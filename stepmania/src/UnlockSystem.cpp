@@ -21,6 +21,7 @@
 #include "SongManager.h"
 #include "GameState.h"
 #include "IniFile.h"
+#include "MsdFile.h"
 
 #include <fstream>
 using namespace std;
@@ -278,49 +279,50 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 {
 	LOG->Trace( "UnlockSystem::LoadFromDATFile(%s)", sPath.c_str() );
 	
-	ifstream input;
-
-	input.open(sPath);
-	if(input.fail())
+	MsdFile msd;
+	if( !msd.ReadFile( sPath ) )
 	{
-		LOG->Warn( "Error opening file '%s' for reading.", sPath.c_str() );
+		LOG->Warn( "Error opening file '%s' for reading: %s.", sPath.c_str(), msd.GetError().c_str() );
 		return false;
 	}
 
-	CString unlock_type, song_title;
-	float datavalue;
 	int MaxRouletteSlot = 0;
-	int i;
+	unsigned i;
 
-	CString line;
-	while( getline(input, line) )
+	for( i=0; i<msd.GetNumValues(); i++ )
 	{
-		CStringArray parameters;
-		CStringArray UnlockTypes;
+		int iNumParams = msd.GetNumParams(i);
+		const MsdFile::value_t &sParams = msd.GetValue(i);
+		CString sValueName = sParams[0];
 
-		split(line, ":", parameters);
-
-		if (parameters[0] != "#UNLOCK")
+		if(iNumParams < 1)
+		{
+			LOG->Warn("Got \"%s\" tag with no parameters", sValueName.c_str());
 			continue;
-		
-		split(parameters[2], ",", UnlockTypes);
+		}
+
+		if( stricmp(sParams[0],"UNLOCK") )
+		{
+			LOG->Warn("Unrecognized unlock tag \"%s\", ignored.", sValueName);
+			continue;
+		}
 
 		SongEntry current;
+		current.m_sSongName = sParams[1];
+		LOG->Trace("Song entry: %s", current.m_sSongName.c_str() );
 
-		parameters[1].MakeUpper();	//Avoid case-sensitive problems
-		current.m_sSongName = parameters[1];
-		
-		LOG->Trace("Song entry: %s", parameters[1].c_str() );
+		CStringArray UnlockTypes;
+		split(sParams[2], ",", UnlockTypes);
 
-		for(i=0; i<UnlockTypes.size(); i++)
+		for( unsigned j=0; j<UnlockTypes.size(); ++j )
 		{
 			CStringArray readparam;
 
-			split(UnlockTypes[i], "=", readparam);
-			unlock_type = readparam[0];
-			datavalue = atof(readparam[1]);
+			split(UnlockTypes[j], "=", readparam);
+			CString unlock_type = readparam[0];
+			float datavalue = (float) atof(readparam[1]);
 
-			LOG->Trace("UnlockTypes line: %s", UnlockTypes[i].c_str() );
+			LOG->Trace("UnlockTypes line: %s", UnlockTypes[j].c_str() );
 			LOG->Trace("Unlock info: %s %f", unlock_type.c_str(), datavalue);
 
 			if (unlock_type == "AP")
@@ -340,13 +342,13 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 			if (unlock_type == "RO")
 			{
 				current.m_iRouletteSeed = (int)datavalue;
-				if (datavalue > MaxRouletteSlot)
-					MaxRouletteSlot = (int)datavalue;
+				MaxRouletteSlot = max( MaxRouletteSlot, (int) datavalue );
 			}
 		}
 		current.updateLocked();
 		m_SongEntries.push_back(current);
 	}
+
 	InitRouletteSeeds(MaxRouletteSlot); // resize roulette seeds
 	                  // for more efficient use of file
 
