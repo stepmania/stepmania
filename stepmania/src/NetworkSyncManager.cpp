@@ -1,6 +1,5 @@
-//This order needed to avoid Linux lib conflicts
-#include "ezsockets.h"
 #include "global.h"
+#include "ezsockets.h"
 #include "NetworkSyncManager.h"
 #include "ProfileManager.h"
 #include "RageLog.h"
