@@ -394,7 +394,7 @@ static void SetupVertices( const RageVertex v[], int iNumVerts )
 		Texture[i*2+1] = v[i].t[1];
 		Normal[i*3+0] = v[i].n[0];
 		Normal[i*3+1] = v[i].n[1];
-		Normal[i*3+2] = v[i].n[2];
+		Normal[i*+2] = v[i].n[2];
 	}
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, 0, Vertex);
@@ -406,7 +406,7 @@ static void SetupVertices( const RageVertex v[], int iNumVerts )
 	glTexCoordPointer(2, GL_FLOAT, 0, Texture);
 
 	glEnableClientState(GL_NORMAL_ARRAY);
-	glNormalPointer(GL_FLOAT, 0, Normal);
+	glNormalPointer(GL_FLOAT, 0, Texture);
 }
 
 void RageDisplay_OGL::DrawQuads( const RageVertex v[], int iNumVerts )

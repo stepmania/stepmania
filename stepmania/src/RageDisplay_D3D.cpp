@@ -925,7 +925,7 @@ RageMatrix RageDisplay_D3D::GetOrthoMatrix( float l, float r, float b, float t, 
 	RageMatrix m(
 		2/(r-l),      0,            0,           0,
 		0,            2/(t-b),      0,           0,
-		0,            0,            1/(zn-zf),   0,
-		-(r+l)/(r-l), -(t+b)/(t-b), zn/(zn-zf),  1 );
+		0,            0,            -1/(zf-zn),  0,
+		-(r+l)/(r-l), -(t+b)/(t-b), -zn/(zf-zn),  1 );
 	return m;
 }
