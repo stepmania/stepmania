@@ -286,7 +286,7 @@ void Song::RevertFromDisk( bool bAllowNotesLoss )
 	StepsID OldCurNotes[NUM_PLAYERS];
 	StepsID OldCurStageStats[NUM_PLAYERS];
 	vector<StepsID> OldPlayedStageStats[NUM_PLAYERS];
-	for( int p = 0; p < NUM_PLAYERS; ++p )
+	FOREACH_PlayerNumber( p )
 	{
 		OldCurNotes[p].FromSteps( GAMESTATE->m_pCurSteps[p] );
 		OldCurStageStats[p].FromSteps( g_CurStageStats.pSteps[p] );
@@ -312,22 +312,20 @@ void Song::RevertFromDisk( bool bAllowNotesLoss )
 
 	PREFSMAN->m_bFastLoad = OldVal;
 
+	FOREACH_PlayerNumber( p )
 	{
-		for( int p = 0; p < NUM_PLAYERS; ++p )
+		CHECKPOINT;
+		if( GAMESTATE->m_pCurSong == this )
+			GAMESTATE->m_pCurSteps[p] = OldCurNotes[p].ToSteps( this, bAllowNotesLoss );
+		CHECKPOINT;
+		if( g_CurStageStats.pSong == this )
+			g_CurStageStats.pSteps[p] = OldCurStageStats[p].ToSteps( this, bAllowNotesLoss );
+		CHECKPOINT;
+		for( unsigned i = 0; i < g_vPlayedStageStats.size(); ++i )
 		{
-			CHECKPOINT;
-			if( GAMESTATE->m_pCurSong == this )
-				GAMESTATE->m_pCurSteps[p] = OldCurNotes[p].ToSteps( this, bAllowNotesLoss );
-			CHECKPOINT;
-			if( g_CurStageStats.pSong == this )
-				g_CurStageStats.pSteps[p] = OldCurStageStats[p].ToSteps( this, bAllowNotesLoss );
-			CHECKPOINT;
-			for( unsigned i = 0; i < g_vPlayedStageStats.size(); ++i )
-			{
-			CHECKPOINT_M(ssprintf("%i", i));
-				if( g_vPlayedStageStats[i].pSong == this )
-					g_vPlayedStageStats[i].pSteps[p] = OldPlayedStageStats[p][i].ToSteps( this, bAllowNotesLoss );
-			}
+		CHECKPOINT_M(ssprintf("%i", i));
+			if( g_vPlayedStageStats[i].pSong == this )
+				g_vPlayedStageStats[i].pSteps[p] = OldPlayedStageStats[p][i].ToSteps( this, bAllowNotesLoss );
 		}
 	}
 

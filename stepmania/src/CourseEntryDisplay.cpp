@@ -48,11 +48,8 @@ void CourseEntryDisplay::Load()
 	m_TextBanner.LoadFromString( "", "", "", "", "", "" );
 	this->AddChild( &m_TextBanner );
 
-	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
+	FOREACH_HumanPlayer( pn )
 	{
-		if( !GAMESTATE->IsHumanPlayer((PlayerNumber)pn) )
-			continue;	// skip
-
 		if( !SEPARATE_COURSE_METERS && pn != GAMESTATE->m_MasterPlayerNumber )
 			continue;	// skip
 

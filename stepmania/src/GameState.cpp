@@ -1070,7 +1070,7 @@ bool GameState::IsDisqualified( PlayerNumber pn )
 
 void GameState::ResetNoteSkins()
 {
-	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
+	FOREACH_PlayerNumber( pn )
 		ResetNoteSkinsForPlayer( (PlayerNumber) pn );
 
 	++m_BeatToNoteSkinRev;
@@ -1663,7 +1663,7 @@ bool GameState::ChangePreferredDifficulty( PlayerNumber pn, Difficulty dc )
 {
 	this->m_PreferredDifficulty[pn] = dc;
 	if( DifficultiesLocked() )
-		for( int p = 0; p < NUM_PLAYERS; ++p )
+		FOREACH_PlayerNumber( p )
 			m_PreferredDifficulty[p] = m_PreferredDifficulty[pn];
 
 	return true;
@@ -1728,7 +1728,7 @@ bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, CourseDifficul
 	m_PreferredCourseDifficulty[pn] = cd;
 
 	if( PREFSMAN->m_bLockCourseDifficulties )
-		for( int p = 0; p < NUM_PLAYERS; ++p )
+		FOREACH_PlayerNumber( p )
 			m_PreferredCourseDifficulty[p] = m_PreferredCourseDifficulty[pn];
 
 	return true;
