@@ -358,7 +358,7 @@ static void child_process()
      * write to /dev/tty instead. */
     FILE *tty = fopen( "/dev/tty", "w" );
     if( tty == NULL )
-        tty = stdin;
+        tty = stderr;
 
     fprintf(tty,
             "\n"
