@@ -693,6 +693,11 @@ void ScreenGameplay::LoadNextSong()
 
 		GAMESTATE->m_pCurNotes[p] = m_apNotesQueue[p][iPlaySongIndex];
 
+		/* Increment the play count even if the player fails.  (It's still popular,
+		 * even if the people playing it aren't good at it.) */
+		for( int mc = 0; mc < NUM_MEMORY_CARDS; ++mc )
+			++GAMESTATE->m_pCurNotes[p]->m_MemCardDatas[mc].iNumTimesPlayed;
+
 		// Put course options into effect.
 		for( unsigned i=0; i<m_asModifiersQueue[p][iPlaySongIndex].size(); ++i )
 		{
