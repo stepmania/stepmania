@@ -132,7 +132,6 @@ protected:
 	AutoActor	m_Overlay;
 
 	BitmapText			m_textSurviveTime;	// used in extra stage
-	BitmapText			m_textSongTitle;
 
 	Player				m_Player[NUM_PLAYERS];
 

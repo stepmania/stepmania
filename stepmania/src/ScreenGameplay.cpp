@@ -415,13 +415,6 @@ void ScreenGameplay::Init()
 		}
 	}
 
-	m_textSongTitle.LoadFromFont( THEME->GetPathF(m_sName,"song title") );
-	m_textSongTitle.SetShadowLength( 0 );
-	m_textSongTitle.SetName( "SongTitle" );
-	SET_XY( m_textSongTitle );
-	this->AddChild( &m_textSongTitle );
-
-
 	m_MaxCombo.LoadFromFont( THEME->GetPathF(m_sName,"max combo") );
 	m_MaxCombo.SetName( "MaxCombo" );
 	SET_XY( m_MaxCombo );
@@ -983,8 +976,6 @@ void ScreenGameplay::LoadNextSong()
 
 	m_AutoKeysounds.FinishLoading();
 	m_pSoundMusic = m_AutoKeysounds.GetSound();
-
-	m_textSongTitle.SetText( GAMESTATE->m_pCurSong->m_sMainTitle );
 
 	const bool bReverse[NUM_PLAYERS] = 
 	{
@@ -2385,7 +2376,6 @@ void ScreenGameplay::TweenOnScreen()
 	ON_COMMAND( m_sprStageFrame );
 	ON_COMMAND( m_textSongOptions );
 	ON_COMMAND( m_sprScoreFrame );
-	ON_COMMAND( m_textSongTitle );
 	ON_COMMAND( m_BPMDisplay );
 	ON_COMMAND( m_MaxCombo );
 
@@ -2425,7 +2415,6 @@ void ScreenGameplay::TweenOffScreen()
 	OFF_COMMAND( m_sprStageFrame );
 	OFF_COMMAND( m_textSongOptions );
 	OFF_COMMAND( m_sprScoreFrame );
-	OFF_COMMAND( m_textSongTitle );
 	OFF_COMMAND( m_BPMDisplay );
 	OFF_COMMAND( m_MaxCombo );
 
