@@ -154,40 +154,40 @@ ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 		default: ASSERT(0); // we should cover all gametypes....
 	}
 
-	SMLoader smfile;		
-	smfile.LoadFromSMFile( THEME->GetPathToO(STEPFILE), m_Song, false );
-	m_Song.AddAutoGenNotes();
-
-	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
-	
-	vector<Steps *> notes;
-	m_Song.GetSteps( notes, pStyleDef->m_StepsType );
-	ASSERT( notes.size() >= 1 );
-
-	NoteData TempNoteData;
-	notes[0]->GetNoteData( &TempNoteData );
-	pStyleDef->GetTransformedNoteDataForStyle( PLAYER_1, &TempNoteData, &m_NoteData );
-
-	GAMESTATE->m_pCurSong = &m_Song;
-	GAMESTATE->m_bPastHereWeGo = true;
-	GAMESTATE->m_PlayerController[PLAYER_1] = PC_AUTOPLAY;
-
 	if( USEPLAYER )
 	{
+		SMLoader smfile;		
+		smfile.LoadFromSMFile( THEME->GetPathToO(STEPFILE), m_Song, false );
+		m_Song.AddAutoGenNotes();
+
+		const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+		
+		vector<Steps *> notes;
+		m_Song.GetSteps( notes, pStyleDef->m_StepsType );
+		ASSERT( notes.size() >= 1 );
+
+		NoteData TempNoteData;
+		notes[0]->GetNoteData( &TempNoteData );
+		pStyleDef->GetTransformedNoteDataForStyle( PLAYER_1, &TempNoteData, &m_NoteData );
+
+		GAMESTATE->m_pCurSong = &m_Song;
+		GAMESTATE->m_bPastHereWeGo = true;
+		GAMESTATE->m_PlayerController[PLAYER_1] = PC_AUTOPLAY;
+
 		m_pPlayer = new Player;
 		m_pPlayer->Load( PLAYER_1, &m_NoteData, m_pLifeMeterBar, NULL, NULL, NULL, NULL, NULL, NULL );
 		m_pPlayer->SetX( PLAYERX );
 		this->AddChild( m_pPlayer );
+
+		// Don't show judgement
+		GAMESTATE->m_PlayerOptions[PLAYER_1].m_fBlind = 1;
+		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+		GAMESTATE->m_bDemonstrationOrJukebox = true;
 	}
 
 	// deferred until after the player, so the notes go under it
 	if( m_pLifeMeterBar )
 		this->AddChild( m_pLifeMeterBar );
-
-	// Don't show judgement
-	GAMESTATE->m_PlayerOptions[PLAYER_1].m_fBlind = 1;
-	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-	GAMESTATE->m_bDemonstrationOrJukebox = true;
 
 	m_fFakeSecondsIntoSong = 0;
 	this->ClearMessageQueue();
@@ -270,8 +270,9 @@ void ScreenHowToPlay::Update( float fDelta )
 			iLastNoteRowCounted = iCurNoteRow;
 		}
 
-		// we want misses from beat 22.8 on out, so change to a HUMAN controller.
-		// since we aren't taking input from the user, the steps are always missed.
+		// once we hit the number of perfects we want, we want to fail.
+		// switch the controller to HUMAN. since we aren't taking input,
+		// the steps will always be misses.
 		if(m_iPerfects > m_iNumPerfects)
 			GAMESTATE->m_PlayerController[PLAYER_1] = PC_HUMAN;
 
