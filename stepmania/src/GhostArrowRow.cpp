@@ -27,7 +27,8 @@ void GhostArrowRow::Load( PlayerNumber pn, CString NoteSkin, float fYReverseOffs
 	// init arrows
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
-		CString Button = g_NoteFieldMode[m_PlayerNumber].GhostButtonNames[c];
+		NoteFieldMode &mode = g_NoteFieldMode[pn];
+		CString Button = mode.GhostButtonNames[c];
 		if(Button == "")
 			Button = NoteSkinManager::ColToButtonName(c);
 

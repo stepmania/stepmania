@@ -130,7 +130,8 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn, CString NoteSkin, float fY
 	m_fYReverseOffsetPixels = fYReverseOffsetPixels;
 
 	/* Normally, this is empty and we use the style table entry via ColToButtonName. */
-	CString Button = g_NoteFieldMode[m_PlayerNumber].NoteButtonNames[iColNum];
+	NoteFieldMode &mode = g_NoteFieldMode[pn];
+	CString Button = mode.NoteButtonNames[iColNum];
 	if(Button == "")
 		Button = NoteSkinManager::ColToButtonName(iColNum);
 

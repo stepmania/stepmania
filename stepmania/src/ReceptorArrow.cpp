@@ -20,7 +20,8 @@ bool ReceptorArrow::Load( CString NoteSkin, PlayerNumber pn, int iColNo )
 	m_PlayerNumber = pn;
 	m_iColNo = iColNo;
 
-	CString sButton = g_NoteFieldMode[pn].GrayButtonNames[iColNo];
+        NoteFieldMode &mode = g_NoteFieldMode[pn];
+	CString sButton = mode.GrayButtonNames[iColNo];
 	if( sButton == "" )
 		sButton = NoteSkinManager::ColToButtonName( iColNo );
 

@@ -204,7 +204,8 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	int c;
 	for( c=0; c<pStyleDef->m_iColsPerPlayer; c++ )
 	{
-		m_HoldJudgment[c].Command( g_NoteFieldMode[pn].m_HoldJudgmentCmd[c] );
+		NoteFieldMode &mode = g_NoteFieldMode[pn];
+		m_HoldJudgment[c].Command( mode.m_HoldJudgmentCmd[c] );
 	}
 
 	// Need to set Y positions of all these elements in Update since
