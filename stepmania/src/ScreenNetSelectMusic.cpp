@@ -76,7 +76,7 @@ void ScreenNetSelectMusic::Init()
 	this->AddChild( &m_MusicWheel );
 	this->MoveToHead( &m_MusicWheel );
 	ON_COMMAND( m_MusicWheel );	
-
+	
 	m_BPMDisplay.SetName( "BPMDisplay" );
 	m_BPMDisplay.Load();
 	SET_XY_AND_ON_COMMAND( m_BPMDisplay );
@@ -447,6 +447,9 @@ void ScreenNetSelectMusic::StartSelectedSong()
 		Steps * pSteps = pSong->GetStepsByDifficulty(st,m_DC[pn]);
 		GAMESTATE->m_pCurSteps[pn].Set( pSteps );
 	}
+
+	GAMESTATE->m_PreferredSortOrder = m_MusicWheel.GetSortOrder();
+	GAMESTATE->m_pPreferredSong = pSong;
 	
 	TweenOffScreen();
 	StartTransitioning( SM_GoToNextScreen );
