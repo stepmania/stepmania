@@ -120,6 +120,8 @@ PrefsManager::PrefsManager()
 	 * stage CRS files) don't get it changed around on them. */
 	m_bPickExtraStage = false;
 
+	m_bComboContinuesBetweenSongs = false;
+
 	// default to old sort order
 	m_iCourseSortOrder = COURSE_SORT_SONGS;
 	m_bMoveRandomToEnd = false;
@@ -230,6 +232,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "JointPremium",			m_bJointPremium );
 	ini.GetValueI( "Options", "BoostAppPriority",			m_iBoostAppPriority );
 	ini.GetValueB( "Options", "PickExtraStage",			m_bPickExtraStage );
+	ini.GetValueB( "Options", "ComboContinuesBetweenSongs",	m_bComboContinuesBetweenSongs );
 	ini.GetValueF( "Options", "LongVerSeconds",			m_fLongVerSongSeconds );
 	ini.GetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
 	ini.GetValueI( "Options", "ShowSongOptions",			(int&)m_ShowSongOptions );
@@ -346,6 +349,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "JointPremium",			m_bJointPremium );
 	ini.SetValueI( "Options", "BoostAppPriority",			m_iBoostAppPriority );
 	ini.SetValueB( "Options", "PickExtraStage",			m_bPickExtraStage );
+	ini.SetValueB( "Options", "ComboContinuesBetweenSongs",	m_bComboContinuesBetweenSongs );
 	ini.SetValueF( "Options", "LongVerSeconds",			m_fLongVerSongSeconds );
 	ini.SetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
 	ini.SetValueI( "Options", "ShowSongOptions",			m_ShowSongOptions );

@@ -192,7 +192,11 @@ void GameState::ResetMusicStatistics()
 
 void GameState::ResetStageStatistics()
 {
+	StageStats OldStats = GAMESTATE->m_CurStageStats;
 	m_CurStageStats = StageStats();
+	if( GetStageIndex() > 0 && PREFSMAN->m_bComboContinuesBetweenSongs )
+		memcpy( GAMESTATE->m_CurStageStats.iCurCombo, OldStats .iCurCombo,  sizeof(OldStats.iCurCombo) );
+
 	RemoveAllActiveAttacks();
 	RemoveAllInventory();
 	m_fOpponentHealthPercent = 1;

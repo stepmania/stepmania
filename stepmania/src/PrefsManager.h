@@ -69,6 +69,7 @@ public:
 	int				m_iCoinsPerCredit;
 	bool			m_bJointPremium;
 	bool			m_bPickExtraStage;
+	bool			m_bComboContinuesBetweenSongs;
 	float			m_fLongVerSongSeconds;
 	float			m_fMarathonVerSongSeconds;
 	enum Maybe { ASK = -1, NO = 0, YES = 1 };
