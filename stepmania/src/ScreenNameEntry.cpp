@@ -176,7 +176,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 
 		// resize string to MAX_RANKING_NAME_LENGTH
 		m_sSelectedName[p] = ssprintf( "%*.*s", MAX_RANKING_NAME_LENGTH, MAX_RANKING_NAME_LENGTH, m_sSelectedName[p].c_str() );
-		ASSERT( m_sSelectedName[p].length() == MAX_RANKING_NAME_LENGTH );
+		ASSERT( (int) m_sSelectedName[p].length() == MAX_RANKING_NAME_LENGTH );
 
 		// don't load player if they aren't going to enter their name
 		if( !m_bStillEnteringName[p] )
@@ -218,7 +218,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 			m_textSelectedChars[p][t].SetY( GRAY_ARROWS_Y );
 			m_textSelectedChars[p][t].SetDiffuse( g_SelectedCharsColor );
 			m_textSelectedChars[p][t].SetZoom( CHARS_ZOOM_LARGE );
-			if( t<m_sSelectedName[p].length() )
+			if( t < (int)m_sSelectedName[p].length() )
 				m_textSelectedChars[p][t].SetText( m_sSelectedName[p].substr(t,1) );
 			this->AddChild( &m_textSelectedChars[p][t] );		// draw these manually
 			
