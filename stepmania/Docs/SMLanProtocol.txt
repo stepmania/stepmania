@@ -90,14 +90,15 @@ CLIENT to SERVER protocol:
     Size	Description
     MSN		Player #
     LSN		StepID 
-		0: Miss
-		1: Boo
-		2: Good
-		3: Great
-		4: Perfect
-		5: Marvelous
-		6: OK \
-		7: NG  \These may be swapped 
+		1: Miss
+		2: Boo
+		3: Good
+		4: Great
+		5: Perfect
+		6: Marvelous
+		7: NG
+		8: OK
+
     MSN		Projected Grade (StepMania enum int)
     LSN		Reserved
     4		Net-order long containing score.
