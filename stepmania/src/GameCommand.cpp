@@ -573,10 +573,10 @@ void GameCommand::Apply( PlayerNumber pn ) const
 static HighScore MakeRandomHighScore()
 {
 	HighScore hs;
-	hs.sName = (char)('A'+rand()%26);
+	hs.sName = "FAKE";
 	hs.grade = (Grade)SCALE( rand()%5, 0, 4, GRADE_TIER_1, GRADE_TIER_5 );
 	hs.iScore = rand()%100*1000;
-	hs.fPercentDP = randomf( 50.0f, 100.0f );
+	hs.fPercentDP = randomf( 0.5f, 1.0f );
 	hs.fSurviveSeconds = randomf( 30.0f, 100.0f );
 	PlayerOptions po;
 	po.ChooseRandomMofifiers();
@@ -742,6 +742,7 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 			vector<Steps*> vpAllSteps = (*pSong)->GetAllSteps();
 			FOREACH( Steps*, vpAllSteps, pSteps )
 			{
+				pProfile->IncrementStepsPlayCount( *pSong, *pSteps );
 				for( int i=0; i<PREFSMAN->m_iMaxHighScoresPerListForMachine; i++ )
 				{
 					int iIndex = 0;
@@ -758,6 +759,7 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 			(*pCourse)->GetAllTrails( vpAllTrails );
 			FOREACH( Trail*, vpAllTrails, pTrail )
 			{
+				pProfile->IncrementCoursePlayCount( *pCourse, *pTrail );
 				for( int i=0; i<PREFSMAN->m_iMaxHighScoresPerListForMachine; i++ )
 				{
 					int iIndex = 0;
