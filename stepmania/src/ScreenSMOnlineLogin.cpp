@@ -13,7 +13,7 @@
 #include "RageUtil.h"
 #include "GameState.h"
 #include "ScreenDimensions.h"
-#include "crypto\CryptMD5.h"
+#include "crypto/CryptMD5.h"
 
 const ScreenMessage SM_SMOnlinePack	= ScreenMessage(SM_User+8);
 
