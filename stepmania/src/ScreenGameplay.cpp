@@ -508,6 +508,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	
 
 	m_BPMDisplay.SetName( "BPM" );
+	m_BPMDisplay.Load();
 	SET_XY( m_BPMDisplay );
 	this->AddChild( &m_BPMDisplay );
 

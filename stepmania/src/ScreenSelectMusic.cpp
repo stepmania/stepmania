@@ -121,6 +121,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	this->AddChild( m_sprBannerFrame );
 
 	m_BPMDisplay.SetName( "BPM" );
+	m_BPMDisplay.Load();
 	SET_XY( m_BPMDisplay );
 	this->AddChild( &m_BPMDisplay );
 
