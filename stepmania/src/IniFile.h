@@ -84,42 +84,6 @@ public:
 	void RenameKey( const CString &from, const CString &to );
 };
 
-class IniFilePreserveOrder
-{
-public:
-	// all keys are of this type
-
-	typedef pair<CString, CString> key_value;
-	typedef vector<key_value> key;
-	typedef pair<CString, key> keymap_value;
-	typedef vector<keymap_value> keymap;
-
-	typedef keymap::const_iterator const_iterator;
-	const_iterator begin() const { return keys.begin(); }
-	const_iterator end() const { return keys.end(); }
-
-	typedef keymap::iterator iterator;
-	iterator begin() { return keys.begin(); }
-	iterator end() { return keys.end(); }
-
-private:
-	CString m_sPath;
-
-	keymap keys;
-
-	mutable CString m_sError;
-
-public:
-	/* Retrieve the filename of the last file loaded. */
-	CString GetPath() const { return m_sPath; }
-	const CString &GetError() const { return m_sError; }
-
-	bool ReadFile( const CString &sPath );
-	bool WriteFile( const CString &sPath );
-
-	bool SetValue( const CString &key, const CString &valuename, const CString &value );
-};
-
 #endif
 
 /*

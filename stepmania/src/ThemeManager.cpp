@@ -189,41 +189,6 @@ void ThemeManager::LoadThemeRecursive( deque<Theme> &theme, const CString &sThem
 	if( !sThemeName.CompareNoCase(BASE_THEME_NAME) )
 		loaded_base = true;
 
-
-	// Uncomment to write "metrics.ini.new" that automatically converts absolute
-	// screen positions to use the SCREEN_* constants.
-#if 0
-	IniFilePreserveOrder ini;
-	ini.ReadFile( GetMetricsIniPath(sThemeName) );
-	for( IniFilePreserveOrder::iterator k = ini.begin(); k != ini.end(); k++ )
-	{
-		IniFilePreserveOrder::key &k2 = k->second;
-		for( IniFilePreserveOrder::key::iterator v = k2.begin(); v != k2.end(); v++ )
-		{
-			const CString &sName = v->first;
-			CString &sValue = v->second;
-
-			if( sValue.empty() )
-				continue;
-			if( !isdigit(sValue[0]) )
-				continue;
-			if( sName.Right(8) == "SpacingX" || sName.Right(8) == "SpacingY" )
-				continue;
-			if( sName.Right(7) == "OffsetX" || sName.Right(7) == "OffsetY" )
-				continue;
-
-			int i = atoi( sValue );
-			if( sName.Right(1) == "X" )
-				sValue = "SCREEN_CENTER_X" + ssprintf("%+d", i-320);
-			if( sName.Right(1) == "Y" )
-				sValue = "SCREEN_CENTER_Y" + ssprintf("%+d", i-240);
-		}
-	}
-	ini.WriteFile( GetMetricsIniPath(sThemeName)+".new" );
-#endif
-
-
-
 	Theme t;
 	t.sThemeName = sThemeName;
 	t.iniMetrics.ReadFile( GetMetricsIniPath(sThemeName) );
