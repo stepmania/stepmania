@@ -106,7 +106,9 @@ typedef signed __int64 int64_t;
 #    endif /* __MINGW32__ */
 
 #    ifdef _DEBUG
-#        define DEBUG
+#        ifndef DEBUG
+#            define DEBUG
+#        endif
 #    endif
 
 #    define snprintf _snprintf
