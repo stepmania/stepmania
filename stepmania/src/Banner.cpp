@@ -30,6 +30,9 @@ bool Banner::Load( RageTextureID ID )
 	/* Song banners often have HOT PINK color keys. */
 	ID.bHotPinkColorKey = true;
 
+	m_fPercentScrolling = 0;
+	m_bScrolling = false;
+
 	return CroppedSprite::Load( ID );
 };
 
