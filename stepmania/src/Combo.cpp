@@ -53,7 +53,7 @@ Combo::Combo()
 
 	Reset();
 
-	m_sprCombo.Load( THEME->GetPathTo("Graphics", "gameplay combo label") );
+	m_sprCombo.Load( THEME->GetPathTo("Graphics", "Combo label") );
 	m_sprCombo.EnableShadow( true );
 	m_sprCombo.StopAnimating();
 	m_sprCombo.SetXY( LABEL_X, LABEL_Y );
@@ -61,7 +61,7 @@ Combo::Combo()
 	m_sprCombo.SetVertAlign( (Actor::VertAlign)(int)LABEL_VERT_ALIGN );
 	this->AddChild( &m_sprCombo );
 
-	m_textComboNumber.LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay combo numbers") );
+	m_textComboNumber.LoadFromNumbers( THEME->GetPathTo("Numbers","Combo numbers") );
 	m_textComboNumber.EnableShadow( true );
 	m_textComboNumber.SetXY( NUMBER_X, NUMBER_Y );
 	m_textComboNumber.SetHorizAlign( (Actor::HorizAlign)(int)NUMBER_HORIZ_ALIGN );
@@ -95,7 +95,7 @@ void Combo::SetScore( TapNoteScore score, int iNumNotesInThisRow, Inventory* pIn
 	case TNS_PERFECT:
 		m_iCurComboOfPerfects += iNumNotesInThisRow;
 
-		if( rand() < 0.1f && m_iCurComboOfPerfects>=150 && (m_iCurComboOfPerfects%150)==0 && !GAMESTATE->m_bDemonstration )
+		if( rand() < 0.1f && m_iCurComboOfPerfects>=150 && (m_iCurComboOfPerfects%150)==0 && !GAMESTATE->m_bDemonstrationOrJukebox )
 			SCREENMAN->SendMessageToTopScreen( SM_BeginToasty, 0 );
 		break;
 	default:

@@ -33,9 +33,7 @@ OptionRowData g_SoundOptionsLines[NUM_SOUND_OPTIONS_LINES] = {
 };
 
 ScreenSoundOptions::ScreenSoundOptions() :
-	ScreenOptions(	THEME->GetPathTo("BGAnimations","sound options"),
-					THEME->GetPathTo("Graphics","sound options page"),
-					THEME->GetPathTo("Graphics","sound options top edge") )
+	ScreenOptions("ScreenSoundOptions",false)
 {
 	LOG->Trace( "ScreenSoundOptions::ScreenSoundOptions()" );
 
@@ -49,9 +47,9 @@ ScreenSoundOptions::ScreenSoundOptions() :
 	}
 
 	Init( INPUTMODE_BOTH, g_SoundOptionsLines, NUM_SOUND_OPTIONS_LINES, false );
-	m_Menu.StopTimer();
+	m_Menu.m_MenuTimer.StopTimer();
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","sound options music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSoundOptions music") );
 }
 
 void ScreenSoundOptions::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )

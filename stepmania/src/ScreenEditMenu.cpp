@@ -44,11 +44,7 @@ ScreenEditMenu::ScreenEditMenu()
 //	m_Selector.AllowNewNotes();
 	this->AddChild( &m_Selector );
 
-	m_Menu.Load( 
-		THEME->GetPathTo("BGAnimations","edit menu"), 
-		THEME->GetPathTo("Graphics","edit menu top edge"),
-		HELP_TEXT, false, false, 99 
-		);
+	m_Menu.Load( "ScreenEditMenu", false );
 	this->AddChild( &m_Menu );
 
 
@@ -58,15 +54,7 @@ ScreenEditMenu::ScreenEditMenu()
 	m_textExplanation.SetZoom( 0.7f );
 	this->AddChild( &m_textExplanation );
 
-	m_Fade.SetOpened();
-	this->AddChild( &m_Fade);
-
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","edit menu music") );
-
-	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
-	m_soundCreate.Load( THEME->GetPathTo("Sounds","edit menu create") );
-
-	m_Menu.TweenOnScreenFromBlack( SM_None );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenEditMenu music") );
 }
 
 
@@ -137,7 +125,7 @@ void DeleteCurNotes()
 
 void ScreenEditMenu::MenuStart( PlayerNumber pn )
 {
-	if( m_Fade.IsClosing() || m_Fade.IsClosed() )
+	if( m_Menu.IsTransitioning() )
 		return;
 
 	Song* pSong					= m_Selector.GetSelectedSong();
@@ -169,9 +157,8 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		// Prepare prepare for ScreenEdit
 		ASSERT( pNotes );
 		SOUNDMAN->StopMusic();
-		m_soundSelect.PlayRandom();
-		m_Menu.TweenOffScreenToBlack( SM_GoToNextScreen, false  );
-		m_Fade.CloseWipingRight( SM_None );
+		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common start") );
+		m_Menu.StartTransitioning( SM_GoToNextScreen );
 		break;
 	case EditMenu::ACTION_DELETE:
 		ASSERT( pNotes );
@@ -190,7 +177,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			pSong->AddNotes( pNewNotes );
 		
 			SCREENMAN->SystemMessage( "Notes created from copy." );
-			m_soundCreate.PlayRandom();
+			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenEditMenu create") );
 			m_Selector.RefreshNotes();
 			pSong->Save();
 		}
@@ -208,7 +195,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			pSong->AddNotes( pNewNotes );
 		
 			SCREENMAN->SystemMessage( "Notes created from AutoGen." );
-			m_soundCreate.PlayRandom();
+			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenEditMenu create") );
 			m_Selector.RefreshNotes();
 			pSong->Save();
 		}
@@ -225,7 +212,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			pSong->AddNotes( pNewNotes );
 		
 			SCREENMAN->SystemMessage( "Blank Notes created." );
-			m_soundCreate.PlayRandom();
+			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenEditMenu create") );
 			m_Selector.RefreshNotes();
 			pSong->Save();
 		}
@@ -237,9 +224,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 
 void ScreenEditMenu::MenuBack( PlayerNumber pn )
 {	
-	m_Menu.TweenOffScreenToBlack( SM_None, true );
+	m_Menu.Back( SM_GoToPrevScreen );
 
 	SOUNDMAN->StopMusic();
-
-	m_Fade.CloseWipingLeft( SM_GoToPrevScreen );
 }

@@ -16,7 +16,7 @@
 #include "Banner.h"
 #include "TextBanner.h"
 #include "GameConstantsAndTypes.h"
-#include "FootMeter.h"
+#include "DifficultyMeter.h"
 #include "RandomSample.h"
 
 
@@ -109,8 +109,8 @@ private:
 	Banner		m_GroupBanner;
 	Banner		m_SongBanner;
 	TextBanner  m_SongTextBanner;
-	FootMeter	m_Meter;
-	FootMeter	m_SourceMeter;
+	DifficultyMeter	m_Meter;
+	DifficultyMeter	m_SourceMeter;
 
 	CStringArray		m_sGroups;
 	vector<NotesType>	m_NotesTypes;

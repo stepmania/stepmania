@@ -74,37 +74,40 @@
 #define STATUS_ICONS_Y					THEME->GetMetricF("ScreenGameplay","StatusIconsY")
 #define SURVIVE_TIME_X					THEME->GetMetricF("ScreenGameplay","SurviveTimeX")
 #define SURVIVE_TIME_Y					THEME->GetMetricF("ScreenGameplay","SurviveTimeY")
-#define SECONDS_BETWEEN_COMMENTS		THEME->GetMetricF("ScreenGameplay","SecondsBetweenComments")
-#define TICK_EARLY_SECONDS				THEME->GetMetricF("ScreenGameplay","TickEarlySeconds")
+CachedThemeMetric SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
+CachedThemeMetric G_TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
 
-static float g_fTickEarlySecondsCache = 0;		// reading directly out of theme metrics is slow
+
+const ScreenMessage	SM_PlayReady			= ScreenMessage(SM_User+0);
+const ScreenMessage	SM_PlayGo				= ScreenMessage(SM_User+1);
 
 
 // received while STATE_DANCING
-const ScreenMessage	SM_NotesEnded			= ScreenMessage(SM_User+101);
-const ScreenMessage	SM_BeginLoadingNextSong	= ScreenMessage(SM_User+102);
-const ScreenMessage SM_PlayToastySound		= ScreenMessage(SM_User+105);
+const ScreenMessage	SM_NotesEnded			= ScreenMessage(SM_User+10);
+const ScreenMessage	SM_BeginLoadingNextSong	= ScreenMessage(SM_User+11);
+const ScreenMessage SM_PlayToastySound		= ScreenMessage(SM_User+12);
 
 // received while STATE_OUTRO
-const ScreenMessage	SM_ShowCleared			= ScreenMessage(SM_User+111);
-const ScreenMessage	SM_ShowTryExtraStage	= ScreenMessage(SM_User+112);
-const ScreenMessage	SM_SaveChangedBeforeGoingBack	= ScreenMessage(SM_User+113);
-const ScreenMessage	SM_GoToScreenAfterBack	= ScreenMessage(SM_User+114);
-const ScreenMessage	SM_GoToStateAfterCleared= ScreenMessage(SM_User+115);
+const ScreenMessage	SM_SaveChangedBeforeGoingBack	= ScreenMessage(SM_User+20);
+const ScreenMessage	SM_GoToScreenAfterBack	= ScreenMessage(SM_User+21);
+const ScreenMessage	SM_GoToStateAfterCleared= ScreenMessage(SM_User+22);
 
-const ScreenMessage	SM_BeginFailed			= ScreenMessage(SM_User+121);
-const ScreenMessage	SM_ShowFailed			= ScreenMessage(SM_User+122);
-const ScreenMessage	SM_PlayFailComment		= ScreenMessage(SM_User+123);
-const ScreenMessage	SM_GoToScreenAfterFail	= ScreenMessage(SM_User+125);
+const ScreenMessage	SM_BeginFailed			= ScreenMessage(SM_User+30);
+const ScreenMessage	SM_GoToScreenAfterFail	= ScreenMessage(SM_User+31);
 
 // received while STATE_INTRO
-const ScreenMessage	SM_StartHereWeGo		= ScreenMessage(SM_User+130);
-const ScreenMessage	SM_StopHereWeGo			= ScreenMessage(SM_User+131);
+const ScreenMessage	SM_StartHereWeGo		= ScreenMessage(SM_User+40);
+const ScreenMessage	SM_StopHereWeGo			= ScreenMessage(SM_User+41);
 
 
 ScreenGameplay::ScreenGameplay( bool bDemonstration )
 {
 	LOG->Trace( "ScreenGameplay::ScreenGameplay()" );
+
+
+	SECONDS_BETWEEN_COMMENTS.Refresh();
+	G_TICK_EARLY_SECONDS.Refresh();
+
 
 	
 	m_textLyrics.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
@@ -125,8 +128,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 			m_pScoreDisplay[p] = NULL;
 		}
 	}
-
-	g_fTickEarlySecondsCache = TICK_EARLY_SECONDS;
 
 
 	GAMESTATE->m_CurStageStats = StageStats();	// clear values
@@ -235,7 +236,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		/* Position it in LoadNextSong. */
 		this->AddChild( &m_ActiveItemList[p] );
 
-		m_sprOniGameOver[p].Load( THEME->GetPathTo("Graphics","gameplay oni gameover") );
+		m_sprOniGameOver[p].Load( THEME->GetPathTo("Graphics","ScreenGameplay oni gameover") );
 		m_sprOniGameOver[p].SetX( fPlayerX );
 		m_sprOniGameOver[p].SetY( SCREEN_TOP - m_sprOniGameOver[p].GetZoomedHeight()/2 );
 		m_sprOniGameOver[p].SetDiffuse( RageColor(1,1,1,0) );	// 0 alpha so we don't waste time drawing while not visible
@@ -247,19 +248,16 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	this->AddChild( &m_OniFade );
 
 
-	m_sprMiddleFrame.Load( THEME->GetPathTo("Graphics","Gameplay Middle Frame") );
-	m_sprMiddleFrame.SetXY( MIDDLE_FRAME_X, MIDDLE_FRAME_Y );
-
 	const bool bExtra = GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2();
 
 	// LifeFrame goes below LifeMeter
 	CString sLifeFrameName;
 	if( bExtra )
-		sLifeFrameName = "gameplay extra life frame";
+		sLifeFrameName = "ScreenGameplay extra life frame";
 	else if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY )
-		sLifeFrameName = "gameplay oni life frame";
+		sLifeFrameName = "ScreenGameplay oni life frame";
 	else 
-		sLifeFrameName = "gameplay life frame";
+		sLifeFrameName = "ScreenGameplay life frame";
 	m_sprLifeFrame.Load( THEME->GetPathTo("Graphics",sLifeFrameName) );
 	m_sprLifeFrame.SetXY( LIFE_FRAME_X, LIFE_FRAME_Y(bExtra) );
 	this->AddChild( &m_sprLifeFrame );
@@ -322,11 +320,11 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	//
 	CString sScoreFrameName;
 	if( bExtra )
-		sScoreFrameName = "gameplay extra score frame";
+		sScoreFrameName = "ScreenGameplay extra score frame";
 	else if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY )
-		sScoreFrameName = "gameplay oni score frame";
+		sScoreFrameName = "ScreenGameplay oni score frame";
 	else 
-		sScoreFrameName = "gameplay score frame";
+		sScoreFrameName = "ScreenGameplay score frame";
 	m_sprScoreFrame.Load( THEME->GetPathTo("Graphics",sScoreFrameName) );
 	m_sprScoreFrame.SetXY( SCORE_FRAME_X, SCORE_FRAME_Y(bExtra) );
 	this->AddChild( &m_sprScoreFrame );
@@ -337,7 +335,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	m_StageName.SetZoom( STAGENAME_ZOOM );
 	this->AddChild( &m_StageName );
 
-	m_MaxCombo.LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay score numbers") );
+	m_MaxCombo.LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenGameplay max combo numbers") );
 	m_MaxCombo.SetXY( MAXCOMBO_X, MAXCOMBO_Y );
 	m_MaxCombo.SetZoom( MAXCOMBO_ZOOM );
 	m_MaxCombo.SetText( ssprintf("%d", m_Player[GAMESTATE->m_MasterPlayerNumber].GetPlayersMaxCombo()) ); /* MAKE THIS WORK FOR BOTH PLAYERS! */
@@ -392,7 +390,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
 
-		m_DifficultyIcon[p].Load( THEME->GetPathTo("graphics","gameplay difficulty icons 2x5") );
+		m_DifficultyIcon[p].Load( THEME->GetPathTo("graphics","ScreenGameplay difficulty icons 2x5") );
 		/* Position it in LoadNextSong. */
 		this->AddChild( &m_DifficultyIcon[p] );
 	}
@@ -405,67 +403,61 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	//this->AddChild( &m_textLyrics ); -- THIS IS NOT DONE YET!! (Miryokuteki)
 	
 
-	for( int s=0; s<NUM_STATUS_ICONS; s++ )
-	{
-		m_sprStatusIcons[s].Load( THEME->GetPathTo("Graphics",ssprintf("gameplay status icons 1x%d",NUM_STATUS_ICONS)) );
-		m_sprStatusIcons[s].StopAnimating();
-		m_sprStatusIcons[s].SetState(s);
-		this->AddChild( &m_sprStatusIcons[s] );
-	}	
-
-	PositionStatusIcons();	// position them
+	m_textOptions.LoadFromFont( THEME->GetPathTo("Fonts","header2") );
+	this->AddChild( &m_textOptions );
+	UpdateOptionsText();
 	
-	
-	m_StarWipe.SetClosed();
-	this->AddChild( &m_StarWipe );
-
-	m_sprReady.Load( THEME->GetPathTo("Graphics","gameplay ready") );
-	m_sprReady.SetXY( CENTER_X, CENTER_Y );
-	m_sprReady.SetDiffuse( RageColor(1,1,1,0) );
-	this->AddChild( &m_sprReady );
-
-	m_sprHereWeGo.Load( THEME->GetPathTo("Graphics","gameplay here we go") );
-	m_sprHereWeGo.SetXY( CENTER_X, CENTER_Y );
-	m_sprHereWeGo.SetDiffuse( RageColor(1,1,1,0) );
-	this->AddChild( &m_sprHereWeGo );
-
-	m_sprCleared.Load( THEME->GetPathTo("Graphics","gameplay cleared") );
-	m_sprCleared.SetXY( CENTER_X, CENTER_Y );
-	m_sprCleared.SetDiffuse( RageColor(1,1,1,0) );
-	this->AddChild( &m_sprCleared );
-
-	m_sprFailed.Load( THEME->GetPathTo("Graphics","gameplay failed") );
-	m_sprFailed.SetXY( CENTER_X, CENTER_Y );
-	m_sprFailed.SetDiffuse( RageColor(1,1,1,0) );
-	this->AddChild( &m_sprFailed );
-
-	if( GAMESTATE->IsFinalStage() )
-		m_sprTryExtraStage.Load( THEME->GetPathTo("Graphics","gameplay try extra stage1") );
-	else if( GAMESTATE->IsExtraStage() )
-		m_sprTryExtraStage.Load( THEME->GetPathTo("Graphics","gameplay try extra stage2") );
-	m_sprTryExtraStage.SetXY( CENTER_X, CENTER_Y );
-	m_sprTryExtraStage.SetDiffuse( RageColor(1,1,1,0) );
-	this->AddChild( &m_sprTryExtraStage );
-
-	m_Fade.SetOpened();
-	this->AddChild( &m_Fade );
-
-	m_textSurviveTime.LoadFromFont( THEME->GetPathTo("Fonts","survive time") );
-	m_textSurviveTime.EnableShadow( false );
-	m_textSurviveTime.SetXY( SURVIVE_TIME_X, SURVIVE_TIME_Y );
-	m_textSurviveTime.SetText( "" );
-	m_textSurviveTime.SetDiffuse( RageColor(1,1,1,0) );
-	this->AddChild( &m_textSurviveTime );
-
-
-	m_sprToasty.Load( THEME->GetPathTo("Graphics","gameplay toasty") );
-	m_sprToasty.SetDiffuse( RageColor(1,1,1,0) );
-	this->AddChild( &m_sprToasty );
-
 
 	m_BPMDisplay.SetXY( BPM_X, BPM_Y );
 	m_BPMDisplay.SetZoom( BPM_ZOOM );
 	this->AddChild( &m_BPMDisplay );
+
+	m_Inventory.RefreshPossibleItems();
+	this->AddChild( &m_Inventory );
+
+
+	
+	if( !bDemonstration )	// only load if we're going to use it
+	{
+		m_Ready.Load( THEME->GetPathTo("BGAnimations","ScreenGameplay ready") );
+		this->AddChild( &m_Ready );
+
+		m_Go.Load( THEME->GetPathTo("BGAnimations","ScreenGameplay go") );
+		this->AddChild( &m_Go );
+
+		m_Cleared.Load( THEME->GetPathTo("BGAnimations","ScreenGameplay cleared") );
+		this->AddChild( &m_Cleared );
+
+		m_Failed.Load( THEME->GetPathTo("BGAnimations","ScreenGameplay failed") );
+		this->AddChild( &m_Failed );
+
+		if( GAMESTATE->IsFinalStage() )	// only load if we're going to use it
+			m_Extra.Load( THEME->GetPathTo("BGAnimations","ScreenGameplay extra1") );
+		if( GAMESTATE->IsExtraStage() )	// only load if we're going to use it
+			m_Extra.Load( THEME->GetPathTo("BGAnimations","ScreenGameplay extra2") );
+		this->AddChild( &m_Extra );
+
+		m_Toasty.Load( THEME->GetPathTo("BGAnimations","ScreenGameplay toasty") );
+		this->AddChild( &m_Toasty );
+
+		m_Back.Load( THEME->GetPathTo("BGAnimations","Common back") );
+		this->AddChild( &m_Back );
+
+		m_In.Load( THEME->GetPathTo("BGAnimations","ScreenGameplay in") );
+		this->AddChild( &m_In );
+
+
+		if( GAMESTATE->IsExtraStage() )	// only load if we're going to use it
+		{
+			m_textSurviveTime.LoadFromFont( THEME->GetPathTo("Fonts","survive time") );
+			m_textSurviveTime.EnableShadow( false );
+			m_textSurviveTime.SetXY( SURVIVE_TIME_X, SURVIVE_TIME_Y );
+			m_textSurviveTime.SetText( "" );
+			m_textSurviveTime.SetDiffuse( RageColor(1,1,1,0) );
+			this->AddChild( &m_textSurviveTime );
+		}
+	}
+
 
 	/* LoadNextSong first, since that positions some elements which need to be
 	 * positioned before we TweenOnScreen. */
@@ -473,52 +465,67 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 
 	TweenOnScreen();
 
-	for( int i=0; i<30; i++ )
-		this->SendScreenMessage( ScreenMessage(SM_User+i), i/2.0f );	// Send messages to we can get the introduction rolling
-	m_soundToasty.Load( THEME->GetPathTo("Sounds","gameplay toasty") );
 
-
-	if( !bDemonstration )	// don't load sounds if just playing demonstration
+	if( !bDemonstration )	// only load if we're going to use it
 	{
-		m_soundFail.Load(				THEME->GetPathTo("Sounds","gameplay failed") );
-		m_soundTryExtraStage.Load(		THEME->GetPathTo("Sounds","gameplay try extra stage") );
-		m_soundOniDie.Load(				THEME->GetPathTo("Sounds","gameplay oni die") );
-		m_announcerReady.Load(			ANNOUNCER->GetPathTo("gameplay ready") );
+		m_soundFail.Load(				THEME->GetPathTo("Sounds","ScreenGameplay failed") );
+		m_soundTryExtraStage.Load(		THEME->GetPathTo("Sounds","ScreenGameplay extra") );
+		m_soundOniDie.Load(				THEME->GetPathTo("Sounds","ScreenGameplay oni die") );
+		m_announcerReady.Load(			ANNOUNCER->GetPathTo("ScreenGameplay ready") );
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go extra") );
+			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("ScreenGameplay here we go extra") );
 		else if( GAMESTATE->IsFinalStage() )
-			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go final") );
+			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("ScreenGameplay here we go final") );
 		else
-			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go normal") );
-		m_announcerDanger.Load(			ANNOUNCER->GetPathTo("gameplay comment danger") );
-		m_announcerGood.Load(			ANNOUNCER->GetPathTo("gameplay comment good") );
-		m_announcerHot.Load(			ANNOUNCER->GetPathTo("gameplay comment hot") );
-		m_announcerOni.Load(			ANNOUNCER->GetPathTo("gameplay comment oni") );
+			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("ScreenGameplay here we go normal") );
+		m_announcerDanger.Load(			ANNOUNCER->GetPathTo("ScreenGameplay comment danger") );
+		m_announcerGood.Load(			ANNOUNCER->GetPathTo("ScreenGameplay comment good") );
+		m_announcerHot.Load(			ANNOUNCER->GetPathTo("ScreenGameplay comment hot") );
+		m_announcerOni.Load(			ANNOUNCER->GetPathTo("ScreenGameplay comment oni") );
 
-		m_announcer100Combo.Load(		ANNOUNCER->GetPathTo("gameplay 100 combo") );
-		m_announcer200Combo.Load(		ANNOUNCER->GetPathTo("gameplay 200 combo") );
-		m_announcer300Combo.Load(		ANNOUNCER->GetPathTo("gameplay 300 combo") );
-		m_announcer400Combo.Load(		ANNOUNCER->GetPathTo("gameplay 400 combo") );
-		m_announcer500Combo.Load(		ANNOUNCER->GetPathTo("gameplay 500 combo") );
-		m_announcer600Combo.Load(		ANNOUNCER->GetPathTo("gameplay 600 combo") );
-		m_announcer700Combo.Load(		ANNOUNCER->GetPathTo("gameplay 700 combo") );
-		m_announcer800Combo.Load(		ANNOUNCER->GetPathTo("gameplay 800 combo") );
-		m_announcer900Combo.Load(		ANNOUNCER->GetPathTo("gameplay 900 combo") );
-		m_announcer1000Combo.Load(		ANNOUNCER->GetPathTo("gameplay 1000 combo") );
-		m_announcerComboStopped.Load(	ANNOUNCER->GetPathTo("gameplay combo stopped") );
+		m_announcer100Combo.Load(		ANNOUNCER->GetPathTo("ScreenGameplay 100 combo") );
+		m_announcer200Combo.Load(		ANNOUNCER->GetPathTo("ScreenGameplay 200 combo") );
+		m_announcer300Combo.Load(		ANNOUNCER->GetPathTo("ScreenGameplay 300 combo") );
+		m_announcer400Combo.Load(		ANNOUNCER->GetPathTo("ScreenGameplay 400 combo") );
+		m_announcer500Combo.Load(		ANNOUNCER->GetPathTo("ScreenGameplay 500 combo") );
+		m_announcer600Combo.Load(		ANNOUNCER->GetPathTo("ScreenGameplay 600 combo") );
+		m_announcer700Combo.Load(		ANNOUNCER->GetPathTo("ScreenGameplay 700 combo") );
+		m_announcer800Combo.Load(		ANNOUNCER->GetPathTo("ScreenGameplay 800 combo") );
+		m_announcer900Combo.Load(		ANNOUNCER->GetPathTo("ScreenGameplay 900 combo") );
+		m_announcer1000Combo.Load(		ANNOUNCER->GetPathTo("ScreenGameplay 1000 combo") );
+		m_announcerComboStopped.Load(	ANNOUNCER->GetPathTo("ScreenGameplay combo stopped") );
+		m_soundAssistTick.Load(			THEME->GetPathTo("Sounds","ScreenGameplay assist tick") );
+		m_soundToasty.Load(				THEME->GetPathTo("Sounds","ScreenGameplay toasty") );
+	}
+
+	//
+	// Get the transitions rolling
+	//
+	if( bDemonstration )
+	{
+		StartPlayingSong( 0, 0 );	// *kick* (no transitions)
 	}
 	else
 	{
-		StartPlayingSong( 0, 0 );
+		float fMinTimeToMusic = m_In.GetLengthSeconds();	// start of m_Ready
+		float fMinTimeToNotes = fMinTimeToMusic + m_Ready.GetLengthSeconds() + m_Go.GetLengthSeconds()+2;	// end of Go
+
+		/*
+		 * Tell the music to start, but don't actually make any noise for
+		 * at least 2.5 (or 1.5) seconds.  (This is so we scroll on screen smoothly.)
+		 *
+		 * This is only a minimum: the music might be started later, to meet
+		 * the minimum-time-to-notes value.  If you're writing song data,
+		 * and you want to make sure we get ideal timing here, make sure there's
+		 * a bit of space at the beginning of the music with no steps. 
+		 */
+
+		/*float delay =*/ StartPlayingSong( fMinTimeToNotes, fMinTimeToMusic );
+
+		m_In.StartTransitioning( SM_PlayReady );
 	}
 
-	m_Inventory.RefreshPossibleItems();
-	this->AddChild( &m_Inventory );
-
-
 	m_iRowLastCrossed = -1;
-
-	m_soundAssistTick.Load(		THEME->GetPathTo("Sounds","gameplay assist tick") );
 }
 
 ScreenGameplay::~ScreenGameplay()
@@ -729,7 +736,7 @@ bool ScreenGameplay::IsTimeToPlayTicks() const
 	// will start coming out the speaker.  Compensate for this by boosting
 	// fPositionSeconds ahead
 	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
-	fPositionSeconds += (SOUNDMAN->GetPlayLatency()+g_fTickEarlySecondsCache) * m_soundMusic.GetPlaybackRate();
+	fPositionSeconds += (SOUNDMAN->GetPlayLatency()+(float)G_TICK_EARLY_SECONDS) * m_soundMusic.GetPlaybackRate();
 	float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
 
 	int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
@@ -869,7 +876,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		}
 
 		//
-		// Check to see if it's time to play a gameplay comment
+		// Check to see if it's time to play a ScreenGameplay comment
 		//
 		m_fTimeLeftBeforeDancingComment -= fDeltaTime;
 		if( m_fTimeLeftBeforeDancingComment <= 0 )
@@ -936,7 +943,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	if( MenuI.IsValid()  &&  
 		MenuI.button == MENU_BUTTON_BACK  &&  
 		m_DancingState != STATE_OUTRO  &&
-		!m_Fade.IsClosing() )
+		!m_Back.IsTransitioning() )
 	{
 		if( PREFSMAN->m_bDelayedEscape && type==IET_FIRST_PRESS)
 		{
@@ -961,7 +968,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			(DeviceI.device!=DEVICE_KEYBOARD && type==IET_FAST_REPEAT) )
 		{
 			m_DancingState = STATE_OUTRO;
-			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu back") );
+			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common back") );
 			/* Hmm.  There are a bunch of subtly different ways we can
 			 * tween out: 
 			 *   1. Keep rendering the song, and keep it moving.  This might
@@ -976,7 +983,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			m_soundMusic.StopPlaying();
 
 			this->ClearMessageQueue();
-			m_Fade.CloseWipingLeft( SM_SaveChangedBeforeGoingBack );
+			m_Back.StartTransitioning( SM_SaveChangedBeforeGoingBack );
 			return;
 		}
 	}
@@ -992,7 +999,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		case SDLK_F6:
 			m_bChangedOffsetOrBPM = true;
 			GAMESTATE->m_SongOptions.m_bAutoSync = !GAMESTATE->m_SongOptions.m_bAutoSync;	// toggle
-			PositionStatusIcons();
+			UpdateOptionsText();
 			break;
 		case SDLK_F7:
 			if( GAMESTATE->m_SongOptions.m_AssistType == SongOptions::ASSIST_NONE )
@@ -1009,7 +1016,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			break;
 		case SDLK_F8:
 			PREFSMAN->m_bAutoPlay = !PREFSMAN->m_bAutoPlay;
-			PositionStatusIcons();
+			UpdateOptionsText();
 			break;
 		case SDLK_F9:
 		case SDLK_F10:
@@ -1094,35 +1101,17 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	}
 }
 
-void ScreenGameplay::PositionStatusIcons()
+void ScreenGameplay::UpdateOptionsText()
 {
-	bool status[NUM_STATUS_ICONS] = {
-		PREFSMAN->m_bAutoPlay,
-		GAMESTATE->m_SongOptions.m_bAutoSync
-	};
+	CString sText;
 
-	vector<Actor*> vActorsToShow;
+	if( PREFSMAN->m_bAutoPlay )
+		sText += "AutoPlay     ";
+	if( GAMESTATE->m_SongOptions.m_bAutoSync )
+		sText += "AutoSync     ";
 
-	for( int i=0; i<NUM_STATUS_ICONS; i++ )
-	{
-		m_sprStatusIcons[i].SetDiffuse( RageColor(1,1,1,status[i]?1.f:0.f) );
-		if( status[i] )
-			vActorsToShow.push_back( &m_sprStatusIcons[i] );
-	}
-
-	float width_of_one = m_sprStatusIcons[0].GetUnzoomedWidth();
-	float center_x = STATUS_ICONS_X;
-	float left_most_x = center_x-(vActorsToShow.size()-1)*width_of_one/2;
-	float right_most_x = center_x+(vActorsToShow.size()-1)*width_of_one/2;
-
-	for( unsigned a=0; a<vActorsToShow.size(); a++ )
-	{
-		vActorsToShow[a]->SetY( STATUS_ICONS_Y );
-		if( vActorsToShow.size()-1 == 0 )
-			vActorsToShow[a]->SetX( center_x );
-		else
-			vActorsToShow[a]->SetX( SCALE(a, 0.0f, vActorsToShow.size()-1, left_most_x, right_most_x) );		
-	}
+	if( sText.length() > 0 )
+		sText.resize( sText.length()-5 );
 }
 
 void SaveChanges()
@@ -1213,93 +1202,18 @@ void ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 
 void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 {
-	int p;
 	switch( SM )
 	{
-		// received while STATE_INTRO
-	case SM_User+0:
-		{
-			m_StarWipe.OpenWipingRight(SM_None);
-
-			/* It may just be me, but having Here We Go start so late into the song
-			 * ruins the rhythm of the announcer.  MAX/EX starts Here We Go
-			 * a fixed amount of time after Are You Ready.  However, 1-5th
-			 * start HWG a certain amount of time before the notes.
-			 * We may want to metric this, but for now, leave it like MAX/EX. -Chris */
-
-			/*
-			 * Don't actually reach any notes for at least 5.5 seconds.
-			 * "Here We Go" takes about two seconds, we want a half second or so of
-			 * a clear view, so we don't want any notes for 2.5 seconds, plus three
-			 * seconds until we actually begin the HWG.
-			 */
-			const float MinTimeToNotes = 5.5f;
-
-			/*
-			 * Tell the music to start, but don't actually make any noise for
-			 * at least 2.5 (or 1.5) seconds.  (This is so we scroll on screen smoothly.)
-			 *
-			 * Use 1.5 seconds to (try to) start when "Ready" is fading in;
-			 * 2.5 for when it's fading out.
-			 *
-			 * The last set of timings was aiming for 1. fade in "Ready", 2. fade
-			 * out "Ready", 3. music starts, 4. fade in "HWG"; the current timing
-			 * is 1. fade in "Ready" and start music, 2. fade out "Ready", 3. fade
-			 * in "HWG".
-			 *
-			 * This is only a minimum: the music might be started later, to meet
-			 * the minimum-time-to-notes value.  If you're writing song data,
-			 * and you want to make sure we get ideal timing here, make sure there's
-			 * a bit of space at the beginning of the music with no steps. */
-			const float MinTimeToMusic = 1.5f;
-
-			float delay = StartPlayingSong( MinTimeToNotes, MinTimeToMusic );
-
-			/* Start the Here We Go sequence 2.5 seconds before notes, so we
-			 * have time to fade in and fade out. */
-			this->SendScreenMessage( SM_StartHereWeGo, 3.0f );
-			// use this for HWG right as the notes are starting
-			// this->SendScreenMessage( SM_StartHereWeGo, delay - 3.0f );
-			delay; /* hush compiler */
-		}
-		break;
-	case SM_User+1:
-		break;
-	case SM_User+2:
-		m_sprReady.StartFocusing();
-		m_announcerReady.PlayRandom();
-		break;
-	case SM_User+3:
-		break;
-	case SM_User+4:
-		m_sprReady.StartBlurring();
-		break;
-	case SM_User+5:
+	case SM_PlayReady:
 		m_Background.FadeIn();
-		break;
-	case SM_User+6:
-		break;
-	case SM_User+7:
-		break;
-	case SM_User+8:
-		break;
-	case SM_User+9:
+		m_announcerReady.PlayRandom();
+		m_Ready.StartTransitioning( SM_PlayGo );
 		break;
 
-	case SM_StartHereWeGo:
-		/* We have 2.5 seconds until the notes start. */
-		m_sprHereWeGo.StartFocusing();
+	case SM_PlayGo:
 		m_announcerHereWeGo.PlayRandom();
+		m_Go.StartTransitioning( SM_None );
 		GAMESTATE->m_bPastHereWeGo = true;
-
-		/* This gives the HWG about a second of screen time. */
-		this->SendScreenMessage( SM_StopHereWeGo, 1.5f );
-		break;
-
-	case SM_StopHereWeGo:
-		/* We have one second until the notes start. */
-		m_sprHereWeGo.StartBlurring();
-
 		m_DancingState = STATE_DANCING;		// STATE CHANGE!  Now the user is allowed to press Back
 		break;
 
@@ -1341,25 +1255,29 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			}
 			else	// IsLastSong
 			{
-				if( m_DancingState == STATE_OUTRO )	// gameplay already ended
+				if( m_DancingState == STATE_OUTRO )	// ScreenGameplay already ended
 					return;		// ignore
 				m_DancingState = STATE_OUTRO;
 
 				if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_END_OF_SONG  &&  AllFailedEarlier() )
 				{
 					this->SendScreenMessage( SM_BeginFailed, 0 );
-					return;
 				}
-
-				m_StarWipe.CloseWipingRight( SM_None );
-
-				// do they deserve an extra stage?
-				if( GAMESTATE->HasEarnedExtraStage() )
-					this->SendScreenMessage( SM_ShowTryExtraStage, 1 );
-				else
+				else	// ! failed
 				{
-					this->SendScreenMessage( SM_ShowCleared, 1 );
-					SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay cleared") );
+					// do they deserve an extra stage?
+					if( GAMESTATE->HasEarnedExtraStage() )
+					{
+						m_Extra.StartTransitioning( SM_GoToStateAfterCleared );
+						SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay extra") );
+//						this->SendScreenMessage( SM_ShowTryExtraStage, 1 );
+					}
+					else
+					{
+						m_Cleared.StartTransitioning( SM_GoToStateAfterCleared );
+						SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay cleared") );
+//						this->SendScreenMessage( SM_ShowCleared, 1 );
+					}
 				}
 			}
 		}
@@ -1377,20 +1295,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	case SM_BeginToasty:
 		if( PREFSMAN->m_bEasterEggs )
 		{
+			m_Toasty.StartTransitioning();
 			m_soundToasty.Play();
-
-			// set off screen
-			m_sprToasty.StopTweening();
-			m_sprToasty.SetDiffuse( RageColor(1,1,1,1) );
-			m_sprToasty.SetX( SCREEN_RIGHT+m_sprToasty.GetUnzoomedWidth()/2 );
-			m_sprToasty.SetY( SCREEN_BOTTOM-m_sprToasty.GetUnzoomedHeight()/2 );
-			m_sprToasty.BeginTweening( 0.2f, Actor::TWEEN_ACCELERATE ); // slide on
-			m_sprToasty.SetTweenX( SCREEN_RIGHT-m_sprToasty.GetUnzoomedWidth()/2 );
-			m_sprToasty.BeginTweening( 0.6f );	// sleep
-			m_sprToasty.BeginTweening( 0.3f, Actor::TWEEN_DECELERATE );	// slide off
-			m_sprToasty.SetTweenX( SCREEN_RIGHT+m_sprToasty.GetUnzoomedWidth()/2 );
-			m_sprToasty.BeginTweening( 0.001f );	// fade out
-			m_sprToasty.SetDiffuse( RageColor(1,1,1,0) );
 		}
 		break;
 
@@ -1471,9 +1377,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
+	
 
-
-	// received while STATE_OUTRO
+/*	// received while STATE_OUTRO
 	case SM_ShowCleared:
 		m_sprCleared.BeginTweening(1.0f);
 		m_sprCleared.SetTweenDiffuse( RageColor(1,1,1,1) );
@@ -1482,8 +1388,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_sprCleared.SetTweenDiffuse( RageColor(1,1,1,0) );
 		SCREENMAN->SendMessageToTopScreen( SM_GoToStateAfterCleared, 4 );
 		break;
-
-	case SM_ShowTryExtraStage:
+*/
+/*	case SM_ShowTryExtraStage:
 		{
 			m_soundTryExtraStage.PlayRandom();
 
@@ -1513,7 +1419,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			SCREENMAN->SendMessageToTopScreen( SM_GoToStateAfterCleared, 5 );
 		}
 		break;
-
+*/
 	case SM_SaveChangedBeforeGoingBack:
 		if( m_bChangedOffsetOrBPM )
 		{
@@ -1522,8 +1428,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		}
 		else
 			this->SendScreenMessage( SM_GoToScreenAfterBack, 0 );
-
 		break;
+
 	case SM_GoToScreenAfterBack:
 		/* Reset options.  (Should this be done in ScreenSelect*?) */
 		GAMESTATE->RestoreSelectedOptions();
@@ -1540,9 +1446,11 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		case PLAY_MODE_ENDLESS:
 			SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
 			break;
-		default:	ASSERT(0);
+		default:
+			ASSERT(0);
 		}
 		break;
+
 	case SM_GoToStateAfterCleared:
 		/* Reset options.  (Should this be done in ScreenSelect*?) */
 		GAMESTATE->RestoreSelectedOptions();
@@ -1556,25 +1464,20 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( "ScreenEvaluation" );
 		break;
 
-
 	case SM_BeginFailed:
 		m_DancingState = STATE_OUTRO;
 		m_soundMusic.StopPlaying();
-		m_StarWipe.SetTransitionTime( 1.5f );
-		m_StarWipe.CloseWipingRight( SM_None );
-		for( p=0; p<NUM_PLAYERS; p++ )
-			if( GAMESTATE->IsPlayerEnabled(p) )
-				m_Player[p].FadeToFail();
-
-		this->SendScreenMessage( SM_ShowFailed, 0.2f );
-		break;
-	case SM_ShowFailed:
+//		m_Failed.StartTransitioning( SM_ShowFailed );
+//		this->SendScreenMessage( SM_GoToScreenAfterFail, 0.2f );
+//		SCREENMAN->SendMessageToTopScreen( SM_PlayFailComment, 1.0f );
+		m_Failed.StartTransitioning( SM_GoToScreenAfterFail );
 		m_soundFail.PlayRandom();
 
-		// make the background invisible so we don't waste mem bandwidth drawing it
+		// make the background invisible so we don't waste power drawing it
 		m_Background.BeginTweening( 1 );
 		m_Background.SetTweenDiffuse( RageColor(1,1,1,0) );
 
+		/*
 		m_sprFailed.SetZoom( 4 );
 		m_sprFailed.BeginBlurredTweening( 0.8f, TWEEN_DECELERATE );
 		m_sprFailed.SetTweenZoom( 0.5f );			// zoom out
@@ -1588,7 +1491,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_sprFailed.BeginTweening( 2 );		// sleep
 		m_sprFailed.BeginTweening( 1 );
 		m_sprFailed.SetTweenDiffuse( RageColor(1,1,1,0) );
-
+*/
 		// show the survive time if extra stage
 		if( GAMESTATE->IsExtraStage()  ||  GAMESTATE->IsExtraStage2() )
 		{
@@ -1606,13 +1509,15 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_textSurviveTime.SetTweenDiffuse( RageColor(1,1,1,0) );
 		}
 
-		SCREENMAN->SendMessageToTopScreen( SM_PlayFailComment, 1.0f );
-		SCREENMAN->SendMessageToTopScreen( SM_GoToScreenAfterFail, 5.0f );
-		break;
-	case SM_PlayFailComment:
-		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay failed") );
+		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("ScreenGameplay failed") );
+
+//		SCREENMAN->SendMessageToTopScreen( SM_GoToScreenAfterFail, 5.0f );
 		break;
 
+/*	case SM_PlayFailComment:
+		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("ScreenGameplay failed") );
+		break;
+*/
 	case SM_GoToScreenAfterFail:
 		/* Reset options.  (Should this be done in ScreenSelect*?) */
 		GAMESTATE->RestoreSelectedOptions();

@@ -33,25 +33,14 @@ ScreenInstructions::ScreenInstructions()
 {
 	LOG->Trace( "ScreenInstructions::ScreenInstructions()" );
 
-
-	m_Menu.Load(
-		THEME->GetPathTo("BGAnimations","Instructions"), 
-		THEME->GetPathTo("Graphics","Instructions Top Edge"), 
-		HELP_TEXT, false, true, TIMER_SECONDS
-		);
-	this->AddChild( &m_Menu );
-
-
-	if(!PREFSMAN->m_bInstructions)
-	{
-		this->SendScreenMessage( SM_GoToNextScreen, 0 );
-		m_Menu.ImmedOffScreenToMenu();
-		return;
-	}
-
 	//
 	// Skip this screen unless someone chose easy or beginner
 	//
+	if( !PREFSMAN->m_bInstructions )
+	{
+		HandleScreenMessage( SM_GoToNextScreen );
+		return;
+	}
 	if( GAMESTATE->m_PlayMode == PLAY_MODE_ARCADE )
 	{
 		Difficulty easiestDifficulty = (Difficulty)(NUM_DIFFICULTIES-1);
@@ -63,37 +52,19 @@ ScreenInstructions::ScreenInstructions()
 		}
 		if( easiestDifficulty > DIFFICULTY_EASY )
 		{
-			// skip this screen
-			this->SendScreenMessage( SM_GoToNextScreen, 0 );
-			m_Menu.ImmedOffScreenToMenu();
+			HandleScreenMessage( SM_GoToNextScreen );
 			return;
 		}
 	}
 
-
-	m_Menu.TweenOnScreenFromMenu( SM_None, true );
+	m_Menu.Load("ScreenInstructions");
+	this->AddChild( &m_Menu );
 
 	CString sHowToPlayPath;
-	switch( GAMESTATE->m_PlayMode )
-	{
-	case PLAY_MODE_ARCADE:
-		sHowToPlayPath = THEME->GetPathTo("Graphics","instructions arcade");
-		break;
-	case PLAY_MODE_NONSTOP:
-		sHowToPlayPath = THEME->GetPathTo("Graphics","instructions nonstop");
-		break;
-	case PLAY_MODE_ONI:
-		sHowToPlayPath = THEME->GetPathTo("Graphics","instructions oni");
-		break;
-	case PLAY_MODE_ENDLESS:
-		sHowToPlayPath = THEME->GetPathTo("Graphics","instructions endless");
-		break;
-	case PLAY_MODE_BATTLE:
-		sHowToPlayPath = THEME->GetPathTo("Graphics","instructions battle");
-		break;
-	default:
-		ASSERT(0);
-	}
+	if( GAMESTATE->m_PlayMode != PLAY_MODE_INVALID )
+		sHowToPlayPath = THEME->GetPathTo("Graphics","ScreenInstructions "+PlayModeToString(GAMESTATE->m_PlayMode)) ;
+	else
+		RageException::Throw( "The PlayMode has not been set.  A theme must set the PlayMode before showing ScreenInstructions." );
 
 	m_sprHowToPlay.Load( sHowToPlayPath );
 	m_sprHowToPlay.SetXY( CENTER_X, CENTER_Y );
@@ -104,7 +75,7 @@ ScreenInstructions::ScreenInstructions()
 	m_sprHowToPlay.BeginTweening( 0.6f, Actor::TWEEN_ACCELERATE );
 	m_sprHowToPlay.SetTweenX( CENTER_X );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","instructions music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenInstructions music") );
 }
 
 ScreenInstructions::~ScreenInstructions()
@@ -122,13 +93,13 @@ void ScreenInstructions::Update( float fDeltaTime )
 void ScreenInstructions::DrawPrimitives()
 {
 	m_Menu.DrawBottomLayer();
+	Screen::DrawPrimitives();
 	m_Menu.DrawTopLayer();
-	Screen::DrawPrimitives();	// draw instructions graphic on top of all the others!
 }
 
 void ScreenInstructions::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	if( m_Menu.IsClosing() )
+	if( m_Menu.IsTransitioning() )
 		return;
 
 	// default input handler
@@ -168,12 +139,12 @@ void ScreenInstructions::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenInstructions::MenuBack( PlayerNumber pn )
 {
-	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
+	m_Menu.Back( SM_GoToPrevScreen );
 }
 
 void ScreenInstructions::MenuStart( PlayerNumber pn )
 {
-	m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
+	m_Menu.StartTransitioning( SM_GoToNextScreen );
 
 	m_sprHowToPlay.StopTweening();
 	m_sprHowToPlay.BeginTweening( 0.3f, Actor::TWEEN_DECELERATE );

@@ -36,16 +36,11 @@ private:
 	void MenuBack( PlayerNumber pn );
 	void MenuStart( PlayerNumber pn );
 
-	JukeboxMenu	 m_Selector;
+	JukeboxMenu		m_Selector;
 
 	BitmapText		m_textExplanation;
 
-	MenuElements m_Menu;
-
-	TransitionFade	m_Fade;
-
-	RandomSample	m_soundSelect;
-	RandomSample	m_soundCreate;
+	MenuElements	m_Menu;
 };
 
 

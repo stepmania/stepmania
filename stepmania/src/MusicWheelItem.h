@@ -21,7 +21,7 @@
 //#include "SmallGradeDisplay.h"
 //#include "GameConstantsAndTypes.h"
 //#include "MusicSortDisplay.h"
-//#include "MusicStatusDisplay.h"
+//#include "WheelNotifyIcon.h"
 //#include "Screen.h"		// for ScreenMessage
 //#include "ScoreDisplayNormal.h"
 //#include "ScrollBar.h"
@@ -42,7 +42,7 @@ public:
 	Course*			m_pCourse;
 	Song*			m_pSong;
 	RageColor		m_color;	// either text color or section background color
-	MusicStatusDisplay::Flags  m_Flags;
+	WheelNotifyIcon::Flags  m_Flags;
 };
 
 
@@ -69,7 +69,7 @@ public:
 
 	// for a TYPE_MUSIC
 	Sprite				m_sprSongBar;
-	MusicStatusDisplay	m_MusicStatusDisplay;
+	WheelNotifyIcon	m_WheelNotifyIcon;
 	TextBanner			m_TextBanner;
 	SmallGradeDisplay	m_GradeDisplay[NUM_PLAYERS];
 

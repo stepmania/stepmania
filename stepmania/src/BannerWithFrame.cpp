@@ -21,7 +21,7 @@
 
 BannerWithFrame::BannerWithFrame()
 {
-	m_sprBannerFrame.Load( THEME->GetPathTo("Graphics","evaluation banner frame") );
+	m_sprBannerFrame.Load( THEME->GetPathTo("Graphics","BannerWithFrame frame") );
 	m_Banner.SetCroppedSize( m_sprBannerFrame.GetUnzoomedWidth()-6, m_sprBannerFrame.GetUnzoomedHeight()-6 );
 
 	this->AddChild( &m_Banner );

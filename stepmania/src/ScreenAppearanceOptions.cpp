@@ -54,11 +54,7 @@ OptionRowData g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
 };
 
 ScreenAppearanceOptions::ScreenAppearanceOptions() :
-	ScreenOptions(
-		THEME->GetPathTo("BGAnimations","appearance options"),
-		THEME->GetPathTo("Graphics","appearance options page"),
-		THEME->GetPathTo("Graphics","appearance options top edge")
-		)
+	ScreenOptions("ScreenAppearanceOptions",false)
 {
 	LOG->Trace( "ScreenAppearanceOptions::ScreenAppearanceOptions()" );
 
@@ -76,10 +72,10 @@ ScreenAppearanceOptions::ScreenAppearanceOptions() :
 		g_AppearanceOptionsLines, 
 		NUM_APPEARANCE_OPTIONS_LINES,
 		false );
-	m_Menu.SetTimer( 99 );
-	m_Menu.StopTimer();
+	m_Menu.m_MenuTimer.SetTimer( 99 );
+	m_Menu.m_MenuTimer.StopTimer();
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","appearance options music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenAppearanceOptions music") );
 }
 
 void ScreenAppearanceOptions::ImportOptions()

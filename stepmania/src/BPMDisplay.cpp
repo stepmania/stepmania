@@ -29,13 +29,13 @@ BPMDisplay::BPMDisplay()
 	m_fTimeLeftInState = 0;
 	m_bExtraStage = GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2();
 
-	m_textBPM.LoadFromNumbers( THEME->GetPathTo("Numbers","select music bpm numbers") );
+	m_textBPM.LoadFromNumbers( THEME->GetPathTo("Numbers","BPMDisplay numbers") );
 	m_textBPM.EnableShadow( false );
 	m_textBPM.SetHorizAlign( Actor::align_right );
 	m_textBPM.SetDiffuse( NORMAL_COLOR );
 	m_textBPM.SetXY( 0, 0 );
 
-	m_sprLabel.Load( THEME->GetPathTo("Graphics","select music bpm label") );
+	m_sprLabel.Load( THEME->GetPathTo("Graphics","BPMDisplay label") );
 	m_sprLabel.EnableShadow( false );
 	m_sprLabel.SetDiffuse( NORMAL_COLOR );
 	m_sprLabel.SetHorizAlign( Actor::align_left );

@@ -73,7 +73,7 @@ public:
 	Difficulty		m_PreferredDifficulty[NUM_PLAYERS];
 	SongSortOrder	m_SongSortOrder;			// used by MusicWheel
 	bool			m_bEditing;			// NoteField does special stuff when this is true
-	bool			m_bDemonstration;	// ScreenGameplay does special stuff when this is true
+	bool			m_bDemonstrationOrJukebox;	// ScreenGameplay does special stuff when this is true
 	bool			m_bJukeboxUsesModifiers;
 	int				m_iCurrentStageIndex;	// incremented on Eval screen.  For a Course, this is always 0
 

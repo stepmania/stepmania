@@ -209,11 +209,10 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	//////////////////////////
 	// Init graphic elements
 	//////////////////////////
-	m_Menu.Load(
-		THEME->GetPathTo("BGAnimations","evaluation"), 
-		THEME->GetPathTo("Graphics",m_ResultMode==RM_ARCADE_SUMMARY?"evaluation summary top edge":"evaluation top edge"),
-		HELP_TEXT, true, true, TIMER_SECONDS 
-		);
+	m_Menu.Load( "ScreenEvaluation" );
+// FIXME:
+//	The header needs to be different depending on the result mode.  How can we do this elegantly?
+//		THEME->GetPathTo("Graphics",m_ResultMode==RM_ARCADE_SUMMARY?"evaluation summary top edge":"evaluation top edge"),
 	this->AddChild( &m_Menu );
 
 	int p;
@@ -555,12 +554,12 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		break;
 	}
 
-	if( bSummary )
-		m_Menu.ImmedOnScreenFromMenu();
-	else
-		m_Menu.TweenOnScreenFromBlack( SM_None );
+//	if( bSummary )
+//		m_Menu.ImmedOnScreenFromMenu();
+//	else
+//		m_Menu.TweenOnScreenFromBlack( SM_None );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","evaluation music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenEvaluation music") );
 }
 
 
@@ -568,7 +567,7 @@ void ScreenEvaluation::TweenOnScreen()
 {
 	int i, p;
 
-	m_Menu.TweenOnScreenFromBlack( SM_None );
+//	m_Menu.TweenOnScreenFromBlack( SM_None );
 
 	float fOriginalX, fOriginalY;
 
@@ -741,7 +740,7 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 {
 //	LOG->Trace( "ScreenEvaluation::Input()" );
 
-	if( m_Menu.IsClosing() )
+	if( m_Menu.IsTransitioning() )
 		return;
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
@@ -800,19 +799,17 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 {
 	TweenOffScreen();
 
-	m_Menu.StopTimer();
-
 	if( PREFSMAN->m_bEventMode )
 	{
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:
-			m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
+			m_Menu.StartTransitioning( SM_GoToSelectMusic );
 			break;
 		case PLAY_MODE_NONSTOP:
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
-			m_Menu.TweenOffScreenToMenu( SM_GoToSelectCourse );
+			m_Menu.StartTransitioning( SM_GoToSelectCourse );
 			break;
 		default:
 			ASSERT(0);
@@ -825,7 +822,7 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 		case RM_ARCADE_STAGE:
 			if( m_bTryExtraStage )
 			{
-				m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
+				m_Menu.StartTransitioning( SM_GoToSelectMusic );
 			}
 			else if( GAMESTATE->IsFinalStage() || GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 			{
@@ -838,14 +835,14 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 			}
 			else
 			{
-				m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
+				m_Menu.StartTransitioning( SM_GoToSelectMusic );
 			}
 			break;
 		case RM_ARCADE_SUMMARY:
-			m_Menu.TweenOffScreenToBlack( SM_GoToGameFinished, false );
+			m_Menu.StartTransitioning( SM_GoToGameFinished );
 			break;
 		case RM_COURSE:
-			m_Menu.TweenOffScreenToBlack( SM_GoToGameFinished, false );
+			m_Menu.StartTransitioning( SM_GoToGameFinished );
 			break;
 		}
 	}

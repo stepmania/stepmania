@@ -127,7 +127,7 @@ ScreenNameEntry::ScreenNameEntry()
 
 	GAMESTATE->m_bPastHereWeGo = true;	// enable the gray arrows
 
-	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","name entry") );
+	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenNameEntry background") );
 	this->AddChild( &m_Background );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
@@ -244,9 +244,9 @@ ScreenNameEntry::ScreenNameEntry()
 	m_Fade.OpenWipingRight();
 //	this->AddChild( &m_Fade );	// draw and update this manually too
 
-	m_soundStep.Load( THEME->GetPathTo("Sounds","name entry step") );
+	m_soundStep.Load( THEME->GetPathTo("Sounds","ScreenNameEntry step") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","name entry music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenNameEntry music") );
 
 	m_fFakeBeat = 0;
 }

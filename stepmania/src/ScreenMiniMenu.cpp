@@ -212,7 +212,7 @@ void ScreenMiniMenu::MenuStart( PlayerNumber pn )
 {
 	m_Fade.OpenWipingRight( SM_GoToOK );
 
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
+	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common start") );
 
 	s_iLastLine = m_iCurLine;
 	COPY( s_iLastAnswers, m_iCurAnswers );

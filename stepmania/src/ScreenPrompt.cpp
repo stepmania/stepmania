@@ -79,7 +79,7 @@ ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool b
 
 	m_textAnswer[m_bAnswer].SetEffectGlowShift();
 
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu prompt") );
+	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenMenuPrompt music.mp3") );
 }
 
 void ScreenPrompt::Update( float fDeltaTime )
@@ -151,7 +151,7 @@ void ScreenPrompt::MenuRight( PlayerNumber pn )
 	m_rectAnswerBox.SetTweenXY( m_textAnswer[m_bAnswer].GetX(), m_textAnswer[m_bAnswer].GetY() );
 	m_rectAnswerBox.SetTweenZoomX( m_textAnswer[m_bAnswer].GetWidestLineWidthInSourcePixels()+10.0f );
 
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","edit change line") );
+	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenPrompt change") );
 }
 
 void ScreenPrompt::MenuStart( PlayerNumber pn )
@@ -171,7 +171,7 @@ void ScreenPrompt::MenuStart( PlayerNumber pn )
 	m_textAnswer[1].BeginTweening( 0.2f );
 	m_textAnswer[1].SetTweenDiffuse( RageColor(1,1,1,0) );
 
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
+	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common start") );
 
 	if( m_bAnswer )
 		if( m_pOnYes )

@@ -15,7 +15,7 @@
 class ScreenUnlock : public ScreenAttract
 {
 public:
-	ScreenUnlock() : ScreenAttract("ScreenUnlock","unlock") { };
+	ScreenUnlock() : ScreenAttract("ScreenUnlock") { };
 };
 
 

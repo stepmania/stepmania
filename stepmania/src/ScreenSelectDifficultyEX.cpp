@@ -30,11 +30,11 @@ const float LOCK_INPUT_TIME = 0.30f;	// lock input while waiting for tweening to
 #define CURSOR_OFFSET_EX_X( p )		THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("CursorOffsetP%dX",p+1))
 #define CURSOR_OFFSET_EX_Y( i )		THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("CursorOffsetP%dY",i+1))
 #define INITIAL_CHOICE				THEME->GetMetricI("ScreenSelectDifficultyEX","InitialChoice")
-#define HELP_TEXT					THEME->GetMetric("ScreenSelectDifficultyEX","HelpText")
+#define HELP_TEXT					THEME->GetMetric ("ScreenSelectDifficultyEX","HelpText")
 #define TIMER_SECONDS				THEME->GetMetricI("ScreenSelectDifficultyEX","TimerSeconds")
-#define NEXT_SCREEN_ARCADE			THEME->GetMetric("ScreenSelectDifficultyEX","NextScreenArcade")
-#define NEXT_SCREEN_ONI				THEME->GetMetric("ScreenSelectDifficultyEX","NextScreenOni")
-#define NEXT_SCREEN_BATTLE			THEME->GetMetric("ScreenSelectDifficultyEX","NextScreenBattle")
+#define NEXT_SCREEN_ARCADE			THEME->GetMetric ("ScreenSelectDifficultyEX","NextScreenArcade")
+#define NEXT_SCREEN_ONI				THEME->GetMetric ("ScreenSelectDifficultyEX","NextScreenOni")
+#define NEXT_SCREEN_BATTLE			THEME->GetMetric ("ScreenSelectDifficultyEX","NextScreenBattle")
 
 
 const CString CHOICE_TEXT[ScreenSelectDifficultyEX::NUM_CHOICES_EX] = 
@@ -54,8 +54,6 @@ float CURSOR_EX_X( int p ) { return DIFFICULTY_X(p) + CURSOR_OFFSET_EX_X(p); }
 float CURSOR_EX_Y( int p ) { return DIFFICULTY_Y(p) + CURSOR_OFFSET_EX_Y(p); }
 
 
-const ScreenMessage SM_StartTweeningOffScreen	= ScreenMessage(SM_User + 3);
-const ScreenMessage SM_StartFadingOut			= ScreenMessage(SM_User + 4);
 
 
 ScreenSelectDifficultyEX::ScreenSelectDifficultyEX()
@@ -66,19 +64,15 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX()
 	GAMESTATE->m_PlayMode = PLAY_MODE_INVALID;
 
 	
-	m_Menu.Load(
-		THEME->GetPathTo("BGAnimations","select difficulty ex"), 
-		THEME->GetPathTo("Graphics","select difficulty ex top edge"),
-		HELP_TEXT, true, true, TIMER_SECONDS
-		);
+	m_Menu.Load( "SelectDifficultyEx" );
 	this->AddChild( &m_Menu );
 	
 	for( unsigned c=0; c<NUM_PLAYERS; c++ )
 	{
 		if( GAMESTATE->IsPlayerEnabled(c) == true )
 		{
-			CString sHeaderFile = ssprintf( "select difficulty ex header %s", CHOICE_TEXT[INITIAL_CHOICE].c_str() );
-			CString sPictureFile = ssprintf( "select difficulty ex picture %s", CHOICE_TEXT[INITIAL_CHOICE].c_str() );
+			CString sHeaderFile = ssprintf( "SelectDifficultyEx header %s", CHOICE_TEXT[INITIAL_CHOICE].c_str() );
+			CString sPictureFile = ssprintf( "SelectDifficultyEx picture %s", CHOICE_TEXT[INITIAL_CHOICE].c_str() );
 
 			m_sprPicture[c].Load( THEME->GetPathTo("Graphics",sPictureFile) );
 			m_sprPicture[c].SetVertAlign( align_top );
@@ -101,14 +95,14 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX()
 		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
 			continue;
 
-		m_sprCursor[p].Load( THEME->GetPathTo("Graphics", "select difficulty ex cursor 2x1") );
+		m_sprCursor[p].Load( THEME->GetPathTo("Graphics", "SelectDifficultyEx cursor 2x1") );
 		m_sprCursor[p].SetXY( -1600, -1600 );
 		m_sprCursor[p].StopAnimating();
 		m_sprCursor[p].SetState( p );
 		m_sprCursor[p].EnableShadow( false );
 		m_framePages.AddChild( &m_sprCursor[p] );
 
-		m_sprOK[p].Load( THEME->GetPathTo("Graphics", "select difficulty ex ok 2x1") );
+		m_sprOK[p].Load( THEME->GetPathTo("Graphics", "SelectDifficultyEx ok 2x1") );
 		m_sprOK[p].SetState( p );
 		m_sprOK[p].StopAnimating();
 		m_sprOK[p].SetDiffuse( RageColor(1,1,1,0) );
@@ -117,16 +111,15 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX()
 
 	this->AddChild( &m_framePages );
 	
-	m_soundChange.Load( THEME->GetPathTo("Sounds", "select difficulty change") );
-	m_soundSelect.Load( THEME->GetPathTo("Sounds", "menu start") );
+	m_soundChange.Load( THEME->GetPathTo("Sounds", "SelectDifficultyEx change") );
+	m_soundSelect.Load( THEME->GetPathTo("Sounds", "Common start") );
 	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select difficulty intro") );
 
-	m_Menu.TweenOnScreenFromMenu( SM_None );
 	TweenOnScreen();
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select difficulty music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","SelectDifficultyEx music") );
 
 	m_fLockInputTime = LOCK_INPUT_TIME;
 }
@@ -142,7 +135,7 @@ void ScreenSelectDifficultyEX::Input( const DeviceInput& DeviceI, const InputEve
 {
 	LOG->Trace( "ScreenSelectDifficultyEX::Input()" );
 
-	if( m_Menu.IsClosing() )
+	if( m_Menu.IsTransitioning() )
 		return;
 
 	if( m_fLockInputTime > 0 )
@@ -218,13 +211,6 @@ void ScreenSelectDifficultyEX::HandleScreenMessage( const ScreenMessage SM )
 		default:	ASSERT(0);
 		}
 
-		break;
-	case SM_StartTweeningOffScreen:
-		TweenOffScreen();
-		this->SendScreenMessage( SM_StartFadingOut, 0.8f );
-		break;
-	case SM_StartFadingOut:
-		m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
 		break;
 	}
 }
@@ -410,13 +396,15 @@ void ScreenSelectDifficultyEX::MenuStart( PlayerNumber pn )
 
 
 	// check to see if everyone has chosen
+	bool bAllChosen = true;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( GAMESTATE->IsPlayerEnabled((PlayerNumber)p)  &&  m_bChosen[p] == false )
-			return;
+		if( GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
+			bAllChosen &= m_bChosen[p];
 	}
-	m_Menu.StopTimer();
-	this->SendScreenMessage( SM_StartTweeningOffScreen, 0.7f );
+	
+	if( bAllChosen )
+		m_Menu.StartTransitioning( SM_GoToNextScreen );
 }
 
 void ScreenSelectDifficultyEX::ShowSelected( PlayerNumber pv )
@@ -436,7 +424,7 @@ void ScreenSelectDifficultyEX::ShowSelected( PlayerNumber pv )
 
 void ScreenSelectDifficultyEX::MenuBack( PlayerNumber pn )
 {
-	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
+	m_Menu.Back( SM_GoToPrevScreen );
 }
 
 void ScreenSelectDifficultyEX::TweenOffScreen()

@@ -34,11 +34,7 @@ OptionRowData g_SelectGameLines[NUM_SELECT_GAME_LINES] =
 
 
 ScreenSelectGame::ScreenSelectGame() :
-	ScreenOptions(
-		THEME->GetPathTo("BGAnimations","select game"),
-		THEME->GetPathTo("Graphics","select game page"),
-		THEME->GetPathTo("Graphics","select game top edge")
-		)
+	ScreenOptions("ScreenSelectGame",false)
 {
 	LOG->Trace( "ScreenSelectGame::ScreenSelectGame()" );
 
@@ -55,14 +51,24 @@ ScreenSelectGame::ScreenSelectGame() :
 	g_SelectGameLines[0].iNumOptions = i;
 
 
+	// fill g_InputOptionsLines with explanation text
+	for( i=0; i<NUM_SELECT_GAME_LINES; i++ )
+	{
+		CString sLineName = g_SelectGameLines[i].szTitle;
+		sLineName.Replace("\n","");
+		sLineName.Replace(" ","");
+		strcpy( g_SelectGameLines[i].szExplanation, THEME->GetMetric("ScreenSelectGame",sLineName) );
+	}
+
+
 	Init( 
 		INPUTMODE_BOTH, 
 		g_SelectGameLines, 
 		NUM_SELECT_GAME_LINES,
 		false );
-	m_Menu.StopTimer();
+	m_Menu.m_MenuTimer.StopTimer();
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select game music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSelectGame music") );
 }
 
 void ScreenSelectGame::ImportOptions()

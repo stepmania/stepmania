@@ -110,14 +110,14 @@ ScreenStage::ScreenStage()
 	int i;
 	for( i=0; i<4; i++ )
 	{
-		m_sprNumbers[i].Load( THEME->GetPathTo("Graphics","stage parts 5x3") );
+		m_sprNumbers[i].Load( THEME->GetPathTo("Graphics","ScreenStage parts 5x3") );
 
 		if( g_StageType != STAGE_TYPE_EZ2 ) // DONT DIFFUSE COLORS FOR EZ2. Coz we actually set the color in the .png
 			m_sprNumbers[i].SetDiffuse( GAMESTATE->GetStageColor() );
 
 		m_sprNumbers[i].StopAnimating();
 	}
-	m_sprStage.Load( THEME->GetPathTo("Graphics","stage stage") );	// we may load a different graphic into here later
+	m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenStage stage") );	// we may load a different graphic into here later
 	m_sprStage.SetDiffuse( GAMESTATE->GetStageColor() );
 
 
@@ -179,22 +179,22 @@ ScreenStage::ScreenStage()
 		}
 		break;
 	case MODE_FINAL:
-		m_sprStage.Load( THEME->GetPathTo("Graphics","stage final") );
+		m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenStage final") );
 		break;
 	case MODE_EXTRA1:
-		m_sprStage.Load( THEME->GetPathTo("Graphics","stage extra1") );
+		m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenStage extra1") );
 		break;
 	case MODE_EXTRA2:
-		m_sprStage.Load( THEME->GetPathTo("Graphics","stage extra2") );
+		m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenStage extra2") );
 		break;
 	case MODE_NONSTOP:
-		m_sprStage.Load( THEME->GetPathTo("Graphics","stage nonstop") );
+		m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenStage nonstop") );
 		break;
 	case MODE_ONI:
-		m_sprStage.Load( THEME->GetPathTo("Graphics","stage oni") );
+		m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenStage oni") );
 		break;
 	case MODE_ENDLESS:
-		m_sprStage.Load( THEME->GetPathTo("Graphics","stage endless") );
+		m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenStage endless") );
 		break;
 	default:
 		ASSERT(0);
@@ -221,7 +221,7 @@ ScreenStage::ScreenStage()
 		m_quadMask.SetZ( 1 );
 
 		m_frameStage.SetXY( CENTER_X, fStageOffScreenY );
-		m_frameStage.BeginTweening(0.8f, Actor::TWEEN_ACCELERATE );
+		m_frameStage.BeginTweening(0.8f, Actor::TWEEN_DECELERATE );
 		m_frameStage.SetTweenY( CENTER_Y );
 
 		this->AddChild( &m_quadMask );	// add quad mask before stage so that it will block out the stage sprites

@@ -49,11 +49,7 @@ OptionRowData g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 
 
 ScreenPlayerOptions::ScreenPlayerOptions() :
-	ScreenOptions(
-		THEME->GetPathTo("BGAnimations","player options"),
-		THEME->GetPathTo("Graphics","player options page"),
-		THEME->GetPathTo("Graphics","player options top edge")
-		)
+	ScreenOptions("ScreenPlayerOptions",true)
 {
 	LOG->Trace( "ScreenPlayerOptions::ScreenPlayerOptions()" );
 	

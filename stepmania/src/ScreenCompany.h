@@ -15,7 +15,7 @@
 class ScreenCompany : public ScreenAttract
 {
 public:
-	ScreenCompany() : ScreenAttract("ScreenCompany","company") { };
+	ScreenCompany() : ScreenAttract("ScreenCompany") { };
 
 };
 

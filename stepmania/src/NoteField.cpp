@@ -38,7 +38,7 @@ NoteField::NoteField()
 	m_rectMarkerBar.EnableShadow( false );
 	m_rectMarkerBar.SetEffectDiffuseShift( 2, RageColor(1,1,1,0.5f), RageColor(0.5f,0.5f,0.5f,0.5f) );
 
-	m_sprBars.Load( THEME->GetPathTo("Graphics","edit bars") );
+	m_sprBars.Load( THEME->GetPathTo("Graphics","NoteField bars") );
 	m_sprBars.StopAnimating();
 
 	m_fBeginMarker = m_fEndMarker = -1;

@@ -20,7 +20,7 @@
 #include "MenuElements.h"
 #include "GrooveRadar.h"
 #include "DifficultyIcon.h"
-#include "FootMeter.h"
+#include "DifficultyMeter.h"
 #include "OptionIconRow.h"
 #include "StageDisplay.h"
 
@@ -74,7 +74,7 @@ protected:
 	BitmapText			m_textSongOptions;
 	OptionIconRow		m_OptionIconRow[NUM_PLAYERS];
 	Sprite				m_sprMeterFrame[NUM_PLAYERS];
-	FootMeter			m_FootMeter[NUM_PLAYERS];
+	DifficultyMeter			m_DifficultyMeter[NUM_PLAYERS];
 	MusicSortDisplay	m_MusicSortDisplay;
 	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
 	ScoreDisplayNormal	m_HighScore[NUM_PLAYERS];

@@ -23,14 +23,15 @@ class Judgment : public ActorFrame
 public:
 	Judgment();
 	virtual ~Judgment() { }
-	void SetJudgment( TapNoteScore score );
+
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
-	virtual void Reset() { m_fShowCountdown = .0f; }
+
+	void Reset();
+	void SetJudgment( TapNoteScore score );
 
 protected:
 	Sprite		m_sprJudgment;
-	float		m_fShowCountdown;
 };
 
 #endif

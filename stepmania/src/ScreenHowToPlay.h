@@ -15,7 +15,7 @@
 class ScreenHowToPlay : public ScreenAttract
 {
 public:
-	ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay","how to play") {};
+	ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay") {};
 };
 
 

@@ -48,7 +48,7 @@ WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, const CString &sSe
 	m_sSectionName = sSectionName;
 	m_pCourse = pCourse;
 	m_color = color;
-	m_Flags = MusicStatusDisplay::Flags();
+	m_Flags = WheelNotifyIcon::Flags();
 }
 
 
@@ -57,25 +57,25 @@ WheelItemDisplay::WheelItemDisplay()
 	data = NULL;
 
 	m_fPercentGray = 0;
-	m_MusicStatusDisplay.SetXY( ICON_X, 0 );
+	m_WheelNotifyIcon.SetXY( ICON_X, 0 );
 	
 	m_TextBanner.SetHorizAlign( align_left );
 	m_TextBanner.SetXY( SONG_NAME_X, 0 );
 
-	m_sprSongBar.Load( THEME->GetPathTo("Graphics","select music song bar") );
+	m_sprSongBar.Load( THEME->GetPathTo("Graphics","MusicWheelItem song") );
 	m_sprSongBar.SetXY( 0, 0 );
 
-	m_sprSectionBar.Load( THEME->GetPathTo("Graphics","select music section bar") );
+	m_sprSectionBar.Load( THEME->GetPathTo("Graphics","MusicWheelItem section") );
 	m_sprSectionBar.SetXY( 0, 0 );
 
-	m_textSectionName.LoadFromFont( THEME->GetPathTo("Fonts","musicwheel section") );
+	m_textSectionName.LoadFromFont( THEME->GetPathTo("Fonts","MusicWheel section") );
 	m_textSectionName.EnableShadow( false );
 	m_textSectionName.SetVertAlign( align_middle );
 	m_textSectionName.SetXY( SECTION_NAME_X, 0 );
 	m_textSectionName.SetZoom( SECTION_ZOOM );
 
 
-	m_textRoulette.LoadFromFont( THEME->GetPathTo("Fonts","musicwheel roulette") );
+	m_textRoulette.LoadFromFont( THEME->GetPathTo("Fonts","MusicWheel roulette") );
 	m_textRoulette.EnableShadow( false );
 	m_textRoulette.TurnRainbowOn();
 	m_textRoulette.SetZoom( ROULETTE_ZOOM );
@@ -87,7 +87,7 @@ WheelItemDisplay::WheelItemDisplay()
 		m_GradeDisplay[p].SetXY( GRADE_X(p), 0 );
 	}
 
-	m_textCourse.LoadFromFont( THEME->GetPathTo("Fonts","musicwheel course") );
+	m_textCourse.LoadFromFont( THEME->GetPathTo("Fonts","MusicWheel course") );
 	m_textCourse.EnableShadow( false );
 	m_textCourse.SetZoom( COURSE_ZOOM );
 	m_textCourse.SetHorizAlign( align_left );
@@ -145,7 +145,7 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 		{
 			m_TextBanner.LoadFromSong( data->m_pSong );
 			m_TextBanner.SetDiffuse( data->m_color );
-			m_MusicStatusDisplay.SetFlags( data->m_Flags );
+			m_WheelNotifyIcon.SetFlags( data->m_Flags );
 			RefreshGrades();
 		}
 		break;
@@ -205,7 +205,7 @@ void WheelItemDisplay::Update( float fDeltaTime )
 	case TYPE_SONG:
 		{
 			m_sprSongBar.Update( fDeltaTime );
-			m_MusicStatusDisplay.Update( fDeltaTime );
+			m_WheelNotifyIcon.Update( fDeltaTime );
 			m_TextBanner.Update( fDeltaTime );
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				m_GradeDisplay[p].Update( fDeltaTime );
@@ -246,7 +246,7 @@ void WheelItemDisplay::DrawPrimitives()
 		break;
 	case TYPE_SONG:		
 		m_TextBanner.Draw();
-		m_MusicStatusDisplay.Draw();
+		m_WheelNotifyIcon.Draw();
 		int p;
 		for( p=0; p<NUM_PLAYERS; p++ )
 			m_GradeDisplay[p].Draw();

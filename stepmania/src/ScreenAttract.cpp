@@ -26,37 +26,40 @@
 #include "SDL_utils.h"
 #include "RageSoundManager.h"
 
-#define SECONDS_TO_SHOW					THEME->GetMetricF(m_sMetricName,"SecondsToShow")
-#define NEXT_SCREEN						THEME->GetMetric(m_sMetricName,"NextScreen")
+#define NEXT_SCREEN						THEME->GetMetric(m_sClassName,"NextScreen")
 
 
-ScreenAttract::ScreenAttract( CString sMetricName, CString sElementName )
+ScreenAttract::ScreenAttract( CString sClassName )
 {
-	LOG->Trace( "ScreenAttract::ScreenAttract(%s, %s)", sMetricName.c_str(), sElementName.c_str() );
+	LOG->Trace( "ScreenAttract::ScreenAttract(%s)", sClassName.c_str() );
 
 	GAMESTATE->Reset();
 
-	m_sMetricName = sMetricName;
-	m_sElementName = sElementName;
+	m_sClassName = sClassName;
 
 	// We have to do initialization in the first update because this->GetElementName() won't
 	// work until the object has been fully constructed.
-	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations",m_sElementName) );
+	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations",m_sClassName+" background") );
 	this->AddChild( &m_Background );
 
-	m_Fade.SetClosed();
-	m_Fade.OpenWipingRight( SM_None );
-	this->AddChild( &m_Fade );
+	m_In.Load( THEME->GetPathTo("BGAnimations","ScreenAttract in") );
+	m_In.StartTransitioning();
+	this->AddChild( &m_In );
 
-	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sElementName) );
+	m_Out.Load( THEME->GetPathTo("BGAnimations","ScreenAttract out") );
+	this->AddChild( &m_Out );
 
-	m_soundStart.Load( THEME->GetPathTo("Sounds","menu start") );
+	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sClassName) );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds",m_sElementName + " music") );	// DO loop.  -Chris
+	m_soundStart.Load( THEME->GetPathTo("Sounds","Common start") );
+
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds",m_sClassName + " music") );	// DO loop.  -Chris
 
 	GAMESTATE->m_bPlayersCanJoin = true;
 
-	this->SendScreenMessage( SM_BeginFadingOut, SECONDS_TO_SHOW );
+
+	float fTimeUntilBeginFadingOut = m_Background.GetLengthSeconds() - m_Out.GetLengthSeconds();
+	this->SendScreenMessage( SM_BeginFadingOut, fTimeUntilBeginFadingOut );
 }
 
 
@@ -70,12 +73,17 @@ void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type
 {
 	LOG->Trace( "ScreenAttract::Input()" );
 
-	if(type != IET_FIRST_PRESS) return; // don't care
+	AttractInput( DeviceI, type, GameI, MenuI, StyleI, m_In.IsTransitioning() || m_Out.IsTransitioning() );
+}
 
+bool ScreenAttract::ChangeCoinModeInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+{
+	if( type != IET_FIRST_PRESS )
+		return false;
 	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F3 )
 	{
 		(int&)PREFSMAN->m_CoinMode = (PREFSMAN->m_CoinMode+1) % PrefsManager::NUM_COIN_MODES;
-		/*ResetGame();
+		/* ResetGame();
 				This causes problems on ScreenIntroMovie, which results in the
 				movie being restarted and/or becoming out-of-synch -- Miryokuteki */
 
@@ -88,27 +96,25 @@ void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type
 		}
 		SCREENMAN->RefreshCreditsMessages();
 		SCREENMAN->SystemMessage( sMessage );
-		return;
+		return true;
 	}
+	return false;
+}
+
+void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, bool bTransitioning )
+{
+	if(type != IET_FIRST_PRESS) 
+		return; // don't care
+
+	ChangeCoinModeInput( DeviceI, type, GameI, MenuI, StyleI );
 
 	if( MenuI.IsValid() )
 	{
 		switch( MenuI.button )
 		{
-		case MENU_BUTTON_LEFT:
-		case MENU_BUTTON_RIGHT:
-			this->SendScreenMessage( SM_BeginFadingOut, 0 );
-			break;
-		case MENU_BUTTON_COIN:
-			/* Credit already taken care of.. go forth -- Miryokuteki */
-			//Screen::MenuCoin( MenuI.player );	// increment coins, play sound
-			SOUNDMAN->StopMusic();
-			SDL_Delay( 800 );	// do a little pause, like the arcade does
-			SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
-			break;
 		case MENU_BUTTON_START:
 		case MENU_BUTTON_BACK:
-
+		case MENU_BUTTON_COIN:
 			switch( PREFSMAN->m_CoinMode )
 			{
 			case PrefsManager::COIN_PAY:
@@ -118,13 +124,27 @@ void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type
 			case PrefsManager::COIN_FREE:
 			case PrefsManager::COIN_HOME:
 				SOUNDMAN->StopMusic();
-				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
+				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common coin") );
 				SDL_Delay( 800 );	// do a little pause, like the arcade does
 				SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 				break;
 			default:
 				ASSERT(0);
 			}
+			break;
+		}
+	}
+
+	if( bTransitioning )
+		return;
+
+	if( MenuI.IsValid() )
+	{
+		switch( MenuI.button )
+		{
+		case MENU_BUTTON_LEFT:
+		case MENU_BUTTON_RIGHT:
+			SCREENMAN->SendMessageToTopScreen( SM_BeginFadingOut, 0 );
 			break;
 		}
 	}
@@ -142,8 +162,8 @@ void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_BeginFadingOut:
-		if( !m_Fade.IsClosing() )
-			m_Fade.CloseWipingRight( SM_GoToNextScreen );
+		if( !m_Out.IsTransitioning() )
+			m_Out.StartTransitioning( SM_GoToNextScreen );
 		break;
 	case SM_GoToNextScreen:
 		/* XXX: Look at the def of the screen we're going to; if it has a 

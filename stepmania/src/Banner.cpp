@@ -76,24 +76,22 @@ void Banner::LoadFromSong( Song* pSong )		// NULL means no song
 	m_bScrolling = false;
 }
 
+void Banner::LoadAllMusic()
+{
+	Load( THEME->GetPathTo("Graphics","Banner all") );
+	m_bScrolling = false;
+}
+
 void Banner::LoadFromGroup( CString sGroupName )
 {
 	CString sGroupBannerPath = SONGMAN->GetGroupBannerPath( sGroupName );
-
-	if( sGroupName == GROUP_ALL_MUSIC )
-		Load( THEME->GetPathTo("Graphics","all music banner") );
-	else if( sGroupBannerPath != "" )
-		Load( sGroupBannerPath );
-	else
-		LoadFallback();
-
+	if( sGroupBannerPath != "" )	Load( sGroupBannerPath );
+	else							LoadFallback();
 	m_bScrolling = false;
 }
 
 void Banner::LoadFromCourse( Course* pCourse )		// NULL means no course
 {
-	Sprite::EnableShadow( false );
-
 	if( pCourse == NULL )						LoadFallback();
 	else if( pCourse->m_sBannerPath != "" )		Load( pCourse->m_sBannerPath );
 	else										LoadFallback();
@@ -103,12 +101,12 @@ void Banner::LoadFromCourse( Course* pCourse )		// NULL means no course
 
 void Banner::LoadFallback()
 {
-	Load( THEME->GetPathTo("Graphics","fallback banner") );
+	Load( THEME->GetPathTo("Graphics","Banner fallback") );
 }
 
 void Banner::LoadRoulette()
 {
-	RageTextureID ID(THEME->GetPathTo("Graphics","select music roulette banner"));
+	RageTextureID ID(THEME->GetPathTo("Graphics","Banner roulette"));
 	ID.iMipMaps = 0;
 	Load( ID );
 	m_bScrolling = true;

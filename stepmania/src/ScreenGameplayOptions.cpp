@@ -50,11 +50,7 @@ OptionRowData g_GameplayOptionsLines[NUM_GAMEPLAY_OPTIONS_LINES] = {
 };
 
 ScreenGameplayOptions::ScreenGameplayOptions() :
-	ScreenOptions(
-		THEME->GetPathTo("BGAnimations","gameplay options"),
-		THEME->GetPathTo("Graphics","gameplay options page"),
-		THEME->GetPathTo("Graphics","gameplay options top edge")
-		)
+	ScreenOptions("ScreenGameplayOptions",false)
 {
 	LOG->Trace( "ScreenGameplayOptions::ScreenGameplayOptions()" );
 
@@ -72,9 +68,9 @@ ScreenGameplayOptions::ScreenGameplayOptions() :
 		g_GameplayOptionsLines, 
 		NUM_GAMEPLAY_OPTIONS_LINES,
 		false );
-	m_Menu.StopTimer();
+	m_Menu.m_MenuTimer.StopTimer();
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","machine options music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenMachineOptions music") );
 }
 
 void ScreenGameplayOptions::ImportOptions()

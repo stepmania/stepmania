@@ -63,7 +63,7 @@ ScreenSelectMode::ScreenSelectMode()
 
 
 	/*********** TODO: MAKE THIS WORK FOR ALL GAME STYLES! *************/
-	m_ChoiceListFrame.Load( THEME->GetPathTo("Graphics","select mode list frame"));
+	m_ChoiceListFrame.Load( THEME->GetPathTo("Graphics","ScreenSelectMode list frame"));
 	m_ChoiceListFrame.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y);
 	this->AddChild( &m_ChoiceListFrame );
 
@@ -72,7 +72,7 @@ ScreenSelectMode::ScreenSelectMode()
 	m_ScrollingList.SetNumberVisible( 9 );
 	this->AddChild( &m_ScrollingList );
 
-	m_ChoiceListHighlight.Load( THEME->GetPathTo("Graphics","select mode list highlight"));
+	m_ChoiceListHighlight.Load( THEME->GetPathTo("Graphics","ScreenSelectMode list highlight"));
 	m_ChoiceListHighlight.SetXY( CENTER_X, SCROLLING_LIST_Y);
 	this->AddChild( &m_ChoiceListHighlight );
 
@@ -82,7 +82,7 @@ ScreenSelectMode::ScreenSelectMode()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_sprJoinFrame[p].Load( THEME->GetPathTo("Graphics","select player join frame 1x2") );
+		m_sprJoinFrame[p].Load( THEME->GetPathTo("Graphics","ScreenSelectMode join frame 1x2") );
 		m_sprJoinFrame[p].StopAnimating();
 		m_sprJoinFrame[p].SetState( p );
 		m_sprJoinFrame[p].SetXY( JOIN_FRAME_X(p), JOIN_FRAME_Y(p) );
@@ -91,7 +91,7 @@ ScreenSelectMode::ScreenSelectMode()
 		if( GAMESTATE->m_bSideIsJoined[p] )
 			m_sprJoinFrame[p].SetZoomY( 0 );
 
-		m_sprJoinMessage[p].Load( THEME->GetPathTo("Graphics","select player join message 2x2") );
+		m_sprJoinMessage[p].Load( THEME->GetPathTo("Graphics","ScreenSelectMode join message 2x2") );
 		m_sprJoinMessage[p].StopAnimating();
 		m_sprJoinMessage[p].SetState( p );
 		m_sprJoinMessage[p].SetXY( JOIN_MESSAGE_X(p), JOIN_MESSAGE_Y(p) );
@@ -112,19 +112,15 @@ ScreenSelectMode::ScreenSelectMode()
 	}
 	
 
-	m_Menu.Load( 	
-		THEME->GetPathTo("BGAnimations","select style"), 
-		THEME->GetPathTo("Graphics","select style top edge"),
-		HELP_TEXT, true, true, TIMER_SECONDS
-		);
+	m_Menu.Load( "ScreenSelectMode" );
 	this->AddChild( &m_Menu );
 
-	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
-	m_soundChange.Load( THEME->GetPathTo("Sounds","select style change"), true );
+	m_soundSelect.Load( THEME->GetPathTo("Sounds","Common start") );
+	m_soundChange.Load( THEME->GetPathTo("Sounds","ScreenSelectMode change"), true );
 
-	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select style intro") );
+	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select mode intro") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select style music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSelectMode music") );
 
 	RefreshModeChoices();
 
@@ -135,7 +131,7 @@ ScreenSelectMode::ScreenSelectMode()
 		for( unsigned i=0; i<m_apPossibleModeChoices.size(); i++ )
 		{
 			CString sChoiceName = m_apPossibleModeChoices[i]->name;
-			m_Infotext[i].Load( THEME->GetPathTo("Graphics",ssprintf("select mode infotext %s %s", sGameName.GetString(), sChoiceName.GetString())) );	
+			m_Infotext[i].Load( THEME->GetPathTo("Graphics",ssprintf("ScreenSelectMode infotext %s %s", sGameName.GetString(), sChoiceName.GetString())) );	
 			m_Infotext[i].SetXY( GUIDE_X, GUIDE_Y );
 			this->AddChild( &m_Infotext[i] );
 			m_Infotext[i].SetDiffuse( RageColor(0,0,0,0));
@@ -144,8 +140,6 @@ ScreenSelectMode::ScreenSelectMode()
 	AfterChange();
 
 	TweenOnScreen();
-	m_Menu.TweenOnScreenFromBlack( SM_None );
-
 }
 
 /************************************
@@ -189,7 +183,7 @@ void ScreenSelectMode::Input( const DeviceInput& DeviceI, const InputEventType t
 {
 	LOG->Trace( "ScreenSelectMode::Input()" );
 
-	if( m_Menu.IsClosing() )
+	if( m_Menu.IsTransitioning() )
 		return;
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
@@ -208,10 +202,8 @@ void ScreenSelectMode::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_MenuTimer:
 		MenuStart( PLAYER_INVALID );
-		m_Menu.StopTimer();
-
 		TweenOffScreen();
-		m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
+		m_Menu.StartTransitioning( SM_GoToNextScreen );
 		break;
 	case SM_GoToPrevScreen:
 		SOUNDMAN->StopMusic();
@@ -292,7 +284,7 @@ void ScreenSelectMode::MenuBack( PlayerNumber pn )
 {
 	SOUNDMAN->StopMusic();
 
-	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
+	m_Menu.Back( SM_GoToPrevScreen );
 }
 
 void ScreenSelectMode::AfterChange()
@@ -379,7 +371,7 @@ void ScreenSelectMode::MenuStart( PlayerNumber pn )
 		m_soundSelect.Play();
 
 		TweenOffScreen();
-		m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
+		m_Menu.StartTransitioning( SM_GoToNextScreen );
 		GAMESTATE->m_bPlayersCanJoin = false;
 		SCREENMAN->RefreshCreditsMessages();
 	}

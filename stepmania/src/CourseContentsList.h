@@ -11,7 +11,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "FootMeter.h"
+#include "DifficultyMeter.h"
 #include "BitmapText.h"
 #include "TextBanner.h"
 #include "ActorFrame.h"

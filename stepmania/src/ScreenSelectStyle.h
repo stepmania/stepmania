@@ -1,8 +1,8 @@
-#ifndef ScreenSelectMaxType1_H
-#define ScreenSelectMaxType1_H
+#ifndef ScreenSelectStyle_H
+#define ScreenSelectStyle_H
 /*
 -----------------------------------------------------------------------------
- Class: ScreenSelectMaxType1
+ Class: ScreenSelectStyle
 
  Desc: 
 
@@ -19,10 +19,10 @@
 
 #define MAX_MODE_CHOICES 30
 
-class ScreenSelectMaxType1 : public ScreenSelect
+class ScreenSelectStyle : public ScreenSelect
 {
 public:
-	ScreenSelectMaxType1();
+	ScreenSelectStyle();
 
 	virtual void MenuLeft( PlayerNumber pn );
 	virtual void MenuRight( PlayerNumber pn );
@@ -39,9 +39,10 @@ protected:
 	// Artists don't make graphics for every single Game, so
 	// have a text representation if textures are missing.
 	BitmapText	m_textIcon[MAX_MODE_CHOICES];
-	Sprite		m_sprPreview[MAX_MODE_CHOICES];
+	Sprite		m_sprPicture[MAX_MODE_CHOICES];
 	Sprite		m_sprInfo[MAX_MODE_CHOICES];
 	Sprite		m_sprExplanation;
+	Sprite		m_sprWarning;
 	Sprite		m_sprJointPremium;
 	
 	RageSound m_soundChange;

@@ -145,13 +145,13 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenMusicScroll.h"
 #include "ScreenPlayerOptions.h"
 #include "ScreenSelectCourse.h"
-#include "ScreenSelectMaxType2.h"
-#include "ScreenSelectMaxType2EX.h"
+#include "ScreenSelectDifficulty.h"
+#include "ScreenSelectDifficultyEX.h"
 #include "ScreenSelectGame.h"
 #include "ScreenSelectGroup.h"
 #include "ScreenSelectMusic.h"
 #include "ScreenSelectStyle5th.h"
-#include "ScreenSelectMaxType1.h"
+#include "ScreenSelectStyle.h"
 #include "ScreenSongOptions.h"
 #include "ScreenSoundOptions.h"
 #include "ScreenStage.h"
@@ -200,13 +200,13 @@ Screen* Screen::Create( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenMusicScroll") )			ret = new ScreenMusicScroll;
 	else if( 0==stricmp(sClassName, "ScreenPlayerOptions") )		ret = new ScreenPlayerOptions;
 	else if( 0==stricmp(sClassName, "ScreenSelectCourse") )			ret = new ScreenSelectCourse;
-	else if( 0==stricmp(sClassName, "ScreenSelectMaxType2") )		ret = new ScreenSelectMaxType2;
-	else if( 0==stricmp(sClassName, "ScreenSelectMaxType2EX") )		ret = new ScreenSelectMaxType2EX;
+	else if( 0==stricmp(sClassName, "ScreenSelectDifficulty") )		ret = new ScreenSelectDifficulty;
+	else if( 0==stricmp(sClassName, "ScreenSelectDifficultyEX") )	ret = new ScreenSelectDifficultyEX;
 	else if( 0==stricmp(sClassName, "ScreenSelectGame") )			ret = new ScreenSelectGame;
 	else if( 0==stricmp(sClassName, "ScreenSelectGroup") )			ret = new ScreenSelectGroup;
 	else if( 0==stricmp(sClassName, "ScreenSelectMusic") )			ret = new ScreenSelectMusic;
 	else if( 0==stricmp(sClassName, "ScreenSelectStyle5th") )		ret = new ScreenSelectStyle5th;
-	else if( 0==stricmp(sClassName, "ScreenSelectMaxType1") )		ret = new ScreenSelectMaxType1;
+	else if( 0==stricmp(sClassName, "ScreenSelectStyle") )		ret = new ScreenSelectStyle;
 	else if( 0==stricmp(sClassName, "ScreenSongOptions") )			ret = new ScreenSongOptions;
 	else if( 0==stricmp(sClassName, "ScreenStage") )				ret = new ScreenStage;
 	else if( 0==stricmp(sClassName, "ScreenTest") )					ret = new ScreenTest;

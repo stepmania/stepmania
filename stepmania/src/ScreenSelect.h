@@ -39,8 +39,6 @@ protected:
 	virtual int GetSelectionIndex( PlayerNumber pn ) = 0;
 	virtual void UpdateSelectableChoices() = 0;		// derived screens must handle this
 	
-	enum ChoicesType { CHOICES_STYLE, CHOICES_DIFFICULTY, CHOICES_MODE, CHOICES_GAME };
-	ChoicesType	m_type;
 	CString m_sClassName;
 
 	MenuElements m_Menu;

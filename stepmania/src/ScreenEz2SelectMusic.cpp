@@ -67,22 +67,18 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 	}
 
 
-	m_Menu.Load(
-		THEME->GetPathTo("BGAnimations","select music"),
-		THEME->GetPathTo("Graphics","select music top edge"),
-		HELP_TEXT, true, true, TIMER_SECONDS
-		);
+	m_Menu.Load("ScreenSelectMusic");
 	this->AddChild( &m_Menu );
 
-	m_soundMusicChange.Load( THEME->GetPathTo("Sounds","select music change"));
-	m_soundMusicCycle.Load( THEME->GetPathTo("Sounds","select music cycle"));
-	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
+	m_soundMusicChange.Load( THEME->GetPathTo("Sounds","ScreenEz2SelectMusic change"));
+	m_soundMusicCycle.Load( THEME->GetPathTo("Sounds","ScreenEz2SelectMusic cycle"));
+	m_soundSelect.Load( THEME->GetPathTo("Sounds","Common start") );
 
-	m_ChoiceListFrame.Load( THEME->GetPathTo("Graphics","select mode list frame"));
+	m_ChoiceListFrame.Load( THEME->GetPathTo("Graphics","ScreenEz2SelectMusic list frame"));
 	m_ChoiceListFrame.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y);
 	this->AddChild( &m_ChoiceListFrame );
 
-	m_Guide.Load( THEME->GetPathTo("Graphics","select mode guide"));
+	m_Guide.Load( THEME->GetPathTo("Graphics","ScreenEz2SelectMusic guide"));
 	m_Guide.SetXY( GUIDE_X, GUIDE_Y );
 	this->AddChild( &m_Guide );
 
@@ -95,7 +91,7 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 		this->AddChild( &m_MusicBannerWheel );
 
 
-		m_ChoiceListHighlight.Load( THEME->GetPathTo("Graphics","select mode list highlight"));
+		m_ChoiceListHighlight.Load( THEME->GetPathTo("Graphics","ScreenEz2SelectMusic list highlight"));
 		m_ChoiceListHighlight.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y);
 		this->AddChild( &m_ChoiceListHighlight );
 
@@ -111,17 +107,17 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 		//	m_FootMeter[p].SetShadowLength( 2 );
 		//	this->AddChild( &m_FootMeter[p] );
 
-			m_SpeedIcon[p].Load( THEME->GetPathTo("Graphics","select music speedicon"));
+			m_SpeedIcon[p].Load( THEME->GetPathTo("Graphics","ScreenEz2SelectMusic speedicon"));
 			m_SpeedIcon[p].SetXY( SPEEDICON_X(p), SPEEDICON_Y(p) );
 			m_SpeedIcon[p].SetDiffuse( RageColor(0,0,0,0) );
 			this->AddChild(&m_SpeedIcon[p] );
 
-			m_MirrorIcon[p].Load( THEME->GetPathTo("Graphics","select music mirroricon"));
+			m_MirrorIcon[p].Load( THEME->GetPathTo("Graphics","ScreenEz2SelectMusic mirroricon"));
 			m_MirrorIcon[p].SetXY( MIRRORICON_X(p), MIRRORICON_Y(p) );
 			m_MirrorIcon[p].SetDiffuse( RageColor(0,0,0,0) );
 			this->AddChild(&m_MirrorIcon[p] );
 
-			m_ShuffleIcon[p].Load( THEME->GetPathTo("Graphics","select music shuffleicon"));
+			m_ShuffleIcon[p].Load( THEME->GetPathTo("Graphics","ScreenEz2SelectMusic shuffleicon"));
 			m_ShuffleIcon[p].SetXY( SHUFFLEICON_X(p), SHUFFLEICON_Y(p) );
 			m_ShuffleIcon[p].SetDiffuse( RageColor(0,0,0,0) );
 			this->AddChild(&m_ShuffleIcon[p] );
@@ -131,11 +127,11 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 			m_iSelection[p] = 0;
 		}
 
-		m_InfoFrame.Load( THEME->GetPathTo("Graphics","select music infoframe") );
+		m_InfoFrame.Load( THEME->GetPathTo("Graphics","ScreenEz2SelectMusic infoframe") );
 		m_InfoFrame.SetXY( INFOFRAME_X, INFOFRAME_Y );
 		this->AddChild( &m_InfoFrame );
 
-		m_PumpDifficultyCircle.Load( THEME->GetPathTo("Graphics","select music pump difficulty circle"));
+		m_PumpDifficultyCircle.Load( THEME->GetPathTo("Graphics","ScreenEz2SelectMusic difficulty frame"));
 		m_PumpDifficultyCircle.SetXY( PUMP_DIFF_X, PUMP_DIFF_Y );
 		this->AddChild( &m_PumpDifficultyCircle );
 
@@ -148,22 +144,20 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 		m_DifficultyRating.SetY(DIFFICULTYRATING_Y);
 		this->AddChild(&m_DifficultyRating);
 
-		m_sprOptionsMessage.Load( THEME->GetPathTo("Graphics","select music options message") );
+		m_sprOptionsMessage.Load( THEME->GetPathTo("Graphics","ScreenEz2SelectMusic options message") );
 		m_sprOptionsMessage.StopAnimating();
 		m_sprOptionsMessage.SetXY( CENTER_X, CENTER_Y );
 		m_sprOptionsMessage.SetZoom( 1 );
 		m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
 		this->AddChild( &m_sprOptionsMessage );
 
-		m_soundOptionsChange.Load( THEME->GetPathTo("Sounds","select music options") );
+		m_soundOptionsChange.Load( THEME->GetPathTo("Sounds","ScreenEz2SelectMusic options") );
 
 		m_bGoToOptions = false;
 		m_bMadeChoice = false;
 
 		MusicChanged();
 	}
-
-	m_Menu.TweenOnScreenFromMenu( SM_None );
 }
 
 void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -175,13 +169,13 @@ void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 
 	if( type == IET_RELEASE )	return;		// don't care
 
-	if( m_Menu.IsClosing() )	return;		// ignore
+	if( m_Menu.IsTransitioning() )	return;		// ignore
 
 	if( !GameI.IsValid() )		return;		// don't care
 
 	if( m_bMadeChoice  &&  !m_bGoToOptions  &&  MenuI.IsValid()  &&  MenuI.button == MENU_BUTTON_START )
 	{
-		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
+		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common start") );
 		m_bGoToOptions = true;
 		m_sprOptionsMessage.SetState( 1 );
 	}
@@ -296,7 +290,7 @@ void ScreenEz2SelectMusic::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenEz2SelectMusic::MenuRight( PlayerNumber pn, const InputEventType type )
 {
-	m_Menu.StallTimer();
+	m_Menu.m_MenuTimer.StallTimer();
 	m_MusicBannerWheel.BannersRight();
 	MusicChanged();
 }
@@ -305,7 +299,7 @@ void ScreenEz2SelectMusic::MenuBack( PlayerNumber pn )
 {
 	SOUNDMAN->StopMusic();
 
-	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
+	m_Menu.Back( SM_GoToPrevScreen );
 }
 
 
@@ -323,7 +317,7 @@ void ScreenEz2SelectMusic::TweenOffScreen()
 
 void ScreenEz2SelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type )
 {
-	m_Menu.StallTimer();
+	m_Menu.m_MenuTimer.StallTimer();
 	m_MusicBannerWheel.BannersLeft();
 	MusicChanged();
 }
@@ -360,13 +354,7 @@ void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 	m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,0) );
 	m_sprOptionsMessage.SetTweenZoomY( 0 );
 
-	m_Menu.TweenOffScreenToBlack( SM_None, false );
-
-	m_Menu.StopTimer();
-
-	this->SendScreenMessage( SM_GoToNextScreen, 2.5f );
-
-//	SCREENMAN->SetNewScreen( "ScreenStage" );
+	m_Menu.StartTransitioning( SM_GoToNextScreen );
 }
 
 

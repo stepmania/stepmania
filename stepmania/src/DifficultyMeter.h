@@ -1,8 +1,8 @@
-#ifndef FOOTMETER_H
-#define FOOTMETER_H
+#ifndef DifficultyMeter_H
+#define DifficultyMeter_H
 /*
 -----------------------------------------------------------------------------
- Class: FootMeter
+ Class: DifficultyMeter
 
  Desc: A meter represention of how hard Notes is.
 
@@ -11,21 +11,19 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Sprite.h"
-#include "song.h"
 #include "BitmapText.h"
-#include "PrefsManager.h"
+struct Notes;
 
 
-class FootMeter : public BitmapText
+class DifficultyMeter : public BitmapText
 {
 public:
-	FootMeter();
+	DifficultyMeter();
 
 	void SetFromNotes( Notes* pNotes );
 
 private:
-	void SetNumFeet( int iNumFeet );
+	void SetMeter( int iMeter );
 };
 
 #endif

@@ -27,40 +27,53 @@
 #include "RageSoundManager.h"
 
 
-#define HELP_X									THEME->GetMetricF("ScreenTitleMenu","HelpX")
-#define HELP_Y									THEME->GetMetricF("ScreenTitleMenu","HelpY")
-#define CHOICES_X								THEME->GetMetricF("ScreenTitleMenu","ChoicesX")
-#define CHOICES_START_Y							THEME->GetMetricF("ScreenTitleMenu","ChoicesStartY")
-#define CHOICES_SPACING_Y						THEME->GetMetricF("ScreenTitleMenu","ChoicesSpacingY")
-#define CHOICES_SHADOW_LENGTH					THEME->GetMetricF("ScreenTitleMenu","ChoicesShadowLength")
-#define COLOR_NOT_SELECTED						THEME->GetMetricC("ScreenTitleMenu","ColorNotSelected")
-#define COLOR_SELECTED							THEME->GetMetricC("ScreenTitleMenu","ColorSelected")
-#define ZOOM_NOT_SELECTED						THEME->GetMetricF("ScreenTitleMenu","ZoomNotSelected")
-#define ZOOM_SELECTED							THEME->GetMetricF("ScreenTitleMenu","ZoomSelected")
-#define SECONDS_BETWEEN_COMMENTS				THEME->GetMetricF("ScreenTitleMenu","SecondsBetweenComments")
-#define SECONDS_BETWEEN_JOINT_PREMIUM_SCROLL	THEME->GetMetricF("ScreenTitleMenu","SecondsBetweenJointPremiumScroll")
-#define SECONDS_BEFORE_ATTRACT					THEME->GetMetricF("ScreenTitleMenu","SecondsBeforeAttract")
-#define HELP_TEXT_HOME							THEME->GetMetric("ScreenTitleMenu","HelpTextHome")
-#define HELP_TEXT_PAY							THEME->GetMetric("ScreenTitleMenu","HelpTextPay")
-#define HELP_TEXT_FREE							THEME->GetMetric("ScreenTitleMenu","HelpTextFree")
-#define NEXT_SCREEN								THEME->GetMetric("ScreenTitleMenu","NextScreen")
+#define HELP_X						THEME->GetMetricF("ScreenTitleMenu","HelpX")
+#define HELP_Y						THEME->GetMetricF("ScreenTitleMenu","HelpY")
+#define CHOICES_X					THEME->GetMetricF("ScreenTitleMenu","ChoicesX")
+#define CHOICES_START_Y				THEME->GetMetricF("ScreenTitleMenu","ChoicesStartY")
+#define CHOICES_SPACING_Y			THEME->GetMetricF("ScreenTitleMenu","ChoicesSpacingY")
+#define CHOICES_SHADOW_LENGTH		THEME->GetMetricF("ScreenTitleMenu","ChoicesShadowLength")
+#define COLOR_NOT_SELECTED			THEME->GetMetricC("ScreenTitleMenu","ColorNotSelected")
+#define COLOR_SELECTED				THEME->GetMetricC("ScreenTitleMenu","ColorSelected")
+#define ZOOM_NOT_SELECTED			THEME->GetMetricF("ScreenTitleMenu","ZoomNotSelected")
+#define ZOOM_SELECTED				THEME->GetMetricF("ScreenTitleMenu","ZoomSelected")
+#define SECONDS_BETWEEN_COMMENTS	THEME->GetMetricF("ScreenTitleMenu","SecondsBetweenComments")
+#define SECONDS_BEFORE_ATTRACT		THEME->GetMetricF("ScreenTitleMenu","SecondsBeforeAttract")
+#define HELP_TEXT_HOME				THEME->GetMetric("ScreenTitleMenu","HelpTextHome")
+#define HELP_TEXT_PAY				THEME->GetMetric("ScreenTitleMenu","HelpTextPay")
+#define HELP_TEXT_FREE				THEME->GetMetric("ScreenTitleMenu","HelpTextFree")
+#define NEXT_SCREEN					THEME->GetMetric("ScreenTitleMenu","NextScreen")
 
 const ScreenMessage SM_PlayComment			=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToAttractLoop		=	ScreenMessage(SM_User+13);
-const ScreenMessage SM_ScrollJointPremium	=	ScreenMessage(SM_User+14);
 
 ScreenTitleMenu::ScreenTitleMenu()
 {
 	LOG->Trace( "ScreenTitleMenu::ScreenTitleMenu()" );
 
-	if( PREFSMAN->m_bJointPremium )
-	{
-		m_sprJointPremiumMsg.Load( THEME->GetPathTo("Graphics","title menu joint premium") );
-		this->AddChild( &m_sprJointPremiumMsg );
-		m_sprJointPremiumMsg.SetX( SCREEN_RIGHT+m_sprJointPremiumMsg.GetUnzoomedWidth()/2 );
-		m_sprJointPremiumMsg.SetY( SCREEN_BOTTOM/2 );
+	if( PREFSMAN->m_CoinMode!=PrefsManager::COIN_HOME  &&  PREFSMAN->m_bJointPremium )
+	{		
+		m_JointPremium.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenTitleMenu joint premium") );
+		this->AddChild( &m_JointPremium );
 	}
 
+	switch( PREFSMAN->m_CoinMode )
+	{
+	case PrefsManager::COIN_HOME:
+		// do nothing
+		break;
+	case PrefsManager::COIN_PAY:
+		m_CoinMode.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenTitleMenu pay") );
+		this->AddChild( &m_CoinMode );
+		break;
+	case PrefsManager::COIN_FREE:
+		m_CoinMode.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenTitleMenu free") );
+		this->AddChild( &m_CoinMode );
+		break;
+	default:
+		ASSERT(0);
+	}
+	
 	m_textHelp.LoadFromFont( THEME->GetPathTo("Fonts","help") );
 	CString sHelpText;
 	switch( PREFSMAN->m_CoinMode )
@@ -105,9 +118,9 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 
 	m_soundAttract.Load( ANNOUNCER->GetPathTo("title menu attract") );
-	m_soundChange.Load( THEME->GetPathTo("Sounds","title menu change") );	
-	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
-	m_soundInvalid.Load( THEME->GetPathTo("Sounds","menu invalid") );
+	m_soundChange.Load( THEME->GetPathTo("Sounds","ScreenTitleMenu change") );	
+	m_soundSelect.Load( THEME->GetPathTo("Sounds","Common start") );
+	m_soundInvalid.Load( THEME->GetPathTo("Sounds","Common invalid") );
 
 	m_Choice = CHOICE_GAME_START;
 
@@ -115,12 +128,12 @@ ScreenTitleMenu::ScreenTitleMenu()
 		LoseFocus( i );
 	GainFocus( m_Choice );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","title menu music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenTitleMenu music") );
 
 	this->SendScreenMessage( SM_PlayComment, SECONDS_BETWEEN_COMMENTS);
 
-	this->MoveToTail( &(ScreenAttract::m_Fade) );	// put it in the back so it covers up the stuff we just added
-	this->SendScreenMessage( SM_ScrollJointPremium, 1);
+	this->MoveToTail( &m_In );	// put it in the back so it covers up the stuff we just added
+	this->MoveToTail( &m_Out );	// put it in the back so it covers up the stuff we just added
 }
 
 ScreenTitleMenu::~ScreenTitleMenu()
@@ -135,133 +148,132 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 
 	if( type != IET_FIRST_PRESS )
 		return;
-	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F3 )
+
+	/* If the CoinMode was changed, we need to reload this screen
+	 * so that the right choices will show */
+	if( ScreenAttract::ChangeCoinModeInput( DeviceI, type, GameI, MenuI, StyleI ) )
 	{
-		/* Coin mode changed.. since this effects how this screen appears, JUST the 
-		screen is just reloaded, not a reset as was before -- Miryokuteki */
-		(int&)PREFSMAN->m_CoinMode = (PREFSMAN->m_CoinMode+1) % PrefsManager::NUM_COIN_MODES;
-		CString sMessage = "Coin Mode: ";
-		switch( PREFSMAN->m_CoinMode )
-		{
-			case PrefsManager::COIN_HOME:	sMessage += "HOME";	break;
-			case PrefsManager::COIN_PAY:	sMessage += "PAY";	break;
-			case PrefsManager::COIN_FREE:	sMessage += "FREE";	break;
-		}
-		SCREENMAN->SystemMessage( sMessage );
-		SCREENMAN->RefreshCreditsMessages();
-		SCREENMAN->SetNewScreen("ScreenTitleMenu");
-		return;
+		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 	}
 
 	if( !MenuI.IsValid() )
 		return;
 
-	if( PREFSMAN->m_CoinMode==PrefsManager::COIN_HOME && m_Fade.IsClosing() )
-		return;
-
-	switch( MenuI.button )
+	switch( PREFSMAN->m_CoinMode )
 	{
-	case MENU_BUTTON_UP:
-		switch( PREFSMAN->m_CoinMode )
+	case PrefsManager::COIN_HOME:
+		switch( MenuI.button )
 		{
-		case PrefsManager::COIN_HOME:
+		case MENU_BUTTON_UP:
+			if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
+				break;
 			TimeToDemonstration.GetDeltaTime();	/* Reset the demonstration timer when a key is pressed. */
 			LoseFocus( m_Choice );
 			if( m_Choice == 0 ) // wrap around
 				m_Choice = (Choice)((int)NUM_CHOICES); 
 			m_Choice = Choice( m_Choice-1 );
-			m_soundChange.PlayRandom();
+			m_soundChange.Play();
 			GainFocus( m_Choice );
 			break;
-		case PrefsManager::COIN_PAY:
-		case PrefsManager::COIN_FREE:
-			return;	// ignore
-		default:
-			ASSERT(0);
-		}
-		break;
-	case MENU_BUTTON_DOWN:
-		switch( PREFSMAN->m_CoinMode )
-		{
-		case PrefsManager::COIN_HOME:
+		case MENU_BUTTON_DOWN:
+			if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
+				break;
 			TimeToDemonstration.GetDeltaTime();	/* Reset the demonstration timer when a key is pressed. */
 			LoseFocus( m_Choice );
 			if( m_Choice == (int)ScreenTitleMenu::NUM_CHOICES-1 ) 
 				m_Choice = (Choice)-1; // wrap around
 			m_Choice = Choice( m_Choice+1 );
-			m_soundChange.PlayRandom();
+			m_soundChange.Play();
 			GainFocus( m_Choice );
 			break;
-		case PrefsManager::COIN_PAY:
-		case PrefsManager::COIN_FREE:
-			return;	// ignore
-		}
-		break;
-	case MENU_BUTTON_BACK:
-		m_Fade.CloseWipingRight( SM_GoToAttractLoop );
-		break;
-	case MENU_BUTTON_START:
-		/* If this side is already in, don't re-join (and re-pay!). */
-		if(GAMESTATE->m_bSideIsJoined[MenuI.player])
+		case MENU_BUTTON_BACK:
+			if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
+				break;
+			m_Out.StartTransitioning( SM_GoToAttractLoop );
 			break;
-
-		switch( PREFSMAN->m_CoinMode )
-		{
-		case PrefsManager::COIN_PAY:
-			if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
-				break;	// not enough coins
-			else
-				GAMESTATE->m_iCoins -= PREFSMAN->m_iCoinsPerCredit;
-				SCREENMAN->RefreshCreditsMessages();
-			// fall through
-		case PrefsManager::COIN_HOME:
-		case PrefsManager::COIN_FREE:
-			GAMESTATE->m_bSideIsJoined[MenuI.player] = true;
-			GAMESTATE->m_MasterPlayerNumber = MenuI.player;
-			GAMESTATE->m_bPlayersCanJoin = false;
-
+		case MENU_BUTTON_START:
+			if( m_In.IsTransitioning() )
+				break;
+			/* break if the choice is invalid */
 			switch( m_Choice )
 			{
 			case CHOICE_GAME_START:
 			case CHOICE_SELECT_GAME:
-			/* At request, moved this into the options/operator menu -- Miryokuteki */
-			//case CHOICE_MAP_KEY_JOY:
 			case CHOICE_OPTIONS:
 			#ifdef DEBUG
 			case CHOICE_SANDBOX:
 			#endif
-				m_soundSelect.PlayRandom();
-				m_Fade.CloseWipingRight( SM_GoToNextScreen );
-				break;
 			case CHOICE_JUKEBOX:
 			case CHOICE_EDIT:
 				if( SONGMAN->GetNumSongs() == 0 )
 				{
-					m_soundInvalid.PlayRandom();
+					m_soundInvalid.Play();
 					SCREENMAN->SystemMessage( "No songs are installed" );
-				}
-				else
-				{
-					m_soundSelect.PlayRandom();
-					m_Fade.CloseWipingRight( SM_GoToNextScreen );
+					break;
 				}
 				break;
 			case CHOICE_EXIT:
-				m_soundSelect.PlayRandom();
 				ExitGame();
 				LOG->Trace("CHOICE_EXIT: shutting down");
 				return;
 			default:
 				ASSERT(0);
 			}
-			break;	
-		default:
-			ASSERT(0);
+
+			/* If this side is already in, don't re-join (and re-pay!). */
+			if(GAMESTATE->m_bSideIsJoined[MenuI.player])
+				break;
+
+			GAMESTATE->m_bSideIsJoined[MenuI.player] = true;
+			if( GAMESTATE->m_MasterPlayerNumber == PLAYER_INVALID )
+				GAMESTATE->m_MasterPlayerNumber = MenuI.player;
+
+			SCREENMAN->RefreshCreditsMessages();
+
+			m_soundSelect.Play();
+
+			if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
+				break;
+			m_Out.StartTransitioning( SM_GoToNextScreen );
+		}
+		break;
+	case PrefsManager::COIN_PAY:
+	case PrefsManager::COIN_FREE:
+		switch( MenuI.button )
+		{
+		case MENU_BUTTON_BACK:
+			m_Out.StartTransitioning( SM_GoToAttractLoop );
+			break;
+		case MENU_BUTTON_START:
+			/* If this side is already in, don't re-join (and re-pay!). */
+			if(GAMESTATE->m_bSideIsJoined[MenuI.player])
+				break;
+
+			/* subtract coins */
+			if( PREFSMAN->m_CoinMode == PrefsManager::COIN_PAY )
+				if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
+					break;	// not enough coins
+				else
+					GAMESTATE->m_iCoins -= PREFSMAN->m_iCoinsPerCredit;
+
+			GAMESTATE->m_bSideIsJoined[MenuI.player] = true;
+			if( GAMESTATE->m_MasterPlayerNumber == PLAYER_INVALID )
+				GAMESTATE->m_MasterPlayerNumber = MenuI.player;
+
+			SCREENMAN->RefreshCreditsMessages();
+		
+			m_soundSelect.Play();
+
+			if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
+				break;
+			m_Out.StartTransitioning( SM_GoToNextScreen );
+			break;
 		}
 		break;
 	}
+	
 
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
+//	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
 void ScreenTitleMenu::Update( float fDelta )
@@ -271,11 +283,6 @@ void ScreenTitleMenu::Update( float fDelta )
 		this->SendScreenMessage( SM_GoToAttractLoop, 0 );
 		TimeToDemonstration.GetDeltaTime();
 	}
-	if( PREFSMAN->m_bJointPremium && TimeToJPScroll.PeekDeltaTime() >= SECONDS_BETWEEN_JOINT_PREMIUM_SCROLL )
-	{
-		this->SendScreenMessage( SM_ScrollJointPremium, 0 );
-		TimeToJPScroll.GetDeltaTime();
-	}
 	Screen::Update(fDelta);
 }
 
@@ -284,19 +291,6 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
-	case SM_ScrollJointPremium:
-		if( PREFSMAN->m_bJointPremium )
-		{
-			m_sprJointPremiumMsg.StopTweening();
-			m_sprJointPremiumMsg.SetDiffuse( RageColor(1,1,1,1) );
-			
-			m_sprJointPremiumMsg.SetX( SCREEN_RIGHT+m_sprJointPremiumMsg.GetUnzoomedWidth()/2 );
-			m_sprJointPremiumMsg.SetY( SCREEN_BOTTOM/2 );
-			
-			m_sprJointPremiumMsg.BeginTweening( 13.0f, Actor::TWEEN_ACCELERATE ); // slide on
-			m_sprJointPremiumMsg.SetTweenX( SCREEN_LEFT-m_sprJointPremiumMsg.GetUnzoomedWidth()*2 );
-		}
-		break;
 	case SM_PlayComment:
 		m_soundAttract.PlayRandom();
 		this->SendScreenMessage( SM_PlayComment, SECONDS_BETWEEN_COMMENTS );

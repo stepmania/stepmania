@@ -266,6 +266,8 @@ void Actor::BeginTweening( float time, TweenType tt )
 {
 	ASSERT( time >= 0 );
 
+	time = max( time, 0 );
+
 	ASSERT( m_TweenStates.size() < 50 );	// there's no reason for the number of tweens to ever go this large
 
 	// add a new TweenState to the tail, and initialize it
@@ -551,8 +553,7 @@ void Actor::Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, 
 
 void Actor::Command( CString sCommandString )
 {
-	// add a snap tween in case the user forgets to use a tween as the first command
-//	BeginTweening( 0.0001f, TWEEN_LINEAR );
+	// OPTIMIZATION OPPORTUNITY:  sCommandString could be parsed much more efficiently.
 
 	CStringArray asCommands;
 	split( sCommandString, ";", asCommands, true );
@@ -623,8 +624,13 @@ void Actor::Command( CString sCommandString )
 		else if( sName=="additiveblend" )	EnableAdditiveBlend( iParam(0)!=0 );
 		else
 		{
-			LOG->Warn( "Unrecognized command name '%s' in command string '%s'.", sName.GetString(), sCommandString.GetString() );
-			ASSERT(0);
+			CString sError = ssprintf( "Unrecognized command name '%s' in command string '%s'.", sName.GetString(), sCommandString.GetString() );
+			LOG->Warn( sError );
+#if defined(WIN32) // XXX arch?
+			if( DISPLAY->IsWindowed() )
+				MessageBox(NULL, sError, "Actor::Command", MB_OK);
+#endif
+
 		}
 	}
 }

@@ -79,7 +79,6 @@ protected:
 	RageSound			m_soundChangeLine;
 	RageSound			m_soundChangeSnap;
 	RageSound			m_soundMarker;
-	RageSound			m_soundInvalid;
 
 	TransitionFade		m_Fade;
 

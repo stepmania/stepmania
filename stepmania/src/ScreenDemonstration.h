@@ -9,11 +9,10 @@
 -----------------------------------------------------------------------------
 */
 
-#include "ScreenGameplay.h"
-#include "Sprite.h"
+#include "ScreenJukebox.h"
 
 
-class ScreenDemonstration : public ScreenGameplay
+class ScreenDemonstration : public ScreenJukebox
 {
 public:
 	ScreenDemonstration();
@@ -24,10 +23,7 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
-	Sprite		m_sprDemonstrationOverlay;
-	Sprite		m_sprDemonstrationBlink;
-
-
+	BGAnimation	m_Overlay;
 };
 
 

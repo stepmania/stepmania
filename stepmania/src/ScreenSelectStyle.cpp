@@ -1,7 +1,7 @@
 #include "global.h"
 /*
 -----------------------------------------------------------------------------
- Class: ScreenSelectMaxType1
+ Class: ScreenSelectStyle
 
  Desc: See header.
 
@@ -10,7 +10,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "ScreenSelectMaxType1.h"
+#include "ScreenSelectStyle.h"
 #include "GameManager.h"
 #include "ThemeManager.h"
 #include "PrefsManager.h"
@@ -18,20 +18,24 @@
 #include "GameState.h"
 
 
-#define JOINT_PREMIUM_ON_COMMAND	THEME->GetMetric ("ScreenSelectMaxType1","JointPremiumOnCommand")
-#define JOINT_PREMIUM_OFF_COMMAND	THEME->GetMetric ("ScreenSelectMaxType1","JointPremiumOffCommand")
-#define ICON_ON_COMMAND( i )		THEME->GetMetric ("ScreenSelectMaxType1",ssprintf("Icon%dOnCommand",i+1))
-#define ICON_OFF_COMMAND( i )		THEME->GetMetric ("ScreenSelectMaxType1",ssprintf("Icon%dOffCommand",i+1))
-#define DISABLED_COLOR				THEME->GetMetricC("ScreenSelectMaxType1","DisabledColor")
-#define EXPLANATION_ON_COMMAND		THEME->GetMetric ("ScreenSelectMaxType1","ExplanationOnCommand")
-#define EXPLANATION_OFF_COMMAND		THEME->GetMetric ("ScreenSelectMaxType1","ExplanationOffCommand")
-#define INFO_ON_COMMAND				THEME->GetMetric ("ScreenSelectMaxType1","InfoOnCommand")
-#define INFO_OFF_COMMAND			THEME->GetMetric ("ScreenSelectMaxType1","InfoOffCommand")
-#define PREVIEW_ON_COMMAND			THEME->GetMetric ("ScreenSelectMaxType1","PreviewOnCommand")
-#define PREVIEW_OFF_COMMAND			THEME->GetMetric ("ScreenSelectMaxType1","PreviewOffCommand")
+#define JOINT_PREMIUM_ON_COMMAND	THEME->GetMetric ("ScreenSelectStyle","JointPremiumOnCommand")
+#define JOINT_PREMIUM_OFF_COMMAND	THEME->GetMetric ("ScreenSelectStyle","JointPremiumOffCommand")
+#define ICON_ON_COMMAND( i )		THEME->GetMetric ("ScreenSelectStyle",ssprintf("Icon%dOnCommand",i+1))
+#define ICON_OFF_COMMAND( i )		THEME->GetMetric ("ScreenSelectStyle",ssprintf("Icon%dOffCommand",i+1))
+#define ICON_GAIN_FOCUS_COMMAND		THEME->GetMetric ("ScreenSelectStyle","IconGainFocusCommand")
+#define ICON_LOSE_FOCUS_COMMAND		THEME->GetMetric ("ScreenSelectStyle","IconLoseFocusCommand")
+#define DISABLED_COLOR				THEME->GetMetricC("ScreenSelectStyle","DisabledColor")
+#define EXPLANATION_ON_COMMAND		THEME->GetMetric ("ScreenSelectStyle","ExplanationOnCommand")
+#define EXPLANATION_OFF_COMMAND		THEME->GetMetric ("ScreenSelectStyle","ExplanationOffCommand")
+#define WARNING_ON_COMMAND			THEME->GetMetric ("ScreenSelectStyle","WarningOnCommand")
+#define WARNING_OFF_COMMAND			THEME->GetMetric ("ScreenSelectStyle","WarningOffCommand")
+#define INFO_ON_COMMAND				THEME->GetMetric ("ScreenSelectStyle","InfoOnCommand")
+#define INFO_OFF_COMMAND			THEME->GetMetric ("ScreenSelectStyle","InfoOffCommand")
+#define PICTURE_ON_COMMAND			THEME->GetMetric ("ScreenSelectStyle","PictureOnCommand")
+#define PICTURE_OFF_COMMAND			THEME->GetMetric ("ScreenSelectStyle","PictureOffCommand")
 
 
-ScreenSelectMaxType1::ScreenSelectMaxType1() : ScreenSelect( "ScreenSelectMaxType1" )
+ScreenSelectStyle::ScreenSelectStyle() : ScreenSelect( "ScreenSelectStyle" )
 {
 	m_iSelection = 0;
 
@@ -40,13 +44,11 @@ ScreenSelectMaxType1::ScreenSelectMaxType1() : ScreenSelect( "ScreenSelectMaxTyp
 	for( i=0; i<m_aModeChoices.size(); i++ )
 	{
 		const ModeChoice& mc = m_aModeChoices[i];
-		CString sGameName = GAMEMAN->GetGameDefForGame(mc.game)->m_szName;
-
 
 		//
 		// Load icon
 		//
-		CString sIconElementName = ssprintf("ScreenSelectMaxType1 icon %s %s", sGameName.GetString(), mc.name );
+		CString sIconElementName = ssprintf("ScreenSelectStyle icon %s", mc.name );
 		CString sIconPath = THEME->GetPathTo("Graphics",sIconElementName);
 		if( sIconPath.empty() )	// element doesn't exist
 		{
@@ -63,23 +65,23 @@ ScreenSelectMaxType1::ScreenSelectMaxType1() : ScreenSelect( "ScreenSelectMaxTyp
 	
 
 		//
-		// Load preview
+		// Load Picture
 		//
-		CString sPreviewElementName = ssprintf("ScreenSelectMaxType1 preview %s %s", sGameName.GetString(), mc.name );
-		CString sPreviewPath = THEME->GetPathTo("Graphics",sPreviewElementName);
-		if( sPreviewPath != "" )
+		CString sPictureElementName = ssprintf("ScreenSelectStyle picture %s", mc.name );
+		CString sPicturePath = THEME->GetPathTo("Graphics",sPictureElementName);
+		if( sPicturePath != "" )
 		{
-			m_sprPreview[i].Load( sPreviewPath );
-//			m_sprPreview[i].Command( PREVIEW_X, PREVIEW_Y );
-			m_sprPreview[i].SetDiffuse( RageColor(1,1,1,0) );
-			this->AddChild( &m_sprPreview[i] );
+			m_sprPicture[i].Load( sPicturePath );
+//			m_sprPicture[i].Command( PREVIEW_X, PREVIEW_Y );
+			m_sprPicture[i].SetDiffuse( RageColor(1,1,1,0) );
+			this->AddChild( &m_sprPicture[i] );
 		}
 
 
 		//
 		// Load info
 		//
-		CString sInfoElementName = ssprintf("ScreenSelectMaxType1 info %s %s", sGameName.GetString(), mc.name );
+		CString sInfoElementName = ssprintf("ScreenSelectStyle info %s", mc.name );
 		CString sInfoPath = THEME->GetPathTo("Graphics",sInfoElementName);
 		if( sInfoPath != "" )
 		{
@@ -90,29 +92,33 @@ ScreenSelectMaxType1::ScreenSelectMaxType1() : ScreenSelect( "ScreenSelectMaxTyp
 		}
 	}
 
-	// fix Z ordering of Preview and Info so that they draw on top
+
+	m_sprWarning.Load( THEME->GetPathTo("Graphics","ScreenSelectStyle warning") );
+	this->AddChild( &m_sprWarning );
+		
+	m_sprExplanation.Load( THEME->GetPathTo("Graphics","ScreenSelectStyle explanation") );
+	this->AddChild( &m_sprExplanation );
+		
+
+
+	// fix Z ordering of Picture and Info so that they draw on top
 	for( i=0; i<this->m_aModeChoices.size(); i++ )
-		this->MoveToTail( &m_sprPreview[i] );
+		this->MoveToTail( &m_sprPicture[i] );
 	for( i=0; i<this->m_aModeChoices.size(); i++ )
 		this->MoveToTail( &m_sprInfo[i] );
 
 
 	this->UpdateSelectableChoices();
 
-	m_sprExplanation.Load( THEME->GetPathTo("Graphics","ScreenSelectMaxType1 explanation") );
-//	m_sprExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
-	this->AddChild( &m_sprExplanation );
-		
 	if( PREFSMAN->m_bJointPremium )
 	{
-		m_sprJointPremium.Load( THEME->GetPathTo("Graphics","ScreenSelectMaxType1 joint premium") );
-//		m_sprJointPremium.SetXY( JOINT_PREMIUM_BANNER_X, JOINT_PREMIUM_BANNER_Y );
+		m_sprJointPremium.Load( THEME->GetPathTo("Graphics","ScreenSelectStyle joint premium") );
 		this->AddChild( &m_sprJointPremium );
 	}
 
 
-	m_soundChange.Load( THEME->GetPathTo("Sounds","ScreenSelectMaxType1 change") );
-	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
+	m_soundChange.Load( THEME->GetPathTo("Sounds","ScreenSelectStyle change") );
+	m_soundSelect.Load( THEME->GetPathTo("Sounds","Common start") );
 
 
 	//
@@ -124,12 +130,13 @@ ScreenSelectMaxType1::ScreenSelectMaxType1() : ScreenSelect( "ScreenSelectMaxTyp
 		m_sprIcon[i].Command( ICON_ON_COMMAND(i) );
 	}
 	m_sprExplanation.Command( EXPLANATION_ON_COMMAND );
+	m_sprWarning.Command( WARNING_ON_COMMAND );
 	m_sprJointPremium.Command( JOINT_PREMIUM_ON_COMMAND );
 
-	// let AfterChange tween Preview and Info
+	// let AfterChange tween Picture and Info
 }
 
-void ScreenSelectMaxType1::MenuLeft( PlayerNumber pn )
+void ScreenSelectStyle::MenuLeft( PlayerNumber pn )
 {
 	int iSwitchToIndex = -1;	// -1 means none found
 	for( int i=m_iSelection-1; i>=0; i-- )
@@ -150,7 +157,7 @@ void ScreenSelectMaxType1::MenuLeft( PlayerNumber pn )
 	AfterChange();
 }
 
-void ScreenSelectMaxType1::MenuRight( PlayerNumber pn )
+void ScreenSelectStyle::MenuRight( PlayerNumber pn )
 {
 	int iSwitchToIndex = -1;	// -1 means none found
 	for( unsigned i=m_iSelection+1; i<m_aModeChoices.size(); i++ )	
@@ -171,7 +178,7 @@ void ScreenSelectMaxType1::MenuRight( PlayerNumber pn )
 	AfterChange();
 }
 
-void ScreenSelectMaxType1::MenuStart( PlayerNumber pn )
+void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 {
 	m_soundSelect.Play();
 	SCREENMAN->SendMessageToTopScreen( SM_AllDoneChoosing, 0 );
@@ -192,17 +199,18 @@ void ScreenSelectMaxType1::MenuStart( PlayerNumber pn )
 		m_textIcon[i].Command( ICON_OFF_COMMAND(i) );
 	}
 	m_sprExplanation.Command( EXPLANATION_OFF_COMMAND );
-	m_sprPreview[m_iSelection].Command( PREVIEW_OFF_COMMAND );
+	m_sprWarning.Command( WARNING_OFF_COMMAND );
+	m_sprPicture[m_iSelection].Command( PICTURE_OFF_COMMAND );
 	m_sprInfo[m_iSelection].Command( INFO_OFF_COMMAND );
 	m_sprJointPremium.Command( JOINT_PREMIUM_OFF_COMMAND );
 }
 
-int ScreenSelectMaxType1::GetSelectionIndex( PlayerNumber pn )
+int ScreenSelectStyle::GetSelectionIndex( PlayerNumber pn )
 {
 	return m_iSelection;
 }
 
-void ScreenSelectMaxType1::UpdateSelectableChoices()
+void ScreenSelectStyle::UpdateSelectableChoices()
 {
 	unsigned i;
 	/* If a player joins during the tween-in, this diffuse change
@@ -244,27 +252,27 @@ void ScreenSelectMaxType1::UpdateSelectableChoices()
 	AfterChange();
 }
 
-void ScreenSelectMaxType1::BeforeChange()
+void ScreenSelectStyle::BeforeChange()
 {
 	// dim/hide old selection
-	m_sprIcon[m_iSelection].SetEffectNone();
-	m_textIcon[m_iSelection].SetEffectNone();
-	m_sprPreview[m_iSelection].StopTweening();
+	m_sprIcon[m_iSelection].Command( ICON_LOSE_FOCUS_COMMAND );
+	m_textIcon[m_iSelection].Command( ICON_LOSE_FOCUS_COMMAND );
+	m_sprPicture[m_iSelection].StopTweening();
 	m_sprInfo[m_iSelection].StopTweening();
-	m_sprPreview[m_iSelection].SetDiffuse( RageColor(1,1,1,0) );
+	m_sprPicture[m_iSelection].SetDiffuse( RageColor(1,1,1,0) );
 	m_sprInfo[m_iSelection].SetDiffuse( RageColor(1,1,1,0) );
-	m_sprPreview[m_iSelection].SetGlow( RageColor(1,1,1,0) );
+	m_sprPicture[m_iSelection].SetGlow( RageColor(1,1,1,0) );
 	m_sprInfo[m_iSelection].SetGlow( RageColor(1,1,1,0) );
 }
 
-void ScreenSelectMaxType1::AfterChange()
+void ScreenSelectStyle::AfterChange()
 {
-	m_sprIcon[m_iSelection].SetEffectGlowShift();
-	m_textIcon[m_iSelection].SetEffectGlowShift();
-	m_sprPreview[m_iSelection].SetDiffuse( RageColor(1,1,1,1) );
+	m_sprIcon[m_iSelection].Command( ICON_GAIN_FOCUS_COMMAND );
+	m_textIcon[m_iSelection].Command( ICON_GAIN_FOCUS_COMMAND );
+	m_sprPicture[m_iSelection].SetDiffuse( RageColor(1,1,1,1) );
 	m_sprInfo[m_iSelection].SetDiffuse( RageColor(1,1,1,1) );
-	m_sprPreview[m_iSelection].SetZoom( 1 );
+	m_sprPicture[m_iSelection].SetZoom( 1 );
 	m_sprInfo[m_iSelection].SetZoom( 1 );
-	m_sprPreview[m_iSelection].Command( PREVIEW_ON_COMMAND );
+	m_sprPicture[m_iSelection].Command( PICTURE_ON_COMMAND );
 	m_sprInfo[m_iSelection].Command( INFO_ON_COMMAND );
 }

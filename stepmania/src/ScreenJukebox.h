@@ -1,3 +1,5 @@
+#ifndef ScreenJukebox_H
+#define ScreenJukebox_H
 /*
 -----------------------------------------------------------------------------
  Class: ScreenJukebox
@@ -16,7 +18,7 @@
 class ScreenJukebox : public ScreenGameplay
 {
 public:
-	ScreenJukebox();
+	ScreenJukebox( bool bDemonstration = false );
 	~ScreenJukebox();
 
 	virtual void Update( float fDeltaTime );
@@ -25,7 +27,10 @@ public:
 
 protected:
 
+	TransitionBGAnimation	m_In;
+	TransitionBGAnimation	m_Out;
+
 };
 
-
+#endif
 

@@ -45,11 +45,7 @@ OptionRowData g_InputOptionsLines[NUM_INPUT_OPTIONS_LINES] = {
 };
 
 ScreenInputOptions::ScreenInputOptions() :
-	ScreenOptions(
-		THEME->GetPathTo("BGAnimations","input options"),
-		THEME->GetPathTo("Graphics","input options page"),
-		THEME->GetPathTo("Graphics","input options top edge")
-		)
+	ScreenOptions("ScreenInputOptions",false)
 {
 	LOG->Trace( "ScreenInputOptions::ScreenInputOptions()" );
 
@@ -67,9 +63,9 @@ ScreenInputOptions::ScreenInputOptions() :
 		g_InputOptionsLines, 
 		NUM_INPUT_OPTIONS_LINES,
 		false );
-	m_Menu.StopTimer();
+	m_Menu.m_MenuTimer.StopTimer();
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","input options music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenInputOptions music") );
 }
 
 void ScreenInputOptions::ImportOptions()

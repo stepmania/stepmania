@@ -21,7 +21,7 @@
 #include "SmallGradeDisplay.h"
 #include "GameConstantsAndTypes.h"
 #include "MusicSortDisplay.h"
-#include "MusicStatusDisplay.h"
+#include "WheelNotifyIcon.h"
 #include "Screen.h"		// for ScreenMessage
 #include "ScoreDisplayNormal.h"
 #include "ScrollBar.h"

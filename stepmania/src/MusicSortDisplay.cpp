@@ -21,7 +21,7 @@
 
 MusicSortDisplay::MusicSortDisplay()
 {
-	Load( THEME->GetPathTo("Graphics","music sort icons 1x4") );
+	Load( THEME->GetPathTo("Graphics","MusicSortDisplay icons 1x4") );
 	StopAnimating();
 }
 

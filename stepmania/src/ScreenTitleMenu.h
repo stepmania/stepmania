@@ -13,9 +13,10 @@
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "TransitionFade.h"
-#include "RandomSample.h"
+#include "RageSound.h"
 #include "BGAnimation.h"
 #include "RageTimer.h"
+#include "RandomSample.h"
 
 
 class ScreenTitleMenu : public ScreenLogo
@@ -72,15 +73,15 @@ private:
 	BitmapText		m_textHelp;
 	BitmapText		m_textChoice[NUM_CHOICES];
 
-	Sprite			m_sprJointPremiumMsg;
-
 	RandomSample	m_soundAttract;
-	RandomSample	m_soundChange;
-	RandomSample	m_soundSelect;
-	RandomSample	m_soundInvalid;
+	RageSound		m_soundChange;
+	RageSound		m_soundSelect;
+	RageSound		m_soundInvalid;
 	
 	RageTimer		TimeToDemonstration;
-	RageTimer		TimeToJPScroll;
+
+	BGAnimation		m_CoinMode;
+	BGAnimation		m_JointPremium;
 };
 
 

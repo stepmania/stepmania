@@ -26,14 +26,10 @@
 #include "ModeChoice.h"
 
 
-#define CHOICES_TYPE			THEME->GetMetricI(m_sClassName,"ChoicesType")
 #define CHOICES					THEME->GetMetric (m_sClassName,"Choices")
 #define HELP_TEXT				THEME->GetMetric (m_sClassName,"HelpText")
 #define TIMER_SECONDS			THEME->GetMetricI(m_sClassName,"TimerSeconds")
-#define NEXT_SCREEN				THEME->GetMetric (m_sClassName,"NextScreen")
-#define NEXT_SCREEN_ARCADE		THEME->GetMetric (m_sClassName,"NextScreenArcade")
-#define NEXT_SCREEN_ONI			THEME->GetMetric (m_sClassName,"NextScreenOni")
-#define NEXT_SCREEN_BATTLE		THEME->GetMetric (m_sClassName,"NextScreenBattle")
+#define NEXT_SCREEN( choice )	THEME->GetMetric (m_sClassName,ssprintf("NextScreen%d",choice+1))
 
 
 ScreenSelect::ScreenSelect( CString sClassName )
@@ -42,190 +38,102 @@ ScreenSelect::ScreenSelect( CString sClassName )
 
 	m_sClassName = sClassName;
 
-
-	m_type = (ChoicesType)CHOICES_TYPE;
-	m_sClassName = sClassName;
-
-
-	GAMESTATE->m_bPlayersCanJoin = (m_type==CHOICES_STYLE)||(m_type==CHOICES_MODE);
+	GAMESTATE->m_bPlayersCanJoin = false;	
+	// Set this true later if we discover a choice that chooses the Style
 
 
-	switch( m_type )
+	CStringArray asChoices;
+	split( CHOICES, ",", asChoices );
+
+	for( unsigned c=0; c<asChoices.size(); c++ )
 	{
-	case CHOICES_STYLE:
+		CString sChoice = asChoices[c];
+
+		ModeChoice mc = {	// fill this in below
+			GAME_INVALID,
+			STYLE_INVALID,
+			PLAY_MODE_INVALID,
+			DIFFICULTY_INVALID,
+			"",
+			1 };
+
+		strncpy( mc.name, sChoice, sizeof(mc.name) );
+
+		bool bChoiceIsInvalid = false;
+
+		CStringArray asBits;
+		split( sChoice, "-", asBits );
+		for( unsigned b=0; b<asBits.size(); b++ )
 		{
-			vector<Style> aStyles;
-			GAMEMAN->GetStylesForGame( GAMESTATE->m_CurGame, aStyles );
-			ASSERT( !aStyles.empty() );	// every game should have at least one Style, or else why have the Game? :-)
+			CString sBit = asBits[b];
 
-			for( unsigned s=0; s<aStyles.size(); s++ )
+			Game game = GAMEMAN->StringToGameType( sBit );
+			if( game != GAME_INVALID )
 			{
-				Style style = aStyles[s];
-				const StyleDef* pStyleDef = GAMEMAN->GetStyleDefForStyle(aStyles[s]);
+				mc.game = game;
+				continue;
+			}
 
-				int iNumSidesJoinedToPlay;
-				switch( pStyleDef->m_StyleType )
-				{
-				case StyleDef::ONE_PLAYER_ONE_CREDIT:	iNumSidesJoinedToPlay = 1;	break;
-				case StyleDef::TWO_PLAYERS_TWO_CREDITS:	iNumSidesJoinedToPlay = 2;	break;
-				case StyleDef::ONE_PLAYER_TWO_CREDITS:	iNumSidesJoinedToPlay = 2;	break;
-				default:	ASSERT(0);	iNumSidesJoinedToPlay = 1;	
-				}
-				
-				ModeChoice mc = {
-					GAMESTATE->m_CurGame,
-					style,
-					PLAY_MODE_INVALID,
-					DIFFICULTY_INVALID,
-					"",
-					iNumSidesJoinedToPlay			
-				};
-				strcpy( mc.name, pStyleDef->m_szName );
-				m_aModeChoices.push_back( mc );
+			Style style = GAMEMAN->GameAndStringToStyle( GAMESTATE->m_CurGame, sBit );
+			if( style != STYLE_INVALID )
+			{
+				mc.style = style;
+				// There is a choices that allows players to choose a style.  Allow joining.
+				GAMESTATE->m_bPlayersCanJoin = true;
+				continue;
+			}
+
+			PlayMode pm = StringToPlayMode( sBit );
+			if( pm != PLAY_MODE_INVALID )
+			{
+				mc.pm = pm;
+				continue;
+			}
+
+			Difficulty dc = StringToDifficulty( sBit );
+			if( dc != DIFFICULTY_INVALID )
+			{
+				mc.dc = dc;
+				continue;
+			}
+
+			LOG->Warn( "The choice token '%s' is not recognized as a Game, Style, PlayMode, or Difficulty.  The choice containing this token will be ignored.", sBit.GetString() );
+			bChoiceIsInvalid |= true;
+		}
+
+		if( mc.style != STYLE_INVALID )
+		{
+			const StyleDef* pStyleDef = GAMEMAN->GetStyleDefForStyle(mc.style);
+			switch( pStyleDef->m_StyleType )
+			{
+			case StyleDef::ONE_PLAYER_ONE_CREDIT:
+				mc.numSidesJoinedToPlay = 1;
+				break;
+			case StyleDef::TWO_PLAYERS_TWO_CREDITS:
+			case StyleDef::ONE_PLAYER_TWO_CREDITS:
+				mc.numSidesJoinedToPlay = 2;
+				break;
+			default:
+				ASSERT(0);
 			}
 		}
-		break;
-	case CHOICES_MODE:
-		{
-			CStringArray asChoices;
-			split( CHOICES, ",", asChoices );
 
-			for( unsigned c=0; c<asChoices.size(); c++ )
-			{
-				ModeChoice mc = {	// fill this in below
-					GAMESTATE->m_CurGame,
-					STYLE_INVALID,
-					PLAY_MODE_INVALID,
-					DIFFICULTY_INVALID,
-					"",
-					1 };
-
-				CStringArray asBits;
-				split( asChoices[c], "-", asBits );
-
-				if( asBits.size() != 3 )
-					RageException::Throw( 
-						"The mode choice '%s' is invalid.  Mode choices must be in the format "
-						"'style-playmode-difficulty'", asChoices[c].GetString() );
-
-				mc.game = GAMESTATE->m_CurGame;
-
-				mc.style = GAMEMAN->GameAndStringToStyle( mc.game, asBits[0] );
-				if( mc.style == STYLE_INVALID )
-					RageException::Throw( 
-						"The specified style '%s' in the mode choice '%s' is invalid.", asBits[0].GetString(), asChoices[c].GetString() );
+		if( ! bChoiceIsInvalid )
+			m_aModeChoices.push_back( mc );
 		
-				mc.pm = StringToPlayMode( asBits[1] );
-				if( mc.pm == PLAY_MODE_INVALID )
-					RageException::Throw( 
-						"The specified play mode '%s' in the mode choice '%s' is invalid.", asBits[1].GetString(), asChoices[c].GetString() );
-
-				mc.dc = StringToDifficulty( asBits[2] );
-				if( mc.dc == DIFFICULTY_INVALID )
-					RageException::Throw( 
-						"The specified difficulty '%s' in the mode choice '%s' is invalid.", asBits[2].GetString(), asChoices[c].GetString() );
-
-				strcpy( mc.name, asChoices[c] );
-				
-				const StyleDef* pStyleDef = GAMEMAN->GetStyleDefForStyle(mc.style);
-				switch( pStyleDef->m_StyleType )
-				{
-				case StyleDef::ONE_PLAYER_ONE_CREDIT:
-					mc.numSidesJoinedToPlay = 1;
-					break;
-				case StyleDef::TWO_PLAYERS_TWO_CREDITS:
-				case StyleDef::ONE_PLAYER_TWO_CREDITS:
-					mc.numSidesJoinedToPlay = 2;
-					break;
-				default:
-					ASSERT(0);
-				}
-	
-				m_aModeChoices.push_back( mc );
-			}
-		}
-		break;
-	case CHOICES_DIFFICULTY:
-		{
-			if( GAMESTATE->m_CurStyle == STYLE_INVALID )
-				RageException::Throw( "The current Style has not been set.  A theme must set the style before it can display a difficulty selection screen." );
-
-			CStringArray asBits;
-			split( CHOICES, ",", asBits );
-
-			unsigned choice;
-
-			for( choice=0; choice<asBits.size(); choice++ )
-			{
-				Difficulty dc = StringToDifficulty(asBits[choice]);
-				PlayMode pm = StringToPlayMode(asBits[choice]);
-				
-				if( dc!=DIFFICULTY_INVALID )	// valid difficulty
-				{
-					ModeChoice mc = {
-						GAMESTATE->m_CurGame,
-						GAMESTATE->m_CurStyle,
-						PLAY_MODE_ARCADE,
-						dc,
-						"",
-						GAMESTATE->GetNumSidesJoined() };
-					strcpy( mc.name, DifficultyToString(dc) );
-					m_aModeChoices.push_back( mc );
-				}
-				else if( pm!=PLAY_MODE_INVALID )	// valid play mode
-				{
-					ModeChoice mc = {
-						GAMESTATE->m_CurGame,
-						GAMESTATE->m_CurStyle,
-						pm,
-						DIFFICULTY_MEDIUM,
-						"",
-						GAMESTATE->GetNumSidesJoined() };
-					strcpy( mc.name, PlayModeToString(pm) );
-					m_aModeChoices.push_back( mc );
-				}
-				else
-					RageException::Throw( "Invalid Choice%d value '%s'.", choice+1, asBits[choice].GetString() );
-			}
-		}
-		break;
-	case CHOICES_GAME:
-		ASSERT(0);	// TODO
-		break;
-	}
-	
-
-	for( unsigned c=0; c<m_aModeChoices.size(); c++ )
-	{
-		CString sBGAnimationDir = THEME->GetPathToOptional("BGAnimations",ssprintf("%s %s",m_sClassName.GetString(),m_aModeChoices[c].name));
+		
+		CString sBGAnimationDir = THEME->GetPathToOptional("BGAnimations",ssprintf("%s %s",m_sClassName.GetString(),mc.name));
 		if( sBGAnimationDir == "" )
-			sBGAnimationDir = THEME->GetPathTo("BGAnimations",m_sClassName.GetString());
+			sBGAnimationDir = THEME->GetPathTo("BGAnimations",m_sClassName+" background");
 		m_BGAnimations[c].LoadFromAniDir( sBGAnimationDir );
 	}
 
-	m_Menu.Load( 	
-		"",		// don't load any BGAnimation.  We have our own.
-		THEME->GetPathTo("Graphics",m_sClassName+" top edge"),
-		HELP_TEXT, false, true, TIMER_SECONDS
-		);
+	m_Menu.Load( sClassName, true, false );	// don't load any BGAnimation.  We have our own.
 	this->AddChild( &m_Menu );
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sClassName+" intro") );
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds",m_sClassName+" music") );
-
-	switch( m_type )
-	{
-	case CHOICES_STYLE:
-	case CHOICES_MODE:
-		// This is probably the first screen in the menu sequence.
-		m_Menu.TweenOnScreenFromBlack( SM_None );
-		break;
-	case CHOICES_DIFFICULTY:
-		// This is probably not the first screen in the menu sequence.
-		m_Menu.TweenOnScreenFromMenu( SM_None );
-		break;
-	}
 }
 
 
@@ -255,10 +163,8 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 	if( MenuI.IsValid() && MenuI.button==MENU_BUTTON_START )
 	{
 		PlayerNumber pn = MenuI.player;
-		switch( m_type )
+		if( GAMESTATE->m_bPlayersCanJoin )
 		{
-		case CHOICES_STYLE:
-		case CHOICES_MODE:
 			if( pn!=PLAYER_INVALID  && !GAMESTATE->m_bSideIsJoined[pn] )
 			{
 				/* I think JP should allow playing two-pad singleplayer modes (doubles),
@@ -271,6 +177,10 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 				* Also, credit deduction should be handled in StepMania.cpp (along with
 				* the coin logic) using GAMESTATE->m_bPlayersCanJoin, since there
 				* are other screens you can join (eg ScreenCaution). -glenn */
+				
+				/* Joint premium on a DDR machine does allow two player modes with a single
+				 * credit.		-Chris */
+
 				if( PREFSMAN->m_CoinMode == PrefsManager::COIN_PAY )
 				{
 					if( !PREFSMAN->m_bJointPremium )
@@ -287,17 +197,16 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 				}
 
 				/* If credits had to be used, it's already taken care of.. add the player */
-				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
+				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common start") );
 				GAMESTATE->m_bSideIsJoined[pn] = true;
 				SCREENMAN->RefreshCreditsMessages();
 				this->UpdateSelectableChoices();
 				return;
 			}
-			break;
 		}
 	}
 
-	if( m_Menu.IsClosing() )
+	if( m_Menu.IsTransitioning() )
 		return;
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
@@ -316,9 +225,8 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 			GAMESTATE->m_bPlayersCanJoin = false;
 			SCREENMAN->RefreshCreditsMessages();
 
-			m_Menu.StopTimer();
-
-			m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
+			if( !m_Menu.IsTransitioning() )
+				m_Menu.StartTransitioning( SM_GoToNextScreen );
 		}
 		break;
 	case SM_MenuTimer:
@@ -333,25 +241,9 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	case SM_GoToNextScreen:
-		switch( m_type )
 		{
-		case CHOICES_STYLE:
-			// if they only chose a style, then the play mode isn't set.
-			SCREENMAN->SetNewScreen( NEXT_SCREEN );
-			break;
-		case CHOICES_MODE:
-		case CHOICES_DIFFICULTY:
-			// go to a specific screen depending on the play mode
-			switch( GAMESTATE->m_PlayMode )
-			{
-			case PLAY_MODE_ARCADE:	SCREENMAN->SetNewScreen( NEXT_SCREEN_ARCADE );	break;
-			case PLAY_MODE_NONSTOP:
-			case PLAY_MODE_ONI:
-			case PLAY_MODE_ENDLESS:	SCREENMAN->SetNewScreen( NEXT_SCREEN_ONI );		break;
-			case PLAY_MODE_BATTLE:	SCREENMAN->SetNewScreen( NEXT_SCREEN_BATTLE );	break;
-			default:	ASSERT(0);
-			}
-			break;
+			int iSelectionIndex = GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
+			SCREENMAN->SetNewScreen( NEXT_SCREEN(iSelectionIndex) );
 		}
 		break;
 	}
@@ -361,5 +253,5 @@ void ScreenSelect::MenuBack( PlayerNumber pn )
 {
 	SOUNDMAN->StopMusic();
 
-	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
+	m_Menu.Back( SM_GoToPrevScreen );
 }

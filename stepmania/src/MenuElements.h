@@ -19,9 +19,7 @@
 #include "RandomSample.h"
 #include "TransitionFade.h"
 #include "MenuTimer.h"
-#include "TransitionFadeWipe.h"
-#include "TransitionKeepAlive.h"
-#include "TransitionInvisible.h"
+#include "TransitionBGAnimation.h"
 #include "TipDisplay.h"
 #include "BGAnimation.h"
 
@@ -36,47 +34,33 @@ public:
 
 	virtual void DrawPrimitives();
 
-	void Load( CString sBackgroundPath, CString sTopEdgePath, CString sHelpText, bool bShowStyleIcon, bool bTimerEnabled, int iTimerSeconds );
-	void SetTimer( int iTimerSeconds );
-	void StartTimer();
-	void StallTimer();
-	void StopTimer();
+	void Load( CString sClassName, bool bEnableTimer = true, bool bLoadStyleIcon = true );
 
 	void StealthTimer( int iActive );
+
 	void DrawTopLayer();
 	void DrawBottomLayer();
 
-	void TweenOnScreenFromMenu( ScreenMessage smSendWhenDone, bool bLeaveKeepAliveOn = false );
-	void TweenOffScreenToMenu( ScreenMessage smSendWhenDone );
-	void ImmedOnScreenFromMenu( bool bLeaveKeepAliveOn = false );
-	void ImmedOffScreenToMenu();
+	void StartTransitioning( ScreenMessage smSendWhenDone );
+	void Back( ScreenMessage smSendWhenDone );
+	bool IsTransitioning();
 
-	void TweenOnScreenFromBlack( ScreenMessage smSendWhenDone );
-	void TweenOffScreenToBlack( ScreenMessage smSendWhenDone, bool bPlayBackSound );
+public:	// let owner tinker with these objects
 
-	bool IsClosing() { return m_Wipe.IsClosing() || m_KeepAlive.IsClosing() || m_Invisible.IsClosing(); };
+	CString				m_sClassName;
 
-protected:
-	void TweenTopLayerOnScreen(float tm=-1);
-	void TweenTopLayerOffScreen(float tm=-1);
+	BGAnimation			m_Background;
 
-	void TweenBottomLayerOnScreen();
-	void TweenBottomLayerOffScreen();
-
-public:
-	Sprite				m_sprTopEdge;
+	Sprite				m_sprHeader;
 	Sprite				m_sprStyleIcon;
 	MenuTimer			m_MenuTimer;
-	Sprite				m_sprBottomEdge;
-	BGAnimation	m_Background;
-	Quad				m_quadBrightness;	// for darkening the background
+	Sprite				m_sprFooter;
 	TipDisplay			m_textHelp;
 
-	TransitionFadeWipe	m_Wipe;			// for going back
-	TransitionKeepAlive	m_KeepAlive;	// going back and forward
-	TransitionInvisible	m_Invisible;	// for going forward to Menu
+	TransitionBGAnimation	m_In;
+	TransitionBGAnimation	m_Out;
+	TransitionBGAnimation	m_Back;
 
-	RageSound m_soundSwoosh;
 	RageSound m_soundBack;
 };
 

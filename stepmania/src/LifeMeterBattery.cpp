@@ -39,8 +39,8 @@ LifeMeterBattery::LifeMeterBattery()
 	m_fBatteryBlinkTime = 0;
 
 	
-	m_soundGainLife.Load( THEME->GetPathTo("Sounds","gameplay oni gain life") );
-	m_soundLoseLife.Load( THEME->GetPathTo("Sounds","gameplay oni lose life") );
+	m_soundGainLife.Load( THEME->GetPathTo("Sounds","LifeMeterBattery gain") );
+	m_soundLoseLife.Load( THEME->GetPathTo("Sounds","LifeMeterBattery lose") );
 }
 
 void LifeMeterBattery::Load( PlayerNumber pn )
@@ -49,34 +49,27 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 
 	bool bPlayerEnabled = GAMESTATE->IsPlayerEnabled(pn);
 
-	m_sprFrame.Load( THEME->GetPathTo("Graphics","gameplay lifemeter oni") );
+	m_sprFrame.Load( THEME->GetPathTo("Graphics","LifeMeterBattery frame") );
 	this->AddChild( &m_sprFrame );
 
-	m_sprBattery.Load( THEME->GetPathTo("Graphics","gameplay lifemeter battery") );
+	m_sprBattery.Load( THEME->GetPathTo("Graphics","LifeMeterBattery lives 1x4") );
 	m_sprBattery.StopAnimating();
 	if( bPlayerEnabled )
 		this->AddChild( &m_sprBattery );
 
-	m_textNumLives.LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay battery life numbers") );
+	m_textNumLives.LoadFromNumbers( THEME->GetPathTo("Numbers","LifeMeterBattery life numbers") );
 	m_textNumLives.SetDiffuse( RageColor(1,1,1,1) );
 	m_textNumLives.EnableShadow( false );
 	if( bPlayerEnabled )
 		this->AddChild( &m_textNumLives );
 
+	m_textPercent.LoadFromNumbers( THEME->GetPathTo("Numbers","LifeMeterBattery percent numbers") );
+	m_textPercent.EnableShadow( false );
+	m_textPercent.SetZoom( 0.7f );
 	if(PREFSMAN->m_bDancePointsForOni)
-	{
-		m_textPercent.LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay battery dance point numbers") );
-		m_textPercent.EnableShadow( false );
-		m_textPercent.SetZoom( 0.7f );
 		m_textPercent.SetText( "     " );
-	}
 	else
-	{
-		m_textPercent.LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay battery percent numbers") );
-		m_textPercent.EnableShadow( false );
-		m_textPercent.SetZoom( 0.7f );
 		m_textPercent.SetText( "00.0%" );
-	}
 	if( bPlayerEnabled )
 		this->AddChild( &m_textPercent );
 

@@ -49,11 +49,7 @@ OptionRowData g_OptionsMenuLines[NUM_OPTIONS_MENU_LINES] = {
 };
 
 ScreenOptionsMenu::ScreenOptionsMenu() :
-	ScreenOptions(
-		THEME->GetPathTo("BGAnimations","options menu"),
-		THEME->GetPathTo("Graphics","options menu page"),
-		THEME->GetPathTo("Graphics","options menu top edge")
-		)
+	ScreenOptions("ScreenOptionsMenu",false)
 {
 	LOG->Trace( "ScreenOptionsMenu::ScreenOptionsMenu()" );
 
@@ -71,10 +67,10 @@ ScreenOptionsMenu::ScreenOptionsMenu() :
 		g_OptionsMenuLines, 
 		NUM_OPTIONS_MENU_LINES,
 		false );
-	m_Menu.SetTimer( 99 );
-	m_Menu.StopTimer();
+	m_Menu.m_MenuTimer.SetTimer( 99 );
+	m_Menu.m_MenuTimer.StopTimer();
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","options menu music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenOptionsMenu music") );
 }
 
 /* We depend on the SM options navigation for this screen, not arcade. */

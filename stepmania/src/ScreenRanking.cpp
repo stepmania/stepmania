@@ -45,7 +45,7 @@ const ScreenMessage SM_ShowNextPage		=	(ScreenMessage)(SM_User+67);
 const ScreenMessage SM_HidePage			=	(ScreenMessage)(SM_User+68);
 
 
-ScreenRanking::ScreenRanking() : ScreenAttract("ScreenRanking","ranking")
+ScreenRanking::ScreenRanking() : ScreenAttract("ScreenRanking")
 {
 	m_textCategory.LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
 	m_textCategory.EnableShadow( false );
@@ -59,7 +59,7 @@ ScreenRanking::ScreenRanking() : ScreenAttract("ScreenRanking","ranking")
 
 	for( int i=0; i<NUM_RANKING_LINES; i++ )
 	{
-		m_sprBullets[i].Load( THEME->GetPathTo("Graphics",("ranking bullets 1x5")) );
+		m_sprBullets[i].Load( THEME->GetPathTo("Graphics",("ScreenRanking bullets 1x5")) );
 		m_sprBullets[i].SetXY( BULLETS_START_X+LINE_SPACING_X*i, BULLETS_START_Y+LINE_SPACING_Y*i );
 		m_sprBullets[i].SetDiffuse( RageColor(1,1,1,0) );
 		m_sprBullets[i].StopAnimating();
@@ -149,7 +149,8 @@ ScreenRanking::ScreenRanking() : ScreenAttract("ScreenRanking","ranking")
 		}
 	}
 
-	this->MoveToTail( &m_Fade );
+	this->MoveToTail( &m_In );		// put it in the back so it covers up the stuff we just added
+	this->MoveToTail( &m_Out );		// put it in the back so it covers up the stuff we just added
 
 	this->ClearMessageQueue( SM_BeginFadingOut );	// ignore ScreenAttract's SecsToShow
 
@@ -160,9 +161,10 @@ void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
-	case SM_BeginFadingOut:
-		m_Fade.CloseWipingRight(SM_GoToNextScreen);
-		break;
+		// redundant
+//	case SM_BeginFadingOut:
+//		m_Out.CloseWipingRight(SM_GoToNextScreen);
+//		break;
 	case SM_ShowNextPage:
 		if( m_vPagesToShow.size() > 0 )
 		{
@@ -173,7 +175,7 @@ void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 		}
 		else
 		{
-			m_Fade.CloseWipingRight(SM_GoToNextScreen);
+			m_Out.StartTransitioning(SM_GoToNextScreen);
 		}
 		break;
 	case SM_HidePage:

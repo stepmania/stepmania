@@ -58,11 +58,7 @@ static const int TextureRes[] = {
 };
 
 ScreenGraphicOptions::ScreenGraphicOptions() :
-	ScreenOptions(
-		THEME->GetPathTo("BGAnimations","graphic options"),
-		THEME->GetPathTo("Graphics","graphic options page"),
-		THEME->GetPathTo("Graphics","graphic options top edge")
-		)
+	ScreenOptions("ScreenGraphicOptions",false)
 {
 	LOG->Trace( "ScreenGraphicOptions::ScreenGraphicOptions()" );
 
@@ -80,9 +76,9 @@ ScreenGraphicOptions::ScreenGraphicOptions() :
 		g_GraphicOptionsLines, 
 		NUM_GRAPHIC_OPTIONS_LINES,
 		false );
-	m_Menu.StopTimer();
+	m_Menu.m_MenuTimer.StopTimer();
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","graphic options music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenGraphicOptions music") );
 }
 
 void ScreenGraphicOptions::ImportOptions()

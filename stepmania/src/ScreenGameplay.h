@@ -13,9 +13,7 @@
 
 #include "Screen.h"
 #include "Sprite.h"
-#include "TransitionFade.h"
-#include "TransitionStarWipe.h"
-#include "TransitionFadeWipe.h"
+#include "TransitionBGAnimation.h"
 #include "TransitionOniFade.h"
 #include "BitmapText.h"
 #include "Player.h"
@@ -105,7 +103,6 @@ protected:
 	BitmapText			m_textStageNumber;
 	BitmapText			m_textCourseSongNumber[NUM_PLAYERS];
 
-	Sprite				m_sprMiddleFrame;
 	BPMDisplay			m_BPMDisplay;
 
 	Sprite				m_sprScoreFrame;
@@ -116,20 +113,19 @@ protected:
 	BitmapText			m_textDebug;
 	BitmapText			m_textLyrics;
 
-#define NUM_STATUS_ICONS	2
-	Sprite				m_sprStatusIcons[NUM_STATUS_ICONS];	// shows whether these options are on.
-	void	PositionStatusIcons();	// reposition the three above when the value of one changes
+	BitmapText			m_textOptions;	// for AutoPlay, AutoAdjust
+	void	UpdateOptionsText();
 	
 	BitmapText			m_MaxCombo;
 
-	TransitionFadeWipe	m_Fade;
-	TransitionStarWipe	m_StarWipe;
-
-	FocusingSprite		m_sprReady;
-	FocusingSprite		m_sprHereWeGo;
-	MotionBlurSprite	m_sprCleared;
-	MotionBlurSprite	m_sprFailed;
-	MotionBlurSprite	m_sprTryExtraStage;
+	TransitionBGAnimation	m_Ready;
+	TransitionBGAnimation	m_Go;
+	TransitionBGAnimation	m_Cleared;
+	TransitionBGAnimation	m_Failed;
+	TransitionBGAnimation	m_Extra;
+	TransitionBGAnimation	m_Toasty;	// easter egg
+	TransitionBGAnimation	m_Back;
+	TransitionBGAnimation	m_In;
 
 	BitmapText			m_textSurviveTime;	// only shown in extra stage
 	BitmapText			m_StageName;
@@ -146,8 +142,6 @@ protected:
 
 	Sprite				m_sprOniGameOver[NUM_PLAYERS];
 	void				ShowOniGameOver( PlayerNumber pn );
-
-	Sprite				m_sprToasty;	// easter egg
 
 	RandomSample	m_soundFail;
 	RandomSample	m_soundOniDie;

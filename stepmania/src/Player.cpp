@@ -207,7 +207,7 @@ void Player::Update( float fDeltaTime )
 		if( hn.fStartBeat < fSongBeat && fSongBeat < hn.fEndBeat )	// if the song beat is in the range of this hold
 		{
 			bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
-			if( !GAMESTATE->m_bEditing  &&  (PREFSMAN->m_bAutoPlay  ||  GAMESTATE->m_bDemonstration) )
+			if( !GAMESTATE->m_bEditing  &&  (PREFSMAN->m_bAutoPlay  ||  GAMESTATE->m_bDemonstrationOrJukebox) )
 				bIsHoldingButton = true;
 
 			m_NoteField.m_bIsHoldingHoldNote[i] = bIsHoldingButton && bSteppedOnTapNote;	// set host flag so NoteField can do intelligent drawing
@@ -390,7 +390,7 @@ void Player::Step( int col )
 		else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_BOO;
 		else																		score = TNS_NONE;
 
-		if( !GAMESTATE->m_bEditing && (GAMESTATE->m_bDemonstration  ||  PREFSMAN->m_bAutoPlay) )
+		if( !GAMESTATE->m_bEditing && (GAMESTATE->m_bDemonstrationOrJukebox  ||  PREFSMAN->m_bAutoPlay) )
 			score = TNS_MARVELOUS;
 
 		if( score==TNS_MARVELOUS  &&  !PREFSMAN->m_bMarvelousTiming )
@@ -550,7 +550,7 @@ int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 
 void Player::CrossedRow( int iNoteRow )
 {
-	if( PREFSMAN->m_bAutoPlay  ||  GAMESTATE->m_bDemonstration )
+	if( PREFSMAN->m_bAutoPlay  ||  GAMESTATE->m_bDemonstrationOrJukebox )
 	{
 		// check to see if there's at the crossed row
 		for( int t=0; t<GetNumTracks(); t++ )

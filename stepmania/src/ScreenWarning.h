@@ -15,7 +15,7 @@
 class ScreenWarning : public ScreenAttract
 {
 public:
-	ScreenWarning() : ScreenAttract("ScreenWarning","warning") {};
+	ScreenWarning() : ScreenAttract("ScreenWarning") {};
 };
 
 

@@ -25,7 +25,7 @@ SnapDisplay::SnapDisplay()
 	int i;
 	for( i=0; i<2; i++ )
 	{
-		m_sprIndicators[i].Load( THEME->GetPathTo("Graphics","edit snap indicator") );
+		m_sprIndicators[i].Load( THEME->GetPathTo("Graphics","SnapDisplay icon 6x1") );
 		ASSERT( m_sprIndicators[i].GetNumStates() == NUM_NOTE_TYPES );
 		m_sprIndicators[i].StopAnimating();
 		this->AddChild( &m_sprIndicators[i] );

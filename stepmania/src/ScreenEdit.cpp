@@ -224,7 +224,7 @@ ScreenEdit::ScreenEdit()
 	GAMESTATE->m_SongOptions.m_fMusicRate = 1;
 	NOTESKIN->SwitchNoteSkin( PLAYER_1, "note" );	// change noteskin before loading all of the edit Actors
 
-	m_BGAnimation.LoadFromAniDir( THEME->GetPathTo("BGAnimations","edit") );
+	m_BGAnimation.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenEdit background") );
 
 	shiftAnchor = -1;
 	m_SnapDisplay.SetXY( EDIT_X, EDIT_GRAY_Y );
@@ -260,7 +260,7 @@ ScreenEdit::ScreenEdit()
 
 	m_Fade.SetClosed();
 
-	m_sprHelp.Load( THEME->GetPathTo("Graphics","edit help") );
+	m_sprHelp.Load( THEME->GetPathTo("Graphics","ScreenEdit help") );
 	m_sprHelp.SetHorizAlign( Actor::align_left );
 	m_sprHelp.SetXY( HELP_X, HELP_Y );
 
@@ -271,7 +271,7 @@ ScreenEdit::ScreenEdit()
 	m_textHelp.SetZoom( 0.5f );
 	m_textHelp.SetText( HELP_TEXT );
 
-	m_sprInfo.Load( THEME->GetPathTo("Graphics","edit info") );
+	m_sprInfo.Load( THEME->GetPathTo("Graphics","ScreenEdit Info") );
 	m_sprInfo.SetHorizAlign( Actor::align_right );
 	m_sprInfo.SetXY( INFO_X, INFO_Y );
 
@@ -282,16 +282,15 @@ ScreenEdit::ScreenEdit()
 	m_textInfo.SetZoom( 0.5f );
 	//m_textInfo.SetText();	// set this below every frame
 
-	m_soundChangeLine.Load( THEME->GetPathTo("Sounds","edit change line") );
-	m_soundChangeSnap.Load( THEME->GetPathTo("Sounds","edit change snap") );
-	m_soundMarker.Load(		THEME->GetPathTo("Sounds","edit marker") );
-	m_soundInvalid.Load(	THEME->GetPathTo("Sounds","menu invalid") );
+	m_soundChangeLine.Load( THEME->GetPathTo("Sounds","ScreenEdit line") );
+	m_soundChangeSnap.Load( THEME->GetPathTo("Sounds","ScreenEdit snap") );
+	m_soundMarker.Load(		THEME->GetPathTo("Sounds","ScreenEdit marker") );
 
 
 	m_soundMusic.Load(m_pSong->GetMusicPath());
 	m_soundMusic.SetAccurateSync(true);
 
-	m_soundAssistTick.Load(		THEME->GetPathTo("Sounds","gameplay assist tick") );
+	m_soundAssistTick.Load(		THEME->GetPathTo("Sounds","ScreenEdit assist tick") );
 
 	m_Fade.OpenWipingRight();
 }

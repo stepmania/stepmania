@@ -1,8 +1,8 @@
-#ifndef MUSICSTATUSDISPLAY_H
-#define MUSICSTATUSDISPLAY_H
+#ifndef WheelNotifyIcon_H
+#define WheelNotifyIcon_H
 /*
 -----------------------------------------------------------------------------
- Class: MusicStatusDisplay
+ Class: WheelNotifyIcon
 
  Desc: A little graphic to the left of the song's text banner in the MusicWheel.
 
@@ -16,10 +16,10 @@
 
 
 
-class MusicStatusDisplay : public Sprite
+class WheelNotifyIcon : public Sprite
 {
 public:
-	MusicStatusDisplay();
+	WheelNotifyIcon();
 
 	struct Flags
 	{

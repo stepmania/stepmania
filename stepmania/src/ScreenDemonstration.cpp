@@ -16,7 +16,7 @@
 #include "GameState.h"
 #include "SongManager.h"
 #include "StepMania.h"
-#include "SDL_utils.h"
+#include "ScreenAttract.h"	// for AttractInput()
 
 
 #define SECONDS_TO_SHOW			THEME->GetMetricF("ScreenDemonstration","SecondsToShow")
@@ -24,15 +24,10 @@
 
 
 const ScreenMessage	SM_NotesEnded				= ScreenMessage(SM_User+101);	// MUST be same as in ScreenGameplay
-const ScreenMessage	SM_BeginFadingToNextScreen	= ScreenMessage(SM_User+1000);
 
 
-bool SetUpSongOptions()		// always return true.
+bool PrepareForDemonstration()		// always return true.
 {
-	//
-	// Set the current song to prepare for a demonstration
-	//
-
 	switch( GAMESTATE->m_CurGame )
 	{
 	case GAME_DANCE:	GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;			break; 
@@ -47,83 +42,10 @@ bool SetUpSongOptions()		// always return true.
 	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
 
 
-	//
-	// Search for a Song and Steps to play during the demo
-	//
-	for( int i=0; i<600; i++ )	// try 600 times
-	{
-		Song* pSong = SONGMAN->GetRandomSong();
-		if( pSong == NULL )	// returns NULL there are no songs
-			return true;	// we need to detect this and abort demonstration later
-
-		if( pSong->m_apNotes.empty() )
-			continue;	// skip
-		
-		if( !pSong->HasMusic() )
-			continue;	// skip
-
-		vector<Notes*> apNotes;
-		pSong->GetNotes( apNotes, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
-
-		if( apNotes.empty() )
-			continue;	// skip
-
-		// Found something we can use!
-		Notes* pNotes = apNotes[ rand()%apNotes.size() ];
-
-		GAMESTATE->m_pCurSong = pSong;
-		for( int p=0; p<NUM_PLAYERS; p++ )
-			GAMESTATE->m_pCurNotes[p] = pNotes;
-		
-		break;	// done looking
-	}
-
-	ASSERT( GAMESTATE->m_pCurSong );
-
-	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-
-	// choose some cool options
-	int Benchmark = 0;
-	if(Benchmark)
-	{
-		/* Note that you also need to make sure you benchmark with the
-		 * same notes.  I use a copy of MaxU with only heavy notes included. */
-		for( int p=0; p<NUM_PLAYERS; p++ )
-		{
-			if( !GAMESTATE->IsPlayerEnabled(p) )
-				continue;
-
-			/* Lots and lots of arrows.  This might even bias to arrows a little
-			 * too much. */
-			GAMESTATE->m_PlayerOptions[p].Init();
-			GAMESTATE->m_PlayerOptions[p].m_fScrollSpeed = .25f;
-			GAMESTATE->m_PlayerOptions[p].m_fEffects[ PlayerOptions::EFFECT_SPACE ] = 1;
-			GAMESTATE->m_PlayerOptions[p].m_fEffects[ PlayerOptions::EFFECT_MINI ] = 1;
-		}
-		GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
-		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
-	}
-
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
-			continue;
-
-		GAMESTATE->m_PlayerOptions[p].Init();
-		GAMESTATE->m_PlayerOptions[p].ChooseRandomMofifiers();
-	}
-
-	GAMESTATE->m_SongOptions = SongOptions();
-
-	GAMESTATE->m_SongOptions.m_LifeType = (randomf(0,1)>0.8f) ? SongOptions::LIFE_BATTERY : SongOptions::LIFE_BAR;
-	GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
-
-	GAMESTATE->m_bDemonstration = true;
-
 	return true;
 }
 
-ScreenDemonstration::ScreenDemonstration() : ScreenGameplay(SetUpSongOptions())	// this is a hack to get some code to execute before the ScreenGameplay constructor
+ScreenDemonstration::ScreenDemonstration() : ScreenJukebox( PrepareForDemonstration() )	// this is a hack to get some code to execute before the ScreenGameplay constructor
 {
 	LOG->Trace( "ScreenDemonstration::ScreenDemonstration()" );
 
@@ -134,41 +56,29 @@ ScreenDemonstration::ScreenDemonstration() : ScreenGameplay(SetUpSongOptions())	
 	}
 
 
-	m_sprDemonstrationOverlay.Load( THEME->GetPathTo("Graphics","demonstration overlay") );
-	m_sprDemonstrationOverlay.SetXY( CENTER_X, CENTER_Y );
-	this->AddChild( &m_sprDemonstrationOverlay );
+	m_Overlay.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenDemonstration overlay") );
+	this->AddChild( &m_Overlay );
 
-	m_sprDemonstrationBlink.Load( THEME->GetPathTo("Graphics","demonstration blink") );
-	m_sprDemonstrationBlink.SetXY( CENTER_X, CENTER_Y );
-	m_sprDemonstrationBlink.SetEffectDiffuseBlink();
-	this->AddChild( &m_sprDemonstrationBlink );
+	this->MoveToTail( &m_In );
+	this->MoveToTail( &m_Out );
 
-	this->MoveToTail( &m_Fade );
-
-	m_Fade.OpenWipingRight();
-
-	ClearMessageQueue();	// remove all of the messages set in ScreenGameplay that animate "ready", "here we go", etc.
+	ClearMessageQueue();	// remove all of the messages set in ScreenGameplay that drive "ready", "go", etc.
 
 	GAMESTATE->m_bPastHereWeGo = true;
 
-	m_StarWipe.SetOpened();
 	m_DancingState = STATE_DANCING;
-	this->SendScreenMessage( SM_BeginFadingToNextScreen, SECONDS_TO_SHOW );	
+	this->SendScreenMessage( SM_BeginFadingOut, SECONDS_TO_SHOW );	
 }
 
 ScreenDemonstration::~ScreenDemonstration()
 {
-	GAMESTATE->m_bDemonstration = false;
+	GAMESTATE->m_bDemonstrationOrJukebox = false;
 	GAMESTATE->Reset();
 }
 
 void ScreenDemonstration::Update( float fDeltaTime )
 {
 	ScreenGameplay::Update( fDeltaTime );
-
-	// hide status icons
-	for( int i=0; i<NUM_STATUS_ICONS; i++ )
-		m_sprStatusIcons[i].SetDiffuse( RageColor(1,1,1,0) );	
 }
 
 void ScreenDemonstration::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -176,45 +86,15 @@ void ScreenDemonstration::Input( const DeviceInput& DeviceI, const InputEventTyp
 	//LOG->Trace( "ScreenDemonstration::Input()" );
 
 
-	//
-	// This should be the same as ScreenAttract::Input()
-	//
-
-	if(type != IET_FIRST_PRESS) return; // don't care
-
-	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F3 )
-	{
-		(int&)PREFSMAN->m_CoinMode = (PREFSMAN->m_CoinMode+1) % PrefsManager::NUM_COIN_MODES;
-		/*ResetGame();
-				This causes problems on ScreenIntroMovie, which results in the
-				movie being restarted and/or becoming out-of-synch -- Miryokuteki */
-
-		CString sMessage = "Coin Mode: ";
-		switch( PREFSMAN->m_CoinMode )
-		{
-		case PrefsManager::COIN_HOME:	sMessage += "HOME";	break;
-		case PrefsManager::COIN_PAY:	sMessage += "PAY";	break;
-		case PrefsManager::COIN_FREE:	sMessage += "FREE";	break;
-		}
-		SCREENMAN->RefreshCreditsMessages();
-		SCREENMAN->SystemMessage( sMessage );
-		return;
-	}
-
+	// Stop music on Start or Coin
+	// TODO:  Change ScreenGameplay to play sound through the global sound object
+	// so that this don't need to be special cased.
 	if( MenuI.IsValid() )
 	{
 		switch( MenuI.button )
 		{
-		case MENU_BUTTON_LEFT:
-		case MENU_BUTTON_RIGHT:
-			if( !m_Fade.IsOpening() && !m_Fade.IsClosing() )
-				m_Fade.CloseWipingRight( SM_GoToNextScreen );
-			break;
 		case MENU_BUTTON_COIN:
-			Screen::MenuCoin( MenuI.player );	// increment coins, play sound
 			m_soundMusic.Stop();
-			SDL_Delay( 800 );	// do a little pause, like the arcade does
-			SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 			break;
 		case MENU_BUTTON_START:
 		case MENU_BUTTON_BACK:
@@ -228,9 +108,6 @@ void ScreenDemonstration::Input( const DeviceInput& DeviceI, const InputEventTyp
 			case PrefsManager::COIN_FREE:
 			case PrefsManager::COIN_HOME:
 				m_soundMusic.Stop();
-				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
-				SDL_Delay( 800 );	// do a little pause, like the arcade does
-				SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 				break;
 			default:
 				ASSERT(0);
@@ -239,6 +116,7 @@ void ScreenDemonstration::Input( const DeviceInput& DeviceI, const InputEventTyp
 		}
 	}
 
+	ScreenAttract::AttractInput( DeviceI, type, GameI, MenuI, StyleI, m_In.IsTransitioning() || m_Out.IsTransitioning() );
 }
 
 void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
@@ -246,10 +124,8 @@ void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_NotesEnded:
-		this->SendScreenMessage( SM_BeginFadingToNextScreen, 0 );
-		return;
-	case SM_BeginFadingToNextScreen:
-		m_Fade.CloseWipingRight( SM_GoToNextScreen );
+	case SM_BeginFadingOut:
+		m_Out.StartTransitioning( SM_GoToNextScreen );
 		return;
 	case SM_GoToNextScreen:
 		m_soundMusic.Stop();

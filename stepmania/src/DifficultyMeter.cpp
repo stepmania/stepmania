@@ -1,7 +1,7 @@
 #include "global.h"
 /*
 -----------------------------------------------------------------------------
- Class: FootMeter
+ Class: DifficultyMeter
 
  Desc: See header.
 
@@ -10,7 +10,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "FootMeter.h"
+#include "DifficultyMeter.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
@@ -23,19 +23,19 @@ const int NUM_FEET_IN_METER					=	10;
 const int GLOW_IF_METER_GREATER_THAN		=	9;
 
 
-FootMeter::FootMeter()
+DifficultyMeter::DifficultyMeter()
 {
-	BitmapText::LoadFromTextureAndChars( THEME->GetPathTo("Graphics","select music meter 2x1"), "10" );
+	BitmapText::LoadFromTextureAndChars( THEME->GetPathTo("Graphics","DifficultyMeter bar 2x1"), "10" );
 
 	SetFromNotes( NULL );
 }
 
-void FootMeter::SetFromNotes( Notes* pNotes )
+void DifficultyMeter::SetFromNotes( Notes* pNotes )
 {
 	if( pNotes != NULL )
 	{
 		SetDiffuse( RageColor(1,1,1,1) );
-		SetNumFeet( pNotes->GetMeter() );
+		SetMeter( pNotes->GetMeter() );
 		if( pNotes->GetMeter() > GLOW_IF_METER_GREATER_THAN )
 			this->SetEffectGlowShift();
 		else
@@ -47,18 +47,18 @@ void FootMeter::SetFromNotes( Notes* pNotes )
 	{
 		this->SetEffectNone();
 		SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
-		SetNumFeet( 0 );
+		SetMeter( 0 );
 	}
 }
 
-void FootMeter::SetNumFeet( int iNumFeet )
+void DifficultyMeter::SetMeter( int iMeter )
 {
 	CString sNewText;
 	int f;
 	for( f=0; f<NUM_FEET_IN_METER; f++ )
-		sNewText += (f<iNumFeet) ? "1" : "0";
+		sNewText += (f<iMeter) ? "1" : "0";
 	for( f=NUM_FEET_IN_METER; f<=13; f++ )
-		if( f<iNumFeet )
+		if( f<iMeter )
 			sNewText += "1";
 
 	SetText( sNewText );

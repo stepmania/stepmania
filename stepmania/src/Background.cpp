@@ -154,7 +154,7 @@ void Background::LoadFromSong( Song* pSong )
 	const float fXZoom = RECT_BACKGROUND.GetWidth() / (float)SCREEN_WIDTH;
 	const float fYZoom = RECT_BACKGROUND.GetHeight() / (float)SCREEN_HEIGHT;
 
-	const CString sSongBackgroundPath = pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","fallback background");
+	const CString sSongBackgroundPath = pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","Background fallback");
 
 	//
 	// Load the static background that will before notes start and after notes end

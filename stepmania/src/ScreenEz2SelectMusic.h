@@ -19,7 +19,7 @@
 #include "TipDisplay.h"
 #include "MusicBannerWheel.h"
 #include "MenuElements.h"
-#include "FootMeter.h"
+#include "DifficultyMeter.h"
 #include "DifficultyRating.h"
 
 
@@ -69,7 +69,7 @@ protected:
 	MusicBannerWheel			m_MusicBannerWheel;
 	MenuElements		m_Menu;
 	DifficultyRating	m_DifficultyRating;
-//	FootMeter			m_FootMeter[NUM_PLAYERS];
+//	DifficultyMeter			m_DifficultyMeter[NUM_PLAYERS];
 	vector<Notes*>		m_arrayNotes[NUM_PLAYERS];
 	int					m_iSelection[NUM_PLAYERS];
 	bool m_bGoToOptions;

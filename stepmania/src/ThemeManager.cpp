@@ -151,7 +151,7 @@ try_element_again:
 
 #if defined(WIN32) // XXX arch?
 			if( DISPLAY->IsWindowed() )
-				if( MessageBox(NULL, message.GetString(), "ThemeManager", MB_RETRYCANCEL ) == IDRETRY)
+				if( MessageBox(NULL, message, "ThemeManager", MB_RETRYCANCEL ) == IDRETRY)
 					goto try_element_again;
 #endif
 			RageException::Throw( "%s", message.GetString() ); 
@@ -233,7 +233,7 @@ try_element_again:
 		return ret;
 
 #if defined(DEBUG) && defined(WIN32)
-	CString sMessage = ssprintf("The theme element %s/%s is missing.",sAssetCategory.GetString(),sFileName.GetString());
+	CString sMessage = ssprintf("The theme element '%s/%s' is missing.",sAssetCategory.GetString(),sFileName.GetString());
 	switch( MessageBox(NULL, sMessage, "ThemeManager", MB_RETRYCANCEL ) )
 	{
 	case IDRETRY:
@@ -301,7 +301,7 @@ try_metric_again:
 	}
 
 #if defined(DEBUG) && defined(WIN32)
-	if( IDRETRY == MessageBox(NULL,ssprintf("The theme metric %s-%s is missing.  Correct this and click Retry, or Cancel to break.",sClassName.GetString(),sValueName.GetString()),"ThemeManager",MB_RETRYCANCEL ) )
+	if( IDRETRY == MessageBox(NULL,ssprintf("The theme metric '%s-%s' is missing.  Correct this and click Retry, or Cancel to break.",sClassName.GetString(),sValueName.GetString()),"ThemeManager",MB_RETRYCANCEL ) )
 		goto try_metric_again;
 #endif
 

@@ -15,7 +15,6 @@
 #include "Banner.h"
 #include "TextBanner.h"
 #include "GameConstantsAndTypes.h"
-#include "FootMeter.h"
 #include "RandomSample.h"
 #include "Style.h"
 

@@ -1,8 +1,8 @@
-#ifndef ScreenSelectMaxType2_H
-#define ScreenSelectMaxType2_H
+#ifndef ScreenSelectDifficulty_H
+#define ScreenSelectDifficulty_H
 /*
 -----------------------------------------------------------------------------
- Class: ScreenSelectMaxType2
+ Class: ScreenSelectDifficulty
 
  Desc: Abstract class for a widget that selects a ModeChoice
 
@@ -20,10 +20,10 @@
 
 #define MAX_CHOICES_PER_PAGE 15
 
-class ScreenSelectMaxType2 : public ScreenSelect
+class ScreenSelectDifficulty : public ScreenSelect
 {
 public:
-	ScreenSelectMaxType2();
+	ScreenSelectDifficulty();
 
 	virtual void Update( float fDelta );
 
@@ -51,7 +51,7 @@ protected:
 
 	ActorFrame	m_framePages;	// to hold the 2 pages
 
-	Sprite	m_sprHeader[NUM_PAGES][MAX_CHOICES_PER_PAGE];
+	Sprite	m_sprInfo[NUM_PAGES][MAX_CHOICES_PER_PAGE];
 	Sprite	m_sprPicture[NUM_PAGES][MAX_CHOICES_PER_PAGE];
 	Sprite	m_sprExplanation[NUM_PAGES];
 	Sprite	m_sprMore[NUM_PAGES];

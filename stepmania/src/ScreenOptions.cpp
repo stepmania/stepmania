@@ -45,26 +45,22 @@ const ScreenMessage SM_PlaySample			= ScreenMessage(SM_User-4);
 const ScreenMessage SM_TweenOffScreen		= ScreenMessage(SM_User-7);
 
 
-ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sPagePath, CString sTopEdgePath )
+ScreenOptions::ScreenOptions( CString sClassName, bool bEnableTimer )
 {
 	LOG->Trace( "ScreenOptions::ScreenOptions()" );
 
-	m_SoundChangeCol.Load( THEME->GetPathTo("Sounds","option change col") );
-	m_SoundNextRow.Load( THEME->GetPathTo("Sounds","option next row") );
-	m_SoundPrevRow.Load( THEME->GetPathTo("Sounds","option prev row") );
-	m_SoundStart.Load( THEME->GetPathTo("Sounds","menu start") );
+	m_SoundChangeCol.Load( THEME->GetPathTo("Sounds","ScreenOptions change") );
+	m_SoundNextRow.Load( THEME->GetPathTo("Sounds","ScreenOptions next") );
+	m_SoundPrevRow.Load( THEME->GetPathTo("Sounds","ScreenOptions prev") );
+	m_SoundStart.Load( THEME->GetPathTo("Sounds","Common start") );
 
-	m_Menu.Load(
-		sBackgroundPath, 
-		sTopEdgePath, 
-		HELP_TEXT, false, true, TIMER_SECONDS
-		);
+	m_Menu.Load( sClassName, bEnableTimer, false );	// no style icon
 	this->AddChild( &m_Menu );
 
 	// add everything to m_framePage so we can animate everything at once
 	this->AddChild( &m_framePage );
 
-	m_sprPage.Load( sPagePath );
+	m_sprPage.Load( THEME->GetPathTo("Graphics",sClassName+" page") );
 	m_sprPage.SetXY( CENTER_X, CENTER_Y );
 	m_framePage.AddChild( &m_sprPage );
 
@@ -75,10 +71,6 @@ ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sPagePath, CStrin
 		for( unsigned l=0; l<MAX_OPTION_LINES; l++ )
 			m_iSelectedOption[p][l] = 0;
 	}
-
-	m_Menu.TweenOnScreenFromBlack( SM_None );
-	m_Wipe.OpenWipingRight(SM_None);
-	this->AddChild( &m_Wipe );
 
 	m_framePage.SetX( SCREEN_LEFT-SCREEN_WIDTH );
 	m_framePage.BeginTweening( 0.3f, Actor::TWEEN_DECELERATE );
@@ -198,7 +190,7 @@ void ScreenOptions::InitOptionsText()
 
 
 		Sprite &arrow = m_sprLineArrows[i];
-		arrow.Load( THEME->GetPathTo("Graphics","options arrow") );
+		arrow.Load( THEME->GetPathTo("Graphics","ScreenOptions bullet") );
 		arrow.SetXY( ARROWS_X, fY );
 
 
@@ -211,7 +203,7 @@ void ScreenOptions::InitOptionsText()
 			option.LoadFromFont( THEME->GetPathTo("Fonts","option item") );
 			option.SetText( optline.szOptionsText[j] );
 			option.SetZoom( ITEMS_ZOOM );
-			option.SetShadowLength( 2 );
+			option.EnableShadow( false );
 
 			// set the XY position of each item in the line
 			float fItemWidth = option.GetWidestLineWidthInSourcePixels() * option.GetZoomX();
@@ -415,7 +407,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 		this->SendScreenMessage( SM_TweenOffScreen, 0 );
 		break;
 	case SM_GoToPrevScreen:
-		this->ExportOptions();
+//		this->ExportOptions();	// Don't save options if we're going back!
 		this->GoToPrevState();
 		break;
 	case SM_GoToNextScreen:
@@ -423,10 +415,10 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 		this->GoToNextState();
 		break;
 	case SM_TweenOffScreen:
-		m_Menu.TweenOffScreenToBlack( SM_None, false );
+		m_Menu.StartTransitioning( SM_GoToNextScreen );
 
 		m_SoundStart.Play();
-		m_Wipe.CloseWipingRight( SM_GoToNextScreen );
+		m_Wipe.CloseWipingRight(  );
 
 		m_framePage.BeginTweening( 0.3f, Actor::TWEEN_ACCELERATE );
 		m_framePage.SetTweenX( SCREEN_RIGHT );
@@ -453,9 +445,7 @@ void ScreenOptions::MenuBack( PlayerNumber pn )
 {
 	Screen::MenuBack( pn );
 
-	m_Menu.TweenOffScreenToBlack( SM_None, true );
-
-	m_Wipe.CloseWipingLeft( SM_GoToPrevScreen );
+	m_Menu.Back( SM_GoToPrevScreen );
 }
 
 void ScreenOptions::StartGoToNextState()

@@ -1,7 +1,7 @@
 #include "global.h"
 /*
 -----------------------------------------------------------------------------
- Class: MusicStatusDisplay
+ Class: WheelNotifyIcon
 
  Desc: See header.
 
@@ -10,24 +10,24 @@
 -----------------------------------------------------------------------------
 */
 
-#include "MusicStatusDisplay.h"
+#include "WheelNotifyIcon.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
 #include "MusicWheel.h"
-#include "MusicStatusDisplay.h"
+#include "WheelNotifyIcon.h"
 #include "RageTimer.h"
 #include <math.h>
 #include "ThemeManager.h"
 
 
 
-MusicStatusDisplay::MusicStatusDisplay()
+WheelNotifyIcon::WheelNotifyIcon()
 {
-	Load( THEME->GetPathTo("Graphics","music status icons 4x2") );
+	Load( THEME->GetPathTo("Graphics","WheelNotifyIcon icons 4x2") );
 	StopAnimating();
 }
 
-void MusicStatusDisplay::SetFlags( Flags flags )
+void WheelNotifyIcon::SetFlags( Flags flags )
 {
 	m_vIconsToShow.clear();
 
@@ -71,7 +71,7 @@ void MusicStatusDisplay::SetFlags( Flags flags )
 		Sprite::SetDiffuse( RageColor(1,1,1,1) );
 }
 
-void MusicStatusDisplay::DrawPrimitives()
+void WheelNotifyIcon::DrawPrimitives()
 {
 		float fSecondFraction = fmodf(RageTimer::GetTimeSinceStart(), 1 );
 	if( m_vIconsToShow.size() > 0 )

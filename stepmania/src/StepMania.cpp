@@ -326,18 +326,14 @@ int main(int argc, char* argv[])
 
 	ResetGame();
 	if( DISPLAY->IsSoftwareRenderer() && !PREFSMAN->m_bAllowSoftwareRenderer )
-		SCREENMAN->Prompt( 
-			SM_None, 
-			"OpenGL hardware acceleration\n"
-			"was not detected.\n\n"
-			"StepMania will use the Microsoft\n"
-			"software OpenGL renderer.\n"
-			"However, the game is not playable\n"
-			"with this software renderer.\n"
-			"Please install the latest video\n"
-			"driver from your graphics card vendor\n"
-			"to enable OpenGL hardware acceleration."
-			);
+		RageException::Throw( 
+			"OpenGL hardware acceleration is not available on your system.\n\n"  
+			"StepMania requires OpenGL hardware acceleration.\n\n"
+			"Please install the latest video driver from your graphics card vendor "
+			"to enable OpenGL hardware acceleration.\n\n"
+			"NO NOT FILE THIS ERROR AS A BUG!\n\n"
+			"(Advanced:  To allow use of the software renderer, set 'AllowSoftwareRenderer=1' "
+			"in StepMania.ini)" );
 
 	/* Run the main loop. */
 	GameLoop();
@@ -389,10 +385,13 @@ int main(int argc, char* argv[])
  * the key should be sent on to screens. */
 bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput GameI, MenuInput MenuI, StyleInput StyleI )
 {
+	/* None of the globals keys act on types other than FIRST_PRESS */
+	if( type == IET_FIRST_PRESS ) 
+		return false;
+
 	switch( MenuI.button )
 	{
 	case MENU_BUTTON_OPERATOR:
-		if( type == IET_FIRST_PRESS ) return true;
 
 		/* Global operator key, to get quick access to the options menu. Don't
 		 * do this if we're on a "system menu", which includes the editor
@@ -406,28 +405,16 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 
 	case MENU_BUTTON_COIN:
 		/* Handle a coin insertion. */
-		if( GAMESTATE->m_bEditing )
+		if( GAMESTATE->m_bEditing )	// no coins while editing
 			break;
-		if( type == IET_FIRST_PRESS ) return true;
-
-		switch( PREFSMAN->m_CoinMode )
-		{
-			case PrefsManager::COIN_FREE: // fall through
-			case PrefsManager::COIN_HOME: // fall through
-			case PrefsManager::COIN_PAY:
-				GAMESTATE->m_iCoins++;
-				SCREENMAN->RefreshCreditsMessages();
-				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
-				return true;
-			default:
-				ASSERT(0);
-				return true;
-		}
+		GAMESTATE->m_iCoins++;
+		SCREENMAN->RefreshCreditsMessages();
+		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common coin") );
+		return false;	// Attract need to know because they go to TitleMenu on > 1 credit
 	}
 
 	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F4))
 	{
-		if(type != IET_FIRST_PRESS) return true;
 		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
 			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
 		{
@@ -449,8 +436,6 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 	
 	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F5))	// F5 conflicts with editor and AutoSync
 	{
-		if(type != IET_FIRST_PRESS) return true;
-
 		// pressed F6.  Save Screenshot.
 		CString sPath;
 		for( int i=0; i<1000; i++ )
@@ -469,7 +454,6 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
 			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
 		{
-			if(type != IET_FIRST_PRESS) return true;
 			/* alt-enter */
 			PREFSMAN->m_bWindowed = !PREFSMAN->m_bWindowed;
 			ApplyGraphicOptions();

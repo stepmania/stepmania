@@ -14,6 +14,7 @@
 #include "Actor.h"
 #include "BGAnimation.h"
 #include "ScreenMessage.h"
+#include "RandomSample.h"
 
 
 class TransitionBGAnimation : public Actor
@@ -26,9 +27,10 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
-	virtual void StartTransitioning( ScreenMessage send_when_done );
+	virtual void StartTransitioning( ScreenMessage send_when_done = SM_None );
 
 	bool IsTransitioning()	{ return m_State == transitioning; };
+	float GetLengthSeconds();
 
 protected:
 
@@ -41,6 +43,7 @@ protected:
 
 
 	BGAnimation	m_BGAnimation;
+	RandomSample	m_sound;
 
 	ScreenMessage	m_MessageToSendWhenDone;
 };

@@ -42,29 +42,21 @@
 #define NEXT_SCREEN			THEME->GetMetric("ScreenSelectGroup","NextScreen")
 
 
-const ScreenMessage SM_StartFadingOut		=	ScreenMessage(SM_User + 3);
-
-
 ScreenSelectGroup::ScreenSelectGroup()
-{
-	
+{	
 	LOG->Trace( "ScreenSelectGroup::ScreenSelectGroup()" );	
 
-	m_Menu.Load(
-		THEME->GetPathTo("BGAnimations","select group") , 
-		THEME->GetPathTo("Graphics","select group top edge"),
-		HELP_TEXT, true, true, TIMER_SECONDS
-		);
-	this->AddChild( &m_Menu );
-
-	if(!PREFSMAN->m_bShowSelectGroup)
+	if( !PREFSMAN->m_bShowSelectGroup )
 	{
 		GAMESTATE->m_sPreferredGroup = GROUP_ALL_MUSIC;
-		m_Menu.ImmedOffScreenToMenu();
-		m_bChosen = true;
-		this->SendScreenMessage( SM_GoToNextScreen, 0.f );
+		HandleScreenMessage( SM_GoToNextScreen );
 		return;
 	}
+
+
+
+	m_Menu.Load( "ScreenSelectGroup" );
+	this->AddChild( &m_Menu );
 
 
 	unsigned i;
@@ -131,7 +123,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 
 	m_bChosen = false;
 
-	m_sprExplanation.Load( THEME->GetPathTo("Graphics","select group explanation") );
+	m_sprExplanation.Load( THEME->GetPathTo("Graphics","ScreenSelectGroup explanation") );
 	m_sprExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
 	this->AddChild( &m_sprExplanation );
 
@@ -140,17 +132,17 @@ ScreenSelectGroup::ScreenSelectGroup()
 	m_Banner.SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
 	this->AddChild( &m_Banner );
 
-	m_sprFrame.Load( THEME->GetPathTo("Graphics","select group info frame") );
+	m_sprFrame.Load( THEME->GetPathTo("Graphics","ScreenSelectGroup frame") );
 	m_sprFrame.SetXY( FRAME_X, FRAME_Y );
 	this->AddChild( &m_sprFrame );
 
-	m_textNumber.LoadFromFont( THEME->GetPathTo("Fonts","select group num songs") );
+	m_textNumber.LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenSelectGroup numbers") );
 	m_textNumber.SetXY( NUMBER_X, NUMBER_Y );
 	m_textNumber.SetHorizAlign( Actor::align_right );
 	m_textNumber.EnableShadow( false );
 	this->AddChild( &m_textNumber );
 	
-	m_sprContents.Load( THEME->GetPathTo("Graphics","select group contents header") );
+	m_sprContents.Load( THEME->GetPathTo("Graphics","ScreenSelectGroup contents") );
 	m_sprContents.SetXY( CONTENTS_X, CONTENTS_Y );
 	this->AddChild( &m_sprContents );
 
@@ -162,14 +154,13 @@ ScreenSelectGroup::ScreenSelectGroup()
 	this->AddChild( &m_GroupList );
 
 
-	m_soundChange.Load( THEME->GetPathTo("Sounds","select group change") );
-	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
+	m_soundChange.Load( THEME->GetPathTo("Sounds","ScreenSelectGroup change") );
+	m_soundSelect.Load( THEME->GetPathTo("Sounds","Common start") );
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group intro") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select group music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSelectGroup music") );
 
-	m_Menu.TweenOnScreenFromMenu( SM_None );
 	TweenOnScreen();
 	AfterChange();
 	m_GroupList.SetSelection(0);
@@ -187,7 +178,7 @@ void ScreenSelectGroup::Input( const DeviceInput& DeviceI, const InputEventType 
 {
 	LOG->Trace( "ScreenSelectGroup::Input()" );
 
-	if( m_Menu.IsClosing()  ||  m_bChosen )
+	if( m_Menu.IsTransitioning() )
 		return;
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
@@ -213,9 +204,6 @@ void ScreenSelectGroup::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
-	case SM_StartFadingOut:
-		m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
-		break;
 	}
 }
 
@@ -228,16 +216,12 @@ void ScreenSelectGroup::AfterChange()
 
 	CString sGroupBannerPath;
 	if( sSelectedGroupName == GROUP_ALL_MUSIC )
-		sGroupBannerPath = THEME->GetPathTo("Graphics","all music banner");
-	else if( SONGMAN->GetGroupBannerPath(sSelectedGroupName) != "" )
-		sGroupBannerPath = SONGMAN->GetGroupBannerPath(sSelectedGroupName);
-	else
-		sGroupBannerPath = THEME->GetPathTo("Graphics","fallback banner");
+		m_Banner.LoadAllMusic();
+	else 
+		m_Banner.LoadFromGroup( sSelectedGroupName );
 
 	const int iNumSongs = m_MusicList.GetNumSongs();
 	m_textNumber.SetText( ssprintf("%d", iNumSongs) );
-
-	m_Banner.LoadFromGroup( sSelectedGroupName );
 }
 
 
@@ -291,14 +275,12 @@ void ScreenSelectGroup::MenuStart( PlayerNumber pn )
 
 
 	TweenOffScreen();
-	m_Menu.StopTimer();
-
-	this->SendScreenMessage( SM_StartFadingOut, 0.8f );
+	m_Menu.StartTransitioning( SM_GoToNextScreen );
 }
 
 void ScreenSelectGroup::MenuBack( PlayerNumber pn )
 {
-	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
+	m_Menu.Back( SM_GoToPrevScreen );
 }
 
 void ScreenSelectGroup::TweenOffScreen()

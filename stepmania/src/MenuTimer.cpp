@@ -27,8 +27,8 @@ MenuTimer::MenuTimer()
 	m_fStallSeconds = 0;
 	m_bTimerStopped = false;
 
-	m_textDigit1.LoadFromNumbers( THEME->GetPathTo("Numbers","menu timer numbers") );
-	m_textDigit2.LoadFromNumbers( THEME->GetPathTo("Numbers","menu timer numbers") );
+	m_textDigit1.LoadFromNumbers( THEME->GetPathTo("Numbers","MenuTimer numbers") );
+	m_textDigit2.LoadFromNumbers( THEME->GetPathTo("Numbers","MenuTimer numbers") );
 
 	m_textDigit1.EnableShadow( false );
 	m_textDigit2.EnableShadow( false );
@@ -42,7 +42,7 @@ MenuTimer::MenuTimer()
 	this->AddChild( &m_textDigit1 );
 	this->AddChild( &m_textDigit2 );
 
-	m_soundBeep.Load( THEME->GetPathTo("Sounds","menu timer") );
+	m_soundBeep.Load( THEME->GetPathTo("Sounds","MenuTimer tick") );
 }
 
 void MenuTimer::StealthTimer( int iActive )
@@ -112,7 +112,12 @@ void MenuTimer::Update( float fDeltaTime )
 	float fRemainder = m_fSecondsLeft - (int)m_fSecondsLeft;
 	float fDistFromNearestNumber = min( fRemainder, 1-fRemainder );	// this is between 0 and 0.5;
 
-	if( m_fSecondsLeft < 4.5f )
+	if( m_fSecondsLeft == 0 )
+	{
+		m_textDigit1.SetZoomX( 1 ); 
+		m_textDigit2.SetZoomX( 1 ); 
+	}
+	else if( m_fSecondsLeft < 4.5f )
 	{
 		m_textDigit1.SetZoomX( min(1, fDistFromNearestNumber*8) ); 
 		m_textDigit2.SetZoomX( min(1, fDistFromNearestNumber*8) ); 

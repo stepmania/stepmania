@@ -1052,6 +1052,14 @@ SOURCE=.\DifficultyIcon.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\DifficultyMeter.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\DifficultyMeter.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\DifficultyRating.cpp
 # End Source File
 # Begin Source File
@@ -1073,14 +1081,6 @@ SOURCE=.\FadingBanner.cpp
 # Begin Source File
 
 SOURCE=.\FadingBanner.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\FootMeter.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\FootMeter.h
 # End Source File
 # Begin Source File
 
@@ -1153,14 +1153,6 @@ SOURCE=.\MusicSortDisplay.cpp
 # Begin Source File
 
 SOURCE=.\MusicSortDisplay.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\MusicStatusDisplay.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\MusicStatusDisplay.h
 # End Source File
 # Begin Source File
 
@@ -1257,6 +1249,14 @@ SOURCE=.\TipDisplay.cpp
 # Begin Source File
 
 SOURCE=.\TipDisplay.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\WheelNotifyIcon.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WheelNotifyIcon.h
 # End Source File
 # End Group
 # Begin Group "Actors used in Gameplay"
@@ -1797,6 +1797,22 @@ SOURCE=.\ScreenSelectCourse.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenSelectDifficulty.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectDifficulty.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectDifficultyEX.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectDifficultyEX.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenSelectGame.cpp
 # End Source File
 # Begin Source File
@@ -1813,30 +1829,6 @@ SOURCE=.\ScreenSelectGroup.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScreenSelectMaxType1.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenSelectMaxType1.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenSelectMaxType2.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenSelectMaxType2.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenSelectMaxType2EX.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenSelectMaxType2EX.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\ScreenSelectMode.cpp
 # End Source File
 # Begin Source File
@@ -1850,6 +1842,14 @@ SOURCE=.\ScreenSelectMusic.cpp
 # Begin Source File
 
 SOURCE=.\ScreenSelectMusic.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectStyle.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectStyle.h
 # End Source File
 # Begin Source File
 

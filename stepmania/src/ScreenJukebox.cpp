@@ -113,12 +113,12 @@ bool PrepareForJukebox()		// always return true.
 	GAMESTATE->m_SongOptions.m_LifeType = (randomf(0,1)>0.8f) ? SongOptions::LIFE_BATTERY : SongOptions::LIFE_BAR;
 	GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
 
-	GAMESTATE->m_bDemonstration = true;
+	GAMESTATE->m_bDemonstrationOrJukebox = true;
 
 	return true;
 }
 
-ScreenJukebox::ScreenJukebox() : ScreenGameplay(PrepareForJukebox())	// this is a hack to get some code to execute before the ScreenGameplay constructor
+ScreenJukebox::ScreenJukebox( bool bDemonstration ) : ScreenGameplay( PrepareForJukebox() )	// this is a hack to get some code to execute before the ScreenGameplay constructor
 {
 	LOG->Trace( "ScreenJukebox::ScreenJukebox()" );
 
@@ -128,13 +128,17 @@ ScreenJukebox::ScreenJukebox() : ScreenGameplay(PrepareForJukebox())	// this is 
 		return;
 	}
 
-	m_Fade.OpenWipingRight();
+	m_In.Load( THEME->GetPathTo("BGAnimations","ScreenDemonstration in") );
+	this->AddChild( &m_In );
+	m_In.StartTransitioning();
+
+	m_Out.Load( THEME->GetPathTo("BGAnimations","ScreenDemonstration out") );
+	this->AddChild( &m_Out );
 
 	ClearMessageQueue();	// remove all of the messages set in ScreenGameplay that animate "ready", "here we go", etc.
 
 	GAMESTATE->m_bPastHereWeGo = true;
 
-	m_StarWipe.SetOpened();
 	m_DancingState = STATE_DANCING;
 }
 
@@ -147,10 +151,6 @@ ScreenJukebox::~ScreenJukebox()
 void ScreenJukebox::Update( float fDeltaTime )
 {
 	ScreenGameplay::Update( fDeltaTime );
-
-	// hide status icons
-	for( int i=0; i<NUM_STATUS_ICONS; i++ )
-		m_sprStatusIcons[i].SetDiffuse( RageColor(1,1,1,0) );	
 }
 
 void ScreenJukebox::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -189,8 +189,8 @@ void ScreenJukebox::Input( const DeviceInput& DeviceI, const InputEventType type
 		{
 		case MENU_BUTTON_LEFT:
 		case MENU_BUTTON_RIGHT:
-			if( !m_Fade.IsOpening() && !m_Fade.IsClosing() )
-				m_Fade.CloseWipingRight( SM_GoToNextScreen );
+			if( !m_In.IsTransitioning() && !m_Out.IsTransitioning() )
+				m_Out.StartTransitioning( SM_GoToNextScreen );
 			break;
 		case MENU_BUTTON_COIN:
 			Screen::MenuCoin( MenuI.player );	// increment coins, play sound
@@ -228,9 +228,9 @@ void ScreenJukebox::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_NotesEnded:
-		if( m_Fade.IsClosing() )
+		if( m_Out.IsTransitioning() )
 			return;	// ignore - we're already fading
-		m_Fade.CloseWipingRight( SM_GoToNextScreen );
+		m_Out.StartTransitioning( SM_GoToNextScreen );
 		return;
 	case SM_GoToNextScreen:
 		/* We're actually under Update(), so make sure ScreenGameplay doesn't

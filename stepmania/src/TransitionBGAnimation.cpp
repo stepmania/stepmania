@@ -24,6 +24,8 @@ TransitionBGAnimation::TransitionBGAnimation()
 void TransitionBGAnimation::Load( CString sBGAniDir )
 {
 	m_BGAnimation.LoadFromAniDir( sBGAniDir );
+
+	m_sound.Load( sBGAniDir );
 }
 
 
@@ -56,6 +58,11 @@ void TransitionBGAnimation::StartTransitioning( ScreenMessage send_when_done )
 	ASSERT( m_State == waiting );	// can't call this more than once
 	m_MessageToSendWhenDone = send_when_done;
 	m_State = transitioning;
+	m_sound.PlayRandom();
 	m_fSecsIntoTransition = 0.0;
 }
 
+float TransitionBGAnimation::GetLengthSeconds()
+{
+	return m_BGAnimation.GetLengthSeconds();
+}

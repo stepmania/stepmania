@@ -48,7 +48,7 @@ EditMenu::EditMenu()
 
 	for( i=0; i<2; i++ )
 	{
-		m_sprArrows[i].Load( THEME->GetPathTo("Graphics",ssprintf("edit menu %s",(i==0?"left":"right"))) );
+		m_sprArrows[i].Load( THEME->GetPathTo("Graphics",ssprintf("EditMenu %s",(i==0?"left":"right"))) );
 		m_sprArrows[i].SetX( ARROWS_X(i) );
 		this->AddChild( &m_sprArrows[i] );
 	}
@@ -98,8 +98,8 @@ EditMenu::EditMenu()
 	this->AddChild( &m_SourceMeter );
 	
 
-	m_soundChangeRow.Load( THEME->GetPathTo("sounds","edit menu row") );
-	m_soundChangeValue.Load( THEME->GetPathTo("sounds","edit menu value") );
+	m_soundChangeRow.Load( THEME->GetPathTo("sounds","EditMenu row") );
+	m_soundChangeValue.Load( THEME->GetPathTo("sounds","EditMenu value") );
 
 
 	// fill in data structures

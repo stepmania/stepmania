@@ -62,20 +62,16 @@ ScreenSelectCourse::ScreenSelectCourse()
 
 	CodeDetector::RefreshCacheItems();
  
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select course music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSelectCourse music") );
 
 	m_bMadeChoice = false;
 	m_bGoToOptions = false;
 	m_bAllowOptionsMenuRepeat = false;
 	
-	m_Menu.Load(
-		THEME->GetPathTo("BGAnimations","select course"), 
-		THEME->GetPathTo("Graphics","select course top edge"),
-		HELP_TEXT, true, true, TIMER_SECONDS 
-		);
+	m_Menu.Load( "ScreenSelectCourse" );
 	this->AddChild( &m_Menu );
 
-	m_sprExplanation.Load( THEME->GetPathTo("Graphics","select course explanation") );
+	m_sprExplanation.Load( THEME->GetPathTo("Graphics","ScreenSelectCourse explanation") );
 	m_sprExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
 	this->AddChild( &m_sprExplanation );
 
@@ -83,16 +79,16 @@ ScreenSelectCourse::ScreenSelectCourse()
 	m_Banner.SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
 	this->AddChild( &m_Banner );
 
-	m_sprBannerFrame.Load( THEME->GetPathTo("Graphics","select course banner frame") );
+	m_sprBannerFrame.Load( THEME->GetPathTo("Graphics","ScreenSelectCourse banner frame") );
 	m_sprBannerFrame.SetXY( BANNER_FRAME_X, BANNER_FRAME_Y );
 	this->AddChild( &m_sprBannerFrame );
 
-	m_textNumSongs.LoadFromFont( THEME->GetPathTo("Fonts","select course num songs") );
+	m_textNumSongs.LoadFromFont( THEME->GetPathTo("Fonts","ScreenSelectCourse num songs") );
 	m_textNumSongs.SetXY( STAGES_X, STAGES_Y );
 	m_textNumSongs.EnableShadow( false );
 	this->AddChild( &m_textNumSongs );
 
-	m_textTime.LoadFromFont( THEME->GetPathTo("Fonts","select course total time") );
+	m_textTime.LoadFromFont( THEME->GetPathTo("Fonts","ScreenSelectCourse total time") );
 	m_textTime.SetXY( TIME_X, TIME_Y );
 	m_textTime.EnableShadow( false );
 	this->AddChild( &m_textTime );
@@ -108,7 +104,7 @@ ScreenSelectCourse::ScreenSelectCourse()
 		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
 			continue;	// skip
 
-		m_sprHighScoreFrame[p].Load( THEME->GetPathTo("Graphics","select music score frame") );
+		m_sprHighScoreFrame[p].Load( THEME->GetPathTo("Graphics","ScreenSelectCourse score frame") );
 		m_sprHighScoreFrame[p].StopAnimating();
 		m_sprHighScoreFrame[p].SetState( p );
 		m_sprHighScoreFrame[p].SetXY( SCORE_X(p), SCORE_Y(p) );
@@ -120,7 +116,7 @@ ScreenSelectCourse::ScreenSelectCourse()
 		this->AddChild( &m_HighScore[p] );
 	}	
 
-	m_sprOptionsMessage.Load( THEME->GetPathTo("Graphics","select music options message 1x2") );
+	m_sprOptionsMessage.Load( THEME->GetPathTo("Graphics","ScreenSelectCourse options message 1x2") );
 	m_sprOptionsMessage.StopAnimating();
 	m_sprOptionsMessage.SetXY( CENTER_X, CENTER_Y );
 	m_sprOptionsMessage.SetZoomY( 0 );
@@ -128,20 +124,19 @@ ScreenSelectCourse::ScreenSelectCourse()
 	this->AddChild( &m_sprOptionsMessage );
 
 
-	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
-	m_soundOptionsChange.Load( THEME->GetPathTo("Sounds","select music options") );
-	m_soundChangeNotes.Load( THEME->GetPathTo("Sounds","select music notes") );
+	m_soundSelect.Load( THEME->GetPathTo("Sounds","Common start") );
+	m_soundOptionsChange.Load( THEME->GetPathTo("Sounds","ScreenSelectCourse options") );
+	m_soundChangeNotes.Load( THEME->GetPathTo("Sounds","ScreenSelectCourse difficulty") );
 
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select course intro") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select course music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSelectCourse music") );
 
 	UpdateOptionsDisplays();
 
 	AfterCourseChange();
 	TweenOnScreen();
-	m_Menu.TweenOnScreenFromMenu( SM_None );
 }
 
 
@@ -235,11 +230,11 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, InputEventType type,
 
 		m_bGoToOptions = true;
 		m_sprOptionsMessage.SetState( 1 );
-		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
+		m_soundSelect.Play();
 		return;
 	}
 	
-	if( m_Menu.IsClosing() )	return;		// ignore
+	if( m_Menu.IsTransitioning() )	return;		// ignore
 
 	if( m_bMadeChoice )
 		return;
@@ -354,7 +349,7 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 		m_sprOptionsMessage.SetTweenZoomY( 0 );
 		this->SendScreenMessage( SM_AllowOptionsMenuRepeat, 0.75f );
 
-		m_Menu.TweenOffScreenToBlack( SM_None, false );
+		m_Menu.StartTransitioning( SM_GoToNextScreen );
 
 		Course* pCourse = m_MusicWheel.GetSelectedCourse();
 		GAMESTATE->m_pCurCourse = pCourse;
@@ -378,11 +373,8 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 		//	GAMESTATE->m_PlayerOptions[p].FromString( sModifiers );
 		//GAMESTATE->m_SongOptions.FromString( sModifiers );
 
-		m_Menu.StopTimer();
 		AdjustOptions();
 
-		this->SendScreenMessage( SM_GoToNextScreen, 2.5f );
-		
 		break;
 	}
 }
@@ -392,7 +384,7 @@ void ScreenSelectCourse::MenuBack( PlayerNumber pn )
 {
 	SOUNDMAN->StopMusic();
 
-	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
+	m_Menu.Back( SM_GoToPrevScreen );
 }
 
 

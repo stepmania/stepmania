@@ -17,73 +17,58 @@
 #include "ThemeManager.h"
 
 
-CachedThemeMetric	OK_ZOOM_X		("HoldJudgment","OKZoomX");
-CachedThemeMetric	OK_ZOOM_Y		("HoldJudgment","OKZoomY");
-CachedThemeMetric	TWEEN_SECONDS	("HoldJudgment","TweenSeconds");
-CachedThemeMetric	SHOW_SECONDS	("HoldJudgment","ShowSeconds");
+CachedThemeMetric	OK_COMMAND	("HoldJudgment","OKCommand");
+CachedThemeMetric	NG_COMMAND	("HoldJudgment","NGCommand");
 
 
 HoldJudgment::HoldJudgment()
 {
-	OK_ZOOM_X.Refresh();
-	OK_ZOOM_Y.Refresh();
-	TWEEN_SECONDS.Refresh();
-	SHOW_SECONDS.Refresh();
+	OK_COMMAND.Refresh();
+	NG_COMMAND.Refresh();
 
-	m_fShowCountdown = 0;
-	m_sprJudgment.Load( THEME->GetPathTo("Graphics","gameplay hold Judgment 1x2") );
+	m_sprJudgment.Load( THEME->GetPathTo("Graphics","HoldJudgment 1x2") );
 	m_sprJudgment.StopAnimating();
-	m_sprJudgment.EnableShadow( true );
+	Reset();
 	this->AddChild( &m_sprJudgment );
 }
 
 void HoldJudgment::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
-
-	m_fShowCountdown -= fDeltaTime;
-	if( m_fShowCountdown < 0 )
-		m_fShowCountdown = 0;
 }
 
 void HoldJudgment::DrawPrimitives()
 {
-	if( m_fShowCountdown > 0 )
-	{
-		ActorFrame::DrawPrimitives();
-	}
+	ActorFrame::DrawPrimitives();
+}
+
+void HoldJudgment::Reset()
+{
+	m_sprJudgment.SetDiffuse( RageColor(1,1,1,0) );
+	m_sprJudgment.SetXY( 0, 0 );
+	m_sprJudgment.StopTweening();
+	m_sprJudgment.SetEffectNone();
 }
 
 void HoldJudgment::SetHoldJudgment( HoldNoteScore hns )
 {
 	//LOG->Trace( "Judgment::SetJudgment()" );
 
+	Reset();
+
 	switch( hns )
 	{
-	case HNS_NONE:	m_sprJudgment.SetState( 0 );	break;
-	case HNS_OK:	m_sprJudgment.SetState( 0 );	break;
-	case HNS_NG:	m_sprJudgment.SetState( 1 );	break;
-	default:	ASSERT( false );
-	}
-
-	m_fShowCountdown = SHOW_SECONDS;
-
-	if( hns == HNS_NG ) 
-	{
-		// falling down
-		m_sprJudgment.StopTweening();
-		m_sprJudgment.SetY( -10 );
-		m_sprJudgment.SetZoom( 1.0f );
-		m_sprJudgment.BeginTweening( SHOW_SECONDS );
-		m_sprJudgment.SetTweenY( 10 );
-	} 
-	else // hns == HNS_OK
-	{		
-		// zooming out
-		m_sprJudgment.StopTweening();
-		m_sprJudgment.SetZoomX( OK_ZOOM_X );
-		m_sprJudgment.SetZoomY( OK_ZOOM_Y );
-		m_sprJudgment.BeginTweening( TWEEN_SECONDS );
-		m_sprJudgment.SetTweenZoom( 1.0f );
+	case HNS_NONE:
+		ASSERT(0);
+	case HNS_OK:
+		m_sprJudgment.SetState( 0 );
+		m_sprJudgment.Command( OK_COMMAND );
+		break;
+	case HNS_NG:
+		m_sprJudgment.SetState( 1 );
+		m_sprJudgment.Command( NG_COMMAND );
+		break;
+	default:
+		ASSERT(0);
 	}
 }

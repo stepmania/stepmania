@@ -42,11 +42,7 @@ ScreenJukeboxMenu::ScreenJukeboxMenu()
 //	m_Selector.AllowNewNotes();
 	this->AddChild( &m_Selector );
 
-	m_Menu.Load( 
-		THEME->GetPathTo("BGAnimations","jukebox menu"), 
-		THEME->GetPathTo("Graphics","jukebox menu top edge"),
-		HELP_TEXT, false, false, 99 
-		);
+	m_Menu.Load( "ScreenJukeboxMenu" );
 	this->AddChild( &m_Menu );
 
 
@@ -56,14 +52,7 @@ ScreenJukeboxMenu::ScreenJukeboxMenu()
 	m_textExplanation.SetZoom( 0.7f );
 	this->AddChild( &m_textExplanation );
 
-	m_Fade.SetOpened();
-	this->AddChild( &m_Fade);
-
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","jukebox menu music") );
-
-	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
-
-	m_Menu.TweenOnScreenFromBlack( SM_None );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenJukeboxMenu music") );
 }
 
 
@@ -121,7 +110,7 @@ void ScreenJukeboxMenu::MenuRight( PlayerNumber pn, const InputEventType type )
 
 void ScreenJukeboxMenu::MenuStart( PlayerNumber pn )
 {
-	if( m_Fade.IsClosing() || m_Fade.IsClosed() )
+	if( m_Menu.IsTransitioning() )
 		return;
 
 	Style style		= m_Selector.GetSelectedStyle();
@@ -137,16 +126,13 @@ void ScreenJukeboxMenu::MenuStart( PlayerNumber pn )
 
 
 	SOUNDMAN->StopMusic();
-	m_soundSelect.PlayRandom();
-	m_Menu.TweenOffScreenToBlack( SM_GoToNextScreen, false  );
-	m_Fade.CloseWipingRight( SM_None );
+	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common start") );
+	m_Menu.StartTransitioning( SM_GoToNextScreen );
 }
 
 void ScreenJukeboxMenu::MenuBack( PlayerNumber pn )
 {	
-	m_Menu.TweenOffScreenToBlack( SM_None, true );
+	m_Menu.StartTransitioning( SM_GoToPrevScreen );
 
 	SOUNDMAN->StopMusic();
-
-	m_Fade.CloseWipingLeft( SM_GoToPrevScreen );
 }

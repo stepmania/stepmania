@@ -55,19 +55,15 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 
 	LOG->Trace( "ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()" );
 
-	m_Menu.Load( 	
-		THEME->GetPathTo("BGAnimations","ez2 select player"), 
-		THEME->GetPathTo("Graphics","select player top edge"),
-		HELP_TEXT, false, true, TIMER_SECONDS
-		);
+	m_Menu.Load( "ScreenEz2SelectPlayer" );
 	this->AddChild( &m_Menu );
 
-	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ez2 select player") );
+	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenEz2SelectPlayer background") );
 	this->AddChild( &m_Background ); // animated background =)
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_sprJoinFrame[p].Load( THEME->GetPathTo("Graphics","select player join frame 1x2") );
+		m_sprJoinFrame[p].Load( THEME->GetPathTo("Graphics","ScreenEz2SelectPlayer join frame 1x2") );
 		m_sprJoinFrame[p].StopAnimating();
 		m_sprJoinFrame[p].SetState( p );
 		m_sprJoinFrame[p].SetXY( JOIN_FRAME_X(p), JOIN_FRAME_Y(p) );
@@ -76,7 +72,7 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 		if( GAMESTATE->m_bSideIsJoined[p] )
 			m_sprJoinFrame[p].SetZoomY( 0 );
 
-		m_sprJoinMessage[p].Load( THEME->GetPathTo("Graphics","select player join message 2x2") );
+		m_sprJoinMessage[p].Load( THEME->GetPathTo("Graphics","ScreenEz2SelectPlayer join message 2x2") );
 		m_sprJoinMessage[p].StopAnimating();
 		m_sprJoinMessage[p].SetState( p );
 		m_sprJoinMessage[p].SetXY( JOIN_MESSAGE_X(p), JOIN_MESSAGE_Y(p) );
@@ -96,14 +92,13 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 		}
 	}
 
-	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
+	m_soundSelect.Load( THEME->GetPathTo("Sounds","Common start") );
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select player intro") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select player music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSelectPlayer music") );
 
 	TweenOnScreen();
-	m_Menu.TweenOnScreenFromBlack( SM_None );
 }
 
 /************************************
@@ -145,7 +140,7 @@ void ScreenEz2SelectPlayer::Input( const DeviceInput& DeviceI, const InputEventT
 {
 	LOG->Trace( "ScreenEz2SelectPlayer::Input()" );
 
-	if( m_Menu.IsClosing() )
+	if( m_Menu.IsTransitioning() )
 		return;
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
@@ -166,11 +161,11 @@ void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 		if( GAMESTATE->GetNumSidesJoined() == 0 )
 		{
 			MenuStart(PLAYER_1);
-			m_Menu.StopTimer();
+			m_Menu.m_MenuTimer.StopTimer();
 		}
 
 		TweenOffScreen();
-		m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
+		m_Menu.StartTransitioning( SM_GoToNextScreen );
 		break;
 	case SM_GoToPrevScreen:
 		SOUNDMAN->StopMusic();
@@ -193,7 +188,7 @@ void ScreenEz2SelectPlayer::MenuBack( PlayerNumber pn )
 {
 	SOUNDMAN->StopMusic();
 
-	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
+	m_Menu.Back( SM_GoToPrevScreen );
 }
 
 
@@ -238,14 +233,14 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber pn )
 	if( bBothSidesJoined )
 	{
 		TweenOffScreen();
-		m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
+		m_Menu.StartTransitioning( SM_GoToNextScreen );
 	}
 	else
 	{
 		// give the other player a little time to join
-		m_Menu.SetTimer( 1 );
-		m_Menu.StartTimer();
-		m_Menu.StealthTimer( SILENT_WAIT ); // do we wanna make the timer 'quiet' ?
+		m_Menu.m_MenuTimer.SetTimer( 1 );
+		m_Menu.m_MenuTimer.StartTimer();
+		m_Menu.m_MenuTimer.StealthTimer( SILENT_WAIT ); // do we wanna make the timer 'quiet' ?
 	}
 }
 

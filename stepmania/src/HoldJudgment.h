@@ -22,13 +22,15 @@ class HoldJudgment : public ActorFrame
 {
 public:
 	HoldJudgment();
-	void SetHoldJudgment( HoldNoteScore hns );
+
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
+	void Reset();
+	void SetHoldJudgment( HoldNoteScore hns );
+
 protected:
 	Sprite		m_sprJudgment;
-	float		m_fShowCountdown;
 };
 
 #endif

@@ -36,22 +36,22 @@ ScreenCaution::ScreenCaution()
 		return;
 	}
 
-	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","caution background") );
+	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenCaution background") );
 	this->AddChild( &m_Background );
 	
-	m_In.Load( THEME->GetPathTo("BGAnimations","caution in") );
+	m_In.Load( THEME->GetPathTo("BGAnimations","ScreenCaution in") );
 	m_In.StartTransitioning( SM_DoneOpening );
 	this->AddChild( &m_In );
 
-	m_Out.Load( THEME->GetPathTo("BGAnimations","caution out") );
+	m_Out.Load( THEME->GetPathTo("BGAnimations","ScreenCaution out") );
 	this->AddChild( &m_Out );
 
-	m_Back.Load( THEME->GetPathTo("BGAnimations","menu back") );
+	m_Back.Load( THEME->GetPathTo("BGAnimations","Common back") );
 	this->AddChild( &m_Back );
 
 	this->SendScreenMessage( SM_StartClosing, 3 );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","caution music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenCaution music") );
 }
 
 
@@ -61,7 +61,7 @@ void ScreenCaution::Input( const DeviceInput& DeviceI, const InputEventType type
 	if( MenuI.IsValid()  &&  pn!=PLAYER_INVALID  &&  !GAMESTATE->m_bSideIsJoined[pn] )
 	{
 		GAMESTATE->m_bSideIsJoined[pn] = true;
-		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
+		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common start") );
 		SCREENMAN->RefreshCreditsMessages();
 		return;	// don't fall though
 	}
@@ -104,6 +104,6 @@ void ScreenCaution::MenuBack( PlayerNumber pn )
 		return;
 	this->ClearMessageQueue();
 	m_Back.StartTransitioning( SM_GoToPrevScreen );
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu back") );
+	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common back") );
 }
 

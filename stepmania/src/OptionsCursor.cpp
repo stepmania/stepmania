@@ -26,7 +26,7 @@ OptionsCursor::OptionsCursor()
 
 void OptionsCursor::Load( PlayerNumber pn, bool bUnderline )
 {
-	CString sFileName = bUnderline ? "options underline" : "options cursor";
+	CString sFileName = bUnderline ? "OptionsCursor underline" : "OptionsCursor cursor";
 	CString sPath = THEME->GetPathTo( "Graphics", sFileName );
 
 	m_sprLeft.Load( sPath );

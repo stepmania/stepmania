@@ -31,13 +31,13 @@ ScreenGameOver::ScreenGameOver()
 {
 	GAMESTATE->Reset();
 
-	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","game over") );
+	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenGameOver background") );
 	this->AddChild( &m_Background );
 
 	m_Fade.OpenWipingRight( SM_None );
 	this->AddChild( &m_Fade );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","game over music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenGameOver music") );
 
 	this->SendScreenMessage( SM_PlayAnnouncer, 0.5 );
 	this->SendScreenMessage( SM_StartFadingOut, 5 );

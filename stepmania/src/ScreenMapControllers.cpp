@@ -93,15 +93,10 @@ ScreenMapControllers::ScreenMapControllers()
 
 	m_bWaitingForPress = false;
 
-	m_Menu.Load(
-		THEME->GetPathTo("BGAnimations","map controllers"),
-		THEME->GetPathTo("Graphics","map controllers top edge"),
-		HELP_TEXT, false, false, 99
-		);
-	m_Menu.TweenOnScreenFromBlack( SM_None );
+	m_Menu.Load( "ScreenMapControllers", false );	// no timer
 	this->AddChild( &m_Menu );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","map controllers music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenMapControllers music") );
 
 	Refresh();
 }
@@ -240,7 +235,8 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 			m_iCurButton++;
 			break;
 		case SDLK_ESCAPE: /* Quit the screen. */
-			m_Menu.TweenOffScreenToBlack( SM_GoToNextScreen, true );		
+			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common start") );
+			m_Menu.StartTransitioning( SM_GoToNextScreen );		
 			break;
 		case SDLK_RETURN: /* Change the selection. */
 			m_bWaitingForPress = true;	

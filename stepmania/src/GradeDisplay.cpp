@@ -26,7 +26,7 @@ const float GRADES_TO_SCROLL = NUM_GRADE_FRAMES*4;
 
 GradeDisplay::GradeDisplay()
 {
-	RageTextureID id( THEME->GetPathTo("Graphics",ssprintf("evaluation grades 1x%d",NUM_GRADE_FRAMES)) );
+	RageTextureID id( THEME->GetPathTo("Graphics",ssprintf("GradeDisplay grades 1x%d",NUM_GRADE_FRAMES)) );
 	id.bStretch = true;
 	Load( id );
 	StopAnimating();

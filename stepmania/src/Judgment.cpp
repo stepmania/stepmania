@@ -18,109 +18,81 @@
 #include "ThemeManager.h"
 
 
-CachedThemeMetric	WORD_X			("Judgment","WordX");
-CachedThemeMetric	WORD_Y			("Judgment","WordY");
-CachedThemeMetric	MARVELOUS_ZOOM	("Judgment","MarvelousZoom");
-CachedThemeMetric	PERFECT_ZOOM	("Judgment","PerfectZoom");
-CachedThemeMetric	GREAT_ZOOM		("Judgment","GreatZoom");
-CachedThemeMetric	GOOD_ZOOM		("Judgment","GoodZoom");
-CachedThemeMetric	BOO_ZOOM		("Judgment","BooZoom");
-CachedThemeMetric	J_TWEEN_SECONDS	("Judgment","TweenSeconds");
-CachedThemeMetric	J_SHOW_SECONDS	("Judgment","ShowSeconds");
+CachedThemeMetric	MARVELOUS_COMMAND	("Judgment","MarvelousCommand");
+CachedThemeMetric	PERFECT_COMMAND		("Judgment","PerfectCommand");
+CachedThemeMetric	GREAT_COMMAND		("Judgment","GreatCommand");
+CachedThemeMetric	GOOD_COMMAND		("Judgment","GoodCommand");
+CachedThemeMetric	BOO_COMMAND			("Judgment","BooCommand");
+CachedThemeMetric	MISS_COMMAND		("Judgment","MissCommand");
 
 
 Judgment::Judgment()
 {
-	WORD_X.Refresh();
-	WORD_Y.Refresh();
-	MARVELOUS_ZOOM.Refresh();
-	PERFECT_ZOOM.Refresh();
-	GREAT_ZOOM.Refresh();
-	GOOD_ZOOM.Refresh();
-	BOO_ZOOM.Refresh();
-	J_TWEEN_SECONDS.Refresh();
-	J_SHOW_SECONDS.Refresh();
+	MARVELOUS_COMMAND.Refresh();
+	PERFECT_COMMAND.Refresh();
+	GREAT_COMMAND.Refresh();
+	GOOD_COMMAND.Refresh();
+	BOO_COMMAND.Refresh();
+	MISS_COMMAND.Refresh();
 
-	m_fShowCountdown = 0;
-	m_sprJudgment.Load( THEME->GetPathTo("Graphics","gameplay Judgment 1x6") );
-	m_sprJudgment.SetXY( WORD_X, WORD_Y );
+	m_sprJudgment.Load( THEME->GetPathTo("Graphics","Judgment 1x6") );
 	m_sprJudgment.StopAnimating();
-	m_sprJudgment.EnableShadow( true );
+	Reset();
 	this->AddChild( &m_sprJudgment );
 }
 
 void Judgment::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
-
-	m_fShowCountdown -= fDeltaTime;
-	if( m_fShowCountdown < 0 )
-		m_fShowCountdown = 0;
 }
 
 void Judgment::DrawPrimitives()
 {
-	if( m_fShowCountdown > 0 )
-	{
-		ActorFrame::DrawPrimitives();
-	}
+	ActorFrame::DrawPrimitives();
 }
 
+
+void Judgment::Reset()
+{
+	m_sprJudgment.SetDiffuse( RageColor(1,1,1,0) );
+	m_sprJudgment.SetXY( 0, 0 );
+	m_sprJudgment.StopTweening();
+	m_sprJudgment.SetEffectNone();
+}
 
 void Judgment::SetJudgment( TapNoteScore score )
 {
 	//LOG->Trace( "Judgment::SetJudgment()" );
 
+	Reset();
+
 	switch( score )
 	{
-	case TNS_MARVELOUS:	m_sprJudgment.SetState( 0 );	break;
-	case TNS_PERFECT:	m_sprJudgment.SetState( 1 );	break;
-	case TNS_GREAT:		m_sprJudgment.SetState( 2 );	break;
-	case TNS_GOOD:		m_sprJudgment.SetState( 3 );	break;
-	case TNS_BOO:		m_sprJudgment.SetState( 4 );	break;
-	case TNS_MISS:		m_sprJudgment.SetState( 5 );	break;
-	default:	ASSERT(0);
+	case TNS_MARVELOUS:
+		m_sprJudgment.SetState( 0 );
+		m_sprJudgment.Command( MARVELOUS_COMMAND );
+		break;
+	case TNS_PERFECT:
+		m_sprJudgment.SetState( 1 );
+		m_sprJudgment.Command( PERFECT_COMMAND );
+		break;
+	case TNS_GREAT:
+		m_sprJudgment.SetState( 2 );
+		m_sprJudgment.Command( GREAT_COMMAND );
+		break;
+	case TNS_GOOD:
+		m_sprJudgment.SetState( 3 );
+		m_sprJudgment.Command( GOOD_COMMAND );
+		break;
+	case TNS_BOO:
+		m_sprJudgment.SetState( 4 );
+		m_sprJudgment.Command( BOO_COMMAND );
+		break;
+	case TNS_MISS:
+		m_sprJudgment.SetState( 5 );
+		m_sprJudgment.Command( MISS_COMMAND );
+		break;
+	default:
+		ASSERT(0);
 	}
-
-	m_fShowCountdown = J_SHOW_SECONDS;
-
-	m_sprJudgment.SetEffectNone();
-	m_sprJudgment.StopTweening();
-
-	if( score == TNS_MISS )
-	{
-		// falling down
-		m_sprJudgment.SetY( -20 );
-		m_sprJudgment.BeginTweening( J_SHOW_SECONDS );
-		m_sprJudgment.SetTweenY( 20 );
-	} 
-	else if( score == TNS_BOO )
-	{
-		// vibrate
-		m_sprJudgment.SetY( 0 );
-		m_sprJudgment.SetZoom( 1.0f );
-		m_sprJudgment.SetEffectVibrate();
-	}
-	else
-	{
-		// zooming out
-		float fZoom;
-		switch( score )
-		{
-		case TNS_MARVELOUS:	fZoom = MARVELOUS_ZOOM;	break;
-		case TNS_PERFECT:	fZoom = PERFECT_ZOOM;	break;
-		case TNS_GREAT:		fZoom = GREAT_ZOOM;		break;
-		case TNS_GOOD:		fZoom = GOOD_ZOOM;		break;
-		default: ASSERT(0);	fZoom = 1;				break;
-		}
-		m_sprJudgment.SetY( 0 );
-		m_sprJudgment.SetZoom( fZoom );
-		m_sprJudgment.BeginTweening( J_TWEEN_SECONDS );
-		m_sprJudgment.SetTweenZoom( 1 );
-	}
-
-	if( score == TNS_MARVELOUS )
-		m_sprJudgment.SetEffectGlowBlink(0.05f, RageColor(1,1,1,0), RageColor(1,1,1,0.5f));
-	else
-		m_sprJudgment.SetEffectNone();
 }

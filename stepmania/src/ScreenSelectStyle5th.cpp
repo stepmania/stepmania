@@ -28,6 +28,8 @@
 #define TIMER_SECONDS		THEME->GetMetricI("ScreenSelectStyle5th","TimerSeconds")
 #define NEXT_SCREEN			THEME->GetMetric("ScreenSelectStyle5th","NextScreen")
 
+const int NUM_DANCE_STYLES = 5;
+
 const CString DANCE_STYLES[NUM_DANCE_STYLES] = {
 	"single",
 	"versus",
@@ -164,23 +166,18 @@ ScreenSelectStyle5th::ScreenSelectStyle5th()
 	m_textExplanation2.SetHorizAlign( BitmapText::align_left );
 	this->AddChild( &m_textExplanation2 );
 	
-	m_Menu.Load( 	
-		THEME->GetPathTo("BGAnimations","select style"), 
-		THEME->GetPathTo("Graphics","select style top edge"),
-		HELP_TEXT, false, true, TIMER_SECONDS
-		);
+	m_Menu.Load( "ScreenSelectStyle5th" );
 	this->AddChild( &m_Menu );
 
-	m_soundChange.Load( THEME->GetPathTo("Graphics","select style change") );
-	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
+	m_soundChange.Load( THEME->GetPathTo("Graphics","ScreenSelectStyle5th change") );
+	m_soundSelect.Load( THEME->GetPathTo("Sounds","Common start") );
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select style intro") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select style music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSelectStyle5th music") );
 
 	m_soundChange.PlayRandom();
 	TweenOnScreen();
-	m_Menu.TweenOnScreenFromBlack( SM_None );
 }
 
 
@@ -201,7 +198,7 @@ void ScreenSelectStyle5th::Input( const DeviceInput& DeviceI, const InputEventTy
 {
 	LOG->Trace( "ScreenSelectStyle5th::Input()" );
 
-	if( m_Menu.IsClosing() )
+	if( m_Menu.IsTransitioning() )
 		return;
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
@@ -274,8 +271,8 @@ void ScreenSelectStyle5th::MenuStart( PlayerNumber pn )
 
 	CString sCurStyleName = GAMESTATE->GetCurrentStyleDef()->m_szName;
 	sCurStyleName.MakeLower();
-	if(	     -1!=sCurStyleName.Find("single") )	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select style comment single") );
-	else if( -1!=sCurStyleName.Find("versus") )	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select style comment versus") );
+	if(	     -1!=sCurStyleName.Find("single") )	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("ScreenSelectStyle5th comment single") );
+	else if( -1!=sCurStyleName.Find("versus") )	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("ScreenSelectStyle5th comment versus") );
 	else if( -1!=sCurStyleName.Find("double") )	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select style comment double") );
 	else if( -1!=sCurStyleName.Find("couple") )	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select style comment couple") );
 	else if( -1!=sCurStyleName.Find("solo") )	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select style comment solo") );
@@ -283,7 +280,7 @@ void ScreenSelectStyle5th::MenuStart( PlayerNumber pn )
 	this->ClearMessageQueue();
 
 	TweenOffScreen();
-	m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
+	m_Menu.StartTransitioning( SM_GoToNextScreen );
 	m_soundSelect.PlayRandom();
 }
 
@@ -291,7 +288,7 @@ void ScreenSelectStyle5th::MenuBack( PlayerNumber pn )
 {
 	SOUNDMAN->StopMusic();
 
-	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
+	m_Menu.Back( SM_GoToPrevScreen );
 }
 
 void ScreenSelectStyle5th::BeforeChange()

@@ -22,7 +22,7 @@ void GroupList::DoneAddingGroups()
 
 	for( i=0; i<min(m_textLabels.size(), MAX_GROUPS_ONSCREEN); i++ )
 	{
-		m_sprButton[i].Load( THEME->GetPathTo("Graphics","select group button") );
+		m_sprButton[i].Load( THEME->GetPathTo("Graphics","GroupList button") );
 		m_sprButton[i].SetXY( BUTTON_X, BUTTON_START_Y + i*BUTTON_SPACING_Y );
 		this->AddChild( &m_sprButton[i] );
 		this->AddChild( &m_screenLabels[i] );
@@ -30,7 +30,7 @@ void GroupList::DoneAddingGroups()
 
 	for( i=0; i<min(m_textLabels.size(), MAX_GROUPS_ONSCREEN); i++ )
 	{
-		m_screenLabels[i].LoadFromFont( THEME->GetPathTo("Fonts","select group button label") );
+		m_screenLabels[i].LoadFromFont( THEME->GetPathTo("Fonts","GroupList label") );
 		m_screenLabels[i].SetXY( BUTTON_X, BUTTON_START_Y + i*BUTTON_SPACING_Y );
 		m_screenLabels[i].SetShadowLength( 2 );
 

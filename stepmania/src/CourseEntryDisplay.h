@@ -11,12 +11,12 @@
 -----------------------------------------------------------------------------
 */
 
-#include "FootMeter.h"
 #include "BitmapText.h"
 #include "TextBanner.h"
 #include "ActorFrame.h"
 #include "Sprite.h"
 #include "Quad.h"
+#include "GameConstantsAndTypes.h"
 class Course;
 class Song;
 struct Notes;

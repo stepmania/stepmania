@@ -54,8 +54,8 @@ ScreenManager::ScreenManager()
 	m_textSystemMessage.SetHorizAlign( Actor::align_left );
 	m_textSystemMessage.SetVertAlign( Actor::align_top );
 	m_textSystemMessage.SetXY( 4.0f, 4.0f );
-	m_textSystemMessage.SetZoom( 0.7f );
-//	m_textSystemMessage.SetShadowLength( 2 );
+	m_textSystemMessage.SetZoom( 0.8f );
+	m_textSystemMessage.SetShadowLength( 2 );
 	m_textSystemMessage.SetDiffuse( RageColor(1,1,1,0) );
 
 	m_textSysTime.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
@@ -74,7 +74,7 @@ ScreenManager::~ScreenManager()
 
 	EmptyDeleteQueue();
 
-	// delete current states
+	// delete current Screens
 	for( unsigned i=0; i<m_ScreenStack.size(); i++ )
 		SAFE_DELETE( m_ScreenStack[i] );
 	SAFE_DELETE( m_ScreenBuffered );
@@ -114,6 +114,7 @@ void ScreenManager::Update( float fDeltaTime )
 	 *
 	 * So, let's just drop the first update for every screen.
 	 */
+	ASSERT( !m_ScreenStack.empty() );	// Why play the game if there is nothing showing?
 	Screen* pScreen = m_ScreenStack[m_ScreenStack.size()-1];
 	if( pScreen->IsFirstUpdate() )
 		pScreen->Update( 0 );
@@ -143,9 +144,7 @@ void ScreenManager::Draw()
 		for( unsigned i=0; i<m_ScreenStack.size(); i++ )	// Draw all screens bottom to top
 			m_ScreenStack[i]->Draw();
 
-	
-	if( m_textSystemMessage.GetDiffuse().a != 0 )
-		m_textSystemMessage.Draw();
+	m_textSystemMessage.Draw();
 
 	if( PREFSMAN  &&  PREFSMAN->m_bShowStats )
 	{
@@ -227,11 +226,22 @@ void ScreenManager::SetNewScreen( CString sClassName )
 
 	RageTimer t;
 	
+	Screen* pOldTopScreen = m_ScreenStack.empty() ? NULL : m_ScreenStack.back();
+
 	// It makes sense that ScreenManager should allocate memory for a new screen since it 
 	// deletes it later on.  This also convention will reduce includes because screens won't 
 	// have to include each other's headers of other screens.
 	Screen* pNewScreen = MakeNewScreen(sClassName);
 	LOG->Trace( "Loaded %s in %f", sClassName.GetString(), t.GetDeltaTime());
+
+	if( pOldTopScreen!=NULL  &&  m_ScreenStack.back()!=pOldTopScreen )
+	{
+		// While constructing this Screen, it's constructor called
+		// SetNewScreen again!  That SetNewScreen Command should
+		// override this older one.
+		SAFE_DELETE( pNewScreen );
+		return;
+	}
 
 	SetNewScreen( pNewScreen );
 
@@ -242,8 +252,10 @@ void ScreenManager::SetNewScreen( CString sClassName )
 		 sClassName == "ScreenGraphicOptions" || sClassName == "ScreenGameplayOptions" || 
 		 sClassName == "ScreenMapControllers" || sClassName == "ScreenPlayerOptions" || 
 		 sClassName == "ScreenAppearanceOptions" || sClassName == "ScreenEdit" || 
-		 sClassName == "ScreenEditMenu" || sClassName == "ScreenSoundOptions") GAMESTATE->m_bIsOnSystemMenu = true;
-	else GAMESTATE->m_bIsOnSystemMenu = false;
+		 sClassName == "ScreenEditMenu" || sClassName == "ScreenSoundOptions") 
+		GAMESTATE->m_bIsOnSystemMenu = true;
+	else 
+		GAMESTATE->m_bIsOnSystemMenu = false;
 }
 
 void ScreenManager::AddNewScreenToTop( CString sClassName )
@@ -294,15 +306,15 @@ void ScreenManager::SendMessageToTopScreen( ScreenMessage SM, float fDelay )
 
 void ScreenManager::SystemMessage( CString sMessage )
 {
-	// Look for an open spot
 	m_textSystemMessage.StopTweening();
 	m_textSystemMessage.SetText( sMessage );
 	m_textSystemMessage.SetDiffuse( RageColor(1,1,1,1) );
+	m_textSystemMessage.SetX( -640 );
+	m_textSystemMessage.BeginTweening( 0.3f );
+	m_textSystemMessage.SetX( 4 );
 	m_textSystemMessage.BeginTweening( 5 );
-	m_textSystemMessage.BeginTweening( 1 );
+	m_textSystemMessage.BeginTweening( 0.3f );
 	m_textSystemMessage.SetTweenDiffuse( RageColor(1,1,1,0) );
-
-	LOG->Trace( "WARNING:  Didn't find an empty system messages slot." );
 }
 
 void ScreenManager::RefreshCreditsMessages()
@@ -329,9 +341,9 @@ void ScreenManager::RefreshCreditsMessages()
 		case PrefsManager::COIN_PAY:
 			{
 				int Coins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
-				CString txt = ssprintf("CREDIT(S) %d ", GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit);
+				CString txt = ssprintf("CREDIT(S) %d", GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit);
 				if (Coins)
-					txt += ssprintf(" (%d / %d)", Coins, PREFSMAN->m_iCoinsPerCredit );
+					txt += ssprintf("  %d/%d", Coins, PREFSMAN->m_iCoinsPerCredit );
 				m_textCreditInfo[p].SetText(txt);
 			}
 			break;

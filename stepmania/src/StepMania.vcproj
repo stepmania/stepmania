@@ -388,6 +388,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenSelectCourse.h">
 			</File>
 			<File
+				RelativePath="ScreenSelectDifficulty.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSelectDifficulty.h">
+			</File>
+			<File
 				RelativePath="ScreenSelectDifficultyEX.cpp">
 			</File>
 			<File
@@ -406,18 +412,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenSelectGroup.h">
 			</File>
 			<File
-				RelativePath="ScreenSelectMaxType1.cpp">
-			</File>
-			<File
-				RelativePath="ScreenSelectMaxType1.h">
-			</File>
-			<File
-				RelativePath="ScreenSelectMaxType2.cpp">
-			</File>
-			<File
-				RelativePath="ScreenSelectMaxType2.h">
-			</File>
-			<File
 				RelativePath="ScreenSelectMode.cpp">
 			</File>
 			<File
@@ -428,6 +422,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenSelectMusic.h">
+			</File>
+			<File
+				RelativePath="ScreenSelectStyle.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSelectStyle.h">
 			</File>
 			<File
 				RelativePath="ScreenSelectStyle5th.cpp">

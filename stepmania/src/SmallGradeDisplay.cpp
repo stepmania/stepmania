@@ -25,7 +25,7 @@ const float GRADES_TO_SCROLL = NUM_GRADE_FRAMES*4;
 
 SmallGradeDisplay::SmallGradeDisplay()
 {
-	Load( THEME->GetPathTo("Graphics","select music small grades 2x9") );
+	Load( THEME->GetPathTo("Graphics","SmallGradeDisplay grades 2x9") );
 	StopAnimating();
 
 	SetGrade( PLAYER_1, GRADE_NO_DATA );

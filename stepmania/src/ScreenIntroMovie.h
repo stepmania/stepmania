@@ -16,7 +16,7 @@
 class ScreenIntroMovie : public ScreenAttract
 {
 public:
-	ScreenIntroMovie() : ScreenAttract("ScreenIntroMovie","intro movie") { };
+	ScreenIntroMovie() : ScreenAttract("ScreenIntroMovie") { };
 	void Update( float fDelta );
 
 };

@@ -52,11 +52,7 @@ OptionRowData g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
 };
 
 ScreenMachineOptions::ScreenMachineOptions() :
-	ScreenOptions(
-		THEME->GetPathTo("BGAnimations","machine options"),
-		THEME->GetPathTo("Graphics","machine options page"),
-		THEME->GetPathTo("Graphics","machine options top edge")
-		)
+	ScreenOptions("ScreenMachineOptions",false)
 {
 	LOG->Trace( "ScreenMachineOptions::ScreenMachineOptions()" );
 
@@ -74,9 +70,9 @@ ScreenMachineOptions::ScreenMachineOptions() :
 		g_MachineOptionsLines, 
 		NUM_MACHINE_OPTIONS_LINES,
 		false );
-	m_Menu.StopTimer();
+	m_Menu.m_MenuTimer.StopTimer();
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","machine options music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenMachineOptions music") );
 }
 
 void ScreenMachineOptions::ImportOptions()

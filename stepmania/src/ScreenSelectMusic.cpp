@@ -94,11 +94,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 
 	int p;
 
-	m_Menu.Load(
-		THEME->GetPathTo("BGAnimations","select music"), 
-		THEME->GetPathTo("Graphics","select music top edge"),
-		HELP_TEXT, true, true, TIMER_SECONDS 
-		);
+	m_Menu.Load( "ScreenSelectMusic" );
 	this->AddChild( &m_Menu );
 
 	// these guys get loaded SetSong and TweenToSong
@@ -106,7 +102,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_Banner.SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
 	this->AddChild( &m_Banner );
 
-	m_sprBannerFrame.Load( THEME->GetPathTo("Graphics","select music banner frame") );
+	m_sprBannerFrame.Load( THEME->GetPathTo("Graphics","ScreenSelectMusic banner frame") );
 	m_sprBannerFrame.SetXY( BANNER_FRAME_X, BANNER_FRAME_Y );
 	this->AddChild( &m_sprBannerFrame );
 
@@ -119,7 +115,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_StageDisplay.Refresh();
 	this->AddChild( &m_StageDisplay );
 
-	m_sprCDTitle.Load( THEME->GetPathTo("Graphics","fallback cd title") );
+	m_sprCDTitle.Load( THEME->GetPathTo("Graphics","ScreenSelectMusic fallback cdtitle") );
 	m_sprCDTitle.EnableShadow( false );
 	m_sprCDTitle.SetXY( CD_TITLE_X, CD_TITLE_Y );
 	this->AddChild( &m_sprCDTitle );
@@ -129,17 +125,17 @@ ScreenSelectMusic::ScreenSelectMusic()
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;	// skip
 
-		m_sprDifficultyFrame[p].Load( THEME->GetPathTo("Graphics","select music difficulty frame 2x1") );
+		m_sprDifficultyFrame[p].Load( THEME->GetPathTo("Graphics","ScreenSelectMusic difficulty frame 2x1") );
 		m_sprDifficultyFrame[p].SetXY( DIFFICULTY_FRAME_X(p), DIFFICULTY_FRAME_Y(p) );
 		m_sprDifficultyFrame[p].StopAnimating();
 		m_sprDifficultyFrame[p].SetState( p );
 		this->AddChild( &m_sprDifficultyFrame[p] );
 
-		m_DifficultyIcon[p].Load( THEME->GetPathTo("graphics","select music difficulty icons 1x5") );
+		m_DifficultyIcon[p].Load( THEME->GetPathTo("graphics","ScreenSelectMusic difficulty icons 1x5") );
 		m_DifficultyIcon[p].SetXY( DIFFICULTY_ICON_X(p), DIFFICULTY_ICON_Y(p) );
 		this->AddChild( &m_DifficultyIcon[p] );
 
-		m_AutoGenIcon[p].Load( THEME->GetPathTo("graphics","select music autogen icon") );
+		m_AutoGenIcon[p].Load( THEME->GetPathTo("graphics","ScreenSelectMusic autogen") );
 		m_AutoGenIcon[p].SetXY( DIFFICULTY_ICON_X(p), DIFFICULTY_ICON_Y(p) );
 		this->AddChild( &m_AutoGenIcon[p] );
 	}
@@ -168,15 +164,15 @@ ScreenSelectMusic::ScreenSelectMusic()
 		m_OptionIconRow[p].Refresh( (PlayerNumber)p );
 		this->AddChild( &m_OptionIconRow[p] );
 
-		m_sprMeterFrame[p].Load( THEME->GetPathTo("Graphics","select music meter frame") );
+		m_sprMeterFrame[p].Load( THEME->GetPathTo("Graphics","ScreenSelectMusic meter frame") );
 		m_sprMeterFrame[p].SetXY( METER_FRAME_X(p), METER_FRAME_Y(p) );
 		m_sprMeterFrame[p].StopAnimating();
 		m_sprMeterFrame[p].SetState( p );
 		this->AddChild( &m_sprMeterFrame[p] );
 
-		m_FootMeter[p].SetXY( METER_X(p), METER_Y(p) );
-		m_FootMeter[p].SetShadowLength( 2 );
-		this->AddChild( &m_FootMeter[p] );
+		m_DifficultyMeter[p].SetXY( METER_X(p), METER_Y(p) );
+		m_DifficultyMeter[p].SetShadowLength( 2 );
+		this->AddChild( &m_DifficultyMeter[p] );
 	}
 
 	m_MusicWheel.SetXY( WHEEL_X, WHEEL_Y );
@@ -187,7 +183,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
 			continue;	// skip
 
-		m_sprHighScoreFrame[p].Load( THEME->GetPathTo("Graphics","select music score frame 1x2") );
+		m_sprHighScoreFrame[p].Load( THEME->GetPathTo("Graphics","ScreenSelectMusic score frame 1x2") );
 		m_sprHighScoreFrame[p].StopAnimating();
 		m_sprHighScoreFrame[p].SetState( p );
 		m_sprHighScoreFrame[p].SetXY( SCORE_X(p), SCORE_Y(p) );
@@ -203,7 +199,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_MusicSortDisplay.Set( GAMESTATE->m_SongSortOrder );
 	this->AddChild( &m_MusicSortDisplay );
 
-	m_sprMarathonBalloon.Load( THEME->GetPathTo("Graphics","select music marathon balloon") );
+	m_sprMarathonBalloon.Load( THEME->GetPathTo("Graphics","ScreenSelectMusic marathon") );
 	m_sprMarathonBalloon.StopAnimating();
 	m_sprMarathonBalloon.SetXY( BALLOON_X, BALLOON_Y );
 	m_sprMarathonBalloon.SetZoomY( 0 );
@@ -211,7 +207,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_sprMarathonBalloon.SetEffectBob( 2, RageVector3(0,10,0) );
 	this->AddChild( &m_sprMarathonBalloon );
 
-	m_sprLongBalloon.Load( THEME->GetPathTo("Graphics","select music long balloon") );
+	m_sprLongBalloon.Load( THEME->GetPathTo("Graphics","ScreenSelectMusic long") );
 	m_sprLongBalloon.StopAnimating();
 	m_sprLongBalloon.SetXY( BALLOON_X, BALLOON_Y );
 	m_sprLongBalloon.SetZoomY( 0 );
@@ -219,7 +215,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_sprLongBalloon.SetEffectBob( 2, RageVector3(0,10,0) );
 	this->AddChild( &m_sprLongBalloon );
 
-	m_sprOptionsMessage.Load( THEME->GetPathTo("Graphics","select music options message") );
+	m_sprOptionsMessage.Load( THEME->GetPathTo("Graphics","ScreenSelectMusic options") );
 	m_sprOptionsMessage.StopAnimating();
 	m_sprOptionsMessage.SetXY( CENTER_X, CENTER_Y );
 	m_sprOptionsMessage.SetZoom( 1 );
@@ -227,10 +223,10 @@ ScreenSelectMusic::ScreenSelectMusic()
 	this->AddChild( &m_sprOptionsMessage );
 
 
-	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
-	m_soundChangeNotes.Load( THEME->GetPathTo("Sounds","select music notes") );
-	m_soundOptionsChange.Load( THEME->GetPathTo("Sounds","select music options") );
-	m_soundLocked.Load( THEME->GetPathTo("Sounds","select music locked") );
+	m_soundSelect.Load( THEME->GetPathTo("Sounds","Common start") );
+	m_soundChangeNotes.Load( THEME->GetPathTo("Sounds","ScreenSelectMusic notes") );
+	m_soundOptionsChange.Load( THEME->GetPathTo("Sounds","ScreenSelectMusic options") );
+	m_soundLocked.Load( THEME->GetPathTo("Sounds","ScreenSelectMusic locked") );
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music intro") );
 
@@ -243,7 +239,6 @@ ScreenSelectMusic::ScreenSelectMusic()
 
 	AfterMusicChange();
 	TweenOnScreen();
-	m_Menu.TweenOnScreenFromMenu( SM_None );
 }
 
 
@@ -290,7 +285,7 @@ void ScreenSelectMusic::TweenOnScreen()
 		m_DifficultyIcon[p].FadeOn( 0, "foldy", TWEEN_TIME );
 		m_AutoGenIcon[p].FadeOn( 0, "foldy", TWEEN_TIME );
 
-		m_FootMeter[p].FadeOn( 0, "foldy", TWEEN_TIME );
+		m_DifficultyMeter[p].FadeOn( 0, "foldy", TWEEN_TIME );
 	}
 
 	m_MusicSortDisplay.FadeOn( 0, "fade", TWEEN_TIME );
@@ -333,7 +328,7 @@ void ScreenSelectMusic::TweenOffScreen()
 		m_DifficultyIcon[p].FadeOff( 0, "foldy", TWEEN_TIME );
 		m_AutoGenIcon[p].FadeOff( 0, "foldy", TWEEN_TIME );
 
-		m_FootMeter[p].FadeOff( 0, "foldy", TWEEN_TIME );
+		m_DifficultyMeter[p].FadeOff( 0, "foldy", TWEEN_TIME );
 	}
 
 	m_MusicSortDisplay.FadeOff( 0, "fade", TWEEN_TIME );
@@ -462,11 +457,11 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		
 		m_bGoToOptions = true;
 		m_sprOptionsMessage.SetState( 1 );
-		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
+		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common start") );
 		return;
 	}
 	
-	if( m_Menu.IsClosing() )	return;		// ignore
+	if( m_Menu.IsTransitioning() )	return;		// ignore
 
 	if( m_bMadeChoice )
 		return;
@@ -613,12 +608,12 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		if( m_MusicWheel.IsRouletting() )
 		{
 			MenuStart(PLAYER_INVALID);
-			m_Menu.SetTimer( 15 );
+			m_Menu.m_MenuTimer.SetTimer( 15 );
 		}
 		else if( m_MusicWheel.GetSelectedType() != TYPE_SONG )
 		{
 			m_MusicWheel.StartRoulette();
-			m_Menu.SetTimer( 15 );
+			m_Menu.m_MenuTimer.SetTimer( 15 );
 		}
 		else
 		{
@@ -739,12 +734,8 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 			this->SendScreenMessage( SM_AllowOptionsMenuRepeat, 0.75f );
 		}
 
-		m_Menu.TweenOffScreenToBlack( SM_None, false );
-
-		m_Menu.StopTimer();
+		m_Menu.StartTransitioning( SM_GoToNextScreen );
 		AdjustOptions();
-
-		this->SendScreenMessage( SM_GoToNextScreen, 2.5f );
 		break;
 	}
 	case TYPE_SECTION:
@@ -776,7 +767,7 @@ void ScreenSelectMusic::MenuBack( PlayerNumber pn )
 {
 	SOUNDMAN->StopMusic();
 
-	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
+	m_Menu.Back( SM_GoToPrevScreen );
 }
 
 void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
@@ -809,14 +800,14 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 		m_AutoGenIcon[pn].SetEffectNone();
 		m_AutoGenIcon[pn].SetDiffuse( RageColor(1,1,1,0) );
 	}
-	m_FootMeter[pn].SetFromNotes( pNotes );
+	m_DifficultyMeter[pn].SetFromNotes( pNotes );
 	m_GrooveRadar.SetFromNotes( pn, pNotes );
 	m_MusicWheel.NotesChanged( pn );
 }
 
 void ScreenSelectMusic::AfterMusicChange()
 {
-	m_Menu.StallTimer();
+	m_Menu.m_MenuTimer.StallTimer();
 
 	Song* pSong = m_MusicWheel.GetSelectedSong();
 	GAMESTATE->m_pCurSong = pSong;
@@ -883,7 +874,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			if( pSong->HasCDTitle() )
 				m_sprCDTitle.Load( pSong->GetCDTitlePath() );
 			else
-				m_sprCDTitle.Load( THEME->GetPathTo("Graphics","fallback cd title") );
+				m_sprCDTitle.Load( THEME->GetPathTo("Graphics","ScreenSelectMusic fallback cdtitle") );
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
 				if( !GAMESTATE->IsPlayerEnabled( PlayerNumber(p) ) )
@@ -956,7 +947,7 @@ void ScreenSelectMusic::PlayMusicSample()
 			1.5f); /* fade out for 1.5 seconds */
 	}
 //	else
-//		SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select music music") );
+//		SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSelectMusic music") );
 }
 
 void ScreenSelectMusic::UpdateOptionsDisplays()

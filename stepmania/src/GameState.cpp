@@ -74,7 +74,7 @@ void GameState::Reset()
 	m_SongSortOrder = SORT_GROUP;
 	m_PlayMode = PLAY_MODE_INVALID;
 	m_bEditing = false;
-	m_bDemonstration = false;
+	m_bDemonstrationOrJukebox = false;
 	m_bJukeboxUsesModifiers = false;
 	m_iCurrentStageIndex = 0;
 	m_bAllow2ndExtraStage = true;
@@ -181,7 +181,7 @@ bool GameState::IsExtraStage2()
 
 CString GameState::GetStageText()
 {
-	if( m_bDemonstration )			return STAGE_TEXT_DEMO;
+	if( m_bDemonstrationOrJukebox )	return STAGE_TEXT_DEMO;
 	else if( IsFinalStage() )		return STAGE_TEXT_FINAL;
 	else if( IsExtraStage() )		return STAGE_TEXT_EXTRA1;
 	else if( IsExtraStage2() )		return STAGE_TEXT_EXTRA2;
@@ -210,7 +210,7 @@ CString GameState::GetStageText()
 
 RageColor GameState::GetStageColor()
 {
-	if( m_bDemonstration )						return STAGE_COLOR_DEMO;
+	if( m_bDemonstrationOrJukebox )				return STAGE_COLOR_DEMO;
 	else if( m_PlayMode==PLAY_MODE_NONSTOP )	return STAGE_COLOR_NONSTOP;
 	else if( m_PlayMode==PLAY_MODE_ONI )		return STAGE_COLOR_ONI;
 	else if( m_PlayMode==PLAY_MODE_ENDLESS )	return STAGE_COLOR_ENDLESS;
