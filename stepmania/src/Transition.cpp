@@ -13,6 +13,9 @@ Transition::Transition()
 
 void Transition::Load( CString sBGAniDir )
 {
+	if( IsADirectory(sBGAniDir) && sBGAniDir.Right(1) != "/" )
+		sBGAniDir += "/";
+
 	bool bWasLoaded = m_sprTransition.IsLoaded();
 	m_sprTransition.Load( sBGAniDir );
 	m_sprTransition->PlayCommand( "On" );
