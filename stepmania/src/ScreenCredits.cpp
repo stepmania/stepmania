@@ -62,18 +62,19 @@ const CreditLine CREDIT_LINES[] =
 	{0,""},
 	{2,"☆☆GRAPHICS☆☆"},
 	{0,"Lucas “v1ral” Tang"}, 
-	{0,"SPiGuMuS"}, // who? get real, you dont know who spig is? he makes half the freaking DDR themes! - Friez
+	// "Who?" = "what is this person's real name", not "what did they do".
+	{0,"SPiGuMuS"}, // who?
 	{0,"Visage"}, // who? makes para para theme graphics for me, wants to do BM and IIDX graphics too. - Friez
 	{0,"Ryan “DJ McFox” McKanna"},
 	{0,"Lamden “Cloud34” Travis"}, // ddrmaniax admin / did a graphic or two for me - friez
 	{0,"Michael “Redcrusher” Curry"}, // ez2 graphics - friez
 	{0,"Steve “healing_vision” Klise"},
 	{0,"Mauro Panichella"},
-	{0,"Popnko"}, // makes popnmusic graphics for me - Friez
+	{0,"Popnko"}, // who? makes popnmusic graphics for me - Friez
 	{0,"Griever (Julian)"}, // who?
 	{0,"Miguel Moore"},
 	{0,"Dj “AeON ExOdus” Washington"},
-	{0,"Xelf"}, // who? / ddrmaniax forums makes a cab with SM on it, dont know what hes directly done for the software - friez
+	{0,"Xelf"}, // who?
 	{0,"James “SPDS” Sanders"},
 	{0,"k0ldx"}, // who?
 	{0,""},
