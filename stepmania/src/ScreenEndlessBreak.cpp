@@ -55,7 +55,7 @@ ScreenEndlessBreak::ScreenEndlessBreak( CString sName ) : Screen( sName )
 		this->AddChild(&m_sprBreakPicture);
 
 	// Set up our countdown clock.
-	m_fCountdownSecs = (PREFSMAN->m_iEndlessBreakLength*60);	// Stored in minutes.
+	m_fCountdownSecs = (float)(PREFSMAN->m_iEndlessBreakLength*60);	// Stored in minutes.
 
 	//BitmapText stuff
 	m_textTimeRemaining.LoadFromFont( THEME->GetPathToF("Common Normal") );
