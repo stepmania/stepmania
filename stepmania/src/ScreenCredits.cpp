@@ -5,22 +5,20 @@
 
  Desc: See header.
 
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+ Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
 	Chris Danford
+	Glenn Maynard
 -----------------------------------------------------------------------------
 */
 
 
 #include "ScreenCredits.h"
-#include "ScreenManager.h"
 #include "RageSounds.h"
 #include "RageLog.h"
-#include "GameConstantsAndTypes.h"
 #include "SongManager.h"
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "AnnouncerManager.h"
-#include <math.h>
 #include "Sprite.h"
 #include "song.h"
 #include "BitmapText.h"
@@ -44,7 +42,6 @@
 #define TEXTS_VELOCITY_Y		THEME->GetMetricF("ScreenCredits","TextsVelocityY")
 #define TEXTS_SPACING_X			THEME->GetMetricF("ScreenCredits","TextsSpacingX")
 #define TEXTS_SPACING_Y			THEME->GetMetricF("ScreenCredits","TextsSpacingY")
-#define NEXT_SCREEN				THEME->GetMetric ("ScreenCredits","NextScreen")
 
 const int NUM_BACKGROUNDS = 20;
 
@@ -54,7 +51,7 @@ struct CreditLine
 	const char* text;
 };
 
-const CreditLine CREDIT_LINES[] = 
+static const CreditLine CREDIT_LINES[] = 
 {
 	{1,"STEPMANIA TEAM"},
 	{0,""},
@@ -177,22 +174,13 @@ const CreditLine CREDIT_LINES[] =
 const unsigned NUM_CREDIT_LINES = sizeof(CREDIT_LINES) / sizeof(CreditLine);
 
 
-ScreenCredits::ScreenCredits( CString sName ) : Screen( sName )
+ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 {
-	LOG->Trace( "ScreenCredits::ScreenCredits()" );
-
-	int i;
-
-	GAMESTATE->Reset();		// so that credits message for both players will show
-
-
-	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenCredits background") );
-	this->AddChild( &m_Background );
-
 	vector<Song*> arraySongs;
 	SONGMAN->GetSongs( arraySongs );
 	SortSongPointerArrayByTitle( arraySongs );
 
+	int i;
 	for( i=0; i<NUM_BACKGROUNDS; i++ )
 	{
 		Song* pSong = NULL;
@@ -236,22 +224,16 @@ ScreenCredits::ScreenCredits( CString sName ) : Screen( sName )
 	m_ScrollerTexts.Load( m_vTexts, TEXTS_BASE_X, TEXTS_BASE_Y, TEXTS_VELOCITY_X, TEXTS_VELOCITY_Y, TEXTS_SPACING_X, TEXTS_SPACING_Y );
 	this->AddChild( &m_ScrollerTexts );
 	
-
 	m_Overlay.LoadFromAniDir( THEME->GetPathToB("ScreenCredits overlay") );
 	this->AddChild( &m_Overlay );
 
-	m_In.Load( THEME->GetPathToB("ScreenCredits in") );
-	this->AddChild( &m_In );	// draw and update manually
-	m_In.StartTransitioning();
+	this->MoveToTail( &m_In );		// put it in the back so it covers up the stuff we just added
+	this->MoveToTail( &m_Out );		// put it in the back so it covers up the stuff we just added
 
-	m_Out.Load( THEME->GetPathToB("ScreenCredits out") );
-	this->AddChild( &m_Out );	// draw and update manually
-
+	this->ClearMessageQueue( SM_BeginFadingOut );	// ignore ScreenAttract's SecsToShow
 	this->PostScreenMessage( SM_BeginFadingOut, m_ScrollerTexts.GetTotalSecsToScroll() );
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("credits") );
-
-	SOUND->PlayMusic( THEME->GetPathToS("ScreenCredits music") );
 }
 
 ScreenCredits::~ScreenCredits()
@@ -271,50 +253,13 @@ ScreenCredits::~ScreenCredits()
 	m_vTexts.clear();
 }
 
-void ScreenCredits::Update( float fDeltaTime )
-{
-	Screen::Update( fDeltaTime );
-}	
 
-
-void ScreenCredits::DrawPrimitives()
-{
-	Screen::DrawPrimitives();
-}	
-
-
-void ScreenCredits::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
-{
-//	LOG->Trace( "ScreenCredits::Input()" );
-
-	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
-		return;
-
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
-}
 
 void ScreenCredits::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
-	{
-	case SM_BeginFadingOut:
-		if( !m_Out.IsTransitioning() )
-			m_Out.StartTransitioning( SM_GoToNextScreen );
-		break;
-	case SM_GoToNextScreen:
+	/* XXX: is this needed anymore? */
+	if( SM == SM_GoToNextScreen )
 		SONGMAN->SaveMachineScoresToDisk();
-		SCREENMAN->SetNewScreen( NEXT_SCREEN );
-		break;
-	}
-}
 
-void ScreenCredits::MenuStart( PlayerNumber pn )
-{
-	this->PostScreenMessage( SM_BeginFadingOut, 0 );
+	ScreenAttract::HandleScreenMessage( SM );
 }
-
-void ScreenCredits::MenuBack( PlayerNumber pn )
-{
-	this->PostScreenMessage( SM_BeginFadingOut, 0 );
-}
-

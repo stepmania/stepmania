@@ -4,35 +4,26 @@
 
  Desc: Music plays and song names scroll across the screen.
 
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+ Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
 	Chris Danford
+	Glenn Maynard
 -----------------------------------------------------------------------------
 */
 
-#include "Screen.h"
+#include "ScreenAttract.h"
 #include "Transition.h"
 #include "ActorScroller.h"
 
 
-class ScreenCredits : public Screen
+class ScreenCredits : public ScreenAttract
 {
 public:
 	ScreenCredits( CString sName );
-	~ScreenCredits();
+	virtual ~ScreenCredits();
 
-	virtual void Update( float fDeltaTime );
-	virtual void DrawPrimitives();
-
-	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	void MenuStart( PlayerNumber pn );
-	void MenuBack( PlayerNumber pn );
-
 private:
-
-	BGAnimation				m_Background;
-
 	ActorScroller			m_ScrollerBackgrounds;
 	vector<Actor*>			m_vBackgrounds;
 
@@ -43,9 +34,6 @@ private:
 	vector<Actor*>			m_vTexts;
 
 	BGAnimation				m_Overlay;
-
-	Transition	m_In;
-	Transition	m_Out;
 };
 
 
