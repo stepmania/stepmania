@@ -4,7 +4,7 @@
 #if !defined(MISSING_STDINT_H) /* need to define int64_t if so */
 #include <stdint.h>
 #endif
-/*
+
 #if defined(LINUX)
 
 #include <asm/byteorder.h>
@@ -26,7 +26,7 @@ inline uint16_t ArchSwap16( uint16_t n )
 
 #define HAVE_BYTE_SWAPS
 #endif
-*/
+
 #endif
 
 /*
