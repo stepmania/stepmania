@@ -81,8 +81,17 @@ static const SongSortOrder SortOrder[] =
 };
 // use ARRAYSIZE(SortOrder)
 
-
 MusicWheel::MusicWheel() 
+{
+	// update theme metric cache
+	SWITCH_SECONDS.Refresh();
+	ITEM_CURVE_X.Refresh();
+	ITEM_SPACING_Y.Refresh();
+	USE_3D.Refresh();
+	NUM_WHEEL_ITEMS_METRIC.Refresh();
+}
+
+void MusicWheel::Load() 
 { 
 	LOG->Trace( "MusicWheel::MusicWheel()" );
 	if (GAMESTATE->m_pCurSong != NULL)
@@ -91,13 +100,6 @@ MusicWheel::MusicWheel()
 		LOG->Trace( "Current Song: NULL" );
 
 	SONGMAN->UpdateRankingCourses();
-
-	// update theme metric cache
-	SWITCH_SECONDS.Refresh();
-	ITEM_CURVE_X.Refresh();
-	ITEM_SPACING_Y.Refresh();
-	USE_3D.Refresh();
-	NUM_WHEEL_ITEMS_METRIC.Refresh();
 
 	if( USE_3D )
 	{

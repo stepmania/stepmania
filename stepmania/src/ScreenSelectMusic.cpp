@@ -86,7 +86,8 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 
 	m_bInCourseDisplayMode = GAMESTATE->IsCourseMode();
 
-	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. */
+	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. 
+	 * Do this before anything that might look at GAMESTATE->m_iCurrentStageIndex. */
 	GAMESTATE->FinishStage();
 
 	/* Cache: */
@@ -99,6 +100,8 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 		RageException::Throw( "The PlayMode has not been set.  A theme must set the PlayMode before loading ScreenSelectMusic." );
 
 	CodeDetector::RefreshCacheItems();
+
+	m_MusicWheel.Load();
 
 	int p;
 

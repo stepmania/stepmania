@@ -42,6 +42,7 @@ class MusicWheel : public ActorFrame
 public:
 	MusicWheel();
 	~MusicWheel();
+	void Load();
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();

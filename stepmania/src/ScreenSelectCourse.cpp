@@ -67,6 +67,8 @@ ScreenSelectCourse::ScreenSelectCourse( CString sClassName ) : Screen( sClassNam
  
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenSelectCourse music") );
 
+	m_MusicWheel.Load();
+
 	m_bMadeChoice = false;
 	m_bGoToOptions = false;
 	m_bAllowOptionsMenuRepeat = false;
