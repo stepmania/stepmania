@@ -44,6 +44,16 @@ AC_SEARCH_LIBS(ogg_stream_init, [ogg], have_ogg=yes,  have_ogg=no)
 AC_SEARCH_LIBS(ov_open, [vorbisfile], have_vorbisfile=yes,  have_vorbisfile=no)
 AC_SEARCH_LIBS(mad_synth_init, [mad], have_mad=yes,  have_mad=no)
 
+AC_SEARCH_LIBS(avcodec_init, [avcodec], have_libavcodec=yes,  have_libavcodec=no)
+AC_SEARCH_LIBS(guess_format, [avformat], have_libavformat=yes,  have_libavformat=no)
+
+have_avcodec=no
+if test "$have_libavformat" = "yes" -a "$have_libavcodec" = "yes"; then
+	have_avcodec=yes
+	AC_DEFINE(HAVE_AVCODEC, 1, [AVCODEC support available])
+fi
+AM_CONDITIONAL(HAVE_AVCODEC, test "$have_avcodec" == "yes" )
+
 #if test "x$have_mad" = "xno"; then
 #  echo
 #  echo "*** Madlib is required to build StepMania; please"

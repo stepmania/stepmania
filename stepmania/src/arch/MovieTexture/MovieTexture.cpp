@@ -13,6 +13,10 @@
 #define DEFAULT_MOVIE_DRIVER_LIST "Null"
 #endif
 
+#ifdef HAVE_AVCODEC
+#include "MovieTexture_AVCodec.h"
+#endif
+
 #include "RageFile.h"
 bool RageMovieTexture::GetFourCC( CString fn, CString &handler, CString &type )
 {
@@ -82,6 +86,9 @@ RageMovieTexture *MakeRageMovieTexture(RageTextureID ID)
 			LOG->Trace("Initializing driver: %s", Driver.c_str());
 #ifdef _WINDOWS
 			if (!Driver.CompareNoCase("DShow")) ret = new MovieTexture_DShow(ID);
+#endif
+#ifdef HAVE_AVCODEC
+			if (!Driver.CompareNoCase("AVCodec")) ret = new MovieTexture_AVCodec(ID);
 #endif
 			if (!Driver.CompareNoCase("Null")) ret = new MovieTexture_Null(ID);
 			if (!ret)
