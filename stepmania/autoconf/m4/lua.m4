@@ -12,10 +12,10 @@ else
 		AC_CHECK_LIB(lua50, lua_open, LIB_LUA=-llua50)
 	fi
 	if test "$LIB_LUA_LIB" = ""; then
-		AC_CHECK_LIB(lualib, luaopen_base, LIB_LUA_LIB=-llualib, , [$LIB_LUA])
+		AC_CHECK_LIB(lualib, luaopen_base, LIB_LUA_LIB=-llualib, , [$LIB_LUA -ldl])
 	fi
 	if test "$LIB_LUA_LIB" = ""; then
-		AC_CHECK_LIB(lualib50, luaopen_base, LIB_LUA_LIB=-llualib50, , [$LIB_LUA])
+		AC_CHECK_LIB(lualib50, luaopen_base, LIB_LUA_LIB=-llualib50, , [$LIB_LUA -ldl])
 	fi
 	if test "$LIB_LUA" = ""; then
 		echo
