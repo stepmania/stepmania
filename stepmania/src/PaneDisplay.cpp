@@ -12,6 +12,7 @@
 #include "Command.h"
 #include "ActorUtil.h"
 #include "Foreach.h"
+#include "PercentageDisplay.h"
 
 #define SHIFT_X(p)			THEME->GetMetricF(m_sName, ssprintf("ShiftP%iX", p+1))
 #define SHIFT_Y(p)			THEME->GetMetricF(m_sName, ssprintf("ShiftP%iY", p+1))
@@ -300,7 +301,7 @@ void PaneDisplay::SetContent( PaneContents c )
 		case COURSE_MACHINE_HIGH_SCORE:
 		case SONG_PROFILE_HIGH_SCORE:
 		case COURSE_PROFILE_HIGH_SCORE:
-			str = ssprintf( "%.2f%%", val );
+			str = PercentageDisplay::FormatPercentScore( val, 5, 2 );
 			break;
 		case SONG_NUM_STEPS:
 		case SONG_JUMPS:
