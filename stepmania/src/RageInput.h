@@ -20,7 +20,7 @@ const int NUM_KEYBOARD_BUTTONS = 256;
 
 const int NUM_JOYSTICKS = 4;
 const int NUM_PUMPS = 2;
-const int NUM_PUMP_PAD_BUTTONS = 6;
+const int NUM_PUMP_PAD_BUTTONS = 11;
 
 enum InputDevice {
 	DEVICE_KEYBOARD = 0,
@@ -153,6 +153,7 @@ private:
 
 	HRESULT UpdateMouse();
 	HRESULT UpdateKeyboard();
+	HRESULT UpdatePump();
 
 public:
 	RageInput(HWND hWnd);

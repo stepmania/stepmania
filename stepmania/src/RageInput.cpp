@@ -37,7 +37,8 @@
 RageInput*		INPUTMAN	= NULL;		// globally accessable input device
 
 const char *PumpButtonNames[] = {
-	"DL", "DR", "MID", "UL", "UR", "Esc"
+	"UL", "UR", "MID", "DL", "DR", "Esc",
+	"P2 UL", "P2 UR", "P2 MID", "P2 DL", "P2 DR"
 };
 
 int DeviceInput::NumButtons(InputDevice device)
@@ -552,6 +553,8 @@ HRESULT RageInput::UpdateMouse()
 
 HRESULT RageInput::UpdateKeyboard()
 {
+	ZeroMemory( &m_keys, sizeof(m_keys) );
+
 	if( NULL == m_pKeyboard ) 
 		return E_FAIL;
 
@@ -571,6 +574,38 @@ HRESULT RageInput::UpdateKeyboard()
 	}
 
 
+	return S_OK;
+}
+
+HRESULT RageInput::UpdatePump()
+{
+	for( int i=0; i<NUM_PUMPS; i++ )
+	{
+		if(m_Pumps[i].h == INVALID_HANDLE_VALUE)
+			continue; /* no pad */
+
+		int ret = m_Pumps[i].GetPadEvent();
+
+		if(ret == -1) 
+			continue; /* no event */
+
+		/* Since we're checking for messages, and not polling,
+		 * only zero this out when we actually *have* a new
+		 * message. */
+		ZeroMemory( &m_pumpState[i], sizeof(m_pumpState[i]) );
+	    
+		int bits[] = {
+		/* P1 */	(1<<9), (1<<12), (1<<13), (1<<11), (1<<10),
+		/* ESC */	(1<<16),
+		/* P1 */	(1<<17), (1<<20), (1<<21), (1<<19), (1<<18),
+		};
+
+		for (int butno = 0 ; butno < NUM_PUMP_PAD_BUTTONS ; butno++)
+		{
+			if(!(ret & bits[butno]))
+				m_pumpState[i].button[butno] = true;
+		}
+	}
 	return S_OK;
 }
 
@@ -595,7 +630,6 @@ HRESULT RageInput::Update()
 	CopyMemory( &m_oldJoyState, &m_joyState, sizeof(m_joyState) );
 	CopyMemory( &m_oldPumpState, &m_pumpState, sizeof(m_pumpState) );
 
-	ZeroMemory( &m_keys, sizeof(m_keys) );
 	ZeroMemory( &m_joyState, sizeof(m_joyState) );
 
 
@@ -614,8 +648,7 @@ HRESULT RageInput::Update()
 	/////////////////////
 
 	// read joystick state
-	BYTE i;
-	for( i=0; i<4; i++ )	// foreach joystick
+	for( BYTE i=0; i<4; i++ )	// foreach joystick
 	{
 		// read joystick states
 		if ( m_pJoystick[i] )
@@ -644,27 +677,7 @@ HRESULT RageInput::Update()
 		}
 	}
 
-	for( i=0; i<NUM_PUMPS; i++ )
-	{
-		if(m_Pumps[i].h == INVALID_HANDLE_VALUE)
-			continue; /* no pad */
-
-		int ret = m_Pumps[i].GetPadEvent();
-
-		if(ret == -1) 
-			continue; /* no event */
-
-		ZeroMemory( &m_pumpState[i], sizeof(m_pumpState[i]) );
-	    int bits[] = { (1<<11), (1<<10), (1<<13), (1<<9), (1<<12),
-			(1<<16) };
-
-		for (int butno = 0 ; butno < 6 ; butno++)
-		{
-			if(!(ret & bits[butno]))
-				m_pumpState[i].button[butno] = true;
-		}
-	}
-
+	UpdatePump();
 
 	return S_OK;
 }
