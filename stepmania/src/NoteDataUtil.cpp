@@ -359,15 +359,12 @@ void NoteDataUtil::RemoveHoldNotes(NoteData &in, float fStartBeat, float fEndBea
 	// turn all the HoldNotes into TapNotes
 	for( int i=in.GetNumHoldNotes()-1; i>=0; i-- )	// iterate backwards so we can delete
 	{
-		const HoldNote &hn = in.GetHoldNote(i);
-		if( !hn.RangeInside( iStartIndex, iEndIndex ) )
+		const HoldNote hn = in.GetHoldNote( i );
+		if( !hn.RangeOverlaps(iStartIndex,iEndIndex) )
 			continue;	// skip
 
-		const int iStartRow = hn.iStartRow;
-
 		in.RemoveHoldNote( i );
-		
-		in.SetTapNote(hn.iTrack, iStartRow, TAP_TAP);
+		in.SetTapNote( hn.iTrack, hn.iStartRow, TAP_TAP );
 	}
 }
 
