@@ -146,10 +146,16 @@ public:
 	avcodec::AVFrame frame;
 
 	FFMpeg_Helper();
+	~FFMpeg_Helper();
 	int GetFrame();
 	void Init();
 
 private:
+	/* 0 = no EOF
+	 * 1 = EOF from ReadPacket
+	 * 2 = EOF from ReadPacket and DecodePacket */
+	int eof;
+
 	int ReadPacket();
 	int DecodePacket();
 };
@@ -162,8 +168,18 @@ FFMpeg_Helper::FFMpeg_Helper()
 	Init();
 }
 
+FFMpeg_Helper::~FFMpeg_Helper()
+{
+	if( current_packet_offset != -1 )
+	{
+		avcodec::av_free_packet( &pkt );
+		current_packet_offset = -1;
+	}
+}
+
 void FFMpeg_Helper::Init()
 {
+	eof = 0;
 	GetNextTimestamp = true;
 	CurrentTimestamp = 0, Last_IP_Timestamp = 0;
 	LastFrameDelay = 0;
@@ -186,17 +202,22 @@ int FFMpeg_Helper::GetFrame()
 			return 1;
 		if( ret == -1 )
 			return -1;
+		if( ret == 0 && eof > 0 )
+			return 0; /* eof */
 
 		ASSERT( ret == 0 );
 		ret = ReadPacket();
-		if( ret <= 0 )
-			return ret; /* error or EOF */
+		if( ret < 0 )
+			return ret; /* error */
 	}
 }
 
 /* Read a packet.  Return -1 on error, 0 on EOF, 1 on OK. */
 int FFMpeg_Helper::ReadPacket()
 {
+	if( eof > 0 )
+		return 0;
+
 	while( 1 )
 	{
 		CHECKPOINT;
@@ -208,7 +229,14 @@ int FFMpeg_Helper::ReadPacket()
 
 		int ret = avcodec::av_read_packet(m_fctx, &pkt);
 		if( ret == -1 )
+		{
+			/* EOF. */
+			eof = 1;
+			pkt.size = 0;
+			current_packet_offset = 0;
+			
 			return 0;
+		}
 
 		if( ret < 0 )
 		{
@@ -237,7 +265,7 @@ int FFMpeg_Helper::DecodePacket()
 	if( current_packet_offset == -1 )
 		return 0; /* no packet */
 
-	while( current_packet_offset < pkt.size )
+	while( eof == 1 || current_packet_offset < pkt.size )
 	{
 		if ( GetNextTimestamp )
 		{
@@ -266,7 +294,11 @@ int FFMpeg_Helper::DecodePacket()
 		current_packet_offset += len;
 
 		if (!got_frame)
+		{
+			if( eof == 1 )
+				eof = 2;
 			continue;
+		}
 
 		GetNextTimestamp = true;
 
