@@ -26,7 +26,7 @@
 #include "LightsManager.h"
 #include "song.h"
 
-#define NEXT_SCREEN				THEME->GetMetric ("ScreenStage","NextScreen")
+#define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
 
 const ScreenMessage	SM_PrepScreen		= (ScreenMessage)(SM_User+0);
 
@@ -61,16 +61,16 @@ ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 	LIGHTSMAN->SetLightMode( LIGHTMODE_STAGE );
 
 
-	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenStage "+GAMESTATE->GetStageText()) );
+	m_Background.LoadFromAniDir( THEME->GetPathToB(m_sName + " "+GAMESTATE->GetStageText()) );
 	this->AddChild( &m_Background );
 
-	m_Overlay.LoadFromAniDir( THEME->GetPathToB("ScreenStage Overlay"));
+	m_Overlay.LoadFromAniDir( THEME->GetPathToB(m_sName + " overlay"));
 
-	m_In.Load( THEME->GetPathToB("ScreenStage in") );
+	m_In.Load( THEME->GetPathToB(m_sName + " in") );
 	m_In.StartTransitioning();
 	this->AddChild( &m_In );
 
-	m_Out.Load( THEME->GetPathToB("ScreenStage out") );
+	m_Out.Load( THEME->GetPathToB(m_sName + " out") );
 	this->AddChild( &m_Out );
 
 	m_Back.Load( THEME->GetPathToB("Common back") );
