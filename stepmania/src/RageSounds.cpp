@@ -25,24 +25,9 @@ RageSounds *SOUND = NULL;
  */
 static RageSound *g_Music;
 static TimingData g_Timing;
+static float g_FirstSecond;
 static bool g_HasTiming;
 static bool g_UpdatingTimer;
-
-RageSounds::RageSounds()
-{
-	/* Init RageSoundMan first: */
-	ASSERT( SOUNDMAN );
-
-	g_Music = new RageSound;
-	g_Timing = TimingData();
-	g_HasTiming = false;
-	g_UpdatingTimer = false;
-}
-
-RageSounds::~RageSounds()
-{
-	delete g_Music;
-}
 
 struct MusicToPlay
 {
@@ -55,6 +40,25 @@ struct MusicToPlay
 };
 static MusicToPlay g_MusicToPlay;
 
+RageSounds::RageSounds()
+{
+	/* Init RageSoundMan first: */
+	ASSERT( SOUNDMAN );
+
+	g_Music = new RageSound;
+	g_Timing = TimingData();
+	g_HasTiming = false;
+	g_UpdatingTimer = false;
+	g_FirstSecond = -1;
+
+	g_Timing.AddBPMSegment( BPMSegment(0,120) );
+}
+
+RageSounds::~RageSounds()
+{
+	delete g_Music;
+}
+
 
 void StartQueuedMusic()
 {
@@ -65,7 +69,7 @@ void StartQueuedMusic()
 	LOG->Trace("Start sound \"%s\"", g_MusicToPlay.file.c_str() );
 
 	g_HasTiming = g_MusicToPlay.HasTiming;
-	g_Timing = g_MusicToPlay.timing;
+	g_FirstSecond = g_MusicToPlay.start_sec;
 
 	g_Music->Load( g_MusicToPlay.file, false );
 
@@ -94,13 +98,19 @@ void StartQueuedMusic()
  * fOldBeat is the beat before the update and fNewBeat is the beat after the update;
  * we'll only start the sound if the fractional part of the beat we'll be moving to
  * lies between them. */
-void TryToStartQueuedMusic( float fOldBeat, float fNewBeat )
+bool TryToStartQueuedMusic( float fOldSeconds, float fNewSeconds )
 {
 	if( g_MusicToPlay.file.size() == 0 )
-		return; /* nothing to do */
+		return false; /* nothing to do */
 
 	if( g_UpdatingTimer )
 	{
+		fOldSeconds += SOUND->GetPlayLatency();
+		fNewSeconds += SOUND->GetPlayLatency();
+
+		const float fOldBeat = g_Timing.GetBeatFromElapsedTime( fOldSeconds );
+		const float fNewBeat = g_Timing.GetBeatFromElapsedTime( fNewSeconds );
+
 		float fOldBeatFraction = fmodfp( fOldBeat,1 );
 		float fNewBeatFraction = fmodfp( fNewBeat,1 );
 
@@ -113,28 +123,60 @@ void TryToStartQueuedMusic( float fOldBeat, float fNewBeat )
 			fStartBeatFraction += 1.0f; /* unwrap */
 
 		if( !( fOldBeatFraction <= fStartBeatFraction && fStartBeatFraction <= fNewBeatFraction ) )
-			return;
+			return false;
 	}
 
 	StartQueuedMusic();
+	return true;
 }
 
 void RageSounds::Update( float fDeltaTime )
 {
-	const float fOldBeat = GAMESTATE->m_fSongBeat;
+	const float fOldSeconds = GAMESTATE->m_fMusicSeconds;
 	if( g_UpdatingTimer )
 	{
 		if( g_Music->IsPlaying() )
-			GAMESTATE->UpdateSongPosition( g_Music->GetPositionSeconds(), g_Timing );
+		{
+			/* With some sound drivers, there's a delay between us calling Play() and
+			 * the sound actually playing.  During this time, timestamps are approximated,
+			 * and will be less than the start position we gave.  We don't want to use
+			 * those, since the beat won't necessarily line up. 
+			 *
+			 * Look at fSeconds; if it's less than the position we gave, it's approximate;
+			 * keep using the previous timing data. */
+			const float fSeconds = g_Music->GetPositionSeconds();
+
+			if( g_FirstSecond != -1 && fSeconds >= g_FirstSecond )
+			{
+				/* We've passed the start position of the new sound, so we should be OK.
+				 * Load up the new timing data. */
+				g_Timing = g_MusicToPlay.timing;
+				g_FirstSecond = -1;
+			}
+
+			if( g_FirstSecond != -1 )
+			{
+				/* We're still waiting for the new sound to start playing, so keep using the
+				 * old timing data and fake the time. */
+				GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSeconds + fDeltaTime, g_Timing );
+			}
+			else
+				GAMESTATE->UpdateSongPosition( fSeconds, g_Timing );
+		}
 		else
 		{
 			/* There's no song playing.  Fake it. */
 			GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSeconds + fDeltaTime, g_Timing );
+			LOG->Trace("fake time %f, beat %f", GAMESTATE->m_fMusicSeconds, GAMESTATE->m_fSongBeat);
 		}
 	}
 
 	/* If we have a sound queued to play, try to start it. */
-	TryToStartQueuedMusic( fOldBeat, GAMESTATE->m_fSongBeat );
+	if( TryToStartQueuedMusic( fOldSeconds, GAMESTATE->m_fMusicSeconds ) )
+	{
+		/* New music started.  Re-update. */
+		Update( 0 );
+	}
 }
 
 
