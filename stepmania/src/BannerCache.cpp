@@ -389,7 +389,9 @@ void BannerCache::CacheBannerInternal( CString BannerPath )
 		SDL_Surface *dst = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, img->w, img->h,
 					16, 0x7C00, 0x03E0, 0x001F, 0x8000 );
 
-		SM_SDL_ErrorDiffusionDither(img, dst);
+		/* SM_SDL_OrderedDither is still faster than SM_SDL_ErrorDiffusionDither, and
+		 * these images are very small and only displayed briefly. */
+		SM_SDL_OrderedDither(img, dst);
 		SDL_FreeSurface( img );
 		img = dst;
 	}
