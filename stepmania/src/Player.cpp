@@ -587,10 +587,10 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			default:	// not a mine
 				if( IsTapAttack(tn) )
 				{
+					score = TNS_NONE;	// don't score this as anything
 					if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowAttackSeconds )
 					{
 						m_soundAttack.Play();
-						score = TNS_NONE;	// don't score this as anything
 						// put attack in effect
 						Attack attack = this->GetAttackAt( col, iIndexOverlappingNote );
 						GAMESTATE->LaunchAttack( OPPOSITE_PLAYER[m_PlayerNumber], attack );
