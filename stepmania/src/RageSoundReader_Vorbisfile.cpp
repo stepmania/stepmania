@@ -114,7 +114,11 @@ int RageSoundReader_Vorbisfile::SetPosition(int ms, bool accurate)
 {
 	avail = 0;
 
-	int ret = ov_time_seek(vf, ms);
+	int ret;
+	if( ms )
+		ret = ov_time_seek(vf, ms);
+	else
+		ret = ov_raw_seek(vf, ms);
 	if(ret < 0)
 	{
 		SetError( ov_ssprintf(ret, "ogg: SetPosition failed") );
