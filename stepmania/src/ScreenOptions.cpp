@@ -66,10 +66,10 @@
 
 const float TWEEN_SECONDS = 0.3f;
 
-CString ROW_Y_NAME( size_t r )					{ return ssprintf("Row%dY",r+1); }
-CString EXPLANATION_X_NAME( size_t p )			{ return ssprintf("ExplanationP%dX",p+1); }
-CString EXPLANATION_Y_NAME( size_t p )			{ return ssprintf("ExplanationP%dY",p+1); }
-CString EXPLANATION_ON_COMMAND_NAME( size_t p )	{ return ssprintf("ExplanationP%dOnCommand",p+1); }
+static CString ROW_Y_NAME( size_t r )					{ return ssprintf("Row%dY",r+1); }
+static CString EXPLANATION_X_NAME( size_t p )			{ return ssprintf("ExplanationP%dX",p+1); }
+static CString EXPLANATION_Y_NAME( size_t p )			{ return ssprintf("ExplanationP%dY",p+1); }
+static CString EXPLANATION_ON_COMMAND_NAME( size_t p )	{ return ssprintf("ExplanationP%dOnCommand",p+1); }
 
 
 //REGISTER_SCREEN_CLASS( ScreenOptions );	// can't be instantiated
