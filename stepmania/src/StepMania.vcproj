@@ -1078,12 +1078,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\Banner.h">
 			</File>
 			<File
-				RelativePath="CroppedSprite.cpp">
-			</File>
-			<File
-				RelativePath="CroppedSprite.h">
-			</File>
-			<File
 				RelativePath="DifficultyIcon.cpp">
 			</File>
 			<File

@@ -96,7 +96,7 @@ Sprite.cpp Sprite.h ActorScroller.cpp ActorScroller.h Model.cpp Model.h mathlib.
 
 ActorsInMenus = \
 Banner.cpp Banner.h BannerCache.cpp BannerCache.h BPMDisplay.cpp BPMDisplay.h CourseContentsList.cpp \
-CourseContentsList.h CourseEntryDisplay.cpp CourseEntryDisplay.h CroppedSprite.cpp CroppedSprite.h \
+CourseContentsList.h CourseEntryDisplay.cpp CourseEntryDisplay.h \
 DifficultyIcon.cpp DifficultyIcon.h DifficultyRating.cpp DifficultyRating.h EditMenu.cpp EditMenu.h \
 FadingBanner.cpp FadingBanner.h DifficultyMeter.cpp DifficultyMeter.h GradeDisplay.cpp GradeDisplay.h GrooveRadar.cpp \
 GrooveRadar.h GroupList.cpp GroupList.h JukeboxMenu.cpp JukeboxMenu.h MenuElements.cpp MenuElements.h \
