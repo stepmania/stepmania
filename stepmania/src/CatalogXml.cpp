@@ -6,7 +6,6 @@
 #include "Steps.h"
 #include "XmlFile.h"
 #include "Course.h"
-#include "Profile.h"
 
 const CString CATALOG_XML	= "Catalog.xml";
 
