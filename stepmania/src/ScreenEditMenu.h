@@ -1,3 +1,6 @@
+#ifndef SCREEN_EDIT_MENU_H
+#define SCREEN_EDIT_MENU_H
+
 /*
 -----------------------------------------------------------------------------
  Class: ScreenEditMenu
@@ -41,5 +44,4 @@ private:
 	MenuElements	m_Menu;
 };
 
-
-
+#endif

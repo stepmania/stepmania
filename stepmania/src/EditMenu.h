@@ -1,5 +1,6 @@
 #ifndef EDITMENU_H
 #define EDITMENU_H
+
 /*
 -----------------------------------------------------------------------------
  Class: EditMenu

@@ -327,3 +327,4 @@ Steps* EditMenu::GetSelectedSourceNotes()
 {
 	return GetSelectedSong()->GetStepsByDifficulty(GetSelectedSourceNotesType(),GetSelectedSourceDifficulty(), false);
 }
+

@@ -230,3 +230,4 @@ void ScreenEditMenu::MenuBack( PlayerNumber pn )
 
 	SOUND->StopMusic();
 }
+
