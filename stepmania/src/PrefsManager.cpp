@@ -279,6 +279,7 @@ PrefsManager::PrefsManager()
 	{
 		m_iMemoryCardUsbBus[p] = -1;
 		m_iMemoryCardUsbPort[p] = -1;
+		m_iMemoryCardUsbLevel[p] = -1;
 	}
 
 	m_sMemoryCardProfileSubdir = PRODUCT_NAME;
@@ -490,6 +491,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 		FixSlashesInPlace( m_sMemoryCardOsMountPoint[p] );
 		ini.GetValue( "Options", ssprintf("MemoryCardUsbBusP%d",p+1),		m_iMemoryCardUsbBus[p] );
 		ini.GetValue( "Options", ssprintf("MemoryCardUsbPortP%d",p+1),		m_iMemoryCardUsbPort[p] );
+		ini.GetValue( "Options", ssprintf("MemoryCardUsbLevelP%d",p+1),		m_iMemoryCardUsbLevel[p] );
 	}
 
 	ini.GetValue( "Options", "CenterImageTranslateX",			m_iCenterImageTranslateX );
@@ -707,6 +709,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 		ini.SetValue( "Options", ssprintf("MemoryCardOsMountPointP%d",p+1),				m_sMemoryCardOsMountPoint[p] );
 		ini.SetValue( "Options", ssprintf("MemoryCardUsbBusP%d",p+1),		m_iMemoryCardUsbBus[p] );
 		ini.SetValue( "Options", ssprintf("MemoryCardUsbPortP%d",p+1),		m_iMemoryCardUsbPort[p] );
+		ini.SetValue( "Options", ssprintf("MemoryCardUsbLevelP%d",p+1),		m_iMemoryCardUsbLevel[p] );
 	}
 
 	ini.SetValue( "Options", "CenterImageTranslateX",			m_iCenterImageTranslateX );

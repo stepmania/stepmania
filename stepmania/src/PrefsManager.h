@@ -181,8 +181,9 @@ public:
 	CString			m_sMemoryCardProfileSubdir;	// the directory on a memory card to look in for a profile
 	CString			m_sDefaultLocalProfileID[NUM_PLAYERS];
 	CString			m_sMemoryCardOsMountPoint[NUM_PLAYERS];	// if set, always use the device that mounts to this point
-	int				m_iMemoryCardUsbBus[NUM_PLAYERS];	// take the first storage device on this usb bus
-	int				m_iMemoryCardUsbPort[NUM_PLAYERS];	// take the first storage device on this usb bus
+	int				m_iMemoryCardUsbBus[NUM_PLAYERS];	// look for this bus when assigning cards.  -1 = match any
+	int				m_iMemoryCardUsbPort[NUM_PLAYERS];	// look for this port when assigning cards.  -1 = match any
+	int				m_iMemoryCardUsbLevel[NUM_PLAYERS];	// look for this level when assigning cards.  -1 = match any
 	int				m_iCenterImageTranslateX;
 	int				m_iCenterImageTranslateY;
 	float			m_fCenterImageScaleX;

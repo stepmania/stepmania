@@ -66,7 +66,7 @@ void MemoryCardManager::Update( float fDelta )
 				const UsbStorageDevice &old = vOld[i];
 				if( find(vNew.begin(),vNew.end(),old) == vNew.end() )	// didn't find
 				{
-					LOG->Trace( ssprintf("Disconnected bus %d port %d device %d path %s", old.iBus, old.iPortOnHub, old.iDeviceOnBus, old.sOsMountDir.c_str()) );
+					LOG->Trace( ssprintf("Disconnected bus %d port %d device %d path %s", old.iBus, old.iPort, old.iLevel, old.sOsMountDir.c_str()) );
 					vDisconnects.push_back( old );
 				}
 			}
@@ -79,7 +79,7 @@ void MemoryCardManager::Update( float fDelta )
 				const UsbStorageDevice &newd = vNew[i];
 				if( find(vOld.begin(),vOld.end(),newd) == vOld.end() )	// didn't find
 				{
-					LOG->Trace( ssprintf("Connected bus %d port %d device %d path %s", newd.iBus, newd.iPortOnHub, newd.iDeviceOnBus, newd.sOsMountDir.c_str()) );
+					LOG->Trace( ssprintf("Connected bus %d port %d device %d path %s", newd.iBus, newd.iPort, newd.iLevel, newd.sOsMountDir.c_str()) );
 					vConnects.push_back( newd );
 				}
 			}
@@ -203,8 +203,8 @@ void MemoryCardManager::AssignUnassignedCards()
 					UsbStorageDevice &usbd = vUnassignedDevices[i];
 					if( usbd.sOsMountDir.CompareNoCase(PREFSMAN->m_sMemoryCardOsMountPoint[p]) == 0 )	// match
 					{
-						LOG->Trace( "dir match:  iUsbStorageIndex: %d, iBus: %d, iDeviceOnBus: %d, iPortOnHub: %d",
-							usbd.iUsbStorageIndex, usbd.iBus, usbd.iDeviceOnBus, usbd.iPortOnHub );
+						LOG->Trace( "dir match:  iUsbStorageIndex: %d, iBus: %d, iLevel: %d, iPort: %d",
+							usbd.iUsbStorageIndex, usbd.iBus, usbd.iLevel, usbd.iPort );
 						goto match;
 					}
 				}
@@ -220,11 +220,15 @@ void MemoryCardManager::AssignUnassignedCards()
 					continue;	// not a match
 
 				if( PREFSMAN->m_iMemoryCardUsbPort[p] != -1 && 
-					PREFSMAN->m_iMemoryCardUsbPort[p] != usbd.iPortOnHub )
+					PREFSMAN->m_iMemoryCardUsbPort[p] != usbd.iPort )
 					continue;	// not a match
 
-				LOG->Trace( "bus/port match:  iUsbStorageIndex: %d, iBus: %d, iDeviceOnBus: %d, iPortOnHub: %d",
-					usbd.iUsbStorageIndex, usbd.iBus, usbd.iDeviceOnBus, usbd.iPortOnHub );
+				if( PREFSMAN->m_iMemoryCardUsbLevel[p] != -1 && 
+					PREFSMAN->m_iMemoryCardUsbLevel[p] != usbd.iLevel )
+					continue;	// not a match
+
+				LOG->Trace( "bus/port match:  iUsbStorageIndex: %d, iBus: %d, iLevel: %d, iPort: %d",
+					usbd.iUsbStorageIndex, usbd.iBus, usbd.iLevel, usbd.iPort );
 				goto match;
 			}
 			
