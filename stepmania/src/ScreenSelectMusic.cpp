@@ -1225,7 +1225,7 @@ void ScreenSelectMusic::AfterStepsChange( PlayerNumber pn )
 	Song* pSong = GAMESTATE->m_pCurSong;
 	Steps* pSteps = m_vpSteps.empty()? NULL: m_vpSteps[m_iSelection[pn]];
 
-	GAMESTATE->m_pCurSteps.Set( pn, pSteps );
+	GAMESTATE->m_pCurSteps[pn].Set( pSteps );
 
 	int iScore = 0;
 	if( pSteps )
@@ -1397,7 +1397,7 @@ void ScreenSelectMusic::AfterMusicChange()
 
 	FOREACH_PlayerNumber( p )
 	{
-		GAMESTATE->m_pCurSteps.Set( p, NULL );
+		GAMESTATE->m_pCurSteps[p].Set( NULL );
 		GAMESTATE->m_pCurTrail[p] = NULL;
 		m_vpSteps.clear();
 		m_vpTrails.clear();

@@ -98,7 +98,7 @@ int DifficultyList::GetCurrentRowIndex( PlayerNumber pn ) const
 		}
 		else
 		{
-			if( GAMESTATE->m_pCurSteps[pn] == row.m_Steps )
+			if( GAMESTATE->m_pCurSteps[pn].Get() == row.m_Steps )
 				return i;
 		}
 	}

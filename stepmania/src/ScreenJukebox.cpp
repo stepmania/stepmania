@@ -101,7 +101,7 @@ bool ScreenJukebox::SetSong( bool bDemonstration )
 		// Found something we can use!
 		GAMESTATE->m_pCurSong.Set( pSong );
 		FOREACH_PlayerNumber( p )
-			GAMESTATE->m_pCurSteps.Set( p, pSteps );
+			GAMESTATE->m_pCurSteps[p].Set( pSteps );
 		
 		return true;	// done looking
 	}

@@ -112,7 +112,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 
 	GAMESTATE->m_pCurSong.Set( pSong );
 	GAMESTATE->m_pCurStyle = GAMEMAN->GetEditorStyleForStepsType( st );
-	GAMESTATE->m_pCurSteps.Set( PLAYER_1, pSteps );
+	GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 
 	//
 	// handle error cases

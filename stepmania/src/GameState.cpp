@@ -159,7 +159,7 @@ void GameState::Reset()
 	m_pCurSong.Set( NULL );
 	m_pPreferredSong = NULL;
 	FOREACH_PlayerNumber( p )
-		m_pCurSteps.Set( p, NULL );
+		m_pCurSteps[p].Set( NULL );
 	m_pCurCourse = NULL;
 	m_pPreferredCourse = NULL;
 	FOREACH_PlayerNumber( p )
@@ -1846,8 +1846,8 @@ public:
 	static int SetCurrentSteps( T* p, lua_State *L )
 	{ 
 		PlayerNumber pn = (PlayerNumber)IArg(1);
-		if( lua_isnil(L,2) )	{ p->m_pCurSteps.Set( pn, NULL ); }
-		else					{ Steps *pS = Luna<Steps>::check(L,2); p->m_pCurSteps.Set( pn, pS ); }
+		if( lua_isnil(L,2) )	{ p->m_pCurSteps[pn].Set( NULL ); }
+		else					{ Steps *pS = Luna<Steps>::check(L,2); p->m_pCurSteps[pn].Set( pS ); }
 		MESSAGEMAN->Broadcast( ssprintf("CurrentStepsP%dChanged",pn+1) );
 		return 0;
 	}
@@ -1940,7 +1940,7 @@ LuaFunction_StrStr(	SetEnv,					GAMESTATE->m_mapEnv[str1] = str2 )
 /* Return an integer into SONGMAN->m_pSongs.  This lets us do input checking, which we
  * can't easily do if we return pointers. */
 LuaFunction_NoArgs( CurSong,				(void *) GAMESTATE->m_pCurSong )
-LuaFunction_PlayerNumber( CurSteps,			GAMESTATE->m_pCurSteps[pn] )
+LuaFunction_PlayerNumber( CurSteps,			(Steps*)GAMESTATE->m_pCurSteps[pn].Get() )
 
 bool PlayerIsUsingModifier( PlayerNumber pn, const CString sModifier )
 {

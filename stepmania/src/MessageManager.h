@@ -22,7 +22,8 @@ enum Message
 	MESSAGE_EDIT_STEPS_TYPE_CHANGED,
 	MESSAGE_EDIT_SOURCE_STEPS_CHANGED,
 	MESSAGE_EDIT_SOURCE_STEPS_TYPE_CHANGED,
-	NUM_MESSAGES
+	NUM_MESSAGES,
+	MESSAGE_INVALID
 };
 const CString& MessageToString( Message m );
 
@@ -32,6 +33,7 @@ class BroadcastOnChange
 private:
 	Message mSendWhenChanged;
 	T val;
+
 public:
 	BroadcastOnChange( Message m ) { mSendWhenChanged = m; }
 	const T Get() const { return val; }
@@ -58,12 +60,16 @@ class BroadcastOnChangePtr1D
 {
 private:
 	Message mSendWhenChanged;
-	T *val[N];
+	typedef BroadcastOnChangePtr<T> MyType;
+	vector<MyType> val;
 public:
-	BroadcastOnChangePtr1D( Message m ) { mSendWhenChanged = m; }
-	const T* Get( unsigned i ) const { return val[i]; }
-	void Set( unsigned i, T* t ) { val[i] = t; MESSAGEMAN->Broadcast( MessageToString((Message)(mSendWhenChanged+i)) ); }
-	T* operator[]( unsigned i ) const { return val[i]; }
+	BroadcastOnChangePtr1D( Message m )
+	{
+		for( unsigned i=0; i<N; i++ )
+			val.push_back( BroadcastOnChangePtr<T>((Message)(m+i)) );
+	}
+	const BroadcastOnChangePtr<T>& operator[]( unsigned i ) const { return val[i]; }
+	BroadcastOnChangePtr<T>& operator[]( unsigned i ) { return val[i]; }
 };
 
 class MessageManager

@@ -681,7 +681,7 @@ void ScreenEz2SelectMusic::AfterNotesChange( PlayerNumber pn )
 
 	Steps* pSteps = m_arrayNotes[pn].empty()? NULL: m_arrayNotes[pn][m_iSelection[pn]];
 
-	GAMESTATE->m_pCurSteps.Set( pn, pSteps );
+	GAMESTATE->m_pCurSteps[pn].Set( pSteps );
 
 
 	if( pSteps != NULL && pn == GAMESTATE->m_MasterPlayerNumber )

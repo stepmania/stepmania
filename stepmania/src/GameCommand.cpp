@@ -113,7 +113,7 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 
 	if( m_pSong && GAMESTATE->m_pCurSong.Get() != m_pSong )
 		return false;
-	if( m_pSteps && GAMESTATE->m_pCurSteps[pn] != m_pSteps )
+	if( m_pSteps && GAMESTATE->m_pCurSteps[pn].Get() != m_pSteps )
 		return false;
 	if( m_pCharacter && GAMESTATE->m_pCurCharacters[pn] != m_pCharacter )
 		return false;
@@ -641,7 +641,7 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 	}
 	if( m_pSteps )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
-			GAMESTATE->m_pCurSteps.Set( *pn, m_pSteps );
+			GAMESTATE->m_pCurSteps[*pn].Set( m_pSteps );
 	if( m_pCourse )
 	{
 		GAMESTATE->m_pCurCourse = m_pCourse;
