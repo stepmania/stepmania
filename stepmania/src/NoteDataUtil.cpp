@@ -834,7 +834,7 @@ void NoteDataUtil::Echo( NoteData &in, float fStartBeat, float fEndBeat )
 		// don't insert a new note if there's already a tap within this interval
 		bool bTapInMiddle = false;
 		for( int r2=iRowWindowBegin+1; r2<=iRowWindowEnd-1; r2++ )
-			if( in.IsThereATapOrHoldHeadAtRow(r2) )
+			if( !in.IsRowEmpty(r2) )
 			{
 				bTapInMiddle = true;
 				break;
