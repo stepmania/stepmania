@@ -26,6 +26,7 @@ public:
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
+	virtual void CopyTweening( const GrayArrowRow &from );
 
 	void Step( int iCol );
 	void UpdateBars( int iCol );

@@ -952,3 +952,10 @@ void Actor::SetBlendMode( CString s )
 	else	ASSERT(0);
 }
 
+void Actor::CopyTweening( const Actor &from )
+{
+	m_current = from.m_current;
+	m_start = from.m_start;
+	m_TweenStates = from.m_TweenStates;
+	m_TweenInfo = from.m_TweenInfo;
+}

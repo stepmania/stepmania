@@ -93,6 +93,8 @@ protected:
 
 	NDMap m_BeatToNoteDisplays;
 
+	NoteDisplayCols *LastDisplay;
+
 	// used in MODE_EDIT
 	Sprite			m_sprBars;	// 4 frames: Measure, 4th, 8th, 16th
 	BitmapText		m_textMeasureNumber;

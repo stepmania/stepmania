@@ -125,3 +125,16 @@ void GhostArrowRow::DidTapMine( int iCol, TapNoteScore score )
 {
 	m_GhostMine[iCol].Step( score );
 }
+
+
+void GhostArrowRow::CopyTweening( const GhostArrowRow &from )
+{
+	for( int c=0; c<m_iNumCols; c++ ) 
+	{
+		m_GhostDim[c].CopyTweening( from.m_GhostDim[c] );
+		m_GhostBright[c].CopyTweening( from.m_GhostBright[c] );
+		m_GhostMine[c].CopyTweening( from.m_GhostMine[c] );
+		m_HoldGhost[c].CopyTweening( from.m_HoldGhost[c] );
+	}
+	ActorFrame::CopyTweening( from );
+}

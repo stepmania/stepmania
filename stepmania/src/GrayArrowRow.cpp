@@ -77,3 +77,9 @@ void GrayArrowRow::UpdateBars( int iCol )
 	m_GrayArrow[iCol].UpdateBars();
 }
 
+void GrayArrowRow::CopyTweening( const GrayArrowRow &from )
+{
+	for( int c=0; c<m_iNumCols; c++ ) 
+		m_GrayArrow[c].CopyTweening( from.m_GrayArrow[c] );
+	ActorFrame::CopyTweening( from );
+}

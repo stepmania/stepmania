@@ -25,6 +25,7 @@ public:
 	GhostArrowRow();
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
+	virtual void CopyTweening( const GhostArrowRow &from );
 
 	void Load( PlayerNumber pn, CString NoteSkin, float fYReverseOffset );
 	

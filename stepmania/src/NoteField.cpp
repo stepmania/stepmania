@@ -41,6 +41,7 @@ NoteField::NoteField()
 	m_fBeginMarker = m_fEndMarker = -1;
 
 	m_fPercentFadeToFail = -1;
+	LastDisplay = NULL;
 }
 
 NoteField::~NoteField()
@@ -147,6 +148,20 @@ void NoteField::Update( float fDeltaTime )
 	m_rectMarkerBar.Update( fDeltaTime );
 
 	NoteDisplayCols *cur = SearchForSongBeat();
+
+	if( cur != LastDisplay )
+	{
+		/* The display has changed.  We might be in the middle of a step; copy any
+		 * tweens. */
+		if( LastDisplay )
+		{
+			cur->m_GhostArrowRow.CopyTweening( LastDisplay->m_GhostArrowRow );
+			cur->m_GrayArrowRow.CopyTweening( LastDisplay->m_GrayArrowRow );
+		}
+
+		LastDisplay = cur;
+	}
+
 	cur->m_GrayArrowRow.Update( fDeltaTime );
 	cur->m_GhostArrowRow.Update( fDeltaTime );
 

@@ -63,7 +63,7 @@ public:
 	bool IsFirstUpdate();
 	virtual void Update( float fDeltaTime );
 	virtual void UpdateTweening( float fDeltaTime );
-
+	virtual void CopyTweening( const Actor &from );
 
 
 	CString m_sName, m_sID;
