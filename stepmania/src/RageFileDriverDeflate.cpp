@@ -431,7 +431,7 @@ int RageFileObjGzip::Start()
 		0,              // no flags
 		0, 0, 0, 0,     // no time
 		0,              // no extra flags
-		255             // unknown os
+		'\xFF'          // unknown os
 	};
 
 	if( m_pFile->Write( header, sizeof(header) ) == -1 )
