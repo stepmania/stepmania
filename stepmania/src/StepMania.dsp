@@ -268,6 +268,14 @@ SOURCE=.\Actor.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Arrow.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Arrow.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Background.cpp
 # End Source File
 # Begin Source File
@@ -300,11 +308,43 @@ SOURCE=.\BlurredTitle.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ColorArrow.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ColorArrow.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\GameInfo.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\GameInfo.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GhostArrow.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GhostArrow.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GrayArrow.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GrayArrow.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GrayArrows.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GrayArrows.h
 # End Source File
 # Begin Source File
 
