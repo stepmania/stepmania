@@ -21,10 +21,10 @@
 
 #include "arch/Threads/Threads.h"
 
-#if defined(CRASH_HANDLER) && !defined(DARWIN)
+#if defined(CRASH_HANDLER)
 #if defined(WIN32)
 #include "archutils/Win32/crash.h"
-#elif defined(LINUX)
+#elif defined(LINUX) || defined(DARWIN)
 #include "archutils/Unix/CrashHandler.h"
 #endif
 #endif
