@@ -22,7 +22,7 @@ const int samplerate = 44100;
 /* The total write-ahead.  Don't make this *too* high; we fill the entire
  * buffer when we start playing, so it can cause frame skips.  This should be
  * high enough that sound cards won't skip. */
-const int buffersize_frames = 1024*4;	/* in frames */
+const int buffersize_frames = 1024*8;	/* in frames */
 const int buffersize = buffersize_frames * samplesize; /* in bytes */
 
 const int num_chunks = 8;
