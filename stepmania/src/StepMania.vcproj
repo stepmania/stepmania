@@ -1787,6 +1787,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScoreDisplayBattle.h">
 			</File>
 			<File
+				RelativePath="ScoreDisplayCalories.cpp">
+			</File>
+			<File
+				RelativePath="ScoreDisplayCalories.h">
+			</File>
+			<File
 				RelativePath="ScoreDisplayNormal.cpp">
 			</File>
 			<File
