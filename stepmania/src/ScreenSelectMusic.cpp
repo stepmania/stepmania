@@ -360,6 +360,9 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 	if( !SCORE_CONNECTED_TO_MUSIC_WHEEL )
 		return;	// do nothing
 
+	/* XXX metric this with MusicWheel::TweenOnScreen */
+	float factor = 0.25f;
+
 	vector<Actor*> apActorsInScore;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -368,16 +371,21 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 	}
 	for( unsigned i=0; i<apActorsInScore.size(); i++ )
 	{
+		/* Grab the tween destination.  (If we're tweening, this is where
+		 * it'll end up; otherwise it's the static position.) */
+		Actor::TweenState original = apActorsInScore[i]->GetDestTweenState();
+
 		apActorsInScore[i]->StopTweening();
 
 		float fOriginalX = apActorsInScore[i]->GetX();
-		apActorsInScore[i]->BeginTweening( TWEEN_TIME, TWEEN_BIAS_END );		// tween off screen
+		apActorsInScore[i]->BeginTweening( factor*TWEEN_TIME, TWEEN_BIAS_END );		// tween off screen
 		apActorsInScore[i]->SetTweenX( fOriginalX+400 );
 		
-		apActorsInScore[i]->BeginTweening( 0.5f );		// sleep
+		apActorsInScore[i]->BeginTweening( factor*0.5f );		// sleep
 
-		apActorsInScore[i]->BeginTweening( 1, TWEEN_BIAS_BEGIN );		// tween back on screen
-		apActorsInScore[i]->SetTweenX( fOriginalX );
+		/* Go back to where we were (or to where we were going.) */
+		apActorsInScore[i]->BeginTweening( factor*1, TWEEN_BIAS_BEGIN );		// tween back on screen
+		apActorsInScore[i]->SetTweenState(original);
 	}
 }
 
