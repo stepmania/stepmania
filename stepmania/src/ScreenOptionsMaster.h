@@ -20,7 +20,6 @@ private:
 		ROW_STEP, /* list of steps for the current song or course */
 		ROW_CHARACTER, /* list of characters */
 		ROW_CONFIG,	/* global pref */
-		ROW_SAVE_TO_PROFILE, /* save new options to profile? */
 		NUM_OPTION_ROW_TYPES
 	};
 
@@ -49,7 +48,6 @@ private:
 	void SetStep( OptionRowData &row, OptionRowHandler &hand );
 	void SetConf( OptionRowData &row, OptionRowHandler &hand, CString param, CString &TitleOut );
 	void SetCharacter( OptionRowData &row, OptionRowHandler &hand );
-	void SetSaveToProfile( OptionRowData &row, OptionRowHandler &hand );
 
 protected:
 	virtual void ImportOptions();

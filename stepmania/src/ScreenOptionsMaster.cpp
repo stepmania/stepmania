@@ -196,15 +196,6 @@ void ScreenOptionsMaster::SetCharacter( OptionRowData &row, OptionRowHandler &ha
 	}
 }
 
-/* Add a list of available characters to the given row/handler. */
-void ScreenOptionsMaster::SetSaveToProfile( OptionRowData &row, OptionRowHandler &hand )
-{
-	hand.type = ROW_SAVE_TO_PROFILE;
-	row.bOneChoiceForAllPlayers = false;
-	row.choices.push_back( ENTRY_NAME("Don'tSave") );
-	row.choices.push_back( ENTRY_NAME("SaveToProfile") );
-}
-
 ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 	ScreenOptions( sClassName )
 {
@@ -290,11 +281,6 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 			{
 				SetCharacter( row, hand );
 				row.name = "Characters";
-			}
-			else if( !name.CompareNoCase("SaveToProfile") )
-			{
-				SetSaveToProfile( row, hand );
-				row.name = "Save To\nProfile";
 			}
 			else
 				RageException::Throw( "Unexpected type '%s' in %s::Line%i", name.c_str(), m_sName.c_str(), i );
@@ -392,10 +378,6 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 			SelectExactlyOne( iSelection+(m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN?1:0), vbSelectedOut );
 			return;
 		}
-
-	case ROW_SAVE_TO_PROFILE:
-		SelectExactlyOne( 0+(m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN?1:0), vbSelectedOut );
-		return;
 
 	default:
 		ASSERT(0);
@@ -504,22 +486,6 @@ int ScreenOptionsMaster::ExportOption( const OptionRowData &row, const OptionRow
 		}
 		break;
 
-	case ROW_SAVE_TO_PROFILE:
-		{
-			int sel = GetOneSelection(vbSelected) - (m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN?1:0);
-
-			if( sel == 1 )
-			{
-				if( PROFILEMAN->IsUsingProfile((PlayerNumber)pn) )
-				{
-					Profile* pProfile = PROFILEMAN->GetProfile((PlayerNumber)pn);
-					pProfile->m_bUsingProfileDefaultModifiers = true;
-					pProfile->m_sDefaultModifiers = GAMESTATE->m_PlayerOptions[pn].GetString();
-				}
-			}
-		}
-		break;
-
 	default:
 		ASSERT(0);
 		break;
@@ -599,10 +565,6 @@ void ScreenOptionsMaster::ExportOptions()
 		SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );
 	}
 	
-	if( ChangeMask & OPT_SAVE_MODIFIERS_TO_PROFILE )
-	{
-		SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );
-	}
 	CHECKPOINT;
 }
 
