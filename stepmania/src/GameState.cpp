@@ -457,7 +457,7 @@ int GameState::GetCourseSongIndex()
 
 bool GameState::PlayersCanJoin() const
 {
-	return GAMESTATE->m_CurStyle == STYLE_INVALID;
+	return GetNumSidesJoined() == 0 || GAMESTATE->m_CurStyle == STYLE_INVALID;
 }
 
 int GameState::GetNumSidesJoined() const
