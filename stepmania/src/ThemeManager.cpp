@@ -66,6 +66,14 @@ void ThemeManager::Subscribe( IThemeMetric *p )
 	if( g_pvpSubscribers == NULL )
 		g_pvpSubscribers = new vector<IThemeMetric*>;
 	g_pvpSubscribers->push_back( p );
+
+
+	// It's ThemeManager's responsibility to make sure all of it's subscribers
+	// are updated with current data.  If a metric is created after 
+	// a theme is loaded, ThemeManager should update it right away (not just
+	// when the theme changes).
+	if( THEME && THEME->GetCurThemeName().size() )
+		p->Read();
 }
 
 void ThemeManager::Unsubscribe( IThemeMetric *p )
