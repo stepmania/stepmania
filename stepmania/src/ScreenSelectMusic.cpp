@@ -904,15 +904,22 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_sprLongBalloon.StopTweening();
 			m_sprLongBalloon.BeginTweening( 0.2f );
 			m_sprLongBalloon.SetTweenZoomY( 0 );
+
+			/* Short delay before actually showing these, so they don't show
+			 * up when scrolling fast.  It'll still show up in "slow" scrolling,
+			 * but it doesn't look at weird as it does in "fast", and I don't
+			 * like the effect with a lot of delay. */
 			if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds )
 			{
 				m_sprMarathonBalloon.StopTweening();
+				m_sprMarathonBalloon.BeginTweening( 0.1f ); /* delay */
 				m_sprMarathonBalloon.BeginTweening( 0.2f );
 				m_sprMarathonBalloon.SetTweenZoomY( 1 );
 			}
 			else if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds )
 			{
 				m_sprLongBalloon.StopTweening();
+				m_sprMarathonBalloon.BeginTweening( 0.1f ); /* delay */
 				m_sprLongBalloon.BeginTweening( 0.2f );
 				m_sprLongBalloon.SetTweenZoomY( 1 );
 			}
