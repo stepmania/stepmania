@@ -715,17 +715,13 @@ void NoteDataUtil::Echo( NoteData &in, float fStartBeat, float fEndBeat )
 	// window is one beat wide and slides 1/2 a beat at a time
 	for( int r=first_row; r<last_row; r+=rows_per_interval ) 
 	{
-		int iRowWindowBegin = r;
-		int iRowWindowEnd = r + rows_per_interval*2;
-		float fBeatWindowBegin = NoteRowToBeat(iRowWindowBegin);
-		float fBeatWindowEnd = NoteRowToBeat(iRowWindowEnd);
-		int iRowEcho = r + rows_per_interval;
+		const int iRowWindowBegin = r;
+		const int iRowWindowEnd = r + rows_per_interval*2;
 
-		int iFirstTapInRow = in.GetFirstTrackWithTap(iRowWindowBegin);
+		const int iFirstTapInRow = in.GetFirstTrackWithTap(iRowWindowBegin);
 		if( iFirstTapInRow != -1 )
-		{
 			iEchoTrack = iFirstTapInRow;
-		}
+
 		if( iEchoTrack==-1 )
 			continue;	// don't lay
 
@@ -741,6 +737,7 @@ void NoteDataUtil::Echo( NoteData &in, float fStartBeat, float fEndBeat )
 			continue;	// don't lay
 
 
+		const int iRowEcho = r + rows_per_interval;
 		{
 			vector<int> viTracks;
 			in.GetTracksHeldAtRow( iRowEcho, viTracks );
@@ -802,7 +799,7 @@ void NoteDataUtil::ConvertTapsToHolds( NoteData &in, int iSimultaneousHolds, flo
 				in.AddHoldNote( HoldNote(t,fStartBeat,fEndBeat) );
 			}
 dont_add_hold:
-			int blah = 0;	// shut compiler up
+			;
 		}
 	}
 }
