@@ -32,7 +32,7 @@ public:
 	virtual void MenuUp( PlayerNumber pn ) {};
 	virtual void MenuDown( PlayerNumber pn ) {};
 	virtual void MenuStart( PlayerNumber pn );
-	virtual void MenuBack( PlayerNumber pn );
+//	virtual void MenuBack( PlayerNumber pn );
 	virtual void TweenOffScreen();
 	virtual void TweenOnScreen();
 

@@ -336,10 +336,10 @@ void ScreenSelectMaxType2::MenuStart( PlayerNumber pn )
 	this->SendScreenMessage( SM_BeginFadingOut, SLEEP_AFTER_CHOICE_SECONDS );	// tell our owner it's time to move on
 }
 
-
-void ScreenSelectMaxType2::MenuBack( PlayerNumber pn )
-{
-}
+// Err, this breaks back ...
+//void ScreenSelectMaxType2::MenuBack( PlayerNumber pn )
+//{
+//}
 
 void ScreenSelectMaxType2::TweenOnScreen() 
 {
