@@ -499,19 +499,26 @@ void Song::TidyUpData()
 		CString error;
 		SoundReader *Sample = SoundReader_FileReader::OpenFile( GetMusicPath(), error );
 		if( Sample == NULL )
-			RageException::Throw( "Error opening sound '%s': '%s'",
-				GetMusicPath().c_str(), error.c_str());
-
-		m_fMusicLengthSeconds = Sample->GetLength() / 1000.0f;
-		delete Sample;
-
-		if(m_fMusicLengthSeconds == -1)
 		{
-			/* It failed; bad file or something.  It's already logged a warning,
-			 * so just set the file to 0 seconds. */
-			m_fMusicLengthSeconds = 0;
-		} else if(m_fMusicLengthSeconds == 0) {
-			LOG->Warn("File %s is empty?", GetMusicPath().c_str());
+			LOG->Warn( "Error opening sound \"%s\": %s", GetMusicPath().c_str(), error.c_str() );
+
+			/* Don't use this file. */
+			m_sMusicFile = "";
+		}
+		else
+		{
+			m_fMusicLengthSeconds = Sample->GetLength() / 1000.0f;
+			delete Sample;
+
+			if( m_fMusicLengthSeconds < 0 )
+			{
+				/* It failed; bad file or something.  It's already logged a warning. */
+				m_fMusicLengthSeconds = 100; // guess
+			}
+			else if( m_fMusicLengthSeconds == 0 )
+			{
+				LOG->Warn( "File %s is empty?", GetMusicPath().c_str() );
+			}
 		}
 	}
 	else	// ! HasMusic()
