@@ -21,6 +21,7 @@ private:
 	CString		m_sGroup;
 	CString		m_sName;
 	T			m_currentValue;
+	bool		m_bIsLoaded;
 
 public:
 	/* Initializing with no group and name is allowed; if you do this, you must
@@ -29,7 +30,8 @@ public:
 	 * (everything except screens). */
 	ThemeMetric( const CString& sGroup = "", const CString& sName = "" ):
 		m_sGroup( sGroup ),
-		m_sName( sName )
+		m_sName( sName ),
+		m_bIsLoaded( false )
 	{
 		m_currentValue = T();
 		ThemeManager::Subscribe( this );
@@ -39,7 +41,8 @@ public:
 		IThemeMetric( cpy ),
 		m_sGroup( cpy.m_sGroup ),
 		m_sName( cpy.m_sName ),
-		m_currentValue( cpy.m_currentValue )
+		m_currentValue( cpy.m_currentValue ),
+		m_bIsLoaded( cpy.m_bIsLoaded )
 	{
 		ThemeManager::Subscribe( this );
 	}
@@ -65,26 +68,30 @@ public:
 	void Read()
 	{
 		if( m_sName != ""  &&  THEME  &&   THEME->IsThemeLoaded() )
+		{
 			THEME->GetMetric( m_sGroup, m_sName, m_currentValue );
+			m_bIsLoaded = true;
+		}
 	}
 
 	const T& GetValue() const
 	{
 		ASSERT( m_sName != "" );
+		ASSERT( m_bIsLoaded );
 
 		return m_currentValue;
 	}
 	
 	operator const T& () const
 	{
-		return m_currentValue;
+		return GetValue();
 	}
 
 	//Hacks for VC6 for all boolean operators.
-	bool operator ! () const { return !m_currentValue; }
-	bool operator && ( const T& input ) const { return m_currentValue && input; }
-	bool operator || ( const T& input ) const { return m_currentValue || input; }
-	bool operator == ( const T& input ) const { return m_currentValue == input; }
+	bool operator ! () const { return !GetValue(); }
+	bool operator && ( const T& input ) const { return GetValue() && input; }
+	bool operator || ( const T& input ) const { return GetValue() || input; }
+	bool operator == ( const T& input ) const { return GetValue() == input; }
 };
 
 typedef CString (*MetricName1D)(size_t N);
