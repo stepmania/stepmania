@@ -23,6 +23,7 @@ struct StageStats
 	StageStats();
 	void operator+=( const StageStats& other );		// accumulate
 	Grade GetGrade( PlayerNumber pn );
+	bool OnePassed() const;
 
 	Song*	pSong;
 	int		iMeter[NUM_PLAYERS];

@@ -97,3 +97,12 @@ Grade StageStats::GetGrade( PlayerNumber pn )
 	else if( fPercentDancePoints >= 0    )		return GRADE_D;
 	else										return GRADE_E;
 }
+
+bool StageStats::OnePassed() const
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		if( GAMESTATE->IsHumanPlayer(p) && !GAMESTATE->m_CurStageStats.bFailed[p] )
+			return true;
+	return false;
+}
+
