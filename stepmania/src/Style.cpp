@@ -43,6 +43,9 @@ GameInput Style::StyleInputToGameInput( const StyleInput& StyleI ) const
 
 	FOREACH_GameController(gc)
 	{
+		if( this->m_StyleType != ONE_PLAYER_TWO_SIDES && gc != (int) StyleI.player )
+			continue;
+
 		for( int i = 0; i < m_pGame->m_iButtonsPerController && m_iInputColumn[gc][i] != END_MAPPING; ++i )
 			if( m_iInputColumn[gc][i] == StyleI.col )
 				return GameInput( gc, i );
@@ -62,12 +65,7 @@ StyleInput Style::GameInputToStyleInput( const GameInput &GameI ) const
 		if( m_iInputColumn[GameI.controller][i] == END_MAPPING )
 			return SI;	// Return invalid.
 
-	SI = StyleInput( (PlayerNumber) GameI.controller, m_iInputColumn[GameI.controller][GameI.button] );
-
-	// HACK:  Looking up the player number using m_ColumnInfo 
-	// returns the wrong answer for ONE_PLAYER_TWO_SIDES styles
-	if( m_StyleType == ONE_PLAYER_TWO_SIDES )
-		SI.player = GAMESTATE->m_MasterPlayerNumber;
+	SI = StyleInput( ControllerToPlayerNumber(GameI.controller), m_iInputColumn[GameI.controller][GameI.button] );
 
 	return SI;
 }
