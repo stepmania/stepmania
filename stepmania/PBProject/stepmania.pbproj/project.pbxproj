@@ -5669,6 +5669,7 @@
 			buildPhases = (
 			);
 			buildSettings = {
+				PRODUCT_NAME = version;
 			};
 			buildToolPath = /bin/sh;
 			dependencies = (
