@@ -289,8 +289,13 @@ void Background::LoadFromSong( Song* pSong )
 			if( bLoadedAnyRandomBackgrounds )
 			{
 				CString sBGName = RandomBackground( ctr );
-				bool bFade = PREFSMAN->m_BackgroundMode==PrefsManager::BGMODE_RANDOMMOVIES || 
-					PREFSMAN->m_BackgroundMode==PrefsManager::BGMODE_MOVIEVIS;
+				
+				// Don't fade.  It causes frame rate dip, especially on 
+				// slower machines.
+				bool bFade = false;
+				//bool bFade = PREFSMAN->m_BackgroundMode==PrefsManager::BGMODE_RANDOMMOVIES || 
+				//	PREFSMAN->m_BackgroundMode==PrefsManager::BGMODE_MOVIEVIS;
+				
 				m_aBGChanges.push_back( BackgroundChange(f,sBGName,1.f,bFade) );
 				ctr = (ctr+1)%PREFSMAN->m_iNumBackgrounds;
 			}
