@@ -14,6 +14,7 @@ public:
 	void Paint();
 };
 
+#define HAVE_LOADING_WINDOW_SDL
 #define HAVE_LOADING_WINDOW_NULL
 
 #endif
