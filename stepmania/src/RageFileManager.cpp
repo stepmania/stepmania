@@ -339,6 +339,20 @@ RageFileObj *RageFileManager::Open( const CString &sPath, RageFile::OpenMode mod
 	return NULL;
 }
 
+/* Copy a RageFileObj for a new RageFile. */
+RageFileObj *RageFileManager::CopyFileObj( const RageFileObj *cpy, RageFile &p )
+{
+	FileReferences::const_iterator it = g_Refs.find( cpy );
+	RAGE_ASSERT_M( it != g_Refs.end(), ssprintf( "RemoveReference: Missing reference (%s)", cpy->GetDisplayPath().c_str() ) );
+
+	RageFileObj *ret = cpy->Copy( p );
+
+	/* It's from the same driver as the original. */
+	AddReference( ret, it->second );
+
+	return ret;	
+}
+
 RageFileObj *RageFileManager::OpenForWriting( const CString &sPath, RageFile::OpenMode mode, RageFile &p, int &err )
 {
 	/*

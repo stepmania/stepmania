@@ -74,7 +74,7 @@ RageFile::RageFile( const RageFile &cpy )
 	ResetBuf();
 
 	/* This will copy the file driver, including its internal file pointer. */
-	m_File = cpy.m_File->Copy( *this );
+	m_File = FILEMAN->CopyFileObj( cpy.m_File, *this );
 	m_Path = cpy.m_Path;
 	m_Mode = cpy.m_Mode;
 	m_Error = cpy.m_Error;
