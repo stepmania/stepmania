@@ -1116,13 +1116,13 @@ void SongManager::LoadAllFromProfiles()
 		if( sProfileDir.empty() )
 			continue;	// skip
 		//
-		// Load all edits.  Edits are dangling .sm files in the Edits folder
+		// Load all .edit files.
 		//
 		{
 			CString sEditsDir = sProfileDir+"Edits/";
 
 			CStringArray asEditsFilesWithPath;
-			GetDirListing( sEditsDir+"*.sm", asEditsFilesWithPath, false, true );
+			GetDirListing( sEditsDir+"*.edit", asEditsFilesWithPath, false, true );
 
 			unsigned size = min( asEditsFilesWithPath.size(), (unsigned)MAX_EDITS_PER_PROFILE );
 
