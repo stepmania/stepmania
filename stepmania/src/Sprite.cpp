@@ -228,6 +228,11 @@ bool Sprite::LoadFromTexture( RageTextureID ID )
 
 	ASSERT( m_pTexture != NULL );
 
+	/* Hack: if we load "_blank", mark the actor hidden, so we can short-circuit
+	 * rendering later on.  (This helps NoteField rendering.) */
+	if( !SetExtension(Basename(ID.filename), "").CompareNoCase("_blank") )
+		this->SetHidden( true );
+	
 	// the size of the sprite is the size of the image before it was scaled
 	Sprite::m_size.x = (float)m_pTexture->GetSourceFrameWidth();
 	Sprite::m_size.y = (float)m_pTexture->GetSourceFrameHeight();		
