@@ -4,7 +4,6 @@
 #include "RageSurface_Load_JPEG.h"
 #include "RageSurface_Load_GIF.h"
 #include "RageUtil.h"
-#include "SDL_image.h"
 
 SDL_Surface *RageSurface::LoadFile( const CString &sPath )
 {
@@ -18,19 +17,25 @@ SDL_Surface *RageSurface::LoadFile( const CString &sPath )
 		ret = RageSurface_Load_GIF( sPath, error );
 	else if( !ext.CompareNoCase("jpg") )
 		ret = RageSurface_Load_JPEG( sPath, error );
-	else
+	else if( !ext.CompareNoCase("bmp") )
 	{
-		SDL_RWops *rw = OpenRWops( sPath );
+		SDL_RWops *rw = OpenRWops( sPath, false );
 		if( rw == NULL )
+		{
+			/* XXX */
+			SDL_SetError( "fail" );
 			return NULL;
+		}
 
-		SDL_Surface *ret = IMG_LoadTyped_RW( rw, false, (char *) GetExtension(sPath).c_str() );
+		ret = SDL_LoadBMP_RW( rw, false );
 		SDL_RWclose( rw );
 		SDL_FreeRW( rw );
 
 		mySDL_FixupPalettedAlpha( ret );
-
-		return ret;
+	}
+	else
+	{
+		error = ssprintf( "Unsupported file type \"%s\"", ext.c_str() );
 	}
 
 	if( ret == NULL )
