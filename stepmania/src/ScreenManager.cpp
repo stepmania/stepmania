@@ -94,6 +94,7 @@ void ScreenManager::ThemeChanged()
 	// reload system layer
 	SAFE_DELETE( m_SystemLayer );
 	m_SystemLayer = new ScreenSystemLayer;
+	m_SystemLayer->Init();
 	m_SystemLayer->RefreshCreditsMessages();
 	
 	// reload shared BGA
@@ -431,6 +432,7 @@ void ScreenManager::Prompt( ScreenMessage SM_SendWhenDone, const CString &sText,
 
 	// add the new state onto the back of the array
 	Screen *pNewScreen = new ScreenPrompt( sText, bYesNo, bDefaultAnswer, OnYes, OnNo, pCallbackData);
+	pNewScreen->Init();
 	SetFromNewScreen( pNewScreen, true );
 
 	m_MessageSendOnPop = SM_SendWhenDone;
@@ -443,6 +445,7 @@ void ScreenManager::TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion,
 
 	// add the new state onto the back of the array
 	Screen *pNewScreen = new ScreenTextEntry( "ScreenTextEntry", sQuestion, sInitialAnswer, OnOK, OnCancel );
+	pNewScreen->Init();
 	SetFromNewScreen( pNewScreen, true );
 
 	m_MessageSendOnPop = SM_SendWhenDone;
@@ -455,6 +458,7 @@ void ScreenManager::MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessa
 
 	// add the new state onto the back of the array
 	Screen *pNewScreen = new ScreenMiniMenu( pDef, SM_SendOnOK, SM_SendOnCancel );
+	pNewScreen->Init();
 	SetFromNewScreen( pNewScreen, true );
 }
 

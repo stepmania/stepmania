@@ -13,7 +13,7 @@
 
 // Each Screen class should have a REGISTER_SCREEN_CLASS in its CPP file.
 #define REGISTER_SCREEN_CLASS( className ) \
-	Screen* Create##className( const CString &sName ) { return new className( sName ); } \
+	Screen* Create##className( const CString &sName ) { Screen *pRet = new className( sName ); pRet->Init(); return pRet; } \
 	class Register##className { \
 	public: \
 		Register##className() { SCREENMAN->Register(#className,Create##className); } \
@@ -26,6 +26,9 @@ public:
 	Screen( CString sName );	// enforce that all screens have m_sName filled in
 	virtual ~Screen();
 
+	/* This is called immediately after construction, to allow initializing after all derived classes
+	 * exist. */
+	virtual void Init() { }
 	virtual void Update( float fDeltaTime );
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
