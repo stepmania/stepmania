@@ -541,6 +541,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<File
 				RelativePath="ScreenUnlock.h">
 			</File>
+			<File
+				RelativePath="ScreenWarning.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Data Structures"
@@ -754,9 +757,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScoreKeeperRave.h">
-			</File>
-			<File
-				RelativePath="ScreenWarning.h">
 			</File>
 			<File
 				RelativePath=".\Song.cpp">
