@@ -260,20 +260,17 @@ RageDisplay *CreateDisplay()
 	{
 		// Apply default graphic settings for this card
 		IniFile ini;
-		ini.SetPath( "Data/VideoCards.ini" );
+		ini.SetPath( "Data/VideoCardDefaults.ini" );
 		if(!ini.ReadFile())
-			RageException::Throw( "Couldn't read VideoCards.ini." );
+			RageException::Throw( "Couldn't read Data/VideoCardDefaults.ini." );
 
-		int iNumEntries = 0;
-		if(!ini.GetValueI( "VideoCards", "NumEntries", iNumEntries ))
-			RageException::Throw( "Couldn't read NumEntries in VideoCards.ini." );
-
-		for( int i=0; i<iNumEntries; i++ )
+		for( int i=0; true; i++ )
 		{
 			CString sKey = ssprintf("%04d",i);
 
 			CString sDriverRegex;
-			ini.GetValue( sKey, "DriverRegex", sDriverRegex );
+			if( !ini.GetValue( sKey, "DriverRegex", sDriverRegex ) )
+				break;
 			Regex regex( sDriverRegex );
 			if( !regex.Compare(sVideoDriver) )
 				continue;	// skip
