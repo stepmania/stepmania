@@ -1888,6 +1888,18 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageSounds.h">
 			</File>
 			<File
+				RelativePath="RageSurface_Load.cpp">
+			</File>
+			<File
+				RelativePath="RageSurface_Load.h">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_PNG.cpp">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_PNG.h">
+			</File>
+			<File
 				RelativePath=".\RageTexture.cpp">
 			</File>
 			<File
