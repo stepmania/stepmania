@@ -40,6 +40,7 @@ public:
 
 	virtual void SetDiffuse( RageColor c );
 
+	float GetMaxTweenTimeLeft() const;
 	void GainingFocus();
 	void LosingFocus();
 

@@ -600,6 +600,16 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	}
 }
 
+float BGAnimationLayer::GetMaxTweenTimeLeft() const
+{
+	float ret = 0;
+
+	for( unsigned i=0; i<m_Sprites.size(); i++ )
+		ret = max(ret, m_Sprites[i]->GetTweenTimeLeft());
+
+	return ret;
+}
+
 void BGAnimationLayer::Update( float fDeltaTime )
 {
 	const float fSongBeat = GAMESTATE->m_fSongBeat;
