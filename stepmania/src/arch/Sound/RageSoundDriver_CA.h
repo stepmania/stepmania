@@ -19,6 +19,7 @@ private:
     int64_t mDecodePos;
     float mLatency;
     CAAudioHardwareDevice *mOutputDevice;
+	const AudioTimeStamp *mNow;
     
     static OSStatus GetData(AudioDeviceID inDevice,
                             const AudioTimeStamp *inNow,
