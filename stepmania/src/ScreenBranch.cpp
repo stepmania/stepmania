@@ -19,6 +19,7 @@
 #include "Grade.h"
 #include "GameState.h"
 #include "StageStats.h"
+#include "SongManager.h"
 
 #define CHOICES						THEME->GetMetric (m_sName,"Choices")
 #define CONDITION(choice)			THEME->GetMetric (m_sName,"Condition"+choice)
@@ -33,6 +34,16 @@ bool EvaluateCondition( CString sCondition )
 	// TODO: Make this a general expression evaluator
 	CStringArray as;
 	split( sCondition, ",", as, false );
+
+	if( as.size()==3 && as[0].CompareNoCase("song")==0 )
+	{
+		const CString &sOp = as[1];
+		const CString &path = as[2];
+
+		const Song *s = SONGMAN->FindSong( path );
+		if( sOp == "=" )
+			return s == GAMESTATE->m_pCurSong;
+	}
 
 	if( as.size()==3 && as[0].CompareNoCase("topgrade")==0 )
 	{
