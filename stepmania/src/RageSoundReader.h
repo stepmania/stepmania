@@ -1,17 +1,10 @@
-/*
- * SoundReader - Data source for a RageSound.
- */
+/* SoundReader - Data source for a RageSound. */
 
 #ifndef RAGE_SOUND_READER_H
 #define RAGE_SOUND_READER_H
 
 class SoundReader
 {
-	mutable string error;
-
-protected:
-	void SetError(string e) const { error = e; }
-
 public:
 	virtual int GetLength() const = 0; /* ms */
 	virtual int GetLength_Fast() const { return GetLength(); } /* ms */
@@ -26,6 +19,12 @@ public:
 
 	bool Error() const { return !error.empty(); }
 	string GetError() const { return error; }
+
+protected:
+	void SetError(string e) const { error = e; }
+
+private:
+	mutable string error;
 };
 
 #endif

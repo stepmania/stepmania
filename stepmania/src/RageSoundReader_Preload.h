@@ -1,6 +1,4 @@
-/*
- * RageSoundReader_Preload - Preload sounds from another reader
- */
+/* RageSoundReader_Preload - Preload sounds from another reader into memory. */
 
 #ifndef RAGE_SOUND_READER_PRELOAD
 #define RAGE_SOUND_READER_PRELOAD

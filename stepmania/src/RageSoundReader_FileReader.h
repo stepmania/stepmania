@@ -1,6 +1,4 @@
-/*
- * SoundReader_FileReader - Simple abstract class for SoundReaders that read from files.
- */
+/* SoundReader_FileReader - base class for SoundReaders that read from files. */
 
 #ifndef RAGE_SOUND_READER_FILE_READER_H
 #define RAGE_SOUND_READER_FILE_READER_H
@@ -10,12 +8,14 @@
 class SoundReader_FileReader: public SoundReader
 {
 public:
-	/* Return OPEN_OK if the file is open and ready to go.  Return OPEN_UNKNOWN_FILE_FORMAT
+	/*
+	 * Return OPEN_OK if the file is open and ready to go.  Return OPEN_UNKNOWN_FILE_FORMAT
 	 * if the file appears to be of a different type.  Return OPEN_FATAL_ERROR if
 	 * the file appears to be the correct type, but there was an error initializing
 	 * the file.
 	 *
-	 * If the file can not be opened at all, or contains no data, return OPEN_MATCH_BUT_FAIL. */
+	 * If the file can not be opened at all, or contains no data, return OPEN_MATCH_BUT_FAIL.
+	 */
 	enum OpenResult
 	{
 		OPEN_OK,
@@ -26,6 +26,7 @@ public:
 	virtual bool IsStreamingFromDisk() const { return true; }
 
 	static SoundReader *OpenFile( CString filename, CString &error );
+
 private:
 	static SoundReader_FileReader *TryOpenFile( CString filename, CString &error, CString format, bool &bKeepTrying );
 };

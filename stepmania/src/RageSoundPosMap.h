@@ -1,6 +1,4 @@
-/*
- * pos_map_queue - maps one set of frame numbers to another
- */
+/* pos_map_queue - A container that maps one set of frame numbers to another. */
 
 #ifndef RAGE_SOUND_POS_MAP_H
 #define RAGE_SOUND_POS_MAP_H
@@ -25,10 +23,6 @@ struct pos_map_t
 /* This class maps one range of frames to another. */
 class pos_map_queue
 {
-	deque<pos_map_t> m_Queue;
-
-	void Cleanup();
-
 public:
 	pos_map_queue();
 	pos_map_queue( const pos_map_queue &cpy );
@@ -43,6 +37,11 @@ public:
 	void Clear();
 
 	bool IsEmpty() const;
+
+private:
+	deque<pos_map_t> m_Queue;
+
+	void Cleanup();
 };
 
 
