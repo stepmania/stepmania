@@ -30,7 +30,7 @@
 #define TEXT_ZOOM			THEME->GetMetricF("ScreenEnding","TextZoom")
 
 
-CString STATS_LINE_TITLE[NUM_STATS_LINES] = {
+CString STATS_LINE_TITLE[NUM_ENDING_STATS_LINES] = {
 	"Total Calories",
 	"Total Songs Played",
 	"Current Combo",
@@ -82,7 +82,7 @@ ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, fa
 		if( pProfile == NULL )
 			continue;	// don't show the stats lines
 	
-		for( int i=0; i<NUM_STATS_LINES; i++ )
+		for( int i=0; i<NUM_ENDING_STATS_LINES; i++ )
 		{
 			m_textStatsTitle[p][i].LoadFromFont( THEME->GetPathToF("ScreenEnding stats title") );
 			m_textStatsTitle[p][i].SetText( STATS_LINE_TITLE[i] );

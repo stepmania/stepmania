@@ -24,9 +24,9 @@ public:
 
 private:
 	BitmapText m_textPlayerName[NUM_PLAYERS];
-#define NUM_STATS_LINES 3	// Total calories burned, total songs played, current combo
-	BitmapText m_textStatsTitle[NUM_PLAYERS][NUM_STATS_LINES];
-	BitmapText m_textStatsValue[NUM_PLAYERS][NUM_STATS_LINES];
+#define NUM_ENDING_STATS_LINES 3	// Total calories burned, total songs played, current combo
+	BitmapText m_textStatsTitle[NUM_PLAYERS][NUM_ENDING_STATS_LINES];
+	BitmapText m_textStatsValue[NUM_PLAYERS][NUM_ENDING_STATS_LINES];
 
 	Sprite	m_sprRemoveMemoryCard[NUM_PLAYERS];
 	bool m_bWaitingForRemoveCard[NUM_PLAYERS];
