@@ -29,7 +29,7 @@ protected:
 	bool		m_bLoaded;
 	float		m_fCurrentItem; // usually between 0 and m_SubActors.size()
 	float		m_fDestinationItem;
-	float		m_fSecondsPerItem;
+	float		m_fSecondsPerItem;		// <= 0 means don't scroll
 	int			m_iNumItemsToDraw;
 	
 	// Note: Rotation is applied before translation.

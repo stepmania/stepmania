@@ -27,7 +27,6 @@ void ActorScroller::Load(
 	const RageVector3	&vTranslateTerm2
 	)
 {
-	ASSERT( fSecondsPerItem > 0 );
 	m_fSecondsPerItem = fSecondsPerItem;
 	m_iNumItemsToDraw = iNumItemsToDraw;
 	m_vRotationDegrees = vRotationDegrees;
@@ -45,7 +44,8 @@ void ActorScroller::Update( float fDeltaTime )
 	if( m_fHibernateSecondsLeft > 0 )
 		return;	// early abort
 
-	fapproach( m_fCurrentItem, m_fDestinationItem, fDeltaTime/m_fSecondsPerItem );
+	if( m_fSecondsPerItem > 0 )
+		fapproach( m_fCurrentItem, m_fDestinationItem, fDeltaTime/m_fSecondsPerItem );
 }
 
 void ActorScroller::DrawPrimitives()
