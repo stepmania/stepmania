@@ -29,7 +29,6 @@ static float g_fTimeBeforeSlow, g_fTimeBeforeFast, g_fTimeBetweenSlow, g_fTimeBe
 
 InputFilter::InputFilter()
 {
-	/* XXX: CircBuf? */
 	queuemutex = new RageMutex("InputFilter");
 	memset( m_BeingHeld, 0, sizeof(m_BeingHeld) );
 	memset( m_BeingForced, 0, sizeof(m_BeingForced) );
