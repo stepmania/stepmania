@@ -350,13 +350,6 @@ int64_t Alsa9Buf::GetPosition() const
 	return last_cursor_pos - delay;
 }
 
-void Alsa9Buf::Reset()
-{
-	/* Nothing is playing.  Reset the sample count; this is just to
-	 * prevent eventual overflow. */
-	last_cursor_pos = 0;
-}
-
 void Alsa9Buf::Play()
 {
 	/* NOP.  It'll start playing when it gets some data. */

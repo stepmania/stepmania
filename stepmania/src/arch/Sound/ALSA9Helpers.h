@@ -40,7 +40,6 @@ public:
 	void Write( const Sint16 *buffer, int frames );
 	unsigned FindSampleRate( unsigned rate );
 	
-	void Reset();
 	void Play();
 	void Stop();
 	void SetVolume(float vol);
