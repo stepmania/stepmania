@@ -16,7 +16,7 @@ HelpDisplay::HelpDisplay()
 void HelpDisplay::Load()
 {
 	m_textTip.SetName( "Tip" );
-	m_textTip.LoadFromFont( THEME->GetPathToF(m_sName) );
+	m_textTip.LoadFromFont( THEME->GetPathF(m_sName,"text") );
 	ON_COMMAND( m_textTip );
 	this->AddChild( &m_textTip );
 

@@ -24,8 +24,8 @@ MenuTimer::MenuTimer()
 	m_fStallSecondsLeft = MAX_STALL_SECONDS;
 	m_bPaused = false;
 
-	m_textDigit1.LoadFromFont( THEME->GetPathToF("MenuTimer") );
-	m_textDigit2.LoadFromFont( THEME->GetPathToF("MenuTimer") );
+	m_textDigit1.LoadFromFont( THEME->GetPathF("MenuTimer","numbers") );
+	m_textDigit2.LoadFromFont( THEME->GetPathF("MenuTimer","numbers") );
 
 	const float fCharWidth = (float) m_textDigit1.m_pFont->GetLineWidthInSourcePixels(L"0");
 	m_textDigit1.SetX( -fCharWidth/2 );
@@ -36,7 +36,7 @@ MenuTimer::MenuTimer()
 
 	SetSeconds( TIMER_SECONDS );
 
-	m_soundBeep.Load( THEME->GetPathToS("MenuTimer tick") );
+	m_soundBeep.Load( THEME->GetPathS("MenuTimer","tick") );
 }
 
 void MenuTimer::EnableStealth( bool bStealth )
@@ -44,7 +44,7 @@ void MenuTimer::EnableStealth( bool bStealth )
 	if( bStealth )
 		m_soundBeep.Unload(); // unload the sound
 	else
-		m_soundBeep.Load( THEME->GetPathToS("MenuTimer tick") ); // reload the sound
+		m_soundBeep.Load( THEME->GetPathS("MenuTimer","tick") ); // reload the sound
 
 	m_textDigit1.SetHidden( bStealth );	
 	m_textDigit2.SetHidden( bStealth );

@@ -26,12 +26,12 @@ void BPMDisplay::Load()
 	NO_BPM_TEXT.Load( m_sName, "NoBPMText" );
 
 	m_textBPM.SetName( "Text" );
-	m_textBPM.LoadFromFont( THEME->GetPathToF(m_sName) );
+	m_textBPM.LoadFromFont( THEME->GetPathF(m_sName,"bpm") );
 	SET_XY_AND_ON_COMMAND( m_textBPM );
 	m_textBPM.SetDiffuse( NORMAL_COLOR );
 	this->AddChild( &m_textBPM );
 
-	m_sprLabel.Load( THEME->GetPathToG(ssprintf("%s label", m_sName.c_str())) );
+	m_sprLabel.Load( THEME->GetPathG(m_sName,"label") );
 	m_sprLabel->SetName( "Label" );
 	SET_XY_AND_ON_COMMAND( m_sprLabel );
 	m_sprLabel->SetDiffuse( NORMAL_COLOR );

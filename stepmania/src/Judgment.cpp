@@ -33,7 +33,7 @@ Judgment::Judgment()
 {
 	m_iCount = 0;
 
-	m_sprJudgment.Load( THEME->GetPathToG("Judgment 1x6") );
+	m_sprJudgment.Load( THEME->GetPathG("Judgment","label 1x6") );
 	m_sprJudgment.StopAnimating();
 	Reset();
 	this->AddChild( &m_sprJudgment );

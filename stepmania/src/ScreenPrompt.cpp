@@ -29,11 +29,11 @@ ScreenPrompt::ScreenPrompt( CString sText, bool bYesNoPrompt, bool bDefaultAnswe
 	m_pOnNo = OnNo;
 	m_pCallbackData = pCallbackData;
 
-	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenPrompt background") );
+	m_Background.LoadFromAniDir( THEME->GetPathB("ScreenPrompt","background") );
 	m_Background.PlayCommand("On");
 	this->AddChild( &m_Background );
 
-	m_textQuestion.LoadFromFont( THEME->GetPathToF("Common normal") );
+	m_textQuestion.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textQuestion.SetText( sText );
 	m_textQuestion.SetXY( QUESTION_X, QUESTION_Y );
 	this->AddChild( &m_textQuestion );
@@ -41,8 +41,8 @@ ScreenPrompt::ScreenPrompt( CString sText, bool bYesNoPrompt, bool bDefaultAnswe
 	m_rectAnswerBox.SetDiffuse( RageColor(0.5f,0.5f,1.0f,0.7f) );
 	this->AddChild( &m_rectAnswerBox );
 
-	m_textAnswer[0].LoadFromFont( THEME->GetPathToF("_shared1") );
-	m_textAnswer[1].LoadFromFont( THEME->GetPathToF("_shared1") );
+	m_textAnswer[0].LoadFromFont( THEME->GetPathF("ScreenPrompt","answer") );
+	m_textAnswer[1].LoadFromFont( THEME->GetPathF("ScreenPrompt","answer") );
 	m_textAnswer[0].SetY( PROMPT_Y );
 	m_textAnswer[1].SetY( PROMPT_Y );
 	this->AddChild( &m_textAnswer[0] );
@@ -69,11 +69,11 @@ ScreenPrompt::ScreenPrompt( CString sText, bool bYesNoPrompt, bool bDefaultAnswe
 
 	m_textAnswer[m_bAnswer].SetEffectGlowShift();
 
-	m_In.Load( THEME->GetPathToB("ScreenPrompt in") );
+	m_In.Load( THEME->GetPathB("ScreenPrompt","in") );
 	m_In.StartTransitioning();
 	this->AddChild( &m_In );
 	
-	m_Out.Load( THEME->GetPathToB("ScreenPrompt out") );
+	m_Out.Load( THEME->GetPathB("ScreenPrompt","out") );
 	this->AddChild( &m_Out );
 }
 
@@ -151,7 +151,7 @@ void ScreenPrompt::MenuRight( PlayerNumber pn )
 	m_rectAnswerBox.SetXY( m_textAnswer[m_bAnswer].GetX(), m_textAnswer[m_bAnswer].GetY() );
 	m_rectAnswerBox.SetZoomX( m_textAnswer[m_bAnswer].GetUnzoomedWidth()+10.0f );
 
-	SOUND->PlayOnce( THEME->GetPathToS("ScreenPrompt change") );
+	SOUND->PlayOnce( THEME->GetPathS("ScreenPrompt","change") );
 }
 
 void ScreenPrompt::MenuStart( PlayerNumber pn )
