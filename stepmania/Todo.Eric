@@ -1,5 +1,11 @@
-Courses 
- * DWI Compatibility
+* Option - Exclude autogen
+
+* DWI Course Compatibility
     - Shuffle
     - Random Entry
-Bugfix - Cant abort song if esc is mapped 
+Low Pri:
+* Keypad mapping - Auto-advance
+* PSX compatibility option.  WHen enabled:
+ - up-right should be synonymous with start.
+ - other things that PSX DDR games do to be more pad-friendly
+
