@@ -26,7 +26,7 @@
 #include "SongOptions.h"
 #include "ScreenManager.h"
 #include "Course.h"
-#include "Song.h"
+#include "song.h"
 #include "SongManager.h"
 #include "GameState.h"
 
@@ -91,7 +91,8 @@ void NetworkSyncManager::StartUp()
 	if( ProfileNames.size() > 0 )
 	{
 		PlayerName.m_packID = 30;
-		for( unsigned i=0; i < strlen(ProfileNames[0]); i++ )
+		unsigned i;
+		for( i=0; i < strlen(ProfileNames[0]); i++ )
 			PlayerName.m_data[i] = ProfileNames[0][i];
 		PlayerName.m_data[i] = 0;
 		NetPlayerClient->send((char*) &PlayerName,20);
@@ -99,7 +100,8 @@ void NetworkSyncManager::StartUp()
 	if( ProfileNames.size() > 1 )
 	{
 		PlayerName.m_packID = 31;
-		for( unsigned i=0; i < strlen(ProfileNames[1]); i++ )
+		unsigned i=0;
+		for( i=0; i < strlen(ProfileNames[1]); i++ )
 			PlayerName.m_data[i] = ProfileNames[1][i];
 		PlayerName.m_data[i] = 0;
 		NetPlayerClient->send( (char*) &PlayerName,20 );
@@ -242,7 +244,7 @@ void NetworkSyncManager::SendSongs()
 {	
 	vector <Song *> LogSongs;
 	LogSongs = SONGMAN->GetAllSongs();
-	int i,j;
+	unsigned i,j;
 	CString SongInfo;
 	char toSend[1020];	//Standard buffer is 1024 and 
 						//we have to include 4 size bytes
@@ -285,7 +287,7 @@ void NetworkSyncManager::SendSongs()
 void ArgStartCourse(CString CourseName)
 {
 	Course * desCourse = SONGMAN->GetCourseFromName(CourseName);
-	LOG->Info ("Course Desied: %s/%d",CourseName.c_str(), desCourse);
+	LOG->Info ("Course Desied: %s",CourseName.c_str());
 	if (desCourse == 0)
 	{
 		LOG->Info ("Desired Course not found!");
