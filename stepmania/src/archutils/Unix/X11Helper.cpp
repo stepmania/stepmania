@@ -5,6 +5,7 @@
 
 #include <X11/Xlib.h>		// Display, Window
 
+#include "RageLog.h"		// LOG
 #include "RageDisplay.h"	// RageDisplay
 
 vector<long>		pMasks;				// Currently open masks
@@ -14,12 +15,24 @@ Window			pWin;				// Current window
 unsigned short int	pCt		= 0;		// Number of subsystems
 							// using the X connection
 
+int protoErrorCallback(Display *d, XErrorEvent *err)
+{
+	char errText[32];
+	XGetErrorText(d,  err->error_code, errText, 32);
+	LOG->Warn("X11 Protocol error %s (%d) has occurred, caused by request %d,%d, resource ID %d",
+		errText, err->error_code, err->request_code, err->minor_code, err->resourceid);
+
+	return 0; // Xlib ignores our return value
+}
+
 bool X11Helper::Go()
 {
 	if(pCt == 0)
 	{
 		pDpy = XOpenDisplay(0);
 		if(pDpy == NULL) { return false; }
+
+		XSetErrorHandler(&protoErrorCallback);
 	}
 	pCt++;
 
