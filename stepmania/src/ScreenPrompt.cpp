@@ -177,11 +177,13 @@ void ScreenPrompt::MenuStart( PlayerNumber pn )
 	SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
 
 	if( m_bAnswer )
+	{
 		if( m_pOnYes )
 			m_pOnYes();
-	else
+	} else {
 		if( m_pOnNo )
 			m_pOnNo();
+	}
 }
 
 void ScreenPrompt::MenuBack( PlayerNumber pn )
