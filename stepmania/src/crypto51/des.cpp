@@ -14,6 +14,8 @@
  * Phil Karn KA9Q, karn@unix.ka9q.ampr.org, August 1994.
  */
 
+#include "global.h"
+
 #include "pch.h"
 #include "misc.h"
 #include "des.h"

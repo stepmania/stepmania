@@ -209,7 +209,7 @@ inline CipherDir GetCipherDir(const T &obj)
 template <class T> inline T rotlFixed(T x, unsigned int y)
 {
 	assert(y < sizeof(T)*8);
-	return (x<<y) | (x>>(sizeof(T)*8-y));
+	return T((x<<y) | (x>>(sizeof(T)*8-y)));
 }
 
 template <class T> inline T rotrFixed(T x, unsigned int y)
@@ -488,20 +488,20 @@ inline T UnalignedGetWord(ByteOrder order, const byte *block, T*dummy=NULL)
 
 inline void UnalignedPutWord(ByteOrder order, byte *block, byte value, const byte *xorBlock = NULL)
 {
-	block[0] = xorBlock ? (value ^ xorBlock[0]) : value;
+	block[0] = byte(xorBlock ? (value ^ xorBlock[0]) : value);
 }
 
 inline void UnalignedPutWord(ByteOrder order, byte *block, word16 value, const byte *xorBlock = NULL)
 {
 	if (order == BIG_ENDIAN_ORDER)
 	{
-		block[0] = GETBYTE(value, 1);
-		block[1] = GETBYTE(value, 0);
+		block[0] = byte(GETBYTE(value, 1));
+		block[1] = byte(GETBYTE(value, 0));
 	}
 	else
 	{
-		block[0] = GETBYTE(value, 0);
-		block[1] = GETBYTE(value, 1);
+		block[0] = byte(GETBYTE(value, 0));
+		block[1] = byte(GETBYTE(value, 1));
 	}
 
 	if (xorBlock)
@@ -515,17 +515,17 @@ inline void UnalignedPutWord(ByteOrder order, byte *block, word32 value, const b
 {
 	if (order == BIG_ENDIAN_ORDER)
 	{
-		block[0] = GETBYTE(value, 3);
-		block[1] = GETBYTE(value, 2);
-		block[2] = GETBYTE(value, 1);
-		block[3] = GETBYTE(value, 0);
+		block[0] = byte(GETBYTE(value, 3));
+		block[1] = byte(GETBYTE(value, 2));
+		block[2] = byte(GETBYTE(value, 1));
+		block[3] = byte(GETBYTE(value, 0));
 	}
 	else
 	{
-		block[0] = GETBYTE(value, 0);
-		block[1] = GETBYTE(value, 1);
-		block[2] = GETBYTE(value, 2);
-		block[3] = GETBYTE(value, 3);
+		block[0] = byte(GETBYTE(value, 0));
+		block[1] = byte(GETBYTE(value, 1));
+		block[2] = byte(GETBYTE(value, 2));
+		block[3] = byte(GETBYTE(value, 3));
 	}
 
 	if (xorBlock)

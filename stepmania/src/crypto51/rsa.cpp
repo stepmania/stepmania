@@ -1,5 +1,7 @@
 // rsa.cpp - written and placed in the public domain by Wei Dai
 
+#include "global.h"
+
 #include "pch.h"
 #include "rsa.h"
 #include "asn.h"

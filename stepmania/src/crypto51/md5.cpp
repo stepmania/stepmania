@@ -1,6 +1,8 @@
 // md5.cpp - modified by Wei Dai from Colin Plumb's public domain md5.c
 // any modifications are placed in the public domain
 
+#include "global.h"
+
 #include "pch.h"
 #include "md5.h"
 #include "misc.h"

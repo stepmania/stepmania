@@ -1,5 +1,7 @@
 // fips140.cpp - written and placed in the public domain by Wei Dai
 
+#include "global.h"
+
 #include "pch.h"
 #include "fips140.h"
 #include "trdlocal.h"	// needs to be included last for cygwin

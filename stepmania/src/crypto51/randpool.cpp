@@ -1,6 +1,8 @@
 // randpool.cpp - written and placed in the public domain by Wei Dai
 // The algorithm in this module comes from PGP's randpool.c
 
+#include "global.h"
+
 #include "pch.h"
 #include "randpool.h"
 #include "mdc.h"

@@ -1,5 +1,7 @@
 // basecode.cpp - written and placed in the public domain by Wei Dai
 
+#include "global.h"
+
 #include "pch.h"
 #include "basecode.h"
 #include "fltrimpl.h"
