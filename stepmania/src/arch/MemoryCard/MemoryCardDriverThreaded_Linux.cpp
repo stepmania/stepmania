@@ -20,72 +20,7 @@
 
 const CString TEMP_MOUNT_POINT = "@mctemp/";
 
-static const char *ETC_MTAB = "/etc/mtab";
-
 void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut );
-
-static int RunProgram( const char *path, char *const args[], CString &out )
-{
-	LOG->Trace( "Running \"%s\"", path );
-	int fds[2];
-	if( pipe(fds) == -1 )
-		return -1;
-	
-	int pid = fork();
-	if( pid == -1 )
-    {
-		close( fds[0] );
-		close( fds[1] );
-		return -1;
-    }
-	
-	if( pid == 0 )
-    {
-		close( fds[0] );
-		close( fileno(stdout) );
-		
-		dup2( fds[1], fileno(stdout) );
-		
-		for( int i = 0; i < 1024; ++i )
-			if( i != fileno(stdout) )
-				close( i );
-			execvp( path, args );
-			_exit(1);
-    }
-	
-	close( fds[1] );
-	
-	while( 1 )
-    {
-		char buf[1024];
-		int got = read( fds[0], buf, sizeof(buf) );
-		if( got == -1 )
-		{
-			if( errno == EINTR )
-				continue;
-			fprintf( stderr, "err %s\n", strerror(errno) );
-			exit(0);
-		}
-		
-		if( got == 0 )
-			break;
-		
-		out.append( buf, got );
-    }
-	
-	close( fds[0] );
-	int status;
-	int ret = waitpid( pid, &status, 0 );
-	
-	if( ret == -1 )
-		return -1;
-	
-	if( !WIFEXITED(status) )
-		return -1; /* signal */
-	
-	return WEXITSTATUS(status);
-}
-
 
 template<class T>
 bool VectorsAreEqual( const T &a, const T &b )
@@ -137,57 +72,83 @@ MemoryCardDriverThreaded_Linux::~MemoryCardDriverThreaded_Linux()
 
 void MemoryCardDriverThreaded_Linux::ResetUsbStorage()
 {
-	//
-	// if usb-storage gets in a bad state, resetting usb-storage will sometimes fix it.
-	//
-	
-	// unmount all devices before trying to remove the module
-	FOREACH( UsbStorageDevice, m_vDevicesLastSeen, d )
-    {
-		CString sCommand = "umount " + d->sOsMountDir;
-		LOG->Trace( "reset unmount (%s)", sCommand.c_str() );
-		ExecuteCommand( sCommand );
-		LOG->Trace( "reset unmount done" );
-		
-		// force a remount the next time cards aren't locked
-		d->bNeedsWriteTest = true;
-		d->bWriteTestSucceeded = false;
-    }
-	
-	ExecuteCommand( "rmmod usb-storage" );
-	ExecuteCommand( "modprobe usb-storage" );
-	
-	MountThreadDoOneUpdate();
 }
 
-bool UsbStorageDevicesChanged()
+static bool ReadFile( const CString &sPath, CString &sBuf )
 {
-  static CString sLastDevices = "";
-  CString sThisDevices;
+	sBuf.clear();
 
-  // 2.4 kernel style
+	int fd = open( sPath, O_RDONLY );
+	if( fd == -1 )
+	{
+		LOG->Warn( "Error opening \"%s\": %s", sPath.c_str(), strerror(errno) );
+		return false;
+	}
+	
+	while(1)
+	{
+		char buf[1024];
+		int iGot = read( fd, buf, sizeof(buf) );
+		if( iGot == -1 )
+		{
+			close(fd);
+			LOG->Warn( "Error reading \"%s\": %s", sPath.c_str(), strerror(errno) );
+			return false;
+		}
 
-  // Find the usb-storage device index for all storage class devices.
-  for( unsigned i=0; true; i++ )
-    {
-      CString fn = ssprintf( "/proc/scsi/usb-storage-%d/%d", i, i );
-      RageFile f;
-      if( !f.Open( fn ) )
-	break;
-      CString sFileText;
-      f.Read( sFileText );
-      sThisDevices += sFileText;
-      f.Close();
-    }
-
-  bool bChanged = sThisDevices != sLastDevices;
-  sLastDevices = sThisDevices;
-  if( bChanged )
-    LOG->Trace( "Change in USB storage devices detected." );
-  return bChanged;
+		sBuf.append( buf, iGot );
+		if( iGot < (int) sizeof(buf) )
+			break;
+	}
+	
+	LOG->Trace("got '%s'", sBuf.c_str());
+	close(fd);
+	return true;
 }
 
-/* Return true if MountThreadDoOneUpdate should be called. */
+static void GetFileList( const CString &sPath, vector<CString> &out )
+{
+	out.clear();
+
+	DIR *dp = opendir( sPath );
+	if( dp == NULL )
+		return; // false; // XXX warn
+
+	while( const struct dirent *ent = readdir(dp) )
+		out.push_back( ent->d_name );
+
+	closedir( dp );
+}
+
+static bool BlockDevicesChanged()
+{
+	LOG->Trace("StorageDevicesChanged");
+	static CString sLastDevices = "";
+	CString sThisDevices;
+
+	/* If a device is removed and reinserted, the inode of the /sys/block entry
+	 * will change. */
+	CString sDevicePath = "/sys/block/";
+	
+	vector<CString> asDevices;
+	GetFileList( sDevicePath, asDevices );
+
+	for( unsigned i = 0; i < asDevices.size(); ++i )
+	{
+		struct stat buf;
+		if( stat( sDevicePath + asDevices[i], &buf ) == -1 )
+			continue; // XXX warn
+
+		sThisDevices += ssprintf( "%i,", (int) buf.st_ino );
+	}
+	       
+	bool bChanged = sThisDevices != sLastDevices;
+	sLastDevices = sThisDevices;
+	if( bChanged )
+		LOG->Trace( "Change in USB storage devices detected." );
+	return bChanged;
+}
+
 bool MemoryCardDriverThreaded_Linux::MountThreadWaitForUpdate()
 {
 	/* Check if any devices need a write test. */
@@ -200,7 +161,7 @@ bool MemoryCardDriverThreaded_Linux::MountThreadWaitForUpdate()
 
 	/* Nothing needs a write test.  If no devices have changed, either,
 	 * delay. */
-	if( UsbStorageDevicesChanged() )
+	if( BlockDevicesChanged() )
 		return true;
 
 	/* Nothing to do.  Delay, so we don't busy loop. */
@@ -210,17 +171,6 @@ bool MemoryCardDriverThreaded_Linux::MountThreadWaitForUpdate()
 
 void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 {
-	// TRICKY: We're waiting for a change in the USB device list, but 
-	// the usb-storage descriptors take a bit longer to update.  It's more convenient to wait
-	// on the USB device list because the usb-storage descriptors are separate files per 
-	// device.  So, sleep for a little bit of time after we detect a new USB device and give
-	// usb-storage a chance to initialize.  
-	//usleep(1000*300);
-	// CAREFUL: We can't wait for a fixed amount of time.  Some devices take
-	// a very long time to initialize before they can be mounted (Rio Carbon).
-	// Instead, poll for a change in the usb-storage descriptor.  When the 
-	// descriptor says the device is present, the device is ready to be mounted.
-	
 	vector<UsbStorageDevice> vNew;
 	GetNewStorageDevices( vNew );
 	vector<UsbStorageDevice> vOld = m_vDevicesLastSeen; // copy
@@ -387,310 +337,105 @@ bool IsDeviceAllowed( int idVendor, int idProduct, CString sVendor, CString sPro
   return bAllowed;
 }
 
-bool ReadUsbStorageDescriptor( CString fn, int iScsiIndex, vector<UsbStorageDevice>& vDevicesOut )
-{
-	LOG->Trace( "ReadUsbStorageDescriptor %s", fn.c_str() );
-	
-	// Read the usb-storage descriptor.  It looks like:
-	
-	//    Host scsi0: usb-storage
-	//        Vendor: KINGSTON
-	//       Product: USB DRIVE
-	// Serial Number: 1125198948886
-	//      Protocol: Transparent SCSI
-	//     Transport: Bulk
-	//          GUID: 04e801000001125198948886
-	//      Attached: Yes
-	
-	ifstream f;
-	f.open(fn);
-	if( !f.is_open() )
-		return false;
-	
-	CString sLine;
-	CString sVendor, sProduct;
-	while( getline(f, sLine) )
-    {
-		// Serial Number: 1125198948886
-		int iRet;
-
-		char szValue[1024];
-		iRet = sscanf( sLine.c_str(), "       Vendor: %[^\n]", szValue );
-                if( iRet == 1 ) // we found our line
-                  sVendor = szValue;
-                iRet = sscanf( sLine.c_str(), "      Product: %[^\n]", szValue );
-                if( iRet == 1 ) // we found our line
-                  sProduct = szValue;
-
-		char szSerial[1024];
-		iRet = sscanf( sLine.c_str(), "Serial Number: %[^\n]", szSerial );
-		if( iRet == 1 ) // we found our line
-		{
-			// Search for the device corresponding to this serial number.
-			for( unsigned j=0; j<vDevicesOut.size(); j++ )
-			{
-				UsbStorageDevice& usbd = vDevicesOut[j];
-				
-				if( usbd.sSerial == szSerial  &&  IsDeviceAllowed( usbd.idVendor, usbd.idProduct, sVendor, sProduct ) )
-				  {
-					usbd.iScsiIndex = iScsiIndex;
-					usbd.sVendor = sVendor;
-					usbd.sProduct = sProduct;
-					sVendor = "";
-					sProduct = "";
-					LOG->Trace( "iScsiIndex: %d, iBus: %d, iLevel: %d, iPort: %d, sSerial: %s, sVendor: %s, sProduct: %s",
-						usbd.iScsiIndex, usbd.iBus, usbd.iLevel, usbd.iPort, usbd.sSerial.c_str(), usbd.sVendor.c_str(), usbd.sProduct.c_str() );
-					break;  // done looking for the corresponding device.
-				    }
-			}
-			break;  // we already found the line we care about
-		}
-    }
-	return true;
-}
-
-#if 0
-/* usbd must have the serial number filled in; fill in iPort and iLevel. */
-static bool GetPortAndLevelFromSerial( CString sSerial, UsbStorageDevice &usbd )
-{
-	// Find all attached USB devices.  Output looks like:
-	// T:  Bus=02 Lev=00 Prnt=00 Port=00 Cnt=00 Dev#=  1 Spd=12  MxCh= 2
-	// B:  Alloc=  0/900 us ( 0%), #Int=  0, #Iso=  0
-	// D:  Ver= 1.00 Cls=09(hub  ) Sub=00 Prot=00 MxPS= 8 #Cfgs=  1
-	// P:  Vendor=0000 ProdID=0000 Rev= 0.00
-	// S:  Product=USB UHCI Root Hub
-	// S:  SerialNumber=ff80
-	// C:* #Ifs= 1 Cfg#= 1 Atr=40 MxPwr=  0mA
-	// I:  If#= 0 Alt= 0 #EPs= 1 Cls=09(hub  ) Sub=00 Prot=00 Driver=hub
-	// E:  Ad=81(I) Atr=03(Int.) MxPS=   8 Ivl=255ms
-	// T:  Bus=02 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=12  MxCh= 0
-	// D:  Ver= 1.10 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 8 #Cfgs=  1
-	// P:  Vendor=04e8 ProdID=0100 Rev= 0.01
-	// S:  Manufacturer=KINGSTON     
-	// S:  Product=USB DRIVE    
-	// S:  SerialNumber=1125198948886
-	// C:* #Ifs= 1 Cfg#= 1 Atr=80 MxPwr= 90mA
-	// I:  If#= 0 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=06 Prot=50 Driver=usb-storage
-	// E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-	// E:  Ad=03(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-	
-	RageFile f;
-	CString fn = "/proc/bus/usb/devices";
-	LOG->Trace( fn );
-	if( !f.Open(fn) )
-	{
-		LOG->Warn( "can't open \"%s\": %s", fn.c_str(), f.GetError().c_str() );
-		return false;
-	}
-	
-	CString sLine;
-	int iPort, iLevel;
-	while( f.GetLine(sLine) > 0 )
-	{
-		int iRet, iThrowAway;
-		
-		// T:  Bus=02 Lev=00 Prnt=00 Port=00 Cnt=00 Dev#=  1 Spd=12  MxCh= 2
-		iRet = sscanf( sLine.c_str(), "T:  Bus=%d Lev=%d Prnt=%d Port=%d Cnt=%d Dev#=%d Spd=%d  MxCh=%d", &iThrowAway, &iLevel, &iThrowAway, &iPort, &iThrowAway, &iThrowAway, &iThrowAway, &iThrowAway );
-		if( iRet == 8 )
-			continue;	// stop processing this line
-		
-		// S:  SerialNumber=ff80
-		char szSerial[1024];
-		iRet = sscanf( sLine.c_str(), "S:  SerialNumber=%[^\n]", szSerial );
-		if( iRet == 1 )
-		{
-			if( sSerial == szSerial )
-			{
-				usbd.iPort = iPort;
-				usbd.iLevel = iLevel;
-				/* got what we came for */
-				return true;
-			}
-			
-			continue;	// stop processing this line
-		}
-	}
-}
-#endif
-
 void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 {
 	LOG->Trace( "GetNewStorageDevices" );
 	
 	vDevicesOut.clear();
-	
+
 	{
-	        // Discover what storage class devices are connected.  Output looks like:
+		vector<CString> asDevices;
+		CString sBlockDevicePath = "/sys/block/";
+		GetFileList( sBlockDevicePath, asDevices );
 
-		// Bus 002 Device 001: ID 0a03:0b05
-		// Port 4
-		//   iSerial                 3 1125198948886
-		//       bInterfaceClass         8 Mass Storage
-		
-		// Don't include a path.  The usbutils installer script installs 
-		// to /usr/local/sbin and the Debian package installs to /usr/sbin/.
-		CString sCommand = "lsusb";
-		char *szParams[] = { "lsusb", "-v", NULL }; 
-		CString sOutput;
-		RunProgram( sCommand, szParams, sOutput );
-		
-		CStringArray vsLines;
-		split( sOutput, "\n", vsLines );
-		
-		UsbStorageDevice usbd;
-		for( unsigned i=0; i<vsLines.size(); i++ )
+		for( unsigned i = 0; i < asDevices.size(); ++i )
 		{
-			CString &sLine = vsLines[i];
-			
-			int iRet, iThrowAway;
-			
-			// Bus 002 Device 001: ID 0000:0000
-			int iBus;
-			iRet = sscanf( sLine.c_str(), "Bus %d", &iBus );
-			if( iRet == 1 )
-			{
-				usbd.iBus = iBus;
-				continue;       // stop processing this line
-			}
-			
-			// Port 4
-			int iPort;
-			iRet = sscanf( sLine.c_str(), "Port %d", &iPort );
-			if( iRet == 1 )
-			{
-				usbd.iPort = iPort;
-				continue;       // stop processing this line
-			}		
+			if( asDevices[i] == "." || asDevices[i] == ".." )
+				continue;
 
-                        //   idVendor           0x0781 SanDisk Corp.
-                        int idVendor;
-                        iRet = sscanf( sLine.c_str(), "  idVendor 0x%x", &idVendor );
-                        if( iRet == 1 )
-			  {
-			    usbd.idVendor = idVendor;
-			    continue;       // stop processing this line
-			  }
+			UsbStorageDevice usbd;
 
-                        //   idProduct          0x4106 
-                        int idProduct;
-                        iRet = sscanf( sLine.c_str(), "  idProduct 0x%x", &idProduct );
-                        if( iRet == 1 )
-                          {
-                            usbd.idProduct = idProduct;
-                            continue;       // stop processing this line
-                          }
-			
-			//   iSerial                 3 1125198948886
-			char szSerial[1024];
-			iRet = sscanf( sLine.c_str(), "  iSerial %d %[^\n]", &iThrowAway, szSerial );
-			if( iRet == 2 )
+			CString sPath = sBlockDevicePath + asDevices[i] + "/";
+			LOG->Trace("'%s'", sPath.c_str());
+
+			/* Ignore non-removable devices. */
+			CString sBuf;
+			if( !ReadFile( sPath + "removable", sBuf ) )
+				continue; // already warned
+			if( atoi(sBuf) != 1 )
+				continue;
+
+
+			usbd.sScsiDevice = "/dev/" + asDevices[i];
+
+			/*
+			 * sPath/device should be a symlink to the actual device.  For USB
+			 * devices, it looks like this:
+			 *
+			 * device -> ../../devices/pci0000:00/0000:00:02.1/usb2/2-1/2-1:1.0
+			 *
+			 * "2-1" is "bus-port".
+			 */
+			char szLink[256];
+			if( readlink( sPath + "device", szLink, sizeof(szLink) ) == -1 )
 			{
-				usbd.sSerial = szSerial;
-				continue;       // stop processing this line
+				// XXX warn
 			}
-			
-			//       bInterfaceClass         8 Mass Storage
-			int iClass;
-			iRet = sscanf( sLine.c_str(), "      bInterfaceClass %d", &iClass );
-			if( iRet == 1 )
+			else
 			{
-				if( iClass == 8 )       // storage class
-				{		      
-					vDevicesOut.push_back( usbd );
-					LOG->Trace( "iScsiIndex: %d, iBus: %d, iLevel: %d, iPort: %d, sSerial  = %s",
-						usbd.iScsiIndex, usbd.iBus, usbd.iLevel, usbd.iPort, usbd.sSerial.c_str() );
+				vector<CString> asBits;
+				split( szLink, "/", asBits );
+
+//				const CString &sHostPort = asBits[asBits.size()-3];
+				if( asBits.size() > 3 && asBits[asBits.size()-3].Left(3) == "usb" )
+				{
+					CString sHostPort = asBits[asBits.size()-2];
+					asBits.clear();
+					split( sHostPort, "-", asBits );
+					if( asBits.size() == 2 )
+					{
+						usbd.iBus = atoi(asBits[0]);
+						usbd.iPort = atoi(asBits[1]);
+					}
 				}
-				continue;       // stop processing this line
 			}
-		}
-	}
 
-	
-	{
-		// Find the usb-storage device index for all storage class devices.
-		
-		const CString sDir = "/proc/scsi/usb-storage/";
-		LOG->Trace( "Scanning %s", sDir.c_str() );
-		DIR *dirp = opendir( sDir );
-		if( dirp )
-		{
-			// 2.6 kernel style
-			
-			struct dirent *direntp;
-			while ( (direntp = readdir( dirp )) != NULL )
+			if( ReadFile( sPath + "device/../idVendor", sBuf ) )
+				sscanf( sBuf, "%x", &usbd.idVendor );
+
+			if( ReadFile( sPath + "device/../idProduct", sBuf ) )
+				sscanf( sBuf, "%x", &usbd.idProduct );
+
+			/* These queries cause communication with the USB device.  Disabling
+			 * them may result in higher reliability. */
+			if( ReadFile( sPath + "device/../serial", sBuf ) )
 			{
-				if( stricmp(direntp->d_name,".")==0 || stricmp(direntp->d_name,"..")==0 )
-					continue;
-				
-				int iScsiIndex = atoi( direntp->d_name );
-				CString fn = sDir + direntp->d_name;
-				
-				ReadUsbStorageDescriptor( fn, iScsiIndex, vDevicesOut );
+				usbd.sSerial = sBuf;
+				TrimRight( usbd.sSerial );
 			}
-			closedir( dirp );
-			dirp = NULL;
+			if( ReadFile( sPath + "device/../product", sBuf ) )
+			{
+				usbd.sProduct = sBuf;
+				TrimRight( usbd.sVendor );
+			}
+			if( ReadFile( sPath + "device/../manufacturer", sBuf ) )
+			{
+				usbd.sVendor = sBuf;
+				TrimRight( usbd.sVendor );
+			}
+
+			if( IsDeviceAllowed( usbd.idVendor, usbd.idProduct, usbd.sVendor, usbd.sProduct ) )
+			{
+				vDevicesOut.push_back( usbd );
+
+				LOG->Trace( "iBus: %d, iLevel: %d, iPort: %d, sSerial  = %s",
+						usbd.iBus, usbd.iLevel, usbd.iPort, usbd.sSerial.c_str() );
+			}
 		}
-		else
-		{
-		    // 2.4 kernel style
-		    
-		    // Find the usb-storage device index for all storage class devices.
-		    for( unsigned i=0; true; i++ )
-		    {
-			CString fn = ssprintf( "/proc/scsi/usb-storage-%d/%d", i, i );
-			if( !ReadUsbStorageDescriptor( fn, i, vDevicesOut ) )
-			    break;
-		    }
-	        }
 	}
 
-
 	{
-	       	// Get the mapping from Scsi device number to Scsi file device.  Requires sg-utils's
-	       	// sg_scan.  It looks like:
-	       	
-	       	// /dev/sg0: scsi47 channel=0 id=0 lun=0 [em]  type=0
-	       	// /dev/sg1: scsi46 channel=0 id=0 lun=0 [em]  type=0
-	       	
-	       	CString sOutput;
-	       	CString sCommand = "/usr/bin/sg_scan";
-	       	LOG->Trace( sCommand );
-	       	RunProgram( sCommand, NULL, sOutput );
-	       	
-	       	CStringArray vsLines;
-	       	split( sOutput, "\n", vsLines );
-	       	
-	       	for( unsigned i=0; i<vsLines.size(); i++ )
-	       	{
-	       		const CString& sLine = vsLines[i];
-	       		
-	       		LOG->Trace( "sLine: %s", sLine.c_str() );
-	       		
-	       		int iSg;
-	       		int iScsiIndex;
-	       		int iRet = sscanf( sLine.c_str(), "/dev/sg%i: scsi%d", &iSg, &iScsiIndex );
-	       		if( iRet != 2 )
-	       			continue;       // don't process this line
-	       		
-	       		// search for the usb-storage device corresponding to the SCSI device
-	       		for( unsigned i=0; i<vDevicesOut.size(); i++ )
-	       		{
-	       			UsbStorageDevice& usbd = vDevicesOut[i];
-	       			if( usbd.iScsiIndex == iScsiIndex ) // found our match
-	       			{
-	       				usbd.sScsiDevice = ssprintf("/dev/sd%c",'a'+(char)iSg);
-	       				
-	       				LOG->Trace( "iScsiIndex: %d, iBus: %d, iLevel: %d, iPort: %d, sScsiDevice: %s",
-	       					usbd.iScsiIndex, usbd.iBus, usbd.iLevel, usbd.iPort, usbd.sScsiDevice.c_str() );
-	       				break;  // stop looking for a match
-	       			}
-	       		}
-	       	}
-	}
-	
-
-	{
-		// Get the mapping from SCSI device to fs mount point.  Output looks like:
+		// Find where each device is mounted. Output looks like:
 		
 		// /dev/sda1               /mnt/flash1             auto    noauto,owner 0 0
 		// /dev/sdb1               /mnt/flash2             auto    noauto,owner 0 0
@@ -743,8 +488,6 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 			}
 		}
 	}
-	
-leave:
 	
 	/* Remove any devices that we couldn't find a mountpoint for. */
 	for( unsigned i=0; i<vDevicesOut.size(); i++ )
@@ -809,7 +552,7 @@ void MemoryCardDriverThreaded_Linux::Flush( UsbStorageDevice* pDevice )
 }
 
 /*
- * (c) 2003-2004 Chris Danford
+ * (c) 2003-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
