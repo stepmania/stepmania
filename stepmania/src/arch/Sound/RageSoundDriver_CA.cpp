@@ -19,7 +19,8 @@ static AudioConverter *gConverter;
 
 /* temporary hack: */
 static float g_fIOProcTime = 0;
-static int g_iIOProcTimeSamples = 0;
+static int g_iIOProcTimeCalls = 0;
+static int64_t g_iIOProcTimeFrames = 0;
 
 static CString FormatToString( int fmt )
 {
@@ -225,8 +226,9 @@ RageSound_CA::~RageSound_CA()
     delete gConverter;
     delete mOutputDevice;
 
-	LOG->Info( "IOProc time: %f in %i calls, %f per call",
-		g_fIOProcTime, g_iIOProcTimeSamples, g_fIOProcTime/g_iIOProcTimeSamples );
+	LOG->Info( "IOProc time: %f in %i calls, %f per call, %lli frames, av %lli frames/call",
+		g_fIOProcTime, g_iIOProcTimeCalls, g_fIOProcTime/g_iIOProcTimeCalls,
+		g_iIOProcTimeFrames, g_iIOProcTimeFrames/g_iIOProcTimeCalls );
 }
 
 int64_t RageSound_CA::GetPosition(const RageSoundBase *sound) const
@@ -262,7 +264,8 @@ OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
     gConverter->FillComplexBuffer(dataPackets, *outOutputData, NULL);
 
 	g_fIOProcTime += tm.GetDeltaTime();
-	++g_iIOProcTimeSamples;
+	++g_iIOProcTimeCalls;
+	g_iIOProcTimeFrames += dataPackets;
 
 	return noErr;
 }
