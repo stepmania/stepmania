@@ -54,6 +54,9 @@ inline float max(int a, float b) { return a > b? a:b; }
 
 #define clamp(val,low,high)		( max( (low), min((val),(high)) ) )
 
+template <class T>
+void swap(T &a, T &b) { T c = a; a = b; b = c; }
+
 #define PI		D3DX_PI
 #define DEG		(PI / 180.0f)
 #define RAD		(180.0f / PI)
