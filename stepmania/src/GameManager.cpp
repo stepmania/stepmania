@@ -91,34 +91,6 @@ GameDef g_GameDefs[NUM_GAMES] =
 };
 
 
-StyleDef g_StyleDefSingle = 
-	{	// STYLE_DANCE_SINGLE
-		"dance-single",						// m_szName
-		NOTES_TYPE_DANCE_SINGLE,			// m_NotesType
-		StyleDef::ONE_PLAYER_USES_ONE_SIDE,	// m_StyleType
-		{ 160, 480 },						// m_iCenterX
-		4,									// m_iColsPerPlayer
-		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
-			{	// PLAYER_1
-				{ TRACK_1,	INSTRUMENT_1,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.5f },
-				{ TRACK_2,	INSTRUMENT_1,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*0.5f },
-				{ TRACK_3,	INSTRUMENT_1,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*0.5f },
-				{ TRACK_4,	INSTRUMENT_1,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.5f },
-			},
-			{	// PLAYER_2
-				{ TRACK_1,	INSTRUMENT_2,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.5f },
-				{ TRACK_2,	INSTRUMENT_2,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*0.5f },
-				{ TRACK_3,	INSTRUMENT_2,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*0.5f },
-				{ TRACK_4,	INSTRUMENT_2,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.5f },
-			},
-		},
-		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-			0, 1, 2, 3
-		},
-	};
-
-
-
 
 StyleDef g_StyleDefs[NUM_STYLES] = 
 {
@@ -334,12 +306,49 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			0,2,4,1,3
 		},
 	},
+	{	// PUMP_STYLE_DOUBLE
+		"pump-double",							// m_szName
+		NOTES_TYPE_PUMP_SINGLE,					// m_NotesType
+		StyleDef::ONE_PLAYER_USES_TWO_SIDES,	// m_StyleType
+		{ 160, 480 },							// m_iCenterX
+		10,										// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	INSTRUMENT_1,	PUMP_BUTTON_DOWNLEFT,	-PUMP_COL_SPACING*4.5f },
+				{ TRACK_2,	INSTRUMENT_1,	PUMP_BUTTON_UPLEFT,		-PUMP_COL_SPACING*3.5f },
+				{ TRACK_3,	INSTRUMENT_1,	PUMP_BUTTON_CENTER,		-PUMP_COL_SPACING*2.5f },
+				{ TRACK_4,	INSTRUMENT_1,	PUMP_BUTTON_UPRIGHT,	-PUMP_COL_SPACING*1.5f },
+				{ TRACK_5,	INSTRUMENT_1,	PUMP_BUTTON_DOWNRIGHT,	-PUMP_COL_SPACING*0.5f },
+				{ TRACK_6,	INSTRUMENT_2,	PUMP_BUTTON_DOWNLEFT,	+PUMP_COL_SPACING*0.5f },
+				{ TRACK_7,	INSTRUMENT_2,	PUMP_BUTTON_UPLEFT,		+PUMP_COL_SPACING*1.5f },
+				{ TRACK_8,	INSTRUMENT_2,	PUMP_BUTTON_CENTER,		+PUMP_COL_SPACING*2.5f },
+				{ TRACK_9,	INSTRUMENT_2,	PUMP_BUTTON_UPRIGHT,	+PUMP_COL_SPACING*3.5f },
+				{ TRACK_10,	INSTRUMENT_2,	PUMP_BUTTON_DOWNRIGHT,	+PUMP_COL_SPACING*4.5f },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	INSTRUMENT_1,	PUMP_BUTTON_DOWNLEFT,	-PUMP_COL_SPACING*4.5f },
+				{ TRACK_2,	INSTRUMENT_1,	PUMP_BUTTON_UPLEFT,		-PUMP_COL_SPACING*3.5f },
+				{ TRACK_3,	INSTRUMENT_1,	PUMP_BUTTON_CENTER,		-PUMP_COL_SPACING*2.5f },
+				{ TRACK_4,	INSTRUMENT_1,	PUMP_BUTTON_UPRIGHT,	-PUMP_COL_SPACING*1.5f },
+				{ TRACK_5,	INSTRUMENT_1,	PUMP_BUTTON_DOWNRIGHT,	-PUMP_COL_SPACING*0.5f },
+				{ TRACK_6,	INSTRUMENT_2,	PUMP_BUTTON_DOWNLEFT,	+PUMP_COL_SPACING*0.5f },
+				{ TRACK_7,	INSTRUMENT_2,	PUMP_BUTTON_UPLEFT,		+PUMP_COL_SPACING*1.5f },
+				{ TRACK_8,	INSTRUMENT_2,	PUMP_BUTTON_CENTER,		+PUMP_COL_SPACING*2.5f },
+				{ TRACK_9,	INSTRUMENT_2,	PUMP_BUTTON_UPRIGHT,	+PUMP_COL_SPACING*3.5f },
+				{ TRACK_10,	INSTRUMENT_2,	PUMP_BUTTON_DOWNRIGHT,	+PUMP_COL_SPACING*4.5f },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			0,2,4,1,3,5,7,9,6,8
+		},
+	},
 };
 
 
 GameManager::GameManager()
 {
-	m_CurStyle = STYLE_DANCE_SINGLE;
+	m_CurGame = GAME_DANCE;
+	m_CurStyle = STYLE_NONE;
 
 	CStringArray asSkinNames;	
 	GetSkinNames( asSkinNames );
@@ -350,14 +359,9 @@ GameManager::GameManager()
 }
 
 
-Game GameManager::GetCurrentGame()
-{
-	return StyleToGame( m_CurStyle );
-}
-
 GameDef* GameManager::GetCurrentGameDef()
 {
-	return &g_GameDefs[ GetCurrentGame() ];
+	return &g_GameDefs[ m_CurGame ];
 }
 
 StyleDef* GameManager::GetCurrentStyleDef()

@@ -50,12 +50,18 @@ protected:
 public:
 
 	// let subclass override if they want
-	virtual void MenuUp( PlayerNumber p )	{};
-	virtual void MenuDown( PlayerNumber p )	{};
-	virtual void MenuLeft( PlayerNumber p )	{};
-	virtual void MenuRight( PlayerNumber p ){};
-	virtual void MenuStart( PlayerNumber p )	{};
-	virtual void MenuBack( PlayerNumber p )	{};
+	virtual void MenuUp(	const PlayerNumber p, const InputEventType type )	{ MenuUp(p); };
+	virtual void MenuDown(	const PlayerNumber p, const InputEventType type )	{ MenuDown(p); };
+	virtual void MenuLeft(	const PlayerNumber p, const InputEventType type )	{ MenuLeft(p); };
+	virtual void MenuRight( const PlayerNumber p, const InputEventType type )	{ MenuRight(p); };
+	virtual void MenuStart( const PlayerNumber p, const InputEventType type )	{ MenuStart(p); };
+	virtual void MenuBack(	const PlayerNumber p, const InputEventType type )	{ MenuBack(p); };
 
+	virtual void MenuUp(	const PlayerNumber p )	{};
+	virtual void MenuDown(	const PlayerNumber p )	{};
+	virtual void MenuLeft(	const PlayerNumber p )	{};
+	virtual void MenuRight( const PlayerNumber p )	{};
+	virtual void MenuStart( const PlayerNumber p )	{};
+	virtual void MenuBack(	const PlayerNumber p )	{};
 
 };

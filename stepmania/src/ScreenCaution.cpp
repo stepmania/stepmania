@@ -62,7 +62,7 @@ void ScreenCaution::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenCaution::MenuStart( PlayerNumber p )
+void ScreenCaution::MenuStart( const PlayerNumber p )
 {
 	m_Wipe.CloseWipingRight( SM_GoToSelectMusic );
 }

@@ -24,12 +24,20 @@
 const float HELP_X		=	CENTER_X;
 const float HELP_Y		=	SCREEN_HEIGHT-28;
 
+const float STYLE_LOCAL_X	=	160;
+const float STYLE_LOCAL_Y	=	6;
+
 const float TIMER_LOCAL_X	=	270;
 const float TIMER_LOCAL_Y	=	0;
+
+const float CREDIT_X[NUM_PLAYERS]	=	{160,480};
+const float CREDIT_Y[NUM_PLAYERS]	=	{SCREEN_BOTTOM-20, SCREEN_BOTTOM-20};
+
 
 MenuElements::MenuElements()
 {
 	m_frameTopBar.AddActor( &m_sprTopEdge );
+	m_frameTopBar.AddActor( &m_sprStyleIcon );
 	m_frameTopBar.AddActor( &m_MenuTimer );
 
 	m_frameBottomBar.AddActor( &m_sprBottomEdge );
@@ -38,6 +46,8 @@ MenuElements::MenuElements()
 	this->AddActor( &m_frameTopBar );
 	this->AddActor( &m_frameBottomBar );
 	this->AddActor( &m_textHelp );
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		this->AddActor( &m_sprCreditInfo[p] );
 }
 
 void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString sHelpText )
@@ -53,6 +63,11 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 
 	m_sprTopEdge.Load( sTopEdgePath );
 	m_sprTopEdge.TurnShadowOff();
+	
+	m_sprStyleIcon.Load( THEME->GetPathTo(GRAPHIC_MENU_STYLE_ICONS) );
+	m_sprStyleIcon.StopAnimating();
+	m_sprStyleIcon.SetXY( STYLE_LOCAL_X, STYLE_LOCAL_Y );
+	m_sprStyleIcon.SetZ( -1 );
 
 	m_MenuTimer.SetXY( TIMER_LOCAL_X, TIMER_LOCAL_Y );
 	m_MenuTimer.SetZ( -1 );
@@ -70,6 +85,15 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	m_textHelp.SetEffectBlinking();
 	m_textHelp.SetShadowLength( 2 );
 
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_sprCreditInfo[p].Load( THEME->GetPathTo(FONT_NORMAL) );
+		m_sprCreditInfo[p].SetXY( CREDIT_X[p], CREDIT_Y[p] );
+		m_sprCreditInfo[p].SetZ( -1 );
+		m_sprCreditInfo[p].SetText( "FREE PLAY" );
+		m_sprCreditInfo[p].SetZoom( 0.5f );
+		m_sprCreditInfo[p].TurnShadowOff();
+	}
 	
 	m_soundSwoosh.Load( THEME->GetPathTo(SOUND_MENU_SWOOSH) );
 	m_soundBack.Load( THEME->GetPathTo(SOUND_MENU_BACK) );

@@ -213,12 +213,6 @@
 				RelativePath="ScreenOptions.h">
 			</File>
 			<File
-				RelativePath="ScreenOptionsType2.cpp">
-			</File>
-			<File
-				RelativePath="ScreenOptionsType2.h">
-			</File>
-			<File
 				RelativePath="ScreenPlayerOptions.cpp">
 			</File>
 			<File
@@ -271,6 +265,12 @@
 			</File>
 			<File
 				RelativePath="ScreenSelectStyle.h">
+			</File>
+			<File
+				RelativePath="ScreenSelectStyle5thMix.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSelectStyle5thMix.h">
 			</File>
 			<File
 				RelativePath="ScreenSongOptions.cpp">

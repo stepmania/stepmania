@@ -157,7 +157,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 
 	this->AddActor( &m_Fade );
 
-	m_soundMusic.Load( THEME->GetPathTo(SOUND_ENDING_MUSIC) );
+	m_soundMusic.Load( THEME->GetPathTo(SOUND_MUSIC_SCROLL_MUSIC) );
 
 	m_Fade.OpenWipingRight();
 	m_soundMusic.Play( true );
@@ -213,12 +213,12 @@ void ScreenMusicScroll::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenMusicScroll::MenuStart( PlayerNumber p )
+void ScreenMusicScroll::MenuStart( const PlayerNumber p )
 {
 	m_Fade.CloseWipingRight( SM_GoToNextState );
 }
 
-void ScreenMusicScroll::MenuBack( PlayerNumber p )
+void ScreenMusicScroll::MenuBack( const PlayerNumber p )
 {
 	MenuStart( p );
 }

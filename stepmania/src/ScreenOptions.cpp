@@ -41,11 +41,12 @@ ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sTopEdgePath )
 {
 	LOG->WriteLine( "ScreenOptions::ScreenOptions()" );
 
-	m_SoundChange.Load(	THEME->GetPathTo(SOUND_SELECT) );
-	m_SoundNext.Load(	THEME->GetPathTo(SOUND_SELECT) );
+	m_SoundChangeCol.Load( THEME->GetPathTo(SOUND_OPTION_CHANGE_COL) );
+	m_SoundChangeRow.Load( THEME->GetPathTo(SOUND_OPTION_CHANGE_ROW) );
+	m_SoundNext.Load( THEME->GetPathTo(SOUND_MENU_START) );
 
 	m_Menu.Load(
-		"Themes\\default\\Graphics\\_shared background.png", 
+		sBackgroundPath, 
 		sTopEdgePath, 
 		ssprintf("%s %s to change line   %s %s to select between options      then press NEXT", CString(char(3)), CString(char(4)), CString(char(1)), CString(char(2)) )
 		);
@@ -292,7 +293,7 @@ void ScreenOptions::OnChange()
 }
 
 
-void ScreenOptions::MenuBack( PlayerNumber p )
+void ScreenOptions::MenuBack( const PlayerNumber p )
 {
 	Screen::MenuBack( p );
 
@@ -302,7 +303,7 @@ void ScreenOptions::MenuBack( PlayerNumber p )
 }
 
 
-void ScreenOptions::MenuStart( PlayerNumber p )
+void ScreenOptions::MenuStart( const PlayerNumber p )
 {
 	Screen::MenuStart( p );
 
@@ -312,95 +313,107 @@ void ScreenOptions::MenuStart( PlayerNumber p )
 	m_Wipe.CloseWipingRight( SM_GoToNextState );
 }
 
-void ScreenOptions::MenuLeft( PlayerNumber p ) 
+void ScreenOptions::MenuLeft( const PlayerNumber p ) 
 {
+	PlayerNumber pn = p;
+
 	switch( m_InputMode )
 	{
 	case INPUTMODE_P1_ONLY:
-		if( p != PLAYER_1 )
+		if( pn != PLAYER_1 )
 			return;
 	case INPUTMODE_BOTH:
-		p = PLAYER_1;
+		pn = PLAYER_1;
 		break;
 	case INPUTMODE_2PLAYERS:
 		break;	// fall through
 	}
 
-	int iCurRow = m_iCurrentRow[p];
-	if( m_iSelectedOption[p][iCurRow] == 0 )	// can't go left any more
+	int iCurRow = m_iCurrentRow[pn];
+	if( m_iSelectedOption[pn][iCurRow] == 0 )	// can't go left any more
 		return;
 
-	m_iSelectedOption[p][iCurRow]--;
+	m_SoundChangeCol.PlayRandom();
+	m_iSelectedOption[pn][iCurRow]--;
 	
-	TweenHighlight( p );
+	TweenHighlight( pn );
 	OnChange();
 }
 
-void ScreenOptions::MenuRight( PlayerNumber p ) 
+void ScreenOptions::MenuRight( const PlayerNumber p ) 
 {
+	PlayerNumber pn = p;
+
 	switch( m_InputMode )
 	{
 	case INPUTMODE_P1_ONLY:
-		if( p != PLAYER_1 )
+		if( pn != PLAYER_1 )
 			return;
 	case INPUTMODE_BOTH:
-		p = PLAYER_1;
+		pn = PLAYER_1;
 		break;
 	case INPUTMODE_2PLAYERS:
 		break;	// fall through
 	}
 
-	int iCurRow = m_iCurrentRow[p];
-	if( m_iSelectedOption[p][iCurRow] == m_OptionLineData[iCurRow].iNumOptions-1 )	// can't go right any more
+	int iCurRow = m_iCurrentRow[pn];
+	if( m_iSelectedOption[pn][iCurRow] == m_OptionLineData[iCurRow].iNumOptions-1 )	// can't go right any more
 		return;
 	
-	m_iSelectedOption[p][iCurRow]++;
+	m_SoundChangeCol.PlayRandom();
+	m_iSelectedOption[pn][iCurRow]++;
 	
-	TweenHighlight( p );
+	TweenHighlight( pn );
 	OnChange();
 }
 
-void ScreenOptions::MenuUp( PlayerNumber p ) 
+void ScreenOptions::MenuUp( const PlayerNumber p ) 
 {
+	PlayerNumber pn = p;
+
 	switch( m_InputMode )
 	{
 	case INPUTMODE_P1_ONLY:
 		return;
 	case INPUTMODE_BOTH:
-		p = PLAYER_1;
+		pn = PLAYER_1;
 		break;
 	case INPUTMODE_2PLAYERS:
 		break;	// fall through
 	}
 
-	if( m_iCurrentRow[p] == 0 )	
-		m_iCurrentRow[p] = m_iNumOptionLines-1; // wrap around
+	m_SoundChangeRow.PlayRandom();
+	if( m_iCurrentRow[pn] == 0 )	
+		m_iCurrentRow[pn] = m_iNumOptionLines-1; // wrap around
 	else
-		m_iCurrentRow[p]--;
+		m_iCurrentRow[pn]--;
 	
-	TweenHighlight( p );
+	TweenHighlight( pn );
 	OnChange();
 }
 
-void ScreenOptions::MenuDown( PlayerNumber p ) 
+void ScreenOptions::MenuDown( const PlayerNumber p ) 
 {
+	PlayerNumber pn = p;
+
 	switch( m_InputMode )
 	{
 	case INPUTMODE_P1_ONLY:
 		return;
 	case INPUTMODE_BOTH:
-		p = PLAYER_1;
+		pn = PLAYER_1;
 		break;
 	case INPUTMODE_2PLAYERS:
 		break;	// fall through
 	}
 
-	if( m_iCurrentRow[p] == m_iNumOptionLines-1 )	
-		m_iCurrentRow[p] = 0; // wrap around
+	m_SoundChangeRow.PlayRandom();
+	if( m_iCurrentRow[pn] == m_iNumOptionLines-1 )	
+		m_iCurrentRow[pn] = 0; // wrap around
 	else
-		m_iCurrentRow[p]++;
+		m_iCurrentRow[pn]++;
 
-	TweenHighlight( p );
+	TweenHighlight( pn );
 	OnChange();
 }
 

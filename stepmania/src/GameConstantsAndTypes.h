@@ -152,7 +152,7 @@ enum NotesType
 	NOTES_TYPE_DANCE_COUPLE,
 	NOTES_TYPE_DANCE_SOLO,
 	NOTES_TYPE_PUMP_SINGLE,
-	NOTES_TYPE_PUMP_VERSUS,
+	NOTES_TYPE_PUMP_DOUBLE,
 	NUM_NOTES_TYPES		// leave this at the end
 };
 
@@ -165,6 +165,7 @@ inline int NotesTypeToNumColumns( NotesType nt )
 	case NOTES_TYPE_DANCE_COUPLE:	return 8;
 	case NOTES_TYPE_DANCE_SOLO:		return 6;
 	case NOTES_TYPE_PUMP_SINGLE:	return 5;
+	case NOTES_TYPE_PUMP_DOUBLE:	return 10;
 	default:	ASSERT(0);		return -1;	// invalid NotesType
 	}
 }
@@ -176,6 +177,7 @@ inline NotesType StringToNotesType( CString sNotesType )
 	else if( sNotesType == "dance-couple" )	return NOTES_TYPE_DANCE_COUPLE;
 	else if( sNotesType == "dance-solo" )	return NOTES_TYPE_DANCE_SOLO;
 	else if( sNotesType == "pump-single" )	return NOTES_TYPE_PUMP_SINGLE;
+	else if( sNotesType == "pump-double" )	return NOTES_TYPE_PUMP_DOUBLE;
 	else	ASSERT(0);	return NOTES_TYPE_DANCE_SINGLE;	// invalid NotesType
 }
 
@@ -188,6 +190,7 @@ inline CString NotesTypeToString( NotesType nt )
 	case NOTES_TYPE_DANCE_COUPLE:	return "dance-couple";
 	case NOTES_TYPE_DANCE_SOLO:		return "dance-solo";
 	case NOTES_TYPE_PUMP_SINGLE:	return "pump-single";
+	case NOTES_TYPE_PUMP_DOUBLE:	return "pump-double";
 	default:	ASSERT(0);		return "";	// invalid NotesType
 	}
 }
@@ -211,7 +214,7 @@ enum PlayerNumber {
 	PLAYER_NONE
 };
 
-inline D3DXCOLOR PlayerToColor( PlayerNumber p ) 
+inline D3DXCOLOR PlayerToColor( const PlayerNumber p ) 
 {
 	switch( p )
 	{
@@ -239,7 +242,8 @@ enum Game
 {
 	GAME_DANCE,
 	GAME_PUMP,
-	NUM_GAMES	// leave this at the end
+	NUM_GAMES,	// leave this at the end
+	GAME_NONE,
 };
 
 enum Style
@@ -252,7 +256,9 @@ enum Style
 	STYLE_DANCE_SOLO_VERSUS,
 	STYLE_PUMP_SINGLE,
 	STYLE_PUMP_VERSUS,
-	NUM_STYLES	// leave this at the end
+	STYLE_PUMP_DOUBLE,
+	NUM_STYLES,	// leave this at the end
+	STYLE_NONE,
 };
 
 inline Game StyleToGame( Style s )
@@ -268,6 +274,7 @@ inline Game StyleToGame( Style s )
 		return GAME_DANCE;
 	case STYLE_PUMP_SINGLE:
 	case STYLE_PUMP_VERSUS:
+	case STYLE_PUMP_DOUBLE:
 		return GAME_PUMP;
 	default:
 		ASSERT(0);	// invalid Style

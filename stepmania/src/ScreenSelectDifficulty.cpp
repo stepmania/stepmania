@@ -133,7 +133,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 	this->AddActor( &m_Fade );
 
 	m_soundChange.Load( THEME->GetPathTo(SOUND_SELECT_DIFFICULTY_CHANGE) );
-	m_soundSelect.Load( THEME->GetPathTo(SOUND_SELECT) );
+	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
 	
 	
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_DIFFICULTY_INTRO) );
@@ -200,7 +200,7 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenSelectDifficulty::MenuLeft( PlayerNumber p )
+void ScreenSelectDifficulty::MenuLeft( const PlayerNumber p )
 {
 	if( m_iSelection[p] == 0 )	// can't go left any more
 		return;
@@ -221,7 +221,7 @@ void ScreenSelectDifficulty::MenuLeft( PlayerNumber p )
 }
 
 
-void ScreenSelectDifficulty::MenuRight( PlayerNumber p )
+void ScreenSelectDifficulty::MenuRight( const PlayerNumber p )
 {
 	if( m_iSelection[p] == 2 )	// can't go right any more
 		return;
@@ -285,7 +285,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	this->SendScreenMessage( SM_StartTweeningOffScreen, 0.7f );
 }
 
-void ScreenSelectDifficulty::MenuBack( PlayerNumber p )
+void ScreenSelectDifficulty::MenuBack( const PlayerNumber p )
 {
 	m_Fade.CloseWipingLeft( SM_GoToPrevState );
 

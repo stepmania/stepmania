@@ -266,9 +266,9 @@ MusicWheel::MusicWheel()
 	this->AddActor( &m_ScrollBar );
 	
 
-	m_soundChangeMusic.Load( THEME->GetPathTo(SOUND_SWITCH_MUSIC), 10 );
-	m_soundChangeSort.Load( THEME->GetPathTo(SOUND_SWITCH_SORT) );
-	m_soundExpand.Load( THEME->GetPathTo(SOUND_EXPAND) );
+	m_soundChangeMusic.Load( THEME->GetPathTo(SOUND_SELECT_MUSIC_CHANGE_MUSIC), 10 );
+	m_soundChangeSort.Load( THEME->GetPathTo(SOUND_SELECT_MUSIC_CHANGE_SORT) );
+	m_soundExpand.Load( THEME->GetPathTo(SOUND_SELECT_MUSIC_SECTION_EXPAND) );
 
 
 	// init m_mapGroupNameToBannerColor

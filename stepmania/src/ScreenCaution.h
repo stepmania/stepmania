@@ -27,6 +27,6 @@ public:
 	TransitionFade	m_Wipe;
 
 protected:
-	void MenuStart( PlayerNumber p );
+	void MenuStart( const PlayerNumber p );
 };
 

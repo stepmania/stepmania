@@ -52,11 +52,10 @@ protected:
 	void SetTopEdgeOffScreen();
 
 
-	Sprite		m_sprBG;
-
 	// stuff in the top bar
 	ActorFrame	m_frameTopBar;
 	Sprite		m_sprTopEdge;
+	Sprite		m_sprStyleIcon;
 	MenuTimer	m_MenuTimer;
 	
 	// stuff in the bottom bar
@@ -64,7 +63,9 @@ protected:
 	Sprite		m_sprBottomEdge;
 
 	// stuff in the main frame
+	Sprite		m_sprBG;
 	BitmapText	m_textHelp;
+	BitmapText	m_sprCreditInfo[NUM_PLAYERS];
 
 
 	RageSoundSample m_soundSwoosh;

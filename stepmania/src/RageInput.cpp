@@ -224,7 +224,7 @@ bool DeviceInput::fromString( const CString &s )
 
 
 //-----------------------------------------------------------------------------
-// Name: EnumJoysticksCallMenuBack( PlayerNumber p )
+// Name: EnumJoysticksCallMenuBack( const PlayerNumber p )
 // Desc: Called once for each enumerated joystick. If we find one, create a
 //       device interface on it so we can play with it.
 //-----------------------------------------------------------------------------
@@ -254,7 +254,7 @@ BOOL CALLBACK	EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance,
 
 
 //-----------------------------------------------------------------------------
-// Name: EnumAxesCallMenuBack( PlayerNumber p )
+// Name: EnumAxesCallMenuBack( const PlayerNumber p )
 // Desc: Callback function for enumerating the axes on a joystick
 //-----------------------------------------------------------------------------
 BOOL CALLBACK	EnumAxesCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,

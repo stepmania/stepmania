@@ -87,6 +87,12 @@ void GameDef::GetSkinNames( CStringArray &AddTo )
 {
 	CString sBaseSkinFolder = "Skins\\" + CString(m_szName) + "\\";
 	GetDirListing( sBaseSkinFolder + "*.*", AddTo, true );
+
+	// strip out "CVS"
+	for( int i=AddTo.GetSize()-1; i>=0; i-- )
+		if( 0 == stricmp("cvs", AddTo[i]) )
+			AddTo.RemoveAt( i );
+
 	if( AddTo.GetSize() == 0 )
 		FatalError( "The folder '%s' must contain at least one skin.", sBaseSkinFolder );
 }

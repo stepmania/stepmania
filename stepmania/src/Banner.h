@@ -38,6 +38,9 @@ public:
 	bool LoadFromGroup( CString sGroupName );
 	bool LoadRoulette();
 
+	inline void SetScrolling( bool bScroll ) { m_bScrolling = bScroll; };
+	inline bool IsScrolling() { return m_bScrolling; };
+
 protected:
 	bool m_bScrolling;
 	float m_fPercentScrolling;

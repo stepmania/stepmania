@@ -22,12 +22,12 @@ class GameManager
 public:
 	GameManager();
 
+	Game			m_CurGame;
 	Style			m_CurStyle;
 	NotesType		m_CurNotesType;		// only used in Edit
 	CString			m_sCurrentSkin[NUM_PLAYERS];
 	PlayerNumber	m_sMasterPlayerNumber;
 
-	Game			GetCurrentGame();	// inferred from m_CurStyle
 	GameDef*		GetCurrentGameDef();
 	StyleDef*		GetCurrentStyleDef();
 

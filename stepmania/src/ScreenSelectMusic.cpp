@@ -119,8 +119,8 @@ ScreenSelectMusic::ScreenSelectMusic()
 	this->AddActor( &m_textHoldForOptions );
 
 
-	m_soundSelect.Load( THEME->GetPathTo(SOUND_SELECT) );
-	m_soundChangeNotes.Load( THEME->GetPathTo(SOUND_SWITCH_STEPS) );
+	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
+	m_soundChangeNotes.Load( THEME->GetPathTo(SOUND_SELECT_MUSIC_CHANGE_NOTES) );
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_MUSIC_INTRO) );
 
@@ -246,7 +246,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType 
 }
 
 
-void ScreenSelectMusic::EasierDifficulty( PlayerNumber p )
+void ScreenSelectMusic::EasierDifficulty( const PlayerNumber p )
 {
 	LOG->WriteLine( "ScreenSelectMusic::EasierDifficulty( %d )", p );
 
@@ -263,7 +263,7 @@ void ScreenSelectMusic::EasierDifficulty( PlayerNumber p )
 	AfterNotesChange( p );
 }
 
-void ScreenSelectMusic::HarderDifficulty( PlayerNumber p )
+void ScreenSelectMusic::HarderDifficulty( const PlayerNumber p )
 {
 	LOG->WriteLine( "ScreenSelectMusic::HarderDifficulty( %d )", p );
 
@@ -323,7 +323,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenSelectMusic::MenuLeft( PlayerNumber p )
+void ScreenSelectMusic::MenuLeft( const PlayerNumber p )
 {
 	m_MusicWheel.PrevMusic();
 	
@@ -331,14 +331,14 @@ void ScreenSelectMusic::MenuLeft( PlayerNumber p )
 }
 
 
-void ScreenSelectMusic::MenuRight( PlayerNumber p )
+void ScreenSelectMusic::MenuRight( const PlayerNumber p )
 {
 	m_MusicWheel.NextMusic();
 
 	AfterMusicChange();
 }
 
-void ScreenSelectMusic::MenuStart( PlayerNumber p )
+void ScreenSelectMusic::MenuStart( const PlayerNumber p )
 {
 	// this needs to check whether valid Notes are selected!
 	m_MusicWheel.Select();
@@ -398,7 +398,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber p )
 }
 
 
-void ScreenSelectMusic::MenuBack( PlayerNumber p )
+void ScreenSelectMusic::MenuBack( const PlayerNumber p )
 {
 	Screen::MenuBack( p );
 
@@ -409,7 +409,7 @@ void ScreenSelectMusic::MenuBack( PlayerNumber p )
 	TweenOffScreen();
 }
 
-void ScreenSelectMusic::AfterNotesChange( PlayerNumber p )
+void ScreenSelectMusic::AfterNotesChange( const PlayerNumber p )
 {
 	if( !GAMEMAN->IsPlayerEnabled(p) )
 		return;

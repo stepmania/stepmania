@@ -105,8 +105,8 @@ ScreenEditMenu::ScreenEditMenu()
 	this->AddActor( &m_Fade);
 
 
-	m_soundChangeMusic.Load( THEME->GetPathTo(SOUND_SWITCH_MUSIC) );
-	m_soundSelect.Load( THEME->GetPathTo(SOUND_SELECT) );
+	m_soundChangeMusic.Load( THEME->GetPathTo(SOUND_SELECT_MUSIC_CHANGE_MUSIC) );
+	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
 
 	MUSIC->Load( THEME->GetPathTo(SOUND_MENU_MUSIC) );
 	MUSIC->Play( true );
@@ -173,7 +173,7 @@ void ScreenEditMenu::OnGroupChange()
 {
 	m_iSelectedGroup = clamp( m_iSelectedGroup, 0, m_sGroups.GetSize()-1 );
 
-	m_textGroup.SetText( GetSelectedGroup() );
+	m_textGroup.SetText( SONGMAN->ShortenGroupName(GetSelectedGroup()) );
 
 	// reload songs
 	m_pSongs.RemoveAll();
@@ -218,7 +218,7 @@ void ScreenEditMenu::OnStepsChange()
 
 }
 
-void ScreenEditMenu::MenuUp( PlayerNumber p )
+void ScreenEditMenu::MenuUp( const PlayerNumber p )
 {
 	if( m_SelectedRow == 0 )	// can't go up any further
 		return;	
@@ -228,7 +228,7 @@ void ScreenEditMenu::MenuUp( PlayerNumber p )
 	AfterRowChange();
 }
 
-void ScreenEditMenu::MenuDown( PlayerNumber p )
+void ScreenEditMenu::MenuDown( const PlayerNumber p )
 {
 	if( m_SelectedRow == NUM_ROWS-1 )	// can't go down any further
 		return;	
@@ -238,7 +238,7 @@ void ScreenEditMenu::MenuDown( PlayerNumber p )
 	AfterRowChange();
 }
 
-void ScreenEditMenu::MenuLeft( PlayerNumber p )
+void ScreenEditMenu::MenuLeft( const PlayerNumber p )
 {
 	switch( m_SelectedRow )
 	{
@@ -271,7 +271,7 @@ void ScreenEditMenu::MenuLeft( PlayerNumber p )
 	}
 }
 
-void ScreenEditMenu::MenuRight( PlayerNumber p )
+void ScreenEditMenu::MenuRight( const PlayerNumber p )
 {
 	switch( m_SelectedRow )
 	{
@@ -304,7 +304,7 @@ void ScreenEditMenu::MenuRight( PlayerNumber p )
 	}
 }
 
-void ScreenEditMenu::MenuStart( PlayerNumber p )
+void ScreenEditMenu::MenuStart( const PlayerNumber p )
 {
 	m_Menu.TweenAllOffScreen();
 
@@ -319,7 +319,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber p )
 	m_Fade.CloseWipingRight( SM_GoToNextState );
 }
 
-void ScreenEditMenu::MenuBack( PlayerNumber p )
+void ScreenEditMenu::MenuBack( const PlayerNumber p )
 {	
 	m_Menu.TweenAllOffScreen();
 

@@ -88,10 +88,6 @@ protected:
 	virtual void CreateFrameRects();
 	virtual void GetFrameDimensionsFromFileName( CString sPath, int* puFramesWide, int* puFramesHigh ) const;
 
-	virtual CString GetCacheFilePath();
-	virtual bool LoadFromCacheFile();
-	virtual void SaveToCacheFile();
-
 	CString				m_sFilePath;
 	LPDIRECT3DDEVICE8   m_pd3dDevice;
 

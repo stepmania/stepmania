@@ -55,16 +55,16 @@ protected:
 	void TweenHighlight( PlayerNumber player_no );
 	void OnChange();
 
-	void MenuBack( PlayerNumber p );
-	void MenuStart( PlayerNumber p );
+	void MenuBack( const PlayerNumber p );
+	void MenuStart( const PlayerNumber p );
 
 	virtual void GoToNextState() = 0;
 	virtual void GoToPrevState() = 0;
 
-	void MenuLeft( PlayerNumber p );
-	void MenuRight( PlayerNumber p );
-	void MenuUp( PlayerNumber p );
-	void MenuDown( PlayerNumber p );
+	void MenuLeft( const PlayerNumber p );
+	void MenuRight( const PlayerNumber p );
+	void MenuUp( const PlayerNumber p );
+	void MenuDown( const PlayerNumber p );
 
 	InputMode m_InputMode;
 
@@ -82,7 +82,8 @@ protected:
 	Quad m_OptionUnderline[NUM_PLAYERS][MAX_OPTION_LINES];
 	Quad m_SelectionHighlight[NUM_PLAYERS];
 
-	RandomSample m_SoundChange;
+	RandomSample m_SoundChangeCol;
+	RandomSample m_SoundChangeRow;
 	RandomSample m_SoundNext;
 
 	TransitionInvisible		m_Wipe;

@@ -39,7 +39,7 @@ RSC=rc.exe
 # PROP Use_MFC 1
 # PROP Use_Debug_Libraries 0
 # PROP Output_Dir "../"
-# PROP Intermediate_Dir "../Release-StackTrace"
+# PROP Intermediate_Dir "../Release-VC6"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo /o"../StepMania-StackTrace.bsc"
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 /nologo /subsystem:windows /debug /machine:I386 /out:"../StepMania-StackTrace.exe"
+# ADD LINK32 /nologo /subsystem:windows /debug /machine:I386 /out:"../StepMania-VC6.exe"
 
 !ELSEIF  "$(CFG)" == "StepMania - Win32 Debug"
 
@@ -832,19 +832,19 @@ SOURCE=.\ScreenGameOptions.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenGameOver.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenGameOver.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenGameplay.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\ScreenGameplay.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenGraphicOptions.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenGraphicOptions.h
 # End Source File
 # Begin Source File
 
@@ -881,14 +881,6 @@ SOURCE=.\ScreenOptions.cpp
 # Begin Source File
 
 SOURCE=.\ScreenOptions.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenOptionsType2.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenOptionsType2.h
 # End Source File
 # Begin Source File
 

@@ -66,7 +66,7 @@ ScreenSelectGame::ScreenSelectGame() :
 
 void ScreenSelectGame::ImportOptions()
 {
-	m_iSelectedOption[0][SG_GAME] = GAMEMAN->GetCurrentGame();
+	m_iSelectedOption[0][SG_GAME] = GAMEMAN->m_CurGame;
 }
 
 void ScreenSelectGame::ExportOptions()

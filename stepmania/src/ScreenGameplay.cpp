@@ -179,7 +179,7 @@ ScreenGameplay::ScreenGameplay()
 
 	m_soundMusic.Load( m_pSong->GetMusicPath() );
 
-	m_soundFail.Load(			THEME->GetPathTo(SOUND_FAILED) );
+	m_soundFail.Load(			THEME->GetPathTo(SOUND_GAMEPLAY_FAILED) );
 	m_announcerReady.Load(		ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_READY) );
 	m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_HERE_WE_GO_NORMAL) );
 	m_announcerGood.Load(		ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_COMMENT_GOOD) );
@@ -187,14 +187,12 @@ ScreenGameplay::ScreenGameplay()
 	m_announcerCleared.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_CLEARED) );
 	m_announcerFailComment.Load(ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_FAILED) );
 
-	m_soundAssistTick.Load(		THEME->GetPathTo(SOUND_ASSIST) );
-
+	m_soundAssistTick.Load(		THEME->GetPathTo(SOUND_GAMEPLAY_ASSIST_TICK) );
 
 
 	// Send some messages every have second to we can get the introduction rolling
 	for( int i=0; i<30; i++ )
 		this->SendScreenMessage( ScreenMessage(SM_User+i), i/2.0f );
-
 
 
 	m_StarWipe.SetClosed();

@@ -49,17 +49,15 @@ void Screen::Input( const DeviceInput& DeviceI, const InputEventType type, const
 	// default input handler used by most menus
 	if( !MenuI.IsValid() )
 		return;
-	if( type != IET_FIRST_PRESS )
-		return;
 
 	switch( MenuI.button )
 	{
-	case MENU_BUTTON_UP:	this->MenuUp( MenuI.player );		return;
-	case MENU_BUTTON_DOWN:	this->MenuDown( MenuI.player );		return;
-	case MENU_BUTTON_LEFT:	this->MenuLeft( MenuI.player );		return;
-	case MENU_BUTTON_RIGHT:	this->MenuRight( MenuI.player );	return;
-	case MENU_BUTTON_BACK:	this->MenuBack( MenuI.player );		return;
-	case MENU_BUTTON_START:	this->MenuStart( MenuI.player );	return;
+	case MENU_BUTTON_UP:	this->MenuUp( MenuI.player, type );		return;
+	case MENU_BUTTON_DOWN:	this->MenuDown( MenuI.player, type );	return;
+	case MENU_BUTTON_LEFT:	this->MenuLeft( MenuI.player, type );	return;
+	case MENU_BUTTON_RIGHT:	this->MenuRight( MenuI.player, type );	return;
+	case MENU_BUTTON_BACK:	this->MenuBack( MenuI.player, type );	return;
+	case MENU_BUTTON_START:	this->MenuStart( MenuI.player, type );	return;
 	}
 }
 

@@ -80,7 +80,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	m_sprLogo.SetAddColor( D3DXCOLOR(1,1,1,1) );
 	m_sprLogo.SetZoomY( 0 );
 	m_sprLogo.BeginTweeningQueued( 0.5f );
-	m_sprLogo.BeginTweeningQueued( 0.5f );
+	m_sprLogo.BeginTweeningQueued( 0.5f, Actor::TWEEN_BOUNCE_END );
 	m_sprLogo.SetEffectGlowing(1, D3DXCOLOR(1,1,1,0.1f), D3DXCOLOR(1,1,1,0.3f) );
 	m_sprLogo.SetTweenZoom( 1 );
 	this->AddActor( &m_sprLogo );
@@ -128,9 +128,9 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_TITLE_MENU_GAME_NAME) );
 
-	m_soundChange.Load( THEME->GetPathTo(SOUND_TITLE_CHANGE) );	
-	m_soundSelect.Load( THEME->GetPathTo(SOUND_SELECT) );
-	m_soundInvalid.Load( THEME->GetPathTo(SOUND_INVALID) );
+	m_soundChange.Load( THEME->GetPathTo(SOUND_TITLE_MENU_CHANGE) );	
+	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
+	m_soundInvalid.Load( THEME->GetPathTo(SOUND_MENU_INVALID) );
 
 	for( i=0; i<3000; i++ )
 		this->SendScreenMessage( SM_PlayAttract, (float)15+i*15 );
@@ -237,7 +237,7 @@ void ScreenTitleMenu::GainFocus( int iChoiceIndex )
 	m_textChoice[iChoiceIndex].SetEffectCamelion( 2.5f, D3DXCOLOR(0.5f,1,0.5f,1), D3DXCOLOR(0.3f,0.6f,0.3f,1) );
 }
 
-void ScreenTitleMenu::MenuUp( PlayerNumber p )
+void ScreenTitleMenu::MenuUp( const PlayerNumber p )
 {
 	LoseFocus( m_TitleMenuChoice );
 
@@ -250,7 +250,7 @@ void ScreenTitleMenu::MenuUp( PlayerNumber p )
 }
 
 
-void ScreenTitleMenu::MenuDown( PlayerNumber p )
+void ScreenTitleMenu::MenuDown( const PlayerNumber p )
 {
 	LoseFocus( m_TitleMenuChoice );
 
@@ -263,7 +263,7 @@ void ScreenTitleMenu::MenuDown( PlayerNumber p )
 }
 
 
-void ScreenTitleMenu::MenuStart( PlayerNumber p )
+void ScreenTitleMenu::MenuStart( const PlayerNumber p )
 {	
 
 	switch( m_TitleMenuChoice )
@@ -317,7 +317,7 @@ void ScreenTitleMenu::MenuStart( PlayerNumber p )
 	}
 }
 
-void ScreenTitleMenu::MenuBack( PlayerNumber p )
+void ScreenTitleMenu::MenuBack( const PlayerNumber p )
 {	
 	//m_Fade.CloseWipingLeft( SM_GoToIntroCovers );
 }

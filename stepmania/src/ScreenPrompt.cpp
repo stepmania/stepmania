@@ -88,7 +88,7 @@ ScreenPrompt::ScreenPrompt( CString sText, PromptType pt, bool* pbAnswer )
 	m_textAnswer[*m_pbAnswer].SetEffectGlowing();
 
 
-	m_soundSelect.Load( THEME->GetPathTo(SOUND_SELECT) );
+	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
 }
 
 void ScreenPrompt::Update( float fDeltaTime )
@@ -125,7 +125,7 @@ void ScreenPrompt::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenPrompt::MenuLeft( PlayerNumber p )
+void ScreenPrompt::MenuLeft( const PlayerNumber p )
 {
 	if( m_PromptType == PROMPT_OK )
 		return;
@@ -133,7 +133,7 @@ void ScreenPrompt::MenuLeft( PlayerNumber p )
 	MenuRight( p );
 }
 
-void ScreenPrompt::MenuRight( PlayerNumber p )
+void ScreenPrompt::MenuRight( const PlayerNumber p )
 {
 	if( m_PromptType == PROMPT_OK )
 		return;
@@ -148,7 +148,7 @@ void ScreenPrompt::MenuRight( PlayerNumber p )
 
 }
 
-void ScreenPrompt::MenuStart( PlayerNumber p )
+void ScreenPrompt::MenuStart( const PlayerNumber p )
 {
 	m_Fade.OpenWipingRight( SM_DoneOpeningWipingRight );
 
@@ -175,7 +175,7 @@ void ScreenPrompt::MenuStart( PlayerNumber p )
 	m_soundSelect.PlayRandom();
 }
 
-void ScreenPrompt::MenuBack( PlayerNumber p )
+void ScreenPrompt::MenuBack( const PlayerNumber p )
 {
 
 }

@@ -115,8 +115,8 @@ ScreenSelectGroup::ScreenSelectGroup()
 	m_Fade.SetZ( -2 );
 	this->AddActor( &m_Fade );
 
-	m_soundChange.Load( THEME->GetPathTo(SOUND_SELECT_DIFFICULTY_CHANGE) );
-	m_soundSelect.Load( THEME->GetPathTo(SOUND_SELECT) );
+	m_soundChange.Load( THEME->GetPathTo(SOUND_SELECT_GROUP_CHANGE) );
+	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_GROUP_INTRO) );
 
@@ -237,17 +237,17 @@ void ScreenSelectGroup::AfterChange()
 }
 
 
-void ScreenSelectGroup::MenuLeft( PlayerNumber p )
+void ScreenSelectGroup::MenuLeft( const PlayerNumber p )
 {
 	MenuUp( p );
 }
 
-void ScreenSelectGroup::MenuRight( PlayerNumber p )
+void ScreenSelectGroup::MenuRight( const PlayerNumber p )
 {
 	MenuDown( p );
 }
 
-void ScreenSelectGroup::MenuUp( PlayerNumber p )
+void ScreenSelectGroup::MenuUp( const PlayerNumber p )
 {
 	if( m_bChosen )
 		return;
@@ -264,7 +264,7 @@ void ScreenSelectGroup::MenuUp( PlayerNumber p )
 }
 
 
-void ScreenSelectGroup::MenuDown( PlayerNumber p )
+void ScreenSelectGroup::MenuDown( const PlayerNumber p )
 {
 	if( m_bChosen )
 		return;
@@ -278,7 +278,7 @@ void ScreenSelectGroup::MenuDown( PlayerNumber p )
 	m_soundChange.PlayRandom();
 }
 
-void ScreenSelectGroup::MenuStart( PlayerNumber p )
+void ScreenSelectGroup::MenuStart( const PlayerNumber p )
 {
 	m_soundSelect.PlayRandom();
 	m_bChosen = true;
@@ -296,7 +296,7 @@ void ScreenSelectGroup::MenuStart( PlayerNumber p )
 	this->SendScreenMessage( SM_StartFadingOut, 0.8f );
 }
 
-void ScreenSelectGroup::MenuBack( PlayerNumber p )
+void ScreenSelectGroup::MenuBack( const PlayerNumber p )
 {
 	m_Fade.CloseWipingLeft( SM_GoToPrevState );
 

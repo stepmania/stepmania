@@ -142,7 +142,7 @@ ScreenEdit::ScreenEdit()
 	m_soundChangeLine.Load( THEME->GetPathTo(SOUND_EDIT_CHANGE_LINE) );
 	m_soundChangeSnap.Load( THEME->GetPathTo(SOUND_EDIT_CHANGE_SNAP) );
 	m_soundMarker.Load( THEME->GetPathTo(SOUND_EDIT_CHANGE_SNAP) );
-	m_soundInvalid.Load( THEME->GetPathTo(SOUND_INVALID) );
+	m_soundInvalid.Load( THEME->GetPathTo(SOUND_MENU_INVALID) );
 
 	m_soundMusic.Load( m_pSong->GetMusicPath() );
 	m_soundMusic.SetPlaybackRate( 0.5f );

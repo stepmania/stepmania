@@ -22,7 +22,7 @@
 
 ScreenSandbox::ScreenSandbox()
 {	
-	m_sound.Load( THEME->GetPathTo(SOUND_SELECT) );
+	m_sound.Load( THEME->GetPathTo(SOUND_MENU_START) );
 	m_sound.Play();
 
 	//this->AddActor( &m_spr );
