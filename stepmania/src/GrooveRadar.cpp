@@ -213,6 +213,6 @@ void GrooveRadar::GrooveRadarValueMap::TweenOnScreen()
 void GrooveRadar::GrooveRadarValueMap::TweenOffScreen()
 {
 	BeginTweening( 0.6f );
-	SetTweenRotationZ( PI*4 );
+	SetTweenRotationZ( 180*4 );
 	SetTweenZoom( 0 );
 }

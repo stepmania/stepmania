@@ -123,7 +123,7 @@ void ScreenPlayerOptions::ImportOptions()
 
 		m_iSelectedOption[p][PO_HOLD_NOTES]	= po.m_bHoldNotes ? 1 : 0;
 		m_iSelectedOption[p][PO_DARK]		= po.m_fDark==1 ? 1 : 0;
-		m_iSelectedOption[p][PO_PERSPECTIVE]= SCALE( (int)po.m_fPerspectiveTilt, -1, +1, 0, 2 );
+		m_iSelectedOption[p][PO_PERSPECTIVE]= (int)po.m_fPerspectiveTilt + 1;
 
 
 		po.Init();

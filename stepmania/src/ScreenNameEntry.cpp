@@ -364,7 +364,7 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				if( GAMESTATE->IsPlayerEnabled(p) )
 					max_grade = max( max_grade, stats.GetGrade((PlayerNumber)p) );
-			if( max_grade >= GRADE_AA )
+			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 				SCREENMAN->SetNewScreen( "ScreenCredits" );
 			else
 				SCREENMAN->SetNewScreen( "ScreenMusicScroll" );

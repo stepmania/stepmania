@@ -51,6 +51,8 @@ public:
 
 	void RefreshCreditsMessages();
 
+	void EmptyDeleteQueue();
+
 private:
 	vector<Screen*> m_ScreenStack;	// bottommost to topmost
 	vector<Screen*> m_ScreensToDelete;
@@ -58,7 +60,6 @@ private:
 	ScreenSystemLayer *m_SystemLayer;
 
 	Screen* MakeNewScreen( CString sClassName );
-	void EmptyDeleteQueue();
 	void SetNewScreen( Screen *pNewScreen );
 };
 

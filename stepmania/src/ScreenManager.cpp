@@ -307,8 +307,6 @@ static bool g_TopNeedsNeedsNullUpdate = false;
 
 void ScreenManager::Update( float fDeltaTime )
 {
-	EmptyDeleteQueue();
-
 	// Only update the topmost screen on the stack.
 
 	/* Screens take some time to load.  If we don't do this, then screens
@@ -332,6 +330,8 @@ void ScreenManager::Update( float fDeltaTime )
 		pScreen->Update( fDeltaTime );
 
 	m_SystemLayer->Update( fDeltaTime );
+
+	EmptyDeleteQueue();
 }
 
 

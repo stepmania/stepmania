@@ -596,14 +596,14 @@ void MusicWheel::DrawPrimitives()
 	{
 		MusicWheelItem& display = m_MusicWheelItems[i];
 
-//		switch( m_WheelState )
-//		{
-//		case STATE_SELECTING_MUSIC:
-//		case STATE_ROULETTE_SPINNING:
-//		case STATE_ROULETTE_SLOWING_DOWN:
-//		case STATE_RANDOM_SPINNING:
-//		case STATE_LOCKED:
-//			{
+		switch( m_WheelState )
+		{
+		case STATE_SELECTING_MUSIC:
+		case STATE_ROULETTE_SPINNING:
+		case STATE_ROULETTE_SLOWING_DOWN:
+		case STATE_RANDOM_SPINNING:
+		case STATE_LOCKED:
+			{
 				float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
 
 				float fX, fY, fZ, fRotationX;
@@ -615,9 +615,9 @@ void MusicWheel::DrawPrimitives()
 				display.SetXY( fX, fY );
 				display.SetZ( fZ );
 				display.SetRotationX( fRotationX );
-//			}
-//			break;
-//		}
+			}
+			break;
+		}
 
 		if( m_WheelState == STATE_LOCKED  &&  i != NUM_WHEEL_ITEMS/2 )
 			display.m_fPercentGray = 0.5f;
