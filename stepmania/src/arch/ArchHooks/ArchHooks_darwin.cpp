@@ -129,7 +129,8 @@ void ArchHooks_darwin::DumpDebugInfo()
         ram = 0;
         vRam = 0;
     }
-        
+    
+    /* XXX update this information for G5s */
     /* Get processor */
     numProcessors = MPProcessorsScheduled();
     err = Gestalt(gestaltNativeCPUtype, &code);

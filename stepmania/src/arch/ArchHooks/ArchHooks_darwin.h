@@ -10,9 +10,6 @@
  */
 
 #include "ArchHooks.h"
-#include <SDL.h>
-#include <SDL_thread.h>
-#include <queue>
 
 class ArchHooks_darwin : public ArchHooks
 {
