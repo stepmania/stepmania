@@ -51,8 +51,8 @@ void Screen::Update( float fDeltaTime )
 		if( m_QueuedMessages[i].fDelayRemaining <= 0.0f )		// send this sucker!
 		{
 			this->HandleScreenMessage( m_QueuedMessages[i].SM );
-			m_QueuedMessages.erase( m_QueuedMessages.begin()+i,
-									m_QueuedMessages.begin()+i+1 );
+			if(i < m_QueuedMessages.size())
+				m_QueuedMessages.erase(m_QueuedMessages.begin()+i);
 			i--;
 		}
 		else
