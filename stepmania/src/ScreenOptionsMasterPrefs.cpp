@@ -199,29 +199,27 @@ MOVE( MarvelousTiming,		PREFSMAN->m_iMarvelousTiming );
 MOVE( PickExtraStage,		PREFSMAN->m_bPickExtraStage );
 MOVE( UnlockSystem,			PREFSMAN->m_bUseUnlockSystem );
 
-/* Graphic options */
-MOVE( DisplayMode,			PREFSMAN->m_bWindowed );
-MOVE( WaitForVsync,			PREFSMAN->m_bVsync );
-MOVE( ShowStats,			PREFSMAN->m_bShowStats );
-MOVE( KeepTexturesInMemory,	PREFSMAN->m_bDelayedTextureDelete );
-
+/* Machine options */
+MOVE( MenuTimer,			PREFSMAN->m_bMenuTimer );
+MOVE( CoinMode,			PREFSMAN->m_iCoinMode );
+MOVE( ScoringType,			PREFSMAN->m_iScoringType );
 template<class T>
 static void MoveMap( int &sel, T &opt, bool ToSel, const T *map, unsigned cnt )
 {
 	if( ToSel )
 	{
 		/* opt -> sel.  Find the closest entry in map. */
-		T best_dist = -1;
-		
+		T best_dist = (T) 0;
+		bool have_best = false;
+
 		for( unsigned i = 0; i < cnt; ++i )
 		{
 			const T val = map[i];
-			T dist = opt-val;
-			if( dist < 0 )
-				dist = -dist;
-			if( best_dist != -1 && dist > best_dist )
+			T dist = opt < val? (T)(opt-val): (T)(val-opt);
+			if( have_best && dist > best_dist )
 				continue;
-			
+
+			have_best = true;
 			best_dist = dist;
 
 			sel = i;
@@ -231,6 +229,84 @@ static void MoveMap( int &sel, T &opt, bool ToSel, const T *map, unsigned cnt )
 		opt = map[sel];
 	}
 }
+
+
+static void JudgeDifficulty( int &sel, bool ToSel, const CStringArray &choices )
+{
+	const float map[] = { 1.50f,1.33f,1.16f,1.00f,0.84f,0.66f,0.50f,0.33f,0.20f };
+	MoveMap( sel, PREFSMAN->m_fJudgeWindowScale, ToSel, map, ARRAYSIZE(map) );
+}
+
+static void LifeDifficulty( int &sel, bool ToSel, const CStringArray &choices )
+{
+	const float map[] = { 1.60f,1.40f,1.20f,1.00f,0.80f,0.60f,0.40f };
+	MoveMap( sel, PREFSMAN->m_fLifeDifficultyScale, ToSel, map, ARRAYSIZE(map) );
+}
+
+static void ShowSongOptions( int &sel, bool ToSel, const CStringArray &choices )
+{
+	const PrefsManager::Maybe map[] = { PrefsManager::YES,PrefsManager::NO,PrefsManager::ASK };
+	MoveMap( sel, PREFSMAN->m_ShowSongOptions, ToSel, map, ARRAYSIZE(map) );
+}
+
+static void CoinsPerCredit( int &sel, bool ToSel, const CStringArray &choices )
+{
+	const int map[] = { 1,2,3,4,5,6,7,8 };
+	MoveMap( sel, PREFSMAN->m_iCoinsPerCredit, ToSel, map, ARRAYSIZE(map) );
+}
+
+static void DefaultFailType( int &sel, bool ToSel, const CStringArray &choices )
+{
+	if( ToSel )
+	{
+		SongOptions so;
+		so.FromString( PREFSMAN->m_sDefaultModifiers );
+		sel = so.m_FailType;
+	} else {
+		CString sModifiers = PREFSMAN->m_sDefaultModifiers;
+		PlayerOptions po;
+		po.FromString( sModifiers );
+		SongOptions so;
+		so.FromString( sModifiers );
+		switch( sel )
+		{
+		case 0:	so.m_FailType = SongOptions::FAIL_ARCADE;		break;
+		case 1:	so.m_FailType = SongOptions::FAIL_END_OF_SONG;		break;
+		case 2:	so.m_FailType = SongOptions::FAIL_OFF;			break;
+		default:
+			ASSERT(0);
+		}
+		CStringArray as;
+		if( po.GetString() != "" )
+			as.push_back( po.GetString() );
+		if( so.GetString() != "" )
+			as.push_back( so.GetString() );
+	}
+}
+
+MOVE( ProgressiveLifebar,	PREFSMAN->m_iProgressiveLifebar );
+MOVE( ProgressiveStageLifebar,		PREFSMAN->m_iProgressiveStageLifebar );
+MOVE( ProgressiveNonstopLifebar,	PREFSMAN->m_iProgressiveNonstopLifebar );
+
+MOVE( JointPremium,			PREFSMAN->m_bJointPremium );
+
+
+static void SongsPerPlay( int &sel, bool ToSel, const CStringArray &choices )
+{
+	const int map[] = { 1,2,3,4,5,6,7,8 };
+	MoveMap( sel, PREFSMAN->m_iNumArcadeStages, ToSel, map, ARRAYSIZE(map) );
+
+	if( ToSel && PREFSMAN->m_bEventMode )
+		sel = 7;
+	if( !ToSel )
+		PREFSMAN->m_bEventMode = (sel == 7);
+}
+
+/* Graphic options */
+MOVE( DisplayMode,			PREFSMAN->m_bWindowed );
+MOVE( WaitForVsync,			PREFSMAN->m_bVsync );
+MOVE( ShowStats,			PREFSMAN->m_bShowStats );
+MOVE( KeepTexturesInMemory,	PREFSMAN->m_bDelayedTextureDelete );
 
 static void DisplayResolution( int &sel, bool ToSel, const CStringArray &choices )
 {
@@ -320,6 +396,21 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Marvelous\nTiming",	MarvelousTiming,	"NEVER","COURSES ONLY","ALWAYS" ),
 	ConfOption( "Pick Extra\nStage",	PickExtraStage,		"OFF","ON" ),
 	ConfOption( "Unlock\nSystem",		UnlockSystem,		"OFF","ON" ),
+
+	/* Machine options */
+	ConfOption( "Menu\nTimer",			MenuTimer,			"OFF","ON" ),
+	ConfOption( "Coin\nMode",			CoinMode,			"HOME","PAY","FREE PLAY" ),
+	ConfOption( "Songs Per\nPlay",		SongsPerPlay,		"1","2","3","4","5","6","7","EVENT MODE" ),
+	ConfOption( "Scoring\nType",		ScoringType,		"MAX2","5TH" ),
+	ConfOption( "Judge\nDifficulty",	JudgeDifficulty,	"1","2","3","4","5","6","7","8","JUSTICE" ),
+	ConfOption( "Life\nDifficulty",		LifeDifficulty,		"1","2","3","4","5","6","7" ),
+	ConfOption( "Progressive\nLifebar",	ProgressiveLifebar,	"OFF","1","2","3","4","5","6","7","8"),
+	ConfOption( "Progressive\nStage Lifebar",ProgressiveStageLifebar,	"OFF","1","2","3","4","5","6","7","8","INSANITY"),
+	ConfOption( "Progressive\nNonstop Lifebar",ProgressiveNonstopLifebar,"OFF","1","2","3","4","5","6","7","8","INSANITY"),
+	ConfOption( "Default\nFail Type",	DefaultFailType,	"ARCADE","END OF SONG","OFF" ),	
+	ConfOption( "Coins Per\nCredit",	CoinsPerCredit,		"1","2","3","4","5","6","7","8" ),
+	ConfOption( "Joint\nPremium",		JointPremium,		"OFF","ON" ),
+	ConfOption( "Show Song\nOptions",	ShowSongOptions,	"HIDE","SHOW","ASK" ),
 
 	/* Graphic options */
 	ConfOption( "Display\nMode",		DisplayMode,		"FULLSCREEN", "WINDOWED" ),
