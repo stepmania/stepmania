@@ -285,7 +285,7 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
                 dirs.pop_back();
             }
         }
-        else
+        else if (DoesFileExist(path))
         {
             if (unlink(path))
                 (*mError)("%s", strerror(errno));
