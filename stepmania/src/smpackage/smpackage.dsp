@@ -200,6 +200,10 @@ SOURCE=.\SMPackageInstallDlg.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\SMPackageUtil.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\smpackageUtil.h
 # End Source File
 # Begin Source File
