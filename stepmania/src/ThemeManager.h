@@ -66,7 +66,7 @@ public:
 	RageColor	GetMetricC( CString sClassName, CString sValueName );
 
 protected:
-	bool GetMetricRaw( CString sClassName, CString sValueName, CString &ret );
+	bool GetMetricRaw( CString sClassName, CString sValueName, CString &ret, int level=0 );
 	CString GetPathToAndFallback( CString sThemeName, ElementCategory category, CString sClassName, CString sFile );
 	CString GetPathToRaw( CString sThemeName, ElementCategory category, CString sClassName, CString sFile );
 	static CString GetThemeDirFromName( const CString &sThemeName );

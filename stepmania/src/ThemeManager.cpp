@@ -493,17 +493,18 @@ void ThemeManager::ReloadMetrics()
 }
 
 
-bool ThemeManager::GetMetricRaw( CString sClassName, CString sValueName, CString &ret )
+bool ThemeManager::GetMetricRaw( CString sClassName, CString sValueName, CString &ret, int level )
 {
-	CString sFallback;
+	if( level > 100 )
+		RageException::Throw("Infinite recursion looking up theme metric \"%s::%s\"", sClassName.c_str(), sValueName.c_str() );
 
-	// TODO:  Add infinite recursion checking
+	CString sFallback;
 
 	if( m_pIniCurMetrics->GetValue(sClassName,sValueName,ret) )
 		return true;
 	if( m_pIniCurMetrics->GetValue(sClassName,"Fallback",sFallback) )
 	{
-		if( GetMetricRaw(sFallback,sValueName,ret) )
+		if( GetMetricRaw(sFallback,sValueName,ret,level+1) )
 			return true;
 	}
 
@@ -511,7 +512,7 @@ bool ThemeManager::GetMetricRaw( CString sClassName, CString sValueName, CString
 		return true;
 	if( m_pIniBaseMetrics->GetValue(sClassName,"Fallback",sFallback) )
 	{
-		if( GetMetricRaw(sFallback,sValueName,ret) )
+		if( GetMetricRaw(sFallback,sValueName,ret,level+1) )
 			return true;
 	}
 
