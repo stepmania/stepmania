@@ -205,7 +205,6 @@
 //					pages and to fit in better in MFC/ATL builds.  In other
 //					words, I copied Microsoft's conversion stuff again. 
 //				  - Added equivalents of CString::GetBuffer, GetBufferSetLength
-//				  - new sscpy() replacement of CStdString::CopyString()
 //				  - a Trim() function that combines TrimRight() and TrimLeft().
 //
 //	  1999-MAR-13 - Corrected the "NotSpace" functional object to use _istpace()
@@ -260,85 +259,24 @@
 #ifndef STDSTRING_H
 #define STDSTRING_H
 
-//#define SS_NOLOCALE	// prevents use/inclusion of <locale> header
-
 // In non-Visual C++ and/or non-Win32 builds, we can't use some cool stuff.
 
 #if !defined(_MSC_VER) || !defined(_WIN32)
 	#define SS_ANSI
 #endif
 
-// Avoid legacy code screw up: if _UNICODE is defined, UNICODE must be as well
+// If they want us to use only standard C++ stuff (no Win32 stuff)
 
-#if defined (_UNICODE) && !defined (UNICODE)
-	#define UNICODE
-#endif
-#if defined (UNICODE) && !defined (_UNICODE)
-	#define _UNICODE
-#endif
+#ifdef SS_ANSI
 
-// -----------------------------------------------------------------------------
-// MIN and MAX.  The Standard C++ template versions go by so many names (at
-// at least in the MS implementation) that you never know what's available 
-// -----------------------------------------------------------------------------
+	// On non-Win32 platforms, there is no TCHAR.H so define what we need
 
-template<class Type>
-inline const Type& SSMIN(const Type& arg1, const Type& arg2)
-{
-	return arg2 < arg1 ? arg2 : arg1;
-}
-template<class Type>
-inline const Type& SSMAX(const Type& arg1, const Type& arg2)
-{
-	return arg2 > arg1 ? arg2 : arg1;
-}
+	#ifndef _WIN32
 
-// If they have not #included W32Base.h (part of my W32 utility library) then
-// we need to define some stuff.  Otherwise, this is all defined there.
-
-#if !defined(W32BASE_H)
-
-	// If they want us to use only standard C++ stuff (no Win32 stuff)
-
-	#ifdef SS_ANSI
-
-		// On non-Win32 platforms, there is no TCHAR.H so define what we need
-
-		#ifndef _WIN32
-
-			typedef const char*		PCSTR;
-			typedef char*			PSTR;
-			#ifdef UNICODE
-				typedef wchar_t		TCHAR;
-			#else
-				typedef char		TCHAR;
-			#endif
-		#else
-
-			#include <TCHAR.H>
-			#include <WTYPES.H>
-			#ifndef STRICT
-				#define STRICT
-			#endif
-
-		#endif	// #ifndef _WIN32
-
-
-		// Make sure ASSERT and verify are defined in an ANSI fashion
-
-		#ifndef ASSERT
-			#include <assert.h>
-			#define ASSERT(f) assert((f))
-		#endif
-		#ifndef VERIFY
-			#ifdef _DEBUG
-				#define VERIFY(x) ASSERT((x))
-			#else
-				#define VERIFY(x) x
-			#endif
-		#endif
-
-	#else // #ifdef SS_ANSI
+		typedef const char*		PCSTR;
+		typedef char*			PSTR;
+		typedef char			TCHAR;
+	#else
 
 		#include <TCHAR.H>
 		#include <WTYPES.H>
@@ -346,37 +284,38 @@ inline const Type& SSMAX(const Type& arg1, const Type& arg2)
 			#define STRICT
 		#endif
 
-		// Make sure ASSERT and verify are defined
+	#endif	// #ifndef _WIN32
 
-		#ifndef ASSERT
-			#include <crtdbg.h>
-			#define ASSERT(f) _ASSERTE((f))
-		#endif
-		#ifndef VERIFY
-			#ifdef _DEBUG
-				#define VERIFY(x) ASSERT((x))
-			#else
-				#define VERIFY(x) x
-			#endif
-		#endif
 
-	#endif // #ifdef SS_ANSI
+	// Make sure ASSERT is defined in an ANSI fashion
 
-	#ifndef UNUSED
-		#define UNUSED(x) x
+	#ifndef ASSERT
+		#include <assert.h>
+		#define ASSERT(f) assert((f))
 	#endif
 
-#endif // #ifndef W32BASE_H
+#else // #ifdef SS_ANSI
+
+	#include <TCHAR.H>
+	#include <WTYPES.H>
+	#ifndef STRICT
+		#define STRICT
+	#endif
+
+	// Make sure ASSERT is defined
+
+	#ifndef ASSERT
+		#include <crtdbg.h>
+		#define ASSERT(f) _ASSERTE((f))
+	#endif
+
+#endif // #ifdef SS_ANSI
 
 // Standard headers needed
 
 #include <string>			// basic_string
 #include <algorithm>		// for_each, etc.
 #include <functional>		// for StdStringLessNoCase, et al
-
-#ifndef SS_NOLOCALE
-	#include <locale>		// for various facets
-#endif
 
 // If this is a recent enough version of VC include comdef.h, so we can write
 // member functions to deal with COM types & compiler support classes e.g. _bstr_t
@@ -386,73 +325,6 @@ inline const Type& SSMAX(const Type& arg1, const Type& arg2)
 	#define SS_NOTHROW __declspec(nothrow)
 #else
 	#define SS_NOTHROW
-#endif
-
-#ifndef TRACE
-	#define TRACE_DEFINED_HERE
-	#define TRACE
-#endif
-
-// Microsoft defines PCSTR, etc, but no PCTSTR.  I hate to use the
-// versions with the "L" in front of them because that's a leftover from Win 16
-// days, even though it evaluates to the same thing.  Therefore, Define a PCSTR
-// as an LPCTSTR.
-
-#if !defined(PCTSTR) && !defined(PCTSTR_DEFINED)
-	typedef const TCHAR*			PCTSTR;
-	#define PCTSTR_DEFINED
-#endif
-
-#if !defined(PCUSTR) && !defined(PCUSTR_DEFINED)
-	typedef const unsigned char*	PCUSTR;
-	typedef unsigned char*			PUSTR;
-	#define PCUSTR_DEFINED
-#endif
-
-// SS_USE_FACET macro and why we need it:
-//
-// Since I'm a good little Standard C++ programmer, I use locales.  Thus, I
-// need to make use of the use_facet<> template function here.   Unfortunately,
-// this need is complicated by the fact the MS' implementation of the Standard
-// C++ Library has a non-standard version of use_facet that takes more
-// arguments than the standard dictates.  Since I'm trying to write CStdString
-// to work with any version of the Standard library, this presents a problem.
-//
-// The upshot of this is that I can't do 'use_facet' directly.  The MS' docs
-// tell me that I have to use a macro, _USE() instead.  Since _USE obviously
-// won't be available in other implementations, this means that I have to write
-// my OWN macro -- SS_USE_FACET -- that evaluates either to _USE or to the
-// standard, use_facet.
-//
-// If you are having trouble with the SS_USE_FACET macro, in your implementation
-// of the Standard C++ Library, you can define your own version of SS_USE_FACET.
-#ifndef schMSG
-	#define schSTR(x)	   #x
-	#define schSTR2(x)	schSTR(x)
-	#define schMSG(desc) message(__FILE__ "(" schSTR2(__LINE__) "):" #desc)
-#endif
-
-#ifndef SS_USE_FACET
-	// STLPort #defines a macro (__STL_NO_EXPLICIT_FUNCTION_TMPL_ARGS) for
-	// all MSVC builds, erroneously in my opinion.  It causes problems for
-	// my SS_ANSI builds.  In my code, I always comment out that line.  You'll
-	// find it in   \stlport\config\stl_msvc.h
-	#if defined(__SGI_STL_PORT) && (__SGI_STL_PORT >= 0x400 )
-		#if defined(__STL_NO_EXPLICIT_FUNCTION_TMPL_ARGS) && defined(_MSC_VER)
-			#ifdef SS_ANSI
-				#pragma schMSG(__STL_NO_EXPLICIT_FUNCTION_TMPL_ARGS defined!!)
-			#endif
-		#endif
-		#define SS_USE_FACET(loc, fac) std::use_facet<fac >(loc)
-	#elif defined(_MSC_VER )
-	#define SS_USE_FACET(loc, fac) std::_USE(loc, fac)
-
-	// ...and
-	#elif defined(_RWSTD_NO_TEMPLATE_ON_RETURN_TYPE)
-        #define SS_USE_FACET(loc, fac) std::use_facet(loc, (fac*)0)
-	#else
-		#define SS_USE_FACET(loc, fac) std::use_facet<fac >(loc)
-	#endif
 #endif
 
 #ifndef SS_ANSI
@@ -469,18 +341,11 @@ inline const Type& SSMAX(const Type& arg1, const Type& arg2)
 
 	#include <stdio.h>
 	#include <stdarg.h>
-	#include <wchar.h>
-	#include <wctype.h>
 	#include <ctype.h>
 	#include <stdlib.h>
 	#ifndef va_start
 		#include <varargs.h>
 	#endif
-
-	// Standard C++ Library implementations that do not provide the required
-	// locale header (and thus the codecvt facet) can use good old mbstowcs and
-	// wcstombs instead by #defining SS_NOLOCALE
-
 #endif // #ifndef SS_ANSI
 
 // StdCodeCvt when there's no conversion to be done
@@ -497,21 +362,10 @@ inline PSTR StdCodeCvt(PSTR pDst, PCSTR pSrc, int nChars)
 
 	return pDst;
 }
-inline PSTR StdCodeCvt(PSTR pDst, PCUSTR pSrc, int nChars)
+inline PSTR StdCodeCvt(PSTR pDst, const unsigned char *pSrc, int nChars)
 {
 	return StdCodeCvt(pDst, (PCSTR)pSrc, nChars);
 }
-inline PUSTR StdCodeCvt(PUSTR pDst, PCSTR pSrc, int nChars)
-{
-	return (PUSTR)StdCodeCvt((PSTR)pDst, pSrc, nChars);
-}
-
-// Define tstring -- generic name for std::basic_string<TCHAR>
-
-#if !defined(tstring) && !defined(TSTRING_DEFINED)
-	typedef std::basic_string<TCHAR> tstring;
-	#define TSTRING_DEFINED
-#endif
 
 // a very shorthand way of applying the fix for KB problem Q172398
 // (basic_string assignment bug)
@@ -552,7 +406,6 @@ inline PUSTR StdCodeCvt(PUSTR pDst, PCSTR pSrc, int nChars)
 template<typename CT> inline int sslen(const CT* pT)
 {
 	return 0 == pT ? 0 : std::basic_string<CT>::traits_type::length(pT);
-//	return 0 == pT ? 0 : std::char_traits<CT>::length(pT);
 }
 inline SS_NOTHROW int sslen(const std::string& s)
 {
@@ -562,23 +415,8 @@ inline SS_NOTHROW int sslen(const std::string& s)
 // -----------------------------------------------------------------------------
 // sstolower/sstoupper -- convert characters to upper/lower case
 // -----------------------------------------------------------------------------
-#if !defined(SS_ANSI) || defined(SS_NOLOCALE)
-	inline char sstoupper(char ch)		{ return (char)::toupper(ch); }
-	inline wchar_t sstoupper(wchar_t ch){ return (wchar_t)::towupper(ch); }
-	inline char sstolower(char ch)		{ return (char)::tolower(ch); }
-	inline wchar_t sstolower(wchar_t ch){ return (wchar_t)::tolower(ch); }
-#else
-	template<typename CT>
-	inline CT sstolower(const CT& t, const std::locale& lo =std::locale())
-	{
-		return std::tolower<CT>(t, loc);
-	}
-	template<typename CT>
-	inline CT sstoupper(const CT& t, const std::locale& lo =std::locale())
-	{
-		return std::toupper<CT>(t, loc);
-	}
-#endif
+inline char sstoupper(char ch)		{ return (char)::toupper(ch); }
+inline char sstolower(char ch)		{ return (char)::tolower(ch); }
 
 // -----------------------------------------------------------------------------
 // ssasn: assignment functions -- assign "sSrc" to "sDst"
@@ -622,9 +460,8 @@ inline void	ssasn(std::string& sDst, PCSTR pA)
 }
 inline void ssasn(std::string& sDst, const int nNull)
 {
-	UNUSED(nNull);
 	ASSERT(nNull==0);
-	sDst.assign("");
+	sDst.erase();
 }	
 #undef StrSizeType
 
@@ -666,48 +503,29 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 // ssicmp: comparison (case insensitive )
 // -----------------------------------------------------------------------------
 #ifdef SS_ANSI
-	#ifdef SS_NOLOCALE
-		template<typename CT>
-		inline int ssicmp(const CT* pA1, const CT* pA2)
+	template<typename CT>
+	inline int ssicmp(const CT* pA1, const CT* pA2)
+	{
+		CT f;
+		CT l;
+
+		do 
 		{
-			CT f;
-			CT l;
+			f = sstolower(*(pA1++));
+			l = sstolower(*(pA2++));
+		} while ( (f) && (f == l) );
 
-			do 
-			{
-				f = sstolower(*(pA1++));
-				l = sstolower(*(pA2++));
-			} while ( (f) && (f == l) );
-
-			return (int)(f - l);
-		}
-	#else
-		template<typename CT>
-		inline int ssicmp(const CT* pA1, const CT* pA2)
-		{
-			std::locale loc;
-			const std::ctype<CT>& ct = SS_USE_FACET(loc, std::ctype<CT>);
-			CT f;
-			CT l;
-
-			do 
-			{
-				f = ct.tolower(*(pA1++));
-				l = ct.tolower(*(pA2++));
-			} while ( (f) && (f == l) );
-
-			return (int)(f - l);
-		}
-	#endif
+		return (int)(f - l);
+	}
 #else
 	#ifdef _MBCS
 		inline long sscmp(PCSTR pA1, PCSTR pA2)
 		{
-			return _mbscmp((PCUSTR)pA1, (PCUSTR)pA2);
+			return _mbscmp((const unsigned char *)pA1, (const unsigned char *)pA2);
 		}
 		inline long ssicmp(PCSTR pA1, PCSTR pA2)
 		{
-			return _mbsicmp((PCUSTR)pA1, (PCUSTR)pA2);
+			return _mbsicmp((const unsigned char *)pA1, (const unsigned char *)pA2);
 		}
 	#else
 		inline long sscmp(PCSTR pA1, PCSTR pA2)
@@ -725,40 +543,27 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 // ssupr/sslwr: Uppercase/Lowercase conversion functions
 // -----------------------------------------------------------------------------
 #ifdef SS_ANSI
-	#ifdef SS_NOLOCALE
-		template<typename CT>
-		inline void sslwr(CT* pT, size_t nLen)
-		{
-			for ( CT* p = pT; static_cast<size_t>(p - pT) < nLen; ++p)
-				*p = (CT)sstolower(*p);
-		}
-		template<typename CT>
-		inline void ssupr(CT* pT, size_t nLen)
-		{
-			for ( CT* p = pT; static_cast<size_t>(p - pT) < nLen; ++p)
-				*p = (CT)sstoupper(*p);
-		}
-	#else
-		template<typename CT>
-		inline void sslwr(CT* pT, size_t nLen)
-		{
-			SS_USE_FACET(std::locale(), std::ctype<CT>).tolower(pT, pT+nLen);
-		}
-		template<typename CT>
-		inline void ssupr(CT* pT, size_t nLen)
-		{
-			SS_USE_FACET(std::locale(), std::ctype<CT>).toupper(pT, pT+nLen);
-		}
-	#endif
+	template<typename CT>
+	inline void sslwr(CT* pT, size_t nLen)
+	{
+		for ( CT* p = pT; static_cast<size_t>(p - pT) < nLen; ++p)
+			*p = (CT)sstolower(*p);
+	}
+	template<typename CT>
+	inline void ssupr(CT* pT, size_t nLen)
+	{
+		for ( CT* p = pT; static_cast<size_t>(p - pT) < nLen; ++p)
+			*p = (CT)sstoupper(*p);
+	}
 #else  // #else we must be on Win32
 	#ifdef _MBCS
 		inline void	ssupr(PSTR pA, size_t /*nLen*/)
 		{
-			_mbsupr((PUSTR)pA);
+			_mbsupr((unsigned char *)pA);
 		}
 		inline void	sslwr(PSTR pA, size_t /*nLen*/)
 		{
-			_mbslwr((PUSTR)pA);
+			_mbslwr((unsigned char *)pA);
 		}
 	#else
 		inline void	ssupr(PSTR pA, size_t /*nLen*/)
@@ -790,129 +595,26 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 
 
 // -----------------------------------------------------------------------------
-// ssload: Type safe, overloaded ::LoadString wrappers
-// There is no equivalent of these in non-Win32-specific builds.  However, I'm
-// thinking that with the message facet, there might eventually be one
-// -----------------------------------------------------------------------------
-#ifdef SS_ANSI
-#else
-	inline int ssload(HMODULE hInst, UINT uId, PSTR pBuf, int nMax)
-	{
-		return ::LoadStringA(hInst, uId, pBuf, nMax);
-	}
-#endif
-
-
-
-// FUNCTION: sscpy.  Copies up to 'nMax' characters from pSrc to pDst.
-// -----------------------------------------------------------------------------
-// FUNCTION:  sscpy
-//		inline int sscpy(PSTR pDst, PCSTR pSrc, int nMax=-1);
-//		inline int sscpy(PUSTR pDst,  PCSTR pSrc, int nMax=-1)
-//
-// DESCRIPTION:
-//		This function is very much (but not exactly) like strcpy.  These
-//		overloads simplify copying one C-style string into another by allowing
-//		the caller to specify two different types of strings if necessary.
-//
-//		The strings must NOT overlap
-//
-//		"Character" is expressed in terms of the destination string, not
-//		the source.  If no 'nMax' argument is supplied, then the number of
-//		characters copied will be sslen(pSrc).  A NULL terminator will
-//		also be added so pDst must actually be big enough to hold nMax+1
-//		characters.  The return value is the number of characters copied,
-//		not including the NULL terminator.
-//
-// PARAMETERS: 
-//		pSrc - the string to be copied FROM.  May be a char based string, an
-//			   MBCS string (in Win32 builds) or a wide string (wchar_t).
-//		pSrc - the string to be copied TO.  Also may be either MBCS or wide
-//		nMax - the maximum number of characters to be copied into szDest.  Note
-//			   that this is expressed in whatever a "character" means to pDst.
-//			   If pDst is a wchar_t type string than this will be the maximum
-//			   number of wchar_ts that my be copied.  The pDst string must be
-//			   large enough to hold least nMaxChars+1 characters.
-//			   If the caller supplies no argument for nMax this is a signal to
-//			   the routine to copy all the characters in pSrc, regardless of
-//			   how long it is.
-//
-// RETURN VALUE: none
-// -----------------------------------------------------------------------------
-template<typename CT1, typename CT2>
-inline int sscpycvt(CT1* pDst, const CT2* pSrc, int nChars)
-{
-	StdCodeCvt(pDst, pSrc, nChars);
-	pDst[SSMAX(nChars, 0)]	= '\0';
-	return nChars;
-}
-
-template<typename CT1, typename CT2>
-inline int sscpy(CT1* pDst, const CT2* pSrc, int nMax, int nLen)
-{
-	return sscpycvt(pDst, pSrc, SSMIN(nMax, nLen));
-}
-template<typename CT1, typename CT2>
-inline int sscpy(CT1* pDst, const CT2* pSrc, int nMax)
-{
-	return sscpycvt(pDst, pSrc, SSMIN(nMax, sslen(pSrc)));
-}
-template<typename CT1, typename CT2>
-inline int sscpy(CT1* pDst, const CT2* pSrc)
-{
-	return sscpycvt(pDst, pSrc, sslen(pSrc));
-}
-template<typename CT1, typename CT2>
-inline int sscpy(CT1* pDst, const std::basic_string<CT2>& sSrc, int nMax)
-{
-	return sscpycvt(pDst, sSrc.c_str(), SSMIN(nMax, (int)sSrc.length()));
-}
-template<typename CT1, typename CT2>
-inline int sscpy(CT1* pDst, const std::basic_string<CT2>& sSrc)
-{
-	return sscpycvt(pDst, sSrc.c_str(), (int)sSrc.length());
-}
-
-// -----------------------------------------------------------------------------
 // Functional objects for changing case.  They also let you pass locales
 // -----------------------------------------------------------------------------
 
 #ifdef SS_ANSI
-	#ifdef SS_NOLOCALE
-		template<typename CT>
-		struct SSToUpper : public std::unary_function<CT, CT>
+	template<typename CT>
+	struct SSToUpper : public std::binary_function<CT, std::locale, CT>
+	{
+		inline CT operator()(const CT& t, const std::locale& loc) const
 		{
-			inline CT operator()(const CT& t) const
-			{
-				return sstoupper(t);
-			}
-		};
-		template<typename CT>
-		struct SSToLower : public std::unary_function<CT, CT>
+			return sstoupper<CT>(t, loc);
+		}
+	};
+	template<typename CT>
+	struct SSToLower : public std::binary_function<CT, std::locale, CT>
+	{
+		inline CT operator()(const CT& t, const std::locale& loc) const
 		{
-			inline CT operator()(const CT& t) const
-			{
-				return sstolower(t);
-			}
-		};
-	#else
-		template<typename CT>
-		struct SSToUpper : public std::binary_function<CT, std::locale, CT>
-		{
-			inline CT operator()(const CT& t, const std::locale& loc) const
-			{
-				return sstoupper<CT>(t, loc);
-			}
-		};
-		template<typename CT>
-		struct SSToLower : public std::binary_function<CT, std::locale, CT>
-		{
-			inline CT operator()(const CT& t, const std::locale& loc) const
-			{
-				return sstolower<CT>(t, loc);
-			}
-		};
-	#endif
+			return sstolower<CT>(t, loc);
+		}
+	};
 #endif
 
 
@@ -971,13 +673,6 @@ public:
 	{
 	}
 
-#ifdef SS_ALLOW_UNSIGNED_CHARS
-	CStdStr(PCUSTR pU)
-	{
-		*this = reinterpret_cast<PCSTR>(pU);
-	}
-#endif
-
 	CStdStr(PCSTR pA)
 	{
 		*this = pA;
@@ -1015,14 +710,6 @@ public:
 		return *this;
 	}
 
-#ifdef SS_ALLOW_UNSIGNED_CHARS
-	MYTYPE& operator=(PCUSTR pU)
-	{
-		ssasn(*this, reinterpret_cast<PCSTR>(pU)):
-		return *this;
-	}
-#endif
-
 	MYTYPE& operator=(CT t)
 	{
 		Q172398(*this);
@@ -1049,7 +736,7 @@ public:
 			// must be a valid length), we must adjust the length here to a safe
 			// value.  Thanks to Ullrich Pollähne for catching this bug
 
-			nChars		= SSMIN(nChars, str.length() - nStart);
+			nChars		= min(nChars, str.length() - nStart);
 
 			// Watch out for assignment to self
 
@@ -1080,7 +767,7 @@ public:
 			// must be a valid length), we must adjust the length here to a safe
 			// value. Thanks to Ullrich Pollähne for catching this bug
 
-			nChars		= SSMIN(nChars, str.length() - nStart);
+			nChars		= min(nChars, str.length() - nStart);
 
 			// Watch out for assignment to self
 
@@ -1109,7 +796,6 @@ public:
 				this->erase();
 			}
 	#endif
-			Q172398(*this);
 			MYBASE::assign(pC, nChars);
 			return *this;
 		}
@@ -1220,12 +906,6 @@ public:
 		return *this;
 	}
 
-
-
-	MYTYPE& Normalize()
-	{
-		return Trim().ToLower();
-	}
 
 
 	// -------------------------------------------------------------------------
@@ -1364,7 +1044,7 @@ public:
 
 			// Ensure proper NULL termination.
 
-			nActual			= nUsed == -1 ? nChars-1 : SSMIN(nUsed, nChars-1);
+			nActual			= nUsed == -1 ? nChars-1 : min(nUsed, nChars-1);
 			pBuf[nActual+1]= '\0';
 
 
@@ -1387,22 +1067,6 @@ public:
 	int CompareNoCase(PCMYSTR szThat)	const
 	{
 		return ssicmp(this->c_str(), szThat);
-	}
-
-	int Delete(int nIdx, int nCount=1)
-	{
-        if ( nIdx < 0 )
-			nIdx = 0;
-
-		if ( nIdx < GetLength() )
-			this->erase(static_cast<MYSIZE>(nIdx), static_cast<MYSIZE>(nCount));
-
-		return GetLength();
-	}
-
-	void Empty()
-	{
-		this->erase();
 	}
 
 	int Find(CT ch) const
@@ -1437,21 +1101,9 @@ public:
 		return static_cast<int>(MYBASE::npos == nIdx ? -1 : nIdx);
 	}
 
-	int FindOneOf(PCMYSTR szCharSet) const
-	{
-		MYSIZE nIdx = this->find_first_of(szCharSet);
-		return static_cast<int>(MYBASE::npos == nIdx ? -1 : nIdx);
-	}
-
-
 	// -------------------------------------------------------------------------
 	// GetXXXX -- Direct access to character buffer
 	// -------------------------------------------------------------------------
-	CT GetAt(int nIdx) const
-	{
-		return this->at(static_cast<MYSIZE>(nIdx));
-	}
-
 	CT* GetBuffer(int nMinLen=-1)
 	{
 		return GetBuf(nMinLen);
@@ -1484,16 +1136,11 @@ public:
 		return GetLength();
 	}
 
-	bool IsEmpty() const
-	{
-		return this->empty();
-	}
-
 	MYTYPE Left(int nCount) const
 	{
         // Range check the count.
 
-		nCount = SSMAX(0, SSMIN(nCount, static_cast<int>(this->size())));
+		nCount = max(0, min(nCount, static_cast<int>(this->size())));
 		return this->substr(0, static_cast<MYSIZE>(nCount)); 
 	}
 
@@ -1510,34 +1157,6 @@ public:
 	void MakeUpper()
 	{ 
 		ToUpper();
-	}
-
-	MYTYPE Mid(int nFirst ) const
-	{
-		return Mid(nFirst, size()-nFirst);
-	}
-
-	MYTYPE Mid(int nFirst, int nCount) const
-	{
-		// CString does range checking here.  Since we're trying to emulate it,
-		// we must check too.
-
-		if ( nFirst < 0 )
-			nFirst = 0;
-		if ( nCount < 0 )
-			nCount = 0;
-
-		if ( unsigned(nFirst + nCount) > size() )
-			nCount = size() - nFirst;
-
-		if ( unsigned(nFirst) > size() )
-			return MYTYPE();
-
-		ASSERT(nFirst >= 0);
-		ASSERT(unsigned(nFirst + nCount) <= size());
-
-		return this->substr(static_cast<MYSIZE>(nFirst),
-							static_cast<MYSIZE>(nCount));
 	}
 
 	void ReleaseBuffer(int nNewLen=-1)
@@ -1602,14 +1221,8 @@ public:
 	{
         // Range check the count.
 
-		nCount = SSMAX(0, SSMIN(nCount, static_cast<int>(this->size())));
+		nCount = max(0, min(nCount, static_cast<int>(this->size())));
 		return this->substr(this->size()-static_cast<MYSIZE>(nCount));
-	}
-
-	void SetAt(int nIndex, CT ch)
-	{
-		ASSERT(this->size() > static_cast<MYSIZE>(nIndex));
-		this->at(static_cast<MYSIZE>(nIndex))		= ch;
 	}
 
 	// Array-indexing operators.  Required because we defined an implicit cast
@@ -1692,42 +1305,6 @@ CStdStr<CT> operator+(PCSTR pA, const  CStdStr<CT>& str)
 // -----------------------------------------------------------------------------
 
 #if defined(__SUNPRO_CC_COMPAT) || defined(__SUNPRO_CC)
-
-// Made non-template versions due to "undefined" errors on Sun Forte compiler
-// when linking with friend template functions
-inline
-CStdStr<wchar_t> operator+(const CStdStr<wchar_t>& str1,
-						   const CStdStr<wchar_t>& str2)
-{
-	CStdStr<wchar_t> strRet(str1);
-	strRet.append(str2);
-	return strRet;
-}
-
-inline
-CStdStr<wchar_t> operator+(const CStdStr<wchar_t>& str, wchar_t t)
-{
-	// this particular overload is needed for disabling reference counting
-	// though it's only an issue from line 1 to line 2
-
-	CStdStr<wchar_t> strRet(str);	// 1
-	strRet.append(1, t);					// 2
-	return strRet;
-}
-
-inline
-CStdStr<wchar_t> operator+(const CStdStr<wchar_t>& str, PCSTR pW)
-{ 
-	return CStdStr<wchar_t>(str) + CStdStr<wchar_t>(pW);
-}
-
-inline
-CStdStr<wchar_t> operator+(PCSTR pW, const CStdStr<wchar_t>& str)
-{
-	CStdStr<wchar_t> strRet(pW);
-	strRet.append(str);
-	return strRet;
-}
 
 inline
 CStdStr<char> operator+(const  CStdStr<char>& str1, const  CStdStr<char>& str2)
@@ -1854,13 +1431,8 @@ typedef CStdStr<char>		CStdStringA;	// a better std::string
 #define StdStringLessNoCaseA		SSLNCA		
 #define StdStringEqualsNoCaseA		SSENCA		
 
-#ifdef UNICODE
-	#define StdStringLessNoCase		SSLNCW		
-	#define StdStringEqualsNoCase	SSENCW		
-#else
-	#define StdStringLessNoCase		SSLNCA		
-	#define StdStringEqualsNoCase	SSENCA		
-#endif
+#define StdStringLessNoCase			SSLNCA
+#define StdStringEqualsNoCase		SSENCA
 
 struct StdStringLessNoCaseA
 	: std::binary_function<CStdStringA, CStdStringA, bool>
@@ -1876,14 +1448,6 @@ struct StdStringEqualsNoCaseA
 	bool operator()(const CStdStringA& sLeft, const CStdStringA& sRight) const
 	{ return ssicmp(sLeft.c_str(), sRight.c_str()) == 0; }
 };
-
-// If we had to define our own version of TRACE above, get rid of it now
-
-#ifdef TRACE_DEFINED_HERE
-	#undef TRACE
-	#undef TRACE_DEFINED_HERE
-#endif
-
 
 // These std::swap specializations come courtesy of Mike Crusader. 
 
