@@ -58,24 +58,6 @@ bool test_read( SoundReader *snd, const char *expected_data, int bytes )
 }
 
 
-bool test_file2( const char *fn )
-{
-	CString error;
-	SoundReader *snd = SoundReader_FileReader::OpenFile( fn, error );
-	
-	if( snd == NULL )
-	{
-		LOG->Trace( "File '%s' failed to open: %s", fn, error.c_str() );
-		return false;
-	}
-
-	float len = snd->GetLength();
-	printf("%f\n", len);
-
-	delete snd;
-	return true;
-}
-
 bool must_be_eof( SoundReader *snd )
 {
 	char buf[4];
@@ -97,6 +79,16 @@ bool test_file( const char *fn, float expected_fix )
 	}
 	SoundReader *snd = s->Copy();
 	delete s;
+
+	{
+		float len = snd->GetLength();
+		printf("%f\n", len);
+		if( len < 1000.0f )
+		{
+			LOG->Warn( "Test file %s is too short", fn );
+			return false;
+		}
+	}
 
 	{
 		/* The fix value shouldn't change much; give a leeway of about 2ms. */
@@ -252,18 +244,24 @@ bool test_file( const char *fn, float expected_fix )
 int main()
 {
 	LOG			= new RageLog();
+	LOG->ShowLogOutput( true );
+	LOG->SetFlushing( true );
+
 	struct {
 		const char *fn;
 		float expected_fix;
 	} files[] = {
-		{ "afronoia.wav",				0 },
-		{ "test.wav",					0 },
-		{ "test.ogg",					0 },
-		{ "first frame corrupt.mp3",	0.052f },
-		{ "LAME cbr.mp3",				0 },
-		{ "LAME vbr with xing tag.mp3",	0 },
-		{ "LAME cbr with id3v2 tag.mp3", 0 },
-		{ "LAME vbr with xing and id3v2 tag.mp3",	0 },
+		{ "test PCM 44100 stereo.wav",	0 },
+		{ "test ADPCM 44100 stereo.wav",0 },
+		{ "test ADPCM 22050 mono.wav",	0 },
+		{ "test OGG 44100 stereo.ogg",	0 },
+		{ "test first frame corrupt.mp3", 0.052f },
+		{ "test MP3 44100 stereo (ID3V1 tag).mp3", 0 },
+		{ "test MP3 44100 stereo (ID3V2 tag).mp3", 0 },
+		{ "test MP3 44100 stereo (LAME tag).mp3", 0 },
+		{ "test MP3 44100 stereo.mp3", 0 },
+		{ "test MP3 44100 stereo (XING, LAME, ID3V1, ID3V2).mp3", 0 },
+		{ "test MP3 44100 stereo (XING, LAME tag).mp3", 0 },
 		{ NULL,							0 }
 	};
 	
@@ -271,7 +269,6 @@ int main()
 	{
 		if( !test_file( files[i].fn, files[i].expected_fix ) )
 			exit(1);
-		test_file2( files[i].fn );
 	}
 
 	exit(0);
