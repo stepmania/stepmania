@@ -48,10 +48,6 @@ inline unsigned long max(unsigned long a, unsigned int b) { return a > b? a:b; }
 
 #define clamp(val,low,high)		( max( (low), min((val),(high)) ) )
 
-#define PI		((float)3.1415926535897932384626433832795)
-#define DegreeToRadian( degree ) ((degree) * (PI / 180.0f))
-#define RadianToDegree( radian ) ((radian) * (180.0f / PI))
-
 // Scales x so that l1 corresponds to l2 and h1 corresponds to h2.  Does not modify x, MUST assign the result to something!
 #define SCALE(x, l1, h1, l2, h2)	(((x) - (l1)) / ((h1) - (l1)) * ((h2) - (l2)) + (l2))
 

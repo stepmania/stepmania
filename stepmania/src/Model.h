@@ -19,15 +19,6 @@
 
 struct msModel;
 
-typedef float matrix_t[3][4];
-typedef struct
-{
-	matrix_t	mRelative;
-	matrix_t	mAbsolute;
-	matrix_t	mRelativeFinal;
-	matrix_t	mFinal;
-} myBone_t;
-
 
 class Model : public Actor
 {

@@ -11,7 +11,6 @@
 */
 #include "Model.h"
 #include "ModelTypes.h"
-#include "mathlib.h"
 #include "RageMath.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"
@@ -139,8 +138,8 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                         break;
                     }
 
-                    msVec3 Vertex;
-                    msVec2 uv;
+                    RageVector3 Vertex;
+                    RageVector2 uv;
                     if (sscanf (szLine, "%d %f %f %f %f %f %d",
                         &nFlags,
                         &Vertex[0], &Vertex[1], &Vertex[2],
@@ -178,7 +177,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                     break;
                 }
                 
-				vector<msVec3> Normals;
+				vector<RageVector3> Normals;
 				Normals.resize( nNumNormals );
                 for (j = 0; j < nNumNormals; j++)
                 {
@@ -188,14 +187,14 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                         break;
                     }
 
-                    msVec3 Normal;
+                    RageVector3 Normal;
                     if (sscanf (szLine, "%f %f %f", &Normal[0], &Normal[1], &Normal[2]) != 3)
                     {
                         bError = true;
                         break;
                     }
 
-					VectorNormalize (Normal);
+					RageVec3Normalize( (RageVector3*)&Normal, (RageVector3*)&Normal );
                     Normals[j] = Normal;
                 }
 
@@ -245,7 +244,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 					{
 
 						msVertex& Vertex = mesh.Vertices[ nIndices[k] ];
-						msVec3& Normal = Normals[ nNormalIndices[k] ];
+						RageVector3& Normal = Normals[ nNormalIndices[k] ];
 						Vertex.Normal = Normal;
 					}
 
@@ -291,8 +290,8 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                     bError = true;
                     break;
                 }
-                msVec4 Ambient;
-                if (sscanf (szLine, "%f %f %f %f", &Ambient.v[0], &Ambient.v[1], &Ambient.v[2], &Ambient.v[3]) != 4)
+                RageVector4 Ambient;
+                if (sscanf (szLine, "%f %f %f %f", &Ambient[0], &Ambient[1], &Ambient[2], &Ambient[3]) != 4)
                 {
                     bError = true;
                     break;
@@ -305,8 +304,8 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                     bError = true;
                     break;
                 }
-                msVec4 Diffuse;
-                if (sscanf (szLine, "%f %f %f %f", &Diffuse.v[0], &Diffuse.v[1], &Diffuse.v[2], &Diffuse.v[3]) != 4)
+                RageVector4 Diffuse;
+                if (sscanf (szLine, "%f %f %f %f", &Diffuse[0], &Diffuse[1], &Diffuse[2], &Diffuse[3]) != 4)
                 {
                     bError = true;
                     break;
@@ -319,8 +318,8 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                     bError = true;
                     break;
                 }
-                msVec4 Specular;
-                if (sscanf (szLine, "%f %f %f %f", &Specular.v[0], &Specular.v[1], &Specular.v[2], &Specular.v[3]) != 4)
+                RageVector4 Specular;
+                if (sscanf (szLine, "%f %f %f %f", &Specular[0], &Specular[1], &Specular[2], &Specular[3]) != 4)
                 {
                     bError = true;
                     break;
@@ -333,8 +332,8 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                     bError = true;
                     break;
                 }
-                msVec4 Emissive;
-                if (sscanf (szLine, "%f %f %f %f", &Emissive.v[0], &Emissive.v[1], &Emissive.v[2], &Emissive.v[3]) != 4)
+                RageVector4 Emissive;
+                if (sscanf (szLine, "%f %f %f %f", &Emissive[0], &Emissive[1], &Emissive[2], &Emissive[3]) != 4)
                 {
                     bError = true;
                     break;
@@ -480,7 +479,7 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
                 strcpy( Bone.szParentName, szName );
 
                 // flags, position, rotation
-                msVec3 Position, Rotation;
+                RageVector3 Position, Rotation;
 			    if( f.GetLine( szLine ) <= 0 )
                 {
                     bError = true;
@@ -488,8 +487,8 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
                 }
                 if (sscanf (szLine, "%d %f %f %f %f %f %f",
                     &nFlags,
-                    &Position.v[0], &Position.v[1], &Position.v[2],
-                    &Rotation.v[0], &Rotation.v[1], &Rotation.v[2]) != 7)
+                    &Position[0], &Position[1], &Position[2],
+                    &Rotation[0], &Rotation[1], &Rotation[2]) != 7)
                 {
                     bError = true;
                     break;
@@ -528,7 +527,9 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
                         break;
                     }
 
-					msPositionKey key = { fTime, { Position[0], Position[1], Position[2] } };
+					msPositionKey key;
+					key.fTime = fTime;
+					key.Position = RageVector3( Position[0], Position[1], Position[2] );
 					Bone.PositionKeys[j] = key;
                 }
 
@@ -560,7 +561,9 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
                         break;
                     }
 
-					msRotationKey key = { fTime, { Rotation[0], Rotation[1], Rotation[2] } };
+					msRotationKey key;
+					key.fTime = fTime;
+					key.Rotation = RageVector3( Rotation[0], Rotation[1], Rotation[2] );
                     Bone.RotationKeys[j] = key;
                 }
             }
@@ -655,12 +658,9 @@ void Model::DrawPrimitives()
 			{
 				int bone = originalVert.nBoneIndex;
 
-				VectorRotate (originalVert.Normal, m_pBones[bone].mFinal, tempVert.n);
+				RageVec3TransformNormal( &tempVert.n, &originalVert.Normal, &m_pBones[bone].mFinal );
 
-				VectorRotate (originalVert.Vertex, m_pBones[bone].mFinal, tempVert.p);
-				tempVert.p[0] += m_pBones[bone].mFinal[0][3];
-				tempVert.p[1] += m_pBones[bone].mFinal[1][3];
-				tempVert.p[2] += m_pBones[bone].mFinal[2][3];
+				RageVec3TransformCoord( &tempVert.p, &originalVert.Vertex, &m_pBones[bone].mFinal );
 			}
 		}
 
@@ -709,25 +709,28 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 	for (i = 0; i < nBoneCount; i++)
 	{
 		msBone *pBone = &m_pCurAnimation->Bones[i];
-		msVec3 vRot;
-		vRot[0] = pBone->Rotation[0] * 180 / (float) Q_PI;
-		vRot[1] = pBone->Rotation[1] * 180 / (float) Q_PI;
-		vRot[2] = pBone->Rotation[2] * 180 / (float) Q_PI;
-		AngleMatrix (vRot, m_pBones[i].mRelative);
-		m_pBones[i].mRelative[0][3] = pBone->Position[0];
-		m_pBones[i].mRelative[1][3] = pBone->Position[1];
-		m_pBones[i].mRelative[2][3] = pBone->Position[2];
+		RageVector3 vRot;
+		vRot[0] = pBone->Rotation[0] * 180 / (float) PI;
+		vRot[1] = pBone->Rotation[1] * 180 / (float) PI;
+		vRot[2] = pBone->Rotation[2] * 180 / (float) PI;
+
+		RageMatrixAngles( &m_pBones[i].mRelative, vRot );
+		
+		m_pBones[i].mRelative.m[3][0] = pBone->Position[0];
+		m_pBones[i].mRelative.m[3][1] = pBone->Position[1];
+		m_pBones[i].mRelative.m[3][2] = pBone->Position[2];
 		
 		int nParentBone = m_pCurAnimation->FindBoneByName( pBone->szParentName );
 		if (nParentBone != -1)
 		{
-			R_ConcatTransforms (m_pBones[nParentBone].mAbsolute, m_pBones[i].mRelative, m_pBones[i].mAbsolute);
-			memcpy (m_pBones[i].mFinal, m_pBones[i].mAbsolute, sizeof (matrix_t));
+			RageMatrixMultiply( &m_pBones[i].mAbsolute, &m_pBones[nParentBone].mAbsolute, &m_pBones[i].mRelative );
+
+			m_pBones[i].mFinal = m_pBones[i].mAbsolute;
 		}
 		else
 		{
-			memcpy (m_pBones[i].mAbsolute, m_pBones[i].mRelative, sizeof (matrix_t));
-			memcpy (m_pBones[i].mFinal, m_pBones[i].mRelative, sizeof (matrix_t));
+			m_pBones[i].mAbsolute = m_pBones[i].mRelative;
+			m_pBones[i].mFinal = m_pBones[i].mRelative;
 		}
 	}
 
@@ -739,31 +742,19 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 			msVertex *pVertex = &pMesh->Vertices[j];
 			if (pVertex->nBoneIndex != -1)
 			{
-				pVertex->Vertex[0] -= m_pBones[pVertex->nBoneIndex].mAbsolute[0][3];
-				pVertex->Vertex[1] -= m_pBones[pVertex->nBoneIndex].mAbsolute[1][3];
-				pVertex->Vertex[2] -= m_pBones[pVertex->nBoneIndex].mAbsolute[2][3];
-				msVec3 vTmp;
-				VectorIRotate (pVertex->Vertex, m_pBones[pVertex->nBoneIndex].mAbsolute, vTmp);
-				VectorCopy (vTmp, pVertex->Vertex);
+				pVertex->Vertex[0] -= m_pBones[pVertex->nBoneIndex].mAbsolute.m[3][0];
+				pVertex->Vertex[1] -= m_pBones[pVertex->nBoneIndex].mAbsolute.m[3][1];
+				pVertex->Vertex[2] -= m_pBones[pVertex->nBoneIndex].mAbsolute.m[3][2];
+				RageVector3 vTmp;
+
+				RageMatrix inverse;
+				RageMatrixTranspose( &inverse, &m_pBones[pVertex->nBoneIndex].mAbsolute );	// transpose = inverse for rotation matrices
+				RageVec3TransformNormal( &vTmp, &pVertex->Vertex, &inverse );
+				
+				pVertex->Vertex = vTmp;
 			}
 		}
 	}
-}
-
-void MakeMatrix( matrix_t out, const RageMatrix &in )
-{
-	out[0][0] = in.m[0][0];
-	out[1][0] = in.m[1][0];
-	out[2][0] = in.m[2][0];
-	out[3][0] = in.m[3][0];
-	out[0][1] = in.m[0][1];
-	out[1][1] = in.m[1][1];
-	out[2][1] = in.m[2][1];
-	out[3][1] = in.m[3][1];
-	out[0][2] = in.m[0][2];
-	out[1][2] = in.m[1][2];
-	out[2][2] = in.m[2][2];
-	out[3][2] = in.m[3][2];
 }
 
 float Model::GetCurFrame() { return m_fCurrFrame; };
@@ -802,12 +793,12 @@ Model::AdvanceFrame (float dt)
 		int nRotationKeyCount = pBone->RotationKeys.size();
 		if (nPositionKeyCount == 0 && nRotationKeyCount == 0)
 		{
-			memcpy (m_pBones[i].mFinal, m_pBones[i].mAbsolute, sizeof (matrix_t));
+			m_pBones[i].mFinal = m_pBones[i].mAbsolute;
 		}
 		else
 		{
-			msVec3 vPos;
-			msVec4 vRot;
+			RageVector3 vPos;
+			RageVector3 vRot;
 			//
 			// search for the adjacent position keys
 			//
@@ -832,17 +823,17 @@ Model::AdvanceFrame (float dt)
 			}
 			else if (pLastPositionKey == 0)
 			{
-				VectorCopy (pThisPositionKey->Position, vPos);
+				vPos = pThisPositionKey->Position;
 			}
 			else if (pThisPositionKey == 0)
 			{
-				VectorCopy (pLastPositionKey->Position, vPos);
+				vPos = pLastPositionKey->Position;
 			}
 			//
 			// search for the adjacent rotation keys
 			//
-			matrix_t m;
-			memset( m, 0, sizeof(m) );
+			RageMatrix m;
+			RageMatrixIdentity( &m );
 			msRotationKey *pLastRotationKey = 0, *pThisRotationKey = 0;
 			for (j = 0; j < nRotationKeyCount; j++)
 			{
@@ -863,36 +854,36 @@ Model::AdvanceFrame (float dt)
 				RageQuatFromHPR( &q2, RageVector3(pThisRotationKey->Rotation) * (180 / PI) );
 				RageQuatSlerp( &q, q1, q2, s );
 
-				RageMatrix mm;
-				RageMatrixFromQuat( &mm, q );
-				MakeMatrix( m, mm );
+				RageMatrixFromQuat( &m, q );
 			}
 			else if (pLastRotationKey == 0)
 			{
-				vRot[0] = pThisRotationKey->Rotation[0] * 180 / (float) Q_PI;
-				vRot[1] = pThisRotationKey->Rotation[1] * 180 / (float) Q_PI;
-				vRot[2] = pThisRotationKey->Rotation[2] * 180 / (float) Q_PI;
-				AngleMatrix (vRot, m);
+				vRot[0] = pThisRotationKey->Rotation[0] * 180 / (float) PI;
+				vRot[1] = pThisRotationKey->Rotation[1] * 180 / (float) PI;
+				vRot[2] = pThisRotationKey->Rotation[2] * 180 / (float) PI;
+				RageMatrixAngles( &m, vRot );
 			}
 			else if (pThisRotationKey == 0)
 			{
-				vRot[0] = pLastRotationKey->Rotation[0] * 180 / (float) Q_PI;
-				vRot[1] = pLastRotationKey->Rotation[1] * 180 / (float) Q_PI;
-				vRot[2] = pLastRotationKey->Rotation[2] * 180 / (float) Q_PI;
-				AngleMatrix (vRot, m);
+				vRot[0] = pLastRotationKey->Rotation[0] * 180 / (float) PI;
+				vRot[1] = pLastRotationKey->Rotation[1] * 180 / (float) PI;
+				vRot[2] = pLastRotationKey->Rotation[2] * 180 / (float) PI;
+				RageMatrixAngles( &m, vRot );
 			}
-			m[0][3] = vPos[0];
-			m[1][3] = vPos[1];
-			m[2][3] = vPos[2];
-			R_ConcatTransforms (m_pBones[i].mRelative, m, m_pBones[i].mRelativeFinal);
+			m.m[3][0] = vPos[0];
+			m.m[3][1] = vPos[1];
+			m.m[3][2] = vPos[2];
+
+			RageMatrixMultiply( &m_pBones[i].mRelativeFinal, &m_pBones[i].mRelative, &m );
+
 			int nParentBone = m_pCurAnimation->FindBoneByName( pBone->szParentName );
 			if (nParentBone == -1)
 			{
-				memcpy (m_pBones[i].mFinal, m_pBones[i].mRelativeFinal, sizeof (matrix_t));
+				m_pBones[i].mFinal = m_pBones[i].mRelativeFinal;
 			}
 			else
 			{
-				R_ConcatTransforms (m_pBones[nParentBone].mFinal, m_pBones[i].mRelativeFinal, m_pBones[i].mFinal);
+				RageMatrixMultiply( &m_pBones[i].mFinal, &m_pBones[nParentBone].mFinal, &m_pBones[i].mRelativeFinal );
 			}
 		}
 	}

@@ -228,6 +228,12 @@ struct RageModelVertex	// doesn't have color.  Relies on material color
 	RageVector2		t;	// texture coordinates
 };
 
+// RageMatrix elements are specified in row-major order.  This
+// means that the translate terms are located in the fourth row and the
+// projection terms in the fourth column.  This is consistent with the way
+// MAX, Direct3D, and OpenGL all handle matrices.  Even though the OpenGL
+// documentation is in column-major form, the OpenGL code is designed to
+// handle matrix operations in row-major form.
 struct RageMatrix
 {
 public:
@@ -248,30 +254,6 @@ public:
     operator const float* () const					{ return m[0]; }
 
     RageMatrix GetTranspose() const;
-
-//	---These are not used.  Maybe I'll implement them later...---
-//  // assignment operators
-//  RageMatrix& operator *= ( const RageMatrix& );
-//  RageMatrix& operator += ( const RageMatrix& );
-//  RageMatrix& operator -= ( const RageMatrix& );
-//  RageMatrix& operator *= ( float );
-//  RageMatrix& operator /= ( float );
-//
-//  // unary operators
-//  RageMatrix operator + () const;
-//  RageMatrix operator - () const;
-//
-//  // binary operators
-//  RageMatrix operator * ( const RageMatrix& ) const;
-//  RageMatrix operator + ( const RageMatrix& ) const;
-//  RageMatrix operator - ( const RageMatrix& ) const;
-//  RageMatrix operator * ( float ) const;
-//  RageMatrix operator / ( float ) const;
-//
-//  friend RageMatrix operator * ( float, const RageMatrix& );
-//
-//  bool operator == ( const RageMatrix& ) const;
-//  bool operator != ( const RageMatrix& ) const;
 
 	float m[4][4];
 };

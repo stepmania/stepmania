@@ -36,22 +36,7 @@ typedef unsigned char byte;
 typedef unsigned short word;
 #endif /* word */
 
-
-typedef struct msVec2 { 
-	float v[2];
-	operator float* ()				{ return v; };
-    operator const float* () const	{ return v; };
-} msVec2;
-typedef struct msVec3 { 
-	float v[3];
-	operator float* ()				{ return v; };
-    operator const float* () const	{ return v; };
-} msVec3;
-typedef struct msVec4 { 
-	float v[4];
-	operator float* ()				{ return v; };
-    operator const float* () const	{ return v; };
-} msVec4;
+#include "RageTypes.h"
 
 
 /* msFlag */
@@ -62,33 +47,33 @@ typedef enum {
 /* msVertex */
 typedef struct msVertex
 {
-//  byte        nFlags;
-    msVec3      Vertex;
-    msVec2      uv;
-    msVec3      Normal;
+//  byte        nFlags;	// we don't care about saving this flag
+    RageVector3 Vertex;
+    RageVector2 uv;
+    RageVector3 Normal;
     char        nBoneIndex;
 } msVertex;
 
 /* msTriangle */
 typedef struct
 {
-//  word        nFlags;
+//  word        nFlags;	// we don't care about saving this flag
     word        nVertexIndices[3];
-//  word        nNormalIndices[3];
-//    msVec3      Normal;
-//  byte        nSmoothingGroup;
+//  word        nNormalIndices[3];	// we don't care about this.  Use the normals in each vertex
+//  msVec3      Normal;	// we don't care about per-triangle normals.  Each vertex has its own
+//  byte        nSmoothingGroup;	// we don't care about this, so don't save it
 } msTriangle;
 
 /* msMesh */
 typedef struct msMesh
 {
-//    byte        nFlags;
+//  byte        nFlags;	// we don't care about saving this flag
     char        szName[MS_MAX_NAME];
     char        nMaterialIndex;
     
     vector<msVertex>   Vertices;
 
-//    vector<msVec3>     Normals;
+//  vector<msVec3>     Normals;	// each vertex holds its own normal
 
     vector<msTriangle> Triangles;
 } msMesh;
@@ -124,10 +109,10 @@ typedef struct msMaterial
 {
     int         nFlags;
     char        szName[MS_MAX_NAME];
-    msVec4      Ambient;
-    msVec4      Diffuse;
-    msVec4      Specular;
-    msVec4      Emissive;
+    RageVector4      Ambient;
+    RageVector4      Diffuse;
+    RageVector4      Specular;
+    RageVector4      Emissive;
     float       fShininess;
     float       fTransparency;
     char        szDiffuseTexture[MS_MAX_PATH];
@@ -140,14 +125,14 @@ typedef struct msMaterial
 typedef struct msPositionKey
 {
     float       fTime;
-    msVec3      Position;
+    RageVector3      Position;
 } msPositionKey;
 
 /* msRotationKey */
 typedef struct msRotationKey
 {
     float   fTime;
-    msVec3  Rotation;
+    RageVector3  Rotation;
 } msRotationKey;
 
 /* msBone */
@@ -156,8 +141,8 @@ typedef struct msBone
     int             nFlags;
     char            szName[MS_MAX_NAME];
     char            szParentName[MS_MAX_NAME];
-    msVec3          Position;
-    msVec3          Rotation;
+    RageVector3          Position;
+    RageVector3          Rotation;
 
     vector<msPositionKey>  PositionKeys;
 
@@ -186,12 +171,19 @@ struct msAnimation
 		return -1;
 	}
 
-	// not used
-//    int         nFrame;
+//  int         nFrame;	// not used in SM.  We keep track of this outside this structure.
     int         nTotalFrames;
 
-    msVec3      Position;
-    msVec3      Rotation;
+    RageVector3      Position;
+    RageVector3      Rotation;
 };
+
+typedef struct
+{
+	RageMatrix	mRelative;
+	RageMatrix	mAbsolute;
+	RageMatrix	mRelativeFinal;
+	RageMatrix	mFinal;
+} myBone_t;
 
 #endif

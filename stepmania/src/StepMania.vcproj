@@ -1866,12 +1866,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<File
 				RelativePath=".\Sprite.h">
 			</File>
-			<File
-				RelativePath="mathlib.c">
-			</File>
-			<File
-				RelativePath="mathlib.h">
-			</File>
 		</Filter>
 		<Filter
 			Name="Global Singletons"

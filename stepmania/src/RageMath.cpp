@@ -52,9 +52,16 @@ void RageVec3Normalize( RageVector3* pOut, const RageVector3* pV )
 
 void RageVec3TransformCoord( RageVector3* pOut, const RageVector3* pV, const RageMatrix* pM )
 {
-	RageVector4 temp( pV->x, pV->y, pV->z, 1.0f );
+	RageVector4 temp( pV->x, pV->y, pV->z, 1.0f );	// translate
 	RageVec4TransformCoord( &temp, &temp, pM );
 	*pOut = RageVector3( temp.x/temp.w, temp.y/temp.w, temp.z/temp.w );
+}
+
+void RageVec3TransformNormal( RageVector3* pOut, const RageVector3* pV, const RageMatrix* pM )
+{
+	RageVector4 temp( pV->x, pV->y, pV->z, 0.0f );	// don't translate
+	RageVec4TransformCoord( &temp, &temp, pM );
+	*pOut = RageVector3( temp.x, temp.y, temp.z );
 }
 
 #define m00 m[0][0]
@@ -405,11 +412,13 @@ void RageMatrixFromQuat( RageMatrix* pOut, const RageVector4 q )
 	float yz = q.y * (q.z + q.z);
 
 	float zz = q.z * (q.z + q.z);
+	// careful.  The param order is row-major, which is the 
+	// transpose of the order shown in the OpenGL docs.
 	*pOut = RageMatrix(
-		1.0f-(yy+zz), xy-wz,     xz+wy,     0,
-		xy+wz,        1-(xx+zz), yz-wx,     0,
-		xz-wy,        yz+wx,     1-(xx+yy), 0,
-		0, 0, 0, 1 );
+		1-(yy+zz), xy+wz,     xz-wy,     0,
+		xy-wz,     1-(xx+zz), yz+wx,     0,
+		xz+wy,     yz-wx,     1-(xx+yy), 0,
+		0,         0,         0,         1 );
 }
 
 void RageQuatSlerp(RageVector4 *pOut, const RageVector4 &from, const RageVector4 &to, float t)
@@ -500,3 +509,39 @@ RageMatrix RageMatrixIdentity()
 	return m;
 }
 
+void RageMatrixAngles( RageMatrix* pOut, const RageVector3 &angles )
+{
+	float		angle;
+	float		sr, sp, sy, cr, cp, cy;
+	
+	angle = angles[2] * (PI*2 / 360);
+	sy = sin(angle);
+	cy = cos(angle);
+	angle = angles[1] * (PI*2 / 360);
+	sp = sin(angle);
+	cp = cos(angle);
+	angle = angles[0] * (PI*2 / 360);
+	sr = sin(angle);
+	cr = cos(angle);
+
+	RageMatrixIdentity( pOut );
+
+
+	// matrix = (Z * Y) * X
+	pOut->m[0][0] = cp*cy;
+	pOut->m[0][1] = cp*sy;
+	pOut->m[0][2] = -sp;
+	pOut->m[1][0] = sr*sp*cy+cr*-sy;
+	pOut->m[1][1] = sr*sp*sy+cr*cy;
+	pOut->m[1][2] = sr*cp;
+	pOut->m[2][0] = (cr*sp*cy+-sr*-sy);
+	pOut->m[2][1] = (cr*sp*sy+-sr*cy);
+	pOut->m[2][2] = cr*cp;
+}
+
+void RageMatrixTranspose( RageMatrix* pOut, const RageMatrix* pIn )
+{
+	for( int i=0; i<4; i++)
+		for( int j=0; j<4; j++)
+			pOut->m[j][i] = pIn->m[i][j];
+}

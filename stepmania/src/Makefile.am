@@ -197,7 +197,7 @@ $(RageFile)
 Actors = \
 Actor.cpp Actor.h ActorCollision.h ActorFrame.cpp ActorFrame.h ActorScroller.cpp ActorScroller.h \
 ActorUtil.cpp ActorUtil.h BitmapText.cpp BitmapText.h Milkshape.h Model.cpp Model.h ModelTypes.cpp ModelTypes.h \
-Quad.h Sprite.cpp Sprite.h mathlib.c mathlib.h 
+Quad.h Sprite.cpp Sprite.h 
 
 GlobalSingletons = \
 AnnouncerManager.cpp AnnouncerManager.h Bookkeeper.h Bookkeeper.cpp FontManager.cpp FontManager.h GameManager.cpp GameManager.h \
