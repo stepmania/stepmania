@@ -19,4 +19,7 @@ void ResetGame();
 extern HWND g_hWndMain;
 #endif
 
+extern int g_argc;
+extern char **g_argv;
+
 #endif

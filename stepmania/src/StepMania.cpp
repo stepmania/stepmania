@@ -61,6 +61,8 @@
 #endif
 
 HWND g_hWndMain = NULL;
+int g_argc = 0;
+char **g_argv = NULL;
 
 #endif
 
@@ -429,6 +431,9 @@ static void RestoreAppPri()
 
 int main(int argc, char* argv[])
 {
+	g_argc = argc;
+	g_argv = argv;
+
 	/* Set up arch hooks first.  This may set up crash handling. */
 	HOOKS = MakeArchHooks();
 
