@@ -971,6 +971,10 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			fDestinationBeat = Quantize( fDestinationBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 			CLAMP( fDestinationBeat, 0, GetMaximumBeatForMoving() );
 
+			// Don't play the sound and do the hold note logic below if our position didn't change.
+			if( fOriginalBeat == fDestinationBeat )
+				return;
+
 			GAMESTATE->m_fSongBeat = fDestinationBeat;
 
 			// check to see if they're holding a button
@@ -990,19 +994,13 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 					continue;
 
 				// create a new hold note
-				int iOriginalRow = BeatToNoteRow( min(fOriginalBeat, fDestinationBeat) );
-				int iDestinationRow = BeatToNoteRow( max(fOriginalBeat, fDestinationBeat) );
-
-				iOriginalRow = max( iOriginalRow, 0 );
-				iDestinationRow = max( iDestinationRow, 0 );
-
-				if( iOriginalRow == iDestinationRow )	// didn't change rows, so don't create a hold
-					continue;
+				int iStartRow = BeatToNoteRow( min(fOriginalBeat, fDestinationBeat) );
+				int iEndRow = BeatToNoteRow( max(fOriginalBeat, fDestinationBeat) );
 
 				// Don't SaveUndo.  We want to undo the whole hold, not just the last segment
 				// that the user made.  Dragging the hold bigger can only absorb and remove
 				// other taps, so dragging won't cause us to exceed the note limit.
-				m_NoteDataEdit.AddHoldNote( iCol, iOriginalRow, iDestinationRow, TAP_ORIGINAL_HOLD_HEAD );
+				m_NoteDataEdit.AddHoldNote( iCol, iStartRow, iEndRow, TAP_ORIGINAL_HOLD_HEAD );
 			}
 
 			if( EditIsBeingPressed(EDIT_BUTTON_SCROLL_SELECT) )
