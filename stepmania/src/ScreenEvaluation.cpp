@@ -34,7 +34,10 @@ const int NUM_SCORE_DIGITS	=	9;
 // metrics that are common to all ScreenEvaluation classes
 #define BANNER_WIDTH						THEME->GetMetricF("ScreenEvaluation","BannerWidth")
 #define BANNER_HEIGHT						THEME->GetMetricF("ScreenEvaluation","BannerHeight")
-const char* JUDGE_STRING[NUM_JUDGE_LINES] = { "Marvelous", "Perfect", "Great", "Good", "Boo", "Miss", "OK", "MaxCombo" };
+const char* JUDGE_STRING[NUM_JUDGE_LINES] =
+{
+	"Marvelous", "Perfect", "Great", "Good", "Boo", "Miss", "OK", "MaxCombo", "TotalError"
+};
 #define SPIN_GRADES							THEME->GetMetricB("ScreenEvaluation","SpinGrades")
 #define CHEER_DELAY_SECONDS					THEME->GetMetricF("ScreenEvaluation","CheerDelaySeconds")
 #define BAR_ACTUAL_MAX_COMMAND				THEME->GetMetric ("ScreenEvaluation","BarActualMaxCommand")
@@ -70,13 +73,14 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	//
 	// debugging
 	//
-/*	GAMESTATE->m_PlayMode = PLAY_MODE_NONSTOP;
+	/*
+	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
 	GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;
 	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 	GAMESTATE->m_pCurSong = SONGMAN->GetAllSongs()[0];
-	GAMESTATE->m_pCurCourse = SONGMAN->m_pCourses[0];
-	GAMESTATE->m_pCurNotes[PLAYER_1] = GAMESTATE->m_pCurSong->GetNotes( STEPS_TYPE_DANCE_SINGLE, DIFFICULTY_HARD );
-	GAMESTATE->m_pCurNotes[PLAYER_2] = GAMESTATE->m_pCurSong->GetNotes( STEPS_TYPE_DANCE_SINGLE, DIFFICULTY_HARD );
+//	GAMESTATE->m_pCurCourse = SONGMAN->m_pCourses[0];
+	GAMESTATE->m_pCurNotes[PLAYER_1] = GAMESTATE->m_pCurSong->m_apNotes[0];
+	GAMESTATE->m_pCurNotes[PLAYER_2] = GAMESTATE->m_pCurSong->m_apNotes[0];
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_bHoldNotes = false;
 	GAMESTATE->m_PlayerOptions[PLAYER_2].m_bHoldNotes = false;
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed = 2;
@@ -589,7 +593,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 		if( SHOW_JUDGMENT(l) )
 		{
-			m_sprJudgeLabels[l].Load( THEME->GetPathToG("ScreenEvaluation judge labels 1x8") );
+			m_sprJudgeLabels[l].Load( THEME->GetPathToG( "ScreenEvaluation judge labels" ) );
 			m_sprJudgeLabels[l].StopAnimating();
 			m_sprJudgeLabels[l].SetState( l );
 			m_sprJudgeLabels[l].SetName( ssprintf("%sLabel",JUDGE_STRING[l]) );
@@ -622,6 +626,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 				case 5:	iValue = stageStats.iTapNoteScores[p][TNS_MISS];		break;
 				case 6:	iValue = stageStats.iHoldNoteScores[p][HNS_OK];			break;
 				case 7:	iValue = stageStats.iMaxCombo[p];						break;
+				case 8:	iValue = stageStats.iTotalError[p];						break;
 				default:	iValue = 0;	ASSERT(0);
 				}
 				m_textJudgeNumbers[l][p].SetText( ssprintf("%4d",iValue) );
