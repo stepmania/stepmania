@@ -2740,6 +2740,7 @@ GLAPI void APIENTRY glMultiTexCoord4ivARB (GLenum, const GLint *);
 GLAPI void APIENTRY glMultiTexCoord4sARB (GLenum, GLshort, GLshort, GLshort, GLshort);
 GLAPI void APIENTRY glMultiTexCoord4svARB (GLenum, const GLshort *);
 #endif /* GL_GLEXT_PROTOTYPES */
+#endif
 typedef void (APIENTRY * PFNGLACTIVETEXTUREARBPROC) (GLenum texture);
 typedef void (APIENTRY * PFNGLCLIENTACTIVETEXTUREARBPROC) (GLenum texture);
 typedef void (APIENTRY * PFNGLMULTITEXCOORD1DARBPROC) (GLenum target, GLdouble s);
@@ -2774,7 +2775,6 @@ typedef void (APIENTRY * PFNGLMULTITEXCOORD4IARBPROC) (GLenum target, GLint s, G
 typedef void (APIENTRY * PFNGLMULTITEXCOORD4IVARBPROC) (GLenum target, const GLint *v);
 typedef void (APIENTRY * PFNGLMULTITEXCOORD4SARBPROC) (GLenum target, GLshort s, GLshort t, GLshort r, GLshort q);
 typedef void (APIENTRY * PFNGLMULTITEXCOORD4SVARBPROC) (GLenum target, const GLshort *v);
-#endif
 
 #ifndef GL_ARB_transpose_matrix
 #define GL_ARB_transpose_matrix 1
