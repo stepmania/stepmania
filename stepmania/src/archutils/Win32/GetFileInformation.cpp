@@ -4,6 +4,7 @@
 #include "RageUtil.h"
 #include <sys/stat.h>
 #include <windows.h>
+#include <tlhelp32.h>
 
 #pragma comment(lib, "version.lib")
 
@@ -76,6 +77,89 @@ CString FindSystemFile( CString fn )
 		return sPath;
 
 	return "";
+}
+
+/* Get the full path of the process running in iProcessID.  On error, false is
+ * returned and an error message is placed in sName. */
+bool GetProcessFileName( uint32_t iProcessID, CString &sName )
+{
+	/* This method works in everything except for NT4, and only uses kernel32.lib functions. */
+	do {
+		HANDLE hSnap = CreateToolhelp32Snapshot( TH32CS_SNAPMODULE, iProcessID );
+		if( hSnap == NULL )
+		{
+			sName = werr_ssprintf( GetLastError(), "OpenProcess" );
+			break;
+		}
+
+		MODULEENTRY32 me;
+		ZERO( me );
+		me.dwSize = sizeof(MODULEENTRY32);
+		bool bRet = !!Module32First( hSnap, &me );
+		CloseHandle( hSnap );
+
+		if( bRet )
+		{
+			sName = me.szExePath;
+			return true;
+		}
+
+		sName = werr_ssprintf( GetLastError(), "Module32First" );
+	} while(0);
+
+	/* This method only works in NT/2K/XP. */
+	do {
+		static HINSTANCE hPSApi = NULL;
+	    typedef DWORD (WINAPI* pfnGetModuleFileNameEx)(HANDLE,HMODULE,LPSTR,DWORD);
+		static pfnGetModuleFileNameEx pGetModuleFileNameEx = NULL;
+		static bool bTried = false;
+
+		if( !bTried )
+		{
+			bTried = true;
+
+			hPSApi = LoadLibrary("psapi.dll");
+			if( hPSApi == NULL )
+			{
+				sName = werr_ssprintf( GetLastError(), "LoadLibrary" );
+				break;
+			}
+			else
+			{
+				pGetModuleFileNameEx = (pfnGetModuleFileNameEx) GetProcAddress( hPSApi, "GetModuleFileNameExA" );
+				if( pGetModuleFileNameEx == NULL )
+				{
+					sName = werr_ssprintf( GetLastError(), "GetProcAddress" );
+					break;
+				}
+			}
+		}
+
+		if( pGetModuleFileNameEx != NULL )
+		{
+			HANDLE hProc = OpenProcess( PROCESS_VM_READ|PROCESS_QUERY_INFORMATION, NULL, iProcessID );
+			if( hProc == NULL )
+			{
+				sName = werr_ssprintf( GetLastError(), "OpenProcess" );
+				break;
+			}
+
+			char buf[1024];
+			int iRet = pGetModuleFileNameEx( hProc, NULL, buf, 1024 );
+			CloseHandle( hProc );
+
+			if( iRet )
+			{
+				buf[iRet] = 0;
+				sName = buf;
+				return true;
+			}
+
+			sName = werr_ssprintf( GetLastError(), "GetModuleFileNameEx" );
+		}
+	} while(0);
+
+	return false;
 }
 
 /*

@@ -5,6 +5,7 @@
 
 bool GetFileVersion( CString fn, CString &out );
 CString FindSystemFile( CString fn );
+bool GetProcessFileName( uint32_t iProcessID, CString &sName );
 
 #endif
 
