@@ -173,8 +173,8 @@ TitleTo: ちょっときいてな
 *
 # Subtitles:
 # (Title is Graduation.)
-SubtitleFrom: Each Tomorrow
-SubtitleTo: それぞれの明日
+SubtitleFrom: .*Each Tomorrow.*
+SubtitleTo: ~それぞれの明日~
 *
 
 # Artists:
