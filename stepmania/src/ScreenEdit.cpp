@@ -65,16 +65,7 @@ const AutoScreenMessage SM_DoSaveAndExit;
 const AutoScreenMessage SM_DoExit;
 
 const CString INPUT_TIPS_TEXT = 
-#if !defined(XBOX)
-	"Up/Down:\n     change beat\n"
-	"Left/Right:\n     change snap\n"
-	"Number keys:\n     add/remove\n     tap note\n"
-	"Create hold note:\n     Hold a number\n     while moving\n     Up or Down\n"
-	"Space bar:\n     Set area\n     marker\n"
-	"Enter:\n     Area Menu\n"
-	"Escape:\n     Main Menu\n"
-	"F1:\n     Show help\n";
-#else
+#if defined(XBOX)
 	"Up/Down:\n     change beat\n"
 	"Left/Right:\n     change snap\n"
 	"A/B/X/Y:\n     add/remove\n     tap note\n"
@@ -83,6 +74,15 @@ const CString INPUT_TIPS_TEXT =
 	"Start:\n     Area Menu\n"
 	"Select:\n     Main Menu\n"
 	"Black:\n     Show\n     shortcuts\n";
+#else
+	"Up/Down:\n     change beat\n"
+	"Left/Right:\n     change snap\n"
+	"Number keys:\n     add/remove\n     tap note\n"
+	"Create hold note:\n     Hold a number\n     while moving\n     Up or Down\n"
+	"Space bar:\n     Set area\n     marker\n"
+	"Enter:\n     Area Menu\n"
+	"Escape:\n     Main Menu\n"
+	"F1:\n     Show help\n";
 #endif
 
 #if defined(XBOX)
@@ -315,7 +315,18 @@ const MapEditToDI *ScreenEdit::GetCurrentMap() const
 
 static Menu g_EditHelp(
 	"ScreenMiniMenuEditHelp",
-#if !defined(XBOX)
+#if defined(XBOX)
+	MenuRow( -1, "L + Up/Down: Change zoom",						false, true, 0, NULL ),
+	MenuRow( -1, "R + Up/Down: Drag area marker",					false, true, 0, NULL ),
+	MenuRow( -1, "L + Select: Play selection",						false, true, 0, NULL ),
+	MenuRow( -1, "R + Start: Play whole song",						false, true, 0, NULL ),
+	MenuRow( -1, "R + Select: Record",								false, true, 0, NULL ),
+	MenuRow( -1, "L + Black: Toggle assist tick",					false, true, 0, NULL ),
+	MenuRow( -1, "R + White: Insert beat and shift down",			false, true, 0, NULL ),
+	MenuRow( -1, "R + Black: Delete beat and shift up",				false, true, 0, NULL ),
+	MenuRow( -1, "R + button: Lay mine",							false, true, 0, NULL ),
+	MenuRow( -1, "L + button: Add to/remove from right half",		false, true, 0, NULL )
+#else
 	MenuRow( -1, "PgUp/PgDn: jump measure",							false, true, 0, NULL ),
 	MenuRow( -1, "Home/End: jump to first/last beat",				false, true, 0, NULL ),
 	MenuRow( -1, "Ctrl + Up/Down: Change zoom",						false, true, 0, NULL ),
@@ -344,17 +355,6 @@ static Menu g_EditHelp(
 																	false, true, 0, NULL ),
 	MenuRow( -1, "Shift + number: Lay mine",						false, true, 0, NULL ),
 	MenuRow( -1, "Alt + number: Add to/remove from right half",		false, true, 0, NULL )
-#else
-	MenuRow( -1, "L + Up/Down: Change zoom",						false, true, 0, NULL ),
-	MenuRow( -1, "R + Up/Down: Drag area marker",					false, true, 0, NULL ),
-	MenuRow( -1, "L + Select: Play selection",						false, true, 0, NULL ),
-	MenuRow( -1, "R + Start: Play whole song",						false, true, 0, NULL ),
-	MenuRow( -1, "R + Select: Record",								false, true, 0, NULL ),
-	MenuRow( -1, "L + Black: Toggle assist tick",					false, true, 0, NULL ),
-	MenuRow( -1, "R + White: Insert beat and shift down",			false, true, 0, NULL ),
-	MenuRow( -1, "R + Black: Delete beat and shift up",				false, true, 0, NULL ),
-	MenuRow( -1, "R + button: Lay mine",							false, true, 0, NULL ),
-	MenuRow( -1, "L + button: Add to/remove from right half",		false, true, 0, NULL )
 #endif
 );
 
