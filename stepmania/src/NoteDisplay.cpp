@@ -445,6 +445,7 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 		m_sprHoldParts.SetXY( fXPos, fYPos );
 		m_sprHoldParts.SetDiffuse( colorGrayPart );
 		m_sprHoldParts.SetGlow( D3DXCOLOR(1,1,1,fGlow) );
+		m_sprHoldParts.StopUsingCustomCoords();
 		m_sprHoldParts.SetState( 0 );
 		m_sprHoldParts.Draw();
 	}
