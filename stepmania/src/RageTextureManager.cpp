@@ -52,6 +52,7 @@ RageTextureManager*		TEXTUREMAN		= NULL;
 RageTextureManager::RageTextureManager()
 {
 	m_iNoWarnAboutOddDimensions = 0;
+	m_TexturePolicy = RageTexture::TEX_DEFAULT;
 	m_bDelayedDelete = false;
 	m_iMovieColorDepth = 16;
 	m_iTextureColorDepth = 16;

@@ -36,6 +36,9 @@ public:
 	bool GetDelayedDelete() { return m_bDelayedDelete; };
 	int GetMaxTextureResolution() { return m_iMaxTextureResolution; };
 
+	RageTexture::TexPolicy GetDefaultTexturePolicy() const { return m_TexturePolicy; }
+	void SetDefaultTexturePolicy( RageTexture::TexPolicy p ) { m_TexturePolicy = p; }
+
 	// call this between Screens
 	void DeleteCachedTextures()	{ GarbageCollect(screen_changed); }
 	
@@ -65,6 +68,7 @@ protected:
 
 	std::map<RageTextureID, RageTexture*> m_mapPathToTexture;
 	int m_iNoWarnAboutOddDimensions;
+	RageTexture::TexPolicy m_TexturePolicy;
 };
 
 extern RageTextureManager*	TEXTUREMAN;	// global and accessable from anywhere in our program

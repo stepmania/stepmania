@@ -21,7 +21,7 @@ RageTexture::RageTexture( RageTextureID name ):
 //	LOG->Trace( "RageTexture::RageTexture()" );
 
 	m_iRefCount = 1;
-	m_Policy = TEX_DEFAULT;
+	m_Policy = TEXTUREMAN->GetDefaultTexturePolicy();
 	m_bWasUsed = false;
 
 //	SetActualID();
