@@ -534,7 +534,6 @@ CString DerefRedir(const CString &path)
 	if( GetExtension(path) != "redir" )
 	{
 		CString path2 = path;
-		ResolvePath( path2 );
 		return path2;
 	}
 
@@ -549,8 +548,6 @@ CString DerefRedir(const CString &path)
 	CString path2 = Dirname(path) + sNewFileName;
 
 	CollapsePath( path2 );
-
-	ResolvePath( path2 );
 
 	if( !DoesFileExist(path2) )
 		RageException::Throw( "The redirect '%s' references a file '%s' which doesn't exist.", path.c_str(), path2.c_str() );

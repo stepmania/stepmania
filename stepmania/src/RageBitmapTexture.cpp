@@ -81,7 +81,6 @@ void RageBitmapTexture::Create()
 
 	/* Create (and return) a surface ready to be loaded to OpenGL */
 	/* Load the image into an SDL surface. */
-	ResolvePath( actualID.filename );
 	SDL_Surface *img = SDL_LoadImage( actualID.filename );
 
 	/* Tolerate corrupt/unknown images. */
