@@ -25,6 +25,7 @@
 #include "ModeChoice.h"
 #include "NoteFieldPositioning.h"
 #include "Character.h"
+#include "UnlockSystem.h"
 
 
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
@@ -39,13 +40,15 @@ GameState::GameState()
 //	Reset();
 	m_pPosition = NULL;
 
+	m_pUnlockingSys = new UnlockSystem;
 	ResetLastRanking();
 	ReloadCharacters();
 }
 
 GameState::~GameState()
 {
-	SAFE_DELETE( m_pPosition );
+	delete m_pUnlockingSys;
+	delete m_pPosition;
 }
 
 void GameState::Reset()

@@ -18,7 +18,6 @@
 #include "Style.h"
 #include "Grade.h"
 #include "StageStats.h"
-#include "UnlockSystem.h"
 
 class Song;
 class Notes;
@@ -28,6 +27,7 @@ class StyleDef;
 struct ModeChoice;
 class NoteFieldPositioning;
 class Character;
+class UnlockSystem;
 
 class GameState
 {
@@ -43,7 +43,7 @@ public:
 	//
 	// Main state info
 	//
-	UnlockSystem	UnlockingSys;
+	UnlockSystem	*m_pUnlockingSys;
 	Game			m_CurGame;
 	Style			m_CurStyle;
 	bool			m_bPlayersCanJoin;	// true if it's not too late for a player to join - this only has an effect on the credits message

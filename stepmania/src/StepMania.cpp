@@ -48,6 +48,7 @@
 #include "InputQueue.h"
 #include "SongCacheIndex.h"
 #include "BannerCache.h"
+#include "UnlockSystem.h"
 
 /* This is also a global class; we own it. */
 ArchHooks *HOOKS = NULL;
@@ -533,7 +534,7 @@ int main(int argc, char* argv[])
 	ResetGame();
 
 	/* Load the unlocks into memory */
-	GAMESTATE->UnlockingSys.LoadFromDATFile("Data/Unlocks.dat");
+	GAMESTATE->m_pUnlockingSys->LoadFromDATFile("Data/Unlocks.dat");
 
 	/* Run the main loop. */
 	GameLoop();
