@@ -235,7 +235,7 @@ File "smpackage.exe"
 ;Rename "$INSTDIR\Data\stepmania.ini" "$INSTDIR\stepmania.ini"
 
 ; Create Start Menu icons
-SetShellVarContext all	; install in "All Users" if NT
+SetShellVarContext current  # 	'all' doesn't work on Win9x
 CreateDirectory "$SMPROGRAMS\${PRODUCT_ID}\"
 CreateShortCut "$DESKTOP\Play ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\stepmania.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME_VER}.lnk" "$INSTDIR\stepmania.exe"
