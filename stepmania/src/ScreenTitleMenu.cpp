@@ -65,8 +65,7 @@ const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
 
 const ScreenMessage SM_PlayAttract			=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+12);
-const ScreenMessage SM_FadeToDemonstration	=	ScreenMessage(SM_User+13);
-const ScreenMessage SM_GoToDemonstration	=	ScreenMessage(SM_User+14);
+const ScreenMessage SM_GoToDemonstration	=	ScreenMessage(SM_User+13);
 
 
 ScreenTitleMenu::ScreenTitleMenu()
@@ -174,7 +173,6 @@ ScreenTitleMenu::ScreenTitleMenu()
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","title menu music") );
 
 	this->SendScreenMessage( SM_PlayAttract, SECONDS_BETWEEN_ATTRACT );
-	this->SendScreenMessage( SM_FadeToDemonstration, SECONDS_BEFORE_DEMONSTRATION );
 }
 
 
@@ -191,13 +189,78 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 	if( m_Fade.IsClosing() )
 		return;
 
+	/* Reset the demonstration timer when a key is pressed. */
+	TimeToDemonstration.GetDeltaTime();
+
 	if(DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F1 && type == IET_FIRST_PRESS)
 	{
-		this->SendScreenMessage( SM_FadeToDemonstration, 0 );
+		FadeToDemonstration();
 		return;
 	}
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
+}
+
+void ScreenTitleMenu::Update( float fDelta )
+{
+	if(TimeToDemonstration.PeekDeltaTime() >= SECONDS_BEFORE_DEMONSTRATION)
+	{
+		FadeToDemonstration();
+		TimeToDemonstration.GetDeltaTime();
+	}
+	Screen::Update(fDelta);
+}
+
+void ScreenTitleMenu::FadeToDemonstration()
+{
+	// Set up the game state for a demonstration
+	switch( GAMESTATE->m_CurGame )
+	{
+	case GAME_DANCE:	GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;			break; 
+	case GAME_PUMP:		GAMESTATE->m_CurStyle = STYLE_PUMP_VERSUS;			break; 
+	case GAME_EZ2:		GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;	break; 
+	case GAME_PARA:		GAMESTATE->m_CurStyle = STYLE_PARA_SINGLE;			break; 
+	case GAME_DS3DDX:	GAMESTATE->m_CurStyle = STYLE_DS3DDX_SINGLE;		break;
+	case GAME_BM:	GAMESTATE->m_CurStyle = STYLE_BM_SINGLE;				break;
+	default:	ASSERT(0);
+	}
+
+	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
+
+	if(!SONGMAN->ChooseRandomSong())
+	{
+		// Couldn't find Song/Notes to play.  Abort demonstration!
+		GAMESTATE->Reset();
+		return;
+	}
+
+	ASSERT( GAMESTATE->m_pCurSong );
+
+	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+
+	// choose some cool options
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsPlayerEnabled(p) )
+			continue;
+
+		if( RandomFloat(0,1)>0.8f )
+			GAMESTATE->m_PlayerOptions[p].m_fArrowScrollSpeed = 1.5f;
+		GAMESTATE->m_PlayerOptions[p].m_bEffects[ rand()%PlayerOptions::NUM_EFFECT_TYPES ] = true;
+		if( RandomFloat(0,1)>0.9f )
+			GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_HIDDEN;
+		if( RandomFloat(0,1)>0.9f )
+			GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_SUDDEN;
+		if( RandomFloat(0,1)>0.7f )
+			GAMESTATE->m_PlayerOptions[p].m_bReverseScroll = true;
+		if( RandomFloat(0,1)>0.8f )
+			GAMESTATE->m_PlayerOptions[p].m_bDark = true;
+	}
+	GAMESTATE->m_SongOptions.m_LifeType = (randomf(0,1)>0.8f) ? SongOptions::LIFE_BATTERY : SongOptions::LIFE_BAR;
+	GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
+
+	GAMESTATE->m_bDemonstration = true;
+	m_Fade.CloseWipingRight( SM_GoToDemonstration );
 }
 
 void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
@@ -244,58 +307,6 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 		default:
 			RAGE_ASSERT_M(0, "CHOICE_EXIT reached?");	// should never get here
 			break;
-		}
-		break;
-	case SM_FadeToDemonstration:
-		{	
-			// Set up the game state for a demonstration
-			switch( GAMESTATE->m_CurGame )
-			{
-			case GAME_DANCE:	GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;			break; 
-			case GAME_PUMP:		GAMESTATE->m_CurStyle = STYLE_PUMP_VERSUS;			break; 
-			case GAME_EZ2:		GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;	break; 
-			case GAME_PARA:		GAMESTATE->m_CurStyle = STYLE_PARA_SINGLE;			break; 
-			case GAME_DS3DDX:	GAMESTATE->m_CurStyle = STYLE_DS3DDX_SINGLE;		break;
-			case GAME_BM:	GAMESTATE->m_CurStyle = STYLE_BM_SINGLE;				break;
-			default:	ASSERT(0);
-			}
-
-			GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
-
-			if(!SONGMAN->ChooseRandomSong())
-			{
-				// Couldn't find Song/Notes to play.  Abort demonstration!
-				GAMESTATE->Reset();
-				return;
-			}
-
-			ASSERT( GAMESTATE->m_pCurSong );
-
-			GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-
-			// choose some cool options
-			for( int p=0; p<NUM_PLAYERS; p++ )
-			{
-				if( !GAMESTATE->IsPlayerEnabled(p) )
-					continue;
-
-				if( RandomFloat(0,1)>0.8f )
-					GAMESTATE->m_PlayerOptions[p].m_fArrowScrollSpeed = 1.5f;
-				GAMESTATE->m_PlayerOptions[p].m_bEffects[ rand()%PlayerOptions::NUM_EFFECT_TYPES ] = true;
-				if( RandomFloat(0,1)>0.9f )
-					GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_HIDDEN;
-				if( RandomFloat(0,1)>0.9f )
-					GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_SUDDEN;
-				if( RandomFloat(0,1)>0.7f )
-					GAMESTATE->m_PlayerOptions[p].m_bReverseScroll = true;
-				if( RandomFloat(0,1)>0.8f )
-					GAMESTATE->m_PlayerOptions[p].m_bDark = true;
-			}
-			GAMESTATE->m_SongOptions.m_LifeType = (randomf(0,1)>0.8f) ? SongOptions::LIFE_BATTERY : SongOptions::LIFE_BAR;
-			GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
-		
-			GAMESTATE->m_bDemonstration = true;
-			m_Fade.CloseWipingRight( SM_GoToDemonstration );
 		}
 		break;
 	case SM_GoToDemonstration:

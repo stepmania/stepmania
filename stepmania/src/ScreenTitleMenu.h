@@ -15,7 +15,7 @@
 #include "TransitionFade.h"
 #include "RandomSample.h"
 #include "BGAnimation.h"
-
+#include "RageTimer.h"
 
 
 class ScreenTitleMenu : public Screen
@@ -25,6 +25,7 @@ public:
 	virtual ~ScreenTitleMenu();
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
+	virtual void Update( float fDelta );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	enum TitleMenuChoice {
@@ -50,6 +51,7 @@ private:
 	void MenuDown( PlayerNumber pn );
 	void MenuBack( PlayerNumber pn );
 	void MenuStart( PlayerNumber pn );
+	void FadeToDemonstration();
 
 	TitleMenuChoice m_TitleMenuChoice;
 
@@ -66,6 +68,8 @@ private:
 	RandomSample		m_soundChange;
 	RandomSample		m_soundSelect;
 	RandomSample		m_soundInvalid;
+
+	RageTimer			TimeToDemonstration;
 };
 
 
