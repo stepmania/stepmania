@@ -20,7 +20,7 @@ bool ReceptorArrow::Load( CString NoteSkin, PlayerNumber pn, int iColNo )
 	m_PlayerNumber = pn;
 	m_iColNo = iColNo;
 
-        NoteFieldMode &mode = g_NoteFieldMode[pn];
+    NoteFieldMode &mode = g_NoteFieldMode[pn];
 	CString sButton = mode.GrayButtonNames[iColNo];
 	if( sButton == "" )
 		sButton = NoteSkinManager::ColToButtonName( iColNo );
@@ -28,9 +28,9 @@ bool ReceptorArrow::Load( CString NoteSkin, PlayerNumber pn, int iColNo )
 	CString sPath;
 	m_pReceptorWaiting.Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin,sButton,"receptor waiting") );
 	m_pReceptorGo.Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin,sButton,"receptor go") );
-	for( int i=0; i<NUM_TAP_NOTE_SCORES; i++ )
+	FOREACH_TapNoteScore( i )
 	{
-		CString sJudge = TapNoteScoreToString( (TapNoteScore)i );
+		CString sJudge = TapNoteScoreToString( i );
 		CString sCommand = Capitalize(sJudge)+"Command";
 		m_sScoreCommand[i] = NOTESKIN->GetMetric( NoteSkin, m_sName, sCommand );
 	}

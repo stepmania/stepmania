@@ -5,7 +5,7 @@
 
 GhostArrow::GhostArrow()
 {
-	for( int i=0; i<NUM_TAP_NOTE_SCORES; i++ )
+	FOREACH_TapNoteScore( i )
 	{
 		m_spr[i].SetHidden( true );
 		this->AddChild( &m_spr[i] );
@@ -14,9 +14,9 @@ GhostArrow::GhostArrow()
 
 void GhostArrow::Load( CString sNoteSkin, CString sButton, CString sElement )
 {
-	for( int i=0; i<NUM_TAP_NOTE_SCORES; i++ )
+	FOREACH_TapNoteScore( i )
 	{
-		CString sJudge = TapNoteScoreToString( (TapNoteScore)i );
+		CString sJudge = TapNoteScoreToString( i );
 		
 		CString sFullElement = sElement  + " " + sJudge;
 
@@ -27,9 +27,9 @@ void GhostArrow::Load( CString sNoteSkin, CString sButton, CString sElement )
 		m_spr[i].Load( sPath );
 	}
 
-	for( int i=0; i<NUM_TAP_NOTE_SCORES; i++ )
+	FOREACH_TapNoteScore( i )
 	{
-		CString sJudge = TapNoteScoreToString( (TapNoteScore)i );
+		CString sJudge = TapNoteScoreToString( i );
 		CString sCommand = Capitalize(sJudge)+"Command";
 		m_sScoreCommand[i] = NOTESKIN->GetMetric( sNoteSkin, m_sName, sCommand );
 	}
@@ -42,7 +42,7 @@ void GhostArrow::Init( PlayerNumber pn )
 
 void GhostArrow::Step( TapNoteScore score )
 {
-	for( int i=0; i<NUM_TAP_NOTE_SCORES; i++ )
+	FOREACH_TapNoteScore( i )
 	{
 		// HACK: never hide the mine explosion
 		if( i == TNS_HIT_MINE )
