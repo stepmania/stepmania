@@ -432,6 +432,7 @@ void NetworkSyncManager::StartRequest(short position)
 		m_EvalPlayerData[i].difficulty=(Difficulty)0;
 		for (int j=0; j<NETNUMTAPSCORES; ++j)
 			m_EvalPlayerData[i].tapScores[j] = 0;
+		m_EvalPlayerData[i].playerOptions = "";
 	}
 
 	//Block until go is recieved.
