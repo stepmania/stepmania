@@ -22,17 +22,19 @@
 #include "OptionIcon.h"
 
 
-const unsigned MAX_OPTION_LINES = 20;
-const unsigned MAX_OPTIONS_PER_LINE = 20;
+const unsigned MAX_OPTION_LINES = 40;
+const unsigned MAX_VISIBLE_VALUES_PER_LINE = 20;
 
 struct OptionRow
 {
 	CString name;
+	bool bOneChoiceForAllPlayers;
 	vector<CString> choices;
 
-	OptionRow( CString n, CString c0="", CString c1="", CString c2="", CString c3="", CString c4="", CString c5="", CString c6="", CString c7="", CString c8="", CString c9="", CString c10="", CString c11="", CString c12="", CString c13="", CString c14="", CString c15="", CString c16="", CString c17="", CString c18="", CString c19="" )
+	OptionRow( CString n, int b, CString c0="", CString c1="", CString c2="", CString c3="", CString c4="", CString c5="", CString c6="", CString c7="", CString c8="", CString c9="", CString c10="", CString c11="", CString c12="", CString c13="", CString c14="", CString c15="", CString c16="", CString c17="", CString c18="", CString c19="" )
 	{
 		name = n;
+		bOneChoiceForAllPlayers = !!b;
 #define PUSH( c )	if(c!="") choices.push_back(c);
 		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);PUSH(c12);PUSH(c13);PUSH(c14);PUSH(c15);PUSH(c16);PUSH(c17);PUSH(c18);PUSH(c19);
 #undef PUSH
@@ -41,8 +43,8 @@ struct OptionRow
 
 enum InputMode 
 { 
-	INPUTMODE_PLAYERS, 	// each player controls their own cursor
-	INPUTMODE_BOTH		// both players control the same cursor
+	INPUTMODE_INDIVIDUAL, 	// each player controls their own cursor
+	INPUTMODE_TOGETHER		// both players control the same cursor
 };
 
 
@@ -50,7 +52,7 @@ class ScreenOptions : public Screen
 {
 public:
 	ScreenOptions( CString sClassName, bool bEnableTimer );
-	void Init( InputMode im, OptionRow OptionRow[], int iNumOptionLines, bool bUseIcons, bool bLoadExplanations );
+	void Init( InputMode im, OptionRow OptionRow[], int iNumOptionLines, bool bLoadExplanations );
 	virtual ~ScreenOptions();
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -80,8 +82,9 @@ protected:
 	virtual void GoToNextState() = 0;
 	virtual void GoToPrevState() = 0;
 
-	void MenuLeft( PlayerNumber pn );
-	void MenuRight( PlayerNumber pn );
+	void MenuLeft( PlayerNumber pn ) { ChangeValue(pn,-1); }
+	void MenuRight( PlayerNumber pn ) { ChangeValue(pn,+1); }
+	void ChangeValue( PlayerNumber pn, int iDelta );
 	void MenuUp( PlayerNumber pn );
 	void MenuDown( PlayerNumber pn );
 
@@ -95,7 +98,6 @@ protected:
 private:
 	CString			m_sName;
 	InputMode		m_InputMode;
-	bool			m_bUseIcons;
 	bool			m_bLoadExplanations;
 
 	int				m_iNumOptionRows;
@@ -104,7 +106,7 @@ private:
 	Sprite			m_sprPage;
 	Sprite			m_sprBullets[MAX_OPTION_LINES];
 	BitmapText		m_textTitles[MAX_OPTION_LINES];
-	BitmapText		m_textItems[MAX_OPTION_LINES][MAX_OPTIONS_PER_LINE];	// this array has to be big enough to hold all of the options
+	BitmapText		m_textItems[MAX_OPTION_LINES][MAX_VISIBLE_VALUES_PER_LINE];	// this array has to be big enough to hold all of the options
 
 	bool m_bRowIsLong[MAX_OPTION_LINES];	// goes off edge of screen
 

@@ -34,12 +34,12 @@ enum {
 };
 
 OptionRow g_BackgroundOptionsLines[NUM_BACKGROUND_OPTIONS_LINES] = {
-	OptionRow( "Mode",					"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES" ),
-	OptionRow( "Brightness",			"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%" ),
-	OptionRow( "Danger",				"HIDE","SHOW" ),
-	OptionRow( "Dancing\nCharacters",	"DEFAULT TO OFF","DEFAULT TO RANDOM" ),
-	OptionRow( "Show Beginner\nHelper",	"OFF","ON" ),
-	OptionRow( "Random\nBackgrounds",   "5","10","15","20" ),
+	OptionRow( "Mode",					true, "OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES" ),
+	OptionRow( "Brightness",			true, "0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%" ),
+	OptionRow( "Danger",				true, "HIDE","SHOW" ),
+	OptionRow( "Dancing\nCharacters",	true, "DEFAULT TO OFF","DEFAULT TO RANDOM" ),
+	OptionRow( "Show Beginner\nHelper",	true, "OFF","ON" ),
+	OptionRow( "Random\nBackgrounds",   true, "5","10","15","20" ),
 };
 
 ScreenBackgroundOptions::ScreenBackgroundOptions() :
@@ -48,10 +48,10 @@ ScreenBackgroundOptions::ScreenBackgroundOptions() :
 	LOG->Trace( "ScreenBackgroundOptions::ScreenBackgroundOptions()" );
 
 	Init( 
-		INPUTMODE_BOTH, 
+		INPUTMODE_TOGETHER, 
 		g_BackgroundOptionsLines, 
 		NUM_BACKGROUND_OPTIONS_LINES,
-		false, true );
+		true );
 	m_Menu.m_MenuTimer.Disable();
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenMachineOptions music") );

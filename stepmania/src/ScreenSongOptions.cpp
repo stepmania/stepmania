@@ -34,13 +34,13 @@ enum {
 };
 
 OptionRow g_SongOptionsLines[NUM_SONG_OPTIONS_LINES] = {
-	OptionRow( "Life\nType",	"BAR","BATTERY" ),	
-	OptionRow( "Bar\nDrain",	"NORMAL","NO RECOVER","SUDDEN DEATH" ),	
-	OptionRow( "Bat\nLives",	"1","2","3","4","5","6","7","8","9","10" ),	
-	OptionRow( "Fail",			"ARCADE","END OF SONG","OFF" ),	
-	OptionRow( "Assist\nTick",	"OFF", "ON" ),
-	OptionRow( "Rate",			"0.3x","0.4x","0.5x","0.6x","0.7x","0.8x","0.9x","1.0x","1.1x","1.2x","1.3x","1.4x","1.5x","1.6x","1.7x","1.8x","1.9x","2.0x" ),	
-	OptionRow( "Auto\nAdjust",	"OFF", "ON" ),	
+	OptionRow( "Life\nType",	true, "BAR","BATTERY" ),	
+	OptionRow( "Bar\nDrain",	true, "NORMAL","NO RECOVER","SUDDEN DEATH" ),	
+	OptionRow( "Bat\nLives",	true, "1","2","3","4","5","6","7","8","9","10" ),	
+	OptionRow( "Fail",			true, "ARCADE","END OF SONG","OFF" ),	
+	OptionRow( "Assist\nTick",	true, "OFF", "ON" ),
+	OptionRow( "Rate",			true, "0.3x","0.4x","0.5x","0.6x","0.7x","0.8x","0.9x","1.0x","1.1x","1.2x","1.3x","1.4x","1.5x","1.6x","1.7x","1.8x","1.9x","2.0x" ),	
+	OptionRow( "Auto\nAdjust",	true, "OFF", "ON" ),	
 };
 
 /* Get the next screen we'll go to when finished. */
@@ -55,10 +55,10 @@ ScreenSongOptions::ScreenSongOptions() :
 {
 	LOG->Trace( "ScreenSongOptions::ScreenSongOptions()" );
 
-	Init( INPUTMODE_BOTH, 
+	Init( INPUTMODE_TOGETHER, 
 		g_SongOptionsLines, 
 		NUM_SONG_OPTIONS_LINES,
-		false, false );
+		false );
 
 	/* If we're coming in from "press start for more options", we need a different
 	 * fade in. XXX: this is a hack */

@@ -74,7 +74,7 @@ ScreenOptions::ScreenOptions( CString sClassName, bool bEnableTimer ) : Screen("
 	memset(&m_bRowIsLong, 0, sizeof(m_bRowIsLong));
 }
 
-void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLines, bool bUseIcons, bool bLoadExplanations )
+void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLines, bool bLoadExplanations )
 {
 	LOG->Trace( "ScreenOptions::Set()" );
 
@@ -82,51 +82,61 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLin
 	m_InputMode = im;
 	m_OptionRow = OptionRow;
 	m_iNumOptionRows = iNumOptionLines;
-	m_bUseIcons = bUseIcons;
 	m_bLoadExplanations = bLoadExplanations;
 
 
 	this->ImportOptions();
-	if( m_InputMode == INPUTMODE_BOTH )
-	{
-		for( unsigned l=0; l<MAX_OPTION_LINES; l++ )
+	for( unsigned l=0; l<MAX_OPTION_LINES; l++ )
+		if( m_OptionRow[l].bOneChoiceForAllPlayers )
 			m_iSelectedOption[PLAYER_2][l] = m_iSelectedOption[PLAYER_1][l];
+
+
+
+	int p;
+
+	// init highlights
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsHumanPlayer(p) )
+			continue;	// skip
+
+		m_Highlight[p].Load( (PlayerNumber)p, false );
+		m_framePage.AddChild( &m_Highlight[p] );
 	}
 
-	// init highlights and underlines
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	// init underlines
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
 
 		for( int l=0; l<m_iNumOptionRows; l++ )
 		{	
-			m_Underline[p][l].Load( (PlayerNumber)p, true );
-			m_framePage.AddChild( &m_Underline[p][l] );
-
 			m_OptionIcons[p][l].Load( (PlayerNumber)p, "", false );
 			m_framePage.AddChild( &m_OptionIcons[p][l] );
+
+			m_Underline[p][l].Load( (PlayerNumber)p, true );
+			m_framePage.AddChild( &m_Underline[p][l] );
 		}
-
-		m_Highlight[p].Load( (PlayerNumber)p, false );
-		m_framePage.AddChild( &m_Highlight[p] );
-
 	}
 
 	// init text
-	int i;
-	for( i=0; i<m_iNumOptionRows; i++ )		// foreach line
+	int r;
+	for( r=0; r<m_iNumOptionRows; r++ )		// foreach line
 	{
-		m_framePage.AddChild( &m_sprBullets[i] );
+		m_framePage.AddChild( &m_sprBullets[r] );
 
-		m_framePage.AddChild( &m_textTitles[i] );		
+		m_framePage.AddChild( &m_textTitles[r] );		
 
-		for( unsigned j=0; j<m_OptionRow[i].choices.size(); j++ )
-			m_framePage.AddChild( &m_textItems[i][j] );
+		int iNumChoices = min( m_OptionRow[r].choices.size(), MAX_VISIBLE_VALUES_PER_LINE );
+		for( unsigned c=0; c<iNumChoices; c++ )
+		{
+			m_framePage.AddChild( &m_textItems[r][c] );
+		}
 	}
 
 	// TRICKY:  Add one more item.  This will be "EXIT"
-	m_framePage.AddChild( &m_textItems[i][0] );
+	m_framePage.AddChild( &m_textItems[r][0] );
 
 	// add explanation here so it appears on top
 	m_textExplanation.LoadFromFont( THEME->GetPathToF("ScreenOptions explanation") );
@@ -148,17 +158,17 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLin
 	/* It's tweening into position, but on the initial tween-in we only want to
 	 * tween in the whole page at once.  Since the tweens are nontrivial, it's
 	 * easiest to queue the tweens and then force them to finish. */
-	for( i=0; i<m_iNumOptionRows; i++ )	// foreach options line
+	for( r=0; r<m_iNumOptionRows; r++ )	// foreach options row
 	{
-		m_textTitles[i].FinishTweening();
-		m_sprBullets[i].FinishTweening();
-		for( unsigned j=0; j<m_OptionRow[i].choices.size(); j++ )
-			m_textItems[i][j].FinishTweening();
+		m_textTitles[r].FinishTweening();
+		m_sprBullets[r].FinishTweening();
+		for( unsigned c=0; c<m_OptionRow[r].choices.size(); c++ )
+			m_textItems[r][c].FinishTweening();
 
 		for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
 		{
-			m_Underline[p][i].FinishTweening();
-			m_OptionIcons[p][i].FinishTweening();
+			m_Underline[p][r].FinishTweening();
+			m_OptionIcons[p][r].FinishTweening();
 		}
 	}
 }
@@ -255,8 +265,9 @@ void ScreenOptions::InitOptionsText()
 				option.EnableShadow( false );
 
 				option.SetY( fY );
-				/* If we're in INPUTMODE_BOTH, center the items. */
-				if( m_InputMode == INPUTMODE_BOTH )
+				
+				/* if choices are locked together, center the item. */
+				if( optline.bOneChoiceForAllPlayers )
 					option.SetX( (ITEM_X[0]+ITEM_X[1])/2 );
 				else
 					option.SetX( ITEM_X[p] );
@@ -343,6 +354,7 @@ void ScreenOptions::RefreshIcons()
 
 		for( int i=0; i<m_iNumOptionRows; i++ )	// foreach options line
 		{
+			OptionRow &row = m_OptionRow[i];
 			OptionIcon &icon = m_OptionIcons[p][i];
 
 			int iSelection = m_iSelectedOption[p][i];
@@ -359,10 +371,13 @@ void ScreenOptions::RefreshIcons()
 				RageException::Throw( "%s", error.c_str() );
 			}
 
-			CString sSelection = m_OptionRow[i].choices[iSelection];
+			CString sSelection = row.choices[iSelection];
 			if( sSelection == "ON" )
 				sSelection = m_OptionRow[i].name;
-			icon.Load( (PlayerNumber)p, m_bUseIcons ? sSelection : "", false );
+			if( row.bOneChoiceForAllPlayers )
+				icon.Load( (PlayerNumber)p, "", false );
+			else
+				icon.Load( (PlayerNumber)p, sSelection, false );
 		}
 	}
 }
@@ -469,7 +484,7 @@ void ScreenOptions::UpdateEnabledDisabled()
 		}
 
 		/* Hide the text of all but the first active player, so we don't overdraw. */
-		if( m_InputMode == INPUTMODE_BOTH && m_bRowIsLong[i] )
+		if( m_InputMode == INPUTMODE_TOGETHER && m_bRowIsLong[i] )
 		{
 			bool one = false;
 			for( unsigned j=0; j<NUM_PLAYERS; j++ )
@@ -579,7 +594,7 @@ void ScreenOptions::PositionItems()
 	const int P2Choice = GAMESTATE->IsHumanPlayer(PLAYER_2)? m_iCurrentRow[PLAYER_2]: m_iCurrentRow[PLAYER_1];
 
 	const bool BothPlayersActivated = GAMESTATE->IsHumanPlayer(PLAYER_1) && GAMESTATE->IsHumanPlayer(PLAYER_2);
-	if( m_InputMode == INPUTMODE_BOTH || !BothPlayersActivated )
+	if( m_InputMode == INPUTMODE_TOGETHER || !BothPlayersActivated )
 	{
 		/* Simply center the cursor. */
 		first_start = max( P1Choice - halfsize, 0 );
@@ -717,11 +732,12 @@ void ScreenOptions::MenuStart( PlayerNumber pn )
 	}
 }
 
-void ScreenOptions::MenuLeft( PlayerNumber pn ) 
+
+void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta ) 
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( m_InputMode == INPUTMODE_PLAYERS  &&  p != pn )
+		if( m_InputMode == INPUTMODE_INDIVIDUAL  &&  p != pn )
 			continue;	// skip
 
 		int iCurRow = m_iCurrentRow[p];
@@ -729,11 +745,23 @@ void ScreenOptions::MenuLeft( PlayerNumber pn )
 		if( iCurRow == m_iNumOptionRows	)	// EXIT is selected
 			return;		// don't allow a move
 
-		const int iNumOptions = m_OptionRow[iCurRow].choices.size();
+		OptionRow &row = m_OptionRow[iCurRow];
+		const int iNumOptions = row.choices.size();
 		if( iNumOptions == 1 )
 			continue;
 
-		m_iSelectedOption[p][iCurRow] = (m_iSelectedOption[p][iCurRow]-1+iNumOptions) % iNumOptions;
+		int iNewSel = (m_iSelectedOption[p][iCurRow]+iDelta+iNumOptions) % iNumOptions;
+
+		if( row.bOneChoiceForAllPlayers )
+		{
+			for( int p2=0; p2<NUM_PLAYERS; p2++ )
+				m_iSelectedOption[p2][iCurRow] = iNewSel;
+		}
+		else
+		{
+			m_iSelectedOption[p][iCurRow] = iNewSel;
+		}
+
 		
 		UpdateText( (PlayerNumber)p );
 	}
@@ -741,35 +769,12 @@ void ScreenOptions::MenuLeft( PlayerNumber pn )
 	OnChange();
 }
 
-void ScreenOptions::MenuRight( PlayerNumber pn ) 
-{
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		if( m_InputMode == INPUTMODE_PLAYERS  &&  p != pn )
-			continue;	// skip
-
-		int iCurRow = m_iCurrentRow[p];
-
-		if( iCurRow == m_iNumOptionRows	)	// EXIT is selected
-			return;		// don't allow a move
-
-		const int iNumOptions = m_OptionRow[iCurRow].choices.size();
-		if( iNumOptions == 1 )
-			continue;
-
-		m_iSelectedOption[p][iCurRow] = (m_iSelectedOption[p][iCurRow]+1) % iNumOptions;
-		
-		UpdateText( (PlayerNumber)p );
-	}
-	m_SoundChangeCol.Play();
-	OnChange();
-}
 
 void ScreenOptions::MenuUp( PlayerNumber pn ) 
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( m_InputMode == INPUTMODE_PLAYERS  &&  p != pn )
+		if( m_InputMode == INPUTMODE_INDIVIDUAL  &&  p != pn )
 			continue;	// skip
 
 		if( m_iCurrentRow[p] == 0 )	// on first row
@@ -786,7 +791,7 @@ void ScreenOptions::MenuDown( PlayerNumber pn )
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( m_InputMode == INPUTMODE_PLAYERS  &&  p != pn )
+		if( m_InputMode == INPUTMODE_INDIVIDUAL  &&  p != pn )
 			continue;	// skip
 
 		if( m_iCurrentRow[p] == m_iNumOptionRows )	// on exit

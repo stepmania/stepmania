@@ -42,22 +42,36 @@ enum {
 	PO_PERSPECTIVE,
 	PO_STEP,
 	PO_CHARACTER,
+	SO_LIFE,
+	SO_DRAIN,
+	SO_BAT_LIVES,
+	SO_FAIL,
+	SO_ASSIST,
+	SO_RATE,
+	SO_AUTOSYNC,
 	NUM_PLAYER_OPTIONS_LINES
 };
 OptionRow g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
-	OptionRow( "Speed",				"x0.25","x0.5","x0.75","x1","x1.5","x2","x3","x5","x8","C200","C300" ),	
-	OptionRow( "Acceler\n-ation",	"OFF","BOOST","BRAKE","WAVE","EXPAND","BOOMERANG" ),	
-	OptionRow( "Effect",			"OFF","DRUNK","DIZZY","MINI","FLIP","TORNADO","TIPSY" ),	
-	OptionRow( "Appear\n-ance",		"VISIBLE","HIDDEN","SUDDEN","STEALTH","BLINK", "R.VANISH" ),	
-	OptionRow( "Turn",				"OFF","MIRROR","LEFT","RIGHT","SHUFFLE","S.SHUFFLE" ),	
-	OptionRow( "Trans\n-form",		"OFF","LITTLE","WIDE","BIG","QUICK","SKIPPY","MINES" ),	
-	OptionRow( "Scroll",			"STANDARD","REVERSE","SPLIT","ALTERNATE" ),	
-	OptionRow( "Note\nSkin",		"" ),	
-	OptionRow( "Holds",				"OFF","ON" ),	
-	OptionRow( "Dark",				"OFF","ON" ),	
-	OptionRow( "Perspec\n-tive",	"" ),
-	OptionRow( "Step",				"" ),
-	OptionRow( "Character",			"" ),
+	OptionRow( "Speed",				false, "x0.25","x0.5","x0.75","x1","x1.5","x2","x3","x5","x8","C200","C300" ),	
+	OptionRow( "Acceler\n-ation",	false, "OFF","BOOST","BRAKE","WAVE","EXPAND","BOOMERANG" ),	
+	OptionRow( "Effect",			false, "OFF","DRUNK","DIZZY","MINI","FLIP","TORNADO","TIPSY" ),	
+	OptionRow( "Appear\n-ance",		false, "VISIBLE","HIDDEN","SUDDEN","STEALTH","BLINK", "R.VANISH" ),	
+	OptionRow( "Turn",				false, "OFF","MIRROR","LEFT","RIGHT","SHUFFLE","S.SHUFFLE" ),	
+	OptionRow( "Trans\n-form",		false, "OFF","LITTLE","WIDE","BIG","QUICK","SKIPPY","MINES" ),	
+	OptionRow( "Scroll",			false, "STANDARD","REVERSE","SPLIT","ALTERNATE" ),	
+	OptionRow( "Note\nSkin",		false, "" ),	
+	OptionRow( "Holds",				false, "OFF","ON" ),	
+	OptionRow( "Dark",				false, "OFF","ON" ),	
+	OptionRow( "Perspec\n-tive",	false, "" ),
+	OptionRow( "Step",				false, "" ),
+	OptionRow( "Character",			false, "" ),
+	OptionRow( "Life\nType",	true, "BAR","BATTERY" ),	
+	OptionRow( "Bar\nDrain",	true, "NORMAL","NO RECOVER","SUDDEN DEATH" ),	
+	OptionRow( "Bat\nLives",	true, "1","2","3","4","5","6","7","8","9","10" ),	
+	OptionRow( "Fail",			true, "ARCADE","END OF SONG","OFF" ),	
+	OptionRow( "Assist\nTick",	true, "OFF", "ON" ),
+	OptionRow( "Rate",			true, "0.3x","0.4x","0.5x","0.6x","0.7x","0.8x","0.9x","1.0x","1.1x","1.2x","1.3x","1.4x","1.5x","1.6x","1.7x","1.8x","1.9x","2.0x" ),	
+	OptionRow( "Auto\nAdjust",	true, "OFF", "ON" ),	
 };
 
 static const PlayerOptions::Effect ChoosableEffects[] = 
@@ -77,10 +91,10 @@ ScreenPlayerOptions::ScreenPlayerOptions() :
 	LOG->Trace( "ScreenPlayerOptions::ScreenPlayerOptions()" );
 	
 	Init( 
-		INPUTMODE_PLAYERS, 
+		INPUTMODE_INDIVIDUAL, 
 		g_PlayerOptionsLines, 
 		NUM_PLAYER_OPTIONS_LINES,
-		true, false );
+		false );
 
 	/* If we're going to "press start for more options" or skipping options
 	 * entirely, we need a different fade out. XXX: this is a hack */
@@ -270,6 +284,27 @@ void ScreenPlayerOptions::ImportOptions()
 		/* Why do this?  We don't want to erase if we back out. */
 		// po.Init();
 	}
+
+
+	SongOptions &so = GAMESTATE->m_SongOptions;
+
+	m_iSelectedOption[0][SO_LIFE] = so.m_LifeType;
+	m_iSelectedOption[0][SO_BAT_LIVES] = so.m_iBatteryLives-1;
+
+	if ( m_iSelectedOption[0][SO_BAT_LIVES] < 0 )
+		m_iSelectedOption[0][SO_BAT_LIVES] = 3;  // default in case value is invalid
+
+	m_iSelectedOption[0][SO_FAIL] = so.m_FailType;
+	m_iSelectedOption[0][SO_ASSIST] = so.m_bAssistTick;
+	m_iSelectedOption[0][SO_AUTOSYNC] = so.m_bAutoSync;
+
+	m_iSelectedOption[0][SO_RATE] = 7;	// in case we don't match below
+	for( i=0; i<g_PlayerOptionsLines[SO_RATE].choices.size(); i++ )
+	{
+		float fThisRate = (float) atof(g_PlayerOptionsLines[SO_RATE].choices[i]);
+		if( fThisRate == so.m_fMusicRate )
+			m_iSelectedOption[0][SO_RATE] = i;
+	}
 }
 
 void ScreenPlayerOptions::ExportOptions()
@@ -383,6 +418,24 @@ void ScreenPlayerOptions::ExportOptions()
 			GAMESTATE->m_pCurCharacters[p] = GAMESTATE->m_pCharacters[choice];
 		}
 	}
+
+
+	SongOptions &so = GAMESTATE->m_SongOptions;
+
+	so.m_LifeType = (SongOptions::LifeType)m_iSelectedOption[0][SO_LIFE];
+	so.m_DrainType = (SongOptions::DrainType)m_iSelectedOption[0][SO_DRAIN];
+	so.m_iBatteryLives = m_iSelectedOption[0][SO_BAT_LIVES]+1;
+	if( so.m_FailType !=	(SongOptions::FailType)m_iSelectedOption[0][SO_FAIL] )
+	{
+		/* The user is changing the fail mode explicitly; stop messing with it. */
+		GAMESTATE->m_bChangedFailType = true;
+		so.m_FailType =	(SongOptions::FailType)m_iSelectedOption[0][SO_FAIL];
+	}
+	so.m_bAssistTick = !!m_iSelectedOption[0][SO_ASSIST];
+	so.m_bAutoSync = !!m_iSelectedOption[0][SO_AUTOSYNC];
+
+	int iSel = m_iSelectedOption[0][SO_RATE];
+	so.m_fMusicRate = (float) atof( g_PlayerOptionsLines[SO_RATE].choices[iSel] );
 }
 
 void ScreenPlayerOptions::GoToPrevState()

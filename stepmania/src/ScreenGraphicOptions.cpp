@@ -35,15 +35,15 @@ enum {
 	NUM_GRAPHIC_OPTIONS_LINES
 };
 OptionRow g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
-	OptionRow( "Display\nMode",				"FULLSCREEN", "WINDOWED" ),
-	OptionRow( "Display\nResolution",		"320","400","512","640","800","1024","1280" ),
-	OptionRow( "Display\nColor",			"16BIT","32BIT" ),
-	OptionRow( "Max Texture\nResolution",	"256","512","1024","2048" ),
-	OptionRow( "Texture\nColor",			"16BIT","32BIT" ),
-	OptionRow( "Keep Textures\nIn Memory",	"NO","YES" ),
-	OptionRow( "Refresh\nRate",				"DEFAULT","60","70","72","75","80","85","90","100","120","150" ),
-	OptionRow( "Movie\nDecode",				"1ms","2ms","3ms","4ms" ),
-	OptionRow( "Wait For\nVsync",			"NO", "YES" ),
+	OptionRow( "Display\nMode",				true, "FULLSCREEN", "WINDOWED" ),
+	OptionRow( "Display\nResolution",		true, "320","400","512","640","800","1024","1280" ),
+	OptionRow( "Display\nColor",			true, "16BIT","32BIT" ),
+	OptionRow( "Max Texture\nResolution",	true, "256","512","1024","2048" ),
+	OptionRow( "Texture\nColor",			true, "16BIT","32BIT" ),
+	OptionRow( "Keep Textures\nIn Memory",	true, "NO","YES" ),
+	OptionRow( "Refresh\nRate",				true, "DEFAULT","60","70","72","75","80","85","90","100","120","150" ),
+	OptionRow( "Movie\nDecode",				true, "1ms","2ms","3ms","4ms" ),
+	OptionRow( "Wait For\nVsync",			true, "NO", "YES" ),
 };
 
 static const int HorizRes[] = {
@@ -62,10 +62,10 @@ ScreenGraphicOptions::ScreenGraphicOptions() :
 	LOG->Trace( "ScreenGraphicOptions::ScreenGraphicOptions()" );
 
 	Init(
-		INPUTMODE_BOTH, 
+		INPUTMODE_TOGETHER, 
 		g_GraphicOptionsLines, 
 		NUM_GRAPHIC_OPTIONS_LINES,
-		false, true );
+		true );
 	m_Menu.m_MenuTimer.Disable();
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenGraphicOptions music") );

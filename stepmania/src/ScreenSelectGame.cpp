@@ -29,7 +29,7 @@ enum {
 
 OptionRow g_SelectGameLines[NUM_SELECT_GAME_LINES] = 
 {
-	OptionRow(	"Game"	),	
+	OptionRow(	"Game", true ),	
 };
 
 
@@ -52,10 +52,10 @@ ScreenSelectGame::ScreenSelectGame() :
 	}
 
 	Init( 
-		INPUTMODE_BOTH, 
+		INPUTMODE_TOGETHER, 
 		g_SelectGameLines, 
 		NUM_SELECT_GAME_LINES,
-		false, true );
+		true );
 	m_Menu.m_MenuTimer.Disable();
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenSelectGame music") );

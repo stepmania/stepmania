@@ -34,12 +34,12 @@ enum {
 };
 
 OptionRow g_GameplayOptionsLines[NUM_GAMEPLAY_OPTIONS_LINES] = {
-	OptionRow( "Solo\nSingles",			"OFF","ON" ),
-	OptionRow( "Hidden\nSongs",			"OFF","ON" ),
-	OptionRow( "Easter\nEggs",			"OFF","ON" ),
-	OptionRow( "Marvelous\nTiming",		"NEVER","COURSES ONLY","ALWAYS" ),
-	OptionRow( "Pick Extra\nStage",		"OFF","ON" ),
-	OptionRow( "Unlock\nSystem",		"OFF","ON" )
+	OptionRow( "Solo\nSingles",			true, "OFF","ON" ),
+	OptionRow( "Hidden\nSongs",			true, "OFF","ON" ),
+	OptionRow( "Easter\nEggs",			true, "OFF","ON" ),
+	OptionRow( "Marvelous\nTiming",		true, "NEVER","COURSES ONLY","ALWAYS" ),
+	OptionRow( "Pick Extra\nStage",		true, "OFF","ON" ),
+	OptionRow( "Unlock\nSystem",		true, "OFF","ON" )
 };
 
 ScreenGameplayOptions::ScreenGameplayOptions() :
@@ -48,10 +48,10 @@ ScreenGameplayOptions::ScreenGameplayOptions() :
 	LOG->Trace( "ScreenGameplayOptions::ScreenGameplayOptions()" );
 
 	Init( 
-		INPUTMODE_BOTH, 
+		INPUTMODE_TOGETHER, 
 		g_GameplayOptionsLines, 
 		NUM_GAMEPLAY_OPTIONS_LINES,
-		false, true );
+		true );
 	m_Menu.m_MenuTimer.Disable();
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenMachineOptions music") );

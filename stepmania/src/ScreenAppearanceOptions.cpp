@@ -47,20 +47,20 @@ enum {
 
 
 OptionRow g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
-	OptionRow( "Language"			 ),
-	OptionRow( "Announcer"			 ),
-	OptionRow( "Theme"				 ),
-	OptionRow( "Default\nNoteSkin"	 ),
-	OptionRow( "Instructions",		"SKIP","SHOW"),
-	OptionRow( "Caution",			"SKIP","SHOW"),
-	OptionRow( "Oni Score\nDisplay","PERCENT","DANCE POINTS"),
-	OptionRow( "Song\nGroup",		"ALL MUSIC","CHOOSE"),
-	OptionRow( "Wheel\nSections",	"NEVER","ALWAYS", "ABC ONLY"),
-	OptionRow( "10+ foot\nIn Red",	"NO", "YES"),
-	OptionRow( "Course\nSort",		"# SONGS", "AVG FEET", "TOTAL FEET", "RANKING"),
-	OptionRow( "Random\nAt End",	"NO","YES"),
-	OptionRow( "Translations",		"NATIVE","TRANSLITERATE"),
-	OptionRow( "Lyrics",			"HIDE","SHOW"),
+	OptionRow( "Language",			true ),
+	OptionRow( "Announcer",			true ),
+	OptionRow( "Theme",				true ),
+	OptionRow( "Default\nNoteSkin",	true ),
+	OptionRow( "Instructions",		true, "SKIP","SHOW"),
+	OptionRow( "Caution",			true, "SKIP","SHOW"),
+	OptionRow( "Oni Score\nDisplay",true, "PERCENT","DANCE POINTS"),
+	OptionRow( "Song\nGroup",		true, "ALL MUSIC","CHOOSE"),
+	OptionRow( "Wheel\nSections",	true, "NEVER","ALWAYS", "ABC ONLY"),
+	OptionRow( "10+ foot\nIn Red",	true, "NO", "YES"),
+	OptionRow( "Course\nSort",		true, "# SONGS", "AVG FEET", "TOTAL FEET", "RANKING"),
+	OptionRow( "Random\nAt End",	true, "NO","YES"),
+	OptionRow( "Translations",		true, "NATIVE","TRANSLITERATE"),
+	OptionRow( "Lyrics",			true, "HIDE","SHOW"),
 };
 
 ScreenAppearanceOptions::ScreenAppearanceOptions() :
@@ -69,10 +69,10 @@ ScreenAppearanceOptions::ScreenAppearanceOptions() :
 	LOG->Trace( "ScreenAppearanceOptions::ScreenAppearanceOptions()" );
 
 	Init( 
-		INPUTMODE_BOTH, 
+		INPUTMODE_TOGETHER, 
 		g_AppearanceOptionsLines, 
 		NUM_APPEARANCE_OPTIONS_LINES,
-		false, true );
+		true );
 	m_Menu.m_MenuTimer.Disable();
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenAppearanceOptions music") );
@@ -89,7 +89,7 @@ void ScreenAppearanceOptions::ImportOptions()
 	THEME->GetLanguages( arrayLanguages );
 
 	m_OptionRow[AO_LANGUAGE].choices.clear();
-	for( i=0; i<arrayLanguages.size() && i<MAX_OPTIONS_PER_LINE; i++ )
+	for( i=0; i<arrayLanguages.size(); i++ )
 	{
 		m_OptionRow[AO_LANGUAGE].choices.push_back( arrayLanguages[i] ); 
 	}
@@ -109,7 +109,7 @@ void ScreenAppearanceOptions::ImportOptions()
 
 	m_OptionRow[AO_ANNOUNCER].choices.clear();
 	m_OptionRow[AO_ANNOUNCER].choices.push_back( "OFF" );
-	for( i=0; i<arrayAnnouncerNames.size() && i<MAX_OPTIONS_PER_LINE; i++ )
+	for( i=0; i<arrayAnnouncerNames.size(); i++ )
 	{
 		m_OptionRow[AO_ANNOUNCER].choices.push_back( arrayAnnouncerNames[i] ); 
 	}
@@ -129,7 +129,7 @@ void ScreenAppearanceOptions::ImportOptions()
 
 	m_OptionRow[AO_THEME].choices.clear();
 	
-	for( i=0; i<arrayThemeNames.size() && i<MAX_OPTIONS_PER_LINE; i++ )
+	for( i=0; i<arrayThemeNames.size(); i++ )
 	{
 		m_OptionRow[AO_THEME].choices.push_back( arrayThemeNames[i] ); 
 	}
@@ -149,7 +149,7 @@ void ScreenAppearanceOptions::ImportOptions()
 
 	m_OptionRow[AO_SKIN].choices.clear();
 
-	for( i=0; i<arraySkinNames.size() && i<MAX_OPTIONS_PER_LINE; i++ )
+	for( i=0; i<arraySkinNames.size(); i++ )
 	{
 		arraySkinNames[i].MakeUpper();
 		m_OptionRow[AO_SKIN].choices.push_back( arraySkinNames[i] ); 

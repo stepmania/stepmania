@@ -36,7 +36,7 @@ OptionRow g_SoundOptionsLines[NUM_SOUND_OPTIONS_LINES] = {
 	 * users, except to troubleshoot clipping; that's why I didn't put it in
 	 * the options to begin with. */
 //	OptionRow( "Master\nVolume",		"MUTE","20%","40%","60%","80%","100%" ),
-	OptionRow( "Preload\nSounds",		"NO","YES" ),
+	OptionRow( "Preload\nSounds",		true, "NO","YES" ),
 };
 
 ScreenSoundOptions::ScreenSoundOptions() :
@@ -44,7 +44,7 @@ ScreenSoundOptions::ScreenSoundOptions() :
 {
 	LOG->Trace( "ScreenSoundOptions::ScreenSoundOptions()" );
 
-	Init( INPUTMODE_BOTH, g_SoundOptionsLines, NUM_SOUND_OPTIONS_LINES, false, true );
+	Init( INPUTMODE_TOGETHER, g_SoundOptionsLines, NUM_SOUND_OPTIONS_LINES, true );
 	m_Menu.m_MenuTimer.Disable();
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenSoundOptions music") );

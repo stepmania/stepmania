@@ -43,20 +43,20 @@ enum {
 };
 
 OptionRow g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
-	OptionRow( "Menu\nTimer",			"OFF","ON" ),
-	OptionRow( "Coin\nMode",			"HOME","PAY","FREE PLAY" ),
-	OptionRow( "Songs Per\nPlay",			"1","2","3","4","5","6","7","EVENT MODE" ),
-	OptionRow( "Scoring\nType",			"MAX2","5TH" ),
-	OptionRow( "Judge\nDifficulty",			"1","2","3","4","5","6","7","8","JUSTICE" ),
-	OptionRow( "Life\nDifficulty",			"1","2","3","4","5","6","7" ),
-	OptionRow( "Progressive\nLifebar",		"OFF","1","2","3","4","5","6","7","8"),
-	OptionRow( "Progressive\nStage Lifebar",	"OFF","1","2","3","4","5","6","7","8","INSANITY"),
-	OptionRow( "Progressive\nNonstop Lifebar",	"OFF","1","2","3","4","5","6","7","8","INSANITY"),
-	OptionRow( "Default\nFail Type",		"ARCADE","END OF SONG","OFF" ),	
-	OptionRow( "Show\nStats",			"OFF","ON" ),
-	OptionRow( "Coins Per\nCredit",			"1","2","3","4","5","6","7","8" ),
-	OptionRow( "Joint\nPremium",			"OFF","ON" ),
-	OptionRow( "Song\nOptions",			"HIDE","SHOW","ASK" ),
+	OptionRow( "Menu\nTimer",					true, "OFF","ON" ),
+	OptionRow( "Coin\nMode",					true, "HOME","PAY","FREE PLAY" ),
+	OptionRow( "Songs Per\nPlay",				true, "1","2","3","4","5","6","7","EVENT MODE" ),
+	OptionRow( "Scoring\nType",					true, "MAX2","5TH" ),
+	OptionRow( "Judge\nDifficulty",				true, "1","2","3","4","5","6","7","8","JUSTICE" ),
+	OptionRow( "Life\nDifficulty",				true, "1","2","3","4","5","6","7" ),
+	OptionRow( "Progressive\nLifebar",			true, "OFF","1","2","3","4","5","6","7","8"),
+	OptionRow( "Progressive\nStage Lifebar",	true, "OFF","1","2","3","4","5","6","7","8","INSANITY"),
+	OptionRow( "Progressive\nNonstop Lifebar",	true, "OFF","1","2","3","4","5","6","7","8","INSANITY"),
+	OptionRow( "Default\nFail Type",			true, "ARCADE","END OF SONG","OFF" ),	
+	OptionRow( "Show\nStats",					true, "OFF","ON" ),
+	OptionRow( "Coins Per\nCredit",				true, "1","2","3","4","5","6","7","8" ),
+	OptionRow( "Joint\nPremium",				true, "OFF","ON" ),
+	OptionRow( "Song\nOptions",					true, "HIDE","SHOW","ASK" ),
 };
 
 ScreenMachineOptions::ScreenMachineOptions() :
@@ -65,10 +65,10 @@ ScreenMachineOptions::ScreenMachineOptions() :
 	LOG->Trace( "ScreenMachineOptions::ScreenMachineOptions()" );
 
 	Init( 
-		INPUTMODE_BOTH, 
+		INPUTMODE_TOGETHER, 
 		g_MachineOptionsLines, 
 		NUM_MACHINE_OPTIONS_LINES,
-		false, true );
+		true );
 	m_Menu.m_MenuTimer.Disable();
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenMachineOptions music") );

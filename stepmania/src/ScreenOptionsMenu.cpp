@@ -42,16 +42,16 @@ enum {
 };
 
 OptionRow g_OptionsMenuLines[NUM_OPTIONS_MENU_LINES] = {
-	OptionRow( "",	"Appearance Options" ),
-	OptionRow( "",	"Autogen Options" ),
-	OptionRow( "",	"Background Options" ),
-	OptionRow( "",	"Config Key/Joy Mappings" ),
-	OptionRow( "",	"Input Options" ),
-	OptionRow( "",	"Gameplay Options" ),
-	OptionRow( "",	"Graphic Options" ),
-	OptionRow( "",	"Machine Options" ),
-//	OptionRow( "",	"Sound Options" ),
-	OptionRow( "",	"Reload Songs/Courses" ),
+	OptionRow( "",	true, "Appearance Options" ),
+	OptionRow( "",	true, "Autogen Options" ),
+	OptionRow( "",	true, "Background Options" ),
+	OptionRow( "",	true, "Config Key/Joy Mappings" ),
+	OptionRow( "",	true, "Input Options" ),
+	OptionRow( "",	true, "Gameplay Options" ),
+	OptionRow( "",	true, "Graphic Options" ),
+	OptionRow( "",	true, "Machine Options" ),
+//	OptionRow( "",	true, "Sound Options" ),
+	OptionRow( "",	true, "Reload Songs/Courses" ),
 };
 
 ScreenOptionsMenu::ScreenOptionsMenu() :
@@ -66,10 +66,10 @@ ScreenOptionsMenu::ScreenOptionsMenu() :
 	GAMESTATE->m_MasterPlayerNumber = PlayerNumber(0);
 
 	Init( 
-		INPUTMODE_BOTH, 
+		INPUTMODE_TOGETHER, 
 		g_OptionsMenuLines, 
 		NUM_OPTIONS_MENU_LINES,
-		false, true );
+		true );
 	m_Menu.m_MenuTimer.Disable();
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenOptionsMenu music") );

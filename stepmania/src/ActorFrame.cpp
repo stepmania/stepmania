@@ -14,6 +14,12 @@
 
 void ActorFrame::AddChild( Actor* pActor )
 {
+#if _DEBUG
+	// check that this Actor isn't already added.
+	vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
+	ASSERT( iter == m_SubActors.end() );	// didn't find
+#endif
+
 	ASSERT( pActor );
 	ASSERT( (void*)pActor != (void*)0xC0000005 );
 	m_SubActors.push_back( pActor );

@@ -29,8 +29,8 @@ enum {
 };
 
 OptionRow g_AutogenOptionsLines[NUM_AUTOGEN_OPTIONS_LINES] = {
-	OptionRow( "Autogen\nMissing Types",	"OFF","ON" ),
-	OptionRow( "Autogen\nGroup Courses",	"OFF","ON" ),
+	OptionRow( "Autogen\nMissing Types",	true, "OFF","ON" ),
+	OptionRow( "Autogen\nGroup Courses",	true, "OFF","ON" ),
 };
 
 ScreenAutogenOptions::ScreenAutogenOptions() :
@@ -39,10 +39,10 @@ ScreenAutogenOptions::ScreenAutogenOptions() :
 	LOG->Trace( "ScreenAutogenOptions::ScreenAutogenOptions()" );
 
 	Init( 
-		INPUTMODE_BOTH, 
+		INPUTMODE_TOGETHER, 
 		g_AutogenOptionsLines, 
 		NUM_AUTOGEN_OPTIONS_LINES,
-		false, true );
+		true );
 	m_Menu.m_MenuTimer.Disable();
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenAutogenOptions music") );

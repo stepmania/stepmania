@@ -36,13 +36,13 @@ enum {
 /* Hmm.  Ignore JoyAxes and Back Delayed probably belong in "key/joy config",
  * preferably alongside button configuration. */
 OptionRow g_InputOptionsLines[NUM_INPUT_OPTIONS_LINES] = {
-	OptionRow( "Auto Map\nJoysticks",	"OFF","ON (recommended)" ),
-	OptionRow( "Ignore\nJoy Axes",		"OFF","ON (for NTPad or DirectPad)" ),
-	OptionRow( "Menu\nButtons",			"USE GAMEPLAY BUTTONS","ONLY DEDICATED BUTTONS" ),
-	OptionRow( "AutoPlay",				"OFF","ON" ),
-	OptionRow( "Back\nDelayed",			"INSTANT","HOLD" ),
-	OptionRow( "Options\nNavigation",	"SM STYLE","ARCADE STYLE" ),
-	OptionRow( "Wheel\nSpeed",			"SLOW","NORMAL","FAST","REALLY FAST" ),
+	OptionRow( "Auto Map\nJoysticks",	true, "OFF","ON (recommended)" ),
+	OptionRow( "Ignore\nJoy Axes",		true, "OFF","ON (for NTPad or DirectPad)" ),
+	OptionRow( "Menu\nButtons",			true, "USE GAMEPLAY BUTTONS","ONLY DEDICATED BUTTONS" ),
+	OptionRow( "AutoPlay",				true, "OFF","ON" ),
+	OptionRow( "Back\nDelayed",			true, "INSTANT","HOLD" ),
+	OptionRow( "Options\nNavigation",	true, "SM STYLE","ARCADE STYLE" ),
+	OptionRow( "Wheel\nSpeed",			true, "SLOW","NORMAL","FAST","REALLY FAST" ),
 };
 
 ScreenInputOptions::ScreenInputOptions() :
@@ -51,10 +51,10 @@ ScreenInputOptions::ScreenInputOptions() :
 	LOG->Trace( "ScreenInputOptions::ScreenInputOptions()" );
 
 	Init( 
-		INPUTMODE_BOTH, 
+		INPUTMODE_TOGETHER, 
 		g_InputOptionsLines, 
 		NUM_INPUT_OPTIONS_LINES,
-		false, true );
+		true );
 	m_Menu.m_MenuTimer.Disable();
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenInputOptions music") );

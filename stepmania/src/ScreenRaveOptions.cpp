@@ -33,9 +33,9 @@ enum {
 };
 
 OptionRow g_RaveOptionsLines[NUM_RAVE_OPTIONS_LINES] = {
-	OptionRow( "P1 Super\nGrowth",	"25%","50%","75%","100%","125%","150%","175%","200%" ),
-	OptionRow( "P2 Super\nGrowth",	"25%","50%","75%","100%","125%","150%","175%","200%" ),
-	OptionRow( "CPU\nSkill",		"-5","-4","-3","-2","-1","DEFAULT","+1","+2","+3","+4","+5" )
+	OptionRow( "P1 Super\nGrowth",	true, "25%","50%","75%","100%","125%","150%","175%","200%" ),
+	OptionRow( "P2 Super\nGrowth",	true, "25%","50%","75%","100%","125%","150%","175%","200%" ),
+	OptionRow( "CPU\nSkill",		true, "-5","-4","-3","-2","-1","DEFAULT","+1","+2","+3","+4","+5" )
 };
 
 PlayerNumber OPPOSITE_PLAYER[NUM_PLAYERS] = { PLAYER_2, PLAYER_1 };
@@ -47,10 +47,10 @@ ScreenRaveOptions::ScreenRaveOptions() :
 
 	bool bComputerPlayersPresent = GAMESTATE->GetNumSidesJoined()==1;
 	Init( 
-		INPUTMODE_BOTH, 
+		INPUTMODE_TOGETHER, 
 		g_RaveOptionsLines, 
 		bComputerPlayersPresent ? 3 : 1,
-		false, false );
+		false );
 }
 
 void ScreenRaveOptions::ImportOptions()
