@@ -22,6 +22,7 @@
 #include "ScoreDisplayNormal.h"
 #include "Banner.h"
 #include "DifficultyIcon.h"
+#include "PercentageDisplay.h"
 
 
 const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed
@@ -69,10 +70,8 @@ protected:
 
 	// points area
 	bool				m_bNewSongsUnlocked;
+	PercentageDisplay	m_Percent[NUM_PLAYERS];
 	Sprite				m_sprPercentFrame[NUM_PLAYERS];
-	BitmapText			m_textPercentWhole[NUM_PLAYERS];
-	BitmapText			m_textPercentRemainder[NUM_PLAYERS];
-	BitmapText			m_textDancePoints[NUM_PLAYERS];
 
 	// bonus area
 	Sprite				m_sprBonusFrame[NUM_PLAYERS];

@@ -177,7 +177,8 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			{
 				if( GAMESTATE->IsHumanPlayer(p) && GAMESTATE->m_SongOptions.m_bSaveScore )
 				{
-					GAMESTATE->m_pCurNotes[p]->AddScore( (PlayerNumber)p, grade[p], stageStats.iScore[p] + stageStats.iBonus[p], bNewRecord[p] );
+					if( GAMESTATE->m_pCurNotes[p] )
+						GAMESTATE->m_pCurNotes[p]->AddScore( (PlayerNumber)p, grade[p], stageStats.iScore[p] + stageStats.iBonus[p], bNewRecord[p] );
 					
 					// update unlock data if unlocks are on
 					if ( PREFSMAN->m_bUseUnlockSystem )
@@ -227,7 +228,6 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		break;
 	case course:
 		{
-			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 			bool bIsHumanPlayer[NUM_PLAYERS];
 			for( p=0; p<NUM_PLAYERS; p++ )
 				bIsHumanPlayer[p] = GAMESTATE->IsHumanPlayer(p);
@@ -235,16 +235,20 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			int iRankingIndex[NUM_PLAYERS];
 
 			Course* pCourse = GAMESTATE->m_pCurCourse;
+			if( pCourse )
+			{
+				int *score;
+				if( pCourse->IsOni() )
+					score = stageStats.iActualDancePoints;
+				else
+					score = stageStats.iScore;
 
-			int *score;
-			if( pCourse->IsOni() )
-				score = stageStats.iActualDancePoints;
-			else
-				score = stageStats.iScore;
-			pCourse->AddScores( nt, bIsHumanPlayer, score, stageStats.fAliveSeconds, iRankingIndex, bNewRecord );
-			COPY( GAMESTATE->m_iRankingIndex, iRankingIndex );
-			GAMESTATE->m_pRankingCourse = pCourse;
-			GAMESTATE->m_RankingNotesType = nt;
+				StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+				pCourse->AddScores( nt, bIsHumanPlayer, score, stageStats.fAliveSeconds, iRankingIndex, bNewRecord );
+				COPY( GAMESTATE->m_iRankingIndex, iRankingIndex );
+				GAMESTATE->m_pRankingCourse = pCourse;
+				GAMESTATE->m_RankingNotesType = nt;
+			}
 
 			// If unlocking is enabled, save the dance points
 			// (for courses)
@@ -399,41 +403,27 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			UtilSetXYAndOnCommand( m_sprPercentFrame[p], "ScreenEvaluation" );
 			this->AddChild( &m_sprPercentFrame[p] );
 
+			/* Use "ScreenEvaluationOni Percent" for the [metric set], but position and
+			 * tween it with "PercentP1X", etc. */
+			m_Percent[p].SetName( m_sName + " Percent" );
+			m_Percent[p].Load( (PlayerNumber) p );
+			m_Percent[p].SetXY( THEME->GetMetricF("ScreenEvaluation", ssprintf("PercentP%dX",p+1)),
+				THEME->GetMetricF("ScreenEvaluation",ssprintf("PercentP%dY",p+1)) );
+			m_Percent[p].Command( THEME->GetMetric("ScreenEvaluation",ssprintf("PercentP%dOnCommand",p+1)) );
+			this->AddChild( &m_Percent[p] );
+
+#if 0
 			if( !PREFSMAN->m_bDancePointsForOni )
 			{
 				m_textPercentWhole[p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation percent") );
-				m_textPercentWhole[p].EnableShadow( false );
-				m_textPercentWhole[p].SetName( ssprintf("PercentWholeP%d",p+1) );
-				UtilSetXYAndOnCommand( m_textPercentWhole[p], "ScreenEvaluation" );
-				this->AddChild( &m_textPercentWhole[p] );
 
 				m_textPercentRemainder[p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation percent") );
-				m_textPercentRemainder[p].EnableShadow( false );
-				m_textPercentRemainder[p].SetName( ssprintf("PercentRemainderP%d",p+1) );
-				UtilSetXYAndOnCommand( m_textPercentRemainder[p], "ScreenEvaluation" );
-				this->AddChild( &m_textPercentRemainder[p] );
-
-				stageStats.iPossibleDancePoints[p] = max( 1, stageStats.iPossibleDancePoints[p] );
-				float fPercentDancePoints =  stageStats.iActualDancePoints[p] / (float)stageStats.iPossibleDancePoints[p] + 0.0001f;	// correct for rounding errors
-				fPercentDancePoints = max( fPercentDancePoints, 0 );
-				int iPercentWhole = int(fPercentDancePoints*100);
-				int iPercentRemainder = int( (fPercentDancePoints*100 - int(fPercentDancePoints*100)) * 10 );
-				m_textPercentWhole[p].SetText( ssprintf("%02d", iPercentWhole) );
-				m_textPercentRemainder[p].SetText( ssprintf(".%01d%%", iPercentRemainder) );
 			}
 			else	// PREFSMAN->m_bDancePointsForOni
 			{
 				m_textDancePoints[p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation percent") );
-				m_textDancePoints[p].EnableShadow( false );
-				/* We don't have a hyphen. */
-				if( stageStats.iActualDancePoints[p] < 0 )
-					m_textDancePoints[p].SetText( ssprintf("0") );
-				else
-					m_textDancePoints[p].SetText( ssprintf("%d", stageStats.iActualDancePoints[p]) );
-				m_textDancePoints[p].SetName( ssprintf("DancePointsP%d",p+1) );
-				UtilSetXYAndOnCommand( m_textDancePoints[p], "ScreenEvaluation" );
-				this->AddChild( &m_textDancePoints[p] );
 			}
+#endif
 		}
 	}
 
@@ -751,12 +741,9 @@ void ScreenEvaluation::TweenOffScreen()
 	// points area
 	for( p=0; p<NUM_PLAYERS; p++ ) 
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
-			continue;
 		UtilOffCommand( m_sprPercentFrame[p], "ScreenEvaluation" );
-		UtilOffCommand( m_textPercentWhole[p], "ScreenEvaluation" );
-		UtilOffCommand( m_textPercentRemainder[p], "ScreenEvaluation" );
-		UtilOffCommand( m_textDancePoints[p], "ScreenEvaluation" );
+		m_Percent[p].Command( THEME->GetMetric("ScreenEvaluation",ssprintf("PercentP%dOffCommand",p+1)) );
+		m_Percent[p].TweenOffScreen();
 	}
 
 	// bonus area
