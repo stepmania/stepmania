@@ -257,7 +257,7 @@ GameDef* GameState::GetCurrentGameDef()
 	return GAMEMAN->GetGameDefForGame( m_CurGame );
 }
 
-StyleDef* GameState::GetCurrentStyleDef()
+const StyleDef* GameState::GetCurrentStyleDef()
 {
 	return GAMEMAN->GetStyleDefForStyle( m_CurStyle );
 }

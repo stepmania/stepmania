@@ -41,7 +41,7 @@ public:
 	PlayerNumber	m_MasterPlayerNumber;
 
 	GameDef*	GetCurrentGameDef();
-	StyleDef*	GetCurrentStyleDef();
+	const StyleDef*	GetCurrentStyleDef();
 
 	bool IsPlayerEnabled( PlayerNumber pn );
 	bool IsPlayerEnabled( int p ) { return IsPlayerEnabled( (PlayerNumber)p ); };	// for those too lasy to cast all those p's to a PlayerNumber
