@@ -13,9 +13,9 @@
 
 /* samples */
 const int channels = 2;
-const int samplesize = channels*2; /* 16-bit */
+const int samplesize = channels*2;		/* 16-bit */
 const int samplerate = 44100;
-const int buffersize_frames = 2048*8;	/* in frames */
+const int buffersize_frames = 1024*4;	/* in frames */
 const int buffersize = buffersize_frames * samplesize; /* in bytes */
 
 const int num_chunks = 8;
@@ -49,6 +49,9 @@ void RageSound_WaveOut::MixerThread()
 	/* SOUNDMAN will be set once RageSoundManager's ctor returns and
 	 * assigns it; we might get here before that happens, though. */
 	while(!SOUNDMAN && !shutdown) Sleep(10);
+
+	if(!SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL))
+		LOG->Warn("Failed to set sound thread priority: %i", GetLastError()); /* XXX */
 
 	while(!shutdown) {
 		while(GetPCM())
