@@ -1375,44 +1375,28 @@ void NoteDataUtil::CollapseLeft( NoteData &inout )
 	inout.Convert2sAnd3sToHoldNotes();
 }
 
+void NoteDataUtil::ShiftTracks( NoteData &inout, int iShiftBy )
+{
+	int iOriginalTrackToTakeFrom[MAX_NOTE_TRACKS];
+	for( int i = 0; i < inout.GetNumTracks(); ++i )
+	{
+		int iFrom = i-iShiftBy;
+		wrap( iFrom, inout.GetNumTracks() );
+		iOriginalTrackToTakeFrom[i] = iFrom;
+	}
+
+	NoteData orig( inout );
+	inout.LoadTransformed( orig, orig.GetNumTracks(), iOriginalTrackToTakeFrom );
+}
+
 void NoteDataUtil::ShiftLeft( NoteData &inout )
 {
-	inout.ConvertHoldNotesTo4s();
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS( inout, r )
-	{
-		for( int t=0; t<inout.GetNumTracks()-1; t++ )	// inout.GetNumTracks()-1 times
-		{
-			int iTrackEarlier = t;
-			int iTrackLater = (t+1) % inout.GetNumTracks();
-
-			// swap
-			TapNote tnEarlier = inout.GetTapNote(iTrackEarlier, r);
-			TapNote tnLater = inout.GetTapNote(iTrackLater, r);
-			inout.SetTapNote(iTrackEarlier, r, tnLater);
-			inout.SetTapNote(iTrackLater, r, tnEarlier);
-		}
-	}
-	inout.Convert4sToHoldNotes();
+	ShiftTracks( inout, -1 );
 }
 
 void NoteDataUtil::ShiftRight( NoteData &inout )
 {
-	inout.ConvertHoldNotesTo4s();
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS( inout, r )
-	{
-		for( int t=inout.GetNumTracks()-1; t>0; t-- )	// inout.GetNumTracks()-1 times
-		{
-			int iTrackEarlier = t;
-			int iTrackLater = (t+1) % inout.GetNumTracks();
-
-			// swap
-			TapNote tnEarlier = inout.GetTapNote(iTrackEarlier, r);
-			TapNote tnLater = inout.GetTapNote(iTrackLater, r);
-			inout.SetTapNote(iTrackEarlier, r, tnLater);
-			inout.SetTapNote(iTrackLater, r, tnEarlier);
-		}
-	}
-	inout.Convert4sToHoldNotes();
+	ShiftTracks( inout, +1 );
 }
 
 

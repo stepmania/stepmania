@@ -74,6 +74,7 @@ namespace NoteDataUtil
 	void ClearRight( NoteData &inout );
 	void CollapseToOne( NoteData &inout );
 	void CollapseLeft( NoteData &inout );
+	void ShiftTracks( NoteData &inout, int iShiftBy );
 	void ShiftLeft( NoteData &inout );
 	void ShiftRight( NoteData &inout );
 
