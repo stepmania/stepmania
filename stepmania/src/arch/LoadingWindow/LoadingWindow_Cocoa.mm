@@ -7,7 +7,24 @@
  *
  */
 
+/* This is really dumb. I don't know why it is needed all of a sudden */
+#include <math.h>
+#ifndef scalb
+#define scalb(x, n) scalbn(x, n)
+#endif
+#ifndef gamma
+#define gamma(x) lgamma(x)
+#endif
+#ifndef _POSIX_SOURCE
+#define _POSIX_SOURCE
+#define POSIX_DEFINED
+#endif
 #import <Cocoa/Cocoa.h>
+#ifdef POSIX_DEFINED
+#undef _POSIX_SOURCE
+#undef POSIX_DEFINED
+#endif
+
 
 static NSWindow *window;
 static NSTextView *text;
