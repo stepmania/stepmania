@@ -26,33 +26,28 @@
 #include "NoteFieldPositioning.h"
 #include "ActorUtil.h"
 
+enum part
+{
+	PART_TAP,
+	PART_ADDITION,
+	PART_MINE,
+	PART_HOLD_HEAD,
+	PART_HOLD_TAIL,
+	PART_HOLD_TOP_CAP,
+	PART_HOLD_BODY,
+	PART_HOLD_BOTTOM_CAP,
+	NUM_PARTS
+};
+
+
 // cache
 struct NoteMetricCache_t
 {
 	bool m_bDrawHoldHeadForTapsOnSameRow;
-	float m_fTapNoteAnimationLengthInBeats;
-	float m_fTapAdditionAnimationLengthInBeats;
-	float m_fTapMineAnimationLengthInBeats;
-	float m_fHoldHeadAnimationLengthInBeats;
-	float m_fHoldTopCapAnimationLengthInBeats;
-	float m_fHoldBodyAnimationLengthInBeats;
-	float m_fHoldBottomCapAnimationLengthInBeats;
-	float m_fHoldTailAnimationLengthInBeats;
-	bool m_bTapNoteAnimationIsVivid;
-	bool m_bTapAdditionAnimationIsVivid;
-	bool m_bTapMineAnimationIsVivid;
-	bool m_bHoldHeadAnimationIsVivid;
-	bool m_bHoldTopCapAnimationIsVivid;
-	bool m_bHoldBodyAnimationIsVivid;
-	bool m_bHoldBottomCapAnimationIsVivid;
-	bool m_bHoldTailAnimationIsVivid;
-	bool m_bTapNoteAnimationIsNoteColor;
-	bool m_bTapAdditionAnimationIsNoteColor;
-	bool m_bHoldHeadAnimationIsNoteColor;
-	bool m_bHoldTopCapAnimationIsNoteColor;
-	bool m_bHoldBodyAnimationIsNoteColor;
-	bool m_bHoldBottomCapAnimationIsNoteColor;
-	bool m_bHoldTailAnimationIsNoteColor;
+	float m_fAnimationLengthInBeats[NUM_PARTS];
+	bool m_bAnimationIsVivid[NUM_PARTS];
+	bool m_bAnimationIsNoteColor[NUM_PARTS];
+
 	bool m_bHoldHeadIsAboveWavyParts;
 	bool m_bHoldTailIsAboveWavyParts;
 	int m_iStartDrawingHoldBodyOffsetFromHead;
@@ -71,29 +66,32 @@ struct NoteMetricCache_t
 void NoteMetricCache_t::Load(CString skin, const CString &name)
 {
 	m_bDrawHoldHeadForTapsOnSameRow =			NOTESKIN->GetMetricB(skin,name,"DrawHoldHeadForTapsOnSameRow");
-	m_fTapNoteAnimationLengthInBeats =			NOTESKIN->GetMetricF(skin,name,"TapNoteAnimationLengthInBeats");
-	m_fTapAdditionAnimationLengthInBeats =		NOTESKIN->GetMetricF(skin,name,"TapAdditionAnimationLengthInBeats");
-	m_fTapMineAnimationLengthInBeats =			NOTESKIN->GetMetricF(skin,name,"TapMineAnimationLengthInBeats");
-	m_fHoldHeadAnimationLengthInBeats =			NOTESKIN->GetMetricF(skin,name,"HoldHeadAnimationLengthInBeats");
-	m_fHoldTopCapAnimationLengthInBeats =		NOTESKIN->GetMetricF(skin,name,"HoldTopCapAnimationLengthInBeats");
-	m_fHoldBodyAnimationLengthInBeats =			NOTESKIN->GetMetricF(skin,name,"HoldBodyAnimationLengthInBeats");
-	m_fHoldBottomCapAnimationLengthInBeats =	NOTESKIN->GetMetricF(skin,name,"HoldBottomCapAnimationLengthInBeats");
-	m_fHoldTailAnimationLengthInBeats =			NOTESKIN->GetMetricF(skin,name,"HoldTailAnimationLengthInBeats");
-	m_bTapNoteAnimationIsVivid =				NOTESKIN->GetMetricB(skin,name,"TapNoteAnimationIsVivid");
-	m_bTapAdditionAnimationIsVivid =			NOTESKIN->GetMetricB(skin,name,"TapAdditionAnimationIsVivid");
-	m_bTapMineAnimationIsVivid =				NOTESKIN->GetMetricB(skin,name,"TapMineAnimationIsVivid");
-	m_bHoldHeadAnimationIsVivid =				NOTESKIN->GetMetricB(skin,name,"HoldHeadAnimationIsVivid");
-	m_bHoldTopCapAnimationIsVivid =				NOTESKIN->GetMetricB(skin,name,"HoldTopCapAnimationIsVivid");
-	m_bHoldBodyAnimationIsVivid =				NOTESKIN->GetMetricB(skin,name,"HoldBodyAnimationIsVivid");
-	m_bHoldBottomCapAnimationIsVivid =			NOTESKIN->GetMetricB(skin,name,"HoldBottomCapAnimationIsVivid");
-	m_bHoldTailAnimationIsVivid =				NOTESKIN->GetMetricB(skin,name,"HoldTailAnimationIsVivid");
-	m_bTapNoteAnimationIsNoteColor =			NOTESKIN->GetMetricB(skin,name,"TapNoteAnimationIsNoteColor");
-	m_bTapAdditionAnimationIsNoteColor =		NOTESKIN->GetMetricB(skin,name,"TapAdditionAnimationIsNoteColor");
-	m_bHoldHeadAnimationIsNoteColor =			NOTESKIN->GetMetricB(skin,name,"HoldHeadAnimationIsNoteColor");
-	m_bHoldTopCapAnimationIsNoteColor =			NOTESKIN->GetMetricB(skin,name,"HoldTopCapAnimationIsNoteColor");
-	m_bHoldBodyAnimationIsNoteColor =			NOTESKIN->GetMetricB(skin,name,"HoldBodyAnimationIsNoteColor");
-	m_bHoldBottomCapAnimationIsNoteColor =		NOTESKIN->GetMetricB(skin,name,"HoldBottomCapAnimationIsNoteColor");
-	m_bHoldTailAnimationIsNoteColor =			NOTESKIN->GetMetricB(skin,name,"HoldTailAnimationIsNoteColor");
+	m_fAnimationLengthInBeats[PART_TAP] =		NOTESKIN->GetMetricF(skin,name,"TapNoteAnimationLengthInBeats");
+	m_fAnimationLengthInBeats[PART_ADDITION] =	NOTESKIN->GetMetricF(skin,name,"TapAdditionAnimationLengthInBeats");
+	m_fAnimationLengthInBeats[PART_MINE] =		NOTESKIN->GetMetricF(skin,name,"TapMineAnimationLengthInBeats");
+	m_fAnimationLengthInBeats[PART_HOLD_HEAD] =	NOTESKIN->GetMetricF(skin,name,"HoldHeadAnimationLengthInBeats");
+	m_fAnimationLengthInBeats[PART_HOLD_TOP_CAP] =	NOTESKIN->GetMetricF(skin,name,"HoldTopCapAnimationLengthInBeats");
+	m_fAnimationLengthInBeats[PART_HOLD_BODY] =	NOTESKIN->GetMetricF(skin,name,"HoldBodyAnimationLengthInBeats");
+	m_fAnimationLengthInBeats[PART_HOLD_BOTTOM_CAP] =	NOTESKIN->GetMetricF(skin,name,"HoldBottomCapAnimationLengthInBeats");
+	m_fAnimationLengthInBeats[PART_HOLD_TAIL] =	NOTESKIN->GetMetricF(skin,name,"HoldTailAnimationLengthInBeats");
+	m_bAnimationIsVivid[PART_TAP] =				NOTESKIN->GetMetricB(skin,name,"TapNoteAnimationIsVivid");
+	m_bAnimationIsVivid[PART_ADDITION] =		NOTESKIN->GetMetricB(skin,name,"TapAdditionAnimationIsVivid");
+	m_bAnimationIsVivid[PART_MINE] =			NOTESKIN->GetMetricB(skin,name,"TapMineAnimationIsVivid");
+	m_bAnimationIsVivid[PART_HOLD_HEAD] =		NOTESKIN->GetMetricB(skin,name,"HoldHeadAnimationIsVivid");
+	m_bAnimationIsVivid[PART_HOLD_TOP_CAP] =	NOTESKIN->GetMetricB(skin,name,"HoldTopCapAnimationIsVivid");
+	m_bAnimationIsVivid[PART_HOLD_BODY] =		NOTESKIN->GetMetricB(skin,name,"HoldBodyAnimationIsVivid");
+	m_bAnimationIsVivid[PART_HOLD_BOTTOM_CAP] =	NOTESKIN->GetMetricB(skin,name,"HoldBottomCapAnimationIsVivid");
+	m_bAnimationIsVivid[PART_HOLD_TAIL] =		NOTESKIN->GetMetricB(skin,name,"HoldTailAnimationIsVivid");
+
+	m_bAnimationIsNoteColor[PART_TAP] =			NOTESKIN->GetMetricB(skin,name,"TapNoteAnimationIsNoteColor");
+	m_bAnimationIsNoteColor[PART_ADDITION] =	NOTESKIN->GetMetricB(skin,name,"TapAdditionAnimationIsNoteColor");
+	// m_bAnimationIsNoteColor[PART_MINE] =	NOTESKIN->GetMetricB(skin,name,"TapMineAnimationIsNoteColor");
+	m_bAnimationIsNoteColor[PART_HOLD_HEAD] =	NOTESKIN->GetMetricB(skin,name,"HoldHeadAnimationIsNoteColor");
+	m_bAnimationIsNoteColor[PART_HOLD_TOP_CAP] =NOTESKIN->GetMetricB(skin,name,"HoldTopCapAnimationIsNoteColor");
+	m_bAnimationIsNoteColor[PART_HOLD_BODY] =	NOTESKIN->GetMetricB(skin,name,"HoldBodyAnimationIsNoteColor");
+	m_bAnimationIsNoteColor[PART_HOLD_BOTTOM_CAP] =	NOTESKIN->GetMetricB(skin,name,"HoldBottomCapAnimationIsNoteColor");
+	m_bAnimationIsNoteColor[PART_HOLD_TAIL] =	NOTESKIN->GetMetricB(skin,name,"HoldTailAnimationIsNoteColor");
+
 	m_bHoldHeadIsAboveWavyParts =				NOTESKIN->GetMetricB(skin,name,"HoldHeadIsAboveWavyParts");
 	m_bHoldTailIsAboveWavyParts =				NOTESKIN->GetMetricB(skin,name,"HoldTailIsAboveWavyParts");
 	m_iStartDrawingHoldBodyOffsetFromHead =		NOTESKIN->GetMetricI(skin,name,"StartDrawingHoldBodyOffsetFromHead");
@@ -157,7 +155,7 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn, CString NoteSkin, float fY
 		sNoteType[i] = NoteTypeToString( (NoteType)i );
 
 
-	if( cache->m_bTapNoteAnimationIsNoteColor )
+	if( cache->m_bAnimationIsNoteColor[PART_TAP] )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 			m_pTapNote[i] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "tap note "+sNoteType[i]) );
@@ -167,7 +165,7 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn, CString NoteSkin, float fY
 		m_pTapNote[0] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "tap note") );
 	}
 
-	if( cache->m_bTapAdditionAnimationIsNoteColor )
+	if( cache->m_bAnimationIsNoteColor[PART_ADDITION] )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 			m_pTapAddition[i] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "tap addition "+sNoteType[i]) );
@@ -179,7 +177,7 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn, CString NoteSkin, float fY
 
 	m_pTapMine = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "tap mine") );
 
-	if( cache->m_bHoldHeadAnimationIsNoteColor )
+	if( cache->m_bAnimationIsNoteColor[PART_HOLD_HEAD] )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
@@ -193,7 +191,7 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn, CString NoteSkin, float fY
 		m_pHoldHeadInactive[0] = MakeActor( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold head inactive") );
 	}
 
-	if( cache->m_bHoldTopCapAnimationIsNoteColor )
+	if( cache->m_bAnimationIsNoteColor[PART_HOLD_TOP_CAP] )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
@@ -207,7 +205,7 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn, CString NoteSkin, float fY
 		m_sprHoldTopCapInactive[0].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold topcap inactive") );
 	}
 
-	if( cache->m_bHoldBodyAnimationIsNoteColor )
+	if( cache->m_bAnimationIsNoteColor[PART_HOLD_BODY] )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
@@ -221,7 +219,7 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn, CString NoteSkin, float fY
 		m_sprHoldBodyInactive[0].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold body inactive") );
 	}
 
-	if( cache->m_bHoldBottomCapAnimationIsNoteColor )
+	if( cache->m_bAnimationIsNoteColor[PART_HOLD_BOTTOM_CAP] )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
@@ -235,7 +233,7 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn, CString NoteSkin, float fY
 		m_sprHoldBottomCapInactive[0].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold bottomcap inactive") );
 	}
 
-	if( cache->m_bHoldTailAnimationIsNoteColor )
+	if( cache->m_bAnimationIsNoteColor[PART_HOLD_TAIL] )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
@@ -295,7 +293,7 @@ void NoteDisplay::SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAni
 Actor * NoteDisplay::GetTapNoteActor( float fNoteBeat )
 {
 	NoteType nt = NoteType(0);
-	if( cache->m_bTapNoteAnimationIsNoteColor )
+	if( cache->m_bAnimationIsNoteColor[PART_TAP] )
 		nt = BeatToNoteType( fNoteBeat );
 //  NOTE_TYPE_INVALID is 192nds at this point.
 	if( nt == NOTE_TYPE_INVALID )
@@ -307,9 +305,9 @@ Actor * NoteDisplay::GetTapNoteActor( float fNoteBeat )
 	SetActiveFrame( 
 		fNoteBeat, 
 		*pActorOut,
-		cache->m_fTapNoteAnimationLengthInBeats, 
-		cache->m_bTapNoteAnimationIsVivid, 
-		cache->m_bTapNoteAnimationIsNoteColor );
+		cache->m_fAnimationLengthInBeats[PART_TAP],
+		cache->m_bAnimationIsVivid[PART_TAP],
+		cache->m_bAnimationIsNoteColor[PART_TAP] );
 
 	return pActorOut;
 }
@@ -317,7 +315,7 @@ Actor * NoteDisplay::GetTapNoteActor( float fNoteBeat )
 Actor * NoteDisplay::GetTapAdditionActor( float fNoteBeat )
 {
 	NoteType nt = NoteType(0);
-	if( cache->m_bTapAdditionAnimationIsNoteColor )
+	if( cache->m_bAnimationIsNoteColor[PART_ADDITION] )
 		nt = BeatToNoteType( fNoteBeat );
 //  NOTE_TYPE_INVALID is 192nds at this point.
 	if( nt == NOTE_TYPE_INVALID )
@@ -329,9 +327,9 @@ Actor * NoteDisplay::GetTapAdditionActor( float fNoteBeat )
 	SetActiveFrame( 
 		fNoteBeat, 
 		*pActorOut,
-		cache->m_fTapAdditionAnimationLengthInBeats, 
-		cache->m_bTapAdditionAnimationIsVivid, 
-		cache->m_bTapAdditionAnimationIsNoteColor );
+		cache->m_fAnimationLengthInBeats[PART_ADDITION],
+		cache->m_bAnimationIsVivid[PART_ADDITION],
+		cache->m_bAnimationIsNoteColor[PART_ADDITION] );
 
 	return pActorOut;
 }
@@ -341,8 +339,8 @@ Actor * NoteDisplay::GetTapMineActor( float fNoteBeat )
 	SetActiveFrame( 
 		fNoteBeat, 
 		*m_pTapMine,
-		cache->m_fTapMineAnimationLengthInBeats, 
-		cache->m_bTapMineAnimationIsVivid, 
+		cache->m_fAnimationLengthInBeats[PART_MINE], 
+		cache->m_bAnimationIsVivid[PART_MINE], 
 		false );
 
 	return m_pTapMine;
@@ -351,7 +349,7 @@ Actor * NoteDisplay::GetTapMineActor( float fNoteBeat )
 Sprite * NoteDisplay::GetHoldTopCapSprite( float fNoteBeat, bool bIsBeingHeld )
 {
 	NoteType nt = NoteType(0);
-	if( cache->m_bHoldTopCapAnimationIsNoteColor )
+	if( cache->m_bAnimationIsNoteColor[PART_HOLD_TOP_CAP] )
 		nt = BeatToNoteType( fNoteBeat );
 //  NOTE_TYPE_INVALID is 192nds at this point.
 	if( nt == NOTE_TYPE_INVALID )
@@ -363,9 +361,9 @@ Sprite * NoteDisplay::GetHoldTopCapSprite( float fNoteBeat, bool bIsBeingHeld )
 	SetActiveFrame( 
 		fNoteBeat, 
 		*pSpriteOut, 
-		cache->m_fHoldTopCapAnimationLengthInBeats, 
-		cache->m_bHoldTopCapAnimationIsVivid, 
-		cache->m_bHoldTopCapAnimationIsNoteColor );
+		cache->m_fAnimationLengthInBeats[PART_HOLD_TOP_CAP],
+		cache->m_bAnimationIsVivid[PART_HOLD_TOP_CAP],
+		cache->m_bAnimationIsNoteColor[PART_HOLD_TOP_CAP] );
 
 	return pSpriteOut;
 }
@@ -373,7 +371,7 @@ Sprite * NoteDisplay::GetHoldTopCapSprite( float fNoteBeat, bool bIsBeingHeld )
 Sprite * NoteDisplay::GetHoldBottomCapSprite( float fNoteBeat, bool bIsBeingHeld )
 {
 	NoteType nt = NoteType(0);
-	if( cache->m_bHoldBottomCapAnimationIsNoteColor )
+	if( cache->m_bAnimationIsNoteColor[PART_HOLD_BOTTOM_CAP] )
 		nt = BeatToNoteType( fNoteBeat );
 //  NOTE_TYPE_INVALID is 192nds at this point.
 	if( nt == NOTE_TYPE_INVALID )
@@ -385,9 +383,9 @@ Sprite * NoteDisplay::GetHoldBottomCapSprite( float fNoteBeat, bool bIsBeingHeld
 	SetActiveFrame( 
 		fNoteBeat, 
 		*pSpriteOut, 
-		cache->m_fHoldBottomCapAnimationLengthInBeats, 
-		cache->m_bHoldBottomCapAnimationIsVivid, 
-		cache->m_bHoldBottomCapAnimationIsNoteColor );
+		cache->m_fAnimationLengthInBeats[PART_HOLD_BOTTOM_CAP],
+		cache->m_bAnimationIsVivid[PART_HOLD_BOTTOM_CAP],
+		cache->m_bAnimationIsNoteColor[PART_HOLD_BOTTOM_CAP] );
 
 	return pSpriteOut;
 }
@@ -396,7 +394,7 @@ Sprite * NoteDisplay::GetHoldBottomCapSprite( float fNoteBeat, bool bIsBeingHeld
 Actor* NoteDisplay::GetHoldHeadActor( float fNoteBeat, bool bIsBeingHeld )
 {
 	NoteType nt = NoteType(0);
-	if( cache->m_bHoldHeadAnimationIsNoteColor )
+	if( cache->m_bAnimationIsNoteColor[PART_HOLD_HEAD] )
 		nt = BeatToNoteType( fNoteBeat );
 //  NOTE_TYPE_INVALID is 192nds at this point.
 	if( nt == NOTE_TYPE_INVALID )
@@ -408,9 +406,9 @@ Actor* NoteDisplay::GetHoldHeadActor( float fNoteBeat, bool bIsBeingHeld )
 	SetActiveFrame( 
 		fNoteBeat, 
 		*pActorOut, 
-		cache->m_fHoldHeadAnimationLengthInBeats, 
-		cache->m_bHoldHeadAnimationIsVivid, 
-		cache->m_bHoldHeadAnimationIsNoteColor );
+		cache->m_fAnimationLengthInBeats[PART_HOLD_HEAD],
+		cache->m_bAnimationIsVivid[PART_HOLD_HEAD],
+		cache->m_bAnimationIsNoteColor[PART_HOLD_HEAD] );
 
 	return pActorOut;
 }
@@ -418,7 +416,7 @@ Actor* NoteDisplay::GetHoldHeadActor( float fNoteBeat, bool bIsBeingHeld )
 Sprite *NoteDisplay::GetHoldBodySprite( float fNoteBeat, bool bIsBeingHeld )
 {
 	NoteType nt = NoteType(0);
-	if( cache->m_bHoldBodyAnimationIsNoteColor )
+	if( cache->m_bAnimationIsNoteColor[PART_HOLD_BODY] )
 		nt = BeatToNoteType( fNoteBeat );
 //  NOTE_TYPE_INVALID is 192nds at this point.
 	if( nt == NOTE_TYPE_INVALID )
@@ -430,9 +428,9 @@ Sprite *NoteDisplay::GetHoldBodySprite( float fNoteBeat, bool bIsBeingHeld )
 	SetActiveFrame( 
 		fNoteBeat, 
 		*pSpriteOut, 
-		cache->m_fHoldBodyAnimationLengthInBeats, 
-		cache->m_bHoldBodyAnimationIsVivid, 
-		cache->m_bHoldBodyAnimationIsNoteColor );
+		cache->m_fAnimationLengthInBeats[PART_HOLD_BODY],
+		cache->m_bAnimationIsVivid[PART_HOLD_BODY],
+		cache->m_bAnimationIsNoteColor[PART_HOLD_BODY] );
 
 	return pSpriteOut;
 }
@@ -440,7 +438,7 @@ Sprite *NoteDisplay::GetHoldBodySprite( float fNoteBeat, bool bIsBeingHeld )
 Actor* NoteDisplay::GetHoldTailActor( float fNoteBeat, bool bIsBeingHeld )
 {
 	NoteType nt = NoteType(0);
-	if( cache->m_bHoldTailAnimationIsNoteColor )
+	if( cache->m_bAnimationIsNoteColor[PART_HOLD_TAIL] )
 		nt = BeatToNoteType( fNoteBeat );
 //  NOTE_TYPE_INVALID is 192nds at this point.
 	if( nt == NOTE_TYPE_INVALID )
@@ -452,9 +450,9 @@ Actor* NoteDisplay::GetHoldTailActor( float fNoteBeat, bool bIsBeingHeld )
 	SetActiveFrame( 
 		fNoteBeat, 
 		*pActorOut, 
-		cache->m_fHoldTailAnimationLengthInBeats, 
-		cache->m_bHoldTailAnimationIsVivid, 
-		cache->m_bHoldTailAnimationIsNoteColor );
+		cache->m_fAnimationLengthInBeats[PART_HOLD_TAIL], 
+		cache->m_bAnimationIsVivid[PART_HOLD_TAIL], 
+		cache->m_bAnimationIsNoteColor[PART_HOLD_TAIL] );
 
 	return pActorOut;
 }
