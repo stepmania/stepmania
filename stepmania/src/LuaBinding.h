@@ -132,8 +132,8 @@ private:
 
 
 #define LUA_REGISTER_CLASS( T ) \
-	const char Luna##T<T>::s_className[] = #T; \
-	Luna##T<T>::RegTypeVector* Luna##T<T>::s_pvMethods = NULL; \
+	const char Luna<T>::s_className[] = #T; \
+	Luna##T<T>::RegTypeVector* Luna<T>::s_pvMethods = NULL; \
 	static Luna##T<T> registera; \
 void T::PushSelf( lua_State *L ) { Luna##T<T>::Push( L, this ); }
 
