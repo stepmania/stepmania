@@ -206,18 +206,20 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Steps &out, int start )
 			fCurrentIncrementer = 1.0/16 * BEATS_PER_MEASURE;
 			break;
 		case NOTE_TYPE_32ND:
-			/* XXX: This is valid for 64ths, too, but we don't
-			 * have NOTE_TYPE_64TH, so we'll write 64ths as
-			 * 192nds. */
+		case NOTE_TYPE_64TH:
 			fprintf( fp, "{" );
 			fCurrentIncrementer = 1.0/64 * BEATS_PER_MEASURE;
+			break;
+		case NOTE_TYPE_48TH:
+		case NOTE_TYPE_INVALID:
+			// since, for whatever reason, the only way to do
+			// 48ths is through a block of 192nds...
+			fprintf( fp, "`" );
+			fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
 			break;
 		default:
 			ASSERT(0);
 			// fall though
-		case NOTE_TYPE_INVALID:
-			fprintf( fp, "`" );
-			fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
 		}
 
 		double fFirstBeatInMeasure = m * BEATS_PER_MEASURE;
@@ -281,14 +283,16 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Steps &out, int start )
 			fprintf( fp, ")" );
 			break;
 		case NOTE_TYPE_32ND:
+		case NOTE_TYPE_64TH:
 			fprintf( fp, "}" );
+			break;
+		case NOTE_TYPE_48TH:
+		case NOTE_TYPE_INVALID:
+			fprintf( fp, "'" );
 			break;
 		default:
 			ASSERT(0);
 			// fall though
-		case NOTE_TYPE_INVALID:
-			fprintf( fp, "'" );
-			break;
 		}
 		fprintf( fp, "\n" );
 	}

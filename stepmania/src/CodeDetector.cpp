@@ -148,6 +148,8 @@ bool CodeDetector::EnteredNextSort( GameController controller )
 
 #define  TOGGLE(v,a,b)	if(v!=a) v=a; else v=b;
 #define  FLOAT_TOGGLE(v)	if(v!=1.f) v=1.f; else v=0.f;
+// XXX: Read the metrics file instead!
+// Using this can give us unlisted scroll speeds on the Options screen.
 #define  INCREMENT_SCROLL_SPEED(s)	(s==0.5f) ? s=0.75f : (s==0.75f) ? s=1.0f : (s==1.0f) ? s=1.5f : (s==1.5f) ? s=2.0f : (s==2.0f) ? s=3.0f : (s==3.0f) ? s=4.0f : (s==4.0f) ? s=5.0f : (s==5.0f) ? s=8.0f : s=0.5f;
 #define  DECREMENT_SCROLL_SPEED(s)	(s==0.75f) ? s=0.5f : (s==1.0f) ? s=0.75f : (s==1.5f) ? s=1.0f : (s==2.0f) ? s=1.5f : (s==3.0f) ? s=2.0f : (s==4.0f) ? s=3.0f : (s==5.0f) ? s=4.0f : (s==8.0f) ? s=4.0f : s=8.0f;
 

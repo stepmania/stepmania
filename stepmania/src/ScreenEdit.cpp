@@ -508,6 +508,9 @@ void ScreenEdit::UpdateTextInfo()
 	}
 
 	CString sText;
+	// MD 11/03/03 - check Editor.ini for a few of these
+	// entries used: CurBeatPlaces, CurSecPlaces, OffsetPlaces,
+	//               PreviewStartPlaces, PreviewLengthPlaces
 	sText += ssprintf( "Current Beat:\n     %.2f\n",		GAMESTATE->m_fSongBeat );
 	sText += ssprintf( "Current Second:\n     %.2f\n",		m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) );
 	sText += ssprintf( "Snap to:\n     %s\n",				sNoteType.c_str() );
