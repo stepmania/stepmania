@@ -29,14 +29,14 @@ ScreenLogo::ScreenLogo() : ScreenAttract("ScreenLogo")
 	this->AddChild( &m_sprLogo );
 
 	m_textVersion.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-	m_textVersion.SetText( "CVS" );
 	m_textVersion.Command( VERSION_ON_COMMAND );
+	m_textVersion.SetText( "CVS" );
 	this->AddChild( &m_textVersion );
 
 
 	m_textSongs.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-	m_textSongs.SetText( ssprintf("%d songs in %d groups, %d courses", SONGMAN->GetNumSongs(), SONGMAN->GetNumGroups(), SONGMAN->GetNumCourses()) );
 	m_textSongs.Command( SONGS_ON_COMMAND );
+	m_textSongs.SetText( ssprintf("%d songs in %d groups, %d courses", SONGMAN->GetNumSongs(), SONGMAN->GetNumGroups(), SONGMAN->GetNumCourses()) );
 	this->AddChild( &m_textSongs );
 
 	this->MoveToTail( &m_In );	// put it in the back so it covers up the stuff we just added
