@@ -160,11 +160,6 @@ void ScreenGameplay::Init()
     FOREACH_PotentialCpuPlayer(p)
         GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSteps[ GAMESTATE->GetFirstHumanPlayer() ] );
 
-	//
-	// fill in m_apSongsQueue, m_vpStepsQueue, m_asModifiersQueue
-	//
-	InitSongQueues();
-
 	/* Increment the course play count. */
 	if( GAMESTATE->IsCourseMode() && !GAMESTATE->m_bDemonstrationOrJukebox )
 		FOREACH_EnabledPlayer(p)
@@ -173,13 +168,9 @@ void ScreenGameplay::Init()
 	STATSMAN->m_CurStageStats.playMode = GAMESTATE->m_PlayMode;
 	STATSMAN->m_CurStageStats.pStyle = GAMESTATE->m_pCurStyle;
 
-    FOREACH_EnabledPlayer(p)
-	{
-		ASSERT( !m_vpStepsQueue[p].empty() );
-
-		/* Record combo rollover. */
-		STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 0, true );
-	}
+	/* Record combo rollover. */
+	FOREACH_EnabledPlayer(pn)
+		STATSMAN->m_CurStageStats.m_player[pn].UpdateComboList( 0, true );
 
 	if( GAMESTATE->IsExtraStage() )
 		STATSMAN->m_CurStageStats.StageType = StageStats::STAGE_EXTRA;
@@ -213,14 +204,6 @@ void ScreenGameplay::Init()
 				&STATSMAN->m_CurStageStats.m_player[p] );
 			break;
 		}
-	}
-
-	FOREACH_EnabledPlayer(pn)
-	{
-		if( m_pPrimaryScoreKeeper[pn] )
-			m_pPrimaryScoreKeeper[pn]->Load( m_apSongsQueue, m_vpStepsQueue[pn], m_asModifiersQueue[pn] );
-		if( m_pSecondaryScoreKeeper[pn] )
-			m_pSecondaryScoreKeeper[pn]->Load( m_apSongsQueue, m_vpStepsQueue[pn], m_asModifiersQueue[pn] );
 	}
 
 	m_bChangedOffsetOrBPM = GAMESTATE->m_SongOptions.m_bAutoSync;
@@ -688,6 +671,20 @@ void ScreenGameplay::Init()
 			m_pPrimaryScoreKeeper[pn], 
 			m_pSecondaryScoreKeeper[pn] );
 
+	//
+	// fill in m_apSongsQueue, m_vpStepsQueue, m_asModifiersQueue
+	//
+	InitSongQueues();
+	FOREACH_EnabledPlayer(pn)
+		ASSERT( !m_vpStepsQueue[pn].empty() );
+
+	FOREACH_EnabledPlayer(pn)
+	{
+		if( m_pPrimaryScoreKeeper[pn] )
+			m_pPrimaryScoreKeeper[pn]->Load( m_apSongsQueue, m_vpStepsQueue[pn], m_asModifiersQueue[pn] );
+		if( m_pSecondaryScoreKeeper[pn] )
+			m_pSecondaryScoreKeeper[pn]->Load( m_apSongsQueue, m_vpStepsQueue[pn], m_asModifiersQueue[pn] );
+	}
 
 	/* LoadNextSong first, since that positions some elements which need to be
 	 * positioned before we TweenOnScreen. */
