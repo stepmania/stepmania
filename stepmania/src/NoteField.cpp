@@ -552,7 +552,7 @@ void NoteField::DrawPrimitives()
 
 			NoteDisplayCols *nd = CurDisplay->second;
 
-			nd->display[c].DrawHold( hn, bIsHoldingNote, fLife, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_fYReverseOffsetPixels );
+			nd->display[c].DrawHold( hn, bIsHoldingNote, bIsActive, fLife, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_fYReverseOffsetPixels );
 		}
 		
 
