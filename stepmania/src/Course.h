@@ -161,7 +161,7 @@ public:
 
 		void AddHighScore( HighScore hs, int &iIndexOut )
 		{
-			for( int i=0; i<vHighScores.size() && i<NUM_RANKING_LINES; i++ )
+			for( int i=0; i<(int)vHighScores.size() && i<NUM_RANKING_LINES; i++ )
 			{
 				if( hs > vHighScores[i] )
 				{
