@@ -2126,7 +2126,6 @@
 				AA29CCC50558741A00961A51,
 				AA29CCC60558741A00961A51,
 				AA29CCC70558741A00961A51,
-				AA29CCC80558741A00961A51,
 				AA29CCC90558741A00961A51,
 				AA29CCCA0558741A00961A51,
 				AA29CCCB0558741A00961A51,
@@ -2361,6 +2360,7 @@
 				AA70E36B0663112800DAE1FD,
 				AA70E36D0663112800DAE1FD,
 				AAD7A2FD0664999800CCAB36,
+				AA42F5E9067068D30013509E,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3283,12 +3283,6 @@
 			settings = {
 			};
 		};
-		AA29CCC80558741A00961A51 = {
-			fileRef = AA6E005E047711F3005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AA29CCC90558741A00961A51 = {
 			fileRef = AA6E0060047711F3005F316C;
 			isa = PBXBuildFile;
@@ -4116,7 +4110,6 @@
 				AA29CDD30558741A00961A51,
 				AA29CDD40558741A00961A51,
 				AA29CDD50558741A00961A51,
-				AA29CDD60558741A00961A51,
 				AA29CDD70558741A00961A51,
 				AA29CDD80558741A00961A51,
 				AA29CDD90558741A00961A51,
@@ -4312,6 +4305,7 @@
 				AA70E36A0663112800DAE1FD,
 				AA70E36C0663112800DAE1FD,
 				AAD7A2FC0664999800CCAB36,
+				AA42F5E8067068D30013509E,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5169,12 +5163,6 @@
 			settings = {
 			};
 		};
-		AA29CDD60558741A00961A51 = {
-			fileRef = AA6E005D047711F3005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AA29CDD70558741A00961A51 = {
 			fileRef = AA6E005F047711F3005F316C;
 			isa = PBXBuildFile;
@@ -6005,6 +5993,36 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
+		};
+		AA42F5E6067068D30013509E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ScreenNetworkOptions.cpp;
+			path = ../src/ScreenNetworkOptions.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA42F5E7067068D30013509E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ScreenNetworkOptions.h;
+			path = ../src/ScreenNetworkOptions.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA42F5E8067068D30013509E = {
+			fileRef = AA42F5E6067068D30013509E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA42F5E9067068D30013509E = {
+			fileRef = AA42F5E7067068D30013509E;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		AA4B425705733D71005FB5DB = {
 			isa = PBXFileReference;
@@ -7554,6 +7572,8 @@
 		};
 		AA6E00090477103E005F316C = {
 			children = (
+				AA42F5E6067068D30013509E,
+				AA42F5E7067068D30013509E,
 				AABB00FD0659F0A700738526,
 				AABB00FE0659F0A700738526,
 				AABB00F40659EF8C00738526,
@@ -7659,8 +7679,6 @@
 				AA6E005A047711F3005F316C,
 				AA6E005B047711F3005F316C,
 				AA6E005C047711F3005F316C,
-				AA6E005D047711F3005F316C,
-				AA6E005E047711F3005F316C,
 				AA6E005F047711F3005F316C,
 				AA6E0060047711F3005F316C,
 				AA6E0061047711F3005F316C,
@@ -8489,30 +8507,6 @@
 			isa = PBXFileReference;
 			name = ScreenSelectCharacter.h;
 			path = ../src/ScreenSelectCharacter.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E005D047711F3005F316C = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenSelectCourse.cpp;
-			path = ../src/ScreenSelectCourse.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E005E047711F3005F316C = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenSelectCourse.h;
-			path = ../src/ScreenSelectCourse.h;
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
