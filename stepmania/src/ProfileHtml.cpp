@@ -101,7 +101,7 @@ inline void PrintTable(RageFile &f,Table &table)
 		{
 			f.Write("<tr>");
 
-			const Table::Line& line = (i<vLines.size()) ? vLines[i] : Table::Line();
+			const Table::Line& line = (i<(int)vLines.size()) ? vLines[i] : Table::Line();
 			if( bPrintRank )
 			{
 				f.Write("<td class='rank'>");
@@ -325,7 +325,7 @@ void PrintGroups( RageFile &f, const Profile *pProfile, CString sTitle, FnPrintG
 	
 	PRINT_OPEN(f, sTitle );
 	{
-		for( int g=0; g<asGroups.size(); g++ )
+		for( unsigned g=0; g<asGroups.size(); g++ )
 		{
 			CString sGroup = asGroups[g];
 			
