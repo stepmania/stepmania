@@ -1558,6 +1558,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			<File
 				RelativePath=".\RageUtil.h">
 			</File>
+			<File
+				RelativePath="RageUtil_CharConversions.cpp">
+			</File>
+			<File
+				RelativePath="RageUtil_CharConversions.h">
+			</File>
 			<Filter
 				Name="Helpers"
 				Filter="">
