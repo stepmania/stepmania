@@ -223,11 +223,8 @@ void ScreenMiniMenu::MenuStart( PlayerNumber pn, const InputEventType type )
 	COPY( s_iLastAnswers, m_iCurAnswers );
 }
 
-void ScreenMiniMenu::MenuBack( PlayerNumber pn, const InputEventType type )
+void ScreenMiniMenu::MenuBack( PlayerNumber pn )
 {
-	if( type == IET_RELEASE )
-		return;
-
 	m_Out.StartTransitioning( SM_GoToCancel );
 }
 

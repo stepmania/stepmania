@@ -79,7 +79,7 @@ protected:
 	void MenuDown( PlayerNumber pn, const InputEventType type );
 	void MenuLeft( PlayerNumber pn, const InputEventType type );
 	void MenuRight( PlayerNumber pn, const InputEventType type );
-	void MenuBack( PlayerNumber pn, const InputEventType type );
+	void MenuBack( PlayerNumber pn );
 	void MenuStart( PlayerNumber pn, const InputEventType type );
 
 	int GetGoUpSpot();		// return -1 if can't go up
