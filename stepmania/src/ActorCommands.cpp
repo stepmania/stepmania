@@ -24,7 +24,7 @@ ActorCommands::ActorCommands( const CString &sCommands )
 		//
 		ostringstream s;
 		
-		s << "return function(self)\n";
+		s << "return function(self,parent)\n";
 
 		FOREACH_CONST( Command, cmds.v, c )
 		{

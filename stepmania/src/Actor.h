@@ -319,8 +319,11 @@ public:
 	virtual void PushSelf( lua_State *L );
 	void AddCommand( const CString &sCmdName, apActorCommands apac );
 	virtual void PlayCommand( const CString &sCommandName );
+	virtual void PlayCommand2( const CString &sCommandName, Actor *pParent );
 	virtual void RunCommands( const LuaReference& cmds );
+	virtual void RunCommands2( const LuaReference& cmds, Actor *pParent );
 	void RunCommands( const apActorCommands& cmds ) { this->RunCommands( *cmds ); }	// convenience
+	void RunCommands2( const apActorCommands& cmds, Actor *pParent ) { this->RunCommands2( *cmds, pParent ); }	// convenience
 
 	static float GetCommandsLengthSeconds( const LuaReference& cmds );
 	static float GetCommandsLengthSeconds( const apActorCommands& cmds ) { return GetCommandsLengthSeconds( *cmds ); }	// convenience
@@ -533,6 +536,12 @@ public:
 	static int queuecommand( T* p, lua_State *L )		{ p->QueueCommand(SArg(1)); return 0; }
 	static int queuemessage( T* p, lua_State *L )		{ p->QueueMessage(SArg(1)); return 0; }
 
+	static int GetWidth( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetUnzoomedWidth() ); return 1; }
+	static int GetHeight( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetUnzoomedHeight() ); return 1; }
+	static int GetZoom( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetZoom() ); return 1; }
+	static int GetZoomX( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetZoomX() ); return 1; }
+
+
 	static void Register(lua_State *L) {
   		ADD_METHOD( sleep )
 		ADD_METHOD( linear )
@@ -624,6 +633,12 @@ public:
 		ADD_METHOD( playcommand )
 		ADD_METHOD( queuecommand )
 		ADD_METHOD( queuemessage )
+
+		ADD_METHOD( GetWidth )
+		ADD_METHOD( GetHeight )
+		ADD_METHOD( GetZoom )
+		ADD_METHOD( GetZoomX )
+
 		Luna<T>::Register( L );
 	}
 };

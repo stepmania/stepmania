@@ -728,11 +728,26 @@ void Actor::AddRotationR( float rot )
 
 void Actor::RunCommands( const LuaReference& cmds )
 {
+	RunCommands2( cmds, NULL );
+}
+
+void Actor::RunCommands2( const LuaReference& cmds, Actor *pParent )
+{
+	// function
 	cmds.PushSelf( LUA->L );
 	ASSERT( !lua_isnil(LUA->L, -1) );
 
-	this->PushSelf( LUA->L ); // 1st parameter
-	lua_call(LUA->L, 1, 0); // call function with 1 argument and 0 results
+	// 1st parameter
+	this->PushSelf( LUA->L );
+	
+	// 2nd parameter
+	if( pParent )
+		pParent->PushSelf( LUA->L );
+	else
+		lua_pushnil( LUA->L );
+
+	// call function with 1 argument and 0 results
+	lua_call(LUA->L, 2, 0); 
 }
 
 /*
@@ -1041,6 +1056,11 @@ void Actor::AddCommand( const CString &sCmdName, apActorCommands apac )
 }
 
 void Actor::PlayCommand( const CString &sCommandName )
+{
+	PlayCommand2( sCommandName, NULL );
+}
+
+void Actor::PlayCommand2( const CString &sCommandName, Actor *pParent )
 {
 	CString sKey = sCommandName;
 	map<CString, apActorCommands>::const_iterator it = m_mapNameToCommands.find( sKey );
