@@ -18,6 +18,7 @@ void ModeChoice::Init()
 	m_dc = DIFFICULTY_INVALID;
 	m_sAnnouncer = "";
 	m_sName = "";
+	m_bInvalid = true;
 }
 
 bool ModeChoice::DescribesCurrentMode() const
@@ -46,6 +47,7 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 	m_iIndex = iIndex;
 
 	m_sName = sChoice;
+	m_bInvalid = false;
 
 	CStringArray asCommands;
 	split( sChoice, ";", asCommands );
