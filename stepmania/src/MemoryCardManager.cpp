@@ -53,11 +53,7 @@ MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in 
 		{
 			return 
 				iBus==other.iBus &&
-				iDeviceOnBus==other.iDeviceOnBus &&
-				iPortOnHub==other.iPortOnHub &&
-				sSerial==other.sSerial &&
-				iUsbStorageIndex==other.iUsbStorageIndex &&
-				sOsMountDir==other.sOsMountDir;
+			  iDeviceOnBus==other.iDeviceOnBus;  // every time a device is plugged in, it gets a unique device number
 		}
 	};
 
@@ -222,7 +218,20 @@ MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in 
 				}
 			}
 		}
-		return;
+
+		{
+		  // try to mount
+		  for( unsigned i=0; i<vDevicesOut.size(); i++ )
+		    {
+		      UsbStorageDevice& usbd = vDevicesOut[i];
+		      if( !usbd.sOsMountDir.empty() )
+			{
+			  CString sCommand = ssprintf("mount %s &",usbd.sOsMountDir.c_str());
+			  //			  system( sCommand );
+			}
+		    }
+		}
+
 	}
 
 
@@ -265,8 +274,6 @@ MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in 
 	{
 		if( UsbChanged() )
 		{
-		  SCREENMAN->SystemMessage( "USB changed" );
-		  return;
 			vector<UsbStorageDevice> vOld = g_StorageDevices;	// make a copy
 			UpdateAttachedUsbStorageDevices();
 			vector<UsbStorageDevice> &vNew = g_StorageDevices;
@@ -278,7 +285,7 @@ MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in 
 			{
 				const UsbStorageDevice old = vOld[i];
 				if( find(vNew.begin(),vNew.end(),old) == vNew.end() )
-					SCREENMAN->SystemMessage( ssprintf("Disconnected bus %d port %d device %d", old.iBus, old.iPortOnHub, old.iDeviceOnBus) );
+					SCREENMAN->SystemMessage( ssprintf("Disconnected bus %d port %d device %d path %s", old.iBus, old.iPortOnHub, old.iDeviceOnBus, old.sOsMountDir.c_str()) );
 			}
 
 			// check for connects
@@ -286,7 +293,7 @@ MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in 
 			{
 				const UsbStorageDevice newd = vNew[i];
 				if( find(vOld.begin(),vOld.end(),newd) == vOld.end() )
-					SCREENMAN->SystemMessage( ssprintf("Connected bus %d port %d device %d", newd.iBus, newd.iPortOnHub, newd.iDeviceOnBus) );
+					SCREENMAN->SystemMessage( ssprintf("Connected bus %d port %d device %d path %s", newd.iBus, newd.iPortOnHub, newd.iDeviceOnBus, newd.sOsMountDir.c_str()) );
 			}
 		}
 	}
