@@ -1,7 +1,7 @@
 #include "global.h"
 #include "Combo.h"
 #include "ThemeManager.h"
-#include "StageStats.h"
+#include "StatsManager.h"
 #include "GameState.h"
 #include "song.h"
 #include "ThemeMetric.h"
@@ -101,17 +101,17 @@ void Combo::SetCombo( int iCombo, int iMisses )
 
 	if( bPastMidpoint )
 	{
-		if( g_CurStageStats.m_player[m_PlayerNumber].FullComboOfScore(TNS_MARVELOUS) )
+		if( STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].FullComboOfScore(TNS_MARVELOUS) )
 		{
 			sprLabel.RunCommands( FULL_COMBO_MARVELOUSES_COMMAND );
 			m_textNumber.RunCommands( FULL_COMBO_MARVELOUSES_COMMAND );
 		}
-		else if( bPastMidpoint && g_CurStageStats.m_player[m_PlayerNumber].FullComboOfScore(TNS_PERFECT) )
+		else if( bPastMidpoint && STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].FullComboOfScore(TNS_PERFECT) )
 		{
 			sprLabel.RunCommands( FULL_COMBO_PERFECTS_COMMAND );
 			m_textNumber.RunCommands( FULL_COMBO_PERFECTS_COMMAND );
 		}
-		else if( bPastMidpoint && g_CurStageStats.m_player[m_PlayerNumber].FullComboOfScore(TNS_GREAT) )
+		else if( bPastMidpoint && STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].FullComboOfScore(TNS_GREAT) )
 		{
 			sprLabel.RunCommands( FULL_COMBO_GREATS_COMMAND );
 			m_textNumber.RunCommands( FULL_COMBO_GREATS_COMMAND );

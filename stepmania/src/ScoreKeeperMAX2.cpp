@@ -29,7 +29,7 @@ ScoreKeeperMAX2::ScoreKeeperMAX2(
 	ASSERT( apSongs.size() == apSteps_.size() );
 	ASSERT( apSongs.size() == asModifiers.size() );
 	//
-	// Fill in g_CurStageStats, calculate multiplier
+	// Fill in STATSMAN->m_CurStageStats, calculate multiplier
 	//
 	int iTotalPossibleDancePoints = 0;
 	for( unsigned i=0; i<apSteps.size(); i++ )

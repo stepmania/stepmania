@@ -8,7 +8,7 @@
 #include "song.h"
 #include "ScreenManager.h"
 #include "GameplayMessages.h"
-#include "StageStats.h"
+#include "StatsManager.h"
 #include "ThemeMetric.h"
 #include "PlayerState.h"
 
@@ -94,10 +94,10 @@ void Inventory::Update( float fDelta )
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
 	// check to see if they deserve a new item
-	if( g_CurStageStats.m_player[pn].iCurCombo != m_iLastSeenCombo )
+	if( STATSMAN->m_CurStageStats.m_player[pn].iCurCombo != m_iLastSeenCombo )
 	{
 		int iOldCombo = m_iLastSeenCombo;
-		m_iLastSeenCombo = g_CurStageStats.m_player[pn].iCurCombo;
+		m_iLastSeenCombo = STATSMAN->m_CurStageStats.m_player[pn].iCurCombo;
 		int iNewCombo = m_iLastSeenCombo;
 		
 #define CROSSED(i) (iOldCombo<i)&&(iNewCombo>=i)

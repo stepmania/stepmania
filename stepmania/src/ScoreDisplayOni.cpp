@@ -6,7 +6,7 @@
 #include "RageLog.h"
 #include "GameState.h"
 #include "ThemeManager.h"
-#include "StageStats.h"
+#include "StatsManager.h"
 #include "PlayerState.h"
 #include "CommonMetrics.h"
 
@@ -44,7 +44,7 @@ void ScoreDisplayOni::Update( float fDelta )
 
 	float fSecsIntoPlay = 0;
 	if( GAMESTATE->IsPlayerEnabled(pn) )
-		fSecsIntoPlay = g_CurStageStats.m_player[pn].fAliveSeconds;
+		fSecsIntoPlay = STATSMAN->m_CurStageStats.m_player[pn].fAliveSeconds;
 
 	m_text.SetText( SecondsToMMSSMsMs(fSecsIntoPlay) );
 }

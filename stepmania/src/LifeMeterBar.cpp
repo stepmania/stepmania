@@ -7,7 +7,7 @@
 #include "RageMath.h"
 #include "ThemeManager.h"
 #include "song.h"
-#include "StageStats.h"
+#include "StatsManager.h"
 #include "ThemeMetric.h"
 #include "PlayerState.h"
 
@@ -402,7 +402,7 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 	}
 
 	/* If we've already failed, there's no point in letting them fill up the bar again.  */
-	if( g_CurStageStats.m_player[m_PlayerNumber].bFailed )
+	if( STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].bFailed )
 		fDeltaLife = 0;
 
 	switch( GAMESTATE->m_SongOptions.m_DrainType )
@@ -431,7 +431,7 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 	CLAMP( m_fLifePercentage, 0, 1 );
 
 	if( m_fLifePercentage <= FAIL_THRESHOLD )
-		g_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier = true;
+		STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier = true;
 
 	m_fLifeVelocity += fDeltaLife;
 }

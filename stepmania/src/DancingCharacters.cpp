@@ -7,7 +7,7 @@
 #include "GameState.h"
 #include "song.h"
 #include "Character.h"
-#include "StageStats.h"
+#include "StatsManager.h"
 #include "PrefsManager.h"
 #include "Model.h"
 
@@ -343,7 +343,7 @@ void DancingCharacters::DrawPrimitives()
 			continue;
 		}
 
-		bool bFailed = g_CurStageStats.m_player[p].bFailed;
+		bool bFailed = STATSMAN->m_CurStageStats.m_player[p].bFailed;
 		bool bDanger = m_bDrawDangerLight;
 
 		DISPLAY->SetLighting( true );

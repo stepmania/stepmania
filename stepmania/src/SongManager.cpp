@@ -29,7 +29,7 @@
 #include "UnlockSystem.h"
 #include "CatalogXml.h"
 #include "Foreach.h"
-#include "StageStats.h"
+#include "StatsManager.h"
 #include "Style.h"
 #include "ThemeMetric.h"
 
@@ -749,7 +749,7 @@ void SongManager::RevertFromDisk( Song *pSong, bool bAllowNotesLoss )
 	LOG->MapLog( "RevertFromDisk", "Reverted \"%s\" from disk", pSong->GetTranslitMainTitle().c_str() );
 
 	// Ugly:  When we re-load the song, the Steps* will change.
-	// Fix GAMESTATE->m_CurSteps, g_CurStageStats, g_vPlayedStageStats[] after reloading.
+	// Fix GAMESTATE->m_CurSteps, STATSMAN->m_CurStageStats, STATSMAN->m_vPlayedStageStats[] after reloading.
 	/* XXX: This is very brittle.  However, we must know about all globals uses of Steps*,
 	 * so we can check to make sure we didn't lose any steps which are referenced ... */
 
@@ -804,10 +804,10 @@ void SongManager::RevertFromDisk( Song *pSong, bool bAllowNotesLoss )
 	{
 		CONVERT_STEPS_POINTER( GAMESTATE->m_pCurSteps[p] );
 
-		FOREACH( Steps*, g_CurStageStats.m_player[p].vpSteps, pSteps )
+		FOREACH( Steps*, STATSMAN->m_CurStageStats.m_player[p].vpSteps, pSteps )
 			CONVERT_STEPS_POINTER( *pSteps );
 
-		FOREACH( StageStats, g_vPlayedStageStats, ss )
+		FOREACH( StageStats, STATSMAN->m_vPlayedStageStats, ss )
 			FOREACH( Steps*, ss->m_player[p].vpSteps, pSteps )
 				CONVERT_STEPS_POINTER( *pSteps );
 	}

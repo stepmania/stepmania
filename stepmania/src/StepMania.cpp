@@ -63,6 +63,7 @@
 #include "CryptManager.h"
 #include "NetworkSyncManager.h"
 #include "MessageManager.h"
+#include "StatsManager.h"
 
 #if defined(XBOX)
 #include "Archutils/Xbox/VirtualMemory.h"
@@ -178,6 +179,7 @@ void ShutdownGame()
 		SOUNDMAN->Shutdown();
 
 	SAFE_DELETE( SCREENMAN );
+	SAFE_DELETE( STATSMAN );
 	SAFE_DELETE( MESSAGEMAN );
 	SAFE_DELETE( NSMAN );
 	/* Delete INPUTMAN before the other INPUTFILTER handlers, or an input
@@ -1088,6 +1090,7 @@ int main(int argc, char* argv[])
 	UNLOCKMAN	= new UnlockSystem;
 	NSMAN 		= new NetworkSyncManager( loading_window ); 
 	MESSAGEMAN	= new MessageManager;
+	STATSMAN	= new StatsManager;
 
 	// UGLY: Reload the current theme now that all global singletons are
 	// constructed so that they can be registered with Lua.

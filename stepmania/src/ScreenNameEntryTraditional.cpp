@@ -18,7 +18,7 @@
 #include "song.h"
 #include "Steps.h"
 #include "ProfileManager.h"
-#include "StageStats.h"
+#include "StatsManager.h"
 #include "RageDisplay.h"
 #include "Foreach.h"
 #include "Style.h"
@@ -162,7 +162,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 				PROFILEMAN->AddCategoryScore( st, RANKING_A, p, hs, a, b );
 			}
 
-			g_vPlayedStageStats.push_back( ss );
+			STATSMAN->m_vPlayedStageStats.push_back( ss );
 		}
 
 	}
@@ -305,11 +305,11 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		actor.FinishTweening(); \
 	}
 
-		m_FeatDisplay[p].reserve( g_vPlayedStageStats.size() );
+		m_FeatDisplay[p].reserve( STATSMAN->m_vPlayedStageStats.size() );
 
-		for( unsigned i = 0; i < g_vPlayedStageStats.size(); ++i )
+		for( unsigned i = 0; i < STATSMAN->m_vPlayedStageStats.size(); ++i )
 		{
-			StageStats &ss = g_vPlayedStageStats[i];
+			StageStats &ss = STATSMAN->m_vPlayedStageStats[i];
 			Song* pSong = ss.vpSongs[0];
 			Steps* pSteps = ss.m_player[p].vpSteps[0];
 			Course* pCourse = GAMESTATE->m_pCurCourse;

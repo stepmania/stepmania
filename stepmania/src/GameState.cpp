@@ -23,7 +23,7 @@
 #include "RageFile.h"
 #include "Bookkeeper.h"
 #include "MemoryCardManager.h"
-#include "StageStats.h"
+#include "StatsManager.h"
 #include "GameConstantsAndTypes.h"
 #include "StepMania.h"
 #include "CommonMetrics.h"
@@ -167,7 +167,7 @@ void GameState::Reset()
 	 * SongManager::UpdateBest could be called).  Erase the cache. */
 	SONGMAN->RegenerateNonFixedCourses();
 
-	g_vPlayedStageStats.clear();
+	STATSMAN->m_vPlayedStageStats.clear();
 
 	m_SongOptions.Init();
 	
@@ -326,7 +326,7 @@ void GameState::EndGame()
 
 	if( m_bDemonstrationOrJukebox )
 		return;
-	if( m_timeGameStarted.IsZero() || !g_vPlayedStageStats.size() )	// we were in the middle of a game and played at least one song
+	if( m_timeGameStarted.IsZero() || !STATSMAN->m_vPlayedStageStats.size() )	// we were in the middle of a game and played at least one song
 		return;
 
 	/* Finish the final stage. */
@@ -504,8 +504,8 @@ void GameState::ResetMusicStatistics()
 
 void GameState::ResetStageStatistics()
 {
-	StageStats OldStats = g_CurStageStats;
-	g_CurStageStats = StageStats();
+	StageStats OldStats = STATSMAN->m_CurStageStats;
+	STATSMAN->m_CurStageStats = StageStats();
 	if( PREFSMAN->m_bComboContinuesBetweenSongs )
 	{
 		if( GetStageIndex() == 0 )
@@ -514,14 +514,14 @@ void GameState::ResetStageStatistics()
 			{
 				Profile* pProfile = PROFILEMAN->GetProfile(p);
 				if( pProfile )
-					g_CurStageStats.m_player[p].iCurCombo = pProfile->m_iCurrentCombo;
+					STATSMAN->m_CurStageStats.m_player[p].iCurCombo = pProfile->m_iCurrentCombo;
 			}
 		}
 		else	// GetStageIndex() > 0
 		{
 			FOREACH_PlayerNumber( p )
 			{
-				g_CurStageStats.m_player[p].iCurCombo = OldStats.m_player[p].iCurCombo;
+				STATSMAN->m_CurStageStats.m_player[p].iCurCombo = OldStats.m_player[p].iCurCombo;
 			}
 		}
 	}
@@ -647,12 +647,12 @@ void GameState::FinishStage()
 	//
 	FOREACH_HumanPlayer( pn )
 	{
-		int iNumTapsAndHolds	= (int) g_CurStageStats.m_player[pn].radarActual[RADAR_NUM_TAPS_AND_HOLDS];
-		int iNumJumps			= (int) g_CurStageStats.m_player[pn].radarActual[RADAR_NUM_JUMPS];
-		int iNumHolds			= (int) g_CurStageStats.m_player[pn].radarActual[RADAR_NUM_HOLDS];
-		int iNumMines			= (int) g_CurStageStats.m_player[pn].radarActual[RADAR_NUM_MINES];
-		int iNumHands			= (int) g_CurStageStats.m_player[pn].radarActual[RADAR_NUM_HANDS];
-		float fCaloriesBurned	= g_CurStageStats.m_player[pn].fCaloriesBurned;
+		int iNumTapsAndHolds	= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_TAPS_AND_HOLDS];
+		int iNumJumps			= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_JUMPS];
+		int iNumHolds			= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_HOLDS];
+		int iNumMines			= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_MINES];
+		int iNumHands			= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_HANDS];
+		float fCaloriesBurned	= STATSMAN->m_CurStageStats.m_player[pn].fCaloriesBurned;
 		PROFILEMAN->AddStepTotals( pn, iNumTapsAndHolds, iNumJumps, iNumHolds, iNumMines, iNumHands, fCaloriesBurned );
 	}
 
@@ -660,7 +660,7 @@ void GameState::FinishStage()
 	// Update profile stats
 	Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
 
-	int iGameplaySeconds = (int)truncf(g_CurStageStats.fGameplaySeconds);
+	int iGameplaySeconds = (int)truncf(STATSMAN->m_CurStageStats.fGameplaySeconds);
 
 	pMachineProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
 	pMachineProfile->m_iCurrentCombo = 0;
@@ -676,11 +676,11 @@ void GameState::FinishStage()
 			pPlayerProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
 			pPlayerProfile->m_iCurrentCombo = 
 				PREFSMAN->m_bComboContinuesBetweenSongs ? 
-				g_CurStageStats.m_player[pn].iCurCombo : 
+				STATSMAN->m_CurStageStats.m_player[pn].iCurCombo : 
 				0;
 		}
 
-		const StageStats& ss = g_CurStageStats;
+		const StageStats& ss = STATSMAN->m_CurStageStats;
 		AddPlayerStatsToProfile( pMachineProfile, ss, pn );
 
 		if( pPlayerProfile )
@@ -778,7 +778,7 @@ int GameState::GetCourseSongIndex() const
 	int iSongIndex = 0;
 	/* iSongsPlayed includes the current song, so it's 1-based; subtract one. */
 	FOREACH_EnabledPlayer( pn )
-		iSongIndex = max( iSongIndex, g_CurStageStats.m_player[pn].iSongsPlayed-1 );
+		iSongIndex = max( iSongIndex, STATSMAN->m_CurStageStats.m_player[pn].iSongsPlayed-1 );
 	return iSongIndex;
 }
 
@@ -975,7 +975,7 @@ bool GameState::HasEarnedExtraStage() const
 			if( PREFSMAN->m_bPickExtraStage && this->IsExtraStage() && !this->m_bAllow2ndExtraStage )
 				continue;
 
-			if( g_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_3 )
+			if( STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_3 )
 				return true;
 		}
 	}
@@ -1013,11 +1013,11 @@ StageResult GameState::GetStageResult( PlayerNumber pn ) const
 			continue;
 
 		/* If anyone did just as well, at best it's a draw. */
-		if( g_CurStageStats.m_player[p].iActualDancePoints == g_CurStageStats.m_player[pn].iActualDancePoints )
+		if( STATSMAN->m_CurStageStats.m_player[p].iActualDancePoints == STATSMAN->m_CurStageStats.m_player[pn].iActualDancePoints )
 			win = RESULT_DRAW;
 
 		/* If anyone did better, we lost. */
-		if( g_CurStageStats.m_player[p].iActualDancePoints > g_CurStageStats.m_player[pn].iActualDancePoints )
+		if( STATSMAN->m_CurStageStats.m_player[p].iActualDancePoints > STATSMAN->m_CurStageStats.m_player[pn].iActualDancePoints )
 			return RESULT_LOSE;
 	}
 	return win;
@@ -1029,9 +1029,9 @@ void GameState::GetFinalEvalStats( StageStats& statsOut ) const
 
 	// Show stats only for the latest 3 normal songs + passed extra stages
 	int PassedRegularSongsLeft = 3;
-	for( int i = (int)g_vPlayedStageStats.size()-1; i >= 0; --i )
+	for( int i = (int)STATSMAN->m_vPlayedStageStats.size()-1; i >= 0; --i )
 	{
-		const StageStats &s = g_vPlayedStageStats[i];
+		const StageStats &s = STATSMAN->m_vPlayedStageStats[i];
 
 		if( !s.OnePassed() )
 			continue;
@@ -1410,13 +1410,13 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 			//
 			vector<SongAndSteps> vSongAndSteps;
 
-			for( unsigned i=0; i<g_vPlayedStageStats.size(); i++ )
+			for( unsigned i=0; i<STATSMAN->m_vPlayedStageStats.size(); i++ )
 			{
-				CHECKPOINT_M( ssprintf("%u/%i", i, (int)g_vPlayedStageStats.size() ) );
+				CHECKPOINT_M( ssprintf("%u/%i", i, (int)STATSMAN->m_vPlayedStageStats.size() ) );
 				SongAndSteps sas;
-				sas.pSong = g_vPlayedStageStats[i].vpSongs[0];
+				sas.pSong = STATSMAN->m_vPlayedStageStats[i].vpSongs[0];
 				ASSERT( sas.pSong );
-				sas.pSteps = g_vPlayedStageStats[i].m_player[pn].vpSteps[0];
+				sas.pSteps = STATSMAN->m_vPlayedStageStats[i].m_player[pn].vpSteps[0];
 				ASSERT( sas.pSteps );
 				vSongAndSteps.push_back( sas );
 			}
@@ -1678,7 +1678,7 @@ bool GameState::AllAreDead() const
 bool GameState::AllHaveComboOf30OrMoreMisses() const
 {
 	FOREACH_EnabledPlayer( p )
-		if( g_CurStageStats.m_player[p].iCurMissCombo < 30 )
+		if( STATSMAN->m_CurStageStats.m_player[p].iCurMissCombo < 30 )
 			return false;
 	return true;
 }

@@ -2,6 +2,7 @@
 #include "NoteDataWithScoring.h"
 #include "NoteData.h"
 #include "StageStats.h"
+#include "StatsManager.h"
 
 namespace
 {
@@ -222,12 +223,12 @@ float GetActualStreamRadarValue( const NoteData &in, float fSongSeconds, PlayerN
 
 float GetActualVoltageRadarValue( const NoteData &in, float fSongSeconds, PlayerNumber pn )
 {
-	/* g_CurStageStats.iMaxCombo is unrelated to GetNumTapNotes: m_bComboContinuesBetweenSongs
+	/* STATSMAN->m_CurStageStats.iMaxCombo is unrelated to GetNumTapNotes: m_bComboContinuesBetweenSongs
 	 * might be on, and the way combo is counted varies depending on the mode and score
 	 * keeper.  Instead, let's use the length of the longest recorded combo.  This is
 	 * only subtly different: it's the percent of the song the longest combo took to get. */
-	const PlayerStageStats::Combo_t MaxCombo = g_CurStageStats.m_player[pn].GetMaxCombo();
-	float fComboPercent = SCALE( MaxCombo.fSizeSeconds, 0, g_CurStageStats.m_player[pn].fLastSecond-g_CurStageStats.m_player[pn].fFirstSecond, 0.0f, 1.0f );
+	const PlayerStageStats::Combo_t MaxCombo = STATSMAN->m_CurStageStats.m_player[pn].GetMaxCombo();
+	float fComboPercent = SCALE( MaxCombo.fSizeSeconds, 0, STATSMAN->m_CurStageStats.m_player[pn].fLastSecond-STATSMAN->m_CurStageStats.m_player[pn].fFirstSecond, 0.0f, 1.0f );
 	return clamp( fComboPercent, 0.0f, 1.0f );
 }
 
@@ -244,11 +245,11 @@ float GetActualAirRadarValue( const NoteData &in, float fSongSeconds, PlayerNumb
 
 float GetActualChaosRadarValue( const NoteData &in, float fSongSeconds, PlayerNumber pn )
 {
-	const int iPossibleDP = g_CurStageStats.m_player[pn].iPossibleDancePoints;
+	const int iPossibleDP = STATSMAN->m_CurStageStats.m_player[pn].iPossibleDancePoints;
 	if ( iPossibleDP == 0 )
 		return 1;
 
-	const int ActualDP = g_CurStageStats.m_player[pn].iActualDancePoints;
+	const int ActualDP = STATSMAN->m_CurStageStats.m_player[pn].iActualDancePoints;
 	return clamp( float(ActualDP)/iPossibleDP, 0.0f, 1.0f );
 }
 

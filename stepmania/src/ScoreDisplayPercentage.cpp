@@ -2,7 +2,7 @@
 
 #include "ScoreDisplayPercentage.h"
 #include "ThemeManager.h"
-#include "StageStats.h"
+#include "StatsManager.h"
 #include "PlayerState.h"
 
 ScoreDisplayPercentage::ScoreDisplayPercentage()
@@ -16,7 +16,7 @@ ScoreDisplayPercentage::ScoreDisplayPercentage()
 
 void ScoreDisplayPercentage::Init( const PlayerState* pPlayerState ) 
 {
-	m_Percent.Load( pPlayerState->m_PlayerNumber, &g_CurStageStats.m_player[pPlayerState->m_PlayerNumber], true );
+	m_Percent.Load( pPlayerState->m_PlayerNumber, &STATSMAN->m_CurStageStats.m_player[pPlayerState->m_PlayerNumber], true );
 }
 
 /*

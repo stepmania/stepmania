@@ -6,7 +6,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "PlayerState.h"
-#include "StageStats.h"
+#include "StatsManager.h"
 #include "CommonMetrics.h"
 
 
@@ -46,8 +46,8 @@ void ScoreDisplayNormal::SetScore( int iNewScore )
 	// score for subtracrive is MaxScore - score).
 
 	
-	int iMaxScore = g_CurStageStats.m_player[pn].iMaxScore;
-	int iCurMaxScore = g_CurStageStats.m_player[pn].iCurMaxScore;
+	int iMaxScore = STATSMAN->m_CurStageStats.m_player[pn].iMaxScore;
+	int iCurMaxScore = STATSMAN->m_CurStageStats.m_player[pn].iCurMaxScore;
 
 	switch( m_pPlayerState->m_CurrentPlayerOptions.m_ScoreDisplay )
 	{

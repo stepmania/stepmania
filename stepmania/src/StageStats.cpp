@@ -5,9 +5,6 @@
 #include "Steps.h"
 #include "song.h"
 
-StageStats	g_CurStageStats;
-vector<StageStats>	g_vPlayedStageStats;
-
 void StageStats::Init()
 {
 	playMode = PLAY_MODE_INVALID;
@@ -103,90 +100,6 @@ public:
 LUA_REGISTER_CLASS( StageStats )
 // lua end
 
-
-//
-// Old Lua
-//
-
-static Grade GetBestGrade()
-{
-	Grade g = NUM_GRADES;
-	FOREACH_EnabledPlayer( pn )
-		g = min( g, g_CurStageStats.m_player[pn].GetGrade() );
-	return g;
-}
-
-static Grade GetWorstGrade()
-{
-	Grade g = GRADE_TIER_1;
-	FOREACH_EnabledPlayer( pn )
-		g = max( g, g_CurStageStats.m_player[pn].GetGrade() );
-	return g;
-}
-
-#include "LuaFunctions.h"
-LuaFunction_NoArgs( GetStagesPlayed,		(int) g_vPlayedStageStats.size() );
-LuaFunction_NoArgs( GetBestGrade,			GetBestGrade() );
-LuaFunction_NoArgs( GetWorstGrade,			GetWorstGrade() );
-LuaFunction_NoArgs( OnePassed,				g_CurStageStats.OnePassed() );
-LuaFunction_NoArgs( AllFailed,				g_CurStageStats.AllFailed() );
-LuaFunction_PlayerNumber( FullCombo,		g_CurStageStats.m_player[pn].FullCombo() )
-LuaFunction_PlayerNumber( MaxCombo,			g_CurStageStats.m_player[pn].GetMaxCombo().cnt )
-LuaFunction_PlayerNumber( GetGrade,			g_CurStageStats.m_player[pn].GetGrade() )
-LuaFunction_Str( Grade,						StringToGrade(str) );
-
-const StageStats *GetStageStatsN( int n )
-{
-	if( n == (int) g_vPlayedStageStats.size() )
-		return &g_CurStageStats;
-	if( n > (int) g_vPlayedStageStats.size() )
-		return NULL;
-	return &g_vPlayedStageStats[n];
-}
-
-/* GetGrade(0) returns the first grade; GetGrade(1) returns the second grade, and
- * and so on.  GetGrade(GetStagesPlayed()) returns the current grade (from g_CurStageStats).
- * If beyond the current song played, return GRADE_NO_DATA. */
-Grade GetGrade( int n, PlayerNumber pn )
-{
-	const StageStats *pStats = GetStageStatsN( n );
-	if( pStats == NULL )
-		return GRADE_NO_DATA;
-	return pStats->m_player[pn].GetGrade();
-}
-
-bool OneGotGrade( int n, Grade g )
-{
-	FOREACH_HumanPlayer( pn )
-		if( GetGrade( n, pn ) == g )
-			return true;
-
-	return false;
-}
-
-
-LuaFunction_IntInt( OneGotGrade, OneGotGrade( a1, (Grade) a2 ) );
-
-Grade GetFinalGrade( PlayerNumber pn )
-{
-	if( !GAMESTATE->IsHumanPlayer(pn) )
-		return GRADE_NO_DATA;
-	StageStats stats;
-	GAMESTATE->GetFinalEvalStats( stats );
-	return stats.m_player[pn].GetGrade();
-}
-LuaFunction_PlayerNumber( GetFinalGrade, GetFinalGrade(pn) );
-
-Grade GetBestFinalGrade()
-{
-	Grade top_grade = GRADE_FAILED;
-	StageStats stats;
-	GAMESTATE->GetFinalEvalStats( stats );
-	FOREACH_HumanPlayer( p )
-		top_grade = min( top_grade, stats.m_player[p].GetGrade() );
-	return top_grade;
-}
-LuaFunction_NoArgs( GetBestFinalGrade, GetBestFinalGrade() );
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard

@@ -2434,6 +2434,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\SongManager.h">
 			</File>
 			<File
+				RelativePath="StatsManager.cpp">
+			</File>
+			<File
+				RelativePath="StatsManager.h">
+			</File>
+			<File
 				RelativePath=".\ThemeManager.cpp">
 			</File>
 			<File

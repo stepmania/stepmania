@@ -5,7 +5,7 @@
 #include "GameState.h"
 #include "Foreach.h"
 #include "Course.h"
-#include "StageStats.h"
+#include "StatsManager.h"
 #include "ScoreKeeperMAX2.h"
 #include "ScoreKeeperRave.h"
 #include "ScreenDimensions.h"
@@ -131,19 +131,19 @@ void ScreenGameplayMultiplayer::Init()
 	/* Called once per stage (single song or single course). */
 	GAMESTATE->BeginStage();
 
-	g_CurStageStats.playMode = GAMESTATE->m_PlayMode;
-	g_CurStageStats.pStyle = GAMESTATE->m_pCurStyle;
+	STATSMAN->m_CurStageStats.playMode = GAMESTATE->m_PlayMode;
+	STATSMAN->m_CurStageStats.pStyle = GAMESTATE->m_pCurStyle;
 
 	{
 		ASSERT( !m_vpStepsQueue.empty() );
 	}
 
 	if( GAMESTATE->IsExtraStage() )
-		g_CurStageStats.StageType = StageStats::STAGE_EXTRA;
+		STATSMAN->m_CurStageStats.StageType = StageStats::STAGE_EXTRA;
 	else if( GAMESTATE->IsExtraStage2() )
-		g_CurStageStats.StageType = StageStats::STAGE_EXTRA2;
+		STATSMAN->m_CurStageStats.StageType = StageStats::STAGE_EXTRA2;
 	else
-		g_CurStageStats.StageType = StageStats::STAGE_NORMAL;
+		STATSMAN->m_CurStageStats.StageType = StageStats::STAGE_NORMAL;
 	
 	//
 	// Init ScoreKeepers
@@ -349,7 +349,7 @@ void ScreenGameplayMultiplayer::LoadNextSong()
 	int iPlaySongIndex = GAMESTATE->GetCourseSongIndex();
 	iPlaySongIndex %= m_vpSongsQueue.size();
 	GAMESTATE->m_pCurSong = m_vpSongsQueue[iPlaySongIndex];
-	g_CurStageStats.vpSongs.push_back( GAMESTATE->m_pCurSong );
+	STATSMAN->m_CurStageStats.vpSongs.push_back( GAMESTATE->m_pCurSong );
 
 	// No need to do this here.  We do it in SongFinished().
 	//GAMESTATE->RemoveAllActiveAttacks();
@@ -364,7 +364,7 @@ void ScreenGameplayMultiplayer::LoadNextSong()
 
 	Steps* pSteps = GAMESTATE->m_pCurSteps[GAMESTATE->m_MasterPlayerNumber];
 
-	g_CurStageStats.m_player[GAMESTATE->m_MasterPlayerNumber].vpSteps.push_back( pSteps );
+	STATSMAN->m_CurStageStats.m_player[GAMESTATE->m_MasterPlayerNumber].vpSteps.push_back( pSteps );
 
 	FOREACH_MultiPlayer( p )
 	{
@@ -596,7 +596,7 @@ void ScreenGameplayMultiplayer::StageFinished( bool bBackedOut )
 
 	// save current stage stats
 	if( !bBackedOut )
-		g_vPlayedStageStats.push_back( g_CurStageStats );
+		STATSMAN->m_vPlayedStageStats.push_back( STATSMAN->m_CurStageStats );
 
 	/* Reset options. */
 	GAMESTATE->RestoreSelectedOptions();

@@ -12,7 +12,7 @@
 #include "ThemeManager.h"
 #include "RageUtil.h"
 #include "RageFile.h"
-#include "StageStats.h"
+#include "StatsManager.h"
 #include "Steps.h"
 #include "PlayerState.h"
 
@@ -503,7 +503,7 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 				bool foundaplayerwithgrade = false;
 				FOREACH_EnabledPlayer( pn )
 				{
-					if(g_CurStageStats.m_player[pn].GetGrade() == info.grades[0])
+					if(STATSMAN->m_CurStageStats.m_player[pn].GetGrade() == info.grades[0])
 					{
 						LOG->Info("Found Valid Grade");
 						foundaplayerwithgrade = true;
@@ -511,7 +511,7 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 				}
 				foundmatchinggrades = foundaplayerwithgrade;
 			}
-			else if(g_vPlayedStageStats.size() < info.grades.size()) // we've not played enough stages to achieve a grade history condition
+			else if(STATSMAN->m_vPlayedStageStats.size() < info.grades.size()) // we've not played enough stages to achieve a grade history condition
 			{
 				LOG->Info("Not Enough Stages Played To Compare Grade History");
 				foundmatchinggrades = false;
@@ -520,16 +520,16 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 			{
 				LOG->Info("Checking Grade History");
 				LOG->Info("Stage Stats Size: %u NumConditionalGrades: %u",
-                          unsigned(g_vPlayedStageStats.size()), unsigned(info.grades.size()));
+                          unsigned(STATSMAN->m_vPlayedStageStats.size()), unsigned(info.grades.size()));
 				bool foundavalidgradeforstage = false;
-				for(unsigned d=info.grades.size()-1,g=g_vPlayedStageStats.size()-1;d>0;d--,g--)
+				for(unsigned d=info.grades.size()-1,g=STATSMAN->m_vPlayedStageStats.size()-1;d>0;d--,g--)
 				{
 					if(d>g) ASSERT(0); // this should never happen.
 
 					FOREACH_EnabledPlayer( pn )
 					{
-						LOG->Info("Player%d Grade: %d :: Expected Grade: %d",pn,g_vPlayedStageStats[g].m_player[pn].GetGrade(),info.grades[d]);
-						if(g_vPlayedStageStats[g].m_player[pn].GetGrade() == info.grades[d])
+						LOG->Info("Player%d Grade: %d :: Expected Grade: %d",pn,STATSMAN->m_vPlayedStageStats[g].m_player[pn].GetGrade(),info.grades[d]);
+						if(STATSMAN->m_vPlayedStageStats[g].m_player[pn].GetGrade() == info.grades[d])
 						{
 							LOG->Info("One Valid Grade");
 							foundavalidgradeforstage = true;
@@ -592,7 +592,7 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 		bool foundclearcond = false;
 		if(info.cleared == CBGA_CSFAILED)
 		{
-			if(GAMESTATE->AllAreDead() || g_CurStageStats.AllFailed()) // they met the fail condition
+			if(GAMESTATE->AllAreDead() || STATSMAN->m_CurStageStats.AllFailed()) // they met the fail condition
 			{
 				LOG->Info("Failed Condition");
 				foundclearcond = true;
@@ -600,7 +600,7 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 		}
 		else if(info.cleared == CBGA_CSCLEARED)
 		{
-			if(!g_CurStageStats.AllFailed() || !GAMESTATE->AllAreDead() ) // stage was cleared
+			if(!STATSMAN->m_CurStageStats.AllFailed() || !GAMESTATE->AllAreDead() ) // stage was cleared
 			{
 				LOG->Info("Cleared Condition");
 				foundclearcond = true;
@@ -610,7 +610,7 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 		{
 			FOREACH_EnabledPlayer( pn )
 			{
-				if(g_CurStageStats.m_player[pn].FullCombo())
+				if(STATSMAN->m_CurStageStats.m_player[pn].FullCombo())
 				{
 					foundclearcond = true;
 					LOG->Info("MaxCombo Condition");
@@ -621,7 +621,7 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 		{
 			FOREACH_EnabledPlayer( pn )
 			{
-				if(!g_CurStageStats.m_player[pn].FullCombo())
+				if(!STATSMAN->m_CurStageStats.m_player[pn].FullCombo())
 				{
 					LOG->Info("BrokenCombo Condition");
 					foundclearcond = true;

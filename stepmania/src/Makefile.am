@@ -289,7 +289,9 @@ MemoryCardManager.cpp MemoryCardManager.h \
 MessageManager.cpp MessageManager.h NetworkSyncManager.cpp NetworkSyncManager.h \
 NetworkSyncServer.cpp NetworkSyncServer.h NoteSkinManager.cpp NoteSkinManager.h \
 PrefsManager.cpp PrefsManager.h ProfileManager.cpp ProfileManager.h ScreenManager.cpp \
-ScreenManager.h SongManager.cpp SongManager.h ThemeManager.cpp ThemeManager.h \
+ScreenManager.h SongManager.cpp SongManager.h \
+StatsManager.cpp StatsManager.h \
+ThemeManager.cpp ThemeManager.h \
 UnlockSystem.cpp UnlockSystem.h
 
 if !WITHOUT_NETWORKING

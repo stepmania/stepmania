@@ -38,7 +38,7 @@ void ScoreDisplayCalories::PlayCommand( const CString &sCommandName )
 {
 	if( sCommandName == m_sMessageOnStep )
 	{
-		float fCals = g_CurStageStats.m_player[m_PlayerNumber].fCaloriesBurned;
+		float fCals = STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].fCaloriesBurned;
 		this->SetTargetNumber( fCals );
 	}
 	

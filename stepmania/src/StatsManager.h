@@ -1,56 +1,29 @@
-/* StageStats - Contains statistics for one stage of play - either one song, or a whole course. */
+/* ThemeManager - Managed non-persisted statistics. */
 
-#ifndef StageStats_H
-#define StageStats_H
+#ifndef StatsManager_H
+#define StatsManager_H
 
-#include "PlayerNumber.h"
-#include "PlayerStageStats.h"
-class Song;
-class Style;
-struct lua_State;
+#include "StageStats.h"
 
-
-struct StageStats
+class StatsManager
 {
-	StageStats() { Init(); }
-	void Init();
+public:
+	StatsManager();
 
-	void AssertValid( PlayerNumber pn ) const;
-
-	void AddStats( const StageStats& other );		// accumulate
-
-	bool OnePassed() const;
-	bool AllFailed() const;
-	bool AllFailedEarlier() const;
-
-	int		GetAverageMeter( PlayerNumber pn ) const;
-
-	PlayMode	playMode;
-	const Style*	pStyle;
-	vector<Song*>	vpSongs;
-	enum { STAGE_INVALID, STAGE_NORMAL, STAGE_EXTRA, STAGE_EXTRA2 } StageType;
-	float	fGameplaySeconds;				// how many seconds before gameplay ended.  Updated by Gameplay, not scaled by music rate.
-
-	PlayerStageStats m_player[NUM_PLAYERS];
+	StageStats	m_CurStageStats;				// current stage (not necessarily passed if Extra Stage)
+	vector<StageStats>	m_vPlayedStageStats;
 
 	// Lua
 	void PushSelf( lua_State *L );
 };
 
-/*
- * This was in GameState, but GameState.h is used by tons of files, and this object
- * is only used by 20 or so.
- *
- * Stage Statistics: 
- * Arcade:	for the current stage (one song).  
- * Nonstop/Oni/Endless:	 for current course (which usually contains multiple songs)
- */
 
-
+extern StatsManager*	STATSMAN;	// global and accessable from anywhere in our program
+	
 #endif
 
 /*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+ * (c) 2001-2004 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

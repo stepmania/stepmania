@@ -3,7 +3,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "Steps.h"
-#include "StageStats.h"
+#include "StatsManager.h"
 
 
 const float	BATTERY_X[NUM_PLAYERS]	=	{ -92, +92 };
@@ -54,7 +54,7 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 	if( bPlayerEnabled )
 	{
 		m_Percent.SetName( "LifeMeterBattery Percent" );
-		m_Percent.Load( pn, &g_CurStageStats.m_player[pn], true );
+		m_Percent.Load( pn, &STATSMAN->m_CurStageStats.m_player[pn], true );
 		this->AddChild( &m_Percent );
 	}
 
@@ -63,7 +63,7 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 
 void LifeMeterBattery::OnSongEnded()
 {
-	if( g_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier )
+	if( STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier )
 		return;
 
 	if( m_iLivesLeft < GAMESTATE->m_SongOptions.m_iBatteryLives )
@@ -80,7 +80,7 @@ void LifeMeterBattery::OnSongEnded()
 
 void LifeMeterBattery::ChangeLife( TapNoteScore score )
 {
-	if( g_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier )
+	if( STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier )
 		return;
 
 	switch( score )
@@ -108,7 +108,7 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 		ASSERT(0);
 	}
 	if( m_iLivesLeft == 0 )
-		g_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier = true;
+		STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier = true;
 }
 
 void LifeMeterBattery::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
@@ -146,7 +146,7 @@ bool LifeMeterBattery::IsHot() const
 
 bool LifeMeterBattery::IsFailing() const
 {
-	return g_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier;
+	return STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier;
 }
 
 float LifeMeterBattery::GetLife() const

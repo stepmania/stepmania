@@ -13,7 +13,7 @@
 #include "DancingCharacters.h"
 #include "arch/arch.h"
 #include "BeginnerHelper.h"
-#include "StageStats.h"
+#include "StatsManager.h"
 #include "ScreenDimensions.h"
 #include "ThemeMetric.h"
 #include "PlayerState.h"
@@ -652,7 +652,7 @@ bool Background::IsDangerAllVisible()
 
 	/* Don't show it if everyone is already failing: it's already too late and it's
 	 * annoying for it to show for the entire duration of a song. */
-	if( g_CurStageStats.AllFailedEarlier() )
+	if( STATSMAN->m_CurStageStats.AllFailedEarlier() )
 		return false;
 
 	if( !GAMESTATE->AllAreInDangerOrWorse() )

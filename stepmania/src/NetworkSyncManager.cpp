@@ -32,7 +32,7 @@ void NetworkSyncManager::SelectUserSong() { }
 #include "song.h"
 #include "Course.h"
 #include "GameState.h"
-#include "StageStats.h"
+#include "StatsManager.h"
 #include "Steps.h"
 #include "PrefsManager.h"
 #include "ProductInfo.h"
@@ -297,9 +297,9 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 	uint8_t ctr = (uint8_t) (playerID * 16 + step - 1);
 	m_packet.Write1(ctr);
 
-	ctr = uint8_t( g_CurStageStats.m_player[playerID].GetGrade()*16 );
+	ctr = uint8_t( STATSMAN->m_CurStageStats.m_player[playerID].GetGrade()*16 );
 
-	if ( g_CurStageStats.m_player[playerID].bFailedEarlier )
+	if ( STATSMAN->m_CurStageStats.m_player[playerID].bFailedEarlier )
 		ctr = uint8_t( 112 );	//Code for failed (failed constant seems not to work)
 
 	m_packet.Write1(ctr);
