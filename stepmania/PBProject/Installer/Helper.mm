@@ -83,7 +83,9 @@ const CString GetPath(const CString& ID)
     [panel setResolvesAliases:YES];
     [panel setAllowsMultipleSelection:NO];
     [panel setPrompt:@"Install"];
-    [panel setCanCreateDirectories:YES];
+    // Only in 10.3 and above
+    if ([panel respondsToSelector:@selector(setCanCreatetDirectories:)])
+	[panel setCanCreateDirectories:YES];
     [panel setTitle:@"Choose a location to install."];
     int result = [panel runModalForTypes:[NSArray array]]; // No extensions
 
