@@ -59,7 +59,7 @@ using namespace std;
  * we do expect, such as d3d init failure.) */
 #include "crash.h"
 #define RAGE_ASSERT_M(COND, MESSAGE) { if(!(COND)) { VDCHECKPOINT_M(MESSAGE); *(char*)0=0; } }
-#define RAGE_ASSERT(COND) RAGE_ASSERT_M((COND), "Assertion failure")
+#define RAGE_ASSERT(COND) RAGE_ASSERT_M((COND), "Assertion '" #COND "' failed")
 
 /* Make this the default assert handler. */
 #define ASSERT RAGE_ASSERT
