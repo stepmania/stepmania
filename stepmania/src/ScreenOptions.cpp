@@ -428,7 +428,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 		m_SoundStart.Play();
 		m_Wipe.CloseWipingRight( SM_GoToNextScreen );
 
-		m_framePage.BeginTweening( 0.3f, Actor::TWEEN_DECELERATE );
+		m_framePage.BeginTweening( 0.3f, Actor::TWEEN_ACCELERATE );
 		m_framePage.SetTweenX( SCREEN_RIGHT );
 		break;
 	}

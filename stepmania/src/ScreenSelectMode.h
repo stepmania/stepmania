@@ -23,7 +23,7 @@ Andrew Livy
 
 /* Class Definition */
 
-const int MAX_MODE_CHOICES = 10;
+#define MAX_MODE_CHOICES2  10
 
 
 class ScreenSelectMode : public Screen
@@ -56,14 +56,14 @@ protected:
 	Sprite  m_ChoiceListHighlight;
 	Sprite  m_Guide;
 
-	Sprite m_Infotext[MAX_MODE_CHOICES];
+	Sprite m_Infotext[MAX_MODE_CHOICES2];
 
 	vector<ModeChoice*> m_apPossibleModeChoices;
 
 	ScrollingList m_ScrollingList;
 	void RefreshModeChoices();
 
-	BGAnimation	m_BGAnimations[MAX_MODE_CHOICES];
+	BGAnimation	m_BGAnimations[MAX_MODE_CHOICES2];
 	MenuElements m_Menu;
 
 	RageSound	m_soundSelect;	

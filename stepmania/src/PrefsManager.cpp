@@ -71,7 +71,6 @@ PrefsManager::PrefsManager()
 	m_bShowSelectGroup = true;
 	m_bShowTranslations = true;
 	m_bArcadeOptionsNavigation = false;
-	m_bDDRExtremeDifficultySelect = false;
 	m_bSoloSingle = false;	// OFF!!!!
 	m_iUnloadTextureDelaySeconds = 0; // disabled 60*30;	// 30 mins
 	m_bCoinOpMode = false;
@@ -87,7 +86,6 @@ PrefsManager::PrefsManager()
 	m_iPolygonRadar = -1;
 	m_bShowSongOptions = true;
 	m_DefaultFailType = SongOptions::FAIL_ARCADE;
-	m_bDDRExtremeDifficultySelect = false;
 	m_bDancePointsForOni = false; //DDR-Extreme style dance points instead of max2 percent
 
 	/* DDR Extreme-style extra stage support.
@@ -179,8 +177,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
 	ini.GetValueB( "Options", "ShowSongOptions",			m_bShowSongOptions );
 	ini.GetValueI( "Options", "DefaultFailType",			(int&)m_DefaultFailType );
-	ini.GetValueB( "Options", "bAllowSoftwareRenderer",		m_bAllowSoftwareRenderer );
-	ini.GetValueB( "Options", "DDRExtremeDifficultySelect",	m_bDDRExtremeDifficultySelect );
+	ini.GetValueB( "Options", "AllowSoftwareRenderer",		m_bAllowSoftwareRenderer );
 	ini.GetValueB( "Options", "SoloSingle",					m_bSoloSingle );
 	ini.GetValueB( "Options", "DancePointsForOni",			m_bDancePointsForOni );
 
@@ -256,8 +253,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
 	ini.SetValueB( "Options", "ShowSongOptions",			m_bShowSongOptions );
 	ini.SetValueI( "Options", "DefaultFailType",			(int&)m_DefaultFailType );
-	ini.SetValueB( "Options", "bAllowSoftwareRenderer",		m_bAllowSoftwareRenderer );
-	ini.SetValueB( "Options", "DDRExtremeDifficultySelect",	m_bDDRExtremeDifficultySelect );
+	ini.SetValueB( "Options", "AllowSoftwareRenderer",		m_bAllowSoftwareRenderer );
 	ini.SetValueB( "Options", "SoloSingle",					m_bSoloSingle );
 	ini.SetValueB( "Options", "DancePointsForOni",			m_bDancePointsForOni );
 

@@ -60,7 +60,7 @@ IntDir=.\../Release6
 TargetDir=\stepmania\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                           	cl                                                                            /Zl                                                                            /nologo                                                                            /c                                                                            verstub.cpp                                                                            /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                             	cl                                                                              /Zl                                                                              /nologo                                                                              /c                                                                              verstub.cpp                                                                              /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -95,7 +95,7 @@ IntDir=.\../Debug6
 TargetDir=\stepmania\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                           	cl                                                                            /Zl                                                                            /nologo                                                                            /c                                                                            verstub.cpp                                                                            /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                             	cl                                                                              /Zl                                                                              /nologo                                                                              /c                                                                              verstub.cpp                                                                              /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -368,6 +368,10 @@ SOURCE=.\Inventory.cpp
 # Begin Source File
 
 SOURCE=.\Inventory.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ModeChoice.h
 # End Source File
 # Begin Source File
 
@@ -1104,30 +1108,6 @@ SOURCE=.\MenuTimer.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ModeSelector.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ModeSelector.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ModeSelectorMaxType1.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ModeSelectorMaxType1.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ModeSelectorMaxType2.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ModeSelectorMaxType2.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\MusicBannerWheel.cpp
 # End Source File
 # Begin Source File
@@ -1777,19 +1757,19 @@ SOURCE=.\ScreenSandbox.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenSelect.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelect.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenSelectCourse.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\ScreenSelectCourse.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenSelectDifficulty.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenSelectDifficulty.h
 # End Source File
 # Begin Source File
 
@@ -1817,6 +1797,22 @@ SOURCE=.\ScreenSelectGroup.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenSelectMaxType1.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectMaxType1.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectMaxType2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectMaxType2.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenSelectMode.cpp
 # End Source File
 # Begin Source File
@@ -1830,14 +1826,6 @@ SOURCE=.\ScreenSelectMusic.cpp
 # Begin Source File
 
 SOURCE=.\ScreenSelectMusic.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenSelectStyle.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenSelectStyle.h
 # End Source File
 # Begin Source File
 

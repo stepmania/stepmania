@@ -22,6 +22,7 @@
 #include "ThemeManager.h"
 #include "RageDisplay.h"
 #include "Screen.h"
+#include "SongManager.h"
 
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
@@ -165,117 +166,9 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 }
 
 
-// Screen classes
-#include "ScreenAppearanceOptions.h"
-#include "ScreenCaution.h"
-#include "ScreenEdit.h"
-#include "ScreenEditMenu.h"
-#include "ScreenEvaluation.h"
-#include "ScreenEz2SelectPlayer.h"
-#include "ScreenSelectMode.h"
-#include "ScreenGameOver.h"
-#include "ScreenGameplay.h"
-#include "ScreenGraphicOptions.h"
-#include "ScreenHowToPlay.h"
-#include "ScreenInputOptions.h"
-#include "ScreenMachineOptions.h"
-#include "ScreenMapControllers.h"
-#include "ScreenMusicScroll.h"
-#include "ScreenPlayerOptions.h"
-#include "ScreenSelectCourse.h"
-#include "ScreenSelectDifficulty.h"
-#include "ScreenSelectDifficultyEX.h"
-#include "ScreenSelectGame.h"
-#include "ScreenSelectGroup.h"
-#include "ScreenSelectMusic.h"
-#include "ScreenSelectStyle5th.h"
-#include "ScreenSelectStyle.h"
-#include "ScreenSongOptions.h"
-#include "ScreenSoundOptions.h"
-#include "ScreenStage.h"
-#include "ScreenTest.h"
-#include "ScreenTestFonts.h"
-#include "ScreenTestSound.h"
-#include "ScreenTitleMenu.h"
-#include "ScreenEz2SelectMusic.h"
-#include "ScreenWarning.h"
-#include "ScreenRanking.h"
-#include "ScreenMemoryCard.h"
-#include "ScreenCompany.h"
-#include "ScreenIntroMovie.h"
-#include "ScreenAlbums.h"
-#include "ScreenLogo.h"
-#include "ScreenUnlock.h"
-#include "ScreenDemonstration.h"
-#include "ScreenInstructions.h"
-#include "ScreenNameEntry.h"
-#include "ScreenJukebox.h"
-#include "ScreenJukeboxMenu.h"
-#include "ScreenOptionsMenu.h"
-#include "ScreenGameplayOptions.h"
-#include "ScreenStyleSplash.h"
-
-#include "ScreenPrompt.h"
-#include "ScreenTextEntry.h"
-#include "ScreenMiniMenu.h"
-
 Screen* ScreenManager::MakeNewScreen( CString sClassName )
 {
-#define RETURN_IF_MATCH(className)	if(0==stricmp(sClassName,"##className##")) return new className
-	Screen *ret = NULL;
-
-	if(		 0==stricmp(sClassName, "ScreenAppearanceOptions") )	ret = new ScreenAppearanceOptions;
-	else if( 0==stricmp(sClassName, "ScreenCaution") )				ret = new ScreenCaution;
-	else if( 0==stricmp(sClassName, "ScreenEdit") )					ret = new ScreenEdit;
-	else if( 0==stricmp(sClassName, "ScreenEditMenu") )				ret = new ScreenEditMenu;
-	else if( 0==stricmp(sClassName, "ScreenEvaluation") )			ret = new ScreenEvaluation;
-	else if( 0==stricmp(sClassName, "ScreenFinalEvaluation") )		ret = new ScreenFinalEvaluation;
-	else if( 0==stricmp(sClassName, "ScreenEz2SelectPlayer") )		ret = new ScreenEz2SelectPlayer;
-	else if( 0==stricmp(sClassName, "ScreenSelectMode") )			ret = new ScreenSelectMode;
-	else if( 0==stricmp(sClassName, "ScreenGameOver") )				ret = new ScreenGameOver;
-	else if( 0==stricmp(sClassName, "ScreenGameplay") )				ret = new ScreenGameplay;
-	else if( 0==stricmp(sClassName, "ScreenGraphicOptions") )		ret = new ScreenGraphicOptions;
-	else if( 0==stricmp(sClassName, "ScreenHowToPlay") )			ret = new ScreenHowToPlay;
-	else if( 0==stricmp(sClassName, "ScreenInputOptions") )			ret = new ScreenInputOptions;
-	else if( 0==stricmp(sClassName, "ScreenMachineOptions") )		ret = new ScreenMachineOptions;
-	else if( 0==stricmp(sClassName, "ScreenMapControllers") )		ret = new ScreenMapControllers;
-	else if( 0==stricmp(sClassName, "ScreenInputOptions") )			ret = new ScreenInputOptions;
-	else if( 0==stricmp(sClassName, "ScreenMusicScroll") )			ret = new ScreenMusicScroll;
-	else if( 0==stricmp(sClassName, "ScreenPlayerOptions") )		ret = new ScreenPlayerOptions;
-	else if( 0==stricmp(sClassName, "ScreenSelectCourse") )			ret = new ScreenSelectCourse;
-	else if( 0==stricmp(sClassName, "ScreenSelectDifficulty") )		ret = new ScreenSelectDifficulty;
-	else if( 0==stricmp(sClassName, "ScreenSelectDifficultyEX") )	ret = new ScreenSelectDifficultyEX;
-	else if( 0==stricmp(sClassName, "ScreenSelectGame") )			ret = new ScreenSelectGame;
-	else if( 0==stricmp(sClassName, "ScreenSelectGroup") )			ret = new ScreenSelectGroup;
-	else if( 0==stricmp(sClassName, "ScreenSelectMusic") )			ret = new ScreenSelectMusic;
-	else if( 0==stricmp(sClassName, "ScreenSelectStyle5th") )		ret = new ScreenSelectStyle5th;
-	else if( 0==stricmp(sClassName, "ScreenSelectStyle") )			ret = new ScreenSelectStyle;
-	else if( 0==stricmp(sClassName, "ScreenSongOptions") )			ret = new ScreenSongOptions;
-	else if( 0==stricmp(sClassName, "ScreenStage") )				ret = new ScreenStage;
-	else if( 0==stricmp(sClassName, "ScreenTest") )					ret = new ScreenTest;
-	else if( 0==stricmp(sClassName, "ScreenTestFonts") )			ret = new ScreenTestFonts;
-	else if( 0==stricmp(sClassName, "ScreenTestSound") )			ret = new ScreenTestSound;
-	else if( 0==stricmp(sClassName, "ScreenTitleMenu") )			ret = new ScreenTitleMenu;
-	else if( 0==stricmp(sClassName, "ScreenEz2SelectMusic") )		ret = new ScreenEz2SelectMusic;
-	else if( 0==stricmp(sClassName, "ScreenWarning") )				ret = new ScreenWarning;
-	else if( 0==stricmp(sClassName, "ScreenRanking") )				ret = new ScreenRanking;
-	else if( 0==stricmp(sClassName, "ScreenMemoryCard") )			ret = new ScreenMemoryCard;
-	else if( 0==stricmp(sClassName, "ScreenCompany") )				ret = new ScreenCompany;
-	else if( 0==stricmp(sClassName, "ScreenIntroMovie") )			ret = new ScreenIntroMovie;
-	else if( 0==stricmp(sClassName, "ScreenAlbums") )				ret = new ScreenAlbums;
-	else if( 0==stricmp(sClassName, "ScreenLogo") )					ret = new ScreenLogo;
-	else if( 0==stricmp(sClassName, "ScreenUnlock") )				ret = new ScreenUnlock;
-	else if( 0==stricmp(sClassName, "ScreenDemonstration") )		ret = (ScreenGameplay*)new ScreenDemonstration;
-	else if( 0==stricmp(sClassName, "ScreenInstructions") )			ret = new ScreenInstructions;
-	else if( 0==stricmp(sClassName, "ScreenNameEntry") )			ret = new ScreenNameEntry;
-	else if( 0==stricmp(sClassName, "ScreenJukebox") )				ret = new ScreenJukebox;
-	else if( 0==stricmp(sClassName, "ScreenJukeboxMenu") )			ret = new ScreenJukeboxMenu;
-	else if( 0==stricmp(sClassName, "ScreenOptionsMenu") )			ret = new ScreenOptionsMenu;
-	else if( 0==stricmp(sClassName, "ScreenSoundOptions") )			ret = new ScreenSoundOptions;
-	else if( 0==stricmp(sClassName, "ScreenGameplayOptions") )		ret = new ScreenGameplayOptions;
-	else if( 0==stricmp(sClassName, "ScreenStyleSplash") )			ret = new ScreenStyleSplash;
-	else
-		RageException::Throw( "Invalid Screen class name '%s'", sClassName.GetString() );
+	Screen *ret = Screen::Create( sClassName );
 
 	/* Give a null update to the new screen.  This bumps everything into its
 	 * initial tween state, if any, so we don't show stuff at an incorrect
@@ -355,6 +248,10 @@ void ScreenManager::AddNewScreenToTop( CString sClassName )
 	m_ScreenStack.push_back( pNewScreen );
 }
 
+#include "ScreenPrompt.h"
+#include "ScreenTextEntry.h"
+#include "ScreenMiniMenu.h"
+
 void ScreenManager::Prompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNo, bool bDefaultAnswer, void(*OnYes)(), void(*OnNo)() )
 {
 	// add the new state onto the back of the array
@@ -420,7 +317,7 @@ void ScreenManager::RefreshCreditsMessages()
 		case PrefsManager::COIN_HOME:
 			if( GAMESTATE->m_bSideIsJoined[p] )
 				m_textCreditInfo[p].SetText( "" );
-			else if( GAMESTATE->m_bPlayersCanJoin )
+			else if( GAMESTATE->m_bPlayersCanJoin )		// would  (GAMESTATE->m_CurStyle!=STYLE_INVALID) do the same thing?
 				m_textCreditInfo[p].SetText( "PRESS START" );
 			else
 				m_textCreditInfo[p].SetText( "NOT PRESENT" );

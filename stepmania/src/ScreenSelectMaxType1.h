@@ -1,10 +1,10 @@
-#ifndef ModeSelectorMaxType1_H
-#define ModeSelectorMaxType1_H
+#ifndef ScreenSelectMaxType1_H
+#define ScreenSelectMaxType1_H
 /*
 -----------------------------------------------------------------------------
- Class: ModeSelectorMaxType1
+ Class: ScreenSelectMaxType1
 
- Desc: Abstract class for a widget that selects a ModeChoice
+ Desc: 
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -12,41 +12,28 @@
 */
 
 
-#include "ModeSelector.h"
+#include "ScreenSelect.h"
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "RageSound.h"
 
-
 #define MAX_MODE_CHOICES 30
 
-
-class ModeSelectorMaxType1 : public ModeSelector
+class ScreenSelectMaxType1 : public ScreenSelect
 {
 public:
-	ModeSelectorMaxType1();
-	virtual ~ModeSelectorMaxType1() {};
-
-	virtual void Init( const vector<ModeChoice>& choices, CString sClassName, CString sThemeElementPrefix );
+	ScreenSelectMaxType1();
 
 	virtual void MenuLeft( PlayerNumber pn );
 	virtual void MenuRight( PlayerNumber pn );
-	virtual void MenuUp( PlayerNumber pn ) {};
-	virtual void MenuDown( PlayerNumber pn ) {};
 	virtual void MenuStart( PlayerNumber pn );
-	virtual void MenuBack( PlayerNumber pn );
-	virtual void TweenOffScreen();
-	virtual void TweenOnScreen();
-
-	virtual void GetSelectedModeChoice( PlayerNumber pn, ModeChoice* pModeChoiceOut );
-	virtual void UpdateSelectableChoices();
 
 protected:
+	virtual int GetSelectionIndex( PlayerNumber pn );
+	virtual void UpdateSelectableChoices();
+
 	void BeforeChange();
 	void AfterChange();
-
-	vector<ModeChoice>	m_aModeChoices;
-	int		m_iSelection;
 
 	Sprite		m_sprIcon[MAX_MODE_CHOICES];
 	// Artists don't make graphics for every single Game, so
@@ -59,6 +46,8 @@ protected:
 	
 	RageSound m_soundChange;
 	RageSound m_soundSelect;
+
+	int m_iSelection;
 };
 
 #endif

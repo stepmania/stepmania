@@ -241,16 +241,21 @@ const StyleDef* GameState::GetCurrentStyleDef()
 	return GAMEMAN->GetStyleDefForStyle( m_CurStyle );
 }
 
-void GameState::ApplyModeChoice( const ModeChoice* pModeChoice, PlayerNumber pn )
+void GameState::ApplyModeChoice( const ModeChoice& mc, PlayerNumber pn )
 {
-	if( pModeChoice->game != GAME_INVALID )
-		m_CurGame = pModeChoice->game;
-	if( pModeChoice->pm != PLAY_MODE_INVALID )
-		m_PlayMode = pModeChoice->pm;
-	if( pModeChoice->style != STYLE_INVALID )
-		m_CurStyle = pModeChoice->style;
-	if( pModeChoice->dc != DIFFICULTY_INVALID  &&  pn != PLAYER_INVALID )
-		m_PreferredDifficulty[pn] = pModeChoice->dc;
+	if( mc.game != GAME_INVALID )
+		m_CurGame = mc.game;
+	if( mc.pm != PLAY_MODE_INVALID )
+		m_PlayMode = mc.pm;
+	if( mc.style != STYLE_INVALID )
+		m_CurStyle = mc.style;
+	if( mc.dc != DIFFICULTY_INVALID  &&  pn != PLAYER_INVALID )
+		m_PreferredDifficulty[pn] = mc.dc;
+}
+
+bool GameState::IsPlayable( const ModeChoice& mc )
+{
+	return mc.numSidesJoinedToPlay == GAMESTATE->GetNumSidesJoined(); 
 }
 
 bool GameState::IsPlayerEnabled( PlayerNumber pn )

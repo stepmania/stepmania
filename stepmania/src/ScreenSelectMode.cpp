@@ -1,6 +1,6 @@
 #include "global.h"
 /****************************************
-ScreenEzSelectPlayer,cpp
+ScreenSelectModeOld,cpp
 Desc: See Header
 Copyright (C):
 Andrew Livy
@@ -247,7 +247,7 @@ void ScreenSelectMode::RefreshModeChoices()
 {
 	int iNumSidesJoined = GAMESTATE->GetNumSidesJoined();
 
-	GAMEMAN->GetModesChoicesForGame( GAMESTATE->m_CurGame, m_apPossibleModeChoices );
+//	GAMEMAN->GetModesChoicesForGame( GAMESTATE->m_CurGame, m_apPossibleModeChoices );	// FIXME
 	ASSERT( !m_apPossibleModeChoices.empty() );
 
 	int i;

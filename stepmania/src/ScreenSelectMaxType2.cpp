@@ -1,7 +1,7 @@
 #include "global.h"
 /*
 -----------------------------------------------------------------------------
- Class: ModeSelectorMaxType2
+ Class: ScreenSelectMaxType2
 
  Desc: See header.
 
@@ -10,45 +10,46 @@
 -----------------------------------------------------------------------------
 */
 
-#include "ModeSelectorMaxType2.h"
+#include "ScreenSelectMaxType2.h"
 #include "GameManager.h"
 #include "ThemeManager.h"
 #include "PrefsManager.h"
 #include "ScreenManager.h"
 #include "GameState.h"
 #include "AnnouncerManager.h"
+#include "ModeChoice.h"
 
 
-#define NUM_CHOICES_ON_PAGE_1				THEME->GetMetricI("ModeSelectorMaxType2","NumChoicesOnPage1")
-#define LOCK_INPUT_SECONDS					THEME->GetMetricF("ModeSelectorMaxType2","LockInputSeconds")
-#define SLEEP_AFTER_CHOICE_SECONDS			THEME->GetMetricF("ModeSelectorMaxType2","SleepAfterChoiceSeconds")
-#define SLEEP_AFTER_TWEEN_OFF_SECONDS		THEME->GetMetricF("ModeSelectorMaxType2","SleepAfterTweenOffSeconds")
-#define MORE_ON_COMMAND( page )				THEME->GetMetric ("ModeSelectorMaxType2",ssprintf("MorePage%dOnCommand",page+1))
-#define MORE_OFF_COMMAND( page )			THEME->GetMetric ("ModeSelectorMaxType2",ssprintf("MorePage%dOffCommand",page+1))
-#define EXPLANATION_ON_COMMAND( page )		THEME->GetMetric ("ModeSelectorMaxType2",ssprintf("ExplanationPage%dOnCommand",page+1))
-#define EXPLANATION_OFF_COMMAND( page )		THEME->GetMetric ("ModeSelectorMaxType2",ssprintf("ExplanationPage%dOffCommand",page+1))
-#define HEADER_ON_COMMAND( page, choice )	THEME->GetMetric ("ModeSelectorMaxType2",ssprintf("HeaderPage%dChoice%dOnCommand",page+1,choice+1))
-#define HEADER_OFF_COMMAND( page, choice )	THEME->GetMetric ("ModeSelectorMaxType2",ssprintf("HeaderPage%dChoice%dOffCommand",page+1,choice+1))
-#define PICTURE_ON_COMMAND( page, choice )	THEME->GetMetric ("ModeSelectorMaxType2",ssprintf("PicturePage%dChoice%dOnCommand",page+1,choice+1))
-#define PICTURE_OFF_COMMAND( page, choice )	THEME->GetMetric ("ModeSelectorMaxType2",ssprintf("PicturePage%dChoice%dOffCommand",page+1,choice+1))
-#define CURSOR_ON_COMMAND					THEME->GetMetric ("ModeSelectorMaxType2","CursorOnCommand")
-#define CURSOR_CHOOSE_COMMAND				THEME->GetMetric ("ModeSelectorMaxType2","CursorChooseCommand")
-#define CURSOR_OFF_COMMAND					THEME->GetMetric ("ModeSelectorMaxType2","CursorOffCommand")
-#define CURSOR_OFFSET_X_FROM_PICTURE( p )	THEME->GetMetricF("ModeSelectorMaxType2",ssprintf("CursorP%dOffsetXFromPicture",p+1))
-#define CURSOR_OFFSET_Y_FROM_PICTURE( p )	THEME->GetMetricF("ModeSelectorMaxType2",ssprintf("CursorP%dOffsetYFromPicture",p+1))
-#define SHADOW_ON_COMMAND					THEME->GetMetric ("ModeSelectorMaxType2","ShadowOnCommand")
-#define SHADOW_CHOOSE_COMMAND				THEME->GetMetric ("ModeSelectorMaxType2","ShadowChooseCommand")
-#define SHADOW_OFF_COMMAND					THEME->GetMetric ("ModeSelectorMaxType2","ShadowOffCommand")
-#define SHADOW_LENGTH_X						THEME->GetMetricF("ModeSelectorMaxType2","ShadowLengthX")
-#define SHADOW_LENGTH_Y						THEME->GetMetricF("ModeSelectorMaxType2","ShadowLengthY")
-#define OK_ON_COMMAND					THEME->GetMetric ("ModeSelectorMaxType2","OKOnCommand")
-#define OK_CHOOSE_COMMAND				THEME->GetMetric ("ModeSelectorMaxType2","OKChooseCommand")
-#define OK_OFF_COMMAND					THEME->GetMetric ("ModeSelectorMaxType2","OKOffCommand")
-#define DISABLED_COLOR						THEME->GetMetricC("ModeSelectorMaxType2","DisabledColor")
+#define NUM_CHOICES_ON_PAGE_1				THEME->GetMetricI("ScreenSelectMaxType2","NumChoicesOnPage1")
+#define LOCK_INPUT_SECONDS					THEME->GetMetricF("ScreenSelectMaxType2","LockInputSeconds")
+#define SLEEP_AFTER_CHOICE_SECONDS			THEME->GetMetricF("ScreenSelectMaxType2","SleepAfterChoiceSeconds")
+#define SLEEP_AFTER_TWEEN_OFF_SECONDS		THEME->GetMetricF("ScreenSelectMaxType2","SleepAfterTweenOffSeconds")
+#define MORE_ON_COMMAND( page )				THEME->GetMetric ("ScreenSelectMaxType2",ssprintf("MorePage%dOnCommand",page+1))
+#define MORE_OFF_COMMAND( page )			THEME->GetMetric ("ScreenSelectMaxType2",ssprintf("MorePage%dOffCommand",page+1))
+#define EXPLANATION_ON_COMMAND( page )		THEME->GetMetric ("ScreenSelectMaxType2",ssprintf("ExplanationPage%dOnCommand",page+1))
+#define EXPLANATION_OFF_COMMAND( page )		THEME->GetMetric ("ScreenSelectMaxType2",ssprintf("ExplanationPage%dOffCommand",page+1))
+#define HEADER_ON_COMMAND( page, choice )	THEME->GetMetric ("ScreenSelectMaxType2",ssprintf("HeaderPage%dChoice%dOnCommand",page+1,choice+1))
+#define HEADER_OFF_COMMAND( page, choice )	THEME->GetMetric ("ScreenSelectMaxType2",ssprintf("HeaderPage%dChoice%dOffCommand",page+1,choice+1))
+#define PICTURE_ON_COMMAND( page, choice )	THEME->GetMetric ("ScreenSelectMaxType2",ssprintf("PicturePage%dChoice%dOnCommand",page+1,choice+1))
+#define PICTURE_OFF_COMMAND( page, choice )	THEME->GetMetric ("ScreenSelectMaxType2",ssprintf("PicturePage%dChoice%dOffCommand",page+1,choice+1))
+#define CURSOR_ON_COMMAND					THEME->GetMetric ("ScreenSelectMaxType2","CursorOnCommand")
+#define CURSOR_CHOOSE_COMMAND				THEME->GetMetric ("ScreenSelectMaxType2","CursorChooseCommand")
+#define CURSOR_OFF_COMMAND					THEME->GetMetric ("ScreenSelectMaxType2","CursorOffCommand")
+#define CURSOR_OFFSET_X_FROM_PICTURE( p )	THEME->GetMetricF("ScreenSelectMaxType2",ssprintf("CursorP%dOffsetXFromPicture",p+1))
+#define CURSOR_OFFSET_Y_FROM_PICTURE( p )	THEME->GetMetricF("ScreenSelectMaxType2",ssprintf("CursorP%dOffsetYFromPicture",p+1))
+#define SHADOW_ON_COMMAND					THEME->GetMetric ("ScreenSelectMaxType2","ShadowOnCommand")
+#define SHADOW_CHOOSE_COMMAND				THEME->GetMetric ("ScreenSelectMaxType2","ShadowChooseCommand")
+#define SHADOW_OFF_COMMAND					THEME->GetMetric ("ScreenSelectMaxType2","ShadowOffCommand")
+#define SHADOW_LENGTH_X						THEME->GetMetricF("ScreenSelectMaxType2","ShadowLengthX")
+#define SHADOW_LENGTH_Y						THEME->GetMetricF("ScreenSelectMaxType2","ShadowLengthY")
+#define OK_ON_COMMAND						THEME->GetMetric ("ScreenSelectMaxType2","OKOnCommand")
+#define OK_CHOOSE_COMMAND					THEME->GetMetric ("ScreenSelectMaxType2","OKChooseCommand")
+#define OK_OFF_COMMAND						THEME->GetMetric ("ScreenSelectMaxType2","OKOffCommand")
+#define DISABLED_COLOR						THEME->GetMetricC("ScreenSelectMaxType2","DisabledColor")
 
 
 
-ModeSelectorMaxType2::ModeSelectorMaxType2()
+ScreenSelectMaxType2::ScreenSelectMaxType2() : ScreenSelect( "ScreenSelectMaxType2" )
 {
 	m_CurrentPage = PAGE_1;
 	for( int p=0; p<NUM_PLAYERS; p++ )
@@ -56,27 +57,22 @@ ModeSelectorMaxType2::ModeSelectorMaxType2()
 		m_iChoiceOnPage[p] = 0;
 		m_bChosen[p] = false;
 	}
-}
 
-ModeSelectorMaxType2::~ModeSelectorMaxType2()
-{
-}
-
-void ModeSelectorMaxType2::Init( const vector<ModeChoice>& choices, CString sClassName, CString sThemeElementPrefix )
-{
-	for( int c=0; c<choices.size(); c++ )
-		if( c < NUM_CHOICES_ON_PAGE_1 )
-			m_ModeChoices[PAGE_1].push_back( choices[c] );
+	for( unsigned c=0; c<m_aModeChoices.size(); c++ )
+	{
+		if( (int)c < NUM_CHOICES_ON_PAGE_1 )
+			m_ModeChoices[PAGE_1].push_back( m_aModeChoices[c] );
 		else
-			m_ModeChoices[PAGE_2].push_back( choices[c] );
+			m_ModeChoices[PAGE_2].push_back( m_aModeChoices[c] );
+	}
 
 	for( int page=0; page<NUM_PAGES; page++ )
 	{
 
-		for( int choice=0; choice<m_ModeChoices[page].size(); choice++ )
+		for( unsigned choice=0; choice<m_ModeChoices[page].size(); choice++ )
 		{
-			CString sHeaderFile = ssprintf( "%s header %s", sThemeElementPrefix.GetString(), m_ModeChoices[page][choice].name );
-			CString sPictureFile = ssprintf( "%s picture %s", sThemeElementPrefix.GetString(), m_ModeChoices[page][choice].name );
+			CString sHeaderFile = ssprintf( "select difficulty header %s", m_ModeChoices[page][choice].name );
+			CString sPictureFile = ssprintf( "select difficulty picture %s", m_ModeChoices[page][choice].name );
 
 			m_sprPicture[page][choice].Load( THEME->GetPathTo("Graphics",sPictureFile) );
 			m_framePages.AddChild( &m_sprPicture[page][choice] );
@@ -86,17 +82,17 @@ void ModeSelectorMaxType2::Init( const vector<ModeChoice>& choices, CString sCla
 		}
 
 		
-		m_sprMore[page].Load( THEME->GetPathTo("Graphics", ssprintf("%s more page%d",sThemeElementPrefix.GetString(),page+1) ) );
+		m_sprMore[page].Load( THEME->GetPathTo("Graphics", ssprintf("select difficulty more page%d",page+1) ) );
 		m_framePages.AddChild( &m_sprMore[page] );
 
-		m_sprExplanation[page].Load( THEME->GetPathTo("Graphics", ssprintf("%s explanation",sThemeElementPrefix.GetString())) );
+		m_sprExplanation[page].Load( THEME->GetPathTo("Graphics", "select difficulty explanation") );
 		m_sprExplanation[page].StopAnimating();
 		m_sprExplanation[page].SetState( page );
 		m_framePages.AddChild( &m_sprExplanation[page] );
 	}
 
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		CLAMP( m_iChoiceOnPage[p], 0, (int)m_ModeChoices[0].size()-1 );
 		m_bChosen[p] = false;
@@ -129,15 +125,17 @@ void ModeSelectorMaxType2::Init( const vector<ModeChoice>& choices, CString sCla
 	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
 
 	m_fLockInputTime = LOCK_INPUT_SECONDS;
+
+	TweenOnScreen();
 }
 
-void ModeSelectorMaxType2::Update( float fDelta )
+void ScreenSelectMaxType2::Update( float fDelta )
 {
-	ModeSelector::Update( fDelta );
+	ScreenSelect::Update( fDelta );
 	m_fLockInputTime = max( 0, m_fLockInputTime-fDelta );
 }
 
-void ModeSelectorMaxType2::HandleScreenMessage( const ScreenMessage SM )
+void ScreenSelectMaxType2::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
@@ -148,12 +146,16 @@ void ModeSelectorMaxType2::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ModeSelectorMaxType2::GetSelectedModeChoice( PlayerNumber pn, ModeChoice* pModeChoiceOut )
+int ScreenSelectMaxType2::GetSelectionIndex( PlayerNumber pn )
 {
-	*pModeChoiceOut = m_ModeChoices[m_CurrentPage][ m_iChoiceOnPage[pn] ];	// doesn't depend on pn
+	int index = 0;
+	for( int page=0; page<m_CurrentPage; page++ )
+		index += m_ModeChoices[page].size();
+	index += m_iChoiceOnPage[pn];
+	return index;
 }
 
-void ModeSelectorMaxType2::UpdateSelectableChoices()
+void ScreenSelectMaxType2::UpdateSelectableChoices()
 {
 	for( int page=0; page<NUM_PAGES; page++ )
 	{
@@ -163,7 +165,7 @@ void ModeSelectorMaxType2::UpdateSelectableChoices()
 		{
 			/* If the icon is text, use a dimmer diffuse, or we won't be
 			 * able to see the glow. */
-			if( IsSelectable(m_ModeChoices[page][i]) )
+			if( GAMESTATE->IsPlayable(m_ModeChoices[page][i]) )
 			{
 				m_sprHeader[page][i].SetDiffuse( RageColor(1,1,1,1) );
 				m_sprPicture[page][i].SetDiffuse( RageColor(1,1,1,1) );
@@ -184,7 +186,7 @@ void ModeSelectorMaxType2::UpdateSelectableChoices()
 		}
 }
 
-void ModeSelectorMaxType2::MenuLeft( PlayerNumber pn )
+void ScreenSelectMaxType2::MenuLeft( PlayerNumber pn )
 {
 	if( m_fLockInputTime > 0 )
 		return;
@@ -200,7 +202,7 @@ void ModeSelectorMaxType2::MenuLeft( PlayerNumber pn )
 }
 
 
-void ModeSelectorMaxType2::MenuRight( PlayerNumber pn )
+void ScreenSelectMaxType2::MenuRight( PlayerNumber pn )
 {
 	if( m_fLockInputTime > 0 )
 		return;
@@ -215,7 +217,7 @@ void ModeSelectorMaxType2::MenuRight( PlayerNumber pn )
 		ChangeWithinPage( pn, m_iChoiceOnPage[pn]+1, false );
 }
 
-void ModeSelectorMaxType2::ChangePage( Page newPage )
+void ScreenSelectMaxType2::ChangePage( Page newPage )
 {
 	int p;
 
@@ -244,7 +246,7 @@ void ModeSelectorMaxType2::ChangePage( Page newPage )
 	m_framePages.SetTweenX( (float)newPage*-SCREEN_WIDTH );
 }
 
-void ModeSelectorMaxType2::ChangeWithinPage( PlayerNumber pn, int iNewChoice, bool bChangingPages )
+void ScreenSelectMaxType2::ChangeWithinPage( PlayerNumber pn, int iNewChoice, bool bChangingPages )
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -273,7 +275,7 @@ void ModeSelectorMaxType2::ChangeWithinPage( PlayerNumber pn, int iNewChoice, bo
 	m_soundChange.Play();
 }
 
-void ModeSelectorMaxType2::MenuStart( PlayerNumber pn )
+void ScreenSelectMaxType2::MenuStart( PlayerNumber pn )
 {
 	if( m_fLockInputTime > 0 )
 		return;
@@ -316,15 +318,15 @@ void ModeSelectorMaxType2::MenuStart( PlayerNumber pn )
 		if( GAMESTATE->IsPlayerEnabled((PlayerNumber)p)  &&  m_bChosen[p] == false )
 			return;
 	}
-	this->SendScreenMessage( SM_BeginFadingOut, SLEEP_AFTER_CHOICE_SECONDS );	// tell our owner it's time to move on
+	this->SendScreenMessage( SM_AllDoneChoosing, SLEEP_AFTER_CHOICE_SECONDS );	// tell our owner it's time to move on
 }
 
 
-void ModeSelectorMaxType2::MenuBack( PlayerNumber pn )
+void ScreenSelectMaxType2::MenuBack( PlayerNumber pn )
 {
 }
 
-void ModeSelectorMaxType2::TweenOnScreen() 
+void ScreenSelectMaxType2::TweenOnScreen() 
 {
 	unsigned p;
 
@@ -363,7 +365,7 @@ void ModeSelectorMaxType2::TweenOnScreen()
 	}
 }
 
-void ModeSelectorMaxType2::TweenOffScreen()
+void ScreenSelectMaxType2::TweenOffScreen()
 {	
 	const int page = m_CurrentPage;
 
@@ -383,7 +385,7 @@ void ModeSelectorMaxType2::TweenOffScreen()
 
 	for( unsigned c=0; c<m_ModeChoices[page].size(); c++ )
 	{
-		const float fPause = c*0.2f;
+//		const float fPause = c*0.2f;
 
 		// roll up
 		//m_sprPicture[page][c].FadeOff( fPause, "foldy bounce", 0.3f );
@@ -396,12 +398,12 @@ void ModeSelectorMaxType2::TweenOffScreen()
 }
 
 
-float ModeSelectorMaxType2::GetCursorX( PlayerNumber pn )
+float ScreenSelectMaxType2::GetCursorX( PlayerNumber pn )
 {
 	return m_sprPicture[m_CurrentPage][m_iChoiceOnPage[pn]].GetX() + CURSOR_OFFSET_X_FROM_PICTURE(pn);
 }
 
-float ModeSelectorMaxType2::GetCursorY( PlayerNumber pn )
+float ScreenSelectMaxType2::GetCursorY( PlayerNumber pn )
 {
 	return m_sprPicture[m_CurrentPage][m_iChoiceOnPage[pn]].GetY() + CURSOR_OFFSET_Y_FROM_PICTURE(pn);
 }

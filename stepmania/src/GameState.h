@@ -60,7 +60,8 @@ public:
 	GameDef*	GetCurrentGameDef();
 	const StyleDef*	GetCurrentStyleDef();
 
-	void ApplyModeChoice( const ModeChoice* pModeChoice, PlayerNumber pn );
+	void ApplyModeChoice( const ModeChoice& mc, PlayerNumber pn );
+	bool IsPlayable( const ModeChoice& mc );
 
 	bool IsPlayerEnabled( PlayerNumber pn );
 	bool IsPlayerEnabled( int p ) { return IsPlayerEnabled( (PlayerNumber)p ); };	// for those too lasy to cast all those p's to a PlayerNumber

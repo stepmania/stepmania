@@ -18,8 +18,8 @@
 struct ModeChoice		// used in SelectMode
 {
 	Game		game;
-	PlayMode	pm;
 	Style		style;
+	PlayMode	pm;
 	Difficulty	dc;
 	char		name[64];
 	int			numSidesJoinedToPlay;

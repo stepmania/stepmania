@@ -76,7 +76,8 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	LOG->Trace( "MenuElements::MenuElements()" );
 
 
-	m_Background.LoadFromAniDir( sBackgroundPath );
+	if( sBackgroundPath != "" )
+		m_Background.LoadFromAniDir( sBackgroundPath );
 
 	m_quadBrightness.SetDiffuse( RageColor(0,0,0,0) );
 	m_quadBrightness.StretchTo( RectI(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );

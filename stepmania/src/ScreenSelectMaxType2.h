@@ -1,8 +1,8 @@
-#ifndef ModeSelectorMaxType2_H
-#define ModeSelectorMaxType2_H
+#ifndef ScreenSelectMaxType2_H
+#define ScreenSelectMaxType2_H
 /*
 -----------------------------------------------------------------------------
- Class: ModeSelectorMaxType2
+ Class: ScreenSelectMaxType2
 
  Desc: Abstract class for a widget that selects a ModeChoice
 
@@ -12,25 +12,18 @@
 */
 
 
-#include "ModeSelector.h"
+#include "ScreenSelect.h"
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "RageSound.h"
 #include "RandomSample.h"
 
+#define MAX_CHOICES_PER_PAGE 15
 
-#define MAX_CHOICES_PER_PAGE	10
-
-
-class ModeSelectorMaxType2 : public ModeSelector
+class ScreenSelectMaxType2 : public ScreenSelect
 {
 public:
-	enum Page { PAGE_1, PAGE_2, NUM_PAGES };
-
-	ModeSelectorMaxType2();
-	virtual ~ModeSelectorMaxType2();
-
-	virtual void Init( const vector<ModeChoice>& choices, CString sClassName, CString sThemeElementPrefix );
+	ScreenSelectMaxType2();
 
 	virtual void Update( float fDelta );
 
@@ -43,12 +36,14 @@ public:
 	virtual void TweenOffScreen();
 	virtual void TweenOnScreen();
 
-	virtual void GetSelectedModeChoice( PlayerNumber pn, ModeChoice* pModeChoiceOut );
-	virtual void UpdateSelectableChoices();
-
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
+	enum Page { PAGE_1, PAGE_2, NUM_PAGES };
+
+	virtual int GetSelectionIndex( PlayerNumber pn );
+	virtual void UpdateSelectableChoices();
+
 	float GetCursorX( PlayerNumber pn );
 	float GetCursorY( PlayerNumber pn );
 	void ChangeWithinPage( PlayerNumber pn, int iNewChoice, bool bChangingPages );

@@ -1265,6 +1265,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 };
 
 
+/*
 ModeChoice g_ModeChoices[] = 
 {
 	{
@@ -1525,7 +1526,7 @@ ModeChoice g_ModeChoices[] =
 	},
 };
 const int NUM_MODE_CHOICES = sizeof(g_ModeChoices) / sizeof(g_ModeChoices[0]);
-
+*/
 
 GameManager::GameManager()
 {
@@ -1571,12 +1572,14 @@ Style GameManager::GetEditorStyleForNotesType( NotesType nt )
 	return STYLE_INVALID;
 }
 
+/*
 void GameManager::GetModesChoicesForGame( Game game, vector<ModeChoice*>& apChoicesAddTo )
 {
 	for( int s=0; s<NUM_MODE_CHOICES; s++ )
 		if( g_ModeChoices[s].game == game)
 			apChoicesAddTo.push_back( &g_ModeChoices[s] );
 }
+*/
 
 void GameManager::GetNotesTypesForGame( Game game, vector<NotesType>& aNotesTypeAddTo )
 {
@@ -1645,15 +1648,6 @@ NotesType GameManager::StringToNotesType( CString sNotesType )
 	return NOTES_TYPE_DANCE_SINGLE;
 }
 
-Game GameManager::StringToGameType( CString sGameType )
-{
-	for( int i=0; i<NUM_GAMES; i++ )
-		if( !sGameType.CompareNoCase(g_GameDefs[i].m_szName) )
-			return Game(i);
-
-	return GAME_INVALID;
-}
-
 CString GameManager::NotesTypeToString( NotesType nt )
 {
 	if(nt >= NUM_NOTES_TYPES)
@@ -1664,4 +1658,29 @@ CString GameManager::NotesTypeToString( NotesType nt )
 	}
 
 	return NotesTypes[nt].name;
+}
+
+Game GameManager::StringToGameType( CString sGameType )
+{
+	for( int i=0; i<NUM_GAMES; i++ )
+		if( !sGameType.CompareNoCase(g_GameDefs[i].m_szName) )
+			return Game(i);
+
+	return GAME_INVALID;
+}
+
+
+Style GameManager::GameAndStringToStyle( Game game, CString sStyle )
+{
+	for( unsigned s=0; s<NUM_STYLES; s++ )
+	{
+		Style style = (Style)s;
+		const StyleDef* pStyleDef = GetStyleDefForStyle( style );
+		if( pStyleDef->m_Game != game )
+			continue;
+		if( sStyle.CompareNoCase(pStyleDef->m_szName) == 0 )
+			return style;
+	}
+
+	return STYLE_INVALID;
 }

@@ -41,6 +41,8 @@ public:
 
 	bool IsTransparent() { return m_bIsTransparent; }
 
+	static Screen* Create( CString sClassName );
+
 protected:
 	// structure for holding messages sent to a Screen
 	struct QueuedScreenMessage {

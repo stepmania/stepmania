@@ -15,7 +15,6 @@
 #include "StyleDef.h"
 #include "Style.h"
 #include "Game.h"
-#include "ModeChoice.h"
 class IniFile;
 
 
@@ -29,7 +28,6 @@ public:
 	const StyleDef*	GetStyleDefForStyle( Style s );
 
 	void	GetStylesForGame( Game game, vector<Style>& aStylesAddTo, bool editor=false );
-	void	GetModesChoicesForGame( Game game, vector<ModeChoice*>& apChoicesAddTo );
 	void	GetNotesTypesForGame( Game game, vector<NotesType>& aNotesTypeAddTo );
 	Style	GetEditorStyleForNotesType( NotesType nt );
 
@@ -39,6 +37,7 @@ public:
 	static NotesType StringToNotesType( CString sNotesType );
 	static CString NotesTypeToString( NotesType nt );
 	static Game StringToGameType( CString sGameType );
+	Style GameAndStringToStyle( Game game, CString sStyle );
 
 protected:
 };
