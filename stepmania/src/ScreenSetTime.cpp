@@ -36,12 +36,12 @@ static const CString SetTimeSelectionNames[NUM_SET_TIME_SELECTIONS] = {
 XToString( SetTimeSelection );
 #define FOREACH_SetTimeSelection( s ) FOREACH_ENUM( SetTimeSelection, NUM_SET_TIME_SELECTIONS, s )
 
-const int g_X[NUM_SET_TIME_SELECTIONS] =
+const float g_X[NUM_SET_TIME_SELECTIONS] =
 {
 	320, 320, 320, 320, 320, 320
 };
 
-const int g_Y[NUM_SET_TIME_SELECTIONS] =
+const float g_Y[NUM_SET_TIME_SELECTIONS] =
 {
 	140, 180, 220, 260, 300, 340
 };
