@@ -477,7 +477,8 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 		//		break;
 			case SORT_MOST_PLAYED:
 				SortSongPointerArrayByMostPlayed( arraySongs );
-				arraySongs.SetSize( 30 );
+				if( arraySongs.GetSize() > 30 )
+					arraySongs.SetSize( 30 );
 				break;
 			default:
 				ASSERT(0);	// unhandled SortOrder
