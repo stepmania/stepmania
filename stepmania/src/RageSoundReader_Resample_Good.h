@@ -7,8 +7,28 @@
 /* This class changes the sampling rate of a sound. */
 class RageSoundReader_Resample_Good: public RageSoundReader_Resample
 {
+public:
+	/* We own source. */
+	void Open(SoundReader *source);
+	int GetLength() const;
+	int GetLength_Fast() const;
+	int SetPosition_Accurate(int ms);
+	int SetPosition_Fast(int ms);
+	int Read(char *buf, unsigned len);
+	RageSoundReader_Resample_Good();
+	virtual ~RageSoundReader_Resample_Good();
+	SoundReader *Copy() const;
+
+	/* Change the actual sample rate of a sound. */
+	void SetSampleRate( int hz );
+	void SetHighQuality( bool hq ) { HighQuality = hq; }
+
+	int GetSampleRate() const { return samplerate; }
+	unsigned GetNumChannels() const { return source->GetNumChannels(); }
+
 	enum { BUFSIZE = 4096 };
 
+private:
 	SoundReader *source;
 	bool HighQuality;
 	int samplerate;
@@ -28,25 +48,6 @@ class RageSoundReader_Resample_Good: public RageSoundReader_Resample
 	void ReopenResampler();
 	float GetFactor() const;
 	bool FillBuf();
-
-public:
-	/* We own source. */
-	void Open(SoundReader *source);
-	int GetLength() const;
-	int GetLength_Fast() const;
-	int SetPosition_Accurate(int ms);
-	int SetPosition_Fast(int ms);
-	int Read(char *buf, unsigned len);
-	RageSoundReader_Resample_Good();
-	virtual ~RageSoundReader_Resample_Good();
-	SoundReader *Copy() const;
-
-	/* Change the actual sample rate of a sound. */
-	void SetSampleRate( int hz );
-	void SetHighQuality( bool hq ) { HighQuality = hq; }
-
-	int GetSampleRate() const { return samplerate; }
-	unsigned GetNumChannels() const { return source->GetNumChannels(); }
 };
 
 #endif
