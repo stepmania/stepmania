@@ -44,7 +44,7 @@ OptionRow g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
 	OptionRow( "Menu\nTimer",			"OFF","ON" ),
 	OptionRow( "Coin\nMode",			"HOME","PAY","FREE PLAY" ),
 	OptionRow( "Songs Per\nPlay",		"1","2","3","4","5","6","7","UNLIMITED" ),
-	OptionRow( "Judge\nDifficulty",		"1","2","3","4","5","6","7","8" ),
+	OptionRow( "Judge\nDifficulty",		"1","2","3","4","5","6","7","8","JUSTICE" ),
 	OptionRow( "Life\nDifficulty",		"1","2","3","4","5","6","7" ),
 	OptionRow( "Progressive\nLifebar",	"OFF","1","2","3","4","5","6","7","8"),
 	OptionRow( "Progressive\nNonstop Lifebar",	"OFF","1","2","3","4"),
@@ -92,6 +92,7 @@ void ScreenMachineOptions::ImportOptions()
 	else if( PREFSMAN->m_fJudgeWindowScale == 0.66f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 5;
 	else if( PREFSMAN->m_fJudgeWindowScale == 0.50f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 6;
 	else if( PREFSMAN->m_fJudgeWindowScale == 0.33f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 7;
+	else if( PREFSMAN->m_fJudgeWindowScale == 0.20f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 8;
 	else												m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 3;
 
 	if(      PREFSMAN->m_fLifeDifficultyScale == 1.60f )	m_iSelectedOption[0][MO_LIFE_DIFFICULTY] = 0;
@@ -138,6 +139,7 @@ void ScreenMachineOptions::ExportOptions()
 	case 5:	PREFSMAN->m_fJudgeWindowScale = 0.66f;	break;
 	case 6:	PREFSMAN->m_fJudgeWindowScale = 0.50f;	break;
 	case 7:	PREFSMAN->m_fJudgeWindowScale = 0.33f;	break;
+	case 8:	PREFSMAN->m_fJudgeWindowScale = 0.20f;	break;
 	default:	ASSERT(0);
 	}
 
