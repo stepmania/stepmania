@@ -115,7 +115,7 @@ ScreenMiniMenu::ScreenMiniMenu( MiniMenuDefinition* pDef, ScreenMessage SM_SendO
 		fAnswerX += fIncreaseBy/2;
 	}
 
-	for( int i=0; i<m_Def.iNumLines; i++ )
+	for( i=0; i<m_Def.iNumLines; i++ )
 	{
 		m_textLabel[i].SetX( fLabelX );
 		m_textAnswer[i].SetX( fAnswerX );
