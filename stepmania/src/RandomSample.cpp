@@ -83,11 +83,6 @@ void RandomSample::PlayRandom()
 	m_iIndexLastPlayed = iIndexToPlay;
 }
 
-void RandomSample::Pause()
-{
-	m_pSamples[m_iIndexLastPlayed]->Pause();
-}
-
 void RandomSample::Stop()
 {
 	if( m_iIndexLastPlayed == -1 )	// nothing is currently playing

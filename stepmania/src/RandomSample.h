@@ -32,7 +32,6 @@ public:
 	};
 
 	void PlayRandom();
-	void Pause();
 	void Stop();
 
 private:
