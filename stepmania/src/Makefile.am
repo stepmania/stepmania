@@ -192,6 +192,7 @@ RageSoundReader_Resample_Fast.cpp RageSoundReader_Resample_Fast.h RageSoundReade
 RageSoundResampler.cpp RageSoundResampler.h RageSounds.cpp RageSounds.h RageTexture.cpp RageTexture.h RageTextureID.cpp RageTextureID.h \
 RageTextureManager.cpp RageTextureManager.h RageThreads.cpp RageThreads.h RageTimer.cpp RageTimer.h RageTypes.h \
 RageUtil.cpp RageUtil.h RageUtil_CharConversions.cpp RageUtil_CharConversions.h RageUtil_FileDB.cpp RageUtil_FileDB.h \
+RageUtil_CircularBuffer.h \
 $(RageSoundFileReaders) \
 $(RageFile)
 
