@@ -1,5 +1,5 @@
 bin_PROGRAMS = stepmania
-TESTS = test_audio_readers test_file_readers test_timing_data test_threads
+TESTS = 
 tests: $(TESTS)
 if BUILD_TESTS
 noinst_PROGRAMS = $(TESTS)
@@ -195,7 +195,7 @@ RageBitmapTexture.cpp RageBitmapTexture.h RageDisplay.cpp RageDisplay.h RageDisp
 RageDisplay_Null.cpp RageDisplay_Null.h RageException.cpp RageException.h RageInput.cpp RageInput.h \
 RageInputDevice.cpp RageInputDevice.h RageLog.cpp RageLog.h RageMath.cpp RageMath.h \
 RageModelGeometry.cpp RageModelGeometry.h RageSound.cpp RageSound.h RageSoundManager.cpp RageSoundManager.h \
-RageSoundReader.h RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
+RageSoundPosMap.cpp RageSoundPosMap.h RageSoundReader.h RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
 RageSoundReader_Preload.cpp RageSoundReader_Preload.h RageSoundReader_Resample.cpp RageSoundReader_Resample.h \
 RageSoundReader_Resample_Fast.cpp RageSoundReader_Resample_Fast.h \
 RageSoundReader_Resample_Good.cpp RageSoundReader_Resample_Good.h \
@@ -206,7 +206,7 @@ RageUtil_FileDB.cpp RageUtil_FileDB.h RageUtil_CircularBuffer.h
 
 Actors = \
 Actor.cpp Actor.h ActorCollision.h ActorCommands.cpp ActorCommands.h ActorFrame.cpp ActorFrame.h \
-ActorScroller.cpp ActorScroller.h ActorUtil.cpp ActorUtil.h BitmapText.cpp BitmapText.h Milkshape.h Model.cpp Model.h \
+ActorScroller.cpp ActorScroller.h ActorUtil.cpp ActorUtil.h BitmapText.cpp BitmapText.h Model.cpp Model.h \
 ModelManager.cpp ModelManager.h ModelTypes.cpp ModelTypes.h Quad.h Sprite.cpp Sprite.h
 
 GlobalSingletons = \
@@ -279,6 +279,7 @@ all_test_SOURCES = \
 		SDL_utils.cpp SDL_utils.h \
 		global.cpp global.h
 
+TESTS += test_audio_readers
 test_audio_readers_SOURCES = \
 		$(RageSoundFileReaders) \
 		$(all_test_SOURCES) \
@@ -295,15 +296,18 @@ test_audio_readers_LDADD = \
 		$(SDL_LIBS) \
 		$(srcdir)/libresample/libresample.a
 
+TESTS += test_file_readers
 test_file_readers_SOURCES = \
 		$(all_test_SOURCES) \
 		tests/test_file_readers.cpp
 
+TESTS += test_timing_data
 test_timing_data_SOURCES = \
 		$(all_test_SOURCES) \
 		tests/test_timing_data.cpp \
 		TimingData.cpp TimingData.h
 
+TESTS += test_threads
 test_threads_SOURCES = \
 		$(all_test_SOURCES) \
 		tests/test_threads.cpp
