@@ -63,18 +63,16 @@ public:
     HRESULT DoRenderSample(IMediaSample *pMediaSample); // New video sample
 
 	// new methods
-	LONG GetVidWidth() const { return m_lVidWidth; }
-	LONG GetVidHeight() const { return m_lVidHeight; }
+	long GetVidWidth() const { return m_lVidWidth; }
+	long GetVidHeight() const { return m_lVidHeight; }
 	HRESULT SetRenderTarget( RageMovieTexture* pTexture );
 
 protected:
-	LONG m_lVidWidth;	// Video width
-	LONG m_lVidHeight;	// Video Height
-	LONG m_lVidPitch;	// Video Pitch
+	// Video width, height, and pitch.
+	long m_lVidWidth, m_lVidHeight, m_lVidPitch;
 
 	RageMovieTexture*	m_pTexture;	// the video surface we will copy new frames to
 	D3DFORMAT			m_TextureFormat; // Texture format
-	BOOL				m_bBackBufferLocked;
 };
 
 
@@ -93,7 +91,6 @@ CTextureRenderer::CTextureRenderer()
 
     // Store and ARageef the texture for our use.
 	m_pTexture = NULL;
-	m_bBackBufferLocked = FALSE;
 }
 
 
@@ -213,11 +210,9 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 		// keep trying until we get the lock
 	}
     
-	m_bBackBufferLocked = TRUE;
-
     // Get the texture buffer & pitch
-	BYTE  *pTxtBuffer = static_cast<byte *>(d3dlr.pBits);
-    LONG  lTxtPitch = d3dlr.Pitch;
+	byte  *pTxtBuffer = static_cast<byte *>(d3dlr.pBits);
+    long  lTxtPitch = d3dlr.Pitch;
    
 	ASSERT( pTxtBuffer != NULL );
 
@@ -271,6 +266,7 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 		ASSERT(0);
 	}
 
+	ASSERT( m_pTexture != NULL );
         
     // Unlock the Texture
     if( FAILED( pD3DTextureCopyTo->UnlockRect(0) ) ) 
@@ -279,8 +275,7 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
         return E_FAIL;
 	}
 
-	m_bBackBufferLocked = FALSE;
-    
+	ASSERT( m_pTexture != NULL );
 
 	// flip active texture
 	m_pTexture->Flip();
