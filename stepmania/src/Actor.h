@@ -143,6 +143,7 @@ public:
 	void  SetZoomX( float zoom )	{ DestTweenState().scale.x = zoom;	}
 	void  SetZoomY( float zoom )	{ DestTweenState().scale.y = zoom; }
 	void  SetZoomZ( float zoom )	{ DestTweenState().scale.z = zoom; }
+	void  ZoomTo( float fX, float fY )	{ ZoomToWidth(fX); ZoomToHeight(fY); }
 	void  ZoomToWidth( float zoom )	{ SetZoomX( zoom / GetUnzoomedWidth() ); }
 	void  ZoomToHeight( float zoom ){ SetZoomY( zoom / GetUnzoomedHeight() ); }
 
@@ -459,6 +460,7 @@ public:
 	static int zoomx( T* p, lua_State *L )			{ p->SetZoomX(FArg(1)); return 0; }
 	static int zoomy( T* p, lua_State *L )			{ p->SetZoomY(FArg(1)); return 0; }
 	static int zoomz( T* p, lua_State *L )			{ p->SetZoomZ(FArg(1)); return 0; }
+	static int zoomto( T* p, lua_State *L )			{ p->ZoomTo(FArg(1), FArg(2)); return 0; }
 	static int zoomtowidth( T* p, lua_State *L )	{ p->ZoomToWidth(FArg(1)); return 0; }
 	static int zoomtoheight( T* p, lua_State *L )	{ p->ZoomToHeight(FArg(1)); return 0; }
 	static int stretchto( T* p, lua_State *L )		{ p->StretchTo( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
@@ -549,6 +551,7 @@ public:
 		ADD_METHOD( zoomx )
 		ADD_METHOD( zoomy )
 		ADD_METHOD( zoomz )
+		ADD_METHOD( zoomto )
 		ADD_METHOD( zoomtowidth )
 		ADD_METHOD( zoomtoheight )
 		ADD_METHOD( stretchto )
