@@ -47,7 +47,8 @@ const float JUDGEMENT_DISPLAY_TIME	=	0.6f;
 const CString JUDGEMENT_SPRITE		=	"Sprites\\Judgement.sprite";
 const float JUDGEMENT_Y				=	CENTER_Y;
 
-const CString FONT_COMBO			=	"Fonts\\Font - Arial Bold numbers 30px.font";
+
+const CString SEQUENCE_NUMBERS		=	"SpriteSequences\\Bold Numbers.seq";
 
 const float COMBO_TWEEN_TIME		=	0.5f;
 const CString COMBO_SPRITE			=	"Sprites\\Combo.sprite";
@@ -194,8 +195,7 @@ Player::Player()
 	// combo
 	m_bComboVisible = FALSE;
 	m_sprCombo.LoadFromSpriteFile( COMBO_SPRITE );
-	m_textComboNum.LoadFromFontName( "Arial Bold" );
-	m_textComboNum.SetText( "" );
+	m_ComboNumber.LoadFromSequenceFile( SEQUENCE_NUMBERS );
 
 	// life meter
 	m_sprLifeMeterFrame.LoadFromSpriteFile( LIFEMETER_FRAME_SPRITE );
@@ -203,8 +203,9 @@ Player::Player()
 
 	// score
 	m_sprScoreFrame.LoadFromTexture( SCORE_FRAME_TEXTURE );
-	m_textScoreNum.LoadFromFontName( "Arial Black with Outline" );
-	m_textScoreNum.SetText( "         " );
+	m_ScoreNumber.LoadFromSequenceFile( SEQUENCE_NUMBERS );
+	m_ScoreNumber.SetSequence( "         " );
+
 
 
 	SetX( CENTER_X );
@@ -571,20 +572,20 @@ void Player::SetJudgement( StepScore score )
 void Player::SetComboX( int iNewX )
 {
 	m_sprCombo.SetXY( iNewX+40, COMBO_Y );
-	m_textComboNum.SetXY(  iNewX-50, COMBO_Y );
+	m_ComboNumber.SetXY(  iNewX-50, COMBO_Y );
 }
 
 void Player::UpdateCombo( const float &fDeltaTime )
 {
 	m_sprCombo.Update( fDeltaTime );
-	m_textComboNum.Update( fDeltaTime );
+	m_ComboNumber.Update( fDeltaTime );
 }
 
 void Player::DrawCombo()
 {
 	if( m_bComboVisible )
 	{
-		m_textComboNum.Draw();
+		m_ComboNumber.Draw();
 		m_sprCombo.Draw();
 	}
 }
@@ -606,9 +607,10 @@ void Player::SetCombo( int iNewCombo )
 	{
 		m_bComboVisible = TRUE;
 
-		m_textComboNum.SetText( ssprintf("%d", iNewCombo) );
-		m_textComboNum.SetZoom( 1.0f + iNewCombo/200.0f ); 
-		m_textComboNum.TweenTo( COMBO_TWEEN_TIME, m_textComboNum.GetX(), m_textComboNum.GetY() );
+		m_ComboNumber.SetSequence( ssprintf("%d", iNewCombo) );
+		m_ComboNumber.SetZoom( 1.0f + iNewCombo/200.0f ); 
+		//m_ComboNumber.BeginTweening( COMBO_TWEEN_TIME );
+		//m_ComboNumber.SetTweenZoom( 1 );
 	}
 
 }
@@ -683,18 +685,18 @@ void Player::ChangeLife( StepScore score )
 void Player::SetScoreX( int iNewX )
 {
 	m_sprScoreFrame.SetXY( iNewX, SCORE_Y );
-	m_textScoreNum.SetXY(  iNewX, SCORE_Y );
+	m_ScoreNumber.SetXY(  iNewX, SCORE_Y );
 }
 
 void Player::UpdateScore( const float &fDeltaTime )
 {
 	m_sprScoreFrame.Update( fDeltaTime );
-	m_textScoreNum.Update( fDeltaTime );
+	m_ScoreNumber.Update( fDeltaTime );
 }
 
 void Player::DrawScore()
 {
-	m_textScoreNum.Draw();
+	m_ScoreNumber.Draw();
 	m_sprScoreFrame.Draw();
 }
 
@@ -735,5 +737,5 @@ void Player::ChangeScore( StepScore score, int iCurCombo )
 	ASSERT( m_fScore > 0 );
 
 	
-	m_textScoreNum.SetText( ssprintf( "%9.0f", m_fScore ) );
+	m_ScoreNumber.SetSequence( ssprintf( "%9.0f", m_fScore ) );
 }

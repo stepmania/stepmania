@@ -15,7 +15,7 @@
 #include "GameInfo.h"	// for ScoreSummary
 #include "Steps.h"
 #include "Sprite.h"
-#include "BitmapText.h"
+#include "SpriteSequence.h"
 
 
 const int MAX_NUM_COLUMNS = 8;
@@ -94,7 +94,7 @@ protected:
 	void SetCombo( int iNum );
 	BOOL		m_bComboVisible;
 	Sprite		m_sprCombo;
-	BitmapText	m_textComboNum;
+	SpriteSequence	m_ComboNumber;
 
 	// life meter
 	void SetLifeMeterX( int iX );
@@ -115,7 +115,7 @@ private:
 	void ChangeScore( StepScore stepscore, int iCurCombo );
 	float		m_fScore;
 	Sprite		m_sprScoreFrame;
-	BitmapText	m_textScoreNum;
+	SpriteSequence	m_ScoreNumber;
 
 };
 

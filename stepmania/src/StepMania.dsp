@@ -308,14 +308,6 @@ SOURCE=.\BlurredTitle.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\FootMeter.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\FootMeter.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\GameInfo.cpp
 # End Source File
 # Begin Source File
@@ -365,6 +357,14 @@ SOURCE=.\Sprite.cpp
 # Begin Source File
 
 SOURCE=.\Sprite.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SpriteSequence.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SpriteSequence.h
 # End Source File
 # Begin Source File
 

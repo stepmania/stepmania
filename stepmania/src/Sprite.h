@@ -63,8 +63,8 @@ public:
 						    D3DXCOLOR Color  = D3DXCOLOR(0,0,0,1), 
 						    D3DXCOLOR Color2 = D3DXCOLOR(1,1,1,1) );
 	void SetEffectGlowing( FLOAT fDeltaPercentPerSecond = 2.5,
-						   D3DXCOLOR Color  = D3DXCOLOR(0.4f,0.4f,0.4f,0),
-						   D3DXCOLOR Color2 = D3DXCOLOR(1.0f,1.0f,1.0f,0) );
+						   D3DXCOLOR Color  = D3DXCOLOR(0.2f,0.2f,0.2f,0),
+						   D3DXCOLOR Color2 = D3DXCOLOR(0.8f,0.8f,0.8f,0) );
 	void SetEffectWagging( FLOAT fWagRadians =  0.2,
 						   FLOAT fWagPeriod = 2.0 );
 	void SetEffectSpinning( FLOAT fRadsPerSpeed = 2.0 );
