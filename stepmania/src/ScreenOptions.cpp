@@ -173,7 +173,8 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 				{
 					/* Make sure the row actually has a selection. */
 					bool bHasSelection = false;
-					for( unsigned i=0; i<Row.m_vbSelected[p].size(); i++ )
+					unsigned i;
+					for( i=0; i<Row.m_vbSelected[p].size(); i++ )
 						if( Row.m_vbSelected[p][i] )
 							bHasSelection = true;
 					if( !bHasSelection )
