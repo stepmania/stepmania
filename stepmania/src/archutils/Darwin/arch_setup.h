@@ -18,6 +18,7 @@ typedef unsigned long long UInt64;
 #define HAVE_CXA_DEMANGLE
 #define HAVE_FFMPEG
 #define HAVE_SDL
+#define CRASH_HANDLER
 #define _BSD_WCHAR_T_DEFINED_
 #define ENDIAN_BIG
 #ifndef __MACOSX__
