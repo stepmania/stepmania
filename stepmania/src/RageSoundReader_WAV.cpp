@@ -132,12 +132,12 @@ bool RageSoundReader_WAV::read_uint8(FILE *rw, Uint8 *ui8) const
 
 RageSoundReader_WAV::adpcm_t::adpcm_t()
 {
-	memset( this, 0, sizeof(this) );
+	memset( this, 0, sizeof(*this) );
 }
 
 RageSoundReader_WAV::adpcm_t::adpcm_t( const adpcm_t &cpy )
 {
-	memset( this, 0, sizeof(this) );
+	memset( this, 0, sizeof(*this) );
 
 	this->cbSize = cpy.cbSize;
 	memcpy( this->blockheaders, cpy.blockheaders, sizeof(this->blockheaders) );
@@ -175,8 +175,6 @@ bool RageSoundReader_WAV::read_fmt_chunk()
 
     if( fmt.wFormatTag == FMT_ADPCM )
     {
-		memset(&adpcm, '\0', sizeof (adpcm));
-
 		RETURN_IF_MACRO(!read_le16(rw, &adpcm.cbSize), false);
 		RETURN_IF_MACRO(!read_le16(rw, &adpcm.wSamplesPerBlock), false);
 		RETURN_IF_MACRO(!read_le16(rw, &adpcm.wNumCoef), false);
@@ -559,9 +557,6 @@ SoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( CString filename_ 
 
 void RageSoundReader_WAV::Close()
 {
-	delete [] this->adpcm.aCoef;
-	this->adpcm.aCoef = NULL;
-
 	if( rw )
 		fclose( rw );
 	rw = NULL;
