@@ -978,6 +978,18 @@ bool Song::LoadFromKSFDir( CString sDir )
 			CStringArray asBits;
 			split( sParams[1], " - ", asBits, false );
 
+			/* It's often "artist - songtitle - difficulty".  Ignore
+			 * the difficulty, since we get that from the filename. */
+			if( asBits.GetSize() == 3 &&
+				(!stricmp(asBits[2], "double") ||
+				 !stricmp(asBits[2], "easy") ||
+				 !stricmp(asBits[2], "normal") ||
+				 !stricmp(asBits[2], "hard") ||
+				 !stricmp(asBits[2], "crazy")) )
+			{
+				asBits.RemoveAt(2);
+			}
+
 			if( asBits.GetSize() == 2 )
 			{
 				m_sArtist = asBits[0];
