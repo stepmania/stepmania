@@ -742,18 +742,25 @@ void ScreenGameplay::Update( float fDeltaTime )
 				else					m_Background.TurnDangerOff();
 
 				// check for individual fail
-				for( int p=0; p<NUM_PLAYERS; p++ )
-					if( GAMESTATE->IsPlayerEnabled(p) )
-						if( m_pLifeMeter[p]->IsFailing()  &&  GAMESTATE->m_fSecondsBeforeFail[p] == -1 )	// not yet failed
-							if( !AllFailedEarlier() )	// if not the last one to fail
-							{
-								// kill them!
-								GAMESTATE->m_fSecondsBeforeFail[p] = GAMESTATE->GetElapsedSeconds();
-								m_soundOniDie.PlayRandom();
-								ShowOniGameOver((PlayerNumber)p);
-								m_Player[p].Init();		// remove all notes and scoring
-								m_Player[p].FadeToFail();	// tell the NoteField to fade to white
-							}
+				for( pn=0; pn<NUM_PLAYERS; pn++ ) {
+					if( !GAMESTATE->IsPlayerEnabled(pn) )
+						continue;
+					if( !m_pLifeMeter[pn]->IsFailing())
+						continue; /* hasn't failed */
+					
+					if( GAMESTATE->m_fSecondsBeforeFail[pn] != -1 )
+						continue; /* failed and is already dead */
+					
+					if( !AllFailedEarlier() )	// if not the last one to fail
+					{
+						// kill them!
+						GAMESTATE->m_fSecondsBeforeFail[pn] = GAMESTATE->GetElapsedSeconds();
+						m_soundOniDie.PlayRandom();
+						ShowOniGameOver((PlayerNumber)pn);
+						m_Player[pn].Init();		// remove all notes and scoring
+						m_Player[pn].FadeToFail();	// tell the NoteField to fade to white
+					}
+				}
 				break;
 			}
 			break;
