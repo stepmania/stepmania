@@ -98,6 +98,16 @@ void RageSoundManager::Update(float delta)
 		if( !(*it)->IsPlaying() )
 			ToDelete.insert( *it );
 
+	/* Don't delete any sounds that are the parent of another sound.  Always delete
+	 * child sounds first. */
+	for( it = owned_sounds.begin(); it != owned_sounds.end(); ++it )
+		if( (*it)->GetOriginal() != (*it) ) // child
+		{
+			set<RageSound *>::iterator parent = ToDelete.find( (*it)->GetOriginal() );
+			if( parent != ToDelete.end() )
+				ToDelete.erase( parent );
+		}
+
 	for( it = ToDelete.begin(); it != ToDelete.end(); ++it )
 		owned_sounds.erase( *it );
 	g_SoundManMutex.Unlock(); /* finished with owned_sounds */
