@@ -53,7 +53,7 @@ HRESULT CTextureRenderer::SetMediaType(const CMediaType *pmt)
     pviBmp = (VIDEOINFO *)pmt->Format();
     m_lVidWidth  = pviBmp->bmiHeader.biWidth;
     m_lVidHeight = abs(pviBmp->bmiHeader.biHeight);
-    m_lVidPitch = (m_lVidWidth * 3 + 3); // We are forcing RGB24
+    m_lVidPitch = (m_lVidWidth * 3 + 3) + ~3; // We are forcing RGB24
 
     return S_OK;
 }

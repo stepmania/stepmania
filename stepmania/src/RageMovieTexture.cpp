@@ -106,6 +106,9 @@ void RageMovieTexture::Update(float fDeltaTime)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
+	/* XXX: We should use m_lVidPitch; we might be padded.  However, I can't
+	 * find any codec that don't force the width to a multiple of at least
+	 * 4 anyway, so I can't test it, so I'll leave it like this for now. */
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, m_iSourceWidth);
 
 	glTexSubImage2D(GL_TEXTURE_2D, 0,
