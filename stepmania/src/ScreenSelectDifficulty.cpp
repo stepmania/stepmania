@@ -11,10 +11,10 @@
 */
 
 #include "ScreenSelectDifficulty.h"
+#include "ScreenManager.h"
+#include "PrefsManager.h"
 #include "GameManager.h"
 #include "ThemeManager.h"
-#include "PrefsManager.h"
-#include "ScreenManager.h"
 #include "GameState.h"
 #include "AnnouncerManager.h"
 #include "ModeChoice.h"
