@@ -397,7 +397,7 @@ HR	{
 	<xsl:template name="Translate">
 		<xsl:param name="Type" />
 		<xsl:param name="Value" />
-		<xsl:variable name="node" select="/Catalog/Types/*[name()=$Type and text()=$Value]" />
+		<xsl:variable name="node" select="$Catalog/Types/*[name()=$Type and text()=$Value]" />
 		<xsl:if test="count($node) &gt; 0">
 			<xsl:value-of select="$node/@DisplayAs" />
 		</xsl:if>
@@ -415,7 +415,7 @@ HR	{
 
 	<xsl:template match="Dir | @Dir | LastSong | Path | @Path | LastCourse">
 		<xsl:variable name="DirOrPath" select="translate(., ' ', ' ')" />
-		<xsl:variable name="SongOrCourse" select="/Catalog/*/*[@Dir=$DirOrPath or @Path=$DirOrPath]" />
+		<xsl:variable name="SongOrCourse" select="$Catalog/*/*[@Dir=$DirOrPath or @Path=$DirOrPath]" />
 		<xsl:if test="count($SongOrCourse) &gt; 0">
 			<xsl:value-of select="$SongOrCourse/MainTitle" />
 			<xsl:text> </xsl:text>
@@ -507,10 +507,10 @@ HR	{
 	</xsl:template>
 
 	<xsl:template match="//*[contains(name(),'Guid')]">
-		<xsl:if test="/Catalog/InternetRankingViewGuidUrl != ''">
+		<xsl:if test="$Catalog/InternetRankingViewGuidUrl != ''">
 			<xsl:element name="a">
 				<xsl:attribute name="href">
-					<xsl:value-of select="/Catalog/InternetRankingViewGuidUrl" />?Guid=<xsl:value-of select="." />
+					<xsl:value-of select="$Catalog/InternetRankingViewGuidUrl" />?Guid=<xsl:value-of select="." />
 				</xsl:attribute>
 				<xsl:attribute name="target">
 					_new
@@ -518,7 +518,7 @@ HR	{
 				<xsl:value-of select="." />
 			</xsl:element>
 		</xsl:if>
-		<xsl:if test="/Catalog/InternetRankingViewGuidUrl = ''">
+		<xsl:if test="$Catalog/InternetRankingViewGuidUrl = ''">
 			<xsl:value-of select="." />
 		</xsl:if>
 	</xsl:template>
