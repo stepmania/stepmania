@@ -919,11 +919,17 @@ static void ProcessArgsSecond()
 		//"ArgStartCourse", is in the NSManager
 		//bacause Networked StepMania will
 		//use it a lot.
-	if( GetCommandlineArgument( "course", & Argument ) )
-		ArgStartCourse(Argument);
+	if( GetCommandlineArgument( "mode",& Argument ) )
+		ArgSetMode(Argument);
 
 	if( GetCommandlineArgument( "netip" ) )
 		NSMAN->DisplayStartupStatus();	//If we're using networking show what happend
+
+	if( GetCommandlineArgument( "course", & Argument ) )
+		ArgStartCourse(Argument);
+
+	if( GetCommandlineArgument( "jumpscreen", & Argument ) )
+		SCREENMAN->SetNewScreen(Argument);
 }
 
 int main(int argc, char* argv[])

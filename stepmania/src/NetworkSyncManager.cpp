@@ -32,7 +32,7 @@
 #include "GameState.h"
 
 
-#define NEXT_SCREEN( play_mode )			THEME->GetMetric ("ScreenSelectMusic","NextScreen"+Capitalize(PlayModeToString(play_mode)))
+#define NEXT_SCREEN							THEME->GetMetric ("ScreenSelectMusic","NextScreen")
 	//Used for advancing to gameplay screen
 
 NetworkSyncManager::NetworkSyncManager()
@@ -54,11 +54,20 @@ NetworkSyncManager::~NetworkSyncManager ()
 	delete NetPlayerClient;
 }
 
-void NetworkSyncManager::StartUp()
+void NetworkSyncManager::CloseConnection()
 {
-	CString ServerIP;
+	if (!useSMserver)
+		return ;
+	m_ServerVersion = 0;
+   	useSMserver = false;
+	m_startupStatus = 0;
+	NetPlayerClient->close();
+}
 
-	if( GetCommandlineArgument( "netip", &ServerIP ) )
+void NetworkSyncManager::PostStartUp(CString ServerIP)
+{
+	CloseConnection();
+	if( ServerIP!="LISTEN" )
 	{
 		if( !Connect(ServerIP.c_str(),8765) )
 		{
@@ -67,9 +76,7 @@ void NetworkSyncManager::StartUp()
 			return;
 		}
 
-	}
-	else if( GetCommandlineArgument( "listen" ) )
-	{
+	} else {
 		if( !Listen(8765) )
 		{
 			m_startupStatus = 2;
@@ -78,8 +85,6 @@ void NetworkSyncManager::StartUp()
 		}
 
 	}
-    else
-        return;
 
 	useSMserver = true;
 
@@ -115,6 +120,21 @@ void NetworkSyncManager::StartUp()
 	}
 
 	LOG->Info("Server Version: %d",m_ServerVersion);
+}
+
+
+void NetworkSyncManager::StartUp()
+{
+	CString ServerIP;
+
+	if( GetCommandlineArgument( "netip", &ServerIP ) )
+	{
+		PostStartUp(ServerIP);
+	}
+	else if( GetCommandlineArgument( "listen" ) )
+	{
+		PostStartUp("LISTEN");
+	}
 }
 
 
@@ -295,6 +315,65 @@ void NetworkSyncManager::SendSongs()
 }
 
 
+void ArgSetMode (CString cmdLineMode)
+{
+	CString PlayerModeStr;
+	int loc=0;
+	int loc2=1;
+
+	while (loc2>=0) {
+		loc2=cmdLineMode.Find(",",loc);
+		if (loc2<0)
+			PlayerModeStr = cmdLineMode.substr(loc,loc2-loc);
+		else
+			PlayerModeStr = cmdLineMode.substr(loc,loc2-loc);
+
+		if (PlayerModeStr.CompareNoCase("1")==0) {
+			GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
+			GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
+			GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+		} else if (PlayerModeStr.CompareNoCase("2")==0) {
+			GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
+			GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
+			GAMESTATE->m_MasterPlayerNumber = PLAYER_2;
+		} else if (PlayerModeStr.CompareNoCase("VERSUS")==0) {
+			GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;
+			GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
+			GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
+		} else if (PlayerModeStr.CompareNoCase("VERSUS")==0) {
+			GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;
+			GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
+			GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;		
+		} else if (PlayerModeStr.CompareNoCase("DOUBLE")==0) {
+			GAMESTATE->m_CurStyle = STYLE_DANCE_DOUBLE;
+			GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
+			GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
+		} else if (PlayerModeStr.CompareNoCase("COUPLE")==0) {
+			GAMESTATE->m_CurStyle = STYLE_DANCE_COUPLE;
+			GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
+			GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;			
+		} else if (PlayerModeStr.CompareNoCase("FAILOFF")==0) {
+			GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
+		} else if (PlayerModeStr.CompareNoCase("FAILENDOFSONG")==0) {
+			GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_END_OF_SONG;
+		} else if (PlayerModeStr.CompareNoCase("FAILARCADE")==0) {
+			GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_ARCADE;
+		} else if (PlayerModeStr.CompareNoCase("ARCADE")==0) {
+			GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
+		} else if (PlayerModeStr.CompareNoCase("NONSTOP")==0) {
+			GAMESTATE->m_PlayMode = PLAY_MODE_NONSTOP;
+		} else if (PlayerModeStr.CompareNoCase("ONI")==0) {
+			GAMESTATE->m_PlayMode = PLAY_MODE_ONI;
+		} else if (PlayerModeStr.CompareNoCase("BATTLE")==0) {
+			GAMESTATE->m_PlayMode = PLAY_MODE_BATTLE;
+		} else if (PlayerModeStr.CompareNoCase("RAVE")==0) {
+			GAMESTATE->m_PlayMode = PLAY_MODE_RAVE;
+		} 
+		loc = loc2+1;
+	}
+}
+
+
 //I am adding this for Network support
 //Feel free to change the way --course is used
 //I am not building any part of SMOnline specific to this yet.
@@ -306,13 +385,28 @@ void ArgStartCourse(CString CourseName)
 	if (desCourse == 0)
 	{
 		LOG->Info ("Desired Course not found!");
+		SCREENMAN->SystemMessage("Failed to find course");
 		return ;
 	}
 
-	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-		//Need to add more functionality eventually
+
+	/*
+		--PLAYERS=
+			1		-> STYLE_DANCE_SINGLE, (Default)
+			2		-> STYLE_DANCE_SINGLE,
+			VERSUS	-> STYLE_DANCE_VERSUS,
+			DOUBLE	-> STYLE_DANCE_DOUBLE,
+			COUPLE	-> STYLE_DANCE_COUPLE,
+	*/
+	if ((!GAMESTATE->m_bSideIsJoined[PLAYER_1]) && (!GAMESTATE->m_bSideIsJoined[PLAYER_2]))
+	{
+		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+		GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
+		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;	//Default
+			//Also take Default Fail Type
+	}
+
 	GAMESTATE->m_pCurCourse = desCourse;
-	GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
 
 	GAMESTATE->m_PlayMode = desCourse->GetPlayMode();
 	if (desCourse->IsOni())
@@ -325,7 +419,7 @@ void ArgStartCourse(CString CourseName)
 	GAMESTATE->PlayersFinalized();
 
 	//Go to Gameplay Screen
-	SCREENMAN->SetNewScreen( THEME->GetMetric ("ScreenSelectMusic","NextScreen") );
+	SCREENMAN->SetNewScreen(NEXT_SCREEN);
 
 	//Not sure if this is correct, it may make more sense
 	//to have a metric to allow/disallow user options at this point.
@@ -352,7 +446,6 @@ void NetworkSyncManager::DisplayStartupStatus()
 		sMessage = "Connection failed.";
 		break;
 	}
-//	SCREENMAN->RefreshCreditsMessages();
 	SCREENMAN->SystemMessage(sMessage);
 }
 

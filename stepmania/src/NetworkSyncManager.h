@@ -17,6 +17,7 @@
 
 void NSSendSongs();
 void ArgStartCourse(CString CourseName);
+void ArgSetMode (CString cmdLineMode);
 
 class EzSockets;
 
@@ -33,11 +34,15 @@ public:
 	bool Connect(const CString& addy, unsigned short port); // Connect to SM Server
 	void SendSongs();  //Send song list to server (And exit) 
 
+	void PostStartUp(CString ServerIP);
+	void CloseConnection();
+
 	void DisplayStartupStatus();	//Used to note user if connect attempt was sucessful or not.
 
 	int m_playerLife[NUM_PLAYERS];	//Life
 
 private:
+
 	void StartUp();
 
 	int m_playerID;  //these are currently unused, but need to stay
