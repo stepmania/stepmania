@@ -315,6 +315,16 @@ void ScreenSelectMusic::TweenSongPartsOnScreen( bool Initial )
 	m_GrooveGraph.StopTweening();
 	m_GrooveRadar.TweenOnScreen();
 	m_GrooveGraph.TweenOnScreen();
+	if( SHOW_DIFFICULTY_LIST )
+	{
+		if( Initial )
+		{
+			ON_COMMAND( m_DifficultyList );
+			m_DifficultyList.TweenOnScreen();
+		}
+		else
+			m_DifficultyList.Show();
+	}
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{		
@@ -333,6 +343,16 @@ void ScreenSelectMusic::TweenSongPartsOffScreen( bool Final )
 {
 	m_GrooveRadar.TweenOffScreen();
 	m_GrooveGraph.TweenOffScreen();
+	if( SHOW_DIFFICULTY_LIST )
+	{
+		if( Final )
+		{
+			OFF_COMMAND( m_DifficultyList );
+			m_DifficultyList.TweenOffScreen();
+		}
+		else
+			m_DifficultyList.Hide();
+	}
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{		
