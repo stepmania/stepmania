@@ -21,6 +21,7 @@
 #include "PrefsManager.h"
 #include "RageDisplay.h"
 #include "GameConstantsAndTypes.h"
+#include "SDL_utils.h"
 
 #include "RageDisplayInternal.h"
 
@@ -190,7 +191,7 @@ void Sprite::DrawPrimitives()
 		return;
 
 	if( m_pTexture  &&  m_pTexture->IsAMovie()  &&  m_pTexture->IsPlaying() )
-		::Sleep( PREFSMAN->m_iMovieDecodeMS );	// let the movie decode a frame
+		SDL_Delay( PREFSMAN->m_iMovieDecodeMS );	// let the movie decode a frame
 
 	// use m_temp_* variables to draw the object
 	RectF quadVerticies;

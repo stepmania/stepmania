@@ -16,6 +16,7 @@
 #include "GameState.h"
 #include "SongManager.h"
 #include "StepMania.h"
+#include "SDL_utils.h"
 
 
 #define SECONDS_TO_SHOW			THEME->GetMetricF("ScreenDemonstration","SecondsToShow")
@@ -212,7 +213,7 @@ void ScreenDemonstration::Input( const DeviceInput& DeviceI, const InputEventTyp
 		case MENU_BUTTON_COIN:
 			Screen::MenuCoin( MenuI.player );	// increment coins, play sound
 			m_soundMusic.Stop();
-			::Sleep( 800 );	// do a little pause, like the arcade does
+			SDL_Delay( 800 );	// do a little pause, like the arcade does
 			SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 			break;
 		case MENU_BUTTON_START:
@@ -228,7 +229,7 @@ void ScreenDemonstration::Input( const DeviceInput& DeviceI, const InputEventTyp
 			case PrefsManager::COIN_HOME:
 				m_soundMusic.Stop();
 				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
-				::Sleep( 800 );	// do a little pause, like the arcade does
+				SDL_Delay( 800 );	// do a little pause, like the arcade does
 				SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 				break;
 			default:
