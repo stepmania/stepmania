@@ -29,6 +29,7 @@ static bool CodePageConvert(CString &txt, int cp)
 	return true;
 }
 
+static bool AttemptEnglishConversion( CString &txt ) { return CodePageConvert( txt, 1252 ); }
 static bool AttemptKoreanConversion( CString &txt ) { return CodePageConvert( txt, 949 ); }
 static bool AttemptJapaneseConversion( CString &txt ) { return CodePageConvert( txt, 932 ); }
 
@@ -40,6 +41,7 @@ TODO
 #else
 
 /* No converters are available, so all fail--we only accept UTF-8. */
+static bool AttemptEnglishConversion( CString &txt ) { return false; }
 static bool AttemptKoreanConversion( CString &txt ) { return false; }
 static bool AttemptJapaneseConversion( CString &txt ) { return false; }
 
@@ -50,12 +52,22 @@ bool ConvertString(CString &str, const CString &encodings)
 	CStringArray lst;
 	split(encodings, ",", lst);
 
-	/* Is the string already valid utf-8? */
-	if( utf8_is_valid(str) )
-		return true;
-
 	for(unsigned i = 0; i < lst.size(); ++i)
 	{
+		if( lst[i] == "utf-8" )
+		{
+			/* Is the string already valid utf-8? */
+			if( utf8_is_valid(str) )
+				return true;
+			continue;
+		}
+		if( lst[i] == "english" )
+		{
+			if(AttemptEnglishConversion(str))
+				return true;
+			continue;
+		}
+
 		if( lst[i] == "japanese" )
 		{
 			if(AttemptJapaneseConversion(str))
@@ -70,7 +82,7 @@ bool ConvertString(CString &str, const CString &encodings)
 			continue;
 		}
 
-		RageException::Throw( "Unexpected conversion string \"%s\" (string \"%s\"",
+		RageException::Throw( "Unexpected conversion string \"%s\" (string \"%s\")",
 						lst[i].c_str(), str.c_str() );
 	}
 
