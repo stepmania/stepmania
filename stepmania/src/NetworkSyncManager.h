@@ -13,15 +13,12 @@
 -----------------------------------------------------------------------------
 */
  
-#include "ezsockets.h"
-
-static int useSMserver;				//Using network or not?
-static EzSockets NetPlayerClient;	//Socket used for network traffic
+class EzSockets;
 
 class NetworkSyncManager 
 {
 public:
-	NetworkSyncManager();
+	NetworkSyncManager(int argc, char **argv);
 	~NetworkSyncManager();
 
 	void ReportScore(int playerID, int step, int score, int combo);	
@@ -38,22 +35,21 @@ public:
 	int m_step;
 	int m_score;
 	int m_combo;
+    bool useSMserver;
+    EzSockets *NetPlayerClient;
+    
 private:
+    struct netHolder		//Data structure used for sending data to server
+    {
+        int m_playerID;	//PID (also used for Commands)
+        int m_step;		//SID (StepID, 0-6 for Miss to Marv, 7,8 for boo and ok)
+        int m_score;	//Player's Score
+        int m_combo;	//Player's Current Combo
+    };
+    
 };
 
-class netHolder		//Data structure used for sending data to server
-{
-public:
-	int m_playerID;	//PID (also used for Commands)
-	int m_step;		//SID (StepID, 0-6 for Miss to Marv, 7,8 for boo and ok)
-	int m_score;	//Player's Score
-	int m_combo;	//Player's Current Combo
-};
-
-//Static this class inside itself
-//so that other parts of the program that include
-//NetworkSyncManager can use "currentNetPlayer"
-static NetworkSyncManager currentNetPlayer;	
+extern NetworkSyncManager *NSMAN;
  
 #endif
  

@@ -15,25 +15,27 @@
 #include "ezsockets.h"
 #include "RageLog.h"
 
-
-NetworkSyncManager::NetworkSyncManager () 
+NetworkSyncManager::NetworkSyncManager(int argc, char **argv)
 {
-	//No Code
+    NetPlayerClient = new EzSockets;
+    if (argc > 1)
+        Connect(argv[1],8765);
+    else
+        useSMserver = false;
 }
 
 NetworkSyncManager::~NetworkSyncManager ()
 {
-	if (useSMserver!=1)
-		return ;
 	//Close Connection to server nicely.
-	NetPlayerClient.close();
-	return ;
+    if (useSMserver)
+        NetPlayerClient->close();
+	delete NetPlayerClient;
 }
 
 int NetworkSyncManager::Connect(char * addy, int port)
 {
 	if (port!=8765) 
-		return (-1);
+		return -1;
 	//Make sure using port 8765
 	//This may change in future versions
 	//It is this way now for protocol's purpose.
@@ -43,21 +45,21 @@ int NetworkSyncManager::Connect(char * addy, int port)
 	//will be connecting to localhost, this port does not matter.
 	
 
-	NetPlayerClient.create();	//Initilize Socket
+	NetPlayerClient->create();	//Initilize Socket
 
-	if(!NetPlayerClient.connect(addy,port)) {
+	if(!NetPlayerClient->connect(addy,port)) {
 		useSMserver = -1;	//If connection to socket fails, tell
 							//other network functions to not do anything
 	} else {
 		useSMserver = 1;	//Utilize other network funtions
 	}
-	return (1);
+	return 1;
 }
 
-void NetworkSyncManager::ReportScore (int playerID, int step, int score, int combo)
+void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo)
 {
 	if (useSMserver!=1) //Make sure that we are using the network
-		return ;
+		return;
 
 	netHolder SendNetPack;	//Create packet to send to server
 
@@ -66,12 +68,11 @@ void NetworkSyncManager::ReportScore (int playerID, int step, int score, int com
 	SendNetPack.m_score=score;			//Load packet with aproperate info
 	SendNetPack.m_step=step-1;
 
-	NetPlayerClient.send((char*)&SendNetPack, sizeof(netHolder)); 
-		//Send packet to server
-	return;
+    //Send packet to server
+	NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder)); 
 }
 
-void NetworkSyncManager::ReportSongOver () 
+void NetworkSyncManager::ReportSongOver() 
 {
 	if (useSMserver!=1)	//Make sure that we are using the network
 		return ;
@@ -83,17 +84,16 @@ void NetworkSyncManager::ReportSongOver ()
 	SendNetPack.m_score=0;		//Use PID 21 (Song over Packet)
 	SendNetPack.m_step=0;
 	
-	NetPlayerClient.send((char*)&SendNetPack, sizeof(netHolder)); 
+	NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder)); 
 	return;
 }
 
-void NetworkSyncManager::StartRequest () 
+void NetworkSyncManager::StartRequest() 
 {
 	if (useSMserver!=1)
 		return ;
 
-	vector <char> tmp;	//Temporary vector used by receive function
-						//when waiting
+	vector <char> tmp;	//Temporary vector used by receive function when waiting
 
 	LOG->Trace("Requesting Start from Server.");
 
@@ -104,14 +104,15 @@ void NetworkSyncManager::StartRequest ()
 	SendNetPack.m_score=0;	//PID 20 (Song Start Request Packet)
 	SendNetPack.m_step=0;
 
-	NetPlayerClient.send((char*)&SendNetPack, sizeof(netHolder));
+	NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder));
 	
 	LOG->Trace("Waiting for RECV");
 
 	//Block until go is recieved.
-	NetPlayerClient.receive(tmp);	
+	NetPlayerClient->receive(tmp);	
 
 	LOG->Trace("Starting Game.");
-	return ;
 }
 
+//Global and accessable from anywhere
+NetworkSyncManager *NSMAN;

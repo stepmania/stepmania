@@ -870,10 +870,6 @@ int main(int argc, char* argv[])
 
 #endif
 
-	if (argc > 1)
-		currentNetPlayer.Connect (argv[1],8765);
-
-
 	/* Almost everything uses this to read and write files.  Load this early. */
 	FILEMAN = new RageFileManager( argv[0] );
 	FILEMAN->MountInitialFilesystems();
@@ -977,6 +973,8 @@ int main(int argc, char* argv[])
 	UNLOCKMAN	= new UnlockSystem;
 	MODELMAN	= new ModelManager;
 	delete loading_window;		// destroy this before init'ing Display
+    
+    NSMAN       = new NetworkSyncManager(argc, argv);
 
 	DISPLAY = CreateDisplay();
 
@@ -1038,6 +1036,7 @@ int main(int argc, char* argv[])
 	}
 #endif
 
+    SAFE_DELETE( NSMAN );
 	SAFE_DELETE( SCREENMAN );
 	/* Delete INPUTMAN before the other INPUTFILTER handlers, or an input
 	 * driver may try to send a message to INPUTFILTER after we delete it. */

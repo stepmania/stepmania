@@ -12,8 +12,10 @@
    Windows-Based OSes.
 ********************************************/
 
+#ifdef _WINDOWS
+//We need the Winsock32 Libary
 #pragma comment(lib,"wsock32.lib")
-	//We need the Winsock32 Libary
+#endif
 
 #include "ezsockets.h"
 
@@ -75,13 +77,10 @@ bool EzSockets::listen() {
 bool EzSockets::accept(EzSockets &socket) {
 
 	//Windows wants it defined as a signed int
-#if defined(WIN32)
+    //As does everything else -- Steve
 	int length = sizeof(socket);
-#else
-	unsigned int length = sizeof(socket);
-#endif
 
-  socket.sock = ::accept(sock, (struct sockaddr *) & socket.addr,& length);
+  socket.sock = ::accept(sock, (struct sockaddr *)&socket.addr,&length);
   if (socket.sock < 0) {
     return false;
   }
@@ -272,7 +271,7 @@ bool EzSockets::connect(std::string host, int port) {
 #else
   addr.sin_family = AF_INET;
   addr.sin_port = htons(port);
-  int status = inet_pton ( AF_INET, host.c_str(), &addr.sin_addr );
+  inet_pton ( AF_INET, host.c_str(), &addr.sin_addr );
 
   int desc = ::connect(sock,(struct sockaddr *)&addr,sizeof(addr));
 #endif
