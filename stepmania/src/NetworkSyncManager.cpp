@@ -263,7 +263,6 @@ void NetworkSyncManager::SendSongs()
 		toSend[2]=char(0);
 		toSend[3]=char(0);
 
-		LOG->Info("SLen: %d",SongInfo.length());
 		NetPlayerClient->send (toSend,SongInfo.length()+4);
 	}
 	toSend[0]=char(36);
