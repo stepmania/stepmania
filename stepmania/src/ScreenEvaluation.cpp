@@ -1372,25 +1372,7 @@ void ScreenEvaluation::EndScreen()
 		}
 	}
 
-	switch( m_Type )
-	{
-	case stage:
-		// Increment the stage counter.
-		int iNumStagesOfLastSong;
-		iNumStagesOfLastSong = SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong );
-
-		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-		{
-			/* If it's an extra stage, always increment by one.  This is because in some
-			 * unusual cases we can pick a long or marathon song as an extra stage.  The
-			 * most common cause of this is when an entire group of songs is long/nonstop mixes.
-			 * 
-			 * We can't simply not choose long songs as extra stages: if there are no
-			 * regular songs to choose, we'll end up with no song to use as an extra stage. */
-			iNumStagesOfLastSong = 1;
-		}
-		GAMESTATE->m_iCurrentStageIndex += iNumStagesOfLastSong;
-		break;
-	}
+	if( m_Type == stage )
+		GAMESTATE->IncrementStageIndex();
 }
 
