@@ -7,6 +7,8 @@
 #include "RadarValues.h"
 #include <map>
 class Steps;
+struct lua_State;
+
 
 struct PlayerStageStats
 {
@@ -88,6 +90,9 @@ struct PlayerStageStats
 	float	GetPercentageOfTaps( TapNoteScore tns ) const;
 	void	UpdateComboList( float fSecond, bool rollover );
 	Combo_t GetMaxCombo() const;
+
+	// Lua
+	void PushSelf( lua_State *L );
 };
 
 

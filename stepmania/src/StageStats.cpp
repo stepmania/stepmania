@@ -81,6 +81,33 @@ bool StageStats::AllFailedEarlier() const
 	return true;
 }
 
+
+// lua start
+#include "LuaBinding.h"
+
+template<class T>
+class LunaStageStats : public Luna<T>
+{
+public:
+	LunaStageStats() { LUA->Register( Register ); }
+
+	static int GetPlayerStageStats( T* p, lua_State *L )	{ p->m_player[IArg(1)].PushSelf(L); return 1; }
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( GetPlayerStageStats )
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_CLASS( StageStats )
+// lua end
+
+
+//
+// Old Lua
+//
+
 static Grade GetBestGrade()
 {
 	Grade g = NUM_GRADES;

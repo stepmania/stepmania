@@ -377,6 +377,28 @@ float PlayerStageStats::GetPercentageOfTaps( TapNoteScore tns ) const
 }
 
 
+// lua start
+#include "LuaBinding.h"
+
+template<class T>
+class LunaPlayerStageStats : public Luna<T>
+{
+public:
+	LunaPlayerStageStats() { LUA->Register( Register ); }
+
+	static int GetCaloriesBurned( T* p, lua_State *L )		{ lua_pushnumber(L, p->fCaloriesBurned ); return 1; }
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( GetCaloriesBurned )
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_CLASS( PlayerStageStats )
+// lua end
+
+
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.

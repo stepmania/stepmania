@@ -7,6 +7,7 @@
 #include "PlayerStageStats.h"
 class Song;
 class Style;
+struct lua_State;
 
 
 struct StageStats
@@ -31,6 +32,9 @@ struct StageStats
 	float	fGameplaySeconds;				// how many seconds before gameplay ended.  Updated by Gameplay, not scaled by music rate.
 
 	PlayerStageStats m_player[NUM_PLAYERS];
+
+	// Lua
+	void PushSelf( lua_State *L );
 };
 
 /*
