@@ -18,6 +18,7 @@
 #include "ThemeManager.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
+#include "Character.h"
 
 
 #define TITLE_ON_COMMAND( p )				THEME->GetMetric ("ScreenSelectCharacter",ssprintf("TitleP%dOnCommand",p+1))
@@ -48,6 +49,13 @@ ScreenSelectCharacter::ScreenSelectCharacter() : Screen("ScreenSelectCharacter")
 {	
 	LOG->Trace( "ScreenSelectCharacter::ScreenSelectCharacter()" );	
 
+	if( GAMESTATE->m_pCharacters.empty() )
+	{
+		HandleScreenMessage( SM_GoToNextScreen );
+		return;
+	}
+	
+	
 	m_Menu.Load( "ScreenSelectCharacter" );
 	this->AddChild( &m_Menu );
 
@@ -60,15 +68,6 @@ ScreenSelectCharacter::ScreenSelectCharacter() : Screen("ScreenSelectCharacter")
 		m_iSelectedCharacter[p] = 0;
 		if( GAMESTATE->IsHumanPlayer(p) )
 			m_SelectionRow[p] = CHOOSING_HUMAN_CHARACTER;
-	}
-
-
-	CStringArray asCharacterPaths;
-	GetDirListing( "Characters/*.ini", asCharacterPaths, false, true );
-	for( unsigned i=0; i<asCharacterPaths.size(); i++ )
-	{
-		m_vCharacters.resize( m_vCharacters.size()+1 );
-		m_vCharacters[i].Load( asCharacterPaths[i] );
 	}
 
 
@@ -220,21 +219,13 @@ void ScreenSelectCharacter::AfterValueChange( PlayerNumber pn )
 	case CHOOSING_CPU_CHARACTER:
 	case CHOOSING_HUMAN_CHARACTER:
 		{
-			Character& character = m_vCharacters[ m_iSelectedCharacter[pnAffected] ];
-			CStringArray asGraphicPaths;
-			GetDirListing( "Characters/" + character.m_sFileName + ".png", asGraphicPaths, false, true );
-			GetDirListing( "Characters/" + character.m_sFileName + ".jpg", asGraphicPaths, false, true );
-			GetDirListing( "Characters/" + character.m_sFileName + ".gif", asGraphicPaths, false, true );
-			GetDirListing( "Characters/" + character.m_sFileName + ".bmp", asGraphicPaths, false, true );
-			if( asGraphicPaths.empty() )
-				m_sprCharacter[pnAffected].UnloadTexture();
-			else
-				m_sprCharacter[pnAffected].Load( asGraphicPaths[0] );
-
+			Character* pChar = GAMESTATE->m_pCharacters[ m_iSelectedCharacter[pnAffected] ];
+			m_sprCharacter[pnAffected].UnloadTexture();
+			m_sprCharacter[pnAffected].Load( pChar->GetCardPath() );
 
 			for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
 				for( int j=0; j<NUM_ATTACKS_PER_LEVEL; j++ )
-					m_AttackIcons[pnAffected][i][j].Load( pnAffected, character.m_sAttacks[i][j] );
+					m_AttackIcons[pnAffected][i][j].Load( pnAffected, pChar->m_sAttacks[i][j] );
 		}
 		break;
 	case FINISHED_CHOOSING:
@@ -274,8 +265,8 @@ void ScreenSelectCharacter::Move( PlayerNumber pn, int deltaValue )
 	{
 	case CHOOSING_CPU_CHARACTER:
 	case CHOOSING_HUMAN_CHARACTER:
-		m_iSelectedCharacter[pnAffected] = (m_iSelectedCharacter[pnAffected]+deltaValue)+m_vCharacters.size();
-		m_iSelectedCharacter[pnAffected] %= m_vCharacters.size();
+		m_iSelectedCharacter[pnAffected] = (m_iSelectedCharacter[pnAffected]+deltaValue)+GAMESTATE->m_pCharacters.size();
+		m_iSelectedCharacter[pnAffected] %= GAMESTATE->m_pCharacters.size();
 		AfterValueChange(pn);
 		m_soundChange.PlayRandom();
 		break;
@@ -312,11 +303,8 @@ void ScreenSelectCharacter::MenuStart( PlayerNumber pn )
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			Character& character = m_vCharacters[ m_iSelectedCharacter[p] ];
-			GAMESTATE->m_sCharacterName[p] = character.m_sFileName;
-			for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
-				for( int j=0; j<NUM_ATTACKS_PER_LEVEL; j++ )
-					GAMESTATE->m_sAttacks[p][i][j] = character.m_sAttacks[i][j];
+			Character* pChar = GAMESTATE->m_pCharacters[ m_iSelectedCharacter[p] ];
+			GAMESTATE->m_pCurCharacters[p] = pChar;
 		}
 
 		m_Menu.m_MenuTimer.Stop();

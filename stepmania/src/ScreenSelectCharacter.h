@@ -13,7 +13,6 @@
 #include "Sprite.h"
 #include "RandomSample.h"
 #include "MenuElements.h"
-#include "Character.h"
 #include "OptionIcon.h"
 
 
@@ -47,8 +46,7 @@ private:
 	void AfterValueChange( PlayerNumber pn );
 	void Move( PlayerNumber pn, int deltaValue );
 
-	vector<Character>	m_vCharacters;
-	int				m_iSelectedCharacter[NUM_PLAYERS];
+	int	m_iSelectedCharacter[NUM_PLAYERS];
 	enum { 
 		CHOOSING_HUMAN_CHARACTER, 
 		CHOOSING_CPU_CHARACTER, 

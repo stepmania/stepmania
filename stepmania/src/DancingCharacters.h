@@ -31,6 +31,7 @@ protected:
 	float	m_CameraDistance;
 	float	m_CameraPanYStart;
 	float	m_CameraPanYEnd;
+	float	m_fLookAtHeight;
 	float	m_fCameraHeightStart;
 	float	m_fCameraHeightEnd;
 	float	m_fThisCameraStartBeat;

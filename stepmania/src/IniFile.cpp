@@ -40,7 +40,7 @@ bool IniFile::ReadFile()
 {
 	ifstream file(path);
 
-	if (file.bad())
+	if (!file.is_open())
 	{
 		error = "Unable to open ini file.";
 		return 0;

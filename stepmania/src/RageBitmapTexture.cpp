@@ -92,7 +92,41 @@ void RageBitmapTexture::Create()
 
 	if(actualID.bHotPinkColorKey)
 	{
-		int color = mySDL_MapRGBExact(img->format, 0xFF, 0, 0xFF);
+		// HACK:  Some Pump banners and DDR PC textures have (248,0,248) as the color key.
+		// Search the edge for (248,0,248).  If we find it, use that as the color key.
+		// TODO:  Get rid of this hack and save DDR PC textures in a format that supports alpha.
+		bool bUse248 = false;
+		{
+			const Uint8 *p = (Uint8*)img->pixels;
+			for( int i=0; i<img->w; i++ )
+			{
+				Uint8 color[4];
+				mySDL_GetRGBAV( p, img, color );
+				if( color[0]==248 && color[1]==0 && color[2]==248 )
+				{
+					bUse248 = true;
+					goto apply_color_key;
+				}
+				p += img->format->BytesPerPixel;
+			}
+		}
+		{
+			const Uint8 *p = (Uint8*)img->pixels;
+			p += img->pitch * (img->h-1);
+			for( int i=0; i<img->w; i++ )
+			{
+				Uint8 color[4];
+				mySDL_GetRGBAV( p, img, color );
+				if( color[0]==248 && color[1]==0 && color[2]==248 )
+				{
+					bUse248 = true;
+					goto apply_color_key;
+				}
+				p += img->format->BytesPerPixel;
+			}
+		}
+apply_color_key:
+		int color = mySDL_MapRGBExact(img->format, bUse248 ? 248 : 0xFF, 0, bUse248 ? 248 : 0xFF);
 		if( color != -1 )
 			SDL_SetColorKey( img, SDL_SRCCOLORKEY, color );
 	}

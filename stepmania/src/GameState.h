@@ -27,7 +27,7 @@ class GameDef;
 class StyleDef;
 struct ModeChoice;
 class NoteFieldPositioning;
-
+class Character;
 
 class GameState
 {
@@ -70,6 +70,14 @@ public:
 	void GetPlayerInfo( PlayerNumber pn, bool& bIsEnabledOut, bool& bIsHumanOut );
 	bool IsPlayerEnabled( PlayerNumber pn );
 	bool IsPlayerEnabled( int p ) { return IsPlayerEnabled( (PlayerNumber)p ); };
+	int	GetNumPlayersEnabled()
+	{ 
+		int count = 0;
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			if( IsPlayerEnabled(p) )
+				count++;
+		return count;
+	};
 	bool IsHumanPlayer( PlayerNumber pn );
 	bool IsHumanPlayer( int p ) { return IsHumanPlayer( (PlayerNumber)p ); };
 	PlayerNumber GetFirstHumanPlayer();
@@ -158,8 +166,10 @@ public:
 
 
 	// used in PLAY_MODE_RAVE
-	CString m_sCharacterName[NUM_PLAYERS];
-	CString	m_sAttacks[NUM_PLAYERS][NUM_ATTACK_LEVELS][NUM_ATTACKS_PER_LEVEL];
+	vector<Character*> m_pCharacters;
+	Character* m_pCurCharacters[NUM_PLAYERS];
+
+	void ReloadCharacters();
 
 	
 	// used in PLAY_MODE_RAVE and PLAY_MODE_BATTLE

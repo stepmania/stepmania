@@ -359,55 +359,55 @@ void Background::Update( float fDeltaTime )
 		if( m_aBGChanges.size() == 0 )
 			return;
 
-		/* If we're in a freeze, hold all animations (don't animate by calling Update). */
-		if( GAMESTATE->m_bFreeze )
-			return;
-
-		// Find the BGSegment we're in
-		int i;
-		int size = (int)(m_aBGChanges.size()) - 1;
-		for( i=0; i<size; i++ )
-			if( GAMESTATE->m_fSongBeat < m_aBGChanges[i+1].m_fStartBeat )
-				break;
-
-		if( i != m_iCurBGChangeIndex )
+		/* Only update BGAnimations if we're not in the middle of a stop. */
+		if( !GAMESTATE->m_bFreeze )
 		{
-			LOG->Trace( "old bga %d -> new bga %d, %f, %f", i, m_iCurBGChangeIndex, m_aBGChanges[i].m_fStartBeat, GAMESTATE->m_fSongBeat );
+			// Find the BGSegment we're in
+			int i;
+			int size = (int)(m_aBGChanges.size()) - 1;
+			for( i=0; i<size; i++ )
+				if( GAMESTATE->m_fSongBeat < m_aBGChanges[i+1].m_fStartBeat )
+					break;
 
-			m_iCurBGChangeIndex = i;
-
-			const BackgroundChange& change = m_aBGChanges[i];
-
-			BGAnimation* pOld = m_pCurrentBGA;
-
-			if( change.m_bFadeLast )
-				m_pFadingBGA = m_pCurrentBGA;
-			else
-				m_pFadingBGA = NULL;
-
-			m_pCurrentBGA = m_BGAnimations[ change.m_sBGName ];
-
-			if( pOld != m_pCurrentBGA )
+			if( i != m_iCurBGChangeIndex )
 			{
-				if( pOld )
-					pOld->LosingFocus();
-				if( m_pCurrentBGA )
-					m_pCurrentBGA->GainingFocus( change.m_fRate, change.m_bRewindMovie, change.m_bLoop );
+				LOG->Trace( "old bga %d -> new bga %d, %f, %f", i, m_iCurBGChangeIndex, m_aBGChanges[i].m_fStartBeat, GAMESTATE->m_fSongBeat );
+
+				m_iCurBGChangeIndex = i;
+
+				const BackgroundChange& change = m_aBGChanges[i];
+
+				BGAnimation* pOld = m_pCurrentBGA;
+
+				if( change.m_bFadeLast )
+					m_pFadingBGA = m_pCurrentBGA;
+				else
+					m_pFadingBGA = NULL;
+
+				m_pCurrentBGA = m_BGAnimations[ change.m_sBGName ];
+
+				if( pOld != m_pCurrentBGA )
+				{
+					if( pOld )
+						pOld->LosingFocus();
+					if( m_pCurrentBGA )
+						m_pCurrentBGA->GainingFocus( change.m_fRate, change.m_bRewindMovie, change.m_bLoop );
+				}
+
+				m_fSecsLeftInFade = m_pFadingBGA!=NULL ? FADE_SECONDS : 0;
 			}
 
-			m_fSecsLeftInFade = m_pFadingBGA!=NULL ? FADE_SECONDS : 0;
-		}
-
-		if( m_pCurrentBGA )
-			m_pCurrentBGA->Update( fDeltaTime );
-		if( m_pFadingBGA )
-		{
-			m_pFadingBGA->Update( fDeltaTime );
-			m_fSecsLeftInFade -= fDeltaTime;
-			float fPercentOpaque = m_fSecsLeftInFade / FADE_SECONDS;
-			m_pFadingBGA->SetDiffuse( RageColor(1,1,1,fPercentOpaque) );
-			if( fPercentOpaque <= 0 )
-				m_pFadingBGA = NULL;
+			if( m_pCurrentBGA )
+				m_pCurrentBGA->Update( fDeltaTime );
+			if( m_pFadingBGA )
+			{
+				m_pFadingBGA->Update( fDeltaTime );
+				m_fSecsLeftInFade -= fDeltaTime;
+				float fPercentOpaque = m_fSecsLeftInFade / FADE_SECONDS;
+				m_pFadingBGA->SetDiffuse( RageColor(1,1,1,fPercentOpaque) );
+				if( fPercentOpaque <= 0 )
+					m_pFadingBGA = NULL;
+			}
 		}
 	}
 	

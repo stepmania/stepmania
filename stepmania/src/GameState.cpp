@@ -24,6 +24,7 @@
 #include "NoteSkinManager.h"
 #include "ModeChoice.h"
 #include "NoteFieldPositioning.h"
+#include "Character.h"
 
 
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
@@ -39,6 +40,7 @@ GameState::GameState()
 	m_pPosition = NULL;
 
 	ResetLastRanking();
+	ReloadCharacters();
 }
 
 GameState::~GameState()
@@ -131,6 +133,29 @@ void GameState::ResetLastRanking()
 	{
 		m_RankingCategory[p] = (RankingCategory)-1;
 		m_iRankingIndex[p] = -1;
+	}
+}
+
+void GameState::ReloadCharacters()
+{
+	int i;
+
+	for( i=0; i<m_pCharacters.size(); i++ )
+		delete m_pCharacters[i];
+	m_pCharacters.clear();
+
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		m_pCurCharacters[p] = NULL;
+
+	CStringArray as;
+	GetDirListing( "Characters/*", as, true, true );
+	for( i=0; i<as.size(); i++ )
+	{
+		Character* pChar = new Character;
+		if( pChar->Load( as[i] ) )
+			m_pCharacters.push_back( pChar );
+		else
+			delete pChar;
 	}
 }
 

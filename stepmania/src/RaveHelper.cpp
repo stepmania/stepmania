@@ -14,6 +14,7 @@
 #include "ThemeManager.h"
 #include "RageUtil.h"
 #include "GameState.h"
+#include "Character.h"
 
 CachedThemeMetricF ATTACK_DURATION_SECONDS	("RaveHelper","AttackDurationSeconds");
 
@@ -76,7 +77,7 @@ void RaveHelper::Update( float fDelta )
 
 void RaveHelper::LaunchAttack( AttackLevel al )
 {
-	CString* asAttacks = GAMESTATE->m_sAttacks[m_PlayerNumber][al];	// [NUM_ATTACKS_PER_LEVEL]
+	CString* asAttacks = GAMESTATE->m_pCurCharacters[m_PlayerNumber]->m_sAttacks[al];	// [NUM_ATTACKS_PER_LEVEL]
 	CString sAttackToGive = asAttacks[ rand()%NUM_ATTACKS_PER_LEVEL ];
   	PlayerNumber pnToAttack = OPPOSITE_PLAYER[m_PlayerNumber];
 

@@ -19,9 +19,19 @@ class Character
 public:
 //	Character();
 
-	void Load( CString sCharIniPath );
+	bool Load( CString sCharDir );	// return true if success
 
-	CString m_sFileName;
+	CString GetTakingABreakPath();
+	CString GetCardPath();
+	CString GetIconPath();
+
+	CString GetModelPath();
+	CString GetRestAnimationPath();
+	CString GetWarmUpAnimationPath();
+	CString GetDanceAnimationPath();
+
+	CString m_sCharDir;
+	CString m_sName;
 	CString	m_sAttacks[NUM_ATTACK_LEVELS][NUM_ATTACKS_PER_LEVEL];
 };
 

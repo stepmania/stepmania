@@ -15,18 +15,80 @@
 #include "RageUtil.h"
 
 
-void Character::Load( CString sCharIniPath )
+bool Character::Load( CString sCharDir )
 {
-	IniFile ini;
-	ini.SetPath( sCharIniPath );
-	ini.ReadFile();
+	// Save character directory
+	if( sCharDir.Right(1)!="/" )
+		sCharDir += '/';
+	m_sCharDir = sCharDir;
 
-	// save file name
-	CString sThrowAway;
-	splitrelpath( sCharIniPath, sThrowAway, m_sFileName, sThrowAway );
-	
-	// load attacks
+	// Save character name
+	vector<CString> as;
+	split( sCharDir, "/", as );
+	m_sName = as.back();
+
+	// Save attacks
+	IniFile ini;
+	ini.SetPath( sCharDir+"character.ini" );
+	if( !ini.ReadFile() )
+		return false;
 	for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
 		for( int j=0; j<NUM_ATTACKS_PER_LEVEL; j++ )
 			ini.GetValue( "Character", ssprintf("Level%dAttack%d",i+1,j+1), m_sAttacks[i][j] );
+
+	return true;
 }
+
+
+CString GetRandomFileInDir( CString sDir )
+{
+	CStringArray asFiles;
+	GetDirListing( sDir, asFiles, false, true );
+	if( asFiles.empty() )
+		return "";
+	else
+		return asFiles[rand()%asFiles.size()];
+}
+
+
+CString Character::GetModelPath()			{ return m_sCharDir + "model.txt"; }
+CString Character::GetRestAnimationPath()	{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Rest/")); }
+CString Character::GetWarmUpAnimationPath() { return DerefRedir(GetRandomFileInDir(m_sCharDir + "WarmUp/")); }
+CString Character::GetDanceAnimationPath()	{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Dance/")); }
+CString Character::GetTakingABreakPath()
+{
+	CStringArray as;
+	GetDirListing( m_sCharDir+"break.png", as, false, true );
+	GetDirListing( m_sCharDir+"break.jpg", as, false, true );
+	GetDirListing( m_sCharDir+"break.gif", as, false, true );
+	GetDirListing( m_sCharDir+"break.bmp", as, false, true );
+	if( as.empty() )
+		return "";
+	else
+		return as[0];
+}
+CString Character::GetCardPath()
+{
+	CStringArray as;
+	GetDirListing( m_sCharDir+"card.png", as, false, true );
+	GetDirListing( m_sCharDir+"card.jpg", as, false, true );
+	GetDirListing( m_sCharDir+"card.gif", as, false, true );
+	GetDirListing( m_sCharDir+"card.bmp", as, false, true );
+	if( as.empty() )
+		return "";
+	else
+		return as[0];
+}
+CString Character::GetIconPath()
+{
+	CStringArray as;
+	GetDirListing( m_sCharDir+"icon.png", as, false, true );
+	GetDirListing( m_sCharDir+"icon.jpg", as, false, true );
+	GetDirListing( m_sCharDir+"icon.gif", as, false, true );
+	GetDirListing( m_sCharDir+"icon.bmp", as, false, true );
+	if( as.empty() )
+		return "";
+	else
+		return as[0];
+}
+

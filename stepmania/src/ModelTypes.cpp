@@ -26,8 +26,8 @@ void AnimatedTexture::Load( CString sTexOrIniPath )
 {
 	ASSERT( vFrames.empty() );	// don't load more than once
 
-	CString sDir, sThrowAway;
-	splitrelpath( sTexOrIniPath, sDir, sThrowAway, sThrowAway );
+	CString sDir, sFName, sExt;
+	splitrelpath( sTexOrIniPath, sDir, sFName, sExt );
 
 	bool bIsIni = sTexOrIniPath.Right(3).CompareNoCase("ini")== 0;
 	if( bIsIni )
@@ -50,6 +50,7 @@ void AnimatedTexture::Load( CString sTexOrIniPath )
 				RageTextureID ID;
 				ID.filename = sDir+sFileName;
 				ID.bStretch = true;
+				ID.bHotPinkColorKey = true;
 				AnimatedTextureState state = { 
 					TEXTUREMAN->LoadTexture( ID ),
 					fDelay
@@ -64,6 +65,7 @@ void AnimatedTexture::Load( CString sTexOrIniPath )
 	{
 		RageTextureID ID;
 		ID.filename = sTexOrIniPath;
+		ID.bHotPinkColorKey = true;
 		ID.bStretch = true;
 		AnimatedTextureState state = { 
 			TEXTUREMAN->LoadTexture( ID ),
@@ -81,7 +83,10 @@ void AnimatedTexture::Update( float fDelta )
 	ASSERT( iCurState < (int)vFrames.size() );
 	fSecsIntoFrame += fDelta;
 	if( fSecsIntoFrame > vFrames[iCurState].fDelaySecs )
+	{
+		fSecsIntoFrame -= vFrames[iCurState].fDelaySecs;
 		iCurState = (iCurState+1) % vFrames.size();
+	}
 }
 
 RageTexture* AnimatedTexture::GetCurrentTexture()
