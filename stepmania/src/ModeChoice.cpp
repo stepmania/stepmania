@@ -104,7 +104,7 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 		CString sValue = join( ",", asBits );
 
 		sName.MakeLower();
-		sValue.MakeLower();
+		// sValue.MakeLower();
 
 		if( sName == "game" )
 		{
