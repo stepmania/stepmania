@@ -34,10 +34,12 @@
 #include "LightsManager.h"
 #include "RageFile.h"
 #include "Bookkeeper.h"
-#include <ctime>
 #include "MemoryCardManager.h"
 #include "StageStats.h"
 #include "GameConstantsAndTypes.h"
+#include "StepMania.h"
+
+#include <ctime>
 
 #define DEFAULT_MODIFIERS THEME->GetMetric( "Common","DefaultModifiers" )
 
@@ -69,6 +71,35 @@ GameState::~GameState()
 	delete m_pPosition;
 	for( unsigned i=0; i<m_pCharacters.size(); i++ )
 		delete m_pCharacters[i];
+}
+
+void GameState::ApplyCmdline()
+{
+	int i;
+
+	/* This is in order of dependency: we need to join players before we can set
+	 * the style, and we need to set the style before we can select steps. */
+	CString sPlayer;
+	for( i = 0; GetCommandlineArgument( "player", &sPlayer, i ); ++i )
+	{
+		int pn = atoi( sPlayer )-1;
+		if( !IsAnInt( sPlayer ) || pn < 0 || pn >= NUM_PLAYERS )
+			RageException::Throw( "Invalid argument \"--player=%s\"", sPlayer.c_str() );
+
+		this->JoinPlayer( (PlayerNumber) pn );
+	}
+
+	CString sMode;
+	for( i = 0; GetCommandlineArgument( "mode", &sMode, i ); ++i )
+	{
+		ModeChoice m;
+		m.Load( 0, sMode );
+		CString why;
+		if( !m.IsPlayable(&why) )
+			RageException::Throw( "Can't apply mode \"%s\": %s", sMode.c_str(), why.c_str() );
+
+		m.ApplyToAllPlayers();
+	}
 }
 
 void GameState::Reset()
@@ -168,6 +199,19 @@ void GameState::Reset()
 	MEMCARDMAN->LockCards( false );
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_ATTRACT );
+
+	ApplyCmdline();
+}
+
+void GameState::JoinPlayer( PlayerNumber pn )
+{
+	this->m_bSideIsJoined[pn] = true;
+	if( this->m_MasterPlayerNumber == PLAYER_INVALID )
+		this->m_MasterPlayerNumber = pn;
+
+	// if first player to join, set start time
+	if( this->GetNumSidesJoined() == 1 )
+		this->BeginGame();
 }
 
 void GameState::BeginGame()
@@ -1153,7 +1197,10 @@ void GameState::AdjustFailType()
 	/* Find the easiest difficulty notes selected by either player. */
 	Difficulty dc = DIFFICULTY_INVALID;
 	FOREACH_HumanPlayer( p )
+	{
+		ASSERT( this->m_pCurNotes[p] );
 		dc = min(dc, this->m_pCurNotes[p]->GetDifficulty());
+	}
 
 	/* Reset the fail type to the default. */
 	SongOptions so;

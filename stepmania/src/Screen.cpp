@@ -193,14 +193,7 @@ bool Screen::JoinInput( const DeviceInput& DeviceI, const InputEventType type, c
 			GAMESTATE->m_iCoins -= iCoinsToCharge;
 
 		SCREENMAN->PlayStartSound();
-
-		GAMESTATE->m_bSideIsJoined[MenuI.player] = true;
-		if( GAMESTATE->m_MasterPlayerNumber == PLAYER_INVALID )
-			GAMESTATE->m_MasterPlayerNumber = MenuI.player;
-
-		// if first player to join, set start time
-		if( GAMESTATE->GetNumSidesJoined() == 1 )
-			GAMESTATE->BeginGame();
+		GAMESTATE->JoinPlayer( MenuI.player );
 
 		PROFILEMAN->LoadFirstAvailableProfile( MenuI.player, true );	// fast load
 		SCREENMAN->RefreshCreditsMessages();
