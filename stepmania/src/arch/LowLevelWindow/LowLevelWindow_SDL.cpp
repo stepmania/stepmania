@@ -111,9 +111,7 @@ CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, true);
 
-#if defined(_WINDOWS)
-	SDL_SetRefreshRate( (p.rate == REFRESH_DEFAULT)? SDL_REFRESH_DEFAULT:p.rate );
-#elif defined(LINUX)
+#if defined(LINUX)
 	/* nVidia cards:
 	 *
 	 * This only works the first time we set up a window; after that, the
@@ -123,10 +121,6 @@ CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 	strcpy( buf, "__GL_SYNC_TO_VBLANK=" );
 	strcat( buf, p.vsync?"1":"0" );
 	putenv( buf );
-#endif
-
-#if defined(WIN32)
-//	mySDL_EventState(SDL_OPENGLRESET, SDL_ENABLE);
 #endif
 
 	SDL_Surface *screen = SDL_SetVideoMode(p.width, p.height, p.bpp, flags);
@@ -147,26 +141,6 @@ CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 		const SDL_version *ver = SDL_Linked_Version();
 		LOG->Info( "SDL version: %i.%i.%i", ver->major, ver->minor, ver->patch );
 	}
-
-	/* XXX: This event only exists in the SDL tree, and is only needed in
-	 * Windows.  Eventually, it'll probably get upstreamed, and once it's
-	 * in the real branch we can remove this #if. */
-	/* Why did I comment this out?  -Chris */
-#if defined(WIN32)
-//	SDL_Event e;
-//	if(SDL_GetEvent(e, SDL_OPENGLRESETMASK))
-//	{
-//		LOG->Trace("New OpenGL context");
-//		SDL_WM_SetCaption("StepMania", "StepMania");
-//		NewOpenGLContext = true;
-//	}
-
-	
-//	mySDL_EventState(SDL_OPENGLRESET, SDL_IGNORE);
-#endif
-
-	/* Recreating the window changes the hwnd. */
-	SDL_UpdateHWnd();
 
 #if defined(unix)
 	{
