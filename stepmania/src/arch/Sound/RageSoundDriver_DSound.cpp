@@ -46,10 +46,10 @@ void RageSound_DSound::MixerThread()
 	while(!shutdown) {
 		CHECKPOINT;
 
-		/* Sleep for the size of one chunk. */
+		/* Sleep for the size of one chunk, or until we're signalled. */
 		const int chunksize_frames = buffersize_frames / num_chunks;
 		float sleep_secs = (float(chunksize_frames) / samplerate);
-		Sleep(int(1000 * sleep_secs));
+        WaitForSingleObject( m_ThreadWakeupEvent, int(1000 * sleep_secs) );
 
 		CHECKPOINT;
 		LockMutex L(SOUNDMAN->lock);
@@ -193,6 +193,7 @@ RageSound_DSound::RageSound_DSound()
 	/* Set channel volumes. */
 	VolumeChanged();
 
+	m_ThreadWakeupEvent = CreateEvent( NULL, false, false, NULL );
 	MixingThread.SetName("Mixer thread");
 	MixingThread.Create( MixerThread_start, this );
 }
@@ -209,6 +210,8 @@ RageSound_DSound::~RageSound_DSound()
 
 	for(unsigned i = 0; i < stream_pool.size(); ++i)
 		delete stream_pool[i];
+
+	CloseHandle( m_ThreadWakeupEvent );
 }
 
 void RageSound_DSound::VolumeChanged()
@@ -253,6 +256,10 @@ void RageSound_DSound::StartMixing(RageSound *snd)
 	 * finish on its own. */
 	if(stream_pool[i]->state == stream_pool[i]->INACTIVE)
 		stream_pool[i]->state = stream_pool[i]->PLAYING;
+
+	/* Kick the decoder thread, so it'll start this sound up quickly. */
+	L.Unlock();
+	SetEvent( m_ThreadWakeupEvent );
 
 //	LOG->Trace("new sound assigned to channel %i", i);
 }
