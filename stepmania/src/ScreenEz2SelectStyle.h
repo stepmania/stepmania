@@ -17,7 +17,6 @@ Andrew Livy
 #include "Quad.h"
 #include "MenuElements.h"
 #include "ScrollingList.h"
-#include "MenuBGAnims.h"
 
 
 /* Class Definition */
@@ -42,6 +41,8 @@ public:
 	void MenuDown( PlayerNumber pn );
 
 protected:
+	void AfterChange();
+
 	void TweenOffScreen();
 	void TweenOnScreen();
 	
@@ -50,21 +51,13 @@ protected:
 	Sprite  m_StyleListFrame;
 	Sprite  m_SelectedStyleFrame;
 
-	CArray<Style,Style> m_aPossibleStyles;
-
-	MenuBGAnims m_BGAnim[10];
+	CArray<ModeChoice,ModeChoice> m_aPossibleModeChoices;
 
 	ScrollingList m_ScrollingList;
-	void RefreshStylesAndList();
-	void RefreshStylesAndListFromMetrics();
-
-
-	Sprite	m_sprBackgrounds[10];
+	void RefreshModeChoices();
 
 	MenuElements m_Menu;
 
 	RageSoundSample m_soundSelect;	
 	RageSoundSample m_soundChange;	
-
-	BackgroundAnimation	m_Background[10];	
 };

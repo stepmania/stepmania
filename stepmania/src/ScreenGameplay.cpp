@@ -1106,7 +1106,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 							if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 								continue;	// skip
 
-							if( GAMESTATE->m_pCurNotes[p]->m_DifficultyClass == CLASS_HARD  &&  GAMESTATE->GetCurrentGrade((PlayerNumber)p) >= GRADE_AA )
+							if( GAMESTATE->m_pCurNotes[p]->m_Difficulty == DIFFICULTY_HARD  &&  GAMESTATE->GetCurrentGrade((PlayerNumber)p) >= GRADE_AA )
 								bTryExtraStage = true;
 						}
 					}

@@ -10,7 +10,7 @@
 void SMLoader::LoadFromSMTokens( 
 	CString sNotesType, 
 	CString sDescription,
-	CString sDifficultyClass,
+	CString sDifficulty,
 	CString sMeter,
 	CString sRadarValues,
 	CString sNoteData,
@@ -21,15 +21,15 @@ void SMLoader::LoadFromSMTokens(
 	sNotesType.TrimRight(); 
 	sDescription.TrimLeft(); 
 	sDescription.TrimRight(); 
-	sDifficultyClass.TrimLeft(); 
-	sDifficultyClass.TrimRight(); 
+	sDifficulty.TrimLeft(); 
+	sDifficulty.TrimRight(); 
 
 
 //	LOG->Trace( "Notes::LoadFromSMTokens()" );
 
 	out.m_NotesType = GameManager::StringToNotesType(sNotesType);
 	out.m_sDescription = sDescription;
-	out.m_DifficultyClass = StringToDifficultyClass( sDifficultyClass );
+	out.m_Difficulty = StringToDifficulty( sDifficulty );
 	out.m_iMeter = atoi(sMeter);
 	CStringArray saValues;
 	split( sRadarValues, ",", saValues, true );

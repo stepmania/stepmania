@@ -40,6 +40,15 @@ public:
 	bool			m_bPlayersCanJoin;	// true if it's not too late for a player to join - this only has an effect on the credits message
 	bool			m_bSideIsJoined[2];	// left side, right side
 	PlayerNumber	m_MasterPlayerNumber;
+	int				GetNumSidesJoined()
+	{ 
+		int iNumSidesJoined = 0;
+		for( int c=0; c<2; c++ )
+			if( m_bSideIsJoined[c] )
+				iNumSidesJoined++;	// left side, and right side
+		return iNumSidesJoined;
+	};
+
 
 	GameDef*	GetCurrentGameDef();
 	const StyleDef*	GetCurrentStyleDef();
@@ -49,7 +58,7 @@ public:
 
 	CString			m_sLoadingMessage;
 	CString			m_sPreferredGroup;
-	DifficultyClass	m_PreferredDifficultyClass[NUM_PLAYERS];
+	Difficulty	m_PreferredDifficulty[NUM_PLAYERS];
 	SongSortOrder	m_SongSortOrder;			// used by MusicWheel
 	PlayMode		m_PlayMode;
 	bool			m_bEditing;			// NoteField does special stuff when this is true

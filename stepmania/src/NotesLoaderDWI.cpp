@@ -124,7 +124,7 @@ bool DWILoader::LoadFromDWITokens(
 
 	out.m_iMeter = atoi( sNumFeet );
 
-	//m_DifficultyClass = DifficultyClassFromDescriptionAndMeter( m_sDescription, m_iMeter );
+	//m_Difficulty = DifficultyFromDescriptionAndMeter( m_sDescription, m_iMeter );
 
 	NoteData* pNoteData = new NoteData;
 	ASSERT( pNoteData );

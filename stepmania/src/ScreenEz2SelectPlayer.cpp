@@ -147,21 +147,14 @@ void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_MenuTimer:
+		if( GAMESTATE->GetNumSidesJoined() == 0 )
 		{
-			bool bAtLeastOneJoined = false;
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->m_bSideIsJoined[p] )
-					bAtLeastOneJoined = true;
-
-			if( !bAtLeastOneJoined )
-			{
-				MenuStart(PLAYER_1);
-				m_Menu.StopTimer();
-			}
-	
-			TweenOffScreen();
-			m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
+			MenuStart(PLAYER_1);
+			m_Menu.StopTimer();
 		}
+
+		TweenOffScreen();
+		m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
 		break;
 	case SM_GoToPrevScreen:
 		MUSIC->Stop();

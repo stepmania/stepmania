@@ -40,5 +40,5 @@ private:
 	MenuElements m_Menu;
 
 	RageSoundSample m_soundSelect;	
-	BackgroundAnimation	m_Background;	
+	BGAnimation	m_Background;	
 };

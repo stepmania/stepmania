@@ -9,7 +9,7 @@ class SMLoader: public NotesLoader  {
 	void LoadFromSMTokens( 
 		CString sNotesType, 
 		CString sDescription,
-		CString sDifficultyClass,
+		CString sDifficulty,
 		CString sMeter,
 		CString sRadarValues,
 		CString sNoteData,		

@@ -714,12 +714,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="GroupList.h">
 			</File>
 			<File
-				RelativePath="MenuBGAnims.h">
-			</File>
-			<File
-				RelativePath="MenuBgAnims.cpp">
-			</File>
-			<File
 				RelativePath="MenuElements.cpp">
 			</File>
 			<File
@@ -826,16 +820,22 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\ArrowEffects.h">
 			</File>
 			<File
+				RelativePath="BGAnimation.cpp">
+			</File>
+			<File
+				RelativePath="BGAnimation.h">
+			</File>
+			<File
+				RelativePath="BGAnimationLayer.cpp">
+			</File>
+			<File
+				RelativePath="BGAnimationLayer.h">
+			</File>
+			<File
 				RelativePath=".\Background.cpp">
 			</File>
 			<File
 				RelativePath=".\Background.h">
-			</File>
-			<File
-				RelativePath="BackgroundAnimation.cpp">
-			</File>
-			<File
-				RelativePath="BackgroundAnimation.h">
 			</File>
 			<File
 				RelativePath=".\Combo.cpp">

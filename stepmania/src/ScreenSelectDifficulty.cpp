@@ -234,9 +234,9 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				switch( m_iSelection[p] )
 				{
-				case 0:	GAMESTATE->m_PreferredDifficultyClass[p] = CLASS_EASY;		break;
-				case 1:	GAMESTATE->m_PreferredDifficultyClass[p] = CLASS_MEDIUM;	break;
-				case 2:	GAMESTATE->m_PreferredDifficultyClass[p] = CLASS_HARD;		break;
+				case 0:	GAMESTATE->m_PreferredDifficulty[p] = DIFFICULTY_EASY;		break;
+				case 1:	GAMESTATE->m_PreferredDifficulty[p] = DIFFICULTY_MEDIUM;	break;
+				case 2:	GAMESTATE->m_PreferredDifficulty[p] = DIFFICULTY_HARD;		break;
 				}
 		}
 
@@ -305,7 +305,7 @@ bool ScreenSelectDifficulty::IsItemOnPage2( int iItemIndex )
 {
 	ASSERT( iItemIndex >= 0  &&  iItemIndex < NUM_DIFFICULTY_ITEMS );
 
-	return iItemIndex >= NUM_DIFFICULTY_CLASSES;
+	return iItemIndex >= NUM_DIFFICULTIES;
 }
 
 bool ScreenSelectDifficulty::SelectedSomethingOnPage2()

@@ -16,7 +16,7 @@
 #include "Quad.h"
 #include "ActorFrame.h"
 #include "Song.h"
-#include "BackgroundAnimation.h"
+#include "BGAnimation.h"
 
 
 struct BGSegment	// like a BGChange, but holds index of a background instead of name
@@ -56,13 +56,13 @@ protected:
 	enum BackgroundMode { MODE_STATIC_BG, MODE_MOVIE_BG, MODE_ANIMATIONS, MODE_MOVIE_VIS, MODE_RANDOMMOVIES };
 	BackgroundMode		m_BackgroundMode;
 		
-	BackgroundAnimation		m_BGADanger;
+	BGAnimation		m_BGADanger;
 
 	// used in all BackgroundModes except OFF
-	CArray<BackgroundAnimation*,BackgroundAnimation*> m_BackgroundAnimations;
+	CArray<BGAnimation*,BGAnimation*> m_BGAnimations;
 	CArray<BGSegment,BGSegment&> m_aBGSegments;
 	int m_iCurBGSegment;	// this increases as we move into new segments
-	BackgroundAnimation* GetCurBGA() { int index = m_aBGSegments[m_iCurBGSegment].m_iBGIndex; return m_BackgroundAnimations[index]; };
+	BGAnimation* GetCurBGA() { int index = m_aBGSegments[m_iCurBGSegment].m_iBGIndex; return m_BGAnimations[index]; };
 
 
 	Quad m_quadBGBrightness;

@@ -33,7 +33,7 @@ Notes::Notes()
 	 * it'd trip obscure asserts all over the place, so I'll wait
 	 * until after b6 to do this. -glenn */
 	m_NotesType = NOTES_TYPE_DANCE_SINGLE;
-	m_DifficultyClass = CLASS_INVALID;
+	m_Difficulty = CLASS_INVALID;
 	m_iMeter = 0;
 	ZeroMemory(m_fRadarValues, sizeof(m_fRadarValues));
 
@@ -54,7 +54,7 @@ void Notes::WriteSMNotesTag( FILE* fp )
 	fprintf( fp, "#NOTES:\n" );
 	fprintf( fp, "     %s:\n", GameManager::NotesTypeToString(m_NotesType) );
 	fprintf( fp, "     %s:\n", m_sDescription );
-	fprintf( fp, "     %s:\n", DifficultyClassToString(m_DifficultyClass) );
+	fprintf( fp, "     %s:\n", DifficultyToString(m_Difficulty) );
 	fprintf( fp, "     %d:\n", m_iMeter );
 	
 	CStringArray asRadarValues;
@@ -77,7 +77,7 @@ void Notes::GetNoteData( NoteData* pNoteDataOut ) const
 	pNoteDataOut->LoadFromSMNoteDataString( m_sSMNoteData );
 }
 
-// Color is a function of DifficultyClass and Intended Style
+// Color is a function of Difficulty and Intended Style
 D3DXCOLOR Notes::GetColor() const
 {
 	CString sDescription = m_sDescription;
@@ -88,32 +88,32 @@ D3DXCOLOR Notes::GetColor() const
 	else if( -1 != m_sDescription.Find("couple") )
 		return D3DXCOLOR(0,0,1,1);		// blue
 	else 
-		return DifficultyClassToColor( m_DifficultyClass ); 
+		return DifficultyToColor( m_Difficulty ); 
 }
 
 void Notes::TidyUpData()
 {
-	if( m_DifficultyClass == CLASS_INVALID )
-		m_DifficultyClass = DifficultyClassFromDescriptionAndMeter( m_sDescription, m_iMeter );
+	if( m_Difficulty == CLASS_INVALID )
+		m_Difficulty = DifficultyFromDescriptionAndMeter( m_sDescription, m_iMeter );
 
 	if( m_iMeter < 1 || m_iMeter > 10 ) 
 	{
-		switch( m_DifficultyClass )
+		switch( m_Difficulty )
 		{
-		case CLASS_EASY:	m_iMeter = 3;	break;
-		case CLASS_MEDIUM:	m_iMeter = 5;	break;
-		case CLASS_HARD:	m_iMeter = 8;	break;
+		case DIFFICULTY_EASY:	m_iMeter = 3;	break;
+		case DIFFICULTY_MEDIUM:	m_iMeter = 5;	break;
+		case DIFFICULTY_HARD:	m_iMeter = 8;	break;
 		default:	ASSERT(0);
 		}
 	}
 }
 
-DifficultyClass Notes::DifficultyClassFromDescriptionAndMeter( CString sDescription, int iMeter )
+Difficulty Notes::DifficultyFromDescriptionAndMeter( CString sDescription, int iMeter )
 {
 	sDescription.MakeLower();
 
 	const int DESCRIPTIONS_PER_CLASS = 4;
-	const CString sDescriptionParts[NUM_DIFFICULTY_CLASSES][DESCRIPTIONS_PER_CLASS] = {
+	const CString sDescriptionParts[NUM_DIFFICULTIES][DESCRIPTIONS_PER_CLASS] = {
 		{
 			"easy",
 			"basic",
@@ -134,15 +134,15 @@ DifficultyClass Notes::DifficultyClassFromDescriptionAndMeter( CString sDescript
 		},
 	};
 
-	for( int i=0; i<NUM_DIFFICULTY_CLASSES; i++ )
+	for( int i=0; i<NUM_DIFFICULTIES; i++ )
 		for( int j=0; j<DESCRIPTIONS_PER_CLASS; j++ )
 			if( sDescription.Find(sDescriptionParts[i][j]) != -1 )
-				return DifficultyClass(i);
+				return Difficulty(i);
 	
 	// guess difficulty class from meter
-	if(		 iMeter <= 3 )	return CLASS_EASY;
-	else if( iMeter <= 6 )	return CLASS_MEDIUM;
-	else					return CLASS_HARD;
+	if(		 iMeter <= 3 )	return DIFFICULTY_EASY;
+	else if( iMeter <= 6 )	return DIFFICULTY_MEDIUM;
+	else					return DIFFICULTY_HARD;
 }
 
 
@@ -190,8 +190,8 @@ int CompareNotesPointersByMeter(const void *arg1, const void *arg2)
 
 int CompareNotesPointersByDifficulty(Notes* pNotes1, Notes* pNotes2)
 {
-	DifficultyClass class1 = pNotes1->m_DifficultyClass;
-	DifficultyClass class2 = pNotes2->m_DifficultyClass;
+	Difficulty class1 = pNotes1->m_Difficulty;
+	Difficulty class2 = pNotes2->m_Difficulty;
 
 	if( class1 < class2 )
 		return -1;

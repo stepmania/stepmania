@@ -515,7 +515,6 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 			iTakeFromTrack[9] = 5;
 			break;
 		case NOTES_TYPE_EZ2_SINGLE:
-		case NOTES_TYPE_EZ2_SINGLE_HARD:
 		case NOTES_TYPE_EZ2_DOUBLE:
 		case NOTES_TYPE_EZ2_REAL:
 			// identity transform.  What should we do here?

@@ -101,22 +101,22 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 	out.m_sDescription = sFName;
 	if( sFName.Find("crazy")!=-1 )
 	{
-		out.m_DifficultyClass = CLASS_HARD;
+		out.m_Difficulty = DIFFICULTY_HARD;
 		if(!out.m_iMeter) out.m_iMeter = 8;
 	}
 	else if( sFName.Find("hard")!=-1 )
 	{
-		out.m_DifficultyClass = CLASS_MEDIUM;
+		out.m_Difficulty = DIFFICULTY_MEDIUM;
 		if(!out.m_iMeter) out.m_iMeter = 5;
 	}
 	else if( sFName.Find("easy")!=-1 )
 	{
-		out.m_DifficultyClass = CLASS_EASY;
+		out.m_Difficulty = DIFFICULTY_EASY;
 		if(!out.m_iMeter) out.m_iMeter = 2;
 	}
 	else
 	{
-		out.m_DifficultyClass = CLASS_MEDIUM;
+		out.m_Difficulty = DIFFICULTY_MEDIUM;
 		if(!out.m_iMeter) out.m_iMeter = 5;
 	}
 

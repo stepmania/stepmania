@@ -186,8 +186,8 @@ void WheelItemDisplay::RefreshGrades()
 
 		if( m_pSong )	// this is a song display
 		{
-			const DifficultyClass dc = GAMESTATE->m_PreferredDifficultyClass[p];
-			const Grade grade = m_pSong->GetGradeForDifficultyClass( GAMESTATE->GetCurrentStyleDef(), p, dc );
+			const Difficulty dc = GAMESTATE->m_PreferredDifficulty[p];
+			const Grade grade = m_pSong->GetGradeForDifficulty( GAMESTATE->GetCurrentStyleDef(), p, dc );
 			m_GradeDisplay[p].SetGrade( (PlayerNumber)p, grade );
 			//m_GradeDisplay[p].SetDiffuse( PlayerToColor((PlayerNumber)p) );
 		}

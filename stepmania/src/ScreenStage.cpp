@@ -255,7 +255,7 @@ ScreenStage::ScreenStage()
 		//	float fOffsetX = SCALE(i, 0, iNumChars-1, -(iNumChars-1)/2.0f*fFrameWidth, (iNumChars-1)/2.0f*fFrameWidth);
 			if( stage_mode == MODE_FINAL )
 			{
-				m_sprNumbers[i].Load( THEME->GetPathTo("Graphics","stage numbers final") );
+				m_sprNumbers[i].Load( THEME->GetPathTo("Graphics","stage final parts") );
 				m_sprNumbers[i].StopAnimating();
 			}
 			

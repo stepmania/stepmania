@@ -463,7 +463,7 @@ void ScreenSelectMusic::EasierDifficulty( PlayerNumber pn )
 
 	m_iSelection[pn]--;
 	// the user explicity switched difficulties.  Update the preferred difficulty
-	GAMESTATE->m_PreferredDifficultyClass[pn] = m_arrayNotes[pn][ m_iSelection[pn] ]->m_DifficultyClass;
+	GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[pn][ m_iSelection[pn] ]->m_Difficulty;
 
 	m_soundChangeNotes.Play();
 
@@ -483,7 +483,7 @@ void ScreenSelectMusic::HarderDifficulty( PlayerNumber pn )
 
 	m_iSelection[pn]++;
 	// the user explicity switched difficulties.  Update the preferred difficulty
-	GAMESTATE->m_PreferredDifficultyClass[pn] = m_arrayNotes[pn][ m_iSelection[pn] ]->m_DifficultyClass;
+	GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[pn][ m_iSelection[pn] ]->m_Difficulty;
 
 	m_soundChangeNotes.Play();
 
@@ -743,7 +743,7 @@ void ScreenSelectMusic::AfterMusicChange()
 				if( !GAMESTATE->IsPlayerEnabled( PlayerNumber(p) ) )
 					continue;
 				for( int i=0; i<m_arrayNotes[p].GetSize(); i++ )
-					if( m_arrayNotes[p][i]->m_DifficultyClass == GAMESTATE->m_PreferredDifficultyClass[p] )
+					if( m_arrayNotes[p][i]->m_Difficulty == GAMESTATE->m_PreferredDifficulty[p] )
 						m_iSelection[p] = i;
 
 				m_iSelection[p] = clamp( m_iSelection[p], 0, m_arrayNotes[p].GetSize() ) ;

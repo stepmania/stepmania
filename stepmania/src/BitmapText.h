@@ -40,9 +40,11 @@ public:
 	void TurnRainbowOn()	{ m_bRainbow = true; };
 	void TurnRainbowOff()	{ m_bRainbow = false; };
 
-protected:
+public:
 	CString m_sFontFilePath;
 	Font* m_pFont;
+
+protected:
 	
 	// recalculate the items below on SetText()
 	char   m_szText[MAX_TEXT_CHARS];

@@ -51,7 +51,7 @@ public:
 	void GetSongOptions( SongOptions* pSO_out);
 
 	void LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs );
-	void CreateEndlessCourseFromGroupAndDifficultyClass( CString sGroupName, DifficultyClass dc, CArray<Song*,Song*> &apSongsInGroup );
+	void CreateEndlessCourseFromGroupAndDifficulty( CString sGroupName, Difficulty dc, CArray<Song*,Song*> &apSongsInGroup );
 
 	void AddStage( Song* pSong, CString sDescription, CString sModifiers )
 	{

@@ -20,34 +20,34 @@
 #define COLOR_HARD		THEME->GetMetricC("Common","ColorHard")
 
 
-D3DXCOLOR DifficultyClassToColor( DifficultyClass dc )
+D3DXCOLOR DifficultyToColor( Difficulty dc )
 {
 	switch( dc )
 	{
-	case CLASS_EASY:	return COLOR_EASY;
-	case CLASS_MEDIUM:	return COLOR_MEDIUM;
-	case CLASS_HARD:	return COLOR_HARD;
-	default:	ASSERT(0);	return D3DXCOLOR();	// invalid DifficultyClass
+	case DIFFICULTY_EASY:	return COLOR_EASY;
+	case DIFFICULTY_MEDIUM:	return COLOR_MEDIUM;
+	case DIFFICULTY_HARD:	return COLOR_HARD;
+	default:	ASSERT(0);	return D3DXCOLOR();	// invalid Difficulty
 	}
 }
 
-CString DifficultyClassToString( DifficultyClass dc )
+CString DifficultyToString( Difficulty dc )
 {
 	switch( dc )
 	{
-	case CLASS_EASY:	return "easy";
-	case CLASS_MEDIUM:	return "medium";
-	case CLASS_HARD:	return "hard";
-	default:	ASSERT(0);	return "";	// invalid DifficultyClass
+	case DIFFICULTY_EASY:	return "easy";
+	case DIFFICULTY_MEDIUM:	return "medium";
+	case DIFFICULTY_HARD:	return "hard";
+	default:	ASSERT(0);	return "";	// invalid Difficulty
 	}
 }
 
-DifficultyClass StringToDifficultyClass( CString sDC )
+Difficulty StringToDifficulty( CString sDC )
 {
-	for( int i=0; i<NUM_DIFFICULTY_CLASSES; i++ )
+	for( int i=0; i<NUM_DIFFICULTIES; i++ )
 	{
-		DifficultyClass dc = (DifficultyClass)i;
-		if( sDC == DifficultyClassToString(dc) )
+		Difficulty dc = (Difficulty)i;
+		if( sDC == DifficultyToString(dc) )
 			return dc;
 	}
 	return CLASS_INVALID;

@@ -10,7 +10,7 @@
 */
 
 #include "Screen.h"
-#include "BackgroundAnimation.h"
+#include "BGAnimation.h"
 #include "TransitionFade.h"
 
 
@@ -26,7 +26,7 @@ public:
 private:
 
 	TransitionFade				m_Fade;
-	BackgroundAnimation			m_Background;
+	BGAnimation			m_Background;
 };
 
 

@@ -30,7 +30,7 @@ public:
 public:
 	NotesType		m_NotesType;
 	CString			m_sDescription;			// This text is displayed next to thte number of feet when a song is selected
-	DifficultyClass m_DifficultyClass;		// this is inferred from m_sDescription
+	Difficulty m_Difficulty;		// this is inferred from m_sDescription
 	int				m_iMeter;				// difficulty from 1-10
 	float			m_fRadarValues[NUM_RADAR_VALUES];	// between 0.0-1.2 starting from 12-o'clock rotating clockwise
 
@@ -45,7 +45,7 @@ public:
 	int m_iMaxCombo;
 	int m_iNumTimesPlayed;
 
-	static DifficultyClass DifficultyClassFromDescriptionAndMeter( CString sDescription, int iMeter );
+	static Difficulty DifficultyFromDescriptionAndMeter( CString sDescription, int iMeter );
 
 	void TidyUpData();
 

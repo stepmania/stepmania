@@ -55,7 +55,7 @@ void GameState::Reset()
 	m_MasterPlayerNumber = PLAYER_INVALID;
 	m_sPreferredGroup	= "";
 	for( p=0; p<NUM_PLAYERS; p++ )
-		m_PreferredDifficultyClass[p] = CLASS_INVALID;
+		m_PreferredDifficulty[p] = CLASS_INVALID;
 	m_SongSortOrder = SORT_GROUP;
 	m_PlayMode = PLAY_MODE_INVALID;
 	m_bEditing = false;
@@ -262,11 +262,13 @@ D3DXCOLOR GameState::GetStageColor()
 
 GameDef* GameState::GetCurrentGameDef()
 {
+	ASSERT( m_CurGame != GAME_INVALID );	// the game must be set before calling this
 	return GAMEMAN->GetGameDefForGame( m_CurGame );
 }
 
 const StyleDef* GameState::GetCurrentStyleDef()
 {
+	ASSERT( m_CurStyle != STYLE_NONE );	// the style must be set before calling this
 	return GAMEMAN->GetStyleDefForStyle( m_CurStyle );
 }
 

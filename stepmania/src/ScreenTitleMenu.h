@@ -15,7 +15,7 @@
 #include "TransitionFade.h"
 #include "RandomSample.h"
 #include "RandomStream.h"
-#include "BackgroundAnimation.h"
+#include "BGAnimation.h"
 
 
 
@@ -51,7 +51,7 @@ private:
 
 	TitleMenuChoice m_TitleMenuChoice;
 
-	BackgroundAnimation	m_Background;
+	BGAnimation	m_Background;
 	Sprite				m_sprLogo;
 	BitmapText			m_textHelp;
 	BitmapText			m_textVersion;

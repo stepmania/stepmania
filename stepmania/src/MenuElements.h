@@ -22,7 +22,7 @@
 #include "TransitionKeepAlive.h"
 #include "TransitionInvisible.h"
 #include "TipDisplay.h"
-#include "BackgroundAnimation.h"
+#include "BGAnimation.h"
 
 
 const float MENU_ELEMENTS_TWEEN_TIME	=	0.5f;
@@ -61,12 +61,12 @@ protected:
 	void TweenBottomLayerOnScreen();
 	void TweenBottomLayerOffScreen();
 
-
+public:
 	Sprite				m_sprTopEdge;
 	Sprite				m_sprStyleIcon;
 	MenuTimer			m_MenuTimer;
 	Sprite				m_sprBottomEdge;
-	BackgroundAnimation	m_Background;
+	BGAnimation	m_Background;
 	Quad				m_quadBrightness;	// for darkening the background
 	TipDisplay			m_textHelp;
 

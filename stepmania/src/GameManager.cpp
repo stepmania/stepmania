@@ -48,7 +48,6 @@ struct {
 	{ "pump-double", 10 },
 	{ "pump-couple", 10 },
 	{ "ez2-single", 5 },		// Single: TL,LHH,D,RHH,TR
-	{ "ez2-single-hard", 5 },	// Single: TL,LHH,D,RHH,TR
 	{ "ez2-double", 10 },		// Double: Single x2
 	{ "ez2-real", 7 },			// Real: TL,LHH,LHL,D,RHL,RHH,TR
 	{ "para-single", 5 }
@@ -774,35 +773,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			2,0,4,1,3 // This should be from back to front: Down, UpLeft, UpRight, Upper Left Hand, Upper Right Hand 
 		},
 	},
-	{	// EZ2_STYLE_SINGLE_HARD
-		GAME_EZ2,								// m_Game
-		true,									// m_bUsedForGameplay
-		true,									// m_bUsedForEdit
-		"singleHard",							// m_szName
-		{ NOTES_TYPE_EZ2_SINGLE_HARD,NOTES_TYPE_EZ2_SINGLE_HARD}, // m_NotesTypes
-		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
-		{ 160, 480 },							// m_iCenterX
-		5,										// m_iColsPerPlayer
-		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
-			{	// PLAYER_1
-				{ TRACK_1,	GAME_CONTROLLER_1,	EZ2_BUTTON_FOOTUPLEFT,	-EZ2_COL_SPACING*2 },
-				{ TRACK_2,	GAME_CONTROLLER_1,	EZ2_BUTTON_HANDUPLEFT,	-EZ2_COL_SPACING*1 },
-				{ TRACK_3,	GAME_CONTROLLER_1,	EZ2_BUTTON_FOOTDOWN,	+EZ2_COL_SPACING*0 },
-				{ TRACK_4,	GAME_CONTROLLER_1,	EZ2_BUTTON_HANDUPRIGHT,	+EZ2_COL_SPACING*1 },
-				{ TRACK_5,	GAME_CONTROLLER_1,	EZ2_BUTTON_FOOTUPRIGHT,	+EZ2_COL_SPACING*2 },
-			},
-			{	// PLAYER_2
-				{ TRACK_1,	GAME_CONTROLLER_2,	EZ2_BUTTON_FOOTUPLEFT,	-EZ2_COL_SPACING*2 },
-				{ TRACK_2,	GAME_CONTROLLER_2,	EZ2_BUTTON_HANDUPLEFT,	-EZ2_COL_SPACING*1 },
-				{ TRACK_3,	GAME_CONTROLLER_2,	EZ2_BUTTON_FOOTDOWN,	+EZ2_COL_SPACING*0 },
-				{ TRACK_4,	GAME_CONTROLLER_2,	EZ2_BUTTON_HANDUPRIGHT,	+EZ2_COL_SPACING*1 },
-				{ TRACK_5,	GAME_CONTROLLER_2,	EZ2_BUTTON_FOOTUPRIGHT,	+EZ2_COL_SPACING*2 },
-			},
-		},
-		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-			2,0,4,1,3 // This should be from back to front: Down, UpLeft, UpRight, Upper Left Hand, Upper Right Hand 
-		},
-	},
 	{	// EZ2_STYLE_REAL
 		GAME_EZ2,								// m_Game
 		true,									// m_bUsedForGameplay
@@ -904,35 +874,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			2,0,4,1,3 // This should be from back to front: Down, UpLeft, UpRight, Upper Left Hand, Upper Right Hand 
 		},
 	},
-	{	// EZ2_STYLE_SINGLE_VERSUS
-		GAME_EZ2,								// m_Game
-		true,									// m_bUsedForGameplay
-		true,									// m_bUsedForEdit
-		"versusHard",							// m_szName
-		{ NOTES_TYPE_EZ2_SINGLE_HARD,NOTES_TYPE_EZ2_SINGLE_HARD },	// m_NotesTypes
-		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
-		{ 160, 480 },							// m_iCenterX
-		5,										// m_iColsPerPlayer
-		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
-			{	// PLAYER_1
-				{ TRACK_1,	GAME_CONTROLLER_1,	EZ2_BUTTON_FOOTUPLEFT,	-EZ2_COL_SPACING*2 },
-				{ TRACK_2,	GAME_CONTROLLER_1,	EZ2_BUTTON_HANDUPLEFT,	-EZ2_COL_SPACING*1 },
-				{ TRACK_3,	GAME_CONTROLLER_1,	EZ2_BUTTON_FOOTDOWN,	+EZ2_COL_SPACING*0 },
-				{ TRACK_4,	GAME_CONTROLLER_1,	EZ2_BUTTON_HANDUPRIGHT,	+EZ2_COL_SPACING*1 },
-				{ TRACK_5,	GAME_CONTROLLER_1,	EZ2_BUTTON_FOOTUPRIGHT,	+EZ2_COL_SPACING*2 },
-			},
-			{	// PLAYER_2
-				{ TRACK_1,	GAME_CONTROLLER_2,	EZ2_BUTTON_FOOTUPLEFT,	-EZ2_COL_SPACING*2 },
-				{ TRACK_2,	GAME_CONTROLLER_2,	EZ2_BUTTON_HANDUPLEFT,	-EZ2_COL_SPACING*1 },
-				{ TRACK_3,	GAME_CONTROLLER_2,	EZ2_BUTTON_FOOTDOWN,	+EZ2_COL_SPACING*0 },
-				{ TRACK_4,	GAME_CONTROLLER_2,	EZ2_BUTTON_HANDUPRIGHT,	+EZ2_COL_SPACING*1 },
-				{ TRACK_5,	GAME_CONTROLLER_2,	EZ2_BUTTON_FOOTUPRIGHT,	+EZ2_COL_SPACING*2 },
-			},
-		},
-		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-			2,0,4,1,3 // This should be from back to front: Down, UpLeft, UpRight, Upper Left Hand, Upper Right Hand 
-		},
-	},
 	{	// EZ2_STYLE_REAL_VERSUS
 		GAME_EZ2,								// m_Game
 		true,									// m_bUsedForGameplay
@@ -998,6 +939,188 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 };
 
 
+ModeChoice g_ModeChoices[] = 
+{
+	{
+		GAME_DANCE,
+		PLAY_MODE_ARCADE,
+		STYLE_DANCE_SINGLE,
+		DIFFICULTY_MEDIUM,
+		"single",
+		1
+	},
+	{
+		GAME_DANCE,
+		PLAY_MODE_ARCADE,
+		STYLE_DANCE_VERSUS,
+		DIFFICULTY_MEDIUM,
+		"versus",
+		2
+	},
+	{
+		GAME_DANCE,
+		PLAY_MODE_ARCADE,
+		STYLE_DANCE_DOUBLE,
+		DIFFICULTY_MEDIUM,
+		"double",
+		2
+	},
+	{
+		GAME_DANCE,
+		PLAY_MODE_ARCADE,
+		STYLE_DANCE_COUPLE,
+		DIFFICULTY_MEDIUM,
+		"couple",
+		2
+	},
+	{
+		GAME_DANCE,
+		PLAY_MODE_ARCADE,
+		STYLE_DANCE_SOLO,
+		DIFFICULTY_MEDIUM,
+		"solo",
+		1
+	},
+	{
+		GAME_PUMP,
+		PLAY_MODE_ARCADE,
+		STYLE_PUMP_SINGLE,
+		DIFFICULTY_EASY,
+		"normal",
+		1
+	},
+	{
+		GAME_PUMP,
+		PLAY_MODE_ARCADE,
+		STYLE_PUMP_SINGLE,
+		DIFFICULTY_MEDIUM,
+		"hard",
+		1
+	},
+	{
+		GAME_PUMP,
+		PLAY_MODE_ARCADE,
+		STYLE_PUMP_SINGLE,
+		DIFFICULTY_HARD,
+		"crazy",
+		1
+	},
+	{
+		GAME_PUMP,
+		PLAY_MODE_ARCADE,
+		STYLE_PUMP_VERSUS,
+		DIFFICULTY_EASY,
+		"normal",
+		2
+	},
+	{
+		GAME_PUMP,
+		PLAY_MODE_ARCADE,
+		STYLE_PUMP_VERSUS,
+		DIFFICULTY_MEDIUM,
+		"hard",
+		2
+	},
+	{
+		GAME_PUMP,
+		PLAY_MODE_ARCADE,
+		STYLE_PUMP_VERSUS,
+		DIFFICULTY_HARD,
+		"crazy",
+		2
+	},
+	{
+		GAME_PUMP,
+		PLAY_MODE_ARCADE,
+		STYLE_PUMP_COUPLE,
+		DIFFICULTY_MEDIUM,
+		"battle",
+		2
+	},
+	{
+		GAME_PUMP,
+		PLAY_MODE_ARCADE,
+		STYLE_PUMP_DOUBLE,
+		DIFFICULTY_MEDIUM,
+		"double",
+		1
+	},
+	{
+		GAME_PUMP,
+		PLAY_MODE_ONI,
+		STYLE_PUMP_SINGLE,
+		DIFFICULTY_MEDIUM,
+		"nonstop",
+		1
+	},
+	{
+		GAME_PUMP,
+		PLAY_MODE_ONI,
+		STYLE_PUMP_VERSUS,
+		DIFFICULTY_MEDIUM,
+		"nonstop",
+		2
+	},
+	{
+		GAME_EZ2,
+		PLAY_MODE_ARCADE,
+		STYLE_EZ2_SINGLE,
+		DIFFICULTY_EASY,
+		"easy",
+		1
+	},
+	{
+		GAME_EZ2,
+		PLAY_MODE_ARCADE,
+		STYLE_EZ2_SINGLE,
+		DIFFICULTY_HARD,
+		"hard",
+		1
+	},
+	{
+		GAME_EZ2,
+		PLAY_MODE_ARCADE,
+		STYLE_EZ2_REAL,
+		DIFFICULTY_MEDIUM,
+		"real",
+		1
+	},
+	{
+		GAME_EZ2,
+		PLAY_MODE_ARCADE,
+		STYLE_EZ2_DOUBLE,
+		DIFFICULTY_MEDIUM,
+		"club",
+		1
+	},
+	{
+		GAME_EZ2,
+		PLAY_MODE_ARCADE,
+		STYLE_EZ2_SINGLE_VERSUS,
+		DIFFICULTY_EASY,
+		"easy",
+		2
+	},
+	{
+		GAME_EZ2,
+		PLAY_MODE_ARCADE,
+		STYLE_EZ2_SINGLE_VERSUS,
+		DIFFICULTY_HARD,
+		"hard",
+		2
+	},
+	{
+		GAME_EZ2,
+		PLAY_MODE_ARCADE,
+		STYLE_EZ2_REAL_VERSUS,
+		DIFFICULTY_MEDIUM,
+		"real",
+		2
+	},
+};
+const int NUM_MODE_CHOICES = sizeof(g_ModeChoices) / sizeof(g_ModeChoices[0]);
+
+
 GameManager::GameManager()
 {
 	m_pIniFile = new IniFile;
@@ -1010,13 +1133,13 @@ GameManager::~GameManager()
 
 GameDef* GameManager::GetGameDefForGame( Game g )
 {
-	ASSERT( g != GAME_INVALID );
+	ASSERT( g != GAME_INVALID ); 	// the game must be set before calling this
 	return &g_GameDefs[ g ];
 }
 
 const StyleDef* GameManager::GetStyleDefForStyle( Style s )
 {
-	ASSERT( s != STYLE_NONE );
+	ASSERT( s != STYLE_NONE );	// the style must be set before calling this
 	return &g_StyleDefs[ s ];
 }
 
@@ -1032,6 +1155,13 @@ void GameManager::GetGameplayStylesForGame( Game game, CArray<Style,Style>& aSty
 
 		aStylesAddTo.Add( (Style)s );
 	}
+}
+
+void GameManager::GetModesChoicesForGame( Game game, CArray<ModeChoice,ModeChoice>& aChoicesAddTo )
+{
+	for( int s=0; s<NUM_MODE_CHOICES; s++ )
+		if( g_ModeChoices[s].game == game)
+			aChoicesAddTo.Add( g_ModeChoices[s] );
 }
 
 void GameManager::GetNotesTypesForGame( Game game, CArray<NotesType,NotesType>& aNotesTypeAddTo )

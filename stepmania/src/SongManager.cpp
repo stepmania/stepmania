@@ -455,10 +455,10 @@ void SongManager::InitCoursesFromDisk()
 		CArray<Song*, Song*> apGroupSongs;
 		GetSongsInGroup( sGroupName, apGroupSongs );
 
-		for( DifficultyClass dc=CLASS_EASY; dc<=CLASS_HARD; dc=DifficultyClass(dc+1) )	// foreach DifficultyClass
+		for( Difficulty dc=DIFFICULTY_EASY; dc<=DIFFICULTY_HARD; dc=Difficulty(dc+1) )	// foreach Difficulty
 		{
 			Course course;
-			course.CreateEndlessCourseFromGroupAndDifficultyClass( sGroupName, dc, apGroupSongs );
+			course.CreateEndlessCourseFromGroupAndDifficulty( sGroupName, dc, apGroupSongs );
 
 			if( course.m_iStages > 0 )
 				m_aEndlessCourses.Add( course );

@@ -187,11 +187,11 @@ bool NotesWriterDWI::WriteDWINotesTag( FILE* fp, const Notes &out )
 	default:	return false;	// not a type supported by DWI
 	}
 
-	switch( out.m_DifficultyClass )
+	switch( out.m_Difficulty )
 	{
-	case CLASS_EASY:	fprintf( fp, "BASIC:" );	break;
-	case CLASS_MEDIUM:	fprintf( fp, "ANOTHER:" );	break;
-	case CLASS_HARD:	fprintf( fp, "MANIAC:" );	break;
+	case DIFFICULTY_EASY:	fprintf( fp, "BASIC:" );	break;
+	case DIFFICULTY_MEDIUM:	fprintf( fp, "ANOTHER:" );	break;
+	case DIFFICULTY_HARD:	fprintf( fp, "MANIAC:" );	break;
 	default:	ASSERT(0);	return false;
 	}
 

@@ -43,20 +43,20 @@ enum RadarCategory	// starting from 12-o'clock rotating clockwise
 	NUM_RADAR_VALUES	// leave this at the end
 };
 
-enum DifficultyClass 
-{ 
-	CLASS_EASY,		// corresponds to Basic
-	CLASS_MEDIUM,	// corresponds to Trick, Another, Standard
-	CLASS_HARD,		// corresponds to Maniac, SSR, Heavy
-	NUM_DIFFICULTY_CLASSES,
+enum Difficulty 
+{
+	DIFFICULTY_EASY,	// corresponds to Basic, Easy
+	DIFFICULTY_MEDIUM,	// corresponds to Trick, Another, Standard, Normal
+	DIFFICULTY_HARD,	// corresponds to Maniac, SSR, Heavy, Crazy
+	NUM_DIFFICULTIES,
 	CLASS_INVALID
 };
 
-D3DXCOLOR DifficultyClassToColor( DifficultyClass dc );
+D3DXCOLOR DifficultyToColor( Difficulty dc );
 
-CString DifficultyClassToString( DifficultyClass dc );
+CString DifficultyToString( Difficulty dc );
 
-DifficultyClass StringToDifficultyClass( CString sDC );
+Difficulty StringToDifficulty( CString sDC );
 
 
 enum NotesType
@@ -69,13 +69,9 @@ enum NotesType
 	NOTES_TYPE_PUMP_DOUBLE,
 	NOTES_TYPE_PUMP_COUPLE,
 	NOTES_TYPE_EZ2_SINGLE,
-	NOTES_TYPE_EZ2_SINGLE_HARD,
 	NOTES_TYPE_EZ2_DOUBLE,
 	NOTES_TYPE_EZ2_REAL,
 	NOTES_TYPE_PARA,
-//	NOTES_TYPE_EZ2_SINGLE_VERSUS,		// Chris:  these should only be styles, not NotesTypes
-//	NOTES_TYPE_EZ2_SINGLE_HARD_VERSUS,
-//	NOTES_TYPE_EZ2_REAL_VERSUS,
 	NUM_NOTES_TYPES,		// leave this at the end
 	NOTES_TYPE_INVALID,
 };

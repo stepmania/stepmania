@@ -38,7 +38,7 @@ public:
 
 private:
 
-	BackgroundAnimation	m_Background;
+	BGAnimation	m_Background;
 	BitmapText			m_textLines[MAX_TOTAL_LINES];
 	int					m_iNumLines;
 	float				m_fTimeLeftInScreen;

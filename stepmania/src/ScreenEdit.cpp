@@ -187,7 +187,7 @@ ScreenEdit::ScreenEdit()
 	if( m_pNotes == NULL )
 	{
 		m_pNotes = new Notes;
-		m_pNotes->m_DifficultyClass = CLASS_MEDIUM;
+		m_pNotes->m_Difficulty = DIFFICULTY_MEDIUM;
 		m_pNotes->m_NotesType = GAMESTATE->GetCurrentStyleDef()->m_NotesTypes[0];
 		m_pNotes->m_sDescription = "Untitled";
 
@@ -487,7 +487,7 @@ void ScreenEdit::Update( float fDeltaTime )
 		GAMESTATE->m_fSongBeat,
 		m_NoteFieldEdit.m_fBeginMarker,	m_NoteFieldEdit.m_fEndMarker,
 		GAMESTATE->m_SongOptions.m_fMusicRate,
-		DifficultyClassToString( m_pNotes->m_DifficultyClass ),
+		DifficultyToString( m_pNotes->m_Difficulty ),
 		GAMESTATE->m_pCurNotes[PLAYER_1] ? GAMESTATE->m_pCurNotes[PLAYER_1]->m_sDescription : "no description",
 		m_pSong->m_sMainTitle,
 		m_pSong->m_sSubTitle,
@@ -1020,8 +1020,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 	case DIK_D:
 		{
-			DifficultyClass &dc = m_pNotes->m_DifficultyClass;
-			dc = DifficultyClass( (dc+1)%NUM_DIFFICULTY_CLASSES );
+			Difficulty &dc = m_pNotes->m_Difficulty;
+			dc = Difficulty( (dc+1)%NUM_DIFFICULTIES );
 		}
 		break;
 

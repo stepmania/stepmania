@@ -575,10 +575,10 @@ bool Song::SongHasNotesType( NotesType nt ) const
 	return false;
 }
 
-bool Song::SongHasNotesTypeAndDifficulty( NotesType nt, DifficultyClass dc ) const
+bool Song::SongHasNotesTypeAndDifficulty( NotesType nt, Difficulty dc ) const
 {
 	for( int i=0; i < m_apNotes.GetSize(); i++ ) // foreach Notes
-		if( m_apNotes[i]->m_NotesType == nt  &&  m_apNotes[i]->m_DifficultyClass == dc )
+		if( m_apNotes[i]->m_NotesType == nt  &&  m_apNotes[i]->m_Difficulty == dc )
 			return true;
 	return false;
 }
@@ -742,7 +742,7 @@ void Song::AddAutoGenNotes()
 					continue;
 
 				Notes* pNewNotes = new Notes;
-				pNewNotes->m_DifficultyClass	= pOriginalNotes->m_DifficultyClass;
+				pNewNotes->m_Difficulty	= pOriginalNotes->m_Difficulty;
 				pNewNotes->m_iMeter				= pOriginalNotes->m_iMeter;
 				pNewNotes->m_sDescription		= pOriginalNotes->m_sDescription + " (autogen)";
 				pNewNotes->m_NotesType			= mapping.ntMissing;
@@ -757,7 +757,7 @@ void Song::AddAutoGenNotes()
 	}
 }
 
-Grade Song::GetGradeForDifficultyClass( const StyleDef *st, int p, DifficultyClass dc ) const
+Grade Song::GetGradeForDifficulty( const StyleDef *st, int p, Difficulty dc ) const
 {
 	CArray<Notes*, Notes*> aNotes;
 	this->GetNotesThatMatch( st, p, aNotes );
@@ -766,7 +766,7 @@ Grade Song::GetGradeForDifficultyClass( const StyleDef *st, int p, DifficultyCla
 	for( int i=0; i<aNotes.GetSize(); i++ )
 	{
 		const Notes* pNotes = aNotes[i];
-		if( pNotes->m_DifficultyClass == dc )
+		if( pNotes->m_Difficulty == dc )
 			return pNotes->m_TopGrade;
 	}
 	return GRADE_NO_DATA;

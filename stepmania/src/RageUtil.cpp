@@ -50,7 +50,7 @@ CString SecondsToTime( float fSecs )
 	int iMinsDisplay = (int)fSecs/60;
 	int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
 	float fLeftoverDisplay = (fSecs - iMinsDisplay*60 - iSecsDisplay) * 100;
-	return ssprintf( "%02d:%02d:%02f", iMinsDisplay, iSecsDisplay, fLeftoverDisplay );
+	return ssprintf( "%02d:%02d:%02.0f", iMinsDisplay, iSecsDisplay, fLeftoverDisplay );
 }
 
 //-----------------------------------------------------------------------------

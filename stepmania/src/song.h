@@ -187,12 +187,12 @@ public:
 
 	bool SongCompleteForStyle( const StyleDef *st ) const;
 	bool SongHasNotesType( NotesType nt ) const;
-	bool SongHasNotesTypeAndDifficulty( NotesType nt, DifficultyClass dc ) const;
+	bool SongHasNotesTypeAndDifficulty( NotesType nt, Difficulty dc ) const;
 	void GetNotesThatMatch( const StyleDef *s, int p, CArray<Notes*, Notes*>& arrayAddTo ) const;
 	int GetNumTimesPlayed() const;
 	bool IsNew() const;
 	bool IsEasy( NotesType nt ) const;
-	Grade GetGradeForDifficultyClass( const StyleDef *s, int p, DifficultyClass dc ) const;
+	Grade GetGradeForDifficulty( const StyleDef *s, int p, Difficulty dc ) const;
 	bool NormallyDisplayed() const;
 	bool RouletteDisplayed() const;
 };

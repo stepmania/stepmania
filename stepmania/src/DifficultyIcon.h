@@ -32,11 +32,11 @@ public:
 		if( pNotes != NULL )
 		{
 			SetDiffuse( D3DXCOLOR(1,1,1,1) );
-			switch( pNotes->m_DifficultyClass )
+			switch( pNotes->m_Difficulty )
 			{
-			case CLASS_EASY:	SetState( 0 );	break;
-			case CLASS_MEDIUM:	SetState( 1 );	break;
-			case CLASS_HARD:	SetState( 2 );	break;
+			case DIFFICULTY_EASY:	SetState( 0 );	break;
+			case DIFFICULTY_MEDIUM:	SetState( 1 );	break;
+			case DIFFICULTY_HARD:	SetState( 2 );	break;
 			}
 		}
 		else

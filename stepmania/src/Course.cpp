@@ -93,7 +93,7 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 }
 
 
-void Course::CreateEndlessCourseFromGroupAndDifficultyClass( CString sGroupName, DifficultyClass dc, CArray<Song*,Song*> &apSongsInGroup )
+void Course::CreateEndlessCourseFromGroupAndDifficulty( CString sGroupName, Difficulty dc, CArray<Song*,Song*> &apSongsInGroup )
 {
 	m_bRepeat = true;
 	m_bRandomize = true;
@@ -112,15 +112,15 @@ void Course::CreateEndlessCourseFromGroupAndDifficultyClass( CString sGroupName,
 	m_sName = sShortGroupName + " ";
 	switch( dc )
 	{
-	case CLASS_EASY:	m_sName += "Easy";		break;
-	case CLASS_MEDIUM:	m_sName += "Medium";	break;
-	case CLASS_HARD:	m_sName += "Hard";		break;
+	case DIFFICULTY_EASY:	m_sName += "Easy";		break;
+	case DIFFICULTY_MEDIUM:	m_sName += "Medium";	break;
+	case DIFFICULTY_HARD:	m_sName += "Hard";		break;
 	}
 
 	for( int s=0; s<apSongsInGroup.GetSize(); s++ )
 	{
 		Song* pSong = apSongsInGroup[s];
-		AddStage( pSong, DifficultyClassToString(dc), "" );
+		AddStage( pSong, DifficultyToString(dc), "" );
 	}
 	Shuffle();
 }
@@ -148,13 +148,13 @@ Notes* Course::GetNotesForStage( int iStage )
 	}
 
 
-	// Didn't find a matching description.  Try to match the DifficultyClass instead.
-	DifficultyClass dc = Notes::DifficultyClassFromDescriptionAndMeter( sDescription, 5 );
+	// Didn't find a matching description.  Try to match the Difficulty instead.
+	Difficulty dc = Notes::DifficultyFromDescriptionAndMeter( sDescription, 5 );
 
 	for( i=0; i<pSong->m_apNotes.GetSize(); i++ )
 	{
 		Notes* pNotes = pSong->m_apNotes[i];
-		if( pNotes->m_DifficultyClass == dc  &&
+		if( pNotes->m_Difficulty == dc  &&
 			GAMESTATE->GetCurrentStyleDef()->MatchesNotesType(pNotes->m_NotesType, 0) )
 			return pNotes;
 	}
