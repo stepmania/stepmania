@@ -217,12 +217,12 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 	// Also, why does this switch on score again instead
 	// of just adding p?  -Chris
 	if( GAMESTATE->m_CurStageStats.bFailed[m_PlayerNumber] )
-		switch( score )
-		{
-			case TNS_MARVELOUS:	m_iScore += 10;		break;
-			case TNS_PERFECT:	m_iScore += MarvelousEnabled? 9:10; break;
-			case TNS_GREAT:		m_iScore += 5;		break;
-		}
+	{
+		m_iScore += p;
+		// make score evenly divisible by 5
+		// only update this on the next step, to make it less *obvious*
+		if (p > 0) m_iScore -= (m_iScore % 5);
+	}
 	else
 		m_iScore += GetScore(p, B, sum, m_iTapNotesHit);
 
