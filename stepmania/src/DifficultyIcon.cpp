@@ -73,6 +73,7 @@ void DifficultyIcon::SetFromCourseDifficulty( PlayerNumber pn, CourseDifficulty 
 	m_bBlank = false;
 	switch( cd )
 	{
+	case COURSE_DIFFICULTY_EASY:		SetFromDifficulty(pn,DIFFICULTY_EASY);	break;
 	case COURSE_DIFFICULTY_REGULAR:		SetFromDifficulty(pn,DIFFICULTY_MEDIUM);	break;
 	case COURSE_DIFFICULTY_DIFFICULT:	SetFromDifficulty(pn,DIFFICULTY_HARD);		break;
 	default:		ASSERT(0);
