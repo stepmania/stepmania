@@ -87,7 +87,7 @@ void RageLog::Info( const char *fmt, ...)
     va_start(va, fmt);
     CString sBuff = vssprintf( fmt, va );
     va_end(va);
-	Trace("%s", sBuff);
+	Trace("%s", sBuff.GetString());
 	StaticLog(sBuff);
 }
 
