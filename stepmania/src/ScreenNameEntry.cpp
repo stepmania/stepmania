@@ -90,7 +90,7 @@ ScreenNameEntry::ScreenNameEntry()
 {
 	LOG->Trace( "ScreenNameEntry::ScreenNameEntry()" );
 
-	
+
 	// update cache
 	g_fCharsZoomSmall = CHARS_ZOOM_SMALL;
 	g_fCharsZoomLarge = CHARS_ZOOM_LARGE;
@@ -116,6 +116,10 @@ ScreenNameEntry::ScreenNameEntry()
 
 
 
+	// reset Player and Song Options
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		GAMESTATE->m_PlayerOptions[p] = PlayerOptions();
+	GAMESTATE->m_SongOptions = SongOptions();
 
 
 
@@ -309,7 +313,7 @@ void ScreenNameEntry::DrawPrimitives()
 		for( int i=0; i<NUM_CHARS_TO_DRAW_TOTAL; i++ )
 		{
 			char c = NAME_CHARS[iCharIndex];
-			for( int t=0; t<pStyleDef->m_iColsPerPlayer; t++ )
+			for( int t=0; t<pStyleDef->m_iColsPerPlayer && t<MAX_RANKING_NAME_LENGTH; t++ )
 			{
 				m_textScrollingChars[p][t].SetText( ssprintf("%c",c) );	// why doens't CStdStr have a contructor that takes a char?
 				m_textScrollingChars[p][t].SetY( fY );
