@@ -118,6 +118,8 @@ ScreenSelectDifficulty::ScreenSelectDifficulty() : ScreenSelect( "ScreenSelectDi
 	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
 
 	m_fLockInputTime = LOCK_INPUT_SECONDS;
+	
+	this->UpdateSelectableChoices();
 
 	TweenOnScreen();
 }
@@ -188,13 +190,25 @@ void ScreenSelectDifficulty::MenuLeft( PlayerNumber pn )
 //		return;
 	if( m_bChosen[pn] )
 		return;
-	if( m_iChoiceOnPage[pn] == 0 )	// can't go left any more
+
+	int iSwitchToIndex = -1;
+	for( int i=m_iChoiceOnPage[pn]-1; i>=0; i-- )
+	{
+		if( GAMESTATE->IsPlayable(m_ModeChoices[m_CurrentPage][i]))
+		{
+			iSwitchToIndex = i;
+			break;
+		}
+	}
+
+	if( iSwitchToIndex == -1 )
 	{
 		if( m_CurrentPage > 0 )
 			ChangePage( (Page)(m_CurrentPage-1) );
+		return;
 	}
-	else
-		ChangeWithinPage( pn, m_iChoiceOnPage[pn]-1, false );
+
+	ChangeWithinPage( pn, iSwitchToIndex, false );
 }
 
 
@@ -204,16 +218,28 @@ void ScreenSelectDifficulty::MenuRight( PlayerNumber pn )
 //		return;
 	if( m_bChosen[pn] )
 		return;
-	if( m_iChoiceOnPage[pn] == (int)m_ModeChoices[m_CurrentPage].size()-1 )	// can't go right any more
+
+	int iSwitchToIndex = -1;
+	for( int i=m_iChoiceOnPage[pn]+1; i<m_ModeChoices[m_CurrentPage].size(); i++ )
+	{
+		if( GAMESTATE->IsPlayable(m_ModeChoices[m_CurrentPage][i]))
+		{
+			iSwitchToIndex = i;
+			break;
+		}
+	}
+
+	if( iSwitchToIndex == -1 )
 	{
 		if( m_ModeChoices[m_CurrentPage+1].size()==0 )	// there is no page 2
 			return;
 
 		if( m_CurrentPage < NUM_PAGES-1 )
 			ChangePage( (Page)(m_CurrentPage+1) );
+		return;
 	}
-	else
-		ChangeWithinPage( pn, m_iChoiceOnPage[pn]+1, false );
+
+	ChangeWithinPage( pn, iSwitchToIndex, false );
 }
 
 void ScreenSelectDifficulty::ChangePage( Page newPage )
@@ -235,10 +261,31 @@ void ScreenSelectDifficulty::ChangePage( Page newPage )
 		m_soundDifficult.PlayRandom();
 	}
 
+	// Find the first Playable mode on the new page
+	int iSwitchToIndex = -1;
+	if( !bPageIncreasing ) {
+		for( int i=m_ModeChoices[newPage].size()-1; i>=0; i-- )
+		{
+			if( GAMESTATE->IsPlayable(m_ModeChoices[newPage][i]))
+			{
+				iSwitchToIndex = i;
+				break;
+			}
+		}
+	} else {
+		for( int i=0; i<m_ModeChoices[newPage].size(); i++ )
+		{
+			if( GAMESTATE->IsPlayable(m_ModeChoices[newPage][i]))
+			{
+				iSwitchToIndex = i;
+				break;
+			}
+		}
+	}
+
 	// change both players
-	int iNewChoice = bPageIncreasing ? 0 : m_ModeChoices[m_CurrentPage].size()-1;
 	for( p=0; p<NUM_PLAYERS; p++ )
-		ChangeWithinPage( (PlayerNumber)p, iNewChoice, true );
+		ChangeWithinPage( (PlayerNumber)p, iSwitchToIndex, true );
 
 	m_soundChange.Play();
 

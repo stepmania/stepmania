@@ -304,24 +304,33 @@ const StyleDef* GameState::GetCurrentStyleDef()
 
 bool GameState::IsPlayable( const ModeChoice& mc )
 {
+	// Mode doesn't interest the caller, presumably because
+	// a style has not been chosen yet.
+	if ( mc.pm == PLAY_MODE_INVALID )
+		return mc.numSidesJoinedToPlay == GAMESTATE->GetNumSidesJoined(); 
+
+	// A style has been chosen, so now consider modes
+	const Style &style = (mc.style != STYLE_INVALID) ? mc.style : m_CurStyle;
+	ASSERT(style != STYLE_INVALID);
+
 	if( mc.pm == PLAY_MODE_RAVE )
 	{
 		// Can't play Rave without characters for attack definitions.
-		if( m_pCharacters.empty() )
+		//X ... but we'll let ScreenSelectDifficulty give that message
+		//X (since that will give the user an explanation)
+		//X
+		//Xif( m_pCharacters.empty() )
+		//X	return false;
+
+		// Can't play rave if there isn't enough room for two players.
+		// This is correct for dance (ie, no rave for solo and doubles),
+		// and should be okay for pump .. not sure about other game types.
+		if( GAMEMAN->GetStyleDefForStyle(style)->m_iColsPerPlayer >= 6 )
 			return false;
-		
-		// Can't play rave unless there is room for two players
-		if( mc.style != STYLE_INVALID &&
-			GAMEMAN->GetStyleDefForStyle(mc.style)->m_StyleType == StyleDef::ONE_PLAYER_TWO_CREDITS )
-			return false;
-	
-		// Can't play rave unless there is room for two players
-		if( m_CurStyle != STYLE_INVALID &&
-			GAMEMAN->GetStyleDefForStyle(m_CurStyle)->m_StyleType == StyleDef::ONE_PLAYER_TWO_CREDITS )
-			return false;
+
 	}
 
-	return mc.numSidesJoinedToPlay == GAMESTATE->GetNumSidesJoined(); 
+	return true;    // why not?
 }
 
 bool GameState::IsPlayerEnabled( PlayerNumber pn )
