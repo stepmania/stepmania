@@ -66,34 +66,18 @@ public:
 	ScreenSystemLayer();
 	void SystemMessage( CString sMessage );
 	void SystemMessageNoAnimate( CString sMessage );
+	void ReloadCreditsText();
 	void RefreshCreditsMessages();
 	void Update( float fDeltaTime );
 };
 
 ScreenSystemLayer::ScreenSystemLayer() : Screen("ScreenSystemLayer")
 {
-	m_textMessage.LoadFromFont( THEME->GetPathToF("ScreenSystemLayer message") );
-	m_textMessage.SetName( "Message" );
-	SET_XY_AND_ON_COMMAND( m_textMessage ); 
 	this->AddChild(&m_textMessage);
-
-	m_textStats.LoadFromFont( THEME->GetPathToF("ScreenSystemLayer stats") );
-	m_textStats.SetName( "Stats" );
-	SET_XY_AND_ON_COMMAND( m_textStats ); 
 	this->AddChild(&m_textStats);
-
-	m_textTime.LoadFromFont( THEME->GetPathToF("ScreenSystemLayer time") );
-	m_textTime.SetName( "Time" );
-	SET_XY_AND_ON_COMMAND( m_textTime ); 
 	this->AddChild(&m_textTime);
-
 	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		m_textCredits[p].LoadFromFont( THEME->GetPathToF("ScreenManager credits") );
-		m_textCredits[p].SetName( ssprintf("CreditsP%d",p+1) );
-		SET_XY_AND_ON_COMMAND( &m_textCredits[p] );
 		this->AddChild(&m_textCredits[p]);
-	}
 
 
 	/* "Was that a skip?"  This displays a message when an update takes
@@ -125,7 +109,30 @@ ScreenSystemLayer::ScreenSystemLayer() : Screen("ScreenSystemLayer")
 		this->AddChild(&m_textSkips[i]);
 	}
 
+	ReloadCreditsText();
 	RefreshCreditsMessages();
+}
+
+void ScreenSystemLayer::ReloadCreditsText()
+{
+	m_textMessage.LoadFromFont( THEME->GetPathToF("ScreenSystemLayer message") );
+	m_textMessage.SetName( "Message" );
+	SET_XY_AND_ON_COMMAND( m_textMessage ); 
+
+	m_textStats.LoadFromFont( THEME->GetPathToF("ScreenSystemLayer stats") );
+	m_textStats.SetName( "Stats" );
+	SET_XY_AND_ON_COMMAND( m_textStats ); 
+
+	m_textTime.LoadFromFont( THEME->GetPathToF("ScreenSystemLayer time") );
+	m_textTime.SetName( "Time" );
+	SET_XY_AND_ON_COMMAND( m_textTime ); 
+
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_textCredits[p].LoadFromFont( THEME->GetPathToF("ScreenManager credits") );
+		m_textCredits[p].SetName( ssprintf("CreditsP%d",p+1) );
+		SET_XY_AND_ON_COMMAND( &m_textCredits[p] );
+	}
 }
 
 void ScreenSystemLayer::SystemMessage( CString sMessage )
@@ -666,5 +673,10 @@ void ScreenManager::SystemMessageNoAnimate( CString sMessage )
 void ScreenManager::RefreshCreditsMessages()
 {
 	m_SystemLayer->RefreshCreditsMessages();
+}
+
+void ScreenManager::ReloadCreditsText()
+{
+	m_SystemLayer->ReloadCreditsText();
 }
 

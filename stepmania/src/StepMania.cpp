@@ -1084,6 +1084,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 	{
 		THEME->ReloadMetrics();
 		TEXTUREMAN->ReloadAll();
+		SCREENMAN->ReloadCreditsText();
 		NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_CurGame );
 	
 		// HACK: Also save bookkeeping and profile info for debugging

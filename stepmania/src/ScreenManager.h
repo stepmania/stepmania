@@ -52,6 +52,7 @@ public:
 	void PostMessageToTopScreen( ScreenMessage SM, float fDelay );
 	void SendMessageToTopScreen( ScreenMessage SM );
 
+	void ReloadCreditsText();
 	void RefreshCreditsMessages();
 
 	void EmptyDeleteQueue();
