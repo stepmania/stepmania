@@ -45,6 +45,7 @@ public:
 	void FromSteps( const Steps *p );
 	Steps *ToSteps( const Song *p, bool bAllowNull ) const;
 	bool operator<( const StepsID &rhs ) const;
+	bool MatchesStepsType( StepsType s ) const { return st == s; }
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
