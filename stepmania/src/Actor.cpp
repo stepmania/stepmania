@@ -814,6 +814,7 @@ void Actor::HandleCommand( const ParsedCommand &command )
 	else if( sName=="ztest" )			SetZTest( bParam(1) );
 	else if( sName=="zwrite" )			SetZWrite( bParam(1) );
 	else if( sName=="clearzbuffer" )	SetClearZBuffer( bParam(1) );
+	else if( sName=="backfacecull" )	SetUseBackfaceCull( bParam(1) );
 	else if( sName=="hidden" )			SetHidden( bParam(1) );
 	else if( sName=="playcommand" )		PlayCommand( sParam(1) );
 
