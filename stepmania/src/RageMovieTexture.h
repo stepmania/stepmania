@@ -74,9 +74,6 @@ protected:
 	// DirectShow pointers
 	//-----------------------------------------------------------------------------
 	CComPtr<IGraphBuilder>  m_pGB;          // GraphBuilder
-	CComPtr<IMediaControl>  m_pMC;          // Media Control
-	CComPtr<IMediaPosition> m_pMP;          // Media Postion
-	CComPtr<IMediaEvent>    m_pME;          // Media Event
     CTextureRenderer        *m_pCTR;        // DShow Texture renderer
 	bool					m_bLoop;
 };

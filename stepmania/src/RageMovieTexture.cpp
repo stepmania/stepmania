@@ -435,11 +435,6 @@ HRESULT RageMovieTexture::InitDShowTextureRenderer()
 		throw RageException( hr, "Could not connect pins!" );
 	}
     
-    // Get the graph's media control, event & position interfaces
-    m_pGB.QueryInterface(&m_pMC);
-    m_pGB.QueryInterface(&m_pMP);
-    m_pGB.QueryInterface(&m_pME);
-
     // The graph is built, now get the set the output video width and height.
 	// The source and image width will always be the same since we can't scale the video
 	m_iSourceWidth  = m_pCTR->GetVidWidth();
@@ -487,10 +482,12 @@ HRESULT RageMovieTexture::CreateD3DTexture()
 
 HRESULT RageMovieTexture::PlayMovie()
 {
-	HRESULT hr;
+	CComPtr<IMediaControl> pMC;
+    m_pGB.QueryInterface(&pMC);
 
     // Start the graph running;
-    if( FAILED( hr = m_pMC->Run() ) )
+	HRESULT hr;
+    if( FAILED( hr = pMC->Run() ) )
         throw RageException( hr, "Could not run the DirectShow graph." );
 
     return S_OK;
@@ -507,9 +504,11 @@ void RageMovieTexture::CheckMovieStatus()
     long lParam2;
 
     // Check for completion events
-    m_pME->GetEvent( &lEventCode, &lParam1, &lParam2, 0 );
+	CComPtr<IMediaEvent>    pME;
+    m_pGB.QueryInterface(&pME);
+    pME->GetEvent( &lEventCode, &lParam1, &lParam2, 0 );
     if( EC_COMPLETE == lEventCode  && m_bLoop )
-        m_pMP->put_CurrentPosition(0);
+		SetPosition(0);
 }
 
 
@@ -519,8 +518,10 @@ void RageMovieTexture::CheckMovieStatus()
 void RageMovieTexture::CleanupDShow()
 {
     // Shut down the graph
-    if (m_pMC) m_pMC->Stop();
-    if (m_pGB) m_pGB.Release ();
+    if (m_pGB) {
+		Stop();
+		m_pGB.Release ();
+	}
 }
     
 void RageMovieTexture::Play()
@@ -530,21 +531,29 @@ void RageMovieTexture::Play()
 
 void RageMovieTexture::Pause()
 {
+	CComPtr<IMediaControl> pMC;
+    m_pGB.QueryInterface(&pMC);
+
 	HRESULT hr;
-	if( FAILED( hr = m_pMC->Pause() ) )
+	if( FAILED( hr = pMC->Pause() ) )
         throw RageException( hr, "Could not pause the DirectShow graph." );
 
 }
 
 void RageMovieTexture::Stop()
 {
+	CComPtr<IMediaControl> pMC;
+    m_pGB.QueryInterface(&pMC);
+
 	HRESULT hr;
-	if( FAILED( hr = m_pMC->Stop() ) )
+	if( FAILED( hr = pMC->Stop() ) )
         throw RageException( hr, "Could not stop the DirectShow graph." );
 }
 
 void RageMovieTexture::SetPosition( float fSeconds )
 {
-     m_pMP->put_CurrentPosition(0);
+	CComPtr<IMediaPosition> pMP;
+    m_pGB.QueryInterface(&pMP);
+    pMP->put_CurrentPosition(0);
 }
 
