@@ -82,7 +82,7 @@ SDL_Surface *RageSurface_Load_XPM( char * const *xpm, CString &error )
 		const CString row = xpm[line++];
 		if( (int) row.size() != width*color_length )
 		{
-			error = ssprintf( "row %i is not expected length (%i != %i)", y, row.size(), width, color_length );
+			error = ssprintf( "row %i is not expected length (%i != %i)", y, row.size(), width*color_length );
 			SDL_FreeSurface( img );
 		    return NULL;
 		}
