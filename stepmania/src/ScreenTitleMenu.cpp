@@ -36,6 +36,8 @@
 #define LOGO_HOME_ON_COMMAND		THEME->GetMetric("ScreenTitleMenu","LogoHomeOnCommand")
 #define VERSION_ON_COMMAND			THEME->GetMetric("ScreenTitleMenu","VersionOnCommand")
 #define SONGS_ON_COMMAND			THEME->GetMetric("ScreenTitleMenu","SongsOnCommand")
+#define MAX_STAGES_ON_COMMAND		THEME->GetMetric("ScreenTitleMenu","MaxStagesOnCommand")
+#define MAX_STAGES_TEXT				THEME->GetMetric("ScreenTitleMenu","MaxStagesText")
 #define HELP_X						THEME->GetMetricF("ScreenTitleMenu","HelpX")
 #define HELP_Y						THEME->GetMetricF("ScreenTitleMenu","HelpY")
 #define CHOICES_X					THEME->GetMetricF("ScreenTitleMenu","ChoicesX")
@@ -113,6 +115,10 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 	m_textSongs.SetText( text );
 	this->AddChild( &m_textSongs );
 
+	m_textMaxStages.LoadFromFont( THEME->GetPathF(m_sName,"MaxStages") );
+	m_textMaxStages.Command( MAX_STAGES_ON_COMMAND );
+	m_textMaxStages.SetText( ssprintf("%d "+MAX_STAGES_TEXT, PREFSMAN->m_iNumArcadeStages ) );
+	this->AddChild( &m_textMaxStages );
 
 	CString sCoinMode = CoinModeToString((CoinMode)PREFSMAN->m_iCoinMode);
 	m_CoinMode.LoadFromAniDir( THEME->GetPathToB("ScreenTitleMenu "+sCoinMode) );
