@@ -201,11 +201,13 @@ CString RageFile::GetLine()
 	return ret;
 }
 
-#if defined(_WIN32)
+// Always use "\r\n".  Even though the program may be running on Unix, the 
+// files written to a memory card are likely to be edited using Windows.
+//#if defined(_WIN32)
 #define NEWLINE "\r\n"
-#else
-#define NEWLINE "\n"
-#endif
+//#else
+//#define NEWLINE "\n"
+//#endif
 
 int RageFile::PutLine( const CString &str )
 {
