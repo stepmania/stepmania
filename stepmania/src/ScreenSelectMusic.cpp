@@ -626,9 +626,9 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_LEFT) )  &&
 		INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_RIGHT) ) )
 	{
-		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-			m_soundLocked.Play();
-		else
+//		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+//			m_soundLocked.Play();
+//		else
 		{
 			if( m_MusicWheel.NextSort() )
 			{
