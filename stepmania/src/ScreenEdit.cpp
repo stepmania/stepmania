@@ -86,7 +86,7 @@ const CString SHORTCUT_TEXT =
 	"F11/F12: Decrease/increase music offset\n"
 	"F1/F2 : Dec/inc sample music start\n"
 	"       Hold F keys for faster change:\n"
-	"NumPad -/+: Dec/inc sample music length\n"
+	"[/]: Dec/inc sample music length\n"
 	"M: Play sample music\n";
 
 const CString MENU_ITEM_TEXT[NUM_MENU_ITEMS] = {
@@ -917,14 +917,14 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		MUSIC->Load( m_pSong->GetMusicPath() );
 		MUSIC->Play( false, m_pSong->m_fMusicSampleStartSeconds, m_pSong->m_fMusicSampleLengthSeconds );
 		break;
-	case DIK_F1:
-	case DIK_F2:
+	case DIK_LBRACKET:
+	case DIK_RBRACKET:
 		{
 			float fOffsetDelta;
 			switch( DeviceI.button )
 			{
-			case DIK_F1:	fOffsetDelta = -0.025f;		break;
-			case DIK_F2:	fOffsetDelta = +0.025f;		break;
+			case DIK_LBRACKET:		fOffsetDelta = -0.025f;	break;
+			case DIK_RBRACKET:		fOffsetDelta = +0.025f;	break;
 			default:	ASSERT(0);
 			}
 			switch( type )
@@ -937,6 +937,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			m_pSong->m_fMusicSampleStartSeconds = max(m_pSong->m_fMusicSampleStartSeconds,0);
 		}
 		break;
+	/* I think this would be better on { and }, but we don't have any
+	 * shift state ... */
 	case DIK_SUBTRACT:
 	case DIK_ADD:
 		{
