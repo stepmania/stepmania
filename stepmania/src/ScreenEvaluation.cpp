@@ -568,7 +568,7 @@ void ScreenEvaluation::Init()
 			SET_XY_AND_ON_COMMAND( m_sprSurvivedFrame[p] );
 			this->AddChild( m_sprSurvivedFrame[p] );
 
-			m_textSurvivedNumber[p].LoadFromFont( THEME->GetPathToN("ScreenEvaluation stage") );
+			m_textSurvivedNumber[p].LoadFromFont( THEME->GetPathF("ScreenEvaluation","stage") );
 			m_textSurvivedNumber[p].SetShadowLength( 0 );
 			// curewater: edited the "# stages cleared" text so it deducts one if you failed.
 			// Should be accurate, but I'm not sure if its "standard" that (bool)true = 1.  (assumption)
@@ -621,7 +621,7 @@ void ScreenEvaluation::Init()
 
 			FOREACH_EnabledPlayer( p )
 			{
-				m_textJudgeNumbers[l][p].LoadFromFont( THEME->GetPathToN("ScreenEvaluation judge") );
+				m_textJudgeNumbers[l][p].LoadFromFont( THEME->GetPathF("ScreenEvaluation","judge") );
 				m_textJudgeNumbers[l][p].SetShadowLength( 0 );
 				m_textJudgeNumbers[l][p].SetDiffuse( PlayerToColor(p) );
 				m_textJudgeNumbers[l][p].SetName( ssprintf("%sNumberP%d",JUDGE_STRING[l],p+1) );
@@ -693,7 +693,7 @@ void ScreenEvaluation::Init()
 
 		FOREACH_EnabledPlayer( p )
 		{
-			m_textScore[p].LoadFromFont( THEME->GetPathToN("ScreenEvaluation score") );
+			m_textScore[p].LoadFromFont( THEME->GetPathF("ScreenEvaluation","score") );
 			m_textScore[p].SetShadowLength( 0 );
 			m_textScore[p].SetDiffuse( PlayerToColor(p) );
 			m_textScore[p].SetName( ssprintf("ScoreNumberP%d",p+1) );
@@ -718,7 +718,7 @@ void ScreenEvaluation::Init()
 
 			//iTotalScore += stageStats.iScore[p];
 
-			m_textTotalScore[p].LoadFromFont( THEME->GetPathToN("ScreenEvaluation totalscore") );
+			m_textTotalScore[p].LoadFromFont( THEME->GetPathF("ScreenEvaluation","totalscore") );
 			m_textTotalScore[p].SetShadowLength( 0 );
 			m_textTotalScore[p].SetDiffuse( PlayerToColor(p) );
 			m_textTotalScore[p].SetName( ssprintf("TotalScoreNumberP%d",p+1) );
@@ -741,7 +741,7 @@ void ScreenEvaluation::Init()
 
 		FOREACH_EnabledPlayer( p )
 		{
-			m_textTime[p].LoadFromFont( THEME->GetPathToN("ScreenEvaluation time") );
+			m_textTime[p].LoadFromFont( THEME->GetPathF("ScreenEvaluation","time") );
 			m_textTime[p].SetShadowLength( 0 );
 			m_textTime[p].SetDiffuse( PlayerToColor(p) );
 			m_textTime[p].SetName( ssprintf("TimeNumberP%d",p+1) );

@@ -23,8 +23,8 @@ MenuTimer::MenuTimer()
 	m_fStallSecondsLeft = MAX_STALL_SECONDS;
 	m_bPaused = false;
 
-	m_textDigit1.LoadFromFont( THEME->GetPathToN("MenuTimer") );
-	m_textDigit2.LoadFromFont( THEME->GetPathToN("MenuTimer") );
+	m_textDigit1.LoadFromFont( THEME->GetPathToF("MenuTimer") );
+	m_textDigit2.LoadFromFont( THEME->GetPathToF("MenuTimer") );
 
 	const float fCharWidth = (float) m_textDigit1.m_pFont->GetLineWidthInSourcePixels(L"0");
 	m_textDigit1.SetX( -fCharWidth/2 );

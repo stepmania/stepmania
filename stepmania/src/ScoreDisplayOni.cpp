@@ -17,7 +17,7 @@ ScoreDisplayOni::ScoreDisplayOni()
 	this->AddChild( &m_sprFrame );
 
 	// init the text
-	m_text.LoadFromFont( THEME->GetPathToN("ScoreDisplayOni") );
+	m_text.LoadFromFont( THEME->GetPathToF("ScoreDisplayOni") );
 	m_text.SetShadowLength( 0 );
 	this->AddChild( &m_text );
 }

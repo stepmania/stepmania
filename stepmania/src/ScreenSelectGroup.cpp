@@ -106,7 +106,7 @@ ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : ScreenWithMenuEleme
 	this->AddChild( &m_sprFrame );
 
 	m_textNumber.SetName( "Number" );
-	m_textNumber.LoadFromFont( THEME->GetPathToN("ScreenSelectGroup num songs") );
+	m_textNumber.LoadFromFont( THEME->GetPathF("ScreenSelectGroup","num songs") );
 	this->AddChild( &m_textNumber );
 	
 	m_sprContents.SetName( "Contents" );

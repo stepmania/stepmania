@@ -79,7 +79,7 @@ void DifficultyMeter::Load()
 	if( SHOW_METER )
 	{
 		m_textMeter.SetName( "Meter" );
-		m_textMeter.LoadFromFont( THEME->GetPathN(m_sName,"meter") );
+		m_textMeter.LoadFromFont( THEME->GetPathF(m_sName,"meter") );
 		SET_XY_AND_ON_COMMAND( m_textMeter );
 		this->AddChild( &m_textMeter );
 	}

@@ -28,7 +28,7 @@ ScoreDisplayRave::ScoreDisplayRave()
 
 	this->AddChild( &m_sprFrameOverlay );
 
-	m_textLevel.LoadFromFont( THEME->GetPathToN("ScoreDisplayRave level") );
+	m_textLevel.LoadFromFont( THEME->GetPathF("ScoreDisplayRave","level") );
 	m_textLevel.SetText( "1" );
 	m_textLevel.SetShadowLength( 0 );
 	this->AddChild( &m_textLevel );

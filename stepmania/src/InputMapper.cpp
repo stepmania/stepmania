@@ -320,7 +320,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 		{
 			const AutoJoyMapping& mapping = g_AutoJoyMappings[j];
 
-			if( pGameDef != GAMESTATE->GetGameDefFromString(mapping.szGame) )
+			if( pGameDef != GAMEMAN->StringToGameType(mapping.szGame) )
 				continue;	// games don't match
 
 			CString sDriverRegex = mapping.szDriverRegex;
