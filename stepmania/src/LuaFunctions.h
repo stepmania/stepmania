@@ -2,6 +2,7 @@
 #define LUA_FUNCTIONS_H
 
 #include "LuaHelpers.h"
+#include "RageUtil.h" /* for ssprintf */
 
 extern "C"
 {
