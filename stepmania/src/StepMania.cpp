@@ -1072,8 +1072,7 @@ int main(int argc, char* argv[])
 		/* This can be things like calling std::string::reserve(-1), or out of memory.
 		 * This can also happen if we throw a RageException during a ctor, in which case
 		 * we want a crash dump. */
-		CHECKPOINT_M( e.what() );
-		*(char*)0=0; /* crash */
+		FAIL_M( e.what() );
 	}
 #endif
 	
