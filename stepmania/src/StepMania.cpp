@@ -1387,6 +1387,30 @@ static void HandleSDLEvents()
 	}
 }
 
+static void CheckSkips( float fDeltaTime )
+{
+	if( !PREFSMAN->m_bLogSkips )
+		return;
+
+	static int iLastFPS = 0;
+	int iThisFPS = DISPLAY->GetFPS();
+
+	/* If vsync is on, and we have a solid framerate (vsync == refresh and we've sustained this
+	 * for at least one frame), we expect the amount of time for the last frame to be 1/FPS. */
+
+	if( iThisFPS != DISPLAY->GetVideoModeParams().rate || iThisFPS != iLastFPS )
+	{
+		iLastFPS = iThisFPS;
+		return;
+	}
+
+	const float fExpectedTime = 1.0f / iThisFPS;
+	const float fDifference = fDeltaTime - fExpectedTime;
+	if( fabsf(fDifference) > 0.002f && fabsf(fDifference) < 0.100f )
+		LOG->Trace("GameLoop timer skip: %i FPS, expected %.3f, got %.3f (%.3f difference)",
+			iThisFPS, fExpectedTime, fDeltaTime, fDifference );
+}
+
 static void GameLoop()
 {
 	RageTimer timer;
@@ -1401,6 +1425,8 @@ static void GameLoop()
 		 */
 		float fDeltaTime = timer.GetDeltaTime();
 		
+		CheckSkips( fDeltaTime );
+
 		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_TAB) ) ) {
 			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_BACKQUOTE) ) )
 				fDeltaTime = 0; /* both; stop time */
