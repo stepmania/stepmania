@@ -53,7 +53,7 @@ public:
 	LONG GetVidWidth() {return m_lVidWidth;};
 	LONG GetVidHeight(){return m_lVidHeight;};
 	HRESULT SetRenderTarget( RageMovieTexture* pTexture );
-	BOOL IsLocked() { return m_bLocked; };
+	BOOL IsLocked(int iIndex) { return m_bLocked[iIndex]; };
 
 protected:
 	LONG m_lVidWidth;	// Video width
@@ -62,7 +62,7 @@ protected:
 
 	RageMovieTexture*	m_pTexture;	// the video surface we will copy new frames to
 	D3DFORMAT			m_TextureFormat; // Texture format
-	BOOL				m_bLocked;	// Is the texture currently locked while we 
+	BOOL				m_bLocked[2];	// Is the texture currently locked while we 
 									// copy the movie frame to it?
 };
 

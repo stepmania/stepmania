@@ -19,8 +19,8 @@
 #include <dinput.h>
 #include "RageUtil.h"
 
-
 const int NUM_KEYBOARD_BUTTONS = 256;
+
 const int NUM_JOYSTICKS = 4;
 
 enum InputDevice {
@@ -51,8 +51,22 @@ enum JoystickButton {
 	JOY_10,
 	JOY_11,
 	JOY_12,
+	JOY_13,
+	JOY_14,
+	JOY_15,
+	JOY_16,
+	JOY_17,
+	JOY_18,
+	JOY_19,
+	JOY_20,
+	JOY_21,
+	JOY_22,
+	JOY_23,
+	JOY_24,
 	NUM_JOYSTICK_BUTTONS	// leave this at the end
 };
+
+const int NUM_DEVICE_BUTTONS = max( NUM_KEYBOARD_BUTTONS, NUM_JOYSTICK_BUTTONS );
 
 
 

@@ -25,6 +25,7 @@
 
 #include "WindowSandbox.h"
 #include "WindowLoading.h"
+#include "WindowResults.h"
 #include "WindowTitleMenu.h"
 
 #include <DXUtil.h>
@@ -89,7 +90,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 		RageError( "StepMania is already running!" );
 	}
 
-	if( !DoesFileExist("Songs") )
+	if( !DoesFileExist("Textures") )
 	{
 		// change dir to path of the execuctable
 		TCHAR szFullAppPath[MAX_PATH];
@@ -174,7 +175,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 			Update();
 			Render();
 			//if( !g_bFullscreen )
-			::Sleep(16);	// give some time for the movie
+			::Sleep(11);	// give some time for the movie decoding thread
 		}
 	}	// end  while( WM_QUIT != msg.message  )
 
@@ -311,17 +312,18 @@ HRESULT CreateObjects( HWND hWnd )
 	WM		= new WindowManager;
 
 	// throw something up on the screen while the game resources are loading
+	// super hack!  Why do we crash unless we have rendered one frame before drawing anything?
+	Render();
+	ShowFrame();
 	WM->SetNewWindow( new WindowLoading );
 	Render();
 	ShowFrame();
-
 
 	// this stuff takes a long time...
 	SOUND	= new RageSound( hWnd );
 	MUSIC	= new RageMusic;
 	INPUT	= new RageInput( hWnd );
 	GAMEINFO= new GameInfo;
-	GAMEINFO->InitSongArrayFromDisk();
 
 	BringWindowToTop( hWnd );
 	SetForegroundWindow( hWnd );
@@ -422,7 +424,7 @@ HRESULT InvalidateObjects()
 //-----------------------------------------------------------------------------
 void Update()
 {
-	FLOAT fDeltaTime = DXUtil_Timer( TIMER_GETELAPSEDTIME );
+	float fDeltaTime = DXUtil_Timer( TIMER_GETELAPSEDTIME );
 	
 	// This was a hack to fix timing issues with the old WindowSelectSong
 	//

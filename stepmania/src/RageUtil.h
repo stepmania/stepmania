@@ -41,9 +41,11 @@
 //-----------------------------------------------------------------------------
 
 // Simple function for generating random numbers
-FLOAT randomf( FLOAT low=-1.0f, FLOAT high=1.0f );
+float randomf( float low=-1.0f, float high=1.0f );
 int roundf( FLOAT f );
 int roundf( double f );
+
+bool IsAnInt( CString s );
 
 CString ssprintf( LPCTSTR fmt, ...);
 CString vssprintf( LPCTSTR fmt, va_list argList );
@@ -63,6 +65,10 @@ CString vssprintf( LPCTSTR fmt, va_list argList );
 */
 void splitpath(BOOL UsingDirsOnly, CString Path, CString& Drive, CString& Dir, CString& FName, CString& Ext);
 
+
+void splitrelpath( CString Path, CString& Dir, CString& FName, CString& Ext );
+
+
 /*
  @FUNCTION: Splits a CString into an CStringArray according the Deliminator.
 	  NOTE: Supports UNC path names.
@@ -70,7 +76,7 @@ void splitpath(BOOL UsingDirsOnly, CString Path, CString& Drive, CString& Dir, C
    @PARAM2: Deliminator.
    @PARAM3: (Referenced) CStringArray to Add to.
 */
-void split(CString Source, CString Deliminator, CStringArray& AddIt );
+void split(CString Source, CString Deliminator, CStringArray& AddIt, bool bIgnoreEmpty = true );
 
 /*
  @FUNCTION: Joins a CStringArray to create a CString according the Deliminator.

@@ -20,7 +20,7 @@
 #include "WindowManager.h"
 
 
-#define DEFAULT_TRANSITION_TIME		1.0f
+#define DEFAULT_TRANSITION_TIME		0.75f
 
 
 class Transition
@@ -45,7 +45,7 @@ public:
 	bool IsClosed()		{ return m_TransitionState == closed; };
 	bool IsClosing()	{ return m_TransitionState == closing_right  ||  m_TransitionState == closing_left; };
 
-	void SetTransitionTime( FLOAT fNewTransitionTime ) { m_fTransitionTime = fNewTransitionTime; };
+	void SetTransitionTime( float fNewTransitionTime ) { m_fTransitionTime = fNewTransitionTime; };
 
 	void SetColor( D3DXCOLOR new_color ) { m_Color = new_color; };
 	void SetCloseWipingRightSound( CString sSoundPath );

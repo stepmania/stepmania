@@ -32,22 +32,25 @@ void Sprite::Init()
 	m_uCurState = 0;
 	m_bIsAnimating = TRUE;
 	m_fSecsIntoState = 0.0;
-	m_bUsingCustomTexCoordRect = FALSE ;
+	m_bUsingCustomTexCoords = false;
 	m_Effect =  no_effect ;
-	m_fPercentBetweenColors = 0.0f ;
-	m_bTweeningTowardEndColor = TRUE ;
-	m_fDeltaPercentPerSecond = 1.0 ;
-	m_fWagRadians =  0.2f ;
-	m_fWagPeriod =  2.0f ;
-	m_fWagTimer =  0.0f ;
-	m_fSpinSpeed =  2.0f ;
-	m_fVibrationDistance =  5.0f ;
+	m_fPercentBetweenColors = 0.0f;
+	m_bTweeningTowardEndColor = true;
+	m_fDeltaPercentPerSecond = 1.0f;
+	m_fWagRadians =  0.2f;
+	m_fWagPeriod =  2.0f;
+	m_fWagTimer =  0.0f;
+	m_fSpinSpeed =  2.0f;
+	m_fVibrationDistance =  5.0f;
 	m_bVisibleThisFrame =  FALSE;
 
 	if( GAMEINFO )
 		m_bHasShadow = GAMEINFO->m_GameOptions.m_bShadows;
 	else
 		m_bHasShadow = true;
+
+
+	m_bBlendAdd = false;
 }
 
 Sprite::~Sprite()
@@ -239,15 +242,6 @@ void Sprite::Draw()
 	if( m_pTexture != NULL )
 	{
 	
-		FRECT* pTexCoordRect;	// the texture coordinates of the frame we're going to use
-		if( m_bUsingCustomTexCoordRect ) {
-			pTexCoordRect = &m_CustomTexCoordRect;
-		} else {
-			UINT uFrameNo = m_uFrame[m_uCurState];
-			pTexCoordRect = m_pTexture->GetTextureCoordRect( uFrameNo );
-		}
-
-
 		D3DXCOLOR	colorDiffuse[4];
 		for(int i=0; i<4; i++)
 			colorDiffuse[i] = m_colorDiffuse[i];
@@ -302,10 +296,26 @@ void Sprite::Draw()
 		v[2].p = D3DXVECTOR3(  fHalfSizeX,	 fHalfSizeY,	0 );	// bottom right
 		v[3].p = D3DXVECTOR3(  fHalfSizeX,	-fHalfSizeY,	0 );	// top right
 
-		v[0].tu = pTexCoordRect->left;		v[0].tv = pTexCoordRect->bottom;	// bottom left
-		v[1].tu = pTexCoordRect->left;		v[1].tv = pTexCoordRect->top;		// top left
-		v[2].tu = pTexCoordRect->right;		v[2].tv = pTexCoordRect->bottom;	// bottom right
-		v[3].tu = pTexCoordRect->right;		v[3].tv = pTexCoordRect->top;		// top right
+
+		if( m_bUsingCustomTexCoords ) 
+		{
+			v[0].tu = m_CustomTexCoords[0];		v[0].tv = m_CustomTexCoords[1];	// bottom left
+			v[1].tu = m_CustomTexCoords[2];		v[1].tv = m_CustomTexCoords[3];	// top left
+			v[2].tu = m_CustomTexCoords[4];		v[2].tv = m_CustomTexCoords[5];	// bottom right
+			v[3].tu = m_CustomTexCoords[6];		v[3].tv = m_CustomTexCoords[7];	// top right
+		} 
+		else 
+		{
+			UINT uFrameNo = m_uFrame[m_uCurState];
+			FRECT* pTexCoordRect = m_pTexture->GetTextureCoordRect( uFrameNo );
+
+			v[0].tu = pTexCoordRect->left;		v[0].tv = pTexCoordRect->bottom;	// bottom left
+			v[1].tu = pTexCoordRect->left;		v[1].tv = pTexCoordRect->top;		// top left
+			v[2].tu = pTexCoordRect->right;		v[2].tv = pTexCoordRect->bottom;	// bottom right
+			v[3].tu = pTexCoordRect->right;		v[3].tv = pTexCoordRect->top;		// top right
+		}
+
+
 
 		pVB->Unlock();
 
@@ -317,52 +327,52 @@ void Sprite::Draw()
 		pd3dDevice->SetTextureStageState( 0, D3DTSS_MAGFILTER, D3DTEXF_LINEAR );
 		//pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  bBlendAdd ? D3DBLEND_ONE : D3DBLEND_SRCALPHA );
 		//pd3dDevice->SetRenderState( D3DRS_DESTBLEND, bBlendAdd ? D3DBLEND_ONE : D3DBLEND_INVSRCALPHA );
-		pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA );
-		pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
+		pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  m_bBlendAdd ? D3DBLEND_ONE : D3DBLEND_SRCALPHA );
+		pd3dDevice->SetRenderState( D3DRS_DESTBLEND, m_bBlendAdd ? D3DBLEND_ONE : D3DBLEND_INVSRCALPHA );
 
 		pd3dDevice->SetVertexShader( D3DFVF_CUSTOMVERTEX );
 		pd3dDevice->SetStreamSource( 0, pVB, sizeof(CUSTOMVERTEX) );
 
 
 
-		//////////////////////
-		// render the shadow
-		//////////////////////
-		if( m_bHasShadow )
-		{
-			D3DXMATRIX matOriginalWorld, matNewWorld, matTemp;
-		    pd3dDevice->GetTransform( D3DTS_WORLD, &matOriginalWorld );	// save the original world matrix
-			matNewWorld = matOriginalWorld;
-
-			D3DXMatrixTranslation( &matTemp, 5, 5, 0 );	// shift by 5 units
-			matNewWorld = matTemp * matNewWorld;
-			pd3dDevice->SetTransform( D3DTS_WORLD, &matNewWorld );	// transform to local coordinates
-
-			pVB->Lock( 0, 0, (BYTE**)&v, 0 );
-
-			v[0].color = v[1].color = v[2].color = v[3].color = D3DXCOLOR(0,0,0,0.5f*colorDiffuse[0].a);	// semi-transparent black
-			
-			pVB->Unlock();
-
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
-			
-			pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 2 );
-
-			pd3dDevice->SetTransform( D3DTS_WORLD, &matOriginalWorld );	// restore the original world matrix
-
-		}
-
-
-		//////////////////////
-		// render the diffuse pass
-		//////////////////////
 		if( colorDiffuse[0].a != 0 )
 		{
+			//////////////////////
+			// render the shadow
+			//////////////////////
+			if( m_bHasShadow )
+			{
+				D3DXMATRIX matOriginalWorld, matNewWorld, matTemp;
+				pd3dDevice->GetTransform( D3DTS_WORLD, &matOriginalWorld );	// save the original world matrix
+				matNewWorld = matOriginalWorld;
+
+				D3DXMatrixTranslation( &matTemp, 5, 5, 0 );	// shift by 5 units
+				matNewWorld = matTemp * matNewWorld;
+				pd3dDevice->SetTransform( D3DTS_WORLD, &matNewWorld );	// transform to local coordinates
+
+				pVB->Lock( 0, 0, (BYTE**)&v, 0 );
+
+				v[0].color = v[1].color = v[2].color = v[3].color = D3DXCOLOR(0,0,0,0.5f*colorDiffuse[0].a);	// semi-transparent black
+				
+				pVB->Unlock();
+
+				pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+				pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+				pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
+				pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+				pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+				pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
+				
+				pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 2 );
+
+				pd3dDevice->SetTransform( D3DTS_WORLD, &matOriginalWorld );	// restore the original world matrix
+
+			}
+
+
+			//////////////////////
+			// render the diffuse pass
+			//////////////////////
 			pVB->Lock( 0, 0, (BYTE**)&v, 0 );
 
 			v[0].color = colorDiffuse[2];	// bottom left
@@ -422,10 +432,20 @@ void Sprite::SetState( UINT uNewState )
 	m_fSecsIntoState = 0.0; 
 }
 
-void Sprite::SetCustomSrcRect(	FRECT new_texcoord_frect ) 
+void Sprite::SetCustomSrcRect( FRECT new_texcoord_frect ) 
 { 
-	m_bUsingCustomTexCoordRect = true;
-	m_CustomTexCoordRect = new_texcoord_frect; 
+	m_bUsingCustomTexCoords = true;
+	m_CustomTexCoords[0] = new_texcoord_frect.left;		m_CustomTexCoords[1] = new_texcoord_frect.bottom;	// bottom left
+	m_CustomTexCoords[2] = new_texcoord_frect.left;		m_CustomTexCoords[3] = new_texcoord_frect.top;		// top left
+	m_CustomTexCoords[4] = new_texcoord_frect.right;	m_CustomTexCoords[5] = new_texcoord_frect.bottom;	// bottom right
+	m_CustomTexCoords[6] = new_texcoord_frect.right;	m_CustomTexCoords[7] = new_texcoord_frect.top;		// top right
+
 }
 
+void Sprite::SetCustomTexCoords( float fTexCoords[8] ) // order: bottom left, top left, bottom right, top right
+{ 
+	m_bUsingCustomTexCoords = true;
+	for( int i=0; i<8; i++ )
+		m_CustomTexCoords[i] = fTexCoords[i]; 
+}
 

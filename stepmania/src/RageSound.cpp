@@ -36,7 +36,7 @@ RageSound::RageSound( HWND hWnd )
 The most likely cause of this problem is that you do not have a sound card\n\
 installed, or that you have not yet installed a driver for your sound card.\n\
 Before running this program again, please verify that your sound card is\n\
-is working in other Windows applications.", "Error - Need updated video driver", MB_ICONSTOP );
+is working in other Windows applications.", "Sound error", MB_ICONSTOP );
 		RageError( "BASS can't initialize sound device." );
 	}
 
@@ -59,6 +59,7 @@ HSAMPLE RageSound::LoadSample( const CString sFileName )
 	if( hSample == NULL )
 		RageError( ssprintf("RageSound::LoadSound: error loading %s (error code %d)", 
 								               sFileName, BASS_ErrorGetCode()) );
+	
 	return hSample;
 }
 
@@ -69,8 +70,12 @@ void RageSound::UnloadSample( HSAMPLE hSample )
 
 void RageSound::PlaySample( HSAMPLE hSample )
 {
-	if( FALSE == BASS_SamplePlay( hSample ) )
+	HCHANNEL hChannel = BASS_SamplePlay( hSample );
+	if( hChannel == NULL )
 		RageError( "There was an error playing a sound sample.  Are you sure this is a valid HSAMPLE?" );
+	
+	DWORD dwPosition = BASS_ChannelGetPosition( hChannel );
+	RageLog( "First BASS_ChannelGetPosition: %d", dwPosition );
 }
 
 void RageSound::StopSample( HSAMPLE hSample )
@@ -87,6 +92,7 @@ float RageSound::GetSampleLength( HSAMPLE hSample )
 float RageSound::GetSamplePosition( HSAMPLE hSample )
 {
 	DWORD dwPosition = BASS_ChannelGetPosition( hSample );
+	RageLog( "BASS_ChannelGetPosition: %d", dwPosition );
 	float fSeconds = BASS_ChannelBytes2Seconds( hSample, dwPosition );
 //	fSeconds += 0.05f;		// fudge number.  Should use a BASS_SYNC to sync the music.
 	return fSeconds;

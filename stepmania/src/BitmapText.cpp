@@ -57,14 +57,32 @@ bool BitmapText::LoadCharWidths( CString sWidthFilePath )
 
 // get a rectangle for the text, considering a possible text scaling.
 // useful to know if some text is visible or not
-float BitmapText::GetWidthInSourcePixels()
+float BitmapText::GetWidestLineWidthInSourcePixels()
 {
-	float fTextWidth = 0;
-	
-	for( int i=0; i<m_sText.GetLength(); i++ )
-		fTextWidth += m_fCharWidthsInSourcePixels[ m_sText[i] ];
+	float fWidestLineWidth = 0;
 
-	return fTextWidth;
+	for( int i=0; i<m_sTextLines.GetSize(); i++ )
+	{
+		float fLineWidth = GetLineWidthInSourcePixels(i);
+		
+		if( fLineWidth > fWidestLineWidth )
+			fWidestLineWidth = fLineWidth;
+	}
+
+	return fWidestLineWidth;
+}
+
+
+float BitmapText::GetLineWidthInSourcePixels( int iLineNo )
+{
+	CString &sText = m_sTextLines[iLineNo];
+
+	float fLineWidth = 0;
+	
+	for( int j=0; j<sText.GetLength(); j++ )
+		fLineWidth += m_fCharWidthsInSourcePixels[ sText[j] ];
+
+	return fLineWidth;
 }
 
 
@@ -72,35 +90,32 @@ float BitmapText::GetWidthInSourcePixels()
 // draw text at x, y using colorTop blended down to colorBottom, with size multiplied by scale
 void BitmapText::Draw()
 {
-	// some basic properties of the text
-	float fTextWidthInSourcePixels = GetWidthInSourcePixels();
-	float fTextWidth = fTextWidthInSourcePixels* GetZoom();
-	float fFrameWidth = GetZoomedWidth();
+	if( m_sTextLines.GetSize() == 0 )
+		return;
+
+	// save the properties now so we can restore them at the end
+	float fOriginalX = GetX();
+	float fOriginalY = GetY();
+
+	
 
 
-/*	
-	if( m_bHasShadow )
+	float fHeight = Sprite::GetZoomedHeight();
+
+	for( int i=0; i<m_sTextLines.GetSize(); i++ )
 	{
-		// do a pass for the shadow
+		CString &sText = m_sTextLines[i];
+		float fY = fOriginalY + fHeight * i - (m_sTextLines.GetSize()-1) * fHeight / 2;
+		float fLineWidth = GetLineWidthInSourcePixels(i) * GetZoomX();
 
-		float fOriginalX = GetX();
-		float fOriginalY = GetY();
-		D3DXCOLOR colorOriginalDiffuse[4];
-		for( int i=0; i<4; i++ )
-			colorOriginalDiffuse[i] = GetDiffuseColors(i);
-		D3DXCOLOR colorOriginalAdd = GetAddColor();
-
-		float fX = fOriginalX - (fTextWidth/2) + 10;
-		float fY = fOriginalY + 10;
+		float fX = fOriginalX - (fLineWidth/2);
 
 		SetY( fY );
-		SetDiffuseColor( D3DXCOLOR(0,0,0,0) );	// transparent
-		SetAddColor( D3DXCOLOR(0,0,0,0.5f) );	// semi-transparent black
 
-
-		for( i=0; i<m_sText.GetLength(); i++ ) {
-			char c = m_sText[i];
-			float fCharWidthZoomed = m_fCharWidthsInSourcePixels[c] * GetZoom();
+		for( int j=0; j<sText.GetLength(); j++ ) 
+		{
+			char c = sText[j];
+			float fCharWidthZoomed = m_fCharWidthsInSourcePixels[c] * GetZoomX();
 			SetState( c );
 			fX += fCharWidthZoomed/2;
 			SetX( fX );
@@ -108,32 +123,21 @@ void BitmapText::Draw()
 			fX += fCharWidthZoomed/2;
 		}
 
-		// set properties back to original
-		SetX( fOriginalX );
-		SetY( fOriginalY );
-		for( i=0; i<4; i++ )
-			SetDiffuseColors( i, colorOriginalDiffuse[i] );
-		SetAddColor( colorOriginalAdd );
-	}
-*/
-
-
-	// draw the text
-
-	float fCenterX = GetX();
-	float fX = fCenterX - (fTextWidth/2);
-
-
-	for( int i=0; i<m_sText.GetLength(); i++ ) {
-		char c = m_sText[i];
-		float fCharWidthZoomed = m_fCharWidthsInSourcePixels[c] * GetZoom();
-		SetState( c );
-		fX += fCharWidthZoomed/2;
-		SetX( fX );
-		Sprite::Draw();
-		fX += fCharWidthZoomed/2;
 	}
 
-	// set properties back to original
-	SetX( fCenterX );
+	// reset properties to what they were before this function 
+	SetX( fOriginalX );
+	SetY( fOriginalY );
+
+}
+
+void BitmapText::SetText( CString sText )
+{ 
+	m_sTextLines.RemoveAll(); 
+	split( sText, "\n", m_sTextLines, false );
+}
+
+CString BitmapText::GetText() 
+{ 
+	return join( "\n", m_sTextLines ); 
 }

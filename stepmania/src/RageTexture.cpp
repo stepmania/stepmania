@@ -78,6 +78,42 @@ void RageTexture::CreateFrameRects()
 #include "string.h"
 void RageTexture::GetFrameDimensionsFromFileName( CString sPath, UINT* puFramesWide, UINT* puFramesHigh ) const
 {
+	*puFramesWide = *puFramesHigh = 1;	// initialize in case we don't find dimensions in the file name
+
+	sPath.MakeLower();
+	if( sPath.Find("max300.png") != -1 )
+		int kljds = 3;
+
+	CString sDir, sFName, sExt;
+	splitrelpath( sPath, sDir, sFName, sExt);
+
+	CStringArray sFileNameBits;
+	split( sFName, " ", sFileNameBits, false );
+
+	if( sFileNameBits.GetSize() < 2 )
+		return;		// there can't be dimensions in the file name if there's no space
+
+	CString sDimensionsPart = sFileNameBits[ sFileNameBits.GetSize()-1 ];	// looks like "10x5"
+
+	CStringArray sDimensionsBits;
+	split( sDimensionsPart, "x", sDimensionsBits, false );
+
+	if( sDimensionsBits.GetSize() != 2 )
+	{
+		return;
+	}
+	else
+	{
+		if( !IsAnInt(sDimensionsBits[0]) || !IsAnInt(sDimensionsBits[1]) )
+			return;
+
+		*puFramesWide = atoi(sDimensionsBits[0]);
+		*puFramesHigh = atoi(sDimensionsBits[1]);
+		return;
+	}
+
+
+	/*
 	//////////////////////////////////////////////////
 	// Parse m_sFilePath for the frame dimensions
 	//
@@ -94,7 +130,7 @@ void RageTexture::GetFrameDimensionsFromFileName( CString sPath, UINT* puFramesW
 	}
 	sDimensionsString = sDimensionsString.Left(index_of_last_period);
 
-	// chop off everything before the last space
+	// chop off everything before and including the last space
 	int index_of_last_space = sDimensionsString.ReverseFind( ' ' );
 	if( index_of_last_space == -1 )	// this file name has space, so the dimensions tag cannot be read
 	{
@@ -118,4 +154,5 @@ void RageTexture::GetFrameDimensionsFromFileName( CString sPath, UINT* puFramesW
 	
 	if( *puFramesWide == 0 )	*puFramesWide = 1;
 	if( *puFramesHigh == 0 )	*puFramesHigh = 1;
+	*/
 }

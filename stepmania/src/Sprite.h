@@ -44,10 +44,13 @@ public:
 
 
 	void SetCustomSrcRect( FRECT new_texcoord_frect );	// for cropping
+	void SetCustomTexCoords( float fTexCoords[8] );
 
 	void TurnShadowOn()		{ m_bHasShadow = true; };
 	void TurnShadowOff()	{ m_bHasShadow = false; };
 
+	void SetBlendModeAdd() 		{ m_bBlendAdd = true; }; 
+	void SetBlendModeNormal() 	{ m_bBlendAdd = false; };
 
 protected:
 	void Init();
@@ -65,10 +68,13 @@ protected:
 	bool	m_bIsAnimating;
 	float	m_fSecsIntoState;	// number of seconds that have elapsed since we switched to this frame
 
-	bool m_bUsingCustomTexCoordRect;
-	FRECT m_CustomTexCoordRect;
+	bool m_bUsingCustomTexCoords;
+	//FRECT m_CustomTexCoordRect;
+	float m_CustomTexCoords[8];	// (x,y) * 4
 
 	bool	m_bHasShadow;
+
+	bool	m_bBlendAdd;
 };
 
 

@@ -23,7 +23,8 @@ const float FADE_RECT_WIDTH		=	SCREEN_WIDTH/2;
 
 TransitionFadeWipe::TransitionFadeWipe()
 {
-	
+	m_sprLogo.LoadFromTexture( "Textures\\Logo dots.png" );
+	m_sprLogo.SetXY( CENTER_X, CENTER_Y );
 }
 
 TransitionFadeWipe::~TransitionFadeWipe()
@@ -70,6 +71,12 @@ void TransitionFadeWipe::Draw()
 		D3DXCOLOR(0,0,0,1),	// down left
 		D3DXCOLOR(0,0,0,0) 	// down right
 		);
+
+	bool bIsOpening = m_TransitionState == opening_left || m_TransitionState == opening_right;
+	float fLogoAlpha = bIsOpening ? (1-fPercentComplete)*3-2 : fPercentComplete*3-2;
+	m_sprLogo.SetDiffuseColor( D3DXCOLOR(1,1,1,fLogoAlpha) );
+	m_sprLogo.Draw();
+
 }
 
 

@@ -20,9 +20,11 @@
 #include "ColorArrow.h"
 #include "GrayArrow.h"
 #include "GhostArrow.h"
+#include "GhostArrowBright.h"
 #include "HoldGhostArrow.h"
 #include "Player.h"
 #include "ActorFrame.h"
+#include "SoundSet.h"
 
 
 
@@ -38,6 +40,7 @@ public:
 	void SetSteps( const Steps& newSteps, bool bLoadOnlyLeftSide = false, bool bLoadOnlyRightSide = false );
 	void SetX( float fX );
 	void Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference );
+	void CrossedIndex( int iIndex );
 	void Draw();
 
 
@@ -97,6 +100,7 @@ protected:
 	void DrawGhostArrows();
 	void GhostArrowStep( int iCol, StepScore score );
 	GhostArrow	m_GhostArrow[MAX_NUM_COLUMNS];
+	GhostArrowBright	m_GhostArrowBright[MAX_NUM_COLUMNS];
 	HoldGhostArrow	m_HoldGhostArrow[MAX_NUM_COLUMNS];
 
 	// holder for judgement and combo displays
@@ -110,7 +114,7 @@ protected:
 	float		m_fJudgementDisplayCountdown;
 	Sprite		m_sprJudgement;
 
-	void SetHoldJudgement( int iCol, HoldStepScore score );
+	void SetHoldJudgement( int iCol, HoldStepScore::HoldScore score );
 	float		m_fHoldJudgementDisplayCountdown[MAX_NUM_COLUMNS];
 	Sprite		m_sprHoldJudgement[MAX_NUM_COLUMNS];
 
@@ -118,7 +122,8 @@ protected:
 	void SetComboX( int iX );
 	void UpdateCombo( float fDeltaTime );
 	void DrawCombo();
-	void SetCombo( int iNum );
+	void ContinueCombo();
+	void EndCombo();
 	bool		m_bComboVisible;
 	Sprite		m_sprCombo;
 	SpriteSequence	m_ComboNumber;
@@ -143,6 +148,9 @@ private:
 	float		m_fScore;
 	Sprite		m_sprScoreFrame;
 	SpriteSequence	m_ScoreNumber;
+
+	// assist
+	SoundSet m_soundAssistTick;
 
 };
 

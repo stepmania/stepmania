@@ -48,7 +48,7 @@ CTextureRenderer::CTextureRenderer( LPUNKNOWN pUnk, HRESULT *phr )
 {
     // Store and ARageef the texture for our use.
 	m_pTexture = NULL;
-	m_bLocked = FALSE;
+	m_bLocked[0] = m_bLocked[1] = FALSE;
     *phr = S_OK;
 }
 
@@ -170,7 +170,7 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
         return E_FAIL;
 	}
     
-	m_bLocked = TRUE;
+	m_bLocked[m_pTexture->m_iIndexActiveTexture] = TRUE;
 
     // Get the texture buffer & pitch
     pTxtBuffer = static_cast<byte *>(d3dlr.pBits);
@@ -222,7 +222,7 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
         return E_FAIL;
 	}
 
-	m_bLocked = FALSE;
+	m_bLocked[m_pTexture->m_iIndexActiveTexture] = FALSE;
     
 
 	// flip active texture

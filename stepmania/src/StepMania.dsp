@@ -176,6 +176,14 @@ SOURCE=.\Window.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\WindowCaution.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowCaution.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\WindowConfigurePads.cpp
 # End Source File
 # Begin Source File
@@ -356,6 +364,14 @@ SOURCE=.\BlurredTitle.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\BPMDisplay.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\BPMDisplay.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ColorArrow.cpp
 # End Source File
 # Begin Source File
@@ -377,6 +393,14 @@ SOURCE=.\GhostArrow.cpp
 # Begin Source File
 
 SOURCE=.\GhostArrow.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GhostArrowBright.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GhostArrowBright.h
 # End Source File
 # Begin Source File
 
@@ -565,6 +589,14 @@ SOURCE=.\TransitionFadeWipe.cpp
 # Begin Source File
 
 SOURCE=.\TransitionFadeWipe.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\TransitionFadeWipeWithLogo.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\TransitionFadeWipeWithLogo.h
 # End Source File
 # Begin Source File
 

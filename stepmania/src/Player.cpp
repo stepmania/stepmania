@@ -178,6 +178,7 @@ Player::Player( PlayerOptions po, PlayerNumber pn )
 	for( int c=0; c < MAX_NUM_COLUMNS; c++ ) {
 		m_GrayArrow[c].SetRotation( m_ColumnToRotation[c] );
 		m_GhostArrow[c].SetRotation( m_ColumnToRotation[c] );
+		m_GhostArrowBright[c].SetRotation( m_ColumnToRotation[c] );
 		m_HoldGhostArrow[c].SetRotation( m_ColumnToRotation[c] );
 		m_ColorArrow[c].SetRotation( m_ColumnToRotation[c] );
 	}
@@ -229,8 +230,12 @@ Player::Player( PlayerOptions po, PlayerNumber pn )
 	m_ScoreNumber.SetSequence( "         " );
 
 
-
 	SetX( CENTER_X );
+
+
+	// assist
+	m_soundAssistTick.AddSound( "Sounds\\Assist Tick.wav" );
+
 }
 
 
@@ -417,6 +422,7 @@ void Player::SetSteps( const Steps& newSteps, bool bLoadOnlyLeftSide, bool bLoad
 	{
 		HoldStep &oldHoldStep = tempHoldSteps[i];
 		HoldStep newHoldStep = oldHoldStep;
+		newHoldStep.m_Step = STEP_NONE;
 
 		for( int j=0; j<12; j++ )
 		{
@@ -425,9 +431,24 @@ void Player::SetSteps( const Steps& newSteps, bool bLoadOnlyLeftSide, bool bLoad
 		}
 		
 		m_HoldSteps.Add( newHoldStep );
-		m_HoldStepScores.Add( HOLD_SCORE_NONE );
+		m_HoldStepScores.Add( HoldStepScore() );
 	}
 
+
+	// filter out all non-quarter notes if little is enabled
+	if( m_PlayerOptions.m_bLittle )
+	{
+		for( i=0; i<MAX_STEP_ELEMENTS; i++ ) 
+		{
+			if( i%ELEMENTS_PER_BEAT != 0 )
+			{
+				m_OriginalStep[i] = STEP_NONE;
+				m_LeftToStepOn[i] = STEP_NONE;
+			}
+		}
+
+		// leave HoldSteps unchanged
+	}
 }
 
 void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference )
@@ -441,8 +462,7 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 	if( iNumMisses > 0 )
 	{
 		SetJudgement( miss );
-		m_iCurCombo = 0;
-		SetCombo( 0 );
+		EndCombo();
 		for( int i=0; i<iNumMisses; i++ )
 			ChangeLife( miss );
 	}
@@ -455,8 +475,8 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 		float fStartBeat = StepIndexToBeat( hs.m_iStartIndex );
 		float fEndBeat = StepIndexToBeat( hs.m_iEndIndex );
 
-		// update the "electric arrow"
-		if( m_HoldStepScores[i] == HOLD_STEPPED_ON  &&	// this hold doesn't already have a score
+		// update the "electric ghost arrow"
+		if( m_HoldStepScores[i].m_HoldScore == HoldStepScore::HOLD_STEPPED_ON  &&	// this hold doesn't already have a score
 			fStartBeat < m_fSongBeat && m_fSongBeat < fEndBeat )	// if the song beat is in the range of this hold
 		{
 			PlayerInput PlayerI = { m_PlayerNumber, hs.m_Step };
@@ -468,15 +488,15 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 		}
 
 		// update the logic
-		if( (m_HoldStepScores[i] == HOLD_SCORE_NONE  ||  m_HoldStepScores[i] == HOLD_STEPPED_ON)  &&	// this hold doesn't already have a score
+		if( (m_HoldStepScores[i].m_HoldScore == HoldStepScore::HOLD_SCORE_NONE  ||  m_HoldStepScores[i].m_HoldScore == HoldStepScore::HOLD_STEPPED_ON)  &&	// this hold doesn't already have a score
 			fStartBeat+fMaxBeatDifference/2 < m_fSongBeat && m_fSongBeat < fEndBeat-fMaxBeatDifference/2 )	// if the song beat is in the range of this hold
 		{
 			PlayerInput PlayerI = { m_PlayerNumber, hs.m_Step };
 			if( !GAMEINFO->IsButtonDown( PlayerI ) )		// they're not holding the button down
 			{
-				m_HoldStepScores[i] = HOLD_SCORE_NG;
+				m_HoldStepScores[i].m_HoldScore = HoldStepScore::HOLD_SCORE_NG;
 				int iCol = m_StepToColumnNumber[ hs.m_Step ];
-				SetHoldJudgement( iCol, HOLD_SCORE_NG );
+				SetHoldJudgement( iCol, HoldStepScore::HOLD_SCORE_NG );
 			}
 		}
 	}
@@ -488,11 +508,11 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 		float fEndBeat = StepIndexToBeat( hs.m_iEndIndex );
 
 		if(  m_fSongBeat > fEndBeat  &&					// if this hold step is in the past
-			m_HoldStepScores[i] == HOLD_STEPPED_ON )	// and it doesn't yet have a score
+			m_HoldStepScores[i].m_HoldScore == HoldStepScore::HOLD_STEPPED_ON )	// and it doesn't yet have a score
 		{
-			m_HoldStepScores[i] = HOLD_SCORE_OK;
+			m_HoldStepScores[i].m_HoldScore = HoldStepScore::HOLD_SCORE_OK;
 			int iCol = m_StepToColumnNumber[ hs.m_Step ];
-			SetHoldJudgement( iCol, HOLD_SCORE_OK );
+			SetHoldJudgement( iCol, HoldStepScore::HOLD_SCORE_OK );
 		}
 	}
 
@@ -508,6 +528,29 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 
 	m_frameJudgementAndCombo.Update( fDeltaTime );
 }
+
+void Player::CrossedIndex( int iIndex )
+{
+	if( GAMEINFO->m_SongOptions.m_AssistType == SongOptions::ASSIST_TICK )
+	{
+		bool bThereIsANoteThisIndex = false;
+
+		bThereIsANoteThisIndex |= (m_OriginalStep[iIndex] != STEP_NONE);
+
+		for( int i=0; i<m_HoldSteps.GetSize(); i++ )
+		{
+			if( m_HoldSteps[i].m_iStartIndex == iIndex )
+			{
+				bThereIsANoteThisIndex |= true;
+				break;
+			}
+		}
+
+		if( bThereIsANoteThisIndex )
+			m_soundAssistTick.PlayRandom();
+	}
+}
+
 
 void Player::Draw()
 {
@@ -537,15 +580,58 @@ void Player::HandlePlayerStep( float fSongBeat, Step player_step, float fMaxBeat
 	int iCurrentIndex = BeatToStepIndex( fSongBeat );
 	for( int i=0; i<m_HoldSteps.GetSize(); i++ )	// for each HoldStep
 	{
-		if( m_HoldStepScores[i] == HOLD_SCORE_NONE  &&	// this has not already been stepped on
-			player_step == m_HoldSteps[i].m_Step )		// player steps in the same note as the hold
+		if( m_HoldStepScores[i].m_HoldScore == HoldStepScore::HOLD_SCORE_NONE  &&	// this has not already been stepped on
+			player_step == m_HoldSteps[i].m_Step )		// player steps is the same note as the hold
 		{
 			HoldStep &hs = m_HoldSteps[i];
 			int iIndexDifference = abs( hs.m_iStartIndex - iCurrentIndex );
 			int iMaxIndexDiff = BeatToStepIndex( fMaxBeatDiff );
 			
 			if( iIndexDifference <= iMaxIndexDiff )
-				m_HoldStepScores[i] = HOLD_STEPPED_ON;
+			{
+				m_HoldStepScores[i].m_HoldScore = HoldStepScore::HOLD_STEPPED_ON;
+ 
+				float fBeatsUntilStep = StepIndexToBeat(hs.m_iStartIndex) - fSongBeat;
+				float fPercentFromPerfect = (float)fabs( fBeatsUntilStep / fMaxBeatDiff );
+
+				//RageLog( "fBeatsUntilStep: %f, fPercentFromPerfect: %f", 
+				//		 fBeatsUntilStep, fPercentFromPerfect );
+
+				// compute what the score should be for the note we stepped on
+				StepScore &stepscore = m_HoldStepScores[i].m_StepScore;
+
+				if(		 fPercentFromPerfect < 0.25f )	stepscore = perfect;
+				else if( fPercentFromPerfect < 0.50f )	stepscore = great;
+				else if( fPercentFromPerfect < 0.75f )	stepscore = good;
+				else									stepscore = boo;
+
+				// update the judgement, score, and life
+				SetJudgement( stepscore );
+				ChangeScore( stepscore, m_iCurCombo );
+				ChangeLife( stepscore );
+
+				// show the gray arrow ghost
+				for( int c=0; c < m_iNumColumns; c++ )	// for each arrow column
+				{
+					if( m_HoldSteps[i].m_Step & m_ColumnNumberToStep[c] )	// this column matches the step
+						GhostArrowStep( c, stepscore );
+				}
+
+				// update the combo display
+				switch( stepscore )
+				{
+				case perfect:
+				case great:
+					ContinueCombo();
+					break;
+				case good:
+				case boo:	
+					EndCombo();
+					break;
+				}
+
+
+			}
 		}
 	}
 
@@ -636,11 +722,11 @@ void Player::OnCompleteStep( float fSongBeat, Step player_step, float fMaxBeatDi
 	{
 	case perfect:
 	case great:
-		SetCombo( m_iCurCombo+1 );	// combo continuing
+		ContinueCombo();
 		break;
 	case good:
 	case boo:	
-		SetCombo( 0 );		// combo stopped
+		EndCombo();
 		break;
 	}
 }
@@ -689,6 +775,23 @@ ScoreSummary Player::GetScoreSummary()
 		case none:									break;
 		}
 	}
+	for( i=0; i<m_HoldStepScores.GetSize(); i++ ) 
+	{
+		switch( m_HoldStepScores[i].m_StepScore )
+		{
+		case perfect:	scoreSummary.perfect++;		break;
+		case great:		scoreSummary.great++;		break;
+		case good:		scoreSummary.good++;		break;
+		case boo:		scoreSummary.boo++;			break;
+		case miss:		scoreSummary.miss++;		break;
+		case none:									break;
+		}
+		switch( m_HoldStepScores[i].m_HoldScore )
+		{
+		case HoldStepScore::HOLD_SCORE_NG:	scoreSummary.ng++;		break;
+		case HoldStepScore::HOLD_SCORE_OK:	scoreSummary.ok++;		break;
+		}
+	}
 	scoreSummary.max_combo = m_iMaxCombo;
 	scoreSummary.score = m_fScore;
 	
@@ -713,6 +816,7 @@ void Player::UpdateGhostArrows( float fDeltaTime )
 {
 	for( int i=0; i < m_iNumColumns; i++ ) {
 		m_GhostArrow[i].Update( fDeltaTime );
+		m_GhostArrowBright[i].Update( fDeltaTime );
 		m_HoldGhostArrow[i].Update( fDeltaTime );
 	}
 }
@@ -732,6 +836,8 @@ void Player::DrawGhostArrows()
 	{
 		m_GhostArrow[i].SetBeat( m_fSongBeat );
 		m_GhostArrow[i].Draw();
+		m_GhostArrowBright[i].SetBeat( m_fSongBeat );
+		m_GhostArrowBright[i].Draw();
 		m_HoldGhostArrow[i].SetBeat( m_fSongBeat );
 		m_HoldGhostArrow[i].Draw();
 	}
@@ -754,6 +860,7 @@ void Player::SetGhostArrowsX( int iNewX )
 		float fY = GetGrayArrowYPos();
 		if( m_PlayerOptions.m_bReverseScroll )	fY = SCREEN_HEIGHT - fY;
 		m_GhostArrow[i].SetXY(  GetArrowColumnX(i), fY );
+		m_GhostArrowBright[i].SetXY(  GetArrowColumnX(i), fY );
 		m_HoldGhostArrow[i].SetXY(  GetArrowColumnX(i), fY );
 	}
 }
@@ -771,7 +878,10 @@ void Player::GrayArrowStep( int index, StepScore score )
 
 void Player::GhostArrowStep( int index, StepScore score )
 {
-	m_GhostArrow[index].Step( score );		
+	if( m_iCurCombo >= 100 )
+		m_GhostArrowBright[index].Step( score );		
+	else
+		m_GhostArrow[index].Step( score );		
 }
 
 void Player::UpdateColorArrows( float fDeltaTime )
@@ -839,6 +949,7 @@ void Player::DrawColorArrows()
 	{
 		HoldStep &hs = m_HoldSteps[i];
 
+		// check if this entire hold step is on the screen
 		if( !( iIndexFirstArrowToDraw <= hs.m_iEndIndex && hs.m_iEndIndex <= iIndexLastArrowToDraw  ||
 			   iIndexFirstArrowToDraw <= hs.m_iStartIndex  && hs.m_iStartIndex <= iIndexLastArrowToDraw  ||
 			   hs.m_iStartIndex < iIndexFirstArrowToDraw && hs.m_iEndIndex > iIndexLastArrowToDraw ) )
@@ -846,19 +957,19 @@ void Player::DrawColorArrows()
 			continue;
 		}
 
-		HoldStepScore &score = m_HoldStepScores[i];
+		HoldStepScore::HoldScore &score = m_HoldStepScores[i].m_HoldScore;
 
 		int iColNum = m_StepToColumnNumber[ hs.m_Step ];
 
 		switch( score )
 		{
-		case HOLD_SCORE_OK:
+		case HoldStepScore::HOLD_SCORE_OK:
 			continue;	// don't draw
-		case HOLD_SCORE_NONE:
-		case HOLD_SCORE_NG:
+		case HoldStepScore::HOLD_SCORE_NONE:
+		case HoldStepScore::HOLD_SCORE_NG:
 			m_ColorArrow[iColNum].SetGrayPartClear();
 			break;
-		case HOLD_STEPPED_ON:
+		case HoldStepScore::HOLD_STEPPED_ON:
 			m_ColorArrow[iColNum].SetGrayPartFull();
 			break;
 		}
@@ -866,14 +977,22 @@ void Player::DrawColorArrows()
 		// draw the gray parts
 		for( int j=hs.m_iEndIndex; j>=hs.m_iStartIndex; j-- )	// for each arrow in this freeze
 		{
+			// check if this hold step is off the the screen
+			if( j < iIndexFirstArrowToDraw || iIndexLastArrowToDraw < j)
+				continue;	// skip this arrow
+
+
 			float fYOffset = GetColorArrowYOffset( j, m_fSongBeat );
-			float fAlpha = GetColorArrowAlphaFromYOffset( fYOffset );
 
 			float fYPos = GetColorArrowYPos( j, m_fSongBeat );
-			if( score == HOLD_STEPPED_ON  ||  score == HOLD_SCORE_OK )
-				fYPos = max( fYPos, GetGrayArrowYPos() );
+			if( score == HoldStepScore::HOLD_STEPPED_ON  ||  score == HoldStepScore::HOLD_SCORE_OK )
+			{
+				if( fYPos < GetGrayArrowYPos() )
+					continue;		// don't draw
+			}
 			if( m_PlayerOptions.m_bReverseScroll )	fYPos = SCREEN_HEIGHT - fYPos;
 			m_ColorArrow[iColNum].SetY( fYPos );
+			float fAlpha = GetColorArrowAlphaFromYOffset( fYOffset );
 			m_ColorArrow[iColNum].SetAlpha( fAlpha );
 			m_ColorArrow[iColNum].DrawGrayPart();
 		}
@@ -881,17 +1000,24 @@ void Player::DrawColorArrows()
 		// draw the color parts
 		for( j=hs.m_iEndIndex; j>=hs.m_iStartIndex; j-- )	// for each arrow in this freeze
 		{
+			// check if this hold step is off the the screen
+			if( j < iIndexFirstArrowToDraw || iIndexLastArrowToDraw < j)
+				continue;	// skip this arrow
+
 			float fYOffset = GetColorArrowYOffset( j, m_fSongBeat );
-			float fAlpha = GetColorArrowAlphaFromYOffset( fYOffset );
 	
 			float fYPos = GetColorArrowYPos( j, m_fSongBeat );
 			m_ColorArrow[iColNum].SetY( fYPos );
-			if( score == HOLD_STEPPED_ON  ||  score == HOLD_SCORE_OK )
-				fYPos = max( fYPos, GetGrayArrowYPos() );
+			if( score == HoldStepScore::HOLD_STEPPED_ON  ||  score == HoldStepScore::HOLD_SCORE_OK )
+			{
+				if( fYPos < GetGrayArrowYPos() )
+					continue;		// don't draw
+			}
 			if( m_PlayerOptions.m_bReverseScroll )	fYPos = SCREEN_HEIGHT - fYPos;
 			m_ColorArrow[iColNum].SetY( fYPos );
 			D3DXCOLOR color( (float)(j-hs.m_iStartIndex)/(float)(hs.m_iEndIndex-hs.m_iStartIndex), 1, 0, 1 );	// color shifts from green to yellow
 			m_ColorArrow[iColNum].SetDiffuseColor( color );	
+			float fAlpha = GetColorArrowAlphaFromYOffset( fYOffset );
 			m_ColorArrow[iColNum].SetAlpha( fAlpha );
 			m_ColorArrow[iColNum].DrawColorPart();
 		}
@@ -900,15 +1026,15 @@ void Player::DrawColorArrows()
 		j = hs.m_iStartIndex;
 
 		float fYOffset = GetColorArrowYOffset( j, m_fSongBeat );
-		float fAlpha = GetColorArrowAlphaFromYOffset( fYOffset );
 		float fYPos = GetColorArrowYPos( j, m_fSongBeat );
-		if( score == HOLD_STEPPED_ON  ||  score == HOLD_SCORE_OK )
+		if( score == HoldStepScore::HOLD_STEPPED_ON  ||  score == HoldStepScore::HOLD_SCORE_OK )
 			fYPos = max( fYPos, GetGrayArrowYPos() );
 		if( m_PlayerOptions.m_bReverseScroll )	fYPos = SCREEN_HEIGHT - fYPos;
 		m_ColorArrow[iColNum].SetY( fYPos );
 		m_ColorArrow[iColNum].SetIndexAndBeat( i, m_fSongBeat );
 		D3DXCOLOR color( 0, 1, 0, 1 );	// color shifts from green to yellow
 		m_ColorArrow[iColNum].SetDiffuseColor( color );
+		float fAlpha = GetColorArrowAlphaFromYOffset( fYOffset );
 		m_ColorArrow[iColNum].SetAlpha( fAlpha );
 		m_ColorArrow[iColNum].Draw();
 
@@ -983,7 +1109,6 @@ float Player::GetGrayArrowYPos()
 {
 	return GRAY_ARROW_Y;
 }
-
 
 
 
@@ -1075,20 +1200,20 @@ void Player::SetJudgement( StepScore score )
 	}
 }
 
-void Player::SetHoldJudgement( int iCol, HoldStepScore score )
+void Player::SetHoldJudgement( int iCol, HoldStepScore::HoldScore score )
 {
 	//RageLog( "Judgement::SetJudgement()" );
 
 	switch( score )
 	{
-	case HOLD_SCORE_NONE:	m_sprHoldJudgement[iCol].SetState( 0 );	break;	// freeze!
-	case HOLD_SCORE_OK:		m_sprHoldJudgement[iCol].SetState( 7 );	break;
-	case HOLD_SCORE_NG:		m_sprHoldJudgement[iCol].SetState( 8 );	break;
+	case HoldStepScore::HOLD_SCORE_NONE:	m_sprHoldJudgement[iCol].SetState( 0 );	break;	// freeze!
+	case HoldStepScore::HOLD_SCORE_OK:		m_sprHoldJudgement[iCol].SetState( 7 );	break;
+	case HoldStepScore::HOLD_SCORE_NG:		m_sprHoldJudgement[iCol].SetState( 8 );	break;
 	}
 
 	m_fHoldJudgementDisplayCountdown[iCol] = JUDGEMENT_DISPLAY_TIME;
 
-	if( score == HOLD_SCORE_NG ) {	// falling down
+	if( score == HoldStepScore::HOLD_SCORE_NG ) {	// falling down
 		float fY = HOLD_JUDGEMENT_Y;
 		if( m_PlayerOptions.m_bReverseScroll )	fY = SCREEN_HEIGHT - fY;
 		m_sprHoldJudgement[iCol].SetY( fY - 10 );
@@ -1133,15 +1258,15 @@ void Player::DrawCombo()
 }
 
 
-void Player::SetCombo( int iNewCombo )
+void Player::ContinueCombo()
 {
+	m_iCurCombo++;
+
 	// new max combo
-	if( iNewCombo > m_iMaxCombo )
-		m_iMaxCombo = iNewCombo;
+	if( m_iCurCombo > m_iMaxCombo )
+		m_iMaxCombo = m_iCurCombo;
 
-	m_iCurCombo = iNewCombo;
-
-	if( iNewCombo <= 4 )
+	if( m_iCurCombo <= 4 )
 	{
 		m_ComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
 		m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
@@ -1151,8 +1276,8 @@ void Player::SetCombo( int iNewCombo )
 		m_ComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	// visible
 		m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	// visible
 
-		m_ComboNumber.SetSequence( ssprintf("%d", iNewCombo) );
-		float fNewZoom = 0.5f + iNewCombo/800.0f;
+		m_ComboNumber.SetSequence( ssprintf("%d", m_iCurCombo) );
+		float fNewZoom = 0.5f + m_iCurCombo/800.0f;
 		m_ComboNumber.SetZoom( fNewZoom ); 
 		m_ComboNumber.SetX( -40 - (fNewZoom-1)*30 ); 
 		m_ComboNumber.SetY( m_PlayerOptions.m_bReverseScroll ? -JUDGEMENT_Y_OFFSET : JUDGEMENT_Y_OFFSET ); 
@@ -1160,6 +1285,14 @@ void Player::SetCombo( int iNewCombo )
 		//m_ComboNumber.BeginTweening( COMBO_TWEEN_TIME );
 		//m_ComboNumber.SetTweenZoom( 1 );
 	}
+}
+
+void Player::EndCombo()
+{
+	m_iCurCombo = 0;
+
+	m_ComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
+	m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
 
 }
 

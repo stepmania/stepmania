@@ -64,6 +64,18 @@ CString DeviceInput::GetDescription()
 		case JOY_10:	sReturn += "10";	break;
 		case JOY_11:	sReturn += "11";	break;
 		case JOY_12:	sReturn += "12";	break;
+		case JOY_13:	sReturn += "13";	break;
+		case JOY_14:	sReturn += "14";	break;
+		case JOY_15:	sReturn += "15";	break;
+		case JOY_16:	sReturn += "16";	break;
+		case JOY_17:	sReturn += "17";	break;
+		case JOY_18:	sReturn += "18";	break;
+		case JOY_19:	sReturn += "19";	break;
+		case JOY_20:	sReturn += "20";	break;
+		case JOY_21:	sReturn += "21";	break;
+		case JOY_22:	sReturn += "22";	break;
+		case JOY_23:	sReturn += "23";	break;
+		case JOY_24:	sReturn += "24";	break;
 		}
 		
 		break;
@@ -185,7 +197,10 @@ CString DeviceInput::GetDescription()
 
 CString DeviceInput::toString() 
 {
-	return ssprintf("%d-%d", device, button );
+	if( device == DEVICE_NONE )
+		return "";
+	else
+		return ssprintf("%d-%d", device, button );
 }
 
 bool DeviceInput::fromString( CString s )
@@ -592,7 +607,7 @@ HRESULT RageInput::GetDeviceInputs( DeviceInputArray &listDeviceInputs )
 					listDeviceInputs.Add( DeviceInput(InputDevice(DEVICE_JOYSTICK1+i), JOY_DOWN) );
 
 
-				for( BYTE b=0; b<10; b++ )
+				for( BYTE b=0; b<NUM_JOYSTICK_BUTTONS; b++ )
 				{
 					if( IS_PRESSED(m_joyState[i].rgbButtons[b]) && !IS_PRESSED(m_oldJoyState[i].rgbButtons[b]) )
 						listDeviceInputs.Add( DeviceInput( InputDevice(DEVICE_JOYSTICK1+i), JOY_1+b ) );

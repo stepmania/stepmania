@@ -41,12 +41,32 @@ int roundf( double f )
     return (int)((f)+0.5);
 }
 
+
+
+bool IsAnInt( CString s )
+{
+	if( s.GetLength() == 0 )
+		return false;
+
+	for( int i=0; i<s.GetLength(); i++ )
+	{
+		if( s[i] < '0' || s[i] > '9' )
+			return false;
+	}
+
+	return true;
+}
+
+
+
 //-----------------------------------------------------------------------------
 // Name: RageLogStart()
 // Desc:
 //-----------------------------------------------------------------------------
 void RageLogStart()
 {
+#if defined(DEBUG) | defined(_DEBUG)
+
 	// delete the old log and create a new one
 	DeleteFile( g_sLogFileName );
 	FILE *fp = NULL;
@@ -61,6 +81,8 @@ void RageLogStart()
 	RageLog( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
 		     st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
 	RageLog( "\n" );
+
+#endif
 }
 
 
@@ -141,7 +163,7 @@ CString join(CString Deliminator, CStringArray& Source)
 // Name: split()
 // Desc:
 //-----------------------------------------------------------------------------
-void split( CString Source, CString Deliminator, CStringArray& AddIt )
+void split( CString Source, CString Deliminator, CStringArray& AddIt, bool bIgnoreEmpty )
 {
 	CString		 newCString;
 	CString		 tmpCString;
@@ -156,15 +178,19 @@ void split( CString Source, CString Deliminator, CStringArray& AddIt )
 		pos = newCString.Find(Deliminator, pos1);
 		if ( pos != -1 ) {
 			CString AddCString = newCString.Left(pos);
-			if (!AddCString.IsEmpty())
-				AddIt.Add(AddCString);
+				if( newCString.IsEmpty() && bIgnoreEmpty )
+					; // do nothing
+				else
+					AddIt.Add(AddCString);
 
 			tmpCString = newCString.Mid(pos + Deliminator.GetLength());
 			newCString = tmpCString;
 		}
 	} while ( pos != -1 );
 
-	if (!newCString.IsEmpty())
+	if( newCString.IsEmpty() && bIgnoreEmpty )
+		; // do nothing
+	else
 		AddIt.Add(newCString);
 }
 
@@ -173,13 +199,14 @@ void split( CString Source, CString Deliminator, CStringArray& AddIt )
 // Name: splitpath()
 // Desc:
 //-----------------------------------------------------------------------------
-void splitpath (BOOL UsingDirsOnly, CString Path, CString& Drive, CString& Dir, CString& FName, CString& Ext)
+void splitpath( BOOL UsingDirsOnly, CString Path, CString& Drive, CString& Dir, CString& FName, CString& Ext )
 {
 
 	int nSecond;
 
 	// Look for a UNC Name!
-	if (Path.Left(2) == "\\\\") {
+	if (Path.Left(2) == "\\\\") 
+	{
 		int nFirst = Path.Find("\\",3);
 		nSecond = Path.Find("\\",nFirst + 1);
 		if (nSecond == -1) {
@@ -191,10 +218,16 @@ void splitpath (BOOL UsingDirsOnly, CString Path, CString& Drive, CString& Dir, 
 		else if (nSecond > nFirst)
 			Drive = Path.Left(nSecond);
 	}
-	else { // Look for normal Drive Structure
+	else if (Path.Mid(1,1) == ":" )		// normal Drive Structure
+	{
 		nSecond = 2;
 		Drive = Path.Left(2);
 	}
+	else	// no UNC or drive letter
+	{
+		nSecond = -1;
+	}
+	
 
 	if (UsingDirsOnly) {
 		Dir = Path.Right((Path.GetLength() - nSecond) - 1);
@@ -232,6 +265,62 @@ void splitpath (BOOL UsingDirsOnly, CString Path, CString& Drive, CString& Dir, 
 	}
 }
 
+//-----------------------------------------------------------------------------
+// Name: splitpath()
+// Desc:
+//-----------------------------------------------------------------------------
+void splitrelpath( CString Path, CString& Dir, CString& FName, CString& Ext )
+{
+	// need to split on both forward slashes and back slashes
+	CStringArray sPathBits;
+
+	CStringArray sBackShashPathBits;
+	split( Path, "\\", sBackShashPathBits, true );
+
+	for( int i=0; i<sBackShashPathBits.GetSize(); i++ )	// foreach backslash bit
+	{
+		CStringArray sForwardShashPathBits;
+		split( sBackShashPathBits[i], "/", sForwardShashPathBits, true );
+
+		sPathBits.Append( sForwardShashPathBits );
+	}
+
+
+	if( sPathBits.GetSize() == 0 )
+	{
+		Dir = FName = Ext = "";
+		return;
+	}
+
+	CString sFNameAndExt = sPathBits[ sPathBits.GetSize()-1 ];
+
+	// subtract the FNameAndExt from Path
+	Dir = Path.Left( Path.GetLength()-sFNameAndExt.GetLength() );	// don't subtract out the trailing slash
+
+
+	CStringArray sFNameAndExtBits;
+	split( sFNameAndExt, ".", sFNameAndExtBits, false );
+
+	if( sFNameAndExtBits.GetSize() == 0 )	// no file at the end of this path
+	{
+		FName = "";
+		Ext = "";
+	}
+	else if( sFNameAndExtBits.GetSize() == 1 )	// file doesn't have extension
+	{
+		FName = sFNameAndExtBits[0];
+		Ext = "";
+	}
+	else if( sFNameAndExtBits.GetSize() > 1 )	// file has extension and possibly multiple periods
+	{
+		Ext = sFNameAndExtBits[ sFNameAndExtBits.GetSize()-1 ];
+
+		// subtract the Ext and last period from FNameAndExt
+		FName = sFNameAndExt.Left( sFNameAndExt.GetLength()-Ext.GetLength()-1 );
+	}
+}
+
+
 void GetDirListing( CString sPath, CStringArray &AddTo, BOOL bOnlyDirs )
 {
 	WIN32_FIND_DATA fd;
@@ -241,8 +330,13 @@ void GetDirListing( CString sPath, CStringArray &AddTo, BOOL bOnlyDirs )
 	{
 		do
 		{
-			if( !bOnlyDirs  ||  fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+			if( bOnlyDirs  &&  !(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
 			{
+				;	// do nothing
+			}
+			else
+			{
+				// add it
 				CString sDirName( fd.cFileName );
 				if( sDirName != "."  &&  sDirName != ".." )
 					AddTo.Add( sDirName );

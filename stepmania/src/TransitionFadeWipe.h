@@ -15,6 +15,7 @@
 #include "Transition.h"
 #include "RageScreen.h"
 #include "RageSound.h"
+#include "Sprite.h"
 
 
 class TransitionFadeWipe : public Transition
@@ -24,6 +25,9 @@ public:
 	~TransitionFadeWipe();
 
 	void Draw();
+
+protected:
+	Sprite m_sprLogo;
 };
 
 
