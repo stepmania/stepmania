@@ -5,8 +5,8 @@
 #include "GameManager.h"
 #include "RageLog.h"
 #include "RageFile.h"
-#include <string.h>
-#include <errno.h>
+#include <cstring>
+#include <cerrno>
 
 void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 {

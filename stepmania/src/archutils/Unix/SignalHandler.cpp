@@ -4,10 +4,10 @@
 #include "SignalHandler.h"
 #include "GetSysInfo.h"
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <unistd.h>
 #include <sys/mman.h>
-#include <errno.h>
+#include <cerrno>
 
 static vector<SignalHandler::handler> handlers;
 SaveSignals *saved_sigs;

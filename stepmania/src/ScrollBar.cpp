@@ -12,7 +12,6 @@
 
 #include "ScrollBar.h"
 #include "GameConstantsAndTypes.h"
-#include <math.h>
 #include "ThemeManager.h"
 
 

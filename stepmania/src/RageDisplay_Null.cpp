@@ -26,8 +26,6 @@
 #include "StepMania.h"
 #include "RageUtil.h"
 
-#include <math.h>
-
 static RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[RageDisplay::NUM_PIX_FORMATS] = {
 	{
 		/* R8G8B8A8 */

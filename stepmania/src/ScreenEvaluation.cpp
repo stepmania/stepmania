@@ -37,7 +37,7 @@
 #include "RageDisplay.h"
 #include "StepMania.h"
 #include "CryptManager.h"
-#include <time.h>
+#include <ctime>
 
 const int NUM_SCORE_DIGITS	=	9;
 

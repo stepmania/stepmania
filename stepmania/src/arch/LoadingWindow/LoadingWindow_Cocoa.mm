@@ -8,7 +8,7 @@
  */
 
 /* This is really dumb. I don't know why it is needed all of a sudden */
-#include <math.h>
+#include <cmath>
 #ifndef scalb
 #define scalb(x, n) scalbn(x, n)
 #endif

@@ -25,7 +25,6 @@
 #include "InputMapper.h"
 #include "GameState.h"
 #include "CodeDetector.h"
-#include <math.h>
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 #include "Steps.h"

@@ -12,7 +12,7 @@
 */
 
 #include <exception>
-#include <stdarg.h>
+#include <cstdarg>
 
 class RageException : public exception
 {

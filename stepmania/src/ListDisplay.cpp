@@ -18,7 +18,6 @@
 #include "PrefsManager.h"
 #include "Course.h"
 #include "SongManager.h"
-#include <math.h>
 #include "ThemeManager.h"
 #include "Steps.h"
 #include "GameState.h"

@@ -13,7 +13,7 @@ using namespace std;
 #include <sys/stat.h>
 #include <sys/uio.h>
 #include <unistd.h>
-#include <assert.h>
+#include <cassert>
 #include <fcntl.h>
 #include <cstdio>
 #include "StdString.h"

@@ -7,7 +7,6 @@
 
 #include "SDL_rotozoom.h"
 
-#include <math.h>
 #include <vector>
 using namespace std;
 

@@ -17,8 +17,8 @@ using namespace std;
 #include <cstring>
 #include <stack>
 #include <map>
-#include <sys/errno.h>
-#include <assert.h>
+#include <cerrno>
+#include <cassert>
 #include "StdString.h"
 #include "InstallerFile.h"
 #include "Processor.h"

@@ -10,7 +10,7 @@
 #import <Security/AuthorizationTags.h>
 #import <sys/types.h>
 #import <sys/wait.h>
-#import <string.h>
+#import <cstring>
 #import <unistd.h>
 #import <fcntl.h>
 #import "Helper.h"

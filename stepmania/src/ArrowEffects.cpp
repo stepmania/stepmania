@@ -19,7 +19,6 @@
 #include "RageTimer.h"
 #include "NoteDisplay.h"
 #include "song.h"
-#include <math.h>
 #include "RageMath.h"
 
 const float ARROW_SPACING	= ARROW_SIZE;// + 2;

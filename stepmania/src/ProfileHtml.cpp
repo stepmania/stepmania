@@ -17,7 +17,7 @@
 #include "SongManager.h"
 #include "song.h"
 #include "Steps.h"
-#include <time.h>
+#include <ctime>
 #include "GameManager.h"
 #include "Course.h"
 #include "Bookkeeper.h"

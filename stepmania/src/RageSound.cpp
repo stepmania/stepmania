@@ -29,8 +29,6 @@
 #include "PrefsManager.h"
 #include "arch/ArchHooks/ArchHooks.h"
 
-#include <math.h>
-
 #include "RageSoundReader_Preload.h"
 #include "RageSoundReader_Resample.h"
 #include "RageSoundReader_FileReader.h"

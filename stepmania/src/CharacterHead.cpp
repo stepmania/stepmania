@@ -16,7 +16,6 @@
 #include "MusicWheel.h"
 #include "CharacterHead.h"
 #include "RageTimer.h"
-#include <math.h>
 #include "ThemeManager.h"
 #include "GameState.h"
 #include "Character.h"

@@ -2,7 +2,6 @@
 #include "RageSoundResampler.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include <math.h>
 
 /*
  * This class handles sound resampling.

@@ -22,7 +22,6 @@
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
 #include "RageMath.h"
-#include <math.h>
 #include "ThemeManager.h"
 #include "song.h"
 #include "Course.h"

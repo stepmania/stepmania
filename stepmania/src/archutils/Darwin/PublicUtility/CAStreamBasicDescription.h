@@ -54,8 +54,8 @@
 #endif
 
 #include "CADebugMacros.h"
-#include <string.h>	// for memset, memcpy
-#include <stdio.h>	// for FILE *
+#include <cstring>	// for memset, memcpy
+#include <cstdio>	// for FILE *
 
 //=============================================================================
 //	CAStreamBasicDescription

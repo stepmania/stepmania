@@ -4,8 +4,8 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 
-#include <setjmp.h>
-#include <assert.h>
+#include <csetjmp>
+#include <cassert>
 
 LuaFunctionList *g_LuaFunctionList = NULL;
 

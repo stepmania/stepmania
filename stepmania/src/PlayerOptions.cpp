@@ -12,7 +12,6 @@
 
 #include "PlayerOptions.h"
 #include "RageUtil.h"
-#include "math.h"
 #include "RageLog.h"
 
 #include "GameState.h"

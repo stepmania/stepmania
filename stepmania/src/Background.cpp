@@ -23,7 +23,6 @@
 #include "PrefsManager.h"
 #include "NoteTypes.h"
 #include "Steps.h"
-#include <math.h>	// for fmodf
 #include "DancingCharacters.h"
 #include "arch/arch.h"
 #include "BeginnerHelper.h"

@@ -4,9 +4,9 @@
 #include "RageUtil.h"
 #include "RageFileManager.h"
 
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
+#include <cstdio>
+#include <cstring>
+#include <cerrno>
 #include <unistd.h>
 #include <fcntl.h>
 #include <linux/types.h>

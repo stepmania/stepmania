@@ -12,7 +12,6 @@
 */
 
 #include "Actor.h"
-#include <math.h>
 #include "RageDisplay.h"
 #include "PrefsManager.h"
 #include "RageUtil.h"

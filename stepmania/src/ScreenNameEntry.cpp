@@ -24,7 +24,6 @@
 #include "ScreenRanking.h"
 #include "Course.h"
 #include "AnnouncerManager.h"
-#include <math.h>
 #include "ProfileManager.h"
 #include "NoteFieldPositioning.h"
 #include "StageStats.h"

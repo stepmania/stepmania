@@ -8,7 +8,7 @@ void CrashHandlerHandleArgs( int argc, char* argv[] );
 void InitializeCrashHandler();
 	
 #if !defined(DARWIN)
-#include <signal.h>
+#include <csignal>
 #include <ucontext.h>
 void CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc );
 #endif

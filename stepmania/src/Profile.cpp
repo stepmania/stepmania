@@ -22,7 +22,7 @@
 #include "SongManager.h"
 #include "Steps.h"
 #include "Course.h"
-#include <time.h>
+#include <ctime>
 #include "ThemeManager.h"
 #include "CryptManager.h"
 #include "ProfileHtml.h"

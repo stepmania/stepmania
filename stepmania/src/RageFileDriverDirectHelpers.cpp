@@ -3,7 +3,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 
-#include <errno.h>
+#include <cerrno>
 #include <sys/types.h>
 #include <sys/stat.h>
 

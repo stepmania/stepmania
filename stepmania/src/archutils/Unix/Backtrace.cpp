@@ -3,12 +3,12 @@
 #include "RageUtil.h"
 
 #include <unistd.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/ptrace.h>
 #include <sys/stat.h>
-#include <errno.h>
+#include <cerrno>
 #include <fcntl.h>
 
 #if defined(BACKTRACE_METHOD_X86_LINUX)

@@ -19,8 +19,6 @@
 #include "Steps.h"
 #include "RageDisplay.h"
 #include "RageMath.h"
-#include <math.h>
-
 
 #define LABEL_OFFSET_X( i )			THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetX",i+1))
 #define LABEL_OFFSET_Y( i )			THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetY",i+1))

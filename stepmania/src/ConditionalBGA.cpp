@@ -1,5 +1,5 @@
 #include "global.h"
-#include <time.h>
+#include <ctime>
 
 #include "GameState.h"
 #include "GameManager.h"

@@ -20,7 +20,6 @@
 #include <Carbon/Carbon.h>
 #undef Random_
 #include <mach/thread_act.h>
-#include <signal.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
 

@@ -10,7 +10,7 @@
 using namespace std;
 
 #include <sys/types.h>
-#include <sys/errno.h>
+#include <cerrno.>
 #include <sys/param.h>
 #include <sys/wait.h>
 #include <unistd.h>

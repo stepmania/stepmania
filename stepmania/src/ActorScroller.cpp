@@ -12,10 +12,8 @@
 
 #include "ActorScroller.h"
 #include "ActorCollision.h"
-#include <math.h>
 #include "RageUtil.h"
 #include "RageDisplay.h"
-
 
 ActorScroller::ActorScroller()
 {

@@ -15,7 +15,6 @@
 #include "IniFile.h"
 #include "RageException.h"
 #include "GameState.h"
-#include <math.h>
 #include "arch/arch.h"
 
 #define AI_PATH "Data/AI.ini"

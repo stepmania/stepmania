@@ -12,7 +12,6 @@
 */
 
 #include "ScreenEz2SelectMusic.h"
-#include <math.h>
 #include "ScreenManager.h"
 #include "RageSounds.h"
 #include "GameConstantsAndTypes.h"

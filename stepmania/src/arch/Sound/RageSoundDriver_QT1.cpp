@@ -14,7 +14,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include <QuickTime/QuickTime.h>
-#include <stdlib.h>
+#include <cstdlib>
 /* Ugh */
 using namespace QT;
 

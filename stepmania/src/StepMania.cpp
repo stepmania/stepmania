@@ -27,7 +27,7 @@
 
 #include "arch/arch.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
-#include "time.h"
+#include <ctime>
 
 #include "ProductInfo.h"
 

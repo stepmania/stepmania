@@ -19,7 +19,7 @@
 #include "RageFile.h"
 #include "RageLog.h"
 #include "ActorUtil.h"
-#include <errno.h>
+#include <cerrno>
 #include "ModelManager.h"
 
 const float FRAMES_PER_SECOND = 30;

@@ -16,7 +16,6 @@
 #include "MusicWheel.h"
 #include "WheelNotifyIcon.h"
 #include "RageTimer.h"
-#include <math.h>
 #include "ThemeManager.h"
 
 

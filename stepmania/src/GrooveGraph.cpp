@@ -21,8 +21,6 @@
 #include "song.h"
 #include "GameState.h"
 #include "StyleDef.h"
-#include <math.h>
-
 
 const float GRAPH_EDGE_WIDTH	= 2;
 

@@ -16,7 +16,6 @@
 #include "song.h"
 #include "Steps.h"
 #include "IniFile.h"
-#include "math.h"	// for fabs()
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "NoteData.h"

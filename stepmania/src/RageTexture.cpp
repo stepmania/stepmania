@@ -12,7 +12,7 @@
 #include "RageTexture.h"
 #include "RageUtil.h"
 #include "RageTextureManager.h"
-#include <string.h>
+#include <cstring>
 
 
 RageTexture::RageTexture( RageTextureID name ):

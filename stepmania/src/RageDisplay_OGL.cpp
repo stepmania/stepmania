@@ -71,8 +71,6 @@ namespace GLExt {
 #include "arch/arch.h"
 #include "arch/LowLevelWindow/LowLevelWindow.h"
 
-#include <math.h>
-
 #ifdef WIN32
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")

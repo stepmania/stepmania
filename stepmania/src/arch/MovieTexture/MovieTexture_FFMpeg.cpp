@@ -10,7 +10,7 @@
 #include "SDL_endian.h"
 #include "PrefsManager.h"
 
-#include <errno.h>
+#include <cerrno>
 
 namespace avcodec
 {

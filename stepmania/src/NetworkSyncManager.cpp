@@ -25,7 +25,7 @@ Don't bother to edit it.  I will be editing it as I go.
 
 
 #include "global.h"
-#include <string.h>
+#include <cstring>
 #include "NetworkSyncManager.h"
 
 #include "BPMDisplay.h"

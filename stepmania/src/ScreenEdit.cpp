@@ -23,7 +23,6 @@
 #include "GameState.h"
 #include "InputMapper.h"
 #include "RageLog.h"
-#include <math.h>
 #include "ThemeManager.h"
 #include "SDL_keysym.h"		// for SDLKeys
 #include "ScreenMiniMenu.h"

@@ -285,19 +285,15 @@ typedef char			TCHAR;
 #ifdef SS_ANSI // Are we doing things the standard, non-Win32 way?...
 	// Not sure if we need all these headers.   I believe ANSI says we do.
 
-	#include <stdio.h>
-	#include <stdarg.h>
-	#include <ctype.h>
-	#include <stdlib.h>
+	#include <cstdio>
+	#include <cctype>
+	#include <cstdlib>
 	#ifndef va_start
 		#include <varargs.h>
 	#endif
 #endif // #ifndef SS_ANSI
 
-// VC++ needs this for va_*. -cdanford
-#ifndef SS_ANSI
-	#include <stdarg.h>
-#endif
+#include <cstdarg>
 
 
 // a very shorthand way of applying the fix for KB problem Q172398

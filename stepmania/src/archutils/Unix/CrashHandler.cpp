@@ -1,14 +1,14 @@
 #include "global.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstdarg>
 #include <unistd.h>
-#include <string.h>
-#include <errno.h>
+#include <cstring>
+#include <cerrno>
 #include <limits.h>
 #include <fcntl.h>
-#include <signal.h>
+#include <csignal>
 
 #include "RageLog.h" /* for RageLog::GetAdditionalLog, etc, only */
 #include "RageThreads.h"

@@ -6,8 +6,8 @@
 #include "RageUtil.h"
 #include "SDL_utils.h"
 
-#include <stdio.h>
-#include <errno.h>
+#include <cstdio>
+#include <cerrno>
 
 #ifdef _WIN32
 #include "mad-0.15.1b/mad.h"

@@ -1,5 +1,5 @@
 #include "global.h"
-#include "stdlib.h"
+#include <cstdlib>
 /*
 -----------------------------------------------------------------------------
  Class: ScreenHowToPlay

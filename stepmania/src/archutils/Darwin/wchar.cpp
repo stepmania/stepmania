@@ -12,7 +12,7 @@
 #if (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_3)
 
 #define	_BSD_WCHAR_T_DEFINED_
-#include <stddef.h>
+#include <cstddef>
 #include <string>
 #include <cstring>
 

@@ -34,7 +34,7 @@
 #include "LightsManager.h"
 #include "RageFile.h"
 #include "Bookkeeper.h"
-#include <time.h>
+#include <ctime>
 #include "MemoryCardManager.h"
 #include "StageStats.h"
 #include "GameConstantsAndTypes.h"

@@ -61,7 +61,7 @@ freely, subject to the following restrictions:
 #include "RageUtil.h"
 #include "RageUtil_FileDB.h"
 
-#include <errno.h>
+#include <cerrno>
 
 #if defined(_WINDOWS) || defined(_XBOX)
 	#include "zlib/zlib.h"

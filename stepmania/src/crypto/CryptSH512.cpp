@@ -284,8 +284,8 @@ void SHA512_Simple(const void *p, int len, unsigned char *output) {
 
 #ifdef TEST
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 int main(void) {
 	unsigned char digest[64];

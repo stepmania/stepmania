@@ -29,7 +29,6 @@
 #include "AnnouncerManager.h"
 #include "song.h"
 #include "Steps.h"
-#include <math.h>
 #include "ProfileManager.h"
 #include "StageStats.h"
 #include "RageDisplay.h"

@@ -19,8 +19,8 @@
 #include "SDL_thread.h"
 #include "SDL_utils.h"
 
-#include <signal.h>
-#include <errno.h>
+#include <csignal>
+#include <cerrno>
 #include <set>
 
 /* SDL threads aren't quite enough.  We need to be able to suspend or

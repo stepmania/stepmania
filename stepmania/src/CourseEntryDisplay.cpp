@@ -23,7 +23,6 @@
 #include "GameState.h"
 #include "StyleDef.h"
 #include "ActorUtil.h"
-#include <math.h>
 
 #define SEPARATE_COURSE_METERS		THEME->GetMetricB(m_sName,"SeparateCourseMeters")
 #define TEXT_BANNER_NAME			THEME->GetMetric (m_sName,"TextBannerName")

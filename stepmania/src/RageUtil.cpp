@@ -16,8 +16,7 @@
 #include "arch/arch.h"
 
 #include <numeric>
-#include <time.h>
-#include <math.h>
+#include <ctime>
 #include <map>
 #include <sys/types.h>
 #include <sys/stat.h>

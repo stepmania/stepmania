@@ -7,7 +7,7 @@
 #include "RageLog.h"
 #include "RageThreads.h"
 
-#include <errno.h>
+#include <cerrno>
 #if defined(LINUX)
 #include <sys/stat.h>
 #endif

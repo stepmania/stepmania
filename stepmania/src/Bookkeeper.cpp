@@ -19,7 +19,7 @@
 #include "GameConstantsAndTypes.h"
 #include "SongManager.h"
 #include "RageFile.h"
-#include <time.h>
+#include <ctime>
 
 
 Bookkeeper*	BOOKKEEPER = NULL;	// global and accessable from anywhere in our program

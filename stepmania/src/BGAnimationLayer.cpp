@@ -17,7 +17,6 @@
 #include "IniFile.h"
 #include "RageMath.h"
 #include "SDL_utils.h"
-#include <math.h>
 #include "RageTimer.h"
 #include "RageLog.h"
 #include "song.h"

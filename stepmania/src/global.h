@@ -129,7 +129,7 @@ void NORETURN sm_crash( const char *reason = "Internal error" );
 #endif
 
 /* Define a few functions if necessary */
-#include <math.h>
+#include <cmath>
 #ifdef NEED_POWF
 inline float powf (float x, float y) { return float(pow(double(x),double(y))); }
 #endif

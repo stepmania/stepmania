@@ -16,7 +16,6 @@
 #include "RageUtil.h"
 #include "RageDisplay.h"
 #include "RageLog.h"
-#include <math.h>
 #include "arch/ArchHooks/ArchHooks.h"
 
 void RageVec3ClearBounds( RageVector3 &mins, RageVector3 &maxs )

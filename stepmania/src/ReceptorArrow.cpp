@@ -14,7 +14,6 @@
 #include "ReceptorArrow.h"
 #include "PrefsManager.h"
 #include "GameState.h"
-#include <math.h>
 #include "ThemeManager.h"
 #include "NoteFieldPositioning.h"
 #include "NoteSkinManager.h"
