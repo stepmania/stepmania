@@ -515,16 +515,12 @@ void Song::TidyUpData()
 		{
 			CString sBGMovieFile = arrayPossibleMovies[0];
 			
-			// strip off extension from file name
-			CString sDir, sFName, sExt;
-			splitrelpath( sBGMovieFile, sDir, sFName, sExt );
-
 			// calculate start beat of music
 			float fMusicStartBeat, fBPS;
 			bool bFreeze;
 			this->GetBeatAndBPSFromElapsedTime( -this->m_fBeat0OffsetInSeconds, fMusicStartBeat, fBPS, bFreeze );
 
-			this->AddBackgroundChange( BackgroundChange(fMusicStartBeat,sFName) );
+			this->AddBackgroundChange( BackgroundChange(fMusicStartBeat,sBGMovieFile) );
 		}
 	}
 
