@@ -16,6 +16,7 @@
 #define NUM_SHOWN_ITEMS				THEME->GetMetricI(m_sName,"NumShownItems")
 #define MOVE_COMMAND				THEME->GetMetric (m_sName,"MoveCommand")
 #define DIFFICULTIES_TO_SHOW		THEME->GetMetric( "Common","DifficultiesToShow" )
+#define CAPITALIZE_DIFFICULTY_NAMES	THEME->GetMetric( m_sName,"CapitalizeDifficultyNames" )
 
 #define MAX_METERS NUM_DIFFICULTIES + MAX_EDITS_PER_SONG
 
@@ -300,7 +301,7 @@ void DifficultyList::SetFromGameState()
 
 				m_Lines[i].m_Meter.SetMeter( 3*(d), d );
 				m_Lines[i].m_Number.SetText( "?" );
-				m_Lines[i].m_Description.SetText( DifficultyToThemedString(d) );
+				m_Lines[i].m_Description.SetText( GetDifficultyString(d) );
 			}
 		}
 		else
@@ -326,7 +327,7 @@ void DifficultyList::SetFromGameState()
 				if( row.m_Steps->GetDifficulty() == DIFFICULTY_EDIT )
 					s = row.m_Steps->GetDescription();
 				else
-					s = DifficultyToThemedString(row.m_dc);
+					s = GetDifficultyString(row.m_dc);
 				m_Lines[i].m_Description.SetMaxWidth( DESCRIPTION_MAX_WIDTH );
 				m_Lines[i].m_Description.SetText( s );
 				/* Don't mess with alpha; it might be fading on. */
@@ -414,6 +415,14 @@ void DifficultyList::Hide()
 	{
 		COMMAND( m_Cursors[pn], "Hide" );
 	}
+}
+
+CString DifficultyList::GetDifficultyString( Difficulty d ) const
+{
+	CString s = DifficultyToThemedString( d );
+	if( CAPITALIZE_DIFFICULTY_NAMES )
+		s.MakeUpper();
+	return s;
 }
 
 /*
