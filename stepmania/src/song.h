@@ -183,16 +183,16 @@ public:
 	vector<Steps*> m_apNotes;
 
 	bool SongCompleteForStyle( const StyleDef *st ) const;
-	bool SongHasNotesType( StepsType nt ) const;
-	bool SongHasNotesTypeAndDifficulty( StepsType nt, Difficulty dc ) const;
+	bool SongHasNotesType( StepsType st ) const;
+	bool SongHasNotesTypeAndDifficulty( StepsType st, Difficulty dc ) const;
 	const vector<Steps*>& GetAllSteps() const { return m_apNotes; }
-	void GetSteps( vector<Steps*>& arrayAddTo, StepsType nt = STEPS_TYPE_INVALID, Difficulty dc = DIFFICULTY_INVALID, int iMeterLow = -1, int iMeterHigh = -1, const CString &sDescription = "", bool bIncludeAutoGen = true, int Max = -1 ) const;
-	Steps* GetStepsByDifficulty( StepsType nt, Difficulty dc, bool bIncludeAutoGen = true ) const;
-	Steps* GetStepsByMeter( StepsType nt, int iMeterLow, int iMeterHigh ) const;
-	Steps* GetStepsByDescription( StepsType nt, CString sDescription ) const;
-	Steps* GetClosestNotes( StepsType nt, Difficulty dc ) const;
-	bool IsEasy( StepsType nt ) const;
-	bool HasEdits( StepsType nt ) const;
+	void GetSteps( vector<Steps*>& arrayAddTo, StepsType st = STEPS_TYPE_INVALID, Difficulty dc = DIFFICULTY_INVALID, int iMeterLow = -1, int iMeterHigh = -1, const CString &sDescription = "", bool bIncludeAutoGen = true, int Max = -1 ) const;
+	Steps* GetStepsByDifficulty( StepsType st, Difficulty dc, bool bIncludeAutoGen = true ) const;
+	Steps* GetStepsByMeter( StepsType st, int iMeterLow, int iMeterHigh ) const;
+	Steps* GetStepsByDescription( StepsType st, CString sDescription ) const;
+	Steps* GetClosestNotes( StepsType st, Difficulty dc ) const;
+	bool IsEasy( StepsType st ) const;
+	bool HasEdits( StepsType st ) const;
 	SelectionDisplay GetDisplayed() const;
 	bool NormallyDisplayed() const { return GetDisplayed() == SHOW_ALWAYS; }
 	bool NeverDisplayed() const { return GetDisplayed() == SHOW_NEVER; }

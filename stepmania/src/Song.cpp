@@ -876,10 +876,10 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 	}
 }
 
-void Song::GetSteps( vector<Steps*>& arrayAddTo, StepsType nt, Difficulty dc, int iMeterLow, int iMeterHigh, const CString &sDescription, bool bIncludeAutoGen, int Max ) const
+void Song::GetSteps( vector<Steps*>& arrayAddTo, StepsType st, Difficulty dc, int iMeterLow, int iMeterHigh, const CString &sDescription, bool bIncludeAutoGen, int Max ) const
 {
 	/* Ignore m_bAutogenSteps for STEPS_TYPE_LIGHTS_CABINET. */
-	if( nt != STEPS_TYPE_LIGHTS_CABINET && !PREFSMAN->m_bAutogenSteps )
+	if( st != STEPS_TYPE_LIGHTS_CABINET && !PREFSMAN->m_bAutogenSteps )
 		bIncludeAutoGen = false;
 
 	for( unsigned i=0; i<m_apNotes.size(); i++ )	// for each of the Song's Steps
@@ -889,7 +889,7 @@ void Song::GetSteps( vector<Steps*>& arrayAddTo, StepsType nt, Difficulty dc, in
 
 		Steps* pSteps = m_apNotes[i];
 
-		if( nt != STEPS_TYPE_INVALID && pSteps->m_StepsType != nt ) 
+		if( st != STEPS_TYPE_INVALID && pSteps->m_StepsType != st ) 
 			continue;
 		if( dc != DIFFICULTY_INVALID && dc != pSteps->GetDifficulty() )
 			continue;
@@ -909,30 +909,30 @@ void Song::GetSteps( vector<Steps*>& arrayAddTo, StepsType nt, Difficulty dc, in
 	}
 }
 
-Steps* Song::GetStepsByDifficulty( StepsType nt, Difficulty dc, bool bIncludeAutoGen ) const
+Steps* Song::GetStepsByDifficulty( StepsType st, Difficulty dc, bool bIncludeAutoGen ) const
 {
 	vector<Steps*> vNotes;
-	GetSteps( vNotes, nt, dc, -1, -1, "", bIncludeAutoGen, 1 );
+	GetSteps( vNotes, st, dc, -1, -1, "", bIncludeAutoGen, 1 );
 	if( vNotes.size() == 0 )
 		return NULL;
 	else 
 		return vNotes[0];
 }
 
-Steps* Song::GetStepsByMeter( StepsType nt, int iMeterLow, int iMeterHigh ) const
+Steps* Song::GetStepsByMeter( StepsType st, int iMeterLow, int iMeterHigh ) const
 {
 	vector<Steps*> vNotes;
-	GetSteps( vNotes, nt, DIFFICULTY_INVALID, iMeterLow, iMeterHigh, "", true, 1 );
+	GetSteps( vNotes, st, DIFFICULTY_INVALID, iMeterLow, iMeterHigh, "", true, 1 );
 	if( vNotes.size() == 0 )
 		return NULL;
 	else 
 		return vNotes[0];
 }
 
-Steps* Song::GetStepsByDescription( StepsType nt, CString sDescription ) const
+Steps* Song::GetStepsByDescription( StepsType st, CString sDescription ) const
 {
 	vector<Steps*> vNotes;
-	GetSteps( vNotes, nt, DIFFICULTY_INVALID, -1, -1, sDescription );
+	GetSteps( vNotes, st, DIFFICULTY_INVALID, -1, -1, sDescription );
 	if( vNotes.size() == 0 )
 		return NULL;
 	else 
@@ -940,31 +940,31 @@ Steps* Song::GetStepsByDescription( StepsType nt, CString sDescription ) const
 }
 
 
-Steps* Song::GetClosestNotes( StepsType nt, Difficulty dc ) const
+Steps* Song::GetClosestNotes( StepsType st, Difficulty dc ) const
 {
 	Difficulty newDC = dc;
 	Steps* pNotes;
-	pNotes = GetStepsByDifficulty( nt, newDC );
+	pNotes = GetStepsByDifficulty( st, newDC );
 	if( pNotes )
 		return pNotes;
 	newDC = (Difficulty)(dc-1);
 	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
-	pNotes = GetStepsByDifficulty( nt, newDC );
+	pNotes = GetStepsByDifficulty( st, newDC );
 	if( pNotes )
 		return pNotes;
 	newDC = (Difficulty)(dc+1);
 	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
-	pNotes = GetStepsByDifficulty( nt, newDC );
+	pNotes = GetStepsByDifficulty( st, newDC );
 	if( pNotes )
 		return pNotes;
 	newDC = (Difficulty)(dc-2);
 	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
-	pNotes = GetStepsByDifficulty( nt, newDC );
+	pNotes = GetStepsByDifficulty( st, newDC );
 	if( pNotes )
 		return pNotes;
 	newDC = (Difficulty)(dc+2);
 	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
-	pNotes = GetStepsByDifficulty( nt, newDC );
+	pNotes = GetStepsByDifficulty( st, newDC );
 	return pNotes;
 }
 
@@ -974,17 +974,17 @@ bool Song::SongCompleteForStyle( const StyleDef *st ) const
 	return SongHasNotesType( st->m_StepsType );
 }
 
-bool Song::SongHasNotesType( StepsType nt ) const
+bool Song::SongHasNotesType( StepsType st ) const
 {
 	vector<Steps*> add;
-	GetSteps( add, nt, DIFFICULTY_INVALID, -1, -1, "", true, 1 );
+	GetSteps( add, st, DIFFICULTY_INVALID, -1, -1, "", true, 1 );
 	return !add.empty();
 }
 
-bool Song::SongHasNotesTypeAndDifficulty( StepsType nt, Difficulty dc ) const
+bool Song::SongHasNotesTypeAndDifficulty( StepsType st, Difficulty dc ) const
 {
 	vector<Steps*> add;
-	GetSteps( add, nt, dc, -1, -1, "", true, 1 );
+	GetSteps( add, st, dc, -1, -1, "", true, 1 );
 	return !add.empty();
 }
 
@@ -1062,39 +1062,39 @@ void Song::AddAutoGenNotes()
 		if( m_apNotes[i]->IsAutogen() )
 			continue;
 
-		StepsType nt = m_apNotes[i]->m_StepsType;
-		HasNotes[nt] = true;
+		StepsType st = m_apNotes[i]->m_StepsType;
+		HasNotes[st] = true;
 	}
 		
-	for( StepsType ntMissing=(StepsType)0; ntMissing<NUM_STEPS_TYPES; ntMissing=(StepsType)(ntMissing+1) )
+	FOREACH_StepsType( stMissing )
 	{
-		if( HasNotes[ntMissing] )
+		if( HasNotes[stMissing] )
 			continue;
 
 		// missing Steps of this type
-		int iNumTracksOfMissing = GAMEMAN->NotesTypeToNumTracks(ntMissing);
+		int iNumTracksOfMissing = GAMEMAN->NotesTypeToNumTracks(stMissing);
 
 		// look for closest match
-		StepsType	ntBestMatch = (StepsType)-1;
+		StepsType	stBestMatch = (StepsType)-1;
 		int			iBestTrackDifference = 10000;	// inf
 
-		for( StepsType nt=(StepsType)0; nt<NUM_STEPS_TYPES; nt=(StepsType)(nt+1) )
+		FOREACH_StepsType( st )
 		{
-			if( !HasNotes[nt] )
+			if( !HasNotes[st] )
 				continue;
 
 			/* has (non-autogen) Steps of this type */
-			const int iNumTracks = GAMEMAN->NotesTypeToNumTracks(nt);
+			const int iNumTracks = GAMEMAN->NotesTypeToNumTracks(st);
 			const int iTrackDifference = abs(iNumTracks-iNumTracksOfMissing);
 			if( iTrackDifference < iBestTrackDifference )
 			{
-				ntBestMatch = nt;
+				stBestMatch = st;
 				iBestTrackDifference = iTrackDifference;
 			}
 		}
 
-		if( ntBestMatch != -1 )
-			AutoGen( ntMissing, ntBestMatch );
+		if( stBestMatch != -1 )
+			AutoGen( stMissing, stBestMatch );
 	}
 }
 
@@ -1126,9 +1126,9 @@ void Song::RemoveAutoGenNotes()
 	}
 }
 
-bool Song::IsEasy( StepsType nt ) const
+bool Song::IsEasy( StepsType st ) const
 {
-	const Steps* pHardNotes = GetStepsByDifficulty( nt, DIFFICULTY_HARD );
+	const Steps* pHardNotes = GetStepsByDifficulty( st, DIFFICULTY_HARD );
 
 	// HACK:  Looks bizarre to see the easy mark by Legend of MAX.
 	if( pHardNotes && pHardNotes->GetMeter() > 9 )
@@ -1137,23 +1137,23 @@ bool Song::IsEasy( StepsType nt ) const
 	/* The easy marker indicates which songs a beginner, having selected "beginner",
 	 * can play and actually get a very easy song: if there are actual beginner
 	 * steps, or if the light steps are 1- or 2-foot. */
-	const Steps* pBeginnerNotes = GetStepsByDifficulty( nt, DIFFICULTY_BEGINNER );
+	const Steps* pBeginnerNotes = GetStepsByDifficulty( st, DIFFICULTY_BEGINNER );
 	if( pBeginnerNotes )
 		return true;
 	
-	const Steps* pEasyNotes = GetStepsByDifficulty( nt, DIFFICULTY_EASY );
+	const Steps* pEasyNotes = GetStepsByDifficulty( st, DIFFICULTY_EASY );
 	if( pEasyNotes && pEasyNotes->GetMeter() == 1 )
 		return true;
 
 	return false;
 }
 
-bool Song::HasEdits( StepsType nt ) const
+bool Song::HasEdits( StepsType st ) const
 {
 	for( unsigned i=0; i<m_apNotes.size(); i++ )
 	{
 		Steps* pSteps = m_apNotes[i];
-		if( pSteps->m_StepsType == nt &&
+		if( pSteps->m_StepsType == st &&
 			pSteps->GetDifficulty() == DIFFICULTY_EDIT )
 		{
 			return true;

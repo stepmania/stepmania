@@ -2360,10 +2360,10 @@ void GameManager::GetStylesForGame( Game game, vector<Style>& aStylesAddTo, bool
 	}
 }
 
-Style GameManager::GetEditorStyleForNotesType( StepsType nt )
+Style GameManager::GetEditorStyleForNotesType( StepsType st )
 {
 	for( int s=0; s<NUM_STYLES; s++ )
-		if( g_StyleDefs[s].m_StepsType == nt && g_StyleDefs[s].m_bUsedForEdit )
+		if( g_StyleDefs[s].m_StepsType == st && g_StyleDefs[s].m_bUsedForEdit )
 			return (Style)s;
 
 	ASSERT(0);	// this style doesn't have a StyleDef that can be used with the editor!
@@ -2412,16 +2412,16 @@ bool GameManager::IsGameEnabled( Game game )
 	return find( aGames.begin(), aGames.end(), game ) != aGames.end();
 }
 
-int GameManager::NotesTypeToNumTracks( StepsType nt )
+int GameManager::NotesTypeToNumTracks( StepsType st )
 {
-	if(nt >= NUM_STEPS_TYPES)
+	if( st >= NUM_STEPS_TYPES )
 	{
 		// invalid StepsType
 		ASSERT(0);
 		return -1;
 	}
 
-	return NotesTypes[nt].NumTracks;
+	return NotesTypes[st].NumTracks;
 }
 
 StepsType GameManager::StringToNotesType( CString sNotesType )
@@ -2445,21 +2445,21 @@ StepsType GameManager::StringToNotesType( CString sNotesType )
 	return STEPS_TYPE_DANCE_SINGLE;
 }
 
-CString GameManager::NotesTypeToString( StepsType nt )
+CString GameManager::NotesTypeToString( StepsType st )
 {
-	if(nt >= NUM_STEPS_TYPES)
+	if( st >= NUM_STEPS_TYPES )
 	{
 		// invalid StepsType
 		ASSERT(0);
 		return "";
 	}
 
-	return NotesTypes[nt].name;
+	return NotesTypes[st].name;
 }
 
-CString GameManager::NotesTypeToThemedString( StepsType nt )
+CString GameManager::NotesTypeToThemedString( StepsType st )
 {
-	CString s = NotesTypeToString(nt);
+	CString s = NotesTypeToString( st );
 	if( THEME->HasMetric( "StepsType", s ) )
 		return THEME->GetMetric( "StepsType", s );
 	else

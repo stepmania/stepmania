@@ -145,7 +145,7 @@ void GameState::Reset()
 	m_iRoundSeed = rand();
 
 	m_pCurSong = NULL;
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		m_pCurNotes[p] = NULL;
 	m_pCurCourse = NULL;
 
@@ -1338,7 +1338,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 			CHECKPOINT;
 			unsigned i, j;
 
-			StepsType nt = this->GetCurrentStyleDef()->m_StepsType;
+			StepsType st = this->GetCurrentStyleDef()->m_StepsType;
 
 			//
 			// Find unique Song and Steps combinations that were played.
@@ -1436,10 +1436,9 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 
 
 			// Find Machine Category Records
-			for( i=0; i<NUM_RANKING_CATEGORIES; i++ )
+			FOREACH_RankingCategory( rc )
 			{
-				RankingCategory rc = (RankingCategory)i;
-				HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCategoryHighScoreList( nt, rc );
+				HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCategoryHighScoreList( st, rc );
 				for( unsigned j=0; j<hsl.vHighScores.size(); j++ )
 				{
 					HighScore &hs = hsl.vHighScores[j];
@@ -1458,12 +1457,11 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 			}
 
 			// Find Personal Category Records
-			for( i=0; i<NUM_RANKING_CATEGORIES; i++ )
+			FOREACH_RankingCategory( rc )
 			{
-				RankingCategory rc = (RankingCategory)i;
 				if( pProf )
 				{
-					HighScoreList &hsl = pProf->GetCategoryHighScoreList( nt, rc );
+					HighScoreList &hsl = pProf->GetCategoryHighScoreList( st, rc );
 					for( unsigned j=0; j<hsl.vHighScores.size(); j++ )
 					{
 						HighScore &hs = hsl.vHighScores[j];
@@ -1491,7 +1489,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 	case PLAY_MODE_ENDLESS:
 		{
 			CHECKPOINT;
-			StepsType nt = this->GetCurrentStyleDef()->m_StepsType;
+			StepsType st = this->GetCurrentStyleDef()->m_StepsType;
 			Course* pCourse = this->m_pCurCourse;
 			ASSERT( pCourse );
 			CourseDifficulty cd = this->m_PreferredCourseDifficulty[pn];
@@ -1499,7 +1497,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 			// Find Machine Records
 			{
 				Profile* pProfile = PROFILEMAN->GetMachineProfile();
-				Trail *pTrail = pCourse->GetTrail( nt, cd );
+				Trail *pTrail = pCourse->GetTrail( st, cd );
 				HighScoreList &hsl = pProfile->GetCourseHighScoreList( pCourse, pTrail );
 				for( unsigned i=0; i<hsl.vHighScores.size(); i++ )
 				{
@@ -1524,7 +1522,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 			// Find Personal Records
 			if( PROFILEMAN->IsUsingProfile( pn ) )
 			{
-				Trail *pTrail = pCourse->GetTrail( nt, cd );
+				Trail *pTrail = pCourse->GetTrail( st, cd );
 				HighScoreList &hsl = pProf->GetCourseHighScoreList( pCourse, pTrail );
 				for( unsigned i=0; i<hsl.vHighScores.size(); i++ )
 				{

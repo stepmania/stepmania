@@ -96,7 +96,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		return;
 
 	Song* pSong					= m_Selector.GetSelectedSong();
-	StepsType nt				= m_Selector.GetSelectedNotesType();
+	StepsType st				= m_Selector.GetSelectedNotesType();
 	Difficulty dc				= m_Selector.GetSelectedDifficulty();
 	Steps* pNotes				= m_Selector.GetSelectedNotes();
 //	StepsType soureNT			= m_Selector.GetSelectedSourceNotesType();
@@ -105,7 +105,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	EditMenu::Action action		= m_Selector.GetSelectedAction();
 
 	GAMESTATE->m_pCurSong = pSong;
-	GAMESTATE->m_CurStyle = GAMEMAN->GetEditorStyleForNotesType( nt );
+	GAMESTATE->m_CurStyle = GAMEMAN->GetEditorStyleForNotesType( st );
 	GAMESTATE->m_pCurNotes[PLAYER_1] = pNotes;
 
 	//
@@ -139,7 +139,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			// Yuck.  Doing the memory allocation doesn't seem right since
 			// Song allocates all of the other Steps.
 			Steps* pNewNotes = new Steps;
-			pNewNotes->CopyFrom( pSourceNotes, nt );
+			pNewNotes->CopyFrom( pSourceNotes, st );
 			pNewNotes->SetDifficulty( dc );
 			pSong->AddNotes( pNewNotes );
 		
@@ -156,7 +156,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			// Yuck.  Doing the memory allocation doesn't seem right since
 			// Song allocates all of the other Steps.
 			Steps* pNewNotes = new Steps;
-			pNewNotes->AutogenFrom( pSourceNotes, nt );
+			pNewNotes->AutogenFrom( pSourceNotes, st );
 			pNewNotes->DeAutogen();
 			pNewNotes->SetDifficulty( dc );	// override difficulty with the user's choice
 			pSong->AddNotes( pNewNotes );
@@ -173,7 +173,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			// Yuck.  Doing the memory allocation doesn't seem right since
 			// Song allocates all of the other Steps.
 			Steps* pNewNotes = new Steps;
-			pNewNotes->CreateBlank( nt );
+			pNewNotes->CreateBlank( st );
 			pNewNotes->SetDifficulty( dc );
 			pNewNotes->SetMeter( 1 );
 			pSong->AddNotes( pNewNotes );

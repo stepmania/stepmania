@@ -29,6 +29,7 @@
 #include "arch/arch.h"
 #include "ThemeManager.h"
 #include "ProfileManager.h"
+#include "Foreach.h"
 
 /* Amount to increase meter ranges to make them difficult: */
 const int COURSE_DIFFICULTY_METER_CHANGE[NUM_COURSE_DIFFICULTIES] = { -2, 0, 2 };
@@ -449,7 +450,7 @@ CString Course::GetAutogenDifficultySuffix( Difficulty diff ) const
  * play that song, even if we're on difficult and harder notes don't exist.  (The
  * exception is a static song entry with a meter range, but that's not very useful.)
  */
-bool Course::HasCourseDifficulty( StepsType nt, CourseDifficulty cd ) const
+bool Course::HasCourseDifficulty( StepsType st, CourseDifficulty cd ) const
 {
 	/* Check to see if any songs would change if difficult. */
 
@@ -457,19 +458,19 @@ bool Course::HasCourseDifficulty( StepsType nt, CourseDifficulty cd ) const
 	if( cd == COURSE_DIFFICULTY_REGULAR )
 		return true;
 
-	Trail *Regular = GetTrail( nt, COURSE_DIFFICULTY_REGULAR ); 
-	Trail *Other = GetTrail( nt, cd ); 
+	Trail *Regular = GetTrail( st, COURSE_DIFFICULTY_REGULAR ); 
+	Trail *Other = GetTrail( st, cd ); 
 
 	return Regular != Other;
 }
 
-bool Course::IsPlayableIn( StepsType nt ) const
+bool Course::IsPlayableIn( StepsType st ) const
 {
-	Trail* pTrail = GetTrail( nt, COURSE_DIFFICULTY_REGULAR );
+	Trail* pTrail = GetTrail( st, COURSE_DIFFICULTY_REGULAR );
 	return !pTrail->m_vEntries.empty();
 }
 
-static vector<Song*> GetFilteredBestSongs( StepsType nt )
+static vector<Song*> GetFilteredBestSongs( StepsType st )
 {
 	const vector<Song*> &vSongsByMostPlayed = SONGMAN->GetBestSongs();
 	vector<Song*> ret;
@@ -483,16 +484,16 @@ static vector<Song*> GetFilteredBestSongs( StepsType nt )
 			continue;
 
 		bool FoundMedium = false, FoundHard = false;
-		for( unsigned j=0; j < pSong->m_apNotes.size(); j++ )	// for each of the Song's Steps
+		FOREACH( Steps*, pSong->m_apNotes, pSteps )
 		{
-			if( pSong->m_apNotes[j]->m_StepsType != nt )
+			if( (*pSteps)->m_StepsType != st )
 				continue;
-			if( !PREFSMAN->m_bAutogenSteps && pSong->m_apNotes[j]->IsAutogen() )
+			if( !PREFSMAN->m_bAutogenSteps && (*pSteps)->IsAutogen() )
 				continue;
 
-			if( pSong->m_apNotes[j]->GetDifficulty() == DIFFICULTY_MEDIUM )
+			if( (*pSteps)->GetDifficulty() == DIFFICULTY_MEDIUM )
 				FoundMedium = true;
-			else if( pSong->m_apNotes[j]->GetDifficulty() == DIFFICULTY_HARD )
+			else if( (*pSteps)->GetDifficulty() == DIFFICULTY_HARD )
 				FoundHard = true;
 
 			if( FoundMedium && FoundHard )
@@ -510,12 +511,12 @@ static vector<Song*> GetFilteredBestSongs( StepsType nt )
 /* This is called by many simple functions, like Course::GetTotalSeconds, and may
  * be called on all songs to sort.  It can take time to execute, so we cache the
  * results. */
-Trail* Course::GetTrail( StepsType nt, CourseDifficulty cd ) const
+Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 {
 	//
 	// Look in the Trail cache
 	//
-	const TrailParams params( nt, cd );
+	const TrailParams params( st, cd );
 	TrailCache::iterator it = m_TrailCache.find( params );
 	if( it != m_TrailCache.end() )
 	{
@@ -551,7 +552,7 @@ Trail* Course::GetTrail( StepsType nt, CourseDifficulty cd ) const
 	int CurSong = 0; /* Current offset into AllSongsShuffled */
 	
 	Trail trail;
-	trail.m_StepsType = nt;
+	trail.m_StepsType = st;
 	trail.m_CourseDifficulty = cd;
 
 	for( unsigned i=0; i<entries.size(); i++ )
@@ -576,11 +577,11 @@ Trail* Course::GetTrail( StepsType nt, CourseDifficulty cd ) const
 			if( pSong )
 			{
 				if( e.difficulty != DIFFICULTY_INVALID )
-					pNotes = pSong->GetStepsByDifficulty( nt, e.difficulty );
+					pNotes = pSong->GetStepsByDifficulty( st, e.difficulty );
 				else if( e.low_meter != -1  &&  e.high_meter != -1 )
-					pNotes = pSong->GetStepsByMeter( nt, low_meter, high_meter );
+					pNotes = pSong->GetStepsByMeter( st, low_meter, high_meter );
 				else
-					pNotes = pSong->GetStepsByDifficulty( nt, DIFFICULTY_MEDIUM );
+					pNotes = pSong->GetStepsByDifficulty( st, DIFFICULTY_MEDIUM );
 			}
 			break;
 		case COURSE_ENTRY_RANDOM:
@@ -607,9 +608,9 @@ Trail* Course::GetTrail( StepsType nt, CourseDifficulty cd ) const
 					   continue; /* wrong group */
 
 					if( e.difficulty == DIFFICULTY_INVALID )
-						pNotes = pSong->GetStepsByMeter( nt, low_meter, high_meter );
+						pNotes = pSong->GetStepsByMeter( st, low_meter, high_meter );
 					else
-						pNotes = pSong->GetStepsByDifficulty( nt, e.difficulty );
+						pNotes = pSong->GetStepsByDifficulty( st, e.difficulty );
 
 					if( pNotes )	// found a match
 						break;		// stop searching
@@ -625,7 +626,7 @@ Trail* Course::GetTrail( StepsType nt, CourseDifficulty cd ) const
 				if( !bMostPlayedSet )
 				{
 					bMostPlayedSet = true;
-					vSongsByMostPlayed = GetFilteredBestSongs( nt );
+					vSongsByMostPlayed = GetFilteredBestSongs( st );
 				}
 
 				if( e.players_index >= (int)vSongsByMostPlayed.size() )
@@ -644,12 +645,12 @@ Trail* Course::GetTrail( StepsType nt, CourseDifficulty cd ) const
 				}
 
 				if( e.difficulty == DIFFICULTY_INVALID )
-					pNotes = pSong->GetStepsByMeter( nt, low_meter, high_meter );
+					pNotes = pSong->GetStepsByMeter( st, low_meter, high_meter );
 				else
-					pNotes = pSong->GetStepsByDifficulty( nt, e.difficulty );
+					pNotes = pSong->GetStepsByDifficulty( st, e.difficulty );
 
 				if( pNotes == NULL )
-					pNotes = pSong->GetClosestNotes( nt, DIFFICULTY_MEDIUM );
+					pNotes = pSong->GetClosestNotes( st, DIFFICULTY_MEDIUM );
 			}
 			break;
 		default:
@@ -670,7 +671,7 @@ Trail* Course::GetTrail( StepsType nt, CourseDifficulty cd ) const
 			dc = clamp( dc, DIFFICULTY_BEGINNER, DIFFICULTY_CHALLENGE );
 			if( dc != original_dc )
 			{
-				Steps* pNewNotes = pSong->GetStepsByDifficulty( nt, dc );
+				Steps* pNewNotes = pSong->GetStepsByDifficulty( st, dc );
 				if( pNewNotes )
 					pNotes = pNewNotes;
 			}
@@ -870,11 +871,11 @@ bool Course::IsRanking() const
 	return false;
 }
 
-float Course::GetMeter( StepsType nt, CourseDifficulty cd ) const
+float Course::GetMeter( StepsType st, CourseDifficulty cd ) const
 {
 	/* If we have a manually-entered meter for this difficulty, use it. */
 	if( m_iCustomMeter[cd] != -1 )
 		return (float)m_iCustomMeter[cd];
 
-	return roundf( GetTrail(nt,cd)->GetAverageMeter() );
+	return roundf( GetTrail(st,cd)->GetAverageMeter() );
 }

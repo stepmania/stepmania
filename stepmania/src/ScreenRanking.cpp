@@ -282,10 +282,10 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 			split( STEPS_TYPES_TO_HIDE, ",", asStepsTypesToHide, true );
 			for( unsigned i=0; i<asStepsTypesToHide.size(); i++ )
 			{
-				StepsType nt = GameManager::StringToNotesType(asStepsTypesToHide[i]);
-				if( nt != STEPS_TYPE_INVALID )
+				StepsType st = GameManager::StringToNotesType(asStepsTypesToHide[i]);
+				if( st != STEPS_TYPE_INVALID )
 				{
-					const vector<StepsType>::iterator iter = find( aStepsTypesToShow.begin(), aStepsTypesToShow.end(), nt );
+					const vector<StepsType>::iterator iter = find( aStepsTypesToShow.begin(), aStepsTypesToShow.end(), st );
 					if( iter != aStepsTypesToShow.end() )
 						aStepsTypesToShow.erase( iter );
 				}

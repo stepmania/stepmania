@@ -100,14 +100,14 @@ public:
 
 
 	// Dereferences course_entries and returns only the playable Songs and Steps
-	Trail* GetTrail( StepsType nt, CourseDifficulty cd ) const;
-	float GetMeter( StepsType nt, CourseDifficulty cd ) const;
+	Trail* GetTrail( StepsType st, CourseDifficulty cd ) const;
+	float GetMeter( StepsType st, CourseDifficulty cd ) const;
 	bool HasMods() const;
 	bool AllSongsAreFixed() const;
 
 	int GetEstimatedNumStages() const { return m_entries.size(); }
-	bool HasCourseDifficulty( StepsType nt, CourseDifficulty cd ) const;
-	bool IsPlayableIn( StepsType nt ) const;
+	bool HasCourseDifficulty( StepsType st, CourseDifficulty cd ) const;
+	bool IsPlayableIn( StepsType st ) const;
 	bool CourseHasBestOrWorst() const;
 	RageColor GetColor() const;
 	bool GetTotalSeconds( StepsType st, float& fSecondsOut ) const;

@@ -26,6 +26,7 @@
 class Song;
 class Steps;
 class Course;
+class Trail;
 class GameDef;
 class StyleDef;
 class NoteFieldPositioning;

@@ -387,7 +387,7 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 	 * XXX: Ack.  This means this function can only be called when we have a style
 	 * set up, which is too restrictive.  How to handle this?
 	 */
-//	const StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+//	const StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 	for( unsigned i=0; i<pSong->m_apNotes.size(); i++ )
 	{
 		const Steps* pNotes = pSong->m_apNotes[i];

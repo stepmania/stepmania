@@ -83,8 +83,8 @@ public:
 	//
 	// Category stats
 	//
-	void AddCategoryScore( StepsType nt, RankingCategory rc, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
-	void IncrementCategoryPlayCount( StepsType nt, RankingCategory rc, PlayerNumber pn );
+	void AddCategoryScore( StepsType st, RankingCategory rc, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
+	void IncrementCategoryPlayCount( StepsType st, RankingCategory rc, PlayerNumber pn );
 
 
 //	void ReadSM300NoteScores();

@@ -899,7 +899,7 @@ void ScreenEvaluation::CommitScores(
 			hs.sPlayerGuid = PROFILEMAN->IsUsingProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : "";
 			hs.sMachineGuid = PROFILEMAN->GetMachineProfile()->m_sGuid;
 
-			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+			StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 
 			switch( m_Type )
 			{
@@ -924,10 +924,10 @@ void ScreenEvaluation::CommitScores(
 					float fAverageMeter = stageStats.iMeter[p] / (float)PREFSMAN->m_iNumArcadeStages;
 					rcOut[p] = AverageMeterToRankingCategory( fAverageMeter );
 
-					PROFILEMAN->AddCategoryScore( nt, rcOut[p], p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
+					PROFILEMAN->AddCategoryScore( st, rcOut[p], p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
 					
 					// TRICKY:  Increment play count here, and not on ScreenGameplay like the others.
-					PROFILEMAN->IncrementCategoryPlayCount( nt, rcOut[p], p );
+					PROFILEMAN->IncrementCategoryPlayCount( st, rcOut[p], p );
 				}
 				break;
 

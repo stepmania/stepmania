@@ -29,15 +29,15 @@ public:
 
 	void	GetStylesForGame( Game game, vector<Style>& aStylesAddTo, bool editor=false );
 	void	GetNotesTypesForGame( Game game, vector<StepsType>& aNotesTypeAddTo );
-	Style	GetEditorStyleForNotesType( StepsType nt );
+	Style	GetEditorStyleForNotesType( StepsType st );
 
 	void GetEnabledGames( vector<Game>& aGamesOut );
 	bool IsGameEnabled( Game game );
 
-	static int NotesTypeToNumTracks( StepsType nt );
+	static int NotesTypeToNumTracks( StepsType st );
 	static StepsType StringToNotesType( CString sNotesType );
-	static CString NotesTypeToString( StepsType nt );
-	static CString NotesTypeToThemedString( StepsType nt );
+	static CString NotesTypeToString( StepsType st );
+	static CString NotesTypeToThemedString( StepsType st );
 	static Game StringToGameType( CString sGameType );
 	Style GameAndStringToStyle( Game game, CString sStyle );
 	static CString StyleToThemedString( Style s );
