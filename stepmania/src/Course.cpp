@@ -828,19 +828,6 @@ static bool CompareCoursePointersByDifficulty(const Course* pCourse1, const Cour
 		return CompareCoursePointersByAutogen( pCourse1, pCourse2 );
 }
 
-static bool CompareCoursePointersByAvgDifficulty(const Course* pCourse1, const Course* pCourse2)
-{
-	float fNum1 = pCourse1->GetMeter( false );
-	float fNum2 = pCourse2->GetMeter( false );
-
-	if( fNum1 < fNum2 )
-		return true;
-	else if( fNum1 > fNum2 )
-		return false;
-	else // fNum1 == fNum2
-		return ( pCourse1->m_sName < pCourse2->m_sName );
-}
-
 static bool CompareCoursePointersByTotalDifficulty(const Course* pCourse1, const Course* pCourse2)
 {
 	int iNum1 = pCourse1->SortOrder_TotalDifficulty;
@@ -905,12 +892,6 @@ void SortCoursePointerArrayByRanking( vector<Course*> &apCourses )
 	for(unsigned i=0; i<apCourses.size(); i++)
 		apCourses[i]->UpdateCourseStats();
 	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByRanking );
-}
-
-void SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCourses )
-{
-	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByAvgDifficulty );
-	stable_sort( apCourses.begin(), apCourses.end(), MovePlayersBestToEnd );
 }
 
 void SortCoursePointerArrayByTotalDifficulty( vector<Course*> &apCourses )
@@ -1017,7 +998,7 @@ int Course::GetNumTimesPlayed( MemoryCard card ) const
 	return iTotalNumTimesPlayed;
 }
 
-static map<const Course*, int> course_sort_val;
+static map<const Course*, float> course_sort_val;
 
 bool CompareCoursePointersBySortValueAscending(const Course *pSong1, const Course *pSong2)
 {
@@ -1029,10 +1010,28 @@ bool CompareCoursePointersBySortValueDescending(const Course *pSong1, const Cour
 	return course_sort_val[pSong1] > course_sort_val[pSong2];
 }
 
+bool CompareCoursePointersByTitle( const Course *pCourse1, const Course *pCourse2 )
+{
+	return pCourse1->m_sName < pCourse2->m_sName;
+}
+
+void SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCourses )
+{
+	RageTimer foo;
+	course_sort_val.clear();
+	for(unsigned i = 0; i < apCourses.size(); ++i)
+		course_sort_val[apCourses[i]] = apCourses[i]->GetMeter( false );
+	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByTitle );
+	stable_sort( apCourses.begin(), apCourses.end(), CompareCoursePointersBySortValueAscending );
+
+	stable_sort( apCourses.begin(), apCourses.end(), MovePlayersBestToEnd );
+}
+ 
+
 void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, MemoryCard card )
 {
 	for(unsigned i = 0; i < arrayCoursePointers.size(); ++i)
-		course_sort_val[arrayCoursePointers[i]] = arrayCoursePointers[i]->GetNumTimesPlayed( card );
+		course_sort_val[arrayCoursePointers[i]] = (float) arrayCoursePointers[i]->GetNumTimesPlayed( card );
 	stable_sort( arrayCoursePointers.begin(), arrayCoursePointers.end(), CompareCoursePointersBySortValueDescending );
 	course_sort_val.clear();
 }
