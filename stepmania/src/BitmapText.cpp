@@ -208,9 +208,11 @@ void BitmapText::BuildChars()
 void BitmapText::DrawChars()
 {
 	unsigned uNumGlyphs = tex.size();
-	unsigned uStartGlyph = SCALE( m_temp.crop.left, 0.f, 1.f, 0, uNumGlyphs );
-	unsigned uEndGlyph = SCALE( m_temp.crop.right, 0.f, 1.f, uNumGlyphs, 0 );
+	unsigned uStartGlyph = (unsigned) SCALE( m_temp.crop.left, 0.f, 1.f, 0, (float) uNumGlyphs );
+	unsigned uEndGlyph = (unsigned) SCALE( m_temp.crop.right, 0.f, 1.f, (float) uNumGlyphs, 0 );
 
+	ASSERT( uStartGlyph <= uNumGlyphs );
+	ASSERT( uEndGlyph <= uNumGlyphs );
 	for(unsigned start = uStartGlyph; start < uEndGlyph; )
 	{
 		unsigned end = start;
