@@ -817,8 +817,6 @@ static void MountTreeOfZips( const CString &dir )
 	}
 }
 
-#define UNLOCKS_PATH "Data/Unlocks.dat"
-
 #ifdef _XBOX
 char *xboxargv[] = { "d:\\default.xbe" };
 extern RageDisplay::VideoModeParams	g_CurrentParams;
@@ -978,9 +976,6 @@ int main(int argc, char* argv[])
 	BoostAppPri();
 
 	ResetGame();
-
-	/* Load the unlocks into memory */
-	GAMESTATE->m_pUnlockingSys->LoadFromDATFile( UNLOCKS_PATH );
 
 	/* Initialize which courses are ranking courses here. */
 	SONGMAN->UpdateRankingCourses();
