@@ -647,11 +647,12 @@ void RageDisplay_D3D::SaveScreenshot( CString sPath )
 RageDisplay::VideoModeParams RageDisplay_D3D::GetVideoModeParams() const { return g_CurrentParams; }
 
 #define SEND_CURRENT_MATRICES \
-	g_pd3dDevice->SetTransform( D3DTS_PROJECTION, (D3DMATRIX*)GetProjection() ); \
+	g_pd3dDevice->SetTransform( D3DTS_PROJECTION, (D3DMATRIX*)GetProjectionTop() ); \
+	g_pd3dDevice->SetTransform( D3DTS_VIEW, (D3DMATRIX*)GetViewTop() ); \
 	RageMatrix m; \
 	/* Convert to OpenGL-style "pixel-centered" coords */ \
 	RageMatrixTranslation( &m, -0.5f, -0.5f, 0 ); \
-	RageMatrixMultiply( &m, &m, GetModelViewTop() ); \
+	RageMatrixMultiply( &m, &m, GetWorldTop() ); \
 	g_pd3dDevice->SetTransform( D3DTS_WORLD, (D3DMATRIX*)&m );
 
 

@@ -184,7 +184,7 @@ void DancingCharacters::Update( float fDelta )
 
 void DancingCharacters::DrawPrimitives()
 {
-	DISPLAY->EnterPerspective( 45, false );
+	DISPLAY->CameraPushMatrix();
 
 	float fPercentIntoSweep;
 	if(m_fThisCameraStartBeat == m_fThisCameraEndBeat)
@@ -200,7 +200,7 @@ void DancingCharacters::DrawPrimitives()
 
 	RageVector3 m_LookAt( 0, m_fLookAtHeight, 0 );
 
-	DISPLAY->LookAt( 
+	DISPLAY->LoadLookAt( 45,
 		m_CameraPoint,
 		m_LookAt,
 		RageVector3(0,1,0) );
@@ -232,5 +232,5 @@ void DancingCharacters::DrawPrimitives()
 	}
 
 
-	DISPLAY->ExitPerspective();
+	DISPLAY->CameraPopMatrix();
 }

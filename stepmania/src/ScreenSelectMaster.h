@@ -69,4 +69,12 @@ protected:
 	float m_fLockInputSecs;
 };
 
+//
+// Aliases
+//
+class ScreenSelectStyle5th : public ScreenSelectMaster
+{
+};
+
+
 #endif

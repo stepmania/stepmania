@@ -91,6 +91,7 @@ struct PlayerOptions
 	bool		m_bTimingAssist;
 	bool		m_bProTiming;
 	float		m_fPerspectiveTilt;		// -1 = near, 0 = overhead, +1 = space
+	float		m_fSkew;		// 0 = vanish point is in center of player, 1 = vanish point is in center of screen
 	CString		m_sPositioning;	/* The current positioning mode, or empty to use the normal positions. */
 	CString		m_sNoteSkin;
 

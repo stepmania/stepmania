@@ -262,14 +262,15 @@ ScreenSelectMusic::~ScreenSelectMusic()
 
 void ScreenSelectMusic::DrawPrimitives()
 {
-	DISPLAY->LoadMenuPerspective(FOV);
+	DISPLAY->CameraPushMatrix();
+	DISPLAY->LoadMenuPerspective(FOV, CENTER_X, CENTER_Y);
 
 	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
 	m_Menu.DrawTopLayer();
 	m_sprOptionsMessage.Draw();
 	
-	DISPLAY->LoadMenuPerspective(0);
+	DISPLAY->CameraPopMatrix();
 }
 
 void ScreenSelectMusic::TweenSongPartsOnScreen( bool Initial )

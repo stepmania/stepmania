@@ -219,6 +219,7 @@ public:
 	void ProcessStatsOnFlip();
 	void StatsAddVerts( int iNumVertsRendered );
 
+	/* World matrix stack functions. */
 	void PushMatrix();
 	void PopMatrix();
 	void Translate( float x, float y, float z );
@@ -231,13 +232,17 @@ public:
 	void PostMultMatrix( const RageMatrix &f );
 	void PreMultMatrix( const RageMatrix &f );
 	void LoadIdentity();
-	float GetMenuPerspectiveFOV();
-	void LoadMenuPerspective(float fovDegrees);
-	void EnterPerspective(float fov, bool preserve_loc = true, float znear = 1, float zfar = 1000);
-	void ExitPerspective();
-	void LookAt(const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up);
 
-	virtual RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ) = 0; 
+	/* Projection and View matrix stack functions. */
+	void CameraPushMatrix();
+	void CameraPopMatrix();
+	void LoadMenuPerspective( float fovDegrees, float fVanishPointX, float fVanishPointY );
+	void LoadLookAt( float fov, const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up );
+
+	SDL_Surface *CreateSurfaceFromPixfmt( PixelFormat pixfmt, void *pixels, int width, int height, int pitch );
+	PixelFormat FindPixelFormat( int bpp, int Rmask, int Gmask, int Bmask, int Amask );
+
+protected:
 	RageMatrix GetFrustrumMatrix(
 		float left,    
 		float right,   
@@ -247,13 +252,13 @@ public:
 		float zfar );
 	RageMatrix GetPerspectiveMatrix(float fovy, float aspect, float zNear, float zFar);
 
-	SDL_Surface *CreateSurfaceFromPixfmt( PixelFormat pixfmt, void *pixels, int width, int height, int pitch );
-	PixelFormat FindPixelFormat( int bpp, int Rmask, int Gmask, int Bmask, int Amask );
+	// Different for D3D and OpenGL.  Not sure why they're not compatible. -Chris
+	virtual RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ) = 0; 
 
-protected:
-	const RageMatrix* GetProjection();
-	const RageMatrix* GetModelViewTop();
-
+	// Called by the RageDisplay derivitives
+	const RageMatrix* GetProjectionTop();
+	const RageMatrix* GetViewTop();
+	const RageMatrix* GetWorldTop();
 };
 
 

@@ -924,9 +924,12 @@ void BGAnimationLayer::Update( float fDeltaTime )
 
 void BGAnimationLayer::Draw()
 {
-	float fLastFOV = DISPLAY->GetMenuPerspectiveFOV();
 	if( m_fFOV != -1 )
-		DISPLAY->LoadMenuPerspective( m_fFOV );
+	{
+		DISPLAY->CameraPushMatrix();
+		DISPLAY->LoadMenuPerspective( m_fFOV, CENTER_X, CENTER_Y );
+	}
+
 	if( m_bLighting )
 	{
 		DISPLAY->SetLighting( true );
@@ -942,7 +945,10 @@ void BGAnimationLayer::Draw()
 		m_pActors[i]->Draw();
 	
 	if( m_fFOV != -1 )
-		DISPLAY->LoadMenuPerspective( fLastFOV );
+	{
+		DISPLAY->CameraPopMatrix();
+	}
+
 	if( m_bLighting )
 	{
 		DISPLAY->SetLightOff( 0 );

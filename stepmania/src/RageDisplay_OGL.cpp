@@ -692,6 +692,14 @@ static void SetupVertices( const RageSpriteVertex v[], int iNumVerts )
 	glNormalPointer(GL_FLOAT, 0, Normal);
 }
 
+#define SEND_CURRENT_MATRICES \
+	glMatrixMode( GL_PROJECTION );	\
+	glLoadMatrixf( (const float*)GetProjectionTop() );	\
+	RageMatrix modelView;	\
+	RageMatrixMultiply( &modelView, GetViewTop(), GetWorldTop() );	\
+	glMatrixMode( GL_MODELVIEW );	\
+	glLoadMatrixf( (const float*)&modelView );	\
+
 static void SetupVertices( const RageModelVertex v[], int iNumVerts )
 {
 	static float *Vertex, *Texture, *Normal;	
@@ -737,10 +745,7 @@ void RageDisplay_OGL::DrawQuads( const RageSpriteVertex v[], int iNumVerts )
 	if(iNumVerts == 0)
 		return;
 
-	glMatrixMode( GL_PROJECTION );
-	glLoadMatrixf( (const float*)GetProjection() );
-	glMatrixMode( GL_MODELVIEW );
-	glLoadMatrixf( (const float*)GetModelViewTop() );
+	SEND_CURRENT_MATRICES;
 
 	SetupVertices( v, iNumVerts );
 	glDrawArrays( GL_QUADS, 0, iNumVerts );
@@ -752,9 +757,9 @@ void RageDisplay_OGL::DrawFan( const RageSpriteVertex v[], int iNumVerts )
 {
 	ASSERT( iNumVerts >= 3 );
 	glMatrixMode( GL_PROJECTION );
-	glLoadMatrixf( (const float*)GetProjection() );
-	glMatrixMode( GL_MODELVIEW );
-	glLoadMatrixf( (const float*)GetModelViewTop() );
+
+	SEND_CURRENT_MATRICES;
+
 	SetupVertices( v, iNumVerts );
 	glDrawArrays( GL_TRIANGLE_FAN, 0, iNumVerts );
 	StatsAddVerts( iNumVerts );
@@ -763,10 +768,9 @@ void RageDisplay_OGL::DrawFan( const RageSpriteVertex v[], int iNumVerts )
 void RageDisplay_OGL::DrawStrip( const RageSpriteVertex v[], int iNumVerts )
 {
 	ASSERT( iNumVerts >= 3 );
-	glMatrixMode( GL_PROJECTION );
-	glLoadMatrixf( (const float*)GetProjection() );
-	glMatrixMode( GL_MODELVIEW );
-	glLoadMatrixf( (const float*)GetModelViewTop() );
+
+	SEND_CURRENT_MATRICES;
+
 	SetupVertices( v, iNumVerts );
 	glDrawArrays( GL_TRIANGLE_STRIP, 0, iNumVerts );
 	StatsAddVerts( iNumVerts );
@@ -777,10 +781,9 @@ void RageDisplay_OGL::DrawTriangles( const RageSpriteVertex v[], int iNumVerts )
 	if( iNumVerts == 0 )
 		return;
 	ASSERT( (iNumVerts%3) == 0 );
-	glMatrixMode( GL_PROJECTION );
-	glLoadMatrixf( (const float*)GetProjection() );
-	glMatrixMode( GL_MODELVIEW );
-	glLoadMatrixf( (const float*)GetModelViewTop() );
+
+	SEND_CURRENT_MATRICES;
+
 	SetupVertices( v, iNumVerts );
 	glDrawArrays( GL_TRIANGLES, 0, iNumVerts );
 	StatsAddVerts( iNumVerts );
@@ -791,10 +794,8 @@ void RageDisplay_OGL::DrawIndexedTriangles( const RageModelVertex v[], int iNumV
 	if( iNumIndices == 0 )
 		return;
 	ASSERT( (iNumIndices%3) == 0 );
-	glMatrixMode( GL_PROJECTION );
-	glLoadMatrixf( (const float*)GetProjection() );
-	glMatrixMode( GL_MODELVIEW );
-	glLoadMatrixf( (const float*)GetModelViewTop() );
+
+	SEND_CURRENT_MATRICES;
 
 	SetupVertices( v, iNumVerts );
 //	glInterleavedArrays( RageSpriteVertexFormat, sizeof(RageSpriteVertex), v );
@@ -812,10 +813,7 @@ void RageDisplay_OGL::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, 
 		return;
 	}
 
-	glMatrixMode( GL_PROJECTION );
-	glLoadMatrixf( (const float*)GetProjection() );
-	glMatrixMode( GL_MODELVIEW );
-	glLoadMatrixf( (const float*)GetModelViewTop() );
+	SEND_CURRENT_MATRICES;
 
 	/* Draw a nice AA'd line loop.  One problem with this is that point and line
 	 * sizes don't always precisely match, which doesn't look quite right.

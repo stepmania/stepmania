@@ -398,27 +398,24 @@ void PlayerMinus::DrawPrimitives()
 		m_Combo.Draw();
 
 	float fTilt = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fPerspectiveTilt;
+	float fSkew = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fSkew;
 	bool bReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].GetReversePercentForColumn(0)>0.5;
-	float fReverseScale = bReverse ? -1.0f : 1.0f;
+	fTilt *= bReverse ? 1.0f : -1.0f;
 
-	if( fTilt != 0 )
-	{
-		DISPLAY->EnterPerspective(45, false);
+	DISPLAY->CameraPushMatrix();
 
-		// construct view and project matrix
-		RageVector3 Up( 0.0f, 1.0f, 0.0f );
-		RageVector3 Eye( CENTER_X, CENTER_Y+SCALE(fTilt*fReverseScale,-1,1,-350,350), 500 );
-		// give a push the receptors toward the edge of the screen so they aren't so far in the middle
-		float fYOffset = SCALE(fTilt,-1,+1,10*fReverseScale,60*fReverseScale);
-		RageVector3 At( CENTER_X, CENTER_Y+fYOffset, 0 );
+	DISPLAY->LoadMenuPerspective( 45, SCALE(fSkew,0.f,1.f,this->GetX(),CENTER_X), CENTER_Y );
 
-		DISPLAY->LookAt(Eye, At, Up);
-	}
+	float fOriginalY = 	m_pNoteField->GetY();
 
+	m_pNoteField->SetY( fOriginalY + SCALE(fTilt,-1.f,+1.f,0,bReverse?+30:-40) );
+	m_pNoteField->SetZ( SCALE(fTilt,-1.f,+1.f,-50,+50) );
+	m_pNoteField->SetRotationX( SCALE(fTilt,-1.f,+1.f,-30,+30) );
 	m_pNoteField->Draw();
 
-	if( fTilt != 0 )
-		DISPLAY->ExitPerspective();
+	m_pNoteField->SetY( fOriginalY );
+
+	DISPLAY->CameraPopMatrix();
 
 	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind == 0 )
 	{

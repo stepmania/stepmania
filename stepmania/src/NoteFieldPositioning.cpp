@@ -26,7 +26,7 @@ NoteFieldMode::NoteFieldMode()
 
 void NoteFieldMode::BeginDrawTrack(int tn)
 {
-	DISPLAY->PushMatrix();
+	DISPLAY->CameraPushMatrix();
 
 	/* It's useful to be able to use Actors like this, functioning only
 	 * for a transformation.  However, this is a big waste of matrix
@@ -36,7 +36,7 @@ void NoteFieldMode::BeginDrawTrack(int tn)
 		m_CenterTrack[tn].BeginDraw();
 
 	if(m_fFov) 
-		DISPLAY->EnterPerspective(m_fFov, true, m_fNear, m_fFar);
+		DISPLAY->LoadMenuPerspective(m_fFov, CENTER_X, CENTER_Y);
 	
 	m_Position.BeginDraw();
 	if(tn != -1)
@@ -49,14 +49,11 @@ void NoteFieldMode::EndDrawTrack(int tn)
 		m_PositionTrack[tn].EndDraw();
 	m_Position.EndDraw();
 
-	if(m_fFov)
-		DISPLAY->ExitPerspective();
-
 	if(tn != -1)
 		m_CenterTrack[tn].EndDraw();
 	m_Center.EndDraw();
 
-	DISPLAY->PopMatrix();
+	DISPLAY->CameraPopMatrix();
 }
 
 template <class T>

@@ -36,6 +36,7 @@ void PlayerOptions::Init()
 	m_bTimingAssist = false;
 	m_bProTiming = false;
 	m_fPerspectiveTilt = 0;
+	m_fSkew = 0;
 	m_sPositioning = "";	// "null"
 	m_sNoteSkin = "default";
 }
@@ -56,6 +57,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	fapproach( m_fDark, other.m_fDark, fDeltaSeconds );
 	fapproach( m_fBlind, other.m_fBlind, fDeltaSeconds );
 	fapproach( m_fPerspectiveTilt, other.m_fPerspectiveTilt, fDeltaSeconds );
+	fapproach( m_fSkew, other.m_fSkew, fDeltaSeconds );
 }
 
 CString PlayerOptions::GetString()
@@ -141,11 +143,14 @@ CString PlayerOptions::GetString()
 	if( m_bTimingAssist )	sReturn += "TimingAssist, ";
 	if( m_bProTiming )		sReturn += "ProTiming, ";
 
-	switch( (int)m_fPerspectiveTilt )
-	{
-	case -1:	sReturn += "Incoming, ";	break;
-	case +1:	sReturn += "Space, ";		break;
-	}
+	if( m_fSkew==1 && m_fPerspectiveTilt==-1 )
+		sReturn += "Incoming, ";
+	else if( m_fSkew==1 && m_fPerspectiveTilt==+1 )
+		sReturn += "Space, ";
+	else if( m_fSkew==0 && m_fPerspectiveTilt==-1 )
+		sReturn += "Hallway, ";
+	else if( m_fSkew==0 && m_fPerspectiveTilt==+1 )
+		sReturn += "Distant, ";
 
 	if( !m_sPositioning.empty() )
 		sReturn += m_sPositioning + ", ";
@@ -228,8 +233,10 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "blind" )		m_fBlind = 1;
 		else if( sBit == "timingassist")m_bTimingAssist = true;
 		else if( sBit == "protiming")	m_bProTiming = true;
-		else if( sBit == "incoming" )	m_fPerspectiveTilt = -1;
-		else if( sBit == "space" )		m_fPerspectiveTilt = +1;
+		else if( sBit == "incoming" )	{ m_fSkew = 1; m_fPerspectiveTilt = -1; }
+		else if( sBit == "space" )		{ m_fSkew = 1; m_fPerspectiveTilt = +1; }
+		else if( sBit == "hallway" )	{ m_fSkew = 0; m_fPerspectiveTilt = -1; }
+		else if( sBit == "distant" )	{ m_fSkew = 0; m_fPerspectiveTilt = +1; }
 		else if( GAMESTATE->m_pPosition->IsValidModeForAnyStyle(sBit) )
 			m_sPositioning = sBit;
 		else if( NOTESKIN->DoesNoteSkinExist(sBit) )

@@ -160,6 +160,8 @@ void ScreenPlayerOptions::ImportOptions()
 	m_OptionRow[PO_PERSPECTIVE].choices.push_back( "INCOMING" ); 
 	m_OptionRow[PO_PERSPECTIVE].choices.push_back( "OVERHEAD" ); 
 	m_OptionRow[PO_PERSPECTIVE].choices.push_back( "SPACE" ); 
+	m_OptionRow[PO_PERSPECTIVE].choices.push_back( "HALLWAY" ); 
+	m_OptionRow[PO_PERSPECTIVE].choices.push_back( "DISTANT" ); 
 
 	CStringArray arrayPosNames;
 	GAMESTATE->m_pPosition->GetNamesForCurrentGame(arrayPosNames);
@@ -275,10 +277,14 @@ void ScreenPlayerOptions::ImportOptions()
 
 		/* Default: */
 		m_iSelectedOption[p][PO_PERSPECTIVE] = 1;
-		if(po.m_fPerspectiveTilt == -1)
+		if( po.m_fSkew==1 && po.m_fPerspectiveTilt==-1 )
 			m_iSelectedOption[p][PO_PERSPECTIVE] = 0;
-		else if(po.m_fPerspectiveTilt == 1)
+		else if( po.m_fSkew==1 && po.m_fPerspectiveTilt==1 )
 			m_iSelectedOption[p][PO_PERSPECTIVE] = 2;
+		else if( po.m_fSkew==0 && po.m_fPerspectiveTilt==-1 )
+			m_iSelectedOption[p][PO_PERSPECTIVE] = 3;
+		else if( po.m_fSkew==0 && po.m_fPerspectiveTilt==1 )
+			m_iSelectedOption[p][PO_PERSPECTIVE] = 4;
 		else /* po.m_fPerspectiveTilt == 0 */
 		{
 			vector<CString> &choices = m_OptionRow[PO_PERSPECTIVE].choices;
@@ -377,9 +383,13 @@ void ScreenPlayerOptions::ExportOptions()
 		
 		switch(m_iSelectedOption[p][PO_PERSPECTIVE])
 		{
-		case 0: po.m_fPerspectiveTilt = -1; break;
-		case 2: po.m_fPerspectiveTilt =  1; break;
-		default:po.m_fPerspectiveTilt =  0; break;
+		case 0: po.m_fSkew = 1;	po.m_fPerspectiveTilt = -1; break;
+		case 1:	po.m_fSkew = 1;	po.m_fPerspectiveTilt =  0; break;
+		case 2: po.m_fSkew = 0;	po.m_fPerspectiveTilt =  1; break;
+		case 3:	po.m_fSkew = 0;	po.m_fPerspectiveTilt = -1; break;
+		case 4: po.m_fSkew = 0;	po.m_fPerspectiveTilt =  1; break;
+		default:
+			ASSERT(0);
 		}
 		if(m_iSelectedOption[p][PO_PERSPECTIVE] > 2)
 		{

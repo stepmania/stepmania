@@ -205,7 +205,7 @@ void RageDisplay::SetDefaultRenderStates()
 	SetAlphaTest( true );
 	SetBlendMode( BLEND_NORMAL );
 	SetTextureFiltering( true );
-	LoadMenuPerspective(0);	// 0 FOV = ortho
+	LoadMenuPerspective(0, CENTER_X, CENTER_Y);	// 0 FOV = ortho
 }
 
 
@@ -223,8 +223,7 @@ public:
 		LoadIdentity();
 	}
 
-    // Pops the top of the stack, returns the current top
-    // *after* popping the top.
+    // Pops the top of the stack.
     void Pop()
 	{
 		stack.pop_back();
@@ -350,83 +349,112 @@ public:
 
 
 MatrixStack	g_ProjectionStack;
-MatrixStack	g_ModelViewStack;
+MatrixStack	g_ViewStack;
+MatrixStack	g_WorldStack;
 
-const RageMatrix* RageDisplay::GetProjection()
+const RageMatrix* RageDisplay::GetProjectionTop()
 {
 	return g_ProjectionStack.GetTop();
 }
 
-const RageMatrix* RageDisplay::GetModelViewTop()
+const RageMatrix* RageDisplay::GetViewTop()
 {
-	return g_ModelViewStack.GetTop();
+	return g_ViewStack.GetTop();
+}
+
+const RageMatrix* RageDisplay::GetWorldTop()
+{
+	return g_WorldStack.GetTop();
 }
 
 void RageDisplay::PushMatrix() 
 { 
-	g_ModelViewStack.Push();
+	g_WorldStack.Push();
 }
 
 void RageDisplay::PopMatrix() 
 { 
-	g_ModelViewStack.Pop();
+	g_WorldStack.Pop();
 }
 
 void RageDisplay::Translate( float x, float y, float z )
 {
-	g_ModelViewStack.TranslateLocal(x, y, z);
+	g_WorldStack.TranslateLocal(x, y, z);
 }
 
 void RageDisplay::TranslateWorld( float x, float y, float z )
 {
-	g_ModelViewStack.Translate(x, y, z);
+	g_WorldStack.Translate(x, y, z);
 }
 
 void RageDisplay::Scale( float x, float y, float z )
 {
-	g_ModelViewStack.ScaleLocal(x, y, z);
+	g_WorldStack.ScaleLocal(x, y, z);
 }
 
 void RageDisplay::RotateX( float deg )
 {
-	g_ModelViewStack.RotateXLocal( deg );
+	g_WorldStack.RotateXLocal( deg );
 }
 
 void RageDisplay::RotateY( float deg )
 {
-	g_ModelViewStack.RotateYLocal( deg );
+	g_WorldStack.RotateYLocal( deg );
 }
 
 void RageDisplay::RotateZ( float deg )
 {
-	g_ModelViewStack.RotateZLocal( deg );
+	g_WorldStack.RotateZLocal( deg );
 }
 
 void RageDisplay::PostMultMatrix( const RageMatrix &m )
 {
-	g_ModelViewStack.MultMatrix( m );
+	g_WorldStack.MultMatrix( m );
 }
 
 void RageDisplay::PreMultMatrix( const RageMatrix &m )
 {
-	g_ModelViewStack.MultMatrixLocal( m );
+	g_WorldStack.MultMatrixLocal( m );
 }
 
 void RageDisplay::LoadIdentity()
 {
-	g_ModelViewStack.LoadIdentity();
+	g_WorldStack.LoadIdentity();
 }
 
-float g_fLastMenuPerspectiveFOV = -1;
-float RageDisplay::GetMenuPerspectiveFOV()
+/*
+void RageDisplay::LoadPerspectiveOffCenter(
+	float fovDegrees,
+	float fCenterX,    
+	float fCenterY )
 {
-	return g_fLastMenuPerspectiveFOV;
+	CLAMP( fovDegrees, 0.1f, 179.9f );
+	float fovRadians = fovDegrees / 180.f * PI;
+	float theta = fovRadians/2;
+	float fDistCameraFromImage = SCREEN_WIDTH/2 / tanf( theta );
+
+	// It's the caller's responsibility to push first.
+	g_ProjectionStack.LoadMatrix(
+		GetFrustrumMatrix(
+		  (-fCenterX)/fDistCameraFromImage,
+		  (-fCenterX+SCREEN_WIDTH)/fDistCameraFromImage,
+		  (-fCenterY+SCREEN_HEIGHT)/fDistCameraFromImage,
+		  (-fCenterY)/fDistCameraFromImage,
+		  1,
+		  fDistCameraFromImage+1000	) );
+
+//	g_ProjectionStack.TranslateLocal( -fCenterX, -fCenterY, 0 );
+
+	g_WorldStack.LoadMatrix( 
+		RageLookAt(
+			0, 0, fDistCameraFromImage,
+			0, 0, 0,
+			0.0f, 1.0f, 0.0f) );
 }
+*/
 
-void RageDisplay::LoadMenuPerspective(float fovDegrees)
+void RageDisplay::LoadMenuPerspective( float fovDegrees, float fVanishPointX, float fVanishPointY )
 {
-	g_fLastMenuPerspectiveFOV = fovDegrees;
-
 	/* fovDegrees == 0 looks the same as an ortho projection.  However,
 	 * we don't want to mess with the ModelView stack because 
 	 * EnterPerspectiveMode's preserve location feature expectes there 
@@ -438,7 +466,7 @@ void RageDisplay::LoadMenuPerspective(float fovDegrees)
 	{
  		float left = 0, right = SCREEN_WIDTH, bottom = SCREEN_HEIGHT, top = 0;
 		g_ProjectionStack.LoadMatrix( GetOrthoMatrix(left, right, bottom, top, SCREEN_NEAR, SCREEN_FAR) );
- 		g_ModelViewStack.LoadIdentity();
+ 		g_ViewStack.LoadIdentity();
 	}
 	else
 	{
@@ -447,20 +475,27 @@ void RageDisplay::LoadMenuPerspective(float fovDegrees)
 		float theta = fovRadians/2;
 		float fDistCameraFromImage = SCREEN_WIDTH/2 / tanf( theta );
 
+		fVanishPointX = SCALE( fVanishPointX, SCREEN_LEFT, SCREEN_RIGHT, SCREEN_RIGHT, SCREEN_LEFT );
+		fVanishPointY = SCALE( fVanishPointY, SCREEN_TOP, SCREEN_BOTTOM, SCREEN_BOTTOM, SCREEN_TOP );
+
+		fVanishPointX -= CENTER_X;
+		fVanishPointY -= CENTER_Y;
+
+
 		/* It's the caller's responsibility to push first. */
 		g_ProjectionStack.LoadMatrix(
 			GetFrustrumMatrix(
-			  -(SCREEN_WIDTH/2)/fDistCameraFromImage,
-			  +(SCREEN_WIDTH/2)/fDistCameraFromImage,
-			  +(SCREEN_HEIGHT/2)/fDistCameraFromImage,
-			  -(SCREEN_HEIGHT/2)/fDistCameraFromImage,
+			  (fVanishPointX-SCREEN_WIDTH/2)/fDistCameraFromImage,
+			  (fVanishPointX+SCREEN_WIDTH/2)/fDistCameraFromImage,
+			  (fVanishPointY+SCREEN_HEIGHT/2)/fDistCameraFromImage,
+			  (fVanishPointY-SCREEN_HEIGHT/2)/fDistCameraFromImage,
 			  1,
 			  fDistCameraFromImage+1000	) );
 
-		g_ModelViewStack.MultMatrixLocal( 
+		g_ViewStack.LoadMatrix( 
 			RageLookAt(
-				CENTER_X, CENTER_Y, fDistCameraFromImage,
-				CENTER_X, CENTER_Y, 0,
+				-fVanishPointX+CENTER_X, -fVanishPointY+CENTER_Y, fDistCameraFromImage,
+				-fVanishPointX+CENTER_X, -fVanishPointY+CENTER_Y, 0,
 				0.0f, 1.0f, 0.0f) );
 	}
 }
@@ -483,19 +518,20 @@ void RageDisplay::LoadMenuPerspective(float fovDegrees)
  * When finished, the current position will be the "viewpoint" (at 0,0).  negative
  * Z goes into the screen, positive X and Y is right and down.
  */
-void RageDisplay::EnterPerspective(float fov, bool preserve_loc, float near_clip, float far_clip)
-{
-	g_ProjectionStack.Push();
-	g_ModelViewStack.Push();
-
-	float aspect = SCREEN_WIDTH/(float)SCREEN_HEIGHT;
-	g_ProjectionStack.LoadMatrix( GetPerspectiveMatrix(fov, aspect, near_clip, far_clip) );
-	/* Flip the Y coordinate, so positive numbers go down. */
-	g_ProjectionStack.Scale(1, -1, 1);
-
-	if( preserve_loc )
-	{
-		//RageMatrix matTop = *g_ModelViewStack.GetTop();
+//void RageDisplay::EnterPerspective(float fov, bool preserve_loc, float near_clip, float far_clip)
+//{
+//	g_ProjectionStack.Push();
+//	g_WorldStack.Push();
+//
+//	float aspect = SCREEN_WIDTH/(float)SCREEN_HEIGHT;
+//	g_ProjectionStack.LoadMatrix( GetPerspectiveMatrix(fov, aspect, near_clip, far_clip) );
+//	/* Flip the Y coordinate, so positive numbers go down. */
+//	g_ProjectionStack.Scale(1, -1, 1);
+//
+//	if( preserve_loc )
+//	{
+//		
+		//RageMatrix matTop = *g_WorldStack.GetTop();
 		/* TODO: Come up with a more general way to handle this.  
 		 * It looks kind of hacky. -Chris */
 	//	{
@@ -530,21 +566,32 @@ void RageDisplay::EnterPerspective(float fov, bool preserve_loc, float near_clip
 	//	/* Reset the matrix back to identity. */
 	//	glMatrixMode( GL_MODELVIEW );
 	//	glLoadIdentity();
-	}
+//	}
+//}
+
+void RageDisplay::CameraPushMatrix()
+{
+	g_ProjectionStack.Push();
+	g_ViewStack.Push();
 }
 
-void RageDisplay::ExitPerspective()
+void RageDisplay::CameraPopMatrix()
 {
 	g_ProjectionStack.Pop();
-	g_ModelViewStack.Pop();
+	g_ViewStack.Pop();
 }
 
 
 /* gluLookAt.  The result is pre-multiplied to the matrix (M = L * M) instead of
  * post-multiplied. */
-void RageDisplay::LookAt(const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up)
+void RageDisplay::LoadLookAt(float fov, const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up)
 {
-	PreMultMatrix(RageLookAt(Eye.x, Eye.y, Eye.z, At.x, At.y, At.z, Up.x, Up.y, Up.z));
+	float aspect = SCREEN_WIDTH/(float)SCREEN_HEIGHT;
+	g_ProjectionStack.LoadMatrix( GetPerspectiveMatrix(fov, aspect, 1, 1000) );
+	/* Flip the Y coordinate, so positive numbers go down. */
+	g_ProjectionStack.Scale(1, -1, 1);
+
+	g_ViewStack.LoadMatrix(RageLookAt(Eye.x, Eye.y, Eye.z, At.x, At.y, At.z, Up.x, Up.y, Up.z));
 }
 
 RageMatrix RageDisplay::GetFrustrumMatrix( 
