@@ -54,7 +54,7 @@ public:
 	bool			m_bInstructions, m_bShowDontDie, m_bShowSelectGroup;
 	bool			m_bArcadeOptionsNavigation;
 	bool			m_bCoinOpMode;
-	bool			m_bMusicWheelUsesSections;
+	enum			{ NEVER, ALWAYS, ABC_ONLY } m_MusicWheelUsesSections;
 	int				m_iMusicWheelSwitchSpeed;
 	bool			m_bChangeBannersWhenFast;
 	bool			m_bEasterEggs;

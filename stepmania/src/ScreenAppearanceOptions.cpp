@@ -44,7 +44,7 @@ OptionRowData g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
 	{ "How To\nPlay",	2, {"SKIP","SHOW"} },
 	{ "Caution",		2, {"SKIP","SHOW"} },
 	{ "Song\nGroup",	2, {"ALL MUSIC","CHOOSE"} },
-	{ "Wheel\nSections",2, {"NO","YES"} },
+	{ "Wheel\nSections",3, {"NEVER","ALWAYS", "ABC_ONLY"} },
 };
 
 ScreenAppearanceOptions::ScreenAppearanceOptions() :
@@ -157,7 +157,7 @@ void ScreenAppearanceOptions::ImportOptions()
 	m_iSelectedOption[0][AO_INSTRUCTIONS]					= PREFSMAN->m_bInstructions? 1:0;
 	m_iSelectedOption[0][AO_CAUTION]					= PREFSMAN->m_bShowDontDie? 1:0;
 	m_iSelectedOption[0][AO_SELECT_GROUP]				= PREFSMAN->m_bShowSelectGroup? 1:0;
-	m_iSelectedOption[0][AO_WHEEL_SECTIONS]				= PREFSMAN->m_bMusicWheelUsesSections? 1:0;
+	m_iSelectedOption[0][AO_WHEEL_SECTIONS]				= (int)PREFSMAN->m_MusicWheelUsesSections;
 }
 
 void ScreenAppearanceOptions::ExportOptions()
@@ -182,7 +182,7 @@ void ScreenAppearanceOptions::ExportOptions()
 	PREFSMAN->m_bInstructions			= !!m_iSelectedOption[0][AO_INSTRUCTIONS];
 	PREFSMAN->m_bShowDontDie			= !!m_iSelectedOption[0][AO_CAUTION];
 	PREFSMAN->m_bShowSelectGroup		= !!m_iSelectedOption[0][AO_SELECT_GROUP];
-	PREFSMAN->m_bMusicWheelUsesSections	= !!m_iSelectedOption[0][AO_WHEEL_SECTIONS];
+	(int&)PREFSMAN->m_MusicWheelUsesSections	= m_iSelectedOption[0][AO_WHEEL_SECTIONS];
 
 	PREFSMAN->SaveGamePrefsToDisk();
 	PREFSMAN->SaveGlobalPrefsToDisk();

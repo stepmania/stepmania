@@ -109,7 +109,6 @@ RageColor PlayerToColor( int p );
 
 
 enum SongSortOrder {
-	SORT_GROUP_NOHEADER,
 	SORT_GROUP, 
 	SORT_TITLE, 
 	SORT_BPM, 

@@ -21,7 +21,7 @@
 
 MusicSortDisplay::MusicSortDisplay()
 {
-	Load( THEME->GetPathTo("Graphics","music sort icons 1x5") );
+	Load( THEME->GetPathTo("Graphics","music sort icons 1x4") );
 	StopAnimating();
 }
 
@@ -29,7 +29,6 @@ void MusicSortDisplay::Set( SongSortOrder so )
 { 
 	switch( so )
 	{
-	case SORT_GROUP_NOHEADER:
 	case SORT_GROUP:
 	case SORT_TITLE:
 	case SORT_BPM:
