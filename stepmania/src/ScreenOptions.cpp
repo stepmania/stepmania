@@ -92,7 +92,8 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	FRAME_ON_COMMAND				(m_sName,"FrameOnCommand"),
 	FRAME_OFF_COMMAND				(m_sName,"FrameOffCommand"),
 	SEPARATE_EXIT_ROW				(m_sName,"SeparateExitRow"),
-	SEPARATE_EXIT_ROW_Y				(m_sName,"SeparateExitRowY")
+	SEPARATE_EXIT_ROW_Y				(m_sName,"SeparateExitRowY"),
+	OPTION_ROW_TYPE					(m_sName,"OptionRowType")
 {
 	LOG->Trace( "ScreenOptions::ScreenOptions()" );
 }
@@ -145,7 +146,7 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 		
 		bool bFirstRowGoesDown = m_OptionsNavigation==NAV_TOGGLE_THREE_KEY;
 
-		row.LoadMetrics( m_sName );
+		row.LoadMetrics( OPTION_ROW_TYPE );
 		row.LoadNormal( vDefs[r], vHands[r], bFirstRowGoesDown );
 
 		this->ImportOptions( r );
@@ -193,7 +194,7 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 	// TRICKY:  Add one more item.  This will be "EXIT"
 	m_Rows.push_back( new OptionRow() );
 	OptionRow &row = *m_Rows.back();
-	row.LoadMetrics( m_sName );
+	row.LoadMetrics( OPTION_ROW_TYPE );
 	row.LoadExit();
 
 	m_framePage.AddChild( &row );

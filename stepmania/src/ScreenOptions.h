@@ -135,6 +135,7 @@ protected:
 	ThemeMetric<apActorCommands>	FRAME_OFF_COMMAND;
 	ThemeMetric<bool>				SEPARATE_EXIT_ROW;
 	ThemeMetric<float>				SEPARATE_EXIT_ROW_Y;
+	ThemeMetric<CString>			OPTION_ROW_TYPE;
 };
 
 #endif
