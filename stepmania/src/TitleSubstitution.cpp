@@ -10,10 +10,13 @@ struct TitleTrans
 {
 	Regex TitleFrom, SubFrom, ArtistFrom;
 	CString TitleTo, SubTo, ArtistTo;			/* plain text */
+	bool translit;
 
-	TitleTrans(CString tf, CString sf, CString af, CString tt, CString st, CString at):
+	TitleTrans(CString tf, CString sf, CString af, CString tt, CString st, CString at,
+			   bool translit_):
 		TitleFrom(tf), SubFrom(sf), ArtistFrom(af),
-			TitleTo(tt), SubTo(st), ArtistTo(at) { }
+			TitleTo(tt), SubTo(st), ArtistTo(at),
+			translit(translit_) { }
 
 	bool Matches(CString title, CString sub, CString artist);
 };
@@ -30,9 +33,9 @@ bool TitleTrans::Matches(CString title, CString sub, CString artist)
 }
 
 void TitleSubst::AddTrans(const CString &tf, const CString &sf, const CString &af,
-		      const CString &tt, const CString &st, const CString &at)
+		      const CString &tt, const CString &st, const CString &at, bool translit)
 {
-	ttab.push_back(new TitleTrans(tf, sf, af, tt, st, at));
+	ttab.push_back(new TitleTrans(tf, sf, af, tt, st, at, translit));
 }
 
 void TitleSubst::Subst(CString &title, CString &subtitle, CString &artist,
@@ -46,19 +49,19 @@ void TitleSubst::Subst(CString &title, CString &subtitle, CString &artist,
 		/* The song matches.  Replace whichever strings aren't empty: */
 		if(!ttab[i]->TitleTo.empty())
 		{
-			ttitle = title;
+			if(ttab[i]->translit) ttitle = title;
 			title = ttab[i]->TitleTo;
 			FontCharAliases::ReplaceMarkers( title );
 		}
 		if(!ttab[i]->SubTo.empty())
 		{
-			tsubtitle = subtitle;
+			if(ttab[i]->translit) tsubtitle = subtitle;
 			subtitle = ttab[i]->SubTo;
 			FontCharAliases::ReplaceMarkers( subtitle );
 		}
 		if(!ttab[i]->ArtistTo.empty())
 		{
-			tartist = artist;
+			if(ttab[i]->translit) tartist = artist;
 			artist = ttab[i]->ArtistTo;
 			FontCharAliases::ReplaceMarkers( artist );
 		}
@@ -79,6 +82,7 @@ void TitleSubst::Load(const CString &filename)
 	while(!f.eof())
 	{
 		CString TitleFrom, ArtistFrom, SubtitleFrom, TitleTo, ArtistTo, SubtitleTo;
+		bool translit = true;
 
 		while(!f.eof())
 		{
@@ -94,6 +98,12 @@ void TitleSubst::Load(const CString &filename)
 
 			TrimLeft(line);
 			TrimRight(line);
+
+			if(!line.CompareNoCase("DontTransliterate"))
+			{
+				translit = false;
+				continue;
+			}
 
 			if(line.size() == 0) continue; /* blank */
 			if(line[0] == '#') continue; /* comment */
@@ -122,7 +132,7 @@ void TitleSubst::Load(const CString &filename)
 		if(ArtistFrom.size()) ArtistFrom = "^(" + ArtistFrom + ")$";
 		if(SubtitleFrom.size()) SubtitleFrom = "^(" + SubtitleFrom + ")$";
 
-		AddTrans(TitleFrom, SubtitleFrom, ArtistFrom, TitleTo, SubtitleTo, ArtistTo);
+		AddTrans(TitleFrom, SubtitleFrom, ArtistFrom, TitleTo, SubtitleTo, ArtistTo, translit);
 	}
 }
 

@@ -8,7 +8,7 @@ class TitleSubst
 	vector<TitleTrans *> ttab;
 
 	void AddTrans(const CString &tf, const CString &sf, const CString &af,
-			   const CString &tt, const CString &st, const CString &at);
+			   const CString &tt, const CString &st, const CString &at, bool translit);
 public:
 	TitleSubst();
 	~TitleSubst();
