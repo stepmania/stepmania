@@ -25,7 +25,7 @@ static bool IsFatalSignal( int signal )
 	}
 }
 
-static void DoCleanShutdown( int signal )
+static void DoCleanShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 {
 	if( IsFatalSignal(signal) )
 		return;
@@ -34,16 +34,16 @@ static void DoCleanShutdown( int signal )
 	ExitGame();
 }
 
-static void DoCrashSignalHandler( int signal )
+static void DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 {
         /* Don't dump a debug file if the user just hit ^C. */
 	if( !IsFatalSignal(signal) )
 		return;
 
-	CrashSignalHandler( signal );
+	CrashSignalHandler( signal, si, uc );
 }
 
-static void EmergencyShutdown( int signal )
+static void EmergencyShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 {
 	if( !IsFatalSignal(signal) )
 		return;
