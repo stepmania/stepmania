@@ -195,6 +195,7 @@ const PixelFormatDesc *RageDisplay_D3D::GetPixelFormatDesc(PixelFormat pf) const
 
 
 RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
+try
 {
 	LOG->Trace( "RageDisplay_D3D::RageDisplay_D3D()" );
 	LOG->MapLog("renderer", "Current renderer: Direct3D");
@@ -214,11 +215,7 @@ RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
 	g_pd3d = pDirect3DCreate8( D3D_SDK_VERSION );
 
 	if( FAILED( g_pd3d->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &g_DeviceCaps) ) )
-	{
-	    g_pd3d->Release();
-
 		throw RageException_D3DNoAcceleration();
-	}
 
 	D3DADAPTER_IDENTIFIER8	identifier;
 	g_pd3d->GetAdapterIdentifier( D3DADAPTER_DEFAULT, 0, &identifier );
@@ -268,13 +265,27 @@ RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
 	int flags = SDL_RESIZABLE | SDL_SWSURFACE;
 	SDL_Surface *screen = SDL_SetVideoMode(p.width, p.height, p.bpp, flags);
 	if(!screen)
-	{
-		SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
 		RageException::Throw("SDL_SetVideoMode failed: %s", SDL_GetError());
-	}
 
 	SetVideoMode( p );
-}
+} catch(...) {
+	// Clean up; ~RageDisplay will not be called.
+	if( SDL_WasInit(SDL_INIT_VIDEO) )
+		SDL_QuitSubSystem(SDL_INIT_VIDEO);
+
+	if( g_pd3d )
+	{
+		g_pd3d->Release();
+		g_pd3d = NULL;
+	}
+
+	if( g_D3D8_Module )
+	{
+		FreeLibrary( g_D3D8_Module );
+		g_D3D8_Module = NULL;
+	}
+	throw;
+};
 
 void RageDisplay_D3D::Update(float fDeltaTime)
 {
