@@ -4,7 +4,6 @@
 TapNote TAP_EMPTY					( TapNote::empty,		TapNote::original, "", 0, false, 0 );
 TapNote TAP_ORIGINAL_TAP			( TapNote::tap,			TapNote::original, "", 0, false, 0 );
 TapNote TAP_ORIGINAL_HOLD_HEAD		( TapNote::hold_head,	TapNote::original, "", 0, false, 0 );
-TapNote TAP_ORIGINAL_HOLD_TAIL		( TapNote::hold_tail,	TapNote::original, "", 0, false, 0 );
 TapNote TAP_ORIGINAL_MINE			( TapNote::mine,		TapNote::original, "", 0, false, 0 );
 TapNote TAP_ORIGINAL_ATTACK			( TapNote::attack,		TapNote::original, "", 0, false, 0 );
 TapNote TAP_ORIGINAL_AUTO_KEYSOUND	( TapNote::autoKeysound,TapNote::original, "", 0, false, 0 );
