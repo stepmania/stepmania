@@ -12,10 +12,10 @@
 #include "ThemeManager.h"
 #include "Steps.h"
 #include "song.h"
+#include "CommonMetrics.h"
 
 #define PREV_SCREEN				THEME->GetMetric(m_sName,"PrevScreen")
 #define EXPLANATION_TEXT( row )	THEME->GetMetric(m_sName,"Explanation"+EditMenuRowToString(row))
-#define HELP_TEXT				THEME->GetMetric(m_sName,"HelpText")
 
 const ScreenMessage SM_RefreshSelector	=	(ScreenMessage)(SM_User+1);
 
@@ -43,6 +43,12 @@ void ScreenEditMenu::Init()
 	SET_XY( m_textExplanation );
 	RefreshExplanationText();
 	this->AddChild( &m_textExplanation );
+
+	m_textNumStepsLoadedFromProfile.SetName( "NumStepsLoadedFromProfile" );
+	m_textNumStepsLoadedFromProfile.LoadFromFont( THEME->GetPathF(m_sName,"NumStepsLoadedFromProfile") );
+	SET_XY_AND_ON_COMMAND( m_textNumStepsLoadedFromProfile );
+	RefreshNumStepsLoadedFromProfile();
+	this->AddChild( &m_textNumStepsLoadedFromProfile );
 
 	this->SortByDrawOrder();
 
@@ -249,6 +255,14 @@ void ScreenEditMenu::RefreshExplanationText()
 	ON_COMMAND( m_textExplanation );
 }
 
+void ScreenEditMenu::RefreshNumStepsLoadedFromProfile()
+{
+	CString s = ssprintf( "edits loaded: %d", SONGMAN->GetNumStepsLoadedFromProfile() );
+	int iMaxStepsLoadedFromProfile = MAX_STEPS_LOADED_FROM_PROFILE;
+	if( iMaxStepsLoadedFromProfile != -1 )
+		s += ssprintf( " / %d", iMaxStepsLoadedFromProfile );
+	m_textNumStepsLoadedFromProfile.SetText( s );
+}
 
 /*
  * (c) 2002-2004 Chris Danford

@@ -23,10 +23,12 @@ private:
 	void MenuStart( PlayerNumber pn );
 
 	void RefreshExplanationText();
+	void RefreshNumStepsLoadedFromProfile();
 
 	EditMenu		m_Selector;
 
 	BitmapText		m_textExplanation;
+	BitmapText		m_textNumStepsLoadedFromProfile;
 };
 
 #endif

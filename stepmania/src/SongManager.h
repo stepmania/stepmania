@@ -35,7 +35,7 @@ public:
 	void SetPreferences();
 
 	void LoadAllFromProfile( ProfileSlot s );	// songs, edits
-	int GetTotalNumberOfEdits();
+	int GetNumStepsLoadedFromProfile();
 	void FreeAllLoadedFromProfiles();
 
 	void LoadGroupSymLinks( CString sDir, CString sGroupFolder );

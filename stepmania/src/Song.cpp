@@ -826,7 +826,7 @@ void Song::GetSteps(
 	if( !iMaxToGet )
 		return;
 
-	const vector<Steps*>& vpSteps = GetStepsByStepsType(st);
+	const vector<Steps*> &vpSteps = st == STEPS_TYPE_INVALID ? GetAllSteps() : GetStepsByStepsType(st);
 	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
 	{
 		Steps* pSteps = vpSteps[i];

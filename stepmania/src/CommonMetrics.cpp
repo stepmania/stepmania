@@ -5,16 +5,17 @@
 
 CString PLAYER_COLOR_NAME( size_t p ) { return ssprintf("ColorP%d",p+1); }
 
-ThemeMetric<CString>	DIFFICULTIES_TO_SHOW		("Common","DifficultiesToShow");
-ThemeMetric<CString>	INITIAL_SCREEN				("Common","InitialScreen");
-ThemeMetric<CString>	FIRST_RUN_INITIAL_SCREEN	("Common","FirstRunInitialScreen");
-ThemeMetric<CString>	DEFAULT_MODIFIERS			("Common","DefaultModifiers" );
-ThemeMetric<CString>	DEFAULT_CPU_MODIFIERS		("Common","DefaultCpuModifiers" );
-ThemeMetric<CString>	COURSE_DIFFICULTIES_TO_SHOW	("Common","CourseDifficultiesToShow");
-ThemeMetric1D<RageColor> PLAYER_COLOR				("Common",PLAYER_COLOR_NAME,NUM_PLAYERS);
-ThemeMetric<float>		JOIN_PAUSE_SECONDS			("Common","JoinPauseSeconds");
-ThemeMetric<CString>	WINDOW_TITLE				("Common","WindowTitle");
-ThemeMetric<bool>		HOME_EDIT_MODE				("Common","HomeEditMode");
+ThemeMetric<CString>	DIFFICULTIES_TO_SHOW			("Common","DifficultiesToShow");
+ThemeMetric<CString>	INITIAL_SCREEN					("Common","InitialScreen");
+ThemeMetric<CString>	FIRST_RUN_INITIAL_SCREEN		("Common","FirstRunInitialScreen");
+ThemeMetric<CString>	DEFAULT_MODIFIERS				("Common","DefaultModifiers" );
+ThemeMetric<CString>	DEFAULT_CPU_MODIFIERS			("Common","DefaultCpuModifiers" );
+ThemeMetric<CString>	COURSE_DIFFICULTIES_TO_SHOW		("Common","CourseDifficultiesToShow");
+ThemeMetric1D<RageColor> PLAYER_COLOR					("Common",PLAYER_COLOR_NAME,NUM_PLAYERS);
+ThemeMetric<float>		JOIN_PAUSE_SECONDS				("Common","JoinPauseSeconds");
+ThemeMetric<CString>	WINDOW_TITLE					("Common","WindowTitle");
+ThemeMetric<bool>		HOME_EDIT_MODE					("Common","HomeEditMode");
+ThemeMetric<int>		MAX_STEPS_LOADED_FROM_PROFILE	("Common","MaxStepsLoadedFromProfile");
 
 
 /*
