@@ -232,17 +232,26 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 				split( aBGChangeExpressions[b], "=", aBGChangeValues );
 				/* XXX: Once we have a way to display warnings that the user actually
 				 * cares about (unlike most warnings), this should be one of them. */
-				if(aBGChangeValues.size() != 2)
+
+				BackgroundChange change;
+				switch( aBGChangeValues.size() )
 				{
-					LOG->Warn("Invalid #%s value \"%s\" (must have exactly one '='), ignored",
+				case 6:
+					change.m_fRate = (float)atof( aBGChangeValues[2] );
+					change.m_bFadeLast = atoi( aBGChangeValues[3] ) != 0;
+					change.m_bRewindMovie = atoi( aBGChangeValues[4] ) != 0;
+					change.m_bLoop = atoi( aBGChangeValues[5] ) != 0;
+					// fall through
+				case 2:
+					change.m_fStartBeat = (float)atof( aBGChangeValues[0] );
+					change.m_sBGName = aBGChangeValues[1];
+					out.AddBackgroundChange( change );
+					break;
+				default:
+					LOG->Warn("Invalid #BGCHANGES%s value \"%s\" was ignored",
 						sValueName.GetString(), aBGChangeExpressions[b].GetString());
-					continue;
+					break;
 				}
-				float fBeat = (float)atof( aBGChangeValues[0] );
-				CString sBGName = aBGChangeValues[1];
-				sBGName.MakeLower();
-				
-				out.AddBackgroundChange( BackgroundChange(fBeat, sBGName) );
 			}
 		}
 

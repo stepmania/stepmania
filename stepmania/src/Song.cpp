@@ -638,7 +638,7 @@ void Song::TidyUpData()
 		/* Use this->GetBeatFromElapsedTime(0) instead of 0 to start when the
 		 * music starts. */
 		if( arrayPossibleMovies.size() == 1 )
-			this->AddBackgroundChange( BackgroundChange(0,arrayPossibleMovies[0]) );
+			this->AddBackgroundChange( BackgroundChange(0,arrayPossibleMovies[0],1.f,true,true,false) );
 	}
 
 	for( i=0; i<m_apNotes.size(); i++ )

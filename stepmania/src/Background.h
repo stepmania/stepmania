@@ -50,6 +50,7 @@ protected:
 
 	map<CString,BGAnimation*> m_BGAnimations;
 	vector<BackgroundChange> m_aBGChanges;
+	int				m_iCurBGChangeIndex;
 	BGAnimation* m_pCurrentBGA;
 	BGAnimation* m_pFadingBGA;
 	float m_fSecsLeftInFade;

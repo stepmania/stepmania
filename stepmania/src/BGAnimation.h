@@ -29,7 +29,7 @@ public:
 
 	void LoadFromStaticGraphic( CString sPath );
 	void LoadFromAniDir( CString sAniDir );
-	void LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewind );
+	void LoadFromMovie( CString sMoviePath );
 	void LoadFromVisualization( CString sMoviePath );
 
 	virtual void Update( float fDeltaTime );
@@ -37,7 +37,7 @@ public:
 
 	virtual void SetDiffuse( const RageColor &c );
 
-	void GainingFocus();
+	void GainingFocus( float fRate, bool bRewindMovie, bool bLoop );
 	void LosingFocus();
 
 	float GetLengthSeconds() { return m_fLengthSeconds; }

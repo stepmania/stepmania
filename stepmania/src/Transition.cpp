@@ -54,7 +54,12 @@ void Transition::Update( float fDeltaTime )
 		/* Start the transition on the first update, not in the ctor, so
 		 * we don't play a sound while our parent is still loading. */
 		if( m_fSecsIntoTransition==0 )	// first update
+		{
 			m_sound.PlayRandom();
+
+			// stop the sound from playing multiple times on an Update(0)
+			m_fSecsIntoTransition+=0.000001f;	
+		}
 
 		m_BGAnimation.Update( fDeltaTime );
 		if( m_fSecsIntoTransition > m_BGAnimation.GetLengthSeconds() )	// over

@@ -83,7 +83,7 @@ bool LowLevelWindow_SDL::SetVideoMode( bool windowed, int width, int height, int
 	 * in the real branch we can remove this #if. */
 #if defined(WIN32)
 	SDL_Event e;
-	if(SDL_GetEvent(&e, SDL_OPENGLRESETMASK))
+	if(SDL_GetEvent(e, SDL_OPENGLRESETMASK))
 	{
 		LOG->Trace("New OpenGL context");
 

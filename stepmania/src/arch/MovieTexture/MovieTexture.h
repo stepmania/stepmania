@@ -16,6 +16,7 @@ public:
 	virtual void Pause() = 0;
 	virtual void Stop() = 0;
 	virtual void SetPosition( float fSeconds ) = 0;
+	virtual void SetPlaybackRate( float fRate ) = 0;
 	virtual bool IsPlaying() const = 0;
 	virtual void SetLooping(bool looping=true) { }
 

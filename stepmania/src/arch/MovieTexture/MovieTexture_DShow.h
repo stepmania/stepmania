@@ -57,6 +57,7 @@ public:
 	virtual void Pause();
 	virtual void Stop();
 	virtual void SetPosition( float fSeconds );
+	virtual void SetPlaybackRate( float fRate );
 	virtual bool IsPlaying() const;
 	void SetLooping(bool looping=true) { m_bLoop = looping; }
 

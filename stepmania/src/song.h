@@ -41,10 +41,14 @@ struct StopSegment
 
 struct BackgroundChange 
 {
-	BackgroundChange() { m_fStartBeat = -1; };
-	BackgroundChange( float s, CString sBGName ) { m_fStartBeat = s; m_sBGName = sBGName; };
+	BackgroundChange() { m_fStartBeat=-1; m_fRate=1; m_bFadeLast=false; m_bRewindMovie=false; m_bLoop=true; };
+	BackgroundChange( float s, CString n, float r=1.f, bool f=false, bool m=false, bool l=true ) { m_fStartBeat=s; m_sBGName=n; m_fRate=r; m_bFadeLast=f; m_bRewindMovie=m; m_bLoop=l; };
 	float m_fStartBeat;
 	CString m_sBGName;
+	float m_fRate;
+	bool m_bFadeLast;
+	bool m_bRewindMovie;
+	bool m_bLoop;
 };
 
 void SortBackgroundChangesArray( vector<BackgroundChange> &arrayBackgroundChanges );

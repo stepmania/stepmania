@@ -194,6 +194,10 @@ Menu g_EditSongInfo
 Menu g_BGChange
 (
 	"Background Change",
+	MenuRow( "Rate (applies to new adds)",			true, 5, "50%","60%","70%","80%","90%","100%","110%","120%","130%","140%","150%","160%","170%","180%","190%","200%" ),
+	MenuRow( "Fade Last (applies to new adds)",		true, 0, "NO","YES" ),
+	MenuRow( "Rewind Movie (applies to new adds)",	true, 0, "NO","YES" ),
+	MenuRow( "Loop (applies to new adds)",			true, 1, "NO","YES" ),
 	MenuRow( "Add Change to random",				true ),
 	MenuRow( "Add Change to song BGAnimation",		true ),
 	MenuRow( "Add Change to song Movie",			true ),
@@ -1542,12 +1546,13 @@ void ScreenEdit::HandleEditSongInfoChoice( EditSongInfoChoice c, int* iAnswers )
 
 void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, int* iAnswers )
 {
-	CString sBGName;
+	BackgroundChange change;
+	change.m_fStartBeat = GAMESTATE->m_fSongBeat;
 
 	switch( c )
 	{
 	case add_random:
-		sBGName = "-random-";
+		change.m_sBGName = "-random-";
 		break;
 	case add_song_bganimation:
 	case add_song_movie:
@@ -1555,14 +1560,19 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, int* iAnswers )
 	case add_global_random_movie:
 	case add_global_bganimation:
 	case add_global_visualization:
-		sBGName = g_BGChange.rows[c].choices[iAnswers[c]];
+		change.m_sBGName = g_BGChange.rows[c].choices[iAnswers[c]];
 		break;
 	case delete_change:
-		sBGName = "";
+		change.m_sBGName = "";
 		break;
 	default:
-		ASSERT(0);
+		SOUNDMAN->PlayOnce( THEME->GetPathToS("Common invalid") );
 	};
+
+	change.m_fRate = (float)atof( g_BGChange.rows[rate].choices[iAnswers[rate]] )/100.f;
+	change.m_bFadeLast = !!iAnswers[fade_last];
+	change.m_bRewindMovie = !!iAnswers[rewind_movie];
+	change.m_bLoop = !!iAnswers[loop];
 
 	unsigned i;
 	for( i=0; i<m_pSong->m_BackgroundChanges.size(); i++ )
@@ -1574,6 +1584,6 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, int* iAnswers )
 										  m_pSong->m_BackgroundChanges.begin()+i+1);
 
 	// create a new BGChange
-	if( sBGName != "" )
-		m_pSong->AddBackgroundChange( BackgroundChange(GAMESTATE->m_fSongBeat, sBGName) );
+	if( change.m_sBGName != "" )
+		m_pSong->AddBackgroundChange( change );
 }

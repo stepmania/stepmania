@@ -119,12 +119,12 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 	}
 }
 
-void BGAnimation::LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewind )
+void BGAnimation::LoadFromMovie( CString sMoviePath )
 {
 	Unload();
 
 	BGAnimationLayer* pLayer = new BGAnimationLayer;
-	pLayer->LoadFromMovie( sMoviePath, bLoop, bRewind );
+	pLayer->LoadFromMovie( sMoviePath );
 	m_Layers.push_back( pLayer );
 }
 
@@ -158,10 +158,10 @@ void BGAnimation::DrawPrimitives()
 		m_Layers[i]->Draw();
 }
 	
-void BGAnimation::GainingFocus()
+void BGAnimation::GainingFocus( float fRate, bool bRewindMovie, bool bLoop )
 {
 	for( unsigned i=0; i<m_Layers.size(); i++ )
-		m_Layers[i]->GainingFocus();
+		m_Layers[i]->GainingFocus( fRate, bRewindMovie, bLoop );
 
 	SetDiffuse( RageColor(1,1,1,1) );
 }

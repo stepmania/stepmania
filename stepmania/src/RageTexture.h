@@ -59,6 +59,7 @@ public:
 	virtual void Stop() {}
 	virtual void Pause() {}
 	virtual void SetPosition( float fSeconds ) {}
+	virtual void SetPlaybackRate( float fRate ) {}
 	virtual bool IsAMovie() const { return false; }
 	virtual bool IsPlaying() const { return false; }
 	void SetLooping(bool looping) { }

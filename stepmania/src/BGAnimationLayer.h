@@ -31,7 +31,7 @@ public:
 
 	void LoadFromStaticGraphic( CString sPath );
 	void LoadFromAniLayerFile( CString sPath );
-	void LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewind );
+	void LoadFromMovie( CString sMoviePath );
 	void LoadFromVisualization( CString sMoviePath );
 	void LoadFromIni( CString sDir, CString sLayer );
 
@@ -41,7 +41,7 @@ public:
 	virtual void SetDiffuse( RageColor c );
 
 	float GetMaxTweenTimeLeft() const;
-	void GainingFocus();
+	void GainingFocus( float fRate, bool bRewindMovie, bool bLoop );
 	void LosingFocus();
 
 protected:
@@ -102,7 +102,6 @@ protected:
 	float m_fStretchTexCoordVelocityY;
 
 	// particle and tile stuff
-	bool m_bRewindMovie;
 	float m_fZoomMin, m_fZoomMax;
 	float m_fVelocityXMin, m_fVelocityXMax;
 	float m_fVelocityYMin, m_fVelocityYMax;

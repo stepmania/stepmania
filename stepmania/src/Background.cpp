@@ -49,6 +49,7 @@ Background::Background()
 {
 	m_bInDanger = false;
 
+	m_iCurBGChangeIndex = -1;
 	m_pCurrentBGA = NULL;
 	m_pFadingBGA = NULL;
 	m_fSecsLeftInFade = 0;
@@ -123,7 +124,7 @@ BGAnimation *Background::CreateSongBGA(const Song *pSong, CString sBGName) const
 		if( sExt.CompareNoCase("avi")==0 ||
 			sExt.CompareNoCase("mpg")==0 ||
 			sExt.CompareNoCase("mpeg")==0 )
-			pTempBGA->LoadFromMovie( asFiles[0], true, true );
+			pTempBGA->LoadFromMovie( asFiles[0] );
 		else
 			pTempBGA->LoadFromStaticGraphic( asFiles[0] );
 		return pTempBGA;
@@ -133,7 +134,7 @@ BGAnimation *Background::CreateSongBGA(const Song *pSong, CString sBGName) const
 	if( !asFiles.empty() )
 	{
 		pTempBGA = new BGAnimation;
-		pTempBGA->LoadFromMovie( asFiles[0], true, false );
+		pTempBGA->LoadFromMovie( asFiles[0] );
 		return pTempBGA;
 	}
 
@@ -212,7 +213,7 @@ BGAnimation* Background::CreateRandomBGA() const
 				return NULL;
 			unsigned index = rand() % arrayPossibleMovies.size();
 			BGAnimation *pTempBGA = new BGAnimation;
-			pTempBGA->LoadFromMovie( arrayPossibleMovies[index], true, false );
+			pTempBGA->LoadFromMovie( arrayPossibleMovies[index] );
 			return pTempBGA;
 		}
 		break;
@@ -260,8 +261,8 @@ void Background::LoadFromSong( Song* pSong )
 		// Load all song-specified backgrounds
 		for( unsigned i=0; i<pSong->m_BackgroundChanges.size(); i++ )
 		{
-			float fStartBeat = pSong->m_BackgroundChanges[i].m_fStartBeat;
-			CString sBGName = pSong->m_BackgroundChanges[i].m_sBGName;
+			BackgroundChange change = pSong->m_BackgroundChanges[i];
+			CString sBGName = change.m_sBGName;
 			
 			bool bIsAlreadyLoaded = m_BGAnimations.find(sBGName) != m_BGAnimations.end();
 
@@ -277,7 +278,7 @@ void Background::LoadFromSong( Song* pSong )
 						sBGName = STATIC_BACKGROUND;
 			}
 			
-			m_aBGChanges.push_back( BackgroundChange(fStartBeat, sBGName) );
+			m_aBGChanges.push_back( change );
 		}
 	}
 	else	// pSong doesn't have an animation plan
@@ -366,24 +367,32 @@ void Background::Update( float fDeltaTime )
 			if( GAMESTATE->m_fSongBeat < m_aBGChanges[i+1].m_fStartBeat )
 				break;
 
-		BGAnimation* pOld = m_pCurrentBGA;
-		CString sNewBGName = m_aBGChanges[i].m_sBGName;
-		BGAnimation* pNew = m_BGAnimations[sNewBGName];
-
-		if( pOld != pNew )
+		if( i != m_iCurBGChangeIndex )
 		{
-	//		LOG->Trace( "new bga %d, %d, %f, %f", m_iCurBGChange, i, m_aBGChanges[i].m_fStartBeat, GAMESTATE->m_fSongBeat );
-	
-			m_pFadingBGA = pOld;
-			m_pCurrentBGA = pNew;
+			LOG->Trace( "old bga %d -> new bga %d, %f, %f", i, m_iCurBGChangeIndex, m_aBGChanges[i].m_fStartBeat, GAMESTATE->m_fSongBeat );
 
-			if( pOld )
-				pOld->LosingFocus();
-			if( pNew )
-				pNew->GainingFocus();
+			m_iCurBGChangeIndex = i;
 
-			bool bBGAnimsMode = PREFSMAN->m_BackgroundMode == PrefsManager::BGMODE_ANIMATIONS;
-			m_fSecsLeftInFade = bBGAnimsMode ? 0 : FADE_SECONDS;
+			const BackgroundChange& change = m_aBGChanges[i];
+
+			BGAnimation* pOld = m_pCurrentBGA;
+
+			if( change.m_bFadeLast )
+				m_pFadingBGA = m_pCurrentBGA;
+			else
+				m_pFadingBGA = NULL;
+
+			m_pCurrentBGA = m_BGAnimations[ change.m_sBGName ];
+
+			if( pOld != m_pCurrentBGA )
+			{
+				if( pOld )
+					pOld->LosingFocus();
+				if( m_pCurrentBGA )
+					m_pCurrentBGA->GainingFocus( change.m_fRate, change.m_bRewindMovie, change.m_bLoop );
+			}
+
+			m_fSecsLeftInFade = m_pFadingBGA!=NULL ? FADE_SECONDS : 0;
 		}
 
 		if( m_pCurrentBGA )

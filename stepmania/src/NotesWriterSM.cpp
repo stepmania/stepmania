@@ -65,7 +65,7 @@ void NotesWriterSM::WriteGlobalTags(FILE *fp, const Song &out)
 	{
 		const BackgroundChange &seg = out.m_BackgroundChanges[i];
 
-		fprintf( fp, "%.3f=%s", seg.m_fStartBeat, seg.m_sBGName.GetString() );
+		fprintf( fp, "%.3f=%s=%.3f=%d=%d=%d", seg.m_fStartBeat, seg.m_sBGName.GetString(), seg.m_fRate, seg.m_bFadeLast, seg.m_bRewindMovie, seg.m_bLoop );
 		if( i != out.m_BackgroundChanges.size()-1 )
 			fprintf( fp, "," );
 	}

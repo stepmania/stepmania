@@ -167,6 +167,10 @@ public:
 	void HandleEditSongInfoChoice( EditSongInfoChoice c, int* iAnswers );
 
 	enum BGChangeChoice {
+		rate,
+		fade_last,
+		rewind_movie,
+		loop,
 		add_random,
 		add_song_bganimation,
 		add_song_movie,

@@ -65,7 +65,6 @@ void BGAnimationLayer::Init()
 
 	m_fStretchTexCoordVelocityX = 0;
 	m_fStretchTexCoordVelocityY = 0;
-	m_bRewindMovie = false;
 	m_fZoomMin = 1;
 	m_fZoomMax = 1;
 	m_fVelocityXMin = 10;
@@ -117,7 +116,7 @@ void BGAnimationLayer::LoadFromStaticGraphic( CString sPath )
 	m_Sprites.back()->StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 }
 
-void BGAnimationLayer::LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewind )
+void BGAnimationLayer::LoadFromMovie( CString sMoviePath )
 {
 	Init();
 	m_Sprites.push_back(new Sprite);
@@ -126,9 +125,6 @@ void BGAnimationLayer::LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewi
 	m_Sprites.back()->GetTexture()->Play();
 	SDL_Delay( 50 );	// decode a frame so we don't see a black flash at the beginning
 	m_Sprites.back()->GetTexture()->Pause();
-	m_bRewindMovie = bRewind;
-	if( !bLoop )
-		m_Sprites.back()->GetTexture()->SetLooping(false);
 }
 
 void BGAnimationLayer::LoadFromVisualization( CString sMoviePath )
@@ -486,7 +482,6 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	ini.GetValue ( sLayer, "Command", m_sCommand );
 	ini.GetValueF( sLayer, "StretchTexCoordVelocityX", m_fStretchTexCoordVelocityX );
 	ini.GetValueF( sLayer, "StretchTexCoordVelocityY", m_fStretchTexCoordVelocityY );
-	ini.GetValueB( sLayer, "RewindMovie", m_bRewindMovie );
 	ini.GetValueF( sLayer, "ZoomMin", m_fZoomMin );
 	ini.GetValueF( sLayer, "ZoomMax", m_fZoomMax );
 	ini.GetValueF( sLayer, "VelocityXMin", m_fVelocityXMin );
@@ -872,10 +867,13 @@ void BGAnimationLayer::SetDiffuse( RageColor c )
 		m_Sprites[i]->SetDiffuse(c);
 }
 
-void BGAnimationLayer::GainingFocus()
+void BGAnimationLayer::GainingFocus( float fRate, bool bRewindMovie, bool bLoop )
 {
-	if( m_bRewindMovie )
+	m_Sprites.back()->GetTexture()->SetPlaybackRate(fRate);
+	if( bRewindMovie )
 		m_Sprites[0]->GetTexture()->SetPosition( 0 );
+	m_Sprites.back()->GetTexture()->SetLooping(bLoop);
+
 	// if movie texture, pause and play movie so we don't waste CPU cycles decoding frames that won't be shown
 	m_Sprites[0]->GetTexture()->Play();
 

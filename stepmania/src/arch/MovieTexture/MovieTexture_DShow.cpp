@@ -378,6 +378,17 @@ void MovieTexture_DShow::SetPosition( float fSeconds )
 	StopSkippingUpdates();
 }
 
+void MovieTexture_DShow::SetPlaybackRate( float fRate )
+{
+	SkipUpdates();
+
+	CComPtr<IMediaPosition> pMP;
+    m_pGB.QueryInterface(&pMP);
+    pMP->put_Rate(fRate);
+
+	StopSkippingUpdates();
+}
+
 bool MovieTexture_DShow::IsPlaying() const
 {
 	return m_bPlaying;
