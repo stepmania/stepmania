@@ -43,8 +43,12 @@ struct RageInput::pump_t
 
 	pump_t();
 	~pump_t();
+	bool Active() const { return h != INVALID_HANDLE_VALUE; }
+	void Update();
 	bool init(int devno);
 	int GetPadEvent();
+
+	bool current_state[NUM_PUMP_PAD_BUTTONS];
 };
 
 int DeviceInput::NumButtons(InputDevice device)
@@ -222,12 +226,7 @@ RageInput::RageInput()
 	SDL_InitSubSystem( SDL_INIT_JOYSTICK );
 
 	// init state info
-	memset( m_keys, 0, sizeof(m_keys) );
-	memset( m_oldKeys, 0, sizeof(m_oldKeys) );
-	memset( m_joyState, 0, sizeof(m_joyState) );
-	memset( m_oldJoyState, 0, sizeof(m_oldJoyState) );
-	memset( m_pumpState, 0, sizeof(m_pumpState) );
-	memset( m_oldPumpState, 0, sizeof(m_oldPumpState) );
+	memset( state, 0, sizeof(state) );
 
 
 	//
@@ -302,9 +301,7 @@ void RageInput::Update( float fDeltaTime )
 	//
 	// Move last current state to old state
 	//
-	memcpy( m_oldKeys, m_keys, sizeof(m_oldKeys) );
-	memcpy( m_oldJoyState, m_joyState, sizeof(m_joyState) );
-	memcpy( m_oldPumpState, m_pumpState, sizeof(m_pumpState) );
+	memcpy( &state[LAST], &state[CURRENT], sizeof(state[LAST]) );
 
 
 	//
@@ -312,14 +309,14 @@ void RageInput::Update( float fDeltaTime )
 	//
 	SDL_PumpEvents();
 	Uint8* keystate = SDL_GetKeyState(NULL);
-	memcpy( m_keys, keystate, sizeof(m_keys) );
+	memcpy( state[CURRENT].m_keys, keystate, sizeof(state[CURRENT].m_keys) );
 
 	//
 	// Update Joystick
 	//
 	SDL_JoystickUpdate();
 
-	memset( m_joyState, 0, sizeof(m_joyState) );	// clear current state
+	memset( state[CURRENT].m_joyState, 0, sizeof(state[CURRENT].m_joyState) );	// clear current state
 
 	for( int joy=0; joy<NUM_JOYSTICKS; joy++ )	// foreach joystick
 	{
@@ -335,12 +332,12 @@ void RageInput::Update( float fDeltaTime )
  			if( val < -16000 )
 			{
 				JoystickButton b = (JoystickButton)(JOY_LEFT+2*axis);
-				m_joyState[joy].button[b] = true;
+				state[CURRENT].m_joyState[joy].button[b] = true;
 			}
 			else if( val > +16000 )
 			{
 				JoystickButton b = (JoystickButton)(JOY_RIGHT+2*axis);
-				m_joyState[joy].button[b] = true;
+				state[CURRENT].m_joyState[joy].button[b] = true;
 			}
 		}
 
@@ -348,17 +345,17 @@ void RageInput::Update( float fDeltaTime )
 		for( int hat=0; hat<iNumJoyHats; hat++ )
 		{
 			Uint8 val = SDL_JoystickGetHat(pJoy,hat);
-			m_joyState[joy].button[JOY_HAT_UP] = (val & SDL_HAT_UP) != 0;
-			m_joyState[joy].button[JOY_HAT_RIGHT] = (val & SDL_HAT_RIGHT) != 0;
-			m_joyState[joy].button[JOY_HAT_DOWN] = (val & SDL_HAT_DOWN) != 0;
-			m_joyState[joy].button[JOY_HAT_LEFT] = (val & SDL_HAT_LEFT) != 0;
+			state[CURRENT].m_joyState[joy].button[JOY_HAT_UP] = (val & SDL_HAT_UP) != 0;
+			state[CURRENT].m_joyState[joy].button[JOY_HAT_RIGHT] = (val & SDL_HAT_RIGHT) != 0;
+			state[CURRENT].m_joyState[joy].button[JOY_HAT_DOWN] = (val & SDL_HAT_DOWN) != 0;
+			state[CURRENT].m_joyState[joy].button[JOY_HAT_LEFT] = (val & SDL_HAT_LEFT) != 0;
 		}
 
 		int iNumJoyButtons = MIN(NUM_JOYSTICK_BUTTONS,SDL_JoystickNumButtons(pJoy));
 		for( int button=0; button<iNumJoyButtons; button++ )
 		{
 			JoystickButton b = (JoystickButton)(JOY_1 + button);
-			m_joyState[joy].button[b] = SDL_JoystickGetButton(pJoy,button) != 0;
+			state[CURRENT].m_joyState[joy].button[b] = SDL_JoystickGetButton(pJoy,button) != 0;
 		}
 	}
 
@@ -368,42 +365,25 @@ void RageInput::Update( float fDeltaTime )
 	//
 	for( int i=0; i<NUM_PUMPS; i++ )
 	{
-		if(m_Pumps[i].h == INVALID_HANDLE_VALUE)
-			continue; /* no pad */
+		if(!m_Pumps[i].Active()) continue;
 
-		int ret = m_Pumps[i].GetPadEvent();
+		m_Pumps[i].Update();
 
-		if(ret == -1) 
-			continue; /* no event */
-
-		/* Since we're checking for messages, and not polling,
-		 * only zero this out when we actually *have* a new
-		 * message. */
-		ZeroMemory( &m_pumpState[i], sizeof(m_pumpState[i]) );
-	    
-		int bits[] = {
-		/* P1 */	(1<<9), (1<<12), (1<<13), (1<<11), (1<<10),
-		/* ESC */	(1<<16),
-		/* P1 */	(1<<17), (1<<20), (1<<21), (1<<19), (1<<18),
-		};
-
-		for (int butno = 0 ; butno < NUM_PUMP_PAD_BUTTONS ; butno++)
-		{
-			if(!(ret & bits[butno]))
-				m_pumpState[i].button[butno] = true;
-		}
+		memcpy(state[CURRENT].m_pumpState[i].button, m_Pumps[i].current_state, sizeof(m_Pumps[i].current_state));
 	}
 
 }
 
 bool RageInput::BeingPressed( DeviceInput di, bool bPrevState )
 {
+	State s = bPrevState? LAST:CURRENT;
+
 	switch( di.device )
 	{
 	case DEVICE_KEYBOARD:
 		{
 			ASSERT(di.button < NUM_KEYBOARD_BUTTONS);
-			return (bPrevState?m_oldKeys:m_keys) [ di.button ];
+			return state[s].m_keys[di.button];
 		}
 	case DEVICE_JOY1:
 	case DEVICE_JOY2:
@@ -411,13 +391,13 @@ bool RageInput::BeingPressed( DeviceInput di, bool bPrevState )
 	case DEVICE_JOY4:
 		{
 			ASSERT(di.button < NUM_JOYSTICK_BUTTONS);
-			return (bPrevState?m_oldJoyState:m_joyState) [di.device - DEVICE_JOY1].button[ di.button ];
+			return state[s].m_joyState[di.device - DEVICE_JOY1].button[ di.button ];
 		}
 	case DEVICE_PUMP1:
 	case DEVICE_PUMP2:
 		{
 			ASSERT(di.button < NUM_PUMP_PAD_BUTTONS);
-			return (bPrevState?m_oldPumpState:m_pumpState) [di.device - DEVICE_PUMP1].button[di.button];
+			return state[s].m_pumpState[di.device - DEVICE_PUMP1].button[di.button];
 		}
 	default:
 		ASSERT( 0 ); // bad device
@@ -511,6 +491,7 @@ HANDLE USB::OpenUSB (int VID, int PID, int num)
 RageInput::pump_t::pump_t()
 {
 	ZeroMemory( &ov, sizeof(ov) );
+	memset(current_state, 0, sizeof(current_state));
 	pending=false;
 	h = INVALID_HANDLE_VALUE;
 }
@@ -561,5 +542,31 @@ int RageInput::pump_t::GetPadEvent()
     }
 
     return buf;
+}
+
+void RageInput::pump_t::Update()
+{
+	int ret = GetPadEvent();
+
+	if(ret == -1) 
+		return; /* no event */
+
+	/* Since we're checking for messages, and not polling,
+	 * only zero this out when we actually *have* a new
+	 * message. */
+	
+	memset( &current_state, 0, sizeof(current_state) );
+	
+	int bits[] = {
+	/* P1 */	(1<<9), (1<<12), (1<<13), (1<<11), (1<<10),
+	/* ESC */	(1<<16),
+	/* P1 */	(1<<17), (1<<20), (1<<21), (1<<19), (1<<18),
+	};
+
+	for (int butno = 0 ; butno < NUM_PUMP_PAD_BUTTONS ; butno++)
+	{
+		if(!(ret & bits[butno]))
+			current_state[butno] = true;
+	}
 }
 

@@ -83,19 +83,22 @@ class RageInput
 {
 	SDL_Joystick*		m_pJoystick[NUM_JOYSTICKS];
 
-	// Keyboard state data
-	bool	m_keys[NUM_KEYBOARD_BUTTONS];
-	bool	m_oldKeys[NUM_KEYBOARD_BUTTONS];
+	enum State { CURRENT = 0, LAST, NUM_STATES };
 
-	// Joystick state data
 	struct {
-		bool button[NUM_JOYSTICK_BUTTONS];
-	} m_joyState[NUM_JOYSTICKS], m_oldJoyState[NUM_JOYSTICKS];
+		// Keyboard state data
+		bool m_keys[NUM_KEYBOARD_BUTTONS];
+		
+		// Joystick state data
+		struct {
+			bool button[NUM_JOYSTICK_BUTTONS];
+		} m_joyState[NUM_JOYSTICKS];
 
-	// Pump state data
-	struct {
-		bool button[NUM_PUMP_PAD_BUTTONS];
-	} m_pumpState[NUM_PUMPS], m_oldPumpState[NUM_PUMPS];
+		// Pump state data
+		struct {
+			bool button[NUM_PUMP_PAD_BUTTONS];
+		} m_pumpState[NUM_PUMPS];
+	} state[NUM_STATES];
 
 	/* Structure for reading Pump pads: */
 	struct pump_t;
