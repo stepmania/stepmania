@@ -136,7 +136,10 @@ void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
 
 			CString s;
 			// convert to theme-defined difficulty name
-			s = SONGMAN->GetDifficultyThemeName( pSteps->GetDifficulty() );
+			if( pSteps->GetDifficulty() == DIFFICULTY_EDIT )
+				s = pSteps->GetDescription();
+			else
+				s = SONGMAN->GetDifficultyThemeName( pSteps->GetDifficulty() );
 			s += ssprintf( " (%d)", pSteps->GetMeter() );
 
 			row.choices.push_back( s );
