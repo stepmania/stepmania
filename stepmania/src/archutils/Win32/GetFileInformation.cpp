@@ -49,7 +49,7 @@ bool GetFileVersion( CString fn, CString &out )
 		gmtime_r( &st.st_mtime, &t );
 		if( !out.empty() )
 			out += " ";
-		out += ssprintf( "[%ib, %02i-%02i-%04i]", st.st_size, t.tm_mon, t.tm_mday, t.tm_year+1900 );
+		out += ssprintf( "[%ib, %02i-%02i-%04i]", st.st_size, t.tm_mon+1, t.tm_mday, t.tm_year+1900 );
 	}
 
 	return true;
