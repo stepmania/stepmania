@@ -28,14 +28,6 @@
 //
 #define SM_300_STATISTICS_INI	"statistics.ini"
 
-#define SM_390A12_CATEGORY_SCORES_DAT	"CategoryScores.dat"
-#define SM_390A12_SONG_SCORES_DAT		"SongScores.dat"
-#define SM_390A12_COURSE_SCORES_DAT		"CourseScores.dat"
-#define SM_390A12_PROFILE_INI			"Profile.ini"
-const int SM_390A12_CATEGORY_RANKING_VERSION = 6;
-const int SM_390A12_SONG_SCORES_VERSION = 9;
-const int SM_390A12_COURSE_SCORES_VERSION = 8;
-
 #define GUID_SIZE_BYTES 8
 
 #define MAX_RECENT_SCORES_TO_SAVE 100
