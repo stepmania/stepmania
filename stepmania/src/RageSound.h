@@ -4,6 +4,7 @@
 #include <deque>
 #include "RageTimer.h"
 #include "RageUtil_CircularBuffer.h"
+#include "RageSoundPosMap.h"
 
 class SoundReader;
 
@@ -122,25 +123,8 @@ private:
 	CircBuf<char> databuf;
 	int FillBuf(int bytes);
 
-	/* Sound blocks we've sent out recently through GetPCM.  We keep track
-	 * of each block for the last four calls of GetPCM. */
-	struct pos_map_t
-	{
-		/* Frame number from the POV of the sound driver: */
-		int64_t frameno;
-
-		/* Actual sound position within the sample: */
-		int64_t position;
-
-		/* The number of frames in this block: */
-		int64_t frames;
-
-		pos_map_t() { frameno=0; position=0; frames=0; }
-		pos_map_t( int64_t frame, int pos, int cnt ) { frameno=frame; position=pos; frames=cnt; }
-	};
-	deque<pos_map_t> pos_map;
-	static int64_t SearchPosMap( const deque<pos_map_t> &pos_map, int64_t cur_frames, bool *approximate );
-	static void CleanPosMap( deque<pos_map_t> &pos_map );
+	/* We keep track of sound blocks we've sent out recently through GetDataToPlay. */
+	pos_map_queue pos_map;
 	
 	CString m_sFilePath;
 

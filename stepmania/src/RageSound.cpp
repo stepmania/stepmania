@@ -44,10 +44,6 @@ const int internal_buffer_size = 1024*16;
 /* The amount of data to read from SDL_sound at once. */
 const unsigned read_block_size = 1024;
 
-/* The number of frames we should keep pos_map data for.  This being too high
- * is mostly harmless; the data is small. */
-const int pos_map_backlog_frames = 100000;
-
 RageSoundParams::RageSoundParams():
 	StartTime( RageZeroTimer )
 {
@@ -197,7 +193,7 @@ void RageSound::Update(float delta)
 	LockMut(SOUNDMAN->lock);
 
 	/* Erase old pos_map data. */
-	CleanPosMap( pos_map );
+//	CleanPosMap( pos_map );
 }
 
 /* Return the number of bytes available in the input buffer. */
@@ -514,21 +510,7 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 /* Indicate that a block of audio data has been written to the device. */
 void RageSound::CommitPlayingPosition( int64_t frameno, int pos, int got_frames )
 {
-	LockMut(SOUNDMAN->lock);
-
-	if( pos_map.size() )
-	{
-		/* Optimization: If the last entry lines up with this new entry, just merge them. */
-		pos_map_t &last = pos_map.back();
-		if( last.frameno+last.frames == frameno &&
-		    last.position+last.frames == pos )
-		{
-			last.frames += got_frames;
-			return;
-		}
-	}
-
-	pos_map.push_back( pos_map_t( frameno, pos, got_frames ) );
+	pos_map.Insert( frameno, pos, got_frames );
 }
 
 /* Called by the mixer: return a block of sound data. 
@@ -610,7 +592,7 @@ void RageSound::StopPlaying()
 	playing = false;
 	playing_thread = 0;
 
-	pos_map.clear();
+	pos_map.Clear();
 }
 
 /* This is similar to StopPlaying, except it's called by sound drivers when we're done
@@ -631,7 +613,7 @@ void RageSound::SoundIsFinishedPlaying()
 	playing = false;
 	playing_thread = 0;
 
-	pos_map.clear();
+	pos_map.Clear();
 }
 
 RageSound *RageSound::Play( const RageSoundParams *params )
@@ -660,77 +642,6 @@ float RageSound::GetLengthSeconds()
 	return len / 1000.f; /* ms -> secs */
 }
 
-int64_t RageSound::SearchPosMap( const deque<pos_map_t> &pos_map, int64_t cur_frame, bool *approximate )
-{
-	/* cur_frame is probably in pos_map.  Search to figure out what position
-	 * it maps to. */
-	int64_t closest_position = 0, closest_position_dist = INT_MAX;
-	int closest_block = 0; /* print only */
-	for( unsigned i = 0; i < pos_map.size(); ++i )
-	{
-		if( cur_frame >= pos_map[i].frameno &&
-			cur_frame < pos_map[i].frameno+pos_map[i].frames )
-		{
-			/* cur_frame lies in this block; it's an exact match.  Figure
-			 * out the exact position. */
-			int64_t diff = pos_map[i].position - pos_map[i].frameno;
-			return cur_frame + diff;
-		}
-
-		/* See if the current position is close to the beginning of this block. */
-		int64_t dist = llabs( pos_map[i].frameno - cur_frame );
-		if( dist < closest_position_dist )
-		{
-			closest_position_dist = dist;
-			closest_block = i;
-			closest_position = pos_map[i].position - dist;
-		}
-
-		/* See if the current position is close to the end of this block. */
-		dist = llabs( pos_map[i].frameno + pos_map[i].frames - cur_frame );
-		if( dist < closest_position_dist )
-		{
-			closest_position_dist = dist;
-			closest_position = pos_map[i].position + pos_map[i].frames + dist;
-		}
-	}
-
-	/* The frame is out of the range of data we've actually sent.
-	 * Return the closest position.
-	 *
-	 * There are three cases when this happens: 
-	 * 1. After the first GetPCM call, but before it actually gets heard.
-	 * 2. After GetPCM returns EOF and the sound has flushed, but before
-	 *    SoundStopped has been called.
-	 * 3. Underflow; we'll be given a larger frame number than we know about.
-	 */
-	/* XXX: %lli normally, %I64i in Windows */
-	LOG->Trace( "Approximate sound time: driver frame %lli, pos_map frame %lli (dist %lli), closest position is %lli",
-		cur_frame, pos_map[closest_block].frameno, closest_position_dist, closest_position );
-
-	if( approximate )
-		*approximate = true;
-	return closest_position;
-}
-
-void RageSound::CleanPosMap( deque<pos_map_t> &pos_map )
-{
-	LockMut( SOUNDMAN->lock );
-
-	/* Determine the number of frames of data we have. */
-	int64_t total_frames = 0;
-	for( unsigned i = 0; i < pos_map.size(); ++i )
-		total_frames += pos_map[i].frames;
-
-	/* Remove the oldest entry so long we'll stil have enough data.  Don't delete every
-	 * frame, so we'll always have some data to extrapolate from. */
-	while( pos_map.size() > 1 && total_frames - pos_map.front().frames > pos_map_backlog_frames )
-	{
-		total_frames -= pos_map.front().frames;
-		pos_map.pop_front();
-	}
-}
-
 /* Get the position in frames. */
 int64_t RageSound::GetPositionSecondsInternal( bool *approximate ) const
 {
@@ -745,7 +656,7 @@ int64_t RageSound::GetPositionSecondsInternal( bool *approximate ) const
 
 	/* If we don't yet have any position data, GetPCM hasn't yet been called at all,
 	 * so guess what we think the real time is. */
-	if(pos_map.empty())
+	if( pos_map.IsEmpty() )
 	{
 		LOG->Trace("no data yet; %i", stopped_position);
 		if( approximate )
@@ -759,7 +670,7 @@ int64_t RageSound::GetPositionSecondsInternal( bool *approximate ) const
 	/* Before using pos_map, flush any incoming positions. */
 	SOUNDMAN->FlushPosMapQueue();
 
-	return SearchPosMap( pos_map, cur_frame, approximate );
+	return pos_map.Search( cur_frame, approximate );
 }
 
 /*
