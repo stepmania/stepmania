@@ -63,3 +63,74 @@ CString HourInDayToString( int iHourInDayIndex )
 	return ssprintf("%02d:00", iHourInDayIndex);
 }
 
+static const CString MONTH_TO_NAME[MONTHS_IN_YEAR] =
+{
+	"January",
+	"February",
+	"March",
+	"April",
+	"May",
+	"June",
+	"July",
+	"August",
+	"September",
+	"October",
+	"November",
+	"December",
+};
+
+CString MonthToString( int iMonthIndex )
+{
+	return MONTH_TO_NAME[iMonthIndex];
+}
+
+CString LastWeekToString( int iLastWeekIndex )
+{
+	switch( iLastWeekIndex )
+	{
+	case 0:		return "This week";	break;
+	case 1:		return "Last week";	break;
+	default:	return ssprintf("%d weeks ago",iLastWeekIndex);	break;
+	}
+}
+
+tm AddDays( tm start, int iDaysToMove )
+{
+	start.tm_mday += iDaysToMove;
+	time_t seconds = mktime( &start );
+	ASSERT( seconds != (time_t)-1 );
+	tm time;
+	localtime_r( &seconds, &time );
+	return time;
+}
+
+tm GetYesterday( tm start )
+{
+	return AddDays( start, -1 );
+}
+
+int GetDayOfWeek( tm time )
+{
+	int iDayOfWeek = time.tm_wday;
+	ASSERT( iDayOfWeek < DAYS_IN_WEEK );
+	return iDayOfWeek;
+}
+
+tm GetNextSunday( tm start )
+{
+	return AddDays( start, DAYS_IN_WEEK-GetDayOfWeek(start) );
+}
+
+
+tm GetDayInYearAndYear( int iDayInYearIndex, int iYear )
+{
+	time_t now = time( NULL );
+	tm when = *localtime( &now );
+
+	when.tm_mday = iDayInYearIndex;
+	when.tm_year = iYear - 1900;
+	time_t then = mktime( &when );
+
+	when = *localtime( &then );
+	return when;
+}

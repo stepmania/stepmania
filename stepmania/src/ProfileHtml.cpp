@@ -363,6 +363,7 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 			END_TABLE;
 		}
 		PRINT_CLOSE(f);
+
 	}
 	PRINT_CLOSE(f);
 }
@@ -855,13 +856,7 @@ void PrintBookkeeping( RageFile &f, const Profile *pProfile, CString sTitle, vec
 				BEGIN_TABLE(4);
 				for( int i=0; i<NUM_LAST_WEEKS; i++ )
 				{
-					CString sWeek;
-					switch( i )
-					{
-					case 0:		sWeek = "This week";	break;
-					case 1:		sWeek = "Last week";	break;
-					default:	sWeek = ssprintf("%d weeks ago",i);	break;
-					}
+					CString sWeek = LastWeekToString( i );
 					TABLE_LINE2( sWeek, coins[i] );
 				}
 				END_TABLE;
@@ -968,6 +963,51 @@ void PrintScreenshots( RageFile &f, const Profile *pProfile, CString sTitle, CSt
 		{
 			PRINT_CLOSE(f);
 		}
+	}
+	PRINT_CLOSE(f);
+}
+
+void PrintCaloriesBurned( RageFile &f, const Profile *pProfile, CString sTitle, CString sProfileDir )
+{
+	PRINT_OPEN(f, sTitle );
+	{
+		f.Write("<table>\n");
+
+		// header row
+		f.Write("<tr>");
+		f.Write("<td></td>");
+		{
+			for( int i=0; i<DAYS_IN_WEEK; i++ )
+				f.Write("<td>"+DayOfWeekToString(i)+"</td>");
+		}
+		f.Write("<td>Total</td>");
+		f.Write("</tr>");
+		
+		// row for each week
+		time_t now = time( NULL );
+		tm when = *localtime( &now );
+		when = GetNextSunday( when );
+		when = AddDays( when, -DAYS_IN_WEEK );
+		{
+			for( int i=0; i<NUM_LAST_WEEKS; i++ )
+			{
+				float fWeekCals = 0;
+				f.Write("<tr>");
+				f.Write("<td>"+LastWeekToString(i)+"</td>");
+				for( int i=0; i<DAYS_IN_WEEK; i++ )
+				{
+					Profile::Day day = { when.tm_yday, when.tm_year+1900 };
+					float fDayCals = pProfile->GetCaloriesBurnedForDay( day );
+					fWeekCals += fDayCals;
+					f.Write("<td>"+ssprintf("%0.3f",fDayCals)+"</td>");
+					when = AddDays( when, +1 );
+				}
+				f.Write("<td>"+ssprintf("%0.3f",fWeekCals)+"</td>");
+				f.Write("</tr>");
+				when = AddDays( when, -DAYS_IN_WEEK*2 );
+			}
+		}
+		f.Write("</table>\n");
 	}
 	PRINT_CLOSE(f);
 }
@@ -1124,6 +1164,7 @@ TITLE.c_str(), STYLE_CSS.c_str() ) );
 		PrintSongHighScores(	f, pProfile,	"My Song High Scores",		vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		PrintCourseHighScores(	f, pProfile,	"My Course High Scores",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		PrintScreenshots(		f, pProfile,	"My Screenshots",			sDir );
+		PrintCaloriesBurned(	f, pProfile,	"My Calories Burned",		sDir );
 		PrintGradeTable(		f, pProfile,	"My Grade Table",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		PrintPopularity(		f, pProfile,	"Last Machine Popularity",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		PrintSongHighScores(	f, pProfile,	"Last Machine High Scores",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
@@ -1134,6 +1175,7 @@ TITLE.c_str(), STYLE_CSS.c_str() ) );
 		PrintSongHighScores(	f, pProfile,	"Song High Scores",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		PrintCourseHighScores(	f, pProfile,	"Course High Scores",		vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		PrintScreenshots(		f, pProfile,	"Screenshots",				sDir );
+		PrintCaloriesBurned(	f, pProfile,	"Calories Burned",			sDir );
 		PrintGradeTable(		f, pProfile,	"Grade Table",				vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		PrintInventoryList(		f, pProfile,	"Song Information",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		PrintBookkeeping(		f, pProfile,	"Bookkeeping",				vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );	

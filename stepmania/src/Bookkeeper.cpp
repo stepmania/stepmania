@@ -28,35 +28,6 @@ static const CString COINS_DAT = "Data/Coins.dat";
 
 const int COINS_DAT_VERSION = 1;
 
-tm AddDays( tm start, int iDaysToMove )
-{
-	start.tm_mday += iDaysToMove;
-	time_t seconds = mktime( &start );
-	ASSERT( seconds != (time_t)-1 );
-	tm time;
-	localtime_r( &seconds, &time );
-	return time;
-}
-
-tm GetYesterday( tm start )
-{
-	return AddDays( start, -1 );
-}
-
-int GetDayOfWeek( tm time )
-{
-	int iDayOfWeek = time.tm_wday;
-	ASSERT( iDayOfWeek < DAYS_IN_WEEK );
-	return iDayOfWeek;
-}
-
-tm GetNextSunday( tm start )
-{
-	return AddDays( start, DAYS_IN_WEEK-GetDayOfWeek(start) );
-}
-
-
-
 Bookkeeper::Bookkeeper()
 {
 	int i, j;

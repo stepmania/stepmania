@@ -186,6 +186,8 @@ typedef struct _tagXMLNode
 	XAttrs::iterator GetAttrIterator( LPXAttr node );
 	LPXAttr CreateAttr( LPCTSTR anem = NULL, LPCTSTR value = NULL );
 	LPXAttr AppendAttr( LPCTSTR name = NULL, LPCTSTR value = NULL );
+	LPXAttr AppendAttr( LPCTSTR name, float value );
+	LPXAttr AppendAttr( LPCTSTR name, int value );
 	LPXAttr	AppendAttr( LPXAttr attr );
 	bool	RemoveAttr( LPXAttr attr );
 	LPXAttr DetachAttr( LPXAttr attr );

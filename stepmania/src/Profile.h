@@ -72,6 +72,8 @@ public:
 	int GetTotalNumSongsPassed() const;
 	static CString GetProfileDisplayNameFromDir( CString sDir );
 	int GetSongNumTimesPlayed( const Song* pSong ) const;
+	
+	void AddStepTotals( int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumMines, int iNumHands );
 
 	//
 	// Editable data
@@ -107,9 +109,6 @@ public:
 	int m_iNumSongsPlayedByMeter[MAX_METER+1];
 	int m_iNumSongsPassedByPlayMode[NUM_PLAY_MODES];
 	int m_iNumSongsPassedByGrade[NUM_GRADES];
-	int m_iCaloriesByDayForLastYear[DAYS_IN_YEAR];
-
-	void AddStepTotals( int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumMines, int iNumHands );
 
 	//
 	// Steps high scores
@@ -171,6 +170,33 @@ public:
 	void AddScreenshot( Screenshot screenshot );
 	int GetNextScreenshotIndex() { return m_vScreenshots.size(); }
 
+
+	//
+	// Calorie Data
+	//
+	// Why track calories in a map, and not in a static sized array like 
+	// Bookkeeping?  The machine's clock is not guaranteed to be set correctly.
+	// If calorie array is in a static sized array, playing on a machine with 
+	// a mis-set clock could wipe out all your past data.  With this scheme, 
+	// the worst that could happen is that playing on a mis-set machine will 
+	// insert some garbage entries into the map.
+	struct Day
+	{
+		int iDayInYear;	// 0-365
+		int iYear;		// e.g. 2004
+		bool operator==( const Day& other ) const { return iDayInYear==other.iDayInYear && iYear==other.iYear; }
+		bool operator<( const Day& other ) const 
+		{
+			if(iYear<other.iYear) 
+				return true; 
+			if( iYear>other.iYear) 
+				return false;
+			else
+				return iDayInYear<other.iDayInYear;
+		}
+	};
+	map<Day,float> m_mapDayToCaloriesBurned;
+	float GetCaloriesBurnedForDay( Day day ) const;
 	
 	//
 	// Init'ing
@@ -183,6 +209,7 @@ public:
 		InitCourseScores(); 
 		InitCategoryScores(); 
 		InitScreenshotData(); 
+		InitCalorieData(); 
 	}
 	void InitEditableData(); 
 	void InitGeneralData(); 
@@ -190,6 +217,7 @@ public:
 	void InitCourseScores(); 
 	void InitCategoryScores(); 
 	void InitScreenshotData(); 
+	void InitCalorieData(); 
 
 	//
 	// Loading and saving
@@ -208,6 +236,7 @@ public:
 	void LoadCourseScoresFromNode( const XNode* pNode );
 	void LoadCategoryScoresFromNode( const XNode* pNode );
 	void LoadScreenshotDataFromNode( const XNode* pNode );
+	void LoadCalorieDataFromNode( const XNode* pNode );
 
 	void SaveEditableDataToDir( CString sDir ) const;
 	XNode* SaveGeneralDataCreateNode() const;
@@ -215,6 +244,7 @@ public:
 	XNode* SaveCourseScoresCreateNode() const;
 	XNode* SaveCategoryScoresCreateNode() const;
 	XNode* SaveScreenshotDataCreateNode() const;
+	XNode* SaveCalorieDataCreateNode() const;
 
 	void DeleteProfileDataFromDirSM390a12( CString sDir ) const;
 	void DeleteSongScoresFromDirSM390a12( CString sDir ) const;

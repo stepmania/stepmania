@@ -1043,6 +1043,9 @@ LPXAttr _tagXMLNode::AppendAttr( LPCTSTR name /*= NULL*/, LPCTSTR value /*= NULL
 	return AppendAttr( CreateAttr( name, value ) );
 }
 
+LPXAttr _tagXMLNode::AppendAttr( LPCTSTR name, float value ){ return AppendAttr(name,ssprintf("%f",value)); }
+LPXAttr _tagXMLNode::AppendAttr( LPCTSTR name, int value )	{ return AppendAttr(name,ssprintf("%d",value)); }
+
 //========================================================
 // Name   : DetachChild
 // Desc   : no delete object, just detach in list

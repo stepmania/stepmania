@@ -95,7 +95,6 @@ void Profile::InitGeneralData()
 		m_iNumSongsPlayedByMeter[i] = 0;
 	ZERO( m_iNumSongsPassedByPlayMode );
 	ZERO( m_iNumSongsPassedByGrade );
-	ZERO( m_iCaloriesByDayForLastYear );
 }
 
 void Profile::InitSongScores()
@@ -120,6 +119,11 @@ void Profile::InitScreenshotData()
 	m_vScreenshots.clear();
 }
 
+void Profile::InitCalorieData()
+{
+	m_mapDayToCaloriesBurned.clear();
+}
+
 CString Profile::GetDisplayName() const
 {
 	if( !m_sDisplayName.empty() )
@@ -135,7 +139,7 @@ CString Profile::GetDisplayTotalCaloriesBurned() const
 	if( m_fWeightPounds == 0 )	// weight not entered
 		return "N/A";
 	else 
-		return ssprintf("%0.3fCal",m_fTotalCaloriesBurned);
+		return ssprintf("%0.3f Cal",m_fTotalCaloriesBurned);
 }
 
 int Profile::GetTotalNumSongsPlayed() const
@@ -385,6 +389,7 @@ bool Profile::LoadAllFromDir( CString sDir )
 		LOAD_NODE( CourseScores );
 		LOAD_NODE( CategoryScores );
 		LOAD_NODE( ScreenshotData );
+		LOAD_NODE( CalorieData );
 	}
 		
 	return true;	// FIXME?  Investigate what happens if we always return true.
@@ -408,6 +413,7 @@ bool Profile::SaveAllToDir( CString sDir ) const
 		xml.AppendChild( SaveCourseScoresCreateNode() );
 		xml.AppendChild( SaveCategoryScoresCreateNode() );
 		xml.AppendChild( SaveScreenshotDataCreateNode() );
+		xml.AppendChild( SaveCalorieDataCreateNode() );
 		bool bSaved = xml.SaveToFile(fn);
 		if( bSaved && PREFSMAN->m_bSignProfileData )
 		{
@@ -585,17 +591,6 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 		}
 	}
 
-	{
-		XNode* pCaloriesByDayForLastYear = pGeneralDataNode->AppendChild("CaloriesByDayForLastYear");
-		for( int i=0; i<DAYS_IN_YEAR; i++ )
-		{
-			/* Don't save empty. */
-			if( m_iCaloriesByDayForLastYear[i]==0 )
-				continue;
-			pCaloriesByDayForLastYear->AppendChild( DayInYearToString(i), m_iCaloriesByDayForLastYear[i] );
-		}
-	}
-
 	return pGeneralDataNode;
 }
 
@@ -727,13 +722,6 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	
 	}
 
-	{
-		XNode* pCaloriesByDayForLastYear = pNode->GetChild("CaloriesByDayForLastYear");
-		if( pCaloriesByDayForLastYear )
-			for( int i=0; i<DAYS_IN_YEAR; i++ )
-				pCaloriesByDayForLastYear->GetChildValue( DayInYearToString(i), m_iCaloriesByDayForLastYear[i] );
-	
-	}
 }
 
 void Profile::AddStepTotals( int iTotalTapsAndHolds, int iTotalJumps, int iTotalHolds, int iTotalMines, int iTotalHands )
@@ -753,6 +741,11 @@ void Profile::AddStepTotals( int iTotalTapsAndHolds, int iTotalJumps, int iTotal
 			SCALE( m_fWeightPounds, 100.f, 200.f, 0.000f, 0.000f ) * iTotalMines +
 			SCALE( m_fWeightPounds, 100.f, 200.f, 0.222f, 0.386f ) * iTotalHands;
 		m_fTotalCaloriesBurned += fCals;
+
+		time_t cur_time = time(NULL);
+		tm *cur_tm = localtime( &cur_time );
+		Day day = { cur_tm->tm_yday, cur_tm->tm_year+1900 };
+		m_mapDayToCaloriesBurned[day] += fCals;
 	}
 }
 
@@ -1450,4 +1443,67 @@ XNode* Profile::SaveScreenshotDataCreateNode() const
 	}
 
 	return pNode;
+}
+
+void Profile::LoadCalorieDataFromNode( const XNode* pNode )
+{
+	CHECKPOINT;
+
+	ASSERT( pNode->name == "CalorieData" );
+	for( XNodes::const_iterator pDay = pNode->childs.begin(); 
+		pDay != pNode->childs.end(); 
+		pDay++ )
+	{
+		if( (*pDay)->name != "Day" )
+			WARN_AND_CONTINUE;
+
+		Day day;
+		
+		if( !(*pDay)->GetAttrValue("DayInYear",day.iDayInYear) )
+			WARN_AND_CONTINUE;
+
+		if( !(*pDay)->GetAttrValue("Year",day.iYear) )
+			WARN_AND_CONTINUE;
+
+		float fCaloriesBurned = 0;
+
+		if( !(*pDay)->GetChildValue("CaloriesBurned",fCaloriesBurned) )
+			WARN_AND_CONTINUE;
+
+		m_mapDayToCaloriesBurned[day] = fCaloriesBurned;
+	}	
+}
+
+XNode* Profile::SaveCalorieDataCreateNode() const
+{
+	CHECKPOINT;
+
+	const Profile* pProfile = this;
+	ASSERT( pProfile );
+
+	XNode* pNode = new XNode;
+	pNode->name = "CalorieData";
+
+	for( map<Day,float>::const_iterator i = m_mapDayToCaloriesBurned.begin();
+		i != m_mapDayToCaloriesBurned.end();
+		i++ )
+	{
+		XNode* pDay = pNode->AppendChild( "Day" );
+
+		pDay->AppendAttr( "DayInYear", i->first.iDayInYear );
+		pDay->AppendAttr( "Year", i->first.iYear );
+
+		pDay->AppendChild( "CaloriesBurned", i->second );
+	}
+
+	return pNode;
+}
+
+float Profile::GetCaloriesBurnedForDay( Day day ) const
+{
+	map<Day,float>::const_iterator i = m_mapDayToCaloriesBurned.find( day );
+	if( i == m_mapDayToCaloriesBurned.end() )
+		return 0;
+	else
+		return i->second;
 }
