@@ -660,8 +660,8 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 		/* This applies difficult mode for meter ranges.  (If it's a difficulty
 		 * class, we'll do it below.) */
-		int low_meter = m_entries[i].low_meter;
-		int high_meter = m_entries[i].high_meter;
+		int low_meter = e.low_meter;
+		int high_meter = e.high_meter;
 
 		switch( e.type )
 		{
