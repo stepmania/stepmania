@@ -12,7 +12,6 @@
 -----------------------------------------------------------------------------
 */
 
-#include "GameConstantsAndTypes.h"
 #include "ActorFrame.h"
 
 
