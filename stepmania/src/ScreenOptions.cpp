@@ -392,7 +392,7 @@ void ScreenOptions::PositionIcons()
 
 void ScreenOptions::RefreshIcons()
 {
-	ASSERT( m_iNumOptionRows < MAX_OPTION_LINES );
+	ASSERT( m_iNumOptionRows < (int) MAX_OPTION_LINES );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
 	{
