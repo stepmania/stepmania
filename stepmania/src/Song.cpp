@@ -40,7 +40,7 @@
 #include "SDL_image.h"
 
 
-const int FILE_CACHE_VERSION = 105;	// increment this when Song or Notes changes to invalidate cache
+const int FILE_CACHE_VERSION = 107;	// increment this when Song or Notes changes to invalidate cache
 
 
 static int CompareBPMSegments(const BPMSegment &seg1, const BPMSegment &seg2)
@@ -591,8 +591,8 @@ void Song::TranslateTitles()
 	if(ttab.empty())
 	{
 		/* Ambiguous, so check artist.  Do this early; Riyu will be replaced later: */
-		ttab.push_back(TitleTrans("^Candy$", "", "^Luv.*", "Candy &whitestar;", "", "") );
-		ttab.push_back(TitleTrans("^Candy$", "", ".*Riyu.*", "Candy &whiteheart;", "", "") );
+		ttab.push_back(TitleTrans("^Candy$", "", "^Luv.*", "CANDY &whitestar;", "", "") );
+		ttab.push_back(TitleTrans("^Candy$", "", ".*Riyu.*", "CANDY &whiteheart;", "", "") );
 
 		/* Make sure this appears after the above "Riyu" match, so it doesn't
 		 * break it.  I've seen both "Kosaku" and "Kosaka"; I think Kosaka is
@@ -602,7 +602,7 @@ void Song::TranslateTitles()
 
 		/* Matsuri Japan is often just "Japan".  There may be other songs by
 		 * this name, too, so match the artist, too. */
-		ttab.push_back(TitleTrans("^Japan$", "", "(Re-Venge)|(RevenG)", "&matsuri; Japan", "", "") );
+		ttab.push_back(TitleTrans("^Japan$", "", "(Re-Venge)|(RevenG)", "&matsuri; JAPAN", "", "") );
 
 		/* Fix up hacked titles: */
 		ttab.push_back(TitleTrans("^Max 300$", "", "%", "", "", "&omega;") );
@@ -636,7 +636,7 @@ void Song::TranslateTitles()
 		ttab.push_back(TitleTrans("^Mobo Moga$", "", "", "Mobo&whitestar;Moga", "", "") );
 
 		/* XXX whiteheart or blackheart? Is this supposed to be capped? */
-		ttab.push_back(TitleTrans("^Love (Love )?Shine$", "", "", "Love &whiteheart; Shine", "", "") );
+		ttab.push_back(TitleTrans("^Love (Love )?Shine$", "", "", "LOVE &whiteheart; SHINE", "", "") );
 
 		/* ロマンスの神様 */
 		ttab.push_back(TitleTrans("^God of Romance$", "", "", "&kro;&kma;&kn;&ksu;&hno;&kami;&sama;", "", "") );
