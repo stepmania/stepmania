@@ -105,7 +105,7 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn )
 int NoteDisplay::GetFrameNo( float fNoteBeat, int iNumFrames, float fAnimationLengthInBeats, bool bVivid, bool bNoteColor )
 {
 	float fSongBeat = GAMESTATE->m_fSongBeat;
-	float fPercentIntoMeasure = fmodf( fSongBeat, fAnimationLengthInBeats ) / fAnimationLengthInBeats;
+	float fPercentIntoMeasure = fmodfp( fSongBeat, fAnimationLengthInBeats ) / fAnimationLengthInBeats;
 
 	float fBeatFraction = fmodf( fNoteBeat, 1.0f );
 	fBeatFraction = froundf( fBeatFraction, 0.25f );	// round to nearest 1/4th
