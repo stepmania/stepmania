@@ -1041,7 +1041,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 
 		// Find all CRS files in this group directory
 		CStringArray arrayCoursePaths;
-		GetDirListing( COURSES_DIR + sGroupDirName + "/*.crs", arrayCoursePaths, false, true );
+		GetDirListing( COURSES_DIR + sGroupDirName + SLASH + "*.crs", arrayCoursePaths, false, true );
 		SortCStringArray( arrayCoursePaths );
 
 		for( unsigned j=0; j<arrayCoursePaths.size(); j++ )
