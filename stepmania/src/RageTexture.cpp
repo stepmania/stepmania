@@ -47,22 +47,16 @@ void RageTextureID::Init()
 
 bool RageTextureID::operator<(const RageTextureID &rhs) const
 {
-	if(filename < rhs.filename) return true;
-	if(filename > rhs.filename) return false;
-	if(iMaxSize < rhs.iMaxSize) return true;
-	if(iMaxSize > rhs.iMaxSize) return false;
-	if(iMipMaps < rhs.iMipMaps) return true;
-	if(iMipMaps > rhs.iMipMaps) return false;
-	if(iAlphaBits < rhs.iAlphaBits) return true;
-	if(iAlphaBits > rhs.iAlphaBits) return false;
-	if(iColorDepth < rhs.iColorDepth) return true;
-	if(iColorDepth > rhs.iColorDepth) return false;
-	if(bDither < rhs.bDither) return true;
-	if(bDither > rhs.bDither) return false;
-	if(bStretch < rhs.bStretch) return true;
-	if(bStretch > rhs.bStretch) return false;
-	if(bHotPinkColorKey < rhs.bHotPinkColorKey) return true;
-	if(bHotPinkColorKey > rhs.bHotPinkColorKey) return false;
+#define COMP(a) if(a<rhs.a) return true; if(a>rhs.a) return false;
+	COMP(filename);
+	COMP(iMaxSize);
+	COMP(iMipMaps);
+	COMP(iAlphaBits);
+	COMP(iColorDepth);
+	COMP(bDither);
+	COMP(bStretch);
+	COMP(bHotPinkColorKey);
+#undef COMP
 	return false;
 }
 
