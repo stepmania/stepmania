@@ -114,7 +114,7 @@ int IniFile::GetNumKeys()
 }
 
 //returns number of values stored for specified key, or -1 if key found
-int IniFile::GetNumValues(CString keyname)
+int IniFile::GetNumValues(const CString &keyname)
 {
 	int keynum = FindKey(keyname);
 	if (keynum == -1)
@@ -125,7 +125,7 @@ int IniFile::GetNumValues(CString keyname)
 
 //gets value of [keyname] valuename = 
 //overloaded to return CString, int, and double
-bool IniFile::GetValue(CString keyname, CString valuename, CString& value)
+bool IniFile::GetValue(const CString &keyname, const CString &valuename, CString& value)
 {
 	int keynum = FindKey(keyname), valuenum = FindValue(keynum,valuename);
 
@@ -147,7 +147,7 @@ bool IniFile::GetValue(CString keyname, CString valuename, CString& value)
 
 //gets value of [keyname] valuename = 
 //overloaded to return CString, int, and double
-bool IniFile::GetValueI(CString keyname, CString valuename, int& value)
+bool IniFile::GetValueI(const CString &keyname, const CString &valuename, int& value)
 {
 	CString sValue;
 	bool bSuccess = GetValue(keyname,valuename,sValue);
@@ -159,7 +159,7 @@ bool IniFile::GetValueI(CString keyname, CString valuename, int& value)
 
 //gets value of [keyname] valuename = 
 //overloaded to return CString, int, and double
-bool IniFile::GetValueF(CString keyname, CString valuename, float& value)
+bool IniFile::GetValueF(const CString &keyname, const CString &valuename, float& value)
 {
 	CString sValue;
 	bool bSuccess = GetValue(keyname,valuename,sValue);
@@ -171,7 +171,7 @@ bool IniFile::GetValueF(CString keyname, CString valuename, float& value)
 
 //gets value of [keyname] valuename = 
 //overloaded to return CString, int, and double
-bool IniFile::GetValueB(CString keyname, CString valuename, bool& value)
+bool IniFile::GetValueB(const CString &keyname, const CString &valuename, bool& value)
 {
 	CString sValue;
 	bool bSuccess = GetValue(keyname,valuename,sValue);
@@ -185,7 +185,7 @@ bool IniFile::GetValueB(CString keyname, CString valuename, bool& value)
 //specify the optional paramter as false (0) if you do not want it to create
 //the key if it doesn't exist. Returns true if data entered, false otherwise
 //overloaded to accept CString, int, and double
-bool IniFile::SetValue(CString keyname, CString valuename, CString value, bool create)
+bool IniFile::SetValue(const CString &keyname, const CString &valuename, const CString &value, bool create)
 {
 	int keynum = FindKey(keyname), valuenum = 0;
 	//find key
@@ -218,7 +218,7 @@ bool IniFile::SetValue(CString keyname, CString valuename, CString value, bool c
 //specify the optional paramter as false (0) if you do not want it to create
 //the key if it doesn't exist. Returns true if data entered, false otherwise
 //overloaded to accept CString, int, and double
-bool IniFile::SetValueI(CString keyname, CString valuename, int value, bool create)
+bool IniFile::SetValueI(const CString &keyname, const CString &valuename, int value, bool create)
 {
 	CString temp;
 	temp.Format("%d",value);
@@ -229,7 +229,7 @@ bool IniFile::SetValueI(CString keyname, CString valuename, int value, bool crea
 //specify the optional paramter as false (0) if you do not want it to create
 //the key if it doesn't exist. Returns true if data entered, false otherwise
 //overloaded to accept CString, int, and double
-bool IniFile::SetValueF(CString keyname, CString valuename, float value, bool create)
+bool IniFile::SetValueF(const CString &keyname, const CString &valuename, float value, bool create)
 {
 	CString temp;
 	temp.Format("%f",value);
@@ -240,7 +240,7 @@ bool IniFile::SetValueF(CString keyname, CString valuename, float value, bool cr
 //specify the optional paramter as false (0) if you do not want it to create
 //the key if it doesn't exist. Returns true if data entered, false otherwise
 //overloaded to accept CString, int, and double
-bool IniFile::SetValueB(CString keyname, CString valuename, bool value, bool create)
+bool IniFile::SetValueB(const CString &keyname, const CString &valuename, bool value, bool create)
 {
 	CString temp;
 	temp.Format("%d",value);
@@ -249,7 +249,7 @@ bool IniFile::SetValueB(CString keyname, CString valuename, bool value, bool cre
 
 //deletes specified value
 //returns true if value existed and deleted, false otherwise
-bool IniFile::DeleteValue(CString keyname, CString valuename)
+bool IniFile::DeleteValue(const CString &keyname, const CString &valuename)
 {
 	int keynum = FindKey(keyname), valuenum = FindValue(keynum,valuename);
 	if (keynum == -1 || valuenum == -1)
@@ -262,7 +262,7 @@ bool IniFile::DeleteValue(CString keyname, CString valuename)
 
 //deletes specified key and all values contained within
 //returns true if key existed and deleted, false otherwise
-bool IniFile::DeleteKey(CString keyname)
+bool IniFile::DeleteKey(const CString &keyname)
 {
 	int keynum = FindKey(keyname);
 	if (keynum == -1)
@@ -274,7 +274,7 @@ bool IniFile::DeleteKey(CString keyname)
 
 //deletes specified key and all values contained within
 //returns true if key existed and deleted, false otherwise
-IniFile::key* IniFile::GetKey(CString keyname)
+IniFile::key* IniFile::GetKey(const CString &keyname)
 {
 	int keynum = FindKey(keyname);
 	if (keynum == -1)
@@ -287,7 +287,7 @@ IniFile::key* IniFile::GetKey(CString keyname)
 /////////////////////////////////////////////////////////////////////
 
 //returns index of specified key, or -1 if not found
-int IniFile::FindKey(CString keyname)
+int IniFile::FindKey(const CString &keyname)
 {
 	int keynum = 0;
 	while ( keynum < keys.GetSize() && names[keynum] != keyname)
@@ -298,7 +298,7 @@ int IniFile::FindKey(CString keyname)
 }
 
 //returns index of specified value, in the specified key, or -1 if not found
-int IniFile::FindValue(int keynum, CString valuename)
+int IniFile::FindValue(int keynum, const CString &valuename)
 {
 	if (keynum == -1)
 		return -1;

@@ -41,10 +41,10 @@ private:
 	//all private functions
 private:
 	//returns index of specified value, in the specified key, or -1 if not found
-	int FindValue(int keynum, CString valuename);
+	int FindValue(int keynum, const CString &valuename);
 
 	//returns index of specified key, or -1 if not found
-	int FindKey(CString keyname);
+	int FindKey(const CString &keyname);
 
 
 	//public variables
@@ -80,32 +80,32 @@ public:
 	int GetNumKeys();
 
 	//returns number of values stored for specified key
-	int GetNumValues(CString keyname);
+	int GetNumValues(const CString &keyname);
 
 	//gets value of [keyname] valuename = 
 	//overloaded to return CString, int, and double,
 	//returns "", or 0 if key/value not found.  Sets error member to show problem
-	bool GetValue(CString key, CString valuename, CString& value);
-	bool GetValueI(CString key, CString valuename, int& value);
-	bool GetValueF(CString key, CString valuename, float& value);
-	bool GetValueB(CString key, CString valuename, bool& value);
+	bool GetValue(const CString &key, const CString &valuename, CString& value);
+	bool GetValueI(const CString &key, const CString &valuename, int& value);
+	bool GetValueF(const CString &key, const CString &valuename, float& value);
+	bool GetValueB(const CString &key, const CString &valuename, bool& value);
 
 	//sets value of [keyname] valuename =.
 	//specify the optional paramter as false (0) if you do not want it to create
 	//the key if it doesn't exist. Returns true if data entered, false otherwise
 	//overloaded to accept CString, int, and double
-	bool SetValue(CString key, CString valuename, CString value, bool create = 1);
-	bool SetValueI(CString key, CString valuename, int value, bool create = 1);
-	bool SetValueF(CString key, CString valuename, float value, bool create = 1);
-	bool SetValueB(CString key, CString valuename, bool value, bool create = 1);
+	bool SetValue(const CString &key, const CString &valuename, const CString &value, bool create = 1);
+	bool SetValueI(const CString &key, const CString &valuename, int value, bool create = 1);
+	bool SetValueF(const CString &key, const CString &valuename, float value, bool create = 1);
+	bool SetValueB(const CString &key, const CString &valuename, bool value, bool create = 1);
 
 	//deletes specified value
 	//returns true if value existed and deleted, false otherwise
-	bool DeleteValue(CString keyname, CString valuename);
+	bool DeleteValue(const CString &keyname, const CString &valuename);
 
 	//deletes specified key and all values contained within
 	//returns true if key existed and deleted, false otherwise
-	bool DeleteKey(CString keyname);
+	bool DeleteKey(const CString &keyname);
 
-	key* GetKey(CString keyname);
+	key* GetKey(const CString &keyname);
 };
