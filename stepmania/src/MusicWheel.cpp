@@ -1251,8 +1251,10 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 		return false;
 	case TYPE_SONG:
 	case TYPE_PORTAL:
-		if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() )
-			UNLOCKMAN->UnlockSong( m_CurWheelItemData[m_iSelection]->m_pSong );
+		// Don't -permanently- unlock the song.  Just let them play 
+		// the unlocked song once.
+//		if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() )
+//			UNLOCKMAN->UnlockSong( m_CurWheelItemData[m_iSelection]->m_pSong );
 		return true;
 	case TYPE_COURSE:
 		return true;
