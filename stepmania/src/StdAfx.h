@@ -67,6 +67,8 @@ using namespace std;
 #include <assert.h>
 /* TODO: define RAGE_ASSERT* (nothing actually uses those right now) */
 #define ASSERT assert
+#define RAGE_ASSERT_M(COND, MESSAGE) ASSERT(COND)
+#define RAGE_ASSERT(COND) RAGE_ASSERT_M((COND), "Assertion '" #COND "' failed")
 #endif
 
 /* Define a macro to tell the compiler that a function doesn't return.  This just
@@ -113,6 +115,11 @@ inline const T& min(const T &a, const T &b, P Pr)
 /* Platform-specific fixes. */
 #if defined(WIN32)
 #include "archutils/Win32/arch_setup.h"
+#endif
+
+#if !defined(WIN32)
+#define stricmp strcasecmp
+#define strnicmp strncasecmp
 #endif
 
 /* Don't include our own headers here, since they tend to change
