@@ -96,7 +96,7 @@ int RageFile::FillBuf()
 	/* The buffer starts at m_Buffer; any data in it starts at m_pBuf; space between
 	 * the two is old data that we've read.  (Don't mangle that data; we can use it
 	 * for seeking backwards.) */
-	const int iBufAvail = sizeof(m_Buffer) - (m_pBuf-m_Buffer);
+	const int iBufAvail = sizeof(m_Buffer) - (m_pBuf-m_Buffer) - m_BufAvail;
 	ASSERT_M( iBufAvail >= 0, ssprintf("%p, %p, %i", m_pBuf, m_Buffer, (int) sizeof(m_Buffer) ) );
 	const int size = m_File->Read( m_pBuf+m_BufAvail, iBufAvail );
 
