@@ -435,7 +435,7 @@ void MovieTexture_AVCodec::DecoderThread()
 					(float)m_stream->codec.frame_rate;
 
 				CurrentTimestamp += frame_delay;
-				CurrentTimestamp += frame.repeat_pict * (frame_delay * 0.5);
+				CurrentTimestamp += frame.repeat_pict * (frame_delay * 0.5f);
 			}
 
 			m_Position = CurrentTimestamp;
