@@ -24,6 +24,7 @@
 #include "GameSoundManager.h"
 #include "ThemeManager.h"
 #include "PlayerState.h"
+#include "Course.h"
 
 void GameCommand::Init()
 {
@@ -140,8 +141,6 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 
 	m_bInvalid = false;
 
-	CString sSteps;
-
 	FOREACH_CONST( Command, cmds.v, command )
 	{
 		CString sName = command->GetName();
@@ -209,6 +208,11 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 			m_sModifiers += sValue;
 		}
 		
+		else if( sName == "screen" )
+		{
+			m_sScreen = sValue;
+		}
+		
 		else if( sName == "song" )
 		{
 			m_pSong = SONGMAN->FindSong( sValue );
@@ -221,9 +225,27 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 
 		else if( sName == "steps" )
 		{
-			/* Save the name of the steps, and set this later, since we want to process
-			 * any "song" and "style" commands first. */
-			sSteps = sValue;
+			CString sSteps = sValue;
+
+			/* This must be processed after "song" and "style" commands. */
+			if( !m_bInvalid )
+			{
+				Song *pSong = (m_pSong != NULL)? m_pSong:GAMESTATE->m_pCurSong;
+				const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->m_pCurStyle;
+				if( pSong == NULL || pStyle == NULL )
+					RageException::Throw( "Must set Song and Style to set Steps" );
+
+				Difficulty dc = StringToDifficulty( sSteps );
+				if( dc != DIFFICULTY_EDIT )
+					m_pSteps = pSong->GetStepsByDifficulty( pStyle->m_StepsType, dc );
+				else
+					m_pSteps = pSong->GetStepsByDescription( pStyle->m_StepsType, sSteps );
+				if( m_pSteps == NULL )
+				{
+					m_sInvalidReason = "steps not found";
+					m_bInvalid |= true;
+				}
+			}
 		}
 
 		else if( sName == "course" )
@@ -236,9 +258,28 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 			}
 		}
 		
-		else if( sName == "screen" )
+		else if( sName == "trail" )
 		{
-			m_sScreen = sValue;
+			CString sTrail = sValue;
+
+			/* This must be processed after "course" and "style" commands. */
+			if( !m_bInvalid )
+			{
+				Course *pCourse = (m_pCourse != NULL)? m_pCourse:GAMESTATE->m_pCurCourse;
+				const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->m_pCurStyle;
+				if( pCourse == NULL || pStyle == NULL )
+					RageException::Throw( "Must set Course and Style to set Steps" );
+
+				const CourseDifficulty cd = StringToCourseDifficulty( sTrail );
+				ASSERT_M( cd != DIFFICULTY_INVALID, ssprintf("Invalid difficulty '%s'", sTrail.c_str()) );
+
+				m_pTrail = pCourse->GetTrail( pStyle->m_StepsType, cd );
+				if( m_pTrail == NULL )
+				{
+					m_sInvalidReason = "trail not found";
+					m_bInvalid |= true;
+				}
+			}
 		}
 		
 		else if( sName == "setenv" )
@@ -340,25 +381,6 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 			CString sWarning = ssprintf( "Command '%s' is not valid.", command->GetOriginalCommandString().c_str() );
 			LOG->Warn( sWarning );
 			Dialog::OK( sWarning, "INVALID_GAME_COMMAND" );
-		}
-	}
-
-	if( !m_bInvalid && sSteps != "" )
-	{
-		Song *pSong = (m_pSong != NULL)? m_pSong:GAMESTATE->m_pCurSong;
-		const Style *style = m_pStyle ? m_pStyle : GAMESTATE->m_pCurStyle;
-		if( pSong == NULL || style == NULL )
-			RageException::Throw( "Must set Song and Style to set Steps" );
-
-		Difficulty dc = StringToDifficulty( sSteps );
-		if( dc != DIFFICULTY_EDIT )
-			m_pSteps = pSong->GetStepsByDifficulty( m_pStyle->m_StepsType, dc );
-		else
-			m_pSteps = pSong->GetStepsByDescription( m_pStyle->m_StepsType, sSteps );
-		if( m_pSteps == NULL )
-		{
-			m_sInvalidReason = "steps not found";
-			m_bInvalid |= true;
 		}
 	}
 }
