@@ -310,6 +310,8 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		SET_XY_AND_ON_COMMAND( actor ); \
 		if( i != 0 ) \
 		{ \
+			COMMAND( actor, "On" ); \
+			actor.FinishTweening(); \
 			COMMAND( actor, "Hide" ); \
 			actor.FinishTweening(); \
 		}
