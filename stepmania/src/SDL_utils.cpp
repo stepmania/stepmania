@@ -883,9 +883,9 @@ static void blit<blit_traits_false,blit_traits_rescale>( SDL_Surface *src_surf, 
 		src_surf->format->Amask
 	};
 
-	int or = 0;
+	int ormask = 0;
 	if( src_surf->format->Amask == 0 )
-		or = dst_surf->format->Amask;
+		ormask = dst_surf->format->Amask;
 
 	while( height-- )
 	{
@@ -902,7 +902,7 @@ static void blit<blit_traits_false,blit_traits_rescale>( SDL_Surface *src_surf, 
 			opixel |= (pixel & masks[3]) >> rshifts[3] << lshifts[3];
 
 			// Correct surfaces that don't have an alpha channel.
-			opixel |= or;
+			opixel |= ormask;
 
 			/* Store it. */
 			encodepixel((Uint8 *) dst, dst_surf->format->BytesPerPixel, opixel);
