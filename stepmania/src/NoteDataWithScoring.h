@@ -50,6 +50,7 @@ public:
 	void SetHoldNoteLife(unsigned h, float f);
 
 	TapNoteScore MinTapNoteScore(unsigned row) const;
+	int LastTapNoteScoreTrack(unsigned row) const;
 	TapNoteScore LastTapNoteScore(unsigned row) const;
 
 	float GetActualRadarValue( RadarCategory rv, float fSongSeconds ) const;
