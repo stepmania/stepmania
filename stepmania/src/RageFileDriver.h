@@ -15,6 +15,7 @@ public:
 	virtual int GetFileModTime( CString sPath ) = 0;
 	virtual int GetPathValue( CString path );
 	virtual bool Ready() { return true; } /* see RageFileManager::MountpointIsReady */
+	virtual void FlushDirCache( const CString &sPath ) { }
 };
 
 class RageFileObj
