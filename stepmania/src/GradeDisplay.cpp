@@ -38,7 +38,7 @@ bool GradeDisplay::Load( RageTextureID ID )
 	Sprite::Load( ID );
 	Sprite::StopAnimating();
 
-	if( Sprite::GetNumStates() != 8  ||  Sprite::GetNumStates() != 16 )
+	if( Sprite::GetNumStates() != 8 && Sprite::GetNumStates() != 16 )
 		RageException::Throw( "The grade graphic '%s' must have either 8 or 16 frames.", ID.filename.GetString() );
 	return true;
 }
@@ -107,8 +107,12 @@ void GradeDisplay::SetGrade( PlayerNumber pn, Grade g )
 	m_bDoScrolling = false;
 	StopUsingCustomCoords();
 
-	SetState( GetFrameNo(pn,g) );
-	Sprite::SetDiffuse( RageColor(1,1,1,g==GRADE_NO_DATA ? 0 : 1) );
+	if(g != GRADE_NO_DATA)
+	{
+		SetState( GetFrameNo(pn,g) );
+		SetDiffuse( RageColor(1,1,1,1.0f) );
+	} else
+		SetDiffuse( RageColor(1,1,1,0) );
 }
 
 void GradeDisplay::Spin()
