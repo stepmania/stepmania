@@ -1,21 +1,9 @@
 #include "global.h"
-/*
------------------------------------------------------------------------------
- Class: ScreenEditCoursesMenu
-
- Desc: The main title screen and menu.
-
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
-	Chris Danford
------------------------------------------------------------------------------
-*/
-
 #include "ScreenEditCoursesMenu.h"
 #include "SongManager.h"
 #include "ScreenManager.h"
 #include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
-#include "PrefsManager.h"
 #include "GameManager.h"
 #include "RageLog.h"
 #include "GameState.h"
@@ -24,13 +12,8 @@
 #include "Steps.h"
 
 
-//
-// Defines specific to ScreenEditCoursesMenu
-//
-#define EXPLANATION_X				THEME->GetMetricF("ScreenEditCoursesMenu","ExplanationX")
-#define EXPLANATION_Y				THEME->GetMetricF("ScreenEditCoursesMenu","ExplanationY")
-#define EXPLANATION_TEXT			THEME->GetMetric("ScreenEditCoursesMenu","ExplanationText")
-#define HELP_TEXT					THEME->GetMetric("ScreenEditCoursesMenu","HelpText")
+#define EXPLANATION_TEXT			THEME->GetMetric (m_sName,"ExplanationText")
+#define HELP_TEXT					THEME->GetMetric (m_sName,"HelpText")
 
 const ScreenMessage SM_RefreshSelector	=	(ScreenMessage)(SM_User+1);
 
@@ -39,7 +22,7 @@ ScreenEditCoursesMenu::ScreenEditCoursesMenu( CString sName ) : ScreenWithMenuEl
 	LOG->Trace( "ScreenEditCoursesMenu::ScreenEditCoursesMenu()" );
 
 	/* Enable all players. */
-	for( int pn=0; pn<NUM_PLAYERS; pn++ )
+	FOREACH_PlayerNumber( pn )
 		GAMESTATE->m_bSideIsJoined[pn] = true;
 
 	GAMESTATE->m_CurStyle = STYLE_INVALID;
@@ -49,31 +32,20 @@ ScreenEditCoursesMenu::ScreenEditCoursesMenu( CString sName ) : ScreenWithMenuEl
 	this->AddChild( &m_Selector );
 
 	
+	m_textExplanation.SetName( "Explanation" );
 	m_textExplanation.LoadFromFont( THEME->GetPathToF("Common normal") );
-	m_textExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
+	SET_XY_AND_ON_COMMAND( m_textExplanation );
 	m_textExplanation.SetText( EXPLANATION_TEXT );
-	m_textExplanation.SetZoom( 0.7f );
 	this->AddChild( &m_textExplanation );
 
+	this->SortByDrawOrder();
+
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenEditCoursesMenu music") );
-}
-
-
-ScreenEditCoursesMenu::~ScreenEditCoursesMenu()
-{
-	LOG->Trace( "ScreenEditCoursesMenu::~ScreenEditCoursesMenu()" );
 }
 
 void ScreenEditCoursesMenu::DrawPrimitives()
 {
 	Screen::DrawPrimitives();
-}
-
-void ScreenEditCoursesMenu::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
-{
-	LOG->Trace( "ScreenEditCoursesMenu::Input()" );
-
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
 void ScreenEditCoursesMenu::HandleScreenMessage( const ScreenMessage SM )
@@ -123,3 +95,28 @@ void ScreenEditCoursesMenu::MenuBack( PlayerNumber pn )
 
 	SOUND->StopMusic();
 }
+
+/*
+ * (c) 2003-2004 Chris Danford
+ * All rights reserved.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, and/or sell copies of the Software, and to permit persons to
+ * whom the Software is furnished to do so, provided that the above
+ * copyright notice(s) and this permission notice appear in all copies of
+ * the Software and that both the above copyright notice(s) and this
+ * permission notice appear in supporting documentation.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
+ * THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS
+ * INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT
+ * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+ * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
