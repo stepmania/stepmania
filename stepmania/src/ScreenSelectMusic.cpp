@@ -133,6 +133,16 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	SET_XY( m_sprStage );
 	this->AddChild( &m_sprStage );
 
+	{
+		CStringArray StageTexts;
+		GAMESTATE->GetAllStageTexts( StageTexts );
+		for( unsigned i = 0; i < StageTexts.size(); ++i )
+		{
+			CString path = THEME->GetPathToG( "ScreenSelectMusic stage "+StageTexts[i] );
+			TEXTUREMAN->CacheTexture( path );
+		}
+	}
+
 	m_sprCDTitleFront.SetName( "CDTitle" );
 	m_sprCDTitleFront.Load( THEME->GetPathToG("ScreenSelectMusic fallback cdtitle") );
 	m_sprCDTitleFront.SetUseBackfaceCull(true);
