@@ -54,7 +54,7 @@ private:
     {
 		enum { INACTIVE, PLAYING, STOPPING } state;
 
-        RageSound *snd;
+        RageSoundBase *snd;
         int flush_pos;
 
 		void clear() { snd=NULL; state=INACTIVE; flush_pos=0; }
@@ -95,16 +95,16 @@ private:
 	void FeederThread();
 #endif
 
-    int ConvertSampleTimeToPosition(const Float64 sampleTime) const;
-    int ConvertAudioTimeStampToPosition(const AudioTimeStamp *time) const;
+    //int64_t ConvertSampleTimeToPosition(const Float64 sampleTime) const;
+    int64_t ConvertAudioTimeStampToPosition(const AudioTimeStamp *time) const;
 
 protected:
-    virtual void StartMixing(RageSound *snd);
-    virtual void Update (float delta);
-    virtual void StopMixing(RageSound *snd);
-    virtual int GetPosition(const RageSound *snd) const;
-    virtual float GetPlayLatency() const;
-	virtual int GetSampleRate() const;
+    void StartMixing(RageSoundBase *snd);
+    void Update (float delta);
+    void StopMixing(RageSoundBase *snd);
+    int64_t GetPosition(const RageSoundBase *snd) const;
+    float GetPlayLatency() const;
+	int GetSampleRate() const;
 
 	size_t smSamplesToBytes(int samples);
 	int smBytesToSamples(size_t bytes);

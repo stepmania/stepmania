@@ -77,21 +77,24 @@ typedef struct VRBChunkHeader	VRBChunkHeader;
 
 #endif
 
-
+namespace
+{
+    inline void TEST_ERR(OSStatus result)
+    {
 #if defined(DEBUG)
-static char *__errorMessage;
-static char __fourcc[5];
-#define TEST_ERR(result) \
-CHECKPOINT; \
-memcpy(__fourcc, &result, 4); \
-__fourcc[4] = '\000'; \
-asprintf(&__errorMessage, "err = %d, %s", result, __fourcc); \
-RAGE_ASSERT_M(result == noErr, __errorMessage); \
-free(__errorMessage)
-
+        char *errorMessage;
+        char fourcc[5];
+        
+        CHECKPOINT;
+        memcpy(fourcc, &result, 4);
+        fourcc[4] = '\000';
+        asprintf(&errorMessage, "err = %d, %s", result, fourcc);
+        free(errorMessage);
 #else
-#define TEST_ERR(result)
+# pragma unused(result)
 #endif
+    }
+}
 
 #define INTERNAL_DEBUG		0
 #if (INTERNAL_DEBUG)
@@ -361,7 +364,7 @@ RageSound_CA::~RageSound_CA()
 #endif
 }
 
-void RageSound_CA::StartMixing(RageSound *snd)
+void RageSound_CA::StartMixing(RageSoundBase *snd)
 {
     LockMutex L(SOUNDMAN->lock);
 
@@ -376,8 +379,8 @@ void RageSound_CA::StartMixing(RageSound *snd)
 	// No free buffer?  Fake it. (and log it)
 	if (i == stream_pool.size())
 	{
-		LOG->Info(LOG_MARKER "RageSound_CA::StartMixing -- exceeded free buffers, faking it");
-		SOUNDMAN->AddFakeSound(snd);
+		LOG->Warn(LOG_MARKER "RageSound_CA::StartMixing -- exceeded free buffers, faking it");
+		//SOUNDMAN->AddFakeSound(snd);
 		return;
 	}
 
@@ -439,7 +442,7 @@ void RageSound_CA::Update(float delta)
     }
 }
 
-void RageSound_CA::StopMixing(RageSound *snd)
+void RageSound_CA::StopMixing(RageSoundBase *snd)
 {
 	ASSERT(snd != NULL);
     LockMutex L(SOUNDMAN->lock);
@@ -473,7 +476,7 @@ void RageSound_CA::StopMixing(RageSound *snd)
 	stream_pool[i]->snd = NULL;
 }
 
-int RageSound_CA::GetPosition(const RageSound *snd) const
+int64_t RageSound_CA::GetPosition(const RageSoundBase *snd) const
 {
     AudioTimeStamp time;
     OSStatus err = AudioDeviceGetCurrentTime(outputDevice, &time);
@@ -798,12 +801,13 @@ OSStatus RageSound_CA::OverloadListener(AudioDeviceID inDevice, UInt32 inChannel
 }
 
 
-int RageSound_CA::ConvertSampleTimeToPosition(const Float64 sampleTime) const
+/*int64_t RageSound_CA::ConvertSampleTimeToPosition(const Float64 sampleTime) const
 {
-	return (int) (sampleTime - startSampleTime);
-}
+	return  int64_t(sampleTime - startSampleTime);
+}*/
 
-int RageSound_CA::ConvertAudioTimeStampToPosition(const AudioTimeStamp *time) const
+int64_t RageSound_CA::ConvertAudioTimeStampToPosition(const AudioTimeStamp *time) const
 {
-	return this->ConvertSampleTimeToPosition(time->mSampleTime);
+	//return this->ConvertSampleTimeToPosition(time->mSampleTime);
+    return int64_t(time->mSampleTime - startSampleTime);
 }
