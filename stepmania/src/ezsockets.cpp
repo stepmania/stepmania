@@ -10,6 +10,7 @@
 
 #include "global.h" // StepMania only includes
 
+
 #if defined(_XBOX)
 #elif defined(_WINDOWS) // We need the WinSock32 Library on Windows
   #pragma comment(lib,"wsock32.lib")
@@ -249,6 +250,7 @@ void EzSockets::SendPack(char* data,unsigned int bytes) {
 
 int EzSockets::ReadPack(char* data,unsigned int max) {
   int size = PeekPack(data,max);
+
   if(size!=-1)
 	inBuffer=inBuffer.substr(size+4);
 
@@ -282,11 +284,15 @@ int EzSockets::PeekPack(char* data,unsigned int max) {
     if((inBuffer.length()<(size+4)) || (inBuffer.length()<=4))
       return -1;
 
+  if (IsError())
+    return -1; 
+	//What if we get disconnected while waiting for data?
+
   string tBuff(inBuffer.substr(4,size));
   if(tBuff.length()>max)
     tBuff.substr(0,max);
-  memcpy (data,tBuff.c_str(),tBuff.length());
 
+  memcpy (data,tBuff.c_str(),tBuff.length());
   return size;
 }
 
