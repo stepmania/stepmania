@@ -128,6 +128,7 @@
 				AA67BFA00558751600EF34A6,
 				AA67BFB20558751E00EF34A6,
 				AA67BFD30558752500EF34A6,
+				AA30C60F07F5E24A0066F398,
 			);
 		};
 		29B97314FDCFA39411CA2CEA = {
@@ -1914,7 +1915,6 @@
 		};
 		AA29CC240558741A00961A51 = {
 			buildPhases = (
-				AA67C0AD0558B1D000EF34A6,
 				AA29CC270558741A00961A51,
 				AA29CD3C0558741A00961A51,
 				AA4B428C05733DF2005FB5DB,
@@ -1957,6 +1957,7 @@
 			};
 			dependencies = (
 				AA29CC250558741A00961A51,
+				AA30C61A07F5E2EF0066F398,
 			);
 			isa = PBXNativeTarget;
 			name = stepmania;
@@ -5663,6 +5664,32 @@
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		AA30C60F07F5E24A0066F398 = {
+			buildArgumentsString = scripts/increment_version.sh;
+			buildPhases = (
+			);
+			buildSettings = {
+			};
+			buildToolPath = /bin/sh;
+			dependencies = (
+			);
+			isa = PBXLegacyTarget;
+			name = version;
+			passBuildSettingsInEnvironment = 1;
+			productName = version;
+		};
+		AA30C61907F5E2EF0066F398 = {
+			containerPortal = 29B97313FDCFA39411CA2CEA;
+			isa = PBXContainerItemProxy;
+			proxyType = 1;
+			remoteGlobalIDString = AA30C60F07F5E24A0066F398;
+			remoteInfo = version;
+		};
+		AA30C61A07F5E2EF0066F398 = {
+			isa = PBXTargetDependency;
+			target = AA30C60F07F5E24A0066F398;
+			targetProxy = AA30C61907F5E2EF0066F398;
+		};
 		AA34ECF70611C9A7003E5955 = {
 			fileRef = AAF744B306116B0500B19AD1;
 			isa = PBXBuildFile;
@@ -7062,22 +7089,6 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
-		};
-		AA67C0AD0558B1D000EF34A6 = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				ver.cpp,
-				version.tst,
-				"",
-			);
-			isa = PBXShellScriptBuildPhase;
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = scripts/increment_version.sh;
 		};
 		AA69675006840991007802A5 = {
 			fileEncoding = 4;
