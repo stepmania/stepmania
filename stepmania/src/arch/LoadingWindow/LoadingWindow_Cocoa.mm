@@ -1,5 +1,5 @@
 /*
- *  LoadingWindow_Cocoa.m
+ *  LoadingWindow_Cocoa.mm
  *  stepmania
  *
  *  Created by Steve Checkoway on Thu Jul 03 2003.
