@@ -140,6 +140,9 @@ SetOutPath "$INSTDIR\Courses"
 File "Courses\instructions.txt"
 File /r "Courses\Samples"
 
+CreateDirectory "$INSTDIR\Packages"
+File "Packages\instructions.txt"
+
 RMDir /r "$INSTDIR\NoteSkins\common\default"
 RMDir /r "$INSTDIR\NoteSkins\dance\MAX"
 RMDir /r "$INSTDIR\NoteSkins\dance\default"
@@ -148,11 +151,6 @@ RMDir /r "$INSTDIR\NoteSkins\dance\note"
 RMDir /r "$INSTDIR\NoteSkins\dance\solo"
 SetOutPath "$INSTDIR\NoteSkins"
 File "NoteSkins\instructions.txt"
-; why do this? -glenn
-; instructions.txt can be deleted.  -Chris
-; Huh?  I mean, why create each of these directories?  File /r
-; does that for us.
-; No reason.  Removed calls to CreateDirectory. -Chris
 
 SetOutPath "$INSTDIR\NoteSkins\common"
 File /r "NoteSkins\common\default"
@@ -300,6 +298,9 @@ RMDir /r "$INSTDIR\Characters\default"
 RMDir "$INSTDIR\Characters"
 
 RMDir /r "$INSTDIR\Cache"
+
+Delete "$INSTDIR\Packages\instructions.txt"
+RMDir "$INSTDIR\Packages"
 
 Delete "$INSTDIR\Courses\instructions.txt"
 RMDir /r "$INSTDIR\Courses\Samples"
