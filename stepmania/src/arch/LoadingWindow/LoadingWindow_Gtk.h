@@ -1,7 +1,7 @@
 #ifndef LOADING_WINDOW_GTK
 #define LOADING_WINDOW_GTK
 
-#include "LoadingWindow_Null.h"
+#include "LoadingWindow.h"
 
 void CreateGtkLoadingWindow();
 void DestroyGtkLoadingWindow();
