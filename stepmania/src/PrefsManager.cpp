@@ -208,7 +208,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValue ( "Options", "DefaultModifiers",			m_sDefaultModifiers );
 	ini.GetValueB( "Options", "BreakComboToGetItem",		m_bBreakComboToGetItem );
 	ini.GetValueB( "Options", "ShowDancingCharacters",		m_bShowDancingCharacters );
-	ini.GetValueI( "Options", "BannerCacheType",			(int&)m_BannerCacheType );
+//	ini.GetValueI( "Options", "BannerCacheType",			(int&)m_BannerCacheType );
 	/* XXX: This belongs in the memcard code, not prefs. */
 	ini.GetValueF( "Options", "DancePointsAccumulated",		m_fDancePointsAccumulated );
 	ini.GetValueB( "Options", "UseUnlockSystem",			m_bUseUnlockSystem );
@@ -303,7 +303,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValue ( "Options", "DefaultModifiers",			m_sDefaultModifiers );
 	ini.SetValueB( "Options", "BreakComboToGetItem",		m_bBreakComboToGetItem );
 	ini.SetValueB( "Options", "ShowDancingCharacters",		m_bShowDancingCharacters );
-	ini.SetValueI( "Options", "BannerCacheType",			m_BannerCacheType );
+//	ini.SetValueI( "Options", "BannerCacheType",			m_BannerCacheType );
 	ini.SetValueF( "Options", "DancePointsAccumulated",		m_fDancePointsAccumulated );
 	ini.SetValueB( "Options", "UseUnlockSystem",			m_bUseUnlockSystem );
 	ini.SetValueB( "Options", "FirstRun",					m_bFirstRun );
