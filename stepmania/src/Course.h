@@ -83,6 +83,7 @@ public:
 	bool IsNonstop() const { return !m_bRepeat && m_iLives <= 0; } 	// use bar life meter
 	bool IsOni() const { return !m_bRepeat && m_iLives > 0; } 	// use battery life meter
 	bool IsEndless() const { return m_bRepeat; }
+	PlayMode GetPlayMode() const;
 
 	void LoadFromCRSFile( CString sPath );
 	void Save();

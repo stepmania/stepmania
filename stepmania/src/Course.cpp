@@ -94,6 +94,19 @@ Song *Course::FindSong(CString sGroup, CString sSong) const
 	return NULL;	
 }
 
+PlayMode Course::GetPlayMode() const
+{
+	if( IsNonstop() )
+		return PLAY_MODE_NONSTOP;
+	if( IsOni() )
+		return PLAY_MODE_ONI;
+	if( IsEndless() )
+		return PLAY_MODE_ENDLESS;
+
+	ASSERT(0);
+	return PLAY_MODE_NONSTOP;
+}
+
 void Course::LoadFromCRSFile( CString sPath )
 {
 	m_sPath = sPath;	// save path
