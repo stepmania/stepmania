@@ -13,7 +13,7 @@ private:
 	int buffersize, last_cursor_pos;
 
 	snd_pcm_sframes_t total_frames;
-
+	snd_pcm_uframes_t xfer_align;
 
 	snd_pcm_t *pcm;
 

@@ -155,6 +155,8 @@ Alsa9Buf::Alsa9Buf( hw hardware, int channels_, int samplerate_ )
 	snd_pcm_sw_params_alloca( &swparams );
 	snd_pcm_sw_params_current( pcm, swparams );
 
+	xfer_align = snd_pcm_sw_params_get_xfer_align( swparams );
+	
 	/* Disable SND_PCM_STATE_XRUN. */
 	snd_pcm_uframes_t boundary = 0;
 	err = snd_pcm_sw_params_get_boundary( swparams, &boundary );
@@ -183,8 +185,6 @@ Alsa9Buf::Alsa9Buf( hw hardware, int channels_, int samplerate_ )
 	snd_output_close( errout );
 */
 	total_frames = snd_pcm_avail_update(pcm);
-
-	
 }
 
 Alsa9Buf::~Alsa9Buf()
@@ -196,6 +196,19 @@ Alsa9Buf::~Alsa9Buf()
 int Alsa9Buf::GetNumFramesToFill( int writeahead )
 {
     snd_pcm_sframes_t avail_frames = snd_pcm_avail_update(pcm);
+	
+	/* If this happens, we've underrun by avail_frames-total_frames frames.  If we fill in that
+	 * number of frames, then we won't actually skip any music; there'll just be a delay.  Don't
+	 * do that; it means the beat of the music will shift, which is much harder to recover
+	 * from while playing. */
+/*	if( avail_frames > total_frames )
+	{
+		int size = avail_frames-total_frames;
+		snd_pcm_forward( pcm, size );
+		LOG->Trace("ur write %i", size);
+	}
+*/
+	
 	if( avail_frames < 0 && Recover(avail_frames) )
 		avail_frames = snd_pcm_avail_update(pcm);
 
@@ -205,24 +218,18 @@ int Alsa9Buf::GetNumFramesToFill( int writeahead )
 		return 0;
 	}
 
-	const snd_pcm_sframes_t filled_frames = total_frames - avail_frames;
-	RAGE_ASSERT_M( filled_frames >= 0, ssprintf("total %i, %i avail", total_frames, avail_frames) );
-	
-	const snd_pcm_sframes_t frames_to_fill = (writeahead - filled_frames) & ~3;
-	RAGE_ASSERT_M( frames_to_fill <= (int)writeahead, ssprintf("writeahead %i, %i filled, %i to fill", writeahead, filled_frames, frames_to_fill) );
-//	LOG->Trace("%li/%li fr avail, %li", avail_frames, total_frames, frames_to_fill);
+	const snd_pcm_sframes_t filled_frames = max( 0, total_frames - avail_frames );
 
-	//  LOG->Trace("%li avail, %li filled, %li to", avail_frames, filled_frames, frames_to_fill);
-	return max( 0l, frames_to_fill );
+	snd_pcm_sframes_t frames_to_fill = clamp( writeahead - filled_frames, 0, (int)writeahead );
+	frames_to_fill -= frames_to_fill % xfer_align;
+
+	return frames_to_fill;
 }
 
 void Alsa9Buf::Write( const Sint16 *buffer, int frames )
 {
 	/* We should be able to write it all.  If we don't, treat it as an error. */
 	int wrote = snd_pcm_mmap_writei( pcm, (const char *) buffer, frames );
-	if( wrote < 0 && Recover(wrote) )
-		wrote = snd_pcm_mmap_writei( pcm, (const char *) buffer, frames );
-
 	if( wrote < 0 )
 	{
 		LOG->Trace( "RageSoundDriver_ALSA9::GetData: snd_pcm_mmap_writei: %s (%i)", snd_strerror(wrote), wrote );
