@@ -825,10 +825,16 @@ Fonts:  This folder contains graphics and font width data used by the font
 		ScaleAllWidthsBy=<0.0...2.0>:  The width of every character in the font 
 			be multipled by this value.  If not specified, StepMania will use 
 			1 for this value.
-		LineSpacing=<0..64>:  This controls the spacing in pixels between lines
+		LineSpacing=<0..64>:  This controls the spacing in pixels between lines of
 			text.  This value is only used in text items that have multiple 
 			lines.  If not specified, StepMania will use the height of the 
 			frames in your texture (which is 32 pixels for 512x512 graphics).
+                Top=<0..63>:  This indicates the top of a typical capital letter, from
+			the top of the frame.  If not specified, this will be derived from
+			LineSpacing.
+                Baseline=<0..63>:  This indicates the baseline of the font, from the
+			top of the frame.  If not specified, the baseline is derived from
+			LineSpacing.
 
 Graphics:  This folder contains graphics used in all of the screens.  These 
 	graphics are the meat and potatoes of a theme.  These graphics can be of
