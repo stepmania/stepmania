@@ -934,6 +934,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 
 			m_pSong->m_fMusicSampleStartSeconds += fOffsetDelta;
+			m_pSong->m_fMusicSampleStartSeconds = max(m_pSong->m_fMusicSampleStartSeconds,0);
 		}
 		break;
 	case DIK_SUBTRACT:
@@ -953,6 +954,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 
 			m_pSong->m_fMusicSampleLengthSeconds += fDelta;
+			m_pSong->m_fMusicSampleLengthSeconds = max(m_pSong->m_fMusicSampleLengthSeconds,0);
 		}
 		break;
 	}
