@@ -8,7 +8,7 @@
  *  Copyright (c) 2003 Steve Checkoway. All rights reserved.
  *
  */
-
+#include "global.h"
 /* ugh, what a hack! QT includes Carbon/Carbon.h which
  * has defs for a few things defined in RageUtil.h which
  * is included in arch.cpp along w/ (eventually) this.
@@ -18,23 +18,13 @@
 namespace QT {
 #include <QuickTime/QuickTime.h>
 }
+
 #include "RageSound.h"
 #include "RageSoundDriver.h"
 
 class RageSound_QT: public RageSoundDriver {
 private:
-  struct sound {
-    RageSound *snd;
-    bool stopping;
-    int flush_pos;
-    sound() { snd=NULL; stopping=false; flush_pos=0; }
-  };
-
-  vector<sound *> sounds;
-  QT::ComponentInstance clock;
   QT::ComponentInstance soundOutput;
-  QT::SndChannelPtr	channel;
-  int last_pos;
   float latency;
 
 protected:
@@ -49,6 +39,8 @@ public:
   virtual ~RageSound_QT();
   static void GetData(QT::SndChannel *chan, QT::SndCommand *cmd_passed);
 };
+
+bool canPlayMultiChannels();
 
 #endif /* RAGE_SOUND_QT */
   
