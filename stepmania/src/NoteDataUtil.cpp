@@ -332,7 +332,7 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 			bool bHoldCrossesThisMeasure = false;
 
 			if( r )
-			for( int t=0; t<=Original.GetNumTracks(); t++ )
+			for( int t=0; t<Original.GetNumTracks(); t++ )
 			{
 				if( Original.GetTapNote(t,r).type == TapNote::hold &&
 					Original.GetTapNote(t,r-1).type == TapNote::hold )
