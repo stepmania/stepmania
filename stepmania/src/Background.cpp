@@ -318,6 +318,11 @@ void Background::LoadFromSong( const Song* pSong )
 	if( PREFSMAN->m_fBGBrightness == 0 )
 		return;
 
+	/* Song backgrounds (even just background stills) can get very big; never keep them
+	 * in memory. */
+	RageTexture::TexPolicy OldPolicy = TEXTUREMAN->GetDefaultTexturePolicy();
+	TEXTUREMAN->SetDefaultTexturePolicy( RageTexture::TEX_VOLATILE );
+
 	TEXTUREMAN->DisableOddDimensionWarning();
 
 	const float fXZoom = RECT_BACKGROUND.GetWidth() / (float)SCREEN_WIDTH;
@@ -429,6 +434,8 @@ void Background::LoadFromSong( const Song* pSong )
 
 	if( m_pDancingCharacters )
 		m_pDancingCharacters->LoadNextSong();
+
+	TEXTUREMAN->SetDefaultTexturePolicy( OldPolicy );
 }
 
 int Background::FindBGSegmentForBeat( float fBeat ) const
