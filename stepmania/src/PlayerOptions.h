@@ -78,6 +78,7 @@ struct PlayerOptions
 	Transform	m_Transform;
 	bool		m_bHoldNotes;
 	bool		m_bTimingAssist;
+	bool		m_bProTiming;
 	float		m_fPerspectiveTilt;		// -1 = near, 0 = overhead, +1 = space
 	CString		m_sPositioning;	/* The current positioning mode, or empty to use the normal positions. */
 	CString		m_sNoteSkin;

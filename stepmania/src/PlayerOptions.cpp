@@ -33,10 +33,10 @@ void PlayerOptions::Init()
 	m_Transform = TRANSFORM_NONE;
 	m_bHoldNotes = true;
 	m_bTimingAssist = false;
+	m_bProTiming = false;
 	m_fPerspectiveTilt = 0;
 	m_sPositioning = "";	// "null"
 	m_sNoteSkin = "default";
-
 }
 
 void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
@@ -130,6 +130,7 @@ CString PlayerOptions::GetString()
 
 	if( !m_bHoldNotes )		sReturn += "NoHolds, ";
 	if( m_bTimingAssist )	sReturn += "TimingAssist, ";
+	if( m_bProTiming )		sReturn += "ProTiming, ";
 
 	switch( (int)m_fPerspectiveTilt )
 	{
@@ -233,6 +234,7 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "nofreeze" )	m_bHoldNotes = false;
 		else if( sBit == "dark" )		m_fDark = 1;
 		else if( sBit == "timingassist")m_bTimingAssist = true;
+		else if( sBit == "protiming")	m_bProTiming = true;
 		else if( sBit == "incoming" )	m_fPerspectiveTilt = -1;
 		else if( sBit == "space" )		m_fPerspectiveTilt = +1;
 		else if( GAMESTATE->m_pPosition->IsValidModeForAnyStyle(sBit) )
