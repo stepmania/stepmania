@@ -216,11 +216,11 @@ void ShutdownGame()
  * up the call stack, to avoid having to use exceptions. */
 void HandleException( CString error )
 {
-	/* Shut down first, so we exit graphics mode before trying to open a dialog. */
-	ShutdownGame();
-
 	if( g_bAutoRestart )
 		HOOKS->RestartProgram();
+
+	/* Shut down first, so we exit graphics mode before trying to open a dialog. */
+	ShutdownGame();
 
 	/* Throw up a pretty error dialog. */
 	Dialog::Error( error );
