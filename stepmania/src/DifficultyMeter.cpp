@@ -149,15 +149,6 @@ void DifficultyMeter::SetFromDifficulty( Difficulty dc )
 	SetDifficulty( DifficultyToString( dc ) );
 }
 
-void DifficultyMeter::SetFromCourseDifficulty( CourseDifficulty cd )
-{
-	m_textFeet.SetEffectNone();
-	if( FEET_IS_DIFFICULTY_COLOR )
-		m_textFeet.SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
-	SetFromMeterAndDifficulty( 0, DIFFICULTY_BEGINNER );
-	SetDifficulty( CourseDifficultyToString( cd ) );
-}
-
 void DifficultyMeter::SetFromGameState( PlayerNumber pn )
 {
 	if( GAMESTATE->IsCourseMode() )
@@ -229,4 +220,13 @@ void DifficultyMeter::SetDifficulty( CString diff )
 		COMMAND( m_Difficulty, "Set" + Capitalize(diff) );
 	if( SHOW_METER )
 		COMMAND( m_textMeter, "Set" + Capitalize(diff) );
+}
+
+void DifficultyMeter::SetFromCourseDifficulty( CourseDifficulty cd )
+{
+	m_textFeet.SetEffectNone();
+	if( FEET_IS_DIFFICULTY_COLOR )
+		m_textFeet.SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
+	SetFromMeterAndDifficulty( 0, DIFFICULTY_BEGINNER );
+	SetDifficulty( CourseDifficultyToString( cd ) );
 }
