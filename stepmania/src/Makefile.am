@@ -25,15 +25,15 @@ $(srcdir)/libresample/libresample.a:
 	cd $(srcdir)/libresample && autoconf && ./configure && make
 
 Screens = \
-Screen.cpp Screen.h ScreenAlbums.cpp ScreenAlbums.h ScreenAppearanceOptions.cpp ScreenAppearanceOptions.h \
+Screen.cpp Screen.h ScreenAppearanceOptions.cpp ScreenAppearanceOptions.h \
 ScreenAttract.cpp ScreenAttract.h ScreenAutogenOptions.cpp ScreenAutogenOptions.h \
-ScreenBackgroundOptions.cpp ScreenBackgroundOptions.h ScreenCaution.cpp ScreenCaution.h ScreenCompany.h \
+ScreenBackgroundOptions.cpp ScreenBackgroundOptions.h ScreenCaution.cpp ScreenCaution.h \
 ScreenCredits.cpp ScreenCredits.h ScreenDemonstration.cpp ScreenDemonstration.h ScreenDimensions.h ScreenEdit.cpp ScreenEdit.h \
 ScreenEditCoursesMenu.cpp ScreenEditCoursesMenu.h ScreenEditMenu.cpp ScreenEditMenu.h ScreenEvaluation.cpp ScreenEvaluation.h \
 ScreenExit.cpp ScreenExit.h ScreenEz2SelectMusic.cpp ScreenEz2SelectMusic.h ScreenEz2SelectPlayer.cpp ScreenEz2SelectPlayer.h \
 ScreenGameOver.cpp ScreenGameOver.h ScreenGameplay.cpp ScreenGameplay.h ScreenGameplayOptions.cpp ScreenGameplayOptions.h \
 ScreenGraphicOptions.cpp ScreenGraphicOptions.h ScreenHowToPlay.cpp ScreenHowToPlay.h ScreenInputOptions.cpp ScreenInputOptions.h \
-ScreenInstructions.cpp ScreenInstructions.h ScreenIntroMovie.cpp ScreenIntroMovie.h ScreenJukebox.cpp ScreenJukebox.h \
+ScreenInstructions.cpp ScreenInstructions.h ScreenJukebox.cpp ScreenJukebox.h \
 ScreenJukeboxMenu.cpp ScreenJukeboxMenu.h ScreenLogo.cpp ScreenLogo.h ScreenMachineOptions.cpp ScreenMachineOptions.h \
 ScreenMapControllers.cpp ScreenMapControllers.h ScreenMemoryCard.h ScreenMessage.h ScreenMiniMenu.cpp ScreenMiniMenu.h \
 ScreenMusicScroll.cpp ScreenMusicScroll.h ScreenNameEntry.cpp ScreenNameEntry.h ScreenOptions.cpp ScreenOptions.h \
@@ -46,8 +46,7 @@ ScreenSelectGroup.cpp ScreenSelectGroup.h ScreenSelectMaster.cpp ScreenSelectMas
 ScreenSelectMusic.cpp ScreenSelectMusic.h ScreenSelectStyle.cpp ScreenSelectStyle.h ScreenSongOptions.cpp ScreenSongOptions.h \
 ScreenSoundOptions.cpp ScreenSoundOptions.h ScreenStage.cpp ScreenStage.h ScreenStyleSplash.cpp ScreenStyleSplash.h \
 ScreenTest.cpp ScreenTest.h ScreenTestFonts.cpp ScreenTestFonts.h ScreenTestSound.cpp ScreenTestSound.h \
-ScreenTextEntry.cpp ScreenTextEntry.h ScreenTitleMenu.cpp ScreenTitleMenu.h ScreenUnlock.cpp ScreenUnlock.h \
-ScreenWarning.h 
+ScreenTextEntry.cpp ScreenTextEntry.h ScreenTitleMenu.cpp ScreenTitleMenu.h ScreenUnlock.cpp ScreenUnlock.h
 
 DataStructures = \
 BannerCache.cpp BannerCache.h Character.cpp Character.h CodeDetector.cpp CodeDetector.h Course.cpp Course.h \

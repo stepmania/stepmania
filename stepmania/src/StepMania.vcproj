@@ -170,12 +170,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="Screen.h">
 			</File>
 			<File
-				RelativePath="ScreenAlbums.cpp">
-			</File>
-			<File
-				RelativePath="ScreenAlbums.h">
-			</File>
-			<File
 				RelativePath="ScreenAppearanceOptions.cpp">
 			</File>
 			<File
@@ -204,9 +198,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenCaution.h">
-			</File>
-			<File
-				RelativePath="ScreenCompany.h">
 			</File>
 			<File
 				RelativePath="ScreenCredits.cpp">
@@ -306,12 +297,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenInstructions.h">
-			</File>
-			<File
-				RelativePath="ScreenIntroMovie.cpp">
-			</File>
-			<File
-				RelativePath="ScreenIntroMovie.h">
 			</File>
 			<File
 				RelativePath="ScreenJukebox.cpp">
@@ -540,9 +525,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenUnlock.h">
-			</File>
-			<File
-				RelativePath="ScreenWarning.h">
 			</File>
 		</Filter>
 		<Filter
