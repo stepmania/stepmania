@@ -131,9 +131,15 @@ void Notes::TidyUpData()
 		else if( GetMeter() <= 6 )	SetDifficulty(DIFFICULTY_MEDIUM);
 		else						SetDifficulty(DIFFICULTY_HARD);
 	}
-
-
-	if( GetMeter() < 1 || GetMeter() > 10 ) // meter is invalid
+	// Meter is overflowing (invalid), but some files (especially maniac/smaniac steps) are purposefully set higher than 10.
+	// See: BMR's Gravity; we probably should keep those as difficult as we can represent.
+	if( GetMeter() >10 ) {
+			if( GetDifficulty() == DIFFICULTY_HARD || GetDifficulty() == DIFFICULTY_CHALLENGE)
+				SetMeter(10);
+			else
+				SetMeter(0);
+	}
+	if( GetMeter() < 1) // meter is invalid
 	{
 		// guess meter from difficulty class
 		switch( GetDifficulty() )
