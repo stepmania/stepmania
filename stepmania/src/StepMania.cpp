@@ -516,8 +516,7 @@ static void HandleInputEvents(float fDeltaTime)
 
 void GameLoop()
 {
-	bool do_exit = false;
-	while(!do_exit)
+	while(1)
 	{
 		// process all queued events
 		SDL_Event event;
@@ -526,8 +525,7 @@ void GameLoop()
 			switch(event.type)
 			{
 			case SDL_QUIT:
-				do_exit = 1;
-				break;
+				return; /* exit the main loop */
 			case SDL_VIDEORESIZE:
 				PREFSMAN->m_iDisplayWidth = event.resize.w;
 				PREFSMAN->m_iDisplayHeight = event.resize.h;
