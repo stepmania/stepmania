@@ -95,7 +95,6 @@ static void *StartThread( void *pData )
 
 	*pThis->m_piThreadID = pThis->GetThreadId();
 	
-	fprintf(stderr, "set %i\n", (int) pThis->GetThreadId() );
 	/* Tell MakeThread that we've set m_piThreadID, so it's safe to return. */
 	sem_post( &pThis->m_StartFinishedSem );
 
@@ -112,12 +111,12 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 
 	int ret = pthread_create( &thread->thread, NULL, StartThread, thread );
 	if( ret )
-		RageException::Throw( "pthread_create: %s", strerror(ret) );
+		FAIL_M( ssprintf( "pthread_create: %s", strerror(ret)) );
 
 	/* Don't return until StartThread sets m_piThreadID. */
 	ret = sem_wait( &thread->m_StartFinishedSem );
 	if( ret )
-		RageException::Throw( "MakeThread(): sem_wait: %s", strerror(ret) );
+		FAIL_M( ssprintf( "pthread_create: %s", strerror(ret)) );
 	sem_destroy( &thread->m_StartFinishedSem );
 	
 	return thread;
