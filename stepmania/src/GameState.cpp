@@ -1126,7 +1126,7 @@ void GameState::ResetNoteSkinsForPlayer( PlayerNumber pn )
 
 void GameState::GetAllUsedNoteSkins( vector<CString> &out ) const
 {
-	for( int pn=0; pn<NUM_PLAYERS; ++pn )
+	FOREACH_EnabledPlayer( pn )
 	{
 		out.push_back( this->m_PlayerOptions[pn].m_sNoteSkin );
 
