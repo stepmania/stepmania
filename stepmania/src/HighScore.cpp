@@ -80,15 +80,15 @@ void HighScore::LoadFromNode( const XNode* pNode )
 	pNode->GetChildValue( "PlayerGuid",		sPlayerGuid );
 	pNode->GetChildValue( "MachineGuid",	sMachineGuid );
 	pNode->GetChildValue( "ProductID",		iProductID );
-	XNode* pTapNoteScores = pNode->GetChild( "TapNoteScores" );
+	const XNode* pTapNoteScores = pNode->GetChild( "TapNoteScores" );
 	if( pTapNoteScores )
 		FOREACH_TapNoteScore( tns )
 			pTapNoteScores->GetChildValue( TapNoteScoreToString(tns), iTapNoteScores[tns] );
-	XNode* pHoldNoteScores = pNode->GetChild( "HoldNoteScores" );
+	const XNode* pHoldNoteScores = pNode->GetChild( "HoldNoteScores" );
 	if( pHoldNoteScores )
 		FOREACH_HoldNoteScore( hns )
 			pHoldNoteScores->GetChildValue( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
-	XNode* pRadarValues = pNode->GetChild( "RadarValues" );
+	const XNode* pRadarValues = pNode->GetChild( "RadarValues" );
 	if( pRadarValues )
 		radarValues.LoadFromNode( pRadarValues );
 
@@ -205,7 +205,7 @@ void Screenshot::LoadFromNode( const XNode* pNode )
 
 	pNode->GetChildValue( "FileName",	sFileName );
 	pNode->GetChildValue( "MD5",		sMD5 );
-	XNode* pHighScore = pNode->GetChild( "HighScore" );
+	const XNode* pHighScore = pNode->GetChild( "HighScore" );
 	if( pHighScore )
 		highScore.LoadFromNode( pHighScore );
 }

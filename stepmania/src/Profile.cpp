@@ -894,7 +894,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "TotalHands",						m_iTotalHands );
 
 	{
-		XNode* pUnlockedSongs = pNode->GetChild("UnlockedSongs");
+		const XNode* pUnlockedSongs = pNode->GetChild("UnlockedSongs");
 		if( pUnlockedSongs )
 		{
 			FOREACH_Node( pUnlockedSongs, song )
@@ -907,14 +907,14 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	}
 
 	{
-		XNode* pNumSongsPlayedByPlayMode = pNode->GetChild("NumSongsPlayedByPlayMode");
+		const XNode* pNumSongsPlayedByPlayMode = pNode->GetChild("NumSongsPlayedByPlayMode");
 		if( pNumSongsPlayedByPlayMode )
 			FOREACH_PlayMode( pm )
 				pNumSongsPlayedByPlayMode->GetChildValue( PlayModeToString(pm), m_iNumSongsPlayedByPlayMode[pm] );
 	}
 
 	{
-		XNode* pNumSongsPlayedByStyle = pNode->GetChild("NumSongsPlayedByStyle");
+		const XNode* pNumSongsPlayedByStyle = pNode->GetChild("NumSongsPlayedByStyle");
 		if( pNumSongsPlayedByStyle )
 		{
 			FOREACH_Node( pNumSongsPlayedByStyle, style )
@@ -934,28 +934,28 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	}
 
 	{
-		XNode* pNumSongsPlayedByDifficulty = pNode->GetChild("NumSongsPlayedByDifficulty");
+		const XNode* pNumSongsPlayedByDifficulty = pNode->GetChild("NumSongsPlayedByDifficulty");
 		if( pNumSongsPlayedByDifficulty )
 			FOREACH_Difficulty( dc )
 				pNumSongsPlayedByDifficulty->GetChildValue( DifficultyToString(dc), m_iNumSongsPlayedByDifficulty[dc] );
 	}
 
 	{
-		XNode* pNumSongsPlayedByMeter = pNode->GetChild("NumSongsPlayedByMeter");
+		const XNode* pNumSongsPlayedByMeter = pNode->GetChild("NumSongsPlayedByMeter");
 		if( pNumSongsPlayedByMeter )
 			for( int i=0; i<MAX_METER+1; i++ )
 				pNumSongsPlayedByMeter->GetChildValue( ssprintf("Meter%d",i), m_iNumSongsPlayedByMeter[i] );
 	}
 
 	{
-		XNode* pNumSongsPassedByGrade = pNode->GetChild("NumSongsPassedByGrade");
+		const XNode* pNumSongsPassedByGrade = pNode->GetChild("NumSongsPassedByGrade");
 		if( pNumSongsPassedByGrade )
 			FOREACH_Grade( g )
 				pNumSongsPassedByGrade->GetChildValue( GradeToString(g), m_iNumSongsPassedByGrade[g] );
 	}
 
 	{
-		XNode* pNumSongsPassedByPlayMode = pNode->GetChild("NumSongsPassedByPlayMode");
+		const XNode* pNumSongsPassedByPlayMode = pNode->GetChild("NumSongsPassedByPlayMode");
 		if( pNumSongsPassedByPlayMode )
 			FOREACH_PlayMode( pm )
 				pNumSongsPassedByPlayMode->GetChildValue( PlayModeToString(pm), m_iNumSongsPassedByPlayMode[pm] );
@@ -1512,7 +1512,7 @@ void Profile::HighScoreForASongAndSteps::LoadFromNode( const XNode* pNode )
 	Unset();
 
 	ASSERT( pNode->name == "HighScoreForASongAndSteps" );
-	XNode* p;
+	const XNode* p;
 	if( (p = pNode->GetChild("Song")) )
 		songID.LoadFromNode( p );
 	if( (p = pNode->GetChild("Steps")) )
@@ -1589,7 +1589,7 @@ void Profile::HighScoreForACourseAndTrail::LoadFromNode( const XNode* pNode )
 	Unset();
 
 	ASSERT( pNode->name == "HighScoreForACourseAndTrail" );
-	XNode* p;
+	const XNode* p;
 	if( (p = pNode->GetChild("Course")) )
 		courseID.LoadFromNode( p );
 	if( (p = pNode->GetChild("Trail")) )
