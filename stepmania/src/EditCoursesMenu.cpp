@@ -144,6 +144,7 @@ void EditCoursesMenu::Up()
 {
 	if( CanGoUp() )
 	{
+		ChangeToRow( Row(m_SelectedRow-1) );
 		m_soundChangeRow.PlayRandom();
 	}
 }
@@ -152,6 +153,7 @@ void EditCoursesMenu::Down()
 {
 	if( CanGoDown() )
 	{
+		ChangeToRow( Row(m_SelectedRow+1) );
 		m_soundChangeRow.PlayRandom();
 	}
 }
@@ -204,17 +206,18 @@ void EditCoursesMenu::OnRowValueChanged( Row row )
 	switch( row )
 	{
 	case ROW_COURSE:
-		m_textValue[ROW_COURSE].SetText( GetSelectedCourse()->m_sName );
-		m_CourseBanner.LoadFromGroup( GetSelectedCourse()->m_sBannerPath );
+		m_textValue[ROW_COURSE].SetText( pCourse->m_sName );
+		m_CourseBanner.LoadFromCourse( pCourse );
 		m_CourseBanner.ScaleToClipped( COURSE_BANNER_WIDTH, COURSE_BANNER_HEIGHT );
 		m_iSelection[ROW_ENTRY] = 0;
 		// fall through
 	case ROW_SAVE:
+		m_textValue[ROW_SAVE].SetText( "(press START)" );
 		// fall through
 	case ROW_COURSE_OPTIONS:
 		m_textValue[ROW_COURSE_OPTIONS].SetText( 
 			ssprintf(
-				"%s, %s, %d",
+				"%s, %s, %d lives",
 				pCourse->m_bRepeat ? "repeat" : "no repeat",
 				pCourse->m_bRandomize ? "randomize" : "no randomize",
 				pCourse->m_iLives ) );
@@ -223,13 +226,59 @@ void EditCoursesMenu::OnRowValueChanged( Row row )
 		m_textValue[ROW_ENTRY].SetText( ssprintf("%d",m_iSelection[ROW_ENTRY]+1) );
 		// fall through
 	case ROW_ENTRY_TYPE:
-		m_textValue[ROW_ENTRY_TYPE].SetText( pEntry ? CourseEntryTypeToString(pEntry->type) : "none" );
+		m_textValue[ROW_ENTRY_TYPE].SetText( pEntry ? CourseEntryTypeToString(pEntry->type) : "(none)" );
 		// fall through
 	case ROW_ENTRY_OPTIONS:
-		m_textValue[ROW_ENTRY_OPTIONS].SetText( "coming soon" );
+		{
+			CString s;
+			if( pEntry )
+			{
+				switch( pEntry->type )
+				{
+					case COURSE_ENTRY_FIXED:
+						s = pEntry->pSong ? "missing song" : pEntry->pSong->GetFullTranslitTitle();
+						break;
+					case COURSE_ENTRY_RANDOM:
+						s = "any group";
+						break;
+					case COURSE_ENTRY_RANDOM_WITHIN_GROUP:
+						s = "group: " + pEntry->group_name;
+						break;
+					case COURSE_ENTRY_BEST:
+						s = ssprintf( "best - %d", pEntry->players_index+1 );
+						break;
+					case COURSE_ENTRY_WORST:
+						s = ssprintf( "worst - %d", pEntry->players_index+1 );
+						break;
+					default:
+						ASSERT(0);
+						break;
+				}
+			}
+			else
+			{
+				s = "n/a";
+			}
+
+			m_textValue[ROW_ENTRY_OPTIONS].SetText( s );
+		}
 		// fall through
 	case ROW_ENTRY_MODIFIERS:
-		m_textValue[ROW_ENTRY_OPTIONS].SetText( "coming soon" );
+		{
+			CString s;
+			if( pEntry )
+			{
+				s = pEntry->modifiers;
+				if( s.empty() )
+					s = "(none)";
+			}
+			else
+			{
+				s = "n/a";
+			}
+		
+			m_textValue[ROW_ENTRY_MODIFIERS].SetText( s );
+		}
 		break;
 	default:
 		ASSERT(0);	// invalid row
