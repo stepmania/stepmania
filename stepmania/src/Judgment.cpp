@@ -45,8 +45,8 @@ Judgment::Judgment()
 void Judgment::Reset()
 {
 	m_sprJudgment.SetDiffuse( RageColor(1,1,1,0) );
-	m_sprJudgment.SetXY( 0, 0 );
 	m_sprJudgment.StopTweening();
+	m_sprJudgment.SetXY( 0, 0 );
 	m_sprJudgment.SetEffectNone();
 }
 
