@@ -84,6 +84,8 @@ public:
 	int m_iSelectMode;
 	void SelectUserSong();
 
+	bool isLanServer;	//Must be public for ScreenNetworkOptions
+	StepManiaLanServer *LANserver;
 private:
 #if !defined(WITHOUT_NETWORKING)
 
@@ -112,10 +114,6 @@ private:
 	bool Listen(unsigned short port);
 
 	PacketFunctions m_packet;
-
-	bool isLanServer;
-	StepManiaLanServer *LANserver;
-
 #endif
 };
 

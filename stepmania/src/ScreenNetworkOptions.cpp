@@ -8,10 +8,12 @@
 #include "ScreenManager.h"
 #include "ScreenTextEntry.h"
 #include "ScreenPrompt.h"
+#include "NetworkSyncServer.h"
 
 
 enum {
 	PO_CONNECTION,
+	PO_SERVER,
 	NUM_NETWORK_OPTIONS_LINES
 };
 
@@ -20,11 +22,18 @@ enum {
 	NO_CONNECT
 };
 
+enum {
+	NO_STOP_SERVER=0,
+	NO_START_SERVER
+};
+
 OptionRowData g_NetworkOptionsLines[NUM_NETWORK_OPTIONS_LINES] = {
 	OptionRowData( "Connection",	true, "PRESS START" ),
+	OptionRowData( "Server",		true, "PRESS START" )
 };
 
 const ScreenMessage	SM_DoneConnecting		= ScreenMessage(SM_User+1);
+const ScreenMessage	SM_ServerNameEnter		= ScreenMessage(SM_User+2);
 
 ScreenNetworkOptions::ScreenNetworkOptions( CString sClassName ) : ScreenOptions( sClassName )
 {
@@ -33,6 +42,11 @@ ScreenNetworkOptions::ScreenNetworkOptions( CString sClassName ) : ScreenOptions
 	g_NetworkOptionsLines[PO_CONNECTION].choices.clear();
 	g_NetworkOptionsLines[PO_CONNECTION].choices.push_back("Disconnect");
 	g_NetworkOptionsLines[PO_CONNECTION].choices.push_back("Connect...");
+
+	g_NetworkOptionsLines[PO_SERVER].choices.clear();
+	g_NetworkOptionsLines[PO_SERVER].choices.push_back("Stop");
+	g_NetworkOptionsLines[PO_SERVER].choices.push_back("Start...");
+	
 	
 	Init( 
 		INPUTMODE_SHARE_CURSOR, 
@@ -65,6 +79,20 @@ void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 			NSMAN->DisplayStartupStatus();
 		}
 		break;
+	case SM_ServerNameEnter:
+		if( !ScreenTextEntry::s_bCancelledLast )
+		{
+			if ( NSMAN->LANserver == NULL)
+				NSMAN->LANserver = new StepManiaLanServer;
+			NSMAN->LANserver->servername = ScreenTextEntry::s_sLastAnswer;
+			if (NSMAN->LANserver->ServerStart())
+			{
+				NSMAN->isLanServer = true;
+				SCREENMAN->SystemMessage( "Server Started." );
+			}
+			else
+				SCREENMAN->SystemMessage( "Server FAILED to start." );
+		}
 	}
 
 	ScreenOptions::HandleScreenMessage( SM );
@@ -84,6 +112,18 @@ void ScreenNetworkOptions::MenuStart( PlayerNumber pn, const InputEventType type
 		case NO_DISCONNECT:
 			NSMAN->CloseConnection();
 			SCREENMAN->SystemMessage("Disconnected from server.");
+			break;
+		}
+		break;
+	case PO_SERVER:
+		switch (m_Rows[GetCurrentRow()]->GetOneSharedSelection())
+		{
+		case NO_START_SERVER:
+			SCREENMAN->TextEntry( SM_ServerNameEnter, "Enter a server name...", "", NULL );
+			break;
+		case NO_STOP_SERVER:
+			if ( NSMAN->LANserver != NULL )
+				NSMAN->LANserver->ServerStop();
 			break;
 		}
 		break;

@@ -42,6 +42,7 @@ const ScreenMessage SM_ChangeSong	= ScreenMessage(SM_User+5);
 
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 {
+	LANserver = NULL;	//So we know if it has been created yet
 	if( GetCommandlineArgument( "runserver" )) {
 		ld->SetText("Initilizing server...");
 		LANserver = new StepManiaLanServer;
