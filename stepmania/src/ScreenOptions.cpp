@@ -170,7 +170,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 		}
 	}
 	
-	// init underlines
+	// init row icons
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
@@ -183,9 +183,6 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 
 				LoadOptionIcon( (PlayerNumber)p, l, "" );
 				m_framePage.AddChild( &row.m_OptionIcons[p] );
-
-				row.m_Underline[p].Load( (PlayerNumber)p, true );
-				m_framePage.AddChild( &row.m_Underline[p] );
 			}
 		}
 	}
@@ -208,33 +205,58 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 			float fX = ITEMS_START_X;	// indent 70 pixels
 			for( c=0; c<optline.choices.size(); c++ )
 			{
+				// init text
 				BitmapText *bt = new BitmapText;
 				textItems.push_back( bt );
-
 				bt->LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
 				bt->SetText( optline.choices[c] );
 				bt->SetZoom( ITEMS_ZOOM );
 				bt->EnableShadow( false );
 
 				// set the X position of each item in the line
-				const float fItemWidth = bt->GetZoomedWidth();
+				float fItemWidth = bt->GetZoomedWidth();
 				fX += fItemWidth/2;
 				bt->SetX( fX );
-				fX += fItemWidth/2 + ITEMS_GAP_X;
-			}
 
-			if( fX > SCREEN_RIGHT-40 )
-			{
-				// It goes off the edge of the screen.  Re-init with the "long row" style.
-				row.m_bRowIsLong = true;
-				for( unsigned j=0; j<optline.choices.size(); j++ )	// for each option on this row
-					delete textItems[j];
-				textItems.clear();
-
-				for( unsigned p=0; p<NUM_PLAYERS; p++ )
+				// init underlines
+				for( int p=0; p<NUM_PLAYERS; p++ )
 				{
 					if( !GAMESTATE->IsHumanPlayer(p) )
 						continue;
+
+					OptionsCursor *ul = new OptionsCursor;
+					row.m_Underline[p].push_back( ul );
+					ul->Load( (PlayerNumber)p, true );
+					ul->SetX( fX );
+					ul->SetWidth( (int)fItemWidth );
+				}
+
+				fX += fItemWidth/2 + ITEMS_GAP_X;
+
+				// It goes off the edge of the screen.  Re-init with the "long row" style.
+				if( fX > SCREEN_RIGHT-40 ) 
+				{
+					row.m_bRowIsLong = true;
+					for( unsigned j=0; j<textItems.size(); j++ )	// for each option on this row
+						delete textItems[j];
+					textItems.clear();
+					for( int p=0; p<NUM_PLAYERS; p++ )
+					{
+						for( unsigned j=0; j<row.m_Underline[p].size(); j++ )	// for each option on this row
+							delete row.m_Underline[p][j];
+						row.m_Underline[p].clear();
+					}
+					break;
+				}
+			}
+
+			if( row.m_bRowIsLong )
+			{
+				// init text
+				for( unsigned p=0; p<NUM_PLAYERS; p++ )
+				{
+					if( !GAMESTATE->IsHumanPlayer(p) )
+						continue;	// skip
 
 					BitmapText *bt = new BitmapText;
 					textItems.push_back( bt );
@@ -246,20 +268,44 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 					bt->SetZoom( ITEMS_ZOOM );
 					bt->EnableShadow( false );
 
-					/* if choices are locked together, center the item. */
 					if( optline.bOneChoiceForAllPlayers )
-						bt->SetX( (ITEM_X[0]+ITEM_X[1])/2 );
+					{
+						bt->SetX( (int)(ITEM_X[0]+ITEM_X[1])/2 );	// center the item
+						break;	// only initialize one item since it's shared
+					}
 					else
+					{
 						bt->SetX( ITEM_X[p] );
+					}
+				}
 
-					/* If bOneChoiceForAllPlayers, then only initialize one text item. */
-					if( optline.bOneChoiceForAllPlayers )
-						break;
+				// init underlines
+				{
+					for( unsigned p=0; p<NUM_PLAYERS; p++ )
+					{
+						if( !GAMESTATE->IsHumanPlayer(p) )
+							continue;	// skip
+
+						OptionsCursor *ul = new OptionsCursor;
+						row.m_Underline[p].push_back( ul );
+						ul->Load( (PlayerNumber)p, true );
+						float fX = optline.bOneChoiceForAllPlayers ? textItems[0]->GetX() : textItems[p]->GetX();
+						float fWidth = optline.bOneChoiceForAllPlayers ? textItems[0]->GetZoomedWidth() : textItems[p]->GetZoomedWidth();
+						ul->SetX( (int)fX );
+						ul->SetWidth( (int)fWidth );
+					}
 				}
 			}
 
-			for( c=0; c<textItems.size(); c++ )
-				m_framePage.AddChild( textItems[c] );
+			// Add children here and not above because of the logic that starts
+			// over if we run off the right edge of the screen.
+			{
+				for( int c=0; c<textItems.size(); c++ )
+					m_framePage.AddChild( textItems[c] );
+				for( int p=0; p<NUM_PLAYERS; p++ )
+					for( int c=0; c<row.m_Underline[p].size(); c++ )
+						m_framePage.AddChild( row.m_Underline[p][c] );
+			}
 		}
 	}
 
@@ -379,10 +425,10 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 
 		for( unsigned c=0; c<row.m_textItems.size(); c++ )
 			row.m_textItems[c]->FinishTweening();
-
-		for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
+		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			row.m_Underline[p].FinishTweening();
+			for( unsigned c=0; c<row.m_Underline[p].size(); c++ )
+				row.m_Underline[p][c]->FinishTweening();
 			row.m_OptionIcons[p].FinishTweening();
 		}
 	}
@@ -436,33 +482,28 @@ CString ScreenOptions::GetExplanationTitle( int iRow ) const
 	return sTitle;
 }
 
-BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow )
+BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow, int iChoiceOnRow )
 {
 	Row &row = *m_Rows[iRow];
 	if( row.Type == Row::ROW_EXIT )
 		return *row.m_textItems[0];
 
 	if( !row.m_bRowIsLong )
-	{
-		unsigned iOptionInRow = m_Rows[iRow]->m_iSelection[pn];
-		return *row.m_textItems[iOptionInRow];
-	}
+		return *row.m_textItems[iChoiceOnRow];
 
 	const bool bOneChoice = m_Rows[iRow]->m_RowDef.bOneChoiceForAllPlayers;
 
+	CHECKPOINT;
+
 	if( bOneChoice )
 		return *row.m_textItems[0];
-
-	/* We have lots of options and this isn't a OneChoice row, which means
-	 * each player has a separate item displayed.  */
-	int iOptionInRow = min( (unsigned)pn, row.m_textItems.size()-1 );
-	CHECKPOINT;
-	return *row.m_textItems[iOptionInRow];
+	else
+		return *row.m_textItems[iChoiceOnRow];
 }
 
-void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int &iWidthOut, int &iXOut, int &iYOut )
+void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut )
 {
-	BitmapText &text = GetTextItemForRow( pn, iRow );
+	BitmapText &text = GetTextItemForRow( pn, iRow, iChoiceOnRow );
 
 	iWidthOut = int(roundf( text.GetZoomedWidth() ));
 	iXOut = int(roundf( text.GetDestX() ));
@@ -508,40 +549,74 @@ void ScreenOptions::InitOptionsText()
 void ScreenOptions::PositionUnderlines()
 {
 	// Set the position of the underscores showing the current choice for each option line.
-	for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
+	for( unsigned r=0; r<m_Rows.size(); r++ )	// foreach options line
 	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;	// skip
+		Row &row = *m_Rows[r];
+		if( row.Type == Row::ROW_EXIT )
+			continue;
 
-		for( unsigned i=0; i<m_Rows.size(); i++ )	// foreach options line
+		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			Row &row = *m_Rows[i];
-			if( row.Type == Row::ROW_EXIT )
-				continue;
+			if( !GAMESTATE->IsHumanPlayer(p) )
+				continue;	// skip
 
-			OptionsCursor &underline = row.m_Underline[p];
+			vector<OptionsCursor*> &vpUnderlines = row.m_Underline[p];
 
-			/* Don't tween X movement and color changes. */
-			int iWidth, iX, iY;
-			GetWidthXY( (PlayerNumber)p, i, iWidth, iX, iY );
-			underline.SetGlobalX( (float)iX );
-			underline.SetGlobalDiffuseColor( RageColor(1,1,1, 1.0f) );
-
-			// If there's only one choice (ScreenOptionsMenu), don't show underlines.  
-			// It looks silly.
-			bool bOnlyOneChoice = m_Rows[i]->m_RowDef.choices.size() == 1;
-			bool hidden = bOnlyOneChoice || row.m_bHidden;
-
-			if( underline.GetDestY() != row.m_fY )
+			if( row.m_bRowIsLong )
 			{
-				underline.StopTweening();
-				underline.BeginTweening( 0.3f );
-			}
+				OptionsCursor& ul = *vpUnderlines[0];
 
-			/* XXX: diffuse doesn't work since underline is an ActorFrame */
-			underline.SetDiffuse( RageColor(1,1,1,hidden? 0.0f:1.0f) );
-			underline.SetBarWidth( iWidth );
-			underline.SetY( (float)iY );
+				/* Don't tween X movement and color changes. */
+				int iWidth, iX, iY;
+				GetWidthXY( (PlayerNumber)p, r, row.m_iSelection[p], iWidth, iX, iY );
+				ul.SetGlobalX( (float)iX );
+				ul.SetGlobalDiffuseColor( RageColor(1,1,1, 1.0f) );
+
+				// If there's only one choice (ScreenOptionsMenu), don't show underlines.  
+				// It looks silly.
+				bool bOnlyOneChoice = row.m_RowDef.choices.size() == 1;
+				bool hidden = bOnlyOneChoice || row.m_bHidden;
+
+				if( ul.GetDestY() != row.m_fY )
+				{
+					ul.StopTweening();
+					ul.BeginTweening( 0.3f );
+				}
+
+				/* XXX: diffuse doesn't work since underline is an ActorFrame */
+				ul.SetDiffuse( RageColor(1,1,1,hidden? 0.0f:1.0f) );
+				ul.SetBarWidth( iWidth );
+				ul.SetY( (float)iY );
+			}
+			else	// !row.m_bRowIsLong
+			{
+				for( int i=0; i<vpUnderlines.size(); i++ )
+				{
+					OptionsCursor& ul = *vpUnderlines[i];
+
+					/* Don't tween X movement and color changes. */
+					int iWidth, iX, iY;
+					GetWidthXY( (PlayerNumber)p, r, row.m_iSelection[p], iWidth, iX, iY );
+					ul.SetGlobalX( (float)iX );
+					ul.SetGlobalDiffuseColor( RageColor(1,1,1, 1.0f) );
+
+					// If there's only one choice (ScreenOptionsMenu), don't show underlines.  
+					// It looks silly.
+					bool bOnlyOneChoice = row.m_RowDef.choices.size() == 1;
+					bool hidden = bOnlyOneChoice || row.m_bHidden;
+
+					if( ul.GetDestY() != row.m_fY )
+					{
+						ul.StopTweening();
+						ul.BeginTweening( 0.3f );
+					}
+
+					/* XXX: diffuse doesn't work since underline is an ActorFrame */
+					ul.SetDiffuse( RageColor(1,1,1,hidden? 0.0f:1.0f) );
+					ul.SetBarWidth( iWidth );
+					ul.SetY( (float)iY );
+				}
+			}
 		}
 	}
 }
@@ -562,7 +637,7 @@ void ScreenOptions::PositionIcons()
 			OptionIcon &icon = row.m_OptionIcons[p];
 
 			int iWidth, iX, iY;			// We only use iY
-			GetWidthXY( (PlayerNumber)p, i, iWidth, iX, iY );
+			GetWidthXY( (PlayerNumber)p, i, row.m_iSelection[p], iWidth, iX, iY );
 			icon.SetX( ICONS_X(p) );
 
 			if( icon.GetDestY() != row.m_fY )
@@ -593,38 +668,42 @@ void ScreenOptions::PositionCursors()
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;
 
-		const int row = m_iCurrentRow[p];
+		int row = m_iCurrentRow[p];		
+		Row &Row = *m_Rows[row];
 
 		OptionsCursor &highlight = m_Highlight[p];
 
 		int iWidth, iX, iY;
-		GetWidthXY( (PlayerNumber)p, row, iWidth, iX, iY );
+		GetWidthXY( (PlayerNumber)p, row, Row.m_iSelection[p], iWidth, iX, iY );
 		highlight.SetBarWidth( iWidth );
 		highlight.SetXY( (float)iX, (float)iY );
 	}
 }
 
-void ScreenOptions::TweenCursor( PlayerNumber player_no )
+void ScreenOptions::TweenCursor( PlayerNumber pn )
 {
 	// Set the position of the highlight showing the current option the user is changing.
-	const int iCurRow = m_iCurrentRow[player_no];
+	const int iCurRow = m_iCurrentRow[pn];
 
-	OptionsCursor &highlight = m_Highlight[player_no];
+	OptionsCursor &highlight = m_Highlight[pn];
+
+	int row = m_iCurrentRow[pn];		
+	Row &Row = *m_Rows[row];
 
 	int iWidth, iX, iY;
-	GetWidthXY( player_no, iCurRow, iWidth, iX, iY );
+	GetWidthXY( pn, iCurRow, Row.m_iSelection[pn], iWidth, iX, iY );
 
 	highlight.StopTweening();
 	highlight.BeginTweening( 0.2f );
 	highlight.TweenBarWidth( iWidth );
 	highlight.SetXY( (float)iX, (float)iY );
 
-	if( GAMESTATE->IsHumanPlayer(player_no) )  
+	if( GAMESTATE->IsHumanPlayer(pn) )  
 	{
-		UtilCommand( m_sprLineHighlight[player_no], "ScreenOptions", "Change" );
+		UtilCommand( m_sprLineHighlight[pn], "ScreenOptions", "Change" );
 		if( m_Rows[iCurRow]->Type == Row::ROW_EXIT )
-			UtilCommand( m_sprLineHighlight[player_no], "ScreenOptions", "ChangeToExit" );
-		m_sprLineHighlight[player_no].SetY( (float)iY );
+			UtilCommand( m_sprLineHighlight[pn], "ScreenOptions", "ChangeToExit" );
+		m_sprLineHighlight[pn].SetY( (float)iY );
 	}
 }
 
@@ -1131,4 +1210,7 @@ ScreenOptions::Row::~Row()
 {
 	for( unsigned i = 0; i < m_textItems.size(); ++i )
 		delete m_textItems[i];
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		for( unsigned i = 0; i < m_Underline[p].size(); ++i )
+			delete m_Underline[p][i];
 }

@@ -65,10 +65,10 @@ protected:
 	virtual void ImportOptions() = 0;
 	virtual void ExportOptions() = 0;
 	void InitOptionsText();
-	void GetWidthXY( PlayerNumber pn, int iRow, int &iWidthOut, int &iXOut, int &iYOut );
+	void GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut );
 	CString GetExplanationText( int row ) const;
 	CString GetExplanationTitle( int row ) const;
-	BitmapText &GetTextItemForRow( PlayerNumber pn, int iRow );
+	BitmapText &GetTextItemForRow( PlayerNumber pn, int iRow, int iChoiceOnRow );
 	void PositionUnderlines();
 	void PositionIcons();
 	virtual void RefreshIcons();
@@ -113,9 +113,9 @@ protected:
 		OptionRowData				m_RowDef;
 		enum { ROW_NORMAL, ROW_EXIT } Type;
 		vector<BitmapText *>	m_textItems;
+		vector<OptionsCursor *>	m_Underline[NUM_PLAYERS];
 		Sprite					m_sprBullet;
 		BitmapText				m_textTitle;
-		OptionsCursor			m_Underline[NUM_PLAYERS];
 		OptionIcon				m_OptionIcons[NUM_PLAYERS];
 
 		float m_fY;
