@@ -64,6 +64,8 @@ void RageBitmapTexture::Create()
 {
 	RageTextureID actualID = GetID();
 
+	ASSERT( actualID.filename != "" );
+
 	/* Create (and return) a surface ready to be loaded to OpenGL */
 	/* Load the image into a RageSurface. */
 	CString error;
