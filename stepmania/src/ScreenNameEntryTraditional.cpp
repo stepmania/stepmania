@@ -282,6 +282,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 
 	m_soundKey.Load( THEME->GetPathToS("ScreenNameEntryTraditional key") );
 	m_soundChange.Load( THEME->GetPathToS("ScreenNameEntryTraditional change",true) );
+	m_soundInvalid.Load( THEME->GetPathToS("ScreenNameEntryTraditional invalid",true) );
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenNameEntryTraditional music") );
 }
@@ -473,7 +474,7 @@ void ScreenNameEntryTraditional::MenuStart( PlayerNumber pn, const InputEventTyp
 	case CHAR_BACK:
 		if( !m_sSelection[pn].size()  )
 		{
-			/* XXX play invalid sound */
+			m_soundInvalid.Play();
 			break;
 		}
 
@@ -487,7 +488,7 @@ void ScreenNameEntryTraditional::MenuStart( PlayerNumber pn, const InputEventTyp
 		/* If we have room, add a new character. */
 		if( (int) m_sSelection[pn].size() == MAX_RANKING_NAME_LENGTH )
 		{
-			/* XXX play invalid sound */
+			m_soundInvalid.Play();
 			break;
 		}
 		m_sSelection[pn] += wchar_t(SelectedLetter);

@@ -63,6 +63,7 @@ private:
 
 	RageSound		m_soundChange;
 	RageSound		m_soundKey;
+	RageSound		m_soundInvalid;
 
 	BitmapText		m_textSelection[NUM_PLAYERS];
 	wstring			m_sSelection[NUM_PLAYERS];
