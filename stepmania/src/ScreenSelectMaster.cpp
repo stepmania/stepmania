@@ -135,7 +135,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 		m_bChosen[p] = false;
 	}
 	
-	m_soundChange.Load( THEME->GetPathToS( ssprintf("%s change", m_sName.c_str())) );
+	m_soundChange.Load( THEME->GetPathToS( ssprintf("%s change", m_sName.c_str())), true );
 	m_soundSelect.Load( THEME->GetPathToS( "Common start") );
 	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
 
