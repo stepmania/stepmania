@@ -50,10 +50,10 @@ ScreenTestSound::ScreenTestSound()
 	s[4].txt.SetXY(150, 400);
 
 	s[0].s.Load("Themes/default/Sounds/_common menu music.ogg");
-	s[1].s.Load("Themes/default/Sounds/title menu change.mp3");
-	s[2].s.Load("Themes/default/Sounds/evaluation extra stage.mp3");
-	s[3].s.Load("Themes/default/Sounds/gameplay oni die.mp3");
-	s[4].s.Load("Themes/default/Sounds/gameplay toasty.mp3");
+	s[1].s.Load("Themes/default/Sounds/ScreenTitleMenu change.mp3");
+	s[2].s.Load("Themes/default/Sounds/ScreenEvaluation extra1.mp3");
+	s[3].s.Load("Themes/default/Sounds/ScreenGameplay oni die.mp3");
+	s[4].s.Load("Themes/default/Sounds/Common back.mp3");
 
 //s[0].s.SetStartSeconds(45);
 //s[0].s.SetPositionSeconds();
