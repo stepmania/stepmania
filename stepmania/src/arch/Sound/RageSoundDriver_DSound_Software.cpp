@@ -110,6 +110,7 @@ void RageSound_DSound_Software::StartMixing(RageSound *snd)
 
 void RageSound_DSound_Software::Update(float delta)
 {
+	ASSERT(SOUNDMAN);
 	LockMut(SOUNDMAN->lock);
 
 	/* SoundStopped might erase sounds out from under us, so make a copy

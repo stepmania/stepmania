@@ -70,6 +70,7 @@ void RageSound_DSound::Update(float delta)
 	/* SoundStopped might erase sounds out from under us, so make a copy
 	 * of the sound list. */
 	vector<stream *> str = stream_pool;
+	ASSERT(SOUNDMAN);
 	LockMutex L(SOUNDMAN->lock);
 
 	for(unsigned i = 0; i < str.size(); ++i)
