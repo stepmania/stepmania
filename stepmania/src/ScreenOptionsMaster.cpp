@@ -76,10 +76,12 @@ void ScreenOptionsMaster::SetList( OptionRowDefinition &row, OptionRowHandler &h
 	{
 		if( asParts[i].CompareNoCase("together") == 0 )
 			row.bOneChoiceForAllPlayers = true;
-		else if( asParts[i].CompareNoCase("SelectMultiple") == 0 )
+		if( asParts[i].CompareNoCase("SelectMultiple") == 0 )
 			row.selectType = SELECT_MULTIPLE;
-		else if( asParts[i].CompareNoCase("SelectNone") == 0 )
+		if( asParts[i].CompareNoCase("SelectNone") == 0 )
 			row.selectType = SELECT_NONE;
+		if( asParts[i].CompareNoCase("ShowOneInRow") == 0 )
+			row.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	}
 
 	for( int col = 0; col < NumCols; ++col )
