@@ -36,7 +36,7 @@ void NoteFieldPlus::Load( NoteData* pNoteData, PlayerNumber pn, int iFirstPixelT
 	// GrayArrowRow
 	//
 	for( c=0; c<m_iNumCols; c++ ) 
-		m_GrayArrow[c].Load( pn, c );
+		m_GrayArrow[c].Load( GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin, pn, c );
 
 
 	//
