@@ -19,25 +19,23 @@ class RageSound_DSound_Software: public RageSoundDriver
 	    sound() { snd = NULL; stopping=false; }
 	};
 
-	void GetPCM();
-
-	bool shutdown;
-
-	int last_cursor_filled, last_cursor_pos;
-
-	void Update(float delta);
-
-	IDirectSound8 *ds8;
-	IDirectSoundBuffer8 *str_ds;
-
-	static int MixerThread_start(void *p);
-	void MixerThread();
-	SDL_Thread *MixerThreadPtr;
-
 	/* List of currently playing sounds: */
 	vector<sound *> sounds;
 
 	mutable int LastPosition;
+
+	bool shutdown;
+	int write_cursor, last_cursor_pos;
+
+	IDirectSound8 *ds8;
+	IDirectSoundBuffer8 *str_ds;
+
+	bool GetPCM();
+	void Update(float delta);
+
+	static int MixerThread_start(void *p);
+	void MixerThread();
+	SDL_Thread *MixerThreadPtr;
 
 	/* virtuals: */
 	void StartMixing(RageSound *snd);	/* used by RageSound */
