@@ -80,7 +80,7 @@ void Combo::Reset()
 void Combo::SetScore( TapNoteScore score, int iNumNotesInThisRow, Inventory* pInventory )
 {
 #ifndef DEBUG
-	if( PREFSMAN->m_bAutoPlay && !GAMESTATE->m_bDemonstration )	// cheaters never prosper
+	if( PREFSMAN->m_bAutoPlay && !GAMESTATE->m_bDemonstrationOrJukebox )	// cheaters never prosper
 	{
 		m_iCurCombo = 0;
 		m_iCurComboOfPerfects = 0;
