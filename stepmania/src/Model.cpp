@@ -56,8 +56,8 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 	const CString sDir = Dirname( sPath );
 
 	FILE *file = fopen (sPath, "rt");
-	if (!file)
-		RageException::Throw( "Model::LoadMilkshapeAscii Could not open '%s'.", sPath.c_str() );
+	if( !file )
+		RageException::Throw( "Model::LoadMilkshapeAscii Could not open \"%s\": %s", sPath.c_str(), strerror(errno) );
 
 	Clear ();
 
