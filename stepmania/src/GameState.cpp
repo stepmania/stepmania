@@ -633,7 +633,22 @@ int GameState::GetCourseSongIndex() const
 
 bool GameState::PlayersCanJoin() const
 {
-	return GetNumSidesJoined() == 0 || this->m_CurStyle == STYLE_INVALID;
+	return GetNumSidesJoined() == 0 || this->m_CurStyle == STYLE_INVALID;	// selecting a style finalizes the players
+}
+
+bool GameState::EnoughCreditsToJoin() const
+{
+	switch( PREFSMAN->m_iCoinMode )
+	{
+	case COIN_PAY:
+		return GAMESTATE->m_iCoins >= PREFSMAN->m_iCoinsPerCredit;
+	case COIN_HOME:
+	case COIN_FREE:
+		return true;
+	default:
+		ASSERT(0);
+		return false;
+	}
 }
 
 int GameState::GetNumSidesJoined() const

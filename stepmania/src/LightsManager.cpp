@@ -77,8 +77,8 @@ void LightsManager::Update( float fDeltaTime )
 	{
 	case LIGHTSMODE_JOINING:
 		{
-			int iSec = (int)(RageTimer::GetTimeSinceStart()*4);
-			bool bBlinkOn = (iSec%2)==0; 
+			int iBeat = (int)(GAMESTATE->m_fSongBeat);
+			bool bBlinkOn = (iBeat%2)==0;
 
 			FOREACH_PlayerNumber( pn )
 			{
@@ -88,10 +88,6 @@ void LightsManager::Update( float fDeltaTime )
 					m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_LR_LEFT+pn] = true;
 					m_LightsState.m_bCabinetLights[LIGHT_BUTTONS_LEFT+pn] = true;
 					m_LightsState.m_bCabinetLights[LIGHT_BASS_LEFT+pn] = true;
-				}
-				else
-				{
-					m_LightsState.m_bCabinetLights[LIGHT_BUTTONS_LEFT+pn] = bBlinkOn;
 				}
 			}
 		}
@@ -182,6 +178,22 @@ void LightsManager::Update( float fDeltaTime )
 	default:
 		ASSERT(0);
 	}
+
+
+	// If not joined, has enough credits, and not too late to join, then 
+	// blink the menu buttons rapidly so they'll press Start
+	{
+		int iBeat = (int)(GAMESTATE->m_fSongBeat*4);
+		bool bBlinkOn = (iBeat%2)==0;
+		FOREACH_PlayerNumber( pn )
+		{
+			if( !GAMESTATE->m_bSideIsJoined[pn] && GAMESTATE->PlayersCanJoin() && GAMESTATE->EnoughCreditsToJoin() )
+			{
+				m_LightsState.m_bCabinetLights[LIGHT_BUTTONS_LEFT+pn] = bBlinkOn;
+			}
+		}
+	}
+
 
 	//
 	// Update game controller lights

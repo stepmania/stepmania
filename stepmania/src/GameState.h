@@ -65,6 +65,7 @@ public:
 	int				m_iGameSeed, m_iRoundSeed;
 
 	bool			PlayersCanJoin() const;	// true if it's not too late for a player to join
+	bool			EnoughCreditsToJoin() const;	// true if an unjoined player can join by pressint start
 	int				GetNumSidesJoined() const;
 
 	GameDef*	GetCurrentGameDef();
