@@ -120,34 +120,32 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 	f.PutLine( ";" );
 }
 
-static void WriteLineList( RageFile &f, vector<CString> &lines, bool SkipLeadingBlankLines, bool OmitLastNewline )
+static CString JoinLineList( vector<CString> &lines )
 {
-	for( unsigned i = 0; i < lines.size(); ++i )
-	{
-		TrimRight( lines[i] );
-		if( SkipLeadingBlankLines )
-		{
-			if( lines.size() == 0 )
-				continue;
-			SkipLeadingBlankLines = false;
-		}
-		f.Write( lines[i] );
+	bool bSkipLeadingBlankLines = true;
 
-		if( !OmitLastNewline || i+1 < lines.size() )
-			f.PutLine( "" ); /* newline */
-	}
+	for( unsigned i = 0; i < lines.size(); ++i )
+		TrimRight( lines[i] );
+
+	/* Skip leading blanks. */
+	unsigned i = 0;
+	while( i < lines.size() && lines.size() == 0 )
+		++i;
+
+	return join( "\n", lines.begin()+i, lines.end() );
 }
 
-void NotesWriterSM::WriteSMNotesTag( const Song &song, const Steps &in, RageFile &f, bool bSavingCache )
+CString NotesWriterSM::GetSMNotesTag( const Song &song, const Steps &in, bool bSavingCache )
 {
-	f.PutLine( "" );
-	f.PutLine( ssprintf( "//---------------%s - %s----------------",
-		GameManager::StepsTypeToString(in.m_StepsType).c_str(), in.GetDescription().c_str() ) );
-	f.PutLine( song.m_vsKeysoundFile.empty() ? "#NOTES:" : "#NOTES2:" );
-	f.PutLine( ssprintf( "     %s:", GameManager::StepsTypeToString(in.m_StepsType).c_str() ) );
-	f.PutLine( ssprintf( "     %s:", in.GetDescription().c_str() ) );
-	f.PutLine( ssprintf( "     %s:", DifficultyToString(in.GetDifficulty()).c_str() ) );
-	f.PutLine( ssprintf( "     %d:", in.GetMeter() ) );
+	CString sRet;
+	sRet += "\n";
+	sRet += ssprintf( "//---------------%s - %s----------------\n",
+		GameManager::StepsTypeToString(in.m_StepsType).c_str(), in.GetDescription().c_str() );
+	sRet += song.m_vsKeysoundFile.empty() ? "#NOTES:\n" : "#NOTES2:\n";
+	sRet += ssprintf( "     %s:\n", GameManager::StepsTypeToString(in.m_StepsType).c_str() );
+	sRet += ssprintf( "     %s:\n", in.GetDescription().c_str() );
+	sRet += ssprintf( "     %s:\n", DifficultyToString(in.GetDifficulty()).c_str() );
+	sRet += ssprintf( "     %d:\n", in.GetMeter() );
 	
 	int MaxRadar = bSavingCache? NUM_RADAR_CATEGORIES:5;
 	CStringArray asRadarValues;
@@ -156,7 +154,7 @@ void NotesWriterSM::WriteSMNotesTag( const Song &song, const Steps &in, RageFile
 	/* Don't append a newline here; it's added in NoteDataUtil::GetSMNoteDataString.
 	 * If we add it here, then every time we write unmodified data we'll add an extra
 	 * newline and they'll accumulate. */
-	f.Write( ssprintf( "     %s:", join(",",asRadarValues).c_str() ) );
+	sRet += ssprintf( "     %s:\n", join(",",asRadarValues).c_str() );
 
 	CString sNoteData;
 	in.GetSMNoteData( sNoteData );
@@ -164,8 +162,9 @@ void NotesWriterSM::WriteSMNotesTag( const Song &song, const Steps &in, RageFile
 	vector<CString> lines;
 
 	split( sNoteData, "\n", lines, false );
-	WriteLineList( f, lines, true, true );
-	f.PutLine( ";" );
+	sRet += JoinLineList( lines );
+	sRet += ";\n";
+	return sRet;
 }
 
 bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
@@ -215,10 +214,27 @@ bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 		if( pSteps->WasLoadedFromProfile() )
 			continue;
 
-		WriteSMNotesTag( out, *pSteps, f, bSavingCache );
+		CString sTag = GetSMNotesTag( out, *pSteps, bSavingCache );
+		f.PutLine( sTag );
 	}
 
 	return true;
+}
+
+void NotesWriterSM::GetEditFile( const Song *pSong, const Steps *pSteps, CString &sOut )
+{
+	sOut = "";
+	CString sDir = pSong->GetSongDir();
+	
+	LOG->Trace( "xxx dir from '%s'", sDir.c_str());
+	/* "Songs/foo/bar"; strip off "Songs/". */
+	vector<CString> asParts;
+	split( sDir, "/", asParts );
+	if( asParts.size() )
+		sDir = join( "/", asParts.begin()+1, asParts.end() );
+	LOG->Trace( "dir to '%s'", sDir.c_str());
+	sOut += ssprintf( "#SONG:%s;\n", sDir.c_str() );
+	sOut += GetSMNotesTag( *pSong, *pSteps, false );
 }
 
 /*

@@ -9,10 +9,11 @@ class RageFile;
 class NotesWriterSM
 {
 	void WriteGlobalTags( RageFile &f, const Song &out );
-	void WriteSMNotesTag( const Song &song, const Steps &in, RageFile &f, bool bSavingCache );
+	static CString GetSMNotesTag( const Song &song, const Steps &in, bool bSavingCache );
 
 public:
 	bool Write( CString sPath, const Song &out, bool bSavingCache );
+	static void GetEditFile( const Song *pSong, const Steps *pSteps, CString &sOut );
 };
 
 #endif
