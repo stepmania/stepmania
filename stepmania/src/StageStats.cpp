@@ -29,10 +29,10 @@ void StageStats::Init()
 		iSongsPassed[p] = iSongsPlayed[p] = 0;
 		iTotalError[p] = 0;
 
-		memset( iTapNoteScores[p], 0, sizeof(iTapNoteScores[p]) );
-		memset( iHoldNoteScores[p], 0, sizeof(iHoldNoteScores[p]) );
-		radarPossible[p].Init();
-		radarActual[p].Init();
+		ZERO( iTapNoteScores[p] );
+		ZERO( iHoldNoteScores[p] );
+		ZERO( radarPossible[p] );	// zero, don't init.  We're going to be incrementing these
+		ZERO( radarActual[p] );		// zero, don't init.  We're going to be incrementing these
 
 		fFirstSecond[p] = 999999;
 		fLastSecond[p] = 0;
