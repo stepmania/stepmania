@@ -16,6 +16,7 @@ ThemeMetric<CString>	WINDOW_TITLE						("Common","WindowTitle");
 ThemeMetric<bool>		HOME_EDIT_MODE						("Common","HomeEditMode");
 ThemeMetric<int>		MAX_STEPS_LOADED_FROM_PROFILE		("Common","MaxStepsLoadedFromProfile");
 ThemeMetric<int>		MAX_COURSE_ENTRIES_BEFORE_VARIOUS	("Common","MaxCourseEntriesBeforeShowVarious");
+ThemeMetric<float>		TICK_EARLY_SECONDS					("ScreenGameplay","TickEarlySeconds");
 
 
 class ThemeMetricDifficultiesToShow : ThemeMetric<CString>

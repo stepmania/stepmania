@@ -47,6 +47,7 @@
 #include "Style.h"
 #include "LuaManager.h"
 #include "MemoryCardManager.h"
+#include "CommonMetrics.h"
 
 //
 // Defines
@@ -61,7 +62,6 @@
 
 static ThemeMetric<float> INITIAL_BACKGROUND_BRIGHTNESS	("ScreenGameplay","InitialBackgroundBrightness");
 static ThemeMetric<float> SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
-static ThemeMetric<float> TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
 
 /* Global, so it's accessible from ShowSavePrompt: */
 static float g_fOldOffset;  // used on offset screen to calculate difference

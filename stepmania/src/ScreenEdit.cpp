@@ -31,12 +31,10 @@
 #include "ScreenPrompt.h"
 #include "CommonMetrics.h"
 
-const float RECORD_HOLD_SECONDS = 0.3f;
-
-
 //
 // Defines specific to ScreenEdit
 //
+const float RECORD_HOLD_SECONDS = 0.3f;
 
 #define EDIT_X			(SCREEN_CENTER_X)
 
@@ -44,8 +42,6 @@ const float RECORD_HOLD_SECONDS = 0.3f;
 #define PLAYER_Y			(SCREEN_CENTER_Y)
 #define PLAYER_HEIGHT		(360)
 #define PLAYER_Y_STANDARD	(PLAYER_Y-PLAYER_HEIGHT/2)
-
-ThemeMetric<float>	 TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
 
 
 const ScreenMessage SM_BackFromMainMenu				= (ScreenMessage)(SM_User+1);
@@ -60,7 +56,7 @@ const ScreenMessage SM_BackFromInsertAttack			= (ScreenMessage)(SM_User+9);
 const ScreenMessage SM_BackFromInsertAttackModifiers= (ScreenMessage)(SM_User+10);
 const ScreenMessage SM_BackFromPrefs				= (ScreenMessage)(SM_User+11);
 const ScreenMessage SM_BackFromCourseModeMenu		= (ScreenMessage)(SM_User+12);
-const ScreenMessage SM_DoRevertToLastSave				= (ScreenMessage)(SM_User+13);
+const ScreenMessage SM_DoRevertToLastSave			= (ScreenMessage)(SM_User+13);
 const ScreenMessage SM_DoUpdateTextInfo				= (ScreenMessage)(SM_User+14);
 const ScreenMessage SM_BackFromBPMChange			= (ScreenMessage)(SM_User+15);
 const ScreenMessage SM_BackFromStopChange			= (ScreenMessage)(SM_User+16);
@@ -713,6 +709,7 @@ void ScreenEdit::UpdateTextInfo()
 
 	int iNumTapNotes = m_NoteDataEdit.GetNumTapNotes();
 	int iNumHoldNotes = m_NoteDataEdit.GetNumHoldNotes();
+	int iNumMines = m_NoteDataEdit.GetNumMines();
 
 	CString sNoteType = NoteTypeToString(m_SnapDisplay.GetNoteType()) + " notes";
 
@@ -722,15 +719,27 @@ void ScreenEdit::UpdateTextInfo()
 	sText += ssprintf( "Snap to:\n     %s\n",				sNoteType.c_str() );
 	sText += ssprintf( "Selection begin:\n     %s\n",		m_NoteFieldEdit.m_iBeginMarker==-1 ? "not set" : ssprintf("%.2f",NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker)).c_str() );
 	sText += ssprintf( "Selection end:\n     %s\n",			m_NoteFieldEdit.m_iEndMarker==-1 ? "not set" : ssprintf("%.2f",NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker)).c_str() );
-	sText += ssprintf( "Difficulty:\n     %s\n",			DifficultyToString( m_pSteps->GetDifficulty() ).c_str() );
+	if( HOME_EDIT_MODE )
+		sText += ssprintf( "Difficulty:\n     %s\n",		DifficultyToString( m_pSteps->GetDifficulty() ).c_str() );
 	sText += ssprintf( "Description:\n     %s\n",			GAMESTATE->m_pCurSteps[PLAYER_1] ? GAMESTATE->m_pCurSteps[PLAYER_1]->GetDescription().c_str() : "no description" );
-	sText += ssprintf( "Main title:\n     %s\n",			m_pSong->m_sMainTitle.c_str() );
-	sText += ssprintf( "Sub title:\n     %s\n",				m_pSong->m_sSubTitle.c_str() );
-	sText += ssprintf( "Tap Steps:\n     %d\n",				iNumTapNotes );
-	sText += ssprintf( "Hold Steps:\n     %d\n",			iNumHoldNotes );
-	sText += ssprintf( "Beat 0 Offset:\n     %.3f secs\n",	m_pSong->m_Timing.m_fBeat0OffsetInSeconds );
-	sText += ssprintf( "Preview Start:\n     %.2f secs\n",	m_pSong->m_fMusicSampleStartSeconds );
-	sText += ssprintf( "Preview Length:\n     %.2f secs\n",m_pSong->m_fMusicSampleLengthSeconds );
+	if( HOME_EDIT_MODE )
+	{
+		sText += ssprintf( "Main title:\n     %s\n", m_pSong->m_sMainTitle.c_str() );
+		sText += ssprintf( "Sub title:\n     %s\n", m_pSong->m_sSubTitle.c_str() );
+	}
+	else
+	{
+		sText += ssprintf( "Title:\n     %s\n", m_pSong->GetFullTranslitTitle() );
+	}
+	sText += ssprintf( "Tap Steps:\n     %d\n", iNumTapNotes );
+	sText += ssprintf( "Hold Steps:\n     %d\n", iNumHoldNotes );
+	sText += ssprintf( "Mines:\n     %d\n", iNumMines );
+	if( HOME_EDIT_MODE )
+		sText += ssprintf( "Beat 0 Offset:\n     %.3f secs\n",	m_pSong->m_Timing.m_fBeat0OffsetInSeconds );
+	if( HOME_EDIT_MODE )
+		sText += ssprintf( "Preview Start:\n     %.2f secs\n",	m_pSong->m_fMusicSampleStartSeconds );
+	if( HOME_EDIT_MODE )
+		sText += ssprintf( "Preview Length:\n     %.2f secs\n",m_pSong->m_fMusicSampleLengthSeconds );
 
 	m_textInfo.SetText( sText );
 }
