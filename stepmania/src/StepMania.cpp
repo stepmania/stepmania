@@ -622,7 +622,10 @@ static void CheckVideoDefaultSettings()
 	{
 		LOG->Warn("Video renderer list has been changed from '%s' to '%s'",
 				sVideoRenderers.c_str(), PREFSMAN->m_sVideoRenderers.c_str() );
+		return;
 	}
+
+	LOG->Info( "Video renderers: '%s'", PREFSMAN->m_sVideoRenderers.c_str() );
 }
 
 RageDisplay *CreateDisplay()
@@ -657,8 +660,6 @@ RageDisplay *CreateDisplay()
 	CString error = "There was an error while initializing your video card.\n\n"
 		"   PLEASE DO NOT FILE THIS ERROR AS A BUG!\n\n"
 		"Video Driver: "+GetVideoDriverName()+"\n\n";
-
-	LOG->Info( "Video renderers: '%s'", PREFSMAN->m_sVideoRenderers.c_str() );
 
 	CStringArray asRenderers;
 	split( PREFSMAN->m_sVideoRenderers, ",", asRenderers, true );
