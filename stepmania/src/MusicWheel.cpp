@@ -169,8 +169,11 @@ MusicWheel::MusicWheel()
 
 	// HACK: invalidate currently selected song in the case that it
 	// cannot be played due to lack of stages remaining
+	// checking for event mode shouldn't be necessary here
+	// but someone mentioned it does it sometimes.
 	if( GAMESTATE->m_pCurSong != NULL && 
 		SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong ) + GAMESTATE->m_iCurrentStageIndex > PREFSMAN->m_iNumArcadeStages
+		&& !PREFSMAN->m_bEventMode
 		&& !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() )
 			GAMESTATE->m_pCurSong = NULL;
 
