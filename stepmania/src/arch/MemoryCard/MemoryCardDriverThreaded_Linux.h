@@ -1,22 +1,21 @@
 #ifndef MemoryCardDriverThreaded_Linux_H
 #define MemoryCardDriverThreaded_Linux_H 1
 
-#include "MemoryCardDriverThreaded.h"
+#include "MemoryCardDriver.h"
 
-class MemoryCardDriverThreaded_Linux : public MemoryCardDriverThreaded
+class MemoryCardDriverThreaded_Linux : public MemoryCardDriver
 {
 public:
 	MemoryCardDriverThreaded_Linux();
 	virtual ~MemoryCardDriverThreaded_Linux();
 
+	virtual bool DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStorageDevicesOut );
+	virtual bool Mount( UsbStorageDevice* pDevice );
 	virtual void Unmount( UsbStorageDevice* pDevice );
 	virtual void Flush( UsbStorageDevice* pDevice );
-protected:
-	virtual void Mount( UsbStorageDevice* pDevice );
-	virtual void ResetUsbStorage();
-	virtual void MountThreadDoOneUpdate();
-	virtual bool MountThreadWaitForUpdate();
+	virtual void Reset();
 
+protected:
 	vector<UsbStorageDevice> m_vDevicesLastSeen;
 };
 

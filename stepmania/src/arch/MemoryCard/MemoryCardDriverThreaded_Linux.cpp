@@ -62,15 +62,13 @@ static bool ExecuteCommand( CCStringRef sCommand )
 
 MemoryCardDriverThreaded_Linux::MemoryCardDriverThreaded_Linux()
 {
-	this->StartThread();
 }
 
 MemoryCardDriverThreaded_Linux::~MemoryCardDriverThreaded_Linux()
 {
-	this->StopThread();
 }
 
-void MemoryCardDriverThreaded_Linux::ResetUsbStorage()
+void MemoryCardDriverThreaded_Linux::Reset()
 {
 }
 
@@ -147,7 +145,7 @@ static bool BlockDevicesChanged()
 		LOG->Trace( "Change in USB storage devices detected." );
 	return bChanged;
 }
-
+#if 0
 bool MemoryCardDriverThreaded_Linux::MountThreadWaitForUpdate()
 {
 	/* Check if any devices need a write test. */
@@ -167,9 +165,12 @@ bool MemoryCardDriverThreaded_Linux::MountThreadWaitForUpdate()
 	usleep(1000*300);  // 300 ms
 	return false;
 }
-
-void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
+#endif
+bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStorageDevicesOut )
 {
+	if( !BlockDevicesChanged() )
+		return false;
+
 	vector<UsbStorageDevice> vNew;
 	GetNewStorageDevices( vNew );
 	vector<UsbStorageDevice> vOld = m_vDevicesLastSeen; // copy
@@ -272,12 +273,12 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 	
 	if( bDidAnyMounts || !vDisconnects.empty() || !vConnects.empty() )	  
 	{
-		LockMut( m_mutexStorageDevices );
-		m_bStorageDevicesChanged = true;
-		m_vStorageDevices = m_vDevicesLastSeen;
+		vStorageDevicesOut = m_vDevicesLastSeen;
+		return true;
 	}
 	
 	CHECKPOINT;
+	return false;
 }
 
 struct WhiteListEntry
@@ -516,11 +517,10 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 }
 
 
-void MemoryCardDriverThreaded_Linux::Mount( UsbStorageDevice* pDevice )
+bool MemoryCardDriverThreaded_Linux::Mount( UsbStorageDevice* pDevice )
 {
 	ASSERT( !pDevice->sOsMountDir.empty() );
 	
-        // HACK: Do OS mount for m_bMemoryCardsMountOnlyWhenNecessary
         CString sCommand = "mount " + pDevice->sOsMountDir;
         LOG->Trace( "hack mount (%s)", sCommand.c_str() );
         bool bMountedSuccessfully = ExecuteCommand( sCommand );
@@ -528,6 +528,8 @@ void MemoryCardDriverThreaded_Linux::Mount( UsbStorageDevice* pDevice )
 	pDevice->bWriteTestSucceeded = bMountedSuccessfully && TestWrite( pDevice->sOsMountDir );
 
 	LOG->Trace( "WriteTest: %s, Name: %s", pDevice->bWriteTestSucceeded ? "succeeded" : "failed", pDevice->sName.c_str() );
+
+	return bMountedSuccessfully;
 }
 
 void MemoryCardDriverThreaded_Linux::Unmount( UsbStorageDevice* pDevice )
@@ -535,9 +537,6 @@ void MemoryCardDriverThreaded_Linux::Unmount( UsbStorageDevice* pDevice )
 	if( pDevice->sOsMountDir.empty() )
 		return;
 	
-	// already unmounted by the mounting thread
-
-	// HACK: Do OS unmount for m_bMemoryCardsMountOnlyWhenNecessary
 	CString sCommand = "umount " + pDevice->sOsMountDir;
 	LOG->Trace( "hack unmount (%s)", sCommand.c_str() );
 	ExecuteCommand( sCommand );
@@ -557,7 +556,7 @@ void MemoryCardDriverThreaded_Linux::Flush( UsbStorageDevice* pDevice )
 }
 
 /*
- * (c) 2003-2004 Chris Danford, Glenn Maynard
+ * (c) 2003-2005 Chris Danford, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
