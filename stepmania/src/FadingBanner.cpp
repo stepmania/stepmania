@@ -16,7 +16,7 @@
 #include "BannerCache.h"
 #include "song.h"
 #include "RageLog.h"
-#include "course.h"
+#include "Course.h"
 #include "PrefsManager.h"
 #include "ThemeManager.h"
 
