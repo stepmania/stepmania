@@ -428,13 +428,6 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 			ExitGame();
 			return true;
 		}
-		else
-		{
-			// pressed just F4
-			PREFSMAN->m_bWindowed = !PREFSMAN->m_bWindowed;
-			ApplyGraphicOptions();
-			return true;
-		}
 	}
 	
 	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F5))	// F5 conflicts with editor and AutoSync
