@@ -305,22 +305,7 @@ void Course::GetStageInfo(
 	if( m_bRandomize )
 		random_shuffle( entries.begin(), entries.end() );
 
-
-	// Sorting is slow, so do this outside the for loop.
-	vector<Song*> vSongsByMostPlayed = SONGMAN->GetAllSongs();
-	SortSongPointerArrayByMostPlayed( vSongsByMostPlayed );
-	
-	// filter out songs that don't have both medium and hard steps and long ver sons
-	for( int j=vSongsByMostPlayed.size()-1; j>=0; j-- )
-	{
-		Song* pSong = vSongsByMostPlayed[j];
-		if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds  ||
-			pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds  || 
-			!pSong->GetNotes(nt, DIFFICULTY_MEDIUM)  ||
-			!pSong->GetNotes(nt, DIFFICULTY_HARD) )
-			vSongsByMostPlayed.erase( vSongsByMostPlayed.begin()+j );
-	}
-
+	vector<Song*> vSongsByMostPlayed;
 
 	for( unsigned i=0; i<entries.size(); i++ )
 	{
@@ -380,6 +365,26 @@ void Course::GetStageInfo(
 		case Entry::players_best:
 		case Entry::players_worst:
 			{
+				if(vSongsByMostPlayed.size() == 0)
+				{
+					/* Probably the first time getting here; fill it in just once. */
+					/* XXX: This is still expensive enough to cause a noticable
+					 * frame drop when scrolling over best/worst entries. */
+					vSongsByMostPlayed = SONGMAN->GetAllSongs();
+					SortSongPointerArrayByMostPlayed( vSongsByMostPlayed );
+					
+					// filter out songs that don't have both medium and hard steps and long ver sons
+					for( int j=vSongsByMostPlayed.size()-1; j>=0; j-- )
+					{
+						Song* pSong = vSongsByMostPlayed[j];
+						if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds  ||
+							pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds  || 
+							!pSong->GetNotes(nt, DIFFICULTY_MEDIUM)  ||
+							!pSong->GetNotes(nt, DIFFICULTY_HARD) )
+							vSongsByMostPlayed.erase( vSongsByMostPlayed.begin()+j );
+					}
+				}
+
 				if( e.players_index >= (int)vSongsByMostPlayed.size() )
 					break;
 
