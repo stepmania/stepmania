@@ -181,6 +181,16 @@ public:
 	void ExitPerspective();
 	void LookAt(const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up);
 
+	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
+	RageMatrix GetFrustrumMatrix(
+		float left,    
+		float right,   
+		float bottom,  
+		float top,     
+		float znear,   
+		float zfar );
+	RageMatrix GetPerspectiveMatrix(float fovy, float aspect, float zNear, float zFar);
+
 protected:
 	const RageMatrix* GetProjection();
 	const RageMatrix* GetModelViewTop();

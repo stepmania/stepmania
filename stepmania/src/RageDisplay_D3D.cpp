@@ -745,7 +745,8 @@ bool RageDisplay::IsZBufferEnabled() const
 
 void RageDisplay::SetZBuffer( bool b )
 {
-	g_pd3dDevice->SetRenderState( D3DRS_ZENABLE,      b );
+	g_pd3dDevice->SetRenderState( D3DRS_ZENABLE,      b ? D3DZB_TRUE : D3DZB_FALSE );
+	g_pd3dDevice->SetRenderState( D3DRS_ZFUNC,		  D3DCMP_LESSEQUAL );
 	g_pd3dDevice->SetRenderState( D3DRS_ZWRITEENABLE, b );
 }
 void RageDisplay::ClearZBuffer()
@@ -904,4 +905,16 @@ void RageDisplay::SetAlphaTest( bool b )
 	g_pd3dDevice->SetRenderState( D3DRS_ALPHATESTENABLE,  b );
 	g_pd3dDevice->SetRenderState( D3DRS_ALPHAREF,         0 );
 	g_pd3dDevice->SetRenderState( D3DRS_ALPHAFUNC, D3DCMP_GREATER );
+}
+
+
+RageMatrix RageDisplay::GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf )
+{
+	// D3DXMatrixOrthoOffCenterRH
+	RageMatrix m(
+		2/(r-l),      0,            0,           0,
+		0,            2/(t-b),      0,           0,
+		0,            0,            1/(zn-zf),   0,
+		(l+r)/(l-r),  (t+b)/(b-t),  zn/(zn-zf),  1 );
+	return m;
 }

@@ -298,7 +298,7 @@ void RageDisplay::LoadMenuPerspective(float fovDegrees)
 	if( fovDegrees == 0 )
 	{
  		float left = 0, right = SCREEN_WIDTH, bottom = SCREEN_HEIGHT, top = 0;
-		g_ProjectionStack.LoadMatrix( RageOrtho(left, right, bottom, top, SCREEN_NEAR, SCREEN_FAR) );
+		g_ProjectionStack.LoadMatrix( GetOrthoMatrix(left, right, bottom, top, SCREEN_NEAR, SCREEN_FAR) );
  		g_ModelViewStack.LoadIdentity();
 	}
 	else
@@ -310,7 +310,7 @@ void RageDisplay::LoadMenuPerspective(float fovDegrees)
 
 		/* It's the caller's responsibility to push first. */
 		g_ProjectionStack.LoadMatrix(
-			RageMatrixFrustrum(
+			GetFrustrumMatrix(
 			  -(SCREEN_WIDTH/2)/fDistCameraFromImage,
 			  +(SCREEN_WIDTH/2)/fDistCameraFromImage,
 			  +(SCREEN_HEIGHT/2)/fDistCameraFromImage,
@@ -350,7 +350,7 @@ void RageDisplay::EnterPerspective(float fov, bool preserve_loc, float near_clip
 	g_ModelViewStack.Push();
 
 	float aspect = SCREEN_WIDTH/(float)SCREEN_HEIGHT;
-	g_ProjectionStack.LoadMatrix( RageMatrixPerspective(fov, aspect, near_clip, far_clip) );
+	g_ProjectionStack.LoadMatrix( GetPerspectiveMatrix(fov, aspect, near_clip, far_clip) );
 	/* Flip the Y coordinate, so positive numbers go down. */
 	g_ProjectionStack.Scale(1, -1, 1);
 
@@ -400,9 +400,40 @@ void RageDisplay::ExitPerspective()
 	g_ModelViewStack.Pop();
 }
 
+
 /* gluLookAt.  The result is pre-multiplied to the matrix (M = L * M) instead of
  * post-multiplied. */
 void RageDisplay::LookAt(const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up)
 {
 	PreMultMatrix(RageLookAt(Eye.x, Eye.y, Eye.z, At.x, At.y, At.z, Up.x, Up.y, Up.z));
+}
+
+RageMatrix RageDisplay::GetFrustrumMatrix( 
+	float left,    
+	float right,   
+	float bottom,  
+	float top,     
+	float znear,   
+	float zfar )	// see glFrustrum docs
+{
+	float A = (right+left) / (right-left);
+	float B = (top+bottom) / (top-bottom);
+	float C = -1 * (zfar+znear) / (zfar-znear);
+	float D = -1 * (2*zfar*znear) / (zfar-znear);
+	RageMatrix m(
+		2*znear/(right-left), 0,                   0,  0,
+		0,                   2*znear/(top-bottom), 0,  0,
+		A,                   B,                    C,  -1,
+		0,                   0,                    D,  0 );
+	return m;
+}
+
+RageMatrix RageDisplay::GetPerspectiveMatrix(float fovy, float aspect, float zNear, float zFar)
+{
+   float ymax = zNear * tanf(fovy * PI / 360.0f);
+   float ymin = -ymax;
+   float xmin = ymin * aspect;
+   float xmax = ymax * aspect;
+
+   return GetFrustrumMatrix(xmin, xmax, ymin, ymax, zNear, zFar);
 }

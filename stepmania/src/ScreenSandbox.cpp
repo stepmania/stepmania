@@ -24,22 +24,29 @@
 
 ScreenSandbox::ScreenSandbox() : Screen("ScreenSandbox")
 {
-	m_quad.StretchTo( RectI(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
-	m_quad.SetDiffuse( RageColor(0,0,1,1) );
-	m_quad.SetZ( -100 );
-	this->AddChild( &m_quad );
+	m_quad1.StretchTo( RectI(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
+	m_quad1.SetDiffuse( RageColor(0,0,1,1) );
+	m_quad1.SetZ( 0 );
+	m_quad1.SetUseZBuffer( true );
+	this->AddChild( &m_quad1 );
+
+	m_quad2.StretchTo( RectI(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
+	m_quad2.SetDiffuse( RageColor(0,1,0,1) );
+	m_quad2.SetZ( 1 );
+	m_quad2.SetUseZBuffer( true );
+	this->AddChild( &m_quad2 );
 
 //	m_sprite.Load( "C:\\stepmania\\stepmania\\RandomMovies\\cm301[1].avi" );
 //	m_sprite.SetXY( CENTER_X, CENTER_Y );
 //	this->AddChild( &m_sprite );
 
-	m_model.SetXY(CENTER_X, CENTER_Y);
-	m_model.SetZoom(3);
-	//m_model.SetZoomY(-1);
-	m_model.LoadMilkshapeAscii( "Down Tap Note 4th.txt" );
+//	m_model.SetXY(CENTER_X, CENTER_Y);
+//	m_model.SetZoom(3);
+//	//m_model.SetZoomY(-1);
+//	m_model.LoadMilkshapeAscii( "Down Tap Note 4th.txt" );
 //	m_model.LoadMilkshapeAsciiBones( "D:\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\howtoplay.bones.txt" );
-	this->AddChild(&m_model);
-	m_model.SetEffectSpin( RageVector3(0,90,90) );
+//	this->AddChild(&m_model);
+//	m_model.SetEffectSpin( RageVector3(0,90,90) );
 
 	this->AddChild( &m_In );
 
@@ -62,18 +69,18 @@ void ScreenSandbox::Update( float fDeltaTime )
 
 void ScreenSandbox::DrawPrimitives()
 {
-	DISPLAY->SetLighting( true );
-	DISPLAY->SetLightDirectional( 
-		0, 
-		RageColor(0,0,0,0), 
-		RageColor(1,1,1,1),
-		RageColor(0,0,0,1),
-		RageVector3(0, -1, 0) );
+//	DISPLAY->SetLighting( true );
+//	DISPLAY->SetLightDirectional( 
+//		0, 
+//		RageColor(0,0,0,0), 
+//		RageColor(1,1,1,1),
+//		RageColor(0,0,0,1),
+//		RageVector3(0, -1, 0) );
 
 	Screen::DrawPrimitives();
 
-	DISPLAY->SetLightOff( 0 );
-	DISPLAY->SetLighting( false );
+//	DISPLAY->SetLightOff( 0 );
+//	DISPLAY->SetLighting( false );
 }
 
 void ScreenSandbox::MenuLeft( PlayerNumber pn )

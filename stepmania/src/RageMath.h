@@ -41,14 +41,5 @@ RageMatrix RageLookAt(
 	float eyex, float eyey, float eyez,
 	float centerx, float centery, float centerz,
 	float upx, float upy, float upz );
-RageMatrix RageOrtho( float l, float r, float b, float t, float zn, float zf ); 
-RageMatrix RageMatrixFrustrum(
-	float left,    
-	float right,   
-	float bottom,  
-	float top,     
-	float znear,   
-	float zfar );
-RageMatrix RageMatrixPerspective(float fovy, float aspect, float zNear, float zFar);
 
 #endif
