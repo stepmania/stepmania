@@ -108,7 +108,8 @@ void GetGLExtensions(set<string> &ext)
 
 RageDisplay_OGL::RageDisplay_OGL( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
 {
-	LOG->Trace( "RageDisplay_OGL::RageDisplay()" );
+	LOG->Trace( "RageDisplay_OGL::RageDisplay_OGL()" );
+	LOG->MapLog("renderer", "Current renderer: OpenGL");
 
 	wind = MakeLowLevelWindow();
 

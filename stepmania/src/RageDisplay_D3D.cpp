@@ -175,7 +175,8 @@ const PixelFormatDesc *RageDisplay_D3D::GetPixelFormatDesc(PixelFormat pf) const
 
 RageDisplay_D3D::RageDisplay_D3D( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
 {
-	LOG->Trace( "RageDisplay_D3D::RageDisplay()" );
+	LOG->Trace( "RageDisplay_D3D::RageDisplay_D3D()" );
+	LOG->MapLog("renderer", "Current renderer: Direct3D");
 
 	typedef IDirect3D8 * (WINAPI * Direct3DCreate8_t) (UINT SDKVersion);
 	Direct3DCreate8_t pDirect3DCreate8;
