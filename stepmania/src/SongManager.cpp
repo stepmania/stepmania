@@ -474,27 +474,32 @@ void SongManager::ReloadCourses()
 
 }
 
+bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredGroup,
+								   Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out )
+{
+	CString sCoursePath = "Songs\\" + sPreferredGroup + "\\" + (bExtra2 ? "extra2" : "extra1") + ".crs";
+	if( !DoesFileExist(sCoursePath) ) return false;
+
+	Course course;
+	course.LoadFromCRSFile( sCoursePath, m_pSongs );
+	if( course.m_iStages <= 0 ) return false;
+
+	pSongOut = course.m_apSongs[0];
+	pNotesOut = course.GetNotesForStage( 0 );
+	if( pNotesOut == NULL ) return false;
+	
+	po_out.FromString( course.m_asModifiers[0] );
+	so_out.FromString( course.m_asModifiers[0] );
+
+	return true;
+}
 
 void SongManager::GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, NotesType nt, 
 								   Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out )
 {
-	{
-		CString sCoursePath = "Songs\\" + sPreferredGroup + "\\" + (bExtra2 ? "extra2" : "extra1") + ".crs";
-		if( !DoesFileExist(sCoursePath) )
-			goto load_from_course_failed;
-		Course course;
-		course.LoadFromCRSFile( sCoursePath, m_pSongs );
-		if( course.m_iStages <= 0 )
-			goto load_from_course_failed;
-		pSongOut = course.m_apSongs[0];
-		pNotesOut = course.GetNotesForStage( 0 );
-		if( pNotesOut == NULL )
-			goto load_from_course_failed;
-		po_out.FromString( course.m_asModifiers[0] );
-		so_out.FromString( course.m_asModifiers[0] );
+	if(GetExtraStageInfoFromCourse(bExtra2, sPreferredGroup,
+			pSongOut, pNotesOut, po_out, so_out))
 		return;
-	}
-load_from_course_failed:
 	
 	// Choose a hard song for the extra stage
 	Song*	pExtra1Song = NULL;		// the absolute hardest Song and Notes.  Use this for extra stage 1.
