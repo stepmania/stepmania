@@ -697,7 +697,7 @@ void SongManager::Invalidate( Song *pStaleSong )
 	InitAutogenCourses();
 
 	// invalidate cache
-	StepsID::Invalidate( pStaleSong );
+	StepsID::ClearCache();
 
 #define CONVERT_COURSE_POINTER( pCourse ) do { \
 	CourseID id = mapOldCourseToCourseID[pCourse]; /* this will always succeed */ \
@@ -787,7 +787,7 @@ void SongManager::RevertFromDisk( Song *pSong, bool bAllowNotesLoss )
 	 * encapsulation and placing confusing limitation on what can be done in 
 	 * SONGMAN->Invalidate(). -Chris */
 	this->Invalidate( pSong );
-	StepsID::Invalidate( pSong );
+	StepsID::ClearCache();
 
 
 
@@ -1227,7 +1227,7 @@ void SongManager::FreeAllLoadedFromProfiles()
 	}
 
 	// After freeing some Steps pointers, the cache will be invalid.
-	SongID::ClearCache();
+	StepsID::ClearCache();
 }
 
 static bool CheckPointer( const Song *p )
