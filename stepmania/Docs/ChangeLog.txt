@@ -1,3 +1,21 @@
+* Alpha 24
+Fixed music sample not starting when a song is selected quickly.
+Fixed swapped NG/OK scoring.
+Fixed double-width slash character.
+Fixed loading half-doubles from KSFs.
+Fixed legacy songs not finishing with the song background.
+Fixed character rendering artifacts when a freeze segment lies on beat 0.
+Fixed screen overlay graphics not being reloaded on theme change.
+Fixed joystick mapping problems.
+Windows: DirectSound underrun fixes.
+Windows: Fixed refresh rate setting in D3D.
+Windows: Fixed crash when fullscreen D3D window loses focus.
+Windows: Use OpenGL for Intel 82845G.
+Linux: Fixed GTK window not being centered.
+Added OSC3 Red Sun translit.
+Player 2 Back button now defaults to NumLock instead of Insert.
+More options are saved to the profile.
+
 * Alpha 23
 Fixed garbled mono sounds.
 Fixed graphics being reset after exiting menus that don't affect graphics.
