@@ -897,7 +897,7 @@ void Replace_Unicode_Markers( CString &Text )
 
 void ReplaceText( CString &Text, const map<CString,CString> &m )
 {
-	basic_string<char,char_traits_char_nocase> txt = Text;
+	basic_string<char,char_traits_char_nocase> txt(Text);
 	
 	for(map<CString,CString>::const_iterator it = m.begin(); it != m.end(); ++it)
 	{
