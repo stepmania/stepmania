@@ -1505,93 +1505,30 @@ void crash() {
 	}
 }
 
-/* RageLog feeds us logs; keep track of recent logs in a circular
- * buffer.  This lets us include recent logs in the crash report.
- * We don't want to include RageLog, since we don't want to pull
- * in MFC.
- *
- * Since this is a static, preallocated region, even if it gets
- * trampled we'll just print garbage, not crash due to an invalid
- * pointer. */
-static const int BACKLOG_LINES = 10;
-static char backlog[BACKLOG_LINES][1024];
-static int backlog_start=0, backlog_cnt=0;
-
-void CrashLog(const char *str)
-{
-	int len = strlen(str);
-	if(len > sizeof(backlog[backlog_start])-1)
-		len = sizeof(backlog[backlog_start])-1;
-
-	strncpy(backlog[backlog_start], str, len);
-	backlog[backlog_start] [ len ] = 0;
-
-	backlog_start++;
-	if(backlog_start > backlog_cnt)
-		backlog_cnt=backlog_start;
-	backlog_start %= BACKLOG_LINES;
-}
-
 static void ReportCrashLog(HWND hwnd, HANDLE hFile)
 {
+	Report(NULL, hFile, "");
 	Report(NULL, hFile, "Partial log:");
 
-	int i;
-	for(i = backlog_start; i < BACKLOG_LINES && i < backlog_cnt; ++i)
-		Report(hwnd, hFile, "%s", backlog[i]);
-	for(i = 0; i < backlog_start && i < backlog_cnt; ++i)
-		Report(hwnd, hFile, "%s", backlog[i]);
+	int i = 0;
+	while( const char *p = RageLog::GetRecentLog( i++ ) )
+		Report(hwnd, hFile, "%s", p);
 }
-
-/* Same idea, except this is for data that we *always* want to print
- * in the crash log, even if it was printed when we started. */
-static const int STATICLOG_SIZE = 1024*32;
-static char staticlog[STATICLOG_SIZE]="";
-static char *staticlog_ptr=staticlog, *staticlog_end=staticlog+STATICLOG_SIZE;
-void StaticLog(const char *str)
-{
-	if(!staticlog_ptr)
-		return;
-
-	int len = strlen(str)+3; /* +\r +\n +null */
-	if(staticlog_ptr+len >= staticlog_end)
-	{
-		const char *txt = "\nStaticlog limit reached\n";
-		char *max_ptr = staticlog_end-strlen(txt)-1;
-		if(staticlog_ptr > max_ptr)
-			staticlog_ptr = max_ptr;
-
-		strcpy(staticlog_ptr, txt);
-		staticlog_ptr=NULL; /* stop */
-		return;
-	}
-
-	strcpy(staticlog_ptr, str);
-
-	staticlog_ptr[len-3] = '\r';
-	staticlog_ptr[len-2] = '\n';
-	staticlog_ptr[len-1] = 0;
-	/* Advance to sit on the NULL, so the terminator will be overwritten
-	 * on the next log. */
-	staticlog_ptr += len-1;
-}
-
 
 static void ReportStaticLog(HWND hwnd, HANDLE hFile)
 {
 	Report(NULL, hFile, "Static log:");
+
+	const char *p = RageLog::GetInfo();
 	DWORD dwActual;
-	WriteFile(hFile, staticlog, staticlog_ptr-staticlog, &dwActual, NULL);
+	WriteFile(hFile, p, strlen(p), &dwActual, NULL);
 //	Report(hwnd, hFile, "%s", staticlog);
 }
 
 static void ReportAdditionalLog(HWND hwnd, HANDLE hFile)
 {
-	DWORD dwActual;
+	const char *p = RageLog::GetAdditionalLog();
 
-	/* We crashed, so this data might well be bogus; don't use strlen. */
-	const char *p;
-	int len;
-	RageLog::GetAdditionalLog( p, len );
-	WriteFile(hFile, p, len, &dwActual, NULL);
+	DWORD dwActual;
+	WriteFile(hFile, p, strlen(p), &dwActual, NULL);
 }

@@ -17,16 +17,6 @@ ArchHooks_Win32::ArchHooks_Win32()
 	VDCHECKPOINT;
 }
 
-void ArchHooks_Win32::Log(CString str, bool important)
-{
-	/* It's OK to send to both of these; it'll let us know when important
-	 * events occurred in crash dumps if they're recent. */
-	if(important)
-		StaticLog(str);
-
-	CrashLog(str);
-}
-
 void ArchHooks_Win32::DumpDebugInfo()
 {
 	/* This is a good time to do the debug search: before we actually

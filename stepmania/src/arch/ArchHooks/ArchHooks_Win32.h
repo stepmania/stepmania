@@ -6,7 +6,6 @@ class ArchHooks_Win32: public ArchHooks
 {
 public:
     ArchHooks_Win32();
-    void Log(CString str, bool important);
     void DumpDebugInfo();
     void MessageBoxOK( CString sMessage, CString ID );
     MessageBoxResult MessageBoxAbortRetryIgnore( CString sMessage, CString ID );
