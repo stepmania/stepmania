@@ -45,7 +45,8 @@ bool SoundReader_Preload::Open(SoundReader *source)
 		/* Add the buffer. */
 		buf.get_owned().append(buffer, buffer+cnt);
 
-		if(buf.get_owned().size() > max_prebuf_size)
+		if(!PREFSMAN->m_bSoundPreloadAll &&
+			buf.get_owned().size() > max_prebuf_size)
 			return false; /* too big */
 	}
 
