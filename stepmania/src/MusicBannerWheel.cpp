@@ -13,11 +13,13 @@ TODO:
 #include "RageUtil.h"
 #include "GameState.h"
 #include "PrefsManager.h"
+#include "RageLog.h"
 #include "SongManager.h"
 #include "ThemeManager.h"
 #include "GameSoundManager.h"
 #include "Style.h"
 #include "song.h"
+#include "Steps.h"
 #include "ActorUtil.h"
 
 #define BANNERSPACING THEME->GetMetricI("ScreenEz2SelectMusic","BannerSpacing")
@@ -57,6 +59,24 @@ MusicBannerWheel::MusicBannerWheel()
 		SONGMAN->GetSongs( arraySongs, GAMESTATE->GetNumStagesLeft() );
 	else // Get the Group They Want
 		SONGMAN->GetSongs( arraySongs, GAMESTATE->m_sPreferredGroup, GAMESTATE->GetNumStagesLeft() );
+
+	//Detect autogenned songs		
+	if ( !PREFSMAN->m_bAutogenSteps )
+	{
+		LOG->Trace( "Removing all autogen songs from wheel." );
+		vector <Steps *> songSteps;
+		vector <Song *> pNotAutogen;
+		for ( unsigned i = 0; i < arraySongs.size(); i++)
+		{
+			//ONLY get non-autogenned steps
+			songSteps.clear();
+			arraySongs[i]->GetSteps( songSteps, GAMESTATE->GetCurrentStyle()->m_StepsType, DIFFICULTY_INVALID, -1, -1, "", false);
+			if ( !songSteps.empty() )
+				pNotAutogen.push_back( arraySongs[i] );
+		}
+		arraySongs.clear();
+		arraySongs = pNotAutogen;
+	}
 
 	if( arraySongs.size() > 0)
 	{
