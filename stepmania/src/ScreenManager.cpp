@@ -232,7 +232,12 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else
 		RageException::Throw( "Invalid Screen class name '%s'", sClassName.GetString() );
 
-	/* That probably took a little while.  Let's reset stats.  This prevents us
+	/* Give a null update to the new screen.  This bumps everything into its
+	 * initial tween state, if any, so we don't show stuff at an incorrect
+	 * position for a frame. */
+	ret->Update(0);
+
+	/* Loading probably took a little while.  Let's reset stats.  This prevents us
 	 * from displaying an unnaturally low FPS value, and the next FPS value we
 	 * display will be accurate, which makes skips in the initial tween-ins more
 	 * apparent. */

@@ -474,8 +474,6 @@ ScreenGameplay::ScreenGameplay()
 		for( int i=0; i<30; i++ )
 			this->SendScreenMessage( ScreenMessage(SM_User+i), i/2.0f );	// Send messages to we can get the introduction rolling
 	}
-
-	Update(0);
 }
 
 ScreenGameplay::~ScreenGameplay()
