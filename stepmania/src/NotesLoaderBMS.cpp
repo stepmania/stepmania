@@ -879,7 +879,6 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	{
 	    if( GetTagFromMap( aBMSData[i], "#title", commonSubstring ) )
 	    {
-		LOG->Trace("CSA: Starting with \"%s\"", commonSubstring.c_str());
 		// This whole loop usually only runs once,
 		// but the less we assume, the better.
 		break;
@@ -894,7 +893,6 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		if( GetTagFromMap( aBMSData[i], "#title", sTitle ) )
 		{
 		    commonSubstring = FindLargestCommonSubstring( commonSubstring, sTitle );
-		    LOG->Trace("CSA: \"%s\" trimmed substring to \"%s\"", sTitle.c_str(), commonSubstring.c_str() );
 		    if( commonSubstring == "" )
 		    {
 			// All bets are off; the titles don't match at all.
@@ -928,7 +926,6 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	    {
 		int tagSubstrLen = sTag.GetLength() - commonSubstrLen;
 		
-		LOG->Trace("Common Substring algorithm: \"%s\" \"%s\" %i %i", commonSubstring.c_str(), sTag.c_str(), commonSubstrLen, tagSubstrLen );
 		sTag = sTag.substr( commonSubstrLen, sTag.GetLength() - commonSubstrLen );
 		sTag.ToLower();
 		
