@@ -29,7 +29,7 @@
 
 #define NEXT_SCREEN				THEME->GetMetric ("ScreenStage","NextScreen")
 
-const ScreenMessage	SM_LoadPrepedScreen	= (ScreenMessage)(SM_User+0);
+const ScreenMessage	SM_PrepScreen		= (ScreenMessage)(SM_User+0);
 
 /*
 #define STAGE_TYPE			THEME->GetMetricI("ScreenStage","StageType")
@@ -63,18 +63,31 @@ ScreenStage::ScreenStage()
 	this->AddChild( &m_Background );
 
 	m_In.Load( THEME->GetPathTo("BGAnimations","ScreenStage in") );
+	m_In.StartTransitioning();
 	this->AddChild( &m_In );
 
 	m_Out.Load( THEME->GetPathTo("BGAnimations","ScreenStage out") );
 	this->AddChild( &m_Out );
 
-	m_In.StartTransitioning( SM_LoadPrepedScreen );
-	float fStartFadingOutSeconds = m_Background.GetLengthSeconds() - m_Out.GetLengthSeconds();
-	this->SendScreenMessage( SM_BeginFadingOut, fStartFadingOutSeconds );
-
 	m_Back.Load( THEME->GetPathTo("BGAnimations","Common back") );
 	this->AddChild( &m_Back );
 	
+	/* Prep the new screen once the animation is complete.  This way, we
+	 * start loading the gameplay screen as soon as possible. */
+	this->SendScreenMessage( SM_PrepScreen, m_Background.GetLengthSeconds() );
+
+	/* Start fading out after m_In is complete, minus the length of m_Out.  This
+	 * essentially makes m_In a timer to pad the length, so we always wait a minimum
+	 * amount of time.  It's a slightly confusing timer, though; maybe we shouldn't
+	 * make m_Out affect it.  (Maybe just make it a metric? XXX) */
+	float fStartFadingOutSeconds = m_In.GetLengthSeconds() - m_Out.GetLengthSeconds();
+
+	/* Never do this before we send SM_PrepScreen--we havn't loaded the screen yet. */
+	fStartFadingOutSeconds = max(fStartFadingOutSeconds, m_Background.GetLengthSeconds());
+
+	this->SendScreenMessage( SM_BeginFadingOut, fStartFadingOutSeconds );
+
+
 	//g_StageType = (StageType)STAGE_TYPE; 
 
 
@@ -571,7 +584,7 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
-	case SM_LoadPrepedScreen:
+	case SM_PrepScreen:
 		SCREENMAN->PrepNewScreen( NEXT_SCREEN );
 		break;
 	case SM_BeginFadingOut:
