@@ -190,21 +190,22 @@ float NoteDataWithScoring::GetActualStreamRadarValue( float fSongSeconds, Player
 	return min( fReturn, 1.0f );
 	*/
 
-	int totalnotes = GetNumTapNotes();
-	int perfects = GetNumTapNotesWithScore(TNS_PERFECT) + GetNumTapNotesWithScore(TNS_MARVELOUS);
+	int TotalSteps = GetNumTapNotes();
+	if( !TotalSteps )
+		return 1;
 
-	float result = float(perfects)/totalnotes;
-	return result;
-
+	const int Perfects = GetNumTapNotesWithScore(TNS_PERFECT) + GetNumTapNotesWithScore(TNS_MARVELOUS);
+	return clamp( float(Perfects)/TotalSteps, 0.0f, 1.0f );
 }
 
 float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds, PlayerNumber pn ) const
 {
+	const int TotalSteps = GetNumTapNotes();
+	if( !TotalSteps )
+		return 1;
 	
-	int MaxCombo = GAMESTATE->m_CurStageStats.iMaxCombo[pn];
-	int TotalSteps = GetNumTapNotes();
-
-	return min( (float)MaxCombo/TotalSteps, 1.0f);
+	const int MaxCombo = GAMESTATE->m_CurStageStats.iMaxCombo[pn];
+	return clamp( (float)MaxCombo/TotalSteps, 0.0f, 1.0f );
 
 	// voltage is essentialy perfects divided by # of steps
 /*	float fAvgBPS = GetLastBeat() / fSongSeconds;
@@ -233,17 +234,16 @@ float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds, Playe
 
 float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds, PlayerNumber pn ) const
 {
-	// number of doubles
-	int iNumDoubles = 
-		GetNumDoublesWithScore(TNS_MARVELOUS) + 
-		GetNumDoublesWithScore(TNS_PERFECT);
-
 //	float fReturn = iNumDoubles / fSongSeconds;
-	int iTotalDoubles = GetNumDoubles();
+	const int iTotalDoubles = GetNumDoubles();
+	if (iTotalDoubles == 0)
+		return 1;  // no jumps in song
 
-	if (iTotalDoubles == 0) return 1.0f;  // no jumps in song
-	float fReturn = (float)iNumDoubles / iTotalDoubles;
-	return min( fReturn, 1.0f );
+	// number of doubles
+	const int iNumDoubles = 
+		GetNumDoublesWithScore(TNS_MARVELOUS) + GetNumDoublesWithScore(TNS_PERFECT);
+
+	return clamp( (float)iNumDoubles / iTotalDoubles, 0.0f, 1.0f );
 }
 
 float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds, PlayerNumber pn ) const
@@ -260,21 +260,24 @@ float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds, PlayerN
 	return min( fReturn, 1.0f );
 	*/
 
-	int PossibleDP = GAMESTATE->m_CurStageStats.iPossibleDancePoints[pn];
-	int ActualDP = GAMESTATE->m_CurStageStats.iActualDancePoints[pn];
+	const int PossibleDP = GAMESTATE->m_CurStageStats.iPossibleDancePoints[pn];
+	if ( PossibleDP == 0 )
+		return 1;  // no jumps in song
 
-	float fResult = float(ActualDP)/PossibleDP;
-
-	return clamp( fResult, 0.0f, 1.0f );
+	const int ActualDP = GAMESTATE->m_CurStageStats.iActualDancePoints[pn];
+	return clamp( float(ActualDP)/PossibleDP, 0.0f, 1.0f );
 }
 
 float NoteDataWithScoring::GetActualFreezeRadarValue( float fSongSeconds, PlayerNumber pn ) const
 {
 	// number of hold steps
-	float totalsteps = (float)GetNumHoldNotes();
-	if (totalsteps == 0) return 1.0f;
-	float fReturn = GetNumHoldNotesWithScore(HNS_OK) / totalsteps;
-	return min( fReturn, 1.0f );
+	const int TotalHolds = GetNumHoldNotes();
+	if ( TotalHolds == 0 )
+		return 1.0f;
+
+	const int ActualHolds = GetNumHoldNotesWithScore(HNS_OK);
+
+	return clamp( float(ActualHolds) / TotalHolds, 0.0f, 1.0f );
 }
 
 template<class T>
