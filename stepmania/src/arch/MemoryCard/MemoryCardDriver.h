@@ -18,6 +18,9 @@ struct UsbStorageDevice
 		bNeedsWriteTest = true;
 		bWriteTestSucceeded = false;
 		sName = "";
+		idVendor = 0;
+		sVendor = "";
+		sProduct = "";
 	};
 	int iBus;
 	int iPort;
@@ -29,9 +32,11 @@ struct UsbStorageDevice
   bool bNeedsWriteTest;
   bool bWriteTestSucceeded;  // only valid if bNeedsWriteTest == false
   CString sName;  // Name in the profile on the memory card.
+  int idVendor;
+  CString sVendor;
+  CString sProduct;
 
-	bool IsBlank() const { return sOsMountDir.empty(); }
-	void SetOsMountDir( const CString &s );
+	bool IsBlank() { return sOsMountDir.empty(); }
 
   bool operator==(const UsbStorageDevice& other) const;
 };

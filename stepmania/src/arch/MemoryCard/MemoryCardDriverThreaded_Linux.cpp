@@ -334,6 +334,43 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 	CHECKPOINT;
 }
 
+static const int g_iAllowedVendorIds[] = 
+  {
+    0x0781, // SanDisk Corp.
+    0x045a, // Diamond Multimedia Systems (Rio)
+    0x04e8, // Samsung Electronics Co., Ltd. (Kingston)
+    0x05dc, // Lexar Media, Inc.
+  };
+static const CString g_sAllowedVendorRegex[] =
+  {
+    "Kingston",
+    "KINGSTON",
+  };
+bool IsDeviceAllowed( int idVendor, CString sVendor, CString sProduct )
+{
+  bool bAllowed = false;
+
+  vector<int> vAllowedVendorIds( &g_iAllowedVendorIds[0], &g_iAllowedVendorIds[ARRAYSIZE(g_iAllowedVendorIds)-1] );
+  vector<int>::const_iterator iter = find( vAllowedVendorIds.begin(), vAllowedVendorIds.end(), idVendor );
+  bAllowed = iter != vAllowedVendorIds.end();
+
+  if( !bAllowed )
+    {
+      for( int i=0; i<ARRAYSIZE(g_sAllowedVendorRegex); i++ )
+	{
+	  Regex regex( g_sAllowedVendorRegex[i] );
+	  if( regex.Compare(sVendor) )
+	    {
+	      bAllowed = true;
+	      break;
+	    }
+	}
+    }  
+
+  LOG->Trace( "Device '%X':'%s':'%s' is %sallowed.", idVendor, sVendor.c_str(), sProduct.c_str(), bAllowed?"":"not " );
+  return bAllowed;
+}
+
 bool ReadUsbStorageDescriptor( CString fn, int iScsiIndex, vector<UsbStorageDevice>& vDevicesOut )
 {
 	LOG->Trace( "ReadUsbStorageDescriptor %s", fn.c_str() );
@@ -355,11 +392,22 @@ bool ReadUsbStorageDescriptor( CString fn, int iScsiIndex, vector<UsbStorageDevi
 		return false;
 	
 	CString sLine;
+	CString sVendor, sProduct;
 	while( getline(f, sLine) )
     {
 		// Serial Number: 1125198948886
+		int iRet;
+
+		char szValue[1024];
+		iRet = sscanf( sLine.c_str(), "       Vendor: %[^\n]", szValue );
+                if( iRet == 1 ) // we found our line
+                  sVendor = szValue;
+                iRet = sscanf( sLine.c_str(), "      Product: %[^\n]", szValue );
+                if( iRet == 1 ) // we found our line
+                  sProduct = szValue;
+
 		char szSerial[1024];
-		int iRet = sscanf( sLine.c_str(), "Serial Number: %[^\n]", szSerial );
+		iRet = sscanf( sLine.c_str(), "Serial Number: %[^\n]", szSerial );
 		if( iRet == 1 ) // we found our line
 		{
 			// Search for the device corresponding to this serial number.
@@ -367,13 +415,17 @@ bool ReadUsbStorageDescriptor( CString fn, int iScsiIndex, vector<UsbStorageDevi
 			{
 				UsbStorageDevice& usbd = vDevicesOut[j];
 				
-				if( usbd.sSerial == szSerial )
-				{
+				if( usbd.sSerial == szSerial  &&  IsDeviceAllowed( usbd.idVendor, sVendor, sProduct ) )
+				  {
 					usbd.iScsiIndex = iScsiIndex;
-					LOG->Trace( "iScsiIndex: %d, iBus: %d, iLevel: %d, iPort: %d, sSerial: %s",
-						usbd.iScsiIndex, usbd.iBus, usbd.iLevel, usbd.iPort, usbd.sSerial.c_str() );
+					usbd.sVendor = sVendor;
+					usbd.sProduct = sProduct;
+					sVendor = "";
+					sProduct = "";
+					LOG->Trace( "iScsiIndex: %d, iBus: %d, iLevel: %d, iPort: %d, sSerial: %s, sVendor: %s, sProduct: %s",
+						usbd.iScsiIndex, usbd.iBus, usbd.iLevel, usbd.iPort, usbd.sSerial.c_str(), usbd.sVendor.c_str(), usbd.sProduct.c_str() );
 					break;  // done looking for the corresponding device.
-				}
+				    }
 			}
 			break;  // we already found the line we care about
 		}
@@ -491,6 +543,15 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 				usbd.iPort = iPort;
 				continue;       // stop processing this line
 			}		
+
+                        //   idVendor           0x0781 SanDisk Corp.
+                        int idVendor;
+                        iRet = sscanf( sLine.c_str(), "  idVendor 0x%x", &idVendor );
+                        if( iRet == 1 )
+			  {
+			    usbd.idVendor = idVendor;
+			    continue;       // stop processing this line
+			  }
 			
 			//   iSerial                 3 1125198948886
 			char szSerial[1024];
