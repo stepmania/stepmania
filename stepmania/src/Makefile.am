@@ -66,7 +66,7 @@ NotesWriterDWI.cpp NotesWriterDWI.h NotesWriterSM.cpp NotesWriterSM.h NoteTypes.
 PlayerOptions.cpp PlayerOptions.h RandomSample.cpp RandomSample.h Song.cpp song.h SongCacheIndex.cpp SongCacheIndex.h \
 SongOptions.cpp SongOptions.h StageStats.cpp StageStats.h StyleDef.cpp StyleDef.h StyleInput.h \
 TitleSubstitution.cpp TitleSubstitution.h Inventory.cpp Inventory.h PlayerNumber.cpp PlayerNumber.h \
-LyricsLoader.cpp LyricsLoader.h NoteFieldPositioning.cpp NoteFieldPositioning.h \
+LyricsLoader.cpp LyricsLoader.h ModeChoice.cpp ModeChoice.h NoteFieldPositioning.cpp NoteFieldPositioning.h \
 PlayerAI.cpp PlayerAI.h Character.cpp Character.h ArrowBackdrop.cpp ArrowBackdrop.h
 
 FileTypes = IniFile.cpp IniFile.h MsdFile.cpp MsdFile.h
