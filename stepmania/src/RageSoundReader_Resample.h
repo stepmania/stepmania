@@ -32,3 +32,7 @@ public:
 };
 
 #endif
+/*
+ * Copyright (c) 2003 by the person(s) listed below.  All rights reserved.
+ *	Glenn Maynard
+ */

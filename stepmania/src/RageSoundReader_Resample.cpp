@@ -96,3 +96,8 @@ SoundReader *RageSoundReader_Resample::Copy() const
 	ret->SetSampleRate(samplerate);
 	return ret;
 }
+
+/*
+ * Copyright (c) 2003 by the person(s) listed below.  All rights reserved.
+ *	Glenn Maynard
+ */
