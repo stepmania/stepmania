@@ -59,35 +59,35 @@ public:
 		) = 0;
 
 	virtual LPDIRECT3DTEXTURE8 GetD3DTexture() = 0;
-	virtual void Play() {};
-	virtual void Stop() {};
-	virtual void Pause() {};
-	virtual void SetPosition( float fSeconds ) {};
-	virtual bool IsAMovie() { return false; };
+	virtual void Play() {}
+	virtual void Stop() {}
+	virtual void Pause() {}
+	virtual void SetPosition( float fSeconds ) {}
+	virtual bool IsAMovie() const { return false; }
 	void SetLooping(bool looping=true) { }
 
-	int GetSourceWidth()	{return m_iSourceWidth;};
-	int GetSourceHeight()	{return m_iSourceHeight;};
-	int GetTextureWidth()	{return m_iTextureWidth;};
-	int GetTextureHeight()	{return m_iTextureHeight;};
-	int GetImageWidth()		{return m_iImageWidth;};
-	int GetImageHeight()	{return m_iImageHeight;};
+	int GetSourceWidth() const	{return m_iSourceWidth;}
+	int GetSourceHeight() const {return m_iSourceHeight;}
+	int GetTextureWidth() const {return m_iTextureWidth;}
+	int GetTextureHeight() const{return m_iTextureHeight;}
+	int GetImageWidth() const	{return m_iImageWidth;}
+	int GetImageHeight() const	{return m_iImageHeight;}
 
-	int GetFramesWide()  {return m_iFramesWide;};
-	int GetFramesHigh()  {return m_iFramesHigh;};
+	int GetFramesWide() const	{return m_iFramesWide;}
+	int GetFramesHigh() const	{return m_iFramesHigh;}
 
-	int GetSourceFrameWidth()	{return GetSourceWidth()	/	GetFramesWide();};
-	int GetSourceFrameHeight()	{return GetSourceHeight()	/	GetFramesHigh();};
-	int GetTextureFrameWidth()	{return GetTextureWidth()	/	GetFramesWide();};
-	int GetTextureFrameHeight(){return GetTextureHeight()	/	GetFramesHigh();};
-	int GetImageFrameWidth()	{return GetImageWidth()		/	GetFramesWide();};
-	int GetImageFrameHeight()	{return GetImageHeight()	/	GetFramesHigh();};
+	int GetSourceFrameWidth() const		{return GetSourceWidth()	/	GetFramesWide();}
+	int GetSourceFrameHeight() const	{return GetSourceHeight()	/	GetFramesHigh();}
+	int GetTextureFrameWidth() const	{return GetTextureWidth()	/	GetFramesWide();}
+	int GetTextureFrameHeight() const	{return GetTextureHeight()	/	GetFramesHigh();}
+	int GetImageFrameWidth() const		{return GetImageWidth()		/	GetFramesWide();}
+	int GetImageFrameHeight() const		{return GetImageHeight()	/	GetFramesHigh();}
 	
-	FRECT* GetTextureCoordRect( int uFrameNo ) {return &m_TextureCoordRects[uFrameNo];};
-	int   GetNumFrames()	{return m_TextureCoordRects.GetSize();};
-	CString GetFilePath()	{return m_sFilePath;};
+	FRECT* GetTextureCoordRect( int uFrameNo ) {return &m_TextureCoordRects[uFrameNo];}
+	int   GetNumFrames() const {return m_TextureCoordRects.GetSize();}
+	CString GetFilePath() const {return m_sFilePath;}
 
-	INT					m_iRefCount;
+	int					m_iRefCount;
 
 protected:
 	virtual void CreateFrameRects();
