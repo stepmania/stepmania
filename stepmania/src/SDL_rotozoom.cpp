@@ -136,6 +136,9 @@ void RageSurfaceUtils::Zoom( RageSurface *&src, int dstwidth, int dstheight )
     if( src == NULL )
 		return;
 
+	if( src->w == dstwidth && src->h == dstheight )
+		return;
+
 	/* resize currently only does RGBA8888 */
 	if( src->fmt.BytesPerPixel != 4 )
 	{
