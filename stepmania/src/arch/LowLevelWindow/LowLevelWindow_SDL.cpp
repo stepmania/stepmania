@@ -7,9 +7,7 @@
 
 #if defined(UNIX)
 #include <X11/Xlib.h>
-#endif
 
-#if defined(UNIX)
 extern Display *g_X11Display;
 #endif
 

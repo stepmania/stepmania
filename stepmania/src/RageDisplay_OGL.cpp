@@ -330,9 +330,7 @@ static void TurnOffHardwareVBO()
 #include "GL/glx.h"
 #undef Font
 #undef Screen
-#endif
 
-#if defined(UNIX)
 Display *g_X11Display = NULL;
 #endif
 
