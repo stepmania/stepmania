@@ -48,6 +48,8 @@ public:
 	virtual void EnterTimeCriticalSection() { }
 	virtual void ExitTimeCriticalSection() { }
 
+	virtual void SetTime( tm newtime ) { }
+
 protected:
 	virtual void MessageBoxErrorPrivate( CString sMessage, CString ID ) { printf("Error: %s\n", sMessage.c_str()); }
 	virtual void MessageBoxOKPrivate( CString sMessage, CString ID ) {}

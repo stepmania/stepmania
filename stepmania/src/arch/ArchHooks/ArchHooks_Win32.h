@@ -20,6 +20,7 @@ public:
 	RageMutex *TimeCritMutex;
 	void EnterTimeCriticalSection();
 	void ExitTimeCriticalSection();
+	void SetTime( tm newtime );
 };
 
 #undef ARCH_HOOKS

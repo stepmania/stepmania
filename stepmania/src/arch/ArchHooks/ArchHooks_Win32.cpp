@@ -202,6 +202,20 @@ void ArchHooks_Win32::ExitTimeCriticalSection()
 	TimeCritMutex->Unlock();
 }
 
+void ArchHooks_Win32::SetTime( tm newtime )
+{
+	SYSTEMTIME st;
+	ZERO( st );
+	st.wYear = newtime.tm_year+1900;
+    st.wMonth = newtime.tm_mon+1;
+    st.wDay = newtime.tm_mday;
+    st.wHour = newtime.tm_hour;
+    st.wMinute = newtime.tm_min;
+    st.wSecond = newtime.tm_sec;
+    st.wMilliseconds = 0;
+	BOOL b = SetLocalTime( &st ); 
+	DWORD dw = GetLastError();
+}
 
 /*
  * Copyright (c) 2002-2004 by the person(s) listed below.  All rights reserved.
