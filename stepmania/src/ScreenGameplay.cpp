@@ -1149,6 +1149,9 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			break;
 		case SDLK_F7:
 			GAMESTATE->m_SongOptions.m_bAssistTick ^= 1;
+
+			/* Store this change, so it sticks if we change songs: */
+			GAMESTATE->m_StoredSongOptions.m_bAssistTick = GAMESTATE->m_SongOptions.m_bAssistTick;
 			
 			m_textDebug.SetText( ssprintf("Assist Tick is %s", GAMESTATE->m_SongOptions.m_bAssistTick?"ON":"OFF") );
 			m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
