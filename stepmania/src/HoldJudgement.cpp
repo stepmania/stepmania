@@ -43,21 +43,21 @@ void HoldJudgement::RenderPrimitives()
 	}
 }
 
-void HoldJudgement::SetHoldJudgement( HoldStepResult result )
+void HoldJudgement::SetHoldJudgement( HoldNoteResult result )
 {
 	//RageLog( "Judgement::SetJudgement()" );
 
 	switch( result )
 	{
-	case HSR_NONE:	m_sprJudgement.SetState( 0 );	break;
-	case HSR_OK:	m_sprJudgement.SetState( 7 );	break;
-	case HSR_NG:	m_sprJudgement.SetState( 8 );	break;
+	case HNR_NONE:	m_sprJudgement.SetState( 0 );	break;
+	case HNR_OK:	m_sprJudgement.SetState( 7 );	break;
+	case HNR_NG:	m_sprJudgement.SetState( 8 );	break;
 	default:	ASSERT( false );
 	}
 
 	m_fDisplayCountdown = JUDGEMENT_DISPLAY_TIME;
 
-	if( result == HSR_NG ) 
+	if( result == HNR_NG ) 
 	{
 		// falling down
 		m_sprJudgement.SetY( -10 );
@@ -65,7 +65,7 @@ void HoldJudgement::SetHoldJudgement( HoldStepResult result )
 		m_sprJudgement.BeginTweening( JUDGEMENT_DISPLAY_TIME );
 		m_sprJudgement.SetTweenY( 10 );
 	} 
-	else if( result == HSR_OK ) 
+	else if( result == HNR_OK ) 
 	{		
 		// zooming out
 		m_sprJudgement.SetZoom( 1.5f );

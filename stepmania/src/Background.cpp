@@ -13,6 +13,7 @@
 #include "RageUtil.h"
 #include "ScreenDimensions.h"
 #include "ThemeManager.h"
+#include "PrefsManager.h"
 #include "RageBitmapTexture.h"
 
 

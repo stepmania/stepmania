@@ -1,10 +1,11 @@
 /*
 -----------------------------------------------------------------------------
- File: Grade.h
+ Class: Grade
 
- Desc: A graphic displayed in the Grade during Dancing.
+ Desc: This a mark the player receives after clearing a song.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 

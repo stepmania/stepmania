@@ -11,7 +11,7 @@
 
 
 #include "Util.h"
-#include "Steps.h"
+#include "Pattern.h"
 #include "RageUtil.h"
 
 #include "Song.h"
@@ -224,12 +224,12 @@ bool Song::LoadSongInfoFromBMSDir( CString sDir )
 	// is identical for every BMS file in the directory.
 	m_sSongFilePath = m_sSongDir + arrayBMSFileNames[0];
 
-	// load the Steps from the rest of the BMS files
+	// load the Pattern from the rest of the BMS files
 	for( int i=0; i<arrayBMSFileNames.GetSize(); i++ ) 
 	{
-		arraySteps.SetSize( arraySteps.GetSize()+1 );
-		Steps &new_steps = arraySteps[ arraySteps.GetSize()-1 ];
-		new_steps.LoadStepsFromBMSFile( m_sSongDir + arrayBMSFileNames[i] );
+		m_arrayPatterns.SetSize( m_arrayPatterns.GetSize()+1 );
+		Pattern &new_steps = m_arrayPatterns[ m_arrayPatterns.GetSize()-1 ];
+		new_steps.LoadFromBMSFile( m_sSongDir + arrayBMSFileNames[i] );
 	}
 
 
@@ -280,7 +280,7 @@ bool Song::LoadSongInfoFromBMSDir( CString sDir )
 		else if( -1 != value_name.Find("#title") ) 
 		{
 			m_sTitle = value_data;
-			// strip steps type out of description leaving only song title (looks like 'B4U <BASIC>')
+			// strip Pattern type out of description leaving only song title (looks like 'B4U <BASIC>')
 			m_sTitle.Replace( "(ANOTHER)", "" );
 			m_sTitle.Replace( "(BASIC)", "" );
 			m_sTitle.Replace( "(MANIAC)", "" );
@@ -347,15 +347,15 @@ bool Song::LoadSongInfoFromBMSDir( CString sDir )
 					{
 					case 01:	// background music track
 						float fBeatOffset;
-						fBeatOffset = StepIndexToBeat( (float)iStepIndex );
+						fBeatOffset = NoteIndexToBeat( (float)iStepIndex );
 						float fBPS;
 						fBPS = m_BPMSegments[0].m_fBPM/60.0f;
 						m_fOffsetInSeconds = fBeatOffset / fBPS;
-						//RageLog( "Found offset to be index %d, beat %f", iStepIndex, StepIndexToBeat(iStepIndex) );
+						//RageLog( "Found offset to be index %d, beat %f", iStepIndex, NoteIndexToBeat(iStepIndex) );
 						break;
 					case 03:	// bpm
 						BPMSegment new_seg;
-						new_seg.m_fStartBeat = StepIndexToBeat( (float)iStepIndex );
+						new_seg.m_fStartBeat = NoteIndexToBeat( (float)iStepIndex );
 						new_seg.m_fBPM = (float)arrayNotes[j];
 
 						m_BPMSegments.Add( new_seg );	// add to back for now (we'll sort later)
@@ -488,7 +488,7 @@ bool Song::LoadSongInfoFromDWIFile( CString sPath )
 				CStringArray arrayFreezeValues;
 				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
 				float fIndex = atoi( arrayFreezeValues[0] ) * ELEMENTS_PER_BEAT / 4.0f;
-				float fFreezeBeat = StepIndexToBeat( fIndex );
+				float fFreezeBeat = NoteIndexToBeat( fIndex );
 				float fFreezeSeconds = (float)atof( arrayFreezeValues[1] ) / 1000.0f;
 				
 				FreezeSegment new_seg;
@@ -513,7 +513,7 @@ bool Song::LoadSongInfoFromDWIFile( CString sPath )
 				CStringArray arrayBPMChangeValues;
 				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
 				float fIndex = atoi( arrayBPMChangeValues[0] ) * ELEMENTS_PER_BEAT / 4.0f;
-				float fBeat = StepIndexToBeat( fIndex );
+				float fBeat = NoteIndexToBeat( fIndex );
 				float fNewBPM = (float)atoi( arrayBPMChangeValues[1] );
 				
 				BPMSegment new_seg;
@@ -528,9 +528,10 @@ bool Song::LoadSongInfoFromDWIFile( CString sPath )
 
 		else if( sValueName == "#SINGLE" || sValueName == "#DOUBLE" || sValueName == "#COUPLE" )
 		{
-			arraySteps.SetSize( arraySteps.GetSize()+1 );
-			Steps &new_steps = arraySteps[ arraySteps.GetSize()-1 ];
-			new_steps.LoadFromDWIValueTokens( arrayValueTokens );
+			m_arrayPatterns.SetSize( m_arrayPatterns.GetSize()+1, 1 );
+			Pattern &new_pattern = m_arrayPatterns[ m_arrayPatterns.GetSize()-1 ];
+			new_pattern.LoadFromDWIValueTokens( arrayValueTokens );
+			int ksjfk = 0;
 		}
 		else
 			// do nothing.  We don't care about this value name
@@ -639,26 +640,26 @@ void Song::TidyUpData()
 }
 
 
-void Song::GetStepsThatMatchGameMode( GameMode gm, CArray<Steps*, Steps*>& arrayAddTo )
+void Song::GetPatternsThatMatchStyle( DanceStyle s, CArray<Pattern*, Pattern*>& arrayAddTo )
 {
-	for( int i=0; i<arraySteps.GetSize(); i++ )	// for each of the Song's Steps
+	for( int i=0; i<m_arrayPatterns.GetSize(); i++ )	// for each of the Song's Pattern
 	{
-		Steps* pCurrentSteps = &arraySteps[i];
+		Pattern* pCurPattern = &m_arrayPatterns[i];
 		
-		if( gm == pCurrentSteps->m_GameMode			// if the current GameModes matches the Steps's GameMode
-		 || (gm == MODE_VERSUS && pCurrentSteps->m_GameMode == MODE_SINGLE) )
+		if( s == pCurPattern->m_DanceStyle			// if the current GameModes matches the Pattern's GameMode
+		 || (s == STYLE_VERSUS && pCurPattern->m_DanceStyle == STYLE_SINGLE) )
 		{
-			arrayAddTo.Add( pCurrentSteps );
+			arrayAddTo.Add( pCurPattern );
 		}
 	}
 
 }
 
-void Song::GetNumFeet( GameMode gm, int& iDiffEasyOut, int& iDiffMediumOut, int& iDiffHardOut )
+void Song::GetNumFeet( DanceStyle s, int& iDiffEasyOut, int& iDiffMediumOut, int& iDiffHardOut )
 {
 	iDiffEasyOut = iDiffMediumOut = iDiffHardOut = -1;		// -1 means not found
-	CArray<Steps*, Steps*> arrayMatchingSteps;
-	GetStepsThatMatchGameMode( gm, arrayMatchingSteps );
+	CArray<Pattern*, Pattern*> arrayMatchingSteps;
+	GetPatternsThatMatchStyle( s, arrayMatchingSteps );
 
 	for( int i=0; i<arrayMatchingSteps.GetSize(); i++ )
 	{
@@ -666,16 +667,16 @@ void Song::GetNumFeet( GameMode gm, int& iDiffEasyOut, int& iDiffMediumOut, int&
 
 		switch( arrayMatchingSteps[i]->m_DifficultyClass )
 		{
-		case Steps::CLASS_EASY:
+		case Pattern::CLASS_EASY:
 			iDiffEasyOut = iNumFeet;
 			break;
-		case Steps::CLASS_MEDIUM:
+		case Pattern::CLASS_MEDIUM:
 			iDiffMediumOut = iNumFeet;
 			break;
-		case Steps::CLASS_HARD:
+		case Pattern::CLASS_HARD:
 			iDiffHardOut = iNumFeet;
 			break;
-		case Steps::CLASS_OTHER:
+		case Pattern::CLASS_OTHER:
 			// should do something intelligent to fill in the missing spots...
 			if( iDiffEasyOut < 0  &&  iNumFeet <= 4 )
 				iDiffEasyOut = iNumFeet;
@@ -697,14 +698,14 @@ void Song::SaveOffsetChangeToDisk()
 
 	if( sExt == "bms" )
 	{
-		for( int i=0; i<arraySteps.GetSize(); i++ )		// for each Steps
+		for( int i=0; i<m_arrayPatterns.GetSize(); i++ )		// for each Pattern
 		{
-			CString sStepsFileName = arraySteps[i].m_sStepsFilePath;
+			CString sPatternFileName = m_arrayPatterns[i].m_sPatternFilePath;
 
 			CStringArray arrayLines;
 			CStdioFile fileIn;
-			if( !fileIn.Open( sStepsFileName, CFile::modeRead|CFile::shareDenyNone) )
-				RageError( ssprintf("Failed to open '%s' for reading", sStepsFileName) );
+			if( !fileIn.Open( sPatternFileName, CFile::modeRead|CFile::shareDenyNone) )
+				RageError( ssprintf("Failed to open '%s' for reading", sPatternFileName) );
 
 			// read the file into sFileContents
 			CString sLine;
@@ -716,8 +717,8 @@ void Song::SaveOffsetChangeToDisk()
 
 			// write the file back to disk with the changes
 			CStdioFile fileOut;
-			if( !fileOut.Open( sStepsFileName, CFile::modeWrite|CFile::shareDenyWrite) )
-				RageError( ssprintf("Failed to open '%s' for writing", sStepsFileName) );
+			if( !fileOut.Open( sPatternFileName, CFile::modeWrite|CFile::shareDenyWrite) )
+				RageError( ssprintf("Failed to open '%s' for writing", sPatternFileName) );
 			for( int j=0; j<arrayLines.GetSize(); j++ )
 			{
 				CString sLine = arrayLines[j];

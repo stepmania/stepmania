@@ -134,71 +134,17 @@ const CString DEFAULT_THEME_DIR  = "Themes\\default\\";
 class ThemeManager
 {
 public:
-	ThemeManager()
-	{
-		CStringArray arrayThemeNames;
-		GetThemeNames( arrayThemeNames );
-		for( int i=0; i<arrayThemeNames.GetSize(); i++ )
-			AssertThemeIsComplete( arrayThemeNames[i] );
+	ThemeManager();
 
-		SetTheme( DEFAULT_THEME_NAME );
-	};
-
-	void GetThemeNames( CStringArray& AddTo )
-	{
-		GetDirListing( "Themes\\*", AddTo, true );
-		
-		// strip out the folder called "CVS"
-		for( int i=0; i<AddTo.GetSize(); i++ )
-		{
-			if( 0 == stricmp( AddTo[i], "cvs" ) )
-			{
-				AddTo.RemoveAt(i);
-				i--;
-			}
-		}
-	};
-
-	bool SetTheme( CString sThemeName )		// return false if theme doesn't exist
-	{
-		sThemeName.MakeLower();
-		m_sCurThemeName = sThemeName;
-		CString sThemeDir = ThemeNameToThemeDir( m_sCurThemeName );
-
-		if( !DoesFileExist( sThemeDir ) )
-		{
-			RageError( ssprintf( "The theme in diretory '%' could not be loaded.", sThemeDir ) );
-			return false;
-		}
-
-		return true;
-	};
-
-	void AssertThemeIsComplete( CString sThemeName )		// return false if theme doesn't exist
-	{
-		for( int i=0; i<NUM_THEME_ELEMENTS; i++ )
-		{
-			if( GetPathTo( (ThemeElement)i, sThemeName ) == "" )
-				RageError( ssprintf( "The theme element for theme '%s' called '%s' could not be found.", sThemeName, ElementToAssetPath((ThemeElement)i) ) );
-		}
-	};
-	
+	void GetThemeNames( CStringArray& AddTo );
+	bool SetTheme( CString sThemeName );		// return false if theme doesn't exist
+	void AssertThemeIsComplete( CString sThemeName );		// return false if theme doesn't exist
 	CString ElementToAssetPath( ThemeElement te );
-
-	CString GetPathTo( ThemeElement te )
-	{
-		return GetPathTo( te, m_sCurThemeName );
-	};
+	CString GetPathTo( ThemeElement te );
 	CString GetPathTo( ThemeElement te, CString sThemeName );
 
-
-
-private:
-
-	CString ThemeNameToThemeDir( CString sThemeName )
-	{
-		return ssprintf( "Themes\\%s\\", sThemeName );
-	}
+protected:
+	CString ThemeNameToThemeDir( CString sThemeName );
 
 	CString m_sCurThemeName;
 };

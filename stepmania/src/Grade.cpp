@@ -1,11 +1,12 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: Grade.cpp
+ Class: Grade
 
- Desc: A graphic displayed in the Grade during Dancing.
+ Desc: See header.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 

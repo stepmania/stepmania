@@ -14,7 +14,7 @@
 #include "IniFile.h"
 
 
-SongManager*	SONGS = NULL;	// global and accessable from anywhere in our program
+SongManager*	SONG = NULL;	// global and accessable from anywhere in our program
 
 
 const CString g_sStatisticsFileName = "statistics.ini";
@@ -24,7 +24,7 @@ SongManager::SongManager()
 {
 	m_pCurSong = NULL;
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		m_pStepsPlayer[p] = NULL;
+		m_pCurPattern[p] = NULL;
 
 	InitSongArrayFromDisk();
 	ReadStatisticsFromDisk();
@@ -33,8 +33,8 @@ SongManager::SongManager()
 
 SongManager::~SongManager()
 {
-	CleanUpSongArray();
 	SaveStatisticsToDisk();
+	CleanUpSongArray();
 }
 
 
@@ -189,7 +189,7 @@ void SongManager::ReadStatisticsFromDisk()
 			int iRetVal;
 			int i;
 
-			// Parse for Song name and Steps name
+			// Parse for Song name and Pattern name
 			iRetVal = sscanf( name_string, "%[^:]::%[^\n]", szSongName, szStepsName );
 			if( iRetVal != 2 )
 				continue;	// this line doesn't match what is expected
@@ -209,35 +209,35 @@ void SongManager::ReadStatisticsFromDisk()
 				continue;	// skip this entry
 
 
-			// Search for the corresponding Steps pointer.
-			Steps* pSteps = NULL;
-			for( i=0; i<pSong->arraySteps.GetSize(); i++ )
+			// Search for the corresponding Pattern pointer.
+			Pattern* pPattern = NULL;
+			for( i=0; i<pSong->m_arrayPatterns.GetSize(); i++ )
 			{
-				if( pSong->arraySteps[i].m_sDescription == szStepsName )	// match!
+				if( pSong->m_arrayPatterns[i].m_sDescription == szStepsName )	// match!
 				{
-					pSteps = &pSong->arraySteps[i];
+					pPattern = &pSong->m_arrayPatterns[i];
 					break;
 				}
 			}
-			if( pSteps == NULL )	// didn't find a match
+			if( pPattern == NULL )	// didn't find a match
 				continue;	// skip this entry
 
 
-			// Parse the Steps statistics.
+			// Parse the Pattern statistics.
 			char szGradeLetters[10];	// longest possible string is "AAA"
 
 			iRetVal = sscanf( 
 				value_string, 
 				"%d::%[^:]::%d::%d", 
-				&pSteps->m_iNumTimesPlayed,
+				&pPattern->m_iNumTimesPlayed,
 				szGradeLetters,
-				&pSteps->m_iTopScore,
-				&pSteps->m_iMaxCombo
+				&pPattern->m_iTopScore,
+				&pPattern->m_iMaxCombo
 			);
 			if( iRetVal != 4 )
 				continue;
 
-			pSteps->m_TopGrade = StringToGrade( szGradeLetters );
+			pPattern->m_TopGrade = StringToGrade( szGradeLetters );
 		}
 	}
 }
@@ -246,32 +246,28 @@ void SongManager::SaveStatisticsToDisk()
 {
 	IniFile ini;
 	ini.SetPath( g_sStatisticsFileName );
-	if( !ini.ReadFile() ) {
-		return;		// load nothing
-		//RageError( "could not read config file" );
-	}
 
 	// save song statistics
 	for( int i=0; i<m_pSongs.GetSize(); i++ )		// for each Song
 	{
 		Song* pSong = m_pSongs[i];
 
-		for( int j=0; j<pSong->arraySteps.GetSize(); j++ )		// for each Steps
+		for( int j=0; j<pSong->m_arrayPatterns.GetSize(); j++ )		// for each Pattern
 		{
-			Steps* pSteps = &pSong->arraySteps[j];
+			Pattern* pPattern = &pSong->m_arrayPatterns[j];
 
-			if( pSteps->m_TopGrade == GRADE_NO_DATA )
-				continue;
+			if( pPattern->m_TopGrade == GRADE_NO_DATA )
+				continue;		// skip
 
-			// Each value has the format "SongName::StepsName=TimesPlayed::TopGrade::TopScore::MaxCombo".
+			// Each value has the format "SongName::PatternName=TimesPlayed::TopGrade::TopScore::MaxCombo".
 
-			CString sName = ssprintf( "%s::%s", pSong->GetTitle(), pSteps->m_sDescription );
+			CString sName = ssprintf( "%s::%s", pSong->GetTitle(), pPattern->m_sDescription );
 			CString sValue = ssprintf( 
 				"%d::%s::%d::%d",
-				pSteps->m_iNumTimesPlayed,
-				GradeToString( pSteps->m_TopGrade ),
-				pSteps->m_iTopScore, 
-				pSteps->m_iMaxCombo
+				pPattern->m_iNumTimesPlayed,
+				GradeToString( pPattern->m_TopGrade ),
+				pPattern->m_iTopScore, 
+				pPattern->m_iMaxCombo
 			);
 
 			ini.SetValue( "Statistics", sName, sValue );
@@ -282,7 +278,7 @@ void SongManager::SaveStatisticsToDisk()
 }
 
 
-CString SongManager::GetBannerPathFromGroup( CString sGroupName )
+CString SongManager::GetGroupBannerPath( CString sGroupName )
 {
 	CString sPath;
 

@@ -30,7 +30,7 @@ public:
 		SetFromDescription( "" );
 	};
 
-	void SetFromSteps( Steps* pSteps )
+	void SetFromSteps( Pattern* pSteps )
 	{
 		if( pSteps != NULL )
 		{

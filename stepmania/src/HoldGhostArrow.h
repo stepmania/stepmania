@@ -16,7 +16,7 @@ class HoldGhostArrow;
 
 
 #include "Sprite.h"
-#include "Steps.h"
+#include "Pattern.h"
 
 
 class HoldGhostArrow : public Sprite

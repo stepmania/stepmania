@@ -46,7 +46,7 @@ void Banner::CropToRightSize()
 	float fOriginalX = GetX();
 	float fOriginalY = GetY();
 
-	if( iImageWidth == iImageHeight )		// this is a SSR/DWI style banner
+	if( iImageWidth == iImageHeight )		// this is a SSR/DWI StyleDef banner
 	{
 		float fCustomImageCoords[8] = {
 			0.22f,	0.98f,	// bottom left

@@ -2,8 +2,8 @@
 -----------------------------------------------------------------------------
  Class: SongManager
 
- Desc: Holder for all Songs and Steps.  Also keeps track of the current 
-	Song and Steps, and loads/saves statistics.
+ Desc: Holder for all Songs and Pattern.  Also keeps track of the current 
+	Song and Pattern, and loads/saves statistics.
 
  Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
 	Chris Danford
@@ -24,9 +24,10 @@ public:
 	SongManager();
 	~SongManager();
 
-	CArray<Song*, Song*>	m_pSongs;
 	Song*					m_pCurSong;
-	Steps*					m_pStepsPlayer[NUM_PLAYERS];
+	Pattern*				m_pCurPattern[NUM_PLAYERS];
+
+	CArray<Song*, Song*>	m_pSongs;	// all songs that can be played
 
 	void InitSongArrayFromDisk();
 
@@ -38,7 +39,7 @@ public:
 	void SaveStatisticsToDisk();
 
 
-	CString GetBannerPathFromGroup( CString sGroupName );
+	CString GetGroupBannerPath( CString sGroupName );
 
 protected:
 	void LoadStepManiaSongDir( CString sDir );
@@ -48,7 +49,7 @@ protected:
 };
 
 
-extern SongManager*	SONGS;	// global and accessable from anywhere in our program
+extern SongManager*	SONG;	// global and accessable from anywhere in our program
 
 
 #endif

@@ -29,7 +29,7 @@ public:
 		SetNumFeet( 0, "" );
 	};
 
-	void SetFromSteps( Steps* pSteps )
+	void SetFromSteps( Pattern* pSteps )
 	{
 		if( pSteps != NULL )
 		{

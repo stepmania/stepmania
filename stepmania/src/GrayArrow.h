@@ -16,7 +16,7 @@
 
 
 #include "Sprite.h"
-#include "Steps.h"
+#include "Pattern.h"
 
 class GrayArrow : public Sprite
 {

@@ -16,7 +16,7 @@ class GhostArrowBright;
 
 
 #include "Sprite.h"
-#include "Steps.h"
+#include "Pattern.h"
 
 
 class GhostArrowBright : public Sprite
@@ -25,7 +25,7 @@ public:
 	GhostArrowBright();
 
 	void  SetBeat( const float fSongBeat );
-	void  Step( TapStepScore score );
+	void  Step( TapNoteScore score );
 
 	float m_fVisibilityCountdown;
 };

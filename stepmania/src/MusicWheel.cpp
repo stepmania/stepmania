@@ -12,6 +12,7 @@
 #include "MusicWheel.h"
 #include "RageUtil.h"
 #include "SongManager.h"
+#include "GameManager.h"
 #include "ScreenDimensions.h"
 #include "ThemeManager.h"
 #include "RageMusic.h"
@@ -231,7 +232,7 @@ MusicWheel::MusicWheel()
 	// init m_mapGroupNameToBannerColor
 
 	CArray<Song*, Song*> arraySongs;
-	arraySongs.Copy( SONGS->m_pSongs );
+	arraySongs.Copy( SONG->m_pSongs );
 	SortSongPointerArrayByGroup( arraySongs );
 	
 	int iNextGroupBannerColor = 0;
@@ -271,10 +272,10 @@ MusicWheel::MusicWheel()
 		BuildWheelItemDatas( m_WheelItemDatas[so], SongSortOrder(so) );
 
 
-	if( SONGS->m_pCurSong == NULL && 	// if there is no currently selected song
-		SONGS->m_pSongs.GetSize() > 0 )		// and there is at least one song
+	if( SONG->m_pCurSong == NULL && 	// if there is no currently selected song
+		SONG->m_pSongs.GetSize() > 0 )		// and there is at least one song
 	{
-		SONGS->m_pCurSong = SONGS->m_pSongs[0];	// select the first song
+		SONG->m_pCurSong = SONG->m_pSongs[0];	// select the first song
 	}
 
 
@@ -283,7 +284,7 @@ MusicWheel::MusicWheel()
 	for( i=0; i<GetCurWheelItemDatas().GetSize(); i++ )
 	{
 		if( GetCurWheelItemDatas()[i].m_pSong != NULL
-		 && GetCurWheelItemDatas()[i].m_pSong == SONGS->m_pCurSong )
+		 && GetCurWheelItemDatas()[i].m_pSong == SONG->m_pCurSong )
 		{
 			m_iSelection = i;		// select it
 			m_sExpandedSectionName = GetCurWheelItemDatas()[m_iSelection].m_sSectionName;	// make its group the currently expanded group
@@ -309,20 +310,20 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 	///////////////////////////////////
 	CArray<Song*, Song*> arraySongs;
 	
-	// copy only song that have at least one Steps for the current GameMode
-	for( int i=0; i<SONGS->m_pSongs.GetSize(); i++ )
+	// copy only song that have at least one Pattern for the current GameMode
+	for( int i=0; i<SONG->m_pSongs.GetSize(); i++ )
 	{
-		Song* pSong = SONGS->m_pSongs[i];
+		Song* pSong = SONG->m_pSongs[i];
 
-		CArray<Steps*, Steps*> arraySteps;
-		pSong->GetStepsThatMatchGameMode( PREFS->m_GameMode, arraySteps );
+		CArray<Pattern*, Pattern*> arraySteps;
+		pSong->GetPatternsThatMatchStyle( GAME->m_DanceStyle, arraySteps );
 
 		if( arraySteps.GetSize() > 0 )
 			arraySongs.Add( pSong );
 	}
 
 
-	// sort the songs
+	// sort the SONG
 	switch( so )
 	{
 	case SORT_GROUP:
@@ -432,7 +433,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 	if( arrayWheelItemDatas.GetSize() == 0 )
 	{
 		arrayWheelItemDatas.SetSize( 1 );
-		arrayWheelItemDatas[0].LoadFromSectionName( "No Songs" );
+		arrayWheelItemDatas[0].LoadFromSectionName( "No SONG" );
 		arrayWheelItemDatas[0].m_colorTint = D3DXCOLOR(0.5f,0.5f,0.5f,1);
 	}
 }

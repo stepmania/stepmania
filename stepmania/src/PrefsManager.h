@@ -2,8 +2,11 @@
 -----------------------------------------------------------------------------
  Class: PrefsManager
 
- Desc: Manages input mapping, saves preferences, and holds data that is passed 
-	between Windows.
+ Desc: Manages all other game data that isn't handled about SongManager, 
+	GameManager, or ThemeManager.  Some of this data is saved between sessions,
+	for example, input mapping settings and GameOptions.  This class also has 
+	temporary holders for information that passed between windows - e.g.
+	ScoreSummary.
 
  Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
 	Chris Danford
@@ -32,44 +35,16 @@ public:
 	PrefsManager();
 	~PrefsManager();
 
-	GameMode m_GameMode;
-
-	ScoreSummary scoreSummaryPlayer[NUM_PLAYERS];
-
-	SongSortOrder	m_SongSortOrder;
-
-	int				m_iCurrentStage;
+	ScoreSummary	m_ScoreSummary[NUM_PLAYERS];	// for passing from Dancing to Results
+	SongSortOrder	m_SongSortOrder;				// used by MusicWheel and should be saved until the app exits
+	int				m_iCurrentStage;				// number of stages played +1
 
 	GameOptions		m_GameOptions;
 	PlayerOptions	m_PlayerOptions[NUM_PLAYERS];
 	SongOptions		m_SongOptions;
 
-	bool IsPlayerEnabled( PlayerNumber PlayerNo )
-	{
-		switch( m_GameMode )
-		{
-		case MODE_VERSUS:
-		case MODE_COUPLE:
-			if( PlayerNo == PLAYER_1 )
-				return true;
-			if( PlayerNo == PLAYER_2 )
-				return true;
-			break;
-		case MODE_SINGLE:
-		case MODE_SOLO:
-		case MODE_DOUBLE:
-			if( PlayerNo == PLAYER_1 )
-				return true;
-			if( PlayerNo == PLAYER_2 )
-				return false;
-			break;
-		default:
-			ASSERT( false );	// invalid game mode
-		}
-		return false;
-	};
 
-	// prefs file stuff
+	// read and write to disk
 	void ReadPrefsFromDisk();
 	void SavePrefsToDisk();
 
@@ -90,11 +65,6 @@ public:
 
 	bool IsButtonDown( PadInput pi );
 	bool IsButtonDown( PlayerInput PlayerI );
-
-	// theme stuff
-	CString m_ThemeName;
-
-
 
 
 protected:

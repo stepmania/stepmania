@@ -29,7 +29,7 @@ public:
 
 	void SetScore( float fNewScore );
 	float GetScore();
-	void AddToScore( TapStepScore stepscore, int iCurCombo );
+	void AddToScore( TapNoteScore score, int iCurCombo );
 
 	virtual void Update( float fDeltaTime );
 	virtual void Draw();

@@ -388,6 +388,14 @@ SOURCE=.\GameConstants.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\GameManager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GameManager.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\GameTypes.h
 # End Source File
 # Begin Source File
@@ -401,6 +409,14 @@ SOURCE=.\Grade.h
 # Begin Source File
 
 SOURCE=.\PadInput.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Pattern.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Pattern.h
 # End Source File
 # Begin Source File
 
@@ -456,19 +472,11 @@ SOURCE=.\SongManager.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Steps.cpp
+SOURCE=.\StyleDef.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Steps.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Style.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Style.h
+SOURCE=.\StyleDef.h
 # End Source File
 # Begin Source File
 

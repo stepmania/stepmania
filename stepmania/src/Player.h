@@ -13,7 +13,7 @@
 #define _PLAYER_H_
 
 #include "PrefsManager.h"	// for ScoreSummary
-#include "Steps.h"
+#include "Pattern.h"
 #include "Sprite.h"
 #include "BitmapText.h"
 
@@ -45,9 +45,9 @@ public:
 	void Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference );
 	void RenderPrimitives();
 
-	void Load( const Style& style, PlayerNumber player_no, const Steps& steps, const PlayerOptions& po );
+	void Load( const StyleDef& StyleDef, PlayerNumber player_no, const Pattern& pattern, const PlayerOptions& po );
 	void CrossedIndex( int iIndex );
-	void HandlePlayerStep( float fSongBeat, TapStep step, float fMaxBeatDiff );
+	void HandlePlayerStep( float fSongBeat, TapNote step, float fMaxBeatDiff );
 	int UpdateStepsMissedOlderThan( float fMissIfOlderThanThisBeat );
 
 	ScoreSummary GetScoreSummary();
@@ -56,20 +56,20 @@ public:
 	bool IsThereANoteAtIndex( int iIndex );
 
 protected:
-	void CheckForCompleteStep( float fSongBeat, TapStep step, float fMaxBeatDiff );
-	void OnCompleteStep( float fSongBeat, TapStep step, float fMaxBeatDiff, int iStepIndex );
+	void CheckForCompleteStep( float fSongBeat, TapNote step, float fMaxBeatDiff );
+	void OnCompleteStep( float fSongBeat, TapNote step, float fMaxBeatDiff, int iStepIndex );
 
 	float			m_fSongBeat;
-	Style			m_Style;
+	StyleDef			m_Style;
 	PlayerNumber	m_PlayerNumber;
 	PlayerOptions	m_PlayerOptions;
 
-	TapStep			m_TapStepsOriginal[MAX_TAP_STEP_ELEMENTS];	// the original steps that were loaded into player
-	TapStep			m_TapStepsRemaining[MAX_TAP_STEP_ELEMENTS];	// mask off the bits as the player steps
-	TapStepScore	m_TapStepScores[MAX_TAP_STEP_ELEMENTS];
-	HoldStep		m_HoldSteps[MAX_HOLD_STEP_ELEMENTS];
-	HoldStepScore	m_HoldStepScores[MAX_HOLD_STEP_ELEMENTS];
-	int				m_iNumHoldSteps;
+	TapNote			m_TapNotesOriginal[MAX_TAP_NOTE_ELEMENTS];	// the original Pattern that were loaded into player
+	TapNote			m_TapNotesRemaining[MAX_TAP_NOTE_ELEMENTS];	// mask off the bits as the player Pattern
+	TapNoteScore	m_TapNoteScores[MAX_TAP_NOTE_ELEMENTS];
+	HoldNote		m_HoldNotes[MAX_HOLD_NOTE_ELEMENTS];
+	HoldNoteScore	m_HoldNoteScores[MAX_HOLD_NOTE_ELEMENTS];
+	int				m_iNumHoldNotes;
 
 
 	GrayArrows		m_GrayArrows;

@@ -24,7 +24,7 @@ class HoldJudgement : public ActorFrame
 {
 public:
 	HoldJudgement();
-	void SetHoldJudgement( HoldStepResult result );
+	void SetHoldJudgement( HoldNoteResult result );
 	virtual void Update( float fDeltaTime );
 	virtual void RenderPrimitives();
 

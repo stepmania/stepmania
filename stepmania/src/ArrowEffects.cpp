@@ -3,21 +3,21 @@
 -----------------------------------------------------------------------------
  File: ArrowEffects.cpp
 
- Desc: Functions that return properties of arrows based on Style and PlayerOptions
+ Desc: Functions that return properties of arrows based on StyleDef and PlayerOptions
 
  Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
 #include "ArrowEffects.h"
-#include "Steps.h"
+#include "Pattern.h"
 #include "ColorArrow.h"
 #include "ScreenDimensions.h"
 
 
 float ArrowGetYOffset( const PlayerOptions& po, float fStepIndex, float fSongBeat )
 {
-	float fBeatsUntilStep = StepIndexToBeat( fStepIndex ) - fSongBeat;
+	float fBeatsUntilStep = NoteIndexToBeat( fStepIndex ) - fSongBeat;
 	float fYOffset = fBeatsUntilStep * ARROW_GAP;
 	switch( po.m_EffectType )
 	{
@@ -31,9 +31,9 @@ float ArrowGetYOffset( const PlayerOptions& po, float fStepIndex, float fSongBea
 	return fYOffset;
 }
 
-float ArrowGetXPos( const PlayerOptions& po, const Style &style, int iColNum, float fYOffset, float fSongBeat ) 
+float ArrowGetXPos( const PlayerOptions& po, const StyleDef &StyleDef, int iColNum, float fYOffset, float fSongBeat ) 
 {
-	float fColOffsetFromCenter = iColNum - (style.m_iNumColumns-1)/2.0f;
+	float fColOffsetFromCenter = iColNum - (StyleDef.m_iNumColumns-1)/2.0f;
 	float fPixelOffsetFromCenter = fColOffsetFromCenter * ARROW_SIZE;
 	
 	switch( po.m_EffectType )
@@ -45,9 +45,9 @@ float ArrowGetXPos( const PlayerOptions& po, const Style &style, int iColNum, fl
 	return fPixelOffsetFromCenter;
 }
 
-float ArrowGetRotation( const PlayerOptions& po, const Style &style, int iColNum, float fYOffset ) 
+float ArrowGetRotation( const PlayerOptions& po, const StyleDef &StyleDef, int iColNum, float fYOffset ) 
 {
-	float fRotation = style.m_ColumnToRotation[iColNum];
+	float fRotation = StyleDef.m_ColumnToRotation[iColNum];
 
 	switch( po.m_EffectType )
 	{

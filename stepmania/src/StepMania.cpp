@@ -24,6 +24,7 @@
 #include "SongManager.h"
 #include "ThemeManager.h"
 #include "WindowManager.h"
+#include "GameManager.h"
 
 #include "WindowSandbox.h"
 #include "WindowLoading.h"
@@ -87,13 +88,16 @@ BOOL SwitchDisplayMode();// BOOL bWindowed, DWORD dwWidth, DWORD dwHeight, DWORD
 //-----------------------------------------------------------------------------
 int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 {
-	AfxEnableControlContainer();
+	// Initialize ActiveX for Flash
+	//AfxEnableControlContainer();
 
 #ifndef DEBUG	// don't use error handler in Release mode
 	try
 	{
 #endif
+		//
 		// Check to see if the app is already running.
+		//
 		g_hMutex = CreateMutex( NULL, TRUE, g_sAppName );
 		if( GetLastError() == ERROR_ALREADY_EXISTS )
 		{
@@ -101,7 +105,9 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 			RageError( "StepMania is already running!" );
 		}
 
+		//
 		// Make sure the current directory is the root program directory
+		//
 		if( !DoesFileExist("Songs") )
 		{
 			// change dir to path of the execuctable
@@ -112,8 +118,12 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 			LPSTR pLastBackslash = strrchr(szFullAppPath, '\\');
 			*pLastBackslash = '\0';	// terminate the string
 
-			SetCurrentDirectory(szFullAppPath);
+			RageLog( "Changing path to '%s'", szFullAppPath );
+			SetCurrentDirectory( szFullAppPath );
 		}
+
+		
+
 
 
 		CoInitialize (NULL);    // Initialize COM
@@ -144,7 +154,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 		g_hWndMain = CreateWindow(
 					  g_sAppClassName,// pointer to registered class name
 					  g_sAppName,		// pointer to window name
-					  g_dwWindowStyle,	// window style
+					  g_dwWindowStyle,	// window StyleDef
 					  CW_USEDEFAULT,	// horizontal position of window
 					  CW_USEDEFAULT,	// vertical position of window
 					  RECTWIDTH(rcWnd),	// window width
@@ -439,12 +449,12 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 //-----------------------------------------------------------------------------
 HRESULT CreateObjects( HWND hWnd )
 {
-	////////////////////////////////
+	//
 	// Draw a splash bitmap so the user isn't looking at a black screen
-	////////////////////////////////
+	//
 	HBITMAP hSplashBitmap = (HBITMAP)LoadImage( 
 		GetModuleHandle( NULL ),
-		TEXT("SPLASH"), 
+		TEXT("BITMAP_SPLASH"), 
 		IMAGE_BITMAP,
 		0, 0, LR_CREATEDIBSECTION );
     BITMAP bmp;
@@ -467,9 +477,9 @@ HRESULT CreateObjects( HWND hWnd )
 
 
 
-	/////////////////////////////////
+	//
 	// Create game objects
-	/////////////////////////////////
+	//
 	srand( (unsigned)time(NULL) );	// seed number generator
 	RageLogStart();
 	
@@ -477,8 +487,8 @@ HRESULT CreateObjects( HWND hWnd )
 	MUSIC	= new RageSoundStream;
 	INPUT	= new RageInput( hWnd );
 	PREFS	= new PrefsManager;
-	SONGS	= new SongManager;
 	SCREEN	= new RageScreen( hWnd );
+	SONG	= new SongManager;
 
 	BringWindowToTop( hWnd );
 	SetForegroundWindow( hWnd );
@@ -489,12 +499,13 @@ HRESULT CreateObjects( HWND hWnd )
 	TM		= new RageTextureManager( SCREEN );
 	THEME	= new ThemeManager;
 	WM		= new WindowManager;
+	GAME	= new GameManager;
 
 	
 	// Ugly...  Switch the screen resolution again so that the system message will display
 	SwitchDisplayMode(); 
 
-	WM->SystemMessage( ssprintf("Found %d songs.", SONGS->m_pSongs.GetSize()) );
+	WM->SystemMessage( ssprintf("Found %d songs.", SONG->m_pSongs.GetSize()) );
 
 
 	//WM->SetNewWindow( new WindowLoading );
@@ -520,7 +531,8 @@ void DestroyObjects()
 
 	SAFE_DELETE( WM );
 	SAFE_DELETE( PREFS );
-	SAFE_DELETE( SONGS );
+	SAFE_DELETE( SONG );
+	SAFE_DELETE( GAME );
 
 	SAFE_DELETE( INPUT );
 	SAFE_DELETE( MUSIC );

@@ -1,10 +1,12 @@
 /*
 -----------------------------------------------------------------------------
- File: Song.h
+ Class: Song
 
- Desc: Holds metadata for a song and the song's step data.
+ Desc: Holds data about a piece of music that can be played by one or more
+	Games.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -12,10 +14,11 @@
 #define _SONG_H_
 
 
-#include "Steps.h"
+#include "Pattern.h"
 
-#include "PrefsManager.h"	// for definition of GameMode
-enum GameMode;	// why is this needed?
+#include "GameTypes.h"
+#include "RageUtil.h"
+//enum DanceStyle;	// why is this needed?
 
 
 
@@ -82,15 +85,15 @@ public:
 		}
 	};
 	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut );
-	void GetStepsThatMatchGameMode( GameMode gm, CArray<Steps*, Steps*>& arrayAddTo );
-	void GetNumFeet( GameMode gm, int& iDiffEasy, int& iDiffMedium, int& iDiffHard );
+	void GetPatternsThatMatchStyle( DanceStyle s, CArray<Pattern*, Pattern*>& arrayAddTo );
+	void GetNumFeet( DanceStyle s, int& iDiffEasy, int& iDiffMedium, int& iDiffHard );
 
 	int GetNumTimesPlayed()
 	{
 		int iTotalNumTimesPlayed = 0;
-		for( int i=0; i<arraySteps.GetSize(); i++ )
+		for( int i=0; i<m_arrayPatterns.GetSize(); i++ )
 		{
-			iTotalNumTimesPlayed += arraySteps[i].m_iNumTimesPlayed;
+			iTotalNumTimesPlayed += m_arrayPatterns[i].m_iNumTimesPlayed;
 		}
 		return iTotalNumTimesPlayed;
 	}
@@ -107,7 +110,6 @@ private:
 	CString	m_sTitle;
 	CString	m_sArtist;
 	CString	m_sCreator;
-//	float	m_fBPM;
 	float	m_fOffsetInSeconds;
 
 	CString	m_sMusicPath;
@@ -119,7 +121,7 @@ private:
 	CArray<FreezeSegment, FreezeSegment&> m_FreezeSegments;	// this must be sorted before dancing
 
 public:
-	CArray<Steps, Steps&> arraySteps;
+	CArray<Pattern, Pattern&> m_arrayPatterns;
 };
 
 

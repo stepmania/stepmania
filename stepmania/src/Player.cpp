@@ -1,10 +1,9 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: Player.cpp
+ Class: Pattern
 
- Desc: Object that accepts pad input, knocks down ColorArrows that were stepped on, 
-		and keeps score for the player.
+ Desc: See header.
 
  Copyright (c) 2001 Chris Danford.  All rights reserved.
 -----------------------------------------------------------------------------
@@ -36,13 +35,13 @@ Player::Player()
 	m_PlayerNumber = PLAYER_NONE;
 
 	// init step elements
-	for( int i=0; i<MAX_TAP_STEP_ELEMENTS; i++ )
+	for( int i=0; i<MAX_TAP_NOTE_ELEMENTS; i++ )
 	{
-		m_TapStepsOriginal[i] = STEP_NONE;
-		m_TapStepsRemaining[i] = STEP_NONE;
-		m_TapStepScores[i] = TSS_NONE;
+		m_TapNotesOriginal[i] = NOTE_NONE;
+		m_TapNotesRemaining[i] = NOTE_NONE;
+		m_TapNoteScores[i] = TNS_NONE;
 	}
-	m_iNumHoldSteps = 0;
+	m_iNumHoldNotes = 0;
 
 
 	this->AddActor( &m_GrayArrows );
@@ -57,39 +56,39 @@ Player::Player()
 }
 
 
-void Player::Load( const Style& style, PlayerNumber player_no, const Steps& steps, const PlayerOptions& po )
+void Player::Load( const StyleDef& StyleDef, PlayerNumber player_no, const Pattern& pattern, const PlayerOptions& po )
 {
 	//RageLog( "Player::Load()", );
 
-	m_Style = style;
+	m_Style = StyleDef;
 	m_PlayerNumber = player_no;
 	m_PlayerOptions = po;
 
-	Steps steps2 = steps;
+	Pattern pattern2 = pattern;
 
 	if( !po.m_bAllowFreezeArrows )
-		steps2.RemoveHoldSteps();
+		pattern2.RemoveHoldNotes();
 
-	steps2.Turn( po.m_TurnType );
+	pattern2.Turn( po.m_TurnType );
 
 	if( po.m_bLittle )
-		steps2.MakeLittle();
+		pattern2.MakeLittle();
 
-	m_ColorArrowField.Load( style, steps2, po, 2, 10 );
-	m_GrayArrows.Load( po, style );
-	m_GhostArrows.Load( po, style );
+	m_ColorArrowField.Load( StyleDef, pattern2, po, 2, 10 );
+	m_GrayArrows.Load( po, StyleDef );
+	m_GhostArrows.Load( po, StyleDef );
 
 	// load step elements
-	for( int i=0; i<MAX_TAP_STEP_ELEMENTS; i++ )
+	for( int i=0; i<MAX_TAP_NOTE_ELEMENTS; i++ )
 	{
-		m_TapStepsOriginal[i] = steps2.m_TapSteps[i];
-		m_TapStepsRemaining[i] = steps2.m_TapSteps[i];
+		m_TapNotesOriginal[i] = pattern2.m_TapNotes[i];
+		m_TapNotesRemaining[i] = pattern2.m_TapNotes[i];
 	}
-	for( i=0; i<steps2.m_iNumHoldSteps; i++ )
+	for( i=0; i<pattern2.m_iNumHoldNotes; i++ )
 	{
-		m_HoldSteps[i] = steps2.m_HoldSteps[i];
+		m_HoldNotes[i] = pattern2.m_HoldNotes[i];
 	}
-	m_iNumHoldSteps = steps2.m_iNumHoldSteps;
+	m_iNumHoldNotes = pattern2.m_iNumHoldNotes;
 
 
 	m_Combo.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - COMBO_Y : COMBO_Y );
@@ -112,70 +111,70 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 
 
 	//
-	// Check for TapStep misses
+	// Check for TapNote misses
 	//
 	int iNumMisses = UpdateStepsMissedOlderThan( m_fSongBeat-fMaxBeatDifference );
 	if( iNumMisses > 0 )
 	{
-		m_Judgement.SetJudgement( TSS_MISS );
+		m_Judgement.SetJudgement( TNS_MISS );
 		m_Combo.EndCombo();
 		for( int i=0; i<iNumMisses; i++ )
-			m_LifeMeter.ChangeLife( TSS_MISS );
+			m_LifeMeter.ChangeLife( TNS_MISS );
 	}
 
 
 	//
-	// update HoldSteps logic
+	// update HoldNotes logic
 	//
-	for( int i=0; i<m_iNumHoldSteps; i++ )		// for each HoldStep
+	for( int i=0; i<m_iNumHoldNotes; i++ )		// for each HoldNote
 	{
-		HoldStep &hs = m_HoldSteps[i];
-		HoldStepScore &hss = m_HoldStepScores[i];
+		HoldNote &hn = m_HoldNotes[i];
+		HoldNoteScore &hns = m_HoldNoteScores[i];
 
-		if( hss.m_Result != HSR_NONE )	// if this HoldStep already has a result
+		if( hns.m_Result != HNR_NONE )	// if this HoldNote already has a result
 			continue;	// we don't need to update the logic for this one
 
-		float fStartBeat = StepIndexToBeat( (float)hs.m_iStartIndex );
-		float fEndBeat = StepIndexToBeat( (float)hs.m_iEndIndex );
+		float fStartBeat = NoteIndexToBeat( (float)hn.m_iStartIndex );
+		float fEndBeat = NoteIndexToBeat( (float)hn.m_iEndIndex );
 
 
 		// update the life
 		if( fStartBeat < m_fSongBeat && m_fSongBeat < fEndBeat )	// if the song beat is in the range of this hold
 		{
-			PlayerInput PlayerI( m_PlayerNumber, hs.m_TapStep );
+			PlayerInput PlayerI( m_PlayerNumber, hn.m_TapNote );
 			bool bIsHoldingButton = PREFS->IsButtonDown( PlayerI );
 			if( bIsHoldingButton )
 			{
-				hss.m_fLife += fDeltaTime/HOLD_ARROW_NG_TIME;
-				hss.m_fLife = min( hss.m_fLife, 1 );	// clamp
-				int iCol = m_Style.TapStepToColumnNumber( hs.m_TapStep );
-				m_GhostArrows.HoldStep( iCol );		// update the "electric ghost" effect
+				hns.m_fLife += fDeltaTime/HOLD_ARROW_NG_TIME;
+				hns.m_fLife = min( hns.m_fLife, 1 );	// clamp
+				int iCol = m_Style.TapNoteToColumnNumber( hn.m_TapNote );
+				m_GhostArrows.HoldNote( iCol );		// update the "electric ghost" effect
 			}
 			else	// !bIsHoldingButton
 			{
-				hss.m_fLife -= fDeltaTime/HOLD_ARROW_NG_TIME;
-				hss.m_fLife = max( hss.m_fLife, 0 );	// clamp
+				hns.m_fLife -= fDeltaTime/HOLD_ARROW_NG_TIME;
+				hns.m_fLife = max( hns.m_fLife, 0 );	// clamp
 			}
-			m_ColorArrowField.SetHoldStepLife( i, hss.m_fLife );	// update the ColorArrowField display
+			m_ColorArrowField.SetHoldNoteLife( i, hns.m_fLife );	// update the ColorArrowField display
 		}
 
 		// check for NG
-		if( hss.m_fLife == 0 )	// the player has not pressed the button for a long time!
+		if( hns.m_fLife == 0 )	// the player has not pressed the button for a long time!
 		{
-			hss.m_Result = HSR_NG;
-			int iCol = m_Style.TapStepToColumnNumber( hs.m_TapStep );
-			m_HoldJudgement[iCol].SetHoldJudgement( HSR_NG );
+			hns.m_Result = HNR_NG;
+			int iCol = m_Style.TapNoteToColumnNumber( hn.m_TapNote );
+			m_HoldJudgement[iCol].SetHoldJudgement( HNR_NG );
 		}
 
 		// check for OK
-		if( m_fSongBeat > fEndBeat )	// if this HoldStep is in the past
+		if( m_fSongBeat > fEndBeat )	// if this HoldNote is in the past
 		{
-			// this implies that hss.m_fLife > 0, or else we would have marked it NG above
-			hss.m_fLife = 1;
-			hss.m_Result = HSR_OK;
-			int iCol = m_Style.TapStepToColumnNumber( hs.m_TapStep );
-			m_HoldJudgement[iCol].SetHoldJudgement( HSR_OK );
-			m_ColorArrowField.SetHoldStepLife( i, hss.m_fLife );	// update the ColorArrowField display
+			// this implies that hns.m_fLife > 0, or else we would have marked it NG above
+			hns.m_fLife = 1;
+			hns.m_Result = HNR_OK;
+			int iCol = m_Style.TapNoteToColumnNumber( hn.m_TapNote );
+			m_HoldJudgement[iCol].SetHoldJudgement( HNR_OK );
+			m_ColorArrowField.SetHoldNoteLife( i, hns.m_fLife );	// update the ColorArrowField display
 		}
 	}
 
@@ -249,12 +248,12 @@ void Player::RenderPrimitives()
 
 bool Player::IsThereANoteAtIndex( int iIndex )
 {
-	if( m_TapStepsOriginal[iIndex] != STEP_NONE )
+	if( m_TapNotesOriginal[iIndex] != NOTE_NONE )
 		return true;
 
-	for( int i=0; i<m_iNumHoldSteps; i++ )	// for each HoldStep
+	for( int i=0; i<m_iNumHoldNotes; i++ )	// for each HoldNote
 	{
-		if( m_HoldSteps[i].m_iStartIndex == iIndex )
+		if( m_HoldNotes[i].m_iStartIndex == iIndex )
 			return true;
 	}
 
@@ -264,12 +263,12 @@ bool Player::IsThereANoteAtIndex( int iIndex )
 
 
 
-void Player::HandlePlayerStep( float fSongBeat, TapStep player_step, float fMaxBeatDiff )
+void Player::HandlePlayerStep( float fSongBeat, TapNote player_step, float fMaxBeatDiff )
 {
 	//RageLog( "Player::HandlePlayerStep()" );
 
-	int iColumnNum = m_Style.TapStepToColumnNumber( player_step );
-	if( iColumnNum == -1 )	// if this TapStep is not used in the current Style
+	int iColumnNum = m_Style.TapNoteToColumnNumber( player_step );
+	if( iColumnNum == -1 )	// if this TapNote is not used in the current StyleDef
 		return;		// ignore the step
 
 	m_GrayArrows.Step( iColumnNum );
@@ -277,37 +276,37 @@ void Player::HandlePlayerStep( float fSongBeat, TapStep player_step, float fMaxB
 	CheckForCompleteStep( fSongBeat, player_step, fMaxBeatDiff );
 
 	//
-	// check if we stepped on the TapStep part of a HoldStep
+	// check if we stepped on the TapNote part of a HoldNote
 	//
-	for( int i=0; i<m_iNumHoldSteps; i++ )	// for each HoldStep
+	for( int i=0; i<m_iNumHoldNotes; i++ )	// for each HoldNote
 	{
-		HoldStep& hs		= m_HoldSteps[i];
-		HoldStepScore& hss	= m_HoldStepScores[i];
+		HoldNote& hn		= m_HoldNotes[i];
+		HoldNoteScore& hns	= m_HoldNoteScores[i];
 
-		if( hss.m_Result != HSR_NONE )	// if this note already has a score
+		if( hns.m_Result != HNR_NONE )	// if this note already has a score
 			continue;	// we don't need to update its logic
 
-		if( hss.m_TapStepScore != TSS_NONE )	// the TapStep already has a score
+		if( hns.m_TapNoteScore != TNS_NONE )	// the TapNote already has a score
 			continue;	// no need to continue;
 			
-		if( player_step == m_HoldSteps[i].m_TapStep ) // the player's step is the same as this HoldStep
+		if( player_step == m_HoldNotes[i].m_TapNote ) // the player's step is the same as this HoldNote
 		{
-			float fBeatDifference = fabsf( StepIndexToBeat(hs.m_iStartIndex) - fSongBeat );
+			float fBeatDifference = fabsf( NoteIndexToBeat(hn.m_iStartIndex) - fSongBeat );
 			
 			if( fBeatDifference <= fMaxBeatDiff )
 			{
-				float fBeatsUntilStep = StepIndexToBeat( (float)hs.m_iStartIndex ) - fSongBeat;
+				float fBeatsUntilStep = NoteIndexToBeat( (float)hn.m_iStartIndex ) - fSongBeat;
 				float fPercentFromPerfect = fabsf( fBeatsUntilStep / fMaxBeatDiff );
 
 				//RageLog( "fBeatsUntilStep: %f, fPercentFromPerfect: %f", 
 				//		 fBeatsUntilStep, fPercentFromPerfect );
 
 				// compute what the score should be for the note we stepped on
-				TapStepScore &score = hss.m_TapStepScore;
-				if(		 fPercentFromPerfect < 0.25f )	score = TSS_PERFECT;
-				else if( fPercentFromPerfect < 0.50f )	score = TSS_GREAT;
-				else if( fPercentFromPerfect < 0.75f )	score = TSS_GOOD;
-				else									score = TSS_BOO;
+				TapNoteScore &score = hns.m_TapNoteScore;
+				if(		 fPercentFromPerfect < 0.25f )	score = TNS_PERFECT;
+				else if( fPercentFromPerfect < 0.50f )	score = TNS_GREAT;
+				else if( fPercentFromPerfect < 0.75f )	score = TNS_GOOD;
+				else									score = TNS_BOO;
 
 				// update the judgement, score, and life
 				m_Judgement.SetJudgement( score );
@@ -315,18 +314,18 @@ void Player::HandlePlayerStep( float fSongBeat, TapStep player_step, float fMaxB
 				m_LifeMeter.ChangeLife( score );
 
 				// show the gray arrow ghost
-				int iColNum = m_Style.TapStepToColumnNumber( player_step );
-				m_GhostArrows.TapStep( iColNum, score, m_Combo.GetCurrentCombo() > 100 );
+				int iColNum = m_Style.TapNoteToColumnNumber( player_step );
+				m_GhostArrows.TapNote( iColNum, score, m_Combo.GetCurrentCombo() > 100 );
 
 				// update the combo display
 				switch( score )
 				{
-				case TSS_PERFECT:
-				case TSS_GREAT:
+				case TNS_PERFECT:
+				case TNS_GREAT:
 					m_Combo.ContinueCombo();
 					break;
-				case TSS_GOOD:
-				case TSS_BOO:
+				case TNS_GOOD:
+				case TNS_BOO:
 					m_Combo.EndCombo();
 					break;
 				}
@@ -339,13 +338,13 @@ void Player::HandlePlayerStep( float fSongBeat, TapStep player_step, float fMaxB
 }
 
 
-void Player::CheckForCompleteStep( float fSongBeat, TapStep player_step, float fMaxBeatDiff )
+void Player::CheckForCompleteStep( float fSongBeat, TapNote player_step, float fMaxBeatDiff )
 {
 	//RageLog( "Player::CheckForCompleteStep()" );
 
 	// look for the closest matching step
-	int iIndexStartLookingAt = BeatToStepIndex( fSongBeat );
-	int iNumElementsToExamine = BeatToStepIndex( fMaxBeatDiff );	// number of elements to examine on either end of iIndexStartLookingAt
+	int iIndexStartLookingAt = BeatToNoteIndex( fSongBeat );
+	int iNumElementsToExamine = BeatToNoteIndex( fMaxBeatDiff );	// number of elements to examine on either end of iIndexStartLookingAt
 	
 	//RageLog( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
 
@@ -356,17 +355,17 @@ void Player::CheckForCompleteStep( float fSongBeat, TapStep player_step, float f
 		int iCurrentIndexLater   = iIndexStartLookingAt + delta;
 
 		// silly check to make sure we don't go out of bounds
-		iCurrentIndexEarlier	= clamp( iCurrentIndexEarlier, 0, MAX_TAP_STEP_ELEMENTS-1 );
-		iCurrentIndexLater		= clamp( iCurrentIndexLater,   0, MAX_TAP_STEP_ELEMENTS-1 );
+		iCurrentIndexEarlier	= clamp( iCurrentIndexEarlier, 0, MAX_TAP_NOTE_ELEMENTS-1 );
+		iCurrentIndexLater		= clamp( iCurrentIndexLater,   0, MAX_TAP_NOTE_ELEMENTS-1 );
 
 		////////////////////////////
 		// check the step to the left of iIndexStartLookingAt
 		////////////////////////////
-		//RageLog( "Checking steps[%d]", iCurrentIndexEarlier );
-		if( m_TapStepsRemaining[iCurrentIndexEarlier] & player_step )	// these steps overlap
+		//RageLog( "Checking Pattern[%d]", iCurrentIndexEarlier );
+		if( m_TapNotesRemaining[iCurrentIndexEarlier] & player_step )	// these Pattern overlap
 		{
-			m_TapStepsRemaining[iCurrentIndexEarlier] &= ~player_step;	// subtract player_step
-			if( m_TapStepsRemaining[iCurrentIndexEarlier] == 0 )	{		// did this complete the step?
+			m_TapNotesRemaining[iCurrentIndexEarlier] &= ~player_step;	// subtract player_step
+			if( m_TapNotesRemaining[iCurrentIndexEarlier] == 0 )	{		// did this complete the step?
 				OnCompleteStep( fSongBeat, player_step, fMaxBeatDiff, iCurrentIndexEarlier );
 				return;
 			}
@@ -375,11 +374,11 @@ void Player::CheckForCompleteStep( float fSongBeat, TapStep player_step, float f
 		////////////////////////////
 		// check the step to the right of iIndexStartLookingAt
 		////////////////////////////
-		//RageLog( "Checking steps[%d]", iCurrentIndexLater );
-		if( m_TapStepsRemaining[iCurrentIndexLater] & player_step )		// these steps overlap
+		//RageLog( "Checking Pattern[%d]", iCurrentIndexLater );
+		if( m_TapNotesRemaining[iCurrentIndexLater] & player_step )		// these Pattern overlap
 		{
-			m_TapStepsRemaining[iCurrentIndexLater] &= ~player_step;		// subtract player_step
-			if( m_TapStepsRemaining[iCurrentIndexLater] == 0 ) {			// did this complete the step?
+			m_TapNotesRemaining[iCurrentIndexLater] &= ~player_step;		// subtract player_step
+			if( m_TapNotesRemaining[iCurrentIndexLater] == 0 ) {			// did this complete the step?
 				OnCompleteStep( fSongBeat, player_step, fMaxBeatDiff, iCurrentIndexLater );
 				return;
 			}
@@ -387,9 +386,9 @@ void Player::CheckForCompleteStep( float fSongBeat, TapStep player_step, float f
 	}
 }
 
-void Player::OnCompleteStep( float fSongBeat, TapStep player_step, float fMaxBeatDiff, int iIndexThatWasSteppedOn )
+void Player::OnCompleteStep( float fSongBeat, TapNote player_step, float fMaxBeatDiff, int iIndexThatWasSteppedOn )
 {
-	float fStepBeat = StepIndexToBeat( (float)iIndexThatWasSteppedOn );
+	float fStepBeat = NoteIndexToBeat( (float)iIndexThatWasSteppedOn );
 
  
 	float fBeatsUntilStep = fStepBeat - fSongBeat;
@@ -399,12 +398,12 @@ void Player::OnCompleteStep( float fSongBeat, TapStep player_step, float fMaxBea
 	//		 fBeatsUntilStep, fPercentFromPerfect );
 
 	// compute what the score should be for the note we stepped on
-	TapStepScore &score = m_TapStepScores[iIndexThatWasSteppedOn];
+	TapNoteScore &score = m_TapNoteScores[iIndexThatWasSteppedOn];
 
-	if(		 fPercentFromPerfect < 0.25f )	score = TSS_PERFECT;
-	else if( fPercentFromPerfect < 0.50f )	score = TSS_GREAT;
-	else if( fPercentFromPerfect < 0.75f )	score = TSS_GOOD;
-	else									score = TSS_BOO;
+	if(		 fPercentFromPerfect < 0.25f )	score = TNS_PERFECT;
+	else if( fPercentFromPerfect < 0.50f )	score = TNS_GREAT;
+	else if( fPercentFromPerfect < 0.75f )	score = TNS_GOOD;
+	else									score = TNS_BOO;
 
 	// update the judgement, score, and life
 	m_Judgement.SetJudgement( score );
@@ -413,24 +412,24 @@ void Player::OnCompleteStep( float fSongBeat, TapStep player_step, float fMaxBea
 
 
 	// remove this row from the ColorArrowField
-	m_ColorArrowField.RemoveTapStepRow( iIndexThatWasSteppedOn );
+	m_ColorArrowField.RemoveTapNoteRow( iIndexThatWasSteppedOn );
 
 	// check to see if this completes a row of notes
 	for( int c=0; c<m_Style.m_iNumColumns; c++ )	// for each column
 	{
-		if( m_TapStepsOriginal[iIndexThatWasSteppedOn] & m_Style.m_ColumnToTapStep[c] )	// if this colum was part of the original step
-			m_GhostArrows.TapStep( c, score, m_Combo.GetCurrentCombo()>100 );	// show the ghost arrow for this column
+		if( m_TapNotesOriginal[iIndexThatWasSteppedOn] & m_Style.m_ColumnToTapNote[c] )	// if this colum was part of the original step
+			m_GhostArrows.TapNote( c, score, m_Combo.GetCurrentCombo()>100 );	// show the ghost arrow for this column
 	}
 
 	// update the combo display
 	switch( score )
 	{
-	case TSS_PERFECT:
-	case TSS_GREAT:
+	case TNS_PERFECT:
+	case TNS_GREAT:
 		m_Combo.ContinueCombo();
 		break;
-	case TSS_GOOD:
-	case TSS_BOO:
+	case TNS_GOOD:
+	case TNS_BOO:
 		m_Combo.EndCombo();
 		break;
 	}
@@ -441,36 +440,36 @@ ScoreSummary Player::GetScoreSummary()
 {
 	ScoreSummary scoreSummary;
 
-	for( int i=0; i<MAX_TAP_STEP_ELEMENTS; i++ ) 
+	for( int i=0; i<MAX_TAP_NOTE_ELEMENTS; i++ ) 
 	{
-		switch( m_TapStepScores[i] )
+		switch( m_TapNoteScores[i] )
 		{
-		case TSS_PERFECT:	scoreSummary.perfect++;		break;
-		case TSS_GREAT:		scoreSummary.great++;		break;
-		case TSS_GOOD:		scoreSummary.good++;		break;
-		case TSS_BOO:		scoreSummary.boo++;			break;
-		case TSS_MISS:		scoreSummary.miss++;		break;
-		case TSS_NONE:									break;
+		case TNS_PERFECT:	scoreSummary.perfect++;		break;
+		case TNS_GREAT:		scoreSummary.great++;		break;
+		case TNS_GOOD:		scoreSummary.good++;		break;
+		case TNS_BOO:		scoreSummary.boo++;			break;
+		case TNS_MISS:		scoreSummary.miss++;		break;
+		case TNS_NONE:									break;
 		default:		ASSERT( false );
 		}
 	}
-	for( i=0; i<m_iNumHoldSteps; i++ ) 
+	for( i=0; i<m_iNumHoldNotes; i++ ) 
 	{
-		switch( m_HoldStepScores[i].m_TapStepScore )
+		switch( m_HoldNoteScores[i].m_TapNoteScore )
 		{
-		case TSS_PERFECT:	scoreSummary.perfect++;		break;
-		case TSS_GREAT:		scoreSummary.great++;		break;
-		case TSS_GOOD:		scoreSummary.good++;		break;
-		case TSS_BOO:		scoreSummary.boo++;			break;
-		case TSS_MISS:		scoreSummary.miss++;		break;
-		case TSS_NONE:									break;
+		case TNS_PERFECT:	scoreSummary.perfect++;		break;
+		case TNS_GREAT:		scoreSummary.great++;		break;
+		case TNS_GOOD:		scoreSummary.good++;		break;
+		case TNS_BOO:		scoreSummary.boo++;			break;
+		case TNS_MISS:		scoreSummary.miss++;		break;
+		case TNS_NONE:									break;
 		default:		ASSERT( false );
 		}
-		switch( m_HoldStepScores[i].m_Result )
+		switch( m_HoldNoteScores[i].m_Result )
 		{
-		case HSR_NG:		scoreSummary.ng++;		break;
-		case HSR_OK:		scoreSummary.ok++;		break;
-		case HSR_NONE:								break;
+		case HNR_NG:		scoreSummary.ng++;		break;
+		case HNR_OK:		scoreSummary.ok++;		break;
+		case HNR_NONE:								break;
 		default:		ASSERT( false );
 		}
 	}
@@ -483,9 +482,9 @@ ScoreSummary Player::GetScoreSummary()
 
 int Player::UpdateStepsMissedOlderThan( float fMissIfOlderThanThisBeat )
 {
-	//RageLog( "Steps::UpdateStepsMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
+	//RageLog( "Pattern::UpdateStepsMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
 
-	int iMissIfOlderThanThisIndex = BeatToStepIndex( fMissIfOlderThanThisBeat );
+	int iMissIfOlderThanThisIndex = BeatToNoteIndex( fMissIfOlderThanThisBeat );
 
 	int iNumMissesFound = 0;
 	// Since this is being called frame, let's not check the whole array every time.
@@ -496,11 +495,11 @@ int Player::UpdateStepsMissedOlderThan( float fMissIfOlderThanThisBeat )
 	for( int i=iStartCheckingAt; i<iMissIfOlderThanThisIndex; i++ )
 	{
 		//RageLog( "Checking for miss:  %d: lefttostepon == %d, score == %d", i, m_LeftToStepOn[i], m_StepScore[i] );
-		if( m_TapStepsRemaining[i] != 0  &&  m_TapStepScores[i] != TSS_MISS )
+		if( m_TapNotesRemaining[i] != 0  &&  m_TapNoteScores[i] != TNS_MISS )
 		{
-			m_TapStepScores[i] = TSS_MISS;
+			m_TapNoteScores[i] = TNS_MISS;
 			iNumMissesFound++;
-			m_LifeMeter.ChangeLife( TSS_MISS );
+			m_LifeMeter.ChangeLife( TNS_MISS );
 		}
 	}
 

@@ -44,23 +44,23 @@ void Judgement::RenderPrimitives()
 }
 
 
-void Judgement::SetJudgement( TapStepScore score )
+void Judgement::SetJudgement( TapNoteScore score )
 {
 	//RageLog( "Judgement::SetJudgement()" );
 
 	switch( score )
 	{
-	case TSS_PERFECT:	m_sprJudgement.SetState( 0 );	break;
-	case TSS_GREAT:		m_sprJudgement.SetState( 1 );	break;
-	case TSS_GOOD:		m_sprJudgement.SetState( 2 );	break;
-	case TSS_BOO:		m_sprJudgement.SetState( 3 );	break;
-	case TSS_MISS:		m_sprJudgement.SetState( 4 );	break;
+	case TNS_PERFECT:	m_sprJudgement.SetState( 0 );	break;
+	case TNS_GREAT:		m_sprJudgement.SetState( 1 );	break;
+	case TNS_GOOD:		m_sprJudgement.SetState( 2 );	break;
+	case TNS_BOO:		m_sprJudgement.SetState( 3 );	break;
+	case TNS_MISS:		m_sprJudgement.SetState( 4 );	break;
 	default:	ASSERT( false );
 	}
 
 	m_fDisplayCountdown = JUDGEMENT_DISPLAY_TIME;
 
-	if( score == TSS_MISS )
+	if( score == TNS_MISS )
 	{
 		// falling down
 		m_sprJudgement.SetY( -30 );

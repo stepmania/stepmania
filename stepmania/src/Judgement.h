@@ -24,7 +24,7 @@ class Judgement : public ActorFrame
 {
 public:
 	Judgement();
-	void SetJudgement( TapStepScore score );
+	void SetJudgement( TapNoteScore score );
 	virtual void Update( float fDeltaTime );
 	virtual void RenderPrimitives();
 

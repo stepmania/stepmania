@@ -93,12 +93,12 @@ void ScoreDisplayRolling::Draw()
 
 
 
-void ScoreDisplayRolling::AddToScore( TapStepScore stepscore, int iCurCombo )
+void ScoreDisplayRolling::AddToScore( TapNoteScore score, int iCurCombo )
 {
 	// The scoring system for DDR versions 1 and 2 (including the Plus remixes) is as follows: 
 	// For every step: 
 	//
-	// Multiplier (M) = (# of steps in your current combo / 4) rounded down 
+	// Multiplier (M) = (# of Pattern in your current combo / 4) rounded down 
 	// "Good" step = M * 100 (and this ends your combo)
 	// "Great" step = M * M * 100 
 	// "Perfect" step = M * M * 300 
@@ -117,17 +117,59 @@ void ScoreDisplayRolling::AddToScore( TapStepScore stepscore, int iCurCombo )
 	float M = iCurCombo/4.0f;
 
 	float fScoreToAdd = 0;
-	switch( stepscore )
+	switch( score )
 	{
-	case TSS_MISS:											break;
-	case TSS_BOO:											break;
-	case TSS_GOOD:		fScoreToAdd =     M * 100 + 100;	break;
-	case TSS_GREAT:		fScoreToAdd = M * M * 100 + 300;	break;
-	case TSS_PERFECT:	fScoreToAdd = M * M * 300 + 500;	break;
+	case TNS_MISS:											break;
+	case TNS_BOO:											break;
+	case TNS_GOOD:		fScoreToAdd =     M * 100 + 100;	break;
+	case TNS_GREAT:		fScoreToAdd = M * M * 100 + 300;	break;
+	case TNS_PERFECT:	fScoreToAdd = M * M * 300 + 500;	break;
 	}
 	m_fScore += fScoreToAdd;
 	ASSERT( m_fScore >= 0 );
 
 	
+ /* Score implementation by Chris Gomez, February 6th, 2002  The 
+ scoring system for 5th mix is much more complicated than the original 
+ scoring system.  We don't have bonuses yet, so they're not included in 
+ this code.  Max score is (feet + 1) * 5,000,000.  Scores are clamped 
+ to integers; this is fixed on the last step (if it's perfect)
+
+  The base step value is the max score divided by 10, divided by 
+ one-half of the max combo  squared plus the max combo. This value is 
+ multiplied by 10 for a perfect or 5 for a great,  and further 
+ multiplied by the number of Pattern currently in the combo. */ 
+/*
+	int iScoreToAdd = 0; int iBonus = 0;
+
+ Pattern *pSteps = GAMEINFO->m_pStepsPlayer[m_PlayerNumber];
+ int iNumFeet = pSteps->m_iNumFeet;
+ int iMaxCombo = pSteps->GetNumSteps();
+
+ int iScoreMax = (iNumFeet + 1) * 5000000; //magic numbers. int 
+ iBaseScore = (iScoreMax / 10) / ((iMaxCombo * (iMaxCombo + 1)) / 2);
+
+ iCurCombo++; // looks like the current combo counter starts at 0 when 
+ iCurCombo++it should start at 1
+     // this was messing with the scoring, so it had to be fixed.
+
+ switch (score)
+ {
+ case miss:
+ case boo:
+ case good:
+  break;
+ case great:
+  iScoreToAdd = 5 * iBaseScore * iCurCombo;
+  break;
+ case perfect:
+  iScoreToAdd = 10 * iBaseScore * iCurCombo;
+  if(BeatToStepIndex(pSteps->GetLastBeat()) == iMaxCombo)
+   for(int i = 1; i <= iMaxCombo; i++)
+    iBonus += 10 * iBaseScore * i;
+  iScoreToAdd += iBonus;
+  break;
+ }
+*/
 	this->SetScore( m_fScore );
 }

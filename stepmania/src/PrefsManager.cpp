@@ -12,6 +12,7 @@
 
 #include "PrefsManager.h"
 #include "IniFile.h"
+#include "GameManager.h"
 
 
 PrefsManager*	PREFS = NULL;	// global and accessable from anywhere in our program
@@ -21,10 +22,8 @@ PrefsManager*	PREFS = NULL;	// global and accessable from anywhere in our progra
 
 PrefsManager::PrefsManager()
 {
-	m_GameMode = MODE_SINGLE;
 	m_SongSortOrder = SORT_GROUP;
 	m_iCurrentStage = 1;
-	m_ThemeName = "default";
 
 	ReadPrefsFromDisk();
 	SetHardCodedButtons();
@@ -275,27 +274,27 @@ bool PrefsManager::PadToDevice( PadInput pi, int iSoltNum, DeviceInput& di )	// 
 void PrefsManager::PadToPlayer( PadInput PadI, PlayerInput &PlayerI )
 {
 	PlayerI.player_no = PLAYER_NONE;
-	PlayerI.step = STEP_NONE;
+	PlayerI.note = NOTE_NONE;
 
-	switch( m_GameMode )
+	switch( GAME->m_DanceStyle )
 	{
-	case MODE_SINGLE:
-	case MODE_SOLO:
+	case STYLE_SINGLE:
+	case STYLE_SOLO:
 		if( PadI.pad_no == PAD_1 )
 			PlayerI.player_no = PLAYER_1;
 		else
 			PlayerI.player_no = PLAYER_NONE;
 		
-		if ( PadI.button == BUTTON_LEFT )		PlayerI.step |= STEP_PAD1_LEFT;
-		if ( PadI.button == BUTTON_UPLEFT )		PlayerI.step |= STEP_PAD1_UPLEFT;
-		if ( PadI.button == BUTTON_DOWN )		PlayerI.step |= STEP_PAD1_DOWN;
-		if ( PadI.button == BUTTON_UP )			PlayerI.step |= STEP_PAD1_UP;
-		if ( PadI.button == BUTTON_UPRIGHT )	PlayerI.step |= STEP_PAD1_UPRIGHT;
-		if ( PadI.button == BUTTON_RIGHT )		PlayerI.step |= STEP_PAD1_RIGHT;
+		if ( PadI.button == BUTTON_LEFT )		PlayerI.note |= NOTE_PAD1_LEFT;
+		if ( PadI.button == BUTTON_UPLEFT )		PlayerI.note |= NOTE_PAD1_UPLEFT;
+		if ( PadI.button == BUTTON_DOWN )		PlayerI.note |= NOTE_PAD1_DOWN;
+		if ( PadI.button == BUTTON_UP )			PlayerI.note |= NOTE_PAD1_UP;
+		if ( PadI.button == BUTTON_UPRIGHT )	PlayerI.note |= NOTE_PAD1_UPRIGHT;
+		if ( PadI.button == BUTTON_RIGHT )		PlayerI.note |= NOTE_PAD1_RIGHT;
 	
 		break;
-	case MODE_VERSUS:
-	case MODE_COUPLE:
+	case STYLE_VERSUS:
+	case STYLE_COUPLE:
 		if( PadI.pad_no == PAD_1 )
 			PlayerI.player_no = PLAYER_1;
 		else if( PadI.pad_no == PAD_2 )
@@ -303,31 +302,31 @@ void PrefsManager::PadToPlayer( PadInput PadI, PlayerInput &PlayerI )
 		else
 			PlayerI.player_no = PLAYER_NONE;
 
-		if ( PadI.button == BUTTON_LEFT )		PlayerI.step |= STEP_PAD1_LEFT;
-		if ( PadI.button == BUTTON_UPLEFT )		PlayerI.step |= STEP_PAD1_UPLEFT;
-		if ( PadI.button == BUTTON_DOWN )		PlayerI.step |= STEP_PAD1_DOWN;
-		if ( PadI.button == BUTTON_UP )			PlayerI.step |= STEP_PAD1_UP;
-		if ( PadI.button == BUTTON_UPRIGHT )	PlayerI.step |= STEP_PAD1_UPRIGHT;
-		if ( PadI.button == BUTTON_RIGHT )		PlayerI.step |= STEP_PAD1_RIGHT;
+		if ( PadI.button == BUTTON_LEFT )		PlayerI.note |= NOTE_PAD1_LEFT;
+		if ( PadI.button == BUTTON_UPLEFT )		PlayerI.note |= NOTE_PAD1_UPLEFT;
+		if ( PadI.button == BUTTON_DOWN )		PlayerI.note |= NOTE_PAD1_DOWN;
+		if ( PadI.button == BUTTON_UP )			PlayerI.note |= NOTE_PAD1_UP;
+		if ( PadI.button == BUTTON_UPRIGHT )	PlayerI.note |= NOTE_PAD1_UPRIGHT;
+		if ( PadI.button == BUTTON_RIGHT )		PlayerI.note |= NOTE_PAD1_RIGHT;
 		
 		break;
-	case MODE_DOUBLE:
+	case STYLE_DOUBLE:
 
 		switch( PadI.pad_no )
 		{
 		case PAD_1:	
 			PlayerI.player_no = PLAYER_1;
-			if ( PadI.button == BUTTON_LEFT )	PlayerI.step |= STEP_PAD1_LEFT;
-			if ( PadI.button == BUTTON_DOWN )	PlayerI.step |= STEP_PAD1_DOWN;
-			if ( PadI.button == BUTTON_UP )		PlayerI.step |= STEP_PAD1_UP;
-			if ( PadI.button == BUTTON_RIGHT )	PlayerI.step |= STEP_PAD1_RIGHT;
+			if ( PadI.button == BUTTON_LEFT )	PlayerI.note |= NOTE_PAD1_LEFT;
+			if ( PadI.button == BUTTON_DOWN )	PlayerI.note |= NOTE_PAD1_DOWN;
+			if ( PadI.button == BUTTON_UP )		PlayerI.note |= NOTE_PAD1_UP;
+			if ( PadI.button == BUTTON_RIGHT )	PlayerI.note |= NOTE_PAD1_RIGHT;
 			break;
 		case PAD_2:	
 			PlayerI.player_no = PLAYER_1;
-			if ( PadI.button == BUTTON_LEFT )	PlayerI.step |= STEP_PAD2_LEFT;
-			if ( PadI.button == BUTTON_DOWN )	PlayerI.step |= STEP_PAD2_DOWN;
-			if ( PadI.button == BUTTON_UP )		PlayerI.step |= STEP_PAD2_UP;
-			if ( PadI.button == BUTTON_RIGHT )	PlayerI.step |= STEP_PAD2_RIGHT;
+			if ( PadI.button == BUTTON_LEFT )	PlayerI.note |= NOTE_PAD2_LEFT;
+			if ( PadI.button == BUTTON_DOWN )	PlayerI.note |= NOTE_PAD2_DOWN;
+			if ( PadI.button == BUTTON_UP )		PlayerI.note |= NOTE_PAD2_UP;
+			if ( PadI.button == BUTTON_RIGHT )	PlayerI.note |= NOTE_PAD2_RIGHT;
 			break;
 		case PAD_NONE:
 			PlayerI.player_no = PLAYER_NONE;
@@ -336,7 +335,7 @@ void PrefsManager::PadToPlayer( PadInput PadI, PlayerInput &PlayerI )
 
 		break;
 	default:
-		ASSERT( false );		// invalid GameMode
+		ASSERT( false );		// invalid DanceStyle
 	}
 }
 
@@ -345,38 +344,38 @@ void PrefsManager::PlayerToPad(  PlayerInput PlayerI, PadInput &PadI )
 	PadI.pad_no = PAD_NONE;
 	PadI.button = BUTTON_NONE;
 
-	switch( m_GameMode )
+	switch( GAME->m_DanceStyle )
 	{
-	case MODE_SINGLE:
-	case MODE_SOLO:
-	case MODE_VERSUS:
-	case MODE_COUPLE:
+	case STYLE_SINGLE:
+	case STYLE_SOLO:
+	case STYLE_VERSUS:
+	case STYLE_COUPLE:
 		PadI.pad_no = (PadNumber)PlayerI.player_no;
 		
-		if ( PlayerI.step == STEP_PAD1_LEFT )		PadI.button = BUTTON_LEFT;
-		if ( PlayerI.step == STEP_PAD1_UPLEFT )		PadI.button = BUTTON_UPLEFT;
-		if ( PlayerI.step == STEP_PAD1_DOWN )		PadI.button = BUTTON_DOWN;
-		if ( PlayerI.step == STEP_PAD1_UP )			PadI.button = BUTTON_UP;
-		if ( PlayerI.step == STEP_PAD1_UPRIGHT )	PadI.button = BUTTON_UPRIGHT;
-		if ( PlayerI.step == STEP_PAD1_RIGHT )		PadI.button = BUTTON_RIGHT;
+		if ( PlayerI.note == NOTE_PAD1_LEFT )		PadI.button = BUTTON_LEFT;
+		if ( PlayerI.note == NOTE_PAD1_UPLEFT )		PadI.button = BUTTON_UPLEFT;
+		if ( PlayerI.note == NOTE_PAD1_DOWN )		PadI.button = BUTTON_DOWN;
+		if ( PlayerI.note == NOTE_PAD1_UP )			PadI.button = BUTTON_UP;
+		if ( PlayerI.note == NOTE_PAD1_UPRIGHT )	PadI.button = BUTTON_UPRIGHT;
+		if ( PlayerI.note == NOTE_PAD1_RIGHT )		PadI.button = BUTTON_RIGHT;
 	
 		break;
-	case MODE_DOUBLE:
-		switch( PlayerI.step )
+	case STYLE_DOUBLE:
+		switch( PlayerI.note )
 		{
-		case STEP_PAD1_LEFT:	PadI.pad_no = PAD_1; PadI.button = BUTTON_LEFT;		break; 	
-		case STEP_PAD1_DOWN:	PadI.pad_no = PAD_1; PadI.button = BUTTON_DOWN;		break; 	
-		case STEP_PAD1_UP:		PadI.pad_no = PAD_1; PadI.button = BUTTON_UP;		break; 	
-		case STEP_PAD1_RIGHT:	PadI.pad_no = PAD_1; PadI.button = BUTTON_RIGHT;	break; 	
-		case STEP_PAD2_LEFT:	PadI.pad_no = PAD_2; PadI.button = BUTTON_LEFT;		break; 	
-		case STEP_PAD2_DOWN:	PadI.pad_no = PAD_2; PadI.button = BUTTON_DOWN;		break; 	
-		case STEP_PAD2_UP:		PadI.pad_no = PAD_2; PadI.button = BUTTON_UP;		break; 	
-		case STEP_PAD2_RIGHT:	PadI.pad_no = PAD_2; PadI.button = BUTTON_RIGHT;	break; 	
+		case NOTE_PAD1_LEFT:	PadI.pad_no = PAD_1; PadI.button = BUTTON_LEFT;		break; 	
+		case NOTE_PAD1_DOWN:	PadI.pad_no = PAD_1; PadI.button = BUTTON_DOWN;		break; 	
+		case NOTE_PAD1_UP:		PadI.pad_no = PAD_1; PadI.button = BUTTON_UP;		break; 	
+		case NOTE_PAD1_RIGHT:	PadI.pad_no = PAD_1; PadI.button = BUTTON_RIGHT;	break; 	
+		case NOTE_PAD2_LEFT:	PadI.pad_no = PAD_2; PadI.button = BUTTON_LEFT;		break; 	
+		case NOTE_PAD2_DOWN:	PadI.pad_no = PAD_2; PadI.button = BUTTON_DOWN;		break; 	
+		case NOTE_PAD2_UP:		PadI.pad_no = PAD_2; PadI.button = BUTTON_UP;		break; 	
+		case NOTE_PAD2_RIGHT:	PadI.pad_no = PAD_2; PadI.button = BUTTON_RIGHT;	break; 	
 		}
 
 		break;
 	default:
-		ASSERT( false );		// invalid GameMode
+		ASSERT( false );		// invalid DanceStyle
 	}
 }
 
