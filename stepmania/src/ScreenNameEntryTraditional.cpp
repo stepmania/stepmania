@@ -36,7 +36,7 @@
 #define NUM_ALPHABET_DISPLAYED		THEME->GetMetricI(m_sName,"NumAlphabetDisplayed")
 #define MAX_RANKING_NAME_LENGTH		THEME->GetMetricI(m_sName,"MaxRankingNameLength")
 #define FEAT_INTERVAL				THEME->GetMetricF(m_sName,"FeatInterval")
-#define NAME_CHARS					THEME->GetMetric (m_sName,"NameChars")
+#define KEYBOARD_LETTERS					THEME->GetMetric (m_sName,"KeyboardLetters")
 
 #define COMMAND_OPTIONAL( actor, command_name ) \
 	if( !actor.GetName().empty() ) \
@@ -139,7 +139,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 
 		/* Add letters to m_Keyboard. */
 		const CString fontpath = THEME->GetPathToF("ScreenNameEntryTraditional letters");
-		const wstring Chars = CStringToWstring(NAME_CHARS);
+		const wstring Chars = CStringToWstring(KEYBOARD_LETTERS);
 		for( unsigned ch = 0; ch < Chars.size(); ++ch )
 		{
 			BitmapText *Letter = new BitmapText;
