@@ -67,6 +67,30 @@ static void EmergencyShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 #endif
 }
 	
+#if defined(HAVE_TLS)
+static thread_local int g_iTestTLS = 0;
+
+static int TestTLSThread( void *p )
+{
+	g_iTestTLS = 2;
+	return 0;
+}
+
+static void TestTLS()
+{
+	/* TLS won't work on older Linux kernels.  Do a simple check. */
+	g_iTestTLS = 1;
+
+	RageThread TestThread;
+	TestThread.SetName( "TestTLS" );
+	TestThread.Create( TestTLSThread, NULL );
+	TestThread.Wait();
+
+	if( g_iTestTLS == 1 )
+		RageThread::SetSupportsTLS( true );
+}
+#endif
+
 ArchHooks_Unix::ArchHooks_Unix()
 {
 	/* First, handle non-fatal termination signals. */
@@ -81,6 +105,10 @@ ArchHooks_Unix::ArchHooks_Unix()
 	/* Set up EmergencyShutdown, to try to shut down the window if we crash.
 	 * This might blow up, so be sure to do it after the crash handler. */
 	SignalHandler::OnClose( EmergencyShutdown );
+
+#if defined(HAVE_TLS)
+	TestTLS();
+#endif
 }
 
 #ifndef _CS_GNU_LIBC_VERSION
