@@ -532,6 +532,7 @@
 				AAADA52504E851EF00D02EE9,
 				AAABAD3C04F0E12B00D02EE9,
 				AAABAD4004F0E12B00D02EE9,
+				AAC28BBC04F758E500D02EE9,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -788,6 +789,7 @@
 				AAADA52104E77F4400D02EE9,
 				AAADA52404E851EF00D02EE9,
 				AAABAD3F04F0E12B00D02EE9,
+				AAC28BBB04F758E500D02EE9,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -830,7 +832,7 @@
 			buildRules = (
 			);
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -7260,6 +7262,8 @@
 				AA6EFF0404770F63005F316C,
 				AA6EFEFF04770F63005F316C,
 				AA6EFF0004770F63005F316C,
+				AAC28BB904F758E500D02EE9,
+				AAC28BBA04F758E500D02EE9,
 				AAE443E904B0F9F600D02EE9,
 				AAE443EA04B0F9F600D02EE9,
 				AAE443EB04B0F9F600D02EE9,
@@ -9219,6 +9223,32 @@
 		};
 		AAC23F830485E68D005F316C = {
 			fileRef = AAC23F7F0485E68D005F316C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAC28BB904F758E500D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = BeginnerHelper.cpp;
+			path = ../src/BeginnerHelper.cpp;
+			refType = 2;
+		};
+		AAC28BBA04F758E500D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = BeginnerHelper.h;
+			path = ../src/BeginnerHelper.h;
+			refType = 2;
+		};
+		AAC28BBB04F758E500D02EE9 = {
+			fileRef = AAC28BB904F758E500D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAC28BBC04F758E500D02EE9 = {
+			fileRef = AAC28BBA04F758E500D02EE9;
 			isa = PBXBuildFile;
 			settings = {
 			};
