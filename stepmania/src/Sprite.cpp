@@ -155,9 +155,9 @@ bool Sprite::LoadFromTexture( RageTextureID ID )
 	{
 		m_iStateToFrame[i] = i;
 		m_fDelay[i] = 0.1f;
-		m_iNumStates = i+1;
 	}
-		
+
+	m_iNumStates = m_pTexture->GetNumFrames();
 	return true;
 }
 
