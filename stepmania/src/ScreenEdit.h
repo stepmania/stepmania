@@ -162,7 +162,7 @@ protected:
 	float				m_fTrailingBeat;	// this approaches GAMESTATE->m_fSongBeat, which is the actual beat
 	/* The location we were at when shift was pressed, or
 	 * -1 when shift isn't pressed: */
-	float shiftAnchor;
+	float g_fShiftAnchor;
 
 	NoteData			m_Clipboard;
 
@@ -291,9 +291,9 @@ public:
 	void HandleBGChangeChoice( BGChangeChoice c, int* iAnswers );
 
 	void InitEditMappings();
-	bool DeviceToEdit( DeviceInput DeviceI, EditButton &button );
-	bool EditToDevice( EditButton button, int iSlotNum, DeviceInput &DeviceI );
-	bool EditIsBeingPressed( EditButton button );
+	bool DeviceToEdit( DeviceInput DeviceI, EditButton &button ) const;
+	bool EditToDevice( EditButton button, int iSlotNum, DeviceInput &DeviceI ) const;
+	bool EditIsBeingPressed( EditButton button ) const;
 	const MapEditToDI *GetCurrentMap() const;
 	MapEditToDI g_EditMappings, g_PlayMappings, g_RecordMappings;
 };

@@ -204,7 +204,7 @@ void ScreenEdit::InitEditMappings()
 #endif
 
 /* Given a DeviceInput that was just depressed, return an active edit function. */
-bool ScreenEdit::DeviceToEdit( DeviceInput DeviceI, EditButton &button )
+bool ScreenEdit::DeviceToEdit( DeviceInput DeviceI, EditButton &button ) const
 {
 	ASSERT( DeviceI.IsValid() );
 
@@ -250,7 +250,7 @@ bool ScreenEdit::DeviceToEdit( DeviceInput DeviceI, EditButton &button )
 	return false;
 }
 
-bool ScreenEdit::EditToDevice( EditButton button, int iSlotNum, DeviceInput &DeviceI )
+bool ScreenEdit::EditToDevice( EditButton button, int iSlotNum, DeviceInput &DeviceI ) const
 {
 	ASSERT( iSlotNum < NUM_EDIT_TO_DEVICE_SLOTS );
 	const MapEditToDI *pCurrentMap = GetCurrentMap();
@@ -258,7 +258,7 @@ bool ScreenEdit::EditToDevice( EditButton button, int iSlotNum, DeviceInput &Dev
 	return DeviceI.IsValid();
 }
 
-bool ScreenEdit::EditIsBeingPressed( EditButton button )
+bool ScreenEdit::EditIsBeingPressed( EditButton button ) const
 {
 	for( int slot = 0; slot < NUM_EDIT_TO_DEVICE_SLOTS; ++slot )
 	{
@@ -489,7 +489,7 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	GAMESTATE->ResetNoteSkins();
 	GAMESTATE->StoreSelectedOptions();
 
-	shiftAnchor = -1;
+	g_fShiftAnchor = -1;
 
 
 	m_SnapDisplay.SetXY( EDIT_X, PLAYER_Y_STANDARD );
@@ -552,9 +552,9 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	m_soundMarker.Load(		THEME->GetPathToS("ScreenEdit marker") );
 
 
-	m_soundMusic.Load(m_pSong->GetMusicPath());
+	m_soundMusic.Load( m_pSong->GetMusicPath() );
 
-	m_soundAssistTick.Load(		THEME->GetPathToS("ScreenEdit assist tick") );
+	m_soundAssistTick.Load( THEME->GetPathToS("ScreenEdit assist tick") );
 
 	this->HandleScreenMessage( SM_DoUpdateTextInfo );
 }
@@ -837,12 +837,12 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	if( type == IET_LEVEL_CHANGED )
 		return;		// don't care
 
-	if(type == IET_RELEASE)
+	if( type == IET_RELEASE )
 	{
-		switch( DeviceI.button ) {
-		case KEY_LSHIFT:
-		case KEY_RSHIFT:
-			shiftAnchor = -1;
+		switch( EditB )
+		{
+		case EDIT_BUTTON_SCROLL_SELECT:
+			g_fShiftAnchor = -1;
 			break;
 		}
 		return;
@@ -1008,17 +1008,17 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				 * If this is the first time we've moved since shift was depressed,
 				 * the old position (before this move) becomes the start pos: */
 
-				if(shiftAnchor == -1)
-					shiftAnchor = fStartBeat;
+				if( g_fShiftAnchor == -1 )
+					g_fShiftAnchor = fStartBeat;
 				
-				if(fEndBeat == shiftAnchor)
+				if(fEndBeat == g_fShiftAnchor)
 				{
 					/* We're back at the anchor, so we have nothing selected. */
 					m_NoteFieldEdit.m_fBeginMarker = m_NoteFieldEdit.m_fEndMarker = -1;
 				}
 				else
 				{
-					m_NoteFieldEdit.m_fBeginMarker = shiftAnchor;
+					m_NoteFieldEdit.m_fBeginMarker = g_fShiftAnchor;
 					m_NoteFieldEdit.m_fEndMarker = fEndBeat;
 					if(m_NoteFieldEdit.m_fBeginMarker > m_NoteFieldEdit.m_fEndMarker)
 						swap(m_NoteFieldEdit.m_fBeginMarker, m_NoteFieldEdit.m_fEndMarker);
