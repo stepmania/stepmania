@@ -18,9 +18,8 @@
 static AudioConverter *gConverter;
 
 /* temporary hack: */
-static float g_fIOProcTime = 0;
-static int g_iIOProcTimeCalls = 0;
-static int64_t g_iIOProcTimeFrames = 0;
+static float g_fLastIOProcTime = 0;
+static int g_iNumIOProcCalls = 0;
 
 static CString FormatToString( int fmt )
 {
@@ -225,10 +224,6 @@ RageSound_CA::~RageSound_CA()
     mOutputDevice->StopIOProc(GetData);
     delete gConverter;
     delete mOutputDevice;
-
-	LOG->Info( "IOProc time: %f in %i calls, %f per call, %lli frames, av %lli frames/call",
-		g_fIOProcTime, g_iIOProcTimeCalls, g_fIOProcTime/g_iIOProcTimeCalls,
-		g_iIOProcTimeFrames, g_iIOProcTimeFrames/g_iIOProcTimeCalls );
 }
 
 int64_t RageSound_CA::GetPosition(const RageSoundBase *sound) const
@@ -263,9 +258,8 @@ OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
     This->mDecodePos = int64_t(inOutputTime->mSampleTime);
     gConverter->FillComplexBuffer(dataPackets, *outOutputData, NULL);
 
-	g_fIOProcTime += tm.GetDeltaTime();
-	++g_iIOProcTimeCalls;
-	g_iIOProcTimeFrames += dataPackets;
+	g_fLastIOProcTime = tm.GetDeltaTime();
+	++g_iNumIOProcCalls;
 
 	return noErr;
 }
@@ -276,7 +270,8 @@ OSStatus RageSound_CA::OverloadListener(AudioDeviceID inDevice,
                                         AudioDevicePropertyID inPropertyID,
                                         void *inData)
 {
-    LOG->Warn("Audio device overload.");
+    LOG->Warn( "Audio overload.  Last IOProc time: %f IOProc calls: %i", g_fLastIOProcTime, g_iNumIOProcCalls );
+    g_iNumIOProcCalls = 0;
     return noErr;
 }
 
