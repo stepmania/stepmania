@@ -22,10 +22,15 @@ struct Content_t
 
 static const Content_t g_Contents[NUM_PANE_CONTENTS] =
 {
-	{ "DifficultyStream",		PANE_SONG_DIFFICULTY,		NEED_NOTES },
-	{ "DifficultyChaos",		PANE_SONG_DIFFICULTY,		NEED_NOTES },
-	{ "DifficultyFreeze",		PANE_SONG_DIFFICULTY,		NEED_NOTES },
-	{ "DifficultyAir",			NUM_PANES,					NEED_NOTES }, // hide
+	{ "SongNumSteps",			PANE_SONG_DIFFICULTY,		NEED_NOTES },
+	{ "SongJumps",				PANE_SONG_DIFFICULTY,		NEED_NOTES },
+	{ "SongHolds",				PANE_SONG_DIFFICULTY,		NEED_NOTES },
+	{ "SongMines",				PANE_SONG_DIFFICULTY,		NEED_NOTES },
+	{ "SongHands",				PANE_SONG_DIFFICULTY,		NEED_NOTES },
+	{ "DifficultyStream",		NUM_PANES,					NEED_NOTES }, // hide
+	{ "DifficultyChaos",		NUM_PANES,					NEED_NOTES },
+	{ "DifficultyFreeze",		NUM_PANES,					NEED_NOTES },
+	{ "DifficultyAir",			NUM_PANES,					NEED_NOTES },
 	{ "DifficultyVoltage",		NUM_PANES,					NEED_NOTES },
 	{ "DifficultyHands",		NUM_PANES,					NEED_NOTES },
 	{ "DifficultyMines",		NUM_PANES,					NEED_NOTES },
@@ -141,6 +146,11 @@ void PaneDisplay::SetContent( PaneContents c )
 	CString str;
 	switch( c )
 	{
+	case SONG_NUM_STEPS:				val = fRadarValues[RADAR_NUM_TAPS_AND_HOLDS]; break;
+	case SONG_JUMPS:					val = fRadarValues[RADAR_NUM_JUMPS]; break;
+	case SONG_HOLDS:					val = fRadarValues[RADAR_NUM_HOLDS]; break;
+	case SONG_MINES:					val = fRadarValues[RADAR_NUM_MINES]; break;
+	case SONG_HANDS:					val = fRadarValues[RADAR_NUM_HANDS]; break;
 	case SONG_DIFFICULTY_RADAR_STREAM:	val = fRadarValues[RADAR_STREAM]; break;
 	case SONG_DIFFICULTY_RADAR_VOLTAGE:	val = fRadarValues[RADAR_VOLTAGE]; break;
 	case SONG_DIFFICULTY_RADAR_AIR:		val = fRadarValues[RADAR_AIR]; break;
@@ -225,6 +235,11 @@ void PaneDisplay::SetContent( PaneContents c )
 	case COURSE_PROFILE_HIGH_SCORE:
 		str = ssprintf( "%.2f%%", val );
 		break;
+	case SONG_NUM_STEPS:
+	case SONG_JUMPS:
+	case SONG_HOLDS:
+	case SONG_MINES:
+	case SONG_HANDS:
 	case SONG_MACHINE_NUM_PLAYS:
 	case COURSE_MACHINE_NUM_PLAYS:
 	case SONG_PROFILE_NUM_PLAYS:
