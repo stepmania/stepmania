@@ -215,29 +215,26 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	}
 
 
-	if ( PREFSMAN->m_bUseUnlockSystem )
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		for( p=0; p<NUM_PLAYERS; p++ )
+		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
+			continue;	// skip
+
+		switch( m_Type )
 		{
-			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-				continue;	// skip
+		case stage:
+			// update unlock data
+			UNLOCKSYS->UnlockClearStage();
+			UNLOCKSYS->UnlockAddAP( grade[p] );
+			UNLOCKSYS->UnlockAddSP( grade[p] );
+			UNLOCKSYS->UnlockAddDP( (float)stageStats.iActualDancePoints[p] );
+			break;
 
-			switch( m_Type )
-			{
-			case stage:
-				// update unlock data
-				UNLOCKSYS->UnlockClearStage();
-				UNLOCKSYS->UnlockAddAP( grade[p] );
-				UNLOCKSYS->UnlockAddSP( grade[p] );
-				UNLOCKSYS->UnlockAddDP( (float)stageStats.iActualDancePoints[p] );
-				break;
-
-			case course:
-				UNLOCKSYS->UnlockAddDP( (float) stageStats.iActualDancePoints[p] );
-				UNLOCKSYS->UnlockAddAP( (float) stageStats.iSongsPassed[p] );
-				UNLOCKSYS->UnlockAddSP( (float) stageStats.iSongsPassed[p] );
-				break;
-			}
+		case course:
+			UNLOCKSYS->UnlockAddDP( (float) stageStats.iActualDancePoints[p] );
+			UNLOCKSYS->UnlockAddAP( (float) stageStats.iSongsPassed[p] );
+			UNLOCKSYS->UnlockAddSP( (float) stageStats.iSongsPassed[p] );
+			break;
 		}
 	}
 
