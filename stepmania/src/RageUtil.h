@@ -268,9 +268,9 @@ int FindIndex( T1 begin, T1 end, const T2 *p )
 
 /* Useful for objects with no operator-, eg. map::iterator (more convenient than advance). */
 template<class T>
-T Increment( T a ) { ++a; return a; }
+inline T Increment( T a ) { ++a; return a; }
 template<class T>
-T Decrement( T a ) { --a; return a; }
+inline T Decrement( T a ) { --a; return a; }
 
 void TrimLeft(CString &str, const char *s = "\r\n\t ");
 void TrimRight(CString &str, const char *s = "\r\n\t ");
