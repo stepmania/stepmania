@@ -612,7 +612,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowDefinition &row, const Op
 				vbSelectedOut[i] = false;
 
 			/* Create the vbSelectedOut table. */
-			LUA->CreateTableFromArray( vbSelectedOut );
+			LUA->CreateTableFromArrayB( vbSelectedOut );
 			ASSERT( lua_gettop(LUA->L) == 1 ); /* vbSelectedOut table */
 
 			/* Get the function to call from m_LuaTable. */
@@ -640,7 +640,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowDefinition &row, const Op
 
 			lua_pop( LUA->L, 1 ); /* pop option table */
 
-			LUA->ReadArrayFromTable( vbSelectedOut );
+			LUA->ReadArrayFromTableB( vbSelectedOut );
 			if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY )
 				vbSelectedOut.insert( vbSelectedOut.begin(), false );
 			
@@ -751,7 +751,7 @@ int ScreenOptionsMaster::ExportOption( const OptionRowDefinition &row, const Opt
 				vbSelectedCopy.erase( vbSelectedCopy.begin() );
 
 			/* Create the vbSelectedOut table. */
-			LUA->CreateTableFromArray( vbSelectedCopy );
+			LUA->CreateTableFromArrayB( vbSelectedCopy );
 			ASSERT( lua_gettop(LUA->L) == 1 ); /* vbSelectedOut table */
 
 			/* Get the function to call. */

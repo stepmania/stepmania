@@ -104,7 +104,7 @@ void LuaManager::PushStack( const CString &out, lua_State *L )
 	lua_pushstring( L, out );
 }
 
-void LuaManager::CreateTableFromArray( const vector<bool> &aIn, lua_State *L )
+void LuaManager::CreateTableFromArrayB( const vector<bool> &aIn, lua_State *L )
 {
 	if( L == NULL )
 		L = LUA->L;
@@ -117,7 +117,7 @@ void LuaManager::CreateTableFromArray( const vector<bool> &aIn, lua_State *L )
 	}
 }
 
-void LuaManager::ReadArrayFromTable( vector<bool> &aOut, lua_State *L )
+void LuaManager::ReadArrayFromTableB( vector<bool> &aOut, lua_State *L )
 {
 	if( L == NULL )
 		L = LUA->L;

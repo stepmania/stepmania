@@ -61,12 +61,26 @@ public:
 
 	/* Create a Lua array (a table with indices starting at 1) of the given vector,
 	 * and push it on the stack. */
-	static void CreateTableFromArray( const vector<bool> &aIn, lua_State *L = NULL );
+	static void CreateTableFromArrayB( const vector<bool> &aIn, lua_State *L = NULL );
 	/* Read the table at the top of the stack back into a vector. */
-	static void ReadArrayFromTable( vector<bool> &aOut, lua_State *L = NULL );
+	static void ReadArrayFromTableB( vector<bool> &aOut, lua_State *L = NULL );
 
 	lua_State *L;
 };
+
+	template<class T>
+	void CreateTableFromArray( const vector<T> &aIn, lua_State *L )
+	{
+		if( L == NULL )
+			L = LUA->L;
+
+		lua_newtable( L );
+		for( unsigned i = 0; i < aIn.size(); ++i )
+		{
+			aIn[i]->PushSelf( L );
+			lua_rawseti( L, -2, i+1 );
+		}
+	}
 
 extern LuaManager *LUA;
 
