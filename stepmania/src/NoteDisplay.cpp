@@ -134,6 +134,8 @@ NoteDisplay::NoteDisplay()
 		m_pTapNote[i] = NULL;
 		m_pHoldHeadActive[i] = NULL;
 		m_pHoldHeadInactive[i] = NULL;
+		m_pHoldTailActive[i] = NULL;
+		m_pHoldTailInactive[i] = NULL;
 	}
 	m_pTapAddition = NULL;
 	m_pTapMine = NULL;
@@ -148,6 +150,8 @@ NoteDisplay::~NoteDisplay()
 		delete m_pTapNote[i];
 		delete m_pHoldHeadActive[i];
 		delete m_pHoldHeadInactive[i];
+		delete m_pHoldTailActive[i];
+		delete m_pHoldTailInactive[i];
 	}
 	delete m_pTapAddition;
 	delete m_pTapMine;
