@@ -29,6 +29,7 @@ Model::Model ()
 {
 	m_bTextureWrapping = true;
 	SetUseZBuffer( true );
+	SetUseZBuffer( true );
 	m_pGeometry = NULL;
 	m_pCurAnimation = NULL;
 	m_bRevertToDefaultAnimation = false;
@@ -397,10 +398,13 @@ void Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 			for ( i = 0; i < (int)Animation.Bones.size(); i++)
 			{
 				msBone& Bone = Animation.Bones[i];
-				for( int j=0; j<(int)Bone.PositionKeys.size(); j++ )
 				{
-					Animation.nTotalFrames = max( Animation.nTotalFrames, (int)Bone.PositionKeys[j].fTime+1 );
-					Animation.nTotalFrames = max( Animation.nTotalFrames, (int)Bone.RotationKeys[j].fTime+1 );
+					for( int j=0; j<(int)Bone.PositionKeys.size(); j++ )
+						Animation.nTotalFrames = max( Animation.nTotalFrames, (int)Bone.PositionKeys[j].fTime );
+				}
+				{
+					for( int j=0; j<(int)Bone.RotationKeys.size(); j++ )
+						Animation.nTotalFrames = max( Animation.nTotalFrames, (int)Bone.RotationKeys[j].fTime );
 				}
 			}
 
@@ -676,8 +680,10 @@ Model::AdvanceFrame (float dt)
 		return;	// bail early
 	}
 
+	LOG->Trace( "m_fCurrFrame = %f", m_fCurrFrame );
+
 	m_fCurrFrame += FRAMES_PER_SECOND * dt * m_fCurAnimationRate;
-	if (m_fCurrFrame >= (float)m_pCurAnimation->nTotalFrames)
+	if (m_fCurrFrame >= m_pCurAnimation->nTotalFrames)
 	{
 		if( m_bRevertToDefaultAnimation && m_sDefaultAnimation != "" )
 		{
@@ -687,10 +693,9 @@ Model::AdvanceFrame (float dt)
 		}
 		else
 		{
-			m_fCurrFrame = 0.0f;
+			m_fCurrFrame -= m_pCurAnimation->nTotalFrames;
 		}
 	}
-
 
 	int nBoneCount = (int)m_pCurAnimation->Bones.size();
 	int i, j;
