@@ -14,24 +14,9 @@
 #include "Foreach.h"
 #include "RageSoundManager.h"
 
-#define NUM_ICON_PARTS							THEME->GetMetricI(m_sName,"NumIconParts")
-#define NUM_PREVIEW_PARTS						THEME->GetMetricI(m_sName,"NumPreviewParts")
-#define NUM_CURSOR_PARTS						THEME->GetMetricI(m_sName,"NumCursorParts")
-#define SHARED_PREVIEW_AND_CURSOR				THEME->GetMetricB(m_sName,"SharedPreviewAndCursor")
-#define NUM_CHOICES_ON_PAGE_1					THEME->GetMetricI(m_sName,"NumChoicesOnPage1")
 #define CURSOR_OFFSET_X_FROM_ICON( p, part )	THEME->GetMetricF(m_sName,ssprintf("CursorPart%dP%dOffsetXFromIcon",part+1,p+1))
 #define CURSOR_OFFSET_Y_FROM_ICON( p, part )	THEME->GetMetricF(m_sName,ssprintf("CursorPart%dP%dOffsetYFromIcon",part+1,p+1))
-#define PRE_SWITCH_PAGE_SECONDS					THEME->GetMetricF(m_sName,"PreSwitchPageSeconds")
-#define POST_SWITCH_PAGE_SECONDS				THEME->GetMetricF(m_sName,"PostSwitchPageSeconds")
-#define EXTRA_SLEEP_AFTER_TWEEN_OFF_SECONDS		THEME->GetMetricF(m_sName,"ExtraSleepAfterTweenOffSeconds")
 #define OPTION_ORDER( dir )						THEME->GetMetric (m_sName,"OptionOrder"+CString(dir))
-#define WRAP_CURSOR								THEME->GetMetricB(m_sName,"WrapCursor")
-#define SHOW_SCROLLER							THEME->GetMetricB(m_sName,"ShowScroller")
-#define SCROLLER_SECONDS_PER_ITEM				THEME->GetMetricF(m_sName,"ScrollerSecondsPerItem")
-#define SCROLLER_NUM_ITEMS_TO_DRAW				THEME->GetMetricF(m_sName,"ScrollerNumItemsToDraw")
-#define SCROLLER_SPACING_X						THEME->GetMetricF(m_sName,"ScrollerSpacingX")
-#define SCROLLER_SPACING_Y						THEME->GetMetricF(m_sName,"ScrollerSpacingY")
-#define DEFAULT_CHOICE							THEME->GetMetric (m_sName,"DefaultChoice")
 
 /* OptionOrderLeft=0:1,1:2,2:3,3:4 */
 const char *ScreenSelectMaster::dirs[NUM_DIRS] =
@@ -42,7 +27,22 @@ const char *ScreenSelectMaster::dirs[NUM_DIRS] =
 const ScreenMessage SM_PlayPostSwitchPage = (ScreenMessage)(SM_User+1);
 
 REGISTER_SCREEN_CLASS( ScreenSelectMaster );
-ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sClassName )
+ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sClassName ),
+	NUM_ICON_PARTS(m_sName,"NumIconParts"),
+	NUM_PREVIEW_PARTS(m_sName,"NumPreviewParts"),
+	NUM_CURSOR_PARTS(m_sName,"NumCursorParts"),
+	SHARED_PREVIEW_AND_CURSOR(m_sName,"SharedPreviewAndCursor"),
+	NUM_CHOICES_ON_PAGE_1(m_sName,"NumChoicesOnPage1"),
+	PRE_SWITCH_PAGE_SECONDS(m_sName,"PreSwitchPageSeconds"),
+	POST_SWITCH_PAGE_SECONDS(m_sName,"PostSwitchPageSeconds"),
+	EXTRA_SLEEP_AFTER_TWEEN_OFF_SECONDS(m_sName,"ExtraSleepAfterTweenOffSeconds"),
+	WRAP_CURSOR(m_sName,"WrapCursor"),
+	SHOW_SCROLLER(m_sName,"ShowScroller"),
+	SCROLLER_SECONDS_PER_ITEM(m_sName,"ScrollerSecondsPerItem"),
+	SCROLLER_NUM_ITEMS_TO_DRAW(m_sName,"ScrollerNumItemsToDraw"),
+	SCROLLER_SPACING_X(m_sName,"ScrollerSpacingX"),
+	SCROLLER_SPACING_Y(m_sName,"ScrollerSpacingY"),
+	DEFAULT_CHOICE(m_sName,"DefaultChoice")
 {
 
 	// TODO: Move default choice to ScreenSelect
@@ -50,7 +50,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 	{
 		const GameCommand& mc = m_aGameCommands[c];
-		if( mc.m_sName == DEFAULT_CHOICE )
+		if( mc.m_sName == (CString) DEFAULT_CHOICE )
 		{
 			iDefaultChoice = c;
 			break;
