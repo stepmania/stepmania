@@ -180,7 +180,10 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 
 	MsdFile msd;
 	if( !msd.ReadFile( sPath ) )
-		RageException::Throw( "Error opening file \"%s\": %s", sPath.c_str(), msd.GetError().c_str() );
+	{
+		LOG->Warn( "Error opening file \"%s\": %s", sPath.c_str(), msd.GetError().c_str() );
+		return false;
+	}
 
 	out.m_Timing.m_sFile = sPath;
 	LoadTimingFromSMFile( msd, out.m_Timing );
@@ -380,7 +383,10 @@ bool SMLoader::LoadFromDir( CString sPath, Song &out )
 	GetApplicableFiles( sPath, aFileNames );
 
 	if( aFileNames.size() > 1 )
-		RageException::Throw( "There is more than one SM file in '%s'.  There should be only one!", sPath.c_str() );
+	{
+		LOG->Warn( "There is more than one SM file in '%s'.  There should be only one!", sPath.c_str() );
+		return false;
+	}
 
 	/* We should have exactly one; if we had none, we shouldn't have been
 	 * called to begin with. */
@@ -402,7 +408,10 @@ bool SMLoader::LoadEdit( CString sEditFilePath, ProfileSlot slot )
 
 	MsdFile msd;
 	if( !msd.ReadFile( sEditFilePath ) )
-		RageException::Throw( "Error opening file \"%s\": %s", sEditFilePath.c_str(), msd.GetError().c_str() );
+	{
+		LOG->Warn( "Error opening edit file \"%s\": %s", sEditFilePath.c_str(), msd.GetError().c_str() );
+		return false;
+	}
 
 	Song* pSong = NULL;
 
