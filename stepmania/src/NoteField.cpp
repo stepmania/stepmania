@@ -96,8 +96,7 @@ void NoteField::Load( const NoteData* pNoteData, PlayerNumber pn, int iFirstPixe
 
 	NoteDataWithScoring::Init();
 
-	m_bIsHoldingHoldNote.clear();
-	m_bIsHoldingHoldNote.insert(m_bIsHoldingHoldNote.end(), pNoteData->GetNumTapNotes(), false);
+	m_HeldHoldNotes.clear();
 
 	this->CopyAll( pNoteData );
 	ASSERT( GetNumTracks() == GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer );
@@ -519,8 +518,7 @@ void NoteField::DrawPrimitives()
 			const HoldNote &hn = GetHoldNote(i);
 			const HoldNoteScore hns = GetHoldNoteScore( hn );
 			const float fLife = GetHoldNoteLife( hn );
-			const bool bIsHoldingNote = (i < int(m_bIsHoldingHoldNote.size()))?
-				m_bIsHoldingHoldNote[i]: false;
+			const bool bIsHoldingNote = m_HeldHoldNotes[hn];
 			
 			if( hns == HNS_OK )	// if this HoldNote was completed
 				continue;	// don't draw anything

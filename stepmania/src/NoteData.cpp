@@ -274,6 +274,20 @@ void NoteData::RemoveHoldNote( int iHoldIndex )
 	m_HoldNotes.erase(m_HoldNotes.begin()+iHoldIndex, m_HoldNotes.begin()+iHoldIndex+1);
 }
 
+/* Get a hold note with the same track and end row as hn. */
+int NoteData::GetMatchingHoldNote( const HoldNote &hn ) const
+{
+	for( int i=0; i<GetNumHoldNotes(); i++ )	// for each HoldNote
+	{
+		const HoldNote &ret = GetHoldNote(i);
+		if( ret.iTrack == hn.iTrack && ret.iEndRow == hn.iEndRow )
+			return i;
+	}
+	ASSERT(0);
+	return -1;
+}
+
+
 void NoteData::SetTapAttackNote( int track, int row, Attack attack )
 {
 	PruneUnusedAttacksFromMap();

@@ -361,7 +361,7 @@ void NoteDataWithScoring::SetTapNoteOffset(unsigned track, unsigned row, float o
  * changes when hold notes are being stepped on, but end rows never change. */
 HoldNoteScore NoteDataWithScoring::GetHoldNoteScore( const HoldNote &hn ) const
 {
-	map<RowTrack, HoldNoteScore>::const_iterator it = m_HoldNoteScores.find( RowTrack(hn.iEndRow, hn.iTrack) );
+	map<RowTrack, HoldNoteScore>::const_iterator it = m_HoldNoteScores.find( RowTrack(hn) );
 	if( it == m_HoldNoteScores.end() )
 		return HNS_NONE;
 	return it->second;
@@ -369,17 +369,17 @@ HoldNoteScore NoteDataWithScoring::GetHoldNoteScore( const HoldNote &hn ) const
 
 void NoteDataWithScoring::SetHoldNoteScore( const HoldNote &hn, HoldNoteScore hns )
 {
-	m_HoldNoteScores[RowTrack(hn.iEndRow, hn.iTrack)] = hns;
+	m_HoldNoteScores[RowTrack(hn)] = hns;
 }
 
 void NoteDataWithScoring::SetHoldNoteLife( const HoldNote &hn, float f )
 {
-	m_fHoldNoteLife[RowTrack(hn.iEndRow, hn.iTrack)] = f;
+	m_fHoldNoteLife[RowTrack(hn)] = f;
 }
 
 float NoteDataWithScoring::GetHoldNoteLife( const HoldNote &hn ) const
 {
-	map<RowTrack, float>::const_iterator it = m_fHoldNoteLife.find( RowTrack(hn.iEndRow, hn.iTrack) );
+	map<RowTrack, float>::const_iterator it = m_fHoldNoteLife.find( RowTrack(hn) );
 	if( it == m_fHoldNoteLife.end() )
 		return 1.0f;
 	return it->second;

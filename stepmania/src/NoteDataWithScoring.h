@@ -16,11 +16,16 @@
 #include "PlayerNumber.h"
 #include <map>
 
+class RowTrack: public pair<int,int>
+{
+public:
+	RowTrack( const HoldNote &hn ): pair<int,int>( hn.iEndRow, hn.iTrack ) { }
+};
+
 class NoteDataWithScoring : public NoteData
 {
 	// maintain this extra data in addition to the NoteData
 	vector<TapNoteScore> m_TapNoteScores[MAX_NOTE_TRACKS];
-	typedef pair<int,int> RowTrack;
 	map<RowTrack, HoldNoteScore> m_HoldNoteScores;
 
 	/* Offset, in seconds, for each tap grade.  Negative numbers mean the note

@@ -98,8 +98,9 @@ public:
 	//
 	void AddHoldNote( HoldNote newNote );	// add note hold note merging overlapping HoldNotes and destroying TapNotes underneath
 	void RemoveHoldNote( int index );
-	HoldNote &GetHoldNote( int index ) { return m_HoldNotes[index]; }
-	const HoldNote &GetHoldNote( int index ) const { return m_HoldNotes[index]; }
+	HoldNote &GetHoldNote( int index ) { ASSERT( index < (int) m_HoldNotes.size() ); return m_HoldNotes[index]; }
+	const HoldNote &GetHoldNote( int index ) const { ASSERT( index < (int) m_HoldNotes.size() ); return m_HoldNotes[index]; }
+	int GetMatchingHoldNote( const HoldNote &hn ) const;
 
 	void SetTapAttackNote( int track, int row, Attack attack );
 	void PruneUnusedAttacksFromMap();	// slow

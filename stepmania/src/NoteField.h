@@ -39,7 +39,7 @@ public:
 	virtual void Unload();
 	void RemoveTapNoteRow( int iIndex );
 
-	vector<bool> m_bIsHoldingHoldNote;	// hack:  Need this to know when to "light up" the center of hold notes
+	map<RowTrack,bool> m_HeldHoldNotes;	// hack:  Need this to know when to "light up" the center of hold notes
 
 	float	m_fBeginMarker, m_fEndMarker;	// only used with MODE_EDIT
 

@@ -283,7 +283,7 @@ void PlayerMinus::Update( float fDeltaTime )
 		const HoldNote &hn = GetHoldNote(i);
 		HoldNoteScore hns = GetHoldNoteScore(hn);
 
-		m_pNoteField->m_bIsHoldingHoldNote[i] = false;	// set host flag so NoteField can do intelligent drawing
+		m_pNoteField->m_HeldHoldNotes[hn] = false;	// set hold flag so NoteField can do intelligent drawing
 
 
 		if( hns != HNS_NONE )	// if this HoldNote already has a result
@@ -310,12 +310,13 @@ void PlayerMinus::Update( float fDeltaTime )
 				bIsHoldingButton = true;
 
 			// set hold flag so NoteField can do intelligent drawing
-			m_pNoteField->m_bIsHoldingHoldNote[i] = bIsHoldingButton && bSteppedOnTapNote;
+			m_pNoteField->m_HeldHoldNotes[hn] = bIsHoldingButton && bSteppedOnTapNote;
 
 			if( bSteppedOnTapNote )		// this note is not judged and we stepped on its head
 			{
 				// Move the start of this Hold
-				HoldNote &fhn = m_pNoteField->GetHoldNote(i);
+				const int n = m_pNoteField->GetMatchingHoldNote( hn );
+				HoldNote &fhn = m_pNoteField->GetHoldNote( n );
 				fhn.iStartRow = min( iSongRow, fhn.iEndRow );
 			}
 
