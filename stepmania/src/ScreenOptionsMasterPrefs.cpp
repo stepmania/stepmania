@@ -257,6 +257,12 @@ MOVE( UnlockSystem,			PREFSMAN->m_bUseUnlockSystem );
 /* Coin options */
 MOVE( CoinMode,			PREFSMAN->m_iCoinMode );
 
+static void CoinModeNoHome( int &sel, bool ToSel, const CStringArray &choices )
+{
+	const int mapping[] = { 1,2 };
+	MoveMap( sel, PREFSMAN->m_iCoinMode, ToSel, mapping, ARRAYSIZE(mapping) );
+}
+
 static void CoinsPerCredit( int &sel, bool ToSel, const CStringArray &choices )
 {
 	const int mapping[] = { 1,2,3,4,5,6,7,8 };
@@ -448,7 +454,8 @@ static const ConfOption g_ConfOptions[] =
 
 	/* Machine options */
 	ConfOption( "Menu\nTimer",			MenuTimer,			"OFF","ON" ),
-	ConfOption( "Coin\nMode",			CoinMode,			"HOME","PAY","FREE PLAY" ),
+	ConfOption( "CoinMode",				CoinMode,			"HOME","PAY","FREE PLAY" ),
+	ConfOption( "CoinModeNoHome",		CoinModeNoHome,		"PAY","FREE PLAY" ),
 	ConfOption( "Songs Per\nPlay",		SongsPerPlay,		"1","2","3","4","5","6","7","EVENT MODE" ),
 	ConfOption( "Scoring\nType",		ScoringType,		"MAX2","5TH" ),
 	ConfOption( "Judge\nDifficulty",	JudgeDifficulty,	"1","2","3","4","5","6","7","8","JUSTICE" ),
