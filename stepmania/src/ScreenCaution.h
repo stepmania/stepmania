@@ -15,6 +15,7 @@
 
 #include "Screen.h"
 #include "TransitionFade.h"
+#include "TransitionFadeWipe.h"
 #include "RandomSample.h"
 
 
@@ -28,8 +29,10 @@ public:
 
 protected:
 	void MenuStart( const PlayerNumber p );
+	void MenuBack(	const PlayerNumber p );
 	Sprite m_sprCaution;
 	TransitionFade	m_Wipe;
+	TransitionFadeWipe	m_FadeWipe;
 };
 
 #endif
