@@ -40,6 +40,8 @@ protected:
 
 	Sprite m_sprFace;
 	float m_fSecondsUntilReturnToNormalFace;
+
+	Sprite m_sprFrame;
 };
 
 

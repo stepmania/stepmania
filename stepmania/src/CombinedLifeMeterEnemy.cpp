@@ -32,14 +32,20 @@ CombinedLifeMeterEnemy::CombinedLifeMeterEnemy()
 	m_sprFace.Load( THEME->GetPathToG("CombinedLifeMeterEnemy face 2x3") );
 	ASSERT( m_sprFace.GetNumStates() >= NUM_FACES );
 	m_sprFace.StopAnimating();
+	this->AddChild( &m_sprFace );
 
 	m_meterHealth.Load( THEME->GetPathToG("CombinedLifeMeterEnemy stream"), 464 );
 	m_fLastSeenHealthPercent = -1;
+	this->AddChild( &m_meterHealth );
 
+	m_sprFrame.Load( THEME->GetPathToG("CombinedLifeMeterEnemy frame") );
+	this->AddChild( &m_sprFrame );
 }
 
 void CombinedLifeMeterEnemy::Update( float fDelta )
 {
+	CombinedLifeMeter::Update( fDelta );
+
 	if( m_fSecondsUntilReturnToNormalFace > 0 )
 	{
 		m_fSecondsUntilReturnToNormalFace -= fDelta;
@@ -53,8 +59,6 @@ void CombinedLifeMeterEnemy::Update( float fDelta )
 
 	if( GAMESTATE->m_fOpponentHealthPercent == 0 )
 		this->SetState( defeated );
-
-	m_sprFace.Update( fDelta );
 
 	if( m_fLastSeenHealthPercent != GAMESTATE->m_fOpponentHealthPercent )
 	{
