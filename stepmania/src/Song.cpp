@@ -675,6 +675,15 @@ void Song::TidyUpData()
 			m_sBannerFile = arrayImages[i];
 			continue;
 		}
+
+		/* Some songs have overlarge banners.  Check if the ratio is reasonable (over
+		 * 2:1; usually over 3:1), and large (not a cdtitle). */
+		if( !HasBanner() && width > 200 && float(width) / height > 2.0f )
+		{
+			m_sBannerFile = arrayImages[i];
+			continue;
+		}
+
 		/* Agh.  DWI's inline title images are triggering this, resulting in kanji,
 		 * etc., being used as a CDTitle for songs with none.  Some sample data
 		 * from random incarnations:
