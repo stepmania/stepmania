@@ -850,6 +850,9 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 		switch( m_OptionsNavigation )
 		{
 		case NAV_THREE_KEY:
+			// don't wrap
+			if( iCurRow == m_Rows.size()-1 )
+				return;
 			MenuDown( pn, type );
 			break;
 		case NAV_TOGGLE_THREE_KEY:
