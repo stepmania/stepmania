@@ -1003,7 +1003,10 @@ void PrintCaloriesBurned( RageFile &f, const Profile *pProfile, CString sTitle, 
 					Profile::Day day = { when.tm_yday, when.tm_year+1900 };
 					float fDayCals = pProfile->GetCaloriesBurnedForDay( day );
 					fWeekCals += fDayCals;
-					f.Write("<td class='daycalories'><font class='daycalories'>"+ssprintf("%f",((fDayCals==0)?"":Commify((int)fDayCals)))+"</font></td>");
+					CString sCalories;
+					if( fDayCals )
+						sCalories = Commify( (int)fDayCals );
+					f.Write("<td class='daycalories'><font class='daycalories'>"+sCalories+"</font></td>");
 					when = AddDays( when, +1 );
 				}
 				f.Write("<td class='weekcalories'><font class='weekcalories'>"+Commify((int)fWeekCals)+"</font></td>");
