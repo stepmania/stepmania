@@ -385,7 +385,7 @@ void Background::Update( float fDeltaTime )
 
 		if( int(i) > m_iCurBGSegment )
 		{
-//			printf( "%d, %d, %f, %f\n", m_iCurBGSegment, i, m_aBGSegments[i].m_fStartBeat, GAMESTATE->m_fSongBeat );
+//			LOG->Trace( "%d, %d, %f, %f\n", m_iCurBGSegment, i, m_aBGSegments[i].m_fStartBeat, GAMESTATE->m_fSongBeat );
 			BGAnimation* pOld = GetCurBGA();
 			m_iCurBGSegment = i;
 			BGAnimation* pNew = GetCurBGA();

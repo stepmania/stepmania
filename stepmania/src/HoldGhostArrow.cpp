@@ -41,7 +41,7 @@ void HoldGhostArrow::Update( float fDeltaTime )
 
 	CLAMP( m_fHeatLevel, 0, 1 );
 //	if( m_fHeatLevel > 0 )
-//		printf( "m_fHeatLevel = %f\n", m_fHeatLevel );
+//		LOG->Trace( "m_fHeatLevel = %f\n", m_fHeatLevel );
 
 	int iStateNum = (int)min( m_fHeatLevel * GetNumStates(), GetNumStates()-1 );
 	SetState( iStateNum );

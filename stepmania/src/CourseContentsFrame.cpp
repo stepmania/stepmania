@@ -111,7 +111,7 @@ void CourseContentsFrame::SetFromCourse( Course* pCourse )
 		if( pNotes == NULL )
 			continue;	// skip
 
-		printf( "Adding song '%s'\n", pSong->m_sMainTitle.GetString() );
+		LOG->Trace( "Adding song '%s'\n", pSong->m_sMainTitle.GetString() );
 		m_CourseContentDisplays[m_iNumContents].Load( m_iNumContents+1, pSong, pNotes );
 		m_CourseContentDisplays[m_iNumContents].SetXY( 0, -((MAX_VISIBLE_CONTENTS-1)/2) * float(ContentsBarHeight) );
 		m_CourseContentDisplays[m_iNumContents].StopTweening();
@@ -120,7 +120,7 @@ void CourseContentsFrame::SetFromCourse( Course* pCourse )
 		
 		m_iNumContents ++;
 	}
-	printf( "m_iNumContents is %d\n", m_iNumContents );
+	LOG->Trace( "m_iNumContents is %d\n", m_iNumContents );
 }
 
 void CourseContentsFrame::Update( float fDeltaTime )

@@ -1239,13 +1239,13 @@ void ScreenEdit::InputActionMenu( const DeviceInput& DeviceI, const InputEventTy
 	case SDLK_UP:
 		MenuItemLoseFocus( &m_textActionMenu[m_iMenuSelection] );
 		m_iMenuSelection = (m_iMenuSelection-1+NUM_ACTION_MENU_ITEMS) % NUM_ACTION_MENU_ITEMS;
-		printf( "%d\n", m_iMenuSelection );
+		LOG->Trace( "%d\n", m_iMenuSelection );
 		MenuItemGainFocus( &m_textActionMenu[m_iMenuSelection] );
 		break;
 	case SDLK_DOWN:
 		MenuItemLoseFocus( &m_textActionMenu[m_iMenuSelection] );
 		m_iMenuSelection = (m_iMenuSelection+1) % NUM_ACTION_MENU_ITEMS;
-		printf( "%d\n", m_iMenuSelection );
+		LOG->Trace( "%d\n", m_iMenuSelection );
 		MenuItemGainFocus( &m_textActionMenu[m_iMenuSelection] );
 		break;
 	case SDLK_RETURN:
@@ -1324,13 +1324,13 @@ void ScreenEdit::InputNamingMenu( const DeviceInput& DeviceI, const InputEventTy
 	case SDLK_UP:
 		MenuItemLoseFocus( &m_textNamingMenu[m_iMenuSelection] );
 		m_iMenuSelection = (m_iMenuSelection-1+NUM_NAMING_MENU_ITEMS) % NUM_NAMING_MENU_ITEMS;
-		printf( "%d\n", m_iMenuSelection );
+		LOG->Trace( "%d\n", m_iMenuSelection );
 		MenuItemGainFocus( &m_textNamingMenu[m_iMenuSelection] );
 		break;
 	case SDLK_DOWN:
 		MenuItemLoseFocus( &m_textNamingMenu[m_iMenuSelection] );
 		m_iMenuSelection = (m_iMenuSelection+1) % NUM_NAMING_MENU_ITEMS;
-		printf( "%d\n", m_iMenuSelection );
+		LOG->Trace( "%d\n", m_iMenuSelection );
 		MenuItemGainFocus( &m_textNamingMenu[m_iMenuSelection] );
 		break;
 	case SDLK_RETURN:
