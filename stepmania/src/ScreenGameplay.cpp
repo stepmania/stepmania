@@ -421,11 +421,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	m_Inventory.RefreshPossibleItems();
 	this->AddChild( &m_Inventory );
 
-	m_textDebug.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-	m_textDebug.SetXY( DEBUG_X, DEBUG_Y );
-	m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
-	this->AddChild( &m_textDebug );
-
 	
 	if( !bDemonstration )	// only load if we're going to use it
 	{
@@ -452,6 +447,13 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 
 		m_In.Load( THEME->GetPathTo("BGAnimations","ScreenGameplay in") );
 		this->AddChild( &m_In );
+
+
+		m_textDebug.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+		m_textDebug.SetXY( DEBUG_X, DEBUG_Y );
+		m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
+		this->AddChild( &m_textDebug );
+
 
 		m_Back.Load( THEME->GetPathTo("BGAnimations","Common back") );
 		this->AddChild( &m_Back );
@@ -1444,7 +1446,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			ShowSavePrompt( SM_GoToScreenAfterBack );
 		}
 		else
-			this->SendScreenMessage( SM_GoToScreenAfterBack, 0 );
+			HandleScreenMessage( SM_GoToScreenAfterBack );
 		break;
 
 	case SM_GoToScreenAfterBack:
@@ -1551,7 +1553,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2())
 			SCREENMAN->SetNewScreen( "ScreenEvaluation" );
 		else if( PREFSMAN->m_bEventMode )
-			this->SendScreenMessage( SM_GoToScreenAfterBack, 0 );
+			HandleScreenMessage( SM_GoToScreenAfterBack );
 		else
 			SCREENMAN->SetNewScreen( "ScreenGameOver" );
 		break;
