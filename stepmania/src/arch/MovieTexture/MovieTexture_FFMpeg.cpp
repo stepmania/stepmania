@@ -228,7 +228,9 @@ int FFMpeg_Helper::ReadPacket()
 		}
 
 		int ret = avcodec::av_read_packet(m_fctx, &pkt);
-		if( ret == -1 )
+		/* XXX: why is avformat returning AVERROR_NOMEM on EOF? */
+		if( ret < 0 )
+//		if( ret == -1 )
 		{
 			/* EOF. */
 			eof = 1;
@@ -238,6 +240,7 @@ int FFMpeg_Helper::ReadPacket()
 			return 0;
 		}
 
+#if 0
 		if( ret < 0 )
 		{
 			/* XXX ? */
@@ -245,6 +248,7 @@ int FFMpeg_Helper::ReadPacket()
 //					GetID().filename.c_str(), ret );
 			return -1;
 		}
+#endif
 		
 		if( pkt.stream_index == m_stream->index )
 		{
