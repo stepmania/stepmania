@@ -5013,9 +5013,9 @@
 			);
 			isa = PBXGroup;
 			name = crypto;
-			path = /Users/steve/stepmania/src/crypto;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/crypto;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA4E8F5E05E6090F0091C1A8 = {
 			fileEncoding = 30;
