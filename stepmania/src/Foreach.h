@@ -11,4 +11,7 @@ for( deque<elemType>::iterator var = (vect).begin(); var != (vect).end(); ++var 
 #define FOREACHD_CONST( elemType, vect, var ) 	\
 for( deque<elemType>::const_iterator var = (vect).begin(); var != (vect).end(); ++var )
 
+#define FOREACHMM( keyType, valType, vect, var ) 			\
+for( multimap<keyType, valType>::iterator var = (vect).begin(); var != (vect).end(); ++var )
+
 #endif

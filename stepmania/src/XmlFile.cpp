@@ -7,6 +7,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "DateTime.h"
+#include "Foreach.h"
 
 
 static const char chXMLTagOpen		= '<';
@@ -154,16 +155,12 @@ XNode::~XNode()
 
 void XNode::Close()
 {
-    for( unsigned i = 0 ; i < childs.size(); i ++)
-	{
-		SAFE_DELETE( childs[i] );
-	}
+	FOREACH_Child( this, p )
+		SAFE_DELETE( p );
 	childs.clear();
 	
-	for( unsigned i = 0 ; i < attrs.size(); i ++)
-	{
-		SAFE_DELETE( attrs[i] );
-	}
+	FOREACH_Attr( this, p2 )
+		SAFE_DELETE( p2 );
 	attrs.clear();
 }
 	
@@ -179,7 +176,7 @@ void XNode::Close()
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-char* XNode::LoadAttributes( const char* pszAttrs , PARSEINFO *pi /*= &piDefault*/)
+char* XNode::LoadAttributes( const char* pszAttrs, PARSEINFO *pi /*= &piDefault*/)
 {
 	char* xml = (char*)pszAttrs;
 
@@ -215,7 +212,7 @@ char* XNode::LoadAttributes( const char* pszAttrs , PARSEINFO *pi /*= &piDefault
 		SetString( xml, pEnd, &attr->name );
 		
 		// add new attribute
-		attrs.push_back( attr );
+		attrs.insert( pair<CString,XAttr*>(attr->name, attr) );
 		xml = pEnd;
 		
 		// XML Attr Value
@@ -373,7 +370,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 			xml = node->Load( xml,pi );
 			if( !node->name.empty() )
 			{
-				childs.push_back( node );
+				childs.insert( pair<CString,XNode*>(node->name, node) );
 			}
 			else
 			{
@@ -513,8 +510,8 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt /*= &optDefault*/ )
 	if( !attrs.empty() )
 		if( f.Write(" ") == -1 )
 			return false;
-	for( unsigned i = 0 ; i < attrs.size(); i++ )
-		if( !attrs[i]->GetXML(f, opt) )
+	FOREACH_Attr( this, p )
+		if( !p->GetXML(f, opt) )
 			return false;
 	
 	if( childs.empty() && value.empty() )
@@ -534,8 +531,8 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt /*= &optDefault*/ )
 			opt->tab_base++;
 		}
 
-		for( unsigned i = 0 ; i < childs.size(); i++ )
-			if( !childs[i]->GetXML( f, opt ) )
+		FOREACH_Child( this, p )
+			if( !p->GetXML( f, opt ) )
 				return false;
 		
 		// Text Value
@@ -624,54 +621,18 @@ void XNode::SetValue(const DateTime &v) { value = v.GetString(); }
 //========================================================
 const XAttr *XNode::GetAttr( const char* attrname ) const
 {
-	for( unsigned i = 0 ; i < attrs.size(); i++ )
-	{
-		XAttr *attr = attrs[i];
-		if( attr )
-		{
-			if( attr->name == attrname )
-				return attr;
-		}
-	}
+	multimap<CString, XAttr*>::const_iterator it = attrs.find( name );
+	if( it != attrs.end() )
+		return it->second;
 	return NULL;
 }
 
 XAttr *XNode::GetAttr( const char* attrname )
 {
-	for( unsigned i = 0 ; i < attrs.size(); i++ )
-	{
-		XAttr *attr = attrs[i];
-		if( attr )
-		{
-			if( attr->name == attrname )
-				return attr;
-		}
-	}
+	multimap<CString, XAttr*>::iterator it = attrs.find( name );
+	if( it != attrs.end() )
+		return it->second;
 	return NULL;
-}
-
-//========================================================
-// Name   : GetAttrs
-// Desc   : find attributes with attribute name, return its list
-// Param  :
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
-XAttrs XNode::GetAttrs( const char* name )
-{
-	XAttrs attrs;
-	for( unsigned i = 0 ; i < attrs.size(); i++ )
-	{
-		XAttr *attr = attrs[i];
-		if( attr )
-		{
-			if( attr->name == name )
-				attrs.push_back( attr );
-		}
-	}
-	return attrs;
 }
 
 //========================================================
@@ -689,50 +650,6 @@ const char*	XNode::GetAttrValue( const char* attrname )
 	return attr ? (const char*)attr->value : NULL;
 }
 
-XNodes XNode::GetChilds()
-{
-	return childs;
-}
-
-//========================================================
-// Name   : GetChilds
-// Desc   : Find childs with name and return childs list
-// Param  :
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
-XNodes XNode::GetChilds( const char* name )
-{
-	XNodes nodes;
-	for( unsigned i = 0 ; i < childs.size(); i++ )
-	{
-		XNode *node = childs[i];
-		if( node )
-		{
-			if( node->name == name )
-				nodes.push_back( node );
-		}
-	}
-	return nodes;	
-}
-
-//========================================================
-// Name   : GetChild
-// Desc   : get child node with index
-// Param  :
-// Return : NULL return if no child.
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
-XNode *XNode::GetChild( int i )
-{
-	if( i >= 0 && i < (int)childs.size() )
-		return childs[i];
-	return NULL;
-}
 
 //========================================================
 // Name   : GetChildCount
@@ -759,29 +676,17 @@ int	XNode::GetChildCount()
 //========================================================
 XNode *XNode::GetChild( const char* name )
 {
-	for( unsigned i = 0 ; i < childs.size(); i++ )
-	{
-		XNode *node = childs[i];
-		if( node )
-		{
-			if( node->name == name )
-				return node;
-		}
-	}
+	multimap<CString, XNode*>::iterator it = childs.find( name );
+	if( it != childs.end() )
+		return it->second;
 	return NULL;
 }
 
 const XNode *XNode::GetChild( const char* name ) const
 {
-	for( unsigned i = 0 ; i < childs.size(); i++ )
-	{
-		XNode *node = childs[i];
-		if( node )
-		{
-			if( node->name == name )
-				return node;
-		}
-	}
+	multimap<CString, XNode*>::const_iterator it = childs.find( name );
+	if( it != childs.end() )
+		return it->second;
 	return NULL;
 }
 
@@ -814,26 +719,6 @@ const char* XNode::GetChildAttrValue( const char* name, const char* attrname )
 
 
 //========================================================
-// Name   : GetChildIterator
-// Desc   : get child nodes iterator
-// Param  :
-// Return : NULL return if no childs.
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
-XNodes::iterator XNode::GetChildIterator( XNode *node )
-{
-	XNodes::iterator it = childs.begin();
-	for( ; it != childs.end() ; ++(it) )
-	{
-		if( *it == node )
-			return it;
-	}
-	return childs.end();
-}
-
-//========================================================
 // Name   : AppendChild
 // Desc   : add node
 // Param  :
@@ -859,7 +744,7 @@ XNode *XNode::AppendChild( const char* name, const DateTime &value )	{ XNode *p 
 //========================================================
 XNode *XNode::AppendChild( XNode *node )
 {
-	childs.push_back( node );
+	childs.insert( pair<CString,XNode*>(node->name,node) );
 	return node;
 }
 
@@ -874,51 +759,18 @@ XNode *XNode::AppendChild( XNode *node )
 //========================================================
 bool XNode::RemoveChild( XNode *node )
 {
-	XNodes::iterator it = GetChildIterator( node );
-	if( it != childs.end() )
+	FOREACHMM( CString, XNode*, childs, p )
 	{
-		delete *it;
-		childs.erase( it );
-		return true;
+		if( p->second == node )
+		{
+			SAFE_DELETE( p->second );
+			childs.erase( p );
+			return true;
+		}
 	}
 	return false;
 }
 
-//========================================================
-// Name   : GetAttr
-// Desc   : get attribute with index in attribute list
-// Param  :
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
-XAttr *XNode::GetAttr( int i )
-{
-	if( i >= 0 && i < (int)attrs.size() )
-		return attrs[i];
-	return NULL;
-}
-
-//========================================================
-// Name   : GetAttrIterator
-// Desc   : get attribute iterator
-// Param  : 
-// Return : XAttrs::iterator
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
-XAttrs::iterator XNode::GetAttrIterator( XAttr *attr )
-{
-	XAttrs::iterator it = attrs.begin();
-	for( ; it != attrs.end() ; ++(it) )
-	{
-		if( *it == attr )
-			return it;
-	}
-	return attrs.end();
-}
 
 //========================================================
 // Name   : AppendAttr
@@ -931,7 +783,7 @@ XAttrs::iterator XNode::GetAttrIterator( XAttr *attr )
 //========================================================
 XAttr *XNode::AppendAttr( XAttr *attr )
 {
-	attrs.push_back( attr );
+	attrs.insert( pair<CString,XAttr*>(attr->name,attr) );
 	return attr;
 }
 
@@ -946,12 +798,14 @@ XAttr *XNode::AppendAttr( XAttr *attr )
 //========================================================
 bool XNode::RemoveAttr( XAttr *attr )
 {
-	XAttrs::iterator it = GetAttrIterator( attr );
-	if( it != attrs.end() )
+	FOREACHMM( CString, XAttr*, attrs, p )
 	{
-		delete *it;
-		attrs.erase( it );
-		return true;
+		if( p->second == attr )
+		{
+			SAFE_DELETE( p->second );
+			attrs.erase( p );
+			return true;
+		}
 	}
 	return false;
 }
@@ -1008,45 +862,6 @@ XAttr *XNode::AppendAttr( const char* name, float value ){ return AppendAttr(nam
 XAttr *XNode::AppendAttr( const char* name, int value )	{ return AppendAttr(name,ssprintf("%d",value)); }
 XAttr *XNode::AppendAttr( const char* name, unsigned value )	{ return AppendAttr(name,ssprintf("%u",value)); }
 
-//========================================================
-// Name   : DetachChild
-// Desc   : no delete object, just detach in list
-// Param  :
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
-XNode *XNode::DetachChild( XNode *node )
-{
-	XNodes::iterator it = GetChildIterator( node );
-	if( it != childs.end() )
-	{
-		childs.erase( it );
-		return node;
-	}
-	return NULL;
-}
-
-//========================================================
-// Name   : DetachAttr
-// Desc   : no delete object, just detach in list
-// Param  :
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
-XAttr *XNode::DetachAttr( XAttr *attr )
-{
-	XAttrs::iterator it = GetAttrIterator( attr );
-	if( it != attrs.end() )
-	{
-		attrs.erase( it );
-		return attr;
-	}
-	return NULL;
-}
 
 XENTITYS::XENTITYS( XENTITY *entities, int count )
 {

@@ -4,6 +4,7 @@
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 #include "XmlFile.h"
+#include "Foreach.h"
 
 #define EMPTY_NAME			THEME->GetMetric ("HighScore","EmptyName")
 
@@ -163,23 +164,21 @@ XNode* HighScoreList::CreateNode() const
 	return pNode;
 }
 
-void HighScoreList::LoadFromNode( const XNode* pNode )
+void HighScoreList::LoadFromNode( const XNode* pHighScoreList )
 {
 	Init();
 
-	ASSERT( pNode->name == "HighScoreList" );
-	for( vector<XNode*>::const_iterator child = pNode->childs.begin();
-		child != pNode->childs.end();
-		child++)
+	ASSERT( pHighScoreList->name == "HighScoreList" );
+	FOREACH_CONST_Child( pHighScoreList, p )
 	{
-		if( (*child)->name == "NumTimesPlayed" )
+		if( p->name == "NumTimesPlayed" )
 		{
-			(*child)->GetValue( iNumTimesPlayed );
+			p->GetValue( iNumTimesPlayed );
 		}
-		else if( (*child)->name == "HighScore" )
+		else if( p->name == "HighScore" )
 		{
 			vHighScores.resize( vHighScores.size()+1 );
-			vHighScores.back().LoadFromNode( (*child) );
+			vHighScores.back().LoadFromNode( p );
 			
 			// ignore all high scores that are 0
 			if( vHighScores.back().iScore == 0 )

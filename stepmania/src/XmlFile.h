@@ -19,14 +19,43 @@
 //              fix escape functions
 //////////////////////////////////////////////////////////////////////
 
-#include <vector>
+#include <map>
 struct DateTime;
 class RageFileBasic;
 
 struct XAttr;
-typedef vector<XAttr*> XAttrs;
+typedef multimap<CString,XAttr*> XAttrs;
 struct XNode;
-typedef vector<XNode*> XNodes;
+typedef multimap<CString,XNode*> XNodes;
+
+#define FOREACH_Attr( pNode, Var ) \
+	XAttrs::iterator Var##Iter; \
+	XAttr *Var = NULL; \
+	for( Var##Iter = pNode->attrs.begin(); \
+		(Var##Iter != pNode->attrs.end() && (Var = Var##Iter->second) ),  Var##Iter != pNode->attrs.end(); \
+		++Var##Iter )
+
+#define FOREACH_CONST_Attr( pNode, Var ) \
+	XAttrs::const_iterator Var##Iter; \
+	const XAttr *Var = NULL; \
+	for( Var##Iter = pNode->attrs.begin(); \
+		(Var##Iter != pNode->attrs.end() && (Var = Var##Iter->second) ),  Var##Iter != pNode->attrs.end(); \
+		++Var##Iter )
+
+#define FOREACH_Child( pNode, Var ) \
+	XNodes::iterator Var##Iter; \
+	XNode *Var = NULL; \
+	for( Var##Iter = pNode->childs.begin(); \
+		(Var##Iter != pNode->childs.end() && (Var = Var##Iter->second) ),  Var##Iter != pNode->childs.end(); \
+		++Var##Iter )
+
+#define FOREACH_CONST_Child( pNode, Var ) \
+	XNodes::const_iterator Var##Iter; \
+	const XNode *Var = NULL; \
+	for( Var##Iter = pNode->childs.begin(); \
+		(Var##Iter != pNode->childs.end() && (Var = Var##Iter->second) ),  Var##Iter != pNode->childs.end(); \
+		++Var##Iter )
+
 
 // Entity Encode/Decode Support
 struct XENTITY
@@ -106,7 +135,7 @@ extern DISP_OPT optDefault;
 // XAttr : Attribute Implementation
 struct XAttr
 {
-	CString name;
+	CString name;	// a duplicate of the name in the parent's map
 	CString	value;
 	void GetValue(CString &out) const;
 	void GetValue(int &out) const;
@@ -121,8 +150,7 @@ struct XAttr
 // XMLNode structure
 struct XNode
 {
-	// name and value
-	CString name;
+	CString name;	// a duplicate of the name in the parent's map
 	CString	value;
 	void GetValue(CString &out) const;
 	void GetValue(int &out) const;
@@ -159,7 +187,6 @@ struct XNode
 	bool GetAttrValue(const char* name,bool &out) const		{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
 	bool GetAttrValue(const char* name,unsigned &out) const	{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
 	bool GetAttrValue(const char* name,DateTime &out) const	{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
-	XAttrs	GetAttrs( const char* name ); 
 
 	// in one level child nodes
 	const XNode *GetChild( const char* name ) const; 
@@ -171,16 +198,12 @@ struct XNode
 	bool GetChildValue(const char* name,bool &out) const	{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
 	bool GetChildValue(const char* name,unsigned &out) const{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
 	bool GetChildValue(const char* name,DateTime &out) const{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
-	XNodes	GetChilds( const char* name ); 
-	XNodes	GetChilds(); 
 
 	XAttr *GetChildAttr( const char* name, const char* attrname );
 	const char* GetChildAttrValue( const char* name, const char* attrname );
 	
 	// modify DOM 
 	int		GetChildCount();
-	XNode *GetChild( int i );
-	XNodes::iterator GetChildIterator( XNode *node );
 	XNode *CreateNode( const char* name = NULL, const char* value = NULL );
 	XNode	*AppendChild( const char* name = NULL, const char* value = NULL );
 	XNode	*AppendChild( const char* name, float value );
@@ -189,11 +212,7 @@ struct XNode
 	XNode	*AppendChild( const char* name, const DateTime &value );
 	XNode	*AppendChild( XNode *node );
 	bool	RemoveChild( XNode *node );
-	XNode *DetachChild( XNode *node );
 
-
-	XAttr *GetAttr( int i );
-	XAttrs::iterator GetAttrIterator( XAttr *node );
 	XAttr *CreateAttr( const char* anem = NULL, const char* value = NULL );
 	XAttr *AppendAttr( const char* name = NULL, const char* value = NULL );
 	XAttr *AppendAttr( const char* name, float value );
@@ -202,7 +221,6 @@ struct XNode
 	XAttr *AppendAttr( const char* name, const DateTime &value );
 	XAttr	*AppendAttr( XAttr *attr );
 	bool	RemoveAttr( XAttr *attr );
-	XAttr *DetachAttr( XAttr *attr );
 
 	XNode() { }
 	~XNode();
