@@ -44,9 +44,15 @@ private:
 
 	MenuElements m_Menu;
 	Sprite	m_sprOpt[NUM_EZ2_GRAPHICS];
+	/* Bitflags for m_iSelectedStyle. */
+	enum { EZ2_PLAYER_1 = 0x01, 
+		   EZ2_PLAYER_2 = 0x02 };
 	int m_iSelectedStyle;
 
 	RandomSample m_soundChange;
 	RandomSample m_soundSelect;	
 	RandomSample m_soundInvalid;
+
+	// used for the bouncing of the '1p' and '2p' images
+	float ez2_bounce; 
 };

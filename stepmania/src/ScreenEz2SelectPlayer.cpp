@@ -54,8 +54,6 @@ const float OPT_Y[NUM_EZ2_GRAPHICS] = {
 
 
 
-float ez2_bounce=0.f; // used for the bouncing of the '1p' and '2p' images
-
 /************************************
 ScreenEz2SelectPlayer (Constructor)
 Desc: Sets up the screen display
@@ -64,8 +62,9 @@ Desc: Sets up the screen display
 ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 {
 	LOG->Trace( "ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()" );
-	m_iSelectedStyle=3; // by bbf: frieza, was this supposed to be 3 ?
+	m_iSelectedStyle=0;
 	GAMESTATE->m_CurStyle = STYLE_NONE;
+	ez2_bounce=0.f;
 //	GAMESTATE->m_MasterPlayerNumber = PLAYER_INVALID;
 
 // Load in the sprites we will be working with.
@@ -182,30 +181,39 @@ void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_MenuTimer:
-		MenuStart(PLAYER_1); // Automatically Choose Player 1
+		/* If a player has already chosen, then he chose within the last second
+		 * of the menu timer; just stop and let it come through as if the menu
+		 * timer didn't expire. */
+		if(!m_iSelectedStyle)
+			MenuStart(PLAYER_1);
 		break;
 	case SM_PlayersChosen:
-		if (m_iSelectedStyle == 0) // only the left pad was selected
+		if (m_iSelectedStyle & EZ2_PLAYER_1) 
 		{
-//			GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-			GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE;
+			if (m_iSelectedStyle & EZ2_PLAYER_2) 
+			{
+				// they both selected
+//				GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+//				GAMESTATE->m_bIsJoined[PLAYER_1] = true;
+				GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;
+			} else {
+				// only the left pad was selected
+//				GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+				GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE;
+//				GAMESTATE->m_bIsJoined[PLAYER_2] = true;
+			}
 		}
-		else if (m_iSelectedStyle == 1) // only the right pad was selected
-		{
+		else if (m_iSelectedStyle & EZ2_PLAYER_2)  {
+			// only the right pad was selected
 //			GAMESTATE->m_MasterPlayerNumber = PLAYER_2;
 			GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE;
-		}
-		else // they both selected
-		{
-//			GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-			GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;
-		}
+//			GAMESTATE->m_bIsJoined[PLAYER_2] = true;
+		} else ASSERT(0);
 
 		MUSIC->Stop();
 		
 		m_Menu.TweenOffScreenToMenu( SM_GoToNextState );
 
-		TweenOffScreen();	
 		break;
 
 	case SM_GoToPrevState:
@@ -257,44 +265,30 @@ presses the button bound to start
 ************************************/
 void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
 {
-	//disallow multiple presses of the menu start.
-	if ( (m_iSelectedStyle == 0 && p == PLAYER_1) || (m_iSelectedStyle == 1 && p == PLAYER_2))
-	{
-		return;
-	}
+	int this_player_bit = (p == PLAYER_1)? EZ2_PLAYER_1:EZ2_PLAYER_2;
 
+	// disallow multiple presses of the menu start.
+	if ( m_iSelectedStyle & this_player_bit )
+		return;
+	
 	// figure out whether we should add a player into the fray or not
 //	if(	GAMESTATE->m_MasterPlayerNumber != PLAYER_2 && GAMESTATE->m_MasterPlayerNumber != PLAYER_1 )
-	if (m_iSelectedStyle == 3)
+	if (m_iSelectedStyle == 0)
 	{
 //		GAMESTATE->m_MasterPlayerNumber = p;
 
-		if (p == PLAYER_1)
-		{
-//			GAMESTATE->m_bIsJoined[PLAYER_1] = true;
-			m_iSelectedStyle = 0;
-		}
-		else
-		{
-			m_iSelectedStyle = 1;
-//			GAMESTATE->m_bIsJoined[PLAYER_2] = true;
-		}
-		m_soundSelect.PlayRandom();
-			
-		// wait for a bit incase another player wants to join before moving on.
-		this->ClearMessageQueue();
+		m_iSelectedStyle |= this_player_bit;
+
+		// wait for a bit in case another player wants to join before moving on.
 		SCREENMAN->SendMessageToTopScreen( SM_PlayersChosen, 1.f );
 	}
 	else
 	{
-		m_iSelectedStyle = 2;
-//		GAMESTATE->m_bIsJoined[PLAYER_1] = true;
-//		GAMESTATE->m_bIsJoined[PLAYER_2] = true;
-		m_soundSelect.PlayRandom();
+		m_iSelectedStyle |= this_player_bit;
 	}
 
+	m_soundSelect.PlayRandom();
 	TweenOffScreen();
-
 }
 
 /************************************
@@ -304,18 +298,18 @@ changes state.
 ************************************/
 void ScreenEz2SelectPlayer::TweenOffScreen()
 {
-		if (m_iSelectedStyle == 0 || m_iSelectedStyle == 2)
-		{	
-			m_sprOpt[1].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-			m_sprOpt[1].SetTweenZoomY( 0 );
-			m_sprOpt[2].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-			m_sprOpt[2].SetTweenZoomY( 0 );
-		}
-		if (m_iSelectedStyle == 1 || m_iSelectedStyle == 2)
-		{	
-			m_sprOpt[0].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-			m_sprOpt[0].SetTweenZoomY( 0 );
-			m_sprOpt[3].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-			m_sprOpt[3].SetTweenZoomY( 0 );
-		}
+	if (m_iSelectedStyle & EZ2_PLAYER_1)
+	{	
+		m_sprOpt[1].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+		m_sprOpt[1].SetTweenZoomY( 0 );
+		m_sprOpt[2].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+		m_sprOpt[2].SetTweenZoomY( 0 );
+	}
+	if (m_iSelectedStyle & EZ2_PLAYER_2)
+	{	
+		m_sprOpt[0].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+		m_sprOpt[0].SetTweenZoomY( 0 );
+		m_sprOpt[3].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+		m_sprOpt[3].SetTweenZoomY( 0 );
+	}
 }
