@@ -684,6 +684,11 @@ static void HandleInputEvents(float fDeltaTime)
 	static InputEventArray ieArray;
 	ieArray.clear();	// empty the array
 	INPUTFILTER->GetInputEvents( ieArray );
+
+	/* If we don't have focus, discard input. */
+	if( !g_bHasFocus )
+		return;
+
 	for( unsigned i=0; i<ieArray.size(); i++ )
 	{
 		DeviceInput DeviceI = (DeviceInput)ieArray[i];
