@@ -60,6 +60,7 @@ public:
 	// Lookup
 	const vector<Song*> &GetAllSongs() const { return m_pSongs; }
 	const vector<Song*> &GetBestSongs( MemoryCard card=MEMORY_CARD_MACHINE ) const { return m_pBestSongs[MEMORY_CARD_MACHINE]; }
+	const vector<Course*> &GetBestCourses( MemoryCard card=MEMORY_CARD_MACHINE ) const { return m_pBestCourses[MEMORY_CARD_MACHINE]; }
 	void GetSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages = 100000 /*inf*/ ) const;
 	void GetSongs( vector<Song*> &AddTo, int iMaxStages ) const { GetSongs(AddTo,"",iMaxStages); }
 	void GetSongs( vector<Song*> &AddTo ) const { GetSongs(AddTo,"",100000 /*inf*/ ); }
@@ -148,7 +149,8 @@ protected:
 	vector<Song*>		m_pBestSongs[NUM_MEMORY_CARDS];
 	CStringArray		m_sGroupNames;
 	CStringArray		m_sGroupBannerPaths; // each song group may have a banner associated with it
-	vector<Course*> m_pCourses;
+	vector<Course*>		m_pCourses;
+	vector<Course*>		m_pBestCourses[NUM_MEMORY_CARDS];
 };
 
 

@@ -1344,6 +1344,9 @@ void SongManager::UpdateBest()
 	{
 		m_pBestSongs[i] = m_pSongs;
 		SortSongPointerArrayByMostPlayed( m_pBestSongs[i], (MemoryCard) i );
+
+		m_pBestCourses[i] = m_pCourses;
+		SortCoursePointerArrayByMostPlayed( m_pBestCourses[i], (MemoryCard) i );
 	}
 }
 
