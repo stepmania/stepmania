@@ -201,6 +201,10 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		m_Fade.CloseWipingRight( SM_GoToAttractLoop );
 		break;
 	case MENU_BUTTON_START:
+		/* If this side is already in, don't re-join (and re-pay!). */
+		if(GAMESTATE->m_bSideIsJoined[MenuI.player])
+			break;
+
 		switch( PREFSMAN->m_CoinMode )
 		{
 		case PrefsManager::COIN_PAY:
