@@ -3,6 +3,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "MovieTexture_Null.h"
+#include "PrefsManager.h"
 
 /* Why is this _WINDOWS and not WIN32?
  * --steve 
@@ -12,9 +13,6 @@
 #if defined(_WINDOWS)
 #include "MovieTexture_DShow.h"
 #define HAVE_FFMPEG
-#define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,DShow,Null"
-#else /* config.h */
-#define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,Null"
 #endif
 
 #ifdef HAVE_FFMPEG
@@ -78,7 +76,7 @@ RageMovieTexture *MakeRageMovieTexture(RageTextureID ID)
 	DumpAVIDebugInfo( ID.filename );
 
 	CStringArray DriversToTry;
-	split(DEFAULT_MOVIE_DRIVER_LIST, ",", DriversToTry, true);
+	split(PREFSMAN->m_sMovieDrivers, ",", DriversToTry, true);
 	ASSERT(DriversToTry.size() != 0);
 
 	CString Driver;
