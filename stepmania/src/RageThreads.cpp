@@ -22,11 +22,12 @@
 
 #include "arch/Threads/Threads.h"
 
+#if defined(CRASH_HANDLER)
 #if defined(WIN32)
 #include "archutils/Win32/crash.h"
-#endif
-#if defined(CRASH_HANDLER)
+#elif defined(UNIX)
 #include "archutils/Unix/CrashHandler.h"
+#endif
 #endif
 
 #define MAX_THREADS 128
@@ -512,8 +513,12 @@ void RageMutex::Lock()
 			ThisSlot? ThisSlot->GetThreadName(): "(???" ")", // stupid trigraph warnings
 			OtherSlot? OtherSlot->GetThreadName(): "(???" ")" );
 
+#if defined(CRASH_HANDLER)
 		/* Pass the crash handle of the other thread, so it can backtrace that thread. */
 		ForceCrashHandlerDeadlock( sReason, OtherSlot? OtherSlot->pImpl->GetCrashHandle():0 );
+#else
+		RageException::Throw( "%s", sReason );
+#endif
 	}
 
 	m_LockedBy = GetThisThreadId();
