@@ -20,6 +20,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "InputMapper.h"
+#include "ActorUtil.h"
 
 const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 
@@ -39,6 +40,9 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 #define EXPLANATION_TOGETHER_X			THEME->GetMetricF("ScreenOptions","ExplanationTogetherX")
 #define EXPLANATION_TOGETHER_Y			THEME->GetMetricF("ScreenOptions","ExplanationTogetherY")
 #define EXPLANATION_TOGETHER_ON_COMMAND	THEME->GetMetric ("ScreenOptions","ExplanationTogetherOnCommand")
+#define SHOW_SCROLL_BAR					THEME->GetMetricB("ScreenOptions","ShowScrollBar")
+#define SCROLL_BAR_HEIGHT				THEME->GetMetricF("ScreenOptions","ScrollBarHeight")
+#define SCROLL_BAR_TIME					THEME->GetMetricF("ScreenOptions","ScrollBarTime")
 #define ITEMS_SPACING_Y					THEME->GetMetricF("ScreenOptions","ItemsSpacingY")
 #define EXPLANATION_ZOOM				THEME->GetMetricF("ScreenOptions","ExplanationZoom")
 #define COLOR_SELECTED					THEME->GetMetricC("ScreenOptions","ColorSelected")
@@ -217,6 +221,19 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 		m_textExplanation[p].SetShadowLength( 0 );
 		m_framePage.AddChild( &m_textExplanation[p] );
 	}
+
+	if( SHOW_SCROLL_BAR )
+	{
+		m_ScrollBar.SetName( "DualScrollBar", "ScrollBar" );
+		m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT );
+		m_ScrollBar.SetBarTime( SCROLL_BAR_TIME );
+		for( p=0; p<NUM_PLAYERS; p++ )
+			m_ScrollBar.EnablePlayer( (PlayerNumber)p, GAMESTATE->IsHumanPlayer(p) );
+		m_ScrollBar.Load();
+		UtilSetXY( m_ScrollBar, "ScreenOptions" );
+		m_framePage.AddChild( &m_ScrollBar );
+	}
+
 	switch( m_InputMode )
 	{
 	case INPUTMODE_INDIVIDUAL:
@@ -740,6 +757,9 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 	RefreshIcons();
 	PositionIcons();
 	UpdateEnabledDisabled();
+
+	if( SHOW_SCROLL_BAR )
+		m_ScrollBar.SetPercentage( pn, m_iCurrentRow[pn] / float(m_iNumOptionRows) );
 
 	/* Update all players, since changing one player can move both cursors. */
 	for( int p=0; p<NUM_PLAYERS; p++ )

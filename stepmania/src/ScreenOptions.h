@@ -20,6 +20,7 @@
 #include "MenuElements.h"
 #include "OptionsCursor.h"
 #include "OptionIcon.h"
+#include "DualScrollBar.h"
 
 
 const unsigned MAX_OPTION_LINES = 40;
@@ -124,6 +125,7 @@ protected:	// derived classes need access to these
 	OptionsCursor	m_Highlight[NUM_PLAYERS];
 
 	BitmapText		m_textExplanation[NUM_PLAYERS];
+	DualScrollBar	m_ScrollBar;
 
 	RageSound		m_SoundChangeCol;
 	RageSound		m_SoundNextRow;
