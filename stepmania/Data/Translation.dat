@@ -666,6 +666,20 @@ ArtistFrom: Alan Tam / Hacken Lee
 TitleTo: 紅日
 ArtistTo: 譚詠麟／李克勤
 *
+TitleFrom: Sabishii Kute Loneliness
+ArtistFrom: wandasu
+TitleTo: 淋しくてLoneliness
+ArtistTo: ワンダース
+*
+TitleFrom: Sora Mimi Keeke
+TitleTo: 空耳ケーキ
+*
+# Foonmix:
+# "Yubikiri" has the artist translit in the subtitle translit; move it.
+ArtistFrom: ねこみみ魔法使い feat.都築きせの
+SubtitleTransTo: -erase-
+ArtistTransTo: NekomimiMahouTsukai feat.KisenoTsuduki
+*
 # DREAMS COME TRUE:
 TitleFrom: Asa ga Mata Kuru
 TitleTo: 朝がまた来る
