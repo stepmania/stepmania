@@ -73,6 +73,7 @@ private:
 	void SkipUpdates();
 	void StopSkippingUpdates();
 	void CheckFrame();
+	CString GetActiveFilterList();
 
 	unsigned GetTexHandle() const { return m_uTexHandle; }
 	unsigned m_uTexHandle;

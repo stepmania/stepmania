@@ -200,6 +200,33 @@ void PrintCodecError(HRESULT hr, CString s)
 		);
 }
 
+CString MovieTexture_DShow::GetActiveFilterList()
+{
+	CString ret;
+	
+	IEnumFilters *pEnum = NULL;
+	HRESULT hr = m_pGB->EnumFilters(&pEnum);
+	if (FAILED(hr))
+		return hr_ssprintf(hr, "EnumFilters");
+
+	IBaseFilter *pF = NULL;
+	while (S_OK == pEnum->Next(1, &pF, 0))
+	{
+		FILTER_INFO FilterInfo;
+		pF->QueryFilterInfo(&FilterInfo);
+
+		if(ret != "")
+			ret += ", ";
+		ret += WStringToCString(FilterInfo.achName);
+
+		if( FilterInfo.pGraph )
+			FilterInfo.pGraph->Release();
+		pF->Release();
+	}
+	pEnum->Release();
+	return ret;
+}
+
 void MovieTexture_DShow::Create()
 {
 	RageTextureID actualID = GetID();
@@ -226,13 +253,13 @@ void MovieTexture_DShow::Create()
 
     // Add the source filter
     CComPtr<IBaseFilter>    pFSrc;          // Source Filter
-    WCHAR wFileName[MAX_PATH];
-	MultiByteToWideChar(CP_ACP, 0, actualID.filename.c_str(), -1, wFileName, MAX_PATH);
+    wstring wFileName = CStringToWstring(actualID.filename);
 
 	// if this fails, it's probably because the user doesn't have DivX installed
 	/* No, it also happens if the movie can't be opened for some reason; for example,
-	 * if another program has it open and locked. */
-    if( FAILED( hr = m_pGB->AddSourceFilter( wFileName, L"SOURCE", &pFSrc ) ) )
+	 * if another program has it open and locked.  Missing codecs probably won't
+	 * show up until Connect(). */
+    if( FAILED( hr = m_pGB->AddSourceFilter( wFileName.c_str(), wFileName.c_str(), &pFSrc ) ) )
 	{
 		PrintCodecError(hr, "Could not create source filter to graph!");
 		return;	// survive and don't Run the graph.
@@ -246,13 +273,15 @@ void MovieTexture_DShow::Create()
     CComPtr<IPin>           pFSrcPinOut;    // Source Filter Output Pin   
     if( FAILED( hr = pFSrc->FindPin( L"Output", &pFSrcPinOut ) ) )
         RageException::Throw( hr_ssprintf(hr, "Could not find output pin!") );
-    
+
     // Connect these two filters
     if( FAILED( hr = m_pGB->Connect( pFSrcPinOut, pFTRPinIn ) ) )
 	{
  		PrintCodecError(hr, "Could not connect pins!");
 		return;	// survive and don't Run the graph.
 	}
+
+	LOG->Trace( "Filters: %s", GetActiveFilterList().c_str() );
 
 	// Pass us to our TextureRenderer.
 	pCTR->SetRenderTarget(this);
