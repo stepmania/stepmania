@@ -98,12 +98,36 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 			{
 				TapNote tn;
 				char ch = *p;
+				
 				switch( ch )
 				{
 				case '0': tn = TAP_EMPTY;					break;
 				case '1': tn = TAP_ORIGINAL_TAP;			break;
-				case '2': tn = TAP_ORIGINAL_HOLD_HEAD;		break;
-				case '3': tn = TAP_ORIGINAL_HOLD_TAIL;		break;
+				case '2':
+					tn = TAP_ORIGINAL_HOLD_HEAD;
+
+					/* Set the hold note to have infinite length.  We'll clamp it when
+					 * we hit the tail. */
+					tn.iDuration = MAX_NOTE_ROW;
+					break;
+				case '3':
+				{
+					/* This is the end of a hold.  Search for the beginning. */
+					int iHeadRow;
+					if( !out.IsHoldNoteAtBeat( iTrack, iIndex, &iHeadRow ) )
+					{
+						LOG->Warn( "Unmatched 3 in \"%s\"", sMeasureLine.c_str() );
+					}
+					else
+					{
+						TapNote head_tap = out.GetTapNote( iTrack, iHeadRow );
+						head_tap.iDuration = iIndex - iHeadRow;
+						out.SetTapNote( iTrack, iHeadRow, head_tap );
+					}
+
+					/* This won't write tn, but keep parsing normally anyway. */
+					break;
+				}
 //				case 'm':
 				// Don't be loose with the definition.  Use only 'M' since
 				// that's what we've been writing to disk.  -Chris
@@ -174,7 +198,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 				/* Optimization: if we pass TAP_EMPTY, NoteData will do a search
 				 * to remove anything in this position.  We know that there's nothing
 				 * there, so avoid the search. */
-				if( tn.type != TapNote::empty )
+				if( tn.type != TapNote::empty && ch != '3' )
 					out.SetTapNote( iTrack, iIndex, tn );
 
 				iTrack++;
@@ -182,7 +206,25 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 		}
 	}
 
-	out.RemoveHoldTails();
+	/* Make sure we don't have any hold notes that didn't find a tail. */
+	for( int t=0; t<out.GetNumTracks(); t++ )
+	{
+		NoteData::iterator begin = out.begin( t );
+		NoteData::iterator end = out.end( t );
+		while( begin != end )
+		{
+			NoteData::iterator next = Increment( begin );
+			const TapNote &tn = begin->second;
+			if( tn.type == TapNote::hold_head && tn.iDuration == MAX_NOTE_ROW )
+			{
+				int iRow = begin->first;
+				LOG->Warn( "Unmatched 2 at beat %f", NoteRowToBeat(iRow) );
+				out.RemoveTapNote( t, begin );
+			}
+
+			begin = next;
+		}
+	}
 }
 
 void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &notes_out )
