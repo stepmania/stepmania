@@ -56,7 +56,7 @@ void ListDisplay::Load(
 	m_fSecondsPauseBetweenItems = fSecondsPauseBetweenItems;
 	m_bSlide = bSlide;
 	m_fCurrentItemAtTopOfList = m_bLoop ? 0 : (float)-m_iNumItemsToShow;
-	m_fDestinationItemAtTopOfList = m_vpItems.size()+1;
+	m_fDestinationItemAtTopOfList = (float)(m_vpItems.size()+1);
 	m_fSecondsPauseCountdown = 0;
 
 	RectF rectBarSize(-m_fItemWidth/2, -m_fItemHeight/2,
