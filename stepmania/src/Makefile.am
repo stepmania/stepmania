@@ -194,7 +194,8 @@ endif
 stepmania_LDADD = \
 		  $(GL_LIBS) \
 		  $(libSDL) \
-		  $(SDL_LIBS) -lSDL_image
+		  $(SDL_LIBS) -lSDL_image \
+		  $(AUDIO_LIBS)
 
 INCLUDES = $(SDL_CFLAGS)
 # -O0 -g
