@@ -332,12 +332,23 @@ int RageSoundReader_MP3::fill_buffer()
 		mad->inbuf_filepos += mad->Stream.next_frame - mad->inbuf;
 	}
 
-	int rc = file.Read( mad->inbuf + inbytes, sizeof (mad->inbuf)-inbytes );
+	const bool bWasAtEOF = file.AtEOF();
+
+	int rc = file.Read( mad->inbuf + inbytes, sizeof(mad->inbuf)-inbytes-MAD_BUFFER_GUARD );
 	if( rc < 0 )
 	{
 		SetError( file.GetError() );
 		return -1;
 	}
+
+	if ( file.AtEOF() && !bWasAtEOF )
+	{
+		/* We just reached EOF.  Append MAD_BUFFER_GUARD bytes of NULs to the
+		 * buffer, to ensure that the last frame is flushed. */
+		memset( mad->inbuf + inbytes + rc, 0, MAD_BUFFER_GUARD );
+		rc += MAD_BUFFER_GUARD;
+	}
+
 	if ( rc == 0 )
 		return 0;
 
