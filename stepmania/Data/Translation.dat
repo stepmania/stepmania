@@ -19,16 +19,6 @@
 # first loaded.  Delete the files in the "Cache" directory after making
 # changes.
 
-# characters needed to add for full effectiveness:
-# ／ (fullwidth slash, the thing that separates each of 3 or more articles) (U+FF0F)
-# 陽 (U+967D) (part of 'Taiyo no Rakuen')
-# ♮ (U+266E) (the music natural sign--for the lightning bolt of FLASH IN THE NIGHT.  Inspired by the DWI character support PNG made by Sonny B)
-# Greek alphabet (U+370 - U+3CE) (here, for Yoma Komatsu...also good for Greek DWI'ers like Synthesis2k2 and Nighthawk)
-# Also suggested:
-# Cyrillic alphabet (automap U+400 - U44F, and import any oddballs that get used.  Idea put forth by parasyte)
-
-# Todo: group songs bet
-
 [Songs]
 TitleFrom: 17 ?(Sai|Ages)?
 TitleTo: 17才
