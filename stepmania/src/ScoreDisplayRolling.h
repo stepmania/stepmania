@@ -1,16 +1,16 @@
 /*
 -----------------------------------------------------------------------------
- File: ScoreDisplay.h
+ File: ScoreDisplayRolling.h
 
- Desc: A graphic displayed in the ScoreDisplay during Dancing.
+ Desc: A graphic displayed in the ScoreDisplayRolling during Dancing.
 
  Copyright (c) 2001 Chris Danford.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
 
-#ifndef _ScoreDisplay_H_
-#define _ScoreDisplay_H_
+#ifndef _ScoreDisplayRolling_H_
+#define _ScoreDisplayRolling_H_
 
 
 #include "Sprite.h"
@@ -22,14 +22,20 @@
 const int MAX_SCORE_DIGITS	=	9;
 
 
-class ScoreDisplay : public ActorFrame
+class ScoreDisplayRolling : public ActorFrame
 {
 public:
-	ScoreDisplay();
+	ScoreDisplayRolling();
 	void SetScore( float fNewScore );
+
+	virtual void Update( float fDeltaTime );
 
 protected:
 	BitmapText m_textDigits[MAX_SCORE_DIGITS];
+	int iCurrentScoreDigits[MAX_SCORE_DIGITS];
+	int iDestinationScoreDigits[MAX_SCORE_DIGITS];
+
+	float m_fTimeUntilNextTick;
 };
 
 #endif

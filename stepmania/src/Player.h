@@ -25,6 +25,7 @@
 #include "Player.h"
 #include "ActorFrame.h"
 #include "SoundSet.h"
+#include "ScoreDisplayRolling.h"
 
 
 
@@ -145,9 +146,9 @@ private:
 	void UpdateScore( float fDeltaTime );
 	void DrawScore();
 	void ChangeScore( StepScore stepscore, int iCurCombo );
-	float		m_fScore;
-	Sprite		m_sprScoreFrame;
-	BitmapText	m_textScoreNumber;
+	float				m_fScore;
+	Sprite				m_sprScoreFrame;
+	ScoreDisplayRolling	m_ScoreDisplay;
 
 	// assist
 	SoundSet m_soundAssistTick;

@@ -676,11 +676,19 @@ SOURCE=.\Rectangle.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScoreDisplay.cpp
+SOURCE=.\ScoreDisplayFlipping.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScoreDisplay.h
+SOURCE=.\ScoreDisplayFlipping.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplayRolling.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplayRolling.h
 # End Source File
 # Begin Source File
 

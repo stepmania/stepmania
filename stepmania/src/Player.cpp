@@ -217,8 +217,7 @@ Player::Player( PlayerOptions po, PlayerNumber pn )
 
 	// score
 	m_sprScoreFrame.Load( THEME->GetPathTo(GRAPHIC_SCORE_FRAME) );
-	m_textScoreNumber.Load( THEME->GetPathTo(FONT_SCORE_NUMBERS) );
-	m_textScoreNumber.SetText( "         " );
+	m_ScoreDisplay.SetScore( 0 );
 
 
 	SetX( CENTER_X );
@@ -1357,19 +1356,19 @@ void Player::ChangeLife( StepScore score )
 
 void Player::SetScoreX( int iNewX )
 {
-	m_sprScoreFrame.SetXY( (float)iNewX, SCORE_Y );
-	m_textScoreNumber.SetXY(  (float)iNewX, SCORE_Y );
+	m_sprScoreFrame.SetXY( iNewX, SCORE_Y );
+	m_ScoreDisplay.SetXY(  iNewX, SCORE_Y );
 }
 
 void Player::UpdateScore( float fDeltaTime )
 {
 	m_sprScoreFrame.Update( fDeltaTime );
-	m_textScoreNumber.Update( fDeltaTime );
+	m_ScoreDisplay.Update( fDeltaTime );
 }
 
 void Player::DrawScore()
 {
-	m_textScoreNumber.Draw();
+	m_ScoreDisplay.Draw();
 	m_sprScoreFrame.Draw();
 }
 
@@ -1410,5 +1409,5 @@ void Player::ChangeScore( StepScore score, int iCurCombo )
 	ASSERT( m_fScore >= 0 );
 
 	
-	m_textScoreNumber.SetText( ssprintf("%9.0f", m_fScore) );
+	m_ScoreDisplay.SetScore( m_fScore );
 }
