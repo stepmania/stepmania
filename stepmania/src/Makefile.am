@@ -126,14 +126,14 @@ ScreenTestSound.cpp ScreenTestSound.h ScreenTextEntry.cpp ScreenTextEntry.h Scre
 ScreenUnlock.h ScreenWarning.h ScreenMiniMenu.cpp ScreenMiniMenu.h ScreenSoundOptions.cpp ScreenSoundOptions.h \
 ScreenAutogenOptions.cpp ScreenAutogenOptions.h ScreenCredits.cpp ScreenCredits.h \
 ScreenSelectCharacter.cpp ScreenSelectCharacter.h ScreenRaveOptions.cpp ScreenRaveOptions.h \
-ScreenBackgroundOptions.cpp ScreenBackgroundOptions.h
+ScreenBackgroundOptions.cpp ScreenBackgroundOptions.h ScreenUnlock.cpp ScreenUnlock.h
  
 
 GlobalSingletons = \
 AnnouncerManager.cpp AnnouncerManager.h FontManager.cpp FontManager.h GameManager.cpp GameManager.h \
 GameState.cpp GameState.h InputFilter.cpp InputFilter.h InputMapper.cpp InputMapper.h InputQueue.cpp InputQueue.h \
 NoteSkinManager.cpp NoteSkinManager.h PrefsManager.cpp PrefsManager.h SongManager.cpp SongManager.h \
-ThemeManager.cpp ThemeManager.h 
+ThemeManager.cpp ThemeManager.h UnlockSystem.cpp UnlockSystem.h StepmaniaTemplates.cpp
 
 Sound_OSS = \
 	arch/Sound/RageSoundDriver_OSS.cpp \
@@ -148,9 +148,9 @@ Sound_Null = \
 	arch/Sound/RageSoundDriver_Null.h
 
 Sound = $(Sound_Null)
-#if ALSA
+if ALSA
 Sound += $(Sound_ALSA9)
-#endif
+endif
 
 stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transitions) \
 		    $(Actors) $(ActorsInMenus) $(ActorsInGameplay) $(Screens) $(GlobalSingletons) \
