@@ -24,7 +24,7 @@
 #include "RageSounds.h"
 #include "ThemeManager.h"
 #include "LightsManager.h"
-#include "Song.h"
+#include "song.h"
 
 #define NEXT_SCREEN				THEME->GetMetric ("ScreenStage","NextScreen")
 
