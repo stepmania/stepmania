@@ -1861,9 +1861,9 @@ class LunaGameState : public Luna<T>
 public:
 	LunaGameState() { LUA->Register( Register ); }
 
-	static int IsPlayerEnabled( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsPlayerEnabled((PlayerNumber)(IArg(1))) ); return 1; }
-	static int IsHumanPlayer( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsHumanPlayer((PlayerNumber)(IArg(1))) ); return 1; }
-	static int GetPlayerDisplayName( T* p, lua_State *L )	{ lua_pushstring(L, p->GetPlayerDisplayName((PlayerNumber)(IArg(1))) ); return 1; }
+	static int IsPlayerEnabled( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsPlayerEnabled((PlayerNumber)IArg(1)) ); return 1; }
+	static int IsHumanPlayer( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsHumanPlayer((PlayerNumber)IArg(1)) ); return 1; }
+	static int GetPlayerDisplayName( T* p, lua_State *L )	{ lua_pushstring(L, p->GetPlayerDisplayName((PlayerNumber)IArg(1)) ); return 1; }
 	static int GetMasterPlayerNumber( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_MasterPlayerNumber ); return 1; }
 	static int ApplyGameCommand( T* p, lua_State *L )
 	{
@@ -1874,9 +1874,35 @@ public:
 		return 0;
 	}
 	static int GetCurrentSong( T* p, lua_State *L )			{ if(p->m_pCurSong) p->m_pCurSong->PushSelf(L); else lua_pushnil(L); return 1; }
-	static int SetCurrentSong( T* p, lua_State *L )			{ Song *pS = Luna<Song>::check(L,1); p->m_pCurSong = pS; return 0; }
+	static int SetCurrentSong( T* p, lua_State *L )
+	{ 
+		if( lua_isnil(L,1) ) { p->m_pCurSong = NULL; }
+		else { Song *pS = Luna<Song>::check(L,1); p->m_pCurSong = pS; }
+		return 0;
+	}
+	static int GetCurrentSteps( T* p, lua_State *L )
+	{
+		PlayerNumber pn = (PlayerNumber)IArg(1);
+		Steps *pSteps = p->m_pCurSteps[pn];  
+		if( pSteps ) { pSteps->PushSelf(L); }
+		else		 { lua_pushnil(L); }
+		return 1;
+	}
+	static int SetCurrentSteps( T* p, lua_State *L )
+	{ 
+		PlayerNumber pn = (PlayerNumber)IArg(1);
+		Steps *pSteps = p->m_pCurSteps[pn];  
+		if( lua_isnil(L,2) )	{ p->m_pCurSteps[pn] = NULL; }
+		else					{ Song *pS = Luna<Song>::check(L,2); p->m_pCurSteps[pn] = pS; }
+		return 0;
+	}
 	static int GetCurrentCourse( T* p, lua_State *L )		{ if(p->m_pCurCourse) p->m_pCurCourse->PushSelf(L); else lua_pushnil(L); return 1; }
-	static int SetCurrentCourse( T* p, lua_State *L )		{ Course *pC = Luna<Course>::check(L,1); p->m_pCurCourse = pC; return 0; }
+	static int SetCurrentCourse( T* p, lua_State *L )
+	{ 
+		if( lua_isnil(L,1) ) { p->m_pCurCourse = NULL; }
+		else { Song *pC = Luna<Course>::check(L,1); p->m_pCurCourse = pC; }
+		return 0;
+	}
 	static int SetTemporaryEventMode( T* p, lua_State *L )	{ p->m_bTemporaryEventMode = BArg(1); return 0; }
 
 	static void Register(lua_State *L)

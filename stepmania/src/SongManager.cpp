@@ -1239,17 +1239,24 @@ class LunaSongManager : public Luna<T>
 public:
 	LunaSongManager() { LUA->Register( Register ); }
 
+	static int GetAllSongs( T* p, lua_State *L )
+	{
+		const vector<Song*> &v = p->GetAllSongs();
+		CreateTableFromArray<Song*>( v, L );
+		return 1;
+	}
 	static int GetAllCourses( T* p, lua_State *L )
 	{
-		vector<Course*> vCourses;
-		p->GetAllCourses( vCourses, BArg(1) );
-		CreateTableFromArray<Course*>( vCourses, L );
+		vector<Course*> v;
+		p->GetAllCourses( v, BArg(1) );
+		CreateTableFromArray<Course*>( v, L );
 		return 1;
 	}
 	static int FindCourse( T* p, lua_State *L ) { Course *pC = p->FindCourse(SArg(1)); if(pC) pC->PushSelf(L); else lua_pushnil(L); return 1; }
 
 	static void Register(lua_State *L)
 	{
+		ADD_METHOD( GetAllSongs )
 		ADD_METHOD( GetAllCourses )
 		ADD_METHOD( FindCourse )
 		Luna<T>::Register( L );
