@@ -7,6 +7,7 @@
  *
  */
 
+#include "StdString.h"
 #include "Crash.h"
 #include "archutils/Unix/CrashHandler.h"
 #include <Carbon/Carbon.h>
