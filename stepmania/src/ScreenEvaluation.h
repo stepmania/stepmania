@@ -15,7 +15,6 @@
 #include "PercentageDisplay.h"
 #include "GraphDisplay.h"
 #include "ComboGraph.h"
-#include "BGAnimation.h"
 #include "ActorUtil.h"
 #include "ConditionalBGA.h"
 #include "HighScore.h"
@@ -64,7 +63,6 @@ protected:
 
 	float m_fScreenCreateTime;
 
-	BGAnimation m_bgOverlay;
 	ConditionalBGA m_bgCondBga;
 
 	// player name area

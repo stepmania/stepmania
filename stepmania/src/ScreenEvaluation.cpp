@@ -279,10 +279,6 @@ void ScreenEvaluation::Init()
 		}
 //	}
 	
-	m_bgOverlay.LoadFromAniDir( THEME->GetPathB(m_sName, "overlay") );
-	m_bgOverlay.SetDrawOrder( 1 ); /* draw on top of everything except transitions */
-	this->AddChild( &m_bgOverlay );
-
 	m_bPassFailTriggered = false; // the sound hasn't been triggered yet
 	if( m_bFailed )
  		m_sndPassFail.Load( THEME->GetPathS(m_sName, "failed") );
