@@ -473,15 +473,6 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 	// we don't override the user's changes if they back out.
 	if( GAMESTATE->m_PlayMode == PLAY_MODE_ONI && GAMESTATE->m_PlayMode != OldPlayMode )
 		GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
-
-
-	//
-	// We know what players are joined at the time we set the Style
-	//
-	if( m_pStyle != NULL )
-	{
-		GAMESTATE->PlayersFinalized();
-	}
 }
 
 bool ModeChoice::IsZero() const

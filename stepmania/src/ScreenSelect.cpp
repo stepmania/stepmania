@@ -173,14 +173,12 @@ void ScreenSelect::FinalizeChoices()
 	 * invalidate the choice we've already made.  Hack: apply the style.
 	 * (Applying the style may have other side-effects, so it'll be re-applied
 	 * in SM_GoToNextScreen.) */
-	FOREACH_PlayerNumber( p )
-		if( GAMESTATE->IsHumanPlayer(p) )
-		{
-			const int sel = GetSelectionIndex( p );
-			
-			if( m_aModeChoices[sel].m_pStyle )
-				GAMESTATE->m_pCurStyle = m_aModeChoices[sel].m_pStyle;
-		}
+	FOREACH_HumanPlayer( p )
+	{
+		const int sel = GetSelectionIndex( p );
+		if( m_aModeChoices[sel].m_pStyle )
+			GAMESTATE->m_pCurStyle = m_aModeChoices[sel].m_pStyle;
+	}
 	SCREENMAN->RefreshCreditsMessages();
 }
 
@@ -204,9 +202,21 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 			/* Apply here, not in SM_AllDoneChoosing, because applying can take a very
 			 * long time (200+ms), and at SM_AllDoneChoosing, we're still tweening stuff
 			 * off-screen. */
-			FOREACH_PlayerNumber( p )
-				if( GAMESTATE->IsHumanPlayer(p) )
-					m_aModeChoices[this->GetSelectionIndex((PlayerNumber)p)].Apply( (PlayerNumber)p );
+			FOREACH_HumanPlayer( p )
+				m_aModeChoices[this->GetSelectionIndex(p)].Apply( p );
+
+			//
+			// Finalize players if we set a style on this screen.
+			//
+			FOREACH_HumanPlayer( p )
+			{
+				const int sel = GetSelectionIndex( p );
+				if( m_aModeChoices[sel].m_pStyle )
+				{
+					GAMESTATE->PlayersFinalized();
+					break;
+				}
+			}
 
 			const int iSelectionIndex = GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
 			if( m_aModeChoices[iSelectionIndex].m_sScreen != "" )
