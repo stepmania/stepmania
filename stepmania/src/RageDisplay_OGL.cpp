@@ -425,7 +425,7 @@ static void CheckReversePackedPixels()
 	glTexImage2D(GL_PROXY_TEXTURE_2D,
 				0, GL_RGBA, 
 				16, 16, 0,
-				GL_BGRA, 2, NULL);//GL_UNSIGNED_SHORT_1_5_5_5_REV, NULL);
+				GL_BGRA, GL_UNSIGNED_SHORT_1_5_5_5_REV, NULL);
 
 	const GLenum glError = glGetError();
 	if( glError == GL_NO_ERROR )
