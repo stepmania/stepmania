@@ -1387,7 +1387,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		{
 		case SongOptions::FAIL_ARCADE:
 		case SongOptions::FAIL_END_OF_SONG:
-            FOREACH(pn)
+            FOREACH_EnabledPlayer(pn)
 				g_CurStageStats.bFailed[pn] = true;	// fail
 		}
 
