@@ -85,15 +85,15 @@ static Actor* LoadActor( CString sPath )
 	return pActor;
 }
 
-Actor* MakeActor( CString sPath )
+Actor* MakeActor( RageTextureID ID )
 {
-	CString sExt = GetExtension(sPath);
+	CString sExt = GetExtension( ID.filename );
 	sExt.MakeLower();
 	
 
 	if( sExt=="actor" )
 	{
-		return LoadActor( sPath );
+		return LoadActor( ID.filename );
 	}
 	else if( sExt=="png" ||
 		sExt=="jpg" || 
@@ -105,18 +105,18 @@ Actor* MakeActor( CString sPath )
 		sExt=="sprite" )
 	{
 		Sprite* pSprite = new Sprite;
-		pSprite->Load( sPath );
+		pSprite->Load( ID );
 		return pSprite;
 	}
 	else if( sExt=="txt" )
 	{
 		Model* pModel = new Model;
-		pModel->LoadMilkshapeAscii( sPath );
+		pModel->LoadMilkshapeAscii( ID.filename );
 		return pModel;
 	}
 
 	RageException::Throw("File \"%s\" has unknown type, \"%s\"",
-		sPath.c_str(), sExt.c_str() );
+		ID.filename.c_str(), sExt.c_str() );
 }
 
 void IncorrectActorParametersWarning( const CStringArray &asTokens, int iMaxIndexAccessed, int size )

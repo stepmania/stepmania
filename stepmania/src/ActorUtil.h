@@ -13,6 +13,7 @@
 
 #include "Actor.h"
 #include "ThemeManager.h"
+#include "RageTexture.h"
 
 
 #define SET_XY( actor )			UtilSetXY( actor, m_sName )
@@ -67,7 +68,7 @@ inline float UtilSetXYAndOnCommand( Actor* pActor, CString sClassName ) { return
 
 
 // Return a Sprite, BitmapText, or Model depending on the file type
-Actor* MakeActor( CString sPath );
+Actor* MakeActor( RageTextureID ID );
 
 
 // creates the appropriate Actor derivitive on load and
