@@ -28,14 +28,12 @@ RageDisplay*		DISPLAY	= NULL;
 ////////////
 // Globals
 ////////////
-const int MAX_NUM_VERTICIES = 1000;
 SDL_Surface			*g_screen = NULL;		// this class is a singleton, so there can be only one
 int					g_flags = 0;		/* SDL video flags */
 GLenum				g_vertMode = GL_TRIANGLES;
-RageVertex			g_vertQueue[MAX_NUM_VERTICIES];
 RageTimer			g_LastCheckTimer;
 int					g_iNumVerts;
-int					g_iFPS, g_iVPF, g_iDPF;
+int					g_iFPS, g_iVPF;
 
 int					g_PerspectiveMode = 0;
 
@@ -43,11 +41,10 @@ int					g_CurrentHeight, g_CurrentWidth, g_CurrentBPP;
 int					g_ModelMatrixCnt=0;
 int RageDisplay::GetFPS() const { return g_iFPS; }
 int RageDisplay::GetVPF() const { return g_iVPF; }
-int RageDisplay::GetDPF() const { return g_iDPF; }
 
 static int			g_iFramesRenderedSinceLastCheck,
-					g_iVertsRenderedSinceLastCheck,
-					g_iDrawsSinceLastCheck;
+					g_iVertsRenderedSinceLastCheck;
+
 PWSWAPINTERVALEXTPROC GLExt::wglSwapIntervalEXT;
 
 void GetGLExtensions(set<string> &ext)
@@ -287,7 +284,6 @@ void RageDisplay::Clear()
 
 void RageDisplay::Flip()
 {
-	FlushQueue();
 	SDL_GL_SwapBuffers();
 	g_iFramesRenderedSinceLastCheck++;
 
@@ -296,17 +292,16 @@ void RageDisplay::Flip()
 		g_LastCheckTimer.GetDeltaTime();
 		g_iFPS = g_iFramesRenderedSinceLastCheck;
 		g_iVPF = g_iVertsRenderedSinceLastCheck / g_iFPS;
-		g_iDPF = g_iDrawsSinceLastCheck / g_iFPS;
-		g_iFramesRenderedSinceLastCheck = g_iVertsRenderedSinceLastCheck = g_iDrawsSinceLastCheck = 0;
-		LOG->Trace( "FPS: %d, VPF: %d, DPF: %d", g_iFPS, g_iVPF, g_iDPF );
+		g_iFramesRenderedSinceLastCheck = g_iVertsRenderedSinceLastCheck = 0;
+		LOG->Trace( "FPS: %d, VPF: %d", g_iFPS, g_iVPF );
 	}
 
 }
 
 void RageDisplay::ResetStats()
 {
-	g_iFPS = g_iVPF = g_iDPF = 0;
-	g_iFramesRenderedSinceLastCheck = g_iVertsRenderedSinceLastCheck = g_iDrawsSinceLastCheck = 0;
+	g_iFPS = g_iVPF = 0;
+	g_iFramesRenderedSinceLastCheck = g_iVertsRenderedSinceLastCheck = 0;
 	g_LastCheckTimer.GetDeltaTime();
 }
 
@@ -318,50 +313,36 @@ void RageDisplay::DrawQuad( const RageVertex v[4] )	// upper-left, upper-right, 
 {
 	DrawQuads( v, 4 );
 }
+
+const GLenum RageVertexFormat = GL_T2F_C4UB_V3F;
 void RageDisplay::DrawQuads( const RageVertex v[], int iNumVerts )
 {
-	if( g_vertMode != GL_QUADS )
-		FlushQueue();
-
 	ASSERT( (iNumVerts%4) == 0 );
-	g_vertMode = GL_QUADS;
-	AddVerts( v, iNumVerts );
 
-	glInterleavedArrays( GL_T2F_C4UB_V3F, sizeof(RageVertex), g_vertQueue );
-	glDrawArrays( g_vertMode, 0, g_iNumVerts );
+	glInterleavedArrays( RageVertexFormat, sizeof(RageVertex), v );
+	glDrawArrays( GL_QUADS, 0, iNumVerts );
 
-	g_iVertsRenderedSinceLastCheck += g_iNumVerts;
-	g_iNumVerts = 0;
-
-	g_iDrawsSinceLastCheck++;
+	g_iVertsRenderedSinceLastCheck += iNumVerts;
 }
 void RageDisplay::DrawFan( const RageVertex v[], int iNumVerts )
 {
-	if( g_vertMode != GL_TRIANGLE_FAN )
-		FlushQueue();
-
 	ASSERT( iNumVerts >= 3 );
-	g_vertMode = GL_TRIANGLE_FAN;
-	AddVerts( v, iNumVerts );
-	FlushQueue();
+	glInterleavedArrays( RageVertexFormat, sizeof(RageVertex), v );
+	glDrawArrays( GL_TRIANGLE_FAN, 0, iNumVerts );
+	g_iVertsRenderedSinceLastCheck += iNumVerts;
 }
+
 void RageDisplay::DrawStrip( const RageVertex v[], int iNumVerts )
 {
-	if( g_vertMode != GL_TRIANGLE_STRIP )
-		FlushQueue();
-
 	ASSERT( iNumVerts >= 3 );
-	g_vertMode = GL_TRIANGLE_STRIP;
-	AddVerts( v, iNumVerts );
-	FlushQueue();
+	glInterleavedArrays( RageVertexFormat, sizeof(RageVertex), v );
+	glDrawArrays( GL_TRIANGLE_STRIP, 0, iNumVerts );
+	g_iVertsRenderedSinceLastCheck += iNumVerts;
 }
 
 void RageDisplay::DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth )
 {
 	ASSERT( iNumVerts >= 3 );
-
-	if( g_vertMode != GL_LINE_LOOP )
-		FlushQueue();
 
 	glEnable(GL_LINE_SMOOTH);
 
@@ -385,9 +366,8 @@ void RageDisplay::DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth
 	glLineWidth(LineWidth);
 
 	/* Draw the line loop: */
-	g_vertMode = GL_LINE_LOOP;
-	AddVerts( v, iNumVerts );
-	FlushQueue();
+	glInterleavedArrays( RageVertexFormat, sizeof(RageVertex), v );
+	glDrawArrays( GL_LINE_LOOP, 0, iNumVerts );
 
 	glDisable(GL_LINE_SMOOTH);
 
@@ -409,40 +389,10 @@ void RageDisplay::DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth
 
 	glEnable(GL_POINT_SMOOTH);
 
-	g_vertMode = GL_POINTS;
-	AddVerts( v, iNumVerts );
-	FlushQueue();
+	glInterleavedArrays( RageVertexFormat, sizeof(RageVertex), v );
+	glDrawArrays( GL_POINTS, 0, iNumVerts );
 
 	glDisable(GL_POINT_SMOOTH);
-}
-
-void RageDisplay::AddVerts( const RageVertex v[], int iNumVerts )
-{
-	for( int i=0; i<iNumVerts; i++ )
-	{
-		// Don't overflow the queue
-		if( g_iNumVerts+1 > MAX_NUM_VERTICIES )	
-			FlushQueue();
-
-		g_vertQueue[g_iNumVerts].p = v[i].p;
-		g_vertQueue[g_iNumVerts].c = v[i].c;
-		g_vertQueue[g_iNumVerts].t = v[i].t;
-		g_iNumVerts++; 
-	}
-}
-
-void RageDisplay::FlushQueue()
-{
-	if( g_iNumVerts == 0 )
-		return;
-
-	glInterleavedArrays( GL_T2F_C4UB_V3F, sizeof(RageVertex), g_vertQueue );
-	glDrawArrays( g_vertMode, 0, g_iNumVerts );
-
-	g_iVertsRenderedSinceLastCheck += g_iNumVerts;
-	g_iNumVerts = 0;
-
-	g_iDrawsSinceLastCheck++;
 }
 
 void RageDisplay::PushMatrix() 
@@ -483,8 +433,6 @@ void RageDisplay::EnterPerspective(float fov, bool preserve_loc)
 		g_PerspectiveMode++;
 		return;
 	}
-
-	DISPLAY->FlushQueue();
 
 	/* Save the old matrices. */
 	DISPLAY->PushMatrix();
@@ -612,23 +560,10 @@ void RageDisplay::smPostMultMatrixf( const RageMatrix &f )
 
 void RageDisplay::SetTexture( RageTexture* pTexture )
 {
-	static int iLastTexID = 0;
-	int iNewTexID = pTexture ? pTexture->GetGLTextureID() : 0;
-
-	if( iLastTexID != iNewTexID )
-		FlushQueue();
-	iLastTexID = iNewTexID;
-
-	glBindTexture( GL_TEXTURE_2D, iNewTexID );
+	glBindTexture( GL_TEXTURE_2D, pTexture? pTexture->GetGLTextureID() : 0 );
 }
 void RageDisplay::SetTextureModeModulate()
 {
-	int a;
-	glGetTexEnviv( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, &a );
-
-	if( a != GL_MODULATE )
-		FlushQueue();
-
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 }
 
@@ -636,20 +571,11 @@ void RageDisplay::SetTextureModeModulate()
  * available pre-OpenGL 1.4. */
 void RageDisplay::SetBlendMode(int src, int dst)
 {
-	int a, b;
-	glGetIntegerv( GL_BLEND_SRC, &a );
-	glGetIntegerv( GL_BLEND_DST, &b );
-
-	if( a!=src || b!=dst )
-		FlushQueue();
-
 	glBlendFunc( src, dst );
 }
 
 void RageDisplay::SetTextureModeGlow()
 {
-	FlushQueue();
-
 	if(!m_oglspecs->EXT_texture_env_combine) {
 		SetBlendMode( GL_SRC_ALPHA, GL_ONE );
 		return;
@@ -686,39 +612,19 @@ bool RageDisplay::ZBufferEnabled() const
 
 void RageDisplay::EnableZBuffer()
 {
-	if( !ZBufferEnabled() )
-		FlushQueue();
-
 	glEnable( GL_DEPTH_TEST );
 }
 void RageDisplay::DisableZBuffer()
 {
-	if( ZBufferEnabled() )
-		FlushQueue();
-
 	glDisable( GL_DEPTH_TEST );
 }
 void RageDisplay::EnableTextureWrapping()
 {
-	int a, b;
-	glGetTexParameteriv( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, &a );
-	glGetTexParameteriv( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, &b );
-
-	if( a!=GL_REPEAT || b!=GL_REPEAT )
-		FlushQueue();
-
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
 }
 void RageDisplay::DisableTextureWrapping()
 {
-	int a, b;
-	glGetTexParameteriv( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, &a );
-	glGetTexParameteriv( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, &b );
-
-	if( a!=GL_CLAMP || b!=GL_CLAMP )
-		FlushQueue();
-
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
 }

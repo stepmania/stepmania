@@ -439,7 +439,6 @@ static void GameLoop()
 
 		SCREENMAN->Draw();		// draw the game
 
-		DISPLAY->FlushQueue();
 		DISPLAY->Flip();
 
 		::Sleep( 0 );	// give some time to other processes and threads

@@ -137,9 +137,9 @@ void ScreenManager::Draw()
 	{
 		/* If FPS == 0, we don't have stats yet. */
 		m_textStats.SetText( ssprintf(DISPLAY->GetFPS()?
-			"%i FPS\n%i VPF\n%i DPF":
-			"-- FPS\n-- VPF\n-- DPF",
-			DISPLAY->GetFPS(), DISPLAY->GetVPF(), DISPLAY->GetDPF()) );
+			"%i FPS\n%i VPF":
+			"-- FPS\n-- VPF",
+			DISPLAY->GetFPS(), DISPLAY->GetVPF()) );
 
 		m_textStats.Draw();
 	}

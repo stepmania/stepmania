@@ -79,7 +79,6 @@ public:
 	/* Statistics */
 	int GetFPS() const;
 	int GetVPF() const;
-	int GetDPF() const;
 	void ResetStats();
 
 	const oglspecs_t &GetSpecs() const { return *m_oglspecs; }
