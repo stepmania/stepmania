@@ -337,8 +337,8 @@ static void CheckSettings()
 
 struct VideoCardDefaults
 {
-	char *szDriverRegex;
-	char *szVideoRenderers;
+	const char *szDriverRegex;
+	const char *szVideoRenderers;
 	int iWidth;
 	int iHeight;
 	int iDisplayColor;
