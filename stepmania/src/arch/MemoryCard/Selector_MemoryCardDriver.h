@@ -7,7 +7,7 @@
 #if defined(HAVE_LINUXKERNEL)
 #include "MemoryCardDriverThreaded_Linux.h"
 #elif defined(HAVE_WIN32)
-#include "MemoryCardDriverThreaded_Win32.h"
+#include "MemoryCardDriverThreaded_Windows.h"
 #endif
 
 #endif
