@@ -144,7 +144,11 @@ void FontPage::SetTextureCoords(const vector<int> &widths)
 			if((iPixelsToChopOff % 2) == 1)
 			{
 				/* We don't want to chop off an odd number of pixels, since that'll
-				 * put our texture coordinates between texels and make things blurrier. */
+				 * put our texture coordinates between texels and make things blurrier. 
+				 * Note that, since we set hadvance above, this merely expands what
+				 * we render; it doesn't advance the cursor further.  So, glyphs
+				 * that have an odd width should err to being a pixel offcenter left,
+				 * not right. */
 				iPixelsToChopOff--;
 				g.width++;
 			}
