@@ -124,7 +124,7 @@ RageLog::~RageLog()
 
 void RageLog::ShowConsole()
 {
-#if defined(WIN32) || !defined(_XBOX)
+#if defined(WIN32) && !defined(_XBOX)
 	// create a new console window and attach standard handles
 	AllocConsole();
 	freopen("CONOUT$","wb",stdout);
@@ -134,7 +134,7 @@ void RageLog::ShowConsole()
 
 void RageLog::HideConsole()
 {
-#if defined(WIN32) || !defined(_XBOX)
+#if defined(WIN32) && !defined(_XBOX)
 	FreeConsole();
 #endif
 }

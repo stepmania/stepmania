@@ -325,7 +325,6 @@ void MovieTexture_DShow::CreateTexture()
 			m_PixelFormat = FMT_RGB5;
 		else
 			m_PixelFormat = FMT_RGBA4;	// everything supports RGBA4
-			
 		break;
 	case 32:
 		if( DISPLAY->SupportsTextureFormat(FMT_RGB8) )

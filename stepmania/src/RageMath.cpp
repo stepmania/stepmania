@@ -222,7 +222,7 @@ void RageMatrixCommand( CString sCommandString, RageMatrix &mat )
 		{
 			CString sError = ssprintf( "Unrecognized matrix command name '%s' in command string '%s'.", sName.c_str(), sCommandString.c_str() );
 			LOG->Warn( sError );
-#if defined(WIN32) || !defined(_XBOX) // XXX arch?
+#if defined(WIN32) && !defined(_XBOX) // XXX arch?
 			if( DISPLAY->IsWindowed() )
 				MessageBox(NULL, sError, "MatrixCommand", MB_OK);
 #endif
