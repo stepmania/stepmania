@@ -80,12 +80,12 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 	memset(&format, 0, sizeof(format));
 	format.dwSize = sizeof(format);
 	format.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS;
+	/* Don't use DSBCAPS_STATIC.  It's meant for static buffers, and we
+	 * only use streaming buffers. */
 	if(hardware == HW_HARDWARE)
 		format.dwFlags |= DSBCAPS_LOCHARDWARE;
-	else if(hardware == HW_SOFTWARE)
+	else
 		format.dwFlags |= DSBCAPS_LOCSOFTWARE;
-	if(hardware == HW_DONT_CARE)
-		format.dwFlags |= DSBCAPS_STATIC;
 	if(vol != 1)
 		format.dwFlags |= DSBCAPS_CTRLVOLUME;
 	format.dwBufferBytes = buffersize;
@@ -98,9 +98,21 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 		RageException::ThrowNonfatal(hr_ssprintf(hr, "CreateSoundBuffer failed"));
 
 	sndbuf_buf->QueryInterface(IID_IDirectSoundBuffer8, (LPVOID*) &buf);
+	ASSERT(buf);
 
-	if(buf == NULL)
-		RageException::ThrowNonfatal("foo"); // XXX
+	/* I'm not sure this should ever be needed, but ... */
+	DSBCAPS bcaps;
+	bcaps.dwSize=sizeof(bcaps);
+	hr = buf->GetCaps(&bcaps);
+	if(FAILED(hr))
+		RageException::Throw(hr_ssprintf(hr, "buf->GetCaps"));
+	if(int(bcaps.dwBufferBytes) != buffersize)
+	{
+		LOG->Warn("bcaps.dwBufferBytes (%i) != buffersize(%i); adjusting",
+			bcaps.dwBufferBytes, buffersize);
+		buffersize = bcaps.dwBufferBytes;
+		writeahead = min(writeahead, buffersize);
+	}
 
 	float vl2 = log10f(vol) / log10f(2); /* vol log 2 */
 
