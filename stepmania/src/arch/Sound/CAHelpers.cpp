@@ -32,16 +32,15 @@ OSStatus AudioConverter::FormatConverterInputProc(UInt32& ioNumberDataPackets,
 {
     AudioBuffer& buf = ioData.mBuffers[0];
     
-    // This really shouldn't happen more than once, but better be sure.
-    if( mBufferSize != buf.mDataByteSize )
+    if( mBufferSize < buf.mDataByteSize )
     {
         delete [] mBuffer;
-        mBufferSize = buf.mDataByteSize;
         mBuffer = new UInt8[mBufferSize];
+        mBufferSize = buf.mDataByteSize;
     }
-    
-    mDriver->FillConverter(mBuffer, mBufferSize);
     buf.mData = mBuffer;
+
+	mDriver->FillConverter( buf.mData, buf.mDataByteSize );
     return noErr;
 }
 
