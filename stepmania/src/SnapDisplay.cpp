@@ -24,7 +24,7 @@ SnapDisplay::SnapDisplay()
 	int i;
 	for( i=0; i<2; i++ )
 	{
-		m_sprIndicators[i].Load( THEME->GetPathToG("SnapDisplay icon 6x1") );
+		m_sprIndicators[i].Load( THEME->GetPathToG("SnapDisplay icon 8x1") );
 		ASSERT( m_sprIndicators[i].GetNumStates() == NUM_NOTE_TYPES );
 		m_sprIndicators[i].StopAnimating();
 		this->AddChild( &m_sprIndicators[i] );
@@ -55,7 +55,8 @@ bool SnapDisplay::PrevSnapMode()
 
 bool SnapDisplay::NextSnapMode()
 {
-	if( m_NoteType == NOTE_TYPE_32ND )	// this is the smallest snap we should allow
+	if( m_NoteType == NOTE_TYPE_64TH )	// this is the smallest snap we should allow
+		// MD 11/02/03 - changed to 64ths because support for 48ths and 64ths comes in today.
 		return false;
 	m_NoteType = NoteType(m_NoteType+1);
 

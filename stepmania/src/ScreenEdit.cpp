@@ -154,15 +154,17 @@ Menu g_AreaMenu
 	MenuRow( "Paste at current beat",		true ),
 	MenuRow( "Paste at begin marker",		true ),
 	MenuRow( "Clear",						true ),
-	MenuRow( "Quantize",					true, 0, "4TH","8TH","12TH","16TH","24TH","32ND" ),
+	MenuRow( "Quantize",					true, 0, "4TH","8TH","12TH","16TH","24TH","32ND","48TH","64TH" ),
 	MenuRow( "Turn",						true, 0, "Left","Right","Mirror","Shuffle","Super Shuffle" ),
 	MenuRow( "Transform",					true, 0, "Little","Wide","Big","Quick","Skippy" ),
 	MenuRow( "Alter",						true, 0, "Backwards","Swap Sides","Copy Left To Right","Copy Right To Left","Clear Left","Clear Right","Collapse To One","Shift Left","Shift Right" ),
-	MenuRow( "Tempo",						true, 0, "Compress 2x","Expand 2x" ),
+	MenuRow( "Tempo",						true, 0, "Compress 2x","Compress 3->2","Compress 4->3","Expand 3->4","Expand 2->3","Expand 2x" ),
 	MenuRow( "Play selection",				true ),
 	MenuRow( "Record in selection",			true ),
 	MenuRow( "Insert beat and shift down",	true ),
-	MenuRow( "Delete beat and shift up",	true )
+	MenuRow( "Delete beat and shift up",	true ),
+	MenuRow( "Convert beats to pause",		true ),
+	MenuRow( "Convert pause to beats",		true )
 );
 
 
@@ -500,6 +502,8 @@ void ScreenEdit::UpdateTextInfo()
 	case NOTE_TYPE_16TH:	sNoteType = "16th notes";	break;
 	case NOTE_TYPE_24TH:	sNoteType = "24th notes";	break;
 	case NOTE_TYPE_32ND:	sNoteType = "32nd notes";	break;
+	case NOTE_TYPE_48TH:	sNoteType = "48th notes";	break;
+	case NOTE_TYPE_64TH:	sNoteType = "64th notes";	break;
 	default:  ASSERT(0);
 	}
 
@@ -843,6 +847,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			g_AreaMenu.rows[tempo].enabled = bAreaSelected;
 			g_AreaMenu.rows[play].enabled = bAreaSelected;
 			g_AreaMenu.rows[record].enabled = bAreaSelected;
+			g_AreaMenu.rows[convert_beats_to_pause].enabled = bAreaSelected;
 			SCREENMAN->MiniMenu( &g_AreaMenu, SM_BackFromAreaMenu );
 		}
 		break;
@@ -908,6 +913,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case SDLK_F7:
 	case SDLK_F8:
 		{
+			// MD 11/02/03 - start referring to Editor.ini entries
+			// entries here: BPMDelta, BPMDeltaFine
 			float fBPM = m_pSong->GetBPMAtBeat( GAMESTATE->m_fSongBeat );
 			float fDeltaBPM;
 			switch( DeviceI.button )
@@ -932,6 +939,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case SDLK_F9:
 	case SDLK_F10:
 		{
+			// MD 11/02/03 - start referring to Editor.ini entries
+			// entries here: StopDelta, StopDeltaFine
 			float fStopDelta;
 			switch( DeviceI.button )
 			{
@@ -939,7 +948,11 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			case SDLK_F10:	fStopDelta = +0.02f;		break;
 			default:	ASSERT(0);						return;
 			}
-			switch( type )
+			// MD 11/02/03 - requested: fine adjust for stops as well
+			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
+				INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
+				fStopDelta /= 4; /* .005 */
+			else switch( type )
 			{
 			case IET_SLOW_REPEAT:	fStopDelta *= 10;	break;
 			case IET_FAST_REPEAT:	fStopDelta *= 40;	break;
@@ -970,6 +983,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case SDLK_F11:
 	case SDLK_F12:
 		{
+			// MD 11/02/03 - start referring to Editor.ini entries
+			// entries here: OffsetDelta, OffsetDeltaFine
 			float fOffsetDelta;
 			switch( DeviceI.button )
 			{
@@ -992,6 +1007,9 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case SDLK_LEFTBRACKET:
 	case SDLK_RIGHTBRACKET:
 		{
+			// MD 11/02/03 - start referring to Editor.ini entries
+			// entries here: SampleLengthDelta, SampleLengthDeltaFine
+			//				 SampleStartDelta, SampleStartDeltaFine
 			float fDelta;
 			switch( DeviceI.button )
 			{
@@ -1549,14 +1567,22 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				float fScale = -1;
 				switch( at )
 				{
-				case compress_2x:	fScale = 0.5f;	break;
-				case expand_2x:		fScale = 2;		break;
+				case compress_2x:	fScale = 0.5f;		break;
+				case compress_3_2:	fScale = 2.0f/3;	break;
+				case compress_4_3:	fScale = 0.75f;		break;
+				case expand_4_3:	fScale = 4.0f/3;	break;
+				case expand_3_2:	fScale = 1.5f;		break;
+				case expand_2x:		fScale = 2;			break;
 				default:		ASSERT(0);
 				}
 
 				switch( at )
 				{
 				case compress_2x:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
+				case compress_3_2:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
+				case compress_4_3:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
+				case expand_4_3:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
+				case expand_3_2:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
 				case expand_2x:		NoteDataUtil::Scale( m_Clipboard, fScale );	break;
 				default:		ASSERT(0);
 				}
@@ -1641,6 +1667,64 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 		case delete_and_shift:
 			NoteDataUtil::ShiftRows( m_NoteFieldEdit, GAMESTATE->m_fSongBeat, -1 );
 			break;
+		// MD 11/02/03 - Converting selected region to a pause of the same length.
+		case convert_beat_to_pause:
+			{
+				ASSERT( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 );
+				float fStopLength = m_NoteFieldEdit.m_fEndMarker - m_NoteFieldEdit.m_fBeginMarker;
+				// be sure not to clobber the row at the start - a row at the end
+				// can be dropped safely, though
+				NoteDataUtil::ShiftRows( m_NoteFieldEdit, 
+										 m_NoteFieldEdit.m_fBeginMarker + 0.003f,
+										 (m_NoteFieldEdit.m_fEndMarker-m_NoteFieldEdit.m_fBeginMarker)
+									   );
+				unsigned i;
+				for( i=0; i<m_pSong->m_StopSegments.size(); i++ )
+				{
+					if( m_pSong->m_StopSegments[i].m_fStartBeat == m_NoteFieldEdit.m_fBeginMarker )
+						break;
+				}
+
+				if( i == m_pSong->m_StopSegments.size() )	// there is no BPMSegment at the current beat
+				{
+					m_pSong->AddStopSegment( StopSegment(GAMESTATE->m_fSongBeat, fStopLength) );
+				}
+				else	// StopSegment being extended is m_StopSegments[i]
+				{
+					m_pSong->m_StopSegments[i].m_fStopSeconds += fStopLength;
+				}
+				m_NoteFieldEdit.m_fEndMarker = -1;
+				break;
+			}
+		// MD 11/02/03 - Converting a pause at the current beat into beats.
+		//    I know this will break holds that cross the pause.  Anyone who
+		//    wants to rewrite this to fix that behavior is welcome to - I'm
+		//    not sure how exactly to do it without making this a lot longer
+		//    than it is.
+		case convert_pause_to_beat:
+			{
+				float fBPMatPause = m_pSong->GetBPMAtBeat( GAMESTATE->m_fSongBeat );
+				unsigned i;
+				for( i=0; i<m_pSong->m_StopSegments.size(); i++ )
+				{
+					if( m_pSong->m_StopSegments[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
+						break;
+				}
+
+				if( i == m_pSong->m_StopSegments.size() )	// there is no BPMSegment at the current beat
+					break;
+				else	// StopSegment being modified is m_StopSegments[i]
+				{
+					float fStopLength = m_pSong->m_StopSegments[i].m_fStopSeconds;
+					m_pSong->m_StopSegments.erase( m_pSong->m_StopSegments.begin()+i,
+												   m_pSong->m_StopSegments.begin()+i+1);
+					fStopLength /= fBPMatPause;
+					fStopLength *= 60;
+					// don't move the step from where it is, just move everything later
+					NoteDataUtil::ShiftRows( m_NoteFieldEdit, GAMESTATE->m_fSongBeat + 0.003f, fStopLength );
+				}
+				
+			}
 		default:
 			ASSERT(0);
 	};

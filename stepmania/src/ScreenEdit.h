@@ -115,6 +115,7 @@ public:
 	};
 	void HandleMainMenuChoice( MainMenuChoice c, int* iAnswers );
 
+	// MD 11/02/03 - added conversions of beats to pauses and vice-versa
 	enum AreaMenuChoice {
 		cut,
 		copy,
@@ -130,13 +131,16 @@ public:
 		record,
 		insert_and_shift,
 		delete_and_shift,
+		convert_beat_to_pause,
+		convert_pause_to_beat,
 		NUM_AREA_MENU_CHOICES
 	};
 	void HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers );
 	enum TurnType { left, right, mirror, shuffle, super_shuffle, NUM_TURN_TYPES };
 	enum TransformType { little, wide, big, quick, skippy, NUM_TRANSFORM_TYPES };
 	enum AlterType { backwards, swap_sides, copy_left_to_right, copy_right_to_left, clear_left, clear_right, collapse_to_one, shift_left, shift_right, NUM_ALTER_TYPES };
-	enum TempoType { compress_2x, expand_2x, NUM_TEMPO_TYPES };
+	// MD 11/02/03 - added additional tempo adjusts which make "sense"
+	enum TempoType { compress_2x, compress_3_2, compress_4_3, expand_4_3, expand_3_2, expand_2x, NUM_TEMPO_TYPES };
 
 	enum EditNotesStatisticsChoice {
 		difficulty,

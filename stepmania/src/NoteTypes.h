@@ -62,7 +62,7 @@ enum
 };
 
 const int BEATS_PER_MEASURE = 4;
-const int ROWS_PER_BEAT	= 24;	// It is important that this number is evenly divisible by 2, 3, and 4.
+const int ROWS_PER_BEAT	= 48;	// It is important that this number is evenly divisible by 2, 3, and 4.
 const int ROWS_PER_MEASURE = ROWS_PER_BEAT * BEATS_PER_MEASURE;
 
 enum NoteType 
@@ -71,8 +71,13 @@ enum NoteType
 	NOTE_TYPE_8TH,	// eighth note
 	NOTE_TYPE_12TH,	// triplet
 	NOTE_TYPE_16TH,	// sixteenth note
-	NOTE_TYPE_24TH,	// twenty-forth note
+	NOTE_TYPE_24TH,	// twenty-fourth note
 	NOTE_TYPE_32ND,	// thirty-second note
+	// MD 11/02/03 - added finer divisions
+	NOTE_TYPE_48TH, // forty-eighth note
+	NOTE_TYPE_64TH,	// sixty-fourth note
+	// 96ths and 192nds have no place here - if you're using them,
+	// you have already failed as a stepmaker.  :-)
 	NUM_NOTE_TYPES,
 	NOTE_TYPE_INVALID
 };
