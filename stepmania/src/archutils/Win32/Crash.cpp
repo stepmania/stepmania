@@ -29,6 +29,7 @@
 #include "crash.h"
 #include "disasm.h"
 #include "CrashList.h"
+#include "ProductInfo.h"
 
 #include "RageLog.h" /* for RageLog::GetAdditionalLog only */
 #include "RageThreads.h" /* for GetCheckpointLogs */
@@ -1361,9 +1362,9 @@ static void DoSave(const EXCEPTION_POINTERS *pExc) {
 		return;
 
 	Report(NULL, hFile,
-			"StepMania crash report -- build %d\r\n"
+			"%s crash report (build %d)\r\n"
 			"--------------------------------------"
-			"\r\n", version_num);
+			"\r\n", PRODUCT_NAME_VER, version_num);
 
 	// Detect operating system.
 
@@ -1470,10 +1471,10 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 			case IDC_CRASH_SAVE:
 				if (!s_bHaveCallstack)
 					if (IDOK != MessageBox(hDlg,
-						"StepMania cannot load its crash resource file, and thus the crash dump will be "
+						PRODUCT_NAME " cannot load its crash resource file, and thus the crash dump will be "
 						"missing the most important part, the call stack. Crash dumps are much less useful "
 						"without the call stack.",
-						"StepMania warning", MB_OK|MB_ICONEXCLAMATION))
+						PRODUCT_NAME " warning", MB_OK|MB_ICONEXCLAMATION))
 						return TRUE;
 
 				ViewWithNotepad("crashinfo.txt");

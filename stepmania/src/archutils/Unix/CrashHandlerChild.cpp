@@ -17,6 +17,7 @@
 #include "CrashHandler.h"
 #include "CrashHandlerInternal.h"
 #include "RageLog.h" /* for RageLog::GetAdditionalLog, etc. only */
+#include "ProductInfo.h"
 
 #if defined(DARWIN)
 #include "archutils/Darwin/Crash.h"
@@ -361,11 +362,12 @@ static void child_process()
         exit(1);
     }
 
-    fprintf(CrashDump, "StepMania crash report");
+    fprintf(CrashDump, "%s crash report", PRODUCT_NAME_VER );
 #if defined(HAVE_VERSION_INFO)
-    fprintf(CrashDump, " -- build %u", version_num);
+    fprintf(CrashDump, " (build %u)", version_num);
 #endif
-    fprintf(CrashDump, "\n--------------------------------------\n");
+    fprintf(CrashDump, "\n");
+    fprintf(CrashDump, "--------------------------------------\n");
     fprintf(CrashDump, "\n");
 
     CString Signal;
@@ -434,7 +436,7 @@ static void child_process()
 #else
     fprintf(stderr,
             "\n"
-            "StepMania has crashed.  Debug information has been output to\n"
+            PRODUCT_NAME " has crashed.  Debug information has been output to\n"
             "\n"
             "    /tmp/crashinfo.txt\n"
             "\n"
