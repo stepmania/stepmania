@@ -1825,7 +1825,6 @@ public:
 		if( lua_isnil(L,1) ) { p->m_pCurSong = NULL; }
 		else { Song *pS = Luna<Song>::check(L,1); p->m_pCurSong = pS; }
 		MESSAGEMAN->Broadcast( "CurrentSongChanged" );
-
 		return 0;
 	}
 	static int GetCurrentSteps( T* p, lua_State *L )
@@ -1841,6 +1840,7 @@ public:
 		PlayerNumber pn = (PlayerNumber)IArg(1);
 		if( lua_isnil(L,2) )	{ p->m_pCurSteps[pn] = NULL; }
 		else					{ Steps *pS = Luna<Steps>::check(L,2); p->m_pCurSteps[pn] = pS; }
+		MESSAGEMAN->Broadcast( ssprintf("CurrentStepsP%dChanged",pn+1) );
 		return 0;
 	}
 	static int GetCurrentCourse( T* p, lua_State *L )		{ if(p->m_pCurCourse) p->m_pCurCourse->PushSelf(L); else lua_pushnil(L); return 1; }
