@@ -9,7 +9,6 @@
 
 class LoadingWindow;
 
-#define NETMAXPLAYERS 32
 const int NETPROTOCOLVERSION=1;
 const int NETMAXBUFFERSIZE=1020; //1024 - 4 bytes for EzSockets
 const int NETNUMTAPSCORES=8;
@@ -117,7 +116,7 @@ public:
 	vector <CString> m_PlayerNames;
 
 	//Used for ScreenNetEvaluation
-	EndOfGame_PlayerData m_EvalPlayerData[NETMAXPLAYERS];
+	vector<EndOfGame_PlayerData> m_EvalPlayerData;
 
 	//Used togeather for 
 	bool ChangedScoreboard(int Column);	//If scoreboard changed since this function last called, then true.

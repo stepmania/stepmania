@@ -424,16 +424,7 @@ void NetworkSyncManager::StartRequest(short position)
 		m_packet.WriteNT("");	//Write a NULL if no player
 
 	//This needs to be reset before ScreenEvaluation could possibly be called
-	for (int i=0; i<NETMAXPLAYERS; ++i)
-	{
-		m_EvalPlayerData[i].name=0;
-				m_EvalPlayerData[i].grade=0;
-		m_EvalPlayerData[i].score=0;
-		m_EvalPlayerData[i].difficulty=(Difficulty)0;
-		for (int j=0; j<NETNUMTAPSCORES; ++j)
-			m_EvalPlayerData[i].tapScores[j] = 0;
-		m_EvalPlayerData[i].playerOptions = "";
-	}
+	m_EvalPlayerData.clear();
 
 	//Block until go is recieved.
 	//Switch to blocking mode (this is the only
@@ -552,6 +543,7 @@ void NetworkSyncManager::ProcessInput()
 		case NSCGON: 
 			{
 				int PlayersInPack = m_packet.Read1();
+				m_EvalPlayerData.resize(PlayersInPack);
 				for (int i=0; i<PlayersInPack; ++i)
 					m_EvalPlayerData[i].name = m_packet.Read1();
 				for (int i=0; i<PlayersInPack; ++i)

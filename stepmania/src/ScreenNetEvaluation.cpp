@@ -54,6 +54,8 @@ ScreenNetEvaluation::ScreenNetEvaluation (const CString & sClassName) : ScreenEv
 	m_iActivePlayers = NSMAN->m_ActivePlayers;
 	m_iCurrentPlayer = 0;
 
+	m_textUsers.resize(m_iActivePlayers);
+
 	for( int i=0; i<m_iActivePlayers; ++i )
 	{
 		m_textUsers[i].LoadFromFont( THEME->GetPathF(m_sName,"names") );
@@ -104,6 +106,7 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_GotEval:
 		m_bHasStats = true;
+		m_textUsers.resize(m_iActivePlayers);
 		for( int i=0; i<m_iActivePlayers; ++i )
 		{
 			m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_EvalPlayerData[i].name] );

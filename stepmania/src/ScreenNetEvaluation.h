@@ -20,7 +20,7 @@ protected:
 private:
 	Quad			m_rectUsersBG;
 
-	BitmapText		m_textUsers[NETMAXPLAYERS];
+	vector<BitmapText>		m_textUsers;
 	int				m_iCurrentPlayer;
 	int				m_iActivePlayers;
 	
