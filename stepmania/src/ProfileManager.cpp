@@ -397,7 +397,9 @@ void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, Play
 		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
 	}
 
-	
+	//
+	// save high score	
+	//
 	if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForMachineSongHighScore )
 	{
 		if( PROFILEMAN->IsUsingProfile(pn) )
@@ -408,6 +410,9 @@ void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, Play
 			PROFILEMAN->GetMachineProfile()->AddStepsHighScore( pSong, pSteps, hs, iMachineIndexOut );
 	}
 
+	//
+	// save recent score	
+	//
 	if( PROFILEMAN->IsUsingProfile(pn) )
 		PROFILEMAN->GetProfile(pn)->AddStepsRecentScore( pSong, pSteps, hs );
 	PROFILEMAN->GetMachineProfile()->AddStepsRecentScore( pSong, pSteps, hs );
@@ -462,6 +467,9 @@ void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail,
 	}
 
 
+	//
+	// save high score	
+	//
 	if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForMachineCourseHighScore )
 	{
 		if( PROFILEMAN->IsUsingProfile(pn) )
@@ -469,6 +477,9 @@ void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail,
 		PROFILEMAN->GetMachineProfile()->AddCourseHighScore( pCourse, pTrail, hs, iMachineIndexOut );
 	}
 
+	//
+	// save recent score	
+	//
 	if( PROFILEMAN->IsUsingProfile(pn) )
 		PROFILEMAN->GetProfile(pn)->AddCourseRecentScore( pCourse, pTrail, hs );
 	PROFILEMAN->GetMachineProfile()->AddCourseRecentScore( pCourse, pTrail, hs );

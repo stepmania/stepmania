@@ -150,6 +150,7 @@ void PaneDisplay::SetContent( PaneContents c )
 	const Course *pCourse = GAMESTATE->m_pCurCourse;
 	const Trail *pTrail = GAMESTATE->m_pCurTrail[m_PlayerNumber];
 	const Profile *pProfile = PROFILEMAN->GetProfile( m_PlayerNumber );
+	bool bIsEdit = pSteps && pSteps->GetDifficulty() == DIFFICULTY_EDIT;
 
 	if( (g_Contents[c].req&NEED_NOTES) && !pSteps )
 		goto done;
@@ -193,6 +194,8 @@ void PaneDisplay::SetContent( PaneContents c )
 		case SONG_MACHINE_HIGH_NAME: /* set val for color */
 		case SONG_MACHINE_HIGH_SCORE:
 			CHECKPOINT;
+			if( bIsEdit )	
+				goto done;	// no machine scores for edits
 			val = 100.0f * PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps).GetTopScore().fPercentDP;
 			break;
 
