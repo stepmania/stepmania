@@ -148,22 +148,8 @@ void RageDisplay::SetupOpenGL()
 	glHint(GL_POINT_SMOOTH_HINT, GL_DONT_CARE);
 
 	/* Initialize the default ortho projection. */
-	glMatrixMode( GL_PROJECTION );
-	glLoadIdentity();
 
-	float left = 0, right = SCREEN_WIDTH, bottom = SCREEN_HEIGHT, top = 0;
-	if(strncmp((const char*)glGetString(GL_RENDERER),"GLDirect",strlen("GLDirect"))==0)
-	{
-	    /* GLDirect incorrectly uses Direct3D's device coordinate system
-	     * instead of OpenGL's, so we need to compensate. */
-	    left += 0.5f;
-	    right += 0.5f;
-	    bottom += 0.5f;
-	    top += 0.5f;
-	}
-
-	glOrtho(left, right, bottom, top, SCREEN_NEAR, SCREEN_FAR );
-	glMatrixMode( GL_MODELVIEW );
+	LoadMenuPerspective(0);	// 0 FOV = ortho
 }
 
 RageDisplay::~RageDisplay()
@@ -620,6 +606,70 @@ void RageDisplay::PopMatrix()
 	ASSERT(g_ModelMatrixCnt-->0);
 }
 
+void RageDisplay::LoadMenuPerspective(float fovDegrees)
+{
+	/* fovDegrees == 0 looks the same as an ortho projection.  However,
+	 * we don't want to mess with the ModelView stack because 
+	 * EnterPerspectiveMode's preserve location feature expectes there 
+	 * not to be any camera transforms.  So, do a true ortho projection
+	 * if fovDegrees == 0.  Perhaps it would be more convenient to keep 
+	 * separate model and view stacks like D3D?
+	 */
+	if( fovDegrees == 0 )
+	{
+		glMatrixMode( GL_PROJECTION );
+ 		glLoadIdentity();
+ 
+ 		float left = 0, right = SCREEN_WIDTH, bottom = SCREEN_HEIGHT, top = 0;
+ 		if(strncmp((const char*)glGetString(GL_RENDERER),"GLDirect",strlen("GLDirect"))==0)
+ 		{
+ 			/* GLDirect incorrectly uses Direct3D's device coordinate system
+ 			 * instead of OpenGL's, so we need to compensate. */
+ 			left += 0.5f;
+ 			right += 0.5f;
+ 			bottom += 0.5f;
+ 			top += 0.5f;
+ 		}
+ 		glOrtho(left, right, bottom, top, SCREEN_NEAR, SCREEN_FAR );
+
+ 		glMatrixMode( GL_MODELVIEW );
+ 		glLoadIdentity();
+	}
+	else
+	{
+		CLAMP( fovDegrees, 0.1f, 179.9f );
+		float fovRadians = fovDegrees / 180.f * PI;
+		// tan(theta) = 320/d
+		float theta = fovRadians/2;
+		float fDistCameraFromImage = SCREEN_WIDTH/2 / tanf( theta );
+
+		/* It's the caller's responsibility to push first. */
+		glMatrixMode( GL_PROJECTION );
+		glLoadIdentity();
+
+		glFrustum(
+		  -(SCREEN_WIDTH/2)/fDistCameraFromImage,
+		  +(SCREEN_WIDTH/2)/fDistCameraFromImage,
+		  +(SCREEN_HEIGHT/2)/fDistCameraFromImage,
+		  -(SCREEN_HEIGHT/2)/fDistCameraFromImage,
+		  1,
+		  fDistCameraFromImage+1000
+		);
+
+		glMatrixMode( GL_MODELVIEW );
+		RageVector3 Up( 0.0f, 1.0f, 0.0f );
+		RageVector3 Eye( CENTER_X, CENTER_Y, fDistCameraFromImage );
+		RageVector3 At( CENTER_X, CENTER_Y, 0 );
+		glLoadIdentity();
+		gluLookAt(Eye.x, Eye.y, Eye.z, At.x, At.y, At.z, Up.x, Up.y, Up.z);
+
+		/* GLDirect incorrectly uses Direct3D's device coordinate system
+		 * instead of OpenGL's, so we need to compensate. */
+		if(strncmp((const char*)glGetString(GL_RENDERER),"GLDirect",strlen("GLDirect"))==0)
+			glTranslatef( 0.5f, 0.5f, 0 );
+	}
+}
+
 /* Switch from orthogonal to perspective view.
  *
  * Tricky: we want to maintain all of the zooms, rotations and translations
@@ -654,6 +704,7 @@ void RageDisplay::EnterPerspective(float fov, bool preserve_loc, float near_clip
 	glLoadIdentity();
 	float aspect = SCREEN_WIDTH/(float)SCREEN_HEIGHT;
 	gluPerspective(fov, aspect, near_clip, far_clip);
+
 
 	/* Flip the Y coordinate, so positive numbers go down. */
 	glScalef(1, -1, 1);

@@ -31,6 +31,7 @@
 #include "ThemeManager.h"
 #include "Notes.h"
 #include "ActorUtil.h"
+#include "RageDisplay.h"
  
 
 const int NUM_SCORE_DIGITS	=	9;
@@ -189,10 +190,14 @@ ScreenSelectMusic::~ScreenSelectMusic()
 
 void ScreenSelectMusic::DrawPrimitives()
 {
+	DISPLAY->LoadMenuPerspective(90);
+
 	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
 	m_Menu.DrawTopLayer();
 	m_sprOptionsMessage.Draw();
+	
+	DISPLAY->LoadMenuPerspective(0);
 }
 
 void ScreenSelectMusic::TweenOnScreen()
