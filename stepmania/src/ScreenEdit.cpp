@@ -250,6 +250,40 @@ bool ScreenEdit::DeviceToEdit( DeviceInput DeviceI, EditButton &button ) const
 	return false;
 }
 
+/* If DeviceI was just pressed, return true if button is triggered.  (More than one
+ * function may be mapped to a key.) */
+bool ScreenEdit::EditPressed( EditButton button, const DeviceInput &DeviceI )
+{
+	ASSERT( DeviceI.IsValid() );
+
+	const MapEditToDI *pCurrentMap = GetCurrentMap();
+
+	/* First, search to see if a key that requires a modifier is pressed. */
+	bool bPrimaryButtonPressed = false;
+	for( int slot = 0; slot < NUM_EDIT_TO_DEVICE_SLOTS; ++slot )
+	{
+		if( pCurrentMap->button[button][slot] == DeviceI )
+			bPrimaryButtonPressed = true;
+	}
+
+	if( !bPrimaryButtonPressed )
+		return false;
+
+	/* The button maps to this function.  Does the function has one or more shift modifiers attached? */
+	if( !pCurrentMap->hold[button][0].IsValid() )
+		return true;
+
+	for( int holdslot = 0; holdslot < NUM_EDIT_TO_DEVICE_SLOTS; ++holdslot )
+	{
+		DeviceInput hDI = pCurrentMap->hold[button][holdslot];
+		if( INPUTFILTER->IsBeingPressed(hDI) )
+			return true;
+	}
+
+	/* No shifted keys matched. */  
+	return false;
+}
+
 bool ScreenEdit::EditToDevice( EditButton button, int iSlotNum, DeviceInput &DeviceI ) const
 {
 	ASSERT( iSlotNum < NUM_EDIT_TO_DEVICE_SLOTS );
@@ -839,12 +873,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 	if( type == IET_RELEASE )
 	{
-		switch( EditB )
-		{
-		case EDIT_BUTTON_SCROLL_SELECT:
+		if( EditPressed( EDIT_BUTTON_SCROLL_SELECT, DeviceI ) )
 			g_iShiftAnchor = -1;
-			break;
-		}
 		return;
 	}
 

@@ -294,6 +294,7 @@ public:
 	void InitEditMappings();
 	bool DeviceToEdit( DeviceInput DeviceI, EditButton &button ) const;
 	bool EditToDevice( EditButton button, int iSlotNum, DeviceInput &DeviceI ) const;
+	bool EditPressed( EditButton button, const DeviceInput &DeviceI );
 	bool EditIsBeingPressed( EditButton button ) const;
 	const MapEditToDI *GetCurrentMap() const;
 	MapEditToDI g_EditMappings, g_PlayMappings, g_RecordMappings;
