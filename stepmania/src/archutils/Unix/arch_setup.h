@@ -2,6 +2,13 @@
 #define ARCH_SETUP_UNIX_H
 
 #if defined(LINUX)
+
+#if !defined(MISSING_STDINT_H) /* need to define int64_t if so */
+#include <stdint.h>
+#endif
+
+#include <asm/byteorder.h>
+
 inline uint32_t ArchSwap32( uint32_t n )
 {
 	return ___arch__swab32( n );
