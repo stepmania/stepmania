@@ -40,10 +40,9 @@ public:
 protected:
 	void GetAllThemeNames( CStringArray& AddTo );
 
-	static CString GetThemeDirFromName( CString sThemeName );
+	static CString GetThemeDirFromName( const CString &sThemeName );
 	CString GetElementDir( CString sThemeName );
 	static CString GetMetricsPathFromName( CString sThemeName );
-	CString GetPathToFont( CString sAssetCategory, CString sFileName );
 
 	CString m_sCurThemeName;
 
