@@ -60,6 +60,9 @@ int g_CurrentHeight, g_CurrentWidth, g_CurrentBPP;
  * Instead, we load a palette into a slot.  We need to keep track
  * of which texture's palette is stored in what slot. */
 map<unsigned,int>	g_TexResourceToPaletteIndex;
+struct TexturePalette { PALETTEENTRY p[256]; };
+map<unsigned,TexturePalette>	g_TexResourceToTexturePalette;
+
 int GetUnusedPaletteIndex()
 {
 	for( int i=0; i<256; i++ )
@@ -729,6 +732,8 @@ void RageDisplay::DeleteTexture( unsigned uTexHandle )
 	// Delete palette (if any)
 	if( g_TexResourceToPaletteIndex.find(uTexHandle) != g_TexResourceToPaletteIndex.end() )
 		g_TexResourceToPaletteIndex.erase( g_TexResourceToPaletteIndex.find(uTexHandle) );
+	if( g_TexResourceToTexturePalette.find(uTexHandle) != g_TexResourceToTexturePalette.end() )
+		g_TexResourceToTexturePalette.erase( g_TexResourceToTexturePalette.find(uTexHandle) );
 }
 
 
@@ -752,22 +757,25 @@ unsigned RageDisplay::CreateTexture(
 		int iPalIndex = GetUnusedPaletteIndex();
 
 		// Save palette
-		PALETTEENTRY pal[256];
-		memset( pal, 0, sizeof(pal) );
+		TexturePalette pal;
+		memset( pal.p, 0, sizeof(pal.p) );
 		for( int i=0; i<img->format->palette->ncolors; i++ )
 		{
 			SDL_Color c = img->format->palette->colors[i];
-			pal[i].peRed = c.r;
-			pal[i].peGreen = c.g;
-			pal[i].peBlue = c.b;
+			pal.p[i].peRed = c.r;
+			pal.p[i].peGreen = c.g;
+			pal.p[i].peBlue = c.b;
 			bool bIsColorKey = img->flags & SDL_SRCCOLORKEY && (unsigned)i == img->format->colorkey;
-			pal[i].peFlags = bIsColorKey ? 0x00 : 0xFF;
+			pal.p[i].peFlags = bIsColorKey ? 0x00 : 0xFF;
 		}
 #ifndef _XBOX
-		g_pd3dDevice->SetPaletteEntries( iPalIndex, pal );
+		g_pd3dDevice->SetPaletteEntries( iPalIndex, pal.p );
 #else
 		ASSERT(0);
 #endif
+
+		ASSERT( g_TexResourceToTexturePalette.find(uTexHandle) == g_TexResourceToTexturePalette.end() );
+		g_TexResourceToTexturePalette[uTexHandle] = pal;
 
 		ASSERT( g_TexResourceToPaletteIndex.find(uTexHandle) == g_TexResourceToPaletteIndex.end() );
 		g_TexResourceToPaletteIndex[uTexHandle] = iPalIndex;
