@@ -81,6 +81,10 @@ void ListDisplay::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
+	/* If we have no children, the code below will busy loop. */
+	if( !m_SubActors.size() )
+		return;
+
 	while( fDeltaTime > 0 )
 	{
 		// handle pause
