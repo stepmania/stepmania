@@ -21,9 +21,10 @@
 #include "UnlockSystem.h"
 #include "SDL_utils.h"
 #include "SongManager.h"
+#include "NoteDataUtil.h"
 
 
-ScoreKeeper5th::ScoreKeeper5th( const vector<Steps*>& apNotes_, PlayerNumber pn_ ):
+ScoreKeeper5th::ScoreKeeper5th( const vector<Steps*>& apNotes_, const CStringArray &asModifiers, PlayerNumber pn_ ):
 	ScoreKeeper(pn_), apNotes(apNotes_)
 {
 	//
@@ -32,15 +33,31 @@ ScoreKeeper5th::ScoreKeeper5th( const vector<Steps*>& apNotes_, PlayerNumber pn_
 	int iTotalPossibleDancePoints = 0;
 	for( unsigned i=0; i<apNotes.size(); i++ )
 	{
-		Steps* pSteps = apNotes[0];
+		Steps* pSteps = apNotes[i];
 		NoteData notedata;
 		pSteps->GetNoteData( &notedata );
+
+		/* We might have been given lots of songs; don't keep them in memory uncompressed. */
+		pSteps->Compress();
 
 		const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 		NoteData playerNoteData;
 		pStyleDef->GetTransformedNoteDataForStyle( pn_, &notedata, &playerNoteData );
 
-		iTotalPossibleDancePoints += this->GetPossibleDancePoints( &notedata );
+		/* Apply transforms to find out how the notes will really look. 
+		 *
+		 * XXX: This is brittle: if we end up combining mods for a song differently
+		 * than ScreenGameplay, we'll end up with the wrong data.  We should probably
+		 * have eg. GAMESTATE->GetOptionsForCourse(po,so,pn) to get options based on
+		 * the last call to StoreSelectedOptions and the modifiers list, but that'd
+		 * mean moving the queues in ScreenGameplay to GameState ... */
+		PlayerOptions ModsForThisSong( GAMESTATE->m_PlayerOptions[pn_] );
+		ModsForThisSong.FromString( asModifiers[i] );
+
+		NoteData playerNoteDataPostModifiers(playerNoteData);
+		NoteDataUtil::TransformNoteData( playerNoteData, ModsForThisSong, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+		 
+		iTotalPossibleDancePoints += this->GetPossibleDancePoints( playerNoteData, playerNoteDataPostModifiers );
 	}
 	GAMESTATE->m_CurStageStats.iPossibleDancePoints[pn_] = iTotalPossibleDancePoints;
 
@@ -433,17 +450,21 @@ void ScoreKeeper5th::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapS
 }
 
 
-int ScoreKeeper5th::GetPossibleDancePoints( const NoteData* pNoteData )
+int ScoreKeeper5th::GetPossibleDancePoints( const NoteData &preNoteData, const NoteData &postNoteData )
 {
 	/* Note that, if Marvelous timing is disabled or not active (not course mode),
 	 * PERFECT will be used instead. */
 
-	TapNoteScore maxPossibleTapScore = 
-		(GAMESTATE->ShowMarvelous() ) ? TNS_MARVELOUS : TNS_PERFECT;
-
-	return pNoteData->GetNumRowsWithTaps()*TapNoteScoreToDancePoints(maxPossibleTapScore)+
-	   pNoteData->GetNumHoldNotes()*HoldNoteScoreToDancePoints(HNS_OK);
+	/*
+	 * The logic here is that if you use a modifier that adds notes, you should have to
+	 * hit the new notes to get a high grade.  However, if you use one that removes notes,
+	 * they should simply be counted as misses. */
+	int NumTaps = max( preNoteData.GetNumRowsWithTaps(), postNoteData.GetNumRowsWithTaps() );
+	int NumHolds = max( preNoteData.GetNumHoldNotes(), postNoteData.GetNumHoldNotes() );
+	return NumTaps*TapNoteScoreToDancePoints(TNS_MARVELOUS)+
+	   NumHolds*HoldNoteScoreToDancePoints(HNS_OK);
 }
+
 
 
 int ScoreKeeper5th::TapNoteScoreToDancePoints( TapNoteScore tns )

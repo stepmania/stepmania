@@ -34,7 +34,7 @@ class ScoreKeeper5th: public ScoreKeeper
 	void AddScore( TapNoteScore score );
 
 public:
-	ScoreKeeper5th( const vector<Steps*>& apNotes, PlayerNumber pn);
+	ScoreKeeper5th( const vector<Steps*>& apNotes_, const CStringArray &asModifiers, PlayerNumber pn_ );
 
 	// before a song plays (called multiple times if course)
 	void OnNextSong( int iSongInCourseIndex, Steps* pNotes, NoteData* pNoteData );
@@ -44,7 +44,7 @@ public:
 
 	int TapNoteScoreToDancePoints( TapNoteScore tns );
 	int HoldNoteScoreToDancePoints( HoldNoteScore hns );
-	int	GetPossibleDancePoints( const NoteData* pNoteData );
+	int	GetPossibleDancePoints( const NoteData &preNoteData, const NoteData &postNoteData );
 };
 
 #endif

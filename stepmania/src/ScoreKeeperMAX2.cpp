@@ -33,7 +33,11 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Steps*>& apNotes_, const CStringA
 	int iTotalPossibleDancePoints = 0;
 	for( unsigned i=0; i<apNotes.size(); i++ )
 	{
-		Steps* pSteps = apNotes[0];
+//		Steps* pSteps = apNotes[0];
+		Steps* pSteps = apNotes[i];  // this should reflect the
+		// song's steps since in oni mode all songs don't necessarily
+		// have the same number of steps
+
 		NoteData notedata;
 		pSteps->GetNoteData( &notedata );
 

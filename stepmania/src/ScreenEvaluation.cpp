@@ -826,6 +826,9 @@ void ScreenEvaluation::Update( float fDeltaTime )
 		if (GAMESTATE->m_CurStageStats.iBonus[p] == 0)
 			continue;
 
+		if (GAMESTATE->IsCourseMode())
+			continue;
+
 		// wait a few seconds before adding bonus
 		if ( RageTimer::GetTimeSinceStart() - m_fScreenCreateTime  < 1.5f)
 			continue;

@@ -191,7 +191,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 			m_pPrimaryScoreKeeper[p] = new ScoreKeeperMAX2( m_apNotesQueue[p], m_asModifiersQueue[p], (PlayerNumber)p );
 			break;
 		case PrefsManager::SCORING_5TH:
-			m_pPrimaryScoreKeeper[p] = new ScoreKeeper5th( m_apNotesQueue[p], (PlayerNumber)p );
+			m_pPrimaryScoreKeeper[p] = new ScoreKeeper5th( m_apNotesQueue[p], m_asModifiersQueue[p], (PlayerNumber)p );
 			break;
 		default: ASSERT(0);
 		}
