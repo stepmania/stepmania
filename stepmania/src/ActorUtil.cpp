@@ -129,6 +129,10 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 
 	CString sFile;
 	pNode->GetAttrValue( "File", sFile );
+	// FIXME: If specifying a path in Lua, assume it is absolute.  We need a way to specify 
+	// absolute paths.  We can't use a slash at the beginning to mean absolute because FILEMAN
+	// maps that to the root of the filesystem.
+	bool bIsAbsolutePath = LUA->RunAtExpressionS( sFile );
 	FixSlashesInPlace( sFile );
 
 	CString sText;
@@ -239,9 +243,7 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 			RageException::Throw( "The actor file in '%s' is missing the File attribute or has an invalid Type \"%s\"",
 				sAniDir.c_str(), sType.c_str() );
 
-		/* XXX: We need to do a theme search, since the file we're loading might
-		 * be overridden by the theme. */
-		CString sNewPath = sAniDir+sFile;
+		CString sNewPath = bIsAbsolutePath ? sFile : sAniDir+sFile;
 
 		ActorUtil::ResolvePath( sNewPath, sAniDir );
 
