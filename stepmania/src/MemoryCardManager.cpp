@@ -215,16 +215,16 @@ void MemoryCardManager::LockCards( bool bLock )
 			m_pDriver->MountAndTestWrite(&m_Device[p], MEM_CARD_MOUNT_POINT[p]);
 		}
 	}
-	
-	if( !bWasLocked && bLock )
-		m_pDriver->SetMountThreadState( MemoryCardDriver::detect_and_dont_mount );
-	else
+
+	if( !bLock )
+	{
 		m_pDriver->SetMountThreadState( MemoryCardDriver::detect_and_mount );
+	}
 }
 
 void MemoryCardManager::TryMountAllCards()
 {
-	FOREACH_PlayerNumber( p )
+	FOREACH_EnabledPlayer( p )
 	{
 		if( m_Device[p].IsBlank() )	// they don't have an assigned card
 			continue;
@@ -235,12 +235,12 @@ void MemoryCardManager::TryMountAllCards()
 
 void MemoryCardManager::MountAllUsedCards()
 {
-	FOREACH_PlayerNumber( p )
+	FOREACH_EnabledPlayer( p )
 	{
 		if( m_Device[p].IsBlank() )	// they don't have an assigned card
 			continue;
 		
-		if( m_bTooLate[p] || !m_Device[p].bWriteTestSucceeded )
+		if( m_bTooLate[p] || !m_Device[p].bWriteTestSucceeded || !PROFILEMAN->ProfileWasLoadedFromMemoryCard(p) )
 			continue;
 
 		m_pDriver->MountAndTestWrite(&m_Device[p], MEM_CARD_MOUNT_POINT[p]);
@@ -249,12 +249,12 @@ void MemoryCardManager::MountAllUsedCards()
 
 void MemoryCardManager::UnmountAllUsedCards()
 {
-	FOREACH_PlayerNumber( p )
+	FOREACH_EnabledPlayer( p )
 	{
 		if( m_Device[p].IsBlank() )	// they don't have an assigned card
 			continue;
 		
-		if( m_bTooLate[p] || !m_Device[p].bWriteTestSucceeded )
+		if( m_bTooLate[p] || !m_Device[p].bWriteTestSucceeded || !PROFILEMAN->ProfileWasLoadedFromMemoryCard(p) )
 			continue;
 
 		m_pDriver->Unmount(&m_Device[p], MEM_CARD_MOUNT_POINT[p]);
@@ -317,9 +317,11 @@ void MemoryCardManager::UnPauseMountingThread()
 bool IsAnyPlayerUsingMemoryCard()
 {
 	FOREACH_HumanPlayer( pn )
+	{
 		if( MEMCARDMAN->GetCardState(pn) == MEMORY_CARD_STATE_READY )
 			return true;
-		return false;
+	}
+	return false;
 }
 
 #include "LuaFunctions.h"

@@ -33,10 +33,10 @@ public:
 	void MountCard( PlayerNumber pn );
 	void UnmountCard( PlayerNumber pn );
 	
-	void PauseMountingThread();	// call this before reading or writing to memory card
-	void UnPauseMountingThread();	// call this when done reading or writing to memory card
+	void PauseMountingThread();	// call this before mouting, reading, or writing to memory card
+	void UnPauseMountingThread();	// call this when done mouting, reading, or writing to memory card
 	
-	void FlushAndReset();	// force all files to be written to mounted memory cards
+	void FlushAndReset();	// force all files to be flushed to mounted memory cards
 
 	bool PathIsMemCard( CString sDir ) const;
 	

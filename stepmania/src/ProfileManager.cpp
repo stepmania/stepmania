@@ -139,11 +139,8 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 		sDir += PREFSMAN->m_sMemoryCardProfileSubdir;
 		sDir += '/'; 
 
-		MEMCARDMAN->PauseMountingThread();
 		bool bSuccess;
 		bSuccess = LoadProfile( pn, sDir, true );
-
-		MEMCARDMAN->UnPauseMountingThread();
 
 		return true; // If a card is inserted, we want to use the memory card to save - even if the Profile load failed.
 	}
@@ -180,14 +177,8 @@ bool ProfileManager::SaveProfile( PlayerNumber pn ) const
 	if( m_sProfileDir[pn].empty() )
 		return false;
 
-	if( ProfileWasLoadedFromMemoryCard(pn) )
-		MEMCARDMAN->PauseMountingThread();
-
 	bool b = m_Profile[pn].SaveAllToDir( m_sProfileDir[pn], PREFSMAN->m_bSignProfileData );
 
-	if( ProfileWasLoadedFromMemoryCard(pn) )
-		MEMCARDMAN->UnPauseMountingThread();
-	
 	return b;
 }
 

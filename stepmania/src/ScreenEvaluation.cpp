@@ -1353,6 +1353,7 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 			if( !m_bSavedScreenshot[pn]  &&	// only allow one screenshot
 				PROFILEMAN->IsUsingProfile(pn) )
 			{
+				MEMCARDMAN->PauseMountingThread();
 				if( PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn) && PREFSMAN->m_bMemoryCardsMountOnlyWhenNecessary )
 					MEMCARDMAN->MountCard( pn );
 			
@@ -1364,6 +1365,7 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 				
 				if( PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn) && PREFSMAN->m_bMemoryCardsMountOnlyWhenNecessary )
 					MEMCARDMAN->UnmountCard( pn );
+				MEMCARDMAN->UnPauseMountingThread();
 
 				if( !sFileName.empty() )
 				{

@@ -232,7 +232,8 @@ void GameState::PlayersFinalized()
 
 	m_bPlayersFinalized = true;
 
-	MEMCARDMAN->LockCards( true );
+	MEMCARDMAN->PauseMountingThread();
+	MEMCARDMAN->LockCards( true );	// this does a mount
 
 	// apply saved default modifiers if any
 	FOREACH_HumanPlayer( pn )
@@ -272,6 +273,7 @@ void GameState::PlayersFinalized()
 
 	if( PREFSMAN->m_bMemoryCardsMountOnlyWhenNecessary )
 		MEMCARDMAN->UnmountAllUsedCards();
+	MEMCARDMAN->UnPauseMountingThread();
 }
 
 /* This data is added to each player profile, and to the machine profile per-player. */
@@ -343,10 +345,9 @@ void GameState::EndGame()
 		}
 	}
 
-
+	MEMCARDMAN->PauseMountingThread();
 	if( PREFSMAN->m_bMemoryCardsMountOnlyWhenNecessary )
-		MEMCARDMAN->UnmountAllUsedCards();
-
+		MEMCARDMAN->MountAllUsedCards();
 
 	BOOKKEEPER->WriteToDisk();
 	PROFILEMAN->SaveAllProfiles();
@@ -359,10 +360,14 @@ void GameState::EndGame()
 		PROFILEMAN->UnloadProfile( pn );
 	}
 
+	if( PREFSMAN->m_bMemoryCardsMountOnlyWhenNecessary )
+		MEMCARDMAN->UnmountAllUsedCards();
+	
 	// Reset the USB storage device numbers -after- saving
 	CHECKPOINT;
 	MEMCARDMAN->FlushAndReset();
 	CHECKPOINT;
+
 
 	SONGMAN->FreeAllLoadedFromProfiles();
 
