@@ -93,8 +93,6 @@ inline int lrintf( float f )
 
 #define ENDIAN_LITTLE
 
-#define HAVE_SDL
-
 #if defined(XBOX)
 #include "ArchUtils/Xbox/arch_setup.h"
 #endif
