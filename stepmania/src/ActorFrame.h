@@ -71,6 +71,12 @@ protected:
 	vector<Actor*>	m_SubActors;
 	bool m_bPropagateCommands;
 	bool m_bDeleteChildren;
+
+	// state effects
+	float m_fUpdateRate;
+	float m_fFOV;	// -1 = no change
+	bool m_bOverrideLighting;	// if true, set ligthing to m_bLighting
+	bool m_bLighting;
 };
 
 #endif

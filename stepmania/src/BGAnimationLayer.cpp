@@ -561,11 +561,9 @@ void BGAnimationLayer::Update( float fDeltaTime )
 	if( m_fHibernateSecondsLeft > 0 )
 		return;
 
+	ActorFrame::Update( fDeltaTime );
+
 	fDeltaTime *= m_fUpdateRate;
-
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->Update( fDeltaTime );
-
 
 	switch( m_Type )
 	{
@@ -681,35 +679,7 @@ bool BGAnimationLayer::EarlyAbortDraw()
 
 void BGAnimationLayer::DrawPrimitives()
 {
-	if( m_fFOV != -1 )
-	{
-		DISPLAY->CameraPushMatrix();
-		DISPLAY->LoadMenuPerspective( m_fFOV, SCREEN_CENTER_X, SCREEN_CENTER_Y );
-	}
-
-	if( m_bLighting )
-	{
-		DISPLAY->SetLighting( true );
-		DISPLAY->SetLightDirectional( 
-			0, 
-			RageColor(1,1,1,1), 
-			RageColor(1,1,1,1),
-			RageColor(1,1,1,1),
-			RageVector3(0,0,1) );
-	}
-
 	ActorFrame::DrawPrimitives();
-	
-	if( m_fFOV != -1 )
-	{
-		DISPLAY->CameraPopMatrix();
-	}
-
-	if( m_bLighting )
-	{
-		DISPLAY->SetLightOff( 0 );
-		DISPLAY->SetLighting( false );
-	}
 }
 
 void BGAnimationLayer::GainFocus( float fRate, bool bRewindMovie, bool bLoop )

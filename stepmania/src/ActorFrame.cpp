@@ -6,6 +6,8 @@
 #include "ActorUtil.h"
 #include "LuaBinding.h"
 #include "ActorCommands.h"
+#include "RageDisplay.h"
+#include "ScreenDimensions.h"
 
 // lua start
 LUA_REGISTER_CLASS( ActorFrame )
@@ -16,6 +18,10 @@ ActorFrame::ActorFrame()
 {
 	m_bPropagateCommands = false;
 	m_bDeleteChildren = false;
+	m_fUpdateRate = 1;
+	m_fFOV = -1;
+	m_bOverrideLighting = false;
+	m_bLighting = false;
 }
 
 ActorFrame::~ActorFrame()
@@ -27,6 +33,10 @@ ActorFrame::~ActorFrame()
 void ActorFrame::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
 	Actor::LoadFromNode( sDir, pNode );
+
+	pNode->GetAttrValue( "UpdateRate", m_fUpdateRate );
+	pNode->GetAttrValue( "FOV", m_fFOV );
+	m_bOverrideLighting = pNode->GetAttrValue( "Lighting", m_bLighting );
 
 	//
 	// Load children
@@ -99,6 +109,26 @@ void ActorFrame::MoveToHead( Actor* pActor )
 
 void ActorFrame::DrawPrimitives()
 {
+	if( m_fFOV != -1 )
+	{
+		DISPLAY->CameraPushMatrix();
+		DISPLAY->LoadMenuPerspective( m_fFOV, SCREEN_CENTER_X, SCREEN_CENTER_Y );
+	}
+
+	if( m_bOverrideLighting )
+	{
+		DISPLAY->SetLighting( m_bLighting );
+		if( m_bLighting )
+			DISPLAY->SetLightDirectional( 
+				0, 
+				RageColor(1,1,1,1), 
+				RageColor(1,1,1,1),
+				RageColor(1,1,1,1),
+				RageVector3(0,0,1) );
+	}
+
+
+
 	// Don't set Actor-defined render states because we won't be drawing 
 	// any geometry that belongs to this object.
 	// Actor::DrawPrimitives();
@@ -106,6 +136,20 @@ void ActorFrame::DrawPrimitives()
 	// draw all sub-ActorFrames while we're in the ActorFrame's local coordinate space
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->Draw();
+
+
+
+	if( m_bOverrideLighting )
+	{
+		// TODO: pop state instead of turning lighting off
+		DISPLAY->SetLightOff( 0 );
+		DISPLAY->SetLighting( false );
+	}
+
+	if( m_fFOV != -1 )
+	{
+		DISPLAY->CameraPopMatrix();
+	}
 }
 
 void ActorFrame::RunCommandsOnChildren( const LuaReference& cmds )
@@ -117,6 +161,9 @@ void ActorFrame::RunCommandsOnChildren( const LuaReference& cmds )
 void ActorFrame::Update( float fDeltaTime )
 {
 //	LOG->Trace( "ActorFrame::Update( %f )", fDeltaTime );
+
+	fDeltaTime *= m_fUpdateRate;
+
 	Actor::Update( fDeltaTime );
 
 	if( m_fHibernateSecondsLeft > 0 )

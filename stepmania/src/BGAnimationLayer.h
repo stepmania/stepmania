@@ -46,9 +46,6 @@ protected:
 	
 	// common stuff
 	bool m_bGeneric;
-	float m_fUpdateRate;	// set by GainFocus
-	float m_fFOV;	// -1 = no change
-	bool m_bLighting;
 
 	CString m_sDrawCond;
 
