@@ -289,9 +289,6 @@ void ScreenOptionsMaster::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Re
 
 	const OptionRowHandler *pHand = OptionRowHandlers[iRow];
 
-	if( pHand->m_bExportOnChange || !pHand->m_vsRefreshRowNames.empty() )
-		ExportOptions( iRow );
-
 	FOREACH_CONST( CString, pHand->m_vsRefreshRowNames, sRowToRefreshName )
 	{
 		for( unsigned r=0; r<m_Rows.size(); r++ )

@@ -40,6 +40,7 @@ struct OptionRowDefinition
 	LayoutType layoutType;
 	vector<CString> choices;
 	set<PlayerNumber> m_vEnabledForPlayers;	// only players in this set may change focus to this row
+	bool	m_bExportOnChange;
 
 	void UpdateEnabledForPlayers( 
 		set<PlayerNumber> vEnabledForPlayers,
@@ -63,6 +64,7 @@ struct OptionRowDefinition
 		m_vEnabledForPlayers.clear();
 		FOREACH_PlayerNumber( pn )
 			m_vEnabledForPlayers.insert( pn );
+		m_bExportOnChange = false;
 	}
 
 	OptionRowDefinition( const char *n, bool b, const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL ) :

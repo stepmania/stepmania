@@ -1023,6 +1023,9 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 
 	if( m_OptionsNavigation != NAV_THREE_KEY_MENU )
 		m_SoundChangeCol.Play();
+
+	if( row.GetRowDef().m_bExportOnChange )
+		ExportOptions( iCurRow );
 }
 
 

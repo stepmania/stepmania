@@ -13,7 +13,6 @@ class OptionRowHandler
 {
 public:
 	CString m_sName;
-	bool	m_bExportOnChange;
 	vector<CString> m_vsRefreshRowNames;	// refresh these rows when the value of this row changes
 	
 	OptionRowHandler::OptionRowHandler() { Init(); }
@@ -21,7 +20,6 @@ public:
 	{
 		m_sName = "";
 		m_vsRefreshRowNames.clear();
-		m_bExportOnChange = false;
 	}
 	virtual void ImportOption( const OptionRowDefinition &row, PlayerNumber pn, vector<bool> &vbSelectedOut ) const = 0;
 	/* Returns an OPT mask. */
