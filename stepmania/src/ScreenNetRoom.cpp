@@ -49,6 +49,13 @@ ScreenNetRoom::ScreenNetRoom( const CString& sName ) : ScreenNetSelectBase( sNam
 	SET_QUAD_INIT( m_rectRoomsSel );
 	this->AddChild( &m_rectRoomsSel );
 	
+	//CreateRoom Sprite
+	m_sprCreateRoom.Load( THEME->GetPathG( m_sName, "CreateRoom" ) );
+	m_sprCreateRoom.SetName( "CreateRoom" );
+	SET_XY_AND_ON_COMMAND( m_sprCreateRoom );
+	this->AddChild( &m_sprCreateRoom );
+
+
 	NSMAN->ReportNSSOnOff(7);
 	return;
 }
@@ -123,6 +130,7 @@ void ScreenNetRoom::MenuStart( PlayerNumber pn )
 {
 	NSMAN->m_SMOnlinePacket.ClearPacket();
 	NSMAN->m_SMOnlinePacket.Write1( 1 );
+	NSMAN->m_SMOnlinePacket.Write1( 1 ); //Type (enter a room)
 	NSMAN->m_SMOnlinePacket.WriteNT( m_Rooms[m_iRoomPlace] );
 	NSMAN->SendSMOnline( );
 	ScreenNetSelectBase::MenuStart( pn );

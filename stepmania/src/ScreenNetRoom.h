@@ -37,6 +37,8 @@ private:
 	BitmapText m_textRooms;
 	Quad m_rectRoomsSel;
 
+	Sprite m_sprCreateRoom;
+
 	vector < CString > m_Rooms;
 	int m_iRoomPlace;
 };
