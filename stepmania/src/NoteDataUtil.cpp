@@ -840,7 +840,7 @@ const ValidRow g_ValidRows[] =
 
 void NoteDataUtil::FixImpossibleRows( NoteData &in, StepsType st )
 {
-	for( int i=0; i<ARRAYSIZE(g_ValidRows); i++ )
+	for( unsigned i=0; i<ARRAYSIZE(g_ValidRows); i++ )
 	{
 		const ValidRow vr = g_ValidRows[i];
 		if( vr.st != st )
