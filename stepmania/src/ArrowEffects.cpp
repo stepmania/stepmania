@@ -199,10 +199,13 @@ const float fCenterLine = 160;	// from fYPos == 0
 const float fFadeDist = 100;
 
 // used by ArrowGetAlpha and ArrowGetGlow below
-float ArrowGetPercentVisible( PlayerNumber pn, int iCol, float fYPos )
+static float ArrowGetPercentVisible( PlayerNumber pn, int iCol, float fYPos, float fYReverseOffsetPixels )
 {
 	if( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol) > 0.5f )
-		fYPos *= -1;
+	{
+		fYPos -= SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, 0.f, fYReverseOffsetPixels );
+		fYPos /= SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, 1.f, -1.f );
+	}
 
 	const float fDistFromCenterLine = fYPos - fCenterLine;
 
@@ -254,10 +257,10 @@ float ArrowGetPercentVisible( PlayerNumber pn, int iCol, float fYPos )
 	return clamp( 1+fVisibleAdjust, 0, 1 );
 }
 
-float ArrowGetAlpha( PlayerNumber pn, int iCol, float fYPos, float fPercentFadeToFail )
+float ArrowGetAlpha( PlayerNumber pn, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels )
 {
 //	fYPos /= GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
-	float fPercentVisible = ArrowGetPercentVisible(pn,iCol,fYPos);
+	float fPercentVisible = ArrowGetPercentVisible(pn,iCol,fYPos,fYReverseOffsetPixels);
 
 	if( fPercentFadeToFail != -1 )
 		fPercentVisible = 1 - fPercentFadeToFail;
@@ -265,10 +268,10 @@ float ArrowGetAlpha( PlayerNumber pn, int iCol, float fYPos, float fPercentFadeT
 	return (fPercentVisible>0.5f) ? 1.0f : 0.0f;
 }
 
-float ArrowGetGlow( PlayerNumber pn, int iCol, float fYPos, float fPercentFadeToFail )
+float ArrowGetGlow( PlayerNumber pn, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels )
 {
 //	fYPos /= GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
-	float fPercentVisible = ArrowGetPercentVisible(pn,iCol,fYPos);
+	float fPercentVisible = ArrowGetPercentVisible(pn,iCol,fYPos,fYReverseOffsetPixels);
 
 	if( fPercentFadeToFail != -1 )
 		fPercentVisible = 1 - fPercentFadeToFail;
@@ -310,3 +313,4 @@ bool ArrowsNeedZBuffer( PlayerNumber pn )
 
 	return false;
 }
+

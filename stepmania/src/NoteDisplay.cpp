@@ -169,9 +169,10 @@ NoteDisplay::~NoteDisplay()
 	delete cache;
 }
 
-void NoteDisplay::Load( int iColNum, PlayerNumber pn )
+void NoteDisplay::Load( int iColNum, PlayerNumber pn, float fYReverseOffsetPixels )
 {
 	m_PlayerNumber = pn;
+	m_fYReverseOffsetPixels = fYReverseOffsetPixels;
 
 	/* Normally, this is empty and we use the style table entry via ColToButtonName. */
 	CString Button = g_NoteFieldMode[m_PlayerNumber].NoteButtonNames[iColNum];
@@ -479,10 +480,10 @@ void NoteDisplay::DrawHoldTopCap( const HoldNote& hn, const bool bActive, float 
 		ASSERT( fTexCoordTop>=-0.0001 && fTexCoordBottom<=1.0001 ); /* allow for rounding error */
 		const float fTexCoordLeft			= pRect->left;
 		const float fTexCoordRight			= pRect->right;
-		const float	fAlphaTop				= ArrowGetAlpha( m_PlayerNumber, iCol, fYTop, fPercentFadeToFail );
-		const float	fAlphaBottom			= ArrowGetAlpha( m_PlayerNumber, iCol, fYBottom, fPercentFadeToFail );
-		const float	fGlowTop				= ArrowGetGlow( m_PlayerNumber, iCol, fYTop, fPercentFadeToFail );
-		const float	fGlowBottom				= ArrowGetGlow( m_PlayerNumber, iCol, fYBottom, fPercentFadeToFail );
+		const float	fAlphaTop				= ArrowGetAlpha( m_PlayerNumber, iCol, fYTop, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const float	fAlphaBottom			= ArrowGetAlpha( m_PlayerNumber, iCol, fYBottom, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const float	fGlowTop				= ArrowGetGlow( m_PlayerNumber, iCol, fYTop, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const float	fGlowBottom				= ArrowGetGlow( m_PlayerNumber, iCol, fYBottom, fPercentFadeToFail, m_fYReverseOffsetPixels );
 		const RageColor colorDiffuseTop		= RageColor(fColorScale,fColorScale,fColorScale,fAlphaTop);
 		const RageColor colorDiffuseBottom	= RageColor(fColorScale,fColorScale,fColorScale,fAlphaBottom);
 		const RageColor colorGlowTop		= RageColor(1,1,1,fGlowTop);
@@ -562,10 +563,10 @@ void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bActive, float fY
 		ASSERT( fTexCoordTop<=2 && fTexCoordBottom<=2 );
 		const float fTexCoordLeft			= pRect->left;
 		const float fTexCoordRight			= pRect->right;
-		const float	fAlphaTop				= ArrowGetAlpha( m_PlayerNumber, iCol, fYTop, fPercentFadeToFail );
-		const float	fAlphaBottom			= ArrowGetAlpha( m_PlayerNumber, iCol, fYBottom, fPercentFadeToFail );
-		const float	fGlowTop				= ArrowGetGlow( m_PlayerNumber, iCol, fYTop, fPercentFadeToFail );
-		const float	fGlowBottom				= ArrowGetGlow( m_PlayerNumber, iCol, fYBottom, fPercentFadeToFail );
+		const float	fAlphaTop				= ArrowGetAlpha( m_PlayerNumber, iCol, fYTop, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const float	fAlphaBottom			= ArrowGetAlpha( m_PlayerNumber, iCol, fYBottom, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const float	fGlowTop				= ArrowGetGlow( m_PlayerNumber, iCol, fYTop, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const float	fGlowBottom				= ArrowGetGlow( m_PlayerNumber, iCol, fYBottom, fPercentFadeToFail, m_fYReverseOffsetPixels );
 		const RageColor colorDiffuseTop		= RageColor(fColorScale,fColorScale,fColorScale,fAlphaTop);
 		const RageColor colorDiffuseBottom	= RageColor(fColorScale,fColorScale,fColorScale,fAlphaBottom);
 		const RageColor colorGlowTop		= RageColor(1,1,1,fGlowTop);
@@ -632,10 +633,10 @@ void NoteDisplay::DrawHoldBottomCap( const HoldNote& hn, const bool bActive, flo
 		const float fTexCoordBottom			= SCALE( fBottomDistFromTailTop, 0, fFrameHeight, pRect->top, pRect->bottom );
 		const float fTexCoordLeft			= pRect->left;
 		const float fTexCoordRight			= pRect->right;
-		const float	fAlphaTop				= ArrowGetAlpha( m_PlayerNumber, iCol, fYTop, fPercentFadeToFail );
-		const float	fAlphaBottom			= ArrowGetAlpha( m_PlayerNumber, iCol, fYBottom, fPercentFadeToFail );
-		const float	fGlowTop				= ArrowGetGlow( m_PlayerNumber, iCol, fYTop, fPercentFadeToFail );
-		const float	fGlowBottom				= ArrowGetGlow( m_PlayerNumber, iCol, fYBottom, fPercentFadeToFail );
+		const float	fAlphaTop				= ArrowGetAlpha( m_PlayerNumber, iCol, fYTop, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const float	fAlphaBottom			= ArrowGetAlpha( m_PlayerNumber, iCol, fYBottom, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const float	fGlowTop				= ArrowGetGlow( m_PlayerNumber, iCol, fYTop, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const float	fGlowBottom				= ArrowGetGlow( m_PlayerNumber, iCol, fYBottom, fPercentFadeToFail, m_fYReverseOffsetPixels );
 		const RageColor colorDiffuseTop		= RageColor(fColorScale,fColorScale,fColorScale,fAlphaTop);
 		const RageColor colorDiffuseBottom	= RageColor(fColorScale,fColorScale,fColorScale,fAlphaBottom);
 		const RageColor colorGlowTop		= RageColor(1,1,1,fGlowTop);
@@ -667,8 +668,8 @@ void NoteDisplay::DrawHoldTail( const HoldNote& hn, bool bActive, float fYTail, 
 	const float fY				= fYTail;
 	const float fX				= ArrowGetXPos( m_PlayerNumber, iCol, fY );
 	const float fZ				= ArrowGetZPos(	m_PlayerNumber, iCol, fY );
-	const float	fAlpha			= ArrowGetAlpha( m_PlayerNumber, iCol, fY, fPercentFadeToFail );
-	const float	fGlow			= ArrowGetGlow( m_PlayerNumber, iCol, fY, fPercentFadeToFail );
+	const float	fAlpha			= ArrowGetAlpha( m_PlayerNumber, iCol, fY, fPercentFadeToFail, m_fYReverseOffsetPixels );
+	const float	fGlow			= ArrowGetGlow( m_PlayerNumber, iCol, fY, fPercentFadeToFail, m_fYReverseOffsetPixels );
 	const RageColor colorDiffuse= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	const RageColor colorGlow	= RageColor(1,1,1,fGlow);
 
@@ -717,8 +718,8 @@ void NoteDisplay::DrawHoldHead( const HoldNote& hn, bool bActive, float fYHead, 
 	const float fY				= fYHead;
 	const float fX				= ArrowGetXPos( m_PlayerNumber, iCol, fY );
 	const float fZ				= ArrowGetZPos(	m_PlayerNumber, iCol, fY );
-	const float	fAlpha			= ArrowGetAlpha( m_PlayerNumber, iCol, fY, fPercentFadeToFail );
-	const float	fGlow			= ArrowGetGlow( m_PlayerNumber, iCol, fY, fPercentFadeToFail );
+	const float	fAlpha			= ArrowGetAlpha( m_PlayerNumber, iCol, fY, fPercentFadeToFail, m_fYReverseOffsetPixels );
+	const float	fGlow			= ArrowGetGlow( m_PlayerNumber, iCol, fY, fPercentFadeToFail, m_fYReverseOffsetPixels );
 	const RageColor colorDiffuse= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	const RageColor colorGlow	= RageColor(1,1,1,fGlow);
 
@@ -811,8 +812,8 @@ void NoteDisplay::DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bo
 	const float fRotation		= ArrowGetRotation(	m_PlayerNumber, fBeat );
 	const float fXPos			= ArrowGetXPos(		m_PlayerNumber, iCol, fYPos );
 	const float fZPos			= ArrowGetZPos(	   m_PlayerNumber, iCol, fYPos );
-	const float fAlpha			= ArrowGetAlpha(	m_PlayerNumber, iCol, fYPos, fPercentFadeToFail );
-	const float fGlow			= ArrowGetGlow(		m_PlayerNumber, iCol, fYPos, fPercentFadeToFail );
+	const float fAlpha			= ArrowGetAlpha(	m_PlayerNumber, iCol, fYPos, fPercentFadeToFail, m_fYReverseOffsetPixels );
+	const float fGlow			= ArrowGetGlow(		m_PlayerNumber, iCol, fYPos, fPercentFadeToFail, m_fYReverseOffsetPixels );
 	const float fColorScale		= ArrowGetBrightness( m_PlayerNumber, fBeat ) * SCALE(fLife,0,1,0.2f,1);
 	RageColor diffuse = RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	RageColor glow = RageColor(1,1,1,fGlow);

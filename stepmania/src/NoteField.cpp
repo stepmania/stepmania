@@ -62,7 +62,7 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDra
 
 	// init note displays
 	for( int c=0; c<GetNumTracks(); c++ ) 
-		m_NoteDisplay[c].Load( c, pn );
+		m_NoteDisplay[c].Load( c, pn, m_fYReverseOffsetPixels );
 	
 	ASSERT( GetNumTracks() == GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer );
 }
@@ -71,7 +71,7 @@ void NoteField::ReloadNoteSkin()
 {
 	// init note displays
 	for( int c=0; c<GetNumTracks(); c++ ) 
-		m_NoteDisplay[c].Load( c, m_PlayerNumber );
+		m_NoteDisplay[c].Load( c, m_PlayerNumber, m_fYReverseOffsetPixels );
 }
 
 void NoteField::Update( float fDeltaTime )
