@@ -32,17 +32,12 @@ FontManager::FontManager()
 
 FontManager::~FontManager()
 {
-	/* It's not safe to delete fonts that still have references left, because fonts
-	 * will also release other fonts when they're deleted (we'd have to make sure
-	 * to delete top-level fonts first).  Since this should never happen anyway,
-	 * and we only delete FontManager when we're shutting down, let's just warn
-	 * about font leaks and not actually free them. */
 	for( std::map<CString, Font*>::iterator i = m_mapPathToFont.begin();
 		i != m_mapPathToFont.end(); ++i)
 	{
 		Font* pFont = i->second;
 		LOG->Trace( "FONT LEAK: '%s', RefCount = %d.", i->first.GetString(), pFont->m_iRefCount );
-//		delete pFont;
+		delete pFont;
 	}
 }
 
@@ -63,9 +58,39 @@ bool FontManager::ExtractGameGlyph(longchar ch, int &c, Game &g)
 
 	return true;
 }
-
-void FontManager::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CString &PageName, int NumFrames)
+#if 0
+void FontManager::ReloadFonts()
 {
+	map<CString, Font*> m_mapPathToFont;
+
+	for(map<CString, Font*>::iterator i = m_mapPathToFont.begin();
+		i != m_mapPathToFont.end(); ++i)
+	{
+		CString path = i->first;
+		Font *f = i->second;
+		f->Unload();
+		f->Load(f);
+
+//		i->
+
+	}
+
+
+
+}
+#endif
+
+void FontManager::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CString &TexturePath, const CString &PageName, CString sChars)
+{
+	cfg.TexturePath = TexturePath;
+
+	/* If we have any characters to map, add them. */
+	for( unsigned n=0; n<sChars.size(); n++ )
+	{
+		char c = sChars[n];
+		cfg.CharToGlyphNo[c] = n;
+	}
+	int NumFrames = RageTexture::GetFrameCountFromFileName(TexturePath);
 	if(NumFrames == 128 || NumFrames == 256)
 	{
 		/* If it's 128 or 256 frames, default to ASCII or ISO-8859-1,
@@ -81,8 +106,12 @@ void FontManager::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, cons
 		for( longchar i=0; i<NumFrames; i++ )
 			cfg.CharToGlyphNo[i] = i;
 	}
+	
 	ini.RenameKey("Char Widths", "main");
 
+	LOG->Trace("Loading font page '%s' settings from page name '%s'",
+		TexturePath.GetString(), PageName.GetString());
+	
 	ini.GetValueI( PageName, "DrawExtraPixelsLeft", cfg.DrawExtraPixelsLeft );
 	ini.GetValueI( PageName, "DrawExtraPixelsRight", cfg.DrawExtraPixelsRight );
 	ini.GetValueI( PageName, "AddToAllWidths", cfg.AddToAllWidths );
@@ -151,12 +180,7 @@ void FontManager::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, cons
 
 			if(game != GAME_INVALID) c = MakeGameGlyph(c, game);
 
-			int frame = atoi(data);
-			if(frame >= NumFrames)
-				RageException::Throw( "Font definition '%s' maps to frame %i, but font only has %i frames",
-					ini.GetPath().GetString(), frame, NumFrames );
-
-			cfg.CharToGlyphNo[c] = frame;
+			cfg.CharToGlyphNo[c] = atoi(data);
 			continue;
 		}
 #if 0
@@ -312,7 +336,7 @@ Font *FontManager::LoadFontInt(const CString &sFontOrTextureFilePath, CString sC
 		{
 			LoadingDefaultFont = true;
 			CString path = THEME->GetPathTo("Fonts", "default font");
-			pFont->MergeFont(FONT->LoadFont(path));
+			pFont->MergeFont(LoadFontInt(path, ""));
 			LoadingDefaultFont = false;
 		}
 
@@ -320,7 +344,7 @@ Font *FontManager::LoadFontInt(const CString &sFontOrTextureFilePath, CString sC
 		for(unsigned i = 0; i < ImportList.size(); ++i)
 		{
 			CString path = THEME->GetPathTo("Fonts", ImportList[i]);
-			pFont->MergeFont(FONT->LoadFont(path));
+			pFont->MergeFont(LoadFontInt(path, ""));
 		}
 	}
 
@@ -329,30 +353,26 @@ Font *FontManager::LoadFontInt(const CString &sFontOrTextureFilePath, CString sC
 	{
 		FontPage *fp = new FontPage;
 
-		int frames = RageTexture::GetFrameCountFromFileName(TexturePaths[i]);
-
 		/* Grab the page name, eg "foo" from "Normal [foo].png". */
 		CString pagename = GetPageNameFromFileName(TexturePaths[i]);
 
 		/* Load settings for this page from the INI. */
 		FontPageSettings cfg;
-
-		/* If we have any characters to map, add them. */
-		for( unsigned n=0; n<sChars.size(); n++ )
-		{
-			char c = sChars[n];
-			cfg.CharToGlyphNo[c] = n;
-		}
-
+		LoadFontPageSettings(cfg, ini, TexturePaths[i], pagename, sChars);
 
 		/* Go. */
-		LoadFontPageSettings(cfg, ini, pagename, frames);
-		fp->Load(TexturePaths[i], cfg);
+		fp->Load(cfg);
 
 		/* Expect at least as many frames as we have premapped characters. */
-		if( unsigned(fp->m_pTexture->GetNumFrames()) < sChars.size() )
-			RageException::Throw( "The font '%s' has %d frames; expected at least %i frames.",
-				fp->m_pTexture->GetNumFrames(), sChars.size() );
+		/* Make sure that we don't map characters to frames we don't actually
+		 * have.  This can happen if the font is too small for an sChars. */
+		for(map<longchar,int>::const_iterator it = fp->m_iCharToGlyphNo.begin();
+			it != fp->m_iCharToGlyphNo.end(); ++it)
+		{
+			if(it->second < fp->m_pTexture->GetNumFrames()) continue; /* OK */
+			RageException::Throw( "The font '%s' maps %s to frame %i, but the font only has %i frames.",
+				TexturePaths[i].GetString(), WcharDisplayText(wchar_t(it->first)).GetString(), it->second, fp->m_pTexture->GetNumFrames() );
+		}
 
 		LOG->Trace("Adding page %s (%s) to %s; %i glyphs",
 			TexturePaths[i].GetString(), pagename.GetString(),
@@ -408,7 +428,7 @@ Font* FontManager::LoadFont( const CString &sFontOrTextureFilePath, CString sCha
 	InitCharAliases();
 
 	// Convert the path to lowercase so that we don't load duplicates.
-	// Really, this does not solve the duplicate problem.  We could have to copies
+	// Really, this does not solve the duplicate problem.  We could have two copies
 	// of the same bitmap if there are equivalent but different paths
 	// (e.g. "graphics\blah.png" and "..\stepmania\graphics\blah.png" ).
 

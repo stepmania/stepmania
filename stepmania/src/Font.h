@@ -34,7 +34,10 @@ struct glyph {
 	RectF rect;
 };
 
-struct FontPageSettings {
+struct FontPageSettings
+{
+	CString TexturePath;
+
 	int DrawExtraPixelsLeft,
 		DrawExtraPixelsRight,
 		AddToAllWidths,
@@ -74,7 +77,7 @@ public:
 	FontPage();
 	~FontPage();
 
-	void Load( const CString &sASCIITexturePath, const FontPageSettings &cfg );
+	void Load( const FontPageSettings &cfg );
 
 	/* Page-global properties. */
 	int height;
@@ -109,6 +112,8 @@ public:
 
 	/* Steal all of a font's pages. */
 	void MergeFont(Font *f);
+
+	void Unload();
 
 	/* Load font-wide settings. */
 	void CapsOnly();

@@ -28,9 +28,9 @@ FontPage::FontPage()
 	m_pTexture = NULL;
 }
 
-void FontPage::Load( const CString &TexturePath, const FontPageSettings &cfg )
+void FontPage::Load( const FontPageSettings &cfg )
 {
-	m_sTexturePath = TexturePath;
+	m_sTexturePath = cfg.TexturePath;
 
 	// load texture
 	m_sTexturePath.MakeLower();
@@ -76,10 +76,10 @@ void FontPage::Load( const CString &TexturePath, const FontPageSettings &cfg )
 	 * and ascender. */
 	if(cfg.Baseline != -1 && cfg.Top == -1)
 		RageException::Throw("Font %s has Baseline but no Top; must have both or neither",
-			TexturePath.GetString());
+			m_sTexturePath.GetString());
 	if(cfg.Baseline == -1 && cfg.Top != -1)
 		RageException::Throw("Font %s has Baseline but no Top; must have both or neither",
-			TexturePath.GetString());
+			m_sTexturePath.GetString());
 
 	int baseline=0;
 	if(cfg.Baseline == -1 && cfg.Top == -1)
@@ -103,7 +103,7 @@ void FontPage::Load( const CString &TexturePath, const FontPageSettings &cfg )
 	SetExtraPixels(cfg.DrawExtraPixelsLeft, cfg.DrawExtraPixelsRight);
 
 	LOG->Trace("Font %s: height %i, baseline %i ( == top %i)",
-		   TexturePath.GetString(), height, baseline, baseline-height);
+		   m_sTexturePath.GetString(), height, baseline, baseline-height);
 }
 
 void FontPage::SetTextureCoords(const vector<int> &widths)
@@ -226,19 +226,36 @@ Font::Font()
 	//LOG->Trace( "Font::LoadFromFontName(%s)", sASCIITexturePath.GetString() );
 
 	m_iRefCount = 1;
+	def = NULL;
 }
 
 Font::~Font()
+{
+	Unload();
+}
+
+void Font::Unload()
 {
 	unsigned i;
 
 	for(i = 0; i < pages.size(); ++i)
 		delete pages[i];
-
-	/* Free any fonts that we merged into us. */
+	pages.clear();
+	
+	/* Free any fonts that we merged into us.  These aren't managed by
+	 * FontManager (we own them), so just delete them. */
 	for(i = 0; i < merged_fonts.size(); ++i)
-		FONT->UnloadFont(merged_fonts[i]);
+		delete merged_fonts[i];
+	merged_fonts.clear();
+
+	m_iCharToGlyph.clear();
+	def = NULL;
+	path.clear();
+
+	/* Don't clear the refcount.  We've unloaded, but that doesn't mean things
+	 * aren't still pointing to us. */
 }
+
 
 void Font::AddPage(FontPage *fp)
 {

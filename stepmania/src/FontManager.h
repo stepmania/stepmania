@@ -47,7 +47,7 @@ protected:
 	map<CString, Font*> m_mapPathToFont;
 	static Font *LoadFontInt(const CString &sFontOrTextureFilePath, CString sChars);
 	static CString GetPageNameFromFileName(const CString &fn);
-	static void LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CString &PageName, int NumFrames);
+	static void LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CString &TexturePath, const CString &PageName, CString sChars);
 	static void GetFontPaths(const CString &sFontOrTextureFilePath, 
 							   CStringArray &TexturePaths, CString &IniPath);
 	static void InitCharAliases();
