@@ -42,7 +42,7 @@
 
 
 
-WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color )
+WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color, SongSortOrder so )
 {
 	m_Type = wit;
 	m_pSong = pSong;
@@ -50,6 +50,7 @@ WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, CString sSectionNa
 	m_pCourse = pCourse;
 	m_color = color;
 	m_Flags = WheelNotifyIcon::Flags();
+	m_SongSortOrder = so;
 }
 
 
@@ -94,6 +95,12 @@ MusicWheelItem::MusicWheelItem()
 	m_textCourse.SetZoom( COURSE_ZOOM );
 	m_textCourse.SetHorizAlign( align_left );
 	m_textCourse.SetXY( COURSE_X, 0 );
+
+	m_textSort.LoadFromFont( THEME->GetPathToF("MusicWheelItem sort") );
+	m_textSort.EnableShadow( false );
+	m_textSort.SetZoom( COURSE_ZOOM );
+	m_textSort.SetHorizAlign( align_left );
+	m_textSort.SetXY( COURSE_X, 0 );
 }
 
 
@@ -119,19 +126,26 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID )
 	{
 	case TYPE_SECTION:
 	case TYPE_COURSE:
+	case TYPE_SORT:
 		{
 			CString sDisplayName;
 			BitmapText *bt;
-			if(pWID->m_Type == TYPE_SECTION)
+			switch( pWID->m_Type )
 			{
-				sDisplayName = SONGMAN->ShortenGroupName(data->m_sSectionName);
-				bt = &m_textSectionName;
+				case TYPE_SECTION:
+					sDisplayName = SONGMAN->ShortenGroupName(data->m_sSectionName);
+					bt = &m_textSectionName;
+					break;
+				case TYPE_COURSE:
+					sDisplayName = data->m_pCourse->m_sName;
+					bt = &m_textCourse;
+					break;
+				case TYPE_SORT:
+					sDisplayName = SongSortOrderToString(data->m_SongSortOrder);
+					bt = &m_textSort;
+					break;
 			}
-			else
-			{
-				sDisplayName = data->m_pCourse->m_sName;
-				bt = &m_textCourse;
-			}
+
 			bt->SetZoom( 1 );
 			bt->SetText( sDisplayName );
 			bt->SetDiffuse( data->m_color );
@@ -217,6 +231,10 @@ void MusicWheelItem::Update( float fDeltaTime )
 		m_sprSongBar.Update( fDeltaTime );
 		m_textCourse.Update( fDeltaTime );
 		break;
+	case TYPE_SORT:
+		m_sprSectionBar.Update( fDeltaTime );
+		m_textSort.Update( fDeltaTime );
+		break;
 	default:
 		ASSERT(0);
 	}
@@ -229,9 +247,14 @@ void MusicWheelItem::DrawPrimitives()
 	{
 	case TYPE_SECTION: 
 	case TYPE_ROULETTE:
-	case TYPE_RANDOM: bar = &m_sprSectionBar; break;
+	case TYPE_RANDOM:
+	case TYPE_SORT:
+		bar = &m_sprSectionBar; 
+		break;
 	case TYPE_SONG:		
-	case TYPE_COURSE: bar = &m_sprSongBar; break;
+	case TYPE_COURSE:
+		bar = &m_sprSongBar; 
+		break;
 	default: ASSERT(0);
 	}
 	
@@ -255,6 +278,9 @@ void MusicWheelItem::DrawPrimitives()
 		break;
 	case TYPE_COURSE:
 		m_textCourse.Draw();
+		break;
+	case TYPE_SORT:
+		m_textSort.Draw();
 		break;
 	default:
 		ASSERT(0);
@@ -283,6 +309,7 @@ bool WheelItemData::HasBanner() const
 	/* XXX: These are special cases. */
 	case TYPE_ROULETTE:
 	case TYPE_RANDOM:
+	case TYPE_SORT:
 		return false;
 		
 	default: ASSERT(0); return false; // "";

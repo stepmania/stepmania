@@ -323,13 +323,13 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 		    if( sscanf( sParams[1], "%i..%i", &iMin, &iMax ) == 2 )
 			{
 				out.m_DisplayBPMType = Song::DISPLAY_SPECIFIED;
-				out.m_fDisplayBPMMin = (float) iMin;
-				out.m_fDisplayBPMMax = (float) iMax;
+				out.m_fSpecifiedBPMMin = (float) iMin;
+				out.m_fSpecifiedBPMMax = (float) iMax;
 			}
 			else if( sscanf( sParams[1], "%i", &iMin ) == 1 )
 			{
 				out.m_DisplayBPMType = Song::DISPLAY_SPECIFIED;
-				out.m_fDisplayBPMMin = out.m_fDisplayBPMMax = (float) iMin;
+				out.m_fSpecifiedBPMMin = out.m_fSpecifiedBPMMax = (float) iMin;
 			}
 			else
 			{

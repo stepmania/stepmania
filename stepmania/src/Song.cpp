@@ -93,8 +93,8 @@ Song::Song()
 	m_fLastBeat = -1;
 	m_SelectionDisplay = SHOW_ALWAYS;
 	m_DisplayBPMType = DISPLAY_ACTUAL;
-	m_fDisplayBPMMin = 0;
-	m_fDisplayBPMMax = 0;
+	m_fSpecifiedBPMMin = 0;
+	m_fSpecifiedBPMMax = 0;
 }
 
 Song::~Song()

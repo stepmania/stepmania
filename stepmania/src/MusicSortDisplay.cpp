@@ -21,7 +21,7 @@
 
 MusicSortDisplay::MusicSortDisplay()
 {
-	Load( THEME->GetPathToG("MusicSortDisplay icons 1x5") );
+	Load( THEME->GetPathToG(ssprintf("MusicSortDisplay icons 1x%d",NUM_SORT_ORDERS)) );
 	StopAnimating();
 }
 
@@ -34,6 +34,7 @@ void MusicSortDisplay::Set( SongSortOrder so )
 	case SORT_TITLE:
 	case SORT_BPM:
 	case SORT_MOST_PLAYED:
+	case SORT_SORT:
 		SetState( so );
 		break;
 	default:

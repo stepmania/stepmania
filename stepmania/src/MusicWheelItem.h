@@ -16,6 +16,7 @@
 #include "BitmapText.h"
 #include "WheelNotifyIcon.h"
 #include "TextBanner.h"
+#include "GameConstantsAndTypes.h"
 class Course;
 class Song;
 
@@ -50,14 +51,17 @@ public:
 
 	// for TYPE_COURSE
 	BitmapText			m_textCourse;
+
+	// for TYPE_SORT
+	BitmapText			m_textSort;
 };
 
-enum WheelItemType { TYPE_SECTION, TYPE_SONG, TYPE_ROULETTE, TYPE_RANDOM, TYPE_COURSE };
+enum WheelItemType { TYPE_SECTION, TYPE_SONG, TYPE_ROULETTE, TYPE_RANDOM, TYPE_COURSE, TYPE_SORT };
 
 struct WheelItemData
 {
 	WheelItemData() {}
-	WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color );
+	WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color, SongSortOrder so );
 
 	bool HasBanner() const;
 	CString GetBanner() const;
@@ -68,6 +72,7 @@ struct WheelItemData
 	Song*			m_pSong;
 	RageColor		m_color;	// either text color or section background color
 	WheelNotifyIcon::Flags  m_Flags;
+	SongSortOrder	m_SongSortOrder;
 };
 
 #endif

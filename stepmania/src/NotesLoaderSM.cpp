@@ -155,11 +155,11 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			else 
 			{
 				out.m_DisplayBPMType = Song::DISPLAY_SPECIFIED;
-				out.m_fDisplayBPMMin = (float)atof( sParams[1] );
+				out.m_fSpecifiedBPMMin = (float)atof( sParams[1] );
 				if( sParams[2].empty() )
-					out.m_fDisplayBPMMax = out.m_fDisplayBPMMin;
+					out.m_fSpecifiedBPMMax = out.m_fSpecifiedBPMMin;
 				else
-					out.m_fDisplayBPMMax = (float)atof( sParams[2] );
+					out.m_fSpecifiedBPMMax = (float)atof( sParams[2] );
 			}
 		}
 

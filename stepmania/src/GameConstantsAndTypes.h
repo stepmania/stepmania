@@ -108,9 +108,14 @@ enum SongSortOrder {
 	SORT_TITLE, 
 	SORT_BPM, 
 	SORT_MOST_PLAYED, 
+	SORT_SORT,
 	SORT_ROULETTE,
-	NUM_SORT_ORDERS
+	NUM_SORT_ORDERS,
+	SORT_INVALID
 };
+const SongSortOrder MAX_SELECTABLE_SORT = (SongSortOrder)(SORT_ROULETTE-1);
+
+CString SongSortOrderToString( SongSortOrder so );
 
 
 //

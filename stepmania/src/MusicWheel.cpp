@@ -51,30 +51,7 @@ CachedThemeMetricB	USE_3D			("MusicWheel","Use3D");
 
 const int MAX_WHEEL_SOUND_SPEED = 15;
 
-static const SongSortOrder MaxSelectableSort = SORT_MOST_PLAYED;
 
-static inline RageColor GetNextSectionColor()
-{
-	static int i=0;
-	i = i % NUM_SECTION_COLORS;
-	return SECTION_COLORS(i++);
-}
-
-
-static SongSortOrder NextSongSortOrder(SongSortOrder so)
-{
-	so = SongSortOrder( so+1 );
-	if(so > MaxSelectableSort)
-		so = SongSortOrder(0);
-
-	/* Disable SORT_PREFERRED for now, until it's implemented; right now it's not
-	 * very different than SORT_GROUP.  Once it's implemented, enable it only
-	 * when no group is selected. */
-	if(so == SORT_PREFERRED)
-		so = SORT_GROUP;
-
-	return so;
-}
 
 MusicWheel::MusicWheel() 
 { 
@@ -118,6 +95,7 @@ MusicWheel::MusicWheel()
 
 	
 	m_iSelection = 0;
+	m_LastSongSortOrder = SORT_INVALID;
 
 	m_WheelState = STATE_SELECTING_MUSIC;
 	m_fTimeLeftInState = 0;
@@ -268,6 +246,35 @@ bool MusicWheel::SelectCourse( const Course *p )
 	return true;
 }
 
+bool MusicWheel::SelectSort( SongSortOrder so )
+{
+	if(so == SORT_INVALID)
+		return false;
+
+	unsigned i;
+	vector<WheelItemData> &from = m_WheelItemDatas[GAMESTATE->m_SongSortOrder];
+	for( i=0; i<from.size(); i++ )
+	{
+		if( from[i].m_SongSortOrder == so )
+		{
+			// make its group the currently expanded group
+			SetOpenGroup(from[i].m_sSectionName);
+			break;
+		}
+	}
+
+	if(i == from.size())
+		return false;
+
+	for( i=0; i<m_CurWheelItemData.size(); i++ )
+	{
+		if( m_CurWheelItemData[i]->m_SongSortOrder == so )
+			m_iSelection = i;		// select it
+	}
+
+	return true;
+}
+
 void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CString sPreferredGroup )
 {
 	vector<Song*> apAllSongs;
@@ -332,29 +339,23 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 {
 	unsigned i;
 
-	// Roulette isn't a choice when selecting a course
-	/* Do we really need to do this?  Seems like an optimization that
-	 * doesn't win anything.  (And the other sort orders aren't used,
-	 * either ...) -glenn */
-	if( so == SongSortOrder(SORT_ROULETTE) )
-	{
-		switch( GAMESTATE->m_PlayMode )
-		{
-		case PLAY_MODE_NONSTOP:
-		case PLAY_MODE_ONI:
-		case PLAY_MODE_ENDLESS:
-            return;
-		default:
-			break;
-		}
-	}
-
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
 		{
+			if( so == SORT_SORT )
+			{
+				arrayWheelItemDatas.clear();	// clear out the previous wheel items 
+				for( i=0; i<MAX_SELECTABLE_SORT; i++ )
+				{
+					RageColor c = RageColor(1,1,0,1);
+					arrayWheelItemDatas.push_back( WheelItemData(TYPE_SORT, NULL, "", NULL, c, (SongSortOrder)i) );
+				}
+				break;
+			}
+
 			///////////////////////////////////
 			// Make an array of Song*, then sort them
 			///////////////////////////////////
@@ -398,7 +399,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			{
 			case SORT_PREFERRED:	bUseSections = false;	break;
 			case SORT_MOST_PLAYED:	bUseSections = false;	break;
-			case SORT_BPM:			bUseSections = false;	break;
+			case SORT_BPM:			bUseSections = true;	break;
 			case SORT_GROUP:		bUseSections = GAMESTATE->m_sPreferredGroup == GROUP_ALL_MUSIC;	break;
 			case SORT_TITLE:		bUseSections = true;	break;
 			case SORT_ROULETTE:		bUseSections = false;	break;
@@ -428,11 +429,11 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 					{
 						colorSection = (so==SORT_GROUP) ? SONGMAN->GetGroupColor(pSong->m_sGroupName) : SECTION_COLORS(iSectionColorIndex);
 						iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
-						arrayWheelItemDatas.push_back( WheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, colorSection) );
+						arrayWheelItemDatas.push_back( WheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, colorSection, SORT_INVALID) );
 						sLastSection = sThisSection;
 					}
 
-					arrayWheelItemDatas.push_back( WheelItemData( TYPE_SONG, pSong, sThisSection, NULL, SONGMAN->GetSongColor(pSong)) );
+					arrayWheelItemDatas.push_back( WheelItemData( TYPE_SONG, pSong, sThisSection, NULL, SONGMAN->GetSongColor(pSong), SORT_INVALID) );
 				}
 			}
 			else
@@ -440,16 +441,16 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				for( unsigned i=0; i<arraySongs.size(); i++ )
 				{
 					Song* pSong = arraySongs[i];
-					arrayWheelItemDatas.push_back( WheelItemData(TYPE_SONG, pSong, "", NULL, SONGMAN->GetSongColor(pSong)) );
+					arrayWheelItemDatas.push_back( WheelItemData(TYPE_SONG, pSong, "", NULL, SONGMAN->GetSongColor(pSong), SORT_INVALID) );
 				}
 			}
 
 			if( so != SORT_ROULETTE )
 			{
 				if( SHOW_ROULETTE )
-					arrayWheelItemDatas.push_back( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, RageColor(1,0,0,1)) );
+					arrayWheelItemDatas.push_back( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, RageColor(1,0,0,1), SORT_INVALID) );
 				if( SHOW_RANDOM )
-					arrayWheelItemDatas.push_back( WheelItemData(TYPE_RANDOM, NULL, "", NULL, RageColor(1,0,0,1)) );
+					arrayWheelItemDatas.push_back( WheelItemData(TYPE_RANDOM, NULL, "", NULL, RageColor(1,0,0,1), SORT_INVALID) );
 			}
 
 			// HACK:  Add extra stage item if it isn't already present on the music wheel
@@ -475,7 +476,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				}
 
 				if( !bFoundExtraSong )
-					arrayWheelItemDatas.push_back( WheelItemData(TYPE_SONG, pSong, "", NULL, SONG_REAL_EXTRA_COLOR) );
+					arrayWheelItemDatas.push_back( WheelItemData(TYPE_SONG, pSong, "", NULL, SONG_REAL_EXTRA_COLOR, SORT_INVALID) );
 			}
 		}
 		break;
@@ -483,6 +484,10 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		{
+			// We only use SORT_PREFERRED when selecting a course
+			if( so != SongSortOrder(SORT_PREFERRED) )
+				break;
+			
 			vector<Course*> apCourses;
 			switch( GAMESTATE->m_PlayMode )
 			{
@@ -500,9 +505,8 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 
 				// check that this course has at least one song playable in the current style
 				if( pCourse->IsPlayableIn(GAMESTATE->GetCurrentStyleDef()->m_NotesType) )
-                    arrayWheelItemDatas.push_back( WheelItemData(TYPE_COURSE, NULL, "", pCourse, pCourse->GetColor()) );
+                    arrayWheelItemDatas.push_back( WheelItemData(TYPE_COURSE, NULL, "", pCourse, pCourse->GetColor(), SORT_INVALID) );
 			}
-
 		}
 		break;
 	default:
@@ -545,7 +549,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 
 	if( arrayWheelItemDatas.empty() )
 	{
-		arrayWheelItemDatas.push_back( WheelItemData(TYPE_SECTION, NULL, "- EMPTY -", NULL, RageColor(1,0,0,1)) );
+		arrayWheelItemDatas.push_back( WheelItemData(TYPE_SECTION, NULL, "- EMPTY -", NULL, RageColor(1,0,0,1), SORT_INVALID) );
 	}
 }
 
@@ -732,44 +736,32 @@ void MusicWheel::Update( float fDeltaTime )
 		case STATE_FLYING_OFF_BEFORE_NEXT_SORT:
 			{
 				Song* pPrevSelectedSong = m_CurWheelItemData[m_iSelection]->m_pSong;
-				CString sPrevSelectedSection = m_CurWheelItemData[m_iSelection]->m_sSectionName;
-
-				/* Change the sort order. */
-				GAMESTATE->m_SongSortOrder = NextSongSortOrder(GAMESTATE->m_SongSortOrder);
 
 				SCREENMAN->PostMessageToTopScreen( SM_SortOrderChanged, 0 );
+				
 				SetOpenGroup(GetSectionNameFromSongAndSort( pPrevSelectedSong, GAMESTATE->m_SongSortOrder ));
-
-				//RebuildWheelItems();
 
 				m_iSelection = 0;
 
-				if( pPrevSelectedSong != NULL )		// the previous selected item was a song
-					SelectSong(pPrevSelectedSong);
-				else	// the previously selected item was a section
+				switch( GAMESTATE->m_SongSortOrder )
 				{
-					// find the previously selected song, and select it
-					for( i=0; i<m_CurWheelItemData.size(); i++ )
-					{
-						if( m_CurWheelItemData[i]->m_sSectionName == sPrevSelectedSection )
-						{
-							m_iSelection = i;
-							break;
-						}
-					}
-				}
-
-				// If changed sort to "BEST", put selection on most popular song
-				if( GAMESTATE->m_SongSortOrder == SORT_MOST_PLAYED )
-				{
-					for( i=0; i<m_CurWheelItemData.size(); i++ )
-					{
-						if( m_CurWheelItemData[i]->m_pSong != NULL )
-						{
-							m_iSelection = i;
-							break;
-						}
-					}
+				case SORT_PREFERRED:
+				case SORT_GROUP:
+				case SORT_TITLE:
+				case SORT_BPM:
+				case SORT_MOST_PLAYED:
+				case SORT_ROULETTE:
+					// Look for the last selected song or course
+					if( GAMESTATE->m_pCurCourse )
+						SelectCourse( GAMESTATE->m_pCurCourse );
+					if( GAMESTATE->m_pCurSong )
+						SelectSong( GAMESTATE->m_pCurSong );
+					break;
+				case SORT_SORT:
+					SelectSort( m_LastSongSortOrder );
+					break;
+				default:
+					ASSERT(0);
 				}
 
 				SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
@@ -951,12 +943,7 @@ void MusicWheel::ChangeMusic(int dist)
 		m_soundChangeMusic.Play();
 }
 
-bool MusicWheel::PrevSort()
-{
-	return NextSort();
-}
-
-bool MusicWheel::NextSort()
+bool MusicWheel::ChangeSort( SongSortOrder new_so )	// return true if change successful
 {
 	switch( m_WheelState )
 	{
@@ -971,10 +958,29 @@ bool MusicWheel::NextSort()
 
 	TweenOffScreen(true);
 
+	m_LastSongSortOrder = GAMESTATE->m_SongSortOrder;
+	GAMESTATE->m_SongSortOrder = new_so;
+
 	m_WheelState = STATE_FLYING_OFF_BEFORE_NEXT_SORT;
 	return true;
 }
-bool MusicWheel::Select()	// return true of a playable item was chosen
+
+bool MusicWheel::NextSort()		// return true if change successful
+{
+	SongSortOrder so = SongSortOrder( GAMESTATE->m_SongSortOrder+1 );
+	if(so > MAX_SELECTABLE_SORT)
+		so = SongSortOrder(0);
+
+	/* Disable SORT_PREFERRED for now, until it's implemented; right now it's not
+	 * very different than SORT_GROUP.  Once it's implemented, enable it only
+	 * when no group is selected. */
+	if(so == SORT_PREFERRED)
+		so = SORT_GROUP;
+
+	return ChangeSort( so );
+}
+
+bool MusicWheel::Select()	// return true if this selection ends the screen
 {
 	LOG->Trace( "MusicWheel::Select()" );
 
@@ -1006,31 +1012,15 @@ bool MusicWheel::Select()	// return true of a playable item was chosen
 	{
 	case TYPE_SECTION:
 		{
-		CString sThisItemSectionName = m_CurWheelItemData[m_iSelection]->m_sSectionName;
-		if( m_sExpandedSectionName == sThisItemSectionName )	// already expanded
-			m_sExpandedSectionName = "";		// collapse it
-		else				// already collapsed
-			m_sExpandedSectionName = sThisItemSectionName;	// expand it
+			CString sThisItemSectionName = m_CurWheelItemData[m_iSelection]->m_sSectionName;
+			if( m_sExpandedSectionName == sThisItemSectionName )	// already expanded
+				m_sExpandedSectionName = "";		// collapse it
+			else				// already collapsed
+				m_sExpandedSectionName = sThisItemSectionName;	// expand it
 
-		m_soundExpand.Play();
+			m_soundExpand.Play();
 
-		SetOpenGroup(m_sExpandedSectionName);
-	
-		RebuildMusicWheelItems();
-
-
-		m_iSelection = 0;	// reset in case we can't find the last selected song
-		// find the section header and select it
-		for( unsigned  i=0; i<m_CurWheelItemData.size(); i++ )
-		{
-			if( m_CurWheelItemData[i]->m_Type == TYPE_SECTION  
-				&&  m_CurWheelItemData[i]->m_sSectionName == sThisItemSectionName )
-			{
-				m_iSelection = i;
-				break;
-			}
-		}
-
+			SetOpenGroup(m_sExpandedSectionName);
 		}
 		return false;
 	case TYPE_ROULETTE:
@@ -1039,11 +1029,15 @@ bool MusicWheel::Select()	// return true of a playable item was chosen
 	case TYPE_RANDOM:
 		StartRandom();
 		return false;
-
 	case TYPE_SONG:
-	default:
-		
+	case TYPE_COURSE:
 		return true;
+	case TYPE_SORT:
+		ChangeSort( m_CurWheelItemData[m_iSelection]->m_SongSortOrder );
+		return false;
+	default:
+		ASSERT(0);
+		return false;
 	}
 }
 
@@ -1077,7 +1071,7 @@ void MusicWheel::StartRandom()
 
 void MusicWheel::SetOpenGroup(CString group, SongSortOrder so)
 {
-	if(so == NUM_SORT_ORDERS)
+	if( so == SORT_INVALID)
 		so = GAMESTATE->m_SongSortOrder;
 
 	m_sExpandedSectionName = group;
@@ -1105,11 +1099,19 @@ void MusicWheel::SetOpenGroup(CString group, SongSortOrder so)
 			TEXTUREMAN->CacheTexture( Banner::BannerTex(from[i].GetBanner()) );
 	}
 
+
+	//
+	// Try to select the item that was selected before chaning groups
+	//
 	m_iSelection = 0;
-	for(i = 0; i < m_CurWheelItemData.size(); ++i)
+
+	for( i=0; i<m_CurWheelItemData.size(); i++ )
 	{
-		if(m_CurWheelItemData[i] == old)
+		if( m_CurWheelItemData[i] == old )
+		{
 			m_iSelection=i;
+			break;
+		}
 	}
 
 	RebuildMusicWheelItems();
@@ -1233,13 +1235,13 @@ CString MusicWheel::GetSectionNameFromSongAndSort( const Song* pSong, SongSortOr
 	case SORT_GROUP:	
 		sTemp = pSong->m_sGroupName;
 		return sTemp;
-//		case SORT_ARTIST:	
-//			sTemp = pSong->m_sArtist;
-//			sTemp.MakeUpper();
-//			sTemp =  (sTemp.GetLength() > 0) ? sTemp.Left(1) : "";
-//			if( IsAnInt(sTemp) )
-//				sTemp = "NUM";
-//			return sTemp;
+//	case SORT_ARTIST:	
+//		sTemp = pSong->m_sArtist;
+//		sTemp.MakeUpper();
+//		sTemp =  (sTemp.GetLength() > 0) ? sTemp.Left(1) : "";
+//		if( IsAnInt(sTemp) )
+//			sTemp = "NUM";
+//		return sTemp;
 	case SORT_TITLE:
 		sTemp = pSong->GetTranslitMainTitle();
 		sTemp.MakeUpper();
@@ -1257,6 +1259,14 @@ CString MusicWheel::GetSectionNameFromSongAndSort( const Song* pSong, SongSortOr
 		sTemp = sTemp[0];
 		return sTemp;
 	case SORT_BPM:
+		{
+			const int iBPMGroupSize = 20;
+			float fMinBPM, fMaxBPM;
+			pSong->GetDisplayBPM( fMinBPM, fMaxBPM );
+			int iMaxBPM = (int)fMaxBPM;
+			iMaxBPM += iBPMGroupSize - (iMaxBPM%iBPMGroupSize);
+			return ssprintf("%03d-%03d",iMaxBPM-(iBPMGroupSize-1), iMaxBPM);
+		}
 	case SORT_MOST_PLAYED:
 	default:
 		return "";

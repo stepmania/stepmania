@@ -42,10 +42,10 @@ void NotesWriterSM::WriteGlobalTags(FILE *fp, const Song &out)
 		// write nothing
 		break;
 	case Song::DISPLAY_SPECIFIED:
-		if( out.m_fDisplayBPMMin == out.m_fDisplayBPMMax )
-			fprintf( fp, "#DISPLAYBPM:%.3f;\n", out.m_fDisplayBPMMin );
+		if( out.m_fSpecifiedBPMMin == out.m_fSpecifiedBPMMax )
+			fprintf( fp, "#DISPLAYBPM:%.3f;\n", out.m_fSpecifiedBPMMin );
 		else
-			fprintf( fp, "#DISPLAYBPM:%.3f:%.3f;\n", out.m_fDisplayBPMMin, out.m_fDisplayBPMMax );
+			fprintf( fp, "#DISPLAYBPM:%.3f:%.3f;\n", out.m_fSpecifiedBPMMin, out.m_fSpecifiedBPMMax );
 		break;
 	case Song::DISPLAY_RANDOM:
 		fprintf( fp, "#DISPLAYBPM:*;\n" );

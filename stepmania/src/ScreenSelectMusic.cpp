@@ -442,14 +442,12 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		if( ( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage ) || GAMESTATE->IsExtraStage2() )
 			m_soundLocked.Play();
 		else
-			if( m_MusicWheel.NextSort() )
-			{
-				SOUNDMAN->StopMusic();
-
-//				m_MusicSortDisplay.FadeOff( 0, "fade", TWEEN_TIME );
-
-				TweenScoreOnAndOffAfterChangeSort();
-			}
+			m_MusicWheel.ChangeSort( SORT_SORT );
+//			if( m_MusicWheel.NextSort() )
+//			{
+//				SOUNDMAN->StopMusic();
+//				TweenScoreOnAndOffAfterChangeSort();
+//			}
 		return;
 	}
 	if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() && CodeDetector::DetectAndAdjustMusicOptions(GameI.controller) )
@@ -767,7 +765,8 @@ void ScreenSelectMusic::AfterMusicChange()
 	m_Menu.m_MenuTimer.Stall();
 
 	Song* pSong = m_MusicWheel.GetSelectedSong();
-	GAMESTATE->m_pCurSong = pSong;
+	if( pSong )
+		GAMESTATE->m_pCurSong = pSong;
 
 	m_sprStage.Load( THEME->GetPathToG("ScreenSelectMusic stage "+GAMESTATE->GetStageText()) );
 
@@ -788,6 +787,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	switch( m_MusicWheel.GetSelectedType() )
 	{
 	case TYPE_SECTION:
+	case TYPE_SORT:
 		{	
 			CString sGroup = m_MusicWheel.GetSelectedSection();
 			for( int p=0; p<NUM_PLAYERS; p++ )
@@ -805,7 +805,8 @@ void ScreenSelectMusic::AfterMusicChange()
 		break;
 	case TYPE_SONG:
 		{
-			SOUNDMAN->StopMusic();
+			// Don't stop music if it's already playing the right file.
+//			SOUNDMAN->StopMusic();
 			m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;
 			m_sSampleMusicToPlay = pSong->GetMusicPath();
 			m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
@@ -879,6 +880,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		}
 		break;
 	case TYPE_ROULETTE:
+	case TYPE_RANDOM:
 		if(!no_banner_change)
 			m_Banner.LoadRoulette();
 		m_BPMDisplay.NoBPM();
@@ -887,23 +889,18 @@ void ScreenSelectMusic::AfterMusicChange()
 
 		SOUNDMAN->StopMusic();
 		m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;
-		m_sSampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic roulette music");
-		m_fSampleStartSeconds = -1;
-		m_fSampleLengthSeconds = -1;
+		switch( m_MusicWheel.GetSelectedType() )
+		{
+		case TYPE_ROULETTE:
+			m_sSampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic roulette music");
+			break;
+		case TYPE_RANDOM:
+			m_sSampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic random music");
+			break;
+		default:
+			ASSERT(0);
+		}
 
-		m_sprBalloon.StopTweening();
-		OFF_COMMAND( m_sprBalloon );
-		break;
-	case TYPE_RANDOM:
-		if(!no_banner_change)
-			m_Banner.LoadRandom();
-		m_BPMDisplay.NoBPM();
-		m_sprCDTitleFront.UnloadTexture();
-		m_sprCDTitleBack.UnloadTexture();
-
-		SOUNDMAN->StopMusic();
-		m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;
-		m_sSampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic random music");
 		m_fSampleStartSeconds = -1;
 		m_fSampleLengthSeconds = -1;
 

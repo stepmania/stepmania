@@ -106,3 +106,18 @@ CString CoinModeToString( CoinMode cm )
 		default:	ASSERT(0);	return "";
 	}
 }
+
+
+CString SongSortOrderToString( SongSortOrder so )
+{
+	CString s[NUM_SORT_ORDERS] = {
+		"PREFERRED",
+		"GROUP", 
+		"TITLE", 
+		"BPM", 
+		"MOST PLAYED", 
+		"SORT"
+		"ROULETTE"
+	};
+	return s[so];
+}

@@ -142,8 +142,8 @@ public:
 	float	m_fMusicSampleStartSeconds;
 	float	m_fMusicSampleLengthSeconds;
 	enum { DISPLAY_ACTUAL, DISPLAY_SPECIFIED, DISPLAY_RANDOM } m_DisplayBPMType;
-	float		m_fDisplayBPMMin;
-	float		m_fDisplayBPMMax;	// if a range, then Min != Max
+	float		m_fSpecifiedBPMMin;
+	float		m_fSpecifiedBPMMax;	// if a range, then Min != Max
 
 	float GetMusicStartBeat() const;
 
@@ -178,6 +178,18 @@ public:
 	void AddBackgroundChange( BackgroundChange seg );
 	void AddLyricSegment( LyricSegment seg );
 
+	void GetDisplayBPM( float &fMinBPMOut, float &fMaxBPMOut ) const
+	{
+		if( m_DisplayBPMType == DISPLAY_SPECIFIED )
+		{
+			fMinBPMOut = m_fSpecifiedBPMMin;
+			fMaxBPMOut = m_fSpecifiedBPMMax;
+		}
+		else
+		{
+			GetActualBPM( fMinBPMOut, fMaxBPMOut );
+		}
+	}
 	void GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut ) const
 	{
 		fMaxBPMOut = 0;
