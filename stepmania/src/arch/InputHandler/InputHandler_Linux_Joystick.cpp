@@ -7,13 +7,18 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#include <linux/types.h>
+#include <errno.h>
+#include <sys/types.h>
 #include <linux/joystick.h>
+
+#include <set>
 
 static const char *Paths[InputHandler_Linux_Joystick::NUM_JOYSTICKS] =
 {
 	"/dev/js0",
 	"/dev/js1",
+	"/dev/input/js0",
+	"/dev/input/js1",
 };
 
 InputHandler_Linux_Joystick::InputHandler_Linux_Joystick()
@@ -21,9 +26,33 @@ InputHandler_Linux_Joystick::InputHandler_Linux_Joystick()
 	for(int i = 0; i < NUM_JOYSTICKS; ++i)
 		fds[i] = -1;
 
+	/* We check both eg. /dev/js0 and /dev/input/js0.  If both exist, they're probably
+	 * the same device; keep track of device IDs so we don't open the same joystick
+	 * twice. */
+	set< pair<int,int> > devices;
+	
 	for(int i = 0; i < NUM_JOYSTICKS; ++i)
 	{
-		fds[i] = open(Paths[i], O_RDONLY);
+		struct stat st;
+		if( stat( Paths[i], &st ) == -1 )
+		{
+			if( errno != ENOENT )
+				LOG->Warn( "Couldn't stat %s: %s", Paths[i], strerror(errno) );
+			continue;
+		}
+
+		if( !S_ISCHR( st.st_mode ) )
+		{
+			LOG->Warn( "Ignoring %s: not a character device", Paths[i] );
+			continue;
+		}
+
+		pair<int,int> dev( major(st.st_rdev), minor(st.st_rdev) );
+		if( devices.find(dev) != devices.end() )
+			continue; /* dupe */
+		devices.insert( dev );
+
+		fds[i] = open( Paths[i], O_RDONLY );
 
 		if(fds[i] != -1)
 			LOG->Info("Opened %s", Paths[i]);
@@ -62,6 +91,9 @@ void InputHandler_Linux_Joystick::Update(float fDeltaTime)
 
 		for(int i = 0; i < NUM_JOYSTICKS; ++i)
 		{
+			if( fds[i] == -1 )
+				continue;
+
 			if(!FD_ISSET(fds[i], &fdset))
 				continue;
 

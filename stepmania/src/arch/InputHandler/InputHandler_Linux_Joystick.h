@@ -7,7 +7,7 @@
 class InputHandler_Linux_Joystick: public InputHandler
 {
 public:
-	enum { NUM_JOYSTICKS = 2 };
+	enum { NUM_JOYSTICKS = 4 };
 	void Update(float fDeltaTime);
 	InputHandler_Linux_Joystick();
 	~InputHandler_Linux_Joystick();
