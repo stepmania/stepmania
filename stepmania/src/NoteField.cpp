@@ -188,6 +188,8 @@ void NoteField::DrawPrimitives()
 
 	if( GAMESTATE->m_bEditing )
 	{
+		ASSERT(GAMESTATE->m_pCurSong);
+
 		unsigned i;
 
 		//
@@ -258,7 +260,8 @@ void NoteField::DrawPrimitives()
 			const HoldNote &hn = GetHoldNote(i);
 			const HoldNoteScore hns = GetHoldNoteScore(i);
 			const float fLife = GetHoldNoteLife(i);
-			const bool bIsHoldingNote = m_bIsHoldingHoldNote[i];	// hack: added -1 because hn.m_iStartIndex changes as note is held
+			const bool bIsHoldingNote = (i < m_bIsHoldingHoldNote.size())?
+				m_bIsHoldingHoldNote[i]: false;
 			
 			if( hns == HNS_OK )	// if this HoldNote was completed
 				continue;	// don't draw anything
