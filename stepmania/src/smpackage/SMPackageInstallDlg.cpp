@@ -105,6 +105,8 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 
 		if( fh.IsDirectory() )
 			continue;
+		if( !fh.GetFileName().CompareNoCase( "smzip.ctl" ) )
+			continue;
 
 		sMessage2 += ssprintf( "\t%s\r\n", fh.GetFileName() );
 	}
