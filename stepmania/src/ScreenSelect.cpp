@@ -27,6 +27,7 @@
 #define NEXT_SCREEN( c )		THEME->GetMetric (m_sName,ssprintf("NextScreen%d",c+1))
 #define IDLE_TIMEOUT_SCREEN		THEME->GetMetric (m_sName,"IdleTimeoutScreen")
 #define ALLOW_DISABLED_PLAYER_INPUT		THEME->GetMetricB(m_sName,"AllowDisabledPlayerInput")
+#define UPDATE_ON_MESSAGE		THEME->GetMetric (m_sName,"UpdateOnMessage")
 
 ScreenSelect::ScreenSelect( CString sClassName ) : 
 	ScreenWithMenuElements(sClassName),
@@ -39,6 +40,13 @@ ScreenSelect::ScreenSelect( CString sClassName ) :
 void ScreenSelect::Init()
 {
 	ScreenWithMenuElements::Init();
+
+	//
+	// Load messages to update on
+	//
+	split( UPDATE_ON_MESSAGE, ",", m_asSubscribedMessages );
+	for( unsigned i = 0; i < m_asSubscribedMessages.size(); ++i )
+		MESSAGEMAN->Subscribe( this, m_asSubscribedMessages[i] );
 
 	//
 	// Load choices
@@ -95,6 +103,8 @@ void ScreenSelect::Init()
 ScreenSelect::~ScreenSelect()
 {
 	LOG->Trace( "ScreenSelect::~ScreenSelect()" );
+	for( unsigned i = 0; i < m_asSubscribedMessages.size(); ++i )
+		MESSAGEMAN->Unsubscribe( this, m_asSubscribedMessages[i] );
 }
 
 void ScreenSelect::Update( float fDelta )
@@ -246,6 +256,13 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 	}
 
 	Screen::HandleScreenMessage( SM );
+}
+
+void ScreenSelect::HandleMessage( const CString &sMessage )
+{
+	this->UpdateSelectableChoices();
+
+	Screen::HandleMessage( sMessage );
 }
 
 void ScreenSelect::MenuBack( PlayerNumber pn )
