@@ -1,5 +1,6 @@
 #include "global.h"
 #include "SDL_rotozoom.h"
+#include "SDL.h"
 
 #include <vector>
 using namespace std;
