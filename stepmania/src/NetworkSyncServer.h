@@ -98,7 +98,7 @@ private:
 	bool StatsNameChange;
 	bool SecondSameSelect;
 	int numPlayers;
-	vector<in_addr> bannedIPs;
+	vector<CString> bannedIPs;
 
 	void Hello(PacketFunctions& Packet, int clientNum);
 	void UpdateClients();
@@ -129,7 +129,7 @@ private:
 	CString StepManiaLanServer::ListPlayers();
 	void Kick(CString &name);
 	void Ban(CString &name);
-	bool IsBanned(in_addr &ip);
+	bool IsBanned(CString &ip);
 	void ForceStart();
 	bool CheckCheat(int clientNum);
 };

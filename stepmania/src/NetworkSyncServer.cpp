@@ -532,7 +532,7 @@ void StepManiaLanServer::NewClientCheck()
 		if (server.accept(Client[CurrentEmptyClient].clientSocket) == 1)
 			Client[CurrentEmptyClient].Used = 1;
 
-	if (IsBanned(Client[CurrentEmptyClient].clientSocket.GetIn_addr()))
+	if (IsBanned(Client[CurrentEmptyClient].clientSocket.address))
 		Client[CurrentEmptyClient].Disconnect();
 
 }
@@ -879,19 +879,19 @@ void StepManiaLanServer::Ban(CString &name)
 {
 	for (int x = 0; x < NUMBERCLIENTS; ++x)
 		if (Client[x].Used)
-			for (int y = 0; y < 2; y++)
+			for (int y = 0; y < 2; ++y)
 				if (name == Client[x].Player[y].name)
 				{
 					ServerChat("Banned " + name + ".");
-					bannedIPs.push_back(Client[x].clientSocket.GetIn_addr());
+					bannedIPs.push_back(Client[x].clientSocket.address);
 					Client[x].Disconnect();
 				}
 }
 
-bool StepManiaLanServer::IsBanned(in_addr &ip)
+bool StepManiaLanServer::IsBanned(CString &ip)
 {
 	for (unsigned int x = 0; x < bannedIPs.size(); ++x)
-		if (ip.S_un.S_addr == bannedIPs[x].S_un.S_addr)
+		if (ip == bannedIPs[x])
 			return true;
 	return false;
 }
