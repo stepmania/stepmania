@@ -474,9 +474,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	FixSlashesInPlace( sFile );
 	
 	CString sPath = sAniDir+sFile;
-	LOG->Trace( "old path is '%s'", sPath.c_str() );
 	CollapsePath( sPath );
-	LOG->Trace( "new path is '%s'", sPath.c_str() );
 
 	if( sFile.CompareNoCase("songbackground")==0 )
 	{
