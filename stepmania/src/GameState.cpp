@@ -240,6 +240,12 @@ void GameState::UpdateSongPosition(float fPositionSeconds)
 //	LOG->Trace( "m_fMusicSeconds = %f, m_fSongBeat = %f, m_fCurBPS = %f, m_bFreeze = %f", m_fMusicSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze );
 }
 
+float GameState::GetSongPercent( float beat ) const
+{
+	/* 0 = first step; 1 = last step */
+	return (beat - m_pCurSong->m_fFirstBeat) / m_pCurSong->m_fLastBeat;
+}
+
 int GameState::GetStageIndex()
 {
 	return m_iCurrentStageIndex;
