@@ -213,6 +213,14 @@ void RageBitmapTexture::Create()
 		}
 	}
 
+	/* Make we're using a supported format. Every card supports either RGBA8 or RGBA4. */
+	if( !DISPLAY->SupportsTextureFormat(pixfmt) )
+	{
+		pixfmt = RageDisplay::FMT_RGBA8;
+		if( !DISPLAY->SupportsTextureFormat(pixfmt) )
+			pixfmt = RageDisplay::FMT_RGBA4;
+	}
+
 	/* Dither if appropriate. XXX: This is a special case: don't bother dithering to
 	 * RGBA8888.  We actually want to dither only if the destination has greater color
 	 * depth on at least one color channel than the source.  For example, it doesn't
@@ -234,16 +242,6 @@ void RageBitmapTexture::Create()
 	 * may introduce new alpha bits that need to be set.  It needs to be
 	 * done *before* we set up the palette, since it might change it. */
 	RageSurfaceUtils::FixHiddenAlpha(img);
-
-	/* Make we're using a supported format. 
-	 * Every card supports either RGBA8 or RGBA4. */
-	if( !DISPLAY->SupportsTextureFormat(pixfmt) )
-	{
-		pixfmt = RageDisplay::FMT_RGBA8;
-		if( !DISPLAY->SupportsTextureFormat(pixfmt) )
-			pixfmt = RageDisplay::FMT_RGBA4;
-	}
-
 
 	/* Convert the data to the destination format and dimensions 
 	 * required by OpenGL if it's not in it already.  */
