@@ -726,73 +726,95 @@ void ScreenEvaluation::TweenOffScreen()
 	}
 
 	// points area
-	for( p=0; p<NUM_PLAYERS; p++ ) 
+	if( SHOW_POINTS_AREA )
 	{
-		UtilOffCommand( m_sprPercentFrame[p], "ScreenEvaluation" );
-		m_Percent[p].Command( THEME->GetMetric("ScreenEvaluation",ssprintf("PercentP%dOffCommand",p+1)) );
-		m_Percent[p].TweenOffScreen();
+		for( p=0; p<NUM_PLAYERS; p++ ) 
+		{
+			UtilOffCommand( m_sprPercentFrame[p], "ScreenEvaluation" );
+			m_Percent[p].Command( THEME->GetMetric("ScreenEvaluation",ssprintf("PercentP%dOffCommand",p+1)) );
+			m_Percent[p].TweenOffScreen();
+		}
 	}
 
 	// bonus area
-	for( p=0; p<NUM_PLAYERS; p++ ) 
+	if( SHOW_BONUS_AREA )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
-			continue;
-		UtilOffCommand( m_sprBonusFrame[p], "ScreenEvaluation" );
-		for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )	// foreach line
+		for( p=0; p<NUM_PLAYERS; p++ ) 
 		{
-			UtilOffCommand( m_sprPossibleBar[p][r], "ScreenEvaluation" );
-			UtilOffCommand( m_sprActualBar[p][r], "ScreenEvaluation" );
+			if( !GAMESTATE->IsPlayerEnabled(p) )
+				continue;
+			UtilOffCommand( m_sprBonusFrame[p], "ScreenEvaluation" );
+			for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )	// foreach line
+			{
+				UtilOffCommand( m_sprPossibleBar[p][r], "ScreenEvaluation" );
+				UtilOffCommand( m_sprActualBar[p][r], "ScreenEvaluation" );
+			}
 		}
 	}
 
 	// survived area
-	for( p=0; p<NUM_PLAYERS; p++ ) 
+	if( SHOW_SURVIVED_AREA )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
-			continue;
-		UtilOffCommand( m_sprSurvivedFrame[p], "ScreenEvaluation" );
-		UtilOffCommand( m_textSurvivedNumber[p], "ScreenEvaluation" );
+		for( p=0; p<NUM_PLAYERS; p++ ) 
+		{
+			if( !GAMESTATE->IsPlayerEnabled(p) )
+				continue;
+			UtilOffCommand( m_sprSurvivedFrame[p], "ScreenEvaluation" );
+			UtilOffCommand( m_textSurvivedNumber[p], "ScreenEvaluation" );
+		}
 	}
-		
+
 	// win area
-	for( p=0; p<NUM_PLAYERS; p++ ) 
+	if( SHOW_WIN_AREA )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
-			continue;
-		UtilOffCommand( m_sprWinFrame[p], "ScreenEvaluation" );
-		UtilOffCommand( m_sprWin[p], "ScreenEvaluation" );
+		for( p=0; p<NUM_PLAYERS; p++ ) 
+		{
+			if( !GAMESTATE->IsPlayerEnabled(p) )
+				continue;
+			UtilOffCommand( m_sprWinFrame[p], "ScreenEvaluation" );
+			UtilOffCommand( m_sprWin[p], "ScreenEvaluation" );
+		}
 	}
-		
+
 	// judgement area
 	int l;
 	for( l=0; l<NUM_JUDGE_LINES; l++ ) 
+	{
+		if( !SHOW_JUDGMENT(l) )
+			continue;
+
 		UtilOffCommand( m_sprJudgeLabels[l], "ScreenEvaluation" );
 
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
-			continue;
-		for( l=0; l<NUM_JUDGE_LINES; l++ ) 
+		for( p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAMESTATE->IsPlayerEnabled(p) )
+				continue;
 			UtilOffCommand( m_textJudgeNumbers[l][p], "ScreenEvaluation" );
+		}
 	}
 
 	// score area
-	UtilOffCommand( m_sprScoreLabel, "ScreenEvaluation" );
-	for( p=0; p<NUM_PLAYERS; p++ )
+	if( SHOW_SCORE_AREA )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
-			continue;
-		UtilOffCommand( m_textScore[p], "ScreenEvaluation" );
+		UtilOffCommand( m_sprScoreLabel, "ScreenEvaluation" );
+		for( p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAMESTATE->IsPlayerEnabled(p) )
+				continue;
+			UtilOffCommand( m_textScore[p], "ScreenEvaluation" );
+		}
 	}
 
 	// time area
-	UtilOffCommand( m_sprTimeLabel, "ScreenEvaluation" );
-	for( p=0; p<NUM_PLAYERS; p++ )
+	if( SHOW_TIME_AREA )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
-			continue;
-		UtilOffCommand( m_textTime[p], "ScreenEvaluation" );
+		UtilOffCommand( m_sprTimeLabel, "ScreenEvaluation" );
+		for( p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAMESTATE->IsPlayerEnabled(p) )
+				continue;
+			UtilOffCommand( m_textTime[p], "ScreenEvaluation" );
+		}
 	}
 
 	// extra area
@@ -828,7 +850,8 @@ void ScreenEvaluation::Update( float fDeltaTime )
 		GAMESTATE->m_CurStageStats.iBonus[p] -= increment;
 		GAMESTATE->m_CurStageStats.iScore[p] += increment;
 
-		m_textScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, GAMESTATE->m_CurStageStats.iScore[p]) );
+		if( SHOW_SCORE_AREA )
+			m_textScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, GAMESTATE->m_CurStageStats.iScore[p]) );
 	}
 
 /*	for( int l=0; l<NUM_JUDGE_LINES; l++ ) 
