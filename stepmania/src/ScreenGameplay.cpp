@@ -1510,6 +1510,9 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			DeviceI.device==DEVICE_KEYBOARD  ||
 			(DeviceI.device!=DEVICE_KEYBOARD && type==IET_FAST_REPEAT)) )
 		{
+			/* I had battle mode back out on me mysteriously once. -glenn */
+			LOG->Trace("Player %i went back", MenuI.player+1);
+
 			m_DancingState = STATE_OUTRO;
 			SOUND->PlayOnce( THEME->GetPathToS("Common back") );
 			/* Hmm.  There are a bunch of subtly different ways we can
