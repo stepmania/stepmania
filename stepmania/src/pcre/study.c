@@ -5,7 +5,7 @@
 /*
 This is a library of functions to support regular expressions whose syntax
 and semantics are as close as possible to those of the Perl 5 language. See
-the file Tech.Steps for some information on the internals.
+the file Tech.Notes for some information on the internals.
 
 Written by: Philip Hazel <ph10@cam.ac.uk>
 

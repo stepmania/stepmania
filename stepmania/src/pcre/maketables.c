@@ -30,7 +30,7 @@ restrictions:
    supersede any condition above with which it is incompatible.
 -----------------------------------------------------------------------------
 
-See the file Tech.Steps for some information on the internals.
+See the file Tech.Notes for some information on the internals.
 */
 
 
