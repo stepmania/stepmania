@@ -210,6 +210,9 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Steps &out, int start )
 			fprintf( fp, "{" );
 			fCurrentIncrementer = 1.0/64 * BEATS_PER_MEASURE;
 			break;
+		default:
+			ASSERT(0);
+			// fall though
 		case NOTE_TYPE_48TH:
 		case NOTE_TYPE_INVALID:
 			// since, for whatever reason, the only way to do
@@ -217,9 +220,6 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Steps &out, int start )
 			fprintf( fp, "`" );
 			fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
 			break;
-		default:
-			ASSERT(0);
-			// fall though
 		}
 
 		double fFirstBeatInMeasure = m * BEATS_PER_MEASURE;
