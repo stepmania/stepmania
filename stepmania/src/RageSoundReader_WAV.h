@@ -5,7 +5,6 @@
 #define RAGE_SOUND_READER_WAV_H
 
 #include "RageSoundReader_FileReader.h"
-#include "SDL_utils.h"
 #include "RageFile.h"
 
 class RageSoundReader_WAV: public SoundReader_FileReader
@@ -13,30 +12,30 @@ class RageSoundReader_WAV: public SoundReader_FileReader
     mutable RageFile rw;
 	struct
 	{
-		Sint16 wFormatTag;
-		Uint16 wChannels;
-		Uint32 dwAvgBytesPerSec;
-		Uint16 wBlockAlign, wBitsPerSample;
+		int16_t wFormatTag;
+		uint16_t wChannels;
+		uint32_t dwAvgBytesPerSec;
+		uint16_t wBlockAlign, wBitsPerSample;
 
-		Uint32 adpcm_sample_frame_size;
-		Uint32 data_starting_offset;
+		uint32_t adpcm_sample_frame_size;
+		uint32_t data_starting_offset;
 	} fmt;
 
 	struct ADPCMBLOCKHEADER {
-		Uint8 bPredictor;
-		Uint16 iDelta;
-		Sint16 iSamp[2];
+		uint8_t bPredictor;
+		uint16_t iDelta;
+		int16_t iSamp[2];
 	};
 	struct adpcm_t
 	{
-		Uint16 cbSize;
-		Uint16 wSamplesPerBlock;
-		vector<Sint16> Coef1, Coef2;
+		uint16_t cbSize;
+		uint16_t wSamplesPerBlock;
+		vector<int16_t> Coef1, Coef2;
 
 		ADPCMBLOCKHEADER blockheaders[2]; /* 2 channels */
-		Uint32 samples_left_in_block;
+		uint32_t samples_left_in_block;
 		int nibble_state;
-		Sint8 nibble;
+		int8_t nibble;
 
 		adpcm_t();
 	};
@@ -56,34 +55,34 @@ class RageSoundReader_WAV: public SoundReader_FileReader
 	enum { CONV_NONE, CONV_8BIT_TO_16BIT, CONV_16LSB_TO_16SYS } Conversion;
 
 	int read_sample_fmt_normal( char *buf, unsigned len );
-	bool read_le16( RageFile &f, Sint16 *si16 ) const;
-	bool read_le16( RageFile &f, Uint16 *ui16 ) const;
-	bool read_le32( RageFile &f, Sint32 *si32 ) const;
-	bool read_le32( RageFile &f, Uint32 *ui32 ) const;
-	bool read_uint8( RageFile &f, Uint8 *ui8 ) const;
+	bool read_le16( RageFile &f, int16_t *si16 ) const;
+	bool read_le16( RageFile &f, uint16_t *ui16 ) const;
+	bool read_le32( RageFile &f, int32_t *si32 ) const;
+	bool read_le32( RageFile &f, uint32_t *ui32 ) const;
+	bool read_uint8( RageFile &f, uint8_t *ui8 ) const;
 
 	bool read_adpcm_block_headers( adpcm_t &out ) const;
 	bool decode_adpcm_sample_frame();
-	Uint32 read_sample_fmt_adpcm( char *buf, unsigned len );
-	void do_adpcm_nibble( Uint8 nib, ADPCMBLOCKHEADER *header, Sint32 lPredSamp );
-	void put_adpcm_sample_frame( Uint16 *buf, int frame );
+	uint32_t read_sample_fmt_adpcm( char *buf, unsigned len );
+	void do_adpcm_nibble( uint8_t nib, ADPCMBLOCKHEADER *header, int32_t lPredSamp );
+	void put_adpcm_sample_frame( uint16_t *buf, int frame );
 
-	int seek_sample_fmt_adpcm( Uint32 ms );
+	int seek_sample_fmt_adpcm( uint32_t ms );
 	int get_length_fmt_adpcm() const;
-	int find_chunk( Uint32 id, Sint32 &size );
+	int find_chunk( uint32_t id, int32_t &size );
 	bool read_fmt_chunk();
 
-	int seek_sample_fmt_normal( Uint32 ms );
+	int seek_sample_fmt_normal( uint32_t ms );
 	int get_length_fmt_normal() const;
 
 	OpenResult WAV_open_internal();
 
 	int SetPosition(int ms);
 
-	bool FindChunk( Sint32 ID, Sint32 &Length );
+	bool FindChunk( int32_t ID, int32_t &Length );
 
-	Uint32 ConvertMsToBytePos(int BytesPerSample, int channels, Uint32 ms) const;
-	Uint32 ConvertBytePosToMs(int BytesPerSample, int channels, Uint32 pos) const;
+	uint32_t ConvertMsToBytePos(int BytesPerSample, int channels, uint32_t ms) const;
+	uint32_t ConvertBytePosToMs(int BytesPerSample, int channels, uint32_t pos) const;
 
 public:
 	OpenResult Open(CString filename);

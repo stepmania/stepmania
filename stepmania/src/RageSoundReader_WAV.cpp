@@ -28,27 +28,27 @@ enum
 };
 
 /* Call this to convert milliseconds to an actual byte position, based on audio data characteristics. */
-Uint32 RageSoundReader_WAV::ConvertMsToBytePos(int BytesPerSample, int channels, Uint32 ms) const
+uint32_t RageSoundReader_WAV::ConvertMsToBytePos(int BytesPerSample, int channels, uint32_t ms) const
 {
     const float frames_per_ms = ((float) SampleRate) / 1000.0f;
-    const Uint32 frame_offset = (Uint32) (frames_per_ms * float(ms) + 0.5f);
-    const Uint32 frame_size = (Uint32) BytesPerSample * channels;
+    const uint32_t frame_offset = (uint32_t) (frames_per_ms * float(ms) + 0.5f);
+    const uint32_t frame_size = (uint32_t) BytesPerSample * channels;
     return frame_offset * frame_size;
 }
 
-Uint32 RageSoundReader_WAV::ConvertBytePosToMs(int BytesPerSample, int channels, Uint32 pos) const
+uint32_t RageSoundReader_WAV::ConvertBytePosToMs(int BytesPerSample, int channels, uint32_t pos) const
 {
-    const Uint32 frame_size = (Uint32) BytesPerSample * channels;
-    const Uint32 frame_no = pos / frame_size;
+    const uint32_t frame_size = (uint32_t) BytesPerSample * channels;
+    const uint32_t frame_no = pos / frame_size;
     const float frames_per_ms = ((float) SampleRate) / 1000.0f;
-    return (Uint32) ((frame_no / frames_per_ms) + 0.5f);
+    return (uint32_t) ((frame_no / frames_per_ms) + 0.5f);
 }
 
 /* Better than SDL_ReadLE16, since you can detect i/o errors... */
-bool RageSoundReader_WAV::read_le16( RageFile &f, Sint16 *si16 ) const
+bool RageSoundReader_WAV::read_le16( RageFile &f, int16_t *si16 ) const
 {
-    const int ret = f.Read( si16, sizeof(Sint16) );
-	if( ret != sizeof(Sint16) )
+    const int ret = f.Read( si16, sizeof(int16_t) );
+	if( ret != sizeof(int16_t) )
 	{
 		SetError( ret >= 0? "end of file": f.GetError().c_str() );
 		return false;
@@ -57,10 +57,10 @@ bool RageSoundReader_WAV::read_le16( RageFile &f, Sint16 *si16 ) const
     return true;
 }
 
-bool RageSoundReader_WAV::read_le16( RageFile &f, Uint16 *ui16 ) const
+bool RageSoundReader_WAV::read_le16( RageFile &f, uint16_t *ui16 ) const
 {
-    const int ret = f.Read( ui16, sizeof(Uint16) );
-	if( ret != sizeof(Uint16) )
+    const int ret = f.Read( ui16, sizeof(uint16_t) );
+	if( ret != sizeof(uint16_t) )
 	{
 		SetError( ret >= 0? "end of file": f.GetError().c_str() );
 		return false;
@@ -71,10 +71,10 @@ bool RageSoundReader_WAV::read_le16( RageFile &f, Uint16 *ui16 ) const
 
 
 /* Better than SDL_ReadLE32, since you can detect i/o errors... */
-bool RageSoundReader_WAV::read_le32( RageFile &f, Sint32 *si32 ) const
+bool RageSoundReader_WAV::read_le32( RageFile &f, int32_t *si32 ) const
 {
-    const int ret = f.Read( si32, sizeof(Sint32) );
-	if( ret != sizeof(Sint32) )
+    const int ret = f.Read( si32, sizeof(int32_t) );
+	if( ret != sizeof(int32_t) )
 	{
 		SetError( ret >= 0? "end of file": f.GetError().c_str() );
 		return false;
@@ -83,10 +83,10 @@ bool RageSoundReader_WAV::read_le32( RageFile &f, Sint32 *si32 ) const
     return true;
 }
 
-bool RageSoundReader_WAV::read_le32( RageFile &f, Uint32 *ui32 ) const
+bool RageSoundReader_WAV::read_le32( RageFile &f, uint32_t *ui32 ) const
 {
-    const int ret = f.Read( ui32, sizeof(Uint32) );
-	if( ret != sizeof(Uint32) )
+    const int ret = f.Read( ui32, sizeof(uint32_t) );
+	if( ret != sizeof(uint32_t) )
 	{
 		SetError( ret >= 0? "end of file": f.GetError().c_str() );
 		return false;
@@ -95,10 +95,10 @@ bool RageSoundReader_WAV::read_le32( RageFile &f, Uint32 *ui32 ) const
     return true;
 }
 
-bool RageSoundReader_WAV::read_uint8( RageFile &f, Uint8 *ui8 ) const
+bool RageSoundReader_WAV::read_uint8( RageFile &f, uint8_t *ui8 ) const
 {
-    const int ret = f.Read( ui8, sizeof(Uint8) );
-	if( ret != sizeof(Uint8) )
+    const int ret = f.Read( ui8, sizeof(uint8_t) );
+	if( ret != sizeof(uint8_t) )
 	{
 		SetError( ret >= 0? "end of file": f.GetError().c_str() );
 		return false;
@@ -130,12 +130,12 @@ bool RageSoundReader_WAV::read_fmt_chunk()
     {
 		RETURN_IF_MACRO(!read_le16(rw, &adpcm.cbSize), false);
 		RETURN_IF_MACRO(!read_le16(rw, &adpcm.wSamplesPerBlock), false);
-		Uint16 NumCoef;
+		uint16_t NumCoef;
 		RETURN_IF_MACRO(!read_le16(rw, &NumCoef), false);
 
 		for ( int i = 0; i < NumCoef; i++ )
 		{
-			Sint16 c1, c2;
+			int16_t c1, c2;
 			RETURN_IF_MACRO(!read_le16(rw, &c1), false);
 			RETURN_IF_MACRO(!read_le16(rw, &c2), false);
 
@@ -161,7 +161,7 @@ int RageSoundReader_WAV::read_sample_fmt_normal(char *buf, unsigned len)
 }
 
 
-int RageSoundReader_WAV::seek_sample_fmt_normal( Uint32 ms )
+int RageSoundReader_WAV::seek_sample_fmt_normal( uint32_t ms )
 {
     const int offset = ConvertMsToBytePos( BytesPerSample, Channels, ms);
     const int pos = (int) (this->fmt.data_starting_offset + offset);
@@ -231,17 +231,17 @@ bool RageSoundReader_WAV::read_adpcm_block_headers( adpcm_t &out ) const
 }
 
 
-void RageSoundReader_WAV::do_adpcm_nibble(Uint8 nib, ADPCMBLOCKHEADER *header, Sint32 lPredSamp)
+void RageSoundReader_WAV::do_adpcm_nibble(uint8_t nib, ADPCMBLOCKHEADER *header, int32_t lPredSamp)
 {
-	static const Sint32 max_audioval = ((1<<(16-1))-1);
-	static const Sint32 min_audioval = -(1<<(16-1));
-	static const Sint32 AdaptionTable[] =
+	static const int32_t max_audioval = ((1<<(16-1))-1);
+	static const int32_t min_audioval = -(1<<(16-1));
+	static const int32_t AdaptionTable[] =
     {
 		230, 230, 230, 230, 307, 409, 512, 614,
 		768, 614, 512, 409, 307, 230, 230, 230
 	};
 
-    Sint32 lNewSamp = lPredSamp;
+    int32_t lNewSamp = lPredSamp;
 
     if (nib & 0x08)
         lNewSamp += header->iDelta * (nib - 0x10);
@@ -250,14 +250,14 @@ void RageSoundReader_WAV::do_adpcm_nibble(Uint8 nib, ADPCMBLOCKHEADER *header, S
 
 	lNewSamp = clamp(lNewSamp, min_audioval, max_audioval);
 
-    Sint32 delta = ((Sint32) header->iDelta * AdaptionTable[nib]) /
+    int32_t delta = ((int32_t) header->iDelta * AdaptionTable[nib]) /
               FIXED_POINT_ADAPTION_BASE;
 
 	delta = max( delta, SMALLEST_ADPCM_DELTA );
 
-    header->iDelta = Sint16(delta);
+    header->iDelta = int16_t(delta);
 	header->iSamp[1] = header->iSamp[0];
-	header->iSamp[0] = Sint16(lNewSamp);
+	header->iSamp[0] = int16_t(lNewSamp);
 }
 
 
@@ -265,12 +265,12 @@ bool RageSoundReader_WAV::decode_adpcm_sample_frame()
 {
 	ADPCMBLOCKHEADER *headers = adpcm.blockheaders;
 
-	Uint8 nib = adpcm.nibble;
+	uint8_t nib = adpcm.nibble;
 	for (int i = 0; i < this->fmt.wChannels; i++)
 	{
-		const Sint16 iCoef1 = adpcm.Coef1[headers[i].bPredictor];
-		const Sint16 iCoef2 = adpcm.Coef2[headers[i].bPredictor];
-		const Sint32 lPredSamp = ((headers[i].iSamp[0] * iCoef1) +
+		const int16_t iCoef1 = adpcm.Coef1[headers[i].bPredictor];
+		const int16_t iCoef2 = adpcm.Coef2[headers[i].bPredictor];
+		const int32_t lPredSamp = ((headers[i].iSamp[0] * iCoef1) +
 			(headers[i].iSamp[1] * iCoef2)) / FIXED_POINT_COEF_BASE;
 
 		if (adpcm.nibble_state == 0)
@@ -292,7 +292,7 @@ bool RageSoundReader_WAV::decode_adpcm_sample_frame()
 }
 
 
-void RageSoundReader_WAV::put_adpcm_sample_frame( Uint16 *buf, int frame )
+void RageSoundReader_WAV::put_adpcm_sample_frame( uint16_t *buf, int frame )
 {
     ADPCMBLOCKHEADER *headers = adpcm.blockheaders;
     for (int i = 0; i < fmt.wChannels; i++)
@@ -300,9 +300,9 @@ void RageSoundReader_WAV::put_adpcm_sample_frame( Uint16 *buf, int frame )
 }
 
 
-Uint32 RageSoundReader_WAV::read_sample_fmt_adpcm(char *buf, unsigned len)
+uint32_t RageSoundReader_WAV::read_sample_fmt_adpcm(char *buf, unsigned len)
 {
-	Uint32 bw = 0;
+	uint32_t bw = 0;
 
 	while (bw < len)
 	{
@@ -312,7 +312,7 @@ Uint32 RageSoundReader_WAV::read_sample_fmt_adpcm(char *buf, unsigned len)
 				return bw;
 
 		const bool first_sample_in_block = ( adpcm.samples_left_in_block == adpcm.wSamplesPerBlock );
-		put_adpcm_sample_frame( (Uint16 *) (buf + bw), first_sample_in_block? 1:0 );
+		put_adpcm_sample_frame( (uint16_t *) (buf + bw), first_sample_in_block? 1:0 );
 		adpcm.samples_left_in_block--;
 		bw += this->fmt.adpcm_sample_frame_size;
 
@@ -331,7 +331,7 @@ Uint32 RageSoundReader_WAV::read_sample_fmt_adpcm(char *buf, unsigned len)
 
 
 
-int RageSoundReader_WAV::seek_sample_fmt_adpcm( Uint32 ms )
+int RageSoundReader_WAV::seek_sample_fmt_adpcm( uint32_t ms )
 {
 	const int offset = ConvertMsToBytePos( BytesPerSample, Channels, ms );
 	const int bpb = (adpcm.wSamplesPerBlock * this->fmt.adpcm_sample_frame_size);
@@ -374,12 +374,12 @@ int RageSoundReader_WAV::seek_sample_fmt_adpcm( Uint32 ms )
 
 
 /* Locate a chunk by ID. */
-int RageSoundReader_WAV::find_chunk( Uint32 id, Sint32 &size )
+int RageSoundReader_WAV::find_chunk( uint32_t id, int32_t &size )
 {
-	Uint32 pos = this->rw.Tell();
+	uint32_t pos = this->rw.Tell();
 	while (1)
 	{
-		Uint32 id_ = 0;
+		uint32_t id_ = 0;
 		if( !read_le32(rw, &id_) )
 			return false;
 		if( !read_le32(rw, &size) )
@@ -391,7 +391,7 @@ int RageSoundReader_WAV::find_chunk( Uint32 id, Sint32 &size )
 		if(size < 0)
 			return false;
 
-		pos += (sizeof (Uint32) * 2) + size;
+		pos += (sizeof (uint32_t) * 2) + size;
 		int ret = this->rw.Seek( pos );
 		if( ret == -1 )
 		{
@@ -404,30 +404,30 @@ int RageSoundReader_WAV::find_chunk( Uint32 id, Sint32 &size )
 
 SoundReader_FileReader::OpenResult RageSoundReader_WAV::WAV_open_internal()
 {
-	Uint32 magic1;
+	uint32_t magic1;
 	if( !read_le32(rw, &magic1) || magic1 != riffID )
 	{
 		SetError( "WAV: Not a RIFF file." );
 		return OPEN_NO_MATCH;
 	}
 
-	Uint32 ignore;
+	uint32_t ignore;
 	read_le32(rw, &ignore); /* throw the length away; we get this info later. */
 
-	Uint32 magic2;
+	uint32_t magic2;
 	if( !read_le32( rw, &magic2 ) || magic2 != waveID )
 	{
 		SetError( "Not a WAVE file." );
 		return OPEN_NO_MATCH;
 	}
 
-	Sint32 NextChunk;
+	int32_t NextChunk;
     BAIL_IF_MACRO(!find_chunk(fmtID, NextChunk), "No format chunk.", OPEN_MATCH_BUT_FAIL);
 	NextChunk += this->rw.Tell();
     BAIL_IF_MACRO(!read_fmt_chunk(), "Can't read format chunk.", OPEN_MATCH_BUT_FAIL);
 
 	/* I think multi-channel WAVs are possible, but I've never even seen one. */
-    Channels = (Uint8) fmt.wChannels;
+	Channels = (uint8_t) fmt.wChannels;
 	ASSERT( Channels <= 2 );
 
 	if( fmt.wFormatTag != FMT_NORMAL &&
@@ -486,7 +486,7 @@ SoundReader_FileReader::OpenResult RageSoundReader_WAV::WAV_open_internal()
 
 	this->rw.Seek( NextChunk );
 
-	Sint32 DataSize;
+	int32_t DataSize;
     BAIL_IF_MACRO(!find_chunk(dataID, DataSize), "No data chunk.", OPEN_MATCH_BUT_FAIL);
 
     fmt.data_starting_offset = this->rw.Tell();
@@ -549,35 +549,35 @@ int RageSoundReader_WAV::Read(char *buf, unsigned len)
 	{
 		/* Do this in place. */
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-		const int cnt = len / sizeof(Sint16);
-		Sint16 *tbuf = (Sint16 *) buf;
+		const int cnt = len / sizeof(int16_t);
+		int16_t *tbuf = (int16_t *) buf;
 		for( int i = 0; i < cnt; ++i )
 			tbuf[i] = SDL_Swap16( tbuf[i] );
 #endif
 	}
 
-	static Sint16 *tmpbuf = NULL;
+	static int16_t *tmpbuf = NULL;
 	static unsigned tmpbufsize = 0;
 	if( len > tmpbufsize )
 	{
 		tmpbufsize = len;
 		delete [] tmpbuf;
-		tmpbuf = new Sint16[len];
+		tmpbuf = new int16_t[len];
 	}
 	if( Conversion == CONV_8BIT_TO_16BIT )
 	{
 		for( int s = 0; s < ret; ++s )
-			tmpbuf[s] = (Sint16(buf[s])-128) << 8;
-		memcpy( buf, tmpbuf, ret * sizeof(Sint16) );
+			tmpbuf[s] = (int16_t(buf[s])-128) << 8;
+		memcpy( buf, tmpbuf, ret * sizeof(int16_t) );
 		ret *= 2; /* 8-bit to 16-bit */
 	}
 
 	if( Channels == 1 )
 	{
-		Sint16 *in = (Sint16*) buf;
+		int16_t *in = (int16_t*) buf;
 		for( int s = 0; s < ret/2; ++s )
 			tmpbuf[s*2] = tmpbuf[s*2+1] = in[s];
-		memcpy( buf, tmpbuf, ret * sizeof(Sint16) );
+		memcpy( buf, tmpbuf, ret * sizeof(int16_t) );
 		ret *= 2; /* 1 channel -> 2 channels */
 	}
 
