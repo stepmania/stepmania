@@ -8,8 +8,24 @@
 
 LowLevelWindow_SDL::LowLevelWindow_SDL()
 {
-    if(!SDL_WasInit(SDL_INIT_VIDEO))
-		SDL_InitSubSystem(SDL_INIT_VIDEO);
+	Windowed = false;
+}
+
+LowLevelWindow_SDL::~LowLevelWindow_SDL()
+{
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
+	SDL_EventState(SDL_VIDEORESIZE, SDL_IGNORE);
+	SDL_EventState(SDL_ACTIVEEVENT, SDL_IGNORE);
+}
+
+void *LowLevelWindow_SDL::GetProcAddress(CString s)
+{
+	return SDL_GL_GetProcAddress(s);
+}
+
+bool LowLevelWindow_SDL::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync )
+{
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 
 	/* By default, ignore all SDL events.  We'll enable them as we need them.
 	 * We must not enable any events we don't actually want, since we won't
@@ -20,24 +36,13 @@ LowLevelWindow_SDL::LowLevelWindow_SDL()
 	SDL_EventState(0xFF /*SDL_ALLEVENTS*/, SDL_IGNORE);
 
 	SDL_EventState(SDL_VIDEORESIZE, SDL_ENABLE);
+	SDL_EventState(SDL_ACTIVEEVENT, SDL_ENABLE);
+
+	SDL_InitSubSystem(SDL_INIT_VIDEO);
 
 	Windowed = false;
-}
 
-LowLevelWindow_SDL::~LowLevelWindow_SDL()
-{
-	SDL_QuitSubSystem(SDL_INIT_VIDEO);
-	SDL_EventState(SDL_VIDEORESIZE, SDL_IGNORE);
-}
-
-void *LowLevelWindow_SDL::GetProcAddress(CString s)
-{
-	return SDL_GL_GetProcAddress(s);
-}
-
-bool LowLevelWindow_SDL::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync )
-{
-	int flags = SDL_DOUBLEBUF | SDL_RESIZABLE | SDL_OPENGL;
+	int flags = SDL_RESIZABLE | SDL_OPENGL; // | SDL_DOUBLEBUF; // no need for DirectDraw to be double-buffered
 	if( !windowed )
 		flags |= SDL_FULLSCREEN;
 
@@ -69,30 +74,30 @@ bool LowLevelWindow_SDL::SetVideoMode( bool windowed, int width, int height, int
 #endif
 
 #if defined(WIN32)
-	SDL_EventState(SDL_OPENGLRESET, SDL_ENABLE);
+//	SDL_EventState(SDL_OPENGLRESET, SDL_ENABLE);
 #endif
 
 	SDL_Surface *screen = SDL_SetVideoMode(width, height, bpp, flags);
 	if(!screen)
 		RageException::Throw("SDL_SetVideoMode failed: %s", SDL_GetError());
 
-	bool NewOpenGLContext = false;
+	bool NewOpenGLContext = true;	// always a new context because we're resetting SDL_Video
 
 	/* XXX: This event only exists in the SDL tree, and is only needed in
 	 * Windows.  Eventually, it'll probably get upstreamed, and once it's
 	 * in the real branch we can remove this #if. */
 #if defined(WIN32)
-	SDL_Event e;
-	if(SDL_GetEvent(e, SDL_OPENGLRESETMASK))
-	{
-		LOG->Trace("New OpenGL context");
+//	SDL_Event e;
+//	if(SDL_GetEvent(e, SDL_OPENGLRESETMASK))
+//	{
+//		LOG->Trace("New OpenGL context");
+//		SDL_WM_SetCaption("StepMania", "StepMania");
+//		NewOpenGLContext = true;
+//	}
 
-		SDL_WM_SetCaption("StepMania", "StepMania");
-
-		NewOpenGLContext = true;
-	}
-
-	SDL_EventState(SDL_OPENGLRESET, SDL_IGNORE);
+	SDL_WM_SetCaption("StepMania", "StepMania");
+	
+//	SDL_EventState(SDL_OPENGLRESET, SDL_IGNORE);
 #endif
 
 	{
@@ -125,7 +130,7 @@ void LowLevelWindow_SDL::SwapBuffers()
 void LowLevelWindow_SDL::Update(float fDeltaTime)
 {
 	SDL_Event event;
-	while(SDL_GetEvent(event, SDL_VIDEORESIZEMASK))
+	while(SDL_GetEvent(event, SDL_VIDEORESIZEMASK|SDL_ACTIVEEVENTMASK))
 	{
 		switch(event.type)
 		{
@@ -135,6 +140,20 @@ void LowLevelWindow_SDL::Update(float fDeltaTime)
 
 			/* Let DISPLAY know that our resolution has changed. */
 			DISPLAY->ResolutionChanged();
+			break;
+		case SDL_ACTIVEEVENT:
+			if( event.active.gain  &&		// app regaining focus
+				!DISPLAY->IsWindowed() )	// full screen
+			{
+				// need to reacquire an OGL context
+				DISPLAY->SetVideoMode( 
+					DISPLAY->IsWindowed(), 
+					DISPLAY->GetWidth(), 
+					DISPLAY->GetHeight(), 
+					DISPLAY->GetBPP(), 
+					0, 
+					0 );
+			}
 			break;
 		}
 	}
