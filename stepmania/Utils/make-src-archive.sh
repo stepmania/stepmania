@@ -34,7 +34,6 @@ rm -rf Texture Font Generator
 rm -rf SDLx-0.02
 # Unused:
 rm -rf smlobby
-rm -rf SDL_net-1.2.5
 
 # Windows-only stuff.  Let's leave some in the archive to make the GPL happy.
 # I don't want to spend an extra half hour to upload separate Windows and
