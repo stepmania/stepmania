@@ -16,7 +16,7 @@
 struct CodeItem
 {
 public:
-	void Load( CString sButtonsNames );
+	bool Load( CString sButtonsNames );
 	bool EnteredCode( GameController controller ) const;
 
 private:

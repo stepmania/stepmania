@@ -69,6 +69,8 @@ CodeItem g_CodeItems[CodeDetector::NUM_CODES];
 
 bool CodeItem::EnteredCode( GameController controller ) const
 {
+	if( controller == GAME_CONTROLLER_INVALID )
+		return false;
 	if( buttons.size() == 0 )
 		return false;
 
@@ -97,7 +99,7 @@ bool CodeItem::EnteredCode( GameController controller ) const
 	}
 }
 
-void CodeItem::Load( CString sButtonsNames )
+bool CodeItem::Load( CString sButtonsNames )
 {
 	buttons.clear();
 
@@ -127,7 +129,7 @@ void CodeItem::Load( CString sButtonsNames )
 	{
 		if( sButtonsNames != "" )
 			LOG->Trace( "The code '%s' is less than 2 buttons, so it will be ignored.", sButtonsNames.c_str() );
-		return;
+		return false;
 	}
 
 	for( unsigned i=0; i<asButtonNames.size(); i++ )	// for each button in this code
@@ -140,7 +142,7 @@ void CodeItem::Load( CString sButtonsNames )
 		{
 			LOG->Trace( "The code '%s' contains an unrecognized button '%s'.", sButtonsNames.c_str(), sButtonName.c_str() );
 			buttons.clear();
-			return;
+			return false;
 		}
 
 		buttons.push_back( gb );
@@ -162,6 +164,7 @@ void CodeItem::Load( CString sButtonsNames )
 	}
 
 	// if we make it here, we found all the buttons in the code
+	return true;
 }
 
 bool CodeDetector::EnteredCode( GameController controller, Code code )
