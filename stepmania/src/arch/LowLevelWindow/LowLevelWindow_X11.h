@@ -22,7 +22,7 @@ public:
 	void Update(float fDeltaTime);
 
 	RageDisplay::VideoModeParams GetVideoModeParams() const { return CurrentParams; }
-}
+};
 // XXX: Shouldn't we try multiple LowLevelWindows and use whichever works?
 #undef ARCH_LOW_LEVEL_WINDOW
 #define ARCH_LOW_LEVEL_WINDOW LowLevelWindow_X11

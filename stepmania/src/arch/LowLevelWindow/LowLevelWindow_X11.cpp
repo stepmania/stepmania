@@ -1,6 +1,8 @@
+#include "global.h"
 #include "LowLevelWindow_X11.h"
-#include "archutils/Unix/X11Helper.h"
+#include "RageLog.h"
 #include "RageException.h"
+#include "archutils/Unix/X11Helper.h"
 
 #include <stack>
 #include <math.h>	// ceil()
@@ -9,6 +11,7 @@
 LowLevelWindow_X11::LowLevelWindow_X11()
 {
 	if(!X11Helper::Go() ) { RageException::Throw("Failed to establish a connection with the X server."); }
+	LOG->Trace("LowLevelWindow_X11 init");
 }
 
 LowLevelWindow_X11::~LowLevelWindow_X11()
@@ -18,7 +21,7 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 
 void *LowLevelWindow_X11::GetProcAddress(CString s)
 {
-	return (void*) glXGetProcAddress( (GLubyte) s.c_str() );
+	return (void*) glXGetProcAddress( (const GLubyte*) s.c_str() );
 }
 
 CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &bNewDeviceOut)
@@ -42,7 +45,7 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 		// Different depth, or we didn't make a window before. New context.
 		bNewDeviceOut = true;
 	
-		bpppc = ceil(p.bpp / 4.0);
+		bpppc = (int) ceil(p.bpp / 4.0);
 
 		visAttribs[0] = GLX_RGBA;
 		visAttribs[1] = GLX_DOUBLEBUFFER;
@@ -57,7 +60,7 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 		xvi = glXChooseVisual(X11Helper::Dpy(),
 				DefaultScreen(X11Helper::Dpy() ), visAttribs);
 
-		if(!vinfo) { return "No visual available for that depth."; }
+		if(!xvi) { return "No visual available for that depth."; }
 
 		X11Helper::OpenMask(StructureNotifyMask);
 
@@ -81,7 +84,7 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 		}
 		while(!otherEvs.empty() )
 		{
-			XPutBackEvent(X11Helper::Dpy(), otherEvs.top() );
+			XPutBackEvent(X11Helper::Dpy(), &otherEvs.top() );
 			otherEvs.pop();
 		}
 
@@ -102,7 +105,7 @@ void LowLevelWindow_X11::SwapBuffers()
 	glXSwapBuffers(X11Helper::Dpy(), X11Helper::Win() );
 }
 
-void LowLevelWindow_X11::Update()
+void LowLevelWindow_X11::Update(float fDeltaTime)
 {
 	// XXX: Handle close events, connection lost events, etc.
 	return;
