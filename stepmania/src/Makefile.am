@@ -316,6 +316,7 @@ all_test_SOURCES = \
 		$(RageFile) \
 		$(ArchHooks) \
 		$(Threads) \
+		$(Dialog) \
 		tests/test_misc.cpp tests/test_misc.h \
 		IniFile.cpp IniFile.h \
 		PrefsManager.cpp PrefsManager.h \
