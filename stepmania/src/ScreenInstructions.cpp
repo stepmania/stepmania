@@ -35,13 +35,10 @@ ScreenInstructions::ScreenInstructions( CString sName ) : ScreenWithMenuElements
 		}
 	}
 
-	CString sHowToPlayPath;
-	if( GAMESTATE->m_PlayMode != PLAY_MODE_INVALID )
-		sHowToPlayPath = THEME->GetPathG(m_sName,PlayModeToString(GAMESTATE->m_PlayMode)) ;
-	else
+	if( GAMESTATE->m_PlayMode == PLAY_MODE_INVALID )
 		RageException::Throw( "The PlayMode has not been set.  A theme must set the PlayMode before showing ScreenInstructions." );
 
-	m_sprHowToPlay.Load( sHowToPlayPath );
+	m_sprHowToPlay.Load( THEME->GetPathG(m_sName,PlayModeToString(GAMESTATE->m_PlayMode)) );
 	m_sprHowToPlay.SetXY( CENTER_X, CENTER_Y );
 	this->AddChild( &m_sprHowToPlay );
 
