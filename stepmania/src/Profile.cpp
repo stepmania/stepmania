@@ -556,6 +556,10 @@ void Profile::IncrementCategoryPlayCount( StepsType st, RankingCategory rc )
 #define WARN_AND_RETURN { WARN; return; }
 #define WARN_AND_CONTINUE { WARN; continue; }
 #define WARN_AND_BREAK { WARN; break; }
+#define WARN_M(m)	LOG->Warn("Error parsing file at %s:%d: %s",__FILE__,__LINE__, (const char*) (m) );
+#define WARN_AND_RETURN_M(m) { WARN_M(m); return; }
+#define WARN_AND_CONTINUE_M(m) { WARN_M(m); continue; }
+#define WARN_AND_BREAK_M(m) { WARN_M(m); break; }
 #define LOAD_NODE(X)	{ \
 	XNode* X = xml.GetChild(#X); \
 	if( X==NULL ) LOG->Warn("Failed to read section " #X); \
@@ -629,7 +633,7 @@ bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 		LOG->Trace( "Done." );
 
 		if( xml.name != "Stats" )
-			WARN_AND_BREAK;
+			WARN_AND_BREAK_M( xml.name );
 
 		LOAD_NODE( GeneralData );
 		LOAD_NODE( SongScores );
@@ -1203,7 +1207,7 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pNode )
 			WARN_AND_CONTINUE;
 		StepsType st = GameManager::StringToStepsType( str );
 		if( st == STEPS_TYPE_INVALID )
-			WARN_AND_CONTINUE;
+			WARN_AND_CONTINUE_M( str );
 
 		for( XNodes::iterator radarCategory = (*stepsType)->childs.begin(); 
 			radarCategory != (*stepsType)->childs.end(); 
@@ -1216,7 +1220,7 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pNode )
 				WARN_AND_CONTINUE;
 			RankingCategory rc = StringToRankingCategory( str );
 			if( rc == RANKING_INVALID )
-				WARN_AND_CONTINUE;
+				WARN_AND_CONTINUE_M( str );
 
 			XNode *pHighScoreListNode = (*radarCategory)->GetChild("HighScoreList");
 			if( pHighScoreListNode == NULL )
@@ -1257,7 +1261,7 @@ void Profile::LoadScreenshotDataFromNode( const XNode* pNode )
 	FOREACH_CONST( XNode*, pNode->childs, screenshot )
 	{
 		if( (*screenshot)->name != "Screenshot" )
-			WARN_AND_CONTINUE;
+			WARN_AND_CONTINUE_M( (*screenshot)->name );
 
 		Screenshot ss;
 		ss.LoadFromNode( *screenshot );
@@ -1292,14 +1296,14 @@ void Profile::LoadCalorieDataFromNode( const XNode* pNode )
 	FOREACH_CONST( XNode*, pNode->childs, pCaloriesBurned )
 	{
 		if( (*pCaloriesBurned)->name != "CaloriesBurned" )
-			WARN_AND_CONTINUE;
+			WARN_AND_CONTINUE_M( (*pCaloriesBurned)->name );
 
 		CString sDate;
 		if( !(*pCaloriesBurned)->GetAttrValue("Date",sDate) )
 			WARN_AND_CONTINUE;
 		DateTime date;
 		if( !date.FromString(sDate) )
-			WARN_AND_CONTINUE;
+			WARN_AND_CONTINUE_M( sDate );
 
 		float fCaloriesBurned = 0;
 
@@ -1384,7 +1388,7 @@ void Profile::LoadRecentSongScoresFromNode( const XNode* pNode )
 			m_vRecentStepsScores.push_back( h );
 		}
 		else
-			WARN_AND_CONTINUE;
+			WARN_AND_CONTINUE_M( (*p)->name );
 	}	
 }
 
@@ -1461,7 +1465,7 @@ void Profile::LoadRecentCourseScoresFromNode( const XNode* pNode )
 			m_vRecentCourseScores.push_back( h );
 		}
 		else
-			WARN_AND_CONTINUE;
+			WARN_AND_CONTINUE_M( (*p)->name );
 	}	
 }
 
