@@ -1938,7 +1938,7 @@ Style g_Styles[] =
 				{ TRACK_3,	-BM_COL_SPACING*0.5f },
 				{ TRACK_4,	+BM_COL_SPACING*0.5f },
 				{ TRACK_5,	+BM_COL_SPACING*1.5f },
-				{ TRACK_6,	+BM_COL_SPACING*3.0f },
+				{ TRACK_6,	+BM_COL_SPACING*3.0f, "scratch" },
 			},
 			{	// PLAYER_2
 				{ TRACK_1,	-BM_COL_SPACING*2.5f },
@@ -1946,7 +1946,7 @@ Style g_Styles[] =
 				{ TRACK_3,	-BM_COL_SPACING*0.5f },
 				{ TRACK_4,	+BM_COL_SPACING*0.5f },
 				{ TRACK_5,	+BM_COL_SPACING*1.5f },
-				{ TRACK_6,	+BM_COL_SPACING*3.0f },
+				{ TRACK_6,	+BM_COL_SPACING*3.0f, "scratch" },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1976,13 +1976,13 @@ Style g_Styles[] =
 				{ TRACK_3,	-BM_COL_SPACING*4.0f },
 				{ TRACK_4,	-BM_COL_SPACING*3.0f },
 				{ TRACK_5,	-BM_COL_SPACING*2.0f },
-				{ TRACK_6,	-BM_COL_SPACING*1.5f },
+				{ TRACK_6,	-BM_COL_SPACING*1.5f, "scratch" },
 				{ TRACK_7,	+BM_COL_SPACING*0.5f },
 				{ TRACK_8,	+BM_COL_SPACING*1.5f },
 				{ TRACK_9,	+BM_COL_SPACING*2.5f },
 				{ TRACK_10,	+BM_COL_SPACING*3.5f },
 				{ TRACK_11,	+BM_COL_SPACING*4.5f },
-				{ TRACK_12,	+BM_COL_SPACING*6.0f },
+				{ TRACK_12,	+BM_COL_SPACING*6.0f, "scratch" },
 			},
 			{	// PLAYER_2
 				{ TRACK_1,	-BM_COL_SPACING*6.0f },
@@ -1990,13 +1990,13 @@ Style g_Styles[] =
 				{ TRACK_3,	-BM_COL_SPACING*4.0f },
 				{ TRACK_4,	-BM_COL_SPACING*3.0f },
 				{ TRACK_5,	-BM_COL_SPACING*2.0f },
-				{ TRACK_6,	-BM_COL_SPACING*1.5f },
+				{ TRACK_6,	-BM_COL_SPACING*1.5f, "scratch" },
 				{ TRACK_7,	+BM_COL_SPACING*0.5f },
 				{ TRACK_8,	+BM_COL_SPACING*1.5f },
 				{ TRACK_9,	+BM_COL_SPACING*2.5f },
 				{ TRACK_10,	+BM_COL_SPACING*3.5f },
 				{ TRACK_11,	+BM_COL_SPACING*4.5f },
-				{ TRACK_12,	+BM_COL_SPACING*6.0f },
+				{ TRACK_12,	+BM_COL_SPACING*6.0f, "scratch" },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -2021,7 +2021,7 @@ Style g_Styles[] =
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_8,	-BM_COL_SPACING*3.5f },
+				{ TRACK_8,	-BM_COL_SPACING*3.5f, "scratch" },
 				{ TRACK_1,	-BM_COL_SPACING*2.0f },
 				{ TRACK_2,	-BM_COL_SPACING*1.0f },
 				{ TRACK_3,	-BM_COL_SPACING*0.0f },
@@ -2038,7 +2038,7 @@ Style g_Styles[] =
 				{ TRACK_5,	+BM_COL_SPACING*0.5f },
 				{ TRACK_6,	+BM_COL_SPACING*1.5f },
 				{ TRACK_7,	+BM_COL_SPACING*2.5f },
-				{ TRACK_8,	+BM_COL_SPACING*4.0f },
+				{ TRACK_8,	+BM_COL_SPACING*4.0f, "scratch" },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -2063,7 +2063,7 @@ Style g_Styles[] =
 		16,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_8,	-BM_COL_SPACING*8.0f },
+				{ TRACK_8,	-BM_COL_SPACING*8.0f, "scratch" },
 				{ TRACK_1,	-BM_COL_SPACING*6.5f },
 				{ TRACK_2,	-BM_COL_SPACING*5.5f },
 				{ TRACK_3,	-BM_COL_SPACING*4.5f },
@@ -2078,10 +2078,10 @@ Style g_Styles[] =
 				{ TRACK_13,	+BM_COL_SPACING*4.5f },
 				{ TRACK_14,	+BM_COL_SPACING*5.5f },
 				{ TRACK_15,	+BM_COL_SPACING*6.5f },
-				{ TRACK_16,	+BM_COL_SPACING*8.0f },
+				{ TRACK_16,	+BM_COL_SPACING*8.0f, "scratch" },
 			},
 			{	// PLAYER_2
-				{ TRACK_8,	-BM_COL_SPACING*8.0f },
+				{ TRACK_8,	-BM_COL_SPACING*8.0f, "scratch" },
 				{ TRACK_1,	-BM_COL_SPACING*6.5f },
 				{ TRACK_2,	-BM_COL_SPACING*5.5f },
 				{ TRACK_3,	-BM_COL_SPACING*4.5f },
@@ -2096,7 +2096,7 @@ Style g_Styles[] =
 				{ TRACK_13,	+BM_COL_SPACING*4.5f },
 				{ TRACK_14,	+BM_COL_SPACING*5.5f },
 				{ TRACK_15,	+BM_COL_SPACING*6.5f },
-				{ TRACK_16,	+BM_COL_SPACING*8.0f },
+				{ TRACK_16,	+BM_COL_SPACING*8.0f, "scratch" },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]

@@ -38,6 +38,7 @@ public:
 	{ 
 		int				track;		// take note data from this track
 		float			fXOffset;	// x position of the column relative to player center
+		const char		*pzName;	// name of this column, or NULL to use the name of a button mapped to it
 	};
 
 	ColumnInfo	m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];	// maps each players' column to a track in the NoteData
