@@ -1029,10 +1029,7 @@ int main(int argc, char* argv[])
 	/* This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow. */
 	LoadingWindow *loading_window = MakeLoadingWindow();
 	if( loading_window == NULL )
-	{
-		LOG->Trace("Couldn't open any loading windows.");
-		exit(1);
-	}
+		RageException::Throw( "Couldn't open any loading windows." );
 
 	loading_window->Paint();
 
