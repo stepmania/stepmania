@@ -382,9 +382,9 @@ void ScreenNameEntryTraditional::Init()
 			}
 
 			if( GAMESTATE->IsCourseMode() )
-				display.m_sprDifficulty.Load( THEME->GetPathG(m_sName,"difficulty "+CourseDifficultyToString(pTrail->m_CourseDifficulty)) );
+				display.m_sprDifficulty.Load( THEME->GetPathG(m_sName,"CourseDifficulty "+CourseDifficultyToString(pTrail->m_CourseDifficulty)) );
 			else
-				display.m_sprDifficulty.Load( THEME->GetPathG(m_sName,"difficulty "+DifficultyToString(pSteps->GetDifficulty())) );
+				display.m_sprDifficulty.Load( THEME->GetPathG(m_sName,"Difficulty "+DifficultyToString(pSteps->GetDifficulty())) );
 			display.m_sprDifficulty->SetName( ssprintf("DifficultyP%i",p+1) );
 			SET_ON( *(Actor*)display.m_sprDifficulty );
 			this->AddChild( display.m_sprDifficulty );
