@@ -637,6 +637,7 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 //	LOG->Trace( "ScreenSelectMusic::Input()" );
+
 	
 	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F9 )
 	{
@@ -649,22 +650,66 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		return;
 	}
 
+
 	if( MenuI.button == MENU_BUTTON_RIGHT || MenuI.button == MENU_BUTTON_LEFT )
 	{
-		if( !MenuI.IsValid() ) return;
 		if( !GAMESTATE->IsHumanPlayer(MenuI.player) ) return;
 
 		/* If we're rouletting, hands off. */
 		if(m_MusicWheel.IsRouletting())
 			return;
 
-		int dir = 0;
-		if(INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) ) )
-			dir++;
-		if(INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_LEFT) ) )
-			dir--;
-		
-		m_MusicWheel.Move(dir);
+		// TRICKY:  There's lots of weirdness that can happen here when tapping 
+		// Left and Right quickly, like when changing sort.
+		bool bLeftPressed = INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_LEFT) );
+		bool bRightPressed = INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) );
+		bool bLeftAndRightPressed = bLeftPressed && bRightPressed;
+		bool bLeftOrRightPressed = bLeftPressed || bRightPressed;
+
+		switch( type )
+		{
+		case IET_RELEASE:
+			// when a key is released, stop moving the wheel
+			if( !bLeftOrRightPressed )
+				m_MusicWheel.Move( 0 );
+			
+			// Reset the repeat timer when a key is released.
+			// This fixes jumping when you release Left and Right at the same 
+			// time (e.g. after tapping Left+Right to change sort).
+			INPUTMAPPER->ResetKeyRepeat( MenuInput(MenuI.player, MENU_BUTTON_LEFT) );
+			INPUTMAPPER->ResetKeyRepeat( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) );
+			break;
+		case IET_FIRST_PRESS:
+			if( MenuI.button == MENU_BUTTON_RIGHT )
+				m_MusicWheel.Move( +1 );
+			else
+				m_MusicWheel.Move( -1 );
+
+			// The wheel moves faster than one item between FIRST_PRESS
+			// and SLOW_REPEAT.  Stop the wheel immediately after moving one 
+			// item if both Left and Right are held.  This way, we won't move
+			// another item 
+			if( bLeftAndRightPressed )
+				m_MusicWheel.Move( 0 );
+			break;
+		case IET_SLOW_REPEAT:
+		case IET_FAST_REPEAT:
+			// We need to handle the repeat events to start the wheel spinning again
+			// when Left and Right are being held, then one is released.
+			if( bLeftAndRightPressed )
+			{
+				// Don't spin if holding both buttons
+				m_MusicWheel.Move( 0 );
+			}
+			else
+			{
+				if( MenuI.button == MENU_BUTTON_RIGHT )
+					m_MusicWheel.Move( +1 );
+				else
+					m_MusicWheel.Move( -1 );
+			}
+			break;
+		}
 	}
 
 	if( type == IET_RELEASE )	return;		// don't care
@@ -693,6 +738,10 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 
 	PlayerNumber pn = GAMESTATE->GetCurrentStyleDef()->ControllerToPlayerNumber( GameI.controller );
 
+	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
+
+	// TRICKY: Process codes after handing MenuLeft, MenuRight, MenuStart.
+	// This 
 	if( type == IET_FIRST_PRESS )
 	{
 		if( CodeDetector::EnteredEasierDifficulty(GameI.controller) )
@@ -742,8 +791,6 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 			return;
 		}
 	}
-
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
 }
 
 

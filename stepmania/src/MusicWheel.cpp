@@ -1418,8 +1418,18 @@ void MusicWheel::Move(int n)
 
 	/* If we're not selecting, discard this.  We won't ignore it; we'll
 	 * get called again every time the key is repeated. */
-	if( m_WheelState != STATE_SELECTING_MUSIC )
-		return;
+	/* Still process Move(0) so we sometimes continue moving immediate 
+	 * after the sort change finished and before the repeat event causes a 
+	 * Move(0). -Chris */
+	switch( m_WheelState )
+	{
+	case STATE_SELECTING_MUSIC:
+	case STATE_FLYING_OFF_BEFORE_NEXT_SORT:
+	case STATE_FLYING_ON_AFTER_NEXT_SORT:
+		break;
+	default:
+		return;	// don't continue
+	}
 
 	if(m_Moving != 0 && n == 0 && m_TimeBeforeMovingBegins == 0)
 	{
@@ -1437,9 +1447,6 @@ void MusicWheel::Move(int n)
 	m_TimeBeforeMovingBegins = 1/4.0f;
 	m_SpinSpeed = float(PREFSMAN->m_iMusicWheelSwitchSpeed);
 	m_Moving = n;
-
-	if( fabsf(m_fPositionOffsetFromSelection) > 0.5f )	// wheel is very busy spinning
-		return;
 	
 	if(m_Moving)
 		ChangeMusic(m_Moving);
