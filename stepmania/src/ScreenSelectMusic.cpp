@@ -468,7 +468,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 	}
 	if( CodeDetector::EnteredNextSort(GameI.controller) )
 	{
-		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+		if( ( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage ) || GAMESTATE->IsExtraStage2() )
 			m_soundLocked.Play();
 		else
 			if( m_MusicWheel.NextSort() )
