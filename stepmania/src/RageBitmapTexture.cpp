@@ -196,6 +196,14 @@ apply_color_key:
 	// Format of the image that we will pass to OpenGL and that we want OpenGL to use
 	RageDisplay::PixelFormat pixfmt;
 
+	if( img->format->BitsPerPixel == 8 )
+	{
+		/* Unless we set up the palette ourself, assume the "unused" bit is undefined,
+		 * and set it to 255.  We use it for alpha. */
+		for( int index = 0; index < img->format->palette->ncolors; ++index )
+			img->format->palette->colors[index].unused = 0xFF;
+	}
+
 	/* Figure out which texture format to use. */
 	// if the source is palleted, load palleted no matter what the prefs
 	if(img->format->BitsPerPixel == 8 && DISPLAY->SupportsTextureFormat(RageDisplay::FMT_PAL))
