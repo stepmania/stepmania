@@ -451,6 +451,7 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Options", "SoundResampleQuality",			m_iSoundResampleQuality );
 	ini.GetValue( "Options", "CoinMode",						m_iCoinMode );
 	ini.GetValue( "Options", "CoinsPerCredit",					m_iCoinsPerCredit );
+	m_iCoinsPerCredit = max(m_iCoinsPerCredit, 1);
 	ini.GetValue( "Options", "Premium",							(int&)m_Premium );
 	ini.GetValue( "Options", "DelayedCreditsReconcile",			m_bDelayedCreditsReconcile );
 	ini.GetValue( "Options", "BoostAppPriority",				m_iBoostAppPriority );
