@@ -228,7 +228,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		m_Out.StartTransitioning( SM_GoToAttractLoop );
 		break;
 	case MENU_BUTTON_START:
-		if( m_In.IsTransitioning() )
+		if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 			break;
 		/* break if the choice is invalid */
 		if( m_Choice == CHOICE_JUKEBOX  ||
@@ -262,7 +262,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		}
 
 		if( Screen::JoinInput( DeviceI, type, GameI, MenuI, StyleI ) )
-			if( !m_Out.IsTransitioning() && !m_BeginOut.IsTransitioning() )
+			if( !m_BeginOut.IsTransitioning() )
 				m_BeginOut.StartTransitioning( SM_GoToNextScreen );
 	}
 
