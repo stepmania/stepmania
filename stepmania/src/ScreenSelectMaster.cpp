@@ -553,32 +553,35 @@ float ScreenSelectMaster::TweenOffScreen()
 		if( GetPage(c) != GetCurrentPage() )
 			continue;	// skip
 
+		bool SelectedByEitherPlayer = false;
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			if( GAMESTATE->IsPlayerEnabled(p) && m_iChoice[p] == (int)c )
+				SelectedByEitherPlayer = true;
+
 		for( int i=0; i<NUM_ICON_PARTS; i++ )
 		{
 			fSecs = max( fSecs, OFF_COMMAND( m_sprIcon[i][c] ) );
-			bool SelectedByEitherPlayer = false;
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsPlayerEnabled(p) && m_iChoice[p] == (int)c )
-					SelectedByEitherPlayer = true;
-
-			if( SelectedByEitherPlayer )
-				fSecs = max( fSecs, COMMAND( m_sprIcon[i][c], "OffFocused" ) );
-			else
-				fSecs = max( fSecs, COMMAND( m_sprIcon[i][c], "OffUnfocused" ) );
+			fSecs = max( fSecs, COMMAND( m_sprIcon[i][c], SelectedByEitherPlayer? "OffFocused":"OffUnfocused" ) );
 		}
 
 
 		if( SHARED_PREVIEW_AND_CURSOR )
 		{
 			for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
+			{
 				fSecs = max( fSecs, OFF_COMMAND( m_sprPreview[i][c][0] ) );
+				fSecs = max( fSecs, COMMAND( m_sprPreview[i][c][0], SelectedByEitherPlayer? "OffFocused":"OffUnfocused" ) );
+			}
 		}
 		else
 		{
 			for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
 				for( int p=0; p<NUM_PLAYERS; p++ )
 					if( GAMESTATE->IsPlayerEnabled(p) )
+					{
 						fSecs = max( fSecs, OFF_COMMAND( m_sprPreview[i][c][p] ) );
+						fSecs = max( fSecs, COMMAND( m_sprPreview[i][c][0], SelectedByEitherPlayer? "OffFocused":"OffUnfocused" ) );
+					}
 		}
 	}
 
