@@ -28,6 +28,10 @@ ThemeMetricDifficultiesToShow::ThemeMetricDifficultiesToShow( const CString& sGr
 	ThemeMetric<CString>(sGroup,sName)
 {
 	ASSERT( sName.Right(6) == "ToShow" );
+
+	// re-read because ThemeMetric::ThemeMetric calls ThemeMetric::Read, not the derived one
+	if( IsLoaded() )
+		Read();
 }
 void ThemeMetricDifficultiesToShow::Read()
 {
@@ -54,6 +58,10 @@ ThemeMetricCourseDifficultiesToShow::ThemeMetricCourseDifficultiesToShow( const 
 	ThemeMetric<CString>(sGroup,sName)
 {
 	ASSERT( sName.Right(6) == "ToShow" );
+
+	// re-read because ThemeMetric::ThemeMetric calls ThemeMetric::Read, not the derived one
+	if( IsLoaded() )
+		Read();
 }
 void ThemeMetricCourseDifficultiesToShow::Read()
 {
@@ -98,6 +106,10 @@ ThemeMetricStepsTypesToShow::ThemeMetricStepsTypesToShow( const CString& sGroup,
 	ThemeMetric<CString>(sGroup,sName)
 {
 	ASSERT( sName.Right(6) == "ToHide" );
+
+	// re-read because ThemeMetric::ThemeMetric calls ThemeMetric::Read, not the derived one
+	if( IsLoaded() )
+		Read();
 }
 void ThemeMetricStepsTypesToShow::Read()
 {

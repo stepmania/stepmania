@@ -87,6 +87,8 @@ public:
 		return GetValue();
 	}
 
+	bool IsLoaded() const	{ return m_bIsLoaded; }
+
 	//Hacks for VC6 for all boolean operators.
 	bool operator ! () const { return !GetValue(); }
 	bool operator && ( const T& input ) const { return GetValue() && input; }
