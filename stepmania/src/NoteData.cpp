@@ -470,7 +470,6 @@ void NoteData::LoadOverlapped( const NoteData* pOriginal, int iNewNumTracks )
 	CopyRange( pOriginal, 0, pOriginal->GetLastRow(), 0 );
 
 	const int iOriginalTracks = pOriginal->GetNumTracks();
-	const bool iUnevenTracks = (iOriginalTracks % iNewNumTracks) != 0;
 	const int iTracksToOverlap = iOriginalTracks / iNewNumTracks;
 	if( iTracksToOverlap )
 	{
@@ -480,16 +479,14 @@ void NoteData::LoadOverlapped( const NoteData* pOriginal, int iNewNumTracks )
 		{
 			for (int iy = 0; iy < iTracksToOverlap; iy++)
 			{
-				CombineTracks(ix, (ix + iy * iNewNumTracks));
+				CombineTracks( ix, ix + iy * iNewNumTracks );
 			}
 		}
-		if( iUnevenTracks )
+		const int iUnevenTracks = iOriginalTracks % iNewNumTracks;
+		for (int ix = iOriginalTracks - iUnevenTracks; ix < iOriginalTracks; ix++)
 		{
-			for (int ix = iOriginalTracks - iUnevenTracks; ix < iOriginalTracks; ix++)
-			{
-				// spread out the remaining tracks evenly
-				CombineTracks((ix * iOriginalTracks) % iNewNumTracks, ix);
-			}
+			// spread out the remaining tracks evenly
+			CombineTracks( (ix * iOriginalTracks) % iNewNumTracks, ix );
 		}
 	}
 	SetNumTracks( iNewNumTracks );
