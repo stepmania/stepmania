@@ -619,7 +619,7 @@ int64_t RageSound::SearchPosMap( const deque<pos_map_t> &pos_map, int64_t cur_fr
 	 * 3. Underflow; we'll be given a larger sample number than we know about.
 	 */
 	/* XXX: %lli normally, %I64i in Windows */
-	LOG->Trace( "Approximate sound time: driver sample %lli, pos_map sample %lli (dist %lli), closest position is %i",
+	LOG->Trace( "Approximate sound time: driver sample %lli, pos_map sample %lli (dist %lli), closest position is %lli",
 		cur_frame, pos_map[closest_block].frameno, closest_position_dist, closest_position );
 
 	if( approximate )
