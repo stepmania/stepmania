@@ -35,7 +35,7 @@ void GhostArrowBright::Step( StepScore score )
 	case great:		SetDiffuseColor( D3DXCOLOR(0.0f,1.0f,0.4f,0.9f) );	break;	// green
 	case good:		SetDiffuseColor( D3DXCOLOR(0.3f,0.8f,1.0f,0.9f) );	break;
 	case boo:		SetDiffuseColor( D3DXCOLOR(0.8f,0.0f,0.6f,0.9f) );	break;
-	case miss:		ASSERT(true);	break;
+	case miss:		ASSERT( false );	break;
 	}
 	SetState( 0 );
 	SetZoom( 1.2f );

@@ -32,12 +32,12 @@ Background::Background()
 	m_sprDangerBackground.StretchTo( CRect(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 }
 
-bool Background::LoadFromSong( Song &song )
+bool Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 {
-	if( song.HasBackgroundMovie() )
+	if( pSong->HasBackgroundMovie() )
 	{
 		// load the movie backgound, and don't load a visualization
-		m_sprSongBackground.Load( song.HasBackground() );
+		m_sprSongBackground.Load( pSong->HasBackground() );
 		m_sprSongBackground.StretchTo( CRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT ) );
 		m_sprSongBackground.SetZoomY( -1 );
 		m_sprSongBackground.SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
@@ -46,7 +46,7 @@ bool Background::LoadFromSong( Song &song )
 	else
 	{
 		// load the static background (if available), and a visualization
-		if( song.HasBackground() )	m_sprSongBackground.Load( song.GetBackgroundPath(), HINT_DITHER );
+		if( pSong->HasBackground() )	m_sprSongBackground.Load( pSong->GetBackgroundPath(), HINT_DITHER );
 		else						m_sprSongBackground.Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BACKGROUND), HINT_DITHER );
 
 		m_sprSongBackground.StretchTo( CRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT ) );
@@ -54,7 +54,7 @@ bool Background::LoadFromSong( Song &song )
 		this->AddActor( &m_sprSongBackground );
 
 
-		if( GAMEINFO->m_GameOptions.m_bRandomVis )
+		if( GAMEINFO->m_GameOptions.m_bRandomVis && !bDisableVisualizations )
 		{
 			// load a random visualization
 			CStringArray sVisualizationPaths;

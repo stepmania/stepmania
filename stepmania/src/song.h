@@ -43,6 +43,9 @@ public:
 	bool LoadFromSongDir( CString sDir );
 	bool LoadSongInfoFromDWIFile( CString sPath );
 	bool LoadSongInfoFromBMSDir( CString sDir );
+
+	void SaveOffsetChangeToDisk();
+
 private:
 
 	void TidyUpData();
@@ -93,6 +96,9 @@ public:
 		return iTotalNumTimesPlayed;
 	}
 
+	bool HasChangedSinceLastSave()	{ return m_bChangedSinceSave;	}
+	void SetChangedSinceLastSave()	{ m_bChangedSinceSave = true;	}
+
 private:
 	CString m_sSongFilePath;
 	CString m_sSongDir;
@@ -118,11 +124,11 @@ public:
 };
 
 
-void SortSongPointerArrayByTitle( CArray<Song*, Song*&> &arraySongPointers );
-void SortSongPointerArrayByBPM( CArray<Song*, Song*&> &arraySongPointers );
-void SortSongPointerArrayByArtist( CArray<Song*, Song*&> &arraySongPointers );
-void SortSongPointerArrayByGroup( CArray<Song*, Song*&> &arraySongPointers );
-void SortSongPointerArrayByMostPlayed( CArray<Song*, Song*&> &arraySongPointers );
+void SortSongPointerArrayByTitle( CArray<Song*, Song*> &arraySongPointers );
+void SortSongPointerArrayByBPM( CArray<Song*, Song*> &arraySongPointers );
+void SortSongPointerArrayByArtist( CArray<Song*, Song*> &arraySongPointers );
+void SortSongPointerArrayByGroup( CArray<Song*, Song*> &arraySongPointers );
+void SortSongPointerArrayByMostPlayed( CArray<Song*, Song*> &arraySongPointers );
 
 
 

@@ -41,7 +41,7 @@ public:
 		case GRADE_D:		SetState(5);	break;
 		case GRADE_E:		SetState(6);	break;
 		case GRADE_NO_DATA:	SetState(7);	break;
-		default:			ASSERT( true );
+		default:			ASSERT( false );
 		}
 	};
 

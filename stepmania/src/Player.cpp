@@ -163,7 +163,7 @@ Player::Player()
 		m_ColumnToRotation[7] = mapStepToRotation[STEP_PAD2_RIGHT];
 		break;
 	default:
-		ASSERT( true );	// invalid GameMode
+		ASSERT( false );	// invalid GameMode
 	}
 
 

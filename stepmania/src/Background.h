@@ -22,7 +22,7 @@ class Background : public ActorFrame
 public:
 
 	Background();
-	virtual bool LoadFromSong( Song &song );
+	virtual bool LoadFromSong( Song *pSong, bool bDisableVisualizations = false );
 
 	virtual void Update( float fDeltaTime );
 	virtual void RenderPrimitives();

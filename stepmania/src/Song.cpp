@@ -220,7 +220,7 @@ bool Song::LoadSongInfoFromBMSDir( CString sDir )
 	// Load the Song info from the first BMS file.  Silly BMS duplicates the song info in every
 	// file.  So, we read the song data from only the first BMS file and assume that the info 
 	// is identical for every BMS file in the directory.
-	CString sBMSFilePath = m_sSongDir + arrayBMSFileNames[0];
+	m_sSongFilePath = m_sSongDir + arrayBMSFileNames[0];
 
 	// load the Steps from the rest of the BMS files
 	for( int i=0; i<arrayBMSFileNames.GetSize(); i++ ) 
@@ -232,9 +232,9 @@ bool Song::LoadSongInfoFromBMSDir( CString sDir )
 
 
 	CStdioFile file;	
-	if( !file.Open( sBMSFilePath, CFile::modeRead|CFile::shareDenyNone ) )
+	if( !file.Open( m_sSongFilePath, CFile::modeRead|CFile::shareDenyNone ) )
 	{
-		RageError( ssprintf("Failed to open %s.", sBMSFilePath) );
+		RageError( ssprintf("Failed to open %s.", m_sSongFilePath) );
 		return false;
 	}
 
@@ -684,7 +684,118 @@ void Song::GetNumFeet( GameMode gm, int& iDiffEasyOut, int& iDiffMediumOut, int&
 }
 
 
+void Song::SaveOffsetChangeToDisk()
+{
+	CString sDir, sFName, sExt;
+	splitrelpath( GetSongFilePath(), sDir, sFName, sExt );
+	sExt.MakeLower();
 
+	if( sExt == "bms" )
+	{
+		for( int i=0; i<arraySteps.GetSize(); i++ )		// for each Steps
+		{
+			CString sStepsFileName = arraySteps[i].m_sStepsFilePath;
+
+			CStringArray arrayLines;
+			CStdioFile fileIn;
+			if( !fileIn.Open( sStepsFileName, CFile::modeRead|CFile::shareDenyNone) )
+				RageError( ssprintf("Failed to open '%s' for reading", sStepsFileName) );
+
+			// read the file into sFileContents
+			CString sLine;
+			while( fileIn.ReadString(sLine) )
+			{
+				arrayLines.Add( sLine+"\n" );
+			}
+			fileIn.Close();
+
+			// write the file back to disk with the changes
+			CStdioFile fileOut;
+			if( !fileOut.Open( sStepsFileName, CFile::modeWrite|CFile::shareDenyWrite) )
+				RageError( ssprintf("Failed to open '%s' for writing", sStepsFileName) );
+			for( int j=0; j<arrayLines.GetSize(); j++ )
+			{
+				CString sLine = arrayLines[j];
+				if( -1 != sLine.Find("01:") )
+				{
+					float fBPM = m_BPMSegments[0].m_fBPM;
+					float fBPS = fBPM/60;
+					float fOffsetInBeats = m_fOffsetInSeconds * fBPS;
+					float fOffsetInMeasures = fOffsetInBeats / BEATS_PER_MEASURE;
+					int   iMeasure = (int)fOffsetInMeasures;
+					float fPercentIntoMeasure = fmodf( fOffsetInMeasures, 1 );
+					CString sBMSMeasureString;
+					for( int k=0; k<64; k++ )
+					{
+						if( k == int(fPercentIntoMeasure*64) )
+							sBMSMeasureString += "99";
+						else
+							sBMSMeasureString += "00";
+					}
+
+					fileOut.WriteString( ssprintf("#%03d01:%s;\n", iMeasure, sBMSMeasureString) );
+				}
+				else
+				{
+					fileOut.WriteString( sLine );
+				}
+			}
+			fileOut.Close();
+		}
+		
+	}
+	else if( sExt == "dwi" )
+	{
+		CStringArray arrayLines;
+		CStdioFile fileIn;
+		if( !fileIn.Open( GetSongFilePath(), CFile::modeRead|CFile::shareDenyNone) )
+			RageError( ssprintf("Failed to open '%s' for reading", GetSongFilePath()) );
+
+		// read the file into sFileContents
+		CString sLine;
+		while( fileIn.ReadString(sLine) )
+		{
+			arrayLines.Add( sLine+"\n" );
+		}
+		fileIn.Close();
+
+
+		// write the file back to disk with the changes
+		CStdioFile fileOut;
+		if( !fileOut.Open( GetSongFilePath(), CFile::modeWrite|CFile::shareDenyWrite) )
+			RageError( ssprintf("Failed to open '%s' for writing", GetSongFilePath()) );
+		for( int i=0; i<arrayLines.GetSize(); i++ )
+		{
+			CString sLine = arrayLines[i];
+			if( -1 != sLine.Find("#GAP") )
+			{
+				// replace with new offset
+				fileOut.WriteString( ssprintf("#GAP:%d;\n", roundf(GetBeatOffsetInSeconds()*-1*1000)) );
+			}
+			else
+			{
+				fileOut.WriteString( sLine );
+			}
+		}
+		fileOut.Close();
+
+
+	}
+	else
+	{
+		RageError( ssprintf("Unrecognized extension '%s' on song file '%s'", sExt, GetSongFilePath()) );
+	}
+
+
+	m_bChangedSinceSave = false;
+
+}
+
+
+
+/////////////////////////////////////
+// Sorting
+/////////////////////////////////////
 
 int CompareSongPointersByTitle(const void *arg1, const void *arg2)
 {
@@ -703,7 +814,7 @@ int CompareSongPointersByTitle(const void *arg1, const void *arg2)
 	return CompareCStrings( (void*)&sCompareString1, (void*)&sCompareString2 );
 }
 
-void SortSongPointerArrayByTitle( CArray<Song*, Song*&> &arraySongPointers )
+void SortSongPointerArrayByTitle( CArray<Song*, Song*> &arraySongPointers )
 {
 	qsort( arraySongPointers.GetData(), arraySongPointers.GetSize(), sizeof(Song*), CompareSongPointersByTitle );
 }
@@ -728,7 +839,7 @@ int CompareSongPointersByBPM(const void *arg1, const void *arg2)
 		return 1;
 }
 
-void SortSongPointerArrayByBPM( CArray<Song*, Song*&> &arraySongPointers )
+void SortSongPointerArrayByBPM( CArray<Song*, Song*> &arraySongPointers )
 {
 	qsort( arraySongPointers.GetData(), arraySongPointers.GetSize(), sizeof(Song*), CompareSongPointersByBPM );
 }
@@ -751,7 +862,7 @@ int CompareSongPointersByArtist(const void *arg1, const void *arg2)
 	return CompareCStrings( (void*)&sCompareString1, (void*)&sCompareString2 );
 }
 
-void SortSongPointerArrayByArtist( CArray<Song*, Song*&> &arraySongPointers )
+void SortSongPointerArrayByArtist( CArray<Song*, Song*> &arraySongPointers )
 {
 	qsort( arraySongPointers.GetData(), arraySongPointers.GetSize(), sizeof(Song*), CompareSongPointersByArtist );
 }
@@ -773,7 +884,7 @@ int CompareSongPointersByGroup(const void *arg1, const void *arg2)
 	return CompareCStrings( (void*)&sCompareString1, (void*)&sCompareString2 );
 }
 
-void SortSongPointerArrayByGroup( CArray<Song*, Song*&> &arraySongPointers )
+void SortSongPointerArrayByGroup( CArray<Song*, Song*> &arraySongPointers )
 {
 	qsort( arraySongPointers.GetData(), arraySongPointers.GetSize(), sizeof(Song*), CompareSongPointersByGroup );
 }
@@ -797,7 +908,7 @@ int CompareSongPointersByMostPlayed(const void *arg1, const void *arg2)
 		return 1;
 }
 
-void SortSongPointerArrayByMostPlayed( CArray<Song*, Song*&> &arraySongPointers )
+void SortSongPointerArrayByMostPlayed( CArray<Song*, Song*> &arraySongPointers )
 {
 	qsort( arraySongPointers.GetData(), arraySongPointers.GetSize(), sizeof(Song*), CompareSongPointersByMostPlayed );
 }

@@ -23,7 +23,7 @@ CString GradeToString( Grade g )
 	case GRADE_D:		return "D";
 	case GRADE_E:		return "E";
 	case GRADE_NO_DATA:	return "N";
-	default:			ASSERT(true);	return "N";
+	default:			ASSERT( false );	return "N";
 	}
 };
 
@@ -38,5 +38,5 @@ Grade StringToGrade( CString s )
 	else if( s == "D" )		return GRADE_D;
 	else if( s == "E" )		return GRADE_E;
 	else if( s == "N" )		return GRADE_NO_DATA;
-	else	ASSERT(true);	return GRADE_NO_DATA;	// invalid grade string
+	else	ASSERT( false );	return GRADE_NO_DATA;	// invalid grade string
 };

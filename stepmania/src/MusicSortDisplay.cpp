@@ -52,7 +52,7 @@ void MusicSortDisplay::Set( SongSortOrder so )
 		SetState( 5 );
 		break;
 	default:
-		ASSERT( true );		// unimplemented MusicSortOrder
+		ASSERT( false );		// unimplemented MusicSortOrder
 	}
 }
 

@@ -69,6 +69,8 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case GRAPHIC_MUSIC_STATUS_ICONS:	sAssetPath = "Graphics\\music status icons 1x4";		break;
 		case GRAPHIC_DANGER_TEXT:			sAssetPath = "Graphics\\danger text";					break;
 		case GRAPHIC_DANGER_BACKGROUND:		sAssetPath = "Graphics\\danger background";				break;
+		case GRAPHIC_ARROWS_LEFT:			sAssetPath = "Graphics\\arrows left 1x4";				break;
+		case GRAPHIC_ARROWS_RIGHT:			sAssetPath = "Graphics\\arrows right 1x4";				break;
 
 		case SOUND_FAILED:					sAssetPath = "Sounds\\failed";							break;
 		case SOUND_ASSIST:					sAssetPath = "Sounds\\Assist";							break;

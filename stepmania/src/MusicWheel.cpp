@@ -122,7 +122,7 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 		m_MusicStatusDisplay.SetType( m_MusicStatusDisplayType );
 		break;
 	default:
-		ASSERT( true );	// invalid type
+		ASSERT( false );	// invalid type
 	}
 }
 
@@ -215,7 +215,7 @@ MusicWheel::MusicWheel()
 
 	// init m_mapGroupNameToBannerColor
 
-	CArray<Song*, Song*&> arraySongs;
+	CArray<Song*, Song*> arraySongs;
 	arraySongs.Copy( GAMEINFO->m_pSongs );
 	SortSongPointerArrayByGroup( arraySongs );
 	
@@ -283,7 +283,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 	///////////////////////////////////
 	// Make an array of Song*, then sort them
 	///////////////////////////////////
-	CArray<Song*, Song*&> arraySongs;
+	CArray<Song*, Song*> arraySongs;
 	
 	// copy only song that have at least one Steps for the current GameMode
 	for( int i=0; i<GAMEINFO->m_pSongs.GetSize(); i++ )
@@ -317,7 +317,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 		SortSongPointerArrayByMostPlayed( arraySongs );
 		break;
 	default:
-		ASSERT( true );	// unhandled SORT_ORDER
+		ASSERT( false );	// unhandled SORT_ORDER
 	}
 
 
@@ -379,7 +379,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 		}
 		break;
 	default:
-		ASSERT( true );	// unhandled SORT_ORDER
+		ASSERT( false );	// unhandled SORT_ORDER
 	}
 
 	// init crowns

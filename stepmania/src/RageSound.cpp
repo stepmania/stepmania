@@ -32,15 +32,13 @@ RageSound::RageSound( HWND hWnd )
 
 	if( !BASS_Init( -1, 44100, BASS_DEVICE_LEAVEVOL, m_hWndApp ) )
 	{
-		MessageBox( NULL, 
-					"There was an error while initializing your sound card.\n\n"
-					"The most likely cause of this problem is that you do not have a sound card\n"
-					"installed, or that you have not yet installed a driver for your sound card.\n"
-					"Before running this program again, please verify that your sound card is\n"
-					"is working in other Windows applications.", 
-					"Sound error", 
-					MB_ICONSTOP );
-		RageError( "BASS can't initialize sound device." );
+		RageError( 
+			"There was an error while initializing your sound card.\n\n"
+			"The most likely cause of this problem is that you do not have a sound card\n"
+			"installed, or that you have not yet installed a driver for your sound card.\n"
+			"Before running this program again, please verify that your sound card is\n"
+			"is working in other Windows applications."
+		);
 	}
 
 	BASS_Start();

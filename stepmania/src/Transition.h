@@ -79,7 +79,7 @@ protected:
 		case closed:
 			return 1;
 		default:
-			ASSERT( true );
+			ASSERT( false );
 			return 0;
 		}
 	};

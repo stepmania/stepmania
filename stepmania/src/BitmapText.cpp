@@ -219,7 +219,7 @@ void BitmapText::RebuildVertexBuffer()
 	case align_top:		fY = -(m_sTextLines.GetSize()) * fHeight / 2;	break;
 	case align_middle:	fY = 0;											break;
 	case align_bottom:	fY = (m_sTextLines.GetSize()) * fHeight / 2;	break;
-	default:		ASSERT( true );
+	default:		ASSERT( false );
 	}
 
 
@@ -234,7 +234,7 @@ void BitmapText::RebuildVertexBuffer()
 		case align_left:	fX = 0;					break;
 		case align_center:	fX = -(fLineWidth/2);	break;
 		case align_right:	fX = -fLineWidth;		break;
-		default:		ASSERT( true );
+		default:		ASSERT( false );
 		}
 
 		for( int j=0; j<sLine.GetLength(); j++ )	// for each character in the line

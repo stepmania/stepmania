@@ -332,6 +332,22 @@ SOURCE=.\WindowSongOptions.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\WindowSynchronize.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowSynchronize.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowSynchronizeMenu.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowSynchronizeMenu.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\WindowTitleMenu.cpp
 # End Source File
 # Begin Source File
