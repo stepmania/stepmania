@@ -1877,7 +1877,7 @@ bool RageDisplay_OGL::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
 	}
 }
 
-void RageDisplay_OGL::SetSphereEnironmentMapping( bool b )
+void RageDisplay_OGL::SetSphereEnivronmentMapping( bool b )
 {
 	if( b )
 	{
