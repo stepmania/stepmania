@@ -446,7 +446,8 @@ int Background::FindBGSegmentForBeat( float fBeat ) const
 		return -1;
 	
 	// assumption: m_aBGChanges are sorted by m_fStartBeat
-	for( int i=m_aBGChanges.size()-1; i>=0; i-- )
+    int i;
+	for( i=m_aBGChanges.size()-1; i>=0; i-- )
 	{
 		if( fBeat >= m_aBGChanges[i].m_fStartBeat )
 			return i;
