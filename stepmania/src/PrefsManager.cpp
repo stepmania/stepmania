@@ -83,7 +83,9 @@ PrefsManager::PrefsManager()
 	m_bJointPremium = false;
 	m_iBoostAppPriority = -1;
 	m_iPolygonRadar = -1;
-
+	m_bShowSongOptions = true;
+	m_FailType = FAIL_ARCADE;
+	
 	/* DDR Extreme-style extra stage support.									*
 	 * Default off so people used to the current behavior (or those with extra  *
 	 * stage CRS files) don't get it changed around on them						*/
@@ -167,6 +169,8 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "PickExtraStage",				m_bPickExtraStage );
 	ini.GetValueF( "Options", "LongVerSeconds",				m_fLongVerSongSeconds );
 	ini.GetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
+	ini.GetValueB( "Options", "ShowSongOptions",			m_bShowSongOptions );
+	ini.GetValueI( "Options", "FailType",					(int&)m_FailType );
 
 
 	m_asAdditionalSongFolders.clear();
@@ -238,7 +242,8 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "PickExtraStage",				m_bPickExtraStage );
 	ini.SetValueF( "Options", "LongVerSeconds",				m_fLongVerSongSeconds );
 	ini.SetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
-	ini.SetValueB( "Options", "SongOptions",				m_bShowSongOptions );
+	ini.SetValueB( "Options", "ShowSongOptions",			m_bShowSongOptions );
+	ini.SetValueI( "Options", "FailType",					(int&)m_FailType );
 
 	/* Only write these if they aren't the default.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who

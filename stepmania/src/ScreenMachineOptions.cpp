@@ -28,6 +28,7 @@ enum {
 	MO_NUM_ARCADE_STAGES,
 	MO_JUDGE_DIFFICULTY,
 	MO_LIFE_DIFFICULTY,
+	MO_FAIL,
 	MO_SHOWSTATS,
 	MO_COIN_MODE,
 	MO_COINS_PER_CREDIT,
@@ -42,11 +43,12 @@ OptionRowData g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
 	{ "Arcade\nStages",		8, {"1","2","3","4","5","6","7","UNLIMITED"} },
 	{ "Judge\nDifficulty",	8, {"1","2","3","4","5","6","7","8"} },
 	{ "Life\nDifficulty",	7, {"1","2","3","4","5","6","7"} },
+	{ "Fail",				3, {"LIFE DRAINED","END OF SONG","OFF"} },	
 	{ "Show\nStats",		2, {"OFF","ON"} },
 	{ "Coin\nMode",			3, {"HOME","PAY","FREE PLAY"} },
 	{ "Coins Per\nCredit",	8, {"1","2","3","4","5","6","7","8"} },
 	{ "Joint\nPremium",		2, {"OFF","ON"} },
-	{ "Song\nOptions",		2, {"OFF","ON"} },
+	{ "Song\nOptions",		2, {"HIDE","SHOW"} },
 };
 
 ScreenMachineOptions::ScreenMachineOptions() :
@@ -109,6 +111,7 @@ void ScreenMachineOptions::ImportOptions()
 	else if( PREFSMAN->m_fLifeDifficultyScale == 0.40f )	m_iSelectedOption[0][MO_LIFE_DIFFICULTY] = 6;
 	else													m_iSelectedOption[0][MO_LIFE_DIFFICULTY] = 3;
 
+	m_iSelectedOption[0][MO_FAIL]					= PREFSMAN->m_FailType;
 	m_iSelectedOption[0][MO_SHOWSTATS]				= PREFSMAN->m_bShowStats ? 1:0;
 	m_iSelectedOption[0][MO_COIN_MODE]				= PREFSMAN->m_CoinMode;
 	m_iSelectedOption[0][MO_COINS_PER_CREDIT]		= PREFSMAN->m_iCoinsPerCredit - 1;
@@ -146,6 +149,7 @@ void ScreenMachineOptions::ExportOptions()
 	default:	ASSERT(0);
 	}
 	
+	(int&)PREFSMAN->m_FailType		= m_iSelectedOption[0][MO_FAIL];
 	PREFSMAN->m_bShowStats			= m_iSelectedOption[0][MO_SHOWSTATS] == 1;
 	(int&)PREFSMAN->m_CoinMode		= m_iSelectedOption[0][MO_COIN_MODE];
 	PREFSMAN->m_iCoinsPerCredit		= m_iSelectedOption[0][MO_COINS_PER_CREDIT] + 1;

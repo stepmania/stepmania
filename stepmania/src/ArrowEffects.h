@@ -46,12 +46,17 @@ float ArrowGetXPos( PlayerNumber pn, int iCol, float fYPos );
 
 
 //	fAlpha is the transparency of the arrow.  It depends on fYPos and the 
-//	ArrowAppearance.
+//	AppearanceType.
 float ArrowGetAlpha( PlayerNumber pn, float fYPos, float fPercentFadeToFail );
 
 
 //	fAlpha is the transparency of the arrow.  It depends on fYPos and the 
-//	ArrowAppearance.
+//	AppearanceType.
 float ArrowGetGlow( PlayerNumber pn, float fYPos, float fPercentFadeToFail );
+
+
+//	Depends on fYPos.
+float ArrowGetBrightness( PlayerNumber pn, float fYPos );
+
 
 #endif

@@ -93,7 +93,7 @@ bool PrepareForJukebox()		// always return true.
 			GAMESTATE->m_PlayerOptions[p].m_bEffects[ PlayerOptions::EFFECT_MINI ] = true;
 		}
 		GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
-		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
+		PREFSMAN->m_FailType = PrefsManager::FAIL_OFF;
 	}
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
@@ -110,7 +110,7 @@ bool PrepareForJukebox()		// always return true.
 	GAMESTATE->m_SongOptions = SongOptions();
 
 	GAMESTATE->m_SongOptions.m_LifeType = (randomf(0,1)>0.8f) ? SongOptions::LIFE_BATTERY : SongOptions::LIFE_BAR;
-	GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
+	PREFSMAN->m_FailType = PrefsManager::FAIL_OFF;
 
 	GAMESTATE->m_bDemonstration = true;
 

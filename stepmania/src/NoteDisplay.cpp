@@ -644,27 +644,15 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 
 void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSameRowAsHoldStart, const float fPercentFadeToFail, const float fLife )
 {
-	const float fYOffset		= ArrowGetYOffset(			m_PlayerNumber, fBeat );
+	const float fYOffset		= ArrowGetYOffset(	m_PlayerNumber, fBeat );
 	const float fYPos			= ArrowGetYPos(	m_PlayerNumber, fYOffset );
-	const float fRotation		= ArrowGetRotation(			m_PlayerNumber, fBeat );
-	const float fXPos			= ArrowGetXPos(				m_PlayerNumber, iCol, fYPos );
-	const float fAlpha			= ArrowGetAlpha(			m_PlayerNumber, fYPos, fPercentFadeToFail );
-	const float fGlow			= ArrowGetGlow(				m_PlayerNumber, fYPos, fPercentFadeToFail );
-	const float fColorScale		= SCALE(fLife,0,1,0.2f,1);
+	const float fRotation		= ArrowGetRotation(	m_PlayerNumber, fBeat );
+	const float fXPos			= ArrowGetXPos(		m_PlayerNumber, iCol, fYPos );
+	const float fAlpha			= ArrowGetAlpha(	m_PlayerNumber, fYPos, fPercentFadeToFail );
+	const float fGlow			= ArrowGetGlow(		m_PlayerNumber, fYPos, fPercentFadeToFail );
+	const float fColorScale		= ArrowGetBrightness( m_PlayerNumber, fYPos ) * SCALE(fLife,0,1,0.2f,1);
 	RageColor diffuse = RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	RageColor glow = RageColor(1,1,1,fGlow);
-
-	/*
-	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_ColorType == PlayerOptions::COLOR_NOTE )
-	{
-		RageColor noteColor = GetNoteColorFromBeat(fBeat);
-		diffuse.r *= noteColor.r;
-		diffuse.g *= noteColor.g;
-		diffuse.b *= noteColor.b;
-
-		glow = RageColor(1,1,1,1)*fGlow + noteColor*(1-fGlow)*0.7f*fAlpha;
-	}
-	*/
 
 	Sprite* pSprite;
 	if( bOnSameRowAsHoldStart  &&  cache->m_bDrawHoldHeadForTapsOnSameRow )

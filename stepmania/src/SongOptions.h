@@ -20,8 +20,6 @@ struct SongOptions
 	enum DrainType { DRAIN_NORMAL, DRAIN_NO_RECOVER, DRAIN_SUDDEN_DEATH };
 	DrainType m_DrainType;	// only used with LifeBar
 	int m_iBatteryLives;
-	enum FailType { FAIL_ARCADE=0, FAIL_END_OF_SONG, FAIL_OFF };
-	FailType m_FailType;
 	enum AssistType { ASSIST_NONE=0, ASSIST_TICK };
 	AssistType m_AssistType;
 	float m_fMusicRate;
@@ -33,7 +31,6 @@ struct SongOptions
 		m_LifeType = LIFE_BAR;
 		m_DrainType = DRAIN_NORMAL;
 		m_iBatteryLives = 4;
-		m_FailType = FAIL_ARCADE;
 		m_AssistType = ASSIST_NONE;
 		m_fMusicRate = 1.0f;
 		m_bAutoSync = false;

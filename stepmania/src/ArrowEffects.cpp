@@ -181,3 +181,12 @@ float ArrowGetGlow( PlayerNumber pn, float fYPos, float fPercentFadeToFail )
 	const float fDistFromHalf = fabsf( fPercentVisible - 0.5f );
 	return SCALE( fDistFromHalf, 0, 0.5f, 1.3f, 0 );
 }
+
+float ArrowGetBrightness( PlayerNumber pn, float fYPos )
+{
+	float fBrightness = SCALE( fYPos, 0, -ARROW_SIZE, 1.f, 0.f );
+	CLAMP( fBrightness, 0, 1 );
+	printf( "fBrightness = %f\n", fBrightness );
+	return fBrightness;
+}
+

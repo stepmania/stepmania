@@ -775,9 +775,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 		//
 		// check for fail
 		//
-		switch( GAMESTATE->m_SongOptions.m_FailType )
+		switch( PREFSMAN->m_FailType )
 		{
-		case SongOptions::FAIL_ARCADE:
+		case PrefsManager::FAIL_ARCADE:
 			switch( GAMESTATE->m_SongOptions.m_LifeType )
 			{
 			case SongOptions::LIFE_BAR:
@@ -821,8 +821,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 				break;
 			}
 			break;
-		case SongOptions::FAIL_END_OF_SONG:
-		case SongOptions::FAIL_OFF:
+		case PrefsManager::FAIL_END_OF_SONG:
+		case PrefsManager::FAIL_OFF:
 			break;	// don't check for fail
 		default:
 			ASSERT(0);
@@ -1274,7 +1274,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 					return;		// ignore
 				m_DancingState = STATE_OUTRO;
 
-				if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_END_OF_SONG  &&  AllFailedEarlier() )
+				if( PREFSMAN->m_FailType == PrefsManager::FAIL_END_OF_SONG  &&  AllFailedEarlier() )
 				{
 					this->SendScreenMessage( SM_BeginFailed, 0 );
 					return;

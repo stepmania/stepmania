@@ -33,14 +33,6 @@ CString SongOptions::GetString()
 		break;
 	}
 
-
-	switch( m_FailType )
-	{
-	case FAIL_ARCADE:											break;
-	case FAIL_END_OF_SONG:		sReturn	+= "FailEndOfSong, ";	break;
-	case FAIL_OFF:				sReturn	+= "FailOff, ";			break;
-	}
-
 	if( m_fMusicRate != 1 )
 	{
 		CString s = ssprintf( "%2.2f", m_fMusicRate );

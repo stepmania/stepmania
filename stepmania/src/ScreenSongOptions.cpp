@@ -24,7 +24,6 @@ enum {
 	SO_LIFE = 0,
 	SO_DRAIN,
 	SO_BAT_LIVES,
-	SO_FAIL,
 	SO_ASSIST,
 	SO_RATE,
 	SO_AUTOSYNC,
@@ -35,7 +34,6 @@ OptionRowData g_SongOptionsLines[NUM_SONG_OPTIONS_LINES] = {
 	{ "Life\nType",		2, {"BAR","BATTERY"} },	
 	{ "Bar\nDrain",		3, {"NORMAL","NO RECOVER","SUDDEN DEATH"} },	
 	{ "Bat\nLives",		10, {"1","2","3","4","5","6","7","8","9","10"} },	
-	{ "Fail",			3, {"ARCADE","END OF SONG","OFF"} },	
 	{ "Assist",			2, {"OFF","TICK"} },	
 	{ "Rate",			9, {"x0.7","x0.8","x0.9","x1.0","x1.1","x1.2","x1.3","x1.4","x1.5"} },	
 	{ "Auto\nAdjust",	2, {"OFF", "ON"} },	
@@ -63,7 +61,6 @@ void ScreenSongOptions::ImportOptions()
 
 	m_iSelectedOption[0][SO_LIFE] = so.m_LifeType;
 	m_iSelectedOption[0][SO_BAT_LIVES] = so.m_iBatteryLives-1;
-	m_iSelectedOption[0][SO_FAIL] = so.m_FailType;
 	m_iSelectedOption[0][SO_ASSIST] = so.m_AssistType;
 	m_iSelectedOption[0][SO_AUTOSYNC] = so.m_bAutoSync;
 
@@ -86,7 +83,6 @@ void ScreenSongOptions::ExportOptions()
 	so.m_LifeType = (SongOptions::LifeType)m_iSelectedOption[0][SO_LIFE];
 	so.m_DrainType = (SongOptions::DrainType)m_iSelectedOption[0][SO_DRAIN];
 	so.m_iBatteryLives = m_iSelectedOption[0][SO_BAT_LIVES]+1;
-	so.m_FailType =	(SongOptions::FailType)m_iSelectedOption[0][SO_FAIL];
 	so.m_AssistType = (SongOptions::AssistType)m_iSelectedOption[0][SO_ASSIST];
 	so.m_bAutoSync = m_iSelectedOption[0][SO_AUTOSYNC] != 0;
 
