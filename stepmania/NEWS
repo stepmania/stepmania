@@ -1,4 +1,6 @@
 ------------------------CVS after 3.00 beta 6----------------
+CHANGE:  Slow-motion is now on ~ instead of shift, since we use shift
+	elsewhere now.
 BUG FIX:  Fix pump doubles offset.
 NEW FEATURE:  Support for #DIFFICULTY in KSF.
 CHANGE:  Allow starting without a keyboard or mouse.
