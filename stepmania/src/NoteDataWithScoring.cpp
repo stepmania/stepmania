@@ -93,6 +93,26 @@ int NoteDataWithScoring::GetNumHoldNotesWithScore( HoldNoteScore hns, const floa
 	return iNumSuccessfulHolds;
 }
 
+bool NoteDataWithScoring::IsRowComplete( int index )
+{
+	for( int t=0; t<m_iNumTracks; t++ )
+		if( GetTapNote(t, index) != TAP_EMPTY && m_TapNoteScores[t][index] < TNS_GREAT )
+			return false;
+	return true;
+}
+
+float NoteDataWithScoring::GetActualRadarValue( RadarCategory rv, float fSongSeconds )
+{
+	switch( rv )
+	{
+	case RADAR_STREAM:	return GetActualStreamRadarValue( fSongSeconds );	break;
+	case RADAR_VOLTAGE:	return GetActualVoltageRadarValue( fSongSeconds );	break;
+	case RADAR_AIR:		return GetActualAirRadarValue( fSongSeconds );		break;
+	case RADAR_FREEZE:	return GetActualFreezeRadarValue( fSongSeconds );	break;
+	case RADAR_CHAOS:	return GetActualChaosRadarValue( fSongSeconds );	break;
+	default:	ASSERT(0);  return 0;
+	}
+}
 
 float NoteDataWithScoring::GetActualStreamRadarValue( float fSongSeconds )
 {
