@@ -141,7 +141,7 @@ void LightsManager::Update( float fDeltaTime )
 			// bass lights
 			float fBeatPercentage = GAMESTATE->m_fSongBeat - (int)GAMESTATE->m_fSongBeat;
 			bool bOn = fBeatPercentage < 0.1 || fBeatPercentage > 0.9; 
-			for( i=7; i<8; i++ )
+			for( i=6; i<8; i++ )
 				m_LightsState.m_bCabinetLights[i] = bOn;
 		}
 		break;
