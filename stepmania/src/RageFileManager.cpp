@@ -29,12 +29,12 @@ RageFileManager::RageFileManager()
 	RageFileManager::Mount( "dir", ".", "" );
 	/* XXX: drop BASE_PATH and do this instead */
 //	RageFileManager::Mount( "dir", "D:\\", "" );
-#elif defined(UNIX)
+#elif defined(LINUX)
 	/* We can almost do this, to have machine profiles be system-global to eg. share
 	 * scores.  It would need to handle permissions properly. */
 /*	RageFileManager::Mount( "dir", "/var/lib/games/stepmania", "Data/Profiles" ); */
 	
-	CString Home = getenv( "HOME" ) + "/" + PRODUCT_NAME;
+	// CString Home = getenv( "HOME" ) + "/" + PRODUCT_NAME;
 
 	/*
 	 * Next: path to write general mutable user data.  If the above path fails (eg.
