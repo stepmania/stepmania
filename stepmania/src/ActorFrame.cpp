@@ -148,24 +148,29 @@ void ActorFrame::DeleteAllChildren()
 void ActorFrame::HandleCommand( const ParsedCommand &command )
 {
 	Actor::HandleCommand( command );
+	// don't propograte to children
 }
 
 void ActorFrame::GainingFocus( float fRate, bool bRewindMovie, bool bLoop )
 {
+	Actor::GainingFocus( fRate, bRewindMovie, bLoop );
+
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->GainingFocus( fRate, bRewindMovie, bLoop );
-
-	SetDiffuse( RageColor(1,1,1,1) );
 }
 
 void ActorFrame::LosingFocus()
 {
+	Actor::LosingFocus();
+
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->LosingFocus();
 }
 
 void ActorFrame::PlayCommand( const CString &sCommandName )
 {
+	Actor::PlayCommand( sCommandName );
+
 	for( unsigned i=0; i<m_SubActors.size(); i++ ) 
 		m_SubActors[i]->PlayCommand( sCommandName );
 }

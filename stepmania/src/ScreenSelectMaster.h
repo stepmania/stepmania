@@ -32,8 +32,8 @@ public:
 	virtual void MenuUp( PlayerNumber pn );
 	virtual void MenuDown( PlayerNumber pn );
 	virtual void MenuStart( PlayerNumber pn );
-	void TweenOffScreen();	// return time in seconds to execute the command
-	void TweenOnScreen();	// return time in seconds to execute the command
+	void TweenOffScreen();
+	void TweenOnScreen();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
@@ -60,7 +60,7 @@ protected:
 	bool Move( PlayerNumber pn, Dirs dir );
 	bool ChangePage( int iNewChoice );
 	bool ChangeSelection( PlayerNumber pn, int iNewChoice );
-	void DoMenuStart( PlayerNumber pn );
+	float DoMenuStart( PlayerNumber pn );
 
 	float GetCursorX( PlayerNumber pn, int iPartIndex );
 	float GetCursorY( PlayerNumber pn, int iPartIndex );

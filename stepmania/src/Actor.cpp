@@ -816,12 +816,15 @@ void Actor::HandleCommand( const ParsedCommand &command )
 	else if( sName=="clearzbuffer" )	SetClearZBuffer( bParam(1) );
 	else if( sName=="hidden" )			SetHidden( bParam(1) );
 	else if( sName=="playcommand" )		PlayCommand( sParam(1) );
-	// Commands to Sprite should have been handled by Sprite and shouldn't be
-	// passed to Actor. -Chris
-//	else if( sName=="customtexturerect" || sName=="texcoordvelocity" || sName=="scaletoclipped" ||
-//			 sName=="stretchtexcoords" || sName=="position" || sName=="loop" || sName=="play" ||
-//			 sName=="pause" || sName=="rate" )
-//		return; /* sprite commands; don't run CheckHandledParams */
+
+	/* These are commands intended for a Sprite commands, but they will get 
+	 * sent to all sub-actors (which aren't necessarily Sprites) on 
+	 * GainingFocus and LosingFocus.  So, don't run CheckHandledParams 
+	 * on these commands. */
+	else if( sName=="customtexturerect" || sName=="texcoordvelocity" || sName=="scaletoclipped" ||
+		 sName=="stretchtexcoords" || sName=="position" || sName=="loop" || sName=="play" ||
+		 sName=="pause" || sName=="rate" )
+		return;
 	else
 	{
 		CString sError = ssprintf( "Actor::HandleCommand: Unrecognized command name '%s'.", sName.c_str() );

@@ -240,6 +240,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 
 	this->UpdateSelectableChoices();
 
+	TweenOnScreen();
 	m_fLockInputSecs = this->GetTweenTimeLeft();
 }
 
@@ -543,17 +544,27 @@ ScreenSelectMaster::Page ScreenSelectMaster::GetCurrentPage() const
 }
 
 
-void ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
+float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
 {
 	if( m_bChosen[pn] == true )
-		return;
+		return 0;
 	m_bChosen[pn] = true;
 
+	float fSecs = 0;
+
 	for( int page=0; page<NUM_PAGES; page++ )
+	{
 		OFF_COMMAND( m_sprMore[page] );
+		fSecs = max( fSecs, m_sprMore[page].GetTweenTimeLeft() );
+	}
 
 	for( int i=0; i<NUM_CURSOR_PARTS; i++ )
+	{
 		COMMAND( m_sprCursor[i][pn], "Choose");
+		fSecs = max( fSecs, m_sprCursor[i][pn].GetTweenTimeLeft() );
+	}
+
+	return fSecs;
 }
 
 void ScreenSelectMaster::MenuStart( PlayerNumber pn )
@@ -566,6 +577,7 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("%s comment %s",m_sName.c_str(), m_aModeChoices[m_iChoice[pn]].m_sName.c_str())) );
 	m_soundSelect.Play();
 
+	float fSecs = 0;
 	bool bAllDone = true;
 	if( SHARED_PREVIEW_AND_CURSOR || GetCurrentPage() == PAGE_2 )
 	{
@@ -574,12 +586,12 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 			if( GAMESTATE->IsHumanPlayer(p) )
 			{
 				ASSERT( !m_bChosen[p] );
-				DoMenuStart( (PlayerNumber)p );
+				fSecs = max( fSecs, DoMenuStart( (PlayerNumber)p ) );
 			}
 	}
 	else
 	{
-		DoMenuStart(pn);
+		fSecs = max( fSecs, DoMenuStart(pn) );
 		// check to see if everyone has chosen
 		for( int p=0; p<NUM_PLAYERS; p++ )
 			if( GAMESTATE->IsHumanPlayer((PlayerNumber)p) )
@@ -587,7 +599,7 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 	}
 
 	if( bAllDone )
-		this->PostScreenMessage( SM_BeginFadingOut, GetTweenTimeLeft() );// tell our owner it's time to move on
+		this->PostScreenMessage( SM_BeginFadingOut, fSecs );// tell our owner it's time to move on
 }
 
 /*
