@@ -524,14 +524,9 @@ void ScreenEdit::Init()
 	m_pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 	m_pAttacksFromCourse = NULL;
 
-	NoteData noteData;
-	m_pSteps->GetNoteData( noteData );
-
 
 	GAMESTATE->m_bPastHereWeGo = false;
-
 	GAMESTATE->m_bEditing = true;
-
 	GAMESTATE->m_fSongBeat = 0;
 	m_fTrailingBeat = GAMESTATE->m_fSongBeat;
 
@@ -557,6 +552,8 @@ void ScreenEdit::Init()
 	m_SnapDisplay.SetZoom( 0.5f );
 	this->AddChild( &m_SnapDisplay );
 
+	NoteData noteData;
+	m_pSteps->GetNoteData( noteData );
 	m_NoteDataEdit.CopyAll( noteData );
 
 	m_NoteFieldEdit.SetXY( EDIT_X, PLAYER_Y );
@@ -566,7 +563,6 @@ void ScreenEdit::Init()
 	this->AddChild( &m_NoteFieldEdit );
 
 	m_NoteDataRecord.CopyAll( noteData );
-
 	m_NoteFieldRecord.SetXY( EDIT_X, PLAYER_Y );
 	m_NoteFieldRecord.Init( GAMESTATE->m_pPlayerState[PLAYER_1], 350 );
 	m_NoteFieldRecord.Load( &m_NoteDataRecord, -150, 350 );
