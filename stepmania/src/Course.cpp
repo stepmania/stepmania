@@ -122,7 +122,8 @@ void Course::LoadFromCRSFile( CString sPath, vector<Song*> &apSongs )
 			 */
 
 			CStringArray split_SongDir;
-			split( sSongDir, "\\", split_SongDir, true );
+			sSongDir.Replace("\\", "/");
+			split( sSongDir, "/", split_SongDir, true );
 
 			if( split_SongDir.size() > 2 )
 			{
@@ -136,8 +137,10 @@ void Course::LoadFromCRSFile( CString sPath, vector<Song*> &apSongs )
 			// foreach song
 			for( unsigned i = 0; pSong == NULL && i < apSongs.size(); i++ )
 			{
+				CString dir = apSongs[i]->GetSongDir();
+				dir.Replace("\\", "/");
 				CStringArray splitted;
-				split( apSongs[i]->GetSongDir(), "\\", splitted, true );
+				split( dir, "/", splitted, true );
 				bool matches = true;
 				
 				int split_no = splitted.size()-1;
