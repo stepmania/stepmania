@@ -109,7 +109,7 @@ CString NoteData::GetSMNoteDataString()
 		if( nt == NOTE_TYPE_INVALID )
 			iRowSpacing = 1;
 		else
-			iRowSpacing = roundf( NoteTypeToBeat(nt) * ROWS_PER_BEAT );
+			iRowSpacing = int(roundf( NoteTypeToBeat(nt) * ROWS_PER_BEAT ));
 
 		CStringArray asMeasureLines;
 		asMeasureLines.Add( ssprintf("  // measure %d", m+1) );
@@ -864,7 +864,7 @@ NoteType NoteData::GetSmallestNoteTypeForMeasure( int iMeasureIndex )
 	for( nt=(NoteType)0; nt<NUM_NOTE_TYPES; nt=NoteType(nt+1) )		// for each NoteType, largest to largest
 	{
 		float fBeatSpacing = NoteTypeToBeat( nt );
-		int iRowSpacing = roundf( fBeatSpacing * ROWS_PER_BEAT );
+		int iRowSpacing = int(roundf( fBeatSpacing * ROWS_PER_BEAT ));
 
 		bool bFoundSmallerNote = false;
 		for( int i=iMeasureStartIndex; i<=iMeasureLastIndex; i++ )	// for each index in this measure

@@ -79,7 +79,7 @@ Font::Font( const CString &sASCIITexturePath )
 	if( ini.GetValueF( "Char Widths", "ScaleAllWidthsBy", fScaleAllWidthsBy ) )
 	{
 		for( int i=0; i<256; i++ )
-			m_iFrameNoToWidth[i] = roundf( m_iFrameNoToWidth[i] * fScaleAllWidthsBy );
+			m_iFrameNoToWidth[i] = int(roundf( m_iFrameNoToWidth[i] * fScaleAllWidthsBy ));
 	}
 
 	m_iLineSpacing = m_pTexture->GetSourceFrameHeight();

@@ -207,8 +207,8 @@ ScreenStage::ScreenStage()
 		const float fStageOffScreenY = CENTER_Y+fStageHeight;
 
 		m_quadMask.SetDiffuse( D3DXCOLOR(0,0,0,0) );
-		m_quadMask.StretchTo( CRect(SCREEN_LEFT, roundf(fStageOffScreenY-fStageHeight/2), 
-							        SCREEN_RIGHT, roundf(fStageOffScreenY+fStageHeight/2)) );
+		m_quadMask.StretchTo( CRect(SCREEN_LEFT, int(roundf(fStageOffScreenY-fStageHeight/2)), 
+							        SCREEN_RIGHT, int(roundf(fStageOffScreenY+fStageHeight/2))) );
 		/* Put the quad mask on top, so draws to the Stage will be "under" it. */
 		m_quadMask.SetZ( -1 );
 

@@ -610,7 +610,7 @@ void MusicWheel::SwitchSortOrder()
 
 float MusicWheel::GetBannerY( float fPosOffsetsFromMiddle )
 {
-	return (float)roundf( fPosOffsetsFromMiddle*g_fItemSpacingY );
+	return roundf( fPosOffsetsFromMiddle*g_fItemSpacingY );
 }
 
 float MusicWheel::GetBannerBrightness( float fPosOffsetsFromMiddle )
@@ -648,7 +648,7 @@ float MusicWheel::GetBannerX( float fPosOffsetsFromMiddle )
 {	
 	float fX = (1-cosf((fPosOffsetsFromMiddle)/3))*95.0f;
 	
-	return (float)roundf( fX );
+	return roundf( fX );
 }
 
 void MusicWheel::RebuildWheelItemDisplays()

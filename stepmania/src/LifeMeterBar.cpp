@@ -185,7 +185,7 @@ void LifeMeterBar::DrawPrimitives()
 	static RECT rectSize;
 	rectSize.left	= -m_iMeterWidth/2; 
 	rectSize.top	= -m_iMeterHeight/2;
-	rectSize.right	= -m_iMeterWidth/2 + roundf(m_iMeterWidth*m_fTrailingLifePercentage);
+	rectSize.right	= -m_iMeterWidth/2 + int(roundf(m_iMeterWidth*m_fTrailingLifePercentage));
 	rectSize.bottom	= +m_iMeterHeight/2;
 
 	float fPrecentOffset = TIMER->GetTimeSinceStart();
