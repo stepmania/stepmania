@@ -27,6 +27,10 @@
 #include "archutils/Unix/arch_setup.h"
 #endif
 
+#if !defined(ENDIAN_LITTLE) && !defined(ENDIAN_BIG)
+#error Neither ENDIAN_LITTLE nor ENDIAN_BIG defined
+#endif
+
 /* Make sure everyone has min and max: */
 #include <algorithm>
 
