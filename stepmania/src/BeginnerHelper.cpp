@@ -48,8 +48,10 @@ static const char *anims[NUM_ANIMATIONS] =
 	"BeginnerHelper_step-jumplr.bones.txt"
 };
 
-static CString GetAnimPath(Animation a) {return CString("Characters/") + anims[a];}
-
+static CString GetAnimPath(Animation a)
+{
+	return CString("Characters/") + anims[a];
+}
 
 BeginnerHelper::BeginnerHelper()
 {
@@ -60,15 +62,18 @@ BeginnerHelper::BeginnerHelper()
 		m_bPlayerEnabled[pn] = false;
 }
 
-BeginnerHelper::~BeginnerHelper() {}
+BeginnerHelper::~BeginnerHelper()
+{
+}
 
 void BeginnerHelper::ShowStepCircle( int pn, int CSTEP )
 {
 	int	isc=0;	// Save OR issues within array boundries.. it's worth the extra few bytes of memory.
-	switch(CSTEP) {
+	switch(CSTEP)
+	{
 		case ST_LEFT:	isc=0;	break;
 		case ST_RIGHT:	isc=1; 	break;
-		case ST_UP:	isc=2;	break;
+		case ST_UP:		isc=2;	break;
 		case ST_DOWN:	isc=3;	break;
 	}
 	
@@ -86,11 +91,13 @@ void BeginnerHelper::AddPlayer( int pn, NoteData *pSteps )
 	ASSERT((pn >= 0) && (pn < NUM_PLAYERS));
 	ASSERT(GAMESTATE->IsHumanPlayer(pn));
 
-	if(!CanUse()) {return;}
+	if(!CanUse())
+		return;
 	
 	const Character *Character = GAMESTATE->m_pCurCharacters[pn];
 	ASSERT( Character != NULL );
-	if(!DoesFileExist(Character->GetModelPath())) {return;}
+	if(!DoesFileExist(Character->GetModelPath()))
+		return;
 
 	m_NoteData[pn].CopyAll(pSteps);
 	m_bPlayerEnabled[pn] = true;
@@ -99,13 +106,17 @@ void BeginnerHelper::AddPlayer( int pn, NoteData *pSteps )
 bool BeginnerHelper::CanUse()
 {
 	for(int i=0; i<NUM_ANIMATIONS; ++i)
-		if(!DoesFileExist(GetAnimPath((Animation)i))) {return false;}
+		if(!DoesFileExist(GetAnimPath((Animation)i)))
+			return false;
 
-	if(GAMESTATE->m_CurGame != GAME_DANCE) {return false;}
+	if(GAMESTATE->m_CurGame != GAME_DANCE)
+		return false;
 
-	switch( GAMESTATE->m_CurStyle ) {
+	switch( GAMESTATE->m_CurStyle )
+	{
 		case STYLE_DANCE_SOLO:
-		case STYLE_DANCE_DOUBLE: return false;
+		case STYLE_DANCE_DOUBLE: 
+			return false;
 	}
 
 	return true;
@@ -114,18 +125,23 @@ bool BeginnerHelper::CanUse()
 bool BeginnerHelper::Initialize( int iDancePadType )
 {
 	ASSERT( !m_bInitialized );
-	if(!CanUse()) {return false;}
+	if(!CanUse())
+		return false;
 
 	// If no players were successfully added, bail.
 	{
 		bool bAnyLoaded = false;
 		for(int pn=0; pn<NUM_PLAYERS; pn++)
-			if(m_bPlayerEnabled[pn]) {bAnyLoaded = true;}
-		if(!bAnyLoaded)	{return false;}
+			if(m_bPlayerEnabled[pn])
+				bAnyLoaded = true;
+
+		if(!bAnyLoaded)
+			return false;
 	}
 	
 	// Load the Background and flash.. Flash only shows if the BG does.
-	if(m_bShowBackground) {
+	if(m_bShowBackground)
+	{
 		m_sBackground.Load( THEME->GetPathToG("BeginnerHelper background") );
 		this->AddChild(&m_sBackground);
 		m_sBackground.SetXY(CENTER_X, CENTER_Y);
@@ -136,13 +152,15 @@ bool BeginnerHelper::Initialize( int iDancePadType )
 	
 	// Load StepCircle graphics
 	for(int lsc=0; lsc<NUM_PLAYERS; lsc++)
-		for(int lsce=0; lsce<4; lsce++) {
+		for(int lsce=0; lsce<4; lsce++)
+		{
 			m_sStepCircle[lsc][lsce].Load(THEME->GetPathToG("BeginnerHelper stepcircle"));
 			m_sStepCircle[lsc][lsce].SetZoom(0);	// Hide until needed.
 			this->AddChild(&m_sStepCircle[lsc][lsce]);
 			
 			// Set coordinates of StepCircle
-			switch(lsce) {
+			switch(lsce)
+			{
 				case 0: m_sStepCircle[lsc][lsce].SetXY((HELPER_X+PLAYER_X(lsc)-80),HELPER_Y);	break;	// Left
 				case 1: m_sStepCircle[lsc][lsce].SetXY((HELPER_X+PLAYER_X(lsc)+80),HELPER_Y);	break;	// Right
 				case 2: m_sStepCircle[lsc][lsce].SetXY((HELPER_X+PLAYER_X(lsc)),(HELPER_Y-60));	break;	// Up
@@ -167,7 +185,8 @@ bool BeginnerHelper::Initialize( int iDancePadType )
 	for( int pl=0; pl<NUM_PLAYERS; pl++ )	// Load players
 	{
 		// Skip if not enabled
-		if(!m_bPlayerEnabled[pl]) {continue;}
+		if(!m_bPlayerEnabled[pl])
+			continue;
 
 		// Load character data
 		const Character *Character = GAMESTATE->m_pCurCharacters[pl];
@@ -178,12 +197,12 @@ bool BeginnerHelper::Initialize( int iDancePadType )
 		m_mDancer[pl].LoadMilkshapeAscii( Character->GetModelPath() );
 
 		// Load needed animations
-		m_mDancer[pl].LoadMilkshapeAsciiBones("Step-LEFT", 	GetAnimPath(ANIM_LEFT));
-		m_mDancer[pl].LoadMilkshapeAsciiBones("Step-DOWN", 	GetAnimPath(ANIM_DOWN));
-		m_mDancer[pl].LoadMilkshapeAsciiBones("Step-UP", 	GetAnimPath(ANIM_UP));
+		m_mDancer[pl].LoadMilkshapeAsciiBones("Step-LEFT",		GetAnimPath(ANIM_LEFT));
+		m_mDancer[pl].LoadMilkshapeAsciiBones("Step-DOWN",		GetAnimPath(ANIM_DOWN));
+		m_mDancer[pl].LoadMilkshapeAsciiBones("Step-UP", 		GetAnimPath(ANIM_UP));
 		m_mDancer[pl].LoadMilkshapeAsciiBones("Step-RIGHT", 	GetAnimPath(ANIM_RIGHT));
 		m_mDancer[pl].LoadMilkshapeAsciiBones("Step-JUMPLR", 	GetAnimPath(ANIM_JUMPLR));
-		m_mDancer[pl].LoadMilkshapeAsciiBones("rest",		Character->GetRestAnimationPath());
+		m_mDancer[pl].LoadMilkshapeAsciiBones("rest",			Character->GetRestAnimationPath());
 		m_mDancer[pl].SetDefaultAnimation("rest");
 		m_mDancer[pl].PlayAnimation("rest");
 		m_mDancer[pl].SetRotationX(PLAYER_ANGLE);
@@ -201,14 +220,17 @@ bool BeginnerHelper::Initialize( int iDancePadType )
 void BeginnerHelper::DrawPrimitives()
 {
 	// If not initialized, don't bother with this
-	if(!m_bInitialized) {return;}
+	if(!m_bInitialized)
+		return;
 
 	ActorFrame::DrawPrimitives();
 	m_sFlash.Draw();
 
 	bool DrawCelShaded = PREFSMAN->m_bCelShadeModels;
-	if(DrawCelShaded) {m_mDancePad.DrawCelShaded();}
-	else {
+	if(DrawCelShaded)
+		m_mDancePad.DrawCelShaded();
+	else
+	{
 		DISPLAY->SetLighting( true );
 		DISPLAY->SetLightDirectional( 
 			0, 
@@ -228,11 +250,12 @@ void BeginnerHelper::DrawPrimitives()
 		for(int scde=0; scde<4; scde++)
 			m_sStepCircle[scd][scde].Draw();
 	
-	if(DrawCelShaded) {
+	if(DrawCelShaded)
 		FOREACH_PlayerNumber(pn)	// Draw each dancer
-			if(GAMESTATE->IsHumanPlayer(pn)) {m_mDancer[pn].DrawCelShaded();}
-	}
-	else {
+			if(GAMESTATE->IsHumanPlayer(pn))
+				m_mDancer[pn].DrawCelShaded();
+	else
+	{
 		DISPLAY->SetLighting( true );
 		DISPLAY->SetLightDirectional( 
 			0, 
@@ -242,7 +265,8 @@ void BeginnerHelper::DrawPrimitives()
 			RageVector3(0, 0, 1) );
 
 		FOREACH_PlayerNumber(pn)	// Draw each dancer
-			if(GAMESTATE->IsHumanPlayer(pn)) {m_mDancer[pn].Draw();}
+			if(GAMESTATE->IsHumanPlayer(pn))
+				m_mDancer[pn].Draw();
 
 		DISPLAY->SetLightOff(0);
 		DISPLAY->SetLighting(false);
@@ -254,7 +278,8 @@ void BeginnerHelper::Step( int pn, int CSTEP )
 	m_mDancer[pn].StopTweening();
 	m_mDancer[pn].SetRotationY(0);	// Make sure we're not still inside of a JUMPUD tween.
 
-	switch(CSTEP) {
+	switch(CSTEP)
+	{
 		case ST_LEFT:
 			ShowStepCircle(pn, ST_LEFT);
 			m_mDancer[pn].PlayAnimation("Step-LEFT", 1.5f);
@@ -299,7 +324,8 @@ void BeginnerHelper::Step( int pn, int CSTEP )
 
 void BeginnerHelper::Update( float fDeltaTime )
 {
-	if(!m_bInitialized) {return;}
+	if(!m_bInitialized)
+		return;
 
 	// the row we want to check on this update
 	int iCurRow = BeatToNoteRowNotRounded(GAMESTATE->m_fSongBeat + 0.4f);
@@ -307,18 +333,21 @@ void BeginnerHelper::Update( float fDeltaTime )
 	for(int pn=0; pn<NUM_PLAYERS; pn++)
 	{
 		// Skip if not enabled
-		if(!m_bPlayerEnabled[pn]) {continue;}
+		if(!m_bPlayerEnabled[pn])
+			continue;
 		
 		for(int iRow=m_iLastRowChecked; iRow<iCurRow; iRow++)
 		{
 			// Check if there are any notes at all on this row.. If not, save scanning.
-			if(!m_NoteData[pn].IsThereATapAtRow(iRow)) {continue;}
+			if(!m_NoteData[pn].IsThereATapAtRow(iRow))
+				continue;
 			
 			// Find all steps on this row, in order to show the correct animations
 			int iStep = 0;
 			const int iNumTracks = m_NoteData[pn].GetNumTracks(); 
 			for(int k=0; k<iNumTracks; k++)
-				if(m_NoteData[pn].GetTapNote(k, iRow) == TAP_TAP) {iStep |= 1 << k;}
+				if(m_NoteData[pn].GetTapNote(k, iRow) == TAP_TAP)
+					iStep |= 1 << k;
 			
 			// Assign new data
 			this->Step(pn, iStep);
@@ -337,7 +366,8 @@ void BeginnerHelper::Update( float fDeltaTime )
 	for(int pu=0; pu<NUM_PLAYERS; pu++)
 	{
 		// If this is not a human player, the dancer is not shown
-		if(!GAMESTATE->IsHumanPlayer(pu)) {continue;}
+		if(!GAMESTATE->IsHumanPlayer(pu))
+			continue;
 		
 		// Update dancer's animation and StepCircles
 		m_mDancer[pu].Update( beat );
