@@ -51,6 +51,19 @@ Actor* LoadFromActorFile( const CString& sAniDir, const XNode& layer )
 	layer.GetAttrValue( "File", sFile );
 	FixSlashesInPlace( sFile );
 
+	CString sText;
+	bool bHasText = layer.GetAttrValue( "Text", sText );
+
+	// backward compatibility hacks
+	if( bHasText )
+		sType = "BitmapText";
+	else if( sFile.CompareNoCase("songbackground") == 0 )
+		sType = "SongBackground";
+	else if( sFile.CompareNoCase("songbanner") == 0 )
+		sType = "SongBanner";
+	else if( sFile.CompareNoCase("coursebanner") == 0 )
+		sType = "CourseBanner";
+
 	if( sType == "SongCreditDisplay" )
 	{
 		pActor = new SongCreditDisplay;
@@ -61,9 +74,8 @@ Actor* LoadFromActorFile( const CString& sAniDir, const XNode& layer )
 		pBGA->LoadFromNode( sAniDir, layer );
 		pActor = pBGA;
 	}
-	else
+	else if( sType == "BitmapText" )
 	{
-
 		/* XXX: How to handle translations?  Maybe we should have one metrics section,
 		 * "Text", eg:
 		 *
@@ -73,175 +85,179 @@ Actor* LoadFromActorFile( const CString& sAniDir, const XNode& layer )
 		 *
 		 * and allow "$TextItem$" in .actors to reference that.
 		 */
+		/* It's a BitmapText. Note that we could do the actual text setting with metrics,
+		 * by adding "text" and "alttext" commands, but right now metrics can't contain
+		 * commas or semicolons.  It's useful to be able to refer to fonts in the real
+		 * theme font dirs, too. */
+		CString sAlttext;
+		layer.GetAttrValue("AltText", sAlttext );
+
+		// Keep the special treatment of text string sync'd with the same treatments
+		// in ThemeManager.
+		sText.Replace( "::", "\n" );
+		sAlttext.Replace( "::", "\n" );
+
+		FontCharAliases::ReplaceMarkers( sText );
+		FontCharAliases::ReplaceMarkers( sAlttext );
+
+		BitmapText* pBitmapText = new BitmapText;
+
 		/* Be careful: if sFile is "", and we don't check it, then we can end up recursively
 		 * loading the BGAnimationLayer that we're in. */
 		if( sFile == "" )
-			RageException::Throw( "The actor file in '%s' is missing the File argument",
+			RageException::Throw( "A BitmapText in '%s' is missing the File attribute",
 				sAniDir.c_str() );
 
-		CString text;
-		if( layer.GetAttrValue("Text", text) )
-		{
-			/* It's a BitmapText. Note that we could do the actual text setting with metrics,
-			 * by adding "text" and "alttext" commands, but right now metrics can't contain
-			 * commas or semicolons.  It's useful to be able to refer to fonts in the real
-			 * theme font dirs, too. */
-			CString alttext;
-			layer.GetAttrValue("AltText", alttext );
-			text.Replace( "::", "\n" );
-			alttext.Replace( "::", "\n" );
-
-			FontCharAliases::ReplaceMarkers( text );
-			FontCharAliases::ReplaceMarkers( alttext );
-
-			BitmapText* pBitmapText = new BitmapText;
-
-			pBitmapText->LoadFromFont( THEME->GetPathToF( sFile ) );
-			pBitmapText->SetText( text, alttext );
-			pActor = pBitmapText;
-		}
-		else
-		{
-			if( sFile.CompareNoCase("songbackground")==0 )
-			{
-				Song *pSong = GAMESTATE->m_pCurSong;
-				if( pSong && pSong->HasBackground() )
-					sFile = pSong->GetBackgroundPath();
-				else
-					sFile = THEME->GetPathToG("Common fallback background");
-
-				/* Always load song backgrounds with SongBGTexture.  It sets texture properties;
-				 * if we load a background without setting those properties, we'll end up
-				 * with duplicates. */
-				Sprite* pSprite = new Sprite;
-				pSprite->LoadBG( sFile );
-				pActor = pSprite;
-			}
-			else if( sFile.CompareNoCase("songbanner")==0 )
-			{
-				Song *pSong = GAMESTATE->m_pCurSong;
-				if( pSong == NULL )
-				{
-					// probe for a random banner
-					for( int i=0; i<300; i++ )
-					{
-						pSong = SONGMAN->GetRandomSong();
-						if( pSong == NULL )
-							break;
-						if( !pSong->ShowInDemonstrationAndRanking() )
-							continue;
-						break;
-					}
-				}
-
-				if( pSong && pSong->HasBanner() )
-					sFile = pSong->GetBannerPath();
-				else
-					sFile = THEME->GetPathToG("Common fallback banner");
-
-				TEXTUREMAN->DisableOddDimensionWarning();
-
-				/* Always load banners with BannerTex.  It sets texture properties;
-				 * if we load a background without setting those properties, we'll end up
-				 * with duplicates. */
-				Sprite* pSprite = new Sprite;
-				pSprite->Load( Sprite::SongBannerTexture(sFile) );
-				pActor = pSprite;
-
-				TEXTUREMAN->EnableOddDimensionWarning();
-			}
-			else if( sFile.CompareNoCase("coursebanner")==0 )
-			{
-				Course *pCourse = GAMESTATE->m_pCurCourse;
-				if( pCourse == NULL )
-				{
-					// probe for a random banner
-					for( int i=0; i<300; i++ )
-					{
-						pCourse = SONGMAN->GetRandomCourse();
-						if( pCourse == NULL )
-							break;
-						if( !pCourse->ShowInDemonstrationAndRanking() )
-							continue;
-						if( pCourse->m_bIsAutogen )
-							continue;
-						break;
-					}
-				}
-
-				if( pCourse && pCourse->HasBanner() )
-					sFile = pCourse->m_sBannerPath;
-				else
-					sFile = THEME->GetPathToG("Common fallback banner");
-
-				TEXTUREMAN->DisableOddDimensionWarning();
-				Sprite* pSprite = new Sprite;
-				pSprite->Load( Sprite::SongBannerTexture(sFile) );
-				pActor = pSprite;
-				TEXTUREMAN->EnableOddDimensionWarning();
-			}
-			else 
-			{
-retry:
-				/* XXX: We need to do a theme search, since the file we're loading might
-				 * be overridden by the theme. */
-				CString sNewPath = sAniDir+sFile;
-
-				// If we know this is an exact match, don't bother with the GetDirListing;
-				// it's causing problems with partial matching BGAnimation directory names.
-				if( !IsAFile(sNewPath) && !IsADirectory(sNewPath) )
-				{
-					CStringArray asPaths;
-					GetDirListing( sNewPath + "*", asPaths, false, true );	// return path too
-
-					if( asPaths.empty() )
-					{
-						CString sError = ssprintf( "The actor file in '%s' references a file '%s' which doesn't exist.", sAniDir.c_str(), sFile.c_str() );
-						switch( Dialog::AbortRetryIgnore( sError, "BROKEN_ACTOR_REFERENCE" ) )
-						{
-						case Dialog::abort:
-							RageException::Throw( sError ); 
-							break;
-						case Dialog::retry:
-							FlushDirCache();
-							goto retry;
-						case Dialog::ignore:
-							asPaths.push_back( sNewPath );
-							if( GetExtension(asPaths[0]) == "" )
-								asPaths[0] = SetExtension( asPaths[0], "png" );
-							break;
-						default:
-							ASSERT(0);
-						}
-					}
-					else if( asPaths.size() > 1 )
-					{
-						CString sError = ssprintf( "The actor file in '%s' references a file '%s' which has multiple matches.", sAniDir.c_str(), sFile.c_str() );
-						switch( Dialog::AbortRetryIgnore( sError, "DUPLICATE_ACTOR_REFERENCE" ) )
-						{
-						case Dialog::abort:
-							RageException::Throw( sError ); 
-							break;
-						case Dialog::retry:
-							FlushDirCache();
-							goto retry;
-						case Dialog::ignore:
-							asPaths.erase( asPaths.begin()+1, asPaths.end() );
-							break;
-						default:
-							ASSERT(0);
-						}
-					}
-
-					sNewPath = asPaths[0];
-				}
-
-				sNewPath = DerefRedir( sNewPath );
-
-				pActor = MakeActor( sNewPath );
-			}
-		}
+		pBitmapText->LoadFromFont( THEME->GetPathToF( sFile ) );
+		pBitmapText->SetText( sText, sAlttext );
+		pActor = pBitmapText;
 	}
+	else if( sType == "SongBackground" )
+	{
+		Song *pSong = GAMESTATE->m_pCurSong;
+		if( pSong && pSong->HasBackground() )
+			sFile = pSong->GetBackgroundPath();
+		else
+			sFile = THEME->GetPathToG("Common fallback background");
+
+		/* Always load song backgrounds with SongBGTexture.  It sets texture properties;
+		 * if we load a background without setting those properties, we'll end up
+		 * with duplicates. */
+		Sprite* pSprite = new Sprite;
+		pSprite->LoadBG( sFile );
+		pActor = pSprite;
+	}
+	else if( sType == "SongBanner" )
+	{
+		Song *pSong = GAMESTATE->m_pCurSong;
+		if( pSong == NULL )
+		{
+			// probe for a random banner
+			for( int i=0; i<300; i++ )
+			{
+				pSong = SONGMAN->GetRandomSong();
+				if( pSong == NULL )
+					break;
+				if( !pSong->ShowInDemonstrationAndRanking() )
+					continue;
+				break;
+			}
+		}
+
+		if( pSong && pSong->HasBanner() )
+			sFile = pSong->GetBannerPath();
+		else
+			sFile = THEME->GetPathToG("Common fallback banner");
+
+		TEXTUREMAN->DisableOddDimensionWarning();
+
+		/* Always load banners with BannerTex.  It sets texture properties;
+		 * if we load a background without setting those properties, we'll end up
+		 * with duplicates. */
+		Sprite* pSprite = new Sprite;
+		pSprite->Load( Sprite::SongBannerTexture(sFile) );
+		pActor = pSprite;
+
+		TEXTUREMAN->EnableOddDimensionWarning();
+	}
+	else if( sType == "CourseBanner" )
+	{
+		Course *pCourse = GAMESTATE->m_pCurCourse;
+		if( pCourse == NULL )
+		{
+			// probe for a random banner
+			for( int i=0; i<300; i++ )
+			{
+				pCourse = SONGMAN->GetRandomCourse();
+				if( pCourse == NULL )
+					break;
+				if( !pCourse->ShowInDemonstrationAndRanking() )
+					continue;
+				if( pCourse->m_bIsAutogen )
+					continue;
+				break;
+			}
+		}
+
+		if( pCourse && pCourse->HasBanner() )
+			sFile = pCourse->m_sBannerPath;
+		else
+			sFile = THEME->GetPathToG("Common fallback banner");
+
+		TEXTUREMAN->DisableOddDimensionWarning();
+		Sprite* pSprite = new Sprite;
+		pSprite->Load( Sprite::SongBannerTexture(sFile) );
+		pActor = pSprite;
+		TEXTUREMAN->EnableOddDimensionWarning();
+	}
+	else // sType is empty or garbage (e.g. "1" // 0==Sprite")
+	{
+		// automatically figure out the type
+retry:
+		/* Be careful: if sFile is "", and we don't check it, then we can end up recursively
+		 * loading the BGAnimationLayer that we're in. */
+		if( sFile == "" )
+			RageException::Throw( "The actor file in '%s' is missing the File attribute",
+				sAniDir.c_str() );
+
+		/* XXX: We need to do a theme search, since the file we're loading might
+		 * be overridden by the theme. */
+		CString sNewPath = sAniDir+sFile;
+
+		// If we know this is an exact match, don't bother with the GetDirListing;
+		// it's causing problems with partial matching BGAnimation directory names.
+		if( !IsAFile(sNewPath) && !IsADirectory(sNewPath) )
+		{
+			CStringArray asPaths;
+			GetDirListing( sNewPath + "*", asPaths, false, true );	// return path too
+
+			if( asPaths.empty() )
+			{
+				CString sError = ssprintf( "The actor file in '%s' references a file '%s' which doesn't exist.", sAniDir.c_str(), sFile.c_str() );
+				switch( Dialog::AbortRetryIgnore( sError, "BROKEN_ACTOR_REFERENCE" ) )
+				{
+				case Dialog::abort:
+					RageException::Throw( sError ); 
+					break;
+				case Dialog::retry:
+					FlushDirCache();
+					goto retry;
+				case Dialog::ignore:
+					asPaths.push_back( sNewPath );
+					if( GetExtension(asPaths[0]) == "" )
+						asPaths[0] = SetExtension( asPaths[0], "png" );
+					break;
+				default:
+					ASSERT(0);
+				}
+			}
+			else if( asPaths.size() > 1 )
+			{
+				CString sError = ssprintf( "The actor file in '%s' references a file '%s' which has multiple matches.", sAniDir.c_str(), sFile.c_str() );
+				switch( Dialog::AbortRetryIgnore( sError, "DUPLICATE_ACTOR_REFERENCE" ) )
+				{
+				case Dialog::abort:
+					RageException::Throw( sError ); 
+					break;
+				case Dialog::retry:
+					FlushDirCache();
+					goto retry;
+				case Dialog::ignore:
+					asPaths.erase( asPaths.begin()+1, asPaths.end() );
+					break;
+				default:
+					ASSERT(0);
+				}
+			}
+
+			sNewPath = asPaths[0];
+		}
+
+		sNewPath = DerefRedir( sNewPath );
+
+		pActor = MakeActor( sNewPath );
+	}
+
 
 	float f;
 	if( layer.GetAttrValue( "BaseRotationXDegrees", f ) )	pActor->SetBaseRotationX( f );
