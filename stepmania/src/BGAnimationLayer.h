@@ -98,6 +98,7 @@ protected:
 	CString m_sCommand;
 	float m_fUpdateRate;	// get by GainingFocus
 	float m_fFOV;
+	bool m_bLighting;
 
 	// stretch stuff
 	float m_fStretchTexCoordVelocityX;

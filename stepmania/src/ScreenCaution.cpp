@@ -50,7 +50,7 @@ ScreenCaution::ScreenCaution() : Screen( "ScreenCaution" )
 	m_Back.Load( THEME->GetPathToB("Common back") );
 	this->AddChild( &m_Back );
 
-	this->PostScreenMessage( SM_StartClosing, 3 );
+	this->PostScreenMessage( SM_StartClosing, m_Background.GetLengthSeconds()-m_Out.GetLengthSeconds() );
 
 	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenCaution music") );
 }

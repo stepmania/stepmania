@@ -247,6 +247,7 @@ public:
 	virtual void SetBlendMode( BlendMode mode ) { m_BlendMode = mode; } 
 	virtual void SetBlendMode( CString );
 	virtual void SetTextureWrapping( bool b ) 	{ m_bTextureWrapping = b; } 
+	virtual void SetClearZBuffer( bool b ) 		{ m_bClearZBuffer = b; } 
 	virtual void SetUseZBuffer( bool b ) 		{ m_bUseZBuffer = b; } 
 	virtual void SetUseBackfaceCull( bool b ) 	{ m_bUseBackfaceCull = b; } 
 
@@ -332,6 +333,7 @@ protected:
 	//
 	bool	m_bTextureWrapping;
 	BlendMode	m_BlendMode;
+	bool	m_bClearZBuffer;
 	bool	m_bUseZBuffer;
 	bool	m_bUseBackfaceCull;
 };

@@ -58,6 +58,7 @@ void BGAnimationLayer::Init()
 
 	m_fUpdateRate = 1;
 	m_fFOV = 0;		// ortho
+	m_bLighting = 0;		// ortho
 
 //	m_bCycleColor = false;
 //	m_bCycleAlpha = false;
@@ -516,6 +517,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	ini.GetValueI( sLayer, "Type", (int&)m_Type );
 	ini.GetValue ( sLayer, "Command", m_sCommand );
 	ini.GetValueF( sLayer, "FOV", m_fFOV );
+	ini.GetValueB( sLayer, "Lighting", m_bLighting );
 	ini.GetValueF( sLayer, "StretchTexCoordVelocityX", m_fStretchTexCoordVelocityX );
 	ini.GetValueF( sLayer, "StretchTexCoordVelocityY", m_fStretchTexCoordVelocityY );
 	ini.GetValueF( sLayer, "ZoomMin", m_fZoomMin );
@@ -902,9 +904,26 @@ void BGAnimationLayer::Update( float fDeltaTime )
 void BGAnimationLayer::Draw()
 {
 	DISPLAY->LoadMenuPerspective( m_fFOV );
+	if( m_bLighting )
+	{
+		DISPLAY->SetLighting( true );
+		DISPLAY->SetLightDirectional( 
+			0, 
+			RageColor(0.6,0.6,0.6,1), 
+			RageColor(0.9,0.9,0.9,1),
+			RageColor(0,0,0,1),
+			RageVector3(0, 0, 1) );
+	}
+
 	for( unsigned i=0; i<m_pActors.size(); i++ )
 		m_pActors[i]->Draw();
+	
 	DISPLAY->LoadMenuPerspective( 0 );
+	if( m_bLighting )
+	{
+		DISPLAY->SetLightOff( 0 );
+		DISPLAY->SetLighting( false );
+	}
 }
 
 void BGAnimationLayer::SetDiffuse( RageColor c )

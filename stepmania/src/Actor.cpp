@@ -51,6 +51,7 @@ void Actor::Reset()
 
 	m_bTextureWrapping = false;
 	m_BlendMode = BLEND_NORMAL;
+	m_bClearZBuffer = false;
 	m_bUseZBuffer = false;
 	m_bUseBackfaceCull = false;
 }
@@ -195,6 +196,8 @@ void Actor::SetRenderStates()
 	DISPLAY->SetTextureWrapping( m_bTextureWrapping );
 	DISPLAY->SetBlendMode( m_BlendMode );
 	DISPLAY->SetZBuffer( m_bUseZBuffer );
+	if( m_bClearZBuffer )
+		DISPLAY->ClearZBuffer();
 	DISPLAY->SetBackfaceCull( m_bUseBackfaceCull );
 }
 
@@ -775,6 +778,7 @@ void Actor::HandleCommand( const CStringArray &asTokens )
 	else if( sName=="additiveblend" )	SetBlendMode( bParam(1) ? BLEND_ADD : BLEND_NORMAL );
 	else if( sName=="blend" )			SetBlendMode( sParam(1) );
 	else if( sName=="zbuffer" )			SetUseZBuffer( bParam(1) );
+	else if( sName=="clearzbuffer" )	SetClearZBuffer( bParam(1) );
 	else
 	{
 		CString sError = ssprintf( "Actor::HandleCommand: Unrecognized command name '%s'.", sName.c_str() );
