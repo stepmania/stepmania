@@ -18,7 +18,6 @@
 #include "Song.h"
 #include "NoteData.h"
 #include "MsdFile.h"
-#include "RageSoundStream.h"
 #include "RageSound.h"
 #include "RageException.h"
 #include "SongCacheIndex.h"
@@ -383,13 +382,9 @@ void Song::TidyUpData()
 	/* This must be done before radar calculation. */
 	if( HasMusic() )
 	{
-#if 1
-		RageSoundStream sound;
-		sound.Load( GetMusicPath() );
-#else
 		RageSound sound;
 		sound.Load( GetMusicPath(), false ); /* don't pre-cache */
-#endif
+
 		m_fMusicLengthSeconds = sound.GetLengthSeconds();
 		/* XXX: if(m_fMusicLengthSeconds == -1), warn and throw out the song */
 		if(m_fMusicLengthSeconds == 0)

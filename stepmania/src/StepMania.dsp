@@ -266,14 +266,6 @@ SOURCE=.\RageSoundSample.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\RageSoundStream.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\RageSoundStream.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\RageTexture.cpp
 # End Source File
 # Begin Source File

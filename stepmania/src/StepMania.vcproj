@@ -1186,12 +1186,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\RageSoundSample.h">
 			</File>
 			<File
-				RelativePath=".\RageSoundStream.cpp">
-			</File>
-			<File
-				RelativePath=".\RageSoundStream.h">
-			</File>
-			<File
 				RelativePath=".\RageTexture.cpp">
 			</File>
 			<File
