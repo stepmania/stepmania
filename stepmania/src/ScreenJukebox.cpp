@@ -110,15 +110,17 @@ bool ScreenJukebox::PrepareForJukebox()		// always return true.
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 
-		GAMESTATE->m_PlayerOptions[p] = PlayerOptions();
-
 		if( GAMESTATE->m_bJukeboxUsesModifiers )
+		{
+			GAMESTATE->m_PlayerOptions[p].Init();
+			GAMESTATE->m_PlayerOptions[p].FromString( PREFSMAN->m_sDefaultModifiers );
 			GAMESTATE->m_PlayerOptions[p].ChooseRandomMofifiers();
+		}
 	}
 
-	GAMESTATE->m_SongOptions = SongOptions();
+	GAMESTATE->m_SongOptions.Init();
+	GAMESTATE->m_SongOptions.FromString( PREFSMAN->m_sDefaultModifiers );
 
-	GAMESTATE->m_SongOptions.m_LifeType = (randomf(0,1)>0.8f) ? SongOptions::LIFE_BATTERY : SongOptions::LIFE_BAR;
 	GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
 
 	GAMESTATE->m_bDemonstrationOrJukebox = true;

@@ -85,6 +85,11 @@ void GameState::Reset()
 	}
 	m_SongOptions.Init();
 	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_PlayerOptions[p].FromString( PREFSMAN->m_sDefaultModifiers );
+	}
+	m_SongOptions.FromString( PREFSMAN->m_sDefaultModifiers );
+	for( p=0; p<NUM_PLAYERS; p++ )
 		NOTESKIN->SwitchNoteSkin( PlayerNumber(p), PREFSMAN->m_sDefaultNoteSkin );
 
 	m_Position = new NoteFieldPositioning("Positioning.ini");
