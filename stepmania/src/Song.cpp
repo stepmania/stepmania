@@ -583,7 +583,7 @@ void Song::TidyUpData()
 
 void Song::TranslateTitles()
 {
-	static TitleSubst tsub;
+	static TitleSubst tsub("songs");
 
 	tsub.Subst(m_sMainTitle, m_sSubTitle, m_sArtist,
 				m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit);

@@ -22,6 +22,7 @@
 # first loaded.  Delete the files in the "Cache" directory after making
 # changes.
 
+[Songs]
 TitleFrom: Candy
 ArtistFrom: Luv.*
 TitleTo: CANDY☆
@@ -307,7 +308,7 @@ ArtistTo: 堀江由衣
 ArtistFrom: (Nobuo Uematsu)|(Uematsu Nobuo)
 ArtistTo: 植松伸夫
 
-# Courses:
+[Courses]
 TitleFrom: Kidou
 TitleTo: 鬼道
 *

@@ -15,8 +15,7 @@ struct TitleTrans
 	TitleTrans(CString tf, CString sf, CString af, CString tt, CString st, CString at,
 			   bool translit_):
 		TitleFrom(tf), SubFrom(sf), ArtistFrom(af),
-			TitleTo(tt), SubTo(st), ArtistTo(at),
-			translit(translit_) { }
+			TitleTo(tt), SubTo(st), ArtistTo(at), translit(translit_) { }
 
 	bool Matches(CString title, CString sub, CString artist);
 };
@@ -33,7 +32,8 @@ bool TitleTrans::Matches(CString title, CString sub, CString artist)
 }
 
 void TitleSubst::AddTrans(const CString &tf, const CString &sf, const CString &af,
-		      const CString &tt, const CString &st, const CString &at, bool translit)
+		      const CString &tt, const CString &st, const CString &at,
+			  bool translit)
 {
 	ttab.push_back(new TitleTrans(tf, sf, af, tt, st, at, translit));
 }
@@ -70,51 +70,50 @@ void TitleSubst::Subst(CString &title, CString &subtitle, CString &artist,
 }
 
 
-TitleSubst::TitleSubst()
+TitleSubst::TitleSubst(const CString &section)
 {
-	Load("Translation.dat");
+	Load("Translation.dat", section);
 }
 
-void TitleSubst::Load(const CString &filename)
+void TitleSubst::Load(const CString &filename, const CString &section)
 {
 	ifstream f;
 	f.open(filename);
 	if(!f.good()) return;
+	CString TitleFrom, ArtistFrom, SubtitleFrom, TitleTo, ArtistTo, SubtitleTo;
+	bool translit = true;
+	CString CurrentSection;
+
 	while(!f.eof())
 	{
-		CString TitleFrom, ArtistFrom, SubtitleFrom, TitleTo, ArtistTo, SubtitleTo;
-		bool translit = true;
 
-		while(!f.eof())
+		CString line;
+		if(!getline(f, line)) continue;
+
+		if(line.size() > 0 && utf8_get_char(line.c_str()) == 0xFEFF)
 		{
-			CString line;
-			if(!getline(f, line)) continue;
+			/* Annoying header that Windows puts on UTF-8 plaintext
+				* files; remove it. */
+			line.erase(0, utf8_get_char_len(line.c_str()));
+		}
 
-			if(line.size() > 0 && utf8_get_char(line.c_str()) == 0xFEFF)
-			{
-				/* Annoying header that Windows puts on UTF-8 plaintext
-				 * files; remove it. */
-				line.erase(0, utf8_get_char_len(line.c_str()));
-			}
+		TrimLeft(line);
+		TrimRight(line);
 
-			TrimLeft(line);
-			TrimRight(line);
+		if(line.size() == 0) continue; /* blank */
+		if(line[0] == '#') continue; /* comment */
 
-			if(!line.CompareNoCase("DontTransliterate"))
-			{
-				translit = false;
-				continue;
-			}
 
-			if(line.size() == 0) continue; /* blank */
-			if(line[0] == '#') continue; /* comment */
+		if(!line.CompareNoCase("DontTransliterate"))
+		{
+			translit = false;
+			continue;
+		}
 
-			if(line[0] == '*') break;
-
+		unsigned pos = line.find_first_of(':');
+		if(pos != string::npos)
+		{
 			/* x: y */
-
-			unsigned pos = line.find_first_of(':');
-			if(pos == string::npos) continue;
 			CString id = line.substr(0, pos);
 			CString txt = line.substr(pos+1);
 			TrimLeft(txt);
@@ -127,13 +126,29 @@ void TitleSubst::Load(const CString &filename)
 			else if(!id.CompareNoCase("SubtitleTo")) SubtitleTo = txt;
 		}
 
-		/* Surround each regex with ^(...)$, to force all comparisons to default
-		 * to being a full-line match.  (Add ".*" manually if htis isn't wanted.) */
-		if(TitleFrom.size()) TitleFrom = "^(" + TitleFrom + ")$";
-		if(ArtistFrom.size()) ArtistFrom = "^(" + ArtistFrom + ")$";
-		if(SubtitleFrom.size()) SubtitleFrom = "^(" + SubtitleFrom + ")$";
+		/* Add the translation if this is a terminator (*) or section
+		 * marker ([xxx]). */
+		if(line[0] == '*' || line[0] == '[')
+		{
+			/* Surround each regex with ^(...)$, to force all comparisons to default
+			 * to being a full-line match.  (Add ".*" manually if htis isn't wanted.) */
+			if(TitleFrom.size()) TitleFrom = "^(" + TitleFrom + ")$";
+			if(ArtistFrom.size()) ArtistFrom = "^(" + ArtistFrom + ")$";
+			if(SubtitleFrom.size()) SubtitleFrom = "^(" + SubtitleFrom + ")$";
 
-		AddTrans(TitleFrom, SubtitleFrom, ArtistFrom, TitleTo, SubtitleTo, ArtistTo, translit);
+			if(!CurrentSection.CompareNoCase(section) &&
+			   (TitleFrom.size() || SubtitleFrom.size() || ArtistFrom.size()))
+				AddTrans(TitleFrom, SubtitleFrom, ArtistFrom, TitleTo, SubtitleTo, ArtistTo, translit);
+			
+			/* Reset. */
+			TitleFrom = ArtistFrom = SubtitleFrom = TitleTo = ArtistTo = SubtitleTo = "";
+			translit = true;
+		}
+
+		if(line[0] == '[' && line[line.size()-1] == ']')
+		{
+			CurrentSection = line.substr(1, line.size()-2);
+		}
 	}
 }
 

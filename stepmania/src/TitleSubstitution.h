@@ -10,10 +10,10 @@ class TitleSubst
 	void AddTrans(const CString &tf, const CString &sf, const CString &af,
 			   const CString &tt, const CString &st, const CString &at, bool translit);
 public:
-	TitleSubst();
+	TitleSubst(const CString &section);
 	~TitleSubst();
 
-	void Load(const CString &filename);
+	void Load(const CString &filename, const CString &section);
 
 	void Subst(CString &title, CString &sub, CString &artist,
 					   CString &ttitle, CString &tsub, CString &tartist);

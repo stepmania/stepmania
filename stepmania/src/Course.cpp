@@ -231,7 +231,7 @@ void Course::LoadFromCRSFile( CString sPath )
 		else
 			LOG->Trace( "Unexpected value named '%s'", sValueName.GetString() );
 	}
-	static TitleSubst tsub;
+	static TitleSubst tsub("courses");
 
 	CString ignore;
 	tsub.Subst(m_sName, ignore, ignore,
