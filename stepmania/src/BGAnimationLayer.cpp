@@ -104,19 +104,6 @@ void BGAnimationLayer::Init()
 	m_fTilesSpacingY = -1;
 	m_fTileVelocityX = 0;
 	m_fTileVelocityY = 0;
-
-	/*
-	m_PosX = m_PosY = 0;
-	m_Zoom = 0;
-	m_Rot = 0;
-	m_ShowTime = 0;
-	m_HideTime = 0;
-	m_TweenStartTime = 0;
-	m_TweenX = m_TweenY = 0.0;
-	m_TweenSpeed = 0;
-	m_TweenState = 0;
-	m_TweenPassedX = m_TweenPassedY = 0;
-	*/
 }
 
 /* Static background layers are simple, uncomposited background images with nothing
@@ -128,7 +115,7 @@ void BGAnimationLayer::LoadFromStaticGraphic( const CString& sPath )
 	Sprite* pSprite = new Sprite;
 	pSprite->LoadBG( sPath );
 	pSprite->StretchTo( FullScreenRectF );
-	m_SubActors.push_back( pSprite );
+	this->AddChild( pSprite );
 }
 
 void BGAnimationLayer::LoadFromMovie( const CString& sMoviePath )
@@ -138,14 +125,14 @@ void BGAnimationLayer::LoadFromMovie( const CString& sMoviePath )
 	pSprite->LoadBG( sMoviePath );
 	pSprite->StretchTo( FullScreenRectF );
 	pSprite->EnableAnimation( false );
-	m_SubActors.push_back( pSprite );
+	this->AddChild( pSprite );
 }
 
 void BGAnimationLayer::LoadFromVisualization( const CString& sMoviePath )
 {
 	Init();
 	Sprite* pSprite = new Sprite;
-	m_SubActors.push_back( pSprite );
+	this->AddChild( pSprite );
 	pSprite->LoadBG( sMoviePath );
 	pSprite->StretchTo( FullScreenRectF );
 	pSprite->SetBlendMode( BLEND_ADD );
@@ -214,7 +201,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const CString& sPath )
 		{
 			m_Type = TYPE_SPRITE;
 			Sprite* pSprite = new Sprite;
-			m_SubActors.push_back( pSprite );
+			this->AddChild( pSprite );
 			pSprite->Load( sPath );
 			pSprite->SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 		}
@@ -230,7 +217,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const CString& sPath )
 		{
 			m_Type = TYPE_SPRITE;
 			Sprite* pSprite = new Sprite;
-			m_SubActors.push_back( pSprite );
+			this->AddChild( pSprite );
 			RageTextureID ID(sPath);
 			ID.bStretch = true;
 			pSprite->LoadBG( ID );
@@ -251,7 +238,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const CString& sPath )
 		{
 			m_Type = TYPE_SPRITE;
 			Sprite* pSprite = new Sprite;
-			m_SubActors.push_back( pSprite );
+			this->AddChild( pSprite );
 			pSprite->LoadBG( sPath );
 			const RectF StretchedFullScreenRectF(
 				FullScreenRectF.left-200,
@@ -282,7 +269,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const CString& sPath )
 			for( int i=0; i<m_iNumParticles; i++ )
 			{
 				Sprite* pSprite = new Sprite;
-				m_SubActors.push_back( pSprite );
+				this->AddChild( pSprite );
 				pSprite->Load( sPath );
 				pSprite->SetZoom( 0.7f + 0.6f*i/(float)m_iNumParticles );
 				pSprite->SetX( randomf( GetGuardRailLeft(pSprite), GetGuardRailRight(pSprite) ) );
@@ -343,7 +330,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const CString& sPath )
 				for( int y=0; y<m_iNumTilesHigh; y++ )
 				{
 					Sprite* pSprite = new Sprite;
-					m_SubActors.push_back( pSprite );
+					this->AddChild( pSprite );
 					pSprite->Load( ID );
 					pSprite->SetTextureWrapping( true );	// gets rid of some "cracks"
 
@@ -543,7 +530,7 @@ void BGAnimationLayer::LoadFromIni( const CString& sAniDir_, const IniKey& layer
 	case TYPE_SPRITE:
 		{
 			Actor* pActor = LoadFromActorFile( sAniDir, layer );
-			m_SubActors.push_back( pActor );
+			this->AddChild( pActor );
 			if( !m_bGeneric )
 			{
 				if( bStretch )
@@ -567,7 +554,7 @@ void BGAnimationLayer::LoadFromIni( const CString& sAniDir_, const IniKey& layer
 			for( int i=0; i<m_iNumParticles; i++ )
 			{
 				Actor* pActor = MakeActor( sPath );
-				m_SubActors.push_back( pActor );
+				this->AddChild( pActor );
 				pActor->SetXY( randomf(float(FullScreenRectF.left),float(FullScreenRectF.right)),
 							   randomf(float(FullScreenRectF.top),float(FullScreenRectF.bottom)) );
 				pActor->SetZoom( randomf(m_fZoomMin,m_fZoomMax) );
@@ -607,7 +594,7 @@ void BGAnimationLayer::LoadFromIni( const CString& sAniDir_, const IniKey& layer
 			for( unsigned i=0; i<NumSprites; i++ )
 			{
 				Sprite* pSprite = new Sprite;
-				m_SubActors.push_back( pSprite );
+				this->AddChild( pSprite );
 				pSprite->Load( ID );
 				pSprite->SetTextureWrapping( true );		// gets rid of some "cracks"
 				pSprite->SetZoom( randomf(m_fZoomMin,m_fZoomMax) );
