@@ -29,6 +29,8 @@ Model::Model ()
 	m_bUseZBuffer = true;
 	m_pCurAnimation = NULL;
 	m_bRevertToDefaultAnimation = false;
+	m_fCurrAnimPlayRate = 1.0f;
+	m_fDefaultAnimPlayRate = 1.0f;
 }
 
 Model::~Model ()
@@ -684,15 +686,24 @@ void Model::DrawPrimitives()
 
 void Model::SetDefaultAnimation( CString sAnimation )
 {
+	m_fDefaultAnimPlayRate = PlayRate;
 	m_sDefaultAnimation = sAnimation;
 }
 
 void Model::PlayAnimation( CString sAniName )
 {
+	msAnimation *pNewAnimation = NULL;
 	if( m_mapNameToAnimation.find(sAniName) == m_mapNameToAnimation.end() )
 		return;
 	else
-		m_pCurAnimation = &m_mapNameToAnimation[sAniName];
+		pNewAnimation = &m_mapNameToAnimation[sAniName];
+
+	m_fCurrFrame = 0;
+
+	if ( m_pCurAnimation == pNewAnimation )
+		return;
+
+	m_pCurAnimation = pNewAnimation;
 
 	// setup bones
 	int nBoneCount = (int)m_pCurAnimation->Bones.size();
@@ -744,8 +755,6 @@ void Model::PlayAnimation( CString sAniName )
 			}
 		}
 	}
-
-	m_fCurrFrame = 0;
 }
 
 float Model::GetCurFrame() { return m_fCurrFrame; };
@@ -766,7 +775,7 @@ Model::AdvanceFrame (float dt)
 	{
 		if( (m_bRevertToDefaultAnimation) && (m_sDefaultAnimation != "") )
 		{
-			this->PlayAnimation( m_sDefaultAnimation );
+			this->PlayAnimation( m_sDefaultAnimation, m_fDefaultAnimPlayRate );
 			m_fCurrFrame = 0.0f;
 			return;
 		}
