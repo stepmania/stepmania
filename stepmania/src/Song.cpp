@@ -346,6 +346,13 @@ bool Song::LoadWithoutCache( CString sDir )
 		return false;
 	}
 
+	/* If this song directory is within the DWI path, prepend the DWI path
+	 * to m_sMusicFile and m_sCDTitleFile. */
+	if(sDir.Left(PREFSMAN->m_DWIPath.GetLength()) == PREFSMAN->m_DWIPath) {
+		m_sMusicFile = PREFSMAN->m_DWIPath+"\\"+m_sMusicFile;
+		m_sCDTitleFile = PREFSMAN->m_DWIPath+"\\"+m_sCDTitleFile;
+	}
+
 	AddAutoGenNotes();
 
 	TidyUpData();
@@ -384,7 +391,7 @@ bool Song::LoadFromSongDir( CString sDir )
 	}
 	else
 	{
-		if(!LoadWithoutCache(sDir))
+		if(!LoadWithoutCache(m_sSongDir))
 			return false;
 	}
 
@@ -974,4 +981,32 @@ int Song::GetNumTimesPlayed() const
 		iTotalNumTimesPlayed += m_apNotes[i]->m_iNumTimesPlayed;
 	}
 	return iTotalNumTimesPlayed;
+}
+
+/* The only files we load that have paths inside these variables
+ * are DWIs loaded from a DWI tree.  This used to look for a leading
+ * ".", but we're prepending the DWI path explicitely now (so they
+ * can be loaded from an actual installation), so look for any
+ * backslashes instead. */
+CString Song::GetMusicPath() const
+{
+	return m_sMusicFile.Find('\\')!=-1 ? m_sMusicFile : m_sSongDir+m_sMusicFile;
+}
+
+CString Song::GetBannerPath() const
+{
+	return m_sSongDir+m_sBannerFile;
+}
+
+CString Song::GetBackgroundPath() const
+{
+	return m_sSongDir+m_sBackgroundFile;
+}
+CString Song::GetCDTitlePath() const
+{
+	return m_sCDTitleFile.Find('\\')!=-1 ? m_sCDTitleFile : m_sSongDir+m_sCDTitleFile;
+}
+CString Song::GetMovieBackgroundPath() const
+{
+	return m_sSongDir+m_sMovieBackgroundFile;
 }

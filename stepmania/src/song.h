@@ -110,11 +110,11 @@ public:
 	CString	m_sCDTitleFile;
 	CString	m_sMovieBackgroundFile;
 
-	CString GetMusicPath() const	{return m_sMusicFile.Find('.')==0 ? m_sMusicFile : m_sSongDir+m_sMusicFile; };
-	CString GetBannerPath() const	{return m_sSongDir+m_sBannerFile; };
-	CString GetBackgroundPath() const {return m_sSongDir+m_sBackgroundFile; };
-	CString GetCDTitlePath() const	{return m_sCDTitleFile.Find('.')==0 ? m_sCDTitleFile : m_sSongDir+m_sCDTitleFile; };
-	CString GetMovieBackgroundPath() const {return m_sSongDir+m_sMovieBackgroundFile; };
+	CString GetMusicPath() const;
+	CString GetBannerPath() const;
+	CString GetBackgroundPath() const;
+	CString GetCDTitlePath() const;
+	CString GetMovieBackgroundPath() const;
 
 
 	bool HasMusic() const;
