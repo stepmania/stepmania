@@ -30,14 +30,24 @@ Actor* LoadFromActorFile( const CString &sIniPath, const CString &sLayer )
 	if( !ini.GetKey(sLayer) )
 		RageException::Throw( "The file '%s' doesn't have layer '%s'.", sIniPath.c_str(), sLayer.c_str() );
 
+	CString sDir = Dirname( sIniPath );
+
+	const IniFile::key* k = ini.GetKey( sLayer );
+	if( k == NULL )
+		RageException::Throw( "The file '%s' doesn't have layer '%s'.", sIniPath.c_str(), sLayer.c_str() );
+
+	return LoadFromActorFile( sDir, *k );
+}
+
+Actor* LoadFromActorFile( const CString& sAniDir, const IniKey& layer )
+{
 	Actor* pActor = NULL;	// fill this in before we return;
 
 	CString sType;
-	ini.GetValue( sLayer, "Type", sType );
+	layer.GetValue( "Type", sType );
 	CString sFile;
-	ini.GetValue( sLayer, "File", sFile );
+	layer.GetValue( "File", sFile );
 	FixSlashesInPlace( sFile );
-	CString sDir = Dirname( sIniPath );
 
 	if( sType == "SongCreditDisplay" )
 	{
@@ -58,18 +68,18 @@ Actor* LoadFromActorFile( const CString &sIniPath, const CString &sLayer )
 		/* Be careful: if sFile is "", and we don't check it, then we can end up recursively
 		 * loading the BGAnimationLayer that we're in. */
 		if( sFile == "" )
-			RageException::Throw( "The actor file '%s' layer %s is missing File",
-				sIniPath.c_str(), sLayer.c_str() );
+			RageException::Throw( "The actor file in '%s' is missing the File argument",
+				sAniDir.c_str() );
 
 		CString text;
-		if( ini.GetValue ( sLayer, "Text", text ) )
+		if( layer.GetValue("Text", text) )
 		{
 			/* It's a BitmapText. Note that we could do the actual text setting with metrics,
 			 * by adding "text" and "alttext" commands, but right now metrics can't contain
 			 * commas or semicolons.  It's useful to be able to refer to fonts in the real
 			 * theme font dirs, too. */
 			CString alttext;
-			ini.GetValue ( sLayer, "AltText", alttext );
+			layer.GetValue("AltText", alttext );
 			text.Replace( "::", "\n" );
 			alttext.Replace( "::", "\n" );
 
@@ -164,7 +174,7 @@ Actor* LoadFromActorFile( const CString &sIniPath, const CString &sLayer )
 retry:
 				/* XXX: We need to do a theme search, since the file we're loading might
 				 * be overridden by the theme. */
-				CString sNewPath = sDir+sFile;
+				CString sNewPath = sAniDir+sFile;
 
 				// If we know this is an exact match, don't bother with the GetDirListing;
 				// it's causing problems with partial matching BGAnimation directory names.
@@ -175,7 +185,7 @@ retry:
 
 					if( asPaths.empty() )
 					{
-						CString sError = ssprintf( "The actor file '%s' references a file '%s' which doesn't exist.", sIniPath.c_str(), sFile.c_str() );
+						CString sError = ssprintf( "The actor file in '%s' references a file '%s' which doesn't exist.", sAniDir.c_str(), sFile.c_str() );
 						switch( Dialog::AbortRetryIgnore( sError, "BROKEN_ACTOR_REFERENCE" ) )
 						{
 						case Dialog::abort:
@@ -195,7 +205,7 @@ retry:
 					}
 					else if( asPaths.size() > 1 )
 					{
-						CString sError = ssprintf( "The actor file '%s' references a file '%s' which has multiple matches.", sIniPath.c_str(), sFile.c_str() );
+						CString sError = ssprintf( "The actor file in '%s' references a file '%s' which has multiple matches.", sAniDir.c_str(), sFile.c_str() );
 						switch( Dialog::AbortRetryIgnore( sError, "DUPLICATE_ACTOR_REFERENCE" ) )
 						{
 						case Dialog::abort:
@@ -223,12 +233,12 @@ retry:
 	}
 
 	float f;
-	if( ini.GetValue ( sLayer, "BaseRotationXDegrees", f ) )	pActor->SetBaseRotationX( f );
-	if( ini.GetValue ( sLayer, "BaseRotationYDegrees", f ) )	pActor->SetBaseRotationY( f );
-	if( ini.GetValue ( sLayer, "BaseRotationZDegrees", f ) )	pActor->SetBaseRotationZ( f );
-	if( ini.GetValue ( sLayer, "BaseZoomX", f ) )				pActor->SetBaseZoomX( f );
-	if( ini.GetValue ( sLayer, "BaseZoomY", f ) )				pActor->SetBaseZoomY( f );
-	if( ini.GetValue ( sLayer, "BaseZoomZ", f ) )				pActor->SetBaseZoomZ( f );
+	if( layer.GetValue( "BaseRotationXDegrees", f ) )	pActor->SetBaseRotationX( f );
+	if( layer.GetValue( "BaseRotationYDegrees", f ) )	pActor->SetBaseRotationY( f );
+	if( layer.GetValue( "BaseRotationZDegrees", f ) )	pActor->SetBaseRotationZ( f );
+	if( layer.GetValue( "BaseZoomX", f ) )				pActor->SetBaseZoomX( f );
+	if( layer.GetValue( "BaseZoomY", f ) )				pActor->SetBaseZoomY( f );
+	if( layer.GetValue( "BaseZoomZ", f ) )				pActor->SetBaseZoomZ( f );
 
 	ASSERT( pActor );	// we should have filled this in above
 	return pActor;

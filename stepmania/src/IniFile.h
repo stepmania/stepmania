@@ -8,12 +8,27 @@ using namespace std;
 
 class RageFileBasic;
 
+class IniKey : public map<CString, CString>
+{
+public:
+	bool GetValue( const CString &valuename, CString& value ) const;
+	bool GetValue( const CString &valuename, int& value ) const;
+	bool GetValue( const CString &valuename, unsigned& value ) const;
+	bool GetValue( const CString &valuename, float& value ) const;
+	bool GetValue( const CString &valuename, bool& value ) const;
+
+	bool SetValue( const CString &valuename, const CString &value );
+	bool SetValue( const CString &valuename, int value );
+	bool SetValue( const CString &valuename, unsigned value );
+	bool SetValue( const CString &valuename, float value );
+	bool SetValue( const CString &valuename, bool value );
+};
+
 class IniFile  
 {
 public:
 	// all keys are of this type
-
-	typedef map<CString, CString> key;
+	typedef IniKey key;
 	typedef map<CString, key> keymap;
 
 	typedef keymap::const_iterator const_iterator;

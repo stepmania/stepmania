@@ -4,6 +4,7 @@
 #include "Actor.h"
 #include "RageTexture.h"
 
+class IniKey;
 
 #define SET_XY( actor )			UtilSetXY( actor, m_sName )
 #define ON_COMMAND( actor )		UtilOnCommand( actor, m_sName )
@@ -33,6 +34,7 @@ inline void UtilSetXYAndOnCommand( Actor* pActor, const CString &sClassName ) { 
 
 // Return a Sprite, BitmapText, or Model depending on the file type
 Actor* LoadFromActorFile( const CString &sIniPath, const CString &sLayer = "Actor" );
+Actor* LoadFromActorFile( const CString& sAniDir, const IniKey& layer );
 Actor* MakeActor( const RageTextureID &ID );
 
 

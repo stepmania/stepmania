@@ -119,28 +119,49 @@ int IniFile::GetNumValues( const CString &keyname ) const
 	return k->second.size();
 }
 
-bool IniFile::GetValue( const CString &keyname, const CString &valuename, CString& value ) const
+bool IniKey::GetValue( const CString &valuename, CString& value ) const
 {
-	keymap::const_iterator k = keys.find(keyname);
-	if (k == keys.end())
-		return false;
+	const_iterator i = find(valuename);
 
-	key::const_iterator i = k->second.find(valuename);
-
-	if( i == k->second.end() )
+	if( i == end() )
 		return false;
 
 	value = i->second;
 	return true;
 }
 
+bool IniKey::SetValue(  const CString &valuename, const CString &value )
+{
+	(*this)[valuename] = value;
+	return true;
+}
+
+bool IniFile::GetValue( const CString &keyname, const CString &valuename, CString& value ) const
+{
+	keymap::const_iterator k = keys.find(keyname);
+	if (k == keys.end())
+		return false;
+	return k->second.GetValue( valuename, value );
+}
+
 bool IniFile::SetValue( const CString &keyname, const CString &valuename, const CString &value )
 {
-	keys[keyname][valuename] = value;
+	keys[keyname].SetValue( valuename, value );
 	return true;
 }
 
 #define TYPE(T) \
+	bool IniKey::GetValue( const CString &valuename, T &value ) const \
+	{ \
+		CString sValue; \
+		if( !GetValue(valuename,sValue) ) \
+			return false; \
+		return FromString( sValue, value ); \
+	} \
+	bool IniKey::SetValue( const CString &valuename, T value ) \
+	{ \
+		return SetValue( valuename, ToString(value) ); \
+	} \
 	bool IniFile::GetValue( const CString &keyname, const CString &valuename, T &value ) const \
 	{ \
 		CString sValue; \
@@ -182,7 +203,7 @@ bool IniFile::DeleteKey(const CString &keyname)
 	return true;
 }
 
-const IniFile::key *IniFile::GetKey(const CString &keyname) const
+const IniKey *IniFile::GetKey(const CString &keyname) const
 {
 	keymap::const_iterator i = keys.find(keyname);
 	if( i == keys.end() )

@@ -126,7 +126,7 @@ void BGAnimationLayer::Init()
 /* Static background layers are simple, uncomposited background images with nothing
  * behind them.  Since they have nothing behind them, they have no need for alpha,
  * so turn that off. */
-void BGAnimationLayer::LoadFromStaticGraphic( CString sPath )
+void BGAnimationLayer::LoadFromStaticGraphic( const CString& sPath )
 {
 	Init();
 	Sprite* pSprite = new Sprite;
@@ -135,7 +135,7 @@ void BGAnimationLayer::LoadFromStaticGraphic( CString sPath )
 	m_SubActors.push_back( pSprite );
 }
 
-void BGAnimationLayer::LoadFromMovie( CString sMoviePath )
+void BGAnimationLayer::LoadFromMovie( const CString& sMoviePath )
 {
 	Init();
 	Sprite* pSprite = new Sprite;
@@ -145,7 +145,7 @@ void BGAnimationLayer::LoadFromMovie( CString sMoviePath )
 	m_SubActors.push_back( pSprite );
 }
 
-void BGAnimationLayer::LoadFromVisualization( CString sMoviePath )
+void BGAnimationLayer::LoadFromVisualization( const CString& sMoviePath )
 {
 	Init();
 	Sprite* pSprite = new Sprite;
@@ -156,7 +156,7 @@ void BGAnimationLayer::LoadFromVisualization( CString sMoviePath )
 }
 
 
-void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
+void BGAnimationLayer::LoadFromAniLayerFile( const CString& sPath )
 {
 	/* Generic BGAs are new.  Animation directories with no INI are old and obsolete. 
 	 * Don't combine them. */
@@ -411,61 +411,43 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 			m_SubActors[i]->SetBlendMode( BLEND_ADD );
 }
 
-
-
-void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
+void BGAnimationLayer::LoadFromIni( const CString& sAniDir_, const IniKey& layer )
 {
+	CString sAniDir = sAniDir_;
+
 	Init();
 	if( sAniDir.Right(1) != "/" )
 		sAniDir += "/";
 
-	ASSERT( IsADirectory(sAniDir) );
+	DEBUG_ASSERT( IsADirectory(sAniDir) );
 
-	CHECKPOINT_M( ssprintf( "BGAnimationLayer::LoadFromIni \"%s\"::%s %s",
-		sAniDir.c_str(), sLayer.c_str(), m_bGeneric? "(generic) ":"" ) );
+	CHECKPOINT_M( ssprintf( "BGAnimationLayer::LoadFromIni \"%s\" %s",
+		sAniDir.c_str(), m_bGeneric? "(generic) ":"" ) );
 
-	CString sPathToIni = sAniDir + "BGAnimation.ini";
-
-	IniFile ini;
-	ini.ReadFile( sPathToIni );
 	{
-		//
-		// Can we ditch this?  It's the same as "Condition=IsPlayerEnabled(p)". -Chris
-		//
-		int player;
-		if( ini.GetValue( sLayer, "Player", player ) )
-		{
-			PlayerNumber pn = (PlayerNumber)(player-1);
-			if( pn>=0 && pn<NUM_PLAYERS )
-			{
-				if( !GAMESTATE->IsPlayerEnabled(pn) )
-					return;
-			}
-			else
-			{
-				LOG->Warn("BGA \"%s\" %s has an invalid Player field", sAniDir.c_str(), sLayer.c_str() );
-			}
-		}
+		CString sPlayer;
+		if( layer.GetValue("Player", sPlayer) )
+			ASSERT_M( 0, "The BGAnimation parameter 'Player' is deprecated.  Please use 'Condition=IsPlayerEnabled(p)'." );
 	}
 
 	{
 		CString expr;
-		if( ini.GetValue(sLayer,"Cond",expr) || ini.GetValue(sLayer,"Condition",expr) )
+		if( layer.GetValue("Cond",expr) || layer.GetValue("Condition",expr) )
 		{
 			if( !Lua::RunExpressionB( expr ) )
 				return;
 		}
 	}
 
-	bool Stretch = false;
+	bool bStretch = false;
 	{
 		CString type = "sprite";
-		ini.GetValue( sLayer, "Type", type );
+		layer.GetValue( "Type", type );
 		type.MakeLower();
 
 		/* The preferred way of stretching a sprite to fit the screen is "Type=sprite"
 		 * and "stretch=1".  "type=1" is for backwards-compatibility. */
-		ini.GetValue( sLayer, "Stretch", Stretch );
+		layer.GetValue( "Stretch", bStretch );
 
 		// Check for string match first, then do integer match.
 		// "if(atoi(type)==0)" was matching against all string matches.
@@ -485,7 +467,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 		else if( atoi(type) == 1 )
 		{
 			m_Type = TYPE_SPRITE; 
-			Stretch = true; 
+			bStretch = true; 
 		}
 		else if( atoi(type) == 2 )
 		{
@@ -502,10 +484,8 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	}
 
 	{
-		const IniFile::key *key = ini.GetKey( sLayer );
-		if( key )
-		for( IniFile::key::const_iterator i = key->begin();
-			 i != key->end(); ++i)
+		for( IniKey::const_iterator i = layer.begin();
+			 i != layer.end(); ++i)
 		{
 			CString KeyName = i->first; /* "OnCommand" */
 			KeyName.MakeLower();
@@ -525,34 +505,34 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	}
 		
 
-	ini.GetValue( sLayer, "CommandRepeatSeconds", m_fRepeatCommandEverySeconds );
+	layer.GetValue( "CommandRepeatSeconds", m_fRepeatCommandEverySeconds );
 	m_fSecondsUntilNextCommand = m_fRepeatCommandEverySeconds;
-	ini.GetValue( sLayer, "FOV", m_fFOV );
-	ini.GetValue( sLayer, "Lighting", m_bLighting );
-	ini.GetValue( sLayer, "TexCoordVelocityX", m_fTexCoordVelocityX );
-	ini.GetValue( sLayer, "TexCoordVelocityY", m_fTexCoordVelocityY );
-	ini.GetValue( sLayer, "DrawCond", m_sDrawCond );
+	layer.GetValue( "FOV", m_fFOV );
+	layer.GetValue( "Lighting", m_bLighting );
+	layer.GetValue( "TexCoordVelocityX", m_fTexCoordVelocityX );
+	layer.GetValue( "TexCoordVelocityY", m_fTexCoordVelocityY );
+	layer.GetValue( "DrawCond", m_sDrawCond );
 
 	// compat:
-	ini.GetValue( sLayer, "StretchTexCoordVelocityX", m_fTexCoordVelocityX );
-	ini.GetValue( sLayer, "StretchTexCoordVelocityY", m_fTexCoordVelocityY );
-	ini.GetValue( sLayer, "ZoomMin", m_fZoomMin );
-	ini.GetValue( sLayer, "ZoomMax", m_fZoomMax );
-	ini.GetValue( sLayer, "VelocityXMin", m_fVelocityXMin );
-	ini.GetValue( sLayer, "VelocityXMax", m_fVelocityXMax );
-	ini.GetValue( sLayer, "VelocityYMin", m_fVelocityYMin );
-	ini.GetValue( sLayer, "VelocityYMax", m_fVelocityYMax );
-	ini.GetValue( sLayer, "VelocityZMin", m_fVelocityZMin );
-	ini.GetValue( sLayer, "VelocityZMax", m_fVelocityZMax );
-	ini.GetValue( sLayer, "OverrideSpeed", m_fOverrideSpeed );
-	ini.GetValue( sLayer, "NumParticles", m_iNumParticles );
-	ini.GetValue( sLayer, "ParticlesBounce", m_bParticlesBounce );
-	ini.GetValue( sLayer, "TilesStartX", m_fTilesStartX );
-	ini.GetValue( sLayer, "TilesStartY", m_fTilesStartY );
-	ini.GetValue( sLayer, "TilesSpacingX", m_fTilesSpacingX );
-	ini.GetValue( sLayer, "TilesSpacingY", m_fTilesSpacingY );
-	ini.GetValue( sLayer, "TileVelocityX", m_fTileVelocityX );
-	ini.GetValue( sLayer, "TileVelocityY", m_fTileVelocityY );
+	layer.GetValue( "StretchTexCoordVelocityX", m_fTexCoordVelocityX );
+	layer.GetValue( "StretchTexCoordVelocityY", m_fTexCoordVelocityY );
+	layer.GetValue( "ZoomMin", m_fZoomMin );
+	layer.GetValue( "ZoomMax", m_fZoomMax );
+	layer.GetValue( "VelocityXMin", m_fVelocityXMin );
+	layer.GetValue( "VelocityXMax", m_fVelocityXMax );
+	layer.GetValue( "VelocityYMin", m_fVelocityYMin );
+	layer.GetValue( "VelocityYMax", m_fVelocityYMax );
+	layer.GetValue( "VelocityZMin", m_fVelocityZMin );
+	layer.GetValue( "VelocityZMax", m_fVelocityZMax );
+	layer.GetValue( "OverrideSpeed", m_fOverrideSpeed );
+	layer.GetValue( "NumParticles", m_iNumParticles );
+	layer.GetValue( "ParticlesBounce", m_bParticlesBounce );
+	layer.GetValue( "TilesStartX", m_fTilesStartX );
+	layer.GetValue( "TilesStartY", m_fTilesStartY );
+	layer.GetValue( "TilesSpacingX", m_fTilesSpacingX );
+	layer.GetValue( "TilesSpacingY", m_fTilesSpacingY );
+	layer.GetValue( "TileVelocityX", m_fTileVelocityX );
+	layer.GetValue( "TileVelocityY", m_fTileVelocityY );
 
 
 	bool NeedTextureStretch = false;
@@ -564,11 +544,11 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	{
 	case TYPE_SPRITE:
 		{
-			Actor* pActor = LoadFromActorFile( sPathToIni, sLayer );
+			Actor* pActor = LoadFromActorFile( sAniDir, layer );
 			m_SubActors.push_back( pActor );
 			if( !m_bGeneric )
 			{
-				if( Stretch )
+				if( bStretch )
 					pActor->StretchTo( FullScreenRectF );
 				else
 					pActor->SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
@@ -578,7 +558,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	case TYPE_PARTICLES:
 		{
 			CString sFile;
-			ini.GetValue( sLayer, "File", sFile );
+			layer.GetValue( "File", sFile );
 			FixSlashesInPlace( sFile );
 			
 			CString sPath = sAniDir+sFile;
@@ -608,7 +588,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	case TYPE_TILES:
 		{
 			CString sFile;
-			ini.GetValue( sLayer, "File", sFile );
+			layer.GetValue( "File", sFile );
 			FixSlashesInPlace( sFile );
 			
 			CString sPath = sAniDir+sFile;
@@ -641,7 +621,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	}
 
 	bool bStartOnRandomFrame = false;
-	ini.GetValue( sLayer, "StartOnRandomFrame", bStartOnRandomFrame );
+	layer.GetValue( "StartOnRandomFrame", bStartOnRandomFrame );
 	if( bStartOnRandomFrame )
 	{
 		for( unsigned i=0; i<m_SubActors.size(); i++ )

@@ -112,7 +112,7 @@ void AddLayersFromAniDir( CString sAniDir, vector<Actor*> &layersAddTo, bool Gen
 			{
 				// import as a single layer
 				BGAnimationLayer* pLayer = new BGAnimationLayer( Generic );
-				pLayer->LoadFromIni( sAniDir, sLayer );
+				pLayer->LoadFromIni( sAniDir, *pKey );
 				layersAddTo.push_back( pLayer );
 			}
 		}
