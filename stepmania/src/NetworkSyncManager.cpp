@@ -26,11 +26,17 @@ NetworkSyncManager::NetworkSyncManager(int argc, char **argv)
 			useSMserver = true;
 			int ClientCommand=3;
 			NetPlayerClient->send((char*) &ClientCommand, 4);
+			NetPlayerClient->send(0);//Send 0 for flash client
+
 			NetPlayerClient->receive(m_ServerVersion);
 				//If network play is desired
 				//AND the connection works
 				//Halt until we know what server 
 				//version we're dealing with
+			if (((m_ServerVersion / 512) % 2) == 1)
+				appendWithZero = true;
+			else
+				appendWithZero = false;
 		} else
 			useSMserver = false;
     else
@@ -77,9 +83,13 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 	SendNetPack.m_combo=combo;
 	SendNetPack.m_score=score;			//Load packet with aproperate info
 	SendNetPack.m_step=step-1;
+	SendNetPack.m_life=m_playerLife[playerID];
 
     //Send packet to server
 	NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder)); 
+
+	if (appendWithZero)
+		NetPlayerClient->send(0);
 }
 
 void NetworkSyncManager::ReportSongOver() 
@@ -93,8 +103,13 @@ void NetworkSyncManager::ReportSongOver()
 	SendNetPack.m_combo=0;
 	SendNetPack.m_score=0;		//Use PID 21 (Song over Packet)
 	SendNetPack.m_step=0;
+	SendNetPack.m_life=0;
 	
 	NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder)); 
+
+	if (appendWithZero)
+		NetPlayerClient->send(0);
+	
 	return;
 }
 
@@ -113,6 +128,7 @@ void NetworkSyncManager::StartRequest()
 	SendNetPack.m_combo=0;
 	SendNetPack.m_score=0;	//PID 20 (Song Start Request Packet)
 	SendNetPack.m_step=0;
+	SendNetPack.m_life=0;
 
 	NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder));
 	

@@ -1403,6 +1403,11 @@ void ScreenGameplay::Update( float fDeltaTime )
 	float fPercentPositionSong = GAMESTATE->m_fMusicSeconds / fMusicLengthSeconds;
 	CLAMP( fPercentPositionSong, 0, 1 );
 	m_meterSongPosition.SetPercent( fPercentPositionSong );
+
+	//NSMAN Update Life in NSMAN.
+	for (int i=0;i<NUM_PLAYERS;i++)
+		NSMAN->m_playerLife[i] = int(m_pLifeMeter[i]->GetLife()*10000);
+	
 }
 
 /* Set g_CurStageStats.bFailed for failed players.  In, FAIL_ARCADE, send

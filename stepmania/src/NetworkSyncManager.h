@@ -12,6 +12,9 @@
 	Joshua Allen
 -----------------------------------------------------------------------------
 */
+
+#include "global.h"
+#include "GameState.h"
  
 class EzSockets;
 
@@ -27,12 +30,19 @@ public:
 	void StartRequest();	//Request a start.  Block until granted.
 	bool Connect(const CString& addy, unsigned short port); // Connect to SM Server
 
+	int m_playerLife[NUM_PLAYERS];	//Life
+
 private:
 	int m_playerID;  //these are currently unused, but need to stay
 	int m_step;
 	int m_score;
 	int m_combo;
-    bool useSMserver;
+    
+	bool appendWithZero;	//Append 4 0s at end of packet.
+							//For FLASH client.
+
+	bool useSMserver;
+
     EzSockets *NetPlayerClient;
 
 	int m_ServerVersion; //ServerVersion
@@ -43,6 +53,7 @@ private:
         int m_step;		//SID (StepID, 0-6 for Miss to Marv, 7,8 for boo and ok)
         int m_score;	//Player's Score
         int m_combo;	//Player's Current Combo
+		int m_life;		//Player's Life
     };
     
 };
