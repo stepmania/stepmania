@@ -197,17 +197,30 @@ Grade StageStats::GetGrade( PlayerNumber pn ) const
 		}
 	}
 
-	if( PREFSMAN->m_bGradeTier02IsAllPerfects &&
-		iTapNoteScores[pn][TNS_PERFECT] > 0 &&
-		iTapNoteScores[pn][TNS_GREAT] == 0 &&
-		iTapNoteScores[pn][TNS_GOOD] == 0 &&
-		iTapNoteScores[pn][TNS_BOO] == 0 &&
-		iTapNoteScores[pn][TNS_MISS] == 0 &&
-		iTapNoteScores[pn][TNS_HIT_MINE] == 0 &&
-		iHoldNoteScores[pn][HNS_NG] == 0 )
-		return GRADE_TIER_2;
+	LOG->Trace( "GetGrade: Grade: %s, %i", GradeToString(grade).c_str(), PREFSMAN->m_bGradeTier02IsAllPerfects );
+	if( PREFSMAN->m_bGradeTier02IsAllPerfects )
+	{
+		if(	iTapNoteScores[pn][TNS_MARVELOUS] > 0 &&
+			iTapNoteScores[pn][TNS_PERFECT] == 0 &&
+			iTapNoteScores[pn][TNS_GREAT] == 0 &&
+			iTapNoteScores[pn][TNS_GOOD] == 0 &&
+			iTapNoteScores[pn][TNS_BOO] == 0 &&
+			iTapNoteScores[pn][TNS_MISS] == 0 &&
+			iTapNoteScores[pn][TNS_HIT_MINE] == 0 &&
+			iHoldNoteScores[pn][HNS_NG] == 0 )
+			return GRADE_TIER_1;
 
-	LOG->Trace( "GetGrade: Grade: %s", GradeToString(grade).c_str() );
+		if( iTapNoteScores[pn][TNS_PERFECT] > 0 &&
+			iTapNoteScores[pn][TNS_GREAT] == 0 &&
+			iTapNoteScores[pn][TNS_GOOD] == 0 &&
+			iTapNoteScores[pn][TNS_BOO] == 0 &&
+			iTapNoteScores[pn][TNS_MISS] == 0 &&
+			iTapNoteScores[pn][TNS_HIT_MINE] == 0 &&
+			iHoldNoteScores[pn][HNS_NG] == 0 )
+			return GRADE_TIER_2;
+
+		return max( grade, GRADE_TIER_3 );
+	}
 
 	return grade;
 }
