@@ -23,6 +23,16 @@
 #include "SongOptions.h"
 #include "RageUtil.h"
 
+Course::Course()
+{
+	m_iStages = 0;
+	m_bRepeat = false;
+	m_bRandomize = false;
+	m_iLives = 4;
+	m_iExtra = 0;
+	for( int i=0; i<MAX_COURSE_STAGES; i++ )
+		m_apSongs[i] = NULL;
+}
 
 void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 {
@@ -206,6 +216,31 @@ Notes* Course::GetNotesForStage( int iStage )
 	return NULL;
 }
 
+Song *Course::GetSong( int iStage )
+{
+	return m_apSongs[iStage];
+}
+
+CString Course::GetDescription( int iStage )
+{
+	return m_asDescriptions[iStage];
+}
+
+CString Course::GetModifiers( int iStage )
+{
+	return m_asModifiers[iStage];
+}
+
+void Course::AddStage( Song* pSong, CString sDescription, CString sModifiers )
+{
+	ASSERT( m_iStages <= MAX_COURSE_STAGES - 1 );
+	m_apSongs[m_iStages] = pSong;
+	m_asDescriptions[m_iStages] = sDescription;
+	m_asModifiers[m_iStages] = sModifiers;
+	SongOrdering[m_iStages] = m_iStages;
+
+	m_iStages++;
+}
 
 /* When bShuffled is true, returns courses in the song ordering list. */
 void Course::GetSongAndNotesForCurrentStyle( 
