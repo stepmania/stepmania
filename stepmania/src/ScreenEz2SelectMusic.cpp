@@ -55,7 +55,7 @@ const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+2);
 const ScreenMessage SM_NoSongs	= ScreenMessage(SM_User+3);
 
 ScreenEz2SelectMusic::ScreenEz2SelectMusic()
-{	
+{
 	i_ErrorDetected=0;
 	CodeDetector::RefreshCacheItems();
 
@@ -67,9 +67,9 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 
 
 	m_Menu.Load(
-		THEME->GetPathTo("BGAnimations","select music"), 
+		THEME->GetPathTo("BGAnimations","select music"),
 		THEME->GetPathTo("Graphics","select music top edge"),
-		HELP_TEXT, true, true, TIMER_SECONDS 
+		HELP_TEXT, true, true, TIMER_SECONDS
 		);
 	this->AddChild( &m_Menu );
 
@@ -96,7 +96,7 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 
 		m_ChoiceListHighlight.Load( THEME->GetPathTo("Graphics","select mode list highlight"));
 		m_ChoiceListHighlight.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y);
-		this->AddChild( &m_ChoiceListHighlight );	
+		this->AddChild( &m_ChoiceListHighlight );
 
 		#ifdef _DEBUG
 		m_debugtext.LoadFromFont( THEME->GetPathTo("Fonts","small titles") );
@@ -138,7 +138,7 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 		m_PumpDifficultyRating.SetXY( PUMP_DIFF_X, PUMP_DIFF_Y );
 		this->AddChild(&m_PumpDifficultyRating);
 
-	
+
 		m_sprOptionsMessage.Load( THEME->GetPathTo("Graphics","select music options message") );
 		m_sprOptionsMessage.StopAnimating();
 		m_sprOptionsMessage.SetXY( CENTER_X, CENTER_Y );
@@ -223,18 +223,18 @@ void ScreenEz2SelectMusic::UpdateOptions(PlayerNumber pn, int nosound)
 
 	if(asOptions.size() > 0) // check it's not empty!
 	{
-		m_MirrorIcon[pn].SetDiffuse( RageColor(0,0,0,0) );	
-	    m_ShuffleIcon[pn].SetDiffuse( RageColor(0,0,0,0) );	
+		m_MirrorIcon[pn].SetDiffuse( RageColor(0,0,0,0) );
+	    m_ShuffleIcon[pn].SetDiffuse( RageColor(0,0,0,0) );
 
 		for(unsigned i=0; i<asOptions.size(); i++)
 		{
 			if(asOptions[0] == "2X" || asOptions[0] == "1.5X" || asOptions[0] == "3X" || asOptions[0] == "4X" || asOptions[0] == "5X" || asOptions[0] == "8X" || asOptions[0] == "0.5X" || asOptions[0] == "0.75X")
 			{
-				m_SpeedIcon[pn].SetDiffuse( RageColor(1,1,1,1) );	
+				m_SpeedIcon[pn].SetDiffuse( RageColor(1,1,1,1) );
 			}
 			else
 			{
-				m_SpeedIcon[pn].SetDiffuse( RageColor(0,0,0,0) );	
+				m_SpeedIcon[pn].SetDiffuse( RageColor(0,0,0,0) );
 			}
 
 			if(asOptions[i] == "Mirror")
@@ -249,9 +249,9 @@ void ScreenEz2SelectMusic::UpdateOptions(PlayerNumber pn, int nosound)
 	}
 	else
 	{
-		m_SpeedIcon[pn].SetDiffuse( RageColor(0,0,0,0) );	
-		m_MirrorIcon[pn].SetDiffuse( RageColor(0,0,0,0) );	
-		m_ShuffleIcon[pn].SetDiffuse( RageColor(0,0,0,0) );	
+		m_SpeedIcon[pn].SetDiffuse( RageColor(0,0,0,0) );
+		m_MirrorIcon[pn].SetDiffuse( RageColor(0,0,0,0) );
+		m_ShuffleIcon[pn].SetDiffuse( RageColor(0,0,0,0) );
 	}
 	if(nosound !=0)
 		m_soundOptionsChange.Play();
@@ -350,7 +350,7 @@ void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 	m_sprOptionsMessage.BeginTweening( 0.25f );	// fade out
 	m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,0) );
 	m_sprOptionsMessage.SetTweenZoomY( 0 );
-	
+
 	m_Menu.TweenOffScreenToBlack( SM_None, false );
 
 	m_Menu.StopTimer();
@@ -392,6 +392,7 @@ void ScreenEz2SelectMusic::EasierDifficulty( PlayerNumber pn )
 	if(PREVIEWMUSICMODE == 1 && iConfirmSelection == 1)
 	{
 		iConfirmSelection = 0;
+		m_MusicBannerWheel.StopBouncing();
 		SOUNDMAN->StopMusic();
 	}
 
@@ -408,7 +409,8 @@ void ScreenEz2SelectMusic::EasierDifficulty( PlayerNumber pn )
 
 void ScreenEz2SelectMusic::HarderDifficulty( PlayerNumber pn )
 {
-	if( !GAMESTATE->IsPlayerEnabled(pn) )
+	if( !GAMESTATE->IsPlayerEnabled(pn
+		) )
 		return;
 	if( m_arrayNotes[pn].empty() )
 		return;
@@ -424,6 +426,8 @@ void ScreenEz2SelectMusic::HarderDifficulty( PlayerNumber pn )
 	if(PREVIEWMUSICMODE == 1 && iConfirmSelection == 1)
 	{
 		iConfirmSelection = 0;
+
+		m_MusicBannerWheel.StopBouncing();
 		SOUNDMAN->StopMusic();
 	}
 
@@ -434,6 +438,7 @@ void ScreenEz2SelectMusic::HarderDifficulty( PlayerNumber pn )
 //	m_soundChangeNotes.Play();
 
 	AfterNotesChange( pn );
+
 }
 
 
@@ -454,7 +459,7 @@ void ScreenEz2SelectMusic::MusicChanged()
 		m_arrayNotes[pn].clear();
 
 
-	for( pn = 0; pn < NUM_PLAYERS; ++pn) 
+	for( pn = 0; pn < NUM_PLAYERS; ++pn)
 	{
 		pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, m_arrayNotes[pn] );
 		SortNotesArrayByDifficulty( m_arrayNotes[pn] );
@@ -462,20 +467,40 @@ void ScreenEz2SelectMusic::MusicChanged()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
+		if( !GAMESTATE->IsPlayerEnabled( PlayerNumber(p) ) )
+			continue;
+		for( unsigned i=0; i<m_arrayNotes[p].size(); i++ )
+		{
+			if( m_arrayNotes[p][i]->GetDifficulty() == GAMESTATE->m_PreferredDifficulty[p] )
+			{
+				m_iSelection[p] = i;
+				break;
+			}
+		}
+
+		m_iSelection[p] = clamp( m_iSelection[p], 0, int(m_arrayNotes[p].size()) ) ;
+	}
+
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
 		AfterNotesChange( (PlayerNumber)p );
 	}
 }
 
 void ScreenEz2SelectMusic::AfterNotesChange( PlayerNumber pn )
 {
-	if( !GAMESTATE->IsPlayerEnabled(pn) )
-		return;
+
+	m_iSelection[pn] = clamp( m_iSelection[pn], 0, int(m_arrayNotes[pn].size()-1) );	// bounds clamping
+
 	Notes* pNotes = m_arrayNotes[pn].empty()? NULL: m_arrayNotes[pn][m_iSelection[pn]];
 
-	if( pNotes != NULL )
+	GAMESTATE->m_pCurNotes[pn] = pNotes;
+
+
+	if( pNotes != NULL && pn == GAMESTATE->m_MasterPlayerNumber )
 		m_PumpDifficultyRating.SetText(ssprintf("Lv.%d",pNotes->GetMeter()));
 
-	GAMESTATE->m_pCurNotes[pn] = pNotes;
+//	GAMESTATE->m_pCurNotes[pn] = pNotes;
 
 //	Notes* m_pNotes = GAMESTATE->m_pCurNotes[pn];
 

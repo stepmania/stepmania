@@ -136,7 +136,6 @@ void MusicBannerWheel::InsertNewBanner(int direction)
 		   scrlistpos = 4   4 0 1 [2] [3] [4] [0] [1] 2 3 4 0 1 2 3 // we lost 2 and got a new one
 		   scrlistpos = 3   3 4 0 [1] [2] [3] [4] [0] 1 2 3 4 0 1 2 // we lost 1 and got a new one
 		 */
-
 		if(currentPos-2 >= 0)
 			pSong = arraySongs[currentPos-2];
 		else
