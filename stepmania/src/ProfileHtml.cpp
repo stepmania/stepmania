@@ -22,10 +22,11 @@
 #include "Course.h"
 #include "Bookkeeper.h"
 #include "PrefsManager.h"
+#include "CryptManager.h"
 
 
-#define STATS_HTML			"stats.html"
-#define STYLE_CSS			"style.css"
+const CString STATS_HTML	= "Stats.html";
+const CString STYLE_CSS		= "Style.css";
 
 #define TITLE				THEME->GetMetric("ProfileHtml","Title")
 #define FOOTER				THEME->GetMetric("ProfileHtml","Footer")
@@ -39,6 +40,7 @@ inline void PRINT_OPEN(RageFile &f,CString sName,bool bExpanded,CString sID){ g_
 inline void PRINT_OPEN(RageFile &f,CString sName,bool bExpanded=false)		{ PRINT_OPEN(f,sName,bExpanded,MakeUniqueId()); }
 inline void PRINT_CLOSE(RageFile &f)										{ f.Write( "</div>\n" "</div>\n" ); g_Level--; ASSERT(g_Level>=0); }
 
+#define PRETTY_PERCENT(numerator,denominator) ssprintf("%0.2f%%",(float)numerator/(float)denominator*100)
 
 struct Table
 {
@@ -54,6 +56,9 @@ struct Table
 		Line(int r,CString n,int v)				{ sRank = ssprintf("%d",r); sName = n; sValue = ssprintf("%d",v); }
 		Line(int r,CString n,CString sn,int v)	{ sRank = ssprintf("%d",r); sName = n; sSubName = sn; sValue = ssprintf("%d",v); }
 		Line(int r,CString n,CString sn,CString ssn,int v)	{ sRank = ssprintf("%d",r); sName = n; sSubName = sn; sSubSubName = ssn; sValue = ssprintf("%d",v); }
+		Line(int r,CString n,CString v)				{ sRank = ssprintf("%d",r); sName = n; sValue = v; }
+		Line(int r,CString n,CString sn,CString v)	{ sRank = ssprintf("%d",r); sName = n; sSubName = sn; sValue = v; }
+		Line(int r,CString n,CString sn,CString ssn,CString v)	{ sRank = ssprintf("%d",r); sName = n; sSubName = sn; sSubSubName = ssn; sValue = v; }
 
 		CString sRank;
 		CString sName;
@@ -85,10 +90,15 @@ inline void PrintTable(RageFile &f,Table &table)
 		return;
 
 	bool bPrintRank = !vLines.empty() && !vLines[0].sRank.empty();
+	bool bPrintInstructions = !vLines.empty() && !vLines[0].sRank.empty() && !vLines[0].sSubName.empty() && !vLines[0].sSubSubName.empty() && !vLines[0].sValue.empty();
 
 	int iMaxItemsPerCol = (vLines.size()+iNumCols-1) / iNumCols;
 	iNumCols = (vLines.size()+iMaxItemsPerCol-1) / iMaxItemsPerCol;	// round up
-	f.Write("<table class='group'><tr>\n");
+	f.Write(ssprintf("<table class='%s'><tr>\n",bPrintInstructions?"instructions":"group"));
+	if( iNumCols == 0 )
+	{
+		f.Write("<td>empty</td>\n");
+	}
 	for( int col=0; col<iNumCols; col++ )
 	{
 		f.Write("<td>\n");
@@ -114,9 +124,18 @@ inline void PrintTable(RageFile &f,Table &table)
 				f.Write("<p class='songtitle'>");
 				f.Write( line.sName );
 				f.Write("</p>");
-				f.Write("<p class='songsubtitle'>");
-				f.Write( line.sSubName );
-				f.Write("</p>");
+				if( !line.sSubName.empty() )
+				{
+					f.Write("<p class='songsubtitle'>");
+					f.Write( line.sSubName );
+					f.Write("</p>");
+				}
+				f.Write("</td>");
+			}
+			else if( line.sValue.empty() )
+			{
+				f.Write("<td>");
+				f.Write( line.sName );
 				f.Write("</td>");
 			}
 			else
@@ -125,6 +144,17 @@ inline void PrintTable(RageFile &f,Table &table)
 				f.Write( line.sName );
 				f.Write("</td>");
 			}
+
+			if( !line.sSubSubName.empty() )
+			{
+				f.Write("<td>&nbsp;</td>");
+				f.Write("<td>");
+				f.Write("<p class='stepsdescription'>");
+				f.Write( line.sSubSubName );
+				f.Write("</p>");
+				f.Write("</td>");
+			}
+
 			if( !line.sValue.empty() )
 			{
 				f.Write("<td>&nbsp;</td>");
@@ -142,6 +172,95 @@ inline void PrintTable(RageFile &f,Table &table)
 	}
 	f.Write("</tr></table>\n");
 } 
+
+#define STRING_AS_LINK(s) CString("<a href='"+s+"'>"+s+"</a>")
+
+void PrintInstructions( RageFile &f, const Profile *pProfile, CString sTitle )
+{
+	PRINT_OPEN(f,sTitle);
+	{
+		PRINT_OPEN(f,"Overview",true);
+		{
+			BEGIN_TABLE(1);
+			TABLE_LINE1("<p>This directory contains all your game profile data.  Please read these instructions before modifying or moving any of these files.  Modifying files may result in irreversible loss of your data.</p>\n");
+			END_TABLE;
+		}
+		PRINT_CLOSE(f);
+
+		PRINT_OPEN(f,"Description of Files");
+		{
+			BEGIN_TABLE(1);
+			TABLE_LINE2(STRING_AS_LINK(EDITS_SUBDIR),		CString("Place edit step files in this directory.  See the Edits section below for more details."));
+			TABLE_LINE2(STRING_AS_LINK(SCREENSHOTS_SUBDIR),	CString("All screenshots that you take are saved in this directory."));
+			TABLE_LINE2(DONT_SHARE_SIG,						CString("This is a secret file that you should never share with anyone else.  See the Sharing Your Data section below for more details."));
+			TABLE_LINE2(STRING_AS_LINK(EDITABLE_INI),		CString("Holds preferences that you can edit offline using your home computer.  This file is not digitally signed."));
+			TABLE_LINE2(STATS_HTML,							CString("You're looking at this file now.  It contains a formatted view of all your saved data, plus some data from the last machine you played on."));
+			TABLE_LINE2(STATS_HTML+SIGNATURE_APPEND,		CString("The signature file for "+STATS_HTML+"."));
+			TABLE_LINE2(STRING_AS_LINK(STATS_XML),			CString("This is the primary data file.  It contains all the score data and statistics, and is read by the game when you join."));
+			TABLE_LINE2(STATS_XML+SIGNATURE_APPEND,			CString("The signature file for "+STATS_XML+"."));
+			TABLE_LINE2(STYLE_CSS,							CString("Contains style data used by "+STATS_HTML+"."));
+			END_TABLE;
+		}
+		PRINT_CLOSE(f);
+
+		PRINT_OPEN(f,"Digital Signatures");
+		{
+			BEGIN_TABLE(1);
+			TABLE_LINE1("<p>Some files on your memory card have a corresponding digital signature.  Digital signatures are used to verify that your files haven't been modified outside of the game.  This prevents cheaters from changing their score data and then passing it off as real.</p>\n");
+			TABLE_LINE1("<p>Before the game reads your memory card data, it verifies that your data and digital signatures match.  If the data and signatures don't match, then your data has been modified outside of the game.  When the game detects this condition, it will completely ignore your tampered data.  It is very important that you -do not- modify any file that has a digital signature because this will cause your data to be permanently unusable.</p>\n");
+			TABLE_LINE1("<p>If someone else shares their profile data with you, you can verify their score data using digital signatures.  To verify their data, you'll need 3 things:</p>\n");
+			TABLE_LINE1("<p>- the "+STATS_XML+" data file</p>\n");
+			TABLE_LINE1("<p>- the digital signature file "+STATS_XML+SIGNATURE_APPEND+"</p>\n");
+			TABLE_LINE1("<p>- a <a href='http://www.stepmania.com/stepmania/digitalsignatures/'>small utility</a> that will check data against a signature</p>\n");
+			END_TABLE;
+		}
+		PRINT_CLOSE(f);
+
+		PRINT_OPEN(f,"About Editable Preferences");
+		{
+			BEGIN_TABLE(1);
+			TABLE_LINE1("<p>The file "+STRING_AS_LINK(EDITABLE_INI)+" contains settings that you can modify using your home computer.  If you're using a Windows PC, you can click <a href='"+EDITABLE_INI+"'>here</a> to open the file for editing.  This file is not digitally signed and the game will import any changes you make to this file.</p>\n");
+			END_TABLE;
+		}
+		PRINT_CLOSE(f);
+
+		PRINT_OPEN(f,"About Screenshots");
+		{
+			BEGIN_TABLE(1);
+			TABLE_LINE1("<p>The "+STRING_AS_LINK(SCREENSHOTS_SUBDIR)+" directory contains all screenshots that you've captured while playing the game.  See the Screenshots section later on this page to see thumbnails and more information captured at the time of the screenshot.  The Screenshots section also lists an MD5 hash of the screenshot file.  You can use the MD5 has to verify that the screenshot has not been modified since it was first saved.</p>\n");
+			TABLE_LINE1("<p>If your memory card is full, you may delete files from this directory or the move files to another disk.  If you move a screenshot to another disk, you can still verify the screenshot file using the MD5 hash.</p>\n");
+			END_TABLE;
+		}
+		PRINT_CLOSE(f);
+
+		PRINT_OPEN(f,"About Edits");
+		{
+			BEGIN_TABLE(1);
+			TABLE_LINE1("<p>The "+STRING_AS_LINK(EDITS_SUBDIR)+" directory contains edit step files that you've created yourself or downloaded from the internet.  See <a href='http://www.stepmania.com/stepmania/edits'>here</a> for more information about edit files.</p>\n");
+			END_TABLE;
+		}
+		PRINT_CLOSE(f);
+
+		PRINT_OPEN(f,"Sharing Your Data");
+		{
+			BEGIN_TABLE(1);
+			TABLE_LINE1("<p>You can share your score data with other players or submit it to a web site for an internet ranking contest.  When sharing your data though, do -not- share the file "+DONT_SHARE_SIG+".  "+DONT_SHARE_SIG+" is private digital signature required by the game before loading memory card data.  Without "+DONT_SHARE_SIG+", the person you're sharing data with can verify that your data is original, but can't load your data using their memory card or pass your scores off as their own.</p>\n");
+			TABLE_LINE1("<p>If you do share your "+DONT_SHARE_SIG+" with someone, then they can completely replicate your memory card and pass your scores off as their own.</p>\n");
+			END_TABLE;
+		}
+		PRINT_CLOSE(f);
+
+		PRINT_OPEN(f,"Backing Up/Moving Your Data");
+		{
+			BEGIN_TABLE(1);
+			TABLE_LINE1("<p>To make a backup of your data, copy the entire "+PREFSMAN->m_sMemoryCardProfileSubdir+"/ directory on the root of your memory card to your local hard drive.</p>\n");
+			TABLE_LINE1("<p>To move your data from the current memory card to a new memory card, move the entire "+PREFSMAN->m_sMemoryCardProfileSubdir+"/ directory on your current memory card to the root directory on the new memory card.</p>\n");
+			END_TABLE;
+		}
+		PRINT_CLOSE(f);
+	}
+	PRINT_CLOSE(f);
+}
 
 void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vector<Song*> &vpSongs, vector<Steps*> &vpAllSteps, vector<StepsType> &vStepsTypesToShow, map<Steps*,Song*> mapStepsToSong, vector<Course*> vpCourses )
 {
@@ -257,6 +376,12 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 
 		unsigned uMaxToShow = min( vpSongs.size(), (unsigned)100 );
 
+		// compute total plays
+		int iTotalPlays = 0;
+		for( unsigned i=0; i<vpSongs.size(); i++ )
+			iTotalPlays += pProfile->GetSongNumTimesPlayed( vpSongs[i] );
+
+
 		{
 			PRINT_OPEN(f, "Most Popular Songs" );
 			{
@@ -267,8 +392,10 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 					int iNumTimesPlayed = pProfile->GetSongNumTimesPlayed(pSong);
 					if( iNumTimesPlayed == 0 || iNumTimesPlayed < iPopularNumPlaysThreshold )	// not popular
 						break;	// done searching
-					TABLE_LINE4(i+1, pSong->GetDisplayMainTitle(), pSong->GetDisplaySubTitle(), iNumTimesPlayed );
+					TABLE_LINE4(i+1, pSong->GetDisplayMainTitle(), pSong->GetDisplaySubTitle(), PRETTY_PERCENT(iNumTimesPlayed,iTotalPlays) );
 				}
+				if( i == 0 )
+					TABLE_LINE1("empty");
 				END_TABLE;
 			}
 			PRINT_CLOSE(f);
@@ -285,8 +412,10 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 					int iNumTimesPlayed = pProfile->GetSongNumTimesPlayed(pSong);
 					if( iNumTimesPlayed >= iPopularNumPlaysThreshold )	// not unpopular
 						break;	// done searching
-					TABLE_LINE4(i+1, pSong->GetDisplayMainTitle(), pSong->GetDisplaySubTitle(), iNumTimesPlayed );
+					TABLE_LINE4(i+1, pSong->GetDisplayMainTitle(), pSong->GetDisplaySubTitle(), PRETTY_PERCENT(iNumTimesPlayed,iTotalPlays) );
 				}
+				if( i == 0 )
+					TABLE_LINE1("empty");
 				END_TABLE;
 			}
 			PRINT_CLOSE(f);
@@ -302,15 +431,18 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 				for( unsigned i=0; i<uNumToShow; i++ )
 				{
 					Steps* pSteps = vpAllSteps[i];
-					if( pProfile->GetStepsNumTimesPlayed(pSteps)==0 )
+					int iNumTimesPlayed = pProfile->GetStepsNumTimesPlayed(pSteps);
+					if( iNumTimesPlayed==0 )
 						continue;	// skip
 					Song* pSong = mapStepsToSong[pSteps];
 					CString s;
 					s += GAMEMAN->NotesTypeToString(pSteps->m_StepsType);
 					s += " ";
 					s += DifficultyToString(pSteps->GetDifficulty());
-					TABLE_LINE5(i+1, pSong->GetDisplayMainTitle(), pSong->GetDisplaySubTitle(), s, pProfile->GetStepsNumTimesPlayed(pSteps) );
+					TABLE_LINE5(i+1, pSong->GetDisplayMainTitle(), pSong->GetDisplaySubTitle(), s, PRETTY_PERCENT(iNumTimesPlayed,iTotalPlays) );
 				}
+				if( i == 0 )
+					TABLE_LINE1("empty");
 				END_TABLE;
 			}
 			PRINT_CLOSE(f);
@@ -326,8 +458,11 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 				for( unsigned i=0; i<uNumToShow; i++ )
 				{
 					Course* pCourse = vpCourses[i];
-					TABLE_LINE3(i+1, pCourse->m_sName, pProfile->GetCourseNumTimesPlayed(pCourse) );
+					int iNumTimesPlayed = pProfile->GetCourseNumTimesPlayed(pCourse);
+					TABLE_LINE3(i+1, pCourse->m_sName, PRETTY_PERCENT(iNumTimesPlayed,iTotalPlays) );
 				}
+				if( i == 0 )
+					TABLE_LINE1("empty");
 				END_TABLE;
 			}
 			PRINT_CLOSE(f);
@@ -337,46 +472,72 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 }
 
 
-typedef void (*FnPrintSong)(RageFile &f, const Profile *pProfile, Song* pSong );
-typedef void (*FnPrintGroup)(RageFile &f, const Profile *pProfile, CString sGroup );
-typedef void (*FnPrintStepsType)(RageFile &f, const Profile *pProfile, StepsType st );
+// return true if anything was printed
+typedef bool (*FnPrintSong)(RageFile &f, const Profile *pProfile, Song* pSong );
+typedef bool (*FnPrintGroup)(RageFile &f, const Profile *pProfile, CString sGroup );
+typedef bool (*FnPrintStepsType)(RageFile &f, const Profile *pProfile, StepsType st );
 
 
-void PrintSongsInGroup( RageFile &f, const Profile *pProfile, CString sGroup, FnPrintSong pFn )
+bool PrintSongsInGroup( RageFile &f, const Profile *pProfile, CString sGroup, FnPrintSong pFn )
 {
+	vector<Song*> vpSongs;
+	SONGMAN->GetSongs( vpSongs, sGroup );
+
+	if( vpSongs.empty() )
+		return false;
+
 	PRINT_OPEN(f, sGroup );
 	{
-		vector<Song*> vpSongs;
-		SONGMAN->GetSongs( vpSongs, sGroup );
-
+		bool bPrintedAny = false;
 		for( unsigned i=0; i<vpSongs.size(); i++ )
 		{
 			Song* pSong = vpSongs[i];
-			
-			pFn( f, pProfile, pSong );
+			bPrintedAny |= pFn( f, pProfile, pSong );
+		}
+
+		if( !bPrintedAny )
+		{
+			BEGIN_TABLE(1);
+			TABLE_LINE1("empty");
+			END_TABLE;
 		}
 	}
 	PRINT_CLOSE(f);
+
+	return true;
 }
 
-void PrintGroups( RageFile &f, const Profile *pProfile, CString sTitle, FnPrintGroup pFn )
+bool PrintGroups( RageFile &f, const Profile *pProfile, CString sTitle, FnPrintGroup pFn )
 {
 	CStringArray asGroups;
 	SONGMAN->GetGroupNames( asGroups );
 	
+	if( asGroups.empty() )
+		return false;
+
 	PRINT_OPEN(f, sTitle );
 	{
+		bool bPrintedAny = false;
+
 		for( unsigned g=0; g<asGroups.size(); g++ )
 		{
 			CString sGroup = asGroups[g];
-			
-			pFn( f, pProfile, sGroup );
+			bPrintedAny |= pFn( f, pProfile, sGroup );
+		}
+
+		if( !bPrintedAny )
+		{
+			BEGIN_TABLE(1);
+			TABLE_LINE1("empty");
+			END_TABLE;
 		}
 	}
 	PRINT_CLOSE(f);
+
+	return true;
 }
 
-void PrintStepsTypes( RageFile &f, const Profile *pProfile, CString sTitle, vector<StepsType> vStepsTypesToShow, FnPrintStepsType pFn )
+bool PrintStepsTypes( RageFile &f, const Profile *pProfile, CString sTitle, vector<StepsType> vStepsTypesToShow, FnPrintStepsType pFn )
 {
 	PRINT_OPEN(f, sTitle );
 	{
@@ -388,22 +549,20 @@ void PrintStepsTypes( RageFile &f, const Profile *pProfile, CString sTitle, vect
 		}
 	}
 	PRINT_CLOSE(f);
+
+	return true;
 }
 
-void PrintHighScoresForSong( RageFile &f, const Profile *pProfile, Song* pSong )
+bool PrintHighScoresForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 {
 	int iNumTimesPlayed = pProfile->GetSongNumTimesPlayed(pSong);
 	if( iNumTimesPlayed == 0 )
-		return;	// skip
+		return false;	// skip
 
 	vector<Steps*> vpSteps = pSong->GetAllSteps();
 
 	PRINT_OPEN(f, pSong->GetFullDisplayTitle() );
 	{
-		BEGIN_TABLE(2);
-		TABLE_LINE2( "NumTimesPlayed", iNumTimesPlayed );
-		END_TABLE;
-
 		//
 		// Print Steps list
 		//
@@ -423,10 +582,6 @@ void PrintHighScoresForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 			PRINT_OPEN(f, s, true);
 			{
 				BEGIN_TABLE(2);
-				TABLE_LINE2( "NumTimesPlayed", hsl.iNumTimesPlayed );
-				END_TABLE;
-			
-				BEGIN_TABLE(2);
 				for( unsigned i=0; i<hsl.vHighScores.size(); i++ )
 				{
 					const HighScore &hs = hsl.vHighScores[i];
@@ -441,11 +596,13 @@ void PrintHighScoresForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 		}
 	}
 	PRINT_CLOSE(f);
+
+	return true;
 }
 
-void PrintHighScoresForGroup(RageFile &f, const Profile *pProfile, CString sGroup )
+bool PrintHighScoresForGroup(RageFile &f, const Profile *pProfile, CString sGroup )
 {
-	PrintSongsInGroup( f, pProfile, sGroup, PrintHighScoresForSong );
+	return PrintSongsInGroup( f, pProfile, sGroup, PrintHighScoresForSong );
 }
 
 void PrintHighScores( RageFile &f, const Profile *pProfile, CString sTitle, vector<Song*> &vpSongs, vector<Steps*> &vpAllSteps, vector<StepsType> &vStepsTypesToShow, map<Steps*,Song*> mapStepsToSong, vector<Course*> vpCourses )
@@ -453,7 +610,7 @@ void PrintHighScores( RageFile &f, const Profile *pProfile, CString sTitle, vect
 	PrintGroups( f, pProfile, sTitle, PrintHighScoresForGroup );
 }
 
-void PrintDifficultyTableForStepsType( RageFile &f, const Profile *pProfile, StepsType st )
+bool PrintGradeTableForStepsType( RageFile &f, const Profile *pProfile, StepsType st )
 {
 	unsigned i;
 	const vector<Song*> &vpSongs = SONGMAN->GetAllSongs();
@@ -468,7 +625,7 @@ void PrintDifficultyTableForStepsType( RageFile &f, const Profile *pProfile, Ste
 		{
 			if( dc == DIFFICULTY_EDIT )
 				continue;	// skip
-			f.PutLine( ssprintf("<td>%s</td>", Capitalize(DifficultyToString(dc).Left(3)).c_str()) );
+			f.PutLine( ssprintf("<td>%s</td>", Capitalize(DifficultyToString(dc)).c_str()) );
 		}
 		f.PutLine( "</tr>" );
 
@@ -490,10 +647,22 @@ void PrintDifficultyTableForStepsType( RageFile &f, const Profile *pProfile, Ste
 					continue;	// skip
 
 				Steps* pSteps = pSong->GetStepsByDifficulty( st, dc, false );
-				if( pSteps )
-					f.PutLine( ssprintf("<td><p class='meter'>%d</p></td>",pSteps->GetMeter()) );
+				if( pSteps && !pSteps->IsAutogen() )
+				{
+					f.PutLine("<td>");
+					f.PutLine("<table class='meterAndGrade'><tr>");
+					f.PutLine( ssprintf("<td class='meter'><p class='meter'>%d</p></td>",pSteps->GetMeter()) );
+					HighScore hs = pProfile->GetStepsHighScoreList( pSteps ).GetTopScore();
+					Grade grade = hs.grade;
+					if( grade != GRADE_NO_DATA )
+						f.PutLine( ssprintf("<td class='grade'><p class='grade'>%s</p></td>",GradeToThemedString(grade).c_str()) );
+					f.PutLine("</tr></table>");
+					f.PutLine("</td>");
+				}
 				else
+				{
 					f.PutLine( "<td>&nbsp;</td>" );
+				}
 			}
 
 			f.Write( "</tr>" );
@@ -502,14 +671,16 @@ void PrintDifficultyTableForStepsType( RageFile &f, const Profile *pProfile, Ste
 		f.PutLine( "</table>\n" );
 	}
 	PRINT_CLOSE(f);
+
+	return true;
 }
 
-void PrintDifficultyTable( RageFile &f, const Profile *pProfile, CString sTitle, vector<Song*> &vpSongs, vector<Steps*> &vpAllSteps, vector<StepsType> &vStepsTypesToShow, map<Steps*,Song*> mapStepsToSong, vector<Course*> vpCourses )
+void PrintGradeTable( RageFile &f, const Profile *pProfile, CString sTitle, vector<Song*> &vpSongs, vector<Steps*> &vpAllSteps, vector<StepsType> &vStepsTypesToShow, map<Steps*,Song*> mapStepsToSong, vector<Course*> vpCourses )
 {
-	PrintStepsTypes( f, pProfile, sTitle, vStepsTypesToShow, PrintDifficultyTableForStepsType );
+	PrintStepsTypes( f, pProfile, sTitle, vStepsTypesToShow, PrintGradeTableForStepsType );
 }
 
-void PrintInventoryForSong( RageFile &f, const Profile *pProfile, Song* pSong )
+bool PrintInventoryForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 {
 	vector<Steps*> vpSteps = pSong->GetAllSteps();
 
@@ -525,6 +696,7 @@ void PrintInventoryForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 		TABLE_LINE2( "Credit", pSong->m_sCredit );
 		TABLE_LINE2( "MusicLength", SecondsToTime(pSong->m_fMusicLengthSeconds) );
 		TABLE_LINE2( "Lyrics", !pSong->m_sLyricsFile.empty() );
+		TABLE_LINE2( "NumTimesPlayed", pProfile->GetSongNumTimesPlayed(pSong) );
 		END_TABLE;
 
 		//
@@ -541,9 +713,10 @@ void PrintInventoryForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 				DifficultyToString(pSteps->GetDifficulty());
 			PRINT_OPEN(f, s, true);	// use poister value as the hash
 			{
-				BEGIN_TABLE(2);
-				TABLE_LINE2( "Description", pSteps->GetDescription() );
+				BEGIN_TABLE(3);
 				TABLE_LINE2( "Meter", pSteps->GetMeter() );
+				TABLE_LINE2( "Description", pSteps->GetDescription() );
+				TABLE_LINE2( "NumTimesPlayed", pProfile->GetStepsNumTimesPlayed(pSteps) );
 				END_TABLE;
 
 				BEGIN_TABLE(2);
@@ -560,11 +733,13 @@ void PrintInventoryForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 		}
 	}
 	PRINT_CLOSE(f);
+
+	return true;
 }
 
-void PrintInventoryForGroup( RageFile &f, const Profile *pProfile, CString sGroup )
+bool PrintInventoryForGroup( RageFile &f, const Profile *pProfile, CString sGroup )
 {
-	PrintSongsInGroup( f, pProfile, sGroup, PrintInventoryForSong );
+	return PrintSongsInGroup( f, pProfile, sGroup, PrintInventoryForSong );
 }
 
 void PrintInventoryList( RageFile &f, const Profile *pProfile, CString sTitle, vector<Song*> &vpSongs, vector<Steps*> &vpAllSteps, vector<StepsType> &vStepsTypesToShow, map<Steps*,Song*> mapStepsToSong, vector<Course*> vpCourses )
@@ -683,9 +858,13 @@ void PrintScreenshots( RageFile &f, const Profile *pProfile, CString sTitle, CSt
 	PRINT_CLOSE(f);
 }
 
-enum SaveType { SAVE_TYPE_PLAYER, SAVE_TYPE_MACHINE };
 
-void SaveStatsWebPageToDir( CString sDir, SaveType saveType, const Profile *pProfile, const Profile *pProfileMachine )
+void SaveStatsWebPage( 
+	CString sDir, 
+	const Profile *pProfile, 	
+	const Profile *pMachineProfile, 	
+	HtmlType htmlType
+	)
 {
 	CString fn = sDir + STATS_HTML;
 
@@ -790,47 +969,58 @@ function expandIt(whichEl)\n\
 <link rel='stylesheet' type='text/css' href='%s'>\n\
 </head>\n\
 <body>",
-TITLE.c_str(), STYLE_CSS ) );
+TITLE.c_str(), STYLE_CSS.c_str() ) );
 	}
 
-	CString sType;
-	switch( saveType )
-	{
-	case SAVE_TYPE_PLAYER:	sType = "Player: ";		break;
-	case SAVE_TYPE_MACHINE:	sType = "Machine: ";	break;
-	}
-
-	CString sName = 
-		pProfile->m_sLastUsedHighScoreName.empty() ? 
-		pProfile->m_sDisplayName :
-		pProfile->m_sLastUsedHighScoreName;
+	CString sName = pProfile->GetDisplayName();
+	CString sMachineName = pMachineProfile->GetDisplayName();
 	time_t ltime = time( NULL );
 	CString sTime = ctime( &ltime );
 
-	f.Write( ssprintf(
-		"<table border='0' cellpadding='0' cellspacing='0' width='100%%' cellspacing='5'><tr><td><h1>%s</h1></td><td>%s %s<br>%s</td></tr></table>\n",
-		TITLE.c_str(), sType.c_str(), sName.c_str(), sTime.c_str() ) );
-
-	CString sPlayerName = pProfile->GetDisplayName();
-	CString sMachineName = pProfileMachine->GetDisplayName();
-
-	switch( saveType )
+	CString sNameCell;
+	switch( htmlType )
 	{
-	case SAVE_TYPE_PLAYER:
-		PrintStatistics(		f, pProfile,		sPlayerName+"'s Statistics",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintPopularity(		f, pProfile,		sPlayerName+"'s Popularity",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintHighScores(		f, pProfile,		sPlayerName+"'s High Scores",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintScreenshots(		f, pProfile,		sPlayerName+"'s Screenshots",	sDir );
-		PrintPopularity(		f, pProfileMachine, sMachineName+"'s Popularity",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintHighScores(		f, pProfileMachine, sMachineName+"'s High Scores",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+	case HTML_TYPE_PLAYER:
+		sNameCell = ssprintf(
+			"Player Name: %s<br>\n"
+			"Last Machine: %s<br>\n"
+			"%s\n",
+			sName.c_str(), sMachineName.c_str(), sTime.c_str() );
 		break;
-	case SAVE_TYPE_MACHINE:
-		PrintStatistics(		f, pProfile,		"Statistics",				vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintPopularity(		f, pProfile,		"Popularity",				vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintHighScores(		f, pProfile,		"High Scores",				vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintDifficultyTable(	f, pProfile,		"Difficulty Table",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintInventoryList(		f, pProfile,		"Song Information",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintBookkeeping(		f, pProfile,		"Bookkeeping",				vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );	
+	case HTML_TYPE_MACHINE:
+		sNameCell = ssprintf(
+			"Machine: %s<br>\n"
+			"%s\n",
+			sName.c_str(), sTime.c_str() );
+		break;
+	default:
+		ASSERT(0);
+	}
+
+	f.Write( ssprintf(
+		"<table border='0' cellpadding='0' cellspacing='0' width='100%%' cellspacing='5'><tr><td><h1>%s</h1></td><td>%s</td></tr></table>\n",
+		TITLE.c_str(), sNameCell.c_str() ) );
+
+	switch( htmlType )
+	{
+	case HTML_TYPE_PLAYER:
+		PrintInstructions(	f, pProfile,	"Instructions" );
+		PrintStatistics(	f, pProfile,	"My Statistics",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintPopularity(	f, pProfile,	"My Popularity",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintHighScores(	f, pProfile,	"My High Scores",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintScreenshots(	f, pProfile,	"My Screenshots",			sDir );
+		PrintGradeTable(	f, pProfile,	"My Grade Table",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintPopularity(	f, pProfile,	"Last Machine Popularity",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintHighScores(	f, pProfile,	"Last Machine High Scores",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		break;
+	case HTML_TYPE_MACHINE:
+		PrintStatistics(	f, pProfile,	"Statistics",				vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintPopularity(	f, pProfile,	"Popularity",				vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintHighScores(	f, pProfile,	"High Scores",				vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintScreenshots(	f, pProfile,	"Screenshots",				sDir );
+		PrintGradeTable(	f, pProfile,	"Grade Table",				vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintInventoryList(	f, pProfile,	"Song Information",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintBookkeeping(	f, pProfile,	"Bookkeeping",				vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );	
 		break;
 	default:
 		ASSERT(0);
@@ -838,25 +1028,23 @@ TITLE.c_str(), STYLE_CSS ) );
 
 	f.PutLine( ssprintf("<p class='footer'>%s</p>\n", FOOTER.c_str()) );
 
-	f.PutLine( "</body>" );
-	f.PutLine( "</html>" );
+	f.PutLine( "</body>\n" );
+	f.PutLine( "</html>\n" );
+	f.Close();
 
+	//
+	// Sign Stats.html
+	//
+	if( PREFSMAN->m_bSignProfileData )
+		CryptManager::SignFileToFile(fn);
+	
 	//
 	// Copy CSS file from theme.  If the copy fails, oh well...
 	// 
 	CString sStyleFile = THEME->GetPathToO("ProfileManager style.css");
 	FileCopy( sStyleFile, sDir+STYLE_CSS );
 	LOG->Trace( "Done." );		
-}
 
-void SavePlayerHtmlToDir( CString sDir, const Profile* pProfilePlayer, const Profile* pProfileMachine )
-{
-	SaveStatsWebPageToDir( sDir, SAVE_TYPE_PLAYER, pProfilePlayer, pProfileMachine );
-}
-
-void SaveMachineHtmlToDir( CString sDir, const Profile* pProfileMachine )
-{
-	SaveStatsWebPageToDir( sDir, SAVE_TYPE_MACHINE, pProfileMachine, pProfileMachine );
 }
 
 

@@ -1310,7 +1310,7 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 					Profile* pProfile = PROFILEMAN->GetProfile(pn);
 					Profile::Screenshot screenshot;
 					screenshot.sFileName = sFileName;
-					screenshot.sSignature = CRYPTMAN->GetFileSignature( sPath );
+					screenshot.sMD5 = CRYPTMAN->GetMD5( sPath );
 					screenshot.highScore = m_HighScore[pn];
 					pProfile->AddScreenshot( screenshot );
 				}

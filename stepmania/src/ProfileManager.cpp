@@ -229,7 +229,7 @@ CString ProfileManager::GetPlayerName( PlayerNumber pn ) const
 {
 	const Profile *prof = GetProfile( pn );
 	if( prof )
-		return prof->m_sLastUsedHighScoreName;
+		return prof->GetDisplayName();
 
 	const char *names[NUM_PLAYERS] = { "PLAYER 1", "PLAYER 2" };
 	return names[pn];

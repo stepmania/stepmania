@@ -13,8 +13,14 @@
 
 #include "Profile.h"
 
-void SavePlayerHtmlToDir( CString sDir, const Profile* pProfilePlayer, const Profile* pProfileMachine );
-void SaveMachineHtmlToDir( CString sDir, const Profile* pProfileMachine  );
+enum HtmlType { HTML_TYPE_MACHINE, HTML_TYPE_PLAYER };
+
+void SaveStatsWebPage( 
+	CString sDir, 
+	const Profile *pProfile, 	
+	const Profile *pMachineProfile, 	
+	HtmlType htmlType
+	);
 
 
 #endif

@@ -1156,7 +1156,7 @@ CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature 
 	FlushDirCache();
 
 	if( bMakeSignature )
-		CryptManager::SignFile( sPath );
+		CryptManager::SignFileToFile( sPath );
 
 	return sFileName;
 }

@@ -7,8 +7,8 @@
 
 #include "crypto/CryptRSA.h"
 #include "crypto/CryptRand.h"
+#include "crypto/CryptMD5.h"
 
-static const CString SIGNATURE_APPEND = ".sig.rsa";
 static const CString PRIVATE_KEY_PATH = "Data/private.key.rsa";
 static const CString PUBLIC_KEY_PATH = "Data/public.key.rsa";
 static const int KEY_LENGTH = 1024;
@@ -63,8 +63,11 @@ void CryptManager::GenerateRSAKey( unsigned int keyLength, CString privFilename,
 	out.Close();
 }
 
-void CryptManager::SignFile( CString sPath )
+void CryptManager::SignFileToFile( CString sPath, CString sSignatureFilename )
 {
+	if( sSignatureFilename == "" )
+		sSignatureFilename = sPath + SIGNATURE_APPEND;
+
 	LOG->Trace("SignFile(%s)", sPath.c_str());
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
@@ -74,24 +77,25 @@ void CryptManager::SignFile( CString sPath )
 	if( !IsAFile(sPath) )
 		return;
 
-	const CString sig = GetFileSignature( sPath );
+	const CString sig = Sign( sPath );
 
 	RageFile out;
-	const CString sSignatureFilename = sPath + SIGNATURE_APPEND;
 	if( !out.Open( sSignatureFilename, RageFile::WRITE ) )
 		RageException::Throw( "Error opening %s: %s", sSignatureFilename.c_str(), out.GetError().c_str() );
 	out.Write( sig );
 }
 
-bool CryptManager::VerifyFile( CString sPath )
+bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFilename )
 {
+	if( sSignatureFilename == "" )
+		sSignatureFilename = sPath + SIGNATURE_APPEND;
+
 	LOG->Trace("VerifyFile(%s)", sPath.c_str());
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
 	if( !IsAFile(PUBLIC_KEY_PATH) )
 		return false;
 
-	const CString sSignatureFilename = sPath + SIGNATURE_APPEND;
 	if( !IsAFile(sSignatureFilename) )
 		return false;
 
@@ -103,10 +107,10 @@ bool CryptManager::VerifyFile( CString sPath )
 		in.Read( sig );
 	}
 
-	return VerifyFile( sPath, sig );
+	return Verify( sPath, sig );
 }
 
-CString CryptManager::GetFileSignature( CString sPath )
+CString CryptManager::Sign( CString sPath )
 {
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
@@ -140,7 +144,7 @@ CString CryptManager::GetFileSignature( CString sPath )
 	return sig;
 }
 
-bool CryptManager::VerifyFile( CString sPath, CString sSignature )
+bool CryptManager::Verify( CString sPath, CString sSignature )
 {
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
@@ -171,21 +175,42 @@ bool CryptManager::VerifyFile( CString sPath, CString sSignature )
 	return key.Verify( data, sSignature );
 }
 
+CString BinaryToHex( const unsigned char *string, int iNumBytes )
+{
+	CString s;
+	for( int i=0; i<iNumBytes; i++ )
+	{
+		unsigned val = string[i];
+		s += ssprintf( "%x", val );
+	}
+	return s;
+}
 
-void CryptManager::DigestFile( CString fn )
+CString CryptManager::GetMD5( CString fn )
 {
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
-//	MD5 md5;
-//	HashFilter md5Filter(md5);
-//
-//	auto_ptr<ChannelSwitch> channelSwitch(new ChannelSwitch);
-//	channelSwitch->AddDefaultRoute(md5Filter);
-//	RageFileSource(filename, true, channelSwitch.release());
-//
-//	HexEncoder encoder(new RageFileSink(cout), false);
-//	cout << "\nMD5: ";
-//	md5Filter.TransferTo(encoder);
+	struct MD5Context md5c;
+	unsigned char digest[16];
+	int iBytesRead;
+	unsigned char buffer[1024];
+
+	RageFile file;
+	if( !file.Open( fn, RageFile::READ ) )
+	{
+		LOG->Warn( "GetMD5: Failed to open file '%s'", fn.c_str() );
+		return "";
+	}
+
+	MD5Init(&md5c);
+	while( !file.AtEOF() && file.GetError().empty() )
+	{
+		iBytesRead = file.Read( buffer, sizeof(buffer) );
+		MD5Update(&md5c, buffer, iBytesRead);
+	}
+	MD5Final(digest, &md5c);
+
+	return BinaryToHex( digest, sizeof(digest) );
 }
 
 CString CryptManager::GetPublicKeyFileName()

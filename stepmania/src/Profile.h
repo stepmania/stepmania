@@ -19,6 +19,36 @@
 #include "XmlFile.h"
 #include "HighScore.h"
 
+
+//
+// Current file versions
+//
+const CString STATS_XML				= "Stats.xml";
+
+const CString EDITABLE_INI			= "Editable.ini";
+// Editable data is an INI because the default INI file association on Windows 
+// systems will open the ini file in an editor.  The default association for 
+// XML will open in IE.  Users have a much better chance of discovering how to 
+// edit this data if they don't have to fight against the file associations.
+
+const CString DONT_SHARE_SIG		= "DontShare.sig";
+// The "don't share" file is something that the user should always keep private.
+// They can safely share STATS_XML with STATS_XML's signature so that others
+// can authenticate the STATS_XML data.  However, others can't copy that data
+// to their own profile for use in the game unless they also have the "don't 
+// share" file.  DontShare contains a piece of information that we can 
+// construct using STATS_XML but the user can't construct using STATS_XML.
+// The file contains a signature of the STATS_XML's signature.
+
+const CString PUBLIC_KEY_FILE		= "public.key";
+const CString SCREENSHOTS_SUBDIR	= "Screenshots/";
+const CString EDITS_SUBDIR			= "Edits/";
+
+#define REASONABLE_EDITABLE_INI_SIZE_BYTES	2*1000		// 2KB
+#define REASONABLE_STATS_XML_SIZE_BYTES		5*1000*1000	// 5MB
+
+
+
 class Song;
 class Steps;
 class Course;
@@ -44,12 +74,12 @@ public:
 	// Editable data
 	//
 	CString m_sDisplayName;
+	CString m_sLastUsedHighScoreName;	// this doesn't really belong in "editable", but we need it in the smaller editable file so that it can be ready quickly.
 	float m_fWeightPounds;
 
 	//
 	// General data
 	//
-	CString m_sLastUsedHighScoreName;
 	bool m_bUsingProfileDefaultModifiers;
 	CString m_sDefaultModifiers;
 	int m_iTotalPlays;
@@ -116,7 +146,7 @@ public:
 	struct Screenshot
 	{
 		CString sFileName;	// no directory part - just the file name
-		CString sSignature;	// sFile signed with the machine's private key
+		CString sMD5;	// MD5 hash of the screenshot file
 		HighScore highScore;	// high score that the screenshot is taken of
 	};
 	vector<Screenshot> m_vScreenshots;
@@ -153,14 +183,14 @@ public:
 	void LoadCourseScoresFromDirSM390a12( CString sDir );
 	void LoadCategoryScoresFromDirSM390a12( CString sDir );
 	
-	void LoadEditableDataFromNode( const XNode* pNode );
+	void LoadEditableDataFromDir( CString sDir );
 	void LoadGeneralDataFromNode( const XNode* pNode );
 	void LoadSongScoresFromNode( const XNode* pNode );
 	void LoadCourseScoresFromNode( const XNode* pNode );
 	void LoadCategoryScoresFromNode( const XNode* pNode );
 	void LoadScreenshotDataFromNode( const XNode* pNode );
 
-	XNode* SaveEditableDataCreateNode() const;
+	void SaveEditableDataToDir( CString sDir ) const;
 	XNode* SaveGeneralDataCreateNode() const;
 	XNode* SaveSongScoresCreateNode() const;
 	XNode* SaveCourseScoresCreateNode() const;
