@@ -171,7 +171,7 @@ NoteFieldPlus.h NoteFieldPlus.cpp Player.cpp Player.h ProTimingDisplay.cpp ProTi
 ScoreDisplay.cpp ScoreDisplay.h ScoreDisplayBattle.cpp ScoreDisplayBattle.h ScoreDisplayNormal.cpp ScoreDisplayNormal.h \
 ScoreDisplayOni.cpp ScoreDisplayOni.h ScoreDisplayRave.cpp ScoreDisplayRave.h TimingAssist.cpp TimingAssist.h \
 PercentageDisplay.cpp PercentageDisplay.h ScoreDisplayPercentage.cpp ScoreDisplayPercentage.h \
-AttackDisplay.cpp AttackDisplay.h
+AttackDisplay.cpp AttackDisplay.h Foreground.cpp Foreground.h
 
 Helpers = SDL_dither.cpp SDL_dither.h SDL_rotozoom.cpp SDL_rotozoom.h SDL_utils.cpp SDL_utils.h
 
