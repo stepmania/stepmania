@@ -267,7 +267,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "ForceLogFlush",				m_bForceLogFlush );
 	ini.GetValueB( "Options", "Logging",					m_bLogging );
 	ini.GetValueB( "Options", "ShowLogWindow",				m_bShowLogWindow );
-	ini.GetValueB( "Options", "ShowBeginnnerHelper",		m_bShowBeginnerHelper );
+	ini.GetValueB( "Options", "ShowBeginnerHelper",			m_bShowBeginnerHelper );
 	ini.GetValue ( "Options", "Language",					m_sLanguage );
 
 
