@@ -14,18 +14,42 @@
 class Steps;
 class Trail;
 
+template<class T>
+class LunaDifficultyMeter : public LunaActorFrame<T>
+{
+public:
+	LunaDifficultyMeter() { LUA->Register( Register ); }
+
+	static int Load( T* p, lua_State *L )		{ p->Load( SArg(1) ); return 0; }
+	static int SetFromSteps( T* p, lua_State *L )
+	{ 
+		if( lua_isnil(L,1) ) { p->SetFromSteps( NULL ); }
+		else { Steps *pS = Luna<Steps>::check(L,1); p->SetFromSteps( pS ); }
+		return 0;
+	}
+
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( Load )
+		ADD_METHOD( SetFromSteps )
+		LunaActor<T>::Register( L );
+	}
+};
 
 class DifficultyMeter: public ActorFrame
 {
 public:
 	DifficultyMeter();
 
-	void Load();
+	void Load( const CString &sType );
 	void SetFromGameState( PlayerNumber pn );
 	void SetFromMeterAndDifficulty( int iMeter, Difficulty dc );
 	void SetFromSteps( const Steps* pSteps );
 	void SetFromTrail( const Trail* pTrail );
 	void Unset();
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 private:
 	void SetFromDifficulty( Difficulty dc );

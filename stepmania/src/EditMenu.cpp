@@ -79,14 +79,14 @@ EditMenu::EditMenu()
 	m_SongTextBanner.SetXY( SONG_TEXT_BANNER_X, SONG_TEXT_BANNER_Y );
 	this->AddChild( &m_SongTextBanner );
 	
-	m_Meter.SetName( "EditDifficultyMeter", "DifficultyMeter" );
+	m_Meter.SetName( "DifficultyMeter" );
 	m_Meter.SetXY( METER_X, METER_Y );
-	m_Meter.Load();
+	m_Meter.Load( "EditDifficultyMeter" );
 	this->AddChild( &m_Meter );
 	
-	m_SourceMeter.SetName( "EditDifficultyMeter", "DifficultyMeter" );
+	m_SourceMeter.SetName( "DifficultyMeter" );
 	m_SourceMeter.SetXY( SOURCE_METER_X, SOURCE_METER_Y );
-	m_SourceMeter.Load();
+	m_SourceMeter.Load( "EditDifficultyMeter" );
 	this->AddChild( &m_SourceMeter );
 	
 

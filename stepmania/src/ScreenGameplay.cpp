@@ -574,11 +574,7 @@ void ScreenGameplay::Init()
 		/* Position it in LoadNextSong. */
 		this->AddChild( &m_DifficultyIcon[p] );
 
-		// FIXME: Find a better way to handle this than changing the name
-		CString sName = m_DifficultyMeter[p].GetName();
-		m_DifficultyMeter[p].SetName( m_sName + ssprintf(" DifficultyMeterP%d",p+1) );
-		m_DifficultyMeter[p].Load();
-		m_DifficultyMeter[p].SetName( sName );
+		m_DifficultyMeter[p].Load( m_sName + ssprintf(" DifficultyMeterP%d",p+1) );
 		/* Position it in LoadNextSong. */
 		this->AddChild( &m_DifficultyMeter[p] );
 	}

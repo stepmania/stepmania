@@ -264,8 +264,8 @@ void ScreenSelectMusic::Init()
 			this->AddChild( &m_PaneDisplay[p] );
 		}
 
-		m_DifficultyMeter[p].SetName( "DifficultyMeter", ssprintf("MeterP%d",p+1) );
-		m_DifficultyMeter[p].Load();
+		m_DifficultyMeter[p].SetName( ssprintf("MeterP%d",p+1) );
+		m_DifficultyMeter[p].Load( "DifficultyMeter" );
 		SET_XY_AND_ON_COMMAND( m_DifficultyMeter[p] );
 		this->AddChild( &m_DifficultyMeter[p] );
 

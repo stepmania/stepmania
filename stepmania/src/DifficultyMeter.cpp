@@ -11,6 +11,11 @@
 #include "ActorUtil.h"
 #include "Style.h"
 
+// lua start
+LUA_REGISTER_CLASS( DifficultyMeter )
+// lua end
+REGISTER_ACTOR_CLASS( DifficultyMeter );
+
 
 DifficultyMeter::DifficultyMeter()
 {
@@ -38,20 +43,20 @@ DifficultyMeter::DifficultyMeter()
  * so I'm trying it first in only this object.
  */
 
-void DifficultyMeter::Load()
+void DifficultyMeter::Load( const CString &sType )
 {
-		/* We can't use global ThemeMetric<CString>s, because we can have multiple
-		 * DifficultyMeters on screen at once, with different names. */
-		m_iNumFeetInMeter = THEME->GetMetricI(m_sName,"NumFeetInMeter");
-		m_iMaxFeetInMeter = THEME->GetMetricI(m_sName,"MaxFeetInMeter");
-		m_iGlowIfMeterGreaterThan = THEME->GetMetricI(m_sName,"GlowIfMeterGreaterThan");
-		m_bShowFeet = THEME->GetMetricB(m_sName,"ShowFeet");
-		/* "easy", "hard" */
-		m_bShowDifficulty = THEME->GetMetricB(m_sName,"ShowDifficulty");
-		/* 3, 9 */
-		m_bShowMeter = THEME->GetMetricB(m_sName,"ShowMeter");
-		m_bFeetIsDifficultyColor = THEME->GetMetricB(m_sName,"FeetIsDifficultyColor");
-		m_bFeetPerDifficulty = THEME->GetMetricB(m_sName,"FeetPerDifficulty");
+	/* We can't use global ThemeMetric<CString>s, because we can have multiple
+	 * DifficultyMeters on screen at once, with different names. */
+	m_iNumFeetInMeter = THEME->GetMetricI(sType,"NumFeetInMeter");
+	m_iMaxFeetInMeter = THEME->GetMetricI(sType,"MaxFeetInMeter");
+	m_iGlowIfMeterGreaterThan = THEME->GetMetricI(sType,"GlowIfMeterGreaterThan");
+	m_bShowFeet = THEME->GetMetricB(sType,"ShowFeet");
+	/* "easy", "hard" */
+	m_bShowDifficulty = THEME->GetMetricB(sType,"ShowDifficulty");
+	/* 3, 9 */
+	m_bShowMeter = THEME->GetMetricB(sType,"ShowMeter");
+	m_bFeetIsDifficultyColor = THEME->GetMetricB(sType,"FeetIsDifficultyColor");
+	m_bFeetPerDifficulty = THEME->GetMetricB(sType,"FeetPerDifficulty");
 
 	if( m_bShowFeet )
 	{
@@ -65,14 +70,14 @@ void DifficultyMeter::Load()
 		}
 		else
 			Feet = "0X";
-		m_textFeet.LoadFromTextureAndChars( THEME->GetPathG(m_sName,"bar"), Feet );
+		m_textFeet.LoadFromTextureAndChars( THEME->GetPathG(sType,"bar"), Feet );
 		SET_XY_AND_ON_COMMAND( &m_textFeet );
 		this->AddChild( &m_textFeet );
 	}
 
 	if( m_bShowDifficulty )
 	{
-		m_Difficulty.Load( THEME->GetPathG(m_sName,"difficulty") );
+		m_Difficulty.Load( THEME->GetPathG(sType,"difficulty") );
 		m_Difficulty->SetName( "Difficulty" );
 		SET_XY_AND_ON_COMMAND( m_Difficulty );
 		this->AddChild( m_Difficulty );
@@ -81,7 +86,7 @@ void DifficultyMeter::Load()
 	if( m_bShowMeter )
 	{
 		m_textMeter.SetName( "Meter" );
-		m_textMeter.LoadFromFont( THEME->GetPathF(m_sName,"meter") );
+		m_textMeter.LoadFromFont( THEME->GetPathF(sType,"meter") );
 		SET_XY_AND_ON_COMMAND( m_textMeter );
 		this->AddChild( &m_textMeter );
 	}

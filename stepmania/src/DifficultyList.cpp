@@ -58,8 +58,8 @@ void DifficultyList::Load()
 
 	for( unsigned m = 0; m < m_Lines.size(); ++m )
 	{
-		m_Lines[m].m_Meter.SetName( "DifficultySummaryRow", "Row" );
-		m_Lines[m].m_Meter.Load();
+		m_Lines[m].m_Meter.SetName( "Row" );
+		m_Lines[m].m_Meter.Load( "DifficultySummaryRow" );
 		this->AddChild( &m_Lines[m].m_Meter );
 
 		m_Lines[m].m_Description.SetName( "Description" );
