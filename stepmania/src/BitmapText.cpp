@@ -307,11 +307,11 @@ void BitmapText::DrawPrimitives()
 			DISPLAY->PushMatrix();
 			DISPLAY->TranslateLocal( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
 
-			DWORD dwColor = RageColor(0,0,0,0.5f*m_temp.diffuse[0].a);	// semi-transparent black
+			RageColor dim(0,0,0,0.5f*m_temp.diffuse[0].a);	// semi-transparent black
 
 			int i;
 			for( i=0; i<iNumV; i++ )
-				v[i].c = dwColor;
+				v[i].c = dim;
 			DISPLAY->DrawQuads( v, iNumV );
 
 			DISPLAY->PopMatrix();

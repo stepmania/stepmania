@@ -11,11 +11,6 @@
 -----------------------------------------------------------------------------
 */
 
-/* nonstandard extension used : nameless struct/union
- * It is, in fact, nonstandard.  G++ 3.x can handle it. 2.95.x can not. XXX */
-#pragma warning (push)
-#pragma warning (disable : 4201)
-
 struct RageVector2
 {
 public:
@@ -41,8 +36,9 @@ public:
 
 	friend RageVector2 operator * ( float f, const RageVector2& other )	{ return other*f; }
 
-    bool operator == ( const RageVector2& other ) const		{ return x==other.x && y==other.y; }
-    bool operator != ( const RageVector2& other ) const		{ return x!=other.x || y!=other.y; }
+	/* unneeded; this is a POD type */
+//    bool operator == ( const RageVector2& other ) const		{ return x==other.x && y==other.y; }
+//    bool operator != ( const RageVector2& other ) const		{ return x!=other.x || y!=other.y; }
  
     float x, y;
 };
@@ -73,8 +69,9 @@ public:
 
 	friend RageVector3 operator * ( float f, const RageVector3& other )	{ return other*f; }
 
-    bool operator == ( const RageVector3& other ) const		{ return x==other.x && y==other.y && z==other.z; }
-    bool operator != ( const RageVector3& other ) const		{ return x!=other.x || y!=other.y || z!=other.z; }
+	/* unneeded; this is a POD type */
+//    bool operator == ( const RageVector3& other ) const		{ return x==other.x && y==other.y && z==other.z; }
+//    bool operator != ( const RageVector3& other ) const		{ return x!=other.x || y!=other.y || z!=other.z; }
 
     float x, y, z;
 };
@@ -104,21 +101,22 @@ public:
 
 	friend RageVector4 operator * ( float f, const RageVector4& other )	{ return other*f; }
 
-    bool operator == ( const RageVector4& other ) const		{ return x==other.x && y==other.y && z==other.z && w==other.w; }
-    bool operator != ( const RageVector4& other ) const		{ return x!=other.x || y!=other.y || z!=other.z || w!=other.w; }
+	/* unneeded; this is a POD type */
+//    bool operator == ( const RageVector4& other ) const		{ return x==other.x && y==other.y && z==other.z && w==other.w; }
+//    bool operator != ( const RageVector4& other ) const		{ return x!=other.x || y!=other.y || z!=other.z || w!=other.w; }
 
 	float x, y, z, w;
 };
 
-
-#define RAGECOLOR_ARGB(a,r,g,b) \
+/* nuke this stuff once we're sure RageVColor is OK */
+/* #define RAGECOLOR_ARGB(a,r,g,b) \
     ((DWORD)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
 
 #define RAGECOLOR_RGBA(r,g,b,a) RAGECOLOR_ARGB(a,r,g,b)
 
 #define RAGECOLOR_COLORVALUE(r,g,b,a) \
     RAGECOLOR_RGBA((DWORD)((r)*255.f),(DWORD)((g)*255.f),(DWORD)((b)*255.f),(DWORD)((a)*255.f))
-
+*/
 
 struct RageColor
 {
@@ -126,16 +124,16 @@ public:
     RageColor() {}
     RageColor( const float * f )							{ r=f[0]; g=f[1]; b=f[2]; a=f[3]; }
 	RageColor( float r1, float g1, float b1, float a1 )		{ r=r1; g=g1; b=b1; a=a1; }
-	RageColor( unsigned long c )
+/*	RageColor( unsigned long c )
 	{
 		a = ((c>>24)&0xff) / 255.f;
 		r = ((c>>16)&0xff) / 255.f;
 		g = ((c>>8)&0xff)  / 255.f;
 		b = (c&0xff)       / 255.f; 
 	}
-
+*/
     // casting
-	operator unsigned long () const							{ return RAGECOLOR_COLORVALUE(min(1.f,max(0.f,r)),min(1.f,max(0.f,g)),min(1.f,max(0.f,b)),min(1.f,max(0.f,a)));	}
+//	operator unsigned long () const							{ return RAGECOLOR_COLORVALUE(min(1.f,max(0.f,r)),min(1.f,max(0.f,g)),min(1.f,max(0.f,b)),min(1.f,max(0.f,a)));	}
 	operator float* ()										{ return &r; };
     operator const float* () const							{ return &r; };
 
@@ -153,12 +151,30 @@ public:
 
 	friend RageVector4 operator * ( float f, const RageVector4& other )	{ return other*f; }
 
-    bool operator == ( const RageColor& other ) const		{ return r==other.r && g==other.g && b==other.b && a==other.a; }
-    bool operator != ( const RageColor& other ) const		{ return r!=other.r || g!=other.g || b!=other.b || a!=other.a; }
+	/* unneeded; this is a POD type */
+//    bool operator == ( const RageColor& other ) const		{ return r==other.r && g==other.g && b==other.b && a==other.a; }
+//    bool operator != ( const RageColor& other ) const		{ return r!=other.r || g!=other.g || b!=other.b || a!=other.a; }
 
 	float r, g, b, a;
 };
 
+/* Convert floating-point 0..1 value to integer 0..255 value. */
+inline unsigned char FTOC(float a) { return (unsigned char)(max(min(a, 1.f), 0.f) * 255.f); }
+
+/* Color type used only in vertex lists.  OpenGL expects colors in
+ * r, g, b, a order, independent of endianness, so storing them this
+ * way avoids endianness problems.  Don't try to manipulate this; only
+ * manip RageColors. */
+class RageVColor
+{
+	unsigned char r, g, b, a;
+public:
+
+	RageVColor() { }
+	RageVColor(const RageColor &rc) { 
+		r = FTOC(rc.r); g = FTOC(rc.g); b = FTOC(rc.b); a = FTOC(rc.a);
+	}
+};
 
 
 template <class T>
@@ -185,12 +201,17 @@ struct RageVertex
 {
 	// This is the format expected by OpenGL.  D3D expects the reverse!
 	RageVector2		t;	// texture coordinates
-    unsigned long	c;	// diffuse color
+    RageVColor		c;	// diffuse color
     RageVector3		p;	// position
 };
 
 #define D3DFVF_RAGEVERTEX (D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1)	// D3D FVF flags which describe our vertex structure
 
+
+/* nonstandard extension used : nameless struct/union
+ * It is, in fact, nonstandard.  G++ 3.x can handle it. 2.95.x can not. XXX */
+#pragma warning (push)
+#pragma warning (disable : 4201)
 
 struct RageMatrix
 {
