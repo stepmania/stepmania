@@ -443,6 +443,9 @@ void ScreenSelectDifficulty::TweenOffScreen()
 {
 	int p;
 
+	for( p=0; p < m_SubActors.GetSize(); p++ )
+		m_SubActors[p]->StopTweening();
+	
 	for( p=0; p<NUM_PAGES; p++ )
 	{
 		if( p == 0  &&  SelectedSomethingOnPage2() )
