@@ -432,7 +432,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 				m_textExplanation[p].SetXY( EXPLANATION_X(p), EXPLANATION_Y(p) );
 		}
 		break;
-	case INPUTMODE_TOGETHER:
+	case INPUTMODE_SHARE_CURSOR:
 		m_textExplanation[0].SetXY( EXPLANATION_TOGETHER_X, EXPLANATION_TOGETHER_Y );
 		break;
 	default:
@@ -990,7 +990,7 @@ void ScreenOptions::PositionItems()
 	}
 
 	const bool BothPlayersActivated = GAMESTATE->IsHumanPlayer(PLAYER_1) && GAMESTATE->IsHumanPlayer(PLAYER_2);
-	if( m_InputMode == INPUTMODE_TOGETHER || !BothPlayersActivated )
+	if( m_InputMode == INPUTMODE_SHARE_CURSOR || !BothPlayersActivated )
 	{
 		/* Simply center the cursor. */
 		first_start = max( P1Choice - halfsize, 0 );
@@ -1132,7 +1132,7 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 			pText->SetText( text );
 		}
 		break;
-	case INPUTMODE_TOGETHER:
+	case INPUTMODE_SHARE_CURSOR:
 		pText = &m_textExplanation[0];
 		if( pText->GetText() != text )
 		{
@@ -1312,7 +1312,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 	{
 		row.m_iChoiceWithFocus[pn] = iNewChoiceWithFocus;
 
-		if( m_InputMode == INPUTMODE_TOGETHER )
+		if( m_InputMode == INPUTMODE_SHARE_CURSOR )
 		{
 			// lock focus together
 			FOREACH_HumanPlayer( pn )

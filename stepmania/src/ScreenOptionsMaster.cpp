@@ -232,7 +232,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 		Flags[i].MakeLower();
 
 		if( Flags[i] == "together" )
-			im = INPUTMODE_TOGETHER;
+			im = INPUTMODE_SHARE_CURSOR;
 		if( Flags[i] == "explanations" )
 			Explanations = true;
 		if( Flags[i] == "forceallplayers" )

@@ -46,7 +46,7 @@ struct OptionRowData
 enum InputMode 
 { 
 	INPUTMODE_INDIVIDUAL, 	// each player controls their own cursor
-	INPUTMODE_TOGETHER		// both players control the same cursor
+	INPUTMODE_SHARE_CURSOR		// both players control the same cursor
 };
 
 

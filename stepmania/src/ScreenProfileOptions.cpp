@@ -78,7 +78,7 @@ ScreenProfileOptions::ScreenProfileOptions( CString sClassName ) : ScreenOptions
 		g_ProfileOptionsLines[PO_OS_MOUNT_2].choices[0] = PREFSMAN->m_sMemoryCardOsMountPoint[PLAYER_2];
 
 	Init( 
-		INPUTMODE_TOGETHER, 
+		INPUTMODE_SHARE_CURSOR, 
 		g_ProfileOptionsLines, 
 		NUM_PROFILE_OPTIONS_LINES );
 
