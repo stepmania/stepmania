@@ -219,7 +219,16 @@ int main(int argc, char* argv[])
 
 	ChangeToDirOfExecutable(argv[0]);
 
-    atexit(SDL_Quit);   /* Clean up on exit */
+	/* Set this up second.  Do this early, since it's needed for RageException::Throw. 
+	 * Do it after ChangeToDirOfExecutable, so the log ends up in the right place. */
+	LOG			= new RageLog();
+#ifdef _DEBUG
+	LOG->ShowConsole();
+#endif
+
+	/* Whew--we should be able to crash safely now! */
+
+	atexit(SDL_Quit);   /* Clean up on exit */
 
 	/* Fire up the SDL, but don't actually start any subsystems. */
 	int SDL_flags = 0;
@@ -253,10 +262,6 @@ int main(int argc, char* argv[])
 	//
 	// Create game objects
 	//
-	LOG			= new RageLog();
-#ifdef _DEBUG
-	LOG->ShowConsole();
-#endif
 	GAMESTATE	= new GameState;
 	PREFSMAN	= new PrefsManager;
 	GAMEMAN		= new GameManager;
