@@ -14,6 +14,7 @@
 #include "RageException.h"
 #include "RageMath.h"
 #include "RageDisplay.h"
+#include "RageThreads.h"
 
 #include "arch/arch.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
@@ -1009,6 +1010,10 @@ int main(int argc, char* argv[])
 	 * little time; do this after the LoadingWindow is shown, since we don't want
 	 * that to appear delayed. */
 	HOOKS->DumpDebugInfo();
+
+#if defined(HAVE_TLS)
+	LOG->Info( "TLS is %savailable", RageThread::GetSupportsTLS()? "":"not " );
+#endif
 
 	if( PREFSMAN->m_bFirstRun )
 		OnFirstRun();
