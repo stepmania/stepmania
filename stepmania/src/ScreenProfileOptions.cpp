@@ -20,7 +20,7 @@
 #include "ScreenManager.h"
 
 
-static enum {
+enum {
 	PO_PLAYER1,
 	PO_PLAYER2,
 	PO_CREATE_NEW,
