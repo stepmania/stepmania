@@ -178,6 +178,14 @@ void ApplyGraphicOptions()
 	INPUTMAN->WindowReset();
 }
 
+void HandleException( CString error )
+{
+	if( g_bAutoRestart )
+		HOOKS->RestartProgram();
+
+	HOOKS->MessageBoxError( error ); // throw up a pretty error dialog
+}
+	
 void ExitGame()
 {
 	g_bQuitting = true;
@@ -1170,11 +1178,7 @@ int main(int argc, char* argv[])
 #endif
 	
 	if( g_sErrorString != "" )
-	{
-		if( g_bAutoRestart )
-			HOOKS->RestartProgram();
-		HOOKS->MessageBoxError( g_sErrorString ); // throw up a pretty error dialog
-	}
+		HandleException( g_sErrorString );
 
 	SAFE_DELETE( HOOKS );
 

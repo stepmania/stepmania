@@ -15,6 +15,7 @@
 
 int SMmain(int argc, char* argv[]);
 void ApplyGraphicOptions();
+void HandleException( CString error );
 void ExitGame();
 void ResetGame( bool ReturnToFirstScreen=true );
 void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame=true );
