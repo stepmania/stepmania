@@ -212,7 +212,7 @@ void GameState::PlayersFinalized()
 			GAMESTATE->ApplyModifiers( pn, pProfile->m_sDefaultModifiers );
 		}
 		// Only set the sort order if it wasn't already set by a ModeChoice
-		if( m_SortOrder == SORT_INVALID )
+		if( m_SortOrder == SORT_INVALID && pProfile->m_SortOrder != SORT_INVALID )
 			m_SortOrder = pProfile->m_SortOrder;
 		if( pProfile->m_PreferredDifficulty != DIFFICULTY_INVALID )
 			GAMESTATE->m_PreferredDifficulty[pn] = pProfile->m_PreferredDifficulty;
