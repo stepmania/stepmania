@@ -3,7 +3,7 @@
 #ifndef ActorCommands_H
 #define ActorCommands_H
 
-#include <memory>	// auto_ptr
+#include "RageUtil_AutoPtr.h"
 class Commands;
 
 class ActorCommands
@@ -22,7 +22,7 @@ private:
 	CString m_sLuaFunctionName;
 };
 
-typedef auto_ptr<ActorCommands> apActorCommands;
+typedef AutoPtrCopyOnWrite<ActorCommands> apActorCommands;
 
 #endif
 
