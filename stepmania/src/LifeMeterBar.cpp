@@ -27,8 +27,6 @@ public:
 	LifeMeterStream()
 	{
 		bool bExtra = GAMESTATE->IsExtraStage()||GAMESTATE->IsExtraStage2();
-		// Here for my reference's sake, no reason to uncomment this
-		// bool bPassmark = GAMESTATE->m_CurrentPlayerOptions[m_playerNumber].m_fPassmark > 0;
 
 		m_quadMask.SetDiffuse( RageColor(0,0,0,1) );
 		m_quadMask.SetZ( 1 );
