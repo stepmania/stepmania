@@ -79,6 +79,8 @@ void ProfileManager::GetLocalProfileNames( vector<CString> &asNamesOut ) const
 
 bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard, bool bLoadNamesOnly )
 {
+  LOG->Trace( "LoadingProfile P%d, %s, %d, %d", pn+1, sProfileDir.c_str(), bIsMemCard, bLoadNamesOnly );
+
 	ASSERT( !sProfileDir.empty() );
 	ASSERT( sProfileDir.Right(1) == "/" );
 
@@ -89,6 +91,8 @@ bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIs
 		m_Profile[pn].LoadEditableDataFromDir( m_sProfileDir[pn] );
 	else
 		m_Profile[pn].LoadAllFromDir( m_sProfileDir[pn], PREFSMAN->m_bSignProfileData );
+
+	LOG->Trace( "Done loading profile." );
 
 	return true;
 }
