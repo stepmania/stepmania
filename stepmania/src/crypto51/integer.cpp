@@ -606,6 +606,12 @@ void Portable::Multiply8Bottom(word *R, const word *A, const word *B)
 #undef SquAcc
 #undef SaveSquAcc
 
+/* Disable inline assembly.  The x86 gcc code assumes -momit-leaf-frame-pointer;
+ * I don't want to use that since it hinders production debugging.  We don't use
+ * this crypto in any performance-critical way, so this isn't really important. */
+typedef Portable LowLevel;
+
+#if 0
 // CodeWarrior defines _MSC_VER
 #if defined(_MSC_VER) && !defined(__MWERKS__) && defined(_M_IX86) && (_M_IX86<=700)
 
@@ -1763,6 +1769,7 @@ inline void AlphaOptimized::Multiply4Bottom(word *R, const word *A, const word *
 
 typedef Portable LowLevel;
 
+#endif
 #endif
 
 // ********************************************************
