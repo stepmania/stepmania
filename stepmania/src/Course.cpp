@@ -19,7 +19,7 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 {
 	CStdioFile file;	
 	if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
-		throw RageException( "Error opening SM file '%s'.", sPath );
+		throw RageException( "Error opening CRS file '%s'.", sPath );
 
 
 	// read the whole file into a sFileText
@@ -89,15 +89,9 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 			if( pSong == NULL )	// we didn't find the Song
 				continue;	// skip this song
 
-			Notes* pNotes = NULL;
-			for( i=0; i<pSong->m_arrayNotes.GetSize(); i++ )
-				if( 0 == stricmp(pSong->m_arrayNotes[i]->m_sDescription, sNotesDescription) )
-					pNotes = pSong->m_arrayNotes[i];
+			DifficultyClass dc = Notes::DifficultyClassFromDescriptionAndMeter( sNotesDescription, 6 );
 			
-			if( pNotes == NULL )	// we didn't find the Notes
-				continue;	// skip this song
-
-			AddStage( pSong, pNotes );
+			AddStage( pSong, dc );
 		}
 
 		else

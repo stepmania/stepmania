@@ -268,7 +268,7 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 	case NOTES_TYPE_DANCE_DOUBLE:
 	case NOTES_TYPE_DANCE_COUPLE:
 		iTransformNewToOld[0] = DANCE_NOTE_PAD1_LEFT;
-		iTransformNewToOld[1] = DANCE_NOTE_PAD1_UP;
+		iTransformNewToOld[1] = DANCE_NOTE_PAD1_DOWN;
 		iTransformNewToOld[2] = DANCE_NOTE_PAD1_UP;
 		iTransformNewToOld[3] = DANCE_NOTE_PAD1_RIGHT;
 		iTransformNewToOld[4] = DANCE_NOTE_PAD2_LEFT;
@@ -337,9 +337,10 @@ void DWIcharToNote( char c, InstrumentNumber i, DanceNote &note1Out, DanceNote &
 	case INSTRUMENT_1:
 		break;
 	case INSTRUMENT_2:
-		note1Out <<= 6;
+		if( note1Out != DANCE_NOTE_NONE )
+			note1Out += 6;
 		if( note2Out != DANCE_NOTE_NONE )
-			note2Out <<= 6;
+			note2Out += 6;
 		break;
 	default:
 		ASSERT( false );
@@ -365,6 +366,7 @@ bool Notes::LoadFromDWITokens(
 	else if( sMode == "#COUPLE" )	m_NotesType = NOTES_TYPE_DANCE_COUPLE;
 	else if( sMode == "#SOLO" )		m_NotesType = NOTES_TYPE_DANCE_SOLO;
 	else	throw RageException( "Unrecognized DWI mode '%s'", sMode );
+
 
 
 	CMap<int, int, int, int>  mapDanceNoteToNoteDataColumn;
@@ -459,26 +461,25 @@ bool Notes::LoadFromDWITokens(
 			
 			case '!':		// hold start
 				{
-				// rewind and get the last step we inserted
-				double fLastStepBeat = fCurrentBeat - fCurrentIncrementer;
-				int iIndex = BeatToNoteRow( (float)fLastStepBeat );
+					// rewind and get the last step we inserted
+					double fLastStepBeat = fCurrentBeat - fCurrentIncrementer;
+					int iIndex = BeatToNoteRow( (float)fLastStepBeat );
 
-				char holdChar = sStepData[i++];
-				
-				DanceNote note1, note2;
-				DWIcharToNote( holdChar, (InstrumentNumber)pad, note1, note2 );
+					char holdChar = sStepData[i++];
+					
+					DanceNote note1, note2;
+					DWIcharToNote( holdChar, (InstrumentNumber)pad, note1, note2 );
 
-				if( note1 != DANCE_NOTE_NONE )
-				{
-					int iCol1 = mapDanceNoteToNoteDataColumn[note1];
-					tempNoteData.m_TapNotes[iCol1][iIndex] = '2';
-				}
-				if( note2 != DANCE_NOTE_NONE )
-				{
-					int iCol2 = mapDanceNoteToNoteDataColumn[note2];
-					tempNoteData.m_TapNotes[iCol2][iIndex] = '2';
-				}
-
+					if( note1 != DANCE_NOTE_NONE )
+					{
+						int iCol1 = mapDanceNoteToNoteDataColumn[note1];
+						tempNoteData.m_TapNotes[iCol1][iIndex] = '2';
+					}
+					if( note2 != DANCE_NOTE_NONE )
+					{
+						int iCol2 = mapDanceNoteToNoteDataColumn[note2];
+						tempNoteData.m_TapNotes[iCol2][iIndex] = '2';
+					}
 				}
 				break;
 			default:	// this is a note character

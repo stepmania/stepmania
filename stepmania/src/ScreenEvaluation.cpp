@@ -282,18 +282,6 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		m_ScoreDisplay[p].SetScore( (float)GS[p].max_combo * 1000 );
 		m_ScoreDisplay[p].SetScore( (float)GS[p].score );
 
-		switch( m_ResultMode )
-		{
-		case RM_ARCADE_STAGE:
-		case RM_ARCADE_SUMMARY:
-			m_Grades[p].SpinAndSettleOn( grade[p] );
-			break;
-		case RM_ONI:
-			m_textOniPercent[p].SetText( "100.0%" );
-			break;
-		}
-
-
 		m_BonusInfoFrame[p].SetBonusInfo( (PlayerNumber)p, GS[p].fRadarPossible, GS[p].fRadarActual, GS[p].max_combo );
 
 
@@ -363,8 +351,10 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			m_textOniPercent[p].Load( THEME->GetPathTo(FONT_HEADER1) );
 			m_textOniPercent[p].SetXY( GRADE_X[p], GRADE_Y );
 			m_textOniPercent[p].SetShadowLength( 2 );
-			m_textOniPercent[p].SetZoom( 3 );
+			m_textOniPercent[p].SetZoomX( 1.5f );
+			m_textOniPercent[p].SetZoomY( 3 );
 			m_textOniPercent[p].SetEffectGlowing( 1.0f );
+			m_textOniPercent[p].SetText( "100.0%" );
 			this->AddActor( &m_textOniPercent[p] );
 			break;
 		case RM_ARCADE_STAGE:
@@ -373,6 +363,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			m_Grades[p].SetZ( -2 );
 			m_Grades[p].SetZoom( 1.0f );
 			m_Grades[p].SetEffectGlowing( 1.0f );
+			m_Grades[p].SpinAndSettleOn( grade[p] );
 			this->AddActor( &m_Grades[p] );
 			break;
 		}

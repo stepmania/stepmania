@@ -75,9 +75,10 @@ public:
 	int m_iMaxCombo;
 	int m_iNumTimesPlayed;
 
+	static DifficultyClass DifficultyClassFromDescriptionAndMeter( CString sDescription, int iMeter );
+
 protected:
 	void TidyUpData();
-	static DifficultyClass DifficultyClassFromDescriptionAndMeter( CString sDescription, int iMeter );
 
 };
 

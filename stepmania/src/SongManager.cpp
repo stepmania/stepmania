@@ -432,45 +432,26 @@ void SongManager::InitCoursesFromDisk()
 		CArray<Song*, Song*> apSongs;
 		this->GetSongsInGroup( sGroupName, apSongs );
 		
-		for( NotesType nt=NotesType(0); nt<NUM_NOTES_TYPES; nt=NotesType(nt+1) )	// foreach NotesType
+
+		for( DifficultyClass dc=CLASS_MEDIUM; dc<=CLASS_HARD; dc=DifficultyClass(dc+1) )	// foreach DifficultyClass
 		{
-
-			for( DifficultyClass dc=CLASS_MEDIUM; dc<=CLASS_HARD; dc=DifficultyClass(dc+1) )	// foreach DifficultyClass
+			Course course;
+			course.m_sName = sShortGroupName + " ";
+			switch( dc )
 			{
-				Course course;
-				course.m_sName = sShortGroupName + " ";
-				switch( dc )
-				{
-				case CLASS_EASY:	course.m_sName += "Easy";	break;
-				case CLASS_MEDIUM:	course.m_sName += "Medium";	break;
-				case CLASS_HARD:	course.m_sName += "Hard";	break;
-				}
-				course.m_NotesType = nt;
-
-
-				for( int s=0; s<apSongs.GetSize(); s++ )
-				{
-					Song* pSong = apSongs[s];
-
-					CArray<Notes*, Notes*> apNotes;
-					pSong->GetNotesThatMatch( course.m_NotesType, apNotes );
-
-					// search for first Notes matching this DifficultyClass
-					for( int n=0; n<apNotes.GetSize(); n++ )
-					{
-						Notes* pNotes = apNotes[n];
-
-						if( pNotes->m_DifficultyClass == dc )
-						{
-							course.AddStage( pSong, pNotes );
-							break;
-						}
-					}
-				}
-
-				if( course.m_iStages > 0 )
-					m_aCourses.Add( course );
+			case CLASS_EASY:	course.m_sName += "Easy";	break;
+			case CLASS_MEDIUM:	course.m_sName += "Medium";	break;
+			case CLASS_HARD:	course.m_sName += "Hard";	break;
 			}
+
+			for( int s=0; s<apSongs.GetSize(); s++ )
+			{
+				Song* pSong = apSongs[s];
+				course.AddStage( pSong, dc );
+			}
+
+			if( course.m_iStages > 0 )
+				m_aCourses.Add( course );
 		}
 	}
 }

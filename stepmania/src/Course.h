@@ -21,33 +21,28 @@ class Course
 public:
 	Course()
 	{
-		m_NotesType	= NOTES_TYPE_INVALID;
 		m_iStages = 0;
 		m_bRepeat = false;
 		for( int i=0; i<MAX_COURSE_STAGES; i++ )
-		{
 			m_apSongs[i] = NULL;
-			m_apNotes[i] = NULL;
-		}
 	}
 
 	CString		m_sName;
 	CString		m_sBannerPath;
 	CString		m_sCDTitlePath;
-	NotesType	m_NotesType;
 	int			m_iStages;
 	Song*		m_apSongs[MAX_COURSE_STAGES];
-	Notes*		m_apNotes[MAX_COURSE_STAGES];
+	DifficultyClass m_aDifficultyClasses[MAX_COURSE_STAGES];
 	bool		m_bRepeat;	// repeat after last song?
-	PlayerOptions		m_PlayerOptions;
+	PlayerOptions	m_PlayerOptions;
 
 	void LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs );
 
-	void AddStage( Song* pSong, Notes* pNotes )
+	void AddStage( Song* pSong, DifficultyClass dc )
 	{
 		ASSERT( m_iStages <= MAX_COURSE_STAGES );
 		m_apSongs[m_iStages] = pSong;
-		m_apNotes[m_iStages] = pNotes;
+		m_aDifficultyClasses[m_iStages] = dc;
 		m_iStages++;
 	}
 

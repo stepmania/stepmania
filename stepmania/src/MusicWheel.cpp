@@ -532,12 +532,9 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 			for( int c=0; c<SONGMAN->m_aCourses.GetSize(); c++ )	// foreach course
 			{
 				Course* pCourse = &SONGMAN->m_aCourses[c];
-				if( GAMEMAN->GetCurrentStyleDef()->m_NotesType  ==  pCourse->m_NotesType )
-				{
-					arrayWheelItemDatas.Add( WheelItemData() );
-					WheelItemData &WID = arrayWheelItemDatas[arrayWheelItemDatas.GetSize()-1];
-					WID.Load( TYPE_COURSE, NULL, "", pCourse, D3DXCOLOR(1,1,1,1) );
-				}
+				arrayWheelItemDatas.Add( WheelItemData() );
+				WheelItemData &WID = arrayWheelItemDatas[arrayWheelItemDatas.GetSize()-1];
+				WID.Load( TYPE_COURSE, NULL, "", pCourse, D3DXCOLOR(1,1,1,1) );
 			}
 		}
 		break;

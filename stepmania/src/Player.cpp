@@ -55,7 +55,7 @@ Player::Player()
 }
 
 
-void Player::Load( PlayerNumber player_no, StyleDef* pStyleDef, NoteData* pNoteData, const PlayerOptions& po, LifeMeterBar* pLM, ScoreDisplayRolling* pScore, int iOriginalNumNotes )
+void Player::Load( PlayerNumber player_no, StyleDef* pStyleDef, NoteData* pNoteData, const PlayerOptions& po, LifeMeterBar* pLM, ScoreDisplayRolling* pScore, int iOriginalNumNotes, int iNotesMeter )
 {
 	//LOG->WriteLine( "Player::Load()", );
 	this->CopyAll( pNoteData );
@@ -69,7 +69,7 @@ void Player::Load( PlayerNumber player_no, StyleDef* pStyleDef, NoteData* pNoteD
 	m_pLifeMeter = pLM;
 	m_pScore = pScore;
 	if( m_pScore )
-		m_pScore->Init( player_no, m_PlayerOptions, iOriginalNumNotes, SONGMAN->GetCurrentNotes(player_no)->m_iMeter );
+		m_pScore->Init( player_no, m_PlayerOptions, iOriginalNumNotes, iNotesMeter );
 
 	if( !po.m_bHoldNotes )
 		this->RemoveHoldNotes();
@@ -438,12 +438,12 @@ void Player::CrossedRow( int iNoteRow, float fSongBeat, float fMaxBeatDiff )
 
 
 
-GameplayStatistics Player::GetGameplayStatistics()
+GameplayStatistics Player::GetGameplayStatistics( Song* pS, Notes* pN )
 {
 	GameplayStatistics GSreturn;
 
-	GSreturn.pSong = SONGMAN->GetCurrentSong();
-	Notes* pNotes = SONGMAN->GetCurrentNotes(m_PlayerNumber);
+	GSreturn.pSong = pS;
+	Notes* pNotes = pN;
 	GSreturn.dc = pNotes->m_DifficultyClass;
 	GSreturn.meter = pNotes->m_iMeter;
 	GSreturn.iPossibleDancePoints = ((NoteData*)this)->GetPossibleDancePoints();
@@ -487,8 +487,8 @@ GameplayStatistics Player::GetGameplayStatistics()
 
 	for( int r=0; r<NUM_RADAR_VALUES; r++ )
 	{
-		GSreturn.fRadarPossible[r] = this->GetRadarValue( (RadarCategory)r, SONGMAN->GetCurrentSong()->m_fMusicLengthSeconds );
-		GSreturn.fRadarActual[r] = this->GetActualRadarValue( (RadarCategory)r, SONGMAN->GetCurrentSong()->m_fMusicLengthSeconds );
+		GSreturn.fRadarPossible[r] = this->GetRadarValue( (RadarCategory)r, pS->m_fMusicLengthSeconds );
+		GSreturn.fRadarActual[r] = this->GetActualRadarValue( (RadarCategory)r, pS->m_fMusicLengthSeconds );
 
 		GSreturn.fRadarPossible[r] = clamp( GSreturn.fRadarPossible[r], 0, 1 );
 		GSreturn.fRadarActual[r] = clamp( GSreturn.fRadarActual[r], 0, 1 );

@@ -144,7 +144,8 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 		g_hMutex = CreateMutex( NULL, TRUE, g_sAppName );
 		if( GetLastError() == ERROR_ALREADY_EXISTS )
 		{
-			CloseHandle( g_hMutex );
+			MessageBox( NULL, "StepMania is already running.", "FatalError", MB_OK );
+			exit( 1 );
 		}
 
 
@@ -687,9 +688,9 @@ void Update()
 
 		INPUTMAPPER->DeviceToGame( DeviceI, GameI );
 		
-		MenuI = INPUTMAPPER->DeviceToMenu( DeviceI );
+		INPUTMAPPER->GameToMenu( GameI, MenuI );
 		if( !MenuI.IsValid() )	// try again
-			INPUTMAPPER->GameToMenu( GameI, MenuI );
+			MenuI = INPUTMAPPER->DeviceToMenu( DeviceI );
 		
 		if( MenuI.IsValid()  &&  type == IET_FIRST_PRESS )
 			INPUTQUEUE->HandleInput( MenuI.player, MenuI.button );

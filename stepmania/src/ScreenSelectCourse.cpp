@@ -221,6 +221,8 @@ void ScreenSelectCourse::MenuStart( const PlayerNumber p )
 
 		m_Menu.TweenOffScreenToBlack( SM_None, false );
 
+		SONGMAN->m_pCurCourse = m_MusicWheel.GetSelectedCourse();
+
 		this->SendScreenMessage( SM_GoToNextState, 2.5f );
 		
 		break;

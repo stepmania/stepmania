@@ -186,17 +186,17 @@ CString ThemeManager::GetPathTo( ThemeElement te )
 		case GRAPHIC_SELECT_STYLE_INFO_GAME_0_STYLE_2:		sAssetPrefix = "Graphics\\select style info game 0 style 2";	break;
 		case GRAPHIC_SELECT_STYLE_INFO_GAME_0_STYLE_3:		sAssetPrefix = "Graphics\\select style info game 0 style 3";	break;
 		case GRAPHIC_SELECT_STYLE_INFO_GAME_0_STYLE_4:		sAssetPrefix = "Graphics\\select style info game 0 style 4";	break;
-		case GRAPHIC_SELECT_STYLE_INFO_GAME_1_STYLE_0:		sAssetPrefix = "Graphics\\select style info game 1 style 0";	break;
-		case GRAPHIC_SELECT_STYLE_INFO_GAME_1_STYLE_1:		sAssetPrefix = "Graphics\\select style info game 1 style 1";	break;
-		case GRAPHIC_SELECT_STYLE_INFO_GAME_1_STYLE_2:		sAssetPrefix = "Graphics\\select style info game 1 style 2";	break;
+//		case GRAPHIC_SELECT_STYLE_INFO_GAME_1_STYLE_0:		sAssetPrefix = "Graphics\\select style info game 1 style 0";	break;
+//		case GRAPHIC_SELECT_STYLE_INFO_GAME_1_STYLE_1:		sAssetPrefix = "Graphics\\select style info game 1 style 1";	break;
+//		case GRAPHIC_SELECT_STYLE_INFO_GAME_1_STYLE_2:		sAssetPrefix = "Graphics\\select style info game 1 style 2";	break;
 		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_0:	sAssetPrefix = "Graphics\\select style preview game 0 style 0";	break;
 		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_1:	sAssetPrefix = "Graphics\\select style preview game 0 style 1";	break;
 		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_2:	sAssetPrefix = "Graphics\\select style preview game 0 style 2";	break;
 		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_3:	sAssetPrefix = "Graphics\\select style preview game 0 style 3";	break;
 		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_4:	sAssetPrefix = "Graphics\\select style preview game 0 style 4";	break;
-		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_1_STYLE_0:	sAssetPrefix = "Graphics\\select style preview game 1 style 0";	break;
-		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_1_STYLE_1:	sAssetPrefix = "Graphics\\select style preview game 1 style 1";	break;
-		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_1_STYLE_2:	sAssetPrefix = "Graphics\\select style preview game 1 style 2";	break;
+//		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_1_STYLE_0:	sAssetPrefix = "Graphics\\select style preview game 1 style 0";	break;
+//		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_1_STYLE_1:	sAssetPrefix = "Graphics\\select style preview game 1 style 1";	break;
+//		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_1_STYLE_2:	sAssetPrefix = "Graphics\\select style preview game 1 style 2";	break;
 		case GRAPHIC_SONG_OPTIONS_BACKGROUND:			sAssetPrefix = "Graphics\\song options background";			break;	
 		case GRAPHIC_SONG_OPTIONS_TOP_EDGE:				sAssetPrefix = "Graphics\\song options top edge";			break;
 		case GRAPHIC_STAGE_UNDERSCORE:					sAssetPrefix = "Graphics\\stage underscore";				break;
@@ -262,11 +262,7 @@ CString ThemeManager::GetPathTo( ThemeElement te )
 		GetDirListing( sCurrentThemeDir + sAssetPrefix + "*.png", asPossibleElementFilePaths, false, true );
 		GetDirListing( sCurrentThemeDir + sAssetPrefix + "*.jpg", asPossibleElementFilePaths, false, true );
 		GetDirListing( sCurrentThemeDir + sAssetPrefix + "*.bmp", asPossibleElementFilePaths, false, true );
-
-		GetDirListing( sDefaultThemeDir + sAssetPrefix + "*.sprite", asPossibleElementFilePaths, false, true );
-		GetDirListing( sDefaultThemeDir + sAssetPrefix + "*.png", asPossibleElementFilePaths, false, true );
-		GetDirListing( sDefaultThemeDir + sAssetPrefix + "*.jpg", asPossibleElementFilePaths, false, true );
-		GetDirListing( sDefaultThemeDir + sAssetPrefix + "*.bmp", asPossibleElementFilePaths, false, true );
+		GetDirListing( sCurrentThemeDir + sAssetPrefix + "*.gif", asPossibleElementFilePaths, false, true );
 	}
 	else if( -1 != sAssetPrefix.Find("Sounds\\") )
 	{
@@ -274,17 +270,10 @@ CString ThemeManager::GetPathTo( ThemeElement te )
 		GetDirListing( sCurrentThemeDir + sAssetPrefix + ".mp3", asPossibleElementFilePaths, false, true );
 		GetDirListing( sCurrentThemeDir + sAssetPrefix + ".ogg", asPossibleElementFilePaths, false, true );
 		GetDirListing( sCurrentThemeDir + sAssetPrefix + ".wav", asPossibleElementFilePaths, false, true );
-
-		GetDirListing( sDefaultThemeDir + sAssetPrefix + ".set", asPossibleElementFilePaths, false, true );
-		GetDirListing( sDefaultThemeDir + sAssetPrefix + ".mp3", asPossibleElementFilePaths, false, true );
-		GetDirListing( sDefaultThemeDir + sAssetPrefix + ".ogg", asPossibleElementFilePaths, false, true );
-		GetDirListing( sDefaultThemeDir + sAssetPrefix + ".wav", asPossibleElementFilePaths, false, true );
 	}
 	else if( -1 != sAssetPrefix.Find("Fonts\\") )
 	{
 		GetDirListing( sCurrentThemeDir + sAssetPrefix + ".font", asPossibleElementFilePaths, false, true );
-
-		GetDirListing( sDefaultThemeDir + sAssetPrefix + ".font", asPossibleElementFilePaths, false, true );
 	}
 	else
 	{

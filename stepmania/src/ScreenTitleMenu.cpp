@@ -65,6 +65,13 @@ ScreenTitleMenu::ScreenTitleMenu()
 {
 	LOG->WriteLine( "ScreenTitleMenu::ScreenTitleMenu()" );
 
+
+	// reset game info
+//	GAMEMAN->m_sMasterPlayerNumber = PLAYER_INVALID;
+//	GAMEMAN->m_CurGame = GAME_INVALID;
+//	GAMEMAN->m_CurGame = GAME_INVALID;
+
+
 	int i;
 
 	m_sprBG.Load( THEME->GetPathTo(GRAPHIC_TITLE_MENU_BACKGROUND) );
@@ -122,12 +129,6 @@ ScreenTitleMenu::ScreenTitleMenu()
 	m_Fade.SetClosed();
 	m_Fade.OpenWipingRight( SM_DoneOpening );
 	this->AddActor( &m_Fade );
-
-	/* ENSURE that the correct announcer is in place for GAME_DANCE (the default game) */
-	if (GAME_DANCE == GAMEMAN->m_CurGame)
-	{
-		ANNOUNCER->SwitchAnnouncer( "default" );	
-	}
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_TITLE_MENU_GAME_NAME) );
 
@@ -281,8 +282,15 @@ void ScreenTitleMenu::MenuStart( const PlayerNumber p )
 		m_Fade.CloseWipingRight( SM_GoToGameOptions );
 		return;
 	case CHOICE_EDIT:
-		m_soundSelect.PlayRandom();
-		m_Fade.CloseWipingRight( SM_GoToEdit );
+		if( SONGMAN->m_pSongs.GetSize() == 0 )
+		{
+			m_soundInvalid.PlayRandom();
+		}
+		else
+		{
+			m_soundSelect.PlayRandom();
+			m_Fade.CloseWipingRight( SM_GoToEdit );
+		}
 		return;
 /*	case CHOICE_HELP:
 		m_soundSelect.PlayRandom();

@@ -758,7 +758,7 @@ float NoteData::GetChaosRadarValue( float fSongSeconds )
 		iNumChaosNotes++;
 	}
 
-	float fReturn = iNumChaosNotes / fSongSeconds * 0.5;
+	float fReturn = iNumChaosNotes / fSongSeconds * 0.5f;
 	return min( fReturn, 1.0f );
 }
 

@@ -53,7 +53,8 @@ private:
 
 	DancingState			m_DancingState;
 
-	Song*					m_pCurSong;	// nearest songs are on back of queue
+	Song*					m_pCurSong;
+	Notes*					m_pCurNotes[NUM_PLAYERS];
 	CArray<Song*,Song*>		m_apSongQueue;	// nearest songs are on back of queue
 	CArray<Notes*,Notes*>	m_apNotesQueue[NUM_PLAYERS];	// nearest notes are on back of queue
 	bool					m_bBothHaveFailed;

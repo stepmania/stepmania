@@ -88,9 +88,20 @@ ScreenGameplay::ScreenGameplay()
 			ASSERT( pCourse != NULL );
 			for( int i=0; i<pCourse->m_iStages; i++ )
 			{
-				m_apSongQueue.Add( pCourse->m_apSongs[i] );
-				for( int p=0; p<NUM_PLAYERS; p++ )
-					m_apNotesQueue[p].Add( pCourse->m_apNotes[i] );
+				Song* pSong = pCourse->m_apSongs[i];
+				DifficultyClass dc = pCourse->m_aDifficultyClasses[i];
+
+				for( int j=0; j<pSong->m_arrayNotes.GetSize(); j++ )
+				{
+					Notes* pNotes = pSong->m_arrayNotes[j];
+					if( pSong->m_arrayNotes[j]->m_DifficultyClass == dc )
+					{
+						m_apSongQueue.Add( pSong );
+						for( int p=0; p<NUM_PLAYERS; p++ )
+							m_apNotesQueue[p].Add( pNotes );
+						break;
+					}
+				}
 			}
 		}
 		break;
@@ -275,10 +286,12 @@ void ScreenGameplay::SaveSummary()
 			if( !GAMEMAN->IsPlayerEnabled((PlayerNumber)p) )
 				continue;		// skip
 
-			SONGMAN->m_aGameplayStatistics[p].Add( m_Player[p].GetGameplayStatistics() );
+			SONGMAN->m_aGameplayStatistics[p].Add( m_Player[p].GetGameplayStatistics( m_pCurSong, m_pCurNotes[p]) );
 		}
 
 		m_pCurSong = NULL;
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			m_pCurNotes[p] = NULL;
 	}
 }
 
@@ -293,10 +306,9 @@ void ScreenGameplay::LoadNextSong()
 	m_pCurSong = m_apSongQueue[m_apSongQueue.GetSize()-1];
 	m_apSongQueue.RemoveAt(m_apSongQueue.GetSize()-1);
 
-	Notes* pNotes[NUM_PLAYERS];
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		pNotes[p] = m_apNotesQueue[p][m_apNotesQueue[p].GetSize()-1];
+		m_pCurNotes[p] = m_apNotesQueue[p][m_apNotesQueue[p].GetSize()-1];
 		m_apNotesQueue[p].RemoveAt(m_apNotesQueue[p].GetSize()-1);
 	}
 
@@ -309,11 +321,11 @@ void ScreenGameplay::LoadNextSong()
 		if( !GAMEMAN->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
 
-		m_DifficultyBanner[p].SetFromNotes( PlayerNumber(p), pNotes[p] );
+		m_DifficultyBanner[p].SetFromNotes( PlayerNumber(p), m_pCurNotes[p] );
 
 
 		NoteData originalNoteData;
-		pNotes[p]->GetNoteData( &originalNoteData );
+		m_pCurNotes[p]->GetNoteData( &originalNoteData );
 		
 		NoteData newNoteData;
 		pStyleDef->GetTransformedNoteDataForStyle( (PlayerNumber)p, &originalNoteData, &newNoteData );
@@ -325,7 +337,8 @@ void ScreenGameplay::LoadNextSong()
 			PREFSMAN->m_PlayerOptions[p],
 			&m_LifeMeter[p],
 			&m_ScoreDisplay[p],
-			originalNoteData.GetNumTapNotes()
+			originalNoteData.GetNumTapNotes(),
+			m_pCurNotes[p]->m_iMeter
 		);
 	}
 
@@ -668,7 +681,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToResults:
 		SaveSummary();
-		m_pCurSong->SaveToSMFile();	// save offset changes
 		SCREENMAN->SetNewScreen( new ScreenEvaluation(false) );
 		break;
 

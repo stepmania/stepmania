@@ -58,14 +58,29 @@ void CourseContentsFrame::SetFromCourse( Course* pCourse )
 		m_Meters[i].SetFromNotes( NULL );
 	}
 
-	for( i=0; i<pCourse->m_iStages-1; i++ )
+	for( i=0; i<min(pCourse->m_iStages, MAX_COURSE_CONTENTS); i++ )
 	{
 		m_textContents[i].SetText( pCourse->m_apSongs[i]->GetFullTitle() );
-		m_textContents[i].SetDiffuseColor( DifficultyClassToColor(pCourse->m_apNotes[i]->m_DifficultyClass) );
+		m_textContents[i].SetDiffuseColor( DifficultyClassToColor(pCourse->m_aDifficultyClasses[i]) );
 
-		m_Meters[i].SetFromNotes( pCourse->m_apNotes[i] );
+		m_Meters[i].SetFromNotes( NULL );
+
+		Song* pSong = pCourse->m_apSongs[i];
+		for( int j=0; j<pSong->m_arrayNotes.GetSize(); j++ )
+		{
+			Notes* pNotes = pSong->m_arrayNotes[j];
+			if( pSong->m_arrayNotes[j]->m_DifficultyClass == pCourse->m_aDifficultyClasses[i] )
+			{
+				m_Meters[i].SetFromNotes( pNotes );
+				break;
+			}
+		}
+
 	}
 
 	if( pCourse->m_iStages >= MAX_COURSE_CONTENTS )
+	{
 		m_textContents[MAX_COURSE_CONTENTS-1].SetText( ssprintf("%d more...", pCourse->m_iStages-(MAX_COURSE_CONTENTS-1)) );
+		m_Meters[MAX_COURSE_CONTENTS-1].SetFromNotes( NULL );
+	}
 }

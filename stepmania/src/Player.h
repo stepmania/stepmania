@@ -44,12 +44,12 @@ public:
 	void Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference );
 	void DrawPrimitives();
 
-	void Load( PlayerNumber player_no, StyleDef *pStyleDef, NoteData* pNoteData, const PlayerOptions& po, LifeMeterBar* pLM, ScoreDisplayRolling* pScore, int iOriginalNumNotes );
+	void Load( PlayerNumber player_no, StyleDef *pStyleDef, NoteData* pNoteData, const PlayerOptions& po, LifeMeterBar* pLM, ScoreDisplayRolling* pScore, int iOriginalNumNotes, int iNotesMeter );
 	void CrossedRow( int iNoteRow, float fSongBeat, float fMaxBeatDiff );
 	void HandlePlayerStep( float fSongBeat, int col, float fMaxBeatDiff );
 	int UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
 
-	GameplayStatistics GetGameplayStatistics();
+	GameplayStatistics GetGameplayStatistics( Song* pS, Notes* pN );
 
 	void	SetOverrideAdd( float fAdd )	{ m_NoteField.m_fOverrideAdd = fAdd; };
 	float	GetOverrideAdd()				{ return m_NoteField.m_fOverrideAdd; };
