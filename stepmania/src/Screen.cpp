@@ -309,7 +309,6 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenResetToDefaults.h"
 #include "ScreenClearBookkeepingData.h"
 #include "ScreenInsertCredit.h"
-#include "ScreenEndlessBreak.h"
 
 Screen* Screen::Create( CString sClassName )
 {
@@ -376,7 +375,6 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenResetToDefaults );
 	IF_RETURN( ScreenClearBookkeepingData );
 	IF_RETURN( ScreenInsertCredit );
-	IF_RETURN( ScreenEndlessBreak );
 
 #if !defined(WITHOUT_NETWORKING)
 	IF_RETURN( ScreenNetworkOptions );
