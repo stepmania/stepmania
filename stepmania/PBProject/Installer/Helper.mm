@@ -68,7 +68,7 @@ void HandleFile(const CString& file, const CString& dir, const CString& archiveP
     {
         int fd_dev_null = open("/dev/null", O_RDWR, 0);
 
-        if (CallTool3(true, -1, fd_dev_null, fd_dev_null, path, arguments))
+        if (CallTool3(true, -1, fd_dev_null, fileno(stderr), path, arguments))
             [c postMessage:@"failed"];
         close(fd_dev_null);
     }
