@@ -203,6 +203,7 @@ bool RageFileObjDirect::FinalFlush()
 		return false;
 	}
 
+#if !defined(WIN32)
 	/* Wait for the directory to be flushed. */
 	int dirfd = open( Dirname(path), O_RDONLY );
 	if( dirfd == -1 )
@@ -221,6 +222,7 @@ bool RageFileObjDirect::FinalFlush()
 	}
 
 	close( dirfd );
+#endif
 
 	return true;
 }
