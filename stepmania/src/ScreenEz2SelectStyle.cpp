@@ -35,7 +35,8 @@ const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User + 2);
 #define HELP_TEXT				THEME->GetMetric("ScreenEz2SelectStyle","HelpText")
 #define TIMER_SECONDS			THEME->GetMetricI("ScreenEz2SelectStyle","TimerSeconds")
 #define NEXT_SCREEN				THEME->GetMetric("ScreenEz2SelectStyle","NextScreen")
-
+#define USE_METRIC_FOR_MENU		THEME->GetMetricI("ScreenEz2SelectStyle","UseMetricForMenu")
+#define	SCROLLING_ELEMENT_SPACING THEME->GetMetricI("ScreenEz2SelectStyle","ScrollingElementSpacing")
 
 const float TWEEN_TIME		= 0.35f;
 
@@ -61,11 +62,11 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 	}
 	m_BGAnim[0].SetZoom(1.0f);
 
+		m_ScrollingList.SetXY( CENTER_X, CENTER_Y );
+		m_ScrollingList.SetSpacing( SCROLLING_ELEMENT_SPACING );
+		m_ScrollingList.SetNumberVisible( 5 );
+		this->AddChild( &m_ScrollingList );
 
-	m_ScrollingList.SetXY( CENTER_X, CENTER_Y );
-	m_ScrollingList.SetSpacing( 400 );
-	m_ScrollingList.SetNumberVisible( 5 );
-	this->AddChild( &m_ScrollingList );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -97,7 +98,23 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 
 	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select style music") );
 
-	RefreshStylesAndList();
+	if (USE_METRIC_FOR_MENU == 1) // get it from the metrics
+	{
+		int numstyles = THEME->GetMetricI("ScreenEz2SelectStyle","NumStyles"); // get the number of styles we need
+
+		CStringArray asGraphicPaths;		
+		for (i=0; i<numstyles; i++) // load in the graphics we want to use
+		{
+			asGraphicPaths.Add( THEME->GetPathTo("Graphics",ssprintf("%s",THEME->GetMetric("ScreenEz2SelectStyle",ssprintf("StyleGraphic%d",i) ) ) ) );
+		}
+
+		m_ScrollingList.Load( asGraphicPaths );
+
+	}
+	else // get it from the styles....
+	{
+		RefreshStylesAndList();
+	}
 
 	TweenOnScreen();
 	m_Menu.TweenOnScreenFromBlack( SM_None );
@@ -218,6 +235,7 @@ void ScreenEz2SelectStyle::RefreshStylesAndList()
 	}
 
 	CStringArray asGraphicPaths;
+
 	for( i=0; i<m_aPossibleStyles.GetSize(); i++ )
 	{
 		Style style = m_aPossibleStyles[i];
@@ -308,7 +326,28 @@ void ScreenEz2SelectStyle::MenuStart( PlayerNumber pn )
 	{
 		// made a selection
 		m_soundSelect.Play();
+
+	if (USE_METRIC_FOR_MENU == 1) // get it from the metrics
+	{
+		int chosen=m_ScrollingList.GetSelection();
+
+		GAMEMAN->GetGameplayStylesForGame( GAMESTATE->m_CurGame, m_aPossibleStyles );
+		GAMESTATE->m_CurStyle = m_aPossibleStyles[ THEME->GetMetricI("ScreenEz2SelectStyle",ssprintf("UseStyle%d",chosen) ) ];
+
+		int m_diSelection = THEME->GetMetricI("ScreenEz2SelectStyle",ssprintf("UseDifficulty%d",chosen) );
+
+		switch( m_diSelection )
+		{
+			case 0:	GAMESTATE->m_PreferredDifficultyClass[PLAYER_1] = CLASS_EASY;		break;
+			case 1:	GAMESTATE->m_PreferredDifficultyClass[PLAYER_1] = CLASS_MEDIUM;	break;
+			case 2:	GAMESTATE->m_PreferredDifficultyClass[PLAYER_1] = CLASS_HARD;		break;
+		}		
+
+	}
+	else // get it from the scrolling list
+	{
 		GAMESTATE->m_CurStyle = m_aPossibleStyles[m_ScrollingList.GetSelection()];
+	}
 		TweenOffScreen();
 		m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
 	}
