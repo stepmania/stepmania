@@ -87,7 +87,7 @@ public:
 						  TweenType tt = tween_linear );
 
 	virtual void BeginTweening( float time, TweenType tt = tween_linear );
-	virtual void StopTweening( float time, TweenType tt = tween_linear ) { m_TweenType = no_tween; };
+	virtual void StopTweening() { m_TweenType = no_tween; };
 	virtual void SetTweenX( float x );
 	virtual void SetTweenY( float y );
 	virtual void SetTweenXY( float x, float y );

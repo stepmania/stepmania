@@ -40,17 +40,18 @@ const int NUM_FRAMES_IN_COLOR_ARROW_SPRITE	= 12;
 
 
 const float JUDGEMENT_DISPLAY_TIME	=	0.6f;
-const CString JUDGEMENT_TEXTURE		=	"Textures\\judgement 1x6.png";
-const float JUDGEMENT_Y				=	CENTER_Y;
+const CString JUDGEMENT_TEXTURE		=	"Textures\\judgement 1x9.png";
+const float JUDGEMENT_Y_OFFSET		=	20;
 
-const CString HOLD_JUDGEMENT_TEXTURE	=	"Textures\\Hold Arrow Judgement 1x3.png";
-const float HOLD_JUDGEMENT_Y			=	GRAY_ARROW_Y + 50;
+const CString HOLD_JUDGEMENT_TEXTURE	=	"Textures\\judgement 1x9.png";
+const float HOLD_JUDGEMENT_Y			=	GRAY_ARROW_Y + 80;
 
 
-const CString SEQUENCE_NUMBERS		=	"SpriteSequences\\Bold Numbers.seq";
+const CString SEQUENCE_COMBO_NUMBERS		=	"SpriteSequences\\MAX Numbers.seq";
+const CString SEQUENCE_SCORE_NUMBERS		=	"SpriteSequences\\Bold Numbers.seq";
 
 const float COMBO_TWEEN_TIME		=	0.5f;
-const CString COMBO_TEXTURE			=	"Textures\\Combo.png";
+const CString COMBO_TEXTURE			=	"Textures\\judgement 1x9.png";
 const float COMBO_Y					=	(CENTER_Y+60);
 
 
@@ -68,9 +69,10 @@ const CString SCORE_FRAME_TEXTURE	= "Textures\\Score Frame.png";
 const float SCORE_Y					= SCREEN_HEIGHT - 40;
 
 
-Player::Player( PlayerOptions po )
+Player::Player( PlayerOptions po, PlayerNumber pn )
 {
 	m_PlayerOptions = po;
+	m_PlayerNumber = pn;
 
 	m_iCurCombo = 0;
 	m_iMaxCombo = 0;
@@ -180,23 +182,40 @@ Player::Player( PlayerOptions po )
 		m_ColorArrow[c].SetRotation( m_ColumnToRotation[c] );
 	}
 
+
+	// holder for judgement and combo displays
+	m_frameJudgementAndCombo.AddActor( &m_sprJudgement );
+	m_frameJudgementAndCombo.AddActor( &m_sprCombo );
+	m_frameJudgementAndCombo.AddActor( &m_ComboNumber );
+	m_frameJudgementAndCombo.SetXY( CENTER_X, CENTER_Y );
+
 	// judgement
 	m_fJudgementDisplayCountdown = 0;
 	m_sprJudgement.LoadFromTexture( JUDGEMENT_TEXTURE );
 	m_sprJudgement.StopAnimating();
+	m_sprJudgement.SetXY( 0, m_PlayerOptions.m_bReverseScroll ? JUDGEMENT_Y_OFFSET : -JUDGEMENT_Y_OFFSET  );
 
+	// combo
+	m_sprCombo.LoadFromTexture( COMBO_TEXTURE );
+	m_sprCombo.StopAnimating();
+	m_sprCombo.SetState( 6 );
+	m_sprCombo.SetXY( 40, m_PlayerOptions.m_bReverseScroll ? -JUDGEMENT_Y_OFFSET : JUDGEMENT_Y_OFFSET+2 );
+	m_sprCombo.SetZoom( 1.0f );
+
+	m_ComboNumber.LoadFromSequenceFile( SEQUENCE_COMBO_NUMBERS );
+	m_ComboNumber.SetXY( -40, m_PlayerOptions.m_bReverseScroll ? -JUDGEMENT_Y_OFFSET : JUDGEMENT_Y_OFFSET );
+
+	m_ComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
+	m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
+
+
+	// hold judgement
 	for( c=0; c<MAX_NUM_COLUMNS; c++ )
 	{
 		m_fHoldJudgementDisplayCountdown[c] = 0;
 		m_sprHoldJudgement[c].LoadFromTexture( HOLD_JUDGEMENT_TEXTURE );
 		m_sprHoldJudgement[c].StopAnimating();
 	}
-
-
-	// combo
-	m_bComboVisible = FALSE;
-	m_sprCombo.LoadFromTexture( COMBO_TEXTURE );
-	m_ComboNumber.LoadFromSequenceFile( SEQUENCE_NUMBERS );
 
 	// life meter
 	m_sprLifeMeterFrame.LoadFromTexture( LIFEMETER_FRAME_TEXTURE );
@@ -206,7 +225,7 @@ Player::Player( PlayerOptions po )
 
 	// score
 	m_sprScoreFrame.LoadFromTexture( SCORE_FRAME_TEXTURE );
-	m_ScoreNumber.LoadFromSequenceFile( SEQUENCE_NUMBERS );
+	m_ScoreNumber.LoadFromSequenceFile( SEQUENCE_SCORE_NUMBERS );
 	m_ScoreNumber.SetSequence( "         " );
 
 
@@ -226,43 +245,189 @@ void Player::SetX( float fX )
 	SetComboX(fX);	
 	SetScoreX(fX);	
 	SetLifeMeterX(fX);	
+
+	m_frameJudgementAndCombo.SetX(fX);
 }
 
 
 void Player::SetSteps( const Steps& newSteps, bool bLoadOnlyLeftSide, bool bLoadOnlyRightSide )
 { 
-	// copy the steps
+	Step	tempSteps[MAX_STEP_ELEMENTS];
+	CArray<HoldStep, HoldStep>	tempHoldSteps;
+
+	// copy the steps into our tempSteps where we will transform them
 	for( int i=0; i<MAX_STEP_ELEMENTS; i++ ) 
 	{
-		m_OriginalStep[i] = newSteps.m_Steps[i];
+		tempSteps[i] = newSteps.m_Steps[i];
 	
-		if( bLoadOnlyLeftSide ) {
+		if( bLoadOnlyLeftSide ) 
+		{
 			// mask off the pad2 steps
-			m_OriginalStep[i] &= ~(STEP_PAD2_LEFT | STEP_PAD2_UPLEFT | STEP_PAD2_DOWN | STEP_PAD2_UP | STEP_PAD2_UPRIGHT | STEP_PAD2_RIGHT );
-		} else if( bLoadOnlyRightSide ) {
+			tempSteps[i] &= ~(STEP_PAD2_LEFT | STEP_PAD2_UPLEFT | STEP_PAD2_DOWN | STEP_PAD2_UP | STEP_PAD2_UPRIGHT | STEP_PAD2_RIGHT );
+		} 
+		else if( bLoadOnlyRightSide ) 
+		{
 			// replace the step making pad2's step the new pad1 step
-			Step new_step = (m_OriginalStep[i]&STEP_PAD2_LEFT	? STEP_PAD1_LEFT	: 0) |
-							(m_OriginalStep[i]&STEP_PAD2_UPLEFT	? STEP_PAD1_UPLEFT	: 0) |
-							(m_OriginalStep[i]&STEP_PAD2_DOWN	? STEP_PAD1_DOWN	: 0) |
-							(m_OriginalStep[i]&STEP_PAD2_UP		? STEP_PAD1_UP		: 0) |
-							(m_OriginalStep[i]&STEP_PAD2_UPRIGHT? STEP_PAD1_UPRIGHT	: 0) |
-							(m_OriginalStep[i]&STEP_PAD2_RIGHT	? STEP_PAD1_RIGHT	: 0);
-			m_OriginalStep[i] = new_step;
+			tempSteps[i] =	(tempSteps[i]&STEP_PAD2_LEFT	? STEP_PAD1_LEFT	: 0) |
+							(tempSteps[i]&STEP_PAD2_UPLEFT	? STEP_PAD1_UPLEFT	: 0) |
+							(tempSteps[i]&STEP_PAD2_DOWN	? STEP_PAD1_DOWN	: 0) |
+							(tempSteps[i]&STEP_PAD2_UP		? STEP_PAD1_UP		: 0) |
+							(tempSteps[i]&STEP_PAD2_UPRIGHT ? STEP_PAD1_UPRIGHT	: 0) |
+							(tempSteps[i]&STEP_PAD2_RIGHT	? STEP_PAD1_RIGHT	: 0);
+		}
+
+	}
+
+	if( m_PlayerOptions.m_bAllowFreezeArrows )
+	{
+		// copy the HoldSteps and transform them later
+		for( int i=0; i<newSteps.m_HoldSteps.GetSize(); i++ )
+		{
+			HoldStep &hs = newSteps.m_HoldSteps[i];
+
+			if( bLoadOnlyLeftSide ) 
+			{
+				if( hs.m_Step & (STEP_PAD1_LEFT | STEP_PAD1_UPLEFT | STEP_PAD1_DOWN | STEP_PAD1_UP | STEP_PAD1_UPRIGHT | STEP_PAD1_RIGHT) )
+					tempHoldSteps.Add( hs );
+			} 
+			else if( bLoadOnlyRightSide ) 
+			{
+				if( hs.m_Step & (STEP_PAD2_LEFT | STEP_PAD2_UPLEFT | STEP_PAD2_DOWN | STEP_PAD2_UP | STEP_PAD2_UPRIGHT | STEP_PAD2_RIGHT) )
+					tempHoldSteps.Add( hs );
+			} 
+			else	// load both sides
+			{
+				tempHoldSteps.Add( hs );
+			}
+		}
+	}
+
+
+	// transform the steps
+	Step oldStepToNewStep [12][2];	// 0 is old Step, 1 is new Step mapping
+	oldStepToNewStep[0][0] = STEP_PAD1_LEFT;	oldStepToNewStep[0][1] = STEP_PAD1_LEFT;
+	oldStepToNewStep[1][0] = STEP_PAD1_UPLEFT;	oldStepToNewStep[1][1] = STEP_PAD1_UPLEFT;
+	oldStepToNewStep[2][0] = STEP_PAD1_DOWN;	oldStepToNewStep[2][1] = STEP_PAD1_DOWN;
+	oldStepToNewStep[3][0] = STEP_PAD1_UP;		oldStepToNewStep[3][1] = STEP_PAD1_UP;
+	oldStepToNewStep[4][0] = STEP_PAD1_UPRIGHT;	oldStepToNewStep[4][1] = STEP_PAD1_UPRIGHT;
+	oldStepToNewStep[5][0] = STEP_PAD1_RIGHT;	oldStepToNewStep[5][1] = STEP_PAD1_RIGHT;
+	oldStepToNewStep[6][0] = STEP_PAD2_LEFT;	oldStepToNewStep[6][1] = STEP_PAD2_LEFT;
+	oldStepToNewStep[7][0] = STEP_PAD2_UPLEFT;	oldStepToNewStep[7][1] = STEP_PAD2_UPLEFT;
+	oldStepToNewStep[8][0] = STEP_PAD2_DOWN;	oldStepToNewStep[8][1] = STEP_PAD2_DOWN;
+	oldStepToNewStep[9][0] = STEP_PAD2_UP;		oldStepToNewStep[9][1] = STEP_PAD2_UP;
+	oldStepToNewStep[10][0]= STEP_PAD2_UPRIGHT;	oldStepToNewStep[10][1]= STEP_PAD2_UPRIGHT;
+	oldStepToNewStep[11][0]= STEP_PAD2_RIGHT;	oldStepToNewStep[11][1]= STEP_PAD2_RIGHT;
+
+
+	switch( m_PlayerOptions.m_TurnType )
+	{
+	case PlayerOptions::TURN_NONE:
+		break;
+	case PlayerOptions::TURN_MIRROR:
+		oldStepToNewStep[0][1] = STEP_PAD1_RIGHT;
+		oldStepToNewStep[2][1] = STEP_PAD1_UP;
+		oldStepToNewStep[3][1] = STEP_PAD1_DOWN;
+		oldStepToNewStep[5][1] = STEP_PAD1_LEFT;
+		oldStepToNewStep[6][1] = STEP_PAD2_RIGHT;
+		oldStepToNewStep[8][1] = STEP_PAD2_UP;
+		oldStepToNewStep[9][1] = STEP_PAD2_DOWN;
+		oldStepToNewStep[11][1]= STEP_PAD2_LEFT;
+		break;
+	case PlayerOptions::TURN_LEFT:
+		oldStepToNewStep[0][1] = STEP_PAD1_DOWN;
+		oldStepToNewStep[2][1] = STEP_PAD1_RIGHT;
+		oldStepToNewStep[3][1] = STEP_PAD1_LEFT;
+		oldStepToNewStep[5][1] = STEP_PAD1_UP;
+		oldStepToNewStep[6][1] = STEP_PAD2_DOWN;
+		oldStepToNewStep[8][1] = STEP_PAD2_RIGHT;
+		oldStepToNewStep[9][1] = STEP_PAD2_LEFT;
+		oldStepToNewStep[11][1]= STEP_PAD2_UP;
+		break;
+	case PlayerOptions::TURN_RIGHT:
+		oldStepToNewStep[0][1] = STEP_PAD1_UP;
+		oldStepToNewStep[2][1] = STEP_PAD1_LEFT;
+		oldStepToNewStep[3][1] = STEP_PAD1_RIGHT;
+		oldStepToNewStep[5][1] = STEP_PAD1_DOWN;
+		oldStepToNewStep[6][1] = STEP_PAD2_UP;
+		oldStepToNewStep[8][1] = STEP_PAD2_LEFT;
+		oldStepToNewStep[9][1] = STEP_PAD2_RIGHT;
+		oldStepToNewStep[11][1]= STEP_PAD2_DOWN;
+		break;
+	case PlayerOptions::TURN_SHUFFLE:
+		bool bAlreadyMapped[12];
+		for( int i=0; i<12; i++ )
+			bAlreadyMapped[i] = false;
+		
+		// hack: don't shuffle the Up+... Steps
+		bAlreadyMapped[1] = true;
+		bAlreadyMapped[4] = true;
+		bAlreadyMapped[7] = true;
+		bAlreadyMapped[10] = true;
+
+		// shuffle left side
+		for( i=0; i<6; i++ )
+		{
+			if( i == 1  ||  i == 4 )
+				continue;
+
+			int iMapsTo;
+			do {
+				iMapsTo = rand()%6;
+			} while( bAlreadyMapped[iMapsTo] );
+			bAlreadyMapped[iMapsTo] = true;
+
+			oldStepToNewStep[i][1] = oldStepToNewStep[iMapsTo][0];
+		}
+		// shuffle right side
+		for( i=6; i<12; i++ )
+		{
+			if( i == 7  ||  i == 10 )
+				continue;
+
+			int iMapsTo;
+			do {
+				iMapsTo = rand()%6+6;
+			} while( bAlreadyMapped[iMapsTo] );
+			bAlreadyMapped[iMapsTo] = true;
+
+			oldStepToNewStep[i][1] = oldStepToNewStep[iMapsTo][0];
+		}
+		break;
+	}
+
+	// transform tempSteps and store them in the Player's structures
+	for( i=0; i<MAX_STEP_ELEMENTS; i++ ) 
+	{
+		Step &oldStep = tempSteps[i];
+		Step &newStep = m_OriginalStep[i];
+		newStep = STEP_NONE;
+
+		for( int j=0; j<12; j++ )
+		{
+			if( oldStep & oldStepToNewStep[j][0] )
+				newStep |= oldStepToNewStep[j][1];
 		}
 
 		m_LeftToStepOn[i] = m_OriginalStep[i];
-		m_iColorArrowFrameOffset[i] = (int)( i/(FLOAT)ELEMENTS_PER_BEAT*NUM_FRAMES_IN_COLOR_ARROW_SPRITE );
+		m_iColorArrowFrameOffset[i] = (int)( i/(float)ELEMENTS_PER_BEAT*NUM_FRAMES_IN_COLOR_ARROW_SPRITE );
 	}
 
-	// copy the HoldSteps
-	m_HoldSteps.Copy( newSteps.m_HoldSteps );
-
-	// init HoldStepScores
-	m_HoldStepScores.RemoveAll();
-	for( i=0; i<m_HoldSteps.GetSize(); i++ )
+	// transform tempHoldSteps and store them in the Player's structures
+	for( i=0; i<tempHoldSteps.GetSize(); i++ ) 
 	{
+		HoldStep &oldHoldStep = tempHoldSteps[i];
+		HoldStep newHoldStep = oldHoldStep;
+
+		for( int j=0; j<12; j++ )
+		{
+			if( oldHoldStep.m_Step & oldStepToNewStep[j][0] )
+				newHoldStep.m_Step |= oldStepToNewStep[j][1];
+		}
+		
+		m_HoldSteps.Add( newHoldStep );
 		m_HoldStepScores.Add( HOLD_SCORE_NONE );
 	}
+
 }
 
 void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference )
@@ -290,11 +455,11 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 		float fStartBeat = StepIndexToBeat( hs.m_iStartIndex );
 		float fEndBeat = StepIndexToBeat( hs.m_iEndIndex );
 
-		if( fStartBeat+fMaxBeatDifference < m_fSongBeat && m_fSongBeat < fEndBeat-fMaxBeatDifference  &&	// if the song beat is in the range of this hold
+		if( fStartBeat+fMaxBeatDifference*2 < m_fSongBeat && m_fSongBeat < fEndBeat-fMaxBeatDifference*2  &&	// if the song beat is in the range of this hold
 			m_HoldStepScores[i] == HOLD_SCORE_NONE  ||  
 			m_HoldStepScores[i] == HOLD_STEPPED_ON )	// this hold doesn't already have a score
 		{
-			PlayerInput PlayerI = { PLAYER_1, hs.m_Step };
+			PlayerInput PlayerI = { m_PlayerNumber, hs.m_Step };
 			if( GAMEINFO->IsButtonDown( PlayerI ) )		// they're holding the button down
 			{
 				int iCol = m_StepToColumnNumber[ hs.m_Step ];
@@ -333,6 +498,8 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 	UpdateCombo( fDeltaTime );
 	UpdateScore( fDeltaTime );
 	UpdateLifeMeter( fDeltaTime );
+
+	m_frameJudgementAndCombo.Update( fDeltaTime );
 }
 
 void Player::Draw()
@@ -343,7 +510,9 @@ void Player::Draw()
 	DrawJudgement();
 	DrawCombo();
 	DrawScore();
-	DrawLifeMeter();	
+	DrawLifeMeter();
+	
+	m_frameJudgementAndCombo.Draw();
 }
 
 
@@ -633,9 +802,11 @@ void Player::DrawColorArrows()
 	{				
 		if( m_LeftToStepOn[i] != 0 )	// this step is not yet complete 
 		{		
+			float fYOffset = GetColorArrowYOffset( i, m_fSongBeat );
 			float fYPos = GetColorArrowYPos( i, m_fSongBeat );
 			if( m_PlayerOptions.m_bReverseScroll )	fYPos = SCREEN_HEIGHT - fYPos;
 
+			float fAlpha = GetColorArrowAlphaFromYOffset( fYOffset );
 
 			// beats until the note is stepped on.
 			float fBeatsTilStep = StepIndexToBeat( i ) - m_fSongBeat;
@@ -646,6 +817,7 @@ void Player::DrawColorArrows()
 				if( m_OriginalStep[i] & m_ColumnNumberToStep[c] ) {	// this column is still unstepped on?
 					m_ColorArrow[c].SetY( fYPos );
 					m_ColorArrow[c].SetIndexAndBeat( i, m_fSongBeat );
+					m_ColorArrow[c].SetAlpha( fAlpha );
 					m_ColorArrow[c].Draw();
 				}
 			}
@@ -686,17 +858,24 @@ void Player::DrawColorArrows()
 		// draw the gray parts
 		for( int j=hs.m_iEndIndex; j>=hs.m_iStartIndex; j-- )	// for each arrow in this freeze
 		{
+			float fYOffset = GetColorArrowYOffset( j, m_fSongBeat );
+			float fAlpha = GetColorArrowAlphaFromYOffset( fYOffset );
+
 			float fYPos = GetColorArrowYPos( j, m_fSongBeat );
 			if( score == HOLD_STEPPED_ON  ||  score == HOLD_SCORE_OK )
 				fYPos = max( fYPos, GetGrayArrowYPos() );
 			if( m_PlayerOptions.m_bReverseScroll )	fYPos = SCREEN_HEIGHT - fYPos;
 			m_ColorArrow[iColNum].SetY( fYPos );
+			m_ColorArrow[iColNum].SetAlpha( fAlpha );
 			m_ColorArrow[iColNum].DrawGrayPart();
 		}
 
 		// draw the color parts
 		for( j=hs.m_iEndIndex; j>=hs.m_iStartIndex; j-- )	// for each arrow in this freeze
 		{
+			float fYOffset = GetColorArrowYOffset( j, m_fSongBeat );
+			float fAlpha = GetColorArrowAlphaFromYOffset( fYOffset );
+	
 			float fYPos = GetColorArrowYPos( j, m_fSongBeat );
 			m_ColorArrow[iColNum].SetY( fYPos );
 			if( score == HOLD_STEPPED_ON  ||  score == HOLD_SCORE_OK )
@@ -704,12 +883,16 @@ void Player::DrawColorArrows()
 			if( m_PlayerOptions.m_bReverseScroll )	fYPos = SCREEN_HEIGHT - fYPos;
 			m_ColorArrow[iColNum].SetY( fYPos );
 			D3DXCOLOR color( (float)(j-hs.m_iStartIndex)/(float)(hs.m_iEndIndex-hs.m_iStartIndex), 1, 0, 1 );	// color shifts from green to yellow
-			m_ColorArrow[iColNum].SetDiffuseColor( color );
+			m_ColorArrow[iColNum].SetDiffuseColor( color );	
+			m_ColorArrow[iColNum].SetAlpha( fAlpha );
 			m_ColorArrow[iColNum].DrawColorPart();
 		}
 
 		// draw the first arrow on top of the others
 		j = hs.m_iStartIndex;
+
+		float fYOffset = GetColorArrowYOffset( j, m_fSongBeat );
+		float fAlpha = GetColorArrowAlphaFromYOffset( fYOffset );
 		float fYPos = GetColorArrowYPos( j, m_fSongBeat );
 		if( score == HOLD_STEPPED_ON  ||  score == HOLD_SCORE_OK )
 			fYPos = max( fYPos, GetGrayArrowYPos() );
@@ -718,6 +901,7 @@ void Player::DrawColorArrows()
 		m_ColorArrow[iColNum].SetIndexAndBeat( i, m_fSongBeat );
 		D3DXCOLOR color( 0, 1, 0, 1 );	// color shifts from green to yellow
 		m_ColorArrow[iColNum].SetDiffuseColor( color );
+		m_ColorArrow[iColNum].SetAlpha( fAlpha );
 		m_ColorArrow[iColNum].Draw();
 
 	}
@@ -745,6 +929,48 @@ float Player::GetColorArrowYPos( int iStepIndex, float fSongBeat )
 
 }
 
+float Player::GetColorArrowYOffset( int iStepIndex, float fSongBeat )
+{
+	float fBeatsUntilStep = StepIndexToBeat( iStepIndex ) - fSongBeat;
+	float fYOffset = fBeatsUntilStep * ARROW_GAP * m_PlayerOptions.m_fArrowScrollSpeed;
+	switch( m_PlayerOptions.m_EffectType )
+	{
+	case PlayerOptions::EFFECT_BOOST:
+		fYOffset *= 1.4f / ((fYOffset+SCREEN_HEIGHT/1.6f)/SCREEN_HEIGHT); 
+		break;
+	case PlayerOptions::EFFECT_WAVE:
+		fYOffset += 15*sin( fYOffset/38 ); 
+		break;
+	}
+	return fYOffset;
+}
+
+float Player::GetColorArrowAlphaFromYOffset( float fYOffset )
+{
+	float fAlpha;
+	switch( m_PlayerOptions.m_AppearanceType )
+	{ 
+	case PlayerOptions::APPEARANCE_VISIBLE:
+		fAlpha = 1;
+		break;
+	case PlayerOptions::APPEARANCE_HIDDEN:
+//						fAlpha = m_PlayerOptions.m_bReverseScroll ? ((SCREEN_HEIGHT-(fYPos-200))/200) : ((fYPos-200)/200);
+		fAlpha = (fYOffset-100)/200;
+		break;
+	case PlayerOptions::APPEARANCE_SUDDEN:
+//						fAlpha = m_PlayerOptions.m_bReverseScroll ? ((SCREEN_HEIGHT-(fYPos+200))/200) : ((fYPos+200)/200);
+		fAlpha = ((SCREEN_HEIGHT-fYOffset)-280)/200;
+		break;
+	case PlayerOptions::APPEARANCE_STEALTH:
+		fAlpha = 0;
+		break;
+	};
+	if( fYOffset < 0 )
+		fAlpha = 1;
+
+	return fAlpha;
+};
+
 float Player::GetGrayArrowYPos()
 {
 	return GRAY_ARROW_Y;
@@ -757,11 +983,12 @@ float Player::GetGrayArrowYPos()
 
 void Player::SetJudgementX( int iNewX )
 {
-	float fY = JUDGEMENT_Y;
-	if( m_PlayerOptions.m_bReverseScroll )	fY = SCREEN_HEIGHT - fY;
-	m_sprJudgement.SetXY( iNewX, fY );
+	// the frame will do this for us
+	//float fY = JUDGEMENT_Y;
+	//if( m_PlayerOptions.m_bReverseScroll )	fY = SCREEN_HEIGHT - fY;
+	//m_sprJudgement.SetXY( iNewX, fY );
 
-	fY = HOLD_JUDGEMENT_Y;
+	float fY = HOLD_JUDGEMENT_Y;
 	if( m_PlayerOptions.m_bReverseScroll )	fY = SCREEN_HEIGHT - fY;
 	for( int c=0; c<MAX_NUM_COLUMNS; c++ )
 	{
@@ -771,9 +998,14 @@ void Player::SetJudgementX( int iNewX )
 
 void Player::UpdateJudgement( float fDeltaTime )
 {
-	if( m_fJudgementDisplayCountdown > 0 )
-		m_fJudgementDisplayCountdown -= fDeltaTime;
-	m_sprJudgement.Update( fDeltaTime );
+	m_fJudgementDisplayCountdown -= fDeltaTime;
+	if( m_fJudgementDisplayCountdown < 0 )
+	{
+		m_sprJudgement.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
+		m_fJudgementDisplayCountdown = 0;
+	}
+
+	// m_sprJudgement.Update( fDeltaTime );	// the frame will take care of this for us.
 
 	for( int c=0; c<MAX_NUM_COLUMNS; c++ )
 	{
@@ -786,8 +1018,8 @@ void Player::UpdateJudgement( float fDeltaTime )
 
 void Player::DrawJudgement()
 {
-	if( m_fJudgementDisplayCountdown > 0.0 )
-		m_sprJudgement.Draw();
+	//if( m_fJudgementDisplayCountdown > 0.0 )
+	//	m_sprJudgement.Draw();		// the frame will take care of this for us
 
 	for( int c=0; c<MAX_NUM_COLUMNS; c++ )
 	{
@@ -812,15 +1044,26 @@ void Player::SetJudgement( StepScore score )
 	m_fJudgementDisplayCountdown = JUDGEMENT_DISPLAY_TIME;
 
 	if( score == miss ) {	// falling down
-		m_sprJudgement.SetY( JUDGEMENT_Y - 30 );
+		m_sprJudgement.SetY( (m_PlayerOptions.m_bReverseScroll ? JUDGEMENT_Y_OFFSET : -JUDGEMENT_Y_OFFSET) - 30 );
 		m_sprJudgement.SetZoom( 1.0f );
+		m_sprJudgement.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	// visible
 		m_sprJudgement.BeginTweening( JUDGEMENT_DISPLAY_TIME );
-		m_sprJudgement.SetTweenY( JUDGEMENT_Y + 30 );
+		m_sprJudgement.SetTweenY( (m_PlayerOptions.m_bReverseScroll ? JUDGEMENT_Y_OFFSET : -JUDGEMENT_Y_OFFSET) + 30 );
+
 	} else {		// zooming out
-		m_sprJudgement.SetY( JUDGEMENT_Y );
-		m_sprJudgement.SetZoom( 1.5f );
+		m_sprJudgement.StopTweening();
+		m_sprJudgement.SetY( (m_PlayerOptions.m_bReverseScroll ? JUDGEMENT_Y_OFFSET : -JUDGEMENT_Y_OFFSET) );
+		m_sprJudgement.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	// visible
+		
+		m_frameJudgementAndCombo.SetZoom( 1.35f );
+		m_frameJudgementAndCombo.BeginTweening( JUDGEMENT_DISPLAY_TIME/5.0 );
+		m_frameJudgementAndCombo.SetTweenZoom( 1.0f );
+		
+/*		m_sprJudgement.SetZoom( 1.5f );
+		m_sprJudgement.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	// visible
 		m_sprJudgement.BeginTweening( JUDGEMENT_DISPLAY_TIME/3.0 );
 		m_sprJudgement.SetTweenZoom( 1.0f );
+		*/
 	}
 }
 
@@ -831,8 +1074,8 @@ void Player::SetHoldJudgement( int iCol, HoldStepScore score )
 	switch( score )
 	{
 	case HOLD_SCORE_NONE:	m_sprHoldJudgement[iCol].SetState( 0 );	break;	// freeze!
-	case HOLD_SCORE_NG:		m_sprHoldJudgement[iCol].SetState( 1 );	break;
-	case HOLD_SCORE_OK:		m_sprHoldJudgement[iCol].SetState( 2 );	break;
+	case HOLD_SCORE_OK:		m_sprHoldJudgement[iCol].SetState( 7 );	break;
+	case HOLD_SCORE_NG:		m_sprHoldJudgement[iCol].SetState( 8 );	break;
 	}
 
 	m_fHoldJudgementDisplayCountdown[iCol] = JUDGEMENT_DISPLAY_TIME;
@@ -843,7 +1086,7 @@ void Player::SetHoldJudgement( int iCol, HoldStepScore score )
 		m_sprHoldJudgement[iCol].SetY( fY - 10 );
 		m_sprHoldJudgement[iCol].SetZoom( 1.0f );
 		m_sprHoldJudgement[iCol].BeginTweening( JUDGEMENT_DISPLAY_TIME );
-		m_sprHoldJudgement[iCol].SetTweenY( HOLD_JUDGEMENT_Y + 10 );
+		m_sprHoldJudgement[iCol].SetTweenY( fY + 10 );
 	} else {		// zooming out
 		float fY = HOLD_JUDGEMENT_Y;
 		if( m_PlayerOptions.m_bReverseScroll )	fY = SCREEN_HEIGHT - fY;
@@ -861,23 +1104,24 @@ void Player::SetComboX( int iNewX )
 	fY = COMBO_Y;
 	if( m_PlayerOptions.m_bReverseScroll )	fY = SCREEN_HEIGHT - fY;
 
-	m_sprCombo.SetXY( iNewX+40, fY );
-	m_ComboNumber.SetXY(  iNewX-50, fY );
+	//m_sprCombo.SetXY( iNewX+40, fY );		// the frame will do this for us
+	//m_ComboNumber.SetXY(  iNewX-50, fY );
 }
 
 void Player::UpdateCombo( float fDeltaTime )
 {
-	m_sprCombo.Update( fDeltaTime );
-	m_ComboNumber.Update( fDeltaTime );
+	//m_sprCombo.Update( fDeltaTime );		// the frame will do this for us
+	//m_ComboNumber.Update( fDeltaTime );	// the frame will do this for us
 }
 
 void Player::DrawCombo()
 {
-	if( m_bComboVisible )
-	{
-		m_ComboNumber.Draw();
-		m_sprCombo.Draw();
-	}
+// the frame will do this for us
+//	if( m_bComboVisible )
+//	{
+//		m_ComboNumber.Draw();
+//		m_sprCombo.Draw();
+//	}
 }
 
 
@@ -891,14 +1135,20 @@ void Player::SetCombo( int iNewCombo )
 
 	if( iNewCombo <= 4 )
 	{
-		m_bComboVisible = FALSE;
+		m_ComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
+		m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
 	}
 	else
 	{
-		m_bComboVisible = TRUE;
+		m_ComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	// visible
+		m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	// visible
 
 		m_ComboNumber.SetSequence( ssprintf("%d", iNewCombo) );
-		m_ComboNumber.SetZoom( 1.0f + iNewCombo/200.0f ); 
+		float fNewZoom = 0.5f + iNewCombo/800.0f;
+		m_ComboNumber.SetZoom( fNewZoom ); 
+		m_ComboNumber.SetX( -40 - (fNewZoom-1)*30 ); 
+		m_ComboNumber.SetY( m_PlayerOptions.m_bReverseScroll ? -JUDGEMENT_Y_OFFSET : JUDGEMENT_Y_OFFSET ); 
+		
 		//m_ComboNumber.BeginTweening( COMBO_TWEEN_TIME );
 		//m_ComboNumber.SetTweenZoom( 1 );
 	}

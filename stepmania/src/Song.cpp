@@ -413,20 +413,16 @@ void Song::TidyUpData()
 		GetDirListing( m_sSongDir + CString("*.jpg"), arrayPossibleBanners );
 		GetDirListing( m_sSongDir + CString("*.bmp"), arrayPossibleBanners );
 
-		D3DXIMAGE_INFO d3dii;
-		int iSmallestNumPixelsSoFar = 1024*1024;
+		DWORD dwSmallestFileSoFar = 0xFFFFFFFF;
 		CString sSmallestFileNameSoFar = "";
 
 		for( int i=0; i<arrayPossibleBanners.GetSize(); i++ )
 		{
-			if( SUCCEEDED( D3DXGetImageInfoFromFile( m_sSongDir + arrayPossibleBanners[i], &d3dii ) ) )
+			DWORD this_size = GetFileSizeInBytes( m_sSongDir + arrayPossibleBanners[i] );
+			if( this_size < dwSmallestFileSoFar )	// we have a new leader!
 			{
-				int iNumPixels = d3dii.Width * d3dii.Height;
-				if( iNumPixels < iSmallestNumPixelsSoFar )	// we have a new leader!
-				{
-					iSmallestNumPixelsSoFar = iNumPixels;
-					sSmallestFileNameSoFar = arrayPossibleBanners[i];
-				}
+				dwSmallestFileSoFar = this_size;
+				sSmallestFileNameSoFar = arrayPossibleBanners[i];
 			}
 		}
 
@@ -444,25 +440,21 @@ void Song::TidyUpData()
 		GetDirListing( m_sSongDir + CString("*.jpg"), arrayPossibleBackgrounds );
 		GetDirListing( m_sSongDir + CString("*.bmp"), arrayPossibleBackgrounds );
 
-		D3DXIMAGE_INFO d3dii;
-		int iBiggestNumPixelsSoFar = 0;
-		CString sBiggestFileNameSoFar = "";
+		DWORD dwLargestFileSoFar = 0;
+		CString sLargestFileNameSoFar = "";
 
 		for( int i=0; i<arrayPossibleBackgrounds.GetSize(); i++ )
 		{
-			if( SUCCEEDED( D3DXGetImageInfoFromFile( m_sSongDir + arrayPossibleBackgrounds[i], &d3dii ) ) )
+			DWORD this_size = GetFileSizeInBytes( m_sSongDir + arrayPossibleBackgrounds[i] );
+			if( this_size > dwLargestFileSoFar )	// we have a new leader!
 			{
-				int iNumPixels = d3dii.Width * d3dii.Height;
-				if( iNumPixels > iBiggestNumPixelsSoFar )	// we have a new leader!
-				{
-					iBiggestNumPixelsSoFar = iNumPixels;
-					sBiggestFileNameSoFar = arrayPossibleBackgrounds[i];
-				}
+				dwLargestFileSoFar = this_size;
+				sLargestFileNameSoFar = arrayPossibleBackgrounds[i];
 			}
 		}
 
-		if( sBiggestFileNameSoFar != "" )		// we found a match
-			m_sBackground = sBiggestFileNameSoFar;
+		if( sLargestFileNameSoFar != "" )		// we found a match
+			m_sBackground = sLargestFileNameSoFar;
 		else
 			RageError( ssprintf("Background could not be found.  Please check the Song file '%s' and verify the specified #BANNER exists.", GetSongFilePath()) );
 	}

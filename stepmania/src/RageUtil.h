@@ -82,6 +82,7 @@ CString join(CString Deliminator, CStringArray& Source);
 void GetDirListing( CString sPath, CStringArray &AddTo, BOOL bOnlyDirs=FALSE );
 
 bool DoesFileExist( CString sPath );
+DWORD GetFileSizeInBytes( CString sFilePath );
 
 int CompareCStrings(const void *arg1, const void *arg2);
 void SortCStringArray( CStringArray &AddTo, BOOL bSortAcsending = TRUE );

@@ -22,6 +22,7 @@
 #include "GhostArrow.h"
 #include "HoldGhostArrow.h"
 #include "Player.h"
+#include "ActorFrame.h"
 
 
 
@@ -32,7 +33,7 @@ const int MAX_NUM_COLUMNS = 8;
 class Player
 {
 public:
-	Player( PlayerOptions po );
+	Player( PlayerOptions po, PlayerNumber pn );
 
 	void SetSteps( const Steps& newSteps, bool bLoadOnlyLeftSide = false, bool bLoadOnlyRightSide = false );
 	void SetX( float fX );
@@ -49,6 +50,7 @@ protected:
 	void OnCompleteStep( float fSongBeat, Step player_step, float fMaxBeatDiff, int iStepIndex );
 
 	PlayerOptions m_PlayerOptions;
+	PlayerNumber	m_PlayerNumber;
 
 	int		m_iCurCombo;
 	int		m_iMaxCombo;
@@ -75,6 +77,8 @@ protected:
 	void SetColorArrowsX( int iX );
 	void UpdateColorArrows( float fDeltaTime );
 	float GetColorArrowYPos( int iStepIndex, float fSongBeat );
+	float GetColorArrowYOffset( int iStepIndex, float fSongBeat );
+	float GetColorArrowAlphaFromYOffset( float fYOffset );
 	void DrawColorArrows();
 	int			m_iColorArrowFrameOffset[MAX_STEP_ELEMENTS];
 	ColorArrow	m_ColorArrow[MAX_NUM_COLUMNS];
@@ -95,6 +99,8 @@ protected:
 	GhostArrow	m_GhostArrow[MAX_NUM_COLUMNS];
 	HoldGhostArrow	m_HoldGhostArrow[MAX_NUM_COLUMNS];
 
+	// holder for judgement and combo displays
+	ActorFrame m_frameJudgementAndCombo;
 
 	// judgement
 	void SetJudgementX( int iX );

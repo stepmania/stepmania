@@ -252,6 +252,22 @@ void GetDirListing( CString sPath, CStringArray &AddTo, BOOL bOnlyDirs )
 	}
 }
 
+DWORD GetFileSizeInBytes( CString sFilePath )
+{
+	HANDLE hFile = CreateFile(
+	  sFilePath,          // pointer to name of the file
+	  GENERIC_READ,       // access (read-write) mode
+	  FILE_SHARE_READ|FILE_SHARE_WRITE,	// share mode
+	  NULL,				   // pointer to security attributes
+	  OPEN_EXISTING,  // how to create
+	  FILE_ATTRIBUTE_NORMAL,  // file attributes
+	  NULL         // handle to file with attributes to 
+	);
+
+	return GetFileSize( hFile, NULL );
+}
+
+
 bool DoesFileExist( CString sPath )
 {
 	RageLog( "DoesFileExist(%s)", sPath );

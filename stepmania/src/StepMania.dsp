@@ -224,6 +224,14 @@ SOURCE=.\WindowManager.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\WindowOptions.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowOptions.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\WindowPlayerOptions.cpp
 # End Source File
 # Begin Source File
@@ -277,6 +285,14 @@ SOURCE=.\WindowSelectSteps.cpp
 # Begin Source File
 
 SOURCE=.\WindowSelectSteps.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowSongOptions.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowSongOptions.h
 # End Source File
 # Begin Source File
 

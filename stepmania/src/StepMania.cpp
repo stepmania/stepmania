@@ -23,9 +23,9 @@
 #include "GameInfo.h"
 #include "WindowManager.h"
 
-#include "WindowTitleMenu.h"
 #include "WindowSandbox.h"
 #include "WindowLoading.h"
+#include "WindowTitleMenu.h"
 
 #include <DXUtil.h>
 
@@ -315,18 +315,27 @@ HRESULT CreateObjects( HWND hWnd )
 	Render();
 	ShowFrame();
 
-	
+
+	// this stuff takes a long time...
 	SOUND	= new RageSound( hWnd );
 	MUSIC	= new RageMusic;
 	INPUT	= new RageInput( hWnd );
-	
-	GAMEINFO	= new GameInfo;
+	GAMEINFO= new GameInfo;
+	GAMEINFO->InitSongArrayFromDisk();
+
+	BringWindowToTop( hWnd );
+	SetForegroundWindow( hWnd );
+
+	bool bGoFullScreen = GAMEINFO->m_GameOptions.m_bIsFullscreen;
+	SetFullscreen( GAMEINFO->m_GameOptions.m_bIsFullscreen );
 
 
 	//WM->SetNewWindow( new WindowSandbox );
+	//WM->SetNewWindow( new WindowResults );
 	WM->SetNewWindow( new WindowTitleMenu );
 
-	Sleep(1000);	// let the disk operations catch up
+	Sleep(2000);	// let the disk operations catch up
+
 
     DXUtil_Timer( TIMER_START );    // Start the accurate timer
 
@@ -528,6 +537,12 @@ void SetFullscreen( BOOL bFullscreen )
 								   SCREEN_WIDTH, 
 								   SCREEN_HEIGHT );
 	RestoreObjects();
+
+	if( GAMEINFO )
+	{
+		GAMEINFO->m_GameOptions.m_bIsFullscreen = bFullscreen;
+		GAMEINFO->SaveConfigToDisk();
+	}
 }
 
 
