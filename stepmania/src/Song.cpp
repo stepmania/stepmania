@@ -1595,7 +1595,7 @@ bool Song::Matches(CString sGroup, CString sSong) const
 	CStringArray bits;
 	split( sDir, "/", bits );
 	ASSERT(bits.size() >= 2); /* should always have at least two parts */
-	CString sLastBit = bits[bits.size()-1];
+	const CString &sLastBit = bits[bits.size()-1];
 
 	// match on song dir or title (ala DWI)
 	if( !sSong.CompareNoCase(sLastBit) )
