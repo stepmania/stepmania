@@ -56,10 +56,13 @@ CombinedLifeMeterTug::CombinedLifeMeterTug()
 
 void CombinedLifeMeterTug::Update( float fDelta )
 {
-	m_Stream[PLAYER_1].SetPercent( GAMESTATE->m_fTugLifePercentP1 );
-	m_Stream[PLAYER_2].SetPercent( 1-GAMESTATE->m_fTugLifePercentP1 );
+	float fPercentToShow = GAMESTATE->m_fTugLifePercentP1;
+	CLAMP( fPercentToShow, 0.f, 1.f );
 
-	float fSeparatorX = SCALE( GAMESTATE->m_fTugLifePercentP1, 0.f, 1.f, -METER_WIDTH/2.f, +METER_WIDTH/2.f );
+	m_Stream[PLAYER_1].SetPercent( fPercentToShow );
+	m_Stream[PLAYER_2].SetPercent( 1-fPercentToShow );
+
+	float fSeparatorX = SCALE( fPercentToShow, 0.f, 1.f, -METER_WIDTH/2.f, +METER_WIDTH/2.f );
 
 	m_sprSeparator.SetX( fSeparatorX );
 
@@ -128,5 +131,4 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, float fPercentToMove )
 	case PLAYER_2:	GAMESTATE->m_fTugLifePercentP1 -= fPercentToMove;	break;
 	default:	ASSERT(0);
 	}
-	CLAMP( GAMESTATE->m_fTugLifePercentP1, 0, 1 );
 }
