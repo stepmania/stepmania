@@ -31,6 +31,7 @@
 #include "ScreenSystemLayer.h"
 #include "BGAnimation.h"
 #include "Foreach.h"
+#include "ActorUtil.h"
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -52,7 +53,7 @@ void ScreenManager::Register( const CString& sClassName, CreateScreenFn pfn )
 
 ScreenManager::ScreenManager()
 {
-	m_pSharedBGA = new BGAnimation;
+	m_pSharedBGA = new Actor;
 	m_SystemLayer = NULL;
 
 	m_MessageSendOnPop = SM_None;
@@ -387,15 +388,15 @@ retry:
 		sNewBGA = THEME->GetPathB(sScreenName,"background");
 	if( sNewBGA.empty() )
 	{
-		m_pSharedBGA->Unload();
+		SAFE_DELETE( m_pSharedBGA );
+		m_pSharedBGA = new Actor;
 		m_sLastLoadedBackgroundPath = "";
 	}
 	else if( m_sLastLoadedBackgroundPath != sNewBGA )
 	{
 		// Create the new background before deleting the previous so that we keep
 		// any common textures loaded.
-		BGAnimation *pNewBGA = new BGAnimation;
-		pNewBGA->LoadFromAniDir( sNewBGA );
+		Actor *pNewBGA = ActorUtil::MakeActor( sNewBGA );
 		SAFE_DELETE( m_pSharedBGA );
 		m_pSharedBGA = pNewBGA;
 		m_pSharedBGA->PlayCommand( "On" );

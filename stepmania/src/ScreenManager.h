@@ -60,7 +60,7 @@ public:
 	//
 	// in draw order first to last
 	//
-	BGAnimation			*m_pSharedBGA;	// BGA object that's persistent between screens
+	Actor			*m_pSharedBGA;	// BGA object that's persistent between screens
 	void	PlaySharedBackgroundOffCommand();
 private:
 	vector<Screen*>		m_ScreenStack;	// bottommost to topmost
