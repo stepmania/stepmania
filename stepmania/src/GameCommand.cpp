@@ -550,6 +550,16 @@ bool GameCommand::IsPlayable( CString *why ) const
 		}
 	}
 
+	if( !m_sModifiers.empty() )
+	{
+		// TODO: Split this and check each modifier individually
+		if( UNLOCKMAN->ModifierIsLocked(m_sModifiers) )
+		{	if( why )
+				*why = "Modifier is locked";
+			return false;
+		}
+	}
+
 	return true;
 }
 
