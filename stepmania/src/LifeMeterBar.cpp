@@ -139,7 +139,7 @@ public:
 
 	void DrawStrip( float fRightEdgePercent )
 	{
-		RECT rect;
+		RectI rect;
 
 		const float fChamberWidthInPercent = 1.0f/g_iNumChambers;
 		const float fStripWidthInPercent = 1.0f/g_iNumStrips;
@@ -161,8 +161,8 @@ public:
 		float fPercentCroppedFromRight = max( 0, fCorrectedRightEdgePercent-1 );
 
 
-		m_sprStreamNormal.StretchTo( &rect );
-		m_sprStreamHot.StretchTo( &rect );
+		m_sprStreamNormal.StretchTo( rect );
+		m_sprStreamHot.StretchTo( rect );
 
 
 		// set custom texture coords
@@ -185,7 +185,7 @@ public:
 
 	void DrawMask( float fPercent )
 	{
-		RECT rect;
+		RectI rect;
 
 		int iChamber;
 		float fChamberOverflowPercent;
@@ -204,7 +204,7 @@ public:
 		rect.left  = MIN( rect.left,  + g_iMeterWidth/2 );
 		rect.right = MIN( rect.right, + g_iMeterWidth/2 );
 
-		m_quadMask.StretchTo( &rect );
+		m_quadMask.StretchTo( rect );
 		m_quadMask.Draw();
 
 		// draw mask for horizontal chambers
@@ -216,7 +216,7 @@ public:
 		rect.left  = MIN( rect.left,  + g_iMeterWidth/2 );
 		rect.right = MIN( rect.right, + g_iMeterWidth/2 );
 
-		m_quadMask.StretchTo( &rect );
+		m_quadMask.StretchTo( rect );
 		m_quadMask.Draw();
 		
 	}

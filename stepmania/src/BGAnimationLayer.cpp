@@ -59,14 +59,14 @@ void BGAnimationLayer::LoadFromStaticGraphic( CString sPath )
 {
 	m_iNumSprites = 1;
 	m_Sprites[0].Load( sPath );
-	m_Sprites[0].StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+	m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 }
 
 void BGAnimationLayer::LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewind )
 {
 	m_iNumSprites = 1;
 	m_Sprites[0].Load( sMoviePath );
-	m_Sprites[0].StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+	m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 	m_Sprites[0].GetTexture()->Play();
 	::Sleep( 50 );	// decode a frame so we don't see a black flash at the beginning
 	m_Sprites[0].GetTexture()->Pause();
@@ -79,7 +79,7 @@ void BGAnimationLayer::LoadFromVisualization( CString sMoviePath )
 {
 	m_iNumSprites = 1;
 	m_Sprites[0].Load( sMoviePath );
-	m_Sprites[0].StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+	m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 	m_Sprites[0].SetBlendModeAdd();
 }
 
@@ -146,7 +146,7 @@ found_effect:
 	case EFFECT_STRETCH_STILL:
 		m_iNumSprites = 1;
 		m_Sprites[0].Load( sPath );
-		m_Sprites[0].StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+		m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 		break;
 	case EFFECT_STRETCH_SCROLL_LEFT:
 	case EFFECT_STRETCH_SCROLL_RIGHT:
@@ -157,7 +157,7 @@ found_effect:
 	case EFFECT_STRETCH_TWIST:
 		m_iNumSprites = 1;
 		m_Sprites[0].Load( sPath, false, 4, 4, false, true );
-		m_Sprites[0].StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+		m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 		m_Sprites[0].SetCustomTextureRect( FRECT(0,0,1,1) );
 
 		switch( m_Effect )
@@ -178,7 +178,7 @@ found_effect:
 	case EFFECT_STRETCH_SPIN:
 		m_iNumSprites = 1;
 		m_Sprites[0].Load( sPath );
-		m_Sprites[0].ScaleToCover( CRect(SCREEN_LEFT-200,SCREEN_TOP-200,SCREEN_RIGHT+200,SCREEN_BOTTOM+200) );
+		m_Sprites[0].ScaleToCover( RectI(SCREEN_LEFT-200,SCREEN_TOP-200,SCREEN_RIGHT+200,SCREEN_BOTTOM+200) );
 		m_fRotationalVelocity = 1;
 		break;
 	case EFFECT_PARTICLES_SPIRAL_OUT:

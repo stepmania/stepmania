@@ -141,7 +141,7 @@ void CourseContentsFrame::DrawPrimitives()
 	// write to z buffer so that top and bottom are clipped
 	m_quad.SetZ( -1 );
 
-	CRect rectBarSize(-(int)CONTENTS_BAR_WIDTH/2, -(int)CONTENTS_BAR_HEIGHT/2, (int)CONTENTS_BAR_WIDTH/2, (int)CONTENTS_BAR_HEIGHT/2);
+	RectI rectBarSize(-(int)CONTENTS_BAR_WIDTH/2, -(int)CONTENTS_BAR_HEIGHT/2, (int)CONTENTS_BAR_WIDTH/2, (int)CONTENTS_BAR_HEIGHT/2);
 	m_quad.StretchTo( rectBarSize );
 
 	m_quad.SetY( (-(MAX_VISIBLE_CONTENTS-1)/2 - 1) * CONTENTS_BAR_HEIGHT );

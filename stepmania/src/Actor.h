@@ -134,11 +134,11 @@ public:
 	
 	enum StretchType { fit_inside, cover };
 
-	void ScaleToCover( LPRECT rect )		{ ScaleTo( rect, cover ); };
-	void ScaleToFitInside( LPRECT rect )	{ ScaleTo( rect, fit_inside); };
-	void ScaleTo( LPRECT rect, StretchType st );
+	void ScaleToCover( const RectI &rect )		{ ScaleTo( rect, cover ); }
+	void ScaleToFitInside( const RectI &rect )	{ ScaleTo( rect, fit_inside); };
+	void ScaleTo( const RectI &rect, StretchType st );
 
-	void StretchTo( LPRECT rect );
+	void StretchTo( const RectI &rect );
 
 
 

@@ -235,7 +235,7 @@ ScreenEdit::ScreenEdit()
 	m_NoteFieldEdit.SetZoom( 0.5f );
 	m_NoteFieldEdit.Load( &noteData, PLAYER_1, 200, 800 );
 
-	m_rectRecordBack.StretchTo( CRect(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
+	m_rectRecordBack.StretchTo( RectI(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 	m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0) );
 
 	m_GrayArrowRowRecord.SetXY( EDIT_X, EDIT_GRAY_Y );
@@ -269,7 +269,7 @@ ScreenEdit::ScreenEdit()
 	m_textHelp.SetShadowLength( 2 );
 	m_textHelp.SetText( HELP_TEXT );
 
-	m_rectShortcutsBack.StretchTo( CRect(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
+	m_rectShortcutsBack.StretchTo( RectI(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 	m_rectShortcutsBack.SetDiffuse( RageColor(0,0,0,0.8f) );
 
 	m_textShortcuts.LoadFromFont( THEME->GetPathTo("Fonts","normal") );

@@ -93,10 +93,10 @@ public:
 	virtual void SetTweenGlow( RageColor c )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetTweenGlow(c); };
 
 
-	void ScaleToCover( LPRECT rect )			{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].ScaleToCover(rect); };
-	void ScaleToFitInside( LPRECT rect )		{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].ScaleToFitInside(rect); };
-	void ScaleTo( LPRECT rect, StretchType st )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].ScaleTo(rect,st); };
-	void StretchTo( LPRECT rect )				{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].StretchTo(rect); };
+	void ScaleToCover( const RectI &rect )		{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].ScaleToCover(rect); }
+	void ScaleToFitInside( const RectI &rect )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].ScaleToFitInside(rect); }
+	void ScaleTo( const RectI &rect, StretchType st )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].ScaleTo(rect,st); }
+	void StretchTo( const RectI &rect )			{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].StretchTo(rect); }
 
 	void SetHorizAlign( HorizAlign ha )			{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetHorizAlign(ha); };
 	void SetVertAlign( VertAlign va )			{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetVertAlign(va); };

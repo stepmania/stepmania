@@ -207,7 +207,7 @@ ScreenStage::ScreenStage()
 		/* The quadMask masks out draws via Z; it doesn't actually erase
 		 * anything, so make it transparent. */
 		m_quadMask.SetDiffuse( RageColor(0,0,0,0) );
-		m_quadMask.StretchTo( CRect(SCREEN_LEFT, int(roundf(fStageOffScreenY-fStageHeight/2)), 
+		m_quadMask.StretchTo( RectI(SCREEN_LEFT, int(roundf(fStageOffScreenY-fStageHeight/2)), 
 							        SCREEN_RIGHT, int(roundf(fStageOffScreenY+fStageHeight/2))) );
 		/* Put the quad mask on top, so draws to the Stage will be "under" it. */
 		m_quadMask.SetZ( -1 );
@@ -228,7 +228,7 @@ ScreenStage::ScreenStage()
 	{
 		const Song* pSong = GAMESTATE->m_pCurSong;
 		m_sprSongBackground.Load( (pSong && pSong->HasBackground()) ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","fallback background") );
-		m_sprSongBackground.StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+		m_sprSongBackground.StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 
 		/* Move the stage numbers downward, so they don't overlay the
 		 * center of the image. */

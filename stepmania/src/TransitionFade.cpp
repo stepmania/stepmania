@@ -20,7 +20,7 @@
 
 TransitionFade::TransitionFade()
 {
-	m_rect.StretchTo( CRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT) );
+	m_rect.StretchTo( RectI(0,0,SCREEN_WIDTH,SCREEN_HEIGHT) );
 	SetDiffuse( RageColor(0,0,0,1) );	// black
 }
 

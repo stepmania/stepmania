@@ -58,7 +58,6 @@ void BMSLoader::mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, char &
 	}
 }
 
-
 bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 {
 	LOG->Trace( "Notes::LoadFromBMSFile( '%s' )", sPath.GetString() );

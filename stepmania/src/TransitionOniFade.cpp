@@ -26,9 +26,9 @@ TransitionOniFade::TransitionOniFade()
 {
 	SetDiffuse( RageColor(1,1,1,1) );	// white
 
-	m_quadBackground.StretchTo( CRect(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
+	m_quadBackground.StretchTo( RectI(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 
-	m_quadStrip.StretchTo( CRect(SCREEN_LEFT, int(CENTER_Y-30), SCREEN_RIGHT, int(CENTER_Y+30)) );
+	m_quadStrip.StretchTo( RectI(SCREEN_LEFT, int(CENTER_Y-30), SCREEN_RIGHT, int(CENTER_Y+30)) );
 	
 	m_textSongInfo.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textSongInfo.TurnShadowOff();

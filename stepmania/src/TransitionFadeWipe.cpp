@@ -51,12 +51,12 @@ void TransitionFadeWipe::DrawPrimitives()
 
 
 	m_rectBlack.SetDiffuse( RageColor(0,0,0,1) );
-	m_rectBlack.StretchTo( CRect((int)fDarkOutsideX, 0, (int)fDarkEdgeX, (int)SCREEN_HEIGHT) );
+	m_rectBlack.StretchTo( RectI((int)fDarkOutsideX, 0, (int)fDarkEdgeX, (int)SCREEN_HEIGHT) );
 	m_rectBlack.Draw();
 	
 	m_rectGradient.SetDiffuseLeftEdge( RageColor(0,0,0,1) );
 	m_rectGradient.SetDiffuseRightEdge( RageColor(0,0,0,0) );
-	m_rectGradient.StretchTo( CRect((int)fDarkEdgeX, 0, (int)fLightEdgeX, (int)SCREEN_HEIGHT) );
+	m_rectGradient.StretchTo( RectI((int)fDarkEdgeX, 0, (int)fLightEdgeX, (int)SCREEN_HEIGHT) );
 	m_rectGradient.Draw();
 
 

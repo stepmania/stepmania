@@ -79,7 +79,7 @@ void ScrollBar::SetPercentage( float fStartPercent, float fEndPercent )
 	}
 
 		
-	m_sprScrollThumbPart1.StretchTo( CRect(
+	m_sprScrollThumbPart1.StretchTo( RectI(
 		(int)-m_sprScrollThumbPart1.GetUnzoomedWidth()/2,
 		iPart1TopY,
 		(int)+m_sprScrollThumbPart1.GetUnzoomedWidth()/2,
@@ -88,7 +88,7 @@ void ScrollBar::SetPercentage( float fStartPercent, float fEndPercent )
 
 	if( iPart2TopY != -1 )
 	{
-		m_sprScrollThumbPart2.StretchTo( CRect(
+		m_sprScrollThumbPart2.StretchTo( RectI(
 			(int)-m_sprScrollThumbPart2.GetUnzoomedWidth()/2,
 			iPart2TopY,
 			(int)+m_sprScrollThumbPart2.GetUnzoomedWidth()/2,

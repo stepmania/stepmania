@@ -32,7 +32,7 @@ const float FADE_SECONDS = 1.0f;
 #define RIGHT_EDGE			THEME->GetMetricI("Background","RightEdge")
 #define BOTTOM_EDGE			THEME->GetMetricI("Background","BottomEdge")
 
-#define RECT_BACKGROUND CRect(LEFT_EDGE,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE)
+#define RECT_BACKGROUND RectI(LEFT_EDGE,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE)
 
 int CompareBGSegments(const BGSegment &seg1, const BGSegment &seg2)
 {
@@ -58,13 +58,13 @@ Background::Background()
 	m_quadBGBrightness.StretchTo( RECT_BACKGROUND );
 	m_quadBGBrightness.SetDiffuse( RageColor(0,0,0,1-PREFSMAN->m_fBGBrightness) );
 
-	m_quadBorder[0].StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,LEFT_EDGE,SCREEN_BOTTOM) );
+	m_quadBorder[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,LEFT_EDGE,SCREEN_BOTTOM) );
 	m_quadBorder[0].SetDiffuse( RageColor(0,0,0,1) );
-	m_quadBorder[1].StretchTo( CRect(LEFT_EDGE,SCREEN_TOP,RIGHT_EDGE,TOP_EDGE) );
+	m_quadBorder[1].StretchTo( RectI(LEFT_EDGE,SCREEN_TOP,RIGHT_EDGE,TOP_EDGE) );
 	m_quadBorder[1].SetDiffuse( RageColor(0,0,0,1) );
-	m_quadBorder[2].StretchTo( CRect(RIGHT_EDGE,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+	m_quadBorder[2].StretchTo( RectI(RIGHT_EDGE,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 	m_quadBorder[2].SetDiffuse( RageColor(0,0,0,1) );
-	m_quadBorder[3].StretchTo( CRect(LEFT_EDGE,BOTTOM_EDGE,RIGHT_EDGE,SCREEN_BOTTOM) );
+	m_quadBorder[3].StretchTo( RectI(LEFT_EDGE,BOTTOM_EDGE,RIGHT_EDGE,SCREEN_BOTTOM) );
 	m_quadBorder[3].SetDiffuse( RageColor(0,0,0,1) );
 }
 

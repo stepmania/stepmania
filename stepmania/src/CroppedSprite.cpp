@@ -66,7 +66,7 @@ void CroppedSprite::CropToSize( float fWidth, float fHeight )
 		Sprite::StopUsingCustomCoords();
 
 		// first find the correct zoom
-		Sprite::ScaleToCover( CRect(0, 0,
+		Sprite::ScaleToCover( RectI(0, 0,
 									(int)m_fCropWidth,
 									(int)m_fCropHeight )
 							 );
