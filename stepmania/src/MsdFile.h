@@ -17,6 +17,10 @@ const unsigned MAX_PARAMS_PER_VALUE = 10;
 
 class MsdFile  
 {
+	void ReadBuf( char *buf, int len );
+	void AddParam( char *buf, int len );
+	void AddValue();
+
 public:
 	MsdFile();
 
