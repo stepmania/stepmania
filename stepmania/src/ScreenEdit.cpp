@@ -114,6 +114,7 @@ Menu g_KeyboardShortcuts
 	MenuRow( "Ctrl + P: Play whole song",						false ),
 	MenuRow( "Shift + P: Play current beat to end",				false ),
 	MenuRow( "Ctrl + R: Record",								false ),
+	MenuRow( "F4: Toggle assist tick",							false ),
 	MenuRow( "F7/F8: Decrease/increase BPM at cur beat",		false ),
 	MenuRow( "F9/F10: Decrease/increase stop at cur beat",		false ),
 	MenuRow( "F11/F12: Decrease/increase music offset",			false ),
@@ -806,7 +807,9 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case SDLK_F1:
 		SCREENMAN->MiniMenu( &g_KeyboardShortcuts, SM_None );
 		break;
-
+	case SDLK_F4:
+		GAMESTATE->m_SongOptions.m_bAssistTick ^= 1;
+		break;
 	case SDLK_F7:
 	case SDLK_F8:
 		{
@@ -1018,6 +1021,9 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 		{
 		case SDLK_ESCAPE:
 			TransitionToEdit();
+			break;
+		case SDLK_F4:
+			GAMESTATE->m_SongOptions.m_bAssistTick ^= 1;
 			break;
 		case SDLK_F11:
 		case SDLK_F12:
