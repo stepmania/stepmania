@@ -27,8 +27,6 @@ static SInt16 ShowAlert( int type, CFStringRef message, CFStringRef OK, CFString
 
 void DialogDriver_Cocoa::OK( CString sMessage, CString ID )
 {
-	bool allowHush = ID != "";
-
 	CFStringRef message = CFStringCreateWithCString(NULL, sMessage, kCFStringEncodingASCII);
 	SInt16 result = ShowAlert(kAlertNoteAlert, message, CFSTR("OK"), CFSTR("Don't show again"));
 
@@ -49,20 +47,20 @@ Dialog::Result DialogDriver_Cocoa::AbortRetryIgnore( CString sMessage, CString I
 {
 	CFStringRef error = CFStringCreateWithCString( NULL, sMessage, kCFStringEncodingASCII );
 	SInt16 result = ShowAlert( kAlertNoteAlert, error, CFSTR("Retry"), CFSTR("Ignore") );
-	ArchHooks::MessageBoxResult ret;
+	Dialog::Result ret;
 
 	CFRelease(error);
 	switch (result)
 	{
 	case kAlertStdAlertOKButton:
-		ret = retry;
+		ret = Dialog::retry;
 		break;
 	case kAlertStdAlertCancelButton:
-		ret = ignore;
+		ret = Dialog::ignore;
 		break;
 	default:
 		ASSERT(0);
-		ret = ignore;
+		ret = Dialog::ignore;
 	}
     
     return ret;

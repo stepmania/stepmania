@@ -8,7 +8,7 @@ class DialogDriver_Cocoa: public DialogDriver
 public:
     void Error(CString sError, CString ID);
 	void OK(CString sMessage, CString ID);
-    MessageBoxResult AbortRetryIgnore(CString sMessage, CString ID);
+    Dialog::Result AbortRetryIgnore(CString sMessage, CString ID);
 };
 
 #define HAVE_DIALOG_COCOA

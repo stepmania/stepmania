@@ -39,7 +39,7 @@ void Dialog::Init()
 			if( !DriversToTry[i].CompareNoCase("Win32") ) g_pImpl = new DialogDriver_Win32;
 #endif
 #if defined(HAVE_DIALOG_COCOA)
-			if( !DriversToTry[i].CompareNoCase("Cocoa") ) g_pImpl = new LoadingWindow_Cocoa;
+			if( !DriversToTry[i].CompareNoCase("Cocoa") ) g_pImpl = new DialogDriver_Cocoa;
 #endif
 			if( !DriversToTry[i].CompareNoCase("Null") ) g_pImpl = new DialogDriverNull;
 		}
