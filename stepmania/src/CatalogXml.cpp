@@ -12,6 +12,7 @@
 
 #include "CatalogXml.h"
 #include "SongManager.h"
+#include "RageLog.h"
 #include "song.h"
 #include "Steps.h"
 
@@ -20,6 +21,8 @@ const CString CATALOG_XML	= "Catalog.xml";
 void SaveCatalogXml( CString sDir )
 {
 	CString fn = sDir + CATALOG_XML;
+
+	LOG->Trace( "Writing %s ...", fn.c_str() );
 
 	XNode xml;
 	xml.name = "Catalog";
@@ -56,4 +59,5 @@ void SaveCatalogXml( CString sDir )
 
 	// bool bSaved =
 	xml.SaveToFile(fn);
+	LOG->Trace( "Done." );
 }
