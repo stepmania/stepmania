@@ -144,21 +144,12 @@ void UtilSetXY( Actor& actor, CString sClassName )
 float UtilCommand( Actor& actor, CString sClassName, CString sCommandName )
 {
 	ASSERT( !actor.GetName().empty() );
-	return actor.Command( THEME->GetMetric(sClassName,actor.GetName()+sCommandName+"Command") );
-}
 
-float UtilOnCommand( Actor& actor, CString sClassName )
-{
-	ASSERT( !actor.GetName().empty() );
-	return actor.Command( THEME->GetMetric(sClassName,actor.GetName()+"OnCommand") );
-}
-
-float UtilOffCommand( Actor& actor, CString sClassName )
-{
 	// HACK:  It's very often that we command things to TweenOffScreen 
 	// that we aren't drawing.  We know that an Actor is not being
 	// used if it's name is blank.  So, do nothing on Actors with a blank name.
-	if( actor.GetName().empty() )
+	if( sCommandName=="Off" && actor.GetName().empty() )
 		return 0;
-	return actor.Command( THEME->GetMetric(sClassName,actor.GetName()+"OffCommand") );
+
+	return actor.Command( THEME->GetMetric(sClassName,actor.GetName()+sCommandName+"Command") );
 }

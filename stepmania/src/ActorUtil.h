@@ -26,13 +26,13 @@ void UtilSetXY( Actor& actor, CString sClassName );
 inline void UtilSetXY( Actor* pActor, CString sClassName ) { UtilSetXY( *pActor, sClassName ); }
 
 
-float UtilOnCommand( Actor& actor, CString sClassName );
-inline float UtilOnCommand( Actor* pActor, CString sClassName ) { return UtilOnCommand( *pActor, sClassName ); }
-
 float UtilCommand( Actor& actor, CString sClassName, CString sCommandName );
 inline float UtilCommand( Actor* pActor, CString sClassName, CString sCommandName ) { return UtilCommand( *pActor, sClassName, sCommandName ); }
 
-float UtilOffCommand( Actor& actor, CString sClassName );
+inline float UtilOnCommand( Actor& actor, CString sClassName ) { return UtilCommand( actor, sClassName, "On" ); }
+inline float UtilOnCommand( Actor* pActor, CString sClassName ) { return UtilOnCommand( *pActor, sClassName ); }
+
+inline float UtilOffCommand( Actor& actor, CString sClassName ) { return UtilCommand( actor, sClassName, "Off" ); }
 inline float UtilOffCommand( Actor* pActor, CString sClassName ) { return UtilOffCommand( *pActor, sClassName ); }
 
 inline float UtilSetXYAndOnCommand( Actor& actor, CString sClassName )
