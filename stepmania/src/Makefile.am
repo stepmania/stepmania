@@ -116,7 +116,9 @@ MovieTexture += arch/MovieTexture/MovieTexture_FFMpeg.cpp arch/MovieTexture/Movi
 endif
 
 Lights = arch/Lights/LightsDriver.h \
-		arch/Lights/LightsDriver_SystemMessage.cpp arch/Lights/LightsDriver_SystemMessage.h
+		arch/Lights/LightsDriver_SystemMessage.cpp arch/Lights/LightsDriver_SystemMessage.h \
+		arch/Lights/LightsDriver_LinuxWeedTech.cpp arch/Lights/LightsDriver_LinuxWeedTech.h \
+		arch/Lights/Linux_SerialPort.c arch/Lights/Linux_SerialPort.h
 
 MemoryCard = arch/MemoryCard/MemoryCardDriver.h \
 	     arch/MemoryCard/MemoryCardDriverThreaded.cpp arch/MemoryCard/MemoryCardDriverThreaded.h
