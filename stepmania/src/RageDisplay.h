@@ -88,8 +88,8 @@ public:
 
 	
 //	LPDIRECT3DVERTEXBUFFER8 GetVertexBuffer() { return m_pVB; };
-	void SetViewTransform( D3DXMATRIX* pMatrix );
-	void SetProjectionTransform( D3DXMATRIX* pMatrix );
+	void SetViewTransform( const D3DXMATRIX* pMatrix );
+	void SetProjectionTransform( const D3DXMATRIX* pMatrix );
 	void GetViewTransform( D3DXMATRIX* pMatrixOut );
 	void GetProjectionTransform( D3DXMATRIX* pMatrixOut );
 

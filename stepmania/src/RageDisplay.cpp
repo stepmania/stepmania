@@ -585,12 +585,12 @@ void RageDisplay::FlushQueue()
 	m_iDrawsSinceLastCheck++;
 }
 
-void RageDisplay::SetViewTransform( D3DXMATRIX* pMatrix )
+void RageDisplay::SetViewTransform( const D3DXMATRIX* pMatrix )
 {
 	FlushQueue();
 	m_pd3dDevice->SetTransform( D3DTS_VIEW, pMatrix );
 }
-void RageDisplay::SetProjectionTransform( D3DXMATRIX* pMatrix )
+void RageDisplay::SetProjectionTransform( const D3DXMATRIX* pMatrix )
 {
 	FlushQueue();
 	m_pd3dDevice->SetTransform( D3DTS_PROJECTION, pMatrix );
