@@ -32,6 +32,7 @@
 #include "GhostArrowRow.h"
 #include "NoteDataWithScoring.h"
 
+#define	SAMPLE_COUNT	16
 
 class Player : public NoteDataWithScoring, public ActorFrame
 {
@@ -62,19 +63,22 @@ protected:
 	int				m_iTapNotesHit;	// number of notes judged so far, needed by scoring
 	int				m_iMeter;		// meter of current steps, needed by scoring
 
-	GrayArrowRow		m_GrayArrowRow;
-	NoteField			m_NoteField;
-	GhostArrowRow		m_GhostArrowRow;
+	float			m_fOffset[SAMPLE_COUNT];//for AutoAdjust
+	int				m_iOffsetSample;		//
 
-	HoldJudgement			m_HoldJudgement[MAX_NOTE_TRACKS];
+	GrayArrowRow	m_GrayArrowRow;
+	NoteField		m_NoteField;
+	GhostArrowRow	m_GhostArrowRow;
 
-	ActorFrame				m_frameJudgement;
-	Judgement				m_Judgement;
+	HoldJudgement	m_HoldJudgement[MAX_NOTE_TRACKS];
+
+	ActorFrame		m_frameJudgement;
+	Judgement		m_Judgement;
 	
-	ActorFrame				m_frameCombo;
-	Combo					m_Combo;
+	ActorFrame		m_frameCombo;
+	Combo			m_Combo;
 
-	LifeMeter*				m_pLifeMeter;
-	ScoreDisplay*			m_pScore;
+	LifeMeter*		m_pLifeMeter;
+	ScoreDisplay*	m_pScore;
 	
 };

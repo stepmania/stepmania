@@ -75,11 +75,12 @@ Player::Player()
 	g_fComboJudgeTweenSeconds = COMBO_JUDGE_TWEEN_SECONDS;
 	g_iBrightGhostThreshold = BRIGHT_GHOST_THRESHOLD;
 
-
 	m_PlayerNumber = PLAYER_INVALID;
 
 	m_pLifeMeter = NULL;
 	m_pScore = NULL;
+
+	m_iOffsetSample = 0;
 
 	this->AddChild( &m_GrayArrowRow );
 	this->AddChild( &m_NoteField );
@@ -339,7 +340,9 @@ void Player::Step( int col )
 
 	// look for the closest matching step
 	int iIndexStartLookingAt = BeatToNoteRow( GAMESTATE->m_fSongBeat );
-	int iNumElementsToExamine = BeatToNoteRow( GetMaxBeatDifference() );	// number of elements to examine on either end of iIndexStartLookingAt
+	// number of elements to examine on either end of iIndexStartLookingAt
+	// 3dfsux: I expanded this window so that beat correction will look
+	int iNumElementsToExamine = BeatToNoteRow( GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate );
 	
 	//LOG->Trace( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
 
@@ -386,32 +389,67 @@ void Player::Step( int col )
 		const float fStepBeat = NoteRowToBeat( (float)iIndexOverlappingNote );
 		const float fBeatsUntilStep = fStepBeat - fSongBeat;
 		const float fPercentFromPerfect = fabsf( fBeatsUntilStep / GetMaxBeatDifference() );
+		const float fNoteOffset = fBeatsUntilStep / GAMESTATE->m_fCurBPS; //the offset from the actual step in seconds
+
 
 		TapNoteScore &score = m_TapNoteScores[col][iIndexOverlappingNote];
 
 		if(		 fPercentFromPerfect < PREFSMAN->m_fJudgeWindowPerfectPercent )	score = TNS_PERFECT;
 		else if( fPercentFromPerfect < PREFSMAN->m_fJudgeWindowGreatPercent )	score = TNS_GREAT;
 		else if( fPercentFromPerfect < PREFSMAN->m_fJudgeWindowGoodPercent )	score = TNS_GOOD;
-		else									score = TNS_BOO;
+		//we have to mark boo's as better than MISS's now that the window is expanded
+		else if( fPercentFromPerfect < 1.0f )									score = TNS_BOO;
+		else																	score = TNS_NONE;
 
 		if( GAMESTATE->m_bDemonstration  ||  PREFSMAN->m_bAutoPlay )
 			score = TNS_PERFECT;
 
 		bDestroyedNote = (score >= TNS_GOOD);
 
+		LOG->Trace("(%2d/%2d)Note offset: %f, Score: %i", m_iOffsetSample, SAMPLE_COUNT, fNoteOffset, score);
+		if (GAMESTATE->m_SongOptions.m_AutoAdjust == SongOptions::ADJUST_ON) {
+			m_fOffset[m_iOffsetSample++] = fNoteOffset;
+			if (m_iOffsetSample >= SAMPLE_COUNT) {
+				float stddev = 0.0f, mean = 0.0f;
+				int i;
+				
+				//calculate mean
+				for( i=0; i<SAMPLE_COUNT; i++ )
+					mean += m_fOffset[i];
+				mean /= SAMPLE_COUNT;
 
-		bool bRowDestroyed = true;
-		for( int t=0; t<m_iNumTracks; t++ )			// did this complete the elminiation of the row?
-		{
-			if( m_TapNotes[t][iIndexOverlappingNote] != '0'  &&			// there is a note here
-				m_TapNoteScores[t][iIndexOverlappingNote] == TNS_NONE )	// and it doesn't have a score
-			{
-				bRowDestroyed = false;
-				break;	// stop searching
+				//calculate stddev
+				for( i=0; i<SAMPLE_COUNT; i++ )
+					stddev += (m_fOffset[i] - mean) * (m_fOffset[i] - mean);
+				stddev /= SAMPLE_COUNT + 1; //yes, N+1. Really.
+				stddev = sqrt(stddev);
+
+				if (stddev < .03 && stddev < fabsf(mean)) { //If they stepped with less than .025 error
+					GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds += mean;
+					LOG->Trace("Offset corrected by %f. Error in steps: %f seconds.", mean, stddev);
+				} else
+					LOG->Trace("Offset NOT corrected. Average offset: %f seconds. Error: %f seconds.", mean, stddev);
+				m_iOffsetSample = 0;
 			}
 		}
-		if( bRowDestroyed )
-			OnRowDestroyed( col, iIndexOverlappingNote );
+
+
+
+
+		if (score > TNS_NONE) {
+			bool bRowDestroyed = true;
+			for( int t=0; t<m_iNumTracks; t++ )			// did this complete the elminiation of the row?
+			{
+				if( m_TapNotes[t][iIndexOverlappingNote] != '0'  &&			// there is a note here
+					m_TapNoteScores[t][iIndexOverlappingNote] == TNS_NONE )	// and it doesn't have a score
+				{
+					bRowDestroyed = false;
+					break;	// stop searching
+				}
+			}
+			if( bRowDestroyed )
+				OnRowDestroyed( col, iIndexOverlappingNote );
+		}
 	}
 
 	if( !bDestroyedNote )
