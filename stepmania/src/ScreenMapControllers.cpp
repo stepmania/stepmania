@@ -23,7 +23,6 @@
 #include "ThemeManager.h"
 
 
-#define HELP_TEXT			THEME->GetMetric("ScreenMapControllers","HelpText")
 #define EVEN_LINE_IN		THEME->GetMetric("ScreenMapControllers","EvenLineIn")
 #define EVEN_LINE_OUT		THEME->GetMetric("ScreenMapControllers","EvenLineOut")
 #define ODD_LINE_IN			THEME->GetMetric("ScreenMapControllers","OddLineIn")
@@ -35,9 +34,6 @@ const int FramesToWaitForInput = 2;
 const int NUM_CHANGABLE_SLOTS = NUM_GAME_TO_DEVICE_SLOTS-1;
 
 
-const float TITLE_Y			=	30;
-const float HELP_X			=	CENTER_X;
-const float HELP_Y			=	SCREEN_HEIGHT-10;
 const float LINE_START_Y	=	64;
 const float LINE_GAP_Y		=	28;
 const float BUTTON_COLUMN_X[NUM_GAME_TO_DEVICE_SLOTS*MAX_GAME_CONTROLLERS] =
