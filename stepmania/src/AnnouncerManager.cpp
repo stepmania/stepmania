@@ -19,12 +19,14 @@ AnnouncerManager*	ANNOUNCER = NULL;	// global object accessable from anywhere in
 
 
 const CString EZ2_ANNOUNCER_NAME = "ez2";
-const CString ANNOUNER_BASE_DIR  = "Announcers\\";
+const CString ANNOUNCER_BASE_DIR  = "Announcers\\";
 
 
 
 AnnouncerManager::AnnouncerManager()
 {
+	LOG->WriteLine("AnnouncerManager::AnnouncerManager()");
+
 	CStringArray arrayAnnouncerNames;
 	GetAnnouncerNames( arrayAnnouncerNames );
 //	for( int i=0; i<arrayAnnouncerNames.GetSize(); i++ )
@@ -35,7 +37,7 @@ AnnouncerManager::AnnouncerManager()
 
 void AnnouncerManager::GetAnnouncerNames( CStringArray& AddTo )
 {
-	GetDirListing( ANNOUNER_BASE_DIR+"*", AddTo, true );
+	GetDirListing( ANNOUNCER_BASE_DIR+"*", AddTo, true );
 	
 	// strip out the folder called "CVS"
 	for( int i=AddTo.GetSize()-1; i>=0; i-- )
@@ -47,6 +49,8 @@ void AnnouncerManager::GetAnnouncerNames( CStringArray& AddTo )
 
 void AnnouncerManager::SwitchAnnouncer( CString sAnnouncerName )
 {
+	LOG->WriteLine("AnnouncerManager::SwitchAnnouncer()");
+
 	if( sAnnouncerName == "" )
 	{
 		m_sCurAnnouncerName = "";
@@ -63,12 +67,16 @@ void AnnouncerManager::SwitchAnnouncer( CString sAnnouncerName )
 	// if we get here, the announcer doesn't exist
 	sAnnouncerName = asAnnouncerNames[0];
 
+	LOG->WriteLine("Announcer '" + sAnnouncerName + "' does not exist.");
+
 announcer_exists:
 
 	m_sCurAnnouncerName = sAnnouncerName;
 	CString sAnnouncerDir = GetAnnouncerDirFromName( m_sCurAnnouncerName );
 	if( !DoesFileExist( sAnnouncerDir ) )
 		throw RageException( "Error loading the announcer in diretory '%s'.", m_sCurAnnouncerName );
+
+	LOG->WriteLine("Announcer successfully switched to '" + sAnnouncerName + "'.");
 }
 
 void AnnouncerManager::AssertAnnouncerIsComplete( CString sAnnouncerName )
@@ -83,7 +91,7 @@ void AnnouncerManager::AssertAnnouncerIsComplete( CString sAnnouncerName )
 
 CString AnnouncerManager::GetAnnouncerDirFromName( CString sAnnouncerName )
 {
-	return ANNOUNER_BASE_DIR + sAnnouncerName + "\\";
+	return ANNOUNCER_BASE_DIR + sAnnouncerName + "\\";
 }
 
 CString AnnouncerManager::GetPathTo( AnnouncerElement ae )

@@ -67,7 +67,7 @@ void PrefsManager::ReadPrefsFromDisk()
 	ini.GetValueB( "Options", "AutoPlay",			m_bAutoPlay );
 	ini.GetValueF( "Options", "JudgeWindow",		m_fJudgeWindow );
 
-	ini.GetValue( "Options", "Announer",			m_sAnnouncer );
+	ini.GetValue( "Options", "Announcer",			m_sAnnouncer );
 	ini.GetValue( "Options", "NoteSkin",			m_sNoteSkin );
 
 	CString sAdditionalSongFolders;
@@ -94,7 +94,7 @@ void PrefsManager::SavePrefsToDisk()
 	ini.SetValueB( "Options", "AutoPlay",			m_bAutoPlay );
 	ini.SetValueF( "Options", "JudgeWindow",		m_fJudgeWindow );
 
-	ini.SetValue( "Options", "Announer",			m_sAnnouncer );
+	ini.SetValue( "Options", "Announcer",			m_sAnnouncer );
 	ini.SetValue( "Options", "NoteSkin",			m_sNoteSkin );
 
 	ini.SetValue( "Options", "SongFolders", join(",", m_asSongFolders) );

@@ -71,6 +71,8 @@ void ScreenSelectGame::ImportOptions()
 
 void ScreenSelectGame::ExportOptions()
 {
+	LOG->WriteLine("ScreenSelectGame::ExportOptions()");
+
 	// Switch the current style to the frist style of the selected game
 	Game game = (Game)m_iSelectedOption[0][SG_GAME];
 	switch( game )
