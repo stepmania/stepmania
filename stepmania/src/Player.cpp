@@ -642,9 +642,6 @@ void PlayerMinus::Step( int col, RageTimer tm )
 	//LOG->Trace( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
 
 	// calculate TapNoteScore
-	// Declared out here because it will be changed
-	// by code blocks below, and then used to see
-	// if the Receptor arrow should sink or not.
 	TapNoteScore score = TNS_NONE;
 
 	if( iIndexOverlappingNote != -1 )
