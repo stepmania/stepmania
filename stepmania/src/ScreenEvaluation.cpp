@@ -87,6 +87,7 @@ const ScreenMessage SM_PlayCheer			=	ScreenMessage(SM_User+6);
 
 ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
 {
+	/*
 	//
 	// debugging
 	//
@@ -101,7 +102,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed = 2;
 	GAMESTATE->m_PlayerOptions[PLAYER_2].m_fScrollSpeed = 2;
 //	GAMESTATE->m_iCurrentStageIndex = 2;
-
+*/
 
 	LOG->Trace( "ScreenEvaluation::ScreenEvaluation()" );
 
