@@ -14,6 +14,7 @@
 
 #if !defined(WIN32)
 #include <dirent.h>
+#include <fcntl.h>
 #endif
 
 
@@ -72,13 +73,16 @@ void FileSet::LoadFromDir(const CString &dir)
 	} while( FindNextFile( hFind, &fd ) );
 	FindClose(hFind);
 #else
-	CString OldDir = GetCwd();
+	int OldDir = open(".", O_RDONLY);
+	if( OldDir == -1 )
+		RageException::Throw( "Couldn't open(.): %s", strerror(errno) );
 
 	if( chdir(dir.c_str()) == -1 )
 	{
 		/* Only log once per dir. */
 		if( LOG )
 			LOG->MapLog("chdir " + dir, "Couldn't chdir(%s): %s", dir.c_str(), strerror(errno) );
+		close( OldDir );
 		return;
 	}
 	DIR *d = opendir(".");
@@ -111,7 +115,9 @@ void FileSet::LoadFromDir(const CString &dir)
 	}
 	       
 	closedir(d);
-	chdir( OldDir );
+	if( fchdir( OldDir ) == -1 )
+		RageException::Throw( "Couldn't fchdir(): %s", strerror(errno) );
+	close( OldDir );
 #endif
 }
 
