@@ -299,6 +299,15 @@ static void InitCharAliases()
 		{ "back",		0xE009 },
 		{ "ok",			0xE00A },
 		{ "nextrow",	0xE00B },
+		{ "aux1",		0xE010 },
+		{ "aux2",		0xE011 },
+		{ "aux3",		0xE012 },
+		{ "aux4",		0xE013 },
+		{ "aux5",		0xE014 },
+		{ "aux6",		0xE015 },
+		{ "aux7",		0xE016 },
+		{ "aux8",		0xE017 },
+		{ "aux9",		0xE018 },
 		{ NULL, 	0 }
 	};
 
