@@ -8,7 +8,6 @@
 
 ScreenTestSound::ScreenTestSound( CString sClassName ) : Screen( sClassName )
 {	
-	int i;
 	this->AddChild(&HEEEEEEEEELP);
 
 	HEEEEEEEEELP.SetXY(450, 400);
@@ -21,7 +20,7 @@ ScreenTestSound::ScreenTestSound( CString sClassName ) : Screen( sClassName )
 		"a  Set autostop\n"
 		"c  Set continue");
 
-	for(i = 0; i < nsounds; ++i)
+	for( int i = 0; i < nsounds; ++i )
 	{
 		this->AddChild(&s[i].txt);
 		s[i].txt.LoadFromFont( THEME->GetPathToF("Common normal") );
@@ -34,7 +33,7 @@ ScreenTestSound::ScreenTestSound( CString sClassName ) : Screen( sClassName )
 	s[3].txt.SetXY(450, 250);
 	s[4].txt.SetXY(150, 400);
 
-	s[0].s.Load("Themes/default/Sounds/_common menu music.ogg");
+	s[0].s.Load("Themes/default/Sounds/_common menu music (loop).ogg");
 	s[1].s.Load("Themes/default/Sounds/ScreenTitleMenu change.ogg");
 	s[2].s.Load("Themes/default/Sounds/ScreenEvaluation try extra1.ogg");
 	s[3].s.Load("Themes/default/Sounds/ScreenGameplay oni die.ogg");
@@ -44,14 +43,16 @@ ScreenTestSound::ScreenTestSound( CString sClassName ) : Screen( sClassName )
 //s[0].s.SetPositionSeconds();
 // s[4].s.SetLengthSeconds(1);
 	RageSoundParams p;
-	p.SetPlaybackRate( 1.20f );
-	s[0].s.SetParams( p );
+	p.StopMode = RageSoundParams::M_STOP;
+	// p.SetPlaybackRate( 1.20f );
+	for( int i = 0; i < nsounds; ++i )
+		s[i].s.SetParams( p );
 
 //s[0].s.SetStopMode(RageSound::M_LOOP);
 //s[0].s.Play();
 
 	selected = 0;
-	for(i = 0; i < nsounds; ++i)
+	for( int i = 0; i < nsounds; ++i )
 		UpdateText(i);
 }
 
@@ -93,6 +94,7 @@ void ScreenTestSound::UpdateText(int n)
 
 void ScreenTestSound::Update(float f)
 {
+	Screen::Update(f);
 	for(int i = 0; i < nsounds; ++i)
 		UpdateText(i);
 }
@@ -161,6 +163,7 @@ void ScreenTestSound::Input( const DeviceInput& DeviceI, const InputEventType ty
 }
 void ScreenTestSound::HandleScreenMessage( const ScreenMessage SM )
 {
+	Screen::HandleScreenMessage( SM );
 }
 
 /*
