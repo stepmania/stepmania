@@ -157,6 +157,7 @@ void IMG_SaveJPG_RW( SDL_Surface *surface, SDL_RWops *dest )
    * since the defaults depend on the source color space.)
    */
   jpeg::jpeg_set_defaults(&cinfo);
+  jpeg::jpeg_set_quality( &cinfo, 150, TRUE );
 
   /* Step 4: Start compressor */
 
