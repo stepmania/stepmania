@@ -88,7 +88,7 @@ public:
 	float GetChaosRadarValue( float fSongSeconds );
 
 	// Transformations
-	void LoadTransformed( NoteData* pOriginal, int iNewNumTracks, int iNewToOriginalTrack[] );
+	void LoadTransformed( const NoteData* pOriginal, int iNewNumTracks, const int iNewToOriginalTrack[] );
 
 	void CropToLeftSide();
 	void CropToRightSide();

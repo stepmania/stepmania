@@ -18,7 +18,7 @@
 #include "GameState.h"
 
 
-void StyleDef::GetTransformedNoteDataForStyle( PlayerNumber p, NoteData* pOriginal, NoteData* pNoteDataOut )
+void StyleDef::GetTransformedNoteDataForStyle( PlayerNumber p, const NoteData* pOriginal, NoteData* pNoteDataOut )
 {
 	int iNewToOriginalTrack[MAX_COLS_PER_PLAYER];
 	for( int col=0; col<m_iColsPerPlayer; col++ )
@@ -33,14 +33,14 @@ void StyleDef::GetTransformedNoteDataForStyle( PlayerNumber p, NoteData* pOrigin
 }
 
 
-GameInput StyleDef::StyleInputToGameInput( const StyleInput StyleI )
+GameInput StyleDef::StyleInputToGameInput( const StyleInput StyleI ) const
 {
 	GameController c = m_ColumnInfo[StyleI.player][StyleI.col].controller;
 	GameButton b = m_ColumnInfo[StyleI.player][StyleI.col].button;
 	return GameInput( c, b );
 };
 
-StyleInput StyleDef::GameInputToStyleInput( const GameInput &GameI )
+StyleInput StyleDef::GameInputToStyleInput( const GameInput &GameI ) const
 {
 	StyleInput SI;
 

@@ -60,9 +60,9 @@ public:
 	ColumnInfo	m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];	// maps each players' column to a track in the NoteData
 	int			m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 
-	GameInput StyleInputToGameInput( const StyleInput StyleI );
-	StyleInput GameInputToStyleInput( const GameInput &GameI );
+	GameInput StyleInputToGameInput( const StyleInput StyleI ) const;
+	StyleInput GameInputToStyleInput( const GameInput &GameI ) const;
 
-	void GetTransformedNoteDataForStyle( PlayerNumber p, NoteData* pOriginal, NoteData* pNoteDataOut );
+	void GetTransformedNoteDataForStyle( PlayerNumber p, const NoteData* pOriginal, NoteData* pNoteDataOut );
 };
 

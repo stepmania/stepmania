@@ -544,6 +544,7 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 			break;
 		case NOTES_TYPE_PUMP_SINGLE:
 		case NOTES_TYPE_PUMP_DOUBLE:
+		case NOTES_TYPE_PUMP_COUPLE:
 			iTakeFromTrack[0] = 1;
 			iTakeFromTrack[1] = 3;
 			iTakeFromTrack[2] = 2;
@@ -773,7 +774,7 @@ float NoteData::GetFreezeRadarValue( float fSongSeconds )
 }
 
 
-void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, int iNewToOriginalTrack[] )
+void NoteData::LoadTransformed( const NoteData* pOriginal, int iNewNumTracks, const int iNewToOriginalTrack[] )
 {
 	// init
 	Init();
@@ -791,7 +792,7 @@ void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, int iNew
 
 		for( i=0; i<pOriginal->m_iNumHoldNotes; i++ )
 		{
-			HoldNote &hn = pOriginal->m_HoldNotes[i];
+			HoldNote hn = pOriginal->m_HoldNotes[i];
 			if( hn.m_iTrack == iOriginalTrack )
 			{
 				hn.m_iTrack = t;
