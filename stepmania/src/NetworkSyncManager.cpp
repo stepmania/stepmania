@@ -258,33 +258,32 @@ void NetworkSyncManager::ReportSongOver()
 
 void NetworkSyncManager::ReportStyle() 
 {
-	ClearPacket(m_packet);
-	Write1(m_packet, 6);
-	Write1(m_packet, GAMESTATE->GetNumPlayersEnabled());
+	ClearPacket( m_packet );
+	Write1( m_packet, 6 );
+	Write1( m_packet, (int8_t) GAMESTATE->GetNumPlayersEnabled() );
 
 	FOREACH_EnabledPlayer( pn ) 
 	{
-		Write1(m_packet,pn);
-		WriteNT(m_packet, GAMESTATE->GetPlayerDisplayName(pn));
+		Write1( m_packet,(uint8_t) pn );
+		WriteNT( m_packet, GAMESTATE->GetPlayerDisplayName(pn) );
 	}
 
-	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
-	return;
+	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position );
 }
 
 void NetworkSyncManager::StartRequest(short position) 
 {
-	if (!useSMserver)
-		return ;
+	if( !useSMserver )
+		return;
 
-	if (GAMESTATE->m_bDemonstrationOrJukebox)
-		return ;
+	if( GAMESTATE->m_bDemonstrationOrJukebox )
+		return;
 
 	LOG->Trace("Requesting Start from Server.");
 
-	ClearPacket(m_packet);
+	ClearPacket( m_packet );
 
-	Write1(m_packet,3);	
+	Write1( m_packet,3 );
 
 	unsigned char ctr=0;
 
