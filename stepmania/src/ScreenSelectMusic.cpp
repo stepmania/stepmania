@@ -245,7 +245,8 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 		this->AddChild( &m_AutoGenIcon[p] );
 
 		m_OptionIconRow[p].SetName( ssprintf("OptionIconsP%d",p+1) );
-		m_OptionIconRow[p].Refresh( (PlayerNumber)p );
+		m_OptionIconRow[p].Load( (PlayerNumber)p );
+		m_OptionIconRow[p].Refresh();
 		SET_XY( m_OptionIconRow[p] );
 		this->AddChild( &m_OptionIconRow[p] );
 
@@ -652,7 +653,12 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 
 	if( !GameI.IsValid() )		return;		// don't care
 
-	if( m_bMadeChoice  &&  MenuI.IsValid()  &&  MenuI.button == MENU_BUTTON_START  &&  !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
+	if( m_bMadeChoice  &&
+		MenuI.IsValid()  &&
+		MenuI.button == MENU_BUTTON_START  &&
+		type != IET_RELEASE  &&
+		!GAMESTATE->IsExtraStage()  &&
+		!GAMESTATE->IsExtraStage2() )
 	{
 		if(m_bGoToOptions) return; /* got it already */
 		if(!m_bAllowOptionsMenu) return; /* not allowed */
@@ -1414,7 +1420,7 @@ void ScreenSelectMusic::UpdateOptionsDisplays()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_OptionIconRow[p].Refresh( (PlayerNumber)p  );
+		m_OptionIconRow[p].Refresh();
 
 		if( GAMESTATE->IsHumanPlayer(p) )
 		{

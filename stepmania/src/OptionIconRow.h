@@ -25,7 +25,8 @@ class OptionIconRow : public ActorFrame
 public:
 	OptionIconRow();
 
-	void Refresh( PlayerNumber pn );
+	void Load( PlayerNumber pn );
+	void Refresh();
 	virtual void DrawPrimitives();
 
 protected:
