@@ -182,9 +182,12 @@ float ArrowGetGlow( PlayerNumber pn, float fYPos, float fPercentFadeToFail )
 	return SCALE( fDistFromHalf, 0, 0.5f, 1.3f, 0 );
 }
 
-float ArrowGetBrightness( PlayerNumber pn, float fYOffset )
+float ArrowGetBrightness( PlayerNumber pn, float fNoteBeat )
 {
-	float fBrightness = SCALE( fYOffset, 0, -ARROW_SIZE, 1.f, 0.f );
+	float fSongBeat = GAMESTATE->m_fSongBeat;
+	float fBeatsUntilStep = fNoteBeat - fSongBeat;
+
+	float fBrightness = SCALE( fBeatsUntilStep, 0, -1, 1.f, 0.f );
 	CLAMP( fBrightness, 0, 1 );
 // noisy	printf( "fBrightness = %f\n", fBrightness );
 	return fBrightness;

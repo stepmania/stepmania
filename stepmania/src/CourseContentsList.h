@@ -1,8 +1,8 @@
-#ifndef COURSECONTENTSFRAME_H
-#define COURSECONTENTSFRAME_H
+#ifndef CourseContentsList_H
+#define CourseContentsList_H
 /*
 -----------------------------------------------------------------------------
- Class: CourseContentsFrame
+ Class: CourseContentsList
 
  Desc: Holds course name and banner.
 
@@ -17,6 +17,7 @@
 #include "ActorFrame.h"
 #include "Sprite.h"
 #include "Quad.h"
+#include "CourseEntryDisplay.h"
 class Course;
 class Song;
 struct Notes;
@@ -26,27 +27,11 @@ const int MAX_VISIBLE_CONTENTS = 5;
 const int MAX_TOTAL_CONTENTS = 56;
 
 
-class CourseContentDisplay : public ActorFrame
+
+class CourseContentsList : public ActorFrame
 {
 public:
-	CourseContentDisplay();
-
-	void LoadFromSongAndNotes( int iNum, Song* pSong, Notes* pNotes );
-	void LoadFromDifficulty( int iNum, Difficulty dc );
-	void LoadFromMeterRange( int iNum, int iLow, int iHigh );
-
-	Sprite		m_sprFrame;
-	BitmapText	m_textNumber;
-	TextBanner	m_TextBanner;
-	BitmapText	m_textFoot;
-	BitmapText	m_textDifficultyNumber;
-};
-
-
-class CourseContentsFrame : public ActorFrame
-{
-public:
-	CourseContentsFrame();
+	CourseContentsList();
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -59,7 +44,7 @@ protected:
 	Quad		m_quad;
 
 	int						m_iNumContents;
-	CourseContentDisplay	m_CourseContentDisplays[MAX_TOTAL_CONTENTS];
+	CourseEntryDisplay		m_CourseContentDisplays[MAX_TOTAL_CONTENTS];
 	int ContentsBarHeight, ContentsBarWidth;
 
 	float m_fTimeUntilScroll;

@@ -282,7 +282,8 @@ bool Course::HasDifficult() const
 
 bool Course::IsPlayableIn( NotesType nt ) const
 {
-	return true;
+	// TODO: something smarter here
+	return m_entries.size() > 0;
 }
 
 
@@ -296,11 +297,24 @@ void Course::GetStageInfo(
 	if( bDifficult )
 		ASSERT( HasDifficult() );
 
-
 	vector<Entry> entries = m_entries;
 
 	if( m_bRandomize )
 		random_shuffle( entries.begin(), entries.end() );
+
+
+	// Sorting is slow, so do this outside the for loop.
+	vector<Song*> vSongsByMostPlayed = SONGMAN->GetAllSongs();
+	SortSongPointerArrayByMostPlayed( vSongsByMostPlayed );
+	
+	// filter out songs that don't have both medium and hard steps
+	for( int j=vSongsByMostPlayed.size()-1; j>=0; j-- )
+	{
+		Song* pSong = vSongsByMostPlayed[j];
+		if( !pSong->GetNotes(nt, DIFFICULTY_MEDIUM) || !pSong->GetNotes(nt, DIFFICULTY_HARD) )
+			vSongsByMostPlayed.erase( vSongsByMostPlayed.begin()+j );
+	}
+
 
 	for( unsigned i=0; i<entries.size(); i++ )
 	{
@@ -309,16 +323,6 @@ void Course::GetStageInfo(
 		Song* pSong = NULL;	// fill this in
 		Notes* pNotes = NULL;	// fill this in
 
-		vector<Song*> vSongsByMostPlayed = SONGMAN->GetAllSongs();
-		SortSongPointerArrayByMostPlayed( vSongsByMostPlayed );
-		
-		// filter out songs that don't have both medium and hard steps
-		for( int j=vSongsByMostPlayed.size()-1; j>=0; j-- )
-		{
-			Song* pSong = vSongsByMostPlayed[j];
-			if( !pSong->GetNotes(nt, DIFFICULTY_MEDIUM) || !pSong->GetNotes(nt, DIFFICULTY_HARD) )
-				vSongsByMostPlayed.erase( vSongsByMostPlayed.begin()+j );
-		}
 
 		switch( e.type )
 		{
@@ -336,7 +340,15 @@ void Course::GetStageInfo(
 		case Entry::random_within_group:
 			{
 				vector<Song*> vSongs;
-				SONGMAN->GetSongs( vSongs, e.group_name );
+				switch( e.type )
+				{
+				case Entry::random:
+					vSongs = SONGMAN->GetAllSongs();
+					break;
+				case Entry::random_within_group:
+					SONGMAN->GetSongs( vSongs, e.group_name );
+					break;
+				}
 
 				if( vSongs.size() == 0 )
 					break;

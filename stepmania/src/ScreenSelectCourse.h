@@ -15,7 +15,7 @@
 #include "RageSound.h"
 #include "GameConstantsAndTypes.h"
 #include "MusicWheel.h"
-#include "CourseContentsFrame.h"
+#include "CourseContentsList.h"
 #include "MenuElements.h"
 #include "FadingBanner.h"
 
@@ -49,7 +49,7 @@ protected:
 	FadingBanner		m_Banner;
 	BitmapText			m_textNumSongs;
 	BitmapText			m_textTime;
-	CourseContentsFrame	m_CourseContentsFrame;
+	CourseContentsList	m_CourseContentsFrame;
 	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
 	ScoreDisplayNormal	m_HighScore[NUM_PLAYERS];
 	BitmapText			m_textPlayerOptions[NUM_PLAYERS];

@@ -522,37 +522,11 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		switch( m_ResultMode )
 		{
 		case RM_ARCADE_STAGE:
-			switch( max_grade )
-			{
-			case GRADE_E:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation e") );		break;
-			case GRADE_D:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation d") );		break;
-			case GRADE_C:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation c") );		break;
-			case GRADE_B:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation b") );		break;
-			case GRADE_A:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation a") );		break;
-			case GRADE_AA:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation aa") );		break;
-			case GRADE_AAA:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation aaa") );	break;
-			case GRADE_AAAA:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation aaaa") );	break;
-			case GRADE_NO_DATA:
-			default:
-				ASSERT(0);	// invalid grade
-			}
+			SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation "+GradeToString(max_grade)) );
 			break;
 		case RM_COURSE:
 		case RM_ARCADE_SUMMARY:
-			switch( max_grade )
-			{
-			case GRADE_E:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final e") );	break;
-			case GRADE_D:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final d") );	break;
-			case GRADE_C:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final c") );	break;
-			case GRADE_B:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final b") );	break;
-			case GRADE_A:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final a") );	break;
-			case GRADE_AA:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final aa") );	break;
-			case GRADE_AAA:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final aaa") );	break;
-			case GRADE_AAAA:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final aaaa") );	break;
-			case GRADE_NO_DATA:
-			default:
-				ASSERT(0);	// invalid grade
-			}
+			SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final "+GradeToString(max_grade)) );
 			break;
 		default:
 			ASSERT(0);

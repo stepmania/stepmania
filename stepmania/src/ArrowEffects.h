@@ -55,8 +55,8 @@ float ArrowGetAlpha( PlayerNumber pn, float fYPos, float fPercentFadeToFail );
 float ArrowGetGlow( PlayerNumber pn, float fYPos, float fPercentFadeToFail );
 
 
-//	Depends on fYPos.
-float ArrowGetBrightness( PlayerNumber pn, float fYOffset );
+//	Depends on fYOffset.
+float ArrowGetBrightness( PlayerNumber pn, float fNoteBeat );
 
 
 #endif

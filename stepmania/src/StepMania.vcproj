@@ -688,12 +688,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			Name="StepMania"
 			Filter="">
 			<File
-				RelativePath=".\global.cpp">
-			</File>
-			<File
-				RelativePath=".\global.h">
-			</File>
-			<File
 				RelativePath="StdString.h">
 			</File>
 			<File
@@ -701,6 +695,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\StepMania.h">
+			</File>
+			<File
+				RelativePath=".\global.cpp">
+			</File>
+			<File
+				RelativePath=".\global.h">
 			</File>
 			<Filter
 				Name="arch"
@@ -962,10 +962,16 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="BannerWithFrame.h">
 			</File>
 			<File
-				RelativePath="CourseContentsFrame.cpp">
+				RelativePath="CourseContentsList.cpp">
 			</File>
 			<File
-				RelativePath="CourseContentsFrame.h">
+				RelativePath="CourseContentsList.h">
+			</File>
+			<File
+				RelativePath="CourseEntryDisplay.cpp">
+			</File>
+			<File
+				RelativePath="CourseEntryDisplay.h">
 			</File>
 			<File
 				RelativePath="CroppedSprite.cpp">

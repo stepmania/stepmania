@@ -635,8 +635,8 @@ void Song::GetNotes( vector<Notes*>& arrayAddTo, NotesType nt, Difficulty dc, in
 	for( unsigned i=0; i<m_apNotes.size(); i++ )	// for each of the Song's Notes
 		if( m_apNotes[i]->m_NotesType == nt )
 			if( dc==DIFFICULTY_INVALID || dc==m_apNotes[i]->GetDifficulty() )
-				if( iMeterLow==-1 || iMeterLow>=m_apNotes[i]->GetMeter() )
-					if( iMeterHigh==-1 || iMeterHigh<=m_apNotes[i]->GetMeter() )
+				if( iMeterLow==-1 || iMeterLow<=m_apNotes[i]->GetMeter() )
+					if( iMeterHigh==-1 || iMeterHigh>=m_apNotes[i]->GetMeter() )
 						if( sDescription=="" || sDescription==m_apNotes[i]->GetDescription() )
 							if( bIncludeAutoGen || !m_apNotes[i]->IsAutogen() )
 								arrayAddTo.push_back( m_apNotes[i] );
