@@ -334,6 +334,7 @@ bool CreateDirectories( CString Path )
 		}
 
 		/* Make sure it's a directory. */
+		FlushDirCache();
 		if( !IsADirectory(curpath) )
 		{
 			if( LOG )
