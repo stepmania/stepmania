@@ -157,6 +157,7 @@ AM_CONDITIONAL(WITHOUT_NETWORKING, test "$with_network" = "no")
 SM_LUA
 SM_ZLIB
 SM_AUDIO
+SM_TLS
 
 AC_SEARCH_LIBS(avcodec_init, [avcodec], have_libavcodec=yes,  have_libavcodec=no)
 AC_SEARCH_LIBS(guess_format, [avformat], have_libavformat=yes,  have_libavformat=no)
