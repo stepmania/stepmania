@@ -107,6 +107,7 @@ public:
 	int m_iTotalHands;
 	set<int> m_UnlockedSongs;
 	mutable CString m_sLastPlayedMachineGuid;	// mutable because we overwrite this on save, and I don't want to remove const from the whole save chain. -Chris
+	mutable DateTime m_LastPlayedDate;
 	int m_iNumSongsPlayedByPlayMode[NUM_PLAY_MODES];
 	map<StyleID,int> m_iNumSongsPlayedByStyle;
 	int m_iNumSongsPlayedByDifficulty[NUM_DIFFICULTIES];

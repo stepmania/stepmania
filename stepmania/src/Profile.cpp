@@ -89,6 +89,7 @@ void Profile::InitGeneralData()
 	m_iNumToasties = 0;
 	m_UnlockedSongs.clear();
 	m_sLastPlayedMachineGuid = "";
+	m_LastPlayedDate = DateTime::GetNowDate();
 	m_iTotalTapsAndHolds = 0;
 	m_iTotalJumps = 0;
 	m_iTotalHolds = 0;
@@ -642,6 +643,7 @@ bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 {
 	m_sLastPlayedMachineGuid = PROFILEMAN->GetMachineProfile()->m_sGuid;
+	m_LastPlayedDate = DateTime::GetNowDate();
 
 	// Save editable.xml
 	SaveEditableDataToDir( sDir );
@@ -736,6 +738,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "CurrentCombo",					m_iCurrentCombo );
 	pGeneralDataNode->AppendChild( "TotalCaloriesBurned",			m_fTotalCaloriesBurned );
 	pGeneralDataNode->AppendChild( "LastPlayedMachineGuid",			m_sLastPlayedMachineGuid );
+	pGeneralDataNode->AppendChild( "LastPlayedDate",				m_LastPlayedDate );
 	pGeneralDataNode->AppendChild( "TotalDancePoints",				m_iTotalDancePoints );
 	pGeneralDataNode->AppendChild( "NumExtraStagesPassed",			m_iNumExtraStagesPassed );
 	pGeneralDataNode->AppendChild( "NumExtraStagesFailed",			m_iNumExtraStagesFailed );
@@ -879,6 +882,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "CurrentCombo",					m_iCurrentCombo );
 	pNode->GetChildValue( "TotalCaloriesBurned",			m_fTotalCaloriesBurned );
 	pNode->GetChildValue( "LastPlayedMachineGuid",			m_sLastPlayedMachineGuid );
+	pNode->GetChildValue( "LastPlayedDate",					m_LastPlayedDate );
 	pNode->GetChildValue( "TotalDancePoints",				m_iTotalDancePoints );
 	pNode->GetChildValue( "NumExtraStagesPassed",			m_iNumExtraStagesPassed );
 	pNode->GetChildValue( "NumExtraStagesFailed",			m_iNumExtraStagesFailed );
@@ -1323,7 +1327,7 @@ XNode* Profile::SaveCalorieDataCreateNode() const
 	{
 		XNode* pCaloriesBurned = pNode->AppendChild( "CaloriesBurned", i->second );
 
-		pCaloriesBurned->AppendAttr( "Date", i->first.GetDateString() );
+		pCaloriesBurned->AppendAttr( "Date", i->first.GetString() );
 	}
 
 	return pNode;
