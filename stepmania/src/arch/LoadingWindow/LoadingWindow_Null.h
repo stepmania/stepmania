@@ -6,8 +6,8 @@
 
 class LoadingWindow_Null: public LoadingWindow {
 public:
-	LoadingWindow_Win32() { }
-	~LoadingWindow_Win32() { }
+	LoadingWindow_Null() { }
+	~LoadingWindow_Null() { }
 
 	void SetText(CString str) { }
 	void Paint() { }
