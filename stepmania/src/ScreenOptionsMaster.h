@@ -42,6 +42,7 @@ private:
 
 		OptionRowHandlerType type;
 		CString m_sName;
+		bool	m_bExportOnChange;
 		vector<CString> m_vsRefreshRowNames;	// refresh these rows when the value of this row changes
 
 		/* ROW_LIST: */

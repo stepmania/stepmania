@@ -102,6 +102,7 @@ void ScreenOptionsMaster::SetList( OptionRowDefinition &row, OptionRowHandler &h
 				row.m_vEnabledForPlayers.insert( pn );
 			}
 		}
+		else if( sName == "exportonchange" )	hand.m_bExportOnChange = true;
 	}
 
 	for( int col = 0; col < NumCols; ++col )
@@ -224,6 +225,43 @@ void ScreenOptionsMaster::SetLua( OptionRowDefinition &row, OptionRowHandler &ha
 		lua_pop( LUA->L, 1 ); /* pop EnabledForPlayers table */
 
 		
+		/* Look for "ExportOnChange" value. */
+		lua_pushstring( LUA->L, "ExportOnChange" );
+		lua_gettable( LUA->L, -2 );
+		if( !lua_isnil( LUA->L, -1 ) )
+		{
+			hand.m_bExportOnChange = !!MyLua_checkboolean( LUA->L, -1 );
+		}
+		lua_pop( LUA->L, 1 ); /* pop ExportOnChange value */
+
+		
+		/* Iterate over the "RefreshRowNames" table. */
+		lua_pushstring( LUA->L, "RefreshRowNames" );
+		lua_gettable( LUA->L, -2 );
+		if( !lua_isnil( LUA->L, -1 ) )
+		{
+			if( !lua_istable( LUA->L, -1 ) )
+				RageException::Throw( "\"%s\" \"RefreshRowNames\" is not a table", sLuaFunction.c_str() );
+
+			hand.m_vsRefreshRowNames.clear();	// and fill in with supplied PlayerNumbers below
+
+			lua_pushnil( LUA->L );
+			while( lua_next(LUA->L, -2) != 0 )
+			{
+				/* `key' is at index -2 and `value' at index -1 */
+				const char *pValue = lua_tostring( LUA->L, -1 );
+				if( pValue == NULL )
+					RageException::Throw( "\"%s\" Column entry is not a string", sLuaFunction.c_str() );
+				LOG->Trace( "'%s'", pValue);
+
+				hand.m_vsRefreshRowNames.push_back( pValue );
+
+				lua_pop( LUA->L, 1 );  /* removes `value'; keeps `key' for next iteration */
+			}
+		}
+		lua_pop( LUA->L, 1 ); /* pop RefreshRowNames table */
+
+
 		lua_pop( LUA->L, 1 ); /* pop main table */
 		ASSERT( lua_gettop(LUA->L) == 0 );
 	}
@@ -992,6 +1030,9 @@ void ScreenOptionsMaster::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Re
 
 	const OptionRowHandler &hand = OptionRowHandlers[iRow];
 
+	if( hand.m_bExportOnChange || !hand.m_vsRefreshRowNames.empty() )
+		ExportOptionForAllPlayers( iRow );
+
 	FOREACH_CONST( CString, hand.m_vsRefreshRowNames, sRowToRefreshName )
 	{
 		for( unsigned r=0; r<m_Rows.size(); r++ )
@@ -1004,16 +1045,8 @@ void ScreenOptionsMaster::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Re
 			OptionRowHandler &handOther = OptionRowHandlers[r];
 			OptionRowDefinition &defOther = m_OptionRowAlloc[r];
 
-			bool bExported = false;
-
 			if( *sRowToRefreshName == handOther.m_sName )
 			{
-				if( !bExported )
-				{
-					ExportOptionForAllPlayers( iRow );
-					bExported = true; 
-				}
-
 				switch( handOther.type )
 				{
 				case ROW_LIST:
