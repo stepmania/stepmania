@@ -24,11 +24,15 @@
 
 UnlockSystem*	UNLOCKSYS = NULL;	// global and accessable from anywhere in our program
 
+#define UNLOCKS_PATH "Data/Unlocks.dat"
+
 #define MEMCARD_PATH "Data/MemCard.ini"
 
 UnlockSystem::UnlockSystem()
 {
 	UNLOCKSYS = this;
+
+	LoadFromDATFile();
 
 	ArcadePoints = 0;
 	DancePoints = 0;
@@ -47,13 +51,13 @@ UnlockSystem::UnlockSystem()
 void UnlockSystem::RouletteUnlock( const Song *song )
 {
 	// if its an extra stage, don't count it
-	if (GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2())
+	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 		return;
 
 	UnlockEntry *p = FindSong( song );
-	if (!p)
+	if( !p )
 		return;  // does not exist
-	if (p->m_iRouletteSeed == 0)
+	if( p->m_iRouletteSeed == 0 )
 		return;  // already unlocked
 
 	ASSERT( p->m_iRouletteSeed < (int) RouletteSeeds.size() );
@@ -66,14 +70,12 @@ bool UnlockSystem::CourseIsLocked( const Course *course )
 	if( !PREFSMAN->m_bUseUnlockSystem )
 		return false;
 
-	// I know, its not a song, but for purposes of title
-	// comparison, its the same thing.
 	UnlockEntry *p = FindCourse( course );
+	if( p == NULL )
+		return false;
 
-	if (p)
-		p->UpdateLocked();
-	
-	return p != NULL && p->isLocked;
+	p->UpdateLocked();
+	return p->isLocked;
 }
 
 bool UnlockSystem::SongIsLocked( const Song *song )
@@ -94,15 +96,15 @@ bool UnlockSystem::SongIsLocked( const Song *song )
 
 bool UnlockSystem::SongIsRoulette( const Song *song )
 {
-	UnlockEntry *p = FindSong( song );
+	const UnlockEntry *p = FindSong( song );
 
-	return p && (p->m_iRouletteSeed != 0) ;
+	return p && p->m_iRouletteSeed != 0;
 }
 
 UnlockEntry *UnlockSystem::FindLockEntry( CString songname )
 {
-	for(unsigned i = 0; i < m_SongEntries.size(); i++)
-		if (!songname.CompareNoCase(m_SongEntries[i].m_sSongName))
+	for( unsigned i = 0; i < m_SongEntries.size(); i++ )
+		if( !songname.CompareNoCase(m_SongEntries[i].m_sSongName) )
 			return &m_SongEntries[i];
 
 	return NULL;
@@ -110,8 +112,8 @@ UnlockEntry *UnlockSystem::FindLockEntry( CString songname )
 
 UnlockEntry *UnlockSystem::FindSong( const Song *pSong )
 {
-	for(unsigned i = 0; i < m_SongEntries.size(); i++)
-		if (m_SongEntries[i].m_pSong == pSong )
+	for( unsigned i = 0; i < m_SongEntries.size(); i++ )
+		if( m_SongEntries[i].m_pSong == pSong )
 			return &m_SongEntries[i];
 
 	return NULL;
@@ -147,29 +149,29 @@ UnlockEntry::UnlockEntry()
 
 void UnlockEntry::UpdateLocked()
 {
-	if (!isLocked)
+	if( !isLocked )
 		return;
 	
 	isLocked = true;
-	if ( m_fArcadePointsRequired && UNLOCKSYS->ArcadePoints >= m_fArcadePointsRequired )
+	if( m_fArcadePointsRequired && UNLOCKSYS->ArcadePoints >= m_fArcadePointsRequired )
 		isLocked = false;
 
-	if ( m_fDancePointsRequired && UNLOCKSYS->DancePoints >= m_fDancePointsRequired )
+	if( m_fDancePointsRequired && UNLOCKSYS->DancePoints >= m_fDancePointsRequired )
 		isLocked = false;
 
-	if ( m_fSongPointsRequired && UNLOCKSYS->SongPoints >= m_fSongPointsRequired )
+	if( m_fSongPointsRequired && UNLOCKSYS->SongPoints >= m_fSongPointsRequired )
 		isLocked = false;
 
-	if ( m_fExtraStagesCleared && UNLOCKSYS->ExtraClearPoints >= m_fExtraStagesCleared )
+	if( m_fExtraStagesCleared && UNLOCKSYS->ExtraClearPoints >= m_fExtraStagesCleared )
 		isLocked = false;
 
-	if ( m_fExtraStagesFailed && UNLOCKSYS->ExtraFailPoints >= m_fExtraStagesFailed )
+	if( m_fExtraStagesFailed && UNLOCKSYS->ExtraFailPoints >= m_fExtraStagesFailed )
 		isLocked = false;
 
-	if ( m_fStagesCleared && UNLOCKSYS->StagesCleared >= m_fStagesCleared )
+	if( m_fStagesCleared && UNLOCKSYS->StagesCleared >= m_fStagesCleared )
 		isLocked = false;
 
-	if ( m_fToastysSeen && UNLOCKSYS->ToastyPoints >= m_fToastysSeen )
+	if( m_fToastysSeen && UNLOCKSYS->ToastyPoints >= m_fToastysSeen )
 		isLocked = false;
 
 	if ( m_iRouletteSeed )
@@ -182,14 +184,14 @@ void UnlockEntry::UpdateLocked()
 	}
 }
 
-bool UnlockSystem::LoadFromDATFile( CString sPath )
+bool UnlockSystem::LoadFromDATFile()
 {
-	LOG->Trace( "UnlockSystem::LoadFromDATFile(%s)", sPath.c_str() );
+	LOG->Trace( "UnlockSystem::LoadFromDATFile()" );
 	
 	MsdFile msd;
-	if( !msd.ReadFile( sPath ) )
+	if( !msd.ReadFile( UNLOCKS_PATH ) )
 	{
-		LOG->Warn( "Error opening file '%s' for reading: %s.", sPath.c_str(), msd.GetError().c_str() );
+		LOG->Warn( "Error opening file '%s' for reading: %s.", UNLOCKS_PATH, msd.GetError().c_str() );
 		return false;
 	}
 
@@ -202,7 +204,7 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 		const MsdFile::value_t &sParams = msd.GetValue(i);
 		CString sValueName = sParams[0];
 
-		if(iNumParams < 1)
+		if( iNumParams < 1 )
 		{
 			LOG->Warn("Got \"%s\" tag with no parameters", sValueName.c_str());
 			continue;
@@ -219,7 +221,7 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 		LOG->Trace("Song entry: %s", current.m_sSongName.c_str() );
 
 		CStringArray UnlockTypes;
-		split(sParams[2], ",", UnlockTypes);
+		split( sParams[2], ",", UnlockTypes );
 
 		for( j=0; j<UnlockTypes.size(); ++j )
 		{
@@ -232,21 +234,21 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 			LOG->Trace("UnlockTypes line: %s", UnlockTypes[j].c_str() );
 			LOG->Trace("Unlock info: %s %f", unlock_type.c_str(), datavalue);
 
-			if (unlock_type == "AP")
+			if( unlock_type == "AP" )
 				current.m_fArcadePointsRequired = datavalue;
-			if (unlock_type == "DP")
+			if( unlock_type == "DP" )
 				current.m_fDancePointsRequired = datavalue;
-			if (unlock_type == "SP")
+			if( unlock_type == "SP" )
 				current.m_fSongPointsRequired = datavalue;
-			if (unlock_type == "EC")
+			if( unlock_type == "EC" )
 				current.m_fExtraStagesCleared = datavalue;
-			if (unlock_type == "EF")
+			if( unlock_type == "EF" )
 				current.m_fExtraStagesFailed = datavalue;
-			if (unlock_type == "CS")
+			if( unlock_type == "CS" )
 				current.m_fStagesCleared = datavalue;
-			if (unlock_type == "!!")
+			if( unlock_type == "!!" )
 				current.m_fToastysSeen = datavalue;
-			if (unlock_type == "RO")
+			if( unlock_type == "RO" )
 			{
 				current.m_iRouletteSeed = (int)datavalue;
 				MaxRouletteSlot = max( MaxRouletteSlot, (int) datavalue );
@@ -257,8 +259,7 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 		m_SongEntries.push_back(current);
 	}
 
-	InitRouletteSeeds(MaxRouletteSlot); // resize roulette seeds
-	                  // for more efficient use of file
+	InitRouletteSeeds( MaxRouletteSlot ); // resize roulette seeds for more efficient use of file
 
 	UpdateSongs();
 	
@@ -280,23 +281,23 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 			LOG->Trace( "                   Found matching song entry" );
 		if (m_SongEntries[i].m_pCourse)
 			LOG->Trace( "                   Found matching course entry" );
-
-		
 	}
 	
 	return true;
 }
 
-bool UnlockEntry::SelectableWheel()
+bool UnlockEntry::SelectableWheel() const
 {
-	return (!isLocked);  // cached
+	return !isLocked;  // cached
 }
 
-bool UnlockEntry::SelectableRoulette()
+bool UnlockEntry::SelectableRoulette() const
 {
-	if (!isLocked) return true;
+	if( !isLocked )
+		return true;
 
-	if (m_iRouletteSeed != 0) return true;
+	if( m_iRouletteSeed != 0 )
+		return true;
 	return false;
 }
 
@@ -307,7 +308,8 @@ float UnlockSystem::DancePointsUntilNextUnlock()
 		if( m_SongEntries[a].m_fDancePointsRequired > DancePoints)
 			fSmallestPoints = min(fSmallestPoints, m_SongEntries[a].m_fDancePointsRequired);
 	
-	if (fSmallestPoints == 400000000) return 0;  // no match found
+	if( fSmallestPoints == 400000000 )
+		return 0;  // no match found
 	return fSmallestPoints - DancePoints;
 }
 
@@ -318,7 +320,8 @@ float UnlockSystem::ArcadePointsUntilNextUnlock()
 		if( m_SongEntries[a].m_fArcadePointsRequired > ArcadePoints)
 			fSmallestPoints = min(fSmallestPoints, m_SongEntries[a].m_fArcadePointsRequired);
 	
-	if (fSmallestPoints == 400000000) return 0;  // no match found
+	if( fSmallestPoints == 400000000 )
+		return 0;  // no match found
 	return fSmallestPoints - ArcadePoints;
 }
 
@@ -329,7 +332,8 @@ float UnlockSystem::SongPointsUntilNextUnlock()
 		if( m_SongEntries[a].m_fSongPointsRequired > SongPoints )
 			fSmallestPoints = min(fSmallestPoints, m_SongEntries[a].m_fSongPointsRequired);
 	
-	if (fSmallestPoints == 400000000) return 0;  // no match found
+	if( fSmallestPoints == 400000000 )
+		return 0;  // no match found
 	return fSmallestPoints - SongPoints;
 }
 
@@ -356,7 +360,6 @@ void UnlockSystem::UpdateSongs()
 			m_SongEntries[i].m_sSongName.c_str() );
 			m_SongEntries.erase(m_SongEntries.begin() + i);
 		}
-
 	}
 }
 
@@ -378,9 +381,9 @@ bool UnlockSystem::ReadValues( CString filename)
 {
 	IniFile data;
 
-	data.SetPath(filename);
+	data.SetPath( filename );
 
-	if (!data.ReadFile())
+	if( !data.ReadFile() )
 		return false;
 
 	data.GetValue ( "Unlock", "ArcadePointsAccumulated",	ArcadePoints );
@@ -400,7 +403,7 @@ bool UnlockSystem::WriteValues( CString filename)
 {
 	IniFile data;
 
-	data.SetPath(filename);
+	data.SetPath( filename );
 
 	data.SetValue( "Unlock", "ArcadePointsAccumulated",		ArcadePoints );
 	data.SetValue( "Unlock", "DancePointsAccumulated",		DancePoints );
@@ -454,7 +457,8 @@ float UnlockSystem::UnlockAddDP(float credit)
 	ReadValues( MEMCARD_PATH );
 
 	// we don't want to ever take away dance points
-	if (credit > 0) DancePoints += credit;
+	if( credit > 0 )
+		DancePoints += credit;
 	WriteValues( MEMCARD_PATH );
 
 	return DancePoints;

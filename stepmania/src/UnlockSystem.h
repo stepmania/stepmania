@@ -40,8 +40,8 @@ struct UnlockEntry
 	bool	IsCourse() const { return m_pCourse != NULL; }
 
 	// if song is selectable vai two means
-	bool	SelectableWheel();
-	bool	SelectableRoulette();
+	bool	SelectableWheel() const;
+	bool	SelectableRoulette() const;
 
 	void	UpdateLocked();  // updates isLocked
 
@@ -50,7 +50,22 @@ struct UnlockEntry
 
 class UnlockSystem
 {
+	friend struct UnlockEntry;
+
 public:
+	/* TODO:
+	enum UnlockType
+	{
+	UNLOCK_ARCADE_POINTS,
+	UNLOCK_DANCE_POINTS,
+	UNLOCK_SONG_POINTS,
+	UNLOCK_EXTRA_CLEARED,
+	UNLOCK_EXTRA_FAILED,
+	UNLOCK_TOASTY,
+	UNLOCK_CLEARED,
+	NUM_UNLOCK_TYPES
+	};
+	*/
 	UnlockSystem();
 
 	float DancePointsUntilNextUnlock();
@@ -64,10 +79,7 @@ public:
 	bool CourseIsLocked( const Course *course );
 
 	// executed when program is first executed
-	bool LoadFromDATFile( CString sPath );
-
-	// All locked songs are stored here
-	vector<UnlockEntry>	m_SongEntries;	
+	bool LoadFromDATFile();
 
 	// Gets number of unlocks for title screen
 	int GetNumUnlocks() const;
@@ -90,16 +102,6 @@ public:
 	bool ReadValues( CString filename);
 	bool WriteValues( CString filename);
 	
-	// unlock values, cached
-	float ArcadePoints;
-	float DancePoints;
-	float SongPoints;
-	float ExtraClearPoints;
-	float ExtraFailPoints;
-	float ToastyPoints;
-	float StagesCleared;
-	CString RouletteSeeds;
-
 	void UpdateSongs();
 
 	UnlockEntry *FindLockEntry( CString lockname );
@@ -112,6 +114,22 @@ private:
 
 	void InitRouletteSeeds(int MaxRouletteSlot);  
 	// makes RouletteSeeds more efficient
+
+public: // XXX
+	// All locked songs are stored here
+	vector<UnlockEntry>	m_SongEntries;	
+
+//	float m_fScores[NUM_UNLOCK_TYPES];
+
+	// unlock values, cached
+	float ArcadePoints;
+	float DancePoints;
+	float SongPoints;
+	float ExtraClearPoints;
+	float ExtraFailPoints;
+	float ToastyPoints;
+	float StagesCleared;
+	CString RouletteSeeds;
 };
 
 extern UnlockSystem*	UNLOCKSYS;  // global and accessable from anywhere in program
