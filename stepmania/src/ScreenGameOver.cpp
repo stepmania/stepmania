@@ -27,7 +27,9 @@ const ScreenMessage SM_PlayAnnouncer	=	ScreenMessage(SM_User + 3);
 
 ScreenGameOver::ScreenGameOver( CString sName ) : Screen( sName )
 {
-	GAMESTATE->Reset();
+	/* Don't reset; this isn't necessarily the last screen.  Let the attract
+	 * loop reset. */
+//	GAMESTATE->Reset();
 
 	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenGameOver background") );
 	this->AddChild( &m_Background );
