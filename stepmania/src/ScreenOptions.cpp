@@ -11,7 +11,6 @@
 */
 
 #include "ScreenOptions.h"
-#include "RageTextureManager.h"
 #include "RageUtil.h"
 #include "RageSoundManager.h"
 #include "ScreenManager.h"
