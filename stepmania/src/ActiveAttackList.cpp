@@ -77,8 +77,10 @@ void ActiveAttackList::Update( float fDelta )
 				for( unsigned i=0; i<asTokens.size(); i++ )
 					asTokens[i] = Capitalize( asTokens[i] );
 
-				// Theme the mod name (the last string)
-				asTokens.back() = THEME->GetMetric( "OptionNames", asTokens.back() );
+				/* Theme the mod name (the last string).  Allow this to not exist, since
+				 * characters might use modifiers that don't exist in the theme. */
+				if( THEME->HasMetric( "OptionNames", asTokens.back() ) )
+					asTokens.back() = THEME->GetMetric( "OptionNames", asTokens.back() );
 			
 				sMod = join( " ", asTokens );
 

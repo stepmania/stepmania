@@ -2459,7 +2459,11 @@ CString GameManager::NotesTypeToString( StepsType nt )
 
 CString GameManager::NotesTypeToThemedString( StepsType nt )
 {
-	return THEME->GetMetric( "StepsType", NotesTypeToString(nt) );
+	CString s = NotesTypeToString(nt);
+	if( THEME->HasMetric( "StepsType", s ) )
+		return THEME->GetMetric( "StepsType", s );
+	else
+		return s;
 }
 
 Game GameManager::StringToGameType( CString sGameType )
