@@ -241,6 +241,7 @@ void ArchHooks_darwin::DumpDebugInfo()
 
 void ArchHooks_darwin::EnterTimeCriticalSection()
 {
+#if 0
 	TimeCritMutex->Lock();
 
 	int mib[] = { CTL_HW, HW_BUS_FREQ };
@@ -269,10 +270,12 @@ void ArchHooks_darwin::EnterTimeCriticalSection()
 		(int*)&ttcpolicy, THREAD_TIME_CONSTRAINT_POLICY_COUNT );
 
 	g_fStartedTimeCritAt = RageTimer::GetTimeSinceStart();
+#endif
 }
 
 void ArchHooks_darwin::ExitTimeCriticalSection()
 {
+#if 0
 	thread_policy_set( mach_thread_self(), THREAD_TIME_CONSTRAINT_POLICY,
 		(int*) &g_oldttcpolicy, THREAD_TIME_CONSTRAINT_POLICY_COUNT );
 	TimeCritMutex->Unlock();
@@ -280,6 +283,7 @@ void ArchHooks_darwin::ExitTimeCriticalSection()
 	float fTimeCritLen = RageTimer::GetTimeSinceStart() - g_fStartedTimeCritAt;
 	if( fTimeCritLen > 0.1f )
 		LOG->Warn( "Time-critical section lasted for %f", fTimeCritLen );
+#endif
 }
 
 static int64_t GetMicrosecondsSinceEpoch()
