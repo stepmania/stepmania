@@ -222,7 +222,7 @@ void MemoryCardManager::LockCards( bool bLock )
 		m_pDriver->SetMountThreadState( MemoryCardDriver::detect_and_mount );
 }
 
-void MemoryCardManager::MountAllCards()
+void MemoryCardManager::TryMountAllCards()
 {
 	FOREACH_PlayerNumber( p )
 	{
@@ -233,13 +233,30 @@ void MemoryCardManager::MountAllCards()
 	}
 }
 
-void MemoryCardManager::UnmountAllCards()
+void MemoryCardManager::MountAllUsedCards()
 {
 	FOREACH_PlayerNumber( p )
 	{
 		if( m_Device[p].IsBlank() )	// they don't have an assigned card
 			continue;
 		
+		if( m_bTooLate[p] || !m_Device[p].bWriteTestSucceeded )
+			continue;
+
+		m_pDriver->MountAndTestWrite(&m_Device[p], MEM_CARD_MOUNT_POINT[p]);
+	}
+}
+
+void MemoryCardManager::UnmountAllUsedCards()
+{
+	FOREACH_PlayerNumber( p )
+	{
+		if( m_Device[p].IsBlank() )	// they don't have an assigned card
+			continue;
+		
+		if( m_bTooLate[p] || !m_Device[p].bWriteTestSucceeded )
+			continue;
+
 		m_pDriver->Unmount(&m_Device[p], MEM_CARD_MOUNT_POINT[p]);
 	}
 }

@@ -271,7 +271,7 @@ void GameState::PlayersFinalized()
 	}
 
 	if( PREFSMAN->m_bMemoryCardsMountOnlyWhenNecessary )
-		MEMCARDMAN->UnmountAllCards();
+		MEMCARDMAN->UnmountAllUsedCards();
 }
 
 /* This data is added to each player profile, and to the machine profile per-player. */
@@ -345,7 +345,7 @@ void GameState::EndGame()
 
 
 	if( PREFSMAN->m_bMemoryCardsMountOnlyWhenNecessary )
-		MEMCARDMAN->MountAllCards();
+		MEMCARDMAN->UnmountAllUsedCards();
 
 
 	BOOKKEEPER->WriteToDisk();

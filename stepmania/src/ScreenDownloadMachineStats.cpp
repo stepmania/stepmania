@@ -10,7 +10,7 @@
 
 static void SaveMachineStatsToFirstMemCard()
 {
-	MEMCARDMAN->MountAllCards();
+	MEMCARDMAN->TryMountAllCards();
 
 	FOREACH_PlayerNumber( pn )
 	{
