@@ -76,20 +76,6 @@ void NoteSkinManager::LoadNoteSkinData( CString sNoteSkinName, NoteSkinData& dat
 	data_out.sName = sNoteSkinName;
 	data_out.metrics.Reset();
 
-	///* Read only the default keys from the default noteskin. */
-	//IniFile defaults;
-	//defaults.SetPath( GLOBAL_BASE_NOTESKIN_DIR+"metrics.ini" );
-	//defaults.ReadFile();
-	//defaults.SetPath( GetNoteSkinDir(BASE_NOTESKIN_NAME)+"metrics.ini" );
-	//defaults.ReadFile();
-
-	// Why only use NoteDisplay?  Now, a few different classes take 
-	// metrics from the NoteSkin.  -Chris
-	//const IniFile::key *def = defaults.GetKey("NoteDisplay");
-	//if(def)
-	//	data_out.metrics.SetValue("NoteDisplay", *def);
-
-
 	/* Load global NoteSkin defaults */
 	data_out.metrics.SetPath( GLOBAL_BASE_NOTESKIN_DIR+"metrics.ini" );
 	data_out.metrics.ReadFile();
@@ -118,9 +104,7 @@ void NoteSkinManager::GetNoteSkinNames( CStringArray &AddTo )
 		AddTo.push_back( iter->second.sName );
 	}
 
-	/*
-	   Move "default" to the front if it exists
-	*/
+	/* Move "default" to the front if it exists. */
 	{
 		CStringArray::iterator iter = find( AddTo.begin(), AddTo.end(), "default" );
 		if( iter != AddTo.end() )
@@ -235,17 +219,6 @@ CString NoteSkinManager::GetPathToFromPlayerAndButton( PlayerNumber pn, CString 
 	return GetPathToFromNoteSkinAndButton( sNoteSkinName, sButtonName, sElement, bOptional );
 }
 
-CString NoteSkinManager::GetPathToFromNoteSkinAndButtonInternal( CString NoteSkin, CString sButtonName, CString sElement )
-{
-	CString ret;
-	if( ret.empty() )
-		ret = GetPathToFromDir( GetNoteSkinDir(NoteSkin), sButtonName+" "+sElement );
-	if( ret.empty() ) // Search game default NoteSkin
-		ret = GetPathToFromDir( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME), sButtonName+" "+sElement );
-	if( ret.empty() ) // Search global default NoteSkin
-		ret = GetPathToFromDir( GLOBAL_BASE_NOTESKIN_DIR, "Fallback "+sElement );
-	return ret;
-}
 
 CString NoteSkinManager::GetPathToFromNoteSkinAndButton( CString NoteSkin, CString sButtonName, CString sElement, bool bOptional )
 {
@@ -254,8 +227,15 @@ CString NoteSkinManager::GetPathToFromNoteSkinAndButton( CString NoteSkin, CStri
 	if( it != g_PathCache.end() )
 		return it->second;
 
-	CString sPath = GetPathToFromNoteSkinAndButtonInternal( NoteSkin, sButtonName, sElement );
-	if( sPath == "" )
+	CString sPath;
+	if( sPath.empty() )
+		sPath = GetPathToFromDir( GetNoteSkinDir(NoteSkin), sButtonName+" "+sElement );
+	if( sPath.empty() ) // Search game default NoteSkin
+		sPath = GetPathToFromDir( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME), sButtonName+" "+sElement );
+	if( sPath.empty() ) // Search global default NoteSkin
+		sPath = GetPathToFromDir( GLOBAL_BASE_NOTESKIN_DIR, "Fallback "+sElement );
+
+	if( sPath.empty() ) // Search global default NoteSkin
 	{
 		if( bOptional )
 		{

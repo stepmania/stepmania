@@ -46,7 +46,6 @@ public:
 
 protected:
 	CString GetPathToFromDir( CString sDir, CString sFileName );
-	CString GetPathToFromNoteSkinAndButtonInternal( CString NoteSkin, CString sButtonName, CString sElement );
 
 	struct NoteSkinData
 	{
