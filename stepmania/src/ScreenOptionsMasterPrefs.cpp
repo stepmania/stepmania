@@ -339,6 +339,7 @@ MOVE( DisplayMode,			PREFSMAN->m_bWindowed );
 MOVE( WaitForVsync,			PREFSMAN->m_bVsync );
 MOVE( ShowStats,			PREFSMAN->m_bShowStats );
 MOVE( KeepTexturesInMemory,	PREFSMAN->m_bDelayedTextureDelete );
+MOVE( AntiAliasing,			PREFSMAN->m_bAntiAliasing );
 
 static void DisplayResolution( int &sel, bool ToSel, const CStringArray &choices )
 {
