@@ -1013,11 +1013,21 @@ void Song::SaveToDWIFile()
 
 void Song::AddAutoGenNotes()
 {
-	for( StepsType ntMissing=(StepsType)0; ntMissing<NUM_STEPS_TYPES; ntMissing=(StepsType)(ntMissing+1) )
+	bool HasNotes[NUM_STEPS_TYPES];
+	memset( HasNotes, 0, sizeof(HasNotes) );
+	for( unsigned i=0; i < m_apNotes.size(); i++ ) // foreach Steps
 	{
-		if( SongHasNotesType(ntMissing) )
+		if( m_apNotes[i]->IsAutogen() )
 			continue;
 
+		StepsType nt = m_apNotes[i]->m_StepsType;
+		HasNotes[nt] = true;
+	}
+		
+	for( StepsType ntMissing=(StepsType)0; ntMissing<NUM_STEPS_TYPES; ntMissing=(StepsType)(ntMissing+1) )
+	{
+		if( HasNotes[ntMissing] )
+			continue;
 
 		// missing Steps of this type
 		int iNumTracksOfMissing = GAMEMAN->NotesTypeToNumTracks(ntMissing);
@@ -1028,9 +1038,10 @@ void Song::AddAutoGenNotes()
 
 		for( StepsType nt=(StepsType)0; nt<NUM_STEPS_TYPES; nt=(StepsType)(nt+1) )
 		{
-			if( GetStepsByDifficulty( nt, DIFFICULTY_INVALID, false ) == NULL )
+			if( !HasNotes[nt] )
 				continue;
 
+			/* has (non-autogen) Steps of this type */
 			const int iNumTracks = GAMEMAN->NotesTypeToNumTracks(nt);
 			const int iTrackDifference = abs(iNumTracks-iNumTracksOfMissing);
 			if( iTrackDifference < iBestTrackDifference )
