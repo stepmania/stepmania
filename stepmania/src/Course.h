@@ -120,6 +120,13 @@ public:
 	
 	void AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS], int iDancePoints[NUM_PLAYERS], float fSurviveTime[NUM_PLAYERS], int iRankingIndexOut[NUM_PLAYERS], bool bNewRecordOut[NUM_PLAYERS] );	// iNewRecordIndexOut[p] = -1 if not a new record
 
+	// sorting values
+	int		SortOrder_NumStages;
+	int		SortOrder_TotalDifficulty;
+	float	SortOrder_AvgDifficulty;
+	int		SortOrder_Ranking;
+
+	void UpdateCourseStats();
 
 private:
 	void SetDefaultScore();
@@ -129,5 +136,9 @@ private:
 
 void SortCoursePointerArrayByDifficulty( vector<Course*> &apCourses );
 void SortCoursePointerArrayByType( vector<Course*> &apCourses );
+void SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCourses );
+void SortCoursePointerArrayByTotalDifficulty( vector<Course*> &apCourses );
+void SortCoursePointerArrayByRanking( vector<Course*> &apCourses );
+
 
 #endif

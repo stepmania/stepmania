@@ -27,6 +27,7 @@
 #include "BannerCache.h"
 #include "RageFile.h"
 #include "arch/arch.h"
+#include "ThemeManager.h"
 
 /* Amount to increase meter ranges to make them difficult: */
 const int DIFFICULT_METER_CHANGE = 2;
@@ -761,9 +762,63 @@ static bool CompareCoursePointersByDifficulty(const Course* pCourse1, const Cour
 		return CompareCoursePointersByAutogen( pCourse1, pCourse2 );
 }
 
+static bool CompareCoursePointersByAvgDifficulty(const Course* pCourse1, const Course* pCourse2)
+{
+	float iNum1 = pCourse1->SortOrder_AvgDifficulty;
+	float iNum2 = pCourse2->SortOrder_AvgDifficulty;
+
+	if( iNum1 < iNum2 )
+		return true;
+	else if( iNum1 > iNum2 )
+		return false;
+	else // iNum1 == iNum2
+		return CompareCoursePointersByAutogen( pCourse1, pCourse2 );
+}
+
+static bool CompareCoursePointersByTotalDifficulty(const Course* pCourse1, const Course* pCourse2)
+{
+	float iNum1 = pCourse1->SortOrder_TotalDifficulty;
+	float iNum2 = pCourse2->SortOrder_TotalDifficulty;
+
+	if( iNum1 < iNum2 )
+		return true;
+	else if( iNum1 > iNum2 )
+		return false;
+	else // iNum1 == iNum2
+		return CompareCoursePointersByAutogen( pCourse1, pCourse2 );
+}
+
+static bool CompareCoursePointersByRanking(const Course* pCourse1, const Course* pCourse2)
+{
+	float iNum1 = pCourse1->SortOrder_Ranking;
+	float iNum2 = pCourse2->SortOrder_Ranking;
+
+	if( iNum1 < iNum2 )
+		return true;
+	else if( iNum1 > iNum2 )
+		return false;
+	else // iNum1 == iNum2
+		return CompareCoursePointersByAutogen( pCourse1, pCourse2 );
+}
+
 void SortCoursePointerArrayByDifficulty( vector<Course*> &apCourses )
 {
 	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByDifficulty );
+}
+
+void SortCoursePointerArrayByRanking( vector<Course*> &apCourses )
+{
+	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByRanking );
+}
+
+void SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCourses )
+{
+	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByAvgDifficulty );
+}
+
+void SortCoursePointerArrayByTotalDifficulty( vector<Course*> &apCourses )
+{
+	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByTotalDifficulty );
 }
 
 static bool CompareCoursePointersByType(const Course* pCourse1, const Course* pCourse2)
@@ -780,4 +835,37 @@ void SortCoursePointerArrayByType( vector<Course*> &apCourses )
 bool Course::HasBanner() const
 {
 	return m_sBannerPath != ""  &&  IsAFile(m_sBannerPath);
+}
+
+void Course::UpdateCourseStats()
+{
+	LOG->Trace("Updating course stats for %s", this->m_sName.c_str() );
+
+	SortOrder_AvgDifficulty = 0;
+	SortOrder_NumStages = 0;
+	SortOrder_Ranking = 2;
+	SortOrder_TotalDifficulty = 0;
+
+	unsigned i;
+
+	vector<Info> ci;
+	GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_NotesType, ci );
+
+	for(i = 0; i < m_entries.size(); i++)
+	{
+		SortOrder_NumStages++;
+		SortOrder_TotalDifficulty += ci[i].pNotes->GetMeter();
+	}
+
+	SortOrder_AvgDifficulty = (float)SortOrder_TotalDifficulty/SortOrder_NumStages;
+	if (SortOrder_NumStages > 7) SortOrder_Ranking = 3;
+
+	CStringArray RankingCourses;
+
+	split( THEME->GetMetric("ScreenRanking","CoursesToShow"),",", RankingCourses);
+
+	for(i = 0; i < RankingCourses.size(); i++)
+		if (!RankingCourses[i].CompareNoCase(this->m_sPath))
+			SortOrder_Ranking = 1;
+
 }

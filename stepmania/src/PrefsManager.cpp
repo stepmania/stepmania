@@ -109,6 +109,9 @@ PrefsManager::PrefsManager()
 	 * stage CRS files) don't get it changed around on them. */
 	m_bPickExtraStage = false;
 
+	// default to old sort order
+	m_iCourseSortOrder = 0;
+
 	m_fLongVerSongSeconds = 60*2.5f;	// Dynamite Rave is 2:55
 	m_fMarathonVerSongSeconds = 60*5.f;
 
@@ -214,6 +217,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "BreakComboToGetItem",		m_bBreakComboToGetItem );
 	ini.GetValueB( "Options", "ShowDancingCharacters",		m_bShowDancingCharacters );
 	ini.GetValueB( "Options", "TenFooterInRed",				m_bTenFooterInRed );
+	ini.GetValueI( "Options", "CourseSortOrder",			(int&)m_iCourseSortOrder );
 
 	ini.GetValueB( "Options", "UseUnlockSystem",			m_bUseUnlockSystem );
 
@@ -325,6 +329,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "DebugMode",					m_bDebugMode );
 
 	ini.SetValueB( "Options", "TenFooterInRed",				m_bTenFooterInRed );
+	ini.SetValueI( "Options", "CourseSortOrder",			m_iCourseSortOrder );
 
 
 	/* Only write these if they aren't the default.  This ensures that we can change

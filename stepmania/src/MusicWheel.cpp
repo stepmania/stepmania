@@ -571,7 +571,23 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		default: ASSERT(0); break;
 		}
 
+		// default sort order; other songs may alter this
 		SortCoursePointerArrayByDifficulty( apCourses );
+
+		if (PREFSMAN->m_iCourseSortOrder != 0)
+		{
+			for(i=0; i<apCourses.size(); i++)
+				apCourses[i]->UpdateCourseStats();
+
+			if (PREFSMAN->m_iCourseSortOrder == 1)
+				SortCoursePointerArrayByAvgDifficulty( apCourses );
+
+			if (PREFSMAN->m_iCourseSortOrder == 2)
+				SortCoursePointerArrayByTotalDifficulty( apCourses );
+
+			if (PREFSMAN->m_iCourseSortOrder == 3)
+				SortCoursePointerArrayByRanking( apCourses );
+		}
 
 		if( so == SORT_ALL_COURSES )
 			SortCoursePointerArrayByType( apCourses );
