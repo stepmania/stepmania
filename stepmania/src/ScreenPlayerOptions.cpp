@@ -106,13 +106,17 @@ void ScreenPlayerOptions::ImportOptions()
 {
 	// fill in difficulty names
 	m_OptionRow[PO_STEP].choices.clear();
-	if( GAMESTATE->m_pCurCourse )   // playing a course
+	if( GAMESTATE->m_bEditing )
+	{
+		m_OptionRow[PO_STEP].choices.push_back( "" );
+	}
+	else if( GAMESTATE->m_pCurCourse )   // playing a course
 	{
 		m_OptionRow[PO_STEP].choices.push_back( "REGULAR" );
 		if( GAMESTATE->m_pCurCourse->HasDifficult( GAMESTATE->GetCurrentStyleDef()->m_StepsType ) )
 			m_OptionRow[PO_STEP].choices.push_back( "DIFFICULT" );
 	}
-	else
+	else if( GAMESTATE->m_pCurSong )	// playing a song
 	{
 		vector<Steps*> vNotes;
 		GAMESTATE->m_pCurSong->GetSteps( vNotes, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
@@ -219,7 +223,12 @@ void ScreenPlayerOptions::ImportOptions()
 		m_iSelectedOption[p][PO_HOLD_NOTES]	= po.m_bHoldNotes ? 1 : 0;
 		m_iSelectedOption[p][PO_DARK]		= po.m_fDark ? 1 : 0;
 
-		if( GAMESTATE->m_pCurCourse )   // playing a course
+
+		if( GAMESTATE->m_bEditing )
+		{
+			m_iSelectedOption[p][PO_STEP] = 0;
+		}
+		else if( GAMESTATE->m_pCurCourse )   // playing a course
 		{
 			if( GAMESTATE->m_bDifficultCourses &&
 				GAMESTATE->m_pCurCourse->HasDifficult( GAMESTATE->GetCurrentStyleDef()->m_StepsType ) )
@@ -227,7 +236,7 @@ void ScreenPlayerOptions::ImportOptions()
 			else
 				m_iSelectedOption[p][PO_STEP] = 0;
 		}
-		else
+		else if( GAMESTATE->m_pCurSong )	// playing a song
 		{
 			vector<Steps*> vNotes;
 			GAMESTATE->m_pCurSong->GetSteps( vNotes, GAMESTATE->GetCurrentStyleDef()->m_StepsType );

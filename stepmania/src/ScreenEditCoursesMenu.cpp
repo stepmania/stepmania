@@ -125,7 +125,7 @@ void ScreenEditCoursesMenu::MenuStart( PlayerNumber pn )
 	if( m_Menu.IsTransitioning() )
 		return;
 
-	Course* pCourse		= m_Selector.GetSelectedCourse();
+	m_Selector.Start();
 }
 
 void ScreenEditCoursesMenu::MenuBack( PlayerNumber pn )

@@ -42,7 +42,9 @@ inline CString CourseEntryTypeToString( CourseEntryType cet )
 	}
 }
 
-struct CourseEntry {
+class CourseEntry
+{
+public:
 	CourseEntryType type;
 	bool mystery;			// show "??????"
 	Song* pSong;			// used in type=fixed

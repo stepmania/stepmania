@@ -19,6 +19,8 @@
 #include "Steps.h"
 #include "song.h"
 #include "Course.h"
+#include "ScreenMiniMenu.h"
+#include "ScreenManager.h"
 
 //
 // Defines specific to EditCoursesMenu
@@ -40,12 +42,44 @@
 #define ROW_VALUE_X( i )		THEME->GetMetricF("EditCoursesMenu",ssprintf("RowValue%dX",i+1))
 #define ROW_Y( i )				THEME->GetMetricF("EditCoursesMenu",ssprintf("Row%dY",i+1))
 
+const ScreenMessage SM_BackFromCourseOptionsMenu		= (ScreenMessage)(SM_User+1);
+const ScreenMessage SM_BackFromCourseEntryOptionsMenu	= (ScreenMessage)(SM_User+2);
+							  
+Menu g_CourseOptionsMenu
+(
+	"Course Options",
+	MenuRow( "Repeat",		true, 0, "NO","YES" ),
+	MenuRow( "Randomize",	true, 0, "NO","YES" ),
+	MenuRow( "Lives",		true, 4, "Use Bar Life","1","2","3","4","5","6","7","8","9","10" )
+);
 
-const int MAX_EDIT_COURSES_ENTRIES = 100;
+enum CourseEntryOptionsMenuRow
+{
+	song,
+	group,
+	difficulty,
+	low_meter,
+	high_meter,
+	best_worst_value
+};
+
+Menu g_CourseEntryOptionsMenu
+(
+	"Course Entry Options",
+	MenuRow( "Song",			true, 0 ),
+	MenuRow( "Group",			true, 0 ),
+	MenuRow( "Difficulty",		true, 0 ),
+	MenuRow( "Low Meter",		true, 0 ),
+	MenuRow( "High Meter",		true, 0 ),
+	MenuRow( "Best/Worst value",true, 0 )
+);
+
 
 EditCoursesMenu::EditCoursesMenu()
 {
 	LOG->Trace( "ScreenEditCoursesMenu::ScreenEditCoursesMenu()" );
+
+	GAMESTATE->m_bEditing = true;
 
 	int i;
 
@@ -74,7 +108,7 @@ EditCoursesMenu::EditCoursesMenu()
 		m_textValue[i].LoadFromFont( THEME->GetPathToF("Common normal") );
 		m_textValue[i].SetXY( ROW_VALUE_X(i), ROW_Y(i) );
 		m_textValue[i].SetText( "blah" );
-		m_textValue[i].SetZoom( 0.8f );
+		m_textValue[i].SetZoom( 0.6f );
 		this->AddChild( &m_textValue[i] );
 	}
 
@@ -90,6 +124,8 @@ EditCoursesMenu::EditCoursesMenu()
 
 	m_soundChangeRow.Load( THEME->GetPathToS("EditCoursesMenu row") );
 	m_soundChangeValue.Load( THEME->GetPathToS("EditCoursesMenu value") );
+	m_soundStart.Load( THEME->GetPathToS("Common start") );
+	m_soundInvalid.Load( THEME->GetPathToS("Common invalid") );
 
 
 	// fill in data structures
@@ -130,9 +166,10 @@ bool EditCoursesMenu::CanGoRight()
 	{
 		m_pCourses.size(),
 		1,
-		1,
-		MAX_EDIT_COURSES_ENTRIES,
+		NUM_ACTIONS,
+		(int)GetSelectedCourse()->m_entries.size(),
 		NUM_COURSE_ENTRY_TYPES,
+		1,
 		1,
 		1
 	};
@@ -145,7 +182,7 @@ void EditCoursesMenu::Up()
 	if( CanGoUp() )
 	{
 		ChangeToRow( Row(m_SelectedRow-1) );
-		m_soundChangeRow.PlayRandom();
+		m_soundChangeRow.Play();
 	}
 }
 
@@ -154,7 +191,7 @@ void EditCoursesMenu::Down()
 	if( CanGoDown() )
 	{
 		ChangeToRow( Row(m_SelectedRow+1) );
-		m_soundChangeRow.PlayRandom();
+		m_soundChangeRow.Play();
 	}
 }
 
@@ -163,8 +200,16 @@ void EditCoursesMenu::Left()
 	if( CanGoLeft() )
 	{
 		m_iSelection[m_SelectedRow]--;
+
+		switch( m_SelectedRow )
+		{
+		case ROW_ENTRY_TYPE:	
+			GetSelectedEntry()->type = GetSelectedEntryType();
+			break;
+		}
+
 		OnRowValueChanged( m_SelectedRow );
-		m_soundChangeValue.PlayRandom();
+		m_soundChangeValue.Play();
 	}
 }
 
@@ -173,8 +218,70 @@ void EditCoursesMenu::Right()
 	if( CanGoRight() )
 	{
 		m_iSelection[m_SelectedRow]++;
+
+		switch( m_SelectedRow )
+		{
+		case ROW_ENTRY_TYPE:	
+			GetSelectedEntry()->type = GetSelectedEntryType();
+			break;
+		}
+
 		OnRowValueChanged( m_SelectedRow );
-		m_soundChangeValue.PlayRandom();
+		m_soundChangeValue.Play();
+	}
+}
+
+void EditCoursesMenu::Start()
+{
+	switch( m_SelectedRow )
+	{
+	case ROW_COURSE_OPTIONS:	
+		SCREENMAN->MiniMenu( &g_CourseOptionsMenu, SM_BackFromCourseOptionsMenu );
+		break;
+	case ROW_ACTION:	
+		m_soundStart.Play();
+		break;
+	case ROW_ENTRY_OPTIONS:	
+		{
+			// update enabled/disabled lines
+			for( int i=0; i<g_CourseEntryOptionsMenu.rows.size(); i++ )
+				g_CourseEntryOptionsMenu.rows[i].enabled = false;
+			switch( GetSelectedEntry()->type )
+			{
+				case COURSE_ENTRY_FIXED:
+					g_CourseEntryOptionsMenu.rows[song].enabled = true;
+					break;
+				case COURSE_ENTRY_RANDOM:
+					g_CourseEntryOptionsMenu.rows[low_meter].enabled = true;
+					g_CourseEntryOptionsMenu.rows[high_meter].enabled = true;
+					break;
+				case COURSE_ENTRY_RANDOM_WITHIN_GROUP:
+					g_CourseEntryOptionsMenu.rows[group].enabled = true;
+					g_CourseEntryOptionsMenu.rows[low_meter].enabled = true;
+					g_CourseEntryOptionsMenu.rows[high_meter].enabled = true;
+					break;
+				case COURSE_ENTRY_BEST:
+					g_CourseEntryOptionsMenu.rows[best_worst_value].enabled = true;
+					break;
+				case COURSE_ENTRY_WORST:
+					g_CourseEntryOptionsMenu.rows[best_worst_value].enabled = true;
+					break;
+				default:
+					ASSERT(0);
+					break;
+			}
+			SCREENMAN->MiniMenu( &g_CourseEntryOptionsMenu, SM_BackFromCourseEntryOptionsMenu );
+		}
+		break;
+	case ROW_ENTRY_PLAYER_OPTIONS:
+		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions" );
+		break;
+	case ROW_ENTRY_SONG_OPTIONS:	
+		SCREENMAN->AddNewScreenToTop( "ScreenSongOptions" );
+		break;
+	default:
+		m_soundInvalid.Play();
+		return;
 	}
 }
 
@@ -199,9 +306,7 @@ void EditCoursesMenu::OnRowValueChanged( Row row )
 	m_sprArrows[1].EnableAnimation( CanGoRight() );
 
 	Course* pCourse = GetSelectedCourse();
-	CourseEntry* pEntry = NULL;
-	if( m_iSelection[ROW_ENTRY] < pCourse->m_entries.size() )
-		pEntry = &pCourse->m_entries[m_iSelection[ROW_ENTRY]];
+	CourseEntry* pEntry = GetSelectedEntry();
 
 	switch( row )
 	{
@@ -211,44 +316,44 @@ void EditCoursesMenu::OnRowValueChanged( Row row )
 		m_CourseBanner.ScaleToClipped( COURSE_BANNER_WIDTH, COURSE_BANNER_HEIGHT );
 		m_iSelection[ROW_ENTRY] = 0;
 		// fall through
-	case ROW_SAVE:
-		m_textValue[ROW_SAVE].SetText( "(press START)" );
-		// fall through
 	case ROW_COURSE_OPTIONS:
 		m_textValue[ROW_COURSE_OPTIONS].SetText( 
 			ssprintf(
-				"%s, %s, %d lives",
+				"(START)  %s, %s, %d lives",
 				pCourse->m_bRepeat ? "repeat" : "no repeat",
 				pCourse->m_bRandomize ? "randomize" : "no randomize",
 				pCourse->m_iLives ) );
 		// fall through
+	case ROW_ACTION:
+		m_textValue[ROW_ACTION].SetText( "(START) " + ActionToString(GetSelectedAction()) );
+		// fall through
 	case ROW_ENTRY:
-		m_textValue[ROW_ENTRY].SetText( ssprintf("%d",m_iSelection[ROW_ENTRY]+1) );
+		m_textValue[ROW_ENTRY].SetText( ssprintf("%d of %d",m_iSelection[ROW_ENTRY]+1, (int)GetSelectedCourse()->m_entries.size()) );
 		// fall through
 	case ROW_ENTRY_TYPE:
 		m_textValue[ROW_ENTRY_TYPE].SetText( pEntry ? CourseEntryTypeToString(pEntry->type) : "(none)" );
 		// fall through
 	case ROW_ENTRY_OPTIONS:
 		{
-			CString s;
+			CString s = "(START) ";
 			if( pEntry )
 			{
 				switch( pEntry->type )
 				{
 					case COURSE_ENTRY_FIXED:
-						s = pEntry->pSong ? "missing song" : pEntry->pSong->GetFullTranslitTitle();
+						s += pEntry->pSong ? "(missing song)" : pEntry->pSong->GetFullTranslitTitle();
 						break;
 					case COURSE_ENTRY_RANDOM:
-						s = "any group";
+						s += "any group";
 						break;
 					case COURSE_ENTRY_RANDOM_WITHIN_GROUP:
-						s = "group: " + pEntry->group_name;
+						s += "group: " + pEntry->group_name;
 						break;
 					case COURSE_ENTRY_BEST:
-						s = ssprintf( "best - %d", pEntry->players_index+1 );
+						s += ssprintf( "rank %d", pEntry->players_index+1 );
 						break;
 					case COURSE_ENTRY_WORST:
-						s = ssprintf( "worst - %d", pEntry->players_index+1 );
+						s += ssprintf( "rank %d", pEntry->players_index+1 );
 						break;
 					default:
 						ASSERT(0);
@@ -263,24 +368,52 @@ void EditCoursesMenu::OnRowValueChanged( Row row )
 			m_textValue[ROW_ENTRY_OPTIONS].SetText( s );
 		}
 		// fall through
-	case ROW_ENTRY_MODIFIERS:
+	case ROW_ENTRY_PLAYER_OPTIONS:
 		{
-			CString s;
+			CString s = "(START) ";
 			if( pEntry )
 			{
-				s = pEntry->modifiers;
-				if( s.empty() )
-					s = "(none)";
+				if( pEntry->modifiers.empty() )
+					s += "(none)";
+				else
+					s += pEntry->modifiers;
 			}
 			else
 			{
 				s = "n/a";
 			}
 		
-			m_textValue[ROW_ENTRY_MODIFIERS].SetText( s );
+			m_textValue[ROW_ENTRY_PLAYER_OPTIONS].SetText( s );
+		}
+		// fall through
+	case ROW_ENTRY_SONG_OPTIONS:
+		{
+			CString s = "(START) ";
+			if( pEntry )
+			{
+				if( pEntry->modifiers.empty() )
+					s += "(none)";
+				else
+					s += pEntry->modifiers;
+			}
+			else
+			{
+				s = "n/a";
+			}
+		
+			m_textValue[ROW_ENTRY_SONG_OPTIONS].SetText( s );
 		}
 		break;
 	default:
 		ASSERT(0);	// invalid row
 	}
+}
+
+CourseEntry* EditCoursesMenu::GetSelectedEntry()
+{
+	Course* pCourse = GetSelectedCourse();
+	if( m_iSelection[ROW_ENTRY] < pCourse->m_entries.size() )
+		return &pCourse->m_entries[m_iSelection[ROW_ENTRY]];
+	else
+		return NULL;
 }

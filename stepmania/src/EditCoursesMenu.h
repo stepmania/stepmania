@@ -17,7 +17,8 @@
 #include "TextBanner.h"
 #include "GameConstantsAndTypes.h"
 #include "DifficultyMeter.h"
-#include "RandomSample.h"
+#include "RageSound.h"
+#include "Course.h"
 
 
 class EditCoursesMenu: public ActorFrame 
@@ -36,16 +37,18 @@ public:
 	void Down();
 	void Left();
 	void Right();
+	void Start();
 
 	enum Row 
 	{ 
 		ROW_COURSE, 
-		ROW_SAVE, 
 		ROW_COURSE_OPTIONS, 
+		ROW_ACTION, 
 		ROW_ENTRY,
 		ROW_ENTRY_TYPE, 
 		ROW_ENTRY_OPTIONS, 
-		ROW_ENTRY_MODIFIERS, 
+		ROW_ENTRY_PLAYER_OPTIONS, 
+		ROW_ENTRY_SONG_OPTIONS, 
 		NUM_ROWS 
 	} m_SelectedRow;
 	CString RowToString( Row r )
@@ -53,17 +56,39 @@ public:
 		const CString s[NUM_ROWS] = 
 		{
 			"Course",
-			"Save",
 			"Course Options",
+			"Action",
 			"Entry",
 			"Entry Type",
 			"Entry Options",
-			"Entry Modifiers"
+			"Entry Player Options",
+			"Entry Song Options"
 		};
 		return s[r];
 	}
 
-	Course*		GetSelectedCourse()				{ return m_pCourses[m_iSelection[ROW_COURSE]]; }
+	enum Action
+	{ 
+		save, 
+		add_entry, 
+		delete_selected_entry, 
+		NUM_ACTIONS
+	};
+	CString ActionToString( Action a )
+	{
+		switch( a )
+		{
+		case save:					return "Save Current Course";
+		case add_entry:				return "Add Entry";
+		case delete_selected_entry:	return "Delete Selected Entry";
+		default:	ASSERT(0);		return "";
+		}
+	}
+
+	Course*		GetSelectedCourse()			{ return m_pCourses[m_iSelection[ROW_COURSE]]; }
+	CourseEntry* GetSelectedEntry();
+	Action GetSelectedAction()				{ return (Action)m_iSelection[ROW_ACTION]; }
+	CourseEntryType GetSelectedEntryType()	{ return (CourseEntryType)m_iSelection[ROW_ENTRY_TYPE]; }
 
 private:
 	Sprite	m_sprArrows[2];
@@ -81,8 +106,10 @@ private:
 	void OnRowValueChanged( Row row );
 	void ChangeToRow( Row newRow );
 
-	RandomSample	m_soundChangeRow;
-	RandomSample	m_soundChangeValue;
+	RageSound	m_soundChangeRow;
+	RageSound	m_soundChangeValue;
+	RageSound	m_soundStart;
+	RageSound	m_soundInvalid;
 };
 
 #endif
