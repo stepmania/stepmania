@@ -70,34 +70,36 @@ fi
 # SDL_LIBS="`echo $SDL_LIBS | sed 's_-L/usr/lib/\?[[ $]]__'`"
 
 have_libpng=yes
-AC_CHECK_LIB(png, png_create_read_struct, , have_libpng=no, [-lz -lm])
+AC_CHECK_LIB(png, png_create_read_struct, [x=y], have_libpng=no, [-lz -lm]) # x=y to stop autoconf from messing with LIBS
 AC_CHECK_HEADER(png.h, , have_libpng=no)
 if test "$have_libpng" = "no"; then
   echo
   echo "*** libpng is required to build StepMania; please make sure that"
   echo "*** it is installed to continue the build process."
   exit 1
-else
-  LIBS="$LIBS -lpng"
 fi
+LIBS="$LIBS -lpng"
 
 AC_ARG_WITH(jpeg, AC_HELP_STRING([--without-jpeg], [Disable JPEG support]), with_jpeg=$withval, with_jpeg=yes)
 
-have_libjpeg=yes
-AC_SEARCH_LIBS(jpeg_read_scanlines, [jpeg], ,  have_libjpeg=no)
-AC_CHECK_HEADER(jpeglib.h, , have_libjpeg=no)
-if test "$have_libjpeg" = "no"; then
-        # Require JPEG by default, so people don't compile without it
-	# by accident and then come asking us why files won't load.
-	if test "$with_jpeg" = "yes"; then
+if test "$with_jpeg" = "yes"; then
+	have_libjpeg=yes
+	AC_CHECK_LIB(jpeg, jpeg_read_scanlines, [x=y], have_libjpeg=no) # x=y to stop autoconf from messing with LIBS
+	AC_CHECK_HEADER(jpeglib.h, , have_libjpeg=no)
+
+	if test "$have_libjpeg" = "no"; then
+		# Require JPEG by default, so people don't compile without it
+		# by accident and then come asking us why files won't load.
 		AC_MSG_ERROR(
 [libjpeg is required to build StepMania; please make sure that it is installed
 to continue the build process.  If you really want to compile without JPEG
 support, pass the "--without-jpeg" flag to configure.])
 	fi
-	AC_DEFINE(NO_JPEG_SUPPORT, 1, [JPEG support not available])
-else
+	have_libjpeg=
+
 	LIBS="$LIBS -ljpeg"
+else
+	AC_DEFINE(NO_JPEG_SUPPORT, 1, [JPEG support not available])
 fi
 
 SM_LUA
