@@ -289,8 +289,8 @@ bool RageSoundReader_MP3::handle_first_frame()
 		 * it'll be treated as an invalid frame, so we match DWI sync.
 		 *
 		 * The information in it isn't very useful to us.  The TOC is less accurate
-		 * then * computing it ourself (lwo resolution).  The file length computation
-		 * might be * wrong, if the tag is incorrect, and we can compute that accurately
+		 * then computing it ourself (low resolution).  The file length computation
+		 * might be wrong, if the tag is incorrect, and we can compute that accurately
 		 * ourself for CBR files.
 		 */
 		if( mad->xingtag.type == xing::INFO )
