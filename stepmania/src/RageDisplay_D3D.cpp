@@ -295,6 +295,9 @@ RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
 #endif
 
 		SetVideoMode( p );
+
+		const SDL_version *ver = SDL_Linked_Version();
+		LOG->Info( "SDL version: %i.%i.%i", ver->major, ver->minor, ver->patch );
 	} catch(...) {
 		// Clean up; ~RageDisplay will not be called.
 #if defined _WINDOWS

@@ -154,6 +154,14 @@ CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 
 	bNewDeviceOut = true;	// always a new context because we're resetting SDL_Video
 
+	static bool bLogged = false;
+	if( !bLogged )
+	{
+		bLogged = true;
+		const SDL_version *ver = SDL_Linked_Version();
+		LOG->Info( "SDL version: %i.%i.%i", ver->major, ver->minor, ver->patch );
+	}
+
 	/* XXX: This event only exists in the SDL tree, and is only needed in
 	 * Windows.  Eventually, it'll probably get upstreamed, and once it's
 	 * in the real branch we can remove this #if. */
