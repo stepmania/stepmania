@@ -66,7 +66,6 @@ void SongManager::InitSongArrayFromDisk( void(*callback)() )
 
 	for( i=0; i<m_pSongs.GetSize(); i++ )
 	{
-		Song* pSong = m_pSongs[i];
 		const CString sGroupName = m_pSongs[i]->m_sGroupName;
 
 		if( m_arrayGroupNames.GetSize() == 0  ||  m_arrayGroupNames[m_arrayGroupNames.GetSize()-1] != sGroupName )

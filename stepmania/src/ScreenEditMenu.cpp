@@ -141,8 +141,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 
 	GAMESTATE->m_pCurSong = Selector.GetSelectedSong();
 
-	// find the first style that matches this notes type
-	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+	// get the style
 	GAMESTATE->m_CurStyle = Selector.GetSelectedStyle();
 	GAMESTATE->m_pCurNotes[PLAYER_1] = Selector.GetSelectedNotes();
 

@@ -48,7 +48,6 @@ bool IniFile::ReadFile()
 	CFileStatus status;
 	if (!file.GetStatus(path,status))
 		return 0;
-	int curkey = -1, curval = -1;
 	if (!file.Open(path, CFile::modeRead))
 	{
 		error = "Unable to open ini file.";
