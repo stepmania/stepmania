@@ -1,5 +1,8 @@
 bin_PROGRAMS = stepmania
 AM_CXXFLAGS = -ISDL-1.2.5/include -ISDL_sound-1.0.0 -DLINUX
+if DARWIN
+AM_LDFLAGS = -framework Cocoa -framework Quicktime -framework Carbon -framework OpenGL -framework IOKit
+endif
 
 # This is a little hacky; we use our own version of SDL and SDL_sound, and I don't
 # want to have to integrate their entire build systems.
@@ -155,8 +158,8 @@ stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transi
 # dealing with its build and libjpeg, png, etc--not worth it.
 stepmania_LDADD = \
 		  $(GL_LIBS) \
-		  $(VPATH)/SDL-1.2.5/src/.libs/libSDL.a \
-		  $(VPATH)/SDL_sound-1.0.0/.libs/libSDL_sound.a \
+		  SDL-1.2.5/src/.libs/libSDL.a \
+		  SDL_sound-1.0.0/.libs/libSDL_sound.a \
 		  $(SDL_LIBS)
 
 INCLUDES = $(SDL_CFLAGS)
