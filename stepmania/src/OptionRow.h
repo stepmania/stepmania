@@ -91,7 +91,7 @@ public:
 	CString GetRowTitle() const;
 
 	void ImportOptions( PlayerNumber pn );
-	int ExportOptions( PlayerNumber pn );
+	int ExportOptions( PlayerNumber pn, bool bRowHasFocus );
 
 	void AfterImportOptions( float fY );
 	void DetachHandler();

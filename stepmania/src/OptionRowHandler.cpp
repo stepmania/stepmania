@@ -229,20 +229,10 @@ public:
 			ListEntries[iFirstSelection].m_sModifiers :
 			def.choices[iFirstSelection];
 	}
-	virtual CString GetAndEraseScreen( int iChoice )
+	virtual bool HasScreen( int iChoice ) const
 	{ 
-		GameCommand &mc = ListEntries[iChoice];
-		if( mc.m_sScreen != "" )
-		{
-			/* Hack: instead of applying screen commands here, store them in
-			* m_sNextScreen and apply them after we tween out.  If we don't set
-			* m_sScreen to "", we'll load it twice (once for each player) and
-			* then again for m_sNextScreen. */
-			CString sNextScreen = mc.m_sScreen;
-			mc.m_sScreen = "";
-			return sNextScreen;
-		}
-		return "";
+		const GameCommand &mc = ListEntries[iChoice];
+		return !mc.m_sScreen.empty();
 	}
 
 	void FillNoteSkins( OptionRowDefinition &defOut, CString sParam )

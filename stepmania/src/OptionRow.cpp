@@ -28,9 +28,6 @@ static const CString LayoutTypeNames[NUM_LAYOUT_TYPES] = {
 XToString( LayoutType, NUM_LAYOUT_TYPES );
 StringToX( LayoutType );
 
-#define FOREACH_OptionsPlayer( pn ) \
-	for( PlayerNumber pn=GetNextHumanPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID && (!m_RowDef.bOneChoiceForAllPlayers || pn==0); pn=GetNextHumanPlayer(pn) )
-
 const CString NEXT_ROW_NAME = "NextRow";
 const CString EXIT_NAME = "Exit";
 
@@ -724,8 +721,8 @@ void OptionRow::Reload()
 				return;
 
 			if( m_RowDef.m_bExportOnChange )
-				FOREACH_OptionsPlayer( p )
-					ExportOptions( p );
+				FOREACH_HumanPlayer( p )
+					ExportOptions( p, false );
 
 			m_pHand->Reload( m_RowDef );
 			ASSERT( !m_RowDef.choices.empty() );
@@ -733,17 +730,17 @@ void OptionRow::Reload()
 			FOREACH_PlayerNumber( p )
 				m_vbSelected[p].resize( m_RowDef.choices.size(), false );
 
-			FOREACH_OptionsPlayer( p )
+			FOREACH_HumanPlayer( p )
 				ImportOptions( p );
 
 			switch( m_RowDef.selectType )
 			{
 			case SELECT_ONE:
-				FOREACH_OptionsPlayer( p )
+				FOREACH_HumanPlayer( p )
 					m_iChoiceInRowWithFocus[p] = GetOneSelection(p);
 				break;
 			case SELECT_MULTIPLE:
-				FOREACH_OptionsPlayer( p )
+				FOREACH_HumanPlayer( p )
 					CLAMP( m_iChoiceInRowWithFocus[p], 0, m_RowDef.choices.size()-1 );
 				break;
 			default:
@@ -751,8 +748,8 @@ void OptionRow::Reload()
 			}
 
 			if( m_RowDef.m_bExportOnChange )
-				FOREACH_OptionsPlayer( p )
-					ExportOptions( p );
+				FOREACH_HumanPlayer( p )
+					ExportOptions( p, false );
 
 			UpdateEnabledDisabled();
 			UpdateText();
@@ -812,7 +809,7 @@ void OptionRow::ImportOptions( PlayerNumber pn )
 	VerifySelected( m_RowDef.selectType, m_vbSelected[pn], m_RowDef.name );
 }
 
-int OptionRow::ExportOptions( PlayerNumber pn )
+int OptionRow::ExportOptions( PlayerNumber pn, bool bRowHasFocus )
 {
 	if( m_pHand == NULL )
 		return 0;
@@ -824,7 +821,18 @@ int OptionRow::ExportOptions( PlayerNumber pn )
 	VerifySelected( m_RowDef.selectType, m_vbSelected[pn], m_RowDef.name );
 	ASSERT( m_vbSelected[pn].size() == m_RowDef.choices.size() );
 	ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[pn] );
+
+	// SELECT_NONE rows get exported if they have focus when the user presses 
+	// Start.
+	int iChoice = GetChoiceInRowWithFocus( pn );
+	if( m_RowDef.selectType == SELECT_NONE && bRowHasFocus )
+		m_vbSelected[pn][iChoice] = true;
+
 	iChangeMask |= m_pHand->ExportOption( m_RowDef, pn, m_vbSelected[pn] );
+	
+	if( m_RowDef.selectType == SELECT_NONE && bRowHasFocus )
+		m_vbSelected[pn][iChoice] = false;
+	
 	INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[pn] );
 	
 	return iChangeMask;

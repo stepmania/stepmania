@@ -115,30 +115,29 @@ void ScreenOptionsMaster::ImportOptions( int r, PlayerNumber pn )
 void ScreenOptionsMaster::ExportOptions( int r, PlayerNumber pn )
 {
 	OptionRow &row = *m_Rows[r];
-	m_iChangeMask |= row.ExportOptions( pn );
+	bool bRowHasFocus = m_iCurrentRow[pn] == r;
+	m_iChangeMask |= row.ExportOptions( pn, bRowHasFocus );
 }
 
 void ScreenOptionsMaster::BeginFadingOut()
 {
 	/* If the selection is on a LIST, and the selected LIST option sets the screen,
 	* honor it. */
-	m_sExportedNextScreen = "";
+	m_bExportWillSetANewScreen = false;
 
 	int iCurRow = this->GetCurrentRow();
 	ASSERT( iCurRow >= 0 && iCurRow < (int)m_Rows.size() );
 	OptionRow &row = *m_Rows[iCurRow];
 
-	if( iCurRow < (int)OptionRowHandlers.size() )
+	if( row.GetRowType() != OptionRow::ROW_EXIT )
 	{
-		const int iChoice = row.GetChoiceInRowWithFocus(GAMESTATE->m_MasterPlayerNumber);
+		const int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
 		OptionRowHandler *pHand = OptionRowHandlers[iCurRow];
-		CString sScreen = pHand->GetAndEraseScreen( iChoice );
-		if( !sScreen.empty() )
-			m_sExportedNextScreen = sScreen;
+		m_bExportWillSetANewScreen = pHand->HasScreen( iChoice );
 	}
 
 	// If options set a NextScreen or one is specified in metrics, then fade out
-	if( m_sExportedNextScreen != "" || NEXT_SCREEN != "" )
+	if( m_bExportWillSetANewScreen || NEXT_SCREEN != "" )
 		ScreenOptions::BeginFadingOut();
 }
 
@@ -146,8 +145,8 @@ void ScreenOptionsMaster::GoToNextScreen()
 {
 	if( GAMESTATE->m_bEditing )
 		SCREENMAN->PopTopScreen( SM_None );
-	else if( m_sExportedNextScreen != "" )
-		SCREENMAN->SetNewScreen( m_sExportedNextScreen );
+	else if( m_bExportWillSetANewScreen )
+		;	// Do nothing.  Let Export set the screen.
 	else if( NEXT_SCREEN != "" )
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 }
@@ -169,10 +168,11 @@ void ScreenOptionsMaster::GoToPrevScreen()
 
 void ScreenOptionsMaster::RefreshIcons( int r, PlayerNumber pn )
 {
-	if( m_Rows[r]->GetRowType() == OptionRow::ROW_EXIT )
+	OptionRow &row = *m_Rows[r];
+	
+	if( row.GetRowType() == OptionRow::ROW_EXIT )
 		return;	// skip
 
-	OptionRow &row = *m_Rows[r];
 	const OptionRowDefinition &def = row.GetRowDef();
 
 	// find first selection and whether multiple are selected
@@ -216,7 +216,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 			{
 				CHECKPOINT_M( ssprintf("%i/%i", r, int(OptionRowHandlers.size())) );
 
-				FOREACH_HumanPlayer( p )
+				FOREACH_OptionsPlayer( p )
 					ExportOptions( r, p );
 			}
 
@@ -246,7 +246,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 			if( m_iChangeMask & OPT_RESET_GAME )
 			{
 				ResetGame();
-				m_sExportedNextScreen = "";
+				m_bExportWillSetANewScreen = false;
 			}
 
 			if( m_iChangeMask & OPT_APPLY_SOUND )

@@ -28,7 +28,7 @@ public:
 	/* Returns an OPT mask. */
 	virtual int ExportOption( const OptionRowDefinition &def, PlayerNumber pn, const vector<bool> &vbSelected ) const = 0;
 	virtual CString GetIconText( const OptionRowDefinition &def, int iFirstSelection ) const { return ""; }
-	virtual CString GetAndEraseScreen( int iChoice ) { return ""; }
+	virtual bool HasScreen( int iChoice ) const { return false; }
 };
 
 

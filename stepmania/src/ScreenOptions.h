@@ -18,6 +18,8 @@ enum InputMode
 	INPUTMODE_SHARE_CURSOR		// both players control the same cursor
 };
 
+#define FOREACH_OptionsPlayer( pn ) \
+	for( PlayerNumber pn=GetNextHumanPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID && (m_InputMode==INPUTMODE_INDIVIDUAL || pn==0); pn=GetNextHumanPlayer(pn) )
 
 class ScreenOptions : public ScreenWithMenuElements
 {
