@@ -58,23 +58,96 @@ void SMLoader::GetApplicableFiles( CString sPath, CStringArray &out )
 	GetDirListing( sPath + CString("*.sm"), out );
 }
 
+void SMLoader::LoadTimingFromSMFile( MsdFile &msd, TimingData &out )
+{
+	out.m_BPMSegments.clear();
+	out.m_StopSegments.clear();
+
+	for( unsigned i=0; i<msd.GetNumValues(); i++ )
+	{
+		const MsdFile::value_t &sParams = msd.GetValue(i);
+		const CString sValueName = sParams[0];
+
+		if( 0==stricmp(sValueName,"OFFSET") )
+			out.m_fBeat0OffsetInSeconds = (float)atof( sParams[1] );
+		else if( 0==stricmp(sValueName,"STOPS") || 0==stricmp(sValueName,"FREEZES") )
+		{
+			CStringArray arrayFreezeExpressions;
+			split( sParams[1], ",", arrayFreezeExpressions );
+
+			for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
+			{
+				CStringArray arrayFreezeValues;
+				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
+				/* XXX: Once we have a way to display warnings that the user actually
+				 * cares about (unlike most warnings), this should be one of them. */
+				if( arrayFreezeValues.size() != 2 )
+				{
+					LOG->Warn( "Invalid #%s value \"%s\" (must have exactly one '='), ignored",
+						sValueName.c_str(), arrayFreezeExpressions[f].c_str() );
+					continue;
+				}
+
+				const float fFreezeBeat = (float)atof( arrayFreezeValues[0] );
+				const float fFreezeSeconds = (float)atof( arrayFreezeValues[1] );
+				
+				StopSegment new_seg;
+				new_seg.m_fStartBeat = fFreezeBeat;
+				new_seg.m_fStopSeconds = fFreezeSeconds;
+
+//				LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
+
+				out.AddStopSegment( new_seg );
+			}
+		}
+
+		else if( 0==stricmp(sValueName,"BPMS") )
+		{
+			CStringArray arrayBPMChangeExpressions;
+			split( sParams[1], ",", arrayBPMChangeExpressions );
+
+			for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
+			{
+				CStringArray arrayBPMChangeValues;
+				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
+				/* XXX: Once we have a way to display warnings that the user actually
+				 * cares about (unlike most warnings), this should be one of them. */
+				if(arrayBPMChangeValues.size() != 2)
+				{
+					LOG->Warn( "Invalid #%s value \"%s\" (must have exactly one '='), ignored",
+						sValueName.c_str(), arrayBPMChangeExpressions[b].c_str() );
+					continue;
+				}
+
+				const float fBeat = (float)atof( arrayBPMChangeValues[0] );
+				const float fNewBPM = (float)atof( arrayBPMChangeValues[1] );
+				
+				BPMSegment new_seg;
+				new_seg.m_fStartBeat = fBeat;
+				new_seg.m_fBPM = fNewBPM;
+				
+				out.AddBPMSegment( new_seg );
+			}
+		}
+	}
+}
+
 bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 {
 	LOG->Trace( "Song::LoadFromSMFile(%s)", sPath.c_str() );
-
-	out.m_Timing.m_BPMSegments.clear();
-	out.m_Timing.m_StopSegments.clear();
 
 	MsdFile msd;
 	bool bResult = msd.ReadFile( sPath );
 	if( !bResult )
 		RageException::Throw( "Error opening file '%s'.", sPath.c_str() );
 
+	LoadTimingFromSMFile( msd, out.m_Timing );
+
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		CString sValueName = sParams[0];
+		const CString sValueName = sParams[0];
 
 		// handle the data
 		if( 0==stricmp(sValueName,"TITLE") )
@@ -164,9 +237,6 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			}
 		}
 
-		else if( 0==stricmp(sValueName,"OFFSET") )
-			out.m_Timing.m_fBeat0OffsetInSeconds = (float)atof( sParams[1] );
-
 		else if( 0==stricmp(sValueName,"SELECTABLE") )
 		{
 			if(!stricmp(sParams[1],"YES"))
@@ -177,65 +247,6 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 				out.m_SelectionDisplay = out.SHOW_ROULETTE;
 			else
 				LOG->Warn( "The song file '%s' has an unknown #SELECTABLE value, '%s'; ignored.", sPath.c_str(), sParams[1].c_str());
-		}
-
-		else if( 0==stricmp(sValueName,"STOPS") || 0==stricmp(sValueName,"FREEZES") )
-		{
-			CStringArray arrayFreezeExpressions;
-			split( sParams[1], ",", arrayFreezeExpressions );
-
-			for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
-			{
-				CStringArray arrayFreezeValues;
-				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
-				/* XXX: Once we have a way to display warnings that the user actually
-				 * cares about (unlike most warnings), this should be one of them. */
-				if(arrayFreezeValues.size() != 2)
-				{
-					LOG->Warn("Invalid #%s value \"%s\" (must have exactly one '='), ignored",
-						sValueName.c_str(), arrayFreezeExpressions[f].c_str());
-					continue;
-				}
-
-				float fFreezeBeat = (float)atof( arrayFreezeValues[0] );
-				float fFreezeSeconds = (float)atof( arrayFreezeValues[1] );
-				
-				StopSegment new_seg;
-				new_seg.m_fStartBeat = fFreezeBeat;
-				new_seg.m_fStopSeconds = fFreezeSeconds;
-
-//				LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
-
-				out.AddStopSegment( new_seg );
-			}
-		}
-
-		else if( 0==stricmp(sValueName,"BPMS") )
-		{
-			CStringArray arrayBPMChangeExpressions;
-			split( sParams[1], ",", arrayBPMChangeExpressions );
-
-			for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
-			{
-				CStringArray arrayBPMChangeValues;
-				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
-				/* XXX: Once we have a way to display warnings that the user actually
-				 * cares about (unlike most warnings), this should be one of them. */
-				if(arrayBPMChangeValues.size() != 2)
-				{
-					LOG->Warn("Invalid #%s value \"%s\" (must have exactly one '='), ignored",
-						sValueName.c_str(), arrayBPMChangeExpressions[b].c_str());
-					continue;
-				}
-				float fBeat = (float)atof( arrayBPMChangeValues[0] );
-				float fNewBPM = (float)atof( arrayBPMChangeValues[1] );
-				
-				BPMSegment new_seg;
-				new_seg.m_fStartBeat = fBeat;
-				new_seg.m_fBPM = fNewBPM;
-				
-				out.AddBPMSegment( new_seg );
-			}
 		}
 
 		else if( 0==stricmp(sValueName,"BGCHANGES") || 0==stricmp(sValueName,"ANIMATIONS") )
@@ -288,6 +299,9 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 				sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6], (iNumParams>=8)?sParams[7]:"",
 				*pNewNotes);
 		}
+		else if( 0==stricmp(sValueName,"OFFSET") || 0==stricmp(sValueName,"BPMS") ||
+				 0==stricmp(sValueName,"STOPS") || 0==stricmp(sValueName,"FREEZES") )
+				 ;
 		else
 			LOG->Trace( "Unexpected value named '%s'", sValueName.c_str() );
 	}

@@ -5,6 +5,8 @@
 #include "Steps.h"
 #include "NotesLoader.h"
 
+class MsdFile;
+
 class SMLoader: public NotesLoader  {
 	static void LoadFromSMTokens( 
 		CString sNotesType, 
@@ -29,6 +31,7 @@ public:
 
 	void GetApplicableFiles( CString sPath, CStringArray &out );
 	bool LoadFromDir( CString sPath, Song &out );
+	static void LoadTimingFromSMFile( MsdFile &msd, TimingData &out );
 };
 
 #endif
