@@ -20,6 +20,7 @@
 class TransitionBackWipe : public Transition
 {
 public:
+	TransitionBackWipe();
 	virtual void DrawPrimitives();
 
 	virtual void CloseWipingRight(ScreenMessage send_when_done = SM_None ) 
