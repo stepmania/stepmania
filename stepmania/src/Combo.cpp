@@ -101,8 +101,9 @@ void Combo::SetCombo( int iCombo )
 		m_sprCombo.SetZoom( 1 );
 
 
+		// don't show a colored combo until 1/4 of the way through the song
 		bool bPastMidpoint = GAMESTATE->GetCourseSongIndex()>0 ||
-			GAMESTATE->m_fMusicSeconds > GAMESTATE->m_pCurSong->m_fMusicLengthSeconds/2;
+			GAMESTATE->m_fMusicSeconds > GAMESTATE->m_pCurSong->m_fMusicLengthSeconds/4;
 
 		if( bPastMidpoint )
 		{
