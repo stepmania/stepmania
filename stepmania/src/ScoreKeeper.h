@@ -37,8 +37,8 @@ public:
 	ScoreKeeper(PlayerNumber pn) { m_PlayerNumber=pn; }
 	virtual void DrawPrimitives() { }
 
-	virtual void HandleTapScore( TapNoteScore score, int iNumTapsInRow ) { }
-	virtual void HandleHoldScore( HoldNoteScore score, TapNoteScore TapNoteScore ) { }
+	virtual void HandleTapScore( TapNoteScore score, int iNumTapsInRow ) = 0;
+	virtual void HandleHoldScore( HoldNoteScore score, TapNoteScore TapNoteScore ) = 0;
 };
 
 #endif
