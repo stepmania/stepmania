@@ -1,5 +1,5 @@
-#ifndef RAGE_SOUND_READER_SDL_SOUND
-#define RAGE_SOUND_READER_SDL_SOUND
+#ifndef RAGE_SOUND_READER_VORBISFILE
+#define RAGE_SOUND_READER_VORBISFILE
 
 #include "RageSoundReader_FileReader.h"
 
