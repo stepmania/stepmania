@@ -1024,7 +1024,7 @@ void Course::UpdateCourseStats()
 	// call it sparingly.  Its handled on startup and when
 	// themes change..
 	
-	LOG->Trace("%s: Total feet: %d, Average Difficulty: %f",
+	LOG->Trace("%s: Total feet: %d",
 		this->m_sName.c_str(),
 		SortOrder_TotalDifficulty );
 }
