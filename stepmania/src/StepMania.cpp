@@ -960,19 +960,25 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 	 * pressing PrntScrn, or will capture the foregroud with focus upon pressing
 	 * Alt+PrntScrn.  Windows will do this whether or not we save a screenshot 
 	 * ourself by dumping the frame buffer.  */
-	/* Pressing F13 on an Apple keyboard sends SDLK_PRINT. */
+	/* Pressing F13 on an Apple keyboard sends SDLK_PRINT.
+	 * However, notebooks don't have F13. Use cmd-F12 then*/
 	// "if pressing PrintScreen and not pressing Alt"
-	if( DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_PRINT) &&
-		!INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) &&
-		!INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
+	if( (DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_PRINT) &&
+		 !INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) &&
+		 !INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT))) ||
+	    (DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F12) &&
+		 (INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RMETA)) ||
+	      INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LMETA)))))
 	{
 		// Save Screenshot.
 		CString sPath;
 		
 		FlushDirCache();
+		if (!CreateDirectories("Screenshots"))
+			return true;
 		for( int i=0; i<10000; i++ )
 		{
-			sPath = ssprintf("screen%04d.bmp",i);
+			sPath = ssprintf("Screenshots" SLASH "screen%04d.bmp",i);
 			if( !DoesFileExist(sPath) )
 				break;
 		}
