@@ -4,11 +4,10 @@
 #include "arch/arch_platform.h"
 
 /* Dialog drivers selector. */
-#ifdef HAVE_WIN32
+#if defined(HAVE_WIN32)
 #include "DialogDriver_Win32.h"
-#endif
 
-#ifdef HAVE_COCOA
+#elif defined(HAVE_COCOA)
 #include "DialogDriver_Cocoa.h"
 #endif
 

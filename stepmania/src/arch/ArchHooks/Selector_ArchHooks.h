@@ -4,10 +4,10 @@
 #include "arch/arch_platform.h"
 
 /* ArchHooks driver selector. */
-#if   defined(HAVE_DARWIN)
+#if defined(HAVE_DARWIN)
 #include "ArchHooks_darwin.h"
 
-#elif defined(HAVE_POSIX)
+#elif defined(HAVE_UNIX)
 #include "ArchHooks_Unix.h"
 
 #elif defined(HAVE_WIN32) // XXX: Better name for this API?

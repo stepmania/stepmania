@@ -24,10 +24,6 @@
 #include "RageSoundDriver_OSS.h"
 #endif
 
-#ifdef HAVE_QUICKTIME1
-#include "RageSoundDriver_QT1.h"
-#endif
-
 #ifdef HAVE_WIN32
 #include "RageSoundDriver_WaveOut.h"
 #endif

@@ -3,14 +3,14 @@
 
 // In here, you define which APIs are guaranteed to be available on which OSes.
 // Don't ever actually #include anything here -- that's for */Selector_*.h.
-#if defined(UNIX) && !defined(DARWIN) // Darwin isn't POSIX enough for us.
-#define HAVE_POSIX				// (is Darwin POSIX at all?)
+#if defined(UNIX) && !defined(DARWIN)
+#define HAVE_UNIX
 #endif
 #if defined(DARWIN)
 #define HAVE_DARWIN
 #define HAVE_COCOA
 #define HAVE_COREAUDIO
-#define HAVE_QUICKTIME1
+#define HAVE_SDL
 #endif
 #if defined(_WINDOWS)
 #define HAVE_DIRECTX
@@ -21,7 +21,7 @@
 #define HAVE_XBOX // XXX: Better name for this API?
 #endif
 #if defined(LINUX)
-#define HAVE_POSIX	// Here just to be explicit.
+#define HAVE_UNIX	// Here just to be explicit.
 #define HAVE_LINUXKERNEL
 #endif
 

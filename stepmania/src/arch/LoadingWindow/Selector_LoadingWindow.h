@@ -4,25 +4,21 @@
 #include "arch/arch_platform.h"
 
 /* LoadingWindow driver selector. */
-#ifdef HAVE_COCOA
-#include "LoadingWindow_Cocoa.h"
-#endif
-
-#ifdef HAVE_GTK
-#include "LoadingWindow_Gtk.h"
-#endif
-
 #include "LoadingWindow_Null.h"
 
-#ifdef HAVE_SDL
+#if defined(HAVE_COCOA)
+#include "LoadingWindow_Cocoa.h"
+
+#elif defined(HAVE_GTK)
+#include "LoadingWindow_Gtk.h"
+
+#elif defined(HAVE_SDL)
 #include "LoadingWindow_SDL.h"
-#endif
 
-#ifdef HAVE_WIN32
+#elif defined(HAVE_WIN32)
 #include "LoadingWindow_Win32.h"
-#endif
 
-#ifdef HAVE_XBOX
+#elif defined(HAVE_XBOX)
 #include "LoadingWindow_Xbox.h"
 #endif
 

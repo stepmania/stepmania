@@ -17,9 +17,9 @@
 #include "InputHandler_MonkeyKeyboard.h"
 
 // NOTE: If X11 is available, we don't use LLW_SDL, which IH_SDL depends on.
-#ifdef HAVE_X11
+#if defined(HAVE_X11)
 #include "InputHandler_X11.h"
-#elif HAVE_SDL
+#elif defined(HAVE_SDL)
 #include "InputHandler_SDL.h"
 #endif
 
