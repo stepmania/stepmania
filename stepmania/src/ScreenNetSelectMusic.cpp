@@ -111,7 +111,7 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL)) ||
 		(!NSMAN->useSMserver);	//If we are disconnected, assume no chatting
 
-	char c = toupper(DeviceI.ToChar() );
+	char c = (char) toupper(DeviceI.ToChar() );
 
 	if ( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
 	{
@@ -167,8 +167,8 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			}
 
 			vector <Song *> AllSongs = SONGMAN->GetAllSongs();
-			int i;
-			for (i=0;i<AllSongs.size();i++)
+			unsigned i;
+			for( i=0; i < AllSongs.size(); i++ )
 			{
 				m_cSong = AllSongs[i];
 				if ( ( !m_cSong->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) ) &&
