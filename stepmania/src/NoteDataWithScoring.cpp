@@ -38,7 +38,7 @@ int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float 
 	unsigned iStartIndex = BeatToNoteRow( fStartBeat );
 	unsigned iEndIndex = BeatToNoteRow( fEndBeat );
 
-	for( unsigned i=iStartIndex; i<min(iEndIndex, m_TapNoteScores[0].size()); i++ )
+	for( unsigned i=iStartIndex; i<min(static_cast<float>(iEndIndex), static_cast<float>(m_TapNoteScores[0].size())); i++ )
 	{
 		for( int t=0; t<GetNumTracks(); t++ )
 		{
@@ -60,7 +60,7 @@ int NoteDataWithScoring::GetNumDoublesWithScore( TapNoteScore tns, const float f
 	unsigned iStartIndex = BeatToNoteRow( fStartBeat );
 	unsigned iEndIndex = BeatToNoteRow( fEndBeat );
 
-	for( unsigned i=iStartIndex; i<min(iEndIndex, m_TapNoteScores[0].size()); i++ )
+	for( unsigned i=iStartIndex; i<min(static_cast<float>(iEndIndex), static_cast<float>(m_TapNoteScores[0].size())); i++ )
 	{
 		int iNumNotesThisIndex = 0;
 		TapNoteScore	minTapNoteScore = TNS_MARVELOUS;
