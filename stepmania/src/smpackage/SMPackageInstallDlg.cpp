@@ -170,13 +170,16 @@ void CSMPackageInstallDlg::OnOK()
 
 	// Show comment (if any)
 	CString sComment = m_zip.GetGlobalComment();
-	if( sComment != "" )
+	bool DontShowComment;
+	if( sComment != "" && (!GetPref("DontShowComment", DontShowComment) || !DontShowComment) )
 	{
 		ShowComment commentDlg;
 		commentDlg.m_sComment = sComment;
 		int nResponse = commentDlg.DoModal();
 		if( nResponse != IDOK )
 			return;	// cancelled
+		if( commentDlg.m_bDontShow )
+			SetPref( "DontShowComment", true );
 	}
 
 
