@@ -580,48 +580,41 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\StepMania.h">
 			</File>
 			<File
-				RelativePath="StepMania.xpm">
-			</File>
-			<File
 				RelativePath=".\resource.h">
 			</File>
 			<Filter
-				Name="default"
-				Filter="">
-				<File
-					RelativePath="arch\default\LoadingWindow_SDL.cpp">
-				</File>
-				<File
-					RelativePath="arch\default\LoadingWindow_SDL.h">
-				</File>
-				<File
-					RelativePath="arch\default\arch.h">
-				</File>
-			</Filter>
-			<Filter
-				Name="Win32"
-				Filter="">
-				<File
-					RelativePath="arch\Win32\LoadingWindow_Win32.cpp">
-				</File>
-				<File
-					RelativePath="arch\Win32\LoadingWindow_Win32.h">
-				</File>
-				<File
-					RelativePath="arch\Win32\arch.h">
-				</File>
-			</Filter>
-			<Filter
 				Name="arch"
 				Filter="">
-				<File
-					RelativePath="arch\LoadingWindow.h">
-				</File>
 				<File
 					RelativePath="arch\arch.cpp">
 				</File>
 				<File
 					RelativePath="arch\arch.h">
+				</File>
+				<File
+					RelativePath="arch\arch_Win32.h">
+				</File>
+				<File
+					RelativePath="arch\arch_default.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="LoadingWindow"
+				Filter="">
+				<File
+					RelativePath="arch\LoadingWindow\LoadingWindow.h">
+				</File>
+				<File
+					RelativePath="arch\LoadingWindow\LoadingWindow_SDL.cpp">
+				</File>
+				<File
+					RelativePath="arch\LoadingWindow\LoadingWindow_SDL.h">
+				</File>
+				<File
+					RelativePath="arch\LoadingWindow\LoadingWindow_Win32.cpp">
+				</File>
+				<File
+					RelativePath="arch\LoadingWindow\LoadingWindow_Win32.h">
 				</File>
 			</Filter>
 		</Filter>
@@ -1245,6 +1238,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="Tls.h">
 			</File>
 		</Filter>
+		<File
+			RelativePath="StepMania.xpm">
+		</File>
 		<File
 			RelativePath=".\error.bmp">
 		</File>
