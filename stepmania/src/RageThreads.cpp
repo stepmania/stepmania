@@ -800,8 +800,8 @@ void RageMutex::MarkLockedMutex()
 		 * then we have an inconsistent lock order. */
 		if( g_MutexesBefore[mutex->m_UniqueID][this->m_UniqueID] )
 		{
-//			LOG->Warn( "Mutex lock inconsistency: mutex \"%s\" must be locked before \"%s\"",
-//				this->GetName().c_str(), mutex->GetName().c_str() );
+			LOG->Warn( "Mutex lock inconsistency: mutex \"%s\" must be locked before \"%s\"",
+				this->GetName().c_str(), mutex->GetName().c_str() );
 			
 			break;
 		}
@@ -873,8 +873,13 @@ RageMutex::~RageMutex()
 
 void RageMutex::Lock()
 {
+	const bool bWasLocked = mut->IsLockedByThisThread();
+
 	mut->Lock();
-	MarkLockedMutex();
+
+	/* Only do lock ordering checks on initial locks, to prevent false positives. */
+	if( !bWasLocked )
+		MarkLockedMutex();
 }
 
 void RageMutex::Unlock()
