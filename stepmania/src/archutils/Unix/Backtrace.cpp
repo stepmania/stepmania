@@ -377,29 +377,6 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 
 	do_backtrace( buf, size, ctx );
 }
-#elif defined(BACKTRACE_METHOD_BACKTRACE)
-#include <execinfo.h>
-
-void InitializeBacktrace() { }
-	
-void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
-{
-	InitializeBacktrace();
-
-	void **cbuf = const_cast<void **> (buf);
-	int retsize = backtrace( cbuf, size-1 );
-
-	/* Remove any NULL entries.  We want to null-terminate the list, and null entries are useless. */
-	for( int i = retsize-1; i >= 0; --i )
-	{
-		if( buf[i] != NULL )
-			continue;
-
-		memmove( &buf[i], &buf[i]+1, retsize-i-1 );
-	}
-
-	buf[retsize] = NULL;
-}
 #elif defined(BACKTRACE_METHOD_POWERPC_DARWIN)
 typedef struct Frame
 {
