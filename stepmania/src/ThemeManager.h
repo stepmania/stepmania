@@ -29,11 +29,11 @@ public:
 
 	CString GetPathTo( CString sAssetCategory, CString sFileName );	// looks up the current theme in PREFSMAN
 
-	CString		GetMetric( CString sScreenName, CString sValueName );
-	int			GetMetricI( CString sScreenName, CString sValueName );
-	float		GetMetricF( CString sScreenName, CString sValueName );
-	bool		GetMetricB( CString sScreenName, CString sValueName );
-	D3DXCOLOR	GetMetricC( CString sScreenName, CString sValueName );
+	CString		GetMetric( CString sClassName, CString sValueName );
+	int			GetMetricI( CString sClassName, CString sValueName );
+	float		GetMetricF( CString sClassName, CString sValueName );
+	bool		GetMetricB( CString sClassName, CString sValueName );
+	D3DXCOLOR	GetMetricC( CString sClassName, CString sValueName );
 
 protected:
 	void GetAllThemeNames( CStringArray& AddTo );

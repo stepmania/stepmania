@@ -14,6 +14,7 @@
 #include "StyleDef.h"
 #include "Style.h"
 #include "Game.h"
+class IniFile;
 
 
 class GameManager
@@ -30,14 +31,22 @@ public:
 //	void GetGameNames( CStringArray &AddTo );
 //	bool DoesGameExist( CString sGameName );
 
-	void GetNoteSkinNames( CStringArray &AddTo );	// looks up current Game in GAMESTATE
-	bool DoesNoteSkinExist( CString sSkinName );	// looks up current Game in GAMESTATE
-	void SwitchNoteSkin( CString sNewNoteSkin );	// looks up current Game in GAMESTATE
-	CString GetCurNoteSkin() { return m_sCurNoteSkin; };
+	CString GetCurNoteSkinDir();
 
-	CString GetPathTo( const int col, const SkinElement gbg );	// looks in GAMESTATE for the current Style
-	void GetTapTweenColors( const int col, CArray<D3DXCOLOR,D3DXCOLOR> &aTapTweenColorsAddTo );	// looks in GAMESTATE for the current Style
-	void GetHoldTweenColors( const int col, CArray<D3DXCOLOR,D3DXCOLOR> &aHoldTweenColorsAddTo );	// looks in GAMESTATE for the current Style
+	void GetNoteSkinNames( Game game, CStringArray &AddTo ) const;
+	void GetNoteSkinNames( CStringArray &AddTo ) const;	// looks up current Game in GAMESTATE
+	bool DoesNoteSkinExist( CString sSkinName ) const;	// looks up current Game in GAMESTATE
+	void SwitchNoteSkin( CString sNewNoteSkin );	// looks up current Game in GAMESTATE
+	CString GetCurNoteSkin() const { return m_sCurNoteSkin; };
+
+	CString GetPathTo( const int col, CString sElementName );
+
+	CString		GetMetric( CString sClassName, CString sValueName );
+	int			GetMetricI( CString sClassName, CString sValueName );
+	float		GetMetricF( CString sClassName, CString sValueName );
+	bool		GetMetricB( CString sClassName, CString sValueName );
+	D3DXCOLOR	GetMetricC( CString sClassName, CString sValueName );
+
 
 	void GetEnabledGames( CArray<Game,Game>& aGamesOut );
 
@@ -46,10 +55,9 @@ public:
 	static CString NotesTypeToString( NotesType nt );
 
 protected:
-	void GetNoteSkinNames( Game game, CStringArray &AddTo );
 
 	CString m_sCurNoteSkin;	
-
+	IniFile* m_pIniFile;
 };
 
 extern GameManager*	GAMEMAN;	// global and accessable from anywhere in our program

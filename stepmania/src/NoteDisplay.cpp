@@ -23,20 +23,17 @@
 #include "RageLog.h"
 
 
-#define USE_HOLD_HEAD_FOR_TAP			THEME->GetMetricB("NoteDisplay","UseHoldHeadForTap")
-
-bool g_bUseHoldHeadForTap;	// cache
-
+bool g_bDrawHoldHeadForTapsOnSameRow, g_bDrawTapOnTopOfHoldHead, g_bDrawTapOnTopOfHoldTail;	// cache
 
 NoteDisplay::NoteDisplay()
 {
-	g_bUseHoldHeadForTap = USE_HOLD_HEAD_FOR_TAP;	// update cache
+	g_bDrawHoldHeadForTapsOnSameRow  = GAMEMAN->GetMetricB( "NoteDisplay", "DrawHoldHeadForTapsOnSameRow" );
+	g_bDrawTapOnTopOfHoldHead  = GAMEMAN->GetMetricB( "NoteDisplay", "DrawTapOnTopOfHoldHead" );
+	g_bDrawTapOnTopOfHoldTail  = GAMEMAN->GetMetricB( "NoteDisplay", "DrawTapOnTopOfHoldTail" );
 
 	// the owner of the NoteDisplay must call load on the gray and color parts
-
 //	m_sprHoldParts.Load( THEME->GetPathTo(GRAPHIC_COLOR_ARROW_GRAY_PART) );	
 //	m_sprTapParts.Load( THEME->GetPathTo(GRAPHIC_COLOR_ARROW_COLOR_PART) );
-
 }
 
 
@@ -44,24 +41,42 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn )
 {
 	m_PlayerNumber = pn;
 
-	CString sPath;
-	
-	sPath = GAMEMAN->GetPathTo(iColNum, GRAPHIC_TAP_PARTS);
-	m_sprTapParts.Load( sPath );
+	CString sTapPartsPath = GAMEMAN->GetPathTo(iColNum, "tap parts");
+	m_sprTapParts.Load( sTapPartsPath );
 	if( m_sprTapParts.GetNumStates() % 2 != 0 )
-		throw RageException( "Tap Parts '%s' must have an even number of frames.", sPath );
-
-	sPath = GAMEMAN->GetPathTo(iColNum, GRAPHIC_HOLD_PARTS);
-	m_sprHoldParts.Load( sPath );
-	if( m_sprHoldParts.GetTexture()->GetFramesWide() != 4  ||  m_sprHoldParts.GetTexture()->GetFramesHigh() != 2 )
-		throw RageException( "Hold Parts '%s' must have 4x2 frames.", sPath );
-
+		throw RageException( "Tap Parts '%s' must have an even number of frames.", sTapPartsPath );
 	m_sprTapParts.StopAnimating();
 	m_sprTapParts.TurnShadowOff();
+
+	CString sHoldPartsPath = GAMEMAN->GetPathTo(iColNum, "hold parts");
+	m_sprHoldParts.Load( sHoldPartsPath );
+	if( m_sprHoldParts.GetTexture()->GetFramesWide() != 4  ||  m_sprHoldParts.GetTexture()->GetFramesHigh() != 2 )
+		throw RageException( "Hold Parts '%s' must have 4x2 frames.", sHoldPartsPath );
 	m_sprHoldParts.StopAnimating();
 	m_sprHoldParts.TurnShadowOff();
+
+
 	m_colorTapTweens.RemoveAll();
-	GAMEMAN->GetTapTweenColors( iColNum, m_colorTapTweens );	
+	const CString sColorsFilePath = GAMEMAN->GetPathTo( iColNum, "Tap.colors" );
+	FILE* fp = fopen( sColorsFilePath, "r" );
+	if( fp == NULL )
+		throw RageException( "Couldn't open .colors file '%s'", sColorsFilePath );
+
+	bool bSuccess;
+	do
+	{
+		D3DXCOLOR color;
+		int retval = fscanf( fp, "%f,%f,%f,%f\n", &color.r, &color.g, &color.b, &color.a );
+		bSuccess = (retval == 4);
+		if( bSuccess )
+			m_colorTapTweens.Add( color );
+	} while( bSuccess );
+
+	if( m_colorTapTweens.GetSize() == 0 )
+		m_colorTapTweens.Add( D3DXCOLOR(1,1,1,1) );
+
+	fclose( fp );
+	return;
 }
 
 
@@ -195,11 +210,14 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	const float fYHead = bReverse ? fEndYPos : fStartYPos;		// the center of the head
 	const float fYTail = bReverse ? fStartYPos : fEndYPos;		// the center the tail
 
+	const float fYHeadTop = fYHead-fFrameHeight/2;		
+	const float fYHeadBottom = fYHead+fFrameHeight/2;	
+
 	const float fYTailTop = fYTail-fFrameHeight/2;		
 	const float fYTailBottom = fYTail+fFrameHeight/2;	
 
-	const float fYBodyTop = fYHead;			// middle of head		
-//	const float fYBodyBottom = fYTailTop;	// top of tail
+	const float fYBodyTop = g_bDrawTapOnTopOfHoldHead ? fYHeadBottom : fYHead;			// middle of head		
+	const float fYBodyBottom = fYTailTop;	// top of tail
 
 	const int	fYStep = 8;		// draw a segment every 8 pixels	// this requires that the texture dimensions be a multiple of 8
 
@@ -259,7 +277,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	//
 	// Draw the body
 	//
-	for( fY=fYBodyTop; fY<fYTailTop+1; fY+=fYStep )	// top to bottom
+	for( fY=fYBodyTop; fY<=fYBodyBottom; fY+=fYStep )	// top to bottom
 	{
 		const float fYTop			= fY;
 		const float fYBottom		= min( fY+fYStep, fYTailTop+1 );
@@ -297,42 +315,98 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 			D3DXVECTOR3(fXBottomRight-0.5f,fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, D3DXVECTOR2(fTexCoordRight, fTexCoordBottom) );//, colorGlowBottom );	// bottom-right
 	}	
 
-	DISPLAY->FlushQueue();
-
-
-	//
-	// Draw head
-	//
+	if( g_bDrawTapOnTopOfHoldHead )
 	{
-		fY							= fYHead;
-		const float fX				= ArrowGetXPos( m_PlayerNumber, iCol, fY );
-		const float	fAlpha			= ArrowGetAlpha( m_PlayerNumber, fY, fPercentFadeToFail );
-		const float	fGlow			= ArrowGetGlow( m_PlayerNumber, fY, fPercentFadeToFail );
-		const float fColorScale		= SCALE(fLife,0,1,0.2f,1);
-		const D3DXCOLOR colorDiffuse= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlpha);
-		const D3DXCOLOR colorGlow	= D3DXCOLOR(1,1,1,fGlow);
+		//
+		// Draw the head
+		//
+		float fY;
+		for( fY=fYHeadTop; fY<fYHeadBottom; fY+=fYStep )
+		{
+			const float fYTop			= fY;
+			const float fYBottom		= fY+min(fYStep, fYHeadBottom-fY);
+			const float fXTop			= ArrowGetXPos( m_PlayerNumber, iCol, fYTop );
+			const float fXBottom		= ArrowGetXPos( m_PlayerNumber, iCol, fYBottom );
+			const float fXTopLeft		= fXTop - fFrameWidth/2;
+			const float fXTopRight		= fXTop + fFrameWidth/2;
+			const float fXBottomLeft	= fXBottom - fFrameWidth/2;
+			const float fXBottomRight	= fXBottom + fFrameWidth/2;
+			const float fTopDistFromHeadTop		= fYTop - fYHeadTop;
+			const float fBottomDistFromHeadTop	= fYBottom - fYHeadTop;
+			const float fTexCoordTop	= SCALE( fTopDistFromHeadTop,    0, fFrameHeight, 0.0f, 0.5f );
+			const float fTexCoordBottom = SCALE( fBottomDistFromHeadTop, 0, fFrameHeight, 0.0f, 0.5f );
+			ASSERT( fBottomDistFromHeadTop-0.0001 <= fFrameHeight );
+			const float fTexCoordLeft	= bActive ? 0.25f : 0.00f;
+			const float fTexCoordRight	= bActive ? 0.50f : 0.25f;
+			const float	fAlphaTop		= ArrowGetAlpha( m_PlayerNumber, fYTop, fPercentFadeToFail );
+			const float	fAlphaBottom	= ArrowGetAlpha( m_PlayerNumber, fYBottom, fPercentFadeToFail );
+			const float	fGlowTop		= ArrowGetGlow( m_PlayerNumber, fYTop, fPercentFadeToFail );
+			const float	fGlowBottom		= ArrowGetGlow( m_PlayerNumber, fYBottom, fPercentFadeToFail );
+			const float fColorScale		= SCALE(fLife,0,1,0.2f,1);
+			const D3DXCOLOR colorDiffuseTop		= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaTop);
+			const D3DXCOLOR colorDiffuseBottom	= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaBottom);
+			const D3DXCOLOR colorGlowTop		= D3DXCOLOR(1,1,1,fGlowTop);
+			const D3DXCOLOR colorGlowBottom		= D3DXCOLOR(1,1,1,fGlowBottom);
 
-		m_sprHoldParts.SetState( bActive?1:0 );
-		m_sprHoldParts.SetXY( fX, fY );
-		if( bDrawGlowOnly )
-		{
-			m_sprHoldParts.SetDiffuse( D3DXCOLOR(1,1,1,0) );
-			m_sprHoldParts.SetGlow( colorGlow );
+			// the shift by -0.5 is to align texels to pixels
+
+			if( bDrawGlowOnly && colorGlowTop.a==0 && colorGlowBottom.a==0 )
+				continue;
+			if( !bDrawGlowOnly && colorDiffuseTop.a==0 && colorDiffuseBottom.a==0 )
+				continue;
+
+			DISPLAY->AddQuad( 
+				D3DXVECTOR3(fXTopLeft-0.5f,    fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    D3DXVECTOR2(fTexCoordLeft,  fTexCoordTop),   // colorGlowTop,			// top-left
+				D3DXVECTOR3(fXTopRight-0.5f,   fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    D3DXVECTOR2(fTexCoordRight, fTexCoordTop),   // colorGlowTop,			// top-right
+				D3DXVECTOR3(fXBottomLeft-0.5f, fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, D3DXVECTOR2(fTexCoordLeft,  fTexCoordBottom),// colorGlowBottom,		// bottom-left
+				D3DXVECTOR3(fXBottomRight-0.5f,fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, D3DXVECTOR2(fTexCoordRight, fTexCoordBottom) );//, colorGlowBottom );	// bottom-right
 		}
-		else
-		{
-			m_sprHoldParts.SetDiffuse( colorDiffuse );
-			m_sprHoldParts.SetGlow( D3DXCOLOR(0,0,0,0) );
-		}
-		m_sprHoldParts.Draw();
+
+		DISPLAY->FlushQueue();
 	}
+	else
+	{
+		//
+		// Draw head
+		//
+		{
+			fY							= fYHead;
+			const float fX				= ArrowGetXPos( m_PlayerNumber, iCol, fY );
+			const float	fAlpha			= ArrowGetAlpha( m_PlayerNumber, fY, fPercentFadeToFail );
+			const float	fGlow			= ArrowGetGlow( m_PlayerNumber, fY, fPercentFadeToFail );
+			const float fColorScale		= SCALE(fLife,0,1,0.2f,1);
+			const D3DXCOLOR colorDiffuse= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlpha);
+			const D3DXCOLOR colorGlow	= D3DXCOLOR(1,1,1,fGlow);
+
+			m_sprHoldParts.SetState( bActive?1:0 );
+			m_sprHoldParts.SetXY( fX, fY );
+			if( bDrawGlowOnly )
+			{
+				m_sprHoldParts.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+				m_sprHoldParts.SetGlow( colorGlow );
+			}
+			else
+			{
+				m_sprHoldParts.SetDiffuse( colorDiffuse );
+				m_sprHoldParts.SetGlow( D3DXCOLOR(0,0,0,0) );
+			}
+			m_sprHoldParts.Draw();
+		}
+	}
+
+
+	if( g_bDrawTapOnTopOfHoldHead )
+		DrawTap( hn.m_iTrack, hn.m_fStartBeat, false, fPercentFadeToFail, fLife );
+	if( g_bDrawTapOnTopOfHoldTail )
+		DrawTap( hn.m_iTrack, hn.m_fEndBeat, false, fPercentFadeToFail, fLife );
+
 
 	// now, draw the glow pass
 	if( !bDrawGlowOnly )
 		DrawHold( hn, bActive, fLife, fPercentFadeToFail, true );
 }
 
-void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSameRowAsHoldStart, const float fPercentFadeToFail )
+void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSameRowAsHoldStart, const float fPercentFadeToFail, const float fLife )
 {
 	const float fYOffset		= ArrowGetYOffset(	m_PlayerNumber, fBeat );
 	const float fYPos			= ArrowGetYPos(		m_PlayerNumber, fYOffset );
@@ -342,8 +416,9 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 	const float fGlow			= ArrowGetGlow(		m_PlayerNumber, fYPos, fPercentFadeToFail );
 	const int iGrayPartFrameNo	= GetTapGrayFrameNo( fBeat );
 	const int iColorPartFrameNo	= GetTapColorFrameNo( fBeat );
+	const float fColorScale		= SCALE(fLife,0,1,0.2f,1);
 
-	D3DXCOLOR colorGrayPart = D3DXCOLOR(1,1,1,1);
+	D3DXCOLOR colorGrayPart = D3DXCOLOR(fColorScale,fColorScale,fColorScale,1);
 	D3DXCOLOR colorLeadingEdge;
 	D3DXCOLOR colorTrailingEdge;
 	GetTapEdgeColors( fBeat, colorLeadingEdge, colorTrailingEdge );
@@ -351,7 +426,14 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 	colorLeadingEdge.a	*= fAlpha;
 	colorTrailingEdge.a *= fAlpha;
 
-	if( bOnSameRowAsHoldStart  &&  g_bUseHoldHeadForTap )
+	colorLeadingEdge.r *= fColorScale;
+	colorLeadingEdge.g *= fColorScale;
+	colorLeadingEdge.b *= fColorScale;
+	colorTrailingEdge.r *= fColorScale;
+	colorTrailingEdge.g *= fColorScale;
+	colorTrailingEdge.b *= fColorScale;
+
+	if( bOnSameRowAsHoldStart  &&  g_bDrawHoldHeadForTapsOnSameRow )
 	{
 		//
 		// draw hold head

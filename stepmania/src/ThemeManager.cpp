@@ -206,7 +206,7 @@ CString ThemeManager::GetMetricsPathFromName( CString sThemeName )
 	return GetThemeDirFromName( sThemeName ) + "metrics.ini";
 }
 
-CString ThemeManager::GetMetric( CString sScreenName, CString sValueName )
+CString ThemeManager::GetMetric( CString sClassName, CString sValueName )
 {
 #ifdef _DEBUG
 try_metric_again:
@@ -226,50 +226,50 @@ try_metric_again:
 	}
 
 	CString sValue;
-	if( m_pIniMetrics->GetValue(sScreenName,sValueName,sValue) )
+	if( m_pIniMetrics->GetValue(sClassName,sValueName,sValue) )
 	{
 		sValue.Replace("::","\n");	// "::" means newline since you can't use line breaks in an ini file.
 		return sValue;
 	}
 
 #ifdef _DEBUG
-	if( IDRETRY == AfxMessageBox( ssprintf("The theme metric %s-%s is missing.  Correct this and click Retry, or Cancel to break.",sScreenName,sValueName), MB_RETRYCANCEL ) )
+	if( IDRETRY == AfxMessageBox( ssprintf("The theme metric %s-%s is missing.  Correct this and click Retry, or Cancel to break.",sClassName,sValueName), MB_RETRYCANCEL ) )
 		goto try_metric_again;
 #endif
 
 	throw RageException( "Theme metric '%s : %s' could not be found in '%s' or '%s'.", 
-		sScreenName,
+		sClassName,
 		sValueName,
 		sCurMetricPath, 
 		sDefaultMetricPath
 		);
 }
 
-int ThemeManager::GetMetricI( CString sScreenName, CString sValueName )
+int ThemeManager::GetMetricI( CString sClassName, CString sValueName )
 {
-	return atoi( GetMetric(sScreenName,sValueName) );
+	return atoi( GetMetric(sClassName,sValueName) );
 }
 
-float ThemeManager::GetMetricF( CString sScreenName, CString sValueName )
+float ThemeManager::GetMetricF( CString sClassName, CString sValueName )
 {
-	return (float)atof( GetMetric(sScreenName,sValueName) );
+	return (float)atof( GetMetric(sClassName,sValueName) );
 }
 
-bool ThemeManager::GetMetricB( CString sScreenName, CString sValueName )
+bool ThemeManager::GetMetricB( CString sClassName, CString sValueName )
 {
-	return atoi( GetMetric(sScreenName,sValueName) ) != 0;
+	return atoi( GetMetric(sClassName,sValueName) ) != 0;
 }
 
-D3DXCOLOR ThemeManager::GetMetricC( CString sScreenName, CString sValueName )
+D3DXCOLOR ThemeManager::GetMetricC( CString sClassName, CString sValueName )
 {
 	float r=1,b=1,g=1,a=1;	// initialize in case sscanf fails
-	CString sValue = GetMetric(sScreenName,sValueName);
+	CString sValue = GetMetric(sClassName,sValueName);
 	char szValue[40];
-	strcpy( szValue, sValue );
+	strncpy( szValue, sValue, 39 );
 	int result = sscanf( szValue, "%f,%f,%f,%f", &r, &g, &b, &a );
 	if( result != 4 )
 	{
-		LOG->Warn( "The color value '%s' for theme metric '%s : %s' is invalid.", szValue, sScreenName, sValueName );
+		LOG->Warn( "The color value '%s' for NoteSkin metric '%s : %s' is invalid.", szValue, sClassName, sValueName );
 		ASSERT(0);
 	}
 

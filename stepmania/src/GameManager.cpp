@@ -19,8 +19,14 @@
 #define DIRECTINPUT_VERSION  0x0800
 #endif
 #include <dinput.h> 	// for DIK_* key codes
+#include "IniFile.h"
+#include "RageLog.h"
+
 
 GameManager*	GAMEMAN = NULL;	// global and accessable from anywhere in our program
+
+
+const CString NOTESKIN_DIR  = "NoteSkins\\";
 
 
 const int DANCE_COL_SPACING = 64;
@@ -994,8 +1000,13 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 
 GameManager::GameManager()
 {
+	m_pIniFile = new IniFile;
 }
 
+GameManager::~GameManager()
+{
+	delete m_pIniFile;
+}
 
 GameDef* GameManager::GetGameDefForGame( Game g )
 {
@@ -1045,17 +1056,7 @@ void GameManager::GetNotesTypesForGame( Game game, CArray<NotesType,NotesType>& 
 	}
 }
 
-void GameManager::GetNoteSkinNames( CStringArray &AddTo )
-{
-	GAMESTATE->GetCurrentGameDef()->GetSkinNames( AddTo );
-}
-
-void GameManager::GetNoteSkinNames( Game game, CStringArray &AddTo )
-{
-	GetGameDefForGame(game)->GetSkinNames( AddTo );
-}
-
-bool GameManager::DoesNoteSkinExist( CString sSkinName )
+bool GameManager::DoesNoteSkinExist( CString sSkinName ) const
 {
 	CStringArray asSkinNames;	
 	GetNoteSkinNames( asSkinNames );
@@ -1071,13 +1072,67 @@ void GameManager::SwitchNoteSkin( CString sNewNoteSkin )
 	{
 		CStringArray as;
 		GetNoteSkinNames( as );
-		m_sCurNoteSkin = as[0];
+		SwitchNoteSkin( as[0] );
 	}
 	else
+	{
 		m_sCurNoteSkin = sNewNoteSkin;
+		m_pIniFile->Reset();
+		CString sPath = GetCurNoteSkinDir() + "metrics.ini";
+		m_pIniFile->SetPath(sPath);
+		if( !m_pIniFile->ReadFile() )
+			throw RageException( "Could not read NoteSkin metrics file '%s'", sPath );
+	}
 }
 
-CString GameManager::GetPathTo( const int col, const SkinElement gbg )	// looks in GAMESTATE for the current Style
+CString GameManager::GetCurNoteSkinDir()
+{
+	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+
+	return NOTESKIN_DIR + ssprintf("%s\\%s\\", pGameDef->m_szName, m_sCurNoteSkin);
+}
+
+CString GameManager::GetMetric( CString sClassName, CString sValue )	// looks in GAMESTATE for the current Style
+{
+	CString sReturn;
+	if( !m_pIniFile->GetValue( sClassName, sValue, sReturn ) )
+		throw RageException( "Could not read metric '%s - %s' from '%s'", sClassName, sValue, GetCurNoteSkinDir() + "metrics.ini" );
+	return sReturn;
+}
+
+int GameManager::GetMetricI( CString sClassName, CString sValueName )
+{
+	return atoi( GetMetric(sClassName,sValueName) );
+}
+
+float GameManager::GetMetricF( CString sClassName, CString sValueName )
+{
+	return (float)atof( GetMetric(sClassName,sValueName) );
+}
+
+bool GameManager::GetMetricB( CString sClassName, CString sValueName )
+{
+	return atoi( GetMetric(sClassName,sValueName) ) != 0;
+}
+
+D3DXCOLOR GameManager::GetMetricC( CString sClassName, CString sValueName )
+{
+	float r=1,b=1,g=1,a=1;	// initialize in case sscanf fails
+	CString sValue = GetMetric(sClassName,sValueName);
+	char szValue[40];
+	strncpy( szValue, sValue, 39 );
+	int result = sscanf( szValue, "%f,%f,%f,%f", &r, &g, &b, &a );
+	if( result != 4 )
+	{
+		LOG->Warn( "The color value '%s' for theme metric '%s : %s' is invalid.", szValue, sClassName, sValueName );
+		ASSERT(0);
+	}
+
+	return D3DXCOLOR(r,g,b,a);
+}
+
+
+CString GameManager::GetPathTo( const int col, CString sElementName )	// looks in GAMESTATE for the current Style
 {
 	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
@@ -1085,33 +1140,22 @@ CString GameManager::GetPathTo( const int col, const SkinElement gbg )	// looks 
 	StyleInput SI( PLAYER_1, col );
 	GameInput GI = pStyleDef->StyleInputToGameInput( SI );
 	CString sButtonName = pGameDef->m_szButtonNames[GI.button];
-	return pGameDef->GetPathToGraphic( m_sCurNoteSkin, sButtonName, gbg );
-}
 
-void GameManager::GetTapTweenColors( const int col, CArray<D3DXCOLOR,D3DXCOLOR> &aTapTweenColorsAddTo )	// looks in GAMESTATE for the current Style
-{
-	ASSERT( m_sCurNoteSkin != "" );	// if this == NULL, SwitchGame() was never called
+	const CString sDir = GetCurNoteSkinDir();
 
-	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
-	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+	CStringArray arrayPossibleFileNames;		// fill this with the possible files
 
-	StyleInput SI( PLAYER_1, col );
-	GameInput GI = pStyleDef->StyleInputToGameInput( SI );
-	CString sButtonName = pGameDef->m_szButtonNames[GI.button];
-	pGameDef->GetTapTweenColors( m_sCurNoteSkin, sButtonName, aTapTweenColorsAddTo );
-}
+	GetDirListing( ssprintf("%s%s %s*.sprite", sDir, sButtonName, sElementName), arrayPossibleFileNames, false, true );
+	GetDirListing( ssprintf("%s%s %s*.png",    sDir, sButtonName, sElementName), arrayPossibleFileNames, false, true );
+	GetDirListing( ssprintf("%s%s %s*.jpg",    sDir, sButtonName, sElementName), arrayPossibleFileNames, false, true );
+	GetDirListing( ssprintf("%s%s %s*.bmp",    sDir, sButtonName, sElementName), arrayPossibleFileNames, false, true );
+	GetDirListing( ssprintf("%s%s %s*.gif",    sDir, sButtonName, sElementName), arrayPossibleFileNames, false, true );
+	GetDirListing( ssprintf("%s%s %s*",        sDir, sButtonName, sElementName), arrayPossibleFileNames, false, true );
 
-void GameManager::GetHoldTweenColors( const int col, CArray<D3DXCOLOR,D3DXCOLOR> &aHoldTweenColorsAddTo )	// looks in GAMESTATE for the current Style
-{
-	ASSERT( m_sCurNoteSkin != "" );	// if this == NULL, SwitchGame() was never called
+	if( arrayPossibleFileNames.GetSize() > 0 )
+		return arrayPossibleFileNames[0];
 
-	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
-	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
-
-	StyleInput SI( PLAYER_1, col );
-	GameInput GI = pStyleDef->StyleInputToGameInput( SI );
-	CString sButtonName = pGameDef->m_szButtonNames[GI.button];
-	pGameDef->GetHoldTweenColors( m_sCurNoteSkin, sButtonName, aHoldTweenColorsAddTo );
+	throw RageException( "The NoteSkin element '%s %s' is missing from '%s'.", sButtonName, sElementName, sDir );
 }
 
 void GameManager::GetEnabledGames( CArray<Game,Game>& aGamesOut )
@@ -1124,6 +1168,24 @@ void GameManager::GetEnabledGames( CArray<Game,Game>& aGamesOut )
 		if( asNoteSkins.GetSize() > 0 )
 			aGamesOut.Add( game );
 	}
+}
+
+void GameManager::GetNoteSkinNames( Game game, CStringArray &AddTo ) const
+{
+	GameDef* pGameDef = GAMEMAN->GetGameDefForGame( game );
+
+	CString sBaseSkinFolder = NOTESKIN_DIR + pGameDef->m_szName + "\\";
+	GetDirListing( sBaseSkinFolder + "*.*", AddTo, true );
+
+	// strip out "CVS"
+	for( int i=AddTo.GetSize()-1; i>=0; i-- )
+		if( 0 == stricmp("cvs", AddTo[i]) )
+			AddTo.RemoveAt( i );
+}
+
+void GameManager::GetNoteSkinNames( CStringArray &AddTo ) const
+{
+	GetNoteSkinNames( GAMESTATE->m_CurGame, AddTo );
 }
 
 int GameManager::NotesTypeToNumTracks( NotesType nt )
@@ -1161,69 +1223,3 @@ CString GameManager::NotesTypeToString( NotesType nt )
 
 	return NotesTypes[nt].name;
 }
-
-/* once we're sure the above lookups works, nuke this */
-/*
-int NotesTypeToNumTracks( NotesType nt )
-{
-	switch( nt )
-	{
-	case NOTES_TYPE_DANCE_SINGLE:		return 4;
-	case NOTES_TYPE_DANCE_DOUBLE:		return 8;
-	case NOTES_TYPE_DANCE_COUPLE:		return 8;
-	case NOTES_TYPE_DANCE_SOLO:			return 6;
-	case NOTES_TYPE_PUMP_SINGLE:		return 5;
-	case NOTES_TYPE_PUMP_DOUBLE:		return 10;
-	case NOTES_TYPE_PUMP_COUPLE:		return 10;
-	case NOTES_TYPE_EZ2_SINGLE:			return 5; // Single: TL,LHH,D,RHH,TR
-	case NOTES_TYPE_EZ2_SINGLE_HARD:	return 5; // Single: TL,LHH,D,RHH,TR
-	case NOTES_TYPE_EZ2_DOUBLE:			return 10; // Double: Single x2
-	case NOTES_TYPE_EZ2_REAL:			return 7; // Real: TL,LHH,LHL,D,RHL,RHH,TR
-//	case NOTES_TYPE_EZ2_SINGLE_VERSUS:	return 10;	
-//	case NOTES_TYPE_EZ2_SINGLE_HARD_VERSUS:		return 10; 
-//	case NOTES_TYPE_EZ2_REAL_VERSUS:	return 10;
-	default:	ASSERT(0);		return -1;	// invalid NotesType
-	}
-}
-
-NotesType StringToNotesType( CString sNotesType )
-{
-	sNotesType.MakeLower();
-	if     ( sNotesType == "dance-single" )	return NOTES_TYPE_DANCE_SINGLE;
-	else if( sNotesType == "dance-double" )	return NOTES_TYPE_DANCE_DOUBLE;
-	else if( sNotesType == "dance-couple" )	return NOTES_TYPE_DANCE_COUPLE;
-	else if( sNotesType == "dance-solo" )	return NOTES_TYPE_DANCE_SOLO;
-	else if( sNotesType == "pump-single" )	return NOTES_TYPE_PUMP_SINGLE;
-	else if( sNotesType == "pump-double" )	return NOTES_TYPE_PUMP_DOUBLE;
-	else if( sNotesType == "pump-couple" )	return NOTES_TYPE_PUMP_COUPLE;
-	else if( sNotesType == "ez2-single" )	return NOTES_TYPE_EZ2_SINGLE;
-	else if( sNotesType == "ez2-single-hard" )	return NOTES_TYPE_EZ2_SINGLE_HARD;
-	else if( sNotesType == "ez2-double" )	return NOTES_TYPE_EZ2_DOUBLE;
-	else if( sNotesType == "ez2-real" )		return NOTES_TYPE_EZ2_REAL;
-// 	else if( sNotesType == "ez2-real-versus" )		return NOTES_TYPE_EZ2_REAL_VERSUS;
-//	else if( sNotesType == "ez2-single-versus" )		return NOTES_TYPE_EZ2_SINGLE_VERSUS;
-	else	ASSERT(0);	return NOTES_TYPE_DANCE_SINGLE;	// invalid NotesType
-}
-
-CString NotesTypeToString( NotesType nt )
-{
-	switch( nt )
-	{
-	case NOTES_TYPE_DANCE_SINGLE:	return "dance-single";
-	case NOTES_TYPE_DANCE_DOUBLE:	return "dance-double";
-	case NOTES_TYPE_DANCE_COUPLE:	return "dance-couple";
-	case NOTES_TYPE_DANCE_SOLO:		return "dance-solo";
-	case NOTES_TYPE_PUMP_SINGLE:	return "pump-single";
-	case NOTES_TYPE_PUMP_DOUBLE:	return "pump-double";
-	case NOTES_TYPE_PUMP_COUPLE:	return "pump-couple";
-	case NOTES_TYPE_EZ2_SINGLE:		return "ez2-single";
-	case NOTES_TYPE_EZ2_SINGLE_HARD:		return "ez2-single-hard";
-	case NOTES_TYPE_EZ2_DOUBLE:		return "ez2-double";
-	case NOTES_TYPE_EZ2_REAL:		return "ez2-real";
-//	case NOTES_TYPE_EZ2_REAL_VERSUS:		return "ez2-real-versus";
-//	case NOTES_TYPE_EZ2_SINGLE_VERSUS:		return "ez2-single-versus";
-//	case NOTES_TYPE_EZ2_SINGLE_HARD_VERSUS:		return "ez2-single-hard-versus";
-	default:	ASSERT(0);		return "";	// invalid NotesType
-	}
-}
-*/

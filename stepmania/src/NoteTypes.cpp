@@ -21,9 +21,9 @@ D3DXCOLOR NoteTypeToColor( NoteType nt )
 	case NOTE_TYPE_12TH:	return D3DXCOLOR(1,0,1,1);	// purple
 	case NOTE_TYPE_16TH:	return D3DXCOLOR(1,1,0,1);	// yellow
 	case NOTE_TYPE_24TH:	return D3DXCOLOR(0,1,1,1);	// light blue
-	case NOTE_TYPE_32ND:	// fall through
 	default:
 		ASSERT(0);
+	case NOTE_TYPE_32ND:	// fall through
 		return D3DXCOLOR(0.5f,0.5f,0.5f,1);	// gray
 	}		
 };

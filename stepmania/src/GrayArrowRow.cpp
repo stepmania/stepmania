@@ -35,10 +35,12 @@ void GrayArrowRow::Load( PlayerNumber pn )
 
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
-		m_GrayArrow[c].Load( GAMEMAN->GetPathTo(c, GRAPHIC_RECEPTOR) );
+		CString sPath = GAMEMAN->GetPathTo(c, "receptor");
+		m_GrayArrow[c].Load( sPath );
+		if( m_GrayArrow[c].GetNumStates() != 2 )
+			throw RageException( "'%s' must have two frames", sPath );
 		m_GrayArrow[c].SetX( pStyleDef->m_ColumnInfo[pn][c].fXOffset );
-	}
-	
+	}	
 }
 
 void GrayArrowRow::Update( float fDeltaTime )

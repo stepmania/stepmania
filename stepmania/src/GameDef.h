@@ -19,16 +19,6 @@
 
 const int MAX_STYLES_PER_GAME = 10;
 
-enum SkinElement { 
-	GRAPHIC_TAP_PARTS,
-	GRAPHIC_HOLD_PARTS,
-	GRAPHIC_RECEPTOR,
-	GRAPHIC_TAP_EXPLOSION_BRIGHT,
-	GRAPHIC_TAP_EXPLOSION_DIM,
-	GRAPHIC_HOLD_EXPLOSION,
-	NUM_GAME_BUTTON_GRAPHICS	// leave this at the end
-};
-
 //
 // PrimaryMenuButton and SecondaryMenuButton are used to support using DeviceInputs that only 
 // navigate the menus.
@@ -75,15 +65,4 @@ public:
 
 	MenuInput GameInputToMenuInput( GameInput GameI ) const;
 	void MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] ) const;
-
-	// note skin stuff
-	void GetSkinNames( CStringArray &asSkinNames ) const;
-	bool HasASkinNamed( CString sSkin ) const;
-	void AssertSkinsAreComplete() const;
-	void AssertSkinIsComplete( CString sSkin ) const;
-
-	CString GetPathToGraphic( const CString sSkinName, const CString sButtonName, const SkinElement gbg ) const;
-	void	GetTapTweenColors( const CString sSkinName, const CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &aTapTweenColorsAddTo ) const;
-	void	GetHoldTweenColors( const CString sSkinName, const CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &aHoldTweenColorsAddTo ) const;
-	CString ElementToGraphicSuffix( const SkinElement gbg ) const;
 };

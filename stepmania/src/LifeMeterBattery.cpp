@@ -53,13 +53,13 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 	if( bPlayerEnabled )
 		this->AddChild( &m_sprBattery );
 
-	m_textNumLives.LoadFromTextureAndChars( THEME->GetPathTo("Graphics","gameplay battery life numbers 5x3"), "0123456789x    " );
+	m_textNumLives.LoadFromTextureAndChars( THEME->GetPathTo("Graphics","gameplay battery life numbers 5x3"), "0123456789%. :x" );
 	m_textNumLives.SetDiffuse( D3DXCOLOR(1,1,1,1) );
 	m_textNumLives.TurnShadowOff();
 	if( bPlayerEnabled )
 		this->AddChild( &m_textNumLives );
 
-	m_textPercent.LoadFromTextureAndChars( THEME->GetPathTo("Graphics","gameplay battery percent numbers 7x2"), "01234 :56789%." );
+	m_textPercent.LoadFromTextureAndChars( THEME->GetPathTo("Graphics","gameplay battery percent numbers 5x3"), "0123456789%. :x" );
 	m_textPercent.TurnShadowOff();
 	m_textPercent.SetZoom( 0.7f );
 	m_textPercent.SetText( "00.0" );

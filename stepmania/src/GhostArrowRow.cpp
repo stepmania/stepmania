@@ -36,9 +36,9 @@ void GhostArrowRow::Load( PlayerNumber pn )
 	// init arrows
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
-		m_GhostArrowRow[c].Load( GAMEMAN->GetPathTo(c, GRAPHIC_TAP_EXPLOSION_DIM) );
-		m_GhostArrowRowBright[c].Load( GAMEMAN->GetPathTo(c, GRAPHIC_TAP_EXPLOSION_BRIGHT) );
-		m_HoldGhostArrowRow[c].Load( GAMEMAN->GetPathTo(c, GRAPHIC_HOLD_EXPLOSION) );
+		m_GhostArrowRow[c].Load( GAMEMAN->GetPathTo(c, "tap explosion dim") );
+		m_GhostArrowRowBright[c].Load( GAMEMAN->GetPathTo(c, "tap explosion bright") );
+		m_HoldGhostArrowRow[c].Load( GAMEMAN->GetPathTo(c, "hold explosion") );
 
 		m_GhostArrowRow[c].SetX( pStyleDef->m_ColumnInfo[pn][c].fXOffset );
 		m_GhostArrowRowBright[c].SetX( pStyleDef->m_ColumnInfo[pn][c].fXOffset );
