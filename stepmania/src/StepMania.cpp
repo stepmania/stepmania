@@ -852,68 +852,54 @@ static void ApplyLogPreferences()
 	Checkpoints::LogCheckpoints( PREFSMAN->m_bLogCheckpoints );
 }
 
+/* Search for the commandline argument given; eg. "test" searches for
+ * the option "--test".  All commandline arguments are getopt_long style:
+ * --foo; short arguments (-x) are not supported.  (As commandline arguments
+ * are not intended for common, general use, having short options isn't
+ * needed.)  If argument is non-NULL, accept an argument. */
+bool GetCommandlineArgument( const CString &option, CString *argument=NULL )
+{
+	const CString optstr = "--" + option;
+	
+	for( int arg = 1; arg < g_argc; ++arg )
+	{
+		const CString CurArgument = g_argv[arg];
+
+		const unsigned i = CurArgument.find( "=" );
+		CString CurOption = CurArgument.substr(0,i);
+		if( CurOption.CompareNoCase(optstr) )
+			continue; /* no match */
+
+		/* Found it. */
+		if( argument )
+		{
+			if( i != CString::npos )
+				*argument = CurArgument.substr( i+1 );
+			else
+				*argument = "";
+		}
+		
+		return true;
+	}
+
+	return false;
+}
 
 //Process args first, put command line options that
 //have to run before the SM window loads here
-static void ProcessArgsFirst(int argc, char ** argv)
+static void ProcessArgsFirst()
 {
-	int argCtr = 1,i;	//argv[0] is exe
-	while (argCtr<argc)
-	{
-		CString Arguement(argv[argCtr]);
-		
-		// StepMaina.exe  argbase=argparameter
-			//Where argparameter can contain = signs
-
-		CString ArgBase;
-		CString ArgParameter;
-
-		for (i=0;i<Arguement.GetLength();i++)
-			if (Arguement.at(i) == '=')
-				break;
-		ArgBase = Arguement.substr(0,i);
-		if (Arguement.GetLength()>i)
-			ArgParameter = Arguement.substr(i+1,Arguement.GetLength()-i-1);
-
-		//For now using an IF/ELSEIF clause
-		if (ArgBase.CompareNoCase("--TESTARGS") == 0)
-			LOG->Info ("Test of arguements requested.  Now in First argcheck");
-		else if (ArgBase.CompareNoCase("--NETIP") == 0)
-			NSMAN->StartUp(ArgParameter.c_str());
-
-
-		argCtr++;
-	}
+	CString Argument;
+	if( GetCommandlineArgument( "netip", &Argument ) )
+		NSMAN->StartUp( Argument );
+	if( GetCommandlineArgument( "test", &Argument ) )
+		LOG->Info ("Test: \"%s\"", Argument.c_str() );
 }
 
-static void ProcessArgsSecond(int argc, char ** argv)
+static void ProcessArgsSecond()
 {
-	int argCtr = 1,i;	//argv[0] is exe
-	while (argCtr<argc)
-	{
-		CString Arguement(argv[argCtr]);
-		
-		// StepMaina.exe  argbase=argparameter
-			//Where argparameter can contain = signs
-
-		CString ArgBase;
-		CString ArgParameter;
-
-		for (i=0;i<Arguement.GetLength();i++)
-			if (Arguement.at(i) == '=')
-				break;
-		ArgBase = Arguement.substr(0,i);
-		if (Arguement.GetLength()>i)
-			ArgParameter = Arguement.substr(i+1,Arguement.GetLength()-i-1);
-
-		//For now using an IF/ELSEIF clause
-
-		if (ArgBase.CompareNoCase("--TESTARGS") == 0)
-			LOG->Info ("Test of arguements requested.  Now in Second argcheck");
-
-
-		argCtr++;
-	}
+	if( GetCommandlineArgument( "test2" ) )
+		LOG->Info ("Test2" );
 }
 
 int main(int argc, char* argv[])
@@ -1055,7 +1041,7 @@ int main(int argc, char* argv[])
     NSMAN       = new NetworkSyncManager; 
 		//Load Network Sync manager, but do not connect
 
-	ProcessArgsFirst(argc,argv);
+	ProcessArgsFirst();
 	
 
 
@@ -1105,7 +1091,7 @@ int main(int argc, char* argv[])
 	SONGMAN->UpdateRankingCourses();
 
 	/* Run the second argcheck, you can do your other options here */
-	ProcessArgsSecond(argc, argv);
+	ProcessArgsSecond();
 
 	/* Run the main loop. */
 	GameLoop();
