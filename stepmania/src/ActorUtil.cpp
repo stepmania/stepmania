@@ -18,6 +18,9 @@
 #include "IniFile.h"
 #include "ThemeManager.h"
 #include "RageUtil_FileDB.h"
+#include "RageDisplay.h"
+#include "RageLog.h"
+#include "arch/ArchHooks/ArchHooks.h"
 
 
 static Actor* LoadActor( CString sPath )
@@ -37,6 +40,15 @@ static Actor* LoadActor( CString sPath )
 
 	sNewPath = DerefRedir( sNewPath );
 
+	/* XXX: How to handle translations?  Maybe we should have one metrics section,
+	 * "Text", eg:
+	 *
+	 * [Text]
+	 * SoundVolume=Sound Volume
+	 * TextItem=Hello
+	 *
+	 * and allow "$TextItem$" in .actors to reference that.
+	 */
 	Actor* pActor = NULL;
 	CString text;
 	if( ini.GetValue ( "Actor", "Text", text ) )
@@ -107,3 +119,11 @@ Actor* MakeActor( CString sPath )
 		sPath.c_str(), sExt.c_str() );
 }
 
+void IncorrectActorParametersWarning( const CStringArray &asTokens, int iMaxIndexAccessed, int size )
+{
+	const CString sError = ssprintf( "Actor::HandleCommand: Wrong number of parameters in command '%s'.  Expected %d but there are %d.",
+		join(",",asTokens).c_str(), iMaxIndexAccessed+1, size );
+	LOG->Warn( sError );
+	if( DISPLAY->IsWindowed() )
+		HOOKS->MessageBoxOK( sError );
+}
