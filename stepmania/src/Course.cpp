@@ -121,8 +121,10 @@ void Course::LoadFromCRSFile( CString sPath )
 
 		// handle the data
 		if( 0 == stricmp(sValueName, "COURSE") )
+		{
 			m_sName = sParams[1];
-
+			m_sTranslitName = m_sName;
+		}
 		else if( 0 == stricmp(sValueName, "REPEAT") )
 		{
 			CString str = sParams[1];

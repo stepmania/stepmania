@@ -44,9 +44,10 @@ class Course
 public:
 	Course();
 
-	bool		m_bIsAutogen;	// was this created by AutoGen?
+	bool		m_bIsAutogen;		// was this created by AutoGen?
 	CString		m_sPath;
 	CString		m_sName;
+	CString		m_sTranslitName;	// used for unlocks
 
 	bool HasBanner() const;
 

@@ -50,6 +50,7 @@ bool UnlockSystem::CourseIsLocked( const Course *course )
 
 	if (p)
 	{
+		p->isCourse = true;  // updates flag here
 		p->updateLocked();
 
 		if (!p->isLocked) tmp = "un";
@@ -91,21 +92,31 @@ bool UnlockSystem::SongIsRoulette( const Song *song )
 	return p && (p->m_iRouletteSeed != 0) ;
 }
 
+SongEntry *UnlockSystem::FindSong( CString songname )
+{
+	songname.MakeUpper();
+	for(int i = 0; i < m_SongEntries.size(); i++)
+		if (songname == m_SongEntries[i].m_sSongName)
+			return &m_SongEntries[i];
+
+	return NULL;
+}
+
 SongEntry *UnlockSystem::FindCourse( const Course *pCourse )
 {
-	CString CourseName = pCourse->m_sName;
+	CString CourseName = pCourse->m_sTranslitName;
 
 	CourseName.MakeUpper();
 
 	for(unsigned i = 0; i < m_SongEntries.size(); i++)
 	{
+
 		if( CourseName == m_SongEntries[i].m_sSongName )
 			return &m_SongEntries[i];
 	}
 
 	return NULL;
 }
-
 
 SongEntry *UnlockSystem::FindSong( const Song *pSong )
 {
@@ -165,6 +176,7 @@ SongEntry::SongEntry()
 	m_iRouletteSeed = 0;
 
 	isLocked = true;
+	isCourse = false;
 }
 
 

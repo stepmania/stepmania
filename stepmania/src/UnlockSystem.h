@@ -36,6 +36,7 @@ struct SongEntry
 	int		m_iRouletteSeed;
 
 	bool	isLocked;    // cached locked tag
+	bool	isCourse;	// used for unlock screen
 
 	SongEntry();
 
@@ -56,6 +57,9 @@ public:
 	float ArcadePointsUntilNextUnlock();
 	float SongPointsUntilNextUnlock();
 
+	SongEntry *FindSong( CString songname );
+	// used for screen unlock
+
 	bool SongIsLocked( const Song *song );
 	bool CourseIsLocked( const Course *course );
 
@@ -73,6 +77,8 @@ public:
 	float UnlockClearStage();
 	float UnlockToasty();
 	bool RouletteUnlock( const Song *song );
+
+
 
 	void DebugPrint();
 

@@ -36,19 +36,26 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 	for(int i=1; i <= THEME->GetMetricI("ScreenUnlock", "NumUnlocks"); i++)
 	{
 		// new unlock graphic
-		Unlocks[i].Load( THEME->GetPathToG(ssprintf("ScreenUnlock icon %d", i)) );
+		Unlocks[i].Load( THEME->GetPathToG(ssprintf("ScreenUnlock %d icon", i)) );
 
+		// set graphic location
 		Unlocks[i].SetName( ssprintf("Unlock%d",i) );
 		SET_XY( Unlocks[i] );
 
-		Song *pSong = SONGMAN->FindSong("", THEME->GetMetric("ScreenUnlock", ssprintf("Unlock%dSong", i)) );
-		if( pSong == NULL )
+		// get pertaining songentry
+		SongEntry *pSong = GAMESTATE->m_pUnlockingSys->FindSong(
+			THEME->GetMetric("ScreenUnlock", 
+			ssprintf("Unlock%dSong", i)) );
+		
+		LOG->Trace("UnlockScreen: Searching for %s", THEME->GetMetric("ScreenUnlock", 
+			ssprintf("Unlock%dSong", i)).c_str() );
+
+		if( pSong == NULL)
 			continue;
 
 		Unlocks[i].Command(IconCommand);
 
-		const bool SongIsLocked = GAMESTATE->m_pUnlockingSys->SongIsLocked( pSong );
-		if ( !SongIsLocked )
+		if ( !pSong->isLocked )
 			this->AddChild(&Unlocks[i]);
 	}
 
