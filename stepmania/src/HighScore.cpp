@@ -59,6 +59,15 @@ XNode* HighScore::CreateNode() const
 	pNode->AppendChild( "PlayerGuid",		sPlayerGuid );
 	pNode->AppendChild( "MachineGuid",		sMachineGuid );
 	pNode->AppendChild( "ProductID",		iProductID );
+	XNode* pTapNoteScores = pNode->AppendChild( "TapNoteScores" );
+	FOREACH_TapNoteScore( tns )
+		pTapNoteScores->AppendChild( TapNoteScoreToString(tns), iTapNoteScores[tns] );
+	XNode* pHoldNoteScores = pNode->AppendChild( "HoldNoteScores" );
+	FOREACH_HoldNoteScore( hns )
+		pHoldNoteScores->AppendChild( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
+	XNode* pRadarCategories = pNode->AppendChild( "RadarActuals" );
+	FOREACH_RadarCategory( rc )
+		pRadarCategories->AppendChild( RadarCategoryToString(rc), fRadarActual[rc] );
 
 	return pNode;
 }
@@ -66,30 +75,36 @@ XNode* HighScore::CreateNode() const
 void HighScore::LoadFromNode( const XNode* pNode ) 
 {
 	ASSERT( pNode->name == "HighScore" );
-	for( XNodes::const_iterator child = pNode->childs.begin(); 
-		child != pNode->childs.end(); 
-		child++ )
-	{
-		if( (*child)->name == "Name" )					(*child)->GetValue( sName );
-		else if( (*child)->name == "Grade" )
-		{
-			CString sGrade;
-			(*child)->GetValue( sGrade );
-			/* Pre-a19 compatibility; remove eventually: */
-			if( IsAnInt(sGrade) )
-				grade = (Grade) atoi( sGrade );
-			else
-				grade = StringToGrade( sGrade );
-		}
-		else if( (*child)->name == "Score" )			(*child)->GetValue( iScore );
-		else if( (*child)->name == "PercentDP" )		(*child)->GetValue( fPercentDP );
-		else if( (*child)->name == "SurviveSeconds" )	(*child)->GetValue( fSurviveSeconds );
-		else if( (*child)->name == "Modifiers" )		(*child)->GetValue( sModifiers );
-		else if( (*child)->name == "Time" )				(*child)->GetValue( (int&)time );
-		else if( (*child)->name == "PlayerGuid" )		(*child)->GetValue( sPlayerGuid );
-		else if( (*child)->name == "MachineGuid" )		(*child)->GetValue( sMachineGuid );
-		else if( (*child)->name == "ProductID" )		(*child)->GetValue( iProductID );
-	}
+
+	CString s;
+
+	pNode->GetChildValue( "Name", sName );
+	pNode->GetChildValue( "Grade", s );
+	/* Pre-a19 compatibility; remove eventually */
+	if( IsAnInt(s) )
+		grade = (Grade) atoi( s );
+	else
+		grade = StringToGrade( s );
+	pNode->GetChildValue( "Score",			iScore );
+	pNode->GetChildValue( "PercentDP",		fPercentDP );
+	pNode->GetChildValue( "SurviveSeconds", fSurviveSeconds );
+	pNode->GetChildValue( "Modifiers",		sModifiers );
+	pNode->GetChildValue( "Time",			(int&)time );
+	pNode->GetChildValue( "PlayerGuid",		sPlayerGuid );
+	pNode->GetChildValue( "MachineGuid",	sMachineGuid );
+	pNode->GetChildValue( "ProductID",		iProductID );
+	XNode* pTapNoteScores = pNode->GetChild( "TapNoteScores" );
+	if( pTapNoteScores )
+		FOREACH_TapNoteScore( tns )
+			pTapNoteScores->GetChildValue( TapNoteScoreToString(tns), iTapNoteScores[tns] );
+	XNode* pHoldNoteScores = pNode->GetChild( "HoldNoteScores" );
+	if( pHoldNoteScores )
+		FOREACH_HoldNoteScore( hns )
+			pHoldNoteScores->GetChildValue( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
+	XNode* pRadarCategories = pNode->GetChild( "RadarActuals" );
+	if( pRadarCategories )
+		FOREACH_RadarCategory( rc )
+			pRadarCategories->GetChildValue( RadarCategoryToString(rc), fRadarActual[rc] );
 
 	/* Validate input. */
 	grade = clamp( grade, GRADE_TIER_1, GRADE_FAILED );

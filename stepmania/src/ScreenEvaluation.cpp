@@ -899,6 +899,9 @@ void ScreenEvaluation::CommitScores(
 			hs.sPlayerGuid = PROFILEMAN->IsUsingProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : "";
 			hs.sMachineGuid = PROFILEMAN->GetMachineProfile()->m_sGuid;
 			hs.iProductID = PREFSMAN->m_iProductID;
+			memcpy( hs.iTapNoteScores, stageStats.iTapNoteScores[p], sizeof(hs.iTapNoteScores) );
+			memcpy( hs.iHoldNoteScores, stageStats.iHoldNoteScores[p], sizeof(hs.iHoldNoteScores) );
+			memcpy( hs.fRadarActual, stageStats.fRadarActual[p], sizeof(hs.fRadarActual) );
 
 			StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 

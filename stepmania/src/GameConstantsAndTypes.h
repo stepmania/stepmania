@@ -189,12 +189,7 @@ enum TapNoteScore {
 };
 #define FOREACH_TapNoteScore( tns ) FOREACH_ENUM( TapNoteScore, NUM_TAP_NOTE_SCORES, tns )
 const CString& TapNoteScoreToString( TapNoteScore tns );
-
-//enum TapNoteTiming { 
-//	TNT_NONE, 
-//	TNT_EARLY, 
-//	TNT_LATE 
-//};
+TapNoteScore StringToTapNoteScore( const CString& str );
 
 
 enum HoldNoteScore 
@@ -205,6 +200,8 @@ enum HoldNoteScore
 	NUM_HOLD_NOTE_SCORES
 };
 #define FOREACH_HoldNoteScore( hns ) FOREACH_ENUM( HoldNoteScore, NUM_HOLD_NOTE_SCORES, hns )
+const CString& HoldNoteScoreToString( HoldNoteScore tns );
+HoldNoteScore StringToHoldNoteScore( const CString& str );
 
 
 //

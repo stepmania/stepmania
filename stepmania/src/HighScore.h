@@ -13,6 +13,7 @@
 */
 
 #include "Grade.h"
+#include "GameConstantsAndTypes.h"
 
 struct XNode;
 struct HighScore
@@ -27,6 +28,9 @@ struct HighScore
 	CString sPlayerGuid;	// who made this high score
 	CString sMachineGuid;	// where this high score was made
 	int	iProductID;
+	int		iTapNoteScores[NUM_TAP_NOTE_SCORES];
+	int		iHoldNoteScores[NUM_HOLD_NOTE_SCORES];
+	float	fRadarActual[NUM_RADAR_CATEGORIES];
 
 	HighScore() { Unset(); }
 	void Unset()
@@ -41,6 +45,9 @@ struct HighScore
 		sPlayerGuid = "";
 		sMachineGuid = "";
 		iProductID = 0;
+		ZERO( iTapNoteScores );
+		ZERO( iHoldNoteScores );
+		ZERO( fRadarActual );
 	}
 
 	bool operator>=( const HighScore& other ) const;
@@ -57,6 +64,12 @@ struct HighScore
 		COMPARE( sPlayerGuid );
 		COMPARE( sMachineGuid );
 		COMPARE( iProductID );
+		FOREACH_TapNoteScore( tns )
+			COMPARE( iTapNoteScores[tns] );
+		FOREACH_HoldNoteScore( hns )
+			COMPARE( iHoldNoteScores[hns] );
+		FOREACH_RadarCategory( rc )
+			COMPARE( fRadarActual[rc] );
 #undef COMPARE
 		return true;
 	}

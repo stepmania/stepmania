@@ -109,6 +109,16 @@ static const CString TapNoteScoreNames[NUM_TAP_NOTE_SCORES] = {
 	"Marvelous",
 };
 XToString( TapNoteScore );
+StringToX( TapNoteScore );
+
+
+static const CString HoldNoteScoreNames[NUM_HOLD_NOTE_SCORES] = {
+	"None",
+	"OK",
+	"NG",
+};
+XToString( HoldNoteScore );
+StringToX( HoldNoteScore );
 
 
 static const CString MemoryCardStateNames[NUM_MEMORY_CARD_STATES] = {
