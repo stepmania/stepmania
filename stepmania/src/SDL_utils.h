@@ -50,9 +50,6 @@ void mySDL_PushEvents(vector<SDL_Event> &events);
 /* The surface contains only transparent values of 0 or 1; no translucency.
  * It only needs one bit of alpha. */
 #define TRAIT_BOOL_TRANSPARENCY 0x0002 /* 1alpha */
-/* All opaque pixels in this image are completely white, so it doesn't need
- * any color bits at all; use a GL_ALPHA8 and only store the transparency. */
-#define TRAIT_WHITE_ONLY		0x0004 /* 8alphaonly */
 int FindSurfaceTraits(const SDL_Surface *img);
 
 

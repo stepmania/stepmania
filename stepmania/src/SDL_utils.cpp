@@ -380,7 +380,6 @@ void FixHiddenAlpha(SDL_Surface *img)
 	SetAlphaRGB(img, r, g, b);
 }
 
-/* XXX: currently only TRAIT_NO_TRANSPARENCY and TRAIT_BOOL_TRANSPARENCY work. */
 /* Find various traits of a surface.  Do these all at once, so we only have to
  * iterate the surface once. */
 
@@ -391,23 +390,15 @@ void FixHiddenAlpha(SDL_Surface *img)
  *
  * XXX: We could do the FindAlphaRGB search here, too, but we need that information
  * in a different place. */
-// #define TRAIT_CONSISTENT_TRANSPARENT_COLOR	0x0008
 
 int FindSurfaceTraits(const SDL_Surface *img)
-//							  Uint8 AlphaColor[3])
 {
-//	bool HaveAlphaValue = false; /* whether ar, ag, ab is valid */
-//	bool HaveConsistentAlphaValue = true;
 	const int NEEDS_NO_ALPHA=0, NEEDS_BOOL_ALPHA=1, NEEDS_FULL_ALPHA=2;
 	int alpha_type = NEEDS_NO_ALPHA;
-//	bool HaveTransparency = false;
-//	bool HaveTranslucensy = false;
-//	bool WhiteOnly = true;
 
 	for(int y = 0; y < img->h; ++y)
 	{
 		Uint8 *row = (Uint8 *)img->pixels + img->pitch*y;
-//		bool FirstVisible = true;
 
 		for(int x = 0; x < img->w; ++x)
 		{
@@ -424,62 +415,11 @@ int FindSurfaceTraits(const SDL_Surface *img)
 					alpha_type = max( alpha_type, NEEDS_FULL_ALPHA );
 			}
 
-#if 0
-			/* Hmm.  This doesn't quite work.  For example, the ScreenCompany
-			 * shadow is actually black; we load it as 8alphaonly, which discards
-			 * the black completely (making it a white shadow), and then we make
-			 * it black again by setting the diffuse color to black.  This is hard
-			 * to generalize.  I guess we could just make the shadow white, but
-			 * that's a little ugly to edit.
-			 *
-			 * Also, for some reason, the font borders are actually a combination
-			 * of a shade of gray and some alpha value.  Those need to be simplified
-			 * to white and some alpha value (multiply the luma by alpha), but
-			 * that's another special case.
-			 *
-			 * So, this doesn't actually help anything right now, and we still
-			 * need 8alphaonly. */
-			if( img->format->BitsPerPixel != 8 ) {
-				/* If the pixel isn't transparent, and isn't completely white: */
-				if(!Transparent &&
-					(val & img->format->Rmask) != img->format->Rmask &&
-					(val & img->format->Gmask) != img->format->Gmask &&
-					(val & img->format->Bmask) != img->format->Bmask)
-					WhiteOnly=false;
-
-			}
-#endif
-
-#if 0
-			/* Is this the first non-invisible pixel on this row? */
-			if(!Invisible && FirstVisible)
-			{
-				FirstVisible = false;
-
-				Uint8 r, g, b;
-				SDL_GetRGB(val, img->format, &r, &g, &b);
-
-				if(!HaveAlphaValue) {
-					/* We don't have the border color yet; set it. */
-					HaveAlphaValue = true;
-					AlphaColor[0] = r;
-					AlphaColor[1] = g;
-					AlphaColor[2] = b;
-				} else if(HaveConsistentAlphaValue) {
-					/* We already have an alpha color from the previous row;
-					 * if it's not the same, it's inconsistent. */
-					if(r != AlphaColor[0] || g != AlphaColor[1] || b != AlphaColor[2])
-						HaveConsistentAlphaValue = false;
-				}
-			}
-#endif
-
 			row += img->format->BytesPerPixel;
 		}
 	}
 
 	int ret = 0;
-//	if(HaveConsistentAlphaValue) ret |= TRAIT_CONSISTENT_TRANSPARENT_COLOR;
 	switch( alpha_type ) 
 	{
 	case NEEDS_NO_ALPHA:	ret |= TRAIT_NO_TRANSPARENCY;	break;
@@ -487,7 +427,7 @@ int FindSurfaceTraits(const SDL_Surface *img)
 	case NEEDS_FULL_ALPHA:									break;
 	default:	ASSERT(0);
 	}
-//	if(WhiteOnly) ret |= TRAIT_WHITE_ONLY;
+
 	return ret;
 }
 
