@@ -38,7 +38,7 @@ BPMDisplay::BPMDisplay()
 void BPMDisplay::Load()
 {
 	m_textBPM.SetName( "Text" );
-	m_textBPM.LoadFromNumbers( THEME->GetPathToN("BPMDisplay") );
+	m_textBPM.LoadFromNumbers( THEME->GetPathToN(m_sName) );
 	SET_XY_AND_ON_COMMAND( m_textBPM );
 	m_textBPM.SetDiffuse( NORMAL_COLOR );
 	this->AddChild( &m_textBPM );
