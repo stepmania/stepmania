@@ -663,6 +663,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					<File
 						RelativePath="arch\Sound\RageSoundDriver_DSound_Software.h">
 					</File>
+					<File
+						RelativePath="arch\Sound\RageSoundDriver_WaveOut.cpp">
+					</File>
+					<File
+						RelativePath="arch\Sound\RageSoundDriver_WaveOut.h">
+					</File>
 				</Filter>
 			</Filter>
 			<Filter
