@@ -37,7 +37,7 @@ const CString STYLE_CSS		= "Style.css";
 #define FOOTER					THEME->GetMetric("ProfileHtml","Footer")
 #define VERIFICATION_TEXT		THEME->GetMetric("ProfileHtml","VerificationText")
 #define SHOW_PLAY_MODE(pm)		THEME->GetMetric("ProfileHtml","ShowPlayMode"+PlayModeToString(pm))
-#define SHOW_RADAR_CATEGORY(rc)	THEME->GetMetric("ProfileHtml","ShowCategory"+RadarCategoryToString(rc))
+#define SHOW_RADAR_CATEGORY(rc)	THEME->GetMetric("ProfileHtml","ShowRadarCategory"+RadarCategoryToString(rc))
 
 
 static int g_Level = 1;
