@@ -9,10 +9,9 @@
 /* We only actually get 1000 using SDL. */
 #define TIMESTAMP_RESOLUTION 1000000
 
-static RageTimer g_Start;
-
 float RageTimer::GetTimeSinceStart()
 {
+	static RageTimer g_Start;
 	return g_Start.Ago();
 }
 
@@ -29,7 +28,7 @@ void RageTimer::Touch()
 float RageTimer::Ago() const
 {
 	const RageTimer Now;
-	return Difference(*this, Now);
+	return Now - *this;
 }
 
 float RageTimer::GetDeltaTime()
