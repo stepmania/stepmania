@@ -67,7 +67,7 @@ void RageTexture::CreateFrameRects()
 	}
 }
 
-void RageTexture::GetFrameDimensionsFromFileName( CString sPath, int* piFramesWide, int* piFramesHigh ) const
+void RageTexture::GetFrameDimensionsFromFileName( CString sPath, int* piFramesWide, int* piFramesHigh )
 {
 	*piFramesWide = *piFramesHigh = 1;	// set default values in case we don't find the dimension in the file name
 
@@ -79,6 +79,7 @@ void RageTexture::GetFrameDimensionsFromFileName( CString sPath, int* piFramesWi
 	CStringArray arrayBits;
 	split( sFName, " ", arrayBits, false );
 
+	/* XXX: allow dims to be in parens */
 	for( unsigned i=0; i<arrayBits.size(); i++ )
 	{
 		CString &sBit = arrayBits[ i ];	

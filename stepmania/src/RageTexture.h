@@ -90,6 +90,8 @@ public:
 	/* The ID that we actually got: */
 	const RageTextureID &GetActualID() const { return m_ActualID; }
 
+	static void GetFrameDimensionsFromFileName( CString sPath, int* puFramesWide, int* puFramesHigh );
+
 private:
 	/* The file we were asked to load.  (This is never changed.) */
 	RageTextureID m_ID;
@@ -106,7 +108,6 @@ protected:
 	vector<RectF>	m_TextureCoordRects;	// size = m_iFramesWide * m_iFramesHigh
 
 	virtual void CreateFrameRects();
-	virtual void GetFrameDimensionsFromFileName( CString sPath, int* puFramesWide, int* puFramesHigh ) const;
 };
 
 #endif
