@@ -152,6 +152,9 @@ LightsDriver *MakeLightsDriver(CString driver)
 #ifdef _WINDOWS
 	if(!driver.CompareNoCase("Parallel")) ret = new LightsDriver_Win32Parallel;
 #endif
+#ifdef LINUX
+	if(!driver.CompareNoCase("Serial")) ret = new LightsDriver_LinuxSerial;
+#endif
 	if(!driver.CompareNoCase("Null")) ret = new LightsDriver_Null;
 	if( !ret )
 	{
