@@ -687,6 +687,9 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 			CString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
 			CryptManager::SignFileToFile(fn, sStatsXmlSigFile);
 
+			// Update file cache, or else IsAFile in CryptManager won't see sStatsXmlSigFile.
+			FILEMAN->FlushDirCache( sDir );
+
 			// Save the "don't share" file
 			CString sDontShareFile = sDir + DONT_SHARE_SIG;
 			CryptManager::SignFileToFile(sStatsXmlSigFile, sDontShareFile);
