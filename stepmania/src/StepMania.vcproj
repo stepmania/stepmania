@@ -904,6 +904,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				<File
 					RelativePath="arch\arch_default.h">
 				</File>
+				<File
+					RelativePath="arch\arch_platform.h">
+				</File>
 				<Filter
 					Name="LoadingWindow"
 					Filter="">
