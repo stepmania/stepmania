@@ -41,9 +41,6 @@ public:
 	int GetHeight() const;
 	int GetBPP() const;
 	
-	void SetViewTransform( const RageMatrix* pMatrix );
-	void GetViewTransform( RageMatrix* pMatrixOut );
-
 	void ResetMatrixStack();
 	void PushMatrix();
 	void PopMatrix();

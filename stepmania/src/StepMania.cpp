@@ -438,11 +438,6 @@ static void GameLoop()
 		DISPLAY->Clear();
 		DISPLAY->ResetMatrixStack();
 
-		RageMatrix mat;
-
-		RageMatrixIdentity( &mat );
-		DISPLAY->SetViewTransform( &mat );
-
 		SCREENMAN->Draw();		// draw the game
 
 		DISPLAY->FlushQueue();

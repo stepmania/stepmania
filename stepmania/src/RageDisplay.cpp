@@ -31,7 +31,6 @@ RageDisplay*		DISPLAY	= NULL;
 const int MAX_NUM_VERTICIES = 1000;
 SDL_Surface			*g_screen = NULL;		// this class is a singleton, so there can be only one
 vector<RageMatrix>	g_matModelStack;	// model matrix stack
-RageMatrix			g_matView;			// view matrix
 RageMatrix&			GetTopModelMatrix() { return g_matModelStack.back(); }
 int					g_flags = 0;		/* SDL video flags */
 GLenum				g_vertMode = GL_TRIANGLES;
@@ -446,18 +445,6 @@ void RageDisplay::FlushQueue()
 	g_iNumVerts = 0;
 
 	g_iDrawsSinceLastCheck++;
-}
-
-void RageDisplay::SetViewTransform( const RageMatrix* pMatrix )
-{
-	FlushQueue();
-	// OpenGL doesn't have a separate view matrix.  We need to save it and muliply in later
-	g_matView = *pMatrix;
-}
-
-void RageDisplay::GetViewTransform( RageMatrix* pMatrixOut )
-{
-	*pMatrixOut = g_matView;
 }
 
 void RageDisplay::ResetMatrixStack() 
