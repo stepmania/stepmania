@@ -106,10 +106,7 @@ IntCmpU $1 0 ok old_dx ok
 
 ; We can function without it (using WaveOut), so don't *require* this.
 old_dx:
-MessageBox MB_YESNO|MB_ICONINFORMATION "The latest version of DirectX (8.1 or higher) is strongly recommended.$\n Do you wish to visit Microsoft's site now?" IDYES open_dx_page
-Goto ok
-
-open_dx_page:
+MessageBox MB_YESNO|MB_ICONINFORMATION "The latest version of DirectX (8.1 or higher) is strongly recommended.$\n Do you wish to visit Microsoft's site now?" IDNO ok
 ExecShell "" "http://www.microsoft.com/directx/"
 Abort
 
