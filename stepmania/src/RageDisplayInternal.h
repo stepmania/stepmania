@@ -7,11 +7,12 @@
  * time, RageDisplay.h is sufficient. 
  */
 
-#include "SDL.h"
+#include "SDL_utils.h"
 /* ours is more up-to-date */
 #define NO_SDL_GLEXT
 #define __glext_h_ /* try harder to stop glext.h from being forced on us by someone else */
 #include "SDL_opengl.h"
+#undef __glext_h_
 
 #include "glext.h"
 
