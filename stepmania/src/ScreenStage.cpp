@@ -437,7 +437,8 @@ ScreenStage::ScreenStage()
 
 			for( i=0; i<iNumChars; i++ )
 				m_frameStage.AddSubActor( &m_sprNumbers[i] );
-			m_frameStage.AddSubActor( &m_sprStage );
+			if ( STAGE_TYPE != STAGE_TYPE_EZ2 ) // DIE EVIL STAGEWORD! err, yea this shouldn't be here for Ez2 =)
+				m_frameStage.AddSubActor( &m_sprStage );
 		}
 		break;
 	case MODE_FINAL:
@@ -494,7 +495,8 @@ void ScreenStage::DrawPrimitives()
 		m_sprSongBackground.Draw();
 		break;
 	case STAGE_TYPE_EZ2:
-		m_sprSongBackground.Draw();
+		m_frameStage.Draw();
+		// m_sprSongBackground.Draw();
 		break;
 	default:
 		ASSERT(0);

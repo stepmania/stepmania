@@ -44,6 +44,20 @@ enum DStyles {
 	DS_CLUB
 };
 
+const float OPT_X[NUM_EZ2STYLE_GRAPHICS] = { 
+	CENTER_X+200, // This is the pad X
+	CENTER_X-200, // This is the pad X
+	CENTER_X-198, // This is the 1p X
+	CENTER_X+195, // This is the 2p X
+}; // tells us the default X position
+const float OPT_Y[NUM_EZ2STYLE_GRAPHICS] = {
+	CENTER_Y+130,
+	CENTER_Y+130,
+	CENTER_Y+115,
+	CENTER_Y+115,
+}; // tells us the default Y position
+
+
 const float TWEEN_TIME		= 0.35f;
 
 
@@ -71,6 +85,7 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 		this->AddSubActor( &m_sprBackground[i] );
 	}
 
+	/* Setup The 1Player Scrolling List */
 	m_ScrList.SetNumberVisibleElements( 3 );
 	m_ScrList.CreateNewElement( "select style info game 2 style 1" );
 	m_ScrList.CreateNewElement( "select style info game 2 style 2" );
@@ -87,7 +102,48 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 	m_ScrList.SetXY(CENTER_X, CENTER_Y);
 	m_ScrList.SetCurrentPosition( DS_EASY );
 
+	/* Setup the 2Player Scrolling List */
+	m_ScrList_2ply.SetNumberVisibleElements( 3 );
+	m_ScrList_2ply.CreateNewElement( "select style info game 2 style 1" );
+	m_ScrList_2ply.CreateNewElement( "select style info game 2 style 2" );
+	m_ScrList_2ply.CreateNewElement( "select style info game 2 style 3" ); // Excess so that the user is tricked into thinking
+	m_ScrList_2ply.CreateNewElement( "select style info game 2 style 1" ); // the list is infinite
+	m_ScrList_2ply.CreateNewElement( "select style info game 2 style 2" );
+	m_ScrList_2ply.CreateNewElement( "select style info game 2 style 3" );
+	m_ScrList_2ply.CreateNewElement( "select style info game 2 style 1" );
+	m_ScrList_2ply.CreateNewElement( "select style info game 2 style 2" );
+	m_ScrList_2ply.CreateNewElement( "select style info game 2 style 3" );
+	m_ScrList_2ply.SetXY(CENTER_X, CENTER_Y);
+	m_ScrList_2ply.SetCurrentPosition( DS_EASY );
+
 	this->AddSubActor( &m_ScrList );
+	this->AddSubActor( &m_ScrList_2ply );
+
+	// figure out on load which list we should put up.
+	if (GAMESTATE->m_CurStyle == STYLE_EZ2_SINGLE_VERSUS) // if we are using two players
+	{
+		m_ScrList.SetZoom( 0 ); // Hide the list for just 1 player 
+	}
+	else
+	{
+		m_ScrList_2ply.SetZoom( 0 ); // Otherwise hide the 2 player list.
+	} 
+
+// Load in the sprites we will be working with.
+	for( i=0; i<NUM_EZ2STYLE_GRAPHICS; i++ )
+	{
+		CString sOptFileName;
+		switch( i )
+		{
+		case 0:	sOptFileName = "select difficulty hard picture";	break;
+		case 1:	sOptFileName = "select difficulty hard picture";	break;
+		case 2:	sOptFileName = "select difficulty medium picture";	break;
+		case 3:	sOptFileName = "select difficulty easy picture";	break;
+		}
+		m_sprOpt[i].Load( THEME->GetPathTo("Graphics",sOptFileName) );
+		m_sprOpt[i].SetXY( OPT_X[i], OPT_Y[i] );
+		this->AddSubActor( &m_sprOpt[i] );
+	}
 
 	m_Menu.Load( 	
 		THEME->GetPathTo("Graphics","select style background"), 
@@ -392,6 +448,24 @@ void ScreenEz2SelectStyle::AnimateBackground()
 		m_sprBackground[0].SetEffectSpinning(1.0f);
 	}
 
+}
+
+/************************************
+Update
+Desc: Animates the 1p/2p selection
+************************************/
+void ScreenEz2SelectStyle::Update( float fDeltaTime )
+{
+	Screen::Update( fDeltaTime );
+
+	fDeltaTime /= .01f;
+
+	ez2_bounce = fmod((ez2_bounce+fDeltaTime), 20);
+
+	/* 0..10..19 -> 10..0..9 */
+	int offset = abs(10-ez2_bounce);
+	m_sprOpt[2].SetXY( OPT_X[2], OPT_Y[2] - offset);
+	m_sprOpt[3].SetXY( OPT_X[3], OPT_Y[3] - offset);
 }
 
 /************************************

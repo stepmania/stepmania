@@ -44,6 +44,8 @@ public:
 
 private:
 	/* Private Function Prototypes */
+
+	void Update( float fDeltaTime );
 	void AnimateGraphics();
 	void AnimateBackground();
 	//	void BeforeChange();
@@ -52,12 +54,15 @@ private:
 	/* Variable Declarations */
 
 	MenuElements m_Menu;
-//	Sprite	m_sprOpt[NUM_EZ2STYLE_GRAPHICS];
+	Sprite	m_sprOpt[NUM_EZ2STYLE_GRAPHICS];
 //	Sprite  m_sprPly[NUM_EZ2P_GRAPHICS];
 	Sprite	m_sprBackground[NUM_EZ2STYLE_GRAPHICS];
 
-	ScrollingList m_ScrList;
+	// used for the bouncing of the '1p' and '2p' images
+	float ez2_bounce; 
 
+	ScrollingList m_ScrList;
+	ScrollingList m_ScrList_2ply;
 
 	int m_iSelectedStyle;
 	int m_iSelectedPlayer;
