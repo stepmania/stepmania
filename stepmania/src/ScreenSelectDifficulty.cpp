@@ -316,7 +316,7 @@ bool ScreenSelectDifficulty::IsOnPage2( int iItemIndex )
 {
 	ASSERT( iItemIndex >= 0  &&  iItemIndex < NUM_CHOICES );
 
-	return iItemIndex >= unsigned(NUM_CHOICES_ON_PAGE_1);
+	return iItemIndex >= NUM_CHOICES_ON_PAGE_1;
 }
 
 bool ScreenSelectDifficulty::SelectedSomethingOnPage2()

@@ -35,7 +35,7 @@ Course::Course()
 	// Init high scores
 	//
 	for( unsigned i=0; i<NUM_NOTES_TYPES; i++ )
-		for( unsigned j=0; j<NUM_RANKING_LINES; j++ )
+		for( int j=0; j<NUM_RANKING_LINES; j++ )
 		{
 			m_RankingScores[i][j].iDancePoints = 573;
 			m_RankingScores[i][j].fSurviveTime = 57.3f;
