@@ -40,7 +40,7 @@ void RollingNumbers::Update( float fDeltaTime )
 {
 	if( m_fCurrentNumber != m_fTargetNumber )
 	{
-		fapproach( m_fCurrentNumber, m_fTargetNumber, m_fScoreVelocity * fDeltaTime );
+		fapproach( m_fCurrentNumber, m_fTargetNumber, fabsf(m_fScoreVelocity) * fDeltaTime );
 		UpdateText();
 	}
 
