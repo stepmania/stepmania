@@ -47,7 +47,6 @@
 
 const int channels = 2;
 const int samplesize = 2 * channels; /* 16-bit */
-// inline int samplerate() { return SOUNDMAN->GetDriverSampleRate(); }
 #define samplerate() Sample->GetSampleRate()
 
 /* The most data to buffer when streaming.  This should generally be at least as large
@@ -173,12 +172,14 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 		RageException::Throw( "RageSoundManager::RageSoundManager: error opening sound '%s': '%s'",
 			m_sFilePath.c_str(), error.c_str());
 
-	if(SOUNDMAN->GetDriverSampleRate() != -1 &&
-	   Sample->GetSampleRate() != SOUNDMAN->GetDriverSampleRate())
+	/* SOUNDMAN->GetDriverSampleRate() returns a sample rate, -1 meaning "any",
+	 * or 0 meaning "ask". */
+	const int NeededRate = SOUNDMAN->GetDriverSampleRate( Sample->GetSampleRate() );
+	if( NeededRate != Sample->GetSampleRate() )
 	{
 		RageSoundReader_Resample *Resample = RageSoundReader_Resample::MakeResampler( (RageSoundReader_Resample::ResampleQuality) PREFSMAN->m_iSoundResampleQuality );
 		Resample->Open(Sample);
-		Resample->SetSampleRate(SOUNDMAN->GetDriverSampleRate());
+		Resample->SetSampleRate( NeededRate );
 		Sample = Resample;
 	}
 
