@@ -279,11 +279,11 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 			TABLE_LINE2( "CurrentCombo",					pProfile->m_iCurrentCombo );
 			TABLE_LINE2( "CaloriesBurned",					pProfile->GetDisplayCaloriesBurned() );
 			TABLE_LINE2( "LastMachinePlayed",				pProfile->m_sLastMachinePlayed );
-			TABLE_LINE2( "NumTapsAndHolds",					pProfile->m_iNumTapsAndHolds );
-			TABLE_LINE2( "NumJumps",						pProfile->m_iNumJumps );
-			TABLE_LINE2( "NumHolds",						pProfile->m_iNumHolds );
-			TABLE_LINE2( "NumMines",						pProfile->m_iNumMines );
-			TABLE_LINE2( "NumHands",						pProfile->m_iNumHands );
+			TABLE_LINE2( "TotalTapsAndHolds",				pProfile->m_iTotalTapsAndHolds );
+			TABLE_LINE2( "TotalJumps",						pProfile->m_iTotalJumps );
+			TABLE_LINE2( "TotalHolds",						pProfile->m_iTotalHolds );
+			TABLE_LINE2( "TotalMines",						pProfile->m_iTotalMines );
+			TABLE_LINE2( "TotalHands",						pProfile->m_iTotalHands );
 			END_TABLE;
 		}
 		PRINT_CLOSE(f);

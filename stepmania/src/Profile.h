@@ -93,11 +93,11 @@ public:
 	int m_iNumExtraStagesPassed;
 	int m_iNumExtraStagesFailed;
 	int m_iNumToasties;
-	int m_iNumTapsAndHolds;
-	int m_iNumJumps;
-	int m_iNumHolds;
-	int m_iNumMines;
-	int m_iNumHands;
+	int m_iTotalTapsAndHolds;
+	int m_iTotalJumps;
+	int m_iTotalHolds;
+	int m_iTotalMines;
+	int m_iTotalHands;
 	set<int> m_UnlockedSongs;
 	mutable CString m_sLastMachinePlayed;	// mutable because we overwrite this on save, and I don't want to remove const from the whole save chain. -Chris
 	int m_iNumSongsPlayedByPlayMode[NUM_PLAY_MODES];
