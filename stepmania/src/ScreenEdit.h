@@ -224,9 +224,11 @@ public:
 		preferences,
 		exit,
 		save_on_exit,
-		NUM_MAIN_MENU_CHOICES
+		NUM_MAIN_MENU_CHOICES,
+		MAIN_MENU_CHOICE_INVALID
 	};
 	void HandleMainMenuChoice( MainMenuChoice c, int* iAnswers );
+	MainMenuChoice m_CurrentAction;
 
 	enum AreaMenuChoice {
 		cut,
