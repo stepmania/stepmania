@@ -1726,8 +1726,8 @@ bool GameState::ChangePreferredDifficulty( PlayerNumber pn, int dir )
 		d = (Difficulty)(d+dir);
 		if( d < 0 || d >= NUM_DIFFICULTIES )
 			return false;
-		if( find(v.begin(), v.end(), d) == v.end() )
-			continue; /* not available */
+		if( find(v.begin(), v.end(), d) != v.end() )
+			break; // found
 	}
 
 	return ChangePreferredDifficulty( pn, d );
