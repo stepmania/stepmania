@@ -631,6 +631,12 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 		m_framePage.BeginTweening( 0.3f, Actor::TWEEN_ACCELERATE );
 		m_framePage.SetX( SCREEN_RIGHT );
 		break;
+	case SM_GainFocus:
+		INPUTFILTER->SetRepeatRate( 0.25f, 12, 0.25f, 12 );
+		break;
+	case SM_LoseFocus:
+		INPUTFILTER->ResetRepeatRate();
+		break;
 	}
 }
 
