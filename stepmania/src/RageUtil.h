@@ -207,9 +207,10 @@ class Regex {
     void Compile();
     void Release();
 public:
-	Regex(const CString &pat);
+	Regex(const CString &pat = "");
 	Regex(const Regex &rhs);
 	~Regex();
+	void Set(const CString &str);
 	bool Compare(const CString &str);
 	bool Compare(const CString &str, vector<CString> &matches);
 };

@@ -667,17 +667,23 @@ void Regex::Compile()
     ASSERT(backrefs+1 < 128);
 }
 
+void Regex::Set(const CString &str)
+{
+	Release();
+    pattern=str;
+	Compile();
+}
+
 void Regex::Release()
 {
     delete (regex_t *)reg;
 	reg = NULL;
 }
 
-Regex::Regex(const CString &pattern_)
+Regex::Regex(const CString &str)
 {
 	reg = NULL;
-    pattern=pattern_;
-	Compile();
+	Set(str);
 }
 
 Regex::Regex(const Regex &rhs)
