@@ -339,6 +339,18 @@ void SongUtil::SortSongPointerArrayByMeter( vector<Song*> &arraySongPointers, Di
 		/* Hack: always put tutorial songs first. */
 		s += ssprintf( "%c", arraySongPointers[i]->IsTutorial()? '0':'1' );
 
+		/* 
+		 * pSteps may not be exactly the difficulty we want; for example, we may
+		 * be sorting by Hard difficulty and a song may have no Hard steps.
+		 *
+		 * In this case, we can end up with unintuitive ties; for example, pSteps
+		 * may be Medium with a meter of 5, which will sort it among the 5-meter
+		 * Hard songs.  Break the tie, by adding the difficulty to the sort as
+		 * well.  That way, we'll always put Medium 5s before Hard 5s.  If all
+		 * songs are using the preferred difficulty (dc), this will be a no-op.
+		 */
+		s += ssprintf( "%c", (pSteps? pSteps->GetDifficulty():0) + '0' );
+
 		if( PREFSMAN->m_bSubSortByNumSteps )
 			s += ssprintf("%06.0f",pSteps ? pSteps->GetRadarValues()[RADAR_NUM_TAPS_AND_HOLDS] : 0);
 	}
