@@ -14490,7 +14490,7 @@
 			fileRef = AABD0B3605DF3F22004F7929;
 			isa = PBXBuildFile;
 			settings = {
-				COMPILER_FLAGS = "-O0";
+				COMPILER_FLAGS = "-O0 -Wno-uninitialized";
 			};
 		};
 		AABD0B3B05DF3F22004F7929 = {
