@@ -175,8 +175,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 				IsAxis = true;
 
 		// ignore joystick D-Pad presses if the user has set their pref.
-		if( PREFSMAN->m_bIgnoreJoyAxes && IsAxis &&
-			DEVICE_JOY1 <= DeviceI.device  &&  DeviceI.device <= DEVICE_JOY4 )
+		if( PREFSMAN->m_bIgnoreJoyAxes && IsAxis && DeviceI.IsJoystick() )
 		{
 			//m_textError.SetText( "Game option is set to ignore the Joystick D-Pad." );
 			//m_fErrorDisplayCountdown = 5;	// show the error message
