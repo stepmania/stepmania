@@ -84,6 +84,9 @@ Song::~Song()
 		SAFE_DELETE( m_vpSteps[i] );
 
 	m_vpSteps.clear();
+
+	/* We deleted some Steps*; clear stuff that used it. */
+	SONGMAN->FlushCaches();
 }
 
 /* Reset to an empty song. */
@@ -100,7 +103,7 @@ void Song::Reset()
 
 	/* Courses cache Notes* pointers.  On the off chance that this isn't the last
 	 * thing this screen does, clear that cache. */
-	SONGMAN->Cleanup();
+	SONGMAN->FlushCaches();
 }
 
 
