@@ -1200,6 +1200,9 @@ void ScreenGameplay::Update( float fDeltaTime )
  * SM_BeginFailed if all players failed, and kill dead Oni players. */
 void ScreenGameplay::UpdateCheckFail()
 {
+	if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_OFF )
+		return;
+
 	// check for individual fail
 	for ( int pn=0; pn<NUM_PLAYERS; pn++ )
 	{
