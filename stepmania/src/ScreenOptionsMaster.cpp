@@ -515,7 +515,7 @@ void ScreenOptionsMaster::ExportOptions()
 	unsigned i;
 	for( i = 0; i < OptionRowHandlers.size(); ++i )
 	{
-		CHECKPOINT_M( ssprintf("%i/%i", i, OptionRowHandlers.size()) );
+		CHECKPOINT_M( ssprintf("%i/%i", i, int(OptionRowHandlers.size())) );
 		
 		const OptionRowHandler &hand = OptionRowHandlers[i];
 		const OptionRowData &data = m_OptionRowAlloc[i];
