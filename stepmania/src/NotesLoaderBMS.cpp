@@ -230,21 +230,13 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out, const map<CSt
 		}
 
 		StripCrnl(line);
-		CString value_name;		// fill these in
-		CString value_data;
 
 		// BMS value names can be separated by a space or a colon.
 		size_t iIndexOfSeparator = line.find_first_of( ": " );
+		CString value_name = line.substr( 0, iIndexOfSeparator );
+		CString value_data;
 		if( iIndexOfSeparator != line.npos )
-		{
-			value_name = line.substr( 0, iIndexOfSeparator );
 			value_data = line.substr( iIndexOfSeparator+1 );
-		}
-		else	// no separator
-		{
-			value_name = line;
-		}
-		LOG->Trace("'%s', '%s'", value_name.c_str(), value_data.c_str());
 
 		value_name.MakeLower();
 
