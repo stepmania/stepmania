@@ -23,7 +23,7 @@
 #include "GameManager.h"
 #include "InputMapper.h"
 #include "ThemeManager.h"
-#include "SDL_Utils.h"
+#include "SDL_utils.h"
 #include "RageSoundManager.h"
 
 #define SECONDS_TO_SHOW					THEME->GetMetricF(m_sMetricName,"SecondsToShow")
@@ -103,7 +103,7 @@ void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type
 			/* Credit already taken care of.. go forth -- Miryokuteki */
 			//Screen::MenuCoin( MenuI.player );	// increment coins, play sound
 			SOUNDMAN->StopMusic();
-			::Sleep( 800 );	// do a little pause, like the arcade does
+			SDL_Delay( 800 );	// do a little pause, like the arcade does
 			SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 			break;
 		case MENU_BUTTON_START:
@@ -119,7 +119,7 @@ void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type
 			case PrefsManager::COIN_HOME:
 				SOUNDMAN->StopMusic();
 				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
-				::Sleep( 800 );	// do a little pause, like the arcade does
+				SDL_Delay( 800 );	// do a little pause, like the arcade does
 				SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 				break;
 			default:
