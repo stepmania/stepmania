@@ -160,21 +160,6 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 		{
 			Row &Row = *m_Rows[r];
 
-			// If this isn't a multiSelectRow, exactly one choice should be selected.
-			if( !Row.m_RowDef.bMultiSelect )
-			{
-				if( Row.m_RowDef.bOneChoiceForAllPlayers )
-				{
-					ASSERT( find( Row.m_vbSelected[0].begin(), Row.m_vbSelected[0].end(), true ) != Row.m_vbSelected[0].end() );
-				}
-				else
-				{
-					for( int p=0; p<NUM_PLAYERS; p++ )
-						ASSERT( find( Row.m_vbSelected[p].begin(), Row.m_vbSelected[p].end(), true ) != Row.m_vbSelected[p].end() );
-				}
-			}
-
-
 			if( Row.m_RowDef.bOneChoiceForAllPlayers )
 				for( int p=1; p<NUM_PLAYERS; p++ )
 					Row.m_vbSelected[p] = m_Rows[r]->m_vbSelected[0];
