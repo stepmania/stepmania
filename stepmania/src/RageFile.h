@@ -14,11 +14,6 @@
 -----------------------------------------------------------------------------
 */
 
-// call FixSlashes on any path that came from the user
-void FixSlashesInPlace( CString &sPath );
-CString FixSlashes( CString sPath );
-void CollapsePath( CString &sPath );
-
 class RageFileObj;
 
 class RageFile

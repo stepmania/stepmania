@@ -898,27 +898,6 @@ void Replace_Unicode_Markers( CString &Text )
 	}
 }
 
-void ReplaceText( CString &Text, const map<CString,CString> &m )
-{
-	basic_string<char,char_traits_char_nocase> txt(Text);
-	
-	for(map<CString,CString>::const_iterator it = m.begin(); it != m.end(); ++it)
-	{
-		unsigned start = 0;
-		while(1)
-		{
-			unsigned pos = txt.find(it->first, start);
-			if(pos == txt.npos)
-				break;
-
-			txt.replace(pos, it->first.size(), it->second);
-			start = pos+it->second.size();
-		}
-	}
-
-	Text = txt.c_str();
-}
-
 /* Form a string to identify a wchar_t with ASCII. */
 CString WcharDisplayText(wchar_t c)
 {
@@ -1004,6 +983,64 @@ char char_traits_char_nocase::uptab[256] =
 	'\xE0','\xE1','\xE2','\xE3','\xE4','\xE5','\xE6','\xE7','\xE8','\xE9','\xEA','\xEB','\xEC','\xED','\xEE','\xEF',
 	'\xF0','\xF1','\xF2','\xF3','\xF4','\xF5','\xF6','\xF7','\xF8','\xF9','\xFA','\xFB','\xFC','\xFD','\xFE','\xFF',
 };
+
+void FixSlashesInPlace( CString &sPath )
+{
+	for( unsigned i = 0; i < sPath.size(); ++i )
+		if( sPath[i] == '\\' )
+			sPath[i] = '/';
+}
+
+CString FixSlashes( CString sPath )
+{
+	FixSlashesInPlace( sPath );
+    return sPath;
+}
+
+/*
+ * Keep trailing slashes, since that can be used to illustrate that a path always
+ * represents a directory.  Not sure if we should always keep leading "." (we do
+ * because it's simpler), but be sure to keep the "." if it's all that's there, so
+ * collapsing "." doesn't result in "". 
+ *
+ * foo/bar -> foo/bar
+ * foo/bar/ -> foo/bar/
+ * foo///bar/// -> foo/bar/
+ * foo/bar/./baz -> foo/bar/baz
+ * foo/bar/../baz -> foo/baz
+ * ./foo -> foo
+ * ./ -> .
+ * ./// -> .
+ */
+
+void CollapsePath( CString &sPath )
+{
+	/* Don't ignore empty: we do want to keep trailing slashes. */
+	CStringArray as;
+	split( sPath, "/", as, false );
+
+	for( unsigned i=0; i<as.size(); i++ )
+	{
+		if( as[i] == ".." && i != 0 )
+		{
+			as.erase( as.begin()+i-1 );
+			as.erase( as.begin()+i-1 );
+			i -= 2;
+		}
+		else if( as[i] == "" && i+1 < as.size() )
+		{
+			/* Remove empty parts that aren't at the end; "foo//bar/" -> "foo/bar/". */
+			as.erase( as.begin()+i );
+			i -= 1;
+		}
+		else if( as[i] == "." && i != 0 )
+		{
+			as.erase( as.begin()+i );
+			i -= 1;
+		}
+	}
+	sPath = join( "/", as );
+}
 
 
 //

@@ -13,7 +13,6 @@
 */
 
 #include <map>
-#include "RageFile.h"
 
 //-----------------------------------------------------------------------------
 // SAFE_ Macros
@@ -227,7 +226,6 @@ public:
 
 
 void Replace_Unicode_Markers( CString &Text );
-void ReplaceText( CString &Text, const map<CString,CString> &m );
 CString WcharDisplayText(wchar_t c);
 
 CString Basename( const CString &dir );
@@ -292,10 +290,16 @@ bool ResolvePath(CString &path);
 unsigned GetFileSizeInBytes( const CString &sFilePath );
 void FlushDirCache();
 
+// call FixSlashes on any path that came from the user
+void FixSlashesInPlace( CString &sPath );
+CString FixSlashes( CString sPath );
+void CollapsePath( CString &sPath );
+
 // helper file functions used by Bookkeeper and ProfileManager
 //
 // Helper function for reading/writing scores
 //
+class RageFile;
 bool FileRead(RageFile& f, CString& sOut);
 bool FileRead(RageFile& f, int& iOut);
 bool FileRead(RageFile& f, unsigned& uOut);

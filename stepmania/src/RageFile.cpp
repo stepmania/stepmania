@@ -17,64 +17,6 @@
 #include "RageUtil.h"
 #include "RageFileDriver.h"
 
-void FixSlashesInPlace( CString &sPath )
-{
-	for( unsigned i = 0; i < sPath.size(); ++i )
-		if( sPath[i] == '\\' )
-			sPath[i] = '/';
-}
-
-CString FixSlashes( CString sPath )
-{
-	FixSlashesInPlace( sPath );
-    return sPath;
-}
-
-/*
- * Keep trailing slashes, since that can be used to illustrate that a path always
- * represents a directory.  Not sure if we should always keep leading "." (we do
- * because it's simpler), but be sure to keep the "." if it's all that's there, so
- * collapsing "." doesn't result in "". 
- *
- * foo/bar -> foo/bar
- * foo/bar/ -> foo/bar/
- * foo///bar/// -> foo/bar/
- * foo/bar/./baz -> foo/bar/baz
- * foo/bar/../baz -> foo/baz
- * ./foo -> foo
- * ./ -> .
- * ./// -> .
- */
-
-void CollapsePath( CString &sPath )
-{
-	/* Don't ignore empty: we do want to keep trailing slashes. */
-	CStringArray as;
-	split( sPath, "/", as, false );
-
-	for( unsigned i=0; i<as.size(); i++ )
-	{
-		if( as[i] == ".." && i != 0 )
-		{
-			as.erase( as.begin()+i-1 );
-			as.erase( as.begin()+i-1 );
-			i -= 2;
-		}
-		else if( as[i] == "" && i+1 < as.size() )
-		{
-			/* Remove empty parts that aren't at the end; "foo//bar/" -> "foo/bar/". */
-			as.erase( as.begin()+i );
-			i -= 1;
-		}
-		else if( as[i] == "." && i != 0 )
-		{
-			as.erase( as.begin()+i );
-			i -= 1;
-		}
-	}
-	sPath = join( "/", as );
-}
-
 RageFile::RageFile()
 {
     m_File = NULL;
