@@ -478,6 +478,27 @@ void RemoveReference( const RageFileObj *obj )
 	g_Refs.erase( it );
 }
 
+/*
+ * Return true if the given path should use slow, reliable writes.
+ *
+ * I havn't decided if it's better to do this here, or to specify SLOW_FLUSH
+ * manually each place we want it.  This seems more reliable (we might forget
+ * somewhere and not notice), and easier (don't have to pass flags down to IniFile::Write,
+ * etc).
+ */
+static bool PathUsesSlowFlush( const CString &sPath )
+{
+	static const char *FlushPaths[] =
+	{
+		"Data/"
+	};
+
+	for( int i = 0; i < ARRAYSIZE(FlushPaths); ++i )
+		if( !strncmp( sPath, FlushPaths[i], strlen(FlushPaths[i]) ) )
+			return true;
+	return false;
+}
+
 /* Used only by RageFile: */
 RageFileObj *RageFileManager::Open( const CString &sPath, int mode, RageFile &p, int &err )
 {
@@ -485,9 +506,12 @@ RageFileObj *RageFileManager::Open( const CString &sPath, int mode, RageFile &p,
 
 	err = ENOENT;
 
+	if( (mode & RageFile::WRITE) && PathUsesSlowFlush(sPath) )
+		mode |= RageFile::SLOW_FLUSH;
+
 	/* If writing, we need to do a heuristic to figure out which driver to write with--there
 	 * may be several that will work. */
-	if( mode == RageFile::WRITE )
+	if( mode & RageFile::WRITE )
 		return OpenForWriting( sPath, mode, p, err );
 
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
