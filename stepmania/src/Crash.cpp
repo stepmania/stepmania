@@ -35,9 +35,6 @@
 HINSTANCE GotoURL(const char *url);
 static void DoSave(const EXCEPTION_POINTERS *pExc);
 
-/* in StepMania.cpp */
-void CleanupForRestart();
-
 ///////////////////////////////////////////////////////////////////////////
 
 #define CODE_WINDOW (256)
@@ -374,7 +371,16 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc) {
 	 * the crash dialog. */
 	ShowWindow( g_hWndMain, SW_HIDE );
 
-	int ret = DialogBoxParam(g_hInstance, MAKEINTRESOURCE(IDD_DISASM_CRASH), NULL, CrashDlgProc, (LPARAM)pExc);
+	/* Little trick to get an HINSTANCE of ourself without having access to the hwnd ... */
+	int ret;
+	{
+		TCHAR szFullAppPath[MAX_PATH];
+		GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
+		HINSTANCE handle = LoadLibrary(szFullAppPath);
+
+		ret = DialogBoxParam(handle, MAKEINTRESOURCE(IDD_DISASM_CRASH), g_hWndMain, CrashDlgProc, (LPARAM)pExc);
+	}
+
 	/* Returns TRUE if we want to pop up the standard crash box;
 	 * FALSE if we should just die. */
 	VDDebugInfoDeinit(&g_debugInfo);
@@ -1455,10 +1461,6 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				return TRUE;
 			case IDC_BUTTON_RESTART:
 				{
-					/* Clear the startup mutex, since we're starting a new
-					 * instance before ending ourself. */
-					CleanupForRestart();
-
 					char cwd[MAX_PATH];
 					SpliceProgramPath(cwd, MAX_PATH, "");
 
