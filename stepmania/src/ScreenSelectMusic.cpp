@@ -726,7 +726,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		
 		m_bGoToOptions = true;
 		m_sprOptionsMessage.SetState( 1 );
-		SOUND->PlayOnce( THEME->GetPathToS("Common start") );
+		SCREENMAN->PlayStartSound();
 		return;
 	}
 

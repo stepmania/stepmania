@@ -128,7 +128,7 @@ void ScreenTestInput::MenuBack( PlayerNumber pn )
 {
 	if(!m_Menu.IsTransitioning())
 	{
-		SOUND->PlayOnce( THEME->GetPathToS("Common start") );
+		SCREENMAN->PlayStartSound();
 		m_Menu.StartTransitioning( SM_GoToPrevScreen );		
 	}
 }

@@ -1146,11 +1146,11 @@ CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature,
 	bool bResult = DISPLAY->SaveScreenshot( sPath, fmt );
 	if( !bResult )
 	{
-		SOUND->PlayOnce( THEME->GetPathToS("Common invalid") );
+		SCREENMAN->PlayInvalidSound();
 		return "";
 	}
 
-	SOUND->PlayOnce( THEME->GetPathToS("Common screenshot") );
+	SCREENMAN->PlayScreenshotSound();
 
 	// We wrote a new file, and SignFile won't pick it up unless we invalidate
 	// the Dir cache.  There's got to be a better way of doing this than 
@@ -1198,7 +1198,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit);
 		BOOKKEEPER->CoinInserted();
 		SCREENMAN->RefreshCreditsMessages();
-		SOUND->PlayOnce( THEME->GetPathToS("Common coin") );
+		SCREENMAN->PlayCoinSound();
 		return false;	// Attract need to know because they go to TitleMenu on > 1 credit
 	}
 

@@ -20,6 +20,7 @@
 #include "MenuInput.h"
 #include "StyleInput.h"
 #include "BitmapText.h"
+#include "RageSound.h"
 
 class Screen;
 struct Menu;
@@ -71,6 +72,19 @@ private:
 	Screen* MakeNewScreen( CString sClassName );
 	void SetFromNewScreen( Screen *pNewScreen, bool Stack );
 	CString m_DelayedScreen;
+
+	// Keep these sounds always loaded, because they could be 
+	// played at any time.  We want to eliminate SOUND->PlayOnce
+public:
+	void PlayStartSound()		{ m_soundStart.Play(); }
+	void PlayCoinSound()		{ m_soundCoin.Play(); }
+	void PlayInvalidSound()		{ m_soundInvalid.Play(); }
+	void PlayScreenshotSound()	{ m_soundScreenshot.Play(); }
+private:
+	RageSound	m_soundStart;
+	RageSound	m_soundCoin;
+	RageSound	m_soundInvalid;
+	RageSound	m_soundScreenshot;
 };
 
 

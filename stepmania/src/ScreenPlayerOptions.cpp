@@ -114,7 +114,7 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 		{
 			m_bGoToOptions = true;
 			m_sprOptionsMessage.SetState( 1 );
-			SOUND->PlayOnce( THEME->GetPathToS("Common start") );
+			SCREENMAN->PlayStartSound();
 		}
 	}
 

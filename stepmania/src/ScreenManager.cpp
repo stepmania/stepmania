@@ -342,6 +342,12 @@ ScreenManager::ScreenManager()
 	m_ScreenBuffered = NULL;
 
 	m_MessageSendOnPop = SM_None;
+
+
+	m_soundStart.Load( THEME->GetPathS("Common","start") );
+	m_soundCoin.Load( THEME->GetPathS("Common","coin") );
+	m_soundInvalid.Load( THEME->GetPathS("Common","invalid") );
+	m_soundScreenshot.Load( THEME->GetPathS("Common","screenshot") );
 }
 
 

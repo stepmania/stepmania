@@ -114,7 +114,7 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 				SOUND->StopMusic();
 				/* We already played the coin sound.  Don't play it again. */
 				if( MenuI.button != MENU_BUTTON_COIN )
-					SOUND->PlayOnce( THEME->GetPathToS("Common coin") );
+					SCREENMAN->PlayCoinSound();
 				SDL_Delay( (int)(JOIN_PAUSE_SECONDS*1000) );	// do a little pause, like the arcade does
 				LOG->Trace("ScreenAttract::AttractInput: go to ScreenTitleMenu" );
 				SCREENMAN->SetNewScreen( "ScreenTitleMenu" );

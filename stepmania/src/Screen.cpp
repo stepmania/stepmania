@@ -198,7 +198,7 @@ bool Screen::JoinInput( const DeviceInput& DeviceI, const InputEventType type, c
 		PROFILEMAN->LoadFirstAvailableProfile( MenuI.player );
 		SCREENMAN->RefreshCreditsMessages();
 
-		SOUND->PlayOnce( THEME->GetPathToS("Common start") );
+		SCREENMAN->PlayStartSound();
 
 		// if first player to join, set start time
 		if( GAMESTATE->GetNumSidesJoined() == 1 )
