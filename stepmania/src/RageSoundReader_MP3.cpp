@@ -754,7 +754,7 @@ int RageSoundReader_MP3::Read( char *buf, unsigned len )
 
 bool RageSoundReader_MP3::MADLIB_rewind()
 {
-	this->file.Rewind();
+	this->file.Seek(0);
 			
 	mad_frame_mute(&mad->Frame);
 	mad_synth_mute(&mad->Synth);
