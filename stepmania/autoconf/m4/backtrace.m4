@@ -1,21 +1,3 @@
-# See if we have a system backtrace().
-AC_DEFUN(SM_FUNC_BACKTRACE,
-[
-    AC_MSG_CHECKING(for working backtrace)
-    AC_TRY_RUN(
-    [
-	    #include <execinfo.h>
-	    int main()
-	    {
-		    void *BacktracePointers[128];
-		    return backtrace (BacktracePointers, 128) <= 0? 1:0;
-	    }
-    ], have_sys_backtrace=yes,have_sys_backtrace=no,have_sys_backtrace=no
-    )
-    AC_MSG_RESULT($have_sys_backtrace)
-])
-
-
 # See if we have a working backtrace_symbols.
 AC_DEFUN(SM_FUNC_BACKTRACE_SYMBOLS,
 [
@@ -75,18 +57,6 @@ AC_DEFUN(SM_CHECK_CRASH_HANDLER,
 	    have_backtrace=yes
 	    ;;
     esac
-
-
-    if test "$have_backtrace" != "yes"; then
-	    # See if we have a system backtrace():
-	    SM_FUNC_BACKTRACE
-
-	    if test "$have_sys_backtrace" = "yes"; then
-		    AC_DEFINE([BACKTRACE_METHOD_BACKTRACE],[1],[Define backtrace type])
-		    AC_DEFINE([BACKTRACE_METHOD_TEXT],["backtrace"],[Define backtrace type])
-		    have_backtrace=yes
-	    fi
-    fi
 
     # Do we have a libdl with dladdr?
     AC_SEARCH_LIBS(dladdr, [dl],
