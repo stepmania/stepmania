@@ -226,7 +226,7 @@ const char *SignalName( int signo )
 #endif
 }
 
-void CrashSignalHandler( int signal )
+void CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 {
 	if( g_pCrashHandlerArgv0 == NULL )
 	{
@@ -236,6 +236,7 @@ void CrashSignalHandler( int signal )
 	
 	/* Block SIGPIPE, so we get EPIPE. */
 	struct sigaction sa;
+	memset( &sa, 0, sizeof(sa) );
 	sa.sa_handler = SIG_IGN;
 	if( sigaction( SIGPIPE, &sa, NULL ) != 0 )
 	{
@@ -267,26 +268,11 @@ void CrashSignalHandler( int signal )
 	// RageThread::HaltAllThreads();
 	
 	/* Do this early, so functions called below don't end up on the backtrace. */
+	BacktraceContext ctx;
+	GetSignalBacktraceContext( &ctx, uc );
 	const void *BacktracePointers[BACKTRACE_MAX_SIZE];
-	GetBacktrace( BacktracePointers, BACKTRACE_MAX_SIZE );
+	GetBacktrace( BacktracePointers, BACKTRACE_MAX_SIZE, &ctx );
 	
-	/* If we have BACKTRACE_SIGNAL_TRAMPOLINE, remove it and everything before it. */
-	for( int i = 0; BacktracePointers[i]; ++i )
-	{
-		if( BacktracePointers[i] != BACKTRACE_SIGNAL_TRAMPOLINE )
-			continue;
-
-		++i;
-
-		/* Find the terminator. */
-		int end = i;
-		while( BacktracePointers[end] )
-			++end;
-
-		memmove( &BacktracePointers[0], &BacktracePointers[i], sizeof(void*) * end-i-1 );
-		break;
-	}
-
 	/* We need to be very careful, since we're under crash conditions.  Let's fork
 	 * a process and exec ourself to get a clean environment to work in. */
 	int fds[2];

@@ -28,6 +28,11 @@ void GetBacktrace( const void **buf, size_t size, BacktraceContext *ctx = NULL )
 int GetThreadBacktraceContext( int ThreadID, BacktraceContext *ctx );
 void GetCurrentBacktraceContext( BacktraceContext *ctx );
 
+/* Set up a BacktraceContext to get a backtrace after receiving a signal, given
+ * a ucontext_t (see sigaction(2)).  (This interface is UNIX-specific.) */
+#include <ucontext.h>
+void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc );
+
 #define BACKTRACE_METHOD_NOT_AVAILABLE ((void*) -1)
 #define BACKTRACE_SIGNAL_TRAMPOLINE ((void*) -2)
 

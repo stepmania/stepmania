@@ -14,6 +14,14 @@
 #if defined(BACKTRACE_METHOD_X86_LINUX)
 #include "LinuxThreadHelpers.h"
 
+void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
+{
+	ctx->esp = (long) uc->uc_mcontext.gregs[REG_ESP];
+	ctx->eip = (long) uc->uc_mcontext.gregs[REG_EIP];
+	ctx->ebp = (long) uc->uc_mcontext.gregs[REG_EBP];
+	ctx->pid = GetCurrentThreadId();
+}
+
 void GetCurrentBacktraceContext( BacktraceContext *ctx )
 {
 	register void *esp __asm__ ("esp");
@@ -201,10 +209,6 @@ static void do_backtrace( const void **buf, size_t size, BacktraceContext *ctx )
 	{
 		StackFrame *link;
 		char *return_address;
-
-		/* These are only relevant if the frame is a signal trampoline. */
-		int signal;
-		sigcontext sig;
 	};
 
 	StackFrame *frame = (StackFrame *) ctx->ebp;
@@ -226,47 +230,10 @@ static void do_backtrace( const void **buf, size_t size, BacktraceContext *ctx )
 		//if( frame->return_address == (void*) CrashSignalHandler )
 		//	continue;
 
-		/*
-		 * The stack return stub is:
-		 *
-		 * 0x401139d8 <sigaction+280>:     pop    %eax			0x58
-		 * 0x401139d9 <sigaction+281>:     mov    $0x77,%eax	0xb8 0x77 0x00 0x00 0x00
-		 * 0x401139de <sigaction+286>:     int    $0x80			0xcd 0x80
-		 *
-		 * This will be different if using realtime signals, as will the stack layout.
-		 *
-		 * If we detect this, it means this is a stack frame returning from a signal.
-		 * Ignore the return_address and use the sigcontext instead.
-		 */
-		const char comp[] = { 0x58, 0xb8, 0x77, 0x0, 0x0, 0x0, 0xcd, 0x80 };
-		bool is_signal_return = true;
+		if( frame->return_address )
+			buf[i++] = frame->return_address;
 
-		/* Ugh.  Linux 2.6 is putting the return address in a place that isn't listed
-		 * as readable in /proc/pid/maps.  This is probably brittle. */
-		if( frame->return_address != (void*)0xffffe420 &&
-			find_address(frame->return_address, readable_begin, readable_end) == -1)
-			is_signal_return = false;
-
-		for( unsigned pos = 0; is_signal_return && pos < sizeof(comp); ++pos )
-			if(frame->return_address[pos] != comp[pos])
-				is_signal_return = false;
-
-		void *to_add = NULL;
-		if( is_signal_return )
-		{
-			/* Mark the signal trampoline. */
-			if( i < size-1 )
-				buf[i++] = BACKTRACE_SIGNAL_TRAMPOLINE;
-
-			to_add = (void *) frame->sig.eip;
-		}
-		else
-			to_add = frame->return_address;
-
-		if( i < size-1 && to_add )
-			buf[i++] = to_add;
-
-		/* frame always goes down.  Make sure it doesn't go up; that could
+		/* frame always goes up.  Make sure it doesn't go down; that could
 		 * cause an infinite loop. */
 		if( frame->link <= frame )
 			break;
