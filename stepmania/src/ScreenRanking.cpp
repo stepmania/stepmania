@@ -464,8 +464,8 @@ void ScreenRanking::SetPage( PageToShow pts )
 				m_sprCategory.Load( path );
 				m_sprCategory.SetDiffuseAlpha(1);
 			} else {
-				m_textCategory.SetZoom(1);
-				m_textCategory.SetTextMaxWidth( CATEGORY_WIDTH, pts.pCourse->m_sName );
+				m_textCategory.SetMaxWidth( CATEGORY_WIDTH );
+				m_textCategory.SetText( pts.pCourse->m_sName );
 				m_textCategory.SetDiffuseAlpha(1);
 			}
 
@@ -523,8 +523,8 @@ void ScreenRanking::SetPage( PageToShow pts )
 			m_banner.ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
 			m_banner.SetDiffuseAlpha(1);
 
-			m_textCategory.SetZoom(1);
-			m_textCategory.SetTextMaxWidth( CATEGORY_WIDTH, pts.pSong->GetFullTranslitTitle() );
+			m_textCategory.SetMaxWidth( CATEGORY_WIDTH );
+			m_textCategory.SetText( pts.pSong->GetFullTranslitTitle() );
 			m_textCategory.SetDiffuseAlpha(1);
 		
 			m_sprType.SetDiffuse( RageColor(1,1,1,1) );

@@ -129,7 +129,6 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 			if ( pSong == NULL )  // no such song
 				continue;
 
-			/* Reset zoom before using SetTextMaxWidth. */
 			text->SetZoom(ScrollingTextZoom);
 
 			if (pSong && pSong->m_pSong != NULL)
@@ -138,14 +137,16 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 				CString subtitle = pSong->m_pSong->GetDisplaySubTitle();
 				if( subtitle != "" )
 					title = title + "\n" + subtitle;
-				text->SetTextMaxWidth( MaxWidth, title );
+				text->SetMaxWidth( MaxWidth );
+				text->SetText( title );
 			}
 			else		 // song is missing, might be a course
 			{
 				Course *crs = SONGMAN->FindCourse( DisplayedSong );
 				if (crs != NULL)
 				{
-					text->SetTextMaxWidth( MaxWidth, crs->m_sName );
+					text->SetMaxWidth( MaxWidth );
+					text->SetText( crs->m_sName );
 					text->Command("Diffuse,0,1,0,1");
 				}
 				else   // entry isn't a song or course
@@ -256,7 +257,6 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 			DisplayedSong.MakeUpper();
 			UnlockEntry *pSong = UNLOCKSYS->FindLockEntry(DisplayedSong);
 
-			/* Reset zoom before using SetTextMaxWidth. */
 			NewText->SetZoom(UNLOCK_TEXT_SCROLL_ZOOM);
 
 			CString title;
@@ -272,7 +272,8 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 
 			if( subtitle != "" )
 				title = title + "\n" + subtitle;
-			NewText->SetTextMaxWidth( MaxWidth, title );
+			NewText->SetMaxWidth( MaxWidth );
+			NewText->SetText( title );
 
 			RageColor color = SONGMAN->GetGroupColor(pSong->m_pSong->m_sGroupName);
 			NewText->SetGlobalDiffuseColor(color);

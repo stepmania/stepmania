@@ -165,9 +165,9 @@ void DifficultyList::SetFromGameState()
 
 			Difficulty dc = pSteps->GetDifficulty();
 			
-			m_Descriptions[m].SetZoomX(1);
 			CString s = SONGMAN->GetDifficultyThemeName(dc);
-			m_Descriptions[m].SetTextMaxWidth( DESCRIPTION_MAX_WIDTH, s );
+			m_Descriptions[m].SetMaxWidth( DESCRIPTION_MAX_WIDTH );
+			m_Descriptions[m].SetText( s );
 			/* Don't mess with alpha; it might be fading on. */
 			m_Descriptions[m].SetDiffuseColor( SONGMAN->GetDifficultyColor(dc) );
 			

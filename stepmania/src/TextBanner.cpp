@@ -101,9 +101,13 @@ void TextBanner::LoadFromString(
 	m_textSubTitle.SetZoom( fSubTitleZoom );
 	m_textArtist.SetZoom( fArtistZoom );
 
-	m_textTitle.SetTextMaxWidth( MAX_TITLE_WIDTH, sDisplayTitle, sTranslitTitle );
-	m_textSubTitle.SetTextMaxWidth( MAX_SUB_TITLE_WIDTH, sDisplaySubTitle, sTranslitSubTitle );
-	m_textArtist.SetTextMaxWidth( MAX_ARTIST_WIDTH, sDisplayArtist, sTranslitArtist );
+	m_textTitle.SetMaxWidth( MAX_TITLE_WIDTH );
+	m_textSubTitle.SetMaxWidth( MAX_SUB_TITLE_WIDTH );
+	m_textArtist.SetMaxWidth( MAX_ARTIST_WIDTH );
+
+	m_textTitle.SetText( sDisplayTitle, sTranslitTitle );
+	m_textSubTitle.SetText( sDisplaySubTitle, sTranslitSubTitle );
+	m_textArtist.SetText( sDisplayArtist, sTranslitArtist );
 
 	const float fTitleY		= bTwoLines ? TWO_LINES_TITLE_Y		: THREE_LINES_TITLE_Y;
 	const float fSubTitleY	= bTwoLines ? 0.0f					: THREE_LINES_SUB_TITLE_Y;
