@@ -139,53 +139,6 @@ void MsdFile::ReadBuf( char *buf, int len )
 		{
 			i++; /* skip */
 			value_start = i;
-			/* If there's a \001 (^A) after the : (possibly separated by whitespace),
-			 * it's binary. */
-			bool Found001 = false;
-			int pos = value_start;
-			do {
-				if(buf[pos] == '\001') { Found001 = true; break; }
-				if(!strchr("\r\n\t ", buf[pos])) break;
-				pos++;
-			} while(pos < len);
-
-
-			if(Found001)
-			{
-				value_start = pos;
-				value_start++;
-				
-				/* Binary param.  Expect digits followed by a comma. */
-				if(!isdigit(buf[value_start]))
-				{
-					LOG->Trace("Expected digit at position %i", value_start);
-					ReadingValue = false; /* so we skip to the next value */
-					continue;
-				}
-				int bytes = atoi(buf+value_start);
-				if(bytes < 0) bytes = 0; /* sanity */
-				while(isdigit(buf[value_start])) 
-					value_start++;
-				if(buf[value_start] != ',')
-				{
-					LOG->Trace("Expected comma at position %i", value_start);
-					ReadingValue = false; /* so we skip to the next value */
-					continue;
-				}
-				value_start++;
-
-				/* Make sure we have enough data left. */
-				if(len - value_start < bytes)
-				{
-					LOG->Trace("%i bytes not available at position %i", value_start);
-					ReadingValue = false; /* so we skip to the next value */
-					continue;
-				}
-
-				AddParam(buf+value_start, bytes);
-				i = value_start + bytes;
-				value_start = -1;
-			}
 			continue;
 		}
 
