@@ -90,8 +90,13 @@ DSound::DSound()
 		RageException::ThrowNonfatal(hr_ssprintf(hr, "DirectSoundCreate"));
 
 #ifndef _XBOX
-	DirectSoundEnumerate(EnumCallback, 0);
-	
+	static bool bShownInfo = false;
+	if( !bShownInfo )
+	{
+		bShownInfo = true;
+		DirectSoundEnumerate(EnumCallback, 0);
+	}
+
 	/* Try to set primary mixing privileges */
 	hr = ds->SetCooperativeLevel( GetDesktopWindow(), DSSCL_PRIORITY );
 #endif
