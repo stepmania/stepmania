@@ -353,8 +353,13 @@ CString Font::GetFontName(CString FileName)
 	if(drop_ext.Compare(FileName))
 		FileName.erase(FileName.size()-4);
 
-	/* If it ends in a dimension spec, remove it. */
+	/* If it ends in a resolution spec, remove it. */
 	CStringArray mat;
+	static Regex ResSpec("( \\(res [0-9]+x[0-9]+\\))$");
+	if(ResSpec.Compare(FileName, mat))
+		FileName.erase(FileName.size()-mat[0].size());
+
+	/* If it ends in a dimension spec, remove it. */
 	static Regex DimSpec("( [0-9]+x[0-9]+)$");
 	if(DimSpec.Compare(FileName, mat))
 		FileName.erase(FileName.size()-mat[0].size());
