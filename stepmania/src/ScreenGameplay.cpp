@@ -933,11 +933,31 @@ bool ScreenGameplay::AllAreInDanger()
 
 bool ScreenGameplay::AllAreFailing()
 {
+
+	if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_PASSMARK )
+	{
+		bool bFoundAPasser = true; // assume nobody passed until proven otherwise
+
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
+				if( (m_pLifeMeter[p]->GetLife()) > 0.7f ) // 70 % is the pass mark
+				{
+					bFoundAPasser = false;
+				}
+		}
+		return bFoundAPasser;
+	}
+	else
+	{
+
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		if( GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
 			if( (m_pLifeMeter[p] && !m_pLifeMeter[p]->IsFailing()) || 
 				(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsFailing((PlayerNumber)p)) )
 				return false;
+	
+	}
 	return true;
 }
 
@@ -1081,7 +1101,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		// show it if everyone is already failing: it's already too late and it's
 		// annoying for it to show for the entire duration of a song.
 		//
-		if( GAMESTATE->m_SongOptions.m_FailType != SongOptions::FAIL_OFF )
+		if( GAMESTATE->m_SongOptions.m_FailType != SongOptions::FAIL_OFF || GAMESTATE->m_SongOptions.m_FailType != SongOptions::FAIL_PASSMARK )
 		{
 			if( AllAreInDanger() && !AllAreFailing() )
 				m_Background.TurnDangerOn();
@@ -1608,7 +1628,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 					GAMESTATE->m_CurStageStats.iSongsPassed[p]++;
 			}
 
-			if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_END_OF_SONG  &&  AllAreFailing() )
+
+			if( (GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_END_OF_SONG || GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_PASSMARK ) &&  AllAreFailing() )
 			{
 				if( m_DancingState == STATE_OUTRO )	// ScreenGameplay already ended
 					return;		// ignore
