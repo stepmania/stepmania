@@ -319,7 +319,7 @@ RageDisplay *CreateDisplay()
 			if( !regex.Compare(sVideoDriver) )
 				continue;	// skip
 
-			LOG->Trace( "Using default graphics settings for '%s'.", sDriverRegex.c_str() );
+			LOG->Trace( "Using default graphics settings for '%s'.", sDriverRegex.size()? sDriverRegex.c_str():"(unknown card)" );
 
 			ini.GetValue( sKey, "Renderers", PREFSMAN->m_sVideoRenderers );
 			ini.GetValueI( sKey, "Width", PREFSMAN->m_iDisplayWidth );
