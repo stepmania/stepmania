@@ -474,18 +474,10 @@ void MovieTexture_FFMpeg::CreateTexture()
 	m_iTextureWidth = power_of_two(m_iImageWidth);
 	m_iTextureHeight = power_of_two(m_iImageHeight);
 
-	/* If the movie is coming in RGB, we can potentially save a lot
-	 * of time by simply sending frame updates to RageDisplay in the
-	 * format we're receiving data.  However, I think just about all
-	 * formats output data in some form of YUV, so I havn't bothered
-	 * with this yet.
-	 *
-	 * TODO: We could get a big speed bonus by doing the above if the
+	/* TODO: We could get a big speed bonus by doing the above if the
 	 * hardware renderer can handle YUV textures.  I think D3D can do
 	 * this, as well as OpenGL on the Mac, but we don't have any infrastructure
-	 * for this right now. 
-	 *
-	 * A hint: http://oss.sgi.com/projects/performer/mail/info-performer/perf-01-06/0017.html */
+	 * for this right now. */
     PixelFormat pixfmt;
 	bool PreferHighColor = (TEXTUREMAN->GetMovieColorDepth() == 32);
 	m_AVTexfmt = FindCompatibleAVFormat( pixfmt, PreferHighColor );
