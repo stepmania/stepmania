@@ -892,7 +892,10 @@ void Player::HandleStep( int col, const RageTimer &tm )
 
 		if( score == TNS_HIT_MINE )
 		{
-			m_soundMine.Play();
+			if( tn.bKeysound )
+				m_vKeysounds[tn.iKeysoundIndex].Play();
+			else
+				m_soundMine.Play();
 
 			if( m_pLifeMeter )
 				m_pLifeMeter->ChangeLife( score );
