@@ -654,7 +654,7 @@ void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 	if(GAMESTATE->m_bDemonstrationOrJukebox)
 		NoCheating = false;
 	// don't accumulate points if AutoPlay is on.
-	if( NoCheating && GAMESTATE->m_PlayerController[m_PlayerNumber] == PC_CPU )
+	if( NoCheating && GAMESTATE->m_PlayerController[m_PlayerNumber] == PC_AUTOPLAY )
 		return;
 
 	if(m_pScoreKeeper)
