@@ -160,6 +160,9 @@ case $host in
 		;;
 esac
 
+AC_ARG_ENABLE(tests, AC_HELP_STRING([--enable-tests], [Build test programs]), enable_tests=$enableval, enable_tests=no)
+AM_CONDITIONAL(BUILD_TESTS, test "$enable_tests" = "yes" )
+
 AC_CONFIG_FILES(Makefile)
 AC_CONFIG_FILES(src/Makefile)
 AC_OUTPUT
