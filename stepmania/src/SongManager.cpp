@@ -53,8 +53,18 @@ const int COURSE_SCORES_VERSION = 1;
 #define EXTRA_COLOR			THEME->GetMetricC("SongManager","ExtraColor")
 
 vector<RageColor> g_vGroupColors;
-RageColor g_ExtraColor;
+RageTimer g_LastMetricUpdate; /* can't use RageTimer globally */
 
+static void UpdateMetrics()
+{
+	if( g_LastMetricUpdate.PeekDeltaTime() < 1 )
+		return;
+
+	g_LastMetricUpdate.Touch();
+	g_vGroupColors.clear();
+	for( int i=0; i<NUM_GROUP_COLORS; i++ )
+		g_vGroupColors.push_back( GROUP_COLOR(i) );
+}
 
 SongManager::SongManager( LoadingWindow *ld )
 {
@@ -63,11 +73,6 @@ SongManager::SongManager( LoadingWindow *ld )
 	SONGMAN = this;
 	try
 	{
-		g_vGroupColors.clear();
-		for( int i=0; i<NUM_GROUP_COLORS; i++ )
-			g_vGroupColors.push_back( GROUP_COLOR(i) );
-		g_ExtraColor = EXTRA_COLOR;
-
 		InitSongArrayFromDisk( ld );
 		InitCoursesFromDisk();
 		InitAutogenCourses();
@@ -77,6 +82,9 @@ SongManager::SongManager( LoadingWindow *ld )
 		SONGMAN = NULL;
 		throw;
 	}
+
+	g_LastMetricUpdate.SetZero();
+	UpdateMetrics();
 }
 
 SongManager::~SongManager()
@@ -611,6 +619,8 @@ bool SongManager::DoesGroupExist( CString sGroupName )
 
 RageColor SongManager::GetGroupColor( const CString &sGroupName )
 {
+	UpdateMetrics();
+
 	// search for the group index
 	unsigned i;
 	for( i=0; i<m_arrayGroupNames.size(); i++ )
