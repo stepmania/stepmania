@@ -697,10 +697,9 @@ CString ThemeManager::GetMetric( const CString &sClassName, const CString &sValu
 
 void ThemeManager::EvaluateString( CString &sText )
 {
-	/* If the string begins with an @, treat it as a raw Lua expression, and don't do any
-	 * other filtering.  (XXX: maybe we should still do font aliases) */
-	if( LUA->RunAtExpressionS( sText ) )
-		return;
+	/* If the string begins with an @, treat it as a Lua expression.
+	 * Still do font aliases on the resulting string. */
+	LUA->RunAtExpressionS( sText );
 
 	// "::" means newline since you can't use line breaks in an ini file.
 	// XXX: this makes it impossible to put a colon at the end of a line, eg: "Color:\nRed"
