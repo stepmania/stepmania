@@ -888,7 +888,7 @@ void Sprite::StretchTexCoords( float fX, float fY )
 	SetCustomTextureCoords( fTexCoords );
 }
 
-void Sprite::HandleCommand( const ParsedCommand &command )
+void Sprite::HandleCommand( const ActorCommand &command )
 {
 	BeginHandleParams;
 

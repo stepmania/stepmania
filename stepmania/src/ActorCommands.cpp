@@ -6,7 +6,7 @@
 #include "LuaHelpers.h"
 
 
-void IncorrectActorParametersWarning( const ParsedCommand &command, int iMaxIndexAccessed )
+void IncorrectActorParametersWarning( const ActorCommand &command, int iMaxIndexAccessed )
 {
 	const CString sError = ssprintf( "Actor::HandleCommand: Wrong number of parameters in command '%s'.  Expected %d but there are %u.",
 		command.GetOriginalCommandString().c_str(), iMaxIndexAccessed+1, unsigned(command.vTokens.size()) );
@@ -14,7 +14,7 @@ void IncorrectActorParametersWarning( const ParsedCommand &command, int iMaxInde
 	Dialog::OK( sError );
 }
 
-void ParsedCommandToken::Set( const CString &sParam )
+void ActorCommandToken::Set( const CString &sParam )
 {
 	s = sParam;
 	CString s = sParam;
@@ -23,7 +23,7 @@ void ParsedCommandToken::Set( const CString &sParam )
 	bColorIsValid = c.FromString( sParam );
 }
 
-void ParsedCommand::Set( const CString &sCommand )
+void ActorCommand::Set( const CString &sCommand )
 {
 	CStringArray vsTokens;
 	split( sCommand, ",", vsTokens, false );	// don't ignore empty
@@ -44,7 +44,7 @@ void ParsedCommand::Set( const CString &sCommand )
 	}
 }
 
-CString ParsedCommand::GetOriginalCommandString() const
+CString ActorCommand::GetOriginalCommandString() const
 {
 	CStringArray asTokens;
 	for( unsigned i=0; i<vTokens.size(); i++ )
@@ -52,7 +52,7 @@ CString ParsedCommand::GetOriginalCommandString() const
 	return join( ",", asTokens );
 }
 
-void ParseCommands( const CString &sCommands, vector<ParsedCommand> &vCommandsOut )
+void ParseCommands( const CString &sCommands, vector<ActorCommand> &vCommandsOut )
 {
 	vCommandsOut.clear();
 	CStringArray vsCommands;
@@ -63,7 +63,7 @@ void ParseCommands( const CString &sCommands, vector<ParsedCommand> &vCommandsOu
 	for( unsigned i=0; i<vsCommands.size(); i++ )
 	{
 		const CString &sCommand = vsCommands[i];
-		ParsedCommand &pc = vCommandsOut[i];
+		ActorCommand &pc = vCommandsOut[i];
 		pc.Set( sCommand );
 	}
 }

@@ -246,7 +246,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 		
 		CString sRowCommands = LINE(sLineName);
 		
-		vector<ParsedCommand> vCommands;
+		vector<ActorCommand> vCommands;
 		ParseCommands( sRowCommands, vCommands );
 		
 		if( vCommands.size() < 1 )
@@ -255,7 +255,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 		OptionRowHandler hand;
 		for( unsigned part = 0; part < vCommands.size(); ++part)
 		{
-			ParsedCommand& command = vCommands[part];
+			ActorCommand& command = vCommands[part];
 
 			BeginHandleParams;
 

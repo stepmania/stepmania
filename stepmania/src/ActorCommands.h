@@ -5,7 +5,7 @@
 
 #include "RageTypes.h"
 
-struct ParsedCommandToken
+struct ActorCommandToken
 {
 	void Set( const CString &sParam );	// fill in all the different types
 
@@ -23,18 +23,18 @@ struct ParsedCommandToken
 	operator const RageColor &() const	{ return c; };
 };
 
-struct ParsedCommand
+struct ActorCommand
 {
 	void Set( const CString &sCommand );
 
-	vector<ParsedCommandToken> vTokens;
+	vector<ActorCommandToken> vTokens;
 
 	CString GetOriginalCommandString() const;	// for when reporting an error in number of params
 };
 
 // Take a command list string and return pointers to each of the tokens in the 
 // string.  sCommand list is a list of commands separated by ';'.
-void ParseCommands( const CString &sCommands, vector<ParsedCommand> &vCommandsOut );
+void ParseCommands( const CString &sCommands, vector<ActorCommand> &vCommandsOut );
 
 
 #define BeginHandleParams int iMaxIndexAccessed = 0;
@@ -44,10 +44,10 @@ void ParseCommands( const CString &sCommands, vector<ParsedCommand> &vCommandsOu
 #define bParam(i) (GetParam<bool>(command,i,iMaxIndexAccessed))
 #define cParam(i) (ColorParam(command,i,iMaxIndexAccessed))
 #define EndHandleParams if( iMaxIndexAccessed != (int)command.vTokens.size()-1 ) { IncorrectActorParametersWarning( command, iMaxIndexAccessed ); }
-void IncorrectActorParametersWarning( const ParsedCommand& command, int iMaxIndexAccessed );
+void IncorrectActorParametersWarning( const ActorCommand& command, int iMaxIndexAccessed );
 
 template<class T>
-inline T GetParam( const ParsedCommand& command, int iIndex, int& iMaxIndexAccessedOut )
+inline T GetParam( const ActorCommand& command, int iIndex, int& iMaxIndexAccessedOut )
 {
 	iMaxIndexAccessedOut = max( iIndex, iMaxIndexAccessedOut );
 	if( iIndex < int(command.vTokens.size()) )
@@ -56,13 +56,13 @@ inline T GetParam( const ParsedCommand& command, int iIndex, int& iMaxIndexAcces
 	}
 	else
 	{
-		ParsedCommandToken pct;
+		ActorCommandToken pct;
 		pct.Set( "" );
 		return (T)pct;
 	}
 }
 
-inline RageColor ColorParam( const ParsedCommand& command, int iIndex, int& iMaxIndexAccessed )
+inline RageColor ColorParam( const ActorCommand& command, int iIndex, int& iMaxIndexAccessed )
 {
 	if( command.vTokens[iIndex].bColorIsValid )
 		return GetParam<RageColor>(command,iIndex,iMaxIndexAccessed);

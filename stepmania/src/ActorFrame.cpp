@@ -73,7 +73,7 @@ void ActorFrame::RunCommandOnChildren( const CString &cmd )
 		m_SubActors[i]->Command( cmd );
 }
 
-void ActorFrame::RunCommandOnChildren( const ParsedCommand &cmd )
+void ActorFrame::RunCommandOnChildren( const ActorCommand &cmd )
 {
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->HandleCommand( cmd );
@@ -155,7 +155,7 @@ void ActorFrame::DeleteAllChildren()
 	m_SubActors.clear();
 }
 
-void ActorFrame::HandleCommand( const ParsedCommand &command )
+void ActorFrame::HandleCommand( const ActorCommand &command )
 {
 	BeginHandleParams;
 

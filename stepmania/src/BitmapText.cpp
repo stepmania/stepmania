@@ -514,7 +514,7 @@ void BitmapText::SetVertAlign( VertAlign va )
 	BuildChars();
 }
 
-void BitmapText::HandleCommand( const ParsedCommand &command )
+void BitmapText::HandleCommand( const ActorCommand &command )
 {
 	BeginHandleParams;
 

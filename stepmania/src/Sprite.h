@@ -60,7 +60,7 @@ public:
 	void ScaleToClipped( float fWidth, float fHeight );
 	static bool IsDiagonalBanner( int iWidth, int iHeight );
 
-	virtual void HandleCommand( const ParsedCommand &command );
+	virtual void HandleCommand( const ActorCommand &command );
 
 protected:
 	virtual bool LoadFromTexture( RageTextureID ID );

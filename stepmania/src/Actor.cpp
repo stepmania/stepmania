@@ -251,7 +251,7 @@ void Actor::UpdateTweening( float fDeltaTime )
 			m_start = m_current;		// set the start position
 
 			// Execute the command in this tween (if any).
-			const ParsedCommand &command = TS.command;
+			const ActorCommand &command = TS.command;
 			if( !command.vTokens.empty() )
 				this->HandleCommand( command );
 		}
@@ -618,14 +618,14 @@ void Actor::AddRotationR( float rot )
 
 void Actor::Command( const CString &sCommands )
 {
-	vector<ParsedCommand> vCommands;
+	vector<ActorCommand> vCommands;
  	ParseCommands( sCommands, vCommands );
 
 	for( unsigned i=0; i<vCommands.size(); i++ )
 		this->HandleCommand( vCommands[i] );
 }
 
-void Actor::HandleCommand( const ParsedCommand &command )
+void Actor::HandleCommand( const ActorCommand &command )
 {
 	BeginHandleParams;
 
@@ -741,7 +741,7 @@ void Actor::HandleCommand( const ParsedCommand &command )
 	else if( sName=="playcommand" )		PlayCommand( sParam(1) );
 	else if( sName=="queuecommand" )	
 	{
-		ParsedCommand newcommand = command;
+		ActorCommand newcommand = command;
 		newcommand.vTokens.erase( newcommand.vTokens.begin() );
 		QueueCommand( newcommand );
 		return;	// don't do parameter number checking
@@ -906,7 +906,7 @@ void Actor::Sleep( float time )
 	BeginTweening( 0, TWEEN_LINEAR ); 
 }
 
-void Actor::QueueCommand( ParsedCommand command )
+void Actor::QueueCommand( ActorCommand command )
 {
 	BeginTweening( 0, TWEEN_LINEAR ); 
 	DestTweenState().command = command; 

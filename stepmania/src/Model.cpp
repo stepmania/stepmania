@@ -719,7 +719,7 @@ void Model::SetSecondsIntoAnimation( float fSeconds )
 	}
 }
 
-void Model::HandleCommand( const ParsedCommand &command )
+void Model::HandleCommand( const ActorCommand &command )
 {
 	BeginHandleParams;
 
