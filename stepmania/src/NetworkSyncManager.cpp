@@ -210,6 +210,12 @@ void NetworkSyncManager::StartRequest()
 	if (!useSMserver)
 		return ;
 
+	//If it's going into demonstration (or jukebox) mode, do not 
+	//bother to sync.
+	if (GAMESTATE->m_bDemonstrationOrJukebox)
+		return ;
+
+
 	vector <char> tmp;	//Temporary vector used by receive function when waiting
 
 	LOG->Trace("Requesting Start from Server.");
@@ -295,7 +301,6 @@ void ArgStartCourse(CString CourseName)
 
 	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 		//Need to add more functionality eventually
-	
 	GAMESTATE->m_pCurCourse = desCourse;
 	GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
 
