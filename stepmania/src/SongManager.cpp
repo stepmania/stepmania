@@ -928,6 +928,9 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 	po_out.FromString( ci[0].Modifiers );
 	so_out.Init();
 	so_out.FromString( ci[0].Modifiers );
+
+	pSongOut = ci[0].pSong;
+	pNotesOut = ci[0].pNotes;
 	return true;
 }
 
