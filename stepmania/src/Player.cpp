@@ -259,11 +259,10 @@ void Player::DrawPrimitives()
 
 	float fTilt = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fPerspectiveTilt;
 	bool bReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fReverseScroll==1;
-	float fReverseScale = bReverse ? -1 : 1;
+	float fReverseScale = bReverse ? -1.0f : 1.0f;
 
 	if( fTilt != 0 )
 	{
-		DISPLAY->PushMatrix();
 		DISPLAY->EnterPerspective(45, false);
 
 		// construct view and project matrix
@@ -275,20 +274,13 @@ void Player::DrawPrimitives()
 
 		DISPLAY->LookAt(Eye, At, Up);
 	}
-	else
-		DISPLAY->PushMatrix();
 
 	m_GrayArrowRow.Draw();
 	m_NoteField.Draw();
 	m_GhostArrowRow.Draw();
 
-	if( GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fPerspectiveTilt != 0 )
-	{
+	if( fTilt != 0 )
 		DISPLAY->ExitPerspective();
-		DISPLAY->PopMatrix();
-	}
-	else
-		DISPLAY->PopMatrix();
 
 	m_Judgment.Draw();
 
