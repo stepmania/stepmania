@@ -391,8 +391,8 @@ retry:
 		/* Set the palette. */
 		GLExt::glColorTableEXT(GL_TEXTURE_2D, GL_RGBA8, 256, GL_RGBA, GL_UNSIGNED_BYTE, palette);
 
-		int RealFormat = 0;
-		GLExt::glGetColorTableParameterivEXT(GL_TEXTURE_2D, GL_COLOR_TABLE_FORMAT, reinterpret_cast<GLint*>(&RealFormat));
+		GLint RealFormat = 0;
+		GLExt::glGetColorTableParameterivEXT(GL_TEXTURE_2D, GL_COLOR_TABLE_FORMAT, &RealFormat);
 		if(RealFormat != GL_RGBA8)
 		{
 			/* This is a case I don't expect to happen; if it does, log,
@@ -444,8 +444,8 @@ retry:
 	/* If we're paletted, and didn't get the 8-bit palette we asked for ...*/
 	if(img->format->BitsPerPixel == 8)
 	{
-		int size = 0;
-		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INDEX_SIZE_EXT), reinterpret_cast<GLint*>(&size));
+		GLint size = 0;
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INDEX_SIZE_EXT), &size);
 		if(size != 8)
 		{
 			/* I don't know any reason this should actually fail (paletted textures

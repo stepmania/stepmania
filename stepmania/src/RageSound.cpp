@@ -735,7 +735,7 @@ void CircBuf::write(const char *buffer, unsigned buffer_size)
 		unsigned write_pos = start + size();
 		if(write_pos >= buf.size()) write_pos -= buf.size();
 		
-		int cpy = static_cast<int>(min(buffer_size, buf.size() - write_pos));
+		int cpy = int(min(buffer_size, buf.size() - write_pos));
 		buf.replace(write_pos, cpy, buffer, cpy);
 
 		cnt += cpy;

@@ -118,7 +118,7 @@ void RageSoundManager::Update(float delta)
 			RageSound *s = j->first;
 			FakeSound &fake = j->second;
 
-			int bytes = static_cast<int>(min(unsigned(delta * 44100*4), sizeof(buf)));
+			int bytes = int(min(unsigned(delta * 44100*4), sizeof(buf)));
 			
 			int now = int(RageTimer::GetTimeSinceStart() - fake.begin) * 44100;
 
