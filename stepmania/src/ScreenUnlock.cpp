@@ -27,7 +27,6 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 	PointsUntilNextUnlock.SetHorizAlign( Actor::align_left );
 
 	// get unlock data first
-	// GAMESTATE->m_pUnlockingSys->LoadFromDATFile("Data\\MemCard.ini");
 
 	CString sDP = ssprintf( "%d", (int)GAMESTATE->m_pUnlockingSys->DancePointsUntilNextUnlock() );
 	CString sAP = ssprintf( "%d", (int)GAMESTATE->m_pUnlockingSys->ArcadePointsUntilNextUnlock() );
@@ -39,12 +38,14 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 
 	for(int i=1; i <= THEME->GetMetricI("ScreenUnlock", "NumUnlocks"); i++)
 	{
+		Sprite* entry = new Sprite;
+
 		// new unlock graphic
-		Unlocks[i].Load( THEME->GetPathToG(ssprintf("ScreenUnlock %d icon", i)) );
+		entry->Load( THEME->GetPathToG(ssprintf("ScreenUnlock %d icon", i)) );
 
 		// set graphic location
-		Unlocks[i].SetName( ssprintf("Unlock%d",i) );
-		SET_XY( Unlocks[i] );
+		entry->SetName( ssprintf("Unlock%d",i) );
+		SET_XY( *entry );
 
 		// get pertaining songentry
 		SongEntry *pSong = GAMESTATE->m_pUnlockingSys->FindSong(
@@ -57,10 +58,12 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 		if( pSong == NULL)
 			continue;
 
-		Unlocks[i].Command(IconCommand);
+		entry->Command(IconCommand);
+
+		Unlocks.push_back(entry);
 
 		if ( !pSong->isLocked )
-			this->AddChild(&Unlocks[i]);
+			this->AddChild(Unlocks[i-1]);
 	}
 
 	// scrolling text
@@ -81,46 +84,57 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 
 		for(int i = 1; i <= NumberUnlocks; i++)
 		{
-			item[i].LoadFromFont( THEME->GetPathToF("_shared2") );
-			item[i].SetHorizAlign( Actor::align_left );
+			BitmapText* text = new BitmapText;
 
-			CString SongText = THEME->GetMetric("ScreenUnlock", 
-				ssprintf("Unlock%dSong", i));
+			text->LoadFromFont( THEME->GetPathToF("_shared2") );
+			text->SetHorizAlign( Actor::align_left );
 
+			CString SongText = THEME->GetMetric("ScreenUnlock", ssprintf("Unlock%dSong", i));
 			SongText.MakeUpper();
 			SongEntry *pSong = GAMESTATE->m_pUnlockingSys->FindSong(SongText);
 
 			if (pSong != NULL && pSong->ActualSong != NULL)
-			{
-				LOG->Trace("Entry %d, pointer=%d", i, (int)pSong);
 				SongText = pSong->ActualSong->GetFullDisplayTitle();
-			}
-			else if (pSong == NULL)  // song is not in library
-				item[i].Command("Diffuse,0,1,0,1");
-			else					 // song is mistyped
-				item[i].Command("Diffuse,1,0,0,1");
+			else					 // song is missing
+				text->Command("Diffuse,1,0,0,1");
 
 			BreakLine(SongText);
+			text->SetZoom(ScrollingTextZoom);
+			text->SetTextMaxWidth(MaxWidth, SongText );
 
-			item[i].SetZoom(ScrollingTextZoom);
-			item[i].SetTextMaxWidth(MaxWidth, SongText );
+			if (pSong->isLocked) {
+				text->SetText("????????");
+				text->SetZoom(ScrollingTextZoom * 1.99); }
 
-			if (pSong->isLocked)
+			text->SetXY(ScrollingTextX, ScrollingTextStartY);
+			text->Command( ssprintf("diffusealpha,0;sleep,%f;linear,0.5;diffusealpha,1;linear,%f;y,%f;linear,0.5;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY) );
+
+			item.push_back(text);
+			this->AddChild(item[i-1]);
+
+			if (THEME->GetMetricI("ScreenUnlock", "UnlockTextScroll") == 2)
 			{
-				item[i].SetText("????????");
-				item[i].SetZoom(ScrollingTextZoom * 1.99);
+				Sprite* IconCount = new Sprite;
+
+				// new unlock graphic
+				IconCount->Load( THEME->GetPathToG(ssprintf("ScreenUnlock %d icon", i)) );
+
+				// set graphic location
+				IconCount->SetXY( THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollIconX"),
+					ScrollingTextStartY);
+
+				float IconSize = THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollIconSize");
+
+				IconCount->SetHeight(IconSize);
+				IconCount->SetWidth(IconSize);
+
+				IconCount->Command( ssprintf("diffusealpha,0;sleep,%f;linear,0.5;diffusealpha,1;linear,%f;y,%f;linear,0.5;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY) );
+
+				ItemIcons.push_back(IconCount);
+
+				this->AddChild(ItemIcons[i-1]);
+					
 			}
-
-			item[i].SetXY(ScrollingTextX, ScrollingTextStartY);
-
-			CString commands;
-
-			commands = ssprintf("diffusealpha,0;sleep,%f;linear,0.5;diffusealpha,1;linear,%f;y,%f;linear,0.5;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY);
-
-			LOG->Trace("Updated text %d: %s", i, SongText.c_str() );
-
-			item[i].Command(commands);
-			this->AddChild(&item[i]);
 		}
 	}
 

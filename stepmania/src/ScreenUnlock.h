@@ -24,8 +24,9 @@ public:
 	ScreenUnlock();
 protected:
 	BitmapText PointsUntilNextUnlock;
-	Sprite Unlocks[NUM_UNLOCKS];       // support 30 unlocks right now
-	BitmapText item[NUM_UNLOCKS];      // for scrolling text
+	vector<Sprite*> Unlocks;
+	vector<BitmapText*> item; // scrolling text
+	vector<Sprite*> ItemIcons;  // icons for scrolling text
 
 	void BreakLine(CString& line);			// used in scrollingtext
 };
