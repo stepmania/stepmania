@@ -6,6 +6,8 @@
 #include <map>
 using namespace std;
 
+class RageBasicFile;
+
 class IniFile  
 {
 public:
@@ -35,7 +37,9 @@ public:
 	const CString &GetError() const { return m_sError; }
 
 	bool ReadFile( const CString &sPath );
+	bool ReadFile( RageBasicFile &sFile );
 	bool WriteFile( const CString &sPath );
+	bool WriteFile( RageBasicFile &sFile );
 	void Reset();
 
 	int GetNumKeys() const;

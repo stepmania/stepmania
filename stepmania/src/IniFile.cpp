@@ -17,6 +17,11 @@ bool IniFile::ReadFile( const CString &sPath )
 		return 0;
 	}
 
+	return ReadFile( f );
+}
+
+bool IniFile::ReadFile( RageBasicFile &f )
+{
 	CString keyname;
 	while( 1 )
 	{
@@ -66,9 +71,14 @@ bool IniFile::WriteFile( const CString &sPath )
 		return false;
 	}
 
+	return IniFile::WriteFile( f );
+}
+
+bool IniFile::WriteFile( RageBasicFile &f )
+{
 	for( keymap::const_iterator k = keys.begin(); k != keys.end(); ++k )
 	{
-		if (k->second.empty())
+		if( k->second.empty() )
 			continue;
 
 		if( f.PutLine( ssprintf("[%s]", k->first.c_str()) ) == -1 )
