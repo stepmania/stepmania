@@ -262,7 +262,7 @@ void LuaGoalType(lua_State* L)
 	{
 		CString s = GoalTypeNames[gt];
 		s.MakeUpper();
-		LUA->SetGlobal( "GOAL_TYPE_"+s, gt );
+		LUA->SetGlobal( "GOAL_"+s, gt );
 	}
 }
 REGISTER_WITH_LUA_FUNCTION( LuaGoalType );
