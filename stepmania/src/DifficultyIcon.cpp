@@ -64,7 +64,7 @@ void DifficultyIcon::SetFromDifficulty( PlayerNumber pn, Difficulty dc )
 	{
 	case NUM_DIFFICULTIES:		SetState( dc );			break;
 	case NUM_DIFFICULTIES*2:	SetState( dc*2+pn );	break;
-	default:		FAIL_M( ssprintf( "%s: %i", this->GetID().c_str(), GetNumStates()) );
+	default:					m_bBlank = true;		break;
 	}	
 }
 
