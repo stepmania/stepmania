@@ -226,6 +226,12 @@ bool CreateDirectories( CString Path )
 DirectFilenameDB::DirectFilenameDB( CString root_ )
 {
 	ExpireSeconds = 30;
+	SetRoot( root_ );
+}
+
+
+void DirectFilenameDB::SetRoot( CString root_ )
+{
 	root = root_;
 	if( root.Right(1) != "/" )
 		root += '/';

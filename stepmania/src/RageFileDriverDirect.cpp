@@ -176,6 +176,7 @@ bool RageFileDriverDirect::Remount( const CString &sPath )
 	root = sPath;
 	if( root.Right(1) != "/" )
 		root += '/';
+	((DirectFilenameDB *) FDB)->SetRoot( sPath );
 
 	/* If the root path doesn't exist, create it. */
 	CreateDirectories( root );

@@ -35,12 +35,13 @@ bool PathReady( CString path );
 #include "RageUtil_FileDB.h"
 class DirectFilenameDB: public FilenameDB
 {
+public:
+	DirectFilenameDB( CString root );
+	void SetRoot( CString root );
+
 protected:
 	virtual void PopulateFileSet( FileSet &fs, const CString &sPath );
 	CString root;
-
-public:
-	DirectFilenameDB( CString root_ );
 };
 
 #endif

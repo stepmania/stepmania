@@ -503,13 +503,15 @@ void RageFileManager::Remount( CString sMountpoint, CString sPath )
 	RageFileDriver *pDriver = FILEMAN->GetFileDriver( sMountpoint );
 	if( pDriver == NULL )
 	{
-		LOG->Warn( "Remount(%s,%s): mountpoint not found",
-			sMountpoint.c_str(), sPath.c_str() );
+		if( LOG )
+			LOG->Warn( "Remount(%s,%s): mountpoint not found", sMountpoint.c_str(), sPath.c_str() );
 		return;
 	}
 
 	if( !pDriver->Remount(sPath) )
 		LOG->Warn( "Remount(%s,%s): remount failed (does the driver support remounting?)" );
+	else
+		pDriver->FlushDirCache( "" );
 
 	FILEMAN->ReleaseFileDriver( pDriver );
 }
