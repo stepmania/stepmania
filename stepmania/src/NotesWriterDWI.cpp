@@ -224,9 +224,13 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 	if( fp == NULL )
 		RageException::Throw( "Error opening song file '%s' for writing.", sPath.GetString() );
 
-	if(out.GetFullTitle().GetLength() != 0)
-		fprintf( fp, "#TITLE:%s;\n", out.GetFullTitle().GetString() );
-	if(out.m_sArtist.GetLength() != 0)
+	/* If we have transliterations, write them instead of the real title, since
+	 * DWI doesn't support UTF-8. */
+	if(!out.GetSortTitle().empty())
+		fprintf( fp, "#TITLE:%s;\n", out.GetSortTitle().GetString() );
+	if(!out.m_sArtistTranslit.empty())
+		fprintf( fp, "#ARTIST:%s;\n", out.m_sArtistTranslit.GetString() );
+	else if(!out.m_sArtist.empty())
 		fprintf( fp, "#ARTIST:%s;\n", out.m_sArtist.GetString() );
 	ASSERT( out.m_BPMSegments[0].m_fStartBeat == 0 );
 	fprintf( fp, "#BPM:%.3f;\n", out.m_BPMSegments[0].m_fBPM );
