@@ -534,7 +534,7 @@ LONG GetRegKey(HKEY key, LPCTSTR subkey, LPTSTR retdata)
     if (retval == ERROR_SUCCESS) {
 		long datasize = MAX_PATH;
 		TCHAR data[MAX_PATH];
-		RegQueryValue(hkey, NULL, data, &datasize);
+		RegQueryValue(hkey, "Favorites", data, &datasize);
 		lstrcpy(retdata,data);
 		RegCloseKey(hkey);
 	}

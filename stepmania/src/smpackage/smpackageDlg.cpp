@@ -210,16 +210,41 @@ void GetFilePathsInDirectory( CString sDir, CStringArray& asPathToFilesOut )
 	}
 }
 
+CString GetDesktopPath()
+{
+    static TCHAR strNull[2] = _T("");
+    static TCHAR strPath[MAX_PATH];
+    DWORD dwType;
+    DWORD dwSize = MAX_PATH;
+    HKEY  hKey;
+
+    // Open the appropriate registry key
+    LONG lResult = RegOpenKeyEx( HKEY_CURRENT_USER,
+                                _T("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"),
+                                0, KEY_READ, &hKey );
+    if( ERROR_SUCCESS != lResult )
+        return strNull;
+
+    lResult = RegQueryValueEx( hKey, _T("Desktop"), NULL,
+                              &dwType, (BYTE*)strPath, &dwSize );
+    RegCloseKey( hKey );
+
+    if( ERROR_SUCCESS != lResult )
+        return strNull;
+
+    return strPath;
+}
+
 bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExport )	
 {
 	CZipArchive zip;
 	
-	const CString sDesktopPath = CString(getenv("USERPROFILE")) + "/Desktop/";
+//	const CString sDesktopPath = CString(getenv("USERPROFILE")) + "/Desktop/";
 
 	//
 	// Create the package zip file
 	//
-	const CString sPackagePath = sDesktopPath + sPackageName;
+	const CString sPackagePath = GetDesktopPath() + "\\" + sPackageName;
 	try
 	{
 		zip.Open( sPackagePath, CZipArchive::zipCreate );
@@ -374,9 +399,11 @@ void CSmpackageDlg::OnButtonExportAsIndividual()
 			asFailedPackages.Add( sPackageName );
 	}
 
-	CString sMessage = ssprintf("Successfully exported the packages %s to your Desktop.", join(", ",asExportedPackages) );
-	if( asFailedPackages.GetSize() > 0 )
-		sMessage += ssprintf("  The packages %s failed to export.", join(", ",asFailedPackages) );
+	CString sMessage;
+	if( asFailedPackages.GetSize() == 0 )
+		sMessage = ssprintf("Successfully exported the packages %s to your Desktop.", join(", ",asExportedPackages) );
+	else
+		sMessage = ssprintf("  The packages %s failed to export.", join(", ",asFailedPackages) );
 	AfxMessageBox( sMessage );
 
 	m_listBox.SetSel( -1, FALSE );
