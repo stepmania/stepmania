@@ -168,6 +168,9 @@ MusicWheel::MusicWheel()
 		}
 	}
 
+	/* Update for SORT_MOST_PLAYED. */
+	SONGMAN->UpdateBest();
+
 	/* Build all of the wheel item data.  Do tihs after selecting
 	 * the extra stage, so it knows to always display it. */
 	for( int so=0; so<NUM_SORT_ORDERS; so++ )
@@ -447,7 +450,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			SortSongPointerArrayByBPM( arraySongs );
 			break;
 		case SORT_MOST_PLAYED:
-			SortSongPointerArrayByMostPlayed( arraySongs );
+			arraySongs = SONGMAN->GetBestSongs();
 			if( arraySongs.size() > 30 )
 				arraySongs.erase(arraySongs.begin()+30, arraySongs.end());
 			bUseSections = false;
