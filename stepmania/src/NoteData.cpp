@@ -73,15 +73,16 @@ void NoteData::ClearAll()
 
 /* Copy a range from pFrom to this.  (Note that this does *not* overlay;
  * all data in the range is overwritten.) */
-void NoteData::CopyRange( NoteData* pFrom, int iFromIndexBegin, int iFromIndexEnd, int iToIndexBegin )
+void NoteData::CopyRange( const NoteData* pFrom, int iFromIndexBegin, int iFromIndexEnd, int iToIndexBegin )
 {
 	ASSERT( pFrom->m_iNumTracks == m_iNumTracks );
 
 	if( iToIndexBegin == -1 )
 		iToIndexBegin = 0;
 
-	pFrom->ConvertHoldNotesTo4s();
-	this->ConvertHoldNotesTo4s();
+	NoteData From, To;
+	From.To4s( *pFrom );
+	To.To4s( *this );
 
 	// copy recorded TapNotes
 	int f = iFromIndexBegin, t = iToIndexBegin;
@@ -89,13 +90,12 @@ void NoteData::CopyRange( NoteData* pFrom, int iFromIndexBegin, int iFromIndexEn
 	while( f<=iFromIndexEnd )
 	{
 		for( int c=0; c<m_iNumTracks; c++ )
-			SetTapNote(c, t, pFrom->GetTapNote(c, f));
+			To.SetTapNote(c, t, From.GetTapNote(c, f));
 		f++;
 		t++;
 	}
 
-	pFrom->Convert4sToHoldNotes();
-	this->Convert4sToHoldNotes();
+	this->From4s( To );
 }
 
 void NoteData::Config( const NoteData &From )
@@ -376,6 +376,18 @@ void NoteData::From2sAnd3s( const NoteData &out )
 {
 	CopyAll( &out );
 	Convert2sAnd3sToHoldNotes();
+}
+
+void NoteData::To4s( const NoteData &out )
+{
+	CopyAll( &out );
+	ConvertHoldNotesTo4s();
+}
+
+void NoteData::From4s( const NoteData &out )
+{
+	CopyAll( &out );
+	Convert4sToHoldNotes();
 }
 
 /* "104444001" ==

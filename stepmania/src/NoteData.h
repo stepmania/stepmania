@@ -57,7 +57,7 @@ public:
 
 	void ClearRange( int iNoteIndexBegin, int iNoteIndexEnd );
 	void ClearAll();
-	void CopyRange( NoteData* pFrom, int iFromIndexBegin, int iFromIndexEnd, int iToIndexBegin = -1 );
+	void CopyRange( const NoteData* pFrom, int iFromIndexBegin, int iFromIndexEnd, int iToIndexBegin = -1 );
 	void CopyAll( const NoteData* pFrom );
 	
 	inline bool IsRowEmpty( int index ) const
@@ -135,6 +135,8 @@ public:
 
 	void Convert4sToHoldNotes();
 	void ConvertHoldNotesTo4s();
+	void To4s( const NoteData &out );
+	void From4s( const NoteData &out );
 
 	// True if no notes in row that aren't true in the mask
 	bool RowPassesValidMask( int row, bool bValidMask[] );
