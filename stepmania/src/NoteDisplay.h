@@ -50,7 +50,7 @@ protected:
 
 	Actor*		m_pTapNote[NOTE_COLOR_IMAGES];
 	Actor*		m_pTapAddition[NOTE_COLOR_IMAGES];
-	Actor*		m_pTapMine;
+	Actor*		m_pTapMine[NOTE_COLOR_IMAGES];
 	Actor*		m_pHoldHeadActive[NOTE_COLOR_IMAGES];
 	Actor*		m_pHoldHeadInactive[NOTE_COLOR_IMAGES];
 	Sprite*		m_pHoldTopCapActive[NOTE_COLOR_IMAGES];
