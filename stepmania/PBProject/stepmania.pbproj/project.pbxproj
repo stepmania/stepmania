@@ -154,7 +154,6 @@
 				29B97317FDCFA39411CA2CEA,
 				29B97323FDCFA39411CA2CEA,
 				19C28FACFE9D520D11CA2CBB,
-				AAC6230005389A3C00D02EE9,
 				AA29CE570558741A00961A51,
 				AA67BFCE0558751E00EF34A6,
 			);
@@ -903,7 +902,7 @@
 				LIBRARY_SEARCH_PATHS = /usr/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OTHER_CFLAGS = "";
-				OTHER_CPLUSPLUSFLAGS = "-finline-limit=300 -Wno-switch -Wno-missing-braces -fcoalesce-templates";
+				OTHER_CPLUSPLUSFLAGS = "-finline-limit=300 -Wno-switch -Wno-missing-braces -fcoalesce-templates -fconstant-cfstrings";
 				OTHER_LDFLAGS = "-lz  -lstdc++";
 				PRODUCT_NAME = StepMania;
 				SECTORDER_FLAGS = "";
@@ -1244,6 +1243,9 @@
 				AA4E8F7905E609100091C1A8,
 				AA4E8F7B05E609100091C1A8,
 				AA996D9905E9ED34008CA159,
+				AA56E5BB05FBF36E006B24C7,
+				AAED6F2D0601C528002D2DEE,
+				AAED6F2F0601C528002D2DEE,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3169,6 +3171,9 @@
 				AA4E8F7A05E609100091C1A8,
 				AA996D9805E9ED34008CA159,
 				AAA71EA105EE154E00D2E8FF,
+				AA56E5BA05FBF36E006B24C7,
+				AAED6F2C0601C528002D2DEE,
+				AAED6F2E0601C528002D2DEE,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5417,6 +5422,36 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
+		AA56E5B805FBF36E006B24C7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ScreenAward.cpp;
+			path = /Users/steve/programming/stepmania/src/ScreenAward.cpp;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AA56E5B905FBF36E006B24C7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ScreenAward.h;
+			path = /Users/steve/programming/stepmania/src/ScreenAward.h;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AA56E5BA05FBF36E006B24C7 = {
+			fileRef = AA56E5B805FBF36E006B24C7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA56E5BB05FBF36E006B24C7 = {
+			fileRef = AA56E5B905FBF36E006B24C7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		AA590A380541CD2A00D02EE9 = {
 			buildActionMask = 2147483647;
 			files = (
@@ -5495,7 +5530,6 @@
 		AA590A390541CD2A00D02EE9 = {
 			buildActionMask = 2147483647;
 			files = (
-				AA590A3F0541CD3800D02EE9,
 				AA590A410541CE2C00D02EE9,
 				AA590A430541CE3400D02EE9,
 				AA590A440541CE4300D02EE9,
@@ -5620,12 +5654,6 @@
 			path = test;
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		AA590A3F0541CD3800D02EE9 = {
-			fileRef = AAC6230205389A3C00D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		AA590A400541CE2C00D02EE9 = {
 			fileRef = AA6EFD7904770A7C005F316C;
@@ -6373,18 +6401,18 @@
 		};
 		AA6E00090477103E005F316C = {
 			children = (
-				AABE321A05ACD8ED001A0E84,
-				AABE321B05ACD8ED001A0E84,
-				AA729C64059A2F2400779F33,
-				AA729C65059A2F2400779F33,
 				AA6E000A047711F3005F316C,
 				AA6E000B047711F3005F316C,
 				AA6E000C047711F3005F316C,
 				AA6E000D047711F3005F316C,
 				AA6E0010047711F3005F316C,
 				AA6E0011047711F3005F316C,
+				AA56E5B805FBF36E006B24C7,
+				AA56E5B905FBF36E006B24C7,
 				AADBE360053D5F8A00D02EE9,
 				AADBE361053D5F8A00D02EE9,
+				AA729C64059A2F2400779F33,
+				AA729C65059A2F2400779F33,
 				AA6E0016047711F3005F316C,
 				AA6E0017047711F3005F316C,
 				AAC622F805389A0500D02EE9,
@@ -6401,6 +6429,8 @@
 				AAADA51704E75DD300D02EE9,
 				AA6E001F047711F3005F316C,
 				AA6E0020047711F3005F316C,
+				AABE321A05ACD8ED001A0E84,
+				AABE321B05ACD8ED001A0E84,
 				AAD6201D0528FAAB00D02EE9,
 				AAD6201E0528FAAB00D02EE9,
 				AA6E0021047711F3005F316C,
@@ -13425,35 +13455,6 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
-		AAC6230005389A3C00D02EE9 = {
-			children = (
-				AAC6230105389A3C00D02EE9,
-				AAC6230205389A3C00D02EE9,
-			);
-			isa = PBXGroup;
-			name = tests;
-			path = /Users/steve/stepmania/src/tests;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		AAC6230105389A3C00D02EE9 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = text;
-			path = "00 README";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAC6230205389A3C00D02EE9 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = test_audio_readers.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 0;
-		};
 		AAC6889905D7F3C800964E6D = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -14497,6 +14498,10 @@
 		};
 		AADB4E8604D50FB900D02EE9 = {
 			children = (
+				AAED6F280601C528002D2DEE,
+				AAED6F290601C528002D2DEE,
+				AAED6F2A0601C528002D2DEE,
+				AAED6F2B0601C528002D2DEE,
 				AA76D15404D9D2D200D02EE9,
 				AADB4E8804D50FB900D02EE9,
 				AA76D15504D9D2D200D02EE9,
@@ -14850,6 +14855,62 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 0;
+		};
+		AAED6F280601C528002D2DEE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = Backtrace.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAED6F290601C528002D2DEE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = Backtrace.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAED6F2A0601C528002D2DEE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = BacktraceNames.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAED6F2B0601C528002D2DEE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = BacktraceNames.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAED6F2C0601C528002D2DEE = {
+			fileRef = AAED6F280601C528002D2DEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAED6F2D0601C528002D2DEE = {
+			fileRef = AAED6F290601C528002D2DEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAED6F2E0601C528002D2DEE = {
+			fileRef = AAED6F2A0601C528002D2DEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAED6F2F0601C528002D2DEE = {
+			fileRef = AAED6F2B0601C528002D2DEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		AAEF3D0C04B533CC00D02EE9 = {
 			fileEncoding = 4;
