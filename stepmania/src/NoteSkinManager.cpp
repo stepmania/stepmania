@@ -43,17 +43,15 @@ void NoteSkinManager::RefreshNoteSkinData( Game game )
 	CStringArray asNoteSkinNames;
 	GetDirListing( sBaseSkinFolder + "*", asNoteSkinNames, true );
 
-	int i;
-
 	// strip out "CVS"
-	for( i=asNoteSkinNames.size()-1; i>=0; i-- )
+	for( int i=asNoteSkinNames.size()-1; i>=0; i-- )
 		if( 0 == stricmp("cvs", asNoteSkinNames[i]) )
 			asNoteSkinNames.erase( asNoteSkinNames.begin()+i, asNoteSkinNames.begin()+i+1 );
 
 	m_mapNameToData.clear();
-	for( i=0; i<asNoteSkinNames.size(); i++ )
+	for( unsigned j=0; j<asNoteSkinNames.size(); j++ )
 	{
-		CString sName = asNoteSkinNames[i];
+		CString sName = asNoteSkinNames[j];
 		sName.MakeLower();
 		m_mapNameToData[sName] = NoteSkinData();
 		LoadNoteSkinData( sName, m_mapNameToData[sName] );
