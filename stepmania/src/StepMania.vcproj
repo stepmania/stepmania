@@ -24,7 +24,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHa"
 				Optimization="0"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="SDL-1.2.5/include,SDL_image-1.2"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,DEBUG"
 				ExceptionHandling="FALSE"
 				BasicRuntimeChecks="3"
@@ -92,7 +92,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/EHa "
+				AdditionalOptions="/EHa"
 				Optimization="3"
 				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="2"
@@ -100,7 +100,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				FavorSizeOrSpeed="2"
 				OptimizeForProcessor="2"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories="DevIL\include"
+				AdditionalIncludeDirectories="SDL-1.2.5/include,SDL_image-1.2"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,RELEASE"
 				StringPooling="TRUE"
 				MinimalRebuild="FALSE"
@@ -114,7 +114,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				ObjectFile=".\../Release/"
 				ProgramDataBaseFileName=".\../Release/"
 				BrowseInformation="1"
-				WarningLevel="3"
+				WarningLevel="4"
 				SuppressStartupBanner="TRUE"
 				DebugInformationFormat="3"/>
 			<Tool
@@ -126,6 +126,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
+				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib"
 				ProgramDatabaseFile=".\../StepMania.pdb"
 				GenerateMapFile="TRUE"
 				MapFileName="$(IntDir)\$(TargetName).map"
@@ -562,6 +563,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\StdAfx.h">
 			</File>
 			<File
+				RelativePath="StdString.h">
+			</File>
+			<File
 				RelativePath=".\StepMania.ICO">
 			</File>
 			<File
@@ -572,12 +576,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\StepMania.h">
-			</File>
-			<File
-				RelativePath=".\dxutil.cpp">
-			</File>
-			<File
-				RelativePath="dxutil.h">
 			</File>
 			<File
 				RelativePath="mycarray.h">
@@ -1039,6 +1037,28 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			<File
 				RelativePath=".\RageUtil.h">
 			</File>
+			<Filter
+				Name="Helpers"
+				Filter="">
+				<File
+					RelativePath="SDL_dither.cpp">
+				</File>
+				<File
+					RelativePath="SDL_dither.h">
+				</File>
+				<File
+					RelativePath="SDL_rotozoom.c">
+				</File>
+				<File
+					RelativePath="SDL_rotozoom.h">
+				</File>
+				<File
+					RelativePath="SDL_utils.cpp">
+				</File>
+				<File
+					RelativePath="SDL_utils.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Actors"
