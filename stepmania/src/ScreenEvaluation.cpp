@@ -761,6 +761,10 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 {
 	TweenOffScreen();
 
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		m_Grades[p].SettleImmediately();
+
+
 	if( PREFSMAN->m_bEventMode )
 	{
 		switch( GAMESTATE->m_PlayMode )

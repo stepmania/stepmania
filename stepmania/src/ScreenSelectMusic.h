@@ -49,7 +49,6 @@ protected:
 
 	void AfterNotesChange( PlayerNumber pn );
 	void AfterMusicChange();
-	void PlayMusicSample();
 	void SortOrderChanged();
 
 	void UpdateOptionsDisplays();
@@ -84,6 +83,8 @@ protected:
 	bool				m_bGoToOptions;
 	Sprite				m_sprOptionsMessage;
 	float				m_fPlaySampleCountdown;
+	CString				m_sSampleMusicToPlay;
+	float				m_fSampleStartSeconds, m_fSampleLengthSeconds;
 	bool				m_bAllowOptionsMenu, m_bAllowOptionsMenuRepeat;
 
 	RageSound			m_soundSelect;

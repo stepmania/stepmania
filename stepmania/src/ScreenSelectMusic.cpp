@@ -351,7 +351,17 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 		/* Make sure we don't start the sample when rouletting is
 		 * spinning down. */
 		if( m_fPlaySampleCountdown <= 0 && !m_MusicWheel.IsRouletting() )
-			this->PlayMusicSample();
+		{
+			if( !m_sSampleMusicToPlay.empty() )
+			{
+				SOUNDMAN->PlayMusic(
+					m_sSampleMusicToPlay, 
+					true,
+					m_fSampleStartSeconds,
+					m_fSampleLengthSeconds,
+					1.5f); /* fade out for 1.5 seconds */
+			}
+		}
 	}
 
 	float fNewRotation = m_sprCDTitle.GetRotationY()+PI*fDeltaTime/2;
@@ -809,8 +819,12 @@ void ScreenSelectMusic::AfterMusicChange()
 		{
 			SOUNDMAN->StopMusic();
 			m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;
+			m_sSampleMusicToPlay = pSong->GetMusicPath();
+			m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
+			m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
 
-			for( int pn = 0; pn < NUM_PLAYERS; ++pn) {
+			for( int pn = 0; pn < NUM_PLAYERS; ++pn) 
+			{
 				pSong->GetNotes( m_arrayNotes[pn], GAMESTATE->GetCurrentStyleDef()->m_NotesType );
 				SortNotesArrayByDifficulty( m_arrayNotes[pn] );
 			}
@@ -866,12 +880,25 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_Banner.LoadRoulette();
 		m_BPMDisplay.SetBPMRange( 0, 0 );
 		m_sprCDTitle.UnloadTexture();
+
+		SOUNDMAN->StopMusic();
+		m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;
+		m_sSampleMusicToPlay = THEME->GetPathTo("Sounds","ScreenSelectMusic roulette music");
+		m_fSampleStartSeconds = -1;
+		m_fSampleLengthSeconds = -1;
+
 		break;
 	case TYPE_RANDOM:
 		if(!no_banner_change)
 			m_Banner.LoadRandom();
 		m_BPMDisplay.SetBPMRange( 0, 0 );
 		m_sprCDTitle.UnloadTexture();
+
+		SOUNDMAN->StopMusic();
+		m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;
+		m_sSampleMusicToPlay = THEME->GetPathTo("Sounds","ScreenSelectMusic random music");
+		m_fSampleStartSeconds = -1;
+		m_fSampleLengthSeconds = -1;
 		break;
 	default:
 		ASSERT(0);
@@ -887,21 +914,6 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_fPlaySampleCountdown = 0;
 }
 
-void ScreenSelectMusic::PlayMusicSample()
-{
-	//LOG->Trace( "ScreenSelectSong::PlayMusicSample()" );
-
-	Song* pSong = m_MusicWheel.GetSelectedSong();
-	if( pSong  &&  pSong->HasMusic() )
-	{
-		SOUNDMAN->PlayMusic(pSong->GetMusicPath(), true,
-			pSong->m_fMusicSampleStartSeconds,
-			pSong->m_fMusicSampleLengthSeconds,
-			1.5f); /* fade out for 1.5 seconds */
-	}
-//	else
-//		SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSelectMusic music") );
-}
 
 void ScreenSelectMusic::UpdateOptionsDisplays()
 {
