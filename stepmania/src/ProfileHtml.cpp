@@ -911,6 +911,7 @@ void PrintScreenshot( RageFile &f, const Profile::Screenshot &ss )
 	TABLE_LINE2( "File", ss.sFileName );
 	TABLE_LINE2( "MD5", ss.sMD5 );
 	TABLE_LINE2( "Time", (CString)ctime(&ss.time) );
+	TABLE_LINE2( "Location", ss.sLocation );
 
 	END_TABLE;
 
@@ -923,15 +924,39 @@ void PrintScreenshots( RageFile &f, const Profile *pProfile, CString sTitle, CSt
 {
 	PRINT_OPEN(f, sTitle );
 	{
-		PRINT_OPEN(f, "Less Than 1 Month Old" );
+		CString sCurrentMonth;
+		bool bFirstMonth = true;
+
+		for( int i = (int)pProfile->m_vScreenshots.size()-1; i >= 0; i-- )
 		{
-			for( unsigned i=0; i<pProfile->m_vScreenshots.size(); i++ )
+			Profile::Screenshot ss = pProfile->m_vScreenshots[i];
+			tm* new_time = localtime( &ss.time );
+			int iYear = new_time->tm_year+1900;
+			int iMonth = new_time->tm_mon+1;
+			CString sNewMonth = ssprintf("%02d/%d", iMonth, iYear );
+			
+			if( sNewMonth != sCurrentMonth )
 			{
-				const Profile::Screenshot &ss = pProfile->m_vScreenshots[i];
-				PrintScreenshot( f, ss );
+				if( !bFirstMonth )
+					PRINT_CLOSE(f);
+				PRINT_OPEN(f, sNewMonth, bFirstMonth);
 			}
+			PrintScreenshot( f, ss );
+
+			sCurrentMonth = sNewMonth;
+			bFirstMonth = false;
 		}
-		PRINT_CLOSE(f);
+
+		if( pProfile->m_vScreenshots.empty() )
+		{
+			BEGIN_TABLE(1);
+			TABLE_LINE1("empty");
+			END_TABLE;
+		}
+		else
+		{
+			PRINT_CLOSE(f);
+		}
 	}
 	PRINT_CLOSE(f);
 }

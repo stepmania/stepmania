@@ -660,8 +660,9 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 				CString sStyle;
 				if( !style->GetAttrValue( "Style", sStyle ) )
 					WARN_AND_CONTINUE;
-
 				Style s = GAMEMAN->GameAndStringToStyle( g, sStyle );
+				if( s == STYLE_INVALID )
+					WARN_AND_CONTINUE;
 
 				style->GetValue( m_iNumSongsPlayedByStyle[s] );
 			}
@@ -1355,13 +1356,16 @@ void Profile::LoadScreenshotDataFromNode( const XNode* pNode )
 		Screenshot ss;
 		
 		if( !(*screenshot)->GetChildValue("FileName",ss.sFileName) )
-			WARN_AND_CONTINUE;
+			WARN;
 
 		if( !(*screenshot)->GetChildValue("MD5",ss.sMD5) )
-			WARN_AND_CONTINUE;
+			WARN;
 
 		if( !(*screenshot)->GetChildValue("Time",(int&)ss.time) )	// time_t is a signed long on Win32.  Is this ok on other platforms?
-			WARN_AND_CONTINUE;
+			WARN;
+
+		if( !(*screenshot)->GetChildValue("Location",ss.sLocation) )
+			WARN;
 
 		m_vScreenshots.push_back( ss );
 	}	
@@ -1386,6 +1390,7 @@ XNode* Profile::SaveScreenshotDataCreateNode() const
 		pScreenshotNode->AppendChild( "FileName", ss.sFileName );
 		pScreenshotNode->AppendChild( "MD5", ss.sMD5);
 		pScreenshotNode->AppendChild( "Time", (int) ss.time);
+		pScreenshotNode->AppendChild( "Location", ss.sLocation);
 	}
 
 	return pNode;
