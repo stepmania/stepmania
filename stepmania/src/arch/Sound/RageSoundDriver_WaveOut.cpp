@@ -57,8 +57,7 @@ void RageSound_WaveOut::MixerThread()
 		while(GetPCM())
 			;
 
-		if(WaitForSingleObject(sound_event, 10) != WAIT_OBJECT_0)
-			continue;
+		WaitForSingleObject(sound_event, 10);
 	}
 }
 
