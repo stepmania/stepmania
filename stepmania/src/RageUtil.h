@@ -179,10 +179,6 @@ bool CompareCStringsAsc(const CString &str1, const CString &str2);
 bool CompareCStringsDesc(const CString &str1, const CString &str2);
 void SortCStringArray( CStringArray &AddTo, const bool bSortAcsending = true );
 
-
-LONG GetRegKey(HKEY key, const char *subkey, LPTSTR retdata);
-HINSTANCE GotoURL(const char *url);
-
 /* Find the mean and standard deviation of all numbers in [start,end). */
 float calc_mean(const float *start, const float *end);
 float calc_stddev(const float *start, const float *end);
