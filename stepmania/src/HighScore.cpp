@@ -73,7 +73,11 @@ void HighScore::LoadFromNode( const XNode* pNode )
 		{
 			CString sGrade;
 			(*child)->GetValue( sGrade );
-			grade = StringToGrade( sGrade );
+			/* Pre-a19 compatibility; remove eventually: */
+			if( IsAnInt(sGrade) )
+				grade = (Grade) atoi( sGrade );
+			else
+				grade = StringToGrade( sGrade );
 		}
 		else if( (*child)->name == "Score" )			(*child)->GetValue( iScore );
 		else if( (*child)->name == "PercentDP" )		(*child)->GetValue( fPercentDP );
