@@ -274,9 +274,6 @@ static int find_address( void *p, const void **starts, const void **ends )
 /* backtrace() for x86 Linux, tested with kernel 2.4.18, glibc 2.3.1. */
 static void do_backtrace( void **buf, size_t size, bool ignore_before_sig = true )
 {
-	/* Make room for a NULL terminator. */
-	--size;
-
 	/* Read /proc/pid/maps to find the address range of the stack. */
     const void *readable_begin[1024], *readable_end[1024];
 	get_readable_ranges( readable_begin, readable_end, 1024 );
@@ -302,7 +299,7 @@ static void do_backtrace( void **buf, size_t size, bool ignore_before_sig = true
 	unsigned i=0;
 	/* If ignore_before_sig is true, don't return stack frames before we find a signal trampoline. */
 	bool got_signal_return = !ignore_before_sig;
-	while( i < size )
+	while( i < size-1 ) // -1 for NULL
 	{
 		/* Make sure that this frame address is readable, and is on the stack. */
 		int val = find_address(frame, readable_begin, readable_end);
@@ -315,18 +312,22 @@ static void do_backtrace( void **buf, size_t size, bool ignore_before_sig = true
 		/*
 		 * The stack return stub is:
 		 *
-		 * 0x401139d8 <sigaction+280>:     pop    %eax
-		 * 0x401139d9 <sigaction+281>:     mov    $0x77,%eax
-		 * 0x401139de <sigaction+286>:     int    $0x80
+		 * 0x401139d8 <sigaction+280>:     pop    %eax			0x58
+		 * 0x401139d9 <sigaction+281>:     mov    $0x77,%eax	0xb8 0x77 0x00 0x00 0x00
+		 * 0x401139de <sigaction+286>:     int    $0x80			0xcd 0x80
 		 *
 		 * This will be different if using realtime signals, as will the stack layout.
 		 *
 		 * If we detect this, it means this is a stack frame returning from a signal.
 		 * Ignore the return_address and use the sigcontext instead.
 		 */
-		const char comp[] = { 0x58, 0xb8, 0x77, 0x0, 0x0, 0x0, 0xcd, 0x80, 0x55, 0x89 };
+		const char comp[] = { 0x58, 0xb8, 0x77, 0x0, 0x0, 0x0, 0xcd, 0x80 };
 		bool is_signal_return = true;
-		if( find_address(frame->return_address, readable_begin, readable_end) == -1)
+
+		/* Ugh.  Linux 2.6 is putting the return address in a place that isn't listed
+		 * as readable in /proc/pid/maps.  This is probably brittle. */
+		if( frame->return_address != (void*)0xffffe420 &&
+			find_address(frame->return_address, readable_begin, readable_end) == -1)
 			is_signal_return = false;
 
 		for( unsigned pos = 0; is_signal_return && pos < sizeof(comp); ++pos )
@@ -355,6 +356,13 @@ static void do_backtrace( void **buf, size_t size, bool ignore_before_sig = true
 	}
 
 	buf[i] = NULL;
+
+	/* If we didn't get any frames, our trampoline handling probably failed.  Turn
+	 * ignore_before_sig off.  We'll probably lose the top frame, which is bad. 
+	 * You can tell that this happened if this function is visible on the returned
+	 * call stack. */
+	if( i == 0 && ignore_before_sig )
+		do_backtrace( buf, size, false );
 }
 #elif defined(BACKTRACE_METHOD_BACKTRACE)
 static void do_backtrace(void **buf, size_t size)
@@ -416,7 +424,6 @@ void CrashSignalHandler( int signal )
 		 * crashed before we stopped it, or it may mean that the crash handler
 		 * crashed. */
 		const char *str;
-		fprintf(stderr, "got %i, in %i, %i %i\n", signal, getpid(), received, childpid);
 		if( received == getpid() )
 			str = "Oops! Fatal signal received while still in the crash handler\n";
 		else if( childpid == getpid() )
