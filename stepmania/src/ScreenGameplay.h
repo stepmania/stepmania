@@ -76,6 +76,7 @@ protected:
 	bool IsLastSong();
 	void SetupSong( int p, int iSongIndex );
 	void LoadNextSong();
+	void LoadCourseSongNumber( int SongNumber );
 	float StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic);
 	void ShowSavePrompt( ScreenMessage SM_SendWhenDone );
 
@@ -114,6 +115,7 @@ protected:
 	CombinedLifeMeter*	m_pCombinedLifeMeter;
 	Sprite				m_sprStage;
 	Sprite				m_sprCourseSongNumber;
+	Sprite				m_sprStageFrame;
 	BitmapText			m_textCourseSongNumber[NUM_PLAYERS];
 	BitmapText			m_textPlayerName[NUM_PLAYERS];
 	BitmapText			m_textStepsDescription[NUM_PLAYERS];

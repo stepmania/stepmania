@@ -190,6 +190,10 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 				AttackArray a;
 				ci[c].GetAttackArray( a );
 				m_asModifiersQueue[p].push_back( a );
+
+				const CString path = THEME->GetPathToG( ssprintf("ScreenGameplay course song %i", c+1), true );
+				if( path != "" )
+					TEXTUREMAN->CacheTexture( path );
 			}
 
 			if( p == 0 )
@@ -559,6 +563,12 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	}
 
 
+	m_sprStageFrame.SetName( "StageFrame" );
+	m_sprStageFrame.Load( THEME->GetPathToG("ScreenGameplay stage frame") );
+	SET_XY( m_sprStageFrame );
+	/* Show in course mode and regular play, but not demo.  (This will go away eventually.) */
+	if( !bDemonstration )
+		this->AddChild( &m_sprStageFrame );
 
 	//
 	// Player/Song options
@@ -822,6 +832,27 @@ void ScreenGameplay::SetupSong( int p, int iSongIndex )
 	m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pCombinedLifeMeter, m_pPrimaryScoreDisplay[p], m_pSecondaryScoreDisplay[p], m_pInventory[p], m_pPrimaryScoreKeeper[p], m_pSecondaryScoreKeeper[p] );
 }
 
+static int GetMaxSongsPlayed()
+{
+	int SongNumber = 0;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		if( GAMESTATE->IsPlayerEnabled(p) )
+			SongNumber = max( SongNumber, g_CurStageStats.iSongsPlayed[p] );
+	return SongNumber;
+}
+
+void ScreenGameplay::LoadCourseSongNumber( int SongNumber )
+{
+	if( !GAMESTATE->IsCourseMode() )
+		return;
+
+	const CString path = THEME->GetPathToG( ssprintf("ScreenGameplay course song %i", SongNumber), true );
+	if( path != "" )
+		m_sprCourseSongNumber.Load( path );
+	else
+		m_sprCourseSongNumber.UnloadTexture();
+}
+
 void ScreenGameplay::LoadNextSong()
 {
 	GAMESTATE->ResetMusicStatistics();
@@ -833,18 +864,7 @@ void ScreenGameplay::LoadNextSong()
 			m_textCourseSongNumber[p].SetText( ssprintf("%d", g_CurStageStats.iSongsPlayed[p]) );
 		}
 
-	if( GAMESTATE->IsCourseMode() )
-	{
-		int SongNumber = 0;
-		for( p=0; p<NUM_PLAYERS; p++ )
-			if( GAMESTATE->IsPlayerEnabled(p) )
-				SongNumber = max( SongNumber, g_CurStageStats.iSongsPlayed[p] );
-		CString path = THEME->GetPathToG( ssprintf("ScreenGameplay course song %i", SongNumber), true );
-		if( path != "" )
-			m_sprCourseSongNumber.Load( path );
-		else
-			m_sprCourseSongNumber.UnloadTexture();
-	}
+	LoadCourseSongNumber( GetMaxSongsPlayed() );
 
 	int iPlaySongIndex = GAMESTATE->GetCourseSongIndex();
 	iPlaySongIndex %= m_apSongsQueue.size();
@@ -1918,6 +1938,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				GAMESTATE->m_pCurSong = pCurSong;
 
 				m_NextSongOut.StartTransitioning( SM_LoadNextSong );
+				LoadCourseSongNumber( GetMaxSongsPlayed()+1 );
+				COMMAND( m_sprCourseSongNumber, "ChangeIn" );
 				return;
 			}
 			
@@ -1995,6 +2017,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 	case SM_LoadNextSong:
 		SongFinished();
+
+		COMMAND( m_sprCourseSongNumber, "ChangeOut" );
 
 		LoadNextSong();
 		GAMESTATE->m_bPastHereWeGo = true;
@@ -2284,6 +2308,7 @@ void ScreenGameplay::TweenOnScreen()
 	ON_COMMAND( m_sprLifeFrame );
 	ON_COMMAND( m_sprStage );
 	ON_COMMAND( m_sprCourseSongNumber );
+	ON_COMMAND( m_sprStageFrame );
 	ON_COMMAND( m_textSongOptions );
 	ON_COMMAND( m_sprScoreFrame );
 	ON_COMMAND( m_textSongTitle );
@@ -2315,6 +2340,7 @@ void ScreenGameplay::TweenOffScreen()
 	OFF_COMMAND( m_sprLifeFrame );
 	OFF_COMMAND( m_sprStage );
 	OFF_COMMAND( m_sprCourseSongNumber );
+	OFF_COMMAND( m_sprStageFrame );
 	OFF_COMMAND( m_textSongOptions );
 	OFF_COMMAND( m_sprScoreFrame );
 	OFF_COMMAND( m_textSongTitle );
