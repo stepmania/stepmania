@@ -58,6 +58,7 @@ public:
 	void SetTextureModeGlow();
 	void SetBlendModeNormal();
 	void SetBlendModeAdd();
+	bool ZBufferEnabled() const;
 	void EnableZBuffer();
 	void DisableZBuffer();
 	void EnableTextureWrapping();

@@ -429,22 +429,24 @@ void RageDisplay::SetBlendModeAdd()
 {
 	SetBlendMode( GL_ONE, GL_ONE );
 }
-void RageDisplay::EnableZBuffer()
+
+bool RageDisplay::ZBufferEnabled() const
 {
 	bool a;
 	glGetBooleanv( GL_DEPTH_TEST, (unsigned char*)&a );
+	return a;
+}
 
-	if( !a )
+void RageDisplay::EnableZBuffer()
+{
+	if( !ZBufferEnabled() )
 		FlushQueue();
 
 	glEnable( GL_DEPTH_TEST );
 }
 void RageDisplay::DisableZBuffer()
 {
-	bool a;
-	glGetBooleanv( GL_DEPTH_TEST, (unsigned char*)&a );
-
-	if( a )
+	if( ZBufferEnabled() )
 		FlushQueue();
 
 	glDisable( GL_DEPTH_TEST );
