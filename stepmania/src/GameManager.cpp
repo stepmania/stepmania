@@ -1238,6 +1238,7 @@ void GameManager::SwitchNoteSkin( CString sNewNoteSkin )
 	{
 		CStringArray as;
 		GetNoteSkinNames( as );
+		ASSERT( !as.empty() );
 		SwitchNoteSkin( as[0] );
 	}
 	else
