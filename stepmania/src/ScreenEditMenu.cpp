@@ -55,8 +55,6 @@ void ScreenEditMenu::Init()
 	SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
 }
 
-ScreenEditMenu *g_pScreenEditMenu = NULL;
-
 // helpers for MenuStart() below
 void DeleteCurSteps( void* pThrowAway )
 {
@@ -68,7 +66,7 @@ void DeleteCurSteps( void* pThrowAway )
 		pSong->Save();
 		SCREENMAN->ZeroNextUpdate();
 	}
-	g_pScreenEditMenu->m_Selector.RefreshAll();
+	SCREENMAN->SendMessageToTopScreen( SM_RefreshSelector );
 }
 
 
@@ -79,6 +77,7 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_RefreshSelector:
 		m_Selector.RefreshAll();
+		RefreshNumStepsLoadedFromProfile();
 		break;
 	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
@@ -88,7 +87,6 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_Success:
 		LOG->Trace( "Delete successful; deleting steps from memory" );
-		g_pScreenEditMenu = this;
 		DeleteCurSteps( NULL );
 		break;
 	case SM_Failure:
@@ -191,7 +189,6 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		}
 		else
 		{
-			g_pScreenEditMenu = this;
 			SCREENMAN->Prompt( SM_RefreshSelector, "These steps will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO, DeleteCurSteps );
 		}
 		break;
