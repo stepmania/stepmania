@@ -996,7 +996,7 @@ void MusicWheel::Update( float fDeltaTime )
 			}
 			break;
 		default:
-			ASSERT(0);	// all state changes should be handled explitily
+			ASSERT(0);	// all state changes should be handled explicitly
 			break;
 		}
 	}
