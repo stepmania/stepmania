@@ -133,6 +133,15 @@ void Background::LoadFromSong( Song* pSong )
 	//
 	BackgroundAnimation* pTempBGA;
 
+	
+	// Tricky!  The song background looks terrible unless its loaded with no alpha 
+	// and dithered.  Create a dummy sprite that loads the texture with the proper 
+	// hints so we don't have to hack up BackgroundAnimation to handle this special
+	// case.
+	Sprite sprDummy;
+	sprDummy.Load( sSongBackgroundPath, true, 4, 0, true, false );
+	
+
 	pTempBGA = new BackgroundAnimation;
 	pTempBGA->LoadFromStaticGraphic( sSongBackgroundPath );
 	m_BackgroundAnimations.Add( pTempBGA );

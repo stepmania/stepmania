@@ -128,19 +128,22 @@ void RageBitmapTexture::Create(
 	switch( dwTextureColorDepth )
 	{
 	case 16:
-//		switch( iAlphaBits )
-//		{
-//		case 0:		fmtTexture = D3DFMT_R5G6B5;		break;
-//		case 1:		fmtTexture = D3DFMT_A1R5G5B5;	break;
-//		default:	fmtTexture = D3DFMT_A4R4G4B4;	break;
-//		}
-
-		// Ignore dwTextureColorDepth, and infer based on image format
-		switch( ddii.Format )
+		switch( iAlphaBits )
 		{
-		case D3DFMT_P8:		fmtTexture = D3DFMT_A1R5G5B5;	break;
-		default:			fmtTexture = D3DFMT_A4R4G4B4;	break;
+		case 0:		fmtTexture = D3DFMT_R5G6B5;		break;
+		case 1:		fmtTexture = D3DFMT_A1R5G5B5;	break;
+		case 4:
+			// Ignore dwTextureColorDepth, and infer based on image format
+			switch( ddii.Format )
+			{
+			case D3DFMT_P8:		fmtTexture = D3DFMT_A1R5G5B5;	break;
+			default:			fmtTexture = D3DFMT_A4R4G4B4;	break;
+			}
+			break;
+		default:
+			ASSERT(0);	// invalid iAlphaBits value
 		}
+
 		break;
 	case 32:
 		fmtTexture = D3DFMT_A8R8G8B8;
