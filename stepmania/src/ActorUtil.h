@@ -35,7 +35,7 @@ inline float UtilOnCommand( Actor& actor, CString sClassName )
 	ASSERT( !actor.GetName().empty() );
 	return actor.Command( THEME->GetMetric(sClassName,actor.GetName()+"OnCommand") );
 }
-inline float UtilOnCommand( Actor* pActor, CString sClassName ) { UtilOnCommand( *pActor, sClassName ); }
+inline float UtilOnCommand( Actor* pActor, CString sClassName ) { return UtilOnCommand( *pActor, sClassName ); }
 
 
 inline float UtilCommand( Actor& actor, CString sClassName, CString sCommandName )
@@ -43,7 +43,7 @@ inline float UtilCommand( Actor& actor, CString sClassName, CString sCommandName
 	ASSERT( !actor.GetName().empty() );
 	return actor.Command( THEME->GetMetric(sClassName,actor.GetName()+sCommandName+"Command") );
 }
-inline float UtilCommand( Actor* pActor, CString sClassName, CString sCommandName ) { UtilCommand( *pActor, sClassName, sCommandName ); }
+inline float UtilCommand( Actor* pActor, CString sClassName, CString sCommandName ) { return UtilCommand( *pActor, sClassName, sCommandName ); }
 
 
 inline float UtilOffCommand( Actor& actor, CString sClassName )
