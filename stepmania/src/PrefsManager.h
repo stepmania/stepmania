@@ -59,6 +59,7 @@ public:
 	enum			{ NEVER, ALWAYS, ABC_ONLY } m_MusicWheelUsesSections;
 	int				m_iMusicWheelSwitchSpeed;
 	bool			m_bChangeBannersWhenFast;
+	bool			m_bDDRExtremeDifficultySelect;
 	bool			m_bEasterEggs;
 	bool			m_bMarvelousTiming;
 	enum { COIN_HOME, COIN_PAY, COIN_FREE, NUM_COIN_MODES } m_CoinMode;

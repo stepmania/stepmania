@@ -24,6 +24,7 @@
 #include "GameManager.h"
 #include "GameState.h"
 #include "ThemeManager.h"
+#include "ScreenMiniMenu.h"
 
 
 enum {

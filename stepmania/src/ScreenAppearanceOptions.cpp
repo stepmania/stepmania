@@ -29,6 +29,7 @@
 enum {
 	AO_ANNOUNCER = 0,
 	AO_THEME,
+	AO_DIFF_SELECT,
 //	AO_SKIN,
 	AO_INSTRUCTIONS,
 	AO_CAUTION,
@@ -39,14 +40,15 @@ enum {
 };
 
 OptionRowData g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
-	{ "Announcer",		1, {"OFF"} },	// fill this in on ImportOptions()
-	{ "Theme",			0, {""} },		// fill this in on ImportOptions()
-//	{ "Note\nSkin",		0, {""} },		// fill this in on ImportOptions()
-	{ "How To\nPlay",	2, {"SKIP","SHOW"} },
-	{ "Caution",		2, {"SKIP","SHOW"} },
-	{ "Song\nGroup",	2, {"ALL MUSIC","CHOOSE"} },
-	{ "Wheel\nSections",3, {"NEVER","ALWAYS", "ABC ONLY"} },
-	{ "Translations",	2, {"NATIVE","TRANSLITERATE"} },
+	{ "Announcer",		    1, {"OFF"} },	// fill this in on ImportOptions()
+	{ "Theme",			    0, {""} },		// fill this in on ImportOptions()
+	{ "Difficulty\nSelect", 2, {"DDR Extreme", "Normal"} },
+//	{ "Note\nSkin",		    0, {""} },		// fill this in on ImportOptions()
+	{ "How To\nPlay",	    2, {"SKIP","SHOW"} },
+	{ "Caution",		    2, {"SKIP","SHOW"} },
+	{ "Song\nGroup",	    2, {"ALL MUSIC","CHOOSE"} },
+	{ "Wheel\nSections",    3, {"NEVER","ALWAYS", "ABC ONLY"} },
+	{ "Translations",	    2, {"NATIVE","TRANSLITERATE"} },
 };
 
 ScreenAppearanceOptions::ScreenAppearanceOptions() :
@@ -133,6 +135,7 @@ void ScreenAppearanceOptions::ImportOptions()
 
 	m_iSelectedOption[0][AO_INSTRUCTIONS]				= PREFSMAN->m_bInstructions? 1:0;
 	m_iSelectedOption[0][AO_CAUTION]					= PREFSMAN->m_bShowDontDie? 1:0;
+	m_iSelectedOption[0][AO_DIFF_SELECT]				= PREFSMAN->m_bDDRExtremeDifficultySelect? 1:0;
 	m_iSelectedOption[0][AO_SELECT_GROUP]				= PREFSMAN->m_bShowSelectGroup? 1:0;
 	m_iSelectedOption[0][AO_WHEEL_SECTIONS]				= (int)PREFSMAN->m_MusicWheelUsesSections;
 	m_iSelectedOption[0][AO_SHOW_TRANSLATIONS]			= PREFSMAN->m_bShowTranslations;
@@ -153,11 +156,12 @@ void ScreenAppearanceOptions::ExportOptions()
 	CString sNewTheme = m_OptionRowData[AO_THEME].szOptionsText[iSelectedTheme];
 	THEME->SwitchTheme( sNewTheme );
 
-	PREFSMAN->m_bInstructions			= !!m_iSelectedOption[0][AO_INSTRUCTIONS];
-	PREFSMAN->m_bShowDontDie			= !!m_iSelectedOption[0][AO_CAUTION];
-	PREFSMAN->m_bShowSelectGroup		= !!m_iSelectedOption[0][AO_SELECT_GROUP];
+	PREFSMAN->m_bDDRExtremeDifficultySelect		= !!m_iSelectedOption[0][AO_DIFF_SELECT];
+	PREFSMAN->m_bInstructions					= !!m_iSelectedOption[0][AO_INSTRUCTIONS];
+	PREFSMAN->m_bShowDontDie					= !!m_iSelectedOption[0][AO_CAUTION];
+	PREFSMAN->m_bShowSelectGroup				= !!m_iSelectedOption[0][AO_SELECT_GROUP];
 	(int&)PREFSMAN->m_MusicWheelUsesSections	= m_iSelectedOption[0][AO_WHEEL_SECTIONS];
-	PREFSMAN->m_bShowTranslations		= !!m_iSelectedOption[0][AO_SHOW_TRANSLATIONS];
+	PREFSMAN->m_bShowTranslations				= !!m_iSelectedOption[0][AO_SHOW_TRANSLATIONS];
 
 	PREFSMAN->SaveGamePrefsToDisk();
 	PREFSMAN->SaveGlobalPrefsToDisk();

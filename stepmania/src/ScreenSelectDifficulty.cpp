@@ -108,8 +108,6 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 
 	// Reset the current PlayMode
 	GAMESTATE->m_PlayMode = PLAY_MODE_INVALID;
-
-
 	unsigned p;
 	
 	m_Menu.Load(

@@ -39,7 +39,7 @@
 #define PREVIEW_Y				THEME->GetMetricF("ScreenSelectStyle","PreviewY")
 #define HELP_TEXT				THEME->GetMetric("ScreenSelectStyle","HelpText")
 #define TIMER_SECONDS			THEME->GetMetricI("ScreenSelectStyle","TimerSeconds")
-#define NEXT_SCREEN				THEME->GetMetric("ScreenSelectStyle","NextScreen")
+#define NEXT_SCREEN				PREFSMAN->m_bDDRExtremeDifficultySelect? THEME->GetMetric("ScreenSelectStyle","NextScreen") : "ScreenSelectDifficultyEX"
 
 
 

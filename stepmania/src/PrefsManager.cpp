@@ -171,6 +171,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
 	ini.GetValueB( "Options", "ShowSongOptions",			m_bShowSongOptions );
 	ini.GetValueI( "Options", "DefaultFailType",			(int&)m_DefaultFailType );
+	ini.GetValueB( "Options", "DDRExtremeDifficultySelect",	m_bDDRExtremeDifficultySelect );
 
 
 	m_asAdditionalSongFolders.clear();
@@ -244,6 +245,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
 	ini.SetValueB( "Options", "ShowSongOptions",			m_bShowSongOptions );
 	ini.SetValueI( "Options", "DefaultFailType",			(int&)m_DefaultFailType );
+	ini.SetValueB( "Options", "DDRExtremeDifficultySelect",	m_bDDRExtremeDifficultySelect );
 
 	/* Only write these if they aren't the default.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who
