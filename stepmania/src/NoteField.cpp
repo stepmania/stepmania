@@ -97,8 +97,8 @@ void NoteField::Load( const NoteData* pNoteData, PlayerNumber pn, int iFirstPixe
 	this->CopyAll( pNoteData );
 	ASSERT( GetNumTracks() == GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer );
 
-	m_GrayArrowRow.Load( pn, m_fYReverseOffsetPixels );
-	m_GhostArrowRow.Load( pn, m_fYReverseOffsetPixels );
+	m_GrayArrowRow.Load( pn, GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin, m_fYReverseOffsetPixels );
+	m_GhostArrowRow.Load( pn, GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin, m_fYReverseOffsetPixels );
 
 	CacheAllUsedNoteSkins();
 	RefreshBeatToNoteSkin();

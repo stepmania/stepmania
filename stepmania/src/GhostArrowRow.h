@@ -26,7 +26,7 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
-	void Load( PlayerNumber pn, float fYReverseOffset );
+	void Load( PlayerNumber pn, CString NoteSkin, float fYReverseOffset );
 	
 	void DidTapNote( int iCol, TapNoteScore score, bool bBright );
 	void DidTapMine( int iCol, TapNoteScore score );

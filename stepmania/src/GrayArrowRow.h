@@ -22,7 +22,7 @@ class GrayArrowRow : public ActorFrame
 public:
 	GrayArrowRow();
 
-	void Load( PlayerNumber pn, float fYReverseOffset );
+	void Load( PlayerNumber pn, CString NoteSkin, float fYReverseOffset );
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();

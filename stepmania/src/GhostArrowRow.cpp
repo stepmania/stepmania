@@ -26,7 +26,7 @@ GhostArrowRow::GhostArrowRow()
 	m_iNumCols = 0;
 }
 
-void GhostArrowRow::Load( PlayerNumber pn, float fYReverseOffset )
+void GhostArrowRow::Load( PlayerNumber pn, CString NoteSkin, float fYReverseOffset )
 {
 	m_PlayerNumber = pn;
 	m_fYReverseOffsetPixels = fYReverseOffset;
@@ -52,10 +52,10 @@ void GhostArrowRow::Load( PlayerNumber pn, float fYReverseOffset )
 		m_GhostMine[c].Init( pn );
 		//m_HoldGhost[c].Init( pn );
 
-		m_GhostDim[c].Load( NOTESKIN->GetPathTo(pn, Button, "tap explosion dim") );
-		m_GhostBright[c].Load( NOTESKIN->GetPathTo(pn, Button, "tap explosion bright") );
-		m_GhostMine[c].Load( NOTESKIN->GetPathTo(pn, Button, "tap explosion mine") );
-		m_HoldGhost[c].Load( NOTESKIN->GetPathTo(pn, Button, "hold explosion") );
+		m_GhostDim[c].Load( NOTESKIN->GetPathTo(NoteSkin, Button, "tap explosion dim") );
+		m_GhostBright[c].Load( NOTESKIN->GetPathTo(NoteSkin, Button, "tap explosion bright") );
+		m_GhostMine[c].Load( NOTESKIN->GetPathTo(NoteSkin, Button, "tap explosion mine") );
+		m_HoldGhost[c].Load( NOTESKIN->GetPathTo(NoteSkin, Button, "hold explosion") );
 	}
 }
 

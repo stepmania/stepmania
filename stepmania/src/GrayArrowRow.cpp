@@ -25,7 +25,7 @@ GrayArrowRow::GrayArrowRow()
 	m_iNumCols = 0;
 }
 
-void GrayArrowRow::Load( PlayerNumber pn, float fYReverseOffset )
+void GrayArrowRow::Load( PlayerNumber pn, CString NoteSkin, float fYReverseOffset )
 {
 	m_PlayerNumber = pn;
 	m_fYReverseOffsetPixels = fYReverseOffset;
@@ -35,7 +35,7 @@ void GrayArrowRow::Load( PlayerNumber pn, float fYReverseOffset )
 	m_iNumCols = pStyleDef->m_iColsPerPlayer;
 
 	for( int c=0; c<m_iNumCols; c++ ) 
-		m_GrayArrow[c].Load( GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin, m_PlayerNumber, c );
+		m_GrayArrow[c].Load( NoteSkin, m_PlayerNumber, c );
 }
 
 void GrayArrowRow::Update( float fDeltaTime )
