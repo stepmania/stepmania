@@ -16,6 +16,8 @@
 ULONG		randseed = time(NULL);
 
 #include <direct.h>
+#include <numeric>
+using namespace std;
 
 bool IsAnInt( const char *s )
 {
@@ -796,5 +798,24 @@ void ReadUlongFromFile( FILE* file, ULONG& u )
 	fscanf( file, "%u\n", &u );
 }
 
+float calc_mean(const float *start, const float *end)
+{
+	return accumulate(start, end, 0.f) / distance(start, end);
+}
+
+float calc_stddev(const float *start, const float *end)
+{
+	/* Calculate the mean. */
+	float mean = calc_mean(start, end);
+
+	/* Calculate stddev. */
+	float dev = 0.0f;
+	for( const float *i=start; i != end; ++i )
+		dev += (*i - mean) * (*i - mean);
+	dev /= distance(start, end) - 1;
+	dev = sqrtf(dev);
+
+	return dev;
+}
 
 
