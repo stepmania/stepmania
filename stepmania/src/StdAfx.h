@@ -57,10 +57,10 @@ using namespace std;
 
 #if 0
 
-/* Use CStdString: */
 #include "StdString.h"
-#define CString CStdString
 
+/* Use CStdString: */
+#define CString CStdString
 #else
 
 /* Wrapper to use getline() on MFC strings. */
