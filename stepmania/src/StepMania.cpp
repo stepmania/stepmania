@@ -1050,11 +1050,10 @@ int main(int argc, char* argv[])
 	PROFILEMAN	= new ProfileManager;
 	PROFILEMAN->Init();				// must load after SONGMAN
 	UNLOCKMAN	= new UnlockSystem;
+    NSMAN       = new NetworkSyncManager( loading_window ); 
+
 	delete loading_window;		// destroy this before init'ing Display
     
-    NSMAN       = new NetworkSyncManager; 
-		//Load Network Sync manager, but do not connect
-
 	ProcessArgsFirst();
 	
 

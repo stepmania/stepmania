@@ -4,7 +4,7 @@
 NetworkSyncManager *NSMAN;
 
 #if defined(WITHOUT_NETWORKING)
-NetworkSyncManager::NetworkSyncManager() { useSMserver=false; }
+NetworkSyncManager::NetworkSyncManager(LoadingWindow * ld) { useSMServer=false }
 NetworkSyncManager::~NetworkSyncManager () { }
 void NetworkSyncManager::CloseConnection() { }
 void NetworkSyncManager::PostStartUp( CString ServerIP ) { }
@@ -30,9 +30,16 @@ bool NetworkSyncManager::ChangedScoreboard(int Column) { return false; }
 #include "Steps.h"
 #include "PrefsManager.h"
 #include "ProductInfo.h"
+#include "ScreenMessage.h"
+#include "arch\LoadingWindow\LoadingWindow.h"
 
-NetworkSyncManager::NetworkSyncManager()
+const ScreenMessage SM_NET_UpdateScoreboard	= ScreenMessage(SM_User+12);
+const ScreenMessage SM_NET_SelectSong		= ScreenMessage(SM_User+2);
+
+
+NetworkSyncManager::NetworkSyncManager(LoadingWindow * ld)
 {
+	ld->SetText("Initilizing Network...");
     NetPlayerClient = new EzSockets;
 	NetPlayerClient->blocking = false;
 	m_ServerVersion = 0;
@@ -445,13 +452,19 @@ void NetworkSyncManager::ProcessInput()
 						}
 					break;
 				}
+				SCREENMAN->SendMessageToTopScreen(SM_NET_UpdateScoreboard);
 				m_Scoreboard[ColumnNumber] = ColumnData;
 				m_scoreboardchange[ColumnNumber]=true;
 			}
 			break;
 		case 6:	//System message from server
-			CString SysMSG = ReadNT(m_packet);
-			SCREENMAN->SystemMessage(SysMSG);
+			{
+				CString SysMSG = ReadNT(m_packet);
+				SCREENMAN->SystemMessage(SysMSG);
+			}
+			break;
+		case 7:
+			SCREENMAN->SendMessageToTopScreen(SM_NET_SelectSong);
 			break;
 		}
 		ClearPacket(m_packet);
@@ -465,6 +478,15 @@ bool NetworkSyncManager::ChangedScoreboard(int Column)
 	m_scoreboardchange[Column]=false;
 	return true;
 }
+
+
+
+
+
+
+
+
+//Functions to deal with this protocol
 
 
 uint8_t NetworkSyncManager::Read1(NetPacket &Packet)

@@ -4,6 +4,7 @@
 #define NetworkSyncManager_H
 
 #include "PlayerNumber.h"
+#include "arch\LoadingWindow\LoadingWindow.h"
 
 const int NETPROTOCOLVERSION=1;
 const int NETMAXBUFFERSIZE=1020; //1024 - 4 bytes for EzSockets
@@ -22,7 +23,7 @@ class EzSockets;
 class NetworkSyncManager 
 {
 public:
-	NetworkSyncManager();
+	NetworkSyncManager(LoadingWindow * ld = NULL);
 	~NetworkSyncManager();
 
     //If "useSMserver" then send score to server

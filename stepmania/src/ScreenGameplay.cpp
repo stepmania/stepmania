@@ -66,6 +66,7 @@ const ScreenMessage	SM_PlayGo				= ScreenMessage(SM_User+1);
 // received while STATE_DANCING
 const ScreenMessage	SM_NotesEnded			= ScreenMessage(SM_User+10);
 const ScreenMessage	SM_LoadNextSong			= ScreenMessage(SM_User+11);
+const ScreenMessage SM_NET_UpdateScoreboard	= ScreenMessage(SM_User+12);
 
 // received while STATE_OUTRO
 const ScreenMessage	SM_SaveChangedBeforeGoingBack	= ScreenMessage(SM_User+20);
@@ -1574,17 +1575,10 @@ void ScreenGameplay::Update( float fDeltaTime )
 	CLAMP( fPercentPositionSong, 0, 1 );
 	m_meterSongPosition.SetPercent( fPercentPositionSong );
 
-	if (NSMAN->useSMserver) {
+	if (NSMAN->useSMserver) 
 		FOREACH_EnabledPlayer( pn2 )
-		{
 			if( m_pLifeMeter[pn2] )
 				NSMAN->m_playerLife[pn2] = int(m_pLifeMeter[pn2]->GetLife()*10000);
-		}
-		if (m_ShowScoreboard)
-			FOREACH_NSScoreBoardColumn (cn)
-				if (NSMAN->ChangedScoreboard(cn))
-					m_Scoreboard[cn].SetText(NSMAN->m_Scoreboard[cn]);
-	}
 }
 
 void ScreenGameplay::AbortGiveUp()
@@ -2328,6 +2322,14 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_StopMusic:
 		m_soundMusic.Stop();
+		break;
+	case SM_NET_UpdateScoreboard:
+		if (!NSMAN->useSMserver)
+			break;
+		if (m_ShowScoreboard)
+			FOREACH_NSScoreBoardColumn (cn)
+				if (NSMAN->ChangedScoreboard(cn))
+					m_Scoreboard[cn].SetText(NSMAN->m_Scoreboard[cn]);
 		break;
 	}
 }
