@@ -59,11 +59,29 @@ ScreenSelectStyle::ScreenSelectStyle()
 	unsigned i;
 	for( i=0; i<m_aPossibleStyles.size(); i++ )
 	{
-		m_sprIcon[i].Load( THEME->GetPathTo("Graphics",ssprintf("select style icons %s",GAMESTATE->GetCurrentGameDef()->m_szName) ) );
-		m_sprIcon[i].StopAnimating();
-		m_sprIcon[i].SetState( i );
-		m_sprIcon[i].SetXY( ICONS_START_X + i*ICONS_SPACING_X, ICONS_START_Y + i*ICONS_SPACING_Y );
-		this->AddChild( &m_sprIcon[i] );
+		CString IconPath = THEME->GetPathToOptional("Graphics",ssprintf("select style icons %s",GAMESTATE->GetCurrentGameDef()->m_szName) );
+		if(IconPath.empty())
+		{
+			BitmapText *b = new BitmapText;
+			b->LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+			b->SetText(GAMEMAN->GetStyleDefForStyle( m_aPossibleStyles[i] )->m_szName);
+			b->SetDiffuse(RageColor(.5,.5,.5,1));
+			b->SetZoom(0.5f);
+			m_sprIcon[i] = b;
+			IconsAreText = true;
+		}
+		else
+		{
+			Sprite *s = new Sprite;
+			s->Load( IconPath );
+			s->StopAnimating();
+			s->SetState( i );
+			m_sprIcon[i] = s;
+			IconsAreText = false;
+		}
+
+		m_sprIcon[i]->SetXY( ICONS_START_X + i*ICONS_SPACING_X, ICONS_START_Y + i*ICONS_SPACING_Y );
+		this->AddChild( m_sprIcon[i] );
 	}
 
 	UpdateEnabledDisabled();
@@ -85,8 +103,8 @@ ScreenSelectStyle::ScreenSelectStyle()
 	// Load dummy Sprites
 	for( i=0; i<m_aPossibleStyles.size(); i++ )
 	{
-		m_sprDummyPreview[i].Load( THEME->GetPathTo("Graphics",ssprintf("select style preview %s %s",pGameDef->m_szName,pStyleDef->m_szName)) );
-		m_sprDummyInfo[i].Load(    THEME->GetPathTo("Graphics",ssprintf("select style info %s %s",pGameDef->m_szName,pStyleDef->m_szName)) );
+		m_sprDummyPreview[i].Load( THEME->GetPathToOptional("Graphics",ssprintf("select style preview %s %s",pGameDef->m_szName,pStyleDef->m_szName)) );
+		m_sprDummyInfo[i].Load(    THEME->GetPathToOptional("Graphics",ssprintf("select style info %s %s",pGameDef->m_szName,pStyleDef->m_szName)) );
 	}
 
 
@@ -154,18 +172,18 @@ void ScreenSelectStyle::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenSelectStyle::BeforeChange()
 {
-	m_sprIcon[m_iSelection].SetEffectNone();
+	m_sprIcon[m_iSelection]->SetEffectNone();
 }
 
 void ScreenSelectStyle::AfterChange()
 {
-	m_sprIcon[m_iSelection].SetEffectGlowing();
+	m_sprIcon[m_iSelection]->SetEffectGlowing();
 
 	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
 	const StyleDef* pStyleDef = GAMEMAN->GetStyleDefForStyle( m_aPossibleStyles[m_iSelection] );
 
 	// Tween Preview
-	m_sprPreview.Load( THEME->GetPathTo("Graphics",ssprintf("select style preview %s %s",pGameDef->m_szName,pStyleDef->m_szName)) );
+	m_sprPreview.Load( THEME->GetPathToOptional("Graphics",ssprintf("select style preview %s %s",pGameDef->m_szName,pStyleDef->m_szName)) );
 
 	m_sprPreview.StopTweening();
 	m_sprPreview.SetGlow( RageColor(1,1,1,0) );
@@ -186,7 +204,7 @@ void ScreenSelectStyle::AfterChange()
 
 
 	// Tween Info
-	m_sprInfo.Load( THEME->GetPathTo("Graphics",ssprintf("select style info %s %s",pGameDef->m_szName,pStyleDef->m_szName)) );
+	m_sprInfo.Load( THEME->GetPathToOptional("Graphics",ssprintf("select style info %s %s",pGameDef->m_szName,pStyleDef->m_szName)) );
 	m_sprInfo.StopTweening();
 	m_sprInfo.SetZoomY( 0 );
 	m_sprInfo.BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
@@ -285,7 +303,7 @@ void ScreenSelectStyle::MenuBack( PlayerNumber pn )
 void ScreenSelectStyle::TweenOnScreen() 
 {
 	for( unsigned i=0; i<m_aPossibleStyles.size(); i++ )
-		m_sprIcon[i].FadeOn( (m_aPossibleStyles.size()-i)*0.05f, "Left Accelerate", MENU_ELEMENTS_TWEEN_TIME );
+		m_sprIcon[i]->FadeOn( (m_aPossibleStyles.size()-i)*0.05f, "Left Accelerate", MENU_ELEMENTS_TWEEN_TIME );
 
 	m_sprExplanation.FadeOn( 0, "Right Accelerate", MENU_ELEMENTS_TWEEN_TIME );
 
@@ -295,7 +313,7 @@ void ScreenSelectStyle::TweenOnScreen()
 void ScreenSelectStyle::TweenOffScreen()
 {
 	for( unsigned i=0; i<m_aPossibleStyles.size(); i++ )
-		m_sprIcon[i].FadeOff( 0, "FoldY", MENU_ELEMENTS_TWEEN_TIME );
+		m_sprIcon[i]->FadeOff( 0, "FoldY", MENU_ELEMENTS_TWEEN_TIME );
 
 	m_sprExplanation.FadeOff( 0, "FoldY", MENU_ELEMENTS_TWEEN_TIME );
 
@@ -330,10 +348,13 @@ void ScreenSelectStyle::UpdateEnabledDisabled()
 	 * will be undone by the tween.  Hmm. */
 	for( i=0; i<m_aPossibleStyles.size(); i++ )
 	{
+		/* If the icon is text, use a dimmer diffuse, or we won't be
+		 * able to see the glow. */
 		if( IsEnabled(i) )
-			m_sprIcon[i].SetDiffuse( RageColor(1,1,1,1) );
+			m_sprIcon[i]->SetDiffuse( IconsAreText? RageColor(0.75f, 0.75f, 0.75f, 1):
+													RageColor(1,1,1,1) );
 		else
-			m_sprIcon[i].SetDiffuse( RageColor(0.25f,0.25f,0.25f,1) );
+			m_sprIcon[i]->SetDiffuse( RageColor(0.25f,0.25f,0.25f,1) );
 	}
 
 	// Select first enabled style

@@ -46,7 +46,8 @@ private:
 
 	MenuElements m_Menu;
 	
-	Sprite	m_sprIcon[NUM_STYLES];
+	Actor	*m_sprIcon[NUM_STYLES];
+	bool IconsAreText;
 	Sprite	m_sprExplanation;
 	Sprite	m_sprPreview;
 	Sprite	m_sprInfo;
