@@ -259,7 +259,6 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 	}
 
 	RageException::Throw( "Couldn't find an appropriate back buffer format." );
-	return D3DFMT_UNKNOWN;
 }
 
 #ifndef _XBOX
