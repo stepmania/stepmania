@@ -25,6 +25,9 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 	PointsUntilNextUnlock.LoadFromFont( THEME->GetPathToF("Common normal") );
 	PointsUntilNextUnlock.SetHorizAlign( Actor::align_left );
 
+	// get unlock data first
+	// GAMESTATE->m_pUnlockingSys->LoadFromDATFile("Data\\MemCard.ini");
+
 	CString sDP = ssprintf( "%d", (int)GAMESTATE->m_pUnlockingSys->DancePointsUntilNextUnlock() );
 	CString sAP = ssprintf( "%d", (int)GAMESTATE->m_pUnlockingSys->ArcadePointsUntilNextUnlock() );
 	CString sSP = ssprintf( "%d", (int)GAMESTATE->m_pUnlockingSys->SongPointsUntilNextUnlock() );
@@ -59,10 +62,6 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 			this->AddChild(&Unlocks[i]);
 	}
 
-	// No negative numbers
-	if( sDP.Left(1) == "-" ) 
-		sDP = "*";
-
 	PointsUntilNextUnlock.SetName( "PointsDisplay" );
 	
 	if (PointDisplay == "DP" || PointDisplay == "Dance")
@@ -82,5 +81,4 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 
 	this->PostScreenMessage( SM_BeginFadingOut, 
 		THEME->GetMetricF("ScreenUnlock", "TimeToDisplay") );
-
 }

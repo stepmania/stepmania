@@ -67,7 +67,6 @@ bool UnlockSystem::CourseIsLocked( const Course *course )
 		p->updateLocked();
 
 		if (!p->isLocked) tmp = "un";
-//		LOG->Trace( "current status: %slocked", tmp.c_str() );
 	}
 	
 	return (p != NULL) && (p->isLocked);
@@ -90,14 +89,7 @@ bool UnlockSystem::SongIsLocked( const Song *song )
 bool UnlockSystem::SongIsRoulette( const Song *song )
 {
 	SongEntry *p = FindSong( song );
-	
-	CString item;
 
-	if (p && (p->m_iRouletteSeed != 0))
-		LOG->Trace("Item %s is roulettable.");
-	else
-		LOG->Trace("Item %s is not roulettable.");
-	
 	return p && (p->m_iRouletteSeed != 0) ;
 }
 
@@ -193,8 +185,8 @@ static bool CompareSongEntries(const SongEntry &se1, const SongEntry &se2)
 bool UnlockSystem::ParseRow(CString text, CString &type, float &qty,
 							CString &songname)
 {
-	int pos = -1;
-	int end = text.size();  // sets a value in case | does not exist
+	int pos = 0;
+	int end = 0;  // sets a value in case | does not exist
 	char unlock_type[4];
 	char qty_text[20];
 
@@ -202,9 +194,10 @@ bool UnlockSystem::ParseRow(CString text, CString &type, float &qty,
 	 * legal to access text[5] if text == "hello"; they're not NULL-terminated
 	 * like C strings (unless you use c_str(), but that's ugly).  Did you mean
 	 * "pos < text.size()"? */
-	while (text[pos] != '|' && pos < text[pos] != '\0')
+
+	// thanks, i never thought of that
+	while (pos < text.size())
 	{
-		pos++;
 		if (text[pos] == '[') text[pos] = ' ';
 		if (text[pos] == ']') text[pos] = ' ';;
 		if (text[pos] == '|') 
@@ -212,7 +205,13 @@ bool UnlockSystem::ParseRow(CString text, CString &type, float &qty,
 			end = pos;
 			text[pos] = ' ';
 		}
+		pos++;
 	}
+	// this will bypass the last character, but it can't be |
+	// since then it would be end of string
+	
+	if (end == 0) // handle lines lacking content
+		return false;
 
 	songname = text.Right(text.size() - 1 - end);
 	
@@ -291,8 +290,6 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 	float datavalue;
 	int MaxRouletteSlot = 0;
 
-//	m_SongEntries.clear();
-
 	CString line;
 	while( getline(input, line) )
 	{
@@ -332,7 +329,7 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 		m_SongEntries.push_back(current);
 	}
 	InitRouletteSeeds(MaxRouletteSlot); // resize roulette seeds
-	                  // for more efficient use of data
+	                  // for more efficient use of file
 
 	// sort list so we can make use of binary searching
 	sort( m_SongEntries.begin(), m_SongEntries.end(), CompareSongEntries );
@@ -422,6 +419,7 @@ void UnlockSystem::InitRouletteSeeds(int MaxRouletteSlot)
 
 	if (seeds.GetLength() > MaxRouletteSlot)  // truncate value
 	{
+		// too many seeds
 		seeds = seeds.Left(MaxRouletteSlot);
 		RouletteSeeds = seeds;
 		return;
