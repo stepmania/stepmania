@@ -36,6 +36,8 @@ struct MenuRowInternal
 	}
 
 	MenuRowInternal( const MenuRow &r );
+
+	void SetDefaultChoiceIfPresent( const CString &s );
 };
 
 

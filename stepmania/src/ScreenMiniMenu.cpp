@@ -6,6 +6,7 @@
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "ThemeManager.h"
+#include "Foreach.h"
 
 
 const float LABEL_X		=	200;
@@ -314,6 +315,18 @@ MenuRowInternal::MenuRowInternal( const MenuRow &r )
 	for( unsigned i = 0; i < ARRAYSIZE(r.choices); ++i )
 		PUSH( r.choices[i] );
 #undef PUSH
+}
+
+void MenuRowInternal::SetDefaultChoiceIfPresent( const CString &s )
+{
+	FOREACH( CString, choices, c )
+	{
+		if( *c == s )
+		{
+			defaultChoice = c - choices.begin();
+			return;
+		}
+	}
 }
 
 /*

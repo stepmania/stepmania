@@ -22,6 +22,7 @@
 #include "NoteDataUtil.h"
 #include "SongUtil.h"
 #include "StepsUtil.h"
+#include "Foreach.h"
 
 
 const float RECORD_HOLD_SECONDS = 0.3f;
@@ -1662,9 +1663,15 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				// Fill in line enabled/disabled
 				//
 				bool bAlreadyBGChangeHere = false;
-				for( unsigned i=0; i<m_pSong->m_BackgroundChanges.size(); i++ )
-					if( m_pSong->m_BackgroundChanges[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
+				BackgroundChange bgChange; 
+				FOREACH( BackgroundChange, m_pSong->m_BackgroundChanges, bgc )
+				{
+					if( bgc->m_fStartBeat == GAMESTATE->m_fSongBeat )
+					{
 						bAlreadyBGChangeHere = true;
+						bgChange = *bgc;
+					}
+				}
 
 				g_BGChange.rows[add_random].enabled = true;
 				g_BGChange.rows[add_song_bganimation].enabled = g_BGChange.rows[add_song_bganimation].choices.size() > 0;
@@ -1675,6 +1682,18 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				g_BGChange.rows[add_global_visualization].enabled = g_BGChange.rows[add_global_visualization].choices.size() > 0;
 				g_BGChange.rows[delete_change].enabled = bAlreadyBGChangeHere;
 					
+
+				// set default choices
+				g_BGChange.rows[rate].						SetDefaultChoiceIfPresent( ssprintf("%2.0f%%",bgChange.m_fRate*100) );
+				g_BGChange.rows[fade_last].defaultChoice	= bgChange.m_bFadeLast ? 1 : 0;
+				g_BGChange.rows[rewind_movie].defaultChoice = bgChange.m_bRewindMovie ? 1 : 0;
+				g_BGChange.rows[loop].defaultChoice			= bgChange.m_bLoop ? 1 : 0;
+				g_BGChange.rows[add_song_bganimation].		SetDefaultChoiceIfPresent( bgChange.m_sBGName );
+				g_BGChange.rows[add_song_movie].			SetDefaultChoiceIfPresent( bgChange.m_sBGName );
+				g_BGChange.rows[add_song_still].			SetDefaultChoiceIfPresent( bgChange.m_sBGName );
+				g_BGChange.rows[add_global_random_movie].	SetDefaultChoiceIfPresent( bgChange.m_sBGName );
+				g_BGChange.rows[add_global_bganimation].	SetDefaultChoiceIfPresent( bgChange.m_sBGName );
+				g_BGChange.rows[add_global_visualization].	SetDefaultChoiceIfPresent( bgChange.m_sBGName );
 
 
 				SCREENMAN->MiniMenu( &g_BGChange, SM_BackFromBGChange );
