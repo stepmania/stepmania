@@ -19,6 +19,14 @@
 #include <netdb.h>
 #endif
 
+#if !defined(SOCKET_ERROR)
+#define SOCKET_ERROR -1
+#endif
+
+#if !defined(INVALID_SOCKET)
+#define INVALID_SOCKET -1
+#endif
+
 EzSockets::EzSockets()
 {
 	MAXCON = 5;
@@ -28,7 +36,7 @@ EzSockets::EzSockets()
 	WSAStartup( MAKEWORD(1,1), &wsda );
 #endif
 	
-	sock = -1;
+	sock = INVALID_SOCKET;
 	blocking = true;
 	scks = new fd_set;
 	times = new timeval;
@@ -47,7 +55,7 @@ EzSockets::~EzSockets()
 //Check to see if the socket has been created
 bool EzSockets::check()
 {
-	return sock > 0;
+	return sock != INVALID_SOCKET;
 }
 
 bool EzSockets::create()
@@ -81,7 +89,7 @@ bool EzSockets::create(int Protocol, int Type)
 	state = skDISCONNECTED;
 	sock = socket(AF_INET, Type, Protocol);
 	lastCode = sock;
-	return sock > 0;
+	return sock != INVALID_SOCKET;
 }
 
 
@@ -100,7 +108,7 @@ bool EzSockets::bind(unsigned short port)
 bool EzSockets::listen()
 {
 	lastCode = ::listen(sock, MAXCON);
-	if (lastCode)
+	if (lastCode == SOCKET_ERROR)
 		return false;
 	
 	state = skLISTENING;
@@ -134,7 +142,7 @@ bool EzSockets::accept(EzSockets& socket)
 	
 	lastCode = socket.sock;
 
-	if (socket.sock <= 0)
+	if (socket.sock == INVALID_SOCKET)
 		return false;
 	
 	socket.state = skCONNECTED;
@@ -166,9 +174,24 @@ bool EzSockets::connect(const std::string& host, unsigned short port)
 		return false;
 	
 #if defined(_XBOX)
-	// FIXME: Xbox doesn't have gethostbyname or any way to get a hostent.  
-	// Investigate the samples and figure out how this is supposed to work.
-	return false;
+	if(!isdigit(host[0])) // don't do a DNS lookup for an IP address
+	{
+		XNDNS *pxndns = NULL;
+		XNetDnsLookup(host.c_str(), NULL, &pxndns);
+		while (pxndns->iStatus == WSAEINPROGRESS)
+		{
+			// Do something else while lookup is in progress
+		}
+		
+		if (pxndns->iStatus == 0)
+			memcpy(&addr.sin_addr, &pxndns->aina[0], sizeof(struct in_addr));
+		else
+			return false;
+		
+		XNetDnsRelease(pxndns);
+	}
+	else
+		addr.sin_addr.s_addr = inet_addr(host.c_str());
 #else
 	struct hostent* phe;
 	phe = gethostbyname(host.c_str());
@@ -179,7 +202,7 @@ bool EzSockets::connect(const std::string& host, unsigned short port)
 	addr.sin_family = AF_INET;
 	addr.sin_port   = htons(port);
 	
-	if(::connect(sock, (struct sockaddr*)&addr, sizeof(addr)))
+	if(::connect(sock, (struct sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR)
 		return false;
 	
 	state = skCONNECTED;
