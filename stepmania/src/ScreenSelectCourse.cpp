@@ -263,12 +263,9 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, InputEventType type,
 	if( CodeDetector::EnteredHarderDifficulty(GameI.controller) &&
 		!GAMESTATE->m_bDifficultCourses)
 	{
-		if (GAMESTATE->m_PlayMode != PLAY_MODE_ONI) // disable difficult courses on oni mode
-		{
-			m_soundChangeNotes.Play();
-			GAMESTATE->m_bDifficultCourses = true;
-			SCREENMAN->PostMessageToTopScreen(SM_SongChanged,0);
-		}
+		m_soundChangeNotes.Play();
+		GAMESTATE->m_bDifficultCourses = true;
+		SCREENMAN->PostMessageToTopScreen(SM_SongChanged,0);
 	}
 
 
