@@ -13,7 +13,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "RageInput.h"
+#include "RageInputDevice.h"
 #include "GameInput.h"
 #include "MenuInput.h"
 #include "StyleInput.h"

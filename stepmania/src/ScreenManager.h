@@ -12,7 +12,7 @@
 */
 
 
-#include "RageInput.h"
+#include "RageInputDevice.h"
 #include "song.h"
 #include "Notes.h"
 #include "Screen.h"
