@@ -138,7 +138,7 @@ void GameState::ResetLastRanking()
 
 void GameState::ReloadCharacters()
 {
-	int i;
+	unsigned i;
 
 	for( i=0; i<m_pCharacters.size(); i++ )
 		delete m_pCharacters[i];
