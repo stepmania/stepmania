@@ -1537,6 +1537,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 void ScreenGameplay::UpdateLights()
 {
+	if( !LIGHTSMAN->IsEnabled() )
+		return;
+
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 	bool bBlinkCabinetLight[NUM_CABINET_LIGHTS];
 	bool bBlinkGameButton[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS];
