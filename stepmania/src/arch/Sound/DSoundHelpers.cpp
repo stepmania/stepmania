@@ -365,19 +365,23 @@ void DSoundBuf::CheckUnderrun( int cursorstart, int cursorend, int chunksize )
 	 * Realign. */
 	if( buffer_bytes_filled == 0 )
 	{
-		/* There's no data filled at all.  We've completely underrun. */
-		/* XXX */
-
+		/* There's no data filled at all.  We've completely underrun.  Pretend that
+		 * the prefetch is full, and point our write cursor just after it.  This way,
+		 * we don't write into the prefetch; doing so shouldn't cause problems, but
+		 * let's play it safe.  Pretending the prefetch is full (instead of just moving
+		 * the write cursor) takes us out of a "major underrun" state. */
 		int missed_by = cursorend - write_cursor;
 		wrap( missed_by, buffersize );
 		int first_byte_filled = write_cursor-buffer_bytes_filled;
 		wrap( first_byte_filled, buffersize );
 
-		LOG->Trace("major underrun: %i..%i filled but cursor at %i..%i (missed it by %i) %i/%i",
-			first_byte_filled, write_cursor, cursorstart, cursorend,
-			missed_by, buffer_bytes_filled, buffersize);
+		LOG->Trace( "major underrun: %i..%i filled but cursor at %i..%i (missed it by %i)",
+			first_byte_filled, write_cursor, cursorstart, cursorend, missed_by );
 
-		write_cursor = cursorstart;
+		write_cursor = cursorend;
+		buffer_bytes_filled = int(cursorend) - cursorstart;
+		wrap( buffer_bytes_filled, buffersize );
+		return;
 	}
 
 	/*
@@ -405,8 +409,9 @@ void DSoundBuf::CheckUnderrun( int cursorstart, int cursorend, int chunksize )
 	 *    ....pppp....
 	 * 5: ....ff...... valid
 	 *    ....pppp....
-	 * 6: ............ valid (no data filled)
+	 * 6: ............
 	 *    ....pppp....
+	 *   invalid: buffer_bytes_filled == 0; we handled this above
 	 */
 	int first_byte_filled = write_cursor-buffer_bytes_filled;
 	wrap( first_byte_filled, buffersize );
