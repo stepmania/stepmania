@@ -45,6 +45,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
+#include "RageDisplay.h"
 
 RageTextureManager*		TEXTUREMAN		= NULL;
 
@@ -338,16 +339,25 @@ void RageTextureManager::DiagnosticOutput() const
 {
 	unsigned cnt = distance(m_mapPathToTexture.begin(), m_mapPathToTexture.end());
 	LOG->Trace("%u textures loaded:", cnt);
+
+	int total = 0;
 	for( std::map<RageTextureID, RageTexture*>::const_iterator i = m_mapPathToTexture.begin();
 		i != m_mapPathToTexture.end(); ++i )
 	{
 		const RageTextureID &ID = i->first;
 		const RageTexture *tex = i->second;
 
-		/* This could output much more, but I only need resolution now and I don't
-		 * want it to be more than one line. */
-		LOG->Trace(" %3ix%3i (%2i) %s",
+		CString diags = DISPLAY->GetTextureDiagnostics( tex->GetTexHandle() );
+		CString str = ssprintf("%3ix%3i (%2i)",
 			tex->GetTextureHeight(), tex->GetTextureWidth(),
-			tex->m_iRefCount, Basename(ID.filename).c_str() );		
+			tex->m_iRefCount);
+
+		if( diags != "" )
+			str += " " + diags;
+
+		LOG->Trace(" %-40s %s",
+			str.c_str(), Basename(ID.filename).c_str() );
+		total += tex->GetTextureHeight() * tex->GetTextureWidth();
 	}
+	LOG->Trace("total %3i texels", total);
 }
