@@ -115,12 +115,19 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 	//Move mode to blocking in order to give CPU back to the 
 	//system, and not wait.
 	
+	bool dontExit=true;
 	NetPlayerClient->blocking=true;
-	NetPlayerClient->ReadPack((char*)m_packet.Data,NETMAXBUFFERSIZE);
+	while (dontExit)
+	{
+		ClearPacket(m_packet);
+		if (NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE)<1)
+			dontExit=false; // Also allow exit if there is a problem on the socket
+		if (Read1(m_packet) == (128+2))
+			dontExit=false;
+		//Only allow passing on handshake. 
+		//Otherwise scoreboard updates and such will confuse us.
+	}
 	NetPlayerClient->blocking=false;
-
-	//int command = Read1(m_packet);
-	Read1(m_packet);
 	m_ServerVersion = Read1(m_packet);
 	m_ServerName = ReadNT(m_packet);
 
