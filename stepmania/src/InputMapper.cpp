@@ -274,7 +274,16 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 				for( int k=0; mapping.maps[k].iSlotIndex != -1; k++ )
 				{
 					if( mapping.maps[k].SecondController )
-						gc = GAME_CONTROLLER_2;
+					{
+						gc = (GameController)(gc+1);
+
+						/* If that pushed it over, then it's a second controller for
+						 * a joystick that's already a second controller, so we'll
+						 * just ignore it.  (This can happen if eg. two primary
+						 * Pump pads are connected.) */
+						if( gc >= GAME_CONTROLLER_INVALID )
+							continue;
+					}
 
 					DeviceInput di( device, mapping.maps[k].deviceButton );
 					GameInput gi( gc, mapping.maps[k].gb );
