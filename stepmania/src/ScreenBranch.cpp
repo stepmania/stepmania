@@ -12,59 +12,13 @@
 
 #include "ScreenBranch.h"
 #include "RageLog.h"
-#include "GameConstantsAndTypes.h"
-#include "PlayerNumber.h"
 #include "ScreenManager.h"
 #include "ThemeManager.h"
-#include "Grade.h"
-#include "GameState.h"
-#include "StageStats.h"
-#include "SongManager.h"
+#include "LuaHelpers.h"
 
 #define CHOICES						THEME->GetMetric (m_sName,"Choices")
 #define CONDITION(choice)			THEME->GetMetric (m_sName,"Condition"+choice)
 #define NEXT_SCREEN(choice)			THEME->GetMetric (m_sName,"NextScreen"+choice)
-
-bool EvaluateCondition( CString sCondition )
-{
-	// For now, empty expresions evaluate to true.  Is there a better way to handle this?
-	if( sCondition.empty() )
-		return true;
-	
-	// TODO: Make this a general expression evaluator
-	CStringArray as;
-	split( sCondition, ",", as, false );
-
-	if( as.size()==3 && as[0].CompareNoCase("song")==0 )
-	{
-		const CString &sOp = as[1];
-		const CString &path = as[2];
-
-		const Song *s = SONGMAN->FindSong( path );
-		if( sOp == "=" )
-			return s == GAMESTATE->m_pCurSong;
-	}
-
-	if( as.size()==3 && as[0].CompareNoCase("topgrade")==0 )
-	{
-		Grade top_grade = GRADE_FAILED;
-		vector<Song*> vSongs;
-		StageStats stats;
-		GAMESTATE->GetFinalEvalStatsAndSongs( stats, vSongs );
-		for( int p=0; p<NUM_PLAYERS; p++ )
-			if( GAMESTATE->IsHumanPlayer(p) )
-				top_grade = min( top_grade, stats.GetGrade((PlayerNumber)p) );
-
-		CString &sOp = as[1];
-
-		Grade grade = StringToGrade(as[2]);
-
-		if( sOp == ">=" )
-			return top_grade >= grade;
-	}
-
-	RageException::Throw( "Condition '%s' is invalid", sCondition.c_str() );
-}
 
 ScreenBranch::ScreenBranch( CString sClassName ) : Screen( sClassName )
 {
@@ -77,7 +31,7 @@ ScreenBranch::ScreenBranch( CString sClassName ) : Screen( sClassName )
 		CString sChoice = Capitalize( as[i] );
 		CString sCondition = CONDITION(sChoice);
 
-		if( EvaluateCondition(sCondition) )
+		if( Lua::RunExpression(sCondition) )
 		{
 			m_sChoice = sChoice;
 			HandleScreenMessage( SM_GoToNextScreen );
