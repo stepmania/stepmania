@@ -284,7 +284,10 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
 {
 	ASSERT(!buffer_locked);
 
-	DWORD cursorstart, junk, cursorend;
+	DWORD cursorstart, cursorend;
+#if !defined(_XBOX)
+	DWORD junk;
+#endif
 
 	HRESULT result;
 
