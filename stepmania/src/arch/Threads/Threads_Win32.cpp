@@ -74,7 +74,7 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 
 	/* XXX: does ThreadHandle need to be dup'd? */
 	thread->ThreadHandle = CreateThread( NULL, 0, &StartThread, thread, 0, &thread->ThreadId );
-	*piThreadID = (uint64_t) thread->ThreadHandle;
+	*piThreadID = (uint64_t) thread->ThreadId;
 
 	ASSERT_M( thread->ThreadHandle, ssprintf("%s", werr_ssprintf(GetLastError(), "CreateThread")) );
 
