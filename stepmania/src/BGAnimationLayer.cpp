@@ -88,10 +88,6 @@ void BGAnimationLayer::Init()
 	m_fTileVelocityX = 0;
 	m_fTileVelocityY = 0;
 
-
-	/* Why doesn't this use the existing tweening mechanism? I can't make
-	 * sense of what this code is doing; all I can tell is that it's duplicating
-	 * stuff we already have. -glenn */
 	/*
 	m_PosX = m_PosY = 0;
 	m_Zoom = 0;
