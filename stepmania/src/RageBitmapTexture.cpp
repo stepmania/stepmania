@@ -180,9 +180,12 @@ SDL_Surface *RageBitmapTexture::CreateImg(int &pixfmt)
 		 * after setting the color key for paletted images; it'll also return
 		 * TRAIT_NO_TRANSPARENCY if the color key is never used. */
 		int traits = FindSurfaceTraits(img);
-		if(traits & TRAIT_NO_TRANSPARENCY) m_ActualID.iAlphaBits = 0;
-		else if(traits & TRAIT_BOOL_TRANSPARENCY) m_ActualID.iAlphaBits = 1;
-		if(traits & TRAIT_WHITE_ONLY) m_ActualID.iTransparencyOnly = 8;
+		if(traits & TRAIT_NO_TRANSPARENCY) 
+			m_ActualID.iAlphaBits = 0;
+		else if(traits & TRAIT_BOOL_TRANSPARENCY) 
+			m_ActualID.iAlphaBits = 1;
+		if(traits & TRAIT_WHITE_ONLY) 
+			m_ActualID.iTransparencyOnly = 8;
 	}
 
 	// look in the file name for a format hints
@@ -296,6 +299,8 @@ void RageBitmapTexture::Create()
 {
 	/* This will be set to the pixfmt we should use if we use an RGBA texture. */
 	int desired_rgba_pixfmt;
+
+	
 	SDL_Surface *img = CreateImg(desired_rgba_pixfmt);
 
 	if(!m_uGLTextureID)
@@ -459,6 +464,16 @@ retry:
 
 	CreateFrameRects();
 	CString props = " ";
+	switch( internalfmt )
+	{
+	case GL_RGBA4:				props += "GL_RGBA4 ";				break;
+	case GL_RGBA8:				props += "GL_RGBA8 ";				break;
+	case GL_RGB5_A1:			props += "GL_RGB5_A1 ";				break;
+	case GL_ALPHA8:				props += "GL_ALPHA8 ";				break;
+	case GL_COLOR_INDEX8_EXT:	props += "GL_COLOR_INDEX8_EXT` ";	break;
+	default:	props += ssprintf("unknown-format-%d ",internalfmt); break;
+	}
+
 	if(m_ActualID.iAlphaBits == 0) props += "opaque ";
 	if(m_ActualID.iAlphaBits == 1) props += "matte ";
 	if(m_ActualID.iTransparencyOnly) props += "mask ";
