@@ -100,6 +100,9 @@ void Profile::InitGeneralData()
 		m_iNumSongsPlayedByMeter[i] = 0;
 	ZERO( m_iNumStagesPassedByPlayMode );
 	ZERO( m_iNumStagesPassedByGrade );
+
+	lua_newtable( LUA->L );
+	m_SavedLuaData.SetFromStack();
 }
 
 void Profile::InitSongScores()
@@ -805,6 +808,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "TotalHolds",					m_iTotalHolds );
 	pGeneralDataNode->AppendChild( "TotalMines",					m_iTotalMines );
 	pGeneralDataNode->AppendChild( "TotalHands",					m_iTotalHands );
+	pGeneralDataNode->AppendChild( "Data",							m_SavedLuaData.Serialize() );
 
 	// Keep declared variables in a very local scope so they aren't 
 	// accidentally used where they're not intended.  There's a lot of
@@ -955,6 +959,20 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "TotalHolds",						m_iTotalHolds );
 	pNode->GetChildValue( "TotalMines",						m_iTotalMines );
 	pNode->GetChildValue( "TotalHands",						m_iTotalHands );
+
+	{
+		CString sData;
+		if( pNode->GetChildValue( "Data", sData ) )
+		{
+			m_SavedLuaData.LoadFromString( sData );
+			if( m_SavedLuaData.GetLuaType() != LUA_TTABLE )
+			{
+				LOG->Warn( "Profile data did not evaluate to a table" );
+				lua_newtable( LUA->L );
+				m_SavedLuaData.SetFromStack();
+			}
+		}
+	}
 
 	{
 		const XNode* pDefaultModifiers = pNode->GetChild("DefaultModifiers");
@@ -1658,11 +1676,13 @@ public:
 
 	static int GetGoalCalories( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iGoalCalories ); return 1; }
 	static int GetCaloriesBurnedToday( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetCaloriesBurnedToday() ); return 1; }
+	static int GetSaved( T* p, lua_State *L )	{ p->m_SavedLuaData.PushSelf(L); return 1; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetGoalCalories )
 		ADD_METHOD( GetCaloriesBurnedToday )
+		ADD_METHOD( GetSaved )
 		Luna<T>::Register( L );
 	}
 };

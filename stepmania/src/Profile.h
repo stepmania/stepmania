@@ -14,6 +14,7 @@
 #include "CourseUtil.h"	// for CourseID
 #include "TrailUtil.h"	// for TrailID
 #include "StyleUtil.h"	// for StyleID
+#include "LuaReference.h" // for LuaData
 
 struct XNode;
 struct lua_State;
@@ -303,6 +304,7 @@ public:
 
 	// Lua
 	void PushSelf( lua_State *L );
+	LuaData m_SavedLuaData;
 
 private:
 	const HighScoresForASong *GetHighScoresForASong( const SongID& songID ) const;
