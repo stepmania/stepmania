@@ -258,7 +258,7 @@ bool FilenameDB::ResolvePath(CString &path)
 
 	/* Split path into components. */
 	vector<CString> p;
-	split(path, SLASH, p, true);
+	split(path, SLASH, p, false);
 
 	/* Resolve each component.  Assume the first component is correct. XXX
 	 * don't do that! "Songs/" vs "songs/" */
