@@ -287,6 +287,10 @@ static void SetAlphaRGB(const RageSurface *img, uint8_t r, uint8_t g, uint8_t b)
  */
 void RageSurfaceUtils::FixHiddenAlpha( RageSurface *img )
 {
+	/* If there are no alpha bits, there's nothing to fix. */
+	if( img->format->BitsPerPixel != 8 && img->format->Amask == 0 )
+		return;
+
 	uint8_t r, g, b;
 	FindAlphaRGB(img, r, g, b, false);
 
