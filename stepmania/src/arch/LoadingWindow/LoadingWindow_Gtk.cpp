@@ -18,7 +18,7 @@ try {
 	
 	Handle = dlopen( DirOfExecutable + "/" + "GtkModule.so", RTLD_NOW );
 	if( Handle == NULL )
-		RageException::Throw("dlopen(): %s", dlerror());
+		RageException::ThrowNonfatal("dlopen(): %s", dlerror());
 
 	Module_Init = (INIT) dlsym(Handle, "Init");
 	if( !Module_Init )
