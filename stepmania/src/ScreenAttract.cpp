@@ -84,7 +84,7 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 			case COIN_HOME:
 			case COIN_FREE:
 				SOUND->StopMusic();
-				/* We already played the coin sound.  Don't play it again. */
+				/* HandleGlobalInputs() already played the coin sound.  Don't play it again. */
 				if( MenuI.button != MENU_BUTTON_COIN )
 					SCREENMAN->PlayCoinSound();
 				SCREENMAN->SendMessageToTopScreen( SM_StopMusic );
