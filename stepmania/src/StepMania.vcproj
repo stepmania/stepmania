@@ -158,6 +158,75 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
+		<Configuration
+			Name="FastDebug|Win32"
+			OutputDirectory="FastDebug"
+			IntermediateDirectory="FastDebug"
+			ConfigurationType="1"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE"
+			CharacterSet="2"
+			WholeProgramOptimization="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="/EHa"
+				Optimization="0"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0\include&quot;"
+				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG"
+				ExceptionHandling="FALSE"
+				BasicRuntimeChecks="0"
+				RuntimeLibrary="2"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderFile="$(IntDir)/StepMania.pch"
+				AssemblerListingLocation=".\../FastDebug/"
+				ObjectFile=".\../FastDebug/"
+				ProgramDataBaseFileName=".\../FastDebug/"
+				BrowseInformation="0"
+				WarningLevel="4"
+				SuppressStartupBanner="TRUE"
+				DebugInformationFormat="4"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
+				OutputFile="../Program/StepMania-debug.exe"
+				LinkIncremental="2"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories=""
+				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib;libci.lib"
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="../Debug/StepMania-debug.pdb"
+				GenerateMapFile="TRUE"
+				MapFileName="$(IntDir)\$(TargetName).map"
+				MapExports="TRUE"
+				SubSystem="2"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName=".\../StepMania.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="archutils\Win32\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot;"/>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="archutils\Win32\verinc
+cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
+"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
 	</Configurations>
 	<Files>
 		<Filter
