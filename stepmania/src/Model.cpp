@@ -770,6 +770,10 @@ Model::AdvanceFrame (float dt)
 			m_fCurrFrame = 0.0f;
 			return;
 		}
+		else
+		{
+			m_fCurrFrame = 0.0f;
+		}
 	}
 
 
