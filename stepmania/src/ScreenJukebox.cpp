@@ -20,6 +20,8 @@
 // HACK: This belongs in ScreenDemonstration
 #define DIFFICULTIES_TO_SHOW		THEME->GetMetric ("ScreenDemonstration","DifficultiesToShow")
 
+#define SHOW_COURSE_MODIFIERS		THEME->GetMetricB("ScreenJukebox","ShowCourseModifiers")
+
 const ScreenMessage	SM_NotesEnded				= ScreenMessage(SM_User+10);	// MUST be same as in ScreenGameplay
 
 
@@ -228,6 +230,44 @@ void ScreenJukebox::HandleScreenMessage( const ScreenMessage SM )
 	}
 
 	ScreenGameplay::HandleScreenMessage( SM );
+}
+
+void ScreenJukebox::InitSongQueues()
+{
+	ScreenGameplay::InitSongQueues();
+
+	ASSERT_M( m_apSongsQueue.size() == 1, ssprintf("%i", (int) m_apSongsQueue.size()) );
+	FOREACH_PlayerNumber(p)
+		ASSERT_M( m_asModifiersQueue[p].size() == 1, ssprintf("%i", (int) m_asModifiersQueue[p].size()) );
+
+	if( !SHOW_COURSE_MODIFIERS )
+		return;
+
+	/* If we have a modifier course containing this song, apply its modifiers.  Only check
+	 * fixed course entries. */
+	vector<Course*> apCourses;
+	SONGMAN->GetAllCourses( apCourses, false );
+	const Song *pSong = m_apSongsQueue[0];
+	vector<const CourseEntry *> apOptions;
+	for( unsigned i = 0; i < apCourses.size(); ++i )
+	{
+		const Course *pCourse = apCourses[i];
+		const CourseEntry *pEntry = pCourse->FindFixedSong( pSong );
+		if( pEntry == NULL || pEntry->attacks.size() == 0 )
+			continue;
+		apOptions.push_back( pEntry );
+	}
+
+	if( apOptions.size() == 0 )
+		return;
+
+	const CourseEntry *pEntry = apOptions[ rand()%apOptions.size() ];
+	AttackArray aAttacks = pEntry->attacks;
+	if( !pEntry->modifiers.empty() )
+		aAttacks.push_back( Attack::FromGlobalCourseModifier( pEntry->modifiers ) );
+
+	FOREACH_PlayerNumber(pn)
+		m_asModifiersQueue[pn][0] = aAttacks;
 }
 
 /*

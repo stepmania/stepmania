@@ -23,6 +23,8 @@ protected:
 	bool m_bDemonstration;
 	Transition	m_In;
 	Transition	m_Out;
+
+	virtual void InitSongQueues();
 };
 
 #endif
