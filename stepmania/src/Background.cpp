@@ -20,7 +20,7 @@ void Background::LoadFromSong( Song& song )
 {
 	Sprite::LoadFromTexture( song.GetBackgroundPath() );
 	Sprite::StretchTo( CRect(0,0,640,480) );
-	Sprite::SetColor( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
+	Sprite::SetDiffuseColor( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
 
 	CStringArray sVisualizationPaths;
 	GetDirListing( sVisDir + "*.*", sVisualizationPaths );

@@ -27,9 +27,9 @@ public:
 	Player();
 
 	void SetSteps( const Steps& newSteps );
-	void SetX( int iX );
+	void SetX( float fX );
 	void Update( const float &fDeltaTime, float fSongBeat, float fMaxBeatDifference );
-	void Draw( float fSongBeat );
+	void Draw();
 
 
 	ScoreSummary GetScoreSummary();
@@ -40,8 +40,9 @@ protected:
 	void CheckForCompleteStep( float fSongBeat, Step player_step, float fMaxBeatDiff );
 	void OnCompleteStep( float fSongBeat, Step player_step, float fMaxBeatDiff, int iStepIndex );
 
-	int			m_iCurCombo;
-	int			m_iMaxCombo;
+	int		m_iCurCombo;
+	int		m_iMaxCombo;
+	float	m_fSongBeat;
 
 	enum StepScore{ none, perfect, great, good, boo, miss };
 	enum StepTiming{ no_timing, early, late };
@@ -53,19 +54,19 @@ protected:
 
 
 	// common to color and gray arrows
-	int m_iArrowsCenterX;
+	float m_fArrowsCenterX;
 
 	int m_iNumColumns;	// will vary depending on the number panels (4,6,8,etc)
 	CMap<Step, Step, int, int>	m_StepToColumnNumber;
 	CMap<int, int, Step, Step>	m_ColumnNumberToStep;
 	CMap<int, int, float, float&>	m_ColumnToRotation;
-	int GetArrowColumnX( int iColNum );
+	float GetArrowColumnX( int iColNum );
 
 	// color arrows
 	void SetColorArrowsX( int iX );
 	void UpdateColorArrows( const float& fDeltaTime );
-	int	 GetColorArrowYPos( int iStepIndex, float fSongBeat );
-	void DrawColorArrows( float fSongBeat );
+	float GetColorArrowYPos( int iStepIndex, float fSongBeat );
+	void DrawColorArrows();
 	Sprite		m_sprColorArrow[MAX_NUM_COLUMNS];
 	int			m_iColorArrowFrameOffset[MAX_STEP_ELEMENTS];
 
@@ -92,14 +93,14 @@ protected:
 	void UpdateCombo( const float& fDeltaTime );
 	void DrawCombo();
 	void SetCombo( int iNum );
-	BOOL		m_bComboVisible;
+	bool		m_bComboVisible;
 	Sprite		m_sprCombo;
 	SpriteSequence	m_ComboNumber;
 
 	// life meter
 	void SetLifeMeterX( int iX );
 	void UpdateLifeMeter( const float& fDeltaTime );
-	void DrawLifeMeter( float fSongBeat );
+	void DrawLifeMeter();
 	void ChangeLife( StepScore score );
 public:
 	float GetLifePercentage() { return m_fLifePercentage; };

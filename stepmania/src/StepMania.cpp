@@ -447,11 +447,29 @@ void Render()
 
 			break;
 		case S_OK:
-			// draw the game
-			WM->Draw();
+			{
+				// set texture and alpha properties
+				LPDIRECT3DDEVICE8 pd3dDevice = SCREEN->GetDevice();
+
+				// calculate view and projection transforms
+
+				D3DXMATRIX matView;
+				D3DXMatrixIdentity( &matView );
+				pd3dDevice->SetTransform( D3DTS_VIEW, &matView );
+
+				D3DXMATRIX matProj;
+				D3DXMatrixOrthoOffCenterLH( &matProj, 0, 640, 480, 0, -100, 100 );
+				pd3dDevice->SetTransform( D3DTS_PROJECTION, &matProj );
+
+				D3DXCOLOR colorDiffuse = D3DXCOLOR(1,1,1,1);
+				D3DXCOLOR colorAdd = D3DXCOLOR(0,0,0,0);
+
+				// draw the game
+				WM->Draw();
 
 
-			SCREEN->EndFrame();
+				SCREEN->EndFrame();
+			}
 			break;
 	}
 }

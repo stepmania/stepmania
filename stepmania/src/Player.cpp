@@ -180,7 +180,7 @@ Player::Player()
 		m_sprGrayArrowGhost[c].SetRotation( m_ColumnToRotation[c] );
 		m_sprGrayArrowGhost[c].StopAnimating();
 		m_sprGrayArrowGhost[c].SetState( 1 );
-		m_sprGrayArrowGhost[c].SetColor( D3DXCOLOR(1,1,1,0) );
+		m_sprGrayArrowGhost[c].SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 
 		// color arrows
 		m_sprColorArrow[c].LoadFromSpriteFile( SPRITE_COLOR_ARROW );
@@ -212,16 +212,16 @@ Player::Player()
 }
 
 
-void Player::SetX( int iX )
+void Player::SetX( float fX )
 {
-	m_iArrowsCenterX = iX;
+	m_fArrowsCenterX = fX;
 
-	SetGrayArrowsX(iX); 
-	SetColorArrowsX(iX);	
-	SetJudgementX(iX);	
-	SetComboX(iX);	
-	SetScoreX(iX);	
-	SetLifeMeterX(iX);	
+	SetGrayArrowsX(fX); 
+	SetColorArrowsX(fX);	
+	SetJudgementX(fX);	
+	SetComboX(fX);	
+	SetScoreX(fX);	
+	SetLifeMeterX(fX);	
 }
 
 
@@ -237,6 +237,8 @@ void Player::SetSteps( const Steps& newSteps )
 void Player::Update( const float &fDeltaTime, float fSongBeat, float fMaxBeatDifference )
 {
 	//RageLog( "Player::Update(%f, %f, %f)", fDeltaTime, fSongBeat, fMaxBeatDifference );
+
+	m_fSongBeat = fSongBeat;	// save song beat
 
 	int iNumMisses = UpdateStepsMissedOlderThan( fSongBeat-fMaxBeatDifference );
 	if( iNumMisses > 0 )
@@ -257,14 +259,14 @@ void Player::Update( const float &fDeltaTime, float fSongBeat, float fMaxBeatDif
 	UpdateLifeMeter( fDeltaTime );
 }
 
-void Player::Draw( float fSongBeat )
+void Player::Draw()
 {
 	DrawGrayArrows(); 
-	DrawColorArrows( fSongBeat );
+	DrawColorArrows();
 	DrawJudgement();
 	DrawCombo();
 	DrawScore();
-	DrawLifeMeter( fSongBeat );	
+	DrawLifeMeter();	
 }
 
 
@@ -420,9 +422,9 @@ ScoreSummary Player::GetScoreSummary()
 }
 
 
-int Player::GetArrowColumnX( int iColNum ) 
+float Player::GetArrowColumnX( int iColNum ) 
 { 
-	return m_iArrowsCenterX + (iColNum - (m_iNumColumns-1)/2) * ARROW_SIZE;
+	return m_fArrowsCenterX + (iColNum - (m_iNumColumns-1)/2) * ARROW_SIZE;
 }
 
 void Player::UpdateGrayArrows( const float &fDeltaTime )
@@ -463,10 +465,10 @@ void Player::GrayArrowGhostStep( int index )
 {
 	m_sprGrayArrowGhost[index].SetXY( GetArrowColumnX(index), GRAY_ARROW_Y );
 	m_sprGrayArrowGhost[index].SetZoom( 1 );
-	m_sprGrayArrowGhost[index].SetColor( D3DXCOLOR(1,1,0.5f,1) );
+	m_sprGrayArrowGhost[index].SetDiffuseColor( D3DXCOLOR(1,1,0.5f,1) );
 	m_sprGrayArrowGhost[index].BeginTweening( 0.3f );
 	m_sprGrayArrowGhost[index].SetTweenZoom( 1.5 );
-	m_sprGrayArrowGhost[index].SetTweenColor( D3DXCOLOR(1,1,0.5f,0) );		
+	m_sprGrayArrowGhost[index].SetTweenDiffuseColor( D3DXCOLOR(1,1,0.5f,0) );		
 }
 
 void Player::UpdateColorArrows( const float &fDeltaTime )
@@ -474,15 +476,15 @@ void Player::UpdateColorArrows( const float &fDeltaTime )
 
 }
 
-void Player::DrawColorArrows( float fSongBeat )
+void Player::DrawColorArrows()
 {
 	//RageLog( "ColorArrows::Draw(%f)", fSongBeat );
 
-	int iBaseFrameNo = (int)(fSongBeat*2.5) % 12;	// 2.5 is a "fudge number" :-)  This should be based on BPM
+	int iBaseFrameNo = (int)(m_fSongBeat*2.5) % 12;	// 2.5 is a "fudge number" :-)  This should be based on BPM
 
-	int iIndexFirstArrowToDraw = BeatToStepIndex( fSongBeat - 2.0f );	// 2 beats earlier
+	int iIndexFirstArrowToDraw = BeatToStepIndex( m_fSongBeat - 2.0f );	// 2 beats earlier
 	if( iIndexFirstArrowToDraw < 0 ) iIndexFirstArrowToDraw = 0;
-	int iIndexLastArrowToDraw  = BeatToStepIndex( fSongBeat + 7.0f );	// 7 beats later
+	int iIndexLastArrowToDraw  = BeatToStepIndex( m_fSongBeat + 7.0f );	// 7 beats later
 
 	//RageLog( "Drawing elements %d through %d", iIndexFirstArrowToDraw, iIndexLastArrowToDraw );
 
@@ -490,7 +492,7 @@ void Player::DrawColorArrows( float fSongBeat )
 	{				
 		if( m_LeftToStepOn[i] != 0 )	// this step is not yet complete 
 		{		
-			int iYPos = GetColorArrowYPos( i, fSongBeat );
+			float fYPos = GetColorArrowYPos( i, m_fSongBeat );
 
 			// calculate which frame to display
 			int iFrameNo = iBaseFrameNo + m_iColorArrowFrameOffset[i];
@@ -500,7 +502,7 @@ void Player::DrawColorArrows( float fSongBeat )
 
 			for( int c=0; c < m_iNumColumns; c++ ) {	// for each arrow column
 				if( m_OriginalStep[i] & m_ColumnNumberToStep[c] ) {	// this column is still unstepped on?
-					m_sprColorArrow[c].SetY( iYPos );
+					m_sprColorArrow[c].SetY( fYPos );
 					m_sprColorArrow[c].SetState( iFrameNo );
 					m_sprColorArrow[c].Draw();
 				}
@@ -519,7 +521,7 @@ void Player::DrawColorArrows( float fSongBeat )
 
 
 
-int Player::GetColorArrowYPos( int iStepIndex, float fSongBeat )
+float Player::GetColorArrowYPos( int iStepIndex, float fSongBeat )
 {
 	float fBeatsUntilStep = StepIndexToBeat( iStepIndex ) - fSongBeat;
 	return (int)(fBeatsUntilStep * ARROW_GAP) + GRAY_ARROW_Y;
@@ -629,14 +631,14 @@ void Player::UpdateLifeMeter( const float &fDeltaTime )
 	m_sprLifeMeterPills.Update( fDeltaTime );
 }
 
-void Player::DrawLifeMeter( float fSongBeat )
+void Player::DrawLifeMeter()
 {
-	float fBeatPercentage = fSongBeat - (int)fSongBeat;
+	float fBeatPercentage = m_fSongBeat - (int)m_fSongBeat;
 	int iOffsetStart = roundf( LIEFMETER_NUM_PILLS*fBeatPercentage );
 
 	m_sprLifeMeterFrame.Draw();
 
-	float iX = m_sprLifeMeterFrame.GetLeftEdge() + 27;
+	float iX = m_sprLifeMeterFrame.GetX() - m_sprLifeMeterFrame.GetZoomedWidth()/2 + 27;
 	int iNumPills = (int)(m_sprLifeMeterPills.GetNumStates() * m_fLifePercentage);
 	int iPillWidth = m_sprLifeMeterPills.GetZoomedWidth();
 
@@ -724,16 +726,16 @@ void Player::ChangeScore( StepScore score, int iCurCombo )
 
 	float M = iCurCombo/4.0f;
 
-	int iScoreToAdd = 0;
+	float fScoreToAdd = 0;
 	switch( score )
 	{
 	case miss:											break;
 	case boo:											break;
-	case good:		iScoreToAdd = M * 100     + 100;	break;
-	case great:		iScoreToAdd = M * M * 100 + 300;	break;
-	case perfect:	iScoreToAdd = M * M * 300 + 500;	break;
+	case good:		fScoreToAdd = M * 100     + 100;	break;
+	case great:		fScoreToAdd = M * M * 100 + 300;	break;
+	case perfect:	fScoreToAdd = M * M * 300 + 500;	break;
 	}
-	m_fScore += iScoreToAdd;
+	m_fScore += fScoreToAdd;
 	ASSERT( m_fScore > 0 );
 
 	

@@ -40,10 +40,10 @@ public:
 	virtual void CloseWipingRight(WindowMessage send_when_done );
 	virtual void CloseWipingLeft( WindowMessage send_when_done );
 
-	BOOL IsClosed() { return m_TransitionState == closed; };
-	BOOL IsClosing() { return m_TransitionState == closing_right  ||  m_TransitionState == closing_left; };
+	bool IsClosed() { return m_TransitionState == closed; };
+	bool IsClosing() { return m_TransitionState == closing_right  ||  m_TransitionState == closing_left; };
 
-	VOID SetTransitionTime( FLOAT fNewTransitionTime ) { m_fTransitionTime = fNewTransitionTime; };
+	void SetTransitionTime( FLOAT fNewTransitionTime ) { m_fTransitionTime = fNewTransitionTime; };
 
 	void SetColor( D3DXCOLOR new_color ) { m_Color = new_color; };
 	void SetCloseWipingRightSound( CString sSoundPath );
@@ -56,13 +56,13 @@ protected:
 						   closing_right, closing_left };
 
 	TransitionState	m_TransitionState;
-	FLOAT			m_fTransitionTime;
-	FLOAT			m_fPercentThroughTransition;
+	float			m_fTransitionTime;
+	float			m_fPercentThroughTransition;
 
 	WindowMessage	m_MessageToSendWhenDone;
 
-	BOOL m_bPlayCloseWipingRightSound;
-	BOOL m_bPlayCloseWipingLeftSound;
+	bool m_bPlayCloseWipingRightSound;
+	bool m_bPlayCloseWipingLeftSound;
 	HSAMPLE m_hCloseWipingRightSound;
 	HSAMPLE m_hCloseWipingLeftSound;
 

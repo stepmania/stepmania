@@ -35,7 +35,7 @@ TransitionFade::~TransitionFade()
 
 void TransitionFade::Draw()
 {
-	FLOAT fPercentageOpaque;
+	float fPercentageOpaque;
 	switch( m_TransitionState )
 	{
 	case opened:

@@ -39,7 +39,7 @@ void TransitionStarWipe::Draw()
 		return;
 	}
 
-	FLOAT fPercentOpen;
+	float fPercentOpen;
 	switch( m_TransitionState )
 	{
 	case opening_right:
