@@ -61,16 +61,6 @@ ScoreKeeper5th::ScoreKeeper5th( const vector<Steps*>& apNotes_, const CStringArr
 	}
 	GAMESTATE->m_CurStageStats.iPossibleDancePoints[pn_] = iTotalPossibleDancePoints;
 
-	if( !GAMESTATE->IsCourseMode() )
-	{
-		ASSERT( !apNotes.empty() );
-		GAMESTATE->m_CurStageStats.pSong = GAMESTATE->m_pCurSong;
-		GAMESTATE->m_CurStageStats.iMeter[pn_] = apNotes[0]->GetMeter();
-	} else {
-		GAMESTATE->m_CurStageStats.pSong = NULL;
-	}
-
-
 
 	m_iScore = 0;
 	m_iScoreRemainder = 0;
