@@ -11,23 +11,6 @@
 -----------------------------------------------------------------------------
 */
 
-//#include "Sprite.h"
-//#include "song.h"
-//#include "ActorFrame.h"
-//#include "BitmapText.h"
-//#include "Quad.h"
-//#include "TextBanner.h"
-//#include "RandomSample.h"
-//#include "SmallGradeDisplay.h"
-//#include "GameConstantsAndTypes.h"
-//#include "MusicSortDisplay.h"
-//#include "WheelNotifyIcon.h"
-//#include "Screen.h"		// for ScreenMessage
-//#include "ScoreDisplayNormal.h"
-//#include "ScrollBar.h"
-//#include "Course.h"
-//#include "RageTimer.h"
-
 
 enum WheelItemType { TYPE_SECTION, TYPE_SONG, TYPE_ROULETTE, TYPE_RANDOM, TYPE_COURSE };
 

@@ -29,8 +29,8 @@ enum
 	GOINGRIGHT
 };
 
-#define DEFAULT_SCROLL_DIRECTION		THEME->GetMetricI("Notes","DefaultScrollDirection")
-#define PREVIEWMUSICMODE		THEME->GetMetricI("ScreenEz2SelectMusic","PreviewMusicMode")
+#define DEFAULT_SCROLL_DIRECTION	THEME->GetMetricI("Notes","DefaultScrollDirection")
+#define PREVIEWMUSICMODE			THEME->GetMetricI("ScreenEz2SelectMusic","PreviewMusicMode")
 
 MusicBannerWheel::MusicBannerWheel() 
 { 

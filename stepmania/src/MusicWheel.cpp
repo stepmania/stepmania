@@ -40,6 +40,8 @@
 #define SECTION_COLORS( i )			THEME->GetMetricC("MusicWheel",ssprintf("SectionColor%d",i+1))
 #define DEFAULT_SCROLL_DIRECTION	THEME->GetMetricI("Notes","DefaultScrollDirection")
 #define SONG_REAL_EXTRA_COLOR		THEME->GetMetricC("MusicWheel","SongRealExtraColor")
+#define SHOW_ROULETTE				THEME->GetMetricB("MusicWheel","ShowRoulette")
+#define SHOW_RANDOM					THEME->GetMetricB("MusicWheel","ShowRandom")
 
 
 const int MAX_WHEEL_SOUND_SPEED = 15;
@@ -295,13 +297,14 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 {
 	unsigned i;
 
-	// Roulette is used only in arcade and battle
+	// Roulette isn't a choice when selecting a course
 	if( so == SongSortOrder(SORT_ROULETTE) )
 	{
 		switch( GAMESTATE->m_PlayMode )
 		{
-		case PLAY_MODE_ARCADE:
-		case PLAY_MODE_BATTLE:
+		case PLAY_MODE_NONSTOP:
+		case PLAY_MODE_ONI:
+		case PLAY_MODE_ENDLESS:
 			break;
 		default:
             return;
@@ -360,7 +363,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			case SORT_GROUP:		bUseSections = GAMESTATE->m_sPreferredGroup == GROUP_ALL_MUSIC;	break;
 			case SORT_TITLE:		bUseSections = true;	break;
 			case SORT_ROULETTE:		bUseSections = false;	break;
-			default:		ASSERT( false );
+			default:		ASSERT( 0 );
 			}
 
 			if( PREFSMAN->m_MusicWheelUsesSections == PrefsManager::NEVER || (so != SORT_TITLE && PREFSMAN->m_MusicWheelUsesSections == PrefsManager::ABC_ONLY ))
@@ -409,8 +412,10 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 
 			if( so != SORT_ROULETTE )
 			{
-				arrayWheelItemDatas.push_back( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, RageColor(1,0,0,1)) );
-				arrayWheelItemDatas.push_back( WheelItemData(TYPE_RANDOM, NULL, "", NULL, RageColor(1,0,0,1)) );
+				if( SHOW_ROULETTE )
+					arrayWheelItemDatas.push_back( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, RageColor(1,0,0,1)) );
+				if( SHOW_RANDOM )
+					arrayWheelItemDatas.push_back( WheelItemData(TYPE_RANDOM, NULL, "", NULL, RageColor(1,0,0,1)) );
 			}
 
 			// HACK:  Add extra stage item if it isn't already present on the music wheel
