@@ -346,8 +346,6 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenTestSound );
 	IF_RETURN( ScreenTitleMenu );
 	IF_RETURN( ScreenEz2SelectMusic );
-	IF_RETURN( ScreenNetSelectMusic );
-	IF_RETURN( ScreenNetEvaluation );
 	IF_RETURN( ScreenRanking );
 	IF_RETURN( ScreenLogo );
 	IF_RETURN( ScreenUnlock );
@@ -362,7 +360,6 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenSelectCharacter );
 	IF_RETURN( ScreenSelectMaster );
 	IF_RETURN( ScreenEditCoursesMenu );
-	IF_RETURN( ScreenNetworkOptions );
 	IF_RETURN( ScreenProfileOptions );
 	IF_RETURN( ScreenExit );
 	IF_RETURN( ScreenReloadSongs );
@@ -379,6 +376,12 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenResetToDefaults );
 	IF_RETURN( ScreenClearBookkeepingData );
 	IF_RETURN( ScreenInsertCredit );
+
+#if !defined(WITHOUT_NETWORKING)
+	IF_RETURN( ScreenNetworkOptions );
+	IF_RETURN( ScreenNetSelectMusic );
+	IF_RETURN( ScreenNetEvaluation );
+#endif
 
 	RageException::Throw( "Invalid Screen class name '%s'", sClassName.c_str() );
 }

@@ -1,4 +1,6 @@
 #include "global.h"
+
+#if !defined(WITHOUT_NETWORKING)
 #include "ScreenNetEvaluation.h"
 #include "ThemeManager.h"
 #include "GameState.h"
@@ -143,3 +145,6 @@ void ScreenNetEvaluation::UpdateStats()
 
 	m_textPlayerOptions[m_pActivePlayer].SetText( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].playerOptions );
 }
+
+#endif
+

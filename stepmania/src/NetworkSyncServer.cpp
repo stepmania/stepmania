@@ -1,9 +1,15 @@
-/* NetworkSyncServer.cpp
- */
 #include "global.h"
 #include "NetworkSyncServer.h"
 #include "RageLog.h"
 #include <time.h>
+
+#if defined(WITHOUT_NETWORKING)
+bool StepManiaLanServer::ServerStart() { return false; }
+void StepManiaLanServer::ServerStop() { }
+void StepManiaLanServer::ServerUpdate() { }
+StepManiaLanServer::StepManiaLanServer() { }
+StepManiaLanServer::~StepManiaLanServer() { }
+#else
 
 LanPlayer::LanPlayer()
 {
@@ -763,6 +769,7 @@ void StepManiaLanServer::ScreenNetMusicSelectStatus(PacketFunctions& Packet, int
 	}
 	ServerChat(message);
 }
+#endif
 
 /*
  * (c) 2003-2004 Joshua Allen

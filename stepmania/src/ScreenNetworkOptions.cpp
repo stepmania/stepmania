@@ -1,4 +1,6 @@
 #include "global.h"
+
+#if !defined(WITHOUT_NETWORKING)
 #include "NetworkSyncManager.h"
 #include "ScreenNetworkOptions.h"
 #include "RageLog.h"
@@ -143,6 +145,8 @@ void ScreenNetworkOptions::ExportOptions()
 {
 
 }
+
+#endif
 
 /*
  * (c) 2004 Charles Lohr

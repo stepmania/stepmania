@@ -1,4 +1,6 @@
 #include "global.h"
+
+#if !defined(WITHOUT_NETWORKING)
 #include "ScreenNetSelectMusic.h"
 #include "ScreenManager.h"
 #include "GameSoundManager.h"
@@ -709,6 +711,8 @@ void ScreenNetSelectMusic::UpdateSongsList()
 	else
 		SONGMAN->GetSongs( m_vSongs, m_vGroups[j] );
 }
+
+#endif
 
 /*
  * (c) 2004 Charles Lohr

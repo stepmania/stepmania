@@ -76,7 +76,9 @@ public:
 	CString servername;
 	CString lastError;
 	int lastErrorCode;
+
 private:
+#if !defined(WITHOUT_NETWORKING)
 	bool stop;
 	PacketFunctions Packet;
 	PacketFunctions Reply;
@@ -117,6 +119,7 @@ private:
 	void SendUserList();
 	void GameOver(PacketFunctions& Packet, int clientNum);
 	void ScreenNetMusicSelectStatus(PacketFunctions& Packet, int clientNum);
+#endif
 };
 
 #endif
