@@ -39,7 +39,7 @@ Uint32 mySDL_Swap24(Uint32 x)
 #endif
 
 /* These conditionals in the inner loop are slow.  Templates? */
-Uint32 decodepixel(const Uint8 *p, int bpp)
+inline Uint32 decodepixel(const Uint8 *p, int bpp)
 {
     switch(bpp) {
     case 1: return *p;
