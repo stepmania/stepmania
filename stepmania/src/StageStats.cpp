@@ -181,18 +181,15 @@ Grade StageStats::GetGrade( PlayerNumber pn ) const
 	LOG->Trace( "GetGrade: Actual: %f, Possible: %f", Actual, Possible );
 
 #define ROUNDING_ERROR 0.00001f
-	Grade grade = (Grade)(NUM_GRADE_TIERS-1);	// lowest non-failing grade
+	Grade grade;
 
-	if( Possible == 0 )
-		return grade;
+	float fPercent = (Possible == 0) ? 0 : Actual / Possible;
 
-	float fPercent = Actual / Possible;
-
-	for( int g=0; g<NUM_GRADE_TIERS; g++ )
+	FOREACH_Grade(g)
 	{
 		if( fPercent >= PREFSMAN->m_fGradePercent[g]-ROUNDING_ERROR )
 		{
-			grade = (Grade)g;
+			grade = g;
 			break;
 		}
 	}

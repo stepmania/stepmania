@@ -412,6 +412,8 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 	m_soundInvalid.Load( THEME->GetPathToS("ScreenNameEntryTraditional invalid",true) );
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenNameEntryTraditional music") );
+
+	this->SortByDrawOrder();
 }
 
 static inline int wrapn( int x, int n )
