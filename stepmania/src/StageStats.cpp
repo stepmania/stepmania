@@ -253,7 +253,7 @@ void StageStats::SetLifeRecordAt( PlayerNumber pn, float fLife, float fSecond )
 
 	fFirstSecond[pn] = min( fSecond, fFirstSecond[pn] );
 	fLastSecond[pn] = max( fSecond, fLastSecond[pn] );
-	LOG->Trace( "fLastSecond = %f", fLastSecond[pn] );
+	//LOG->Trace( "fLastSecond = %f", fLastSecond[pn] );
 
 	if( !fLifeRecord[pn].empty() )
 	{
@@ -317,7 +317,7 @@ void StageStats::UpdateComboList( PlayerNumber pn, float fSecond, bool rollover 
 	{
 		fFirstSecond[pn] = min( fSecond, fFirstSecond[pn] );
 		fLastSecond[pn] = max( fSecond, fLastSecond[pn] );
-		LOG->Trace( "fLastSecond = %f", fLastSecond[pn] );
+		//LOG->Trace( "fLastSecond = %f", fLastSecond[pn] );
 	}
 
 	int cnt = iCurCombo[pn];
