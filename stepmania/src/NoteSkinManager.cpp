@@ -233,17 +233,17 @@ CString NoteSkinManager::GetPathToFromPlayerAndButton( PlayerNumber pn, CString 
 
 CString NoteSkinManager::GetPathToFromNoteSkinAndButton( CString NoteSkin, CString sButtonName, CString sElement, bool bOptional )
 {
-	CString ret = GetPathToFromDir( GetNoteSkinDir(NoteSkin), sButtonName+" "+sElement, bOptional );
+	CString ret = GetPathToFromDir( GetNoteSkinDir(NoteSkin), sButtonName+" "+sElement );
 	if( !ret.empty() )	// we found something
 		return ret;
 
 	// Search game default NoteSkin
-	ret = GetPathToFromDir( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME), sButtonName+" "+sElement, bOptional );
+	ret = GetPathToFromDir( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME), sButtonName+" "+sElement );
 	if( !ret.empty() )	// we found something
 		return ret;
 
 	// Search global default NoteSkin
-	ret = GetPathToFromDir( GLOBAL_BASE_NOTESKIN_DIR, "Fallback "+sElement, bOptional );
+	ret = GetPathToFromDir( GLOBAL_BASE_NOTESKIN_DIR, "Fallback "+sElement );
 	if( !ret.empty() )	// we found something
 		return ret;
 
@@ -257,7 +257,8 @@ CString NoteSkinManager::GetPathToFromNoteSkinAndButton( CString NoteSkin, CStri
 			GLOBAL_BASE_NOTESKIN_DIR.c_str() );
 }
 
-CString NoteSkinManager::GetPathToFromDir( CString sDir, CString sFileName, bool bOptional )
+
+CString NoteSkinManager::GetPathToFromDir( CString sDir, CString sFileName )
 {
 	CStringArray matches;		// fill this with the possible files
 
@@ -291,7 +292,7 @@ CString NoteSkinManager::GetPathToFromDir( CString sDir, CString sFileName, bool
 	{
 		CString sNewFileName = GetRedirContents(sPath);
 		
-		CString sNewPath = GetPathToFromDir(sDir, sNewFileName, bOptional);
+		CString sNewPath = GetPathToFromDir(sDir, sNewFileName);
 
 		if( !sNewPath.empty() )
 			return sNewPath;

@@ -33,7 +33,6 @@ public:
 	CString GetPathToFromPlayerAndCol( PlayerNumber pn, int col, CString sElement, bool bOptional=false );
 	CString GetPathToFromNoteSkinAndButton( CString NoteSkin, CString sButtonName, CString sElement, bool bOptional=false );
 	CString GetPathToFromPlayerAndButton( PlayerNumber pn, CString sButtonName, CString sElement, bool bOptional=false );
-	CString GetPathToFromDir( CString sDir, CString sFileName, bool bOptional=false );
 
 	CString		GetMetric( CString sNoteSkinName, CString sButtonName, CString sValue );
 	int			GetMetricI( CString sNoteSkinName, CString sButtonName, CString sValueName );
@@ -46,6 +45,7 @@ public:
 	CString GetNoteSkinDir( CString sSkinName );
 
 protected:
+	CString GetPathToFromDir( CString sDir, CString sFileName );
 
 	struct NoteSkinData
 	{
