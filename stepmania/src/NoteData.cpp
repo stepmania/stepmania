@@ -235,7 +235,6 @@ void NoteData::AddHoldNote( HoldNote add )
 	// add a tap note at the start of this hold
 	SetTapNote(add.m_iTrack, iAddStartIndex, TAP_HOLD_HEAD);		// Hold begin marker.  Don't draw this, but do grade it.
 
-	ASSERT( m_HoldNotes.size() < MAX_HOLD_NOTES );
 	m_HoldNotes.push_back(add);
 }
 

@@ -57,8 +57,6 @@ const int ROWS_PER_BEAT	= 12;	// It is important that this number is evenly divi
 const int ROWS_PER_MEASURE = ROWS_PER_BEAT * BEATS_PER_MEASURE;
 const int MAX_TAP_NOTE_ROWS = MAX_BEATS*ROWS_PER_BEAT;
 
-const int MAX_HOLD_NOTES = 800;	// BMR's Connected has about 300
-
 enum NoteType 
 { 
 	NOTE_TYPE_4TH,	// quarter note
