@@ -438,12 +438,12 @@ HRESULT RageInput::Initialize()
 	//////////////////////////////
 	// Look for joysticks
 	// TODO:  Why is this function so slow to return?  Is it just my machine?
-/*    if( FAILED( hr = m_pDI->EnumDevices( DI8DEVCLASS_GAMECTRL, 
+    if( FAILED( hr = m_pDI->EnumDevices( DI8DEVCLASS_GAMECTRL, 
                                          EnumJoysticksCallback,
                                          (VOID*)this, 
 										 DIEDFL_ATTACHEDONLY ) ) )
 		throw RageException( hr, "m_pDI->EnumDevices failed." );
-*/
+
 	for( int i=0; i<NUM_JOYSTICKS; i++ )
 	{
 		// Set the data format to "simple joystick" - a predefined data format 
