@@ -415,8 +415,8 @@ int NoteData::GetNumTapNotes( float fStartBeat, float fEndBeat ) const
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
 	/* Clamp to known-good ranges. */
-	iStartIndex = clamp( iStartIndex, 0, GetMaxRow()-1 );
-	iEndIndex = clamp( iEndIndex, 0, GetMaxRow()-1 );
+	iStartIndex = max( iStartIndex, 0 );
+	iEndIndex = min( iEndIndex, GetMaxRow()-1 );
 	
 	for( int t=0; t<m_iNumTracks; t++ )
 	{
@@ -457,8 +457,8 @@ int NoteData::GetNumMines( float fStartBeat, float fEndBeat ) const
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
 	/* Clamp to known-good ranges. */
-	iStartIndex = clamp( iStartIndex, 0, GetMaxRow()-1 );
-	iEndIndex = clamp( iEndIndex, 0, GetMaxRow()-1 );
+	iStartIndex = max( iStartIndex, 0 );
+	iEndIndex = min( iEndIndex, GetMaxRow()-1 );
 	
 	for( int t=0; t<m_iNumTracks; t++ )
 	{
@@ -499,8 +499,8 @@ int NoteData::GetNumHands( float fStartBeat, float fEndBeat ) const
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
 	/* Clamp to known-good ranges. */
-	iStartIndex = clamp( iStartIndex, 0, temp.GetMaxRow()-1 );
-	iEndIndex = clamp( iEndIndex, 0, temp.GetMaxRow()-1 );
+	iStartIndex = max( iStartIndex, 0 );
+	iEndIndex = min( iEndIndex, GetMaxRow()-1 );
 
 	int iNum = 0;
 	for( int i=iStartIndex; i<=iEndIndex; i++ )
@@ -528,8 +528,8 @@ int NoteData::GetNumN( int MinTaps, float fStartBeat, float fEndBeat ) const
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
 	/* Clamp to known-good ranges. */
-	iStartIndex = clamp( iStartIndex, 0, GetMaxRow()-1 );
-	iEndIndex = clamp( iEndIndex, 0, GetMaxRow()-1 );
+	iStartIndex = max( iStartIndex, 0 );
+	iEndIndex = min( iEndIndex, GetMaxRow()-1 );
 
 	int iNum = 0;
 	for( int i=iStartIndex; i<=iEndIndex; i++ )
