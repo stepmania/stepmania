@@ -434,6 +434,86 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
+static void HandleInputEvents(float fDeltaTime)
+{
+	static InputEventArray ieArray;
+	ieArray.clear();	// empty the array
+	INPUTFILTER->GetInputEvents( ieArray, fDeltaTime );
+	for( unsigned i=0; i<ieArray.size(); i++ )
+	{
+		DeviceInput DeviceI = (DeviceInput)ieArray[i];
+		InputEventType type = ieArray[i].type;
+
+		if(type == IET_FIRST_PRESS && DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F4))
+		{
+			if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
+				INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
+			{
+				// pressed Alt+F4
+				SDL_Event *event;
+				event = (SDL_Event *) malloc(sizeof(event));
+				event->type = SDL_QUIT;
+				SDL_PushEvent(event);
+				continue;
+			}
+			else
+			{
+				// pressed just F4
+				PREFSMAN->m_bWindowed = !PREFSMAN->m_bWindowed;
+				ApplyGraphicOptions();
+				// fall through
+				/* why fall through? other code shouldn't be using 
+				 * globally-bound keys -glenn */
+			}
+		}
+		else if( type == IET_FIRST_PRESS && DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F5))
+		{
+			// pressed F5.  Toggle detail.
+			if(PREFSMAN->m_iDisplayWidth != 640)
+			{
+				PREFSMAN->m_iDisplayWidth = 640;
+				PREFSMAN->m_iDisplayHeight = 480;
+				ApplyGraphicOptions();
+			}			
+			else
+			{
+				PREFSMAN->m_iDisplayWidth = 320;
+				PREFSMAN->m_iDisplayHeight = 240;
+				ApplyGraphicOptions();
+			}			
+
+		}
+
+		if(type == IET_FIRST_PRESS && DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_RETURN))
+		{
+			if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
+				INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
+			{
+				/* alt-enter */
+				PREFSMAN->m_bWindowed = !PREFSMAN->m_bWindowed;
+				ApplyGraphicOptions();
+				continue;
+			}
+		}
+
+		GameInput GameI;
+		MenuInput MenuI;
+		StyleInput StyleI;
+
+		INPUTMAPPER->DeviceToGame( DeviceI, GameI );
+		
+		if( GameI.IsValid()  &&  type == IET_FIRST_PRESS )
+			INPUTQUEUE->RememberInput( GameI );
+		if( GameI.IsValid() )
+		{
+			INPUTMAPPER->GameToMenu( GameI, MenuI );
+			INPUTMAPPER->GameToStyle( GameI, StyleI );
+		}
+
+		SCREENMAN->Input( DeviceI, type, GameI, MenuI, StyleI );
+	}
+}
+
 void GameLoop()
 {
 	bool do_exit = false;
@@ -479,83 +559,7 @@ void GameLoop()
 		SCREENMAN->Update( fDeltaTime );
 		CLIENT->Update( fDeltaTime );
 		SOUNDMAN->Update( fDeltaTime );
-
-		static InputEventArray ieArray;
-		ieArray.clear();	// empty the array
-		INPUTFILTER->GetInputEvents( ieArray, fDeltaTime );
-		for( unsigned i=0; i<ieArray.size(); i++ )
-		{
-			DeviceInput DeviceI = (DeviceInput)ieArray[i];
-			InputEventType type = ieArray[i].type;
-
-			/* ALT-F4 -> quit (better place for this? in ScreenManager perhaps?) */
-			/* Nah.  this is fine.  -Chris */
-			if(type == IET_FIRST_PRESS && DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F4))
-			{
-				if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
-					INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
-				{
-					// pressed Alt+F4
-					SDL_Event *event;
-					event = (SDL_Event *) malloc(sizeof(event));
-					event->type = SDL_QUIT;
-					SDL_PushEvent(event);
-					continue;
-				}
-				else
-				{
-					// pressed just F4
-					PREFSMAN->m_bWindowed = !PREFSMAN->m_bWindowed;
-					ApplyGraphicOptions();
-					// fall through
-				}
-			}
-			else if( type == IET_FIRST_PRESS && DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F5))
-			{
-				// pressed F5.  Toggle detail.
-				if(PREFSMAN->m_iDisplayWidth != 640)
-				{
-					PREFSMAN->m_iDisplayWidth = 640;
-					PREFSMAN->m_iDisplayHeight = 480;
-					ApplyGraphicOptions();
-				}			
-				else
-				{
-					PREFSMAN->m_iDisplayWidth = 320;
-					PREFSMAN->m_iDisplayHeight = 240;
-					ApplyGraphicOptions();
-				}			
-	
-			}
-
-			if(type == IET_FIRST_PRESS && DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_RETURN))
-			{
-				if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
-					INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
-				{
-					/* alt-enter */
-					PREFSMAN->m_bWindowed = !PREFSMAN->m_bWindowed;
-					ApplyGraphicOptions();
-					continue;
-				}
-			}
-
-			GameInput GameI;
-			MenuInput MenuI;
-			StyleInput StyleI;
-
-			INPUTMAPPER->DeviceToGame( DeviceI, GameI );
-			
-			if( GameI.IsValid()  &&  type == IET_FIRST_PRESS )
-				INPUTQUEUE->RememberInput( GameI );
-			if( GameI.IsValid() )
-			{
-				INPUTMAPPER->GameToMenu( GameI, MenuI );
-				INPUTMAPPER->GameToStyle( GameI, StyleI );
-			}
-
-			SCREENMAN->Input( DeviceI, type, GameI, MenuI, StyleI );
-		}
+		HandleInputEvents( fDeltaTime );
 
 		/*
 		 * Render
