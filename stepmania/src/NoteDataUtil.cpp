@@ -246,9 +246,10 @@ namespace
 				tail.type = TapNote::hold_tail;
 
 				/* If iDuration is 0, we'd end up overwriting the head with the tail
-				* (and invalidating our iterator).  Empty hold notes aren't valid. */
-				if( tn.iDuration != 0 )
-					inout.SetTapNote( t, iRow + tn.iDuration, tail );
+				 * (and invalidating our iterator).  Empty hold notes aren't valid. */
+				ASSERT( tn.iDuration != 0 );
+
+				inout.SetTapNote( t, iRow + tn.iDuration, tail );
 			}
 		}
 	}
