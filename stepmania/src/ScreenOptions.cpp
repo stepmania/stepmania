@@ -416,6 +416,8 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 		this->GoToNextState();
 		break;
 	case SM_BeginFadingOut:
+		if(m_Menu.IsTransitioning())
+			return; /* already transitioning */
 		m_Menu.StartTransitioning( SM_GoToNextScreen );
 
 		m_SoundStart.Play();
