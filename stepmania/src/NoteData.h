@@ -124,4 +124,12 @@ public:
 	void ConvertHoldNotesTo4s();
 };
 
-static const TapNote TAP_EMPTY = '0';
+static const TapNote TAP_EMPTY		= '0';
+static const TapNote TAP_TAP		= '1'; /* impatient? */
+static const TapNote TAP_HOLD_HEAD	= '2';
+
+/* In 2sand3s mode, holds are deleted and TAP_HOLD_END is added: */
+static const TapNote TAP_HOLD_TAIL	= '3';
+
+/* In 4s mode, holds and TAP_HOLD_HEAD are deleted and TAP_HOLD is added: */
+static const TapNote TAP_HOLD		= '4';
