@@ -60,7 +60,7 @@
 				TypeLibraryName=".\../StepMania.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi"/>
+				CommandLine="disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi"/>
 			<Tool
 				Name="VCPreBuildEventTool"
 				CommandLine="disasm\verinc
