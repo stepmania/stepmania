@@ -24,89 +24,93 @@ extern "C"
 template <typename T>
 struct RegType
 {
-  const char *name; 
-  int (*mfunc)(T *p, lua_State *L);
+	const char *name; 
+	int (*mfunc)(T *p, lua_State *L);
 };
 
 template <typename T>
 class Luna 
 {
-  typedef struct { T *pT; } userdataType;
+	typedef struct { T *pT; } userdataType;
 public:
-
-  static void Register(lua_State *L) {
-    lua_newtable(L);
-    int methods = lua_gettop(L);
-
-    luaL_newmetatable(L, s_className);
-    int metatable = lua_gettop(L);
-
-    // store method table in globals so that
-    // scripts can add functions written in Lua.
-    lua_pushstring(L, s_className);
-    lua_pushvalue(L, methods);
-    lua_settable(L, LUA_GLOBALSINDEX);
-
-    lua_pushliteral(L, "__metatable");
-    lua_pushvalue(L, methods);
-    lua_settable(L, metatable);  // hide metatable from Lua getmetatable()
-
-    lua_pushliteral(L, "__index");
-    lua_pushvalue(L, methods);
-    lua_settable(L, metatable);
-
-    lua_pushliteral(L, "__tostring");
-    lua_pushcfunction(L, tostring_T);
-    lua_settable(L, metatable);
-
-    // fill method table with methods from class T
-    for (unsigned i=0; i<s_pvMethods->size(); i++ )
+	
+	static void Register(lua_State *L)
 	{
-		const MyRegType *l = &(*s_pvMethods)[i];
-      lua_pushstring(L, l->name);
-      lua_pushlightuserdata(L, (void*)l);
-      lua_pushcclosure(L, thunk, 1);
-      lua_settable(L, methods);
-    }
-
-    lua_pop(L, 2);  // drop metatable and method table
-  }
-
-  // get userdata from Lua stack and return pointer to T object
-  static T *check(lua_State *L, int narg) {
-    userdataType *ud =
-      static_cast<userdataType*>(luaL_checkudata(L, narg, s_className));
-    if(!ud) luaL_typerror(L, narg, s_className);
-    return ud->pT;  // pointer to T object
-  }
-
+		lua_newtable(L);
+		int methods = lua_gettop(L);
+		
+		luaL_newmetatable(L, s_className);
+		int metatable = lua_gettop(L);
+		
+		// store method table in globals so that
+		// scripts can add functions written in Lua.
+		lua_pushstring(L, s_className);
+		lua_pushvalue(L, methods);
+		lua_settable(L, LUA_GLOBALSINDEX);
+		
+		lua_pushliteral(L, "__metatable");
+		lua_pushvalue(L, methods);
+		lua_settable(L, metatable);  // hide metatable from Lua getmetatable()
+		
+		lua_pushliteral(L, "__index");
+		lua_pushvalue(L, methods);
+		lua_settable(L, metatable);
+		
+		lua_pushliteral(L, "__tostring");
+		lua_pushcfunction(L, tostring_T);
+		lua_settable(L, metatable);
+		
+		// fill method table with methods from class T
+		for (unsigned i=0; i<s_pvMethods->size(); i++ )
+		{
+			const MyRegType *l = &(*s_pvMethods)[i];
+			lua_pushstring(L, l->name);
+			lua_pushlightuserdata(L, (void*)l);
+			lua_pushcclosure(L, thunk, 1);
+			lua_settable(L, methods);
+		}
+		
+		lua_pop(L, 2);  // drop metatable and method table
+	}
+	
+	// get userdata from Lua stack and return pointer to T object
+	static T *check(lua_State *L, int narg)
+	{
+		userdataType *ud =
+			static_cast<userdataType*>(luaL_checkudata(L, narg, s_className));
+		if(!ud) luaL_typerror(L, narg, s_className);
+		return ud->pT;  // pointer to T object
+	}
+	
 private:
-
-  // member function dispatcher
-  static int thunk(lua_State *L) {
-    // stack has userdata, followed by method args
-    T *obj = check(L, 1);  // get 'self', or if you prefer, 'this'
-    lua_remove(L, 1);  // remove self so member function args start at index 1
-    // get member function from upvalue
-    MyRegType *l = static_cast<MyRegType*>(lua_touserdata(L, lua_upvalueindex(1)));
-    return (*(l->mfunc))(obj,L);  // call member function
-  }
-
+	
+	// member function dispatcher
+	static int thunk(lua_State *L) 
+	{
+		// stack has userdata, followed by method args
+		T *obj = check(L, 1);  // get 'self', or if you prefer, 'this'
+		lua_remove(L, 1);  // remove self so member function args start at index 1
+		// get member function from upvalue
+		MyRegType *l = static_cast<MyRegType*>(lua_touserdata(L, lua_upvalueindex(1)));
+		return (*(l->mfunc))(obj,L);  // call member function
+	}
+	
 public:
-  // create a new T object and
-  // push onto the Lua stack a userdata containing a pointer to T object
-  static int Push(lua_State *L, T* p ) {
-    userdataType *ud = static_cast<userdataType*>(lua_newuserdata(L, sizeof(userdataType)));
-    ud->pT = p;  // store pointer to object in userdata
-    luaL_getmetatable(L, s_className);  // lookup metatable in Lua registry
-    lua_setmetatable(L, -2);
-    return 1;  // userdata containing pointer to T object
-  }
-
+	// create a new T object and
+	// push onto the Lua stack a userdata containing a pointer to T object
+	static int Push(lua_State *L, T* p )
+	{
+		userdataType *ud = static_cast<userdataType*>(lua_newuserdata(L, sizeof(userdataType)));
+		ud->pT = p;  // store pointer to object in userdata
+		luaL_getmetatable(L, s_className);  // lookup metatable in Lua registry
+		lua_setmetatable(L, -2);
+		return 1;  // userdata containing pointer to T object
+	}
+	
 	typedef RegType<T> MyRegType;
 	typedef vector<MyRegType> RegTypeVector;
 	static RegTypeVector *s_pvMethods;
-
+	
 	static void CreateMethodsVector()
 	{
 		if(s_pvMethods==NULL) 
@@ -114,22 +118,23 @@ public:
 	}
 private:
 	static const char s_className[];
-
-  static int tostring_T (lua_State *L) {
-    char buff[32];
-    userdataType *ud = static_cast<userdataType*>(lua_touserdata(L, 1));
-    T *obj = ud->pT;
-    sprintf(buff, "%p", obj);
-    lua_pushfstring(L, "%s (%s)", s_className, buff);
-    return 1;
-  }
+	
+	static int tostring_T (lua_State *L)
+	{
+		char buff[32];
+		userdataType *ud = static_cast<userdataType*>(lua_touserdata(L, 1));
+		T *obj = ud->pT;
+		sprintf(buff, "%p", obj);
+		lua_pushfstring(L, "%s (%s)", s_className, buff);
+		return 1;
+	}
 };
 
 
 #define LUA_REGISTER_CLASS( T ) \
-const char Luna##T<T>::s_className[] = #T; \
-Luna##T<T>::RegTypeVector* Luna##T<T>::s_pvMethods = NULL; \
-static Luna##T<T> registera; \
+	const char Luna##T<T>::s_className[] = #T; \
+	Luna##T<T>::RegTypeVector* Luna##T<T>::s_pvMethods = NULL; \
+	static Luna##T<T> registera; \
 void T::PushSelf( lua_State *L ) { Luna##T<T>::Push( L, this ); }
 
 #define ADD_METHOD( method_name ) \
