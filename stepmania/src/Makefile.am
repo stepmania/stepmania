@@ -57,7 +57,8 @@ Screens += ScreenGameplayMultiplayer.cpp ScreenGameplayMultiplayer.h ScreenSMOnl
 endif
 
 DataStructures = \
-Attack.cpp Attack.h AutoKeysounds.cpp AutoKeysounds.h BannerCache.cpp BannerCache.h CatalogXml.cpp CatalogXml.h \
+ActorCommands.cpp ActorCommands.h Attack.cpp Attack.h AutoKeysounds.cpp AutoKeysounds.h \
+BannerCache.cpp BannerCache.h CatalogXml.cpp CatalogXml.h \
 Character.cpp Character.h CharacterHead.cpp CharacterHead.h \
 CodeDetector.cpp CodeDetector.h \
 Command.cpp Command.h Difficulty.cpp Difficulty.h EnumHelper.cpp EnumHelper.h Course.cpp Course.h \
