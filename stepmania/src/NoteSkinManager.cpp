@@ -149,6 +149,7 @@ CString NoteSkinManager::GetNoteSkinDir( CString sSkinName )
 
 CString NoteSkinManager::GetMetric( CString sNoteSkinName, CString sButtonName, CString sValue )
 {
+	sNoteSkinName.MakeLower();
 	CString sReturn;
 	NoteSkinData& data = m_mapNameToData[sNoteSkinName];
 	if( data.metrics.GetValue( sButtonName, sValue, sReturn ) )
