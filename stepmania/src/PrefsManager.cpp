@@ -125,8 +125,6 @@ PrefsManager::PrefsManager()
 	
 	m_bAllowUnacceleratedRenderer = false;
 
-	m_sDefaultNoteSkin = "default";
-
 	ReadGlobalPrefsFromDisk( true );
 }
 
@@ -202,7 +200,6 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "AutogenMissingTypes",		m_bAutogenMissingTypes );
 	ini.GetValueB( "Options", "AutogenGroupCourses",		m_bAutogenGroupCourses );
 	ini.GetValueB( "Options", "Timestamping",				m_bTimestamping );
-	ini.GetValue ( "Options", "DefaultModifiers",			m_sDefaultModifiers );
 	ini.GetValueB( "Options", "BreakComboToGetItem",		m_bBreakComboToGetItem );
 	ini.GetValueB( "Options", "ShowDancingCharacters",		m_bShowDancingCharacters );
 	/* XXX: This belongs in the memcard code, not prefs. */
@@ -295,7 +292,6 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "AutogenMissingTypes",		m_bAutogenMissingTypes );
 	ini.SetValueB( "Options", "AutogenGroupCourses",		m_bAutogenGroupCourses );
 	ini.SetValueB( "Options", "Timestamping",				m_bTimestamping );
-	ini.SetValue ( "Options", "DefaultModifiers",			m_sDefaultModifiers );
 	ini.SetValueB( "Options", "BreakComboToGetItem",		m_bBreakComboToGetItem );
 	ini.SetValueB( "Options", "ShowDancingCharacters",		m_bShowDancingCharacters );
 	ini.SetValueF( "Options", "DancePointsAccumulated",		m_fDancePointsAccumulated );
@@ -340,16 +336,17 @@ void PrefsManager::ReadGamePrefsFromDisk()
 	// if these calls fail, the three strings will keep the initial values set above.
 	ini.GetValue( sGameName, "Announcer",		sAnnouncer );
 	ini.GetValue( sGameName, "Theme",			sTheme );
-	ini.GetValue( sGameName, "NoteSkin",		sNoteSkin );
+	ini.GetValue( sGameName, "DefaultModifiers",m_sDefaultModifiers );
 
 	// it's OK to call these functions with names that don't exist.
 	ANNOUNCER->SwitchAnnouncer( sAnnouncer );
 	THEME->SwitchTheme( sTheme );
 
-	if(NOTESKIN->DoesNoteSkinExist(sNoteSkin))
-		m_sDefaultNoteSkin = sNoteSkin;
-	else
-		m_sDefaultNoteSkin = "default";
+	// XXX: ?
+//	if(NOTESKIN->DoesNoteSkinExist(sNoteSkin))
+//		m_sDefaultNoteSkin = sNoteSkin;
+//	else
+//		m_sDefaultNoteSkin = "default";
 
 //	NOTESKIN->SwitchNoteSkin( sNoteSkin );
 }
@@ -366,8 +363,7 @@ void PrefsManager::SaveGamePrefsToDisk()
 
 	ini.SetValue( sGameName, "Announcer",		ANNOUNCER->GetCurAnnouncerName() );
 	ini.SetValue( sGameName, "Theme",			THEME->GetCurThemeName() );
-//	ini.SetValue( sGameName, "NoteSkin",		NOTESKIN->GetCurNoteSkinName() );
-	ini.SetValue( sGameName, "NoteSkin",		m_sDefaultNoteSkin );
+	ini.SetValue( sGameName, "DefaultModifiers",m_sDefaultModifiers );
 
 	ini.WriteFile();
 }

@@ -74,7 +74,6 @@ public:
 	bool			m_bShowLyrics;
 	bool			m_bAutogenMissingTypes;
 	bool			m_bAutogenGroupCourses;
-	CString			m_sDefaultModifiers;
 	bool			m_bBreakComboToGetItem;
 	bool			m_bShowDancingCharacters;
 	float			m_fDancePointsAccumulated;
@@ -100,7 +99,7 @@ public:
 	bool			m_bAllowUnacceleratedRenderer;
 
 	/* Game-specific prefs: */
-	CString			m_sDefaultNoteSkin;
+	CString			m_sDefaultModifiers;
 
 	void ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame );
 	void SaveGlobalPrefsToDisk();
