@@ -9,7 +9,6 @@
 #include "PrefsManager.h"
 #include "RageDisplay.h"
 #include "RageTexture.h"
-#include "GameConstantsAndTypes.h"
 #include "SDL_utils.h"
 #include "ActorUtil.h"
 #include "arch/ArchHooks/ArchHooks.h"
@@ -51,7 +50,9 @@ RageTextureID Sprite::SongBGTexture( RageTextureID ID )
 	ID.Policy = RageTextureID::TEX_VOLATILE;
 
 	// Don't we want to dither 16 bit textures at least?
-//	ID.bDither = true;
+	/* This was changed with the commit message "runs on Xbox", so I don't know
+	 * why it was changed; it should definitely be on. */
+	ID.bDither = true;
 
 	return ID;
 }
