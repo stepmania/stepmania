@@ -79,9 +79,12 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		return NULL;
 	}
 
+	SDL_Surface *volatile surf = NULL;
 	if( setjmp(png_jmpbuf(png)) )
 	{
 		png_destroy_read_struct( &png, &info_ptr, png_infopp_NULL );
+		if( surf )
+			SDL_FreeSurface( surf );
 		return NULL;
 	}
 
@@ -181,7 +184,6 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 
 	png_read_update_info( png, info_ptr );
 
-	SDL_Surface *surf;
 	switch( type )
 	{
 	case PALETTE:
