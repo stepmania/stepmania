@@ -24,7 +24,10 @@ static Desc FindClosestFormat(const vector<Desc>& formats)
 	{
 		const Desc& format = *i;
 
-		if (!format.IsPCM() || format.mSampleRate != 44100.0)
+		if( !format.IsPCM() )
+			continue;
+
+		if( format.mSampleRate != 0. && format.mSampleRate != 44100.0 )
 			continue;
 
 		if (format.SampleWordSize() == 2 &&
