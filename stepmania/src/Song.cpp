@@ -772,8 +772,13 @@ void Song::SaveOffsetChangeToDisk()
 			CString sLine = arrayLines[i];
 			if( -1 != sLine.Find("#GAP") )
 			{
+				// Discover whether the GAP line has a semicolon at the end.  
+				// If it doesn't then the semicolon is probably on the next line
+				// and we don't want to write a second semicolon!
+				bool bHasSemiColon = -1 != sLine.Find(";");
+
 				// replace with new offset
-				fileOut.WriteString( ssprintf("#GAP:%d;\n", roundf(GetBeatOffsetInSeconds()*-1*1000)) );
+				fileOut.WriteString( ssprintf("#GAP:%d%s\n", roundf(GetBeatOffsetInSeconds()*-1*1000), bHasSemiColon ? ";" : "") );
 			}
 			else
 			{
