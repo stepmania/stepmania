@@ -27,7 +27,9 @@ public:
 	ActorFrame	m_afDancerSuite;	// So we can easily rotate or whatever without disturbing the Background.
 
 	void FlashOnce();
-	void Initialize( int iDancePadType );
+	bool Initialize( int iDancePadType );
+	bool IsInitialized() { return m_bInitialized; }
+	static bool CanUse();
 	void AddPlayer( int pn, NoteData *pNotes );
 	void SetFlash(CString sFilename, float fX, float fY);
 	void ShowStepCircle( int pn, int CSTEP );

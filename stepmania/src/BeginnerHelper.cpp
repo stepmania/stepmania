@@ -77,9 +77,19 @@ void BeginnerHelper::AddPlayer( int pn, NoteData *pNotes )
 	m_NoteData[pn].CopyAll( pNotes );
 }
 
-void BeginnerHelper::Initialize( int iDancePadType )
+bool BeginnerHelper::CanUse()
+{
+	return ((GAMESTATE->m_CurGame == GAME_DANCE) &&
+			(DoesFileExist("Characters" SLASH "DancePad-DDR.txt")) &&
+			(DoesFileExist("Characters" SLASH "DancePads-DDR.txt")) );
+}
+
+bool BeginnerHelper::Initialize( int iDancePadType )
 {
 	ASSERT( !m_bInitialized );
+
+	if (!CanUse())		// if we can't be used, bail now.
+		return false;
 
 	// Load the StepCircle, Background, and flash animation
 	m_sBackground.Load( THEME->GetPathToG("BeginnerHelper background") );
@@ -97,21 +107,29 @@ void BeginnerHelper::Initialize( int iDancePadType )
 	}*/
 
 	// Load the DancePad
+	switch(iDancePadType)
+	{
+		case 0: break; // No pad
+		case 1:
+			if (!DoesFileExist("Characters" SLASH "DancePad-DDR.txt") )
+				return false;		// can't initialize without the required pad model. bail
+			m_mDancePad.LoadMilkshapeAscii( "Characters" SLASH "DancePad-DDR.txt" );
+			break;
+		case 2:
+			if (!DoesFileExist("Characters" SLASH "DancePads-DDR.txt") )
+				return false;		// can't initialize without the required pad model. bail
+			m_mDancePad.LoadMilkshapeAscii( "Characters" SLASH "DancePads-DDR.txt" );
+			break;
+	}
 	m_mDancePad.SetHorizAlign( align_left );
 	m_mDancePad.SetRotationX( DANCEPAD_ANGLE );
 	m_mDancePad.SetX(HELPER_X);
 	m_mDancePad.SetY(HELPER_Y);
 	m_mDancePad.SetZoom( 23 );	// Pad should always be 3 units bigger in zoom than the dancer.
-	switch(iDancePadType)
-	{
-		case 0: break; // No pad
-		case 1:m_mDancePad.LoadMilkshapeAscii( "Characters" SLASH "DancePad-DDR.txt" ); break;
-		case 2:m_mDancePad.LoadMilkshapeAscii( "Characters" SLASH "DancePads-DDR.txt" ); break;
-	}
 
 	for( int pl=0; pl<NUM_PLAYERS; pl++ )	// Load players
 	{
-		if( !GAMESTATE->IsPlayerEnabled(pl))
+		if( !GAMESTATE->IsHumanPlayer(pl))
 			continue;
 
 		// if there is no character set, try loading a random one.
@@ -144,7 +162,7 @@ void BeginnerHelper::Initialize( int iDancePadType )
 		}
 	}
 
-	m_bInitialized = true;
+	return (m_bInitialized = true);
 }
 
 void BeginnerHelper::FlashOnce()
@@ -178,7 +196,7 @@ void BeginnerHelper::DrawPrimitives()
 		m_sStepCircle[scd].Draw();		// Should be drawn before the dancer, but after the pad, so it is drawn over the pad and under the dancer.
 	
 	for( int pn=0; pn<NUM_PLAYERS; pn++ )	// Draw each dancer
-		if( GAMESTATE->IsPlayerEnabled(pn) )
+		if( GAMESTATE->IsHumanPlayer(pn) )
 			m_mDancer[pn].Draw();
 
 	DISPLAY->SetLightOff( 0 );
@@ -189,7 +207,7 @@ void BeginnerHelper::Step( int pn, int CSTEP )
 {
 	LOG->Trace( "BeginnerHelper::Step()" );
 	// First make sure this player is on beginner mode and enabled... The difficulty check may be redundant, tho.
-	if( (GAMESTATE->IsPlayerEnabled(pn)) && (GAMESTATE->m_pCurNotes[pn]->GetDifficulty() == DIFFICULTY_BEGINNER) )
+	if( (GAMESTATE->IsHumanPlayer(pn)) && (GAMESTATE->m_pCurNotes[pn]->GetDifficulty() == DIFFICULTY_BEGINNER) )
 	{
 		ShowStepCircle( pn, CSTEP);
 		m_mDancer[pn].StopTweening();
@@ -226,7 +244,7 @@ void BeginnerHelper::Update( float fDeltaTime )
 
 	for(int pn = 0; pn < NUM_PLAYERS; pn++ )
 	{
-		if( !( GAMESTATE->IsPlayerEnabled(pn) && GAMESTATE->m_pCurNotes[pn]->GetDifficulty() == DIFFICULTY_BEGINNER) )
+		if( !( GAMESTATE->IsHumanPlayer(pn) && GAMESTATE->m_pCurNotes[pn]->GetDifficulty() == DIFFICULTY_BEGINNER) )
 			continue;	// skip
 
 		if( (m_NoteData[pn].IsThereATapAtRow( BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.01f)) ) ) )
@@ -261,7 +279,7 @@ void BeginnerHelper::Update( float fDeltaTime )
 
 	for( int pu=0; pu<NUM_PLAYERS; pu++ )
 	{
-		if(!GAMESTATE->IsPlayerEnabled(pu))
+		if(!GAMESTATE->IsHumanPlayer(pu))
 			continue;
 
 		m_mDancer[pu].Update( beat );	//Update dancers

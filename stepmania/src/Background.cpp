@@ -26,6 +26,7 @@
 #include <math.h>	// for fmodf
 #include "DancingCharacters.h"
 #include "arch/arch.h"
+#include "BeginnerHelper.h"
 
 
 const float FADE_SECONDS = 1.0f;
@@ -68,16 +69,11 @@ Background::Background()
 	bool bOneOrMoreChars = false;
 	bool bShowingBeginnerHelper = false;
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsPlayerEnabled(p) )
+		if( GAMESTATE->IsHumanPlayer(p) )
 		{
 			bOneOrMoreChars = true;
-
-			// if playing dance magic mode vs. the CPU, skip next condition
-			if (GAMESTATE->m_PlayMode == PLAY_MODE_RAVE)
-				continue;
-
 			//Disable dancing characters if BH will be showing.
-			if( (PREFSMAN->m_bShowBeginnerHelper) || (GAMESTATE->m_pCurNotes[p]->GetDifficulty() == DIFFICULTY_BEGINNER ) )
+			if( (PREFSMAN->m_bShowBeginnerHelper) && BeginnerHelper::CanUse() && (GAMESTATE->m_pCurNotes[p]->GetDifficulty() == DIFFICULTY_BEGINNER ) )
 				bShowingBeginnerHelper = true;
 		}
 

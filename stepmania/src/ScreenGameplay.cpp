@@ -779,25 +779,23 @@ void ScreenGameplay::LoadNextSong()
 	
 	// Check to see if any players are in beginner mode.
 	// Note: steps can be different if turn modifiers are used.
-	if( PREFSMAN->m_bShowBeginnerHelper )
+	if( PREFSMAN->m_bShowBeginnerHelper && BeginnerHelper::CanUse())
 	{
 		bool anybeginners = false;
 
 		for( int pb=0; pb<NUM_PLAYERS; pb++ )
-			if( GAMESTATE->IsPlayerEnabled(pb) && GAMESTATE->m_pCurNotes[pb]->GetDifficulty() == DIFFICULTY_BEGINNER )
+			if( GAMESTATE->IsHumanPlayer(pb) && GAMESTATE->m_pCurNotes[pb]->GetDifficulty() == DIFFICULTY_BEGINNER )
 			{
 				anybeginners = true;
 				m_BeginnerHelper.AddPlayer( pb, &m_Player[pb] );
 			}
 
-		if(anybeginners)
+		if(anybeginners && m_BeginnerHelper.Initialize( 2 ))	// Init for doubles
 		{
-			m_Background.Unload();	// BeginnerHelper has it's own BG control.
-			m_Background.StopAnimating();
-			
-			m_BeginnerHelper.Initialize( 2 );	// Init for doubles
-			m_BeginnerHelper.SetX( CENTER_X );
-			m_BeginnerHelper.SetY( CENTER_Y );
+				m_Background.Unload();	// BeginnerHelper has it's own BG control.
+				m_Background.StopAnimating();
+				m_BeginnerHelper.SetX( CENTER_X );
+				m_BeginnerHelper.SetY( CENTER_Y );
 		}
 		else
 		{
