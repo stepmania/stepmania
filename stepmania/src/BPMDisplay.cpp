@@ -15,6 +15,8 @@
 #include "PrefsManager.h"
 #include "GameState.h"
 #include "ThemeManager.h"
+#include "Course.h"
+#include "StyleDef.h"
 
 
 #define NORMAL_COLOR		THEME->GetMetricC("BPMDisplay","NormalColor")
@@ -24,9 +26,11 @@
 
 BPMDisplay::BPMDisplay()
 {
-	m_fCurrentBPM = m_fLowBPM = m_fHighBPM = 0;
-	m_fTimeLeftInState = 0;
-	m_CountingState = holding_down;
+	m_fBPMFrom = m_fBPMTo = 0;
+	m_iCurrentBPM = 0;
+	m_BPMS.push_back(0);
+	m_fPercentInState = 0;
+	m_fCycleTime = 1.0f;
 
 	m_textBPM.LoadFromNumbers( THEME->GetPathToN("BPMDisplay") );
 	m_textBPM.EnableShadow( false );
@@ -44,88 +48,66 @@ BPMDisplay::BPMDisplay()
 	this->AddChild( &m_sprLabel );
 }
 
+float BPMDisplay::GetActiveBPM() const
+{
+	return m_fBPMTo + (m_fBPMFrom-m_fBPMTo)*m_fPercentInState;
+}
 
 void BPMDisplay::Update( float fDeltaTime ) 
 { 
 	ActorFrame::Update( fDeltaTime ); 
-	
-	m_fTimeLeftInState -= fDeltaTime;
-	if( m_fTimeLeftInState < 0 )
+
+	if( m_BPMS.size() == 0 )
+		return; /* no bpm */
+
+	m_fPercentInState -= fDeltaTime / m_fCycleTime;
+	if( m_fPercentInState < 0 )
 	{
 		// go to next state
-		switch( m_CountingState )
+		m_fPercentInState = 1;		// reset timer
+
+		m_iCurrentBPM = (m_iCurrentBPM + 1) % m_BPMS.size();
+		m_fBPMFrom = m_fBPMTo;
+		m_fBPMTo = m_BPMS[m_iCurrentBPM];
+
+		if(m_fBPMTo == -1)
 		{
-		case counting_up:
-			m_CountingState = holding_up;
-			m_fTimeLeftInState = 1;		// reset timer
-			break;
-		case holding_up:
-			m_CountingState = counting_down;
-			m_fTimeLeftInState = 1;		// reset timer
-			break;
-		case counting_down:
-			m_CountingState = holding_down;
-			m_fTimeLeftInState = 1;		// reset timer
-			break;
-		case holding_down:
-			m_CountingState = counting_up;
-			m_fTimeLeftInState = 1;		// reset timer
-			break;
-		case cycle_randomly:
+			m_fBPMFrom = -1;
 			m_textBPM.SetText( (RandomFloat(0,1)>0.90) ? "xxx" : ssprintf("%03.0f",RandomFloat(0,600)) ); 
-			m_fTimeLeftInState = 0.2f;		// reset timer
-			break;
-		case no_bpm:
-			m_fTimeLeftInState = 0;
-			break;
-		default:
-			ASSERT(0);
-		}
+		} else if(m_fBPMFrom == -1)
+			m_fBPMFrom = m_fBPMTo;
 	}
 
-	// update m_fCurrentBPM
-//	int iLastCurBPM = (int)m_fCurrentBPM;
-	switch( m_CountingState )
+	// update m_textBPM
+	if( m_fBPMTo != -1)
 	{
-	case counting_down:	m_fCurrentBPM = m_fLowBPM + (m_fHighBPM-m_fLowBPM)*m_fTimeLeftInState;	break;
-	case counting_up:	m_fCurrentBPM = m_fHighBPM + (m_fLowBPM-m_fHighBPM)*m_fTimeLeftInState;	break;
-	case holding_up:	m_fCurrentBPM = m_fHighBPM;												break;
-	case holding_down:	m_fCurrentBPM = m_fLowBPM;												break;
-	case cycle_randomly:																		break;
-	case no_bpm:																				break;
-	default:
-		ASSERT(0);
-	}
-
-	// update text
-	switch( m_CountingState )
-	{
-	case counting_down:
-	case counting_up:
-	case holding_up:
-	case holding_down:
-		//if( (int)m_fCurrentBPM != iLastCurBPM )
-		//	m_textBPM.SetText( ssprintf("%03.0f", m_fCurrentBPM) ); 
-
-		/* BUG FIXED:: Just set the BPM.. This was causing an error that would not change
-			the BPM to what it should be, if you changed the selection from a Group
-			to a song. There's no great reason to check if it is higher or lower
-			than the previous BPM -- Miryokuteki */
-		m_textBPM.SetText( ssprintf("%03.0f", m_fCurrentBPM) );
-		break;
+		const float fActualBPM = GetActiveBPM();
+		m_textBPM.SetText( ssprintf("%03.0f", fActualBPM) );
 	}
 }
 
 
-void BPMDisplay::SetBPMRange( float fLowBPM, float fHighBPM )
+void BPMDisplay::SetBPMRange( const vector<float> &BPMS )
 {
-	m_fLowBPM = fLowBPM;
-	m_fHighBPM = fHighBPM;
-	if( m_fCurrentBPM > m_fHighBPM )
-		m_CountingState = counting_down;
-	else
-		m_CountingState = counting_up;
-	m_fTimeLeftInState = 1;
+	ASSERT( m_BPMS.size() );
+
+	m_BPMS.clear();
+	unsigned i;
+	bool AllIdentical = true;
+	for( i = 0; i < BPMS.size(); ++i )
+	{
+		if( i > 0 && m_BPMS[i] != m_BPMS[i-1] )
+			AllIdentical = false;
+
+		m_BPMS.push_back(BPMS[i]);
+		if( BPMS[i] != -1 )
+			m_BPMS.push_back(BPMS[i]); /* hold */
+	}
+
+	m_iCurrentBPM = min(1u, sizeof(m_BPMS)); /* start on the first hold */
+	m_fBPMFrom = BPMS[0];
+	m_fBPMTo = BPMS[0];
+	m_fPercentInState = 1;
 
 	m_textBPM.StopTweening();
 	m_sprLabel.StopTweening();
@@ -137,7 +119,7 @@ void BPMDisplay::SetBPMRange( float fLowBPM, float fHighBPM )
 		m_textBPM.SetDiffuse( EXTRA_COLOR );
 		m_sprLabel.SetDiffuse( EXTRA_COLOR );		
 	}
-	else if( m_fLowBPM != m_fHighBPM )
+	else if( !AllIdentical )
 	{
 		m_textBPM.SetDiffuse( CHANGE_COLOR );
 		m_sprLabel.SetDiffuse( CHANGE_COLOR );
@@ -152,16 +134,16 @@ void BPMDisplay::SetBPMRange( float fLowBPM, float fHighBPM )
 
 void BPMDisplay::CycleRandomly()
 {
-	m_CountingState = cycle_randomly;
-	m_fTimeLeftInState = 0;
+	vector<float> BPMS;
+	BPMS.push_back(-1);
+	SetBPMRange( BPMS );
 
-	m_textBPM.SetDiffuse( NORMAL_COLOR );
-	m_sprLabel.SetDiffuse( NORMAL_COLOR );
+	m_fCycleTime = 0.2f;
 }
 
 void BPMDisplay::NoBPM()
 {
-	m_CountingState = no_bpm;
+	m_BPMS.clear();
 	m_textBPM.SetText( "..." ); 
 
 	m_textBPM.SetDiffuse( NORMAL_COLOR );
@@ -174,14 +156,15 @@ void BPMDisplay::SetBPM( const Song* pSong )
 	switch( pSong->m_DisplayBPMType )
 	{
 	case Song::DISPLAY_ACTUAL:
+	case Song::DISPLAY_SPECIFIED:
 		{
 			float fMinBPM, fMaxBPM;
-			pSong->GetActualBPM( fMinBPM, fMaxBPM );
-			SetBPMRange( fMinBPM, fMaxBPM );
+			pSong->GetDisplayBPM( fMinBPM, fMaxBPM );
+			vector<float> BPMS;
+			BPMS.push_back(fMinBPM);
+			BPMS.push_back(fMaxBPM);
+			SetBPMRange( BPMS );
 		}
-		break;
-	case Song::DISPLAY_SPECIFIED:
-		SetBPMRange( pSong->m_fSpecifiedBPMMin, pSong->m_fSpecifiedBPMMax );
 		break;
 	case Song::DISPLAY_RANDOM:
 		CycleRandomly();
@@ -189,6 +172,52 @@ void BPMDisplay::SetBPM( const Song* pSong )
 	default:
 		ASSERT(0);
 	}
+
+	m_fCycleTime = 1.0f;
+}
+
+void BPMDisplay::SetBPM( const Course* pCourse )
+{
+	vector<Song*> vSongs;
+	vector<Notes*> vNotes;
+	vector<CString> vsModifiers;
+	pCourse->GetStageInfo( vSongs, vNotes, vsModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
+
+	ASSERT( vSongs.size() );
+
+	vector<float> BPMS;
+	for( unsigned i = 0; i < vSongs.size(); ++i )
+	{
+		if( pCourse->IsMysterySong(i) )
+		{
+			BPMS.push_back( -1 );
+			continue;
+		}
+
+		Song *pSong = vSongs[i];
+		ASSERT( pSong );
+		switch( pSong->m_DisplayBPMType )
+		{
+		case Song::DISPLAY_ACTUAL:
+		case Song::DISPLAY_SPECIFIED:
+			{
+				float fMinBPM, fMaxBPM;
+				pSong->GetDisplayBPM( fMinBPM, fMaxBPM );
+				BPMS.push_back( fMinBPM );
+				if( fMinBPM != fMaxBPM )
+					BPMS.push_back( fMaxBPM );
+			}
+			break;
+		case Song::DISPLAY_RANDOM:
+			BPMS.push_back( -1 );
+			break;
+		default:
+			ASSERT(0);
+		}
+	}
+	
+	SetBPMRange( BPMS );
+	m_fCycleTime = 0.2f;
 }
 
 void BPMDisplay::DrawPrimitives()

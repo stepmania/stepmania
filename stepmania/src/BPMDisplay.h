@@ -17,6 +17,7 @@
 #include "BitmapText.h"
 #include "Quad.h"
 class Song;
+class Course;
 
 class BPMDisplay : public ActorFrame
 {
@@ -24,26 +25,23 @@ public:
 	BPMDisplay();
 	virtual void Update( float fDeltaTime ); 
 	virtual void DrawPrimitives(); 
-	void SetBPMRange( float fLowBPM, float fHighBPM );
 	void SetBPM( const Song* pSong );
+	void SetBPM( const Course* pCourse );
 	void CycleRandomly();
 	void NoBPM();
 
 protected:
+	float GetActiveBPM() const;
+	void SetBPMRange( const vector<float> &m_BPMS );
+
 	BitmapText m_textBPM;
 	Sprite m_sprLabel;
 
-	float m_fCurrentBPM;
-	float m_fLowBPM, m_fHighBPM;
-	enum CountingState {
-		counting_up, 
-		holding_up, 
-		counting_down, 
-		holding_down,
-		cycle_randomly,
-		no_bpm	// show dashes
-	} m_CountingState;
-	float m_fTimeLeftInState;
+	float m_fBPMFrom, m_fBPMTo;
+	int m_iCurrentBPM;
+	vector<float> m_BPMS;
+	float m_fPercentInState;
+	float m_fCycleTime;
 };
 
 #endif
