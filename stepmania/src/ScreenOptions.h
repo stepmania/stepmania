@@ -84,15 +84,20 @@ protected:
 	void MenuUp( PlayerNumber pn );
 	void MenuDown( PlayerNumber pn );
 
+	int GetCurrentRow(PlayerNumber pn = PLAYER_1) const { return m_iCurrentRow[pn]; }
+
+	MenuElements	m_Menu;
+	OptionRow*		m_OptionRow;
+
+	int m_iSelectedOption[NUM_PLAYERS][MAX_OPTION_LINES];
+
+private:
 	CString			m_sName;
 	InputMode		m_InputMode;
 	bool			m_bUseIcons;
 	bool			m_bLoadExplanations;
 
-	OptionRow*		m_OptionRow;
 	int				m_iNumOptionRows;
-
-	MenuElements	m_Menu;
 
 	ActorFrame		m_framePage;
 	Sprite			m_sprPage;
@@ -101,14 +106,13 @@ protected:
 	BitmapText		m_textItems[MAX_OPTION_LINES][MAX_OPTIONS_PER_LINE];	// this array has to be big enough to hold all of the options
 
 	bool m_bRowIsLong[MAX_OPTION_LINES];	// goes off edge of screen
-	int m_iSelectedOption[NUM_PLAYERS][MAX_OPTION_LINES];
+
 	int m_iCurrentRow[NUM_PLAYERS];
 
 	OptionsCursor	m_Underline[NUM_PLAYERS][MAX_OPTION_LINES];
 	OptionIcon		m_OptionIcons[NUM_PLAYERS][MAX_OPTION_LINES];
 	OptionsCursor	m_Highlight[NUM_PLAYERS];
 
-private:
 	BitmapText		m_textExplanation;
 
 	RageSound		m_SoundChangeCol;

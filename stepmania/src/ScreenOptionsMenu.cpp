@@ -95,7 +95,7 @@ void ScreenOptionsMenu::GoToPrevState()
 
 void ScreenOptionsMenu::GoToNextState()
 {
-	switch( this->m_iCurrentRow[0] )
+	switch( this->GetCurrentRow() )
 	{
 		case OM_APPEARANCE:		SCREENMAN->SetNewScreen("ScreenAppearanceOptions");	break;
 		case OM_AUTO_GRAPHIC:	SCREENMAN->SetNewScreen("ScreenAutoGraphicDetail");	break;
