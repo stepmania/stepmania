@@ -733,9 +733,12 @@ void BrightnessOverlay::SetActualBrightness()
 	float fLeftBrightness = 1-GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fCover;
 	float fRightBrightness = 1-GAMESTATE->m_pPlayerState[PLAYER_2]->m_PlayerOptions.m_fCover;
 
-	// HACK: Always show training in full brightness
-	float fBaseBGBrightness = GAMESTATE->m_pCurSong->IsTutorial()? 1.0f:PREFSMAN->m_fBGBrightness;
+	float fBaseBGBrightness = PREFSMAN->m_fBGBrightness;
 
+	// HACK: Always show training in full brightness
+	if( GAMESTATE->m_pCurSong && GAMESTATE->m_pCurSong->IsTutorial() )
+		fBaseBGBrightness = 1.0f;
+	
 	fLeftBrightness *= fBaseBGBrightness;
 	fRightBrightness *= fBaseBGBrightness;
 
