@@ -12,13 +12,13 @@ class LunaBitmapText : public LunaActor<T>
 public:
 	LunaBitmapText() { LUA->Register( Register ); }
 
-	static int wrapwidthpixels( T* p, lua_State *L )	{ p->SetWrapWidthPixels( IArg(1) ); return 0; } \
-	static int maxwidth( T* p, lua_State *L )			{ p->SetMaxWidth( FArg(1) ); return 0; } \
+	static int wrapwidthpixels( T* p, lua_State *L )	{ p->SetWrapWidthPixels( IArg(1) ); return 0; }
+	static int maxwidth( T* p, lua_State *L )			{ p->SetMaxWidth( FArg(1) ); return 0; }
 
 	static void Register(lua_State *L) 
 	{
-		ADD_METHOD( wrapwidthpixels ) \
-		ADD_METHOD( maxwidth ) \
+		ADD_METHOD( wrapwidthpixels )
+		ADD_METHOD( maxwidth )
 		LunaActor<T>::Register( L );
 	}
 };

@@ -15,27 +15,27 @@ public:
 	LunaSprite() { LUA->Register( Register ); }
 
 	/* Commands that go in the tweening queue: 
-	 * Commands that take effect immediately (ignoring the tweening queue): */ \
-	static int customtexturerect( T* p, lua_State *L )	{ p->SetCustomTextureRect( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; } \
-	static int texcoordvelocity( T* p, lua_State *L )	{ p->SetTexCoordVelocity( FArg(1),FArg(2) ); return 0; } \
-	static int scaletoclipped( T* p, lua_State *L )		{ p->ScaleToClipped( FArg(1),FArg(2) ); return 0; } \
-	static int stretchtexcoords( T* p, lua_State *L )	{ p->StretchTexCoords( FArg(1),FArg(2) ); return 0; } \
+	 * Commands that take effect immediately (ignoring the tweening queue): */
+	static int customtexturerect( T* p, lua_State *L )	{ p->SetCustomTextureRect( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int texcoordvelocity( T* p, lua_State *L )	{ p->SetTexCoordVelocity( FArg(1),FArg(2) ); return 0; }
+	static int scaletoclipped( T* p, lua_State *L )		{ p->ScaleToClipped( FArg(1),FArg(2) ); return 0; }
+	static int stretchtexcoords( T* p, lua_State *L )	{ p->StretchTexCoords( FArg(1),FArg(2) ); return 0; }
 	/* Texture commands; these could be moved to RageTexture* (even though that's
 	 * not an Actor) if these are needed for other things that use textures.
 	 * We'd need to break the command helpers into a separate function; RageTexture
-	 * shouldn't depend on Actor. */ \
-	static int position( T* p, lua_State *L )			{ p->SetPosition(FArg(1)); return 0; } \
-	static int loop( T* p, lua_State *L )				{ p->SetLooping(BArg(1)); return 0; } \
-	static int rate( T* p, lua_State *L )				{ p->SetPlaybackRate(FArg(1)); return 0; } \
+	 * shouldn't depend on Actor. */
+	static int position( T* p, lua_State *L )			{ p->SetPosition(FArg(1)); return 0; }
+	static int loop( T* p, lua_State *L )				{ p->SetLooping(BArg(1)); return 0; }
+	static int rate( T* p, lua_State *L )				{ p->SetPlaybackRate(FArg(1)); return 0; }
 
 	static void Register(lua_State *L) {
-		ADD_METHOD( customtexturerect ) \
-		ADD_METHOD( texcoordvelocity ) \
-		ADD_METHOD( scaletoclipped ) \
-		ADD_METHOD( stretchtexcoords ) \
-		ADD_METHOD( position ) \
-		ADD_METHOD( loop ) \
-		ADD_METHOD( rate ) \
+		ADD_METHOD( customtexturerect )
+		ADD_METHOD( texcoordvelocity )
+		ADD_METHOD( scaletoclipped )
+		ADD_METHOD( stretchtexcoords )
+		ADD_METHOD( position )
+		ADD_METHOD( loop )
+		ADD_METHOD( rate )
 		LunaActor<T>::Register( L );
 	}
 };
