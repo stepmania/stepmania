@@ -20,7 +20,6 @@ void PlayerStageStats::Init()
 	bFailed = bFailedEarlier = false;
 	iPossibleDancePoints = iActualDancePoints = 0;
 	iCurCombo = iMaxCombo = iCurMissCombo = iScore = iBonus = iMaxScore = iCurMaxScore = 0;
-	fSecondsBeforeFail = 0;
 	iSongsPassed = iSongsPlayed = 0;
 	iTotalError = 0;
 	fCaloriesBurned = 0;
@@ -56,7 +55,6 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 	iCurMaxScore += other.iCurMaxScore;
 	radarPossible += other.radarPossible;
 	radarActual += other.radarActual;
-	fSecondsBeforeFail += other.fSecondsBeforeFail;
 	iSongsPassed += other.iSongsPassed;
 	iSongsPlayed += other.iSongsPlayed;
 	iTotalError += other.iTotalError;

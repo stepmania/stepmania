@@ -44,7 +44,6 @@ struct PlayerStageStats
 	int		iBonus;  // bonus to be added on screeneval
 	RadarValues	radarPossible;	// filled in by ScreenGameplay on start of notes
 	RadarValues radarActual;
-	float	fSecondsBeforeFail;				// -1 means didn't/hasn't failed
 	/* The number of songs played and passed, respectively. */
 	int		iSongsPassed;
 	int		iSongsPlayed;
