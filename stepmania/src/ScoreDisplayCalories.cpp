@@ -20,7 +20,8 @@ ScoreDisplayCalories::ScoreDisplayCalories()
 
 ScoreDisplayCalories::~ScoreDisplayCalories()
 {
-	MESSAGEMAN->Unsubscribe( this, m_sMessageOnStep );
+	if( m_sMessageOnStep != "" )
+		MESSAGEMAN->Unsubscribe( this, m_sMessageOnStep );
 }
 
 void ScoreDisplayCalories::LoadFromNode( const CString& sDir, const XNode* pNode )
