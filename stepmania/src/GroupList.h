@@ -7,10 +7,9 @@
 
 class GroupList: public ActorFrame {
 	ActorFrame			 m_Frame;
-	vector<Actor *>		 m_Frames;
 	vector<Sprite *>	 m_sprButtons;
-	vector<BitmapText *> m_screenLabels;
-	vector<CString> m_asLabels;
+	vector<BitmapText *> m_textLabels;
+	vector<CString>		 m_asLabels;
 
 	vector<bool>		 m_bHidden;
 
