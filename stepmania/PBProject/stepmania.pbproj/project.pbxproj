@@ -228,8 +228,9 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				LIBRARY_STYLE = Dynamic;
 				OPTIMIZATION_CFLAGS = "-O0";
 				ZERO_LINK = YES;
 			};
@@ -242,6 +243,8 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				LIBRARY_STYLE = Dynamic;
 				ZERO_LINK = NO;
 			};
 			isa = PBXBuildStyle;
@@ -1059,7 +1062,6 @@
 				AA29CCEF0558741A00961A51,
 				AA29CCF00558741A00961A51,
 				AA29CCF10558741A00961A51,
-				AA29CCF20558741A00961A51,
 				AA29CCF30558741A00961A51,
 				AA29CCF40558741A00961A51,
 				AA29CCF50558741A00961A51,
@@ -1134,6 +1136,10 @@
 				AA29CD3B0558741A00961A51,
 				AA9EC2F3055F5126007E5098,
 				AA9D236D0561B6CF00FC7F14,
+				AAC6DCE60567660A00B5D56F,
+				AAC6DCF20567663800B5D56F,
+				AAC6DCF30567663800B5D56F,
+				AAC6DCFF056846E600B5D56F,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2350,12 +2356,6 @@
 			settings = {
 			};
 		};
-		AA29CCF20558741A00961A51 = {
-			fileRef = AABE36FF0497CE83005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AA29CCF30558741A00961A51 = {
 			fileRef = AABE37030497CF85005F316C;
 			isa = PBXBuildFile;
@@ -3068,6 +3068,8 @@
 				AA29CE390558741A00961A51,
 				AA29CE3A0558741A00961A51,
 				AA9EC2F2055F5126007E5098,
+				AAC6DCE50567660A00B5D56F,
+				AAC6DCFE056846E600B5D56F,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7173,6 +7175,8 @@
 			children = (
 				AA6E00FF0477128A005F316C,
 				AA6E01000477128A005F316C,
+				AADBE368053DA38C00D02EE9,
+				AADBE369053DA38C00D02EE9,
 				AA6E01010477128A005F316C,
 				AA6E01020477128A005F316C,
 				AA6E01030477128A005F316C,
@@ -7183,6 +7187,8 @@
 				AA6E01080477128A005F316C,
 				AA6E01090477128A005F316C,
 				AA6E010A0477128A005F316C,
+				AAC6DCE30567660A00B5D56F,
+				AAC6DCE40567660A00B5D56F,
 				AA1DCB6304A4872700D02EE9,
 				AA1C659C050FD1E00073A143,
 				AA1C659D050FD1E00073A143,
@@ -7202,8 +7208,6 @@
 				AA6E01130477128A005F316C,
 				AA6E01140477128A005F316C,
 				AA6E01150477128A005F316C,
-				AADBE368053DA38C00D02EE9,
-				AADBE369053DA38C00D02EE9,
 			);
 			isa = PBXGroup;
 			name = GlobalSingletons;
@@ -7516,17 +7520,18 @@
 		};
 		AA6E01400477136A005F316C = {
 			children = (
-				AABE36FE0497CE67005F316C,
-				AA6E01540477136A005F316C,
-				AA6E015A0477136A005F316C,
-				AA6E01620477136A005F316C,
-				AA6E01DD04771F19005F316C,
-				AA6E012D04771299005F316C,
 				AA6E01410477136A005F316C,
 				AABE36F80497CE16005F316C,
 				AA98E298049ACE39005F316C,
 				AABE36F60497CE16005F316C,
 				AABE36F70497CE16005F316C,
+				AABE36FE0497CE67005F316C,
+				AA6E01540477136A005F316C,
+				AAC6DCED0567663800B5D56F,
+				AA6E015A0477136A005F316C,
+				AA6E01620477136A005F316C,
+				AA6E01DD04771F19005F316C,
+				AA6E012D04771299005F316C,
 			);
 			isa = PBXGroup;
 			path = arch;
@@ -12157,6 +12162,122 @@
 			refType = 4;
 			sourceTree = "<group>";
 			usesTabs = 1;
+		};
+		AAC6DCE30567660A00B5D56F = {
+			expectedFileType = sourcecode.cpp.cpp;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = LightsManager.cpp;
+			path = /Users/steve/stepmania/src/LightsManager.cpp;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AAC6DCE40567660A00B5D56F = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = LightsManager.h;
+			path = /Users/steve/stepmania/src/LightsManager.h;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AAC6DCE50567660A00B5D56F = {
+			fileRef = AAC6DCE30567660A00B5D56F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAC6DCE60567660A00B5D56F = {
+			fileRef = AAC6DCE40567660A00B5D56F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAC6DCED0567663800B5D56F = {
+			children = (
+				AAC6DCEE0567663800B5D56F,
+				AAC6DCEF0567663800B5D56F,
+				AAC6DCF00567663800B5D56F,
+				AAC6DCF10567663800B5D56F,
+				AAC6DCFC056846E600B5D56F,
+				AAC6DCFD056846E600B5D56F,
+			);
+			isa = PBXGroup;
+			path = Lights;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAC6DCEE0567663800B5D56F = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = LightsDriver.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAC6DCEF0567663800B5D56F = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = LightsDriver_Null.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAC6DCF00567663800B5D56F = {
+			expectedFileType = sourcecode.cpp.cpp;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = LightsDriver_Win32Parallel.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAC6DCF10567663800B5D56F = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = LightsDriver_Win32Parallel.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAC6DCF20567663800B5D56F = {
+			fileRef = AAC6DCEE0567663800B5D56F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAC6DCF30567663800B5D56F = {
+			fileRef = AAC6DCEF0567663800B5D56F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAC6DCFC056846E600B5D56F = {
+			expectedFileType = sourcecode.cpp.cpp;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = LightsDriver_LinuxSerial.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAC6DCFD056846E600B5D56F = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = LightsDriver_LinuxSerial.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAC6DCFE056846E600B5D56F = {
+			fileRef = AAC6DCFC056846E600B5D56F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAC6DCFF056846E600B5D56F = {
+			fileRef = AAC6DCFD056846E600B5D56F;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		AAD620190528FA5E00D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
