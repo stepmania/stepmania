@@ -279,20 +279,6 @@ const StyleDef* GameState::GetCurrentStyleDef()
 	return GAMEMAN->GetStyleDefForStyle( m_CurStyle );
 }
 
-void GameState::ApplyModeChoice( const ModeChoice& mc, PlayerNumber pn )
-{
-	if( mc.game != GAME_INVALID )
-		m_CurGame = mc.game;
-	if( mc.pm != PLAY_MODE_INVALID )
-		m_PlayMode = mc.pm;
-	if( mc.style != STYLE_INVALID )
-		m_CurStyle = mc.style;
-	if( mc.dc != DIFFICULTY_INVALID  &&  pn != PLAYER_INVALID )
-		m_PreferredDifficulty[pn] = mc.dc;
-	if( mc.sAnnouncer != "" )
-		ANNOUNCER->SwitchAnnouncer( mc.sAnnouncer );	
-}
-
 bool GameState::IsPlayable( const ModeChoice& mc )
 {
 	return mc.numSidesJoinedToPlay == GAMESTATE->GetNumSidesJoined(); 

@@ -65,7 +65,6 @@ public:
 	GameDef*	GetCurrentGameDef();
 	const StyleDef*	GetCurrentStyleDef();
 
-	void ApplyModeChoice( const ModeChoice& mc, PlayerNumber pn );
 	bool IsPlayable( const ModeChoice& mc );
 
 	void GetPlayerInfo( PlayerNumber pn, bool& bIsEnabledOut, bool& bIsHumanOut );
