@@ -74,7 +74,8 @@ static Desc FindClosestFormat(const vector<Desc>& formats)
 	return v[0]; // something is better than nothing.
 }
 
-static void GetIOProcFormats( CAAudioHardwareStream stream, vector<Desc> &procFormats )
+static void GetIOProcFormats( CAAudioHardwareStream stream,
+			      vector<Desc> &procFormats )
 {
 	UInt32 numFormats = stream.GetNumberAvailableIOProcFormats();
 
@@ -87,7 +88,8 @@ static void GetIOProcFormats( CAAudioHardwareStream stream, vector<Desc> &procFo
 	}
 }
 
-static void GetPhysicalFormats( CAAudioHardwareStream stream, vector<Desc> &physicalFormats )
+static void GetPhysicalFormats( CAAudioHardwareStream stream,
+				vector<Desc> &physicalFormats )
 {
 	UInt32 numFormats = stream.GetNumberAvailablePhysicalFormats();
 	for( UInt32 i=0; i<numFormats; ++i )
@@ -103,8 +105,9 @@ RageSound_CA::RageSound_CA()
 {
     try
     {
-        AudioDeviceID dID = CAAudioHardwareSystem::GetDefaultDevice(false, false);
-    
+        AudioDeviceID dID;
+	
+	dID = CAAudioHardwareSystem::GetDefaultDevice(false, false);
         mOutputDevice = new CAAudioHardwareDevice(dID);
     }
     catch (const CAException& e)
@@ -120,7 +123,9 @@ RageSound_CA::RageSound_CA()
     {
         RageException::ThrowNonfatal("Couldn't set the nominal sample rate.");
     }
-    AudioStreamID sID = mOutputDevice->GetStreamByIndex( kAudioDeviceSectionOutput, 0 );
+    AudioStreamID sID;
+
+    sID = mOutputDevice->GetStreamByIndex( kAudioDeviceSectionOutput, 0 );
     CAAudioHardwareStream stream( sID );
 
     try
@@ -144,8 +149,9 @@ RageSound_CA::RageSound_CA()
     {
         const Desc& f = physicalFormats[i];
         
-        LOG->Info("Format %u:  Rate: %i  ID: %s  Flags 0x%lx  bpp %lu  fpp %lu  bpf %lu  channels %lu  bits %lu",
-                  i, (int) f.mSampleRate, FormatToString(f.mFormatID).c_str(), f.mFormatFlags,
+        LOG->Info("Format %u:  Rate: %i  ID: %s  Flags 0x%lx  bpp %lu  fpp %lu"
+		  " bpf %lu  channels %lu  bits %lu", i, int(f.mSampleRate),
+                  FormatToString(f.mFormatID).c_str(), f.mFormatFlags,
                   f.mBytesPerPacket, f.mFramesPerPacket, f.mBytesPerFrame,
                   f.mChannelsPerFrame, f.mBitsPerChannel);
     }
@@ -159,8 +165,9 @@ RageSound_CA::RageSound_CA()
     {
         const Desc& f = procFormats[i];
         
-        LOG->Info("Format %u:  Rate: %i  ID: %s  Flags 0x%lx  bpp %lu  fpp %lu  bpf %lu  channels %lu  bits %lu",
-                  i, (int) f.mSampleRate, FormatToString(f.mFormatID).c_str(), f.mFormatFlags,
+        LOG->Info("Format %u:  Rate: %i  ID: %s  Flags 0x%lx  bpp %lu  fpp %lu"
+		  " bpf %lu  channels %lu  bits %lu", i, int(f.mSampleRate),
+                  FormatToString(f.mFormatID).c_str(), f.mFormatFlags,
                   f.mBytesPerPacket, f.mFramesPerPacket, f.mBytesPerFrame,
                   f.mChannelsPerFrame, f.mBitsPerChannel);
     }
@@ -248,20 +255,20 @@ OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
                                const AudioTimeStamp *inOutputTime,
                                void *inClientData)
 {
-	RageTimer tm;
+    RageTimer tm;
 
     RageSound_CA *This = (RageSound_CA *)inClientData;
     UInt32 dataPackets = outOutputData->mBuffers[0].mDataByteSize;
     
     dataPackets /= gConverter->GetOutputFormat().mBytesPerPacket;
-    
+   
     This->mDecodePos = int64_t(inOutputTime->mSampleTime);
     gConverter->FillComplexBuffer(dataPackets, *outOutputData, NULL);
 
-	g_fLastIOProcTime = tm.GetDeltaTime();
-	++g_iNumIOProcCalls;
+    g_fLastIOProcTime = tm.GetDeltaTime();
+    ++g_iNumIOProcCalls;
 
-	return noErr;
+    return noErr;
 }
 
 OSStatus RageSound_CA::OverloadListener(AudioDeviceID inDevice,
@@ -270,7 +277,8 @@ OSStatus RageSound_CA::OverloadListener(AudioDeviceID inDevice,
                                         AudioDevicePropertyID inPropertyID,
                                         void *inData)
 {
-    LOG->Warn( "Audio overload.  Last IOProc time: %f IOProc calls: %i", g_fLastIOProcTime, g_iNumIOProcCalls );
+    LOG->Warn( "Audio overload.  Last IOProc time: %f IOProc calls: %i",
+	       g_fLastIOProcTime, g_iNumIOProcCalls );
     g_iNumIOProcCalls = 0;
     return noErr;
 }
@@ -280,10 +288,14 @@ void RageSound_CA::SetupDecodingThread()
 	/* Increase the scheduling precedence of the decoder thread. */
 	thread_precedence_policy po;
 	po.importance = 32;
-	kern_return_t ret = thread_policy_set( mach_thread_self(), THREAD_PRECEDENCE_POLICY,
-                       (int *)&po, THREAD_PRECEDENCE_POLICY_COUNT );
+	kern_return_t ret;
+
+	ret = thread_policy_set( mach_thread_self(),
+				 THREAD_PRECEDENCE_POLICY, (int *)&po,
+				 THREAD_PRECEDENCE_POLICY_COUNT );
 	if( ret != KERN_SUCCESS )
-		LOG->Warn( "thread_policy_set(THREAD_PRECEDENCE_POLICY) failed: %s", mach_error_string(ret) );
+	    LOG->Warn("thread_policy_set(THREAD_PRECEDENCE_POLICY) failed: %s",
+		      mach_error_string(ret));
 }
 
 /*
