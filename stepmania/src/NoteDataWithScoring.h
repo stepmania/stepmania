@@ -20,6 +20,11 @@ class NoteDataWithScoring : public NoteData
 	vector<TapNoteScore> m_TapNoteScores[MAX_NOTE_TRACKS];
 	vector<HoldNoteScore> m_HoldNoteScores;
 
+	/* Offset, in seconds, for each tap grade.  Negative numbers mean the note
+	 * was hit early; positive numbers mean it was hit late.  These values are
+	 * only meaningful for graded taps (m_TapNoteScores >= TNS_BOO). */
+	vector<float> m_TapNoteOffset[MAX_NOTE_TRACKS];
+
 	/* 1.0 means this HoldNote has full life.
 	 * 0.0 means this HoldNote is dead
 	 * When this value hits 0.0 for the first time, m_HoldScore becomes HSS_NG.
@@ -37,12 +42,15 @@ public:
 
 	TapNoteScore GetTapNoteScore(unsigned track, unsigned row) const;
 	void SetTapNoteScore(unsigned track, unsigned row, TapNoteScore tns);
+	float GetTapNoteOffset(unsigned track, unsigned row) const;
+	void SetTapNoteOffset(unsigned track, unsigned row, float offset);
 	HoldNoteScore GetHoldNoteScore(unsigned h) const;
 	void SetHoldNoteScore(unsigned h, HoldNoteScore hns);
 	float GetHoldNoteLife(unsigned h) const;
 	void SetHoldNoteLife(unsigned h, float f);
 
-	bool IsRowComplete( int index, TapNoteScore minGrade = TNS_GREAT ) const;
+	TapNoteScore MinTapNoteScore(unsigned row) const;
+	TapNoteScore LastTapNoteScore(unsigned row) const;
 
 	float GetActualRadarValue( RadarCategory rv, float fSongSeconds ) const;
 	float GetActualStreamRadarValue( float fSongSeconds ) const;

@@ -53,7 +53,7 @@ public:
 	
 protected:
 	int UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
-	void OnRowDestroyed( TapNoteScore lastScore, int iStepIndex );
+	void OnRowDestroyed( int iStepIndex );
 	void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow );
 	void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );
 	void HandleAutosync(float fNoteOffset);

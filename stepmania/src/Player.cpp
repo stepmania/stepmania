@@ -393,12 +393,13 @@ void Player::Step( int col )
 
 		LOG->Trace("(%2d/%2d)Note offset: %f, Score: %i", m_iOffsetSample, SAMPLE_COUNT, fNoteOffset, score);
 		SetTapNoteScore(col, iIndexOverlappingNote, score);
+		SetTapNoteOffset(col, iIndexOverlappingNote, fNoteOffset);
 
-		if (score>=TNS_GREAT ) 
+		if ( score >= TNS_GREAT ) 
 			HandleAutosync(fNoteOffset);
 
-		if (score > TNS_NONE && IsRowComplete(iIndexOverlappingNote, TNS_BOO) )
-			OnRowDestroyed( score, iIndexOverlappingNote );
+		if (score > TNS_NONE && MinTapNoteScore(iIndexOverlappingNote) >= TNS_BOO )
+			OnRowDestroyed( iIndexOverlappingNote );
 	}
 
 	if( !bDestroyedNote )
@@ -426,18 +427,15 @@ void Player::HandleAutosync(float fNoteOffset)
 	m_iOffsetSample = 0;
 }
 
-void Player::OnRowDestroyed( TapNoteScore lastScore, int iIndexThatWasSteppedOn )
+
+void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
 {
 	LOG->Trace( "Player::OnRowDestroyed" );
 	
-	// find the minimum score of the row
-	TapNoteScore score = TNS_MARVELOUS;
-	for( int t=0; t<GetNumTracks(); t++ )
-	{
-		TapNoteScore tns = GetTapNoteScore(t, iIndexThatWasSteppedOn);
-		if( tns >= TNS_BOO )
-			score = min( score, tns );
-	}
+	/* Find the minimum score of the row.  This will never be TNS_NONE, since this
+	 * function is only called when a row is completed. */
+//	TapNoteScore score = MinTapNoteScore(iIndexThatWasSteppedOn);
+	TapNoteScore score = LastTapNoteScore(iIndexThatWasSteppedOn);
 
 	/* If the whole row was hit with perfects or greats, remove the row
 	 * from the NoteField, so it disappears. */

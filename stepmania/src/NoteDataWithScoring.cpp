@@ -97,13 +97,43 @@ int NoteDataWithScoring::GetNumHoldNotesWithScore( HoldNoteScore hns, const floa
 	return iNumSuccessfulHolds;
 }
 
-bool NoteDataWithScoring::IsRowComplete( int index, TapNoteScore minGrade ) const
+/* Return the minimum tap score of a row.  If the row isn't complete (not all
+ * taps have been hit), return TNS_NONE or TNS_MISS. */
+TapNoteScore NoteDataWithScoring::MinTapNoteScore(unsigned row) const
 {
+	TapNoteScore score = TNS_MARVELOUS;
 	for( int t=0; t<GetNumTracks(); t++ )
-		if( GetTapNote(t, index) != TAP_EMPTY && GetTapNoteScore(t, index) < minGrade )
-			return false;
-	return true;
+	{
+		/* If there's no tap note on this row, skip it; the score will always be TNS_NONE. */
+		if(GetTapNote(t, row) == TAP_EMPTY) continue;
+		score = min( score, GetTapNoteScore(t, row) );
+	}
+
+	return score;
 }
+
+/* Return the last tap score of a row: the grade of the tap that completed
+ * the row.  If the row isn't complete (not all taps have been hit), return
+ * TNS_NONE or TNS_MISS. */
+TapNoteScore NoteDataWithScoring::LastTapNoteScore(unsigned row) const
+{
+	TapNoteScore score = TNS_MARVELOUS;
+	float scoretime = -9999;
+	for( int t=0; t<GetNumTracks(); t++ )
+	{
+		/* If there's no tap note on this row, skip it; the score will always be TNS_NONE. */
+		if(GetTapNote(t, row) == TAP_EMPTY) continue;
+
+		float tm = GetTapNoteOffset(t, row);
+		if(tm < scoretime) continue;
+		
+		score = GetTapNoteScore(t, row);
+		scoretime = tm;
+	}
+
+	return score;
+}
+
 
 float NoteDataWithScoring::GetActualRadarValue( RadarCategory rv, float fSongSeconds ) const
 {
@@ -173,7 +203,7 @@ float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds ) const
 	int iNumChaosNotesCompleted = 0;
 	for( unsigned r=0; r<m_TapNoteScores[0].size(); r++ )
 	{
-		if( !IsRowEmpty(r)  &&  IsRowComplete(r)  &&  GetNoteType(r) >= NOTE_TYPE_12TH )
+		if( !IsRowEmpty(r) && MinTapNoteScore(r) >= TNS_GREAT && GetNoteType(r) >= NOTE_TYPE_12TH )
 			iNumChaosNotesCompleted++;
 	}
 
@@ -210,6 +240,19 @@ void NoteDataWithScoring::SetTapNoteScore(unsigned track, unsigned row, TapNoteS
 {
 	extend(m_TapNoteScores[track], TNS_NONE, row);
 	m_TapNoteScores[track][row] = tns;
+}
+
+float NoteDataWithScoring::GetTapNoteOffset(unsigned track, unsigned row) const
+{
+	if(row >= m_TapNoteOffset[track].size())
+		return 0;
+	return m_TapNoteOffset[track][row];
+}
+
+void NoteDataWithScoring::SetTapNoteOffset(unsigned track, unsigned row, float offset)
+{
+	extend(m_TapNoteOffset[track], 0.f, row);
+	m_TapNoteOffset[track][row] = offset;
 }
 
 HoldNoteScore NoteDataWithScoring::GetHoldNoteScore(unsigned h) const
