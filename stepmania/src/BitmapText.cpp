@@ -254,10 +254,10 @@ void BitmapText::DrawPrimitives()
 			DISPLAY->TranslateLocal( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
 
 			DWORD dwColor = D3DXCOLOR(0,0,0,0.5f*m_temp_colorDiffuse[0].a);	// semi-transparent black
+
 			int i;
 			for( i=0; i<iNumV; i++ )
 				v[i].color = dwColor;
-
 			for( i=0; i<iNumV; i+=4 )
 				DISPLAY->AddQuad( &v[i] );
 
@@ -300,10 +300,10 @@ void BitmapText::DrawPrimitives()
 	if( m_temp_colorGlow.a != 0 )
 	{
 		DISPLAY->SetColorDiffuse();
+
 		int i;
 		for( i=0; i<iNumV; i++ )
 			v[i].color = m_temp_colorGlow;
-
 		for( i=0; i<iNumV; i+=4 )
 			DISPLAY->AddQuad( &v[i] );
 	}

@@ -253,40 +253,91 @@ void WheelItemDisplay::DrawPrimitives()
 	{
 	case TYPE_SECTION:
 		m_sprSectionBar.Draw();
-		m_textSectionName.Draw();
 		break;
 	case TYPE_ROULETTE:
 		m_sprSectionBar.Draw();
-		m_textRoulette.Draw();
 		break;
-	case TYPE_SONG:
-		{
-			m_sprSongBar.Draw();
-			m_MusicStatusDisplay.Draw();
-			m_TextBanner.Draw();
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				m_GradeDisplay[p].Draw();
-			
-			if( m_fPercentGray > 0 )
-			{
-				m_sprSongBar.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-				m_sprSongBar.SetGlowColor( D3DXCOLOR(0,0,0,m_fPercentGray) );
-				m_sprSongBar.Draw();
-				m_sprSongBar.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-				m_sprSongBar.SetGlowColor( D3DXCOLOR(0,0,0,0) );
-			}
-		}
+	case TYPE_SONG:		
+		m_sprSongBar.Draw();
 		break;
 	case TYPE_COURSE:
 		m_sprSongBar.Draw();
+		break;
+	default:
+		ASSERT(0);
+	}
+
+	switch( m_WheelItemType )
+	{
+	case TYPE_SECTION:
+		m_textSectionName.Draw();
+		break;
+	case TYPE_ROULETTE:
+		m_textRoulette.Draw();
+		break;
+	case TYPE_SONG:
+		m_TextBanner.Draw();
+		break;
+	case TYPE_COURSE:
 		m_textCourse.Draw();
 		break;
 	default:
 		ASSERT(0);
 	}
+
+	switch( m_WheelItemType )
+	{
+	case TYPE_SECTION:
+		break;
+	case TYPE_ROULETTE:
+		break;
+	case TYPE_SONG:
+		m_MusicStatusDisplay.Draw();
+		break;
+	case TYPE_COURSE:
+		break;
+	default:
+		ASSERT(0);
+	}
+
+	switch( m_WheelItemType )
+	{
+	case TYPE_SECTION:
+		break;
+	case TYPE_ROULETTE:
+		break;
+	case TYPE_SONG:
+		int p;
+		for( p=0; p<NUM_PLAYERS; p++ )
+			m_GradeDisplay[p].Draw();
+		break;
+	case TYPE_COURSE:
+		break;
+	default:
+		ASSERT(0);
+	}
+
+	switch( m_WheelItemType )
+	{
+	case TYPE_SECTION:
+		break;
+	case TYPE_ROULETTE:
+		break;
+	case TYPE_SONG:
+		if( m_fPercentGray > 0 )
+		{
+			m_sprSongBar.SetGlowColor( D3DXCOLOR(0,0,0,m_fPercentGray) );
+			m_sprSongBar.Draw();
+			m_sprSongBar.SetGlowColor( D3DXCOLOR(0,0,0,0) );
+		}
+		break;
+	case TYPE_COURSE:
+		break;
+	default:
+		ASSERT(0);
+	}
+
 }
-
-
 
 MusicWheel::MusicWheel() 
 { 
@@ -732,7 +783,6 @@ void MusicWheel::DrawPrimitives()
 
 		display.Draw();
 	}
-
 
 	ActorFrame::DrawPrimitives();
 }

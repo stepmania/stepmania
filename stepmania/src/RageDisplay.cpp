@@ -531,13 +531,18 @@ void RageDisplay::FlushQueue()
 	if( m_iNumVerts == 0 )
 		return;
 	ASSERT( (m_iNumVerts % 3) == 0 );
-	
+
+	m_pd3dDevice->DrawPrimitiveUP( D3DPT_TRIANGLELIST, m_iNumVerts/3, m_vertQueue, sizeof(RAGEVERTEX) );
+	m_iNumVerts = 0;
+
+/*
 	RAGEVERTEX* v;
 	m_pVB->Lock( 0, 0, (BYTE**)&v, 0 );
 	memcpy( v, m_vertQueue, sizeof(RAGEVERTEX)*m_iNumVerts );
 	m_pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, m_iNumVerts/3 );
 	m_pVB->Unlock();
 	m_iNumVerts = 0;
+*/
 
 	m_iDrawsSinceLastCheck++;
 }

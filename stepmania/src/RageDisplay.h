@@ -35,6 +35,13 @@ const int MAX_NUM_VERTICIES = MAX_NUM_QUADS*4;	// 4 verticies per quad
 
 
 
+// 
+// Chris:
+// I did a lot of testing, and drawing indexed primitives is SLOWER than duplicating 
+// verticies and not indexing.  In fact, drawing indexed primitives is about 30% slower.
+// 
+
+
 class RageDisplay
 {
 	friend class RageTexture;
@@ -138,7 +145,6 @@ private:
 	//
 protected:
 	RAGEVERTEX	m_vertQueue[MAX_NUM_VERTICIES];
-	D3DCOLOR	m_addColors[MAX_NUM_VERTICIES];
 	int			m_iNumVerts;
 
 public:

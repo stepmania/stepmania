@@ -17,9 +17,13 @@
 #include "GameState.h"
 
 
-#define METER_WIDTH			THEME->GetMetricF("LifeMeterBar","MeterWidth")
-#define METER_HEIGHT		THEME->GetMetricF("LifeMeterBar","MeterHeight")
+//
+// Important!!!!  Do not use these macros during gameplay.  They return very slowly.  Cache them in a member.
+//
+#define METER_WIDTH			THEME->GetMetricI("LifeMeterBar","MeterWidth")
+#define METER_HEIGHT		THEME->GetMetricI("LifeMeterBar","MeterHeight")
 #define DANGER_THRESHOLD	THEME->GetMetricF("LifeMeterBar","DangerThreshold")
+
 const float FAIL_THRESHOLD = 0;
 
 
@@ -37,10 +41,13 @@ LifeMeterBar::LifeMeterBar()
 	m_fLifeVelocity = 0;
 	m_fHotAlpha = 0;
 	m_bFailedEarlier = false;
+	m_iMeterWidth = METER_WIDTH;
+	m_iMeterHeight = METER_HEIGHT;
+	m_fDangerThreshold = DANGER_THRESHOLD;
 
 	m_quadBlackBackground.SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
-	m_quadBlackBackground.SetZoomX( METER_WIDTH );
-	m_quadBlackBackground.SetZoomY( METER_HEIGHT );
+	m_quadBlackBackground.SetZoomX( m_iMeterWidth );
+	m_quadBlackBackground.SetZoomY( m_iMeterHeight );
 	m_frame.AddSubActor( &m_quadBlackBackground );
 
 	m_sprStreamNormal.Load( THEME->GetPathTo("Graphics","gameplay lifemeter stream normal") );
@@ -137,7 +144,7 @@ bool LifeMeterBar::IsHot()
 
 bool LifeMeterBar::IsInDanger() 
 { 
-	return m_fLifePercentage < DANGER_THRESHOLD; 
+	return m_fLifePercentage < m_fDangerThreshold; 
 }
 
 bool LifeMeterBar::IsFailing() 
@@ -165,13 +172,18 @@ void LifeMeterBar::Update( float fDeltaTime )
 		m_fLifeVelocity /= 4;		// make some drag
 	CLAMP( m_fTrailingLifePercentage, 0, 1 );
 
+	m_fHotAlpha  += IsHot() ? +fDeltaTime*2 : -fDeltaTime*2;
+	CLAMP( m_fHotAlpha, 0, 1 );
+}
 
+void LifeMeterBar::DrawPrimitives()
+{
 	// set custom texture coords
-	CRect rectSize( 
-		int( -METER_WIDTH/2 ), 
-		int( -METER_HEIGHT/2 ), 
-		int( -METER_WIDTH/2  + METER_WIDTH  * m_fTrailingLifePercentage ), 
-		int( -METER_HEIGHT/2 + METER_HEIGHT) );
+	static RECT rectSize;
+	rectSize.left	= -m_iMeterWidth/2; 
+	rectSize.top	= -m_iMeterHeight/2;
+	rectSize.right	= -m_iMeterWidth/2 + roundf(m_iMeterWidth*m_fTrailingLifePercentage);
+	rectSize.bottom	= +m_iMeterHeight/2;
 
 	float fPrecentOffset = TIMER->GetTimeSinceStart();
 	fPrecentOffset -= (int)fPrecentOffset;
@@ -182,19 +194,17 @@ void LifeMeterBar::Update( float fDeltaTime )
 		m_fTrailingLifePercentage - fPrecentOffset,
 		1 );
 
-	m_sprStreamNormal.StretchTo( rectSize );
+	m_sprStreamNormal.StretchTo( &rectSize );
 	m_sprStreamNormal.SetCustomTextureRect( frectCustomTexCoords );
-	m_sprStreamHot.StretchTo( rectSize );
+	m_sprStreamHot.StretchTo( &rectSize );
 	m_sprStreamHot.SetCustomTextureRect( frectCustomTexCoords );
 
-	m_fHotAlpha  += IsHot() ? +fDeltaTime*2 : -fDeltaTime*2;
-	CLAMP( m_fHotAlpha, 0, 1 );
 	m_sprStreamHot.SetDiffuseColor(    D3DXCOLOR(1,1,1,m_fHotAlpha) );
-}
 
-void LifeMeterBar::DrawPrimitives()
-{
-	float fPercentRed = (m_fTrailingLifePercentage<DANGER_THRESHOLD) ? sinf( TIMER->GetTimeSinceStart()*D3DX_PI*4 )/2+0.5f : 0;
+
+
+
+	float fPercentRed = (m_fTrailingLifePercentage<m_fDangerThreshold) ? sinf( TIMER->GetTimeSinceStart()*D3DX_PI*4 )/2+0.5f : 0;
 	m_quadBlackBackground.SetDiffuseColor( D3DXCOLOR(fPercentRed*0.8f,0,0,1) );
 
 	if( !GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
@@ -202,6 +212,7 @@ void LifeMeterBar::DrawPrimitives()
 		m_sprStreamNormal.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 		m_sprStreamHot.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	}
+
 	ActorFrame::DrawPrimitives();
 }
 

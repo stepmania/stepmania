@@ -49,7 +49,15 @@ Actor::Actor()
 }
 
 
-void Actor::Draw()		// set the world matrix and calculate actor properties, the call DrawPrimitives
+void Actor::Draw()
+{
+	// call the most-derived versions
+	this->BeginDraw();	
+	this->DrawPrimitives();	// call the most-derived version of DrawPrimitives();
+	this->EndDraw();	
+}
+
+void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 {
 	DISPLAY->PushMatrix();	// we're actually going to do some drawing in this function	
 
@@ -141,12 +149,10 @@ void Actor::Draw()		// set the world matrix and calculate actor properties, the 
 		DISPLAY->RotateY( m_temp_rotation.y );
 	if( m_temp_rotation.z != 0 )
 		DISPLAY->RotateZ( m_temp_rotation.z );
+}
 
-
-
-	this->DrawPrimitives();	// call the most-derived version of DrawPrimitives();
-
-
+void Actor::EndDraw()
+{
 	DISPLAY->PopMatrix();
 }
 

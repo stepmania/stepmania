@@ -58,8 +58,8 @@ private:
 	Sprite	m_sprArrowShadow[NUM_PLAYERS];
 	Sprite	m_sprOK[NUM_PLAYERS];
 
-	RandomSample m_soundChange;
-	RandomSample m_soundSelect;
+	RageSoundSample m_soundChange;
+	RageSoundSample m_soundSelect;
 
 	bool m_bPlayedChallengeSound;
 

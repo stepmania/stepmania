@@ -569,7 +569,7 @@ bool Song::LoadFromBMSDir( CString sDir )
 									value_name = line;
 								}
 
-								if( 0==stricmp(value_name, sTagToLookFor) == 0 )
+								if( 0==stricmp(value_name, sTagToLookFor) )
 								{
 									fBPM = (float)atof( value_data );
 									break;

@@ -62,20 +62,10 @@ ScreenEditMenu::ScreenEditMenu()
 {
 	LOG->Trace( "ScreenEditMenu::ScreenEditMenu()" );
 
-
-	// data structures
-	m_SelectedRow = ROW_GROUP;
-
-	SONGMAN->GetGroupNames( m_sGroups );
-	GAMEMAN->GetNotesTypesForGame( GAMESTATE->m_CurGame, m_NotesTypes );
-	m_iSelectedGroup = 0;
-	m_iSelectedSong = 0;
-	m_iSelectedNotesType = 0;
-	m_iSelectedNotes = 0;
-
 	m_textGroup.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textGroup.SetXY( GROUP_X, GROUP_Y );
 	m_textGroup.SetDiffuseColor( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
+	m_textGroup.SetText( "blah" );
 	this->AddSubActor( &m_textGroup );
 
 	m_Banner.SetXY( SONG_BANNER_X, SONG_BANNER_Y );
@@ -98,16 +88,54 @@ ScreenEditMenu::ScreenEditMenu()
 	m_textNotesType.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textNotesType.SetXY( GAME_STYLE_X, GAME_STYLE_Y );
 	m_textNotesType.SetDiffuseColor( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
+	m_textNotesType.SetText( "blah" );
 	this->AddSubActor( &m_textNotesType );
 
 	m_textNotes.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textNotes.SetXY( STEPS_X, STEPS_Y );
 	m_textNotes.SetDiffuseColor( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
+	m_textNotes.SetText( "blah" );
 	this->AddSubActor( &m_textNotes );
 
 
+
+	// data structures
+	m_SelectedRow = ROW_GROUP;
 	AfterRowChange();
-	OnGroupChange();
+
+	SONGMAN->GetGroupNames( m_sGroups );
+	GAMEMAN->GetNotesTypesForGame( GAMESTATE->m_CurGame, m_NotesTypes );
+	m_iSelectedGroup = 0;
+	m_iSelectedSong = 0;
+	m_iSelectedNotesType = 0;
+	m_iSelectedNotes = 0;
+
+	if( GAMESTATE->m_pCurSong )
+	{
+		int i;
+
+		for( i=0; i<m_sGroups.GetSize(); i++ )
+			if( GAMESTATE->m_pCurSong->m_sGroupName == m_sGroups[i] )
+				m_iSelectedGroup = i;
+		OnGroupChange();
+
+		for( i=0; i<m_pSongs.GetSize(); i++ )
+			if( GAMESTATE->m_pCurSong == m_pSongs[i] )
+				m_iSelectedSong = i;
+		OnSongChange();
+
+		for( i=0; i<m_NotesTypes.GetSize(); i++ )
+			if( GAMESTATE->GetCurrentStyleDef()->m_NotesType == m_NotesTypes[i] )
+				m_iSelectedNotesType = i;
+		OnNotesTypeChange();
+
+		for( i=0; i<m_pNotess.GetSize(); i++ )
+			if( GAMESTATE->m_pCurNotes[PLAYER_1] == m_pNotess[i] )
+				m_iSelectedNotes = i;
+		OnNotesChange();
+	}
+	else
+		OnGroupChange();
 
 
 	m_textExplanation.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
@@ -248,10 +276,10 @@ void ScreenEditMenu::OnNotesTypeChange()
 	m_iSelectedNotes = 0;
 
 
-	OnStepsChange();
+	OnNotesChange();
 }
 
-void ScreenEditMenu::OnStepsChange()
+void ScreenEditMenu::OnNotesChange()
 {
 	m_iSelectedNotes = clamp( m_iSelectedNotes, 0, m_pNotess.GetSize()-1 );
 
@@ -308,7 +336,7 @@ void ScreenEditMenu::MenuLeft( const PlayerNumber p )
 		if( m_iSelectedNotes == 0 )	// can't go left any further
 			return;
 		m_iSelectedNotes--;
-		OnStepsChange();
+		OnNotesChange();
 		break;
 	default:
 		ASSERT(false);
@@ -341,7 +369,7 @@ void ScreenEditMenu::MenuRight( const PlayerNumber p )
 		if( m_iSelectedNotes == m_pNotess.GetSize()-1 )	// can't go right any further
 			return;
 		m_iSelectedNotes++;
-		OnStepsChange();
+		OnNotesChange();
 		break;
 	default:
 		ASSERT(false);

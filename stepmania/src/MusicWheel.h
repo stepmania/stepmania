@@ -54,14 +54,14 @@ public:
 
 
 class WheelItemDisplay : public WheelItemData,
-						 public Actor
+						 public ActorFrame
 {
 public:
 	WheelItemDisplay();
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
-
+	
 	CString GetSectionName() { return m_sSectionName; }
 
 	void LoadFromWheelItemData( WheelItemData* pWID );

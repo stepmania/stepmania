@@ -1163,6 +1163,10 @@ CHANGE:  Background Movies now start playing at beat 0, and the movie should
 OPTIMIZATION:  New deferred rendering architecture uses more CPU in order to
 	create more efficient operations for the graphics card.
 BUG FIX:  Select Group no longer crashes with > 15 groups.
+CHANGE:  Last edited song is selected upon entering Edit Menu.
+BUG FIX:  "Indirect BPM changes" (track 08) work again.  This was causing 
+	"0 BPM" segments to be added to songs like MAX300.
+BUG FIX:  Fixed life meter stream alignment (I hope!)
 
 ------------------------CVS after 3.00 beta 5----------------
 OPTIMIZATION:  Much faster song loading.

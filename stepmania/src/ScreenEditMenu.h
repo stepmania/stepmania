@@ -39,7 +39,7 @@ private:
 	void OnGroupChange();
 	void OnSongChange();
 	void OnNotesTypeChange();
-	void OnStepsChange();
+	void OnNotesChange();
 
 	CString		GetSelectedGroup()		{ return m_sGroups[m_iSelectedGroup]; };
 	Song*		GetSelectedSong()		{ return m_pSongs[m_iSelectedSong]; };
@@ -60,31 +60,31 @@ private:
 	MenuElements m_Menu;
 
 	CStringArray m_sGroups;
-	int m_iSelectedGroup;		// index into m_sGroups
-	BitmapText m_textGroup;
+	int			m_iSelectedGroup;		// index into m_sGroups
+	BitmapText	m_textGroup;
 
 	CArray<Song*, Song*> m_pSongs;
-	int m_iSelectedSong;		// index into m_pSongs
-	Banner  m_Banner;
+	int			m_iSelectedSong;	// index into m_pSongs
+	Banner		m_Banner;
 	TextBanner  m_TextBanner;
-	Sprite  m_sprArrowLeft;
-	Sprite  m_sprArrowRight;
+	Sprite		m_sprArrowLeft;
+	Sprite		m_sprArrowRight;
 
 	CArray<NotesType, NotesType> m_NotesTypes;
-	int m_iSelectedNotesType;	// index into m_NotesTypes
-	BitmapText m_textNotesType;
+	int			m_iSelectedNotesType;	// index into m_NotesTypes
+	BitmapText	m_textNotesType;
 
 	CArray<Notes*, Notes*> m_pNotess;
-	int m_iSelectedNotes;		// index into m_pNotess
-	BitmapText m_textNotes;
+	int			m_iSelectedNotes;	// index into m_pNotess
+	BitmapText	m_textNotes;
 
 
-	BitmapText m_textExplanation;
+	BitmapText		m_textExplanation;
 
-	TransitionFade		m_Fade;
+	TransitionFade	m_Fade;
 
-	RandomSample m_soundChangeMusic;
-	RandomSample m_soundSelect;
+	RandomSample	m_soundChangeMusic;
+	RandomSample	m_soundSelect;
 
 };
 

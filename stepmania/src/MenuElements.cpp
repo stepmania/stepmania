@@ -207,16 +207,20 @@ void MenuElements::DrawPrimitives()
 
 void MenuElements::DrawTopLayer()
 {
+	BeginDraw();
 	m_frameTopBar.Draw();
 	m_frameBottomBar.Draw();
 	m_textHelp.Draw();
 	m_KeepAlive.Draw();
 	m_Wipe.Draw();
+	EndDraw();
 }
 
 void MenuElements::DrawBottomLayer()
 {
+	BeginDraw();
 	m_sprBG.Draw();
+	EndDraw();
 }
 
 void MenuElements::StopTimer()

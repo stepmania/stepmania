@@ -47,4 +47,7 @@ private:
 	float		m_fLifeVelocity;	// how m_fTrailingLifePercentage approaches m_fLifePercentage
 	float		m_fHotAlpha;
 	bool		m_bFailedEarlier;		// set this to true when life dips below 0
+	int			m_iMeterWidth;
+	int			m_iMeterHeight;
+	float		m_fDangerThreshold;
 };

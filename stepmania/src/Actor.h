@@ -41,8 +41,10 @@ public:
 	virtual void Restore() {};
 	virtual void Invalidate() {};
 
-	virtual void Draw();	// set up the world matrix, then calls DrawPrimitives()
-	virtual void DrawPrimitives() = 0;
+	virtual void Draw();		// calls, BeginDraw, DrawPrimitives, EndDraw
+	virtual void BeginDraw();	// pushes transform onto world matrix stack
+	virtual void DrawPrimitives() = 0;	// override with Actor specific action
+	virtual void EndDraw();		// pops transform from world matrix stack
 	virtual void Update( float fDeltaTime );
 
 	virtual float GetX()					{ return m_pos.x; };

@@ -16,11 +16,15 @@
 #include "PrefsManager.h"
 
 
+//
+// Important!!!!  Do not use these macros during gameplay.  They return very slowly.  Cache them in a member.
+//
 #define JUDGEMENT_DISPLAY_TIME			THEME->GetMetricF("HoldJudgement","DisplayTime")
 
 
 HoldJudgement::HoldJudgement()
 {
+	m_fDisplayTime = JUDGEMENT_DISPLAY_TIME;
 	m_fDisplayCountdown = 0;
 	m_sprJudgement.Load( THEME->GetPathTo("Graphics","gameplay hold judgement") );
 	m_sprJudgement.StopAnimating();
@@ -57,21 +61,21 @@ void HoldJudgement::SetHoldJudgement( HoldNoteScore hns )
 	default:	ASSERT( false );
 	}
 
-	m_fDisplayCountdown = JUDGEMENT_DISPLAY_TIME;
+	m_fDisplayCountdown = m_fDisplayTime;
 
 	if( hns == HNS_NG ) 
 	{
 		// falling down
 		m_sprJudgement.SetY( -10 );
 		m_sprJudgement.SetZoom( 1.0f );
-		m_sprJudgement.BeginTweening( JUDGEMENT_DISPLAY_TIME );
+		m_sprJudgement.BeginTweening( m_fDisplayTime );
 		m_sprJudgement.SetTweenY( 10 );
 	} 
 	else // hns == HNS_OK
 	{		
 		// zooming out
 		m_sprJudgement.SetZoom( 1.5f );
-		m_sprJudgement.BeginTweening( JUDGEMENT_DISPLAY_TIME/3.0f );
+		m_sprJudgement.BeginTweening( m_fDisplayTime/3.0f );
 		m_sprJudgement.SetTweenZoom( 1.0f );
 	}
 }

@@ -196,7 +196,7 @@ void NoteField::DrawPrimitives()
 		//
 		int iFirstMeasureToDraw = int(fFirstBeatToDraw)/BEATS_PER_MEASURE;
 		int iLastMeasureToDraw = (int(fLastBeatToDraw)/BEATS_PER_MEASURE)+1;
-		for( i=iFirstMeasureToDraw; i<=fLastBeatToDraw; i++ )
+		for( i=iFirstMeasureToDraw; i<=iLastMeasureToDraw; i++ )
 			DrawMeasureBar( i );
 
 		//

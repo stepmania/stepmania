@@ -409,7 +409,7 @@ void ScreenSelectDifficulty::ChangeTo( const PlayerNumber pn, int iSelectionWas,
 		}
 	}
 
-	m_soundChange.PlayRandom();
+	m_soundChange.Play();
 }
 
 void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
@@ -418,7 +418,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 		return;
 	m_bChosen[pn] = true;
 
-	m_soundSelect.PlayRandom();
+	m_soundSelect.Play();
 	int iSelection = m_iSelection[pn];
 
 	switch( iSelection )
