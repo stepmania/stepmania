@@ -133,10 +133,11 @@ void MemoryCardDriver_Linux::GetStorageDevices( vector<UsbStorageDevice>& vDevic
 	}
 
 	{
-		// Find the usb-storage device index for all storage class devices.
-		for( unsigned i=0; i<vDevicesOut.size(); i++ )
+		// Read all usb-storage descriptors and map from our array to usb-storage device index.
+		int iConnectedDeviceIndex = 0;
+		for( iUsbStorageIndex = 0; true; iUsbStorageIndex++; )
 		{
-			UsbStorageDevice& usbd = vDevicesOut[i];
+			UsbStorageDevice& usbd = vDevicesOut[iConnectedDeviceIndex];
 			// Output looks like:
 
 			//    Host scsi0: usb-storage
@@ -148,29 +149,35 @@ void MemoryCardDriver_Linux::GetStorageDevices( vector<UsbStorageDevice>& vDevic
 			//          GUID: 04e801000001125198948886
 			//      Attached: Yes
 	
-			CString fn = ssprintf( "/proc/scsi/usb-storage-%d/%d", i, i );
+			CString fn = ssprintf( "/proc/scsi/usb-storage-%d/%d", iUsbStorageIndex, iUsbStorageIndex );
 			ifstream f;
 			f.open(fn);
 			if( !f.is_open() )
-			{
-				LOG->Warn( "can't open '%s'", fn.c_str() );
-				return;
-			}
+				break;
+
+			char szTemp[1024];
 
 			CString sLine;
 			while( getline(f, sLine) )
 			{
-				// Serial Number: 1125198948886
-				char szSerial[1024];
-				int iRet = sscanf( sLine.c_str(), "Serial Number: %[^\n]", szSerial );
+				//      Attached: Yes
+				int iRet = sscanf( sLine.c_str(), "     Attached: %s", szTemp );
 				if( iRet == 1 )	// we found our line
 				{
-					usbd.iUsbStorageIndex = i;
-
-					LOG->Trace( "iUsbStorageIndex: %d, iBus: %d, iDeviceOnBus: %d, iPortOnHub: %d",
-						usbd.iUsbStorageIndex, usbd.iBus, usbd.iDeviceOnBus, usbd.iPortOnHub );
-
-					break;	// stop looking
+					if( strcmp(szTemp,"Yes")==0 )
+					{
+						usbd.iUsbStorageIndex = iUsbStorageIndex;
+						iConnectedDeviceIndex++;
+					}
+					else if( strcmp(szTemp,"No")==0 )
+					{
+						break;	// this device isn't attached.  Ignore it.
+					}
+					else
+					{
+						LOG->Warn( "Invalid value for Attached: '%s'", szTemp );
+						break;
+					}
 				}
 			}
 		}
