@@ -117,6 +117,7 @@ void ThemeManager::GetLanguages( CStringArray& AddTo )
 	AddTo.clear();
 	CStringArray asTemp;
 
+	/* XXX: this should use FallbackTheme */
 	GetLanguagesForTheme( m_sCurThemeName, AddTo );
 	GetLanguagesForTheme( BASE_THEME_NAME, asTemp );
 	AddTo.insert( AddTo.begin(), asTemp.begin(), asTemp.end() );
@@ -141,8 +142,12 @@ bool ThemeManager::DoesLanguageExist( CString sLanguage )
 void ThemeManager::LoadThemeRecursive( deque<Theme> &theme, CString sThemeName )
 {
 	static int depth = 0;
+	static bool loaded_base = false;
 	depth++;
 	ASSERT_M( depth < 20, "Circular NoteSkin fallback references detected." );
+
+	if( !sThemeName.CompareNoCase(BASE_THEME_NAME) )
+		loaded_base = true;
 
 	Theme t;
 	t.sThemeName = sThemeName;
@@ -151,13 +156,26 @@ void ThemeManager::LoadThemeRecursive( deque<Theme> &theme, CString sThemeName )
 	if( m_sCurLanguage.CompareNoCase(BASE_LANGUAGE) )
 		t.iniMetrics.ReadFile( GetLanguageIniPath(sThemeName,m_sCurLanguage) );
 
-	// read global fallback the current NoteSkin (if any)
+	LOG->Trace("load '%s', %i",
+		sThemeName.c_str(), loaded_base);
+	/* Read the fallback theme.  If no fallback theme is specified, and we havn't
+	 * already loaded it, fall back on BASE_THEME_NAME.  That way, default theme
+	 * fallbacks can be disabled with "FallbackTheme=". */
 	CString sFallback;
-	if( t.iniMetrics.GetValue("Global","FallbackTheme",sFallback) )
+	if( !t.iniMetrics.GetValue("Global","FallbackTheme",sFallback) )
+	{
+		if( sThemeName.CompareNoCase( BASE_THEME_NAME ) && !loaded_base )
+			sFallback = BASE_THEME_NAME;
+		LOG->Trace("no fallback, '%s'", sFallback.c_str());
+	}
+	if( !sFallback.empty() )
 		LoadThemeRecursive( theme, sFallback );
 
 	g_vThemes.push_front( t );
-	
+
+	if( !sThemeName.CompareNoCase(sThemeName) )
+		loaded_base = false;
+
 	depth--;
 }
 
@@ -180,13 +198,8 @@ void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage
 
 	g_vThemes.clear();
 
-	// load base theme
-	LoadThemeRecursive( g_vThemes, BASE_THEME_NAME );
-
 	// load current theme
-	/* Don't bother loading m_pIniCurMetrics if it'll be the same data as BASE_THEME_NAME. */
-	if( m_sCurThemeName.CompareNoCase(BASE_THEME_NAME) )
-		LoadThemeRecursive( g_vThemes, m_sCurThemeName );
+	LoadThemeRecursive( g_vThemes, m_sCurThemeName );
 
 
 	CString sMetric;
@@ -633,11 +646,14 @@ void ThemeManager::GetModifierNames( set<CString>& AddTo )
 {
 	for( deque<Theme>::const_iterator iter = g_vThemes.begin();
 		iter != g_vThemes.end();
-		iter++ )
+		++iter )
 	{
 		const IniFile::key *cur = iter->iniMetrics.GetKey( "OptionNames" );
-		for( IniFile::key::const_iterator iter = cur->begin(); iter != cur->end(); ++iter )
-			AddTo.insert( iter->first );
+		if( cur )
+		{
+			for( IniFile::key::const_iterator iter = cur->begin(); iter != cur->end(); ++iter )
+				AddTo.insert( iter->first );
+		}
 	}
 }
 
