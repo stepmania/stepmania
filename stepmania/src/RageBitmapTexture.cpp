@@ -211,21 +211,23 @@ void RageBitmapTexture::Create()
 		default:
 			RageException::Throw( "Invalid color depth: %d bits", actualID.iColorDepth );
 		}
+	}
 
-		/* It's either not a paletted image, or we can't handle paletted textures.
-		 * Convert to the desired RGBA format, dithering if appropriate. */
-		if( actualID.bDither && 
-			(pixfmt==RageDisplay::FMT_RGBA4 || pixfmt==RageDisplay::FMT_RGB5A1) )	/* Don't dither if format is 32bpp; there's no point. */
-		{
-			/* Dither down to the destination format. */
-			const RageDisplay::PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
-			RageSurface *dst = CreateSurface( img->w, img->h, pfd->bpp,
-				pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
+	/* Dither if appropriate. XXX: This is a special case: don't bother dithering to
+	 * RGBA8888.  We actually want to dither only if the destination has greater color
+	 * depth on at least one color channel than the source.  For example, it doesn't
+	 * make sense to do this when pixfmt is RGBA5551 if the image is only RGBA555. */
+	if( actualID.bDither && 
+		(pixfmt==RageDisplay::FMT_RGBA4 || pixfmt==RageDisplay::FMT_RGB5A1) )
+	{
+		/* Dither down to the destination format. */
+		const RageDisplay::PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
+		RageSurface *dst = CreateSurface( img->w, img->h, pfd->bpp,
+			pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
 
-			SM_SDL_ErrorDiffusionDither(img, dst);
-			delete img;
-			img = dst;
-		}
+		SM_SDL_ErrorDiffusionDither(img, dst);
+		delete img;
+		img = dst;
 	}
 
 	/* This needs to be done *after* the final resize, since that resize
