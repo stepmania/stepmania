@@ -483,8 +483,25 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 		RageException::Throw( "In the ini file for BGAnimation '%s', '%s' is missing a the line 'File='.", sAniDir.c_str(), sLayer.c_str() );
 	}
 
-	if( !DoesFileExist(sPath) )
-		RageException::Throw( "In the ini file for BGAnimation '%s', the specified File '%s' does not exist.", sAniDir.c_str(), sFile.c_str() );
+
+	/* XXX: Search the BGA dir first, then search the Graphics directory if this
+	 * is a theme BGA, so common BG graphics can be overridden. */
+	{
+		vector<CString> asElementPaths;
+		GetDirListing( sPath + "*", asElementPaths, false, true );
+		if(asElementPaths.size() == 0)
+			RageException::Throw( "In the ini file for BGAnimation '%s', the specified File '%s' does not exist.", sAniDir.c_str(), sFile.c_str() );
+		if(asElementPaths.size() > 1)
+		{
+			CString message = ssprintf( 
+				"There is more than one file that matches "
+				"'%s/%s'.  Please remove all but one of these matches.",
+				sAniDir.c_str(), sFile.c_str() );
+
+			RageException::Throw( message ); 
+		}
+		sPath = asElementPaths[0];
+	}
 
 	ini.GetValueI( sLayer, "Type", (int&)m_Type );
 	ini.GetValue ( sLayer, "Command", m_sCommand );
