@@ -50,7 +50,7 @@ ScreenTestSound::ScreenTestSound()
 	s[4].txt.SetXY(150, 400);
 
 	s[0].s.Load("Themes/default/Sounds/_common menu music.ogg");
-	s[1].s.Load("Themes/default/Sounds/music scroll music.ogg");
+	s[1].s.Load("Themes/default/Sounds/title menu change.mp3");
 	s[2].s.Load("Themes/default/Sounds/evaluation extra stage.mp3");
 	s[3].s.Load("Themes/default/Sounds/gameplay oni die.mp3");
 	s[4].s.Load("Themes/default/Sounds/gameplay toasty.mp3");
@@ -108,8 +108,8 @@ void ScreenTestSound::UpdateText(int n)
 
 void ScreenTestSound::Update(float f)
 {
-//	for(int i = 0; i < nsounds; ++i)
-//		UpdateText(i);
+	for(int i = 0; i < nsounds; ++i)
+		UpdateText(i);
 }
 
 void ScreenTestSound::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
