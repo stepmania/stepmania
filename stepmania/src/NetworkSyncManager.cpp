@@ -110,10 +110,13 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 	
 	NetPlayerClient->SendPack((char*)m_packet.Data,m_packet.Position);
 
+	ClearPacket(m_packet);
+
 	NetPlayerClient->ReadPack((char*)m_packet.Data,NETMAXBUFFERSIZE);
 
+	int command = Read1(m_packet);
 	m_ServerVersion = Read1(m_packet);
-	CString m_ServerName = ReadNT(m_packet);
+	m_ServerName = ReadNT(m_packet);
 
 	LOG->Info("Server Version: %d %s", m_ServerVersion, m_ServerName.c_str());
 }
@@ -272,7 +275,7 @@ void NetworkSyncManager::DisplayStartupStatus()
 		//Networking wasn't attepmpted
 		return;
 	case 1:
-		sMessage = "Connect to server successful.";
+		sMessage = "Connection to " + m_ServerName + " sucessful.";
 		break;
 	case 2:
 		sMessage = "Connection failed.";
@@ -322,7 +325,7 @@ CString NetworkSyncManager::ReadNT(NetPacket &Packet)
 	int Orig=Packet.Position;
 	CString TempStr;
 	while ((Packet.Position<NETMAXBUFFERSIZE)&& (((char*)Packet.Data)[Packet.Position]!=0))
-		TempStr+=(char)Packet.Data[Packet.Position++];
+		TempStr= TempStr + (char)Packet.Data[Packet.Position++];
 
 	Packet.Position++;
 	return TempStr;
@@ -362,6 +365,7 @@ void NetworkSyncManager::WriteNT(NetPacket &Packet, CString Data)
 	while ((Packet.Position<NETMAXBUFFERSIZE)&&(index<Data.GetLength()))
 		Packet.Data[Packet.Position++] = (unsigned char)(Data.c_str()[index++]);
 			//Is it proper to do "(unsigned char)(Data.c_str()[index++])"?
+	Packet.Data[Packet.Position++] = 0;
 }
 
 

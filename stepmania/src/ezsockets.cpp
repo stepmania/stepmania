@@ -399,8 +399,10 @@ int EzSockets::pUpdateRead()
 int EzSockets::pUpdateWrite()
 {
 	int bytes = pWriteData(outBuffer.c_str(),outBuffer.length());
-	outBuffer = outBuffer.substr(bytes);
-		
+	if (bytes>0)
+		outBuffer = outBuffer.substr(bytes);
+	if (bytes<0)
+		state = skERROR;
 	return bytes;
 }
 
