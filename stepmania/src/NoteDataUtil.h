@@ -32,21 +32,21 @@ namespace NoteDataUtil
 
 	void GetRadarValues( const NoteData &in, float fSongSeconds, RadarValues& out );
 
-	void RemoveHoldNotes( NoteData &inout, int iStartIndex = 0, int iEndIndex = 999999 );
-	void RemoveSimultaneousNotes( NoteData &inout, int iMaxSimultaneous, int iStartIndex = 0, int iEndIndex = 999999 );
-	void RemoveJumps( NoteData &inout, int iStartIndex = 0, int iEndIndex = 999999 );
-	void RemoveHands( NoteData &inout, int iStartIndex = 0, int iEndIndex = 999999 );
-	void RemoveQuads( NoteData &inout, int iStartIndex = 0, int iEndIndex = 999999 );
-	void RemoveMines( NoteData &inout, int iStartIndex = 0, int iEndIndex = 999999 );
+	void RemoveHoldNotes( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void RemoveSimultaneousNotes( NoteData &inout, int iMaxSimultaneous, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void RemoveJumps( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void RemoveHands( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void RemoveQuads( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void RemoveMines( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void RemoveAllButOneTap( NoteData &inout, int row );
 	enum TrackMapping { left, right, mirror, shuffle, super_shuffle, stomp, NUM_TRACK_MAPPINGS };
-	void Turn( NoteData &inout, StepsType st, TrackMapping tt, int iStartIndex = 0, int iEndIndex = 999999 );
-	void Little( NoteData &inout, int iStartIndex = 0, int iEndIndex = 999999 );
-	void Wide( NoteData &inout, int iStartIndex = 0, int iEndIndex = 999999 );
-	void Big( NoteData &inout, int iStartIndex = 0, int iEndIndex = 999999 );
-	void Quick( NoteData &inout, int iStartIndex = 0, int iEndIndex = 999999 );
-	void BMRize( NoteData &inout, int iStartIndex = 0, int iEndIndex = 999999 );
-	void Skippy( NoteData &inout, int iStartIndex = 0, int iEndIndex = 999999 );
+	void Turn( NoteData &inout, StepsType st, TrackMapping tt, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void Little( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void Wide( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void Big( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void Quick( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void BMRize( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void Skippy( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void InsertIntelligentTaps( 
 		NoteData &in, 
 		int iWindowSizeRows,
@@ -54,14 +54,14 @@ namespace NoteDataUtil
 		int iWindowStrideRows,
 		bool bSkippy, 
 		int iStartIndex = 0,
-		int iEndIndex = 999999 );
-	void AddMines( NoteData &inout, int iStartIndex = 0, int iEndIndex = 999999 );
-	void Echo( NoteData &inout, int iStartIndex = 0, int iEndIndex = 999999 );
-	void Stomp( NoteData &inout, StepsType st, int iStartIndex = 0, int iEndIndex = 999999 );
-	void Planted( NoteData &inout, int iStartIndex = 0, int iEndIndex = 999999 );
-	void Floored( NoteData &inout, int iStartIndex = 0, int iEndIndex = 999999 );
-	void Twister( NoteData &inout, int iStartIndex = 0, int iEndIndex = 999999 );
-	void ConvertTapsToHolds( NoteData &inout, int iSimultaneousHolds, int iStartIndex = 0, int iEndIndex = 999999 );
+		int iEndIndex = MAX_NOTE_ROW );
+	void AddMines( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void Echo( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void Stomp( NoteData &inout, StepsType st, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void Planted( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void Floored( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void Twister( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void ConvertTapsToHolds( NoteData &inout, int iSimultaneousHolds, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 
 	// change all TAP_ADDITIONs to TAP_TAPs
 	void ConvertAdditionsToRegular( NoteData &inout );
@@ -90,11 +90,11 @@ namespace NoteDataUtil
 	bool RowPassesValidMask( NoteData &inout, int row, const bool bValidMask[] );
 
 	void TransformNoteData( NoteData &nd, const AttackArray &aa, StepsType st, Song* pSong );
-	void TransformNoteData( NoteData &nd, const PlayerOptions &po, StepsType st, int iStartIndex = 0, int iEndIndex = 999999 );
+	void TransformNoteData( NoteData &nd, const PlayerOptions &po, StepsType st, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void AddTapAttacks( NoteData &nd, Song* pSong );
 
 	// void Scale( NoteData &nd, float fScale );
-	void ScaleRegion( NoteData &nd, float fScale, int iStartIndex = 0, int iEndIndex = 999999 );
+	void ScaleRegion( NoteData &nd, float fScale, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	inline void Scale( NoteData &nd, float fScale ) { NoteDataUtil::ScaleRegion(nd, fScale); }
 
 	// If iRowsToShift > 0, add blank rows.  If iRowsToShift < 0, delete rows

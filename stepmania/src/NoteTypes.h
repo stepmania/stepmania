@@ -136,6 +136,7 @@ const int MAX_NOTE_TRACKS = 16;
 const int BEATS_PER_MEASURE = 4;
 const int ROWS_PER_BEAT	= 48;	// It is important that this number is evenly divisible by 2, 3, and 4.
 const int ROWS_PER_MEASURE = ROWS_PER_BEAT * BEATS_PER_MEASURE;
+const int MAX_NOTE_ROW = ( (1<<30) / ROWS_PER_BEAT );
 
 enum NoteType 
 { 

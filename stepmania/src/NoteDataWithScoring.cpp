@@ -6,7 +6,7 @@
 namespace
 {
 
-int GetNumTapNotesWithScore( const NoteData &in, TapNoteScore tns, int iStartIndex = 0, int iEndIndex = 999999 )
+int GetNumTapNotesWithScore( const NoteData &in, TapNoteScore tns, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW )
 { 
 	int iNumSuccessfulTapNotes = 0;
 	for( int t=0; t<in.GetNumTracks(); t++ )
@@ -22,7 +22,7 @@ int GetNumTapNotesWithScore( const NoteData &in, TapNoteScore tns, int iStartInd
 	return iNumSuccessfulTapNotes;
 }
 
-int GetNumNWithScore( const NoteData &in, TapNoteScore tns, int MinTaps, int iStartIndex = 0, int iEndIndex = 999999 )
+int GetNumNWithScore( const NoteData &in, TapNoteScore tns, int MinTaps, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW )
 {
 	int iNumSuccessfulDoubles = 0;
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, i, iStartIndex, iEndIndex )
@@ -47,7 +47,7 @@ int GetNumNWithScore( const NoteData &in, TapNoteScore tns, int MinTaps, int iSt
 	return iNumSuccessfulDoubles;
 }
 
-int GetNumHoldNotesWithScore( const NoteData &in, HoldNoteScore hns, int iStartIndex = 0, int iEndIndex = 999999 )
+int GetNumHoldNotesWithScore( const NoteData &in, HoldNoteScore hns, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW )
 {
 	int iNumSuccessfulHolds = 0;
 	for( int i=0; i<in.GetNumHoldNotes(); i++ )
@@ -61,7 +61,7 @@ int GetNumHoldNotesWithScore( const NoteData &in, HoldNoteScore hns, int iStartI
 	return iNumSuccessfulHolds;
 }
 
-int GetSuccessfulMines( const NoteData &in, int iStartIndex = 0, int iEndIndex = 999999 )
+int GetSuccessfulMines( const NoteData &in, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW )
 {
 	int iNumSuccessfulMinesNotes = 0;
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, i, iStartIndex, iEndIndex )
@@ -78,7 +78,7 @@ int GetSuccessfulMines( const NoteData &in, int iStartIndex = 0, int iEndIndex =
 }
 
 /* See NoteData::GetNumHands(). */
-int GetSuccessfulHands( const NoteData &in, int iStartIndex = 0, int iEndIndex = 999999 )
+int GetSuccessfulHands( const NoteData &in, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW )
 {
 	int iNum = 0;
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, i, iStartIndex, iEndIndex )
