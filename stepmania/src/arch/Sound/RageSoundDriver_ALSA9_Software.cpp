@@ -18,7 +18,7 @@ static const int channels = 2;
 int samplerate = 44100;
 
 static const int samples_per_frame = channels;
-static const int bytes_per_frame = sizeof(Sint16) * samples_per_frame;
+static const int bytes_per_frame = sizeof(int16_t) * samples_per_frame;
 
 /* Linux 2.6 has a fine-grained scheduler.  We can almost always use a smaller buffer
  * size than in 2.4.  XXX: Some cards can handle smaller buffer sizes than others. */
@@ -57,9 +57,9 @@ bool RageSound_ALSA9_Software::GetData()
 	if( frames_to_fill <= 0 )
 		return false;
 
-	static Sint16 *buf = NULL;
+	static int16_t *buf = NULL;
 	if (!buf)
-		buf = new Sint16[max_writeahead*samples_per_frame];
+		buf = new int16_t[max_writeahead*samples_per_frame];
 
 	const int64_t play_pos = pcm->GetPlayPos();
 	const int64_t cur_play_pos = pcm->GetPosition();

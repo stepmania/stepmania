@@ -318,7 +318,7 @@ bool Alsa9Buf::WaitUntilFramesCanBeFilled( int timeout_ms )
 	return err == 1;
 }
 
-void Alsa9Buf::Write( const Sint16 *buffer, int frames )
+void Alsa9Buf::Write( const int16_t *buffer, int frames )
 {
 	/* We should be able to write it all.  If we don't, treat it as an error. */
 	int wrote = dsnd_pcm_mmap_writei( pcm, (const char *) buffer, frames );

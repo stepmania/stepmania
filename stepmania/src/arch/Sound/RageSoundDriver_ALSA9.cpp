@@ -11,7 +11,7 @@ const int channels = 2;
 const int samplerate = 44100;
 
 const int samples_per_frame = channels;
-const int bytes_per_frame = sizeof(Sint16) * samples_per_frame;
+const int bytes_per_frame = sizeof(int16_t) * samples_per_frame;
 
 const unsigned max_writeahead = 1024*8;
 const int num_chunks = 8;
@@ -92,9 +92,9 @@ bool RageSound_ALSA9::stream::GetData( bool &bEOF )
 	if( frames_to_fill < chunksize )
 		return false;
 
-	static Sint16 *buf = NULL;
+	static int16_t *buf = NULL;
 	if ( !buf )
-		buf = new Sint16[max_writeahead*samples_per_frame];
+		buf = new int16_t[max_writeahead*samples_per_frame];
 	char *cbuf = (char*) buf;
 
 	const int64_t play_pos = pcm->GetPlayPos();
@@ -130,7 +130,7 @@ bool RageSound_ALSA9::stream::GetData( bool &bEOF )
 		bytes_read += got;
 		bytes_left -= got;
 
-		RageSoundManager::AttenuateBuf( buf, got/sizeof(Sint16), snd->GetVolume() );
+		RageSoundManager::AttenuateBuf( buf, got/sizeof(int16_t), snd->GetVolume() );
 
 		if( bytes_left > 0 )
 		{

@@ -363,11 +363,11 @@ void RageSoundManager::SetPrefs(float MixVol)
 }
 
 /* Standalone helpers: */
-void RageSoundManager::AttenuateBuf( Sint16 *buf, int samples, float vol )
+void RageSoundManager::AttenuateBuf( int16_t *buf, int samples, float vol )
 {
 	while( samples-- )
 	{
-		*buf = Sint16( (*buf) * vol );
+		*buf = int16_t( (*buf) * vol );
 		++buf;
 	}
 }
@@ -390,7 +390,7 @@ void SoundMixBuffer::SetVolume( float f )
 	vol = int(256*f);
 }
 
-void SoundMixBuffer::write( const Sint16 *buf, unsigned size, float volume, int offset )
+void SoundMixBuffer::write( const int16_t *buf, unsigned size, float volume, int offset )
 {
 	int factor = vol;
 	if( volume != -1 )
@@ -399,13 +399,13 @@ void SoundMixBuffer::write( const Sint16 *buf, unsigned size, float volume, int 
 	const unsigned realsize = size+offset;
 	if( bufsize < realsize )
 	{
-		mixbuf = (Sint32 *) realloc( mixbuf, sizeof(Sint32) * realsize );
+		mixbuf = (int32_t *) realloc( mixbuf, sizeof(int32_t) * realsize );
 		bufsize = realsize;
 	}
 
 	if( used < realsize )
 	{
-		memset( mixbuf + used, 0, (realsize - used) * sizeof(Sint32) );
+		memset( mixbuf + used, 0, (realsize - used) * sizeof(int32_t) );
 		used = realsize;
 	}
 
@@ -414,12 +414,12 @@ void SoundMixBuffer::write( const Sint16 *buf, unsigned size, float volume, int 
 		mixbuf[pos+offset] += buf[pos] * factor;
 }
 
-void SoundMixBuffer::read(Sint16 *buf)
+void SoundMixBuffer::read(int16_t *buf)
 {
 	for( unsigned pos = 0; pos < used; ++pos )
 	{
-		Sint32 out = (mixbuf[pos]) / 256;
-		buf[pos] = (Sint16) clamp( out, -32768, 32767 );
+		int32_t out = (mixbuf[pos]) / 256;
+		buf[pos] = (int16_t) clamp( out, -32768, 32767 );
 	}
 	used = 0;
 }

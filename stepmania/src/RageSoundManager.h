@@ -69,7 +69,7 @@ public:
 
 	void GetCopies( RageSound &snd, vector<RageSound *> &snds, bool bLockSounds=false );
 
-	static void AttenuateBuf( Sint16 *buf, int samples, float vol );
+	static void AttenuateBuf( int16_t *buf, int samples, float vol );
 
 private:
 	void FlushPosMapQueue();
@@ -79,14 +79,14 @@ private:
 /* This inputs and outputs 16-bit 44khz stereo input. */
 class SoundMixBuffer
 {
-	Sint32 *mixbuf;
+	int32_t *mixbuf;
 	unsigned bufsize; /* actual allocated samples */
 	unsigned used; /* used samples */
 	int vol; /* vol * 256 */
 
 public:
-	void write( const Sint16 *buf, unsigned size, float volume = -1, int offset = 0 );
-	void read(Sint16 *buf);
+	void write( const int16_t *buf, unsigned size, float volume = -1, int offset = 0 );
+	void read(int16_t *buf);
 	void read( float *buf );
 	unsigned size() const { return used; }
 	void SetVolume(float f);

@@ -38,7 +38,7 @@ public:
 
 	int GetNumFramesToFill();
 	bool WaitUntilFramesCanBeFilled( int timeout_ms );
-	void Write( const Sint16 *buffer, int frames );
+	void Write( const int16_t *buffer, int frames );
 	unsigned FindSampleRate( unsigned rate );
 	
 	void Play();
