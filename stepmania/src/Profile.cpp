@@ -1013,7 +1013,8 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 
 void Profile::SaveMachinePublicKeyToDir( CString sDir ) const
 {
-	FileCopy( CRYPTMAN->GetPublicKeyFileName(), "public.key.rsa" );
+	if( IsAFile(CRYPTMAN->GetPublicKeyFileName()) )
+		FileCopy( CRYPTMAN->GetPublicKeyFileName(), sDir+"public.key.rsa" );
 }
 
 void Profile::AddScreenshot( Screenshot screenshot )
