@@ -147,9 +147,6 @@ inline float truncf( float f )	{ return float(int(f)); };
 inline float roundf( float f )	{ if(f < 0) return truncf(f-0.5f); return truncf(f+0.5f); };
 #endif
 
-/* XXX remove */
-#define SLASH "/"
-
 /* Don't include our own headers here, since they tend to change often. */
 
 #endif
