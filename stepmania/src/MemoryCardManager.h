@@ -28,6 +28,8 @@ public:
 	CString GetOsMountDir( PlayerNumber pn );	// only valid when ready
 
 	void LockCards( bool bLock );	// prevent removing or changing of memory cards
+	
+	void FlushAllDisks();	// force all files to be written to mounted memory cards
 
 protected:
 	void AssignUnassignedCards();	// do our best to assign a Device to each player

@@ -207,3 +207,15 @@ match:
 		}
 	}
 }
+
+void MemoryCardManager::FlushAllDisks()
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !m_Device[p].IsBlank() )	// they already have an assigned card
+			continue;	// skip
+		if( m_bWriteError[p] || m_bTooLate[p] )
+			continue;	// skip
+		m_pDriver->Flush(&m_Device[p]);
+	}
+}

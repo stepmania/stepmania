@@ -84,10 +84,11 @@ bool MemoryCardDriver_Windows::MountAndTestWrite( UsbStorageDevice* pDevice )
 	return true;
 }
 
-void MemoryCardDriver_Windows::Unmount( UsbStorageDevice* pDevice )
+void MemoryCardDriver_Windows::Flush( UsbStorageDevice* pDevice )
 {
 	// Do we need anything here?  I don't lose data if ejecting 
-	// soon after a write... -Chris
+	// soon after a write.  From the activity LED, it looks like 
+	// Windows flushes automatically every ~2 seconds. -Chris
 }
 
 /*

@@ -30,6 +30,7 @@
 #include "ThemeManager.h"
 #include "Bookkeeper.h"
 #include <time.h>
+#include "MemoryCardManager.h"
 
 
 ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our program
@@ -56,7 +57,7 @@ const int COURSE_SCORES_VERSION = 8;
 
 #define STATS_TITLE									THEME->GetMetric("ProfileManager","StatsTitle")
 
-static const char *MemCardDirs[NUM_PLAYERS] =
+static const char *MEM_CARD_DIR[NUM_PLAYERS] =
 {
 	/* @ is important; see RageFileManager LoadedDriver::GetPath */
 	"@mc1/",
@@ -68,9 +69,6 @@ ProfileManager::ProfileManager()
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_bUsingMemoryCard[p] = false;
-
-		if( PREFSMAN->m_sMemoryCardDir[p] != "" )
-			FILEMAN->Mount( "dir", PREFSMAN->m_sMemoryCardDir[p], MemCardDirs[p] );
 	}
 
 	InitMachineScoresFromDisk();
@@ -161,14 +159,9 @@ bool ProfileManager::LoadDefaultProfileFromMachine( PlayerNumber pn )
 	return LoadProfile( pn, sDir, false );
 }
 
-bool ProfileManager::IsMemoryCardInserted( PlayerNumber pn )
-{
-	return FILEMAN->MountpointIsReady( MemCardDirs[pn] );
-}
-
 bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 {
-	CString sDir = MemCardDirs[pn];
+	CString sDir = MEM_CARD_DIR[pn];
 	if( !FILEMAN->IsMounted(sDir) )
 		return false;
 	
@@ -182,15 +175,14 @@ bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn )
 {
 #ifndef _XBOX
 	// mount card
-//	if( !PREFSMAN->m_sMemoryCardMountCommand[pn].empty() )
-//		system( PREFSMAN->m_sMemoryCardMountCommand[pn] );
-
-	if( IsMemoryCardInserted(pn) )
+	if( MEMCARDMAN->GetCardState(pn) == MEMORY_CARD_STATE_READY )
 	{
+		FILEMAN->Mount( "dir", MEMCARDMAN->GetOsMountDir(pn), MEM_CARD_DIR[pn] );
+
 		if( LoadProfileFromMemoryCard(pn) )
 			return true;
 	
-		CString sDir = MemCardDirs[pn];
+		CString sDir = MEM_CARD_DIR[pn];
 		CreateProfile( sDir, NEW_MEM_CARD_NAME );
 		if( LoadProfileFromMemoryCard(pn) )
 			return true;

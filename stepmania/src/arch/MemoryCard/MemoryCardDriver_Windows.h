@@ -12,7 +12,7 @@ public:
 	virtual bool StorageDevicesChanged();
 	virtual void GetStorageDevices( vector<UsbStorageDevice>& vStorageDevicesOut );
 	virtual bool MountAndTestWrite( UsbStorageDevice* pDevice );
-	virtual void Unmount( UsbStorageDevice* pDevice );
+	virtual void Flush( UsbStorageDevice* pDevice );
 protected:
 	DWORD m_dwLastLogicalDrives;
 };

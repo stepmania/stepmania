@@ -215,6 +215,8 @@ void GameState::EndGame()
 				pPlayerProfile->m_iNumSongsPlayedByMeter[ss.iMeter[p]]++;
 			}
 		}
+
+		MEMCARDMAN->FlushAllDisks();
 	}
 
 	BOOKKEEPER->WriteToDisk();

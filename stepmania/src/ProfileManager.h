@@ -68,13 +68,10 @@ public:
 	bool RenameLocalProfile( CString sProfileID, CString sNewName );
 	bool DeleteLocalProfile( CString sProfileID );
 
-	bool CreateMemoryCardProfile( CString sName );
-
 	void GetLocalProfileIDs( vector<CString> &asProfileIDsOut );
 	void GetLocalProfileNames( vector<CString> &asNamesOut );
 
 	bool LoadFirstAvailableProfile( PlayerNumber pn );
-	bool IsMemoryCardInserted( PlayerNumber pn );
 	bool SaveProfile( PlayerNumber pn );
 	void UnloadProfile( PlayerNumber pn );
 

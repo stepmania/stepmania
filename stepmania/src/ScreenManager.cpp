@@ -210,7 +210,7 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 			}
 			else if( GAMESTATE->m_bIsOnSystemMenu ) // no mem card
 				sPlayerInfo = "";
-			else if( PREFSMAN->m_sMemoryCardDir[p]!="" )
+			else 
 			{
 				if( GAMESTATE->PlayersCanJoin() )
 					sPlayerInfo = PLAYER_INFO_INSERT_CARD;
