@@ -18,11 +18,13 @@
 			ConfigurationType="1"
 			UseOfMFC="1"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			CharacterSet="2"
+			WholeProgramOptimization="FALSE">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHa"
 				Optimization="0"
+				AdditionalIncludeDirectories=""
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,DEBUG"
 				ExceptionHandling="FALSE"
 				BasicRuntimeChecks="3"
@@ -32,7 +34,7 @@
 				AssemblerListingLocation=".\../Debug/"
 				ObjectFile=".\../Debug/"
 				ProgramDataBaseFileName=".\../Debug/"
-				BrowseInformation="1"
+				BrowseInformation="2"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				DebugInformationFormat="4"/>
@@ -41,10 +43,12 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 $(intdir)\verstub.obj"
+				ShowProgress="2"
 				OutputFile="../StepMania-debug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
-				IgnoreAllDefaultLibraries="FALSE"
+				AdditionalLibraryDirectories=""
+				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib;libci.lib;libcpmtd.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\../StepMania-debug.pdb"
 				GenerateMapFile="TRUE"
@@ -96,6 +100,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				FavorSizeOrSpeed="2"
 				OptimizeForProcessor="2"
 				OptimizeForWindowsApplication="TRUE"
+				AdditionalIncludeDirectories="DevIL\include"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,RELEASE"
 				StringPooling="TRUE"
 				MinimalRebuild="FALSE"
@@ -120,6 +125,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				OutputFile=".\../StepMania.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories=""
 				ProgramDatabaseFile=".\../StepMania.pdb"
 				GenerateMapFile="TRUE"
 				MapFileName="$(IntDir)\$(TargetName).map"
@@ -194,6 +200,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenEvaluation.h">
+			</File>
+			<File
+				RelativePath="ScreenEz2SelectMusic.cpp">
+			</File>
+			<File
+				RelativePath="ScreenEz2SelectMusic.h">
 			</File>
 			<File
 				RelativePath="ScreenEz2SelectPlayer.cpp">
@@ -426,6 +438,33 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="Notes.h">
+			</File>
+			<File
+				RelativePath="NotesLoader.h">
+			</File>
+			<File
+				RelativePath="NotesLoaderBMS.cpp">
+			</File>
+			<File
+				RelativePath="NotesLoaderBMS.h">
+			</File>
+			<File
+				RelativePath="NotesLoaderDWI.cpp">
+			</File>
+			<File
+				RelativePath="NotesLoaderDWI.h">
+			</File>
+			<File
+				RelativePath="NotesLoaderKSF.cpp">
+			</File>
+			<File
+				RelativePath="NotesLoaderKSF.h">
+			</File>
+			<File
+				RelativePath="NotesLoaderSM.cpp">
+			</File>
+			<File
+				RelativePath="NotesLoaderSM.h">
 			</File>
 			<File
 				RelativePath=".\Player.cpp">
