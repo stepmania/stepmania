@@ -10,6 +10,7 @@
 -----------------------------------------------------------------------------
 */
 
+/* Obsolete: use DifficultyClass. */
 #include "DifficultyIcon.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
