@@ -20,6 +20,7 @@
 #include "song.h"
 #include "Course.h"
 #include "Steps.h"
+#include "ThemeManager.h"
 
 #define ONE( arr ) { for( unsigned Z = 0; Z < ARRAYSIZE(arr); ++Z ) arr[Z]=1.0f; }
 
@@ -582,4 +583,50 @@ bool PlayerOptions::IsEasierForCourse( Course* pCourse, StepsType st, CourseDiff
 			return true;
 	}
 	return false;
+}
+
+CString PlayerOptions::ThemeMod( CString sOneMod )
+{
+	// Strip out the approach speed token
+	if( !sOneMod.empty() && sOneMod[0]=='*' )
+	{
+		int iPos = sOneMod.Find(' ');
+		if( iPos != -1 )
+			sOneMod.erase( sOneMod.begin(), sOneMod.begin()+iPos+1 );
+	}
+
+	// Strip out "100% "
+#define PERCENT_100 "100% "
+	if( !strncmp( sOneMod, PERCENT_100, sizeof(PERCENT_100)) )
+	{
+		sOneMod.erase( sOneMod.begin(), sOneMod.begin()+sizeof(PERCENT_100) );
+	}
+
+	// Capitalize all tokens
+	CStringArray asTokens;
+	split( sOneMod, " ", asTokens );
+	for( unsigned i=0; i<asTokens.size(); i++ )
+		asTokens[i] = Capitalize( asTokens[i] );
+
+	/* Theme the mod name (the last string).  Allow this to not exist, since
+	 * characters might use modifiers that don't exist in the theme. */
+	if( THEME->HasMetric( "OptionNames", asTokens.back() ) )
+		asTokens.back() = THEME->GetMetric( "OptionNames", asTokens.back() );
+
+	return join( " ", asTokens );
+}
+
+CString PlayerOptions::GetThemedString() const
+{
+	CString sMods = GetString();
+
+	CStringArray asMods;
+	split( sMods, ", ", asMods );
+	CStringArray asThemedMods;
+	for( unsigned j=0; j<asMods.size(); j++ )
+	{
+		CString& sMod = asMods[j];
+		asThemedMods.push_back( ThemeMod(sMod) );
+	}
+	return join( ", ", asThemedMods );
 }

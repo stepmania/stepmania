@@ -56,33 +56,7 @@ void ActiveAttackList::Update( float fDelta )
 			{
 				CString& sMod = asMods[j];
 
-				// Strip out the approach speed token
-				if( !sMod.empty() && sMod[0]=='*' )
-				{
-					int iPos = sMod.Find(' ');
-					if( iPos != -1 )
-						sMod.erase( sMod.begin(), sMod.begin()+iPos+1 );
-				}
-
-				// Strip out "100% "
-#define PERCENT_100 "100% "
-				if( !strncmp( sMod, PERCENT_100, sizeof(PERCENT_100)) )
-				{
-					sMod.erase( sMod.begin(), sMod.begin()+sizeof(PERCENT_100) );
-				}
-
-				// Capitalize all tokens
-				CStringArray asTokens;
-				split( sMod, " ", asTokens );
-				for( unsigned i=0; i<asTokens.size(); i++ )
-					asTokens[i] = Capitalize( asTokens[i] );
-
-				/* Theme the mod name (the last string).  Allow this to not exist, since
-				 * characters might use modifiers that don't exist in the theme. */
-				if( THEME->HasMetric( "OptionNames", asTokens.back() ) )
-					asTokens.back() = THEME->GetMetric( "OptionNames", asTokens.back() );
-			
-				sMod = join( " ", asTokens );
+				sMod = PlayerOptions::ThemeMod( sMod );
 
 				if( s.empty() )
 					s = sMod;
