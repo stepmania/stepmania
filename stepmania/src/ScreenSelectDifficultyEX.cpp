@@ -261,7 +261,7 @@ void ScreenSelectDifficultyEX::SetAllPlayersSelection( int iChoice, bool bSwitch
 		m_sprPicture[p].Load( THEME->GetPathToG(sPictureFile) );
 		
 		int iDiffIndex = GetSelectionIndex((PlayerNumber)p);
-		m_sprHighlight[p].SetBarWidth( 20 + m_sprDifficultyIcon[iDiffIndex].GetZoomedWidth() + (m_textDifficultyText[iDiffIndex].GetWidestLineWidthInSourcePixels() /2) );
+		m_sprHighlight[p].SetBarWidth( int(20 + m_sprDifficultyIcon[iDiffIndex].GetZoomedWidth() + (m_textDifficultyText[iDiffIndex].GetWidestLineWidthInSourcePixels() / 2)) );
 		m_sprHighlight[p].SetXY( DIFFICULTYICON_X(m_iChoice[p]) + 35, DIFFICULTYICON_Y(m_iChoice[p]) );
 	}
 	
@@ -303,7 +303,7 @@ void ScreenSelectDifficultyEX::Change( PlayerNumber pn, int iNewChoice )
 		m_sprPicture[p].Load( THEME->GetPathToG(sPictureFile) );
 		
 		int iDiffIndex = GetSelectionIndex((PlayerNumber)p);
-		m_sprHighlight[p].SetBarWidth( 20 + m_sprDifficultyIcon[iDiffIndex].GetZoomedWidth() + (m_textDifficultyText[iDiffIndex].GetWidestLineWidthInSourcePixels() /2) );
+		m_sprHighlight[p].SetBarWidth( int( 20 + m_sprDifficultyIcon[iDiffIndex].GetZoomedWidth() + (m_textDifficultyText[iDiffIndex].GetWidestLineWidthInSourcePixels() /2 )) );
 		m_sprHighlight[p].SetXY( DIFFICULTYICON_X(m_iChoice[p]) + 30, DIFFICULTYICON_Y(m_iChoice[p]) );
 	}
 	
@@ -425,8 +425,8 @@ void ScreenSelectDifficultyEX::TweenOnScreen()
 	{
 		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) ) { continue; }
 
-		float fCursorX = GetCursorX( (PlayerNumber)p );
-		float fCursorY = GetCursorY( (PlayerNumber)p );
+//		float fCursorX = GetCursorX( (PlayerNumber)p );
+//		float fCursorY = GetCursorY( (PlayerNumber)p );
 
 		m_sprInfo[p].Command( INFO_ON_COMMAND(p) );
 		m_sprPicture[p].Command( PICTURE_ON_COMMAND(p) );
