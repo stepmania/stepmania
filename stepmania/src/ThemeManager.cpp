@@ -154,7 +154,7 @@ try_element_again:
 
 	if( asElementPaths.size() > 1 )
 	{
-		FDB.FlushDirCache();
+		FlushDirCache();
 
 		CString message = ssprintf( 
 			"There is more than one theme element element that matches "

@@ -13,6 +13,7 @@
 */
 
 #include <map>
+#include "RageUtil_FileDB.h"
 
 //-----------------------------------------------------------------------------
 // SAFE_ Macros
@@ -186,12 +187,6 @@ unsigned int GetHashForString( CString s );
 unsigned int GetHashForFile( CString sPath );
 unsigned int GetHashForDirectory( CString sDir );	// a hash value that remains the same as long as nothing in the directory has changed
 
-bool DoStat(CString sPath, struct stat *st);
-bool DoesFileExist( const CString &sPath );
-bool IsAFile( const CString &sPath );
-bool IsADirectory( const CString &sPath );
-unsigned GetFileSizeInBytes( const CString &sFilePath );
-
 bool CompareCStringsAsc(const CString &str1, const CString &str2);
 bool CompareCStringsDesc(const CString &str1, const CString &str2);
 void SortCStringArray( CStringArray &AddTo, const bool bSortAcsending = true );
@@ -223,35 +218,6 @@ public:
 	bool Compare(const CString &str, vector<CString> &matches);
 };
 
-struct FileSet;
-class FilenameDB
-{
-	FileSet &GetFileSet(CString dir, bool ResolveCase = true);
-
-	/* Directories we have cached: */
-	map<CString, FileSet *> dirs;
-
-	void GetFilesEqualTo(const CString &dir, const CString &fn, vector<CString> &out, bool bOnlyDirs);
-	void GetFilesMatching(const CString &dir, 
-		const CString &beginning, const CString &containing, const CString &ending, 
-		vector<CString> &out, bool bOnlyDirs);
-
-public:
-	/* This handles at most one * wildcard.  If we need anything more complicated,
-	 * we'll need to use fnmatch or regex. */
-	void GetFilesSimpleMatch(const CString &dir, const CString &fn, vector<CString> &out, bool bOnlyDirs);
-
-	/* Search for "path" case-insensitively and replace it with the correct
-	 * case.  If "path" doesn't exist at all, return false and don't change it. */
-	bool ResolvePath(CString &path);
-
-	bool DoesFileExist(const CString &path);
-	bool IsAFile(const CString &path);
-	bool IsADirectory(const CString &path);
-
-	void FlushDirCache();
-};
-extern FilenameDB FDB;
 
 void Replace_Unicode_Markers( CString &Text );
 void ReplaceText( CString &Text, const map<CString,CString> &m );
@@ -264,5 +230,40 @@ CString Capitalize( CString s );
 #ifndef WIN32
 #include <unistd.h> /* correct place with correct definitions */
 #endif
+
+/* ASCII-only case insensitivity. */
+struct char_traits_char_nocase: public char_traits<char>
+{
+    static bool eq( char c1, char c2 )
+    { return toupper(c1) == toupper(c2); }
+
+    static bool ne( char c1, char c2 )
+    { return toupper(c1) != toupper(c2); }
+
+    static bool lt( char c1, char c2 )
+    { return toupper(c1) <  toupper(c2); }
+
+    static int compare( const char* s1, const char* s2, size_t n ) {
+		return memicmp( s1, s2, n );
+    }
+
+	static inline char fasttoupper(char a)
+	{
+		if(a < 'a' || a > 'z')
+			return a;
+		return a+('A'-'a');
+	}
+	
+    static const char *find( const char* s, int n, char a ) {
+	  a = fasttoupper(a);
+      while( n-- > 0 && fasttoupper(*s) != a ) {
+          ++s;
+      }
+	  if(fasttoupper(*s) == a)
+		return s;
+	  return NULL;
+    }
+};
+typedef basic_string<char,char_traits_char_nocase> istring;
 
 #endif
