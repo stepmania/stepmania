@@ -53,9 +53,7 @@ void RageSound_DSound::MixerThread()
 	while(!shutdown) {
 		VDCHECKPOINT;
 
-		/* Sleep for half of a buffer size.  (GetPCM() can take a bit
-		 * of CPU if we call it too much and we're playing a lot of sounds.) */
-		float sleep_secs = (float(buffersize_frames/2) / samplerate);
+		float sleep_secs = (float(chunksize/2) / samplerate);
 		Sleep(int(1000 * sleep_secs));
 
 		VDCHECKPOINT;
