@@ -138,6 +138,10 @@ void GameState::Reset()
 		// I can't think of a good reason to have both game-specific
 		// default mods and theme specific default mods.  We should choose 
 		// one or the other. -Chris
+		// Having default modifiers in prefs is needed for several things.
+		// The theme setting is for eg. BM being reverse by default.  (This
+		// could be done in the title menu ModeChoice, but then it wouldn't
+		// affect demo, and other non-gameplay things ...) -glenn
 		ApplyModifiers( (PlayerNumber)p, DEFAULT_MODIFIERS );
 		ApplyModifiers( (PlayerNumber)p, PREFSMAN->m_sDefaultModifiers );
 	}
