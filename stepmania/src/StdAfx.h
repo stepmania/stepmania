@@ -9,8 +9,8 @@
 -----------------------------------------------------------------------------
 */
 
-#if !defined(AFX_STDAFX_H__9FF379EB_FAE2_11D1_BFC5_D41F722B624A__INCLUDED_)
-#define AFX_STDAFX_H__9FF379EB_FAE2_11D1_BFC5_D41F722B624A__INCLUDED_
+#ifndef STDAFX_H
+#define STDAFX_H
 
 #if _MSC_VER >= 1000
 #pragma once
@@ -21,27 +21,8 @@
 #include <afxwin.h>         // MFC core and standard components
 #include <afxext.h>         // MFC extensions
 #include <afxtempl.h>		// MFC templated collections
-#ifndef _AFX_NO_AFXCMN_SUPPORT
-#include <afxcmn.h>			// MFC support for Common Controls
-#endif // _AFX_NO_AFXCMN_SUPPORT
 
+/* Don't include our own headers here, since they tend to change
+ * often. */
 
-//
-// Rage global classes
-//
-/*
-#include "RageLog.h"
-#include "RageDisplay.h"
-#include "RageTextureManager.h"
-#include "RageSound.h"
-#include "RageMusic.h"
-#include "RageInput.h"
-#include "RageTimer.h"
-#include "RageException.h"
-*/
-
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Developer Studio will insert additional declarations immediately before the previous line.
-
-#endif // !defined(AFX_STDAFX_H__9FF379EB_FAE2_11D1_BFC5_D41F722B624A__INCLUDED_)
+#endif
