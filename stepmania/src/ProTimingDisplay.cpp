@@ -2,14 +2,15 @@
 #include "ProTimingDisplay.h"
 #include "ThemeManager.h"
 #include "RageUtil.h"
+#include "ThemeMetric.h"
 
-static CachedThemeMetric	MARVELOUS_COMMAND	("ProTimingDisplay","MarvelousCommand");
-static CachedThemeMetric	PERFECT_COMMAND		("ProTimingDisplay","PerfectCommand");
-static CachedThemeMetric	GREAT_COMMAND		("ProTimingDisplay","GreatCommand");
-static CachedThemeMetric	GOOD_COMMAND		("ProTimingDisplay","GoodCommand");
-static CachedThemeMetric	BOO_COMMAND			("ProTimingDisplay","BooCommand");
-static CachedThemeMetric	MISS_COMMAND		("ProTimingDisplay","MissCommand");
-static CachedThemeMetric	HIT_MINE_COMMAND	("ProTimingDisplay","HitMineCommand");
+static ThemeMetric<CString>	MARVELOUS_COMMAND	("ProTimingDisplay","MarvelousCommand");
+static ThemeMetric<CString>	PERFECT_COMMAND		("ProTimingDisplay","PerfectCommand");
+static ThemeMetric<CString>	GREAT_COMMAND		("ProTimingDisplay","GreatCommand");
+static ThemeMetric<CString>	GOOD_COMMAND		("ProTimingDisplay","GoodCommand");
+static ThemeMetric<CString>	BOO_COMMAND			("ProTimingDisplay","BooCommand");
+static ThemeMetric<CString>	MISS_COMMAND		("ProTimingDisplay","MissCommand");
+static ThemeMetric<CString>	HIT_MINE_COMMAND	("ProTimingDisplay","HitMineCommand");
 
 
 ProTimingDisplay::ProTimingDisplay()
@@ -17,14 +18,6 @@ ProTimingDisplay::ProTimingDisplay()
 	m_Judgment.LoadFromFont( THEME->GetPathF("ProTimingDisplay","Judgment") );
 	m_Judgment.SetName( "Judgment" );
 	this->AddChild( &m_Judgment );
-
-	MARVELOUS_COMMAND.Refresh();
-	PERFECT_COMMAND.Refresh();
-	GREAT_COMMAND.Refresh();
-	GOOD_COMMAND.Refresh();
-	BOO_COMMAND.Refresh();
-	MISS_COMMAND.Refresh();
-	HIT_MINE_COMMAND.Refresh();
 }
 
 void ProTimingDisplay::Reset()
@@ -43,7 +36,7 @@ void ProTimingDisplay::SetJudgment( int ms, TapNoteScore score )
 
 	m_Judgment.SetText( ssprintf("%i", ms) );
 
-	const CachedThemeMetric *Commands[NUM_TAP_NOTE_SCORES] =
+	const ThemeMetric<CString> *Commands[NUM_TAP_NOTE_SCORES] =
 	{
 		NULL, /* no TNS_NONE */
 		&HIT_MINE_COMMAND, 

@@ -7,15 +7,15 @@
 #include "SongManager.h"
 #include "RageTextureManager.h"
 #include "ActorUtil.h"
+#include "ThemeMetric.h"
 
-
-CachedThemeMetric ARTIST_PREPEND_STRING			("TextBanner","ArtistPrependString");
-CachedThemeMetric TWO_LINES_TITLE_COMMAND		("TextBanner","TwoLinesTitleCommand");
-CachedThemeMetric TWO_LINES_SUBTITLE_COMMAND	("TextBanner","TwoLinesSubtitleCommand");
-CachedThemeMetric TWO_LINES_ARTIST_COMMAND		("TextBanner","TwoLinesArtistCommand");
-CachedThemeMetric THREE_LINES_TITLE_COMMAND		("TextBanner","ThreeLinesTitleCommand");
-CachedThemeMetric THREE_LINES_SUBTITLE_COMMAND	("TextBanner","ThreeLinesSubtitleCommand");
-CachedThemeMetric THREE_LINES_ARTIST_COMMAND	("TextBanner","ThreeLinesArtistCommand");
+ThemeMetric<CString> ARTIST_PREPEND_STRING			("TextBanner","ArtistPrependString");
+ThemeMetric<CString> TWO_LINES_TITLE_COMMAND		("TextBanner","TwoLinesTitleCommand");
+ThemeMetric<CString> TWO_LINES_SUBTITLE_COMMAND	("TextBanner","TwoLinesSubtitleCommand");
+ThemeMetric<CString> TWO_LINES_ARTIST_COMMAND		("TextBanner","TwoLinesArtistCommand");
+ThemeMetric<CString> THREE_LINES_TITLE_COMMAND		("TextBanner","ThreeLinesTitleCommand");
+ThemeMetric<CString> THREE_LINES_SUBTITLE_COMMAND	("TextBanner","ThreeLinesSubtitleCommand");
+ThemeMetric<CString> THREE_LINES_ARTIST_COMMAND	("TextBanner","ThreeLinesArtistCommand");
 
 void TextBanner::Init()
 {
@@ -24,13 +24,6 @@ void TextBanner::Init()
 	m_bInitted = true;
 
 	ASSERT( m_sName != "" );
-	ARTIST_PREPEND_STRING.Refresh( m_sName );
-	TWO_LINES_TITLE_COMMAND.Refresh( m_sName );
-	TWO_LINES_SUBTITLE_COMMAND.Refresh( m_sName );
-	TWO_LINES_ARTIST_COMMAND.Refresh( m_sName );
-	THREE_LINES_TITLE_COMMAND.Refresh( m_sName );
-	THREE_LINES_SUBTITLE_COMMAND.Refresh( m_sName );
-	THREE_LINES_ARTIST_COMMAND.Refresh( m_sName );
 
 	m_textTitle.SetName( "Title" );
 	m_textTitle.LoadFromFont( THEME->GetPathToF("TextBanner") );

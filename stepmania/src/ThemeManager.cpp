@@ -68,6 +68,13 @@ void ThemeManager::Subscribe( IThemeMetric *p )
 	g_pvpSubscribers->push_back( p );
 }
 
+void ThemeManager::Unsubscribe( IThemeMetric *p )
+{
+	vector<IThemeMetric*>::iterator iter = find( g_pvpSubscribers->begin(), g_pvpSubscribers->end(), p );
+	ASSERT( iter != g_pvpSubscribers->end() );	// tried to unregister when not registered
+	g_pvpSubscribers->erase( iter );
+}
+
 
 
 /* We spend a lot of time doing redundant theme path lookups.  Cache results. */
@@ -281,10 +288,10 @@ void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName, const CStr
 	if ( SCREENMAN != NULL )
 		SCREENMAN->ThemeChanged();
 
+	Lua::UpdateGlobals();
+
 	// reload subscribers
 	FOREACH( IThemeMetric*, *g_pvpSubscribers, p ) (*p)->Read();
-
-	Lua::UpdateGlobals();
 }
 
 CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )

@@ -41,6 +41,7 @@
 #include "Foreach.h"
 #include "DancingCharacters.h"
 #include "ScreenDimensions.h"
+#include "ThemeMetric.h"
 
 //
 // Defines
@@ -55,8 +56,8 @@
  * go away eventually, once metrics can redirect to Lua calls. */
 #define INITIAL_BACKGROUND_BRIGHTNESS( play_mode )	THEME->GetMetricF(m_sName,"InitialBackgroundBrightness"+Capitalize(PlayModeToString(play_mode)))
 
-static CachedThemeMetricF SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
-static CachedThemeMetricF TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
+static ThemeMetric<float> SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
+static ThemeMetric<float> TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
 
 /* Global, so it's accessible from ShowSavePrompt: */
 static float g_fOldOffset;  // used on offset screen to calculate difference
@@ -99,9 +100,6 @@ void ScreenGameplay::Init()
 
 	/* We do this ourself. */
 	SOUND->HandleSongTimer( false );
-
-	SECONDS_BETWEEN_COMMENTS.Refresh();
-	TICK_EARLY_SECONDS.Refresh();
 
 	//need to initialize these before checking for demonstration mode
 	//otherwise destructor will try to delete possibly invalid pointers

@@ -3,9 +3,10 @@
 #include "ThemeManager.h"
 #include "GameState.h"
 #include "PrefsManager.h"
+#include "ThemeMetric.h"
 
 
-CachedThemeMetricF METER_WIDTH		("CombinedLifeMeterTug","MeterWidth");
+ThemeMetric<float> METER_WIDTH		("CombinedLifeMeterTug","MeterWidth");
 
 const float FACE_X[NUM_PLAYERS] = { -300, +300 };
 const float FACE_Y[NUM_PLAYERS] = { 0, 0 };
@@ -13,8 +14,6 @@ const float FACE_Y[NUM_PLAYERS] = { 0, 0 };
 
 CombinedLifeMeterTug::CombinedLifeMeterTug() 
 {
-	METER_WIDTH.Refresh();
-
 	FOREACH_PlayerNumber( p )
 	{
 		CString sStreamPath = THEME->GetPathToG(ssprintf("CombinedLifeMeterTug stream p%d",p+1));

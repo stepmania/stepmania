@@ -24,6 +24,7 @@
 #include "StepsUtil.h"
 #include "Foreach.h"
 #include "ScreenDimensions.h"
+#include "ThemeMetric.h"
 
 
 const float RECORD_HOLD_SECONDS = 0.3f;
@@ -71,7 +72,7 @@ const float RECORD_HOLD_SECONDS = 0.3f;
 #define NAMING_MENU_ITEM_START_Y	(SCREEN_TOP + 24)
 #define NAMING_MENU_ITEM_SPACING_Y	(18)
 
-CachedThemeMetricF	 TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
+ThemeMetric<float>	 TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
 
 
 const ScreenMessage SM_BackFromMainMenu				= (ScreenMessage)(SM_User+1);
@@ -381,8 +382,6 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 
 	/* We do this ourself. */
 	SOUND->HandleSongTimer( false );
-
-	TICK_EARLY_SECONDS.Refresh();
 
 	// set both players to joined so the credit message doesn't show
 	FOREACH_PlayerNumber( p )

@@ -5,53 +5,32 @@
 #include "PrefsManager.h"
 #include "GameState.h"
 #include "ThemeManager.h"
+#include "ThemeMetric.h"
 
+static ThemeMetric<CString>	MARVELOUS_COMMAND		("Judgment","MarvelousCommand");
+static ThemeMetric<CString>	PERFECT_COMMAND			("Judgment","PerfectCommand");
+static ThemeMetric<CString>	GREAT_COMMAND			("Judgment","GreatCommand");
+static ThemeMetric<CString>	GOOD_COMMAND			("Judgment","GoodCommand");
+static ThemeMetric<CString>	BOO_COMMAND				("Judgment","BooCommand");
+static ThemeMetric<CString>	MISS_COMMAND			("Judgment","MissCommand");
 
-static CachedThemeMetric	MARVELOUS_COMMAND		("Judgment","MarvelousCommand");
-static CachedThemeMetric	PERFECT_COMMAND			("Judgment","PerfectCommand");
-static CachedThemeMetric	GREAT_COMMAND			("Judgment","GreatCommand");
-static CachedThemeMetric	GOOD_COMMAND			("Judgment","GoodCommand");
-static CachedThemeMetric	BOO_COMMAND				("Judgment","BooCommand");
-static CachedThemeMetric	MISS_COMMAND			("Judgment","MissCommand");
+static ThemeMetric<CString>	MARVELOUS_ODD_COMMAND	("Judgment","MarvelousOddCommand");
+static ThemeMetric<CString>	PERFECT_ODD_COMMAND		("Judgment","PerfectOddCommand");
+static ThemeMetric<CString>	GREAT_ODD_COMMAND		("Judgment","GreatOddCommand");
+static ThemeMetric<CString>	GOOD_ODD_COMMAND		("Judgment","GoodOddCommand");
+static ThemeMetric<CString>	BOO_ODD_COMMAND			("Judgment","BooOddCommand");
+static ThemeMetric<CString>	MISS_ODD_COMMAND		("Judgment","MissOddCommand");
 
-static CachedThemeMetric	MARVELOUS_ODD_COMMAND	("Judgment","MarvelousOddCommand");
-static CachedThemeMetric	PERFECT_ODD_COMMAND		("Judgment","PerfectOddCommand");
-static CachedThemeMetric	GREAT_ODD_COMMAND		("Judgment","GreatOddCommand");
-static CachedThemeMetric	GOOD_ODD_COMMAND		("Judgment","GoodOddCommand");
-static CachedThemeMetric	BOO_ODD_COMMAND			("Judgment","BooOddCommand");
-static CachedThemeMetric	MISS_ODD_COMMAND		("Judgment","MissOddCommand");
-
-static CachedThemeMetric	MARVELOUS_EVEN_COMMAND	("Judgment","MarvelousEvenCommand");
-static CachedThemeMetric	PERFECT_EVEN_COMMAND	("Judgment","PerfectEvenCommand");
-static CachedThemeMetric	GREAT_EVEN_COMMAND		("Judgment","GreatEvenCommand");
-static CachedThemeMetric	GOOD_EVEN_COMMAND		("Judgment","GoodEvenCommand");
-static CachedThemeMetric	BOO_EVEN_COMMAND		("Judgment","BooEvenCommand");
-static CachedThemeMetric	MISS_EVEN_COMMAND		("Judgment","MissEvenCommand");
+static ThemeMetric<CString>	MARVELOUS_EVEN_COMMAND	("Judgment","MarvelousEvenCommand");
+static ThemeMetric<CString>	PERFECT_EVEN_COMMAND	("Judgment","PerfectEvenCommand");
+static ThemeMetric<CString>	GREAT_EVEN_COMMAND		("Judgment","GreatEvenCommand");
+static ThemeMetric<CString>	GOOD_EVEN_COMMAND		("Judgment","GoodEvenCommand");
+static ThemeMetric<CString>	BOO_EVEN_COMMAND		("Judgment","BooEvenCommand");
+static ThemeMetric<CString>	MISS_EVEN_COMMAND		("Judgment","MissEvenCommand");
 
 
 Judgment::Judgment()
 {
-	MARVELOUS_COMMAND.Refresh();
-	PERFECT_COMMAND.Refresh();
-	GREAT_COMMAND.Refresh();
-	GOOD_COMMAND.Refresh();
-	BOO_COMMAND.Refresh();
-	MISS_COMMAND.Refresh();
-
-	MARVELOUS_ODD_COMMAND.Refresh();
-	PERFECT_ODD_COMMAND.Refresh();
-	GREAT_ODD_COMMAND.Refresh();
-	GOOD_ODD_COMMAND.Refresh();
-	BOO_ODD_COMMAND.Refresh();
-	MISS_ODD_COMMAND.Refresh();
-
-	MARVELOUS_EVEN_COMMAND.Refresh();
-	PERFECT_EVEN_COMMAND.Refresh();
-	GREAT_EVEN_COMMAND.Refresh();
-	GOOD_EVEN_COMMAND.Refresh();
-	BOO_EVEN_COMMAND.Refresh();
-	MISS_EVEN_COMMAND.Refresh();
-
 	m_iCount = 0;
 
 	m_sprJudgment.Load( THEME->GetPathToG("Judgment 1x6") );

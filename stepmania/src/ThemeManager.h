@@ -68,6 +68,7 @@ public:
 	// For self-registering metrics
 	//
 	static void Subscribe( IThemeMetric *p );
+	static void Unsubscribe( IThemeMetric *p );
 
 
 protected:
@@ -86,78 +87,6 @@ protected:
 };
 
 extern ThemeManager*	THEME;	// global and accessable from anywhere in our program
-
-class CachedThemeMetric
-{
-protected:
-	CString m_sClassName;
-	CString m_sValueName;
-	bool	m_bInited;
-
-	CString		m_sValue;
-
-	virtual void Update() { }
-
-public:
-	CachedThemeMetric( const CString &sClassName, const CString &sValueName ):
-		m_sClassName( sClassName ),
-		m_sValueName( sValueName ),
-		m_bInited( false )
-	{
-	}
-	virtual ~CachedThemeMetric() { }
-
-	void Refresh( const CString &sClassName = "" )
-	{
-		m_sValue = THEME->GetMetric(sClassName==""? m_sClassName:sClassName,m_sValueName);
-		Update();
-		m_bInited = true;
-	}
-
-    operator const CString () const		{ ASSERT(m_bInited);	return m_sValue; };
-};
-
-class CachedThemeMetricF : public CachedThemeMetric
-{
-	float		m_fValue;
-public:
-	void Update() { m_fValue = (float)atof( m_sValue ); }
-	CachedThemeMetricF( const CString &sClassName, const CString &sValueName ) : CachedThemeMetric( sClassName, sValueName ) {}
-    operator const float () const		{ ASSERT(m_bInited);	return m_fValue; };
-};
-
-class CachedThemeMetricI : public CachedThemeMetric
-{
-	int			m_iValue;
-public:
-	void Update() { m_iValue = atoi( m_sValue ); }
-	CachedThemeMetricI( const CString &sClassName, const CString &sValueName ) : CachedThemeMetric( sClassName, sValueName ) {}
-	operator const int () const			{ ASSERT(m_bInited);	return m_iValue; };
-};
-
-class CachedThemeMetricB : public CachedThemeMetric
-{
-	bool		m_bValue;
-public:
-	void Update() { m_bValue = atoi( m_sValue ) != 0; }
-	CachedThemeMetricB( const CString &sClassName, const CString &sValueName ) : CachedThemeMetric( sClassName, sValueName ) {}
-    operator const bool () const		{ ASSERT(m_bInited);	return m_bValue; };
-};
-
-		
-		
-class CachedThemeMetricC : public CachedThemeMetric
-{
-	RageColor	m_cValue;
-public:
-	void Update()
-	{
-		m_cValue = RageColor(1,1,1,1);
-		sscanf( m_sValue, "%f,%f,%f,%f", &m_cValue.r, &m_cValue.g, &m_cValue.b, &m_cValue.a );
-	}
-	CachedThemeMetricC( const CString &sClassName, const CString &sValueName ) : CachedThemeMetric( sClassName, sValueName ) {}
-    operator const RageColor () const	{ ASSERT(m_bInited);	return m_cValue; };
-};
 
 #endif
 

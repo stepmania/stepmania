@@ -294,6 +294,7 @@ public:
 	// For self-registering prefs
 	//
 	static void Subscribe( IPreference *p );
+	static void Unsubscribe( IPreference *p );
 
 protected:
 	void ReadPrefsFromFile( CString sIni );

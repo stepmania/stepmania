@@ -40,6 +40,12 @@ void PrefsManager::Subscribe( IPreference *p )
 	g_pvpSubscribers->push_back( p );
 }
 
+void PrefsManager::Unsubscribe( IPreference *p )
+{
+	vector<IPreference*>::iterator iter = find( g_pvpSubscribers->begin(), g_pvpSubscribers->end(), p );
+	ASSERT( iter != g_pvpSubscribers->end() );	// tried to unregister when not registered
+	g_pvpSubscribers->erase( iter );
+}
 
 
 bool g_bAutoRestart = false;

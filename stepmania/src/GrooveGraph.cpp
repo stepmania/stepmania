@@ -9,6 +9,7 @@
 #include "song.h"
 #include "GameState.h"
 #include "Style.h"
+#include "ThemeMetric.h"
 
 const float GRAPH_EDGE_WIDTH	= 2;
 
@@ -17,8 +18,8 @@ const float GRAPH_EDGE_WIDTH	= 2;
 #define SHOW_CATEGORY(cat)		THEME->GetMetricB("GrooveGraph","Show"+Capitalize(RadarCategoryToString(cat)))
 #define CATEGORY_X(cat)			THEME->GetMetricF("GrooveGraph",Capitalize(RadarCategoryToString(cat))+"X")
 #define MOUNTAINS_BASE_Y		THEME->GetMetricF("GrooveGraph","MountainsBaseY")
-CachedThemeMetricF MOUNTAIN_WIDTH	("GrooveGraph","MountainWidth");
-CachedThemeMetricF MOUNTAIN_HEIGHT	("GrooveGraph","MountainHeight");
+ThemeMetric<float> MOUNTAIN_WIDTH	("GrooveGraph","MountainWidth");
+ThemeMetric<float> MOUNTAIN_HEIGHT	("GrooveGraph","MountainHeight");
 
 RageColor	g_DifficultyColorsCache[NUM_DIFFICULTIES];
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
@@ -27,8 +28,6 @@ GrooveGraph::GrooveGraph()
 {
 	for( int i=0; i<NUM_DIFFICULTIES; i++ )
 		g_DifficultyColorsCache[i] = DIFFICULTY_COLORS((Difficulty)i);
-	MOUNTAIN_WIDTH.Refresh();
-	MOUNTAIN_HEIGHT.Refresh();
 
 	m_sprBase.Load( THEME->GetPathToG("GrooveGraph base") );
 	this->AddChild( &m_sprBase );

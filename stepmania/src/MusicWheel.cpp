@@ -23,20 +23,21 @@
 #include "CourseUtil.h"
 #include "Foreach.h"
 #include "Style.h"
+#include "ThemeMetric.h"
 
 
 #define FADE_SECONDS				THEME->GetMetricF("MusicWheel","FadeSeconds")
-CachedThemeMetricF SWITCH_SECONDS	("MusicWheel","SwitchSeconds");
+ThemeMetric<float>	SWITCH_SECONDS	("MusicWheel","SwitchSeconds");
 #define ROULETTE_SWITCH_SECONDS		THEME->GetMetricF("MusicWheel","RouletteSwitchSeconds")
 #define ROULETTE_SLOW_DOWN_SWITCHES	THEME->GetMetricI("MusicWheel","RouletteSlowDownSwitches")
 #define LOCKED_INITIAL_VELOCITY		THEME->GetMetricF("MusicWheel","LockedInitialVelocity")
 #define SCROLL_BAR_X				THEME->GetMetricF("MusicWheel","ScrollBarX")
 #define SCROLL_BAR_HEIGHT			THEME->GetMetricI("MusicWheel","ScrollBarHeight")
-CachedThemeMetricF ITEM_CURVE_X		("MusicWheel","ItemCurveX");
+ThemeMetric<float>	ITEM_CURVE_X		("MusicWheel","ItemCurveX");
 #define USE_LINEAR_WHEEL			THEME->GetMetricB("MusicWheel","NoCurving")
-CachedThemeMetricF ITEM_SPACING_Y	("MusicWheel","ItemSpacingY");
-CachedThemeMetricF WHEEL_3D_RADIUS	("MusicWheel","Wheel3DRadius");
-CachedThemeMetricF CIRCLE_PERCENT	("MusicWheel","CirclePercent");
+ThemeMetric<float>	ITEM_SPACING_Y	("MusicWheel","ItemSpacingY");
+ThemeMetric<float>	WHEEL_3D_RADIUS	("MusicWheel","Wheel3DRadius");
+ThemeMetric<float>	CIRCLE_PERCENT	("MusicWheel","CirclePercent");
 #define NUM_SECTION_COLORS			THEME->GetMetricI("MusicWheel","NumSectionColors")
 #define SECTION_COLORS( i )			THEME->GetMetricC("MusicWheel",ssprintf("SectionColor%d",i+1))
 #define SONG_REAL_EXTRA_COLOR		THEME->GetMetricC("MusicWheel","SongRealExtraColor")
@@ -44,8 +45,8 @@ CachedThemeMetricF CIRCLE_PERCENT	("MusicWheel","CirclePercent");
 #define SHOW_ROULETTE				THEME->GetMetricB("MusicWheel","ShowRoulette")
 #define SHOW_RANDOM					THEME->GetMetricB("MusicWheel","ShowRandom")
 #define SHOW_PORTAL					THEME->GetMetricB("MusicWheel","ShowPortal")
-CachedThemeMetricB	USE_3D			("MusicWheel","Use3D");
-CachedThemeMetricI  NUM_WHEEL_ITEMS_METRIC	("MusicWheel","NumWheelItems");
+ThemeMetric<bool>	USE_3D			("MusicWheel","Use3D");
+ThemeMetric<int>	NUM_WHEEL_ITEMS_METRIC	("MusicWheel","NumWheelItems");
 #define NUM_WHEEL_ITEMS				min( MAX_WHEEL_ITEMS, (int) NUM_WHEEL_ITEMS_METRIC )
 #define MOST_PLAYED_SONGS_TO_SHOW	THEME->GetMetricI("MusicWheel","MostPlayedSongsToShow")
 #define SORT_MENU_NAMES				THEME->GetMetric ("MusicWheel","SortMenuNames")
@@ -72,15 +73,10 @@ static const SortOrder SORT_ORDERS[] =
 	SORT_ARTIST,
 };
 // use ARRAYSIZE(SortOrder)
+// Why? -Chris
 
 MusicWheel::MusicWheel() 
 {
-	// update theme metric cache
-	SWITCH_SECONDS.Refresh();
-	ITEM_CURVE_X.Refresh();
-	ITEM_SPACING_Y.Refresh();
-	USE_3D.Refresh();
-	NUM_WHEEL_ITEMS_METRIC.Refresh();
 }
 
 void MusicWheel::Load() 
@@ -92,12 +88,6 @@ void MusicWheel::Load()
 		LOG->Trace( "Current Song: NULL" );
 
 	SONGMAN->UpdateRankingCourses();
-
-	if( USE_3D )
-	{
-		WHEEL_3D_RADIUS.Refresh();
-		CIRCLE_PERCENT.Refresh();
-	}
 
 	/*
 	// for debugging.

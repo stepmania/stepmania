@@ -4,51 +4,32 @@
 #include "StageStats.h"
 #include "GameState.h"
 #include "song.h"
+#include "ThemeMetric.h"
 
 
-CachedThemeMetricF	LABEL_X				("Combo","LabelX");
-CachedThemeMetricF	LABEL_Y				("Combo","LabelY");
-CachedThemeMetricI	LABEL_HORIZ_ALIGN	("Combo","LabelHorizAlign");
-CachedThemeMetricI	LABEL_VERT_ALIGN	("Combo","LabelVertAlign");
-CachedThemeMetricF	NUMBER_X			("Combo","NumberX");
-CachedThemeMetricF	NUMBER_Y			("Combo","NumberY");
-CachedThemeMetricI	NUMBER_HORIZ_ALIGN	("Combo","NumberHorizAlign");
-CachedThemeMetricI	NUMBER_VERT_ALIGN	("Combo","NumberVertAlign");
-CachedThemeMetricI	SHOW_COMBO_AT		("Combo","ShowComboAt");
-CachedThemeMetricF	NUMBER_MIN_ZOOM		("Combo","NumberMinZoom");
-CachedThemeMetricF	NUMBER_MAX_ZOOM		("Combo","NumberMaxZoom");
-CachedThemeMetricF	NUMBER_MAX_ZOOM_AT	("Combo","NumberMaxZoomAt");
-CachedThemeMetricF	PULSE_ZOOM			("Combo","PulseZoom");
-CachedThemeMetricF	C_TWEEN_SECONDS		("Combo","TweenSeconds");
-CachedThemeMetricF	FULL_COMBO_GREATS_COMMAND		("Combo","FullComboGreatsCommand");
-CachedThemeMetricF	FULL_COMBO_PERFECTS_COMMAND		("Combo","FullComboPerfectsCommand");
-CachedThemeMetricF	FULL_COMBO_MARVELOUSES_COMMAND	("Combo","FullComboMarvelousesCommand");
-CachedThemeMetricF	FULL_COMBO_BROKEN_COMMAND		("Combo","FullComboBrokenCommand");
-CachedThemeMetricB	SHOW_MISS_COMBO		("Combo","ShowMissCombo");
+ThemeMetric<float>	LABEL_X				("Combo","LabelX");
+ThemeMetric<float>	LABEL_Y				("Combo","LabelY");
+ThemeMetric<int>	LABEL_HORIZ_ALIGN	("Combo","LabelHorizAlign");
+ThemeMetric<int>	LABEL_VERT_ALIGN	("Combo","LabelVertAlign");
+ThemeMetric<float>	NUMBER_X			("Combo","NumberX");
+ThemeMetric<float>	NUMBER_Y			("Combo","NumberY");
+ThemeMetric<int>	NUMBER_HORIZ_ALIGN	("Combo","NumberHorizAlign");
+ThemeMetric<int>	NUMBER_VERT_ALIGN	("Combo","NumberVertAlign");
+ThemeMetric<int>	SHOW_COMBO_AT		("Combo","ShowComboAt");
+ThemeMetric<float>	NUMBER_MIN_ZOOM		("Combo","NumberMinZoom");
+ThemeMetric<float>	NUMBER_MAX_ZOOM		("Combo","NumberMaxZoom");
+ThemeMetric<float>	NUMBER_MAX_ZOOM_AT	("Combo","NumberMaxZoomAt");
+ThemeMetric<float>	PULSE_ZOOM			("Combo","PulseZoom");
+ThemeMetric<float>	C_TWEEN_SECONDS		("Combo","TweenSeconds");
+ThemeMetric<CString>	FULL_COMBO_GREATS_COMMAND		("Combo","FullComboGreatsCommand");
+ThemeMetric<CString>	FULL_COMBO_PERFECTS_COMMAND		("Combo","FullComboPerfectsCommand");
+ThemeMetric<CString>	FULL_COMBO_MARVELOUSES_COMMAND	("Combo","FullComboMarvelousesCommand");
+ThemeMetric<CString>	FULL_COMBO_BROKEN_COMMAND		("Combo","FullComboBrokenCommand");
+ThemeMetric<bool>	SHOW_MISS_COMBO		("Combo","ShowMissCombo");
 
 
 Combo::Combo()
 {
-	LABEL_X.Refresh();
-	LABEL_Y.Refresh();
-	LABEL_HORIZ_ALIGN.Refresh();
-	LABEL_VERT_ALIGN.Refresh();
-	NUMBER_X.Refresh();
-	NUMBER_Y.Refresh();
-	NUMBER_HORIZ_ALIGN.Refresh();
-	NUMBER_VERT_ALIGN.Refresh();
-	SHOW_COMBO_AT.Refresh();
-	NUMBER_MIN_ZOOM.Refresh();
-	NUMBER_MAX_ZOOM.Refresh();
-	NUMBER_MAX_ZOOM_AT.Refresh();
-	PULSE_ZOOM.Refresh();
-	C_TWEEN_SECONDS.Refresh();
-	FULL_COMBO_GREATS_COMMAND.Refresh();
-	FULL_COMBO_PERFECTS_COMMAND.Refresh();
-	FULL_COMBO_MARVELOUSES_COMMAND.Refresh();
-	FULL_COMBO_BROKEN_COMMAND.Refresh();
-	SHOW_MISS_COMBO.Refresh();
-
 	m_sprComboLabel.Load( THEME->GetPathToG( "Combo label") );
 	m_sprComboLabel.SetShadowLength( 4 );
 	m_sprComboLabel.StopAnimating();

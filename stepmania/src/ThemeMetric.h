@@ -28,6 +28,17 @@ public:
 		ThemeManager::Subscribe( this );
 	}
 
+	~ThemeMetric()
+	{
+		ThemeManager::Unsubscribe( this );
+	}
+
+	void ChangeGroup( const CString &sGroup )
+	{
+		m_sGroup = sGroup;
+		Read();
+	}
+
 	void Read()
 	{
 		THEME->GetMetric( m_sGroup, m_sName, m_currentValue );

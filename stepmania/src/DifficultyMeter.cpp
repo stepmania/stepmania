@@ -40,7 +40,7 @@ DifficultyMeter::DifficultyMeter()
 
 void DifficultyMeter::Load()
 {
-		/* We can't use global CachedThemeMetrics, because we can have multiple
+		/* We can't use global ThemeMetric<CString>s, because we can have multiple
 		 * DifficultyMeters on screen at once, with different names. */
 		m_iNumFeetInMeter = THEME->GetMetricI(m_sName,"NumFeetInMeter");
 		m_iMaxFeetInMeter = THEME->GetMetricI(m_sName,"MaxFeetInMeter");

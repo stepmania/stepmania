@@ -8,8 +8,9 @@
 #include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "SongManager.h"
+#include "ThemeMetric.h"
 
-static CachedThemeMetricF FADE_SECONDS			("FadingBanner","FadeSeconds");
+static ThemeMetric<float> FADE_SECONDS			("FadingBanner","FadeSeconds");
 
 /*
  * Allow fading from one banner to another.  We can handle two fades at once;
@@ -21,8 +22,6 @@ static CachedThemeMetricF FADE_SECONDS			("FadingBanner","FadeSeconds");
  */
 FadingBanner::FadingBanner()
 {
-	FADE_SECONDS.Refresh();
-
 	m_bMovingFast = false;
 	m_bSkipNextBannerUpdate = false;
 	m_iIndexLatest = 0;

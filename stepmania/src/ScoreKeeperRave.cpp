@@ -6,13 +6,13 @@
 #include "Character.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
+#include "ThemeMetric.h"
 
-CachedThemeMetricF ATTACK_DURATION_SECONDS	("ScoreKeeperRave","AttackDurationSeconds");
+ThemeMetric<float> ATTACK_DURATION_SECONDS	("ScoreKeeperRave","AttackDurationSeconds");
 
 
 ScoreKeeperRave::ScoreKeeperRave(PlayerNumber pn) : ScoreKeeper(pn)
 {
-	ATTACK_DURATION_SECONDS.Refresh();
 }
 
 void ScoreKeeperRave::OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData )

@@ -16,9 +16,9 @@
 #include "BeginnerHelper.h"
 #include "StageStats.h"
 #include "ScreenDimensions.h"
+#include "ThemeMetric.h"
 
 #include <set>
-
 
 const float FADE_SECONDS = 1.0f;
 
@@ -26,8 +26,8 @@ const float FADE_SECONDS = 1.0f;
 #define TOP_EDGE			THEME->GetMetricF("Background","TopEdge")
 #define RIGHT_EDGE			THEME->GetMetricF("Background","RightEdge")
 #define BOTTOM_EDGE			THEME->GetMetricF("Background","BottomEdge")
-CachedThemeMetricB BLINK_DANGER_ALL("Background","BlinkDangerAll");
-CachedThemeMetricB DANGER_ALL_IS_OPAQUE("Background","DangerAllIsOpaque");
+ThemeMetric<bool> BLINK_DANGER_ALL("Background","BlinkDangerAll");
+ThemeMetric<bool> DANGER_ALL_IS_OPAQUE("Background","DangerAllIsOpaque");
 #define BRIGHTNESS_FADE_COMMAND THEME->GetMetric("Background","BrightnessFadeCommand")
 #define RECT_BACKGROUND RectF(LEFT_EDGE,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE)
 
@@ -36,9 +36,6 @@ const CString STATIC_BACKGROUND = "static background";
 
 Background::Background()
 {
-	BLINK_DANGER_ALL.Refresh();
-	DANGER_ALL_IS_OPAQUE.Refresh();
-
 	m_iCurBGChangeIndex = -1;
 	m_pCurrentBGA = NULL;
 	m_pFadingBGA = NULL;
@@ -585,7 +582,7 @@ void Background::DrawPrimitives()
 		m_DangerAll.Draw();
 	}
 	
-	if( !IsDangerAllVisible() || !DANGER_ALL_IS_OPAQUE ) 
+	if( !IsDangerAllVisible() || !(bool)DANGER_ALL_IS_OPAQUE ) 
 	{	
 		if( m_pDancingCharacters )
 			m_pDancingCharacters->m_bDrawDangerLight = false;

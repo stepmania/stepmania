@@ -4,29 +4,18 @@
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "ThemeManager.h"
+#include "ThemeMetric.h"
 
-
-CachedThemeMetric	OK_COMMAND	("HoldJudgment","OKCommand");
-CachedThemeMetric	NG_COMMAND	("HoldJudgment","NGCommand");
-
-CachedThemeMetric	OK_ODD_COMMAND	("HoldJudgment","OKOddCommand");
-CachedThemeMetric	NG_ODD_COMMAND	("HoldJudgment","NGOddCommand");
-
-CachedThemeMetric	OK_EVEN_COMMAND	("HoldJudgment","OKEvenCommand");
-CachedThemeMetric	NG_EVEN_COMMAND	("HoldJudgment","NGEvenCommand");
+ThemeMetric<CString>	OK_COMMAND	("HoldJudgment","OKCommand");
+ThemeMetric<CString>	NG_COMMAND	("HoldJudgment","NGCommand");
+ThemeMetric<CString>	OK_ODD_COMMAND	("HoldJudgment","OKOddCommand");
+ThemeMetric<CString>	NG_ODD_COMMAND	("HoldJudgment","NGOddCommand");
+ThemeMetric<CString>	OK_EVEN_COMMAND	("HoldJudgment","OKEvenCommand");
+ThemeMetric<CString>	NG_EVEN_COMMAND	("HoldJudgment","NGEvenCommand");
 
 
 HoldJudgment::HoldJudgment()
 {
-	OK_COMMAND.Refresh();
-	NG_COMMAND.Refresh();
-
-	OK_ODD_COMMAND.Refresh();
-	NG_ODD_COMMAND.Refresh();
-
-	OK_EVEN_COMMAND.Refresh();
-	NG_EVEN_COMMAND.Refresh();
-
 	m_iCount = 0;
 
 	m_sprJudgment.Load( THEME->GetPathToG("HoldJudgment 1x2") );

@@ -29,9 +29,10 @@
 #include "DancingCharacters.h"
 #include "ScreenDimensions.h"
 #include "RageSoundManager.h"
+#include "ThemeMetric.h"
 
-CachedThemeMetricF GRAY_ARROWS_Y_STANDARD		("Player","ReceptorArrowsYStandard");
-CachedThemeMetricF GRAY_ARROWS_Y_REVERSE		("Player","ReceptorArrowsYReverse");
+ThemeMetric<float> GRAY_ARROWS_Y_STANDARD		("Player","ReceptorArrowsYStandard");
+ThemeMetric<float> GRAY_ARROWS_Y_REVERSE		("Player","ReceptorArrowsYReverse");
 #define JUDGMENT_X( p, both_sides )				THEME->GetMetricF("Player",both_sides ? CString("JudgmentXOffsetBothSides") : ssprintf("JudgmentXOffsetOneSideP%d",p+1))
 #define JUDGMENT_Y								THEME->GetMetricF("Player","JudgmentY")
 #define JUDGMENT_Y_REVERSE						THEME->GetMetricF("Player","JudgmentYReverse")
@@ -41,11 +42,11 @@ CachedThemeMetricF GRAY_ARROWS_Y_REVERSE		("Player","ReceptorArrowsYReverse");
 #define ATTACK_DISPLAY_X( p, both_sides )		THEME->GetMetricF("Player",both_sides ? CString("AttackDisplayXOffsetBothSides") : ssprintf("AttackDisplayXOffsetOneSideP%d",p+1))
 #define ATTACK_DISPLAY_Y						THEME->GetMetricF("Player","AttackDisplayY")
 #define ATTACK_DISPLAY_Y_REVERSE				THEME->GetMetricF("Player","AttackDisplayYReverse")
-CachedThemeMetricF HOLD_JUDGMENT_Y_STANDARD		("Player","HoldJudgmentYStandard");
-CachedThemeMetricF HOLD_JUDGMENT_Y_REVERSE		("Player","HoldJudgmentYReverse");
-CachedThemeMetricI	BRIGHT_GHOST_COMBO_THRESHOLD("Player","BrightGhostComboThreshold");
-CachedThemeMetricB	TAP_JUDGMENTS_UNDER_FIELD	("Player","TapJudgmentsUnderField");
-CachedThemeMetricB	HOLD_JUDGMENTS_UNDER_FIELD	("Player","HoldJudgmentsUnderField");
+ThemeMetric<float> HOLD_JUDGMENT_Y_STANDARD		("Player","HoldJudgmentYStandard");
+ThemeMetric<float> HOLD_JUDGMENT_Y_REVERSE		("Player","HoldJudgmentYReverse");
+ThemeMetric<int>	BRIGHT_GHOST_COMBO_THRESHOLD("Player","BrightGhostComboThreshold");
+ThemeMetric<bool>	TAP_JUDGMENTS_UNDER_FIELD	("Player","TapJudgmentsUnderField");
+ThemeMetric<bool>	HOLD_JUDGMENTS_UNDER_FIELD	("Player","HoldJudgmentsUnderField");
 #define START_DRAWING_AT_PIXELS					THEME->GetMetricI("Player","StartDrawingAtPixels")
 #define STOP_DRAWING_AT_PIXELS					THEME->GetMetricI("Player","StopDrawingAtPixels")
 #define MAX_PRO_TIMING_ERROR					THEME->GetMetricI("Player","MaxProTimingError")
@@ -58,14 +59,6 @@ static const float StepSearchDistance = 1.0f;
 
 PlayerMinus::PlayerMinus()
 {
-	GRAY_ARROWS_Y_STANDARD.Refresh();
-	GRAY_ARROWS_Y_REVERSE.Refresh();
-	HOLD_JUDGMENT_Y_STANDARD.Refresh();
-	HOLD_JUDGMENT_Y_REVERSE.Refresh();
-	BRIGHT_GHOST_COMBO_THRESHOLD.Refresh();
-	TAP_JUDGMENTS_UNDER_FIELD.Refresh();
-	HOLD_JUDGMENTS_UNDER_FIELD.Refresh();
-
 	m_PlayerNumber = PLAYER_INVALID;
 	m_fNoteFieldHeight = 0;
 
@@ -570,10 +563,10 @@ void PlayerMinus::DrawPrimitives()
 	DISPLAY->PopMatrix();
 
 
-	if( !TAP_JUDGMENTS_UNDER_FIELD )
+	if( !(bool)TAP_JUDGMENTS_UNDER_FIELD )
 		DrawTapJudgments();
 
-	if( !TAP_JUDGMENTS_UNDER_FIELD )
+	if( !(bool)TAP_JUDGMENTS_UNDER_FIELD )
 		DrawHoldJudgments();
 }
 

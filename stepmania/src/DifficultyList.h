@@ -6,6 +6,7 @@
 #include "PlayerNumber.h"
 #include "BitmapText.h"
 #include "DifficultyMeter.h"
+#include "ThemeMetric.h"
 
 class Song;
 class Steps;
@@ -61,6 +62,8 @@ private:
 	};
 	
 	vector<Row>		m_Rows;
+
+	ThemeMetric<CString>  MOVE_COMMAND;
 };
 
 #endif

@@ -52,6 +52,11 @@ public:
 		PrefsManager::Subscribe( this );
 	}
 
+	~Preference()
+	{
+		PrefsManager::Unsubscribe( this );
+	}
+
 	void LoadDefault()
 	{
 		m_currentValue = m_defaultValue;

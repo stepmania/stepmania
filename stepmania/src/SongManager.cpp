@@ -31,6 +31,7 @@
 #include "Foreach.h"
 #include "StageStats.h"
 #include "Style.h"
+#include "ThemeMetric.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -42,14 +43,14 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 
 #define NUM_GROUP_COLORS	THEME->GetMetricI("SongManager","NumGroupColors")
 #define GROUP_COLOR( i )	THEME->GetMetricC("SongManager",ssprintf("GroupColor%d",i+1))
-CachedThemeMetricC BEGINNER_COLOR		("SongManager","BeginnerColor");
-CachedThemeMetricC EASY_COLOR			("SongManager","EasyColor");
-CachedThemeMetricC MEDIUM_COLOR			("SongManager","MediumColor");
-CachedThemeMetricC HARD_COLOR			("SongManager","HardColor");
-CachedThemeMetricC CHALLENGE_COLOR		("SongManager","ChallengeColor");
-CachedThemeMetricC EDIT_COLOR			("SongManager","EditColor");
-CachedThemeMetricC EXTRA_COLOR			("SongManager","ExtraColor");
-CachedThemeMetricI EXTRA_COLOR_METER	("SongManager","ExtraColorMeter");
+ThemeMetric<RageColor> BEGINNER_COLOR		("SongManager","BeginnerColor");
+ThemeMetric<RageColor> EASY_COLOR			("SongManager","EasyColor");
+ThemeMetric<RageColor> MEDIUM_COLOR			("SongManager","MediumColor");
+ThemeMetric<RageColor> HARD_COLOR			("SongManager","HardColor");
+ThemeMetric<RageColor> CHALLENGE_COLOR		("SongManager","ChallengeColor");
+ThemeMetric<RageColor> EDIT_COLOR			("SongManager","EditColor");
+ThemeMetric<RageColor> EXTRA_COLOR			("SongManager","ExtraColor");
+ThemeMetric<int> EXTRA_COLOR_METER	("SongManager","ExtraColorMeter");
 
 vector<RageColor> g_vGroupColors;
 RageTimer g_LastMetricUpdate; /* can't use RageTimer globally */
@@ -63,15 +64,6 @@ static void UpdateMetrics()
 	g_vGroupColors.clear();
 	for( int i=0; i<NUM_GROUP_COLORS; i++ )
 		g_vGroupColors.push_back( GROUP_COLOR(i) );
-
-	BEGINNER_COLOR.Refresh();
-	EASY_COLOR.Refresh();
-	MEDIUM_COLOR.Refresh();
-	HARD_COLOR.Refresh();
-	CHALLENGE_COLOR.Refresh();
-	EDIT_COLOR.Refresh();
-	EXTRA_COLOR.Refresh();
-	EXTRA_COLOR_METER.Refresh();
 }
 
 SongManager::SongManager()

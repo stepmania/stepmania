@@ -9,6 +9,7 @@
 #include "ScreenManager.h"
 #include "ScreenGameplay.h"
 #include "StageStats.h"
+#include "ThemeMetric.h"
 
 
 #define NUM_ITEM_TYPES			THEME->GetMetricF("Inventory","NumItemTypes")
@@ -16,7 +17,7 @@
 #define ITEM_COMBO( i )			THEME->GetMetricI("Inventory",ssprintf("Item%dCombo",i+1))
 #define ITEM_EFFECT( i )		THEME->GetMetric ("Inventory",ssprintf("Item%dEffect",i+1))
 #define ITEM_LEVEL( i )			THEME->GetMetricI("Inventory",ssprintf("Item%dLevel",i+1))
-CachedThemeMetricF ITEM_USE_RATE_SECONDS("Inventory","ItemUseRateSeconds");
+ThemeMetric<float> ITEM_USE_RATE_SECONDS("Inventory","ItemUseRateSeconds");
 
 #define ITEM_USE_PROBABILITY (1.f/ITEM_USE_RATE_SECONDS)
 
@@ -62,8 +63,6 @@ Inventory::~Inventory()
 
 void Inventory::Load( PlayerNumber pn )
 {
-	ITEM_USE_RATE_SECONDS.Refresh();
-
 	ReloadItems();
 
 	m_PlayerNumber = pn;

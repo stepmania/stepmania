@@ -8,16 +8,14 @@
 #include "ThemeManager.h"
 #include "song.h"
 #include "StageStats.h"
+#include "ThemeMetric.h"
 
 
-//
-// Important!!!!  Do not use these macros during gameplay.  They return very slowly.  Cache them in a member.
-//
-static CachedThemeMetricF METER_WIDTH		("LifeMeterBar","MeterWidth");
-static CachedThemeMetricF METER_HEIGHT		("LifeMeterBar","MeterHeight");
-static CachedThemeMetricF DANGER_THRESHOLD	("LifeMeterBar","DangerThreshold");
-static CachedThemeMetricI NUM_CHAMBERS		("LifeMeterBar","NumChambers");
-static CachedThemeMetricI NUM_STRIPS		("LifeMeterBar","NumStrips");
+static ThemeMetric<float> METER_WIDTH		("LifeMeterBar","MeterWidth");
+static ThemeMetric<float> METER_HEIGHT		("LifeMeterBar","MeterHeight");
+static ThemeMetric<float> DANGER_THRESHOLD	("LifeMeterBar","DangerThreshold");
+static ThemeMetric<int> NUM_CHAMBERS		("LifeMeterBar","NumChambers");
+static ThemeMetric<int> NUM_STRIPS		("LifeMeterBar","NumStrips");
 
 
 const float FAIL_THRESHOLD = 0;
@@ -28,13 +26,6 @@ class LifeMeterStream : public Actor
 public:
 	LifeMeterStream()
 	{
-		METER_WIDTH.Refresh();
-		METER_HEIGHT.Refresh();
-		DANGER_THRESHOLD.Refresh();
-		NUM_CHAMBERS.Refresh();
-		NUM_STRIPS.Refresh();
-
-
 		bool bExtra = GAMESTATE->IsExtraStage()||GAMESTATE->IsExtraStage2();
 
 		m_quadMask.SetDiffuse( RageColor(0,0,0,1) );

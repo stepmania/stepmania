@@ -1,15 +1,13 @@
 #include "global.h"
 #include "DifficultyDisplay.h"
 #include "song.h"
-#include "ThemeManager.h"
+#include "ThemeMetric.h"
 
-CachedThemeMetric  ICONONCOMMAND	("DifficultyDisplay","IconOnCommand");
-CachedThemeMetric  ICONOFFCOMMAND	("DifficultyDisplay","IconOffCommand");
+ThemeMetric<CString>  ICONONCOMMAND	("DifficultyDisplay","IconOnCommand");
+ThemeMetric<CString>  ICONOFFCOMMAND	("DifficultyDisplay","IconOffCommand");
 
 DifficultyDisplay::DifficultyDisplay()
 {
-	ICONONCOMMAND.Refresh();
-	ICONOFFCOMMAND.Refresh();
 	float fHeight = 0;
 	int diff;
 	for( diff = DIFFICULTY_BEGINNER; diff <= DIFFICULTY_CHALLENGE; ++diff )

@@ -8,15 +8,13 @@
 #include "RageTextureManager.h"
 #include "Course.h"
 #include "Character.h"
+#include "ThemeMetric.h"
 
-CachedThemeMetricB SCROLL_RANDOM		("Banner","ScrollRandom");
-CachedThemeMetricB SCROLL_ROULETTE		("Banner","ScrollRoulette");
+ThemeMetric<bool> SCROLL_RANDOM		("Banner","ScrollRandom");
+ThemeMetric<bool> SCROLL_ROULETTE		("Banner","ScrollRoulette");
 
 Banner::Banner()
 {
-	SCROLL_RANDOM.Refresh();
-	SCROLL_ROULETTE.Refresh();
-
 	m_bScrolling = false;
 	m_fPercentScrolling = 0;
 
