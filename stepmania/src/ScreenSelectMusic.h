@@ -95,6 +95,7 @@ protected:
 	DifficultyDisplay   m_DifficultyDisplay;
 	CourseContentsList	m_CourseContentsFrame;
 	HelpDisplay			m_Artist;
+	BitmapText			m_MachineRank;
 
 	bool				m_bMadeChoice;
 	bool				m_bGoToOptions;
