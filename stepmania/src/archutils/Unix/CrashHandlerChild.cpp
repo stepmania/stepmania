@@ -345,6 +345,9 @@ static void child_process()
 
 #if defined(DARWIN)
     InformUserOfCrash( sCrashInfoPath );
+    
+    /* Forcibly kill our parent. */
+    kill( getppid(), SIGKILL );
 #else
     fprintf(stderr,
             "\n"
@@ -358,9 +361,6 @@ static void child_process()
             "\n"
             );
 #endif
-
-    /* Forcibly kill our parent. */
-    //	kill( getppid(), SIGKILL );
 }
 
 
