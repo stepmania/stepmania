@@ -78,15 +78,6 @@ void LyricDisplay::Update( float fDeltaTime )
 	m_textLyrics.Command(OUT_COMMAND);
 
 	m_iCurLyricNumber++;
-
-		/*I figure for longer lines of text, the Lyric display object should
-			be scaled down, if needed, by the .ScaleTo() function. But somehow
-			it jus ain't working for me at all.. anyone able to do this
-			properly?? We prolly should also add detection of where to put
-			the Lyric object, if the arrows are on reverse? Jus an idea, 
-			but it kinda defeats the purpose of the Lyric object X/Y being a
-			theme element :)
-	*/
 }
 
 /*
