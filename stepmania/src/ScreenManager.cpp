@@ -341,13 +341,6 @@ ScreenManager::ScreenManager()
 	m_ScreenBuffered = NULL;
 
 	m_MessageSendOnPop = SM_None;
-
-
-	m_soundStart.Load( THEME->GetPathS("Common","start") );
-	m_soundCoin.Load( THEME->GetPathS("Common","coin") );
-	m_soundInvalid.Load( THEME->GetPathS("Common","invalid") );
-	m_soundScreenshot.Load( THEME->GetPathS("Common","screenshot") );
-	m_soundBack.Load( THEME->GetPathS("Common","back") );
 }
 
 
@@ -362,6 +355,16 @@ ScreenManager::~ScreenManager()
 		delete m_ScreenStack[i];
 	delete m_ScreenBuffered;
 	delete m_SystemLayer;
+}
+
+void ScreenManager::ReloadCommonSounds()
+{
+	// reload common sounds
+	m_soundStart.Load( THEME->GetPathS("Common","start") );
+	m_soundCoin.Load( THEME->GetPathS("Common","coin") );
+	m_soundInvalid.Load( THEME->GetPathS("Common","invalid") );
+	m_soundScreenshot.Load( THEME->GetPathS("Common","screenshot") );
+	m_soundBack.Load( THEME->GetPathS("Common","back") );
 }
 
 void ScreenManager::EmptyDeleteQueue()

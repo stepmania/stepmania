@@ -201,6 +201,9 @@ void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage
 	// load current theme
 	LoadThemeRecursive( g_vThemes, m_sCurThemeName );
 
+	// reload common sounds
+	if ( SCREENMAN != NULL )
+		SCREENMAN->ReloadCommonSounds();
 
 	CString sMetric;
 	for( i = 0; GetCommandlineArgument( "metric", &sMetric, i ); ++i )

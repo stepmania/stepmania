@@ -45,6 +45,7 @@ public:
 
 	void ReloadCreditsText();
 	void RefreshCreditsMessages();
+	void ReloadCommonSounds();
 
 	void EmptyDeleteQueue();
 
