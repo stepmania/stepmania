@@ -403,9 +403,9 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			UtilSetXYAndOnCommand( m_sprPercentFrame[p], "ScreenEvaluation" );
 			this->AddChild( &m_sprPercentFrame[p] );
 
-			/* Use "ScreenEvaluationOni Percent" for the [metric set], but position and
+			/* Use "ScreenEvaluation Percent" for the [metric set], but position and
 			 * tween it with "PercentP1X", etc. */
-			m_Percent[p].SetName( m_sName + " Percent" );
+			m_Percent[p].SetName( "ScreenEvaluation Percent" );
 			m_Percent[p].Load( (PlayerNumber) p );
 			m_Percent[p].SetXY( THEME->GetMetricF("ScreenEvaluation", ssprintf("PercentP%dX",p+1)),
 				THEME->GetMetricF("ScreenEvaluation",ssprintf("PercentP%dY",p+1)) );
