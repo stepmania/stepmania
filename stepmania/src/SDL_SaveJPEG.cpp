@@ -1,27 +1,27 @@
-#include <stdio.h>
-#include <string.h>
-#include <setjmp.h>
-
+#include "global.h"
 #include "SDL.h"
 
+#undef FAR /* fix for VC */
+namespace jpeg
+{
 #include "libjpeg/jpeglib.h"
+}
 
-// Why aren't we including the header to this?
 #include "SDL_SaveJPEG.h"
 
 /* Pull in JPEG library here. */
 #ifdef _XBOX
 	// FIXME
 #elif defined _WINDOWS
+#pragma comment(lib, "libjpeg/jpeg.lib")
 #endif
 
-	#pragma comment(lib, "libjpeg/jpeg.lib")
 
 
 
 #define OUTPUT_BUFFER_SIZE	4096
 typedef struct {
-	struct jpeg_destination_mgr pub;
+	struct jpeg::jpeg_destination_mgr pub;
 
 	SDL_RWops *ctx;
 	Uint8 buffer[OUTPUT_BUFFER_SIZE];
@@ -32,7 +32,7 @@ typedef struct {
  * Initialize source --- called by jpeg_read_header
  * before any data is actually read.
  */
-static void init_destination (j_compress_ptr cinfo)
+static void init_destination (jpeg::j_compress_ptr cinfo)
 {
 	/* We don't actually need to do anything */
 	return;
@@ -41,7 +41,7 @@ static void init_destination (j_compress_ptr cinfo)
 /*
  * Empty the output buffer --- called whenever buffer is full.
  */
-static boolean empty_output_buffer (j_compress_ptr cinfo)
+static jpeg::boolean empty_output_buffer (jpeg::j_compress_ptr cinfo)
 {
 	my_destination_mgr * dest = (my_destination_mgr *) cinfo->dest;
 	int nbytes;
@@ -58,7 +58,7 @@ static boolean empty_output_buffer (j_compress_ptr cinfo)
  * Terminate source --- called by jpeg_finish_decompress
  * after all data has been read.
  */
-static void term_destination (j_compress_ptr cinfo)
+static void term_destination (jpeg::j_compress_ptr cinfo)
 {
 	/* Write data remaining in the buffer */
 	my_destination_mgr * dest = (my_destination_mgr *) cinfo->dest;
@@ -76,7 +76,7 @@ static void term_destination (j_compress_ptr cinfo)
  * The caller must have already opened the stream, and is responsible
  * for closing it after finishing decompression.
  */
-static void jpeg_SDL_RW_dest(j_compress_ptr cinfo, SDL_RWops *ctx)
+static void jpeg_SDL_RW_dest(jpeg::j_compress_ptr cinfo, SDL_RWops *ctx)
 {
   my_destination_mgr *dest;
 
@@ -88,8 +88,8 @@ static void jpeg_SDL_RW_dest(j_compress_ptr cinfo, SDL_RWops *ctx)
    * manager serially with the same JPEG object.  Caveat programmer.
    */
   if (cinfo->dest == NULL) {	/* first time for this JPEG object? */
-    cinfo->dest = (struct jpeg_destination_mgr *)
-      (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
+    cinfo->dest = (struct jpeg::jpeg_destination_mgr *)
+      (*cinfo->mem->alloc_small) ((jpeg::j_common_ptr) cinfo, JPOOL_PERMANENT,
 				  sizeof(my_destination_mgr));
     dest = (my_destination_mgr *) cinfo->dest;
   }
@@ -115,7 +115,7 @@ void IMG_SaveJPG_RW(SDL_Surface *surface, SDL_RWops *dest)
    * compression/decompression processes, in existence at once.  We refer
    * to any one struct (and its associated working data) as a "JPEG object".
    */
-  struct jpeg_compress_struct cinfo;
+  struct jpeg::jpeg_compress_struct cinfo;
   /* This struct represents a JPEG error handler.  It is declared separately
    * because applications often want to supply a specialized error handler
    * (see the second half of this file for an example).  But here we just
@@ -124,9 +124,9 @@ void IMG_SaveJPG_RW(SDL_Surface *surface, SDL_RWops *dest)
    * Note that this struct must live as long as the main JPEG parameter
    * struct, to avoid dangling-pointer problems.
    */
-  struct jpeg_error_mgr jerr;
+  struct jpeg::jpeg_error_mgr jerr;
   /* More stuff */
-  JSAMPROW row_pointer[1];	/* pointer to JSAMPLE row[s] */
+  jpeg::JSAMPROW row_pointer[1];	/* pointer to JSAMPLE row[s] */
   int row_stride;		/* physical row width in image buffer */
 
   /* Step 1: allocate and initialize JPEG compression object */
@@ -136,9 +136,10 @@ void IMG_SaveJPG_RW(SDL_Surface *surface, SDL_RWops *dest)
    * This routine fills in the contents of struct jerr, and returns jerr's
    * address which we place into the link field in cinfo.
    */
-  cinfo.err = jpeg_std_error(&jerr);
+  cinfo.err = jpeg::jpeg_std_error(&jerr);
   /* Now we can initialize the JPEG compression object. */
-  jpeg_create_compress(&cinfo);
+  jpeg::jpeg_CreateCompress(&cinfo, JPEG_LIB_VERSION, \
+                        (size_t) sizeof(struct jpeg::jpeg_compress_struct));
 
   /* Step 2: specify data destination (eg, a file) */
   /* Note: steps 2 and 3 can be done in either order. */
@@ -158,19 +159,19 @@ void IMG_SaveJPG_RW(SDL_Surface *surface, SDL_RWops *dest)
   cinfo.image_width = surface->w; 	/* image width and height, in pixels */
   cinfo.image_height = surface->h;
   cinfo.input_components = 3;		/* # of color components per pixel */
-  cinfo.in_color_space = JCS_RGB; 	/* colorspace of input image */
+  cinfo.in_color_space = jpeg::JCS_RGB; 	/* colorspace of input image */
   /* Now use the library's routine to set default compression parameters.
    * (You must set at least cinfo.in_color_space before calling this,
    * since the defaults depend on the source color space.)
    */
-  jpeg_set_defaults(&cinfo);
+  jpeg::jpeg_set_defaults(&cinfo);
 
   /* Step 4: Start compressor */
 
   /* TRUE ensures that we will write a complete interchange-JPEG file.
    * Pass TRUE unless you are very sure of what you're doing.
    */
-  jpeg_start_compress(&cinfo, TRUE);
+  jpeg::jpeg_start_compress(&cinfo, TRUE);
 
   /* Step 5: while (scan lines remain to be written) */
   /*           jpeg_write_scanlines(...); */
@@ -187,19 +188,19 @@ void IMG_SaveJPG_RW(SDL_Surface *surface, SDL_RWops *dest)
      * Here the array is only one element long, but you could pass
      * more than one scanline at a time if that's more convenient.
      */
-    row_pointer[0] = & ((JSAMPLE*)surface->pixels)[cinfo.next_scanline * row_stride];
-    (void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
+    row_pointer[0] = & ((jpeg::JSAMPLE*)surface->pixels)[cinfo.next_scanline * row_stride];
+    (void) jpeg::jpeg_write_scanlines(&cinfo, row_pointer, 1);
   }
 
   /* Step 6: Finish compression */
 
-  jpeg_finish_compress(&cinfo);
+  jpeg::jpeg_finish_compress(&cinfo);
   /* After finish_compress, we can close the output file. */
 
   /* Step 7: release JPEG compression object */
 
   /* This is an important step since it will release a good deal of memory. */
-  jpeg_destroy_compress(&cinfo);
+  jpeg::jpeg_destroy_compress(&cinfo);
 
   /* And we're done! */
 }
