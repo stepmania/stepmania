@@ -83,14 +83,23 @@ int RageFileObjMem::GetFileSize() const
 	return m_pFile->m_sBuf.size();
 }
 
+RageFileObjMem::RageFileObjMem( const RageFileObjMem &cpy )
+{
+	m_pFile = cpy.m_pFile;
+	m_iFilePos = cpy.m_iFilePos;
+	RageFileObjMemFile::AddReference( m_pFile );
+}
+
 RageFileObj *RageFileObjMem::Copy() const
 {
-	RageFileObjMem *pRet = new RageFileObjMem( m_pFile );
-	pRet->m_iFilePos = m_iFilePos;
-
+	RageFileObjMem *pRet = new RageFileObjMem( *this );
 	return pRet;
 }
 
+const CString &RageFileObjMem::GetString() const
+{
+	return m_pFile->m_sBuf;
+}
 
 RageFileDriverMem::RageFileDriverMem():
 	RageFileDriver( new NullFilenameDB ),

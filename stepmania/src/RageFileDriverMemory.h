@@ -11,6 +11,7 @@ class RageFileObjMem: public RageFileObj
 {
 public:
 	RageFileObjMem( RageFileObjMemFile *pFile = NULL );
+	RageFileObjMem( const RageFileObjMem &cpy );
 	~RageFileObjMem();
 
 	int ReadInternal( void *buffer, size_t bytes );
@@ -18,6 +19,9 @@ public:
 	int SeekInternal( int offset );
 	int GetFileSize() const;
 	RageFileObj *Copy() const;
+
+	/* Retrieve the contents of this file. */
+	const CString &GetString() const;
 
 private:
 	RageFileObjMemFile *m_pFile;
