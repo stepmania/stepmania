@@ -171,7 +171,7 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 	SET_XY_AND_ON_COMMAND( m_sprPage );
 	m_framePage.AddChild( m_sprPage );
 
-	// init line highlights
+	// init line line highlights
 	FOREACH_HumanPlayer( p )
 	{
 		m_sprLineHighlight[p].Load( THEME->GetPathG(m_sName,"line highlight") );
@@ -181,7 +181,7 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 		ON_COMMAND( m_sprLineHighlight[p] );
 	}
 	
-	// init highlights
+	// init cursors
 	FOREACH_HumanPlayer( p )
 	{
 		m_Cursor[p].Load( m_sName, OptionsCursor::cursor );
@@ -371,28 +371,29 @@ void ScreenOptions::RefreshAllIcons()
 
 void ScreenOptions::PositionCursors()
 {
-	// Set the position of the highlight showing the current option the user is changing.
-	// Set the position of the underscores showing the current choice for each option line.
+	// Set the position of the cursor showing the current option the user is changing.
+	// Set the position of the underlines showing the current choice for each option line.
 	FOREACH_HumanPlayer( pn )
 	{
 		const int iRow = m_iCurrentRow[pn];
 		ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, (int)m_Rows.size() ) );
 		OptionRow &OptionRow = *m_Rows[iRow];
-
-		OptionsCursor &highlight = m_Cursor[pn];
+		OptionsCursor &cursor = m_Cursor[pn];
 
 		const int iChoiceWithFocus = OptionRow.GetChoiceInRowWithFocus(pn);
+		if( iChoiceWithFocus == -1 )
+			continue;	// skip
 
 		int iWidth, iX, iY;
 		GetWidthXY( pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
-		highlight.SetBarWidth( iWidth );
-		highlight.SetXY( (float)iX, (float)iY );
+		cursor.SetBarWidth( iWidth );
+		cursor.SetXY( (float)iX, (float)iY );
 	}
 }
 
 void ScreenOptions::TweenCursor( PlayerNumber pn )
 {
-	// Set the position of the highlight showing the current option the user is changing.
+	// Set the position of the cursor showing the current option the user is changing.
 	const int iRow = m_iCurrentRow[pn];
 	ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, (int)m_Rows.size() ) );
 
@@ -402,11 +403,11 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	int iWidth, iX, iY;
 	GetWidthXY( pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
 
-	OptionsCursor &highlight = m_Cursor[pn];
-	highlight.StopTweening();
-	highlight.BeginTweening( TWEEN_SECONDS );
-	highlight.TweenBarWidth( iWidth );
-	highlight.SetXY( (float)iX, (float)iY );
+	OptionsCursor &cursor = m_Cursor[pn];
+	cursor.StopTweening();
+	cursor.BeginTweening( TWEEN_SECONDS );
+	cursor.TweenBarWidth( iWidth );
+	cursor.SetXY( (float)iX, (float)iY );
 
 	if( GAMESTATE->IsHumanPlayer(pn) )  
 	{

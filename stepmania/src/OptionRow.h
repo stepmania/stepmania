@@ -111,6 +111,8 @@ public:
 	{
 		if( m_RowDef.bOneChoiceForAllPlayers )
 			pn = PLAYER_1;
+		if( m_RowDef.choices.empty() )
+			return -1;
 		int iChoice = m_iChoiceInRowWithFocus[pn];
 		return iChoice; 
 	}
