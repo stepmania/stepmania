@@ -243,6 +243,9 @@ public:
 	int				m_iSoundResampleQuality;
 	CString			m_sMovieDrivers;
 	CString			m_sLightsDriver;
+	CString			m_sLightsStepsType;
+	CString			m_sLightsStepsDifficulty;
+	bool			m_bLightsOrOutput;
 	bool			m_bBlinkGameplayButtonLightsOnNote;
 	bool			m_bAllowUnacceleratedRenderer;
 	bool			m_bThreadedInput;

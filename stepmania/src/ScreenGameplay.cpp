@@ -1040,12 +1040,27 @@ void ScreenGameplay::LoadNextSong()
 	// Load cabinet lights data
 	//
 	{
+		int i;
 		m_CabinetLightsNoteData.Init();
 		ASSERT( GAMESTATE->m_pCurSong );
 		vector<Steps*> vSteps;
-		GAMESTATE->m_pCurSong->GetSteps( vSteps, STEPS_TYPE_LIGHTS_CABINET );
+				
+		StepsType lightsSteps = STEPS_TYPE_LIGHTS_CABINET;
+
+		lightsSteps = GAMEMAN->StringToNotesType(PREFSMAN->m_sLightsStepsType);
+
+		GAMESTATE->m_pCurSong->GetSteps( vSteps, lightsSteps );
+		
 		if( !vSteps.empty() )
 			vSteps[0]->GetNoteData( &m_CabinetLightsNoteData );
+		
+		for (i=0;i<vSteps.size();i++)
+		{
+			Difficulty DC = StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty);
+			Difficulty DC2 = vSteps[i]->GetDifficulty();
+			if (DC == DC2)
+				vSteps[i]->GetNoteData( &m_CabinetLightsNoteData );
+		}
 
 		// Convert to 4s so that we can check if we're inside a hold with just 
 		// GetTapNote().

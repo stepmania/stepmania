@@ -28,6 +28,8 @@ PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our pro
 
 const float DEFAULT_SOUND_VOLUME = 1.00f;
 const CString DEFAULT_LIGHTS_DRIVER = "Null";
+const CString DEFAULT_LIGHTS_STEPS_TYPE = "lights-cabinet";
+const CString DEFAULT_LIGHTS_STEPS_DIFFICULTY = "standard";
 
 bool g_bAutoRestart = false;
 
@@ -264,6 +266,9 @@ void PrefsManager::Init()
 #endif
 
 	m_sLightsDriver = DEFAULT_LIGHTS_DRIVER;
+	m_sLightsStepsType = DEFAULT_LIGHTS_STEPS_TYPE;
+	m_sLightsStepsDifficulty = DEFAULT_LIGHTS_STEPS_DIFFICULTY;
+	m_bLightsOrOutput = false;
 
 	m_bBlinkGameplayButtonLightsOnNote = false;
 	m_bAllowUnacceleratedRenderer = false;
@@ -443,6 +448,9 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Options", "MarvelousTiming",					(int&)m_iMarvelousTiming );
 	ini.GetValue( "Options", "SoundVolume",						m_fSoundVolume );
 	ini.GetValue( "Options", "LightsDriver",					m_sLightsDriver );
+	ini.GetValue( "Options", "LightsStepsType",					m_sLightsStepsType );
+	ini.GetValue( "Options", "LightsStepsDifficulty",			m_sLightsStepsDifficulty );
+	ini.GetValue( "Options", "LightsOrOutput",					m_bLightsOrOutput);
 	ini.GetValue( "Options", "SoundResampleQuality",			m_iSoundResampleQuality );
 	ini.GetValue( "Options", "CoinMode",						m_iCoinMode );
 	ini.GetValue( "Options", "CoinsPerCredit",					m_iCoinsPerCredit );
@@ -751,7 +759,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "AnisotropicFiltering",			m_bAnisotropicFiltering );
 	ini.SetValue( "Options", "AutoRestart",						g_bAutoRestart );
 	ini.SetValue( "Options", "SignProfileData",					m_bSignProfileData );
-
+	
 	ini.SetValue( "Options", "SoundWriteAhead",					m_iSoundWriteAhead );
 
 	ini.SetValue( "Editor", "ShowBGChangesPlay",				m_bEditorShowBGChangesPlay );
@@ -763,8 +771,14 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 		ini.SetValue ( "Options", "SoundDrivers",				m_sSoundDrivers );
 	if(m_fSoundVolume != DEFAULT_SOUND_VOLUME)
 		ini.SetValue( "Options", "SoundVolume",					m_fSoundVolume );
+	if(m_bLightsOrOutput != false)
+		ini.SetValue( "Options", "LightsOrOutput",				m_bLightsOrOutput );
 	if(m_sLightsDriver != DEFAULT_LIGHTS_DRIVER)
 		ini.SetValue( "Options", "LightsDriver",				m_sLightsDriver );
+	if(m_sLightsStepsType != DEFAULT_LIGHTS_STEPS_TYPE)
+		ini.SetValue( "Options", "LightsStepsType",				m_sLightsStepsType );
+	if(m_sLightsStepsDifficulty != DEFAULT_LIGHTS_STEPS_DIFFICULTY)
+		ini.SetValue( "Options", "LightsStepsDifficulty",		m_sLightsStepsDifficulty );
 	if(m_sMovieDrivers != DEFAULT_MOVIE_DRIVER_LIST)
 		ini.SetValue ( "Options", "MovieDrivers",				m_sMovieDrivers );
 
