@@ -615,42 +615,36 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 			int iMeasureNo	= atoi( value_name.substr(1,3).c_str() );
 			int iBMSTrackNo	= atoi( value_name.substr(4,2).c_str() );
 
-			CString sNoteData = value_data;
-			vector<int> arrayNotes;
+			int iStepIndex = (int) ( iMeasureNo * ROWS_PER_MEASURE );
 
-			for( int i=0; i+1<sNoteData.GetLength(); i+=2 )
 			{
-				CString sNote = sNoteData.substr(i,2);
-				int iNote;
-				sscanf( sNote, "%x", &iNote );	// data is in hexadecimal
-				arrayNotes.push_back( iNote );
-			}
-
-			const unsigned iNumNotesInThisMeasure = arrayNotes.size();
-			for( unsigned j=0; j<iNumNotesInThisMeasure; j++ )
-			{
-				if( arrayNotes[j] == 0 )
-					continue;
-
-				float fPercentThroughMeasure = (float)j/(float)iNumNotesInThisMeasure;
-
-				// index is in quarter beats starting at beat 0
-				int iStepIndex = (int) ( (iMeasureNo + fPercentThroughMeasure)
-								 * BEATS_PER_MEASURE * ROWS_PER_BEAT );
-
 				switch( iBMSTrackNo )
 				{
+					/* Don't do this; we handle autoplay tracks properly now. */
 				case 1:	{ // background music track
-					float fBeatOffset = fBeatOffset = NoteRowToBeat( (float)iStepIndex );
+/*					float fBeatOffset = fBeatOffset = NoteRowToBeat( (float)iStepIndex );
 					if( fBeatOffset > 10 )	// some BPMs's play the music again at the end.  Why?  Who knows...
 						break;
 					float fBPS;
 					fBPS = out.m_Timing.m_BPMSegments[0].m_fBPM/60.0f;
 					out.m_Timing.m_fBeat0OffsetInSeconds = fBeatOffset / fBPS;
+*/					break;
+				}
+				case 2:
+				{
+					/* Yuck: BPM divide for this measure only. */
+					float fBPM = out.GetBPMAtBeat( NoteRowToBeat(iStepIndex) );
+					float fNewBPM = fBPM / (float) atof(value_data);
+
+					out.AddBPMSegment( BPMSegment( NoteRowToBeat(iStepIndex), fNewBPM ) );
+
+					/* Undo the BPM change at the end of the measure. */
+					out.AddBPMSegment( BPMSegment( NoteRowToBeat(iStepIndex)+4, fBPM ) );
+					LOG->Trace( "Inserting new temp BPM change at beat %f, BPM %f", NoteRowToBeat(iStepIndex), fNewBPM );
 					break;
 				}
 				case 3:	{ // bpm change
-					BPMSegment newSeg( NoteRowToBeat(iStepIndex), (float)arrayNotes[j] );
+					BPMSegment newSeg( NoteRowToBeat(iStepIndex), (float) atof(value_data) );
 					out.AddBPMSegment( newSeg );
 					LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", newSeg.m_fStartBeat, newSeg.m_fBPM );
 					break;
@@ -659,7 +653,9 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 				case 8:	{ // indirect bpm
 					/*	This is a very inefficient way to parse, but it doesn't matter much
 						because this is only parsed on the first run after the song is installed. */
-					CString sTagToLookFor = ssprintf( "#BPM%02x", arrayNotes[j] );
+					int iBPMNo;
+					sscanf( value_data, "%x", &iBPMNo );	// data is in hexadecimal
+					CString sTagToLookFor = ssprintf( "#BPM%02x", iBPMNo );
 					float fBPM = -1;
 
 
@@ -720,7 +716,10 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 				case 9:	{ // stop
 					/*	This is a very inefficient way to parse, but it doesn't
 						matter much because this is only parsed on the first run after the song is installed. */
-					CString sTagToLookFor = ssprintf( "#STOP%02x", arrayNotes[j] );
+					int iStopNo;
+					sscanf( value_data, "%x", &iStopNo );	// data is in hexadecimal
+					CString sTagToLookFor = ssprintf( "#STOP%02x", iStopNo );
+
 					float fFreezeStartBeat = NoteRowToBeat(iStepIndex);
 					float fFreezeSecs = -1;
 
