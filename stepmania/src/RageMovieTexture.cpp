@@ -143,6 +143,8 @@ void RageMovieTexture::Create()
 {
     HRESULT hr;
     
+	m_ActualID.iAlphaBits = 0;
+
     if( FAILED( hr=CoInitialize(NULL) ) )
         RageException::Throw( hr_ssprintf(hr, "Could not CoInitialize") );
 
