@@ -424,9 +424,7 @@ void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, const in
 	{
 		const int iOriginalTrack = iOriginalTrackToTakeFrom[t];
 
-		// ******************* WHY DO THIS? IT BREAKS SOME AUTOGEN LOADING (NAMELY DDR->DS3DDX) - Andy.
-		
-	//	ASSERT( iOriginalTrack < pOriginal->m_iNumTracks );
+		ASSERT( iOriginalTrack < pOriginal->m_iNumTracks );
 
 
 

@@ -1033,7 +1033,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		"single",								// m_szName
-		NOTES_TYPE_PARA_SINGLE,						// m_NotesType
+		NOTES_TYPE_DS3DDX_SINGLE,						// m_NotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		8,										// m_iColsPerPlayer

@@ -100,7 +100,7 @@ void ScreenSandbox::UpdateText(int n)
 		if(p) pos += ", ";
 		pos += ssprintf("%.3f", snds[p]->GetPositionSeconds());
 	}
-
+/*
 	s[n].txt.SetText(ssprintf(
 		"%i: %s\n"
 		"%s\n"
@@ -111,13 +111,14 @@ void ScreenSandbox::UpdateText(int n)
 		"%s",
 		n+1, fn.GetString(),
 		s[n].s.IsPlaying()? "Playing":"Stopped",
-		s[n].s.GetLooping()? "Looping": "Not looping",
-		s[n].s.GetAutoStop()? "Stop when finished": "Continue until stopped",
+		s[n].s.GetLooping()? "Looping": "Not looping", // Not Member Of Rage Sound
+		s[n].s.GetAutoStop()? "Stop when finished": "Continue until stopped", // Not Member Of Rage Sound
 		pos.size()? pos.GetString(): "none playing",
 		s[n].s.GetLengthSeconds(),
 		s[n].s.IsStreaming()? "Streaming":"Preloaded",
 		selected == n? "^^^^^^":""
 		));
+*/
 }
 
 void ScreenSandbox::Update(float f)
@@ -148,10 +149,10 @@ void ScreenSandbox::Input( const DeviceInput& DeviceI, const InputEventType type
 			s[selected].s.Stop();
 			break;
 		case 'l':
-			s[selected].s.SetLooping(!s[selected].s.GetLooping());
+//			s[selected].s.SetLooping(!s[selected].s.GetLooping()); // Not Member Of RageSound
 			break;
 		case 'a':
-			s[selected].s.SetAutoStop(!s[selected].s.GetAutoStop());
+//			s[selected].s.SetAutoStop(!s[selected].s.GetAutoStop()); // Not Member Of Rage Sound
 			break;
 
 /*		case SDLK_LEFT:
