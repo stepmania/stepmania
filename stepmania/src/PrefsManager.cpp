@@ -10,6 +10,7 @@
 #include "ProductInfo.h"
 #include "Foreach.h"
 #include "Preference.h"
+#include "RageLog.h"
 
 #define DEFAULTS_INI_PATH	"Data/Defaults.ini"		// these can be overridden
 #define STEPMANIA_INI_PATH	"Data/StepMania.ini"	// overlay on Defaults.ini, contains the user's choices
@@ -851,8 +852,6 @@ public:
 LUA_REGISTER_CLASS( PrefsManager )
 // lua end
 
-
-#include "RageLog.h"
 #include "LuaFunctions.h"
 
 
