@@ -98,14 +98,17 @@ void ScreenWithMenuElements::Init()
 	SET_XY_AND_ON_COMMAND( m_sprOverlay );
 	this->AddChild( m_sprOverlay );
 
+	m_In.SetName( "In" );
 	m_In.Load( THEME->GetPathB(m_sName,"in") );
 	m_In.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_In );
 
+	m_Out.SetName( "Out" );
 	m_Out.Load( THEME->GetPathB(m_sName,"out") );
 	m_Out.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Out );
 
+	m_Cancel.SetName( "Cancel" );
 	m_Cancel.Load( THEME->GetPathB(m_sName,"cancel") );
 	m_Cancel.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Cancel );

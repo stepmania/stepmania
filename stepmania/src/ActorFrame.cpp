@@ -198,7 +198,10 @@ void ActorFrame::Update( float fDeltaTime )
 
 	// update all sub-Actors
 	for( vector<Actor*>::iterator it=m_SubActors.begin(); it!=m_SubActors.end(); it++ )
-		(*it)->Update(fDeltaTime);
+	{
+		Actor *pActor = *it;
+		pActor->Update(fDeltaTime);
+	}
 }
 
 #define PropagateActorFrameCommand( cmd, type ) \
