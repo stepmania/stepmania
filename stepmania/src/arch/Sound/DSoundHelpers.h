@@ -53,7 +53,8 @@ private:
 	int buffersize_frames() const { return buffersize / bytes_per_frame(); }
 	int bytes_per_frame() const { return channels*samplebits/8; }
 
-	void CheckUnderrun( int cursorstart, int cursorend, int chunksize );
+	void CheckWriteahead( int cursorstart, int cursorend );
+	void CheckUnderrun( int cursorstart, int cursorend );
 
 	IDirectSoundBuffer *buf;
 
@@ -63,13 +64,15 @@ private:
 	int buffersize;
 	
 	int write_cursor, buffer_bytes_filled; /* bytes */
+	int extra_writeahead;
 	int64_t write_cursor_pos; /* frames */
 	mutable int64_t LastPosition;
 	bool playing;
 
 	bool buffer_locked;
-	char *locked_buf;
-	int locked_len;
+	char *locked_buf1, *locked_buf2;
+	int locked_size1, locked_size2;
+	char *temp_buffer;
 };
 
 #endif
