@@ -79,11 +79,10 @@ public:
 	//specify the optional paramter as false (0) if you do not want it to create
 	//the key if it doesn't exist. Returns true if data entered, false otherwise
 	bool SetValue(const CString &key, const CString &valuename, const CString &value, bool create = 1);
-	bool SetValueI(const CString &key, const CString &valuename, int value, bool create = 1);
-	bool SetValueU(const CString &key, const CString &valuename, unsigned value, bool create = 1);
-	bool SetValueF(const CString &key, const CString &valuename, float value, bool create = 1);
-	bool SetValueB(const CString &key, const CString &valuename, bool value, bool create = 1);
-	bool SetValue(const CString &key, const CString &valuename, int value, bool create = 1) { return SetValueI(key, valuename, value, create); }
+	bool SetValue(const CString &key, const CString &valuename, int value, bool create = 1);
+	bool SetValue(const CString &key, const CString &valuename, unsigned value, bool create = 1);
+	bool SetValue(const CString &key, const CString &valuename, float value, bool create = 1);
+	bool SetValue(const CString &key, const CString &valuename, bool value, bool create = 1);
 
 	//deletes specified value
 	//returns true if value existed and deleted, false otherwise

@@ -406,14 +406,14 @@ bool UnlockSystem::WriteValues( CString filename)
 
 	data.SetPath(filename);
 
-	data.SetValueF( "Unlock", "ArcadePointsAccumulated",	ArcadePoints );
-	data.SetValueF( "Unlock", "DancePointsAccumulated",		DancePoints );
-	data.SetValueF( "Unlock", "SongPointsAccumulated",		SongPoints );
-	data.SetValueF( "Unlock", "ExtraStagesCleared",			ExtraClearPoints );
-	data.SetValueF( "Unlock", "ExtraStagesFailed",			ExtraFailPoints );
-	data.SetValueF( "Unlock", "TotalStagesCleared",			StagesCleared );
-	data.SetValueF( "Unlock", "TotalToastysSeen",			ToastyPoints );
-	data.SetValue ( "Unlock", "RouletteSeeds",				RouletteSeeds );
+	data.SetValue( "Unlock", "ArcadePointsAccumulated",		ArcadePoints );
+	data.SetValue( "Unlock", "DancePointsAccumulated",		DancePoints );
+	data.SetValue( "Unlock", "SongPointsAccumulated",		SongPoints );
+	data.SetValue( "Unlock", "ExtraStagesCleared",			ExtraClearPoints );
+	data.SetValue( "Unlock", "ExtraStagesFailed",			ExtraFailPoints );
+	data.SetValue( "Unlock", "TotalStagesCleared",			StagesCleared );
+	data.SetValue( "Unlock", "TotalToastysSeen",			ToastyPoints );
+	data.SetValue( "Unlock", "RouletteSeeds",				RouletteSeeds );
 
 	data.WriteFile();
 

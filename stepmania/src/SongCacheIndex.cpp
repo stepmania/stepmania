@@ -54,8 +54,8 @@ void SongCacheIndex::ReadCacheIndex()
 
 void SongCacheIndex::AddCacheIndex(const CString &path, unsigned hash)
 {
-	CacheIndex.SetValueI( "Cache", "CacheVersion", FILE_CACHE_VERSION );
-	CacheIndex.SetValueU( "Cache", MangleName(path), hash );
+	CacheIndex.SetValue( "Cache", "CacheVersion", FILE_CACHE_VERSION );
+	CacheIndex.SetValue( "Cache", MangleName(path), hash );
 	CacheIndex.WriteFile();
 }
 

@@ -219,22 +219,22 @@ bool IniFile::SetValue(const CString &keyname, const CString &valuename, const C
 // sets value of [keyname] valuename =.
 // specify the optional paramter as false (0) if you do not want it to create
 // the key if it doesn't exist. Returns true if data entered, false otherwise
-bool IniFile::SetValueI(const CString &keyname, const CString &valuename, int value, bool create)
+bool IniFile::SetValue(const CString &keyname, const CString &valuename, int value, bool create)
 {
 	return SetValue(keyname, valuename, ssprintf("%d",value), create);
 }
 
-bool IniFile::SetValueU(const CString &keyname, const CString &valuename, unsigned value, bool create)
+bool IniFile::SetValue(const CString &keyname, const CString &valuename, unsigned value, bool create)
 {
 	return SetValue(keyname, valuename, ssprintf("%u",value), create);
 }
 
-bool IniFile::SetValueF(const CString &keyname, const CString &valuename, float value, bool create)
+bool IniFile::SetValue(const CString &keyname, const CString &valuename, float value, bool create)
 {
 	return SetValue(keyname, valuename, ssprintf("%f",value), create);
 }
 
-bool IniFile::SetValueB(const CString &keyname, const CString &valuename, bool value, bool create)
+bool IniFile::SetValue(const CString &keyname, const CString &valuename, bool value, bool create)
 {
 	return SetValue(keyname, valuename, ssprintf("%d",value), create);
 }

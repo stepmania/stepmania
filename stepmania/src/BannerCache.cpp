@@ -414,12 +414,12 @@ void BannerCache::CacheBannerInternal( CString BannerPath )
 		SDL_FreeSurface(img);
 
 	/* Remember the original size. */
-	BannerData.SetValue ( BannerPath, "Path", CachePath );
-	BannerData.SetValueI( BannerPath, "Width", src_width );
-	BannerData.SetValueI( BannerPath, "Height", src_height );
-	BannerData.SetValueU( BannerPath, "FullHash", GetHashForFile( BannerPath ) );
+	BannerData.SetValue( BannerPath, "Path", CachePath );
+	BannerData.SetValue( BannerPath, "Width", src_width );
+	BannerData.SetValue( BannerPath, "Height", src_height );
+	BannerData.SetValue( BannerPath, "FullHash", GetHashForFile( BannerPath ) );
 	/* Remember this, so we can hint Sprite. */
-	BannerData.SetValueB( BannerPath, "Rotated", WasRotatedBanner );
+	BannerData.SetValue( BannerPath, "Rotated", WasRotatedBanner );
 	BannerData.WriteFile();
 }
 
