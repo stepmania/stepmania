@@ -705,41 +705,16 @@ void mySDL_BlitTransform( const SDL_Surface *src, SDL_Surface *dst,
 	}
 }
 
-/* Templated blitter.  This has a couple advantages:
- *
- * The generic implementations will see the parameters at compile-time, and
- * the compiler can elide them completely, giving a smaller loop.
- *
- * Also, we can enable and disable specializations simply by commenting out
- * a blit function; if it's not there, it'll fall back on the generic version
- * automatically. 
- *
- * This is not yet intended for widespread use; it's currently only used in
- * the RageDisplay Create/UpdateTexture functions.  I wrote this because
- * I'm tired of fighting with SDL's blit.  This can replace the SDL blits
- * completely after the release, but that'll take a lot of testing.
- *
+/*
  * Simplified:
  *
  * No source alpha.
  * Palette -> palette blits assume the palette is identical (no mapping).
- * Color key removal controlled by a parameter, not a flag.
+ * No color key.
  * No general blitting rects.
  */
-struct blit_traits_true {  enum { val = true };  };
-struct blit_traits_false { enum { val = false }; };
-enum { IDENTITY, DIFFERENT_RGBA, PAL_TO_RGBA };
-struct blit_traits_identity { enum { convert = IDENTITY }; };
-/* Nonidentical RGBA->RGBA; convert. */
-struct blit_traits_rescale { enum { convert = DIFFERENT_RGBA }; };
-/* PAL->RGBA; convert. */
-struct blit_traits_depallete { enum { convert = PAL_TO_RGBA }; };
 
-template<class blit_traits>
-static void blit( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width, int height );
-
-template<>
-static void blit<blit_traits_identity>( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width, int height )
+static void blit_same_type( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width, int height )
 {
 	const char *src = (const char *) src_surf->pixels;
 	const char *dst = (const char *) dst_surf->pixels;
@@ -777,8 +752,7 @@ static void blit<blit_traits_identity>( SDL_Surface *src_surf, const SDL_Surface
 
 /* Rescaling blit with no ckey.  This is used to update movies in
  * D3D, so optimization is very important. */
-template<>
-static void blit<blit_traits_rescale>( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width, int height )
+static void blit_rgba_to_rgba( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width, int height )
 {
 	const char *src = (const char *) src_surf->pixels;
 	const char *dst = (const char *) dst_surf->pixels;
@@ -844,8 +818,7 @@ static void blit<blit_traits_rescale>( SDL_Surface *src_surf, const SDL_Surface 
 	}
 }
 
-template<class blit_traits>
-static void blit( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width, int height )
+static void blit_generic( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width, int height )
 {
 	const char *src = (const char *) src_surf->pixels;
 	const char *dst = (const char *) dst_surf->pixels;
@@ -861,22 +834,13 @@ static void blit( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width,
 		{
 			unsigned int pixel = decodepixel((Uint8 *) src, src_surf->format->BytesPerPixel);
 
-			if( blit_traits::convert )
-			{
-				Uint8 colors[4];
-				if( blit_traits::convert == (int) DIFFERENT_RGBA )
-				{
-					/* Convert pixel to the destination RGBA. */
-					mySDL_GetRGBAV(pixel, src_surf, colors);
-				} else if( blit_traits::convert == (int) PAL_TO_RGBA ) {
-					/* Convert pixel to the destination RGBA. */
-					colors[0] = src_surf->format->palette->colors[pixel].r;
-					colors[1] = src_surf->format->palette->colors[pixel].g;
-					colors[2] = src_surf->format->palette->colors[pixel].b;
-					colors[3] = src_surf->format->palette->colors[pixel].unused;
-				}
-				pixel = mySDL_SetRGBAV(dst_surf->format, colors);
-			}
+			Uint8 colors[4];
+				/* Convert pixel to the destination RGBA. */
+				colors[0] = src_surf->format->palette->colors[pixel].r;
+				colors[1] = src_surf->format->palette->colors[pixel].g;
+				colors[2] = src_surf->format->palette->colors[pixel].b;
+				colors[3] = src_surf->format->palette->colors[pixel].unused;
+			pixel = mySDL_SetRGBAV(dst_surf->format, colors);
 
 			/* Store it. */
 			encodepixel((Uint8 *) dst, dst_surf->format->BytesPerPixel, pixel);
@@ -917,19 +881,19 @@ void mySDL_BlitSurface(
 		src->format->Amask == dst->format->Amask )
 	{
 		/* RGBA->RGBA with the same format, or PAL->PAL.  Simple copy. */
-		blit<blit_traits_identity>(src, dst, width, height);
+		blit_same_type(src, dst, width, height);
 	}
 
 	else if( src->format->BytesPerPixel != 1 && dst->format->BytesPerPixel != 1 )
 	{
 		/* RGBA->RGBA with different formats. */
-		blit<blit_traits_rescale>(src, dst, width, height);
+		blit_rgba_to_rgba(src, dst, width, height);
 	}
 
 	else if( src->format->BytesPerPixel == 1 && dst->format->BytesPerPixel != 1 )
 	{
 		/* PAL->RGBA. */
-		blit<blit_traits_depallete>(src, dst, width, height);
+		blit_generic(src, dst, width, height);
 	}
 	else
 		/* We don't do RGBA->PAL. */
