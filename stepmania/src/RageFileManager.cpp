@@ -364,7 +364,7 @@ int GetFileModTime( const CString &sPath )
 	return FILEMAN->GetFileModTime( sPath );
 }
 
-void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
+void GetDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
 	FILEMAN->GetDirListing( sPath, AddTo, bOnlyDirs, bReturnPathToo );
 }
