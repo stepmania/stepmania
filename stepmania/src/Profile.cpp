@@ -399,8 +399,6 @@ void Profile::LoadSongScoresFromDir( CString sDir )
 {
 	CHECKPOINT;
 
-	Profile* pProfile = this;
-
 	CString fn = sDir + SONG_SCORES_XML;
 
 	XNode xml;
@@ -784,8 +782,6 @@ void Profile::LoadCourseScoresFromDir( CString sDir )
 {
 	CHECKPOINT;
 
-	Profile* pProfile = this;
-
 	CString fn = sDir + COURSE_SCORES_XML;
 
 	XNode xml;
@@ -873,8 +869,6 @@ void Profile::SaveCategoryScoresToDir( CString sDir ) const
 void Profile::LoadCategoryScoresFromDir( CString sDir )
 {
 	CHECKPOINT;
-
-	Profile* pProfile = this;
 
 	CString fn = sDir + CATEGORY_SCORES_XML;
 
