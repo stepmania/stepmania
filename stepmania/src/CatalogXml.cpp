@@ -42,6 +42,9 @@ void SaveCatalogXml()
 	for( unsigned i=0; i<vpSongs.size(); i++ )
 	{
 		Song* pSong = vpSongs[i];
+		
+		if( pSong->IsTutorial() )
+			continue;	// skip
 
 		SongID songID;
 		songID.FromSong( pSong );
