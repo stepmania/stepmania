@@ -51,7 +51,6 @@ bool IniFile::ReadFile()
 	CString line;
 	while (getline(file, line))
 	{
-		
 		if(line.size() >= 3 &&
 			line[0] == '\xef' &&
 			line[1] == '\xbb' &&
@@ -64,6 +63,8 @@ bool IniFile::ReadFile()
 
 		if (line == "")
 			continue;
+
+		StripCrnl(line);
 
 		if (line.substr(0, 2) == "//" || line.substr(0) == "#")
 			continue; /* comment */
