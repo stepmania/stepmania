@@ -11,7 +11,7 @@ class AudioConverter : public FormatConverterClient
 {
 public:
     AudioConverter( RageSound_CA *driver, const Desc &procFormat );
-    ~AudioConverter() { delete mBuffer; }
+    ~AudioConverter() { delete [] mBuffer; }
 protected:
     OSStatus FormatConverterInputProc(UInt32& ioNumberDataPackets,
                                       AudioBufferList& ioData,
