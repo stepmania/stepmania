@@ -190,22 +190,26 @@ ScreenEdit::ScreenEdit()
 
 	m_pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
 	
-	if( m_pNotes == NULL )
-	{
-		m_pNotes = new Notes;
-		m_pNotes->SetDifficulty(DIFFICULTY_MEDIUM);
-		m_pNotes->m_NotesType = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
-		m_pNotes->SetDescription("Untitled");
 
-		// In ScreenEditMenu, the screen preceding this one,
-		// GAMEMAN->m_CurStyle is set to the target game style
-		// of the current edit. Naturally, this is where we'll
-		// want to extract the NotesType for a (NEW) sequence.
+	/* Make EditMenu responsible for creating new Notes */
+	//if( m_pNotes == NULL )
+	//{
+	//	m_pNotes = new Notes;
+	//	m_pNotes->SetDifficulty(DIFFICULTY_MEDIUM);
+	//	m_pNotes->m_NotesType = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
+	//	m_pNotes->SetDescription("Untitled");
 
-		m_pSong->m_apNotes.push_back( m_pNotes );
+	//	// In ScreenEditMenu, the screen preceding this one,
+	//	// GAMEMAN->m_CurStyle is set to the target game style
+	//	// of the current edit. Naturally, this is where we'll
+	//	// want to extract the NotesType for a (NEW) sequence.
 
-		GAMESTATE->m_pCurNotes[PLAYER_1] = m_pNotes;
-	}
+	//	m_pSong->m_apNotes.push_back( m_pNotes );
+
+	//	GAMESTATE->m_pCurNotes[PLAYER_1] = m_pNotes;
+	//}
+
+
 
 	NoteData noteData;
 	m_pNotes->GetNoteData( &noteData );

@@ -19,7 +19,7 @@
 !define PRODUCT_NAME_VER "${PRODUCT_NAME} ${VERSION}"
 
 Name "${PRODUCT_NAME}"
-OutFile "stepmania-CVS-20030130.exe"
+OutFile "stepmania-CVS-20030202.exe"
 ;OutFile "stepmania301.exe"
 
 ; Some default compiler settings (uncomment and change at will):
@@ -179,7 +179,7 @@ File "SDL_image.dll"
 ; File "SDL_net.dll"
 
 File "COPYING.txt"
-File "README-FIRST.TXT"
+File "README-FIRST.htm"
 File "NEWS"
 File "stepmania.exe"
 File "stepmania.vdi"
@@ -208,7 +208,7 @@ CreateShortCut "$DESKTOP\Play ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\stepmania.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME_VER}.lnk" "$INSTDIR\stepmania.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Open Songs Folder.lnk" "$WINDIR\explorer.exe" "$INSTDIR\Songs\"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Package Exporter.lnk" "$INSTDIR\smpackage.exe"
-CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\README.lnk" "$INSTDIR\README-FIRST.txt"
+CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\README-FIRST.lnk" "$INSTDIR\README-FIRST.htm"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\uninst.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Go To StepMania web site.lnk" "http://www.stepmania.com"
 

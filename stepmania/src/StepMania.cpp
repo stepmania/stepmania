@@ -444,7 +444,7 @@ static void HandleInputEvents(float fDeltaTime)
 			ApplyGraphicOptions();
 		}
 		*/
-		else if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F6))
+		else if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F5))	// F6 conflicts with editor and AutoSync
 		{
 			if(type != IET_FIRST_PRESS) continue;
 

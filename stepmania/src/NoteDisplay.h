@@ -28,12 +28,21 @@ public:
 	void DrawHold( const HoldNote& hn, const bool bActive, const float fLife, const float fPercentFadeToFail, bool bDrawGlowOnly = false );
 
 protected:
-	int			GetTapFrameNo( const float fNoteBeat );
+	int GetFrameNo( float fNoteBeat, int iNumFrames, float fAnimationLengthInBeats, bool bVivid, bool bNoteColor  );
+	int	GetTapNoteFrameNo( float fNoteBeat );
+	int	GetHoldHeadFrameNo( float fNoteBeat, bool bActive );
+	int	GetHoldBodyFrameNo( float fNoteBeat, bool bActive );
+	int	GetHoldTailFrameNo( float fNoteBeat, bool bActive );
 
 	PlayerNumber m_PlayerNumber;	// to look up PlayerOptions
 
-	Sprite		m_sprTap;
-	Sprite		m_sprHoldParts;
+	Sprite		m_sprTapNote;
+	Sprite		m_sprHoldHeadActive;
+	Sprite		m_sprHoldHeadInactive;
+	Sprite		m_sprHoldBodyActive;
+	Sprite		m_sprHoldBodyInactive;
+	Sprite		m_sprHoldTailActive;
+	Sprite		m_sprHoldTailInactive;
 };
 
 #endif

@@ -73,6 +73,7 @@ enum NoteType
 RageColor NoteTypeToColor( NoteType nt );
 float NoteTypeToBeat( NoteType nt );
 NoteType GetNoteType( int iNoteIndex );
+NoteType BeatToNoteType( float fBeat );
 bool IsNoteOfType( int iNoteIndex, NoteType t );
 RageColor GetNoteColorFromIndex( int iNoteIndex );
 RageColor GetNoteColorFromBeat( float fBeat );

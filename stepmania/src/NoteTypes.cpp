@@ -53,6 +53,11 @@ NoteType GetNoteType( int iNoteIndex )
 	else												return NOTE_TYPE_INVALID;
 };
 
+NoteType BeatToNoteType( float fBeat )
+{ 
+	return GetNoteType( BeatToNoteRow(fBeat) );
+};
+
 bool IsNoteOfType( int iNoteIndex, NoteType t )
 { 
 	return GetNoteType(iNoteIndex) == t;
