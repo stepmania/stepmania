@@ -317,38 +317,6 @@ static bool ChangeAppPri()
 	return true;
 }
 
-static void BoostAppPri()
-{
-	if( !ChangeAppPri() )
-		return;
-
-#ifdef _WINDOWS
-	/* We just want a slight boost, so we don't skip needlessly if something happens
-	 * in the background.  We don't really want to be high-priority--above normal should
-	 * be enough.  However, ABOVE_NORMAL_PRIORITY_CLASS is only supported in Win2000
-	 * and later. */
-	OSVERSIONINFO version;
-	version.dwOSVersionInfoSize=sizeof(version);
-	if( !GetVersionEx(&version) )
-	{
-		LOG->Warn( werr_ssprintf(GetLastError(), "GetVersionEx failed") );
-		return;
-	}
-
-#ifndef ABOVE_NORMAL_PRIORITY_CLASS
-#define ABOVE_NORMAL_PRIORITY_CLASS 0x00008000
-#endif
-
-	DWORD pri = HIGH_PRIORITY_CLASS;
-	if( version.dwMajorVersion >= 5 )
-		pri = ABOVE_NORMAL_PRIORITY_CLASS;
-
-	/* Be sure to boost the app, not the thread, to make sure the
-	 * sound thread stays higher priority than the main thread. */
-	SetPriorityClass( GetCurrentProcess(), pri );
-#endif
-}
-
 static void CheckSettings()
 {
 #if defined(WIN32)
@@ -736,17 +704,6 @@ RageDisplay *CreateDisplay()
 
 	RageException::Throw( error );
 }
-
-static void RestoreAppPri()
-{
-	if(!ChangeAppPri())
-		return;
-
-#ifdef _WINDOWS
-	SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
-#endif
-}
-
 
 #define GAMEPREFS_INI_PATH "Data/GamePrefs.ini"
 #define STATIC_INI_PATH "Data/Static.ini"
@@ -1169,7 +1126,8 @@ int main(int argc, char* argv[])
 
 	/* People may want to do something else while songs are loading, so do
 	 * this after loading songs. */
-	BoostAppPri();
+	if( ChangeAppPri() )
+		HOOKS->BoostPriority();
 
 	ResetGame();
 
@@ -1489,10 +1447,13 @@ void FocusChanged( bool bHasFocus )
 	/* If we lose focus, we may lose input events, especially key releases. */
 	INPUTFILTER->Reset();
 
-	if(g_bHasFocus)
-		BoostAppPri();
-	else
-		RestoreAppPri();
+	if( ChangeAppPri() )
+	{
+		if( g_bHasFocus )
+			HOOKS->BoostPriority();
+		else
+			HOOKS->UnBoostPriority();
+	}
 }
 
 static void CheckSkips( float fDeltaTime )

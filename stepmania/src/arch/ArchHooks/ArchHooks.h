@@ -23,6 +23,9 @@ public:
 
 	virtual void SetTime( tm newtime ) { }
 
+	virtual void BoostPriority() { }
+	virtual void UnBoostPriority() { }
+
 	/*
 	 * Return the amount of time since the program started.  (This may actually be
 	 * since the initialization of HOOKS.

@@ -1,6 +1,7 @@
 #include "global.h"
 #include "ArchHooks_Win32.h"
 #include "RageUtil.h"
+#include "RageLog.h"
 #include "RageThreads.h"
 #include "PrefsManager.h"
 #include "ProductInfo.h"
@@ -183,6 +184,38 @@ void ArchHooks_Win32::SetTime( tm newtime )
     st.wSecond = (WORD)newtime.tm_sec;
     st.wMilliseconds = 0;
 	SetLocalTime( &st ); 
+}
+
+void ArchHooks_Win32::BoostPriority()
+{
+	/* We just want a slight boost, so we don't skip needlessly if something happens
+	 * in the background.  We don't really want to be high-priority--above normal should
+	 * be enough.  However, ABOVE_NORMAL_PRIORITY_CLASS is only supported in Win2000
+	 * and later. */
+	OSVERSIONINFO version;
+	version.dwOSVersionInfoSize=sizeof(version);
+	if( !GetVersionEx(&version) )
+	{
+		LOG->Warn( werr_ssprintf(GetLastError(), "GetVersionEx failed") );
+		return;
+	}
+
+#ifndef ABOVE_NORMAL_PRIORITY_CLASS
+#define ABOVE_NORMAL_PRIORITY_CLASS 0x00008000
+#endif
+
+	DWORD pri = HIGH_PRIORITY_CLASS;
+	if( version.dwMajorVersion >= 5 )
+		pri = ABOVE_NORMAL_PRIORITY_CLASS;
+
+	/* Be sure to boost the app, not the thread, to make sure the
+	 * sound thread stays higher priority than the main thread. */
+	SetPriorityClass( GetCurrentProcess(), pri );
+}
+
+void ArchHooks_Win32::UnBoostPriority()
+{
+	SetPriorityClass( GetCurrentProcess(), NORMAL_PRIORITY_CLASS );
 }
 
 static bool g_bTimerInitialized;

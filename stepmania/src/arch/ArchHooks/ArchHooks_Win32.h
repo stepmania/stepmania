@@ -18,6 +18,9 @@ public:
 	void ExitTimeCriticalSection();
 	void SetTime( tm newtime );
 
+	void BoostPriority();
+	void UnBoostPriority();
+
 private:
 	void CheckVideoDriver();
 };
