@@ -574,6 +574,9 @@ void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bActive, float fY
 	const float fYBodyTop = fYHead + cache->m_iStartDrawingHoldBodyOffsetFromHead;
 	const float fYBodyBottom = fYTail + cache->m_iStopDrawingHoldBodyOffsetFromTail;
 	
+	const bool bReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].GetReversePercentForColumn(iCol) > 0.5;
+	bool bAnchorToBottom = bReverse && cache->m_bFlipHeadAndTailWhenReverse;
+
 	// top to bottom
 	for( float fY=fYBodyTop; fY<=fYBodyBottom; fY+=fYStep )
 	{
@@ -591,8 +594,10 @@ void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bActive, float fY
 		const float fXBottomRight			= fXBottom + fFrameWidth/2;
 		const float fTopDistFromBodyBottom		= fYBodyBottom - fYTop;
 		const float fBottomDistFromBodyBottom	= fYBodyBottom - fYBottom;
-				float fTexCoordTop			= SCALE( fTopDistFromBodyBottom,    0, fFrameHeight, pRect->bottom, pRect->top );
-				float fTexCoordBottom			= SCALE( fBottomDistFromBodyBottom, 0, fFrameHeight, pRect->bottom, pRect->top );
+		const float fTopDistFromBodyTop		= fYTop - fYBodyTop;
+		const float fBottomDistFromBodyTop	= fYBottom - fYBodyTop;
+		float fTexCoordTop		= SCALE( bAnchorToBottom ? fTopDistFromBodyTop : fTopDistFromBodyBottom,    0, fFrameHeight, pRect->bottom, pRect->top );
+		float fTexCoordBottom	= SCALE( bAnchorToBottom ? fBottomDistFromBodyTop : fBottomDistFromBodyBottom, 0, fFrameHeight, pRect->bottom, pRect->top );
 		if( fTexCoordTop < 0 )
 		{
 			int iToSubtract = (int)fTexCoordTop - 1;
@@ -602,6 +607,18 @@ void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bActive, float fY
 		else if( fTexCoordBottom > 2 )
 		{
 			int iToSubtract = (int)fTexCoordBottom;
+			fTexCoordTop -= iToSubtract;
+			fTexCoordBottom -= iToSubtract;
+		}
+		if( fTexCoordBottom < 0 )
+		{
+			int iToSubtract = (int)fTexCoordBottom - 1;
+			fTexCoordTop -= iToSubtract;
+			fTexCoordBottom -= iToSubtract;
+		}
+		else if( fTexCoordTop > 2 )
+		{
+			int iToSubtract = (int)fTexCoordTop;
 			fTexCoordTop -= iToSubtract;
 			fTexCoordBottom -= iToSubtract;
 		}
