@@ -79,6 +79,7 @@ protected:
 	vector<State> m_States;
 	int		m_iCurState;
 	float	m_fSecsIntoState;	// number of seconds that have elapsed since we switched to this frame
+	float	m_fLastTime;
 
 	bool m_bUsingCustomTexCoords;
 	float m_CustomTexCoords[8];     // (x,y) * 4: top left, bottom left, bottom right, top right

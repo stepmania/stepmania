@@ -18,7 +18,7 @@ Sprite::Sprite()
 	m_pTexture = NULL;
 	m_bDrawIfTextureNull = false;
 	m_iCurState = 0;
-	m_fSecsIntoState = 0.0;
+	m_fSecsIntoState = m_fLastTime = 0.0f;
 	m_bUsingCustomTexCoords = false;
 	
 	m_fRememberedClipWidth = -1;
@@ -283,7 +283,26 @@ void Sprite::Update( float fDelta )
 	if( !m_pTexture )	// no texture, nothing to animate
 	    return;
 
-	m_fSecsIntoState += fDelta;
+	float fTimePassed = 0;
+	switch( m_EffectClock )
+	{
+	case CLOCK_TIMER:
+		fTimePassed = fDelta;
+		break;
+
+	case CLOCK_BGM_BEAT:
+		fTimePassed = g_fCurrentBGMBeat - m_fLastTime;
+		m_fLastTime = g_fCurrentBGMBeat;
+		break;
+
+	case CLOCK_BGM_TIME:
+		fTimePassed = g_fCurrentBGMTime - m_fLastTime;
+		m_fLastTime = g_fCurrentBGMTime;
+		break;
+	default: FAIL_M( ssprintf("%i",m_EffectClock) );
+	}
+
+	m_fSecsIntoState += fTimePassed;
 	UpdateAnimationState();
 
 	//
@@ -627,7 +646,7 @@ void Sprite::SetState( int iNewState )
 
 	CLAMP(iNewState, 0, (int)m_States.size()-1);
 	m_iCurState = iNewState;
-	m_fSecsIntoState = 0.0; 
+	m_fSecsIntoState = m_fLastTime = 0.0f;
 }
 
 float Sprite::GetAnimationLengthSeconds() const
