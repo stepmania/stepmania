@@ -314,9 +314,28 @@ int RageSurfaceUtils::FindSurfaceTraits( const RageSurface *img )
 
 	uint32_t max_alpha;
 	if( img->format->BitsPerPixel == 8 )
+	{
+		/* Short circuit if we already know we have no transparency. */
+		bool bHaveNonOpaque = false;
+		for( int c = 0; !bHaveNonOpaque && c < img->format->palette->ncolors; ++c )
+		{
+			if( img->format->palette->colors[c].a != 256 )
+				bHaveNonOpaque = true;
+		}
+
+		if( !bHaveNonOpaque )
+			return TRAIT_NO_TRANSPARENCY;
+
 		max_alpha = 0xFF;
+	}
 	else
+	{
+		/* Short circuit if we already know we have no transparency. */
+		if( img->format->Amask == 0 )
+			return TRAIT_NO_TRANSPARENCY;
+
 		max_alpha = img->format->Amask;
+	}
 
 	for(int y = 0; y < img->h; ++y)
 	{
