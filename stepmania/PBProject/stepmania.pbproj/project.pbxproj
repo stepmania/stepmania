@@ -140,14 +140,11 @@
 				AA4E8F5D05E6090F0091C1A8,
 				AA6EFDC804770AF1005F316C,
 				AA6EFE5704770C7E005F316C,
-				29B97323FDCFA39411CA2CEA,
 				AA6E00FE047711FF005F316C,
 				AA507E4F050BA1A000F96139,
 				AAAE28D60522523F00D02EE9,
 				29B97315FDCFA39411CA2CEA,
-				19C28FACFE9D520D11CA2CBB,
 				AA6EFDBB04770A83005F316C,
-				29B97317FDCFA39411CA2CEA,
 				AA6E00090477103E005F316C,
 				AA6EFE6A04770D01005F316C,
 				AA6EFF6F04770F6A005F316C,
@@ -155,6 +152,9 @@
 				AAFC803F0513A6EB00D02EE9,
 				AA67BFCE0558751E00EF34A6,
 				AA29CE570558741A00961A51,
+				29B97323FDCFA39411CA2CEA,
+				19C28FACFE9D520D11CA2CBB,
+				29B97317FDCFA39411CA2CEA,
 			);
 			isa = PBXGroup;
 			name = "SDL App";
@@ -1639,18 +1639,18 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = ScreenNetSelectMusic.cpp;
-			path = src/ScreenNetSelectMusic.cpp;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/ScreenNetSelectMusic.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA22CBA406DE909C0083BA97 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = ScreenNetSelectMusic.h;
-			path = src/ScreenNetSelectMusic.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/ScreenNetSelectMusic.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA22CBA506DE909C0083BA97 = {
 			fileRef = AA22CBA306DE909C0083BA97;
@@ -6239,9 +6239,10 @@
 			explicitFileType = sourcecode.cpp;
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = SDLMain.m;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
+			name = SDLMain.m;
+			path = ../PBProject/SDLMain.m;
+			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -6943,9 +6944,9 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = CourseUtil.cpp;
-			path = src/CourseUtil.cpp;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/CourseUtil.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 			usesTabs = 1;
 		};
 		AA5C73F80637A5F000AFB891 = {
@@ -6953,9 +6954,9 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = CourseUtil.h;
-			path = src/CourseUtil.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/CourseUtil.h;
+			refType = 4;
+			sourceTree = "<group>";
 			usesTabs = 1;
 		};
 		AA5C73F90637A5F000AFB891 = {
@@ -6963,9 +6964,9 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = SongUtil.cpp;
-			path = src/SongUtil.cpp;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/SongUtil.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 			usesTabs = 1;
 		};
 		AA5C73FA0637A5F000AFB891 = {
@@ -6973,9 +6974,9 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = SongUtil.h;
-			path = src/SongUtil.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/SongUtil.h;
+			refType = 4;
+			sourceTree = "<group>";
 			usesTabs = 1;
 		};
 		AA5C73FB0637A5F000AFB891 = {
@@ -6983,9 +6984,9 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = StepsUtil.cpp;
-			path = src/StepsUtil.cpp;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/StepsUtil.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 			usesTabs = 1;
 		};
 		AA5C73FC0637A5F000AFB891 = {
@@ -6993,9 +6994,9 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = StepsUtil.h;
-			path = src/StepsUtil.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/StepsUtil.h;
+			refType = 4;
+			sourceTree = "<group>";
 			usesTabs = 1;
 		};
 		AA5C73FD0637A5F100AFB891 = {
@@ -7110,18 +7111,18 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = RageFileDriverMemory.cpp;
-			path = src/RageFileDriverMemory.cpp;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/RageFileDriverMemory.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA64218706EC606F00C21584 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = RageFileDriverMemory.h;
-			path = src/RageFileDriverMemory.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/RageFileDriverMemory.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA64218806EC606F00C21584 = {
 			fileRef = AA64218606EC606F00C21584;
@@ -12792,9 +12793,9 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = Trail.cpp;
-			path = src/Trail.cpp;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/Trail.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 			usesTabs = 1;
 		};
 		AA70E3660663112800DAE1FD = {
@@ -12802,9 +12803,9 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = Trail.h;
-			path = src/Trail.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/Trail.h;
+			refType = 4;
+			sourceTree = "<group>";
 			usesTabs = 1;
 		};
 		AA70E3670663112800DAE1FD = {
@@ -12812,9 +12813,9 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = TrailUtil.cpp;
-			path = src/TrailUtil.cpp;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/TrailUtil.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 			usesTabs = 1;
 		};
 		AA70E3680663112800DAE1FD = {
@@ -12822,9 +12823,9 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = TrailUtil.h;
-			path = src/TrailUtil.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/TrailUtil.h;
+			refType = 4;
+			sourceTree = "<group>";
 			usesTabs = 1;
 		};
 		AA70E3690663112800DAE1FD = {
@@ -13021,9 +13022,10 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			path = SDLMain.h;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
+			name = SDLMain.h;
+			path = ../PBProject/SDLMain.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA75DA1806E0944700EF13B5 = {
 			fileRef = AA75DA1706E0944700EF13B5;
@@ -13036,18 +13038,18 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = NetworkSyncServer.cpp;
-			path = src/NetworkSyncServer.cpp;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/NetworkSyncServer.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA75DA1F06E0A1B500EF13B5 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = NetworkSyncServer.h;
-			path = src/NetworkSyncServer.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/NetworkSyncServer.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA75DA2006E0A1B500EF13B5 = {
 			fileRef = AA75DA1E06E0A1B500EF13B5;
@@ -13185,18 +13187,18 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = RageUtil_BackgroundLoader.cpp;
-			path = src/RageUtil_BackgroundLoader.cpp;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/RageUtil_BackgroundLoader.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA8A405006EEFF72002F25AB = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = RageUtil_BackgroundLoader.h;
-			path = src/RageUtil_BackgroundLoader.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/RageUtil_BackgroundLoader.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA8A405106EEFF72002F25AB = {
 			fileRef = AA8A404F06EEFF72002F25AB;
@@ -13339,9 +13341,9 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = EnumHelper.cpp;
-			path = src/EnumHelper.cpp;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/EnumHelper.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 			usesTabs = 1;
 		};
 		AA8F136F0624BAB200C6A467 = {
@@ -13349,9 +13351,9 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = EnumHelper.h;
-			path = src/EnumHelper.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/EnumHelper.h;
+			refType = 4;
+			sourceTree = "<group>";
 			usesTabs = 1;
 		};
 		AA8F13710624BAB200C6A467 = {
@@ -14260,36 +14262,36 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = RageSurfaceUtils_Palettize.cpp;
-			path = src/RageSurfaceUtils_Palettize.cpp;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/RageSurfaceUtils_Palettize.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAB9C8AC06EAF64400AD97CD = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = RageSurfaceUtils_Palettize.h;
-			path = src/RageSurfaceUtils_Palettize.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/RageSurfaceUtils_Palettize.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAB9C8AD06EAF64400AD97CD = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = RageSurfaceUtils.cpp;
-			path = src/RageSurfaceUtils.cpp;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/RageSurfaceUtils.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAB9C8AE06EAF64400AD97CD = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = RageSurfaceUtils.h;
-			path = src/RageSurfaceUtils.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/RageSurfaceUtils.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAB9C8AF06EAF64400AD97CD = {
 			fileRef = AAB9C8AB06EAF64400AD97CD;
@@ -14320,18 +14322,18 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = ScreenNetEvaluation.cpp;
-			path = src/ScreenNetEvaluation.cpp;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/ScreenNetEvaluation.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAB9C8B406EAF66C00AD97CD = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = ScreenNetEvaluation.h;
-			path = src/ScreenNetEvaluation.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/ScreenNetEvaluation.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAB9C8B506EAF66C00AD97CD = {
 			fileRef = AAB9C8B306EAF66C00AD97CD;
@@ -16325,9 +16327,9 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = CatalogXml.cpp;
-			path = src/CatalogXml.cpp;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/CatalogXml.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 			usesTabs = 1;
 		};
 		AAD6A6DF065E0A8D0042165A = {
@@ -16335,9 +16337,9 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = CatalogXml.h;
-			path = src/CatalogXml.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/CatalogXml.h;
+			refType = 4;
+			sourceTree = "<group>";
 			usesTabs = 1;
 		};
 		AAD6A6E0065E0A8D0042165A = {
@@ -16357,9 +16359,9 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = Difficulty.cpp;
-			path = src/Difficulty.cpp;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/Difficulty.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 			usesTabs = 1;
 		};
 		AAD6A713065E0FDF0042165A = {
@@ -16367,9 +16369,9 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = Difficulty.h;
-			path = src/Difficulty.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/Difficulty.h;
+			refType = 4;
+			sourceTree = "<group>";
 			usesTabs = 1;
 		};
 		AAD6A714065E0FDF0042165A = {
@@ -17053,9 +17055,9 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = LuaFunctions.h;
-			path = src/LuaFunctions.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/LuaFunctions.h;
+			refType = 4;
+			sourceTree = "<group>";
 			usesTabs = 1;
 		};
 		AAEA090705E23DF900D38622 = {
@@ -17063,9 +17065,9 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = LuaHelpers.cpp;
-			path = src/LuaHelpers.cpp;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/LuaHelpers.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 			usesTabs = 1;
 		};
 		AAEA090805E23DF900D38622 = {
@@ -17073,9 +17075,9 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = LuaHelpers.h;
-			path = src/LuaHelpers.h;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
+			path = ../src/LuaHelpers.h;
+			refType = 4;
+			sourceTree = "<group>";
 			usesTabs = 1;
 		};
 		AAEA090905E23DF900D38622 = {
