@@ -421,7 +421,7 @@ void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bRe
 bool ResolvePath(CString &path) { return FDB.ResolvePath(path); }
 
 
-#if 0
+#if 1
 bool DoesFileExist( const CString &sPath ) { return FDB.DoesFileExist(sPath); }
 bool IsAFile( const CString &sPath ) { return FDB.IsAFile(sPath); }
 bool IsADirectory( const CString &sPath ) { return FDB.IsADirectory(sPath); }
