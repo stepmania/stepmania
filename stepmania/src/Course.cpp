@@ -224,15 +224,29 @@ Notes* Course::GetNotesForStage( int iStage )
 	Song* pSong = GetSong(iStage);
 	CString sDescription = entries[iStage].description;
 	
-	for( unsigned i=0; i<pSong->m_apNotes.size(); i++ )
+	/* First, search for an exact description match. */
+	unsigned i;
+	for( i=0; i<pSong->m_apNotes.size(); i++ )
 	{
 		Notes* pNotes = pSong->m_apNotes[i];
 
 		if( !GAMESTATE->GetCurrentStyleDef()->MatchesNotesType(pNotes->m_NotesType) )
 			continue;
 
-		if( !pNotes->GetDescription().CompareNoCase(sDescription)  ||
-			!DifficultyToString(pNotes->GetDifficulty()).CompareNoCase(sDescription) )
+		if( !pNotes->GetDescription().CompareNoCase(sDescription) )
+			return pNotes;
+	}
+
+	/* If that failed, try to do a difficulty match. */
+	Difficulty dc = StringToDifficulty(sDescription);
+	for( i=0; i < pSong->m_apNotes.size(); i++ )
+	{
+		Notes* pNotes = pSong->m_apNotes[i];
+
+		if( !GAMESTATE->GetCurrentStyleDef()->MatchesNotesType(pNotes->m_NotesType) )
+			continue;
+
+		if(dc == pNotes->GetDifficulty())
 			return pNotes;
 	}
 
