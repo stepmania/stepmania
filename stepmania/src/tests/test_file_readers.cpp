@@ -5,6 +5,10 @@
 #include "RageUtil_FileDB.h"
 #include "RageFileManager.h"
 
+#include <unistd.h>
+
+bool CreateTestFiles = false;
+
 void CreateBinaryTestFile( FILE *out, int size )
 {
 	char c = 0;
@@ -83,26 +87,40 @@ bool CheckTextData( const CString &buf, int LineSize, int size )
 
 void TestText( int LineSize, bool DOS )
 {
-	FILE *out = fopen( "test.2", "w+b" );
-
 	const unsigned NumLines = 50;
-	for( unsigned line = 0; line < NumLines; ++line )
-	{
-		const CString TestLine = MakeTextTestLine( line, LineSize );
-		fprintf( out, "%s", TestLine.c_str() );
-		if( DOS )
-			fprintf( out, "\r" );
-		fprintf( out, "\n" );
-	}
 	
-	/* Write a binary test block at the end. */
-	CreateBinaryTestFile( out, 4096 );
+	CString filename = "test.text";
+	if( DOS )
+		filename += ".DOS";
+	filename += ssprintf( ".%i", LineSize );
+	if( CreateTestFiles )
+	{
+		FILE *out = fopen( filename, "w+b" );
 
-	fclose( out );
-	out = NULL;
+		for( unsigned line = 0; line < NumLines; ++line )
+		{
+			const CString TestLine = MakeTextTestLine( line, LineSize );
+			fprintf( out, "%s", TestLine.c_str() );
+			if( DOS )
+				fprintf( out, "\r" );
+			fprintf( out, "\n" );
+		}
+		
+		/* Write a binary test block at the end. */
+		CreateBinaryTestFile( out, 4096 );
+
+		fclose( out );
+		out = NULL;
+			return;
+	}
 
 	RageFile test;
-	test.Open("test.2");
+	if( !test.Open(filename) )
+	{
+		LOG->Warn( "Open \"%s\" failed: %s", filename.c_str(), test.GetError().c_str() );
+		exit(1);
+	}
+		
 	int ExpectedPos = 0;
 	for( unsigned line = 0; line < NumLines; ++line )
 	{
@@ -166,21 +184,24 @@ void TestText()
 
 void TestSeek( bool relative )
 {
-	/* Output a line of text, followed by some junk, followed by binary
-	 * test data. */
-	FILE *out = fopen( "test.3", "w+b" );
 	const CString TestLine = "Hello World\n";
 	const CString junk = "XXXXXXXX";
-	fprintf( out, "%s", TestLine.c_str() );
-	fprintf( out, "%s", junk.c_str() );
-	CreateBinaryTestFile( out, 1024 );
-	fclose( out );
-	out = NULL;
-	
+	if( CreateTestFiles )
+	{
+		/* Output a line of text, followed by some junk, followed by binary
+		 * test data. */
+		FILE *out = fopen( "test.seek", "w+b" );
+		fprintf( out, "%s", TestLine.c_str() );
+		fprintf( out, "%s", junk.c_str() );
+		CreateBinaryTestFile( out, 1024 );
+		fclose( out );
+		return;
+	}
+		
 	/* Read the line of text.  This will result in some of the junk being
 	 * read into the buffer. */
 	RageFile test;
-	test.Open("test.3");
+	test.Open("test.seek");
 	CString line;
 	test.GetLine( line );
 
@@ -229,31 +250,65 @@ void TestSeek( bool relative )
 
 int main( int argc, char *argv[] )
 {
+	CString Driver = "dir", Root = ".";
+	while( 1 )
+	{
+		int opt = getopt( argc, argv, "cd:r:h" );
+		if( opt == -1 )
+			break;
+		switch( opt )
+		{
+		case 'c':
+			CreateTestFiles = true;
+			break;
+		case 'd':
+			Driver = optarg;
+			break;
+		case 'r':
+			Root = optarg;
+			break;
+
+		case 'h':
+			printf( "options:\n" );
+			printf( " -c: create test files\n" );
+			printf( " -d driver: choose file driver to test (default \"Dir\")\n" );
+			printf( " -r root: set file driver root (default \".\")\n" );
+			exit(1);
+		}
+
+	}
+
 	FILEMAN = new RageFileManager( argv[0] );
-	FILEMAN->Mount( "dir", ".", "" );
+	FILEMAN->Mount( Driver, Root, "" );
 
 	LOG			= new RageLog();
+	LOG->SetLogToDisk( false );
 	LOG->SetShowLogOutput( true );
 	LOG->SetFlushing( true );
 
-	/* Create a binary file to test with. */
-	CreateBinaryTestFile( "test.1", 4096 );
+	if( CreateTestFiles )
+		CreateBinaryTestFile( "test.binary", 4096 );
+	else
 	{
 		/* Test binary reading. */
 		RageFile test;
-		test.Open("test.1");
+		if( !test.Open("test.binary") )
+		{
+			LOG->Warn( "Open \"test.binary\" failed: %s", test.GetError().c_str() );
+			exit(1);
+		}
 
 		TestBinaryRead( test, 256, false, 0, 0 );
 
 		/* Test simple re-opening. */
 		test.Close();
-		test.Open("test.1");
+		test.Open("test.binary");
 
 		/* We should now be back at 0. */
 		if( test.Tell() != 0 )
 		{
 			LOG->Warn( "Simple Tell() after reopen failed (got %i, expected 0)", test.Tell() );
-			exit(0);
+			exit(1);
 		}
 
 		/* Test reading further, with various block sizes. */
@@ -270,7 +325,7 @@ int main( int argc, char *argv[] )
 	/* Test seeking. */
 	TestSeek( true );
 	TestSeek( false );
-	
+
 	exit(0);
 }
 
