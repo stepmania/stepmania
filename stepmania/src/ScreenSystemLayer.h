@@ -14,6 +14,16 @@ const int NUM_SKIPS_TO_SHOW = 5;
 
 class ScreenSystemLayer : public Screen
 {
+public:
+	ScreenSystemLayer();
+	virtual void Init();
+	void SystemMessage( const CString &sMessage );
+	void SystemMessageNoAnimate( const CString &sMessage );
+	void ReloadCreditsText();
+	void RefreshCreditsMessages();
+	void Update( float fDeltaTime );
+
+private:
 	BitmapText m_textStats;
 	BitmapText m_textMessage;
 	BitmapText m_textCredits[NUM_PLAYERS];
@@ -25,15 +35,6 @@ class ScreenSystemLayer : public Screen
 	RageTimer SkipTimer;
 	void AddTimestampLine( const CString &txt, const RageColor &color );
 	void UpdateTimestampAndSkips();
-
-public:
-	ScreenSystemLayer();
-	virtual void Init();
-	void SystemMessage( const CString &sMessage );
-	void SystemMessageNoAnimate( const CString &sMessage );
-	void ReloadCreditsText();
-	void RefreshCreditsMessages();
-	void Update( float fDeltaTime );
 };
 
 
