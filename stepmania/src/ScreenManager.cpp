@@ -210,6 +210,7 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 
 #include "ScreenPrompt.h"
 #include "ScreenTextEntry.h"
+#include "ScreenMiniMenu.h"
 
 Screen* ScreenManager::MakeNewScreen( CString sClassName )
 {
@@ -349,6 +350,12 @@ void ScreenManager::TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion,
 {	
 	// add the new state onto the back of the array
 	m_ScreenStack.push_back( new ScreenTextEntry(SM_SendWhenDone, sQuestion, sInitialAnswer, OnOK, OnCanel) );
+}
+
+void ScreenManager::MiniMenu( MiniMenuDefinition* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
+{
+	// add the new state onto the back of the array
+	m_ScreenStack.push_back( new ScreenMiniMenu(pDef, SM_SendOnOK, SM_SendOnCancel) );
 }
 
 void ScreenManager::PopTopScreen( ScreenMessage SM )

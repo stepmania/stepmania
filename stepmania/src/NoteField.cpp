@@ -37,7 +37,7 @@ NoteField::NoteField()
 	m_textMeasureNumber.SetZoom( 1.0f );
 
 	m_rectMarkerBar.TurnShadowOff();
-	m_rectMarkerBar.SetEffectGlowCamelion();
+	m_rectMarkerBar.SetEffectDiffuseShift( 2, RageColor(1,1,1,0.5f), RageColor(0.5f,0.5f,0.5f,0.5f) );
 
 	m_fBeginMarker = m_fEndMarker = -1;
 
@@ -75,25 +75,56 @@ void NoteField::Update( float fDeltaTime )
 		m_fPercentFadeToFail = min( m_fPercentFadeToFail + fDeltaTime/1.5f, 1 );	// take 1.5 seconds to totally fade
 }
 
-void NoteField::DrawMeasureBar( int iMeasureIndex )
+int NoteField::GetWidth()
 {
-	const int iMeasureNoDisplay = iMeasureIndex+1;
-	const float fBeat = float(iMeasureIndex * BEATS_PER_MEASURE);
+	return (GetNumTracks()+1) * ARROW_SIZE;
+}
+
+void NoteField::DrawBeatBar( const float fBeat )
+{
+	bool bIsMeasure = fmodf( fBeat, (float)BEATS_PER_MEASURE ) == 0;
+	int iMeasureIndex = (int)fBeat / BEATS_PER_MEASURE;
+	int iMeasureNoDisplay = iMeasureIndex+1;
+
+	NoteType nt = BeatToNoteType( fBeat );
 
 	const float fYOffset	= ArrowGetYOffset(			m_PlayerNumber, fBeat );
 	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, fYOffset );
 
-	m_rectMeasureBar.SetXY( 0, fYPos );
-	m_rectMeasureBar.SetZoomX( (float)(GetNumTracks()+1) * ARROW_SIZE );
-	m_rectMeasureBar.SetZoomY( 20 );
-	m_rectMeasureBar.SetDiffuse( RageColor(0,0,0,0.5f) );
-	m_rectMeasureBar.Draw();
 
-	m_textMeasureNumber.SetDiffuse( RageColor(1,1,1,1) );
-	m_textMeasureNumber.SetGlow( RageColor(1,1,1,0) );
-	m_textMeasureNumber.SetText( ssprintf("%d", iMeasureNoDisplay) );
-	m_textMeasureNumber.SetXY( -m_rectMeasureBar.GetZoomedWidth()/2 + 10, fYPos );
-	m_textMeasureNumber.Draw();
+	int iSegWidth;
+	int iSpaceWidth;
+	float fBrightness;
+	float fScrollSpeed = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fScrollSpeed;
+	switch( nt )
+	{
+	default:	ASSERT(0);
+	case NOTE_TYPE_4TH:	iSegWidth = 16; iSpaceWidth = 0; fBrightness = 1;	break;
+	case NOTE_TYPE_8TH:	iSegWidth = 12; iSpaceWidth = 4; fBrightness = SCALE(fScrollSpeed,1.f,2.f,0.f,1.f);	break;
+	case NOTE_TYPE_16TH:iSegWidth = 4;  iSpaceWidth = 4; fBrightness = SCALE(fScrollSpeed,2.f,4.f,0.f,1.f);	break;
+	}
+	CLAMP( fBrightness, 0, 1 );
+
+	int iWidth = GetWidth();
+	for( int i=-iWidth/2; i<+iWidth/2; )
+	{
+		m_rectMeasureBar.StretchTo( RectI(i,0,i+iSegWidth,0) );
+		m_rectMeasureBar.SetY( fYPos );
+		m_rectMeasureBar.SetZoomY( bIsMeasure ? 6.f : 2.f );
+		m_rectMeasureBar.SetDiffuse( RageColor(1,1,1,0.5f*fBrightness) );
+		m_rectMeasureBar.Draw();
+
+		i += iSegWidth + iSpaceWidth;
+	}
+
+	if( bIsMeasure )
+	{
+		m_textMeasureNumber.SetDiffuse( RageColor(1,1,1,1) );
+		m_textMeasureNumber.SetGlow( RageColor(1,1,1,0) );
+		m_textMeasureNumber.SetText( ssprintf("%d", iMeasureNoDisplay) );
+		m_textMeasureNumber.SetXY( -iWidth/2.f + 10, fYPos );
+		m_textMeasureNumber.Draw();
+	}
 }
 
 void NoteField::DrawMarkerBar( const float fBeat )
@@ -103,10 +134,24 @@ void NoteField::DrawMarkerBar( const float fBeat )
 
 	m_rectMarkerBar.SetXY( 0, fYPos );
 	m_rectMarkerBar.SetZoomX( (float)(GetNumTracks()+1) * ARROW_SIZE );
-	m_rectMarkerBar.SetZoomY( 20 );
-	m_rectMarkerBar.SetDiffuse( RageColor(0,0,0,0.5f) );
+	m_rectMarkerBar.SetZoomY( (float)ARROW_SIZE );
 	m_rectMarkerBar.Draw();
 }
+
+void NoteField::DrawAreaHighlight( const float fStartBeat, const float fEndBeat )
+{
+	const float fYStartOffset	= ArrowGetYOffset( m_PlayerNumber, fStartBeat );
+	const float fYStartPos		= ArrowGetYPos(	m_PlayerNumber, fYStartOffset );
+	const float fYEndOffset		= ArrowGetYOffset( m_PlayerNumber, fEndBeat );
+	const float fYEndPos		= ArrowGetYPos(	m_PlayerNumber, fYEndOffset );
+
+	m_rectAreaHighlight.StretchTo( RectI(0, (int)fYStartPos-ARROW_SIZE/2, 1, (int)fYEndPos+ARROW_SIZE/2) );
+	m_rectAreaHighlight.SetZoomX( (float)(GetNumTracks()+1) * ARROW_SIZE );
+	m_rectAreaHighlight.SetDiffuse( RageColor(1,0,0,0.3f) );
+	m_rectAreaHighlight.Draw();
+}
+
+
 
 void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 {
@@ -116,7 +161,7 @@ void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 	m_textMeasureNumber.SetDiffuse( RageColor(1,0,0,1) );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,cosf(RageTimer::GetTimeSinceStart()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.2f", fBPM) );
-	m_textMeasureNumber.SetXY( -m_rectMeasureBar.GetZoomedWidth()/2 - 60, fYPos );
+	m_textMeasureNumber.SetXY( -GetWidth()/2.f - 60, fYPos );
 	m_textMeasureNumber.Draw();
 }
 
@@ -128,7 +173,7 @@ void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 	m_textMeasureNumber.SetDiffuse( RageColor(0.8f,0.8f,0,1) );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,cosf(RageTimer::GetTimeSinceStart()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.2f", fSecs) );
-	m_textMeasureNumber.SetXY( -m_rectMeasureBar.GetZoomedWidth()/2 - 10, fYPos );
+	m_textMeasureNumber.SetXY( -GetWidth()/2.f - 10, fYPos );
 	m_textMeasureNumber.Draw();
 }
 
@@ -140,7 +185,7 @@ void NoteField::DrawBGChangeText( const float fBeat, const CString sNewBGName )
 	m_textMeasureNumber.SetDiffuse( RageColor(0,1,0,1) );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,cosf(RageTimer::GetTimeSinceStart()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( sNewBGName );
-	m_textMeasureNumber.SetXY( +m_rectMeasureBar.GetZoomedWidth()/2 + 10, fYPos );
+	m_textMeasureNumber.SetXY( +GetWidth()/2.f + 10, fYPos );
 	m_textMeasureNumber.Draw();
 }
 
@@ -193,12 +238,13 @@ void NoteField::DrawPrimitives()
 		unsigned i;
 
 		//
-		// Draw measure bars
+		// Draw beat bars
 		//
-		unsigned iFirstMeasureToDraw = max(0, int(fFirstBeatToDraw)/BEATS_PER_MEASURE);
-		unsigned iLastMeasureToDraw = max(0, (int(fLastBeatToDraw)/BEATS_PER_MEASURE)+1);
-		for( i=iFirstMeasureToDraw; i<=iLastMeasureToDraw; i++ )
-			DrawMeasureBar( i );
+		{
+			float fStartDrawingMeasureBars = max( 0, froundf(fFirstBeatToDraw-0.25f,0.25f) );
+			for( float f=fStartDrawingMeasureBars; f<fLastBeatToDraw; f+=0.25f )
+				DrawBeatBar( f );
+		}
 
 		//
 		// BPM text
@@ -235,9 +281,11 @@ void NoteField::DrawPrimitives()
 		//
 		// Draw marker bars
 		//
-		if( m_fBeginMarker != -1 )
+		if( m_fBeginMarker != -1  &&  m_fEndMarker != -1 )
+			DrawAreaHighlight( m_fBeginMarker, m_fEndMarker );
+		else if( m_fBeginMarker != -1 )
 			DrawMarkerBar( m_fBeginMarker );
-		if( m_fEndMarker != -1 )
+		else if( m_fEndMarker != -1 )
 			DrawMarkerBar( m_fEndMarker );
 
 	}
@@ -304,7 +352,16 @@ void NoteField::DrawPrimitives()
 				}
 			}
 
-			m_NoteDisplay[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, m_fPercentFadeToFail );
+			bool bIsInSelectionRange = false;
+			float fGlow = 0;
+			if( m_fBeginMarker!=-1 && m_fEndMarker!=-1 )
+			{
+				float fBeat = NoteRowToBeat(i);
+				bIsInSelectionRange = m_fBeginMarker<=fBeat && fBeat<=m_fEndMarker;
+				fGlow = SCALE( cosf(RageTimer::GetTimeSinceStart()*2), -1, 1, 0.1f, 0.3f );
+			}
+
+			m_NoteDisplay[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsInSelectionRange ? fGlow : m_fPercentFadeToFail );
 		}
 	}
 

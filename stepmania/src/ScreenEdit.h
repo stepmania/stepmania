@@ -36,8 +36,6 @@ public:
 	virtual void DrawPrimitives();
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	void InputEdit( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	void InputActionMenu( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	void InputNamingMenu( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, bool forceShiftPressed = false );
 	void InputRecord( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	void InputPlay( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
@@ -52,7 +50,7 @@ protected:
 	void MenuItemLoseFocus( BitmapText* menuitem );
 
 
-	enum EditMode { MODE_EDITING, MODE_ACTION_MENU, MODE_NAMING_MENU, MODE_RECORDING, MODE_PLAYING };
+	enum EditMode { MODE_EDITING, MODE_RECORDING, MODE_PLAYING };
 	EditMode m_EditMode;
 
 	Song*			m_pSong;
@@ -64,16 +62,18 @@ protected:
 	SnapDisplay		m_SnapDisplay;
 	GrayArrowRow	m_GrayArrowRowEdit;
 
-	BitmapText		m_textInfo;		// status information that changes
+	Sprite			m_sprHelp;
 	BitmapText		m_textHelp;
-	Quad			m_rectShortcutsBack;
-	BitmapText		m_textShortcuts;
+	Sprite			m_sprInfo;
+	BitmapText		m_textInfo;		// status information that changes
 
 	// keep track of where we are and what we're doing
 	float				m_fTrailingBeat;	// this approaches GAMESTATE->m_fSongBeat, which is the actual beat
 	/* The location we were at when shift was pressed, or
 	 * -1 when shift isn't pressed: */
 	float shiftAnchor;
+
+	float			m_fDestinationScrollSpeed;
 
 	NoteData			m_Clipboard;
 
@@ -99,12 +99,77 @@ protected:
 	Quad			m_rectRecordBack;
 	RageSound		m_soundMusic;
 
-	int				m_iMenuSelection;
-	BitmapText		m_textActionMenu[NUM_ACTION_MENU_ITEMS];
-	BitmapText	    m_textNamingMenu[NUM_NAMING_MENU_ITEMS];
-
 	int				m_iRowLastCrossed;
 	RageSound		m_soundAssistTick;
+
+
+public:
+	enum MainMenuChoice {
+		edit_notes_statistics,
+		play_whole_song,
+		save,
+		editor_options,
+		player_options,
+		song_options,
+		edit_song_info,
+		edit_bpm,
+		edit_stop,
+		edit_bg_change,
+		play_preview_music,
+		exit,
+		NUM_MAIN_MENU_CHOICES
+	};
+	void HandleMainMenuChoice( MainMenuChoice c, int* iAnswers );
+
+	enum AreaMenuChoice {
+		cut,
+		copy,
+		paste,
+		clear,
+		quantize,
+		transform,
+		play,
+		record,
+		insert_and_shift,
+		delete_and_shift,
+		NUM_AREA_MENU_CHOICES
+	};
+	void HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers );
+	enum TransformType { little, big, left, right, mirror, shuffle, super_shuffle, backwards, swap_sides, NUM_TRANSFORM_TYPES };
+
+	enum EditNotesStatisticsChoice {
+		difficulty,
+		meter,
+		description,
+		tap_notes,
+		hold_notes,
+		stream,
+		voltage,
+		air,
+		freeze,
+		chaos,
+		NUM_EDIT_NOTES_STATISTICS_CHOICES
+	};
+	void HandleEditNotesStatisticsChoice( EditNotesStatisticsChoice c, int* iAnswers );
+
+	enum EditOptionsChoice {
+		zoom,
+		max_notes_per_row,
+		after_note_add,
+		NUM_EDIT_OPTIONS_CHOICES
+	};
+	void HandleEditOptionsChoice( EditOptionsChoice c, int* iAnswers );
+
+	enum EditSongInfoChoice {
+		main_title,
+		sub_title,
+		artist,
+		main_title_transliteration,
+		sub_title_transliteration,
+		artist_transliteration,
+		NUM_EDIT_SONG_INFO_CHOICES
+	};
+	void HandleEditSongInfoChoice( EditSongInfoChoice c, int* iAnswers );
 
 };
 

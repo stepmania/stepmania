@@ -152,7 +152,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_textSongOptions.SetXY( SONG_OPTIONS_X, SONG_OPTIONS_Y );
 	m_textSongOptions.SetZoom( 0.5f );
 	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-		m_textSongOptions.SetEffectDiffuseCamelion( 2.5f, RageColor(1,0,0,1), RageColor(1,1,1,1) );	// blink red
+		m_textSongOptions.SetEffectDiffuseShift( 2.5f, RageColor(1,0,0,1), RageColor(1,1,1,1) );	// blink red
 	m_textSongOptions.SetDiffuse( RageColor(1,1,1,1) );	// white
 	this->AddChild( &m_textSongOptions );
 
@@ -777,7 +777,7 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 	m_DifficultyIcon[pn].SetFromNotes( pn, pNotes );
 	if( pNotes && pNotes->IsAutogen() )
 	{
-		m_AutoGenIcon[pn].SetEffectDiffuseCamelion();
+		m_AutoGenIcon[pn].SetEffectDiffuseShift();
 	}
 	else
 	{

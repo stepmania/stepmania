@@ -170,7 +170,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 		m_sprCursor[p].StopAnimating();
 		m_sprCursor[p].SetState( p );
 		m_sprCursor[p].TurnShadowOff();
-		m_sprCursor[p].SetEffectGlowCamelion();
+		m_sprCursor[p].SetEffectGlowShift();
 		m_framePages.AddChild( &m_sprCursor[p] );
 
 		m_sprOK[p].Load( THEME->GetPathTo("Graphics", "select difficulty ok 2x1") );

@@ -100,21 +100,23 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	if( !GAMESTATE->m_PlayerOptions[pn].m_bHoldNotes )
 		NoteDataUtil::RemoveHoldNotes(*this);
 
-	NoteDataUtil::Turn( *this, GAMESTATE->m_PlayerOptions[pn].m_TurnType );
+	switch( GAMESTATE->m_PlayerOptions[pn].m_TurnType )
+	{
+	case PlayerOptions::TURN_NONE:																		break;
+	case PlayerOptions::TURN_MIRROR:		NoteDataUtil::Turn( *this, NoteDataUtil::mirror );			break;
+	case PlayerOptions::TURN_LEFT:			NoteDataUtil::Turn( *this, NoteDataUtil::left );			break;
+	case PlayerOptions::TURN_RIGHT:			NoteDataUtil::Turn( *this, NoteDataUtil::right );			break;
+	case PlayerOptions::TURN_SHUFFLE:		NoteDataUtil::Turn( *this, NoteDataUtil::shuffle );			break;
+	case PlayerOptions::TURN_SUPER_SHUFFLE:	NoteDataUtil::Turn( *this, NoteDataUtil::super_shuffle );	break;
+	default:		ASSERT(0);
+	}
 
 	switch( GAMESTATE->m_PlayerOptions[pn].m_Transform )
 	{
-	case PlayerOptions::TRANSFORM_NONE:
-		break;
-	case PlayerOptions::TRANSFORM_LITTLE:
-		NoteDataUtil::MakeLittle(*this);
-		break;
-	case PlayerOptions::TRANSFORM_BIG:
-		NoteDataUtil::MakeBig(*this);
-		break;
-	default:
-		ASSERT(0);	// invalid value
-		break;
+	case PlayerOptions::TRANSFORM_NONE:										break;
+	case PlayerOptions::TRANSFORM_LITTLE:	NoteDataUtil::Little(*this);	break;
+	case PlayerOptions::TRANSFORM_BIG:		NoteDataUtil::Big(*this);		break;
+	default:		ASSERT(0);
 	}
 
 	int iPixelsToDrawBefore = -60;

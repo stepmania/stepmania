@@ -34,7 +34,7 @@ ScreenLogo::ScreenLogo() : ScreenAttract("ScreenLogo","logo")
 	m_sprLogo.StopTweening();
 	m_sprLogo.BeginTweening( 0.5f );	// sleep
 	m_sprLogo.BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
-	m_sprLogo.SetEffectGlowCamelion(2.5f, RageColor(1,1,1,0.1f), RageColor(1,1,1,0.3f) );
+	m_sprLogo.SetEffectGlowShift(2.5f, RageColor(1,1,1,0.1f), RageColor(1,1,1,0.3f) );
 	m_sprLogo.SetTweenZoom( 1 );
 	this->AddChild( &m_sprLogo );
 

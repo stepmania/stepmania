@@ -226,12 +226,16 @@ void EditMenu::ChangeToRow( Row newRow )
 		m_sprArrows[i].SetY( ROW_Y(newRow) );
 	m_sprArrows[0].SetDiffuse( CanGoLeft()?RageColor(1,1,1,1):RageColor(0.2f,0.2f,0.2f,1) );
 	m_sprArrows[1].SetDiffuse( CanGoRight()?RageColor(1,1,1,1):RageColor(0.2f,0.2f,0.2f,1) );
+	m_sprArrows[0].EnableAnimation( CanGoLeft() );
+	m_sprArrows[1].EnableAnimation( CanGoRight() );
 }
 
 void EditMenu::OnRowValueChanged( Row row )
 {
 	m_sprArrows[0].SetDiffuse( CanGoLeft()?RageColor(1,1,1,1):RageColor(0.2f,0.2f,0.2f,1) );
 	m_sprArrows[1].SetDiffuse( CanGoRight()?RageColor(1,1,1,1):RageColor(0.2f,0.2f,0.2f,1) );
+	m_sprArrows[0].EnableAnimation( CanGoLeft() );
+	m_sprArrows[1].EnableAnimation( CanGoRight() );
 
 	switch( row )
 	{

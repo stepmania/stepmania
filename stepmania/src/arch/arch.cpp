@@ -46,18 +46,16 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 			Driver = DriversToTry[i];
 			LOG->Trace("Initializing driver: %s", DriversToTry[i].GetString());
 
-#if defined(WIN32)
+#ifdef WIN32
 			if(!DriversToTry[i].CompareNoCase("DirectSound")) ret = new RageSound_DSound;
-			else if(!DriversToTry[i].CompareNoCase("DirectSound-sw")) ret = new RageSound_DSound_Software;
-			else if(!DriversToTry[i].CompareNoCase("WaveOut")) ret = new RageSound_WaveOut;
-			else if(!DriversToTry[i].CompareNoCase("Linux")) ret = new RageSound_Linux;
-			
-#else
-#warning No sound drivers defined!
-			if(1) ret = new RageSound_Null;
+			if(!DriversToTry[i].CompareNoCase("DirectSound-sw")) ret = new RageSound_DSound_Software;
+			if(!DriversToTry[i].CompareNoCase("WaveOut")) ret = new RageSound_WaveOut;
 #endif
-			else if(!DriversToTry[i].CompareNoCase("Null")) ret = new RageSound_Null;
-			else
+#ifndef WIN32	// FIXME: change to a define for -nix platforms?
+			if(!DriversToTry[i].CompareNoCase("Linux")) ret = new RageSound_Linux;
+#endif		
+			if(!DriversToTry[i].CompareNoCase("Null")) ret = new RageSound_Null;
+			if( !ret )
 				LOG->Warn("Unknown sound driver name: %s", DriversToTry[i].GetString());
 		}
 		catch(const RageException &e) {

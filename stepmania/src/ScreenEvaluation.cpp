@@ -330,7 +330,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_textOniPercentLarge[p].SetXY( PERCENT_BASE_X(p), PERCENT_BASE_Y );
 				m_textOniPercentLarge[p].SetHorizAlign( Actor::align_right );
 				m_textOniPercentLarge[p].SetVertAlign( Actor::align_bottom );
-				m_textOniPercentLarge[p].SetEffectGlowCamelion( 2.5f );
+				m_textOniPercentLarge[p].SetEffectGlowShift( 2.5f );
 				this->AddChild( &m_textOniPercentLarge[p] );
 
 				m_textOniPercentSmall[p].LoadFromNumbers( THEME->GetPathTo("Numbers","evaluation percent numbers") );
@@ -339,7 +339,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_textOniPercentSmall[p].SetXY( PERCENT_BASE_X(p), PERCENT_BASE_Y );
 				m_textOniPercentSmall[p].SetHorizAlign( Actor::align_left );
 				m_textOniPercentSmall[p].SetVertAlign( Actor::align_bottom );
-				m_textOniPercentSmall[p].SetEffectGlowCamelion( 2.5f );
+				m_textOniPercentSmall[p].SetEffectGlowShift( 2.5f );
 				this->AddChild( &m_textOniPercentSmall[p] );
 
 				stageStats.iPossibleDancePoints[p] = max( 1, stageStats.iPossibleDancePoints[p] );
@@ -381,7 +381,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_Grades[p].SetXY( GRADE_X(p), GRADE_Y );
 				m_Grades[p].SetZ( 2 );
 				m_Grades[p].SetZoom( 1.0f );
-				m_Grades[p].SetEffectGlowCamelion( 1.0f, GRADES_GLOW_COLOR_1, GRADES_GLOW_COLOR_2 );
+				m_Grades[p].SetEffectGlowShift( 1.0f, GRADES_GLOW_COLOR_1, GRADES_GLOW_COLOR_2 );
 				if( SPIN_GRADES )
 					m_Grades[p].SpinAndSettleOn( grade[p] );
 				else
@@ -424,7 +424,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 					m_sprActualBar[p][r].BeginTweening( 1.0f );				// tween
 					m_sprActualBar[p][r].SetTweenZoomToWidth( BAR_WIDTH*stageStats.fRadarActual[p][r] );
 					if( stageStats.fRadarActual[p][r] == stageStats.fRadarPossible[p][r] )
-						m_sprActualBar[p][r].SetEffectGlowCamelion();
+						m_sprActualBar[p][r].SetEffectGlowShift();
 					this->AddChild( &m_sprActualBar[p][r] );
 				}
 				break;
@@ -435,7 +435,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		{
 			m_sprNewRecord[p].Load( THEME->GetPathTo("Graphics","evaluation new record") );
 			m_sprNewRecord[p].SetXY( NEW_RECORD_X(p), NEW_RECORD_Y );
-			m_sprNewRecord[p].SetEffectGlowCamelion( 2.5f );
+			m_sprNewRecord[p].SetEffectGlowShift( 2.5f );
 			this->AddChild( &m_sprNewRecord[p] );
 		}
 	}
@@ -507,7 +507,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	{
 		m_sprTryExtraStage.Load( THEME->GetPathTo("Graphics",GAMESTATE->IsExtraStage()?"evaluation try extra stage2":"evaluation try extra stage1") );
 		m_sprTryExtraStage.SetXY( TRY_EXTRA_STAGE_X, TRY_EXTRA_STAGE_Y );
-		m_sprTryExtraStage.SetEffectGlowCamelion( 2.5f );
+		m_sprTryExtraStage.SetEffectGlowShift( 2.5f );
 		this->AddChild( &m_sprTryExtraStage );
 
 		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","evaluation extra stage") );

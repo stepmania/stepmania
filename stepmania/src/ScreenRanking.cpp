@@ -218,8 +218,8 @@ void ScreenRanking::SetPage( PageToShow pts )
 
 				if( bRecentHighScore )
 				{
-					m_textNames[l].SetEffectDiffuseBlinking( 10, TEXT_COLOR, RageColor(1,1,1,1) );
-					m_textScores[l].SetEffectDiffuseBlinking( 10, TEXT_COLOR, RageColor(1,1,1,1) );
+					m_textNames[l].SetEffectDiffuseBlinking( 0.1f, TEXT_COLOR, RageColor(1,1,1,1) );
+					m_textScores[l].SetEffectDiffuseBlinking( 0.1f, TEXT_COLOR, RageColor(1,1,1,1) );
 				}
 				else
 				{

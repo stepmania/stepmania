@@ -51,8 +51,14 @@ public:
 	virtual void DrawPrimitives();
 	virtual void Update( float fDeltaTime );
 
-	virtual void StartAnimating()	{ m_bIsAnimating = true; if(m_pTexture) m_pTexture->Play(); };
-	virtual void StopAnimating()	{ m_bIsAnimating = false; if(m_pTexture) m_pTexture->Pause(); };
+	virtual void EnableAnimation( bool bEnable )
+	{ 
+		m_bIsAnimating = bEnable; 
+		if(m_pTexture) 
+			bEnable ? m_pTexture->Play() : m_pTexture->Pause(); 
+	};
+	virtual void StartAnimating()	{ EnableAnimation(true); };
+	virtual void StopAnimating()	{ EnableAnimation(false); };
 	virtual void SetState( int iNewState );
 	
 	int		GetNumStates()		{ return m_iNumStates; };

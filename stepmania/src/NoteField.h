@@ -42,11 +42,13 @@ public:
 	void FadeToFail();
 
 protected:
-	void DrawMeasureBar( const int iMeasureIndex );
+	void DrawBeatBar( const float fBeat );
 	void DrawMarkerBar( const float fBeat );
+	void DrawAreaHighlight( const float fStartBeat, const float fEndBeat );
 	void DrawBPMText( const float fBeat, const float fBPM );
 	void DrawFreezeText( const float fBeat, const float fBPM );
 	void DrawBGChangeText( const float fBeat, const CString sNewBGName );
+	int GetWidth();
 
 	float	m_fPercentFadeToFail;	// -1 of not fading to fail
 
@@ -61,6 +63,7 @@ protected:
 	Quad			m_rectMeasureBar;
 	BitmapText		m_textMeasureNumber;
 	Quad			m_rectMarkerBar;
+	Quad			m_rectAreaHighlight;
 };
 
 #endif

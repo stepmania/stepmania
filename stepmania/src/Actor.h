@@ -31,8 +31,8 @@ public:
 		TWEEN_SPRING,
 	};
 	enum Effect { no_effect,
-				diffuse_blinking,	diffuse_camelion,
-				glow_blinking,		glow_camelion,
+				diffuse_blinking,	diffuse_shift,
+				glow_blinking,		glow_shift,
 				wagging,	spinning,
 				vibrating,	flickering,
 				bouncing,	bobbing
@@ -156,13 +156,13 @@ public:
 	void SetEffectDiffuseBlinking( float fEffectPeriodSeconds = 1.0f,
 						    RageColor c1 = RageColor(0.5f,0.5f,0.5f,1), 
 						    RageColor c2 = RageColor(1,1,1,1) );
-	void SetEffectDiffuseCamelion( float fEffectPeriodSeconds = 1.0f,
+	void SetEffectDiffuseShift( float fEffectPeriodSeconds = 1.0f,
 						    RageColor c1 = RageColor(0,0,0,1), 
 						    RageColor c2 = RageColor(1,1,1,1) );
 	void SetEffectGlowBlinking( float fEffectPeriodSeconds = 1.0f,
 						   RageColor c1 = RageColor(1,1,1,0.2f),
 						   RageColor c2 = RageColor(1,1,1,0.8f) );
-	void SetEffectGlowCamelion( float fEffectPeriodSeconds = 1.0f,
+	void SetEffectGlowShift( float fEffectPeriodSeconds = 1.0f,
 						   RageColor c1 = RageColor(1,1,1,0.2f),
 						   RageColor c2 = RageColor(1,1,1,0.8f) );
 	void SetEffectWagging( float fWagRadians =  0.2,
@@ -278,7 +278,7 @@ protected:
 	float m_fSecsIntoEffect;
 	float m_fEffectPeriodSeconds;
 
-	// Counting variables for camelion and glowing:
+	// Counting variables for shift and glowing:
 	RageColor   m_effectColor1;
 	RageColor   m_effectColor2;
 

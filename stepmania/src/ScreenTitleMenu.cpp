@@ -357,6 +357,6 @@ void ScreenTitleMenu::GainFocus( int iChoiceIndex )
 	color1 = COLOR_SELECTED;
 	color2 = color1 * 0.5f;
 	color2.a = 1;
-	m_textChoice[iChoiceIndex].SetEffectDiffuseCamelion( 0.5f, color1, color2 );
+	m_textChoice[iChoiceIndex].SetEffectDiffuseShift( 0.5f, color1, color2 );
 }
 

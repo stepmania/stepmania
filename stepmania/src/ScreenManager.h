@@ -20,6 +20,8 @@
 #include "Quad.h"
 
 
+struct MiniMenuDefinition;
+
 class ScreenManager
 {
 public:
@@ -38,6 +40,7 @@ public:
 	void SetNewScreen( CString sClassName );
 	void Prompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNo = false, bool bDefaultAnswer = false, void(*OnYes)() = NULL, void(*OnNo)() = NULL );
 	void TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer) = NULL, void(*OnCanel)() = NULL );
+	void MiniMenu( MiniMenuDefinition* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel = SM_None );
 	void PopTopScreen( ScreenMessage SM );
 	void SystemMessage( CString sMessage );
 

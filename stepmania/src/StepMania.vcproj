@@ -322,6 +322,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenMessage.h">
 			</File>
 			<File
+				RelativePath="ScreenMiniMenu.cpp">
+			</File>
+			<File
+				RelativePath="ScreenMiniMenu.h">
+			</File>
+			<File
 				RelativePath="ScreenMusicScroll.cpp">
 			</File>
 			<File

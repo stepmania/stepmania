@@ -25,11 +25,13 @@
 #include <math.h>
 #include "ThemeManager.h"
 #include "SDL_keysym.h"		// for SDLKeys
+#include "ScreenMiniMenu.h"
 
 #include <utility>
 
 
-const float RECORD_HOLD_THRESHOLD = 0.3f;
+const float RECORD_HOLD_SECONDS = 0.3f;
+
 
 //
 // Defines specific to GameScreenTitleMenu
@@ -41,20 +43,26 @@ const float GRAY_ARROW_Y				= ARROW_SIZE * 1.5;
 const float DEBUG_X			= SCREEN_LEFT + 10;
 const float DEBUG_Y			= CENTER_Y-100;
 
-const float HELP_X			= SCREEN_LEFT + 10;
-const float HELP_Y			= SCREEN_BOTTOM - 10;
-
 const float SHORTCUTS_X		= CENTER_X - 150;
 const float SHORTCUTS_Y		= CENTER_Y;
 
-const float INFO_X			= SCREEN_RIGHT - 10 ;
-const float INFO_Y			= SCREEN_BOTTOM - 10;
+const float HELP_X			= SCREEN_LEFT;
+const float HELP_Y			= CENTER_Y;
+
+const float HELP_TEXT_X		= SCREEN_LEFT + 4;
+const float HELP_TEXT_Y		= 40;
+
+const float INFO_X			= SCREEN_RIGHT;
+const float INFO_Y			= CENTER_Y;
+
+const float INFO_TEXT_X		= SCREEN_RIGHT - 114;
+const float INFO_TEXT_Y		= 40;
 
 const float MENU_WIDTH		=	110;
 const float EDIT_X			=	CENTER_X;
 const float EDIT_GRAY_Y		=	GRAY_ARROW_Y;
 
-const float PLAYER_X		=	EDIT_X;
+const float PLAYER_X		=	CENTER_X;
 const float PLAYER_Y		=	SCREEN_TOP;
 
 const float ACTION_MENU_ITEM_X			=	CENTER_X-200;
@@ -65,122 +73,119 @@ const float NAMING_MENU_ITEM_X			=	CENTER_X-200;
 const float NAMING_MENU_ITEM_START_Y	=	SCREEN_TOP + 24;
 const float NAMING_MENU_ITEM_SPACING_Y	=	18;
 
-#define TICK_EARLY_SECONDS				THEME->GetMetricF("ScreenGameplay","TickEarlySeconds")
-static float g_fTickEarlySecondsCache = 0;		// reading directly out of theme metrics is slow
+CachedThemeMetric	 TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
+
+
+const ScreenMessage SM_BackFromMainMenu				= (ScreenMessage)(SM_User+1);
+const ScreenMessage SM_BackFromAreaMenu				= (ScreenMessage)(SM_User+2);
+const ScreenMessage SM_BackFromEditNotesStatistics	= (ScreenMessage)(SM_User+3);
+const ScreenMessage SM_BackFromEditOptions			= (ScreenMessage)(SM_User+4);
+const ScreenMessage SM_BackFromEditSongInfo			= (ScreenMessage)(SM_User+5);
+
 
 const CString HELP_TEXT = 
-	"Esc: show command menu\n"
-//	"Hold F1 to show more commands\n"
-	"Hold keys for faster change:\n"
-	"F7/F8: Decrease/increase BPM at cur beat\n"
-	"F9/F10: Dec/inc freeze secs at cur beat\n"
-	"F11/F12: Decrease/increase music offset\n"
-	"[ and ]: Dec/inc sample music start\n"
-	"{ and }: Dec/inc sample music length\n"
-	"Up/Down: change beat\n"
-	"Left/Right: change snap\n"
-	"PgUp/PgDn: jump 1 measure\n"
-	"Home/End: jump to first/last beat\n"
-	"Number keys: add or remove tap note\n"
-	"To create a hold note, hold a number key\n" 
-	"      while changing the beat pressing Up/Down\n";
+	"Up/Down:\n     change beat\n"
+	"Left/Right:\n     change snap\n"
+	"PgUp/PgDn:\n     jump measure\n"
+	"Home/End:\n     jump to first/\n     last beat\n"
+	"Number keys:\n     add/remove\n     tap note\n"
+	"Create hold note:\n     Hold a number\n     while moving\n     Up or Down\n"
+	"F7/F8:\n     Dec/inc BPM\n     at cur beat\n"
+	"F9/F10:\n     Dec/inc stop\n     at cur beat\n"
+	"F11/F12:\n     Dec/inc music\n     offset\n"
+	"[ and ]:\n     Dec/inc sample\n     music start\n"
+	"{ and }:\n     Dec/inc sample\n     music length\n";
 
-const CString SHORTCUT_TEXT = "";
-/*	"S: save changes\n"
-	"W: save as SM and DWI (lossy)\n"
-	"Enter/Space: set begin/end selection markers\n"
-	"G/H/J/K/L: Quantize selection to nearest\n"
-	"      4th / 8th / 12th / 16th / 12th or 16th\n"
-	"P: Play selected area\n"
-	"R: Record in selected area\n"
-	"T: Toggle Play/Record rate\n"
-	"X: Cut selected area\n"
-	"C: Copy selected area\n"
-	"V: Paste at current beat\n"
-	"D: Toggle difficulty\n"
-	"E: Edit description\n"
-	"A: Edit main title\n"
-	"U: Edit sub title\n"
-	"B: Add/Edit background change\n"
-	"Ins: Insert blank beat\n"
-	"Del: Delete current beat and shift\n"
-	"M: Play sample music\n";
-*/
 
-const CString ACTION_MENU_ITEM_TEXT[NUM_ACTION_MENU_ITEMS] = {
-	"Enter:  Set begin marker (Enter)",
-	"Space:  Set end marker (Space)",
-	"P:      Play selection",
-	"R:      Record in selection",
-	"T:      Toggle Play/Record rate",
-	"X:      Cut selection",
-	"C:      Copy selection",
-	"V:      Paste clipboard at current beat",
-	"D:      Toggle difficulty",
-	"E:      Edit description",
-	"N:      Edit Title/Subtitle/Artist & Transliterations",
-	"I:      Toggle assist tick",
-	"B:      Add/Edit background change at current beat",
-	"Ins:    Insert blank beat and shift down",
-	"Del:    Delete blank beat and shift up",
-	"G:      Quantize selection to 4th notes",
-	"H:      Quantize selection to 8th notes",
-	"J:      Quantize selection to 12th notes",
-	"K:      Quantize selection to 16th notes",
-	"L:      Quantize selection to 12th or 16th notes",
-	"M:      Play sample music",
-	"S:      Save changes as SM and DWI",
-	"Q:      Quit"
-};
-const int ACTION_MENU_ITEM_KEY[NUM_ACTION_MENU_ITEMS] = {
-	SDLK_RETURN,
-	SDLK_SPACE,
-	SDLK_p,
-	SDLK_r,
-	SDLK_t,
-	SDLK_x,
-	SDLK_c,
-	SDLK_v,
-	SDLK_d,
-	SDLK_e,
-	SDLK_n,
-	SDLK_i,
-	SDLK_b,
-	SDLK_INSERT,
-	SDLK_DELETE,
-	SDLK_g,
-	SDLK_h,
-	SDLK_j,
-	SDLK_k,
-	SDLK_l,
-	SDLK_m,
-	SDLK_s,
-	SDLK_q,
+MiniMenuDefinition g_MainMenu =
+{
+	"Main Menu",
+	ScreenEdit::NUM_MAIN_MENU_CHOICES,
+	{
+		{ "Edit Notes Statistics",	true, 1, 0, {""} },
+		{ "Play Whole Song",		true, 1, 0, {""} },
+		{ "Save",					true, 1, 0, {""} },
+		{ "Editor Options",			true, 1, 0, {""} },
+		{ "Player Options",			true, 1, 0, {""} },
+		{ "Song Options",			true, 1, 0, {""} },
+		{ "Edit Song Info",			true, 1, 0, {""} },
+		{ "Add/Edit BPM Change",	true, 1, 0, {""} },
+		{ "Add/Edit Stop",			true, 1, 0, {""} },
+		{ "Add/Edit BG Change",		true, 1, 0, {""} },
+		{ "Play preview music",		true, 1, 0, {""} },
+		{ "Exit",					true, 1, 0, {""} },
+	}
 };
 
-const CString NAMING_MENU_ITEM_TEXT[NUM_NAMING_MENU_ITEMS] = {
-	"          M:   Edit main title",
-	"          S:   Edit sub title",
-	"          A:   Edit artist",
-	"Shift-M:   Edit main title transliteration",
-	"Shift-S:   Edit sub title transliteration",
-	"Shift-A:   Edit artist transliteration"
-};
-// Pairs of keystroke + ifCapital
-const std::pair<int, bool> NAMING_MENU_ITEM_KEY[NUM_NAMING_MENU_ITEMS] = {
-	std::make_pair(SDLK_m, false),
-	std::make_pair(SDLK_s, false),
-	std::make_pair(SDLK_a, false),
-	std::make_pair(SDLK_m, true),
-	std::make_pair(SDLK_s, true),
-	std::make_pair(SDLK_a, true),
+MiniMenuDefinition g_AreaMenu =
+{
+	"Area Menu",
+	ScreenEdit::NUM_AREA_MENU_CHOICES,
+	{
+		{ "Cut",				true, 1, 0, {""} },
+		{ "Copy",				true, 1, 0, {""} },
+		{ "Paste",				true, 1, 0, {""} },
+		{ "Clear",				true, 1, 0, {""} },
+		{ "Quantize",			true, NUM_NOTE_TYPES, 0, {"4TH","8TH","12TH","16TH","24TH","32ND"} },
+		{ "Transform",			true, ScreenEdit::NUM_TRANSFORM_TYPES, 0, {"Little","Big","Left","Right","Mirror","Shuffle","Super Shuffle","Backwards","Swap Sides"} },
+		{ "Play selection",		true, 1, 0, {""} },
+		{ "Record in selection",true, 1, 0, {""} },
+		{ "Insert blank beat and shift down", true, 1, 0, {""} },
+		{ "Delete blank beat and shift up", true, 1, 0, {""} },
+	}
 };
 
+
+MiniMenuDefinition g_EditNotesStatistics =
+{
+	"Statistics",
+	ScreenEdit::NUM_EDIT_NOTES_STATISTICS_CHOICES,
+	{
+		{ "Difficulty",	true, 5, 0, {"BEGINNER","EASY","MEDIUM","HARD","CHALLENGE"} },
+		{ "Meter",		true, 11, 0, {"1","2","3","4","5","6","7","8","9","10","11"} },
+		{ "Description",true, 1, 0, {""} },
+		{ "Tap Notes",	false, 1, 0, {""} },
+		{ "Hold Notes",	false, 1, 0, {""} },
+		{ "Stream",		false, 1, 0, {""} },
+		{ "Voltage",	false, 1, 0, {""} },
+		{ "Air",		false, 1, 0, {""} },
+		{ "Freeze",		false, 1, 0, {""} },
+		{ "Chaos",		false, 1, 0, {""} },
+	}
+};
+
+
+MiniMenuDefinition g_EditOptions =
+{
+	"Edit Options",
+	ScreenEdit::NUM_EDIT_OPTIONS_CHOICES,
+	{
+		{ "Zoom",				true, 3, 0, {"1X","2X","4X"} },
+		{ "Max Notes Per Row",	true, 4, 0, {"NO LIMIT","2","3","4"} },
+		{ "After Note Add",		true, 2, 0, {"STAY","NEXT LINE"} },
+	}
+};
+
+MiniMenuDefinition g_EditSongInfo =
+{
+	"Edit Song Info",
+	ScreenEdit::NUM_EDIT_SONG_INFO_CHOICES,
+	{
+		{ "Main title",					true, 1, 0, {""} },
+		{ "Sub title",					true, 1, 0, {""} },
+		{ "Artist",						true, 1, 0, {""} },
+		{ "Main title transliteration",	true, 1, 0, {""} },
+		{ "Sub title transliteration",	true, 1, 0, {""} },
+		{ "Artist transliteration",		true, 1, 0, {""} },
+	}
+};
 
 
 ScreenEdit::ScreenEdit()
 {
 	LOG->Trace( "ScreenEdit::ScreenEdit()" );
+
+	TICK_EARLY_SECONDS.Refresh();
 
 	// set both players to joined so the credit message doesn't show
 	for( int p=0; p<NUM_PLAYERS; p++ )
@@ -188,13 +193,12 @@ ScreenEdit::ScreenEdit()
 	SCREENMAN->RefreshCreditsMessages();
 
 	m_iRowLastCrossed = -1;
+	m_fDestinationScrollSpeed = 1;
 
 	m_pSong = GAMESTATE->m_pCurSong;
 
 	m_pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
 	
-	g_fTickEarlySecondsCache = TICK_EARLY_SECONDS;
-
 	/* Make EditMenu responsible for creating new Notes */
 	//if( m_pNotes == NULL )
 	//{
@@ -264,33 +268,27 @@ ScreenEdit::ScreenEdit()
 
 	m_Fade.SetClosed();
 
-	m_textInfo.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-	m_textInfo.SetXY( INFO_X, INFO_Y );
-	m_textInfo.SetHorizAlign( Actor::align_right );
-	m_textInfo.SetVertAlign( Actor::align_bottom );
-	m_textInfo.SetZoom( 0.5f );
-	m_textInfo.SetShadowLength( 2 );
-	//m_textInfo.SetText();	// set this below every frame
+	m_sprHelp.Load( THEME->GetPathTo("Graphics","edit help") );
+	m_sprHelp.SetHorizAlign( Actor::align_left );
+	m_sprHelp.SetXY( HELP_X, HELP_Y );
 
 	m_textHelp.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-	m_textHelp.SetXY( HELP_X, HELP_Y );
+	m_textHelp.SetXY( HELP_TEXT_X, HELP_TEXT_Y );
 	m_textHelp.SetHorizAlign( Actor::align_left );
-	m_textHelp.SetVertAlign( Actor::align_bottom );
+	m_textHelp.SetVertAlign( Actor::align_top );
 	m_textHelp.SetZoom( 0.5f );
-	m_textHelp.SetShadowLength( 2 );
 	m_textHelp.SetText( HELP_TEXT );
 
-	m_rectShortcutsBack.StretchTo( RectI(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
-	m_rectShortcutsBack.SetDiffuse( RageColor(0,0,0,0.8f) );
+	m_sprInfo.Load( THEME->GetPathTo("Graphics","edit info") );
+	m_sprInfo.SetHorizAlign( Actor::align_right );
+	m_sprInfo.SetXY( INFO_X, INFO_Y );
 
-	m_textShortcuts.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-	m_textShortcuts.SetXY( SHORTCUTS_X, SHORTCUTS_Y );
-	m_textShortcuts.SetHorizAlign( Actor::align_left );
-	m_textShortcuts.SetVertAlign( Actor::align_middle );
-	m_textShortcuts.SetZoom( 0.5f );
-	m_textShortcuts.SetShadowLength( 2 );
-	m_textShortcuts.SetText( SHORTCUT_TEXT );
-
+	m_textInfo.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textInfo.SetXY( INFO_TEXT_X, INFO_TEXT_Y );
+	m_textInfo.SetHorizAlign( Actor::align_left );
+	m_textInfo.SetVertAlign( Actor::align_top );
+	m_textInfo.SetZoom( 0.5f );
+	//m_textInfo.SetText();	// set this below every frame
 
 	m_soundChangeLine.Load( THEME->GetPathTo("Sounds","edit change line") );
 	m_soundChangeSnap.Load( THEME->GetPathTo("Sounds","edit change snap") );
@@ -302,26 +300,6 @@ ScreenEdit::ScreenEdit()
 	m_soundMusic.SetAccurateSync(true);
 
 	m_soundAssistTick.Load(		THEME->GetPathTo("Sounds","gameplay assist tick") );
-
-	for( int i=0; i<NUM_ACTION_MENU_ITEMS; i++ )
-	{
-		m_textActionMenu[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-		m_textActionMenu[i].SetXY( ACTION_MENU_ITEM_X, ACTION_MENU_ITEM_START_Y + ACTION_MENU_ITEM_SPACING_Y*i );
-		m_textActionMenu[i].SetHorizAlign( Actor::align_left );
-		m_textActionMenu[i].SetZoom( 0.5f );
-		m_textActionMenu[i].SetShadowLength( 2 );
-		m_textActionMenu[i].SetText( ACTION_MENU_ITEM_TEXT[i] );
-	}
-	for( int j=0; j<NUM_NAMING_MENU_ITEMS; j++ )
-	{
-		m_textNamingMenu[j].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-		m_textNamingMenu[j].SetXY( NAMING_MENU_ITEM_X, NAMING_MENU_ITEM_START_Y + NAMING_MENU_ITEM_SPACING_Y*j );
-		m_textNamingMenu[j].SetHorizAlign( Actor::align_left );
-		m_textNamingMenu[j].SetZoom( 0.5f );
-		m_textNamingMenu[j].SetShadowLength( 2 );
-		m_textNamingMenu[j].SetText( NAMING_MENU_ITEM_TEXT[j] );
-	}
-	m_iMenuSelection = 0;
 
 	m_Fade.OpenWipingRight();
 }
@@ -345,7 +323,7 @@ bool ScreenEdit::PlayTicks() const
 	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
 
 	// HACK:  Play the sound a little bit early to account for the fact that the middle of the tick sounds occurs 0.015 seconds into playing.
-	fPositionSeconds += (SOUNDMAN->GetPlayLatency()+g_fTickEarlySecondsCache) * m_soundMusic.GetPlaybackRate();
+	fPositionSeconds += (SOUNDMAN->GetPlayLatency()+(float)TICK_EARLY_SECONDS) * m_soundMusic.GetPlaybackRate();
 	float fSongBeat=GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
 
 	int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
@@ -364,6 +342,17 @@ bool ScreenEdit::PlayTicks() const
 
 void ScreenEdit::Update( float fDeltaTime )
 {
+	// approach destonation scroll speed
+	if( m_fDestinationScrollSpeed != GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed )
+	{
+		float fDelta = m_fDestinationScrollSpeed - GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed;
+		float fSign = fDelta / fabsf(fDelta);
+		float fToMove = fSign * fDeltaTime * 4 * (m_fDestinationScrollSpeed>2 ? 2 : 1);
+		CLAMP( fToMove, -fabsf(fDelta), fabsf(fDelta) );
+		GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed += fToMove;
+	}
+
+
 	float fPositionSeconds = m_soundMusic.GetPositionSeconds();
 	float fSongBeat, fBPS;
 	bool bFreeze;
@@ -385,7 +374,7 @@ void ScreenEdit::Update( float fDeltaTime )
 			StyleInput StyleI( PLAYER_1, t );
 			float fSecsHeld = INPUTMAPPER->GetSecsHeld( StyleI );
 
-			if( fSecsHeld > RECORD_HOLD_THRESHOLD )
+			if( fSecsHeld > RECORD_HOLD_SECONDS )
 			{
 				// add or extend hold
 				const float fHoldStartSeconds = m_soundMusic.GetPositionSeconds() - fSecsHeld;
@@ -427,10 +416,10 @@ void ScreenEdit::Update( float fDeltaTime )
 	m_GrayArrowRowEdit.Update( fDeltaTime );
 	m_NoteFieldEdit.Update( fDeltaTime );
 	m_Fade.Update( fDeltaTime );
+	m_sprHelp.Update( fDeltaTime );
 	m_textHelp.Update( fDeltaTime );
+	m_sprInfo.Update( fDeltaTime );
 	m_textInfo.Update( fDeltaTime );
-	m_rectShortcutsBack.Update( fDeltaTime );
-	m_textShortcuts.Update( fDeltaTime );
 
 	m_rectRecordBack.Update( fDeltaTime );
 
@@ -459,25 +448,13 @@ void ScreenEdit::Update( float fDeltaTime )
 	else
 	{
 		float fSign = fDelta / fabsf(fDelta);
-		float fMoveDelta = fSign*fDeltaTime*40;
+		float fMoveDelta = fSign*fDeltaTime*40 / GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed;
 		if( fabsf(fMoveDelta) > fabsf(fDelta) )
 			fMoveDelta = fDelta;
 		m_fTrailingBeat += fMoveDelta;
 
 		if( fabsf(fDelta) > 10 )
 			m_fTrailingBeat += fDelta * fDeltaTime*5;
-	}
-
-	if( m_EditMode == MODE_ACTION_MENU )
-	{
-		for( int i=0; i<NUM_ACTION_MENU_ITEMS; i++ )
-			m_textActionMenu[i].Update( fDeltaTime );
-	}
-
-	if( m_EditMode == MODE_NAMING_MENU )
-	{
-		for( int i=0; i<NUM_NAMING_MENU_ITEMS; i++ )
-			m_textNamingMenu[i].Update( fDeltaTime );
 	}
 
 	m_NoteFieldEdit.Update( fDeltaTime );
@@ -510,32 +487,22 @@ void ScreenEdit::Update( float fDeltaTime )
 		iNumHoldNotes = m_NoteFieldEdit.GetNumHoldNotes();
 	}
 
-	m_textInfo.SetText( ssprintf(
-		"Snap = %s\n"
-		"Beat = %.2f\n"
-		"Selection = begin: %.2f, end: %.2f\n"
-		"Play/Record rate: %.1f\n"
-		"Difficulty = %s\n"
-		"Description = %s\n"
-		"Main title = %s\n"
-		"Sub title = %s\n"
-		"Num notes tap: %d, hold: %d\n"
-		"Assist tick is %s\n"
-		"MusicOffsetSeconds: %.2f\n"
-		"Preview start: %.2f, length = %.2f\n",
-		sNoteType.GetString(),
-		GAMESTATE->m_fSongBeat,
-		m_NoteFieldEdit.m_fBeginMarker,	m_NoteFieldEdit.m_fEndMarker,
-		GAMESTATE->m_SongOptions.m_fMusicRate,
-		DifficultyToString( m_pNotes->GetDifficulty() ).GetString(),
-		GAMESTATE->m_pCurNotes[PLAYER_1] ? GAMESTATE->m_pCurNotes[PLAYER_1]->GetDescription().GetString() : "no description",
-		m_pSong->m_sMainTitle.GetString(),
-		m_pSong->m_sSubTitle.GetString(),
-		iNumTapNotes, iNumHoldNotes,
-		GAMESTATE->m_SongOptions.m_AssistType==SongOptions::ASSIST_TICK ? "ON" : "OFF",
-		m_pSong->m_fBeat0OffsetInSeconds,
-		m_pSong->m_fMusicSampleStartSeconds, m_pSong->m_fMusicSampleLengthSeconds
-		) );
+	CString sText;
+	sText += ssprintf( "Current Beat:\n     %.2f\n",		GAMESTATE->m_fSongBeat );
+	sText += ssprintf( "Snap to:\n     %s\n",				sNoteType.GetString() );
+	sText += ssprintf( "Selection begin:\n     %.2f\n",		m_NoteFieldEdit.m_fBeginMarker );
+	sText += ssprintf( "Selection end:\n     %.2f\n",		m_NoteFieldEdit.m_fEndMarker );
+	sText += ssprintf( "Difficulty:\n     %s\n",			DifficultyToString( m_pNotes->GetDifficulty() ).GetString() );
+	sText += ssprintf( "Description:\n     %s\n",			GAMESTATE->m_pCurNotes[PLAYER_1] ? GAMESTATE->m_pCurNotes[PLAYER_1]->GetDescription().GetString() : "no description" );
+	sText += ssprintf( "Main title:\n     %s\n",			m_pSong->m_sMainTitle.GetString() );
+	sText += ssprintf( "Sub title:\n     %s\n",				m_pSong->m_sSubTitle.GetString() );
+	sText += ssprintf( "Tap Notes:\n     %d\n",				iNumTapNotes );
+	sText += ssprintf( "Hold Notes:\n     %d\n",			iNumHoldNotes );
+	sText += ssprintf( "Beat 0 Offset:\n     %.2f secs\n",	m_pSong->m_fBeat0OffsetInSeconds );
+	sText += ssprintf( "Preview Start:\n     %.2f secs\n",	m_pSong->m_fMusicSampleStartSeconds );
+	sText += ssprintf( "Preview Length:\n     %.2f secs\n",m_pSong->m_fMusicSampleLengthSeconds );
+
+	m_textInfo.SetText( sText );
 }
 
 
@@ -551,14 +518,12 @@ void ScreenEdit::DrawPrimitives()
 	m_NoteFieldEdit.Draw();
 	GAMESTATE->m_fSongBeat = fSongBeat;	// restore real song beat
 
+	m_sprHelp.Draw();
 	m_textHelp.Draw();
+	m_sprInfo.Draw();
 	m_textInfo.Draw();
 	m_Fade.Draw();
-/*	if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,SDLK_F1) ) )
-	{
-		m_rectShortcutsBack.Draw();
-		m_textShortcuts.Draw();
-	} */
+
 
 	m_rectRecordBack.Draw();
 
@@ -573,34 +538,6 @@ void ScreenEdit::DrawPrimitives()
 		m_Player.Draw();
 	}
 
-	if( m_EditMode == MODE_RECORDING )
-	{
-		/*
-		for( int t=0; t<GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer; t++ )
-		{
-			if( m_bLayingAHold[t] )
-			{
-				bool bHoldingButton = false;
-				for( int p=0; p<NUM_PLAYERS; p++ )
-					bHoldingButton |= INPUTMAPPER->IsButtonDown( StyleInput(PlayerInput(p), t) );
-				if( bHoldingButton 
-			}
-		}
-		*/
-	}
-
-	if( m_EditMode == MODE_ACTION_MENU )
-	{
-		for( int i=0; i<NUM_ACTION_MENU_ITEMS; i++ )
-			m_textActionMenu[i].Draw();
-	}
-
-	if( m_EditMode == MODE_NAMING_MENU )
-	{
-		for( int i=0; i<NUM_NAMING_MENU_ITEMS; i++ )
-			m_textNamingMenu[i].Draw();
-	}
-
 	Screen::DrawPrimitives();
 }
 
@@ -611,8 +548,6 @@ void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, c
 	switch( m_EditMode )
 	{
 	case MODE_EDITING:		InputEdit( DeviceI, type, GameI, MenuI, StyleI );	break;
-	case MODE_ACTION_MENU:	InputActionMenu( DeviceI, type, GameI, MenuI, StyleI );	break;
-	case MODE_NAMING_MENU:	InputNamingMenu( DeviceI, type, GameI, MenuI, StyleI ); break;
 	case MODE_RECORDING:	InputRecord( DeviceI, type, GameI, MenuI, StyleI );	break;
 	case MODE_PLAYING:		InputPlay( DeviceI, type, GameI, MenuI, StyleI );	break;
 	default:	ASSERT(0);
@@ -748,27 +683,44 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 		}
 		break;
-	case SDLK_q:
-		SCREENMAN->SetNewScreen( "ScreenEditMenu" );
-		break;
-	case SDLK_s:
-		{
-			// copy edit into current Notes
-			Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
-			ASSERT( pNotes );
-
-			pNotes->SetNoteData( &m_NoteFieldEdit );
-			GAMESTATE->m_pCurSong->Save();
-
-			SCREENMAN->SystemMessage( "Saved as SM and DWI." );
-			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","edit save") );
-		}
-		break;
 	case SDLK_UP:
 	case SDLK_DOWN:
 	case SDLK_PAGEUP:
 	case SDLK_PAGEDOWN:
 		{
+			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,SDLK_LCTRL)) ||
+				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,SDLK_RCTRL)) )
+			{
+				if( DeviceI.button == SDLK_UP )
+				{
+					if( m_fDestinationScrollSpeed == 4 )
+					{
+						m_fDestinationScrollSpeed = 2;
+						m_soundMarker.Play();
+					}
+					else if( m_fDestinationScrollSpeed == 2 )
+					{
+						m_fDestinationScrollSpeed = 1;
+						m_soundMarker.Play();
+					}
+					break;
+				}
+				else if( DeviceI.button == SDLK_DOWN )
+				{
+					if( m_fDestinationScrollSpeed == 1 )
+					{
+						m_fDestinationScrollSpeed = 2;
+						m_soundMarker.Play();
+					}
+					else if( m_fDestinationScrollSpeed == 2 )
+					{
+						m_fDestinationScrollSpeed = 4;
+						m_soundMarker.Play();
+					}
+					break;
+				}
+			}
+
 			float fBeatsToMove=0.f;
 			switch( DeviceI.button )
 			{
@@ -855,173 +807,62 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		m_SnapDisplay.NextSnapMode();
 		OnSnapModeChange();
 		break;
-	case SDLK_RETURN:
-	case SDLK_KP_ENTER:
-		if( m_NoteFieldEdit.m_fEndMarker != -1  &&  GAMESTATE->m_fSongBeat > m_NoteFieldEdit.m_fEndMarker )
-		{
-			// invalid!  The begin maker must be placed before the end marker
-			m_soundInvalid.Play();
-		}
-		else
-		{
-			m_NoteFieldEdit.m_fBeginMarker = GAMESTATE->m_fSongBeat;
-			m_soundMarker.Play();
-		}
-		break;
 	case SDLK_SPACE:
-		if( m_NoteFieldEdit.m_fBeginMarker != -1  &&  GAMESTATE->m_fSongBeat < m_NoteFieldEdit.m_fBeginMarker )
+		if( m_NoteFieldEdit.m_fBeginMarker==-1 && m_NoteFieldEdit.m_fEndMarker==-1 )
 		{
-			// invalid!  The end maker must be placed after the begin marker
-			m_soundInvalid.Play();
+			// lay begin marker
+			m_NoteFieldEdit.m_fBeginMarker = GAMESTATE->m_fSongBeat;
 		}
-		else
+		else if( m_NoteFieldEdit.m_fEndMarker==-1 )	// only begin marker is laid
 		{
-			m_NoteFieldEdit.m_fEndMarker = GAMESTATE->m_fSongBeat;
-			m_soundMarker.Play();
-		}
-		break;
-	case SDLK_g:
-	case SDLK_h:
-	case SDLK_j:
-	case SDLK_k:
-	case SDLK_l:
-		{
-			if( m_NoteFieldEdit.m_fBeginMarker == -1  ||  m_NoteFieldEdit.m_fEndMarker == -1 )
+			if( GAMESTATE->m_fSongBeat == m_NoteFieldEdit.m_fBeginMarker )
 			{
-				m_soundInvalid.Play();
+				m_NoteFieldEdit.m_fBeginMarker = -1;
 			}
 			else
 			{
-				NoteType noteType1;
-				NoteType noteType2;
-				switch( DeviceI.button )
-				{
-					case SDLK_g:	noteType1 = NOTE_TYPE_4TH;	noteType2 = NOTE_TYPE_4TH;	break;
-					case SDLK_h:	noteType1 = NOTE_TYPE_8TH;	noteType2 = NOTE_TYPE_8TH;	break;
-					case SDLK_j:	noteType1 = NOTE_TYPE_12TH;	noteType2 = NOTE_TYPE_12TH;	break;
-					case SDLK_k:	noteType1 = NOTE_TYPE_16TH;	noteType2 = NOTE_TYPE_16TH;	break;
-					case SDLK_l:	noteType1 = NOTE_TYPE_12TH;	noteType2 = NOTE_TYPE_16TH;	break;
-					default:	ASSERT( false );		return;
-				}
-
-				NoteDataUtil::SnapToNearestNoteType( m_NoteFieldEdit, noteType1, noteType2, m_NoteFieldEdit.m_fBeginMarker, m_NoteFieldEdit.m_fEndMarker );
+				m_NoteFieldEdit.m_fEndMarker = max( m_NoteFieldEdit.m_fBeginMarker, GAMESTATE->m_fSongBeat );
+				m_NoteFieldEdit.m_fBeginMarker = min( m_NoteFieldEdit.m_fBeginMarker, GAMESTATE->m_fSongBeat );
 			}
+		}
+		else	// both markers are laid
+		{
+			if( GAMESTATE->m_fSongBeat == m_NoteFieldEdit.m_fBeginMarker )
+			{
+				m_NoteFieldEdit.m_fBeginMarker = m_NoteFieldEdit.m_fEndMarker;
+				m_NoteFieldEdit.m_fEndMarker = -1;
+			}
+			else if( GAMESTATE->m_fSongBeat == m_NoteFieldEdit.m_fEndMarker )
+			{
+				m_NoteFieldEdit.m_fEndMarker = -1;
+			}
+			else
+			{
+				m_NoteFieldEdit.m_fBeginMarker = GAMESTATE->m_fSongBeat;
+				m_NoteFieldEdit.m_fEndMarker = -1;
+			}
+		}
+		m_soundMarker.Play();
+		break;
+	case SDLK_RETURN:
+	case SDLK_KP_ENTER:
+		{
+			// update enabled/disabled in g_AreaMenu
+			bool bAreaSelected = m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1;
+			g_AreaMenu.lines[cut].bEnabled = bAreaSelected;
+			g_AreaMenu.lines[copy].bEnabled = bAreaSelected;
+			g_AreaMenu.lines[paste].bEnabled = this->m_Clipboard.GetLastBeat() != 0;
+			g_AreaMenu.lines[clear].bEnabled = bAreaSelected;
+			g_AreaMenu.lines[quantize].bEnabled = bAreaSelected;
+			g_AreaMenu.lines[transform].bEnabled = bAreaSelected;
+			g_AreaMenu.lines[record].bEnabled = bAreaSelected;
+			g_AreaMenu.lines[insert_and_shift].bEnabled = !bAreaSelected;
+			g_AreaMenu.lines[delete_and_shift].bEnabled = !bAreaSelected;
+			SCREENMAN->MiniMenu( &g_AreaMenu, SM_BackFromAreaMenu );
 		}
 		break;
 	case SDLK_ESCAPE:
-		{
-			m_EditMode = MODE_ACTION_MENU;
-			m_iMenuSelection = 0;
-			MenuItemGainFocus( &m_textActionMenu[m_iMenuSelection] );
-
-			m_rectRecordBack.StopTweening();
-			m_rectRecordBack.BeginTweening( 0.5f );
-			m_rectRecordBack.SetTweenDiffuse( RageColor(0,0,0,0.8f) );
-		}
-		break;
-	case SDLK_n:
-		{
-			m_EditMode = MODE_NAMING_MENU;
-			m_iMenuSelection = 0;
-			MenuItemGainFocus( &m_textNamingMenu[m_iMenuSelection] );
-
-			m_rectRecordBack.StopTweening();
-			m_rectRecordBack.BeginTweening( 0.5f );
-			m_rectRecordBack.SetTweenDiffuse( RageColor(0,0,0,0.8f) );
-		}
-		break;
-	case SDLK_r:
-	case SDLK_p:
-		{
-			if( m_NoteFieldEdit.m_fBeginMarker == -1 )
-				m_NoteFieldEdit.m_fBeginMarker = GAMESTATE->m_fSongBeat;
-			if( m_NoteFieldEdit.m_fEndMarker == -1 )
-				m_NoteFieldEdit.m_fEndMarker = m_pSong->m_fLastBeat;
-
-			if(DeviceI.button == SDLK_r) {
-				m_EditMode = MODE_RECORDING;
-
-				// initialize m_NoteFieldRecord
-				m_NoteFieldRecord.ClearAll();
-				m_NoteFieldRecord.SetNumTracks( m_NoteFieldEdit.GetNumTracks() );
-				m_NoteFieldRecord.m_fBeginMarker = m_NoteFieldEdit.m_fBeginMarker;
-				m_NoteFieldRecord.m_fEndMarker = m_NoteFieldEdit.m_fEndMarker;
-
-			} else {
-				m_EditMode = MODE_PLAYING;
-
-				m_Player.Load( PLAYER_1, (NoteData*)&m_NoteFieldEdit, NULL, NULL );
-			}
-
-			m_rectRecordBack.StopTweening();
-			m_rectRecordBack.BeginTweening( 0.5f );
-			m_rectRecordBack.SetTweenDiffuse( RageColor(0,0,0,0.8f) );
-
-			GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;	// give a 1 measure lead-in
-			float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) ;
-			m_soundMusic.SetPositionSeconds( fStartSeconds );
-			m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
-			m_soundMusic.StartPlaying();
-		}
-		break;
-	case SDLK_t:
-		if(     GAMESTATE->m_SongOptions.m_fMusicRate == 1.0f )		GAMESTATE->m_SongOptions.m_fMusicRate = 0.9f;
-		else if( GAMESTATE->m_SongOptions.m_fMusicRate == 0.9f )	GAMESTATE->m_SongOptions.m_fMusicRate = 0.8f;
-		else if( GAMESTATE->m_SongOptions.m_fMusicRate == 0.8f )	GAMESTATE->m_SongOptions.m_fMusicRate = 0.7f;
-		else if( GAMESTATE->m_SongOptions.m_fMusicRate == 0.7f )	GAMESTATE->m_SongOptions.m_fMusicRate = 1.5f;
-		else if( GAMESTATE->m_SongOptions.m_fMusicRate == 1.5f )	GAMESTATE->m_SongOptions.m_fMusicRate = 1.4f;
-		else if( GAMESTATE->m_SongOptions.m_fMusicRate == 1.4f )	GAMESTATE->m_SongOptions.m_fMusicRate = 1.3f;
-		else if( GAMESTATE->m_SongOptions.m_fMusicRate == 1.3f )	GAMESTATE->m_SongOptions.m_fMusicRate = 1.2f;
-		else if( GAMESTATE->m_SongOptions.m_fMusicRate == 1.2f )	GAMESTATE->m_SongOptions.m_fMusicRate = 1.1f;
-		else if( GAMESTATE->m_SongOptions.m_fMusicRate == 1.1f )	GAMESTATE->m_SongOptions.m_fMusicRate = 1.0f;
-		break;
-	case SDLK_INSERT:
-	case SDLK_DELETE:
-		{
-			NoteData temp;
-			temp.SetNumTracks( m_NoteFieldEdit.GetNumTracks() );
-			int iTakeFromRow=0;
-			int iPasteAtRow;
-			switch( DeviceI.button )
-			{
-			case SDLK_INSERT:
-				iTakeFromRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
-				iPasteAtRow = BeatToNoteRow( GAMESTATE->m_fSongBeat+1 );
-				break;
-			case SDLK_DELETE:
-				iTakeFromRow = BeatToNoteRow( GAMESTATE->m_fSongBeat+1 );
-				iPasteAtRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
-				break;
-			}
-			temp.CopyRange( &m_NoteFieldEdit, iTakeFromRow, m_NoteFieldEdit.GetLastRow() );
-			m_NoteFieldEdit.ClearRange( min(iTakeFromRow,iPasteAtRow), m_NoteFieldEdit.GetLastRow()  );
-			m_NoteFieldEdit.CopyRange( &temp, 0, temp.GetLastRow(), iPasteAtRow );
-		}
-		break;
-	case SDLK_x:
-	case SDLK_c:
-		if( m_NoteFieldEdit.m_fBeginMarker == -1  ||  m_NoteFieldEdit.m_fEndMarker == -1 )
-		{
-			m_soundInvalid.Play();
-			SCREENMAN->SystemMessage( "You must select a range before copying." );
-		} else {
-			int iFirstRow = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
-			int iLastRow  = BeatToNoteRow( m_NoteFieldEdit.m_fEndMarker );
-
-			m_Clipboard.ClearAll();
-			m_Clipboard.CopyRange( &m_NoteFieldEdit, iFirstRow, iLastRow );
-			if(DeviceI.button == SDLK_x)
-				m_NoteFieldEdit.ClearRange( iFirstRow, iLastRow  );
-		}
-		break;
-	case SDLK_v:
-		{
-			int iSrcFirstRow = 0;
-			int iSrcLastRow  = BeatToNoteRow( m_Clipboard.GetLastBeat() );
-			int iDestFirstRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
-
-			m_NoteFieldEdit.CopyRange( &m_Clipboard, iSrcFirstRow, iSrcLastRow, iDestFirstRow );
-		}
+		SCREENMAN->MiniMenu( &g_MainMenu, SM_BackFromMainMenu );
 		break;
 
 	case SDLK_d:
@@ -1153,13 +994,6 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			m_pSong->m_fBeat0OffsetInSeconds += fOffsetDelta;
 		}
 		break;
-	case SDLK_m:
-		SOUNDMAN->PlayMusic("");
-		SOUNDMAN->PlayMusic( m_pSong->GetMusicPath(), false,
-			m_pSong->m_fMusicSampleStartSeconds,
-			m_pSong->m_fMusicSampleLengthSeconds,
-			1.5f );
-		break;
 	case SDLK_LEFTBRACKET:
 	case SDLK_RIGHTBRACKET:
 		{
@@ -1224,119 +1058,6 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 	case IET_FAST_REPEAT:
 	case IET_RELEASE:
 		// don't add or extend holds here
-		break;
-	}
-}
-
-void ScreenEdit::InputActionMenu( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
-{
-	if( DeviceI.device != DEVICE_KEYBOARD )
-		return;
-	if(type == IET_RELEASE) return; // don't care
-
-	switch( DeviceI.button )
-	{
-	case SDLK_UP:
-		MenuItemLoseFocus( &m_textActionMenu[m_iMenuSelection] );
-		m_iMenuSelection = (m_iMenuSelection-1+NUM_ACTION_MENU_ITEMS) % NUM_ACTION_MENU_ITEMS;
-		LOG->Trace( "%d\n", m_iMenuSelection );
-		MenuItemGainFocus( &m_textActionMenu[m_iMenuSelection] );
-		break;
-	case SDLK_DOWN:
-		MenuItemLoseFocus( &m_textActionMenu[m_iMenuSelection] );
-		m_iMenuSelection = (m_iMenuSelection+1) % NUM_ACTION_MENU_ITEMS;
-		LOG->Trace( "%d\n", m_iMenuSelection );
-		MenuItemGainFocus( &m_textActionMenu[m_iMenuSelection] );
-		break;
-	case SDLK_RETURN:
-	case SDLK_ESCAPE:
-		TransitionToEdit();
-		MenuItemLoseFocus( &m_textActionMenu[m_iMenuSelection] );
-		if( DeviceI.button == SDLK_RETURN )
-		{
-			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
-			int iMenuKey = ACTION_MENU_ITEM_KEY[m_iMenuSelection];
-			InputEdit( DeviceInput(DEVICE_KEYBOARD,iMenuKey), IET_FIRST_PRESS, GameInput(), MenuInput(), StyleInput() );
-		}
-		break;
-	default:
-		// On recognized keys, behave as on the top level
-		for(int i=0; i<NUM_ACTION_MENU_ITEMS; i++) {
-			if( DeviceI.button == ACTION_MENU_ITEM_KEY[i] ) {
-				TransitionToEdit();
-				MenuItemLoseFocus( &m_textActionMenu[m_iMenuSelection] );
-
-				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
-				InputEdit( DeviceI, IET_FIRST_PRESS, GameInput(), MenuInput(), StyleInput() );
-			}
-		}
-		break;
-	}
-}
-
-void ScreenEdit::InputNamingMenu( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, bool forceShiftPressed )
-{
-	if( DeviceI.device != DEVICE_KEYBOARD )
-		return;
-	if(type == IET_RELEASE) return; // don't care
-
-	bool translit = forceShiftPressed ||
-					INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT)) ||
-					INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RSHIFT));
-
-	switch( DeviceI.button ) {
-	case SDLK_m:
-	case SDLK_s:
-	case SDLK_a:
-	case SDLK_ESCAPE:
-	case SDLK_RETURN:
-		TransitionToEdit();
-		MenuItemLoseFocus( &m_textNamingMenu[m_iMenuSelection] );
-		break;
-	}
-
-	switch( DeviceI.button )
-	{
-	case SDLK_m:
-		if(translit) {
-			SCREENMAN->TextEntry( SM_None, "Edit song main title transliteration.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sMainTitleTranslit, ChangeMainTitleTranslit, NULL);
-		} else {
-			SCREENMAN->TextEntry( SM_None, "Edit song main title.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sMainTitle, ChangeMainTitle, NULL );
-		}
-		break;
-
-	case SDLK_s:
-		if(translit) {
-			SCREENMAN->TextEntry( SM_None, "Edit song sub title transliteration.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sSubTitleTranslit, ChangeSubTitleTranslit, NULL);
-		} else {
-			SCREENMAN->TextEntry( SM_None, "Edit song sub title.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sSubTitle, ChangeSubTitle, NULL );
-		}
-		break;
-
-	case SDLK_a:
-		if(translit) {
-			SCREENMAN->TextEntry( SM_None, "Edit song artist transliteration.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sArtistTranslit, ChangeArtistTranslit, NULL);
-		} else {
-			SCREENMAN->TextEntry( SM_None, "Edit song artist.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sArtist, ChangeArtist, NULL );
-		}
-		break;
-
-	case SDLK_UP:
-		MenuItemLoseFocus( &m_textNamingMenu[m_iMenuSelection] );
-		m_iMenuSelection = (m_iMenuSelection-1+NUM_NAMING_MENU_ITEMS) % NUM_NAMING_MENU_ITEMS;
-		LOG->Trace( "%d\n", m_iMenuSelection );
-		MenuItemGainFocus( &m_textNamingMenu[m_iMenuSelection] );
-		break;
-	case SDLK_DOWN:
-		MenuItemLoseFocus( &m_textNamingMenu[m_iMenuSelection] );
-		m_iMenuSelection = (m_iMenuSelection+1) % NUM_NAMING_MENU_ITEMS;
-		LOG->Trace( "%d\n", m_iMenuSelection );
-		MenuItemGainFocus( &m_textNamingMenu[m_iMenuSelection] );
-		break;
-	case SDLK_RETURN:
-		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
-		const std::pair<int, bool>& pairMenuKey = NAMING_MENU_ITEM_KEY[m_iMenuSelection];
-		InputNamingMenu( DeviceInput(DEVICE_KEYBOARD,pairMenuKey.first), IET_FIRST_PRESS, GameInput(), MenuInput(), StyleInput(), pairMenuKey.second );
 		break;
 	}
 }
@@ -1426,9 +1147,22 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( "ScreenEditMenu" );
 		break;
+	case SM_BackFromMainMenu:
+		HandleMainMenuChoice( (MainMenuChoice)ScreenMiniMenu::s_iLastLine, ScreenMiniMenu::s_iLastAnswers );
+		break;
+	case SM_BackFromAreaMenu:
+		HandleAreaMenuChoice( (AreaMenuChoice)ScreenMiniMenu::s_iLastLine, ScreenMiniMenu::s_iLastAnswers );
+		break;
+	case SM_BackFromEditNotesStatistics:
+		HandleEditNotesStatisticsChoice( (EditNotesStatisticsChoice)ScreenMiniMenu::s_iLastLine, ScreenMiniMenu::s_iLastAnswers );
+		break;
+	case SM_BackFromEditOptions:
+		HandleEditOptionsChoice( (EditOptionsChoice)ScreenMiniMenu::s_iLastLine, ScreenMiniMenu::s_iLastAnswers );
+		break;
+	case SM_BackFromEditSongInfo:
+		HandleEditSongInfoChoice( (EditSongInfoChoice)ScreenMiniMenu::s_iLastLine, ScreenMiniMenu::s_iLastAnswers );
+		break;
 	}
-
-
 }
 
 void ScreenEdit::OnSnapModeChange()
@@ -1442,15 +1176,276 @@ void ScreenEdit::OnSnapModeChange()
 	GAMESTATE->m_fSongBeat -= NoteRowToBeat( iStepIndexHangover );
 }
 
-void ScreenEdit::MenuItemGainFocus( BitmapText* menuitem )
+void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 {
-	menuitem->SetEffectDiffuseCamelion( 1.0f, RageColor(1,1,1,1), RageColor(0,1,0,1) );
-	menuitem->SetZoom( 0.7f );
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","edit menu row") );
+	switch( c )
+	{
+		case edit_notes_statistics:
+			{
+				Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
+				float fMusicSeconds = m_soundMusic.GetLengthSeconds();
+
+				g_EditNotesStatistics.lines[difficulty].iDefaultOption = pNotes->GetDifficulty();
+				g_EditNotesStatistics.lines[meter].iDefaultOption = pNotes->GetMeter()+1;
+				strcpy( g_EditNotesStatistics.lines[description].szOptionsText[0], pNotes->GetDescription() );
+				strcpy( g_EditNotesStatistics.lines[tap_notes].szOptionsText[0], ssprintf("%d", m_NoteFieldEdit.GetNumTapNotes()) );
+				strcpy( g_EditNotesStatistics.lines[hold_notes].szOptionsText[0], ssprintf("%d", m_NoteFieldEdit.GetNumHoldNotes()) );
+				strcpy( g_EditNotesStatistics.lines[stream].szOptionsText[0], ssprintf("%f", NoteDataUtil::GetStreamRadarValue(m_NoteFieldEdit,fMusicSeconds)) );
+				strcpy( g_EditNotesStatistics.lines[voltage].szOptionsText[0], ssprintf("%f", NoteDataUtil::GetVoltageRadarValue(m_NoteFieldEdit,fMusicSeconds)) );
+				strcpy( g_EditNotesStatistics.lines[air].szOptionsText[0], ssprintf("%f", NoteDataUtil::GetAirRadarValue(m_NoteFieldEdit,fMusicSeconds)) );
+				strcpy( g_EditNotesStatistics.lines[freeze].szOptionsText[0], ssprintf("%f", NoteDataUtil::GetFreezeRadarValue(m_NoteFieldEdit,fMusicSeconds)) );
+				strcpy( g_EditNotesStatistics.lines[chaos].szOptionsText[0], ssprintf("%f", NoteDataUtil::GetChaosRadarValue(m_NoteFieldEdit,fMusicSeconds)) );
+				SCREENMAN->MiniMenu( &g_EditNotesStatistics, SM_BackFromEditNotesStatistics );
+			}
+			break;
+		case play_whole_song:
+			break;
+		case save:
+			{
+				// copy edit into current Notes
+				Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
+				ASSERT( pNotes );
+
+				pNotes->SetNoteData( &m_NoteFieldEdit );
+				GAMESTATE->m_pCurSong->Save();
+
+				SCREENMAN->SystemMessage( "Saved as SM and DWI." );
+				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","edit save") );
+			}
+			break;
+		case editor_options:
+			SCREENMAN->MiniMenu( &g_EditOptions, SM_BackFromEditOptions );
+			break;
+		case player_options:
+			break;
+		case song_options:
+			break;
+		case edit_song_info:
+			SCREENMAN->MiniMenu( &g_EditSongInfo, SM_BackFromEditSongInfo );
+			break;
+		case edit_bpm:
+			break;
+		case edit_stop:
+			break;
+		case edit_bg_change:
+			break;
+		case play_preview_music:
+			SOUNDMAN->PlayMusic("");
+			SOUNDMAN->PlayMusic( m_pSong->GetMusicPath(), false,
+				m_pSong->m_fMusicSampleStartSeconds,
+				m_pSong->m_fMusicSampleLengthSeconds,
+				1.5f );
+			break;
+		case exit:
+			SCREENMAN->SetNewScreen( "ScreenEditMenu" );
+			break;
+		default:
+			ASSERT(0);
+	};
 }
 
-void ScreenEdit::MenuItemLoseFocus( BitmapText* menuitem )
+void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 {
-	menuitem->SetEffectNone();
-	menuitem->SetZoom( 0.5f );
+	switch( c )
+	{
+		case cut:
+			{
+				HandleAreaMenuChoice( copy, iAnswers );
+				HandleAreaMenuChoice( clear, iAnswers );
+			}
+			break;
+		case copy:
+			{
+				ASSERT( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 );
+				int iFirstRow = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
+				int iLastRow  = BeatToNoteRow( m_NoteFieldEdit.m_fEndMarker );
+				m_Clipboard.ClearAll();
+				m_Clipboard.CopyRange( &m_NoteFieldEdit, iFirstRow, iLastRow );
+			}
+			break;
+		case paste:
+			{
+				int iSrcFirstRow = 0;
+				int iSrcLastRow  = BeatToNoteRow( m_Clipboard.GetLastBeat() );
+				int iDestFirstRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+				m_NoteFieldEdit.CopyRange( &m_Clipboard, iSrcFirstRow, iSrcLastRow, iDestFirstRow );
+			}
+			break;
+		case clear:
+			{
+				ASSERT( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 );
+				int iFirstRow = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
+				int iLastRow  = BeatToNoteRow( m_NoteFieldEdit.m_fEndMarker );
+				m_NoteFieldEdit.ClearRange( iFirstRow, iLastRow );
+			}
+			break;
+		case quantize:
+			{
+				NoteType nt = (NoteType)iAnswers[c];
+				NoteDataUtil::SnapToNearestNoteType( m_NoteFieldEdit, nt, nt, m_NoteFieldEdit.m_fBeginMarker, m_NoteFieldEdit.m_fEndMarker );
+			}
+			break;
+		case transform:
+			{
+				HandleAreaMenuChoice( cut, iAnswers );
+
+				TransformType tt = (TransformType)iAnswers[c];
+				switch( tt )
+				{
+				case little:		NoteDataUtil::Little( m_Clipboard );							break;
+				case big:			NoteDataUtil::Big( m_Clipboard );								break;
+				case left:			NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::left );			break;
+				case right:			NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::right );			break;
+				case shuffle:		NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::shuffle );		break;
+				case super_shuffle:	NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::super_shuffle );	break;
+				case backwards:		NoteDataUtil::Backwards( m_Clipboard );							break;
+				case swap_sides:	NoteDataUtil::SwapSides( m_Clipboard );							break;
+				default:		ASSERT(0);
+				}
+
+				HandleAreaMenuChoice( paste, iAnswers );
+			}
+			break;
+		case play:
+			{
+				ASSERT( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 );
+
+				m_EditMode = MODE_PLAYING;
+
+				m_Player.Load( PLAYER_1, (NoteData*)&m_NoteFieldEdit, NULL, NULL );
+
+				m_rectRecordBack.StopTweening();
+				m_rectRecordBack.BeginTweening( 0.5f );
+				m_rectRecordBack.SetTweenDiffuse( RageColor(0,0,0,0.8f) );
+
+				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;	// give a 1 measure lead-in
+				float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) ;
+				m_soundMusic.SetPositionSeconds( fStartSeconds );
+				m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
+				m_soundMusic.StartPlaying();
+			}
+			break;
+		case record:
+			{
+				ASSERT( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 );
+
+				m_EditMode = MODE_RECORDING;
+
+				// initialize m_NoteFieldRecord
+				m_NoteFieldRecord.ClearAll();
+				m_NoteFieldRecord.SetNumTracks( m_NoteFieldEdit.GetNumTracks() );
+				m_NoteFieldRecord.m_fBeginMarker = m_NoteFieldEdit.m_fBeginMarker;
+				m_NoteFieldRecord.m_fEndMarker = m_NoteFieldEdit.m_fEndMarker;
+
+				m_rectRecordBack.StopTweening();
+				m_rectRecordBack.BeginTweening( 0.5f );
+				m_rectRecordBack.SetTweenDiffuse( RageColor(0,0,0,0.8f) );
+
+				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;	// give a 1 measure lead-in
+				float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) ;
+				m_soundMusic.SetPositionSeconds( fStartSeconds );
+				m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
+				m_soundMusic.StartPlaying();
+			}
+			break;
+		case insert_and_shift:
+			{
+				NoteData temp;
+				temp.SetNumTracks( m_NoteFieldEdit.GetNumTracks() );
+				int iTakeFromRow=0;
+				int iPasteAtRow;
+
+				iTakeFromRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+				iPasteAtRow = BeatToNoteRow( GAMESTATE->m_fSongBeat+1 );
+
+				temp.CopyRange( &m_NoteFieldEdit, iTakeFromRow, m_NoteFieldEdit.GetLastRow() );
+				m_NoteFieldEdit.ClearRange( min(iTakeFromRow,iPasteAtRow), m_NoteFieldEdit.GetLastRow()  );
+				m_NoteFieldEdit.CopyRange( &temp, 0, temp.GetLastRow(), iPasteAtRow );
+			}
+			break;
+		case delete_and_shift:
+			{
+				NoteData temp;
+				temp.SetNumTracks( m_NoteFieldEdit.GetNumTracks() );
+				int iTakeFromRow=0;
+				int iPasteAtRow;
+
+				iTakeFromRow = BeatToNoteRow( GAMESTATE->m_fSongBeat+1 );
+				iPasteAtRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+
+				temp.CopyRange( &m_NoteFieldEdit, iTakeFromRow, m_NoteFieldEdit.GetLastRow() );
+				m_NoteFieldEdit.ClearRange( min(iTakeFromRow,iPasteAtRow), m_NoteFieldEdit.GetLastRow()  );
+				m_NoteFieldEdit.CopyRange( &temp, 0, temp.GetLastRow(), iPasteAtRow );		
+			}
+			break;
+		default:
+			ASSERT(0);
+	};
+
+}
+
+void ScreenEdit::HandleEditNotesStatisticsChoice( EditNotesStatisticsChoice c, int* iAnswers )
+{
+	switch( c )
+	{
+	case difficulty:
+		break;
+	case meter:
+		break;
+	case description:
+		break;
+	case tap_notes:
+		break;
+	case hold_notes:
+		break;
+	case stream:
+		break;
+	case voltage:
+		break;
+	case air:
+		break;
+	case freeze:
+		break;
+	case chaos:
+		break;
+	default:
+		ASSERT(0);
+	};
+
+}
+
+void ScreenEdit::HandleEditOptionsChoice( EditOptionsChoice c, int* iAnswers )
+{
+	switch( c )
+	{
+	case zoom:
+		break;
+	case max_notes_per_row:
+		break;
+	case after_note_add:
+		break;
+	default:
+		ASSERT(0);
+	};
+}
+
+void ScreenEdit::HandleEditSongInfoChoice( EditSongInfoChoice c, int* iAnswers )
+{
+	switch( c )
+	{
+	case main_title:
+		break;
+	case sub_title:
+		break;
+	case artist:
+		break;
+	case main_title_transliteration:
+		break;
+	case sub_title_transliteration:
+		break;
+	case artist_transliteration:
+		break;
+	default:
+		ASSERT(0);
+	};
 }

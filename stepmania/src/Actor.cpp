@@ -83,7 +83,7 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		for(i=0; i<4; i++)
 			m_temp.diffuse[i] = bBlinkOn ? m_effectColor1 : m_effectColor2;
 		break;
-	case diffuse_camelion:
+	case diffuse_shift:
 		for(i=0; i<4; i++)
 			m_temp.diffuse[i] = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
 		break;
@@ -91,7 +91,7 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		m_temp.glow = bBlinkOn ? m_effectColor1 : m_effectColor2;
 		m_temp.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
 		break;
-	case glow_camelion:
+	case glow_shift:
 		m_temp.glow = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
 		m_temp.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
 		break;
@@ -224,9 +224,9 @@ void Actor::Update( float fDeltaTime )
 	case no_effect:
 		break;
 	case diffuse_blinking:
-	case diffuse_camelion:
+	case diffuse_shift:
 	case glow_blinking:
-	case glow_camelion:
+	case glow_shift:
 	case wagging:
 	case bouncing:
 	case bobbing:
@@ -400,9 +400,9 @@ void Actor::SetEffectDiffuseBlinking( float fEffectPeriodSeconds, RageColor c1, 
 	m_fSecsIntoEffect = 0;
 }
 
-void Actor::SetEffectDiffuseCamelion( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
+void Actor::SetEffectDiffuseShift( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
-	m_Effect = diffuse_camelion;
+	m_Effect = diffuse_shift;
 	m_effectColor1 = c1;
 	m_effectColor2 = c2;
 	m_fEffectPeriodSeconds = fEffectPeriodSeconds;
@@ -418,9 +418,9 @@ void Actor::SetEffectGlowBlinking( float fEffectPeriodSeconds, RageColor c1, Rag
 	m_fSecsIntoEffect = 0;
 }
 
-void Actor::SetEffectGlowCamelion( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
+void Actor::SetEffectGlowShift( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
-	m_Effect = glow_camelion;
+	m_Effect = glow_shift;
 	m_effectColor1 = c1;
 	m_effectColor2 = c2;
 	m_fEffectPeriodSeconds = fEffectPeriodSeconds;

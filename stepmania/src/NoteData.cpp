@@ -795,7 +795,7 @@ void NoteDataUtil::RemoveHoldNotes(NoteData &in)
 }
 
 
-void NoteDataUtil::Turn( NoteData &in, PlayerOptions::TurnType tt )
+void NoteDataUtil::Turn( NoteData &in, TurnType tt )
 {
 	int iTakeFromTrack[MAX_NOTE_TRACKS];	// New track "t" will take from old track iTakeFromTrack[t]
 
@@ -803,15 +803,10 @@ void NoteDataUtil::Turn( NoteData &in, PlayerOptions::TurnType tt )
 
 	switch( tt )
 	{
-	case PlayerOptions::TURN_NONE:
-		return;		// nothing to do
-	case PlayerOptions::TURN_MIRROR:
-		for( t=0; t<in.GetNumTracks(); t++ )
-			iTakeFromTrack[t] = in.GetNumTracks()-t-1;
-		break;
-	case PlayerOptions::TURN_LEFT:
-	case PlayerOptions::TURN_RIGHT:		// HACK: TurnRight does the same thing as TurnLeft.  I'll fix this later...
-		// Chris: Handling each NotesType case is a terrible way to do this, but oh well...
+	case left:
+	case right:
+		// FIXME: TurnRight does the same thing as TurnLeft.
+		// Is there a way to do this withoutn handling each NotesType? -Chris
 		switch( GAMESTATE->GetCurrentStyleDef()->m_NotesType )
 		{
 		case NOTES_TYPE_DANCE_SINGLE:
@@ -878,8 +873,12 @@ void NoteDataUtil::Turn( NoteData &in, PlayerOptions::TurnType tt )
 			break;
 		}
 		break;
-	case PlayerOptions::TURN_SHUFFLE:
-	case PlayerOptions::TURN_SUPER_SHUFFLE:		// use this code to shuffle the HoldNotes
+	case mirror:
+		for( t=0; t<in.GetNumTracks(); t++ )
+			iTakeFromTrack[t] = in.GetNumTracks()-t-1;
+		break;
+	case shuffle:
+	case super_shuffle:		// use this code to shuffle the HoldNotes
 		{
 			vector<int> aiTracksLeftToMap;
 			for( t=0; t<in.GetNumTracks(); t++ )
@@ -894,8 +893,6 @@ void NoteDataUtil::Turn( NoteData &in, PlayerOptions::TurnType tt )
 				iTakeFromTrack[t] = iRandTrack;
 			}
 		}
-		break;
-		// handle this below
 		break;
 	default:
 		ASSERT(0);
@@ -915,41 +912,85 @@ void NoteDataUtil::Turn( NoteData &in, PlayerOptions::TurnType tt )
 	in.CopyAll( &tempNoteData );		// copy note data from newData back into this
 	in.Convert2sAnd3sToHoldNotes();
 
-
 	if( tt == PlayerOptions::TURN_SUPER_SHUFFLE )
+		SuperShuffleTaps( in );
+}
+
+void NoteDataUtil::SuperShuffleTaps( NoteData &in )
+{
+	// We already did the normal shuffling code above, which did a good job
+	// of shuffling HoldNotes without creating impossible patterns.
+	// Now, go in and shuffle the TapNotes per-row.
+	in.ConvertHoldNotesTo4s();
+
+	int max_row = in.GetLastRow();
+	for( int r=0; r<=max_row; r++ )
 	{
-		// We already did the normal shuffling code above, which did a good job
-		// of shuffling HoldNotes without creating impossible patterns.
-		// Now, go in and shuffle the TapNotes per-row.
-		in.ConvertHoldNotesTo4s();
-		for( int r=0; r<=max_row; r++ )
+		for( int t1=0; t1<in.GetNumTracks(); t1++ )
 		{
-			for( int t1=0; t1<in.GetNumTracks(); t1++ )
+			TapNote tn1 = in.GetTapNote(t1, r);
+			if( tn1!='4' )	// a tap that is not part of a hold
 			{
-				TapNote tn1 = in.GetTapNote(t1, r);
-				if( tn1!='4' )	// a tap that is not part of a hold
+				// probe for a spot to swap with
+				while( 1 )
 				{
-					// probe for a spot to swap with
-					while( 1 )
+					int t2 = rand() % in.GetNumTracks();
+					TapNote tn2 = in.GetTapNote(t2, r);
+					if( tn2!='4' )	// a tap that is not part of a hold
 					{
-						int t2 = rand() % in.GetNumTracks();
-						TapNote tn2 = in.GetTapNote(t2, r);
-						if( tn2!='4' )	// a tap that is not part of a hold
-						{
-							// swap
-							in.SetTapNote(t1, r, tn2);
-							in.SetTapNote(t2, r, tn1);
-							break;
-						}
+						// swap
+						in.SetTapNote(t1, r, tn2);
+						in.SetTapNote(t2, r, tn1);
+						break;
 					}
 				}
 			}
 		}
-		in.Convert4sToHoldNotes();
 	}
+	in.Convert4sToHoldNotes();
 }
 
-void NoteDataUtil::MakeLittle(NoteData &in)
+void NoteDataUtil::Backwards( NoteData &in )
+{
+	in.ConvertHoldNotesTo4s();
+	int max_row = in.GetLastRow();
+	for( int r=0; r<=max_row/2; r++ )
+	{
+		int iRowEarlier = r;
+		int iRowLater = max_row-r;
+
+		for( int t=0; t<in.GetNumTracks(); t++ )
+		{
+			TapNote tnEarlier = in.GetTapNote(t, iRowEarlier);
+			TapNote tnLater = in.GetTapNote(t, iRowLater);
+			in.SetTapNote(t, iRowEarlier, tnLater);
+			in.SetTapNote(t, iRowLater, tnEarlier);
+		}
+	}
+	in.Convert4sToHoldNotes();
+}
+
+void NoteDataUtil::SwapSides( NoteData &in )
+{
+	in.ConvertHoldNotesTo4s();
+	int max_row = in.GetLastRow();
+	for( int r=0; r<=max_row; r++ )
+	{
+		for( int t=0; t<in.GetNumTracks()/2; t++ )
+		{
+			int iTrackEarlier = t;
+			int iTrackLater = in.GetNumTracks()-1-t;
+
+			TapNote tnEarlier = in.GetTapNote(iTrackEarlier, r);
+			TapNote tnLater = in.GetTapNote(iTrackLater, r);
+			in.SetTapNote(iTrackEarlier, r, tnLater);
+			in.SetTapNote(iTrackLater, r, tnEarlier);
+		}
+	}
+	in.Convert4sToHoldNotes();
+}
+
+void NoteDataUtil::Little(NoteData &in)
 {
 	// filter out all non-quarter notes
 	int max_row = in.GetLastRow();
@@ -968,7 +1009,7 @@ void NoteDataUtil::MakeLittle(NoteData &in)
 	// leave HoldNotes unchanged (what should be do with them?)
 }
 
-void NoteDataUtil::MakeBig(NoteData &in)
+void NoteDataUtil::Big( NoteData &in )
 {
 	in.ConvertHoldNotesTo4s();
 
@@ -976,12 +1017,21 @@ void NoteDataUtil::MakeBig(NoteData &in)
 	int max_row = in.GetLastRow();
 	for( int i=0; i<=max_row; i+=ROWS_PER_BEAT ) 
 	{
-		int iNum = in.GetNumTapNonEmptyTracksInRow(i);
+		int iNum = in.GetNumTapNonEmptyTracks(i);
 		if( iNum == 1 )
 		{
 			// add a note determinitsitcally
 			int iBeat = (int)roundf( NoteRowToBeat(i) );
-			int iTrackToAdd = iBeat % in.GetNumTracks();
+			int iTrackOfNote = in.GetFirstNonEmptyTrack(i);
+			int iTrackToAdd = iTrackOfNote + (iBeat%4)-2;
+			CLAMP( iTrackToAdd, 0, in.GetNumTracks() );
+			if( iTrackToAdd == iTrackOfNote )
+				iTrackToAdd++;
+			CLAMP( iTrackToAdd, 0, in.GetNumTracks() );
+			if( iTrackToAdd == iTrackOfNote )
+				iTrackToAdd--;
+			CLAMP( iTrackToAdd, 0, in.GetNumTracks() );
+
 			if( in.GetTapNote(iTrackToAdd, i) != TAP_EMPTY )
 			{
 				iTrackToAdd = (iTrackToAdd+1) % in.GetNumTracks();

@@ -15,7 +15,6 @@
 */
 
 //#include "GameConstantsAndTypes.h"
-#include "PlayerOptions.h"
 #include "NoteTypes.h"
 
 // '1' = tap note
@@ -68,13 +67,20 @@ public:
 				return false;
 		return true;
 	}
-	inline int GetNumTapNonEmptyTracksInRow( int index ) const
+	inline int GetNumTapNonEmptyTracks( int index ) const
 	{
 		int iNum = 0;
 		for( int t=0; t<m_iNumTracks; t++ )
 			if( GetTapNote(t, index) != TAP_EMPTY )
 				iNum++;
 		return iNum;
+	}
+	inline int GetFirstNonEmptyTrack( int index ) const
+	{
+		for( int t=0; t<m_iNumTracks; t++ )
+			if( GetTapNote(t, index) != TAP_EMPTY )
+				return t;
+		return -1;
 	}
 
 	// used in edit/record
@@ -129,10 +135,14 @@ namespace NoteDataUtil
 	// radar values - return between 0.0 and 1.2
 	float GetRadarValue( const NoteData &in, RadarCategory rv, float fSongSeconds );
 
-	void RemoveHoldNotes(NoteData &in);
-	void Turn( NoteData &in, PlayerOptions::TurnType tt );
-	void MakeLittle(NoteData &in);
-	void MakeBig(NoteData &in);
+	void RemoveHoldNotes( NoteData &in );
+	enum TurnType { left, right, mirror, shuffle, super_shuffle, NUM_TURN_TYPES };
+	void Turn( NoteData &in, TurnType tt );
+	void Little( NoteData &in );
+	void Big( NoteData &in );
+	void SuperShuffleTaps( NoteData &in );
+	void Backwards( NoteData &in );
+	void SwapSides( NoteData &in );
 
 	void SnapToNearestNoteType( NoteData &in, NoteType nt1, NoteType nt2, float fBeginBeat, float fEndBeat );
 	inline void SnapToNearestNoteType( NoteData &in, NoteType nt, float fBeginBeat, float fEndBeat ) { SnapToNearestNoteType( in, nt, (NoteType)-1, fBeginBeat, fEndBeat ); }

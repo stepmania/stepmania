@@ -75,7 +75,7 @@ ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool b
 	m_rectAnswerBox.SetZoomX( m_textAnswer[m_bAnswer].GetWidestLineWidthInSourcePixels()+10.0f );
 	m_rectAnswerBox.SetZoomY( 30 );
 
-	m_textAnswer[m_bAnswer].SetEffectGlowCamelion();
+	m_textAnswer[m_bAnswer].SetEffectGlowShift();
 
 	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu prompt") );
 }
@@ -142,7 +142,7 @@ void ScreenPrompt::MenuRight( PlayerNumber pn )
 
 	m_textAnswer[m_bAnswer].SetEffectNone();
 	m_bAnswer = !m_bAnswer;
-	m_textAnswer[m_bAnswer].SetEffectGlowCamelion();
+	m_textAnswer[m_bAnswer].SetEffectGlowShift();
 
 	m_rectAnswerBox.StopTweening();
 	m_rectAnswerBox.BeginTweening( 0.2f );
