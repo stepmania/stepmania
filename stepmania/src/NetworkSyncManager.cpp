@@ -1,6 +1,7 @@
 #include "global.h"
 #include "NetworkSyncManager.h"
 #include "NetworkSyncServer.h"
+#include "LuaManager.h"
 #include "LuaFunctions.h"
 
 NetworkSyncManager *NSMAN;
