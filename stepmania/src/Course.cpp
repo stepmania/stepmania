@@ -881,6 +881,17 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		trail.m_vEntries.push_back( te ); 
 	}
 
+	/* Hack: If any entry was non-FIXED, or m_bRandomize is set, then radar values
+	 * for this trail will be meaningless as they'll change every time.  Pre-cache
+	 * empty data.  XXX: How can we do this cleanly, without propagating lots of
+	 * otherwise unnecessary data (course entry types, m_bRandomize) to Trail, or
+	 * storing a Course pointer in Trail (yuck)? */
+	if( !AllSongsAreFixed() || m_bRandomize )
+	{
+		trail.m_bRadarValuesCached = true;
+		trail.m_CachedRadarValues = RadarValues();
+	}
+
 	/* If we have a manually-entered meter for this difficulty, use it. */
 	if( m_iCustomMeter[cd] != -1 )
 		trail.m_iSpecifiedMeter = m_iCustomMeter[cd];
