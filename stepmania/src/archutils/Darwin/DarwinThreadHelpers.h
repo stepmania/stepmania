@@ -8,7 +8,7 @@ uint64_t GetCurrentThreadId();
 #endif
 
 /*
- * (c) 2001-2004 Steve Checkoway
+ * (c) 2004 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
