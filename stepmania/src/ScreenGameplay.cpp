@@ -66,7 +66,6 @@ const ScreenMessage	SM_PlayGo				= ScreenMessage(SM_User+1);
 // received while STATE_DANCING
 const ScreenMessage	SM_NotesEnded			= ScreenMessage(SM_User+10);
 const ScreenMessage	SM_LoadNextSong			= ScreenMessage(SM_User+11);
-const ScreenMessage SM_NET_UpdateScoreboard	= ScreenMessage(SM_User+12);
 
 // received while STATE_OUTRO
 const ScreenMessage	SM_SaveChangedBeforeGoingBack	= ScreenMessage(SM_User+20);
@@ -424,24 +423,36 @@ void ScreenGameplay::Init()
 		break;
 	}
 
-	m_ShowScoreboard = false;
+	m_ShowScoreboard=false;
 
 	//the following is only used in SMLAN/SMOnline
 	if( NSMAN->useSMserver )
 	{
-		PlayerNumber pn = GAMESTATE->m_MasterPlayerNumber;
+		//PlayerNumber pn = GAMESTATE->m_MasterPlayerNumber;
+		//We need not the master player, but the not-master-player
+		//So, we gotta see which one isn't the master player
+		//NOTE: If both players are playing, do not show scoreboard
+		//There may be a later solution for this, like a horizontal
+		//scoreboard, but for now, we cannot have a scoreboard over
+		//people's arrows.
 
-		FOREACH_NSScoreBoardColumn( i2 )
-		{
-			m_Scoreboard[i2].LoadFromFont( THEME->GetPathF(m_sName,"scoreboard") );
-			m_Scoreboard[i2].SetShadowLength( 0 );
-			m_Scoreboard[i2].SetName( ssprintf("ScoreboardC%iP%i",i2+1,pn+1) );
-			SET_XY( m_Scoreboard[i2] );
-			this->AddChild( &m_Scoreboard[i2] );
-			m_Scoreboard[i2].SetText(NSMAN->m_Scoreboard[i2]);
-			m_Scoreboard[i2].SetVertAlign(align_top);
-			m_ShowScoreboard = true;
-		}
+		int i=-1;
+		FOREACH_PlayerNumber(p)
+			if (!GAMESTATE->IsPlayerEnabled(p))
+				i=p;
+
+		if (i!=-1)
+			FOREACH_NSScoreBoardColumn( i2 )
+			{
+				m_Scoreboard[i2].LoadFromFont( THEME->GetPathF(m_sName,"scoreboard") );
+				m_Scoreboard[i2].SetShadowLength( 0 );
+				m_Scoreboard[i2].SetName( ssprintf("ScoreboardC%iP%i",i2+1,i+1) );
+				SET_XY( m_Scoreboard[i2] );
+				this->AddChild( &m_Scoreboard[i2] );
+				m_Scoreboard[i2].SetText(NSMAN->m_Scoreboard[i2]);
+				m_Scoreboard[i2].SetVertAlign(align_top);
+				m_ShowScoreboard = true;
+			}
 	}
 
 	m_textSongTitle.LoadFromFont( THEME->GetPathF(m_sName,"song title") );
@@ -1570,9 +1581,15 @@ void ScreenGameplay::Update( float fDeltaTime )
 	m_meterSongPosition.SetPercent( fPercentPositionSong );
 
 	if (NSMAN->useSMserver) 
+	{
 		FOREACH_EnabledPlayer( pn2 )
 			if( m_pLifeMeter[pn2] )
 				NSMAN->m_playerLife[pn2] = int(m_pLifeMeter[pn2]->GetLife()*10000);
+		if( m_ShowScoreboard )
+			FOREACH_NSScoreBoardColumn(cn)
+				if( NSMAN->ChangedScoreboard(cn) )
+					m_Scoreboard[cn].SetText( NSMAN->m_Scoreboard[cn] );
+	}
 }
 
 void ScreenGameplay::AbortGiveUp()
@@ -2316,12 +2333,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_StopMusic:
 		m_soundMusic.Stop();
-		break;
-	case SM_NET_UpdateScoreboard:
-		if( m_ShowScoreboard )
-			FOREACH_NSScoreBoardColumn(cn)
-				if( NSMAN->ChangedScoreboard(cn) )
-					m_Scoreboard[cn].SetText( NSMAN->m_Scoreboard[cn] );
 		break;
 	}
 }

@@ -33,7 +33,6 @@ bool NetworkSyncManager::ChangedScoreboard(int Column) { return false; }
 #include "ScreenMessage.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
 
-const ScreenMessage SM_NET_UpdateScoreboard	= ScreenMessage(SM_User+12);
 const ScreenMessage SM_NET_SelectSong		= ScreenMessage(SM_User+2);
 
 
@@ -452,7 +451,6 @@ void NetworkSyncManager::ProcessInput()
 						}
 					break;
 				}
-				SCREENMAN->SendMessageToTopScreen(SM_NET_UpdateScoreboard);
 				m_Scoreboard[ColumnNumber] = ColumnData;
 				m_scoreboardchange[ColumnNumber]=true;
 			}
