@@ -37,7 +37,9 @@ static void GetDisplayDriverDebugInfo()
 	else
 		LOG->Info( "Primary display driver: %s", sPrimaryDeviceName.c_str() );
 
-	for( int i=0; true; i++ )
+	bool LoggedSomething = false;
+	int i;
+	for( i=0; true; i++ )
 	{
 		VideoDriverInfo info;
 		if( !GetVideoDriverInfo(i, info) )
@@ -46,11 +48,26 @@ static void GetDisplayDriverDebugInfo()
 		if( sPrimaryDeviceName == "" )	// failed to get primary display name (NT4)
 		{
 			LogVideoDriverInfo( info );
+			LoggedSomething = true;
 		}
 		else if( info.sDescription == sPrimaryDeviceName )
 		{
 			LogVideoDriverInfo( info );
+			LoggedSomething = true;
 			break;
+		}
+	}
+	if( !LoggedSomething )
+	{
+		LOG->Warn("Couldn't find primary display driver; logging all drivers");
+
+		for( i=0; true; i++ )
+		{
+			VideoDriverInfo info;
+			if( !GetVideoDriverInfo(i, info) )
+				break;
+			
+			LogVideoDriverInfo( info );
 		}
 	}
 }
