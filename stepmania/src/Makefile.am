@@ -1,4 +1,4 @@
-bin_PROGRAMS = stepmania test_audio_readers test_file_readers
+bin_PROGRAMS = stepmania test_audio_readers test_file_readers test_timing_data
 
 AM_LDFLAGS =
 AM_CXXFLAGS = 
@@ -219,41 +219,42 @@ stepmania_LDADD = \
 		  $(srcdir)/libresample/libresample.a
 
 # XXX: Make ArchHooks not depend on Display
-# A hack for now:
-test_audio_readers_SOURCES = tests/test_audio_readers.cpp \
+all_test_SOURCES = \
 		RageDisplay.cpp RageDisplay.h \
 		RageMath.cpp RageMath.h \
 		RageUtil.cpp RageLog.cpp RageThreads.cpp RageException.cpp \
 		RageUtil_FileDB.cpp RageUtil_FileDB.h \
 		RageTimer.cpp RageTimer.h \
 		$(RageFile) \
-		RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
 		PrefsManager.cpp PrefsManager.h \
 		Grade.cpp Grade.h \
 		arch/ArchHooks/ArchHooks.cpp arch/ArchHooks/ArchHooks.h \
 		IniFile.cpp IniFile.h \
-		$(RageSoundFileReaders) \
 		$(PCRE)
+
+test_audio_readers_SOURCES = $(all_test_SOURCES) \
+		tests/test_audio_readers.cpp \
+		RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
+		$(RageSoundFileReaders) \
+		RageSoundReader_Resample.cpp  RageSoundReader_Resample.h \
+		RageSoundReader_Resample_Fast.cpp RageSoundReader_Resample_Fast.h \
+		RageSoundResampler.cpp RageSoundResampler.h \
+		RageSoundReader_Resample_Good.cpp RageSoundReader_Resample_Good.h \
+		RageSoundReader_Preload.cpp RageSoundReader_Preload.h
 
 test_audio_readers_LDADD = \
-	      $(USE_SDL_LIBS) \
-	      $(AUDIO_LIBS)
+		$(USE_SDL_LIBS) \
+		$(AUDIO_LIBS) \
+		$(srcdir)/libresample/libresample.a
 
-test_file_readers_SOURCES = tests/test_file_readers.cpp \
-		RageDisplay.cpp RageDisplay.h \
-		RageMath.cpp RageMath.h \
-		RageUtil.cpp RageLog.cpp RageThreads.cpp RageException.cpp \
-		RageUtil_FileDB.cpp RageUtil_FileDB.h \
-		RageTimer.cpp RageTimer.h \
-		$(RageFile) \
-		PrefsManager.cpp PrefsManager.h \
-		Grade.cpp Grade.h \
-		arch/ArchHooks/ArchHooks.cpp arch/ArchHooks/ArchHooks.h \
-		IniFile.cpp IniFile.h \
-		$(PCRE)
+test_file_readers_SOURCES = $(all_test_SOURCES) \
+		tests/test_file_readers.cpp
 
 test_file_readers_LDADD = \
 	      $(USE_SDL_LIBS)
+
+test_timing_data_SOURCES = $(all_test_SOURCES) \
+		tests/test_timing_data.cpp TimingData.cpp TimingData.h
 
 INCLUDES = $(SDL_CFLAGS)
 
