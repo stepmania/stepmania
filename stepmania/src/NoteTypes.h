@@ -170,10 +170,10 @@ NoteType BeatToNoteType( float fBeat );
 bool IsNoteOfType( int row, NoteType t );
 CString NoteTypeToString( NoteType nt );
 
-inline int   BeatToNoteRow( float fBeatNum )			{ return int( fBeatNum * ROWS_PER_BEAT + 0.5f); };	// round
+inline int   BeatToNoteRow( float fBeatNum )			{ return lrintf( fBeatNum * ROWS_PER_BEAT ); }	// round
 inline int   BeatToNoteRowNotRounded( float fBeatNum )	{ return (int)( fBeatNum * ROWS_PER_BEAT ); };
-inline float NoteRowToBeat( float fNoteIndex )			{ return fNoteIndex / (float)ROWS_PER_BEAT;	 };
-inline float NoteRowToBeat( int row )			{ return NoteRowToBeat( (float)row );	 };
+inline float NoteRowToBeat( float fNoteIndex )			{ return fNoteIndex / (float)ROWS_PER_BEAT; }
+inline float NoteRowToBeat( int row )			{ return NoteRowToBeat( (float)row ); }
 
 
 
