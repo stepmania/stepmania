@@ -843,4 +843,3 @@ void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
 
 	LoadStack.pop_back();
 }
-
