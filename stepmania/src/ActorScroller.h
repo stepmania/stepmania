@@ -23,8 +23,8 @@ public:
 
 	virtual void Update( float fDelta );
 
-	void SetDestinationItem( int iItem ) { m_fDestinationItem = iItem; }
-	void SetCurrentAndDestinationItem( int iItem ) { m_fCurrentItem = m_fDestinationItem = iItem; }
+	void SetDestinationItem( int iItem ) { m_fDestinationItem = float(iItem); }
+	void SetCurrentAndDestinationItem( int iItem ) { m_fCurrentItem = m_fDestinationItem = float(iItem); }
 
 protected:
 	float		m_fCurrentItem; // usually between 0 and m_SubActors.size()
