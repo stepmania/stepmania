@@ -31,7 +31,7 @@ function SelectEvaluationScreen()
 end
 
 function SelectFirstOptionsScreen()
-	if PlayModeName() == "Rave" then return ScreenRaveOptions end
+	if PlayModeName() == "Rave" then return "ScreenRaveOptions" end
 	return "ScreenPlayerOptions"
 end
 
