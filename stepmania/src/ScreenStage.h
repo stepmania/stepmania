@@ -28,9 +28,11 @@ private:
 
 	// Common Elements
 
-	ActorFrame		m_frameStage;
 	Sprite			m_sprNumbers[4];	// up to 3 numbers and suffix
 	Sprite			m_sprStage;			// "Stage", "Final Stage", etc.
+	/* A frame for m_sprNumbers and m_sprStage, so they can be
+	 * manipulated as a unit. */
+	ActorFrame		m_frameStage;
 
 	// Ez2 Elements
 

@@ -102,7 +102,6 @@ ScreenStage::ScreenStage()
 	//
 	this->AddChild( &m_sprSongBackground );	// add background first so it draws bottom-most
 	this->AddChild( &m_quadMask );	// add quad mask before stage so that it will block out the stage sprites
-	this->AddChild( &m_frameStage ); 
 	
 	for( int i=0; i<4; i++ )
 	{
@@ -170,12 +169,9 @@ ScreenStage::ScreenStage()
 			}
 			m_sprStage.SetX( fStageCenterX );
 
-			if ( g_StageType != STAGE_TYPE_EZ2 ) // Ez2dancer MUST have this graphic on-top
-			{
-				for( i=0; i<iNumChars; i++ )
-					m_frameStage.AddChild( &m_sprNumbers[i] );
-				m_frameStage.AddChild( &m_sprStage );
-			}
+			for( i=0; i<iNumChars; i++ )
+				m_frameStage.AddChild( &m_sprNumbers[i] );
+			m_frameStage.AddChild( &m_sprStage );
 		}
 		break;
 	case MODE_FINAL:
@@ -216,7 +212,8 @@ ScreenStage::ScreenStage()
 		const float fStageOffScreenY = CENTER_Y+fStageHeight;
 
 		m_quadMask.SetDiffuse( D3DXCOLOR(0,0,0,0) );
-		m_quadMask.StretchTo( CRect(SCREEN_LEFT, roundf(fStageOffScreenY-fStageHeight/2), SCREEN_RIGHT, roundf(fStageOffScreenY+fStageHeight/2)) );
+		m_quadMask.StretchTo( CRect(SCREEN_LEFT, roundf(fStageOffScreenY-fStageHeight/2), 
+							        SCREEN_RIGHT, roundf(fStageOffScreenY+fStageHeight/2)) );
 		m_quadMask.SetZ( -1 );		// important: fill Z buffer with values that will cause subsequent draws to fail the Z test
 
 		m_frameStage.SetXY( CENTER_X, fStageOffScreenY );
@@ -357,15 +354,11 @@ ScreenStage::ScreenStage()
 		m_sprbg[2].SetTweenX( CENTER_X );
 		m_sprbg[2].SetTweenRotationZ( 0 );
 
-		for (i=3; i>=0; i--) // work backwards as we wanna add em in reverse 
-		{
-			m_frameStage.AddChild( &m_sprbg[i] ); 
-		}
+		for (i = 3; i >= 0; i--) // add them backwards
+			AddChild( &m_sprbg[i] ); 
 
 		if (stage_mode == MODE_FINAL) // if we're in FINAL add that extra background element mentioned earlier.
-		{
-			m_frameStage.AddChild( &m_sprbgxtra );
-		}
+			AddChild( &m_sprbgxtra );
 
 
 		/////////////////////////
@@ -426,8 +419,8 @@ ScreenStage::ScreenStage()
 
 		for (i=0; i<2; i++) // add the actors
 		{
-			m_frameStage.AddChild( &m_ez2ukm[i] );
-			m_frameStage.AddChild( &m_stagedesc[i] );
+			AddChild( &m_ez2ukm[i] );
+			AddChild( &m_stagedesc[i] );
 		}
 		
 		//////////////////////////////
@@ -478,7 +471,7 @@ ScreenStage::ScreenStage()
 				else // set 2
 					m_sprScrollingBlobs[j][i].SetTweenX(CENTER_X+(SCREEN_WIDTH/2)+30-70-(i*30.0f)); 
 	
-				m_frameStage.AddChild( &m_sprScrollingBlobs[j][i] ); // add the actor
+				AddChild( &m_sprScrollingBlobs[j][i] );
 			}
 		}
 
@@ -532,19 +525,16 @@ ScreenStage::ScreenStage()
 		m_stagename.BeginTweening(0.5f); // start tweening them to their new home
 		
 		m_stagename.SetTweenX(CENTER_X+70); // set their new locations
-		m_frameStage.AddChild( &m_stagename ); //add the actor
+		AddChild( &m_stagename ); //add the actor
 		//////////////////////////////
 		// END stage name         //
 		//////////////////////////////
 
-		// Add in the number graphics that were neglected earlier
-		CString sStageNo = ssprintf("%d", iStageNo);
-		const int iNumChars = sStageNo.GetLength()+1;
-		for( i=0; i<iNumChars; i++ )
-			m_frameStage.AddChild( &m_sprNumbers[i] );
-		m_frameStage.AddChild( &m_sprStage );
 		m_sprStage.SetZoom( 0 ); // hide this element for Ez2 :)
 	}
+
+	/* Add this last, so it's on top (except for the QuadMask, due to SetZ) */
+	this->AddChild( &m_frameStage ); 
 
 	this->SendScreenMessage( SM_DoneFadingIn, 1.0f );
 	this->SendScreenMessage( SM_StartFadingOut, 4.0f );
