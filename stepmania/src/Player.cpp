@@ -275,7 +275,7 @@ void Player::Update( float fDeltaTime )
 			hns = HNS_NG;
 
 		// check for OK
-		if( fSongBeat >= hn.m_fEndBeat && fLife > 0 )	// if this HoldNote is in the past
+		if( fSongBeat >= hn.m_fEndBeat && bSteppedOnTapNote && fLife > 0 )	// if this HoldNote is in the past
 		{
 			fLife = 1;
 			hns = HNS_OK;
