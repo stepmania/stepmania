@@ -206,22 +206,11 @@ int Font::GetLineHeightInSourcePixels( const wstring &szLine ) const
 {
 	int iLineHeight = 0;
 
-	/* The spacing of a line is the spacing of its tallest used font page. XXX */
+	/* The height of a line is the height of its tallest used font page. */
 	for( unsigned i=0; i<szLine.size(); i++ )
 		iLineHeight = max(iLineHeight, GetGlyph(szLine[i]).fp->height);
 
 	return iLineHeight;
-}
-
-int Font::GetLineSpacingInSourcePixels( const wstring &szLine ) const
-{
-	int iLineSpacing = 0;
-
-	/* The spacing of a line is the spacing of its tallest used font page. XXX */
-	for( unsigned i=0; i<szLine.size(); i++ )
-		iLineSpacing = max(iLineSpacing, GetGlyph(szLine[i]).fp->LineSpacing);
-
-	return iLineSpacing;
 }
 
 
@@ -359,8 +348,8 @@ CString Font::GetFontName(CString FileName)
 	splitpath( FileName, sDir, sFName, sExt );
 	FileName = sFName;
 
-	/* If it ends in an extension, remove it. XXX */
-	static Regex drop_ext("\\....");
+	/* If it ends in an extension, remove it. */
+	static Regex drop_ext("\\....$");
 	if(drop_ext.Compare(FileName))
 		FileName.erase(FileName.size()-4);
 
@@ -505,12 +494,12 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 			continue;
 		}
 
-		/* "map XXXX=frame" maps a char to a frame. */
+		/* "map codepoint=frame" maps a char to a frame. */
 		if(val.substr(0, 4) == "MAP ")
 		{
 			/* map CODEPOINT=frame. CODEPOINT can be
 			 * 1. U+hexval
-			 * 2. an alias ("kakumei1")
+			 * 2. an alias ("oq")
 			 * 3. a game type followed by a game alias, eg "pump menuleft"
 			 * 4. a character in quotes ("X")
 			 *

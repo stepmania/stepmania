@@ -108,7 +108,6 @@ public:
 
 	int GetLineWidthInSourcePixels( const wstring &szLine ) const;
 	int GetLineHeightInSourcePixels( const wstring &szLine ) const;
-	int GetLineSpacingInSourcePixels( const wstring &szLine ) const;
 
 	bool FontCompleteForString( const wstring &str ) const;
 
