@@ -953,11 +953,11 @@ static void blit( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width,
 			if( blit_traits::convert )
 			{
 				Uint8 colors[4];
-				if( blit_traits::convert == DIFFERENT_RGBA )
+				if( blit_traits::convert == (int) DIFFERENT_RGBA )
 				{
 					/* Convert pixel to the destination RGBA. */
 					mySDL_GetRGBAV(pixel, src_surf, colors);
-				} else if( blit_traits::convert == PAL_TO_RGBA ) {
+				} else if( blit_traits::convert == (int) PAL_TO_RGBA ) {
 					/* Convert pixel to the destination RGBA. */
 					colors[0] = src_surf->format->palette->colors[pixel].r;
 					colors[1] = src_surf->format->palette->colors[pixel].g;
