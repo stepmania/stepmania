@@ -3,11 +3,13 @@
 #include "song.h"
 #include "ThemeManager.h"
 
-#define ICONONCOMMAND			THEME->GetMetric ("DifficultyDisplay","IconOnCommand")
-#define ICONOFFCOMMAND			THEME->GetMetric ("DifficultyDisplay","IconOffCommand")
+CachedThemeMetric  ICONONCOMMAND	("DifficultyDisplay","IconOnCommand");
+CachedThemeMetric  ICONOFFCOMMAND	("DifficultyDisplay","IconOffCommand");
 
 DifficultyDisplay::DifficultyDisplay()
 {
+	ICONONCOMMAND.Refresh();
+	ICONOFFCOMMAND.Refresh();
 	float fHeight = 0;
 	int diff;
 	for( diff = DIFFICULTY_BEGINNER; diff <= DIFFICULTY_CHALLENGE; ++diff )
