@@ -24,6 +24,7 @@ class HighScoreWheelItem : public ActorFrame
 {
 public:
 	void Load( int iRankIndex, const HighScore& hs );
+	void LoadBlank( int iRankIndex );
 	void ShowFocus();
 
 	BitmapText m_textRank;

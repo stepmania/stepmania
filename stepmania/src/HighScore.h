@@ -24,6 +24,7 @@ struct HighScore
 	float fSurviveSeconds;
 	CString	sModifiers;
 
+
 	HighScore()
 	{
 		grade = GRADE_NO_DATA;
@@ -36,6 +37,8 @@ struct HighScore
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
+
+	CString GetDisplayName() const;
 };
 
 struct HighScoreList

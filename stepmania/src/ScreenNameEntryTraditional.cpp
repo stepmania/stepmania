@@ -32,11 +32,13 @@
 #include <math.h>
 #include "ProfileManager.h"
 #include "StageStats.h"
+#include "RageDisplay.h"
 
 
 //
 // Defines specific to ScreenNameEntryTraditional
 //
+#define FOV							THEME->GetMetricF(m_sName,"FOV")
 #define ALPHABET_GAP_X				THEME->GetMetricF(m_sName,"AlphabetGapX")
 #define NUM_ALPHABET_DISPLAYED		THEME->GetMetricI(m_sName,"NumAlphabetDisplayed")
 #define MAX_RANKING_NAME_LENGTH		THEME->GetMetricI(m_sName,"MaxRankingNameLength")
@@ -66,7 +68,7 @@ void HighScoreWheelItem::Load( int iRankIndex, const HighScore& hs )
 
 	m_textName.SetName( "Name" );
 	m_textName.LoadFromFont( THEME->GetPathF(m_sName,"name") );
-	m_textName.SetText( hs.sName );
+	m_textName.SetText( hs.GetDisplayName() );
 	this->AddChild( &m_textName );
 	SET_XY_AND_ON_COMMAND( m_textName );
 
@@ -80,6 +82,12 @@ void HighScoreWheelItem::Load( int iRankIndex, const HighScore& hs )
 	SET_XY_AND_ON_COMMAND( m_textScore );
 }
 
+void HighScoreWheelItem::LoadBlank( int iRankIndex )
+{
+	HighScore hs;
+	Load( iRankIndex, hs );
+}
+
 void HighScoreWheelItem::ShowFocus()
 {
 	CString sCommand = "diffuseshift;EffectColor1,1,1,0,1;EffectColor2,0,1,1,1";
@@ -90,16 +98,18 @@ void HighScoreWheelItem::ShowFocus()
 
 void HighScoreWheel::Load( const HighScoreList& hsl, int iIndexToFocus )
 {
-	int iSize = hsl.vHighScores.size();
-	m_Items.resize( iSize );
-	for( int i=0; i<iSize; i++ )
+	m_Items.resize( PREFSMAN->m_iMaxHighScoresPerList );
+	for( int i=0; i<PREFSMAN->m_iMaxHighScoresPerList; i++ )
 	{
-		m_Items[i].Load( i, hsl.vHighScores[i] );
+		if( i < hsl.vHighScores.size() )
+			m_Items[i].Load( i, hsl.vHighScores[i] );
+		else
+			m_Items[i].LoadBlank( i );
 		this->AddChild( &m_Items[i] );
 	}
 	m_iIndexToFocus = iIndexToFocus;
 
-	if( m_iIndexToFocus >= 0  &&  m_iIndexToFocus < iSize )
+	if( m_iIndexToFocus >= 0  &&  m_iIndexToFocus < hsl.vHighScores.size() )
 		m_Items[m_iIndexToFocus].ShowFocus();
 
 	ActorScroller::Load( 
@@ -462,9 +472,14 @@ void ScreenNameEntryTraditional::Update( float fDelta )
 
 void ScreenNameEntryTraditional::DrawPrimitives()
 {
+	DISPLAY->CameraPushMatrix();
+	DISPLAY->LoadMenuPerspective( FOV, CENTER_X, CENTER_Y );
+
 	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
 	m_Menu.DrawTopLayer();
+	
+	DISPLAY->CameraPopMatrix();
 }
 
 void ScreenNameEntryTraditional::ChangeDisplayedFeat()

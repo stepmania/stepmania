@@ -13,6 +13,10 @@
 #include "HighScore.h"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
+#include "ThemeManager.h"
+
+#define EMPTY_NAME			THEME->GetMetric ("HighScore","EmptyName")
+
 
 bool HighScore::operator>=( const HighScore& other ) const
 {
@@ -71,6 +75,14 @@ void HighScore::LoadFromNode( const XNode* pNode )
 
 	/* Validate input. */
 	grade = clamp( grade, GRADE_TIER_1, GRADE_FAILED );
+}
+
+CString HighScore::GetDisplayName() const
+{
+	if( sName.empty() )
+		return EMPTY_NAME;
+	else
+		return sName;
 }
 
 

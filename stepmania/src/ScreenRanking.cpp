@@ -37,7 +37,6 @@
 #define PAGE_FADE_SECONDS			THEME->GetMetricF("ScreenRanking","PageFadeSeconds")
 #define PERCENT_DECIMAL_PLACES		THEME->GetMetricI("ScreenRanking","PercentDecimalPlaces")
 #define PERCENT_TOTAL_SIZE			THEME->GetMetricI("ScreenRanking","PercentTotalSize")
-#define EMPTY_SCORE_NAME			THEME->GetMetric ("ScreenRanking","EmptyScoreName")
 #define NO_SCORE_NAME				THEME->GetMetric ("ScreenRanking","NoScoreName")
 
 #define ROW_SPACING_X				THEME->GetMetricF("ScreenRanking","RowSpacingX")
@@ -686,10 +685,8 @@ float ScreenRanking::SetPage( PageToShow pts )
 				{
 					hs.sName = NO_SCORE_NAME;				
 				}
-				if( hs.sName.empty() )
-					hs.sName = EMPTY_SCORE_NAME;
 
-				m_textNames[l].SetText( hs.sName );
+				m_textNames[l].SetText( hs.GetDisplayName() );
 				m_textScores[l].SetText( ssprintf("%09i",hs.iScore) );
 				m_textNames[l].SetDiffuse( STEPS_TYPE_COLOR(pts.colorIndex) );
 				m_textScores[l].SetDiffuse( STEPS_TYPE_COLOR(pts.colorIndex) );
@@ -729,10 +726,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 					hs.sName = NO_SCORE_NAME;				
 				}
 
-				if( hs.sName.empty() )
-					hs.sName = EMPTY_SCORE_NAME;
-				
-				m_textNames[l].SetText( hs.sName );
+				m_textNames[l].SetText( hs.GetDisplayName() );
 				if( pts.pCourse->IsOni() )
 				{
 					m_textPoints[l].SetText( ssprintf("%04d",hs.iScore) );
@@ -796,11 +790,9 @@ float ScreenRanking::SetPage( PageToShow pts )
 						{
 							hs.sName = NO_SCORE_NAME;				
 						}
-						if( hs.sName.empty() )
-							hs.sName = EMPTY_SCORE_NAME;
 
 						CString s;
-						s = hs.sName + "\n";
+						s = hs.GetDisplayName() + "\n";
 						s += ssprintf( "%0*.*f%%", PERCENT_TOTAL_SIZE, PERCENT_DECIMAL_PLACES, hs.fPercentDP*100 );
 						pTextStepsScore->SetText( s );
 					}
@@ -835,11 +827,9 @@ float ScreenRanking::SetPage( PageToShow pts )
 					{
 						hs.sName = NO_SCORE_NAME;				
 					}
-					if( hs.sName.empty() )
-						hs.sName = EMPTY_SCORE_NAME;
 
 					CString s;
-					s = hs.sName + "\n";
+					s = hs.GetDisplayName() + "\n";
 					s += ssprintf( "%0*.*f%%", PERCENT_TOTAL_SIZE, PERCENT_DECIMAL_PLACES, hs.fPercentDP*100 );
 					pTextStepsScore->SetText( s );
 				}
