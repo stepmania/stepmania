@@ -27,6 +27,7 @@ bool NetworkSyncManager::ChangedScoreboard() {}
 #include "GameState.h"
 #include "StageStats.h"
 #include "Steps.h"
+#include "PrefsManager.h"
 
 NetworkSyncManager::NetworkSyncManager()
 {
@@ -94,14 +95,18 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 	int ctr = 2 * 16 + 0;
 	Write1(m_packet, (uint8_t) ctr);
 
-	vector <CString> ProfileNames;
-	PROFILEMAN->GetLocalProfileNames(ProfileNames);
-	
-	if( ProfileNames.size() > 0 )
-		WriteNT(m_packet,ProfileNames[0]);
-	if( ProfileNames.size() > 1 )
-		WriteNT(m_packet,ProfileNames[0]);
-	
+	vector <CString> profileNames;
+	PROFILEMAN->GetLocalProfileNames(profileNames);
+
+	FOREACH_PlayerNumber(pn)
+	{
+		int localID=atoi(PREFSMAN->m_sDefaultLocalProfileID[pn])-1;
+		if ((localID>=0)&&(localID<profileNames.size()))
+			WriteNT(m_packet,profileNames[localID]);
+		else
+			WriteNT(m_packet,"[No Profile Set]");
+	}
+
 	NetPlayerClient->SendPack((char*)m_packet.Data,m_packet.Position);
 
 	ClearPacket(m_packet);
