@@ -1125,7 +1125,7 @@ public:
 RageModelVertexArray* RageDisplay_OGL::CreateRageModelVertexArray()
 {
 	if( GLExt::glGenBuffersARB )
-		return new RageModelVertexArraySWOGL;
+		return new RageModelVertexArrayHWOGL;
 	else
 		return new RageModelVertexArraySWOGL;
 }
