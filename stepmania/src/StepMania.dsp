@@ -60,7 +60,7 @@ IntDir=.\../Release6
 TargetDir=\temp\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                              	cl                               /Zl                               /nologo                               /c                               verstub.cpp                               /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                               	cl                                /Zl                                /nologo                                /c                                verstub.cpp                                /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -95,7 +95,7 @@ IntDir=.\../Debug6
 TargetDir=\temp\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                              	cl                               /Zl                               /nologo                               /c                               verstub.cpp                               /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                               	cl                                /Zl                                /nologo                                /c                                verstub.cpp                                /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -509,38 +509,6 @@ SOURCE=.\MsdFile.h
 # Begin Group "System"
 
 # PROP Default_Filter ""
-# Begin Group "default"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\arch\default\arch.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\arch\default\LoadingWindow_SDL.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\arch\default\LoadingWindow_SDL.h
-# End Source File
-# End Group
-# Begin Group "Win32"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\arch\Win32\arch.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\arch\Win32\LoadingWindow_Win32.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\arch\Win32\LoadingWindow_Win32.h
-# End Source File
-# End Group
 # Begin Group "arch"
 
 # PROP Default_Filter ""
@@ -554,7 +522,35 @@ SOURCE=.\arch\arch.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\arch\LoadingWindow.h
+SOURCE=.\arch\arch_default.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\arch_Win32.h
+# End Source File
+# End Group
+# Begin Group "LoadingWindow"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\arch\LoadingWindow\LoadingWindow.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\LoadingWindow\LoadingWindow_SDL.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\LoadingWindow\LoadingWindow_SDL.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\LoadingWindow\LoadingWindow_Win32.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\LoadingWindow\LoadingWindow_Win32.h
 # End Source File
 # End Group
 # Begin Source File
