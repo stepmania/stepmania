@@ -2,9 +2,15 @@
 #include "MovieTexture.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "MovieTexture_null.h"
 
+/* Why is this _WINDOWS and not WIN32?
+ * --steve */
 #if defined(_WINDOWS)
 #include "MovieTexture_DShow.h"
+#define DEFAULT_MOVIE_DRIVER_LIST "DShow"
+#else
+#define DEFAULT_MOVIE_DRIVER_LIST "Null"
 #endif
 
 #include <fstream>
@@ -59,16 +65,33 @@ static void DumpAVIDebugInfo( CString fn )
 }
 
 /* Try drivers in order of preference until we find one that works. */
-/* Well, eventually; for now it's DShow or bust.w */
 RageMovieTexture *MakeRageMovieTexture(RageTextureID ID)
 {
 	DumpAVIDebugInfo( ID.filename );
 
-#if defined(_WINDOWS)
-	return new MovieTexture_DShow(ID);
-#else
-	/* XXX: need a simple null movie texture object */
-	RageException::Throw("xxx");
+	CStringArray DriversToTry;
+	split(DEFAULT_MOVIE_DRIVER_LIST, ",", DriversToTry, true);
+	ASSERT(DriversToTry.size() != 0);
+
+	CString Driver;
+	RageMovieTexture *ret = NULL;
+
+	for (unsigned i=0; ret==NULL && i<DriversToTry.size(); ++i) {
+		try {
+			Driver = DriversToTry[i];
+			LOG->Trace("Initializing driver: %s", Driver.c_str());
+#ifdef _WINDOWS
+			if (!Driver.CompareNoCase("DShow")) ret = new MovieTexture_DShow(ID);
 #endif
+			if (!Driver.CompareNoCase("Null")) ret = new MovieTexture_Null(ID);
+			if (!ret)
+				LOG->Warn("Unknown movie driver name: %s", Driver.c_str());
+		} catch (const RageException &e) {
+			LOG->Info("Couldn't load driver %s: %s", Driver.c_str(), e.what());
+		}
+	}
+	if (!ret)
+        RageException::Throw("Couldn't create a movie texture");
+	return ret;
 }
 
