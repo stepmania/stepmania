@@ -101,7 +101,7 @@ void ActorFrame::DrawPrimitives()
 		m_SubActors[i]->Draw();
 }
 
-void ActorFrame::RunCommandsOnChildren( const ActorCommands& cmds )
+void ActorFrame::RunCommandsOnChildren( const LuaReference& cmds )
 {
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->RunCommands( cmds );
@@ -185,7 +185,7 @@ void ActorFrame::DeleteAllChildren()
 	m_SubActors.clear();
 }
 
-void ActorFrame::RunCommands( const ActorCommands& cmds )
+void ActorFrame::RunCommands( const LuaReference& cmds )
 {
 	if( m_bPropagateCommands )
 		RunCommandsOnChildren( cmds );

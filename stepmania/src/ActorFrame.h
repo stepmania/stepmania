@@ -41,7 +41,7 @@ public:
 	// Commands
 	//
 	void PushSelf( lua_State *L );
-	void RunCommandsOnChildren( const ActorCommands& cmds ); /* but not on self */
+	void RunCommandsOnChildren( const LuaReference& cmds ); /* but not on self */
 	void RunCommandsOnChildren( const apActorCommands& cmds ) { RunCommandsOnChildren( *cmds ); }	// convenience
 
 	virtual void Update( float fDeltaTime );
@@ -63,7 +63,7 @@ public:
 	virtual void GainFocus( float fRate, bool bRewindMovie, bool bLoop );
 	virtual void LoseFocus();
 	virtual void PlayCommand( const CString &sCommandName );
-	virtual void RunCommands( const ActorCommands& cmds );
+	virtual void RunCommands( const LuaReference& cmds );
 	void RunCommands( const apActorCommands& cmds ) { ActorFrame::RunCommands( *cmds ); }	// convenience
 
 protected:

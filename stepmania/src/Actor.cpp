@@ -13,6 +13,7 @@
 #include "Command.h"
 #include "ActorCommands.h"
 #include "ThemeManager.h"
+#include "LuaReference.h"
 
 
 // lua start
@@ -692,7 +693,7 @@ void Actor::AddRotationR( float rot )
 	RageQuatMultiply( &DestTweenState().quat, DestTweenState().quat, RageQuatFromR(rot) );
 }
 
-void Actor::RunCommands( const ActorCommands& cmds )
+void Actor::RunCommands( const LuaReference& cmds )
 {
 	cmds.PushSelf( LUA->L );
 	ASSERT( !lua_isnil(LUA->L, -1) );
@@ -843,7 +844,7 @@ void Actor::HandleCommand( const Command &command )
 }
 */
 
-float Actor::GetCommandsLengthSeconds( const ActorCommands& cmds )
+float Actor::GetCommandsLengthSeconds( const LuaReference& cmds )
 {
 	Actor temp;
 	temp.RunCommands(cmds);

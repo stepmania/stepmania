@@ -9,6 +9,7 @@
 #include <map>
 struct XNode;
 struct lua_State;
+class LuaReference;
 #include "LuaBinding.h"
 
 
@@ -310,10 +311,10 @@ public:
 	virtual void PushSelf( lua_State *L );
 	void AddCommand( const CString &sCmdName, apActorCommands apac );
 	virtual void PlayCommand( const CString &sCommandName );
-	virtual void RunCommands( const ActorCommands& cmds );
+	virtual void RunCommands( const LuaReference& cmds );
 	void RunCommands( const apActorCommands& cmds ) { this->RunCommands( *cmds ); }	// convenience
 
-	static float GetCommandsLengthSeconds( const ActorCommands& cmds );
+	static float GetCommandsLengthSeconds( const LuaReference& cmds );
 	static float GetCommandsLengthSeconds( const apActorCommands& cmds ) { return GetCommandsLengthSeconds( *cmds ); }	// convenience
 
 	//
