@@ -145,10 +145,10 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 
 ScreenHowToPlay::~ScreenHowToPlay()
 {
-	SAFE_DELETE(m_pLifeMeterBar);
-	SAFE_DELETE(m_pmCharacter);
-	SAFE_DELETE(m_pmDancePad);
-	SAFE_DELETE(m_pPlayer);
+	delete m_pLifeMeterBar;
+	delete m_pmCharacter;
+	delete m_pmDancePad;
+	delete m_pPlayer;
 }
 
 void ScreenHowToPlay::Step( float fDelta )
