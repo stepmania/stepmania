@@ -338,7 +338,7 @@ float FindLastDisplayedBeat( PlayerNumber pn, int iLastPixelToDraw )
 		else	// on screen
 			fLastBeatToDraw += fSearchDistance;
 
-		float fOffBy = fYPosWOReverse - iLastPixelToDraw;
+//		float fOffBy = fYPosWOReverse - iLastPixelToDraw;
 		
 		fSearchDistance /= 2;
 	}
