@@ -40,10 +40,12 @@ public:
 	void InputRecord( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	void InputPlay( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
-	void TransitionFromRecordToEdit();
-	void TransitionToEdit();
 
 protected:
+	void TransitionFromRecordToEdit();
+	void TransitionToEdit();
+	bool PlayTicks() const;
+
 	void OnSnapModeChange();
 	void MenuItemGainFocus( BitmapText* menuitem );
 	void MenuItemLoseFocus( BitmapText* menuitem );
