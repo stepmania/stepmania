@@ -269,6 +269,18 @@ DSoundBuf::DSoundBuf( DSound &ds, DSoundBuf::hw hardware,
 		buffersize = bcaps.dwBufferBytes;
 		writeahead = min( writeahead, buffersize );
 	}
+
+	if( !(bcaps.dwFlags & DSBCAPS_CTRLVOLUME) )
+		LOG->Warn( "Sound channel missing DSBCAPS_CTRLVOLUME" );
+	if( !(bcaps.dwFlags & DSBCAPS_GETCURRENTPOSITION2) )
+		LOG->Warn( "Sound channel missing DSBCAPS_GETCURRENTPOSITION2" );
+
+	DWORD got;
+	hr = buf->GetFormat( &waveformat, sizeof(waveformat), &got );
+	if( FAILED(hr) )
+		LOG->Warn( hr_ssprintf(hr, "GetFormat on secondary buffer") );
+	else if( (int) waveformat.nSamplesPerSec != samplerate )
+		LOG->Warn( "Secondary buffer set to %i instead of %i", waveformat.nSamplesPerSec, samplerate );
 #endif
 }
 
@@ -289,8 +301,8 @@ void DSoundBuf::SetVolume(float vol)
 		vol = 0.001f;		// fix log10f(0) == -INF
 	float vl2 = log10f(vol) / log10f(2); /* vol log 2 */
 
-	/* Volume is a multiplier; SetVolume wants attenuation in thousands of a decibel. */
-	const int new_volume = max( int(1000 * vl2), DSBVOLUME_MIN );
+	/* Volume is a multiplier; SetVolume wants attenuation in hundredths of a decibel. */
+	const int new_volume = max( int(100 * vl2), DSBVOLUME_MIN );
 
 	if( volume == new_volume )
 		return;
