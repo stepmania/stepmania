@@ -204,13 +204,6 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		for( i = 0; i < m_textAlphabet[p].size(); ++i )
 			m_textAlphabet[p][i]->FinishTweening();
 
-		/* We always show the banner frame (if any), because fading from a graphic to
-		 * itself is ugly. */
-		m_sprBannerFrame[p].SetName( ssprintf("BannerFrameP%i",p+1) );
-		m_sprBannerFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenNameEntryTraditional banner frame p%i",p+1)) );
-		SET_XY_AND_ON_COMMAND( m_textSelection[p] );
-		this->AddChild( &m_sprBannerFrame[p] );
-
 		/* Show feat 0, hide others without tweening.  Run the ON command for
 		 * all actors, even if we're going to hide it anyway, so any style commands
 		 * are run. */
@@ -243,7 +236,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			}
 
 			m_textScore[p][i].SetName( ssprintf("ScoreP%i",p+1) );
-			m_textScore[p][i].LoadFromFont( THEME->GetPathToF("ScreenNameEntryTraditional score") );
+			m_textScore[p][i].LoadFromNumbers( THEME->GetPathToN("ScreenNameEntryTraditional score") );
 			if( PREFSMAN->m_bPercentageScoring )
 				m_textScore[p][i].SetText( ssprintf("%.2f%%", feat.fPercentDP*100) );
 			else
@@ -262,6 +255,13 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		}
 
 #undef SET_ON
+
+		/* We always show the banner frame (if any), because fading from a graphic to
+		 * itself is ugly. */
+		m_sprBannerFrame[p].SetName( ssprintf("BannerFrameP%i",p+1) );
+		m_sprBannerFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenNameEntryTraditional banner frame p%i",p+1)) );
+		SET_XY_AND_ON_COMMAND( m_sprBannerFrame[p] );
+		this->AddChild( &m_sprBannerFrame[p] );
 	}
 
 	this->PostScreenMessage( SM_ChangeDisplayedFeat, FEAT_INTERVAL );
