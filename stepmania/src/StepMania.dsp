@@ -62,7 +62,7 @@ IntDir=.\../Debug6
 TargetDir=\temp\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                                      	cl                                                                                                                                      /Zl                                                                                                                                      /nologo                                                                                                                                      /c                                                                                                                                      verstub.cpp                                                                                                                                      /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                                       	cl                                                                                                                                       /Zl                                                                                                                                       /nologo                                                                                                                                       /c                                                                                                                                       verstub.cpp                                                                                                                                       /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -99,7 +99,7 @@ IntDir=.\../Release6
 TargetDir=\temp\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                                       	cl                                                                                                /Zl                                                                                                /nologo                                                                                                /c                                                                                                verstub.cpp                                                                                                /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                                        	cl                                                                                                 /Zl                                                                                                 /nologo                                                                                                 /c                                                                                                 verstub.cpp                                                                                                 /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -1103,14 +1103,6 @@ SOURCE=.\arch\LoadingWindow\LoadingWindow.h
 # Begin Source File
 
 SOURCE=.\arch\LoadingWindow\LoadingWindow_Null.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\arch\LoadingWindow\LoadingWindow_SDL.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\arch\LoadingWindow\LoadingWindow_SDL.h
 # End Source File
 # Begin Source File
 
