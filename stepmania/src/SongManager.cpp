@@ -886,14 +886,15 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 	course.LoadFromCRSFile( sCoursePath );
 	if( course.GetEstimatedNumStages() <= 0 ) return false;
 
-	CString sModifiers;
-	if( !course.GetFirstStageInfo( pSongOut, pNotesOut, sModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType ) )
+	vector<Course::Info> ci;
+	course.GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_NotesType, ci );
+	if( ci.empty() )
 		return false;
 
 	po_out.Init();
-	po_out.FromString( sModifiers );
+	po_out.FromString( ci[0].Modifiers );
 	so_out.Init();
-	so_out.FromString( sModifiers );
+	so_out.FromString( ci[0].Modifiers );
 	return true;
 }
 
