@@ -60,6 +60,7 @@ class ScreenSystemLayer: public Screen
 	Quad m_SkipBackground;
 
 	RageTimer SkipTimer;
+	void AddTimestampLine( const CString &txt, RageColor color );
 	void UpdateTimestampAndSkips();
 
 public:
@@ -239,6 +240,21 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 	}
 }
 
+void ScreenSystemLayer::AddTimestampLine( const CString &txt, RageColor color )
+{
+	m_textSkips[m_LastSkip].SetText( txt );
+	m_textSkips[m_LastSkip].StopTweening();
+	m_textSkips[m_LastSkip].SetDiffuse( RageColor(1,1,1,1) );
+	m_textSkips[m_LastSkip].BeginTweening( 0.2f );
+	m_textSkips[m_LastSkip].SetDiffuse( color );
+	m_textSkips[m_LastSkip].BeginTweening( 3.0f );
+	m_textSkips[m_LastSkip].BeginTweening( 0.2f );
+	m_textSkips[m_LastSkip].SetDiffuse( RageColor(1,1,1,0) );
+
+	m_LastSkip++;
+	m_LastSkip %= NUM_SKIPS_TO_SHOW;
+}
+
 void ScreenSystemLayer::UpdateTimestampAndSkips()
 {
 	if(!PREFSMAN->m_bTimestamping)
@@ -282,18 +298,9 @@ void ScreenSystemLayer::UpdateTimestampAndSkips()
 				RageColor(1,1,0,1),		  /* yellow */
 				RageColor(1,0.2f,0.2f,1)  /* light red */
 			};
-			m_textSkips[m_LastSkip].SetText(ssprintf("%s: %.0fms (%.0f)",
-				time.c_str(), 1000*UpdateTime, UpdateTime/ExpectedUpdate));
-			m_textSkips[m_LastSkip].StopTweening();
-			m_textSkips[m_LastSkip].SetDiffuse(RageColor(1,1,1,1));
-			m_textSkips[m_LastSkip].BeginTweening(0.2f);
-			m_textSkips[m_LastSkip].SetDiffuse(colors[skip]);
-			m_textSkips[m_LastSkip].BeginTweening(3.0f);
-			m_textSkips[m_LastSkip].BeginTweening(0.2f);
-			m_textSkips[m_LastSkip].SetDiffuse(RageColor(1,1,1,0));
 
-			m_LastSkip++;
-			m_LastSkip %= NUM_SKIPS_TO_SHOW;
+			AddTimestampLine( ssprintf("%s: %.0fms (%.0f)", time.c_str(), 1000*UpdateTime, UpdateTime/ExpectedUpdate),
+				colors[skip] );
 		}
 	}
 
@@ -602,6 +609,11 @@ retry:
 
 void ScreenManager::AddNewScreenToTop( CString sClassName, ScreenMessage messageSendOnPop )
 {	
+	/* Send this before making the new screen, since it might set things that will be re-set
+	 * in the new screen's ctor. */
+	if( m_ScreenStack.size() )
+		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
+
 	Screen* pNewScreen = MakeNewScreen(sClassName);
 	m_ScreenStack.push_back( pNewScreen );
 	m_MessageSendOnPop = messageSendOnPop;
@@ -613,18 +625,27 @@ void ScreenManager::AddNewScreenToTop( CString sClassName, ScreenMessage message
 
 void ScreenManager::Prompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNo, bool bDefaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
 {
+	if( m_ScreenStack.size() )
+		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
+
 	// add the new state onto the back of the array
 	m_ScreenStack.push_back( new ScreenPrompt(SM_SendWhenDone, sText, bYesNo, bDefaultAnswer, OnYes, OnNo, pCallbackData) );
 }
 
 void ScreenManager::TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer), void(*OnCanel)() )
 {	
+	if( m_ScreenStack.size() )
+		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
+
 	// add the new state onto the back of the array
 	m_ScreenStack.push_back( new ScreenTextEntry("ScreenTextEntry", SM_SendWhenDone, sQuestion, sInitialAnswer, OnOK, OnCanel) );
 }
 
 void ScreenManager::MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
 {
+	if( m_ScreenStack.size() )
+		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
+
 	// add the new state onto the back of the array
 	m_ScreenStack.push_back( new ScreenMiniMenu(pDef, SM_SendOnOK, SM_SendOnCancel) );
 }
