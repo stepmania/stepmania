@@ -23,6 +23,10 @@ ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( s
 {
 	m_MenuTimer = new MenuTimer;
 	m_textHelp = new HelpDisplay;
+
+	// Needs to be in the constructor in case a derivitive decides to skip 
+	// itself and sends SM_GoToNextScreen to ScreenAttract.
+	PLAY_MUSIC.Load( m_sName, "PlayMusic" );
 }
 
 void ScreenWithMenuElements::Init()
@@ -32,7 +36,6 @@ void ScreenWithMenuElements::Init()
 	Screen::Init();
 
 	FIRST_UPDATE_COMMAND.Load( m_sName, "FirstUpdateCommand" );
-	PLAY_MUSIC.Load( m_sName, "PlayMusic" );
 
 	ASSERT( this->m_SubActors.empty() );	// don't call Init twice!
 
