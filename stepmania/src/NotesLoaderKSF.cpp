@@ -135,7 +135,11 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out, const Song &s
 		} else if( sFName.Find("_2") != -1 ) {
 			notedata.SetNumTracks( 10 );
 			out.m_NotesType = NOTES_TYPE_PUMP_COUPLE;
+		} else if( sFName.Find("halfdouble") != -1 ) {
+			notedata.SetNumTracks( 6 );
+			out.m_NotesType = NOTES_TYPE_PUMP_HALFDOUBLE;
 		}
+
 	}
 
 	int iHoldStartRow[13];

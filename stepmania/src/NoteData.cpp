@@ -828,6 +828,14 @@ void NoteDataUtil::Turn( NoteData &in, TurnType tt )
 			iTakeFromTrack[8] = 5;
 			iTakeFromTrack[9] = 6;
 			break;
+		case NOTES_TYPE_PUMP_HALFDOUBLE:
+			iTakeFromTrack[0] = 2;
+			iTakeFromTrack[1] = 0;
+			iTakeFromTrack[2] = 1;
+			iTakeFromTrack[3] = 3;
+			iTakeFromTrack[4] = 4;
+			iTakeFromTrack[5] = 5;
+			break;
 		case NOTES_TYPE_PUMP_DOUBLE:
 			iTakeFromTrack[0] = 8;
 			iTakeFromTrack[1] = 9;

@@ -80,7 +80,7 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic() : Screen("ScreenEz2SelectMusic")
 	}
 
 
-	m_Menu.Load("ScreenSelectMusic");
+	m_Menu.Load("ScreenSelectMusic", true, false);
 	this->AddChild( &m_Menu );
 
 	m_soundMusicChange.Load( THEME->GetPathToS("ScreenEz2SelectMusic change"));

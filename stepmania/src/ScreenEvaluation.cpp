@@ -88,8 +88,8 @@ const char* JUDGE_STRING[NUM_JUDGE_LINES] = { "Marvelous", "Perfect", "Great", "
 #define TRY_EXTRA_STAGE_UtilOffCommand			THEME->GetMetric ("ScreenEvaluation",ssprintf("TryExtraStageUtilOffCommand"))
 */
 
-#define JUDGE_SOUND_TIME( name )	THEME->GetMetricF( m_sName, ssprintf("JudgeSoundTime%s", name) );
-#define SOUND_ON_FULL_ALPHA			THEME->GetMetricB( m_sName, "JudgeSoundIfJudgeGraphicsFullAlpha" )
+// #define JUDGE_SOUND_TIME( name )	THEME->GetMetricF( m_sName, ssprintf("JudgeSoundTime%s", name) );
+// #define SOUND_ON_FULL_ALPHA			THEME->GetMetricB( m_sName, "JudgeSoundIfJudgeGraphicsFullAlpha" )
 // metrics that are specific to classes derived from ScreenEvaluation
 #define NEXT_SCREEN							THEME->GetMetric (m_sName,"NextScreen")
 #define END_SCREEN							THEME->GetMetric (m_sName,"EndScreen")
@@ -523,7 +523,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 	int l;
 	for( l=0; l<NUM_JUDGE_LINES; l++ ) 
 	{
-		m_TimeToPlayJudgeSound[l] = -1;
+//		m_TimeToPlayJudgeSound[l] = -1;
 		if( l == 0  &&  !PREFSMAN->m_bMarvelousTiming )
 			continue;	// skip
 
@@ -536,8 +536,8 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			UtilSetXYAndOnCommand( m_sprJudgeLabels[l], "ScreenEvaluation" );
 			this->AddChild( &m_sprJudgeLabels[l] );
 
-			m_soundJudgeSound[l].Load( THEME->GetPathToS( ssprintf("ScreenEvaluation JudgeSound %s", JUDGE_STRING[l]) ) );
-			m_TimeToPlayJudgeSound[l] = JUDGE_SOUND_TIME( JUDGE_STRING[l] );
+	//		m_soundJudgeSound[l].Load( THEME->GetPathToS( ssprintf("ScreenEvaluation JudgeSound %s", JUDGE_STRING[l]) ) );
+	//		m_TimeToPlayJudgeSound[l] = JUDGE_SOUND_TIME( JUDGE_STRING[l] );
 
 			for( p=0; p<NUM_PLAYERS; p++ )
 			{
@@ -823,7 +823,7 @@ void ScreenEvaluation::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
 
-	for( int l=0; l<NUM_JUDGE_LINES; l++ ) 
+/*	for( int l=0; l<NUM_JUDGE_LINES; l++ ) 
 	{
 		if(!SHOW_JUDGMENT(l))
 			continue;
@@ -844,7 +844,7 @@ void ScreenEvaluation::Update( float fDeltaTime )
 
 		m_soundJudgeSound[l].Play();
 		m_TimeToPlayJudgeSound[l] = -1;
-	}
+	}*/
 }
 
 void ScreenEvaluation::DrawPrimitives()

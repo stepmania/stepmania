@@ -46,6 +46,7 @@ struct {
 	{ "dance-couple", 8 },
 	{ "dance-solo", 6 },
 	{ "pump-single", 5 },
+	{ "pump-halfdouble", 6 },
 	{ "pump-double", 10 },
 	{ "pump-couple", 10 },
 	{ "ez2-single", 5 },		// Single: TL,LHH,D,RHH,TR
@@ -900,6 +901,37 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			0,2,4,1,3
+		},
+	},
+	{	// PUMP_STYLE_HALFDOUBLE
+		GAME_PUMP,								// m_Game
+		true,									// m_bUsedForGameplay
+		true,									// m_bUsedForEdit
+		"halfdouble",								// m_szName
+		NOTES_TYPE_PUMP_HALFDOUBLE,					// m_NotesType
+		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
+		{ 320, 320 },							// m_iCenterX
+		6,										// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	GAME_CONTROLLER_1,	PUMP_BUTTON_CENTER,	-PUMP_COL_SPACING*2.5f },
+				{ TRACK_2,	GAME_CONTROLLER_1,	PUMP_BUTTON_UPRIGHT,		-PUMP_COL_SPACING*1.5f },
+				{ TRACK_3,	GAME_CONTROLLER_1,	PUMP_BUTTON_DOWNRIGHT,		-PUMP_COL_SPACING*0.5f },
+				{ TRACK_4,	GAME_CONTROLLER_2,	PUMP_BUTTON_DOWNLEFT,	+PUMP_COL_SPACING*0.5f },
+				{ TRACK_5,	GAME_CONTROLLER_2,	PUMP_BUTTON_UPLEFT,	+PUMP_COL_SPACING*1.5f },
+				{ TRACK_6,	GAME_CONTROLLER_2,	PUMP_BUTTON_CENTER,	+PUMP_COL_SPACING*2.5f },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	GAME_CONTROLLER_1,	PUMP_BUTTON_CENTER,	-PUMP_COL_SPACING*2.5f },
+				{ TRACK_2,	GAME_CONTROLLER_1,	PUMP_BUTTON_UPRIGHT,		-PUMP_COL_SPACING*1.5f },
+				{ TRACK_3,	GAME_CONTROLLER_1,	PUMP_BUTTON_DOWNRIGHT,		-PUMP_COL_SPACING*0.5f },
+				{ TRACK_4,	GAME_CONTROLLER_2,	PUMP_BUTTON_DOWNLEFT,	+PUMP_COL_SPACING*0.5f },
+				{ TRACK_5,	GAME_CONTROLLER_2,	PUMP_BUTTON_UPLEFT,	+PUMP_COL_SPACING*1.5f },
+				{ TRACK_6,	GAME_CONTROLLER_2,	PUMP_BUTTON_CENTER,	+PUMP_COL_SPACING*2.5f },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			0,5,2,4,3,1
 		},
 	},
 	{	// PUMP_STYLE_DOUBLE
