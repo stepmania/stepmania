@@ -254,6 +254,7 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 		return;
 
 	const PlayMode OldPlayMode = GAMESTATE->m_PlayMode;
+
 	if( m_game != GAME_INVALID )
 		GAMESTATE->m_CurGame = m_game;
 	if( m_pm != PLAY_MODE_INVALID )
@@ -309,6 +310,7 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 	{
 		MEMCARDMAN->LockCards( true );
 	}
+	
 }
 
 bool ModeChoice::IsZero() const

@@ -689,7 +689,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			for( unsigned i=0; i<g_vPlayedStageStats.size(); i++ )
 				iTotalScore += g_vPlayedStageStats[i].iScore[p];
 
-			iTotalScore += stageStats.iScore[p];
+			//iTotalScore += stageStats.iScore[p];
 
 			m_textTotalScore[p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation totalscore") );
 			m_textTotalScore[p].EnableShadow( false );

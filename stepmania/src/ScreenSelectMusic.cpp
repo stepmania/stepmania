@@ -302,6 +302,17 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );	// invisible
 	//this->AddChild( &m_sprOptionsMessage );	// we have to draw this manually over the top of transitions
 
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsPlayerEnabled( p ))
+		{
+			m_sprNonPresence[p].SetName( ssprintf("NonPresenceP%d",p+1) );
+			m_sprNonPresence[p].Load( THEME->GetPathToG(ssprintf("ScreenSelectMusic nonpresence p%d",p+1)) );
+			SET_XY( m_sprNonPresence[p] );
+			this->AddChild( &m_sprNonPresence[p] );
+		}
+	}
+
 	m_bgOverlay.SetName( "BGAOverlay");
 	m_bgOverlay.LoadFromAniDir( THEME->GetPathToB("ScreenSelectMusic Overlay"));
 	this->AddChild( &m_bgOverlay );
@@ -372,6 +383,13 @@ void ScreenSelectMusic::TweenSongPartsOnScreen( bool Initial )
 		ON_COMMAND( m_DifficultyIcon[p] );
 		ON_COMMAND( m_AutoGenIcon[p] );
 	}
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsPlayerEnabled( p ))
+		{
+			ON_COMMAND( m_sprNonPresence[p] );
+		}
+	}
 }
 
 void ScreenSelectMusic::TweenSongPartsOffScreen( bool Final )
@@ -398,6 +416,13 @@ void ScreenSelectMusic::TweenSongPartsOffScreen( bool Final )
 		OFF_COMMAND( m_sprMeterFrame[p] );
 		OFF_COMMAND( m_DifficultyIcon[p] );
 		OFF_COMMAND( m_AutoGenIcon[p] );
+	}
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsPlayerEnabled( p ))
+		{
+			OFF_COMMAND( m_sprNonPresence[p] );
+		}
 	}
 }
 
