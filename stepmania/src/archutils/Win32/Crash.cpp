@@ -75,7 +75,6 @@ struct VDDebugInfoContext {
 	const unsigned char *pRVAHeap;
 	unsigned	nFirstRVA;
 
-	const char *pClassNameHeap;
 	const char *pFuncNameHeap;
 	const unsigned long (*pSegments)[2];
 	int		nSegments;
@@ -250,17 +249,7 @@ static void Report(HWND hwndList, HANDLE hFile, const char *format, ...) {
 	}
 }
 
-static void SetWindowTitlef(HWND hwnd, const char *format, ...) {
-	char buf[256];
-	va_list val;
-
-	va_start(val, format);
-	wvsprintf(buf, format, val);
-	va_end(val);
-	SetWindowText(hwnd, buf);
-}
-
-static void ReportReason(HWND hwnd, HWND hwndReason, HANDLE hFile, const EXCEPTION_POINTERS *const pExc)
+static void ReportReason(HWND hwndReason, HANDLE hFile, const EXCEPTION_POINTERS *const pExc)
 {
 	const EXCEPTION_RECORD *const pRecord = (const EXCEPTION_RECORD *)pExc->ExceptionRecord;
 
@@ -279,19 +268,21 @@ static void ReportReason(HWND hwnd, HWND hwndReason, HANDLE hFile, const EXCEPTI
 	// us with the read/write flag and virtual address as the docs say...
 	// *sigh*
 
-	if (!pel->code) {
-		if (hwndReason)
-			SetWindowTitlef(hwndReason, "Crash reason: unknown exception 0x%08lx", pRecord->ExceptionCode);
+	char buf[256] = "";
 
-		if (hFile)
-			Report(hwnd, hFile, "Crash reason: unknown exception 0x%08lx", pRecord->ExceptionCode);
-	} else {
-		if (hwndReason)
-			SetWindowTitlef(hwndReason, "Crash reason: %s", pel->name);
-
-		if (hFile)
-			Report(hwnd, hFile, "Crash reason: %s", pel->name);
+	if (!pel->code)
+		wsprintf( buf, "Crash reason: unknown exception 0x%08lx", pRecord->ExceptionCode );
+	else
+	{
+		strcpy( buf, "Crash reason: " );
+		strcat( buf, pel->name );
 	}
+
+	if( hwndReason )
+		SetWindowText( hwndReason, buf );
+
+	if( hFile )
+		Report( NULL, hFile, buf );
 }
 
 static const char *GetNameFromHeap(const char *heap, int idx) {
@@ -347,13 +338,6 @@ static bool IsValidCall(char *buf, int len) {
 
 	return false;
 }
-
-///////////////////////////////////////////////////////////////////////////
-//
-//	info from Portable Executable/Common Object File Format (PE/COFF) spec
-
-typedef unsigned short ushort;
-typedef unsigned long ulong;
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -422,36 +406,19 @@ bool VDDebugInfoInitFromMemory(VDDebugInfoContext *pctx, const void *_src) {
 
 	pctx->pRVAHeap = NULL;
 
-	// Check type string
-
-	if (!memcmp((char *)src + 6, "] StepMania disasm", 18))
-		src += *(long *)(src + 64) + 72;
-
-	if (src[0] != '[' || src[3] != '|')
+	if (memcmp((char *)src, "StepMania symbolic debug information", 36))
 		return false;
-
-	if (memcmp((char *)src + 6, "] StepMania symbolic debug information", 38))
-		return false;
-
-	// Check version number
-
-//	int write_version = (src[1]-'0')*10 + (src[2] - '0');
-	int compat_version = (src[4]-'0')*10 + (src[5] - '0');
-
-	if (compat_version > 1)
-		return false;	// resource is too new for us to load
 
 	// Extract fields
 
 	src += 64;
 
 	pctx->nBuildNumber		= *(int *)src;
-	pctx->pRVAHeap			= (const unsigned char *)(src + 24);
-	pctx->nFirstRVA			= *(const long *)(src + 20);
-	pctx->pClassNameHeap	= (const char *)pctx->pRVAHeap - 4 + *(const long *)(src + 4);
-	pctx->pFuncNameHeap		= pctx->pClassNameHeap + *(const long *)(src + 8);
-	pctx->pSegments			= (unsigned long (*)[2])(pctx->pFuncNameHeap + *(const long *)(src + 12));
-	pctx->nSegments			= *(const long *)(src + 16);
+	pctx->pRVAHeap			= (const unsigned char *)(src + 20);
+	pctx->nFirstRVA			= *(const long *)(src + 16);
+	pctx->pFuncNameHeap		= (const char *)pctx->pRVAHeap - 4 + *(const long *)(src + 4);
+	pctx->pSegments			= (unsigned long (*)[2])(pctx->pFuncNameHeap + *(const long *)(src + 8));
+	pctx->nSegments			= *(const long *)(src + 12);
 
 	return true;
 }
@@ -501,19 +468,24 @@ bool VDDebugInfoInitFromFile(VDDebugInfoContext *pctx, const char *pszFilename)
 	return false;
 }
 
-long VDDebugInfoLookupRVA(VDDebugInfoContext *pctx, unsigned rva, char *buf, int buflen) {
-	int i;
-
-	for(i=0; i<pctx->nSegments; ++i) {
+static bool PointerIsInAnySegment( const VDDebugInfoContext *pctx, unsigned rva )
+{
+	for( int i=0; i<pctx->nSegments; ++i )
+	{
 		if (rva >= pctx->pSegments[i][0] && rva < pctx->pSegments[i][0] + pctx->pSegments[i][1])
-			break;
+			return true;
 	}
 
-	if (i >= pctx->nSegments)
+	return false;
+}
+
+long VDDebugInfoLookupRVA(VDDebugInfoContext *pctx, unsigned rva, char *buf, int buflen)
+{
+	if ( !PointerIsInAnySegment(pctx, rva) )
 		return -1;
 
 	const unsigned char *pr = pctx->pRVAHeap;
-	const unsigned char *pr_limit = (const unsigned char *)pctx->pClassNameHeap;
+	const unsigned char *pr_limit = (const unsigned char *)pctx->pFuncNameHeap;
 	int idx = 0;
 
 	// Linearly unpack RVA deltas and find lower_bound
@@ -542,22 +514,19 @@ long VDDebugInfoLookupRVA(VDDebugInfoContext *pctx, unsigned rva, char *buf, int
 
 		++idx;
 	}
+	if (pr >= pr_limit)
+		return -1;
 
 	// Decompress name for RVA
+	const char *fn_name = GetNameFromHeap(pctx->pFuncNameHeap, idx);
 
-	if (pr < pr_limit) {
-		const char *fn_name = GetNameFromHeap(pctx->pFuncNameHeap, idx);
+	if (!*fn_name)
+		fn_name = "(special)";
 
-		if (!*fn_name)
-			fn_name = "(special)";
+	strncpy( buf, fn_name, buflen );
+	buf[buflen-1]=0;
 
-		// ehh... where's my wsnprintf?  _snprintf() might allocate memory or locks....
-		return wsprintf(buf, "%s", fn_name) >= 0
-				? rva
-				: -1;
-	}
-
-	return -1;
+	return rva;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -622,15 +591,21 @@ static const char *Demangle( const char *buf )
 	return obuf;
 }
 
+static bool PointsToValidCall( unsigned long ptr )
+{
+	char buf[7];
+	int len = 7;
+
+	memset( buf, 0, sizeof(buf) );
+
+	while(len > 0 && !ReadProcessMemory(GetCurrentProcess(), (void *)(ptr-len), buf+7-len, len, NULL))
+		--len;
+
+	return IsValidCall(buf+7, len);
+}
+
 static bool ReportCrashCallStack(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTERS *const pExc)
 {
-	const CONTEXT *const pContext = (const CONTEXT *)pExc->ContextRecord;
-	HANDLE hprMe = GetCurrentProcess();
-	char *lpAddr = (char *)pContext->Esp;
-	int limit = 100;
-	unsigned long data;
-	char buf[512];
-
 	if (!g_debugInfo.pRVAHeap) {
 		Report(hwnd, hFile, "Could not open debug resource file (StepMania.vdi).");
 		return false;
@@ -640,11 +615,6 @@ static bool ReportCrashCallStack(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTE
 		Report(hwnd, hFile, "Incorrect StepMania.vdi file (build %d, expected %d) for this version of StepMania -- call stack unavailable.", g_debugInfo.nBuildNumber, int(version_num));
 		return false;
 	}
-
-	// Get some module names.
-
-	void *pModuleMem;
-//	ModuleInfo *pModules = CrashGetModules(pModuleMem);
 
 	// Retrieve stack pointers.
 	// Not sure if NtCurrentTeb() is available on Win95....
@@ -658,33 +628,28 @@ static bool ReportCrashCallStack(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTE
 
 	char *pStackBase = (char *)pTib->StackBase;
 
+	const CONTEXT *const pContext = (const CONTEXT *)pExc->ContextRecord;
+	const HANDLE hprMe = GetCurrentProcess();
+	const char *lpAddr = (const char *)pContext->Esp;
+	int limit = 100;
+
 	// Walk up the stack.  Hopefully it wasn't fscked.
 
-	data = pContext->Eip;
+	unsigned long data = pContext->Eip;
 	do {
 		bool fValid = true;
-		int len;
 		MEMORY_BASIC_INFORMATION meminfo;
 
 		VirtualQuery((void *)data, &meminfo, sizeof meminfo);
 		
-		if (!IsExecutableProtection(meminfo.Protect) || meminfo.State!=MEM_COMMIT) {
-//				Report(NULL, hFile, "Rejected: %08lx (%08lx)", data, meminfo.Protect);
+		if (!IsExecutableProtection(meminfo.Protect) || meminfo.State!=MEM_COMMIT)
 			fValid = false;
-		}
 
-		if (data != pContext->Eip) {
-			len = 7;
-
-			*(long *)(buf + 0) = *(long *)(buf + 4) = 0;
-
-			while(len > 0 && !ReadProcessMemory(GetCurrentProcess(), (void *)(data-len), buf+7-len, len, NULL))
-				--len;
-
-			fValid &= IsValidCall(buf+7, len);
-		}
+		if ( data != pContext->Eip && !PointsToValidCall(data) )
+			fValid = false;
 		
 		if (fValid) {
+			char buf[512];
 			if (VDDebugInfoLookupRVA(&g_debugInfo, data, buf, sizeof buf) >= 0) {
 				Report(hwnd, hFile, "%08lx: %s", data, Demangle(buf));
 				--limit;
@@ -718,11 +683,6 @@ static bool ReportCrashCallStack(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTE
 		lpAddr += 4;
 	} while(limit > 0 && ReadProcessMemory(hprMe, lpAddr-4, &data, 4, NULL));
 
-	// All done, close up shop and exit.
-
-	if (pModuleMem)
-		VirtualFree(pModuleMem, 0, MEM_RELEASE);
-
 	return true;
 }
 
@@ -747,7 +707,7 @@ static void DoSave(const EXCEPTION_POINTERS *pExc)
 			"--------------------------------------"
 			"\r\n", PRODUCT_NAME_VER, version_num);
 
-	ReportReason(NULL, NULL, hFile, pExc);
+	ReportReason(NULL, hFile, pExc);
 	Report(NULL, hFile, "");
 
 	// Dump thread stacks
@@ -816,7 +776,7 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				if (hFontMono)
 					SendMessage(hwndList, WM_SETFONT, (WPARAM)hFontMono, MAKELPARAM(TRUE, 0));
 
-				ReportReason(NULL, hwndReason, NULL, pExc);
+				ReportReason(hwndReason, NULL, pExc);
 				s_bHaveCallstack = ReportCrashCallStack(hwndList, NULL, pExc);
 			}
 			return TRUE;

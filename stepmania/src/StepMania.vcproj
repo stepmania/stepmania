@@ -63,7 +63,7 @@
 				TypeLibraryName=".\../StepMania.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="disasm\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot; &quot;ia32.vdi&quot;"/>
+				CommandLine="disasm\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot;"/>
 			<Tool
 				Name="VCPreBuildEventTool"
 				CommandLine="disasm\verinc
@@ -141,7 +141,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				TypeLibraryName=".\../StepMania.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="disasm\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot; &quot;ia32.vdi&quot;"/>
+				CommandLine="disasm\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot;"/>
 			<Tool
 				Name="VCPreBuildEventTool"
 				CommandLine="disasm\verinc

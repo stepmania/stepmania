@@ -37,9 +37,6 @@ std::vector<RVAEnt> rvabuf;
 char fnambuf[MAX_FNAMBUF];
 char *fnamptr = fnambuf;
 
-char cnambuf[MAX_CNAMBUF];
-char *cnamptr = cnambuf;
-
 long segbuf[MAX_SEGMENTS][2];
 int segcnt=0;
 int seggrp[MAX_SEGMENTS];
@@ -82,98 +79,8 @@ bool findline(const char *searchstr) {
 
 ///////////////////////////////////////////////////////////////////////////
 
-void parsename(long rva, char *buf) {
-	char *func_name = NULL;
-//	char *class_name = NULL;
-//	char c;
-//	int special_func = 0;
-
-//	if (*buf++ != '?') {
-		func_name = buf;
-/*	} else {
-
-		if (*buf == '?') {
-			// ??0
-			// ??1
-			// ??_G
-			// ??_E
-
-			++buf;
-			c=*buf++;
-
-			special_func = 31;
-			if (c=='0')
-				special_func = 1;		// constructor
-			else if (c=='1')
-				special_func = 2;		// destructor
-			else if (c=='_') {
-				c = *buf++;
-
-				if (c == 'G')
-					special_func = 3;		// scalar deleting destructor
-				else if (c == 'E')
-					special_func = 4;		// vector deleting destructor?
-			}
-		} else {
-			func_name = buf;
-
-			while(*buf != '@') {
-				if (!*buf)
-					throw "bad decorated name";
-
-				++buf;
-			}
-
-			*buf++ = 0;
-		}
-
-		// Look for a class name.
-
-		if (*buf != '@') {
-			if (!*buf)
-				throw "bad decorated name";
-
-			class_name = buf;
-
-			while(*buf != '@') {
-				if (!*buf)
-					throw "bad decorated name (class)";
-
-				++buf;
-			}
-
-			*buf++ = 0;
-		}
-	}
-	// write out to buffers
-
-	if (class_name) {
-		char *csptr = cnambuf;
-		int idx = 0;
-
-		while(csptr < cnamptr) {
-			if (!strcmp(csptr, class_name)) {
-				break;
-			}
-			while(*csptr++);
-			++idx;
-		}
-
-		if (csptr >= cnamptr && strcmp(csptr, class_name) ) {
-			cnamptr = strtack(cnamptr, class_name, cnambuf+MAX_CNAMBUF);
-			if(!cnambuf)
-				throw "Too many class names; increase MAX_CNAMBUF.";
-		}
-
-		*fnamptr++ = 1 + (idx / 128);
-		*fnamptr++ = 1 + (idx % 128);
-
-		if (special_func)
-			*fnamptr++ = special_func;
-	}
-*/
-
-	fnamptr = strtack(fnamptr, func_name? func_name:"", fnambuf+MAX_FNAMBUF);
+void parsename(long rva, char *func_name) {
+	fnamptr = strtack(fnamptr, func_name, fnambuf+MAX_FNAMBUF);
 	if(!fnamptr)
 		throw "Too many func names; increase MAX_FNAMBUF.";
 }
@@ -189,8 +96,8 @@ int main(int argc, char **argv) {
 	int i;
 	long load_addr;
 
-	if (argc<4) {
-		printf("mapconv <listing-file> <output-name> <disassembler module>\n");
+	if (argc<3) {
+		printf("mapconv <listing-file> <output-name>\n");
 		return 0;
 	}
 
@@ -210,27 +117,6 @@ int main(int argc, char **argv) {
 	if (!(fo=fopen(argv[2], "wb"))) {
 		printf("can't open output file \"%s\"\n", argv[2]);
 		return 20;
-	}
-
-	int disasm_size = 0;
-	{
-		FILE *fd;
-
-		if (!(fd=fopen(argv[3], "rb"))) {
-			printf("can't open disassembler module \"%s\"\n", argv[3]);
-			return 20;
-		}
-
-		void *buf = malloc(32768);
-		int act;
-
-		while((act = fread(buf, 1, 32768, fd)) > 0) {
-			disasm_size += act;
-			fwrite(buf, act, 1, fo);
-		}
-
-		free(buf);
-		fclose(fd);
 	}
 
 	// Begin parsing file
@@ -340,9 +226,7 @@ int main(int argc, char **argv) {
 		}
 /*
 		printf("Raw statistics:\n");
-		printf("\tDisassembler:     %ld bytes\n", disasm_size);
 		printf("\tRVA bytes:        %ld\n", rvabuf.size()*4);
-		printf("\tClass name bytes: %ld\n", cnamptr - cnambuf);
 		printf("\tFunc name bytes:  %ld\n", fnamptr - fnambuf);
 
 		printf("\nPacking RVA data..."); fflush(stdout);
@@ -368,19 +252,16 @@ int main(int argc, char **argv) {
 
 		// dump data
 
-		long t;
-
-		static const char header[64]="[01|01] StepMania symbolic debug information\r\n\x1A";
+		static const char header[64]="StepMania symbolic debug information\r\n\x1A";
 
 		fwrite(header, 64, 1, fo);
+
+		long t;
 
 		t = ver;
 		fwrite(&t, 4, 1, fo);
 
 		t = rvaout.size() + 4;
-		fwrite(&t, 4, 1, fo);
-
-		t = cnamptr - cnambuf;
 		fwrite(&t, 4, 1, fo);
 
 		t = fnamptr - fnambuf;
@@ -391,7 +272,6 @@ int main(int argc, char **argv) {
 
 		fwrite(&firstrva, 4, 1, fo);
 		fwrite(&rvaout[0], rvaout.size(), 1, fo);
-		fwrite(cnambuf, cnamptr - cnambuf, 1, fo);
 		fwrite(fnambuf, fnamptr - fnambuf, 1, fo);
 		fwrite(segbuf, segcnt*8, 1, fo);
 
