@@ -114,6 +114,16 @@ BOOL CSmpackageDlg::OnInitDialog()
 		}
 	}
 
+	// Strip out "CVS"
+	for( int i=m_listBox.GetCount()-1; i>=0; i-- )
+	{
+		CString sItemName;
+		m_listBox.GetText( i, sItemName );
+		if( -1!=sItemName.Find("CVS") )
+			m_listBox.DeleteString( i );
+	}
+
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -235,9 +245,11 @@ bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExp
 		{
 			CString sFilePath = asFilePaths[j];
 			
-			// don't export "thumbs.db" files
+			// don't export "thumbs.db" files or "CVS folders
 			CString sDir, sFName, sExt;
 			splitrelpath( sFilePath, sDir, sFName, sExt );
+			if( 0==stricmp(sFName,"thumbs.db") )
+				continue;	// skip
 			if( 0==stricmp(sFName,"thumbs.db") )
 				continue;	// skip
 
