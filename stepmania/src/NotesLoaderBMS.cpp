@@ -264,23 +264,14 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, const NameToData_t &mapNa
 		out.SetMeter( atoi(sData) );
 	if( GetTagFromMap( mapNameToData, "#title", sData ) )
 	{
-		// XXX: Replace with common substring trick in LoadFromDir() somehow
-		sData.MakeLower();
+		/* Hack: guess at 6-panel. */
 
 		// extract the Steps description (looks like 'Music <BASIC>')
-		int iPosOpenBracket = sData.Find( "<" );
-		if( iPosOpenBracket == -1 )
-			iPosOpenBracket = sData.Find( "(" );
-		int iPosCloseBracket = sData.Find( ">" );
-		if( iPosCloseBracket == -1 )
-			iPosCloseBracket = sData.Find( ")" );
+		size_t iOpenBracket = sData.find_first_of( "<(" );
+		size_t iCloseBracket = sData.find_first_of( ">)" );
 
-		if( iPosOpenBracket != -1  &&  iPosCloseBracket != -1 )
-			sData = sData.substr( iPosOpenBracket+1, 
-			iPosCloseBracket-iPosOpenBracket-1 );
-		LOG->Trace( "Steps description found to be '%s'", sData.c_str() );
-
-		out.SetDescription(sData);
+		if( iOpenBracket != string::npos && iCloseBracket != string::npos && iCloseBracket > iOpenBracket )
+			sData = sData.substr( iOpenBracket+1, iCloseBracket-iOpenBracket-1 );
 
 		// if there's a 6 in the description, it's probably part of "6panel" or "6-panel"
 		if( sData.Find("6") != -1 )
@@ -914,7 +905,8 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 			// XXX: This matches (double), but I haven't seen it used. Again, MORE EXAMPLES NEEDED
 			if( sTag.find('l') != sTag.npos )
-			    unsigned lPos = sTag.find('l')
+			{
+				unsigned lPos = sTag.find('l');
 			    if( sTag.substr(lPos-2,4) == "solo" )
 			    {
 				// (solo) -- an edit, apparently (Thanks Glenn!)
@@ -925,6 +917,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 				// Any of [L7] [L14] (LIGHT7) (LIGHT14) (LIGHT) [L] <LIGHT7> <L7>... you get the idea.
 				pSteps->SetDifficulty( DIFFICULTY_EASY );
 			    }
+			}
 			// [A] <A> (A) [ANOTHER] <ANOTHER> (ANOTHER) (ANOTHER7) Another (DP ANOTHER) (Another) -ANOTHER- [A7] [A14] etc etc etc
 			else if( sTag.find('a') != sTag.npos )
 				pSteps->SetDifficulty( DIFFICULTY_HARD );
