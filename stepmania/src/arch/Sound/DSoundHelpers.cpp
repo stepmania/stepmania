@@ -76,7 +76,7 @@ void DSound::SetPrimaryBufferMode()
 	if( FAILED(hr) )
 		LOG->Warn( hr_ssprintf(hr, "GetFormat on primary buffer") );
 	else if( waveformat.nSamplesPerSec != 44100 )
-		LOG->Warn( hr_ssprintf(hr, "Primary buffer set to %i instead of 44100", waveformat.nSamplesPerSec) );
+		LOG->Warn( "Primary buffer set to %i instead of 44100", waveformat.nSamplesPerSec );
 
 	/* MS docs:
 	 *
