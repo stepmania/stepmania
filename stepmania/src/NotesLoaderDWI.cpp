@@ -195,12 +195,12 @@ bool DWILoader::LoadFromDWITokens(
 					if( note1 != DANCE_NOTE_NONE )
 					{
 						int iCol1 = mapDanceNoteToNoteDataColumn[note1];
-						pNoteData->m_TapNotes[iCol1][iIndex] = '2';
+						pNoteData->SetTapNote(iCol1, iIndex, TAP_HOLD_HEAD);
 					}
 					if( note2 != DANCE_NOTE_NONE )
 					{
 						int iCol2 = mapDanceNoteToNoteDataColumn[note2];
-						pNoteData->m_TapNotes[iCol2][iIndex] = '2';
+						pNoteData->SetTapNote(iCol2, iIndex, TAP_HOLD_HEAD);
 					}
 				}
 				break;
@@ -214,12 +214,12 @@ bool DWILoader::LoadFromDWITokens(
 					if( note1 != DANCE_NOTE_NONE )
 					{
 						int iCol1 = mapDanceNoteToNoteDataColumn[note1];
-						pNoteData->m_TapNotes[iCol1][iIndex] = '1';
+						pNoteData->SetTapNote(iCol1, iIndex, TAP_TAP);
 					}
 					if( note2 != DANCE_NOTE_NONE )
 					{
 						int iCol2 = mapDanceNoteToNoteDataColumn[note2];
-						pNoteData->m_TapNotes[iCol2][iIndex] = '1';
+						pNoteData->SetTapNote(iCol2, iIndex, TAP_TAP);
 					}
 
 					fCurrentBeat += fCurrentIncrementer;

@@ -90,7 +90,9 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 				iHoldStartRow[t] = -1;
 			}
 
-			notedata.m_TapNotes[t][row] = sRowString[t];
+			/* XXXXX: don't do this, translate explicitly, so the TAP_* constants
+			 * can be changed */
+			notedata.SetTapNote(t, row, sRowString[t]);
 		}
 	}
 

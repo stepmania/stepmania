@@ -1213,7 +1213,7 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 			if( iRow < 0 )
 				break;
 
-			m_NoteFieldRecord.m_TapNotes[iCol][iRow] = '1';
+			m_NoteFieldRecord.SetTapNote(iCol, iRow, TAP_TAP);
 			m_GrayArrowRowRecord.Step( iCol );
 		}
 		break;
