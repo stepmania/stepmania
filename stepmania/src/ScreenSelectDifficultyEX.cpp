@@ -29,10 +29,10 @@
 #define ANIMATE_MODE_SWITCH_PICTURE_ON_COMMAND	THEME->GetMetric("ScreenSelectDifficultyEX","AnimateModeSwitchPictureONCommand")
 #define CURSOR_OFFSET_X_FROM_PICTURE( p )		THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("CursorP%dOffsetXFromPicture",p+1))
 #define CURSOR_OFFSET_Y_FROM_PICTURE( p )		THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("CursorP%dOffsetYFromPicture",p+1))
-#define DIFFICULTYICON_OFF_COMMAND( p )			THEME->GetMetric("ScreenSelectDifficultyEX",ssprintf("DifficultyIcon%dOFFCommand",p+1))
-#define DIFFICULTYICON_ON_COMMAND( p )			THEME->GetMetric("ScreenSelectDifficultyEX",ssprintf("DifficultyIcon%dONCommand",p+1))
-#define DIFFICULTYICON_X( p )					THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("DifficultyIcon%dX",p+1))
-#define DIFFICULTYICON_Y( p )					THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("DifficultyIcon%dY",p+1))
+#define DIFFICULTYSPRITE_OFF_COMMAND( p )			THEME->GetMetric("ScreenSelectDifficultyEX",ssprintf("DifficultyIcon%dOFFCommand",p+1))
+#define DIFFICULTYSPRITE_ON_COMMAND( p )			THEME->GetMetric("ScreenSelectDifficultyEX",ssprintf("DifficultyIcon%dONCommand",p+1))
+#define DIFFICULTYSPRITE_X( p )					THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("DifficultyIcon%dX",p+1))
+#define DIFFICULTYSPRITE_Y( p )					THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("DifficultyIcon%dY",p+1))
 #define DIFFICULTYTEXT_COLOR( p )				THEME->GetMetricC("ScreenSelectDifficultyEX",ssprintf("DifficultyText%dCOLOR",p+1))
 #define DIFFICULTYTEXT_OFF_COMMAND( p )			THEME->GetMetric("ScreenSelectDifficultyEX",ssprintf("DifficultyText%dOFFCommand",p+1))
 #define DIFFICULTYTEXT_ON_COMMAND( p )			THEME->GetMetric("ScreenSelectDifficultyEX",ssprintf("DifficultyText%dONCommand",p+1))
@@ -78,16 +78,17 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX() : ScreenSelect( "ScreenSele
 		if( IsValidModeName(MOO) )
 		{
 			// We cannot show more than 8 icons at a time, BTW
-			m_sprDifficultyIcon[k].Load( THEME->GetPathToG("ScreenSelectDifficultyEX icons 1x10") );
-			m_sprDifficultyIcon[k].SetX( DIFFICULTYICON_X(k) );
-			m_sprDifficultyIcon[k].SetY( DIFFICULTYICON_Y(k) );
-			m_sprDifficultyIcon[k].SetZoom( 1 );
-			this->AddChild( &m_sprDifficultyIcon[k] );
+			m_sprDifficulty[k].Load( THEME->GetPathToG("ScreenSelectDifficultyEX icons 1x10") );
+			m_sprDifficulty[k].StopAnimating();
+			m_sprDifficulty[k].SetX( DIFFICULTYSPRITE_X(k) );
+			m_sprDifficulty[k].SetY( DIFFICULTYSPRITE_Y(k) );
+			m_sprDifficulty[k].SetZoom( 1 );
+			this->AddChild( &m_sprDifficulty[k] );
 			
 			m_textDifficultyText[k].SetHorizAlign( Actor::align_left );		
 			m_textDifficultyText[k].LoadFromFont( THEME->GetPathToF("Common normal") );
-			m_textDifficultyText[k].SetX( DIFFICULTYICON_X(k) + 20 );
-			m_textDifficultyText[k].SetY( DIFFICULTYICON_Y(k) );
+			m_textDifficultyText[k].SetX( DIFFICULTYSPRITE_X(k) + 20 );
+			m_textDifficultyText[k].SetY( DIFFICULTYSPRITE_Y(k) );
 			m_textDifficultyText[k].SetZoom( .5 );
 			m_textDifficultyText[k].SetShadowLength( 1 );	//No shadow, jus outline
 			m_textDifficultyText[k].SetDiffuse( DIFFICULTYTEXT_COLOR(k) );
@@ -261,8 +262,8 @@ void ScreenSelectDifficultyEX::SetAllPlayersSelection( int iChoice, bool bSwitch
 		m_sprPicture[p].Load( THEME->GetPathToG(sPictureFile) );
 		
 		int iDiffIndex = GetSelectionIndex((PlayerNumber)p);
-		m_sprHighlight[p].SetBarWidth( int(20 + m_sprDifficultyIcon[iDiffIndex].GetZoomedWidth() + (m_textDifficultyText[iDiffIndex].GetWidestLineWidthInSourcePixels() / 2)) );
-		m_sprHighlight[p].SetXY( DIFFICULTYICON_X(m_iChoice[p]) + 35, DIFFICULTYICON_Y(m_iChoice[p]) );
+		m_sprHighlight[p].SetBarWidth( int(20 + m_sprDifficulty[iDiffIndex].GetZoomedWidth() + (m_textDifficultyText[iDiffIndex].GetWidestLineWidthInSourcePixels() / 2)) );
+		m_sprHighlight[p].SetXY( DIFFICULTYSPRITE_X(m_iChoice[p]) + 35, DIFFICULTYSPRITE_Y(m_iChoice[p]) );
 	}
 	
 	m_soundChange.Play();
@@ -303,8 +304,8 @@ void ScreenSelectDifficultyEX::Change( PlayerNumber pn, int iNewChoice )
 		m_sprPicture[p].Load( THEME->GetPathToG(sPictureFile) );
 		
 		int iDiffIndex = GetSelectionIndex((PlayerNumber)p);
-		m_sprHighlight[p].SetBarWidth( int( 20 + m_sprDifficultyIcon[iDiffIndex].GetZoomedWidth() + (m_textDifficultyText[iDiffIndex].GetWidestLineWidthInSourcePixels() /2 )) );
-		m_sprHighlight[p].SetXY( DIFFICULTYICON_X(m_iChoice[p]) + 30, DIFFICULTYICON_Y(m_iChoice[p]) );
+		m_sprHighlight[p].SetBarWidth( int( 20 + m_sprDifficulty[iDiffIndex].GetZoomedWidth() + (m_textDifficultyText[iDiffIndex].GetWidestLineWidthInSourcePixels() /2 )) );
+		m_sprHighlight[p].SetXY( DIFFICULTYSPRITE_X(m_iChoice[p]) + 30, DIFFICULTYSPRITE_Y(m_iChoice[p]) );
 	}
 	
 	m_soundChange.Play();
@@ -338,7 +339,7 @@ void ScreenSelectDifficultyEX::SetDifficultyIconText( bool bDisplayCourseItems )
 	{
 		CString	MMNAME = m_ModeChoices[k].name;
 		MMNAME.Replace( "arcade-", "" );
-		m_sprDifficultyIcon[k].SetState( GetIconIndex(MMNAME.c_str()) );
+		m_sprDifficulty[k].SetState( GetIconIndex(MMNAME.c_str()) );
 		m_textDifficultyText[k].SetDiffuse( RageColor(1,1,1,1) );
 
 		/* Grammatically correct names. There has to be a better way to
@@ -379,7 +380,7 @@ void ScreenSelectDifficultyEX::MenuStart( PlayerNumber pn )
 			if( IsACourse(e) )
 			{
 				m_textDifficultyText[e].SetDiffuse( RageColor(.5,.5,.5,1) );
-				m_sprDifficultyIcon[e].SetDiffuse( RageColor(.5,.5,.5,1) );
+				m_sprDifficulty[e].SetDiffuse( RageColor(.5,.5,.5,1) );
 			}
 		}
 		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectDifficulty comment %s",mc.name)) );
@@ -431,14 +432,14 @@ void ScreenSelectDifficultyEX::TweenOnScreen()
 		m_sprInfo[p].Command( INFO_ON_COMMAND(p) );
 		m_sprPicture[p].Command( PICTURE_ON_COMMAND(p) );
 		
-		m_sprHighlight[p].SetXY( DIFFICULTYICON_X(1) + 30, DIFFICULTYICON_Y(1) );
+		m_sprHighlight[p].SetXY( DIFFICULTYSPRITE_X(1) + 30, DIFFICULTYSPRITE_Y(1) );
 		m_sprHighlight[p].Command( "diffusealpha,0;linear,0.3;diffusealpha,1" );
 	}
 
 	m_sprIconBar.Command( ICONBAR_ON_COMMAND );
 	for( unsigned di=0; di < m_aModeChoices.size(); di++ )
 	{
-		m_sprDifficultyIcon[di].Command( DIFFICULTYICON_ON_COMMAND(di) );
+		m_sprDifficulty[di].Command( DIFFICULTYSPRITE_ON_COMMAND(di) );
 		m_textDifficultyText[di].Command( DIFFICULTYTEXT_ON_COMMAND(di) );
 	}
 }
@@ -458,7 +459,7 @@ void ScreenSelectDifficultyEX::TweenOffScreen()
 	m_sprIconBar.Command( ICONBAR_OFF_COMMAND );
 	for( unsigned di=0; di < m_aModeChoices.size(); di++ )
 	{
-		m_sprDifficultyIcon[di].Command( DIFFICULTYICON_OFF_COMMAND(di) );
+		m_sprDifficulty[di].Command( DIFFICULTYSPRITE_OFF_COMMAND(di) );
 		m_textDifficultyText[di].Command( DIFFICULTYTEXT_OFF_COMMAND(di) );
 	}
 }

@@ -55,7 +55,7 @@ protected:
 
 /* Icon Bar stuff */
 	unsigned m_NumModes;
-	DifficultyIcon	m_sprDifficultyIcon[8];
+	Sprite	m_sprDifficulty[8];
 	Sprite	m_sprIconBar;
 	BitmapText	m_textDifficultyText[8];
 	OptionsCursor	m_sprHighlight[NUM_PLAYERS];
