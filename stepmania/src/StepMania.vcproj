@@ -365,6 +365,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenNameEntryTraditional.h">
 			</File>
 			<File
+				RelativePath="ScreenNetworkOptions.cpp">
+			</File>
+			<File
+				RelativePath="ScreenNetworkOptions.h">
+			</File>
+			<File
 				RelativePath="ScreenOptions.cpp">
 			</File>
 			<File
@@ -393,12 +399,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenProfileOptions.h">
-			</File>
-			<File
-				RelativePath="ScreenNetworkOptions.cpp">
-			</File>
-			<File
-				RelativePath="ScreenNetworkOptions.h">
 			</File>
 			<File
 				RelativePath="ScreenPrompt.cpp">
@@ -1197,6 +1197,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				</File>
 				<File
 					RelativePath="archutils\Win32\DebugInfoHunt.h">
+				</File>
+				<File
+					RelativePath="archutils\Win32\GetFileInformation.cpp">
+				</File>
+				<File
+					RelativePath="archutils\Win32\GetFileInformation.h">
 				</File>
 				<File
 					RelativePath="archutils\Win32\GotoURL.cpp">
