@@ -242,6 +242,18 @@ int RageSound_ALSA9::GetSampleRate( int rate ) const
 	return str->pcm->FindSampleRate( rate );
 }
 	
+static void CheckMixingBlacklist()
+{
+	CString sID = Alsa9Buf::GetHardwareID();
+	const CString blacklist[] = {
+		/* ALSA Driver: 0: Aureal Vortex au8830 [au8830], device 0: AU88x0 ADB [adb], 32/32 subdevices avail
+		 * ALSA segfaults after creating about ten subdevices. */
+		"au8830",
+	}, *blacklist_end = blacklist+ARRAYSIZE(blacklist);
+	
+	if( find( &blacklist[0], blacklist_end, sID ) != blacklist_end )
+		RageException::ThrowNonfatal( "ALSA driver \"%s\" not using hardware mixing", sID.c_str() );
+}
 
 RageSound_ALSA9::RageSound_ALSA9()
 {
@@ -249,6 +261,8 @@ RageSound_ALSA9::RageSound_ALSA9()
 	if( err != "" )
 		RageException::ThrowNonfatal("Driver unusable: %s", err.c_str());
 try {
+	CheckMixingBlacklist();
+	
 	shutdown = false;
 
 	/* Create a bunch of streams and put them into the stream pool. */
