@@ -1139,8 +1139,10 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			if( GAMESTATE->m_bDemonstration )		// Don't show "CLEARED" in Demo
 			{
 				this->SendScreenMessage( SM_BeginFadingToTitleMenu, 0 );
+				return;
 			}
-		// save any statistics
+			
+			// save any statistics
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
 				if( GAMESTATE->IsPlayerEnabled(p) )
