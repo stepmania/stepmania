@@ -109,13 +109,14 @@ void TimingData::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatO
 	for( unsigned i=0; i<m_BPMSegments.size(); i++ ) // foreach BPMSegment
 	{
 		const float fStartBeatThisSegment = m_BPMSegments[i].m_fStartBeat;
+		const bool bIsFirstBPMSegment = i==0;
 		const bool bIsLastBPMSegment = i==m_BPMSegments.size()-1;
 		const float fStartBeatNextSegment = bIsLastBPMSegment ? 40000/*inf*/ : m_BPMSegments[i+1].m_fStartBeat; 
 		const float fBPS = m_BPMSegments[i].m_fBPM / 60.0f;
 
 		for( unsigned j=0; j<m_StopSegments.size(); j++ )	// foreach freeze
 		{
-			if( fStartBeatThisSegment >= m_StopSegments[j].m_fStartBeat )
+			if( !bIsFirstBPMSegment && fStartBeatThisSegment >= m_StopSegments[j].m_fStartBeat )
 				continue;
 			if( !bIsLastBPMSegment && m_StopSegments[j].m_fStartBeat > fStartBeatNextSegment )
 				continue;
