@@ -18,6 +18,8 @@ class IniFile;
 
 class ThemeManager
 {
+	float NextReloadCheck;
+
 public:
 	ThemeManager();
 	~ThemeManager();

@@ -14,6 +14,7 @@
 #include "RageLog.h"
 #include "PrefsManager.h"
 #include "RageException.h"
+#include "RageTimer.h"
 #include "GameState.h"
 #include "GameDef.h"
 #include "IniFile.h"
@@ -28,9 +29,9 @@ const CString THEMES_DIR  = "Themes\\";
 ThemeManager::ThemeManager()
 {
 	m_pIniMetrics = new IniFile;
-	m_iHashForCurThemeMetrics = -99;	// garbage value that will never match a real hash
-	m_iHashForBaseThemeMetrics = -99;	// garbage value that will never match a real hash
 
+	/* Update the metric cache on the first call to GetMetric. */
+	NextReloadCheck = -1;
 
 	m_sCurThemeName = BASE_THEME_NAME;	// Use te base theme for now.  It's up to PrefsManager to change this.
 
@@ -242,11 +243,15 @@ try_metric_again:
 	CString sCurMetricPath = GetMetricsPathFromName(m_sCurThemeName);
 	CString sDefaultMetricPath = GetMetricsPathFromName(BASE_THEME_NAME);
 
-	// is our metric cache out of date?
-	if( m_iHashForCurThemeMetrics != GetHashForFile(sCurMetricPath)  ||
-		m_iHashForBaseThemeMetrics != GetHashForFile(sDefaultMetricPath) )
+	// Is our metric cache out of date?
+	if (NextReloadCheck == -1 || TIMER->GetTimeSinceStart() > NextReloadCheck)
 	{
-		SwitchTheme(m_sCurThemeName);	// force a reload of the metrics cache
+		NextReloadCheck = TIMER->GetTimeSinceStart()+1.0f;
+		if( m_iHashForCurThemeMetrics != GetHashForFile(sCurMetricPath)  ||
+			m_iHashForBaseThemeMetrics != GetHashForFile(sDefaultMetricPath) )
+		{
+			SwitchTheme(m_sCurThemeName);	// force a reload of the metrics cache
+		}
 	}
 
 	CString sValue;
