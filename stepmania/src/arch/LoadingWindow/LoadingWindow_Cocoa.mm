@@ -34,7 +34,9 @@ void MakeNewCocoaWindow() {
 	view = [window contentView];
 	[view addSubview:text]; /* This retains text */
 	[view addSubview:iView]; /* This retains iView */
+	[text setFont:[NSFont systemFontOfSize:12]];
 	[text setString:@"Initializing Hardware..."];
+	[text display];
 	
 	[window makeKeyAndOrderFront:nil];
 }
