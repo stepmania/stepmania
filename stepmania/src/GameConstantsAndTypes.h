@@ -30,7 +30,7 @@
 //
 // Note definitions
 //
-const int MAX_METER = 12;
+const int MAX_METER = 13;
 const int MIN_METER = 1;
 
 
