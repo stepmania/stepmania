@@ -56,6 +56,19 @@ void RageModelGeometry::OptimizeBones()
 	}
 }
 
+bool RageModelGeometry::HasAnyPerVertexBones() const
+{
+	for( unsigned i = 0; i < m_Meshes.size(); ++i )
+	{
+		const msMesh& mesh = m_Meshes[i];
+		for( unsigned j = 0; j < mesh.Vertices.size(); ++j )
+			if( mesh.Vertices[j].bone != -1 )
+				return true;
+	}
+
+	return false;
+}
+
 #define THROW RageException::Throw( "Parse error in \"%s\" at line %d: '%s'", sPath.c_str(), iLineNum, sLine.c_str() );
 
 void RageModelGeometry::LoadMilkshapeAscii( CString sPath )

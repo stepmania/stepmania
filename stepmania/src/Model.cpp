@@ -104,21 +104,7 @@ void Model::LoadPieces( CString sMeshesPath, CString sMaterialsPath, CString sBo
 	//
     // Setup temp vertices (if necessary)
 	//
-	bool bHasAnyPerVertexBones = false;
-	for( unsigned i = 0; i < m_pGeometry->m_Meshes.size(); ++i )
-	{
-		const msMesh& mesh = m_pGeometry->m_Meshes[i];
-		for( unsigned j = 0; j < mesh.Vertices.size(); ++j )
-		{
-			if( mesh.Vertices[j].bone != -1 )
-			{
-				bHasAnyPerVertexBones = true;
-				break;
-			}
-		}
-	}
-
-	if( bHasAnyPerVertexBones )
+	if( m_pGeometry->HasAnyPerVertexBones() )
 	{
 		m_vTempMeshes = m_pGeometry->m_Meshes;
 		m_pTempGeometry = DISPLAY->CreateCompiledGeometry();

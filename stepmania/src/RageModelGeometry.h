@@ -20,6 +20,7 @@ public:
 public:
 	void LoadMilkshapeAscii( CString sMilkshapeAsciiFile );
 	void OptimizeBones();
+	bool HasAnyPerVertexBones() const;
 
 	int m_iRefCount;
 
