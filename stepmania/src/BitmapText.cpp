@@ -6,7 +6,6 @@
 #include "RageException.h"
 #include "RageTimer.h"
 #include "RageDisplay.h"
-#include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "GameConstantsAndTypes.h"
 #include "Font.h"
