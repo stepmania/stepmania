@@ -12,17 +12,15 @@
 #if defined (HAVE_XBOX)
  #define DEFAULT_INPUT_DRIVER_LIST "Xbox"
 #elif defined(HAVE_DIRECTX)
-#define DEFAULT_INPUT_DRIVER_LIST "DirectInput,Pump,Para"
+ #define DEFAULT_INPUT_DRIVER_LIST "DirectInput,Pump,Para"
 #elif defined(HAVE_X11) // Prefer X11 over SDL
  #define DEFAULT_INPUT_DRIVER_LIST "X11,Linux_joystick"
 #elif defined(HAVE_SDL)
  #define DEFAULT_INPUT_DRIVER_LIST "SDL"
+#elif defined(LINUX)
+ #define DEFAULT_INPUT_DRIVER_LIST "Linux_joystick,Linux_tty"
 #else
- #if defined(LINUX)
-  #define DEFAULT_INPUT_DRIVER_LIST "Linux_joystick,Linux_tty"
- #else
-  #define DEFAULT_INPUT_DRIVER_LIST "MonkeyKeyboard"
- #endif
+ #define DEFAULT_INPUT_DRIVER_LIST "Null"
 #endif
 
 /* MovieTexture drivers */
