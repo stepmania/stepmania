@@ -325,7 +325,7 @@ void ArgStartCourse(CString CourseName)
 	GAMESTATE->PlayersFinalized();
 
 	//Go to Gameplay Screen
-	SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
+	SCREENMAN->SetNewScreen( THEME->GetMetric ("ScreenSelectMusic","NextScreen") );
 
 	//Not sure if this is correct, it may make more sense
 	//to have a metric to allow/disallow user options at this point.
