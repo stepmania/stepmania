@@ -471,10 +471,15 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
+		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 
 		m_DifficultyIcon[p].Load( THEME->GetPathToG("ScreenGameplay difficulty icons 2x5") );
+		
+		// UGLY HACK:  Don't show difficulty icon for CPU.
+		if( GAMESTATE->m_PlayMode == PLAY_MODE_CPU_BATTLE && GAMESTATE->IsCpuPlayer(p) )
+			m_DifficultyIcon[p].SetZoom( 0 );
+
 		/* Position it in LoadNextSong. */
 		this->AddChild( &m_DifficultyIcon[p] );
 	}
@@ -1366,6 +1371,21 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
 			}
 			break;
+		// testing:
+		case SDLK_PAUSE:
+			{
+				if( GAMESTATE->m_PlayerOptions[PLAYER_1].m_fPerspectiveTilt == -1 )	// incoming
+				{
+					for( int p=0; p<NUM_PLAYERS; p++ )
+						GAMESTATE->m_PlayerOptions[PLAYER_1].m_fPerspectiveTilt = 0;
+				}
+				else
+				{
+					for( int p=0; p<NUM_PLAYERS; p++ )
+						GAMESTATE->m_PlayerOptions[PLAYER_1].m_fPerspectiveTilt = -1;
+				}
+			}
+			break;
 		}
 	}
 
@@ -1603,10 +1623,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 						switch( GAMESTATE->m_PlayMode )
 						{
 						case PLAY_MODE_HUMAN_BATTLE:
-						case PLAY_MODE_CPU_BATTLE:
 						case PLAY_MODE_RAVE:
 							{
-								PlayerNumber winner = GAMESTATE->GetWinner();
+								PlayerNumber winner = GAMESTATE->GetBestPlayer();
 								switch( winner )
 								{
 								case PLAYER_INVALID:
