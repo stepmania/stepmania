@@ -632,10 +632,10 @@ void Song::TranslateTitles()
 		/* 17才 */
 		ttab.push_back(TitleTrans("^17 ?(Sai)?$", "", "", "17&sai;", "", "") );
 
-		/* XXX blackstar or whitestar?  Is this supposed to be capped? */
-		ttab.push_back(TitleTrans("^Mobo Moga$", "", "", "Mobo&whitestar;Moga", "", "") );
+		/* Handle "Mobo Moga", "Mobo * Moga"; spaces optional. XXX blackstar or whitestar?  Is this supposed to be capped? */
+		ttab.push_back(TitleTrans("^Mobo ?\\*? ?Moga$", "", "", "Mobo&whitestar;Moga", "", "") );
 
-		/* XXX whiteheart or blackheart? Is this supposed to be capped? */
+		/* XXX whiteheart or blackheart? */
 		ttab.push_back(TitleTrans("^Love (Love )?Shine$", "", "", "LOVE &whiteheart; SHINE", "", "") );
 
 		/* ロマンスの神様 */
