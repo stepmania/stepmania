@@ -6,12 +6,21 @@
 ;
 ; NOTE: this .NSI script is designed for NSIS v1.8+
 
-Name "StepMania"
-OutFile "stepmania-CVS-20030119.exe"
-!define PRODUCT_NAME "StepMania CVS"
-;OutFile "stepmania301.exe"
-;!define PRODUCT_NAME "StepMania 3.01"
+; Don't change this.
+!define PRODUCT_NAME "StepMania"
 
+!define VERSION "CVS"
+; !define VERSION "3.01"
+
+; If this is changed, different versions of SM can be installed
+; in parallel.  Normal releases should be StepMania; CVS releases
+; should be StepMania CVS.
+!define PRODUCT_ID "StepMania CVS"
+!define PRODUCT_NAME_VER "${PRODUCT_NAME} ${VERSION}"
+
+Name "${PRODUCT_NAME}"
+OutFile "stepmania-CVS-20030119.exe"
+;OutFile "stepmania301.exe"
 
 ; Some default compiler settings (uncomment and change at will):
 SetCompress auto ; (can be off or force)
@@ -20,8 +29,8 @@ CRCCheck on ; (can be off)
 AutoCloseWindow true ; (can be true for the window go away automatically at end)
 ; ShowInstDetails hide ; (can be show to have them shown, or nevershow to disable)
 SetDateSave on ; (can be on to have files restored to their orginal date)
-InstallDir "$PROGRAMFILES\StepMania"
-InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\StepMania\StepMania" ""
+InstallDir "$PROGRAMFILES\${PRODUCT_ID}"
+InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\StepMania\${PRODUCT_ID}" ""
 DirShow show ; (make this hide to not let the user change it)
 DirText "Select the directory to install StepMania in:"
 
@@ -87,9 +96,9 @@ SetOverwrite on
 WriteUninstaller "$INSTDIR\uninst.exe"
 
 ; add registry entries
-WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\StepMania\StepMania" "" "$INSTDIR"
-WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\StepMania" "DisplayName" "${PRODUCT_NAME} (remove only)"
-WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\StepMania" "UninstallString" '"$INSTDIR\uninst.exe"'
+WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\StepMania\${PRODUCT_ID}" "" "$INSTDIR"
+WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "DisplayName" "${PRODUCT_ID} (remove only)"
+WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "UninstallString" '"$INSTDIR\uninst.exe"'
 
 WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\smpackage.exe\shell\open\command" "" '"$INSTDIR\smpackage.exe" "%1"'
 WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile" "" "StepMania package"
@@ -194,16 +203,16 @@ stepmania_ini_not_present:
 
 ; Create Start Menu icons
 SetShellVarContext all	; install in "All Users" if NT
-CreateDirectory "$SMPROGRAMS\StepMania\"
-CreateShortCut "$DESKTOP\Play ${PRODUCT_NAME}.lnk" "$INSTDIR\stepmania.exe"
-CreateShortCut "$SMPROGRAMS\StepMania\${PRODUCT_NAME}.lnk" "$INSTDIR\stepmania.exe"
-CreateShortCut "$SMPROGRAMS\StepMania\Open Songs Folder.lnk" "$WINDIR\explorer.exe" "$INSTDIR\Songs\"
-CreateShortCut "$SMPROGRAMS\StepMania\Package Exporter.lnk" "$INSTDIR\smpackage.exe"
-CreateShortCut "$SMPROGRAMS\StepMania\README.lnk" "$INSTDIR\README-FIRST.txt"
-CreateShortCut "$SMPROGRAMS\StepMania\Uninstall ${PRODUCT_NAME}.lnk" "$INSTDIR\uninst.exe"
-CreateShortCut "$SMPROGRAMS\StepMania\Go To StepMania web site.lnk" "http://www.stepmania.com"
+CreateDirectory "$SMPROGRAMS\${PRODUCT_ID}\"
+CreateShortCut "$DESKTOP\Play ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\stepmania.exe"
+CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME_VER}.lnk" "$INSTDIR\stepmania.exe"
+CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Open Songs Folder.lnk" "$WINDIR\explorer.exe" "$INSTDIR\Songs\"
+CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Package Exporter.lnk" "$INSTDIR\smpackage.exe"
+CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\README.lnk" "$INSTDIR\README-FIRST.txt"
+CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\uninst.exe"
+CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Go To StepMania web site.lnk" "http://www.stepmania.com"
 
-Exec '$WINDIR\explorer.exe "$SMPROGRAMS\StepMania\"'
+Exec '$WINDIR\explorer.exe "$SMPROGRAMS\${PRODUCT_ID}\"'
 
 SectionEnd ; end of default section
 
@@ -291,9 +300,10 @@ Delete "$INSTDIR\log.txt"
 RMDir "$INSTDIR"	; will delete only if empty
 
 SetShellVarContext all	; delete from "All Users" if NT
-Delete "$DESKTOP\Play {PRODUCT_NAME}.lnk"
-Delete "$SMPROGRAMS\StepMania\*.*"
-RMDir "$SMPROGRAMS\StepMania"
+Delete "$DESKTOP\Play {PRODUCT_NAME_VER}.lnk"
+; I'm being paranoid here:
+Delete "$SMPROGRAMS\${PRODUCT_ID}\*.*"
+RMDir "$SMPROGRAMS\${PRODUCT_ID}"
 
 SectionEnd ; end of uninstall section
 
