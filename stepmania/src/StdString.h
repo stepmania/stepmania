@@ -1079,7 +1079,7 @@ inline void	ssadd(std::wstring& sDst, PCWSTR pW)
 		// arguments.  If you get a compilation error here, then you can just
 		// change this code to call the three-argument version.
 //	#if !defined(__MWERKS__) && !defined(__SUNPRO_CC_COMPAT) && !defined(__SUNPRO_CC)
-	#ifndef _MSC_VER
+	#ifndef _WIN32
 		return vswprintf(pW, nCount, pFmtW, vl);
 	#else
 		nCount;
@@ -1521,7 +1521,7 @@ public:
 
 	// addition operators -- global friend functions.
 
-#if _MSC_VER < 1300 /* VC6, not VC7 */
+#if defined(_MSC_VER) && _MSC_VER < 1300 /* VC6, not VC7 */
 /* work around another stupid vc6 bug */
 #define EMP_TEMP
 #else
