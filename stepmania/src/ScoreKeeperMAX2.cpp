@@ -344,6 +344,10 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	// update judged row totals
 	m_pPlayerStageStats->iTapNoteScores[scoreOfLastTap] += 1;
 
+	// increment the current total possible dance score
+
+	m_pPlayerStageStats->iCurPossibleDancePoints += TapNoteScoreToDancePoints( TNS_MARVELOUS );
+
 	//
 	// Regular combo
 	//
@@ -431,6 +435,10 @@ void ScoreKeeperMAX2::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tap
 	if( m_pPlayerState->m_HealthState != PlayerState::DEAD )
 		m_pPlayerStageStats->iActualDancePoints += HoldNoteScoreToDancePoints( holdScore );
 	m_pPlayerStageStats->iHoldNoteScores[holdScore] ++;
+
+	// increment the current total possible dance score
+
+	m_pPlayerStageStats->iCurPossibleDancePoints += HoldNoteScoreToDancePoints( HNS_OK );
 
 	if( holdScore == HNS_OK )
 		AddScore( TNS_MARVELOUS );

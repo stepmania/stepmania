@@ -7,6 +7,7 @@
 #include "ActorUtil.h"
 #include "RageLog.h"
 #include "StageStats.h"
+#include "PlayerState.h"
 
 
 PercentageDisplay::PercentageDisplay()
@@ -20,11 +21,13 @@ void PercentageDisplay::Load( PlayerNumber pn, PlayerStageStats* pSource, const 
 	m_pSource = pSource;
 	m_bAutoRefresh = bAutoRefresh;
 	m_Last = -1;
+	m_LastMax = -1;
 
 	DANCE_POINT_DIGITS.Load( sMetricsGroup, "DancePointsDigits" );
 	PERCENT_DECIMAL_PLACES.Load( sMetricsGroup, "PercentDecimalPlaces" );
 	PERCENT_TOTAL_SIZE.Load( sMetricsGroup, "PercentTotalSize" );
 	PERCENT_USE_REMAINDER.Load( sMetricsGroup, "PercentUseRemainder" );
+	APPLY_SCORE_DISPLAY_OPTIONS.Load( sMetricsGroup, "ApplyScoreDisplayOptions" );
 
 
 	if( PREFSMAN->m_bDancePointsForOni )
@@ -68,12 +71,16 @@ void PercentageDisplay::Update( float fDeltaTime )
 void PercentageDisplay::Refresh()
 {
 	const int iActualDancePoints = m_pSource->iActualDancePoints;
-	if( iActualDancePoints == m_Last )
+	const int iCurPossibleDancePoints = m_pSource->iCurPossibleDancePoints;
+
+	if( iActualDancePoints == m_Last && iCurPossibleDancePoints == m_LastMax )
 		return;
 
 	m_Last = iActualDancePoints;
+	m_LastMax = iCurPossibleDancePoints;
 
 	CString sNumToDisplay;
+
 	if( PREFSMAN->m_bDancePointsForOni )
 	{
 		sNumToDisplay = ssprintf( "%*d", (int) DANCE_POINT_DIGITS, max( 0, iActualDancePoints ) );
@@ -81,6 +88,26 @@ void PercentageDisplay::Refresh()
 	else
 	{
 		float fPercentDancePoints = m_pSource->GetPercentDancePoints();
+		float fCurMaxPercentDancePoints = m_pSource->GetCurMaxPercentDancePoints();
+		
+		if ( APPLY_SCORE_DISPLAY_OPTIONS )
+		{
+			switch( GAMESTATE->m_pPlayerState[m_PlayerNumber]->m_CurrentPlayerOptions.m_ScoreDisplay )
+			{
+			case PlayerOptions::SCORING_ADD:
+				// nothing to do
+				break;
+			case PlayerOptions::SCORING_SUBTRACT:
+				fPercentDancePoints = 1.0f - ( fCurMaxPercentDancePoints - fPercentDancePoints );
+				break;
+			case PlayerOptions::SCORING_AVERAGE:
+				if( fCurMaxPercentDancePoints == 0.0f ) // don't divide by zero fats
+					fPercentDancePoints = 0.0f;
+				else
+					fPercentDancePoints = fPercentDancePoints / fCurMaxPercentDancePoints;
+				break;
+			}
+		}
 
 		// clamp percentage - feedback is that negative numbers look weird here.
 		CLAMP( fPercentDancePoints, 0.f, 1.f );

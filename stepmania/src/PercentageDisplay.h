@@ -9,6 +9,8 @@
 #include "StageStats.h"
 #include "ThemeMetric.h"
 
+struct PlayerState;
+
 class PercentageDisplay: public ActorFrame
 {
 public:
@@ -22,12 +24,14 @@ private:
 	ThemeMetric<int> PERCENT_DECIMAL_PLACES;
 	ThemeMetric<int> PERCENT_TOTAL_SIZE;
 	ThemeMetric<bool> PERCENT_USE_REMAINDER;
+	ThemeMetric<bool> APPLY_SCORE_DISPLAY_OPTIONS;
 
 	void Refresh();
 	PlayerNumber m_PlayerNumber;
 	PlayerStageStats *m_pSource;
 	bool m_bAutoRefresh;
 	int m_Last;
+	int m_LastMax;
 	BitmapText	m_textPercent;
 	BitmapText	m_textPercentRemainder;
 };

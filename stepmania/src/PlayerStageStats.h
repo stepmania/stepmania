@@ -20,6 +20,8 @@ struct PlayerStageStats
 	static Grade GetGradeFromPercent( float fPercent );
 	Grade GetGrade() const;
 	float GetPercentDancePoints() const;
+	float GetCurMaxPercentDancePoints() const;
+
 	vector<Steps*>  vpSteps;
 	float	fAliveSeconds;		// how far into the music did they last before failing?  Updated by Gameplay, scaled by music rate.
 
@@ -32,6 +34,7 @@ struct PlayerStageStats
 	 * point during the song.  It's set in all fail modes. */
 	bool	bFailedEarlier;
 	int		iPossibleDancePoints;
+	int		iCurPossibleDancePoints;
 	int		iActualDancePoints;
 	int		iTapNoteScores[NUM_TAP_NOTE_SCORES];
 	int		iHoldNoteScores[NUM_HOLD_NOTE_SCORES];

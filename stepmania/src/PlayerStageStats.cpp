@@ -18,7 +18,7 @@ void PlayerStageStats::Init()
 	vpSteps.clear();
 	fAliveSeconds = 0;
 	bFailed = bFailedEarlier = false;
-	iPossibleDancePoints = iActualDancePoints = 0;
+	iPossibleDancePoints = iCurPossibleDancePoints = iActualDancePoints = 0;
 	iCurCombo = iMaxCombo = iCurMissCombo = iScore = iBonus = iMaxScore = iCurMaxScore = 0;
 	iSongsPassed = iSongsPlayed = 0;
 	iTotalError = 0;
@@ -42,6 +42,7 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 	bFailedEarlier |= other.bFailedEarlier;
 	iPossibleDancePoints += other.iPossibleDancePoints;
 	iActualDancePoints += other.iActualDancePoints;
+	iCurPossibleDancePoints += other.iCurPossibleDancePoints;
 	
 	for( int t=0; t<NUM_TAP_NOTE_SCORES; t++ )
 		iTapNoteScores[t] += other.iTapNoteScores[t];
@@ -206,6 +207,19 @@ float PlayerStageStats::GetPercentDancePoints() const
 	float fPercentDancePoints =  iActualDancePoints / (float)iPossibleDancePoints;
 	
 	return fPercentDancePoints;
+}
+
+float PlayerStageStats::GetCurMaxPercentDancePoints() const
+{
+	if ( iPossibleDancePoints == 0 )
+		return 0; // div/0
+
+	if ( iCurPossibleDancePoints == iPossibleDancePoints )
+		return 1; // correct for rounding error
+
+	float fCurMaxPercentDancePoints = iCurPossibleDancePoints / (float)iPossibleDancePoints;
+
+	return fCurMaxPercentDancePoints;
 }
 
 void PlayerStageStats::SetLifeRecordAt( float fLife, float fSecond )
