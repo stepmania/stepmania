@@ -853,10 +853,14 @@ for this value.<br>
 DrawExtraPixelsRight=&lt;0..32&gt;: If letters of your font are being chopped off on
 the right size, try increasing this value. If not specified, StepMania will use
 0 for this value.<br>
-AddToAllWidths=&lt;0..32&gt;: The value in this line will be added to the width of
-every character in the font. Increase this value to increase character spacing
-in your font. This feature is also useful if you wish to add a border to the
-characters of your font. If not specified, StepMania will use 0 for this value.
+AddToAllWidths=&lt;0..32&gt;: If specified, this value will be added to the width of 
+every character in the font. Increase this value if the width of all characters
+changes uniformly; for example, if you add a border to each character.<br>
+AdvanceExtraPixels=&lt;0..32&gt;: The value in this line determines the amount of
+space to advance between each character.  This is usually small, as most fonts
+include spacing between characters in the body of the character.  Increase this
+value to increase character spacing in your font.  If not specified, StepMania
+will use 1 for this value.<br>
 ScaleAllWidthsBy=&lt;0.0...2.0&gt;: The width of every character in the font be
 multipled by this value. If not specified, StepMania will use 1 for this value.<br>
 LineSpacing=&lt;0..64&gt;: This controls the spacing in pixels between lines of text.
