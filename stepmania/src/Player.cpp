@@ -236,7 +236,8 @@ void Player::Update( float fDeltaTime )
 			if( GAMESTATE->m_PlayerController[m_PlayerNumber] != PC_HUMAN )
 				bIsHoldingButton = true;
 
-			m_NoteField.m_bIsHoldingHoldNote[i] = bIsHoldingButton && bSteppedOnTapNote;	// set host flag so NoteField can do intelligent drawing
+			// set hold flag so NoteField can do intelligent drawing
+			m_NoteField.m_bIsHoldingHoldNote[i] = bIsHoldingButton && bSteppedOnTapNote;
 
 			if( bSteppedOnTapNote )		// this note is not judged and we stepped on its head
 				m_NoteField.GetHoldNote(i).fStartBeat = fSongBeat;	// move the start of this Hold
@@ -285,13 +286,6 @@ void Player::Update( float fDeltaTime )
 		SetHoldNoteLife(i, fLife);
 		SetHoldNoteScore(i, hns);
 	}
-
-/* Is there a reason this wasn't done within NoteField to begin with? */
-/*	if( m_sLastSeenNoteSkin != GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_sNoteSkin )
-	{
-		m_NoteField.ReloadNoteSkin();
-		m_sLastSeenNoteSkin = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_sNoteSkin;
-	} */
 
 	// Why was this originally "BeatToNoteRowNotRounded"?  It should be rounded.  -Chris
 	/* We want to send the crossed row message exactly when we cross the row--not
