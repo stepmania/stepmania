@@ -68,7 +68,7 @@ void Combo::UpdateScore( TapNoteScore score )
 		if( score == TNS_PERFECT )	m_iCurComboOfPerfects++;
 		else						m_iCurComboOfPerfects = 0;
 
-		if( (m_iCurComboOfPerfects%150)==0  &&  RandomFloat(0,1) > 0.5  &&  !GAMESTATE->m_bDemonstration )
+		if( m_iCurComboOfPerfects>=150  &&  (m_iCurComboOfPerfects%150)==0  &&  RandomFloat(0,1) > 0.5  &&  !GAMESTATE->m_bDemonstration )
 			SCREENMAN->SendMessageToTopScreen( SM_BeginToasty, 0 );
 
 
