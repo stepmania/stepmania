@@ -85,10 +85,14 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 	{
 		const BackgroundChange &seg = out.m_BackgroundChanges[i];
 
-		f.PutLine( ssprintf( "%.3f=%s=%.3f=%d=%d=%d", seg.m_fStartBeat, seg.m_sBGName.c_str(), seg.m_fRate, seg.m_bFadeLast, seg.m_bRewindMovie, seg.m_bLoop ) );
-		if( i != out.m_BackgroundChanges.size()-1 )
-			f.Write( "," );
+		f.PutLine( ssprintf( "%.3f=%s=%.3f=%d=%d=%d,", seg.m_fStartBeat, seg.m_sBGName.c_str(), seg.m_fRate, seg.m_bFadeLast, seg.m_bRewindMovie, seg.m_bLoop ) );
 	}
+	/* If there's an animation plan at all, add a dummy "-nosongbg-" tag to indicate that
+	 * this file doesn't want a song BG entry added at the end.  See SMLoader::TidyUpData.
+	 * This tag will be removed on load.  Add it at a very high beat, so it won't cause
+	 * problems if loaded in older versions. */
+	if( !out.m_BackgroundChanges.empty() )
+		f.PutLine( "99999=-nosongbg-=1.000=0=0=0 // don't automatically add -songbackground-" );
 	f.PutLine( ";" );
 
 	if( out.m_ForegroundChanges.size() )
