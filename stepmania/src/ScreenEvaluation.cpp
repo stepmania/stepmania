@@ -210,11 +210,14 @@ void ScreenEvaluation::Init()
 		else
 			grade[p] = GRADE_FAILED;
 
-		if (PREFSMAN->m_iScoringType == PrefsManager::SCORING_5TH)
+		if( PREFSMAN->m_iScoringType == PrefsManager::SCORING_5TH )
 		{
-			int ScoreBonuses[9] = {0, 0, 100, 1000, 10000, 100000, 1000000, 10000000, 10000000};
-			g_CurStageStats.iBonus[p] += ScoreBonuses[(int)grade[p] ];
-			stageStats.iBonus[p] += ScoreBonuses[(int)grade[p] ];
+			const int ScoreBonuses[] = { 10000000, 10000000, 1000000, 100000, 10000, 1000, 100 };
+			if( grade[p] < ARRAYSIZE(ScoreBonuses) )
+			{
+				g_CurStageStats.iBonus[p] += ScoreBonuses[(int)grade[p] ];
+				stageStats.iBonus[p] += ScoreBonuses[(int)grade[p] ];
+			}
 		}
 	}
 
@@ -1230,19 +1233,23 @@ void ScreenEvaluation::Update( float fDeltaTime )
 
 	for( int p=0; p<NUM_PLAYERS; p++)
 	{
-		if (g_CurStageStats.iBonus[p] == 0)
+		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 
-		if (GAMESTATE->IsCourseMode())
+		if( g_CurStageStats.iBonus[p] == 0 )
+			continue;
+
+		if( GAMESTATE->IsCourseMode() )
 			continue;
 
 		// wait a few seconds before adding bonus
-		if ( RageTimer::GetTimeSinceStart() - m_fScreenCreateTime  < 1.5f)
+		if( RageTimer::GetTimeSinceStart() - m_fScreenCreateTime  < 1.5f )
 			continue;
 
 		int increment = g_CurStageStats.iBonus[p]/10;
-		if (increment < 1) 
-			increment = min(1024, g_CurStageStats.iBonus[p]);
+		/* XXX: What's this supposed to do?  If i < 1, then min(i, 1024) is i ... */
+		if( increment < 1 )
+			increment = min( 1024, g_CurStageStats.iBonus[p] );
 
 		g_CurStageStats.iBonus[p] -= increment;
 		g_CurStageStats.iScore[p] += increment;
