@@ -139,10 +139,8 @@ TitleFrom: (Doors? of Magic)|(Mahou no Tobira)
 TitleTo: 魔法の扉
 SubtitleTo: (スペース&planet;マコのテーマ)
 * 
-# No need to write transliterations for these.
 TitleFrom: Senorita
 TitleTo: SEÑORITA
-DontTransliterate
 * 
 TitleFrom: Senorita\(Speedy Mix\)
 TitleTo: SEÑORITA
@@ -192,7 +190,7 @@ ArtistTo: くにたけみゆき
 ArtistFrom: Kunitake Miyuki
 ArtistTo: くにたけみゆき
 *
-# DREAMS COME TRUE:
+# Dreams Come True:
 TitleFrom: Asa ga Mata Kuru
 TitleTo: 朝がまた来る
 *
@@ -240,7 +238,7 @@ TitleTo: ゾナパラ
 SubtitleTo: WHY! パラパラ・リミックス
 ArtistTo: ゾベッカ
 *
-#TOKIMEKI MEMORIAL DANCING SUMMER VACATION
+# Tokimeki Memorial Dancing Summer Vacation
 TitleFrom: Anata
 ArtistFrom: Unknown
 TitleTo: あなたに会えて
@@ -272,7 +270,7 @@ SubtitleTo: ~Dancing Summer Mix~
 ArtistTo: 金月 真美
 *
 TitleFrom: Olgore
-ArtistFrom: Unkown
+ArtistFrom: Unkn?own
 TitleTo: ときめきのオルゴーレ
 SubtitleTo: ~Dancing Summer Mix~
 ArtistTo: 金月 真美
@@ -346,14 +344,11 @@ ArtistFrom: (Nobuo Uematsu)|(Uematsu Nobuo)
 ArtistTo: 植松伸夫
 
 [Courses]
-TitleFrom: .*(Kidou).*|(Demon Road)|(Road of Oni)|(Oni Michi)
+TitleFrom: (.*Kidou)|(Demon Road)|(Road of Oni)|(Oni Michi)
 TitleTo: 鬼道
 *
-TitleFrom: .*(Kidou 2).*|(Demon Road 2)|(Road of Oni 2)|(Oni Michi 2)
+TitleFrom: (.*Kidou 2)|(Demon Road 2)|(Road of Oni 2)|(Oni Michi 2)
 TitleTo: 鬼道 弐
-*
-TitleFrom: Love
-TitleTo: Love ♡
 *
 TitleFrom: (Love Love)|(Love)|(.*Love Heart)
 TitleTo: Love ♡
@@ -361,13 +356,13 @@ TitleTo: Love ♡
 TitleFrom: (2 ?MB)|(.*Road of 2 ?MB)
 TitleTo: 2MB道
 *
-TitleFrom: (.*)Dancemania( Oni)?
+TitleFrom: .*Dancemania( Oni)?
 TitleTo: Dancemania 鬼
 *
 TitleFrom: (TaQ( Oni)?)|(.*Road of TaQ)
 TitleTo: TaQ 道
 *
-TitleFrom: (Legend Road)|(Road of Legend)|.*(Legendary Road)
+TitleFrom: (Legend Road)|(Road of Legend)|(.*Legendary Road)
 TitleTo: 伝説道
 *
 TitleFrom: (.*Slow Demon Road)|(Road of Slow)
@@ -377,7 +372,7 @@ TitleTo: 鬼の遅道
 TitleFrom: (.*True Demon Road)|(Road of Tru.*)
 TitleTo: 真鬼道
 *
-#DWInsanity's Ayumi Platinum Course
+# DWInsanity's Ayumi Platinum Course
 TitleFrom: Ayumi( Platinum)?
 TitleTo: あゆみ Platinum
 *
