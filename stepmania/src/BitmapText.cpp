@@ -346,17 +346,24 @@ void BitmapText::SetText( CString sText, CString sAlternateText, int iWrapWidthP
 			{
 				CString sToAdd = " " + sWord;
 				int iWidthToAdd = m_pFont->GetLineWidthInSourcePixels(L" ") + iWidthWord;
-				if( iCurLineWidth + iWidthToAdd <= iWrapWidthPixels )	// will fit on current line
-				{
-					sCurLine += sToAdd;
-					iCurLineWidth += iWidthToAdd;
-				}
-				else
+				if( sWord == "\n" )	//Check to see if it's a forced newline
 				{
 					m_wTextLines.push_back( CStringToWstring(sCurLine) );
-					sCurLine = sWord;
-					iCurLineWidth = iWidthWord;
-				}
+					sCurLine = "";
+					iCurLineWidth = 0;
+				} 
+				else
+					if( iCurLineWidth + iWidthToAdd <= iWrapWidthPixels )	// will fit on current line
+					{
+						sCurLine += sToAdd;
+						iCurLineWidth += iWidthToAdd;
+					}
+					else
+					{
+						m_wTextLines.push_back( CStringToWstring(sCurLine) );
+						sCurLine = sWord;
+						iCurLineWidth = iWidthWord;
+					}
 			}
 		}
 		m_wTextLines.push_back( CStringToWstring(sCurLine) );
