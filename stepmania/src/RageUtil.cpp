@@ -18,7 +18,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fstream>
-#include "regex.h"
 #include <map>
 #include <set>
 
@@ -139,8 +138,8 @@ CString vssprintf( const char *fmt, va_list argList)
 }
 
 #ifdef WIN32
-//#include "dxerr8.h"
-//#pragma comment(lib, "DxErr8.lib")
+#include "dxerr8.h"
+#pragma comment(lib, "DxErr8.lib")
 
 CString hr_ssprintf( int hr, const char *fmt, ...)
 {
@@ -149,7 +148,9 @@ CString hr_ssprintf( int hr, const char *fmt, ...)
     CString s = vssprintf( fmt, va );
     va_end(va);
 
-	return s;// += ssprintf( " (%s)", DXGetErrorString8(hr) );
+	/* Why was this commented out?  -glenn */
+	return s + ssprintf( " (%s)", DXGetErrorString8(hr) );
+//	return s;// += ssprintf( " (%s)", DXGetErrorString8(hr) );
 }
 
 CString werr_ssprintf( int err, const char *fmt, ...)
@@ -430,7 +431,11 @@ unsigned GetFileSizeInBytes( const CString &sFilePath )
 	
 	return st.st_size;
 }
-
+#if 0
+bool DoesFileExist( const CString &sPath ) { return FDB.DoesFileExist(sPath); }
+bool IsAFile( const CString &sPath ) { return FDB.IsAFile(sPath); }
+bool IsADirectory( const CString &sPath ) { return FDB.IsADirectory(sPath); }
+#else
 bool DoesFileExist( const CString &sPath )
 {
 	if(sPath.empty()) return false;
@@ -452,6 +457,7 @@ bool IsADirectory( const CString &sPath )
 
 	return !!(st.st_mode & S_IFDIR);
 }
+#endif
 
 bool CompareCStringsAsc(const CString &str1, const CString &str2)
 {
@@ -556,6 +562,104 @@ CString GetRedirContents(const CString &path)
 	return sNewFileName;
 }
 
+#if 1
+/* PCRE */
+#include "pcre/pcre.h"
+void Regex::Compile()
+{
+	const char *error;
+	int offset;
+	reg = pcre_compile(pattern.c_str(), PCRE_CASELESS, &error, &offset, NULL);
+
+    if(reg == NULL)
+		RageException::Throw("Invalid regex: '%s' (%s)", pattern.c_str(), error);
+
+	int ret = pcre_fullinfo( (pcre *) reg, NULL, PCRE_INFO_CAPTURECOUNT, &backrefs);
+	ASSERT(ret >= 0);
+
+	backrefs++;
+    ASSERT(backrefs < 128);
+}
+
+void Regex::Set(const CString &str)
+{
+	Release();
+    pattern=str;
+	Compile();
+}
+
+void Regex::Release()
+{
+    pcre_free(reg);
+	reg = NULL;
+	pattern = "";
+}
+
+Regex::Regex(const CString &str)
+{
+	reg = NULL;
+	Set(str);
+}
+
+Regex::Regex(const Regex &rhs)
+{
+	reg = NULL;
+    Set(rhs.pattern);
+}
+
+Regex &Regex::operator=(const Regex &rhs)
+{
+	if(this != &rhs) Set(rhs.pattern);
+	return *this;
+}
+
+Regex::~Regex()
+{
+    Release();
+}
+
+bool Regex::Compare(const CString &str)
+{
+    int mat[128*3];
+	int ret = pcre_exec( (pcre *) reg, NULL,
+		str.data(), str.size(), 0, 0, mat, 128*3);
+
+	if( ret < -1 )
+		RageException::Throw("Unexpected return from pcre_exec('%s'): %i",
+			pattern.c_str(), ret);
+
+	return ret >= 0;
+}
+
+bool Regex::Compare(const CString &str, vector<CString> &matches)
+{
+    matches.clear();
+
+    int mat[128*3];
+	int ret = pcre_exec( (pcre *) reg, NULL,
+		str.data(), str.size(), 0, 0, mat, 128*3);
+
+	if( ret < -1 )
+		RageException::Throw("Unexpected return from pcre_exec('%s'): %i",
+			pattern.c_str(), ret);
+
+	if(ret == -1)
+		return false;
+
+    for(unsigned i = 1; i < backrefs; ++i)
+    {
+		const int start = mat[i*2], end = mat[i*2+1];
+        if(start == -1)
+            matches.push_back(""); /* no match */
+        else
+            matches.push_back(str.substr(start, end - start));
+    }
+
+    return true;
+}
+#else
+/* GNU regex */
+#include "regex.h"
 void Regex::Compile()
 {
     reg = new regex_t;
@@ -633,6 +737,7 @@ bool Regex::Compare(const CString &str, vector<CString> &matches)
 
     return true;
 }
+#endif
 
 /* UTF-8 decoding code from glib. */
 char *utf8_find_next_char (const char *p, const char *end)
@@ -927,6 +1032,9 @@ struct FileSet
 		const CString &beginning, const CString &containing, const CString &ending,
 		vector<CString> &out, bool bOnlyDirs) const;
 	void GetFilesEqualTo(const CString &pat, vector<CString> &out, bool bOnlyDirs) const;
+	bool DoesFileExist(const CString &path) const;
+	bool IsADirectory(const CString &path) const;
+	bool IsAFile(const CString &path) const;
 };
 
 void FileSet::LoadFromDir(const CString &dir)
@@ -1023,6 +1131,68 @@ void FileSet::GetFilesEqualTo(const CString &str, vector<CString> &out, bool bOn
 
 	out.push_back(i->name.c_str());
 }
+
+bool FileSet::DoesFileExist(const CString &path) const
+{
+	return files.find(File(path.c_str())) != files.end();
+}
+
+bool FileSet::IsADirectory(const CString &path) const
+{
+	set<File>::const_iterator i = files.find(File(path.c_str()));
+	if(i == files.end())
+		return false;
+	return i->dir;
+}
+
+bool FileSet::IsAFile(const CString &path) const
+{
+	set<File>::const_iterator i = files.find(File(path.c_str()));
+	if(i == files.end())
+		return false;
+	return !i->dir;
+}
+
+/* Given "foo/bar/baz/" or "foo/bar/baz", return "foo/bar/" and "baz". */
+static void SplitPath( CString Path, CString &Dir, CString &Name )
+{
+	/* Must always have at least one slash. */
+	static Regex split("(.*/)([^/]+)");
+	CStringArray match;
+	if(split.Compare(Path, match)) {
+		Dir = match[0];
+		Name = match[1];
+	} else {
+		/* No slash. */
+		Dir = "./";
+		Name = Path;
+	}
+}
+
+bool FilenameDB::DoesFileExist( const CString &sPath )
+{
+	CString Dir, Name;
+	SplitPath(sPath, Dir, Name);
+	FileSet &fs = GetFileSet(Dir);
+	return fs.DoesFileExist(Name);
+}
+
+bool FilenameDB::IsAFile( const CString &sPath )
+{
+	CString Dir, Name;
+	SplitPath(sPath, Dir, Name);
+	FileSet &fs = GetFileSet(Dir);
+	return fs.IsAFile(Name);
+}
+
+bool FilenameDB::IsADirectory( const CString &sPath )
+{
+	CString Dir, Name;
+	SplitPath(sPath, Dir, Name);
+	FileSet &fs = GetFileSet(Dir);
+	return fs.IsADirectory(Name);
+}
+
 
 /* XXX: this won't work right for URIs, eg \\foo\bar */
 bool FilenameDB::ResolvePath(CString &path)
