@@ -107,9 +107,6 @@ TapNoteScore NoteDataWithScoring::MinTapNoteScore(unsigned row) const
 		/* If there's no tap note on this row, skip it, or else the score will always be TNS_NONE. */
 		if(GetTapNote(t, row) == TAP_EMPTY) 
 			continue;
-		/* Don't count mines - the goal is to miss those */
-		if(GetTapNote(t, row) == TAP_MINE) 
-			continue;
 		score = min( score, GetTapNoteScore(t, row) );
 	}
 

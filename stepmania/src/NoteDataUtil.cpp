@@ -643,8 +643,6 @@ void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fBeatInterval, flo
 
 void NoteDataUtil::Mines( NoteData &in, float fStartBeat, float fEndBeat )
 {
-	int iTapCount = 0;
-
 	int first_row = 0;
 	if( fStartBeat != -1 )
 		first_row = BeatToNoteRow(fStartBeat);
@@ -653,14 +651,22 @@ void NoteDataUtil::Mines( NoteData &in, float fStartBeat, float fEndBeat )
 	if( fEndBeat != -1 )
 		last_row = BeatToNoteRow(fEndBeat);
 
+	//
+	// Change whole rows at a time to be tap notes.  Otherwise, it causes
+	// major problems for our scoring system. -Chris
+	//
+
+	int iRowCount = 0;
 	for( int r=first_row; r<=last_row; r++ )
-		for( int t=0; t<in.GetNumTracks(); t++ )
-			if( in.GetTapNote(t,r) == TAP_TAP )
-			{
-				iTapCount++;
-				if( (iTapCount%7) == 6 )
-					in.SetTapNote(t,r,TAP_MINE);
-			}
+		if( !in.IsRowEmpty(r) )
+		{
+			iRowCount++;
+			// place every 6 or 7 rows
+			if( (iRowCount%7)==6 || ((iRowCount%7)==5 && rand()%2) )
+				for( int t=0; t<in.GetNumTracks(); t++ )
+					if( in.GetTapNote(t,r) == TAP_TAP )
+						in.SetTapNote(t,r,TAP_MINE);
+		}
 }
 
 
