@@ -1126,6 +1126,8 @@ static void HandleInputEvents(float fDeltaTime)
 
 		// HACK:  Numlock is read is being pressed if the NumLock light is on.
 		// Filter out all NumLock repeat messages
+		/* XXX: Is this still needed?  If so, it should probably be done in the
+		 * affected input driver. */
 		if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_NUMLOCK && type != IET_FIRST_PRESS )
 			continue;	// skip
 
