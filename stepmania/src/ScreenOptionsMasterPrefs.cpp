@@ -375,6 +375,12 @@ MOVE( PreloadSounds,		PREFSMAN->m_bSoundPreloadAll );
 MOVE( ResamplingQuality,	PREFSMAN->m_iSoundResampleQuality );
 MOVE( AttractSound,			PREFSMAN->m_bAttractSound );
 
+static void SoundVolume( int &sel, bool ToSel, const CStringArray &choices )
+{
+	const float mapping[] = { 0.0f,0.1f,0.2f,0.3f,0.4f,0.5f,0.6f,0.7f,0.8f,0.9f,1.0f };
+	MoveMap( sel, PREFSMAN->m_fSoundVolume, ToSel, mapping, ARRAYSIZE(mapping) );
+}
+
 
 static const ConfOption g_ConfOptions[] =
 {
@@ -456,6 +462,7 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Preload\nSounds",		PreloadSounds,		"NO","YES" ),
 	ConfOption( "Resampling\nQuality",	ResamplingQuality,	"FAST","NORMAL","HIGH QUALITY" ),
 	ConfOption( "Attract\nSound",		AttractSound,		"OFF","ON" ),
+	ConfOption( "Sound\nVolume",		SoundVolume,		"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%","10%" ),
 	ConfOption( "", NULL )	// end marker
 };
 
@@ -475,7 +482,8 @@ int ConfOption::GetEffects() const
 		{ KeepTexturesInMemory,	OPT_APPLY_GRAPHICS },
 		{ RefreshRate,			OPT_APPLY_GRAPHICS },
 		{ WaitForVsync,			OPT_APPLY_GRAPHICS },
-		{ GameSel,				OPT_RESET_GAME }
+		{ GameSel,				OPT_RESET_GAME },
+		{ SoundVolume,			OPT_APPLY_SOUND },
 	};
 
 	int ret = OPT_SAVE_PREFERENCES;

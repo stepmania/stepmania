@@ -18,6 +18,7 @@
 #include "ScreenOptionsMasterPrefs.h"
 #include "RageSounds.h"
 #include "StepMania.h"
+#include "RageSoundManager.h"
 
 #define OPTION_MENU_FLAGS		THEME->GetMetric (m_sName,"OptionMenuFlags")
 #define ROW_LINE(i)				THEME->GetMetric (m_sName,ssprintf("Line%i",(i+1)))
@@ -530,6 +531,11 @@ void ScreenOptionsMaster::ExportOptions()
 	{
 		ResetGame();
 		m_NextScreen = "";
+	}
+
+	if( ChangeMask & OPT_APPLY_SOUND )
+	{
+		SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );
 	}
 }
 
