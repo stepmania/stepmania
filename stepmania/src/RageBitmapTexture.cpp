@@ -298,11 +298,22 @@ apply_color_key:
 
 	CreateFrameRects();
 
-	/* Enforce frames in the image have even dimensions.  Otherwise, 
-	 * pixel/texel alignment will be off.
-	 * If it looks like the artist intentionally blanked the image
-	 * by making it very tiny, then don't run the check. */
-	if( this->GetSourceWidth()>2 || this->GetSourceHeight()>2 )
+
+	//
+	// Enforce frames in the image have even dimensions.  Otherwise, 
+	// pixel/texel alignment will be off.
+	//
+	bool bRunCheck = true;
+	
+	 // Don't check if the artist intentionally blanked the image by making it very tiny.
+	if( this->GetSourceWidth()<=2 || this->GetSourceHeight()<=2 )
+		 bRunCheck = false;
+	
+	// HACK: Don't check song graphics.  Many of them are weird dimensions.
+	if( (actualID.filename.length()>=6 && actualID.filename.Left(6)=="Songs/") )
+		 bRunCheck = false;
+
+	if( bRunCheck )
 	{
 		float fFrameWidth = this->GetSourceWidth() / (float)this->GetFramesWide();
 		float fFrameHeight = this->GetSourceHeight() / (float)this->GetFramesHigh();
@@ -326,6 +337,8 @@ apply_color_key:
 				HOOKS->MessageBoxOK( sWarning );
 		}
 	}
+
+
 
 	SDL_FreeSurface( img );
 

@@ -28,11 +28,11 @@ ScreenSandbox::ScreenSandbox() : Screen("ScreenSandbox")
 	m_quad1.SetDiffuse( RageColor(0,0,1,1) );
 	m_quad1.SetZ( 0 );
 	m_quad1.SetUseZBuffer( true );
-//	this->AddChild( &m_quad1 );
+	this->AddChild( &m_quad1 );
 
 	m_quad2.StretchTo( RectI(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 	m_quad2.SetDiffuse( RageColor(0,1,0,1) );
-	m_quad2.SetZ( 1 );
+	m_quad2.SetZ( -1 );
 	m_quad2.SetUseZBuffer( true );
 	this->AddChild( &m_quad2 );
 
