@@ -17,7 +17,7 @@ GhostArrowRow::GhostArrowRow()
 {
 	m_iNumCols = 0;
 }
-#include "RageLog.h"
+
 void GhostArrowRow::Load( const PlayerState* pPlayerState, CString NoteSkin, float fYReverseOffset )
 {
 	Unload();
