@@ -240,7 +240,7 @@ void NoteData::AddHoldNote( HoldNote add )
 		m_TapNotes[add.m_iTrack][i] = TAP_EMPTY;
 
 	// add a tap note at the start of this hold
-	m_TapNotes[add.m_iTrack][iAddStartIndex] = '2';		// '2' means a Hold begin marker.  Don't draw this, but do grade it.
+	m_TapNotes[add.m_iTrack][iAddStartIndex] = TAP_HOLD_HEAD;		// Hold begin marker.  Don't draw this, but do grade it.
 
 	ASSERT( m_iNumHoldNotes < MAX_HOLD_NOTES );
 	m_HoldNotes[m_iNumHoldNotes++] = add;
@@ -628,12 +628,12 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 			// shuffle this row
 			CArray<int,int> aiTracksThatCouldHaveTapNotes;
 			for( t=0; t<m_iNumTracks; t++ )
-				if( m_TapNotes[t][r] != '4' )	// any point that isn't part of a hold
+				if( m_TapNotes[t][r] != TAP_HOLD )	// any point that isn't part of a hold
 					aiTracksThatCouldHaveTapNotes.Add( t );
 
 			for( t=0; t<m_iNumTracks; t++ )
 			{
-				if( m_TapNotes[t][r] != '4'  &&  m_TapNotes[t][r] != TAP_EMPTY )	// there is a tap note here (and not a HoldNote)
+				if( m_TapNotes[t][r] != TAP_HOLD  &&  m_TapNotes[t][r] != TAP_EMPTY )	// there is a tap note here (and not a HoldNote)
 				{
 					int iRandIndex = rand() % aiTracksThatCouldHaveTapNotes.GetSize();
 					int iTo = aiTracksThatCouldHaveTapNotes[ iRandIndex ];
@@ -674,20 +674,20 @@ void NoteData::MakeLittle()
  * this to do this. -glenn
  *
 
- * This code intentially leaves the '2' behind because a hold head is 
+ * This code intentially leaves the TAP_HOLD_HEAD behind because a hold head is 
  * treated exactly like a tap note for scoring purposes.
 
  */
 void NoteData::Convert2sAnd3sToHoldNotes()
 {
-	// Any note will end a hold (not just a '3').  This makes parsing DWIs much easier.
+	// Any note will end a hold (not just a TAP_HOLD_TAIL).  This makes parsing DWIs much easier.
 	// Plus, allowing tap notes in the middle of a hold doesn't make sense!
 
 	for( int col=0; col<m_iNumTracks; col++ )	// foreach column
 	{
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )	// foreach TapNote element
 		{
-			if( m_TapNotes[col][i] != '2' )	// this is a HoldNote begin marker
+			if( m_TapNotes[col][i] != TAP_HOLD_HEAD )	// this is a HoldNote begin marker
 				continue;
 			m_TapNotes[col][i] = TAP_EMPTY;
 
@@ -720,8 +720,8 @@ void NoteData::ConvertHoldNotesTo2sAnd3s()
 		
 		/* If they're the same, then they got clamped together, so just ignore it. */
 		if(iHoldStartIndex != iHoldEndIndex) {
-			m_TapNotes[hn.m_iTrack][iHoldStartIndex] = '2';
-			m_TapNotes[hn.m_iTrack][iHoldEndIndex]   = '3';
+			m_TapNotes[hn.m_iTrack][iHoldStartIndex] = TAP_HOLD_HEAD;
+			m_TapNotes[hn.m_iTrack][iHoldEndIndex]   = TAP_HOLD_TAIL;
 		}
 	}
 	m_iNumHoldNotes = 0;
@@ -739,7 +739,7 @@ void NoteData::Convert4sToHoldNotes()
 	{
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )	// foreach TapNote element
 		{
-			if( m_TapNotes[col][i] != '4' )	// this is a HoldNote begin marker
+			if( m_TapNotes[col][i] != TAP_HOLD )	// this is a HoldNote body
 				continue;
 
 			HoldNote hn = { col, NoteRowToBeat(i), 0 };
@@ -747,7 +747,7 @@ void NoteData::Convert4sToHoldNotes()
 			do {
 				SetTapNote(col, i, TAP_EMPTY);
 				i++;
-			} while( GetTapNote(col, i) == '4');
+			} while( GetTapNote(col, i) == TAP_HOLD);
 			SetTapNote(col, i, TAP_EMPTY);
 
 			hn.m_fEndBeat = NoteRowToBeat(i);
@@ -766,7 +766,7 @@ void NoteData::ConvertHoldNotesTo4s()
 		int iHoldEndIndex   = clamp(BeatToNoteRow(hn.m_fEndBeat), 0, MAX_TAP_NOTE_ROWS);
 
 		for( int j = iHoldStartIndex; j < iHoldEndIndex; ++j)
-			m_TapNotes[hn.m_iTrack][j] = '4';
+			m_TapNotes[hn.m_iTrack][j] = TAP_HOLD;
 	}
 	m_iNumHoldNotes = 0;
 }
@@ -956,8 +956,8 @@ void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTra
 			if( r )
 			for( int t=0; t<=pOriginal->m_iNumTracks; t++ )
 			{
-				if( pOriginal->m_TapNotes[t][r] == '4' &&
-					pOriginal->m_TapNotes[t][r-1] == '4')
+				if( pOriginal->m_TapNotes[t][r] == TAP_HOLD &&
+					pOriginal->m_TapNotes[t][r-1] == TAP_HOLD)
 				{
 					bHoldCrossesThisMeasure = true;
 					break;
