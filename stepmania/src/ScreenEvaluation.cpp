@@ -876,11 +876,11 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 		//
 		// Add step totals
 		//
-		int iNumTapsAndHolds	= stageStats.fRadarPossible[p][RADAR_NUM_TAPS_AND_HOLDS];
-		int iNumJumps			= stageStats.fRadarPossible[p][RADAR_NUM_JUMPS];
-		int iNumHolds			= stageStats.fRadarPossible[p][RADAR_NUM_HOLDS];
-		int iNumMines			= stageStats.fRadarPossible[p][RADAR_NUM_MINES];
-		int iNumHands			= stageStats.fRadarPossible[p][RADAR_NUM_HANDS];
+		int iNumTapsAndHolds	= (int) stageStats.fRadarPossible[p][RADAR_NUM_TAPS_AND_HOLDS];
+		int iNumJumps			= (int) stageStats.fRadarPossible[p][RADAR_NUM_JUMPS];
+		int iNumHolds			= (int) stageStats.fRadarPossible[p][RADAR_NUM_HOLDS];
+		int iNumMines			= (int) stageStats.fRadarPossible[p][RADAR_NUM_MINES];
+		int iNumHands			= (int) stageStats.fRadarPossible[p][RADAR_NUM_HANDS];
 
 		PROFILEMAN->AddStepTotals( (PlayerNumber)p, iNumTapsAndHolds, iNumJumps, iNumHolds, iNumMines, iNumHands );
 
