@@ -35,6 +35,16 @@ public:
 
 public:
 	void	Clear ();
+	void	Load( CString sPath )
+	{
+		if( sPath == "" ) return;
+		if( sPath.Right(6) == ".model" )
+			LoadFromModelFile( sPath );
+		else 
+			LoadMilkshapeAscii( sPath );
+	};
+
+	bool	LoadFromModelFile( CString sPath );
 	bool	LoadMilkshapeAscii( CString sPath );
 	bool	LoadMilkshapeAsciiBones( CString sPath );
 
@@ -44,6 +54,10 @@ public:
 	float	CalcDistance () const;
 	void	SetupBones ();
 	void	AdvanceFrame (float dt);
+
+	virtual void SetState( int iNewState );
+	virtual int GetNumStates();
+
 
 private:
 	msModel		*m_pModel;

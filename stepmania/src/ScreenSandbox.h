@@ -23,11 +23,12 @@ public:
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void Update(float f);
+	virtual void DrawPrimitives();
 
 	void MenuLeft( PlayerNumber pn );
 	void MenuRight( PlayerNumber pn );
 
-	void Update(float f);
 	Model m_model;
 	Quad m_quad;
 	Transition	m_In;

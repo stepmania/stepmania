@@ -29,10 +29,10 @@
 
 Actor* MakeModelOrSprite( CString sFile )
 {
-	if( sFile.Right(3)=="txt" )
+	if( sFile.Right(3)=="txt"||sFile.Right(5)=="model" )
 	{
 		Model* pModel = new Model;
-		pModel->LoadMilkshapeAscii( sFile );
+		pModel->Load( sFile );
 		return pModel;
 	}
 	else
@@ -699,7 +699,20 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 	pActor->SetXY( fXPos, fYPos );
 	pActor->SetDiffuse( diffuse );
 	pActor->SetGlow( glow );
+
+	
+	DISPLAY->EnableLighting( true );
+	DISPLAY->SetLightDirectional( 
+		0, 
+		RageColor(0.0f,0.0f,0.0f,1), 
+		RageColor(1,1,1,1),
+		RageColor(1,1,1,1),
+		RageVector3(1, 0, +1) );
+
 	pActor->Draw();
+
+	DISPLAY->SetLightOff( 0 );
+	DISPLAY->EnableLighting( false );
 }
 
 

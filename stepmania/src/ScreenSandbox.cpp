@@ -18,6 +18,8 @@
 #include "ScreenSandbox.h"
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
+#include "RageDisplay.h"
+#include "RageTimer.h"
 
 
 ScreenSandbox::ScreenSandbox() : Screen("ScreenSandbox")
@@ -32,12 +34,12 @@ ScreenSandbox::ScreenSandbox() : Screen("ScreenSandbox")
 //	this->AddChild( &m_sprite );
 
 	m_model.SetXY(CENTER_X, CENTER_Y);
-	m_model.SetZoomX(1);
-	m_model.SetZoomY(-1);
-	m_model.LoadMilkshapeAscii( "arrow.txt" );
+	m_model.SetZoom(3);
+	//m_model.SetZoomY(-1);
+	m_model.LoadMilkshapeAscii( "Down Tap Note 4th.txt" );
 //	m_model.LoadMilkshapeAsciiBones( "D:\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\howtoplay.bones.txt" );
 	this->AddChild(&m_model);
-	m_model.SetEffectSpin( RageVector3(0,90,0) );
+	m_model.SetEffectSpin( RageVector3(0,90,90) );
 
 	this->AddChild( &m_In );
 
@@ -56,6 +58,22 @@ void ScreenSandbox::Input( const DeviceInput& DeviceI, const InputEventType type
 void ScreenSandbox::Update( float fDeltaTime )
 {
 	Screen::Update(fDeltaTime);
+}
+
+void ScreenSandbox::DrawPrimitives()
+{
+	DISPLAY->EnableLighting( true );
+	DISPLAY->SetLightDirectional( 
+		0, 
+		RageColor(0,0,0,0), 
+		RageColor(1,1,1,1),
+		RageColor(0,0,0,1),
+		RageVector3(0, -1, 0) );
+
+	Screen::DrawPrimitives();
+
+	DISPLAY->SetLightOff( 0 );
+	DISPLAY->EnableLighting( false );
 }
 
 void ScreenSandbox::MenuLeft( PlayerNumber pn )

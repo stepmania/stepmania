@@ -138,7 +138,7 @@ try_element_again:
 		static const char *masks[NUM_ELEMENT_CATEGORIES][12] = {
 			{ "", NULL },
 			{ "*.ini", NULL },
-			{"*.sprite", "*.png", "*.jpg", "*.bmp", "*.gif","*.avi", "*.mpg", "*.mpeg", NULL},
+			{ "*.model", "*.sprite", "*.png", "*.jpg", "*.bmp", "*.gif","*.avi", "*.mpg", "*.mpeg", NULL},
 			{ "*.png", NULL },
 			{ ".set", ".mp3", ".ogg", ".wav", NULL },
 		};		

@@ -1,7 +1,7 @@
 #include "global.h"
 /*
 -----------------------------------------------------------------------------
- Class: Milkshape
+ Class: Model
 
  Desc: Types defined in msLib.h.
 
@@ -10,11 +10,12 @@
 -----------------------------------------------------------------------------
 */
 #include "Model.h"
-#include "Milkshape.h"
+#include "ModelTypes.h"
 #include "mathlib.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"
 #include "RageTextureManager.h"
+#include "IniFile.h"
 
 
 const float FRAMES_PER_SECOND = 30;
@@ -39,6 +40,33 @@ void Model::Clear ()
 	m_pModel = NULL;
 }
 
+bool Model::LoadFromModelFile( CString sPath )
+{
+	CString sDir, sThrowAway;
+	splitrelpath( sPath, sDir, sThrowAway, sThrowAway );
+
+	IniFile ini;
+	ini.SetPath( sPath );
+	ini.ReadFile();
+	
+	if( !ini.GetKey("Model") )
+		RageException::Throw( "The model file '%s' is invalid.", sPath.c_str() );
+
+	CString sFileName;
+	ini.GetValue( "Model", "File", sFileName );
+	LoadMilkshapeAscii( sDir+sFileName );
+
+	float f;
+	if( ini.GetValueF( "Model", "BaseRotationXDegrees", f ) )	Actor::SetBaseRotationX( f );
+	if( ini.GetValueF( "Model", "BaseRotationYDegrees", f ) )	Actor::SetBaseRotationY( f );
+	if( ini.GetValueF( "Model", "BaseRotationZDegrees", f ) )	Actor::SetBaseRotationZ( f );
+	if( ini.GetValueF( "Model", "BaseZoomX", f ) )				Actor::SetBaseZoomX( f );
+	if( ini.GetValueF( "Model", "BaseZoomY", f ) )				Actor::SetBaseZoomY( f );
+	if( ini.GetValueF( "Model", "BaseZoomZ", f ) )				Actor::SetBaseZoomZ( f );
+	
+	return true;
+}
+
 bool Model::LoadMilkshapeAscii( CString sPath )
 {
 	CString sDir, sThrowAway;
@@ -46,7 +74,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 
 	FILE *file = fopen (sPath, "rt");
 	if (!file)
-		RageException::Throw( "Model:: Could not open '%s'.", sPath.c_str() );
+		RageException::Throw( "Model::LoadMilkshapeAscii Could not open '%s'.", sPath.c_str() );
 
 	Clear ();
 
@@ -378,14 +406,10 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                 sscanf (szLine, "\"%[^\"]\"", szName);
                 strcpy( Material.szAlphaTexture, szName );
 
-				Material.pTexture = NULL;
 				if( strcmp(Material.szDiffuseTexture, "")!=0 )
 				{
-					RageTextureID ID;
-					ID.filename = sDir+Material.szDiffuseTexture;
-					ID.bStretch = true;
-					if( DoesFileExist(ID.filename) )
-						Material.pTexture = TEXTUREMAN->LoadTexture( ID );
+					if( IsAFile(sDir+Material.szDiffuseTexture) )
+						Material.aniTexture.Load( sDir+Material.szDiffuseTexture );
 				}
             }
         }
@@ -722,7 +746,7 @@ void Model::DrawPrimitives()
 				mat.Diffuse,
 				mat.Specular,
 				mat.fShininess );
-			DISPLAY->SetTexture( mat.pTexture );
+			DISPLAY->SetTexture( mat.aniTexture.GetCurrentTexture() );
 		}
 		else
 		{
@@ -758,10 +782,11 @@ void Model::DrawPrimitives()
 			}
 			else
 			{
-				VectorRotate (originalVert.Normal, m_pBones[originalVert.nBoneIndex].mFinal, tempVert.n);
-
 				int bone = originalVert.nBoneIndex;
-				VectorRotate (originalVert.Vertex, m_pBones[originalVert.nBoneIndex].mFinal, tempVert.p);
+
+				VectorRotate (originalVert.Normal, m_pBones[bone].mFinal, tempVert.n);
+
+				VectorRotate (originalVert.Vertex, m_pBones[bone].mFinal, tempVert.p);
 				tempVert.p[0] += m_pBones[bone].mFinal[0][3];
 				tempVert.p[1] += m_pBones[bone].mFinal[1][3];
 				tempVert.p[2] += m_pBones[bone].mFinal[2][3];
@@ -971,4 +996,23 @@ void Model::Update( float fDelta )
 {
 	Actor::Update( fDelta );
 	AdvanceFrame( fDelta );
+	if( m_pModel )
+		for( int i=0; i<m_pModel->Materials.size(); i++ )
+			m_pModel->Materials[i].aniTexture.Update( fDelta );
+}
+
+void Model::SetState( int iNewState )
+{
+	if( m_pModel )
+		for( int i=0; i<m_pModel->Materials.size(); i++ )
+			m_pModel->Materials[i].aniTexture.SetState( iNewState );
+}
+
+int Model::GetNumStates()
+{
+	int iMaxStates = 0;
+	if( m_pModel )
+		for( int i=0; i<m_pModel->Materials.size(); i++ )
+			iMaxStates = max( iMaxStates, m_pModel->Materials[i].aniTexture.GetNumStates() );
+	return iMaxStates;
 }

@@ -60,7 +60,7 @@ IntDir=.\../Release6
 TargetDir=\stepmania\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                	cl                                                                                                                 /Zl                                                                                                                 /nologo                                                                                                                 /c                                                                                                                 verstub.cpp                                                                                                                 /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                  	cl                                                                                                                   /Zl                                                                                                                   /nologo                                                                                                                   /c                                                                                                                   verstub.cpp                                                                                                                   /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -95,7 +95,7 @@ IntDir=.\../Debug6
 TargetDir=\stepmania\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                	cl                                                                                                                 /Zl                                                                                                                 /nologo                                                                                                                 /c                                                                                                                 verstub.cpp                                                                                                                 /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                  	cl                                                                                                                   /Zl                                                                                                                   /nologo                                                                                                                   /c                                                                                                                   verstub.cpp                                                                                                                   /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -1008,15 +1008,19 @@ SOURCE=.\mathlib.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Milkshape.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\Model.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\Model.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ModelTypes.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ModelTypes.h
 # End Source File
 # Begin Source File
 
@@ -2029,6 +2033,10 @@ SOURCE=.\ScreenTitleMenu.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenUnlock.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenUnlock.h
 # End Source File
 # Begin Source File
@@ -2138,6 +2146,14 @@ SOURCE=.\ThemeManager.cpp
 # Begin Source File
 
 SOURCE=.\ThemeManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\UnlockSystem.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\UnlockSystem.h
 # End Source File
 # End Group
 # Begin Source File
