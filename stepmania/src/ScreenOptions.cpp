@@ -7,6 +7,7 @@
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
+	Glenn Maynard
 -----------------------------------------------------------------------------
 */
 
@@ -35,8 +36,6 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 #define EXPLANATION_X		THEME->GetMetricF("ScreenOptions","ExplanationX")
 #define EXPLANATION_Y		THEME->GetMetricF("ScreenOptions","ExplanationY")
 #define EXPLANATION_ZOOM	THEME->GetMetricF("ScreenOptions","ExplanationZoom")
-#define HELP_TEXT			THEME->GetMetric("ScreenOptions","HelpText")
-#define TIMER_SECONDS		THEME->GetMetricI("ScreenOptions","TimerSeconds")
 #define COLOR_SELECTED		THEME->GetMetricC("ScreenOptions","ColorSelected")
 #define COLOR_NOT_SELECTED	THEME->GetMetricC("ScreenOptions","ColorNotSelected")
 
@@ -148,6 +147,23 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLin
 	PositionCursors();
 	UpdateEnabledDisabled();
 	OnChange();
+
+	/* It's tweening into position, but on the initial tween-in we only want to
+	 * tween in the whole page at once.  Since the tweens are nontrivial, it's
+	 * easiest to queue the tweens and then force them to finish. */
+	for( i=0; i<m_iNumOptionRows; i++ )	// foreach options line
+	{
+		m_textTitles[i].FinishTweening();
+		m_sprBullets[i].FinishTweening();
+		for( unsigned j=0; j<m_OptionRow[i].choices.size(); j++ )
+			m_textItems[i][j].FinishTweening();
+
+		for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
+		{
+			m_Underline[p][i].FinishTweening();
+			m_OptionIcons[p][i].FinishTweening();
+		}
+	}
 }
 
 ScreenOptions::~ScreenOptions()
