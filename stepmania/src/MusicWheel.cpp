@@ -187,7 +187,12 @@ void MusicWheel::Load()
 	}
 
 	/* Update for SORT_MOST_PLAYED. */
-	SONGMAN->UpdateBestAndShuffled();
+	SONGMAN->UpdateBest();
+
+	/* Sort SONGMAN's songs by CompareSongPointersByTitle, so we can do other sorts (with
+	 * stable_sort) from its output, and title will be the secondary sort, without having
+	 * to re-sort by title each time. */
+	SONGMAN->SortSongs();
 
 	RageTimer timer;
 	CString times;
@@ -375,7 +380,7 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CStrin
 			continue;
 
 		vector<Steps*> arraySteps;
-		pSong->GetSteps( arraySteps, GAMESTATE->GetCurrentStyleDef()->m_StepsType, DIFFICULTY_INVALID, -1, -1, "" );
+		pSong->GetSteps( arraySteps, GAMESTATE->GetCurrentStyleDef()->m_StepsType, DIFFICULTY_INVALID, -1, -1, "", 1 );
 
 		if( !arraySteps.empty() )
 			arraySongs.push_back( pSong );
