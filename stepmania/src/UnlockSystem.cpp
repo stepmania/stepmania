@@ -76,7 +76,7 @@ SongEntry::SongEntry()
 }
 
 
-static int CompareSongEntries(const SongEntry &se1, const SongEntry &se2)
+static bool CompareSongEntries(const SongEntry &se1, const SongEntry &se2)
 {
 	return se1.m_sSongName < se2.m_sSongName;
 }
