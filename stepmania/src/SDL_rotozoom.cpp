@@ -36,12 +36,6 @@ static void ZoomSurface( RageSurface * src, RageSurface * dst )
 	{
 		float sax = sx*x + sx/2;
 
-		// HACK to improve pixel alignment in the 2x magnify case.
-		// I can't figure out a general solution that works with larger and 
-		// scale factors, so this remains a special case.
-		if( sx == 0.5f ) // 2x magnify
-			sax += 0.5f;
-
 		/* sx/2 is the distance from the start of the sample to the center;
 		 * sx/4 is the distance from the center of the sample to the center of
 		 * either pixel. */
@@ -72,12 +66,6 @@ static void ZoomSurface( RageSurface * src, RageSurface * dst )
     for( y = 0; y < dst->h; y++ )
 	{
 		float say = sy*y + sy/2;
-
-		// HACK to improve pixel alignment in the 2x magnify case.
-		// I can't figure out a general solution that works with larger and 
-		// scale factors, so this remains a special case.
-		if( sy == 0.5f ) // 2x magnify
-			say += 0.5f;
 
 		float ystep = sy/4;
 
