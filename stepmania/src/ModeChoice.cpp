@@ -110,6 +110,10 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 			m_sAnnouncer = sValue;
 		}
 
+		if( sName == "name" )
+		{
+			m_sName = sValue;
+		}
 	}
 }
 
