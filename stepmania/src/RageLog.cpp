@@ -47,7 +47,12 @@ RageLog* LOG;		// global and accessable from anywhere in the program
 /* staticlog gets info.txt
  * crashlog gets log.txt */
 enum {
-	TO_INFO = 0x01,
+	/* If this is set, the message will also be written to info.txt and
+	 * will be flagged "important" when sent to HOOKS->Log. (info and warnings) */
+	WRITE_TO_INFO = 0x01,
+	
+	/* Whether this line should be loud when written to log.txt (warnings). */
+	WRITE_LOUD = 0x02
 };
 
 RageLog::RageLog()
@@ -117,7 +122,7 @@ void RageLog::Info( const char *fmt, ...)
     CString sBuff = vssprintf( fmt, va );
     va_end(va);
 
-	Write(TO_INFO, sBuff);
+	Write(WRITE_TO_INFO, sBuff);
 }
 
 void RageLog::Warn( const char *fmt, ...)
@@ -127,21 +132,31 @@ void RageLog::Warn( const char *fmt, ...)
     CString sBuff = vssprintf( fmt, va );
     va_end(va);
 
-	Write(TO_INFO, ssprintf(
-		"/////////////////////////////////////////\n"
-		"WARNING:  %s\n"
-		"/////////////////////////////////////////", sBuff.GetString()));
+	Write(WRITE_TO_INFO | WRITE_LOUD, ssprintf("WARNING: %s", sBuff.GetString()));
 }
 
+/* When */
 void RageLog::Write( int where, CString str)
 {
-	if( m_fileLog )
-		fprintf(m_fileLog, "%s\n", str.GetString() );
-
-	if( where & TO_INFO && m_fileInfo )
+	if( where&WRITE_TO_INFO && m_fileInfo )
 		fprintf(m_fileInfo, "%s\n", str.GetString() );
 
-	HOOKS->Log(str, where & TO_INFO);
+	HOOKS->Log(str, where & WRITE_TO_INFO);
+
+	/* Only do this for log.txt and stdout.  The other outputs are
+	 * fairly quiet anyway, so the prepended "WARNING" makes them stand
+	 * out well enough and this is just clutter. */
+	if( where & WRITE_LOUD )
+	{
+		str = ssprintf(
+			  "/////////////////////////////////////////\n"
+			  "%s\n"
+			  "/////////////////////////////////////////",
+			  str.GetString());
+	}
+
+	if( m_fileLog )
+		fprintf(m_fileLog, "%s\n", str.GetString() );
 
 	printf("%s\n", str.GetString() );
 
