@@ -44,19 +44,30 @@ OptionRow g_SongOptionsLines[NUM_SONG_OPTIONS_LINES] = {
 	OptionRow( "Auto\nAdjust",	"OFF", "ON" ),	
 };
 
+/* Get the next screen we'll go to when finished. */
+CString ScreenSongOptions::GetNextScreen()
+{
+	return NEXT_SCREEN(GAMESTATE->m_PlayMode);
+}
+
 
 ScreenSongOptions::ScreenSongOptions() :
 	ScreenOptions("ScreenSongOptions",true)
 {
 	LOG->Trace( "ScreenSongOptions::ScreenSongOptions()" );
 
-	if( !PREFSMAN->m_bShowSongOptions )
-		SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
-
 	Init( INPUTMODE_BOTH, 
 		g_SongOptionsLines, 
 		NUM_SONG_OPTIONS_LINES,
 		false, false );
+
+	/* If we're coming in from "press start for more options", we need a different
+	 * fade in. XXX: this is a hack */
+	if(PREFSMAN->m_ShowSongOptions == PrefsManager::ASK)
+	{
+		m_Menu.m_In.Load( THEME->GetPathToB("ScreenSongOptions option in") );
+		m_Menu.m_In.StartTransitioning();
+	}
 }
 
 void ScreenSongOptions::ImportOptions()

@@ -49,7 +49,7 @@ OptionRow g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
 	OptionRow( "Show\nStats",			"OFF","ON" ),
 	OptionRow( "Coins Per\nCredit",		"1","2","3","4","5","6","7","8" ),
 	OptionRow( "Joint\nPremium",		"OFF","ON" ),
-	OptionRow( "Song\nOptions",			"HIDE","ALLOW" ),
+	OptionRow( "Song\nOptions",			"HIDE","SHOW","ASK" ),
 };
 
 ScreenMachineOptions::ScreenMachineOptions() :
@@ -106,7 +106,13 @@ void ScreenMachineOptions::ImportOptions()
 	m_iSelectedOption[0][MO_SHOWSTATS]				= PREFSMAN->m_bShowStats ? 1:0;
 	m_iSelectedOption[0][MO_COINS_PER_CREDIT]		= PREFSMAN->m_iCoinsPerCredit - 1;
 	m_iSelectedOption[0][MO_JOINT_PREMIUM]			= PREFSMAN->m_bJointPremium ? 1:0;
-	m_iSelectedOption[0][MO_SHOW_SONG_OPTIONS]		= PREFSMAN->m_bShowSongOptions ? 1:0;
+	switch(PREFSMAN->m_ShowSongOptions)
+	{
+	case PrefsManager::YES: m_iSelectedOption[0][MO_SHOW_SONG_OPTIONS] = 1; break;
+	case PrefsManager::NO: m_iSelectedOption[0][MO_SHOW_SONG_OPTIONS] = 0; break;
+	case PrefsManager::ASK: m_iSelectedOption[0][MO_SHOW_SONG_OPTIONS] = 2; break;
+	default:	ASSERT(0);
+	}
 }
 
 void ScreenMachineOptions::ExportOptions()
@@ -163,7 +169,14 @@ void ScreenMachineOptions::ExportOptions()
 	PREFSMAN->m_bShowStats				= m_iSelectedOption[0][MO_SHOWSTATS] == 1;
 	PREFSMAN->m_iCoinsPerCredit			= m_iSelectedOption[0][MO_COINS_PER_CREDIT] + 1;
 	PREFSMAN->m_bJointPremium			= m_iSelectedOption[0][MO_JOINT_PREMIUM] == 1;
-	PREFSMAN->m_bShowSongOptions		= (bool&)m_iSelectedOption[0][MO_SHOW_SONG_OPTIONS];
+
+	switch(m_iSelectedOption[0][MO_SHOW_SONG_OPTIONS])
+	{
+	case 0: PREFSMAN->m_ShowSongOptions = PrefsManager::NO; break;
+	case 1: PREFSMAN->m_ShowSongOptions = PrefsManager::YES; break;
+	case 2: PREFSMAN->m_ShowSongOptions = PrefsManager::ASK; break;
+	default:	ASSERT(0);
+	}
 }
 
 void ScreenMachineOptions::GoToPrevState()

@@ -16,6 +16,7 @@ class ScreenSongOptions : public ScreenOptions
 {
 public:
 	ScreenSongOptions();
+	static CString GetNextScreen();
 
 private:
 	void ImportOptions();

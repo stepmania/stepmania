@@ -64,7 +64,8 @@ public:
 	bool			m_bPickExtraStage;
 	float			m_fLongVerSongSeconds;
 	float			m_fMarathonVerSongSeconds;
-	bool			m_bShowSongOptions;
+	enum Maybe { ASK = -1, NO = 0, YES = 1 };
+	Maybe			m_ShowSongOptions;
 	bool			m_bSoloSingle;
 	bool			m_bDancePointsForOni;	//DDR-Extreme style dance points instead of max2 percent
 	bool			m_bTimestamping;

@@ -83,7 +83,7 @@ PrefsManager::PrefsManager()
 	m_bJointPremium = false;
 	m_iBoostAppPriority = -1;
 	m_iPolygonRadar = -1;
-	m_bShowSongOptions = true;
+	m_ShowSongOptions = YES;
 	m_bDancePointsForOni = false;
 	m_bTimestamping = false;
 	m_bShowLyrics = true;
@@ -181,7 +181,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "PickExtraStage",				m_bPickExtraStage );
 	ini.GetValueF( "Options", "LongVerSeconds",				m_fLongVerSongSeconds );
 	ini.GetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
-	ini.GetValueB( "Options", "ShowSongOptions",			m_bShowSongOptions );
+	ini.GetValueI( "Options", "ShowSongOptions",			(int&)m_ShowSongOptions );
 	ini.GetValueB( "Options", "AllowSoftwareRenderer",		m_bAllowSoftwareRenderer );
 	ini.GetValueB( "Options", "SoloSingle",					m_bSoloSingle );
 	ini.GetValueB( "Options", "DancePointsForOni",			m_bDancePointsForOni );
@@ -262,7 +262,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "PickExtraStage",				m_bPickExtraStage );
 	ini.SetValueF( "Options", "LongVerSeconds",				m_fLongVerSongSeconds );
 	ini.SetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
-	ini.SetValueB( "Options", "ShowSongOptions",			m_bShowSongOptions );
+	ini.SetValueI( "Options", "ShowSongOptions",			m_ShowSongOptions );
 	ini.SetValueB( "Options", "AllowSoftwareRenderer",		m_bAllowSoftwareRenderer );
 	ini.SetValueB( "Options", "SoloSingle",					m_bSoloSingle );
 	ini.SetValueB( "Options", "DancePointsForOni",			m_bDancePointsForOni );
