@@ -29,6 +29,7 @@
 #include "GrayArrowRow.h"
 #include "GhostArrowRow.h"
 #include "NoteDataWithScoring.h"
+#include "ArrowBackdrop.h"
 class ScoreDisplay;
 class LifeMeter;
 class ScoreKeeper;
@@ -69,9 +70,11 @@ protected:
 	float			m_fOffset[SAMPLE_COUNT];//for AutoAdjust
 	int				m_iOffsetSample;		//
 
+	ArrowBackdrop	m_ArrowBackdrop;
 	GrayArrowRow	m_GrayArrowRow;
 	NoteField		m_NoteField;
 	GhostArrowRow	m_GhostArrowRow;
+	ActorFrame		m_ArrowFrame;
 
 	HoldJudgment	m_HoldJudgment[MAX_NOTE_TRACKS];
 

@@ -30,6 +30,7 @@
 #include "ScoreDisplay.h"
 #include "LifeMeter.h"
 #include "PlayerAI.h"
+#include "NoteFieldPositioning.h"
 
 #define GRAY_ARROWS_Y				THEME->GetMetricF("Player","GrayArrowsY")
 #define JUDGMENT_X( p, both_sides )	THEME->GetMetricF("Player",both_sides ? "JudgmentXOffsetBothSides" : ssprintf("JudgmentXOffsetOneSideP%d",p+1))
@@ -61,9 +62,11 @@ Player::Player()
 	
 	m_iOffsetSample = 0;
 
-	this->AddChild( &m_GrayArrowRow );
-	this->AddChild( &m_NoteField );
-	this->AddChild( &m_GhostArrowRow );
+	m_ArrowFrame.AddChild(&m_ArrowBackdrop);
+	m_ArrowFrame.AddChild(&m_NoteField);
+	m_ArrowFrame.AddChild(&m_GrayArrowRow);
+	m_ArrowFrame.AddChild(&m_GhostArrowRow);
+	this->AddChild( &m_ArrowFrame );
 	this->AddChild( &m_Judgment );
 	this->AddChild( &m_Combo );
 	for( int c=0; c<MAX_NOTE_TRACKS; c++ )
@@ -133,15 +136,19 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	int iStartDrawingAtPixels = GAMESTATE->m_bEditing ? -100 : START_DRAWING_AT_PIXELS;
 	int iStopDrawingAtPixels = GAMESTATE->m_bEditing ? 400 : STOP_DRAWING_AT_PIXELS;
 
+	m_ArrowBackdrop.Unload();
+	CString BackdropName = GAMESTATE->m_Position->GetBackdropBGA(pn);
+	if( !BackdropName.empty() )
+		m_ArrowBackdrop.LoadFromAniDir( THEME->GetPathToB( BackdropName ) );
 	m_NoteField.Load( (NoteData*)this, pn, iStartDrawingAtPixels, iStopDrawingAtPixels );
 	
+	m_ArrowBackdrop.SetPlayer( pn );
 	m_GrayArrowRow.Load( pn );
 	m_GhostArrowRow.Load( pn );
 
-	bool bReverse = GAMESTATE->m_PlayerOptions[pn].m_fReverseScroll == 1;
+	const bool bReverse = GAMESTATE->m_PlayerOptions[pn].m_fReverseScroll == 1;
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyleDef()->m_StyleType==StyleDef::ONE_PLAYER_TWO_CREDITS;
 	m_Combo.SetX( COMBO_X(m_PlayerNumber,bPlayerUsingBothSides) );
-	m_Combo.SetY( bReverse ? SCREEN_BOTTOM-COMBO_Y : SCREEN_TOP+COMBO_Y );
 	m_Judgment.SetX( JUDGMENT_X(m_PlayerNumber,bPlayerUsingBothSides) );
 	m_Judgment.SetY( bReverse ? SCREEN_BOTTOM-JUDGMENT_Y : SCREEN_TOP+JUDGMENT_Y );
 
@@ -152,9 +159,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 		m_HoldJudgment[c].SetX( (float)pStyleDef->m_ColumnInfo[pn][c].fXOffset );
 	}
 
-	m_NoteField.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
-	m_GrayArrowRow.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
-	m_GhostArrowRow.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
+	m_ArrowFrame.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
 
 	if( GAMESTATE->m_PlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_MINI] == 1 )
 	{
@@ -258,8 +263,6 @@ void Player::Update( float fDeltaTime )
 		SetHoldNoteScore(i, hns);
 	}
 
-
-
 	ActorFrame::Update( fDeltaTime );
 }
 
@@ -285,9 +288,7 @@ void Player::DrawPrimitives()
 		DISPLAY->LookAt(Eye, At, Up);
 	}
 
-	m_GrayArrowRow.Draw();
-	m_NoteField.Draw();
-	m_GhostArrowRow.Draw();
+	m_ArrowFrame.Draw();
 
 	if( fTilt != 0 )
 		DISPLAY->ExitPerspective();
