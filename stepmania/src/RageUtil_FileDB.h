@@ -93,6 +93,7 @@ public:
 	void AddFile( const CString &sPath, int size, int hash, void *priv=NULL );
 	void DelFile( const CString &sPath );
 	const File *GetFile( const CString &path );
+	const void *GetFilePriv( const CString &path );
 
 	/* This handles at most two * wildcards.  If we need anything more complicated,
 	 * we'll need to use fnmatch or regex. */

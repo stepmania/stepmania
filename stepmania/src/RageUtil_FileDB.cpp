@@ -389,6 +389,15 @@ const File *FilenameDB::GetFile( const CString &sPath )
 	return const_cast<File *> (&*it);
 }
 
+const void *FilenameDB::GetFilePriv( const CString &path )
+{
+	const File *pFile = GetFile( path );
+	void *pRet = NULL;
+	if( pFile != NULL )
+		pRet = pFile->priv;
+
+	return pRet;
+}
 
 
 
