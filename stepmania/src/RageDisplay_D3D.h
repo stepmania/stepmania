@@ -31,7 +31,7 @@ public:
 	void EndFrame();
 	VideoModeParams GetVideoModeParams() const;
 	void SetBlendMode( BlendMode mode );
-	bool SupportsTextureFormat( PixelFormat pixfmt );
+	bool SupportsTextureFormat( PixelFormat pixfmt, bool realtime=false );
 	unsigned CreateTexture( PixelFormat pixfmt, SDL_Surface* img );
 	void UpdateTexture( 
 		unsigned uTexHandle, 

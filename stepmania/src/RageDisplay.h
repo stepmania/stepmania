@@ -139,7 +139,7 @@ public:
 	
 	virtual void SetBlendMode( BlendMode mode ) = 0;
 
-	virtual bool SupportsTextureFormat( PixelFormat pixfmt ) = 0;
+	virtual bool SupportsTextureFormat( PixelFormat pixfmt, bool realtime=false ) = 0;
 
 	/* This really indicates whether 4-bit palettes will actually use less memory
 	 * than 8-bit ones.  Note that 4-bit palettes are uploaded as 8-bit paletted
@@ -254,7 +254,7 @@ public:
 	void ChangeCentering( int trans_x, int trans_y, float scale_x, float scale_y );
 
 	SDL_Surface *CreateSurfaceFromPixfmt( PixelFormat pixfmt, void *pixels, int width, int height, int pitch );
-	PixelFormat FindPixelFormat( int bpp, int Rmask, int Gmask, int Bmask, int Amask );
+	PixelFormat FindPixelFormat( int bpp, int Rmask, int Gmask, int Bmask, int Amask, bool realtime=false );
 
 protected:
 	RageMatrix GetPerspectiveMatrix(float fovy, float aspect, float zNear, float zFar);

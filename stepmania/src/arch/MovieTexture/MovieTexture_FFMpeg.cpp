@@ -117,7 +117,9 @@ static int FindCompatibleAVFormat( RageDisplay::PixelFormat &pixfmt, bool HighCo
 				fmt.masks[0],
 				fmt.masks[1],
 				fmt.masks[2],
-				fmt.masks[3] );
+				fmt.masks[3],
+				true /* realtime */
+				);
 
 		if( pixfmt == RageDisplay::NUM_PIX_FORMATS )
 			continue;

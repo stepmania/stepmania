@@ -693,20 +693,6 @@ void RageDisplay_OGL::EndFrame()
 	ProcessStatsOnFlip();
 }
 
-bool RageDisplay_OGL::SupportsTextureFormat( PixelFormat pixfmt )
-{
-	switch( pixfmt )
-	{
-	case FMT_PAL:
-		return GLExt::glColorTableEXT && GLExt::glGetColorTableParameterivEXT;
-	case FMT_BGR8:
-	case FMT_A1BGR5:
-		return g_bGL_EXT_bgra;
-	default:
-		return true;	// No way to query this in OGL.  You pass it a format and hope it doesn't have to convert.
-	}
-}
-
 bool RageDisplay_OGL::Supports4BitPalettes()
 {
 	return g_b4BitPalettesWork;
@@ -1386,3 +1372,23 @@ bool RageDisplay_OGL::SupportsSurfaceFormat( PixelFormat pixfmt )
 	}
 }
 
+
+bool RageDisplay_OGL::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
+{
+	/* If we support a pixfmt for texture formats but not for surface formats, then
+	 * we'll have to convert the texture to a supported surface format before uploading.
+	 * This is too slow for dynamic textures. */
+	if( realtime && !SupportsSurfaceFormat( pixfmt ) )
+		return false;
+
+	switch( GL_PIXFMT_INFO[pixfmt].format )
+	{
+	case GL_COLOR_INDEX:
+		return GLExt::glColorTableEXT && GLExt::glGetColorTableParameterivEXT;
+	case GL_BGR:
+	case GL_BGRA:
+		return g_bGL_EXT_bgra;
+	default:
+		return true;
+	}
+}

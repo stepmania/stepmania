@@ -639,7 +639,7 @@ void RageDisplay_D3D::EndFrame()
 	ProcessStatsOnFlip();
 }
 
-bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt )
+bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
 {
 #if defined _XBOX
 	// Lazy...  Xbox handles paletted textures completely differently
