@@ -26,8 +26,7 @@
 #define SCROLL_DELAY		THEME->GetMetricF("ScreenMusicScroll","ScrollDelay")
 #define SCROLL_SPEED		THEME->GetMetricF("ScreenMusicScroll","ScrollSpeed")
 #define TEXT_ZOOM			THEME->GetMetricF("ScreenMusicScroll","TextZoom")
-
-const ScreenMessage SM_StartFadingOut	=	ScreenMessage(SM_User + 1);
+#define NEXT_SCREEN			THEME->GetMetric("ScreenMusicScroll","NextScreen")
 
 
 const CString CREDIT_LINES[] = 
@@ -150,7 +149,8 @@ ScreenMusicScroll::ScreenMusicScroll()
 	this->AddChild( &m_Background );
 
 
-	vector<Song*> arraySongs = SONGMAN->m_pSongs;
+	vector<Song*> arraySongs;
+	SONGMAN->GetAllSongs( arraySongs );
 	SortSongPointerArrayByTitle( arraySongs );
 	
 	m_iNumLines = 0;
@@ -183,7 +183,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 		m_textLines[i].SetTweenXY( CENTER_X, SCREEN_TOP - 40 );	
 	}
 	
-	this->SendScreenMessage( SM_StartFadingOut, 0.2f * i + 3.0f );
+	this->SendScreenMessage( SM_BeginFadingOut, 0.2f * i + 3.0f );
 
 	this->AddChild( &m_Fade );
 
@@ -233,12 +233,12 @@ void ScreenMusicScroll::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
-	case SM_StartFadingOut:
+	case SM_BeginFadingOut:
 		m_Fade.CloseWipingRight( SM_GoToNextScreen );
 		break;
 	case SM_GoToNextScreen:
 		SONGMAN->SaveMachineScoresToDisk();
-		SCREENMAN->SetNewScreen( "ScreenCompany" );
+		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	}
 }

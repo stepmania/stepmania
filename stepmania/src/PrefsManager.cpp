@@ -55,11 +55,11 @@ PrefsManager::PrefsManager()
 	m_iNumArcadeStages = 3;
 	m_bAutoPlay = false;
 	m_fJudgeWindowScale = 1.0f;
-	m_fJudgeWindowMarvelousSeconds = 0.025f;
-	m_fJudgeWindowPerfectSeconds = 0.05f;
-	m_fJudgeWindowGreatSeconds = 0.10f;
-	m_fJudgeWindowGoodSeconds = 0.15f;
-	m_fJudgeWindowBooSeconds = 0.2f;
+	m_fJudgeWindowMarvelousSeconds = 0.02f;
+	m_fJudgeWindowPerfectSeconds = 0.04f;
+	m_fJudgeWindowGreatSeconds = 0.08f;
+	m_fJudgeWindowGoodSeconds = 0.12f;
+	m_fJudgeWindowBooSeconds = 0.16f;
 	m_fLifeDifficultyScale = 1.0f;
 	m_iMovieDecodeMS = 2;
 	m_bUseBGIfNoBanner = false;

@@ -11,14 +11,18 @@
 -----------------------------------------------------------------------------
 */
 
+
 #include "GameConstantsAndTypes.h"	// for NUM_PLAYERS
+#include "Grade.h"
 
 class Song;
+
 
 struct StageStats
 {
 	StageStats();
 	void operator+=( const StageStats& other );		// accumulate
+	Grade GetGrade( PlayerNumber pn );
 
 	Song*	pSong;
 	int		iMeter[NUM_PLAYERS];

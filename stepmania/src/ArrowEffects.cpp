@@ -41,8 +41,6 @@ float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )
 	 */
 	/* Boost and wave can no longer be used at the same time.  -Chris */
 
-	if( fYOffset < 0 )
-		return fYOffset;	// don't mess with it after crossing the receptors
 
 	switch( GAMESTATE->m_PlayerOptions[pn].m_AccelType )
 	{
@@ -50,7 +48,8 @@ float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )
 		fYOffset *= 1.5f / ((fYOffset+SCREEN_HEIGHT/1.2f)/SCREEN_HEIGHT); 
 		break;
 	case PlayerOptions::ACCEL_LAND:
-		fYOffset *= SCALE( fYOffset, 0.f, SCREEN_HEIGHT, 0.25f, 1.5f ); 
+		if( fYOffset > 0 )	// speed the arrows back to normal after they cross 0
+			fYOffset *= SCALE( fYOffset, 0.f, SCREEN_HEIGHT, 0.25f, 1.5f ); 
 		break;
 	case PlayerOptions::ACCEL_WAVE:
 		fYOffset += 20.0f*sinf( fYOffset/38.0f ); 

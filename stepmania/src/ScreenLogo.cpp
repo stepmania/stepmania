@@ -49,7 +49,7 @@ ScreenLogo::ScreenLogo() : ScreenAttract("ScreenLogo","logo")
 
 	m_textSongs.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textSongs.SetHorizAlign( Actor::align_left );
-	m_textSongs.SetText( ssprintf("Found %u Songs", SONGMAN->m_pSongs.size()) );
+	m_textSongs.SetText( ssprintf("%d songs in %d groups", SONGMAN->GetNumSongs(), SONGMAN->GetNumGroups()) );
 	m_textSongs.SetDiffuse( RageColor(0.6f,0.6f,0.6f,1) );	// light gray
 	m_textSongs.SetXY( SONGS_X, SONGS_Y );
 	m_textSongs.SetZoom( 0.5f );

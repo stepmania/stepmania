@@ -26,8 +26,6 @@ public:
 	SongManager( LoadingWindow *ld );
 	~SongManager();
 
-	vector<Song*>	m_pSongs;	// all songs that can be played
-
 	void InitSongArrayFromDisk( LoadingWindow *ld );
 	void FreeSongArray();
 	void ReloadSongArray();
@@ -54,7 +52,10 @@ public:
 
 
 	// Lookup
+	void GetAllSongs( vector<Song*> &AddTo );
 	void GetSongsInGroup( const CString sGroupName, vector<Song*> &AddTo );
+	int GetNumSongs();
+	int GetNumGroups();
 	Song* GetRandomSong();
 
 	void GetNonstopCourses( vector<Course*> &AddTo );	// add to if life meter type is BAR.
@@ -95,6 +96,7 @@ protected:
 	void SanityCheckGroupDir( CString sDir ) const;
 	void AddGroup( CString sDir, CString sGroupDirName );
 
+	vector<Song*>		m_pSongs;	// all songs that can be played
 	CStringArray		m_arrayGroupNames;
 	CStringArray		m_GroupBannerPaths;		// each song group has a banner associated with it
 };

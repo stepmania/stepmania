@@ -49,7 +49,7 @@
 #define PREVIEWMUSICMODE		THEME->GetMetricI("ScreenEz2SelectMusic","PreviewMusicMode")
 #define DIFFICULTYRATING_X		THEME->GetMetricF("ScreenEz2SelectMusic","DifficultyRatingX")
 #define DIFFICULTYRATING_Y		THEME->GetMetricF("ScreenEz2SelectMusic","DifficultyRatingY")
-#define DIFFICULTYRATING_ORIENTATION		THEME->GetMetricF("ScreenEz2SelectMusic","DifficultyRatingOrientation")
+#define DIFFICULTYRATING_ORIENTATION		THEME->GetMetricI("ScreenEz2SelectMusic","DifficultyRatingOrientation")
 #define INFOFRAME_X		THEME->GetMetricF("ScreenEz2SelectMusic","InfoFrameX")
 #define INFOFRAME_Y		THEME->GetMetricF("ScreenEz2SelectMusic","InfoFrameY")
 

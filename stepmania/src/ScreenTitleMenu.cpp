@@ -199,6 +199,9 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 			// fall through
 		case PrefsManager::COIN_HOME:
 		case PrefsManager::COIN_FREE:
+			if( m_Fade.IsClosing() )
+				break;
+
 			GAMESTATE->m_bSideIsJoined[MenuI.player] = true;
 			GAMESTATE->m_MasterPlayerNumber = MenuI.player;
 			GAMESTATE->m_bPlayersCanJoin = false;
@@ -209,17 +212,18 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 			case CHOICE_SELECT_GAME:
 			case CHOICE_MAP_KEY_JOY:
 			case CHOICE_OPTIONS:
-			case CHOICE_JUKEBOX:
 			#ifdef _DEBUG
 			case CHOICE_SANDBOX:
 			#endif
 				m_soundSelect.PlayRandom();
 				m_Fade.CloseWipingRight( SM_GoToNextScreen );
 				break;
+			case CHOICE_JUKEBOX:
 			case CHOICE_EDIT:
-				if( SONGMAN->m_pSongs.empty() )
+				if( SONGMAN->GetNumSongs() == 0 )
 				{
 					m_soundInvalid.PlayRandom();
+					SCREENMAN->SystemMessage( "No songs are installed" );
 				}
 				else
 				{

@@ -32,7 +32,6 @@ void GroupList::DoneAddingGroups()
 	{
 		m_screenLabels[i].LoadFromFont( THEME->GetPathTo("Fonts","select group button label") );
 		m_screenLabels[i].SetXY( BUTTON_X, BUTTON_START_Y + i*BUTTON_SPACING_Y );
-		m_screenLabels[i].SetZoom( 0.8f );
 		m_screenLabels[i].SetShadowLength( 2 );
 
 		CString sGroupName = m_textLabels[i];
@@ -48,7 +47,14 @@ void GroupList::SetLabels()
 	{
 		CString &label = m_textLabels[m_iTop+i];
 		m_screenLabels[i].SetText( SONGMAN->ShortenGroupName( label ) );
-		
+		float fTextWidth = (float)m_screenLabels[i].GetWidestLineWidthInSourcePixels();
+		float fButtonWidth = m_sprButton[i].GetZoomedWidth();
+
+		float fZoom = fButtonWidth/fTextWidth;
+		fZoom = min( fZoom, 0.8f );
+		m_screenLabels[i].SetZoomX( fZoom );
+		m_screenLabels[i].SetZoomY( 0.8f );
+
 		if( m_iTop+i == 0 )	m_screenLabels[i].TurnRainbowOn();
 		else {
 			m_screenLabels[i].TurnRainbowOff();

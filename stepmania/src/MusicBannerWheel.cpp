@@ -52,22 +52,21 @@ MusicBannerWheel::MusicBannerWheel()
 
 	if( 0 == stricmp(GAMESTATE->m_sPreferredGroup, "All Music") )
 	{
-		arraySongs = SONGMAN->m_pSongs;
+		SONGMAN->GetAllSongs( arraySongs );
 	}
 	else // Get the Group They Want
 	{
-		for( unsigned i=0; i< SONGMAN->m_pSongs.size(); i++ )
+		vector<Song*> apAllSongs;
+		SONGMAN->GetAllSongs( apAllSongs );
+
+		for( unsigned i=0; i<apAllSongs.size(); i++ )
 		{
-			Song* pSong = SONGMAN->m_pSongs[i];
+			Song* pSong = apAllSongs[i];
 
 			if( GAMESTATE->m_sPreferredGroup != "ALL MUSIC"  &&  pSong->m_sGroupName != GAMESTATE->m_sPreferredGroup )
-			{
 				continue;
-			}
 			else
-			{
 				arraySongs.push_back(pSong);
-			}
 		}
 
 	}

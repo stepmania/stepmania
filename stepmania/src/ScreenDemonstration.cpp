@@ -258,6 +258,7 @@ void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 		m_Fade.CloseWipingRight( SM_GoToNextScreen );
 		return;
 	case SM_GoToNextScreen:
+		m_soundMusic.Stop();
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		return;
 	}

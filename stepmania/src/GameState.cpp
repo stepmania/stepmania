@@ -43,6 +43,8 @@ GameState::GameState()
 	m_CurGame = GAME_DANCE;
 	m_iCoins = 0;
 	Reset();
+
+	ResetLastRanking();
 }
 
 GameState::~GameState()
@@ -83,8 +85,11 @@ void GameState::Reset()
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_PlayerOptions[p] = PlayerOptions();
 	m_SongOptions = SongOptions();
+}
 
-	for( p=0; p<NUM_PLAYERS; p++ )
+void GameState::ResetLastRanking()
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_LastRankingCategory[p] = (RankingCategory)-1;
 		m_iLastRankingIndex[p] = -1;
@@ -197,47 +202,6 @@ bool GameState::IsPlayerEnabled( PlayerNumber pn )
 	}
 }
 
-Grade GameState::GetCurrentGrade( PlayerNumber pn )
-{
-	ASSERT( GAMESTATE->IsPlayerEnabled(pn) );	// should be calling this is player isn't joined!
-
-	if( m_CurStageStats.bFailed[pn] )
-		return GRADE_E;
-
-	/* Based on the percentage of your total "Dance Points" to the maximum
-	 * possible number, the following rank is assigned: 
-	 *
-	 * 100% - AAA
-	 *  93% - AA
-	 *  80% - A
-	 *  65% - B
-	 *  45% - C
-	 * Less - D
-	 * Fail - E
-	 */
-	float fPercentDancePoints = m_CurStageStats.iActualDancePoints[pn] / (float)m_CurStageStats.iPossibleDancePoints[pn];
-	fPercentDancePoints = max( 0, fPercentDancePoints );
-	LOG->Trace( "iActualDancePoints: %i", m_CurStageStats.iActualDancePoints[pn] );
-	LOG->Trace( "iPossibleDancePoints: %i", m_CurStageStats.iPossibleDancePoints[pn] );
-	LOG->Trace( "fPercentDancePoints: %f", fPercentDancePoints  );
-
-	// check for "AAAA"
-	if( m_CurStageStats.iTapNoteScores[pn][TNS_MARVELOUS] > 0 &&
-		m_CurStageStats.iTapNoteScores[pn][TNS_PERFECT] == 0 &&
-		m_CurStageStats.iTapNoteScores[pn][TNS_GREAT] == 0 &&
-		m_CurStageStats.iTapNoteScores[pn][TNS_GOOD] == 0 &&
-		m_CurStageStats.iTapNoteScores[pn][TNS_BOO] == 0 &&
-		m_CurStageStats.iTapNoteScores[pn][TNS_MISS] == 0 )
-		return GRADE_AAAA;
-
-	if     ( fPercentDancePoints == 1.00 )		return GRADE_AAA;
-	else if( fPercentDancePoints >= 0.93 )		return GRADE_AA;
-	else if( fPercentDancePoints >= 0.80 )		return GRADE_A;
-	else if( fPercentDancePoints >= 0.65 )		return GRADE_B;
-	else if( fPercentDancePoints >= 0.45 )		return GRADE_C;
-	else										return GRADE_D;
-}
-
 bool GameState::HasEarnedExtraStage()
 {
 	if( (GAMESTATE->IsFinalStage() || GAMESTATE->IsExtraStage()) )
@@ -247,7 +211,7 @@ bool GameState::HasEarnedExtraStage()
 			if( !GAMESTATE->IsPlayerEnabled(p) )
 				continue;	// skip
 
-			if( GAMESTATE->m_pCurNotes[p]->GetDifficulty()==DIFFICULTY_HARD && GetCurrentGrade((PlayerNumber)p)==GRADE_AA )
+			if( GAMESTATE->m_pCurNotes[p]->GetDifficulty()==DIFFICULTY_HARD && m_CurStageStats.GetGrade((PlayerNumber)p)==GRADE_AA )
 				return true;
 		}
 	}

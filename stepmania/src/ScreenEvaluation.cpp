@@ -232,10 +232,10 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	Grade grade[NUM_PLAYERS];
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) || GAMESTATE->m_CurStageStats.bFailed[p] )
-			grade[p] = GRADE_E;
+		if( GAMESTATE->IsPlayerEnabled(p) )
+			grade[p] = stageStats.GetGrade( (PlayerNumber)p );
 		else
-			grade[p] = GAMESTATE->GetCurrentGrade( (PlayerNumber)p );
+			grade[p] = GRADE_E;
 	}
 
 	Grade max_grade = GRADE_NO_DATA;
@@ -832,7 +832,22 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 			m_Menu.TweenOffScreenToBlack( SM_GoToGameFinished, false );
 	}
 
-	GAMESTATE->m_iCurrentStageIndex++;		// Increment the stage counter.
-	GAMESTATE->m_vPassedStageStats.push_back( GAMESTATE->m_CurStageStats );	// Save this stage's stats
+	switch( m_ResultMode )
+	{
+	case RM_ARCADE_STAGE:
+		GAMESTATE->m_iCurrentStageIndex++;		// Increment the stage counter.
+
+		// add current stage stats to accumulated total only if this song was passed
+		{
+			bool bOnePassed = false;
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( GAMESTATE->IsPlayerEnabled(p) )
+					bOnePassed |= !GAMESTATE->m_CurStageStats.bFailed[p];
+
+			if( bOnePassed )
+				GAMESTATE->m_vPassedStageStats.push_back( GAMESTATE->m_CurStageStats );	// Save this stage's stats
+		}
+		break;
+	}
 }
 

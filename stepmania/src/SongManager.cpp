@@ -38,14 +38,15 @@ const int COURSE_TOP_SCORE_VERSION = 1;
 #define GROUP_COLOR( i )	THEME->GetMetricC("SongManager",ssprintf("GroupColor%d",i+1))
 #define EXTRA_COLOR			THEME->GetMetricC("SongManager","ExtraColor")
 
-RageColor g_GroupColors[30];
+vector<RageColor> g_vGroupColors;
 RageColor g_ExtraColor;
 
 
 SongManager::SongManager( LoadingWindow *ld )
 {
+	g_vGroupColors.clear();
 	for( int i=0; i<NUM_GROUP_COLORS; i++ )
-		g_GroupColors[i] = GROUP_COLOR( i );
+		g_vGroupColors.push_back( GROUP_COLOR(i) );
 	g_ExtraColor = EXTRA_COLOR;
 
 	InitSongArrayFromDisk( ld );
@@ -285,7 +286,7 @@ void SongManager::SaveMachineScoresToDisk()
 		FILE* fp = fopen( CATEGORY_TOP_SCORE_FILE, "w" );
 		if( fp )
 		{
-			fprintf(fp,"%d",CATEGORY_TOP_SCORE_VERSION);
+			fprintf(fp,"%d\n",CATEGORY_TOP_SCORE_VERSION);
 			for( int i=0; i<NUM_NOTES_TYPES; i++ )
 				for( int j=0; j<NUM_RANKING_CATEGORIES; j++ )
 					for( int k=0; k<NUM_RANKING_LINES; k++ )
@@ -351,7 +352,7 @@ RageColor SongManager::GetGroupColor( const CString &sGroupName )
 	}
 	ASSERT( i != m_arrayGroupNames.size() );	// this is not a valid group
 
-	return g_GroupColors[i%NUM_GROUP_COLORS];
+	return g_vGroupColors[i%g_vGroupColors.size()];
 }
 
 RageColor SongManager::GetSongColor( const Song* pSong )
@@ -368,14 +369,31 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 }
 
 
+void SongManager::GetAllSongs( vector<Song*> &AddTo )
+{
+	AddTo = m_pSongs;
+}
+
 void SongManager::GetSongsInGroup( const CString sGroupName, vector<Song*> &AddTo )
 {
+	AddTo.clear();
+
 	for( unsigned i=0; i<m_pSongs.size(); i++ )
 	{
 		Song* pSong = m_pSongs[i];
 		if( sGroupName == m_pSongs[i]->m_sGroupName )
 			AddTo.push_back( pSong );
 	}
+}
+
+int SongManager::GetNumSongs()
+{
+	return m_pSongs.size();
+}
+
+int SongManager::GetNumGroups()
+{
+	return m_arrayGroupNames.size();
 }
 
 CString SongManager::ShortenGroupName( const CString &sOrigGroupName )
@@ -678,7 +696,7 @@ void SongManager::AddMachineRecords( NotesType nt, RankingCategory hsc[NUM_PLAYE
 			if( newHS.fScore > machineScores[i].fScore )
 			{
 				// We found the insert point.  Shift down.
-				for( int j=i+1; j<NUM_RANKING_LINES; j++ )
+				for( int j=NUM_RANKING_LINES-1; j>i; j-- )
 					machineScores[j] = machineScores[j-1];
 				// insert
 				machineScores[i].fScore = newHS.fScore;
@@ -689,3 +707,5 @@ void SongManager::AddMachineRecords( NotesType nt, RankingCategory hsc[NUM_PLAYE
 		}
 	}
 }
+
+

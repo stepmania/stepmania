@@ -330,7 +330,8 @@ MusicWheel::MusicWheel()
 
 	// init m_mapGroupNameToBannerColor
 
-	vector<Song*> arraySongs = SONGMAN->m_pSongs;
+	vector<Song*> arraySongs;
+	SONGMAN->GetAllSongs( arraySongs );
 	SortSongPointerArrayByGroup( arraySongs );
 	
 	m_iSelection = 0;
@@ -477,10 +478,13 @@ bool MusicWheel::SelectCourse( const Course *p )
 
 void MusicWheel::GetSongList(vector<Song*> &arraySongs, bool bRoulette )
 {
+	vector<Song*> apAllSongs;
+	SONGMAN->GetAllSongs( apAllSongs );
+
 	// copy only songs that have at least one Notes for the current GameMode
-	for( unsigned i=0; i<SONGMAN->m_pSongs.size(); i++ )
+	for( unsigned i=0; i<apAllSongs.size(); i++ )
 	{
-		Song* pSong = SONGMAN->m_pSongs[i];
+		Song* pSong = apAllSongs[i];
 
 		/* If we're on an extra stage, and this song is selected, ignore
 			* #SELECTABLE. */

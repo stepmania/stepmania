@@ -422,7 +422,11 @@ static void HandleInputEvents(float fDeltaTime)
 				continue;
 			}
 		}
-		else if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F5))
+		/* Hitting F5, then waiting 5 seconds while my monitor is black
+		 * is really making me angry.  
+		 * Do any users even know about this hotkey or think it's useful?
+		 * Probably not...   -Chris
+/*		else if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F5))
 		{
 			if(type != IET_FIRST_PRESS) continue;
 
@@ -439,6 +443,7 @@ static void HandleInputEvents(float fDeltaTime)
 			}			
 			ApplyGraphicOptions();
 		}
+		*/
 		else if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F6))
 		{
 			if(type != IET_FIRST_PRESS) continue;

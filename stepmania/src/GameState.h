@@ -33,6 +33,7 @@ public:
 	GameState();
 	~GameState();
 	void Reset();
+	void ResetLastRanking();
 
 	//
 	// Main State Info
@@ -106,7 +107,6 @@ public:
 												// A song is only inserted here if at least one player passed.
 												// StageStats are added by the Evaluation screen
 	void	GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& vSongsOut );	// shown on arcade final evaluation
-	Grade	GetCurrentGrade( PlayerNumber pn );		// grade so far
 
 
 	PlayerOptions	m_PlayerOptions[NUM_PLAYERS];    // The currently active options

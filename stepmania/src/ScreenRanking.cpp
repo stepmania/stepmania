@@ -59,16 +59,15 @@ ScreenRanking::ScreenRanking() : ScreenAttract("ScreenRanking","ranking")
 	{
 		m_sprBullets[i].Load( THEME->GetPathTo("Graphics",("ranking bullets 1x5")) );
 		m_sprBullets[i].SetXY( BULLETS_START_X+LINE_SPACING_X*i, BULLETS_START_Y+LINE_SPACING_Y*i );
+		m_sprBullets[i].SetDiffuse( RageColor(1,1,1,0) );
 		m_sprBullets[i].StopAnimating();
 		m_sprBullets[i].SetState(i);
-		m_sprBullets[i].SetDiffuse( RageColor(1,1,1,0) );
 		this->AddChild( &m_sprBullets[i] );
 
 		m_textNames[i].LoadFromFont( THEME->GetPathTo("Fonts","ranking") );
 		m_textNames[i].TurnShadowOff();
 		m_textNames[i].SetXY( NAMES_START_X+LINE_SPACING_X*i, NAMES_START_Y+LINE_SPACING_Y*i );
 		m_textNames[i].SetZoom( NAMES_ZOOM );
-		m_textNames[i].SetDiffuse( NAMES_COLOR );
 		m_textNames[i].SetHorizAlign( Actor::align_left );
 		this->AddChild( &m_textNames[i] );
 
@@ -76,7 +75,6 @@ ScreenRanking::ScreenRanking() : ScreenAttract("ScreenRanking","ranking")
 		m_textScores[i].TurnShadowOff();
 		m_textScores[i].SetXY( SCORES_START_X+LINE_SPACING_X*i, SCORES_START_Y+LINE_SPACING_Y*i );
 		m_textScores[i].SetZoom( SCORES_ZOOM );
-		m_textScores[i].SetDiffuse( SCORES_COLOR );
 		m_textScores[i].SetHorizAlign( Actor::align_right );
 		this->AddChild( &m_textScores[i] );
 	}
@@ -177,30 +175,38 @@ void ScreenRanking::SetPage( PageToShow pts )
 	{
 	case PageToShow::TYPE_CATEGORY:
 		{
+			m_textCategory.SetDiffuse( RageColor(1,1,1,1) );
 			m_textCategory.SetText( ssprintf("Type %c", 'A'+pts.category) );
+			m_textType.SetDiffuse( RageColor(1,1,1,1) );
 			m_textType.SetText( GameManager::NotesTypeToString(pts.nt) );
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
+				m_sprBullets[l].SetDiffuse( RageColor(1,1,1,1) );
 				CString sName = SONGMAN->m_MachineScores[pts.nt][pts.category][l].sName;
 				float fScore = SONGMAN->m_MachineScores[pts.nt][pts.category][l].fScore;
 				m_textNames[l].SetText( sName );
 				m_textScores[l].SetText( ssprintf("%.0f",fScore) );
 				m_textNames[l].SetDiffuse( NAMES_COLOR );
 				m_textScores[l].SetDiffuse( SCORES_COLOR );
+
+				bool bRecentHighScore = false;
 				for( int p=0; p<NUM_PLAYERS; p++ )
 				{
-					if( pts.nt == GAMESTATE->m_LastRankingNotesType  &&
+					bRecentHighScore |=
+						pts.nt == GAMESTATE->m_LastRankingNotesType  &&
 						GAMESTATE->m_LastRankingCategory[p] == pts.category  &&
-						GAMESTATE->m_iLastRankingIndex[p] == l )
-					{
-						m_textNames[l].SetEffectBlinking();
-						m_textScores[l].SetEffectBlinking();
-					}
-					else
-					{
-						m_textNames[l].SetEffectNone();
-						m_textScores[l].SetEffectNone();
-					}
+						GAMESTATE->m_iLastRankingIndex[p] == l;
+				}
+
+				if( bRecentHighScore )
+				{
+					m_textNames[l].SetEffectBlinking( 10, NAMES_COLOR, RageColor(1,1,1,1) );
+					m_textScores[l].SetEffectBlinking( 10, SCORES_COLOR, RageColor(1,1,1,1) );
+				}
+				else
+				{
+					m_textNames[l].SetEffectNone();
+					m_textScores[l].SetEffectNone();
 				}
 			}
 		}
@@ -242,18 +248,13 @@ void ScreenRanking::SetPage( PageToShow pts )
 
 void ScreenRanking::TweenPageOnScreen()
 {
-	m_textCategory.SetDiffuse( RageColor(1,1,1,1) );
 	m_textCategory.FadeOn(0,"bounce right",0.5f);
-	m_textType.SetDiffuse( RageColor(1,1,1,1) );
 	m_textType.FadeOn(0.1f,"bounce right",0.5f);
 
 	for( int l=0; l<NUM_RANKING_LINES; l++ )
 	{
-		m_sprBullets[l].SetDiffuse( RageColor(1,1,1,1) );
 		m_sprBullets[l].FadeOn(0.2f+l*0.1f,"bounce right far",1.f);
-		m_textNames[l].SetDiffuse( RageColor(1,1,1,1) );
 		m_textNames[l].FadeOn(0.2f+l*0.1f,"bounce right far",1.f);
-		m_textScores[l].SetDiffuse( RageColor(1,1,1,1) );
 		m_textScores[l].FadeOn(0.2f+l*0.1f,"bounce right far",1.f);
 	}
 }
