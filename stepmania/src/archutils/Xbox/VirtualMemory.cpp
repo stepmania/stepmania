@@ -246,6 +246,13 @@ bool VirtualMemoryManager::PageFault(void *ptr)
 		return false;
 	}
 
+	if(pages[startPage].committed)
+	{
+		if(LOG && logging)
+			LOG->Trace("Pages appear to be committed already. Doing nothing...");
+		return true;
+	}
+
 	pageLRU = (startPage + pages[startPage].sizeInPages) % totalPages;
 
 	if(LOG && logging)
