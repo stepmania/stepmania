@@ -115,9 +115,8 @@ void ScreenStage::Update( float fDeltaTime )
 		m_sprCharacterIcon[p].Update(fDeltaTime);
 	m_Overlay.Update(fDeltaTime);
 	if ( PREFSMAN->m_bShowBanners )
-		if( GAMESTATE->m_pCurSong != NULL)
-			if( GAMESTATE->m_pCurSong->HasBanner() )
-				m_Banner.Update(fDeltaTime);
+		if( GAMESTATE->m_pCurSong && GAMESTATE->m_pCurSong->HasBanner() )
+			m_Banner.Update(fDeltaTime);
 	m_SongTitle.Update(fDeltaTime);
 	m_Artist.Update(fDeltaTime);
 }
@@ -127,14 +126,11 @@ void ScreenStage::DrawPrimitives()
 	Screen::DrawPrimitives();
 	int p;
 	for( p=0; p<NUM_PLAYERS; p++ )
-	{
 		m_sprCharacterIcon[p].Draw();
-	}
 	m_Overlay.Draw();
 	if ( PREFSMAN->m_bShowBanners )
-		if( GAMESTATE->m_pCurSong != NULL)
-			if( GAMESTATE->m_pCurSong->HasBanner() )
-				m_Banner.Draw();
+		if( GAMESTATE->m_pCurSong && GAMESTATE->m_pCurSong->HasBanner() )
+			m_Banner.Draw();
 	m_SongTitle.Draw();
 	m_Artist.Draw();
 }
@@ -150,9 +146,7 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 		m_Out.StartTransitioning( SM_GoToNextScreen );
 		int p;
 		for( p=0; p<NUM_PLAYERS; p++ )
-		{
 			OFF_COMMAND( m_sprCharacterIcon[p] );
-		}
 		OFF_COMMAND( m_SongTitle );
 		OFF_COMMAND( m_Artist );
 		OFF_COMMAND( m_Banner );
