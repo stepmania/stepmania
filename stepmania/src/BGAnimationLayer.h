@@ -86,15 +86,7 @@ protected:
 	float m_fTexCoordVelocityX;
 	float m_fTexCoordVelocityY;
 
-	// particle and tile stuff
-	float m_fZoomMin, m_fZoomMax;
-	float m_fVelocityXMin, m_fVelocityXMax;
-	float m_fVelocityYMin, m_fVelocityYMax;
-	float m_fVelocityZMin, m_fVelocityZMax;
-	float m_fOverrideSpeed;		// 0 means don't override speed
-
 	// particles stuff
-	int m_iNumParticles;
 	bool  m_bParticlesBounce;
 
 	// tiles stuff

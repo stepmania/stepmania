@@ -59,16 +59,6 @@ void BGAnimationLayer::Init()
 
 	m_fTexCoordVelocityX = 0;
 	m_fTexCoordVelocityY = 0;
-	m_fZoomMin = 1;
-	m_fZoomMax = 1;
-	m_fVelocityXMin = 10;
-	m_fVelocityXMax = 10;
-	m_fVelocityYMin = 0;
-	m_fVelocityYMax = 0;
-	m_fVelocityZMin = 0;
-	m_fVelocityZMax = 0;
-	m_fOverrideSpeed = 0;
-	m_iNumParticles = 10;
 	m_bParticlesBounce = false;
 	m_iNumTilesWide = -1;
 	m_iNumTilesHigh = -1;
@@ -208,15 +198,15 @@ void BGAnimationLayer::LoadFromAniLayerFile( const CString& sPath )
 			s.Load( sPath );
 			int iSpriteArea = int( s.GetUnzoomedWidth()*s.GetUnzoomedHeight() );
 			const int iMaxArea = int(SCREEN_WIDTH*SCREEN_HEIGHT);
-			m_iNumParticles = iMaxArea / iSpriteArea;
-			m_iNumParticles = min( m_iNumParticles, MAX_SPRITES );
+			int iNumParticles = iMaxArea / iSpriteArea;
+			iNumParticles = min( iNumParticles, MAX_SPRITES );
 
-			for( int i=0; i<m_iNumParticles; i++ )
+			for( int i=0; i<iNumParticles; i++ )
 			{
 				Sprite* pSprite = new Sprite;
 				this->AddChild( pSprite );
 				pSprite->Load( sPath );
-				pSprite->SetZoom( 0.7f + 0.6f*i/(float)m_iNumParticles );
+				pSprite->SetZoom( 0.7f + 0.6f*i/(float)iNumParticles );
 				pSprite->SetX( randomf( GetGuardRailLeft(pSprite), GetGuardRailRight(pSprite) ) );
 				pSprite->SetY( randomf( GetGuardRailTop(pSprite), GetGuardRailBottom(pSprite) ) );
 
@@ -421,16 +411,28 @@ void BGAnimationLayer::LoadFromNode( const CString& sAniDir_, const XNode& layer
 	// compat:
 	layer.GetAttrValue( "StretchTexCoordVelocityX", m_fTexCoordVelocityX );
 	layer.GetAttrValue( "StretchTexCoordVelocityY", m_fTexCoordVelocityY );
-	layer.GetAttrValue( "ZoomMin", m_fZoomMin );
-	layer.GetAttrValue( "ZoomMax", m_fZoomMax );
-	layer.GetAttrValue( "VelocityXMin", m_fVelocityXMin );
-	layer.GetAttrValue( "VelocityXMax", m_fVelocityXMax );
-	layer.GetAttrValue( "VelocityYMin", m_fVelocityYMin );
-	layer.GetAttrValue( "VelocityYMax", m_fVelocityYMax );
-	layer.GetAttrValue( "VelocityZMin", m_fVelocityZMin );
-	layer.GetAttrValue( "VelocityZMax", m_fVelocityZMax );
-	layer.GetAttrValue( "OverrideSpeed", m_fOverrideSpeed );
-	layer.GetAttrValue( "NumParticles", m_iNumParticles );
+
+	// particle and tile stuff
+	float fZoomMin = 1;
+	float fZoomMax = 1;
+	layer.GetAttrValue( "ZoomMin", fZoomMin );
+	layer.GetAttrValue( "ZoomMax", fZoomMax );
+
+	float fVelocityXMin = 10, fVelocityXMax = 10;
+	float fVelocityYMin = 0, fVelocityYMax = 0;
+	float fVelocityZMin = 0, fVelocityZMax = 0;
+	float fOverrideSpeed = 0;		// 0 means don't override speed
+	layer.GetAttrValue( "VelocityXMin", fVelocityXMin );
+	layer.GetAttrValue( "VelocityXMax", fVelocityXMax );
+	layer.GetAttrValue( "VelocityYMin", fVelocityYMin );
+	layer.GetAttrValue( "VelocityYMax", fVelocityYMax );
+	layer.GetAttrValue( "VelocityZMin", fVelocityZMin );
+	layer.GetAttrValue( "VelocityZMax", fVelocityZMax );
+	layer.GetAttrValue( "OverrideSpeed", fOverrideSpeed );
+
+	int iNumParticles = 10;
+	layer.GetAttrValue( "NumParticles", iNumParticles );
+
 	layer.GetAttrValue( "ParticlesBounce", m_bParticlesBounce );
 	layer.GetAttrValue( "TilesStartX", m_fTilesStartX );
 	layer.GetAttrValue( "TilesStartY", m_fTilesStartY );
@@ -473,21 +475,21 @@ void BGAnimationLayer::LoadFromNode( const CString& sAniDir_, const XNode& layer
 
 
 			ASSERT( !m_bGeneric );
-			for( int i=0; i<m_iNumParticles; i++ )
+			for( int i=0; i<iNumParticles; i++ )
 			{
 				Actor* pActor = MakeActor( sPath );
 				this->AddChild( pActor );
 				pActor->SetXY( randomf(float(FullScreenRectF.left),float(FullScreenRectF.right)),
 							   randomf(float(FullScreenRectF.top),float(FullScreenRectF.bottom)) );
-				pActor->SetZoom( randomf(m_fZoomMin,m_fZoomMax) );
+				pActor->SetZoom( randomf(fZoomMin,fZoomMax) );
 				m_vParticleVelocity.push_back( RageVector3( 
-					randomf(m_fVelocityXMin,m_fVelocityXMax),
-					randomf(m_fVelocityYMin,m_fVelocityYMax),
-					randomf(m_fVelocityZMin,m_fVelocityZMax) ) );
-				if( m_fOverrideSpeed != 0 )
+					randomf(fVelocityXMin,fVelocityXMax),
+					randomf(fVelocityYMin,fVelocityYMax),
+					randomf(fVelocityZMin,fVelocityZMax) ) );
+				if( fOverrideSpeed != 0 )
 				{
 					RageVec3Normalize( &m_vParticleVelocity[i], &m_vParticleVelocity[i] );
-					m_vParticleVelocity[i] *= m_fOverrideSpeed;
+					m_vParticleVelocity[i] *= fOverrideSpeed;
 				}
 			}
 		}
@@ -519,7 +521,7 @@ void BGAnimationLayer::LoadFromNode( const CString& sAniDir_, const XNode& layer
 				this->AddChild( pSprite );
 				pSprite->Load( ID );
 				pSprite->SetTextureWrapping( true );		// gets rid of some "cracks"
-				pSprite->SetZoom( randomf(m_fZoomMin,m_fZoomMax) );
+				pSprite->SetZoom( randomf(fZoomMin,fZoomMax) );
 			}
 		}
 		break;
@@ -543,8 +545,6 @@ void BGAnimationLayer::Update( float fDeltaTime )
 
 	fDeltaTime *= m_fUpdateRate;
 
-	const float fSongBeat = GAMESTATE->m_fSongBeat;
-	
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->Update( fDeltaTime );
 
@@ -556,6 +556,7 @@ void BGAnimationLayer::Update( float fDeltaTime )
 		{
 			for( unsigned i=0; i<m_SubActors.size(); i++ )
 			{
+				/* XXX: there's no longer any guarantee that this is a Sprite */
 				Sprite *pSprite = (Sprite*)m_SubActors[i];
 				pSprite->StretchTexCoords(
 					fDeltaTime*m_fTexCoordVelocityX,
