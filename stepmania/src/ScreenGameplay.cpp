@@ -931,17 +931,21 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 
 	if( GAMESTATE->m_bDemonstration )
 	{
-		if( MenuI.button==MENU_BUTTON_START  &&  !m_Fade.IsClosing() )
+		/* Special case:always allow escape. */
+		if( DeviceI.device==DEVICE_KEYBOARD  &&  DeviceI.button==DIK_ESCAPE  &&  !m_Fade.IsClosing() )
+		{
+			this->SendScreenMessage( SM_BeginFadingToTitleMenu, 0 );
+		}
+		/* Since escape backs out, we want to allow any other back buttons to
+		 * work, too, to avoid confusion. */
+		else if( (MenuI.button==MENU_BUTTON_START || MenuI.button==MENU_BUTTON_BACK)
+			&&  !m_Fade.IsClosing() )
 		{
 			m_soundMusic.Stop();
 			SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","insert coin") );
 			::Sleep( 1000 );	// do a little pause, like the arcade does
 			this->SendScreenMessage( SM_GoToTitleMenu, 0 );
 //			m_Fade.CloseWipingRight( SM_GoToTitleMenu );
-		}
-		else if( DeviceI.device==DEVICE_KEYBOARD  &&  DeviceI.button==DIK_ESCAPE  &&  !m_Fade.IsClosing() )
-		{
-			this->SendScreenMessage( SM_BeginFadingToTitleMenu, 0 );
 		}
 		return;	// don't fall through below
 	}
