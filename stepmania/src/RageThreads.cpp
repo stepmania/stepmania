@@ -220,7 +220,8 @@ void RageThread::Create( int (*fn)(void *), void *data )
 	
 	if( name == "" )
 	{
-		LOG->Warn("Created a thread without naming it first.");
+		if( LOG )
+			LOG->Warn("Created a thread without naming it first.");
 
 		/* If you don't name it, I will: */
 		strcpy( m_pSlot->name, "Joe" );
@@ -228,7 +229,8 @@ void RageThread::Create( int (*fn)(void *), void *data )
 		strcpy( m_pSlot->name, name.c_str() );
 	}
 
-	LOG->Trace( "Starting thread: %s", name.c_str() );
+	if( LOG )
+		LOG->Trace( "Starting thread: %s", name.c_str() );
 	sprintf( m_pSlot->ThreadFormattedOutput, "Thread: %s", name.c_str() );
 
 	/* Start a thread using our own startup function.  We pass the id to fill in,
