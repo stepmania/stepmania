@@ -170,8 +170,8 @@ void GameState::EndGame()
 	Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
 
 	int iGameplaySeconds = 0;
-	for( int i=0; i<m_vPlayedStageStats.size(); i++ )
-		iGameplaySeconds += m_vPlayedStageStats[i].fGameplaySeconds;
+	for( unsigned i=0; i<m_vPlayedStageStats.size(); i++ )
+		iGameplaySeconds += (int) roundf(m_vPlayedStageStats[i].fGameplaySeconds);
 
 	pMachineProfile->m_iTotalPlaySeconds += iPlaySeconds;
 	pMachineProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
@@ -183,7 +183,8 @@ void GameState::EndGame()
 		if( !IsHumanPlayer(p) )
 			continue;
 
-		for( int i=0; i<m_vPlayedStageStats.size(); i++ )
+		unsigned i;
+		for( i=0; i<m_vPlayedStageStats.size(); i++ )
 		{
 			const StageStats& ss = m_vPlayedStageStats[i];
 			pMachineProfile->m_iNumSongsPlayedByPlayMode[ss.playMode]++;
@@ -203,7 +204,7 @@ void GameState::EndGame()
 				GAMESTATE->m_CurStageStats.iCurCombo[p] : 
 				0;
 		
-			for( int i=0; i<m_vPlayedStageStats.size(); i++ )
+			for( i=0; i<m_vPlayedStageStats.size(); i++ )
 			{
 				const StageStats& ss = m_vPlayedStageStats[i];
 				pPlayerProfile->m_iNumSongsPlayedByPlayMode[ss.playMode]++;
