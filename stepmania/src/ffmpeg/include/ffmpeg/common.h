@@ -25,6 +25,7 @@
 #    include <stdlib.h>
 #    include <stdio.h>
 #    include <string.h>
+#    include <ctype.h>
 #    ifndef __BEOS__
 #        include <errno.h>
 #    else
@@ -106,9 +107,7 @@ typedef signed __int64 int64_t;
 #    endif /* __MINGW32__ */
 
 #    ifdef _DEBUG
-#        ifndef DEBUG
-#            define DEBUG
-#        endif
+#        define DEBUG
 #    endif
 
 #    define snprintf _snprintf

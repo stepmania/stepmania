@@ -5,9 +5,13 @@
 extern "C" {
 #endif
 
-#define LIBAVFORMAT_VERSION_INT 0x000406  
-#define LIBAVFORMAT_VERSION     "0.4.6"
-#define LIBAVFORMAT_BUILD       4606
+#define LIBAVFORMAT_BUILD       4608
+
+#define LIBAVFORMAT_VERSION_INT FFMPEG_VERSION_INT
+#define LIBAVFORMAT_VERSION     FFMPEG_VERSION
+#define LIBAVFORMAT_IDENT	"FFmpeg" FFMPEG_VERSION "b" AV_STRINGIFY(LIBAVFORMAT_BUILD)
+
+#include <time.h>
 
 #include "avcodec.h"
 
@@ -119,10 +123,9 @@ typedef struct AVOutputFormat {
     enum CodecID audio_codec; /* default audio codec */
     enum CodecID video_codec; /* default video codec */
     int (*write_header)(struct AVFormatContext *);
-    /* XXX: change prototype for 64 bit pts */
     int (*write_packet)(struct AVFormatContext *, 
                         int stream_index,
-                        unsigned char *buf, int size, int force_pts);
+                        const uint8_t *buf, int size, int64_t pts);
     int (*write_trailer)(struct AVFormatContext *);
     /* can use flags: AVFMT_NOFILE, AVFMT_NEEDNUMBER */
     int flags;
@@ -210,6 +213,11 @@ typedef struct AVFormatContext {
     char author[512];
     char copyright[512];
     char comment[512];
+    char album[512];
+    int year;  /* ID3 year, 0 if none */
+    int track; /* track number, 0 if none */
+    char genre[32]; /* ID3 genre */
+
     int flags; /* format specific flags */
     /* private data for pts handling (do not modify directly) */
     int pts_wrap_bits; /* number of bits in pts (used for wrapping control) */
@@ -334,6 +342,9 @@ int swf_init(void);
 /* mov.c */
 int mov_init(void);
 
+/* movenc.c */
+int movenc_init(void);
+
 /* flvenc.c */
 int flvenc_init(void);
 
@@ -358,6 +369,9 @@ int wav_init(void);
 /* raw.c */
 int raw_init(void);
 
+/* mp3.c */
+int mp3_init(void);
+
 /* yuv4mpeg.c */
 int yuv4mpeg_init(void);
 
@@ -376,6 +390,21 @@ int redir_open(AVFormatContext **ic_ptr, ByteIOContext *f);
 
 /* 4xm.c */
 int fourxm_init(void);
+
+/* psxstr.c */
+int str_init(void);
+
+/* idroq.c */
+int roq_init(void);
+
+/* ipmovie.c */
+int ipmovie_init(void);
+
+/* nut.c */
+int nut_init(void);
+
+/* wc3movie.c */
+int wc3_init(void);
 
 #include "rtp.h"
 
@@ -466,6 +495,9 @@ int audio_init(void);
 int dv1394_init(void);
 
 #ifdef HAVE_AV_CONFIG_H
+
+#include "os_support.h"
+
 int strstart(const char *str, const char *val, const char **ptr);
 int stristart(const char *str, const char *val, const char **ptr);
 void pstrcpy(char *buf, int buf_size, const char *str);
@@ -473,6 +505,7 @@ char *pstrcat(char *buf, int buf_size, const char *s);
 
 void __dynarray_add(unsigned long **tab_ptr, int *nb_ptr, unsigned long elem);
 
+#ifdef __GNUC__
 #define dynarray_add(tab, nb_ptr, elem)\
 do {\
     typeof(tab) _tab = (tab);\
@@ -480,6 +513,16 @@ do {\
     (void)sizeof(**_tab == _elem); /* check that types are compatible */\
     __dynarray_add((unsigned long **)_tab, nb_ptr, (unsigned long)_elem);\
 } while(0)
+#else
+#define dynarray_add(tab, nb_ptr, elem)\
+do {\
+    __dynarray_add((unsigned long **)(tab), nb_ptr, (unsigned long)(elem));\
+} while(0)
+#endif
+
+time_t mktimegm(struct tm *tm);
+const char *small_strptime(const char *p, const char *fmt, 
+                           struct tm *dt);
 
 struct in_addr;
 int resolve_host(struct in_addr *sin_addr, const char *hostname);
