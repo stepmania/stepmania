@@ -541,7 +541,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 			arrayWheelItemDatas.Add( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, D3DXCOLOR(1,0,0,1)) );
 		}
 
-		// HACK:  Add extra stage item since it's not necessarily in the same group
+		// HACK:  Add extra stage item if it isn't already present on the music wheel
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 		{
 			Song* pSong;
@@ -549,7 +549,20 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 			PlayerOptions po;
 			SongOptions so;
 			SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->m_pCurSong->m_sGroupName, GAMESTATE->GetCurrentStyleDef(), pSong, pNotes, po, so );
-			arrayWheelItemDatas.Add( WheelItemData(TYPE_SONG, pSong, "", NULL, GAMESTATE->GetStageColor()) );
+			
+			bool bFoundExtraSong = false;
+
+			for( int i=0; i<arrayWheelItemDatas.GetSize(); i++ )
+			{
+				if( arrayWheelItemDatas[i].m_pSong == pSong )
+				{
+					bFoundExtraSong = true;
+					break;
+				}
+			}
+			
+			if( !bFoundExtraSong )
+				arrayWheelItemDatas.Add( WheelItemData(TYPE_SONG, pSong, "", NULL, GAMESTATE->GetStageColor()) );
 		}
 
 		break;

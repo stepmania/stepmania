@@ -188,7 +188,10 @@ HRESULT CTextureRenderer::SetRenderTarget( RageMovieTexture* pTexture )
 HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 {
 	if( m_pTexture == NULL )
-		throw RageException( "DoRenderSample called while m_pTexture was NULL!" );
+	{
+		LOG->Warn( "DoRenderSample called while m_pTexture was NULL!" );
+		return S_OK;
+	}
 
     BYTE  *pBmpBuffer;		// Bitmap buffer
 
@@ -307,6 +310,7 @@ RageMovieTexture::RageMovieTexture(
 	}
 
 	m_bLoop = true;
+	m_bPlaying = false;
 }
 
 RageMovieTexture::~RageMovieTexture()
@@ -490,6 +494,8 @@ HRESULT RageMovieTexture::PlayMovie()
     if( FAILED( hr = pMC->Run() ) )
         throw RageException( hr, "Could not run the DirectShow graph." );
 
+	m_bPlaying = true;
+
     return S_OK;
 }
 
@@ -552,6 +558,8 @@ void RageMovieTexture::Stop()
 	HRESULT hr;
 	if( FAILED( hr = pMC->Stop() ) )
         throw RageException( hr, "Could not stop the DirectShow graph." );
+
+	m_bPlaying = false;
 }
 
 void RageMovieTexture::SetPosition( float fSeconds )
@@ -559,5 +567,10 @@ void RageMovieTexture::SetPosition( float fSeconds )
 	CComPtr<IMediaPosition> pMP;
     m_pGB.QueryInterface(&pMP);
     pMP->put_CurrentPosition(0);
+}
+
+bool RageMovieTexture::IsPlaying() const
+{
+	return m_bPlaying;
 }
 

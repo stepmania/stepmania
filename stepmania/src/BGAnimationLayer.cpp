@@ -61,9 +61,9 @@ void BGAnimationLayer::LoadFromStaticGraphic( CString sPath )
 	m_Sprites[0].StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 }
 
-void BGAnimationLayer::LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewind, bool bFadeSongBG, CString sSongBGPath )
+void BGAnimationLayer::LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewind )
 {
-	m_iNumSprites = bFadeSongBG ? 2 : 1;
+	m_iNumSprites = 1;
 	m_Sprites[0].Load( sMoviePath );
 	m_Sprites[0].StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 	m_Sprites[0].GetTexture()->Play();
@@ -72,14 +72,6 @@ void BGAnimationLayer::LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewi
 	m_bRewindMovie = bRewind;
 	if( !bLoop )
 		m_Sprites[0].GetTexture()->SetLooping(false);
-
-	if( bFadeSongBG )
-	{
-		m_Sprites[1].Load( sSongBGPath );
-		m_Sprites[1].StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-		m_Sprites[1].BeginTweening( 0.7f );		// this tween won't actually happen until GainFocus is called and this Layer starts getting Update()s.
-		m_Sprites[1].SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
-	}
 }
 
 void BGAnimationLayer::LoadFromVisualization( CString sMoviePath )

@@ -197,7 +197,7 @@ void Sprite::DrawPrimitives()
 	if( m_pTexture == NULL )
 		return;
 
-	if( m_pTexture->IsAMovie() )
+	if( m_pTexture->IsAMovie()  &&  m_pTexture->IsPlaying() )
 		::Sleep( PREFSMAN->m_iMovieDecodeMS );	// let the movie decode a frame
 
 

@@ -64,6 +64,7 @@ public:
 	virtual void Pause() {}
 	virtual void SetPosition( float fSeconds ) {}
 	virtual bool IsAMovie() const { return false; }
+	virtual bool IsPlaying() const { return false; }
 	void SetLooping(bool looping=true) { }
 
 	int GetSourceWidth() const	{return m_iSourceWidth;}

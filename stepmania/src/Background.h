@@ -22,9 +22,10 @@
 struct BGSegment	// like a BGChange, but holds index of a background instead of name
 {
 	BGSegment() {};
-	BGSegment( float b, int i ) { m_fStartBeat = b; m_iBGIndex = i; };
+	BGSegment( float b, int i, bool f ) { m_fStartBeat = b; m_iBGIndex = i; m_bFade = f; };
 	float m_fStartBeat;
 	int m_iBGIndex;
+	bool m_bFade;
 };
 
 
@@ -52,9 +53,6 @@ public:
 
 protected:
 	bool DangerVisible();
-
-	enum BackgroundMode { MODE_STATIC_BG, MODE_ANIMATIONS, MODE_MOVIE_VIS, MODE_RANDOMMOVIES };
-	BackgroundMode		m_BackgroundMode;
 		
 	BGAnimation		m_BGADanger;
 
@@ -63,7 +61,9 @@ protected:
 	CArray<BGSegment,BGSegment&> m_aBGSegments;
 	int m_iCurBGSegment;	// this increases as we move into new segments
 	BGAnimation* GetCurBGA() { int index = m_aBGSegments[m_iCurBGSegment].m_iBGIndex; return m_BGAnimations[index]; };
-
+	BGAnimation* m_pCurrentBGA;
+	BGAnimation* m_pFadingBGA;
+	float m_fSecsLeftInFade;
 
 	Quad m_quadBGBrightness;
 	Quad m_quadBorder[4];	// l, t, r, b - cover up the edge of animations that might hang outside of the background rectangle

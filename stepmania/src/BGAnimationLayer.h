@@ -26,11 +26,13 @@ public:
 
 	void LoadFromStaticGraphic( CString sPath );
 	void LoadFromAniLayerFile( CString sPath, CString sSongBGPath );
-	void LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewind, bool bFadeSongBG, CString sSongBGPath );
+	void LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewind );
 	void LoadFromVisualization( CString sMoviePath );
 
 	virtual void Update( float fDeltaTime );
 	virtual void Draw();
+
+	virtual void SetDiffuse( D3DXCOLOR c ) { for(int i=0; i<m_iNumSprites; i++) m_Sprites[i].SetDiffuse(c); }
 
 	void GainingFocus();
 	void LosingFocus();

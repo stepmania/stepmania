@@ -435,7 +435,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_Grades[p].SetXY( GRADE_X(p), GRADE_Y );
 				m_Grades[p].SetZ( -2 );
 				m_Grades[p].SetZoom( 1.0f );
-				m_Grades[p].SetEffectGlowing( 8.0f, GRADES_GLOW_COLOR_1, GRADES_GLOW_COLOR_2 );
+				m_Grades[p].SetEffectGlowing( 5.0f, GRADES_GLOW_COLOR_1, GRADES_GLOW_COLOR_2 );
 				if( SPIN_GRADES )
 					m_Grades[p].SpinAndSettleOn( grade[p] );
 				else

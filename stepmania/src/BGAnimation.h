@@ -28,16 +28,20 @@ public:
 
 	void LoadFromStaticGraphic( CString sPath );
 	void LoadFromAniDir( CString sAniDir, CString sSongBGPath="" );
-	void LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewind, bool bFadeSongBG = false, CString sSongBGPath = "" );
+	void LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewind );
 	void LoadFromVisualization( CString sMoviePath, CString sSongBGPath );
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
+
+	virtual void SetDiffuse( const D3DXCOLOR &c );
+
 
 	void GainingFocus();
 	void LosingFocus();
 
 protected:
 	CArray<BGAnimationLayer*,BGAnimationLayer*> m_Layers;
+	float	m_fFadeSeconds;
 };
 

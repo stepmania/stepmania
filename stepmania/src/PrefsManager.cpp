@@ -45,7 +45,7 @@ PrefsManager::PrefsManager()
 	m_bEventMode = false;
 	m_iNumArcadeStages = 3;
 	m_bAutoPlay = false;
-	m_fJudgeWindowSeconds = 0.20f;
+	m_fJudgeWindowSeconds = 0.17f;
 	m_fJudgeWindowPerfectPercent = 0.25f;
 	m_fJudgeWindowGreatPercent = 0.50f;
 	m_fJudgeWindowGoodPercent = 0.75f;

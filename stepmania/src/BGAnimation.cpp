@@ -20,6 +20,7 @@
 
 BGAnimation::BGAnimation()
 {
+	m_fFadeSeconds = 0;
 }
 
 BGAnimation::~BGAnimation()
@@ -41,6 +42,8 @@ void BGAnimation::LoadFromStaticGraphic( CString sPath )
 	BGAnimationLayer* pLayer = new BGAnimationLayer;
 	pLayer->LoadFromStaticGraphic( sPath );
 	m_Layers.Add( pLayer );
+
+	m_fFadeSeconds = 0.5f;
 }
 
 void BGAnimation::LoadFromAniDir( CString sAniDir, CString sSongBGPath )
@@ -72,15 +75,19 @@ void BGAnimation::LoadFromAniDir( CString sAniDir, CString sSongBGPath )
 		pLayer->LoadFromAniLayerFile( asImagePaths[i], sSongBGPath );
 		m_Layers.Add( pLayer );
 	}
+
+	m_fFadeSeconds = 0;
 }
 
-void BGAnimation::LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewind, bool bFadeSongBG, CString sSongBGPath )
+void BGAnimation::LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewind )
 {
 	Unload();
 
 	BGAnimationLayer* pLayer = new BGAnimationLayer;
-	pLayer->LoadFromMovie( sMoviePath, bLoop, bRewind, bFadeSongBG, sSongBGPath );
+	pLayer->LoadFromMovie( sMoviePath, bLoop, bRewind );
 	m_Layers.Add( pLayer );
+
+	m_fFadeSeconds = 0.5f;
 }
 
 void BGAnimation::LoadFromVisualization( CString sVisPath, CString sSongBGPath )
@@ -95,6 +102,8 @@ void BGAnimation::LoadFromVisualization( CString sVisPath, CString sSongBGPath )
 	pLayer = new BGAnimationLayer;
 	pLayer->LoadFromVisualization( sVisPath );
 	m_Layers.Add( pLayer );	
+
+	m_fFadeSeconds = 0.5f;
 }
 
 
@@ -114,6 +123,8 @@ void BGAnimation::GainingFocus()
 {
 	for( int i=0; i<m_Layers.GetSize(); i++ )
 		m_Layers[i]->GainingFocus();
+
+	SetDiffuse( D3DXCOLOR(1,1,1,1) );
 }
 
 void BGAnimation::LosingFocus()
@@ -122,3 +133,8 @@ void BGAnimation::LosingFocus()
 		m_Layers[i]->LosingFocus();
 }
 
+void BGAnimation::SetDiffuse( const D3DXCOLOR &c )
+{
+	for( int i=0; i<m_Layers.GetSize(); i++ ) 
+		m_Layers[i]->SetDiffuse(c);
+ }

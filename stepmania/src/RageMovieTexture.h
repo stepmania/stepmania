@@ -53,6 +53,7 @@ public:
 	virtual void Stop();
 	virtual void SetPosition( float fSeconds );
 	virtual bool IsAMovie() const { return true; };
+	virtual bool IsPlaying() const;
 	void SetLooping(bool looping=true) { m_bLoop = looping; }
 
 	LPDIRECT3DTEXTURE8 GetBackBuffer() { return m_pd3dTexture[!m_iIndexFrontBuffer]; }
@@ -76,4 +77,5 @@ protected:
 	CComPtr<IGraphBuilder>  m_pGB;          // GraphBuilder
     CTextureRenderer        *m_pCTR;        // DShow Texture renderer
 	bool					m_bLoop;
+	bool					m_bPlaying;
 };
