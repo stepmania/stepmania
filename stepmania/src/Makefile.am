@@ -13,7 +13,7 @@ endif
 AM_CXXFLAGS += -O2
 
 if NHAVE_SDL
-AM_CXXFLAGS += -ISDL-1.2.5/include
+AM_CXXFLAGS += -ISDL-1.2.6/include
 endif
 
 AM_CFLAGS   += -O2
@@ -22,11 +22,11 @@ AM_CFLAGS   += -O2
 # want to have to integrate the entire build system.
 
 if NHAVE_SDL
-SDL-1.2.5/src/.libs/libSDL.a:
-	cd SDL-1.2.5 && ./configure \
+SDL-1.2.6/src/.libs/libSDL.a:
+	cd SDL-1.2.6 && ./configure \
 		--disable-nasm --disable-arts --disable-esd --enable-static --disable-shared \
 		--disable-debug --disable-alsa --disable-oss --disable-video-directfb
-	make -C SDL-1.2.5
+	make -C SDL-1.2.6
 endif
 
 Screens = \
@@ -202,7 +202,7 @@ stepmania_SOURCES = $(Screens) $(DataStructures) $(FileTypes) $(StepMania) $(Arc
 libSDL = 
 
 if NHAVE_SDL
-libSDL += $(srcdir)/SDL-1.2.5/src/.libs/libSDL.a
+libSDL += $(srcdir)/SDL-1.2.6/src/.libs/libSDL.a
 endif
 
 stepmania_LDADD = \
