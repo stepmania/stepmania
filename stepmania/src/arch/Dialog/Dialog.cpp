@@ -146,12 +146,15 @@ Dialog::Result Dialog::AbortRetryIgnore( CString sMessage, CString ID )
 	g_bIsShowingDialog = true;
 	
 	// only show Dialog if windowed
+	Dialog::Result ret;
 	if( !g_bWindowed )
-		return g_pNullDriver.AbortRetryIgnore( sMessage, ID );
+		ret = g_pNullDriver.AbortRetryIgnore( sMessage, ID );
 	else
-		return g_pImpl->AbortRetryIgnore( sMessage, ID );	// call derived version
+		ret = g_pImpl->AbortRetryIgnore( sMessage, ID );	// call derived version
 	
 	g_bIsShowingDialog = false;
+
+	return ret;
 }
 
 Dialog::Result Dialog::RetryCancel( CString sMessage, CString ID )
@@ -164,12 +167,15 @@ Dialog::Result Dialog::RetryCancel( CString sMessage, CString ID )
 	g_bIsShowingDialog = true;
 
 	// only show Dialog if windowed
+	Dialog::Result ret;
 	if( !g_bWindowed )
-		return g_pNullDriver.RetryCancel( sMessage, ID );
+		ret = g_pNullDriver.RetryCancel( sMessage, ID );
 	else
-		return g_pImpl->RetryCancel( sMessage, ID );	// call derived version
+		ret = g_pImpl->RetryCancel( sMessage, ID );	// call derived version
 	
 	g_bIsShowingDialog = false;
+
+	return ret;
 }
 
 /*
