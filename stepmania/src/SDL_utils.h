@@ -10,6 +10,13 @@
 #undef Screen
 
 Uint32 mySDL_Swap24(Uint32 x);
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+#define mySDL_SwapLE24(n) (n)
+#define mySDL_SwapBE24(n) (mySDL_Swap24(n))
+#else
+#define mySDL_SwapLE24(n) (mySDL_Swap24(n))
+#define mySDL_SwapBE24(n) (n)
+#endif
 
 Uint32 decodepixel(const Uint8 *p, int bpp);
 void encodepixel(Uint8 *p, int bpp, Uint32 pixel);
