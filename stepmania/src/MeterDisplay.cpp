@@ -20,11 +20,10 @@ void MeterDisplay::Load( CString sStreamPath, float fStreamWidth, CString sTipPa
 
 	m_sprStream.Load( sStreamPath );
 	m_sprStream.SetZoomX( fStreamWidth / m_sprStream.GetUnzoomedWidth() );
-
 	this->AddChild( &m_sprStream );
-	this->AddChild( m_sprTip );
 
 	m_sprTip.Load( sTipPath );
+	this->AddChild( m_sprTip );
 
 	SetPercent( 0.5f );
 }
