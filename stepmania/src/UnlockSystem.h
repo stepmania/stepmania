@@ -1,6 +1,6 @@
 #ifndef UNLOCK_SYSTEM_H
 #define UNLOCK_SYSTEM_H
-#include "grade.h"
+#include "Grade.h"
 #include <map>
 using namespace std;
 
