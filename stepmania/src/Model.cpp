@@ -401,6 +401,16 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                 sscanf (szLine, "\"%[^\"]\"", szName);
                 strcpy( Material.szDiffuseTexture, szName );
 
+				if( strcmp(Material.szDiffuseTexture, "")!=0 )
+				{
+					CString sFile = Material.szDiffuseTexture;
+					FixSlashesInPlace( sFile );
+					CString sPath = sDir + Material.szDiffuseTexture;
+					CollapsePath( sPath );
+					if( IsAFile(sPath) )
+						Material.aniTexture.Load( sPath );
+				}
+
                 // alpha texture
                 if (!fgets (szLine, 256, file))
                 {
@@ -410,12 +420,6 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                 strcpy (szName, "");
                 sscanf (szLine, "\"%[^\"]\"", szName);
                 strcpy( Material.szAlphaTexture, szName );
-
-				if( strcmp(Material.szDiffuseTexture, "")!=0 )
-				{
-					if( IsAFile(sDir+Material.szDiffuseTexture) )
-						Material.aniTexture.Load( sDir+Material.szDiffuseTexture );
-				}
             }
         }
     }
