@@ -68,8 +68,7 @@ private:
 
 	void Create();
 
-	unsigned CreateTexture();
-	void CreateTextures();
+	void CreateTexture();
 	bool PlayMovie();
 	void SkipUpdates();
 	void StopSkippingUpdates();

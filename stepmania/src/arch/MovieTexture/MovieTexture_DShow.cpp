@@ -129,7 +129,7 @@ void MovieTexture_DShow::Update(float fDeltaTime)
 		return;
 
 	/* Just in case we were invalidated: */
-	CreateTextures();
+	CreateTexture();
 
 	glBindTexture( GL_TEXTURE_2D, m_uGLTextureID );
 
@@ -246,7 +246,7 @@ void MovieTexture_DShow::Create()
 
 	/* We've set up the movie, so we know the dimensions we need.  Set
 	 * up the texture. */
-	CreateTextures();
+	CreateTexture();
 
 	// Start the graph running
     if( !PlayMovie() )
@@ -276,19 +276,13 @@ void MovieTexture_DShow::NewData(const char *data)
 }
 
 
-
-void MovieTexture_DShow::CreateTextures()
+void MovieTexture_DShow::CreateTexture()
 {
-	if(!m_uGLTextureID)
-		m_uGLTextureID = CreateTexture();
-}
+	if(m_uGLTextureID)
+		return;
 
-unsigned MovieTexture_DShow::CreateTexture()
-{
-	unsigned TextureID;
-
-	glGenTextures(1, &TextureID);
-	glBindTexture( GL_TEXTURE_2D, TextureID );
+	glGenTextures(1, &m_uGLTextureID);
+	glBindTexture( GL_TEXTURE_2D, m_uGLTextureID );
 
 	/* Initialize the texture and set it to black. */
 	string buf(m_iTextureWidth*m_iTextureHeight*3, 0);
@@ -310,8 +304,6 @@ unsigned MovieTexture_DShow::CreateTexture()
 
 	glTexImage2D(GL_TEXTURE_2D, 0, internalformat,
 		m_iTextureWidth, m_iTextureHeight, 0, GL_BGR, GL_UNSIGNED_BYTE, buf.data());
-
-	return TextureID;
 }
 
 bool MovieTexture_DShow::PlayMovie()
