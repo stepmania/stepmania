@@ -455,9 +455,12 @@ void InputHandler_DInput::InputThread()
 		}
         
 		BufferedDevices.push_back( &Devices[i] );
+
+		IDirectInputDevice2_Unacquire(Devices[i].Device);
 		HRESULT hr = IDirectInputDevice2_SetEventNotification(Devices[i].Device, Handle);
 		if( FAILED(hr) )
 			LOG->Warn("IDirectInputDevice2_SetEventNotification failed on %i", i);
+		IDirectInputDevice2_Acquire(Devices[i].Device);
 	}
 
 	/* If we have any polled devices, we need a fast loop. */
@@ -516,8 +519,13 @@ void InputHandler_DInput::InputThread()
 	VDCHECKPOINT;
 
 	for( i = 0; i < Devices.size(); ++i )
-		if( Devices[i].buffered )
-	        IDirectInputDevice2_SetEventNotification( Devices[i].Device, NULL );
+	{
+		if( !Devices[i].buffered )
+			continue;
+
+		IDirectInputDevice2_Unacquire(Devices[i].Device);
+        IDirectInputDevice2_SetEventNotification( Devices[i].Device, NULL );
+	}
 
 	CloseHandle(Handle);
 
