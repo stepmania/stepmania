@@ -37,7 +37,6 @@ private:
 	};
 
 	CString m_NextScreen;
-	bool m_ForceSMOptionsNavigation;
 
 	vector<OptionRowHandler> OptionRowHandlers;
 	OptionRow *m_OptionRowAlloc;
@@ -51,7 +50,6 @@ private:
 	void SetSaveToProfile( OptionRow &row, OptionRowHandler &hand );
 
 protected:
-	virtual void MenuStart( PlayerNumber pn, const InputEventType type );
 	virtual void ImportOptions();
 	virtual void ExportOptions();
 

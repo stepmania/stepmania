@@ -180,8 +180,6 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 	if( MusicPath != "" )
 		SOUND->PlayMusic( MusicPath );
 
-	m_ForceSMOptionsNavigation = false;
-
 	CStringArray Flags;
 	split( OPTION_MENU_FLAGS, ";", Flags, true );
 	InputMode im = INPUTMODE_INDIVIDUAL;
@@ -206,7 +204,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 			GAMESTATE->m_MasterPlayerNumber = PlayerNumber(0);
 		}
 		if( Flags[i] == "smnavigation" )
-			m_ForceSMOptionsNavigation = true;
+			SetSMOptionsNavigation( true );
 	}
 
 	if( NumRows == -1 )
@@ -548,17 +546,6 @@ void ScreenOptionsMaster::ExportOptions()
 		SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );
 	}
 	CHECKPOINT;
-}
-
-void ScreenOptionsMaster::MenuStart( PlayerNumber pn, const InputEventType type )
-{
-	if( m_ForceSMOptionsNavigation )
-	{
-		StartGoToNextState();
-		return;
-	}
-
-	ScreenOptions::MenuStart( pn, type );
 }
 
 void ScreenOptionsMaster::GoToNextState()

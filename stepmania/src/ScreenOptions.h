@@ -105,6 +105,7 @@ protected:	// derived classes need access to these
 	int				m_iNumOptionRows;
 
 	void LoadOptionIcon( PlayerNumber pn, int iRow, CString sText );
+	void SetSMOptionsNavigation( bool on ) { m_SMOptionsNavigation = on; }
 
 private:
 	/* Map menu lines to m_OptionRow entries. */
@@ -124,6 +125,8 @@ private:
 		bool m_bHidden; // currently off screen
 	};
 	vector<Row*>		m_Rows;
+
+	bool			m_SMOptionsNavigation;
 
 	int				m_iCurrentRow[NUM_PLAYERS];
 
