@@ -202,7 +202,37 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)) ||
 					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT));
 			if ( bIsHoldingShift )
-				AppendToAnswer( ssprintf( "%c", DeviceI.ToChar() - 32 ) );
+			{
+
+				char c = (char)toupper( DeviceI.ToChar() );
+
+				switch( c )
+				{
+				case '`':	c='~';	break;
+				case '1':	c='!';	break;
+				case '2':	c='@';	break;
+				case '3':	c='#';	break;
+				case '4':	c='$';	break;
+				case '5':	c='%';	break;
+				case '6':	c='^';	break;
+				case '7':	c='&';	break;
+				case '8':	c='*';	break;
+				case '9':	c='(';	break;
+				case '0':	c=')';	break;
+				case '-':	c='_';	break;
+				case '=':	c='+';	break;
+				case '[':	c='{';	break;
+				case ']':	c='}';	break;
+				case '\'':	c='"';	break;
+				case '\\':	c='|';	break;
+				case ';':	c=':';	break;
+				case ',':	c='<';	break;
+				case '.':	c='>';	break;
+				case '/':	c='?';	break;
+				}
+
+				AppendToAnswer( ssprintf( "%c", c ) );
+			}
 			else
 				AppendToAnswer( ssprintf( "%c", DeviceI.ToChar() ) );
 
