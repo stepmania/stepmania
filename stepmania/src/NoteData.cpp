@@ -589,7 +589,7 @@ void NoteData::EliminateAllButOneTap(int row)
 	PadTapNotes(row);
 
 	int track;
-        for(track = 0; track < m_iNumTracks; ++track)
+	for(track = 0; track < m_iNumTracks; ++track)
 	{
 		if( m_TapNotes[track][row] == TAP_TAP )
 			break;
