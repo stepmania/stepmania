@@ -31,6 +31,7 @@
 #include "Style.h"
 #include "MessageManager.h"
 #include "CommonMetrics.h"
+#include "Foreach.h"
 
 #include <ctime>
 #include <set>
@@ -1079,17 +1080,49 @@ void GameState::GetAllUsedNoteSkins( vector<CString> &out ) const
 				{
 					PlayerOptions po;
 					po.FromString( asAttacks[att] );
-					/* Hack: NoteSkin "default" is never applied as an attack,
-					 * so don't waste memory preloading it. */
-					if( po.m_sNoteSkin != "" && po.m_sNoteSkin.CompareNoCase("default") )
-						out.push_back( po.m_sNoteSkin );
+					out.push_back( po.m_sNoteSkin );
 				}
 			}
 		}
 
-		for( map<float,CString>::const_iterator it = m_pPlayerState[pn]->m_BeatToNoteSkin.begin(); 
-			it != m_pPlayerState[pn]->m_BeatToNoteSkin.end(); ++it )
-			out.push_back( it->second );
+		/* Add note skins that are used in courses. */
+		if( this->IsCourseMode() )
+		{
+			FOREACH_EnabledPlayer(pn)
+			{
+				const Trail *pTrail = this->m_pCurTrail[pn];
+				ASSERT( pTrail );
+
+				FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
+				{
+					AttackArray a;
+					e->GetAttackArray( a );
+
+					for( unsigned j=0; j<a.size(); j++ )
+					{
+						const Attack &mod = a[j];
+						PlayerOptions po;
+						po.FromString( mod.sModifier );
+						out.push_back( po.m_sNoteSkin );
+					}
+				}
+			}
+		}
+	}
+
+	/* Remove duplicates. */
+	sort( out.begin(), out.end() );
+	out.erase( unique( out.begin(), out.end() ), out.end() );
+
+	/* Hack: NoteSkin "default" is never applied as an attack, so don't
+	 * waste memory preloading it. */
+	for( unsigned i = 0; i < out.size(); ++i )
+	{
+		if( !out[i].CompareNoCase("default") || out[i] == "" )
+		{
+			out.erase( out.begin()+i, out.begin()+i+1 );
+			--i;
+		}
 	}
 }
 
