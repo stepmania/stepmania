@@ -484,7 +484,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 
 				pos = endpos + 1;
 
-				BlacklistedImages.insert( sub );
+				BlacklistedImages.insert( sub.c_str() );
 			}
 		}
 		else

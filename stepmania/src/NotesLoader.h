@@ -2,6 +2,7 @@
 #define NOTES_LOADER_H
 
 #include "song.h"
+#include "RageUtil.h"
 #include <set>
 
 typedef int DanceNote;
@@ -25,11 +26,11 @@ class NotesLoader {
 protected:
 	virtual void GetApplicableFiles( CString sPath, CStringArray &out )=0;
 
-	set<CString> BlacklistedImages;
+	set<istring> BlacklistedImages;
 
 public:
 	virtual ~NotesLoader() { }
-	const set<CString> &GetBlacklistedImages() const { return BlacklistedImages; }
+	const set<istring> &GetBlacklistedImages() const { return BlacklistedImages; }
 	static void GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut );
 	virtual bool LoadFromDir( CString sPath, Song &out ) = 0;
 	bool Loadable( CString sPath );

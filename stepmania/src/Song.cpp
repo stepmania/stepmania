@@ -336,7 +336,7 @@ NotesLoader *Song::MakeLoader( CString sDir ) const
 
 /* Hack: This should be a parameter to TidyUpData, but I don't want to
  * pull in <set> into Song.h, which is heavily used. */
-static set<CString> BlacklistedImages;
+static set<istring> BlacklistedImages;
 
 bool Song::LoadWithoutCache( CString sDir )
 {
@@ -686,7 +686,7 @@ void Song::TidyUpData()
 	for( i=0; i<arrayImages.size(); i++ )	// foreach image
 	{
 		// ignore DWI "-char" graphics
-		if( BlacklistedImages.find( arrayImages[i] ) != BlacklistedImages.end() )
+		if( BlacklistedImages.find( arrayImages[i].c_str() ) != BlacklistedImages.end() )
 			continue;	// skip
 		
 		// Skip any image that we've already classified
