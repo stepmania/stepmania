@@ -6,6 +6,9 @@
 #include "RageException.h"
 #include "MsdFile.h"
 
+#include <map>
+using namespace std;
+
 void DWILoader::DWIcharToNote( char c, GameController i, DanceNote &note1Out, DanceNote &note2Out )
 {
 	switch( c )
@@ -84,7 +87,7 @@ bool DWILoader::LoadFromDWITokens(
 	}
 
 
-	CMap<int, int, int, int>  mapDanceNoteToNoteDataColumn;
+	std::map<int,int> mapDanceNoteToNoteDataColumn;
 	switch( out.m_NotesType )
 	{
 	case NOTES_TYPE_DANCE_SINGLE:
@@ -124,7 +127,7 @@ bool DWILoader::LoadFromDWITokens(
 
 	NoteData* pNoteData = new NoteData;
 	ASSERT( pNoteData );
-	pNoteData->m_iNumTracks = mapDanceNoteToNoteDataColumn.GetCount();
+	pNoteData->m_iNumTracks = mapDanceNoteToNoteDataColumn.size();
 
 	for( int pad=0; pad<2; pad++ )		// foreach pad
 	{
