@@ -112,7 +112,7 @@ Grade PlayerStageStats::GetGradeFromPercent( float fPercent )
 			break;
 		}
 	}
-	return g;
+	return grade;
 }
 
 Grade PlayerStageStats::GetGrade() const
