@@ -13,6 +13,7 @@
 
 #include "GhostArrow.h"
 #include "NoteSkinManager.h"
+#include "GameState.h"
 
 
 GhostArrow::GhostArrow()
@@ -28,7 +29,7 @@ void GhostArrow::Init( PlayerNumber pn )
 	{
 		CString sJudge = TapNoteScoreToString( (TapNoteScore)i );
 		CString sCommand = Capitalize(sJudge)+"Command";
-		m_sScoreCommand[i] = NOTESKIN->GetMetric(m_PlayerNumber,m_sName,sCommand);
+		m_sScoreCommand[i] = NOTESKIN->GetMetric(GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin,m_sName,sCommand);
 	}
 }
 

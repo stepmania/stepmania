@@ -160,44 +160,6 @@ CString NoteSkinManager::GetMetric( CString sNoteSkinName, CString sButtonName, 
 	return sReturn;
 }
 
-CString NoteSkinManager::GetMetric( PlayerNumber pn, CString sButtonName, CString sValue )	// looks in GAMESTATE for the current Style
-{
-	CString sNoteSkinName = GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin;
-	sNoteSkinName.MakeLower();
-	return GetMetric( sNoteSkinName, sButtonName, sValue );
-}
-
-int NoteSkinManager::GetMetricI( PlayerNumber pn, CString sButtonName, CString sValueName )
-{
-	return atoi( GetMetric(pn,sButtonName,sValueName) );
-}
-
-float NoteSkinManager::GetMetricF( PlayerNumber pn, CString sButtonName, CString sValueName )
-{
-	return (float)atof( GetMetric(pn,sButtonName,sValueName) );
-}
-
-bool NoteSkinManager::GetMetricB( PlayerNumber pn, CString sButtonName, CString sValueName )
-{
-	return atoi( GetMetric(pn,sButtonName,sValueName) ) != 0;
-}
-
-RageColor NoteSkinManager::GetMetricC( PlayerNumber pn, CString sButtonName, CString sValueName )
-{
-	float r=1,b=1,g=1,a=1;	// initialize in case sscanf fails
-	CString sValue = GetMetric(pn,sButtonName,sValueName);
-	char szValue[40];
-	strncpy( szValue, sValue, 39 );
-	int result = sscanf( szValue, "%f,%f,%f,%f", &r, &g, &b, &a );
-	if( result != 4 )
-	{
-		LOG->Warn( "The color value '%s' for theme metric '%s : %s' is invalid.", szValue, sButtonName.c_str(), sValueName.c_str() );
-		ASSERT(0);
-	}
-
-	return RageColor(r,g,b,a);
-}
-
 int NoteSkinManager::GetMetricI( CString sNoteSkinName, CString sButtonName, CString sValueName )
 {
 	return atoi( GetMetric(sNoteSkinName,sButtonName,sValueName) );

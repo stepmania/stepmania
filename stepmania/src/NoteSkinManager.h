@@ -35,12 +35,6 @@ public:
 	CString GetPathTo( PlayerNumber pn, CString sButtonName, CString sElement );
 	CString GetPathTo( CString sDir, CString sFileName );
 
-	CString		GetMetric( PlayerNumber pn, CString sButtonName, CString sValueName );
-	int			GetMetricI( PlayerNumber pn, CString sButtonName, CString sValueName );
-	float		GetMetricF( PlayerNumber pn, CString sButtonName, CString sValueName );
-	bool		GetMetricB( PlayerNumber pn, CString sButtonName, CString sValueName );
-	RageColor	GetMetricC( PlayerNumber pn, CString sButtonName, CString sValueName );
-
 	CString		GetMetric( CString sNoteSkinName, CString sButtonName, CString sValue );
 	int			GetMetricI( CString sNoteSkinName, CString sButtonName, CString sValueName );
 	float		GetMetricF( CString sNoteSkinName, CString sButtonName, CString sValueName );
