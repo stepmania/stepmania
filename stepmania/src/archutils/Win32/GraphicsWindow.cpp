@@ -35,9 +35,6 @@ CString GetNewWindow()
 
 	sName = Basename(sName);
 
-	if( h == GetShellWindow() )
-		sName += " (shell)";
-
 	return sName;
 }
 
