@@ -113,7 +113,7 @@ void ScreenPrompt::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenPrompt::MenuLeft( const PlayerNumber p )
+void ScreenPrompt::MenuLeft( PlayerNumber p )
 {
 	if( !m_bYesNoPrompt )
 		return;
@@ -121,7 +121,7 @@ void ScreenPrompt::MenuLeft( const PlayerNumber p )
 	MenuRight( p );
 }
 
-void ScreenPrompt::MenuRight( const PlayerNumber p )
+void ScreenPrompt::MenuRight( PlayerNumber p )
 {
 	if( !m_bYesNoPrompt )
 		return;
@@ -137,7 +137,7 @@ void ScreenPrompt::MenuRight( const PlayerNumber p )
 	SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","edit change line") );
 }
 
-void ScreenPrompt::MenuStart( const PlayerNumber p )
+void ScreenPrompt::MenuStart( PlayerNumber p )
 {
 	m_Fade.OpenWipingRight( SM_DoneOpeningWipingRight );
 
@@ -162,7 +162,7 @@ void ScreenPrompt::MenuStart( const PlayerNumber p )
 		m_pOnNo();
 }
 
-void ScreenPrompt::MenuBack( const PlayerNumber p )
+void ScreenPrompt::MenuBack( PlayerNumber p )
 {
 
 }

@@ -25,20 +25,33 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 
 const CString g_sStatisticsFileName = "statistics.ini";
 
-D3DXCOLOR GROUP_COLORS[] = { 
-//	D3DXCOLOR( 0.9f, 0.0f, 0.2f, 1 ),	// red
-	D3DXCOLOR( 0.8f, 0.1f, 0.6f, 1 ),	// pink
-	D3DXCOLOR( 0.5f, 0.3f, 0.7f, 1 ),	// purple
-	D3DXCOLOR( 0.0f, 0.4f, 0.8f, 1 ),	// sky blue
-	D3DXCOLOR( 0.0f, 0.6f, 0.6f, 1 ),	// sea green
-	D3DXCOLOR( 0.1f, 0.7f, 0.3f, 1 ),	// green
-	D3DXCOLOR( 0.8f, 0.6f, 0.0f, 1 ),	// orange
-};
-const int NUM_GROUP_COLORS = sizeof(GROUP_COLORS) / sizeof(D3DXCOLOR);
+#define GROUP_COLOR_1		THEME->GetMetricC("SongManager","GroupColor1")
+#define GROUP_COLOR_2		THEME->GetMetricC("SongManager","GroupColor2")
+#define GROUP_COLOR_3		THEME->GetMetricC("SongManager","GroupColor3")
+#define GROUP_COLOR_4		THEME->GetMetricC("SongManager","GroupColor4")
+#define GROUP_COLOR_5		THEME->GetMetricC("SongManager","GroupColor5")
+#define GROUP_COLOR_6		THEME->GetMetricC("SongManager","GroupColor6")
+#define GROUP_COLOR_7		THEME->GetMetricC("SongManager","GroupColor7")
+#define EXTRA_COLOR			THEME->GetMetricC("SongManager","GroupColor7")
+
+const int NUM_GROUP_COLORS = 7;
+D3DXCOLOR GROUP_COLORS[NUM_GROUP_COLORS];
+
+D3DXCOLOR g_ExtraColor;
 
 
 SongManager::SongManager( void(*callback)() )
 {
+	// Loading these theme metrics is slow, so only do it ever 20th time.
+	GROUP_COLORS[0] = GROUP_COLOR_1;
+	GROUP_COLORS[1] = GROUP_COLOR_2;
+	GROUP_COLORS[2] = GROUP_COLOR_3;
+	GROUP_COLORS[3] = GROUP_COLOR_4;
+	GROUP_COLORS[4] = GROUP_COLOR_5;
+	GROUP_COLORS[5] = GROUP_COLOR_6;
+	GROUP_COLORS[6] = GROUP_COLOR_7;
+	g_ExtraColor = EXTRA_COLOR;
+
 	InitSongArrayFromDisk( callback );
 	ReadStatisticsFromDisk();
 
@@ -362,6 +375,20 @@ D3DXCOLOR SongManager::GetGroupColor( const CString &sGroupName )
 
 	return GROUP_COLORS[i%NUM_GROUP_COLORS];
 }
+
+D3DXCOLOR SongManager::GetSongColor( Song* pSong )
+{
+	ASSERT( pSong );
+	for( int i=0; i<pSong->m_apNotes.GetSize(); i++ )
+	{
+		Notes* pNotes = pSong->m_apNotes[i];
+		if( pNotes->m_iMeter == 10 )
+			return EXTRA_COLOR;
+	}
+
+	return GetGroupColor( pSong->m_sGroupName );
+}
+
 
 void SongManager::GetSongsInGroup( const CString sGroupName, CArray<Song*, Song*> &AddTo )
 {

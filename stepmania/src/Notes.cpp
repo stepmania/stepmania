@@ -840,11 +840,15 @@ bool Notes::LoadFromKSFFile( const CString &sPath )
 	for( int r=0; r<asRows.GetSize(); r++ )
 	{
 		CString& sRowString = asRows[r];
-		ASSERT( sRowString.GetLength() == 13 );		// why 13 notes per row.  Beats me!
 		
+		if( sRowString == "" )
+			continue;	// skip
+
 		/* All 2s indicates the end of the song. */
 		if( sRowString == "2222222222222" )
 			break;
+
+		ASSERT( sRowString.GetLength() == 13 );		// why 13 notes per row.  Beats me!
 
 		// the length of a note in a row depends on TICKCOUNT
 		float fBeatThisRow = r/(float)iTickCount;

@@ -433,7 +433,7 @@ HRESULT RageDisplay::EndFrame()
 		m_iDrawsSinceLastCheck = 0;
 		m_fLastCheckTime = fTimeNow;
 
-		LOG->Trace( "FPS: %d, TPF: %d, DPF: %d", m_iFPS, m_iTPF, m_iDPF );
+		//LOG->Trace( "FPS: %d, TPF: %d, DPF: %d", m_iFPS, m_iTPF, m_iDPF );
 	}
 
 

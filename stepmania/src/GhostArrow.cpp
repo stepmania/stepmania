@@ -1,22 +1,38 @@
 #include "stdafx.h"
-//
-// GhostArrow.cpp: implementation of the GhostArrow class.
-//
-//////////////////////////////////////////////////////////////////////
+/*
+-----------------------------------------------------------------------------
+ Class: GhostArrow
+
+ Desc: See header.
+
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Ben Nordstrom
+	Chris Danford
+-----------------------------------------------------------------------------
+*/
 
 #include "GhostArrow.h"
 #include "PrefsManager.h"
 
-const float  GRAY_ARROW_TWEEN_TIME = 0.5f;
 
+#define POP_UP_SECONDS		THEME->GetMetricF("GhostArrow","PopUpSeconds")
+#define ZOOM_START			THEME->GetMetricF("GhostArrow","ZoomStart")
+#define ZOOM_END			THEME->GetMetricF("GhostArrow","ZoomEnd")
+#define COLOR_PERFECT		THEME->GetMetricC("GhostArrow","ColorPerfect")
+#define COLOR_GREAT			THEME->GetMetricC("GhostArrow","ColorGreat")
+#define COLOR_GOOD			THEME->GetMetricC("GhostArrow","ColorGood")
+#define COLOR_BOO			THEME->GetMetricC("GhostArrow","ColorBoo")
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
 GhostArrow::GhostArrow()
 {
-//	Load( THEME->GetPathTo(GRAPHIC_GHOST_ARROW) );
+	m_fPopUpSeconds = POP_UP_SECONDS;
+	m_fZoomStart = ZOOM_START;
+	m_fZoomEnd = ZOOM_END;
+	m_colorPerfect = COLOR_PERFECT;
+	m_colorGreat = COLOR_GREAT;
+	m_colorGood = COLOR_GOOD;
+	m_colorBoo = COLOR_BOO;
 	SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	TurnShadowOff();
 }
@@ -28,18 +44,24 @@ void GhostArrow::Update( float fDeltaTime )
 
 void GhostArrow::Step( TapNoteScore score )
 {
+	D3DXCOLOR color;
 	switch( score )
 	{
-	case TNS_PERFECT:	SetDiffuseColor( D3DXCOLOR(1.0f,1.0f,0.3f,1) );	break;	// yellow
-	case TNS_GREAT:		SetDiffuseColor( D3DXCOLOR(0.0f,1.0f,0.4f,1) );	break;	// green
-	case TNS_GOOD:		SetDiffuseColor( D3DXCOLOR(0.3f,0.8f,1.0f,1) );	break;
-	case TNS_BOO:		SetDiffuseColor( D3DXCOLOR(0.8f,0.0f,0.6f,1) );	break;
-	case TNS_MISS:		ASSERT( false );									break;
+	case TNS_PERFECT:	color = m_colorPerfect;	break;
+	case TNS_GREAT:		color = m_colorGreat;	break;
+	case TNS_GOOD:		color = m_colorGood;	break;
+	case TNS_BOO:		color = m_colorBoo;		break;
+	case TNS_MISS:		// miss should never be passed in here
+	default:
+		ASSERT(0);
 	}
-	SetZoom( 1.0f );
-	BeginTweening( 0.25f );
-	SetTweenZoom( 1.5f );
-	D3DXCOLOR colorTween = GetDiffuseColor();
-	colorTween.a = 0;
-	SetTweenDiffuseColor( colorTween );
+
+	StopTweening();
+	SetDiffuseColor( color );
+	SetState( 0 );
+	SetZoom( m_fZoomStart );
+	BeginTweening( m_fPopUpSeconds );
+	SetTweenZoom( m_fZoomEnd );
+	color.a = 0;
+	SetTweenDiffuseColor( color );
 }

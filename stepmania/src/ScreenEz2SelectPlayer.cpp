@@ -23,33 +23,52 @@ Andrew Livy
 
 /* Constants */
 
-const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
-const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User + 2);
-const ScreenMessage SM_PlayersChosen		=	ScreenMessage(SM_User + 3);
+const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User + 1);
+const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User + 2);
 
 
+#define CURSOR_P1_X				THEME->GetMetricF("ScreenEz2SelectPlayer","CursorP1X")
+#define CURSOR_P1_Y				THEME->GetMetricF("ScreenEz2SelectPlayer","CursorP1Y")
+#define CURSOR_P2_X				THEME->GetMetricF("ScreenEz2SelectPlayer","CursorP2X")
+#define CURSOR_P2_Y				THEME->GetMetricF("ScreenEz2SelectPlayer","CursorP2Y")
+#define CONTROLLER_P1_X			THEME->GetMetricF("ScreenEz2SelectPlayer","ControllerP1X")
+#define CONTROLLER_P1_Y			THEME->GetMetricF("ScreenEz2SelectPlayer","ControllerP1Y")
+#define CONTROLLER_P2_X			THEME->GetMetricF("ScreenEz2SelectPlayer","ControllerP2X")
+#define CONTROLLER_P2_Y			THEME->GetMetricF("ScreenEz2SelectPlayer","ControllerP2Y")
 #define HELP_TEXT				THEME->GetMetric("ScreenEz2SelectPlayer","HelpText")
 #define TIMER_SECONDS			THEME->GetMetricI("ScreenEz2SelectPlayer","TimerSeconds")
 #define NEXT_SCREEN				THEME->GetMetric("ScreenEz2SelectPlayer","NextScreen")
 
+float CURSOR_X( int p ) {
+	switch( p ) {
+		case PLAYER_1:	return CURSOR_P1_X;
+		case PLAYER_2:	return CURSOR_P2_X;
+		default:		ASSERT(0);	return 0;
+	}
+}
+float CURSOR_Y( int p ) {
+	switch( p ) {
+		case PLAYER_1:	return CURSOR_P1_Y;
+		case PLAYER_2:	return CURSOR_P2_Y;
+		default:		ASSERT(0);	return 0;
+	}
+}
+float CONTROLLER_X( int p ) {
+	switch( p ) {
+		case PLAYER_1:	return CONTROLLER_P1_X;
+		case PLAYER_2:	return CONTROLLER_P2_X;
+		default:		ASSERT(0);	return 0;
+	}
+}
+float CONTROLLER_Y( int p ) {
+	switch( p ) {
+		case PLAYER_1:	return CONTROLLER_P1_Y;
+		case PLAYER_2:	return CONTROLLER_P2_Y;
+		default:		ASSERT(0);	return 0;
+	}
+}
 
 const float TWEEN_TIME		= 0.35f;
-const D3DXCOLOR OPT_NOT_SELECTED = D3DXCOLOR(0.3f,0.3f,0.3f,1);
-const D3DXCOLOR OPT_SELECTED = D3DXCOLOR(1.0f,1.0f,1.0f,1);
-
-const float OPT_X[NUM_EZ2_GRAPHICS] = { 
-	CENTER_X+200, // This is the pad X
-	CENTER_X-200, // This is the pad X
-	CENTER_X-198, // This is the 1p X
-	CENTER_X+195, // This is the 2p X
-}; // tells us the default X position
-const float OPT_Y[NUM_EZ2_GRAPHICS] = {
-	CENTER_Y+130,
-	CENTER_Y+130,
-	CENTER_Y+115,
-	CENTER_Y+115,
-}; // tells us the default Y position
-
 
 
 /************************************
@@ -59,52 +78,39 @@ Desc: Sets up the screen display
 
 ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 {
-	LOG->Trace( "ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()" );
-	m_iSelectedStyle=0;
-	GAMESTATE->m_CurStyle = STYLE_NONE;
-	ez2_bounce=0.f;
-//	GAMESTATE->m_MasterPlayerNumber = PLAYER_INVALID;
+	// Unjoin the players, then let them join back in on this screen
+	GAMESTATE->m_bPlayersCanJoin = true;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		GAMESTATE->m_bSideIsJoined[p] = false;
 
-// Load in the sprites we will be working with.
-	for( int i=0; i<NUM_EZ2_GRAPHICS; i++ )
+	LOG->Trace( "ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()" );
+
+	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		CString sOptFileName;
-		switch( i )
-		{
-		case 0:	sOptFileName = "select difficulty hard picture";	break;
-		case 1:	sOptFileName = "select difficulty hard picture";	break;
-		case 2:	sOptFileName = "select difficulty medium picture";	break;
-		case 3:	sOptFileName = "select difficulty easy picture";	break;
-		}
-		m_sprOpt[i].Load( THEME->GetPathTo("Graphics",sOptFileName) );
-		m_sprOpt[i].SetXY( OPT_X[i], OPT_Y[i] );
-		this->AddSubActor( &m_sprOpt[i] );
+		m_sprControllers[p].Load( THEME->GetPathTo("Graphics","select player controller") );
+		m_sprControllers[p].SetXY( CONTROLLER_X(p), CONTROLLER_Y(p) );
+		this->AddSubActor( &m_sprControllers[p] );
+
+		m_sprCursors[p].Load( THEME->GetPathTo("Graphics",ssprintf("select player cursor p%d",p+1)) );
+		m_sprCursors[p].SetXY( CURSOR_X(p), CURSOR_Y(p) );
+		m_sprCursors[p].SetEffectBouncing( D3DXVECTOR3(0,10,0), 0.5f );
+		this->AddSubActor( &m_sprCursors[p] );
 	}
 
-
 	m_Menu.Load( 	
-		THEME->GetPathTo("Graphics","select style background"), 
-		THEME->GetPathTo("Graphics","select style top edge"),
+		THEME->GetPathTo("Graphics","select player background"), 
+		THEME->GetPathTo("Graphics","select player top edge"),
 		HELP_TEXT, true, TIMER_SECONDS
 		);
 	this->AddSubActor( &m_Menu );
 
-	m_soundChange.Load( THEME->GetPathTo("Sounds","select style change") );
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
-	m_soundInvalid.Load( THEME->GetPathTo("Sounds","menu invalid") );
 
-	/* Chris:  If EZ2 doesn't use this sound, make a theme that overrides is with a silent sound file */
-	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_STYLE_INTRO) );
-
+	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select player intro") );
 
 	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select player music") );
 
-//	GAMESTATE->m_bPlayersCanJoin = true;
-//	GAMESTATE->m_bIsJoined[PLAYER_1] = false;
-//	GAMESTATE->m_bIsJoined[PLAYER_2] = false;
-
-//	AfterChange();
-//	TweenOnScreen();
+	TweenOnScreen();
 	m_Menu.TweenOnScreenFromBlack( SM_None );
 }
 
@@ -125,15 +131,6 @@ Desc: Animates the 1p/2p selection
 void ScreenEz2SelectPlayer::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
-
-	fDeltaTime /= .01f;
-
-	ez2_bounce = fmodf((ez2_bounce+fDeltaTime), 20);
-
-	/* 0..10..19 -> 10..0..9 */
-	int offset = roundf( fabsf(10-ez2_bounce) );
-	m_sprOpt[2].SetXY( OPT_X[2], OPT_Y[2] - offset);
-	m_sprOpt[3].SetXY( OPT_X[3], OPT_Y[3] - offset);
 }
 
 /************************************
@@ -174,46 +171,27 @@ void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_MenuTimer:
-		/* If a player has already chosen, then he chose within the last second
-		 * of the menu timer; just stop and let it come through as if the menu
-		 * timer didn't expire. */
-		if(!m_iSelectedStyle)
-			MenuStart(PLAYER_1);
-		break;
-	case SM_PlayersChosen:
-		if (m_iSelectedStyle & EZ2_PLAYER_1) 
 		{
-			if (m_iSelectedStyle & EZ2_PLAYER_2) 
+			bool bAtLeastOneJoined = false;
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( GAMESTATE->m_bSideIsJoined[p] )
+					bAtLeastOneJoined = true;
+
+			if( !bAtLeastOneJoined )
 			{
-				// they both selected
-//				GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-//				GAMESTATE->m_bIsJoined[PLAYER_1] = true;
-				GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;
-			} else {
-				// only the left pad was selected
-//				GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-				GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE;
-//				GAMESTATE->m_bIsJoined[PLAYER_2] = true;
+				MenuStart(PLAYER_1);
+				m_Menu.StopTimer();
 			}
+	
+			TweenOffScreen();
+			m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
 		}
-		else if (m_iSelectedStyle & EZ2_PLAYER_2)  {
-			// only the right pad was selected
-//			GAMESTATE->m_MasterPlayerNumber = PLAYER_2;
-			GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE;
-//			GAMESTATE->m_bIsJoined[PLAYER_2] = true;
-		} else ASSERT(0);
-
-		MUSIC->Stop();
-		
-		m_Menu.TweenOffScreenToMenu( SM_GoToNextState );
-
 		break;
-
-	case SM_GoToPrevState:
+	case SM_GoToPrevScreen:
 		MUSIC->Stop();
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
-	case SM_GoToNextState:
+	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	}
@@ -226,15 +204,11 @@ Desc: Actions performed when a player
 presses the button bound to back
 ************************************/
 
-void ScreenEz2SelectPlayer::MenuBack( const PlayerNumber p )
+void ScreenEz2SelectPlayer::MenuBack( PlayerNumber p )
 {
 	MUSIC->Stop();
 
-	m_Menu.TweenOffScreenToBlack( SM_GoToPrevState, true );
-
-//	m_Fade.CloseWipingLeft( SM_GoToPrevState );
-
-//	TweenOffScreen();
+	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
 }
 
 
@@ -255,51 +229,64 @@ presses the button bound to start
 ************************************/
 void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
 {
-	int this_player_bit = (p == PLAYER_1)? EZ2_PLAYER_1:EZ2_PLAYER_2;
+	if( GAMESTATE->m_bSideIsJoined[p] )	// already joined
+		return;	// ignore
 
-	// disallow multiple presses of the menu start.
-	if ( m_iSelectedStyle & this_player_bit )
-		return;
-	
-	// figure out whether we should add a player into the fray or not
-//	if(	GAMESTATE->m_MasterPlayerNumber != PLAYER_2 && GAMESTATE->m_MasterPlayerNumber != PLAYER_1 )
-	if (m_iSelectedStyle == 0)
+	GAMESTATE->m_bSideIsJoined[p] = true;
+	SCREENMAN->RefreshCreditsMessages();
+	m_soundSelect.PlayRandom();
+	m_sprCursors[p].BeginTweening( 0.25f );
+	m_sprCursors[p].SetTweenZoomY( 0 );
+	m_sprControllers[p].BeginTweening( 0.25f );
+	m_sprControllers[p].SetTweenZoomY( 0 );
+
+	bool bBothSidesJoined = true;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		if( !GAMESTATE->m_bSideIsJoined[p] )
+			bBothSidesJoined = false;
+
+	if( bBothSidesJoined )
 	{
-//		GAMESTATE->m_MasterPlayerNumber = p;
-
-		m_iSelectedStyle |= this_player_bit;
-
-		// wait for a bit in case another player wants to join before moving on.
-		SCREENMAN->SendMessageToTopScreen( SM_PlayersChosen, 1.f );
+		TweenOffScreen();
+		m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
 	}
 	else
 	{
-		m_iSelectedStyle |= this_player_bit;
+		// give the other player a little time to join
+		m_Menu.SetTimer( 5 );
+		m_Menu.StartTimer();
 	}
-
-	m_soundSelect.PlayRandom();
-	TweenOffScreen();
 }
 
-/************************************
-TweenOffScreen
-Desc: Squashes graphics before the screen
-changes state.
-************************************/
+void ScreenEz2SelectPlayer::TweenOnScreen()
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		float fOffScreenOffset = float( (p==PLAYER_1) ? -SCREEN_WIDTH/2 : +SCREEN_WIDTH/2 );
+
+		float fOriginalX;
+		
+		fOriginalX = m_sprCursors[p].GetX();
+		m_sprCursors[p].SetX( m_sprCursors[p].GetX()+fOffScreenOffset );
+		m_sprCursors[p].BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
+		m_sprCursors[p].SetTweenX( fOriginalX );
+
+		fOriginalX = m_sprControllers[p].GetX();
+		m_sprControllers[p].SetX( m_sprCursors[p].GetX()+fOffScreenOffset );
+		m_sprControllers[p].BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
+		m_sprControllers[p].SetTweenX( fOriginalX );
+	}
+}
+
 void ScreenEz2SelectPlayer::TweenOffScreen()
 {
-	if (m_iSelectedStyle & EZ2_PLAYER_1)
-	{	
-		m_sprOpt[1].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_sprOpt[1].SetTweenZoomY( 0 );
-		m_sprOpt[2].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_sprOpt[2].SetTweenZoomY( 0 );
-	}
-	if (m_iSelectedStyle & EZ2_PLAYER_2)
-	{	
-		m_sprOpt[0].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_sprOpt[0].SetTweenZoomY( 0 );
-		m_sprOpt[3].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_sprOpt[3].SetTweenZoomY( 0 );
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		float fOffScreenOffset = float( (p==PLAYER_1) ? -SCREEN_WIDTH : +SCREEN_WIDTH );
+
+		m_sprCursors[p].BeginTweening( 0.5f, Actor::TWEEN_BIAS_END );
+		m_sprCursors[p].SetTweenX( m_sprCursors[p].GetX()+fOffScreenOffset );
+		m_sprControllers[p].BeginTweening( 0.5f, Actor::TWEEN_BIAS_END );
+		m_sprControllers[p].SetTweenX( m_sprCursors[p].GetX()+fOffScreenOffset );
 	}
 }

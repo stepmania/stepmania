@@ -65,8 +65,8 @@ float BEST_TIME_Y( int p ) {
 
 const float TWEEN_TIME		= 0.5f;
 
-const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User+1);
-const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User+2);
+const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User+1);
+const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+2);
 
 
 
@@ -137,7 +137,7 @@ ScreenSelectCourse::ScreenSelectCourse()
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 	m_soundChangeNotes.Load( THEME->GetPathTo("Sounds","select music change notes") );
 
-	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_COURSE_INTRO) );
+	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select course intro") );
 
 	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select course music") );
 
@@ -251,10 +251,10 @@ void ScreenSelectCourse::HandleScreenMessage( const ScreenMessage SM )
 	case SM_MenuTimer:
 		MenuStart(PLAYER_1);
 		break;
-	case SM_GoToPrevState:
+	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
-	case SM_GoToNextState:
+	case SM_GoToNextScreen:
 
 		// find out if the Next button is being held down on any of the pads
 		bool bIsHoldingNext;
@@ -276,7 +276,7 @@ void ScreenSelectCourse::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenSelectCourse::MenuLeft( const PlayerNumber p, const InputEventType type )
+void ScreenSelectCourse::MenuLeft( PlayerNumber p, const InputEventType type )
 {
 	m_MusicWheel.PrevMusic();
 	
@@ -284,14 +284,14 @@ void ScreenSelectCourse::MenuLeft( const PlayerNumber p, const InputEventType ty
 }
 
 
-void ScreenSelectCourse::MenuRight( const PlayerNumber p, const InputEventType type )
+void ScreenSelectCourse::MenuRight( PlayerNumber p, const InputEventType type )
 {
 	m_MusicWheel.NextMusic();
 
 	AfterCourseChange();
 }
 
-void ScreenSelectCourse::MenuStart( const PlayerNumber p )
+void ScreenSelectCourse::MenuStart( PlayerNumber p )
 {
 	// this needs to check whether valid Notes are selected!
 	m_MusicWheel.Select();
@@ -299,7 +299,7 @@ void ScreenSelectCourse::MenuStart( const PlayerNumber p )
 	switch( m_MusicWheel.GetSelectedType() )
 	{
 	case TYPE_COURSE:
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_MUSIC_COMMENT_GENERAL) );
+		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select course comment general") );
 	
 		TweenOffScreen();
 
@@ -327,18 +327,18 @@ void ScreenSelectCourse::MenuStart( const PlayerNumber p )
 
 		m_Menu.StopTimer();
 
-		this->SendScreenMessage( SM_GoToNextState, 2.5f );
+		this->SendScreenMessage( SM_GoToNextScreen, 2.5f );
 		
 		break;
 	}
 }
 
 
-void ScreenSelectCourse::MenuBack( const PlayerNumber p )
+void ScreenSelectCourse::MenuBack( PlayerNumber p )
 {
 	MUSIC->Stop();
 
-	m_Menu.TweenOffScreenToBlack( SM_GoToPrevState, true );
+	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
 }
 
 

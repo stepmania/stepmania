@@ -511,7 +511,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 						sLastSection = sThisSection;
 					}
 
-					arrayWheelItemDatas.Add( WheelItemData( TYPE_SONG, pSong, sThisSection, NULL, SONGMAN->GetGroupColor(pSong->m_sGroupName)) );
+					arrayWheelItemDatas.Add( WheelItemData( TYPE_SONG, pSong, sThisSection, NULL, SONGMAN->GetSongColor(pSong)) );
 				}
 			}
 			else
@@ -521,7 +521,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 					Song* pSong = arraySongs[i];
 					if( GAMESTATE->m_sPreferredGroup != "ALL MUSIC"  &&  pSong->m_sGroupName != GAMESTATE->m_sPreferredGroup )
 						continue;	// skip
-					arrayWheelItemDatas.Add( WheelItemData(TYPE_SONG, pSong, "", NULL, SONGMAN->GetGroupColor(pSong->m_sGroupName)) );
+					arrayWheelItemDatas.Add( WheelItemData(TYPE_SONG, pSong, "", NULL, SONGMAN->GetSongColor(pSong)) );
 				}
 			}
 		}

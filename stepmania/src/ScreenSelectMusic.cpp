@@ -124,8 +124,8 @@ float PLAYER_OPTIONS_Y( int p ) {
 	}
 }
 
-const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User+1);
-const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User+2);
+const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User+1);
+const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+2);
 
 
 
@@ -261,7 +261,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_soundChangeNotes.Load( THEME->GetPathTo("Sounds","select music change notes") );
 	m_soundLocked.Load( THEME->GetPathTo("Sounds","select music wheel locked") );
 
-	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_MUSIC_INTRO) );
+	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select music intro") );
 
 	m_bMadeChoice = false;
 	m_bGoToOptions = false;
@@ -505,7 +505,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType 
 }
 
 
-void ScreenSelectMusic::EasierDifficulty( const PlayerNumber p )
+void ScreenSelectMusic::EasierDifficulty( PlayerNumber p )
 {
 	LOG->Trace( "ScreenSelectMusic::EasierDifficulty( %d )", p );
 
@@ -525,7 +525,7 @@ void ScreenSelectMusic::EasierDifficulty( const PlayerNumber p )
 	AfterNotesChange( p );
 }
 
-void ScreenSelectMusic::HarderDifficulty( const PlayerNumber p )
+void ScreenSelectMusic::HarderDifficulty( PlayerNumber p )
 {
 	LOG->Trace( "ScreenSelectMusic::HarderDifficulty( %d )", p );
 
@@ -568,10 +568,10 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			MenuStart(PLAYER_INVALID);
 		}
 		break;
-	case SM_GoToPrevState:
+	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
-	case SM_GoToNextState:
+	case SM_GoToNextScreen:
 		if( m_bGoToOptions )
 		{
 			SCREENMAN->SetNewScreen( "ScreenPlayerOptions" );
@@ -594,7 +594,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenSelectMusic::MenuLeft( const PlayerNumber p, const InputEventType type )
+void ScreenSelectMusic::MenuLeft( PlayerNumber p, const InputEventType type )
 {
 	if( type >= IET_SLOW_REPEAT  &&  INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_RIGHT) ) )
 			return;		// ignore
@@ -606,7 +606,7 @@ void ScreenSelectMusic::MenuLeft( const PlayerNumber p, const InputEventType typ
 }
 
 
-void ScreenSelectMusic::MenuRight( const PlayerNumber p, const InputEventType type )
+void ScreenSelectMusic::MenuRight( PlayerNumber p, const InputEventType type )
 {
 	if( type >= IET_SLOW_REPEAT  &&  INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_LEFT) ) )
 		return;		// ignore
@@ -617,7 +617,7 @@ void ScreenSelectMusic::MenuRight( const PlayerNumber p, const InputEventType ty
 	m_MusicWheel.NextMusic();
 }
 
-void ScreenSelectMusic::MenuStart( const PlayerNumber p )
+void ScreenSelectMusic::MenuStart( PlayerNumber p )
 {
 	if( p != PLAYER_INVALID  &&
 		INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_LEFT) )  &&
@@ -674,11 +674,11 @@ void ScreenSelectMusic::MenuStart( const PlayerNumber p )
 				}
 
 				if( bIsNew )
-					SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_MUSIC_COMMENT_NEW) );
+					SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select music comment new") );
 				else if( bIsHard )
-					SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_MUSIC_COMMENT_HARD) );
+					SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select music comment hard") );
 				else
-					SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_MUSIC_COMMENT_GENERAL) );
+					SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select music comment general") );
 
 
 				TweenOffScreen();
@@ -704,7 +704,7 @@ void ScreenSelectMusic::MenuStart( const PlayerNumber p )
 
 				m_Menu.StopTimer();
 
-				this->SendScreenMessage( SM_GoToNextState, 2.5f );
+				this->SendScreenMessage( SM_GoToNextScreen, 2.5f );
 			}
 			break;
 		case TYPE_SECTION:
@@ -719,14 +719,14 @@ void ScreenSelectMusic::MenuStart( const PlayerNumber p )
 }
 
 
-void ScreenSelectMusic::MenuBack( const PlayerNumber p )
+void ScreenSelectMusic::MenuBack( PlayerNumber p )
 {
 	MUSIC->Stop();
 
-	m_Menu.TweenOffScreenToBlack( SM_GoToPrevState, true );
+	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
 }
 
-void ScreenSelectMusic::AfterNotesChange( const PlayerNumber p )
+void ScreenSelectMusic::AfterNotesChange( PlayerNumber p )
 {
 	if( !GAMESTATE->IsPlayerEnabled(p) )
 		return;

@@ -31,8 +31,8 @@ const CString EXPLANATION_TEXT	=
 	"In this mode, you can edit existing notes patterns,\n"
 	"create note patterns, or synchronize notes with the music.";
 
-const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User+1);
-const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User+2);
+const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User+1);
+const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+2);
 
 
 ScreenEditMenu::ScreenEditMenu()
@@ -44,8 +44,8 @@ ScreenEditMenu::ScreenEditMenu()
 	this->AddSubActor( &Selector );
 
 	m_Menu.Load( 
-		THEME->GetPathTo("Graphics","edit background"), 
-		THEME->GetPathTo("Graphics","edit top edge"),
+		THEME->GetPathTo("Graphics","edit menu background"), 
+		THEME->GetPathTo("Graphics","edit menu top edge"),
 		ssprintf("%c %c change line    %c %c change value    START to continue", char(3), char(4), char(1), char(2) ),
 		false, 99 
 		);
@@ -92,10 +92,10 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
-	case SM_GoToPrevState:
+	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
-	case SM_GoToNextState:
+	case SM_GoToNextScreen:
 		// set the current style based on the notes type
 
 		// Dro Kulix:
@@ -116,27 +116,27 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 	
-void ScreenEditMenu::MenuUp( const PlayerNumber p )
+void ScreenEditMenu::MenuUp( PlayerNumber p )
 {
 	Selector.Up();
 }
 
-void ScreenEditMenu::MenuDown( const PlayerNumber p )
+void ScreenEditMenu::MenuDown( PlayerNumber p )
 {
 	Selector.Down();
 }
 
-void ScreenEditMenu::MenuLeft( const PlayerNumber p, const InputEventType type )
+void ScreenEditMenu::MenuLeft( PlayerNumber p, const InputEventType type )
 {
 	Selector.Left();
 }
 
-void ScreenEditMenu::MenuRight( const PlayerNumber p, const InputEventType type )
+void ScreenEditMenu::MenuRight( PlayerNumber p, const InputEventType type )
 {
 	Selector.Right();
 }
 
-void ScreenEditMenu::MenuStart( const PlayerNumber p )
+void ScreenEditMenu::MenuStart( PlayerNumber p )
 {
 	MUSIC->Stop();
 
@@ -151,14 +151,14 @@ void ScreenEditMenu::MenuStart( const PlayerNumber p )
 
 	m_Menu.TweenOffScreenToBlack( SM_None, false  );
 
-	m_Fade.CloseWipingRight( SM_GoToNextState );
+	m_Fade.CloseWipingRight( SM_GoToNextScreen );
 }
 
-void ScreenEditMenu::MenuBack( const PlayerNumber p )
+void ScreenEditMenu::MenuBack( PlayerNumber p )
 {	
 	m_Menu.TweenOffScreenToBlack( SM_None, true );
 
 	MUSIC->Stop();
 
-	m_Fade.CloseWipingLeft( SM_GoToPrevState );
+	m_Fade.CloseWipingLeft( SM_GoToPrevScreen );
 }

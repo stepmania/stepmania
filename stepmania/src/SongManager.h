@@ -37,6 +37,7 @@ public:
 	CString GetGroupBannerPath( CString sGroupName );
 	void GetGroupNames( CStringArray &AddTo );
 	D3DXCOLOR GetGroupColor( const CString &sGroupName );
+	D3DXCOLOR GetSongColor( Song* pSong );
 
 	static CString ShortenGroupName( const CString &sOrigGroupName );
 

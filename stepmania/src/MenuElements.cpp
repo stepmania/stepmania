@@ -71,7 +71,10 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	if( GAMESTATE->m_CurStyle == STYLE_NONE )
 		m_sprStyleIcon.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	else
-		m_sprStyleIcon.SetState( GAMESTATE->m_CurStyle*2+GAMESTATE->m_MasterPlayerNumber );
+	{
+		int iRowNum = GetStyleIndexRelativeToGame( GAMESTATE->m_CurGame, GAMESTATE->m_CurStyle );
+		m_sprStyleIcon.SetState( iRowNum*2+GAMESTATE->m_MasterPlayerNumber );
+	}
 
 	m_MenuTimer.SetXY( TIMER_X, TIMER_Y );
 	if( !bTimerEnabled  ||  !PREFSMAN->m_bMenuTimer )
@@ -227,14 +230,19 @@ void MenuElements::DrawBottomLayer()
 	EndDraw();
 }
 
-void MenuElements::StopTimer()
-{
-	m_MenuTimer.StopTimer();
-}
-
 void MenuElements::SetTimer( int iTimerSeconds )
 {
 	m_MenuTimer.SetTimer( iTimerSeconds );
+}
+
+void MenuElements::StartTimer()
+{
+	m_MenuTimer.StartTimer();
+}
+
+void MenuElements::StopTimer()
+{
+	m_MenuTimer.StopTimer();
 }
 
 void MenuElements::StallTimer()

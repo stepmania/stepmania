@@ -41,8 +41,8 @@
 #define NEXT_SCREEN_ONI		THEME->GetMetric("ScreenSelectGroup","NextScreenOni")
 
 
-const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
-const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User + 2);
+const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User + 1);
+const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User + 2);
 const ScreenMessage SM_StartFadingOut		=	ScreenMessage(SM_User + 3);
 
 
@@ -160,7 +160,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 	m_soundChange.Load( THEME->GetPathTo("Sounds","select group change") );
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 
-	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_GROUP_INTRO) );
+	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select group intro") );
 
 	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select group music") );
 
@@ -202,10 +202,10 @@ void ScreenSelectGroup::HandleScreenMessage( const ScreenMessage SM )
 	case SM_MenuTimer:
 		MenuStart(PLAYER_1);
 		break;
-	case SM_GoToPrevState:
+	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
-	case SM_GoToNextState:
+	case SM_GoToNextScreen:
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:
@@ -220,7 +220,7 @@ void ScreenSelectGroup::HandleScreenMessage( const ScreenMessage SM )
 		}
 		break;
 	case SM_StartFadingOut:
-		m_Menu.TweenOffScreenToMenu( SM_GoToNextState );
+		m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
 		break;
 	}
 }
@@ -247,17 +247,17 @@ void ScreenSelectGroup::AfterChange()
 }
 
 
-void ScreenSelectGroup::MenuLeft( const PlayerNumber p )
+void ScreenSelectGroup::MenuLeft( PlayerNumber p )
 {
 	MenuUp( p );
 }
 
-void ScreenSelectGroup::MenuRight( const PlayerNumber p )
+void ScreenSelectGroup::MenuRight( PlayerNumber p )
 {
 	MenuDown( p );
 }
 
-void ScreenSelectGroup::MenuUp( const PlayerNumber p )
+void ScreenSelectGroup::MenuUp( PlayerNumber p )
 {
 	if( m_bChosen )
 		return;
@@ -270,7 +270,7 @@ void ScreenSelectGroup::MenuUp( const PlayerNumber p )
 }
 
 
-void ScreenSelectGroup::MenuDown( const PlayerNumber p )
+void ScreenSelectGroup::MenuDown( PlayerNumber p )
 {
 	if( m_bChosen )
 		return;
@@ -282,7 +282,7 @@ void ScreenSelectGroup::MenuDown( const PlayerNumber p )
 	m_soundChange.PlayRandom();
 }
 
-void ScreenSelectGroup::MenuStart( const PlayerNumber p )
+void ScreenSelectGroup::MenuStart( PlayerNumber p )
 {
 	m_soundSelect.PlayRandom();
 	m_bChosen = true;
@@ -291,9 +291,9 @@ void ScreenSelectGroup::MenuStart( const PlayerNumber p )
 	GAMESTATE->m_sPreferredGroup = m_GroupList.GetSelectionName();
 
 	if( 0 == stricmp(GAMESTATE->m_sPreferredGroup, "All Music") )
-        SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_GROUP_COMMENT_ALL_MUSIC) );
+        SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select group comment all music") );
 	else
-        SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_GROUP_COMMENT_GENERAL) );
+        SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select group comment general") );
 
 
 	TweenOffScreen();
@@ -302,9 +302,9 @@ void ScreenSelectGroup::MenuStart( const PlayerNumber p )
 	this->SendScreenMessage( SM_StartFadingOut, 0.8f );
 }
 
-void ScreenSelectGroup::MenuBack( const PlayerNumber p )
+void ScreenSelectGroup::MenuBack( PlayerNumber p )
 {
-	m_Menu.TweenOffScreenToBlack( SM_GoToPrevState, true );
+	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
 }
 
 void ScreenSelectGroup::TweenOffScreen()

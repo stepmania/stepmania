@@ -33,8 +33,8 @@ a polish :)
 #define NEXT_SCREEN				THEME->GetMetric("ScreenEz2SelectStyle","NextScreen")
 
 
-const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
-const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User + 2);
+const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User + 1);
+const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User + 2);
 
 
 enum DStyles {
@@ -164,13 +164,13 @@ void ScreenEz2SelectStyle::HandleScreenMessage( const ScreenMessage SM )
 	case SM_MenuTimer:
 		m_soundSelect.PlayRandom();
 		GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
-		this->SendScreenMessage( SM_GoToNextState, 0 );
+		this->SendScreenMessage( SM_GoToNextScreen, 0 );
 		break;
-	case SM_GoToPrevState:
+	case SM_GoToPrevScreen:
 		MUSIC->Stop();
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
-	case SM_GoToNextState:
+	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	}
@@ -183,14 +183,14 @@ Desc: Actions performed when a player
 presses the button bound to back
 ************************************/
 
-void ScreenEz2SelectStyle::MenuBack( const PlayerNumber p )
+void ScreenEz2SelectStyle::MenuBack( PlayerNumber p )
 {
 	MUSIC->Stop();
 
-	m_Menu.TweenOffScreenToBlack( SM_GoToPrevState, true );
+	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
 	GAMESTATE->m_CurStyle = STYLE_NONE; // Make sure that both players can scroll around title menu...
 
-//	m_Fade.CloseWipingLeft( SM_GoToPrevState );
+//	m_Fade.CloseWipingLeft( SM_GoToPrevScreen );
 
 //	TweenOffScreen();
 }
@@ -201,7 +201,7 @@ Desc: Actions performed when a player
 presses the button bound to down
 ************************************/
 
-void ScreenEz2SelectStyle::MenuDown( const PlayerNumber p )
+void ScreenEz2SelectStyle::MenuDown( PlayerNumber p )
 {
 	MenuStart(p);
 }
@@ -282,7 +282,16 @@ void ScreenEz2SelectStyle::MenuStart( PlayerNumber p )
 	this->ClearMessageQueue();
 	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
 //	GAMESTATE->m_bPlayersCanJoin = false;
-	m_Menu.TweenOffScreenToMenu( SM_GoToNextState );
+
+	CString sCurStyleName = GAMESTATE->GetCurrentStyleDef()->m_szName;
+	if(	     0==stricmp(sCurStyleName,"single") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment single") );
+	else if( 0==stricmp(sCurStyleName,"versus") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment versus") );
+	else if( 0==stricmp(sCurStyleName,"double") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment double") );
+	else if( 0==stricmp(sCurStyleName,"couple") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment couple") );
+	else if( 0==stricmp(sCurStyleName,"solo") )		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment solo") );
+
+
+	m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
 }
 
 /************************************

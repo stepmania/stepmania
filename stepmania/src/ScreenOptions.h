@@ -60,16 +60,16 @@ protected:
 	void TweenHighlight( PlayerNumber player_no );
 	virtual void OnChange();
 
-	void MenuBack( const PlayerNumber p );
-	void MenuStart( const PlayerNumber p );
+	void MenuBack( PlayerNumber p );
+	void MenuStart( PlayerNumber p );
 
 	virtual void GoToNextState() = 0;
 	virtual void GoToPrevState() = 0;
 
-	void MenuLeft( const PlayerNumber p );
-	void MenuRight( const PlayerNumber p );
-	void MenuUp( const PlayerNumber p );
-	void MenuDown( const PlayerNumber p );
+	void MenuLeft( PlayerNumber p );
+	void MenuRight( PlayerNumber p );
+	void MenuUp( PlayerNumber p );
+	void MenuDown( PlayerNumber p );
 
 	InputMode		m_InputMode;
 

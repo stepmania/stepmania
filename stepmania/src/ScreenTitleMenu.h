@@ -42,10 +42,10 @@ public:
 private:
 	void GainFocus( int iChoiceIndex );
 	void LoseFocus( int iChoiceIndex );
-	void MenuUp( const PlayerNumber p );
-	void MenuDown( const PlayerNumber p );
-	void MenuBack( const PlayerNumber p );
-	void MenuStart( const PlayerNumber p );
+	void MenuUp( PlayerNumber p );
+	void MenuDown( PlayerNumber p );
+	void MenuBack( PlayerNumber p );
+	void MenuStart( PlayerNumber p );
 
 	TitleMenuChoice m_TitleMenuChoice;
 

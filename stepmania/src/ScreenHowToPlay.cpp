@@ -26,7 +26,7 @@
 #define NEXT_SCREEN_ONI			THEME->GetMetric("ScreenHowToPlay","NextScreenOni")
 
 
-const ScreenMessage SM_GoToNextState	=	ScreenMessage(SM_User + 1);
+const ScreenMessage SM_GoToNextScreen	=	ScreenMessage(SM_User + 1);
 
 
 ScreenHowToPlay::ScreenHowToPlay()
@@ -102,7 +102,7 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 	case SM_MenuTimer:
 		this->MenuStart(PLAYER_1);
 		break;
-	case SM_GoToNextState:
+	case SM_GoToNextScreen:
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:
@@ -119,13 +119,13 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenHowToPlay::MenuBack( const PlayerNumber p )
+void ScreenHowToPlay::MenuBack( PlayerNumber p )
 {
 }
 
-void ScreenHowToPlay::MenuStart( const PlayerNumber p )
+void ScreenHowToPlay::MenuStart( PlayerNumber p )
 {
-	m_Menu.TweenOffScreenToMenu( SM_GoToNextState );
+	m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
 
 	m_sprHowToPlay.BeginTweening( 0.3f, Actor::TWEEN_BIAS_END );
 	m_sprHowToPlay.SetTweenX( SCREEN_RIGHT+m_sprHowToPlay.GetUnzoomedWidth()/2 );

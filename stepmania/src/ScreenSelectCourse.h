@@ -34,10 +34,10 @@ public:
 	void TweenOnScreen();
 	void TweenOffScreen();
 
-	void MenuLeft( const PlayerNumber p, const InputEventType type );
-	void MenuRight( const PlayerNumber p, const InputEventType type );
-	void MenuStart( const PlayerNumber p );
-	void MenuBack( const PlayerNumber p );
+	void MenuLeft( PlayerNumber p, const InputEventType type );
+	void MenuRight( PlayerNumber p, const InputEventType type );
+	void MenuStart( PlayerNumber p );
+	void MenuBack( PlayerNumber p );
 
 protected:
 	void AfterCourseChange();

@@ -23,7 +23,7 @@
 
 
 const ScreenMessage SM_StartFadingOut	=	ScreenMessage(SM_User + 1);
-const ScreenMessage SM_GoToNextState	=	ScreenMessage(SM_User + 2);
+const ScreenMessage SM_GoToNextScreen	=	ScreenMessage(SM_User + 2);
 const ScreenMessage SM_PlayAnnouncer	=	ScreenMessage(SM_User + 3);
 
 
@@ -60,15 +60,15 @@ void ScreenGameOver::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_PlayAnnouncer:
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_GAME_OVER) );
+		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("game over") );
 		break;
 	case SM_StartFadingOut:
 		m_bClosing = true;
 		m_sprGameOver.BeginTweening( 0.8f );
 		m_sprGameOver.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
-		this->SendScreenMessage( SM_GoToNextState, 0.8f );
+		this->SendScreenMessage( SM_GoToNextScreen, 0.8f );
 		break;
-	case SM_GoToNextState:
+	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	}

@@ -21,7 +21,7 @@
 #define NEXT_SCREEN				THEME->GetMetric("ScreenCaution","NextScreen")
 
 
-const ScreenMessage SM_GoToPrevState	= ScreenMessage(SM_User-6);
+const ScreenMessage SM_GoToPrevScreen	= ScreenMessage(SM_User-6);
 const ScreenMessage SM_DoneOpening		= ScreenMessage(SM_User-7);
 const ScreenMessage SM_StartClosing		= ScreenMessage(SM_User-8);
 const ScreenMessage SM_GoToNextScreen	= ScreenMessage(SM_User-9);
@@ -65,9 +65,9 @@ void ScreenCaution::HandleScreenMessage( const ScreenMessage SM )
 			m_Wipe.CloseWipingRight( SM_GoToNextScreen );
 		break;
 	case SM_DoneOpening:
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_CAUTION) );
+		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("caution") );
 		break;
-	case SM_GoToPrevState:
+	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	case SM_GoToNextScreen:
@@ -76,7 +76,7 @@ void ScreenCaution::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenCaution::MenuStart( const PlayerNumber p )
+void ScreenCaution::MenuStart( PlayerNumber p )
 {
 	if( p != PLAYER_INVALID  &&  !GAMESTATE->m_bSideIsJoined[p] )
 	{
@@ -90,12 +90,12 @@ void ScreenCaution::MenuStart( const PlayerNumber p )
 		m_Wipe.CloseWipingRight( SM_GoToNextScreen );
 }
 
-void ScreenCaution::MenuBack( const PlayerNumber p )
+void ScreenCaution::MenuBack( PlayerNumber p )
 {
 	if(m_FadeWipe.IsClosing())
 		return;
 	this->ClearMessageQueue();
-	m_FadeWipe.CloseWipingLeft( SM_GoToPrevState );
+	m_FadeWipe.CloseWipingLeft( SM_GoToPrevScreen );
 	SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu back") );
 }
 

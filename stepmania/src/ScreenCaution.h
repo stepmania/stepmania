@@ -28,8 +28,8 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
-	void MenuStart( const PlayerNumber p );
-	void MenuBack(	const PlayerNumber p );
+	void MenuStart( PlayerNumber p );
+	void MenuBack(	PlayerNumber p );
 	Sprite m_sprCaution;
 	TransitionFade	m_Wipe;
 	TransitionFadeWipe	m_FadeWipe;

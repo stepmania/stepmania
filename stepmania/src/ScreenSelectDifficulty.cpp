@@ -117,8 +117,8 @@ float CURSOR_Y( int iItemIndex, int p ) {
 }
 
 
-const ScreenMessage SM_GoToPrevState			= ScreenMessage(SM_User + 1);
-const ScreenMessage SM_GoToNextState			= ScreenMessage(SM_User + 2);
+const ScreenMessage SM_GoToPrevScreen			= ScreenMessage(SM_User + 1);
+const ScreenMessage SM_GoToNextScreen			= ScreenMessage(SM_User + 2);
 const ScreenMessage SM_StartTweeningOffScreen	= ScreenMessage(SM_User + 3);
 const ScreenMessage SM_StartFadingOut			= ScreenMessage(SM_User + 4);
 
@@ -214,7 +214,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 
 	m_bPlayedChallengeSound = false;
 	
-	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_DIFFICULTY_INTRO) );
+	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select difficulty intro") );
 
 	m_Menu.TweenOnScreenFromMenu( SM_None );
 	TweenOnScreen();
@@ -269,10 +269,10 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 					MenuStart( (PlayerNumber)p );
 		}
 		break;
-	case SM_GoToPrevState:
+	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
-	case SM_GoToNextState:
+	case SM_GoToNextScreen:
 		{
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				switch( m_iSelection[p] )
@@ -312,12 +312,12 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 		this->SendScreenMessage( SM_StartFadingOut, 0.8f );
 		break;
 	case SM_StartFadingOut:
-		m_Menu.TweenOffScreenToMenu( SM_GoToNextState );
+		m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
 		break;
 	}
 }
 
-void ScreenSelectDifficulty::MenuLeft( const PlayerNumber p )
+void ScreenSelectDifficulty::MenuLeft( PlayerNumber p )
 {
 	if( m_iSelection[p] == 0 )	// can't go left any more
 		return;
@@ -328,7 +328,7 @@ void ScreenSelectDifficulty::MenuLeft( const PlayerNumber p )
 }
 
 
-void ScreenSelectDifficulty::MenuRight( const PlayerNumber p )
+void ScreenSelectDifficulty::MenuRight( PlayerNumber p )
 {
 	if( m_iSelection[p] == NUM_DIFFICULTY_ITEMS-1 )	// can't go right any more
 		return;
@@ -355,7 +355,7 @@ bool ScreenSelectDifficulty::SelectedSomethingOnPage2()
 	return false;
 }
 
-void ScreenSelectDifficulty::ChangeTo( const PlayerNumber pn, int iSelectionWas, int iSelectionIs )
+void ScreenSelectDifficulty::ChangeTo( PlayerNumber pn, int iSelectionWas, int iSelectionIs )
 {
 	bool bChangedPagesFrom1To2 = iSelectionWas < 3  &&  iSelectionIs >= 3;
 	bool bChangedPagesFrom2To1 = iSelectionWas >= 3  &&  iSelectionIs < 3;
@@ -385,7 +385,7 @@ void ScreenSelectDifficulty::ChangeTo( const PlayerNumber pn, int iSelectionWas,
 
 	if( !m_bPlayedChallengeSound  &&  bChangedPagesFrom1To2 )
 	{
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_DIFFICULTY_CHALLENGE) );
+		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select difficulty challenge") );
 		m_bPlayedChallengeSound = true;
 	}
 
@@ -423,11 +423,11 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 
 	switch( iSelection )
 	{
-	case 0:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_DIFFICULTY_COMMENT_EASY) );	break;
-	case 1:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_DIFFICULTY_COMMENT_MEDIUM) );	break;
-	case 2:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_DIFFICULTY_COMMENT_HARD) );	break;
-	case 3:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_DIFFICULTY_COMMENT_ONI) );	break;
-	case 4:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_DIFFICULTY_COMMENT_ENDLESS) );	break;
+	case 0:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select difficulty comment easy") );		break;
+	case 1:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select difficulty comment medium") );		break;
+	case 2:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select difficulty comment hard") );		break;
+	case 3:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select difficulty comment oni") );		break;
+	case 4:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select difficulty comment endless") );	break;
 	}
 
 	if( iSelection >= 3 )	// chose something on page 2
@@ -471,9 +471,9 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	this->SendScreenMessage( SM_StartTweeningOffScreen, 0.7f );
 }
 
-void ScreenSelectDifficulty::MenuBack( const PlayerNumber p )
+void ScreenSelectDifficulty::MenuBack( PlayerNumber p )
 {
-	m_Menu.TweenOffScreenToBlack( SM_GoToPrevState, true );
+	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
 }
 
 void ScreenSelectDifficulty::TweenOffScreen()

@@ -35,8 +35,8 @@ const float LINE_GAP_Y		= 34;
 const float ITEMS_START_X	= 160;
 
 const ScreenMessage SM_PlaySample			= ScreenMessage(SM_User-4);
-const ScreenMessage SM_GoToPrevState		= ScreenMessage(SM_User-5);
-const ScreenMessage SM_GoToNextState		= ScreenMessage(SM_User-6);
+const ScreenMessage SM_GoToPrevScreen		= ScreenMessage(SM_User-5);
+const ScreenMessage SM_GoToNextScreen		= ScreenMessage(SM_User-6);
 
 
 ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sPagePath, CString sTopEdgePath )
@@ -299,11 +299,11 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 	case SM_MenuTimer:
 		this->MenuStart(PLAYER_1);
 		break;
-	case SM_GoToPrevState:
+	case SM_GoToPrevScreen:
 		this->ExportOptions();
 		this->GoToPrevState();
 		break;
-	case SM_GoToNextState:
+	case SM_GoToNextScreen:
 		this->ExportOptions();
 		this->GoToNextState();
 		break;
@@ -317,30 +317,30 @@ void ScreenOptions::OnChange()
 }
 
 
-void ScreenOptions::MenuBack( const PlayerNumber p )
+void ScreenOptions::MenuBack( PlayerNumber p )
 {
 	Screen::MenuBack( p );
 
 	m_Menu.TweenOffScreenToBlack( SM_None, true );
 
-	m_Wipe.CloseWipingLeft( SM_GoToPrevState );
+	m_Wipe.CloseWipingLeft( SM_GoToPrevScreen );
 }
 
 
-void ScreenOptions::MenuStart( const PlayerNumber p )
+void ScreenOptions::MenuStart( PlayerNumber p )
 {
 	Screen::MenuStart( p );
 
 	m_Menu.TweenOffScreenToBlack( SM_None, false );
 
 	m_SoundNext.PlayRandom();
-	m_Wipe.CloseWipingRight( SM_GoToNextState );
+	m_Wipe.CloseWipingRight( SM_GoToNextScreen );
 
 	m_framePage.BeginTweening( 0.3f, Actor::TWEEN_BIAS_END );
 	m_framePage.SetTweenX( SCREEN_RIGHT );
 }
 
-void ScreenOptions::MenuLeft( const PlayerNumber pn ) 
+void ScreenOptions::MenuLeft( PlayerNumber pn ) 
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -365,7 +365,7 @@ void ScreenOptions::MenuLeft( const PlayerNumber pn )
 	OnChange();
 }
 
-void ScreenOptions::MenuRight( const PlayerNumber pn ) 
+void ScreenOptions::MenuRight( PlayerNumber pn ) 
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -390,7 +390,7 @@ void ScreenOptions::MenuRight( const PlayerNumber pn )
 	OnChange();
 }
 
-void ScreenOptions::MenuUp( const PlayerNumber pn ) 
+void ScreenOptions::MenuUp( PlayerNumber pn ) 
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -413,7 +413,7 @@ void ScreenOptions::MenuUp( const PlayerNumber pn )
 }
 
 
-void ScreenOptions::MenuDown( const PlayerNumber pn ) 
+void ScreenOptions::MenuDown( PlayerNumber pn ) 
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{

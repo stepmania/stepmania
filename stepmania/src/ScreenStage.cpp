@@ -34,9 +34,12 @@ enum StageType		// for use with the metric above
 	STAGE_TYPE_EZ2
 };
 
+StageType g_StageType;	// cache for STAGE_TYPE because it's slow to look up
+
+
 const ScreenMessage SM_StartFadingOut	=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_DoneFadingIn		=	ScreenMessage(SM_User + 2);
-const ScreenMessage SM_GoToNextState	=	ScreenMessage(SM_User + 3);
+const ScreenMessage SM_GoToNextScreen	=	ScreenMessage(SM_User + 3);
 
 
 enum StageMode
@@ -51,8 +54,13 @@ enum StageMode
 
 ScreenStage::ScreenStage()
 {
+	g_StageType = (StageType)STAGE_TYPE; 
+
 	MUSIC->Stop();
 
+	//
+	// Init common graphics
+	//
 	for( int i=0; i<4; i++ )
 	{
 		m_sprNumbers[i].Load( THEME->GetPathTo("Graphics","stage numbers") );
@@ -81,6 +89,9 @@ ScreenStage::ScreenStage()
 	else													stage_mode = MODE_NORMAL;
 
 
+	//
+	// Play announcer
+	//
 	switch( stage_mode )
 	{
 	case MODE_NORMAL:
@@ -88,33 +99,29 @@ ScreenStage::ScreenStage()
 			const int iStageNo = GAMESTATE->GetStageIndex()+1;
 			switch( iStageNo )
 			{
-			case 1:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_1) );	break;
-			case 2:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_2) );	break;
-			case 3:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_3) );	break;
-			case 4:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_4) );	break;
-			case 5:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_5) );	break;
+			case 1:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("stage 1") );	break;
+			case 2:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("stage 2") );	break;
+			case 3:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("stage 3") );	break;
+			case 4:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("stage 4") );	break;
+			case 5:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("stage 5") );	break;
 			default:	;	break;	// play nothing
 			}
 		}
 		break;
-	case MODE_FINAL:
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_FINAL) );
-		break;
-	case MODE_EXTRA1:
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_EXTRA1) );
-		break;
-	case MODE_EXTRA2:
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_EXTRA2) );
-		break;
-	case MODE_ONI:
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_ONI) );
-		break;
-	case MODE_ENDLESS:
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_ENDLESS) );
-		break;
-	default:
-		ASSERT(0);
+	case MODE_FINAL:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("stage final") );		break;
+	case MODE_EXTRA1:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("stage extra1") );		break;
+	case MODE_EXTRA2:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("stage extra2") );		break;
+	case MODE_ONI:		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("stage oni") );		break;
+	case MODE_ENDLESS:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("stage endless") );	break;
+	default:		ASSERT(0);
 	}
+
+
+	// Andy -
+	// Is all this stuff only supposed to be initializing in MODE_NORMAL?
+	// The final stage screens look goofy in TYPE_PUMP and TYPE_EZ2 because of this.
+	// I'm going to make changes, but feel free to correct anything I good up.
+	//		- Chris
 
 	int ez2Final=0; // if we're 0 it's not a final stage. if we're 1 it is.
 	// why do this? Ez2dancer uses NORMAL for it's final stage but just re-arranges
@@ -122,7 +129,7 @@ ScreenStage::ScreenStage()
 	// the ez2Final is so that when we're in normal we can go and see if we're really
 	// FINAL or not. at the end of normal, if we WERE FINAL, we set it back to final
 	// hacky or what? =)
-	if( STAGE_TYPE == STAGE_TYPE_EZ2  &&  stage_mode == MODE_FINAL )
+	if( g_StageType == STAGE_TYPE_EZ2  &&  stage_mode == MODE_FINAL )
 	{
 		for( int i=0; i<4; i++ )
 		{
@@ -183,7 +190,7 @@ ScreenStage::ScreenStage()
 			// EZ2 TYPE DEFINITION //
 			/////////////////////////
 
-			if ( STAGE_TYPE == STAGE_TYPE_EZ2) // Initialize and manipulate existing graphics for Ez2dancer Screen Type
+			if ( g_StageType == STAGE_TYPE_EZ2) // Initialize and manipulate existing graphics for Ez2dancer Screen Type
 			{
 				for( i=0; i<iNumChars; i++ )
 				{
@@ -467,7 +474,6 @@ void ScreenStage::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
 
-
 	m_quadMask.Update( fDeltaTime );
 	m_frameStage.Update( fDeltaTime );
 	m_Fade.Update( fDeltaTime );
@@ -476,18 +482,25 @@ void ScreenStage::Update( float fDeltaTime )
 
 void ScreenStage::DrawPrimitives()
 {
-	DISPLAY->EnableZBuffer();
-
-	if ( STAGE_TYPE == STAGE_TYPE_MAX) // only DANCE uses the Z mask
+	switch( g_StageType )
+	{
+	case STAGE_TYPE_MAX:
+		DISPLAY->EnableZBuffer();
 		m_quadMask.Draw();
-	m_frameStage.Draw();
-
-	DISPLAY->DisableZBuffer();
-
-	m_Fade.Draw();
-
-	if ( STAGE_TYPE == STAGE_TYPE_PUMP) // only PUMP uses the song background on the stage screen
+		m_frameStage.Draw();
+		DISPLAY->DisableZBuffer();
+		break;
+	case STAGE_TYPE_PUMP:
 		m_sprSongBackground.Draw();
+		break;
+	case STAGE_TYPE_EZ2:
+		m_sprSongBackground.Draw();
+		break;
+	default:
+		ASSERT(0);
+	}
+	
+	m_Fade.Draw();
 }
 
 void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
@@ -495,11 +508,11 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_StartFadingOut:
-		m_Fade.CloseWipingRight( SM_GoToNextState );
+		m_Fade.CloseWipingRight( SM_GoToNextScreen );
 		break;
 	case SM_DoneFadingIn:
 		break;
-	case SM_GoToNextState:
+	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( "ScreenGameplay" );
 		break;
 	}

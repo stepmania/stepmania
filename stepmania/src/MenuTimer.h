@@ -23,9 +23,11 @@ public:
 	MenuTimer();
 	
 	virtual void Update( float fDeltaTime ); 
+
+	void SetTimer( int iTimerSeconds );
+	void StartTimer();
 	void StopTimer();
 	void StallTimer();
-	void SetTimer( int iTimerSeconds );
 
 protected:
 	float m_fSecondsLeft;

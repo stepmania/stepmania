@@ -23,5 +23,10 @@ public:
 	virtual void Update( float fDeltaTime );
 
 	void  Step( TapNoteScore score );
+
+protected:
+	float m_fPopUpSeconds;
+	float m_fZoomStart, m_fZoomEnd;
+	D3DXCOLOR m_colorPerfect, m_colorGreat, m_colorGood, m_colorBoo;
 };
 

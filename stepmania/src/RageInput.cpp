@@ -301,7 +301,7 @@ char DeviceInput::ToChar() const
 
 
 //-----------------------------------------------------------------------------
-// Name: EnumJoysticksCallMenuBack( const PlayerNumber p )
+// Name: EnumJoysticksCallMenuBack( PlayerNumber p )
 // Desc: Called once for each enumerated joystick. If we find one, create a
 //       device interface on it so we can play with it.
 //-----------------------------------------------------------------------------
@@ -331,7 +331,7 @@ BOOL CALLBACK	RageInput::EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInst
 
 
 //-----------------------------------------------------------------------------
-// Name: EnumAxesCallMenuBack( const PlayerNumber p )
+// Name: EnumAxesCallMenuBack( PlayerNumber p )
 // Desc: Callback function for enumerating the axes on a joystick
 //-----------------------------------------------------------------------------
 BOOL CALLBACK	RageInput::EnumAxesCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,

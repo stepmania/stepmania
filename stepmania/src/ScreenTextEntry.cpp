@@ -120,15 +120,15 @@ void ScreenTextEntry::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenTextEntry::MenuLeft( const PlayerNumber p )
+void ScreenTextEntry::MenuLeft( PlayerNumber p )
 {
 }
 
-void ScreenTextEntry::MenuRight( const PlayerNumber p )
+void ScreenTextEntry::MenuRight( PlayerNumber p )
 {
 }
 
-void ScreenTextEntry::MenuStart( const PlayerNumber p )
+void ScreenTextEntry::MenuStart( PlayerNumber p )
 {
 	m_Fade.OpenWipingRight( SM_DoneOpeningWipingRight );
 
@@ -153,7 +153,7 @@ void ScreenTextEntry::MenuStart( const PlayerNumber p )
 			m_pOnOK( m_sAnswer );
 }
 
-void ScreenTextEntry::MenuBack( const PlayerNumber p )
+void ScreenTextEntry::MenuBack( PlayerNumber p )
 {
 	m_bCancelled = true;
 	MenuStart(p);

@@ -39,16 +39,16 @@ public:
 	void TweenOnScreen();
 	void TweenOffScreen();
 
-	void MenuLeft( const PlayerNumber p, const InputEventType type );
-	void MenuRight( const PlayerNumber p, const InputEventType type );
-	void MenuStart( const PlayerNumber p );
-	void MenuBack( const PlayerNumber p );
+	void MenuLeft( PlayerNumber p, const InputEventType type );
+	void MenuRight( PlayerNumber p, const InputEventType type );
+	void MenuStart( PlayerNumber p );
+	void MenuBack( PlayerNumber p );
 
 protected:
-	void EasierDifficulty( const PlayerNumber p );
-	void HarderDifficulty( const PlayerNumber p );
+	void EasierDifficulty( PlayerNumber p );
+	void HarderDifficulty( PlayerNumber p );
 
-	void AfterNotesChange( const PlayerNumber p );
+	void AfterNotesChange( PlayerNumber p );
 	void AfterMusicChange();
 	void PlayMusicSample();
 	void SortOrderChanged();

@@ -1,1 +1,3 @@
 Place announcer folders in this directory.  See the readme for more details.
+If you want to make a new announcer, copy the announcer "Empty", rename the 
+copy, and add your own sounds.

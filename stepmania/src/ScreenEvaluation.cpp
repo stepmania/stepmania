@@ -626,13 +626,13 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		case RM_ARCADE_STAGE:
 			switch( max_grade )
 			{
-			case GRADE_E:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_E) );		break;
-			case GRADE_D:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_D) );		break;
-			case GRADE_C:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_C) );		break;
-			case GRADE_B:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_B) );		break;
-			case GRADE_A:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_A) );		break;
-			case GRADE_AA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_AA) );	break;
-			case GRADE_AAA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_AAA) );	break;
+			case GRADE_E:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation e") );		break;
+			case GRADE_D:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation d") );		break;
+			case GRADE_C:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation c") );		break;
+			case GRADE_B:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation b") );		break;
+			case GRADE_A:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation a") );		break;
+			case GRADE_AA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation aa") );	break;
+			case GRADE_AAA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation aaa") );	break;
 			case GRADE_NO_DATA:
 			default:
 				ASSERT(0);	// invalid grade
@@ -642,13 +642,13 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		case RM_ARCADE_SUMMARY:
 			switch( max_grade )
 			{
-			case GRADE_E:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_FINAL_E) );	break;
-			case GRADE_D:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_FINAL_D) );	break;
-			case GRADE_C:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_FINAL_C) );	break;
-			case GRADE_B:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_FINAL_B) );	break;
-			case GRADE_A:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_FINAL_A) );	break;
-			case GRADE_AA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_FINAL_AA) );	break;
-			case GRADE_AAA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_EVALUATION_FINAL_AAA) );	break;
+			case GRADE_E:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation e") );		break;
+			case GRADE_D:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation d") );		break;
+			case GRADE_C:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation c") );		break;
+			case GRADE_B:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation b") );		break;
+			case GRADE_A:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation a") );		break;
+			case GRADE_AA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation aa") );	break;
+			case GRADE_AAA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation aaa") );	break;
 			case GRADE_NO_DATA:
 			default:
 				ASSERT(0);	// invalid grade
@@ -886,12 +886,12 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenEvaluation::MenuBack( const PlayerNumber p )
+void ScreenEvaluation::MenuBack( PlayerNumber p )
 {
 	MenuStart( p );
 }
 
-void ScreenEvaluation::MenuStart( const PlayerNumber p )
+void ScreenEvaluation::MenuStart( PlayerNumber p )
 {
 	TweenOffScreen();
 

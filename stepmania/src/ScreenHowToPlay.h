@@ -29,8 +29,8 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	virtual void MenuBack( const PlayerNumber p );
-	virtual void MenuStart( const PlayerNumber p );
+	virtual void MenuBack( PlayerNumber p );
+	virtual void MenuStart( PlayerNumber p );
 
 protected:
 	Sprite			m_sprHowToPlay;

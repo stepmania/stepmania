@@ -38,8 +38,8 @@
 #define NEXT_SCREEN			THEME->GetMetric("ScreenSelectStyle","NextScreen")
 
 
-const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
-const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User + 2);
+const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User + 1);
+const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User + 2);
 
 
 ScreenSelectStyle::ScreenSelectStyle()
@@ -96,7 +96,7 @@ ScreenSelectStyle::ScreenSelectStyle()
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 
 
-	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_STYLE_INTRO) );
+	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style intro") );
 
 	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select style music") );
 
@@ -137,11 +137,11 @@ void ScreenSelectStyle::HandleScreenMessage( const ScreenMessage SM )
 	case SM_MenuTimer:
 		MenuStart(PLAYER_INVALID);
 		break;
-	case SM_GoToPrevState:
+	case SM_GoToPrevScreen:
 		MUSIC->Stop();
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
-	case SM_GoToNextState:
+	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	}
@@ -185,7 +185,7 @@ void ScreenSelectStyle::AfterChange()
 	m_sprInfo.SetTweenZoomY( 1 );
 }
 
-void ScreenSelectStyle::MenuLeft( const PlayerNumber p )
+void ScreenSelectStyle::MenuLeft( PlayerNumber p )
 {
 	// search for a style to the left of the current selection that is enabled
 	int iSwitchToStyleIndex = -1;	// -1 means none found
@@ -208,7 +208,7 @@ void ScreenSelectStyle::MenuLeft( const PlayerNumber p )
 }
 
 
-void ScreenSelectStyle::MenuRight( const PlayerNumber p )
+void ScreenSelectStyle::MenuRight( PlayerNumber p )
 {
 	// search for a style to the right of the current selection that is enabled
 	int iSwitchToStyleIndex = -1;	// -1 means none found
@@ -230,7 +230,7 @@ void ScreenSelectStyle::MenuRight( const PlayerNumber p )
 	AfterChange();
 }
 
-void ScreenSelectStyle::MenuStart( const PlayerNumber p )
+void ScreenSelectStyle::MenuStart( PlayerNumber p )
 {
 	if( p!=PLAYER_INVALID  && !GAMESTATE->m_bSideIsJoined[p] )
 	{
@@ -243,23 +243,14 @@ void ScreenSelectStyle::MenuStart( const PlayerNumber p )
 
 	GAMESTATE->m_CurStyle = GetSelectedStyle();
 
-	AnnouncerElement ae;
-	switch( GAMESTATE->m_CurStyle )
-	{
-		case STYLE_PUMP_SINGLE:	
-		case STYLE_DANCE_SINGLE:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_SINGLE;		break;
-		case STYLE_PUMP_VERSUS:
-		case STYLE_DANCE_VERSUS:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_VERSUS;		break;		
-		case STYLE_PUMP_DOUBLE:
-		case STYLE_DANCE_DOUBLE:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_DOUBLE;		break;
-		case STYLE_PUMP_COUPLE:
-		case STYLE_DANCE_COUPLE:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_COUPLE;		break;
-		case STYLE_DANCE_SOLO:			ae = ANNOUNCER_SELECT_STYLE_COMMENT_SOLO;		break;
-		default:	ASSERT(0);	break;	// invalid Style
-	}
-	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ae) );
+	CString sCurStyleName = GAMESTATE->GetCurrentStyleDef()->m_szName;
+	if(	     0==stricmp(sCurStyleName,"single") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment single") );
+	else if( 0==stricmp(sCurStyleName,"versus") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment versus") );
+	else if( 0==stricmp(sCurStyleName,"double") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment double") );
+	else if( 0==stricmp(sCurStyleName,"couple") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment couple") );
+	else if( 0==stricmp(sCurStyleName,"solo") )		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment solo") );
 
-	m_Menu.TweenOffScreenToMenu( SM_GoToNextState );
+	m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
 
 	m_soundSelect.PlayRandom();
 
@@ -268,13 +259,13 @@ void ScreenSelectStyle::MenuStart( const PlayerNumber p )
 	TweenOffScreen();
 }
 
-void ScreenSelectStyle::MenuBack( const PlayerNumber p )
+void ScreenSelectStyle::MenuBack( PlayerNumber p )
 {
 	MUSIC->Stop();
 
-	m_Menu.TweenOffScreenToBlack( SM_GoToPrevState, true );
+	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
 
-//	m_Fade.CloseWipingLeft( SM_GoToPrevState );
+//	m_Fade.CloseWipingLeft( SM_GoToPrevScreen );
 
 //	TweenOffScreen();
 }

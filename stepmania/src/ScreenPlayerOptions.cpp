@@ -63,7 +63,7 @@ ScreenPlayerOptions::ScreenPlayerOptions() :
 		NUM_PLAYER_OPTIONS_LINES
 		);
 
-	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_PLAYER_OPTIONS_INTRO) );
+	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("player options intro") );
 }
 
 

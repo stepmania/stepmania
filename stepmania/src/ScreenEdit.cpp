@@ -133,8 +133,8 @@ int MENU_ITEM_KEY[NUM_MENU_ITEMS] = {
 	DIK_Q,
 };
 
-const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User+1);
-const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User+2);
+const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User+1);
+const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+2);
 
 
 ScreenEdit::ScreenEdit()
@@ -1181,10 +1181,10 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
-	case SM_GoToPrevState:
+	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( "ScreenEditMenu" );
 		break;
-	case SM_GoToNextState:
+	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( "ScreenEditMenu" );
 		break;
 	}

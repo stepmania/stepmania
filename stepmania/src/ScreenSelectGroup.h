@@ -30,12 +30,12 @@ public:
 
 	void AfterChange();
 
-	void MenuLeft( const PlayerNumber p );
-	void MenuRight( const PlayerNumber p );
-	void MenuUp( const PlayerNumber p );
-	void MenuDown( const PlayerNumber p );
-	void MenuStart( const PlayerNumber p );
-	void MenuBack( const PlayerNumber p );
+	void MenuLeft( PlayerNumber p );
+	void MenuRight( PlayerNumber p );
+	void MenuUp( PlayerNumber p );
+	void MenuDown( PlayerNumber p );
+	void MenuStart( PlayerNumber p );
+	void MenuBack( PlayerNumber p );
 
 	void TweenOffScreen();
 	void TweenOnScreen();

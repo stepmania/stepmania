@@ -19,21 +19,34 @@
 #include "PrefsManager.h"
 
 
+#define RAINBOW_COLOR_1		THEME->GetMetricC("BitmapText","RainbowColor1")
+#define RAINBOW_COLOR_2		THEME->GetMetricC("BitmapText","RainbowColor2")
+#define RAINBOW_COLOR_3		THEME->GetMetricC("BitmapText","RainbowColor3")
+#define RAINBOW_COLOR_4		THEME->GetMetricC("BitmapText","RainbowColor4")
+#define RAINBOW_COLOR_5		THEME->GetMetricC("BitmapText","RainbowColor5")
+#define RAINBOW_COLOR_6		THEME->GetMetricC("BitmapText","RainbowColor6")
+#define RAINBOW_COLOR_7		THEME->GetMetricC("BitmapText","RainbowColor7")
 
-D3DXCOLOR RAINBOW_COLORS[] = { 
-	D3DXCOLOR( 1.0f, 0.2f, 0.4f, 1 ),	// red
-	D3DXCOLOR( 0.8f, 0.2f, 0.6f, 1 ),	// pink
-	D3DXCOLOR( 0.4f, 0.3f, 0.5f, 1 ),	// purple
-	D3DXCOLOR( 0.2f, 0.6f, 1.0f, 1 ),	// sky blue
-	D3DXCOLOR( 0.2f, 0.8f, 0.8f, 1 ),	// sea green
-	D3DXCOLOR( 0.2f, 0.8f, 0.4f, 1 ),	// green
-	D3DXCOLOR( 1.0f, 0.8f, 0.2f, 1 ),	// orange
-};
-const int NUM_RAINBOW_COLORS = sizeof(RAINBOW_COLORS) / sizeof(D3DXCOLOR);
+const int NUM_RAINBOW_COLORS = 7;
+D3DXCOLOR RAINBOW_COLORS[NUM_RAINBOW_COLORS];
 
 
 BitmapText::BitmapText()
 {
+	// Loading these theme metrics is slow, so only do it ever 20th time.
+	static int iReloadCounter = 0;
+	if( iReloadCounter%20==0 )
+	{
+		RAINBOW_COLORS[0] = RAINBOW_COLOR_1;
+		RAINBOW_COLORS[1] = RAINBOW_COLOR_2;
+		RAINBOW_COLORS[2] = RAINBOW_COLOR_3;
+		RAINBOW_COLORS[3] = RAINBOW_COLOR_4;
+		RAINBOW_COLORS[4] = RAINBOW_COLOR_5;
+		RAINBOW_COLORS[5] = RAINBOW_COLOR_6;
+		RAINBOW_COLORS[6] = RAINBOW_COLOR_7;
+	}
+	iReloadCounter++;
+
 	m_HorizAlign = align_center;
 	m_VertAlign = align_middle;
 
@@ -284,10 +297,10 @@ void BitmapText::DrawPrimitives()
 		if( m_bRainbow )
 		{
 			int color_index = int(TIMER->GetTimeSinceStart() / 0.200) % NUM_RAINBOW_COLORS;
-			for( int i=0; i<iNumV; i+=6 )
+			for( int i=0; i<iNumV; i+=4 )
 			{
 				const D3DXCOLOR color = RAINBOW_COLORS[color_index];
-				for( int j=i; j<i+6; j++ )
+				for( int j=i; j<i+4; j++ )
 					v[j].color = color;
 
 				color_index = (color_index+1)%NUM_RAINBOW_COLORS;

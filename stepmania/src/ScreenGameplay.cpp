@@ -542,28 +542,28 @@ ScreenGameplay::ScreenGameplay()
 	{
 		m_soundFail.Load(			THEME->GetPathTo("Sounds","gameplay failed") );
 		m_soundOniDie.Load(			THEME->GetPathTo("Sounds","gameplay oni die") );
-		m_announcerReady.Load(		ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_READY) );
+		m_announcerReady.Load(		ANNOUNCER->GetPathTo("gameplay ready") );
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_HERE_WE_GO_EXTRA) );
+			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go extra") );
 		else if( GAMESTATE->IsFinalStage() )
-			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_HERE_WE_GO_FINAL) );
+			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go final") );
 		else
-			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_HERE_WE_GO_NORMAL) );
-		m_announcerDanger.Load(		ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_COMMENT_DANGER) );
-		m_announcerGood.Load(		ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_COMMENT_GOOD) );
-		m_announcerHot.Load(		ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_COMMENT_HOT) );
+			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go normal") );
+		m_announcerDanger.Load(		ANNOUNCER->GetPathTo("gameplay comment danger") );
+		m_announcerGood.Load(		ANNOUNCER->GetPathTo("gameplay comment goood") );
+		m_announcerHot.Load(		ANNOUNCER->GetPathTo("gameplay comment hot") );
 
-		m_announcer100Combo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_100_COMBO) );
-		m_announcer200Combo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_200_COMBO) );
-		m_announcer300Combo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_300_COMBO) );
-		m_announcer400Combo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_400_COMBO) );
-		m_announcer500Combo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_500_COMBO) );
-		m_announcer600Combo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_600_COMBO) );
-		m_announcer700Combo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_700_COMBO) );
-		m_announcer800Combo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_800_COMBO) );
-		m_announcer900Combo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_900_COMBO) );
-		m_announcer1000Combo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_1000_COMBO) );
-		m_announcerComboStopped.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_COMBO_STOPPED) );
+		m_announcer100Combo.Load(	ANNOUNCER->GetPathTo("gameplay comment 100 combo") );
+		m_announcer200Combo.Load(	ANNOUNCER->GetPathTo("gameplay comment 200 combo") );
+		m_announcer300Combo.Load(	ANNOUNCER->GetPathTo("gameplay comment 300 combo") );
+		m_announcer400Combo.Load(	ANNOUNCER->GetPathTo("gameplay comment 400 combo") );
+		m_announcer500Combo.Load(	ANNOUNCER->GetPathTo("gameplay comment 500 combo") );
+		m_announcer600Combo.Load(	ANNOUNCER->GetPathTo("gameplay comment 600 combo") );
+		m_announcer700Combo.Load(	ANNOUNCER->GetPathTo("gameplay comment 700 combo") );
+		m_announcer800Combo.Load(	ANNOUNCER->GetPathTo("gameplay comment 800 combo") );
+		m_announcer900Combo.Load(	ANNOUNCER->GetPathTo("gameplay comment 900 combo") );
+		m_announcer1000Combo.Load(	ANNOUNCER->GetPathTo("gameplay comment 1000 combo") );
+		m_announcerComboStopped.Load(	ANNOUNCER->GetPathTo("gameplay comment combo stopped") );
 	}
 
 	m_iRowLastCrossed = -1;
@@ -1233,7 +1233,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				{
 					m_StarWipe.CloseWipingRight( SM_None );
 					this->SendScreenMessage( SM_ShowCleared, 1 );
-					SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_CLEARED) );
+					SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("gameplay cleared") );
 				}
 			}
 		}
@@ -1440,7 +1440,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SendMessageToTopScreen( SM_HideFailed, 3.0f );
 		break;
 	case SM_PlayFailComment:
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_FAILED) );
+		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("gameplay failed") );
 		break;
 	case SM_HideFailed:
 		m_sprFailed.StopTweening();

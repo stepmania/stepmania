@@ -20,7 +20,7 @@ public:
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	virtual void MenuStart( const PlayerNumber p );
+	virtual void MenuStart( PlayerNumber p );
 
 private:
 

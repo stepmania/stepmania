@@ -150,10 +150,10 @@ ScreenTitleMenu::ScreenTitleMenu()
 	this->AddSubActor( &m_Fade );
 
 
-	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_TITLE_MENU_GAME_NAME) );
+	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("title menu game name") );
 
 
-	m_soundAttract.Load( ANNOUNCER->GetPathTo(ANNOUNCER_TITLE_MENU_ATTRACT) );
+	m_soundAttract.Load( ANNOUNCER->GetPathTo("title menu attract") );
 	m_soundChange.Load( THEME->GetPathTo("Sounds","title menu change") );	
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 	m_soundInvalid.Load( THEME->GetPathTo("Sounds","menu invalid") );
@@ -302,7 +302,7 @@ void ScreenTitleMenu::GainFocus( int iChoiceIndex )
 	m_textChoice[iChoiceIndex].SetEffectCamelion( 2.5f, color1, color2 );
 }
 
-void ScreenTitleMenu::MenuUp( const PlayerNumber p )
+void ScreenTitleMenu::MenuUp( PlayerNumber p )
 {
 	LoseFocus( m_TitleMenuChoice );
 
@@ -315,7 +315,7 @@ void ScreenTitleMenu::MenuUp( const PlayerNumber p )
 }
 
 
-void ScreenTitleMenu::MenuDown( const PlayerNumber p )
+void ScreenTitleMenu::MenuDown( PlayerNumber p )
 {
 	LoseFocus( m_TitleMenuChoice );
 
@@ -328,7 +328,7 @@ void ScreenTitleMenu::MenuDown( const PlayerNumber p )
 }
 
 
-void ScreenTitleMenu::MenuStart( const PlayerNumber p )
+void ScreenTitleMenu::MenuStart( PlayerNumber p )
 {	
 	GAMESTATE->m_bSideIsJoined[p] = true;
 	GAMESTATE->m_MasterPlayerNumber = p;
@@ -380,7 +380,7 @@ void ScreenTitleMenu::MenuStart( const PlayerNumber p )
 	}
 }
 
-void ScreenTitleMenu::MenuBack( const PlayerNumber p )
+void ScreenTitleMenu::MenuBack( PlayerNumber p )
 {	
 	this->SendScreenMessage( SM_FadeToDemonstration, 0 );
 }

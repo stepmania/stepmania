@@ -32,3 +32,23 @@ enum Style
 	STYLE_NONE,
 	STYLE_PUMP_COUPLE,
 };
+
+const int NUM_DANCE_STYLES = 6;
+const int NUM_PUMP_STYLES = 3;
+const int NUM_EZ2_STYLES = 7;
+
+
+// Ugh.  This is needed for the style icon.
+// TODO:  Find a more elegant way to handle this
+inline int GetStyleIndexRelativeToGame( int iGameIndex, Style style )
+{
+	int iStyleIndex = style;
+	switch( iGameIndex )
+	{
+	case 0:														break;	// dance
+	case 1:	iStyleIndex -= NUM_DANCE_STYLES;					break;	// pump
+	case 2:	iStyleIndex -= NUM_DANCE_STYLES+NUM_PUMP_STYLES;	break;	// ez2
+	default:	ASSERT(0);	// invalid game index
+	}
+	return iStyleIndex;
+}

@@ -22,7 +22,7 @@
 
 
 const ScreenMessage SM_StartFadingOut	=	ScreenMessage(SM_User + 1);
-const ScreenMessage SM_GoToNextState	=	ScreenMessage(SM_User + 2);
+const ScreenMessage SM_GoToNextScreen	=	ScreenMessage(SM_User + 2);
 
 const int LINE_GAP = 40;
 
@@ -144,7 +144,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 		Song* pSong = arraySongs[i];
 		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 		m_textLines[m_iNumLines].SetText( pSong->GetFullTitle() );
-		m_textLines[m_iNumLines].SetDiffuseColor( SONGMAN->GetGroupColor(pSong->m_sGroupName) );
+		m_textLines[m_iNumLines].SetDiffuseColor( SONGMAN->GetSongColor(pSong) );
 
 		m_iNumLines++;
 	}
@@ -171,7 +171,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 
 	this->AddSubActor( &m_Fade );
 
-	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_MUSIC_SCROLL) );
+	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("music scroll") );
 
 	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","music scroll music") );
 
@@ -221,20 +221,20 @@ void ScreenMusicScroll::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_StartFadingOut:
-		m_Fade.CloseWipingRight( SM_GoToNextState );
+		m_Fade.CloseWipingRight( SM_GoToNextScreen );
 		break;
-	case SM_GoToNextState:
+	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	}
 }
 
-void ScreenMusicScroll::MenuStart( const PlayerNumber p )
+void ScreenMusicScroll::MenuStart( PlayerNumber p )
 {
-	m_Fade.CloseWipingRight( SM_GoToNextState );
+	m_Fade.CloseWipingRight( SM_GoToNextScreen );
 }
 
-void ScreenMusicScroll::MenuBack( const PlayerNumber p )
+void ScreenMusicScroll::MenuBack( PlayerNumber p )
 {
 	MenuStart( p );
 }

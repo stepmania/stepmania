@@ -20,7 +20,7 @@
 #include "NoteDisplay.h"
 
 
-float ArrowGetYOffset( const PlayerNumber pn, float fNoteBeat )
+float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )
 {
 	float fSongBeat = GAMESTATE->m_fSongBeat;
 	float fBeatsUntilStep = fNoteBeat - fSongBeat;
@@ -37,7 +37,7 @@ float ArrowGetYOffset( const PlayerNumber pn, float fNoteBeat )
 	return fYOffset;
 }
 
-float ArrowGetXPos2( const PlayerNumber pn, int iColNum, float fYPos ) 
+float ArrowGetXPos2( PlayerNumber pn, int iColNum, float fYPos ) 
 {
 	float fSongBeat = GAMESTATE->m_fSongBeat;
 	float fPixelOffsetFromCenter = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[PLAYER_1][iColNum].fXOffset;
@@ -51,7 +51,7 @@ float ArrowGetXPos2( const PlayerNumber pn, int iColNum, float fYPos )
 	return fPixelOffsetFromCenter;
 }
 
-float ArrowGetRotation( const PlayerNumber pn, int iColNum, float fYOffset ) 
+float ArrowGetRotation( PlayerNumber pn, int iColNum, float fYOffset ) 
 {
 	float fRotation = 0; //StyleDef.m_ColumnToRotation[iColNum];
 
@@ -65,12 +65,12 @@ float ArrowGetRotation( const PlayerNumber pn, int iColNum, float fYOffset )
 	return fRotation;
 }
 
-float ArrowGetYPos( const PlayerNumber pn, float fYOffset )
+float ArrowGetYPos( PlayerNumber pn, float fYOffset )
 {
 	return fYOffset * GAMESTATE->m_PlayerOptions[pn].m_fArrowScrollSpeed * (GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll ? -1 : 1 );
 }
 
-float ArrowGetAlpha( const PlayerNumber pn, float fYPos )
+float ArrowGetAlpha( PlayerNumber pn, float fYPos )
 {
 	float fAlpha;
 	static	float blinktimer=0;

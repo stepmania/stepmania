@@ -26,14 +26,13 @@
 #define TIMER_SECONDS		THEME->GetMetricI("ScreenSelectStyle5th","TimerSeconds")
 #define NEXT_SCREEN			THEME->GetMetric("ScreenSelectStyle5th","NextScreen")
 
-const CString DANCE_STYLES[] = {
+const CString DANCE_STYLES[NUM_DANCE_STYLES] = {
 	"single",
 	"versus",
 	"double",
 	"couple",
 	"solo",
 };
-const int NUM_DANCE_STYLES = sizeof(DANCE_STYLES)/sizeof(CString);
 
 const float PAD_X[NUM_STYLE_PADS] = {
 	CENTER_X-250,
@@ -107,8 +106,8 @@ const D3DXCOLOR COLOR_P1_NOT_SELECTED = COLOR_P1_SELECTED*0.5f + D3DXCOLOR(0,0,0
 const D3DXCOLOR COLOR_P2_NOT_SELECTED = COLOR_P2_SELECTED*0.5f + D3DXCOLOR(0,0,0,0.5f);
 
 
-const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
-const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User + 2);
+const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User + 1);
+const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User + 2);
 const ScreenMessage SM_UpdateAnimations		=	ScreenMessage(SM_User + 3);
 const ScreenMessage SM_TweenExplanation2	=	ScreenMessage(SM_User + 4);
 
@@ -175,7 +174,7 @@ ScreenSelectStyle5th::ScreenSelectStyle5th()
 	m_soundChange.Load( THEME->GetPathTo("Graphics","select style change") );
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 
-	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_STYLE_INTRO) );
+	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style intro") );
 
 	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select style music") );
 
@@ -217,11 +216,11 @@ void ScreenSelectStyle5th::HandleScreenMessage( const ScreenMessage SM )
 	case SM_MenuTimer:
 		MenuStart(PLAYER_1);
 		break;
-	case SM_GoToPrevState:
+	case SM_GoToPrevScreen:
 		MUSIC->Stop();
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
-	case SM_GoToNextState:
+	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( "ScreenSelectDifficulty" );
 		break;
 	case SM_TweenExplanation2:
@@ -243,7 +242,7 @@ void ScreenSelectStyle5th::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenSelectStyle5th::MenuLeft( const PlayerNumber p )
+void ScreenSelectStyle5th::MenuLeft( PlayerNumber p )
 {
 	if( m_iSelection == 0 )		// can't go left any further
 		return;
@@ -256,7 +255,7 @@ void ScreenSelectStyle5th::MenuLeft( const PlayerNumber p )
 }
 
 
-void ScreenSelectStyle5th::MenuRight( const PlayerNumber p )
+void ScreenSelectStyle5th::MenuRight( PlayerNumber p )
 {
 	if( m_iSelection == NUM_DANCE_STYLES-1 )		// can't go right any further
 		return;
@@ -268,37 +267,30 @@ void ScreenSelectStyle5th::MenuRight( const PlayerNumber p )
 	AfterChange();
 }
 
-void ScreenSelectStyle5th::MenuStart( const PlayerNumber p )
+void ScreenSelectStyle5th::MenuStart( PlayerNumber p )
 {
 	GAMESTATE->m_CurStyle = Style( m_iSelection );
 	GAMESTATE->m_MasterPlayerNumber = p;
 
-	AnnouncerElement ae;
-	switch( GAMESTATE->m_CurStyle )
-	{
-		case STYLE_DANCE_SINGLE:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_SINGLE;		break;
-		case STYLE_DANCE_VERSUS:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_VERSUS;		break;
-		case STYLE_DANCE_DOUBLE:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_DOUBLE;		break;
-		case STYLE_DANCE_COUPLE:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_COUPLE;		break;
-		case STYLE_DANCE_SOLO:			ae = ANNOUNCER_SELECT_STYLE_COMMENT_SOLO;		break;
-		case STYLE_PUMP_SINGLE:			ae = ANNOUNCER_SELECT_STYLE_COMMENT_SINGLE;		break;
-		case STYLE_PUMP_VERSUS:			ae = ANNOUNCER_SELECT_STYLE_COMMENT_VERSUS;		break;
-		default:	ASSERT(0);	break;	// invalid Style
-	}
-	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ae) );
+	CString sCurStyleName = GAMESTATE->GetCurrentStyleDef()->m_szName;
+	if(	     0==stricmp(sCurStyleName,"single") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment single") );
+	else if( 0==stricmp(sCurStyleName,"versus") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment versus") );
+	else if( 0==stricmp(sCurStyleName,"double") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment double") );
+	else if( 0==stricmp(sCurStyleName,"couple") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment couple") );
+	else if( 0==stricmp(sCurStyleName,"solo") )		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment solo") );
 
 	this->ClearMessageQueue();
 
 	TweenOffScreen();
-	m_Menu.TweenOffScreenToMenu( SM_GoToNextState );
+	m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
 	m_soundSelect.PlayRandom();
 }
 
-void ScreenSelectStyle5th::MenuBack( const PlayerNumber p )
+void ScreenSelectStyle5th::MenuBack( PlayerNumber p )
 {
 	MUSIC->Stop();
 
-	m_Menu.TweenOffScreenToBlack( SM_GoToPrevState, true );
+	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
 }
 
 void ScreenSelectStyle5th::BeforeChange()

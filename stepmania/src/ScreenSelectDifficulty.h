@@ -31,16 +31,16 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	void MenuLeft( const PlayerNumber p );
-	void MenuRight( const PlayerNumber p );
-	void MenuStart( const PlayerNumber p );
-	void MenuBack( const PlayerNumber p );
+	void MenuLeft( PlayerNumber p );
+	void MenuRight( PlayerNumber p );
+	void MenuStart( PlayerNumber p );
+	void MenuBack( PlayerNumber p );
 
 	void TweenOffScreen();
 	void TweenOnScreen();
 
 private:
-	void ChangeTo( const PlayerNumber pn, int iSelectionWas, int iSelectionIs );
+	void ChangeTo( PlayerNumber pn, int iSelectionWas, int iSelectionIs );
 
 	bool IsItemOnPage2( int iItemIndex );
 	bool SelectedSomethingOnPage2();	// checks selection of players
