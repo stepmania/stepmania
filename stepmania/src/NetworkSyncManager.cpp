@@ -4,7 +4,7 @@
 NetworkSyncManager *NSMAN;
 
 #if defined(WITHOUT_NETWORKING)
-NetworkSyncManager::NetworkSyncManager(LoadingWindow * ld) { useSMserver=false; }
+NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld ) { useSMserver=false; }
 NetworkSyncManager::~NetworkSyncManager () { }
 void NetworkSyncManager::CloseConnection() { }
 void NetworkSyncManager::PostStartUp( CString ServerIP ) { }
@@ -37,7 +37,7 @@ const ScreenMessage SM_NET_UpdateScoreboard	= ScreenMessage(SM_User+12);
 const ScreenMessage SM_NET_SelectSong		= ScreenMessage(SM_User+2);
 
 
-NetworkSyncManager::NetworkSyncManager(LoadingWindow * ld)
+NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 {
 	ld->SetText("Initilizing Network...");
     NetPlayerClient = new EzSockets;
