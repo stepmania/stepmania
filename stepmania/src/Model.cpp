@@ -99,7 +99,9 @@ void Model::LoadPieces( CString sMeshesPath, CString sMaterialsPath, CString sBo
 
 	LoadMaterialsFromMilkshapeAscii( sMaterialsPath );
 
-	LoadMilkshapeAsciiBones( DEFAULT_ANIMATION_NAME, sBonesPath );
+	if( LoadMilkshapeAsciiBones( DEFAULT_ANIMATION_NAME, sBonesPath ) )
+		PlayAnimation( DEFAULT_ANIMATION_NAME );
+
 
 	//
     // Setup temp vertices (if necessary)
@@ -263,7 +265,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
 	f.Close();
 }
 
-void Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
+bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 {
 	FixSlashesInPlace(sPath);
 	const CString sDir = Dirname( sPath );
@@ -275,6 +277,7 @@ void Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 	CString sLine;
 	int iLineNum = 0;
 
+	bool bLoaded = false;
     while( f.GetLine( sLine ) > 0 )
     {
 		iLineNum++;
@@ -394,9 +397,9 @@ void Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 			for( unsigned j = 0; j < Bone.RotationKeys.size(); ++j )
 				Animation.nTotalFrames = max( Animation.nTotalFrames, (int)Bone.RotationKeys[j].fTime );
 		}
-
-		PlayAnimation( sAniName );
 	}
+
+	return bLoaded;
 }
 
 bool Model::EarlyAbortDraw()
