@@ -158,7 +158,7 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 			}
 			EndDialog( hWnd, 0 );
 			break;
-			// fall through
+
 		case IDOK:
 			EndDialog( hWnd, 0 );
 			break;
