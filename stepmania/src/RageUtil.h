@@ -162,6 +162,7 @@ CString join(
 	const CStringArray& Source
 );
 
+bool CreateDirectories( CString Path );
 void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
 bool GetFnmDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo, ... );
 unsigned int GetHashForString( CString s );

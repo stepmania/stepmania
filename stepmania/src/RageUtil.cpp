@@ -109,33 +109,20 @@ CString join( const CString &Deliminator, const CStringArray& Source)
 //-----------------------------------------------------------------------------
 void split( const CString &Source, const CString &Deliminator, CStringArray& AddIt, const bool bIgnoreEmpty )
 {
-	CString		 newCString;
-	CString		 tmpCString;
-	CString		 AddCString;
+	int startpos = 0;
 
-	int pos1 = 0;
-	int pos = 0;
-
-	newCString = Source;
 	do {
-		pos1 = 0;
-		pos = newCString.Find(Deliminator, pos1);
-		if ( pos != -1 ) {
-			CString AddCString = newCString.Left(pos);
-				if( newCString.IsEmpty() && bIgnoreEmpty )
-					; // do nothing
-				else
-					AddIt.Add(AddCString);
+		int pos = Source.Find(Deliminator, startpos);
+		if ( pos == -1 ) pos=Source.GetLength();
 
-			tmpCString = newCString.Mid(pos + Deliminator.GetLength());
-			newCString = tmpCString;
-		}
-	} while ( pos != -1 );
+		CString AddCString = Source.Mid(startpos, pos-startpos);
+		if( AddCString.IsEmpty() && bIgnoreEmpty )
+			; // do nothing
+		else
+			AddIt.Add(AddCString);
 
-	if( newCString.IsEmpty() && bIgnoreEmpty )
-		; // do nothing
-	else
-		AddIt.Add(newCString);
+		startpos=pos+1;
+	} while ( startpos <= Source.GetLength() );
 }
 
 
@@ -264,6 +251,30 @@ void splitrelpath( const CString &Path, CString& Dir, CString& FName, CString& E
 	}
 }
 
+/* mkdir -p.  Doesn't fail if Path already exists and is a directory. */
+bool CreateDirectories( CString Path )
+{
+	CStringArray parts;
+	CString curpath;
+	Path.Replace("\\", "/");
+	split(Path, "/", parts);
+
+	for(int i = 0; i < parts.GetSize(); ++i)
+	{
+		curpath += parts[i] + "/";
+		if(CreateDirectory( curpath, NULL ))
+			continue;
+
+		if(GetLastError() != ERROR_ALREADY_EXISTS)
+			return false;
+
+		/* Make sure it's a directory. */
+		if( !IsADirectory(curpath) )
+			return false;
+	}
+	
+	return true;
+}
 
 void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
