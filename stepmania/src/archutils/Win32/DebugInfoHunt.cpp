@@ -18,8 +18,16 @@ void LogVideoDriverInfo( VideoDriverInfo info )
 	LOG->Info("%-15s:\t%s", "DeviceID", info.sDeviceID.c_str());
 }
 
-
-
+static void GetMemoryDebugInfo()
+{
+	MEMORYSTATUS mem;
+	GlobalMemoryStatus(&mem);
+	
+	LOG->Info("Memory: %imb total, %imb swap (%imb swap avail)",
+		mem.dwTotalPhys / 1048576, 
+		mem.dwTotalPageFile / 1048576, 
+		mem.dwAvailPageFile / 1048576);
+}
 
 static void GetDisplayDriverDebugInfo()
 {
@@ -36,7 +44,7 @@ static void GetDisplayDriverDebugInfo()
 		if( !GetVideoDriverInfo(i, info) )
 			break;
 		
-		if( sPrimaryDeviceName == "" )	// failed to get primary disaply name (NT4)
+		if( sPrimaryDeviceName == "" )	// failed to get primary display name (NT4)
 		{
 			LogVideoDriverInfo( info );
 		}
@@ -59,6 +67,45 @@ static CString wo_ssprintf( MMRESULT err, const char *fmt, ...)
     va_end(va);
 
 	return s += ssprintf( "(%s)", buf );
+}
+
+static void GetWindowsVersionDebugInfo()
+{
+	/* Detect operating system. */
+	OSVERSIONINFO ovi;
+	ovi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+	if (!GetVersionEx(&ovi))
+	{
+		LOG->Info("GetVersionEx failed!");
+		return;
+	}
+
+	CString Ver = ssprintf("Windows %i.%i (", ovi.dwMajorVersion, ovi.dwMinorVersion);
+	if(ovi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
+	{
+		if(ovi.dwMinorVersion == 0)
+			Ver += "Win95";
+		else if(ovi.dwMinorVersion == 10)
+			Ver += "Win98";
+		else if(ovi.dwMinorVersion == 90)
+			Ver += "WinME";
+		else 
+			Ver += "unknown 9x-based";
+	}
+	else if(ovi.dwPlatformId == VER_PLATFORM_WIN32_NT)
+	{
+		if(ovi.dwMajorVersion == 4 && ovi.dwMinorVersion == 0)
+			Ver += "WinNT 4.0";
+		else if(ovi.dwMajorVersion == 5 && ovi.dwMinorVersion == 0)
+			Ver += "Win2000";
+		else if(ovi.dwMajorVersion == 5 && ovi.dwMinorVersion == 1)
+			Ver += "WinXP";
+		else
+			Ver += "unknown NT-based";
+	} else Ver += "???";
+
+	Ver += ssprintf(") build %i [%s]", ovi.dwBuildNumber & 0xffff, ovi.szCSDVersion);
+	LOG->Info("%s", Ver.c_str());
 }
 
 static void GetSoundDriverDebugInfo()
@@ -85,40 +132,10 @@ static void GetSoundDriverDebugInfo()
 
 void SearchForDebugInfo()
 {
+	GetWindowsVersionDebugInfo();
+	GetMemoryDebugInfo();
 	GetDisplayDriverDebugInfo();
 	GetSoundDriverDebugInfo();
-
-	/* Detect operating system. */
-	OSVERSIONINFO ovi;
-	ovi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	if (GetVersionEx(&ovi)) {
-		CString Ver = ssprintf("Windows %i.%i (", ovi.dwMajorVersion, ovi.dwMinorVersion);
-		if(ovi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
-		{
-			if(ovi.dwMinorVersion == 0)
-				Ver += "Win95";
-			else if(ovi.dwMinorVersion == 10)
-				Ver += "Win98";
-			else if(ovi.dwMinorVersion == 90)
-				Ver += "WinME";
-			else 
-				Ver += "unknown 9x-based";
-		}
-		else if(ovi.dwPlatformId == VER_PLATFORM_WIN32_NT)
-		{
-			if(ovi.dwMajorVersion == 4 && ovi.dwMinorVersion == 0)
-				Ver += "WinNT 4.0";
-			else if(ovi.dwMajorVersion == 5 && ovi.dwMinorVersion == 0)
-				Ver += "Win2000";
-			else if(ovi.dwMajorVersion == 5 && ovi.dwMinorVersion == 1)
-				Ver += "WinXP";
-			else
-				Ver += "unknown NT-based";
-		} else Ver += "???";
-
-		Ver += ssprintf(") build %i [%s]", ovi.dwBuildNumber & 0xffff, ovi.szCSDVersion);
-		LOG->Info("%s", Ver.c_str());
-	}
 }
 
 /*
