@@ -779,16 +779,12 @@ void Model::Update( float fDelta )
 			vector<RageModelVertex> &tempVertices = tempMesh.Vertices;
 			for( unsigned j = 0; j < origVertices.size(); j++ )
 			{
-				RageVector3& tempPos =			tempVertices[j].p;
-				RageVector3& tempNormal =		tempVertices[j].n;
-				RageVector2& tempTex =			tempVertices[j].t;
-				const RageVector3& originalPos =		origVertices[j].p;
+				RageVector3& tempPos =				tempVertices[j].p;
+				RageVector3& tempNormal =			tempVertices[j].n;
+				const RageVector3& originalPos =	origVertices[j].p;
 				const RageVector3& originalNormal =	origVertices[j].n;
-				const RageVector2& originalTex =		origVertices[j].t;
-				int8_t bone =					origVertices[j].bone;
+				int8_t bone =						origVertices[j].bone;
 
-				tempTex = originalTex;
-				
 				if( bone == -1 )
 				{
 					tempNormal = originalNormal;
@@ -800,7 +796,6 @@ void Model::Update( float fDelta )
 					RageVec3TransformCoord( &tempPos, &originalPos, &m_vpBones[bone].mFinal );
 				}
 			}
-
 		}
 
 		// send the new vertices to the graphics card
@@ -845,26 +840,6 @@ void Model::SetSecondsIntoAnimation( float fSeconds )
 void Model::HandleCommand( const ParsedCommand &command )
 {
 	HandleParams;
-
-	/* XXX: It would be very useful to be able to tween animations, eg:
-	 *
-	 * play,Dance,1;sleep,2;linear,.5;play,Collapse,1
-	 *
-	 * to play "Dance" for two seconds, then tween to playing "Collapse" over half
-	 * a second, with the tween percentage weighting the animations.
-	 *
-	 * Also, being able to queue animations cleanly without knowing the exact duration
-	 * of the animation, eg:
-	 *
-	 * play,Dance,1;finishanim;play,Collapse,1
-	 *
-	 * to play "Dance", and then play "Collapse" when "Dance" finishes.  (In this case,
-	 * Dance would presumably end on the same keyframe that Collapse begins on, since
-	 * it isn't queuing a tween.)
-	 *
-	 * We need more architecture for this, so we can put custom items in the Actor
-	 * tween queue.
-	 */
 
 	const CString& sName = sParam(0);
 	if( sName=="play" )
