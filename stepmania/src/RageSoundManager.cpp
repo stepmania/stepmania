@@ -93,7 +93,12 @@ void RageSoundManager::PlayCopy( const RageSound &snd )
 	 * std::basic_string happens to be refcounted).  That's not too bad,
 	 * but we might do five of these in the same frame ...
 	 */
+
 	RageSound *newsnd = new RageSound(snd);
+
+	/* PlayCopy's sounds must always stop on their own. */
+	newsnd->SetLooping(true);
+	newsnd->SetAutoStop(true);
 
 	/* We're responsible for freeing it. */
 	owned_sounds.insert(newsnd);

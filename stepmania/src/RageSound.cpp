@@ -98,21 +98,23 @@ RageSound::RageSound(const RageSound &cpy)
 	LockMutex L(SOUNDMAN->lock);
 
 	stream.Sample = NULL;
-	position = 0;
-	playing = false;
-	Loop = false;
-	speed = 1.0f;
-	stream.buf.reserve(internal_buffer_size);
-	AutoStop = cpy.AutoStop;
 
-	/* Copy some of it; don't copy the playing state. */
-	big = cpy.big;
 	full_buf = cpy.full_buf;
+	big = cpy.big;
+	AutoStop = cpy.AutoStop;
+	m_sFilePath = cpy.m_sFilePath;
+	m_StartSeconds = cpy.m_StartSeconds;
+	m_LengthSeconds = cpy.m_LengthSeconds;
+	Loop = cpy.Loop;
+	position = cpy.position;
+	playing = false;
+	speed = cpy.speed;
 
 	if(big)
 	{
 		/* We can't copy the Sound_Sample, so load a new one. 
 		 * Don't bother trying to load it in a small buffer. */
+		stream.buf.reserve(internal_buffer_size);
 		Load(cpy.GetLoadedFilePath(), false);
 	}
 
