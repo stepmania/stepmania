@@ -267,7 +267,7 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenPlayerOptions.h"
 #include "ScreenSandbox.h"
 #include "ScreenSelectDifficulty.h"
-#include "ScreenSelectDifficultyEX.h"
+// #include "ScreenSelectDifficultyEX.h"
 #include "ScreenSelectGroup.h"
 #include "ScreenSelectMusic.h"
 #include "ScreenSelectStyle.h"
@@ -334,7 +334,7 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenPlayerOptions );
 	IF_RETURN( ScreenSandbox );
 	IF_RETURN( ScreenSelectDifficulty );
-	IF_RETURN( ScreenSelectDifficultyEX );
+//	IF_RETURN( ScreenSelectDifficultyEX );
 	IF_RETURN( ScreenSelectGroup );
 	IF_RETURN( ScreenSelectMusic );
 	IF_RETURN( ScreenSelectStyle5th );
