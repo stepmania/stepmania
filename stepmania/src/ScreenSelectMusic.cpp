@@ -643,6 +643,9 @@ void ScreenSelectMusic::MenuStart( PlayerNumber p )
 			{
 				if( !m_MusicWheel.GetSelectedSong()->HasMusic() )
 				{
+					/* TODO: gray these out. 
+					 *
+					 * XXX: also, make sure they're not selected by roulette */
 					SCREENMAN->Prompt( SM_None, "ERROR:\n \nThis song does not have a music file\n and cannot be played." );
 					return;
 				}
