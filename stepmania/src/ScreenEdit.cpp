@@ -1369,7 +1369,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	case SM_BackFromPlayerOptions:
 	case SM_BackFromSongOptions:
 		// coming back from PlayerOptions or SongOptions
-		m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
+		GAMESTATE->StoreSelectedOptions();
 		break;
 	case SM_BackFromInsertAttack:
 		{
