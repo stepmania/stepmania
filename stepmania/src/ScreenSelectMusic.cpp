@@ -692,6 +692,8 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		break;
 	case TYPE_ROULETTE:
 		break;
+	case TYPE_SORT:
+		break;
 	}
 
 	if( GAMESTATE->IsExtraStage() && PREFSMAN->m_bPickExtraStage )
@@ -771,13 +773,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	for( pn = 0; pn < NUM_PLAYERS; ++pn)
 		m_arrayNotes[pn].clear();
 
-	bool no_banner_change = false;
 	m_Banner.SetMovingFast( !!m_MusicWheel.IsMoving() );
-//	if(PREFSMAN->m_BannerCacheType == PREFSMAN->preload_none && m_MusicWheel.IsMoving()) 
-//	{
-		/* If we're moving fast and we didn't preload banners, don't touch it. */
-//		no_banner_change = true;
-//	}
 
 	switch( m_MusicWheel.GetSelectedType() )
 	{
@@ -788,11 +784,22 @@ void ScreenSelectMusic::AfterMusicChange()
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				m_iSelection[p] = -1;
 
-			if(!no_banner_change)
-				m_Banner.LoadFromGroup( sGroup );	// if this isn't a group, it'll default to the fallback banner
+			m_Banner.LoadFromGroup( sGroup );	// if this isn't a group, it'll default to the fallback banner
 			m_BPMDisplay.NoBPM();
 			m_sprCDTitleFront.UnloadTexture();
 			m_sprCDTitleBack.UnloadTexture();
+
+			switch( m_MusicWheel.GetSelectedType() )
+			{
+			case TYPE_SECTION:
+				m_sSampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic section music");
+				break;
+			case TYPE_SORT:
+				m_sSampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic sort music");
+				break;
+			default:
+				ASSERT(0);
+			}
 
 			m_sprBalloon.StopTweening();
 			OFF_COMMAND( m_sprBalloon );
@@ -813,8 +820,7 @@ void ScreenSelectMusic::AfterMusicChange()
 				SortNotesArrayByDifficulty( m_arrayNotes[pn] );
 			}
 
-			if(!no_banner_change)
-				m_Banner.LoadFromSong( pSong );
+			m_Banner.LoadFromSong( pSong );
 
 			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 			{
@@ -878,8 +884,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		break;
 	case TYPE_ROULETTE:
 	case TYPE_RANDOM:
-		if(!no_banner_change)
-			m_Banner.LoadRoulette();
+		m_Banner.LoadRoulette();
 		m_BPMDisplay.NoBPM();
 		m_sprCDTitleFront.UnloadTexture();
 		m_sprCDTitleBack.UnloadTexture();
