@@ -9,17 +9,17 @@ LoadingWindow_SDL::LoadingWindow_SDL()
 {
     /* Initialize the SDL library */
     if( SDL_InitSubSystem(SDL_INIT_VIDEO) < 0 )
-        throw RageException( "Couldn't initialize SDL: %s\n", SDL_GetError() );
+        RageException::Throw( "Couldn't initialize SDL: %s\n", SDL_GetError() );
 
 	/* Load the BMP file into a surface */
     SDL_Surface *image = IMG_ReadXPMFromArray(loading);
     if( image == NULL )
-        throw RageException("Couldn't load loading.bmp: %s\n",SDL_GetError());
+        RageException::Throw("Couldn't load loading.bmp: %s\n",SDL_GetError());
 
     /* Initialize the display in a 640x480 16-bit mode */
     loading_screen = SDL_SetVideoMode(image->w, image->h, 16, SDL_SWSURFACE|SDL_ANYFORMAT|SDL_NOFRAME);
     if( loading_screen == NULL )
-        throw RageException( "Couldn't initialize loading window: %s\n", SDL_GetError() );
+        RageException::Throw( "Couldn't initialize loading window: %s\n", SDL_GetError() );
 
     /* Blit onto the screen surface */
     SDL_BlitSurface(image, NULL, loading_screen, NULL);
