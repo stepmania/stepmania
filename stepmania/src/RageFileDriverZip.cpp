@@ -406,7 +406,7 @@ RageFileObj *RageFileDriverZip::Open( const CString &path, int mode, RageFile &p
 		return NULL;
 	}
 
-	File *f = FDB->GetFile( path );
+	const File *f = FDB->GetFile( path );
 	if( f == NULL )
 	{
 		err = ENOENT;

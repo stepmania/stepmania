@@ -115,7 +115,7 @@ RageFileManager::FileType FilenameDB::GetFileType( const CString &sPath )
 	if( Name == "." )
 		return RageFileManager::TYPE_DIR;
 
-	FileSet *fs = GetFileSet( Dir );
+	const FileSet *fs = GetFileSet( Dir );
 	return fs->GetFileType( Name );
 }
 
@@ -124,7 +124,7 @@ int FilenameDB::GetFileSize( const CString &sPath )
 {
 	CString Dir, Name;
 	SplitPath(sPath, Dir, Name);
-	FileSet *fs = GetFileSet( Dir );
+	const FileSet *fs = GetFileSet( Dir );
 	return fs->GetFileSize(Name);
 }
 
@@ -132,7 +132,7 @@ int FilenameDB::GetFileHash( const CString &sPath )
 {
 	CString Dir, Name;
 	SplitPath(sPath, Dir, Name);
-	FileSet *fs = GetFileSet( Dir );
+	const FileSet *fs = GetFileSet( Dir );
 	return fs->GetFileHash(Name);
 }
 
@@ -147,7 +147,7 @@ bool FilenameDB::ResolvePath(CString &path)
 
 	/* Resolve each component. */
 	CString ret = "";
-	FileSet *fs = NULL;
+	const FileSet *fs = NULL;
 	File *prev_file = NULL;
 	static const CString slash("/");
 	while( 1 )
@@ -162,7 +162,7 @@ bool FilenameDB::ResolvePath(CString &path)
 		CString p = path.substr( begin, size );
 		ASSERT_M( p.size() != 1 || p[0] != '.', path ); // no .
 		ASSERT_M( p.size() != 2 || p[0] != '.' || p[1] != '.', path ); // no ..
-		set<File>::iterator it = fs->files.find( File(p) );
+		set<File>::const_iterator it = fs->files.find( File(p) );
 
 		/* If there were no matches, the path isn't found. */
 		if( it == fs->files.end() )
@@ -188,13 +188,13 @@ bool FilenameDB::ResolvePath(CString &path)
 
 void FilenameDB::GetFilesMatching(const CString &dir, const CString &beginning, const CString &containing, const CString &ending, vector<CString> &out, bool bOnlyDirs)
 {
-	FileSet *fs = GetFileSet( dir );
+	const FileSet *fs = GetFileSet( dir );
 	fs->GetFilesMatching(beginning, containing, ending, out, bOnlyDirs);
 }
 
 void FilenameDB::GetFilesEqualTo(const CString &dir, const CString &fn, vector<CString> &out, bool bOnlyDirs)
 {
-	FileSet *fs = GetFileSet( dir );
+	const FileSet *fs = GetFileSet( dir );
 	fs->GetFilesEqualTo(fn, out, bOnlyDirs);
 }
 
@@ -369,7 +369,7 @@ void FilenameDB::FlushDirCache()
 	dirs.clear();
 }
 
-File *FilenameDB::GetFile( const CString &sPath )
+const File *FilenameDB::GetFile( const CString &sPath )
 {
 	CString Dir, Name;
 	SplitPath(sPath, Dir, Name);

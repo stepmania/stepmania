@@ -30,7 +30,7 @@ struct File
 
 	/* If this is non-NULL, and dir is true, this is a pointer to the FileSet containing
 	 * the directory contents.  (This is a cache; it isn't always set.) */
-	FileSet *dirp;
+	const FileSet *dirp;
 
 	File() { dir=false; dirp=NULL; size=-1; hash=-1; priv=NULL;}
 	File( const CString &fn )
@@ -92,7 +92,7 @@ public:
 
 	void AddFile( const CString &sPath, int size, int hash, void *priv=NULL );
 	void DelFile( const CString &sPath );
-	File *GetFile( const CString &path );
+	const File *GetFile( const CString &path );
 
 	/* This handles at most two * wildcards.  If we need anything more complicated,
 	 * we'll need to use fnmatch or regex. */
