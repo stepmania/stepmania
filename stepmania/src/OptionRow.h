@@ -204,7 +204,6 @@ protected:
 	ThemeMetric<RageColor>			COLOR_NOT_SELECTED;
 	ThemeMetric<RageColor>			COLOR_DISABLED;
 	ThemeMetric<bool>				CAPITALIZE_ALL_OPTION_NAMES;
-	ThemeMetric<bool>				SHOW_UNDERLINES;
 	ThemeMetric<float>				TWEEN_SECONDS;
 	ThemeMetric<bool>				THEME_ITEMS;
 	ThemeMetric<bool>				THEME_TITLES;

@@ -127,7 +127,6 @@ void OptionRow::LoadMetrics( const CString &sType )
 	COLOR_NOT_SELECTED				.Load(m_sType,"ColorNotSelected");
 	COLOR_DISABLED					.Load(m_sType,"ColorDisabled");
 	CAPITALIZE_ALL_OPTION_NAMES		.Load(m_sType,"CapitalizeAllOptionNames");
-	SHOW_UNDERLINES					.Load(m_sType,"ShowUnderlines");
 	TWEEN_SECONDS					.Load(m_sType,"TweenSeconds");
 	THEME_ITEMS						.Load(m_sType,"ThemeItems");
 	THEME_TITLES					.Load(m_sType,"ThemeTitles");
@@ -457,8 +456,6 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 
 		bool bSelected = (iChoiceWithFocus==-1) ? false : m_vbSelected[pnTakeSelectedFrom][ iChoiceWithFocus ];
 		bool bHidden = !bSelected || m_bHidden;
-		if( !(bool)SHOW_UNDERLINES )
-			bHidden = true;
 
 		if( ul.GetDestY() != m_fY )
 		{
