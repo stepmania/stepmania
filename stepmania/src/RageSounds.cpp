@@ -7,6 +7,7 @@
 #include "GameState.h"
 #include "TimingData.h"
 #include "NotesLoaderSM.h"
+#include "PrefsManager.h"
 
 RageSounds *SOUND = NULL;
 
@@ -349,6 +350,21 @@ void RageSounds::Update( float fDeltaTime )
 			g_Playing->m_Timing = g_Playing->m_NewTiming;
 			g_Playing->m_TimingDelayed = false;
 		}
+	}
+	else if( PREFSMAN->m_bLogSkips )
+	{
+		const float fExpectedTimePassed = (tm - GAMESTATE->m_LastBeatUpdate) * g_Playing->m_Music->GetPlaybackRate();
+		const float fSoundTimePassed = fSeconds - GAMESTATE->m_fMusicSeconds;
+		const float fDiff = fExpectedTimePassed - fSoundTimePassed;
+
+		static CString sLastFile = "";
+		const CString ThisFile = g_Playing->m_Music->GetLoadedFilePath();
+
+		/* If fSoundTimePassed < 0, the sound has probably looped. */
+		if( sLastFile == ThisFile && fSoundTimePassed >= 0 && fabsf(fDiff) > 0.003f )
+			LOG->Trace("Song position skip in %s: expected %.3f, got %.3f (cur %f, prev %f) (%.3f difference)",
+				Basename(ThisFile).c_str(), fExpectedTimePassed, fSoundTimePassed, fSeconds, GAMESTATE->m_fMusicSeconds, fDiff );
+		sLastFile = ThisFile;
 	}
 
 	GAMESTATE->UpdateSongPosition( fSeconds, g_Playing->m_Timing, tm );

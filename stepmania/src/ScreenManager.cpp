@@ -262,10 +262,10 @@ void ScreenSystemLayer::UpdateTimestampAndSkips()
 		/* Hide: */
 		m_textTime.SetDiffuse( RageColor(1,1,1,0) );
 		m_SkipBackground.SetDiffuse( RageColor(0,0,0,0) );
-		return;
+	} else {
+		m_textTime.SetDiffuse( RageColor(1,0,1,1) );
+		m_SkipBackground.SetDiffuse(RageColor(0,0,0,0.4f));
 	}
-
-	m_SkipBackground.SetDiffuse(RageColor(0,0,0,0.4f));
 
 	CString time(SecondsToTime(RageTimer::GetTimeSinceStart()));
 
@@ -301,11 +301,12 @@ void ScreenSystemLayer::UpdateTimestampAndSkips()
 
 			AddTimestampLine( ssprintf("%s: %.0fms (%.0f)", time.c_str(), 1000*UpdateTime, UpdateTime/ExpectedUpdate),
 				colors[skip] );
+			if( PREFSMAN->m_bLogSkips && skip > 1 )
+				LOG->Trace( "Frame skip: %.0fms (%.0f)", 1000*UpdateTime, UpdateTime/ExpectedUpdate );
 		}
 	}
 
 	m_textTime.SetText( time );
-	m_textTime.SetDiffuse( RageColor(1,0,1,1) );
 }
 
 void ScreenSystemLayer::Update( float fDeltaTime )
