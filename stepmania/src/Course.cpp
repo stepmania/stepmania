@@ -67,7 +67,7 @@ const int DifficultMeterRamp = 3;
 float Course::GetMeter( int Difficult ) const
 {
 	if( m_iMeter != -1 )
-		return float(m_iMeter + IsDifficult(Difficult)? DifficultMeterRamp:0);
+		return float(m_iMeter + (IsDifficult(Difficult)? DifficultMeterRamp:0));
 
 	/*LOG->Trace( "Course file '%s' contains a song '%s%s%s' that is not present",
 			m_sPath.c_str(), sGroup.c_str(), sGroup.size()? SLASH:"", sSong.c_str());*/
@@ -178,13 +178,18 @@ void Course::LoadFromCRSFile( CString sPath )
 				else if( !sBits[0].CompareNoCase("END") )
 					end = (float) atof( sBits[1] );
 				else if( !sBits[0].CompareNoCase("MODS") )
+				{
+					if( end != -9999 )
+					{
+						attack.fSecsRemaining = end - attack.fStartSecond;
+						end = -9999;
+					}
 					attack.sModifier = sBits[1];
+					attacks.push_back( attack );
+				}
 			}
 
-			if( end != -9999 )
-				attack.fSecsRemaining = end - attack.fStartSecond;
 				
-			attacks.push_back( attack );
 		}
 		else if( 0 == stricmp(sValueName, "SONG") )
 		{
