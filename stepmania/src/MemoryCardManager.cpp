@@ -12,146 +12,180 @@
 */
 
 #include "MemoryCardManager.h"
-#include <fstream>
-#include "RageLog.h"
-#include "RageUtil.h"
-#include "ScreenManager.h"
-# include <stdio.h>
-# include <sys/stat.h>
 
 MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in our program
 
-static const char *MemCardDirs[NUM_PLAYERS] =
-{
-	/* @ is important; see RageFileManager LoadedDriver::GetPath */
-	"@m2c1/",
-	"@m2c2/",
-};
+//
+// TODO: Change this to use arch/driver format
+//
+#ifdef LINUX
 
-struct UsbStorageDevice
-{
-	UsbStorageDevice()
+	#include <fstream>
+	#include "RageLog.h"
+	#include "RageUtil.h"
+	#include "ScreenManager.h"
+	#include <stdio.h>
+	#include <unistd.h>
+	#include <fcntl.h>
+	#include <linux/types.h>
+
+	static const char *PROC_KMSG = "/proc/kmsg";
+	static int fds_kmsg = -1;
+
+	struct UsbStorageDevice
 	{
-		iBus = -1;
-		iDeviceOnBus = -1;
-		iPortOnHub = -1;
-		iUsbStorageIndex = -1;
-	};
-	int iBus;
-	int iDeviceOnBus;
-	int iPortOnHub;
-	CString sSerial;
-	int iUsbStorageIndex;
-	CString	sOsMountDir;	// WITHOUT trailing slash
-
-	bool operator==(const UsbStorageDevice& other)
-	{
-		return 
-			iBus==other.iBus &&
-			iDeviceOnBus==other.iDeviceOnBus &&
-			iPortOnHub==other.iPortOnHub &&
-			sSerial==other.sSerial &&
-			iUsbStorageIndex==other.iUsbStorageIndex &&
-			sOsMountDir==other.sOsMountDir;
-	}
-};
-
-vector<UsbStorageDevice> g_StorageDevices;
-
-void UpdateAttachedUsbStorageDevices()
-{
-	vector<UsbStorageDevice> &vDevicesOut = g_StorageDevices;
-
-#if defined(LINUX)
-	vDevicesOut.clear();
-
-	{
-		// Find all attached USB devices.  Output looks like:
-
-		// T:  Bus=02 Lev=00 Prnt=00 Port=00 Cnt=00 Dev#=  1 Spd=12  MxCh= 2
-		// B:  Alloc=  0/900 us ( 0%), #Int=  0, #Iso=  0
-		// D:  Ver= 1.00 Cls=09(hub  ) Sub=00 Prot=00 MxPS= 8 #Cfgs=  1
-		// P:  Vendor=0000 ProdID=0000 Rev= 0.00
-		// S:  Product=USB UHCI Root Hub
-		// S:  SerialNumber=ff80
-		// C:* #Ifs= 1 Cfg#= 1 Atr=40 MxPwr=  0mA
-		// I:  If#= 0 Alt= 0 #EPs= 1 Cls=09(hub  ) Sub=00 Prot=00 Driver=hub
-		// E:  Ad=81(I) Atr=03(Int.) MxPS=   8 Ivl=255ms
-		// T:  Bus=02 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=12  MxCh= 0
-		// D:  Ver= 1.10 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 8 #Cfgs=  1
-		// P:  Vendor=04e8 ProdID=0100 Rev= 0.01
-		// S:  Manufacturer=KINGSTON     
-		// S:  Product=USB DRIVE    
-		// S:  SerialNumber=1125198948886
-		// C:* #Ifs= 1 Cfg#= 1 Atr=80 MxPwr= 90mA
-		// I:  If#= 0 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=06 Prot=50 Driver=usb-storage
-		// E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-		// E:  Ad=03(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-
-		ifstream f;
-		CString fn = "/proc/bus/usb/devices";
-		f.open(fn);
-		if( !f.is_open() )
+		UsbStorageDevice()
 		{
-			LOG->Warn( "can't open '%s'", fn.c_str() );
-			return;
+			iBus = -1;
+			iDeviceOnBus = -1;
+			iPortOnHub = -1;
+			iUsbStorageIndex = -1;
+		};
+		int iBus;
+		int iDeviceOnBus;
+		int iPortOnHub;
+		CString sSerial;
+		int iUsbStorageIndex;
+		CString	sOsMountDir;	// WITHOUT trailing slash
+
+		bool operator==(const UsbStorageDevice& other)
+		{
+			return 
+				iBus==other.iBus &&
+				iDeviceOnBus==other.iDeviceOnBus &&
+				iPortOnHub==other.iPortOnHub &&
+				sSerial==other.sSerial &&
+				iUsbStorageIndex==other.iUsbStorageIndex &&
+				sOsMountDir==other.sOsMountDir;
 		}
+	};
 
-		UsbStorageDevice usbd;
-		CString sLine;
-		while( getline(f, sLine) )
+	vector<UsbStorageDevice> g_StorageDevices;
+
+	void UpdateAttachedUsbStorageDevices()
+	{
+		vector<UsbStorageDevice> &vDevicesOut = g_StorageDevices;
+
+		vDevicesOut.clear();
+
 		{
-			int iRet, iThrowAway;
+			// Find all attached USB devices.  Output looks like:
 
 			// T:  Bus=02 Lev=00 Prnt=00 Port=00 Cnt=00 Dev#=  1 Spd=12  MxCh= 2
-			int iBus, iPort, iDevice;
-			iRet = sscanf( sLine.c_str(), "T:  Bus=%d Lev=%d Prnt=%d Port=%d Cnt=%d Dev#=%d Spd=%d  MxCh=%d", &iBus, &iThrowAway, &iThrowAway, &iPort, &iThrowAway, &iDevice, &iThrowAway, &iThrowAway );
-			if( iRet == 8 )
+			// B:  Alloc=  0/900 us ( 0%), #Int=  0, #Iso=  0
+			// D:  Ver= 1.00 Cls=09(hub  ) Sub=00 Prot=00 MxPS= 8 #Cfgs=  1
+			// P:  Vendor=0000 ProdID=0000 Rev= 0.00
+			// S:  Product=USB UHCI Root Hub
+			// S:  SerialNumber=ff80
+			// C:* #Ifs= 1 Cfg#= 1 Atr=40 MxPwr=  0mA
+			// I:  If#= 0 Alt= 0 #EPs= 1 Cls=09(hub  ) Sub=00 Prot=00 Driver=hub
+			// E:  Ad=81(I) Atr=03(Int.) MxPS=   8 Ivl=255ms
+			// T:  Bus=02 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=12  MxCh= 0
+			// D:  Ver= 1.10 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 8 #Cfgs=  1
+			// P:  Vendor=04e8 ProdID=0100 Rev= 0.01
+			// S:  Manufacturer=KINGSTON     
+			// S:  Product=USB DRIVE    
+			// S:  SerialNumber=1125198948886
+			// C:* #Ifs= 1 Cfg#= 1 Atr=80 MxPwr= 90mA
+			// I:  If#= 0 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=06 Prot=50 Driver=usb-storage
+			// E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+			// E:  Ad=03(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+
+			ifstream f;
+			CString fn = "/proc/bus/usb/devices";
+			f.open(fn);
+			if( !f.is_open() )
 			{
-				usbd.iBus = iBus;
-				usbd.iDeviceOnBus = iDevice;
-				usbd.iPortOnHub = iPort;
-				continue;	// stop processing this line
+				LOG->Warn( "can't open '%s'", fn.c_str() );
+				return;
 			}
 
-			// S:  SerialNumber=ff80
-			char szSerial[1024];
-			iRet = sscanf( sLine.c_str(), "S:  SerialNumber=%[^\n]", szSerial );
-			if( iRet == 1 )
+			UsbStorageDevice usbd;
+			CString sLine;
+			while( getline(f, sLine) )
 			{
-				usbd.sSerial = szSerial;
-				continue;	// stop processing this line
-			}
-			
-			// I:  If#= 0 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=06 Prot=50 Driver=usb-storage
-			int iClass;
-			iRet = sscanf( sLine.c_str(), "I:  If#=%d Alt=%d #EPs=%d Cls=%d", &iThrowAway, &iThrowAway, &iThrowAway, &iClass );
-			if( iRet == 4 )
-			{
-				if( iClass == 8 )	// storage class
-					vDevicesOut.push_back( usbd );
-				continue;	// stop processing this line
+				int iRet, iThrowAway;
+
+				// T:  Bus=02 Lev=00 Prnt=00 Port=00 Cnt=00 Dev#=  1 Spd=12  MxCh= 2
+				int iBus, iPort, iDevice;
+				iRet = sscanf( sLine.c_str(), "T:  Bus=%d Lev=%d Prnt=%d Port=%d Cnt=%d Dev#=%d Spd=%d  MxCh=%d", &iBus, &iThrowAway, &iThrowAway, &iPort, &iThrowAway, &iDevice, &iThrowAway, &iThrowAway );
+				if( iRet == 8 )
+				{
+					usbd.iBus = iBus;
+					usbd.iDeviceOnBus = iDevice;
+					usbd.iPortOnHub = iPort;
+					continue;	// stop processing this line
+				}
+
+				// S:  SerialNumber=ff80
+				char szSerial[1024];
+				iRet = sscanf( sLine.c_str(), "S:  SerialNumber=%[^\n]", szSerial );
+				if( iRet == 1 )
+				{
+					usbd.sSerial = szSerial;
+					continue;	// stop processing this line
+				}
+				
+				// I:  If#= 0 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=06 Prot=50 Driver=usb-storage
+				int iClass;
+				iRet = sscanf( sLine.c_str(), "I:  If#=%d Alt=%d #EPs=%d Cls=%d", &iThrowAway, &iThrowAway, &iThrowAway, &iClass );
+				if( iRet == 4 )
+				{
+					if( iClass == 8 )	// storage class
+						vDevicesOut.push_back( usbd );
+					continue;	// stop processing this line
+				}
 			}
 		}
-	}
 
-	{
-		// Find the usb-storage device index for all storage class devices.
-		for( unsigned i=0; i<vDevicesOut.size(); i++ )
 		{
-			UsbStorageDevice& usbd = vDevicesOut[i];
-			// Output looks like:
+			// Find the usb-storage device index for all storage class devices.
+			for( unsigned i=0; i<vDevicesOut.size(); i++ )
+			{
+				UsbStorageDevice& usbd = vDevicesOut[i];
+				// Output looks like:
 
-			//    Host scsi0: usb-storage
-			//        Vendor: KINGSTON     
-			//       Product: USB DRIVE    
-			// Serial Number: 1125198948886
-			//      Protocol: Transparent SCSI
-			//     Transport: Bulk
-			//          GUID: 04e801000001125198948886
-			//      Attached: Yes
-	
-			CString fn = ssprintf( "/proc/scsi/usb-storage-%d/%d", i );
+				//    Host scsi0: usb-storage
+				//        Vendor: KINGSTON     
+				//       Product: USB DRIVE    
+				// Serial Number: 1125198948886
+				//      Protocol: Transparent SCSI
+				//     Transport: Bulk
+				//          GUID: 04e801000001125198948886
+				//      Attached: Yes
+		
+				CString fn = ssprintf( "/proc/scsi/usb-storage-%d/%d", i );
+				ifstream f;
+				f.open(fn);
+				if( !f.is_open() )
+				{
+					LOG->Warn( "can't open '%s'", fn.c_str() );
+					return;
+				}
+
+				CString sLine;
+				while( getline(f, sLine) )
+				{
+					// Serial Number: 1125198948886
+					char szSerial[1024];
+					int iRet = sscanf( sLine.c_str(), "Serial Number: %[^\n]", szSerial );
+					if( iRet == 1 )	// we found our line
+					{
+						usbd.iUsbStorageIndex = i;
+						break;	// stop looking
+					}
+				}
+			}
+		}
+
+		{
+			// Find where each device is mounted. Output looks like:
+
+			// /dev/sda1               /mnt/flash1             auto    noauto,owner 0 0
+			// /dev/sdb1               /mnt/flash2             auto    noauto,owner 0 0
+			// /dev/sdc1               /mnt/flash3             auto    noauto,owner 0 0
+
+			CString fn = "/etc/fstab";
 			ifstream f;
 			f.open(fn);
 			if( !f.is_open() )
@@ -163,131 +197,117 @@ void UpdateAttachedUsbStorageDevices()
 			CString sLine;
 			while( getline(f, sLine) )
 			{
-				// Serial Number: 1125198948886
-				char szSerial[1024];
-				int iRet = sscanf( sLine.c_str(), "Serial Number: %[^\n]", szSerial );
-				if( iRet == 1 )	// we found our line
+				// /dev/sda1               /mnt/flash1             auto    noauto,owner 0 0
+				char cScsiDev;
+				char szMountPoint[1024];
+				int iRet = sscanf( sLine.c_str(), "/dev/sd%c1 %s", &cScsiDev, szMountPoint );
+				if( iRet != 2 )
+					continue;	// don't process this line
+
+				int iUsbStorageIndex = cScsiDev - 'a';
+				CString sMountPoint = szMountPoint;
+				TrimLeft( sMountPoint );
+				TrimRight( sMountPoint );
+
+				// search for the usb-storage device corresponding to the SCSI device
+				for( unsigned i=0; i<vDevicesOut.size(); i++ )
 				{
-					usbd.iUsbStorageIndex = i;
-					break;	// stop looking
+					UsbStorageDevice& usbd = vDevicesOut[i];
+					if( usbd.iUsbStorageIndex == iUsbStorageIndex )	// found our match
+					{
+						usbd.sOsMountDir = sMountPoint;
+						break;	// stop looking for a match
+					}
 				}
 			}
 		}
+		return;
 	}
 
+
+	MemoryCardManager::MemoryCardManager()
 	{
-		// Find where each device is mounted. Output looks like:
+		fds_kmsg = open(PROC_KMSG, O_RDONLY);
+		if( fds_kmsg == -1 )
+			LOG->Warn("Open '%s' failed", PROC_KMSG);
+	}
 
-		// /dev/sda1               /mnt/flash1             auto    noauto,owner 0 0
-		// /dev/sdb1               /mnt/flash2             auto    noauto,owner 0 0
-		// /dev/sdc1               /mnt/flash3             auto    noauto,owner 0 0
+	MemoryCardManager::~MemoryCardManager()
+	{
+		if( fds_kmsg != -1 ) 
+			close( fds_kmsg );
+	}
 
-		CString fn = "/etc/fstab";
-		ifstream f;
-		f.open(fn);
-		if( !f.is_open() )
+
+	bool UsbChanged()
+	{
+		// check PROC_KMSG for any "usb" messages
+		if( fds_kmsg == -1 )
+			return false;
+
+		fd_set fdset;
+		FD_ZERO( &fdset );
+		FD_SET( fds_kmsg, &fdset );
+		int max_fd = fds_kmsg;
+		
+		struct timeval zero = {0,0};
+		if ( select(max_fd+1, &fdset, NULL, NULL, &zero) <= 0 )
+			return;
+
+		if( !FD_ISSET(fds_kmsg, &fdset) )
+			continue;
+
+		static char buffer[1024];	// large enough to read all messages in one call
+		int ret = read(fds_kmsg, &buffer, sizeof(buffer));
+		if( ret == 0 )
 		{
-			LOG->Warn( "can't open '%s'", fn.c_str() );
+			LOG->Warn("Read only %d bytes from '%s'", ret, PROC_KMSG);
+			close(fds_kmsg);
+			fds_kmsg = -1;
 			return;
 		}
-
-		CString sLine;
-		while( getline(f, sLine) )
+		else if( buffer == sizeof(buffer) )
 		{
-			// /dev/sda1               /mnt/flash1             auto    noauto,owner 0 0
-			char cScsiDev;
-			char szMountPoint[1024];
-			int iRet = sscanf( sLine.c_str(), "/dev/sd%c1 %s", &cScsiDev, szMountPoint );
-			if( iRet != 2 )
-				continue;	// don't process this line
+			LOG->Warn("We could have more than %d bytes from '%s'", sizeof(buffer), PROC_KMSG);
+			buffer[sizeof(buffer)-1] = \0; 
+		}
 
-			int iUsbStorageIndex = cScsiDev - 'a';
-			CString sMountPoint = szMountPoint;
-			TrimLeft( sMountPoint );
-			TrimRight( sMountPoint );
+		bool bLogAboutUsb = strstr(buffer,"usb") || strstr(buffer,"USB");
+		return bLogAboutUsb;
+	}
 
-			// search for the usb-storage device corresponding to the SCSI device
-			for( unsigned i=0; i<vDevicesOut.size(); i++ )
+	void MemoryCardManager::Update( float fDelta )
+	{
+		if( UsbChanged() )
+		{
+			vector<UsbStorageDevice> vOld = g_StorageDevices;	// make a copy
+			UpdateAttachedUsbStorageDevices();
+			vector<UsbStorageDevice> &vNew = g_StorageDevices;
+
+			unsigned i;
+
+			// check for disconnects
+			for( i=0; i<vOld.size(); i++ )
 			{
-				UsbStorageDevice& usbd = vDevicesOut[i];
-				if( usbd.iUsbStorageIndex == iUsbStorageIndex )	// found our match
-				{
-					usbd.sOsMountDir = sMountPoint;
-					break;	// stop looking for a match
-				}
+				const UsbStorageDevice old = vOld[i];
+				if( find(vNew.begin(),vNew.end(),old) == vNew.end() )
+					SCREENMAN->SystemMessage( ssprintf("Disconnected bus %d port %d device %d", old.iBus, old.iPortOnHub, old.iDeviceOnBus) );
+			}
+
+			// check for connects
+			for( i=0; i<vNew.size(); i++ )
+			{
+				const UsbStorageDevice newd = vNew[i];
+				if( find(vOld.begin(),vOld.end(),newd) == vOld.end() )
+					SCREENMAN->SystemMessage( ssprintf("Connected bus %d port %d device %d", newd.iBus, newd.iPortOnHub, newd.iDeviceOnBus) );
 			}
 		}
 	}
-	return;
-#elif defined(_WINDOWS)
 
-#else
+#elif	// !LINUX
+
+	MemoryCardManager::MemoryCardManager() {}
+	MemoryCardManager::~MemoryCardManager() {}
+	void MemoryCardManager::Update( float fDelta ) {}
 
 #endif
-}
-
-
-MemoryCardManager::MemoryCardManager()
-{
-
-}
-
-MemoryCardManager::~MemoryCardManager()
-{
-
-}
-
-bool UsbChanged()
-{
-#if defined(LINUX)
-	// UGLY: if the system log changed, then a USB device was connected or 
-	// disconnected.  Use this as a trivial check.
-	static const CString VAR_LOG_MESSAGES = "/var/log/messages";
-	static bool bFirstTime = false;
-	static stat old_stat;
-	if( bFirstTime )
-	{
-		fstat(VAR_LOG_MESSAGES, &old_stat);
-		bFirstTime = false;
-		return true;
-	}
-	else
-	{
-		stat new_stat;
-		fstat(VAR_LOG_MESSAGES, &new_stat);
-		bool bChanged = old_stat != new_stat;
-		old_stat = new_stat;
-		return bChanged;
-	}
-#else
-	return false;
-#endif
-}
-
-void MemoryCardManager::Update( float fDelta )
-{
-	if( UsbChanged() )
-	{
-		vector<UsbStorageDevice> vOld = g_StorageDevices;	// make a copy
-		UpdateAttachedUsbStorageDevices();
-		vector<UsbStorageDevice> &vNew = g_StorageDevices;
-
-		unsigned i;
-
-		// check for disconnects
-		for( i=0; i<vOld.size(); i++ )
-		{
-			const UsbStorageDevice old = vOld[i];
-			if( find(vNew.begin(),vNew.end(),old) == vNew.end() )
-				SCREENMAN->SystemMessage( ssprintf("Disconnected bus %d port %d device %d", old.iBus, old.iPortOnHub, old.iDeviceOnBus) );
-		}
-
-		// check for connects
-		for( i=0; i<vNew.size(); i++ )
-		{
-			const UsbStorageDevice newd = vNew[i];
-			if( find(vOld.begin(),vOld.end(),newd) == vOld.end() )
-				SCREENMAN->SystemMessage( ssprintf("Connected bus %d port %d device %d", newd.iBus, newd.iPortOnHub, newd.iDeviceOnBus) );
-		}
-	}
-}

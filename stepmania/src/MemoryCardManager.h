@@ -19,9 +19,6 @@ public:
 	~MemoryCardManager();
 
 	void Update( float fDelta );
-
-	bool IsReady();
-	CString GetMemCardDir( PlayerNumber pn );
 };
 
 extern MemoryCardManager*	MEMCARDMAN;	// global and accessable from anywhere in our program
