@@ -46,7 +46,7 @@ void ActorScroller::LoadFromIni( const IniFile &ini, const CString &sKey )
 		Dialog::OK( ssprintf("File '%s' is missing the value Scroller::%s", ini.GetPath().c_str(), szName) );
 
 	float fSecondsPerItem = 1;
-	int iNumItemsToDraw = 7;
+	float fNumItemsToDraw = 7;
 	RageVector3	vRotationDegrees = RageVector3(0,0,0);
 	RageVector3	vTranslateTerm0 = RageVector3(0,0,0);
 	RageVector3	vTranslateTerm1 = RageVector3(0,0,0);
@@ -55,7 +55,7 @@ void ActorScroller::LoadFromIni( const IniFile &ini, const CString &sKey )
 	float fItemPaddingEnd = 0;
 
 	REQUIRED_GET_VALUE( "SecondsPerItem", fSecondsPerItem );
-	REQUIRED_GET_VALUE( "NumItemsToDraw", iNumItemsToDraw );
+	REQUIRED_GET_VALUE( "NumItemsToDraw", fNumItemsToDraw );
 	REQUIRED_GET_VALUE( "RotationDegreesX", vRotationDegrees[0] );
 	REQUIRED_GET_VALUE( "RotationDegreesY", vRotationDegrees[1] );
 	REQUIRED_GET_VALUE( "RotationDegreesZ", vRotationDegrees[2] );
@@ -74,7 +74,7 @@ void ActorScroller::LoadFromIni( const IniFile &ini, const CString &sKey )
 
 	Load( 
 		fSecondsPerItem,
-		iNumItemsToDraw,
+		fNumItemsToDraw,
 		vRotationDegrees,
 		vTranslateTerm0,
 		vTranslateTerm1,
@@ -103,7 +103,6 @@ void ActorScroller::DrawPrimitives()
 	}
 	else
 	{
-		int iFirstItemToDraw = (int)roundf( m_fCurrentItem - m_fNumItemsToDraw/2.f );
 		for( int i=0; i<m_SubActors.size(); i++ )
 		{
 			float fItemOffset = i - m_fCurrentItem;
