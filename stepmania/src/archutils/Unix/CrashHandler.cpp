@@ -486,7 +486,7 @@ void CrashSignalHandler( int signal )
 	if( childpid == -1 )
 	{
 		safe_print(fileno(stderr), "Crash handler fork() failed: ", strerror(errno), "\n", NULL);
-		exit(1);
+		_exit(1);
 	}
 
 	if( childpid == 0 )
