@@ -1567,23 +1567,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			const vector<Song*> best = SONGMAN->GetBestSongs( PROFILE_SLOT_MACHINE );
 			const int index = FindIndex( best.begin(), best.end(), pSong );
 			if( index != -1 )
-			{
-				CString sSuffix;
-				int iDisplay = index+1;
-				switch( iDisplay%10 )
-				{
-				case 1:		sSuffix = "st";	break;
-				case 2:		sSuffix = "nd";	break;
-				case 3:		sSuffix = "rd";	break;
-				default:	sSuffix = "th";	break;
-				}
-
-				// hack for teens: "11th", "113th", etc.
-				if( ((iDisplay%100) / 10) == 1 )
-					sSuffix = "th";
-
-				m_MachineRank.SetText( ssprintf("%i", iDisplay) + sSuffix );
-			}
+				m_MachineRank.SetText( AddNumberSuffix( index+1 ) );
 
 			m_DifficultyDisplay.SetDifficulties( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType );
 
@@ -1719,7 +1703,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		const vector<Course*> best = SONGMAN->GetBestCourses( PROFILE_SLOT_MACHINE );
 		const int index = FindCourseIndexOfSameMode( best.begin(), best.end(), pCourse );
 		if( index != -1 )
-			m_MachineRank.SetText( ssprintf("%i", index+1) );
+			m_MachineRank.SetText( AddNumberSuffix( index+1 ) );
 
 
 
