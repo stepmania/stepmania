@@ -48,6 +48,7 @@ void CollapsePath( CString &sPath )
 
 bool RageFile::Open(const CString& path, const char *mode)
 {
+    Close();
     mPath = path;
     FixSlashesInPlace(mPath);
     mFP = fopen(mPath, mode);
