@@ -394,7 +394,8 @@ int Player::GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, float fM
 	return Fwd;
 }
 
-void Player::Step( int col )
+
+void Player::Step( int col, RageTimer tm )
 {
 	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  GAMESTATE->m_CurStageStats.bFailed[m_PlayerNumber] )	// Oni dead
 		return;	// do nothing
@@ -414,14 +415,20 @@ void Player::Step( int col )
 	if( iIndexOverlappingNote != -1 )
 	{
 		// compute the score for this hit
-		float fStepBeat = NoteRowToBeat( (float)iIndexOverlappingNote );
+		const float fStepBeat = NoteRowToBeat( (float)iIndexOverlappingNote );
 
-		float fStepSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fStepBeat);
+		const float fStepSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fStepBeat);
+
+		/* XXX: Double-check that we're handling m_fMusicRate correctly. */
+		/* We actually stepped on the note this long ago: */
+		const float fAgo = tm.Ago();
+		/* ... which means it happened at this point in the music: */
+		const float fMusicSeconds = GAMESTATE->m_fMusicSeconds - (fAgo / GAMESTATE->m_SongOptions.m_fMusicRate);
 
 		// The offset from the actual step in seconds:
-		float fNoteOffset = fStepSeconds - GAMESTATE->m_fMusicSeconds;
+		const float fNoteOffset = fStepSeconds - fMusicSeconds;
 
-		float fSecondsFromPerfect = fabsf( fNoteOffset ) / GAMESTATE->m_SongOptions.m_fMusicRate;	// account for music rate
+		const float fSecondsFromPerfect = fabsf( fNoteOffset ) / GAMESTATE->m_SongOptions.m_fMusicRate;	// account for music rate
 
 		// calculate TapNoteScore
 		TapNoteScore score;
@@ -606,10 +613,13 @@ void Player::CrossedRow( int iNoteRow )
 		RandomiseNotes( iNoteRow );
 
 	// check to see if there's at the crossed row
-	for( int t=0; t<GetNumTracks(); t++ )
-		if( GetTapNote(t, iNoteRow) != TAP_EMPTY )
-			if( GAMESTATE->m_PlayerController[m_PlayerNumber] != PC_HUMAN )
-				 Step( t );
+	RageTimer now;
+	if( GAMESTATE->m_PlayerController[m_PlayerNumber] != PC_HUMAN )
+	{
+		for( int t=0; t<GetNumTracks(); t++ )
+			if( GetTapNote(t, iNoteRow) != TAP_EMPTY )
+				Step( t, now );
+	}
 }
 
 void Player::RandomiseNotes( int iNoteRow )

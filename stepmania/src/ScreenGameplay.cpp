@@ -1330,7 +1330,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		StyleI.IsValid() &&
 		GAMESTATE->IsPlayerEnabled( StyleI.player ) )
 	{
-		m_Player[StyleI.player].Step( StyleI.col ); 
+		m_Player[StyleI.player].Step( StyleI.col, DeviceI.ts ); 
 	}
 	else if( type==IET_FIRST_PRESS && 
 		!PREFSMAN->m_bAutoPlay && 

@@ -1062,10 +1062,10 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 
 	switch( StyleI.player )
 	{
-		case PLAYER_1:	
-			if( !PREFSMAN->m_bAutoPlay )
-				m_Player.Step( StyleI.col ); 
-			return;
+	case PLAYER_1:	
+		if( !PREFSMAN->m_bAutoPlay )
+			m_Player.Step( StyleI.col, DeviceI.ts ); 
+		break;
 	}
 
 }

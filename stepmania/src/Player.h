@@ -30,6 +30,8 @@
 #include "GhostArrowRow.h"
 #include "NoteDataWithScoring.h"
 #include "ArrowBackdrop.h"
+#include "RageTimer.h"
+
 class ScoreDisplay;
 class LifeMeter;
 class CombinedLifeMeter;
@@ -50,7 +52,7 @@ public:
 
 	void Load( PlayerNumber player_no, NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScore, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper );
 	void CrossedRow( int iNoteRow );
-	void Step( int col );
+	void Step( int col, RageTimer tm );
 	void RandomiseNotes( int iNoteRow );
 	void FadeToFail();
 	void DontShowJudgement() { m_bShowJudgment = false; }	// Used in ScreenHowToPlay
