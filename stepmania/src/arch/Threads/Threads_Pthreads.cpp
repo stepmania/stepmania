@@ -9,11 +9,6 @@
 #include "archutils/Unix/RunningUnderValgrind.h"
 #endif
 
-#if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK) && defined(CRASH_HANDLER)
-#include "archutils/Unix/Backtrace.h"
-#include "archutils/Unix/CrashHandler.h"
-#endif
-
 #if defined(DARWIN)
 #include "archutils/Darwin/DarwinThreadHelpers.h"
 #endif
@@ -109,7 +104,7 @@ MutexImpl_Pthreads::~MutexImpl_Pthreads()
 }
 
 
-#if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK) && defined(CRASH_HANDLER)
+#if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK)
 static bool UseTimedlock()
 {
 #if defined(LINUX)
@@ -124,7 +119,7 @@ static bool UseTimedlock()
 
 bool MutexImpl_Pthreads::Lock()
 {
-#if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK) && defined(CRASH_HANDLER)
+#if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK)
 	if( UseTimedlock() )
 	{
 		int len = 10; /* seconds */
@@ -283,6 +278,60 @@ void SemaImpl_Pthreads::Post()
 
 bool SemaImpl_Pthreads::Wait()
 {
+#if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK)
+	if( UseTimedlock() )
+	{
+		timeval tv;
+		gettimeofday( &tv, NULL );
+
+		/* Wait for ten seconds.  If it takes longer than that, we're probably deadlocked. */
+		timespec ts;
+		ts.tv_sec = tv.tv_sec + 10;
+		ts.tv_nsec = tv.tv_usec * 1000;
+
+		pthread_mutex_lock( &m_Mutex );
+
+		int tries = 2;
+		while( tries-- )
+		{
+			int ret = pthread_cond_timedwait( &m_Cond, &m_Mutex, &ts );
+
+			switch( ret )
+			{
+			case 0:
+				if( !m_iValue )
+				{
+					++tries;
+					continue;
+				}
+
+				--m_iValue;
+				pthread_mutex_unlock( &m_Mutex );
+
+				return true;
+
+			case EINTR:
+				/* Ignore it. */
+				++tries;
+				continue;
+
+			case ETIMEDOUT:
+				/* Timed out.  Probably deadlocked.  Try again one more time, with a smaller
+				 * timeout, just in case we're debugging and happened to stop while waiting
+				 * on the mutex. */
+				++ts.tv_sec;
+				break;
+
+			default:
+				FAIL_M( ssprintf("pthread_mutex_timedlock: %s", strerror(errno)) );
+			}
+		}
+
+		pthread_mutex_unlock( &m_Mutex );
+		return false;
+	}
+#endif
+
 	pthread_mutex_lock( &m_Mutex );
 	while( !m_iValue )
 		pthread_cond_wait( &m_Cond, &m_Mutex );
