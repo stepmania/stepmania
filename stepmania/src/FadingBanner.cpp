@@ -112,8 +112,13 @@ void FadingBanner::LoadFromCachedBanner( const CString &path )
 	/* No matter what we load, ensure we don't fade to a stale path. */
 	m_sPendingBanner = "";
 
-	/* Try to load the low quality version. */
-	RageTextureID ID = BANNERCACHE->LoadCachedBanner( path );
+	RageTextureID ID;
+	if( PREFSMAN->m_BannerCache == PrefsManager::BNCACHE_FULL )
+		ID = Banner::BannerTex( path );
+	else
+		/* Try to load the low quality version. */
+		ID = BANNERCACHE->LoadCachedBanner( path );
+
 	if( !TEXTUREMAN->IsTextureRegistered(ID) )
 	{
 		/* Oops.  We couldn't load a banner quickly.  We can load the actual

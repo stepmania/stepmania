@@ -353,7 +353,7 @@ static void CheckSettings()
 	/* Preloaded banners takes about 9k per song. Although it's smaller than the
 	 * actual song data, it still adds up with a lot of songs. Disable it for 64-meg
 	 * systems. */
-	PREFSMAN->m_bBannerCache = !LowMemory;
+	PREFSMAN->m_BannerCache = LowMemory? PrefsManager::BNCACHE_OFF:PrefsManager::BNCACHE_LOW_RES;
 
 	PREFSMAN->SaveGlobalPrefsToDisk();
 #endif
@@ -755,18 +755,16 @@ void SaveGamePrefsToDisk()
 #define UNLOCKS_PATH BASE_PATH "Data" SLASH "Unlocks.dat"
 
 #ifdef _XBOX
-char *xboxargv[] = { "d:\\default.xbe" } ;
+char *xboxargv[] = { "d:\\default.xbe" };
 extern RageDisplay::VideoModeParams	g_CurrentParams;
-
 #endif
 
 int main(int argc, char* argv[])
 {
-
 #ifdef _XBOX
-	argc = 1 ;
-	argv = xboxargv ;
-	XGetCustomLaunchData() ;
+	argc = 1;
+	argv = xboxargv;
+	XGetCustomLaunchData();
 #endif
 
 	g_argc = argc;
@@ -881,6 +879,8 @@ int main(int argc, char* argv[])
 	g_hWndMain = info.window;
 #endif
 
+	SONGMAN->PreloadSongImages();
+
 	/* This initializes objects that change the SDL event mask, and has other
 	 * dependencies on the SDL video subsystem, so it must be initialized after
 	 * DISPLAY and setting the default SDL event mask. */
@@ -903,9 +903,11 @@ int main(int argc, char* argv[])
 	SONGMAN->UpdateRankingCourses();
 
 #ifdef _XBOX
-	g_CurrentParams.width = 600 ;
-	g_CurrentParams.height= 400 ;
-	DISPLAY->ResolutionChanged() ;
+	/* XXX: This is a bad way to do this.  Instead, add an "XBOX" entry to
+	 * g_VideoCardDefaults (and make sure the name shows up, so it matches). */
+	g_CurrentParams.width = 600;
+	g_CurrentParams.height= 400;
+	DISPLAY->ResolutionChanged();
 #endif
 
 	/* Run the main loop. */

@@ -29,6 +29,8 @@
 #include "GameManager.h"
 #include "RageFile.h"
 #include "ProductInfo.h"
+#include "RageTextureManager.h"
+#include "Banner.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -300,6 +302,25 @@ void SongManager::LoadGroupSymLinks(CString sDir, CString sGroupFolder)
 			m_pSongs.push_back( pNewSong );
 		}
 	}
+}
+
+void SongManager::PreloadSongImages()
+{
+	ASSERT( TEXTUREMAN );
+	if( PREFSMAN->m_BannerCache != PrefsManager::BNCACHE_FULL )
+		return;
+
+	const vector<Song*> &songs = SONGMAN->GetAllSongs();
+	unsigned i;
+	for( i = 0; i < songs.size(); ++i )
+	{
+		if( !songs[i]->HasBanner() )
+			continue;
+
+		const RageTextureID ID = Banner::BannerTex( songs[i]->GetBannerPath() );
+		TEXTUREMAN->CacheTexture( ID );
+	}
+
 }
 
 void SongManager::FreeSongs()

@@ -17,6 +17,10 @@
 #include "SDL_dither.h"
 #include "SDL_image.h"
 #include "SDL_rotozoom.h"
+#include "SDL_utils.h"
+#include "RageDisplay.h"
+#include "RageTexture.h"
+#include "RageTextureManager.h"
 
 #include "Banner.h"
 
@@ -55,7 +59,7 @@ CString BannerCache::GetBannerCachePath( CString BannerPath )
 
 void BannerCache::LoadBanner( CString BannerPath )
 {
-	if( !PREFSMAN->m_bBannerCache || BannerPath == "" )
+	if( PREFSMAN->m_BannerCache != PrefsManager::BNCACHE_LOW_RES || BannerPath == "" )
 		return;
 
 	/* Load it. */
@@ -124,11 +128,6 @@ BannerCache::~BannerCache()
 {
 	UnloadAllBanners();
 }
-
-#include "SDL_utils.h"
-#include "RageDisplay.h"
-#include "RageTexture.h"
-#include "RageTextureManager.h"
 
 struct BannerTexture: public RageTexture
 {
@@ -397,7 +396,7 @@ void BannerCache::CacheBannerInternal( CString BannerPath )
 	const CString CachePath = GetBannerCachePath(BannerPath);
 	mySDL_SaveSurface( img, CachePath );
 
-	if( PREFSMAN->m_bBannerCache )
+	if( PREFSMAN->m_BannerCache == PrefsManager::BNCACHE_LOW_RES )
 	{
 		/* If an old image is loaded, free it. */
 		if( m_BannerPathToImage.find(BannerPath) != m_BannerPathToImage.end() )

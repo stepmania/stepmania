@@ -42,6 +42,7 @@ public:
 	void FreeCourses();
 
 	void Reload();	// songs, courses, groups - everything.
+	void PreloadSongImages();
 
 
 	CString GetGroupBannerPath( CString sGroupName );

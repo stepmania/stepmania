@@ -46,7 +46,8 @@ public:
 	bool			m_bDelayedTextureDelete;
 	bool			m_bTexturePreload;
 	bool			m_bDelayedScreenLoad;
-	bool			m_bBannerCache;
+	enum BannerCacheMode { BNCACHE_OFF, BNCACHE_LOW_RES, BNCACHE_FULL };
+	BannerCacheMode	m_BannerCache;
 
 	bool			m_bOnlyDedicatedMenuButtons;
 	bool			m_bMenuTimer;
