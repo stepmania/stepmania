@@ -557,8 +557,9 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 	{
 		time_t rawtime;
 		time(&rawtime);
-		struct tm* ptm = localtime(&rawtime);
-		int month = ptm->tm_mon; /* Month 0..11 */
+		struct tm ptm;
+		localtime_r( &rawtime, &ptm );
+		int month = ptm.tm_mon; /* Month 0..11 */
 		LOG->Info("Month: %d",month);
 		bool foundvalidmonth = false;
 		for(unsigned d=0;d<info.songmonths.size();d++)
@@ -578,8 +579,9 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 	{
 		time_t rawtime;
 		time(&rawtime);
-		struct tm* ptm = localtime(&rawtime);
-		int day = ptm->tm_mday; /* day in the month */
+		struct tm ptm;
+		localtime_r( &rawtime, &ptm );
+		int day = ptm.tm_mday; /* day in the month */
 		LOG->Info("DAy: %d",day);
 		bool foundvalidday = false;
 		for(unsigned d=0;d<info.songdays.size();d++)
