@@ -1926,7 +1926,7 @@ LuaFunction_StrStr(	SetEnv,					GAMESTATE->m_mapEnv[str1] = str2 )
 
 /* Return an integer into SONGMAN->m_pSongs.  This lets us do input checking, which we
  * can't easily do if we return pointers. */
-LuaFunction_NoArgs( CurSong,				GAMESTATE->m_pCurSong )
+LuaFunction_NoArgs( CurSong,				(void *) GAMESTATE->m_pCurSong )
 LuaFunction_PlayerNumber( CurSteps,			GAMESTATE->m_pCurSteps[pn] )
 
 bool PlayerIsUsingModifier( PlayerNumber pn, const CString sModifier )
