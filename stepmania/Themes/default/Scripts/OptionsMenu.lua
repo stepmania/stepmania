@@ -44,9 +44,11 @@ end
 OptionRowTable =
 {
 	SaveTo = nil, -- set this
+	Default = nil, -- set this
 
 	LoadSelections = function(self, list, pn)
 		local Sort = PROFILEMAN:GetMachineProfile():GetSaved()[self.Name]
+			or self.Default
 		-- Find the index of the current sort.
 		local Index = FindValue(self.RawChoices, Sort) or 1
 		list[Index] = true
