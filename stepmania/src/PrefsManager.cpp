@@ -278,6 +278,7 @@ void PrefsManager::Init()
 	m_bTimestamping = false;
 	m_bLogSkips = false;
 	m_bLogCheckpoints = false;
+	m_bLogFPS = true;
 	m_bShowLoadingWindow = true;
 
 	m_bMemoryCards = false;
@@ -551,6 +552,7 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Debug", "Timestamping",						m_bTimestamping );
 	ini.GetValue( "Debug", "LogSkips",							m_bLogSkips );
 	ini.GetValue( "Debug", "LogCheckpoints",					m_bLogCheckpoints );
+	ini.GetValue( "Debug", "LogFPS",							m_bLogFPS );
 	ini.GetValue( "Debug", "ShowLoadingWindow",					m_bShowLoadingWindow );
 }
 
@@ -791,6 +793,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Debug", "Timestamping",						m_bTimestamping );
 	ini.SetValue( "Debug", "LogSkips",							m_bLogSkips );
 	ini.SetValue( "Debug", "LogCheckpoints",					m_bLogCheckpoints );
+	ini.SetValue( "Debug", "LogFPS",							m_bLogFPS );
 	ini.SetValue( "Debug", "ShowLoadingWindow",					m_bShowLoadingWindow );
 
 	ini.WriteFile( STEPMANIA_INI_PATH );

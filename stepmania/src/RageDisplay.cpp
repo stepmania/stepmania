@@ -10,6 +10,7 @@
 #include "RageSurface_Save_BMP.h"
 #include "SDL_rotozoom.h"
 #include "RageSurface.h"
+#include "PrefsManager.h"
 
 //
 // Statistics stuff
@@ -108,7 +109,8 @@ void RageDisplay::ProcessStatsOnFlip()
 		g_iCFPS = g_iFramesRenderedSinceLastReset / g_iNumChecksSinceLastReset;
 		g_iVPF = g_iVertsRenderedSinceLastCheck / g_iFPS;
 		g_iFramesRenderedSinceLastCheck = g_iVertsRenderedSinceLastCheck = 0;
-		LOG->Trace( "FPS: %d, CFPS %d, VPF: %d", g_iFPS, g_iCFPS, g_iVPF );
+		if( PREFSMAN->m_bLogFPS )
+			LOG->Trace( "FPS: %d, CFPS %d, VPF: %d", g_iFPS, g_iCFPS, g_iVPF );
 	}
 }
 
