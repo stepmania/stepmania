@@ -100,9 +100,9 @@ PrefsManager::PrefsManager()
 	m_iGradeGoodWeight = 0;
 	m_iGradeBooWeight = -4;
 	m_iGradeMissWeight = -8;
+	m_iGradeHitMineWeight = -8;
 	m_iGradeOKWeight = 6;
 	m_iGradeNGWeight = 0;
-	m_iPercentScoreHitMineWeight = -8;
 	m_fGradePercentAA = 0.93f;
 	m_fGradePercentA = 0.80f;
 	m_fGradePercentB = 0.65f;
@@ -327,9 +327,9 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "GradeGoodWeight",					m_iGradeGoodWeight );
 	ini.GetValue( "Options", "GradeBooWeight",					m_iGradeBooWeight );
 	ini.GetValue( "Options", "GradeMissWeight",					m_iGradeMissWeight );
+	ini.GetValue( "Options", "GradeHitMineWeight",				m_iGradeHitMineWeight );
 	ini.GetValue( "Options", "GradeOKWeight",					m_iGradeOKWeight );
 	ini.GetValue( "Options", "GradeNGWeight",					m_iGradeNGWeight );
-	ini.GetValue( "Options", "GradeHitMineWeight",				m_iPercentScoreHitMineWeight );
 	ini.GetValue( "Options", "GradePercentAA",					m_fGradePercentAA );
 	ini.GetValue( "Options", "GradePercentA",					m_fGradePercentA );
 	ini.GetValue( "Options", "GradePercentB",					m_fGradePercentB );
@@ -510,9 +510,9 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "GradeGoodWeight",					m_iGradeGoodWeight );
 	ini.SetValue( "Options", "GradeBooWeight",					m_iGradeBooWeight );
 	ini.SetValue( "Options", "GradeMissWeight",					m_iGradeMissWeight );
+	ini.SetValue( "Options", "GradeHitMineWeight",				m_iGradeHitMineWeight );
 	ini.SetValue( "Options", "GradeOKWeight",					m_iGradeOKWeight );
 	ini.SetValue( "Options", "GradeNGWeight",					m_iGradeNGWeight );
-	ini.SetValue( "Options", "GradeHitMineWeight",				m_iPercentScoreHitMineWeight );
 	ini.SetValue( "Options", "GradePercentAA",					m_fGradePercentAA );
 	ini.SetValue( "Options", "GradePercentA",					m_fGradePercentA );
 	ini.SetValue( "Options", "GradePercentB",					m_fGradePercentB );

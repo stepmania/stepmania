@@ -795,23 +795,29 @@ void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fWindowSizeBeats, 
 			iTrackOfNoteEarlier != iTrackOfNoteLater )	// Don't make skips on the same note
 		{
 			iTrackOfNoteToAdd = iTrackOfNoteEarlier;
+			goto done_looking_for_track_to_add;
 		}
-		else
+
+		// try to choose a track between the earlier and later notes
+		if( abs(iTrackOfNoteEarlier-iTrackOfNoteLater) >= 2 )
 		{
-			// choose a randomish track
-			if( abs(iTrackOfNoteEarlier-iTrackOfNoteLater) == 2 )
-				iTrackOfNoteToAdd = (iTrackOfNoteEarlier+iTrackOfNoteLater)/2;
-			else
-			{
-				for( int t=min(iTrackOfNoteEarlier,iTrackOfNoteLater)-1; t<=max(iTrackOfNoteEarlier,iTrackOfNoteLater)+1; t++ )
-				{
-					iTrackOfNoteToAdd = t;
-					CLAMP( iTrackOfNoteToAdd, 0, in.GetNumTracks()-1 );
-					if( iTrackOfNoteToAdd!=iTrackOfNoteEarlier && iTrackOfNoteToAdd!=iTrackOfNoteLater )
-						break;
-				}
-			}
+			iTrackOfNoteToAdd = min(iTrackOfNoteEarlier,iTrackOfNoteLater)+1;
+			goto done_looking_for_track_to_add;
 		}
+		
+		if( min(iTrackOfNoteEarlier,iTrackOfNoteLater)-1 >= 0 )
+		{
+			iTrackOfNoteToAdd = min(iTrackOfNoteEarlier,iTrackOfNoteLater)-1;
+			goto done_looking_for_track_to_add;
+		}
+
+		if( max(iTrackOfNoteEarlier,iTrackOfNoteLater)+1 < in.GetNumTracks() )
+		{
+			iTrackOfNoteToAdd = max(iTrackOfNoteEarlier,iTrackOfNoteLater)+1;
+			goto done_looking_for_track_to_add;
+		}
+
+done_looking_for_track_to_add:
 
 		in.SetTapNote(iTrackOfNoteToAdd, iRowToAdd, TAP_ADDITION);
 	}
