@@ -23,6 +23,7 @@
 
 OptionIconRow::OptionIconRow()
 {
+	m_PlayerNumber = NUM_PLAYERS;
 	for( unsigned i=0; i<NUM_OPTION_COLS; i++ )
 	{
 		m_OptionIcon[i].SetXY( i*SPACING_X, i*SPACING_Y );
@@ -98,6 +99,8 @@ void OptionIconRow::Load( PlayerNumber pn )
 
 void OptionIconRow::Refresh()
 {
+	ASSERT( m_PlayerNumber != NUM_PLAYERS );
+	
 	// init
 	unsigned i;
 	for( i=0; i<NUM_OPTION_COLS; i++ )
