@@ -237,7 +237,12 @@ void ScreenOptions::InitOptionsText()
 				option.SetZoom( ITEMS_ZOOM );
 				option.EnableShadow( false );
 
-				option.SetXY( ITEM_X[p], fY );
+				option.SetY( fY );
+				/* If we're in INPUTMODE_BOTH, center the items. */
+				if( m_InputMode == INPUTMODE_BOTH )
+					option.SetX( (ITEM_X[0]+ITEM_X[1])/2 );
+				else
+					option.SetX( ITEM_X[p] );
 
 				UpdateText( (PlayerNumber)p );
 			}
@@ -362,8 +367,7 @@ void ScreenOptions::UpdateEnabledDisabled()
 	RageColor colorNotSelected = COLOR_NOT_SELECTED;
 
 	// init text
-	int i;
-	for( i=0; i<m_iNumOptionRows; i++ )		// foreach line
+	for( int i=0; i<m_iNumOptionRows; i++ )		// foreach line
 	{
 		bool bThisRowIsSelected = false;
 		for( int p=0; p<NUM_PLAYERS; p++ )
@@ -376,21 +380,27 @@ void ScreenOptions::UpdateEnabledDisabled()
 
 		if( m_bRowIsLong[i] )
 			for( unsigned j=0; j<NUM_PLAYERS; j++ )
+			{
 				m_textItems[i][j].SetDiffuse( bThisRowIsSelected ? colorSelected : colorNotSelected );
+
+				/* Hide the text of all but the first player, so we don't overdraw. */
+				if( m_InputMode == INPUTMODE_BOTH && j != 0 )
+					m_textItems[i][j].SetDiffuse( RageColor(1,1,1,0) );
+			}
 		else
 			for( unsigned j=0; j<m_OptionRow[i].choices.size(); j++ )
 				m_textItems[i][j].SetDiffuse( bThisRowIsSelected ? colorSelected : colorNotSelected );
 	}
 
-	bool bThisRowIsSelectedByBoth = true;
+	bool bExitRowIsSelectedByBoth = true;
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsHumanPlayer(p)  &&  m_iCurrentRow[p] != i )
-			bThisRowIsSelectedByBoth = false;
-		m_textItems[i][0].SetDiffuse( bThisRowIsSelectedByBoth ? colorNotSelected : colorSelected );
-	if( bThisRowIsSelectedByBoth )
-		m_textItems[i][0].SetEffectDiffuseShift( 1.0f, colorSelected, colorNotSelected );
+		if( GAMESTATE->IsHumanPlayer(p)  &&  m_iCurrentRow[p] != m_iNumOptionRows )
+			bExitRowIsSelectedByBoth = false;
+	m_textItems[m_iNumOptionRows][0].SetDiffuse( bExitRowIsSelectedByBoth ? colorNotSelected : colorSelected );
+	if( bExitRowIsSelectedByBoth )
+		m_textItems[m_iNumOptionRows][0].SetEffectDiffuseShift( 1.0f, colorSelected, colorNotSelected );
 	else
-		m_textItems[i][0].SetEffectNone();
+		m_textItems[m_iNumOptionRows][0].SetEffectNone();
 }
 
 void ScreenOptions::Update( float fDeltaTime )
