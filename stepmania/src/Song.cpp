@@ -1188,8 +1188,8 @@ void SortSongPointerArrayByDifficulty( vector<Song*> &arraySongPointers )
 bool CompareSongPointersByBPM(const Song *pSong1, const Song *pSong2)
 {
 	float fMinBPM1, fMaxBPM1, fMinBPM2, fMaxBPM2;
-	pSong1->GetActualBPM( fMinBPM1, fMaxBPM1 );
-	pSong2->GetActualBPM( fMinBPM2, fMaxBPM2 );
+	pSong1->GetDisplayBPM( fMinBPM1, fMaxBPM1 );
+	pSong2->GetDisplayBPM( fMinBPM2, fMaxBPM2 );
 
 	if( fMaxBPM1 < fMaxBPM2 )
 		return true;
