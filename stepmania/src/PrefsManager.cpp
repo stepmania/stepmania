@@ -66,7 +66,8 @@ PrefsManager::PrefsManager()
 	m_iUnloadTextureDelaySeconds = 0; // disabled 60*30;	// 30 mins
 	m_bCoinOpMode = false;
 	m_bMusicWheelUsesSections = true;
-	
+	m_bChangeBannersWhenFast = false;
+
 	/* I'd rather get occasional people asking for support for this even though it's
 	 * already here than lots of people asking why songs aren't being displayed. */
 	m_bHiddenSongs = false;
@@ -122,6 +123,7 @@ PrefsManager::~PrefsManager()
 	ini.GetValueI( "Options", "UnloadTextureDelaySeconds",	m_iUnloadTextureDelaySeconds );
 	ini.GetValueB( "Options", "CoinOpMode",					m_bCoinOpMode );
 	ini.GetValueB( "Options", "MusicWheelUsesSections",		m_bMusicWheelUsesSections );
+	ini.GetValueB( "Options", "ChangeBannersWhenFast",		m_bChangeBannersWhenFast );
 	ini.GetValue ( "Options", "SoundDrivers",				m_bSoundDrivers );
 
 	m_asAdditionalSongFolders.clear();
@@ -176,6 +178,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValue ( "Options", "DWIPath",					m_DWIPath );
 	ini.SetValueI( "Options", "UnloadTextureDelaySeconds",	m_iUnloadTextureDelaySeconds );
 	ini.SetValueB( "Options", "MusicWheelUsesSections",		m_bMusicWheelUsesSections );
+	ini.SetValueB( "Options", "ChangeBannersWhenFast",		m_bChangeBannersWhenFast );
 	ini.SetValueB( "Options", "CoinOpMode",					m_bCoinOpMode );
 
 	/* Only write this if it's been changed.  This ensures that we can change

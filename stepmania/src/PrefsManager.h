@@ -53,6 +53,7 @@ public:
 	bool			m_bArcadeOptionsNavigation;
 	bool			m_bCoinOpMode;
 	bool			m_bMusicWheelUsesSections;
+	bool			m_bChangeBannersWhenFast;
 
 	CStringArray m_asAdditionalSongFolders;
 	CString m_DWIPath;
