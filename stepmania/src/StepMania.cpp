@@ -882,10 +882,6 @@ static void ProcessArgsFirst()
 	CString Argument;
 	if( GetCommandlineArgument( "test", &Argument ) )
 		LOG->Info ("Test: \"%s\"", Argument.c_str() );
-
-		//--LogSongs
-	if( GetCommandlineArgument( "sendsongs" ) )
-		NSMAN->SendSongs();
 }
 
 static void ProcessArgsSecond()
