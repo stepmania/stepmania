@@ -3,16 +3,16 @@
 
 #include "InputHandler.h"
 
-class PumpPadDevice: RageInputFeeder
+class InputHandler_Win32_Pump: public InputHandler
 {
 	struct dev_t; /* MYOB */
 
 	dev_t *dev;
 
 public:
-	void Update();
-	PumpPadDevice();
-	~PumpPadDevice();
+	void Update(float fDeltaTime);
+	InputHandler_Win32_Pump();
+	~InputHandler_Win32_Pump();
 };
 
 

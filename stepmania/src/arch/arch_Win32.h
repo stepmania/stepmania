@@ -6,6 +6,8 @@
 #include "ErrorDialog/ErrorDialog_Win32.h"
 #include "ArchHooks/ArchHooks_Win32.h"
 
+#include "InputHandler/InputHandler_Win32_Pump.h"
+
 #include "Sound/RageSoundDriver_DSound.h"
 #include "Sound/RageSoundDriver_DSound_Software.h"
 #include "Sound/RageSoundDriver_WaveOut.h"

@@ -15,11 +15,11 @@
  * be used by RageInputFeeders.
  */
 
-class RageInputFeeder
+class InputHandler
 {
 public:
 	virtual void Update(float fDeltaTime) { }
-	virtual ~RageInputFeeder() { }
+	virtual ~InputHandler() { }
 };
 
 #endif

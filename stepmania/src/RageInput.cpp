@@ -14,6 +14,7 @@
 #include "SDL_utils.h"
 #include "RageLog.h"
 #include "InputFilter.h"
+#include "arch/InputHandler/InputHandler.h"
 
 RageInput*		INPUTMAN	= NULL;		// globally accessable input device
 
@@ -54,28 +55,24 @@ RageInput::RageInput()
 	}
 	SDL_JoystickEventState( SDL_ENABLE );
 
-	//
-	// Init pump
-	//
-	m_Pump = new PumpPadDevice;
+	/* Init optional devices. */
+	MakeInputHandlers(Devices);
 }
 
 RageInput::~RageInput()
 {
-	//
-	// De-init pump
-	//
-	delete m_Pump;
+	/* Delete optional devices. */
+	for(unsigned i = 0; i < Devices.size(); ++i)
+		delete Devices[i];
 
 	SDL_QuitSubSystem( SDL_INIT_JOYSTICK );
 }
 
 void RageInput::Update( float fDeltaTime )
 {
-	//
-	// Update Pump
-	//
-	m_Pump->Update();
+	/* Update optional devices. */
+	for(unsigned i = 0; i < Devices.size(); ++i)
+		Devices[i]->Update(fDeltaTime);
 }
 
 bool RageInput::FeedSDLEvent(const SDL_Event &event)

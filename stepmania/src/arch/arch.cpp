@@ -21,6 +21,13 @@ LoadingWindow *MakeLoadingWindow() { return new ARCH_LOADING_WINDOW; }
 ErrorDialog *MakeErrorDialog() { return new ARCH_ERROR_DIALOG; }
 ArchHooks *MakeArchHooks() { return new ARCH_HOOKS; }
 
+void MakeInputHandlers(vector<InputHandler *> &Add)
+{
+#if defined(WIN32)
+	Add.push_back(new InputHandler_Win32_Pump);
+#endif
+}
+
 /* Err, this is ugly--breaks arch encapsulation. Hmm. */
 RageSoundDriver *MakeRageSoundDriver(CString drivers)
 {

@@ -12,7 +12,7 @@
 #pragma comment(lib, "ddk/setupapi.lib") 
 #pragma comment(lib, "ddk/hid.lib") 
 
-struct PumpPadDevice::dev_t {
+struct InputHandler_Win32_Pump::dev_t {
 	dev_t();
 	~dev_t();
 	HANDLE h;
@@ -112,20 +112,20 @@ HANDLE USB::OpenUSB (int VID, int PID, int num)
 }
 
 
-PumpPadDevice::dev_t::dev_t()
+InputHandler_Win32_Pump::dev_t::dev_t()
 {
 	ZeroMemory( &ov, sizeof(ov) );
 	pending=false;
 	h = INVALID_HANDLE_VALUE;
 }
 
-PumpPadDevice::dev_t::~dev_t()
+InputHandler_Win32_Pump::dev_t::~dev_t()
 {
 	if(h != INVALID_HANDLE_VALUE)
 		CloseHandle(h);
 }
 
-PumpPadDevice::PumpPadDevice()
+InputHandler_Win32_Pump::InputHandler_Win32_Pump()
 {
 	const int pump_usb_vid = 0x0d2f, pump_usb_pid = 0x0001;
 
@@ -139,12 +139,12 @@ PumpPadDevice::PumpPadDevice()
 	}
 }
 
-PumpPadDevice::~PumpPadDevice()
+InputHandler_Win32_Pump::~InputHandler_Win32_Pump()
 {
 	delete[] dev;
 }
 
-int PumpPadDevice::dev_t::GetPadEvent()
+int InputHandler_Win32_Pump::dev_t::GetPadEvent()
 {
     int ret;
 
@@ -179,7 +179,7 @@ int PumpPadDevice::dev_t::GetPadEvent()
     return buf;
 }
 
-void PumpPadDevice::Update()
+void InputHandler_Win32_Pump::Update(float fDeltaTime)
 {
 	static const int bits[] = {
 	/* P1 */	(1<<9), (1<<12), (1<<13), (1<<11), (1<<10),

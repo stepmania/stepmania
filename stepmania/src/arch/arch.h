@@ -6,11 +6,14 @@ class ErrorDialog;
 class LoadingWindow;
 class RageSoundDriver;
 class ArchHooks;
+class InputHandler;
 
 ErrorDialog *MakeErrorDialog();
 LoadingWindow *MakeLoadingWindow();
-RageSoundDriver *MakeRageSoundDriver(CString drivers);
 ArchHooks *MakeArchHooks();
+
+void MakeInputHandlers(vector<InputHandler *> &Add);
+RageSoundDriver *MakeRageSoundDriver(CString drivers);
 
 /* Define the default list of sound drivers for each arch. */
 #if defined(WIN32)

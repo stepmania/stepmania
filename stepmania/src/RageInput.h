@@ -10,13 +10,11 @@
 
 #include "RageInputDevice.h"
 #include "SDL_utils.h"
-
-#include "arch/InputHandler/InputHandler_Win32_Pump.h"
+#include "arch/arch.h"
 
 class RageInput
 {
-	/* Structure for reading Pump pads: */
-	PumpPadDevice *m_Pump;
+	vector<InputHandler *> Devices;
 
 public:
 	RageInput();
@@ -27,7 +25,6 @@ public:
 };
 
 extern RageInput*			INPUTMAN;	// global and accessable from anywhere in our program
-
 
 #endif
 /*
