@@ -7,6 +7,7 @@
 
 #include "Sound/RageSoundDriver_DSound.h"
 #include "Sound/RageSoundDriver_DSound_Software.h"
+#include "Sound/RageSoundDriver_WaveOut.h"
 
 #endif
 
