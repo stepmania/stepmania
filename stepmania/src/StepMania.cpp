@@ -307,9 +307,10 @@ RageDisplay *CreateDisplay()
 		if(!ini.ReadFile())
 			RageException::Throw( "Couldn't read Data/VideoCardDefaults.ini." );
 
-		for( int i=0; true; i++ )
+		IniFile::const_iterator i;
+		for( i = ini.begin(); i != ini.end(); ++i )
 		{
-			CString sKey = ssprintf("%04d",i);
+			const CString &sKey = i->first;
 
 			CString sDriverRegex;
 			if( !ini.GetValue( sKey, "DriverRegex", sDriverRegex ) )
