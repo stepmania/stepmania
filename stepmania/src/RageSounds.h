@@ -18,6 +18,8 @@ public:
 
 	void PlayOnce( CString sPath );
 	void PlayOnceFromDir( CString sDir );
+
+	float GetPlayLatency() const;
 };
 
 extern RageSounds *SOUND;

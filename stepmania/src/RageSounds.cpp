@@ -70,6 +70,11 @@ void RageSounds::PlayOnceFromDir( CString PlayOnceFromDir )
 	SOUNDMAN->PlayOnceFromDir( PlayOnceFromDir );
 }
 
+float RageSounds::GetPlayLatency() const
+{
+	return SOUNDMAN->GetPlayLatency();
+}
+
 /*
 -----------------------------------------------------------------------------
  Copyright (c) 2002-2003 by the person(s) listed below.  All rights reserved.
