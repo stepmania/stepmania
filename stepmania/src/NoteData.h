@@ -11,9 +11,10 @@
 
 class NoteData
 {
-	/* Keep this aligned, so that they all have the same size. */
-	vector<TapNote> m_TapNotes[MAX_NOTE_TRACKS];
-	int m_iNumTracks;
+	/* By convention, all TrackVectors have the same size.
+	 * If you want to set the size of one, be sure to set the rest. */
+	typedef vector<TapNote> TrackVector;
+	vector<TrackVector> m_TapNotes;
 
 	vector<HoldNote>	m_HoldNotes;
 

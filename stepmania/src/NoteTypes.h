@@ -52,29 +52,7 @@ extern TapNote TAP_ADDITION_TAP;
 extern TapNote TAP_ADDITION_MINE;
 
 // TODO: Don't have a hard-coded track limit.
-enum 
-{
-	TRACK_1 = 0,
-	TRACK_2,
-	TRACK_3,
-	TRACK_4,
-	TRACK_5,
-	TRACK_6,
-	TRACK_7,
-	TRACK_8,
-	TRACK_9,
-	TRACK_10,
-	TRACK_11,
-	TRACK_12,
-	TRACK_13,	// BMS reader needs 13 tracks
-	// MD 10/26/03 - BMS reader needs a whole lot more than 13 tracks - more like 16
-	//   because we have 11-16, 18, 19, 21-26, 28, 29 for IIDX double (bm-double7)
-	TRACK_14,
-	TRACK_15,
-	TRACK_16,
-	// MD 10/26/03 end
-	MAX_NOTE_TRACKS		// leave this at the end
-};
+const int MAX_NOTE_TRACKS = 16;
 
 const int BEATS_PER_MEASURE = 4;
 const int ROWS_PER_BEAT	= 48;	// It is important that this number is evenly divisible by 2, 3, and 4.
