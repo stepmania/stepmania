@@ -94,7 +94,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Optimization="0"
 				OptimizeForProcessor="2"
 				AdditionalIncludeDirectories=".,sdl_xbox_includes,SDL_image-1.2;vorbis,libjpeg,lua-5.0"
-				PreprocessorDefinitions="WIN32,_XBOX,_DEBUG,OGG_ONLY"
+				PreprocessorDefinitions="WIN32,_XBOX,_DEBUG,OGG_ONLY,_INC_WINDOWS"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderFile=".\Debug/StepMania.pch"
@@ -134,7 +134,10 @@ cl                                                                              
 				FileName="../default.xbe"
 				StackSize="0x10000"
 				IncludeDebugInfo="TRUE"
-				SuppressStartupBanner="TRUE"/>
+				LimitAvailableMemoryTo64MB="TRUE"
+				SuppressStartupBanner="TRUE"
+				XboxGameRating="5"
+				TitleName="StepmaniaX"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -260,7 +263,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 cl                                                                                                                                                                                     /Zl                                                                                                                                                                                     /nologo                                                                                                                                                                                     /c                                                                                                                                                                                     verstub.cpp                                                                                                                                                                                     /Fo$(IntDir)\
 "/>
 			<Tool
-				Name="XboxDeploymentTool"/>
+				Name="XboxDeploymentTool"
+				Progress="TRUE"
+				ForceCopy="TRUE"/>
 			<Tool
 				Name="XboxImageTool"
 				FileName="../default.xbe"
@@ -269,7 +274,7 @@ cl                                                                              
 				SuppressStartupBanner="TRUE"
 				TitleID=""
 				TitleInfo=""
-				TitleName=""
+				TitleName="StepmaniaX"
 				TitleImage=""/>
 		</Configuration>
 	</Configurations>
@@ -288,12 +293,6 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath="ScreenAttract.h">
-			</File>
-			<File
-				RelativePath="ScreenAward.cpp">
-			</File>
-			<File
-				RelativePath="ScreenAward.h">
 			</File>
 			<File
 				RelativePath="ScreenBookkeeping.cpp">
@@ -726,6 +725,12 @@ cl                                                                              
 				RelativePath="CourseUtil.h">
 			</File>
 			<File
+				RelativePath="DateTime.cpp">
+			</File>
+			<File
+				RelativePath="DateTime.h">
+			</File>
+			<File
 				RelativePath="Difficulty.cpp">
 			</File>
 			<File
@@ -915,10 +920,10 @@ cl                                                                              
 				RelativePath="Profile.h">
 			</File>
 			<File
-				RelativePath="ProfileHtml.cpp">
+				RelativePath="RadarValues.cpp">
 			</File>
 			<File
-				RelativePath="ProfileHtml.h">
+				RelativePath="RadarValues.h">
 			</File>
 			<File
 				RelativePath=".\RandomSample.cpp">
@@ -984,22 +989,19 @@ cl                                                                              
 				RelativePath="StepsUtil.h">
 			</File>
 			<File
+				RelativePath="Style.cpp">
+			</File>
+			<File
 				RelativePath="Style.h">
-			</File>
-			<File
-				RelativePath=".\StyleDef.cpp">
-			</File>
-			<File
-				RelativePath=".\StyleDef.h">
 			</File>
 			<File
 				RelativePath="StyleInput.h">
 			</File>
 			<File
-				RelativePath="TimeConstants.cpp">
+				RelativePath="StyleUtil.cpp">
 			</File>
 			<File
-				RelativePath="TimeConstants.h">
+				RelativePath="StyleUtil.h">
 			</File>
 			<File
 				RelativePath="TimingData.cpp">
@@ -1193,6 +1195,9 @@ cl                                                                              
 					Name="Lights"
 					Filter="">
 					<File
+						RelativePath="arch\Lights\LightsDriver.cpp">
+					</File>
+					<File
 						RelativePath="arch\Lights\LightsDriver.h">
 					</File>
 					<File
@@ -1208,6 +1213,9 @@ cl                                                                              
 				<Filter
 					Name="MemoryCard"
 					Filter="">
+					<File
+						RelativePath="arch\MemoryCard\MemoryCardDriver.cpp">
+					</File>
 					<File
 						RelativePath="arch\MemoryCard\MemoryCardDriver.h">
 					</File>
@@ -1920,12 +1928,6 @@ cl                                                                              
 				RelativePath="RageSoundResampler.h">
 			</File>
 			<File
-				RelativePath="RageSounds.cpp">
-			</File>
-			<File
-				RelativePath="RageSounds.h">
-			</File>
-			<File
 				RelativePath="RageSurface.cpp">
 			</File>
 			<File
@@ -2195,6 +2197,12 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath=".\GameManager.h">
+			</File>
+			<File
+				RelativePath="GameSoundManager.cpp">
+			</File>
+			<File
+				RelativePath="GameSoundManager.h">
 			</File>
 			<File
 				RelativePath="GameState.cpp">
@@ -2510,6 +2518,419 @@ cl                                                                              
 					RelativePath="crypto51\words.h">
 				</File>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="Xbox Compilance"
+			Filter="">
+			<File
+				RelativePath="Xbox Compilance\main.cpp">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="Xbox Compilance\stdafx.cpp">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="Xbox Compilance\stdafx.h">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+			</File>
+		</Filter>
+		<Filter
+			Name="XBFILEZILLA"
+			Filter="">
+			<File
+				RelativePath="xbfilezilla\XBFileZilla.cpp">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\XBFileZilla.h">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\XBFileZillaImp.cpp">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\XBFileZillaImp.h">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\atlconv.h">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\bsdsfv.cpp">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\bsdsfv.h">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\comdef.h">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\oleauto.h">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\shlobj.h">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\version.cpp">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\windows.cpp">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\windows.h">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\winsock.h">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\wtypes.h">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\xbdefines.h">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\xbnetwork.cpp">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\xbnetwork.h">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\xbserver.cpp">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\xbserver.h">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\xbtimer.cpp">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\xbtimer.h">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\xbwindows.cpp">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCLCompilerTool"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="xbfilezilla\xbwindows.h">
+				<FileConfiguration
+					Name="Debug|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Xbox"
+					ExcludedFromBuild="TRUE">
+					<Tool
+						Name="VCCustomBuildTool"/>
+				</FileConfiguration>
+			</File>
 		</Filter>
 		<File
 			RelativePath="archutils\Win32\DialogCrashHeader.bmp">
