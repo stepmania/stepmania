@@ -16,6 +16,11 @@
 #pragma comment(lib, "dinput8.lib") 
 #pragma comment(lib, "dxguid.lib") 
 
+// #define HAVE_DDK
+#ifdef HAVE_DDK
+#pragma comment(lib, "setupapi.lib") 
+#pragma comment(lib, "hid.lib") 
+#endif
 
 //-----------------------------------------------------------------------------
 // Includes
@@ -31,7 +36,29 @@
 
 RageInput*		INPUTMAN	= NULL;		// globally accessable input device
 
+const char *PumpButtonNames[] = {
+	"DL", "DR", "MID", "UL", "UR", "Esc"
+};
 
+int DeviceInput::NumButtons(InputDevice device)
+{
+	switch( device )
+	{
+	case DEVICE_KEYBOARD:	
+		return NUM_KEYBOARD_BUTTONS;	
+	case DEVICE_JOY1:
+	case DEVICE_JOY2:
+	case DEVICE_JOY3:
+	case DEVICE_JOY4:
+		return NUM_JOYSTICK_BUTTONS;	
+	case DEVICE_PUMP1:
+	case DEVICE_PUMP2:
+		return NUM_PUMP_PAD_BUTTONS;	
+	default:
+		ASSERT( false );
+	}
+	return -1; /* quiet compiler */
+}
 
 CString DeviceInput::GetDescription() 
 {
@@ -81,6 +108,25 @@ CString DeviceInput::GetDescription()
 		case JOY_24:	sReturn += "24";	break;
 		}
 		
+		break;
+
+	case DEVICE_PUMP1:
+	case DEVICE_PUMP2:
+		/* There is almost always only one Pump device, even if there are
+		 * two pads, so only enumerate the second and higher. */
+		if(device == DEVICE_PUMP1)
+			sReturn = ssprintf("PIU ");
+		else
+			sReturn = ssprintf("PIU#%d ", device - DEVICE_PUMP1 + 1 );
+
+		if(button < NUM_PUMP_PAD_BUTTONS)
+			sReturn += PumpButtonNames[button];
+		else 
+			/* This can happen if the INI is corrupt and has an invalid
+			 * button number.  Crashing with an assertion failure because
+			 * we got something unexpected is no good. */
+			sReturn += "???";
+
 		break;
 
 	case DEVICE_KEYBOARD:		// keyboard
@@ -307,6 +353,10 @@ RageInput::RageInput( HWND hWnd )
 		ZeroMemory( &m_oldKeys[i], sizeof(m_joyState[i]) );
 	}
 
+	ZeroMemory( &m_pumpState, sizeof(m_pumpState) );
+	ZeroMemory( &m_oldPumpState, sizeof(m_oldPumpState) );
+	m_Pumps = new pump_t[NUM_PUMPS];
+
 	Initialize();
 }
 
@@ -388,12 +438,12 @@ HRESULT RageInput::Initialize()
 	//////////////////////////////
 	// Look for joysticks
 	// TODO:  Why is this function so slow to return?  Is it just my machine?
-    if( FAILED( hr = m_pDI->EnumDevices( DI8DEVCLASS_GAMECTRL, 
+/*    if( FAILED( hr = m_pDI->EnumDevices( DI8DEVCLASS_GAMECTRL, 
                                          EnumJoysticksCallback,
                                          (VOID*)this, 
 										 DIEDFL_ATTACHEDONLY ) ) )
 		throw RageException( hr, "m_pDI->EnumDevices failed." );
-
+*/
 	for( int i=0; i<NUM_JOYSTICKS; i++ )
 	{
 		// Set the data format to "simple joystick" - a predefined data format 
@@ -436,6 +486,9 @@ HRESULT RageInput::Initialize()
 				throw RageException( hr, "m_pJoystick[i]->Acquire failed." );
 	}
 
+	for(int pumpNo = 0; pumpNo < NUM_PUMPS; ++pumpNo)
+		m_Pumps[pumpNo].init(pumpNo);
+
 	return S_OK;
 }
 
@@ -462,8 +515,8 @@ void RageInput::Release()
 
 	// Release the DirectInput object
 	SAFE_RELEASE(m_pDI);
+	delete[] m_Pumps;
 }
-
 
 
 HRESULT RageInput::Update()
@@ -485,6 +538,7 @@ HRESULT RageInput::Update()
 
 	CopyMemory( &m_oldKeys, &m_keys, sizeof(m_keys) );
 	CopyMemory( &m_oldJoyState, &m_joyState, sizeof(m_joyState) );
+	CopyMemory( &m_oldPumpState, &m_pumpState, sizeof(m_pumpState) );
 
 	ZeroMemory( &m_keys, sizeof(m_keys) );
 	ZeroMemory( &m_joyState, sizeof(m_joyState) );
@@ -535,22 +589,12 @@ HRESULT RageInput::Update()
 	m_RelPosition_x = m_mouseState.lX;
 	m_RelPosition_y = m_mouseState.lY;
 
-
 	m_AbsPosition_x += m_mouseState.lX;
 	m_AbsPosition_y += m_mouseState.lY;
 
-	if (m_AbsPosition_x >= 640)
-		m_AbsPosition_x = 640-1;
-	else
-		if (m_AbsPosition_x < 0)
-			m_AbsPosition_x = 0;
-
-	// now the y boundaries
-	if (m_AbsPosition_y >= 480)
-		m_AbsPosition_y= 480-1;
-	else
-		if (m_AbsPosition_y < 0)
-			m_AbsPosition_y = 0;
+	/* Clamp the mouse to 0...640-1, 0...480-1. */
+	m_AbsPosition_x = clamp(m_AbsPosition_x, 0, 640-1);
+	m_AbsPosition_y = clamp(m_AbsPosition_y, 0, 480-1);
 
 
 	/////////////////////
@@ -558,7 +602,8 @@ HRESULT RageInput::Update()
 	/////////////////////
 
 	// read joystick state
-	for( BYTE i=0; i<4; i++ )	// foreach joystick
+	BYTE i;
+	for( i=0; i<4; i++ )	// foreach joystick
 	{
 		// read joystick states
 		if ( m_pJoystick[i] )
@@ -587,6 +632,26 @@ HRESULT RageInput::Update()
 		}
 	}
 
+	for( i=0; i<NUM_PUMPS; i++ )
+	{
+		if(m_Pumps[i].h == INVALID_HANDLE_VALUE)
+			continue; /* no pad */
+
+		int ret = m_Pumps[i].GetPadEvent();
+
+		if(ret == -1) 
+			continue; /* no event */
+
+		ZeroMemory( &m_pumpState[i], sizeof(m_pumpState[i]) );
+	    int bits[] = { (1<<11), (1<<10), (1<<13), (1<<9), (1<<12),
+			(1<<16) };
+
+		for (int butno = 0 ; butno < 6 ; butno++)
+		{
+			if(!(ret & bits[butno]))
+				m_pumpState[i].button[butno] = true;
+		}
+	}
 
 
 	return S_OK;
@@ -602,7 +667,7 @@ bool RageInput::IsBeingPressed( DeviceInput di )
 	case DEVICE_JOY1:
 	case DEVICE_JOY2:
 	case DEVICE_JOY3:
-	case DEVICE_JOY4:
+	case DEVICE_JOY4: {
 		int joy_index;
 		joy_index = di.device - DEVICE_JOY1;
 
@@ -620,6 +685,17 @@ bool RageInput::IsBeingPressed( DeviceInput di )
 			int button_index = di.button - JOY_1;
 			return 0 != IS_PRESSED( m_joyState[joy_index].rgbButtons[button_index] );
 		}
+	}
+	case DEVICE_PUMP1:
+	case DEVICE_PUMP2:
+	{
+		int pump_index;
+		pump_index = di.device - DEVICE_PUMP1;
+		if(m_pumpState[pump_index].button[di.button])
+			return 1;
+		ASSERT(di.button < NUM_PUMP_PAD_BUTTONS);
+		return m_pumpState[pump_index].button[di.button];
+	}
 	default:
 		ASSERT( false ); // bad device
 	}
@@ -654,9 +730,172 @@ bool RageInput::WasBeingPressed( DeviceInput di )
 			int button_index = di.button - JOY_1;
 			return 0 != IS_PRESSED( m_oldJoyState[joy_index].rgbButtons[button_index] );
 		}
+
+	case DEVICE_PUMP1:
+	case DEVICE_PUMP2: {
+		int pump_index;
+		pump_index = di.device - DEVICE_PUMP1;
+		ASSERT(di.button < NUM_PUMP_PAD_BUTTONS);
+		return m_oldPumpState[pump_index].button[di.button];
+	}
+
 	default:
 		ASSERT( false ); // bad device
 	}
 
 	return false;	// how did we get here?!?
+}
+
+#ifdef HAVE_DDK
+extern "C" {
+#include <setupapi.h>
+#include <hidsdi.h>
+}
+#endif
+
+char *USB::GetUSBDevicePath (int num)
+{
+#ifndef HAVE_DDK
+	LOG->Trace( "Can't get USB device #%i: DDK not available.", 
+		num );
+	return NULL;
+#else
+    GUID guid;
+    HidD_GetHidGuid(&guid);
+
+    HDEVINFO DeviceInfo = SetupDiGetClassDevs (&guid,
+                 NULL, NULL, (DIGCF_PRESENT | DIGCF_DEVICEINTERFACE));
+
+    SP_DEVICE_INTERFACE_DATA DeviceInterface;
+    DeviceInterface.cbSize = sizeof(SP_DEVICE_INTERFACE_DATA);
+
+    char *ret = NULL;
+    PSP_INTERFACE_DEVICE_DETAIL_DATA DeviceDetail = NULL;
+
+    if (!SetupDiEnumDeviceInterfaces (DeviceInfo,
+               NULL, &guid, num, &DeviceInterface))
+		goto err;
+
+    unsigned long size;
+    SetupDiGetDeviceInterfaceDetail (DeviceInfo, &DeviceInterface, NULL, 0, &size, 0);
+
+    DeviceDetail = (PSP_INTERFACE_DEVICE_DETAIL_DATA) malloc(size);
+    DeviceDetail->cbSize = sizeof(SP_INTERFACE_DEVICE_DETAIL_DATA);
+
+    if (SetupDiGetDeviceInterfaceDetail (DeviceInfo, &DeviceInterface,
+		DeviceDetail, size, &size, NULL)) 
+    {
+        ret = strdup(DeviceDetail->DevicePath);
+    }
+
+err:
+    SetupDiDestroyDeviceInfoList (DeviceInfo);
+    free (DeviceDetail);
+    return ret;
+#endif
+}
+
+HANDLE USB::OpenUSB (int VID, int PID, int num)
+{
+#ifndef HAVE_DDK
+	LOG->Trace( "Can't open USB device %-4.4x:%-4.4x#%i: DDK not available.", 
+		VID, PID, num );
+    return INVALID_HANDLE_VALUE;
+#else
+    DWORD index = 0;
+
+    char *path;
+	HANDLE h = INVALID_HANDLE_VALUE;
+
+    while ((path = GetUSBDevicePath (index++)) != NULL)
+    {
+		if(h != INVALID_HANDLE_VALUE)
+			CloseHandle (h);
+
+		h = CreateFile (path, GENERIC_READ,
+			   FILE_SHARE_READ | FILE_SHARE_WRITE,
+			   NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
+
+		free(path);
+
+		if(h == INVALID_HANDLE_VALUE)
+			continue;
+
+		HIDD_ATTRIBUTES attr;
+		if (!HidD_GetAttributes (h, &attr))
+			continue;
+
+        if ((VID != -1 && attr.VendorID != VID) &&
+            (PID != -1 && attr.ProductID != PID))
+			continue; /* This isn't it. */
+
+		/* The VID and PID match. */
+		if(num-- == 0)
+            return h;
+    }
+	if(h != INVALID_HANDLE_VALUE)
+		CloseHandle (h);
+
+    return INVALID_HANDLE_VALUE;
+#endif
+}
+
+RageInput::pump_t::pump_t()
+{
+	ZeroMemory( &ov, sizeof(ov) );
+	pending=false;
+	h = INVALID_HANDLE_VALUE;
+}
+
+RageInput::pump_t::~pump_t()
+{
+	if(h != INVALID_HANDLE_VALUE)
+		CloseHandle(h);
+}
+
+RageInput::pump_t::init(int devno)
+{
+	const int pump_usb_vid = 0x0d2f, pump_usb_pid = 0x0001;
+	h = USB::OpenUSB (pump_usb_vid, pump_usb_pid, devno);
+	if(h != INVALID_HANDLE_VALUE)
+		LOG->Trace("Found Pump pad %i\n", devno);
+}
+
+int RageInput::pump_t::GetPadEvent()
+{
+    int ret;
+
+    if(!pending)
+    {
+		/* Request feedback from the device. */
+	    unsigned long r;
+    	ret = ReadFile(h, &buf, sizeof(buf), &r, &ov);
+    	pending=true;
+    }
+
+	/* See if we have a response for our request (which we may
+	 * have made on a previous cal): */
+    if(WaitForSingleObjectEx(h, 0, TRUE) == WAIT_TIMEOUT)
+		return -1;
+    
+	/* We do; get the result.  It'll go into the original &buf
+	 * we supplied on the original call; that's why buf is a
+	 * member instead of a local. */
+    unsigned long cnt;
+    ret = GetOverlappedResult(h, &ov, &cnt, FALSE);
+    pending=false;
+
+    if(ret == 0 && (GetLastError() == ERROR_IO_PENDING || GetLastError() == ERROR_IO_INCOMPLETE))
+		return -1;
+
+    if(ret == 0) {
+		int err = GetLastError();
+		char ebuf[1024];
+		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,
+			0, err, 0, ebuf, sizeof(ebuf), NULL);
+		LOG->Trace("Error reading Pump pad: %s\n", ebuf);
+	    return -1;
+    }
+
+    return buf;
 }

@@ -19,6 +19,8 @@
 const int NUM_KEYBOARD_BUTTONS = 256;
 
 const int NUM_JOYSTICKS = 4;
+const int NUM_PUMPS = 2;
+const int NUM_PUMP_PAD_BUTTONS = 6;
 
 enum InputDevice {
 	DEVICE_KEYBOARD = 0,
@@ -26,6 +28,8 @@ enum InputDevice {
 	DEVICE_JOY2,
 	DEVICE_JOY3,
 	DEVICE_JOY4,
+	DEVICE_PUMP1,
+	DEVICE_PUMP2,
 	NUM_INPUT_DEVICES,	// leave this at the end
 	DEVICE_NONE			// means this is NULL
 };
@@ -63,9 +67,10 @@ enum JoystickButton {
 	NUM_JOYSTICK_BUTTONS	// leave this at the end
 };
 
-const int NUM_DEVICE_BUTTONS = max( NUM_KEYBOARD_BUTTONS, NUM_JOYSTICK_BUTTONS );
+const int NUM_DEVICE_BUTTONS = MAX( MAX( NUM_KEYBOARD_BUTTONS, NUM_JOYSTICK_BUTTONS ), 
+								NUM_PUMP_PAD_BUTTONS );
 
-
+extern const char *PumpButtonNames[];
 
 struct DeviceInput
 {
@@ -88,6 +93,8 @@ public:
 
 	bool IsValid() const { return device != DEVICE_NONE; };
 	void MakeInvalid() { device = DEVICE_NONE; };
+
+	static int NumButtons(InputDevice device);
 };
 
 
@@ -109,6 +116,7 @@ public:
 	LPDIRECTINPUTDEVICE8	m_pJoystick[NUM_JOYSTICKS];
 
 private:
+
 	// Arrays for Keyboard Data
 	byte m_keys[NUM_KEYBOARD_BUTTONS];
 	byte m_oldKeys[NUM_KEYBOARD_BUTTONS];
@@ -119,6 +127,23 @@ private:
 	// Joystick data for NUM_JOYSTICKS controllers
     DIJOYSTATE2 m_joyState[NUM_JOYSTICKS];
     DIJOYSTATE2 m_oldJoyState[NUM_JOYSTICKS];
+
+	struct {
+		bool button[NUM_PUMP_PAD_BUTTONS];
+	} m_pumpState[NUM_PUMPS], m_oldPumpState[NUM_PUMPS];
+
+	/* Structure for reading Pump pads: */
+	struct pump_t {
+		HANDLE h;
+		OVERLAPPED ov;
+		long buf;
+		bool pending;
+
+		pump_t();
+		~pump_t();
+		init(int devno);
+		int GetPadEvent();
+	} *m_Pumps;
 
 	INT m_AbsPosition_x;
 	INT m_AbsPosition_y;
@@ -149,5 +174,9 @@ public:
 
 };
 
+namespace USB {
+	char *GetUSBDevicePath (int num);
+	HANDLE OpenUSB (int VID, int PID, int num);
+};
 
 extern RageInput*			INPUTMAN;	// global and accessable from anywhere in our program
