@@ -7,7 +7,6 @@
 #include "RageLog.h"
 #include "RageSound.h"
 #include "RageUtil.h"
-#include "archutils/win32/tls.h"
 #include "RageSoundManager.h"
 
 #include "SDL.h"

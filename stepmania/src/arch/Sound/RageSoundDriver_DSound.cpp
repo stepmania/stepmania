@@ -13,10 +13,6 @@
 #include "RageSound.h"
 #include "RageLog.h"
 
-#ifdef _WINDOWS
-#include "archutils/win32/tls.h"
-#endif
-
 #include "SDL.h"
 
 const int channels = 2;

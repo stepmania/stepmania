@@ -10,7 +10,6 @@
 #include "archutils/Win32/AppInstance.h"
 #include "InputFilter.h"
 #include "PrefsManager.h"
-#include "archutils/win32/tls.h"
 
 #include "InputHandler_DirectInputHelper.h"
 

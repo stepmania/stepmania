@@ -6,7 +6,6 @@
 #include "resource.h"
 
 #include "archutils/win32/AppInstance.h"
-#include "archutils/win32/tls.h"
 #include "archutils/win32/crash.h"
 #include "archutils/win32/DebugInfoHunt.h"
 #include "archutils/win32/GotoURL.h"
