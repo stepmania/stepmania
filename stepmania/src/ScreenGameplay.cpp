@@ -776,15 +776,19 @@ void ScreenGameplay::LoadNextSong()
 	/* Set up song-specific graphics. */
 	
 	
-	/* TODO: fall back on m_Background if nobody is on beginner. */
-	if( PREFSMAN->m_bShowBeginnerHelper )
-	{
-		// Beginner steps are always the same on both players.. Just get the # of 1 player that's using the Beginner steps, and go on.
-		m_iPOB = 0;
-		for( int pb=0; pb<NUM_PLAYERS; pb++ )
-			if( GAMESTATE->IsPlayerEnabled(pb) && GAMESTATE->m_PreferredDifficulty[pb] == DIFFICULTY_BEGINNER )
-					m_iPOB = pb;
+	bool UseBeginnerhelper = false;
+	// Beginner steps are always the same on both players.. Just get the # of 1 player that's using the Beginner steps, and go on.
+	m_iPOB = 0;
+	for( int pb=0; pb<NUM_PLAYERS; pb++ )
+		if( GAMESTATE->IsPlayerEnabled(pb) && GAMESTATE->m_PreferredDifficulty[pb] == DIFFICULTY_BEGINNER )
+		{
+			UseBeginnerhelper = true;
+			m_iPOB = pb;
+		}
 
+	/* TODO: fall back on m_Background if nobody is on beginner. */
+	if( PREFSMAN->m_bShowBeginnerHelper && UseBeginnerhelper)
+	{
 		m_Background.Unload();	// BeginnerHelper has it's own BG control.
 		m_Background.StopAnimating();
 		
