@@ -395,7 +395,6 @@ bool SMLoader::LoadEdit( CString sEditFilePath )
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
 		const CString sValueName = sParams[0];
-        CString sSongFullTitle;
 
 		// handle the data
 		if( 0==stricmp(sValueName,"SONG") )
@@ -406,7 +405,7 @@ bool SMLoader::LoadEdit( CString sEditFilePath )
 				return false;
 			}
 
-			sSongFullTitle = sParams[1];
+			CString sSongFullTitle = sParams[1];
 			sSongFullTitle.Replace( '\\', '/' );
 
 			pSong = SONGMAN->FindSong( sSongFullTitle );
@@ -436,7 +435,7 @@ bool SMLoader::LoadEdit( CString sEditFilePath )
 			}
 
 			LoadFromSMTokens( 
-				sSongFullTitle, sParams[2], sParams[3], sParams[4], sParams[5], sParams[6], (iNumParams>=8)?sParams[7]:"",
+				sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6], (iNumParams>=8)?sParams[7]:"",
 				*pNewNotes);
 		}
 		else
