@@ -594,8 +594,7 @@ PixelFormat RageDisplay::FindPixelFormat(
 {
 	PixelFormatDesc tmp = { bpp, Rmask, Gmask, Bmask, Amask };
 
-	int pixfmt;
-	for(pixfmt = 0; pixfmt < NUM_PIX_FORMATS; ++pixfmt)
+	for(int pixfmt = 0; pixfmt < NUM_PIX_FORMATS; ++pixfmt)
 	{
 		const PixelFormatDesc *pf = GetPixelFormatDesc(PixelFormat(pixfmt));
 		if(!SupportsTextureFormat( PixelFormat(pixfmt) ))
