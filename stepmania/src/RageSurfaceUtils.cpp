@@ -516,29 +516,58 @@ static void blit_rgba_to_rgba( const RageSurface *src_surf, const RageSurface *d
 	RageSurfaceUtils::GetBitsPerChannel(src_surf->format, src_bits);
 	RageSurfaceUtils::GetBitsPerChannel(dst_surf->format, dst_bits);
 
-	const int rshifts[4] = {
-		src_surf->format->Rshift + src_bits[0] - dst_bits[0],
-		src_surf->format->Gshift + src_bits[1] - dst_bits[1],
-		src_surf->format->Bshift + src_bits[2] - dst_bits[2],
-		src_surf->format->Ashift + src_bits[3] - dst_bits[3],
+	/* XXX: We should store the shifts and masks as an array in RageSurfaceFormat. */
+	const int src_shifts[4] = {
+		src_surf->format->Rshift,
+		src_surf->format->Gshift,
+		src_surf->format->Bshift,
+		src_surf->format->Ashift,
 	};
-	const int lshifts[4] = {
+
+	const int dst_shifts[4] = {
 		dst_surf->format->Rshift,
 		dst_surf->format->Gshift,
 		dst_surf->format->Bshift,
 		dst_surf->format->Ashift,
 	};
 
-	const uint32_t masks[4] = {
+	const uint32_t src_masks[4] =
+	{
 		src_surf->format->Rmask,
 		src_surf->format->Gmask,
 		src_surf->format->Bmask,
 		src_surf->format->Amask
 	};
 
-	int ormask = 0;
-	if( src_surf->format->Amask == 0 )
-		ormask = dst_surf->format->Amask;
+	const uint32_t dst_masks[4] =
+	{
+		dst_surf->format->Rmask,
+		dst_surf->format->Gmask,
+		dst_surf->format->Bmask,
+		dst_surf->format->Amask
+	};
+
+	uint8_t lookup[4][256];
+	for( int c = 0; c < 4; ++c )
+	{
+		const uint32_t max_src_val = src_masks[c] >> src_shifts[c];
+		const uint32_t max_dst_val = dst_masks[c] >> dst_shifts[c];
+		ASSERT( max_src_val <= 0xFF );
+		ASSERT( max_dst_val <= 0xFF );
+
+		if( src_masks[c] == 0 )
+		{
+			/* The source is missing a channel.  Alpha defaults to opaque, other
+			 * channels default to 0. */
+			if( c == 3 )
+				lookup[c][0] = (uint8_t) max_dst_val;
+			else
+				lookup[c][0] = 0;
+		} else {
+			for( uint32_t i = 0; i <= max_src_val; ++i )
+				lookup[c][i] = (uint8_t) SCALE( i, 0, max_src_val, 0, max_dst_val );
+		}
+	}
 
 	while( height-- )
 	{
@@ -547,15 +576,13 @@ static void blit_rgba_to_rgba( const RageSurface *src_surf, const RageSurface *d
 		{
 			unsigned int pixel = RageSurfaceUtils::decodepixel( src, src_surf->format->BytesPerPixel );
 
-			/* Convert pixel to the destination RGBA. */
+			/* Convert pixel to the destination format. */
 			unsigned int opixel = 0;
-			opixel |= (pixel & masks[0]) >> rshifts[0] << lshifts[0];
-			opixel |= (pixel & masks[1]) >> rshifts[1] << lshifts[1];
-			opixel |= (pixel & masks[2]) >> rshifts[2] << lshifts[2];
-			opixel |= (pixel & masks[3]) >> rshifts[3] << lshifts[3];
-
-			// Correct surfaces that don't have an alpha channel.
-			opixel |= ormask;
+			for( int c = 0; c < 4; ++c )
+			{
+				int src = (pixel & src_masks[c]) >> src_shifts[c];
+				opixel |= lookup[c][src] << dst_shifts[c];
+			}
 
 			/* Store it. */
 			RageSurfaceUtils::encodepixel( dst, dst_surf->format->BytesPerPixel, opixel );
