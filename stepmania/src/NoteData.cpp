@@ -803,7 +803,6 @@ void NoteDataUtil::Turn( NoteData &in, TurnType tt )
 	{
 	case left:
 	case right:
-		// FIXME: TurnRight does the same thing as TurnLeft.
 		// Is there a way to do this withoutn handling each NotesType? -Chris
 		// Identity transform for ones not handled below.  What should we do here?
 		for( t = 0; t < MAX_NOTE_TRACKS; ++t )
@@ -865,6 +864,19 @@ void NoteDataUtil::Turn( NoteData &in, TurnType tt )
 			break;
 		default: break;
 		}
+
+		if( tt == right )
+		{
+			/* Invert. */
+			int iTrack[MAX_NOTE_TRACKS];
+			memcpy( iTrack, iTakeFromTrack, sizeof(iTrack) );
+			for( t = 0; t < MAX_NOTE_TRACKS; ++t )
+			{
+				const int to = iTrack[t];
+				iTakeFromTrack[to] = t;
+			}
+		}
+
 		break;
 	case mirror:
 		for( t=0; t<in.GetNumTracks(); t++ )
