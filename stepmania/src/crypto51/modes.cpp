@@ -3,18 +3,9 @@
 #include "pch.h"
 #include "modes.h"
 
-#include "des.h"
-
 #include "strciphr.cpp"
 
 NAMESPACE_BEGIN(CryptoPP)
-
-void Modes_TestInstantiations()
-{
-	CFB_Mode<DES>::Encryption m0;
-	CFB_Mode<DES>::Decryption m1;
-	CBC_Mode<DES>::Encryption m5;
-}
 
 // explicit instantiations for Darwin gcc-932.1
 template class CFB_CipherTemplate<AbstractPolicyHolder<CFB_CipherAbstractPolicy, SymmetricCipher> >;
