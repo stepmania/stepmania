@@ -104,7 +104,6 @@ MutexImpl_Pthreads::~MutexImpl_Pthreads()
 }
 
 
-#if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK)
 static bool UseTimedlock()
 {
 #if defined(LINUX)
@@ -115,7 +114,6 @@ static bool UseTimedlock()
 
 	return true;
 }
-#endif
 
 bool MutexImpl_Pthreads::Lock()
 {
@@ -278,7 +276,6 @@ void SemaImpl_Pthreads::Post()
 
 bool SemaImpl_Pthreads::Wait()
 {
-#if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK)
 	if( UseTimedlock() )
 	{
 		timeval tv;
@@ -330,7 +327,6 @@ bool SemaImpl_Pthreads::Wait()
 		pthread_mutex_unlock( &m_Mutex );
 		return false;
 	}
-#endif
 
 	pthread_mutex_lock( &m_Mutex );
 	while( !m_iValue )
