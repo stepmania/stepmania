@@ -474,11 +474,11 @@ static void CheckPalettedTextures( bool LowColor )
 		}
 
 		GLint RealWidth = 0;
-		GLExt::glGetColorTableParameterivEXT(GL_PROXY_TEXTURE_2D, GL_COLOR_TABLE_WIDTH_EXT, &RealWidth);
-		GL_CHECK_ERROR( "glGetColorTableParameterivEXT(GL_COLOR_TABLE_WIDTH_EXT)" );
+		GLExt::glGetColorTableParameterivEXT(GL_PROXY_TEXTURE_2D, GL_COLOR_TABLE_WIDTH, &RealWidth);
+		GL_CHECK_ERROR( "glGetColorTableParameterivEXT(GL_COLOR_TABLE_WIDTH)" );
 		if( RealWidth != 1 << bits )
 		{
-			error = ssprintf("GL_COLOR_TABLE_WIDTH_EXT returned %i instead of %i", RealWidth, 1 << bits );
+			error = ssprintf("GL_COLOR_TABLE_WIDTH returned %i instead of %i", RealWidth, 1 << bits );
 			goto fail;
 		}
 		
