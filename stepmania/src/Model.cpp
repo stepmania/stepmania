@@ -444,7 +444,7 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 	if( m_mapNameToAnimation.find(sAniName) == m_mapNameToAnimation.end() )
 		return;
 
-	msAnimation *pNewAnimation = &m_mapNameToAnimation[sAniName];
+	const msAnimation *pNewAnimation = &m_mapNameToAnimation[sAniName];
 
 	m_fCurFrame = 0;
 	m_fCurAnimationRate = fPlayRate;
