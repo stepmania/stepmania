@@ -220,8 +220,12 @@ void Course::LoadFromCRSFile( CString sPath )
 			if( new_entry.difficulty == DIFFICULTY_INVALID )
 			{
 				int retval = sscanf( sParams[2], "%d..%d", &new_entry.low_meter, &new_entry.high_meter );
-				if( retval != 2 )
+				if( retval == 1 )
+					new_entry.high_meter = new_entry.low_meter;
+				else if( retval != 2 )
 				{
+					LOG->Warn("Course file '%s' contains an invalid difficulty setting: \"%s\", 3..6 used instead",
+						m_sPath.c_str(), sParams[2].c_str());
 					new_entry.low_meter = 3;
 					new_entry.high_meter = 6;
 				}
