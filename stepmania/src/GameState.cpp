@@ -916,6 +916,14 @@ PlayerNumber GameState::GetFirstHumanPlayer() const
 	return PLAYER_INVALID;
 }
 
+PlayerNumber GameState::GetFirstDisabledPlayer() const
+{
+	FOREACH_PlayerNumber( p )
+		if( !IsPlayerEnabled(p) )
+			return p;
+	return PLAYER_INVALID;
+}
+
 bool GameState::IsCpuPlayer( PlayerNumber pn ) const
 {
 	return IsPlayerEnabled(pn) && !IsHumanPlayer(pn);

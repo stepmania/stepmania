@@ -81,6 +81,7 @@ public:
 	bool IsHumanPlayer( PlayerNumber pn ) const;
 	int GetNumHumanPlayers() const;
 	PlayerNumber GetFirstHumanPlayer() const;
+	PlayerNumber GetFirstDisabledPlayer() const;
 	bool IsCpuPlayer( PlayerNumber pn ) const;
 	bool AnyPlayersAreCpu() const;
 

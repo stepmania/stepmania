@@ -430,31 +430,21 @@ void ScreenGameplay::Init()
 	//the following is only used in SMLAN/SMOnline
 	if( NSMAN->useSMserver )
 	{
-		//PlayerNumber pn = GAMESTATE->m_MasterPlayerNumber;
-		//We need not the master player, but the not-master-player
-		//So, we gotta see which one isn't the master player
-		//NOTE: If both players are playing, do not show scoreboard
-		//There may be a later solution for this, like a horizontal
-		//scoreboard, but for now, we cannot have a scoreboard over
-		//people's arrows.
-
-		int i=-1;
-		FOREACH_PlayerNumber(p)
-			if (!GAMESTATE->IsPlayerEnabled(p))
-				i=p;
-
-		if (i!=-1)
-			FOREACH_NSScoreBoardColumn( i2 )
+		PlayerNumber pn = GAMESTATE->GetFirstDisabledPlayer();
+		if( pn != PLAYER_INVALID )
+		{
+			FOREACH_NSScoreBoardColumn( col )
 			{
-				m_Scoreboard[i2].LoadFromFont( THEME->GetPathF(m_sName,"scoreboard") );
-				m_Scoreboard[i2].SetShadowLength( 0 );
-				m_Scoreboard[i2].SetName( ssprintf("ScoreboardC%iP%i",i2+1,i+1) );
-				SET_XY( m_Scoreboard[i2] );
-				this->AddChild( &m_Scoreboard[i2] );
-				m_Scoreboard[i2].SetText(NSMAN->m_Scoreboard[i2]);
-				m_Scoreboard[i2].SetVertAlign(align_top);
+				m_Scoreboard[col].LoadFromFont( THEME->GetPathF(m_sName,"scoreboard") );
+				m_Scoreboard[col].SetShadowLength( 0 );
+				m_Scoreboard[col].SetName( ssprintf("ScoreboardC%iP%i",col+1,pn+1) );
+				SET_XY( m_Scoreboard[col] );
+				this->AddChild( &m_Scoreboard[col] );
+				m_Scoreboard[col].SetText( NSMAN->m_Scoreboard[col] );
+				m_Scoreboard[col].SetVertAlign( align_top );
 				m_ShowScoreboard = true;
 			}
+		}
 	}
 
 	m_textSongTitle.LoadFromFont( THEME->GetPathF(m_sName,"song title") );
@@ -634,8 +624,8 @@ void ScreenGameplay::Init()
 	}
 
 
-	if(PREFSMAN->m_bShowLyrics)
-		this->AddChild(&m_LyricDisplay);
+	if( PREFSMAN->m_bShowLyrics )
+		this->AddChild( &m_LyricDisplay );
 	
 
 	m_textAutoPlay.LoadFromFont( THEME->GetPathF(m_sName,"autoplay") );
@@ -1010,15 +1000,13 @@ void ScreenGameplay::LoadNextSong()
 		GAMESTATE->m_PlayerOptions[1].m_fScrolls[PlayerOptions::SCROLL_REVERSE] == 1
 	};
 
+	FOREACH_EnabledPlayer( p )
 	{
-		FOREACH_EnabledPlayer( p )
-		{
-			m_DifficultyIcon[p].SetName( ssprintf("DifficultyP%d%s",p+1,bReverse[p]?"Reverse":"") );
-			SET_XY( m_DifficultyIcon[p] );
+		m_DifficultyIcon[p].SetName( ssprintf("DifficultyP%d%s",p+1,bReverse[p]?"Reverse":"") );
+		SET_XY( m_DifficultyIcon[p] );
 
-			m_DifficultyMeter[p].SetName( ssprintf("DifficultyMeterP%d%s",p+1,bReverse[p]?"Reverse":"") );
-			SET_XY( m_DifficultyMeter[p] );
-		}
+		m_DifficultyMeter[p].SetName( ssprintf("DifficultyMeterP%d%s",p+1,bReverse[p]?"Reverse":"") );
+		SET_XY( m_DifficultyMeter[p] );
 	}
 
 	const bool bBothReverse = bReverse[PLAYER_1] && bReverse[PLAYER_2];
@@ -1635,15 +1623,15 @@ void ScreenGameplay::Update( float fDeltaTime )
 	CLAMP( fPercentPositionSong, 0, 1 );
 	m_meterSongPosition.SetPercent( fPercentPositionSong );
 
-	if (NSMAN->useSMserver) 
+	if( NSMAN->useSMserver )
 	{
 		FOREACH_EnabledPlayer( pn2 )
 			if( m_pLifeMeter[pn2] )
 				NSMAN->m_playerLife[pn2] = int(m_pLifeMeter[pn2]->GetLife()*10000);
-		if( m_ShowScoreboard )
-			FOREACH_NSScoreBoardColumn(cn)
-				if( NSMAN->ChangedScoreboard(cn) )
-					m_Scoreboard[cn].SetText( NSMAN->m_Scoreboard[cn] );
+
+		FOREACH_NSScoreBoardColumn(cn)
+			if( m_ShowScoreboard && NSMAN->ChangedScoreboard(cn) )
+				m_Scoreboard[cn].SetText( NSMAN->m_Scoreboard[cn] );
 	}
 }
 
