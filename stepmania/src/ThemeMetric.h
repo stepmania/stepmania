@@ -62,7 +62,7 @@ public:
 
 	void Read()
 	{
-		if( m_sName != "" )
+		if( m_sName != ""  &&  THEME  &&   THEME->IsThemeLoaded() )
 			THEME->GetMetric( m_sGroup, m_sName, m_currentValue );
 	}
 

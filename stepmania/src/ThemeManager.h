@@ -30,6 +30,7 @@ public:
 	void SwitchThemeAndLanguage( const CString &sThemeName, const CString &sLanguage );
 	void UpdateLuaGlobals();
 	CString GetCurThemeName() { return m_sCurThemeName; };
+	bool IsThemeLoaded()	{ return !m_sCurThemeName.empty(); };
 	CString GetCurLanguage() { return m_sCurLanguage; };
 	CString GetCurThemeDir() { return GetThemeDirFromName(m_sCurThemeName); };
 	void NextTheme();
