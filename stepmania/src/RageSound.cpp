@@ -607,6 +607,27 @@ void RageSound::StopPlaying()
 	pos_map.clear();
 }
 
+/* This is similar to StopPlaying, except it's called by sound drivers when we're done
+ * playing, rather than by users to as us to stop.  (The only difference is that this
+ * doesn't call SOUNDMAN->StopMixing; there's no reason to tell the sound driver to
+ * stop mixing, since they're the one telling us we're done.) */
+void RageSound::SoundIsFinishedPlaying()
+{
+	if(!playing)
+		return;
+
+	stopped_position = (int) GetPositionSecondsInternal();
+
+	SOUNDMAN->lock.Lock();
+	SOUNDMAN->playing_sounds.erase( this );
+	SOUNDMAN->lock.Unlock();
+
+	playing = false;
+	playing_thread = 0;
+
+	pos_map.clear();
+}
+
 RageSound *RageSound::Play( const RageSoundParams *params )
 {
 	return SOUNDMAN->PlaySound( *this, params );

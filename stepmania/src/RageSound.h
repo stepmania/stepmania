@@ -12,7 +12,8 @@ class RageSoundBase
 {
 public:
 	virtual ~RageSoundBase() { }
-	virtual void StopPlaying() = 0;
+	virtual void StopPlaying() = 0; // deprecated
+	virtual void SoundIsFinishedPlaying() = 0;
 	virtual bool GetDataToPlay( int16_t *buffer, int size, int &pos, int &got_bytes ) = 0;
 	virtual int GetPCM( char *buffer, int size, int64_t frameno ) = 0;
 	virtual int GetSampleRate() const = 0;
@@ -173,6 +174,8 @@ private:
 	void Fail(CString reason);
 	int Bytes_Available() const;
 	RageSoundParams::StopMode_t GetStopMode() const; /* resolves M_AUTO */
+
+	void SoundIsFinishedPlaying(); // called by sound drivers
 
 	static void RateChange(char *buf, int &cnt, int speed_input_samples, int speed_output_samples, int channels);
 
