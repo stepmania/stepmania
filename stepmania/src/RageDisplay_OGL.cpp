@@ -92,6 +92,8 @@ set<string> g_glExts;
  * no GL_T2F_C4F_V3F. */
 const GLenum RageSpriteVertexFormat = GL_T2F_C4F_N3F_V3F;
 
+/* If we support texture matrix scaling, a handle to the vertex program: */
+static GLhandleARB g_bTextureMatrixShader = NULL;
 
 LowLevelWindow *wind;
 
@@ -348,6 +350,98 @@ RageDisplay_OGL::RageDisplay_OGL()
 	wind = NULL;
 }
 
+CString GetInfoLog( GLhandleARB h )
+{
+	GLint iLength;
+	GLExt.glGetObjectParameterivARB( h, GL_OBJECT_INFO_LOG_LENGTH_ARB, &iLength );
+	if( !iLength )
+		return "";
+
+	GLcharARB *pInfoLog = new GLcharARB[iLength];
+	GLExt.glGetInfoLogARB( h, iLength, &iLength, pInfoLog );
+	CString sRet = pInfoLog;
+	delete [] pInfoLog;
+	return sRet;
+}
+
+GLhandleARB CompileShader( GLenum ShaderType, CString sBuffer )
+{
+	GLhandleARB VertexShader = GLExt.glCreateShaderObjectARB( GL_VERTEX_SHADER_ARB );
+	const GLcharARB *pData = sBuffer.data();
+	int iLength = sBuffer.size();
+	GLExt.glShaderSourceARB( VertexShader, 1, &pData, &iLength );
+
+	GLExt.glCompileShaderARB( VertexShader );
+
+	GLint bCompileStatus  = GL_FALSE;
+	GLExt.glGetObjectParameterivARB( VertexShader, GL_OBJECT_COMPILE_STATUS_ARB, &bCompileStatus );
+
+	if( !bCompileStatus )
+	{
+		LOG->Trace( "Compile failure: %s", GetInfoLog( VertexShader ).c_str() );
+		return NULL;
+	}
+
+	return VertexShader;
+}
+
+enum
+{
+	ATTRIB_TEXTURE_MATRIX_SCALE = 1
+};
+
+/* XXX: How should we include these?  Doing them like this is ugly.  Linking them in
+ * from another file as a text symbol would be ideal, but that's completely different
+ * on each platform, so it'd be a maintenance nightmare.  Reading them from a file would
+ * be annoying, too. */
+const GLcharARB *g_TextureMatrixScaleShader =
+" \
+attribute vec4 TextureMatrixScale; \
+void main( void ) \
+{ \
+	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex; \
+	vec4 multiplied_tex_coord = gl_TextureMatrix[0] * gl_MultiTexCoord0; \
+	gl_TexCoord[0] = (multiplied_tex_coord * TextureMatrixScale) + \
+					(gl_MultiTexCoord0 * (1-TextureMatrixScale)); \
+	gl_FrontColor = gl_Color; \
+} \
+";
+
+void InitScalingScript()
+{
+	g_bTextureMatrixShader = NULL;
+
+	if( !GLExt.m_bGL_ARB_shader_objects ||
+		!GLExt.m_bGL_ARB_vertex_shader ||
+		!GLExt.m_bGL_ARB_shading_language_100 )
+		return;
+
+	GLhandleARB VertexShader = CompileShader( GL_VERTEX_SHADER_ARB, g_TextureMatrixScaleShader );
+	if( VertexShader == NULL )
+		return;
+
+	g_bTextureMatrixShader = GLExt.glCreateProgramObjectARB();
+	GLExt.glAttachObjectARB( g_bTextureMatrixShader, VertexShader );
+	GLExt.glDeleteObjectARB( VertexShader );
+
+	// Bind attributes.
+	GLExt.glBindAttribLocationARB( g_bTextureMatrixShader, ATTRIB_TEXTURE_MATRIX_SCALE, "TextureMatrixScale" );
+
+	// Link the program.
+	GLExt.glLinkProgramARB( g_bTextureMatrixShader );
+	GLint bLinkStatus = false;
+	GLExt.glGetObjectParameterivARB( g_bTextureMatrixShader, GL_OBJECT_LINK_STATUS_ARB, &bLinkStatus );
+
+	if( !bLinkStatus )
+	{
+		LOG->Trace( "Scaling shader link failed: %s", GetInfoLog(g_bTextureMatrixShader).c_str() );
+		GLExt.glDeleteObjectARB( g_bTextureMatrixShader );
+		return;
+	}
+
+	GLExt.glVertexAttrib2fARB( ATTRIB_TEXTURE_MATRIX_SCALE, 1, 1 );
+}
+
 CString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRenderer )
 {
 	wind = MakeLowLevelWindow();
@@ -403,6 +497,8 @@ CString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRender
 	glGetFloatv(GL_LINE_WIDTH_GRANULARITY, &g_line_granularity);
 	glGetFloatv(GL_POINT_SIZE_RANGE, g_point_range);
 	glGetFloatv(GL_POINT_SIZE_GRANULARITY, &g_point_granularity);
+
+	InitScalingScript();
 
 	return "";
 }
@@ -797,6 +893,7 @@ public:
 		m_vPosition.resize( GetTotalVertices() );
 		m_vTexture.resize( GetTotalVertices() );
 		m_vNormal.resize( GetTotalVertices() );
+		m_vTexMatrixScale.resize( GetTotalVertices() );
 		m_vTriangles.resize( GetTotalTriangles() );
 	}
 	void Change( const vector<msMesh> &vMeshes )
@@ -813,6 +910,7 @@ public:
 				m_vPosition[meshInfo.iVertexStart+j] = Vertices[j].p;
 				m_vTexture[meshInfo.iVertexStart+j] = Vertices[j].t;
 				m_vNormal[meshInfo.iVertexStart+j] = Vertices[j].n;
+				m_vTexMatrixScale[meshInfo.iVertexStart+j] = Vertices[j].TextureMatrixScale;
 			}
 
 			for( unsigned j=0; j<Triangles.size(); j++ )
@@ -852,6 +950,7 @@ protected:
 	vector<RageVector2> m_vTexture;
 	vector<RageVector3> m_vNormal;
 	vector<msTriangle>	m_vTriangles;
+	vector<RageVector2>	m_vTexMatrixScale;
 };
 
 class RageCompiledGeometryHWOGL : public RageCompiledGeometrySWOGL
@@ -862,6 +961,7 @@ protected:
 	GLuint m_nTextureCoords;
 	GLuint m_nNormals;
 	GLuint m_nTriangles;
+	GLuint m_nTextureMatrixScale;
 
 	void AllocateBuffers();
 	void UploadData();
@@ -889,7 +989,7 @@ static void InvalidateAllGeometry()
 RageCompiledGeometryHWOGL::RageCompiledGeometryHWOGL()
 {
 	g_GeometryList.insert( this );
-	m_nPositions = m_nTextureCoords = m_nNormals = m_nTriangles = 0;
+	m_nPositions = m_nTextureCoords = m_nNormals = m_nTriangles = m_nTextureMatrixScale = 0;
 
 	AllocateBuffers();
 }
@@ -906,6 +1006,8 @@ RageCompiledGeometryHWOGL::~RageCompiledGeometryHWOGL()
 	GLExt.glDeleteBuffersARB( 1, &m_nNormals );
 	AssertNoGLError();
 	GLExt.glDeleteBuffersARB( 1, &m_nTriangles );
+	AssertNoGLError();
+	GLExt.glDeleteBuffersARB( 1, &m_nTextureMatrixScale );
 	AssertNoGLError();
 }
 
@@ -934,6 +1036,12 @@ void RageCompiledGeometryHWOGL::AllocateBuffers()
 	if( !m_nTriangles )
 	{
 		GLExt.glGenBuffersARB( 1, &m_nTriangles );
+		AssertNoGLError();
+	}
+
+	if( !m_nTextureMatrixScale )
+	{
+		GLExt.glGenBuffersARB( 1, &m_nTextureMatrixScale );
 		AssertNoGLError();
 	}
 }
@@ -971,12 +1079,23 @@ void RageCompiledGeometryHWOGL::UploadData()
 		&m_vTriangles[0], 
 		GL_STATIC_DRAW_ARB );
 //		AssertNoGLError();
+
+
+	if( m_bNeedsTextureMatrixScale )
+	{
+		GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureMatrixScale );
+		GLExt.glBufferDataARB( 
+			GL_ARRAY_BUFFER_ARB, 
+			GetTotalVertices()*sizeof(RageVector2),
+			&m_vTexMatrixScale[0],
+			GL_STATIC_DRAW_ARB );
+	}
 }
 
 void RageCompiledGeometryHWOGL::Invalidate()
 {
 	/* Our vertex buffers no longer exist.  Reallocate and reupload. */
-	m_nPositions = m_nTextureCoords = m_nNormals = m_nTriangles = 0;
+	m_nPositions = m_nTextureCoords = m_nNormals = m_nTriangles = m_nTextureMatrixScale = 0;
 	AllocateBuffers();
 	UploadData();
 }
@@ -984,7 +1103,6 @@ void RageCompiledGeometryHWOGL::Invalidate()
 void RageCompiledGeometryHWOGL::Allocate( const vector<msMesh> &vMeshes )
 {
 	RageCompiledGeometrySWOGL::Allocate( vMeshes );
-	
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
 	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
@@ -1016,6 +1134,13 @@ void RageCompiledGeometryHWOGL::Allocate( const vector<msMesh> &vMeshes )
 		NULL, 
 		GL_STATIC_DRAW_ARB );
 	AssertNoGLError();
+
+	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureMatrixScale );
+	GLExt.glBufferDataARB( 
+		GL_ARRAY_BUFFER_ARB, 
+		GetTotalVertices()*sizeof(RageVector2), 
+		NULL,
+		GL_STATIC_DRAW_ARB );
 }
 
 void RageCompiledGeometryHWOGL::Change( const vector<msMesh> &vMeshes )
@@ -1068,6 +1193,21 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 		glDisableClientState(GL_NORMAL_ARRAY);
 	}
 
+	if( m_bNeedsTextureMatrixScale && g_bTextureMatrixShader != NULL )
+	{
+		/* If we're using texture matrix scales, set up that buffer, too, and enable the
+		 * vertex shader.  This shader doesn't support all OpenGL state, so only enable it
+		 * if we're using it. */
+		GLExt.glEnableVertexAttribArrayARB( ATTRIB_TEXTURE_MATRIX_SCALE );
+		AssertNoGLError();
+		GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureMatrixScale );
+		AssertNoGLError();
+		GLExt.glVertexAttribPointerARB( ATTRIB_TEXTURE_MATRIX_SCALE, 2, GL_FLOAT, false, 0, NULL );
+		AssertNoGLError();
+
+		GLExt.glUseProgramObjectARB( g_bTextureMatrixShader );
+	}
+
 	GLExt.glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
 	AssertNoGLError();
 
@@ -1083,6 +1223,12 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 		GL_UNSIGNED_SHORT,
 		BUFFER_OFFSET(meshInfo.iTriangleStart*sizeof(msTriangle)) );
 	AssertNoGLError();
+
+	if( m_bNeedsTextureMatrixScale && g_bTextureMatrixShader != NULL )
+	{
+		GLExt.glDisableVertexAttribArrayARB( ATTRIB_TEXTURE_MATRIX_SCALE );
+		GLExt.glUseProgramObjectARB( NULL );
+	}
 }
 
 RageCompiledGeometry* RageDisplay_OGL::CreateCompiledGeometry()

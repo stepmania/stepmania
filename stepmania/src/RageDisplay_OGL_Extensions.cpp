@@ -16,6 +16,7 @@
 #include "glext.h"
 
 #include "RageDisplay_OGL_Extensions.h"
+#include "RageLog.h"
 #include "arch/LowLevelWindow/LowLevelWindow.h"
 
 GLExt_t GLExt;
@@ -102,4 +103,67 @@ void GLExt_t::Load( LowLevelWindow *pWind )
 
 	if( HasExtension("GL_EXT_draw_range_elements") )
 		GLExt.glDrawRangeElements = (PFNGLDRAWRANGEELEMENTSPROC) pWind->GetProcAddress("glDrawRangeElements");
+
+	m_bGL_ARB_shader_objects = HasExtension("GL_ARB_shader_objects");
+	if( m_bGL_ARB_shader_objects )
+	{
+		func_t funcs[] = {
+			F( glCreateShaderObjectARB ),
+			F( glCreateShaderObjectARB ),
+			F( glCreateProgramObjectARB ),
+			F( glShaderSourceARB ),
+			F( glCompileShaderARB ),
+			F( glGetObjectParameterfvARB ),
+			F( glGetObjectParameterivARB ),
+			F( glGetInfoLogARB ),
+			F( glAttachObjectARB ),
+			F( glDeleteObjectARB ),
+			F( glLinkProgramARB ),
+			F( glUseProgramObjectARB ),
+			F( glVertexAttrib2fARB ),
+			F( glVertexAttrib3fARB ),
+			F( glVertexAttrib4fARB ),
+			F( glEnableVertexAttribArrayARB ),
+			F( glDisableVertexAttribArrayARB ),
+			F( glVertexAttribPointerARB ),
+			NULL
+		};
+
+		if( !LoadAllOrNothing(funcs, pWind) )
+			m_bGL_ARB_shader_objects = false;
+	}
+
+	m_bGL_ARB_vertex_shader = m_bGL_ARB_shader_objects && HasExtension("GL_ARB_vertex_shader");
+	if( m_bGL_ARB_vertex_shader )
+	{
+		func_t funcs[] =
+		{
+			F( glBindAttribLocationARB ),
+			NULL
+		};
+		if( !LoadAllOrNothing(funcs, pWind) )
+			m_bGL_ARB_vertex_shader = false;
+	}
+
+	m_bGL_ARB_shading_language_100 = HasExtension("GL_ARB_shading_language_100");
+	if( m_bGL_ARB_shading_language_100 )
+	{
+		while( glGetError() != GL_NO_ERROR )
+			;
+		const char *pzVersion = (const char *) glGetString( GL_SHADING_LANGUAGE_VERSION );
+
+		GLenum glError = glGetError();
+		if( glError == GL_INVALID_ENUM )
+		{
+			LOG->Info( "No GL_SHADING_LANGUAGE_VERSION; assuming 1.0" );
+			m_iShadingLanguageVersion = 100;
+		}
+		else
+		{
+			const float fVersion = strtof( pzVersion, NULL );
+			m_iShadingLanguageVersion = int(roundf(fVersion * 100));
+			/* The version string may contain extra information beyond the version number. */
+			LOG->Info( "OpenGL shading language: %s", pzVersion );
+		}
+	}
 }
