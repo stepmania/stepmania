@@ -312,7 +312,7 @@ void Steps::AddScore( PlayerNumber pn, Grade grade, int iScore, bool& bNewRecord
 	m_MemCardScores[MEMORY_CARD_MACHINE].iNumTimesPlayed++;
 	m_MemCardScores[pn].iNumTimesPlayed++;
 
-	if( m_MemCardScores[pn].HigherScore(iScore, grade) )
+	if( m_MemCardScores[pn].HigherScore(iScore, grade) && iScore > 0)
 	{
 		m_MemCardScores[pn].iScore = iScore;
 		m_MemCardScores[pn].grade = grade;
