@@ -445,7 +445,7 @@ void ScreenOptionsMaster::ExportOptions()
 	const OptionRowHandler &hand = OptionRowHandlers[row];
 	if( hand.type == ROW_LIST )
 	{
-		const int sel = m_iSelectedOption[0][i];
+		const int sel = m_iSelectedOption[0][row];
 		const ModeChoice &mc = hand.ListEntries[sel];
 		if( mc.m_sScreen != "" )
 			m_NextScreen = mc.m_sScreen;
