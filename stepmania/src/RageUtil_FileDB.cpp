@@ -299,10 +299,10 @@ FileSet *FilenameDB::GetFileSet( CString dir, bool create )
 		this->DelFileSet( i );
 	}
 
-	/* Create the FileSet and insert it.  Since it's marked !m_bFilled, if other
-	 * threads happen to try to use this directory before we finish filling it,
-	 * they'll wait. */
+	/* Create the FileSet and insert it.  Set it to !m_bFilled, so if other threads
+	 * happen to try to use this directory before we finish filling it, they'll wait. */
 	ret = new FileSet;
+	ret->m_bFilled = false;
 	dirs[lower] = ret;
 
 	/* Unlock while we populate the directory.  This way, reads to other directories
