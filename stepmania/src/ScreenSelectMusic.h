@@ -50,6 +50,7 @@ protected:
 	void HarderDifficulty( PlayerNumber pn );
 
 	void AfterNotesChange( PlayerNumber pn );
+	void SwitchToPreferredDifficulty();
 	void AfterMusicChange();
 	void SortOrderChanged();
 

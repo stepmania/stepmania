@@ -768,6 +768,30 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 	m_MusicWheel.NotesChanged( pn );
 }
 
+void ScreenSelectMusic::SwitchToPreferredDifficulty()
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsHumanPlayer( PlayerNumber(p) ) )
+			continue;
+
+		/* Find the closest match to the user's preferred difficulty. */
+		int CurDifference = -1;
+		for( unsigned i=0; i<m_arrayNotes[p].size(); i++ )
+		{
+			int Diff = abs(m_arrayNotes[p][i]->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[p]);
+
+			if( CurDifference == -1 || Diff < CurDifference )
+			{
+				m_iSelection[p] = i;
+				CurDifference = Diff;
+			}
+		}
+
+		m_iSelection[p] = clamp( m_iSelection[p], 0, int(m_arrayNotes[p].size()) ) ;
+	}
+}
+
 void ScreenSelectMusic::AfterMusicChange()
 {
 	m_Menu.m_MenuTimer.Stall();
@@ -848,27 +872,9 @@ void ScreenSelectMusic::AfterMusicChange()
 			FlipSpriteHorizontally(m_sprCDTitleBack);
 
 			m_DifficultyDisplay.SetDifficulties( pSong, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
- 
-			for( int p=0; p<NUM_PLAYERS; p++ )
-			{
-				if( !GAMESTATE->IsHumanPlayer( PlayerNumber(p) ) )
-					continue;
 
-				/* Find the closest match to the user's preferred difficulty. */
-				int CurDifference = -1;
-				for( unsigned i=0; i<m_arrayNotes[p].size(); i++ )
-				{
-					int Diff = abs(m_arrayNotes[p][i]->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[p]);
-
-					if( CurDifference == -1 || Diff < CurDifference )
-					{
-						m_iSelection[p] = i;
-						CurDifference = Diff;
-					}
-				}
-
-				m_iSelection[p] = clamp( m_iSelection[p], 0, int(m_arrayNotes[p].size()) ) ;
-			}
+			if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() )
+				SwitchToPreferredDifficulty();
 
 			/* Short delay before actually showing these, so they don't show
 			 * up when scrolling fast.  It'll still show up in "slow" scrolling,
