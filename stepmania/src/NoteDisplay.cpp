@@ -301,7 +301,9 @@ void NoteDisplay::SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAni
 
 	int iFrameNo = (int)(fPrecentIntoAnimation*iNumFrames);
 	if( bVivid )
-		iFrameNo += (int)( froundf(fNoteBeatFraction,1.f/fAnimationLengthInBeats)*iNumFrames );
+		// changed to deal with the minor complaint that the color cycling is
+		// one tick off in general
+		iFrameNo += (int)( froundf((fNoteBeatFraction + 0.5f/fAnimationLengthInBeats),1.f/fAnimationLengthInBeats)*iNumFrames );
 
 	iFrameNo += iNumFrames;
 	iFrameNo %= iNumFrames;
