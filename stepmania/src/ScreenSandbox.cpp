@@ -32,12 +32,10 @@ ScreenSandbox::ScreenSandbox() : Screen("ScreenSandbox")
 //	this->AddChild( &m_sprite );
 
 	m_model.SetXY(CENTER_X, CENTER_Y);
-	m_model.SetZoomX(12);
-	m_model.SetZoomY(-12);
-//	m_model.SetY(0);
-//	m_model.LoadMilkshapeAscii( "bend.txt" );
-	m_model.LoadMilkshapeAscii( "D:\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\char0000\\model.txt" );
-	m_model.LoadMilkshapeAsciiBones( "D:\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\howtoplay.bones.txt" );
+	m_model.SetZoomX(1);
+	m_model.SetZoomY(-1);
+	m_model.LoadMilkshapeAscii( "arrow.txt" );
+//	m_model.LoadMilkshapeAsciiBones( "D:\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\howtoplay.bones.txt" );
 	this->AddChild(&m_model);
 	m_model.SetEffectSpin( RageVector3(0,90,0) );
 

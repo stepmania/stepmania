@@ -27,6 +27,22 @@
 #include "NoteFieldPositioning.h"
 
 
+Actor* MakeModelOrSprite( CString sFile )
+{
+	if( sFile.Right(3)=="txt" )
+	{
+		Model* pModel = new Model;
+		pModel->LoadMilkshapeAscii( sFile );
+		return pModel;
+	}
+	else
+	{
+		Sprite* pSprite = new Sprite;
+		pSprite->Load( sFile );
+		return pSprite;
+	}
+}
+
 #define DRAW_HOLD_HEAD_FOR_TAPS_ON_SAME_ROW			NOTESKIN->GetMetricB(pn,name,"DrawHoldHeadForTapsOnSameRow")
 #define TAP_NOTE_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF(pn,name,"TapNoteAnimationLengthInBeats")
 #define HOLD_HEAD_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF(pn,name,"HoldHeadAnimationLengthInBeats")
@@ -111,6 +127,13 @@ NoteDisplay::NoteDisplay()
 
 NoteDisplay::~NoteDisplay()
 {
+	for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
+	{
+		delete m_pTapNote[i];
+		delete m_pHoldHeadActive[i];
+		delete m_pHoldHeadInactive[i];
+	}
+
 	delete cache;
 }
 
@@ -134,25 +157,25 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn )
 	if( cache->m_bTapNoteAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
-			m_sprTapNote[i].Load( NOTESKIN->GetPathTo(pn, Button, "tap note "+sNoteType[i]) );
+			m_pTapNote[i] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "tap note "+sNoteType[i]) );
 	}
 	else
 	{
-		m_sprTapNote[0].Load( NOTESKIN->GetPathTo(pn, Button, "tap note") );
+		m_pTapNote[0] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "tap note") );
 	}
 
 	if( cache->m_bHoldHeadAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_sprHoldHeadActive[i].Load( NOTESKIN->GetPathTo(pn, Button, "hold head active "+sNoteType[i]) );
-			m_sprHoldHeadInactive[i].Load( NOTESKIN->GetPathTo(pn, Button, "hold head inactive "+sNoteType[i]) );
+			m_pHoldHeadActive[i] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "hold head active "+sNoteType[i]) );
+			m_pHoldHeadInactive[i] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "hold head inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_sprHoldHeadActive[0].Load( NOTESKIN->GetPathTo(pn, Button, "hold head active") );
-		m_sprHoldHeadInactive[0].Load( NOTESKIN->GetPathTo(pn, Button, "hold head inactive") );
+		m_pHoldHeadActive[0] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "hold head active") );
+		m_pHoldHeadInactive[0] = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "hold head inactive") );
 	}
 
 	if( cache->m_bHoldTopCapAnimationIsNoteColor )
@@ -213,9 +236,9 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn )
 }
 
 
-void NoteDisplay::SetActiveFrame( float fNoteBeat, Sprite &Spr, float fAnimationLengthInBeats, bool bVivid, bool bNoteColor )
+void NoteDisplay::SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAnimationLengthInBeats, bool bVivid, bool bNoteColor )
 {
-	const int iNumFrames = Spr.GetNumStates();
+	const int iNumFrames = actorToSet.GetNumStates();
 	float fSongBeat = GAMESTATE->m_fSongBeat;
 	float fPrecentIntoAnimation = fmodf(fSongBeat,fAnimationLengthInBeats) / fAnimationLengthInBeats;
 	float fNoteBeatFraction = fmodf( fNoteBeat, 1.0f );
@@ -229,26 +252,26 @@ void NoteDisplay::SetActiveFrame( float fNoteBeat, Sprite &Spr, float fAnimation
 
 	ASSERT( iFrameNo>=0 && iFrameNo<iNumFrames );
 
-	Spr.SetState( iFrameNo );
+	actorToSet.SetState( iFrameNo );
 }
 
-Sprite * NoteDisplay::GetTapNoteSprite( float fNoteBeat )
+Actor * NoteDisplay::GetTapNoteActor( float fNoteBeat )
 {
 	NoteType nt = NoteType(0);
 	if( cache->m_bTapNoteAnimationIsNoteColor )
 		nt = BeatToNoteType( fNoteBeat );
 	if( nt == NOTE_TYPE_INVALID )
 		nt = NOTE_TYPE_32ND;
-	Sprite *pSpriteOut = &m_sprTapNote[nt];
+	Actor *pActorOut = m_pTapNote[nt];
 
 	SetActiveFrame( 
 		fNoteBeat, 
-		*pSpriteOut,
+		*pActorOut,
 		cache->m_fTapNoteAnimationLengthInBeats, 
 		cache->m_bTapNoteAnimationIsVivid, 
 		cache->m_bTapNoteAnimationIsNoteColor );
 
-	return pSpriteOut;
+	return pActorOut;
 }
 
 Sprite * NoteDisplay::GetHoldTopCapSprite( float fNoteBeat, bool bActive )
@@ -292,7 +315,7 @@ Sprite * NoteDisplay::GetHoldBottomCapSprite( float fNoteBeat, bool bActive )
 }
 
 
-Sprite * NoteDisplay::GetHoldHeadSprite( float fNoteBeat, bool bActive )
+Actor* NoteDisplay::GetHoldHeadActor( float fNoteBeat, bool bActive )
 {
 	NoteType nt = NoteType(0);
 	if( cache->m_bHoldHeadAnimationIsNoteColor )
@@ -300,16 +323,16 @@ Sprite * NoteDisplay::GetHoldHeadSprite( float fNoteBeat, bool bActive )
 	if( nt == NOTE_TYPE_INVALID )
 		nt = NOTE_TYPE_32ND;
 
-	Sprite *pSpriteOut = bActive ? &m_sprHoldHeadActive[nt] : &m_sprHoldHeadInactive[nt];
+	Actor *pActorOut = bActive ? m_pHoldHeadActive[nt] : m_pHoldHeadInactive[nt];
 
 	SetActiveFrame( 
 		fNoteBeat, 
-		*pSpriteOut, 
+		*pActorOut, 
 		cache->m_fHoldHeadAnimationLengthInBeats, 
 		cache->m_bHoldHeadAnimationIsVivid, 
 		cache->m_bHoldHeadAnimationIsNoteColor );
 
-	return pSpriteOut;
+	return pActorOut;
 }
 
 Sprite *NoteDisplay::GetHoldBodySprite( float fNoteBeat, bool bActive )
@@ -619,7 +642,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	// Draw the head
 	//
 	{
-		Sprite* pSprHead = GetHoldHeadSprite( hn.fStartBeat, bActive );
+		Actor* pActor = GetHoldHeadActor( hn.fStartBeat, bActive );
 
 		// draw with normal Sprite
 		const float fY				= fYHead;
@@ -629,18 +652,18 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		const RageColor colorDiffuse= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 		const RageColor colorGlow	= RageColor(1,1,1,fGlow);
 
-		pSprHead->SetXY( fX, fY );
+		pActor->SetXY( fX, fY );
 		if( bDrawGlowOnly )
 		{
-			pSprHead->SetDiffuse( RageColor(1,1,1,0) );
-			pSprHead->SetGlow( colorGlow );
+			pActor->SetDiffuse( RageColor(1,1,1,0) );
+			pActor->SetGlow( colorGlow );
 		}
 		else
 		{
-			pSprHead->SetDiffuse( colorDiffuse );
-			pSprHead->SetGlow( RageColor(0,0,0,0) );
+			pActor->SetDiffuse( colorDiffuse );
+			pActor->SetGlow( RageColor(0,0,0,0) );
 		}
-		pSprHead->Draw();
+		pActor->Draw();
 	}
 
 	// now, draw the glow pass
@@ -660,24 +683,23 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 	RageColor diffuse = RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	RageColor glow = RageColor(1,1,1,fGlow);
 
-	Sprite* pSprite;
+	Actor* pActor;
 	if( bOnSameRowAsHoldStart  &&  cache->m_bDrawHoldHeadForTapsOnSameRow )
 	{
 		// draw hold head
-		pSprite = GetHoldHeadSprite( fBeat, false );
-		pSprite->StopUsingCustomCoords();
+		pActor = GetHoldHeadActor( fBeat, false );
 	}
 	else	
 	{
 		// draw tap
-		pSprite = GetTapNoteSprite( fBeat );
-		pSprite->SetRotationZ( fRotation );
+		pActor = GetTapNoteActor( fBeat );
+		pActor->SetRotationZ( fRotation );
 	}
 
-	pSprite->SetXY( fXPos, fYPos );
-	pSprite->SetDiffuse( diffuse );
-	pSprite->SetGlow( glow );
-	pSprite->Draw();
+	pActor->SetXY( fXPos, fYPos );
+	pActor->SetDiffuse( diffuse );
+	pActor->SetGlow( glow );
+	pActor->Draw();
 }
 
 

@@ -239,6 +239,8 @@ public:
 	void Command( CString sCommandString );
 	static float GetCommandLength( CString command );
 
+	virtual void SetState( int iNewState ) {};
+	virtual int GetNumStates() { return 1; };
 
 protected:
 

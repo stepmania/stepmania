@@ -14,6 +14,7 @@
 */
 
 #include "Sprite.h"
+#include "Model.h"
 #include "NoteTypes.h"
 #include "PlayerNumber.h"
 
@@ -32,9 +33,9 @@ public:
 	void DrawHold( const HoldNote& hn, const bool bActive, const float fLife, const float fPercentFadeToFail, bool bDrawGlowOnly = false );
 
 protected:
-	void SetActiveFrame( float fNoteBeat, Sprite &Spr, float fAnimationLengthInBeats, bool bVivid, bool bNoteColor );
-	Sprite *GetTapNoteSprite( float fNoteBeat  );
-	Sprite *GetHoldHeadSprite( float fNoteBeat, bool bActive );
+	void SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAnimationLengthInBeats, bool bVivid, bool bNoteColor );
+	Actor *GetTapNoteActor( float fNoteBeat );
+	Actor *GetHoldHeadActor( float fNoteBeat, bool bActive );
 	Sprite *GetHoldTopCapSprite( float fNoteBeat, bool bActive );
 	Sprite *GetHoldBodySprite( float fNoteBeat, bool bActive );
 	Sprite *GetHoldBottomCapSprite( float fNoteBeat, bool bActive );
@@ -46,9 +47,9 @@ protected:
 
 #define NOTE_COLOR_IMAGES 6
 
-	Sprite		m_sprTapNote[NOTE_COLOR_IMAGES];
-	Sprite		m_sprHoldHeadActive[NOTE_COLOR_IMAGES];
-	Sprite		m_sprHoldHeadInactive[NOTE_COLOR_IMAGES];
+	Actor*		m_pTapNote[NOTE_COLOR_IMAGES];
+	Actor*		m_pHoldHeadActive[NOTE_COLOR_IMAGES];
+	Actor*		m_pHoldHeadInactive[NOTE_COLOR_IMAGES];
 	Sprite		m_sprHoldTopCapActive[NOTE_COLOR_IMAGES];
 	Sprite		m_sprHoldTopCapInactive[NOTE_COLOR_IMAGES];
 	Sprite		m_sprHoldBodyActive[NOTE_COLOR_IMAGES];

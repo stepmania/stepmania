@@ -199,6 +199,7 @@ CString NoteSkinManager::GetPathTo( CString sSkinName, CString sButtonName, CStr
 
 	CStringArray arrayPossibleFileNames;		// fill this with the possible files
 
+	GetDirListing( ssprintf("%s%s %s*.txt",	   sDir.c_str(), sButtonName.c_str(), sElementName.c_str()), arrayPossibleFileNames, false, true );
 	GetDirListing( ssprintf("%s%s %s*.sprite", sDir.c_str(), sButtonName.c_str(), sElementName.c_str()), arrayPossibleFileNames, false, true );
 	GetDirListing( ssprintf("%s%s %s*.png",    sDir.c_str(), sButtonName.c_str(), sElementName.c_str()), arrayPossibleFileNames, false, true );
 	GetDirListing( ssprintf("%s%s %s*.jpg",    sDir.c_str(), sButtonName.c_str(), sElementName.c_str()), arrayPossibleFileNames, false, true );

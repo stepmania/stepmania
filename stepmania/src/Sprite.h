@@ -42,7 +42,7 @@ public:
 	virtual void EnableAnimation( bool bEnable );
 	virtual void SetState( int iNewState );
 	
-	int		GetNumStates()		{ return m_iNumStates; };
+	virtual int GetNumStates()		{ return m_iNumStates; };
 	CString	GetTexturePath()	{ return m_pTexture==NULL ? "" : m_pTexture->GetID().filename; };
 
 	void SetCustomTextureRect( const RectF &new_texcoord_frect );
