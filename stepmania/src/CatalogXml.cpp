@@ -18,8 +18,14 @@
 #include "ThemeManager.h"
 #include "PrefsManager.h"
 
-#define SHOW_PLAY_MODE(pm)	THEME->GetMetricB("CatalogXml",ssprintf("ShowPlayMode%s",PlayModeToString(pm).c_str()))
-#define SHOW_STYLE(ps)		THEME->GetMetricB("CatalogXml",ssprintf("ShowStyle%s",Capitalize((ps)->m_szName).c_str()))
+#define SHOW_PLAY_MODE(pm)				THEME->GetMetricB("CatalogXml",ssprintf("ShowPlayMode%s",PlayModeToString(pm).c_str()))
+#define SHOW_STYLE(ps)					THEME->GetMetricB("CatalogXml",ssprintf("ShowStyle%s",Capitalize((ps)->m_szName).c_str()))
+#define INTERNET_RANKING_HOME_URL		THEME->GetMetric ("CatalogXml","InternetRankingHomeUrl")
+#define INTERNET_RANKING_UPLOAD_URL		THEME->GetMetric ("CatalogXml","InternetRankingUploadUrl")
+#define INTERNET_RANKING_VIEW_GUID_URL	THEME->GetMetric ("CatalogXml","InternetRankingViewGuidUrl")
+#define STATS_HEADER					THEME->GetMetric ("CatalogXml","StatsHeader")
+#define STATS_FOOTER_TEXT				THEME->GetMetric ("CatalogXml","StatsFooterText")
+#define STATS_FOOTER_LINK				THEME->GetMetric ("CatalogXml","StatsFooterLink")
 
 void SaveCatalogXml()
 {
@@ -105,90 +111,86 @@ void SaveCatalogXml()
 	}
 
 	{
-		XNode* pNode = xml.AppendChild( "DifficultiesToShow" );
+		XNode* pNode = xml.AppendChild( "Types" );
 
-		set<Difficulty> vDiffs;
-		GAMESTATE->GetDifficultiesToShow( vDiffs );
-		for( set<Difficulty>::const_iterator iter = vDiffs.begin(); iter != vDiffs.end(); iter++ )
 		{
-			XNode* pNode2 = pNode->AppendChild( "Difficulty", DifficultyToString(*iter) );
-			pNode2->AppendAttr( "DisplayAs", DifficultyToThemedString(*iter) );
+			set<Difficulty> vDiffs;
+			GAMESTATE->GetDifficultiesToShow( vDiffs );
+			for( set<Difficulty>::const_iterator iter = vDiffs.begin(); iter != vDiffs.end(); iter++ )
+			{
+				XNode* pNode2 = pNode->AppendChild( "Difficulty", DifficultyToString(*iter) );
+				pNode2->AppendAttr( "DisplayAs", DifficultyToThemedString(*iter) );
+			}
+		}
+
+		{
+			set<CourseDifficulty> vDiffs;
+			GAMESTATE->GetCourseDifficultiesToShow( vDiffs );
+			for( set<CourseDifficulty>::const_iterator iter = vDiffs.begin(); iter != vDiffs.end(); iter++ )
+			{
+				XNode* pNode2 = pNode->AppendChild( "CourseDifficulty", CourseDifficultyToString(*iter) );
+				pNode2->AppendAttr( "DisplayAs", CourseDifficultyToThemedString(*iter) );
+			}
+		}
+
+		{
+			vector<StepsType> vStepsTypes;
+			GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_CurGame, vStepsTypes );
+			for( vector<StepsType>::const_iterator iter = vStepsTypes.begin(); iter != vStepsTypes.end(); iter++ )
+			{
+				XNode* pNode2 = pNode->AppendChild( "StepsType", GAMEMAN->StepsTypeToString(*iter) );
+				pNode2->AppendAttr( "DisplayAs", GAMEMAN->StepsTypeToThemedString(*iter) );
+			}
+		}
+
+		{
+			FOREACH_PlayMode( pm )
+			{
+				if( !SHOW_PLAY_MODE(pm) )
+					continue;
+				XNode* pNode2 = pNode->AppendChild( "PlayMode", PlayModeToString(pm) );
+				pNode2->AppendAttr( "DisplayAs", PlayModeToThemedString(pm) );
+			}
+		}
+
+		{
+			vector<const Style*> vpStyle;
+			GAMEMAN->GetStylesForGame( GAMESTATE->m_CurGame, vpStyle );
+			FOREACH( const Style*, vpStyle, pStyle )
+			{
+				if( !SHOW_STYLE(*pStyle) )
+					continue;
+				StyleID sID;
+				sID.FromStyle( (*pStyle) );
+				const Style *pStyle = sID.ToStyle();
+				XNode* pNode2 = pNode->AppendChild( sID.CreateNode() );
+				pNode2->AppendAttr( "DisplayAs", GAMEMAN->StyleToThemedString(pStyle) );
+			}
+		}
+
+		{
+			for( int i=MIN_METER; i<=MAX_METER; i++ )
+			{
+				XNode* pNode2 = pNode->AppendChild( "Meter", ssprintf("Meter%d",i) );
+				pNode2->AppendAttr( "DisplayAs", ssprintf("%d",i) );
+			}
+		}
+
+		{
+			FOREACH_UsedGrade( g )
+			{
+				XNode* pNode2 = pNode->AppendChild( "Grade", GradeToString(g) );
+				pNode2->AppendAttr( "DisplayAs", GradeToThemedString(g) );
+			}
 		}
 	}
 
-	{
-		XNode* pNode = xml.AppendChild( "CourseDifficultiesToShow" );
-
-		set<CourseDifficulty> vDiffs;
-		GAMESTATE->GetCourseDifficultiesToShow( vDiffs );
-		for( set<CourseDifficulty>::const_iterator iter = vDiffs.begin(); iter != vDiffs.end(); iter++ )
-		{
-			XNode* pNode2 = pNode->AppendChild( "CourseDifficulty", CourseDifficultyToString(*iter) );
-			pNode2->AppendAttr( "DisplayAs", CourseDifficultyToThemedString(*iter) );
-		}
-	}
-
-	{
-		XNode* pNode = xml.AppendChild( "StepsTypesToShow" );
-
-		vector<StepsType> vStepsTypes;
-		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_CurGame, vStepsTypes );
-		for( vector<StepsType>::const_iterator iter = vStepsTypes.begin(); iter != vStepsTypes.end(); iter++ )
-		{
-			XNode* pNode2 = pNode->AppendChild( "StepsType", GAMEMAN->StepsTypeToString(*iter) );
-			pNode2->AppendAttr( "DisplayAs", GAMEMAN->StepsTypeToThemedString(*iter) );
-		}
-	}
-
-	{
-		XNode* pNode = xml.AppendChild( "PlayModesToShow" );
-
-		FOREACH_PlayMode( pm )
-		{
-			if( !SHOW_PLAY_MODE(pm) )
-				continue;
-			XNode* pNode2 = pNode->AppendChild( "PlayMode", PlayModeToString(pm) );
-			pNode2->AppendAttr( "DisplayAs", PlayModeToThemedString(pm) );
-		}
-	}
-
-	{
-		XNode* pNode = xml.AppendChild( "StylesToShow" );
-
-		vector<const Style*> vpStyle;
-		GAMEMAN->GetStylesForGame( GAMESTATE->m_CurGame, vpStyle );
-		FOREACH( const Style*, vpStyle, pStyle )
-		{
-			if( !SHOW_STYLE(*pStyle) )
-				continue;
-			StyleID sID;
-			sID.FromStyle( (*pStyle) );
-			const Style *pStyle = sID.ToStyle();
-			XNode* pNode2 = pNode->AppendChild( sID.CreateNode() );
-			pNode2->AppendAttr( "DisplayAs", GAMEMAN->StyleToThemedString(pStyle) );
-		}
-	}
-
-	{
-		XNode* pNode = xml.AppendChild( "MetersToShow" );
-
-		for( int i=MIN_METER; i<=MAX_METER; i++ )
-		{
-			XNode* pNode2 = pNode->AppendChild( "Meter", ssprintf("Meter%d",i) );
-			pNode2->AppendAttr( "DisplayAs", ssprintf("%d",i) );
-		}
-	}
-
-	{
-		XNode* pNode = xml.AppendChild( "GradesToShow" );
-
-		FOREACH_UsedGrade( g )
-		{
-			XNode* pNode2 = pNode->AppendChild( "Grade", GradeToString(g) );
-			pNode2->AppendAttr( "DisplayAs", GradeToThemedString(g) );
-		}
-	}
-
+	xml.AppendChild( "InternetRankingHomeUrl", INTERNET_RANKING_HOME_URL );
+	xml.AppendChild( "InternetRankingUploadUrl", INTERNET_RANKING_UPLOAD_URL );
+	xml.AppendChild( "InternetRankingViewGuidUrl", INTERNET_RANKING_VIEW_GUID_URL );
+	xml.AppendChild( "StatsHeader", STATS_HEADER );
+	xml.AppendChild( "StatsFooterText", STATS_FOOTER_TEXT );
+	xml.AppendChild( "StatsFooterLink", STATS_FOOTER_LINK );
 
 	xml.SaveToFile(fn);
 
