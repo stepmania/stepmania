@@ -214,7 +214,8 @@ void GameState::EndGame()
 	pMachineProfile->m_iCurrentCombo = 0;
 
 	CHECKPOINT;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+    int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !IsHumanPlayer(p) )
 			continue;
