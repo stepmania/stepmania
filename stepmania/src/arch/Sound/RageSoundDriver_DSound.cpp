@@ -48,26 +48,15 @@ void RageSound_DSound::MixerThread()
 		CHECKPOINT;
 		LockMut( m_Mutex );
 
-		/* GetData() will return false if the buffer is sufficiently full.  Interleave
-		 * reads: call GetData for each file before calling it on the same file twice.
-		 * That way, if we're behind, we'll catch up each file a little, instead of bursting
-		 * to catch up one file while the others fall further behind. 
-		 *
-		 * A better approach would be to sort the files by how many chunks they need,
-		 * and to fill sounds that need the most first. */
-		while( 1 )
+ 		for( unsigned i = 0; i < stream_pool.size(); ++i )
 		{
-			bool bMoreData = false;
- 			for(unsigned i = 0; i < stream_pool.size(); ++i)
+			/* We're only interested in PLAYING and FLUSHING sounds. */
+			while( stream_pool[i]->state == stream::PLAYING ||
+				   stream_pool[i]->state == stream::FLUSHING )
 			{
-				/* We're only interested in PLAYING and FLUSHING sounds. */
-				if( stream_pool[i]->state != stream::PLAYING &&
-					stream_pool[i]->state != stream::FLUSHING )
-					continue; /* inactive */
-
 				bool bEOF;
-				if( stream_pool[i]->GetData( false, bEOF ) )
-					bMoreData = true;
+				if( !stream_pool[i]->GetData( false, bEOF ) )
+					break;
 
 				if( bEOF )
 				{
@@ -79,8 +68,6 @@ void RageSound_DSound::MixerThread()
 					stream_pool[i]->flush_pos = stream_pool[i]->pcm->GetOutputPosition();
 				}
 			}
-			if( !bMoreData )
-				break;
 		}
 
 		/* When sounds are in FLUSHING, and we've finished flushing, stop the sound
