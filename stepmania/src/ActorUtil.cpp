@@ -46,6 +46,7 @@ Actor* LoadFromActorFile( CString sIniPath, CString sLayer )
 	ini.GetValue( sLayer, "Type", sType );
 	CString sFile;
 	ini.GetValue( sLayer, "File", sFile );
+	FixSlashesInPlace( sFile );
 	CString sDir = Dirname( sIniPath );
 
 	if( sType == "SongCreditDisplay" )
