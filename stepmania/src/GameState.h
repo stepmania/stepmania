@@ -111,6 +111,7 @@ public:
 
 	int				GetStageIndex() const;
 	void			BeginStage();
+	void			CancelStage();
 	void			FinishStage();
 	int				GetNumStagesLeft() const;
 	bool			IsFinalStage() const;

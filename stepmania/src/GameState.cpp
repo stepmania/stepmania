@@ -442,6 +442,11 @@ void GameState::BeginStage()
 	}
 }
 
+void GameState::CancelStage()
+{
+	m_iNumStagesOfThisSong = 0;
+}
+
 /* Called by ScreenSelectMusic (etc).  Increment the stage counter if we just played a
  * song.  Might be called more than once. */
 void GameState::FinishStage()

@@ -1794,6 +1794,9 @@ void ScreenGameplay::StageFinished()
 
 	// save current stage stats
 	g_vPlayedStageStats.push_back( g_CurStageStats );
+
+	/* Reset options. */
+	GAMESTATE->RestoreSelectedOptions();
 }
 
 void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
@@ -2114,17 +2117,14 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		SongFinished();
 		StageFinished();
 
-		/* Reset options.  (Should this be done in ScreenSelect*?) */
-		GAMESTATE->RestoreSelectedOptions();
+		GAMESTATE->CancelStage();
+
 		SCREENMAN->SetNewScreen( PREV_SCREEN(GAMESTATE->m_PlayMode) );
 		break;
 
 	case SM_GoToStateAfterCleared:
 		SongFinished();
 		StageFinished();
-
-		/* Reset options.  (Should this be done in ScreenSelect*?) */
-		GAMESTATE->RestoreSelectedOptions();
 
 		if( m_bChangedOffsetOrBPM )
 		{
@@ -2178,9 +2178,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		SongFinished();
 		StageFinished();
 		
-		/* Reset options.  (Should this be done in ScreenSelect*?) */
-		GAMESTATE->RestoreSelectedOptions();
-
 		if( m_bChangedOffsetOrBPM )
 		{
 			m_bChangedOffsetOrBPM = false;
@@ -2201,7 +2198,10 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				}
 				else // the theme says just fail and go back to the song select for event mode
 				{
-					HandleScreenMessage( SM_GoToScreenAfterBack );
+					SCREENMAN->SetNewScreen( PREV_SCREEN(GAMESTATE->m_PlayMode) );
+
+					/* Don't do this; it'll call SongFinished, etc. again. -glenn */
+//					HandleScreenMessage( SM_GoToScreenAfterBack );
 				}
 			}
 			else if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
