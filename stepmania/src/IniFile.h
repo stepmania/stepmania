@@ -13,14 +13,8 @@
 
 class IniFile  
 {
-	//all private variables
-private:
-
-	//stores pathname of ini file to read/write
-	CString path;
-	
 public:
-	//all keys are of this time
+	// all keys are of this type
 	struct key
 	{
 		//list of values in key
@@ -31,6 +25,9 @@ public:
 	};
 
 private:
+	//stores pathname of ini file to read/write
+	CString path;
+
 	//list of keys in ini
 	CArray<key, key> keys; 
 
@@ -38,7 +35,6 @@ private:
 	CArray<CString, CString> names; 
 	
 	
-	//all private functions
 private:
 	//returns index of specified value, in the specified key, or -1 if not found
 	int FindValue(int keynum, const CString &valuename);
@@ -47,7 +43,6 @@ private:
 	int FindKey(const CString &keyname);
 
 
-	//public variables
 public:
 
 	//will contain error info if one occurs
@@ -55,8 +50,6 @@ public:
 	CString error;
 
 
-	//public functions
-public:
 	//constructor, can specify pathname here instead of using SetPath later
 	IniFile(CString inipath = "");
 
