@@ -1238,6 +1238,19 @@ void SongManager::FreeAllLoadedFromProfiles()
 	StepsID::ClearCache();
 }
 
+int SongManager::GetTotalNumberOfEdits()
+{
+	int iNumEdits = 0;
+	for( unsigned s=0; s<m_pSongs.size(); s++ )
+	{
+		Song* pSong = m_pSongs[s];
+		vector<Steps*> vSteps;
+		pSong->GetSteps( vSteps, STEPS_TYPE_INVALID, DIFFICULTY_INVALID );
+		iNumEdits += vSteps.size();
+	}	
+
+	return iNumEdits;
+}
 
 
 // lua start
@@ -1264,6 +1277,7 @@ public:
 	}
 	static int FindSong( T* p, lua_State *L )	{ Song *pS = p->FindSong(SArg(1)); if(pS) pS->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int FindCourse( T* p, lua_State *L ) { Course *pC = p->FindCourse(SArg(1)); if(pC) pC->PushSelf(L); else lua_pushnil(L); return 1; }
+	static int GetTotalNumberOfEdits( T* p, lua_State *L ) { lua_pushnumber(L,p->GetTotalNumberOfEdits()); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -1271,6 +1285,7 @@ public:
 		ADD_METHOD( GetAllCourses )
 		ADD_METHOD( FindSong )
 		ADD_METHOD( FindCourse )
+		ADD_METHOD( GetTotalNumberOfEdits )
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,
