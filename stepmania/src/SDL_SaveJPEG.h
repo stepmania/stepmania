@@ -2,7 +2,8 @@
 #define SDL_SAVE_JPEG_H
 
 struct RageSurface;
-void IMG_SaveJPG_RW( RageSurface *surface, SDL_RWops *dest, bool bHighQual=true );
+class RageFile;
+bool IMG_SaveJPG_RW( RageSurface *surface, RageFile &f, bool bHighQual=true );
 
 #endif
 

@@ -1,8 +1,8 @@
 #include "global.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
-#include "SDL_utils.h"
 #include "RageUtil.h"
+#include "RageFile.h"
 
 #undef FAR /* fix for VC */
 namespace jpeg
@@ -30,7 +30,7 @@ typedef struct
 {
 	struct jpeg::jpeg_destination_mgr pub;
 
-	SDL_RWops *ctx;
+	RageFile *f;
 	uint8_t buffer[OUTPUT_BUFFER_SIZE];
 } my_destination_mgr;
 
@@ -49,9 +49,8 @@ static void init_destination( jpeg::j_compress_ptr cinfo )
 static jpeg::boolean empty_output_buffer( jpeg::j_compress_ptr cinfo )
 {
 	my_destination_mgr * dest = (my_destination_mgr *) cinfo->dest;
-	int nbytes;
-
-	nbytes = SDL_RWwrite( dest->ctx, dest->buffer, 1, OUTPUT_BUFFER_SIZE );
+	int nbytes = dest->f->Write( dest->buffer, OUTPUT_BUFFER_SIZE );
+	// XXX err
 	dest->pub.next_output_byte = dest->buffer;
 	dest->pub.free_in_buffer = OUTPUT_BUFFER_SIZE;
 
@@ -67,7 +66,8 @@ static void term_destination (jpeg::j_compress_ptr cinfo)
 {
 	/* Write data remaining in the buffer */
 	my_destination_mgr *dest = (my_destination_mgr *) cinfo->dest;
-	SDL_RWwrite(dest->ctx, dest->buffer, 1, OUTPUT_BUFFER_SIZE - dest->pub.free_in_buffer);
+	int wrote = dest->f->Write( dest->buffer, OUTPUT_BUFFER_SIZE - dest->pub.free_in_buffer );
+	// XXX err
 	dest->pub.next_output_byte = dest->buffer;
 	dest->pub.free_in_buffer = OUTPUT_BUFFER_SIZE;
 }
@@ -77,7 +77,7 @@ static void term_destination (jpeg::j_compress_ptr cinfo)
  * The caller must have already opened the stream, and is responsible
  * for closing it after finishing decompression.
  */
-static void jpeg_SDL_RW_dest( jpeg::j_compress_ptr cinfo, SDL_RWops *ctx )
+static void jpeg_RageFile_dest( jpeg::j_compress_ptr cinfo, RageFile &f )
 {
 	ASSERT( cinfo->dest == NULL );
 
@@ -92,11 +92,11 @@ static void jpeg_SDL_RW_dest( jpeg::j_compress_ptr cinfo, SDL_RWops *ctx )
 	dest->pub.free_in_buffer = OUTPUT_BUFFER_SIZE; /* forces fill_input_buffer on first read */
 	dest->pub.next_output_byte = dest->buffer; /* until buffer loaded */
 
-	dest->ctx = ctx;
+	dest->f = &f;
 }
 
 /* Save a JPEG to a file.  cjpeg.c and example.c from jpeglib were helpful in writing this. */
-void IMG_SaveJPG_RW( RageSurface *surface, SDL_RWops *dest, bool bHighQual )
+bool IMG_SaveJPG_RW( RageSurface *surface, RageFile &f, bool bHighQual )
 {
 	RageSurface *dst_surface;
 	if( RageSurfaceUtils::ConvertSurface( surface, dst_surface,
@@ -127,7 +127,7 @@ void IMG_SaveJPG_RW( RageSurface *surface, SDL_RWops *dest, bool bHighQual )
 	else
 		jpeg::jpeg_set_quality( &cinfo, 40, TRUE );
 
-	jpeg_SDL_RW_dest( &cinfo, dest );
+	jpeg_RageFile_dest( &cinfo, f );
 
 	/* Start the compressor. */
 	jpeg::jpeg_start_compress( &cinfo, TRUE );
@@ -152,6 +152,7 @@ void IMG_SaveJPG_RW( RageSurface *surface, SDL_RWops *dest, bool bHighQual )
 	jpeg::jpeg_destroy_compress( &cinfo );
 
 	delete dst_surface;
+	return true;
 }
 
 /*

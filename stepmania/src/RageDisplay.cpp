@@ -5,9 +5,9 @@
 #include "RageMath.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
-#include "SDL_utils.h"
 #include "RageFile.h"
 #include "SDL_SaveJPEG.h"
+#include "RageSurface_Save_BMP.h"
 #include "SDL_rotozoom.h"
 #include "RageSurface.h"
 
@@ -633,41 +633,11 @@ bool RageDisplay::SaveScreenshot( CString sPath, GraphicsFileFormat format )
 {
 	RageSurface* surface = this->CreateScreenshot();
 
-	CString buf;
-	buf.reserve( 1024*1024 );
-
-	SDL_RWops rw;
-	OpenRWops( &rw, &buf );
-
 	/* Unless we're in lossless, resize the image to 640x480.  If we're saving lossy,
 	 * there's no sense in saving 1280x960 screenshots, and if we're in a custom
 	 * resolution (eg. 640x240), we don't want to output in that resolution. */
 	if( format != SAVE_LOSSLESS && (surface->h != 640 || surface->w != 480) )
 		zoomSurface( surface, 640, 480 );
-
-	switch( format )
-	{
-	case SAVE_LOSSLESS:
-	{
-		SDL_Surface *pSDLSurf = SDLSurfaceFromRageSurface( surface );
-		SDL_SaveBMP_RW( pSDLSurf, &rw, false );
-		delete pSDLSurf;
-		break;
-	}
-	case SAVE_LOSSY_LOW_QUAL:
-		IMG_SaveJPG_RW( surface, &rw, false );
-	case SAVE_LOSSY_HIGH_QUAL:
-		IMG_SaveJPG_RW( surface, &rw, true );
-		break;
-	default:
-		ASSERT(0);
-		return false;
-	}
-
-	SDL_RWclose( &rw );
-
-	delete surface;
-	surface = NULL;
 
 	RageFile out;
 	if( !out.Open( sPath, RageFile::WRITE ) )
@@ -676,7 +646,31 @@ bool RageDisplay::SaveScreenshot( CString sPath, GraphicsFileFormat format )
 		return false;
 	}
 
-	out.Write( buf );
+	bool bSuccess = false;
+	switch( format )
+	{
+	case SAVE_LOSSLESS:
+		bSuccess = RageSurface_Save_BMP( surface, out );
+		break;
+	case SAVE_LOSSY_LOW_QUAL:
+		bSuccess = IMG_SaveJPG_RW( surface, out, false );
+		break;
+	case SAVE_LOSSY_HIGH_QUAL:
+		bSuccess = IMG_SaveJPG_RW( surface, out, true );
+		break;
+	default:
+		ASSERT(0);
+		return false;
+	}
+
+	delete surface;
+	surface = NULL;
+
+	if( !bSuccess )
+	{
+		LOG->Trace("Couldn't write %s: %s", sPath.c_str(), out.GetError().c_str() );
+		return false;
+	}
 
 	return true;
 }
