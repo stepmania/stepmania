@@ -184,7 +184,17 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 		m_ArrowBackdrop.LoadFromAniDir( THEME->GetPathToB( BackdropName ) );
 
 	float fNoteFieldMidde = (GRAY_ARROWS_Y_STANDARD+GRAY_ARROWS_Y_REVERSE)/2;
+	
+#if defined(XBOX)
+	/* HACK: The receptor arrows are offset down and to the right. This sets them back.
+	 * It doesn't look perfect but its better than having player 2's arrows of the screen.
+	 */
+	m_pNoteField->SetY( fNoteFieldMidde - 20 );
+	m_pNoteField->SetX( m_pNoteField->GetX() - 55);
+#else
 	m_pNoteField->SetY( fNoteFieldMidde );
+#endif
+
 	m_fNoteFieldHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
 	m_pNoteField->Load( this, pn, iStartDrawingAtPixels, iStopDrawingAtPixels, m_fNoteFieldHeight );
 	m_ArrowBackdrop.SetPlayer( pn );
@@ -193,7 +203,7 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==Style::ONE_PLAYER_TWO_CREDITS;
 	m_Combo.SetX( COMBO_X(m_PlayerNumber,bPlayerUsingBothSides) );
 	m_Combo.SetY( bReverse ? COMBO_Y_REVERSE : COMBO_Y );
-	m_AttackDisplay.SetX( ATTACK_DISPLAY_X(m_PlayerNumber,bPlayerUsingBothSides) );
+	m_AttackDisplay.SetX( ATTACK_DISPLAY_X(m_PlayerNumber,bPlayerUsingBothSides) - 40 );
 	m_AttackDisplay.SetY( bReverse ? ATTACK_DISPLAY_Y_REVERSE : ATTACK_DISPLAY_Y );
 	m_Judgment.SetX( JUDGMENT_X(m_PlayerNumber,bPlayerUsingBothSides) );
 	m_Judgment.SetY( bReverse ? JUDGMENT_Y_REVERSE : JUDGMENT_Y );
