@@ -147,7 +147,6 @@ public:
 	 * flushed, SoundStopped will be called.  Until then, SOUNDMAN->GetPosition
 	 * can still be called (the sound is still playing). */
 	int GetPCM(char *buffer, int size, int sampleno);
-
 	void Update(float delta);
 };
 

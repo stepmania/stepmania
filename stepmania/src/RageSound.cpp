@@ -47,7 +47,7 @@ const int samplesize = 2 * channels; /* 16-bit */
 const int samplerate = 44100;
 
 /* If a sound is smaller than this, we'll load it entirely into memory. */
-const int max_prebuf_size = 0; // 1024*256;
+const int max_prebuf_size = 1024*256;
 
 /* The most data to buffer when streaming.  This should generally be at least as large
  * as the largest hardware buffer. */
@@ -77,9 +77,9 @@ class SpeedChanger
 
 	float frac;
 
-	basic_string<Uint16> samples;
+	basic_string<Sint16> samples;
 
-	basic_string<Uint16> output;
+	basic_string<Sint16> output;
 
 	static float cub(float fm1, float f0, float f1, float f2, float x);
 	void move_data();
@@ -88,9 +88,9 @@ public:
 	SpeedChanger();
 	~SpeedChanger();
 	void Set(float speed);
-	void write(const Uint16 *buf, int size);
-	void eof(); /* no more data will be written */
-	unsigned read(Uint16 *buf, unsigned size);
+	void write(const Sint16 *buf, int size);
+	void flush();
+	unsigned read(Sint16 *buf, unsigned size);
 };
 
 SpeedChanger::SpeedChanger()
@@ -141,9 +141,9 @@ void SpeedChanger::Set(float speed)
 	samples.insert(samples.end(), 0);
 }
 
-void SpeedChanger::write(const Uint16 *buf, int size)
+void SpeedChanger::write(const Sint16 *buf, int size)
 {
-	while(size)
+	while(size > 1)
 	{
 		cur_sample += buf[0];
 		buf++;
@@ -161,7 +161,7 @@ void SpeedChanger::move_data()
 	cur_sample /= compress;
 
 	/* Add it to the sample buffer: */
-	samples.insert(samples.end(), Uint16(cur_sample));
+	samples.insert(samples.end(), Sint16(cur_sample));
 	sample_inputs = cur_sample = 0;
 
 	if(samples.size() != 4)
@@ -173,10 +173,10 @@ void SpeedChanger::move_data()
 		float interp = cub(samples[0], samples[1],
                 samples[2], samples[3], frac);
 
-		Uint16 clipped;
-		if(interp > 65535) clipped = 65535u;
-		else if(interp < 0) clipped = 0;
-		else clipped = Uint16(interp);
+		Sint16 clipped;
+		if(interp > 32767) clipped = 32767u;
+		else if(interp < -32768) clipped = -32768;
+		else clipped = Sint16(interp);
 		output.insert(output.end(), clipped);
 		frac += rate;
 	}
@@ -185,13 +185,12 @@ void SpeedChanger::move_data()
 	samples.erase(samples.begin(), samples.begin()+1);
 }
 
-void SpeedChanger::eof()
+void SpeedChanger::flush()
 {
 	/* Feed null until all samples are empty. */
-
 	while(1)
 	{
-		Uint16 nothing = 0;
+		Sint16 nothing = 0;
 		write(&nothing, 0);
 
 		int empty = true;
@@ -202,10 +201,10 @@ void SpeedChanger::eof()
 	}
 }
 
-unsigned SpeedChanger::read(Uint16 *buf, unsigned size)
+unsigned SpeedChanger::read(Sint16 *buf, unsigned size)
 {
 	size = min(size, output.size());
-	memcpy(buf, output.data(), size*sizeof(Uint16));
+	memcpy(buf, output.data(), size*sizeof(Sint16));
 	output.erase(output.begin(), output.begin() + size);
 	return size;
 }
@@ -461,12 +460,13 @@ int RageSound::FillBuf(int bytes)
 		{
 			unsigned input_size = stream.buf.capacity() - stream.buf.size();
 			input_size = min(input_size, sizeof(inbuf));
-			input_size /= sizeof(Uint16);
+			input_size /= sizeof(Sint16);
 
-			cnt = speedchanger->read((Uint16 *) inbuf, input_size);
-			cnt *= sizeof(Uint16);
+			cnt = speedchanger->read((Sint16 *) inbuf, input_size);
+			cnt *= sizeof(Sint16);
 
 			stream.buf.write((const char *) inbuf, cnt);
+			speedchanger->flush();
 			bytes -= cnt;
 
 			if(cnt)
@@ -491,16 +491,16 @@ int RageSound::FillBuf(int bytes)
 					if(!at_eof)
 					{
 						at_eof = true;
-						speedchanger->eof();
+						speedchanger->flush();
 						continue;
 					}
 
 					/* Really EOF. */
-					speedchanger->eof();
+					speedchanger->flush();
 					return got_something; /* EOF */
 				}
 
-				speedchanger->write((const Uint16 *) inbuf, cnt/2);
+				speedchanger->write((const Sint16 *) inbuf, cnt/2);
 			}
 			continue;
 		}
@@ -764,7 +764,8 @@ float RageSound::GetPositionSeconds() const
 			/* cur_sample lies in this block; it's an exact match.  Figure
 			 * out the exact position. */
 			int diff = pos_map[i].position - pos_map[i].sampleno;
-			return speed * float(cur_sample + diff) / samplerate;
+			diff = int(diff * speed);
+			return float(cur_sample + diff) / samplerate;
 		}
 
 		/* See if the current position is close to the beginning of this block. */
@@ -872,6 +873,9 @@ bool RageSound::SetPositionSamples( int samples )
 void RageSound::SetPlaybackRate( float NewSpeed )
 {
 	LockMut(SOUNDMAN->lock);
+
+	if(speed == NewSpeed)
+		return;
 
 	/* Scale the position to the new scale. XXX untested */
 	position *= int(speed / NewSpeed);
