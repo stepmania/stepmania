@@ -39,7 +39,6 @@ inline float NoteRowToBeat( int iNoteIndex )			{ return NoteRowToBeat( (float)iN
 
 
 
-
 class NoteData
 {
 public:
@@ -51,6 +50,9 @@ public:
 	TapNote		m_TapNotes[MAX_NOTE_TRACKS][MAX_TAP_NOTE_ROWS];
 	HoldNote	m_HoldNotes[MAX_HOLD_NOTE_ELEMENTS];
 	int			m_iNumHoldNotes;
+
+	void LoadFromSMNoteDataString( CString sSMNoteData );
+	CString GetSMNoteDataString();
 
 	void ClearRange( int iNoteIndexBegin, int iNoteIndexEnd );
 	void ClearAll() { ClearRange( 0, MAX_TAP_NOTE_ROWS ); };

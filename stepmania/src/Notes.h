@@ -14,7 +14,7 @@
 
 #include "GameConstantsAndTypes.h"
 #include "Grade.h"
-#include "NoteData.h"
+class NoteData;
 
 
 struct Notes
@@ -39,8 +39,7 @@ public:
 		const CString &sDifficultyClass,
 		const CString &sMeter,
 		const CString &sRadarValues,
-		const CString &sNoteDataOut,
-		const bool bLoadNoteData
+		const CString &sNoteDataOut
 		);
 	void WriteSMNotesTag( FILE* fp );
 
@@ -51,6 +50,11 @@ public:
 	DifficultyClass m_DifficultyClass;		// this is inferred from m_sDescription
 	int				m_iMeter;				// difficulty from 1-10
 	float			m_fRadarValues[NUM_RADAR_VALUES];	// between 0.0-1.2 starting from 12-o'clock rotating clockwise
+
+	CString			m_sSMNoteData;
+	void			GetNoteData( NoteData* pNoteDataOut );
+	void			SetNoteData( NoteData* pNewNoteData );
+
 
 	// Color is a function of DifficultyClass and Intended Style
 	D3DXCOLOR GetColor()
@@ -73,14 +77,10 @@ public:
 	int m_iMaxCombo;
 	int m_iNumTimesPlayed;
 
-	bool		IsNoteDataLoaded();
-	NoteData*	GetNoteData();
-	void		SetNoteData( NoteData* pNewNoteData );
-	void		DeleteNoteData();
-
+protected:
+	void TidyUpData();
 	static DifficultyClass DifficultyClassFromDescriptionAndMeter( CString sDescription, int iMeter );
-	
-	NoteData*	m_pNoteData;
+
 };
 
 

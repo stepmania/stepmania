@@ -88,7 +88,6 @@ ScreenEdit::ScreenEdit()
 	LOG->WriteLine( "ScreenEdit::ScreenEdit()" );
 
 	m_pSong = SONGMAN->GetCurrentSong();
-	m_pSong->LoadNoteData();
 
 	m_pNotes = SONGMAN->m_pCurNotes[PLAYER_1];
 	if( m_pNotes == NULL )
@@ -96,6 +95,10 @@ ScreenEdit::ScreenEdit()
 		m_pNotes = new Notes;
 		m_pSong->m_arrayNotes.Add( m_pNotes );
 	}
+
+	NoteData noteData;
+	m_pNotes->GetNoteData( &noteData );
+
 
 	m_Mode = MODE_EDIT;
 
@@ -120,7 +123,7 @@ ScreenEdit::ScreenEdit()
 
 	m_NoteFieldEdit.SetXY( EDIT_X, EDIT_GRAY_Y );
 	m_NoteFieldEdit.SetZoom( 0.5f );
-	m_NoteFieldEdit.Load( m_pNotes->GetNoteData(), PLAYER_1, GAMEMAN->GetCurrentStyleDef(), m_PlayerOptions, 10, 12, NoteField::MODE_EDITING );
+	m_NoteFieldEdit.Load( &noteData, PLAYER_1, GAMEMAN->GetCurrentStyleDef(), m_PlayerOptions, 10, 12, NoteField::MODE_EDITING );
 
 	m_rectRecordBack.StretchTo( CRect(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 	m_rectRecordBack.SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
@@ -131,11 +134,11 @@ ScreenEdit::ScreenEdit()
 
 	m_NoteFieldRecord.SetXY( EDIT_X, EDIT_GRAY_Y );
 	m_NoteFieldRecord.SetZoom( 1.0f );
-	m_NoteFieldRecord.Load( m_pNotes->GetNoteData(), PLAYER_1, GAMEMAN->GetCurrentStyleDef(), m_PlayerOptions, 2, 5, NoteField::MODE_EDITING );
+	m_NoteFieldRecord.Load( &noteData, PLAYER_1, GAMEMAN->GetCurrentStyleDef(), m_PlayerOptions, 2, 5, NoteField::MODE_EDITING );
 
 	m_Clipboard.m_iNumTracks = m_NoteFieldEdit.m_iNumTracks;
 
-	m_Player.Load( PLAYER_1, GAMEMAN->GetCurrentStyleDef(), m_pNotes->GetNoteData(), PlayerOptions(), NULL, NULL, 1 );
+	m_Player.Load( PLAYER_1, GAMEMAN->GetCurrentStyleDef(), &noteData, PlayerOptions(), NULL, NULL, 1 );
 	m_Player.SetXY( PLAYER_X, PLAYER_Y );
 
 	m_Fade.SetClosed();
@@ -399,7 +402,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 			break;
 		case DIK_ESCAPE:
-			m_pSong->LoadFromSMFile( m_pSong->GetCacheFilePath(), true );
+			m_pSong->LoadFromSMFile( m_pSong->GetCacheFilePath() );
 			SCREENMAN->SetNewScreen( new ScreenEditMenu );
 			break;
 		case DIK_S:

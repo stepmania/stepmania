@@ -43,7 +43,7 @@ public:
 
 	bool LoadFromDWIFile( CString sPath );
 	bool LoadFromBMSDir( CString sDir );
-	bool LoadFromSMFile( CString sPath, bool bLoadNoteData );
+	bool LoadFromSMFile( CString sPath );
 
 	void TidyUpData();	// call after loading to clean up invalid data
 
@@ -52,8 +52,6 @@ public:
 
 	CString GetSongFilePath();
 	CString GetCacheFilePath();
-
-	void LoadNoteData();
 
 public:
 	CString m_sSongDir;

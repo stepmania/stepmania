@@ -16,9 +16,10 @@
 #include "RageLog.h"
 #include "IniFile.h"
 #include "Song.h"
+#include "NoteData.h"
 
 
-const int FILE_CACHE_VERSION = 25;	// increment this when the SM file format changes
+const int FILE_CACHE_VERSION = 26;	// increment this to force a cache reload (useful when the SM file format changes)
 
 
 int CompareBPMSegments(const void *arg1, const void *arg2)
@@ -267,7 +268,7 @@ bool Song::LoadFromSongDir( CString sDir )
 	ini.GetValueI( "Cache", "CacheVersion", iCacheVersion );
 	if( iCacheVersion != FILE_CACHE_VERSION )
 	{
-		LOG->WriteLine( "Cache format is out of date.  Deleting all cache files" );
+		LOG->WriteLine( "Cache format is out of date.  Deleting all cache files." );
 		CStringArray asCacheFileNames;
 		GetDirListing( "Cache\\*.*", asCacheFileNames );
 		for( int i=0; i<asCacheFileNames.GetSize(); i++ )
@@ -281,7 +282,7 @@ bool Song::LoadFromSongDir( CString sDir )
 	{
 		if( !DoesFileExist(GetCacheFilePath()) )
 			goto load_without_cache;
-		LoadFromSMFile( GetCacheFilePath(), false );	// don't load NoteData
+		LoadFromSMFile( GetCacheFilePath() );	// don't load NoteData
 
 		// Save length of music
 		if( GetMusicPath() != "" )
@@ -318,7 +319,7 @@ load_without_cache:
 	else if( iNumDWIFiles > 1 )
 		throw RageException( "There is more than one DWI file in '%s'.  There should be only one!", sDir );
 	else if( iNumSMFiles == 1 )
-		LoadFromSMFile( sDir + arraySMFileNames[0], true );	// do load note data
+		LoadFromSMFile( sDir + arraySMFileNames[0] );	// do load note data
 	else if( iNumDWIFiles == 1 )
 		LoadFromDWIFile( sDir + arrayDWIFileNames[0] );
 	else if( iNumBMSFiles > 0 )
@@ -328,12 +329,7 @@ load_without_cache:
 
 	TidyUpData();
 
-	//
-	// In order to save memory, we're going to save the file back to the cache, 
-	// then unload all the large NoteData. 
-	//
-	SaveToCacheFile();
-	LoadFromSMFile( GetCacheFilePath(), false );	// don't load NoteData
+	SaveToCacheFile();	// save a cahce file so we don't have to parse it all over again next time
 
 	return true;
 }
@@ -786,9 +782,9 @@ bool Song::LoadFromDWIFile( CString sPath )
 }
 
 
-bool Song::LoadFromSMFile( CString sPath, bool bLoadNoteData )
+bool Song::LoadFromSMFile( CString sPath )
 {
-	LOG->WriteLine( "Song::LoadFromSMDir(%s, %d)", sPath, bLoadNoteData );
+	LOG->WriteLine( "Song::LoadFromSMDir(%s)", sPath );
 
 	m_BPMSegments.RemoveAll();
 	m_FreezeSegments.RemoveAll();
@@ -954,8 +950,8 @@ bool Song::LoadFromSMFile( CString sPath, bool bLoadNoteData )
 				arrayValueTokens[4], 
 				arrayValueTokens[5], 
 				arrayValueTokens[6], 
-				arrayValueTokens[7], 
- 				bLoadNoteData );
+				arrayValueTokens[7]
+				);
 		}
 
 		else
@@ -1075,10 +1071,11 @@ void Song::TidyUpData()
 	for( int i=0; i<m_arrayNotes.GetSize(); i++ )
 	{
 		Notes* pNotes = m_arrayNotes[i];
-		ASSERT( pNotes->m_pNoteData != NULL );
+		NoteData tempNoteData;
+		pNotes->GetNoteData( &tempNoteData );
 
 		for( int r=0; r<NUM_RADAR_VALUES; r++ )
-			pNotes->m_fRadarValues[r] = pNotes->GetNoteData()->GetRadarValue( (RadarCategory)r, m_fMusicLengthSeconds );
+			pNotes->m_fRadarValues[r] = tempNoteData.GetRadarValue( (RadarCategory)r, m_fMusicLengthSeconds );
 	}
 }
 
@@ -1183,16 +1180,6 @@ void Song::SaveToSMFile( CString sPath )
 	fclose( fp );
 }
 
-void Song::LoadNoteData()
-{
-	if( m_arrayNotes.GetSize() > 0 )
-	{
-		if( m_arrayNotes[0]->m_pNoteData != NULL )	// if already loaded
-			return;
-		LoadFromSMFile( GetCacheFilePath(), true );
-	}
-}
-
 Grade Song::GetGradeForDifficultyClass( NotesType nt, DifficultyClass dc )
 {
 	CArray<Notes*, Notes*> aNotes;
@@ -1207,7 +1194,6 @@ Grade Song::GetGradeForDifficultyClass( NotesType nt, DifficultyClass dc )
 	}
 	return GRADE_NO_DATA;
 }
-
 
 
 

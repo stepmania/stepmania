@@ -28,6 +28,13 @@ struct NoteDataWithScoring : public NoteData
 	int GetNumSuccessfulDoubles( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
 	int GetNumSuccessfulHoldNotes( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
 
+	inline bool IsRowComplete( int index )
+	{
+		for( int t=0; t<m_iNumTracks; t++ )
+			if( m_TapNotes[t][index] != '0'  &&  m_TapNoteScores[t][index] < TNS_GREAT )
+				return false;
+		return true;
+	}
 
 	float GetActualRadarValue( RadarCategory rv, float fSongSeconds )
 	{

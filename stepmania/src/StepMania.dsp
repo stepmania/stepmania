@@ -208,6 +208,14 @@ SOURCE=.\RageUtil.h
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\Course.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Course.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Font.cpp
 # End Source File
 # Begin Source File
@@ -1041,10 +1049,6 @@ SOURCE=.\ScreenStage.cpp
 # Begin Source File
 
 SOURCE=.\ScreenStage.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenSynchronizeMenu.h
 # End Source File
 # Begin Source File
 

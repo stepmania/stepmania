@@ -64,7 +64,8 @@ enum NoteType
 	NOTE_8TH,	// eighth notes
 	NOTE_12TH,	// triplets
 	NOTE_16TH,	// sixteenth notes
-	NUM_NOTE_TYPES
+	NUM_NOTE_TYPES,
+	NOTE_INVALID
 };
 
 inline D3DXCOLOR NoteTypeToColor( NoteType nt )
@@ -91,16 +92,23 @@ inline float NoteTypeToBeat( NoteType nt )
 	}
 };
 
+inline NoteType GetNoteType( int iNoteIndex )
+{ 
+	if( iNoteIndex % (ELEMENTS_PER_MEASURE/4) == 0)
+		return NOTE_4TH;
+	else if( iNoteIndex % (ELEMENTS_PER_MEASURE/8) == 0)
+		return NOTE_8TH;
+	else if( iNoteIndex % (ELEMENTS_PER_MEASURE/12) == 0)
+		return NOTE_12TH;
+	else if( iNoteIndex % (ELEMENTS_PER_MEASURE/16) == 0)
+		return NOTE_16TH;
+	ASSERT(0);
+	return NOTE_INVALID;
+};
+
 inline bool IsNoteOfType( int iNoteIndex, NoteType t )
 { 
-	switch( t )
-	{
-	case NOTE_4TH:	return iNoteIndex % (ELEMENTS_PER_MEASURE/4) == 0;
-	case NOTE_8TH:	return iNoteIndex % (ELEMENTS_PER_MEASURE/8) == 0;
-	case NOTE_12TH:	return iNoteIndex % (ELEMENTS_PER_MEASURE/12) == 0;
-	case NOTE_16TH:	return iNoteIndex % (ELEMENTS_PER_MEASURE/16) == 0;
-	default:	ASSERT( false );	return false;
-	}
+	return GetNoteType(iNoteIndex) == t;
 };
 
 inline D3DXCOLOR GetNoteColorFromIndex( int iStepIndex )

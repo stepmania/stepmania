@@ -292,7 +292,6 @@ void ScreenGameplay::LoadNextSong()
 
 	m_pCurSong = m_apSongQueue[m_apSongQueue.GetSize()-1];
 	m_apSongQueue.RemoveAt(m_apSongQueue.GetSize()-1);
-	m_pCurSong->LoadNoteData();
 
 	Notes* pNotes[NUM_PLAYERS];
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -313,10 +312,11 @@ void ScreenGameplay::LoadNextSong()
 		m_DifficultyBanner[p].SetFromNotes( PlayerNumber(p), pNotes[p] );
 
 
-		NoteData* pOriginalNoteData = pNotes[p]->GetNoteData();
+		NoteData originalNoteData;
+		pNotes[p]->GetNoteData( &originalNoteData );
 		
 		NoteData newNoteData;
-		pStyleDef->GetTransformedNoteDataForStyle( (PlayerNumber)p, pOriginalNoteData, &newNoteData );
+		pStyleDef->GetTransformedNoteDataForStyle( (PlayerNumber)p, &originalNoteData, &newNoteData );
 
 		m_Player[p].Load( 
 			(PlayerNumber)p,
@@ -325,7 +325,7 @@ void ScreenGameplay::LoadNextSong()
 			PREFSMAN->m_PlayerOptions[p],
 			&m_LifeMeter[p],
 			&m_ScoreDisplay[p],
-			pNotes[p]->GetNoteData()->GetNumTapNotes()
+			originalNoteData.GetNumTapNotes()
 		);
 	}
 

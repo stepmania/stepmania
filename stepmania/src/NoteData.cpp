@@ -37,6 +37,114 @@ NoteData::~NoteData()
 }
 
 
+void NoteData::LoadFromSMNoteDataString( CString sSMNoteData )
+{
+	// strip comments out of sSMNoteData
+	while( sSMNoteData.Find("//") != -1 )
+	{
+		int iIndexCommentStart = sSMNoteData.Find("//");
+		int iIndexCommentEnd = sSMNoteData.Find("\n", iIndexCommentStart);
+		if( iIndexCommentEnd == -1 )	// comment doesn't have an end?
+			sSMNoteData.Delete( iIndexCommentStart, 2 );
+		else
+			sSMNoteData.Delete( iIndexCommentStart, iIndexCommentEnd-iIndexCommentStart );
+	}
+
+	CStringArray asMeasures;
+	split( sSMNoteData, ",", asMeasures, true );	// ignore empty is important
+	for( int m=0; m<asMeasures.GetSize(); m++ )	// foreach measure
+	{
+		CString &sMeasureString = asMeasures[m];
+		sMeasureString.TrimLeft();
+		sMeasureString.TrimRight();
+
+		CStringArray asMeasureLines;
+		split( sMeasureString, "\n", asMeasureLines, true );	// ignore empty is important
+
+		for( int l=0; l<asMeasureLines.GetSize(); l++ )
+		{
+			CString &sMeasureLine = asMeasureLines[l];
+			sMeasureLine.TrimLeft();
+			sMeasureLine.TrimRight();
+
+			const float fPercentIntoMeasure = l/(float)asMeasureLines.GetSize();
+			const float fBeat = (m + fPercentIntoMeasure) * BEATS_PER_MEASURE;
+			const int iIndex = BeatToNoteRow( fBeat );
+
+			if( m_iNumTracks != sMeasureLine.GetLength() )
+				throw RageException( "Actual number of note columns (%d) is different from the NotesType (%d).", m_iNumTracks, sMeasureLine.GetLength() );
+
+			for( int c=0; c<sMeasureLine.GetLength(); c++ )
+				m_TapNotes[c][iIndex] = sMeasureLine[c];
+		}
+	}
+}
+
+CString NoteData::GetSMNoteDataString()
+{
+	this->ConvertHoldNotesTo2sAnd3s();
+
+	float fLastBeat = GetLastBeat();
+	int iLastMeasure = int( fLastBeat/BEATS_PER_MEASURE );
+
+	CStringArray asMeasureStrings;
+
+	for( int m=0; m<=iLastMeasure; m++ )	// foreach measure
+	{
+		int iMeasureStartIndex = m * ELEMENTS_PER_MEASURE;
+		int iMeasureLastIndex = (m+1) * ELEMENTS_PER_MEASURE - 1;
+
+		// probe to find the smallest note type
+		NoteType nt;
+		int iNoteIndexSpacing;
+		for( nt=(NoteType)0; nt<NUM_NOTE_TYPES; nt=NoteType(nt+1) )
+		{
+			float fBeatSpacing = NoteTypeToBeat( nt );
+			iNoteIndexSpacing = roundf( fBeatSpacing * ELEMENTS_PER_BEAT );
+
+			bool bFoundSmallerNote = false;
+			for( int i=iMeasureStartIndex; i<=iMeasureLastIndex; i++ )	// for each index in this measure
+			{
+				if( i % iNoteIndexSpacing == 0 )
+					continue;	// skip
+				
+				if( !IsRowEmpty(i) )
+				{
+					bFoundSmallerNote = true;
+					break;
+				}
+				
+			}
+			if( bFoundSmallerNote )
+				continue;	// keep searching
+			else
+				break;	// stop searching
+		}
+
+		if( nt == NUM_NOTE_TYPES )	// we didn't find one
+			iNoteIndexSpacing = 1;
+
+
+		CStringArray asMeasureLines;
+		asMeasureLines.Add( ssprintf("  // measure %d", m+1) );
+		for( int i=iMeasureStartIndex; i<=iMeasureLastIndex; i+=iNoteIndexSpacing )
+		{
+			CString sLineString;
+			for( int c=0; c<m_iNumTracks; c++ )
+				sLineString += m_TapNotes[c][i];
+			asMeasureLines.Add( sLineString );
+		}
+		CString sMeasureString = join( "\n", asMeasureLines );
+
+		asMeasureStrings.Add( sMeasureString );
+	}
+
+	this->Convert2sAnd3sToHoldNotes();
+
+	return join( "\n,", asMeasureStrings );
+}
+
+
 void NoteData::ClearRange( int iNoteIndexBegin, int iNoteIndexEnd )
 {
 	// delete old TapNotes in the range
@@ -601,8 +709,8 @@ float NoteData::GetStreamRadarValue( float fSongSeconds )
 	// density of steps
 	int iNumNotes = GetNumTapNotes() + GetNumHoldNotes();
 	float fNotesPerSecond = iNumNotes/fSongSeconds;
-	float fReturn = fNotesPerSecond / 5;
-	return min( fReturn, 1.2f );
+	float fReturn = fNotesPerSecond / 10;
+	return min( fReturn, 1.0f );
 }
 
 float NoteData::GetVoltageRadarValue( float fSongSeconds )
@@ -610,7 +718,7 @@ float NoteData::GetVoltageRadarValue( float fSongSeconds )
 	// peak density of steps
 	float fMaxDensityPerSecSoFar = 0;
 
-	for( int i=0; i<MAX_BEATS; i+=8 )
+	for( int i=0; i<MAX_BEATS; i+=16 )
 	{
 		int iNumNotesThisMeasure = GetNumTapNotes((float)i,(float)i+8) + GetNumHoldNotes((float)i,(float)i+8);
 
@@ -622,30 +730,37 @@ float NoteData::GetVoltageRadarValue( float fSongSeconds )
 			fMaxDensityPerSecSoFar = fDensityPerSecThisMeasure;
 	}
 
-	float fReturn = fMaxDensityPerSecSoFar*10;
-	return min( fReturn, 1.2f );
+	float fReturn = fMaxDensityPerSecSoFar*5;
+	return min( fReturn, 1.0f );
 }
 
 float NoteData::GetAirRadarValue( float fSongSeconds )
 {
 	// number of doubles
 	int iNumDoubles = GetNumDoubles();
-	float fReturn = iNumDoubles / fSongSeconds * 2;
-	return min( fReturn, 1.2f );
+	float fReturn = iNumDoubles / fSongSeconds;
+	return min( fReturn, 1.0f );
 }
 
 float NoteData::GetChaosRadarValue( float fSongSeconds )
 {
-	// irregularity of steps
-	float fReturn = fabsf( GetStreamRadarValue(fSongSeconds) - GetVoltageRadarValue(fSongSeconds) ) * 2.5f;
-	return min( fReturn, 1.2f );
+	// count number of triplets
+	int iNumTriplets = 0;
+	for( int r=0; r<MAX_TAP_NOTE_ROWS; r++ )
+	{
+		if( !IsRowEmpty(r) && IsNoteOfType(r, NOTE_12TH) )
+		iNumTriplets++;
+	}
+
+	float fReturn = iNumTriplets / fSongSeconds;
+	return min( fReturn, 1.0f );
 }
 
 float NoteData::GetFreezeRadarValue( float fSongSeconds )
 {
 	// number of hold steps
-	float fReturn = GetNumHoldNotes() / fSongSeconds * 3;
-	return min( fReturn, 1.2f );
+	float fReturn = GetNumHoldNotes() / fSongSeconds;
+	return min( fReturn, 1.0f );
 }
 
 

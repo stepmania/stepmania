@@ -99,8 +99,8 @@ float NoteDataWithScoring::GetActualStreamRadarValue( float fSongSeconds )
 	// density of steps
 	int iNumSuccessfulNotes = GetNumSuccessfulTapNotes() + GetNumSuccessfulHoldNotes();
 	float fNotesPerSecond = iNumSuccessfulNotes/fSongSeconds;
-	float fReturn = fNotesPerSecond / 5;
-	return min( fReturn, 1.2f );
+	float fReturn = fNotesPerSecond / 10;
+	return min( fReturn, 1.0f );
 }
 
 float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds )
@@ -108,7 +108,7 @@ float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds )
 	// peak density of steps
 	float fMaxDensityPerSecSoFar = 0;
 
-	for( int i=0; i<MAX_BEATS; i+=8 )
+	for( int i=0; i<MAX_BEATS; i+=16 )
 	{
 		int iNumNotesThisMeasure = GetNumSuccessfulTapNotes((float)i,(float)i+8) + GetNumSuccessfulHoldNotes((float)i,(float)i+8);
 
@@ -120,30 +120,35 @@ float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds )
 			fMaxDensityPerSecSoFar = fDensityPerSecThisMeasure;
 	}
 
-	float fReturn = fMaxDensityPerSecSoFar*10;
-	return min( fReturn, 1.2f );
+	float fReturn = fMaxDensityPerSecSoFar*5;
+	return min( fReturn, 1.0f );
 }
 
 float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds )
 {
 	// number of doubles
 	int iNumDoubles = GetNumSuccessfulDoubles();
-	float fReturn = iNumDoubles / fSongSeconds * 2;
-	return min( fReturn, 1.2f );
+	float fReturn = iNumDoubles / fSongSeconds;
+	return min( fReturn, 1.0f );
 }
 
 float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds )
 {
-	// irregularity of steps
-	float fReturn = GetChaosRadarValue(fSongSeconds) - 
-		(GetStreamRadarValue(fSongSeconds)-GetActualStreamRadarValue(fSongSeconds)) - 
-		(GetVoltageRadarValue(fSongSeconds)-GetActualVoltageRadarValue(fSongSeconds));
-	return min( fReturn, 1.2f );
+	// count number of triplets
+	int iNumTripletsCompleted = 0;
+	for( int r=0; r<MAX_TAP_NOTE_ROWS; r++ )
+	{
+		if( !IsRowComplete(r) && IsNoteOfType(r, NOTE_12TH) )
+		iNumTripletsCompleted++;
+	}
+
+	float fReturn = iNumTripletsCompleted / fSongSeconds;
+	return min( fReturn, 1.0f );
 }
 
 float NoteDataWithScoring::GetActualFreezeRadarValue( float fSongSeconds )
 {
 	// number of hold steps
-	float fReturn = GetNumSuccessfulHoldNotes() / fSongSeconds * 3;
-	return min( fReturn, 1.2f );
+	float fReturn = GetNumSuccessfulHoldNotes() / fSongSeconds;
+	return min( fReturn, 1.0f );
 }
