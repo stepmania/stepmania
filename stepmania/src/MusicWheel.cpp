@@ -1294,6 +1294,15 @@ void MusicWheel::StartRandom()
 	}
 	else
 	{
+		/* If we're in SORT_SORT_MENU or SORT_MODE_MENU, then the timer probably ran
+		 * out.  Make sure we're in a sort with actual selections. */
+		switch( GAMESTATE->m_SortOrder )
+		{
+		case SORT_SORT_MENU:
+		case SORT_MODE_MENU:
+			SetOpenGroup("", SortOrder(m_LastSortOrder));
+		}
+
 		m_iSelection = rand() % m_CurWheelItemData.size();
 		m_fPositionOffsetFromSelection = 0;
 		m_WheelState = STATE_SELECTING_MUSIC;
