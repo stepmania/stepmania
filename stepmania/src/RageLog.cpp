@@ -75,7 +75,7 @@ map<CString, CString> LogMaps;
 #define INFO_PATH	SYS_BASE_PATH "info.txt"
 #endif
 
-static FILE *g_fileLog, *g_fileInfo;
+static RageFile g_fileLog, g_fileInfo;
 
 #if defined(HAVE_VERSION_INFO)
 extern unsigned long version_num;
@@ -104,13 +104,13 @@ RageLog::RageLog()
 	remove( INFO_PATH );
 
 	// Open log file and leave it open.
-	g_fileLog = fopen( LOG_PATH, "w" );
+	g_fileLog.Open( LOG_PATH, RageFile::WRITE );
 	
 	// Failing to open shouldn't be fatal
 	//if( g_fileLog == NULL )
 	//	RageException::Throw( " Couldn't open log.txt: %s", strerror(errno) );
 
-	g_fileInfo = fopen( INFO_PATH, "w" );
+	g_fileInfo.Open( INFO_PATH, RageFile::WRITE );
 
 	// Failing to open shouldn't be fatal
 	//if( g_fileInfo == NULL )
@@ -153,8 +153,8 @@ RageLog::~RageLog()
 
 	Flush();
 	ShowLogOutput( false );
-	if(g_fileLog) fclose( g_fileLog );
-	if(g_fileInfo) fclose( g_fileInfo );
+	g_fileLog.Close();
+	g_fileInfo.Close();
 }
 
 void RageLog::SetLogging( bool b )
@@ -238,8 +238,8 @@ void RageLog::Write( int where, CString str)
 	if( m_bTimestamping )
 		str = SecondsToTime(RageTimer::GetTimeSinceStart()) + ": " + str;
 
-	if( where&WRITE_TO_INFO && g_fileInfo )
-		fprintf(g_fileInfo, "%s\n", str.c_str() );
+	if( where&WRITE_TO_INFO && g_fileInfo.IsOpen() )
+		g_fileInfo.PutLine( str );
 
 	if( HOOKS )
 		HOOKS->Log( str, where & WRITE_TO_INFO );
@@ -260,8 +260,8 @@ void RageLog::Write( int where, CString str)
 			  str.c_str());
 	}
 
-	if( g_fileLog )
-		fprintf(g_fileLog, "%s\n", str.c_str() );
+	if( g_fileLog.IsOpen() )
+		g_fileLog.PutLine( str );
 
 	if( m_bShowLogOutput || where != 0 )
 		printf("%s\n", str.c_str() );
@@ -273,8 +273,8 @@ void RageLog::Write( int where, CString str)
 
 void RageLog::Flush()
 {
-	fflush( g_fileLog );
-	fflush( g_fileInfo );
+	g_fileLog.Flush();
+	g_fileInfo.Flush();
 }
 
 

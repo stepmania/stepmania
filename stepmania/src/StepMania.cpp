@@ -816,14 +816,14 @@ int main(int argc, char* argv[])
 
 	ChangeToDirOfExecutable(argv[0]);
 
-	/* Set this up second.  Do this early, since it's needed for RageException::Throw. 
+	/* Almost everything uses this to read and write files.  Load this early. */
+	FILEMAN = new RageFileManager;
+
+	/* Set this up next.  Do this early, since it's needed for RageException::Throw. 
 	 * Do it after ChangeToDirOfExecutable, so the log ends up in the right place. */
 	LOG			= new RageLog();
 
 	/* Whew--we should be able to crash safely now! */
-
-	/* Everything except LOG uses this to read and write files.  Load this early. */
-	FILEMAN = new RageFileManager;
 
 	MountTreeOfZips( ZIPS_DIR );
 
