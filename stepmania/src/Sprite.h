@@ -17,7 +17,6 @@ public:
 	virtual bool EarlyAbortDraw();
 	virtual void DrawPrimitives();
 	virtual void Update( float fDeltaTime );
-	virtual void GainFocus( float fRate, bool bRewindMovie, bool bLoop );
 
 	void UpdateAnimationState();	// take m_fSecondsIntoState, and move to a new state
 

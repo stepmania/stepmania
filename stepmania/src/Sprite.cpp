@@ -212,9 +212,30 @@ void Sprite::UnloadTexture()
 
 void Sprite::EnableAnimation( bool bEnable )
 { 
+	bool bWasEnabled = m_bIsAnimating;
 	Actor::EnableAnimation( bEnable ); 
-	if(m_pTexture) 
-		bEnable ? m_pTexture->Play() : m_pTexture->Pause(); 
+
+	if( bEnable && !bWasEnabled )
+	{
+		/*
+		 * When we start animating a movie, we need to discard the first update; send
+		 * 0 instead of the passed time.  This is for two reasons:
+		 *
+		 * First, and most fundamentally, the time we'll receive on the next update
+		 * represents time that passed *before* the movie was started.  For example,
+		 * 1: 20ms passes; 2: EnableAnimation(true); 3: Update(.020).  We don't want
+		 * to send that 20ms to the texture; on the first update, the movie's time
+		 * should be 0.
+		 *
+		 * Second, we don't receive Update() calls if we're in a BGAnimation that
+		 * doesn't have focus.  It looks like 1: EnableAnimation(false); 2: 30 seconds
+		 * pass; 3: EnableAnimation(true); 4: Update(30).  We must be sure not to send
+		 * that long 30-second update to the movie.
+		 *
+		 * (detail: the timestamps here are actually coming from GetEffectDeltaTime())
+		 */
+		m_bSkipNextUpdate = true;
+	}
 }
 
 bool Sprite::LoadFromTexture( RageTextureID ID )
@@ -258,20 +279,6 @@ bool Sprite::LoadFromTexture( RageTextureID ID )
 	return true;
 }
 
-void Sprite::GainFocus( float fRate, bool bRewindMovie, bool bLoop )
-{
-	/*
-	 * When we lose focus, we don't receive updates.  When we regain focus,
-	 * we'll receive an update, and if we're in CLOCK_BGM_TIME or CLOCK_BGM_BEAT,
-	 * m_fSecsIntoEffect will be much higher than it was at our last update.
-	 * We don't want to send that big jump on to the texture (don't animate
-	 * when we don't have focus).  This is particularly important for movies.
-	 *
-	 * However, we havn't received that time yet; we won't until the next Update().
-	 */
-	m_bSkipNextUpdate = true;
-}
-
 void Sprite::UpdateAnimationState()
 {
 	// Don't bother with state switching logic if there's only one state.  
@@ -287,25 +294,46 @@ void Sprite::UpdateAnimationState()
 	}
 }
 
+/*
+ * We treat .sprite/frame animation and movie animation slightly differently.
+ *
+ * Sprite animation is always tied directly to the effect timer.  If you pause
+ * animation, wait a while and restart it, sprite animations will snap back to the
+ * effect timer.  This allows sprites to animate to the beat in BGAnimations, where
+ * they might be disabled for a while.
+ *
+ * Movies don't do this; if you pause a movie, wait a while and restart it, it'll
+ * pick up where it left off.  We may have a lot of movies loaded, so it's too
+ * expensive to decode movies that aren't being displayed.  Movies also don't loop
+ * when the effect timer loops.
+ *
+ * (I'd like to handle sprite and movie animation as consistently as possible; the above
+ * is just documentation of current practice.)
+ */
 void Sprite::Update( float fDelta )
 {
 	Actor::Update( fDelta );	// do tweening
 
-	if( !m_bIsAnimating || m_bSkipNextUpdate )
-	{
-		m_bSkipNextUpdate = false;
+	const bool bSkipThisMovieUpdate = m_bSkipNextUpdate;
+	m_bSkipNextUpdate = false;
+
+	if( !m_bIsAnimating )
 		return;
-	}
 
 	if( !m_pTexture )	// no texture, nothing to animate
 	    return;
 
 	float fTimePassed = GetEffectDeltaTime();
 	m_fSecsIntoState += fTimePassed;
+
+	if( m_fSecsIntoState < 0 )
+		wrap( m_fSecsIntoState, GetAnimationLengthSeconds() );
+
 	UpdateAnimationState();
 
 	/* If the texture is a movie, decode frames. */
-	m_pTexture->DecodeSeconds( fTimePassed );
+	if( !bSkipThisMovieUpdate )
+		m_pTexture->DecodeSeconds( max(0, fTimePassed) );
 
 	//
 	// update scrolling
