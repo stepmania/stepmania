@@ -1161,8 +1161,10 @@
 				AA729C530599B58D00779F33,
 				AA729C550599B58D00779F33,
 				AA729C67059A2F2400779F33,
-				AA729C6F059A2FD300779F33,
 				AABFA8CC05A4535700D3FDD1,
+				AABE321D05ACD8ED001A0E84,
+				AABE322105ACD931001A0E84,
+				AABE322505ACDA52001A0E84,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3081,8 +3083,10 @@
 				AA729C520599B58D00779F33,
 				AA729C540599B58D00779F33,
 				AA729C66059A2F2400779F33,
-				AA729C6E059A2FD300779F33,
 				AABFA8CB05A4535700D3FDD1,
+				AABE321C05ACD8ED001A0E84,
+				AABE322005ACD931001A0E84,
+				AABE322405ACDA52001A0E84,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5948,8 +5952,8 @@
 		};
 		AA6E00090477103E005F316C = {
 			children = (
-				AA729C6C059A2FD300779F33,
-				AA729C6D059A2FD300779F33,
+				AABE321A05ACD8ED001A0E84,
+				AABE321B05ACD8ED001A0E84,
 				AA729C64059A2F2400779F33,
 				AA729C65059A2F2400779F33,
 				AA6E000A047711F3005F316C,
@@ -8326,6 +8330,8 @@
 		};
 		AA6EFDBB04770A83005F316C = {
 			children = (
+				AABE322205ACDA52001A0E84,
+				AABE322305ACDA52001A0E84,
 				AA1DCB6104A4872700D02EE9,
 				AA6EFD6D04770A7C005F316C,
 				AA6EFD6E04770A7C005F316C,
@@ -10339,6 +10345,8 @@
 		};
 		AA6EFEFA04770E84005F316C = {
 			children = (
+				AABE321E05ACD931001A0E84,
+				AABE321F05ACD931001A0E84,
 				AA6EFEFD04770F63005F316C,
 				AA6EFEFE04770F63005F316C,
 				AAB005F00579B8CB000BBA58,
@@ -11401,36 +11409,6 @@
 			settings = {
 			};
 		};
-		AA729C6C059A2FD300779F33 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = ScreenRemoveMemoryCard.cpp;
-			path = ../src/ScreenRemoveMemoryCard.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AA729C6D059A2FD300779F33 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = ScreenRemoveMemoryCard.h;
-			path = ../src/ScreenRemoveMemoryCard.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AA729C6E059A2FD300779F33 = {
-			fileRef = AA729C6C059A2FD300779F33;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA729C6F059A2FD300779F33 = {
-			fileRef = AA729C6D059A2FD300779F33;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AA76432A04DBC4BF00D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -12292,6 +12270,96 @@
 			path = smicon.icns;
 			refType = 4;
 			sourceTree = "<group>";
+		};
+		AABE321A05ACD8ED001A0E84 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ScreenEnding.cpp;
+			path = /Users/steve/stepmania/src/ScreenEnding.cpp;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AABE321B05ACD8ED001A0E84 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ScreenEnding.h;
+			path = /Users/steve/stepmania/src/ScreenEnding.h;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AABE321C05ACD8ED001A0E84 = {
+			fileRef = AABE321A05ACD8ED001A0E84;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AABE321D05ACD8ED001A0E84 = {
+			fileRef = AABE321B05ACD8ED001A0E84;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AABE321E05ACD931001A0E84 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = Foreground.cpp;
+			path = /Users/steve/stepmania/src/Foreground.cpp;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AABE321F05ACD931001A0E84 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = Foreground.h;
+			path = /Users/steve/stepmania/src/Foreground.h;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AABE322005ACD931001A0E84 = {
+			fileRef = AABE321E05ACD931001A0E84;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AABE322105ACD931001A0E84 = {
+			fileRef = AABE321F05ACD931001A0E84;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AABE322205ACDA52001A0E84 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = RageFileDriverDirectHelpers.cpp;
+			path = /Users/steve/stepmania/src/RageFileDriverDirectHelpers.cpp;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AABE322305ACDA52001A0E84 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = RageFileDriverDirectHelpers.h;
+			path = /Users/steve/stepmania/src/RageFileDriverDirectHelpers.h;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AABE322405ACDA52001A0E84 = {
+			fileRef = AABE322205ACDA52001A0E84;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AABE322505ACDA52001A0E84 = {
+			fileRef = AABE322305ACDA52001A0E84;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		AABE35EB04967E25005F316C = {
 			fileEncoding = 30;
