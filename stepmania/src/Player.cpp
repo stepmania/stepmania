@@ -338,106 +338,112 @@ void Player::Update( float fDeltaTime )
 	//
 	// update HoldNotes logic
 	//
-	for( int i=0; i < m_NoteData.GetNumHoldNotes(); i++ )		// for each HoldNote
+	for( int iTrack=0; iTrack<m_NoteData.GetNumTracks(); ++iTrack )
 	{
-		HoldNote &hn = m_NoteData.GetHoldNote(i);
-
-		// set hold flags so NoteField can do intelligent drawing
-		hn.result.bHeld = false;
-		hn.result.bActive = false;
-
-
-		HoldNoteScore hns = hn.result.hns;
-		if( hns != HNS_NONE )	// if this HoldNote already has a result
-			continue;	// we don't need to update the logic for this one
-		if( iSongRow < hn.iStartRow )
-			continue;	// hold hasn't happened yet
-
-		// TODO: Remove use of PlayerNumber.
-		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
-		const StyleInput StyleI( pn, hn.iTrack );
-		const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( StyleI );
-
-		// if they got a bad score or haven't stepped on the corresponding tap yet
-		const TapNoteScore tns = m_NoteData.GetTapNote( hn.iTrack, hn.iStartRow ).result.tns;
-		const bool bSteppedOnTapNote = tns != TNS_NONE  &&  tns != TNS_MISS;	// did they step on the start of this hold?
-
-		float fLife = hn.result.fLife;
-
-		bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
-		// TODO: Make the CPU miss sometimes.
-		if( m_pPlayerState->m_PlayerController != PC_HUMAN )
-			bIsHoldingButton = true;
-
-		if( bSteppedOnTapNote && fLife != 0 )
+		// Since this is being called every frame, let's not check the whole array every time.
+		// Instead, only check 1 beat back.  Even 1 is overkill.
+		const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
+		NoteData::iterator begin, end;
+		m_NoteData.GetTapNoteRangeInclusive( iTrack, iStartCheckingAt, iSongRow, begin, end );
+		for( ; begin != end; ++begin )
 		{
-			/* This hold note is not judged and we stepped on its head.  Update iLastHeldRow.
-			 * Do this even if we're a little beyond the end of the hold note, to make sure
-			 * iLastHeldRow is clamped to iEndRow if the hold note is held all the way. */
-			hn.result.iLastHeldRow = min( iSongRow, hn.iEndRow );
-		}
+			TapNote &tn = begin->second;
+			if( tn.type != TapNote::hold_head )
+				continue;
+			int iRow = begin->first;
 
-		// If the song beat is in the range of this hold:
-		if( hn.RowIsInRange(iSongRow) )
-		{
-			// set hold flag so NoteField can do intelligent drawing
-			hn.result.bHeld = bIsHoldingButton && bSteppedOnTapNote;
-			hn.result.bActive = bSteppedOnTapNote;
+			// set hold flags so NoteField can do intelligent drawing
+			tn.HoldResult.bHeld = false;
+			tn.HoldResult.bActive = false;
 
-			if( bSteppedOnTapNote && bIsHoldingButton )
+			HoldNoteScore hns = tn.HoldResult.hns;
+			if( hns != HNS_NONE )	// if this HoldNote already has a result
+				continue;	// we don't need to update the logic for this one
+
+			// TODO: Remove use of PlayerNumber.
+			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+			// if they got a bad score or haven't stepped on the corresponding tap yet
+			const TapNoteScore tns = tn.result.tns;
+			const bool bSteppedOnTapNote = tns != TNS_NONE  &&  tns != TNS_MISS;	// did they step on the start of this hold?
+
+			bool bIsHoldingButton;
+			if( m_pPlayerState->m_PlayerController != PC_HUMAN )
 			{
-				// Increase life
-				fLife = 1;
-
-				if( m_pNoteField )
-					m_pNoteField->DidHoldNote( hn.iTrack );		// update the "electric ghost" effect
+				// TODO: Make the CPU miss sometimes.
+				bIsHoldingButton = true;
 			}
 			else
 			{
-				/* What is this conditional for?  It causes a problem: if a hold note
-				 * begins on a freeze, you can tap it and then release it for the
-				 * duration of the freeze; life doesn't count down until we're
-				 * past the first beat. */
-//				if( fSongBeat-hn.fStartBeat > GAMESTATE->m_fCurBPS * GetMaxStepDistanceSeconds() )
-//				{
+				const StyleInput StyleI( pn, iTrack );
+				const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( StyleI );
+				bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
+			}
+
+			int iEndRow = iRow + tn.iDuration;
+
+			float fLife = tn.HoldResult.fLife;
+			if( bSteppedOnTapNote && fLife != 0 )
+			{
+				/* This hold note is not judged and we stepped on its head.  Update iLastHeldRow.
+				 * Do this even if we're a little beyond the end of the hold note, to make sure
+				 * iLastHeldRow is clamped to iEndRow if the hold note is held all the way. */
+				tn.HoldResult.iLastHeldRow = min( iSongRow, iEndRow );
+			}
+
+			// If the song beat is in the range of this hold:
+			if( iRow <= iSongRow && iRow <= iEndRow )
+			{
+				// set hold flag so NoteField can do intelligent drawing
+				tn.HoldResult.bHeld = bIsHoldingButton && bSteppedOnTapNote;
+				tn.HoldResult.bActive = bSteppedOnTapNote;
+
+				if( bSteppedOnTapNote && bIsHoldingButton )
+				{
+					// Increase life
+					fLife = 1;
+
+					if( m_pNoteField )
+						m_pNoteField->DidHoldNote( iTrack );		// update the "electric ghost" effect
+				}
+				else
+				{
 					// Decrease life
 					fLife -= fDeltaTime/ADJUSTED_WINDOW(OK);
 					fLife = max( fLife, 0 );	// clamp
-//				}
+				}
 			}
+
+			/* check for NG.  If the head was missed completely, don't count an NG. */
+			if( bSteppedOnTapNote && fLife == 0 )	// the player has not pressed the button for a long time!
+				hns = HNS_NG;
+
+			// check for OK
+			if( iSongRow >= iEndRow && bSteppedOnTapNote && fLife > 0 )	// if this HoldNote is in the past
+			{
+				fLife = 1;
+				hns = HNS_OK;
+				if( m_pNoteField )
+					m_pNoteField->DidTapNote( iTrack, TNS_PERFECT, true );	// bright ghost flash
+			}
+
+			if( hns != HNS_NONE )
+			{
+				/* this note has been judged */
+				HandleHoldScore( hns, tns );
+				m_HoldJudgment[iTrack].SetHoldJudgment( hns );
+
+				int ms_error = (hns == HNS_OK)? 0:MAX_PRO_TIMING_ERROR;
+
+				if( m_pPlayerStageStats )
+					m_pPlayerStageStats->iTotalError += ms_error;
+				if( hns == HNS_NG ) /* don't show a 0 for an OK */
+					m_ProTimingDisplay.SetJudgment( ms_error, TNS_MISS );
+			}
+
+			tn.HoldResult.fLife = fLife;
+			tn.HoldResult.hns = hns;
 		}
-
-		/* check for NG.  If the head was missed completely, don't count
-		 * an NG. */
-		if( bSteppedOnTapNote && fLife == 0 )	// the player has not pressed the button for a long time!
-			hns = HNS_NG;
-
-		// check for OK
-		if( iSongRow >= hn.iEndRow && bSteppedOnTapNote && fLife > 0 )	// if this HoldNote is in the past
-		{
-			fLife = 1;
-			hns = HNS_OK;
-			if( m_pNoteField )
-				m_pNoteField->DidTapNote( StyleI.col, TNS_PERFECT, true );	// bright ghost flash
-		}
-
-		if( hns != HNS_NONE )
-		{
-			/* this note has been judged */
-			HandleHoldScore( hns, tns );
-			m_HoldJudgment[hn.iTrack].SetHoldJudgment( hns );
-
-			int ms_error = (hns == HNS_OK)? 0:MAX_PRO_TIMING_ERROR;
-
-			if( m_pPlayerStageStats )
-				m_pPlayerStageStats->iTotalError += ms_error;
-			if( hns == HNS_NG ) /* don't show a 0 for an OK */
-				m_ProTimingDisplay.SetJudgment( ms_error, TNS_MISS );
-		}
-
-		hn.result.fLife = fLife;
-		hn.result.hns = hns;
 	}
 
 	// TODO: Remove use of PlayerNumber.
@@ -474,7 +480,6 @@ void Player::Update( float fDeltaTime )
 			m_iMineRowLastCrossed = iRowNow;
 		}
 	}
-
 
 	// process transforms that are waiting to be applied
 	ApplyWaitingTransforms();
@@ -1095,7 +1100,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 	}
 
 	// Since this is being called every frame, let's not check the whole array every time.
-	// Instead, only check 1 beat back.  Even 10 is overkill.
+	// Instead, only check 1 beat back.  Even 1 is overkill.
 	const int iStartCheckingAt = max( 0, iMissIfOlderThanThisIndex-BeatToNoteRow(1) );
 
 	//LOG->Trace( "iStartCheckingAt: %d   iMissIfOlderThanThisIndex:  %d", iStartCheckingAt, iMissIfOlderThanThisIndex );
@@ -1217,14 +1222,7 @@ void Player::RandomizeNotes( int iNoteRow )
 			continue;
 
 		/* Make sure the destination row isn't in the middle of a hold. */
-		bool bSkip = false;
-		for( int i = 0; !bSkip && i < m_NoteData.GetNumHoldNotes(); ++i )
-		{
-			const HoldNote &hn = m_NoteData.GetHoldNote(i);
-			if( hn.iTrack == iSwapWith && hn.RowIsInRange(iNewNoteRow) )
-				bSkip = true;
-		}
-		if( bSkip )
+		if( m_NoteData.IsHoldNoteAtBeat(iSwapWith, iNoteRow) )
 			continue;
 		
 		m_NoteData.SetTapNote( t, iNewNoteRow, t2 );

@@ -21,7 +21,6 @@ struct TapNoteResult
 	bool bHidden;
 };
 
-/* This HoldNote data is persisted when converted to 2sAnd3s. */
 struct HoldNoteResult
 {
 	HoldNoteScore hns;
@@ -112,13 +111,17 @@ struct TapNote
 		COMPARE(fAttackDurationSeconds);
 		COMPARE(bKeysound);
 		COMPARE(iKeysoundIndex);
+		COMPARE(iDuration);
 #undef COMPARE
 		return true;
 	}
 
+	/* hold_head only: */
+	int iDuration;
+
 	TapNoteResult result;
 
-	/* This is valid for hold_head when in 2sAnd3s. */
+	/* hold_head only: */
 	HoldNoteResult HoldResult;
 };
 

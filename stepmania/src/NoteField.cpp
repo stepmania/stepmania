@@ -291,7 +291,7 @@ void NoteField::DrawAreaHighlight( int iStartBeat, int iEndBeat )
 	fYStartPos = max( fYStartPos, -1000 );	
 	fYEndPos = min( fYEndPos, +5000 );	
 
-	m_rectAreaHighlight.StretchTo( RectF(-GetWidth()/2, fYStartPos-ARROW_SIZE/2, GetWidth()/2, fYEndPos+ARROW_SIZE/2) );
+	m_rectAreaHighlight.StretchTo( RectF(-GetWidth()/2, fYStartPos, GetWidth()/2, fYEndPos) );
 	m_rectAreaHighlight.SetDiffuse( RageColor(1,0,0,0.3f) );
 	m_rectAreaHighlight.Draw();
 }
@@ -558,46 +558,55 @@ void NoteField::DrawPrimitives()
 		NDMap::iterator CurDisplay = m_BeatToNoteDisplays.begin();
 		ASSERT( CurDisplay != m_BeatToNoteDisplays.end() );
 		NDMap::iterator NextDisplay = CurDisplay; ++NextDisplay;
-		for( int i=0; i < m_pNoteData->GetNumHoldNotes(); i++ )
+
 		{
-			const HoldNote &hn = m_pNoteData->GetHoldNote(i);
-			if( hn.iTrack != c )	// this HoldNote doesn't belong to this column
-				continue;
+			NoteData::TrackMap::const_iterator begin, end;
+			m_pNoteData->GetTapNoteRangeInclusive( c, iFirstIndexToDraw, iLastIndexToDraw, begin, end );
 
-			const HoldNoteResult &Result = hn.result;
-			if( Result.hns == HNS_OK )	// if this HoldNote was completed
-				continue;	// don't draw anything
+			for( ; begin != end; ++begin )
+			{	
+				const TapNote &tn = begin->second; //m_pNoteData->GetTapNote(c, i);
+				if( tn.type != TapNote::hold_head )
+					continue;	// skip
 
-			// If no part of this HoldNote is on the screen, skip it
-			if( !hn.RangeOverlaps(iFirstIndexToDraw, iLastIndexToDraw) )
-				continue;	// skip
+				const HoldNoteResult &Result = tn.HoldResult;
+				if( Result.hns == HNS_OK )	// if this HoldNote was completed
+					continue;	// don't draw anything
 
-			// TRICKY: If boomerang is on, then all notes in the range 
-			// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
-			// Test every note to make sure it's on screen before drawing
-			float fYStartOffset = ArrowEffects::GetYOffset( m_pPlayerState, c, NoteRowToBeat(hn.iStartRow) );
-			float fYEndOffset = ArrowEffects::GetYOffset( m_pPlayerState, c, NoteRowToBeat(hn.iEndRow) );
-			if( !( iFirstPixelToDraw <= fYEndOffset && fYEndOffset <= iLastPixelToDraw  ||
-				iFirstPixelToDraw <= fYStartOffset  && fYStartOffset <= iLastPixelToDraw  ||
-				fYStartOffset < iFirstPixelToDraw   && fYEndOffset > iLastPixelToDraw ) )
-			{
-				continue;	// skip
+				int iStartRow = begin->first;
+				int iEndRow = iStartRow + tn.iDuration;
+
+				// TRICKY: If boomerang is on, then all notes in the range 
+				// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
+				// Test every note to make sure it's on screen before drawing
+				float fYStartOffset = ArrowEffects::GetYOffset( m_pPlayerState, c, NoteRowToBeat(iStartRow) );
+				float fYEndOffset = ArrowEffects::GetYOffset( m_pPlayerState, c, NoteRowToBeat(iEndRow) );
+				if( !( iFirstPixelToDraw <= fYEndOffset && fYEndOffset <= iLastPixelToDraw  ||
+					iFirstPixelToDraw <= fYStartOffset  && fYStartOffset <= iLastPixelToDraw  ||
+					fYStartOffset < iFirstPixelToDraw   && fYEndOffset > iLastPixelToDraw ) )
+				{
+					continue;	// skip
+				}
+
+				const bool bIsActive = tn.HoldResult.bActive;
+				const bool bIsHoldingNote = tn.HoldResult.bHeld;
+				if( bIsActive )
+					SearchForSongBeat()->m_GhostArrowRow.SetHoldIsActive( c );
+				
+				ASSERT_M( NoteRowToBeat(iStartRow) > -2000, ssprintf("%i %i %i", iStartRow, iEndRow, c) );
+				SearchForBeat( CurDisplay, NextDisplay, NoteRowToBeat(iStartRow) );
+
+				bool bIsInSelectionRange = false;
+				if( m_iBeginMarker!=-1 && m_iEndMarker!=-1 )
+					bIsInSelectionRange = (m_iBeginMarker <= iStartRow && iEndRow < m_iEndMarker);
+
+				NoteDisplayCols *nd = CurDisplay->second;
+				HoldNote hn(c, iStartRow, iEndRow);
+				hn.result = tn.HoldResult;
+
+				nd->display[c].DrawHold( hn, bIsHoldingNote, bIsActive, Result, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_fYReverseOffsetPixels );
 			}
 
-			const bool bIsActive = hn.result.bActive;
-			const bool bIsHoldingNote = hn.result.bHeld;
-			if( bIsActive )
-				SearchForSongBeat()->m_GhostArrowRow.SetHoldIsActive( hn.iTrack );
-			
-			ASSERT_M( NoteRowToBeat(hn.iStartRow) > -2000, ssprintf("%i %i %i", hn.iStartRow, hn.iEndRow, hn.iTrack) );
-			SearchForBeat( CurDisplay, NextDisplay, NoteRowToBeat(hn.iStartRow) );
-
-			bool bIsInSelectionRange = false;
-			if( m_iBeginMarker!=-1 && m_iEndMarker!=-1 )
-				bIsInSelectionRange = hn.ContainedByRange( m_iBeginMarker, m_iEndMarker );
-
-			NoteDisplayCols *nd = CurDisplay->second;
-			nd->display[c].DrawHold( hn, bIsHoldingNote, bIsActive, Result, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_fYReverseOffsetPixels );
 		}
 		
 
@@ -615,11 +624,12 @@ void NoteField::DrawPrimitives()
 		{	
 			int i = begin->first;
 			const TapNote &tn = begin->second; //m_pNoteData->GetTapNote(c, i);
-			if( tn.type == TapNote::empty )	// no note here
+			switch( tn.type )
+			{
+			case TapNote::empty: // no note here
+			case TapNote::hold_head:
 				continue;	// skip
-			
-			if( tn.type == TapNote::hold_head )	// this is a HoldNote begin marker.  Grade it, but don't draw
-				continue;	// skip
+			}
 
 			/* Don't draw hidden (fully judged) steps. */
 			if( tn.result.bHidden )
@@ -656,10 +666,7 @@ void NoteField::DrawPrimitives()
 
 			bool bIsInSelectionRange = false;
 			if( m_iBeginMarker!=-1 && m_iEndMarker!=-1 )
-			{
-				int iBeat = i;
-				bIsInSelectionRange = m_iBeginMarker<=iBeat && iBeat<=m_iEndMarker;
-			}
+				bIsInSelectionRange = m_iBeginMarker<=i && i<m_iEndMarker;
 
 			bool bIsAddition = (tn.source == TapNote::addition);
 			bool bIsMine = (tn.type == TapNote::mine);

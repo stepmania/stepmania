@@ -181,7 +181,8 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 			}
 		}
 	}
-	out.Convert2sAnd3sToHoldNotes();
+
+	out.RemoveHoldTails();
 }
 
 void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &notes_out )
@@ -189,8 +190,8 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &notes_out 
 	//
 	// Get note data
 	//
-	NoteData in;
-	in.To2sAnd3s( in_ );
+	NoteData in( in_ );
+	in.InsertHoldTails();
 
 	float fLastBeat = in.GetLastBeat();
 	int iLastMeasure = int( fLastBeat/BEATS_PER_MEASURE );
@@ -264,21 +265,17 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 		return;
 	}
 
-	NoteData Original;
-	Original.To2sAnd3s( in );
-
-	out.Config( in );
 	out.SetNumTracks( iNewNumTracks );
 
 
 	int iCurTrackOffset = 0;
 	int iTrackOffsetMin = 0;
-	int iTrackOffsetMax = abs( iNewNumTracks - Original.GetNumTracks() );
+	int iTrackOffsetMax = abs( iNewNumTracks - in.GetNumTracks() );
 	int bOffsetIncreasing = true;
 
 	int iLastMeasure = 0;
 	int iMeasuresSinceChange = 0;
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS( Original, r )
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS( in, r )
 	{
 		const int iMeasure = r / ROWS_PER_MEASURE;
 		if( iMeasure != iLastMeasure )
@@ -289,10 +286,10 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 			// See if there is a hold crossing the beginning of this measure
 			bool bHoldCrossesThisMeasure = false;
 
-			for( int t=0; t<Original.GetNumTracks(); t++ )
+			for( int t=0; t<in.GetNumTracks(); t++ )
 			{
-				if( Original.IsHoldNoteAtBeat( t, r-1 ) &&
-				    Original.IsHoldNoteAtBeat( t, r ) )
+				if( in.IsHoldNoteAtBeat( t, r-1 ) &&
+				    in.IsHoldNoteAtBeat( t, r ) )
 				{
 					bHoldCrossesThisMeasure = true;
 					break;
@@ -313,24 +310,19 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 		iLastMeasure = iMeasure;
 
 		// copy notes in this measure
-		for( int t=0; t<Original.GetNumTracks(); t++ )
+		for( int t=0; t<in.GetNumTracks(); t++ )
 		{
 			int iOldTrack = t;
 			int iNewTrack = (iOldTrack + iCurTrackOffset) % iNewNumTracks;
-			const TapNote &tn = Original.GetTapNote( iOldTrack, r );
+			const TapNote &tn = in.GetTapNote( iOldTrack, r );
 			out.SetTapNote( iNewTrack, r, tn );
 		}
 	}
-
-	out.Convert2sAnd3sToHoldNotes();
 }
 
-void NoteDataUtil::LoadOverlapped( const NoteData &input, NoteData &out, int iNewNumTracks )
+void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNumTracks )
 {
 	out.SetNumTracks( iNewNumTracks );
-
-	NoteData in;
-	in.To2sAnd3s( input );
 
 	/* Keep track of the last source track that put a tap into each destination track,
 	 * and the row of that tap.  Then, if two rows are trying to put taps into the
@@ -356,13 +348,11 @@ void NoteDataUtil::LoadOverlapped( const NoteData &input, NoteData &out, int iNe
 			const TapNote &tnFrom = in.GetTapNote( iTrackFrom, row );
 			if( tnFrom.type == TapNote::empty )
 				continue;
-			if( tnFrom.type == TapNote::hold_tail )
-				continue; /* copied with hold_head */
 
 			/* If this is a hold note, find the end. */
 			int iEndIndex = row;
 			if( tnFrom.type == TapNote::hold_head )
-				in.IsHoldNoteAtBeat( iTrackFrom, row, NULL, &iEndIndex );
+				iEndIndex = row + tnFrom.iDuration;
 
 			int &iTrackTo = DestRow[iTrackFrom];
 			if( LastSourceTrack[iTrackTo] != iTrackFrom )
@@ -391,8 +381,6 @@ void NoteDataUtil::LoadOverlapped( const NoteData &input, NoteData &out, int iNe
 			}
 		}
 	}
-
-	out.Convert2sAnd3sToHoldNotes();
 }
 
 int FindLongestOverlappingHoldNoteForAnyTrack( const NoteData &in, int iRow )
@@ -400,11 +388,12 @@ int FindLongestOverlappingHoldNoteForAnyTrack( const NoteData &in, int iRow )
 	int iMaxTailRow = -1;
 	for( int t=0; t<in.GetNumTracks(); t++ )
 	{
-		int iTailRow;
-		if( !in.IsHoldNoteAtBeat( t, iRow, NULL, &iTailRow ) )
-			continue;
-
-		iMaxTailRow = max( iMaxTailRow, iTailRow );
+		for( int t=0; t<in.GetNumTracks(); t++ )
+		{
+			const TapNote &tn = in.GetTapNote( t, iRow );
+			if( tn.type == TapNote::hold_head )
+				iMaxTailRow = max( iMaxTailRow, iRow + tn.iDuration );
+		}
 	}
 
 	return iMaxTailRow;
@@ -414,9 +403,6 @@ void NoteDataUtil::LoadTransformedLights( const NoteData &in, NoteData &out, int
 {
 	// reset all notes
 	out.Init();
-
-	NoteData Original;
-	Original.To2sAnd3s( in );
 
 	out.SetNumTracks( iNewNumTracks );
 
@@ -428,7 +414,7 @@ void NoteDataUtil::LoadTransformedLights( const NoteData &in, NoteData &out, int
 		int iHoldEnd = -1;
 		while(1)
 		{
-			int iMaxTailRow = FindLongestOverlappingHoldNoteForAnyTrack( Original, r );
+			int iMaxTailRow = FindLongestOverlappingHoldNoteForAnyTrack( in, r );
 			if( iMaxTailRow == -1 )
 				break;
 			iHoldEnd = iMaxTailRow;
@@ -438,16 +424,12 @@ void NoteDataUtil::LoadTransformedLights( const NoteData &in, NoteData &out, int
 		if( iHoldEnd != -1 )
 		{
 			/* If we found a hold note, add it to all tracks. */
-			HoldNote hn( 0, iHoldStart, iHoldEnd );
-			for( int t=0; t<Original.GetNumTracks(); t++ )
-			{
-				hn.iTrack = t;
-				out.AddHoldNote( hn );
-			}
+			for( int t=0; t<in.GetNumTracks(); t++ )
+				out.AddHoldNote( t, iHoldStart, iHoldEnd, TAP_ORIGINAL_HOLD_HEAD );
 			continue;
 		}
 
-		if( Original.IsRowEmpty( r ) )
+		if( in.IsRowEmpty( r ) )
 			continue;
 
 		/* Enable every track in the output. */
@@ -554,14 +536,16 @@ float NoteDataUtil::GetChaosRadarValue( const NoteData &in, float fSongSeconds )
 void NoteDataUtil::RemoveHoldNotes( NoteData &in, int iStartIndex, int iEndIndex )
 {
 	// turn all the HoldNotes into TapNotes
-	for( int i=in.GetNumHoldNotes()-1; i>=0; i-- )	// iterate backwards so we can delete
+	for( int t=0; t<in.GetNumTracks(); ++t )
 	{
-		const HoldNote hn = in.GetHoldNote( i );
-		if( !hn.RangeOverlaps(iStartIndex,iEndIndex) )
-			continue;	// skip
-
-		in.RemoveHoldNote( i );
-		in.SetTapNote( hn.iTrack, hn.iStartRow, TAP_ORIGINAL_TAP );
+		NoteData::iterator begin, end;
+		in.GetTapNoteRangeInclusive( t, iStartIndex, iEndIndex, begin, end );
+		for( ; begin != end; ++begin )
+		{
+			if( begin->second.type != TapNote::hold_head )
+				continue;
+			begin->second.type = TapNote::tap;
+		}
 	}
 }
 
@@ -579,22 +563,19 @@ void NoteDataUtil::RemoveSimultaneousNotes( NoteData &in, int iMaxSimultaneous, 
 		int iTracksToRemove = max( 0, iTotalTracksPressed - iMaxSimultaneous );
 		for( int t=0; iTracksToRemove>0 && t<in.GetNumTracks(); t++ )
 		{
-			if( in.GetTapNote(t,r).type == TapNote::tap )
+			const TapNote &tn = in.GetTapNote(t,r);
+			if( tn.type == TapNote::tap )
 			{
 				in.SetTapNote( t, r, TAP_EMPTY );
 				iTracksToRemove--;
 			}
-			else if( in.GetTapNote(t,r).type == TapNote::hold_head )
+			else if( tn.type == TapNote::hold_head )
 			{
-				int i;
-				for( i=0; i<in.GetNumHoldNotes(); i++ )
-				{
-					const HoldNote& hn = in.GetHoldNote(i);
-					if( hn.iStartRow == r )
-						break;
-				}
-				ASSERT( i<in.GetNumHoldNotes() );	// if we hit this, there was a hold head with no hold
-				in.RemoveHoldNote( i );
+				int iStartTrack;
+				if( !in.IsHoldNoteAtBeat( t, r, &iStartTrack ) )
+					continue;
+
+				in.SetTapNote( t, iStartTrack, TAP_EMPTY );
 				iTracksToRemove--;
 			}
 		}
@@ -782,14 +763,13 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 
 static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	// convert to 2sAnd3s before calling this
-	ASSERT( inout.GetNumHoldNotes() == 0 );
-	
-	/* We already did the normal shuffling code above, which did a good job
+	/*
+	 * We already did the normal shuffling code above, which did a good job
 	 * of shuffling HoldNotes without creating impossible patterns.
 	 * Now, go in and shuffle the TapNotes per-row.
 	 *
-	 * This is only called by NoteDataUtil::Turn.  "in" is in 2sAnd3s. */
+	 * This is only called by NoteDataUtil::Turn.
+	 */
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, r, iStartIndex, iEndIndex )
 	{
 		for( int t1=0; t1<inout.GetNumTracks(); t1++ )
@@ -799,7 +779,6 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 			{
 			case TapNote::empty:
 			case TapNote::hold_head:
-			case TapNote::hold_tail:
 				continue;
 			}
 
@@ -834,12 +813,7 @@ void NoteDataUtil::Turn( NoteData &inout, StepsType st, TrackMapping tt, int iSt
 	tempNoteData.LoadTransformed( inout, inout.GetNumTracks(), iTakeFromTrack );
 
 	if( tt == super_shuffle )
-	{
-		NoteData tempNoteData2;	// write into here as we tranform
-		tempNoteData2.To2sAnd3s( tempNoteData );
-		SuperShuffleTaps( tempNoteData2, iStartIndex, iEndIndex ); /* expects 2sAnd3s */
-		tempNoteData.From2sAnd3s( tempNoteData2 );
-	}
+		SuperShuffleTaps( tempNoteData, iStartIndex, iEndIndex );
 
 	inout.CopyAll( tempNoteData );
 }
@@ -849,7 +823,6 @@ void NoteDataUtil::Backwards( NoteData &inout )
 	NoteData out;
 	out.SetNumTracks( inout.GetNumTracks() );
 
-	inout.ConvertHoldNotesTo2sAnd3s();
 	int max_row = inout.GetLastRow();
 	for( int t=0; t<inout.GetNumTracks(); t++ )
 	{
@@ -859,34 +832,14 @@ void NoteDataUtil::Backwards( NoteData &inout )
 			int iRowLater = max_row-r;
 
 			TapNote tnEarlier = inout.GetTapNote(t, iRowEarlier);
+			if( tnEarlier.type == TapNote::hold_head )
+				iRowLater -= tnEarlier.iDuration;
+
 			out.SetTapNote(t, iRowLater, tnEarlier);
 		}
 	}
 
-	/* Un-flip hold_head and hold_tail. */
-	for( int t=0; t<out.GetNumTracks(); t++ )
-	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( out, t, r, 0, out.GetLastRow() )
-		{
-			TapNote tn = out.GetTapNote( t, r );
-			if( tn.type != TapNote::hold_tail )
-				continue;
-
-			int iTailRow = r;
-			while( out.GetNextTapNoteRowForTrack(t,iTailRow) )
-			{
-				TapNote tn2 = out.GetTapNote( t, iTailRow );
-				if( tn2.type != TapNote::hold_head )
-					continue;
-
-				out.SetTapNote( t, r, tn2 );
-				out.SetTapNote( t, iTailRow, tn );
-			}
-		}
-	}
-
 	inout = out;
-	inout.Convert2sAnd3sToHoldNotes();
 }
 
 void NoteDataUtil::SwapSides( NoteData &inout )
@@ -908,27 +861,28 @@ void NoteDataUtil::Little( NoteData &inout, int iStartIndex, int iEndIndex )
 {
 	// filter out all non-quarter notes
 	for( int t=0; t<inout.GetNumTracks(); t++ ) 
+	{
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( inout, t, i, iStartIndex, iEndIndex )
-			if( i % ROWS_PER_BEAT != 0 )
-					inout.SetTapNote( t, i, TAP_EMPTY );
+		{
+			if( i % ROWS_PER_BEAT == 0 )
+				continue;
 
-	for( int i=inout.GetNumHoldNotes()-1; i>=0; i-- )
-		if( fmodf(inout.GetHoldNote(i).GetStartBeat(),1) != 0 )	// doesn't start on a beat
-			inout.RemoveHoldNote( i );
+			inout.SetTapNote( t, i, TAP_EMPTY );
+		}
+	}
 }
 
+// Make all all quarter notes into jumps.
 void NoteDataUtil::Wide( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	// Make all all quarter notes into jumps.
-	inout.ConvertHoldNotesTo2sAnd3s();
-
 	/* Start on an even beat. */
 	iStartIndex = Quantize( iStartIndex, BeatToNoteRow(2.0f) );
 
-	iEndIndex = min( iEndIndex, inout.GetLastRow() );
-
-	for( int i=iStartIndex; i<iEndIndex; i+=ROWS_PER_BEAT*2 ) // every even beat
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, i, iStartIndex, iEndIndex )
 	{
+		if( i % BeatToNoteRow(2.0f) != 0 )
+			continue;	// even beats only
+
 		bool bHoldNoteAtBeat = false;
 		for( int t = 0; !bHoldNoteAtBeat && t < inout.GetNumTracks(); ++t )
 			if( inout.IsHoldNoteAtBeat(t, i) )
@@ -968,8 +922,6 @@ void NoteDataUtil::Wide( NoteData &inout, int iStartIndex, int iEndIndex )
 		}
 		inout.SetTapNote(iTrackToAdd, i, TAP_ADDITION_TAP);
 	}
-
-	inout.Convert2sAnd3sToHoldNotes();
 }
 
 void NoteDataUtil::Big( NoteData &inout, int iStartIndex, int iEndIndex )
@@ -1009,8 +961,6 @@ void NoteDataUtil::InsertIntelligentTaps(
 {
 	ASSERT( iInsertOffsetRows <= iWindowSizeRows );
 	ASSERT( iWindowSizeRows <= iWindowStrideRows );
-
-	inout.ConvertHoldNotesTo2sAnd3s();
 
 	bool bRequireNoteAtBeginningOfWindow = !bSkippy;
 	bool bRequireNoteAtEndOfWindow = true;
@@ -1085,9 +1035,72 @@ void NoteDataUtil::InsertIntelligentTaps(
 done_looking_for_track_to_add:
 		inout.SetTapNote(iTrackOfNoteToAdd, iRowToAdd, TAP_ADDITION_TAP);
 	}
-
-	inout.Convert2sAnd3sToHoldNotes();
 }
+#if 0
+class TrackIterator
+{
+public:
+	TrackIterator();
+
+	/* If called, iterate only over [iStart,iEnd]. */
+	void SetRange( int iStart, int iEnd )
+	{
+	}
+
+	/* If called, pay attention to iTrack only. */
+	void SetTrack( iTrack );
+
+	/* Extend iStart and iEnd to include hold notes overlapping the boundaries.  Call SetRange()
+	 * and SetTrack() first. */
+	void HoldInclusive();
+
+	/* Reduce iStart and iEnd to exclude hold notes overlapping the boundaries.  Call SetRange()
+	 * and SetTrack() first. */
+	void HoldExclusive();
+
+	/* If called, keep the iterator around.  This results in much faster iteration.  If used,
+	 * ensure that the current row will always remain valid.  SetTrack() must be called first. */
+	void Fast();
+
+	/* Retrieve an iterator for the current row.  SetTrack() must be called first (but Fast()
+	 * does not). */
+	TapNote::iterator Get();
+
+	int GetRow() const { return m_iCurrentRow; }
+	bool Prev();
+	bool Next();
+
+private:
+	int m_iStart, m_iEnd;
+	int m_iTrack;
+
+	bool m_bFast;
+
+	int m_iCurrentRow;
+
+	NoteData::iterator m_Iterator;
+
+	/* m_bFast only: */
+	NoteData::iterator m_Begin, m_End;
+};
+
+bool TrackIterator::Next()
+{
+	if( m_bFast )
+	{
+		if( m_Iterator == 
+
+	}
+
+}
+
+TrackIterator::TrackIterator()
+{
+	m_iStart = 0;
+	m_iEnd = MAX_NOTE_ROW;
+	m_iTrack = -1;
+}
+#endif
 
 void NoteDataUtil::AddMines( NoteData &inout, int iStartIndex, int iEndIndex )
 {
@@ -1120,30 +1133,34 @@ void NoteDataUtil::AddMines( NoteData &inout, int iStartIndex, int iEndIndex )
 	}
 
 	// Place mines right after hold so player must lift their foot.
-	for( int i=0; i<inout.GetNumHoldNotes(); i++ )
+	for( int iTrack=0; iTrack<inout.GetNumTracks(); ++iTrack )
 	{
-		HoldNote &hn = inout.GetHoldNote(i);
-		int iHoldEndRow = hn.iEndRow;
-		int iMineRow = iHoldEndRow+BeatToNoteRow(0.5f);
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( inout, iTrack, r, iStartIndex, iEndIndex )
+		{
+			const TapNote &tn = inout.GetTapNote( iTrack, r );
+			if( tn.type != TapNote::hold_head )
+				continue;
 
-		if( iMineRow < iStartIndex || iMineRow > iEndIndex )
-			continue;
+			int iMineRow = r + tn.iDuration + BeatToNoteRow(0.5f);
+			if( iMineRow < iStartIndex || iMineRow > iEndIndex )
+				continue;
 
-		// Only place a mines if there's not another step nearby
-		int iMineRangeBegin = iMineRow - BeatToNoteRow( 0.5f ) + 1;
-		int iMineRangeEnd = iMineRow + BeatToNoteRow( 0.5f ) - 1;
-		if( !inout.IsRangeEmpty(hn.iTrack, iMineRangeBegin, iMineRangeEnd) )
-			continue;
-	
-		// Add a mine right after the hold end.
-		inout.SetTapNote( hn.iTrack, iMineRow, TAP_ADDITION_MINE );
+			// Only place a mines if there's not another step nearby
+			int iMineRangeBegin = iMineRow - BeatToNoteRow( 0.5f ) + 1;
+			int iMineRangeEnd = iMineRow + BeatToNoteRow( 0.5f ) - 1;
+			if( !inout.IsRangeEmpty(iTrack, iMineRangeBegin, iMineRangeEnd) )
+				continue;
+		
+			// Add a mine right after the hold end.
+			inout.SetTapNote( iTrack, iMineRow, TAP_ADDITION_MINE );
 
-		// Convert all notes inout this row to mines.
-		for( int t=0; t<inout.GetNumTracks(); t++ )
-			if( inout.GetTapNote(t,iMineRow).type == TapNote::tap )
-				inout.SetTapNote(t,iMineRow,TAP_ADDITION_MINE);
+			// Convert all notes in this row to mines.
+			for( int t=0; t<inout.GetNumTracks(); t++ )
+				if( inout.GetTapNote(t,iMineRow).type == TapNote::tap )
+					inout.SetTapNote(t,iMineRow,TAP_ADDITION_MINE);
 
-		iRowCount = 0;
+			iRowCount = 0;
+		}
 	}
 }
 
@@ -1152,14 +1169,15 @@ void NoteDataUtil::Echo( NoteData &inout, int iStartIndex, int iEndIndex )
 	// add 8th note tap "echos" after all taps
 	int iEchoTrack = -1;
 
-	iStartIndex = Quantize( iStartIndex, BeatToNoteRow(0.5f) );
-
-	iEndIndex = min( iEndIndex, inout.GetLastRow() );
 	const int rows_per_interval = BeatToNoteRow( 0.5f );
+	iStartIndex = Quantize( iStartIndex, rows_per_interval );
 
 	// window is one beat wide and slides 1/2 a beat at a time
-	for( int r=iStartIndex; r<iEndIndex; r+=rows_per_interval ) 
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, r, iStartIndex, iEndIndex )
 	{
+		if( r % rows_per_interval != 0 )
+			continue;	// 8th notes only
+
 		const int iRowWindowBegin = r;
 		const int iRowWindowEnd = r + rows_per_interval*2;
 
@@ -1211,7 +1229,6 @@ void NoteDataUtil::Twister( NoteData &inout, int iStartIndex, int iEndIndex )
 void NoteDataUtil::ConvertTapsToHolds( NoteData &inout, int iSimultaneousHolds, int iStartIndex, int iEndIndex )
 {
 	// Convert all taps to freezes.
-	iEndIndex = min( iEndIndex, inout.GetLastRow() );
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, r, iStartIndex, iEndIndex )
 	{
 		int iTrackAddedThisRow = 0;
@@ -1250,7 +1267,7 @@ void NoteDataUtil::ConvertTapsToHolds( NoteData &inout, int iSimultaneousHolds, 
 				if( r2 == r+1 )
 					r2 = r+BeatToNoteRow(1);
 
-				inout.AddHoldNote( HoldNote(t,r,r2) );
+				inout.AddHoldNote( t, r, r2, TAP_ORIGINAL_HOLD_HEAD );
 				iTrackAddedThisRow++;
 			}
 dont_add_hold:
@@ -1263,10 +1280,6 @@ dont_add_hold:
 void NoteDataUtil::Stomp( NoteData &inout, StepsType st, int iStartIndex, int iEndIndex )
 {
 	// Make all non jumps with ample space around them into jumps.
-
-
-	iEndIndex = min( iEndIndex, inout.GetLastRow() );
-
 	int iTrackMapping[MAX_NOTE_TRACKS];
 	GetTrackMapping( st, stomp, inout.GetNumTracks(), iTrackMapping );
 
@@ -1315,8 +1328,6 @@ void NoteDataUtil::SnapToNearestNoteType( NoteData &inout, NoteType nt1, NoteTyp
 	if( nt2 != NOTE_TYPE_INVALID )
 		fSnapInterval2 = NoteTypeToBeat( nt2 );
 
-	inout.ConvertHoldNotesTo2sAnd3s();
-
 	// iterate over all TapNotes in the interval and snap them
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, iOldIndex, iStartIndex, iEndIndex )
 	{
@@ -1338,21 +1349,16 @@ void NoteDataUtil::SnapToNearestNoteType( NoteData &inout, NoteType nt1, NoteTyp
 			inout.SetTapNote(c, iOldIndex, TAP_EMPTY);
 
 			const TapNote &tnOld = inout.GetTapNote(c, iNewIndex);
-			if( tnNew.type == TapNote::tap &&
-				(tnOld.type == TapNote::hold_head || tnOld.type == TapNote::hold_tail) )
+			if( tnNew.type == TapNote::tap && tnOld.type == TapNote::hold_head )
 				continue; // HoldNotes override TapNotes
 
-			/* If two hold tnNew boundaries are getting snapped together,
-			 * merge them. */
-			if( (tnNew.type == TapNote::hold_head && tnOld.type == TapNote::hold_tail) ||
-				(tnNew.type == TapNote::hold_tail && tnOld.type == TapNote::hold_head) )
-				tnNew = TAP_EMPTY;
+			int iNewDuration = Quantize( tnNew.iDuration, BeatToNoteRow(fSnapInterval1) );
+			if( iNewDuration == 0 )
+				continue;
 			
 			inout.SetTapNote(c, iNewIndex, tnNew );
 		}
 	}
-
-	inout.Convert2sAnd3sToHoldNotes();
 }
 
 
@@ -1408,7 +1414,6 @@ void NoteDataUtil::ClearRight( NoteData &inout )
 
 void NoteDataUtil::CollapseToOne( NoteData &inout )
 {
-	inout.ConvertHoldNotesTo2sAnd3s();
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS( inout, r )
 		for( int t=0; t<inout.GetNumTracks(); t++ )
 			if( inout.GetTapNote(t,r).type != TapNote::empty )
@@ -1417,12 +1422,10 @@ void NoteDataUtil::CollapseToOne( NoteData &inout )
 				inout.SetTapNote(t, r, TAP_EMPTY);
 				inout.SetTapNote(0, r, tn);
 			}
-	inout.Convert2sAnd3sToHoldNotes();
 }
 
 void NoteDataUtil::CollapseLeft( NoteData &inout )
 {
-	inout.ConvertHoldNotesTo2sAnd3s();
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS( inout, r )
 	{
 		int iNumTracksFilled = 0;
@@ -1440,7 +1443,6 @@ void NoteDataUtil::CollapseLeft( NoteData &inout )
 			}
 		}
 	}
-	inout.Convert2sAnd3sToHoldNotes();
 }
 
 void NoteDataUtil::ShiftTracks( NoteData &inout, int iShiftBy )
@@ -1655,30 +1657,27 @@ void NoteDataUtil::Scale( NoteData &nd, float fScale )
 
 void NoteDataUtil::ScaleRegion( NoteData &nd, float fScale, int iStartIndex, int iEndIndex )
 {
-	// convert to 2sAnd3s before calling this
-	ASSERT( nd.GetNumHoldNotes() == 0 );
-
 	ASSERT( fScale > 0 );
 	ASSERT( iStartIndex < iEndIndex );
 	ASSERT( iStartIndex >= 0 );
 
 	NoteData temp1, temp2;
-	temp1.Config( nd );
-	temp2.Config( nd );
-
-	const int iFirstRowAtEndOfRegion = min( nd.GetLastRow(), iEndIndex );
-	const int iScaledFirstRowAfterRegion = int(iStartIndex + (iEndIndex - iStartIndex) * fScale);
+	temp1.SetNumTracks( nd.GetNumTracks() );
+	temp2.SetNumTracks( nd.GetNumTracks() );
 
 	if( iStartIndex != 0 )
 		temp1.CopyRange( nd, 0, iStartIndex );
-	if( nd.GetLastRow() > iFirstRowAtEndOfRegion )
-		temp1.CopyRange( nd, iFirstRowAtEndOfRegion, nd.GetLastRow(), iScaledFirstRowAfterRegion);
-	temp2.CopyRange( nd, iStartIndex, iFirstRowAtEndOfRegion );
+	if( iEndIndex != MAX_NOTE_ROW )
+	{
+		const int iScaledFirstRowAfterRegion = int(iStartIndex + (iEndIndex - iStartIndex) * fScale);
+		temp1.CopyRange( nd, iEndIndex, MAX_NOTE_ROW, iScaledFirstRowAfterRegion );
+	}
+	temp2.CopyRange( nd, iStartIndex, iEndIndex );
 	nd.ClearAll();
 
-	for( int r=0; r<=temp2.GetLastRow(); r++ )
+	for( int t=0; t<temp2.GetNumTracks(); t++ )
 	{
-		for( int t=0; t<temp2.GetNumTracks(); t++ )
+		FOREACH_NONEMPTY_ROW_IN_TRACK( temp2, t, r )
 		{
 			TapNote tn = temp2.GetTapNote( t, r );
 			if( tn.type != TapNote::empty )
@@ -1696,8 +1695,6 @@ void NoteDataUtil::ScaleRegion( NoteData &nd, float fScale, int iStartIndex, int
 
 void NoteDataUtil::ShiftRows( NoteData &nd, int iStartIndex, int iRowsToShift )
 {
-	NoteData temp;
-	temp.SetNumTracks( nd.GetNumTracks() );
 	int iTakeFromRow = iStartIndex;
 	int iPasteAtRow = iStartIndex;
 
@@ -1706,9 +1703,11 @@ void NoteDataUtil::ShiftRows( NoteData &nd, int iStartIndex, int iRowsToShift )
 	else	// delete rows
 		iTakeFromRow -= iRowsToShift;
 
-	temp.CopyRange( nd, iTakeFromRow, nd.GetLastRow() );
-	nd.ClearRange( min(iTakeFromRow,iPasteAtRow), nd.GetLastRow()  );
-	nd.CopyRange( temp, 0, temp.GetLastRow(), iPasteAtRow );		
+	NoteData temp;
+	temp.SetNumTracks( nd.GetNumTracks() );
+	temp.CopyRange( nd, iTakeFromRow, MAX_NOTE_ROW );
+	nd.ClearRange( min(iTakeFromRow,iPasteAtRow), MAX_NOTE_ROW );
+	nd.CopyRange( temp, 0, MAX_NOTE_ROW, iPasteAtRow );		
 }
 
 void NoteDataUtil::RemoveAllTapsOfType( NoteData& ndInOut, TapNote::Type typeToRemove )

@@ -28,14 +28,13 @@ void KSFLoader::RemoveHoles( NoteData &out, const Song &song )
 //		else
 //			LastRow = out.GetLastRow();
 		NoteData tmp;
-		tmp.SetNumTracks(out.GetNumTracks());
-		tmp.CopyRange( &out, FromRow, out.GetLastRow() );
-		out.ClearRange( FromRow, out.GetLastRow() );
-		out.CopyRange( &tmp, 0, tmp.GetLastRow(), ToRow );
+		tmp.SetNumTracks( out.GetNumTracks() );
+		tmp.CopyRange( &out, FromRow, MAX_NOTE_ROW );
+		out.ClearRange( FromRow, MAX_NOTE_ROW );
+		out.CopyRange( &tmp, 0, MAX_NOTE_ROW, ToRow );
 	}
 
 /*
-	out.ConvertHoldNotesTo2sAnd3s();
 	for( t = 0; t < notedata.GetNumTracks(); ++t )
 	{
 		const float CurBPM = song.GetBPMAtBeat( NoteRowToBeat(row) );
@@ -54,7 +53,6 @@ void KSFLoader::RemoveHoles( NoteData &out, const Song &song )
 			notedata.SetTapNote( t, row, TAP_EMPTY );
 		}
 	}
-	out.Convert2sAnd3sToHoldNotes();
 */
 }
 #endif
@@ -188,12 +186,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 
 			if( iHoldStartRow[t] != -1 )	// this ends the hold
 			{
-				HoldNote hn (
-					t, /* button */
-					BeatToNoteRow(iHoldStartRow[t]/(float)iTickCount), /* start */
-					BeatToNoteRow((r-1)/(float)iTickCount) /* end */
-				);
-				notedata.AddHoldNote( hn );
+				notedata.AddHoldNote( t, BeatToNoteRow(iHoldStartRow[t]/(float)iTickCount), BeatToNoteRow((r-1)/(float)iTickCount), TAP_ORIGINAL_HOLD_HEAD );
 				iHoldStartRow[t] = -1;
 			}
 

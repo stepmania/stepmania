@@ -47,17 +47,24 @@ int GetNumNWithScore( const NoteData &in, TapNoteScore tns, int MinTaps, int iSt
 	return iNumSuccessfulDoubles;
 }
 
-int GetNumHoldNotesWithScore( const NoteData &in, HoldNoteScore hns, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW )
+int GetNumHoldNotesWithScore( const NoteData &in, HoldNoteScore hns )
 {
 	int iNumSuccessfulHolds = 0;
-	for( int i=0; i<in.GetNumHoldNotes(); i++ )
+	for( int t=0; t<in.GetNumTracks(); ++t )
 	{
-		const HoldNote &hn = in.GetHoldNote(i);
-		if( !hn.ContainedByRange(iStartIndex, iEndIndex) )
-			continue;
-		if( hn.result.hns == hns )
-			iNumSuccessfulHolds++;
+		NoteData::TrackMap::const_iterator begin, end;
+		in.GetTapNoteRange( t, 0, MAX_NOTE_ROW, begin, end );
+
+		for( ; begin != end; ++begin )
+		{
+			const TapNote &tn = begin->second;
+			if( tn.type != TapNote::hold_head )
+				continue;
+			if( tn.HoldResult.hns == hns )
+				++iNumSuccessfulHolds;
+		}
 	}
+
 	return iNumSuccessfulHolds;
 }
 
@@ -89,7 +96,7 @@ int GetSuccessfulHands( const NoteData &in, int iStartIndex = 0, int iEndIndex =
 		bool Missed = false;
 		for( int t=0; t<in.GetNumTracks(); t++ )
 		{
-			TapNote tn = in.GetTapNote(t, i);
+			const TapNote &tn = in.GetTapNote(t, i);
 			if( tn.type == TapNote::empty )
 				continue;
 			if( tn.type == TapNote::mine ) // mines don't count
@@ -102,20 +109,19 @@ int GetSuccessfulHands( const NoteData &in, int iStartIndex = 0, int iEndIndex =
 			continue;
 
 		/* Check hold scores. */
-		for( int j=0; j<in.GetNumHoldNotes(); j++ )
+		for( int t=0; t<in.GetNumTracks(); ++t )
 		{
-			const HoldNote &hn = in.GetHoldNote(j);
-
-			/* Check if the row we're checking is in range. */
-			if( !hn.RowIsInRange(i) )
+			int iHeadRow;
+			if( !in.IsHoldNoteAtBeat( t, i, &iHeadRow ) )
 				continue;
+			const TapNote &tn = in.GetTapNote(t, i);
 
 			/* If a hold is released *after* a hands containing it, the hands is
 			 * still good.  So, ignore the judgement and only examine iLastHeldRow
 			 * to be sure that the hold was still held at the point of this row.
 			 * (Note that if the hold head tap was missed, then iLastHeldRow == i
 			 * and this won't fail--but the tap check above will have already failed.) */
-			if( hn.result.iLastHeldRow < i )
+			if( tn.HoldResult.iLastHeldRow < i )
 				Missed = true;
 		}
 

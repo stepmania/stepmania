@@ -190,7 +190,6 @@ void NotesWriterDWI::WriteDWINotesField( RageFile &f, const Steps &out, int star
 {
 	NoteData notedata;
 	out.GetNoteData( notedata );
-	notedata.ConvertHoldNotesTo2sAnd3s();
 
 	const int iLastMeasure = int( notedata.GetLastBeat()/BEATS_PER_MEASURE );
 	for( int m=0; m<=iLastMeasure; m++ )	// foreach measure

@@ -280,7 +280,6 @@ bool DWILoader::LoadFromDWITokens(
 							newNoteData.SetTapNote(iCol1, iIndex, TAP_ORIGINAL_HOLD_HEAD);
 						if( iCol2 != -1 )
 							newNoteData.SetTapNote(iCol2, iIndex, TAP_ORIGINAL_HOLD_HEAD);
-
 					}
 				}
 				while( jump );
@@ -291,8 +290,29 @@ bool DWILoader::LoadFromDWITokens(
 		}
 	}
 
-	// this will expand the HoldNote begin markers we wrote into actual HoldNotes
-	newNoteData.Convert2sAnd3sToHoldNotes();
+	/* Fill in iDuration. */
+	for( int t=0; t<newNoteData.GetNumTracks(); ++t )
+	{
+		FOREACH_NONEMPTY_ROW_IN_TRACK( newNoteData, t, iHeadRow )
+		{
+			TapNote tn = newNoteData.GetTapNote( t, iHeadRow  );
+			if( tn.type != TapNote::hold_head )
+				continue;
+
+			int iTailRow = iHeadRow;
+			while( newNoteData.GetNextTapNoteRowForTrack(t, iTailRow) )
+			{
+				const TapNote &TailTap = newNoteData.GetTapNote( t, iTailRow );
+				if( TailTap.type == TapNote::empty )
+					continue;
+
+				newNoteData.SetTapNote( t, iTailRow, TAP_EMPTY );
+				tn.iDuration = iTailRow - iHeadRow;
+				newNoteData.SetTapNote( t, iHeadRow, tn );
+				break;
+			}
+		}
+	}
 
 	ASSERT( newNoteData.GetNumTracks() > 0 );
 
@@ -303,11 +323,8 @@ bool DWILoader::LoadFromDWITokens(
 	return true;
 }
 
-/* STUPID ALERT!
- * This value can be in either "HH:MM:SS.sssss", "MM:SS.sssss", "SSS.sssss"
- * or milliseconds.
- * What's even more dumb is that the value can contain a ':'.  Colon is supposed to be a parameter separator!
- */
+/* This value can be in either "HH:MM:SS.sssss", "MM:SS.sssss", "SSS.sssss"
+ * or milliseconds. */
 float DWILoader::ParseBrokenDWITimestamp(const CString &arg1, const CString &arg2, const CString &arg3)
 {
 	if(arg1.empty()) return 0;

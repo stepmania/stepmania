@@ -1114,9 +1114,6 @@ void ScreenGameplay::LoadNextSong()
 				NoteDataUtil::LoadTransformedLights( TapNoteData, m_CabinetLightsNoteData, GameManager::StepsTypeToNumTracks(STEPS_TYPE_LIGHTS_CABINET) );
 			}
 		}
-
-		// Convert to 2sAnd3s so that we can check if we're inside a hold with IsHoldNoteAtBeat.
-		m_CabinetLightsNoteData.ConvertHoldNotesTo2sAnd3s();
 	}
 }
 
@@ -1615,12 +1612,11 @@ void ScreenGameplay::UpdateLights()
 		FOREACH_EnabledPlayer( pn )
 		{
 			// check if a hold should be active
-			for( int i=0; i < m_Player[pn].m_NoteData.GetNumHoldNotes(); i++ )		// for each HoldNote
+			for( int t=0; t < m_Player[pn].m_NoteData.GetNumTracks(); ++t )
 			{
-				const HoldNote &hn = m_Player[pn].m_NoteData.GetHoldNote(i);
-				if( hn.iStartRow <= iSongRow && iSongRow <= hn.iEndRow )
+				if( m_Player[pn].m_NoteData.IsHoldNoteAtBeat( t, iSongRow ) )
 				{
-					StyleInput si( pn, hn.iTrack );
+					StyleInput si( pn, t );
 					GameInput gi = pStyle->StyleInputToGameInput( si );
 					bBlinkGameButton[gi.controller][gi.button] |= true;
 				}

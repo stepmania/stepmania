@@ -11,32 +11,27 @@
 #define FOREACH_NONEMPTY_ROW_IN_TRACK( nd, track, row ) \
 	for( int row = -1; (nd).GetNextTapNoteRowForTrack(track,row); )
 #define FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( nd, track, row, start, last ) \
-	for( int row = start-1; (nd).GetNextTapNoteRowForTrack(track,row) && row <= (last); )
+	for( int row = start-1; (nd).GetNextTapNoteRowForTrack(track,row) && row < (last); )
 #define FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE_REVERSE( nd, track, row, start, last ) \
-	for( int row = last+1; (nd).GetPrevTapNoteRowForTrack(track,row) && row >= (start); )
+	for( int row = last; (nd).GetPrevTapNoteRowForTrack(track,row) && row >= (start); )
 #define FOREACH_NONEMPTY_ROW_ALL_TRACKS( nd, row ) \
 	for( int row = -1; (nd).GetNextTapNoteRowForAllTracks(row); )
 #define FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( nd, row, start, last ) \
-	for( int row = start-1; (nd).GetNextTapNoteRowForAllTracks(row) && row <= (last); )
+	for( int row = start-1; (nd).GetNextTapNoteRowForAllTracks(row) && row < (last); )
 
 class NoteData
 {
 public:
 	typedef map<int,TapNote> TrackMap;
+	typedef map<int,TapNote>::iterator iterator;
+	typedef map<int,TapNote>::const_iterator const_iterator;
 
 private:
 	// There's no point in inserting empty notes into the map.
 	// Any blank space in the map is defined to be empty.
 	vector<TrackMap> m_TapNotes;
 
-	vector<HoldNote>	m_HoldNotes;
-
 public:
-
-	/* Set up to hold the data in From; same number of tracks, same
-	 * divisor.  Doesn't allocate or copy anything. */
-	void Config( const NoteData& from );
-
 	NoteData();
 	~NoteData();
 	void Init();
@@ -56,6 +51,30 @@ public:
 			return TAP_EMPTY;
 	}
 
+	iterator begin( int iTrack ) { return m_TapNotes[iTrack].begin(); }
+	const_iterator begin( int iTrack ) const { return m_TapNotes[iTrack].begin(); }
+	iterator end( int iTrack ) { return m_TapNotes[iTrack].end(); }
+	const_iterator end( int iTrack ) const { return m_TapNotes[iTrack].end(); }
+
+	inline iterator FindTapNote( unsigned iTrack, int iRow ) { return m_TapNotes[iTrack].find( iRow ); }
+	inline const_iterator FindTapNote( unsigned iTrack, int iRow ) const { return m_TapNotes[iTrack].find( iRow ); }
+	void RemoveTapNote( unsigned iTrack, iterator it ) { m_TapNotes[iTrack].erase( it ); }
+
+	/* Return an iterator range including exactly iStartRow to iEndRow. */
+	void GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, const_iterator &begin, const_iterator &end ) const;
+	void GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, TrackMap::iterator &begin, TrackMap::iterator &end );
+
+	/* Return an iterator range include iStartRow to iEndRow.  Extend the range to include
+	 * hold notes overlapping the boundary. */
+	void GetTapNoteRangeInclusive( int iTrack, int iStartRow, int iEndRow, const_iterator &begin, const_iterator &end, bool bIncludeAdjacent=false ) const;
+	void GetTapNoteRangeInclusive( int iTrack, int iStartRow, int iEndRow, iterator &begin, iterator &end, bool bIncludeAdjacent=false );
+
+	/* Return an iterator range include iStartRow to iEndRow.  Shrink the range to exclude
+	 * hold notes overlapping the boundary. */
+	void GetTapNoteRangeExclusive( int iTrack, int iStartRow, int iEndRow, const_iterator &begin, const_iterator &end ) const;
+	void GetTapNoteRangeExclusive( int iTrack, int iStartRow, int iEndRow, iterator &begin, iterator &end );
+
+
 	// Use this to iterate over notes.
 	// Returns the row index of the first TapNote on the track that has a row
 	// index > afterRow.
@@ -63,11 +82,10 @@ public:
 	bool GetNextTapNoteRowForAllTracks( int &rowInOut ) const;
 	bool GetPrevTapNoteRowForTrack( int track, int &rowInOut ) const;
 	
-	void GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, TrackMap::const_iterator &begin, TrackMap::const_iterator &end ) const;
-
 	void MoveTapNoteTrack( int dest, int src );
 	void SetTapNote( int track, int row, const TapNote& tn );
-	
+	void AddHoldNote( int iTrack, int iStartRow, int iEndRow, TapNote tn ); // add note hold note merging overlapping HoldNotes and destroying TapNotes underneath
+
 	void ClearRangeForTrack( int rowBegin, int rowEnd, int iTrack );
 	void ClearRange( int rowBegin, int rowEnd );
 	void ClearAll();
@@ -97,19 +115,10 @@ public:
 	void GetTracksHeldAtRow( int row, set<int>& addTo );
 	int GetNumTracksHeldAtRow( int row );
 
-	//
-	// used in edit/record
-	//
-	void AddHoldNote( HoldNote newNote );	// add note hold note merging overlapping HoldNotes and destroying TapNotes underneath
-	void RemoveHoldNote( int index );
-	HoldNote &GetHoldNote( int index ) { ASSERT( index < (int) m_HoldNotes.size() ); return m_HoldNotes[index]; }
-	const HoldNote &GetHoldNote( int index ) const { ASSERT( index < (int) m_HoldNotes.size() ); return m_HoldNotes[index]; }
-
 	/* Determine if a given spot is within a hold note (being on the tail doesn't count).
 	 * Return true if so.  If pHeadRow is non-NULL, return the row of the head.  If pTailRow is
-	 * non-NULL, return the row of the tail.  This function is faster if pTailRow is NULL.
-	 * Must be in 2sAnd3s. */
-	bool IsHoldNoteAtBeat( int iTrack, int iRow, int *pHeadRow = NULL, int *pTailRow = NULL ) const;
+	 * non-NULL, return the row of the tail.  This function is faster if pTailRow is NULL. */
+	bool IsHoldNoteAtBeat( int iTrack, int iRow, int *pHeadRow = NULL ) const;
 
 	//
 	// statistics
@@ -127,18 +136,15 @@ public:
 	// should hands also count as a jump?
 	int GetNumDoubles( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const { return GetNumN( 2, iStartIndex, iEndIndex ); }
 	/* optimization: for the default of start to end, use the second (faster) */
-	int GetNumHoldNotes( const int iStartIndex, const int iEndIndex = MAX_NOTE_ROW ) const;
-	int GetNumHoldNotes() const { return m_HoldNotes.size(); }
+	int GetNumHoldNotes( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 	int RowNeedsHands( int row ) const;
 
 	// Transformations
 	void LoadTransformed( const NoteData& original, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] );	// -1 for iOriginalTracksToTakeFrom means no track
 
-	// Convert between HoldNote representation and '2' and '3' markers in TapNotes
-	void Convert2sAnd3sToHoldNotes();
-	void ConvertHoldNotesTo2sAnd3s();
-	void To2sAnd3s( const NoteData& from );
-	void From2sAnd3s( const NoteData& from );
+	/* hold_tail is only used to make SM parsing easier. */
+	void InsertHoldTails();
+	void RemoveHoldTails(); /* adjusts iDuration */
 };
 
 
