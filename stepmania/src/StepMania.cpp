@@ -161,10 +161,19 @@ void ApplyGraphicOptions()
 		PREFSMAN->m_fCenterImageScaleY );
 
 	bNeedReload |= TEXTUREMAN->SetPrefs( 
-		PREFSMAN->m_iTextureColorDepth, 
-		PREFSMAN->m_iMovieColorDepth,
-		PREFSMAN->m_bDelayedTextureDelete, 
-		PREFSMAN->m_iMaxTextureResolution );
+		RageTextureManagerPrefs( 
+			PREFSMAN->m_iTextureColorDepth, 
+			PREFSMAN->m_iMovieColorDepth,
+			PREFSMAN->m_bDelayedTextureDelete, 
+			PREFSMAN->m_iMaxTextureResolution 
+			)
+		);
+
+	bNeedReload |= MODELMAN->SetPrefs( 
+		ModelManagerPrefs(
+			PREFSMAN->m_bDelayedModelDelete 
+			)
+		);
 
 	if( bNeedReload )
 		TEXTUREMAN->ReloadAll();
@@ -1059,7 +1068,6 @@ int main(int argc, char* argv[])
 	PROFILEMAN	= new ProfileManager;
 	PROFILEMAN->Init();				// must load after SONGMAN
 	UNLOCKMAN	= new UnlockSystem;
-	MODELMAN	= new ModelManager;
 	delete loading_window;		// destroy this before init'ing Display
     
     NSMAN       = new NetworkSyncManager; 
@@ -1079,10 +1087,20 @@ int main(int argc, char* argv[])
 
 	TEXTUREMAN	= new RageTextureManager();
 	TEXTUREMAN->SetPrefs( 
-		PREFSMAN->m_iTextureColorDepth, 
-		PREFSMAN->m_iMovieColorDepth,
-		PREFSMAN->m_bDelayedTextureDelete, 
-		PREFSMAN->m_iMaxTextureResolution );
+		RageTextureManagerPrefs( 
+			PREFSMAN->m_iTextureColorDepth, 
+			PREFSMAN->m_iMovieColorDepth,
+			PREFSMAN->m_bDelayedTextureDelete, 
+			PREFSMAN->m_iMaxTextureResolution 
+			)
+		);
+
+	MODELMAN	= new ModelManager;
+	MODELMAN->SetPrefs( 
+		ModelManagerPrefs(
+			PREFSMAN->m_bDelayedModelDelete 
+			)
+		);
 
 	StoreActualGraphicOptions( true );
 

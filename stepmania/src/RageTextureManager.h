@@ -9,6 +9,42 @@
 
 #include <map>
 
+struct RageTextureManagerPrefs
+{
+	int m_iTextureColorDepth;
+	int m_iMovieColorDepth;
+	bool m_bDelayedDelete;
+	int m_iMaxTextureResolution;
+	
+	RageTextureManagerPrefs()
+	{
+		m_bDelayedDelete = false;
+		m_iMovieColorDepth = 16;
+		m_iTextureColorDepth = 16;
+		m_iMaxTextureResolution = 1024;
+	}
+	RageTextureManagerPrefs( 
+		int iTextureColorDepth,
+		int iMovieColorDepth,
+		bool bDelayedDelete,
+		int iMaxTextureResolution )
+	{
+		m_bDelayedDelete = bDelayedDelete ;
+		m_iMovieColorDepth = iMovieColorDepth;
+		m_iTextureColorDepth = iTextureColorDepth;
+		m_iMaxTextureResolution = iMaxTextureResolution;
+	}
+
+	bool operator!=( const RageTextureManagerPrefs& rhs )
+	{
+		return 
+			m_iTextureColorDepth != rhs.m_iTextureColorDepth ||
+			m_iMovieColorDepth != rhs.m_iMovieColorDepth ||
+			m_bDelayedDelete != rhs.m_bDelayedDelete ||
+			m_iMaxTextureResolution != rhs.m_iMaxTextureResolution;
+	}
+};
+
 class RageTextureManager
 {
 public:
@@ -24,11 +60,8 @@ public:
 	void UnloadTexture( RageTexture *t );
 	void ReloadAll();
 
-	bool SetPrefs( int iTextureColorDepth, int iMovieColorDepth, bool bDelayedDelete, int iMaxTextureResolution );
-	int GetTextureColorDepth() { return m_iTextureColorDepth; };
-	int GetMovieColorDepth() { return m_iMovieColorDepth; };
-	bool GetDelayedDelete() { return m_bDelayedDelete; };
-	int GetMaxTextureResolution() { return m_iMaxTextureResolution; };
+	bool SetPrefs( RageTextureManagerPrefs prefs );
+	RageTextureManagerPrefs GetPrefs() { return m_Prefs; };
 
 	RageTextureID::TexPolicy GetDefaultTexturePolicy() const { return m_TexturePolicy; }
 	void SetDefaultTexturePolicy( RageTextureID::TexPolicy p ) { m_TexturePolicy = p; }
@@ -53,10 +86,7 @@ protected:
 	enum GCType { screen_changed, delayed_delete };
 	void GarbageCollect( GCType type );
 
-	int m_iTextureColorDepth;
-	int m_iMovieColorDepth;
-	bool m_bDelayedDelete;
-	int m_iMaxTextureResolution;
+	RageTextureManagerPrefs m_Prefs;
 
 	RageTexture* LoadTextureInternal( RageTextureID ID );
 

@@ -71,9 +71,17 @@ void ModelManager::UnloadModel( RageModelGeometry *m )
 	{
 		if( i->second == m )
 		{
-			m_mapFileToModel.erase( i );	// remove map entry
-			SAFE_DELETE( m );	// free the texture
-			return;
+			if( m_Prefs.m_bDelayedUnload )
+			{
+				// leave this Model loaded
+				return;
+			}
+			else
+			{
+				m_mapFileToModel.erase( i );	// remove map entry
+				SAFE_DELETE( m );	// free the texture
+				return;
+			}
 		}
 	}
 

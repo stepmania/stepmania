@@ -43,10 +43,6 @@ RageTextureManager::RageTextureManager()
 {
 	m_iNoWarnAboutOddDimensions = 0;
 	m_TexturePolicy = RageTextureID::TEX_DEFAULT;
-	m_bDelayedDelete = false;
-	m_iMovieColorDepth = 16;
-	m_iTextureColorDepth = 16;
-	m_iMaxTextureResolution = 1024;
 }
 
 RageTextureManager::~RageTextureManager()
@@ -74,8 +70,8 @@ void RageTextureManager::Update( float fDeltaTime )
 void RageTextureManager::AdjustTextureID(RageTextureID &ID) const
 {
 	if( ID.iColorDepth == -1 )
-		ID.iColorDepth = m_iTextureColorDepth;
-	ID.iMaxSize = min( ID.iMaxSize, m_iMaxTextureResolution );
+		ID.iColorDepth = m_Prefs.m_iTextureColorDepth;
+	ID.iMaxSize = min( ID.iMaxSize, m_Prefs.m_iMaxTextureResolution );
 }
 
 /* If you've set up a texture yourself, register it here so it can be referenced
@@ -177,7 +173,7 @@ void RageTextureManager::UnloadTexture( RageTexture *t )
 		bDeleteThis = true;
 
 	/* Delete normal textures immediately unless m_bDelayedDelete is is on. */
-	if( t->GetPolicy() == RageTextureID::TEX_DEFAULT && !m_bDelayedDelete )
+	if( t->GetPolicy() == RageTextureID::TEX_DEFAULT && !m_Prefs.m_bDelayedDelete )
 		bDeleteThis = true;
 
 	/* Delete volatile textures after they've been used at least once. */
@@ -233,11 +229,11 @@ void RageTextureManager::GarbageCollect( GCType type )
 				/* If m_bDelayedDelete, wait until delayed_delete.  If !m_bDelayedDelete,
 				 * it should have been deleted when it reached no references, but we
 				 * might have just changed the preference. */
-				if( !m_bDelayedDelete )
+				if( !m_Prefs.m_bDelayedDelete )
 					bDeleteThis = true;
 				break;
 			case RageTextureID::TEX_CACHED:
-				if( !m_bDelayedDelete )
+				if( !m_Prefs.m_bDelayedDelete )
 					bDeleteThis = true;
 				break;
 			case RageTextureID::TEX_VOLATILE:
@@ -290,22 +286,16 @@ void RageTextureManager::InvalidateTextures()
 	}
 }
 
-bool RageTextureManager::SetPrefs( int iTextureColorDepth, int iMovieColorDepth, bool bDelayedDelete, int iMaxTextureResolution )
+bool RageTextureManager::SetPrefs( RageTextureManagerPrefs prefs )
 {
 	bool need_reload = false;
-	if( m_bDelayedDelete != bDelayedDelete ||
-		m_iMovieColorDepth != iMovieColorDepth ||
-		m_iTextureColorDepth != iTextureColorDepth ||
-		m_iMaxTextureResolution != iMaxTextureResolution )
+	if( m_Prefs != prefs )
 		need_reload = true;
 
-	m_bDelayedDelete = bDelayedDelete;
-	m_iTextureColorDepth = iTextureColorDepth;
-	m_iMaxTextureResolution = iMaxTextureResolution;
-	m_iMovieColorDepth = iMovieColorDepth;
+	m_Prefs = prefs;
 	
-	ASSERT( m_iTextureColorDepth==16 || m_iTextureColorDepth==32 );
-	ASSERT( m_iMovieColorDepth==16 || m_iMovieColorDepth==32 );
+	ASSERT( m_Prefs.m_iTextureColorDepth==16 || m_Prefs.m_iTextureColorDepth==32 );
+	ASSERT( m_Prefs.m_iMovieColorDepth==16 || m_Prefs.m_iMovieColorDepth==32 );
 	return need_reload;
 }
 

@@ -155,6 +155,7 @@ void PrefsManager::Init()
 	m_bDelayedTextureDelete = true;
 	m_bTexturePreload = false;
 	m_bDelayedScreenLoad = false;
+	m_bDelayedModelDelete = false;
 	m_BannerCache = BNCACHE_LOW_RES;
 	m_bFastLoad = true;
 	m_MusicWheelUsesSections = ALWAYS;
@@ -438,6 +439,7 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Options", "DelayedTextureDelete",			m_bDelayedTextureDelete );
 	ini.GetValue( "Options", "TexturePreload",					m_bTexturePreload );
 	ini.GetValue( "Options", "DelayedScreenLoad",				m_bDelayedScreenLoad );
+	ini.GetValue( "Options", "DelayedModelDelete",				m_bDelayedModelDelete );
 	ini.GetValue( "Options", "BannerCache",						(int&)m_BannerCache );
 	ini.GetValue( "Options", "FastLoad",						m_bFastLoad );
 	ini.GetValue( "Options", "MusicWheelUsesSections",			(int&)m_MusicWheelUsesSections );
@@ -672,6 +674,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "DelayedTextureDelete",			m_bDelayedTextureDelete );
 	ini.SetValue( "Options", "TexturePreload",					m_bTexturePreload );
 	ini.SetValue( "Options", "DelayedScreenLoad",				m_bDelayedScreenLoad );
+	ini.SetValue( "Options", "DelayedModelDelete",				m_bDelayedModelDelete );
 	ini.SetValue( "Options", "BannerCache",						m_BannerCache );
 	ini.SetValue( "Options", "FastLoad",						m_bFastLoad );
 	ini.SetValue( "Options", "MusicWheelUsesSections",			m_MusicWheelUsesSections );
