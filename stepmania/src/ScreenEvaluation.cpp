@@ -38,6 +38,7 @@
 #define GRADE_Y					THEME->GetMetricF("ScreenEvaluation","GradeY")
 #define PERCENT_BASE_X( p )		THEME->GetMetricF("ScreenEvaluation",ssprintf("PercentBaseP%dX",p+1))
 #define DANCE_POINT_X( p )		THEME->GetMetricF("ScreenEvaluation",ssprintf("DancePointP%dX",p+1))
+#define DANCE_POINT_WIDTH		THEME->GetMetricF("ScreenEvaluation","DancePointDisplayWidth")
 #define PERCENT_BASE_Y			THEME->GetMetricF("ScreenEvaluation","PercentBaseY")
 #define JUDGE_LABELS_X			THEME->GetMetricF("ScreenEvaluation","JudgeLabelsX")
 #define MARVELOUS_X(o,p)		THEME->GetMetricF("ScreenEvaluation",ssprintf("Marvelous%sP%dX",o?"Oni":"",p+1))
@@ -305,6 +306,8 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	m_bTryExtraStage = 
 		GAMESTATE->HasEarnedExtraStage()  && 
 		m_ResultMode==RM_ARCADE_STAGE;
+ 
+	float fDancePointWidth = DANCE_POINT_WIDTH;
 
 	//
 	// Init ResultMode-specific displays
@@ -347,7 +350,11 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				}
 
 				if(PREFSMAN->m_bDancePointsForOni)
+				{
 					m_textOniPercentLarge[p].SetText( ssprintf("%d", stageStats.iActualDancePoints[p]) );
+					if(m_textOniPercentLarge[p].GetWidestLineWidthInSourcePixels() > fDancePointWidth)
+						m_textOniPercentLarge[p].SetZoomX( fDancePointWidth / (float)m_textOniPercentLarge[p].GetWidestLineWidthInSourcePixels() );
+				}
 				else
 				{
 					stageStats.iPossibleDancePoints[p] = max( 1, stageStats.iPossibleDancePoints[p] );
