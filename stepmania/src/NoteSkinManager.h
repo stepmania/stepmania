@@ -18,15 +18,15 @@ public:
 	void RefreshNoteSkinData( const Game* game );
 	void GetNoteSkinNames( const Game* game, CStringArray &AddTo, bool bFilterDefault=true );
 	void GetNoteSkinNames( CStringArray &AddTo );	// looks up current const Game* in GAMESTATE
-	bool DoesNoteSkinExist( CString sSkinName );	// looks up current const Game* in GAMESTATE
+	bool DoesNoteSkinExist( const CString &sSkinName );	// looks up current const Game* in GAMESTATE
 
-	CString GetPathToFromNoteSkinAndButton( CString NoteSkin, CString sButtonName, CString sElement, bool bOptional=false );
+	CString GetPathToFromNoteSkinAndButton( const CString &sNoteSkin, const CString &sButtonName, const CString &sElement, bool bOptional=false );
 
-	CString		GetMetric( CString sNoteSkinName, CString sButtonName, CString sValue );
-	int			GetMetricI( CString sNoteSkinName, CString sButtonName, CString sValueName );
-	float		GetMetricF( CString sNoteSkinName, CString sButtonName, CString sValueName );
-	bool		GetMetricB( CString sNoteSkinName, CString sButtonName, CString sValueName );
-	RageColor	GetMetricC( CString sNoteSkinName, CString sButtonName, CString sValueName );
+	CString		GetMetric( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValue );
+	int			GetMetricI( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName );
+	float		GetMetricF( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName );
+	bool		GetMetricB( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName );
+	RageColor	GetMetricC( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName );
 
 	CString GetNoteSkinDir( const CString &sSkinName );
 

@@ -140,7 +140,7 @@ void NoteSkinManager::GetNoteSkinNames( const Game* pGame, CStringArray &AddTo, 
 }
 
 
-bool NoteSkinManager::DoesNoteSkinExist( CString sSkinName )
+bool NoteSkinManager::DoesNoteSkinExist( const CString &sSkinName )
 {
 	CStringArray asSkinNames;	
 	GetNoteSkinNames( asSkinNames );
@@ -157,8 +157,9 @@ CString NoteSkinManager::GetNoteSkinDir( const CString &sSkinName )
 	return NOTESKINS_DIR + sGame + "/" + sSkinName + "/";
 }
 
-CString NoteSkinManager::GetMetric( CString sNoteSkinName, CString sButtonName, CString sValue )
+CString NoteSkinManager::GetMetric( const CString &_sNoteSkinName, const CString &sButtonName, const CString &sValue )
 {
+	CString sNoteSkinName = _sNoteSkinName;
 	sNoteSkinName.MakeLower();
 	map<CString,NoteSkinData>::const_iterator it = m_mapNameToData.find(sNoteSkinName);
 	ASSERT_M( it != m_mapNameToData.end(), sNoteSkinName );	// this NoteSkin doesn't exist!
@@ -173,22 +174,22 @@ CString NoteSkinManager::GetMetric( CString sNoteSkinName, CString sButtonName, 
 	return sReturn;
 }
 
-int NoteSkinManager::GetMetricI( CString sNoteSkinName, CString sButtonName, CString sValueName )
+int NoteSkinManager::GetMetricI( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName )
 {
 	return atoi( GetMetric(sNoteSkinName,sButtonName,sValueName) );
 }
 
-float NoteSkinManager::GetMetricF( CString sNoteSkinName, CString sButtonName, CString sValueName )
+float NoteSkinManager::GetMetricF( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName )
 {
 	return strtof( GetMetric(sNoteSkinName,sButtonName,sValueName), NULL );
 }
 
-bool NoteSkinManager::GetMetricB( CString sNoteSkinName, CString sButtonName, CString sValueName )
+bool NoteSkinManager::GetMetricB( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName )
 {
 	return atoi( GetMetric(sNoteSkinName,sButtonName,sValueName) ) != 0;
 }
 
-RageColor NoteSkinManager::GetMetricC( CString sNoteSkinName, CString sButtonName, CString sValueName )
+RageColor NoteSkinManager::GetMetricC( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName )
 {
 	float r=1,b=1,g=1,a=1;	// initialize in case sscanf fails
 	CString sValue = GetMetric(sNoteSkinName,sButtonName,sValueName);
@@ -205,7 +206,7 @@ RageColor NoteSkinManager::GetMetricC( CString sNoteSkinName, CString sButtonNam
 }
 
 
-CString NoteSkinManager::GetPathToFromNoteSkinAndButton( CString NoteSkin, CString sButtonName, CString sElement, bool bOptional )
+CString NoteSkinManager::GetPathToFromNoteSkinAndButton( const CString &NoteSkin, const CString &sButtonName, const CString &sElement, bool bOptional )
 {
 try_again:
 
