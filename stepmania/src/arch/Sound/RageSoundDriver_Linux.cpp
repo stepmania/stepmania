@@ -265,7 +265,7 @@ int RageSound_Linux::MixerThread_start(void *p) {
 void RageSound_Linux::MixerThread() {
 	/* SOUNDMAN will be set once RageSoundManager's ctor returns and
 	 * assigns it; we might get here before that happens, though. */
-	while(!SOUNDMAN && !shutdown) sleep(10);
+	while(!SOUNDMAN && !shutdown) SDL_Delay(10);
 	while(!shutdown) { while (GetData()); }
 }
 	
