@@ -123,7 +123,9 @@ public:
 	int GetFileSize() { return info.uncompr_size; }
 	RageFileObj *Copy( RageFile &p ) const
 	{
-		return new RageFileObjZipDeflated( *this, p );
+		RageException::Throw( "Loading ZIPs from deflated ZIPs is currently disabled; see RageFileObjZipDeflated" );
+
+		// return new RageFileObjZipDeflated( *this, p );
 	}
 };
 
@@ -506,7 +508,10 @@ RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFile &f, const FileInf
 	info(info_),
 	zip( f )
 {
-	decomp_buf_avail = 0;
+	/* inflateInit2 isn't widespread yet */
+	ASSERT( 0 );
+/*
+decomp_buf_avail = 0;
 
     dstrm.zalloc = Z_NULL;
     dstrm.zfree = Z_NULL;
@@ -519,6 +524,7 @@ RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFile &f, const FileInf
 
 	decomp_buf_ptr = decomp_buf;
 	CFilePos = UFilePos = 0;
+	*/
 }
 
 RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFileObjZipDeflated &cpy, RageFile &p ):
