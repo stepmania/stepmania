@@ -17,10 +17,13 @@
 #include "NoteTypes.h"
 
 
+struct NoteMetricCache_t;
+
 class NoteDisplay
 {
 public:
 	NoteDisplay();
+	~NoteDisplay();
 
 	void Load( int iColNum, PlayerNumber pn );
 
@@ -28,21 +31,29 @@ public:
 	void DrawHold( const HoldNote& hn, const bool bActive, const float fLife, const float fPercentFadeToFail, bool bDrawGlowOnly = false );
 
 protected:
-	int GetFrameNo( float fNoteBeat, int iNumFrames, float fAnimationLengthInBeats, bool bVivid, bool bNoteColor  );
-	void	GetTapNoteSpriteAndFrameNo( float fNoteBeat, Sprite*& pSpriteOut, int& iFrameNoOut );
-	void	GetHoldHeadSpriteAndFrameNo( float fNoteBeat, bool bActive, Sprite*& pSpriteOut, int& iFrameNoOut );
-	void	GetHoldBodySpriteAndFrameNo( float fNoteBeat, bool bActive, Sprite*& pSpriteOut, int& iFrameNoOut );
-	void	GetHoldTailSpriteAndFrameNo( float fNoteBeat, bool bActive, Sprite*& pSpriteOut, int& iFrameNoOut );
+	void SetActiveFrame( float fNoteBeat, Sprite &Spr, float fAnimationLengthInBeats, bool bVivid, bool bNoteColor );
+	Sprite *GetTapNoteSprite( float fNoteBeat  );
+	Sprite *GetHoldHeadSprite( float fNoteBeat, bool bActive );
+	Sprite *GetHoldTopCapSprite( float fNoteBeat, bool bActive );
+	Sprite *GetHoldBodySprite( float fNoteBeat, bool bActive );
+	Sprite *GetHoldBottomCapSprite( float fNoteBeat, bool bActive );
+	Sprite *GetHoldTailSprite( float fNoteBeat, bool bActive );
 
 	PlayerNumber m_PlayerNumber;	// to look up PlayerOptions
+
+	struct NoteMetricCache_t *cache;
 
 #define NOTE_COLOR_IMAGES 6
 
 	Sprite		m_sprTapNote[NOTE_COLOR_IMAGES];
 	Sprite		m_sprHoldHeadActive[NOTE_COLOR_IMAGES];
 	Sprite		m_sprHoldHeadInactive[NOTE_COLOR_IMAGES];
+	Sprite		m_sprHoldTopCapActive[NOTE_COLOR_IMAGES];
+	Sprite		m_sprHoldTopCapInactive[NOTE_COLOR_IMAGES];
 	Sprite		m_sprHoldBodyActive[NOTE_COLOR_IMAGES];
 	Sprite		m_sprHoldBodyInactive[NOTE_COLOR_IMAGES];
+	Sprite		m_sprHoldBottomCapActive[NOTE_COLOR_IMAGES];
+	Sprite		m_sprHoldBottomCapInactive[NOTE_COLOR_IMAGES];
 	Sprite		m_sprHoldTailActive[NOTE_COLOR_IMAGES];
 	Sprite		m_sprHoldTailInactive[NOTE_COLOR_IMAGES];
 };

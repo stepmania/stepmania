@@ -31,11 +31,13 @@ public:
 
 	CString GetPathTo( int col, CString sFileName );
 
-	CString		GetMetric( CString sClassName, CString sValueName );
-	int			GetMetricI( CString sClassName, CString sValueName );
-	float		GetMetricF( CString sClassName, CString sValueName );
-	bool		GetMetricB( CString sClassName, CString sValueName );
-	RageColor	GetMetricC( CString sClassName, CString sValueName );
+	CString		GetMetric( CString sButtonName, CString sValueName );
+	int			GetMetricI( CString sButtonName, CString sValueName );
+	float		GetMetricF( CString sButtonName, CString sValueName );
+	bool		GetMetricB( CString sButtonName, CString sValueName );
+	RageColor	GetMetricC( CString sButtonName, CString sValueName );
+
+	static CString NoteSkinManager::ColToButtonName(int col);
 
 protected:
 	CString GetPathTo( CString sSkinName, CString sButtonName, CString sFileName );
