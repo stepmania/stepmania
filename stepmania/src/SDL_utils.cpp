@@ -932,7 +932,8 @@ void mySDL_BlitSurface(
 	}
 }
 
-/* This converts an image to a special 8-bit paletted format.  The palette is set up
+/*
+ * This converts an image to a special 8-bit paletted format.  The palette is set up
  * so that palette indexes look like regular, packed components.
  *
  * For example, an image with 8 bits of grayscale and 0 bits of alpha has a palette
@@ -947,9 +948,8 @@ void mySDL_BlitSurface(
  * values: the first two bits of the index are the grayscale component, and the next
  * two bits are the alpha component.
  *
- * This gives us a generic way to handle arbitrary 8-bit texture formats.  It could
- * possibly be used for 16-bit texture formats, but I doubt those are well-supported
- * in hardware, and SDL blits only support 8-bit paletted surfaces. */
+ * This gives us a generic way to handle arbitrary 8-bit texture formats.
+ */
 SDL_Surface *mySDL_Palettize( SDL_Surface *src_surf, int GrayBits, int AlphaBits )
 {
 	AlphaBits = min( AlphaBits, 8-src_surf->format->Aloss );
