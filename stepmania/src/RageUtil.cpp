@@ -1042,3 +1042,12 @@ void ReplaceText( CString &Text, const map<CString,CString> &m )
 		}
 	}
 }
+
+/* Form a string to identify a wchar_t with ASCII. */
+CString WcharDisplayText(wchar_t c)
+{
+	CString chr;
+	chr = ssprintf("U+%4.4x", c);
+	if(c < 128) chr += ssprintf(" ('%c')", char(c));
+	return chr;
+}
