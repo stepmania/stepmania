@@ -42,15 +42,6 @@ struct OptionRowDefinition
 	set<PlayerNumber> m_vEnabledForPlayers;	// only players in this set may change focus to this row
 	bool	m_bExportOnChange;
 
-	void UpdateEnabledForPlayers( 
-		set<PlayerNumber> vEnabledForPlayers,
-		bool bThisRowIsSelected, 
-		bool bThisRowIsSelectedByAll, 
-		const RageColor &colorSelected, 
-		const RageColor &colorNotSelected, 
-		const RageColor &colorDisabled, 
-		float fTweenSeconds 
-		);
 	bool EnabledForPlayer( PlayerNumber pn ) { return m_vEnabledForPlayers.find(pn) != m_vEnabledForPlayers.end(); }
 
 	OptionRowDefinition() { Init(); }
@@ -204,7 +195,7 @@ protected:
 	ThemeMetric<RageColor>			COLOR_DISABLED;
 	ThemeMetric<bool>				CAPITALIZE_ALL_OPTION_NAMES;
 	ThemeMetric<bool>				SHOW_UNDERLINES;
-	ThemeMetric<bool>				TWEEN_SECONDS;
+	ThemeMetric<float>				TWEEN_SECONDS;
 };
 
 #endif
