@@ -83,8 +83,6 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 #define NUM_SEQUENCE_SOUNDS					THEME->GetMetricI(m_sName,"NumSequenceSounds")
 #define SOUNDSEQ_TIME( i )					THEME->GetMetricF(m_sName,ssprintf("SoundSeqTime%d", i+1))
 #define SOUNDSEQ_NAME( i )					THEME->GetMetric (m_sName,ssprintf("SoundSeqName%d", i+1))
-#define USE_GRADE_SPECIFIC_BG				THEME->GetMetricB(m_sName,"UseGradeSpecificBG")
-#define USE_STYLE_SPECIFIC_BG				THEME->GetMetricB(m_sName,"UseStyleSpecificBG")
 
 
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
@@ -272,43 +270,6 @@ void ScreenEvaluation::Init()
 
 	m_bgCondBga.Load(m_sName);
 
-	// Special Background Stuff
-/*	if(m_Type == stage)
-	{
-		if(USE_GRADE_SPECIFIC_BG || USE_STYLE_SPECIFIC_BG) // put other 'whatever specific' checks here
-		{
-			CString bgpath = "ScreenEvaluationStage ";
-			
-			if(USE_GRADE_SPECIFIC_BG) // individual check for grades
-			{
-				int highestgrade=GRADE_NO_DATA;
-				CString gradename = "";
-				unsigned pn=0;
-				for(pn=0;pn<NUM_PLAYERS;pn++)
-				{
-					if( GAMESTATE->IsPlayerEnabled( (PlayerNumber)pn ) )
-					{
-						int playergrade = stageStats.GetGrade((PlayerNumber)pn);
-						if(playergrade < highestgrade)
-						{
-							highestgrade = playergrade;
-							gradename = GradeToString((Grade)playergrade);
-						}
-
-					}
-				}
-				bgpath += gradename;			
-			}
-			if(USE_STYLE_SPECIFIC_BG)
-			{
-				CString stylename = ssprintf("%d", GAMESTATE->m_CurStyle);
-				bgpath += stylename;
-			}
-			
-			m_bgSpecialBack.LoadFromAniDir( THEME->GetPathToB(bgpath) );
-		}
-	}
-*/	
 	//
 	// load other sounds
 	//
@@ -1228,9 +1189,6 @@ void ScreenEvaluation::Update( float fDeltaTime )
 		}
 //	}
 	
-//	if(USE_GRADE_SPECIFIC_BG)
-//		m_bgSpecialBack.Update(fDeltaTime);
-
 	for( int p=0; p<NUM_PLAYERS; p++)
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
@@ -1264,11 +1222,6 @@ void ScreenEvaluation::DrawPrimitives()
 	m_Menu.DrawBottomLayer();
 
 	m_bgCondBga.DrawPrimitives();
-	// draw the failed background here if the player(s) failed
-
-	// draw any special backgrounds if the player failed.
-//	if(USE_GRADE_SPECIFIC_BG)
-//		m_bgSpecialBack.Draw();
 
 	Screen::DrawPrimitives();
 
