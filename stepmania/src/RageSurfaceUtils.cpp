@@ -933,26 +933,25 @@ void RageSurfaceUtils::ApplyHotPinkColorKey( RageSurface *&img )
 		return;
 	}
 
-	/* RGBA. */
-	/* Make sure we have alpha. */
-	if( !img->format->Amask )
+	/* RGBA. Make sure we have alpha. */
+	if( img->format->Amask == 0 )
 	{
 		/* We don't have any alpha.  Try to enable it without copying. */
-		int usable_bits = (1<<img->format->BitsPerPixel)-1;
-		usable_bits &= ~img->format->Rmask;
-		usable_bits &= ~img->format->Gmask;
-		usable_bits &= ~img->format->Bmask;
+		/* XXX: need to scan the surface and make sure the new alpha bit is always 1 */
+		/*
+		const int used_bits = img->format->Rmask | img->format->Gmask | img->format->Bmask;
 		
-		for( int i = 0; img->format->Amask == 0 && i < 32; ++i )
+		for( int i = 0; img->format->Amask == 0 && i < img->format->BitsPerPixel; ++i )
 		{
-			if( usable_bits & (1<<i) )
+			if( (used_bits & (1<<i)) )
 			{
 				img->format->Amask = 1<<i;
 				img->format->Aloss = 7;
 				img->format->Ashift = (uint8_t) i;
 			}
 		}
-
+		*/
+		/* If we didn't have any free bits, convert to make room. */
 		if( img->format->Amask == 0  )
 			ConvertSurface( img, img->w, img->h,
 				32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF );
@@ -970,7 +969,7 @@ void RageSurfaceUtils::ApplyHotPinkColorKey( RageSurface *&img )
 
 	for( int y = 0; y < img->h; ++y )
 	{
-		uint8_t *row = (uint8_t *)img->pixels + img->pitch*y;
+		uint8_t *row = img->pixels + img->pitch*y;
 
 		for( int x = 0; x < img->w; ++x )
 		{
