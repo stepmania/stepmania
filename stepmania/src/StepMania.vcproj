@@ -1322,6 +1322,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\ArrowEffects.h">
 			</File>
 			<File
+				RelativePath="AttackDisplay.cpp">
+			</File>
+			<File
+				RelativePath="AttackDisplay.h">
+			</File>
+			<File
 				RelativePath=".\Background.cpp">
 			</File>
 			<File
