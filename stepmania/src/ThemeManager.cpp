@@ -142,50 +142,25 @@ try_element_again:
 	///////////////////////////////////////
 	// Search both the current theme and the default theme dirs for this element
 	///////////////////////////////////////
-	if( sAssetCategory == "graphics" )
-	{
-		const char *masks[] = {
-			"*.sprite", "*.png", "*.jpg", "*.bmp", "*.gif", "*.redir",
-			"*.avi", "*.mpg", "*.mpeg", NULL
-		};
+	static const char *graphic_masks[] = {
+		"*.sprite", "*.png", "*.jpg", "*.bmp", "*.gif", "*.redir",
+		"*.avi", "*.mpg", "*.mpeg", NULL
+	};
+	static const char *sound_masks[] = { ".set", ".mp3", ".ogg", ".wav", ".redir", NULL };
+	static const char *font_masks[] = { ".font", ".redir", NULL };
+	const char **asset_masks = NULL;
+	if( sAssetCategory == "graphics" ) asset_masks = graphic_masks;
+	else if( sAssetCategory == "sounds" ) asset_masks = sound_masks;
+	else if( sAssetCategory == "fonts" ) asset_masks = font_masks;
+	else ASSERT(0); // Unknown theme asset category
+	int i;
+	for(i = 0; asset_masks[i]; ++i)
+		GetDirListing( sCurrentThemeDir + sAssetCategory+"\\"+sFileName + asset_masks[i],
+						asPossibleElementFilePaths, false, true );
+	for(i = 0; asset_masks[i]; ++i)
+		GetDirListing( sDefaultThemeDir + sAssetCategory+"\\"+sFileName + asset_masks[i],
+						asPossibleElementFilePaths, false, true );
 
-		int i;
-		for(i = 0; masks[i]; ++i)
-			GetDirListing( sCurrentThemeDir + sAssetCategory+"\\"+sFileName + masks[i],
-				asPossibleElementFilePaths, false, true );
-
-		for(i = 0; masks[i]; ++i)
-			GetDirListing( sDefaultThemeDir + sAssetCategory+"\\"+sFileName + masks[i],
-				asPossibleElementFilePaths, false, true );
-	}
-	else if( sAssetCategory == "sounds" )
-	{
-		GetDirListing( sCurrentThemeDir + sAssetCategory+"\\"+sFileName + ".set", asPossibleElementFilePaths, false, true );
-		GetDirListing( sCurrentThemeDir + sAssetCategory+"\\"+sFileName + ".mp3", asPossibleElementFilePaths, false, true );
-		GetDirListing( sCurrentThemeDir + sAssetCategory+"\\"+sFileName + ".ogg", asPossibleElementFilePaths, false, true );
-		GetDirListing( sCurrentThemeDir + sAssetCategory+"\\"+sFileName + ".wav", asPossibleElementFilePaths, false, true );
-		GetDirListing( sCurrentThemeDir + sAssetCategory+"\\"+sFileName + ".redir", asPossibleElementFilePaths, false, true );
-
-		GetDirListing( sDefaultThemeDir + sAssetCategory+"\\"+sFileName + ".set", asPossibleElementFilePaths, false, true );
-		GetDirListing( sDefaultThemeDir + sAssetCategory+"\\"+sFileName + ".mp3", asPossibleElementFilePaths, false, true );
-		GetDirListing( sDefaultThemeDir + sAssetCategory+"\\"+sFileName + ".ogg", asPossibleElementFilePaths, false, true );
-		GetDirListing( sDefaultThemeDir + sAssetCategory+"\\"+sFileName + ".wav", asPossibleElementFilePaths, false, true );
-		GetDirListing( sDefaultThemeDir + sAssetCategory+"\\"+sFileName + ".redir", asPossibleElementFilePaths, false, true );
-	}
-	else if( sAssetCategory == "fonts" )
-	{
-		GetDirListing( sCurrentThemeDir + sAssetCategory+"\\"+sFileName + ".font", asPossibleElementFilePaths, false, true );
-		GetDirListing( sCurrentThemeDir + sAssetCategory+"\\"+sFileName + ".redir", asPossibleElementFilePaths, false, true );
-
-		GetDirListing( sDefaultThemeDir + sAssetCategory+"\\"+sFileName + ".font", asPossibleElementFilePaths, false, true );
-		GetDirListing( sDefaultThemeDir + sAssetCategory+"\\"+sFileName + ".redir", asPossibleElementFilePaths, false, true );
-	}
-	else
-	{
-		ASSERT(0); // Unknown theme asset category;
-	}
-
-	
 	if( asPossibleElementFilePaths.GetSize() == 0 )
 	{
 #ifdef _DEBUG
