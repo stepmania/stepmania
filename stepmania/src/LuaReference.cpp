@@ -141,8 +141,7 @@ CString LuaData::Serialize() const
 
 	/* The return value is a string, which we store in m_sSerializedData. */
 	const char *pString = lua_tostring( LUA->L, -1 );
-	if( pString == NULL )
-		FAIL_M( "Serialize() didn't return a string" );
+	ASSERT_M( pString != NULL, "Serialize() didn't return a string" );
 
 	CString sRet = pString;
 	lua_pop( LUA->L, 1 );
