@@ -398,6 +398,7 @@ void ForceCrashHandler( const char *reason )
 	RunCrashHandler( &crash );
 }
 
+#if defined(LINUX)
 void ForceCrashHandlerDeadlock( CString reason, const BacktraceContext *ctx )
 {
 	CrashData crash;
@@ -427,6 +428,7 @@ void ForceCrashHandlerDeadlock( CString reason, uint64_t iCrashHandle )
 
 	_exit(1);
 }
+#endif
 
 /* XXX test for recursive crashes here (eg. GetBacktrace crashing) */
 
