@@ -184,11 +184,18 @@ struct StackFrame
 	const void *return_address;
 };
 
-/* Return true if the given stack pointer is in readable memory. */
+/* Return true if the given pointer is in readable memory, and on the stack. */
 bool IsOnStack( const void *p )
 {
 	int val = find_address( p, g_ReadableBegin, g_ReadableEnd );
 	return val != -1 && (val == g_StackBlock1 || val == g_StackBlock2 );
+}
+
+/* Return true if the given pointer is in executable memory. */
+bool IsExecutableAddress( const void *p )
+{
+	int val = find_address( p, g_ExecutableBegin, g_ExecutableEnd );
+	return val != -1;
 }
 
 /* Return true if the given stack frame is in readable memory. */
@@ -242,15 +249,15 @@ static bool PointsToValidCall( const void *ptr )
 		return true;
 
 	// FF D0-D7					CALL reg32
-	if (len >= 2 && buf[-2] == '\xff' && (buf[-1]&0xF8) == '\xd0')
+	if (len >= 2 && buf[-2] == '\xff' && char(buf[-1]&0xF8) == '\xd0')
 		return true;
 
 	// FF 50-57 xx				CALL [reg32+reg32*scale+disp8]
-	if (len >= 3 && buf[-3] == '\xff' && (buf[-2]&0xF8) == '\x50')
+	if (len >= 3 && buf[-3] == '\xff' && char(buf[-2]&0xF8) == '\x50')
 		return true;
 
 	// FF 90-97 xx xx xx xx xx	CALL [reg32+reg32*scale+disp32]
-	if (len >= 7 && buf[-7] == '\xff' && (buf[-6]&0xF8) == '\x90')
+	if (len >= 7 && buf[-7] == '\xff' && char(buf[-6]&0xF8) == '\x90')
 		return true;
 
 	return false;
@@ -272,8 +279,7 @@ bool IsValidFrame( const StackFrame *frame )
 		return false;
 
 	/* The return address should be in a readable, executable page. */
-	int val = find_address( frame->return_address, g_ExecutableBegin, g_ExecutableEnd );
-	if( val == -1 )
+	if( !IsExecutableAddress( frame->return_address ) )
 		return false;
 
 	/* The return address should follow a CALL opcode. */
@@ -285,7 +291,7 @@ bool IsValidFrame( const StackFrame *frame )
 
 /* This x86 backtracer attempts to walk the stack frames.  If we come to a
  * place that doesn't look like a valid frame, we'll look forward and try
- * to find it again. */
+ * to find one again. */
 static void do_backtrace( const void **buf, size_t size, const BacktraceContext *ctx )
 {
 	/* Read /proc/pid/maps to find the address range of the stack. */
@@ -296,17 +302,30 @@ static void do_backtrace( const void **buf, size_t size, const BacktraceContext 
 	g_StackBlock1 = find_address( ctx->esp, g_ReadableBegin, g_ReadableEnd );
 	g_StackBlock2 = find_address( SavedStackPointer, g_ReadableBegin, g_ReadableEnd );
 
-	/* If eip is valid, put it at the top of the backtrace. */
+	/* Put eip at the top of the backtrace. */
+	/* XXX: We want EIP even if it's not valid, but we can't put NULL on the
+	 * list, since it's NULL-terminated.  Hmm. */
 	unsigned i=0;
 	if( i < size-1 && ctx->eip ) // -1 for NULL
 		buf[i++] = ctx->eip;
+
+	/* If we did a CALL to an invalid address (eg. call a NULL callback), then
+	 * we won't have a stack frame for the function that called it (since the
+	 * stack frame is set up by the called function), but if esp hasn't been
+	 * changed after the CALL, the return address will be esp[0].  Grab it. */
+	if( IsOnStack( ctx->esp ) )
+	{
+		const void *p = ((const void **) ctx->esp)[0];
+		if( IsExecutableAddress( p ) && PointsToValidCall( p ) && i < size-1 ) // -1 for NULL
+			buf[i++] = p;
+	}
 
 	/* ebp is usually the frame pointer. */
 	const StackFrame *frame = (StackFrame *) ctx->ebp;
 
 	/* If ebp doesn't point to a valid stack frame, we're probably in
 	 * -fomit-frame-pointer code.  Ignore it; use esp instead.  It probably
-	 * won't * point to a stack frame, but it should at least give us a starting
+	 * won't point to a stack frame, but it should at least give us a starting
 	 * point in the stack. */
 	if( !IsValidFrame( frame ) )
 		frame = (StackFrame *) ctx->esp;
