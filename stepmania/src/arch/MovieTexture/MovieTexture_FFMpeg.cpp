@@ -885,8 +885,10 @@ void MovieTexture_FFMpeg::DecoderThread()
 			SDL_Delay( int(1000*fTime) );
 
 		{
+			/* The only reason m_BufferFinished might be non-zero right now (before
+			 * ConvertFrame()) is if we're quitting. */
 			int n = SDL_SemValue( m_BufferFinished );
-			ASSERT_M( n == 0, ssprintf("%i", n) );
+			ASSERT_M( n == 0 || m_State == DECODER_QUIT, ssprintf("%i, %i", n, m_State) );
 		}
 		ConvertFrame();
 
