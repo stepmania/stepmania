@@ -33,9 +33,9 @@
 #include "NotesLoaderKSF.h"
 #include "NotesWriterDWI.h"
 
+#include "SDL.h"
+#include "SDL_image.h"
 
-// XXX needed for D3DXGetImageInfo.  Remove this ASAP!
-#include "D3DX8.h"
 
 const int FILE_CACHE_VERSION = 102;	// increment this when Song or Notes changes to invalidate cache
 
@@ -482,20 +482,24 @@ void Song::TidyUpData()
 		if( HasCDTitle()  &&  stricmp(m_sCDTitleFile, arrayImages[i])==0 )
 			continue;	// skip
 
-		D3DXIMAGE_INFO ddii;
-		if( !FAILED( D3DXGetImageInfoFromFile( m_sSongDir + arrayImages[i], &ddii ) ) )
+		SDL_Surface *img = IMG_Load( m_sSongDir + arrayImages[i] );
+		if( img )
 		{
-			if( !HasBackground()  &&  ddii.Width >= 320  &&  ddii.Height >= 240 )
+			int width = img->w;
+			int height = img->h;
+			SDL_FreeSurface( img );
+
+			if( !HasBackground()  &&  width >= 320  &&  height >= 240 )
 			{
 				m_sBackgroundFile = arrayImages[i];
 				continue;
 			}
-			if( !HasBanner()  &&  100 < ddii.Width &&  ddii.Width < 320  &&  50 < ddii.Height  &&  ddii.Height < 240 )
+			if( !HasBanner()  &&  100<width  &&  width<320  &&  50<height  &&  height<240 )
 			{
 				m_sBannerFile = arrayImages[i];
 				continue;
 			}
-			if( !HasCDTitle()  &&  ddii.Width <= 100  &&  ddii.Height <= 50 )
+			if( !HasCDTitle()  &&  width<=100  &&  height<=50 )
 			{
 				m_sCDTitleFile = arrayImages[i];
 				continue;
@@ -528,10 +532,31 @@ void Song::TidyUpData()
 		}
 	}
 
+	ReCalulateRadarValuesAndLastBeat();
+
+	// challenge notes are encoded as smaniac.  If there is only one Notes for 
+	// a NotesType and it's "smaniac", then convert it to "Challenge"
+	for( NotesType nt=(NotesType)0; nt<NUM_NOTES_TYPES; nt=(NotesType)(nt+1) )
+	{
+		CArray<Notes*,Notes*> apNotes;
+		GetNotesThatMatch( nt, apNotes );
+		if( apNotes.size() == 1 )
+		{
+			if( 0 == apNotes[0]->m_sDescription.CompareNoCase("smaniac") )
+			{
+				apNotes[0]->m_sDescription = "Challenge";
+				apNotes[0]->m_Difficulty = DIFFICULTY_HARD;
+			}
+		}
+	}
+}
+
+void Song::ReCalulateRadarValuesAndLastBeat()
+{
 	//
 	// calculate radar values and first/last beat
 	//
-	for( i=0; i<m_apNotes.size(); i++ )
+	for( unsigned int i=0; i<m_apNotes.size(); i++ )
 	{
 		Notes* pNotes = m_apNotes[i];
 		NoteData tempNoteData;
@@ -552,19 +577,6 @@ void Song::TidyUpData()
 			m_fLastBeat = max( m_fLastBeat, fLastBeat );
 	}
 
-	// challenge notes are encoded as smaniac.  If there is only one Notes for 
-	// a NotesType and it's "smaniac", then convert it to "Challenge"
-	for( NotesType nt=(NotesType)0; nt<NUM_NOTES_TYPES; nt=(NotesType)(nt+1) )
-	{
-		CArray<Notes*,Notes*> apNotes;
-		GetNotesThatMatch( nt, apNotes );
-		if( apNotes.size() == 1 )
-			if( 0 == apNotes[0]->m_sDescription.CompareNoCase("smaniac") )
-			{
-				apNotes[0]->m_sDescription = "Challenge";
-				apNotes[0]->m_Difficulty = DIFFICULTY_HARD;
-			}
-	}
 }
 
 void Song::GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo ) const
@@ -633,6 +645,8 @@ void Song::Save()
 		CString sNewPath = sOldPath + ".old";
 		MoveFile( sOldPath, sNewPath );
 	}
+
+	ReCalulateRadarValuesAndLastBeat();
 
 	SaveToSMFile( GetSongFilePath(), false );
 	SaveToDWIFile();
@@ -720,7 +734,7 @@ void Song::SaveToSMFile( CString sPath, bool bSavingCache )
 	for( i=0; i<m_apNotes.size(); i++ ) 
 	{
 		Notes* pNotes = m_apNotes[i];
-		if( bSavingCache  ||  pNotes->m_sDescription.Find("(autogen)") == -1 )	// If notes aren't autogen
+		if( bSavingCache  ||  !pNotes->m_bAutoGen )	// If notes aren't autogen
 			m_apNotes[i]->WriteSMNotesTag( fp );
 	}
 
@@ -741,21 +755,6 @@ void Song::SaveToDWIFile()
 
 void Song::AddAutoGenNotes()
 {
-
-// This hack is no longer needed.  I've sped up autogen.
-
-//	// This is way too slow.  Only autogen dance->pump and pump->dance
-//	CArray<NotesType,NotesType> aMissingNotesTypes;
-//	if( !SongHasNotesType(NOTES_TYPE_DANCE_SINGLE) )	aMissingNotesTypes.push_back( NOTES_TYPE_DANCE_SINGLE );
-//	if( !SongHasNotesType(NOTES_TYPE_DANCE_DOUBLE) )	aMissingNotesTypes.push_back( NOTES_TYPE_DANCE_DOUBLE );
-//	if( !SongHasNotesType(NOTES_TYPE_DANCE_SOLO) )		aMissingNotesTypes.push_back( NOTES_TYPE_DANCE_SOLO );
-//	if( !SongHasNotesType(NOTES_TYPE_PUMP_SINGLE) )		aMissingNotesTypes.push_back( NOTES_TYPE_PUMP_SINGLE );
-//	if( !SongHasNotesType(NOTES_TYPE_PUMP_DOUBLE) )		aMissingNotesTypes.push_back( NOTES_TYPE_PUMP_DOUBLE );
-//
-//	for( unsigned i=0; i<aMissingNotesTypes.size(); i++ )
-//	{
-//		NotesType ntMissing = aMissingNotesTypes[i];
-
 	for( NotesType ntMissing=(NotesType)0; ntMissing<NUM_NOTES_TYPES; ntMissing=(NotesType)(ntMissing+1) )
 	{
 next_notes_type:
@@ -769,21 +768,18 @@ next_notes_type:
 
 		unsigned j;
 
-		// look for an exact match that was created by autogen
+		// look for previously autogen'd data with the same number of tracks
 		for( j=0; j<m_apNotes.size(); j++ )
 		{
 			Notes* pOriginalNotes = m_apNotes[j];
-			if( iNumTracksOfMissing != GAMEMAN->NotesTypeToNumTracks(pOriginalNotes->m_NotesType) )
-				continue;	// no match, skip
-
-			Notes* pNewNotes = new Notes;
-			pNewNotes->m_Difficulty		= pOriginalNotes->m_Difficulty;
-			pNewNotes->m_iMeter			= pOriginalNotes->m_iMeter;
-			pNewNotes->m_sDescription	= pOriginalNotes->m_sDescription + " (autogen)";
-			pNewNotes->m_NotesType		= ntMissing;
-			pNewNotes->m_sSMNoteData	= pOriginalNotes->m_sSMNoteData;
-			this->m_apNotes.push_back( pNewNotes );
-			goto next_notes_type;
+			NotesType ntOriginal = pOriginalNotes->m_NotesType;
+			int iNumOriginalNotesTracks = GAMEMAN->NotesTypeToNumTracks(ntOriginal);
+			
+			if( pOriginalNotes->m_bAutoGen  &&  iNumTracksOfMissing == iNumOriginalNotesTracks )
+			{
+				AutoGen( ntMissing, ntOriginal );
+				goto next_notes_type;	// done searching
+			}
 		}
 
 
@@ -797,35 +793,40 @@ next_notes_type:
 			int iTrackDifference = abs(iNumTracks-iNumTracksOfMissing);
 			CArray<Notes*,Notes*> apNotes;
 			this->GetNotesThatMatch( nt, apNotes );
-			if( iTrackDifference < iBestTrackDifference && !apNotes.empty() && apNotes[0]->m_sDescription.Find("autogen")==-1 )
+			if( iTrackDifference < iBestTrackDifference && !apNotes.empty() && !apNotes[0]->m_bAutoGen )
 			{
 				ntBestMatch = nt;
 				iBestTrackDifference = iTrackDifference;
 			}
 		}
 
-		if( ntBestMatch == -1 )
-			continue;
+		if( ntBestMatch != -1 )
+			AutoGen( ntMissing, ntBestMatch );
+	}
+}
 
-		for( j=0; j<m_apNotes.size(); j++ )
+void Song::AutoGen( NotesType ntTo, NotesType ntFrom )
+{
+	int iNumTracksOfTo = GAMEMAN->NotesTypeToNumTracks(ntTo);
+
+	for( unsigned int j=0; j<m_apNotes.size(); j++ )
+	{
+		Notes* pOriginalNotes = m_apNotes[j];
+		if( pOriginalNotes->m_NotesType == ntFrom )
 		{
-			Notes* pOriginalNotes = m_apNotes[j];
-			if( pOriginalNotes->m_NotesType != ntBestMatch )
-				continue;	// skip
-
 			Notes* pNewNotes = new Notes;
 			pNewNotes->m_Difficulty		= pOriginalNotes->m_Difficulty;
 			pNewNotes->m_iMeter			= pOriginalNotes->m_iMeter;
-			pNewNotes->m_sDescription	= pOriginalNotes->m_sDescription + " (autogen)";
-			pNewNotes->m_NotesType		= ntMissing;
+			pNewNotes->m_sDescription	= pOriginalNotes->m_sDescription;
+			pNewNotes->m_bAutoGen		= true;
+			pNewNotes->m_NotesType		= ntTo;
 
 			NoteData originalNoteData;
 			NoteData newNoteData;
 			pOriginalNotes->GetNoteData( &originalNoteData );
-			newNoteData.LoadTransformedSlidingWindow( &originalNoteData, iNumTracksOfMissing );
+			newNoteData.LoadTransformedSlidingWindow( &originalNoteData, iNumTracksOfTo );
 			pNewNotes->SetNoteData( &newNoteData );
 			this->m_apNotes.push_back( pNewNotes );
-			goto next_notes_type;
 		}
 	}
 }

@@ -752,14 +752,12 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			// copy edit into current Notes
 			Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
 			ASSERT( pNotes );
-			
-			// strip out the autogen marker if any.  The autogen marker would have caused these Notes not to be saved to disk.
-			pNotes->m_sDescription.Replace( " (autogen)", "" );
+			pNotes->m_bAutoGen = false;		// set not autogen so these Notes will be saved to disk.
 
 			pNotes->SetNoteData( &m_NoteFieldEdit );
 			GAMESTATE->m_pCurSong->Save();
-			SCREENMAN->SystemMessage( "Saved as SM and DWI." );
 
+			SCREENMAN->SystemMessage( "Saved as SM and DWI." );
 			SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","edit save") );
 		}
 		break;

@@ -248,8 +248,13 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		const float fXBottomRight	= fXBottom + fFrameWidth/2;
 		const float fTopDistFromTailTop		= fYTop - fYTailTop;
 		const float fBottomDistFromTailTop	= fYBottom - fYTailTop;
-		const float fTexCoordTop	= SCALE( fTopDistFromTailTop,    0, fFrameHeight, 0.5f, 1.0f );
-		const float fTexCoordBottom = SCALE( fBottomDistFromTailTop, 0, fFrameHeight, 0.5f, 1.0f );
+			  float fTexCoordTop	= SCALE( fTopDistFromTailTop,    0, fFrameHeight, 0.5f, 1.0f );
+			  float fTexCoordBottom = SCALE( fBottomDistFromTailTop, 0, fFrameHeight, 0.5f, 1.0f );
+		if( fTexCoordTop > 1 && fTexCoordBottom > 1 )
+		{
+			fTexCoordTop -= (int)fTexCoordTop;
+			fTexCoordBottom -= (int)fTexCoordTop;
+		}
 		ASSERT( fBottomDistFromTailTop-0.001 <= fFrameHeight );
 		const float fTexCoordLeft	= bActive ? 0.25f : 0.00f;
 		const float fTexCoordRight	= bActive ? 0.50f : 0.25f;
@@ -294,8 +299,13 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		const float fXBottomRight	= fXBottom + fFrameWidth/2;
 		const float fTopDistFromTailTop		= fYTailTop - fYTop;
 		const float fBottomDistFromTailTop	= fYTailTop - fYBottom;
-		const float fTexCoordTop	= SCALE( fTopDistFromTailTop,    0, fBodyHeight, 1, 0 );
-		const float fTexCoordBottom = SCALE( fBottomDistFromTailTop, 0, fBodyHeight, 1, 0 );
+			  float fTexCoordTop	= SCALE( fTopDistFromTailTop,    0, fBodyHeight, 1, 0 );
+			  float fTexCoordBottom = SCALE( fBottomDistFromTailTop, 0, fBodyHeight, 1, 0 );
+		if( fTexCoordTop > 1 && fTexCoordBottom > 1 )
+		{
+			fTexCoordTop -= (int)fTexCoordTop;
+			fTexCoordBottom -= (int)fTexCoordTop;
+		}
 		const float fTexCoordLeft	= bActive ? 0.75f : 0.50f;
 		const float fTexCoordRight	= bActive ? 1.00f : 0.75f;
 		const float	fAlphaTop		= ArrowGetAlpha( m_PlayerNumber, fYTop, fPercentFadeToFail );

@@ -39,6 +39,7 @@ public:
 public:
 	NotesType		m_NotesType;
 	CString			m_sDescription;		// This text is displayed next to thte number of feet when a song is selected
+	bool			m_bAutoGen;			// Was created by autogen?
 	Difficulty		m_Difficulty;		// difficulty classification
 	int				m_iMeter;			// difficulty rating from 1-10
 	float			m_fRadarValues[NUM_RADAR_VALUES];	// between 0.0-1.2 starting from 12-o'clock rotating clockwise

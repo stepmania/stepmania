@@ -62,6 +62,7 @@ public:
 	bool LoadFromSongDir( CString sDir );
 
 	void TidyUpData();	// call after loading to clean up invalid data
+	void ReCalulateRadarValuesAndLastBeat();	// called by TidyUpData, and after saving
 
 	void SaveToSMFile( CString sPath, bool bSavingCache );
 	void Save();	// saves SM and DWI
@@ -72,6 +73,7 @@ public:
 	CString GetCacheFilePath() const;
 
 	void AddAutoGenNotes();
+	void AutoGen( NotesType ntTo, NotesType ntFrom );	// create Notes of type ntTo from Notes of type ntFrom
 
 	/* Directory this song data came from: */
 	CString m_sSongDir;

@@ -273,6 +273,14 @@ void RageDisplay::DrawQuads( const RageVertex v[], int iNumVerts )
 	ASSERT( (iNumVerts%4) == 0 );
 	g_vertMode = GL_QUADS;
 	AddVerts( v, iNumVerts );
+
+	glInterleavedArrays( GL_T2F_C4UB_V3F, sizeof(RageVertex), g_vertQueue );
+	glDrawArrays( g_vertMode, 0, g_iNumVerts );
+
+	g_iVertsRenderedSinceLastCheck += g_iNumVerts;
+	g_iNumVerts = 0;
+
+	g_iDrawsSinceLastCheck++;
 }
 void RageDisplay::DrawFan( const RageVertex v[], int iNumVerts )
 {

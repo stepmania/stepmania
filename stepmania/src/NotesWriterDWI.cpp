@@ -54,19 +54,20 @@ char NotesWriterDWI::NotesToDWIChar( bool bCol1, bool bCol2, bool bCol3, bool bC
 CString NotesWriterDWI::NotesToDWIString( TapNote cNoteCol1, TapNote cNoteCol2, TapNote cNoteCol3, TapNote cNoteCol4, TapNote cNoteCol5, TapNote cNoteCol6 )
 {
 	char cShow = NotesToDWIChar( 
-		cNoteCol1 != TAP_EMPTY && cNoteCol1!=TAP_HOLD_HEAD,
-		cNoteCol2 != TAP_EMPTY && cNoteCol2!=TAP_HOLD_HEAD,
-		cNoteCol3 != TAP_EMPTY && cNoteCol3!=TAP_HOLD_HEAD,
-		cNoteCol4 != TAP_EMPTY && cNoteCol4!=TAP_HOLD_HEAD,
-		cNoteCol5 != TAP_EMPTY && cNoteCol5!=TAP_HOLD_HEAD,
-		cNoteCol6 != TAP_EMPTY && cNoteCol6!=TAP_HOLD_HEAD );
-	char cHold = NotesToDWIChar( cNoteCol1==TAP_HOLD_HEAD, 
-								 cNoteCol2==TAP_HOLD_HEAD, 
-								 cNoteCol3==TAP_HOLD_HEAD, 
-								 cNoteCol4==TAP_HOLD_HEAD,
-								 cNoteCol5==TAP_HOLD_HEAD,
-								 cNoteCol6==TAP_HOLD_HEAD );
-	
+		cNoteCol1!=TAP_EMPTY,
+		cNoteCol2!=TAP_EMPTY,
+		cNoteCol3!=TAP_EMPTY,
+		cNoteCol4!=TAP_EMPTY,
+		cNoteCol5!=TAP_EMPTY,
+		cNoteCol6!=TAP_EMPTY );
+	char cHold = NotesToDWIChar( 
+		cNoteCol1==TAP_HOLD_HEAD, 
+		cNoteCol2==TAP_HOLD_HEAD, 
+		cNoteCol3==TAP_HOLD_HEAD, 
+		cNoteCol4==TAP_HOLD_HEAD,
+		cNoteCol5==TAP_HOLD_HEAD,
+		cNoteCol6==TAP_HOLD_HEAD );
+
 	if( cHold != '0' )
 		return ssprintf( "%c!%c", cShow, cHold );
 	else

@@ -143,13 +143,13 @@ public:
     RageColor& operator *= ( float f )						{ r*=f; g*=f; b*=f; a*=f; }
     RageColor& operator /= ( float f )						{ r/=f; g/=f; b/=f; a/=f; }
 
-    // binarg operators
+    // binary operators
     RageColor operator + ( const RageColor& other ) const	{ return RageColor( r+other.r, g+other.g, b+other.b, a+other.a ); }
     RageColor operator - ( const RageColor& other ) const	{ return RageColor( r-other.r, g-other.g, b-other.b, a-other.a ); }
     RageColor operator * ( float f ) const					{ return RageColor( r*f, g*f, b*f, a*f ); }
     RageColor operator / ( float f ) const					{ return RageColor( r/f, g/f, b/f, a/f ); }
 
-	friend RageVector4 operator * ( float f, const RageVector4& other )	{ return other*f; }
+	friend RageVector4 operator * ( float f, const RageVector4& other )	{ return other*f; }		// What is this for?  Did I add this?  -Chris
 
 	/* unneeded; this is a POD type */
 //    bool operator == ( const RageColor& other ) const		{ return r==other.r && g==other.g && b==other.b && a==other.a; }
@@ -159,12 +159,14 @@ public:
 };
 
 /* Convert floating-point 0..1 value to integer 0..255 value. */
-inline unsigned char FTOC(float a) { return (unsigned char)(a * 255.f); }
+inline unsigned char FTOC(float a) { if(a<0) a=0; if(a>1) a=1; return (unsigned char)(a*255.f); }	// need clamping to handle values <0.0 and > 1.0
 
 /* Color type used only in vertex lists.  OpenGL expects colors in
  * r, g, b, a order, independent of endianness, so storing them this
  * way avoids endianness problems.  Don't try to manipulate this; only
  * manip RageColors. */
+/* Perhaps the math in RageColor could be moved to RaveVColor.  We don't need the 
+ * precision of a float for our calculations anyway.   -Chris */
 class RageVColor
 {
 	unsigned char r, g, b, a;

@@ -31,9 +31,11 @@ TransitionFade::~TransitionFade()
 
 void TransitionFade::DrawPrimitives()
 {
-	const float fPercentageOpaque = 1 - GetPercentageOpen();
+	float fPercentageOpaque = 1 - GetPercentageOpen();
 	if( fPercentageOpaque == 0 )
 		return;	// draw nothing
+
+	CLAMP( fPercentageOpaque, 0, 1 );
 
 	RageColor colorTemp = GetDiffuse();
 	colorTemp.a = fPercentageOpaque;

@@ -67,7 +67,7 @@ void RandomSample::PlayRandom()
 	// play one of the samples
 	if( m_pSamples.empty() )
 	{
-		LOG->Trace( "WARNING:  Tried to play a RandomSample that has 0 sounds loaded." );
+//		LOG->Trace( "WARNING:  Tried to play a RandomSample that has 0 sounds loaded." );
 		return;
 	}
 

@@ -40,6 +40,7 @@ Notes::Notes()
 	 * it'd trip obscure asserts all over the place, so I'll wait
 	 * until after b6 to do this. -glenn */
 	m_NotesType = NOTES_TYPE_DANCE_SINGLE;
+	m_bAutoGen = false;
 	m_Difficulty = CLASS_INVALID;
 	m_iMeter = 0;
 	ZeroMemory(m_fRadarValues, sizeof(m_fRadarValues));

@@ -2,6 +2,18 @@
 Fix
 /////////////////////////
 
+I'd also like to see "custom steps" implemented-- if you hit right twice on the arcade, you get to the custom (memcard) steps. I would like to see it so that any difficulty that isn't one of the standards gets put in this category (perhaps another way would be to put levels labeled "custom" there)
+
+Only being able to see one difficulty at a time doesnt' work so well for a simulator as it does for the arcade, because things are so varied-- you have to end up doing a lot of searching to find what level you want to play. Some indication of how many feet the other options are would be nice.
+
+1) The main menu should only be acessable by keyboard presses. Too many times people got in strange menus, quit the game, etc, without intending to.
+
+2) pressing both starts at the same time should not reset the game. The most common way to start doubles or versus is for someone to go up to the machine and press both starts at the same time. Same for selecting difficulty. This caused a LOT of confusion.
+
+a WIBNI (Wouldn't it be nice if...) is to add a "training" mode. basically, it would take a song, turn it into only having steps on 1 and 3. Similar to DDR USA. It was a real bear finidng songs for the newbies. (This is what prompted me to start lint-- there are many songs with only maniac steps out there!)
+
+play intro.mp3 if available.
+
 rename Notes to Pattern
 
 You'll notice that if you add up the Perfects and Greats, they are far less than the max combo. Where did they go? Apparently Jumps count for 2 steps during normal game play, but ONLY for max combo. 
