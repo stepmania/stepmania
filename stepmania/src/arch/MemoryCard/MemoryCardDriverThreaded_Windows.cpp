@@ -106,7 +106,7 @@ void MemoryCardDriverThreaded_Windows::MountThreadDoOneUpdate()
 	}
 	m_dwLastLogicalDrives = dwNewLogicalDrives;
 
-	::Sleep( 100 );
+	usleep( 100000 );
 }
 
 void MemoryCardDriverThreaded_Windows::Mount( UsbStorageDevice* pDevice, CString sMountPoint )
