@@ -104,7 +104,7 @@ void ApplyGraphicOptions()
 void ExitGame()
 {
 	SDL_Event *event;
-	event = (SDL_Event *) malloc(sizeof(event));
+	event = (SDL_Event *) malloc(sizeof(SDL_Event));
 	event->type = SDL_QUIT;
 	SDL_PushEvent(event);
 }
