@@ -1275,7 +1275,7 @@ XNode* Profile::SaveScreenshotDataCreateNode() const
 
 		pScreenshotNode->AppendChild( "FileName", ss.sFileName );
 		pScreenshotNode->AppendChild( "MD5", ss.sMD5);
-		pScreenshotNode->AppendChild( "Time", ss.time);
+		pScreenshotNode->AppendChild( "Time", (int) ss.time);
 	}
 
 	return pNode;
