@@ -8,7 +8,6 @@
 #include "ScreenGameplay.h"
 #include "GameState.h"
 #include "Course.h"
-#include "SDL_utils.h"
 #include "SongManager.h"
 #include "NoteDataUtil.h"
 #include "RageLog.h"
