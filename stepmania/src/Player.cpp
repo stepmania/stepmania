@@ -233,14 +233,15 @@ Player::Player( PlayerOptions po, PlayerNumber pn )
 void Player::SetX( float fX )
 {
 	m_fArrowsCenterX = fX;
+  int fXInt = (int)m_fArrowsCenterX;
 
-	SetGrayArrowsX(fX); 
-	SetGhostArrowsX(fX); 
-	SetColorArrowsX(fX);	
-	SetJudgementX(fX);	
-	SetComboX(fX);	
-	SetScoreX(fX);	
-	SetLifeMeterX(fX);	
+	SetGrayArrowsX(fXInt); 
+	SetGhostArrowsX(fXInt); 
+	SetColorArrowsX(fXInt);	
+	SetJudgementX(fXInt);	
+	SetComboX(fXInt);	
+	SetScoreX(fXInt);	
+	SetLifeMeterX(fXInt);	
 
 	m_frameJudgementAndCombo.SetX(fX);
 }
@@ -1045,7 +1046,7 @@ float Player::GetColorArrowYPos( int iStepIndex, float fSongBeat )
 		fYOffset *= 1.4f / ((fYOffset+SCREEN_HEIGHT/1.6f)/SCREEN_HEIGHT); 
 		break;
 	case PlayerOptions::EFFECT_WAVE:
-		fYOffset += 15*sin( fYOffset/38 ); 
+		fYOffset += 15.0f*(float)sin( fYOffset/38.0f ); 
 		break;
 	}
 	float fYPos = fYOffset + GRAY_ARROW_Y;
@@ -1064,7 +1065,7 @@ float Player::GetColorArrowYOffset( int iStepIndex, float fSongBeat )
 		fYOffset *= 1.4f / ((fYOffset+SCREEN_HEIGHT/1.6f)/SCREEN_HEIGHT); 
 		break;
 	case PlayerOptions::EFFECT_WAVE:
-		fYOffset += 15*sin( fYOffset/38 ); 
+		fYOffset += 15.0f*(float)sin( fYOffset/38.0f ); 
 		break;
 	}
 	return fYOffset;
@@ -1180,7 +1181,7 @@ void Player::SetJudgement( StepScore score )
 		m_sprJudgement.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	// visible
 		
 		m_frameJudgementAndCombo.SetZoom( 1.35f );
-		m_frameJudgementAndCombo.BeginTweening( JUDGEMENT_DISPLAY_TIME/5.0 );
+		m_frameJudgementAndCombo.BeginTweening( JUDGEMENT_DISPLAY_TIME/5.0f );
 		m_frameJudgementAndCombo.SetTweenZoom( 1.0f );
 		
 /*		m_sprJudgement.SetZoom( 1.5f );
@@ -1216,7 +1217,7 @@ void Player::SetHoldJudgement( int iCol, HoldStepScore::HoldScore score )
 		if( m_PlayerOptions.m_bReverseScroll )	fY = SCREEN_HEIGHT - fY;
 		m_sprHoldJudgement[iCol].SetY( fY );
 		m_sprHoldJudgement[iCol].SetZoom( 1.5f );
-		m_sprHoldJudgement[iCol].BeginTweening( JUDGEMENT_DISPLAY_TIME/3.0 );
+		m_sprHoldJudgement[iCol].BeginTweening( JUDGEMENT_DISPLAY_TIME/3.0f );
 		m_sprHoldJudgement[iCol].SetTweenZoom( 1.0f );
 	}
 }
@@ -1291,8 +1292,8 @@ void Player::EndCombo()
 
 void Player::SetLifeMeterX( int iNewX )
 {
-	m_sprLifeMeterFrame.SetXY( iNewX, LIFEMETER_Y );
-	m_sprLifeMeterPills.SetXY( iNewX, LIFEMETER_PILLS_Y );
+	m_sprLifeMeterFrame.SetXY( (float)iNewX, LIFEMETER_Y );
+	m_sprLifeMeterPills.SetXY( (float)iNewX, LIFEMETER_PILLS_Y );
 }
 
 void Player::UpdateLifeMeter( float fDeltaTime )
@@ -1310,7 +1311,7 @@ void Player::DrawLifeMeter()
 
 	float iX = m_sprLifeMeterFrame.GetX() - m_sprLifeMeterFrame.GetZoomedWidth()/2 + 27;
 	int iNumPills = (int)(m_sprLifeMeterPills.GetNumStates() * m_fLifePercentage);
-	int iPillWidth = m_sprLifeMeterPills.GetZoomedWidth();
+	int iPillWidth = (int)m_sprLifeMeterPills.GetZoomedWidth();
 
 	for( int i=0; i<iNumPills; i++ )
 	{
@@ -1356,8 +1357,8 @@ void Player::ChangeLife( StepScore score )
 
 void Player::SetScoreX( int iNewX )
 {
-	m_sprScoreFrame.SetXY( iNewX, SCORE_Y );
-	m_textScoreNumber.SetXY(  iNewX, SCORE_Y );
+	m_sprScoreFrame.SetXY( (float)iNewX, SCORE_Y );
+	m_textScoreNumber.SetXY(  (float)iNewX, SCORE_Y );
 }
 
 void Player::UpdateScore( float fDeltaTime )
