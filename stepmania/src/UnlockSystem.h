@@ -13,9 +13,6 @@
 	Andrew Wong
 -----------------------------------------------------------------------------
 */
-enum UnlockTypes { UNLOCK_AP, UNLOCK_DP, UNLOCK_SP,
-				UNLOCK_EC, UNLOCK_EF, UNLOCK_SC,
-				UNLOCK_TT, UNLOCK_RO};
 
 class Song;
 
@@ -117,5 +114,6 @@ private:
 	// makes RouletteSeeds more efficient
 };
 
+extern UnlockSystem*	UNLOCKSYS;  // global and accessable from anywhere in program
 
 #endif

@@ -355,7 +355,7 @@ void ScoreKeeper5th::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTap
 		if( m_iCurToastyCombo==250 && !GAMESTATE->m_bDemonstrationOrJukebox )
 		{
 			SCREENMAN->PostMessageToTopScreen( SM_PlayToasty, 0 );
-			GAMESTATE->m_pUnlockingSys->UnlockToasty();
+			UNLOCKSYS->UnlockToasty();
 		}
 		break;
 	default:

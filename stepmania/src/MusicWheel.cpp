@@ -335,12 +335,12 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CStrin
 			if( so!=SORT_ROULETTE && !pSong->NormallyDisplayed() )
 				continue;
 			if( so==SORT_ROULETTE && !(pSong->RouletteDisplayed()
-				|| GAMESTATE->m_pUnlockingSys->SongIsRoulette( pSong )) )
+				|| UNLOCKSYS->SongIsRoulette( pSong )) )
 				continue;
 		}
 
 		// If we're using unlocks, check it here to prevent from being shown
-		if( so!=SORT_ROULETTE && GAMESTATE->m_pUnlockingSys->SongIsLocked(pSong) )
+		if( so!=SORT_ROULETTE && UNLOCKSYS->SongIsLocked(pSong) )
 			continue;
 
 		vector<Steps*> arraySteps;
@@ -625,7 +625,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			Course* pCourse = apCourses[c];
 
 			// if unlocks are on, make sure it is unlocked
-			if ( GAMESTATE->m_pUnlockingSys->CourseIsLocked(pCourse) )
+			if ( UNLOCKSYS->CourseIsLocked(pCourse) )
 				continue;
 
 			CString sThisSection = "";
@@ -1203,7 +1203,7 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 		return false;
 	case TYPE_SONG:
 		if (PREFSMAN->m_bUseUnlockSystem)
-			GAMESTATE->m_pUnlockingSys->RouletteUnlock( m_CurWheelItemData[m_iSelection]->m_pSong );
+			UNLOCKSYS->RouletteUnlock( m_CurWheelItemData[m_iSelection]->m_pSong );
 		// fall-through - we want to check for unlocking only if its a song
 	case TYPE_COURSE:
 		return true;

@@ -112,7 +112,7 @@ void ScreenOptionsMenu::GoToNextState()
 //		case OM_SOUND:			SCREENMAN->SetNewScreen("ScreenSoundOptions");		break;
 		case OM_RELOAD:
 			SONGMAN->Reload();
-			GAMESTATE->m_pUnlockingSys->UpdateSongs();
+			UNLOCKSYS->UpdateSongs();
 			SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 			break;
 		default:	// Exit

@@ -1847,7 +1847,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			
 			// if unlocks are on, update fail extra stage count
 			if (PREFSMAN->m_bUseUnlockSystem)
-				GAMESTATE->m_pUnlockingSys->UnlockFailExtraStage();
+				UNLOCKSYS->UnlockFailExtraStage();
 		}
 		
 		// Feels hackish. Feel free to make cleaner.

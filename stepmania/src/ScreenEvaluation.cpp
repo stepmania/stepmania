@@ -150,7 +150,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			(GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() ) &&
 			grade[p] > GRADE_E &&
 			m_Type != summary)
-					GAMESTATE->m_pUnlockingSys->UnlockClearExtraStage();
+					UNLOCKSYS->UnlockClearExtraStage();
 	}
 
 
@@ -174,15 +174,15 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 					// update unlock data if unlocks are on
 					if ( PREFSMAN->m_bUseUnlockSystem )
 					{
-						GAMESTATE->m_pUnlockingSys->UnlockClearStage();
-						GAMESTATE->m_pUnlockingSys->UnlockAddAP( grade[p] );
-						GAMESTATE->m_pUnlockingSys->UnlockAddSP( grade[p] );
+						UNLOCKSYS->UnlockClearStage();
+						UNLOCKSYS->UnlockAddAP( grade[p] );
+						UNLOCKSYS->UnlockAddSP( grade[p] );
 
 						// we want to save dance points here if we are in event mode.
 						// otherwise, dance points will never get saved except
 						// in nonstop mode.
 						if( PREFSMAN->m_bEventMode )
-							GAMESTATE->m_pUnlockingSys->UnlockAddDP( (float)stageStats.iActualDancePoints[p] );
+							UNLOCKSYS->UnlockAddDP( (float)stageStats.iActualDancePoints[p] );
 
 					}
 				}
@@ -214,7 +214,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 
 			// If unlocking is enabled, save the dance points
 			if( PREFSMAN->m_bUseUnlockSystem )
-				GAMESTATE->m_pUnlockingSys->UnlockAddDP( fTotalDP );
+				UNLOCKSYS->UnlockAddDP( fTotalDP );
 		}
 		break;
 	case course:
@@ -247,9 +247,9 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 					if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 						continue;	// skip
 
-					GAMESTATE->m_pUnlockingSys->UnlockAddDP( (float) stageStats.iActualDancePoints[p] );
-					GAMESTATE->m_pUnlockingSys->UnlockAddAP( (float) stageStats.iSongsPassed[p] );
-					GAMESTATE->m_pUnlockingSys->UnlockAddSP( (float) stageStats.iSongsPassed[p] );
+					UNLOCKSYS->UnlockAddDP( (float) stageStats.iActualDancePoints[p] );
+					UNLOCKSYS->UnlockAddAP( (float) stageStats.iSongsPassed[p] );
+					UNLOCKSYS->UnlockAddSP( (float) stageStats.iSongsPassed[p] );
 				}
 			}
 			// cannot just use score since it may be nonstop mode
