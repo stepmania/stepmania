@@ -97,15 +97,12 @@ void Background::Unload()
 	m_BackgroundAnimations.RemoveAll();
 	
 	m_aBGSegments.RemoveAll();
+	m_iCurBGSegment = 0;
 }
 
 void Background::LoadFromSong( Song* pSong )
 {
-	/* Endless was crashing due to this; is there any reason not to
-	 * fix it this way? -glenn */
-	 /* Correct.  I added the same chage.    -Chris */
 	Unload();
-
 
 	const float fXZoom = RECTWIDTH(RECT_BACKGROUND) / (float)SCREEN_WIDTH;
 	const float fYZoom = RECTHEIGHT(RECT_BACKGROUND) / (float)SCREEN_HEIGHT;
