@@ -333,17 +333,17 @@ void NetworkSyncManager::StartRequest(short position)
 
 	m_packet.ClearPacket();
 
-	m_packet.Write1(3 );
+	m_packet.Write1( 3 );
 
 	unsigned char ctr=0;
 
 	Steps * tSteps;
-	tSteps = g_CurStageStats.vpSteps[PLAYER_1].back();
-	if (tSteps!=NULL)
+	tSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+	if ((tSteps!=NULL) && (GAMESTATE->IsPlayerEnabled(PLAYER_1)))
 		ctr = uint8_t(ctr+tSteps->GetMeter()*16);
 
-	tSteps = g_CurStageStats.vpSteps[PLAYER_2].back();
-	if (tSteps!=NULL)
+	tSteps = GAMESTATE->m_pCurSteps[PLAYER_2];
+	if ((tSteps!=NULL) && (GAMESTATE->IsPlayerEnabled(PLAYER_2)))
 		ctr = uint8_t(ctr+tSteps->GetMeter());
 
 	m_packet.Write1(ctr);
@@ -491,7 +491,12 @@ void NetworkSyncManager::ProcessInput()
 		case 1:	//These are in responce to when/if we send packet 0's
 		case 2: //This is already taken care of by the blocking code earlier on
 		case 3: //This is taken care of by the blocking start code
-		case 4: //Undefined
+			break;
+		case 4: 
+			{
+
+			}
+			break;
 		case 5: //Scoreboard Update
 			{	//Ease scope
 				int ColumnNumber=m_packet.Read1();

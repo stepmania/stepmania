@@ -487,6 +487,18 @@ cl                                                                              
 				RelativePath="ScreenNetworkOptions.h">
 			</File>
 			<File
+				RelativePath="ScreenNetSelectMusic.cpp">
+			</File>
+			<File
+				RelativePath="ScreenNetSelectMusic.h">
+			</File>
+			<File
+				RelativePath="ScreenNetEvaluation.cpp">
+			</File>
+			<File
+				RelativePath="ScreenNetEvaluation.h">
+			</File>
+			<File
 				RelativePath="ScreenOptions.cpp">
 			</File>
 			<File

@@ -652,6 +652,7 @@ void ScreenNetSelectMusic::UpdateGroupsListPos()
 	}	
 	m_textGroups.SetText( GroupsDisplay );
 }
+
 void ScreenNetSelectMusic::UpdateSongsList()
 {
 	m_vSongs.clear();
