@@ -242,7 +242,7 @@ void BMSLoader::SearchForDifficulty( CString sTag, Steps *pOut )
 
 	if( sTag.find( "(solo)" ) != sTag.npos )
 	{
-		pOut->SetDescription( "Edit" );
+		pOut->SetDescription( "Solo" );
 		pOut->SetDifficulty( DIFFICULTY_EDIT );
 	}
 
