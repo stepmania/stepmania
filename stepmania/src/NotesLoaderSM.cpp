@@ -74,11 +74,17 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 		else if( 0==stricmp(sValueName,"SUBTITLE") )
 			out.m_sSubTitle = sParams[1];
 
-		else if( 0==stricmp(sValueName,"TRANSLITERATION") )
-			out.m_sTransliteration = sParams[1];
-
 		else if( 0==stricmp(sValueName,"ARTIST") )
 			out.m_sArtist = sParams[1];
+
+		else if( 0==stricmp(sValueName,"TITLETRANSLIT") )
+			out.m_sMainTitleTranslit = sParams[1];
+
+		else if( 0==stricmp(sValueName,"SUBTITLETRANSLIT") )
+			out.m_sSubTitleTranslit = sParams[1];
+
+		else if( 0==stricmp(sValueName,"ARTISTTRANSLIT") )
+			out.m_sArtistTranslit = sParams[1];
 
 		else if( 0==stricmp(sValueName,"CREDIT") )
 			out.m_sCredit = sParams[1];

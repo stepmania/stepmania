@@ -627,8 +627,10 @@ void Song::SaveToSMFile( CString sPath, bool bSavingCache )
 
 	fprintf( fp, "#TITLE:%s;\n", m_sMainTitle );
 	fprintf( fp, "#SUBTITLE:%s;\n", m_sSubTitle );
-	fprintf( fp, "#TRANSLITERATION:%s;\n", m_sTransliteration );
 	fprintf( fp, "#ARTIST:%s;\n", m_sArtist );
+	fprintf( fp, "#TITLETRANSLIT:%s;\n", m_sMainTitleTranslit );
+	fprintf( fp, "#SUBTITLETRANSLIT:%s;\n", m_sSubTitleTranslit );
+	fprintf( fp, "#ARTISTTRANSLIT:%s;\n", m_sArtistTranslit );
 	fprintf( fp, "#CREDIT:%s;\n", m_sCredit );
 	fprintf( fp, "#BANNER:%s;\n", m_sBannerFile );
 	fprintf( fp, "#BACKGROUND:%s;\n", m_sBackgroundFile );
@@ -799,10 +801,8 @@ int CompareSongPointersByTitle(const void *arg1, const void *arg2)
 	const Song* pSong2 = *(const Song**)arg2;
 	
 	//Prefer transliterations to full titles
-	CString sTitle1 = pSong1->GetTransliteration();
-	CString sTitle2 = pSong2->GetTransliteration();
-	if(sTitle1.IsEmpty()) sTitle1 = pSong1->GetFullTitle();
-	if(sTitle2.IsEmpty()) sTitle2 = pSong2->GetFullTitle();
+	CString sTitle1 = pSong1->GetSortTitle();
+	CString sTitle2 = pSong2->GetSortTitle();
 
 	int ret = sTitle1.CompareNoCase(sTitle2);
 	if(ret != 0) return ret;

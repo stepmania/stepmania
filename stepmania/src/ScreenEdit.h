@@ -22,7 +22,8 @@
 #include "SnapDisplay.h"
 
 
-const int NUM_MENU_ITEMS = 25;
+const int NUM_ACTION_MENU_ITEMS = 23;
+const int NUM_NAMING_MENU_ITEMS = 6;
 
 
 class ScreenEdit : public Screen
@@ -34,7 +35,8 @@ public:
 	virtual void DrawPrimitives();
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	void InputEdit( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	void InputMenu( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
+	void InputActionMenu( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
+	void InputNamingMenu( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, bool forceShiftPressed = false );
 	void InputRecord( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	void InputPlay( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
@@ -43,11 +45,11 @@ public:
 
 protected:
 	void OnSnapModeChange();
-	void MenuItemGainFocus( int iItemIndex );
-	void MenuItemLoseFocus( int iItemIndex );
+	void MenuItemGainFocus( BitmapText* menuitem );
+	void MenuItemLoseFocus( BitmapText* menuitem );
 
 
-	enum EditMode { MODE_EDITING, MODE_MENU, MODE_RECORDING, MODE_PLAYING };
+	enum EditMode { MODE_EDITING, MODE_ACTION_MENU, MODE_NAMING_MENU, MODE_RECORDING, MODE_PLAYING };
 	EditMode m_EditMode;
 
 	Song*			m_pSong;
@@ -95,7 +97,8 @@ protected:
 	RageSoundStream	m_soundMusic;
 
 	int				m_iMenuSelection;
-	BitmapText		m_textMenu[NUM_MENU_ITEMS];
+	BitmapText		m_textActionMenu[NUM_ACTION_MENU_ITEMS];
+	BitmapText	    m_textNamingMenu[NUM_NAMING_MENU_ITEMS];
 
 	int				m_iRowLastCrossed;
 	RageSoundSample	m_soundAssistTick;

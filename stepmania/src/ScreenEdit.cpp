@@ -22,6 +22,7 @@
 #include "GameState.h"
 #include "InputFilter.h"
 
+#include <utility>
 
 //
 // Defines specific to GameScreenTitleMenu
@@ -49,9 +50,13 @@ const float EDIT_GRAY_Y		=	GRAY_ARROW_Y;
 const float PLAYER_X		=	EDIT_X;
 const float PLAYER_Y		=	SCREEN_TOP;
 
-const float MENU_ITEM_X			=	CENTER_X-200;
-const float MENU_ITEM_START_Y	=	SCREEN_TOP + 24;
-const float MENU_ITEM_SPACING_Y	=	18;
+const float ACTION_MENU_ITEM_X			=	CENTER_X-200;
+const float ACTION_MENU_ITEM_START_Y	=	SCREEN_TOP + 24;
+const float ACTION_MENU_ITEM_SPACING_Y	=	18;
+
+const float NAMING_MENU_ITEM_X			=	CENTER_X-200;
+const float NAMING_MENU_ITEM_START_Y	=	SCREEN_TOP + 24;
+const float NAMING_MENU_ITEM_SPACING_Y	=	18;
 
 const CString HELP_TEXT = 
 	"Esc: show command menu\n"
@@ -92,7 +97,7 @@ const CString SHORTCUT_TEXT = "";
 	"M: Play sample music\n";
 */
 
-const CString MENU_ITEM_TEXT[NUM_MENU_ITEMS] = {
+const CString ACTION_MENU_ITEM_TEXT[NUM_ACTION_MENU_ITEMS] = {
 	"Enter:  Set begin marker (Enter)",
 	"Space:  Set end marker (Space)",
 	"P:      Play selection",
@@ -103,9 +108,7 @@ const CString MENU_ITEM_TEXT[NUM_MENU_ITEMS] = {
 	"V:      Paste clipboard at current beat",
 	"D:      Toggle difficulty",
 	"E:      Edit description",
-	"A:      Edit main title",
-	"U:      Edit subtitle",
-	"Y:      Edit transliteration",
+	"N:      Edit Title/Subtitle/Artist & Transliterations",
 	"I:      Toggle assist tick",
 	"B:      Add/Edit background change at current beat",
 	"Ins:    Insert blank beat and shift down",
@@ -119,7 +122,7 @@ const CString MENU_ITEM_TEXT[NUM_MENU_ITEMS] = {
 	"S:      Save changes as SM and DWI",
 	"Q:      Quit"
 };
-int MENU_ITEM_KEY[NUM_MENU_ITEMS] = {
+const int ACTION_MENU_ITEM_KEY[NUM_ACTION_MENU_ITEMS] = {
 	DIK_RETURN,
 	DIK_SPACE,
 	DIK_P,
@@ -130,9 +133,7 @@ int MENU_ITEM_KEY[NUM_MENU_ITEMS] = {
 	DIK_V,
 	DIK_D,
 	DIK_E,
-	DIK_A,
-	DIK_U,
-	DIK_GRAVE,
+	DIK_N,
 	DIK_I,
 	DIK_B,
 	DIK_INSERT,
@@ -145,6 +146,24 @@ int MENU_ITEM_KEY[NUM_MENU_ITEMS] = {
 	DIK_M,
 	DIK_S,
 	DIK_Q,
+};
+
+const CString NAMING_MENU_ITEM_TEXT[NUM_NAMING_MENU_ITEMS] = {
+	"          M:   Edit main title",
+	"          S:   Edit sub title",
+	"          A:   Edit artist",
+	"Shift-M:   Edit main title transliteration",
+	"Shift-S:   Edit sub title transliteration",
+	"Shift-A:   Edit artist transliteration"
+};
+// Pairs of keystroke + ifCapital
+const std::pair<int, bool> NAMING_MENU_ITEM_KEY[NUM_NAMING_MENU_ITEMS] = {
+	std::make_pair(DIK_M, false),
+	std::make_pair(DIK_S, false),
+	std::make_pair(DIK_A, false),
+	std::make_pair(DIK_M, true),
+	std::make_pair(DIK_S, true),
+	std::make_pair(DIK_A, true),
 };
 
 const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User+1);
@@ -269,14 +288,23 @@ ScreenEdit::ScreenEdit()
 
 	m_soundAssistTick.Load(		THEME->GetPathTo("Sounds","gameplay assist tick") );
 
-	for( int i=0; i<NUM_MENU_ITEMS; i++ )
+	for( int i=0; i<NUM_ACTION_MENU_ITEMS; i++ )
 	{
-		m_textMenu[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-		m_textMenu[i].SetXY( MENU_ITEM_X, MENU_ITEM_START_Y + MENU_ITEM_SPACING_Y*i );
-		m_textMenu[i].SetHorizAlign( Actor::align_left );
-		m_textMenu[i].SetZoom( 0.5f );
-		m_textMenu[i].SetShadowLength( 2 );
-		m_textMenu[i].SetText( MENU_ITEM_TEXT[i] );
+		m_textActionMenu[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+		m_textActionMenu[i].SetXY( ACTION_MENU_ITEM_X, ACTION_MENU_ITEM_START_Y + ACTION_MENU_ITEM_SPACING_Y*i );
+		m_textActionMenu[i].SetHorizAlign( Actor::align_left );
+		m_textActionMenu[i].SetZoom( 0.5f );
+		m_textActionMenu[i].SetShadowLength( 2 );
+		m_textActionMenu[i].SetText( ACTION_MENU_ITEM_TEXT[i] );
+	}
+	for( int j=0; j<NUM_NAMING_MENU_ITEMS; j++ )
+	{
+		m_textNamingMenu[j].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+		m_textNamingMenu[j].SetXY( NAMING_MENU_ITEM_X, NAMING_MENU_ITEM_START_Y + NAMING_MENU_ITEM_SPACING_Y*j );
+		m_textNamingMenu[j].SetHorizAlign( Actor::align_left );
+		m_textNamingMenu[j].SetZoom( 0.5f );
+		m_textNamingMenu[j].SetShadowLength( 2 );
+		m_textNamingMenu[j].SetText( NAMING_MENU_ITEM_TEXT[j] );
 	}
 	m_iMenuSelection = 0;
 
@@ -377,10 +405,16 @@ void ScreenEdit::Update( float fDeltaTime )
 			m_fTrailingBeat += fDelta * fDeltaTime*5;
 	}
 
-	if( m_EditMode == MODE_MENU )
+	if( m_EditMode == MODE_ACTION_MENU )
 	{
-		for( int i=0; i<NUM_MENU_ITEMS; i++ )
-			m_textMenu[i].Update( fDeltaTime );
+		for( int i=0; i<NUM_ACTION_MENU_ITEMS; i++ )
+			m_textActionMenu[i].Update( fDeltaTime );
+	}
+
+	if( m_EditMode == MODE_NAMING_MENU )
+	{
+		for( int i=0; i<NUM_NAMING_MENU_ITEMS; i++ )
+			m_textNamingMenu[i].Update( fDeltaTime );
 	}
 
 	m_NoteFieldEdit.Update( fDeltaTime );
@@ -445,7 +479,6 @@ void ScreenEdit::Update( float fDeltaTime )
 		"Description = %s\n"
 		"Main title = %s\n"
 		"Sub title = %s\n"
-		"Transliteration = %s\n"
 		"Num notes tap: %d, hold: %d\n"
 		"Assist tick is %s\n"
 		"MusicOffsetSeconds: %.2f\n"
@@ -458,7 +491,6 @@ void ScreenEdit::Update( float fDeltaTime )
 		GAMESTATE->m_pCurNotes[PLAYER_1] ? GAMESTATE->m_pCurNotes[PLAYER_1]->m_sDescription : "no description",
 		m_pSong->m_sMainTitle,
 		m_pSong->m_sSubTitle,
-		m_pSong->m_sTransliteration,
 		iNumTapNotes, iNumHoldNotes,
 		GAMESTATE->m_SongOptions.m_AssistType==SongOptions::ASSIST_TICK ? "ON" : "OFF",
 		m_pSong->m_fBeat0OffsetInSeconds,
@@ -517,10 +549,16 @@ void ScreenEdit::DrawPrimitives()
 		*/
 	}
 
-	if( m_EditMode == MODE_MENU )
+	if( m_EditMode == MODE_ACTION_MENU )
 	{
-		for( int i=0; i<NUM_MENU_ITEMS; i++ )
-			m_textMenu[i].Draw();
+		for( int i=0; i<NUM_ACTION_MENU_ITEMS; i++ )
+			m_textActionMenu[i].Draw();
+	}
+
+	if( m_EditMode == MODE_NAMING_MENU )
+	{
+		for( int i=0; i<NUM_NAMING_MENU_ITEMS; i++ )
+			m_textNamingMenu[i].Draw();
 	}
 
 	Screen::DrawPrimitives();
@@ -533,7 +571,8 @@ void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, c
 	switch( m_EditMode )
 	{
 	case MODE_EDITING:		InputEdit( DeviceI, type, GameI, MenuI, StyleI );	break;
-	case MODE_MENU:			InputMenu( DeviceI, type, GameI, MenuI, StyleI );	break;
+	case MODE_ACTION_MENU:	InputActionMenu( DeviceI, type, GameI, MenuI, StyleI );	break;
+	case MODE_NAMING_MENU:	InputNamingMenu( DeviceI, type, GameI, MenuI, StyleI ); break;
 	case MODE_RECORDING:	InputRecord( DeviceI, type, GameI, MenuI, StyleI );	break;
 	case MODE_PLAYING:		InputPlay( DeviceI, type, GameI, MenuI, StyleI );	break;
 	default:	ASSERT(0);
@@ -578,10 +617,28 @@ void ChangeSubTitle( CString sNew )
 	pSong->m_sSubTitle = sNew;
 }
 
-void ChangeTransliteration( CString sNew )
+void ChangeArtist( CString sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
-	pSong->m_sTransliteration = sNew;
+	pSong->m_sArtist = sNew;
+}
+
+void ChangeMainTitleTranslit( CString sNew )
+{
+	Song* pSong = GAMESTATE->m_pCurSong;
+	pSong->m_sMainTitleTranslit = sNew;
+}
+
+void ChangeSubTitleTranslit( CString sNew )
+{
+	Song* pSong = GAMESTATE->m_pCurSong;
+	pSong->m_sSubTitleTranslit = sNew;
+}
+
+void ChangeArtistTranslit( CString sNew )
+{
+	Song* pSong = GAMESTATE->m_pCurSong;
+	pSong->m_sArtistTranslit = sNew;
 }
 
 // End helper functions for InputEdit
@@ -825,9 +882,19 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		break;
 	case DIK_ESCAPE:
 		{
-			m_EditMode = MODE_MENU;
+			m_EditMode = MODE_ACTION_MENU;
 			m_iMenuSelection = 0;
-			MenuItemGainFocus( m_iMenuSelection );
+			MenuItemGainFocus( &m_textActionMenu[m_iMenuSelection] );
+
+			m_rectRecordBack.BeginTweening( 0.5f );
+			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0.8f) );
+		}
+		break;
+	case DIK_N:
+		{
+			m_EditMode = MODE_NAMING_MENU;
+			m_iMenuSelection = 0;
+			MenuItemGainFocus( &m_textNamingMenu[m_iMenuSelection] );
 
 			m_rectRecordBack.BeginTweening( 0.5f );
 			m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0.8f) );
@@ -960,18 +1027,6 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 	case DIK_E:
 		SCREENMAN->TextEntry( SM_None, "Edit notes description.\nPress Enter to confirm,\nEscape to cancel.", m_pNotes->m_sDescription, ChangeDescription, NULL );
-		break;
-
-	case DIK_A:
-		SCREENMAN->TextEntry( SM_None, "Edit song main title.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sMainTitle, ChangeMainTitle, NULL );
-		break;
-
-	case DIK_U:
-		SCREENMAN->TextEntry( SM_None, "Edit song sub title.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sSubTitle, ChangeSubTitle, NULL );
-		break;
-
-	case DIK_Y:
-		SCREENMAN->TextEntry( SM_None, "Edit song transliteration.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sTransliteration, ChangeTransliteration, NULL);
 		break;
 
 	case DIK_B:
@@ -1175,7 +1230,7 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 	}
 }
 
-void ScreenEdit::InputMenu( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenEdit::InputActionMenu( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	if( DeviceI.device != DEVICE_KEYBOARD )
 		return;
@@ -1184,29 +1239,112 @@ void ScreenEdit::InputMenu( const DeviceInput& DeviceI, const InputEventType typ
 	switch( DeviceI.button )
 	{
 	case DIK_UP:
-		MenuItemLoseFocus( m_iMenuSelection );
-		m_iMenuSelection = (m_iMenuSelection-1+NUM_MENU_ITEMS) % NUM_MENU_ITEMS;
+		MenuItemLoseFocus( &m_textActionMenu[m_iMenuSelection] );
+		m_iMenuSelection = (m_iMenuSelection-1+NUM_ACTION_MENU_ITEMS) % NUM_ACTION_MENU_ITEMS;
 		printf( "%d\n", m_iMenuSelection );
-		MenuItemGainFocus( m_iMenuSelection );
+		MenuItemGainFocus( &m_textActionMenu[m_iMenuSelection] );
 		break;
 	case DIK_DOWN:
-		MenuItemLoseFocus( m_iMenuSelection );
-		m_iMenuSelection = (m_iMenuSelection+1) % NUM_MENU_ITEMS;
+		MenuItemLoseFocus( &m_textActionMenu[m_iMenuSelection] );
+		m_iMenuSelection = (m_iMenuSelection+1) % NUM_ACTION_MENU_ITEMS;
 		printf( "%d\n", m_iMenuSelection );
-		MenuItemGainFocus( m_iMenuSelection );
+		MenuItemGainFocus( &m_textActionMenu[m_iMenuSelection] );
 		break;
 	case DIK_RETURN:
 	case DIK_ESCAPE:
 		m_EditMode = MODE_EDITING;
 		m_rectRecordBack.BeginTweening( 0.5f );
 		m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
-		MenuItemLoseFocus( m_iMenuSelection );
+		MenuItemLoseFocus( &m_textActionMenu[m_iMenuSelection] );
 		if( DeviceI.button == DIK_RETURN )
 		{
 			SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
-			int iMenuKey = MENU_ITEM_KEY[m_iMenuSelection];
+			int iMenuKey = ACTION_MENU_ITEM_KEY[m_iMenuSelection];
 			InputEdit( DeviceInput(DEVICE_KEYBOARD,iMenuKey), IET_FIRST_PRESS, GameInput(), MenuInput(), StyleInput() );
 		}
+		break;
+	default:
+		// On recognized keys, behave as on the top level
+		for(int i=0; i<NUM_ACTION_MENU_ITEMS; i++) {
+			if( DeviceI.button == ACTION_MENU_ITEM_KEY[i] ) {
+				m_EditMode = MODE_EDITING;
+				m_rectRecordBack.BeginTweening( 0.5f );
+				m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
+				MenuItemLoseFocus( &m_textActionMenu[m_iMenuSelection] );
+
+				SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
+				InputEdit( DeviceI, IET_FIRST_PRESS, GameInput(), MenuInput(), StyleInput() );
+			}
+		}
+		break;
+	}
+}
+
+void ScreenEdit::InputNamingMenu( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, bool forceShiftPressed )
+{
+	if( DeviceI.device != DEVICE_KEYBOARD )
+		return;
+	if(type == IET_RELEASE) return; // don't care
+
+	bool translit = forceShiftPressed ||
+					INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_LSHIFT)) ||
+					INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_RSHIFT));
+
+	switch( DeviceI.button ) {
+	case DIK_M:
+	case DIK_S:
+	case DIK_A:
+	case DIK_ESCAPE:
+	case DIK_RETURN:
+		m_EditMode = MODE_EDITING;
+		m_rectRecordBack.BeginTweening( 0.5f );
+		m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
+		MenuItemLoseFocus( &m_textNamingMenu[m_iMenuSelection] );
+		break;
+	}
+
+	switch( DeviceI.button )
+	{
+	case DIK_M:
+		if(translit) {
+			SCREENMAN->TextEntry( SM_None, "Edit song main title transliteration.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sMainTitleTranslit, ChangeMainTitleTranslit, NULL);
+		} else {
+			SCREENMAN->TextEntry( SM_None, "Edit song main title.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sMainTitle, ChangeMainTitle, NULL );
+		}
+		break;
+
+	case DIK_S:
+		if(translit) {
+			SCREENMAN->TextEntry( SM_None, "Edit song sub title transliteration.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sSubTitleTranslit, ChangeSubTitleTranslit, NULL);
+		} else {
+			SCREENMAN->TextEntry( SM_None, "Edit song sub title.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sSubTitle, ChangeSubTitle, NULL );
+		}
+		break;
+
+	case DIK_A:
+		if(translit) {
+			SCREENMAN->TextEntry( SM_None, "Edit song artist transliteration.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sArtistTranslit, ChangeArtistTranslit, NULL);
+		} else {
+			SCREENMAN->TextEntry( SM_None, "Edit song artist.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sArtist, ChangeArtist, NULL );
+		}
+		break;
+
+	case DIK_UP:
+		MenuItemLoseFocus( &m_textNamingMenu[m_iMenuSelection] );
+		m_iMenuSelection = (m_iMenuSelection-1+NUM_NAMING_MENU_ITEMS) % NUM_NAMING_MENU_ITEMS;
+		printf( "%d\n", m_iMenuSelection );
+		MenuItemGainFocus( &m_textNamingMenu[m_iMenuSelection] );
+		break;
+	case DIK_DOWN:
+		MenuItemLoseFocus( &m_textNamingMenu[m_iMenuSelection] );
+		m_iMenuSelection = (m_iMenuSelection+1) % NUM_NAMING_MENU_ITEMS;
+		printf( "%d\n", m_iMenuSelection );
+		MenuItemGainFocus( &m_textNamingMenu[m_iMenuSelection] );
+		break;
+	case DIK_RETURN:
+		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
+		const std::pair<int, bool>& pairMenuKey = NAMING_MENU_ITEM_KEY[m_iMenuSelection];
+		InputNamingMenu( DeviceInput(DEVICE_KEYBOARD,pairMenuKey.first), IET_FIRST_PRESS, GameInput(), MenuInput(), StyleInput(), pairMenuKey.second );
 		break;
 	}
 }
@@ -1303,15 +1441,15 @@ void ScreenEdit::OnSnapModeChange()
 	GAMESTATE->m_fSongBeat -= NoteRowToBeat( iStepIndexHangover );
 }
 
-void ScreenEdit::MenuItemGainFocus( int iItemIndex )
+void ScreenEdit::MenuItemGainFocus( BitmapText* menuitem )
 {
-	m_textMenu[iItemIndex].SetEffectCamelion( 2.5, D3DXCOLOR(1,1,1,1), D3DXCOLOR(0,1,0,1) );
-	m_textMenu[iItemIndex].SetZoom( 0.7f );
+	menuitem->SetEffectCamelion( 2.5, D3DXCOLOR(1,1,1,1), D3DXCOLOR(0,1,0,1) );
+	menuitem->SetZoom( 0.7f );
 	SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","edit menu change") );
 }
 
-void ScreenEdit::MenuItemLoseFocus( int iItemIndex )
+void ScreenEdit::MenuItemLoseFocus( BitmapText* menuitem )
 {
-	m_textMenu[iItemIndex].SetEffectNone();
-	m_textMenu[iItemIndex].SetZoom( 0.5f );
+	menuitem->SetEffectNone();
+	menuitem->SetZoom( 0.5f );
 }

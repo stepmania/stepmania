@@ -189,8 +189,7 @@ protected:
 //				sTemp = "NUM";
 //			return sTemp;
 		case SORT_TITLE:
-			sTemp = pSong->GetTransliteration();
-			if(sTemp.IsEmpty()) sTemp = pSong->GetFullTitle();
+			sTemp = pSong->GetSortTitle();
 			sTemp.MakeUpper();
 			sTemp = (sTemp.GetLength() > 0) ? sTemp.Left(1) : "";
 			if( IsAnInt(sTemp) )

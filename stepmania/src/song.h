@@ -89,13 +89,25 @@ public:
 
 	CString	m_sMainTitle;
 	CString	m_sSubTitle;
-	CString m_sTransliteration;
 	CString	m_sArtist;
+	CString m_sMainTitleTranslit;
+	CString m_sSubTitleTranslit;
+	CString m_sArtistTranslit;
 	CString	m_sCredit;
 
 	CString GetFullTitle() const { return m_sMainTitle + (m_sSubTitle.GetLength()? (" " + m_sSubTitle):""); }
-	CString GetTransliteration() const { return m_sTransliteration; }
-
+	CString GetSortTitle() const { return
+										(m_sMainTitleTranslit.IsEmpty()?
+											m_sMainTitle:
+											m_sMainTitleTranslit)
+										+
+											(m_sSubTitleTranslit.IsEmpty()?
+												(m_sSubTitle.IsEmpty()?
+													"":
+													" " + m_sSubTitle):
+												" " + m_sSubTitleTranslit);
+								}
+												
 	CString	m_sMusicFile;
 	DWORD	m_iMusicBytes;
 	float	m_fBeat0OffsetInSeconds;
