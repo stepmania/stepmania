@@ -542,8 +542,9 @@ void RageDisplay::DrawPolyLine(const RageVertex &p1, const RageVertex &p2, float
 void RageDisplay::DrawLoop_Polys( const RageVertex v[], int iNumVerts, float LineWidth )
 {
 	ASSERT( iNumVerts >= 3 );
-
-	for(int i = 0; i < iNumVerts; ++i)
+	
+	int i;
+	for(i = 0; i < iNumVerts; ++i)
 		DrawPolyLine(v[i], v[(i+1)%iNumVerts], LineWidth);
 
 	/* Join the lines with circles so we get rounded corners. */
