@@ -227,12 +227,12 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				LIBRARY_STYLE = Static;
 				OPTIMIZATION_CFLAGS = "-O0";
-				ZERO_LINK = YES;
+				ZERO_LINK = NO;
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -297,6 +297,7 @@
 			path = MovieTexture/MovieTexture_FFMpeg.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA14ED100509F40000E3FAD7 = {
@@ -1140,6 +1141,8 @@
 				AAC6DCF20567663800B5D56F,
 				AAC6DCF30567663800B5D56F,
 				AAC6DCFF056846E600B5D56F,
+				AAC6DDE10569C71000B5D56F,
+				AAC6DDE90569C80900B5D56F,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3010,7 +3013,6 @@
 				AA29CDFE0558741A00961A51,
 				AA29CE000558741A00961A51,
 				AA29CE010558741A00961A51,
-				AA29CE020558741A00961A51,
 				AA29CE030558741A00961A51,
 				AA29CE040558741A00961A51,
 				AA29CE050558741A00961A51,
@@ -3070,6 +3072,8 @@
 				AA9EC2F2055F5126007E5098,
 				AAC6DCE50567660A00B5D56F,
 				AAC6DD500568510000B5D56F,
+				AAC6DDE00569C71000B5D56F,
+				AAC6DDE80569C80900B5D56F,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4216,12 +4220,6 @@
 		};
 		AA29CE010558741A00961A51 = {
 			fileRef = AAE443F304B0FEB700D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CE020558741A00961A51 = {
-			fileRef = AA8B6C7904AFD87300D02EE9;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -9393,10 +9391,10 @@
 		};
 		AA6EFE6D04770D3E005F316C = {
 			children = (
-				AA6EFE7604770E7C005F316C,
-				AA6EFE7704770E7C005F316C,
 				AA6EFE6E04770D61005F316C,
 				AA6EFE6F04770D61005F316C,
+				AA6EFE7604770E7C005F316C,
+				AA6EFE7704770E7C005F316C,
 				AAD620190528FA5E00D02EE9,
 				AAD6201A0528FA5E00D02EE9,
 				AAFF55210549F43A00D02EE9,
@@ -9407,6 +9405,8 @@
 				AA6EFE7B04770E7C005F316C,
 				AA6EFE7E04770E7C005F316C,
 				AA6EFE7F04770E7C005F316C,
+				AAC6DDE60569C80900B5D56F,
+				AAC6DDE70569C80900B5D56F,
 				AA6EFE8004770E7C005F316C,
 				AA6EFE8104770E7C005F316C,
 				AA6EFE8204770E7C005F316C,
@@ -9453,6 +9453,8 @@
 				AA6EFEAB04770E7C005F316C,
 				AA6EFEAC04770E7C005F316C,
 				AA6EFEAD04770E7C005F316C,
+				AAC6DDDE0569C71000B5D56F,
+				AAC6DDDF0569C71000B5D56F,
 				AA6EFEAE04770E7C005F316C,
 				AA6EFEAF04770E7C005F316C,
 				AA6EFEB004770E7C005F316C,
@@ -12275,6 +12277,66 @@
 		};
 		AAC6DD500568510000B5D56F = {
 			fileRef = AAC6DCFC056846E600B5D56F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAC6DDDE0569C71000B5D56F = {
+			expectedFileType = sourcecode.cpp.cpp;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = PaneDisplay.cpp;
+			path = ../src/PaneDisplay.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAC6DDDF0569C71000B5D56F = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = PaneDisplay.h;
+			path = ../src/PaneDisplay.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAC6DDE00569C71000B5D56F = {
+			fileRef = AAC6DDDE0569C71000B5D56F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAC6DDE10569C71000B5D56F = {
+			fileRef = AAC6DDDF0569C71000B5D56F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAC6DDE60569C80900B5D56F = {
+			expectedFileType = sourcecode.cpp.cpp;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = DifficultyList.cpp;
+			path = ../src/DifficultyList.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAC6DDE70569C80900B5D56F = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = DifficultyList.h;
+			path = ../src/DifficultyList.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAC6DDE80569C80900B5D56F = {
+			fileRef = AAC6DDE60569C80900B5D56F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAC6DDE90569C80900B5D56F = {
+			fileRef = AAC6DDE70569C80900B5D56F;
 			isa = PBXBuildFile;
 			settings = {
 			};
