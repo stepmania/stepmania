@@ -60,7 +60,8 @@ const unsigned read_block_size = 1024;
  * is mostly harmless; the data is small. */
 const int pos_map_backlog_samples = 100000;
 
-RageSound::RageSound()
+RageSound::RageSound():
+	StartTime( RageZeroTimer )
 {
 	ASSERT(SOUNDMAN);
 	LockMut(SOUNDMAN->lock);
