@@ -39,15 +39,15 @@ private:
 	CString m_NextScreen;
 
 	vector<OptionRowHandler> OptionRowHandlers;
-	OptionRow *m_OptionRowAlloc;
+	OptionRowData *m_OptionRowAlloc;
 
-	int ExportOption( const OptionRow &row, const OptionRowHandler &hand, int pn, int sel );
-	int ImportOption( const OptionRow &row, const OptionRowHandler &hand, int pn, int rowno );
-	void SetList( OptionRow &row, OptionRowHandler &hand, CString param, CString &TitleOut );
-	void SetStep( OptionRow &row, OptionRowHandler &hand );
-	void SetConf( OptionRow &row, OptionRowHandler &hand, CString param, CString &TitleOut );
-	void SetCharacter( OptionRow &row, OptionRowHandler &hand );
-	void SetSaveToProfile( OptionRow &row, OptionRowHandler &hand );
+	int ExportOption( const OptionRowData &row, const OptionRowHandler &hand, int pn, int sel );
+	int ImportOption( const OptionRowData &row, const OptionRowHandler &hand, int pn, int rowno );
+	void SetList( OptionRowData &row, OptionRowHandler &hand, CString param, CString &TitleOut );
+	void SetStep( OptionRowData &row, OptionRowHandler &hand );
+	void SetConf( OptionRowData &row, OptionRowHandler &hand, CString param, CString &TitleOut );
+	void SetCharacter( OptionRowData &row, OptionRowHandler &hand );
+	void SetSaveToProfile( OptionRowData &row, OptionRowHandler &hand );
 
 protected:
 	virtual void ImportOptions();

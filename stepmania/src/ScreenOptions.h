@@ -23,18 +23,16 @@
 #include "DualScrollBar.h"
 
 
-const unsigned MAX_OPTION_LINES = 40;
-
-struct OptionRow
+struct OptionRowData
 {
 	CString name;
 	bool bOneChoiceForAllPlayers;
 	vector<CString> choices;
 	bool bMultiSelect;
 
-	OptionRow(): name(""), bOneChoiceForAllPlayers(false), bMultiSelect(false) { }
+	OptionRowData(): name(""), bOneChoiceForAllPlayers(false), bMultiSelect(false) { }
 
-	OptionRow( const char *n, int b, const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL )
+	OptionRowData( const char *n, int b, const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL )
 	{
 		name = n;
 		bOneChoiceForAllPlayers = !!b;
@@ -56,7 +54,7 @@ class ScreenOptions : public Screen
 {
 public:
 	ScreenOptions( CString sClassName );
-	void Init( InputMode im, OptionRow OptionRow[], int iNumOptionLines );
+	void Init( InputMode im, OptionRowData OptionRowData[], int iNumOptionLines );
 	virtual ~ScreenOptions();
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -96,14 +94,12 @@ protected:
 	void MenuDown( PlayerNumber pn, const InputEventType type ) { Move( pn, +1, type != IET_FIRST_PRESS ); }
 	void Move( PlayerNumber pn, int dir, bool Repeat );
 
-	/* Returns -1 if on a row with no OptionRow (eg. EXIT). */
+	/* Returns -1 if on a row with no OptionRowData (eg. EXIT). */
 	int GetCurrentRow(PlayerNumber pn = PLAYER_1) const;
 
 	MenuElements	m_Menu;
 
 protected:	// derived classes need access to these
-	int				m_iSelectedOption[NUM_PLAYERS][MAX_OPTION_LINES];
-
 	void LoadOptionIcon( PlayerNumber pn, int iRow, CString sText );
 	enum Navigation { NAV_THREE_KEY, NAV_THREE_KEY_MENU, NAV_FIVE_KEY };
 	void SetNavigation( Navigation nav ) { m_OptionsNavigation = nav; }
@@ -114,7 +110,7 @@ protected:
 	{
 		Row();
 		~Row();
-		OptionRow				m_RowDef;
+		OptionRowData				m_RowDef;
 		enum { ROW_NORMAL, ROW_EXIT } Type;
 		vector<BitmapText *>	m_textItems;
 		Sprite					m_sprBullet;
@@ -125,6 +121,7 @@ protected:
 		float m_fY;
 		bool m_bRowIsLong;	// goes off edge of screen
 		bool m_bHidden; // currently off screen
+		int m_iSelection[NUM_PLAYERS];
 	};
 	vector<Row*>		m_Rows;
 

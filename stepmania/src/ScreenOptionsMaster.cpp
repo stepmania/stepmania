@@ -35,7 +35,7 @@
 // #define PREV_SCREEN( play_mode )		THEME->GetMetric (m_sName,"PrevScreen"+Capitalize(PlayModeToString(play_mode)))
 
 /* Add the list named "ListName" to the given row/handler. */
-void ScreenOptionsMaster::SetList( OptionRow &row, OptionRowHandler &hand, CString ListName, CString &TitleOut )
+void ScreenOptionsMaster::SetList( OptionRowData &row, OptionRowHandler &hand, CString ListName, CString &TitleOut )
 {
 	hand.type = ROW_LIST;
 
@@ -89,7 +89,7 @@ void ScreenOptionsMaster::SetList( OptionRow &row, OptionRowHandler &hand, CStri
 }
 
 /* Add a list of difficulties/edits to the given row/handler. */
-void ScreenOptionsMaster::SetStep( OptionRow &row, OptionRowHandler &hand )
+void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
 {
 	hand.type = ROW_STEP;
 	row.bOneChoiceForAllPlayers = false;
@@ -131,7 +131,7 @@ void ScreenOptionsMaster::SetStep( OptionRow &row, OptionRowHandler &hand )
 
 
 /* Add the given configuration value to the given row/handler. */
-void ScreenOptionsMaster::SetConf( OptionRow &row, OptionRowHandler &hand, CString param, CString &TitleOut )
+void ScreenOptionsMaster::SetConf( OptionRowData &row, OptionRowHandler &hand, CString param, CString &TitleOut )
 {
 	/* Configuration values are never per-player. */
 	row.bOneChoiceForAllPlayers = true;
@@ -147,7 +147,7 @@ void ScreenOptionsMaster::SetConf( OptionRow &row, OptionRowHandler &hand, CStri
 }
 
 /* Add a list of available characters to the given row/handler. */
-void ScreenOptionsMaster::SetCharacter( OptionRow &row, OptionRowHandler &hand )
+void ScreenOptionsMaster::SetCharacter( OptionRowData &row, OptionRowHandler &hand )
 {
 	hand.type = ROW_CHARACTER;
 	row.bOneChoiceForAllPlayers = false;
@@ -163,7 +163,7 @@ void ScreenOptionsMaster::SetCharacter( OptionRow &row, OptionRowHandler &hand )
 }
 
 /* Add a list of available characters to the given row/handler. */
-void ScreenOptionsMaster::SetSaveToProfile( OptionRow &row, OptionRowHandler &hand )
+void ScreenOptionsMaster::SetSaveToProfile( OptionRowData &row, OptionRowHandler &hand )
 {
 	hand.type = ROW_SAVE_TO_PROFILE;
 	row.bOneChoiceForAllPlayers = false;
@@ -213,10 +213,10 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 	if( NumRows == -1 )
 		RageException::Throw( "%s::OptionMenuFlags is missing \"rows\" field", m_sName.c_str() );
 
-	m_OptionRowAlloc = new OptionRow[NumRows];
+	m_OptionRowAlloc = new OptionRowData[NumRows];
 	for( i = 0; (int) i < NumRows; ++i )
 	{
-		OptionRow &row = m_OptionRowAlloc[i];
+		OptionRowData &row = m_OptionRowAlloc[i];
 		
 		CStringArray asParts;
 		split( ROW_LINE(i), ";", asParts );
@@ -271,7 +271,7 @@ ScreenOptionsMaster::~ScreenOptionsMaster()
 	delete [] m_OptionRowAlloc;
 }
 
-int ScreenOptionsMaster::ImportOption( const OptionRow &row, const OptionRowHandler &hand, int pn, int rowno )
+int ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRowHandler &hand, int pn, int rowno )
 {
 	/* Figure out which selection is the default. */
 	switch( hand.type )
@@ -362,13 +362,13 @@ void ScreenOptionsMaster::ImportOptions()
 	for( unsigned i = 0; i < OptionRowHandlers.size(); ++i )
 	{
 		const OptionRowHandler &hand = OptionRowHandlers[i];
-		const OptionRow &row = m_OptionRowAlloc[i];
+		const OptionRowData &row = m_OptionRowAlloc[i];
 
 		if( row.bOneChoiceForAllPlayers )
 		{
 			int col = ImportOption( row, hand, 0, i );
-			m_iSelectedOption[0][i] = col;
-			ASSERT( m_iSelectedOption[0][i] < (int)row.choices.size() );
+			m_Rows[i]->m_iSelection[0] = col;
+			ASSERT( m_Rows[i]->m_iSelection[0] < (int)row.choices.size() );
 		}
 		else
 			for( int pn=0; pn<NUM_PLAYERS; pn++ )
@@ -377,15 +377,15 @@ void ScreenOptionsMaster::ImportOptions()
 					continue;
 
 				int col = ImportOption( row, hand, pn, i );
-				m_iSelectedOption[pn][i] = col;
-				ASSERT( m_iSelectedOption[pn][i] < (int)row.choices.size() );
+				m_Rows[i]->m_iSelection[pn] = col;
+				ASSERT( m_Rows[i]->m_iSelection[pn] < (int)row.choices.size() );
 			}
 	}
 }
 
 
 /* Returns an OPT mask. */
-int ScreenOptionsMaster::ExportOption( const OptionRow &row, const OptionRowHandler &hand, int pn, int sel )
+int ScreenOptionsMaster::ExportOption( const OptionRowData &row, const OptionRowHandler &hand, int pn, int sel )
 {
 	/* Figure out which selection is the default. */
 	switch( hand.type )
@@ -485,14 +485,14 @@ void ScreenOptionsMaster::ExportOptions()
 	for( i = 0; i < OptionRowHandlers.size(); ++i )
 	{
 		const OptionRowHandler &hand = OptionRowHandlers[i];
-		const OptionRow &row = m_OptionRowAlloc[i];
+		const OptionRowData &row = m_OptionRowAlloc[i];
 
 		for( int pn=0; pn<NUM_PLAYERS; pn++ )
 		{
 			if( !GAMESTATE->IsHumanPlayer(pn) )
 				continue;
 
-			ChangeMask |= ExportOption( row, hand, pn, m_iSelectedOption[pn][i] );
+			ChangeMask |= ExportOption( row, hand, pn, m_Rows[i]->m_iSelection[pn] );
 		}
 	}
 
@@ -507,7 +507,7 @@ void ScreenOptionsMaster::ExportOptions()
 		const OptionRowHandler &hand = OptionRowHandlers[row];
 		if( hand.type == ROW_LIST )
 		{
-			const int sel = m_iSelectedOption[0][row];
+			const int sel = m_Rows[row]->m_iSelection[0];
 			const ModeChoice &mc = hand.ListEntries[sel];
 			if( mc.m_sScreen != "" )
 				m_NextScreen = mc.m_sScreen;
@@ -571,8 +571,6 @@ void ScreenOptionsMaster::GoToPrevState()
 
 void ScreenOptionsMaster::RefreshIcons()
 {
-	ASSERT( m_Rows.size() < MAX_OPTION_LINES );
-
 	for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
@@ -583,9 +581,9 @@ void ScreenOptionsMaster::RefreshIcons()
 			if( m_Rows[i]->Type == Row::ROW_EXIT )
 				continue;	// skip
 
-			const OptionRow &row = m_Rows[i]->m_RowDef;
+			const OptionRowData &row = m_Rows[i]->m_RowDef;
 
-			int iSelection = m_iSelectedOption[p][i];
+			int iSelection = m_Rows[i]->m_iSelection[p];
 			if( iSelection >= (int)row.choices.size() )
 			{
 				/* Invalid selection.  Send debug output, to aid debugging. */

@@ -33,14 +33,14 @@ enum {
 	NUM_PROFILE_OPTIONS_LINES
 };
 
-OptionRow g_ProfileOptionsLines[NUM_PROFILE_OPTIONS_LINES] = {
-	OptionRow( "Player1\nProfile",	true ),
-	OptionRow( "Player2\nProfile",	true ),
-	OptionRow( "Create\nNew",		true, "PRESS START" ),
-	OptionRow( "Delete",			true ),
-	OptionRow( "Rename",			true ),
-	OptionRow( "OS Mount\nPlayer1",	true, "" ),
-	OptionRow( "OS Mount\nPlayer2",	true, "" ),
+OptionRowData g_ProfileOptionsLines[NUM_PROFILE_OPTIONS_LINES] = {
+	OptionRowData( "Player1\nProfile",	true ),
+	OptionRowData( "Player2\nProfile",	true ),
+	OptionRowData( "Create\nNew",		true, "PRESS START" ),
+	OptionRowData( "Delete",			true ),
+	OptionRowData( "Rename",			true ),
+	OptionRowData( "OS Mount\nPlayer1",	true, "" ),
+	OptionRowData( "OS Mount\nPlayer2",	true, "" ),
 };
 
 const ScreenMessage	SM_DoneCreating		= ScreenMessage(SM_User+1);
@@ -97,14 +97,14 @@ void ScreenProfileOptions::ImportOptions()
 		vsProfiles.end(),
 		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_1] );
 	if( iter != vsProfiles.end() )
-		m_iSelectedOption[0][PO_PLAYER1] = iter - vsProfiles.begin() + 1;
+		m_Rows[PO_PLAYER1]->m_iSelection[0] = iter - vsProfiles.begin() + 1;
 
 	iter = find( 
 		vsProfiles.begin(),
 		vsProfiles.end(),
 		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_2] );
 	if( iter != vsProfiles.end() )
-		m_iSelectedOption[0][PO_PLAYER2] = iter - vsProfiles.begin() + 1;
+		m_Rows[PO_PLAYER2]->m_iSelection[0] = iter - vsProfiles.begin() + 1;
 }
 
 void ScreenProfileOptions::ExportOptions()
@@ -112,13 +112,13 @@ void ScreenProfileOptions::ExportOptions()
 	vector<CString> vsProfiles;
 	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
-	if( m_iSelectedOption[0][PO_PLAYER1] > 0 )
-		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_1] = vsProfiles[m_iSelectedOption[0][PO_PLAYER1]-1];
+	if( m_Rows[PO_PLAYER1]->m_iSelection[0] > 0 )
+		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_1] = vsProfiles[m_Rows[PO_PLAYER1]->m_iSelection[0]-1];
 	else
 		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_1] = "";
 
-	if( m_iSelectedOption[0][PO_PLAYER2] > 0 )
-		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_2] = vsProfiles[m_iSelectedOption[0][PO_PLAYER2]-1];
+	if( m_Rows[PO_PLAYER2]->m_iSelection[0] > 0 )
+		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_2] = vsProfiles[m_Rows[PO_PLAYER2]->m_iSelection[0]-1];
 	else
 		PREFSMAN->m_sDefaultLocalProfileID[PLAYER_2] = "";
 }
@@ -212,17 +212,17 @@ CString ScreenProfileOptions::GetSelectedProfileID()
 	vector<CString> vsProfiles;
 	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
-	if( m_iSelectedOption[0][GetCurrentRow()]==0 )
+	if( m_Rows[GetCurrentRow()]->m_iSelection[0] )
 		return "";
 	else
-		return vsProfiles[m_iSelectedOption[0][GetCurrentRow()]-1];
+		return vsProfiles[ m_Rows[GetCurrentRow()]->m_iSelection[0]-1];
 }
 
 CString ScreenProfileOptions::GetSelectedProfileName()
 {
-	if( m_iSelectedOption[0][GetCurrentRow()]==0 )
+	if( m_Rows[GetCurrentRow()]->m_iSelection[0] )
 		return "";
 	else
-		return g_ProfileOptionsLines[PO_PLAYER1].choices[ m_iSelectedOption[0][GetCurrentRow()] ];
+		return g_ProfileOptionsLines[PO_PLAYER1].choices[ m_Rows[GetCurrentRow()]->m_iSelection[0] ];
 }
 

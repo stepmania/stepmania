@@ -105,9 +105,6 @@ ScreenOptions::ScreenOptions( CString sClassName ) : Screen(sClassName)
 	{
 		m_iCurrentRow[p] = 0;
 		m_bWasOnExit[p] = false;
-
-		for( unsigned l=0; l<MAX_OPTION_LINES; l++ )
-			m_iSelectedOption[p][l] = 0;
 	}
 
 	m_framePage.Command( FRAME_ON_COMMAND );
@@ -118,27 +115,37 @@ void ScreenOptions::LoadOptionIcon( PlayerNumber pn, int iRow, CString sText )
 	m_Rows[iRow]->m_OptionIcons[pn].Load( pn, sText, false );
 }
 
-void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLines )
+void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOptionLines )
 {
 	LOG->Trace( "ScreenOptions::Set()" );
 
 	m_InputMode = im;
 
-	this->ImportOptions();
-
-	int r;
-	for( r=0; r<iNumOptionLines; r++ )		// foreach row
 	{
-		m_Rows.push_back( new Row() );
-		m_Rows[r]->m_RowDef = OptionRows[r];
+		for( int r=0; r<iNumOptionLines; r++ )		// foreach row
+		{
+			m_Rows.push_back( new Row() );
+			m_Rows[r]->m_RowDef = OptionRows[r];
 
-		if( m_Rows[r]->m_RowDef.bOneChoiceForAllPlayers )
-			for( int p=1; p<NUM_PLAYERS; p++ )
-				m_iSelectedOption[0][r] = m_iSelectedOption[p][r];
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				m_Rows[r]->m_iSelection[p] = 0;
+
+			if( m_Rows[r]->m_RowDef.bOneChoiceForAllPlayers )
+				for( int p=1; p<NUM_PLAYERS; p++ )
+					m_Rows[r]->m_iSelection[p] = m_Rows[r]->m_iSelection[0];
+		}
 	}
 
+	this->ImportOptions();
 
-	int p;
+	{
+		for( int r=0; r<iNumOptionLines; r++ )		// foreach row
+		{
+			if( m_Rows[r]->m_RowDef.bOneChoiceForAllPlayers )
+				for( int p=1; p<NUM_PLAYERS; p++ )
+					m_Rows[r]->m_iSelection[p] = m_Rows[r]->m_iSelection[0];
+		}
+	}
 
 	m_sprPage.Load( THEME->GetPathToG(m_sName+" page") );
 	m_sprPage->SetName( "Page" );
@@ -146,109 +153,114 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 	m_framePage.AddChild( m_sprPage );
 
 	// init highlights
-	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;	// skip
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAMESTATE->IsHumanPlayer(p) )
+				continue;	// skip
 
-		m_sprLineHighlight[p].Load( THEME->GetPathToG("ScreenOptions line highlight") );
-		m_sprLineHighlight[p].SetName( "LineHighlight" );
-		m_sprLineHighlight[p].SetX( CENTER_X );
-		m_framePage.AddChild( &m_sprLineHighlight[p] );
-		UtilOnCommand( m_sprLineHighlight[p], "ScreenOptions" );
+			m_sprLineHighlight[p].Load( THEME->GetPathToG("ScreenOptions line highlight") );
+			m_sprLineHighlight[p].SetName( "LineHighlight" );
+			m_sprLineHighlight[p].SetX( CENTER_X );
+			m_framePage.AddChild( &m_sprLineHighlight[p] );
+			UtilOnCommand( m_sprLineHighlight[p], "ScreenOptions" );
 
-		m_Highlight[p].Load( (PlayerNumber)p, false );
-		m_framePage.AddChild( &m_Highlight[p] );
+			m_Highlight[p].Load( (PlayerNumber)p, false );
+			m_framePage.AddChild( &m_Highlight[p] );
+		}
 	}
-
 	
 	// init underlines
-	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;	// skip
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAMESTATE->IsHumanPlayer(p) )
+				continue;	// skip
 
-		for( unsigned l=0; l<m_Rows.size(); l++ )
-		{	
-			Row &row = *m_Rows[l];
+			for( unsigned l=0; l<m_Rows.size(); l++ )
+			{	
+				Row &row = *m_Rows[l];
 
-			LoadOptionIcon( (PlayerNumber)p, l, "" );
-			m_framePage.AddChild( &row.m_OptionIcons[p] );
+				LoadOptionIcon( (PlayerNumber)p, l, "" );
+				m_framePage.AddChild( &row.m_OptionIcons[p] );
 
-			row.m_Underline[p].Load( (PlayerNumber)p, true );
-			m_framePage.AddChild( &row.m_Underline[p] );
+				row.m_Underline[p].Load( (PlayerNumber)p, true );
+				m_framePage.AddChild( &row.m_Underline[p] );
+			}
 		}
 	}
 
 	// init m_textItems from optionLines
-	for( r=0; r<m_Rows.size(); r++ )		// foreach row
 	{
-		Row &row = *m_Rows[r];
-		row.Type = Row::ROW_NORMAL;
-
-		vector<BitmapText *> & textItems = row.m_textItems;
-		const OptionRow &optline = m_Rows[r]->m_RowDef;
-
-		unsigned c;
-
-		m_framePage.AddChild( &row.m_sprBullet );
-		m_framePage.AddChild( &row.m_textTitle );		
-
-		float fX = ITEMS_START_X;	// indent 70 pixels
-		for( c=0; c<optline.choices.size(); c++ )
+		for( int r=0; r<m_Rows.size(); r++ )		// foreach row
 		{
-			BitmapText *bt = new BitmapText;
-			textItems.push_back( bt );
+			Row &row = *m_Rows[r];
+			row.Type = Row::ROW_NORMAL;
 
-			bt->LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
-			bt->SetText( optline.choices[c] );
-			bt->SetZoom( ITEMS_ZOOM );
-			bt->EnableShadow( false );
+			vector<BitmapText *> & textItems = row.m_textItems;
+			const OptionRowData &optline = m_Rows[r]->m_RowDef;
 
-			// set the X position of each item in the line
-			const float fItemWidth = bt->GetZoomedWidth();
-			fX += fItemWidth/2;
-			bt->SetX( fX );
-			fX += fItemWidth/2 + ITEMS_GAP_X;
-		}
+			unsigned c;
 
-		if( fX > SCREEN_RIGHT-40 )
-		{
-			// It goes off the edge of the screen.  Re-init with the "long row" style.
-			row.m_bRowIsLong = true;
-			for( unsigned j=0; j<optline.choices.size(); j++ )	// for each option on this row
-				delete textItems[j];
-			textItems.clear();
+			m_framePage.AddChild( &row.m_sprBullet );
+			m_framePage.AddChild( &row.m_textTitle );		
 
-			for( unsigned p=0; p<NUM_PLAYERS; p++ )
+			float fX = ITEMS_START_X;	// indent 70 pixels
+			for( c=0; c<optline.choices.size(); c++ )
 			{
-				if( !GAMESTATE->IsHumanPlayer(p) )
-					continue;
-
 				BitmapText *bt = new BitmapText;
 				textItems.push_back( bt );
 
-				const int iChoiceInRow = m_iSelectedOption[p][r];
-
 				bt->LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
-				bt->SetText( optline.choices[iChoiceInRow] );
+				bt->SetText( optline.choices[c] );
 				bt->SetZoom( ITEMS_ZOOM );
 				bt->EnableShadow( false );
 
-				/* if choices are locked together, center the item. */
-				if( optline.bOneChoiceForAllPlayers )
-					bt->SetX( (ITEM_X[0]+ITEM_X[1])/2 );
-				else
-					bt->SetX( ITEM_X[p] );
-
-				/* If bOneChoiceForAllPlayers, then only initialize one text item. */
-				if( optline.bOneChoiceForAllPlayers )
-					break;
+				// set the X position of each item in the line
+				const float fItemWidth = bt->GetZoomedWidth();
+				fX += fItemWidth/2;
+				bt->SetX( fX );
+				fX += fItemWidth/2 + ITEMS_GAP_X;
 			}
-		}
 
-		for( c=0; c<textItems.size(); c++ )
-			m_framePage.AddChild( textItems[c] );
+			if( fX > SCREEN_RIGHT-40 )
+			{
+				// It goes off the edge of the screen.  Re-init with the "long row" style.
+				row.m_bRowIsLong = true;
+				for( unsigned j=0; j<optline.choices.size(); j++ )	// for each option on this row
+					delete textItems[j];
+				textItems.clear();
+
+				for( unsigned p=0; p<NUM_PLAYERS; p++ )
+				{
+					if( !GAMESTATE->IsHumanPlayer(p) )
+						continue;
+
+					BitmapText *bt = new BitmapText;
+					textItems.push_back( bt );
+
+					const int iChoiceInRow = m_Rows[r]->m_iSelection[p];
+
+					bt->LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
+					bt->SetText( optline.choices[iChoiceInRow] );
+					bt->SetZoom( ITEMS_ZOOM );
+					bt->EnableShadow( false );
+
+					/* if choices are locked together, center the item. */
+					if( optline.bOneChoiceForAllPlayers )
+						bt->SetX( (ITEM_X[0]+ITEM_X[1])/2 );
+					else
+						bt->SetX( ITEM_X[p] );
+
+					/* If bOneChoiceForAllPlayers, then only initialize one text item. */
+					if( optline.bOneChoiceForAllPlayers )
+						break;
+				}
+			}
+
+			for( c=0; c<textItems.size(); c++ )
+				m_framePage.AddChild( textItems[c] );
+		}
 	}
 
 	// TRICKY:  Add one more item.  This will be "EXIT"
@@ -272,19 +284,21 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 	InitOptionsText();
 
 	// add explanation here so it appears on top
-	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_textExplanation[p].LoadFromFont( THEME->GetPathToF("ScreenOptions explanation") );
-		m_textExplanation[p].SetZoom( EXPLANATION_ZOOM );
-		m_textExplanation[p].SetShadowLength( 0 );
-		m_framePage.AddChild( &m_textExplanation[p] );
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			m_textExplanation[p].LoadFromFont( THEME->GetPathToF("ScreenOptions explanation") );
+			m_textExplanation[p].SetZoom( EXPLANATION_ZOOM );
+			m_textExplanation[p].SetShadowLength( 0 );
+			m_framePage.AddChild( &m_textExplanation[p] );
+		}
 	}
 
 	/* Hack: if m_CurStyle is set, we're probably in the player or song options menu, so
 	 * the player name is meaningful.  Otherwise, we're probably in the system menu. */
 	if( GAMESTATE->m_CurStyle != STYLE_INVALID )
 	{
-		for( p=0; p<NUM_PLAYERS; p++ )
+		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
 			m_textPlayerName[p].LoadFromFont( THEME->GetPathToF( "ScreenOptions player") );
 			m_textPlayerName[p].SetName( ssprintf("PlayerNameP%i",p+1) );
@@ -299,7 +313,7 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 		m_ScrollBar.SetName( "DualScrollBar", "ScrollBar" );
 		m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT );
 		m_ScrollBar.SetBarTime( SCROLL_BAR_TIME );
-		for( p=0; p<NUM_PLAYERS; p++ )
+		for( int p=0; p<NUM_PLAYERS; p++ )
 			m_ScrollBar.EnablePlayer( (PlayerNumber)p, GAMESTATE->IsHumanPlayer(p) );
 		m_ScrollBar.Load();
 		UtilSetXY( m_ScrollBar, "ScreenOptions" );
@@ -314,8 +328,10 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 	switch( m_InputMode )
 	{
 	case INPUTMODE_INDIVIDUAL:
-		for( p=0; p<NUM_PLAYERS; p++ )
-			m_textExplanation[p].SetXY( EXPLANATION_X(p), EXPLANATION_Y(p) );
+		{
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				m_textExplanation[p].SetXY( EXPLANATION_X(p), EXPLANATION_Y(p) );
+		}
 		break;
 	case INPUTMODE_TOGETHER:
 		m_textExplanation[0].SetXY( EXPLANATION_TOGETHER_X, EXPLANATION_TOGETHER_Y );
@@ -329,10 +345,12 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 	m_framePage.AddChild( m_sprFrame );
 
 	// poke once at all the explanation metrics so that we catch missing ones early
-	for( r=0; r<(int)m_Rows.size(); r++ )		// foreach row
 	{
-		GetExplanationText( r );
-		GetExplanationTitle( r );
+		for( int r=0; r<(int)m_Rows.size(); r++ )		// foreach row
+		{
+			GetExplanationText( r );
+			GetExplanationTitle( r );
+		}
 	}
 
 	CHECKPOINT;
@@ -343,15 +361,17 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 	RefreshIcons();
 	PositionCursors();
 	UpdateEnabledDisabled();
-	for( p=0; p<NUM_PLAYERS; p++ )
-		OnChange( (PlayerNumber)p );
+	{
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			OnChange( (PlayerNumber)p );
+	}
 
 	CHECKPOINT;
 
 	/* It's tweening into position, but on the initial tween-in we only want to
 	 * tween in the whole page at once.  Since the tweens are nontrivial, it's
 	 * easiest to queue the tweens and then force them to finish. */
-	for( r=0; r<(int) m_Rows.size(); r++ )	// foreach options line
+	for( int r=0; r<(int) m_Rows.size(); r++ )	// foreach options line
 	{
 		Row &row = *m_Rows[r];
 		row.m_sprBullet.FinishTweening();
@@ -424,7 +444,7 @@ BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow )
 
 	if( !row.m_bRowIsLong )
 	{
-		unsigned iOptionInRow = m_iSelectedOption[pn][iRow];
+		unsigned iOptionInRow = m_Rows[iRow]->m_iSelection[pn];
 		return *row.m_textItems[iOptionInRow];
 	}
 
@@ -615,9 +635,9 @@ void ScreenOptions::UpdateText( PlayerNumber player_no, int iRow )
 	if( !row.m_bRowIsLong )
 		return;
 
-	int iChoiceInRow = m_iSelectedOption[player_no][iRow];
+	int iChoiceInRow = m_Rows[iRow]->m_iSelection[player_no];
 
-	const OptionRow &optrow = m_Rows[iRow]->m_RowDef;
+	const OptionRowData &optrow = m_Rows[iRow]->m_RowDef;
 
 	unsigned item_no = optrow.bOneChoiceForAllPlayers?0:player_no;
 
@@ -1013,7 +1033,7 @@ void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta, bool Repeat )
 {
 	const int iCurRow = m_iCurrentRow[pn];
 	Row &row = *m_Rows[iCurRow];
-	OptionRow &optrow = m_Rows[iCurRow]->m_RowDef;
+	OptionRowData &optrow = m_Rows[iCurRow]->m_RowDef;
 
 	/* If START is being pressed, and in NAV_THREE_KEY, then we're holding left/right
 	 * and start to move backwards.  Don't move left and right, too. */
@@ -1044,23 +1064,23 @@ void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta, bool Repeat )
 		if( p != pn )
 			continue;	// skip
 
-		int iNewSel = m_iSelectedOption[p][iCurRow] + iDelta;
+		int iNewSel = m_Rows[iCurRow]->m_iSelection[p] + iDelta;
 		wrap( iNewSel, iNumOptions );
 		
-		if( iNewSel != m_iSelectedOption[p][iCurRow] )
+		if( iNewSel != m_Rows[iCurRow]->m_iSelection[p] )
 			bOneChanged = true;
 
 		if( optrow.bOneChoiceForAllPlayers )
 		{
 			for( int p2=0; p2<NUM_PLAYERS; p2++ )
 			{
-				m_iSelectedOption[p2][iCurRow] = iNewSel;
+				m_Rows[iCurRow]->m_iSelection[p2] = iNewSel;
 				UpdateText( (PlayerNumber)p2, iCurRow );
 			}
 		}
 		else
 		{
-			m_iSelectedOption[p][iCurRow] = iNewSel;
+			m_Rows[iCurRow]->m_iSelection[p] = iNewSel;
 			UpdateText( (PlayerNumber)p, iCurRow );
 		}
 		OnChange( (PlayerNumber)p );
