@@ -72,6 +72,7 @@ void InputFilter::ButtonPressed( DeviceInput di, bool Down )
 	if(m_BeingHeld[di.device][di.button] == Down)
 		return;
 
+	LOG->Trace( "ButtonPressed(%i,%i) %i", di.device, di.button, Down );
 	const bool WasBeingPressed = IsBeingPressed( di );
 
 	m_BeingHeld[di.device][di.button] = Down;
