@@ -146,6 +146,7 @@ MusicWheel::MusicWheel()
 			{
 				GAMESTATE->m_pCurNotes[p] = pNotes;
 				GAMESTATE->m_PlayerOptions[p] = po;
+				GAMESTATE->m_PreferredDifficulty[p] = pNotes->GetDifficulty();
 			}
 		}
 		GAMESTATE->m_SongOptions = so;

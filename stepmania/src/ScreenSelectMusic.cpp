@@ -776,14 +776,6 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 		if( !GAMESTATE->IsHumanPlayer( PlayerNumber(p) ) )
 			continue;
 
-		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-		{
-			/* Extra stage; just keep the difficulty selected by
-			 * SongManager::GetExtraStageInfo. */
-			m_iSelection[p] = GAMESTATE->m_pCurNotes[p]->GetDifficulty();
-			continue;
-		}
-
 		/* Find the closest match to the user's preferred difficulty. */
 		int CurDifference = -1;
 		for( unsigned i=0; i<m_arrayNotes[p].size(); i++ )
