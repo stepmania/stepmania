@@ -509,7 +509,8 @@ void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
 			iNumNotesInThisRow++;
 
 			// show the ghost arrow for this column
-			m_GhostArrowRow.TapNote( c, score, m_Combo.GetCurrentCombo()>g_iBrightGhostThreshold );
+			if(score == TNS_GREAT || score == TNS_PERFECT || score == TNS_MARVELOUS)
+				m_GhostArrowRow.TapNote( c, score, m_Combo.GetCurrentCombo()>g_iBrightGhostThreshold );
 		}
 	}
 		
