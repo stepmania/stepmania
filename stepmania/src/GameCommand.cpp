@@ -54,6 +54,7 @@ void GameCommand::Init()
 	m_bDownloadMachineStats = false;
 	m_bInsertCredit = false;
 	m_bResetToFactoryDefaults = false;
+	m_bStopMusic = false;
 }
 
 bool CompareSongOptions( const SongOptions &so1, const SongOptions &so2 );
@@ -278,6 +279,10 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 		else if( sName == "resettofactorydefaults" )
 		{
 			m_bResetToFactoryDefaults = true;
+		}
+		else if( sName == "stopmusic" )
+		{
+			m_bStopMusic = true;
 		}
 
 		else
@@ -561,6 +566,8 @@ void GameCommand::Apply( PlayerNumber pn ) const
 		UNLOCKMAN->UnlockCode( m_iUnlockIndex );
 	if( m_sSoundPath != "" )
 		SOUND->PlayOnce( THEME->GetPathToS( m_sSoundPath ) );
+	if( m_bStopMusic )
+		SOUND->StopMusic();
 	FOREACH_CONST( CString, m_vsScreensToPrepare, s )
 		SCREENMAN->PrepareScreen( *s );
 	if( m_bDeletePreparedScreens )

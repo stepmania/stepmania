@@ -59,6 +59,7 @@ struct GameCommand		// used in SelectMode
 	bool m_bDownloadMachineStats;
 	bool m_bInsertCredit;
 	bool m_bResetToFactoryDefaults;
+	bool m_bStopMusic;
 };
 
 #endif
