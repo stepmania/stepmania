@@ -6,7 +6,7 @@ if test "$LUA_CONFIG" != ""; then
 	LUA_LIBS=`lua-config --static`
 else
 	if test "$LIB_LUA" = ""; then
-		AC_CHECK_LIB(lualib, lua_open, LIB_LUA=-llua)
+		AC_CHECK_LIB(lua, lua_open, LIB_LUA=-llua)
 	fi
 	if test "$LIB_LUA" = ""; then
 		AC_CHECK_LIB(lua50, lua_open, LIB_LUA=-llua50)
