@@ -63,7 +63,7 @@ BOOL ConvertThemeDlg::OnInitDialog()
 	CStringArray asThemes;
 	GetDirListing( "Themes\\*.*", asThemes, true, false );
 	for( int i=0; i<asThemes.GetSize(); i++ )
-		if( asThemes[i] != "default" )
+//		if( asThemes[i] != "default" )	// allow editing of default
 			m_listThemes.AddString( asThemes[i] );
 
 	return TRUE;  // return TRUE unless you set the focus to a control
