@@ -69,7 +69,7 @@ void AddLayersFromAniDir( CString sAniDir, vector<Actor*> &layersAddTo, bool Gen
 
 	{
 		CString expr;
-		if( ini.GetValue( "BGAnimation", "Cond", expr ) )
+		if( ini.GetValue( "BGAnimation", "Condition", expr ) || ini.GetValue( "BGAnimation", "Cond", expr ) )
 		{
 			if( !Lua::RunExpression( expr ) )
 				return;
