@@ -57,7 +57,7 @@
 #define IDC_DONTSHOW                    1042
 #define IDC_PACKAGES                    1044
 #define IDC_BUTTON1                     1045
-#define IDC_PROGRESS1                   1046
+#define IDC_PROGRESS1                   1047
 
 // Next default values for new objects
 // 
@@ -65,7 +65,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        149
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1047
+#define _APS_NEXT_CONTROL_VALUE         1048
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

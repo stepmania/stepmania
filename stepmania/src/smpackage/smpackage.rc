@@ -70,6 +70,210 @@ IDR_MAINFRAME           ICON                    "smpackage.ICO"
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Dialog
+//
+
+IDD_INSTALL DIALOGEX 0, 0, 332, 234
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
+CAPTION "Stepmania Package Manager"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    EDITTEXT        IDC_EDIT_MESSAGE1,7,42,320,45,ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT 
+                    WS_TABSTOP
+    DEFPUSHBUTTON   "Finish >",IDOK,200,215,55,15
+    PUSHBUTTON      "Cancel",IDCANCEL,275,215,50,15
+    PUSHBUTTON      "< Back",IDC_BUTTON_BACK,145,215,55,15,WS_DISABLED
+    CONTROL         133,IDC_STATIC,"Static",SS_BITMAP,0,0,258,37
+    EDITTEXT        IDC_EDIT_MESSAGE3,5,180,320,13,ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT 
+                    WS_TABSTOP
+    EDITTEXT        IDC_EDIT_MESSAGE2,5,90,320,87,ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL | NOT 
+                    WS_TABSTOP
+    COMBOBOX        IDC_COMBO_DIR,22,195,204,105,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Edit Installations",IDC_BUTTON_EDIT,233,194,59,14
+    CONTROL         "",IDC_PROGRESS1,"msctls_progress32",NOT WS_VISIBLE | 
+                    WS_BORDER,7,60,318,14
+END
+
+IDD_EXPORTER DIALOGEX 0, 0, 332, 234
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | 
+    WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Stepmania Package Manager"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Close",IDOK,255,215,69,14
+    PUSHBUTTON      "Play Stepmania",IDC_BUTTON_PLAY,5,215,70,15
+    PUSHBUTTON      "Export As One",IDC_BUTTON_EXPORT_AS_ONE,255,104,69,15
+    CONTROL         135,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
+    PUSHBUTTON      "Export As Individual",IDC_BUTTON_EXPORT_AS_INDIVIDUAL,
+                    255,137,69,15
+    CONTROL         "Tree2",IDC_TREE,"SysTreeView32",TVS_HASBUTTONS | 
+                    TVS_HASLINES | TVS_LINESATROOT | TVS_CHECKBOXES | 
+                    WS_BORDER | WS_TABSTOP,7,61,239,151
+    COMBOBOX        IDC_COMBO_DIR,74,40,170,105,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Edit Installations",IDC_BUTTON_EDIT,253,39,71,14
+    LTEXT           "Select Installation:",IDC_STATIC,7,42,66,11
+    PUSHBUTTON      "Open Program Folder",IDC_BUTTON_OPEN,83,215,79,15
+END
+
+IDD_DIALOG_NAME DIALOG  0, 0, 261, 58
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Name Your Package"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Please enter a name for your new package:",IDC_STATIC,7,
+                    7,179,12
+    EDITTEXT        IDC_EDIT,17,20,178,13,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,204,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,204,24,50,14
+    LTEXT           "NOTE: (leave off the "".smzip"" extension)",IDC_STATIC,
+                    18,38,179,12
+END
+
+IDD_EDIT_INSTALLATIONS DIALOG  0, 0, 233, 220
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Edit Installations"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,117,198,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,175,198,50,14
+    LISTBOX         IDC_LIST,17,21,136,89,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
+                    WS_TABSTOP
+    EDITTEXT        IDC_EDIT,19,168,136,13,ES_AUTOHSCROLL
+    PUSHBUTTON      "Add",IDC_BUTTON_ADD,165,168,50,14
+    PUSHBUTTON      "Remove",IDC_BUTTON_REMOVE,164,42,50,15
+    PUSHBUTTON      "Make Default",IDC_BUTTON_MAKE_DEFAULT,164,72,50,15
+    GROUPBOX        "Add New Installation",IDC_STATIC,7,130,218,59
+    GROUPBOX        "Current Installations (the top installation is the default)",
+                    IDC_STATIC,7,7,218,114
+    LTEXT           "Enter the complete path to a StepMania or DWI installation\r\ne.g. ""C:\\Program Files\\StepMania""",
+                    IDC_STATIC,18,144,196,17
+END
+
+IDD_MENU DIALOG  0, 0, 332, 234
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "StepMania Tools Main Menu"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "Close",IDOK,275,213,50,14
+    CONTROL         140,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
+    PUSHBUTTON      "Export Packages",IDC_EXPORT_PACKAGES,20,120,70,15
+    LTEXT           "Choose this option to create .smzip files that you can share with other StepMania and DWI users.  A .smzip package can contain songs, courses, themes, background animations, and more.",
+                    IDC_STATIC,105,115,215,25
+    GROUPBOX        ".smzip Packages",IDC_STATIC,5,100,320,50
+    GROUPBOX        "Themes",IDC_STATIC,5,155,320,53
+    PUSHBUTTON      "Theme Tools",IDC_ANALYZE_ELEMENTS,20,176,70,15
+    PUSHBUTTON      "Edit Installations",IDC_EDIT_INSTALLATIONS,20,65,70,15
+    LTEXT           "Choose this option to edit the list of locations where you have StepMania or DWI installed.  When you double-click on a .smzip file, you can choose to install the package to any of these locations.",
+                    IDC_STATIC,105,60,215,25
+    GROUPBOX        "Installations",IDC_STATIC,5,45,320,50
+    LTEXT           "Using this feature, you can:\n - Catch redundant and misnamed theme elements\n - Convert a SM 3.0 theme for use in SM 4.0\n - Edit theme metrics using a user-friendly interface",
+                    IDC_STATIC,103,168,215,35
+END
+
+IDD_CONVERT_THEME DIALOG  0, 0, 332, 258
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Theme Elements"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "Close",IDOK,275,237,50,14
+    CONTROL         144,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
+    LISTBOX         IDC_LIST_THEMES,7,44,88,186,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Convert from 3.0 to 4.0",IDC_BUTTON_CONVERT,164,51,95,
+                    15,WS_DISABLED
+    LTEXT           "This will convert the element names in a SM 3.0 theme to the SM 4.0 theme names.  A converted theme will no longer be compatible with StepMania 3.0, so make a backup.  This tool does not convert theme metrics.",
+                    IDC_STATIC,110,71,210,33
+    GROUPBOX        "Elements",IDC_STATIC,105,41,220,100
+    LTEXT           "Check for redundant or possibly midnamed theme elements.",
+                    IDC_STATIC,110,127,210,11
+    PUSHBUTTON      "Analyze Elements",IDC_BUTTON_ANALYZE,165,107,95,15,
+                    WS_DISABLED
+    GROUPBOX        "Metrics",IDC_STATIC,105,149,220,81
+    LTEXT           "Edit theme metrics with a user-friendly interface.",
+                    IDC_STATIC,110,179,210,10
+    PUSHBUTTON      "Edit Metrics",IDC_BUTTON_EDIT_METRICS,165,159,95,15,
+                    WS_DISABLED
+    LTEXT           "Check for redundant or possibly midnamed theme metrics.",
+                    IDC_STATIC,109,217,210,10
+    PUSHBUTTON      "Analyze Metrics",IDC_BUTTON_ANALYZE_METRICS,165,197,95,
+                    15,WS_DISABLED
+END
+
+IDD_EDIT_METRICS DIALOG  0, 0, 332, 234
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Edit Theme Metrics"
+FONT 8, "MS Sans Serif"
+BEGIN
+    PUSHBUTTON      "Close",IDC_BUTTON_CLOSE,275,213,50,14
+    CONTROL         146,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
+    EDITTEXT        IDC_EDIT_VALUE,217,95,108,50,ES_MULTILINE | 
+                    ES_AUTOVSCROLL | WS_DISABLED
+    LTEXT           "Value",IDC_STATIC,218,83,88,9
+    EDITTEXT        IDC_EDIT_DEFAULT,217,161,108,48,ES_MULTILINE | 
+                    ES_AUTOVSCROLL | ES_READONLY
+    LTEXT           "Default Value",IDC_STATIC,218,148,88,9
+    PUSHBUTTON      "Override",IDC_BUTTON_OVERRIDE,217,45,60,14,WS_DISABLED
+    PUSHBUTTON      "Remove Override",IDC_BUTTON_REMOVE,217,64,60,14,
+                    WS_DISABLED
+    CONTROL         "Tree1",IDC_TREE,"SysTreeView32",TVS_HASBUTTONS | 
+                    TVS_LINESATROOT | TVS_SHOWSELALWAYS | WS_BORDER | 
+                    WS_TABSTOP,7,44,203,165
+    PUSHBUTTON      "Save",IDC_BUTTON_SAVE,203,213,56,14
+    PUSHBUTTON      "Explanation",IDC_BUTTON_HELP,65,214,71,13
+END
+
+IDD_ENTER_COMMENT DIALOGEX 0, 0, 312, 202
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add A Comment"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "This message will be displayed before a user installs your package.",
+                    -1,7,7,219,12
+    EDITTEXT        IDC_EDIT,17,24,232,155,ES_MULTILINE | ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,255,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,255,24,50,14
+    CONTROL         "Don't display this dialog in the future",IDC_DONTASK,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,20,181,145,11
+END
+
+IDD_SHOW_COMMENT DIALOGEX 0, 0, 246, 186
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Package Comment"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    EDITTEXT        IDC_EDIT,7,7,232,137,ES_MULTILINE | ES_AUTOHSCROLL | 
+                    ES_READONLY
+    DEFPUSHBUTTON   "OK",IDOK,72,165,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,128,165,50,14
+    CONTROL         "Don't display this dialog in the future",IDC_DONTSHOW,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,149,145,11
+END
+
+IDD_UNINSTALL_OLD_PACKAGES DIALOGEX 0, 0, 277, 161
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Uninstall Old Packages"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "&Yes",IDOK,55,132,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,171,132,50,14
+    LTEXT           "The following packages are already installed.  It is strongly recommended that they be deleted before installing this package.",
+                    IDC_STATIC,32,11,214,19
+    EDITTEXT        IDC_PACKAGES,56,47,165,67,ES_AUTOHSCROLL | ES_READONLY | 
+                    NOT WS_BORDER
+    PUSHBUTTON      "&No",IDC_BUTTON1,111,132,49,14
+    LTEXT           "Delete old packages?",IDC_STATIC,105,119,67,12
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // Version
 //
 
@@ -88,7 +292,7 @@ VS_VERSION_INFO VERSIONINFO
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
-        BLOCK "040904b0"
+        BLOCK "040904B0"
         BEGIN
             VALUE "FileDescription", "smpackage MFC Application"
             VALUE "FileVersion", "1, 0, 0, 1"
@@ -103,237 +307,6 @@ BEGIN
     BEGIN
         VALUE "Translation", 0x409, 1200
     END
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Bitmap
-//
-
-INSTALL                 BITMAP                  "install.bmp"
-MANAGE                  BITMAP                  "manage.bmp"
-MENU                    BITMAP                  "menu.bmp"
-CONVERTTHEME            BITMAP                  "converttheme.bmp"
-EDIT_METRICS            BITMAP                  "editmetrics.bmp"
-#endif    // Anglais (États-Unis) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
-// Français (France) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
-#ifdef _WIN32
-LANGUAGE LANG_FRENCH, SUBLANG_FRENCH
-#pragma code_page(1252)
-#endif //_WIN32
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog
-//
-
-IDD_INSTALL DIALOGEX 0, 0, 332, 234
-STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
-CAPTION "Gestionnaire de Paquet StepMania"
-FONT 8, "MS Sans Serif", 0, 0, 0x0
-BEGIN
-    EDITTEXT        IDC_EDIT_MESSAGE1,7,41,320,45,ES_MULTILINE | 
-                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT 
-                    WS_TABSTOP
-    DEFPUSHBUTTON   "Terminer >",IDOK,200,215,55,15
-    PUSHBUTTON      "Annuler",IDCANCEL,275,215,50,15
-    PUSHBUTTON      "< Retour",IDC_BUTTON_BACK,145,215,55,15,WS_DISABLED
-    CONTROL         133,IDC_STATIC,"Static",SS_BITMAP,0,0,258,37
-    EDITTEXT        IDC_EDIT_MESSAGE3,5,180,320,13,ES_MULTILINE | 
-                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT 
-                    WS_TABSTOP
-    EDITTEXT        IDC_EDIT_MESSAGE2,5,90,320,87,ES_MULTILINE | 
-                    ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL | NOT 
-                    WS_TABSTOP
-    COMBOBOX        IDC_COMBO_DIR,22,195,204,105,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Editer Installations",IDC_BUTTON_EDIT,230,194,62,14
-    CONTROL         "",IDC_PROGRESS1,"msctls_progress32",NOT WS_VISIBLE | 
-                    WS_BORDER,7,65,318,14
-END
-
-IDD_EXPORTER DIALOGEX 0, 0, 332, 234
-STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | 
-    WS_VISIBLE | WS_CAPTION | WS_SYSMENU
-EXSTYLE WS_EX_APPWINDOW
-CAPTION "Gestionnaire de Paquet StepMania"
-FONT 8, "MS Sans Serif", 0, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "Fermer",IDOK,255,215,69,14
-    PUSHBUTTON      "Lancer Stepmania",IDC_BUTTON_PLAY,5,215,70,15
-    PUSHBUTTON      "Exporter en Un",IDC_BUTTON_EXPORT_AS_ONE,252,104,72,15
-    CONTROL         135,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
-    PUSHBUTTON      "Exporter En Individuel",IDC_BUTTON_EXPORT_AS_INDIVIDUAL,
-                    252,137,72,15
-    CONTROL         "Tree2",IDC_TREE,"SysTreeView32",TVS_HASBUTTONS | 
-                    TVS_HASLINES | TVS_LINESATROOT | TVS_CHECKBOXES | 
-                    WS_BORDER | WS_TABSTOP,7,61,239,151
-    COMBOBOX        IDC_COMBO_DIR,74,40,170,105,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Editer les Installations",IDC_BUTTON_EDIT,250,38,74,14
-    LTEXT           "Choisir l'Installation :",IDC_STATIC,7,42,66,11
-    PUSHBUTTON      "Ouvrir Dossier Programme",IDC_BUTTON_OPEN,83,215,87,15
-END
-
-IDD_DIALOG_NAME DIALOGEX 0, 0, 261, 58
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Nommer Votre Paquet"
-FONT 8, "MS Sans Serif", 0, 0, 0x0
-BEGIN
-    LTEXT           "Veuillez entrer un nom pour votre nouveau paquet :",
-                    IDC_STATIC,7,7,179,12
-    EDITTEXT        IDC_EDIT,17,20,178,13,ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "OK",IDOK,204,7,50,14
-    PUSHBUTTON      "Annuler",IDCANCEL,204,24,50,14
-    LTEXT           "NOTE: (n'insérez pas l'extension "".smzip"")",
-                    IDC_STATIC,18,38,179,12
-END
-
-IDD_EDIT_INSTALLATIONS DIALOGEX 0, 0, 233, 220
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Editer Les Installations"
-FONT 8, "MS Sans Serif", 0, 0, 0x0
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,117,198,50,14
-    PUSHBUTTON      "Annuler",IDCANCEL,175,198,50,14
-    LISTBOX         IDC_LIST,17,21,136,89,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
-                    WS_TABSTOP
-    EDITTEXT        IDC_EDIT,19,168,136,13,ES_AUTOHSCROLL
-    PUSHBUTTON      "Ajouter",IDC_BUTTON_ADD,165,168,50,14
-    PUSHBUTTON      "Supprimer",IDC_BUTTON_REMOVE,164,42,50,15
-    PUSHBUTTON      "Par défaut",IDC_BUTTON_MAKE_DEFAULT,164,72,50,15
-    GROUPBOX        "Ajouter une Nouvelle Installation",IDC_STATIC,7,130,218,
-                    59
-    GROUPBOX        "Installations Actuelles (la première est celle par défaut)",
-                    IDC_STATIC,7,7,218,114
-    LTEXT           "Entrez le chemin entier d'une installation de StepMania ou de DWI. ex.  ""C:\\Program Files\\StepMania""",
-                    IDC_STATIC,18,144,196,17
-END
-
-IDD_MENU DIALOGEX 0, 0, 332, 234
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Outils StepMania Menu Principal"
-FONT 8, "MS Sans Serif", 0, 0, 0x0
-BEGIN
-    DEFPUSHBUTTON   "Fermer",IDOK,275,213,50,14
-    CONTROL         140,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
-    PUSHBUTTON      "Exporter Paquets",IDC_EXPORT_PACKAGES,20,120,70,15
-    LTEXT           "Choisissez cette option pour créer des fichier .smzip que vous pouvez partager avec d'autres utilisateurs de DWI ou de StepMania. Un paquet .smzip peut contenir des musiques, des courses, des thèmes, des animations d'arrière plan et plus.",
-                    IDC_STATIC,110,111,215,32
-    GROUPBOX        "Paquets .smzip",IDC_STATIC,5,100,320,50
-    GROUPBOX        "Thèmes",IDC_STATIC,5,155,320,53
-    PUSHBUTTON      "Outils pour Thème",IDC_ANALYZE_ELEMENTS,20,176,70,15
-    PUSHBUTTON      "Editer Installations",IDC_EDIT_INSTALLATIONS,20,65,70,
-                    15
-    LTEXT           "Choisissez cette option pour éditer la liste des endroits ou vous avez StepMania ou DWI d'installé.  Quand vous double-cliquez sur un fichier .smzip, vous pouvez choisir d'installer le paquet dans n'importe laquelle de ces installations.",
-                    IDC_STATIC,103,55,222,32
-    GROUPBOX        "Installations",IDC_STATIC,5,45,320,50
-    LTEXT           "En utilisant cette fonction, vous pouvez :\n - Supprimer les éléments de thème redondants et mal nommés\n - Convertir un thème SM 3.0 pour être utilisé avec SM 4.0\n - Editer les métriques de thème en utilisant une interface conviviale",
-                    IDC_STATIC,103,168,215,35
-END
-
-IDD_CONVERT_THEME DIALOGEX 0, 0, 332, 258
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Eléments de Thème"
-FONT 8, "MS Sans Serif", 0, 0, 0x0
-BEGIN
-    DEFPUSHBUTTON   "Fermer",IDOK,275,237,50,14
-    CONTROL         144,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
-    LISTBOX         IDC_LIST_THEMES,7,44,88,186,LBS_SORT | 
-                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Convertir du 3.0 vers le 4.0",IDC_BUTTON_CONVERT,164,51,
-                    95,15,WS_DISABLED
-    LTEXT           "Ceci convertira le nom des éléments d'un thème SM 3.0 avec des nom de thème SM 4.0. Un thème convertit ne sera plus compatible avech StepMania 3.0, donc faites une sauvegarde. Cet outils ne convertit pas les metriques du thème.",
-                    IDC_STATIC,110,71,210,33
-    GROUPBOX        "Elements",IDC_STATIC,105,41,220,100
-    LTEXT           "Vérifie les éléments du thème qui sont redondants ou mal nommés.",
-                    IDC_STATIC,110,127,210,11
-    PUSHBUTTON      "Analyzee les Elements",IDC_BUTTON_ANALYZE,165,107,95,15,
-                    WS_DISABLED
-    GROUPBOX        "Metrics",IDC_STATIC,105,149,220,81
-    LTEXT           "Editer les métriques du thème avec une interface conviviale.",
-                    IDC_STATIC,110,179,210,10
-    PUSHBUTTON      "Editer Métriques",IDC_BUTTON_EDIT_METRICS,165,159,95,15,
-                    WS_DISABLED
-    LTEXT           "Vérifie les métriques du thème qui sont redondants ou mal nommés.",
-                    IDC_STATIC,109,217,210,10
-    PUSHBUTTON      "Analyzer Metriques",IDC_BUTTON_ANALYZE_METRICS,165,197,
-                    95,15,WS_DISABLED
-END
-
-IDD_EDIT_METRICS DIALOGEX 0, 0, 332, 234
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Editer Métriques du Thème"
-FONT 8, "MS Sans Serif", 0, 0, 0x0
-BEGIN
-    PUSHBUTTON      "Fermer",IDC_BUTTON_CLOSE,275,213,50,14
-    CONTROL         146,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
-    EDITTEXT        IDC_EDIT_VALUE,217,95,108,50,ES_MULTILINE | 
-                    ES_AUTOVSCROLL | WS_DISABLED
-    LTEXT           "Valeur",IDC_STATIC,218,83,88,9
-    EDITTEXT        IDC_EDIT_DEFAULT,217,161,108,48,ES_MULTILINE | 
-                    ES_AUTOVSCROLL | ES_READONLY
-    LTEXT           "Valeur par défaut",IDC_STATIC,218,148,88,9
-    PUSHBUTTON      "Remplacer",IDC_BUTTON_OVERRIDE,217,45,65,14,WS_DISABLED
-    PUSHBUTTON      "Ne Pas Remplacer",IDC_BUTTON_REMOVE,217,64,65,14,
-                    WS_DISABLED
-    CONTROL         "Tree1",IDC_TREE,"SysTreeView32",TVS_HASBUTTONS | 
-                    TVS_LINESATROOT | TVS_SHOWSELALWAYS | WS_BORDER | 
-                    WS_TABSTOP,7,44,203,165
-    PUSHBUTTON      "Sauver",IDC_BUTTON_SAVE,203,213,56,14
-    PUSHBUTTON      "Explication",IDC_BUTTON_HELP,65,214,71,13
-END
-
-IDD_ENTER_COMMENT DIALOGEX 0, 0, 312, 202
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Ajouter un Commentaire"
-FONT 8, "MS Sans Serif", 0, 0, 0x0
-BEGIN
-    LTEXT           "Ce message sera affiché avant qu'un utilisateur installe votre paquet.",
-                    -1,7,7,219,12
-    EDITTEXT        IDC_EDIT,17,24,232,155,ES_MULTILINE | ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "OK",IDOK,255,7,50,14
-    PUSHBUTTON      "Annuler",IDCANCEL,255,24,50,14
-    CONTROL         "Ne plus afficher ce dialogue dans le futur",IDC_DONTASK,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,20,181,145,11
-END
-
-IDD_SHOW_COMMENT DIALOGEX 0, 0, 246, 186
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Commentaire de Paquet"
-FONT 8, "MS Sans Serif", 0, 0, 0x0
-BEGIN
-    EDITTEXT        IDC_EDIT,7,7,232,137,ES_MULTILINE | ES_AUTOHSCROLL | 
-                    ES_READONLY
-    DEFPUSHBUTTON   "OK",IDOK,72,165,50,14
-    PUSHBUTTON      "Annuler",IDCANCEL,128,165,50,14
-    CONTROL         "Ne plus afficher ce dialogue dans le futur",
-                    IDC_DONTSHOW,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,
-                    149,145,11
-END
-
-IDD_UNINSTALL_OLD_PACKAGES DIALOGEX 0, 0, 277, 161
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
-    WS_SYSMENU
-CAPTION "Désinstaller les Anciens Paquets"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "&Oui",IDOK,55,132,50,14
-    PUSHBUTTON      "Annuler",IDCANCEL,171,132,50,14
-    LTEXT           "Les paquets suivants sont déja installés. Il est fortement recommandé de les supprimer avant d'installer ce paquet.",
-                    IDC_STATIC,46,14,188,19
-    EDITTEXT        IDC_PACKAGES,56,47,165,67,ES_AUTOHSCROLL | ES_READONLY | 
-                    NOT WS_BORDER
-    PUSHBUTTON      "&Non",IDC_BUTTON1,111,132,49,14
-    LTEXT           "Supprimer les anciens paquets ?",IDC_STATIC,84,119,106,
-                    12
 END
 
 
@@ -427,7 +400,18 @@ BEGIN
 END
 #endif    // APSTUDIO_INVOKED
 
-#endif    // Français (France) resources
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+INSTALL                 BITMAP                  "install.bmp"
+MANAGE                  BITMAP                  "manage.bmp"
+MENU                    BITMAP                  "menu.bmp"
+CONVERTTHEME            BITMAP                  "converttheme.bmp"
+EDIT_METRICS            BITMAP                  "editmetrics.bmp"
+#endif    // Anglais (États-Unis) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
