@@ -95,6 +95,7 @@ public:
 	bool		m_bRandomize;	// play the songs in a random order
 	int			m_iLives;	// -1 means use bar life meter
 	int			m_iCustomMeter[NUM_COURSE_DIFFICULTIES];	// -1 = no meter specified
+	bool		m_bSortByMeter;
 
 	vector<CourseEntry> m_entries;
 
@@ -122,8 +123,9 @@ public:
 	void LoadFromCRSFile( CString sPath );
 	void Init();
 	void Save();
-	void AutogenEndlessFromGroup( CString sGroupName, Difficulty diff );
-	void AutogenNonstopFromGroup( CString sGroupName, Difficulty diff );
+	void AutogenEndlessFromGroup( CString sGroupName, Difficulty dc );
+	void AutogenNonstopFromGroup( CString sGroupName, Difficulty dc );
+	void AutogenOniFromArtist( CString sArtistName, vector<Song*> aSongs, Difficulty dc );
 
 	// sorting values
 	int		m_SortOrder_TotalDifficulty;
@@ -136,6 +138,7 @@ public:
 	void ClearCache();
 
 private:
+	void GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
 	void GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut, CourseDifficulty cd ) const;
 
 	typedef pair<StepsType,CourseDifficulty> TrailParams;

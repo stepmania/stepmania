@@ -589,6 +589,47 @@ void SongManager::InitAutogenCourses()
 	pCourse = new Course;
 	pCourse->AutogenEndlessFromGroup( "", DIFFICULTY_MEDIUM );
 	m_pCourses.push_back( pCourse );
+
+	/* Generate Oni courses from artists.  Only create courses if we have at least
+	 * four songs from an artist; create 3- and 4-song courses. */
+	vector<Song *> aSongs;
+	{
+		vector<Song*> apSongs = this->GetAllSongs();
+		SongUtil::SortSongPointerArrayByArtist( apSongs );
+
+		CString sCurArtist = "";
+		int iCurArtistCount = 0;
+
+		unsigned i = 0;
+		do {
+			CString sArtist = i >= apSongs.size()? "": apSongs[i]->GetTranslitArtist();
+			if( i < apSongs.size() && !sCurArtist.CompareNoCase(sArtist) )
+			{
+				aSongs.push_back( apSongs[i] );
+				++iCurArtistCount;
+				continue;
+			}
+
+			/* Different artist, or we're at the end.  If we have enough entries for
+			 * the last artist, add it.  Skip blanks and "Unknown artist". */
+			if( iCurArtistCount >= 3 && sCurArtist != "" &&
+				sCurArtist.CompareNoCase("Unknown artist") )
+			{
+				pCourse = new Course;
+				pCourse->AutogenOniFromArtist( sCurArtist, aSongs, DIFFICULTY_HARD );
+				m_pCourses.push_back( pCourse );
+			}
+
+			aSongs.clear();
+			
+			if( i < apSongs.size() )
+			{
+				sCurArtist = sArtist;
+				iCurArtistCount = 1;
+				aSongs.push_back( apSongs[i] );
+			}
+		} while( i++ < apSongs.size() );
+	}
 }
 
 

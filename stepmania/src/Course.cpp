@@ -272,6 +272,7 @@ void Course::Init()
 	m_bRepeat = false;
 	m_bRandomize = false;
 	m_iLives = -1;
+	m_bSortByMeter = false;
 	ZERO( m_iCustomMeter );
 	m_entries.clear();
 	m_sPath = m_sName = m_sTranslitName = m_sBannerPath = m_sCDTitlePath = "";
@@ -432,6 +433,47 @@ void Course::AutogenNonstopFromGroup( CString sGroupName, Difficulty diff )
 		m_entries.pop_back();
 }
 
+void Course::AutogenOniFromArtist( CString sArtistName, vector<Song*> aSongs, Difficulty dc )
+{
+	m_bIsAutogen = true;
+	m_bRepeat = false;
+	m_bRandomize = true;
+	m_bSortByMeter = true;
+
+	m_iLives = 4;
+	m_iCustomMeter[0] = m_iCustomMeter[1] = -1;
+
+	ASSERT( sArtistName != "" );
+	ASSERT( aSongs.size() > 0 );
+
+	/* "Artist Oni" is a little repetitive; "by Artist" stands out less, and lowercasing
+	 * "by" puts more emphasis on the artist's name.  It also sorts them together. */
+	m_sName = "by " + sArtistName;
+
+	// m_sBannerPath = ""; // XXX
+
+	/* Shuffle the list to determine which songs we'll use.  Shuffle it deterministically,
+	 * so we always get the same set of songs unless the song set changes. */
+	{
+		RandomGen rng( GetHashForString( sArtistName ) + aSongs.size() );
+		random_shuffle( aSongs.begin(), aSongs.end(), rng );
+	}
+
+	/* Only use up to four songs. */
+	if( aSongs.size() > 4 )
+		aSongs.erase( aSongs.begin()+4, aSongs.end() );
+
+	CourseEntry e;
+	e.type = COURSE_ENTRY_FIXED;
+	e.difficulty = dc;
+
+	for( unsigned i = 0; i < aSongs.size(); ++i )
+	{
+		e.pSong = aSongs[i];
+		m_entries.push_back( e );
+	}
+}
+
 /*
  * Difficult courses do the following:
  *
@@ -501,6 +543,13 @@ static vector<Song*> GetFilteredBestSongs( StepsType st )
 	return ret;
 }
 
+struct SortTrailEntry
+{
+	TrailEntry entry;
+	int SortMeter;
+	bool operator< ( const SortTrailEntry &rhs ) const { return SortMeter < rhs.SortMeter; }
+};
+
 /* This is called by many simple functions, like Course::GetTotalSeconds, and may
  * be called on all songs to sort.  It can take time to execute, so we cache the
  * results. */
@@ -516,7 +565,44 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 		return &it->second;
 	}
 
+	//
+	// Construct a new Trail, add it to the cache, then return it.
+	//
+	Trail trail;
+	GetTrailUnsorted( st, cd, trail );
 
+	if( this->m_bSortByMeter )
+	{
+		/* Sort according to COURSE_DIFFICULTY_REGULAR, since the order of songs
+		 * must not change across difficulties. */
+		Trail SortTrail;
+		if( cd == COURSE_DIFFICULTY_REGULAR )
+			SortTrail = trail;
+		else
+			GetTrailUnsorted( st, COURSE_DIFFICULTY_REGULAR, SortTrail );
+		ASSERT_M( trail.m_vEntries.size() == SortTrail.m_vEntries.size(), ssprintf("%i %i", trail.m_vEntries.size(), SortTrail.m_vEntries.size()) );
+
+		vector<SortTrailEntry> entries;
+		for( unsigned i = 0; i < trail.m_vEntries.size(); ++i )
+		{
+			SortTrailEntry ste;
+			ste.entry = trail.m_vEntries[i];
+			ste.SortMeter = SortTrail.m_vEntries[i].pSteps->GetMeter();
+			entries.push_back( ste );
+		}
+
+		stable_sort( entries.begin(), entries.end() );
+		for( unsigned i = 0; i < trail.m_vEntries.size(); ++i )
+			trail.m_vEntries[i] = entries[i].entry;
+	}
+
+	/* Cache results. */
+	m_TrailCache[params] = trail;
+	return &m_TrailCache[params];
+}
+
+void Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const
+{
 	//
 	// Construct a new Trail, add it to the cache, then return it.
 	//
@@ -544,7 +630,6 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 
 	int CurSong = 0; /* Current offset into AllSongsShuffled */
 	
-	Trail trail;
 	trail.m_StepsType = st;
 	trail.m_CourseDifficulty = cd;
 
@@ -680,10 +765,6 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 		te.iHighMeter = high_meter;
 		trail.m_vEntries.push_back( te ); 
 	}
-
-	/* Cache results. */
-	m_TrailCache[params] = trail;
-	return &m_TrailCache[params];
 }
 
 bool Course::HasMods() const
