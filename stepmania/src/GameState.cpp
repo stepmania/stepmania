@@ -210,9 +210,10 @@ RageColor GameState::GetStageColor()
 int GameState::GetCourseSongIndex()
 {
 	int iSongIndex = 0;
+	/* iSongsPlayed includes the current song, so it's 1-based; subtract one. */
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		if( IsPlayerEnabled(p) )
-			iSongIndex = max( iSongIndex, m_CurStageStats.iSongsPlayed[p] );
+			iSongIndex = max( iSongIndex, m_CurStageStats.iSongsPlayed[p]-1 );
 	return iSongIndex;
 }
 
