@@ -99,7 +99,7 @@ void BeginnerHelper::Initialize( int iDancePadType )
 
 	for( int pl=0; pl<NUM_PLAYERS; pl++ )	// Load players
 	{
-		if( GAMESTATE->m_PreferredDifficulty[pl] == DIFFICULTY_BEGINNER && GAMESTATE->m_pCurCharacters[0] != NULL )
+		if( GAMESTATE->m_PreferredDifficulty[pl] == DIFFICULTY_BEGINNER && GAMESTATE->m_pCurCharacters[pl] != NULL )
 		{
 			// Load textures
 			m_mDancer[pl].SetHorizAlign( align_left );
