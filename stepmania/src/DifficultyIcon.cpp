@@ -33,7 +33,7 @@ bool DifficultyIcon::Load( CString sPath )
 	return true;
 }
 
-void DifficultyIcon::SetFromSteps( PlayerNumber pn, Steps* pSteps )
+void DifficultyIcon::SetFromSteps( PlayerNumber pn, const Steps* pSteps )
 {
 	if( pSteps == NULL )
 		m_bBlank = true;
@@ -41,7 +41,7 @@ void DifficultyIcon::SetFromSteps( PlayerNumber pn, Steps* pSteps )
 		SetFromDifficulty( pn, pSteps->GetDifficulty() );
 }
 
-void DifficultyIcon::SetFromTrail( PlayerNumber pn, Trail* pTrail )
+void DifficultyIcon::SetFromTrail( PlayerNumber pn, const Trail* pTrail )
 {
 	if( pTrail == NULL )
 		m_bBlank = true;

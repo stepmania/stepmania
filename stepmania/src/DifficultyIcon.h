@@ -19,8 +19,8 @@ public:
 
 	bool Load( CString sFilePath );
 
-	void SetFromSteps( PlayerNumber pn, Steps* pSteps );
-	void SetFromTrail( PlayerNumber pn, Trail* pTrail );
+	void SetFromSteps( PlayerNumber pn, const Steps* pSteps );
+	void SetFromTrail( PlayerNumber pn, const Trail* pTrail );
 	void SetFromDifficulty( PlayerNumber pn, Difficulty dc );
 
 protected:
