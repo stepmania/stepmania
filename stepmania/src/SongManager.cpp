@@ -14,6 +14,7 @@
 #include "SongManager.h"
 #include "IniFile.h"
 #include "RageLog.h"
+#include "NotesLoaderDWI.h"
 
 #include "GameState.h"
 #include "PrefsManager.h"
@@ -62,6 +63,24 @@ void SongManager::InitSongArrayFromDisk( void(*callback)() )
 	LOG->Trace( "Found %d Songs.", m_pSongs.GetSize() );
 }
 
+void SongManager::SanityCheckGroupDir( CString sDir ) const
+{
+	// Check to see if they put a song directly inside the group folder.
+	CStringArray arrayFiles;
+	GetDirListing( ssprintf("%s\\*.mp3", sDir), arrayFiles );
+	GetDirListing( ssprintf("%s\\*.ogg", sDir), arrayFiles );
+	GetDirListing( ssprintf("%s\\*.wav", sDir), arrayFiles );
+	if( arrayFiles.GetSize() > 0 )
+		throw RageException( 
+			ssprintf( "The folder '%s' contains music files.\n\n"
+				"This probably means that you have a song outside of a group folder.\n"
+				"All song folders must reside in a group folder.  For example, 'Songs\\DDR 4th Mix\\B4U'.\n"
+				"See the StepMania readme for more info.",
+				ssprintf("%s\\%s", sDir ) )
+		);
+	
+}
+
 void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 {
 	// trim off the trailing slash if any
@@ -79,20 +98,8 @@ void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 		if( 0 == stricmp( sGroupDirName, "cvs" ) )	// the directory called "CVS"
 			continue;		// ignore it
 
-		// Check to see if they put a song directly inside of the group folder
-		CStringArray arrayFiles;
-		GetDirListing( ssprintf("%s\\%s\\*.mp3", sDir, sGroupDirName), arrayFiles );
-		GetDirListing( ssprintf("%s\\%s\\*.ogg", sDir, sGroupDirName), arrayFiles );
-		GetDirListing( ssprintf("%s\\%s\\*.wav", sDir, sGroupDirName), arrayFiles );
-		if( arrayFiles.GetSize() > 0 )
-			throw RageException( 
-				ssprintf( "The folder '%s' contains music files.\n\n"
-					"This probably means that you have a song outside of a group folder.\n"
-					"All song folders must reside in a group folder.  For example, 'Songs\\DDR 4th Mix\\B4U'.\n"
-					"See the StepMania readme for more info.",
-					ssprintf("%s\\%s", sDir, sGroupDirName ) )
-			);
-		
+		SanityCheckGroupDir(sDir+"\\"+sGroupDirName);
+
 		// Look for a group banner in this group folder
 		CStringArray arrayGroupBanners;
 		GetDirListing( ssprintf("%s\\%s\\*.png", sDir, sGroupDirName), arrayGroupBanners );
@@ -151,8 +158,8 @@ void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 		callback();
 }
 
-
 /*
+
 void SongManager::LoadDWISongDir( CString DWIHome )
 {
 	// trim off the trailing slash if any
@@ -196,8 +203,11 @@ void SongManager::LoadDWISongDir( CString DWIHome )
 				sDWIFileName.MakeLower();
 
 				// load DWIs from the sub dirs
+				DWILoader ld;
 				Song* pNewSong = new Song;
-				pNewSong->LoadFromDWIFile( ssprintf("%s\\Songs\\%s\\%s\\%s", DWIHome, MixDirs[i], arrayDirs[b], sDWIFileName) );
+				ld.LoadFromDWIFile(
+					ssprintf("%s\\Songs\\%s\\%s\\%s", DWIHome, MixDirs[i], arrayDirs[b], sDWIFileName),
+					*pNewSong);
 				m_pSongs.Add( pNewSong );
 			}
 		}
