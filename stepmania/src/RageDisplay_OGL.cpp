@@ -232,7 +232,7 @@ static void FlushGLErrors()
 		;
 }
 
-RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p )
+RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p, bool bAllowUnacceleratedRenderer )
 {
 	LOG->Trace( "RageDisplay_OGL::RageDisplay_OGL()" );
 	LOG->MapLog("renderer", "Current renderer: OpenGL");
@@ -241,15 +241,31 @@ RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p )
 
 	wind = MakeLowLevelWindow();
 
-	SetVideoMode( p );
+	try {
+		SetVideoMode( p );
+	} catch(...) {
+		/* SetVideoMode can throw. */
+		delete wind;
+		throw;
+	}
 
 	// Log driver details
 	LOG->Info("OGL Vendor: %s", glGetString(GL_VENDOR));
 	LOG->Info("OGL Renderer: %s", glGetString(GL_RENDERER));
 	LOG->Info("OGL Version: %s", glGetString(GL_VERSION));
 	LOG->Info("OGL Extensions: %s", glGetString(GL_EXTENSIONS));
+
 	if( IsSoftwareRenderer() )
+	{
+		if( !bAllowUnacceleratedRenderer )
+		{
+			delete wind;
+			RageException::ThrowNonfatal(
+				"Your system is reporting that OpenGL hardware acceleration is not available.  "
+				"Please obtain an updated driver from your video card manufacturer.\n\n" );
+		}
 		LOG->Warn("This is a software renderer!");
+	}
 
 
 	/* Log this, so if people complain that the radar looks bad on their

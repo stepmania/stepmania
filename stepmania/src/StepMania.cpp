@@ -378,17 +378,12 @@ RageDisplay *CreateDisplay()
 			 * SDL may throw, but that only happens with broken driver installations, and
 			 * we probably don't want to fall back on D3D in that case anyway.) */
 			error += "Initializing OpenGL...\n";
-
-			RageDisplay *ret = new RageDisplay_OGL( params );
-			
-			if( PREFSMAN->m_bAllowUnacceleratedRenderer || !ret->IsSoftwareRenderer() )
-				return ret;
-			else
-			{
-				error += "Your system is reporting that OpenGL hardware acceleration is not available.  "
-					"Please obtain an updated driver from your video card manufacturer.\n\n";
-				delete ret;
-			}
+			try {
+				return new RageDisplay_OGL( params, PREFSMAN->m_bAllowUnacceleratedRenderer );
+			} catch(RageException e) {
+				error += CString(e.what()) + "\n";
+				continue;
+			};
 #endif
 		}
 		else if( sRenderer.CompareNoCase("d3d")==0 )
@@ -402,6 +397,8 @@ RageDisplay *CreateDisplay()
 			} catch(RageException_D3DNoAcceleration e) {
 				error += "Your system is reporting that Direct3D hardware acceleration is not available.  "
 					"Please obtain an updated driver from your video card manufacturer.\n\n";
+			} catch(RageException e) {
+				error += CString(e.what()) + "\n";
 			};
 #endif
 		}
