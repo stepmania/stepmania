@@ -545,8 +545,8 @@ struct SurfaceHeader
 /* Save and load SDL_Surfaces to disk.  This avoids problems with bitmaps. */
 bool mySDL_SaveSurface( SDL_Surface *img, CString file )
 {
-	FILE *f = fopen(file.c_str(), "wb+");
-	if(f == NULL)
+	RageFile f;
+	if( !f.Open( file, RageFile::WRITE ) )
 		return false;
 
 	SurfaceHeader h;
@@ -570,37 +570,30 @@ bool mySDL_SaveSurface( SDL_Surface *img, CString file )
 		h.colorkey = 0;
 	}
 
-	fwrite(&h, sizeof(h), 1, f);
+	f.Write( &h, sizeof(h) );
 
 	if(h.bpp == 8)
-		fwrite(img->format->palette->colors, 256 * sizeof(SDL_Color), 1, f);
+		f.Write( img->format->palette->colors, 256 * sizeof(SDL_Color) );
 
-	fwrite(img->pixels, img->h * img->pitch, 1, f);
+	f.Write( img->pixels, img->h * img->pitch );
 	
-	fclose(f);
 	return true;
 }
 
 SDL_Surface *mySDL_LoadSurface( CString file )
 {
-	FILE *f = fopen(file.c_str(), "rb");
-	if(f == NULL)
-		return NULL;
+	RageFile f;
+	if( !f.Open( file ) )
+		return false;
 
 	SurfaceHeader h;
-	if( fread(&h, sizeof(h), 1, f) != 1 )
-	{
-		fclose(f);
+	if( f.Read( &h, sizeof(h) ) != sizeof(h) )
 		return NULL;
-	}
 	
 	SDL_Color palette[256];
 	if(h.bpp == 8)
-		if( fread(palette, 256 * sizeof(SDL_Color), 1, f) != 1 )
-		{
-			fclose(f);
+		if( f.Read( palette, 256 * sizeof(SDL_Color) != 256 * sizeof(SDL_Color) ) )
 			return NULL;
-		}
 
 	/* Create the surface. */
 	SDL_Surface *img = SDL_CreateRGBSurface(
@@ -608,9 +601,8 @@ SDL_Surface *mySDL_LoadSurface( CString file )
 			h.Rmask, h.Gmask, h.Bmask, h.Amask);
 	ASSERT( h.pitch == img->pitch );
 
-	if( fread(img->pixels, h.height * h.pitch, 1, f) != 1 )
+	if( f.Read( img->pixels, h.height * h.pitch ) != h.height * h.pitch )
 	{
-		fclose(f);
 		SDL_FreeSurface( img );
 		return NULL;
 	}
@@ -623,7 +615,6 @@ SDL_Surface *mySDL_LoadSurface( CString file )
 			SDL_SetColorKey( img, SDL_SRCCOLORKEY, h.colorkey );
 	}
 
-	fclose(f);
 	return img;
 }
 
