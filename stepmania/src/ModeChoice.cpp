@@ -58,12 +58,11 @@ bool ModeChoice::DescribesCurrentMode( PlayerNumber pn ) const
 
 	if( m_sModifiers != "" )
 	{
-		/* Save the current modifiers. */
-		const PlayerOptions po = GAMESTATE->m_PlayerOptions[pn];
-		const SongOptions so = GAMESTATE->m_SongOptions;
-
 		/* Apply modifiers. */
-		GAMESTATE->ApplyModifiers( pn, m_sModifiers );
+		PlayerOptions po = GAMESTATE->m_PlayerOptions[pn];
+		SongOptions so = GAMESTATE->m_SongOptions;
+		po.FromString( m_sModifiers );
+		so.FromString( m_sModifiers );
 
 		/* Did anything change? */
 		bool Changed = false;
@@ -71,10 +70,6 @@ bool ModeChoice::DescribesCurrentMode( PlayerNumber pn ) const
 			Changed = true;
 		if( !CompareSongOptions(so, GAMESTATE->m_SongOptions) )
 			Changed = true;
-
-		/* Restore modifiers. */
-		GAMESTATE->m_PlayerOptions[pn] = po;
-		GAMESTATE->m_SongOptions = so;
 
 		if( Changed )
 			return false;
