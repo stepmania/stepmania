@@ -42,7 +42,9 @@
 // So the magics for these are:
 // pnm-nine: nothing >5, with 12, 14, 22 and/or 24
 // pnm-five: nothing >5, with 14 and/or 22
-// bm-*: 18/19 - 7-key modes have 16/17/26/27
+// bm-*: can't tell difference between bm-single and dance-solo
+//       18/19 marks bm-single7, 28/29 marks bm-double7
+//       bm-double uses 21-26.
 //
 
 int iTracks[MAX_NOTE_TRACKS];
@@ -70,19 +72,23 @@ StepsType BMSLoader::CheckTracksMagic( void ) {
 	case 5:
 		return STEPS_TYPE_PNM_FIVE;
 	case 6:
+		// No reason to return STEPS_TYPE_BM_SINGLE here...
+		// ...at least, none that I can see.  Same data, no way to distinguish.
+		// We also don't need to autogen between them, though.
 		return STEPS_TYPE_DANCE_SOLO;
 	case 8:
 		// Could also be couple or 7-key.
-		// TODO: Insert the magic check between IIDX and DDR Double - 12, 14, 18, or 19.
-		//       Until BM 7-key is supported in stepfiles, we'll assume it's DDR.
-		return STEPS_TYPE_DANCE_DOUBLE;
+		if (iTracks[7] == 0 && iTracks[8] == 0 && iTracks[1] == 0 && iTracks[3] == 0)
+			// these four tracks are IIDX-related
+			return STEPS_TYPE_DANCE_DOUBLE;
+		else
+			return STEPS_TYPE_BM_SINGLE7;
 	case 9:
 		return STEPS_TYPE_PNM_NINE;
 	case 12:
-		// TODO: Uncomment these once BM Double 5/7-key is supported.
-		// return STEPS_TYPE_BM_DOUBLE;
+		return STEPS_TYPE_BM_DOUBLE;
 	case 16:
-		// return STEPS_TYPE_BM_DOUBLE7;
+		return STEPS_TYPE_BM_DOUBLE7;
 	default:
 		return STEPS_TYPE_INVALID;
 	}
