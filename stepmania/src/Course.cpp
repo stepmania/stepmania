@@ -560,7 +560,11 @@ bool Course::IsMysterySong( int stage ) const
 
 Difficulty Course::GetDifficulty( int stage ) const
 {
-	return m_entries[stage].difficulty;
+	Difficulty dc = m_entries[stage].difficulty;
+	if(GAMESTATE->m_bDifficultCourses)
+		dc  = Difficulty(dc + 1);
+
+	return dc;
 }
 
 void Course::GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut ) const
