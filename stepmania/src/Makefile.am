@@ -52,7 +52,8 @@ ScreenUnlock.cpp ScreenUnlock.h
 
 
 DataStructures = \
-BannerCache.cpp BannerCache.h Character.cpp Character.h CodeDetector.cpp CodeDetector.h Course.cpp Course.h \
+BannerCache.cpp BannerCache.h Character.cpp Character.h CharacterHead.h \
+CharacterHead.cpp  CodeDetector.cpp CodeDetector.h Course.cpp Course.h \
 Font.cpp Font.h FontCharAliases.cpp FontCharAliases.h FontCharmaps.cpp FontCharmaps.h Game.h \
 GameConstantsAndTypes.cpp GameConstantsAndTypes.h GameDef.cpp GameDef.h GameInput.cpp GameInput.h \
 Grade.cpp Grade.h Inventory.cpp Inventory.h LyricsLoader.cpp LyricsLoader.h MenuInput.h ModeChoice.cpp ModeChoice.h \
