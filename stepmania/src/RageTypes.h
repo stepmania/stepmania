@@ -154,6 +154,8 @@ public:
 			r = ir / 255.0f; g = ig / 255.0f; b = ib / 255.0f;
 			if( result == 4 )
 				a = ia / 255.0f;
+			else
+				a = 1;
 			return true;
 		}
 
