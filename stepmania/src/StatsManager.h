@@ -21,6 +21,8 @@ public:
 	void CalcAccumStageStats();
 	StageStats& GetAccumStageStats() { return m_AccumStageStats; }
 
+	void CommitStatsToProfiles();
+
 	// Lua
 	void PushSelf( lua_State *L );
 

@@ -2,6 +2,9 @@
 #include "StatsManager.h"
 #include "GameState.h"
 #include "Foreach.h"
+#include "ProfileManager.h"
+#include "PrefsManager.h"
+#include "Steps.h"
 
 StatsManager*	STATSMAN = NULL;	// global object accessable from anywhere in the program
 
@@ -70,6 +73,99 @@ void StatsManager::GetFinalEvalStageStats( StageStats& statsOut ) const
 void StatsManager::CalcAccumStageStats()
 {
 	m_AccumStageStats = AccumStageStats( m_vPlayedStageStats );
+}
+
+/* This data is added to each player profile, and to the machine profile per-player. */
+void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNumber pn )
+{
+	ss.AssertValid( pn );
+	CHECKPOINT;
+
+	StyleID sID;
+	sID.FromStyle( ss.pStyle );
+
+	ASSERT( ss.vpSongs.size() == ss.m_player[pn].vpSteps.size() );
+	for( unsigned i=0; i<ss.vpSongs.size(); i++ )
+	{
+		Steps *pSteps = ss.m_player[pn].vpSteps[i];
+
+		pProfile->m_iNumSongsPlayedByPlayMode[ss.playMode]++;
+		pProfile->m_iNumSongsPlayedByStyle[sID] ++;
+		pProfile->m_iNumSongsPlayedByDifficulty[pSteps->GetDifficulty()] ++;
+
+		int iMeter = clamp( pSteps->GetMeter(), 0, MAX_METER );
+		pProfile->m_iNumSongsPlayedByMeter[iMeter] ++;
+	}
+	
+	pProfile->m_iTotalDancePoints += ss.m_player[pn].iActualDancePoints;
+
+	if( ss.StageType == StageStats::STAGE_EXTRA || ss.StageType == StageStats::STAGE_EXTRA2 )
+	{
+		if( ss.m_player[pn].bFailed )
+			++pProfile->m_iNumExtraStagesFailed;
+		else
+			++pProfile->m_iNumExtraStagesPassed;
+	}
+
+	// If you fail in a course, you passed all but the final song.
+	// FIXME: Not true.  If playing with 2 players, one player could have failed earlier.
+	if( !ss.m_player[pn].bFailed )
+	{
+		pProfile->m_iNumStagesPassedByPlayMode[ss.playMode] ++;
+		pProfile->m_iNumStagesPassedByGrade[ss.m_player[pn].GetGrade()] ++;
+	}
+}
+
+
+void StatsManager::CommitStatsToProfiles()
+{
+	//
+	// Add step totals.  Use radarActual, since the player might have failed part way
+	// through the song, in which case we don't want to give credit for the rest of the
+	// song.
+	//
+	FOREACH_HumanPlayer( pn )
+	{
+		int iNumTapsAndHolds	= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_TAPS_AND_HOLDS];
+		int iNumJumps			= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_JUMPS];
+		int iNumHolds			= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_HOLDS];
+		int iNumMines			= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_MINES];
+		int iNumHands			= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_HANDS];
+		float fCaloriesBurned	= STATSMAN->m_CurStageStats.m_player[pn].fCaloriesBurned;
+		PROFILEMAN->AddStepTotals( pn, iNumTapsAndHolds, iNumJumps, iNumHolds, iNumMines, iNumHands, fCaloriesBurned );
+	}
+
+	// Update profile stats
+	Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
+
+	int iGameplaySeconds = (int)truncf(STATSMAN->m_CurStageStats.fGameplaySeconds);
+
+	pMachineProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
+	pMachineProfile->m_iCurrentCombo = 0;
+
+	CHECKPOINT;
+	FOREACH_HumanPlayer( pn )
+	{
+		CHECKPOINT;
+
+		Profile* pPlayerProfile = PROFILEMAN->GetProfile( pn );
+		if( pPlayerProfile )
+		{
+			pPlayerProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
+			pPlayerProfile->m_iCurrentCombo = 
+				PREFSMAN->m_bComboContinuesBetweenSongs ? 
+				STATSMAN->m_CurStageStats.m_player[pn].iCurCombo : 
+				0;
+		}
+
+		const StageStats& ss = STATSMAN->m_CurStageStats;
+		AddPlayerStatsToProfile( pMachineProfile, ss, pn );
+
+		if( pPlayerProfile )
+			AddPlayerStatsToProfile( pPlayerProfile, ss, pn );
+
+		CHECKPOINT;
+	}
 }
 
 
