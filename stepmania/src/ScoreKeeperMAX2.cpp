@@ -232,7 +232,7 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 
 	// What does this do?  "Don't use a multiplier if 
 	// the player has failed"?
-	if( GAMESTATE->m_CurStageStats.bFailed[m_PlayerNumber] )
+	if( GAMESTATE->m_CurStageStats.bFailedEarlier[m_PlayerNumber] )
 	{
 		iScore += p;
 		// make score evenly divisible by 5
@@ -252,7 +252,7 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 
 	if ( m_iTapNotesHit == m_iNumTapsAndHolds && score >= TNS_PERFECT )
 	{
-		if (!GAMESTATE->m_CurStageStats.bFailed[m_PlayerNumber])
+		if (!GAMESTATE->m_CurStageStats.bFailedEarlier[m_PlayerNumber])
 			iScore += m_iPointBonus;
 		if ( m_bIsLastSongInCourse )
 		{
