@@ -473,6 +473,23 @@ void RageDisplay::LoadMenuPerspective( float fovDegrees, float fVanishPointX, fl
 				-fVanishPointX+SCREEN_CENTER_X, -fVanishPointY+SCREEN_CENTER_Y, 0,
 				0.0f, 1.0f, 0.0f) );
 	}
+
+	const float fDAR = GetVideoModeParams().fDisplayAspectRatio;
+	const float fOutputDAR = GetVideoModeParams().fOutputDisplayAspectRatio;
+
+	if( fOutputDAR != -1 && fabsf(fDAR-fOutputDAR) > 0.001f )
+	{
+		if( fOutputDAR > fDAR )
+		{
+			/* Letterboxed horizontally (showing widescreen on a regular monitor). */
+			float fYAdjust = fDAR / fOutputDAR;
+			g_ProjectionStack.Scale( 1, fYAdjust, 1 );
+		} else {
+			/* Letterboxed vertically (showing 4:3 on a widescreen monitor). */
+			float fXAdjust = fOutputDAR / fDAR;
+			g_ProjectionStack.Scale( fXAdjust, 1, 1 );
+		}
+	}
 }
 
 
@@ -717,6 +734,41 @@ void RageDisplay::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, floa
 void RageDisplay::DrawCircle( const RageSpriteVertex &v, float radius )
 {
 	this->DrawCircleInternal( v, radius );
+}
+
+RageCompiledGeometry::~RageCompiledGeometry()
+{
+	m_bNeedsNormals = false;
+}
+
+void RageCompiledGeometry::Set( const vector<msMesh> &vMeshes, bool bNeedsNormals )
+{
+	m_bNeedsNormals = bNeedsNormals;
+
+	size_t totalVerts = 0;
+	size_t totalTriangles = 0;
+
+	m_vMeshInfo.resize( vMeshes.size() );
+	for( unsigned i=0; i<vMeshes.size(); i++ )
+	{
+		const msMesh& mesh = vMeshes[i];
+		const vector<RageModelVertex> &Vertices = mesh.Vertices;
+		const vector<msTriangle> &Triangles = mesh.Triangles;
+
+		MeshInfo& meshInfo = m_vMeshInfo[i];
+
+		meshInfo.iVertexStart = totalVerts;
+		meshInfo.iVertexCount = Vertices.size();
+		meshInfo.iTriangleStart = totalTriangles;
+		meshInfo.iTriangleCount = Triangles.size();
+
+		totalVerts += Vertices.size();
+		totalTriangles += Triangles.size();
+	}
+
+	this->Allocate( vMeshes );
+
+	Change( vMeshes );
 }
 
 /*

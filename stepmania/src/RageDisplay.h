@@ -17,48 +17,17 @@ const int MAX_TEXTURE_UNITS = 2;
 class RageCompiledGeometry
 {
 public:
-	virtual ~RageCompiledGeometry()
-	{
-		m_bNeedsNormals = false;
-	}
+	virtual ~RageCompiledGeometry();
 
-	void Set( const vector<msMesh> &vMeshes, bool bNeedsNormals )
-	{
-		m_bNeedsNormals = bNeedsNormals;
-
-		size_t totalVerts = 0;
-		size_t totalTriangles = 0;
-
-		m_vMeshInfo.resize( vMeshes.size() );
-		for( unsigned i=0; i<vMeshes.size(); i++ )
-		{
-			const msMesh& mesh = vMeshes[i];
-			const vector<RageModelVertex> &Vertices = mesh.Vertices;
-			const vector<msTriangle> &Triangles = mesh.Triangles;
-
-			MeshInfo& meshInfo = m_vMeshInfo[i];
-
-			meshInfo.iVertexStart = totalVerts;
-			meshInfo.iVertexCount = Vertices.size();
-			meshInfo.iTriangleStart = totalTriangles;
-			meshInfo.iTriangleCount = Triangles.size();
-
-			totalVerts += Vertices.size();
-			totalTriangles += Triangles.size();
-		}
-
-		this->Allocate( vMeshes );
-
-		Change( vMeshes );
-	}
+	void Set( const vector<msMesh> &vMeshes, bool bNeedsNormals );
 
 	virtual void Allocate( const vector<msMesh> &vMeshes ) = 0;	// allocate space
 	virtual void Change( const vector<msMesh> &vMeshes ) = 0;	// new data must be the same size as was passed to Set()
 	virtual void Draw( int iMeshIndex ) const = 0;
 	
 protected:
-	size_t GetTotalVertices()  { if( m_vMeshInfo.empty() ) return 0; return m_vMeshInfo.back().iVertexStart + m_vMeshInfo.back().iVertexCount; }
-	size_t GetTotalTriangles() { if( m_vMeshInfo.empty() ) return 0; return m_vMeshInfo.back().iTriangleStart + m_vMeshInfo.back().iTriangleCount; }
+	size_t GetTotalVertices() const { if( m_vMeshInfo.empty() ) return 0; return m_vMeshInfo.back().iVertexStart + m_vMeshInfo.back().iVertexCount; }
+	size_t GetTotalTriangles() const { if( m_vMeshInfo.empty() ) return 0; return m_vMeshInfo.back().iTriangleStart + m_vMeshInfo.back().iTriangleCount; }
 	
 	struct MeshInfo
 	{
