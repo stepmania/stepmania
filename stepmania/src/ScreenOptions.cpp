@@ -887,14 +887,17 @@ void ScreenOptions::StoreFocus( PlayerNumber pn )
 void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 {
 	const int iCurRow = m_iCurrentRow[pn];
+	if( iCurRow == -1	)	// no row selected
+		return;		// don't allow a move
+
 	OptionRow &row = *m_Rows[iCurRow];
 	
 	if( row.GetRowType() == OptionRow::ROW_EXIT	)	// EXIT is selected
 		return;		// don't allow a move
 
-	const int iNumOptions = row.GetRowDef().choices.size();
+	const int iNumChoices = row.GetRowDef().choices.size();
 
-	if( m_OptionsNavigation == NAV_THREE_KEY_MENU && iNumOptions <= 1 )	// 1 or 0
+	if( m_OptionsNavigation == NAV_THREE_KEY_MENU && iNumChoices <= 1 )	// 1 or 0
 	{
 		/* There are no other options on the row; move up or down instead of left and right.
 		 * This allows navigating the options menu with left/right/start. 
@@ -905,7 +908,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 		return;
 	}
 
-	if( iNumOptions == 0 )
+	if( iNumChoices == 0 )
 		return;
 
 	if( Repeat )
@@ -916,8 +919,8 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 
 	int iCurrentChoiceWithFocus = row.GetChoiceInRowWithFocus(pn);
 	int iNewChoiceWithFocus = iCurrentChoiceWithFocus + iDelta;
-	ASSERT( iNumOptions > 0 );
-	wrap( iNewChoiceWithFocus, iNumOptions );
+	ASSERT( iNumChoices > 0 );
+	wrap( iNewChoiceWithFocus, iNumChoices );
 	
 	if( iCurrentChoiceWithFocus != iNewChoiceWithFocus )
 		bOneChanged = true;
