@@ -9,9 +9,6 @@
 
 #include "SDL_utils.h"
 
-//DDD
-//#include <time.h>
-
 const int channels = 2;
 const int samplerate = 44100;
 const int bytes_per_sample = 2;  /* 16-bit */
@@ -23,19 +20,8 @@ const int buffersize_frames = 1024*2;
 const int buffersize_samples = buffersize_frames * samples_per_frame;
 const int buffersize_bytes = buffersize_frames * bytes_per_frame;
 
-//DDD
-//char* GetTime()
-//{
-//	static char temp[100];
-//	struct timeval now;
-//	gettimeofday(&now,NULL);
-//	sprintf(temp, "%d%06d", now.tv_sec-1046494000, now.tv_usec);
-//	return temp;
-//}
 
-/**
- * int err; must be defined before using this macro
- */
+/* int err; must be defined before using this macro */
 #define ALSA_ASSERT(x) \
         if (err < 0) \
         { \
@@ -85,8 +71,7 @@ void RageSound_ALSA9::MixerThread()
 	}
 }
 
-/* Returns the number of frames processed
- */
+/* Returns the number of frames processed */
 unsigned int RageSound_ALSA9::GetData()
 {
 	LockMutex L(SOUNDMAN->lock);
@@ -136,9 +121,9 @@ unsigned int RageSound_ALSA9::GetData()
 	while (remaining > 0)
 	{
 		r = snd_pcm_mmap_writei(pcm, start, remaining);
-		if (r == -EAGAIN) {
+		if (r == -EAGAIN)
 			continue;
-		}
+
 		if (r <= 0)
 		{
 			LOG->Trace("RageSoundDriver_ALSA9::GetData: snd_pcm_mmap_writei: %s", snd_strerror(r));
@@ -267,19 +252,8 @@ RageSound_ALSA9::RageSound_ALSA9()
 	/* open the device */
 	// if we instead use plughw: then our requested format WILL be provided
 	err = snd_pcm_open(&pcm, "hw:0,0", SND_PCM_STREAM_PLAYBACK, 0);  
-	if (err == -EBUSY)
-	{
-		RageException::ThrowNonfatal("Could not allocate access to sound device hw:0,0");
-	}
-	else if (err == -SND_ERROR_INCOMPATIBLE_VERSION)
-	{
-		RageException::ThrowNonfatal("ALSA kernal API is incompatible");
-	}
-	else if (err < 0)
-	{
-		RageException::ThrowNonfatal("Unhandled error snd_pcm_open");
-		//XXX give the error, via sprintf
-	}
+	if (err < 0)
+		RageException::ThrowNonfatal("snd_pcm_open: %s", snd_strerror(err));
 
 	/* allocate the hardware parameters structure */
 	err = snd_pcm_hw_params_malloc(&hwparams);
