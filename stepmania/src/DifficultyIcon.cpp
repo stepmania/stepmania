@@ -26,7 +26,7 @@ bool DifficultyIcon::Load( CString sPath )
 	Sprite::Load( sPath );
 	if( GetNumStates() != 5  &&  GetNumStates() != 10 )
 		if( DISPLAY->IsWindowed() )
-			HOOKS->MessageBoxOK( "The difficulty icon graphic '%s' must have 5 or 10 frames.", sPath.c_str() );
+			HOOKS->MessageBoxOK( ssprintf("The difficulty icon graphic '%s' must have 5 or 10 frames.", sPath.c_str()) );
 	StopAnimating();
 	return true;
 }
@@ -47,8 +47,8 @@ void DifficultyIcon::SetFromNotes( PlayerNumber pn, Steps* pNotes )
 		switch( GetNumStates() )
 		{
 		case 5:		SetState( iStateNo );		break;
-		case 10:	SetState( iStateNo*2+pn );		break;
-		default:	ASSERT(0);
+		case 10:	SetState( iStateNo*2+pn );	break;
+		default:	SetState( 0 );				break;
 		}
 	}
 }
