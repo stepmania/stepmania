@@ -213,6 +213,23 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 	}
 }
 
+static void MovePref( int &iSel, bool bToSel, const ConfOption *pConfOption )
+{
+	IPreference *pPref = PREFSMAN->GetPreferenceByName( pConfOption->name );
+	ASSERT_M( pPref != NULL, pConfOption->name );
+
+	if( bToSel )
+	{
+		const CString sVal = pPref->ToString();
+		iSel = atoi( sVal );
+	}
+	else
+	{
+		const CString sVal = ToString(iSel);
+		pPref->FromString( sVal );
+	}
+}
+
 /* Appearance options */
 MOVE( Instructions,			PREFSMAN->m_bShowInstructions );
 MOVE( Caution,				PREFSMAN->m_bShowCaution );
@@ -227,11 +244,8 @@ MOVE( Lyrics,				PREFSMAN->m_bShowLyrics );
 /* Misc. options */
 MOVE( AutogenSteps,			PREFSMAN->m_bAutogenSteps );
 MOVE( AutogenGroupCourses,	PREFSMAN->m_bAutogenGroupCourses );
-MOVE( FastLoad,				PREFSMAN->m_bFastLoad.Value() );
 
 /* Background options */
-MOVE( BackgroundMode,		PREFSMAN->m_iBackgroundMode.Value() );
-MOVE( ShowDanger,			PREFSMAN->m_bShowDanger.Value() );
 MOVE( DancingCharacters,	PREFSMAN->m_ShowDancingCharacters );
 MOVE( BeginnerHelper,		PREFSMAN->m_bShowBeginnerHelper );
 
@@ -249,7 +263,6 @@ static void NumBackgrounds( int &sel, bool ToSel, const ConfOption *pConfOption 
 
 /* Input options */
 MOVE( AutoMapOnJoyChange,	PREFSMAN->m_bAutoMapOnJoyChange );
-MOVE( MenuButtons,			PREFSMAN->m_bOnlyDedicatedMenuButtons.Value() );
 MOVE( AutoPlay,				PREFSMAN->m_bAutoPlay );
 MOVE( BackDelayed,			PREFSMAN->m_bDelayedBack );
 MOVE( OptionsNavigation,	PREFSMAN->m_bArcadeOptionsNavigation );
@@ -262,7 +275,6 @@ static void WheelSpeed( int &sel, bool ToSel, const ConfOption *pConfOption )
 
 /* Gameplay options */
 MOVE( SoloSingles,			PREFSMAN->m_bSoloSingle );
-MOVE( HiddenSongs,			PREFSMAN->m_bHiddenSongs.Value() );
 MOVE( EasterEggs,			PREFSMAN->m_bEasterEggs );
 MOVE( MarvelousTiming,		PREFSMAN->m_iMarvelousTiming );
 MOVE( AllowExtraStage,		PREFSMAN->m_bAllowExtraStage );
@@ -298,7 +310,6 @@ static void SongsPerPlay( int &sel, bool ToSel, const ConfOption *pConfOption )
 MOVE( EventMode,			PREFSMAN->m_bEventMode );
 
 /* Machine options */
-MOVE( MenuTimer,			PREFSMAN->m_bMenuTimer.Value() );
 MOVE( ScoringType,			PREFSMAN->m_iScoringType );
 
 static void JudgeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -356,11 +367,6 @@ MOVE( ProgressiveStageLifebar,		PREFSMAN->m_iProgressiveStageLifebar );
 MOVE( ProgressiveNonstopLifebar,	PREFSMAN->m_iProgressiveNonstopLifebar );
 
 /* Graphic options */
-MOVE( DisplayMode,			PREFSMAN->m_bWindowed.Value() );
-MOVE( WaitForVsync,			PREFSMAN->m_bVsync.Value() );
-MOVE( ShowBanners,			PREFSMAN->m_bShowBanners.Value() );
-MOVE( ShowStats,			PREFSMAN->m_bShowStats.Value() );
-MOVE( KeepTexturesInMemory,	PREFSMAN->m_bDelayedTextureDelete.Value() );
 MOVE( CelShadeModels,		PREFSMAN->m_bCelShadeModels );
 MOVE( SmoothLines,			PREFSMAN->m_bSmoothLines );
 
@@ -479,19 +485,19 @@ static void InitializeConfOptions()
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_SONG;
 
 	ADD( ConfOption( "Autogen\nGroup Courses",	AutogenGroupCourses, "OFF","ON" ) );
-	ADD( ConfOption( "Fast\nLoad",				FastLoad,		   "OFF","ON" ) );
+	ADD( ConfOption( "FastLoad",				MovePref,			"OFF","ON" ) );
 
 	/* Background options */
-	ADD( ConfOption( "Background\nMode",		BackgroundMode,		"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES" ) );
+	ADD( ConfOption( "BackgroundMode",			MovePref,			"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES" ) );
 	ADD( ConfOption( "Brightness",				BGBrightness,		"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%" ) );
-	ADD( ConfOption( "Danger",					ShowDanger,			"HIDE","SHOW" ) );
+	ADD( ConfOption( "ShowDanger",				MovePref,			"HIDE","SHOW" ) );
 	ADD( ConfOption( "Dancing\nCharacters",		DancingCharacters,	"DEFAULT TO OFF","DEFAULT TO RANDOM","SELECT" ) );
 	ADD( ConfOption( "Beginner\nHelper",		BeginnerHelper,		"OFF","ON" ) );
 	ADD( ConfOption( "Random\nBackgrounds",		NumBackgrounds,		"5","10","15","20" ) );
 
 	/* Input options */
 	ADD( ConfOption( "Auto Map\nOn Joy Change",	AutoMapOnJoyChange,	"OFF","ON (recommended)" ) );
-	ADD( ConfOption( "MenuButtons",				MenuButtons,		"USE GAMEPLAY BUTTONS","ONLY DEDICATED BUTTONS" ) );
+	ADD( ConfOption( "OnlyDedicatedMenuButtons",MovePref,			"USE GAMEPLAY BUTTONS","ONLY DEDICATED BUTTONS" ) );
 	ADD( ConfOption( "AutoPlay",				AutoPlay,			"OFF","ON" ) );
 	ADD( ConfOption( "Back\nDelayed",			BackDelayed,		"INSTANT","HOLD" ) );
 	ADD( ConfOption( "Options\nNavigation",		OptionsNavigation,	"SM STYLE","ARCADE STYLE" ) );
@@ -499,7 +505,7 @@ static void InitializeConfOptions()
 
 	/* Gameplay options */
 	ADD( ConfOption( "Solo\nSingles",			SoloSingles,		"OFF","ON" ) );
-	ADD( ConfOption( "Hidden\nSongs",			HiddenSongs,		"OFF","ON" ) );
+	ADD( ConfOption( "HiddenSongs",				MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "Easter\nEggs",			EasterEggs,			"OFF","ON" ) );
 	ADD( ConfOption( "Marvelous\nTiming",		MarvelousTiming,	"NEVER","COURSES ONLY","ALWAYS" ) );
 	ADD( ConfOption( "Allow Extra\nStage",		AllowExtraStage,	"OFF","ON" ) );
@@ -507,7 +513,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "Unlock\nSystem",			UnlockSystem,		"OFF","ON" ) );
 
 	/* Machine options */
-	ADD( ConfOption( "Menu\nTimer",				MenuTimer,			"OFF","ON" ) );
+	ADD( ConfOption( "MenuTimer",				MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "CoinMode",				CoinMode,			"HOME","PAY","FREE PLAY" ) );
 	ADD( ConfOption( "CoinModeNoHome",			CoinModeNoHome,		"PAY","FREE PLAY" ) );
 	ADD( ConfOption( "Songs Per\nPlay",			SongsPerPlay,		"1","2","3","4","5","6","7" ) );
@@ -526,28 +532,28 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "Show Name\nEntry",		ShowNameEntry,		"OFF", "ON", "RANKING SONGS" ) );
 
 	/* Graphic options */
-	ADD( ConfOption( "Display\nMode",			DisplayMode,		"FULLSCREEN", "WINDOWED" ) );
+	ADD( ConfOption( "Windowed",				MovePref,			"FULLSCREEN", "WINDOWED" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
-	ADD( ConfOption( "Display\nResolution",		DisplayResolution,	"320","400","512","640","800","1024","1280x960","1280x1024" ) );
+	ADD( ConfOption( "DisplayResolution",		DisplayResolution,	"320","400","512","640","800","1024","1280x960","1280x1024" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
-	ADD( ConfOption( "Display\nColor",			DisplayColor,		"16BIT","32BIT" ) );
+	ADD( ConfOption( "DisplayColor",			DisplayColor,		"16BIT","32BIT" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
 	ADD( ConfOption( "Texture\nResolution",		TextureResolution,	"256","512","1024","2048" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
 	ADD( ConfOption( "Texture\nColor",			TextureColor,		"16BIT","32BIT" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
 	ADD( ConfOption( "Movie\nColor",			MovieColor,			"16BIT","32BIT" ) );
-	ADD( ConfOption( "Keep Textures\nIn Memory", KeepTexturesInMemory,	"OFF","ON" ) );
+	ADD( ConfOption( "DelayedTextureDelete",	MovePref,			"OFF","ON" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
 	ADD( ConfOption( "CelShade\nModels",		CelShadeModels,		"OFF","ON" ) );
 	ADD( ConfOption( "SmoothLines",				SmoothLines,		"OFF","ON" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
 	ADD( ConfOption( "Refresh\nRate",			RefreshRate,		"DEFAULT","60","70","72","75","80","85","90","100","120","150" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
-	ADD( ConfOption( "Wait For\nVsync",			WaitForVsync,		"NO", "YES" ) );
+	ADD( ConfOption( "Vsync",					MovePref,		"NO", "YES" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
-	ADD( ConfOption( "Show\nStats",				ShowStats,			"OFF","ON" ) );
-	ADD( ConfOption( "Show\nBanners",			ShowBanners,		"OFF","ON" ) );
+	ADD( ConfOption( "ShowStats",				MovePref,			"OFF","ON" ) );
+	ADD( ConfOption( "ShowBanners",				MovePref,			"OFF","ON" ) );
 
 	/* Sound options */
 	ADD( ConfOption( "Resampling\nQuality",		ResamplingQuality,	"FAST","NORMAL","HIGH QUALITY" ) );
