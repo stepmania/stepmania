@@ -519,7 +519,7 @@ Returns:     number of characters placed in the buffer
 static int
 ord2utf8(int cvalue, uschar *buffer)
 {
-register int i, j;
+register unsigned i, j;
 for (i = 0; i < sizeof(utf8_table1)/sizeof(int); i++)
   if (cvalue <= utf8_table1[i]) break;
 buffer += i;
@@ -4969,7 +4969,7 @@ while ((c = *(++ptr)) != 0)
 #ifdef SUPPORT_UTF8
         if (utf8 && c > 127)
           {
-          int i;
+          unsigned i;
           for (i = 0; i < sizeof(utf8_table1)/sizeof(int); i++)
             if (c <= utf8_table1[i]) break;
           runlength += i;
@@ -5569,10 +5569,15 @@ i, and fc and c, can be the same variables. */
 #define fi i
 #define fc c
 
+#ifdef SUPPORT_UTF8
+const uschar *charptr;
+const uschar *lastptr;
+#endif
+
 const uschar *callpat;             /* Many of these variables are used ony */
-const uschar *charptr;             /* small blocks of the code. My normal  */
+                                   /* small blocks of the code. My normal  */
 const uschar *data;                /* style of coding would have declared  */
-const uschar *lastptr;             /* them within each of those blocks.    */
+                                   /* them within each of those blocks.    */
 const uschar *next;                /* However, in order to accommodate the */
 const uschar *pp;                  /* version of this code that uses an    */
 const uschar *prev;                /* external "stack" implemented on the  */
