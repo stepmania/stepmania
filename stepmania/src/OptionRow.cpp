@@ -31,11 +31,27 @@ StringToX( LayoutType );
 #define FOREACH_OptionsPlayer( pn ) \
 	for( PlayerNumber pn=GetNextHumanPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID && (!m_RowDef.bOneChoiceForAllPlayers || pn==0); pn=GetNextHumanPlayer(pn) )
 
-#define PREPARE_ITEM_TEXT( s )	if( s!= "" ) { if( m_RowDef.m_bAllowThemeItems && THEME_ITEMS ) s = THEME_OPTION_ITEM( s, false ); if( CAPITALIZE_ALL_OPTION_NAMES ) s.MakeUpper(); }
-
-static CString OPTION_TITLE( CString s ) { return THEME->GetMetric("OptionTitles",s); }
-
 const CString NEXT_ROW_NAME = "NextRow";
+
+void OptionRow::PrepareItemText( CString &s ) const
+{
+	if( s == "" )
+		return;
+	bool bTheme = false;
+	
+	// HACK: Always theme the NEXT_ROW item
+	if( s == NEXT_ROW_NAME )							bTheme = true;
+	if( m_RowDef.m_bAllowThemeItems && THEME_ITEMS )	bTheme = true;
+
+	if( bTheme ) 
+		s = THEME_OPTION_ITEM( s, false ); 
+	if( CAPITALIZE_ALL_OPTION_NAMES )
+		s.MakeUpper(); 
+}
+static CString OPTION_TITLE( CString s )
+{
+	return THEME->GetMetric("OptionTitles",s);
+}
 
 CString ITEMS_LONG_ROW_X_NAME( size_t p )		{ return ssprintf("ItemsLongRowP%dX",p+1); }
 CString ICONS_X_NAME( size_t p )				{ return ssprintf("IconsP%dX",p+1); }
@@ -252,7 +268,7 @@ void OptionRow::AfterImportOptions( float fY )
 		for( unsigned c=0; c<m_RowDef.choices.size(); c++ )
 		{
 			CString sText = m_RowDef.choices[c];
-			PREPARE_ITEM_TEXT( sText );
+			PrepareItemText( sText );
 			fX += ITEMS_ZOOM * pFont->GetLineWidthInSourcePixels( CStringToWstring(sText) );
 			
 			if( c != m_RowDef.choices.size()-1 )
@@ -285,7 +301,7 @@ void OptionRow::AfterImportOptions( float fY )
 
 			bt->LoadFromFont( THEME->GetPathF(m_sType,"item") );
 			CString sText = (iChoiceInRowWithFocus==-1) ? "" : m_RowDef.choices[iChoiceInRowWithFocus];
-			PREPARE_ITEM_TEXT( sText );
+			PrepareItemText( sText );
 			bt->SetText( sText );
 			bt->SetZoom( ITEMS_ZOOM );
 			bt->SetShadowLength( 0 );
@@ -325,7 +341,7 @@ void OptionRow::AfterImportOptions( float fY )
 				m_textItems.push_back( bt );
 				bt->LoadFromFont( THEME->GetPathF(m_sType,"item") );
 				CString sText = m_RowDef.choices[c];
-				PREPARE_ITEM_TEXT( sText );
+				PrepareItemText( sText );
 				bt->SetText( sText );
 				bt->SetZoom( ITEMS_ZOOM );
 				bt->SetShadowLength( 0 );
@@ -394,7 +410,7 @@ void OptionRow::LoadExit()
 
 	bt->LoadFromFont( THEME->GetPathF(m_sType,"item") );
 	CString sText = "Exit";
-	PREPARE_ITEM_TEXT( sText );
+	PrepareItemText( sText );
 	bt->SetText( sText );
 	bt->SetZoom( ITEMS_ZOOM );
 	bt->SetShadowLength( 0 );
@@ -491,7 +507,7 @@ void OptionRow::UpdateText()
 			int iChoiceWithFocus = m_iChoiceInRowWithFocus[pn];
 
 			CString sText = m_RowDef.choices[iChoiceWithFocus];
-			PREPARE_ITEM_TEXT( sText );
+			PrepareItemText( sText );
 
 			// If player_no is 2 and there is no player 1:
 			int index = min( pn, m_textItems.size()-1 );

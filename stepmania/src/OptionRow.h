@@ -154,6 +154,8 @@ public:
 	unsigned GetTextItemsSize() { return m_textItems.size(); }
 	bool GetFirstItemGoesDown() { return m_bFirstItemGoesDown; }
 
+	void PrepareItemText( CString &s ) const;
+
 	void SetExitText( CString sExitText );
 
 	void Reload();
