@@ -64,7 +64,7 @@ int power_of_two(int input)
 
 bool IsAnInt( const CString &s )
 {
-	if( s[0] == '\0' )
+	if( !s.size() )
 		return false;
 
 	for( int i=0; s[i]; i++ )
