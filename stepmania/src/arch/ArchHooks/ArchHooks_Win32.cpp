@@ -79,6 +79,29 @@ static BOOL CALLBACK DriverWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
 	return FALSE;
 }
 
+static bool MessageIsIgnored( CString ID )
+{
+	vector<CString> list;
+	split( PREFSMAN->m_sIgnoredMessageWindows, ",", list );
+	for( unsigned i = 0; i < list.size(); ++i )
+		if( !ID.CompareNoCase(list[i]) )
+			return true;
+	return false;
+}
+
+static void IgnoreMessage( CString ID )
+{
+	if( ID == "" )
+
+	if( MessageIsIgnored(ID) )
+		return;
+
+	vector<CString> list;
+	split( PREFSMAN->m_sIgnoredMessageWindows, ",", list );
+	list.push_back( ID );
+	PREFSMAN->m_sIgnoredMessageWindows = join( ",", list );
+	PREFSMAN->SaveGlobalPrefsToDisk();
+}
 
 /*
  * This simply does a few manual checks for known bad driver versions.  Only nag the
@@ -124,155 +147,6 @@ void ArchHooks_Win32::CheckVideoDriver()
 		ExitProcess(0);
 }
 
-static CString g_sMessage;
-static bool g_AllowHush;
-static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
-{
-	switch( msg )
-	{
-	case WM_INITDIALOG:
-		{
-			g_Hush = false;
-			CString sMessage = g_sMessage;
-
-			sMessage.Replace( "\n", "\r\n" );
-			HWND hush = GetDlgItem( hWnd, IDC_HUSH );
-	        int style = GetWindowLong(hush, GWL_STYLE);
-
-			if( g_AllowHush )
-				style |= WS_VISIBLE;
-			else
-				style &= ~WS_VISIBLE;
-	        SetWindowLong( hush, GWL_STYLE, style );
-
-			SendDlgItemMessage( 
-				hWnd, 
-				IDC_MESSAGE, 
-				WM_SETTEXT, 
-				0, 
-				(LPARAM)(LPCTSTR)sMessage
-				);
-		}
-		break;
-	case WM_COMMAND:
-		switch (LOWORD(wParam))
-		{
-		case IDOK:
-			g_Hush = !!IsDlgButtonChecked(hWnd, IDC_HUSH);
-			/* fall through */
-		case IDCANCEL:
-			EndDialog( hWnd, 0 );
-			break;
-		}
-	}
-	return FALSE;
-}
-
-
-
-
-void ArchHooks_Win32::MessageBoxOKPrivate( CString sMessage, CString ID )
-{
-	g_AllowHush = ID != "";
-	g_sMessage = sMessage;
-	AppInstance handle;
-	DialogBox(handle.Get(), MAKEINTRESOURCE(IDD_OK), NULL, OKWndProc);
-	if( g_AllowHush && g_Hush )
-		IgnoreMessage( ID );
-}
-
-static CString g_sErrorString;
-
-static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
-{
-	switch( msg )
-	{
-	case WM_INITDIALOG:
-		{
-			CString sMessage = g_sErrorString;
-
-			sMessage.Replace( "\n", "\r\n" );
-			
-			SendDlgItemMessage( 
-				hWnd, 
-				IDC_EDIT_ERROR, 
-				WM_SETTEXT, 
-				0, 
-				(LPARAM)(LPCTSTR)sMessage
-				);
-		}
-		break;
-	case WM_COMMAND:
-		switch (LOWORD(wParam))
-		{
-		case IDC_BUTTON_VIEW_LOG:
-			{
-				PROCESS_INFORMATION pi;
-				STARTUPINFO	si;
-				ZeroMemory( &si, sizeof(si) );
-
-				CreateProcess(
-					NULL,		// pointer to name of executable module
-					"notepad.exe log.txt",		// pointer to command line string
-					NULL,  // process security attributes
-					NULL,   // thread security attributes
-					false,  // handle inheritance flag
-					0, // creation flags
-					NULL,  // pointer to new environment block
-					NULL,   // pointer to current directory name
-					&si,  // pointer to STARTUPINFO
-					&pi  // pointer to PROCESS_INFORMATION
-				);
-			}
-			break;
-		case IDC_BUTTON_REPORT:
-			GotoURL( "http://sourceforge.net/tracker/?func=add&group_id=37892&atid=421366" );
-			break;
-		case IDC_BUTTON_RESTART:
-			Win32RestartProgram();
-			/* not reached */
-			ASSERT( 0 );
-
-			EndDialog( hWnd, 0 );
-			break;
-
-		case IDOK:
-			EndDialog( hWnd, 0 );
-			break;
-		}
-	}
-	return FALSE;
-}
-
-void ArchHooks_Win32::MessageBoxErrorPrivate( CString error, CString ID )
-{
-	g_sErrorString = error;
- 	// throw up a pretty error dialog
-	AppInstance handle;
-	DialogBox(handle.Get(), MAKEINTRESOURCE(IDD_ERROR_DIALOG),
-		NULL, ErrorWndProc);
-}
-
-ArchHooks::MessageBoxResult ArchHooks_Win32::MessageBoxAbortRetryIgnorePrivate( CString sMessage, CString ID )
-{
-	switch( MessageBox(NULL, sMessage, PRODUCT_NAME, MB_ABORTRETRYIGNORE|MB_DEFBUTTON2 ) )
-	{
-	case IDABORT:	return abort;
-	case IDRETRY:	return retry;
-	default:	ASSERT(0);
-	case IDIGNORE:	return ignore;
-	}
-} 
-
-ArchHooks::MessageBoxResult ArchHooks_Win32::MessageBoxRetryCancelPrivate( CString sMessage, CString ID )
-{
-	switch( MessageBox(NULL, sMessage, PRODUCT_NAME, MB_RETRYCANCEL ) )
-	{
-	case IDRETRY:	return retry;
-	default:	ASSERT(0);
-	case IDCANCEL:	return cancel;
-	}
-} 
 
 void ArchHooks_Win32::RestartProgram()
 {
