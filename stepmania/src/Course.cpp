@@ -608,6 +608,9 @@ static bool CompareCoursePointersByDifficulty(const Course* pCourse1, const Cour
 		// "Players Best  1-4" and "Players Best  5-8".  Replace the string "  "
 		// with " 0" for comparison only.
 
+		// XXX: That doesn't happen to me, and it shouldn't (strcmp is strictly
+		// a byte sort, though CompareNoCase doesn't use strcmp).  Are you sure
+		// you didn't have only one space before? -glenn
 		CString sName1 = pCourse1->m_sName;
 		CString sName2 = pCourse2->m_sName;
 		sName1.Replace( "  " , " 0" );
