@@ -83,20 +83,20 @@ public:
 	//
 	int GetSongNumTimesPlayed( const Song* pSong, ProfileSlot card ) const;
 	bool IsSongNew( const Song* pSong ) const { return GetSongNumTimesPlayed(pSong,PROFILE_SLOT_MACHINE)==0; }
-	void AddStepsHighScore( const Song* pSong, const Steps* pSteps, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
+	void AddStepsScore( const Song* pSong, const Steps* pSteps, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 	void IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps, PlayerNumber pn );
 	HighScore GetHighScoreForDifficulty( const Song *s, const StyleDef *st, ProfileSlot slot, Difficulty dc ) const;
 
 	//
 	// Course stats
 	//
-	void AddCourseHighScore( const Course* pCourse, StepsType st, CourseDifficulty cd, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
+	void AddCourseScore( const Course* pCourse, StepsType st, CourseDifficulty cd, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 	void IncrementCoursePlayCount( const Course* pCourse, StepsType st, CourseDifficulty cd, PlayerNumber pn );
 
 	//
 	// Category stats
 	//
-	void AddCategoryHighScore( StepsType nt, RankingCategory rc, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
+	void AddCategoryScore( StepsType nt, RankingCategory rc, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 	void IncrementCategoryPlayCount( StepsType nt, RankingCategory rc, PlayerNumber pn );
 
 

@@ -36,7 +36,8 @@ class CourseID
 	CString sName;
 
 public:
-	CourseID() { FromCourse(NULL); }
+	CourseID() { Unset(); }
+	void Unset() { FromCourse(NULL); }
 	void FromCourse( const Course *p );
 	Course *ToCourse() const;
 	bool operator<( const CourseID &other ) const

@@ -238,7 +238,7 @@ public:
 	bool HasPeakComboAward( PeakComboAward pca );
 
 	//
-	// LastScores
+	// LastSongScores
 	//
 	struct HighScoreForASongAndSteps
 	{
@@ -252,8 +252,25 @@ public:
 		XNode* CreateNode() const;
 		void LoadFromNode( const XNode* pNode );
 	};
-	vector<HighScoreForASongAndSteps> m_vLastScores;
-	void AddLastScore( Song* pSong, Steps* pSteps, HighScore hs );
+	vector<HighScoreForASongAndSteps> m_vLastStepsScores;
+	void AddStepsLastScore( const Song* pSong, const Steps* pSteps, HighScore hs );
+	
+	//
+	// LastCourseScores
+	//
+	struct HighScoreForACourse
+	{
+		CourseID courseID;
+		HighScore hs;
+
+		HighScoreForACourse() { Unset(); }
+		void Unset() { courseID.Unset(); hs.Unset(); }
+
+		XNode* CreateNode() const;
+		void LoadFromNode( const XNode* pNode );
+	};
+	vector<HighScoreForACourse> m_vLastCourseScores;
+	void AddCourseLastScore( const Course* pCourse, StepsType st, CourseDifficulty cd, HighScore hs );
 
 	//
 	// Init'ing
@@ -268,7 +285,8 @@ public:
 		InitScreenshotData(); 
 		InitCalorieData(); 
 		InitAwards(); 
-		InitLastScores(); 
+		InitSongLastScores(); 
+		InitCourseLastScores(); 
 	}
 	void InitEditableData(); 
 	void InitGeneralData(); 
@@ -278,7 +296,8 @@ public:
 	void InitScreenshotData(); 
 	void InitCalorieData(); 
 	void InitAwards(); 
-	void InitLastScores(); 
+	void InitSongLastScores(); 
+	void InitCourseLastScores(); 
 
 	//
 	// Loading and saving
@@ -299,7 +318,8 @@ public:
 	void LoadScreenshotDataFromNode( const XNode* pNode );
 	void LoadCalorieDataFromNode( const XNode* pNode );
 	void LoadAwardsFromNode( const XNode* pNode );
-	void LoadLastScoresFromNode( const XNode* pNode );
+	void LoadSongLastScoresFromNode( const XNode* pNode );
+	void LoadCourseLastScoresFromNode( const XNode* pNode );
 
 	void SaveEditableDataToDir( CString sDir ) const;
 	XNode* SaveGeneralDataCreateNode() const;
@@ -309,7 +329,8 @@ public:
 	XNode* SaveScreenshotDataCreateNode() const;
 	XNode* SaveCalorieDataCreateNode() const;
 	XNode* SaveAwardsCreateNode() const;
-	XNode* SaveLastScoresCreateNode() const;
+	XNode* SaveSongLastScoresCreateNode() const;
+	XNode* SaveCourseLastScoresCreateNode() const;
 
 	void DeleteProfileDataFromDirSM390a12( CString sDir ) const;
 	void DeleteSongScoresFromDirSM390a12( CString sDir ) const;

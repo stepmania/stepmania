@@ -959,8 +959,7 @@ void ScreenEvaluation::CommitScores(
 
 					ASSERT( pSteps );
 
-					if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForHighScore )
-						PROFILEMAN->AddStepsHighScore( pSong, pSteps, (PlayerNumber)p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
+					PROFILEMAN->AddStepsScore( pSong, pSteps, (PlayerNumber)p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
 				}
 				break;
 
@@ -973,8 +972,7 @@ void ScreenEvaluation::CommitScores(
 					float fAverageMeter = stageStats.iMeter[p] / (float)PREFSMAN->m_iNumArcadeStages;
 					rcOut[p] = AverageMeterToRankingCategory( fAverageMeter );
 
-					if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
-						PROFILEMAN->AddCategoryHighScore( nt, rcOut[p], (PlayerNumber)p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
+					PROFILEMAN->AddCategoryScore( nt, rcOut[p], (PlayerNumber)p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
 					
 					// TRICKY:  Increment play count here, and not on ScreenGameplay like the others.
 					PROFILEMAN->IncrementCategoryPlayCount( nt, rcOut[p], (PlayerNumber)p );
@@ -992,8 +990,7 @@ void ScreenEvaluation::CommitScores(
 					if( stageStats.bFailed[p] && pCourse->IsNonstop() )
 						continue;
 
-					if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
-						PROFILEMAN->AddCourseHighScore( pCourse, nt, cd, (PlayerNumber)p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
+					PROFILEMAN->AddCourseScore( pCourse, nt, cd, (PlayerNumber)p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
 				}
 				break;
 			default:

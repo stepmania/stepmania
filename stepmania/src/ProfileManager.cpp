@@ -432,14 +432,21 @@ int ProfileManager::GetSongNumTimesPlayed( const Song* pSong, ProfileSlot slot )
 	return GetProfile(slot)->GetSongNumTimesPlayed( pSong );
 }
 
-void ProfileManager::AddStepsHighScore( const Song* pSong, const Steps* pSteps, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
+void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
-	hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
+	if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForHighScore )
+	{
+		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
+		if( PROFILEMAN->IsUsingProfile(pn) )
+			PROFILEMAN->GetProfile(pn)->AddStepsHighScore( pSong, pSteps, hs, iPersonalIndexOut );
+		else
+			iPersonalIndexOut = -1;
+		PROFILEMAN->GetMachineProfile()->AddStepsHighScore( pSong, pSteps, hs, iMachineIndexOut );
+	}
+
 	if( PROFILEMAN->IsUsingProfile(pn) )
-		PROFILEMAN->GetProfile(pn)->AddStepsHighScore( pSong, pSteps, hs, iPersonalIndexOut );
-	else
-		iPersonalIndexOut = -1;
-	PROFILEMAN->GetMachineProfile()->AddStepsHighScore( pSong, pSteps, hs, iMachineIndexOut );
+		PROFILEMAN->GetProfile(pn)->AddStepsLastScore( pSong, pSteps, hs );
+	PROFILEMAN->GetMachineProfile()->AddStepsLastScore( pSong, pSteps, hs );
 }
 
 void ProfileManager::IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps, PlayerNumber pn )
@@ -468,14 +475,21 @@ HighScore ProfileManager::GetHighScoreForDifficulty( const Song *s, const StyleD
 //
 // Course stats
 //
-void ProfileManager::AddCourseHighScore( const Course* pCourse, StepsType st, CourseDifficulty cd, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
+void ProfileManager::AddCourseScore( const Course* pCourse, StepsType st, CourseDifficulty cd, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
-	hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
+	if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForHighScore )
+	{
+		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
+		if( PROFILEMAN->IsUsingProfile(pn) )
+			PROFILEMAN->GetProfile(pn)->AddCourseHighScore( pCourse, st, cd, hs, iPersonalIndexOut );
+		else
+			iPersonalIndexOut = -1;
+		PROFILEMAN->GetMachineProfile()->AddCourseHighScore( pCourse, st, cd, hs, iMachineIndexOut );
+	}
+
 	if( PROFILEMAN->IsUsingProfile(pn) )
-		PROFILEMAN->GetProfile(pn)->AddCourseHighScore( pCourse, st, cd, hs, iPersonalIndexOut );
-	else
-		iPersonalIndexOut = -1;
-	PROFILEMAN->GetMachineProfile()->AddCourseHighScore( pCourse, st, cd, hs, iMachineIndexOut );
+		PROFILEMAN->GetProfile(pn)->AddCourseLastScore( pCourse, st, cd, hs );
+	PROFILEMAN->GetMachineProfile()->AddCourseLastScore( pCourse, st, cd, hs );
 }
 
 void ProfileManager::IncrementCoursePlayCount( const Course* pCourse, StepsType st, CourseDifficulty cd, PlayerNumber pn )
@@ -489,14 +503,17 @@ void ProfileManager::IncrementCoursePlayCount( const Course* pCourse, StepsType 
 //
 // Category stats
 //
-void ProfileManager::AddCategoryHighScore( StepsType st, RankingCategory rc, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
+void ProfileManager::AddCategoryScore( StepsType st, RankingCategory rc, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
-	hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
-	if( PROFILEMAN->IsUsingProfile(pn) )
-		PROFILEMAN->GetProfile(pn)->AddCategoryHighScore( st, rc, hs, iPersonalIndexOut );
-	else
-		iPersonalIndexOut = -1;
-	PROFILEMAN->GetMachineProfile()->AddCategoryHighScore( st, rc, hs, iMachineIndexOut );
+	if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
+	{
+		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
+		if( PROFILEMAN->IsUsingProfile(pn) )
+			PROFILEMAN->GetProfile(pn)->AddCategoryHighScore( st, rc, hs, iPersonalIndexOut );
+		else
+			iPersonalIndexOut = -1;
+		PROFILEMAN->GetMachineProfile()->AddCategoryHighScore( st, rc, hs, iMachineIndexOut );
+	}
 }
 
 void ProfileManager::IncrementCategoryPlayCount( StepsType st, RankingCategory rc, PlayerNumber pn )
