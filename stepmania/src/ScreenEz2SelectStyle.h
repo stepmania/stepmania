@@ -19,6 +19,7 @@ Andrew Livy
 #include "ScrollingList.h"
 #include "MenuBGAnims.h"
 
+
 /* Class Definition */
 
 
@@ -46,6 +47,8 @@ protected:
 	
 	Sprite	m_sprCursors[NUM_PLAYERS];
 	Sprite	m_sprControllers[NUM_PLAYERS];
+	Sprite  m_StyleListFrame;
+	Sprite  m_SelectedStyleFrame;
 
 	CArray<Style,Style> m_aPossibleStyles;
 
@@ -56,12 +59,12 @@ protected:
 	void RefreshStylesAndListFromMetrics();
 
 
-	Sprite	m_sprBackgrounds[NUM_STYLES];
+	Sprite	m_sprBackgrounds[10];
 
 	MenuElements m_Menu;
 
 	RageSoundSample m_soundSelect;	
 	RageSoundSample m_soundChange;	
 
-	BackgroundAnimation	m_Background;	
+	BackgroundAnimation	m_Background[10];	
 };
