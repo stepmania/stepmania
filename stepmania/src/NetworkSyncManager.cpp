@@ -23,9 +23,7 @@ bool NetworkSyncManager::ChangedScoreboard(int Column) { return false; }
 void NetworkSyncManager::SendChat(const CString& message) { }
 void NetworkSyncManager::SelectUserSong() { }
 
-void NetworkSyncManager::SendSMOnline( int command, char * data, int size ) { }
-SMOnlinePacket & NetworkSyncManager::GetSMOnline( ) { }
-SMOnlinePacket & NetworkSyncManager::PeekSMOnline( ) { }
+void NetworkSyncManager::SendSMOnline( PacketFunctions &PackData ) { }
 
 #else
 #include "ezsockets.h"
