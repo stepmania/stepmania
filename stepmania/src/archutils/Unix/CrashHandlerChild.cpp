@@ -274,6 +274,18 @@ void BacktraceNames::FromAddr( void *p )
 
 static void output_stack_trace( FILE *out, void **BacktracePointers )
 {
+	if( BacktracePointers[0] == BACKTRACE_METHOD_NOT_AVAILABLE )
+	{
+		fprintf( out, "No backtrace method available.\n");
+		return;
+	}
+
+	if( !BacktracePointers[0] )
+	{
+		fprintf( out, "Backtrace was empty.\n");
+		return;
+	}
+
     for( int i = 0; BacktracePointers[i]; ++i)
     {
         BacktraceNames bn;

@@ -102,7 +102,7 @@ static void parent_process( int to_child, void **BacktracePointers, int SignalRe
 	}
 
     /* 6. Write CHECKPOINTs. */
-    p = GetCheckpointLogs("$$");
+    p = GetCheckpointLogs("\n");
     size = strlen(p)+1;
     parent_write(to_child, &size, sizeof(size));
     parent_write(to_child, p, size);
@@ -387,7 +387,8 @@ static void do_backtrace(void **buf, size_t size)
 #warning Undefined BACKTRACE_METHOD_*
 static void do_backtrace(void **buf, size_t size)
 {
-    buf[0] = NULL;
+    buf[0] = BACKTRACE_METHOD_NOT_AVAILABLE;
+    buf[1] = NULL;
 }
 #endif
 
