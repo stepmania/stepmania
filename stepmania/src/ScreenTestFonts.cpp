@@ -101,6 +101,7 @@ void ScreenTestFonts::Input( const DeviceInput& DeviceI, const InputEventType ty
 	case 'w': SetFont( "Themes/default/Fonts/header2" ); break;
 	case 'e': SetFont( "Themes/default/Fonts/Normal" ); break;
 	case 'r': SetFont( "Themes/SMMAX2/Fonts/titlemenu" ); break;
+	case 't': SetFont( "Themes/default/Fonts/small titles" ); break;
 
 	case 'z': FONT->ReloadFonts();
 			  TEXTUREMAN->ReloadAll();
