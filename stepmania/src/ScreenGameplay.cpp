@@ -1091,7 +1091,7 @@ void ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 			"%s.\n"
 			"Would you like to save these changes back\n"
 			"to the song file?\n"
-			"Choosing NO will disgard your changes.",
+			"Choosing NO will discard your changes.",
 			GAMESTATE->m_pCurSong->GetFullTitle() );
 		break;
 	case PLAY_MODE_ONI:
@@ -1101,7 +1101,7 @@ void ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 			"one or more songs in this course.\n"
 			"Would you like to save these changes back\n"
 			"to the song file(s)?\n"
-			"Choosing NO will disgard your changes." );
+			"Choosing NO will discard your changes." );
 		break;
 	default:
 		ASSERT(0);
