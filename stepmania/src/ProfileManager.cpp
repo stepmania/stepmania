@@ -913,6 +913,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 {
 	CString fn = sDir + STATS_HTML_FILE;
 
+	LOG->Trace( "Writing %s ...", fn.c_str() );
 	//
 	// Get Profile
 	//
@@ -1035,6 +1036,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 	//
 	// Print Statistics
 	//
+	LOG->Trace( "Writing stats ..." );
 	{
 		PRINT_SECTION_START( "Statistics" );
 
@@ -1158,6 +1160,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 	//
 	// Print Difficulty tables
 	//
+	LOG->Trace( "Writing difficulty tables ..." );
 	{
 		SortSongPointerArrayByGroupAndTitle( vpSongs );
 
@@ -1214,6 +1217,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 	//
 	// Print song list
 	//
+	LOG->Trace( "Writing song list ..." );
 	{
 		PRINT_SECTION_START( "Song/Steps List" );
 		for( unsigned i=0; i<vpSongs.size(); i++ )
@@ -1345,6 +1349,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 	// 
 	CString sStyleFile = THEME->GetPathToO("ProfileManager style.css");
 	CopyFile2( sStyleFile, sDir+STYLE_CSS_FILE );
+	LOG->Trace( "Done." );
 		
 }
 
