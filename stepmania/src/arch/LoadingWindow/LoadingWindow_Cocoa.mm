@@ -55,7 +55,9 @@ void DisposeOfCocoaWindow()
 
 void SetCocoaWindowText(const char *s)
 {
-	[text setString:[NSString stringWithCString:s]];
+	NSString *str = [NSString stringWithUTF8String:s];
+	
+	[text setString:(str ? str : @"" )];
 	[text display];
 }
 
