@@ -406,11 +406,14 @@ void GetNewStorageDevices( vector<UsbStorageDeviceEx>& vDevicesOut )
 	
 	{
 		// Bus 002 Device 001: ID 0000:0000
+	        // Port 4
 		//   iSerial                 3 1125198948886
 		//       bInterfaceClass         8 Mass Storage
 		
-		CString sCommand = "/usr/sbin/lsusb";
-		char *szParams[] = { "/usr/sbin/lsusb", "-v", NULL }; 
+	        // Don't include a path.  The usbutils installer script installs 
+	        // to /usr/local/sbin and the Debian package installs to /usr/sbin/.
+		CString sCommand = "lsusb";
+		char *szParams[] = { "lsusb", "-v", NULL }; 
 		CString sOutput;
 		RunProgram( sCommand, szParams, sOutput );
 		
@@ -432,7 +435,16 @@ void GetNewStorageDevices( vector<UsbStorageDeviceEx>& vDevicesOut )
 				usbd.iBus = iBus;
 				continue;       // stop processing this line
 			}
-			
+
+                        // Port 4
+                        int iPort;
+                        iRet = sscanf( sLine.c_str(), "Port %d", &iPort );
+                        if( iRet == 1 )
+			{
+			    usbd.iPort = iPort;
+			    continue;       // stop processing this line
+			}		
+	
 			//   iSerial                 3 1125198948886
 			char szSerial[1024];
 			iRet = sscanf( sLine.c_str(), "  iSerial %d %[^\n]", &iThrowAway, szSerial );
