@@ -31,11 +31,9 @@ public:
 private:
 	void TweenOffScreen();
 	void TweenOnScreen();
-
 	
-	Sprite	m_sprCursors[NUM_PLAYERS];
-	Sprite	m_sprControllers[NUM_PLAYERS];
-	Sprite  m_logo;
+	Sprite	m_sprJoinMessage[NUM_PLAYERS];
+	Sprite	m_sprJoinFrame[NUM_PLAYERS];
 
 	MenuElements m_Menu;
 

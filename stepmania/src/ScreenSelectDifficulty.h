@@ -55,7 +55,7 @@ private:
 	Sprite	m_sprMoreArrows[NUM_PAGES];
 
 	Sprite	m_sprCursor[NUM_PLAYERS];
-	Sprite	m_sprCursorShadow[NUM_PLAYERS];
+	Sprite	m_sprJoinMessagehadow[NUM_PLAYERS];
 	Sprite	m_sprOK[NUM_PLAYERS];
 
 	RageSoundSample m_soundChange;

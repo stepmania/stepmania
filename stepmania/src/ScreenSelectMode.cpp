@@ -28,17 +28,19 @@ const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User + 2);
 
 
-#define CURSOR_X( p )				THEME->GetMetricF("ScreenSelectMode",ssprintf("CursorP%dX",p+1))
-#define CURSOR_Y( i )				THEME->GetMetricF("ScreenSelectMode",ssprintf("CursorP%dY",i+1))
-#define CONTROLLER_X( p )			THEME->GetMetricF("ScreenSelectMode",ssprintf("ControllerP%dX",p+1))
-#define CONTROLLER_Y( i )			THEME->GetMetricF("ScreenSelectMode",ssprintf("ControllerP%dY",i+1))
-#define HELP_TEXT					THEME->GetMetric("ScreenSelectMode","HelpText")
-#define TIMER_SECONDS				THEME->GetMetricI("ScreenSelectMode","TimerSeconds")
-#define NEXT_SCREEN					THEME->GetMetric("ScreenSelectMode","NextScreen")
-#define	SCROLLING_ELEMENT_SPACING	THEME->GetMetricI("ScreenSelectMode","ScrollingElementSpacing")
-#define SCROLLING_LIST_X			THEME->GetMetricF("ScreenSelectMode","ScrollingListX")
-#define SCROLLING_LIST_Y			THEME->GetMetricF("ScreenSelectMode","ScrollingListY")
-#define SELECTION_SPECIFIC_BG_ANIMATIONS		THEME->GetMetricB("ScreenSelectMode","SelectionSpecificBGAnimations")
+#define JOIN_FRAME_X( p )				THEME->GetMetricF("ScreenSelectMode",ssprintf("JoinFrameP%dX",p+1))
+#define JOIN_FRAME_Y( i )				THEME->GetMetricF("ScreenSelectMode",ssprintf("JoinFrameP%dY",i+1))
+#define JOIN_MESSAGE_X( p )				THEME->GetMetricF("ScreenSelectMode",ssprintf("JoinMessageP%dX",p+1))
+#define JOIN_MESSAGE_Y( i )				THEME->GetMetricF("ScreenSelectMode",ssprintf("JoinMessageP%dY",i+1))
+#define HELP_TEXT						THEME->GetMetric("ScreenSelectMode","HelpText")
+#define TIMER_SECONDS					THEME->GetMetricI("ScreenSelectMode","TimerSeconds")
+#define NEXT_SCREEN						THEME->GetMetric("ScreenSelectMode","NextScreen")
+#define	SCROLLING_ELEMENT_SPACING		THEME->GetMetricI("ScreenSelectMode","ScrollingElementSpacing")
+#define SCROLLING_LIST_X				THEME->GetMetricF("ScreenSelectMode","ScrollingListX")
+#define SCROLLING_LIST_Y				THEME->GetMetricF("ScreenSelectMode","ScrollingListY")
+#define SELECTION_SPECIFIC_BG_ANIMATIONS	THEME->GetMetricB("ScreenSelectMode","SelectionSpecificBGAnimations")
+#define BOUNCE_JOIN_MESSAGE				THEME->GetMetricB("ScreenSelectMode","BounceJoinMessage")
+#define FOLD_ON_JOIN					THEME->GetMetricB("ScreenSelectMode","FoldOnJoin")
 
 const float TWEEN_TIME		= 0.35f;
 
@@ -57,35 +59,48 @@ ScreenSelectMode::ScreenSelectMode()
 
 
 	/*********** TODO: MAKE THIS WORK FOR ALL GAME STYLES! *************/
-	m_StyleListFrame.Load( THEME->GetPathTo("Graphics","StyleListFrame"));
-	m_StyleListFrame.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y);
-	this->AddChild( &m_StyleListFrame );
+	m_ChoiceListFrame.Load( THEME->GetPathTo("Graphics","select mode list frame"));
+	m_ChoiceListFrame.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y);
+	this->AddChild( &m_ChoiceListFrame );
 
 	m_ScrollingList.SetXY( CENTER_X, SCROLLING_LIST_Y );
 	m_ScrollingList.SetSpacing( SCROLLING_ELEMENT_SPACING );
 	m_ScrollingList.SetNumberVisible( 9 );
 	this->AddChild( &m_ScrollingList );
 
-	m_SelectedStyleFrame.Load( THEME->GetPathTo("Graphics","SelectedStyleFrame"));
-	m_SelectedStyleFrame.SetXY( CENTER_X, SCROLLING_LIST_Y);
-	this->AddChild( &m_SelectedStyleFrame );
+	m_ChoiceListHighlight.Load( THEME->GetPathTo("Graphics","select mode list highlight"));
+	m_ChoiceListHighlight.SetXY( CENTER_X, SCROLLING_LIST_Y);
+	this->AddChild( &m_ChoiceListHighlight );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		// add the controllers, change their graphic if the player is not selected later
-		m_sprControllers[p].Load( THEME->GetPathTo("Graphics",ssprintf("select player controller selected p%d", p+1)) );
-		m_sprControllers[p].SetXY( CONTROLLER_X(p), CONTROLLER_Y(p) );
-		this->AddChild( &m_sprControllers[p] );
-		
-		if( GAMESTATE->m_bSideIsJoined[p] )	// if side is already joined
-			continue;	// don't show bobbing join and blob
+		m_sprJoinFrame[p].Load( THEME->GetPathTo("Graphics","select player join frame 1x2") );
+		m_sprJoinFrame[p].StopAnimating();
+		m_sprJoinFrame[p].SetState( p );
+		m_sprJoinFrame[p].SetXY( JOIN_FRAME_X(p), JOIN_FRAME_Y(p) );
+		this->AddChild( &m_sprJoinFrame[p] );
 
-		m_sprControllers[p].Load( THEME->GetPathTo("Graphics",ssprintf("select player controller p%d", p+1)) );
+		if( GAMESTATE->m_bSideIsJoined[p] )
+			m_sprJoinFrame[p].SetZoomY( 0 );
 
-		m_sprCursors[p].Load( THEME->GetPathTo("Graphics",ssprintf("select player cursor p%d",p+1)) );
-		m_sprCursors[p].SetXY( CURSOR_X(p), CURSOR_Y(p) );
-		m_sprCursors[p].SetEffectBouncing( D3DXVECTOR3(0,10,0), 0.5f );
-		this->AddChild( &m_sprCursors[p] );
+		m_sprJoinMessage[p].Load( THEME->GetPathTo("Graphics","select player join message 2x2") );
+		m_sprJoinMessage[p].StopAnimating();
+		m_sprJoinMessage[p].SetState( p );
+		m_sprJoinMessage[p].SetXY( JOIN_MESSAGE_X(p), JOIN_MESSAGE_Y(p) );
+		if( BOUNCE_JOIN_MESSAGE )
+			m_sprJoinMessage[p].SetEffectBouncing( D3DXVECTOR3(0,10,0), 0.5f );
+		this->AddChild( &m_sprJoinMessage[p] );
+	
+		if( GAMESTATE->m_bSideIsJoined[p] )
+		{
+			m_sprJoinMessage[p].SetState( p+NUM_PLAYERS );
+
+			if( FOLD_ON_JOIN )
+			{
+				m_sprJoinMessage[p].SetZoomY( 0 );
+				m_sprJoinFrame[p].SetZoomY( 0 );
+			}
+		}
 	}
 	
 
@@ -199,7 +214,7 @@ void ScreenSelectMode::RefreshModeChoices()
 		const ModeChoice& choice = m_aPossibleModeChoices[i];
 
 		if( choice.numSidesJoinedToPlay == iNumSidesJoined )
-			asGraphicPaths.Add( THEME->GetPathTo("Graphics", ssprintf("select mode %s %s", sGameName, choice.name) ) );
+			asGraphicPaths.Add( THEME->GetPathTo("Graphics", ssprintf("select mode choice %s %s", sGameName, choice.name) ) );
 	}
 
 	m_ScrollingList.Load( asGraphicPaths );
@@ -276,12 +291,16 @@ void ScreenSelectMode::MenuStart( PlayerNumber pn )
 		GAMESTATE->m_bSideIsJoined[pn] = true;
 		SCREENMAN->RefreshCreditsMessages();
 		m_soundSelect.Play();
-		m_sprCursors[pn].BeginTweening( 0.25f );
-		m_sprCursors[pn].SetTweenZoomY( 0 );
-		//m_sprControllers[pn].BeginTweening( 0.25f );
-		//m_sprControllers[pn].SetTweenZoomY( 0 );
-		// NOW replace with the new controller!
-		m_sprControllers[pn].Load( THEME->GetPathTo("Graphics",ssprintf("select player controller selected p%d", pn+1)) );		
+
+		m_sprJoinMessage[pn].SetState( pn + NUM_PLAYERS );
+
+		if( FOLD_ON_JOIN )
+		{
+			m_sprJoinMessage[pn].BeginTweening( 0.25f );
+			m_sprJoinMessage[pn].SetTweenZoomY( 0 );
+			m_sprJoinFrame[pn].BeginTweening( 0.25f );
+			m_sprJoinFrame[pn].SetTweenZoomY( 0 );
+		}
 
 		RefreshModeChoices();
 
@@ -315,15 +334,15 @@ void ScreenSelectMode::TweenOnScreen()
 
 		float fOriginalX;
 		
-		fOriginalX = m_sprCursors[p].GetX();
-		m_sprCursors[p].SetX( m_sprCursors[p].GetX()+fOffScreenOffset );
-		m_sprCursors[p].BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
-		m_sprCursors[p].SetTweenX( fOriginalX );
+		fOriginalX = m_sprJoinMessage[p].GetX();
+		m_sprJoinMessage[p].SetX( m_sprJoinMessage[p].GetX()+fOffScreenOffset );
+		m_sprJoinMessage[p].BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
+		m_sprJoinMessage[p].SetTweenX( fOriginalX );
 
-		fOriginalX = m_sprControllers[p].GetX();
-		m_sprControllers[p].SetX( m_sprCursors[p].GetX()+fOffScreenOffset );
-		m_sprControllers[p].BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
-		m_sprControllers[p].SetTweenX( fOriginalX );
+		fOriginalX = m_sprJoinFrame[p].GetX();
+		m_sprJoinFrame[p].SetX( m_sprJoinMessage[p].GetX()+fOffScreenOffset );
+		m_sprJoinFrame[p].BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
+		m_sprJoinFrame[p].SetTweenX( fOriginalX );
 	}
 }
 
@@ -336,9 +355,9 @@ void ScreenSelectMode::TweenOffScreen()
 	{
 		float fOffScreenOffset = float( (p==PLAYER_1) ? -SCREEN_WIDTH : +SCREEN_WIDTH );
 
-		m_sprCursors[p].BeginTweening( 0.5f, Actor::TWEEN_BIAS_END );
-		m_sprCursors[p].SetTweenX( m_sprCursors[p].GetX()+fOffScreenOffset );
-		m_sprControllers[p].BeginTweening( 0.5f, Actor::TWEEN_BIAS_END );
-		m_sprControllers[p].SetTweenX( m_sprCursors[p].GetX()+fOffScreenOffset );
+		m_sprJoinMessage[p].BeginTweening( 0.5f, Actor::TWEEN_BIAS_END );
+		m_sprJoinMessage[p].SetTweenX( m_sprJoinMessage[p].GetX()+fOffScreenOffset );
+		m_sprJoinFrame[p].BeginTweening( 0.5f, Actor::TWEEN_BIAS_END );
+		m_sprJoinFrame[p].SetTweenX( m_sprJoinMessage[p].GetX()+fOffScreenOffset );
 	}
 }

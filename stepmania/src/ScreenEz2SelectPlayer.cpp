@@ -27,14 +27,16 @@ const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User + 2);
 
 
-#define CURSOR_X( p )			THEME->GetMetricF("ScreenEz2SelectPlayer",ssprintf("CursorP%dX",p+1))
-#define CURSOR_Y( i )			THEME->GetMetricF("ScreenEz2SelectPlayer",ssprintf("CursorP%dY",i+1))
-#define CONTROLLER_X( p )		THEME->GetMetricF("ScreenEz2SelectPlayer",ssprintf("ControllerP%dX",p+1))
-#define CONTROLLER_Y( i )		THEME->GetMetricF("ScreenEz2SelectPlayer",ssprintf("ControllerP%dY",i+1))
+#define JOIN_FRAME_X( p )		THEME->GetMetricF("ScreenEz2SelectPlayer",ssprintf("JoinFrameP%dX",p+1))
+#define JOIN_FRAME_Y( i )		THEME->GetMetricF("ScreenEz2SelectPlayer",ssprintf("JoinFrameP%dY",i+1))
+#define JOIN_MESSAGE_X( p )		THEME->GetMetricF("ScreenEz2SelectPlayer",ssprintf("JoinMessageP%dX",p+1))
+#define JOIN_MESSAGE_Y( i )		THEME->GetMetricF("ScreenEz2SelectPlayer",ssprintf("JoinMessageP%dY",i+1))
 #define HELP_TEXT				THEME->GetMetric("ScreenEz2SelectPlayer","HelpText")
 #define TIMER_SECONDS			THEME->GetMetricI("ScreenEz2SelectPlayer","TimerSeconds")
 #define NEXT_SCREEN				THEME->GetMetric("ScreenEz2SelectPlayer","NextScreen")
 #define SILENT_WAIT				THEME->GetMetricI("ScreenEz2SelectPlayer","SilentWait")
+#define BOUNCE_JOIN_MESSAGE		THEME->GetMetricB("ScreenEz2SelectPlayer","BounceJoinMessage")
+#define FOLD_ON_JOIN			THEME->GetMetricB("ScreenEz2SelectPlayer","FoldOnJoin")
 
 const float TWEEN_TIME		= 0.35f;
 
@@ -55,7 +57,7 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 	LOG->Trace( "ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()" );
 
 	m_Menu.Load( 	
-		THEME->GetPathTo("Graphics","select player background"), 
+		THEME->GetPathTo("BGAnimations","ez2 select player"), 
 		THEME->GetPathTo("Graphics","select player top edge"),
 		HELP_TEXT, false, true, TIMER_SECONDS
 		);
@@ -64,20 +66,35 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ez2 select player") );
 	this->AddChild( &m_Background ); // animated background =)
 
-	m_logo.Load( THEME->GetPathTo("Graphics","select player logo"));
-	m_logo.SetXY( CENTER_X, CENTER_Y);
-	this->AddChild( &m_logo );
-
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_sprControllers[p].Load( THEME->GetPathTo("Graphics",ssprintf("select player controller p%d", p+1)) ); // two of these for pump support.
-		m_sprControllers[p].SetXY( CONTROLLER_X(p), CONTROLLER_Y(p) );
-		this->AddChild( &m_sprControllers[p] );
+		m_sprJoinFrame[p].Load( THEME->GetPathTo("Graphics","select player join frame 1x2") );
+		m_sprJoinFrame[p].StopAnimating();
+		m_sprJoinFrame[p].SetState( p );
+		m_sprJoinFrame[p].SetXY( JOIN_FRAME_X(p), JOIN_FRAME_Y(p) );
+		this->AddChild( &m_sprJoinFrame[p] );
 
-		m_sprCursors[p].Load( THEME->GetPathTo("Graphics",ssprintf("select player cursor p%d",p+1)) );
-		m_sprCursors[p].SetXY( CURSOR_X(p), CURSOR_Y(p) );
-		m_sprCursors[p].SetEffectBouncing( D3DXVECTOR3(0,10,0), 0.5f );
-		this->AddChild( &m_sprCursors[p] );
+		if( GAMESTATE->m_bSideIsJoined[p] )
+			m_sprJoinFrame[p].SetZoomY( 0 );
+
+		m_sprJoinMessage[p].Load( THEME->GetPathTo("Graphics","select player join message 2x2") );
+		m_sprJoinMessage[p].StopAnimating();
+		m_sprJoinMessage[p].SetState( p );
+		m_sprJoinMessage[p].SetXY( JOIN_MESSAGE_X(p), JOIN_MESSAGE_Y(p) );
+		if( BOUNCE_JOIN_MESSAGE )
+			m_sprJoinMessage[p].SetEffectBouncing( D3DXVECTOR3(0,10,0), 0.5f );
+		this->AddChild( &m_sprJoinMessage[p] );
+	
+		if( GAMESTATE->m_bSideIsJoined[p] )
+		{
+			m_sprJoinMessage[p].SetState( p+NUM_PLAYERS );
+
+			if( FOLD_ON_JOIN )
+			{
+				m_sprJoinMessage[p].SetZoomY( 0 );
+				m_sprJoinFrame[p].SetZoomY( 0 );
+			}
+		}
 	}
 
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
@@ -204,10 +221,10 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber pn )
 	GAMESTATE->m_bSideIsJoined[pn] = true;
 	SCREENMAN->RefreshCreditsMessages();
 	m_soundSelect.Play();
-	m_sprCursors[pn].BeginTweening( 0.25f );
-	m_sprCursors[pn].SetTweenZoomY( 0 );
-	m_sprControllers[pn].BeginTweening( 0.25f );
-	m_sprControllers[pn].SetTweenZoomY( 0 );
+	m_sprJoinMessage[pn].BeginTweening( 0.25f );
+	m_sprJoinMessage[pn].SetTweenZoomY( 0 );
+	m_sprJoinFrame[pn].BeginTweening( 0.25f );
+	m_sprJoinFrame[pn].SetTweenZoomY( 0 );
 
 	bool bBothSidesJoined = true;
 	for( int p=0; p<NUM_PLAYERS; p++ )
@@ -236,15 +253,15 @@ void ScreenEz2SelectPlayer::TweenOnScreen()
 
 		float fOriginalX;
 		
-		fOriginalX = m_sprCursors[p].GetX();
-		m_sprCursors[p].SetX( m_sprCursors[p].GetX()+fOffScreenOffset );
-		m_sprCursors[p].BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
-		m_sprCursors[p].SetTweenX( fOriginalX );
+		fOriginalX = m_sprJoinMessage[p].GetX();
+		m_sprJoinMessage[p].SetX( m_sprJoinMessage[p].GetX()+fOffScreenOffset );
+		m_sprJoinMessage[p].BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
+		m_sprJoinMessage[p].SetTweenX( fOriginalX );
 
-		fOriginalX = m_sprControllers[p].GetX();
-		m_sprControllers[p].SetX( m_sprCursors[p].GetX()+fOffScreenOffset );
-		m_sprControllers[p].BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
-		m_sprControllers[p].SetTweenX( fOriginalX );
+		fOriginalX = m_sprJoinFrame[p].GetX();
+		m_sprJoinFrame[p].SetX( m_sprJoinMessage[p].GetX()+fOffScreenOffset );
+		m_sprJoinFrame[p].BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
+		m_sprJoinFrame[p].SetTweenX( fOriginalX );
 	}
 }
 
@@ -254,9 +271,9 @@ void ScreenEz2SelectPlayer::TweenOffScreen()
 	{
 		float fOffScreenOffset = float( (p==PLAYER_1) ? -SCREEN_WIDTH : +SCREEN_WIDTH );
 
-		m_sprCursors[p].BeginTweening( 0.5f, Actor::TWEEN_BIAS_END );
-		m_sprCursors[p].SetTweenX( m_sprCursors[p].GetX()+fOffScreenOffset );
-		m_sprControllers[p].BeginTweening( 0.5f, Actor::TWEEN_BIAS_END );
-		m_sprControllers[p].SetTweenX( m_sprCursors[p].GetX()+fOffScreenOffset );
+		m_sprJoinMessage[p].BeginTweening( 0.5f, Actor::TWEEN_BIAS_END );
+		m_sprJoinMessage[p].SetTweenX( m_sprJoinMessage[p].GetX()+fOffScreenOffset );
+		m_sprJoinFrame[p].BeginTweening( 0.5f, Actor::TWEEN_BIAS_END );
+		m_sprJoinFrame[p].SetTweenX( m_sprJoinMessage[p].GetX()+fOffScreenOffset );
 	}
 }

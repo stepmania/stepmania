@@ -48,10 +48,10 @@ protected:
 	void TweenOffScreen();
 	void TweenOnScreen();
 	
-	Sprite	m_sprCursors[NUM_PLAYERS];
-	Sprite	m_sprControllers[NUM_PLAYERS];
-	Sprite  m_StyleListFrame;
-	Sprite  m_SelectedStyleFrame;
+	Sprite	m_sprJoinMessage[NUM_PLAYERS];
+	Sprite	m_sprJoinFrame[NUM_PLAYERS];
+	Sprite  m_ChoiceListFrame;
+	Sprite  m_ChoiceListHighlight;
 
 	CArray<ModeChoice,ModeChoice> m_aPossibleModeChoices;
 

@@ -143,12 +143,12 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
 			continue;
 
-		m_sprCursorShadow[p].Load( THEME->GetPathTo("Graphics", "select difficulty cursor 2x1") );
-		m_sprCursorShadow[p].StopAnimating();
-		m_sprCursorShadow[p].SetState( p );
-		m_sprCursorShadow[p].TurnShadowOff();
-		m_sprCursorShadow[p].SetDiffuse( D3DXCOLOR(0,0,0,0.6f) );
-		m_framePages.AddChild( &m_sprCursorShadow[p] );
+		m_sprJoinMessagehadow[p].Load( THEME->GetPathTo("Graphics", "select difficulty cursor 2x1") );
+		m_sprJoinMessagehadow[p].StopAnimating();
+		m_sprJoinMessagehadow[p].SetState( p );
+		m_sprJoinMessagehadow[p].TurnShadowOff();
+		m_sprJoinMessagehadow[p].SetDiffuse( D3DXCOLOR(0,0,0,0.6f) );
+		m_framePages.AddChild( &m_sprJoinMessagehadow[p] );
 
 		m_sprCursor[p].Load( THEME->GetPathTo("Graphics", "select difficulty cursor 2x1") );
 		m_sprCursor[p].StopAnimating();
@@ -368,10 +368,10 @@ void ScreenSelectDifficulty::ChangeTo( PlayerNumber pn, int iSelectionWas, int i
 			m_sprCursor[p].SetTweenX( CURSOR_X(m_iSelection[p],(PlayerNumber)p) - CURSOR_SHADOW_LENGTH_X );
 			m_sprCursor[p].SetTweenY( CURSOR_Y(m_iSelection[p],(PlayerNumber)p) - CURSOR_SHADOW_LENGTH_Y );
 
-			m_sprCursorShadow[p].StopTweening();
-			m_sprCursorShadow[p].BeginTweening( 0.2f, bChangedPages ? TWEEN_LINEAR : TWEEN_BIAS_BEGIN );
-			m_sprCursorShadow[p].SetTweenX( CURSOR_X(m_iSelection[p],(PlayerNumber)p) );
-			m_sprCursorShadow[p].SetTweenY( CURSOR_Y(m_iSelection[p],(PlayerNumber)p) );
+			m_sprJoinMessagehadow[p].StopTweening();
+			m_sprJoinMessagehadow[p].BeginTweening( 0.2f, bChangedPages ? TWEEN_LINEAR : TWEEN_BIAS_BEGIN );
+			m_sprJoinMessagehadow[p].SetTweenX( CURSOR_X(m_iSelection[p],(PlayerNumber)p) );
+			m_sprJoinMessagehadow[p].SetTweenY( CURSOR_Y(m_iSelection[p],(PlayerNumber)p) );
 		}
 	}
 
@@ -422,9 +422,9 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	m_sprOK[pn].SetTweenZoom( 1 );
 	m_sprOK[pn].SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
 
-	m_sprCursorShadow[pn].BeginTweening( 0.2f );
-	m_sprCursorShadow[pn].BeginTweening( 0.2f );
-	m_sprCursorShadow[pn].SetDiffuse( D3DXCOLOR(0,0,0,0) );
+	m_sprJoinMessagehadow[pn].BeginTweening( 0.2f );
+	m_sprJoinMessagehadow[pn].BeginTweening( 0.2f );
+	m_sprJoinMessagehadow[pn].SetDiffuse( D3DXCOLOR(0,0,0,0) );
 
 
 	// check to see if everyone has chosen
@@ -473,8 +473,8 @@ void ScreenSelectDifficulty::TweenOffScreen()
 		m_sprOK[p].BeginTweening( 0.3f );
 		m_sprOK[p].SetTweenZoom( 0 );
 
-		m_sprCursorShadow[p].BeginTweening( 0.3f );
-		m_sprCursorShadow[p].SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
+		m_sprJoinMessagehadow[p].BeginTweening( 0.3f );
+		m_sprJoinMessagehadow[p].SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
 	}
 
 	for( int d=0; d<NUM_DIFFICULTY_ITEMS; d++ )
@@ -538,11 +538,11 @@ void ScreenSelectDifficulty::TweenOnScreen()
 		*/
 		m_sprCursor[p].FadeOn( 0, "SpinZ ZoomX ZoomY Fade", 0.3f );
 
-		m_sprCursorShadow[p].SetXY( CURSOR_X(iSelection,(PlayerNumber)p), CURSOR_Y(iSelection,(PlayerNumber)p) );
-		D3DXCOLOR colorOriginal = m_sprCursorShadow[p].GetDiffuse();
-		m_sprCursorShadow[p].SetDiffuse( D3DXCOLOR(0,0,0,0) );
-		m_sprCursorShadow[p].BeginTweening( 0.3f );
-		m_sprCursorShadow[p].SetTweenDiffuse( colorOriginal );
+		m_sprJoinMessagehadow[p].SetXY( CURSOR_X(iSelection,(PlayerNumber)p), CURSOR_Y(iSelection,(PlayerNumber)p) );
+		D3DXCOLOR colorOriginal = m_sprJoinMessagehadow[p].GetDiffuse();
+		m_sprJoinMessagehadow[p].SetDiffuse( D3DXCOLOR(0,0,0,0) );
+		m_sprJoinMessagehadow[p].BeginTweening( 0.3f );
+		m_sprJoinMessagehadow[p].SetTweenDiffuse( colorOriginal );
 	}
 
 	for( int d=0; d<NUM_DIFFICULTY_ITEMS; d++ )
