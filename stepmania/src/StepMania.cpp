@@ -858,6 +858,8 @@ static void WriteLogHeader()
 
 	LOG->Info( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
 		1900+now.tm_year, now.tm_mon+1, now.tm_mday, now.tm_hour+1, now.tm_min, now.tm_sec );
+	LOG->Trace( " " );
+
 	if( g_argc > 1 )
 	{
 		CString args;
@@ -872,7 +874,6 @@ static void WriteLogHeader()
 		}
 		LOG->Info( "Command line args (count=%d): %s", (g_argc - 1), args.c_str());
 	}
-	LOG->Trace( " " );
 }
 
 static void ApplyLogPreferences()
