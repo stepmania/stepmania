@@ -514,7 +514,7 @@ void MusicWheel::GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, fl
 {
 	if( USE_3D )
 	{
-		fRotationX_out = SCALE(fPosOffsetsFromMiddle,-7,+7,-PI/2.f,+PI/2.f);
+		fRotationX_out = SCALE(fPosOffsetsFromMiddle,-7,+7,+PI/2.f,-PI/2.f);
 
 		printf( "fRotationX_out = %f\n", fRotationX_out );
 
