@@ -155,7 +155,8 @@ protected:
 	void MenuItemGainFocus( BitmapText* menuitem );
 	void MenuItemLoseFocus( BitmapText* menuitem );
 
-	float GetMaximumBeat() const;	// don't allow Down key to go past this beat.
+	float GetMaximumBeatForNewNote() const;	// don't allow Down key to go past this beat.
+	float GetMaximumBeatForMoving() const;	// don't allow Down key to go past this beat.
 
 
 	EditMode m_EditMode;

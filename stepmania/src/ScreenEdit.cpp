@@ -969,7 +969,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			const float fOriginalBeat = GAMESTATE->m_fSongBeat;
 			float fDestinationBeat = GAMESTATE->m_fSongBeat + fBeatsToMove;
 			fDestinationBeat = Quantize( fDestinationBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
-			CLAMP( fDestinationBeat, 0, GetMaximumBeat() );
+			CLAMP( fDestinationBeat, 0, GetMaximumBeatForMoving() );
 
 			GAMESTATE->m_fSongBeat = fDestinationBeat;
 
@@ -2093,12 +2093,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 					default:
 						ASSERT(0);
 				}
-				
-				int iRowsToCopy = m_Clipboard.GetLastRow()+1;
-				// Don't allow pasting past the maximum row
-				int iMaxRow = (GetMaximumBeat() == FLT_MAX) ? INT_MAX : BeatToNoteRow(GetMaximumBeat());
-				CLAMP( iRowsToCopy, 0, iMaxRow - iDestFirstRow + 1 );
 
+				int iRowsToCopy = m_Clipboard.GetLastRow()+1;
 				m_NoteDataEdit.CopyRange( m_Clipboard, 0, iRowsToCopy, iDestFirstRow );
 			}
 			break;
@@ -2621,9 +2617,28 @@ void ScreenEdit::CheckNumberOfNotesAndUndo()
 			return;
 		}
 	}
+
+	if( GAMESTATE->m_pCurSteps[0]->IsAnEdit() )
+	{
+		// Check that the action didn't push notes any farther past the last measure.
+		// This blocks Insert Beat from pushing past the end, but allows Delete Beat
+		// to pull back the notes that are already past the end.
+		float fNewLastBeat = m_NoteDataEdit.GetLastBeat();
+		bool bLastBeatIncreased = fNewLastBeat > m_Undo.GetLastBeat();
+		bool bPassedTheEnd = fNewLastBeat > GetMaximumBeatForNewNote();
+		if( bLastBeatIncreased && bPassedTheEnd )
+		{
+			Undo();
+			CString sError = ssprintf(
+				"This change creates notes past the end of the music and is not allowed.\n\nThe change has been reverted.", 
+				MAX_NOTES_PER_MEASURE, MAX_NOTES_PER_MEASURE );
+			SCREENMAN->Prompt( SM_None, sError );
+			return;
+		}
+	}
 }
 
-float ScreenEdit::GetMaximumBeat() const
+float ScreenEdit::GetMaximumBeatForNewNote() const
 {
 	if( GAMESTATE->m_pCurSteps[0]->IsAnEdit() )
 	{
@@ -2635,18 +2650,25 @@ float ScreenEdit::GetMaximumBeat() const
 		fEndBeat += BEATS_PER_MEASURE;
 		fEndBeat = ftruncf( fEndBeat, (float)BEATS_PER_MEASURE );
 
-		// Jump to GetLastBeat even if it's past m_pCurSong->m_fLastBeat
-		// so that users can delete garbage steps past then end that they have 
-		// have inserted in a text editor.  Once they delete all steps on 
-		// GetLastBeat() and move off of that beat, they won't be able to return.
-		fEndBeat = max( fEndBeat, GAMESTATE->m_pCurSong->m_fLastBeat );
-
 		return fEndBeat;
 	}
 	else
 	{
 		return FLT_MAX;
 	}
+}
+
+float ScreenEdit::GetMaximumBeatForMoving() const
+{
+	float fEndBeat = GetMaximumBeatForNewNote();
+
+	// Jump to GetLastBeat even if it's past m_pCurSong->m_fLastBeat
+	// so that users can delete garbage steps past then end that they have 
+	// have inserted in a text editor.  Once they delete all steps on 
+	// GetLastBeat() and move off of that beat, they won't be able to return.
+	fEndBeat = max( fEndBeat, m_NoteDataEdit.GetLastBeat() );
+
+	return fEndBeat;
 }
 
 /*
