@@ -1,6 +1,4 @@
-/*
- * RageInput: Starts up InputHandlers, which generate InputEvents.
- */
+/* RageInput: Starts up InputHandlers, which generate InputEvents. */
 
 #ifndef RAGEINPUT_H
 #define RAGEINPUT_H
