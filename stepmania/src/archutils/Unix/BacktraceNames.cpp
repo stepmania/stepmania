@@ -99,9 +99,31 @@ void BacktraceNames::FromAddr( const void *p )
 {
     Address = (int) p;
 
+    /*
+     * When calling a function that doesn't return, gcc will truncate a function.
+     * This results in our return addresses lying just beyond the end of a function.
+     * Those addresses are correct; our backtrace addresses are usually a list of
+     * return addresses (that's the same thing you'll see in gdb).  dladdr won't work,
+     * because they're not actually within the bounds of the function.
+     *
+     * A generic fix for this would be to adjust the backtrace to be a list of
+     * places where control was lost, instead of where it'll come back to; to point
+     * to the CALL instead of just beyond the CALL.  That's hard to do generically;
+     * the stack only contains the return pointers.  (Some archs don't even contain
+     * that: on archs where gcc has to manually store the return address--by pushing
+     * the IP--it will omit the push when calling a function that never returns.)
+     *
+     * Let's try the address we're given, and if that fails to find a symbol, try
+     * moving up a few bytes.  This usually makes "__cxa_throw, std::terminate,
+     * gsignal" stacks come out right.  It probably won't work if there's no space
+     * between one function and the next, because the first lookup will succeed.
+     */
     Dl_info di;
-    if( !dladdr(p, &di) )
-        return;
+    if( !dladdr(p, &di) || di.dli_sname == NULL )
+    {
+	if( !dladdr( ((char *) p) - 8, &di) )
+	    return;
+    }
 
     Symbol = di.dli_sname;
     File = di.dli_fname;
