@@ -15,7 +15,6 @@
 #include "RageDisplay.h"
 #include "RageUtil.h"
 #include "RageMath.h"
-#include "PrefsManager.h"
 #include "GameState.h"
 #include "song.h"
 #include "Character.h"
