@@ -75,7 +75,7 @@ StepMania = global.h ScreenDimensions.h StdString.h StepMania.cpp StepMania.h
 Transitions = Transition.cpp Transition.h
 
 Actors = \
-Actor.cpp Actor.h ActorFrame.cpp ActorFrame.h BitmapText.cpp BitmapText.h Quad.h Sample3dObject.cpp Sample3dObject.h \
+Actor.cpp Actor.h ActorFrame.cpp ActorFrame.h BitmapText.cpp BitmapText.h Quad.h \
 Sprite.cpp Sprite.h ActorScroller.cpp ActorScroller.h Model.cpp Model.h mathlib.c mathlib.h ModelTypes.cpp ModelTypes.h
 
 ActorsInMenus = \
