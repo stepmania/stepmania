@@ -1,10 +1,11 @@
 #include "global.h"
 #include "Foreground.h"
-#include "BGAnimation.h"
 #include "RageUtil.h"
 #include "IniFile.h"
 #include "GameState.h"
 #include "RageTextureManager.h"
+#include "ActorUtil.h"
+#include "song.h"
 
 Foreground::~Foreground()
 {
@@ -38,8 +39,7 @@ void Foreground::LoadFromSong( const Song *pSong )
 			RageException::Throw( "The song foreground BGA \"%s\" is not a directory", sAniDir.c_str() );
 
 		LoadedBGA bga;
-		bga.m_bga = new BGAnimation;
-		bga.m_bga->LoadFromAniDir( sAniDir );
+		bga.m_bga = ActorUtil::MakeActor( sAniDir );
 		bga.m_bga->PlayCommand( "On" );
 		bga.m_fStartBeat = change.m_fStartBeat;
 

@@ -2,9 +2,8 @@
 #define FOREGROUND_H
 
 #include "ActorFrame.h"
-#include "song.h"
-class BGAnimation;
 
+class Song;
 class Foreground: public ActorFrame
 {
 public:
@@ -20,7 +19,7 @@ protected:
 	void LoadFromAniDir( CString sAniDir );
 	struct LoadedBGA
 	{
-		BGAnimation		*m_bga;
+		Actor			*m_bga;
 		float			m_fStartBeat;
 		float			m_fStopBeat;
 	};
