@@ -221,6 +221,8 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenWithM
 	m_soundChangeOpt.Load( THEME->GetPathToS("ScreenNetSelectMusic change opt"));
 	m_soundChangeSel.Load( THEME->GetPathToS("ScreenNetSelectMusic change sel"));
 
+	NSMAN->ReportNSSOnOff(1);
+
 	return;
 }
 
@@ -536,6 +538,7 @@ void ScreenNetSelectMusic::TweenOffScreen()
 		OFF_COMMAND( m_DifficultyMeters[pn] );
 		OFF_COMMAND( m_DifficultyIcon[pn] );
 	}
+	NSMAN->ReportNSSOnOff(0);
 }
 
 

@@ -249,6 +249,7 @@ void NetworkSyncManager::ReportNSSOnOff(int i)
 	m_packet.ClearPacket();
 	m_packet.Write1( 10 );
 	m_packet.Write1( i );
+	NetPlayerClient->SendPack((char*)m_packet.Data, m_packet.Position);
 }
 
 void NetworkSyncManager::ReportTiming(float offset, int PlayerNumber)
