@@ -282,7 +282,6 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenNameEntry.h"
 #include "ScreenJukebox.h"
 #include "ScreenJukeboxMenu.h"
-#include "ScreenOptionsMenu.h"
 #include "ScreenGameplayOptions.h"
 #include "ScreenStyleSplash.h"
 #include "ScreenAutogenOptions.h"
@@ -391,7 +390,6 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenNameEntry );
 	IF_RETURN( ScreenJukebox );
 	IF_RETURN( ScreenJukeboxMenu );
-	IF_RETURN( ScreenOptionsMenu );
 	IF_RETURN( ScreenSoundOptions );
 	IF_RETURN( ScreenGameplayOptions );
 	IF_RETURN( ScreenStyleSplash );
