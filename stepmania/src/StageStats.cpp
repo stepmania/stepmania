@@ -31,8 +31,8 @@ void StageStats::Init()
 
 		ZERO( iTapNoteScores[p] );
 		ZERO( iHoldNoteScores[p] );
-		ZERO( radarPossible[p] );	// zero, don't init.  We're going to be incrementing these
-		ZERO( radarActual[p] );		// zero, don't init.  We're going to be incrementing these
+		radarPossible[p].Zero();
+		radarActual[p].Zero();
 
 		fFirstSecond[p] = 999999;
 		fLastSecond[p] = 0;

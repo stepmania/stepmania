@@ -18,7 +18,8 @@ struct RadarValues
     operator float* ()				{ return m_fValues; };
 
 	RadarValues();
-	void Init();
+	void MakeUnknown();
+	void Zero();
 	
 
 	RadarValues& operator+=( const RadarValues& other )

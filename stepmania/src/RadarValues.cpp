@@ -7,13 +7,19 @@
 
 RadarValues::RadarValues()
 {
-	Init();
+	MakeUnknown();
 }
 
-void RadarValues::Init()
+void RadarValues::MakeUnknown()
 {
 	FOREACH_RadarCategory( rc )
 		m_fValues[rc] = RADAR_VAL_UNKNOWN;
+}
+
+void RadarValues::Zero()
+{
+	FOREACH_RadarCategory( rc )
+		m_fValues[rc] = 0;
 }
 
 XNode* RadarValues::CreateNode() const

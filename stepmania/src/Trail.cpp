@@ -65,7 +65,7 @@ RadarValues Trail::GetRadarValues() const
 	else
 	{
 		m_bRadarValuesCached = true;
-		m_CachedRadarValues.Init();
+		m_CachedRadarValues.Zero();
 
 		FOREACH_CONST( TrailEntry, m_vEntries, e )
 		{

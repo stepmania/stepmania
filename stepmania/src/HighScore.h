@@ -41,7 +41,7 @@ struct HighScore
 		iProductID = 0;
 		ZERO( iTapNoteScores );
 		ZERO( iHoldNoteScores );
-		radarValues.Init();
+		radarValues.MakeUnknown();
 	}
 
 	bool operator>=( const HighScore& other ) const;
