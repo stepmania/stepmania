@@ -435,7 +435,7 @@ struct VideoCardDefaults
 		false	// broken, causes black screen
 	},
 	{
-		"Radeon 7|Wonder 7500|ArcadeVGA",	// Radeon 7xxx
+		"Radeon.* 7|Wonder 7500|ArcadeVGA",	// Radeon 7xxx, RADEON Mobility 7500
 		"d3d,opengl",	// movie texture performance is terrible in OpenGL, but fine in D3D.
 		640,480,
 		16,16,16,
@@ -510,6 +510,14 @@ struct VideoCardDefaults
 		"d3d",	// OpenGL blue screens w/ XP drivers from 6-21-2002
 		640,480,
 		16,16,16,	// slow at 32bpp
+		1024,
+		false
+	},
+	{
+		"Intel.*", /* fallback: all unknown Intel cards to D3D, since Intel is notoriously bad at OpenGL */
+		"d3d,opengl",
+		640,480,
+		16,16,16,
 		1024,
 		false
 	},
