@@ -18,11 +18,12 @@
 /* Pull in all of our SDL libraries here. */
 #ifdef _DEBUG
 #pragma comment(lib, "SDL-1.2.5/lib/SDLd.lib")
+#pragma comment(lib, "SDL_image-1.2/SDL_imaged.lib")
 #else
 #pragma comment(lib, "SDL-1.2.5/lib/SDL.lib")
+#pragma comment(lib, "SDL_image-1.2/SDL_image.lib")
 #endif
 
-#pragma comment(lib, "SDL_image-1.2/SDL_image.lib")
 
 #endif
 
