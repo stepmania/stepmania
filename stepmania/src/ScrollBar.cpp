@@ -55,38 +55,38 @@ void ScrollBar::SetPercentage( float fStartPercent, float fEndPercent )
 	fEndPercent		= fmodf( fEndPercent+1, 1 );
 
 	CHECKPOINT;
-	int iPart1TopY, iPart1BottomY, iPart2TopY, iPart2BottomY;
+	float fPart1TopY, fPart1BottomY, fPart2TopY, fPart2BottomY;
 
 	if( fStartPercent < fEndPercent )	// we only need to one 1 thumb part
 	{
-		iPart1TopY		= (int)SCALE( fStartPercent,0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
-		iPart1BottomY	= (int)SCALE( fEndPercent,  0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
-		iPart2TopY		= 0; 
-		iPart2BottomY	= 0; 
+		fPart1TopY		= SCALE( fStartPercent,0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
+		fPart1BottomY	= SCALE( fEndPercent,  0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
+		fPart2TopY		= 0; 
+		fPart2BottomY	= 0; 
 	}
 	else	// we need two thumb parts
 	{
-		iPart1TopY		= (int)SCALE( 0.0f,			0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
-		iPart1BottomY	= (int)SCALE( fEndPercent,	0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
-		iPart2TopY		= (int)SCALE( fStartPercent,0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
-		iPart2BottomY	= (int)SCALE( 1.0f,			0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
+		fPart1TopY		= SCALE( 0.0f,			0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
+		fPart1BottomY	= SCALE( fEndPercent,	0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
+		fPart2TopY		= SCALE( fStartPercent,0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
+		fPart2BottomY	= SCALE( 1.0f,			0.0f, 1.0f, -iBarContentHeight/2.0f, +iBarContentHeight/2.0f ); 
 	}
 
 	CHECKPOINT;
 		
-	m_sprScrollThumbPart1.StretchTo( RectI(
-		(int)-m_sprScrollThumbPart1.GetUnzoomedWidth()/2,
-		iPart1TopY,
-		(int)+m_sprScrollThumbPart1.GetUnzoomedWidth()/2,
-		iPart1BottomY
+	m_sprScrollThumbPart1.StretchTo( RectF(
+		-m_sprScrollThumbPart1.GetUnzoomedWidth()/2,
+		fPart1TopY,
+		+m_sprScrollThumbPart1.GetUnzoomedWidth()/2,
+		fPart1BottomY
 		) );
 
 	CHECKPOINT;
-	m_sprScrollThumbPart2.StretchTo( RectI(
-		(int)-m_sprScrollThumbPart2.GetUnzoomedWidth()/2,
-		iPart2TopY,
-		(int)+m_sprScrollThumbPart2.GetUnzoomedWidth()/2,
-		iPart2BottomY
+	m_sprScrollThumbPart2.StretchTo( RectF(
+		-m_sprScrollThumbPart2.GetUnzoomedWidth()/2,
+		fPart2TopY,
+		+m_sprScrollThumbPart2.GetUnzoomedWidth()/2,
+		fPart2BottomY
 		) );
 	CHECKPOINT;
 }
