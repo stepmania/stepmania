@@ -9,7 +9,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <errno.h>
-#include <RageFile.h>
+#include "RageFile.h"
 #include "arch/arch.h"
 
 #if !defined(WIN32)
