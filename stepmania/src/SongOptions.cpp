@@ -67,7 +67,7 @@ void SongOptions::FromString( CString sOptions )
 	CStringArray asBits;
 	split( sOptions, ",", asBits, true );
 
-	for( int i=0; i<asBits.GetSize(); i++ )
+	for( unsigned i=0; i<asBits.size(); i++ )
 	{
 		CString& sBit = asBits[i];
 		sBit.TrimLeft();

@@ -24,7 +24,7 @@ RandomSample::RandomSample()
 
 RandomSample::~RandomSample()
 {
-	for( int i=0; i<m_pSamples.GetSize(); i++ )
+	for( unsigned i=0; i<m_pSamples.size(); i++ )
 		SAFE_DELETE( m_pSamples[i] );
 }
 
@@ -43,7 +43,7 @@ bool RandomSample::LoadSoundDir( CString sDir )
 	GetDirListing( sDir + "*.ogg", arraySoundFiles );
 	GetDirListing( sDir + "*.wav", arraySoundFiles );
 
-	for( int i=0; i<arraySoundFiles.GetSize(); i++ )
+	for( unsigned i=0; i<arraySoundFiles.size(); i++ )
 		LoadSound( sDir + arraySoundFiles[i] );
 
 	return true;
@@ -65,7 +65,7 @@ bool RandomSample::LoadSound( CString sSoundFilePath )
 void RandomSample::PlayRandom()
 {
 	// play one of the samples
-	if( m_pSamples.GetSize() == 0 )
+	if( m_pSamples.empty() )
 	{
 		LOG->Trace( "WARNING:  Tried to play a RandomSample that has 0 sounds loaded." );
 		return;
@@ -74,7 +74,7 @@ void RandomSample::PlayRandom()
 	int iIndexToPlay = 0;
 	for( int i=0; i<5; i++ )
 	{
-		iIndexToPlay = rand() % m_pSamples.GetSize();
+		iIndexToPlay = rand() % m_pSamples.size();
 		if( iIndexToPlay != m_iIndexLastPlayed )
 			break;
 	}

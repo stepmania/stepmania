@@ -264,7 +264,7 @@ bool DeviceInput::fromString( const CString &s )
 	CStringArray a;
 	split( s, "-", a);
 
-	if( a.GetSize() != 2 ) {
+	if( a.size() != 2 ) {
 		device = DEVICE_NONE;
 		return false;
 	}

@@ -129,14 +129,14 @@ const CString CREDIT_LINES[] =
 	"",
 	"Please, join the StepMania team and help us out!",
 };
-const int NUM_CREDIT_LINES = sizeof(CREDIT_LINES) / sizeof(CString);
+const unsigned NUM_CREDIT_LINES = sizeof(CREDIT_LINES) / sizeof(CString);
 
 
 ScreenMusicScroll::ScreenMusicScroll()
 {
 	LOG->Trace( "ScreenMusicScroll::ScreenMusicScroll()" );
 
-	int i;
+	unsigned i;
 
 	GAMESTATE->Reset();		// so that credits message for both players will show
 
@@ -149,7 +149,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 	
 	m_iNumLines = 0;
 
-	for( i=0; i<min(arraySongs.GetSize(), MAX_MUSIC_LINES); i++ )
+	for( i=0; i<min(arraySongs.size(), MAX_MUSIC_LINES); i++ )
 	{
 		Song* pSong = arraySongs[i];
 		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathTo("Fonts","music scroll") );
@@ -193,11 +193,8 @@ void ScreenMusicScroll::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
 	
-	for( int i=0; i<m_iNumLines; i++ )
-	{
+	for( unsigned i=0; i<m_iNumLines; i++ )
 		m_textLines[i].Update( fDeltaTime );
-	}
-		
 }	
 
 
@@ -205,7 +202,7 @@ void ScreenMusicScroll::DrawPrimitives()
 {
 	Screen::DrawPrimitives();
 
-	for( int i=0; i<m_iNumLines; i++ )
+	for( unsigned i=0; i<m_iNumLines; i++ )
 	{
 		if( m_textLines[i].GetY() > SCREEN_TOP-20  &&
 			m_textLines[i].GetY() < SCREEN_BOTTOM+20 )

@@ -1226,7 +1226,7 @@ bool GameManager::DoesNoteSkinExist( CString sSkinName ) const
 {
 	CStringArray asSkinNames;	
 	GetNoteSkinNames( asSkinNames );
-	for( int i=0; i<asSkinNames.GetSize(); i++ )
+	for( unsigned i=0; i<asSkinNames.size(); i++ )
 		if( 0==stricmp(sSkinName, asSkinNames[i]) )
 			return true;
 	return false;
@@ -1318,7 +1318,7 @@ CString GameManager::GetPathTo( const int col, CString sElementName )	// looks i
 	GetDirListing( ssprintf("%s%s %s*.gif",    sDir.GetString(), sButtonName.GetString(), sElementName.GetString()), arrayPossibleFileNames, false, true );
 	GetDirListing( ssprintf("%s%s %s*",        sDir.GetString(), sButtonName.GetString(), sElementName.GetString()), arrayPossibleFileNames, false, true );
 
-	if( arrayPossibleFileNames.GetSize() > 0 )
+	if( !arrayPossibleFileNames.empty() )
 		return arrayPossibleFileNames[0];
 
 	throw RageException( "The NoteSkin element '%s %s' is missing from '%s'.", sButtonName.GetString(), sElementName.GetString(), sDir.GetString() );
@@ -1331,7 +1331,7 @@ void GameManager::GetEnabledGames( CArray<Game,Game>& aGamesOut )
 		Game game = (Game)g;
 		CStringArray asNoteSkins;
 		GetNoteSkinNames( game, asNoteSkins );
-		if( asNoteSkins.GetSize() > 0 )
+		if( !asNoteSkins.empty() )
 			aGamesOut.Add( game );
 	}
 }
@@ -1344,7 +1344,7 @@ void GameManager::GetNoteSkinNames( Game game, CStringArray &AddTo ) const
 	GetDirListing( sBaseSkinFolder + "*.*", AddTo, true );
 
 	// strip out "CVS"
-	for( int i=AddTo.GetSize()-1; i>=0; i-- )
+	for( int i=AddTo.size()-1; i>=0; i-- )
 		if( 0 == stricmp("cvs", AddTo[i]) )
 			AddTo.RemoveAt( i );
 }

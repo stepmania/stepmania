@@ -306,7 +306,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 			CStringArray arrayFreezeExpressions;
 			split( sParams[1], ",", arrayFreezeExpressions );
 
-			for( int f=0; f<arrayFreezeExpressions.GetSize(); f++ )
+			for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
 			{
 				CStringArray arrayFreezeValues;
 				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
@@ -324,11 +324,11 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 			CStringArray arrayBPMChangeExpressions;
 			split( sParams[1], ",", arrayBPMChangeExpressions );
 
-			for( int b=0; b<arrayBPMChangeExpressions.GetSize(); b++ )
+			for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
 			{
 				CStringArray arrayBPMChangeValues;
 				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
-				if(arrayBPMChangeValues.GetSize() != 2) {
+				if(arrayBPMChangeValues.size() != 2) {
 					LOG->Warn( "Invalid CHANGEBPM: '%s'", arrayBPMChangeExpressions[b].GetString());
 					continue;
 				}
@@ -377,12 +377,12 @@ bool DWILoader::LoadFromDir( CString sPath, Song &out )
 	CStringArray aFileNames;
 	GetApplicableFiles( sPath, aFileNames );
 
-	if( aFileNames.GetSize() > 1 )
+	if( aFileNames.size() > 1 )
 		throw RageException( "There is more than one DWI file in '%s'.  There should be only one!", sPath.GetString() );
 
 	/* We should have exactly one; if we had none, we shouldn't have been
 	 * called to begin with. */
-	ASSERT( aFileNames.GetSize() == 1 );
+	ASSERT( aFileNames.size() == 1 );
 
 	return LoadFromDWIFile( sPath + aFileNames[0], out );
 }

@@ -17,7 +17,7 @@
 struct PlayerOptions;
 
 
-const int NUM_OPTION_COLS = 8;
+const unsigned NUM_OPTION_COLS = 8;
 
 
 class OptionIconRow : public ActorFrame

@@ -94,14 +94,14 @@ void RefreshCacheItem( int iIndex )
 	CStringArray asButtonNames;
 	split( sButtonsNames, ",", asButtonNames, false );
 
-	if( asButtonNames.GetSize() < 2 )
+	if( asButtonNames.size() < 2 )
 	{
 		LOG->Trace( "The code '%s' is less than 2 buttons, so it will be ignored.", sCodeName.GetString() );
 		item.iNumButtons = 0;
 		return;
 	}
 
-	for( int i=0; i<asButtonNames.GetSize(); i++ )	// for each button in this code
+	for( unsigned i=0; i<asButtonNames.size(); i++ )	// for each button in this code
 	{
 		CString sButtonName = asButtonNames[i];
 

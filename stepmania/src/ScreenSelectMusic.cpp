@@ -302,15 +302,14 @@ void ScreenSelectMusic::TweenOnScreen()
 
 void ScreenSelectMusic::TweenOffScreen()
 {
-	int i;
-
 	m_sprBannerFrame.FadeOff( 0, "bounce left", TWEEN_TIME*2 );
 	m_Banner.FadeOff( 0, "bounce left", TWEEN_TIME*2 );
 	m_BPMDisplay.FadeOff( 0, "bounce left", TWEEN_TIME*2 );
 	m_textStage.FadeOff( 0, "bounce left", TWEEN_TIME*2 );
 	m_sprCDTitle.FadeOff( 0, "bounce left", TWEEN_TIME*2 );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_sprDifficultyFrame[p].FadeOff( 0, "fade", TWEEN_TIME );
 		m_sprMeterFrame[p].FadeOff( 0, "fade", TWEEN_TIME );
@@ -339,7 +338,7 @@ void ScreenSelectMusic::TweenOffScreen()
 		apActorsInScore.Add( &m_sprHighScoreFrame[p] );
 		apActorsInScore.Add( &m_HighScore[p] );
 	}
-	for( i=0; i<apActorsInScore.GetSize(); i++ )
+	for( unsigned i=0; i<apActorsInScore.size(); i++ )
 	{
 		apActorsInScore[i]->BeginTweening( TWEEN_TIME, TWEEN_BIAS_END );
 		apActorsInScore[i]->SetTweenX( SCORE_CONNECTED_TO_MUSIC_WHEEL ? apActorsInScore[i]->GetX()+400 : apActorsInScore[i]->GetX()-400 );
@@ -359,7 +358,7 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 		apActorsInScore.Add( &m_sprHighScoreFrame[p] );
 		apActorsInScore.Add( &m_HighScore[p] );
 	}
-	for( int i=0; i<apActorsInScore.GetSize(); i++ )
+	for( unsigned i=0; i<apActorsInScore.size(); i++ )
 	{
 		apActorsInScore[i]->StopTweening();
 
@@ -465,7 +464,7 @@ void ScreenSelectMusic::EasierDifficulty( PlayerNumber pn )
 
 	if( !GAMESTATE->IsPlayerEnabled(pn) )
 		return;
-	if( m_arrayNotes[pn].GetSize() == 0 )
+	if( m_arrayNotes[pn].empty() )
 		return;
 	if( m_iSelection[pn] == 0 )
 		return;
@@ -485,9 +484,9 @@ void ScreenSelectMusic::HarderDifficulty( PlayerNumber pn )
 
 	if( !GAMESTATE->IsPlayerEnabled(pn) )
 		return;
-	if( m_arrayNotes[pn].GetSize() == 0 )
+	if( m_arrayNotes[pn].empty() )
 		return;
-	if( m_iSelection[pn] == m_arrayNotes[pn].GetSize()-1 )
+	if( m_iSelection[pn] == int(m_arrayNotes[pn].size()-1) )
 		return;
 
 	m_iSelection[pn]++;
@@ -673,9 +672,9 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 	if( !GAMESTATE->IsPlayerEnabled(pn) )
 		return;
 	
-	m_iSelection[pn] = clamp( m_iSelection[pn], 0, m_arrayNotes[pn].GetSize()-1 );	// bounds clamping
+	m_iSelection[pn] = clamp( m_iSelection[pn], 0, int(m_arrayNotes[pn].size()-1) );	// bounds clamping
 
-	Notes* pNotes = m_arrayNotes[pn].GetSize()>0 ? m_arrayNotes[pn][m_iSelection[pn]] : NULL;
+	Notes* pNotes = m_arrayNotes[pn].empty()? NULL: m_arrayNotes[pn][m_iSelection[pn]];
 
 	GAMESTATE->m_pCurNotes[pn] = pNotes;
 
@@ -711,9 +710,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		{	
 			CString sGroup = m_MusicWheel.GetSelectedSection();
 			for( int p=0; p<NUM_PLAYERS; p++ )
-			{
 				m_iSelection[p] = -1;
-			}
 
 			m_Banner.SetFromGroup( sGroup );	// if this isn't a group, it'll default to the fallback banner
 			m_BPMDisplay.SetBPMRange( 0, 0 );
@@ -744,7 +741,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			{
 				if( !GAMESTATE->IsPlayerEnabled( PlayerNumber(p) ) )
 					continue;
-				for( int i=0; i<m_arrayNotes[p].GetSize(); i++ )
+				for( unsigned i=0; i<m_arrayNotes[p].size(); i++ )
 				{
 					if( m_arrayNotes[p][i]->m_Difficulty == GAMESTATE->m_PreferredDifficulty[p] )
 					{
@@ -753,7 +750,7 @@ void ScreenSelectMusic::AfterMusicChange()
 					}
 				}
 
-				m_iSelection[p] = clamp( m_iSelection[p], 0, m_arrayNotes[p].GetSize() ) ;
+				m_iSelection[p] = clamp( m_iSelection[p], 0, int(m_arrayNotes[p].size()) ) ;
 			}
 		}
 		break;

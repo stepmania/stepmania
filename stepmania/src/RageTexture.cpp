@@ -90,7 +90,7 @@ void RageTexture::GetFrameDimensionsFromFileName( CString sPath, int* piFramesWi
 	CStringArray arrayBits;
 	split( sFName, " ", arrayBits, false );
 
-	for( int i=0; i<arrayBits.GetSize(); i++ )
+	for( unsigned i=0; i<arrayBits.size(); i++ )
 	{
 		CString &sBit = arrayBits[ i ];	
 		
@@ -99,7 +99,7 @@ void RageTexture::GetFrameDimensionsFromFileName( CString sPath, int* piFramesWi
 		CStringArray arrayDimensionsBits;
 		split( sBit, "x", arrayDimensionsBits, false );
 
-		if( arrayDimensionsBits.GetSize() != 2 )
+		if( arrayDimensionsBits.size() != 2 )
 			continue;
 		else if( !IsAnInt(arrayDimensionsBits[0]) || !IsAnInt(arrayDimensionsBits[1]) )
 			continue;

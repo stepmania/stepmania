@@ -30,8 +30,8 @@ InputQueue::InputQueue()
 void InputQueue::RememberInput( const GameInput GameI )
 {
 	int c = GameI.controller;
-	if( m_aQueue[c].GetSize() >= MAX_INPUT_QUEUE_LENGTH )	// full
-		m_aQueue[c].RemoveAt( 0, m_aQueue[c].GetSize()-MAX_INPUT_QUEUE_LENGTH+1 );
+	if( m_aQueue[c].size() >= MAX_INPUT_QUEUE_LENGTH )	// full
+		m_aQueue[c].RemoveAt( 0, m_aQueue[c].size()-MAX_INPUT_QUEUE_LENGTH+1 );
 	m_aQueue[c].Add( GameButtonAndTime(GameI.button,TIMER->GetTimeSinceStart()) );
 };
 
@@ -43,7 +43,7 @@ bool InputQueue::MatchesPattern( const GameController c, const MenuButton* butto
 	float fOldestTimeAllowed = TIMER->GetTimeSinceStart() - fMaxSecondsBack;
 
 	int sequence_index = iNumButtons-1;	// count down
-	for( int queue_index=m_aQueue[c].GetSize()-1; queue_index>=0; queue_index-- )	// iterate newest to oldest
+	for( int queue_index=m_aQueue[c].size()-1; queue_index>=0; queue_index-- )	// iterate newest to oldest
 	{
 		GameButtonAndTime BandT = m_aQueue[c][queue_index];
 		GameInput GameI( c, BandT.button );
@@ -72,7 +72,7 @@ bool InputQueue::MatchesPattern( const GameController c, const GameButton* butto
 	float fOldestTimeAllowed = TIMER->GetTimeSinceStart() - fMaxSecondsBack;
 
 	int sequence_index = iNumButtons-1;	// count down
-	for( int queue_index=m_aQueue[c].GetSize()-1; queue_index>=0; queue_index-- )	// iterate newest to oldest
+	for( int queue_index=m_aQueue[c].size()-1; queue_index>=0; queue_index-- )	// iterate newest to oldest
 	{
 		GameButtonAndTime BandT = m_aQueue[c][queue_index];
 		if( BandT.button != button_sequence[sequence_index]  ||

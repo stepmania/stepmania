@@ -166,7 +166,7 @@ void NoteField::DrawPrimitives()
 
 	if( GAMESTATE->m_bEditing )
 	{
-		int i;
+		unsigned i;
 
 		//
 		// Draw measure bars
@@ -180,21 +180,21 @@ void NoteField::DrawPrimitives()
 		// BPM text
 		//
 		CArray<BPMSegment,BPMSegment&> &aBPMSegments = GAMESTATE->m_pCurSong->m_BPMSegments;
-		for( i=0; i<aBPMSegments.GetSize(); i++ )
+		for( i=0; i<aBPMSegments.size(); i++ )
 			DrawBPMText( aBPMSegments[i].m_fStartBeat, aBPMSegments[i].m_fBPM );
 
 		//
 		// Freeze text
 		//
 		CArray<StopSegment,StopSegment&> &aStopSegments = GAMESTATE->m_pCurSong->m_StopSegments;
-		for( i=0; i<aStopSegments.GetSize(); i++ )
+		for( i=0; i<aStopSegments.size(); i++ )
 			DrawFreezeText( aStopSegments[i].m_fStartBeat, aStopSegments[i].m_fStopSeconds );
 
 		//
 		// BGChange text
 		//
 		CArray<BackgroundChange,BackgroundChange&> &aBackgroundChanges = GAMESTATE->m_pCurSong->m_BackgroundChanges;
-		for( i=0; i<aBackgroundChanges.GetSize(); i++ )
+		for( i=0; i<aBackgroundChanges.size(); i++ )
 			DrawBGChangeText( aBackgroundChanges[i].m_fStartBeat, aBackgroundChanges[i].m_sBGName );
 
 		//

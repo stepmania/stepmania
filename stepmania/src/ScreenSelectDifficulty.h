@@ -18,10 +18,10 @@
 #include "RandomSample.h"
 
 
-const int NUM_ITEMS_ON_PAGE_1 = 3;	// easy, medium, hard, 
-const int NUM_ITEMS_ON_PAGE_2 = 2;	// Oni, Endless
-const int NUM_DIFFICULTY_ITEMS = NUM_ITEMS_ON_PAGE_1 + NUM_ITEMS_ON_PAGE_2;
-const int NUM_PAGES = 2;	// easy-medium-hard, Oni
+const unsigned NUM_ITEMS_ON_PAGE_1 = 3;	// easy, medium, hard, 
+const unsigned NUM_ITEMS_ON_PAGE_2 = 2;	// Oni, Endless
+const unsigned NUM_DIFFICULTY_ITEMS = NUM_ITEMS_ON_PAGE_1 + NUM_ITEMS_ON_PAGE_2;
+const unsigned NUM_PAGES = 2;	// easy-medium-hard, Oni
 
 class ScreenSelectDifficulty : public Screen
 {

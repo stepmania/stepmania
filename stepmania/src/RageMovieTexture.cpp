@@ -301,7 +301,7 @@ RageMovieTexture::RageMovieTexture(
 
 	CreateFrameRects();
 	// flip all frame rects because movies are upside down
-	for( int i=0; i<m_TextureCoordRects.GetSize(); i++ )
+	for( unsigned i=0; i<m_TextureCoordRects.size(); i++ )
 	{
 		float fTemp = m_TextureCoordRects[i].top;
 		m_TextureCoordRects[i].top = m_TextureCoordRects[i].bottom;

@@ -206,7 +206,7 @@ D3DFORMAT RageDisplay::FindBackBufferType(bool bWindowed, int iBPP)
 		throw RageException( ssprintf("Invalid BPP '%u' specified", iBPP) );
 
 	// Test each back buffer format until we find something that works.
-	for( int i=0; i < arrayBackBufferFormats.GetSize(); i++ )
+	for( unsigned i=0; i < arrayBackBufferFormats.size(); i++ )
 	{
 		D3DFORMAT fmtBackBuffer = arrayBackBufferFormats[i];
 
@@ -619,12 +619,12 @@ void RageDisplay::ResetMatrixStack()
 void RageDisplay::PushMatrix() 
 { 
 	m_MatrixStack.Add( GetTopMatrix() );	
-	ASSERT(m_MatrixStack.GetSize()<20);		// check for infinite loop
+	ASSERT(m_MatrixStack.size()<20);		// check for infinite loop
 }
 
 void RageDisplay::PopMatrix() 
 { 
-	m_MatrixStack.RemoveAt( m_MatrixStack.GetSize()-1 ); 
+	m_MatrixStack.RemoveAt( m_MatrixStack.size()-1 ); 
 }
 
 void RageDisplay::Translate( float x, float y, float z )

@@ -455,9 +455,9 @@ void ScreenSelectDifficulty::MenuBack( PlayerNumber pn )
 
 void ScreenSelectDifficulty::TweenOffScreen()
 {
-	int p;
+	unsigned p;
 
-	for( p=0; p < m_SubActors.GetSize(); p++ )
+	for( p=0; p < m_SubActors.size(); p++ )
 		m_SubActors[p]->StopTweening();
 	
 	for( p=0; p<NUM_PAGES; p++ )

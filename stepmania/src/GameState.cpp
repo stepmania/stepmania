@@ -301,7 +301,7 @@ float GameState::GetElapsedSeconds()
 	case PLAY_MODE_ENDLESS:
 		{
 			float fSecondsTotal = 0;
-			for( int i=0; i<m_apSongsPlayed.GetSize(); i++ )
+			for( unsigned i=0; i<m_apSongsPlayed.size(); i++ )
 				fSecondsTotal += m_apSongsPlayed[i]->m_fMusicLengthSeconds;
 			fSecondsTotal += max( 0, m_fMusicSeconds );
 			return fSecondsTotal;

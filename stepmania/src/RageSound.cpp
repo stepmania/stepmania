@@ -117,9 +117,9 @@ void RageSound::PlayOnceStreamedFromDir( CString sDir )
 	GetDirListing( sDir + "*.wav", arraySoundFiles );
 	GetDirListing( sDir + "*.ogg", arraySoundFiles );
 
-	if( arraySoundFiles.GetSize() != 0 )
+	if( !arraySoundFiles.empty() )
 	{
-		int index = rand() % arraySoundFiles.GetSize();
+		int index = rand() % arraySoundFiles.size();
 		PlayOnceStreamed( sDir + arraySoundFiles[index] );
 	}
 }

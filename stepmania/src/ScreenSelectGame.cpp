@@ -43,7 +43,7 @@ ScreenSelectGame::ScreenSelectGame() :
 	/* populate g_SelectGameLines */
 	CArray<Game,Game> aGames;
 	GAMEMAN->GetEnabledGames( aGames );
-	for( int i=0; i<aGames.GetSize(); i++ )
+	for( unsigned i=0; i<aGames.size(); i++ )
 	{
 		Game game = aGames[i];
 		CString sGameName = GAMEMAN->GetGameDefForGame(game)->m_szName;
@@ -70,10 +70,10 @@ void ScreenSelectGame::ImportOptions()
 	 * note skins; reset it to the first available. */
 	CArray<Game,Game> aGames;
 	GAMEMAN->GetEnabledGames( aGames );
-	ASSERT(aGames.GetSize());
+	ASSERT(!aGames.empty());
 
 	m_iSelectedOption[0][SG_GAME] = 0;
-	for(int sel = 0; sel < aGames.GetSize(); ++sel)
+	for(unsigned sel = 0; sel < aGames.size(); ++sel)
 		if(aGames[sel] == GAMESTATE->m_CurGame) m_iSelectedOption[0][SG_GAME] = sel;
 }
 

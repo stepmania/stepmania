@@ -25,7 +25,7 @@ bool GameInput::fromString( CString s )
 	CStringArray a;
 	split( s, "-", a);
 
-	if( a.GetSize() != 2 ) {
+	if( a.size() != 2 ) {
 		MakeInvalid();
 		return false;
 	}

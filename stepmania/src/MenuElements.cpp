@@ -124,7 +124,7 @@ void MenuElements::TweenTopLayerOnScreen()
 	apActorsInTopFrame.Add( &m_sprTopEdge );
 	apActorsInTopFrame.Add( &m_sprStyleIcon );
 	apActorsInTopFrame.Add( &m_MenuTimer );
-	for( int i=0; i<apActorsInTopFrame.GetSize(); i++ )
+	for( unsigned i=0; i<apActorsInTopFrame.size(); i++ )
 	{
 		float fOriginalX = apActorsInTopFrame[i]->GetX();
 		apActorsInTopFrame[i]->SetX( fOriginalX+SCREEN_WIDTH );
@@ -162,7 +162,7 @@ void MenuElements::TweenTopLayerOffScreen()
 	apActorsInTopFrame.Add( &m_sprTopEdge );
 	apActorsInTopFrame.Add( &m_sprStyleIcon );
 	apActorsInTopFrame.Add( &m_MenuTimer );
-	for( int i=0; i<apActorsInTopFrame.GetSize(); i++ )
+	for( unsigned i=0; i<apActorsInTopFrame.size(); i++ )
 	{
 		float fOriginalX = apActorsInTopFrame[i]->GetX();
 		apActorsInTopFrame[i]->BeginTweening( MENU_ELEMENTS_TWEEN_TIME, TWEEN_BOUNCE_BEGIN );
