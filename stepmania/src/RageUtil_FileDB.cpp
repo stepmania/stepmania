@@ -285,7 +285,9 @@ void FilenameDB::AddFile( const CString &sPath, int size, int hash, void *priv )
 	do
 	{
 		/* Combine all but the last part. */
-		CString dir = join( "/", begin, end-1 ) + "/";
+		CString dir = join( "/", begin, end-1 );
+		if( dir != "" )
+			dir += "/";
 		const CString &fn = *(end-1);
 		FileSet *fs = GetFileSet( dir );
 
