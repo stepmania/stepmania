@@ -820,9 +820,20 @@ int main(int argc, char* argv[])
 
 	CString  g_sErrorString = "";
 
-#ifndef DEBUG
+#if !defined(DEBUG)
+	/* Always catch RageExceptions; they should always have distinct strings. */
 	try { /* RageException */
+
+	/* Tricky: for other exceptions, we want a backtrace.  To do this in Windows,
+	 * we need to catch the exception and force a crash.  The call stack is still
+	 * there, and gets picked up by the crash handler.  (If we don't catch it, we'll
+	 * get a generic, useless "abnormal terminaiton" dialog.)  In Linux, if we do this
+	 * we'll only get main() on the stack, but if we don't catch the exception, it'll
+	 * just work.  So, only catch exception& in Windows. */
+#if defined(_WINDOWS)
 	try { /* exception */
+#endif
+
 #endif
 
 	ChangeToDirOfExecutable(argv[0]);
@@ -1013,7 +1024,7 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( FILEMAN );
 	SAFE_DELETE( LOG );
 
-#ifndef DEBUG
+#if !defined(DEBUG) && defined(_WINDOWS)
 	}
 	catch( const exception &e )
 	{
