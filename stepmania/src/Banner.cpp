@@ -18,6 +18,8 @@
 #include "song.h"
 #include "RageTextureManager.h"
 #include "Course.h"
+#include "Character.h"
+
 
 RageTextureID Banner::BannerTex( RageTextureID ID )
 {
@@ -113,6 +115,27 @@ void Banner::LoadFromCourse( Course* pCourse )		// NULL means no course
 {
 	if( pCourse == NULL )						LoadFallback();
 	else if( pCourse->m_sBannerPath != "" )		Load( pCourse->m_sBannerPath );
+	else										LoadFallback();
+
+	m_bScrolling = false;
+}
+
+void Banner::LoadCardFromCharacter( Character* pCharacter )	
+{
+	ASSERT( pCharacter );
+
+	if( pCharacter->GetCardPath() != "" )		Load( pCharacter->GetCardPath() );
+	else										LoadFallback();
+
+	m_bScrolling = false;
+}
+
+void Banner::LoadIconFromCharacter( Character* pCharacter )	
+{
+	ASSERT( pCharacter );
+
+	if( pCharacter->GetIconPath() != "" )		Load( pCharacter->GetIconPath() );
+	else if( pCharacter->GetCardPath() != "" )	Load( pCharacter->GetCardPath() );
 	else										LoadFallback();
 
 	m_bScrolling = false;

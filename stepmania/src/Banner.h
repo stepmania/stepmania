@@ -15,7 +15,7 @@
 #include "RageTexture.h"
 class Song;
 class Course;
-
+class Character;
 
 class Banner : public Sprite
 {
@@ -31,6 +31,8 @@ public:
 	void LoadAllMusic();
 	void LoadFromGroup( CString sGroupName );
 	void LoadFromCourse( Course* pCourse );
+	void LoadCardFromCharacter( Character* pCharacter );
+	void LoadIconFromCharacter( Character* pCharacter );
 	void LoadRoulette();
 	void LoadRandom();
 	void LoadFallback();
