@@ -429,7 +429,9 @@ float UnlockSystem::UnlockAddAP(Grade credit)
 float UnlockSystem::UnlockAddDP(float credit)
 {
 	ReadValues("Data/MemCard.ini");
-	DancePoints += credit;
+
+	// we don't want to ever take away dance points
+	if (credit > 0) DancePoints += credit;
 	WriteValues("Data/MemCard.ini");
 
 	return DancePoints;
