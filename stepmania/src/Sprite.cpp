@@ -47,12 +47,31 @@ Sprite::~Sprite()
 	UnloadTexture();
 }
 
-bool Sprite::LoadBG( RageTextureID ID )
+RageTextureID Sprite::SongBGTexture( RageTextureID ID )
 {
 	ID.bMipMaps = true;
+
+	/* Song backgrounds are, by definition, in the background, so there's no need to keep alpha. */
+	ID.iAlphaBits = 0;
+
 	// Don't we want to dither 16 bit textures at least?
 //	ID.bDither = true;
-	return Load(ID);
+
+	return ID;
+}
+
+RageTextureID Sprite::SongBannerTexture( RageTextureID ID )
+{
+	/* Song banners often have HOT PINK color keys. */
+	ID.bHotPinkColorKey = true;
+	ID.bDither = true;
+	return ID;
+}
+
+/* deprecated */
+bool Sprite::LoadBG( RageTextureID ID )
+{
+	return Load( SongBGTexture(ID) );
 }
 
 bool Sprite::Load( RageTextureID ID )

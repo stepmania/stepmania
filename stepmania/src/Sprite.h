@@ -29,6 +29,12 @@ public:
 	virtual void Update( float fDeltaTime );
 	void UpdateAnimationState();	// take m_fSecondsIntoState, and move to a new state
 
+	/* Adjust texture properties for song backgrounds. */
+	static RageTextureID SongBGTexture( RageTextureID ID );
+
+	/* Adjust texture properties for song banners. */
+	static RageTextureID SongBannerTexture( RageTextureID ID );
+
 	/* Just a convenience function; load an image that'll be used in the
 	 * background. */
 	virtual bool LoadBG( RageTextureID ID );
