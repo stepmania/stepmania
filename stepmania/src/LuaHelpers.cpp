@@ -16,6 +16,9 @@ LuaFunctionList *g_LuaFunctionList = NULL;
 	 * We don't care; we'll throw a fatal exception immediately anyway. */
 	#pragma warning (disable : 4611)
 #endif
+#if defined (DARWIN)
+	extern void NORETURN longjmp(jmp_buf env, int val);
+#endif
 
 
 
