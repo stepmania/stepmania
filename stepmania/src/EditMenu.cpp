@@ -16,6 +16,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "GameManager.h"
+#include "Notes.h"
 
 //
 // Defines specific to EditMenu
@@ -123,6 +124,21 @@ EditMenu::EditMenu()
 			if( GAMESTATE->m_pCurSong == m_pSongs[i] )
 				m_iSelection[ROW_SONG] = i;
 		OnRowValueChanged( ROW_SONG );
+
+		// Select the current NotesType and difficulty if any
+		if( GAMESTATE->m_pCurNotes )
+		{
+			for( i=0; i<m_NotesTypes.size(); i++ )
+				if( m_NotesTypes[i] == GAMESTATE->m_pCurNotes[PLAYER_1]->m_NotesType )
+				{
+					m_iSelection[ROW_NOTES_TYPE] = i;
+					OnRowValueChanged( ROW_NOTES_TYPE );
+				}
+
+			m_iSelection[ROW_DIFFICULTY] = GAMESTATE->m_pCurNotes[PLAYER_1]->GetDifficulty();
+			OnRowValueChanged( ROW_DIFFICULTY );
+		}
+
 	}
 }
 

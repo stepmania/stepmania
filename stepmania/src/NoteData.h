@@ -163,7 +163,7 @@ namespace NoteDataUtil
 	void Big( NoteData &in );
 	void Quick( NoteData &in );
 	void Skippy( NoteData &in );
-	void InsertIntelligentTaps( NoteData &in, float fBeatInterval, float fInsertBeatOffset );
+	void InsertIntelligentTaps( NoteData &in, float fBeatInterval, float fInsertBeatOffset, bool bNewTapSameAsBeginning );
 	void SuperShuffleTaps( NoteData &in );
 	void Backwards( NoteData &in );
 	void SwapSides( NoteData &in );

@@ -1046,20 +1046,20 @@ void NoteDataUtil::Wide( NoteData &in )
 
 void NoteDataUtil::Big( NoteData &in )
 {
-	InsertIntelligentTaps(in,1.0f,0.5f);	// add 8ths between 4ths
+	InsertIntelligentTaps(in,1.0f,0.5f,false);	// add 8ths between 4ths
 }
 
 void NoteDataUtil::Quick( NoteData &in )
 {
-	InsertIntelligentTaps(in,0.5f,0.25f);	// add 16ths between 8ths
+	InsertIntelligentTaps(in,0.5f,0.25f,false);	// add 16ths between 8ths
 }
 
 void NoteDataUtil::Skippy( NoteData &in )
 {
-	InsertIntelligentTaps(in,1.0f,0.75f);	// add 16ths between 4ths
+	InsertIntelligentTaps(in,1.0f,0.75f,true);	// add 16ths between 4ths
 }
 
-void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fBeatInterval, float fInsertBeatOffset )
+void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fBeatInterval, float fInsertBeatOffset, bool bNewTapSameAsBeginning )
 {
 	ASSERT( fInsertBeatOffset <= fBeatInterval );
 
@@ -1094,19 +1094,30 @@ void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fBeatInterval, flo
 		// add a note determinitsitcally somewhere on a track different from the two surrounding notes
 		int iTrackOfNoteEarlier = in.GetFirstNonEmptyTrack(iRowEarlier);
 		int iTrackOfNoteLater = in.GetFirstNonEmptyTrack(iRowLater);
-		int iTrackOfNoteMiddle = 0;
-		if( abs(iTrackOfNoteEarlier-iTrackOfNoteLater) == 2 )
-			iTrackOfNoteMiddle = (iTrackOfNoteEarlier+iTrackOfNoteLater)/2;
-		else
-			for( int t=min(iTrackOfNoteEarlier,iTrackOfNoteLater)-1; t<=max(iTrackOfNoteEarlier,iTrackOfNoteLater)+1; t++ )
+		int iTrackOfNoteToAdd = 0;
+		if( bNewTapSameAsBeginning  &&
+			iTrackOfNoteEarlier != iTrackOfNoteLater )	// Don't make skips on the same note
+		{
+			iTrackOfNoteToAdd = iTrackOfNoteEarlier;
+		}
+		else	// bNewTapSameAsBeginning
+		{
+			// choose a randomish track
+			if( abs(iTrackOfNoteEarlier-iTrackOfNoteLater) == 2 )
+				iTrackOfNoteToAdd = (iTrackOfNoteEarlier+iTrackOfNoteLater)/2;
+			else
 			{
-				iTrackOfNoteMiddle = t;
-				CLAMP( iTrackOfNoteMiddle, 0, in.GetNumTracks()-1 );
-				if( iTrackOfNoteMiddle!=iTrackOfNoteEarlier && iTrackOfNoteMiddle!=iTrackOfNoteLater )
-					break;
+				for( int t=min(iTrackOfNoteEarlier,iTrackOfNoteLater)-1; t<=max(iTrackOfNoteEarlier,iTrackOfNoteLater)+1; t++ )
+				{
+					iTrackOfNoteToAdd = t;
+					CLAMP( iTrackOfNoteToAdd, 0, in.GetNumTracks()-1 );
+					if( iTrackOfNoteToAdd!=iTrackOfNoteEarlier && iTrackOfNoteToAdd!=iTrackOfNoteLater )
+						break;
+				}
 			}
+		}
 
-		in.SetTapNote(iTrackOfNoteMiddle, iRowToAdd, TAP_TAP);
+		in.SetTapNote(iTrackOfNoteToAdd, iRowToAdd, TAP_TAP);
 	}
 
 	in.Convert4sToHoldNotes();
