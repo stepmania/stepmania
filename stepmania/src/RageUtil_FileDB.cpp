@@ -81,7 +81,7 @@ int FileSet::GetFileHash(const CString &path) const
 static void SplitPath( CString Path, CString &Dir, CString &Name )
 {
 	/* Strip off any trailing slashes. */
-	if( Path.size() > 0 && Path.Right(1) == SLASH )
+	if( Path.size() > 0 && Path.Right(1) == "/" )
 		Path.erase( Path.size()-1 );
 
 	static Regex split("(.*/)([^/]+)");
@@ -93,7 +93,7 @@ static void SplitPath( CString Path, CString &Dir, CString &Name )
 		Name = match[1];
 	} else {
 		/* No slash. */
-		Dir = "." SLASH;
+		Dir = "./";
 		Name = Path;
 	}
 }
@@ -133,10 +133,10 @@ bool FilenameDB::ResolvePath(CString &path)
 
 	/* Split path into components. */
 	vector<CString> p;
-	split(path, SLASH, p, true);
+	split(path, "/", p, true);
 
 	/* If we have "/foo", then add a blank entry to the beginning to line things up. */
-	if( path.Left( strlen(SLASH) ) == SLASH )
+	if( path.Left(1) == "/" )
 		p.insert( p.begin(), "" );
 
 	/* Resolve each component.  Assume the first component is correct. XXX
@@ -144,7 +144,7 @@ bool FilenameDB::ResolvePath(CString &path)
 	CString ret = p[0];
 	for(unsigned i = 1; i < p.size(); ++i)
 	{
-		ret += SLASH;
+		ret += "/";
 
 		vector<CString> lst;
 		FileSet &fs = GetFileSet( ret );
@@ -160,8 +160,8 @@ bool FilenameDB::ResolvePath(CString &path)
 		ret += lst[0];
 	}
 
-	if(path.Right(1) == SLASH)
-		path = ret + SLASH;
+	if(path.Right(1) == "/")
+		path = ret + "/";
 	else
 		path = ret;
 	return true;
@@ -208,8 +208,8 @@ void FilenameDB::GetFilesSimpleMatch(const CString &dir, const CString &fn, vect
 FileSet &FilenameDB::GetFileSet( CString dir )
 {
 	/* Normalize the path. */
-	dir.Replace("\\", SLASH); /* foo\bar -> foo/bar */
-	dir.Replace("//", SLASH); /* foo//bar -> foo/bar */
+	dir.Replace("\\", "/"); /* foo\bar -> foo/bar */
+	dir.Replace("//", "/"); /* foo//bar -> foo/bar */
 
 	CString lower = dir;
 	lower.MakeLower();
@@ -323,7 +323,7 @@ void FilenameDB::GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDi
 	 * prepend "./" */
 
 	/* Strip off the last path element and use it as a mask. */
-	unsigned pos = sPath.find_last_of( SLASH );
+	unsigned pos = sPath.find_last_of( '/' );
 	CString fn;
 	if(pos != sPath.npos)
 	{

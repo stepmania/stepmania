@@ -889,20 +889,20 @@ CString Basename( const CString &dir )
 CString Dirname( const CString &dir )
 {
         /* Special case: "/" -> "/". */
-        if( dir.size() == 1 && dir[0] == SLASH[0] )
-                return SLASH;
+        if( dir.size() == 1 && dir[0] == '/' )
+                return "/";
 
         int pos = dir.size()-1;
         /* Skip trailing slashes. */
-        while( pos >= 0 && dir[pos] == SLASH[0] )
+        while( pos >= 0 && dir[pos] == '/' )
                 --pos;
 
         /* Skip the last component. */
-        while( pos >= 0 && dir[pos] != SLASH[0] )
+        while( pos >= 0 && dir[pos] != '/' )
                 --pos;
 
         if( pos < 0 )
-                return "." SLASH;
+                return "./";
 
         return dir.substr(0, pos+1);
 }
