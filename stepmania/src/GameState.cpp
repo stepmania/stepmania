@@ -1119,7 +1119,9 @@ void GameState::GetAllUsedNoteSkins( vector<CString> &out ) const
 				{
 					PlayerOptions po;
 					po.FromString( asAttacks[att] );
-					if( po.m_sNoteSkin != "" )
+					/* Hack: NoteSkin "default" is never applied as an attack,
+					 * so don't waste memory preloading it. */
+					if( po.m_sNoteSkin != "" && po.m_sNoteSkin.CompareNoCase("default") )
 						out.push_back( po.m_sNoteSkin );
 				}
 			}
