@@ -367,9 +367,6 @@ void Checkpoints::SetCheckpoint( const char *file, int line, const char *message
 /* This is called under crash conditions.  Be careful. */
 static const char *GetCheckpointLog( int slotno, int lineno )
 {
-	static char ret[1024*32];
-	ret[0] = 0;
-
 	ThreadSlot &slot = g_ThreadSlots[slotno];
 	if( !slot.used )
 		return NULL;
@@ -382,8 +379,7 @@ static const char *GetCheckpointLog( int slotno, int lineno )
 		return slot.GetFormattedCheckpoint( lineno-1 );
 
 	slot.ThreadFormattedOutput[sizeof(slot.ThreadFormattedOutput)-1] = 0;
-	strcat(ret, slot.ThreadFormattedOutput);
-	return ret;
+	return slot.ThreadFormattedOutput;
 }
 
 const char *Checkpoints::GetLogs( const char *delim )
