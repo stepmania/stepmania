@@ -413,7 +413,7 @@ void Song::TidyUpData()
 	else	// ! HasMusic()
 	{
 		m_fMusicLengthSeconds = 100;		// guess
-		LOG->Warn("File %s has no music; guessing at %f seconds", m_fMusicLengthSeconds);
+		LOG->Warn("This song has no music file; guessing at %f seconds", m_fMusicLengthSeconds);
 	}
 
 	/* Generate these before we autogen notes, so the new notes can inherit
@@ -445,6 +445,8 @@ void Song::TidyUpData()
 	// Here's the problem:  We have a directory full of images.  We want to determine which 
 	// image is the banner, which is the background, and which is the CDTitle.
 	//
+
+	LOG->Trace("Looking for images...");
 
 	//
 	// First, check the file name for hints.

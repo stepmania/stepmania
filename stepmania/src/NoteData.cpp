@@ -21,6 +21,7 @@
 #include "GameState.h"
 #include "math.h"
 #include "NotesLoaderSM.h"
+#include "RageLog.h"
 
 
 NoteData::NoteData()
@@ -30,8 +31,8 @@ NoteData::NoteData()
 
 void NoteData::Init()
 {
+	m_iNumTracks = 0;	// must do this before calling ClearAll()!
 	ClearAll();
-	m_iNumTracks = 0;
 }
 
 NoteData::~NoteData()
