@@ -745,7 +745,7 @@ void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
 	}
 
 	/* The font is not already loaded.  Figure out what we have. */
-	LOG->Trace( "FontManager::LoadFont(%s).", sFontOrTextureFilePath.GetString() );
+	LOG->Trace( "FontManager::LoadFont(\"%s\",\"%s\").", sFontOrTextureFilePath.GetString(), Chars.GetString() );
 
 	path = sFontOrTextureFilePath;
 	Chars = sChars;
