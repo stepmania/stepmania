@@ -201,12 +201,11 @@ int NoteData::GetFirstRow() const
 
 float NoteData::GetFirstBeat() const		
 { 
-	float fEarliestBeatFoundSoFar = MAX_BEATS;
+	float fEarliestBeatFoundSoFar = -1;
 	
 	int i;
 
-	int rows = GetLastRow();
-	for( i=0; i<=rows; i++ )
+	for( i=0; i <= int(m_TapNotes[0].size()); i++ )
 	{
 		if( !IsRowEmpty(i) )
 		{
@@ -216,14 +215,16 @@ float NoteData::GetFirstBeat() const
 	}
 
 	for( i=0; i<GetNumHoldNotes(); i++ )
-		if( GetHoldNote(i).fStartBeat < fEarliestBeatFoundSoFar )
+	{
+		if( fEarliestBeatFoundSoFar == -1 ||
+			GetHoldNote(i).fStartBeat < fEarliestBeatFoundSoFar )
 			fEarliestBeatFoundSoFar = GetHoldNote(i).fStartBeat;
+	}
 
-
-	if( fEarliestBeatFoundSoFar == MAX_BEATS )	// there are no notes
+	if( fEarliestBeatFoundSoFar == -1 )	// there are no notes
 		return 0;
-	else
-		return fEarliestBeatFoundSoFar;
+
+	return fEarliestBeatFoundSoFar;
 }
 
 int NoteData::GetLastRow() const

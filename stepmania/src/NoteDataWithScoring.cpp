@@ -140,7 +140,9 @@ float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds )
 
 	const int BEAT_WINDOW = 8;
 
-	for( int i=0; i<MAX_BEATS; i+=BEAT_WINDOW )
+	const int fEndBeat = (int) GetMaxBeat()+1;
+
+	for( int i=0; i<fEndBeat; i+=BEAT_WINDOW )
 	{
 		int iNumNotesThisWindow = 0;
 		iNumNotesThisWindow += GetNumTapNotesWithScore(TNS_MARVELOUS,(float)i,(float)i+BEAT_WINDOW);
