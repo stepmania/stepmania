@@ -940,12 +940,21 @@ void NORETURN debug_crash()
 /* Get a stack trace of the current thread and the specified thread. */
 void NORETURN Crash_BacktraceThread( HANDLE hThread )
 {
+	if( hThread == NULL )
+	{
+		strcpy( g_CrashInfo.m_CrashReason, "Crash reason: Thread deadlock (with NULL?)" );
+		debug_crash();
+	}
+
+#if 0
+	/* Ugh.  GetThreadId is XP-only or 2003 Server-only or something.  How can we do this? */
 	if( GetThreadId( hThread ) == GetCurrentThreadId() )
 	{
 		/* hThread is the current thread.  This shouldn't happen. */
 		strcpy( g_CrashInfo.m_CrashReason, "Crash reason: Thread deadlock (with the current thread?)" );
 		debug_crash();
 	}
+#endif
 
 	/* Suspend the other thread we're going to backtrace.  (We need to at least suspend
 	 * hThread, for GetThreadContext to work.) */
