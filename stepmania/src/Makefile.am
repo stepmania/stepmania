@@ -123,14 +123,14 @@ LowLevelWindow = arch/LowLevelWindow/LowLevelWindow.h \
 
 ArchUtils = archutils/Unix/AssertionHandler.cpp \
 		archutils/Unix/GetSysInfo.cpp archutils/Unix/GetSysInfo.h \
-		archutils/Unix/SignalHandler.cpp archutils/Unix/SignalHandler.h
+		archutils/Unix/SignalHandler.cpp archutils/Unix/SignalHandler.h \
+		archutils/Unix/LinuxThreadHelpers.cpp archutils/Unix/LinuxThreadHelpers.h
 
 if USE_CRASH_HANDLER
 ArchUtils += archutils/Unix/Backtrace.cpp archutils/Unix/Backtrace.h \
 		archutils/Unix/BacktraceNames.cpp archutils/Unix/BacktraceNames.h \
 		archutils/Unix/CrashHandler.cpp archutils/Unix/CrashHandler.h \
-		archutils/Unix/CrashHandlerChild.cpp archutils/Unix/CrashHandlerInternal.h \
-		archutils/Unix/LinuxThreadHelpers.cpp archutils/Unix/LinuxThreadHelpers.h
+		archutils/Unix/CrashHandlerChild.cpp archutils/Unix/CrashHandlerInternal.h
 endif
 
 Arch = $(LoadingWindow) $(Sound) $(ArchHooks) $(InputHandler) $(MovieTexture) \
