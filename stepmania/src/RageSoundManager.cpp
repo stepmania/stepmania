@@ -96,18 +96,6 @@ void RageSoundManager::Update(float delta)
 			ToDelete.insert( *it );
 		}
 
-	/* Don't delete any sounds that are the parent of another sound.  Always delete
-	 * child sounds first.  Otherwise, another sound might be allocated that has the
-	 * same pointer as an old, deleted parent, and since we use the pointer to the
-	 * parent to determine which sounds share the same parent, it'll confuse GetCopies(). */
-	for( set<RageSound *>::iterator iter = all_sounds.begin(); iter != all_sounds.end(); ++iter )
-		if( (*iter)->GetOriginal() != (*iter) ) // child
-		{
-			set<RageSound *>::iterator parent = ToDelete.find( (*iter)->GetOriginal() );
-			if( parent != ToDelete.end() )
-				ToDelete.erase( parent );
-		}
-
 	for( it = ToDelete.begin(); it != ToDelete.end(); ++it )
 		owned_sounds.erase( *it );
 	g_SoundManMutex.Unlock(); /* finished with owned_sounds and all_sounds */
