@@ -552,11 +552,18 @@ void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bIsBeingHeld, flo
 	DISPLAY->SetTextureWrapping( true );
 
 
-	const float fFrameWidth  = pSprBody->GetUnzoomedWidth();
+	float fFrameWidth  = pSprBody->GetUnzoomedWidth();
 	const float fFrameHeight = pSprBody->GetUnzoomedHeight();
 	const float fYBodyTop = fYHead + cache->m_iStartDrawingHoldBodyOffsetFromHead;
 	const float fYBodyBottom = fYTail + cache->m_iStopDrawingHoldBodyOffsetFromTail;
-	
+
+	// To get the hold body textures to look correct on longer hold arrows, you need to have
+	// SetTextureWrapping() be set to true above.  However, this ends up defeating the scaling
+	// done on the Sprite itself.  As a result, if we want this to be the appropriate size
+	// for 2-player 8-panel (techno versus), then we need to shrink it to 80% manually here.
+	if( GAMESTATE->m_CurGame == GAME_TECHNO && GAMESTATE->m_CurStyle == STYLE_TECHNO_VERSUS8 )
+		fFrameWidth *= (float)0.8;
+
 	const bool bReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].GetReversePercentForColumn(iCol) > 0.5;
 	bool bAnchorToBottom = bReverse && cache->m_bFlipHeadAndTailWhenReverse;
 

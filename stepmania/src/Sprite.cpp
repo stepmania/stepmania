@@ -24,6 +24,9 @@
 #include "SDL_utils.h"
 #include "ActorUtil.h"
 #include "arch/ArchHooks/ArchHooks.h"
+#include "Game.h"
+#include "GameState.h"
+#include "Style.h"
 
 Sprite::Sprite()
 {
@@ -82,13 +85,24 @@ bool Sprite::LoadBG( RageTextureID ID )
 
 bool Sprite::Load( RageTextureID ID )
 {
-	if( ID.filename == "" ) return true;
+	bool result;
+	if( ID.filename == "" ) result = true;
 	if( ID.filename.Right(7) == ".sprite" )
-		return LoadFromSpriteFile( ID );
+		result = LoadFromSpriteFile( ID );
 	else 
-		return LoadFromTexture( ID );
-};
+		result = LoadFromTexture( ID );
 
+	// 2-player 8-panel gets crowded - this scaling emulates the arcade behaviour to account for this
+	if( GAMESTATE->m_CurGame == GAME_TECHNO &&
+		GAMESTATE->m_CurStyle == STYLE_TECHNO_VERSUS8 &&
+		ID.filename.find( "NoteSkin" ) != -1 )
+	{
+		Actor::SetBaseZoomX( Actor::m_baseScale.x * (float)0.8 );
+		Actor::SetBaseZoomY( Actor::m_baseScale.y * (float)0.8 );
+	}
+
+	return result;
+};
 
 // Sprite file has the format:
 //
