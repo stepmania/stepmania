@@ -514,7 +514,7 @@ CString ScreenOptions::GetExplanationTitle( int iRow ) const
 
 BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow, int iChoiceOnRow )
 {
-	RAGE_ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %zu", iRow, m_Rows.size() ) );
+	RAGE_ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, (int)m_Rows.size() ) );
 	Row &row = *m_Rows[iRow];
 	if( row.Type == Row::ROW_EXIT )
 		return *row.m_textItems[0];
@@ -526,7 +526,7 @@ BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow, int iCh
 	else
 		index = iChoiceOnRow;
 
-	RAGE_ASSERT_M( index < (int)row.m_textItems.size(), ssprintf("%i < %zu", index, row.m_textItems.size() ) );
+	RAGE_ASSERT_M( index < (int)row.m_textItems.size(), ssprintf("%i < %i", index, (int)row.m_textItems.size() ) );
 	return *row.m_textItems[index];
 }
 
@@ -680,7 +680,7 @@ void ScreenOptions::PositionCursors()
 			continue;
 
 		const int iRow = m_iCurrentRow[pn];
-		RAGE_ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %zu", iRow, m_Rows.size() ) );
+		RAGE_ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, (int)m_Rows.size() ) );
 		Row &Row = *m_Rows[iRow];
 
 		OptionsCursor &highlight = m_Highlight[pn];
@@ -698,7 +698,7 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 {
 	// Set the position of the highlight showing the current option the user is changing.
 	const int iRow = m_iCurrentRow[pn];
-	RAGE_ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %zu", iRow, m_Rows.size() ) );
+	RAGE_ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, (int)m_Rows.size() ) );
 
 	const Row &Row = *m_Rows[iRow];
 	const int iChoiceWithFocus = Row.m_iChoiceWithFocus[pn];
