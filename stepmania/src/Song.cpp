@@ -472,12 +472,23 @@ bool Song::LoadFromSongDir( CString sDir, bool bAllowCache )
 
 void Song::RevertFromDisk()
 {
-	unsigned CurNoteIndex[NUM_PLAYERS];
-	memset(CurNoteIndex, 0, sizeof(CurNoteIndex));
-	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
-		for( unsigned n = 0; n < m_apNotes.size(); ++n )
-			if( m_apNotes[n] == GAMESTATE->m_pCurNotes[pn] )
-				CurNoteIndex[pn] = n;
+	// Ugly:  When we re-load the song, the Steps* will change.
+	// Fix the GAMESTATE->m_CurNotes after reloading.
+	StepsType st[NUM_PLAYERS];
+	Difficulty dc[NUM_PLAYERS];
+	for( int p = 0; p < NUM_PLAYERS; ++p )
+	{
+		if( GAMESTATE->m_pCurNotes[p] == NULL )
+		{
+			st[p] = STEPS_TYPE_INVALID;
+			dc[p] = DIFFICULTY_INVALID;
+		}
+		else
+		{
+			st[p] = GAMESTATE->m_pCurNotes[p]->m_StepsType;
+			dc[p] = GAMESTATE->m_pCurNotes[p]->GetDifficulty();
+		}
+	}
 
 	const CString dir = GetSongDir();
 
@@ -488,13 +499,15 @@ void Song::RevertFromDisk()
 	// if they've saved in the editor.
 	LoadFromSongDir( dir, false );	
 
+
 	if( GAMESTATE->m_pCurSong == this )
 	{
-		/* m_pCurNotes points at notes that we just reloaded; fix it. */
-		for( int pn = 0; pn < NUM_PLAYERS; ++pn )
+		for( int p = 0; p < NUM_PLAYERS; ++p )
 		{
-			int ind = min(CurNoteIndex[pn], m_apNotes.size()-1);
-			GAMESTATE->m_pCurNotes[pn] = m_apNotes[ind];
+			if( st[p] == STEPS_TYPE_INVALID || dc[p] == DIFFICULTY_INVALID )
+				continue;	// skip
+			GAMESTATE->m_pCurNotes[p] = this->GetStepsByDifficulty( st[p], dc[p], false );
+			ASSERT( GAMESTATE->m_pCurNotes[p] );	// we had something selected before reloading, so it better still be there after!
 		}
 	}
 }

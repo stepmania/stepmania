@@ -125,17 +125,19 @@ EditMenu::EditMenu()
 		OnRowValueChanged( ROW_SONG );
 
 		// Select the current StepsType and difficulty if any
-		if( GAMESTATE->m_pCurNotes )
+		if( GAMESTATE->m_pCurNotes && GAMESTATE->m_pCurNotes[PLAYER_1] )
 		{
 			for( i=0; i<m_StepsTypes.size(); i++ )
+			{
 				if( m_StepsTypes[i] == GAMESTATE->m_pCurNotes[PLAYER_1]->m_StepsType )
 				{
 					m_iSelection[ROW_NOTES_TYPE] = i;
 					OnRowValueChanged( ROW_NOTES_TYPE );
+					m_iSelection[ROW_DIFFICULTY] = GAMESTATE->m_pCurNotes[PLAYER_1]->GetDifficulty();
+					OnRowValueChanged( ROW_DIFFICULTY );
+					break;
 				}
-
-			m_iSelection[ROW_DIFFICULTY] = GAMESTATE->m_pCurNotes[PLAYER_1]->GetDifficulty();
-			OnRowValueChanged( ROW_DIFFICULTY );
+			}
 		}
 
 	}
