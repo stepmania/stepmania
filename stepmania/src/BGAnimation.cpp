@@ -85,7 +85,7 @@ void AddLayersFromAniDir( CString sAniDir, vector<BGAnimationLayer*> &layersAddT
 		}
 		else
 		{
-			// import a single layer
+			// import as a single layer
 			BGAnimationLayer* pLayer = new BGAnimationLayer( Generic );
 			pLayer->LoadFromIni( sAniDir, sLayer );
 			layersAddTo.push_back( pLayer );
@@ -129,17 +129,19 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 	if( !ini.GetValue( "BGAnimation", szName, valueOut ) ) \
 		RageException::Throw( "File '%s' is missing the value BGAnimation::%s", sPathToIni.c_str(), szName );
 
-			float fScrollSecondsPerItem, fSpacingX, fSpacingY;
+			float fScrollSecondsPerItem, fSpacingX, fSpacingY, fItemPaddingStart, fItemPaddingEnd;
 			REQUIRED_GET_VALUE( "ScrollSecondsPerItem", fScrollSecondsPerItem );
 			REQUIRED_GET_VALUE( "ScrollSpacingX", fSpacingX );
 			REQUIRED_GET_VALUE( "ScrollSpacingY", fSpacingY );
+			REQUIRED_GET_VALUE( "ItemPaddingStart", fItemPaddingStart );
+			REQUIRED_GET_VALUE( "ItemPaddingEnd", fItemPaddingEnd );
 #undef REQUIRED_GET_VALUE
 
 			m_Scroller.Load( fScrollSecondsPerItem, fSpacingX, fSpacingY );
 			for( unsigned i=0; i<m_Layers.size(); i++ )
 				m_Scroller.AddChild( m_Layers[i] );
-			m_Scroller.SetCurrentAndDestinationItem( 0 );
-			m_Scroller.SetDestinationItem( m_Layers.size()-1 );
+			m_Scroller.SetCurrentAndDestinationItem( -fItemPaddingStart );
+			m_Scroller.SetDestinationItem( m_Layers.size()-1+fItemPaddingEnd );
 			this->AddChild( &m_Scroller );
 		}
 
