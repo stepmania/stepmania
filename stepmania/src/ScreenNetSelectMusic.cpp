@@ -332,7 +332,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			vector <wstring> wLines;
 			m_textOutHidden.GetLines( wLines );
 			CString actualText = "";
-			for (int i = max( int(wLines.size() - SHOW_CHAT_LINES), 0 ) ; i < wLines.size() ; i++)
+			for (unsigned i = max(wLines.size() - SHOW_CHAT_LINES, unsigned(0) ) ; i < wLines.size() ; ++i)
 				actualText += WStringToCString(wLines[i])+'\n';
 			m_textChatOutput.SetText( actualText );
 			break;
@@ -345,18 +345,15 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			UpdateGroupsListPos();
 			UpdateSongsList();
 			
-			int i;
+			unsigned i;
 
-			for ( i = 0; i < m_vSongs.size(); i++)
+			for ( i = 0; i < m_vSongs.size(); ++i)
 				if ( ( m_vSongs[i]->GetTranslitArtist() == NSMAN->m_sArtist ) &&
 					 ( m_vSongs[i]->GetTranslitMainTitle() == NSMAN->m_sMainTitle ) &&
 					 ( m_vSongs[i]->GetTranslitSubTitle() == NSMAN->m_sSubTitle ) )
 					 break;
 			
-			bool haveSong = false;
-
-			if ( i != m_vSongs.size() )
-				haveSong = true;
+			bool haveSong = i != m_vSongs.size();
 
 			switch (NSMAN->m_iSelectMode)
 			{
