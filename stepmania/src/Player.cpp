@@ -118,7 +118,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	 * is reset and not tweening.  Perhaps ActorFrame should recurse to subactors;
 	 * then we could just this->StopTweening()? -glenn */
 	m_frameJudgement.StopTweening();
-	m_Combo.Reset();
+//	m_Combo.Reset();		// don't reset combos between songs in a course!
 	m_Judgement.Reset();
 
 	m_iNumTapNotes = pNoteData->GetNumTapNotes();
