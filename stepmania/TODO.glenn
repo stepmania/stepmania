@@ -34,9 +34,6 @@ Is it actually noticable?  Might reduce seams in tiled BGAs.
 
 Make RageTextureManager handle refcounting, not RageTexture.
 
-We'll use a pre-loaded texture even if we're loading it with different
-hints.  Probably never an issue.
-
 ********
 
 D away with m_HoldNotes completely, and change the default storage scheme
@@ -319,10 +316,6 @@ and distribution, of course, but it doesn't say that.)
 
 ********
 
-Arrows (all types) should be mipmapped; they look really bad in Space.
-
-********
-
 Make autogen go through combinations of arrows.
 
 That is, right now we just walk through consecutive arrows.  DDR
@@ -339,34 +332,22 @@ images takes a good amount of time (most of the load time).  Do all
 this and write the postprocessed data to disk; read it and load it
 in a simple block load later on.
 
-
-Compressed textures.  It gives a decent performance improvement.
-Also, if designed correctly, the texture cache can write compressed
-images to disk; then load times are even faster--we load a small
-block of data from disk and load it right into hardware with no
-decompression or compression overhead.  (see
-http://developer.nvidia.com/docs/IO/1327/ATT/ARB_texture_compression.pdf)
-
-Keep track of the available texture compression formats.  If it changes,
-invalidate the texture cache.  1: we might not be able to use the
-compressed images; 2: we might be able to compress better/higher quality.
+This is tricky; it's possible that reading uncompressed textures
+will be slower than reading compressed ones and porcessing them.
+I was hoping to use hardware compressed textures for this, but they're
+way too low quality.
 
 Also, some mechanism to cache song images during the song scan,
 so we don't spend time doing it in the music wheel or gameplay.
-
-This can give nearly the speed of 16bit textures: with a 16bpp framebuffer
-it gives me about 10fps; with 32bpp, about 20.
-
-Do this after the new OpenGL code is stable.
 
 ********
 
 Note that a 16bpp framebuffer bit depth can give extremely high quality
 output; it's usually only worse than 32bpp if you're looking for it.  (It
 becomes more important with heavy filtering; for example, Q3's transparent
-layered smoke puffs.)  Using 32bpp (or compressed) textures and a 16bpp
-framebuffer will dither in hardware, which is much higher quality than
-dithering the texture itself and is free.
+layered smoke puffs.)  Using 32bpp textures and a 16bpp framebuffer will
+dither in hardware, which is much higher quality than dithering the
+texture itself and is free.
 
 Jumping to a 32bpp framebuffer is *much* more expensive than jumping
 to 32bpp textures, and doesn't improve quality nearly as much.
@@ -374,8 +355,6 @@ to 32bpp textures, and doesn't improve quality nearly as much.
 ex. in the graphics menu, 1024x768, vsync off, I get 170 fps in 16 bpp
 textures, 16 bpp framebuffer.  Jumping to 32bpp textures costs 20 fps.
 32 bpp framebuffer costs 62.  Both costs 74.
-
-(Compressed textures is even faster: 177 fps in 16bpp framebuffer.)
 
 We're more fillbound than most apps: we don't draw very many polys,
 but backgrounds can result in multiple fullscreen passes.
