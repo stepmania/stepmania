@@ -61,11 +61,10 @@
 #endif
 
 HWND g_hWndMain = NULL;
-int g_argc = 0;
-char **g_argv = NULL;
-
 #endif
 
+int g_argc = 0;
+char **g_argv = NULL;
 
 static bool g_bHasFocus = true;
 static bool g_bQuitting = false;
