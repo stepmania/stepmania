@@ -1741,14 +1741,26 @@ unsigned RageDisplay_OGL::CreateTexture(
 			img->w, img->h, 0,
 			glImageFormat, glImageType, img->pixels);
 		
+		{
+			ostringstream s;
+			s << "glTexImage2D(format " << GLToString(glTexFormat) <<
+					", " << img->w << "x" <<  img->h <<
+					", format " << GLToString(glImageFormat) <<
+					", type " << GLToString(glImageType) <<
+					", pixfmt " << pixfmt <<
+					", imgpixfmt " << imgpixfmt;
+			LOG->Trace( s.str().c_str() );
+		}
 		GLenum error = glGetError();
 		if( error != GL_NO_ERROR )
 		{
 			ostringstream s;
 			s << "glTexImage2D(format " << GLToString(glTexFormat) <<
-				 ", w " << img->w << ", h " <<  img->h <<
+				 ", " << img->w << "x" <<  img->h <<
 				 ", format " << GLToString(glImageFormat) <<
 				 ", type " << GLToString(glImageType) <<
+				 ", pixfmt " << pixfmt <<
+				 ", imgpixfmt " << imgpixfmt <<
 				 "): " << GLToString(error);
 			LOG->Trace( s.str().c_str() );
 
