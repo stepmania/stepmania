@@ -27,7 +27,5 @@ void RageMatrixRotationX( RageMatrix* pOut, float fTheta );
 void RageMatrixRotationY( RageMatrix* pOut, float fTheta );
 void RageMatrixRotationZ( RageMatrix* pOut, float fTheta );
 void RageMatrixOrthoOffCenterLH( RageMatrix* pOut, float l, float r, float b, float t, float zn, float zf );
-void RageMatrixLookAtLH( RageMatrix* pOut, const RageVector3* pEye, const RageVector3* pAt, const RageVector3* pUp ); 
-void RageMatrixPerspectiveFovLH( RageMatrix* pOut, float fovy, float Aspect, float zn, float zf );
 
 #endif

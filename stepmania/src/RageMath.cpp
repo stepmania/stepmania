@@ -13,7 +13,6 @@
 
 #include "RageMath.h"
 #include "RageTypes.h"
-#include "D3DX8Math.h"
 
 #ifdef _DEBUG
 #pragma comment(lib, "plib-1.6.0/sg_d.lib")
@@ -98,14 +97,4 @@ void RageMatrixOrthoOffCenterLH( RageMatrix* pOut, float l, float r, float b, fl
 	pOut->m[3][0] = -(r+l)/(r-l);
 	pOut->m[3][1] = -(t+b)/(t-b);
 	pOut->m[3][2] = -(zf+zn)/(zn-zf);
-}
-
-void RageMatrixLookAtLH( RageMatrix* pOut, const RageVector3* pEye, const RageVector3* pAt, const RageVector3* pUp )
-{
-	D3DXMatrixLookAtLH( (D3DXMATRIX*)pOut, (const D3DXVECTOR3*)pEye, (const D3DXVECTOR3*)pAt, (const D3DXVECTOR3*)pUp );
-}
-
-void RageMatrixPerspectiveFovLH( RageMatrix* pOut, float fovy, float Aspect, float zn, float zf )
-{
-	D3DXMatrixPerspectiveFovLH( (D3DXMATRIX*)pOut, fovy, Aspect, zn, zf );
 }
