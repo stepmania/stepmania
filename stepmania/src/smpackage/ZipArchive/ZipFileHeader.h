@@ -4,7 +4,7 @@
 // $Date$ $Author$
 ////////////////////////////////////////////////////////////////////////////////
 // This source file is part of the ZipArchive library source distribution and
-// is Copyright 2000-2002 by Tadeusz Dracz (http://www.artpol-software.com/)
+// is Copyright 2000-2003 by Tadeusz Dracz (http://www.artpol-software.com/)
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -27,6 +27,7 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include "ZipExport.h"
 #include "ZipStorage.h"
 #include "ZipAutoBuffer.h"
 #include "sys/types.h"
@@ -41,7 +42,7 @@
 	(it would mean updating all the information in the local headers 
 	and the offsets would be changed as well when the filename would changed its size)
 */
-class CZipFileHeader  
+class ZIP_API CZipFileHeader  
 {
 	friend class CZipCentralDir;
 	friend class CZipArchive;
@@ -174,7 +175,7 @@ public:
 /**
 	Set #m_uModDate, #m_uModTime
 	(file modification time)
-	\param	const time_t& ttime
+	\param ttime
 	\see GetTime
 */
 	void SetTime(const time_t& ttime);
@@ -261,7 +262,7 @@ protected:
 
 /**
 	Set the version made by number.
-	\param	uVersion
+
 */
 	void SetVersion(WORD uVersion)
 	{
@@ -285,7 +286,7 @@ protected:
 /**
 	Fill the buffer with the current values of crc and compressed and 
 	uncompressed sizes of the file.
-	\param	pBuffer
+
 		
 */
 	void GetCrcAndSizes(char* pBuffer)const;
@@ -306,14 +307,14 @@ protected:
 	Called by CZipArchive::OpenNewFile
 	\param	iLevel
 		a compression level
-	\param	bExtraHeader
-		\c true, if the data descriptor will be present
+	\param	bSpan
+		\c true, if the data descriptor will be present because of spanning archive
 	\param	bEncrypted
 		\c true, if the file will be encrypted
 	\return	\c true if the sizes of the filename, extra field and comments
 	does not exceed \c unsigned \c short maximum value; otherwise \c false;
 */
-	bool PrepareData(int iLevel, bool bExtraHeader, bool bEncrypted);
+	bool PrepareData(int iLevel, bool bSpan, bool bEncrypted);
 /**	
 	Write the local file header to the \e storage
 	\param	storage

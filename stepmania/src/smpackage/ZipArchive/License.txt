@@ -1,7 +1,7 @@
 /** \page pageLic Licensing information
 
-ZipArchive library - creation, modification and extraction of "zip" format archives <BR>
-Copyright &copy; 2000 - 2002 Tadeusz Dracz.			<BR>
+ZipArchive library - creation, modification and decompression of "zip" format archives <BR>
+Copyright &copy; 2000 - 2003 Tadeusz Dracz.			<BR>
 E-Mail: \htmlonly<a href="mailto:tdracz@artpol-software.com"> tdracz@artpol-software.com</a><BR>
 Web: <A HREF="http://www.artpol-software.com" target="_blank">http://www.artpol-software.com</A> \endhtmlonly
 
@@ -21,19 +21,19 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 <HR>
 *************************************************************************
-An English version of the \ref pageGPL "GNU GPL" is in the gpl.txt file distributed with 
+An English version of the \ref pageGPL "GNU GPL" is in the %gpl.txt file distributed with 
 this project. Translations to other languages are available at:
 \htmlonly
 <A HREF="http://www.gnu.org/copyleft/gpl.html" target="_blank">http://www.gnu.org/copyleft/gpl.html</A>
 \endhtmlonly
 
-<B><EM>
+<EM><B>
 Distributing ZipArchive under GNU GPL implies ZipArchive can only be used 
 with software that is licensed under conditions compliant with the GPL. 
 Embedding in proprietary software requires an alternative license.
 </B></EM>
 
-\subsection s1 Alternative license for use with proprietary software
+\section s1 Alternative license for use with proprietary software
 
 
 If you want to distribute software in a commercial context that incorporates
@@ -44,21 +44,30 @@ software that uses the ZipArchive library)</B>, you need to have a commercial li
 addition allows you to embed ZipArchive library in proprietary software without 
 affecting the copyright of this software (it removes the GNU GPL obligation 
 to publish the source code)
+- The license gives you royalty free distribution rights
 - The license does not allow you to transfer these rights
-- The license is granted per developer or per company
-- It does not depend on the amount of copies of software that uses the library sold
+- The license is granted per developer 
 - You won't need to purchase an additional license for the future versions of the library
 
 
-The commercial license is available free of charge for freeware and shareware
-programs. If your program is distributed in a similar way to the one of the 
-above, the commercial license will be granted to you free of charge as well.
-<BR>
-There is a fee for the commercial license for using the library in the software 
-not falling into the mentioned categories.
+The commercial license is available free of charge for using ZipArchive library in:
+- freeware software <EM>(freeware is software that is available free of charge, but which is copyrighted by the developer, who retains the right to control its redistribution and to sell it in the future)</EM>
+	- excluded is software which is associated with an equipment that the same company manufactures and which has no practical usage value without the mentioned equipment (e.g. software used for maintenace of machines) - unless the equipment is free as well
+	- if you decide to sell the software in the future - you will need to purchase the commercial license for using the ZipArchive library, unless it is distributed in the shareware way - see below
+- software distributed in the Shareware way <em>(Shareware distribution gives users a chance to try software before buying it. If you try a Shareware program and continue using it, you are expected to register. Individual programs differ on details -- some request registration while others require it, some specify a maximum trial period. 
+Copyright laws apply to both Shareware and commercial software and the copyright holder retains all rights, with the exception that copying and distributing the program for evaluation purposes is encouraged, subject to certain conditions. For example, some authors require written permission before a commercial disk vendor may copy their Shareware. )</em>
+	- excluded is software which price for a single copy is higher than the price of the ZipArchive library for a single developer
+
+Extended Licence for HBZLIB (library for zip compression in \htmlonly <A HREF="http://www.harbour-project.org" target="_blank">Harbour</A>\endhtmlonly)<BR>
+You can create proprietary software using hbzlib respecting the follow:
+- ZipArchive library must be linked together with hbzlib
+- you cannot use ZipArchive as a dynamic library (DLL), it must be linked staticaly with the software 
+- the commercial license for ZipArchive is free of charge, but these grants are valid only if the whole application is written with Harbour
+
+There is a fee for the commercial license for using the library in the software not falling into the mentioned categories.
 <BR>
 It is recommended that you should print two copies of the commercial license 
 document after you receive it, sign them and send by post. One copy, signed by the author will be sent back to you.
-Please \htmlonly <a href="mailto:tdracz@artpol-software.com">contact the author</a> or visit <A HREF="http://www.artpol-software.com" target="_blank">the Artpol Software web site</A>\endhtmlonly to find out more.
+Please \htmlonly <a href="mailto:tdracz@artpol-software.com">contact the author</a> or visit <A HREF="http://www.artpol-software.com" target="_blank">the Artpol Software web site</A> \endhtmlonly to find out more.
 
 */

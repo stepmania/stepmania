@@ -1,10 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 // $Workfile: ZipStorage.h $
 // $Archive: /ZipArchive/ZipStorage.h $
-// $Date$ $Author$
+// $Date$ $Author$.
 ////////////////////////////////////////////////////////////////////////////////
 // This source file is part of the ZipArchive library source distribution and
-// is Copyright 2000-2002 by Tadeusz Dracz (http://www.artpol-software.com/)
+// is Copyright 2000-2003 by Tadeusz Dracz (http://www.artpol-software.com/)
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -23,15 +23,16 @@
 #if !defined(AFX_ZIPSTORAGE_H__941824FE_3320_4794_BDE3_BE334ED8984B__INCLUDED_)
 #define AFX_ZIPSTORAGE_H__941824FE_3320_4794_BDE3_BE334ED8984B__INCLUDED_
 
+#if _MSC_VER > 1000
+#pragma once
+#endif // _MSC_VER > 1000
+
 #include "ZipFile.h"	
 #include "ZipAutoBuffer.h"
 #include "ZipString.h"
 #include "ZipMemFile.h"
+#include "ZipExport.h"
 
-
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
 
 
 /**
@@ -40,7 +41,7 @@
 	Do not derive from CZipCallback directly but from CZipSpanCallback (as a callback when there is a need 
 	for a disk change in a disk-spanning archive) or from CZipActionCallback for other actions.
 */
-struct CZipCallback
+struct ZIP_API CZipCallback
 {
 	/**
 		Method called as a callback. 
@@ -80,7 +81,7 @@ struct CZipCallback
 	\see CZipCallback::Callback
 	\see CZipArchive::SetSpanCallback
 */
-struct CZipSpanCallback : public CZipCallback
+struct ZIP_API CZipSpanCallback : public CZipCallback
 {
 	DWORD m_uDiskNeeded;		///< the number of a disk needed (counting from 1)
 };
@@ -97,7 +98,7 @@ struct CZipSpanCallback : public CZipCallback
 	\see CZipCallback::Callback
 	\see CZipArchive::SetCallback
 */
-struct CZipActionCallback : public CZipCallback
+struct ZIP_API CZipActionCallback : public CZipCallback
 {
 
 	CZipActionCallback()
@@ -113,7 +114,7 @@ struct CZipActionCallback : public CZipCallback
 	int m_iType;
 
 	/**
-		Used to init the callback function with the filenames. Resets #m_uTotalToDo and #m_uTotalSoFar variables to 0.
+		Used by the ZipArchive library to init the callback function with the filenames. Resets #m_uTotalToDo and #m_uTotalSoFar variables to 0.
 		#m_iType variable is already set to the proper value. Called at the beginning of the action.
 	*/
 	virtual void Init(LPCTSTR lpszFileInZip = NULL, LPCTSTR lpszExternalFile = NULL) 
@@ -180,7 +181,9 @@ struct CZipActionCallback : public CZipCallback
 		Used only when creating map before deletion (see CZipArchive::cbDeleteCnt) or 
 		saving the central directory record. You'll be notified every nth step (n is \e m_iStep value) with \e iProgress set to 
 		\e m_iStep . Do not set it to low values or you can have a long waiting on archives
-		with huge number of files. The default is 256.
+		with huge number of files. 
+
+		\b Default: 256.
 	*/
 	static int m_iStep;
 
@@ -196,7 +199,7 @@ struct CZipActionCallback : public CZipCallback
 /**
 	A low-level class - operates physically on archive (CZipArchive operates logically)
 */
-class CZipStorage  
+class ZIP_API CZipStorage  
 {
 	friend class CZipCentralDir;
 public:
@@ -295,7 +298,7 @@ public:
 		Return the position in the file, taking into account the bytes in the write buffer.
 		\note Throws exceptions.
 	*/
-	DWORD GetPosition() const {return m_pFile->GetPosition() + m_uBytesInWriteBuffer;}
+	DWORD GetPosition() const {return (DWORD)(m_pFile->GetPosition()) + m_uBytesInWriteBuffer;}
 
 
 	/**
@@ -367,9 +370,10 @@ public:
 		The simplified mode is used then.
 		In this case it'll be possible to reuse the object to operate on another
 		archive, but the current archive file will not be valid anyway.
+	\return the filepath of the archive (used by CZipArchive::Close)
 	\note Throws exceptions.
 */
-	void Close(bool bAfterException);
+	CZipString Close(bool bAfterException);
 
 
 	/**
@@ -516,6 +520,11 @@ protected:
 
 	*/
 	int m_iTdSpanData;
+	
+	/**
+		The extension of the last volume.
+	*/
+	CZipString m_szSpanExtension;
 
 	/**
 		\return	the count bytes left free in the write buffer

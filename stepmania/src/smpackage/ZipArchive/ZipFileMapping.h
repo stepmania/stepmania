@@ -4,7 +4,7 @@
 // $Date$ $Author$
 ////////////////////////////////////////////////////////////////////////////////
 // This source file is part of the ZipArchive library source distribution and
-// is Copyright 2000-2002 by Tadeusz Dracz (http://www.artpol-software.com/)
+// is Copyright 2000-2003 by Tadeusz Dracz (http://www.artpol-software.com/)
 // 
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -36,11 +36,11 @@ namespace ziparchv
 			m_hFileMap = NULL;
 			m_pFileMap = NULL;
 		}
-		bool CreateMapping(CZipFile* pFile)
+		bool CreateMapping(CZipFile* pFile) 
 		{
 			if (!pFile)
 				return false;
-			m_hFileMap = CreateFileMapping((HANDLE)pFile->operator HFILE(), NULL, PAGE_READWRITE,
+			m_hFileMap = CreateFileMapping((*pFile), NULL, PAGE_READWRITE,
 				0, 0, _T("ZipArchive Mapping File"));
 			if (!m_hFileMap)
 				return false;

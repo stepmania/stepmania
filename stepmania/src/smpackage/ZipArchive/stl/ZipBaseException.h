@@ -1,10 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
-// $Workfile: ZipInternalInfo.cpp $
-// $Archive: /ZipArchive/ZipInternalInfo.cpp $
+// $Workfile: ZipBaseException.h $
+// $Archive: /ZipArchive_STL/ZipBaseException.h $
 // $Date$ $Author$
 ////////////////////////////////////////////////////////////////////////////////
 // This source file is part of the ZipArchive library source distribution and
-// is Copyright 2000-2002 by Tadeusz Dracz (http://www.artpol-software.com/)
+// is Copyright 2000-2003 by Tadeusz Dracz (http://www.artpol-software.com/)
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,24 +14,9 @@
 // For the licensing details see the file License.txt
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
-#include "ZipInternalInfo.h"
+#ifndef __ZIPBASEEXCEPTION_H__
+#define __ZIPBASEEXCEPTION_H__
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
+typedef std::exception CZipBaseException;
 
-CZipInternalInfo::CZipInternalInfo()
-{
-	m_iBufferSize = 16384;
-}
-
-CZipInternalInfo::~CZipInternalInfo()
-{
-
-}
-
-void CZipInternalInfo::Init()
-{
-	m_pBuffer.Allocate(m_iBufferSize);
-}
+#endif //__ZIPBASEEXCEPTION_H__

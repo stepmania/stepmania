@@ -4,7 +4,7 @@
 // $Date$ $Author$
 ////////////////////////////////////////////////////////////////////////////////
 // This source file is part of the ZipArchive library source distribution and
-// is Copyright 2000-2002 by Tadeusz Dracz (http://www.artpol-software.com/)
+// is Copyright 2000-2003 by Tadeusz Dracz (http://www.artpol-software.com/)
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,7 +33,7 @@ char CZipStorage::m_gszExtHeaderSignat[] = {0x50, 0x4b, 0x07, 0x08};
 CZipStorage::CZipStorage()
 {
 	m_pChangeDiskFunc = NULL;
-	m_iWriteBufferSize = 65535;
+	m_iWriteBufferSize = 65536;
 	m_iCurrentDisk = -1;
 	m_pFile = NULL;
 }
@@ -202,19 +202,21 @@ CZipString CZipStorage::RenameLastFileInTDSpan()
 	return szNewFileName;
 }
 
-void CZipStorage::Close(bool bAfterException)
+CZipString CZipStorage::Close(bool bAfterException)
 {
 	bool bClose = true;
+	CZipString sz;
 	if (!bAfterException)
 	{
 		Flush();
 		if ((m_iSpanMode == tdSpan) && (m_bNewSpan))
 		{
-			RenameLastFileInTDSpan();
+			sz = RenameLastFileInTDSpan();
 			bClose = false;// already closed in RenameLastFileInTDSpan
 		}
 	}
-
+	if (sz.IsEmpty())
+		sz = m_pFile->GetFilePath();
 	if (bClose && !m_bInMemory)
 	{
 		FlushFile();
@@ -227,6 +229,7 @@ void CZipStorage::Close(bool bAfterException)
 	m_iCurrentDisk = -1;
 	m_iSpanMode = noSpan;
 	m_pFile = NULL;
+	return sz;
 }
 
 CZipString CZipStorage::GetTdVolumeName(bool bLast, LPCTSTR lpszZipName) const
@@ -235,7 +238,7 @@ CZipString CZipStorage::GetTdVolumeName(bool bLast, LPCTSTR lpszZipName) const
 	CZipPathComponent zpc(szFilePath);
 	CZipString szExt;
 	if (bLast)
-		szExt = _T("zip");
+		szExt = m_szSpanExtension;
 	else
 		szExt.Format(_T("%.3d"), m_iCurrentDisk);
 	zpc.SetExtension(szExt);
@@ -260,8 +263,11 @@ void CZipStorage::NextDisk(int iNeeded, LPCTSTR lpszFileName)
 	else
 		szFileName =  GetTdVolumeName(false, lpszFileName);
 
-	m_pFile->Flush();
-	m_pFile->Close();
+	if (!m_pFile->IsClosed())
+	{
+		m_pFile->Flush();
+		m_pFile->Close();
+	}
 
 	if (bPkSpan)
 	{
@@ -322,12 +328,15 @@ void CZipStorage::UpdateSpanMode(WORD uLastDisk)
 	if (uLastDisk)
 	{
 		// disk spanning detected
-
+		CZipString szFilePath = m_pFile->GetFilePath();
 		if (m_iSpanMode == suggestedAuto)
-			m_iSpanMode = ZipPlatform::IsDriveRemovable(m_pFile->GetFilePath()) ? 
+			m_iSpanMode = ZipPlatform::IsDriveRemovable(szFilePath) ? 
 				pkzipSpan : tdSpan;
 		else
+		{
+			ASSERT(m_iSpanMode == suggestedTd);
 			m_iSpanMode = tdSpan;
+		}
 
 		if (m_iSpanMode == pkzipSpan)
 		{
@@ -336,7 +345,8 @@ void CZipStorage::UpdateSpanMode(WORD uLastDisk)
 		}
 		else /*if (m_iSpanMode == tdSpan)*/
 			m_iTdSpanData = uLastDisk; // disk with .zip extension ( the last one)
-			
+		CZipPathComponent zpc(szFilePath);
+		m_szSpanExtension = zpc.GetFileExt();
 		m_pWriteBuffer.Release(); // no need for this in this case
 	}
 	else 
@@ -448,3 +458,4 @@ void CZipStorage::FinalizeSpan()
 	OpenFile(szFileName, CZipFile::modeNoTruncate | (m_iSpanMode == noSpan ? CZipFile::modeReadWrite : CZipFile::modeRead));
 	
 }
+

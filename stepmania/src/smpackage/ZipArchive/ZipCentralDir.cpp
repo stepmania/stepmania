@@ -4,7 +4,7 @@
 // $Date$ $Author$
 ////////////////////////////////////////////////////////////////////////////////
 // This source file is part of the ZipArchive library source distribution and
-// is Copyright 2000-2002 by Tadeusz Dracz (http://www.artpol-software.com/)
+// is Copyright 2000-2003 by Tadeusz Dracz (http://www.artpol-software.com/)
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -186,26 +186,18 @@ void CZipCentralDir::Clear(bool bEverything)
 {
 	m_pOpenedFile = NULL;
 	m_pLocalExtraField.Release();
-
 	if (bEverything)
 	{
 		RemoveHeaders();
 		m_findarray.RemoveAll();
 		m_pszComment.Release();
-		
 	}
 }
 
 
 bool CZipCentralDir::IsValidIndex(int uIndex)const
 {
-
-	bool ret = uIndex < m_headers.GetSize() && uIndex >= 0;
-#ifdef _DEBUG
-	if (!ret)
-			TRACE(_T("%s(%i) : Not a valid index.\n"),__FILE__,__LINE__);
-#endif 
-	return ret;
+	return uIndex < m_headers.GetSize() && uIndex >= 0;
 }
 
 
@@ -228,7 +220,6 @@ void CZipCentralDir::OpenFile(WORD uIndex)
 		if (m_pStorage->GetCurrentDisk() != iCurrDsk)
 			ThrowError(CZipException::badZipFile);
 	}
-	
 }
 
 void CZipCentralDir::CloseFile(bool bAfterException)
@@ -256,15 +247,31 @@ void CZipCentralDir::CloseFile(bool bAfterException)
 }
 
 // add new header using the argument as a template
-CZipFileHeader* CZipCentralDir::AddNewFile(const CZipFileHeader & header)
+CZipFileHeader* CZipCentralDir::AddNewFile(const CZipFileHeader & header, int iReplaceIndex)
 {
 	CZipFileHeader* pHeader = new CZipFileHeader(header);
 	m_pOpenedFile = pHeader;
-	m_headers.Add(pHeader);
+	WORD uIndex;
+	DWORD uOffset = 0;
+	bool bReplace = IsValidIndex(iReplaceIndex);
+	if (bReplace)
+	{
+		CZipFileHeader* pfh = m_headers[iReplaceIndex];
+		uOffset = pfh->m_uOffset + m_info.m_uBytesBeforeZip;
+		RemoveFile(pfh, iReplaceIndex, false);
+		m_headers.InsertAt(iReplaceIndex, pHeader);
+		uIndex = (WORD)iReplaceIndex;
+	}
+	else
+		uIndex = m_headers.Add(pHeader);
+
 	if (m_bFindFastEnabled)
-		InsertFindFastElement(pHeader, WORD(m_headers.GetSize() - 1)); // GetCount > 0, 'cos we've just added a header
+		InsertFindFastElement(pHeader, uIndex); // GetCount > 0, 'cos we've just added a header
 	RemoveFromDisk();
-	m_pStorage->m_pFile->SeekToEnd();
+	if (bReplace)
+		m_pStorage->m_pFile->Seek(uOffset, CZipAbstractFile::begin);
+	else
+		m_pStorage->m_pFile->SeekToEnd();
 	return pHeader;
 }
 
@@ -277,12 +284,14 @@ void CZipCentralDir::RemoveFromDisk()
 		m_pStorage->m_pFile->SetLength(m_info.m_uBytesBeforeZip + m_info.m_uOffset);
 		m_info.m_bOnDisk = false;
 	}
+	else
+		m_pStorage->Flush(); // if remove from disk is requested, then the archive modification will follow, so flush the buffers
 }
 
 
 void CZipCentralDir::CloseNewFile()
 {
-	CZipAutoBuffer buf(12 + 4);
+	CZipAutoBuffer buf(ZIPARCHIVE_DATADESCRIPTOR_LEN + 4);
 	short iToWrite = 0;
 	bool bIsSpan = m_pStorage->IsSpanMode() != 0;
 	bool bEncrypted = m_pOpenedFile->IsEncrypted();
@@ -298,13 +307,14 @@ void CZipCentralDir::CloseNewFile()
 	{
 		ASSERT(!bIsSpan && !bEncrypted);
 		m_pStorage->Flush();
+		// the offset contains bytes before zip (set while writting the local header)
 		m_pStorage->m_pFile->Seek(m_pOpenedFile->m_uOffset + 14, CZipAbstractFile::begin);
 		// we don't have to restore the pointer, because before adding a new file, 
 		// the pointer is moved to the end
 	}
 
 	m_pOpenedFile->GetCrcAndSizes(buf + iToWrite);
-	iToWrite += 12;
+	iToWrite += ZIPARCHIVE_DATADESCRIPTOR_LEN;
 
 	// offset set during writing the local header
 	m_pOpenedFile->m_uOffset -= m_info.m_uBytesBeforeZip;
@@ -317,8 +327,8 @@ void CZipCentralDir::CloseNewFile()
 		{
 			// write the information to the local header too
 			m_pStorage->Flush();
-			m_pStorage->m_pFile->Seek(m_pOpenedFile->m_uOffset + 14, CZipAbstractFile::begin);
-			m_pStorage->Write(buf + 4, 12, true);
+			m_pStorage->m_pFile->Seek(m_info.m_uBytesBeforeZip + m_pOpenedFile->m_uOffset + 14, CZipAbstractFile::begin);
+			m_pStorage->Write(buf + 4, ZIPARCHIVE_DATADESCRIPTOR_LEN, true);
 		}
 		m_pStorage->Flush();
 	}
@@ -519,22 +529,8 @@ void CZipCentralDir::RemoveAll()
 	RemoveHeaders();
 }
 
-void CZipCentralDir::RemoveFile(CZipFileHeader* pHeader, int iIndex)
+void CZipCentralDir::RemoveFile(CZipFileHeader* pHeader, int iIndex, bool bShift)
 {
-	if (m_bFindFastEnabled)
-	{
-		int i = FindFileNameIndex(pHeader->GetFileName());
-		ASSERT(i != -1);
-		int uIndex = m_findarray[i].m_uIndex;
-		m_findarray.RemoveAt(i);
-		// shift down the indexes
-		int iSize = m_findarray.GetSize();
-		for (int j = 0; j < iSize; j++)
-		{
-			if (m_findarray[j].m_uIndex > uIndex)
-				m_findarray[j].m_uIndex--;
-		}
-	}
 
 	if (iIndex == -1)
 	{
@@ -546,6 +542,30 @@ void CZipCentralDir::RemoveFile(CZipFileHeader* pHeader, int iIndex)
 				break;
 			}
 	}
+	ASSERT(iIndex != -1 || pHeader);
+	if (!pHeader)
+		pHeader = m_headers[iIndex];
+
+	if (m_bFindFastEnabled)
+	{
+		int i = FindFileNameIndex(pHeader->GetFileName());
+		ASSERT(i != -1);
+		int uIndex = m_findarray[i].m_uIndex;
+		m_findarray.RemoveAt(i);
+		// shift down the indexes
+		
+		if (bShift)
+		{
+			int iSize = m_findarray.GetSize();
+			for (int j = 0; j < iSize; j++)
+			{
+				if (m_findarray[j].m_uIndex > uIndex)
+					m_findarray[j].m_uIndex--;
+			}
+		}
+	}
+
+
 	
 	if (iIndex != -1)
 	{
@@ -821,4 +841,12 @@ int CZipCentralDir::FindFileNameIndex(LPCTSTR lpszFileName) const
 	return -1;
 }
 
- 
+void CZipCentralDir::RenameFile(WORD uIndex, LPCTSTR lpszNewName)
+{
+	CZipFileHeader* pHeader = m_headers[uIndex];
+	pHeader->SetFileName(lpszNewName);
+	if (!m_bConvertAfterOpen)
+		ZipCompatibility::FileNameUpdate(*pHeader, false);
+	if (m_bFindFastEnabled)
+		BuildFindFastArray(m_bCaseSensitive);
+}

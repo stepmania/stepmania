@@ -4,7 +4,7 @@
 // $Date$ $Author$
 ////////////////////////////////////////////////////////////////////////////////
 // This source file is part of the ZipArchive library source distribution and
-// is Copyright 2000-2002 by Tadeusz Dracz (http://www.artpol-software.com/)
+// is Copyright 2000-2003 by Tadeusz Dracz (http://www.artpol-software.com/)
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -27,16 +27,17 @@
 #endif // _MSC_VER > 1000
 #include "ZipAbstractFile.h"
 #include "ZipString.h"
+#include "ZipExport.h"
 
 /**
 	A memory buffer which behaves like a physical file.
 	Automatically grows when necessary
 */
-class CZipMemFile : public CZipAbstractFile
+class ZIP_API CZipMemFile : public CZipAbstractFile
 {
 protected:
-	UINT m_nGrowBy, m_nPos;
-	UINT m_nBufSize, m_nDataSize;
+	size_t m_nGrowBy, m_nPos;
+	size_t m_nBufSize, m_nDataSize;
 	BYTE* m_lpBuf;
 	bool m_bAutoDelete;
 	void Free()
@@ -54,16 +55,16 @@ protected:
 		m_lpBuf = NULL;
 
 	}
-	void Grow(long nBytes);
+	void Grow(size_t nBytes);
 public:
 	bool IsClosed() const { return m_lpBuf == NULL;}
 	void Flush(){}
 
-	long Seek(long lOff, int nFrom);
-	DWORD GetLength() const {return m_nDataSize;}
+	ZIP_ULONGLONG Seek(ZIP_LONGLONG lOff, int nFrom);
+	ZIP_ULONGLONG GetLength() const {return m_nDataSize;}
 	void Write(const void* lpBuf, UINT nCount);
 	UINT Read(void* lpBuf, UINT nCount);
-	void SetLength(long nNewLen);
+	void SetLength(ZIP_ULONGLONG nNewLen);
 	CZipString GetFilePath() const  {return _T("");} 	
 	CZipMemFile(long nGrowBy = 1024)
 	{
@@ -74,9 +75,10 @@ public:
 
 	CZipMemFile(BYTE* lpBuf, UINT nBufSize, long nGrowBy = 0)
 	{
+		Init();
 		Attach(lpBuf, nBufSize, nGrowBy);
 	}
-	DWORD GetPosition() const {	return m_nPos;}
+	ZIP_ULONGLONG GetPosition() const {	return m_nPos;}
 	void Attach(BYTE* lpBuf, UINT nBufSize, long nGrowBy = 0)
 	{
 		Close();

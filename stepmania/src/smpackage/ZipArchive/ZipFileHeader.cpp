@@ -1,10 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 // $Workfile: ZipFileHeader.cpp $
-// $Archive: /ZipArchive/ZipFileHeader.cpp $
+// $Archive: /ZipArchive_STL/ZipFileHeader.cpp $
 // $Date$ $Author$
 ////////////////////////////////////////////////////////////////////////////////
 // This source file is part of the ZipArchive library source distribution and
-// is Copyright 2000-2002 by Tadeusz Dracz (http://www.artpol-software.com/)
+// is Copyright 2000-2003 by Tadeusz Dracz (http://www.artpol-software.com/)
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -16,7 +16,6 @@
 
 
 #include "stdafx.h"
-#include "zlib/zlib.h"
 #include "ZipFileHeader.h"
 #include "ZipAutoBuffer.h"
 #include "ZipArchive.h"
@@ -137,10 +136,10 @@ DWORD CZipFileHeader::Write(CZipStorage *pStorage)
 
 	if (uExtraFieldSize)
 		memcpy(buf + 46 + uFileNameSize, m_pExtraField, uExtraFieldSize);
-
+	
 	if (uCommentSize)
 		memcpy(buf + 46 + uFileNameSize + uExtraFieldSize, m_pszComment, uCommentSize);
-
+	
 	pStorage->Write(buf, iSize, true);
 	return iSize;
 }
@@ -151,12 +150,15 @@ bool CZipFileHeader::ReadLocal(CZipStorage *pStorage, WORD& iLocExtrFieldSize)
 	pStorage->Read(buf, LOCALFILEHEADERSIZE, true);
 	if (memcmp(buf, m_gszLocalSignature, 4) != 0)
 		return false;
-
+	
 	bool bIsDataDescr = (((WORD)*(buf + 6)) & 8) != 0;
-
+	
 	WORD uFileNameSize = GetFileNameSize();
-	if ((memcmp(buf + 6, &m_uFlag, 2) != 0)
-		||(memcmp(buf + 8, &m_uMethod, 2) != 0)
+	WORD uTemp; 
+	memcpy(&uTemp, buf+6, 2); // give the priority to the local flag
+	if ((uTemp & 0xf) != (m_uFlag & 0xf))
+		m_uFlag = uTemp;
+	if ((memcmp(buf + 8, &m_uMethod, 2) != 0)
 		|| (m_uMethod && (m_uMethod != Z_DEFLATED))
 		|| (memcmp(buf + 26, &uFileNameSize, 2) != 0))
 		return false;
@@ -225,7 +227,7 @@ void CZipFileHeader::WriteLocal(CZipStorage& storage)
 }
 
 // prepare the data before adding a new file
-bool CZipFileHeader::PrepareData(int iLevel, bool bExtraHeader, bool bEncrypted)
+bool CZipFileHeader::PrepareData(int iLevel, bool bSpan, bool bEncrypted)
 {
 	memcpy(m_szSignature, m_gszSignature, 4);
 	m_uInternalAttr = 0;
@@ -257,13 +259,13 @@ bool CZipFileHeader::PrepareData(int iLevel, bool bExtraHeader, bool bEncrypted)
 			break;
 		}
 
-	if (bExtraHeader)
+	if (bSpan || bEncrypted)
 		m_uFlag  |= 8; // data descriptor present
 
 	if (bEncrypted)
 	{
 		m_uComprSize = ZIPARCHIVE_ENCR_HEADER_LEN;	// encrypted header
-		m_uFlag  |= 9;		// encrypted file
+		m_uFlag  |= 1;		// encrypted file
 	}
 
 	return !(m_pszComment.GetSize() > USHRT_MAX || m_pszFileName.GetSize() > USHRT_MAX

@@ -1,10 +1,10 @@
 ///////////////////////////////////////////////////////////////////////////////
 // $Workfile: ZipArchive.h $
-// $Archive: /ZipArchive_STL/ZipArchive.h $
+// $Archive: /ZipArchive/ZipArchive.h $
 // $Date$ $Author$
 ////////////////////////////////////////////////////////////////////////////////
 // This source file is part of the ZipArchive library source distribution and
-// is Copyright 2000-2002 by Tadeusz Dracz (http://www.artpol-software.com/)
+// is Copyright 2000-2003 by Tadeusz Dracz (http://www.artpol-software.com/)
 // 
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -26,6 +26,8 @@
 //							( also available at ftp://ftp.pkware.com/appnote.zip)
 //
 // 
+
+
 
 /**
 * \file ZipArchive.h
@@ -72,24 +74,195 @@
 	#endif 
 #endif //
 
+#if (_MSC_VER > 1000) && (defined ZIP_HAS_DLL)
+	#pragma warning( disable : 4251 ) // needs to have dll-interface to be used by clients of class
+	#pragma warning( disable : 4275 ) // non dll-interface class used as base for dll-interface
+#endif
+
+#ifdef __GNUC__
+	#include "zlib.h"
+#else
+	#include "zlib/zlib.h"
+#endif
+
 #include "ZipException.h"
+#include "ZipAutoBuffer.h"
 #include "ZipCentralDir.h"	
 #include "ZipStorage.h"
-#include "ZipInternalInfo.h"	
 #include "ZipPathComponent.h"
 #include "ZipString.h"
+#include "ZipExport.h"
 
+
+/**
+	Structure used as a parameter in CZipArchive::AddNewFile(CZipAddNewFileInfo& );
+	Use one of constructors provided and then adjust the member variables that are
+	set to default values by #Defaults method.
+*/
+struct ZIP_API CZipAddNewFileInfo
+{
+	CZipAddNewFileInfo(LPCTSTR lpszFilePath, bool bFullPath = true)
+		: m_szFilePath(lpszFilePath),m_bFullPath(bFullPath)
+	{
+		m_pFile = NULL;
+		Defaults();
+	}
+	CZipAddNewFileInfo(LPCTSTR lpszFilePath, LPCTSTR lpszFileNameInZip)
+		: m_szFilePath(lpszFilePath), m_szFileNameInZip(lpszFileNameInZip)
+	{
+		m_pFile = NULL;
+		Defaults();
+	}
+	CZipAddNewFileInfo(CZipAbstractFile* pFile, LPCTSTR lpszFileNameInZip)
+		: m_pFile(pFile), m_szFileNameInZip(lpszFileNameInZip)
+	{
+		Defaults();
+	}
+	/**
+		the full path to the file to be added; if it is empty you need to set #m_pFile
+	*/
+	CZipString m_szFilePath;		
+
+	/**
+		the file name that will be stored in the archive (if the file is a directory,
+		there is a path separator automatically added at the end); #SetRootPath
+		function has no effect on this parameter
+	*/
+	CZipString m_szFileNameInZip;
+	
+	/**
+	It has only the meaning when #m_szFileNameInZip is not specified and #m_szFilePath is not empty. 
+
+	- if \c true, include full path of the file inside the archive (even if #m_szRootPath is set)<BR>
+	
+	- if \c false only the filename without a path is stored in the archive <BR>
+	
+	in this case if #m_szRootPath is set previously with #SetRootPath 
+	and if the beginning of #m_szFilePath equals #m_szRootPath
+	then the filename is set to the remaining part of m_szFilePath
+	(you can say to m_lpszFilePath minus #m_szRootPath)		
+	*/
+	bool m_bFullPath;
+
+	/**
+		the compression level, see #OpenNewFile
+	*/
+	int m_iComprLevel;				
+
+	/**
+		the smartness level of  of the library; can be one or more #Smartness
+		values (you can OR them);<BR>
+		if zipsmCheckForEff is specified and due to it the file needs to be
+		reinserted into the archive without a compression and the callback
+		functor is specified, the callback functor's method Callback is called with the first argument set to 
+		DWORD (-1)	(you need to remember the last argument if you need the size of the file)		
+	*/
+	int m_iSmartLevel;
+
+	/**
+		the index of the existing file in the archive to be replaced by the file being added (the new file
+		goes into the same physical place as the old file - the archive may of course grow or shrink as a result)
+
+- >= 0 the index of the file to be replaced
+- -1 do not replace any file and add the new file at the end of the archive (default)
+- -2 if the new file has the same name as a file already in the archive then replace it or add at the end of the archive if it's filename is unique; it uses CZipArchive::FindFile with
+	the arguments \e iCaseSensitive and \e bFileNameOnly set to default values
+
+		\note 
+		- you replace files in disk-spanning archives (i.e. use a value different from -1)
+		- if the space size taken by the old file is different from the space size needed by the new file, the callback is called while moving data (see CZipArchive::cbReplace)
+		- this replaces the file physically, so no information from the file being replaced is retained (such as attributes, modification time, etc.)
+		- if you use an invalid index, the function will fail; if you specify the last file in the archive to be replaced, it'll be removed and the usual action taken
+		- the new file encryption does not depend on the old file encryption but only on the current password settings (see CZipArchive::SetPassword)
+		- if #m_iComprLevel is not 0 then a temporary archive is created in the temporary directory 
+		(see  CZipArchive::SetTempPath) or in the memory (if you use CZipArchive::zipsmMemoryFlag in #m_iSmartLevel)
+		- <B>the most complicated scenario </B>is when you try to replace the file and use CZipArchive::zipsmCheckForEff flag in #m_iSmartLevel and the file compression proves to be 
+		inefficient (you can use the sample application \e ZipArc to observe the following process): 
+			- first you get CZipArchive::cbAdd callback - the file is being compressed to a temporary archive, 
+			- then the file compression proves to be inefficient and the file needs to be stored instead of compressed, 
+			but first the space inside archive must be adjusted to fit the file being added in the place of file being replaced - you	get	CZipArchive::cbReplace, 
+			- then, at the end, the file is being stored - you get CZipArchive::cbAddStore callback
+		
+		\see SetAdvanced 
+		\see CZipArchive::WillBeDuplicated		 
+	*/
+	int m_iReplaceIndex;		
+
+	/**
+		the size of the buffer used while file operations
+	*/
+	unsigned long m_nBufSize;		
+
+	/**			
+		instead of from a physical file, the data for compression is taken from the CZipAbstractFile object (e.g. from CZipMemFile)
+	
+	  \note 
+	  - you have to leave #m_szFilePath empty if you set #m_pFile to not NULL
+	  - the time of the file in zip is set to the current time, and the attributes to the default
+	  file attributes (depending on the system)
+	  - you cannot add directories this way
+	*/
+	CZipAbstractFile* m_pFile;
+
+	/**
+		Set default values for #m_iSmartLevel, #m_iReplaceIndex, #m_nBufSize and #m_iComprLevel
+	*/
+	void Defaults();
+};
 
 
 /**
 	The representation of the zip archive file.	
-	This class provides all the operations on the zip archive.
+	This class provides all the operations on the zip archive.	
+
 */
-class CZipArchive  
+class ZIP_API CZipArchive  
 {
 	
 public:
+	/**
+	The purpose of this structure is to hold the data that allow communication
+	with the zlib library
+	*/
+	struct ZIP_API CZipInternalInfo  
+	{
 	
+		CZipInternalInfo()
+		{
+			m_iBufferSize = 65536;
+		}
+		virtual ~CZipInternalInfo(){}
+
+	/**
+		Allocate internal buffer of m_iBufferSize size
+	*/
+		void Init()
+		{
+			m_pBuffer.Allocate(m_iBufferSize);
+		}
+		void ReleaseBuf()
+		{
+			m_pBuffer.Release();
+		}
+		z_stream m_stream;		///< zlib library data stream
+		DWORD m_uUncomprLeft;	///< bytes left to uncompress
+		DWORD m_uComprLeft;		///< bytes left to decompress
+		DWORD m_uCrc32;			///< crc32 file control value
+
+		/**
+			The size of the buffer used in decompressing data.
+			Set before opening the archive.
+			It is usually set with CZipArchive::SetAdvanced
+			(specify this value as the second argument).
+			\see CZipArchive::SetAdvanced
+		*/
+		DWORD m_iBufferSize;
+
+		/**
+			This buffer caches data during compression and decompression.
+		*/
+		CZipAutoBuffer m_pBuffer;
+	};
 
 	CZipArchive();
 	virtual ~CZipArchive();
@@ -119,7 +292,7 @@ public:
 
 /** 
 	Set the password for the file to be opened or created.
-	Use this method BEFORE opening or adding a file
+	Use this method BEFORE opening or adding a file, but AFTER opening an archive
 	\param	lpszPassword
 		set it to NULL to clear password
 	\return	\c false if the password contains ASCII characters
@@ -139,16 +312,30 @@ public:
 	the write buffer in the disk spanning archive is the size of the volume.
 
 	\param	iWriteBuffer
-		buffer used during write operation to the disk
+		the write cache size used
 	\see CZipStorage::m_iWriteBufferSize
-	\param	iExtractBuffer
-		buffer used in extracting and compressing files
+	\param	iGeneralBuffer
+		buffer used in extracting, compressing, deleting, getting (#GetFromArchive) files, renaming and replacing
 	\see CZipInternalInfo::m_iBufferSize
 	\param	iSearchBuffer
 		the buffer used in searching for the central dir
 	\see CZipCentralDir::m_iBufferSize
+	\see GetAdvanced
 */
-	void SetAdvanced(int iWriteBuffer = 65535, int iExtractBuffer = 16384, int iSearchBuffer = 32768);
+	void SetAdvanced(int iWriteBuffer = 65536, int iGeneralBuffer = 65536, int iSearchBuffer = 32768);
+
+	/**
+		retreive buffer size as set by #SetAdvanced
+	*/
+	void GetAdvanced(int* piWriteBuffer = NULL, int* piGeneralBuffer = NULL, int* piSearchBuffer= NULL)
+	{
+		if (piWriteBuffer)
+			*piWriteBuffer = 	m_storage.m_iWriteBufferSize;
+		if (piGeneralBuffer)
+			*piGeneralBuffer = m_info.m_iBufferSize;
+		if (piSearchBuffer)
+			*piSearchBuffer = m_centralDir.m_iBufferSize;
+	}
 
 	/**
 		Enum values used as \e iWhich parameter in #SetCallback function.
@@ -172,9 +359,15 @@ public:
 		cbTest		= 0x0040,	///< called when testing a file with #TestFile function
 		cbSave		= 0x0080,	///< called when saving the central directory with CZipCentralDir::Write (usually on close or flush); it is safe to break on non-disk spanning archive - the saved part of 
 								///< the central directory will be removed from disk
+		cbGetFromArchive 
+					= 0x0100,	///< called when using one of #GetFromArchive methods
+		cbRename	= 0x0200,	///< called when during the renaming a file there is a need to make less or more space for the new filename
+		cbReplace	= 0x0400,   ///< called when moving data while replacing files to make less or more space for the new file
+		cbNextValue = 0x0800,	///< for CZipActionCallback overrides and user defined callbacks
+		
 
-		cbSubActions= cbAddTmp | cbAddStore | cbDeleteCnt,				///< sub actions - they are part of bigger actions (#cbAddTmp | #cbAddStore | #cbDeleteCnt)
-		cbActions	= cbAdd | cbExtract | cbDelete | cbTest | cbSave,	///< main actions (#cbAdd | #cbExtract | #cbDelete | #cbTest | #cbSave)
+		cbSubActions= cbAddTmp | cbAddStore | cbDeleteCnt | cbReplace,				///< sub actions - they are part of bigger actions (#cbAddTmp | #cbAddStore | #cbDeleteCnt | #cbReplace)
+		cbActions	= cbAdd | cbExtract | cbDelete | cbTest | cbSave | cbGetFromArchive | cbRename,	///< main actions (#cbAdd | #cbExtract | #cbDelete | #cbTest | #cbSave | #cbGetFromArchive | #cbRename)
 		cbAll		= cbActions | cbSubActions							///< assign all callbacks to the same functor
 	};
 
@@ -191,9 +384,18 @@ public:
 			can be one or more (use logical OR) #CallbackType values.
 
 		\see CZipActionCallback
+		\see GetCallback
 		
      */
 	void SetCallback(CZipActionCallback* pCallback = NULL, int iWhich = cbAll);
+
+	/**
+		\return the callback \e iWhich set with #SetCallback
+	*/
+	CZipActionCallback* GetCallback(CallbackType iWhich)
+	{
+		return m_callbacks.Get(iWhich);
+	}
 
 	/**
 		Set the callback functor used during operations on a 
@@ -256,7 +458,13 @@ public:
 	\param	iMode
 		one of the #OpenMode values
 	\param	iVolumeSize
-		the volume size in the disk spanning archive
+	the volume size in the disk spanning archive; 
+	the size of the volume may be from 1 to INT_MAX , 
+	and the bigger - the faster is creation and extraction (no file changes between volumes) - but the size of the whole archive is the same. 
+	If you're creating disk-spanning archive in \ref TDSpan "TD span compatible mode" 
+	and plan later to convert it to \ref PKSpan "PKZIP compatible mode" (see \ref sectSpan), it is good to set this this value to 
+	about the size of the diskette (a little less just in case).
+	
 	\note Throws exceptions.
 	\see Open(CZipMemFile&, int);
 	\see GetSpanMode
@@ -290,7 +498,7 @@ public:
 		in the archive <BR>
 		if \c NULL - clears the #m_szRootPath and no path beginning will be matched against it
 
-	\note set the case-sensitivity with #SetCaseSensitivity
+	\note Set the case-sensitivity with #SetCaseSensitivity
 
 	\see AddNewFile 
 	\see ExtractFile
@@ -302,9 +510,6 @@ public:
 
     /**
        Return the current value of #m_szRootPath
-       
-       \param none
-       
        \return CZipString 
      */
 	CZipString GetRootPath()const 
@@ -314,7 +519,7 @@ public:
 
 	/**
 		The levels of smartness of the adding files action (see #AddNewFile)
-		\note if you wish to use \e zipsmCheckForEff, you should use 
+		\note If you wish to use \e zipsmCheckForEff, you should use 
 		\e zipsmNotCompSmall as well, because it will save you the time
 		( the small file will be surely larger after compression, so that
 		we can add it not compressed straight away);the compression level 
@@ -334,7 +539,7 @@ public:
 										///< if it is not present or there is not enough space there, it tries the current directory, if it fails, no temporary file is created
 										///< and the compression goes the usual way
 
-		zipsmMemoryFlag		= 0x0010,  ///< combine it with zipsmCheckForEff or use zipsmCheckForEffInMem
+		zipsmMemoryFlag		= 0x0010,  ///< combine it with zipsmCheckForEff or use zipsmCheckForEffInMem, you can also use this when replacing files see note at CZipAddNewFileInfo::m_iReplaceIndex
 
 		zipsmCheckForEffInMem = zipsmMemoryFlag | zipsmCheckForEff, ///< the same as #zipsmCheckForEff, but the temporary file is created created in memory instead (the temporary directory set with #SetTempPath() is ignored); has the meaning only with a disk-spanning archive,
 																	///< non-disk spanning archives don't need a temporary file 
@@ -348,84 +553,51 @@ public:
 
 	};
 
-
-
-/**
-	Add a new file to the archive. You can set the callback functor with #SetCallback.
-
-	\param	lpszFilePath
-		the full path to the file to be added
-	\param	iLevel 
-		the compression level, see #OpenNewFile
-	\param	bFullPath <BR>
-		 - if \c true, include full path of the file inside the archive (even if #m_szRootPath is set);
-		 - if \c false only the filename without a path is stored in the archive <BR>
-		in this case if #m_szRootPath is set previously with #SetRootPath 
-		and if the beginning of \e lpszFilePath equals #m_szRootPath
-		then the filename is set to the remaining part of \e lpszFilePath
-		(you can say to \e lpszFilePath minus #m_szRootPath)		
-	\param iSmartLevel
-		the level of smartness of the library; can be one or more #Smartness
-		values (you can OR them)<BR>
-		if zipsmCheckForEff is specified and due to it the file needs to be
-		reinserted into the archive without a compression and the callback
-		functor is specified, the callback functor's method Callback is called with the first argument set to 
-		DWORD (-1)	(you need to remember the last argument if you need the size of the file)
-	\param	nBufSize 
-		the size of the buffer used
-	\return	\c if it returns false then the file was not added, but the internal
-	state allows you to add other files (which is not possible after throwing 
-	an exception)
-	\note Throws exceptions.
-	\note If you abort while adding a file in a non-disk-spanning archive, the added data will be removed from the archive
-	\see SetCallback
-	\see <CODE> AddNewFile(LPCTSTR, LPCTSTR, int, int, unsigned long) </CODE>
-	\see <CODE> AddNewFile(CZipMemFile&, LPCTSTR, int, int, unsigned long)</CODE>
-	\todo Replacing files in the archive
-*/
-	bool AddNewFile(LPCTSTR lpszFilePath, int iLevel = -1, bool bFullPath = true,
-		int iSmartLevel = zipsmSafeSmart, unsigned long nBufSize = 65535);
-
-
-/**
-	Add a new file to the archive.
-	The same as <CODE> #AddNewFile(LPCTSTR, int, bool, int, unsigned long) </CODE>
-	but differs by one argument:
 	
-	\param	lpszFileNameInZip
-		the file name that will be stored in the archive (to the directories,
-		there is a path separator automatically added at the end); #SetRootPath
-		function has no effect on this parameter
+	/**
+		Add a new file to the archive. You can set the callback functor with #SetCallback.
+		\param info see CZipAddNewFileInfo
+		\return	\c if it returns false then the file was not added, but the internal
+		state allows you to add other files (which is not possible after throwing 
+		an exception)
+		
+		\note 
+		- If you abort while adding a file in a non-disk-spanning archive, the added data will be removed from the archive
+		- Throws exceptions.
+		
+		\see SetCallback
+		\see <CODE> AddNewFile(LPCTSTR, LPCTSTR, int, int, unsigned long) </CODE>
+		\see <CODE> AddNewFile(LPCTSTR, int, bool, int, unsigned long) </CODE>
+		\see <CODE> AddNewFile(CZipMemFile&, LPCTSTR, int, int, unsigned long)</CODE>
+	*/
+	bool AddNewFile(CZipAddNewFileInfo& info);
 
-	\see <CODE> AddNewFile(CZipMemFile&, LPCTSTR, int, int, unsigned long)</CODE>
-
-*/
-	bool AddNewFile(LPCTSTR lpszFilePath,
-							 LPCTSTR lpszFileNameInZip,
-                             int iLevel = -1,                             
-							 int iSmartLevel = zipsmSafeSmart,
-                             unsigned long nBufSize = 65535);
 
 	/**
-			Add a new file to the archive.
-			The same as <CODE> #AddNewFile(LPCTSTR, LPCTSTR, int, int, unsigned long) </CODE>
-			but differs by one argument:
+		\see AddNewFile(CZipAddNewFileInfo& ); the parameters are equivalent to CZipAddNewFileInfo member variables
+	
+	*/
+	bool AddNewFile(LPCTSTR lpszFilePath, int iComprLevel = -1, bool bFullPath = true,
+		int iSmartLevel = zipsmSafeSmart, unsigned long nBufSize = 65536);
 
-			\param mf
-			instead of from the physical file, the data for compression is taken from the CZipMemFile object
 
-			\note 
-			- the time of the file in zip is set to the current time, and the attributes to the default
-			file attributes (depending on the system)
-			- you cannot add directories with this function
-			\see <CODE> AddNewFile(LPCTSTR, int, bool, int, unsigned long) </CODE>
-		
+	/**
+		\see AddNewFile(CZipAddNewFileInfo& ); the parameters are equivalent to CZipAddNewFileInfo member variables
+	*/
+	bool AddNewFile(LPCTSTR lpszFilePath,
+							 LPCTSTR lpszFileNameInZip,
+                             int iComprLevel = -1,                             
+							 int iSmartLevel = zipsmSafeSmart,
+                             unsigned long nBufSize = 65536);
+
+	/**
+		\see AddNewFile(CZipAddNewFileInfo& ); the parameters are equivalent to CZipAddNewFileInfo member variables
 	*/
 	bool AddNewFile(CZipMemFile& mf,
 							 LPCTSTR lpszFileNameInZip,
-                             int iLevel = -1,                             
+                             int iComprLevel = -1,                             
 							 int iSmartLevel = zipsmSafeSmart,
-                             unsigned long nBufSize = 65535);
+                             unsigned long nBufSize = 65536);
 
 
 
@@ -469,16 +641,18 @@ public:
 	\param	lpszFilePath
 		The path to the file to retrieve date stamp and attributes from.
 		These values are stored inside the archive.
+	\param uInternal
+		for internal use only
 
 	\return	\c false in the following cases:
 	- the \e lpszFilePath is not NULL and the file attributes and data was not correctly retrieved
 	- a file is already opened for extraction or compression
 	- archive is an existing disk span archive
-	- maximum file count inside archive already reached (65535)
+	- maximum file count inside archive already reached (65536)
 	\note Throws exceptions.
 
 */
-	bool OpenNewFile(CZipFileHeader & header, int iLevel = Z_DEFAULT_COMPRESSION, LPCTSTR lpszFilePath = NULL);
+	bool OpenNewFile(CZipFileHeader & header, int iLevel = Z_DEFAULT_COMPRESSION, LPCTSTR lpszFilePath = NULL, DWORD uInternal = 0);
 
 /**
 	Compress the contents of the buffer and write it to a new file.
@@ -512,11 +686,107 @@ public:
 	\param bAfterException 
 		it will close the new file without writing anything (call it also
 		with this parameter set to \c true after an exception other than CZipException::abortedSafely was
-		thrown from one of \e AddNewFile functions)
+		thrown from one of #AddNewFile functions)
 	\note Throws exceptions.
 	\see OpenNewFile
 */
 	bool CloseNewFile(bool bAfterException = false);
+
+/**
+	Acquire a file with the given index from another archive. 
+	The compressed data of the file from another archive are copied 
+	without decompressing to the current archive.
+	You can set the callback functor with #SetCallback.	
+	\param zip 
+		an opened archive to get the file from (must not be multi-disk)
+	\param	uIndex
+		a zero-based index of the file to get from the \e zip archive
+	\param iReplaceIndex the same as CZipAddNewFileInfo::m_iReplaceIndex
+	\param bKeepSystComp
+		if \c false, which is default, then the file from \e zip archive
+		system compatibility is converted to the current archive system
+		compatibility (if they differ)	
+	\return \c false if the operation could not be performed (either of archives is closed, 
+	a file inside either of archives is opened, \e zip archive is multi-disk or the current
+	archive is an existing multi-disk archive)
+	\note Throws exceptions <BR>
+	(when an exception is thrown, you may need to call #CloseNewFile with \e bAfterException set to \c true, to make the archive reusable).	
+	\note it is safe to abort the action (by returning false from the callback call) in non-disk spanning archive and when no replacing is taking place
+	(the file not entirely added is removed from the archive)
+	\see SetCallback
+	\see GetFromArchive(CZipArchive& , CZipWordArray &, bool)
+	\see GetFromArchive(CZipArchive& , CZipStringArray &, bool)
+	\see FindMatches
+	\see SetAdvanced 
+*/
+	bool GetFromArchive(CZipArchive& zip, WORD uIndex, int iReplaceIndex = -1, bool bKeepSystComp = false)
+	{
+				
+		m_info.Init();
+		bool bRet;
+		try
+		{
+			bRet = GetFromArchive(zip, uIndex, iReplaceIndex, bKeepSystComp, GetCallback(cbGetFromArchive));
+		}
+		catch(...)
+		{
+			m_info.ReleaseBuf();
+			throw;
+		}
+		m_info.ReleaseBuf();
+		if (bRet && m_bAutoFlush)
+			Flush();
+
+		return bRet;
+	}
+
+	/**
+	Acquire files with the given indexes from another archive. 
+	
+	\param	aIndexes
+		an array of zero-based indexes of the files inside the \e zip archive	
+
+	\see GetFromArchive(CZipArchive& , WORD, int, bool)
+
+	\note 
+	- To get files which filenames match a specified pattern, use #FindMatches function
+	*/
+	bool GetFromArchive(CZipArchive& zip, CZipWordArray &aIndexes, bool bKeepSystComp = false);
+	
+	/**
+	Acquire files with the given indexes from another archive. 
+	\param	aNames
+		an array of filenames inside the \e zip archive; 	
+
+	\see GetFromArchive(CZipArchive& , WORD, int, bool)
+	\see EnableFindFast
+
+	\note 
+	- Set the case-sensitivity with #SetCaseSensitivity
+	- Enables FindFast if not enabled
+	
+	*/
+	
+	bool GetFromArchive(CZipArchive& zip, CZipStringArray &aNames, bool bKeepSystComp = false)
+	{
+		CZipWordArray indexes;
+		zip.GetIndexes(aNames, indexes);
+		return GetFromArchive(zip, indexes, bKeepSystComp);
+		
+	}
+
+	/**
+		Get indexes of the files stored int \e aNames array and put them into \e aIndexes
+		\param	aNames
+			an array of filenames inside the archive; 
+		\param aIndexes
+			an array of indexes to be build
+		\note 
+		- Set the case-sensitivity with #SetCaseSensitivity
+		- Enables FindFast if not enabled
+			
+	*/
+	void GetIndexes(const CZipStringArray &aNames, CZipWordArray& aIndexes);
 
 /**
 	Extract the file from the archive. You can set the callback functor with #SetCallback.
@@ -525,14 +795,14 @@ public:
 	\param	uIndex
 		the index of the file to extract
 	\param	lpszPath
+	\verbatim
 		The PATH only to extract the file to. May not be NULL. If you wish to 
 		use UNC path you need to replace \\\\ at the beginning of UNC path with \\\\?\UNC\ .
+	\endverbatim
 	\param	bFullPath <BR>
 		- if \c true, then extract with the full path - in this case the resulting
 		file path is \e lpszPath plus the path stored in the archive or plus \e lpszNewName 
 		if \e lpszNewName is not NULL. <BR>
-		  If the path of the file stored in the archive or \e lpszNewName contains a drive letter,
-		it is removed.
 		- if \c false, the destination file path is \e lpszPath + \e the filename only
 		extracted from the path stored in the archive or from \e lpszNewName if
 		\e lpszNewName is specified; <BR>
@@ -544,19 +814,19 @@ public:
 	\param	lpszNewName 
 			The new name of the file after extraction. 
 			If NULL the original filename stored in the archive is used.
-			May point to the full path but, if \e bFullPath is \c false, only the filename is extracted from this argument,
-			if the \e bFullPath is \c true, the drive letter (if exists) is removed.
+			May point to the full path but, if \e bFullPath is \c false, only the filename is extracted from this argument,			
 	\param	nBufSize 
-		the size of the buffer used
+		the size of the buffer used while file operations
 	\return	\c true if successful
-	\note to extract files which filenames match a specified pattern, use #FindMatches function
-	\note Throws exceptions.
+	\note 
+	- To extract files which filenames match a specified pattern, use #FindMatches function
+	- Throws exceptions.
 	\see SetCallback
 	\see <CODE> ExtractFile(WORD, CZipMemFile&, DWORD) </CODE> 
 	\see FindMatches
 */
 	bool ExtractFile(WORD uIndex, LPCTSTR lpszPath, bool bFullPath = true,
-		LPCTSTR lpszNewName = NULL, DWORD nBufSize = 65535);
+		LPCTSTR lpszNewName = NULL, DWORD nBufSize = 65536);
 
 	
 	/**
@@ -566,7 +836,7 @@ public:
 		- if you pass CZipMemFile object already with data, its contents are NOT overwirtten, but the decompressed data is appended at the end
 		- if you try to extract a directory, the function will return \c false
 	*/
-	bool ExtractFile(WORD uIndex, CZipMemFile& mf, DWORD nBufSize = 65535);
+	bool ExtractFile(WORD uIndex, CZipMemFile& mf, DWORD nBufSize = 65536);
 
 /**
 	Open the file with the given index in the archive for extracting.
@@ -604,12 +874,12 @@ public:
 		the size of the buffer used during extraction
 	\return \c false if the incorrect action has been taken by 
 	the user or the programmer (it is when #OpenFile or #GetFileInfo returned \c false or \e uBufSize is 0).
-	If the file didn't passed the test or there was a disk I/O error, an exception is thrown.
+	If the file didn't passed the test or there was a disk I/O error or the password supplied was incorrect, an exception is thrown.
 	\note Throws exceptions.
 	\see SetCallback
 	
 */
-	bool TestFile(WORD uIndex, DWORD uBufSize = 65535);
+	bool TestFile(WORD uIndex, DWORD uBufSize = 65536);
 
 /**
 	Perform the necessary cleanup after an exception was thrown
@@ -657,7 +927,7 @@ public:
 		because the system may not be able to retrieve information from it.
 	\return	<BR>
 	-  "1" = ok
-	-  "-1" = some bytes left to uncompress - probably due to a bad password
+	-  "-1" = some bytes left to uncompress - probably due to a bad password or corrupted archive
 	-  "-2" = setting extracted file date and attributes was not successful	
 	\note Throws exceptions.
 */
@@ -666,6 +936,8 @@ public:
 /**
 	Delete the file from the archive with the given index. 
 	You can set the callback functor with #SetCallback.
+	If you plan to delete more than one file, use one of <EM>DeleteFiles </EM>functions rather than calling DeleteFile
+	successively, because these functions are optimized for deleting multiple files
 	\param	uIndex
 		a zero-based index
 	\note Throws exceptions.
@@ -679,11 +951,12 @@ public:
 /**
 	Delete files from the archive.
 	You can set the callback functor with #SetCallback.
-	Sort \e aIndexes array in an ascending order.
+	Sorts \e aIndexes array in an ascending order.
 	\param	aIndexes
 		an array of zero-based indexes of the files inside the archive	
-	\note to remove files which filenames match a specified pattern, use #FindMatches function
-	\note Throws exceptions.
+	\note 
+	- To remove files which filenames match a specified pattern, use #FindMatches function
+	- Throws exceptions.
 	\see SetCallback
 	\see DeleteFile
 	\see DeleteFiles(const CZipStringArray& )
@@ -695,19 +968,18 @@ public:
 /**
 	Delete files from the archive.
 	You can set the callback functor with #SetCallback.
-	\param	&aNames
-		an array of filenames inside the archive; 
-	\param bFileNameOnly 
-		the same as in #FindFile
-	\note set the case-sensitivity with #SetCaseSensitivity
-	\note Enables FindFast if not enabled
-	\note Throws exceptions.
+	\param	aNames
+		an array of filenames inside the archive; 	
+	\note 
+	- Set the case-sensitivity with #SetCaseSensitivity
+	- Enables FindFast if not enabled
+	- Throws exceptions.
 	\see SetCallback
 	\see DeleteFile
 	\see DeleteFiles(CZipWordArray&)
 	\see EnableFindFast
 */
-	void DeleteFiles(const CZipStringArray &aNames, bool bFileNameOnly = false);
+	void DeleteFiles(const CZipStringArray &aNames);
 
 
 /**
@@ -755,21 +1027,6 @@ public:
 /**
 	Return the disk spanning mode of the current archive.
 
-	Disk spanning archive modes:
-	
-	\anchor PKSpan
-	PKZIP compatible mode (pkzipSpan):
-		- only on removable devices
-		- auto-detect the size of the volume
-		- write a label to the disk
-		- there is a need to set a span callback functor (use #SetSpanCallback)
-
-	\anchor TDSpan
-	TD mode (tdSpan):
-		- may be created on non removable devices
-		- uses user-defined volume size
-		- no need to set a span callback functor
-
 	\return	<BR>
 	- -2 - existing TD mode compatible disk spanning archive
 	- -1 - existing PKZIP compatible 
@@ -777,14 +1034,8 @@ public:
 	- 1 - PKZIP compatible in creation
 	- 2 - TD compatible in creation
 
-  This two disk spanning modes create volumes with compatible internal 
-  structure. It means that you can easily convert the volumes created 
-  in one mode to the other one by renaming the files 
-  (in TD mode each volume but last has a number as an extension). 
-  To convert the archive from TD to PKZIP compatible archive, 
-  Copy each file to the removable media, giving them the extension.
-  ".zip". You should also label each disk with the appropriate label 
-  starting from "pkback# 001".
+  \see \ref PKSpan, \ref TDSpan
+
 */
 	int GetSpanMode()const 
 	{
@@ -813,9 +1064,9 @@ public:
 
 /**
 	Find the file in the archive.
-	If the archive wasn't opened with #m_bConvertAfterOpen set to \c true, 
+	If the archive wasn't opened with CZipCentralDir::m_bConvertAfterOpen set to \c true, 
 	this function automatically convert all the filenames with the function
-	CZipCentralDir::ConvertAll and set #m_bConvertAfterOpen to \c true.
+	CZipCentralDir::ConvertAll and set CZipCentralDir::m_bConvertAfterOpen to \c true.
 	This function requires \link CZipCentralDir::m_bFindFastEnabled FindFast \endlink
 	feature enabled.
 	\param	lpszFileName
@@ -825,9 +1076,7 @@ public:
 	\param iCaseSensitive can be one of #FFCaseSens values
 	\param bFileNameOnly
 		if \c true, the function tries to find a filename without a path (a less effective search is performed); if you wish to find
-		a directory name, do not end it with the path separator, which is required if you 
-		set \e bFileName to \c false
-		
+		a directory name, do not end it with the path separator, which is required if you set \e bFileName to \c false		
 	\return	<BR>
 	- the index of the file found 
 	- -1 if there is no such a file in the archive
@@ -850,9 +1099,25 @@ public:
 
 
 /**
+	\param	bOnlyFiles
+		if \c true, the directories are not inluded in a total count;
+		default is \c false
 	\return	the number of files in the archive
 */
-	int GetCount()const {return m_centralDir.m_headers.GetSize();}
+	int GetCount(bool bOnlyFiles = false)const 
+	{
+		int iTotalCount = m_centralDir.m_headers.GetSize();
+		if (bOnlyFiles)
+		{
+			int iCount = 0;
+			for (int i = 0; i < iTotalCount; i++)
+				if (!m_centralDir.m_headers[i]->IsDirectory())
+					iCount++;
+			return iCount;
+		}
+		else
+			return iTotalCount;
+	}
 
 	/**
 		values used in #Close function as parameter \e iAfterException
@@ -869,9 +1134,13 @@ public:
 	Close the archive.
 	\param	iAfterException
 		one of #CloseAfterException enum values
+	\param bUpdateTimeStamp
+		if \c true, set the modification date of the zip file to the date of the newest file in the archive;		
+		in disk-spanning mode only the last archive file will have the time stamp updated; 
+		you can use this option even without performing any additional processing on the archive, just open and close it
 	\note Throws exceptions if \e iAfterException is different from \c afAfterException
 */
-	void Close(int iAfterException = afNoException);
+	void Close(int iAfterException = afNoException, bool bUpdateTimeStamp = false);
 
 
 /**
@@ -895,9 +1164,10 @@ public:
 		after finalizing the disk spanning archive it turns out that it is one disk only, it is converted to 
 		a normal archive and you can use it as such. If you want to know what is the state of the archive after using
 		this function call #GetSpanMode.
-		\note Cannot be used on existing disk spanning archives (they are not modifable anyway)
-		\note If you have an archive with a huge central directory, it'll influence the perfomance calling this function without a reason.
-		\note Throws exceptions.
+		\note 
+		- Cannot be used on existing disk spanning archives (they are not modifable anyway)
+		- If you have an archive with a huge central directory, it'll influence the perfomance calling this function without a reason.
+		- Throws exceptions.
 		\see GetSpanMode
 		\see SetAutoFlush
 		\see GetAutoFlush
@@ -911,8 +1181,9 @@ public:
 		(adding a new file, deleting file(s), modifying the global or a file comment).
 		It is useful when we want to prevent the loss of data in case of the program crash - the zip file will be then finalized on the disk.
 		Use it after opening the archive.
-		\note You can set AutoFlush only for non-disk spanning archives, however you can call #Flush once for a disk-spanning archive in creation.
-		\note If you have an archive with a huge central directory, setting Auto-Flush will influence the performance.
+		\note 
+		- You can set AutoFlush only for non-disk spanning archives, however you can call #Flush once for a disk-spanning archive in creation.
+		- If you have an archive with a huge central directory, setting Auto-Flush will influence the performance.
 		\see Flush	
 		\see GetAutoFlush
 	*/
@@ -1046,7 +1317,7 @@ public:
 	Set CZipCentralDir::m_bFindFastEnabled to \c true, which is required by #FindFile.
 	#FindFileIt is called by #FindFileif necessary. It builds CZipCentralDir::m_findarray
 	with the default case-sensitivity (set with #SetCaseSensitivity)
-	\note call after opening the archive. 
+	\note Call it only after opening the archive. 
 	\param	bEnable
 	\see CZipCentralDir::m_bFindFastEnabled
 	\see FindFile
@@ -1126,12 +1397,26 @@ public:
 			the same as \e bFullPath in #AddNewFile
        \param iWhat
 			one of #Predict values to treat \e lpszFilePath correctly
-		bool bAnsiOEM 
-			if \c true, ANSI->OEM conversion is made
+		\param bExactly
+			if \c true, return the filename exactly as it would look inside the archive i.e. convert slash to backslash, and perform ANSI->OEM conversion;
+			otherwise return the filename with the path separators that are used by default in the system
        
        \return a modified file path
      */
-	CZipString PredictFileNameInZip(LPCTSTR lpszFilePath, bool bFullPath, int iWhat = prAuto, bool bAnsiOEM = false)const ;
+	CZipString PredictFileNameInZip(LPCTSTR lpszFilePath, bool bFullPath, int iWhat = prAuto, bool bExactly = false)const ;
+
+	/**
+		Check if the filename will be duplicted in the archive, if added to the archive in the given form
+		\param bFileNameOnly
+			if \c true, assume that the filename is duplicated if only the filename (no path) is the same (\e bFullPath is ignored), otherwise the whole filename with path is taken into account.
+			
+		\b Default: \c false
+		
+		 The rest of the parameters have the same meaning as in #PredictFileNameInZip.
+
+		\return the zero-based index of the file in the archive that the filename would be duplicated, or -1, if the filename is unique
+	*/
+	int WillBeDuplicated(LPCTSTR lpszFilePath, bool bFullPath, bool bFileNameOnly = false, int iWhat = prAuto);
 
 
     /**
@@ -1139,7 +1424,7 @@ public:
 	   to the <CODE> #ExtractFile(WORD , LPCTSTR , bool , LPCTSTR , DWORD ) </CODE> function. The function takes into account the root path set with #SetRootPath.
        \param lpszFileNameInZip
 			the filename of the file inside the archive (may be \c NULL if lpszNewName is not \c NULL)
-       \param lpszFilePath
+       \param lpszPath
        \param bFullPath
        \param lpszNewName       
        \return a predicted file path 
@@ -1186,13 +1471,15 @@ public:
 		- #TrimRootPath
 		- #DeleteFiles
 		
-		\note set it before using one of the functions above or leave it as it is by default;
-			the default CZipArchive case-sensitivity depends on the system and is set
-			as follows:
-			- on Windows:	\c false
-			- on Linux:		\c true
-
+		
+			
 		\param bCaseSensitive
+		the default CZipArchive case-sensitivity depends on the system and is set
+			as follows:
+			- on Windows:	\c false <BR>
+			- on Linux:	\c true
+		\note Set it before using one of the functions above or leave it as it is by default;
+			
 	*/
 
 	void SetCaseSensitivity(bool bCaseSensitive) 
@@ -1239,7 +1526,7 @@ public:
 		This class is based on code by J. Kercheval, created 01/05/1991
 		and available as a public domain at http://www.snippets.org.
 	*/
-	class CWildcard  
+	class ZIP_API CWildcard  
 	{
 	public:
 		
@@ -1271,7 +1558,7 @@ public:
 		
 		  \param lpszText
 		  the string to match against
-		  \param iErrorType
+		  \param iRetCode
 				if not \c NULL, set to one of #Match values indicating the return code
 			\return \c true if \e lpszText matches the pattern.
 			\see SetPattern
@@ -1378,12 +1665,44 @@ public:
        
      */
 	void FindMatches(LPCTSTR lpszPattern, CZipWordArray& ar, bool bFullPath = true)const;
+
+
+    /**
+       Change the name of the file with the given index.
+       
+		\param uIndex
+			zero-based index of the file
+		\param lpszNewName
+			new name for the file
+		\return 
+			
+		\note Throws exceptions.
+		\see SetAdvanced 
+     */
+	bool RenameFile(WORD uIndex, LPCTSTR lpszNewName);
+
+	/**
+
+		If \c true, the drive letter is removed from the filename stored inside the archive when adding a new file to the archive. It affects 
+		#AddNewFile, #ExtractFile, #PredictFileNameInZip, #PredictExtractedFileName, #WillBeDuplicated methods.
+
+		\b Default: \c true
+	*/
+	bool m_bRemoveDriveLetter;
+
 protected:
+	
+	/**
+		\param iReplaceIndex index of file to be replaced
+		\param uTotal the size of the new file to replace existing
+		\param lpszFileName the filename for callback initialization
+	*/
+	void MakeSpaceForReplace(int iReplaceIndex, DWORD uTotal, LPCTSTR lpszFileName);
 	/**
 		A structure for the internal use only. Clears the password if necessary and
 		restores it later (also in case of an exception).
 	*/
-	struct CZipSmClrPass
+	struct ZIP_API CZipSmClrPass
 	{
 		void ClearPasswordSmartly(CZipArchive* pZip)
 		{
@@ -1405,7 +1724,7 @@ protected:
 		Holds map of holes and areas to remain when deleting files from the archive.
 		A structure for the internal use only.
 	*/
-	struct CZipDeleteInfo
+	struct ZIP_API CZipDeleteInfo
 	{
 		CZipDeleteInfo(){m_pHeader = NULL; m_bDelete = false;}
 		CZipDeleteInfo(CZipFileHeader* pHeader, bool bDelete)
@@ -1419,7 +1738,7 @@ protected:
 		Storage for callback functors. A structure for the internal use only.
 		\see SetCallback
 	*/
-	struct CZipClbckStrg : public CZipMap<CallbackType, CZipActionCallback*>
+	struct ZIP_API CZipClbckStrg : public CZipMap<CallbackType, CZipActionCallback*>		
 	{
 		void Set(CZipActionCallback* pCallback, CallbackType iType)
 		{
@@ -1441,6 +1760,7 @@ protected:
 			else
 				return NULL;
 		}
+	
 	};
 	
 	
@@ -1516,6 +1836,8 @@ protected:
 	*/
 	bool m_bIgnoreCRC;
 
+	
+
 /**
 	The root path to be omitted in #AddNewFile and #ExtractFile functions
 	from the beginning of the full file path. Set by #SetRootPath
@@ -1561,16 +1883,10 @@ protected:
 
 /**
 	Move the range of data in the archive specified by the \e uStartOffset
-	and \e uEndOffset by \e uToMove
-	\param	uStartOffset
-		
-	\param	uEndOffset
-	\param	uMoveBy
-		
-	\return	\c false if callback functor's operator () returned \c false
+	and \e uEndOffset by \e uToMove		
 	
 */
-	bool MovePackedFiles(DWORD uStartOffset, DWORD uEndOffset, DWORD uMoveBy);
+	void MovePackedFiles(DWORD uStartOffset, DWORD uEndOffset, DWORD uMoveBy, CZipActionCallback* pCallback, bool bForward = false);
 
 	/**
 		Remove recently added file (used by AddNewFile) if compressed is larger than uncompressed or if callback method return \c false.
@@ -1578,6 +1894,17 @@ protected:
 
 	*/
 	bool RemoveLast(bool bRemoveAnyway = false);
+
+	/**
+		It is used in GetFromArchive public functions and in AddNewFile and the callback parameter is needed
+	*/
+	bool GetFromArchive(CZipArchive& zip, WORD uIndex, int iReplaceIndex, bool bKeepSystComp, CZipActionCallback* pCallback);
+
+	/**
+		\return whether the code should continue or not
+	*/
+	bool UpdateReplaceIndex(int& iReplaceIndex, LPCTSTR lpszNewFileName);
+	
 /**
 	\return	 the currently opened for compression or decompression
 	file inside the archive NULL if there is no file opened
@@ -1628,17 +1955,19 @@ protected:
 		Copyright string.
 	*/
 	static const TCHAR m_gszCopyright[];
-	/**
-		\name Cryptography
+	
+/**
+		\defgroup Cryptography Cryptography
 		Methods performing data encryption and decryption
 		and attributes used by them.
-	*/
-	//@{
+*/
+	/*@{*/
+
 /**
-	Decode \e nCount bytes from the internal buffer.
+	Decode \e uCount bytes from the internal buffer.
 	\see m_info
 	\see CZipInternalInfo::m_pBuffer
-	\param	uCount
+
 */
 	void CryptDecodeBuffer(DWORD uCount);
 /**
@@ -1650,7 +1979,7 @@ protected:
 
 /**
 	Encode the character \e c and update \link #m_keys encryption keys \endlink.
-	\param	&c
+
 */
 	void CryptEncode(char &c);
 /**
@@ -1667,14 +1996,11 @@ protected:
 	void CryptCryptHeader(long iCrc, CZipAutoBuffer& buf);
 /**
 	\internal
-	\param	l		
-	\param	c
 	\return	
 */
 	DWORD CryptCRC32(DWORD l, char c);
 /**
 	Decode the character \e c and update \link #m_keys encryption keys \endlink.
-	\param	&c
 */
 	void CryptDecode(char &c);
 	/**
@@ -1690,9 +2016,7 @@ protected:
 */
 	bool CryptCheck();
 /**
-	Update \link #m_keys encryption keys \endlink with the given value.
-	\param	c
-			
+	Update \link #m_keys encryption keys \endlink with the given value.			
 */
 	void CryptUpdateKeys(char c);
 /**
@@ -1710,10 +2034,8 @@ protected:
 		\see CryptInitKeys
 	*/
 	DWORD m_keys[3];
-
-	//@}
-	
-
+		
+	/*@}*/
 };
 
 

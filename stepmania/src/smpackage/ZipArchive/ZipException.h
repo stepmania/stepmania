@@ -4,7 +4,7 @@
 // $Date$ $Author$
 ////////////////////////////////////////////////////////////////////////////////
 // This source file is part of the ZipArchive library source distribution and
-// is Copyright 2000-2002 by Tadeusz Dracz (http://www.artpol-software.com/)
+// is Copyright 2000-2003 by Tadeusz Dracz (http://www.artpol-software.com/)
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,7 +33,7 @@
 
 #include "ZipString.h"
 #include "ZipBaseException.h"
-
+#include "ZipExport.h"
 
 #define ZIP_ENABLE_ERROR_DESCRIPTION
  
@@ -42,7 +42,7 @@
 	Library exception class derived in the MFC version from \c CException 
 	and in non-MFC version from \c std::exception.	
 */
-class CZipException : public CZipBaseException
+class ZIP_API CZipException : public CZipBaseException
 {
 public:
 
@@ -99,12 +99,12 @@ public:
 #ifdef ZIP_ENABLE_ERROR_DESCRIPTION
 
     /**
-       Return the error description (you need to have defined ZIP_ENABLE_ERROR_DESCRIPTION
-	   in file ZipException.h); undefine this value if you don't want to 
+       Return the error description.
+	   \note You need to have defined ZIP_ENABLE_ERROR_DESCRIPTION
+	   (in file ZipException.h); undefine this value if you don't want to 
 	   store the messages in the library.
        
        
-       \return 
      */
 	CZipString GetErrorDescription();
 
@@ -120,15 +120,16 @@ public:
 	\param nMaxError
 		the maximum number of characters the buffer can hold, including the NULL terminator
 
-	\param UINT*
-		not used 
 
      \return 
 			\c TRUE if the error string is not empty
 	\note 
-		the function will not copy more than \c nMaxError – 1 characters 
+	- The function will not copy more than \c nMaxError – 1 characters 
 		to the buffer, and it always adds a trailing null to end the string;
-		if the buffer is too small, the error message will be truncated;
+		if the buffer is too small, the error message will be truncated.
+	- You need to have defined ZIP_ENABLE_ERROR_DESCRIPTION
+		(in file ZipException.h); undefine this value if you don't want to 
+		store the messages in the library.
 
      */
 	BOOL GetErrorMessage(LPTSTR lpszError, UINT nMaxError, UINT* = NULL);

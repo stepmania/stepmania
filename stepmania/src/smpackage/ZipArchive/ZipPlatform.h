@@ -4,7 +4,7 @@
 // $Date$ $Author$
 ////////////////////////////////////////////////////////////////////////////////
 // This source file is part of the ZipArchive library source distribution and
-// is Copyright 2000-2002 by Tadeusz Dracz (http://www.artpol-software.com/)
+// is Copyright 2000-2003 by Tadeusz Dracz (http://www.artpol-software.com/)
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -30,6 +30,7 @@ class CZipAutoBuffer;
 #include "ZipString.h"
 #include "ZipPathComponent.h"
 #include <sys/types.h>
+#include "ZipExport.h"
 
 /**
 	Interface to the system API.
@@ -41,59 +42,59 @@ namespace ZipPlatform
 	/**
 		return the default system case-sensitivity
 	*/
-	bool GetSystemCaseSensitivity();
+	ZIP_API bool GetSystemCaseSensitivity();
 
 	/**
 		\return A current system name tag. 
 		May be one of ZipCompatibility::ZipPlatforms values.
 		\see CZipArchive::GetSystemCompatibility
 	*/
-	int GetSystemID();
+	ZIP_API int GetSystemID();
 
 /**
 	\return	the default file attributes for the current system
 */
-	DWORD GetDefaultAttributes(); 
+	ZIP_API DWORD GetDefaultAttributes(); 
 
 /**
 	\return	the default directory attributes for the current system
 */
-	DWORD GetDefaultDirAttributes();
+	ZIP_API DWORD GetDefaultDirAttributes();
 
 /**
 	Get the free space on the device pointed by \e lpszPath
 */
-	DWORD GetDeviceFreeSpace(LPCTSTR lpszPath);
+	ZIP_API DWORD GetDeviceFreeSpace(LPCTSTR lpszPath);
 
 /**
 	Return the temporary file name ensuring there is enough size in the destination directory,.
 	Checking for the size is disabled by default.
 */
-	CZipString GetTmpFileName(LPCTSTR lpszPath = NULL, DWORD iSizeNeeded = DWORD(-1));
+	ZIP_API CZipString GetTmpFileName(LPCTSTR lpszPath = NULL, DWORD iSizeNeeded = DWORD(-1));
 /**
 	\name Various operations on files and directories.
 	All the functions which are returning a \c bool value,
 	return \c true when the operation was successful.
 */
 	//@{
-	bool GetCurrentDirectory(CZipString& sz);	///< Get the current directory and store it in \e sz
-	bool ChangeDirectory(LPCTSTR lpDirectory);
-	bool SetFileAttr(LPCTSTR lpFileName, DWORD uAttr);
-	bool GetFileAttr(LPCTSTR lpFileName, DWORD& uAttr);
-	bool GetFileModTime(LPCTSTR lpFileName, time_t & ttime); ///< get the file modification time
-	bool GetFileSize(LPCTSTR lpszFileName, DWORD& dSize);
-	bool SetFileModTime(LPCTSTR lpFileName, time_t ttime);	 ///< set the file modification time
-	bool CreateDirectory(LPCTSTR lpDirectory);
-	bool SetVolLabel(LPCTSTR lpszPath, LPCTSTR lpszLabel); ///< \c lpszPath may point to a file on the device
-	bool ForceDirectory(LPCTSTR lpDirectory);	///< create nested directories at once
-	bool RemoveFile(LPCTSTR lpszFileName, bool bThrow = true);
-	bool RenameFile( LPCTSTR lpszOldName, LPCTSTR lpszNewName, bool bThrow = true);
+	ZIP_API bool GetCurrentDirectory(CZipString& sz);	///< Get the current directory and store it in \e sz
+	ZIP_API bool ChangeDirectory(LPCTSTR lpDirectory);
+	ZIP_API bool SetFileAttr(LPCTSTR lpFileName, DWORD uAttr);
+	ZIP_API bool GetFileAttr(LPCTSTR lpFileName, DWORD& uAttr);
+	ZIP_API bool GetFileModTime(LPCTSTR lpFileName, time_t & ttime); ///< get the file modification time
+	ZIP_API bool GetFileSize(LPCTSTR lpszFileName, DWORD& dSize);
+	ZIP_API bool SetFileModTime(LPCTSTR lpFileName, time_t ttime);	 ///< set the file modification time
+	ZIP_API bool CreateDirectory(LPCTSTR lpDirectory);
+	ZIP_API bool SetVolLabel(LPCTSTR lpszPath, LPCTSTR lpszLabel); ///< \c lpszPath may point to a file on the device
+	ZIP_API bool ForceDirectory(LPCTSTR lpDirectory);	///< create nested directories at once
+	ZIP_API bool RemoveFile(LPCTSTR lpszFileName, bool bThrow = true);
+	ZIP_API bool RenameFile( LPCTSTR lpszOldName, LPCTSTR lpszNewName, bool bThrow = true);
 
 #ifndef _MFC_VER
-	bool TruncateFile(int iDes, DWORD iSize);
-	int OpenFile(LPCTSTR lpszFileName, UINT iMode, int iShareMode);
-	bool FlushFile(int iDes);	///< flush the file to the disk.
-	int GetFileSystemHandle(int iDes); ///< return the underlying system handle 
+	ZIP_API bool TruncateFile(int iDes, DWORD iSize);
+	ZIP_API int OpenFile(LPCTSTR lpszFileName, UINT iMode, int iShareMode);
+	ZIP_API bool FlushFile(int iDes);	///< flush the file to the disk.
+	ZIP_API int GetFileSystemHandle(int iDes); ///< return the underlying system handle 
 #endif
 	//@}
 
@@ -102,20 +103,20 @@ namespace ZipPlatform
 		
 	\return	\c true, if \e lpszDir directory exists; otherwise \c false;
 */
-	bool DirectoryExists(LPCTSTR lpszDir);
+	ZIP_API bool DirectoryExists(LPCTSTR lpszDir);
 /**
 	\param	lpszFilePath
 		may point to a file path or a directory on the device
 	\return	\c true if the drive is removable. 
 	Implemented only on Windows system, in all others always returns \c true.
 */
-	bool IsDriveRemovable(LPCTSTR lpszFilePath);
+	ZIP_API bool IsDriveRemovable(LPCTSTR lpszFilePath);
 /**
 	\param	uAttr
 		attributes value to test		
 	\return	\c true if the attributes are the directory attributes
 */
-	bool IsDirectory(DWORD uAttr);
+	ZIP_API bool IsDirectory(DWORD uAttr);
 
 /**
 	Perform the translation between ANSI and OEM character sets.
@@ -131,7 +132,7 @@ namespace ZipPlatform
 		if \c true, convert ANSI to OEM
 		if \c false, OEM to ANSI
 */
-	void AnsiOem(CZipAutoBuffer& buffer, bool bAnsiToOem);
+	ZIP_API void AnsiOem(CZipAutoBuffer& buffer, bool bAnsiToOem);
 /**
 	Check if the given file or directory exists.
 	\param	lpszName
@@ -141,7 +142,7 @@ namespace ZipPlatform
 	- 1 a file
 	- 0 if there is no such a file
 */
-	int FileExists(LPCTSTR lpszName);
+	ZIP_API int FileExists(LPCTSTR lpszName);
 
 
 #ifdef _UNICODE	
@@ -155,7 +156,7 @@ namespace ZipPlatform
 		the \e szSingle buffer length, or \c -1 when not succeeded
 	\note Only in UNICODE version.
 */
-	int WideToSingle(LPCTSTR lpWide, CZipAutoBuffer &szSingle);
+	ZIP_API int WideToSingle(LPCTSTR lpWide, CZipAutoBuffer &szSingle);
 /**
 	Convert single character string to wide character string.
 	\param	szSingle
@@ -166,7 +167,7 @@ namespace ZipPlatform
 	or \c -1 when not succeeded
 	\note Only in UNICODE version.
 */
-	int SingleToWide(const CZipAutoBuffer &szSingle, CZipString& szWide);
+	ZIP_API int SingleToWide(const CZipAutoBuffer &szSingle, CZipString& szWide);
 #endif
 };
 

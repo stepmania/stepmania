@@ -14,34 +14,41 @@ If you do not have it, please download it from http://www.artpol-software.com/
 <I><B>
 The ZipArchive library				<BR>
 </B>
-Copyright &copy; 2000 - 2002 Tadeusz Dracz<BR>
+Copyright &copy; 2000 - 2003 Tadeusz Dracz<BR>
 </I>
 
-\b Version: 2.2 				<BR>
-\b Date:    10-January-2002
+\b Version: 2.3.4 				<BR>
+\b Date:    26-June-2003
 
 
-This library adds zip compression and decompression functionality to your program, allowing you to create and modify ZIP files in the compatible way with WinZip and PKZIP.
-It's easy and practical interface makes the library suitable for the beginners as well as for the advanced users. 
+This library adds zip compression and decompression functionality to your program, allowing you to create and modify ZIP files in the compatible way with WinZip, PKZIP and other popular archivers.
+Its easy and practical interface makes the library suitable for the beginners as well as for the advanced users. 
+
+See <B> \ref pageHist "what's new" </b> in this version.<BR>
+To be notified about the future library updates, sign up for the \ref pageSubsc.
 
 
 <B>\ref pageSyst "Platforms supported:" </B>
-- Windows 9x\Me\NT\2000\XP (MFC and STL) - \ref sectVisual "Microsoft Visual C++ 6.0", \ref sectBorl "Borland C++"
+- Windows 9x\\Me\\NT\\2000\\XP (MFC and STL) <BR> \ref sectVisual "Microsoft Visual C++ 6.0" (<B>.NET compatible </B>), \ref sectBorl "Borland C++"
+
 - \ref sectLinux "Linux (STL)"
 
 \author Tadeusz Dracz		<BR>
 E-Mail: \htmlonly <a href="mailto:tdracz@artpol-software.com">tdracz@artpol-software.com</a> \endhtmlonly<BR>
 Web Site: \htmlonly <A HREF="http://www.artpol-software.com" target="_blank">http://www.artpol-software.com</A> \endhtmlonly
 
-This library uses \htmlonly <A HREF="http://www.freesoftware.com/pub/infozip/zlib/" target="_blank">the zlib library </A> \endhtmlonly by Jean-loup Gailly and Mark Adler to perform inflate and deflate operations.
+This library uses \htmlonly <A HREF="http://www.gzip.org/zlib/" target="_blank">the zlib library </A> \endhtmlonly by Jean-loup Gailly and Mark Adler to perform inflate and deflate operations.
 
 \section sectFeat Features Summary:
 - work in a compatible way with PKZIP and WinZip (apart from \ref TDSpan "TD disk spanning mode" which is specific to this library)
 - create, modify, extract and test zip archives
 - create and extract multi-disk archives (on non-removable disks as well)
+- add file to the archive from another archive without decompressing the file (copy compressed data) (see CZipArchive::GetFromArchive)
+- highly optimized deleting multiple files from the archive
+- optimized replacing and renaming files in the archive
+- compression from and decompression to memory, create the whole archive in memory, extract the archive from memory (see \ref sectMemory)
 - password encryption and decryption supported
 - possibility to create or extract self-extracting archives
-- compression from and decompression to memory, create the whole archive in memory, extract the archive from memory (see \ref sectMemory)
 - smart compression, if enabled, prevents the file in the archive to be larger after compression (see CZipArchive::Smartness)
 - safe compression with CZipArchive::Flush function
 - using functional objects as callback
@@ -51,6 +58,7 @@ This library uses \htmlonly <A HREF="http://www.freesoftware.com/pub/infozip/zli
 - UNC and Windows Unicode paths recognized 
 - wide characters supported
 - support for the Java <sup><small>TM</small></sup> Archive (jar) File Format (see CZipArchive::SetIgnoreCRC)
+- can be used as a static library or DLL (necessary VC++ projects included)
 - possibility to integrate help system with MSDN (see \ref sectHelp)
 - easy interface
 - easy transfer to other system platforms
@@ -58,97 +66,52 @@ This library uses \htmlonly <A HREF="http://www.freesoftware.com/pub/infozip/zli
 - well documented
 - full source code provided
 - sample applications provided (for the STL version located in \e stl/zippie,
-the MFC version is available separately)
+the MFC version (multithreaded) is available separately)
 
-Suggestions and bug reports are welcome. Drop me a note if you wish to share any.
+No software product is entirely bugless and neither is this library. If you find a bug (or suspect one), please <a href="mailto:tdracz@artpol-software.com?Subject=bug report">mail me</a>. The bugs are usually corrected within few days. Many thanks to the people that already tracked them down and submitted.
 
-\section secQl Quick Links
+\section secQl The Introduction
 
-\par 
-\ref pageGen
-\par
-\ref pageSyst
-\par
-\ref pageFaq
-\par
-\ref pageHist 
-\par
-\ref pageLic 
-\par
-\ref pageSubsc
+All you need to know about the licensing: \ref pageLic .
+
+It's a good start to read these pages first (prior to reading the raw documentation):
+- \ref pageSyst
+- \ref pageGen
+
+Have you got a question? Maybe it's one of the \ref pageFaq "frequently asked questions".
+
+\ref pageHist not only shows how the development of the library went so far, but also you may find here an 
+interesting library feature without digging through the documentation.
+
+If you wish to be notified about the future library updates, sign up for the \ref pageSubsc .
+
 
 
  */
 
 /**
- 
+	
 	\page pageSyst Compilation & Integration
 
-	\subsection stlNotes STL version notes
-	- <B>[Windows only]</B> If your locale is different from English and you wish to use non-English 
-	characters in zip files, you need to set your locale with function
-	\e std::locale::global(std::locale("")) to set it to be the same as your 
-	system locale or e.g. \e std::locale::global(std::locale("French"))
-	to set it to the specified value (do not use \e _T() macro here when using 
-	Unicode); \e setlocale() function is not sufficient in this case.
-	- There is a sample application that compiles under Windows (MSVC) and Linux (see below 
-	to find out \ref stlLinuxTest "how to compile it under Linux"). This sample application demonstrates most of the 
-	ZipArchive library features and is located in \e stl/zippie.
+	\par 
+	- \ref secCompil
+		- \ref winMFC
+		- \ref winSTL
+		- \ref LnxSTL	
+	- \ref sectVisual
+		- \ref subsM1
+		- \ref subsM2
+		- \ref subsDLL
+	- \ref sectBorl
+		- \ref subExample
+	- \ref sectLinux
+		- \ref subsLnxNot
+		- \ref subsLnxCom
+	- \ref sectNotes
+		- \ref stlNotes
+		- \ref subDLLnotes
+		- \ref MFCsample
 
-	\subsection MFCsample MFC sample application (ZipArc) notes
-	MFC sample application using ZipArchive library is available separately. Main features:
-		- MDI application
-		- multithreaded - you can work with many zip files at one time
-		- shell integration (remembers the last application used to open zip files and can restore it correctly)
-		- drag & drop support
-		- detailed error reports
-		- you can open and modify SFX archives
-		- it demonstrates the use of the following functions (most of them are placed in ZipArcDoc.cpp) :
-		CZipArchive::AddNewFile,
-		CZipArchive::Close,
-		CZipArchive::CloseFile,
-		CZipArchive::CloseNewFile,
-		CZipArchive::DeleteFiles,
-		CZipArchive::EnableFindFast,
-		CZipArchive::ExtractFile,
-		CZipArchive::FindFile,
-		CZipArchive::FindMatches,
-		CZipArchive::Flush,
-		CZipArchive::GetArchivePath, 
-		CZipArchive::GetCentralDirInfo,
-		CZipArchive::GetCentralDirSize,
-		CZipArchive::GetCurrentDisk,
-		CZipArchive::GetFileInfo,
-		CZipArchive::GetFindFastIndex,
-		CZipArchive::GetGlobalComment,
-		CZipArchive::GetCount,
-		CZipArchive::GetPassword,
-		CZipArchive::GetSpanMode,
-		CZipArchive::IsClosed,
-		CZipArchive::IsReadOnly,
-		CZipArchive::Open,
-		CZipArchive::PredictExtractedFileName,
-		CZipArchive::SetAdvanced,
-		CZipArchive::SetCallback,
-		CZipArchive::SetFileComment,
-		CZipArchive::SetGlobalComment,
-		CZipArchive::SetIgnoreCRC,
-		CZipArchive::SetPassword,
-		CZipArchive::SetRootPath,
-		CZipArchive::SetSpanCallback,
-		CZipArchive::SetTempPath,
-		CZipArchive::TestFile, <BR>
-		CZipFileHeader::IsEncrypted,
-		CZipFileHeader::IsDirectory,
-		CZipFileHeader::GetTime,
-		CZipFileHeader::GetSystemCompatibility,
-		CZipFileHeader::GetSystemAttr,
-		CZipFileHeader::GetSize,
-		CZipFileHeader::GetFileName,
-		CZipFileHeader::GetEffComprSize,
-		CZipFileHeader::GetCompressionRatio,
-		CZipFileHeader::GetComment,
-		CZipFileHeader::CompressionEfficient,
 
 	\section secCompil Compiling for different implementations and platforms
 
@@ -160,15 +123,15 @@ Suggestions and bug reports are welcome. Drop me a note if you wish to share any
 
 	
 	\subsection winMFC Windows MFC
-		\e \Windows and \e \mfc <BR>
+		\e \\Windows and \e \\mfc <BR>
 		You can just execute <EM> _copy from Win-MFC.bat </EM> batch file.
 
 	\subsection winSTL Windows STL
-		\e \Windows and \e \stl <BR>
+		\e \\Windows and \e \\stl <BR>
 		You can just execute <EM> _copy from Win-STL.bat </EM> batch file.
 
 	\subsection LnxSTL Linux (STL version)
-		\e \Linux and \e \stl <BR>
+		\e \\Linux and \e \\stl <BR>
 		You can just execute <EM> _copy_from_Linux.sh </EM> script file
 		(don't forget to set executable rights before e.g. with the command:
 		<EM> chmod +x _copy_from_Linux.sh </EM>).
@@ -185,10 +148,11 @@ Suggestions and bug reports are welcome. Drop me a note if you wish to share any
 
 	\subsection subsM1 Method 1
 
-	Add \e ZipArchive.lib with the proper path e.g. <EM> ..\ZipArchive\debug\ZipArchive.lib </EM> to <EM> Project Settings->Link->Input->Object/library modules </EM> 
+	Add \e ZipArchive.lib with the proper path e.g. <EM> ..\\ZipArchive\\debug\\ZipArchive.lib </EM> to <EM> Project Settings->Link->Input->Object/library modules </EM> 
 	and add ZipArchive library directory to the preprocessor searches (<EM> Project Settings -> C++ -> Preprocessor -> Additional include directories </EM>).
 
 	\subsection subsM2 Method 2 (simpler)
+
 	Insert Zip project into workspace and set project dependencies: your project dependent on ZipArchive project
 	(<EM> Project -> Dependencies </EM> and then on the dialog that will appear
 	you select your project name from the combo box and check the box next to ZipArchive project name).
@@ -198,17 +162,21 @@ Suggestions and bug reports are welcome. Drop me a note if you wish to share any
 	in your application project and make sure that your project uses MFC library and run-time library in same way
 	(<em> Project->Settings->General->Microsoft Fundation Classes </em> and <EM> Project->Settings-> c/c++ ->Code Generation->Use run-time library </EM>).
 
-	In case you experience linking problems, please see the \ref pageFaq.
+	\subsection subsDLL DLL version
+
+	When you're using the DLL version of the ZipArchive library, you need to define in your program <B>ZIP_HAS_DLL</B> (e.g. in <EM> Project Settings -> C++ -> Preprocessor -> Preprocessor definitions </EM>).
+	Apart from integrating the ZipArchive library with your program (use one of the methods above), you also need to take into account <EM>zlib.lib</EM> file (use <EM>zlib/zlib.dsw </EM> to create it and add to preprocessor includes) or <EM>zlib/zlib.dsw</EM> project (insert into workspace and set ZipArchive project dependent on it)).
+	Files <EM>zlib.dll</EM> and <EM>ZipArchive.dll</EM> must be available for the program when running (e.g. in the program's directory).
+
+	
+
+	You can read about linking problems in the \ref pageFaq.
 
 	\section sectBorl Borland C++ compatibility
 	The library contains a project files for Borland C++ 5.0 (
 	They were created using Visual C++ Project Conversion Utility (VCTOBPR.EXE).
-	You can start it with the command <I> Tools->Visual C++ Project Conversion Utility </I>.
-	- The project \e ZipArchive.bpr was converted from a Release configuration
-	of the MFC version of the library (\e ZipArchive.dsp).
-	- The project \e ZipArchive_no_MFC.bpr was converted from a Release configuration
-	of the non MFC version of the library (\e ZipArchive_no_MFC.dsp).
-
+	You can start this tool with the command <I> Tools->Visual C++ Project Conversion Utility </I>.
+	
 	\note Be sure to create \e Release subfolder before compiling one of these projects,
 	 otherwise you'll get a write error.
 
@@ -216,7 +184,7 @@ Suggestions and bug reports are welcome. Drop me a note if you wish to share any
 	to the root directory appropriate files for \ref winMFC "MFC" or \ref winSTL "STL" versions. 
 	You may use the Borland project conversion utility.
 
-	<EM><B>The library contains also \e makefiles which should work with every version of Borland.</B></EM>
+	<EM><B>The library contains also \e makefiles which should work with other versions of Borland.</B></EM>
 
 	
 	\subsection subExample Compiling the sample application
@@ -279,6 +247,82 @@ Suggestions and bug reports are welcome. Drop me a note if you wish to share any
 	you need to switch the comments (comment one line and uncomment another) in the \e Makefile in the section \e "zippie:".
 	- If you wish to uninstall the library type <EM>make uninstall</EM>
 
+	\section sectNotes	Notes
+
+	\subsection stlNotes STL version
+	- <B>[Windows only]</B> If your locale is different from English and you wish to use non-English 
+	characters in zip files, you need to set your locale with function
+	\e std::locale::global(std::locale("")) to set it to be the same as your 
+	system locale or e.g. \e std::locale::global(std::locale("French"))
+	to set it to the specified value (do not use \e _T() macro here when using 
+	Unicode); \e setlocale() function is not sufficient in this case.
+	- There is a sample application that compiles under Windows (MSVC) and Linux (see below 
+	to find out \ref stlLinuxTest "how to compile it under Linux"). This sample application demonstrates most of the 
+	ZipArchive library features and is located in \e stl/zippie.
+
+	\subsection subDLLnotes Compiling as DLL
+	<B>[Windows only]</B>
+	- The project that compiles the DLL version of the ZipArchive library needs to have defined <B>ZIP_HAS_DLL, ZIP_BUILD_DLL</B> and also <B>ZLIB_DLL</B>.
+	- The project that uses the ZipArchive library as the DLL version need to have defined <B>ZIP_HAS_DLL</B>
+
+	\subsection MFCsample MFC sample application (ZipArc)
+	MFC sample application using ZipArchive library is available separately. Main features:
+		- MDI application
+		- multithreaded - you can work with many zip files at one time
+		- shell integration (remembers the last application used to open zip files and can restore it correctly)
+		- drag & drop support
+		- detailed error reports
+		- you can open and modify SFX archives
+		- it demonstrates the use of the following functions (most of them are placed in ZipArcDoc.cpp) :
+		CZipArchive::AddNewFile,
+		CZipArchive::Close,
+		CZipArchive::CloseFile,
+		CZipArchive::CloseNewFile,
+		CZipArchive::DeleteFiles,
+		CZipArchive::EnableFindFast,
+		CZipArchive::ExtractFile,
+		CZipArchive::FindFile,
+		CZipArchive::FindMatches,
+		CZipArchive::Flush,
+		CZipArchive::GetArchivePath, 
+		CZipArchive::GetCentralDirInfo,
+		CZipArchive::GetCentralDirSize,
+		CZipArchive::GetCurrentDisk,
+		CZipArchive::GetFileInfo,
+		CZipArchive::GetFindFastIndex,
+		CZipArchive::GetGlobalComment,
+		CZipArchive::GetCount,
+		CZipArchive::GetPassword,
+		CZipArchive::GetSpanMode,
+		CZipArchive::IsClosed,
+		CZipArchive::IsReadOnly,
+		CZipArchive::Open,
+		CZipArchive::RenameFile,
+		CZipArchive::PredictExtractedFileName,
+		CZipArchive::SetAdvanced,
+		CZipArchive::SetCallback,
+		CZipArchive::SetFileComment,
+		CZipArchive::SetGlobalComment,
+		CZipArchive::SetIgnoreCRC,
+		CZipArchive::SetPassword,
+		CZipArchive::SetRootPath,
+		CZipArchive::SetSpanCallback,
+		CZipArchive::SetTempPath,
+		CZipArchive::TestFile,
+		CZipArchive::WillBeDuplicated, <BR>
+		CZipFileHeader::IsEncrypted,
+		CZipFileHeader::IsDirectory,
+		CZipFileHeader::GetTime,
+		CZipFileHeader::GetSystemCompatibility,
+		CZipFileHeader::GetSystemAttr,
+		CZipFileHeader::GetSize,
+		CZipFileHeader::GetFileName,
+		CZipFileHeader::GetEffComprSize,
+		CZipFileHeader::GetCompressionRatio,
+		CZipFileHeader::GetComment,
+		CZipFileHeader::CompressionEfficient,
+
+	
 */
 
 
@@ -315,15 +359,17 @@ for the archive to be intact.
 
 \section sectSpan Multi-disk archives
 
-This library supports two kinds of multi-disk archives:
+This library can create multi-disk archives in two ways (modes):
 
-- Disk spanning that is performed in the compatible way with all other main zip programs. It means that:
+\anchor PKSpan
+- <B>PKSpan</B> mode. Disk spanning is performed in the compatible way with all other main zip programs. It means that:
 	- the archive can only be created on a removable device, 
 	- the size of the volume is auto-detected
 	- the label is written to the disk
 	- you need to define a callback functor for changing disks and set it with CZipArchive::SetSpanCallback function.
 
-- Disk spanning that is performed in the internal mode, called in the sources TDSpan mode and it means that:
+\anchor TDSpan
+- <B>TDSpan</B> mode. Disk spanning is performed in the internal mode. It means that:
 	- the archive can be created on non-removable device as well
 	- you need to define the single volume size
 	- there is no need to set callback functor in this mode.
@@ -334,7 +380,7 @@ These two disk spanning modes create volumes with compatible internal structure.
 
 There is a limited functions set available while working with multi-disk archives. Only adding is allowed when creating the archive and only extracting and testing after opening an existing one. Deleting files from these archives is not allowed at all.
 
-Class CZipArchive uses write buffer to make write operations as fast as possible. You can change its size with CZipArchive::SetAdvanced function. While creating a multi-disk archive, set the size of the buffer to the maximum size of the volume for the best performance.
+Class CZipArchive uses write buffer to make write operations as fast as possible. You can change its size with CZipArchive::SetAdvanced function (first argument). While creating a multi-disk archive, set the size of the buffer to the maximum size of the volume for the best performance.
 
 The popular archivers such as PKZIP and WinZip cannot operate on archive in TDSpan mode. You need to convert them to PKZIP span mode (\ref convertZips "have a look above"). Remember about copying the files to the removable media (it does not comply with Winzip, which can extract a multi-disk archive from any media but only from the fixed location on the drive).
 
@@ -374,8 +420,8 @@ int nCmdShow)
 	//
 	// class CBrowseForFolder is included in the sample application project
 	// remember about including the header!
-	zip.Open(szBuff, CZipArchive::openReadOnly); 
-	// openReadOnly mode is necessary for self extract archives
+	zip.Open(szBuff, CZipArchive::zipOpenReadOnly); 
+	// zipOpenReadOnly mode is necessary for self extract archives
 	for (WORD i = 0; i < zip.GetCount(); i++)
 		zip.ExtractFile(i, szDest);
 
@@ -393,8 +439,10 @@ After compiling it and appending a zip archive to it (e.g. with the DOS command:
 
 \section sectExc Exceptions
 
-\subsection excmfc MFX version
-The library throws the following exceptions inherited from \c CException: \c CMemoryException*, \c CFileExeption* and \c CZipException*. The first two don't need an explanation. The last is thrown when some internal error occurs. Handling them may be done in the following way:
+The ZipArchive library mostly uses exceptions to notify about the error occured. The library throws CZipException to notify about errors specific to the internal zip file processing. In the MFC version CZipException class is derived from CException whereas in the STL version it is derived from std::exception.
+
+\subsection excmfc MFC version
+The library throws the following exceptions inherited from \c CException: \c CMemoryException*, \c CFileExeption* and \c CZipException* <VAR><B>(be sure to delete the object when you done with it)</B></VAR>. Handling them may be done in the following way:
 
 \code
 
@@ -570,7 +618,8 @@ be a lengthy process.
 \page pageSubsc ZipArchive Newsletter
 
 To be notified about ZipArchive library updates, enter your
-e-mail into the input field below and press \e Subscribe! button.
+e-mail into the input field below and press \e Subscribe! button. 
+You should receive a confirmation message then. 
 
 \htmlonly
 

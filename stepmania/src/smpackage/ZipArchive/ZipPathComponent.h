@@ -4,7 +4,7 @@
 // $Date$ $Author$
 ////////////////////////////////////////////////////////////////////////////////
 // This source file is part of the ZipArchive library source distribution and
-// is Copyright 2000-2002 by Tadeusz Dracz (http://www.artpol-software.com/)
+// is Copyright 2000-2003 by Tadeusz Dracz (http://www.artpol-software.com/)
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -26,11 +26,12 @@
 #pragma once
 #endif // _MSC_VER > 1000
 #include "ZipString.h"
+#include "ZipExport.h"
 
 /**
 	A class splitting a file path into components.
 */
-class CZipPathComponent  
+class ZIP_API CZipPathComponent  
 {
 public:
 	CZipPathComponent(){}
@@ -39,7 +40,6 @@ public:
 	static const TCHAR m_cSeparator; ///< A system - specific default path separator. Defined in ZipPlatform.cpp.
 /**
 	Append a path separator to \e szPath if it is not already there.
-	\param	szPath
 */
 	static void AppendSeparator(CZipString& szPath)
 	{
@@ -49,7 +49,6 @@ public:
 
 	/**
 		Remove separators from the end of \e szPath
-		\param	szPath
 	*/
 	static void RemoveSeparators(CZipString& szPath)
 	{
@@ -59,7 +58,7 @@ public:
 
 	/**
 		Remove separators from the beginning of \e szPath
-		\param	szPath
+
 	*/
 
 	static void RemoveSeparatorsLeft(CZipString& szPath)
@@ -72,7 +71,6 @@ public:
 	
 	  \return \c true if \e c is a slash or a backslash
        
-       \param c
        
      */
 	static bool IsSeparator(TCHAR c)

@@ -4,7 +4,7 @@
 // $Date$ $Author$
 ////////////////////////////////////////////////////////////////////////////////
 // This source file is part of the ZipArchive library source distribution and
-// is Copyright 2000-2002 by Tadeusz Dracz (http://www.artpol-software.com/)
+// is Copyright 2000-2003 by Tadeusz Dracz (http://www.artpol-software.com/)
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -20,8 +20,10 @@
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
+#include "ZipExport.h"
 #include "ZipString.h"
-class CZipAbstractFile
+
+class ZIP_API CZipAbstractFile
 {
 public:
 
@@ -33,16 +35,16 @@ public:
 	virtual bool Open(LPCTSTR , UINT , bool ){return true;}
 	virtual void Close() = 0;
 	virtual void Flush() = 0;
-	virtual DWORD GetPosition() const = 0;
-	virtual void SeekToBegin(){Seek(0, begin);}
-	virtual void SeekToEnd(){Seek(0, end);}
-	virtual CZipString GetFilePath() const = 0;
-	virtual void SetLength(long nNewLen) = 0;
+	virtual ZIP_ULONGLONG GetPosition() const = 0;	
+	virtual ZIP_ULONGLONG Seek(ZIP_LONGLONG lOff, int nFrom) = 0;
+	virtual ZIP_ULONGLONG GetLength() const = 0;
+	virtual void SetLength(ZIP_ULONGLONG nNewLen) = 0;	
+	virtual ZIP_ULONGLONG SeekToBegin(){return Seek(0, begin);}
+	virtual ZIP_ULONGLONG SeekToEnd(){return Seek(0, end);}
+	virtual CZipString GetFilePath() const = 0;	
 	virtual UINT Read(void *lpBuf, UINT nCount) = 0;
-	virtual void Write(const void* lpBuf, UINT nCount) = 0;
-	virtual long Seek(long lOff, int nFrom) = 0;
-	virtual bool IsClosed() const = 0;
-	virtual DWORD	GetLength() const = 0;
+	virtual void Write(const void* lpBuf, UINT nCount) = 0;	
+	virtual bool IsClosed() const = 0;	
 	virtual ~CZipAbstractFile(){};
 
 };

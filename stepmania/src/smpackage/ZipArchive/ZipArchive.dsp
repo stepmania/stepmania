@@ -28,7 +28,7 @@ CFG=ZipArchive - Win32 Static Debug
 
 # Begin Project
 # PROP AllowPerConfigDependencies 0
-# PROP Scc_ProjName "ZipArchive"
+# PROP Scc_ProjName ""$/ZipArchive", LDAAAAAA"
 # PROP Scc_LocalPath "."
 CPP=cl.exe
 RSC=rc.exe
@@ -46,7 +46,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_AFXDLL" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /D "NDEBUG" /D "_MBCS" /D "WIN32" /D "_WINDOWS" /D "ZLIB_DLL" /D "ZIP_ARCHIVE_MFC_PROJ" /D "_AFXDLL" /YX"stdafx.h" /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /D "NDEBUG" /D "_MBCS" /D "ZLIB_DLL" /D "_AFXDLL" /D "WIN32" /D "_WINDOWS" /D "ZIP_ARCHIVE_MFC_PROJ" /D "PKZIP_BUG_WORKAROUND" /YX"stdafx.h" /FD /c
 # ADD BASE RSC /l 0x415 /d "NDEBUG" /d "_AFXDLL"
 # ADD RSC /l 0x409 /d "NDEBUG" /d "_AFXDLL"
 BSC32=bscmake.exe
@@ -69,7 +69,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /D "_DEBUG" /D "_AFXDLL" /D "_MBCS" /D "WIN32" /D "_WINDOWS" /D "ZLIB_DLL" /D "ZIP_ARCHIVE_MFC_PROJ" /Fr /YX"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /MDd /W4 /Gm /GX /ZI /Od /D "_DEBUG" /D "_AFXDLL" /D "_MBCS" /D "ZLIB_DLL" /D "WIN32" /D "_WINDOWS" /D "ZIP_ARCHIVE_MFC_PROJ" /D "PKZIP_BUG_WORKAROUND" /Fr /YX"stdafx.h" /FD /GZ /c
 # ADD BASE RSC /l 0x415 /d "_DEBUG" /d "_AFXDLL"
 # ADD RSC /l 0x409 /d "_DEBUG" /d "_AFXDLL"
 BSC32=bscmake.exe
@@ -92,7 +92,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Static_Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "ZLIB_DLL" /D "_AFXDLL" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MT /W3 /GX /O2 /D "NDEBUG" /D "_MBCS" /D "WIN32" /D "_WINDOWS" /D "ZLIB_DLL" /D "ZIP_ARCHIVE_MFC_PROJ" /YX"stdafx.h" /FD /c
+# ADD CPP /nologo /MT /W3 /GX /O2 /D "NDEBUG" /D "_MBCS" /D "WIN32" /D "_WINDOWS" /D "ZIP_ARCHIVE_MFC_PROJ" /D "PKZIP_BUG_WORKAROUND" /YX"stdafx.h" /FD /c
 # ADD BASE RSC /l 0x415 /d "NDEBUG" /d "_AFXDLL"
 # ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -115,7 +115,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Unicode_Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MDd /W4 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /D "ZLIB_DLL" /Fr /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /MDd /W4 /Gm /GX /ZI /Od /D "_DEBUG" /D "_AFXDLL" /D "_UNICODE" /D "WIN32" /D "_WINDOWS" /D "ZLIB_DLL" /D "ZIP_ARCHIVE_MFC_PROJ" /Fr /YX"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /MDd /W4 /Gm /GX /ZI /Od /D "_DEBUG" /D "_AFXDLL" /D "_UNICODE" /D "ZLIB_DLL" /D "WIN32" /D "_WINDOWS" /D "ZIP_ARCHIVE_MFC_PROJ" /D "PKZIP_BUG_WORKAROUND" /Fr /YX"stdafx.h" /FD /GZ /c
 # ADD BASE RSC /l 0x415 /d "_DEBUG" /d "_AFXDLL"
 # ADD RSC /l 0x409 /d "_DEBUG" /d "_AFXDLL"
 BSC32=bscmake.exe
@@ -138,7 +138,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Unicode_Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W4 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "ZLIB_DLL" /D "_AFXDLL" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MD /W4 /GX /O2 /D "NDEBUG" /D "_AFXDLL" /D "_UNICODE" /D "WIN32" /D "_WINDOWS" /D "ZLIB_DLL" /D "ZIP_ARCHIVE_MFC_PROJ" /YX"stdafx.h" /FD /c
+# ADD CPP /nologo /MD /W4 /GX /O2 /D "NDEBUG" /D "_AFXDLL" /D "_UNICODE" /D "ZLIB_DLL" /D "WIN32" /D "_WINDOWS" /D "ZIP_ARCHIVE_MFC_PROJ" /D "PKZIP_BUG_WORKAROUND" /YX"stdafx.h" /FD /c
 # ADD BASE RSC /l 0x415 /d "NDEBUG" /d "_AFXDLL"
 # ADD RSC /l 0x409 /d "NDEBUG" /d "_AFXDLL"
 BSC32=bscmake.exe
@@ -161,7 +161,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Unicode_Static_Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "ZLIB_DLL" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MT /W3 /GX /O2 /D "NDEBUG" /D "_UNICODE" /D "WIN32" /D "_WINDOWS" /D "ZLIB_DLL" /D "ZIP_ARCHIVE_MFC_PROJ" /YX"stdafx.h" /FD /c
+# ADD CPP /nologo /MT /W3 /GX /O2 /D "NDEBUG" /D "_UNICODE" /D "ZLIB_DLL" /D "WIN32" /D "_WINDOWS" /D "ZIP_ARCHIVE_MFC_PROJ" /D "PKZIP_BUG_WORKAROUND" /YX"stdafx.h" /FD /c
 # ADD BASE RSC /l 0x415 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -184,7 +184,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Static_Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MDd /W4 /Gm /GX /ZI /Od /D "_DEBUG" /D "_AFXDLL" /D "_MBCS" /D "WIN32" /D "_WINDOWS" /D "ZLIB_DLL" /D "ZIP_ARCHIVE_MFC_PROJ" /Fr /YX"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /MTd /W4 /Gm /GX /ZI /Od /D "_DEBUG" /D "_MBCS" /D "WIN32" /D "_WINDOWS" /D "ZLIB_DLL" /D "ZIP_ARCHIVE_MFC_PROJ" /D "NDEBUG" /Fr /YX"stdafx.h" /FD /GZ /c
+# ADD CPP /nologo /MTd /W4 /Gm /GX /ZI /Od /D "_DEBUG" /D "_MBCS" /D "WIN32" /D "_WINDOWS" /D "ZIP_ARCHIVE_MFC_PROJ" /D "PKZIP_BUG_WORKAROUND" /Fr /YX"stdafx.h" /FD /GZ /c
 # ADD BASE RSC /l 0x415 /d "_DEBUG" /d "_AFXDLL"
 # ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -307,10 +307,6 @@ SOURCE=.\ZipFileHeader.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\ZipInternalInfo.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\ZipMemFile.cpp
 # End Source File
 # Begin Source File
@@ -423,6 +419,10 @@ SOURCE=.\ZipException.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ZipExport.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ZipFile.h
 # End Source File
 # Begin Source File
@@ -432,10 +432,6 @@ SOURCE=.\ZipFileHeader.h
 # Begin Source File
 
 SOURCE=.\ZipFileMapping.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ZipInternalInfo.h
 # End Source File
 # Begin Source File
 

@@ -4,7 +4,7 @@
 // $Date$ $Author$
 ////////////////////////////////////////////////////////////////////////////////
 // This source file is part of the ZipArchive library source distribution and
-// is Copyright 2000-2002 by Tadeusz Dracz (http://www.artpol-software.com/)
+// is Copyright 2000-2003 by Tadeusz Dracz (http://www.artpol-software.com/)
 // 
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -22,10 +22,18 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#ifdef __BORLANDC__
-#define ZIPINLINE
-#else
+#if _MSC_VER < 1300 && !defined __BORLANDC__
 #define ZIPINLINE inline
+#else
+#define ZIPINLINE
+#endif
+
+#if _MSC_VER >= 1300
+#define ZIP_ULONGLONG ULONGLONG
+#define ZIP_LONGLONG LONGLONG
+#else
+#define ZIP_ULONGLONG DWORD
+#define ZIP_LONGLONG LONG
 #endif
 
 #define ZIP_ARCHIVE_MFC

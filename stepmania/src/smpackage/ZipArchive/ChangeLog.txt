@@ -1,16 +1,83 @@
 /** \page pageHist Revision history
 
-<B> ver 2.2b <SMALL>(01-2002)</SMALL></B>
+<B> ver 2.3.4 <SMALL>(06-2003)</SMALL></B>
+
+<B>  Bug fixed: </B>
+
+	- problems with extracting some archives (very rare) (thanks to Ben Jos Walbeehm for the fix)
+	- problems with extracting some archives created under Linux (thanks to Jürgen Marquardt for reporting)
+	- small compilation errors under MSVC++ .NET (thanks to Darren Whobrey for the fixes)
+	- setting password in zippie (thanks to Amnon David for the fix)
+
+<B>  Changes: </B>
+	
+	- CZipArchive::TestFile throws an exception now if CZipArchive::CloseFile returned -1. It makes it work as described in the documentation that an exception is thrown when the file is corrupted (thanks to Silvio Scarpati for pointing this out).
+	- it is now possible to add an already opened file to an archive (thanks to Kristjan Bjarnason for the change)
+
+<B> ver 2.3.3 <SMALL>(01-2003)</SMALL></B>
+
+<B>  Features added: </B>
+	
+	- CZipArchive::m_bRemoveDriveLetter option added
 
 <B>  Bugs fixed: </B>
+
+	- not extracting files from the last volume when opening an existing archive created in TDSpan mode, where the last volume filename has other extension than ".zip"
+	- added PKZIP_BUG_WORKAROUND definition to the zlib.h file distributed with ZipArchive library as well as to ZipArchive project files (in case the zlib library is replaced with a new version). 
+	It deals with pkzip bug existing in some archives (thanks to Ben Jos Walbeehm for reporting).
+
+<B> ver 2.3.2 <SMALL>(08-2002)</SMALL></B>
+
+<B>  Bug fixed: </B>
+	
+	- problem with creating disk spanning archives in the STL version of the library (thanks to Luiz Rafael Culik for reporting)
+
+<B> ver 2.3.1 <SMALL>(05-2002)</SMALL></B>
+
+<B>  Bug fixed: </B>
+	
+	- using CZipMemFile::CZipMemFile(BYTE* , UINT , long ) constructor could cause memory errors (thanks to Laurent Doré)
+
+<B> ver 2.3 <SMALL>(04-2002) (includes changes and fixes from 2.2a to 2.2c)</SMALL></B>
+
+<B> Features added: </B>
+
+	- Visual Studio .NET compatibility	
+	- methods CZipArchive::GetFromArchive added, which allow copying files from another archive without decompressing them
+	- many times requested replacing of files in the archive feature; it works with methods CZipArchive::GetFromArchive and a new 
+		CZipArchive::AddNewFile(CZipAddNewFileInfo& ) which was introduced due to increasing parameters count
+	- added method CZipArchive::RenameFile which renames a file in the archive maintaining its physical position inside the archive
+	- projects and necessary changes for compiling ZipArchive as a DLL version (courtesy of Jonathan Reis) - see \ref subsDLL and \ref subDLLnotes
+	<BR>( they are not embedded into existing ones, but made separated, since the DLL version needs separated project for zlib.dll and for the static version,
+	zlib library is already included in the projects to minimize linking problems with applications)
+	- added CZipArchive::WillBeDuplicated which lets you check quickly if the given filename would duplicate an existing one in the archive 
+	- CZipArchive::GetCount has now an additional parameter and can return the number of files in the archive not counting the directories
+	- CZipArchive::Close has been given also an additional parameter (\e bUpdateTimeStamp) and can set the modification time of the zip archive to the modification time of the newest file inside the archive	
+	- method CZipArchive::GetIndexes added
+	- ZipArc application updated to support renaming, replacing (as well as updating files in the archive) and getting compressed files from another archive
+
+<B>  Changes: </B>
+	- zlib library updated to version 1.1.4 that fixes the security vulnerability in version 1.1.3 
+	as described in 
+	\htmlonly
+	<A HREF="http://www.zlib.org/advisory-2002-03-11.txt" target="_blank">http://www.zlib.org/advisory-2002-03-11.txt</A> 
+	\endhtmlonly
+	- if the file inside the archive has the wrong date/time stamp set, then the extracted file is given the current time instead of reporting an error
+	- a little change in CZipArchive::PredictFileNameInZip : parameter \e bAnsiOem changed to \e bExactly (apart from the name, the meaning has also been changed)
+	- removed parameter bFileNameOnly from CZipArchive::DeleteFiles(const CZipStringArray &);
+
+<B>  Bugs fixed: </B>
+	- eliminated possible errors when using CZipArchive::zipsmCheckForEff with disk-spanning mode
+	- reading some files created with other archivers failed occasionally in CZipFileHeader::ReadLocal (thanks to Christian von Seydlitz)
 	- while a file recompression (smartness level included CZipArchive::zipsmCheckForEff) if the
 	AutoFlush feature was enabled, there were redundant bytes added to the archive (thanks to Roman Scherzer)
-
-<B> ver 2.2a <SMALL>(11-2001)</SMALL></B>
-
-<B>  Bugs fixed: </B>
 	- aborting extraction of multi-disk archive caused errors (thanks to Sabina Terenzi)
+	- some GUI fixes in ZipArc
 
+<B>  Known issues: </B>
+	- under Windows XP, in TD disk spanning mode, when the central directory is not entirely 
+	written on the last volume (but divided between volumes), \e SHGetFileInfo hangs up (it is used i.e. by \e CFileDialog::DoModal) - Windows probably tries to analize 
+	zip structure, but fails becuase it is an additional feature of ZipArchive library to create multi volume archives on non-removable data storage
 
 <B> ver 2.2 <SMALL>(10-2001)</SMALL></B> <EM>Time for global changes</EM>
 
@@ -214,10 +281,9 @@
 		- Changed names for several classes.
 
 <B> ver 1.3.1 <SMALL>(11-2000)</SMALL></B>
- 		- Added support for password encryption and decryption.
-			The encryption used in PKZIP was generously supplied by Roger
-			Schlafly.  
+ 		
 		- Testing the archive made easier
+		- Added support for password encryption and decryption. The encryption used in PKZIP was generously supplied by Roger Schlafly.
 		- Unicode support added
 
 <B> ver 1.2.2 <SMALL>(08-2000)</SMALL></B>
@@ -235,7 +301,7 @@
 		- one class for zip and unzip functions
 		- fast adding, deleting and extracting files with a single function call
  
-<B> ver 1.1.2 <SMALL>(03-2001)</SMALL></B>
+<B> ver 1.1.2 <SMALL>(03-2000)</SMALL></B>
 		- international characters in filenames inside archive are now
 			converted in a compatible way with other archiving programs (they are stored
 		converted to OEM inside archive).

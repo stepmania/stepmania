@@ -4,7 +4,7 @@
 // $Date$ $Author$
 ////////////////////////////////////////////////////////////////////////////////
 // This source file is part of the ZipArchive library source distribution and
-// is Copyright 2000-2002 by Tadeusz Dracz (http://www.artpol-software.com/)
+// is Copyright 2000-2003 by Tadeusz Dracz (http://www.artpol-software.com/)
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -22,13 +22,13 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-void CZipMemFile::Grow(long nGrowTo)
+void CZipMemFile::Grow(size_t nGrowTo)
 {
 	if (m_nBufSize < (UINT)nGrowTo)
 	{
 		if (m_nGrowBy == 0)
 			CZipException::Throw(CZipException::memError);
-		long nNewSize = m_nBufSize;
+		size_t nNewSize = m_nBufSize;
 		while (nNewSize < nGrowTo)
 			nNewSize += m_nGrowBy;
 		BYTE* lpNew;
@@ -42,15 +42,15 @@ void CZipMemFile::Grow(long nGrowTo)
 		m_nBufSize = nNewSize;
 		m_lpBuf = lpNew;
 	}
-}
+} 
 
-void CZipMemFile::SetLength(long nNewLen)
+void CZipMemFile::SetLength(ZIP_ULONGLONG nNewLen)
 {
 	if (m_nBufSize < (UINT)nNewLen)
-		Grow(nNewLen);
+		Grow((size_t)nNewLen);
 	else
-		m_nPos = nNewLen;
-	m_nDataSize = nNewLen;
+		m_nPos = (size_t)nNewLen;
+	m_nDataSize = (size_t)nNewLen;
 }
 
 UINT CZipMemFile::Read(void *lpBuf, UINT nCount)
@@ -77,9 +77,9 @@ void CZipMemFile::Write(const void *lpBuf, UINT nCount)
 		m_nDataSize = m_nPos;
 }
 
-long CZipMemFile::Seek(long lOff, int nFrom)
+ZIP_ULONGLONG CZipMemFile::Seek(ZIP_LONGLONG lOff, int nFrom)
 {
-	long lNew = m_nPos;
+	ZIP_ULONGLONG lNew = m_nPos;
 
 	if (nFrom == CZipAbstractFile::begin)
 		lNew = lOff;
@@ -93,6 +93,6 @@ long CZipMemFile::Seek(long lOff, int nFrom)
 	if (lNew< 0)
 		CZipException::Throw(CZipException::memError);
 
-	m_nPos = lNew;
+	m_nPos = (size_t)lNew;
 	return lNew;
 }

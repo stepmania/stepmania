@@ -4,7 +4,7 @@
 // $Date$ $Author$
 ////////////////////////////////////////////////////////////////////////////////
 // This source file is part of the ZipArchive library source distribution and
-// is Copyright 2000-2002 by Tadeusz Dracz (http://www.artpol-software.com/)
+// is Copyright 2000-2003 by Tadeusz Dracz (http://www.artpol-software.com/)
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -165,7 +165,7 @@ bool ZipPlatform::SetFileModTime(LPCTSTR lpFileName, time_t ttime)
 {
 	struct _utimbuf ub;
 	ub.actime = time(NULL);
-	ub.modtime = ttime;
+	ub.modtime = ttime == -1 ? time(NULL) : ttime; // if wrong file time, set it to the current
 	return _tutime(lpFileName, &ub) == 0;
 }
 

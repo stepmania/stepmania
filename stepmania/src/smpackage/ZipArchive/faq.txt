@@ -21,7 +21,7 @@ Q: When do I need to purchase the commercial license?
 
 <A HREF="#q2">	
 Q: When I open a multi-disk archive (Pkzip mode) and the last disk is not in 
-	the drive, I receive the CZipException::cdirNotFound exception. How to detect 
+	the drive, I receive the %CZipException::cdirNotFound exception. How to detect 
 	whether the last disk is in the drive?
 </A>
 
@@ -44,7 +44,7 @@ Q: Why the library doesn't want to extract archives (mostly old)?
 </A>
 
 <A HREF="#q9">	
-Q: In CZipArchive::AddNewFile and CZipArchive::ExtractFile I want to use partial
+Q: In %CZipArchive::AddNewFile and %CZipArchive::ExtractFile I want to use partial
 path for the filename inside the archive.
 </A>
 
@@ -53,7 +53,7 @@ Q: I want to create an archive that will be readable under Unix/Linux.
 </A>
 
 <A HREF="#q11">	
-Q: How can I use UNC path with CZipArchive::ExtractFile function ?
+Q: How can I use UNC path with %CZipArchive::ExtractFile function ?
 </A>
 
 <A HREF="#q12">	
@@ -74,8 +74,8 @@ Q: I experience linking problems. What to do?
 
 A: 
 \par If you get mostly LNK2005 : 
- You need to make sure that
- the library and your program are both using single-threaded or both
+ If you changed the project configuration (e.g. from Release to Unicode Release), rebuild the projects.
+ If you are still getting link errors, make sure that the library and your program are both using single-threaded or both
  multithreaded (or multithreaded DLL) run-time library. The option <EM> Project->Settings-> c/c++ ->Code Generation->Use run-time library </EM> 
  should be set to the same value in the ZipArchive library and the program 
  project options. Make sure that you link appropriate configurations (Release against Release, Debug against Debug...)
@@ -83,7 +83,7 @@ A:
 \par If you get LNK1104 (e.g. cannot open file "mfc42u.lib")
  You're trying to compile the Unicode version but you haven't installed the necessary libraries.
 When installing Visual C++ Professional for example, you need to check the boxes "Static Libraries for Unicode" and
-"Shared Libraries for Unicode". They are in "VC++ MFC and Template libraries\MS Foundation Class Libraries".
+"Shared Libraries for Unicode". They are in "VC++ MFC and Template libraries\\MS Foundation Class Libraries".
 You don't need to reinstall the Visual Studio to add them.
 
 
@@ -160,15 +160,14 @@ The only methods supported by the zlib library are \e deflation which is the mos
 Q: In CZipArchive::AddNewFile and CZipArchive::ExtractFile I want to use partial
 path for the filename inside the archive. For example:<BR>
 When I compress some directory, like this:
-<em> c:\program files\example</em> (full directory path: <em>c:\program files\example\text\txt</em>)
- it comes with the whole path. I would like that the zip only get the <em>EXAMPLE\text\txt path</em>.
-
+<em> c:\\program files\\example</em> (full directory path: <em>c:\\program files\\example\\text\\txt</em>)
+ it comes with the whole path. I would like that the zip only get the <em>EXAMPLE\\text\\txt</em> path.
 </B>
 
 A: You can set \e bFullPath argument to \c false in these functions and set 
 the beginning part of the path that you commonly want to eliminate with 
 CZipArchive::SetRootPath function. In the example above you'd set it to 
-<em>c:\program files\ </em> (the path separator at the end is added automatically).
+<em>c:\\program files\\ </em> (the path separator at the end is added automatically).
 
 \anchor q10
 <B>
@@ -188,7 +187,9 @@ with the argument set to ZipCompatibility::zcUnix after creating the archive.
 Q: How can I use UNC path with CZipArchive::ExtractFile function ?
 </B>
 
+\verbatim
 A: You need to replace \\\\ at the beginning of the UNC path with \\\\?\UNC\ .
+\endverbatim
 
 \anchor q12
 <B>

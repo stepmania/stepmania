@@ -1,11 +1,13 @@
 /* zconf.h -- configuration of the zlib compression library
- * Copyright (C) 1995-1998 Jean-loup Gailly.
+ * Copyright (C) 1995-2002 Jean-loup Gailly.
  * For conditions of distribution and use, see copyright notice in zlib.h 
  */
 
+/* @(#) $Id$ */
 
 #ifndef _ZCONF_H
 #define _ZCONF_H
+
 #if _MSC_VER > 1000
 	#pragma warning (disable : 4131)
 	#pragma warning (disable : 4115)
@@ -15,6 +17,8 @@
 	#pragma warning (disable : 4702)
 	#pragma warning (disable : 4206)
 #endif // _MSC_VER > 1000
+
+
 
 /*
  * If you *really* need a unique prefix for all types and library functions,

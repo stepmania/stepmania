@@ -4,7 +4,7 @@
 // $Date$ $Author$
 ////////////////////////////////////////////////////////////////////////////////
 // This source file is part of the ZipArchive library source distribution and
-// is Copyright 2000-2002 by Tadeusz Dracz (http://www.artpol-software.com/)
+// is Copyright 2000-2003 by Tadeusz Dracz (http://www.artpol-software.com/)
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -26,17 +26,25 @@
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
+
+#if (_MSC_VER > 1000) && (defined ZIP_HAS_DLL)
+	#pragma warning( disable : 4251 ) // needs to have dll-interface to be used by clients of class
+#endif
+
 #include "ZipException.h"
 #include "ZipFileHeader.h"
 #include "ZipAutoBuffer.h"
 #include "ZipCollections.h"
 #include "ZipCompatibility.h"
+#include "ZipExport.h"
+#define ZIPARCHIVE_DATADESCRIPTOR_LEN 12
 
 /**
 	A class representing the central directory record in the archive.
 */
-class CZipCentralDir  
+class ZIP_API CZipCentralDir  
 {
+public:
 	/**
 		Used in fast finding files by the filename.
 		A structure for the internal use only.
@@ -45,7 +53,7 @@ class CZipCentralDir
 		\see CZipArchive::FindFile
 		\see CZipArchive::EnableFindFast
 	*/
-	struct CZipFindFast
+	struct ZIP_API CZipFindFast
 	{
 		CZipFindFast()
 		{
@@ -64,20 +72,22 @@ class CZipCentralDir
 		WORD m_uIndex;
 	};
 	
-public:
+
 	/**
 		Stores general information about the central directory record.
 	*/
-	struct Info
+	struct ZIP_API Info
 	{
-		DWORD m_uCentrDirPos;		///< the position of the beginning of the central directory
-		DWORD m_uBytesBeforeZip;	///< The number of bytes before the actual zip archive in a file. It is non-zero for self-extracting archives.
+		DWORD m_uCentrDirPos;	///< the position of the beginning of the central directory (as located by #Locate)
+		DWORD m_uBytesBeforeZip;///< The number of bytes before the actual zip archive in a file. It is non-zero for self-extracting archives.
 		WORD m_uThisDisk;		///< number of the disk with the central directory end record (the number of disks in the disk-spanning archive)
 		WORD m_uDiskWithCD;		///< number of the disk with the start of the central directory
 		WORD m_uDiskEntriesNo;	///< total number of entries in the central dir on this disk
 		WORD m_uEntriesNumber;	///< total number of entries in the central dir
 		DWORD m_uSize;			///< size of the central directory (valid only if #m_bOnDisk is \c true; use #GetSize instead)
-		DWORD m_uOffset;		///< offset of start of central directory with respect to the starting disk number
+		DWORD m_uOffset;		///< offset of start of central directory with respect to the starting disk number 
+								///< (as written in the central directory record);
+								///< valid only if #m_bOnDisk is \c true
 		bool m_bOnDisk;			///< \c true if the central directory is physically present in the archive
 
 	protected:
@@ -152,21 +162,26 @@ public:
 	\param	pHeader
 		the header to remove
 	\param iIndex if index is not known set it to -1
+	\param bShift 
 	\note Throws exceptions.
 */
-	void RemoveFile(CZipFileHeader* pHeader, int iIndex = -1);
+	void RemoveFile(CZipFileHeader* pHeader, int iIndex = -1, bool bShift = true);
 
 
     /**
-       Remove last file from the central directory after the compression of the 
-	   file has proven to be non-effective (according to smartness level set)
-       
-       \param pHeader
-       \param iIndex
+       Remove last file from the central directory.
        
      */
-	void RemoveLastFile(CZipFileHeader* pHeader, int iIndex)
+	void RemoveLastFile(CZipFileHeader* pHeader = NULL, int iIndex = -1)
 	{
+		if (iIndex == -1)
+		{
+			iIndex = m_headers.GetSize() - 1;
+			if (iIndex == -1)
+				return;
+		}
+		if (!pHeader)
+			pHeader = m_headers[iIndex];
 		DWORD uNewSize = pHeader->m_uOffset + GetBytesBefore();
 		// then remove
 		RemoveFile(pHeader, iIndex);
@@ -196,11 +211,12 @@ public:
 /**
 	Add a new file to the central directory.
 	\param	header
-		copy data from it to the new file header
+		copy data from it to the new file header	
+	\param iReplaceIndex if different from -1, the index of the file to be replaced
 	\return the pointer to the new header
 	\note Throws exceptions.
 */
-	CZipFileHeader* AddNewFile(const CZipFileHeader & header);
+	CZipFileHeader* AddNewFile(const CZipFileHeader & header, int iReplaceIndex = -1);
 
 	/**
 		return the header filename, converted if needed
@@ -319,11 +335,14 @@ public:
 		the archive.
 		- If \c false, the conversion takes place on each call to CZipArchive::GetFileInfo
 
+		Change is value with CZipArchive::SetConvertAfterOpen.
+
 		Set it to \c true when you plan to use CZipArchive::FindFile or get the stored files information. <BR>
 		Set it to \c false when you plan mostly to modify the archive.
 
 		\b Default: \c true
 		\note Set it before opening the archive.
+		\see CZipArchive::SetConvertAfterOpen
 		\see ConvertFileName
 	*/
 	bool m_bConvertAfterOpen;
@@ -373,7 +392,18 @@ public:
 	int FindFileNameIndex(LPCTSTR lpszFileName) const;
 
 	DWORD GetBytesBefore() const {return m_info.m_uBytesBeforeZip;}
+	/**
+		Get the information about the central directory
+	*/
 	void GetInfo(Info& info) const {info = m_info;}
+	/**
+		\return the value of m_bFindFastEnabled
+	*/
+	bool IsFindFastEnabled(){return m_bFindFastEnabled;}
+	/**
+		Called by CZipArchive::RenameFile
+	*/
+	void RenameFile(WORD uIndex, LPCTSTR lpszNewName);
 protected:
 	/**
 		Sort the files inside the archive headers by the order in the archive.
@@ -425,6 +455,7 @@ protected:
 	bool m_bFindFastEnabled;
 
 
+
 /**
 	The \e lpszFileName and \e bCaseSensitive arguments 
 	are the same as in the #FindFileNameIndex. The function get CZipFindFast
@@ -445,8 +476,6 @@ protected:
 /**
 	Insert a new CZipFindFast element to the #m_findarray.
 	Initialize CZipFindFast object with \e pHeader and \e uIndex values.
-	\param	pHeader
-	\param	uIndex
 */
 	void InsertFindFastElement(CZipFileHeader* pHeader, WORD uIndex);
 

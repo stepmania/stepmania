@@ -4,7 +4,7 @@
 // $Date$ $Author$
 ////////////////////////////////////////////////////////////////////////////////
 // This source file is part of the ZipArchive library source distribution and
-// is Copyright 2000-2002 by Tadeusz Dracz (http://www.artpol-software.com/)
+// is Copyright 2000-2003 by Tadeusz Dracz (http://www.artpol-software.com/)
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -21,20 +21,20 @@
 #pragma once
 #endif // _MSC_VER > 1000
 #include "ZipAbstractFile.h"
+#include "ZipExport.h"
 
-class CZipFile :public CZipAbstractFile, public CFile
+class ZIP_API CZipFile :public CZipAbstractFile, public CFile
 {
 public:
 	DECLARE_DYNAMIC(CZipFile)
-// 	__int64 Seek(__int64 dOff, UINT nFrom);
 	void Flush(){CFile::Flush();}
-	DWORD GetPosition() const {return CFile::GetPosition() ;}
+	ZIP_ULONGLONG GetPosition() const {return CFile::GetPosition() ;}
 	CZipString GetFilePath() const {return CFile::GetFilePath();}
-	void SetLength(long nNewLen) {CFile::SetLength(nNewLen);}
+	void SetLength(ZIP_ULONGLONG nNewLen) {CFile::SetLength(nNewLen);}
 	UINT Read(void *lpBuf, UINT nCount){return CFile::Read(lpBuf, nCount);}
 	void Write(const void* lpBuf, UINT nCount){CFile::Write(lpBuf, nCount);}
-	long Seek(long lOff, int nFrom){return CFile::Seek(lOff, nFrom);}
-	DWORD GetLength() const {return CFile::GetLength();}
+	ZIP_ULONGLONG Seek(ZIP_LONGLONG lOff , int nFrom){return CFile::Seek(lOff, nFrom);}
+	ZIP_ULONGLONG GetLength() const {return CFile::GetLength();}
 	bool Open( LPCTSTR lpszFileName, UINT nOpenFlags, bool bThrowExc)
 	{
 		CFileException* e = new CFileException;
@@ -48,7 +48,7 @@ public:
 	CZipFile();
 	bool IsClosed() const 
 	{
-		return m_hFile == (UINT)CFile::hFileNull;
+		return m_hFile == CFile::hFileNull;
 	}
 
 
@@ -60,6 +60,7 @@ public:
  		if (!IsClosed())
 			CFile::Close();
 	}
+	operator HANDLE();
 	virtual ~CZipFile();
 
 };
