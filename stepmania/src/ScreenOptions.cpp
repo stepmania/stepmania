@@ -484,7 +484,7 @@ void ScreenOptions::Update( float fDeltaTime )
 {
 	//LOG->Trace( "ScreenOptions::Update(%f)", fDeltaTime );
 
-	Screen::Update( fDeltaTime );
+	ScreenWithMenuElements::Update( fDeltaTime );
 }
 
 void ScreenOptions::DrawPrimitives()
