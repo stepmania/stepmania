@@ -38,6 +38,7 @@ public:
 	bool IsStreamingFromDisk() const;
 
 private:
+	int ReadBlock( int16_t *pBuffer, int iFrames );
 	int GetSampleRateInternal() const;
 
 	int m_iPreferredSampleRate;
@@ -59,6 +60,7 @@ private:
 
 	/* Read state: */
 	int m_iCurrentFrame;
+	unsigned m_iNextSound;
 	struct ActiveSound
 	{
 		SoundReader *pSound;

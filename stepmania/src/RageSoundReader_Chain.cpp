@@ -22,6 +22,7 @@ RageSoundReader_Chain::RageSoundReader_Chain()
 	m_iActualSampleRate = -1;
 	m_iChannels = 0;
 	m_iCurrentFrame = 0;
+	m_iNextSound = 0;
 }
 
 RageSoundReader_Chain::~RageSoundReader_Chain()
@@ -181,9 +182,11 @@ int RageSoundReader_Chain::SetPosition_Accurate( int ms )
 		}
 	}
 
+	m_iNextSound = GetNextSoundIndex();
+
 	/* If no sounds were started, and we have no sounds ahead of us, we've seeked
 	 * past EOF. */
-	if( m_apActiveSounds.empty() && GetNextSoundIndex() == m_Sounds.size() )
+	if( m_apActiveSounds.empty() && m_iNextSound == m_Sounds.size() )
 		return 0;
 
 	return ms;
@@ -230,97 +233,112 @@ unsigned RageSoundReader_Chain::GetNextSoundIndex() const
 	return iNextSound;
 }
 
-int RageSoundReader_Chain::Read( char *pBuffer, unsigned iLength )
+int RageSoundReader_Chain::ReadBlock( int16_t *pBuffer, int iFrames )
 {
-	RageSoundMixBuffer mix;
-
-	unsigned iNextSound = GetNextSoundIndex();
-
-	int iNumFramesToRead = iLength / (sizeof(int16_t) * m_iChannels);
-
-	int iFramesRead = 0;
-	while( iFramesRead < iNumFramesToRead )
+	/* How many samples should we read before we need to start up a sound? */
+	int iFramesToRead = 999999999; /* inf */
+	if( m_iNextSound < m_Sounds.size() )
 	{
-		/* How many samples should we read before we need to start up a sound? */
-		int iFramesToRead = 999999999; /* inf */
-		if( iNextSound < m_Sounds.size() )
-		{
-			int iStartFrame = m_iCurrentFrame;
-			int iOffsetFrame = m_Sounds[iNextSound].GetOffsetFrame(m_iActualSampleRate);
-			ASSERT_M( iOffsetFrame >= iStartFrame, ssprintf("%i %i", iOffsetFrame, iStartFrame) );
-			iFramesToRead = iOffsetFrame - iStartFrame;
-		}
-		iFramesToRead = min( iFramesToRead, iNumFramesToRead-iFramesRead );
-		iFramesToRead = min( iFramesToRead, 1024 );
-
-		mix.SetWriteOffset( iFramesRead * m_iChannels );
-
-		/* While we need more data, and have a source for it, read. */
-		int iMaxFramesRead = 0;
-		if( iFramesToRead > 0 && !m_apActiveSounds.empty() )
-		{
-			/* Read iFramesToRead from each sound. */
-			int16_t Buffer[2048];
-			for( unsigned i = 0; i < m_apActiveSounds.size(); )
-			{
-				ActiveSound &s = m_apActiveSounds[i];
-				SoundReader *pSound = s.pSound;
-				int iSamples = min( iFramesToRead * pSound->GetNumChannels(), ARRAYSIZE(Buffer) );
-				int iBytesRead = pSound->Read( (char *) Buffer, iSamples*sizeof(int16_t) );
-				if( iBytesRead == -1 || iBytesRead == 0 )
-				{
-					/* The sound is at EOF.  Release it. */
-					ReleaseSound( i );
-					continue;
-				}
-
-				int iSamplesRead = iBytesRead / sizeof(int16_t);
-				int iFramesRead = iSamplesRead / pSound->GetNumChannels();
-
-				iMaxFramesRead = max( iMaxFramesRead, iFramesRead );
-
-				if( m_iChannels == 2 && pSound->GetNumChannels() == 1 )
-				{
-					RageSoundUtil::ConvertMonoToStereoInPlace( Buffer, iSamplesRead );
-					iSamplesRead *= 2;
-				}
-
-				if( fabs(s.fPan) > 0.0001f )
-					RageSoundUtil::Pan( Buffer, iSamplesRead, s.fPan );
-
-				mix.write( Buffer, iSamplesRead );
-				++i;
-			}
-		}
-
-		/* If we have more sounds ahead of us, pretend we read the entire block, since
-		 * there's silence in between.  Otherwise, we're at EOF. */
-		if( iNextSound < m_Sounds.size() )
-		{
-			iMaxFramesRead = iFramesToRead;
-			mix.Extend( iFramesToRead*m_iChannels );
-		}
-
-		m_iCurrentFrame += iMaxFramesRead;
-		iFramesRead += iMaxFramesRead;
-
-		while( iNextSound < m_Sounds.size() && m_iCurrentFrame == m_Sounds[iNextSound].GetOffsetFrame(m_iActualSampleRate) )
-		{
-			sound &sound = m_Sounds[iNextSound];
-			ActivateSound( sound );
-			++iNextSound;
-		}
-
-		/* If we have no sources, and no more sounds to play, EOF. */
-		if( m_apActiveSounds.empty() && iNextSound == m_Sounds.size() )
-			break;
+		int iStartFrame = m_iCurrentFrame;
+		int iOffsetFrame = m_Sounds[m_iNextSound].GetOffsetFrame(m_iActualSampleRate);
+		ASSERT_M( iOffsetFrame >= iStartFrame, ssprintf("%i %i", iOffsetFrame, iStartFrame) );
+		iFramesToRead = iOffsetFrame - iStartFrame;
 	}
 
-	/* Read mixed frames into the output buffer. */
-	ASSERT_M( mix.size() <= iFramesRead * m_iChannels, ssprintf("%i, %i", mix.size(), iFramesRead * m_iChannels) );
-	mix.read( (int16_t *) pBuffer );
+	iFramesToRead = min( iFramesToRead, iFrames );
 
-	return iFramesRead * sizeof(int16_t) * m_iChannels;
+	if( iFramesToRead > 0 && m_apActiveSounds.size() == 1 &&
+		m_apActiveSounds.front().fPan == 0 &&
+		m_apActiveSounds.front().pSound->GetNumChannels() == m_iChannels &&
+		m_apActiveSounds.front().pSound->GetSampleRate() == m_iActualSampleRate )
+	{
+		/* We have only one source, and it matches our target.  Don't mix; read
+		 * directly from the source into the destination.  (This is to optimize
+		 * the common case of having one BGM track and no autoplay sounds.) */
+		int iBytes = m_apActiveSounds.front().pSound->Read( (char *) pBuffer, iFrames * sizeof(int16_t) * m_iChannels );
+		if( iBytes == 0 )
+			ReleaseSound( 0 );
+		return iBytes / (sizeof(int16_t) * m_iChannels);
+	}
+
+	if( iFramesToRead > 0 && !m_apActiveSounds.empty() )
+	{
+		RageSoundMixBuffer mix;
+		/* Read iFramesToRead from each sound. */
+		int16_t Buffer[2048];
+		iFramesToRead = min( iFramesToRead, 1024 );
+		int iMaxFramesRead = 0;
+		for( unsigned i = 0; i < m_apActiveSounds.size(); )
+		{
+			ActiveSound &s = m_apActiveSounds[i];
+			SoundReader *pSound = s.pSound;
+			int iSamples = min( iFramesToRead * pSound->GetNumChannels(), ARRAYSIZE(Buffer) );
+			int iBytesRead = pSound->Read( (char *) Buffer, iSamples*sizeof(int16_t) );
+			if( iBytesRead == -1 || iBytesRead == 0 )
+			{
+				/* The sound is at EOF.  Release it. */
+				ReleaseSound( i );
+				continue;
+			}
+
+			int iSamplesRead = iBytesRead / sizeof(int16_t);
+			int iFramesRead = iSamplesRead / pSound->GetNumChannels();
+
+			iMaxFramesRead = max( iMaxFramesRead, iFramesRead );
+
+			if( m_iChannels == 2 && pSound->GetNumChannels() == 1 )
+				RageSoundUtil::ConvertMonoToStereoInPlace( Buffer, iSamplesRead );
+
+			if( fabsf(s.fPan) > 0.0001f )
+				RageSoundUtil::Pan( Buffer, iFramesRead, s.fPan );
+
+			mix.write( Buffer, iSamplesRead );
+			++i;
+		}
+
+		/* Read mixed frames into the output buffer. */
+		mix.read( (int16_t *) pBuffer );
+		return iMaxFramesRead;
+	}
+
+	/* If we have more sounds ahead of us, pretend we read the entire block, since
+	 * there's silence in between.  Otherwise, we're at EOF. */
+	if( iFramesToRead > 0 )
+	{
+		memset( pBuffer, 0, iFramesToRead * m_iChannels * sizeof(int16_t) );
+		return iFramesToRead;
+	}
+
+	return 0;
+}
+
+
+int RageSoundReader_Chain::Read( char *pBuffer, unsigned iLength )
+{
+	int iNumFramesToRead = iLength / (sizeof(int16_t) * m_iChannels);
+	int iTotalFramesRead = 0;
+
+	/* If we have no sources, and no more sounds to play, EOF. */
+	while( iNumFramesToRead > 0 && (!m_apActiveSounds.empty() || m_iNextSound < m_Sounds.size()) )
+	{
+		int iFramesRead = ReadBlock( (int16_t *) pBuffer, iNumFramesToRead );
+		if( iFramesRead == -1 )
+			return -1;
+
+		m_iCurrentFrame += iFramesRead;
+		iNumFramesToRead -= iFramesRead;
+		iTotalFramesRead += iFramesRead;
+		pBuffer += iFramesRead * sizeof(int16_t) * m_iChannels;
+
+		while( m_iNextSound < m_Sounds.size() && m_iCurrentFrame == m_Sounds[m_iNextSound].GetOffsetFrame(m_iActualSampleRate) )
+		{
+			sound &sound = m_Sounds[m_iNextSound];
+			ActivateSound( sound );
+			++m_iNextSound;
+		}
+	}
+
+	return iTotalFramesRead * sizeof(int16_t) * m_iChannels;
 }
 
 int RageSoundReader_Chain::GetLength() const
