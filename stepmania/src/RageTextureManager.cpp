@@ -88,10 +88,14 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 	splitpath( ID.filename, sDir, sFName, sExt );
 
 	RageTexture* pTexture;
+#ifndef LINUX
 	if( sExt == ".avi" || sExt == ".mpg" || sExt == ".mpeg" )
 		pTexture = new RageMovieTexture( ID );
 	else
 		pTexture = new RageBitmapTexture( ID );
+#else
+	pTexture = new RageBitmapTexture(ID);
+#endif
 
 //	LOG->Trace( "RageTextureManager: Loaded '%s'.", ID.filename.GetString() );
 

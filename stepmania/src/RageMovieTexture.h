@@ -14,6 +14,11 @@
 /* Don't know why we need this for the headers ... */
 typedef char TCHAR, *PTCHAR;
 
+/* Fix HRESULT under Linux and other non-windows OSses*/
+#if !defined(HRESULT)
+typedef long HRESULT
+#endif
+
 /* Prevent these from using Dbg stuff, which we don't link in. */
 #ifdef DEBUG
 #undef DEBUG

@@ -11,7 +11,7 @@
 -----------------------------------------------------------------------------
 */
 
-
+#ifdef WIN32
 #pragma comment(lib, "winmm.lib") 
  
 // Link with the DirectShow base class libraries
@@ -19,6 +19,13 @@
 	#pragma comment(lib, "baseclasses/debug/strmbasd.lib") 
 #else
 	#pragma comment(lib, "baseclasses/release/strmbase.lib") 
+#endif
+
+#endif
+
+/* Fix HRESULT under Linux and other non-windows OSses*/
+#if !defined(HRESULT)
+typedef long HRESULT
 #endif
 
 #include "RageMovieTextureHelper.h"
