@@ -1465,7 +1465,7 @@ static void HandleSDLEvents()
 				if(event.active.state == SDL_APPMOUSEFOCUS)
 					break;
 
-				Uint8 i = SDL_GetAppState();
+				uint8_t i = SDL_GetAppState();
 				
 				g_bHasFocus = i&SDL_APPINPUTFOCUS && i&SDL_APPACTIVE;
 				LOG->Trace("App %s focus (%i%i)", g_bHasFocus? "has":"doesn't have",
