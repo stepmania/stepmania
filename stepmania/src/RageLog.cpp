@@ -101,6 +101,7 @@ RageLog::RageLog()
 	m_bEnabled = true;
 	m_bFlush = false;
 	m_bTimestamping = false;
+	m_bShowLogOutput = false;
 
 	// delete old log files
 	remove( LOG_PATH );
