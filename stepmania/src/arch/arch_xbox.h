@@ -3,7 +3,6 @@
 
 /* Load drivers for Xbox. */
 
-#include "LoadingWindow/LoadingWindow_Null.h"
 #include "LoadingWindow/LoadingWindow_SDL.h"
 
 #include "ArchHooks/ArchHooks_Xbox.h"
