@@ -32,7 +32,6 @@ class NoteData
 public:
 	NoteData();
 	~NoteData();
-	NoteData(const NoteData &cpy);
 	void Init();
 
 	int			m_iNumTracks;

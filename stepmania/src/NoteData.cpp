@@ -28,11 +28,6 @@ NoteData::NoteData()
 	Init();
 }
 
-NoteData::NoteData(const NoteData &cpy)
-{
-	*this = cpy;
-}
-
 void NoteData::Init()
 {
 	m_iNumTracks = 0;
