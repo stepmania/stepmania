@@ -13,6 +13,7 @@ class RageSoundBase
 public:
 	virtual ~RageSoundBase() { }
 	virtual void StopPlaying() = 0;
+	virtual bool GetDataToPlay( int16_t *buffer, int size, int &pos, int &got_bytes ) = 0;
 	virtual int GetPCM( char *buffer, int size, int64_t frameno ) = 0;
 	virtual int GetSampleRate() const = 0;
 	virtual RageTimer GetStartTime() const { return RageZeroTimer; }
@@ -133,7 +134,8 @@ private:
 		/* The number of frames in this block: */
 		int64_t frames;
 
-		pos_map_t( int64_t frame, int pos, int cnt ) { frameno=frame, position=pos; frames=cnt; }
+		pos_map_t() { frameno=0; position=0; frames=0; }
+		pos_map_t( int64_t frame, int pos, int cnt ) { frameno=frame; position=pos; frames=cnt; }
 	};
 	deque<pos_map_t> pos_map;
 	static int64_t SearchPosMap( const deque<pos_map_t> &pos_map, int64_t cur_frames, bool *approximate );
@@ -178,6 +180,8 @@ public:
 	 * flushed, SoundStopped will be called.  Until then, SOUNDMAN->GetPosition
 	 * can still be called (the sound is still playing). */
 	int GetPCM( char *buffer, int size, int64_t frameno );
+	bool GetDataToPlay( int16_t *buffer, int size, int &pos, int &got_bytes );
+	void CommitPlayingPosition( int64_t frameno, int pos, int got_bytes );
 	void Update(float delta);
 };
 

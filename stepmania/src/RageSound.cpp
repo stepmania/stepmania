@@ -354,9 +354,16 @@ int RageSound::GetData(char *buffer, int size)
 	return got;
 }
 
-/* Called by the mixer: return a block of sound data. 
- * Be careful; this is called in a separate thread. */
-int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
+/* Retrieve audio data, for mixing.  At the time of this call, the frameno at which the
+ * sound will be played doesn't have to be known.  Once committed, and the frameno
+ * is known, call CommitPCMData.  size is in bytes.
+ *
+ * If the data returned is at the end of the stream, return false.
+ *
+ * size is in samples
+ * sound_frame is in frames (abstract)
+ */
+bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int &frames_stored )
 {
 	int NumRewindsThisCall = 0;
 
@@ -364,35 +371,20 @@ int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
 
 	ASSERT(playing);
 
-	/* Erase old pos_map data. */
-	CleanPosMap( pos_map );
+	frames_stored = 0;
+	sound_frame = position;
 
-	/*
-	 * "frameno" is the audio driver's conception of time.  "position"
-	 * is ours. Keep track of frameno->position mappings.
-	 *
-	 * This way, when we query the time later on, we can derive position
-	 * values from the frameno values returned from GetPosition.
-	 */
-
-	/* Now actually put data from the correct buffer into the output. */
-	int bytes_stored = 0;
-	while(size)
+	while( 1 )
 	{
+		/* If we don't have any data left buffered, fill the buffer by
+		 * up to as much as we need. */
+		if( !Bytes_Available() )
+			FillBuf( size*sizeof(Sint16) );
+
 		/* Get a block of data. */
-		int got = GetData(buffer, size);
-
-		if(!got)
+		int got = GetData( (char *) buffer, size*sizeof(Sint16) );
+		if( !got )
 		{
-			/* If we don't have any data left buffered, fill the buffer by
-			 * up to as much as we need. */
-			if(!Bytes_Available())
-				FillBuf(size);
-
-			/* If we got some data, we're OK. */
-			if(GetData(NULL, size) != 0)
-				continue; /* we have more */
-
 			/* We're at the end of the data.  If we're looping, rewind and restart. */
 			if( GetStopMode() == RageSoundParams::M_LOOP )
 			{
@@ -407,7 +399,7 @@ int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
 					LOG->Warn( "Sound %s is busy looping.  Sound stopped (start = %f, length = %f)",
 						GetLoadedFilePath().c_str(), m_Param.m_StartSecond, m_Param.m_LengthSeconds );
 
-					return 0;
+					return false;
 				}
 
 				/* Rewind and start over. */
@@ -415,14 +407,15 @@ int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
 
 				/* Make sure we can get some data.  If we can't, then we'll have
 				 * nothing to send and we'll just end up coming back here. */
-				if(!Bytes_Available()) FillBuf(size);
-				if(GetData(NULL, size) == 0)
+				if( !Bytes_Available() )
+					FillBuf( size*sizeof(Sint16) );
+				if( GetData(NULL, size*sizeof(Sint16)) == 0 )
 				{
 					LOG->Warn( "Can't loop data in %s; no data available at start point %f",
 						GetLoadedFilePath().c_str(), m_Param.m_StartSecond );
 
 					/* Stop here. */
-					return bytes_stored;
+					return false;
 				}
 
 				continue;
@@ -430,19 +423,17 @@ int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
 
 			/* Not looping.  Normally, we'll just stop here. */
 			if( GetStopMode() == RageSoundParams::M_STOP )
-				break;
+				return false;
 
 			/* We're out of data, but we're not going to stop, so fill in the
 			 * rest with silence. */
-			memset(buffer, 0, size);
-			got = size;
+			memset( buffer, 0, size*sizeof(Sint16) );
+			got = size*sizeof(Sint16);
 		}
 
 		/* This block goes from position to position+got_frames. */
 		int got_frames = got / framesize;  /* bytes -> frames */
-
-		/* Save this frameno/position map. */
-		pos_map.push_back( pos_map_t(frameno, position, got_frames) );
+		RAGE_ASSERT_M( (got % framesize) == 0, ssprintf("%i isn't divisible by %i", got, framesize) );
 
 		/* We want to fade when there's FADE_TIME seconds left, but if
 		 * m_LengthFrames is -1, we don't know the length we're playing.
@@ -501,11 +492,56 @@ int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
 			}
 		}
 
-		bytes_stored += got;
+		sound_frame = position;
+
+		frames_stored = got_frames;
 		position += got_frames;
-		size -= got;
-		buffer += got;
+		return true;
+	}
+}
+
+/* Indicate that a block of audio data has been written to the device. */
+void RageSound::CommitPlayingPosition( int64_t frameno, int pos, int got_frames )
+{
+	LockMut(SOUNDMAN->lock);
+	pos_map_t p( frameno, pos, got_frames );
+	pos_map.push_back( p );
+
+	/* Erase old pos_map data. */
+	CleanPosMap( pos_map );
+}
+
+/* Called by the mixer: return a block of sound data. 
+ * Be careful; this is called in a separate thread. */
+int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
+{
+	LockMut(SOUNDMAN->lock);
+
+	ASSERT(playing);
+
+	/*
+	 * "frameno" is the audio driver's conception of time.  "position"
+	 * is ours. Keep track of frameno->position mappings.
+	 *
+	 * This way, when we query the time later on, we can derive position
+	 * values from the frameno values returned from GetPosition.
+	 */
+
+	/* Now actually put data from the correct buffer into the output. */
+	int bytes_stored = 0;
+	while( bytes_stored < size )
+	{
+		int pos, got_frames;
+		bool eof = !GetDataToPlay( (int16_t *)(buffer+bytes_stored), (size-bytes_stored)/2, pos, got_frames );
+
+		/* Save this frameno/position map. */
+		SOUNDMAN->CommitPlayingPosition( GetID(), frameno, pos, got_frames );
+
+		bytes_stored += got_frames * framesize;
 		frameno += got_frames;
+
+		if( eof )
+			break;
 	}
 
 	return bytes_stored;
@@ -637,6 +673,8 @@ int64_t RageSound::SearchPosMap( const deque<pos_map_t> &pos_map, int64_t cur_fr
 
 void RageSound::CleanPosMap( deque<pos_map_t> &pos_map )
 {
+	LockMut( SOUNDMAN->lock );
+
 	/* Determine the number of frames of data we have. */
 	int64_t total_frames = 0;
 	for( unsigned i = 0; i < pos_map.size(); ++i )
@@ -679,6 +717,9 @@ int64_t RageSound::GetPositionSecondsInternal( bool *approximate ) const
 
 	/* Get our current hardware position. */
 	int64_t cur_frame = SOUNDMAN->GetPosition(this);
+
+	/* Before using pos_map, flush any incoming positions. */
+	SOUNDMAN->FlushPosMapQueue();
 
 	return SearchPosMap( pos_map, cur_frame, approximate );
 }
