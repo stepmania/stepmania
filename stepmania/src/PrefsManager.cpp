@@ -92,7 +92,7 @@ PrefsManager::PrefsManager() :
 	m_bPalettedBannerCache	( Options, "PalettedBannerCache",	false ),
 	m_bFastLoad				( Options, "FastLoad",				true ),
 
-	m_bOnlyDedicatedMenuButtons	( Options, "UseDedicatedMenuButtons",	false ),
+	m_bOnlyDedicatedMenuButtons	( Options, "OnlyDedicatedMenuButtons",	false ),
 	m_bMenuTimer				( Options, "MenuTimer",					true ),
 	m_bShowDanger				( Options, "ShowDanger",					true ),
 
