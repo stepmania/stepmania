@@ -53,6 +53,7 @@ public:
 	void SetTexCoordVelocity(float fVelX, float fVelY) { m_fTexCoordVelocityX = fVelX; m_fTexCoordVelocityY = fVelY; }	
 	// Scale the Sprite maintaining the aspect ratio so that it fits 
 	// within (fWidth,fHeight) and is clipped to (fWidth,fHeight).
+	void SetCroppedSize( float fWidth, float fHeight );
 	void ScaleToClipped( float fWidth, float fHeight );
 	static bool IsDiagonalBanner( int iWidth, int iHeight );
 
