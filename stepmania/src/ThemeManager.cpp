@@ -175,12 +175,12 @@ try_element_again:
 	}
 
 	static const char *graphic_masks[] = {
-		".sprite", ".png", ".jpg", ".bmp", ".gif",
-		".avi", ".mpg", ".mpeg", NULL
+		"*.sprite", "*.png", "*.jpg", "*.bmp", "*.gif",
+		"*.avi", "*.mpg", "*.mpeg", NULL
 	};
 	static const char *sound_masks[] = { ".set", ".mp3", ".ogg", ".wav", NULL };
 	static const char *font_masks[] = { "*.ini", "*.png", "*.jpg", "*.bmp", "*.gif",  NULL };
-	static const char *numbers_masks[] = { ".png", NULL };
+	static const char *numbers_masks[] = { "*.png", NULL };
 	static const char *bganimations_masks[] = { "", NULL };
 	static const char *blank_mask[] = { "", NULL };
 	const char **asset_masks = NULL;
@@ -195,10 +195,6 @@ try_element_again:
 	 * a mask.  This should only happen with redirs. */
 	if(sFileName.find_last_of('.') != sFileName.npos)
 		asset_masks = blank_mask;
-
-	/* Graphics can have hints, so add a wildcard. */
-	if( sAssetCategory == "graphics" || sAssetCategory == "numbers" )
-		sFileName += "*";
 
 	bool DirsOnly=false;
 	if( sAssetCategory == "bganimations" )
@@ -267,6 +263,10 @@ try_element_again:
 		sFileName.GetString(), 
 		GetThemeDirFromName(m_sCurThemeName).GetString(), 
 		GetThemeDirFromName(BASE_THEME_NAME).GetString() );
+
+	/* Err? */
+	if(sFileName == "_missing")
+		RageException::Throw("_missing element missing from %s/%s", GetThemeDirFromName(BASE_THEME_NAME).GetString(), sAssetCategory.GetString() );
 	return GetPathTo( sAssetCategory, "_missing" );
 }
 
