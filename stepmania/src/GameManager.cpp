@@ -2642,7 +2642,7 @@ Style g_Styles[] =
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			0,1,2,3,4,5,6,7,8,9
 		},
-		true, // m_bNeedsZoomOutWith2Players
+		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_PNM_FIVE
