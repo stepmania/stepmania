@@ -168,14 +168,14 @@ void RageDisplay::SetupExtensions()
 	m_oglspecs->EXT_paletted_texture = HasExtension("GL_EXT_paletted_texture");
 
 	/* Find extension functions. */
-	wglSwapIntervalEXT = (PWSWAPINTERVALEXTPROC) SDL_GL_GetProcAddress("wglSwapIntervalEXT");
-	glColorTableEXT = (PFNGLCOLORTABLEPROC) SDL_GL_GetProcAddress("glColorTableEXT");
-	glGetColorTableParameterivEXT = (PFNGLCOLORTABLEPARAMETERIVPROC) SDL_GL_GetProcAddress("glGetColorTableParameterivEXT");
+	GLExt::wglSwapIntervalEXT = (PWSWAPINTERVALEXTPROC) SDL_GL_GetProcAddress("wglSwapIntervalEXT");
+	GLExt::glColorTableEXT = (PFNGLCOLORTABLEPROC) SDL_GL_GetProcAddress("glColorTableEXT");
+	GLExt::glGetColorTableParameterivEXT = (PFNGLCOLORTABLEPARAMETERIVPROC) SDL_GL_GetProcAddress("glGetColorTableParameterivEXT");
 
 	/* Make sure we have all components for detected extensions. */
 	if(m_oglspecs->WGL_EXT_swap_control)
 	{
-		if(!wglSwapIntervalEXT)
+		if(!GLExt::wglSwapIntervalEXT)
 		{
 			LOG->Warn("wglSwapIntervalEXT but wglSwapIntervalEXT() not found");
 			m_oglspecs->WGL_EXT_swap_control=false;
@@ -183,7 +183,7 @@ void RageDisplay::SetupExtensions()
 	}
 	if(m_oglspecs->EXT_paletted_texture)
 	{
-		if(!glColorTableEXT || !glGetColorTableParameterivEXT)
+		if(!GLExt::glColorTableEXT || !GLExt::glGetColorTableParameterivEXT)
 		{
 			LOG->Warn("GL_EXT_paletted_texture but glColorTableEXT or glGetColorTableParameterivEXT not found");
 			m_oglspecs->EXT_paletted_texture = false;
@@ -271,7 +271,7 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 	/* Set vsync the Windows way, if we can.  (What other extensions are there
 	 * to do this, for other archs?) */
 	if(m_oglspecs->WGL_EXT_swap_control) {
-	    wglSwapIntervalEXT(vsync);
+	    GLExt::wglSwapIntervalEXT(vsync);
 	}
 	
 	g_CurrentWidth = g_screen->w;

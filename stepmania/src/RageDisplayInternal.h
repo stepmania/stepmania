@@ -53,7 +53,6 @@ namespace GLExt {
 	extern PFNGLCOLORTABLEPROC glColorTableEXT;
 	extern PFNGLCOLORTABLEPARAMETERIVPROC glGetColorTableParameterivEXT;
 };
-using namespace GLExt;
 
 #endif
 
