@@ -105,7 +105,8 @@ private:
 		pos_map_t(int samp, int pos, int cnt) { sampleno=samp, position=pos; samples=cnt; }
 	};
 	deque<pos_map_t> pos_map;
-
+	static int SearchPosMap( const deque<pos_map_t> &pos_map, int cur_sample, bool *approximate );
+	
 	CString m_sFilePath;
 
 	/* The amount of data to play (or loop): */

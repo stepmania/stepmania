@@ -571,6 +571,55 @@ float RageSound::GetLengthSeconds()
 	return len / 1000.f; /* ms -> secs */
 }
 
+int RageSound::SearchPosMap( const deque<pos_map_t> &pos_map, int cur_sample, bool *approximate )
+{
+	/* sampleno is probably in pos_map.  Search to figure out what position
+	 * this sampleno maps to. */
+	int closest_position = 0, closest_position_dist = INT_MAX;
+	for( unsigned i = 0; i < pos_map.size(); ++i )
+	{
+		if( cur_sample >= pos_map[i].sampleno &&
+			cur_sample < pos_map[i].sampleno+pos_map[i].samples )
+		{
+			/* cur_sample lies in this block; it's an exact match.  Figure
+			 * out the exact position. */
+			int diff = pos_map[i].position - pos_map[i].sampleno;
+			return cur_sample + diff;
+		}
+
+		/* See if the current position is close to the beginning of this block. */
+		int dist = abs( pos_map[i].sampleno - cur_sample );
+		if( dist < closest_position_dist )
+		{
+			closest_position_dist = dist;
+			closest_position = pos_map[i].position - dist;
+		}
+
+		/* See if the current position is close to the end of this block. */
+		dist = abs( pos_map[i].sampleno + pos_map[i].samples - cur_sample );
+		if( dist < closest_position_dist )
+		{
+			closest_position_dist = dist;
+			closest_position = pos_map[i].position + pos_map[i].samples + dist;
+		}
+	}
+
+	/* The sample is out of the range of data we've actually sent.
+	 * Return the closest position.
+	 *
+	 * There are three cases when this happens: 
+	 * 1. After the first GetPCM call, but before it actually gets heard.
+	 * 2. After GetPCM returns EOF and the sound has flushed, but before
+	 *    SoundStopped has been called.
+	 * 3. Underflow; we'll be given a larger sample number than we know about.
+	 */
+	LOG->Trace( "Approximate sound time: sample %i, dist %i, closest %i", cur_sample, closest_position_dist, closest_position );
+
+	if( approximate )
+		*approximate = true;
+	return closest_position;
+}
+
 /* Get the position in frames (ignoring GetOffsetFix).  approximate is set to true
  * if the returned time is approximated because of underrun, the sound not having started
  * (after Play()) or finished (after EOF) yet. */
@@ -602,51 +651,7 @@ int RageSound::GetPositionSecondsInternal( bool *approximate ) const
 	/* Get our current hardware position. */
 	int cur_sample = SOUNDMAN->GetPosition(this);
 
-	/* sampleno is probably in pos_maps.  Search to figure out what position
-	 * this sampleno maps to. */
-
-	int closest_position = 0, closest_position_dist = INT_MAX;
-	for(unsigned i = 0; i < pos_map.size(); ++i) {
-		if(cur_sample >= pos_map[i].sampleno &&
-		   cur_sample < pos_map[i].sampleno+pos_map[i].samples)
-		{
-			/* cur_sample lies in this block; it's an exact match.  Figure
-			 * out the exact position. */
-			int diff = pos_map[i].position - pos_map[i].sampleno;
-			return cur_sample + diff;
-		}
-
-		/* See if the current position is close to the beginning of this block. */
-		int dist = abs(pos_map[i].sampleno - cur_sample);
-		if(dist < closest_position_dist)
-		{
-			closest_position_dist = dist;
-			closest_position = pos_map[i].position - dist;
-		}
-
-		/* See if the current position is close to the end of this block. */
-		dist = abs(pos_map[i].sampleno + pos_map[i].samples - cur_sample);
-		if(dist < closest_position_dist)
-		{
-			closest_position_dist = dist;
-			closest_position = pos_map[i].position + pos_map[i].samples + dist;
-		}
-	}
-
-	/* The sample is out of the range of data we've actually sent.
-	 * Return the closest position.
-	 *
-	 * There are three cases when this happens: 
-	 * 1. After the first GetPCM call, but before it actually gets heard.
-	 * 2. After GetPCM returns EOF and the sound has flushed, but before
-	 *    SoundStopped has been called.
-	 * 3. Underflow; we'll be given a larger sample number than we know about.
-	 */
-	LOG->Trace("Approximate sound time: sample %i, dist %i, closest %i", cur_sample, closest_position_dist, closest_position);
-
-	if( approximate )
-		*approximate = true;
-	return closest_position;
+	return SearchPosMap( pos_map, cur_sample, approximate );
 }
 
 float RageSound::GetPositionSeconds( bool *approximate ) const
