@@ -128,11 +128,6 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	SET_XY( m_DifficultyDisplay );
 	this->AddChild( &m_DifficultyDisplay );
 
-	m_sprStage.SetName( "Stage" );
-	m_sprStage.Load( THEME->GetPathToG("ScreenSelectMusic stage "+GAMESTATE->GetStageText()) );
-	SET_XY( m_sprStage );
-	this->AddChild( &m_sprStage );
-
 	{
 		CStringArray StageTexts;
 		GAMESTATE->GetAllStageTexts( StageTexts );
@@ -142,6 +137,11 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 			TEXTUREMAN->CacheTexture( path );
 		}
 	}
+
+	m_sprStage.SetName( "Stage" );
+	m_sprStage.Load( THEME->GetPathToG("ScreenSelectMusic stage "+GAMESTATE->GetStageText()) );
+	SET_XY( m_sprStage );
+	this->AddChild( &m_sprStage );
 
 	m_sprCDTitleFront.SetName( "CDTitle" );
 	m_sprCDTitleFront.Load( THEME->GetPathToG("ScreenSelectMusic fallback cdtitle") );
