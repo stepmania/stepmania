@@ -80,11 +80,48 @@ inline int lrintf( float f )
  * uniform across platforms yet). */
 #define CRASH_HANDLER
 
+#define ENDIAN_LITTLE
+
 #ifdef _XBOX
 #include <xtl.h>
 #include <xgraphics.h>
 #include <stdio.h>
 #endif
+
+#define HAVE_BYTE_SWAPS
+
+inline uint32_t ArchSwap32( uint32_t n )
+{
+	__asm
+	{
+		mov eax, n
+		xchg al, ah
+		ror eax, 16
+		xchg al, ah
+		mov n, eax
+	};
+}
+
+inline uint32_t ArchSwap24( uint32_t n )
+{
+	__asm
+	{
+		mov eax, n
+		xchg al, ah
+		ror eax, 8
+		mov n, eax
+	};
+}
+
+inline uint16_t ArchSwap16( uint16_t n )
+{
+	__asm
+	{
+		mov ax, n
+		xchg al, ah
+		mov n, ax
+	};
+}
 
 #endif
 
