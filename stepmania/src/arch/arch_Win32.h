@@ -4,6 +4,9 @@
 /* Load drivers for Win32. */
 #include "LoadingWindow/LoadingWindow_Win32.h"
 
+#include "Sound/RageSoundDriver_DSound.h"
+#include "Sound/RageSoundDriver_DSound_Software.h"
+
 #endif
 
 /*
