@@ -107,6 +107,7 @@ void GameState::Reset()
 	m_bPlayersFinalized = false;
 //	m_iCoins = 0;	// don't reset coin count!
 	m_MasterPlayerNumber = PLAYER_INVALID;
+	m_mapEnv.clear();
 	m_sPreferredGroup	= GROUP_ALL_MUSIC;
 	m_bChangedFailType = false;
 	FOREACH_PlayerNumber( p )
@@ -1797,6 +1798,8 @@ LuaFunction_NoArgs( CurStyleName,			CString( GAMESTATE->m_CurStyle == STYLE_INVA
 LuaFunction_NoArgs( GetNumPlayersEnabled,	GAMESTATE->GetNumPlayersEnabled() )
 LuaFunction_NoArgs( PlayerUsingBothSides,	GAMESTATE->PlayerUsingBothSides() )
 LuaFunction_NoArgs( GetEasiestNotesDifficulty, GAMESTATE->GetEasiestNotesDifficulty() )
+LuaFunction_Str(	GetEnv,					GAMESTATE->m_mapEnv[str] )
+LuaFunction_StrStr(	SetEnv,					GAMESTATE->m_mapEnv[str1] = str2 )
 
 /* Return an integer into SONGMAN->m_pSongs.  This lets us do input checking, which we
  * can't easily do if we return pointers. */

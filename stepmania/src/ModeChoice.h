@@ -7,6 +7,7 @@
 #include "Style.h"
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
+#include <map>
 
 class Song;
 class Steps;
@@ -44,6 +45,7 @@ struct ModeChoice		// used in SelectMode
 	Course*		m_pCourse;
 	Trail*		m_pTrail;
 	Character*	m_pCharacter;
+	std::map<CString,CString> m_SetEnv;
 };
 
 #endif
