@@ -1,12 +1,13 @@
 #include "global.h"
 #include "RageFileDriverDirect.h"
 #include "RageUtil.h"
+#include "RageUtil_FileDB.h"
+#include "RageLog.h"
 
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <RageLog.h>
 
 #if !defined(WIN32)
 #include <dirent.h>
@@ -19,8 +20,6 @@
 #if !defined(O_BINARY)
 #define O_BINARY 0
 #endif
-
-#include "RageUtil_FileDB.h"
 
 /* This driver handles direct file access. */
 class DirectFilenameDB: public FilenameDB
