@@ -338,6 +338,9 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 	case ROW_STEP:
 	case ROW_CHARACTER:
 		{
+			int FallbackOption = -1;
+			bool UseFallbackOption = true;
+
 			for( unsigned e = 0; e < hand.ListEntries.size(); ++e )
 			{
 				const ModeChoice &mc = hand.ListEntries[e];
@@ -350,7 +353,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 					 * above" entry.  It will always return true for DescribesCurrentMode().
 					 * It's only the selected choice if nothing else matches. */
 					if( !row.bMultiSelect )
-						SelectExactlyOne( e, vbSelectedOut );
+						FallbackOption = e;
 					continue;
 				}
 
@@ -358,6 +361,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 				{
 					if( mc.DescribesCurrentModeForAllPlayers() )
 					{
+						UseFallbackOption = false;
 						if( !row.bMultiSelect )
 							SelectExactlyOne( e, vbSelectedOut );
 						else
@@ -368,6 +372,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 				{
 					if( mc.DescribesCurrentMode( (PlayerNumber) pn) )
 					{
+						UseFallbackOption = false;
 						if( !row.bMultiSelect )
 							SelectExactlyOne( e, vbSelectedOut );
 						else
@@ -375,6 +380,10 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 					}
 				}
 			}
+
+			if( UseFallbackOption && FallbackOption != -1 && !row.bMultiSelect )
+				SelectExactlyOne( FallbackOption, vbSelectedOut );
+
 			return;
 		}
 
