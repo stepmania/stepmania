@@ -22,7 +22,8 @@
 
 SnapDisplay::SnapDisplay()
 {
-	for( int i=0; i<2; i++ )
+	int i;
+	for( i=0; i<2; i++ )
 	{
 		m_sprIndicators[i].Load( THEME->GetPathTo("Graphics","edit snap indicator") );
 		this->AddChild( &m_sprIndicators[i] );
