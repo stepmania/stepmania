@@ -13,6 +13,7 @@
 #include "TransitionBGAnimation.h"
 #include "RageUtil.h"
 #include "ScreenManager.h"
+#include "IniFile.h"
 
 
 TransitionBGAnimation::TransitionBGAnimation()
@@ -23,9 +24,21 @@ TransitionBGAnimation::TransitionBGAnimation()
 
 void TransitionBGAnimation::Load( CString sBGAniDir )
 {
+	if( !sBGAniDir.empty() && sBGAniDir.Right(1) != "/" )
+		sBGAniDir += "/";
+
 	m_BGAnimation.LoadFromAniDir( sBGAniDir );
 
-	m_sound.Load( sBGAniDir );
+	// load sound from file specified by ini, or use the first sound in the directory
+	IniFile ini;
+	ini.SetPath( sBGAniDir+"BGAnimation.ini" );
+	ini.ReadFile();
+
+	CString sSoundFileName;
+	if( ini.GetValue("BGAnimation","Sound",sSoundFileName) )
+		m_sound.Load( sBGAniDir+sSoundFileName );
+	else
+		m_sound.Load( sBGAniDir );
 }
 
 

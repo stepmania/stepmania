@@ -51,7 +51,7 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 {
 	Unload();
 
-	if( sAniDir.Right(1) != "/" )
+	if( !sAniDir.empty() && sAniDir.Right(1) != "/" )
 		sAniDir += "/";
 
 	ASSERT( IsADirectory(sAniDir) );
