@@ -434,8 +434,9 @@ ScoreSummary Player::GetScoreSummary()
 
 
 float Player::GetArrowColumnX( int iColNum ) 
-{ 
-	return m_fArrowsCenterX + (iColNum - (m_iNumColumns-1)/2) * ARROW_SIZE;
+{
+	float fColOffsetFromCenter = iColNum - (m_iNumColumns-1)/2.0f;
+	return m_fArrowsCenterX + fColOffsetFromCenter * ARROW_SIZE;
 }
 
 void Player::UpdateGrayArrows( const float &fDeltaTime )
