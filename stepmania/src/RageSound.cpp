@@ -163,6 +163,7 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 	Unload();
 
 	m_sFilePath = sSoundFilePath;
+	ResolvePath( m_sFilePath );
 	position = 0;
 
 	
