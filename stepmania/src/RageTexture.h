@@ -31,10 +31,7 @@ struct RageTextureID
 	bool bStretch;
 	bool bHotPinkColorKey; /* #FF00FF */
 
-	/* Define an ordering so this can be used in a set<>.  This defines a partial
-	 * ordering; use equal() to see if they're equal. */
-	bool operator< (const RageTextureID &rhs) const	{ return filename < rhs.filename; }
-	bool equal(const RageTextureID &rhs) const;
+	bool operator< (const RageTextureID &rhs) const;
 
 	void Init();
 

@@ -76,15 +76,9 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 	std::map<RageTextureID, RageTexture*>::iterator p = m_mapPathToTexture.find(ID);
 	while(p != m_mapPathToTexture.end())
 	{
-		if(p->first.equal(ID)) {
-			/* Found the texture.  Just increase the refcount and return it. */
-			p->second->m_iRefCount++;
-			return p->second;
-		}
-
-		/* short circuit */
-		if(p->first.filename > ID.filename) break;
-		p++;
+		/* Found the texture.  Just increase the refcount and return it. */
+		p->second->m_iRefCount++;
+		return p->second;
 	}
 
 	// the texture is not already loaded.  Load it.
