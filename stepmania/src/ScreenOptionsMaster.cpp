@@ -16,6 +16,7 @@
 #include "Character.h"
 #include "PrefsManager.h"
 #include "ScreenOptionsMasterPrefs.h"
+#include "RageSounds.h"
 
 #define OPTION_MENU_FLAGS		THEME->GetMetric (m_sName,"OptionMenuFlags")
 #define ROW_LINE(i)				THEME->GetMetric (m_sName,ssprintf("Line%i",(i+1)))
@@ -176,6 +177,8 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 	ScreenOptions( sClassName )
 {
 	LOG->Trace("ScreenOptionsMaster::ScreenOptionsMaster(%s)", m_sName.c_str() );
+
+	SOUND->PlayMusic( THEME->GetPathToS( ssprintf("%s music", m_sName.c_str()) ) );
 
 	CStringArray Flags;
 	split( OPTION_MENU_FLAGS, ";", Flags, true );
