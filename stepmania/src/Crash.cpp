@@ -271,6 +271,11 @@ static void DoEraseEmergencyDump()
 #include "RageSound.h"
 extern HWND g_hWndMain;
 long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc) {
+	/* If we're fullscreen, the fullscreen d3d window will obscure
+	 * the crash dialog.  Do this before we suspend threads, or it'll
+	 * deadlock if the thread controlling this window has been stopped. */
+	ShowWindow( g_hWndMain, SW_HIDE );
+
 	/////////////////////////
 	//
 	// QUICKLY: SUSPEND ALL THREADS THAT AREN'T US.
@@ -367,10 +372,6 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc) {
 	 * dump, save it now. */
 	DoSave(pExc);
 
-	/* If we're fullscreen, the fullscreen d3d window will obscure
-	 * the crash dialog. */
-	ShowWindow( g_hWndMain, SW_HIDE );
-
 	/* Little trick to get an HINSTANCE of ourself without having access to the hwnd ... */
 	int ret;
 	{
@@ -378,11 +379,12 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc) {
 		GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
 		HINSTANCE handle = LoadLibrary(szFullAppPath);
 
-		ret = DialogBoxParam(handle, MAKEINTRESOURCE(IDD_DISASM_CRASH), g_hWndMain, CrashDlgProc, (LPARAM)pExc);
+		/* Returns TRUE if we want to pop up the standard crash box;
+		 * FALSE if we should just die. */
+		ret = DialogBoxParam(handle, MAKEINTRESOURCE(IDD_DISASM_CRASH), NULL,
+			CrashDlgProc, (LPARAM)pExc);
 	}
 
-	/* Returns TRUE if we want to pop up the standard crash box;
-	 * FALSE if we should just die. */
 	VDDebugInfoDeinit(&g_debugInfo);
 
 	/* Major hack:
