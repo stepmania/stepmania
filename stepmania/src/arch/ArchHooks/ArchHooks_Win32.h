@@ -10,6 +10,7 @@ public:
     void MessageBoxOK( CString sMessage, CString ID );
 	void MessageBoxError( CString error );
     MessageBoxResult MessageBoxAbortRetryIgnore( CString sMessage, CString ID );
+	void RestartProgram();
 };
 
 #undef ARCH_HOOKS

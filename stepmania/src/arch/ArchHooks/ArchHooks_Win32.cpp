@@ -149,9 +149,6 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 
 void ArchHooks_Win32::MessageBoxError( CString error )
 {
-	if( g_bAutoRestart )
-		Win32RestartProgram();
-
 	g_sErrorString = error;
  	// throw up a pretty error dialog
 	AppInstance handle;
@@ -169,6 +166,11 @@ ArchHooks::MessageBoxResult ArchHooks_Win32::MessageBoxAbortRetryIgnore( CString
 	case IDIGNORE:	return ignore;
 	}
 } 
+
+void ArchHooks_Win32::RestartProgram()
+{
+	Win32RestartProgram();
+}
 
 
 /*
