@@ -298,7 +298,7 @@ void SongManager::PreloadSongImages()
 			continue;
 
 		const RageTextureID ID = Sprite::SongBannerTexture( songs[i]->GetBannerPath() );
-		TEXTUREMAN->CacheTexture( ID );
+		TEXTUREMAN->PermanentTexture( ID );
 	}
 
 	vector<Course*> courses;
@@ -309,7 +309,7 @@ void SongManager::PreloadSongImages()
 			continue;
 
 		const RageTextureID ID = Sprite::SongBannerTexture( courses[i]->m_sBannerPath );
-		TEXTUREMAN->CacheTexture( ID );
+		TEXTUREMAN->PermanentTexture( ID );
 	}
 }
 
