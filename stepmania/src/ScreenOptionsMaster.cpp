@@ -563,6 +563,9 @@ void ScreenOptionsMaster::ExportOptions()
 		SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );
 	}
 	
+	if( ChangeMask & OPT_APPLY_SONG )
+		SONGMAN->SetPreferences();
+
 	CHECKPOINT;
 }
 

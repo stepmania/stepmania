@@ -7,6 +7,7 @@ static const int MAX_OPTIONS=16;
 #define OPT_APPLY_THEME					0x4
 #define OPT_RESET_GAME					0x8
 #define OPT_APPLY_SOUND					0x16
+#define OPT_APPLY_SONG					0x32
 
 struct ConfOption
 {

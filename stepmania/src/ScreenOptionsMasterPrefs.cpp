@@ -520,6 +520,7 @@ int ConfOption::GetEffects() const
 		{ WaitForVsync,			OPT_APPLY_GRAPHICS },
 		{ GameSel,				OPT_RESET_GAME },
 		{ SoundVolume,			OPT_APPLY_SOUND },
+		{ AutogenSteps,			OPT_APPLY_SONG },
 	};
 
 	int ret = OPT_SAVE_PREFERENCES;
