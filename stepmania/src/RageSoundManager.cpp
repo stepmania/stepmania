@@ -36,11 +36,14 @@ RageSoundManager::RageSoundManager(CString drivers)
 
 RageSoundManager::~RageSoundManager()
 {
+	lock.Lock();
 	/* Clear any sounds that we own and havn't freed yet. */
 	set<RageSoundBase *>::iterator j = owned_sounds.begin();
 	while(j != owned_sounds.end())
 		delete *(j++);
+	lock.Unlock();
 
+	/* Don't lock while deleting the driver (the decoder thread might deadlock). */
 	delete driver;
 }
 
@@ -57,6 +60,7 @@ void RageSoundManager::StopMixing( RageSoundBase *snd )
 	 * However, this call might be *from* the sound itself, and it'd be
 	 * a mess to delete it while it's on the call stack.  Instead, put it
 	 * in a queue to delete, and delete it on the next update. */
+	LockMut(lock);
 	if(owned_sounds.find(snd) != owned_sounds.end()) {
 		sounds_to_delete.insert(snd);
 		owned_sounds.erase(snd);
@@ -70,20 +74,13 @@ int64_t RageSoundManager::GetPosition( const RageSoundBase *snd ) const
 
 void RageSoundManager::Update(float delta)
 {
+	LockMut(lock);
 	while(!sounds_to_delete.empty())
 	{
 		delete *sounds_to_delete.begin();
 		sounds_to_delete.erase(sounds_to_delete.begin());
 	}
 
-	// Race condition here?  I crashed with the following stack:
-	// std::_Tree<RageSound *,RageSound *,std::set<RageSound *,std::less<RageSound *>,std::allocator<RageSound *> >::_Kfn,std::less<RageSound *>,std::allocator<RageSound *> >::_Min(std::_Tree<RageSound *,RageSound *,std::set<RageSound *,std::less<RageSound *>,std::allocator<RageSound *> >::_Kfn,std::less<RageSound *>,std::allocator<RageSound *> >::_Node * 0xfeeefeee) line 542 + 21 bytes
-	// std::_Tree<RageSound *,RageSound *,std::set<RageSound *,std::less<RageSound *>,std::allocator<RageSound *> >::_Kfn,std::less<RageSound *>,std::allocator<RageSound *> >::const_iterator::_Inc() line 104 + 22 bytes
-	// std::_Tree<RageSound *,RageSound *,std::set<RageSound *,std::less<RageSound *>,std::allocator<RageSound *> >::_Kfn,std::less<RageSound *>,std::allocator<RageSound *> >::iterator::operator++() line 130
-	// RageSoundManager::Update(float 0.0360000) line 80 + 10 bytes
-	// GameLoop() line 1315
-	// SDL_main(int 1, char * * 0x0012fed0) line 999
-	//  -Chris
 	for(set<RageSound *>::iterator i = all_sounds.begin();
 		i != all_sounds.end(); ++i)
 		(*i)->Update(delta);
@@ -103,6 +100,8 @@ int RageSoundManager::GetDriverSampleRate( int rate ) const
 
 RageSound *RageSoundManager::PlaySound(RageSound &snd)
 {
+	LockMut(lock);
+
 	RageSound *sound_to_play;
 	if(!snd.IsPlaying())
 		sound_to_play = &snd;
@@ -123,6 +122,8 @@ RageSound *RageSoundManager::PlaySound(RageSound &snd)
 
 void RageSoundManager::StopPlayingSound(RageSound &snd)
 {
+	LockMut(lock);
+
 	/* Stop playing all playing sounds derived from the same parent as snd. */
 	vector<RageSound *> snds;
 	GetCopies(snd, snds);
@@ -135,6 +136,8 @@ void RageSoundManager::StopPlayingSound(RageSound &snd)
 
 void RageSoundManager::GetCopies(RageSound &snd, vector<RageSound *> &snds)
 {
+	LockMut(lock);
+
 	RageSound *parent = snd.GetOriginal();
 
 	snds.clear();
@@ -152,19 +155,22 @@ void RageSoundManager::PlayOnce( CString sPath )
 	snd->Load(sPath, false);
 
 	/* We're responsible for freeing it. */
+	lock.Lock();
 	owned_sounds.insert(snd);
+	lock.Unlock();
 
 	snd->Play();
 }
 
-/* Standalone helpers: */
-
 void RageSoundManager::SetPrefs(float MixVol)
 {
+	LockMut(lock);
+
 	MixVolume = MixVol;
 	driver->VolumeChanged();
 }
 
+/* Standalone helpers: */
 void RageSoundManager::AttenuateBuf( Sint16 *buf, int samples, float vol )
 {
 	while( samples-- )
