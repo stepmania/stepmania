@@ -79,8 +79,7 @@ int OptionToPreferredColumn( CString sOptionText )
 		if( g_OptionColumnEntries[i].szString == sOptionText )
 			return g_OptionColumnEntries[i].iSlotIndex;
 
-	LOG->Trace("Unknown option: \"%s\"", sOptionText );
-	ASSERT(0);	// we encountered an option that isn't in our lookup table.  You should add it above.
+	LOG->Warn("Unknown option: \"%s\"", sOptionText );
 	return -1;
 }
 
@@ -102,6 +101,9 @@ void OptionIconRow::Refresh( PlayerNumber pn )
 	{
 		CString sOption = asOptions[i];
 		int iPerferredCol = OptionToPreferredColumn( sOption );
+
+		if( iPerferredCol == -1 )
+			continue;	// skip
 
 		// search for a vacant spot
 		for( int i=iPerferredCol; i<NUM_OPTION_COLS-1; i++ )
