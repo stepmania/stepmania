@@ -1387,40 +1387,45 @@ void SortSongPointerArrayByBPM( vector<Song*> &arraySongPointers )
 	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByBPM );
 }
 
-struct GradeCnt { int n[NUM_GRADES]; };
-static map<Song *, GradeCnt> NumNotesWithGrade;
-
-bool CompareSongPointersByGrade(const Song *pSong1, const Song *pSong2)
+void AppendOctal( int n, int digits, CString &out )
 {
-	const GradeCnt &cnt1=NumNotesWithGrade[(Song *) pSong1];
-	const GradeCnt &cnt2=NumNotesWithGrade[(Song *) pSong2];
-	for( int i=NUM_GRADES-1; i>GRADE_NO_DATA; i-- )
+	for( int p = digits; p >= 0; --p )
 	{
-		const int iCount1 = cnt1.n[i];
-		const int iCount2 = cnt2.n[i];
-
-		if( iCount1 > iCount2 )
-			return true;
-		if( iCount1 < iCount2 )
-			return false;
+		const int shift = p*3;
+		int n2 = (n >> shift) & 0x7;
+		out.push_back( (char) n2 );
 	}
-	
-	return CompareSongPointersByTitle( pSong1, pSong2 );
 }
+
+bool CompDescending( const pair<Song *, CString> &a, const pair<Song *, CString> &b )
+{ return a.second > b.second; }
 
 void SortSongPointerArrayByGrade( vector<Song*> &arraySongPointers )
 {
-	for(unsigned i = 0; i < arraySongPointers.size(); ++i)
-	{
-		GradeCnt cnt;
-		memset( cnt.n, 0, sizeof(cnt.n) );
+	/* Optimize by pre-writing a string to compare, since doing GetNumNotesWithGrade
+	 * inside the sort is too slow. */
+	typedef pair< Song *, CString > val;
+	vector<val> vals;
+	vals.reserve( arraySongPointers.size() );
 
+	for( unsigned i = 0; i < arraySongPointers.size(); ++i )
+	{
 		Song *pSong = arraySongPointers[i];
+
+		CString foo;
+		foo.reserve(256);
 		for( int g=NUM_GRADES-1; g>GRADE_NO_DATA; g-- )
-			cnt.n[g] = pSong->GetNumNotesWithGrade( (Grade)g );
-		NumNotesWithGrade[pSong] = cnt;
+		{
+			int n = pSong->GetNumNotesWithGrade( (Grade)g );
+			AppendOctal( n, 3, foo );
+		}
+		vals.push_back( val(pSong, foo) );
 	}
-	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByGrade );
+
+	sort( vals.begin(), vals.end(), CompDescending );
+
+	for( unsigned i = 0; i < arraySongPointers.size(); ++i )
+		arraySongPointers[i] = vals[i].first;
 }
 
 
