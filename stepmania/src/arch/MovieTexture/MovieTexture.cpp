@@ -22,6 +22,13 @@
 #include "MovieTexture_FFMpeg.h"
 #endif
 
+void ForceToAscii( CString &str )
+{
+	for( unsigned i=0; i<str.size(); ++i )
+		if( str[i] < 0x20 || str[i] > 0x7E )
+			str[i] = '?';
+}
+
 bool RageMovieTexture::GetFourCC( CString fn, CString &handler, CString &type )
 {
 	CString ignore, ext;
@@ -36,35 +43,31 @@ bool RageMovieTexture::GetFourCC( CString fn, CString &handler, CString &type )
 	}
 
 	//Not very pretty but should do all the same error checking without iostream
-#define HANDLE_ERROR(x) {error = x; goto errorLabel;}
+#define HANDLE_ERROR(x) { \
+		LOG->Warn( "Error reading %s: %s", fn.c_str(), x ); \
+		handler = type = ""; \
+		return false; \
+	}
+
 	RageFile file(fn);
-	CString error("");
-	int i;
 	
-	if (!file.IsOpen())
+	if( !file.IsOpen() )
 		HANDLE_ERROR("Could not open file.");
-	if ( !file.Seek(0x70) )
+	if( !file.Seek(0x70) )
 		HANDLE_ERROR("Could not seek.");
 	type = "    ";
-	if (file.Read((char *)type.c_str(), 4) != 4)
+	if( file.Read((char *)type.c_str(), 4) != 4 )
 		HANDLE_ERROR("Could not read.");
-	for (i=0; i<4; ++i)
-		if (type[i] < 0x20 || type[i] > 0x7E) type[i] = '?';
+	ForceToAscii( type );
 	
-	if ( !file.Seek(0xBC) )
+	if( file.Seek(0xBC) != 0xBC )
 		HANDLE_ERROR("Could not seek.");
 	handler = "    ";
-	if (file.Read((char *)handler.c_str(), 4) != 4)
+	if( file.Read((char *)handler.c_str(), 4) != 4 )
 		HANDLE_ERROR("Could not read.");
-	for (i=0; i<4; ++i)
-		if (handler[i] < 0x20 || handler[i] > 0x7E) handler[i] = '?';
+	ForceToAscii( handler );
 
 	return true;
-	
-errorLabel:
-	LOG->Warn("Error on %s: %s.", fn.c_str(), error.c_str());
-	handler = type = "";
-	return false;
 #undef HANDLE_ERROR
 }
 
