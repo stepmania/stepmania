@@ -154,7 +154,7 @@ MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in 
 				//          GUID: 04e801000001125198948886
 				//      Attached: Yes
 		
-				CString fn = ssprintf( "/proc/scsi/usb-storage-%d/%d", i );
+				CString fn = ssprintf( "/proc/scsi/usb-storage-%d/%d", i, i );
 				ifstream f;
 				f.open(fn);
 				if( !f.is_open() )
@@ -259,6 +259,7 @@ MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in 
 
 		static char buffer[1024];	// large enough to read all messages in one call
 		int ret = read(fds_kmsg, &buffer, sizeof(buffer));
+
 		if( ret == 0 )
 		{
 			LOG->Warn("Read only %d bytes from '%s'", ret, PROC_KMSG);
@@ -268,10 +269,15 @@ MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in 
 		}
 		else if( ret == sizeof(buffer) )
 		{
-			LOG->Warn("We could have more than %d bytes from '%s'", sizeof(buffer), PROC_KMSG);
+			LOG->Warn("Buffer size %d is too small to read all messages from '%s'", sizeof(buffer), PROC_KMSG);
 			buffer[sizeof(buffer)-1] = '\0'; 
 		}
-
+	        else
+		  {
+		    buffer[ret] = '\0';
+		  }
+		LOG->Trace( "read '%s' from kmsg", buffer );
+	       
 		bool bLogAboutUsb = strstr(buffer,"usb") || strstr(buffer,"USB");
 		return bLogAboutUsb;
 	}
@@ -280,6 +286,7 @@ MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in 
 	{
 		if( UsbChanged() )
 		{
+		  SCREENMAN->SystemMessage( "USB changed" );
 			vector<UsbStorageDevice> vOld = g_StorageDevices;	// make a copy
 			UpdateAttachedUsbStorageDevices();
 			vector<UsbStorageDevice> &vNew = g_StorageDevices;
