@@ -42,6 +42,7 @@
 #define SCROLL_BAR_X				THEME->GetMetricF("MusicWheel","ScrollBarX")
 #define SCROLL_BAR_HEIGHT			THEME->GetMetricI("MusicWheel","ScrollBarHeight")
 CachedThemeMetricF ITEM_CURVE_X		("MusicWheel","ItemCurveX");
+#define USE_LINEAR_WHEEL			THEME->GetMetricB("MusicWheel","NoCurving")
 CachedThemeMetricF ITEM_SPACING_Y	("MusicWheel","ItemSpacingY");
 #define NUM_SECTION_COLORS			THEME->GetMetricI("MusicWheel","NumSectionColors")
 #define SECTION_COLORS( i )			THEME->GetMetricC("MusicWheel",ssprintf("SectionColor%d",i+1))
@@ -707,14 +708,28 @@ void MusicWheel::GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, fl
 	}
 	else
 	{
-		fX_out = (1-cosf(fPosOffsetsFromMiddle/PI))*ITEM_CURVE_X;
-		fY_out = fPosOffsetsFromMiddle*ITEM_SPACING_Y;
-		fZ_out = 0;
-		fRotationX_out = 0;
+		if(!USE_LINEAR_WHEEL)
+		{
+			fX_out = (1-cosf(fPosOffsetsFromMiddle/PI))*ITEM_CURVE_X;
+			fY_out = fPosOffsetsFromMiddle*ITEM_SPACING_Y;
+			fZ_out = 0;
+			fRotationX_out = 0;
 
-		fX_out = roundf( fX_out );
-		fY_out = roundf( fY_out );
-		fZ_out = roundf( fZ_out );
+			fX_out = roundf( fX_out );
+			fY_out = roundf( fY_out );
+			fZ_out = roundf( fZ_out );
+		}
+		else
+		{
+			fX_out = fPosOffsetsFromMiddle*ITEM_CURVE_X;
+			fY_out = fPosOffsetsFromMiddle*ITEM_SPACING_Y;
+			fZ_out = 0;
+			fRotationX_out = 0;
+
+			fX_out = roundf( fX_out );
+			fY_out = roundf( fY_out );
+			fZ_out = roundf( fZ_out );
+		}
 	}
 }
 
