@@ -590,9 +590,20 @@ void Model::DrawPrimitives()
 	if(m_Meshes.empty())
 		return;	// bail early
 
+	/* Don't if we're fully transparent */
+	if( m_temp.diffuse[0].a <= 0.001f )
+		return;
+
 	Actor::SetRenderStates();	// set Actor-specified render states
 
 	DISPLAY->Scale( 1, -1, 1 );	// flip Y so positive is up
+
+
+	//////////////////////
+	// render the diffuse pass
+	//////////////////////
+
+	DISPLAY->SetTextureModeModulate();
 
 	for (int i = 0; i < (int)m_Meshes.size(); i++)
 	{
@@ -657,8 +668,13 @@ void Model::DrawPrimitives()
 		DISPLAY->DrawIndexedTriangles( &TempVertices[0], pMesh->Vertices.size(), (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );
 	}
 
-	DISPLAY->SetZBuffer( false );
-
+	//////////////////////
+	// render the glow pass
+	//////////////////////
+	if( m_temp.glow.a > 0.0001f )
+	{
+		// TODO: Support glow.
+	}
 }
 
 void Model::SetDefaultAnimation( CString sAnimation, float fPlayRate )

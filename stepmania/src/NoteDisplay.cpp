@@ -266,7 +266,8 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn, CString NoteSkin, float fY
 void NoteDisplay::SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAnimationLengthInBeats, bool bVivid, bool bNoteColor )
 {
 	const int iNumFrames = actorToSet.GetNumStates();
-	ASSERT( iNumFrames );
+	if( iNumFrames == 0 )	// Model with no textures
+		return;
 
 	float fSongBeat = GAMESTATE->m_fSongBeat;
 	float fPrecentIntoAnimation = fmodf(fSongBeat,fAnimationLengthInBeats) / fAnimationLengthInBeats;
