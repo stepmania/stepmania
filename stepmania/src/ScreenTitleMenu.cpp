@@ -88,6 +88,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 		else
 			THEME->SwitchTheme( "default" );
 	}
+	PREFSMAN->SaveGamePrefsToDisk();
 
 
 
