@@ -23,48 +23,8 @@ static const CString PageTypeNames[NUM_PAGE_TYPES] = {
 XToString( PageType );
 
 
-#define STEPS_TYPES_TO_HIDE			THEME->GetMetric (m_sName,"StepsTypesToHide")
-#define SHOW_CATEGORIES				THEME->GetMetricB(m_sName,"ShowCategories")
-#define SHOW_ALL_STEPS_SCORES		THEME->GetMetricB(m_sName,"ShowAllStepsScores")
-#define SHOW_ALL_COURSE_SCORES		THEME->GetMetricB(m_sName,"ShowAllCourseScores")
-#define DIFFICULTIES_TO_SHOW		THEME->GetMetric (m_sName,"DifficultiesToShow")
 #define COURSES_TO_SHOW				PREFSMAN->m_sCoursesToShowRanking
-#define SECONDS_PER_PAGE			THEME->GetMetricF(m_sName,"SecondsPerPage")
-#define PAGE_FADE_SECONDS			THEME->GetMetricF(m_sName,"PageFadeSeconds")
-#define PERCENT_DECIMAL_PLACES		THEME->GetMetricI(m_sName,"PercentDecimalPlaces")
-#define PERCENT_TOTAL_SIZE			THEME->GetMetricI(m_sName,"PercentTotalSize")
-#define NO_SCORE_NAME				THEME->GetMetric (m_sName,"NoScoreName")
-
-#define ROW_SPACING_X				THEME->GetMetricF(m_sName,"RowSpacingX")
-#define ROW_SPACING_Y				THEME->GetMetricF(m_sName,"RowSpacingY")
-#define COL_SPACING_X				THEME->GetMetricF(m_sName,"ColSpacingX")
-#define COL_SPACING_Y				THEME->GetMetricF(m_sName,"ColSpacingY")
-#define STEPS_TYPE_COLOR( i )		THEME->GetMetricC(m_sName,ssprintf("StepsTypeColor%d",i+1))
-#define SONG_SCORE_ROWS_TO_SHOW		THEME->GetMetricI(m_sName,"SongScoreRowsToShow")
-#define SONG_SCORE_SECONDS_PER_ROW	THEME->GetMetricF(m_sName,"SongScoreSecondsPerRow")
-
-#define BULLET_START_X				THEME->GetMetricF(m_sName,"BulletStartX")
-#define BULLET_START_Y				THEME->GetMetricF(m_sName,"BulletStartY")
-#define NAME_START_X				THEME->GetMetricF(m_sName,"NameStartX")
-#define NAME_START_Y				THEME->GetMetricF(m_sName,"NameStartY")
-#define SCORE_START_X				THEME->GetMetricF(m_sName,"ScoreStartX")
-#define SCORE_START_Y				THEME->GetMetricF(m_sName,"ScoreStartY")
-#define POINTS_START_X				THEME->GetMetricF(m_sName,"PointsStartX")
-#define POINTS_START_Y				THEME->GetMetricF(m_sName,"PointsStartY")
-#define TIME_START_X				THEME->GetMetricF(m_sName,"TimeStartX")
-#define TIME_START_Y				THEME->GetMetricF(m_sName,"TimeStartY")
-#define DIFFICULTY_START_X			THEME->GetMetricF(m_sName,"DifficultyStartX")
-#define DIFFICULTY_Y				THEME->GetMetricF(m_sName,"DifficultyY")
-#define COURSE_DIFFICULTY_START_X	THEME->GetMetricF(m_sName,"CourseDifficultyStartX")
-#define COURSE_DIFFICULTY_Y			THEME->GetMetricF(m_sName,"CourseDifficultyY")
-#define SONG_TITLE_OFFSET_X			THEME->GetMetricF(m_sName,"SongTitleOffsetX")
-#define SONG_TITLE_OFFSET_Y			THEME->GetMetricF(m_sName,"SongTitleOffsetY")
-#define SONG_FRAME_OFFSET_X			THEME->GetMetricF(m_sName,"SongFrameOffsetX")
-#define SONG_FRAME_OFFSET_Y			THEME->GetMetricF(m_sName,"SongFrameOffsetY")
-#define STEPS_SCORE_OFFSET_START_X	THEME->GetMetricF(m_sName,"StepsScoreOffsetStartX")
-#define STEPS_SCORE_OFFSET_Y		THEME->GetMetricF(m_sName,"StepsScoreOffsetY")
-#define COURSE_SCORE_OFFSET_START_X	THEME->GetMetricF(m_sName,"CourseListScoreOffsetStartX")
-#define COURSE_SCORE_OFFSET_Y		THEME->GetMetricF(m_sName,"CourseListScoreOffsetY")
+#define COURSES_TO_SHOW2			THEME->GetMetric(m_sName,"CoursesToShow")
 
 
 #define BULLET_X(row)				(BULLET_START_X+ROW_SPACING_X*row)
@@ -87,8 +47,51 @@ const ScreenMessage SM_ShowNextPage		=	(ScreenMessage)(SM_User+67);
 const ScreenMessage SM_HidePage			=	(ScreenMessage)(SM_User+68);
 
 
+CString STEPS_TYPE_COLOR_NAME( size_t i ) { return ssprintf("StepsTypeColor%d",i+1); }
+
 REGISTER_SCREEN_CLASS( ScreenRanking );
-ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
+ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName ),
+	STEPS_TYPES_TO_HIDE			(m_sName,"StepsTypesToHide"),
+	SHOW_CATEGORIES				(m_sName,"ShowCategories"),
+	SHOW_ALL_STEPS_SCORES		(m_sName,"ShowAllStepsScores"),
+	SHOW_ALL_COURSE_SCORES		(m_sName,"ShowAllCourseScores"),
+	DIFFICULTIES_TO_SHOW		(m_sName,"DifficultiesToShow"),
+	SECONDS_PER_PAGE			(m_sName,"SecondsPerPage"),
+	PAGE_FADE_SECONDS			(m_sName,"PageFadeSeconds"),
+	PERCENT_DECIMAL_PLACES		(m_sName,"PercentDecimalPlaces"),
+	PERCENT_TOTAL_SIZE			(m_sName,"PercentTotalSize"),
+	NO_SCORE_NAME				(m_sName,"NoScoreName"),
+
+	ROW_SPACING_X				(m_sName,"RowSpacingX"),
+	ROW_SPACING_Y				(m_sName,"RowSpacingY"),
+	COL_SPACING_X				(m_sName,"ColSpacingX"),
+	COL_SPACING_Y				(m_sName,"ColSpacingY"),
+	STEPS_TYPE_COLOR			(m_sName,STEPS_TYPE_COLOR_NAME,5),
+	SONG_SCORE_ROWS_TO_SHOW		(m_sName,"SongScoreRowsToShow"),
+	SONG_SCORE_SECONDS_PER_ROW	(m_sName,"SongScoreSecondsPerRow"),
+	
+	BULLET_START_X				(m_sName,"BulletStartX"),
+	BULLET_START_Y				(m_sName,"BulletStartY"),
+	NAME_START_X				(m_sName,"NameStartX"),
+	NAME_START_Y				(m_sName,"NameStartY"),
+	SCORE_START_X				(m_sName,"ScoreStartX"),
+	SCORE_START_Y				(m_sName,"ScoreStartY"),
+	POINTS_START_X				(m_sName,"PointsStartX"),
+	POINTS_START_Y				(m_sName,"PointsStartY"),
+	TIME_START_X				(m_sName,"TimeStartX"),
+	TIME_START_Y				(m_sName,"TimeStartY"),
+	DIFFICULTY_START_X			(m_sName,"DifficultyStartX"),
+	DIFFICULTY_Y				(m_sName,"DifficultyY"),
+	COURSE_DIFFICULTY_START_X	(m_sName,"CourseDifficultyStartX"),
+	COURSE_DIFFICULTY_Y			(m_sName,"CourseDifficultyY"),
+	SONG_TITLE_OFFSET_X			(m_sName,"SongTitleOffsetX"),
+	SONG_TITLE_OFFSET_Y			(m_sName,"SongTitleOffsetY"),
+	SONG_FRAME_OFFSET_X			(m_sName,"SongFrameOffsetX"),
+	SONG_FRAME_OFFSET_Y			(m_sName,"SongFrameOffsetY"),
+	STEPS_SCORE_OFFSET_START_X	(m_sName,"StepsScoreOffsetStartX"),
+	STEPS_SCORE_OFFSET_Y		(m_sName,"StepsScoreOffsetY"),
+	COURSE_SCORE_OFFSET_START_X	(m_sName,"CourseListScoreOffsetStartX"),
+	COURSE_SCORE_OFFSET_Y		(m_sName,"CourseListScoreOffsetY")
 {
 }
 
@@ -156,7 +159,7 @@ void ScreenRanking::Init()
 
 			// TODO: Think of a better way to handle this
 			if( PREFSMAN->m_sCoursesToShowRanking == "" )
-				PREFSMAN->m_sCoursesToShowRanking = THEME->GetMetric(m_sName,"CoursesToShow");
+				PREFSMAN->m_sCoursesToShowRanking = COURSES_TO_SHOW2;
 		}
 	}
 
@@ -543,7 +546,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 			{
 				m_textNames[l].Reset();
 				m_textNames[l].SetXY( NAME_X(l), NAME_Y(l) );
-				m_textNames[l].SetDiffuse( STEPS_TYPE_COLOR(pts.colorIndex) );
+				m_textNames[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 				ON_COMMAND( m_textNames[l] );
 			}
 
@@ -552,7 +555,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 			{
 				m_textScores[l].Reset();
 				m_textScores[l].SetXY( SCORE_X(l), SCORE_Y(l) );
-				m_textScores[l].SetDiffuse( STEPS_TYPE_COLOR(pts.colorIndex) );
+				m_textScores[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 				ON_COMMAND( m_textScores[l] );
 			}
 			
@@ -561,7 +564,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 			{
 				m_textPoints[l].Reset();
 				m_textPoints[l].SetXY( POINTS_X(l), POINTS_Y(l) );
-				m_textPoints[l].SetDiffuse( STEPS_TYPE_COLOR(pts.colorIndex) );
+				m_textPoints[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 				ON_COMMAND( m_textPoints[l] );
 			}
 			
@@ -570,7 +573,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 			{
 				m_textTime[l].Reset();
 				m_textTime[l].SetXY( TIME_X(l), TIME_Y(l) );
-				m_textTime[l].SetDiffuse( STEPS_TYPE_COLOR(pts.colorIndex) );
+				m_textTime[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 				ON_COMMAND( m_textTime[l] );
 			}
 		}
@@ -617,7 +620,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 					pStepsScoreRowItems->m_textStepsScore[*dc_iter].Reset();
 					pStepsScoreRowItems->m_textStepsScore[*dc_iter].SetXY( STEPS_SCORE_OFFSET_X(*dc_iter), STEPS_SCORE_OFFSET_Y );
 					pStepsScoreRowItems->m_textStepsScore[*dc_iter].SetUseZBuffer( true );
-					pStepsScoreRowItems->m_textStepsScore[*dc_iter].SetDiffuse( STEPS_TYPE_COLOR(pts.colorIndex) );
+					pStepsScoreRowItems->m_textStepsScore[*dc_iter].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 					ON_COMMAND( pStepsScoreRowItems->m_textStepsScore[*dc_iter] );
 				}
 			}
@@ -665,7 +668,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 					pCourseScoreRowItem->m_textStepsScore[d].Reset();
 					pCourseScoreRowItem->m_textStepsScore[d].SetXY( COURSE_SCORE_OFFSET_X(d), COURSE_SCORE_OFFSET_Y );
 					pCourseScoreRowItem->m_textStepsScore[d].SetUseZBuffer( true );
-					pCourseScoreRowItem->m_textStepsScore[d].SetDiffuse( STEPS_TYPE_COLOR(pts.colorIndex) );
+					pCourseScoreRowItem->m_textStepsScore[d].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 					ON_COMMAND( pCourseScoreRowItem->m_textStepsScore[d] );
 				}
 			}
@@ -703,8 +706,8 @@ float ScreenRanking::SetPage( PageToShow pts )
 
 				m_textNames[l].SetText( hs.GetDisplayName() );
 				m_textScores[l].SetText( ssprintf("%09i",hs.iScore) );
-				m_textNames[l].SetDiffuse( STEPS_TYPE_COLOR(pts.colorIndex) );
-				m_textScores[l].SetDiffuse( STEPS_TYPE_COLOR(pts.colorIndex) );
+				m_textNames[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
+				m_textScores[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 
 				if( bRecentHighScore )
 				{
@@ -752,10 +755,10 @@ float ScreenRanking::SetPage( PageToShow pts )
 					m_textTime[l].SetText( "" );
 					m_textScores[l].SetText( ssprintf("%09d",hs.iScore) );
 				}
-				m_textNames[l].SetDiffuse( STEPS_TYPE_COLOR(pts.colorIndex) );
-				m_textPoints[l].SetDiffuse( STEPS_TYPE_COLOR(pts.colorIndex) );
-				m_textTime[l].SetDiffuse( STEPS_TYPE_COLOR(pts.colorIndex) );
-				m_textScores[l].SetDiffuse( STEPS_TYPE_COLOR(pts.colorIndex) );
+				m_textNames[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
+				m_textPoints[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
+				m_textTime[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
+				m_textScores[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 
 				if( bRecentHighScore )
 				{

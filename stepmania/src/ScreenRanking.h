@@ -9,6 +9,7 @@
 #include "ListDisplay.h"
 #include "ActorUtil.h"
 #include "Difficulty.h"
+#include "ThemeMetric.h"
 
 class Course;
 class Song;
@@ -92,6 +93,49 @@ protected:
 
 	vector<PageToShow>	m_vPagesToShow;
 	vector<Difficulty>  m_vDiffsToShow;
+
+
+	ThemeMetric<CString>		STEPS_TYPES_TO_HIDE;
+	ThemeMetric<bool>			SHOW_CATEGORIES;
+	ThemeMetric<bool>			SHOW_ALL_STEPS_SCORES;
+	ThemeMetric<bool>			SHOW_ALL_COURSE_SCORES;
+	ThemeMetric<CString>		DIFFICULTIES_TO_SHOW;
+	ThemeMetric<float>			SECONDS_PER_PAGE;
+	ThemeMetric<float>			PAGE_FADE_SECONDS;
+	ThemeMetric<int>			PERCENT_DECIMAL_PLACES;
+	ThemeMetric<int>			PERCENT_TOTAL_SIZE;
+	ThemeMetric<CString>		NO_SCORE_NAME;
+
+	ThemeMetric<float>			ROW_SPACING_X;
+	ThemeMetric<float>			ROW_SPACING_Y;
+	ThemeMetric<float>			COL_SPACING_X;
+	ThemeMetric<float>			COL_SPACING_Y;
+	ThemeMetric1D<RageColor>	STEPS_TYPE_COLOR;
+	ThemeMetric<int>			SONG_SCORE_ROWS_TO_SHOW;
+	ThemeMetric<float>			SONG_SCORE_SECONDS_PER_ROW;
+
+	ThemeMetric<float>			BULLET_START_X;
+	ThemeMetric<float>			BULLET_START_Y;
+	ThemeMetric<float>			NAME_START_X;
+	ThemeMetric<float>			NAME_START_Y;
+	ThemeMetric<float>			SCORE_START_X;
+	ThemeMetric<float>			SCORE_START_Y;
+	ThemeMetric<float>			POINTS_START_X;
+	ThemeMetric<float>			POINTS_START_Y;
+	ThemeMetric<float>			TIME_START_X;
+	ThemeMetric<float>			TIME_START_Y;
+	ThemeMetric<float>			DIFFICULTY_START_X;
+	ThemeMetric<float>			DIFFICULTY_Y;
+	ThemeMetric<float>			COURSE_DIFFICULTY_START_X;
+	ThemeMetric<float>			COURSE_DIFFICULTY_Y;
+	ThemeMetric<float>			SONG_TITLE_OFFSET_X;
+	ThemeMetric<float>			SONG_TITLE_OFFSET_Y;
+	ThemeMetric<float>			SONG_FRAME_OFFSET_X;
+	ThemeMetric<float>			SONG_FRAME_OFFSET_Y;
+	ThemeMetric<float>			STEPS_SCORE_OFFSET_START_X;
+	ThemeMetric<float>			STEPS_SCORE_OFFSET_Y;
+	ThemeMetric<float>			COURSE_SCORE_OFFSET_START_X;
+	ThemeMetric<float>			COURSE_SCORE_OFFSET_Y;
 };
 
 #endif
