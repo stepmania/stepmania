@@ -125,9 +125,9 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	SET_XY( m_BPMDisplay );
 	this->AddChild( &m_BPMDisplay );
 
-	m_DifficultyDisplay.SetName( "DifficultyDisplay" );
-	m_DifficultyDisplay.EnableShadow( false );
-	SET_XY( m_DifficultyDisplay );
+	m_DifficultyMeter[p].SetName( "DifficultyMeter", ssprintf("MeterP%d",p+1) );
+	m_DifficultyMeter[p].Load();
+	SET_XY_AND_ON_COMMAND( m_DifficultyMeter[p] );
 	this->AddChild( &m_DifficultyDisplay );
 
 	{
