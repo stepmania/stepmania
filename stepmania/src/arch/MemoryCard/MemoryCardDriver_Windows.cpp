@@ -83,8 +83,12 @@ bool MemoryCardDriver_Windows::MountAndTestWrite( UsbStorageDevice* pDevice, CSt
 	fclose( fp );
 	remove( sFile );
 
-	// XXX: Remounting a different OS directory to the same mount point 
-	// seems to be broken.  Investigate this later...
+	/* Unmount any previous mounts for this mountpoint. */
+	vector<RageFileManager::DriverLocation> Mounts;
+	FILEMAN->GetLoadedDrivers( Mounts );
+	for( unsigned i = 0; i < Mounts.size(); ++i )
+		FILEMAN->Unmount( Mounts[i].Type, Mounts[i].Root, Mounts[i].MountPoint );
+
 	FILEMAN->Mount( "dir", pDevice->sOsMountDir, sMountPoint.c_str() );
 	LOG->Trace( "FILEMAN->Mount %s %s", pDevice->sOsMountDir.c_str(), sMountPoint.c_str() );
 
