@@ -232,8 +232,7 @@ void BitmapText::SetText( CString sText )
 	m_szTextLines.clear();
 	m_iLineWidths.clear();
 
-	wstring s; s+=L'\n';
-	split(CStringToWstring(sText), s, m_szTextLines, false);
+	split(CStringToWstring(sText), L"\n", m_szTextLines, false);
 	
 	BuildChars();
 }
