@@ -588,11 +588,11 @@ void Model::DrawPrimitives()
 			}
 			else
 			{
-				const static RageColor emissive( 0,0,0,0 );
-				const static RageColor ambient( 0.2f,0.2f,0.2f,1 );
-				const static RageColor diffuse( 0.7f,0.7f,0.7f,1 );
-				const static RageColor specular( 0.2f,0.2f,0.2f,1 );
-				const static float shininess = 1;
+				static const RageColor emissive( 0,0,0,0 );
+				static const RageColor ambient( 0.2f,0.2f,0.2f,1 );
+				static const RageColor diffuse( 0.7f,0.7f,0.7f,1 );
+				static const RageColor specular( 0.2f,0.2f,0.2f,1 );
+				static const float shininess = 1;
 				DISPLAY->SetMaterial(
 					emissive,
 					ambient,
