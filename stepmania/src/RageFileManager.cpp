@@ -170,11 +170,6 @@ void RageFileManager::MountInitialFilesystems()
 			
 	RageFileManager::Mount( "dir", Root, "" );
 #elif defined(_WINDOWS)
-	/* XXX: Test to see if we can write to the program directory tree.  If we can't,
-	 * add a search path under "Documents and Settings" for writing scores, etc. Otherwise,
-	 * don't.  We don't want to write to D&S if we don't have to (it'll confuse people). */
-/*	RageFileManager::Mount( "dir", "******", "" ); */
-
 	/* All Windows data goes in the directory one level above the executable. */
 	CStringArray parts;
 	split( DirOfExecutable, "/", parts );
