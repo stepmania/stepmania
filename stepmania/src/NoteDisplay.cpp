@@ -471,8 +471,8 @@ void NoteDisplay::DrawHoldTopCap( const HoldNote& hn, const bool bIsBeingHeld, f
 	DISPLAY->SetCullMode( CULL_NONE );
 	DISPLAY->SetTextureWrapping(false);
 
-	const float fFrameWidth  = pSprTopCap->GetUnzoomedWidth();
-	const float fFrameHeight = pSprTopCap->GetUnzoomedHeight();
+	const float fFrameWidth  = pSprTopCap->GetZoomedWidth();
+	const float fFrameHeight = pSprTopCap->GetZoomedHeight();
 	const float fYCapTop	 = fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead-fFrameHeight;
 	const float fYCapBottom  = fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead;
 
@@ -538,17 +538,10 @@ void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bIsBeingHeld, flo
 	DISPLAY->SetTextureWrapping( true );
 
 
-	float fFrameWidth  = pSprBody->GetUnzoomedWidth();
-	const float fFrameHeight = pSprBody->GetUnzoomedHeight();
+	const float fFrameWidth  = pSprBody->GetZoomedWidth();
+	const float fFrameHeight = pSprBody->GetZoomedHeight();
 	const float fYBodyTop = fYHead + cache->m_iStartDrawingHoldBodyOffsetFromHead;
 	const float fYBodyBottom = fYTail + cache->m_iStopDrawingHoldBodyOffsetFromTail;
-
-	// To get the hold body textures to look correct on longer hold arrows, you need to have
-	// SetTextureWrapping() be set to true above.  However, this ends up defeating the scaling
-	// done on the Sprite itself.  As a result, if we want this to be the appropriate size
-	// for 2-player 8-panel (techno versus), then we need to shrink it to 80% manually here.
-	if( GAMESTATE->m_CurGame == GAME_TECHNO && GAMESTATE->m_CurStyle == STYLE_TECHNO_VERSUS8 )
-		fFrameWidth *= (float)0.8;
 
 	const bool bReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].GetReversePercentForColumn(iCol) > 0.5;
 	bool bAnchorToBottom = bReverse && cache->m_bFlipHeadAndTailWhenReverse;
@@ -614,8 +607,8 @@ void NoteDisplay::DrawHoldBottomCap( const HoldNote& hn, const bool bIsBeingHeld
 	DISPLAY->SetCullMode( CULL_NONE );
 	DISPLAY->SetTextureWrapping(false);
 
-	const float fFrameWidth		= pBottomCap->GetUnzoomedWidth();
-	const float fFrameHeight	= pBottomCap->GetUnzoomedHeight();
+	const float fFrameWidth		= pBottomCap->GetZoomedWidth();
+	const float fFrameHeight	= pBottomCap->GetZoomedHeight();
 	const float fYCapTop		= fYTail+cache->m_iStopDrawingHoldBodyOffsetFromTail;
 	const float fYCapBottom		= fYTail+cache->m_iStopDrawingHoldBodyOffsetFromTail+fFrameHeight;
 
