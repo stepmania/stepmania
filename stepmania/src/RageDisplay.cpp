@@ -27,6 +27,7 @@
 #include "SDL.h"
 /* ours is more up-to-date */
 #define NO_SDL_GLEXT
+#define __glext_h_ /* try harder to stop glext.h from being forced on us by someone else */
 #include "SDL_opengl.h"
 
 #include "glext.h"
@@ -225,7 +226,7 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 	if(!g_screen) {
 		g_screen = SDL_SetVideoMode(width, height, bpp, g_flags);
 		if(!g_screen)
-			throw RageException("Failed to open screen!");
+			throw RageException("SDL_SetVideoMode failed: %s", SDL_GetError());
 
 		SDL_WM_SetCaption("StepMania", "StepMania");
 	}
