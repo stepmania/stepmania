@@ -636,7 +636,7 @@ void RageMutexImpl::Unlock()
 	/* We can't ASSERT here, since this is called from checkpoints, which is
 	 * called from ASSERT. */
 	if( !ret )
-		sm_crash();
+		sm_crash( werr_ssprintf( GetLastError(), "ReleaseMutex failed" ) );
 }
 
 bool RageMutexImpl::IsLockedByThisThread() const
