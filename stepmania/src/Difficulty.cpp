@@ -45,11 +45,12 @@ Difficulty StringToDifficulty( const CString& sDC )
 
 static const CString CourseDifficultyNames[NUM_DIFFICULTIES] =
 {
-	"(not used)",
+	"Beginner",
 	"Easy",
 	"Regular",
 	"Difficult",
-	"(not used)",
+	"Challenge",
+	"Edit",
 };
 XToString( CourseDifficulty );
 XToThemedString( CourseDifficulty, NUM_DIFFICULTIES );
