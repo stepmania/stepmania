@@ -32,6 +32,7 @@
 #include "UnlockSystem.h"
 #include "ModeChoice.h"
 #include "ActorUtil.h"
+#include "SongUtil.h"
 
 
 #define FADE_SECONDS				THEME->GetMetricF("MusicWheel","FadeSeconds")
@@ -486,18 +487,18 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		{
 		case SORT_PREFERRED:
 		case SORT_ROULETTE:
-			SortSongPointerArrayByGroupAndDifficulty( arraySongs );
+			SongUtil::SortSongPointerArrayByGroupAndDifficulty( arraySongs );
 			bUseSections = false;
 			break;
 		case SORT_GROUP:
-			SortSongPointerArrayByGroupAndTitle( arraySongs );
+			SongUtil::SortSongPointerArrayByGroupAndTitle( arraySongs );
 			bUseSections = GAMESTATE->m_sPreferredGroup == GROUP_ALL_MUSIC;
 			break;
 		case SORT_TITLE:
-			SortSongPointerArrayByTitle( arraySongs );
+			SongUtil::SortSongPointerArrayByTitle( arraySongs );
 			break;
 		case SORT_BPM:
-			SortSongPointerArrayByBPM( arraySongs );
+			SongUtil::SortSongPointerArrayByBPM( arraySongs );
 			break;
 		case SORT_MOST_PLAYED:
 			if( (int) arraySongs.size() > MOST_PLAYED_SONGS_TO_SHOW )
@@ -505,22 +506,22 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			bUseSections = false;
 			break;
 		case SORT_GRADE:
-			SortSongPointerArrayByGrade( arraySongs );
+			SongUtil::SortSongPointerArrayByGrade( arraySongs );
 			break;
 		case SORT_ARTIST:
-			SortSongPointerArrayByArtist( arraySongs );
+			SongUtil::SortSongPointerArrayByArtist( arraySongs );
 			break;
 		case SORT_EASY_METER:
-			SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_EASY );
+			SongUtil::SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_EASY );
 			break;
 		case SORT_MEDIUM_METER:
-			SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_MEDIUM );
+			SongUtil::SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_MEDIUM );
 			break;
 		case SORT_HARD_METER:
-			SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_HARD );
+			SongUtil::SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_HARD );
 			break;
 		case SORT_CHALLENGE_METER:
-			SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_CHALLENGE );
+			SongUtil::SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_CHALLENGE );
 			break;
 		default:
 			ASSERT(0);	// unhandled SortOrder
@@ -547,7 +548,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 //				/* We're using sections, so use the section name as the top-level
 //				 * sort. */
 			if( so != SORT_GRADE && so != SORT_BPM )
-				SortSongPointerArrayBySectionName(arraySongs, so);
+				SongUtil::SortSongPointerArrayBySectionName(arraySongs, so);
 
 			// make WheelItemDatas with sections
 			CString sLastSection = "";
@@ -555,7 +556,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			for( unsigned i=0; i< arraySongs.size(); i++ )
 			{
 				Song* pSong = arraySongs[i];
-				CString sThisSection = GetSectionNameFromSongAndSort( pSong, so );
+				CString sThisSection = SongUtil::GetSectionNameFromSongAndSort( pSong, so );
 
 				if( sThisSection != sLastSection)	// new section, make a section item
 				{
@@ -908,7 +909,7 @@ void MusicWheel::Update( float fDeltaTime )
 
 				SCREENMAN->PostMessageToTopScreen( SM_SortOrderChanged, 0 );
 				
-				SetOpenGroup(GetSectionNameFromSongAndSort( pPrevSelectedSong, GAMESTATE->m_SortOrder ));
+				SetOpenGroup(SongUtil::GetSectionNameFromSongAndSort( pPrevSelectedSong, GAMESTATE->m_SortOrder ));
 
 				m_iSelection = 0;
 

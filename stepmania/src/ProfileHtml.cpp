@@ -25,6 +25,8 @@
 #include "CryptManager.h"
 #include "UnlockSystem.h"
 #include "RageUtil.h"
+#include "SongUtil.h"
+#include "StepsUtil.h"
 
 
 const CString STATS_HTML	= "Stats.html";
@@ -374,7 +376,7 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 	PRINT_OPEN(f, sTitle );
 	if( vpSongs.size() )
 	{
-		SortSongPointerArrayByNumPlays( vpSongs, pProfile, true );
+		SongUtil::SortSongPointerArrayByNumPlays( vpSongs, pProfile, true );
 		Song* pSongPopularThreshold = vpSongs[ vpSongs.size()*2/3 ];
 		int iPopularNumPlaysThreshold = pProfile->GetSongNumTimesPlayed(pSongPopularThreshold);
 		
@@ -411,7 +413,7 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 		}
 
 		{
-			SortSongPointerArrayByNumPlays( vpSongs, pProfile, false );
+			SongUtil::SortSongPointerArrayByNumPlays( vpSongs, pProfile, false );
 			PRINT_OPEN(f, "Least Popular Songs" );
 			{
 				BEGIN_TABLE(1);
@@ -434,7 +436,7 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 		{
 			unsigned uNumToShow = min( vpAllSteps.size(), (unsigned)100 );
 
-			SortStepsPointerArrayByNumPlays( vpAllSteps, pProfile, true );
+			StepsUtil::SortStepsPointerArrayByNumPlays( vpAllSteps, pProfile, true );
 			PRINT_OPEN(f, "Most Popular Steps" );
 			{
 				BEGIN_TABLE(1);

@@ -27,6 +27,7 @@
 #include "GameState.h"
 #include "UnlockSystem.h"
 #include "MenuTimer.h"
+#include "SongUtil.h"
 
 #define BANNER_WIDTH					THEME->GetMetricF("ScreenSelectGroup","BannerWidth")
 #define BANNER_HEIGHT					THEME->GetMetricF("ScreenSelectGroup","BannerHeight")
@@ -101,7 +102,7 @@ ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : Screen( sClassName 
 			aSongsInGroup.push_back( aAllSongs[i] );
 		}
 
-		SortSongPointerArrayByTitle( aSongsInGroup );
+		SongUtil::SortSongPointerArrayByTitle( aSongsInGroup );
 
 		m_MusicList.AddGroup();
 		m_MusicList.AddSongsToGroup(aSongsInGroup);

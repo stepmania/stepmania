@@ -804,6 +804,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="SongOptions.h">
 			</File>
 			<File
+				RelativePath="SongUtil.cpp">
+			</File>
+			<File
+				RelativePath="SongUtil.h">
+			</File>
+			<File
 				RelativePath="StageStats.cpp">
 			</File>
 			<File
@@ -814,6 +820,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="Steps.h">
+			</File>
+			<File
+				RelativePath="StepsUtil.cpp">
+			</File>
+			<File
+				RelativePath="StepsUtil.h">
 			</File>
 			<File
 				RelativePath="Style.h">

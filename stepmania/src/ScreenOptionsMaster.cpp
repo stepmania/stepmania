@@ -20,6 +20,7 @@
 #include "StepMania.h"
 #include "RageSoundManager.h"
 #include "ProfileManager.h"
+#include "StepsUtil.h"
 
 #define LINE_NAMES				THEME->GetMetric (m_sName,"LineNames")
 #define OPTION_MENU_FLAGS		THEME->GetMetric (m_sName,"OptionMenuFlags")
@@ -128,7 +129,7 @@ void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
 	{
 		vector<Steps*> vSteps;
 		GAMESTATE->m_pCurSong->GetSteps( vSteps, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
-		SortNotesArrayByDifficulty( vSteps );
+		StepsUtil::SortNotesArrayByDifficulty( vSteps );
 		for( unsigned i=0; i<vSteps.size(); i++ )
 		{
 			Steps* pSteps = vSteps[i];

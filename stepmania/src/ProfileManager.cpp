@@ -30,6 +30,7 @@
 #include "ThemeManager.h"
 #include "MemoryCardManager.h"
 #include "XmlFile.h"
+#include "StepsUtil.h"
 
 
 ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our program
@@ -453,7 +454,7 @@ HighScore ProfileManager::GetHighScoreForDifficulty( const Song *s, const StyleD
 	// return max grade of notes in difficulty class
 	vector<Steps*> aNotes;
 	s->GetSteps( aNotes, st->m_StepsType );
-	SortNotesArrayByDifficulty( aNotes );
+	StepsUtil::SortNotesArrayByDifficulty( aNotes );
 
 	const Steps* pSteps = s->GetStepsByDifficulty( st->m_StepsType, dc );
 

@@ -18,6 +18,7 @@
 #include "ThemeManager.h"
 #include "AnnouncerManager.h"
 #include "song.h"
+#include "SongUtil.h"
 
 
 #define SCROLL_DELAY		THEME->GetMetricF("ScreenMusicScroll","ScrollDelay")
@@ -36,7 +37,7 @@ ScreenMusicScroll::ScreenMusicScroll( CString sClassName ) : ScreenAttract( sCla
 {
 	vector<Song*> arraySongs;
 	SONGMAN->GetSongs( arraySongs );
-	SortSongPointerArrayByTitle( arraySongs );
+	SongUtil::SortSongPointerArrayByTitle( arraySongs );
 	
 	unsigned i;
 	for( i=0; i < arraySongs.size(); i++ )

@@ -25,6 +25,7 @@
 #include "RageLog.h"
 #include "StyleDef.h"
 #include "GameManager.h"
+#include "SongUtil.h"
 
 
 #define SCROLL_DELAY		THEME->GetMetricF("ScreenEnding","ScrollDelay")
@@ -66,7 +67,7 @@ ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, fa
 {
 	vector<Song*> arraySongs;
 	SONGMAN->GetSongs( arraySongs );
-	SortSongPointerArrayByTitle( arraySongs );
+	SongUtil::SortSongPointerArrayByTitle( arraySongs );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{

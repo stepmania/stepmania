@@ -94,13 +94,4 @@ protected:
 	RadarValues		m_RadarValues;
 };
 
-bool CompareNotesPointersByRadarValues(const Steps* pNotes1, const Steps* pNotes2);
-bool CompareNotesPointersByMeter(const Steps *pNotes1, const Steps* pNotes2);
-bool CompareNotesPointersByDifficulty(const Steps *pNotes1, const Steps *pNotes2);
-void SortNotesArrayByDifficulty( vector<Steps*> &arrayNotess );
-bool CompareStepsPointersByTypeAndDifficulty(const Steps *pStep1, const Steps *pStep2);
-void SortStepsByTypeAndDifficulty( vector<Steps*> &arraySongPointers );
-void SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers, ProfileSlot slot, bool bDescending );
-void SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers, const Profile* pProfile, bool bDescending );
-
 #endif

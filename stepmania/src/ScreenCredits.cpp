@@ -21,6 +21,8 @@
 #include "Sprite.h"
 #include "song.h"
 #include "BitmapText.h"
+#include "ActorUtil.h"
+#include "SongUtil.h"
 
 
 #define BACKGROUNDS_SPACING_X				THEME->GetMetricF("ScreenCredits","BackgroundsSpacingX")
@@ -164,13 +166,12 @@ static const CreditLine CREDIT_LINES[] =
 	{1,"Join the StepMania team"},
 	{1,"and help us out!"},
 };
-#include "ActorUtil.h"
 
 ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 {
 	vector<Song*> arraySongs;
 	SONGMAN->GetSongs( arraySongs );
-	SortSongPointerArrayByTitle( arraySongs );
+	SongUtil::SortSongPointerArrayByTitle( arraySongs );
 
 	// FIXME:  Redo this screen with a BGA
 	m_ScrollerBackgrounds.SetName( "Backgrounds" );

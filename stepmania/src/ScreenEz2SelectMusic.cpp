@@ -27,6 +27,7 @@
 #include "RageTextureManager.h"
 #include "AnnouncerManager.h"
 #include "MenuTimer.h"
+#include "StepsUtil.h"
 
 #define SCROLLING_LIST_X		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListX")
 #define SCROLLING_LIST_Y		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListY")
@@ -654,7 +655,7 @@ void ScreenEz2SelectMusic::MusicChanged()
 	for( pn = 0; pn < NUM_PLAYERS; ++pn)
 	{
 		pSong->GetSteps( m_arrayNotes[pn], GAMESTATE->GetCurrentStyleDef()->m_StepsType );
-		SortNotesArrayByDifficulty( m_arrayNotes[pn] );
+		StepsUtil::SortNotesArrayByDifficulty( m_arrayNotes[pn] );
 	}
 
 	for( pn=0; pn<NUM_PLAYERS; pn++ )

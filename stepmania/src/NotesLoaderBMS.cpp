@@ -9,6 +9,7 @@
 #include "GameManager.h"
 #include "RageException.h"
 #include "RageFile.h"
+#include "StepsUtil.h"
 
 /*	BMS encoding:     tap-hold
 	4&8panel:   Player1     Player2
@@ -724,7 +725,7 @@ void BMSLoader::SlideDuplicateDifficulties( Song &p )
 			vector<Steps*> vSteps;
 			p.GetSteps( vSteps, st, dc );
 
-			SortNotesArrayByDifficulty( vSteps );
+			StepsUtil::SortNotesArrayByDifficulty( vSteps );
 			for( unsigned k=1; k<vSteps.size(); k++ )
 			{
 				Steps* pSteps = vSteps[k];

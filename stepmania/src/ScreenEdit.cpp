@@ -32,6 +32,8 @@
 #include "NoteFieldPositioning.h"
 #include "arch/arch.h"
 #include "NoteDataUtil.h"
+#include "SongUtil.h"
+#include "StepsUtil.h"
 
 
 const float RECORD_HOLD_SECONDS = 0.3f;
@@ -947,7 +949,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			GAMESTATE->m_pCurSong->GetSteps( vSteps, st );
 
 			// Sort them by difficulty.
-			SortStepsByTypeAndDifficulty( vSteps );
+			StepsUtil::SortStepsByTypeAndDifficulty( vSteps );
 
 			// Find out what index the current Steps are
 			vector<Steps*>::iterator it = find( vSteps.begin(), vSteps.end(), pNotes );

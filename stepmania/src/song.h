@@ -4,7 +4,7 @@
 -----------------------------------------------------------------------------
  Class: Song
 
- Desc: See header.
+ Desc: Holds data all music metadata and notes data single, playable song.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -208,21 +208,5 @@ private:
 	void AdjustDuplicateSteps(); // part of TidyUpData
 	CString GetUniqueSongDescription( StepsType st );
 };
-
-CString MakeSortString( CString s );
-void SortSongPointerArrayByDifficulty( vector<Song*> &arraySongPointers );
-void SortSongPointerArrayByTitle( vector<Song*> &arraySongPointers );
-void SortSongPointerArrayByBPM( vector<Song*> &arraySongPointers );
-void SortSongPointerArrayByGrade( vector<Song*> &arraySongPointers );
-void SortSongPointerArrayByArtist( vector<Song*> &arraySongPointers );
-void SortSongPointerArrayByGroupAndDifficulty( vector<Song*> &arraySongPointers );
-void SortSongPointerArrayByGroupAndTitle( vector<Song*> &arraySongPointers );
-void SortSongPointerArrayByNumPlays( vector<Song*> &arraySongPointers, ProfileSlot slot, bool bDescending );
-void SortSongPointerArrayByNumPlays( vector<Song*> &arraySongPointers, const Profile* pProfile, bool bDescending );
-void SortSongPointerArrayByMeter( vector<Song*> &arraySongPointers, Difficulty dc );
-CString GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so );
-void SortSongPointerArrayBySectionName( vector<Song*> &arraySongPointers, SortOrder so );
-
-
 
 #endif

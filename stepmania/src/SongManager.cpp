@@ -33,6 +33,8 @@
 #include "ProfileManager.h"
 #include "MemoryCardManager.h"
 #include "NotesLoaderSM.h"
+#include "SongUtil.h"
+#include "StepsUtil.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -679,11 +681,11 @@ bool CompareNotesPointersForExtra(const Steps *n1, const Steps *n2)
 	if(d1 > d2) return false;
 	/* n1 difficulty == n2 difficulty */
 
-	if(CompareNotesPointersByMeter(n1,n2)) return true;
-	if(CompareNotesPointersByMeter(n2,n1)) return false;
+	if(StepsUtil::CompareNotesPointersByMeter(n1,n2)) return true;
+	if(StepsUtil::CompareNotesPointersByMeter(n2,n1)) return false;
 	/* n1 meter == n2 meter */
 
-	return CompareNotesPointersByRadarValues(n1,n2);
+	return StepsUtil::CompareNotesPointersByRadarValues(n1,n2);
 }
 
 void SongManager::GetExtraStageInfo( bool bExtra2, const StyleDef *sd, 
@@ -904,7 +906,7 @@ void SongManager::UpdateBest()
 			Best.erase( Best.end()-1 );
 		}
 
-		SortSongPointerArrayByNumPlays( m_pBestSongs[i], (ProfileSlot) i, true );
+		SongUtil::SortSongPointerArrayByNumPlays( m_pBestSongs[i], (ProfileSlot) i, true );
 
 		m_pBestCourses[i] = m_pCourses;
 		SortCoursePointerArrayByNumPlays( m_pBestCourses[i], (ProfileSlot) i, true );
@@ -923,7 +925,7 @@ void SongManager::UpdateShuffled()
 
 void SongManager::SortSongs()
 {
-	SortSongPointerArrayByTitle( m_pSongs );
+	SongUtil::SortSongPointerArrayByTitle( m_pSongs );
 }
 
 void SongManager::UpdateRankingCourses()

@@ -36,6 +36,7 @@
 #include "MenuTimer.h"
 #include "LightsManager.h"
 #include "StageStats.h"
+#include "StepsUtil.h"
 
 
 const int NUM_SCORE_DIGITS	=	9;
@@ -1329,7 +1330,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
 
 			pSong->GetSteps( m_arrayNotes, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
-			SortNotesArrayByDifficulty( m_arrayNotes );
+			StepsUtil::SortNotesArrayByDifficulty( m_arrayNotes );
 
 			if ( PREFSMAN->m_bShowBanners )
 				m_Banner.LoadFromSong( pSong );

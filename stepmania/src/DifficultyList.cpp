@@ -9,6 +9,7 @@
 #include "BitmapText.h"
 #include "SongManager.h"
 #include "ThemeManager.h"
+#include "StepsUtil.h"
 
 #define ITEMS_SPACING_Y							THEME->GetMetricF(m_sName,"ItemsSpacingY")
 #define DESCRIPTION_MAX_WIDTH					THEME->GetMetricF(m_sName,"DescriptionMaxWidth")
@@ -289,7 +290,7 @@ void DifficultyList::SetFromGameState()
 		song->GetSteps( CurSteps, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 
 		/* Should match the sort in ScreenSelectMusic::AfterMusicChange. */
-		SortNotesArrayByDifficulty( CurSteps );
+		StepsUtil::SortNotesArrayByDifficulty( CurSteps );
 
 		unsigned i;
 		for( i = 0; i < m_Rows.size(); ++i )
