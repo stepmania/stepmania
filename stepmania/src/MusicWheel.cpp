@@ -32,7 +32,6 @@
 #include "Notes.h"
 
 
-#define NUM_WHEEL_ITEMS				min( MAX_WHEEL_ITEMS, THEME->GetMetricI("MusicWheel","NumWheelItems") )
 #define FADE_SECONDS				THEME->GetMetricF("MusicWheel","FadeSeconds")
 #define SWITCH_SECONDS				THEME->GetMetricF("MusicWheel","SwitchSeconds")
 #define ROULETTE_SWITCH_SECONDS		THEME->GetMetricF("MusicWheel","RouletteSwitchSeconds")
@@ -49,6 +48,8 @@ CachedThemeMetricF ITEM_SPACING_Y	("MusicWheel","ItemSpacingY");
 #define SHOW_ROULETTE				THEME->GetMetricB("MusicWheel","ShowRoulette")
 #define SHOW_RANDOM					THEME->GetMetricB("MusicWheel","ShowRandom")
 CachedThemeMetricB	USE_3D			("MusicWheel","Use3D");
+CachedThemeMetricI  NUM_WHEEL_ITEMS_METRIC	("MusicWheel","NumWheelItems");
+#define NUM_WHEEL_ITEMS				min( MAX_WHEEL_ITEMS, (int) NUM_WHEEL_ITEMS_METRIC )
 
 const int MAX_WHEEL_SOUND_SPEED = 15;
 
@@ -72,6 +73,7 @@ MusicWheel::MusicWheel()
 	ITEM_CURVE_X.Refresh();
 	ITEM_SPACING_Y.Refresh();
 	USE_3D.Refresh();
+	NUM_WHEEL_ITEMS_METRIC.Refresh();
 
 	// for debugging
 	if( GAMESTATE->m_CurStyle == STYLE_INVALID )
