@@ -1,15 +1,11 @@
-#include "global.h"
 /*
  * Area for testing.  Throw whatever you're working on in here.  If you
  * don't want stuff in here to be wiped out by the next guy who works on something,
  * make a separate screen and add a hook into ScreenTest; this one's just a
  * scratchpad.
- *
- * Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
- * (there is no actual code here)
------------------------------------------------------------------------------
-*/
+ */
 
+#include "global.h"
 #include "ScreenSandbox.h"
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"

@@ -34,9 +34,6 @@ static void GetResolutionFromFileName( CString sPath, int &Width, int &Height )
 	Height = atoi(matches[1].c_str());
 }
 
-//-----------------------------------------------------------------------------
-// RageBitmapTexture constructor
-//-----------------------------------------------------------------------------
 RageBitmapTexture::RageBitmapTexture( RageTextureID name ) :
 	RageTexture( name )
 {
@@ -345,4 +342,3 @@ void RageBitmapTexture::Destroy()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */ 
-

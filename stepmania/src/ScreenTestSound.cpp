@@ -1,17 +1,4 @@
 #include "global.h"
-/*
------------------------------------------------------------------------------
- File: ScreenTestSound.h
-
- Desc: Area for testing.
-
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
-	Glenn Maynard
------------------------------------------------------------------------------
-*/
-
-#include "global.h"
-
 #include "ScreenTestSound.h"
 #include "RageDisplay.h"
 #include "SDL.h"

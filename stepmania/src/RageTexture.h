@@ -1,6 +1,4 @@
-/*
- *  RageTexture - Abstract class for a texture and metadata.
- */
+/* RageTexture - Abstract class for a texture and metadata.  */
 
 #ifndef RAGE_TEXTURE_H
 #define RAGE_TEXTURE_H
@@ -8,10 +6,6 @@
 #include "RageTypes.h"
 #include "RageTextureID.h"
 
-
-//-----------------------------------------------------------------------------
-// RageTexture Class Declarations
-//-----------------------------------------------------------------------------
 class RageTexture
 {
 public:

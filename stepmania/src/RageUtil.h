@@ -1,15 +1,10 @@
-/*
- * RageUtil - Miscellaneous helper macros and functions.
- */
+/* RageUtil - Miscellaneous helper macros and functions.  */
 
 #ifndef RAGEUTIL_H
 #define RAGEUTIL_H
 
 #include <map>
 
-//-----------------------------------------------------------------------------
-// SAFE_ Macros
-//-----------------------------------------------------------------------------
 #define SAFE_DELETE(p)       { if(p) { delete (p);     (p)=NULL; } }
 #define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
 #define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
@@ -71,11 +66,6 @@ inline void wrap( float &x, float n)
 	x = fmodf(x,n);
 }
 
-
-
-//-----------------------------------------------------------------------------
-// Misc helper functions
-//-----------------------------------------------------------------------------
 
 // Fast random number generators
 // Taken from "Numerical Recipes in C"

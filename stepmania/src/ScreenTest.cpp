@@ -1,16 +1,4 @@
 #include "global.h"
-/*
------------------------------------------------------------------------------
- File: ScreenTest.h
-
- Desc: Area for testing.
-
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
-	Chris Danford, Glenn Maynard, Lance Gilbert
------------------------------------------------------------------------------
-*/
-
-#include "global.h"
 #include "ScreenTest.h"
 #include "ScreenSandbox.h"
 #include "ScreenTestSound.h"

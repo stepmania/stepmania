@@ -1,14 +1,4 @@
 #include "global.h"
-/*
------------------------------------------------------------------------------
- File: BPMDisplay.h
-
- Desc: A graphic displayed in the BPMDisplay during Dancing.
-
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
------------------------------------------------------------------------------
-*/
-
 #include "BPMDisplay.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"

@@ -1,15 +1,4 @@
 #include "global.h"
-/*
------------------------------------------------------------------------------
- Class: ScreenTextEntry
-
- Desc: See header.
-
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
-	Chris Danford
------------------------------------------------------------------------------
-*/
-
 #include "ScreenTextEntry.h"
 #include "PrefsManager.h"
 #include "ScreenManager.h"
