@@ -26,6 +26,7 @@
 #include "AnnouncerManager.h"
 #include <math.h>
 #include "ProfileManager.h"
+#include "NoteFieldPositioning.h"
 
 
 //
@@ -187,7 +188,10 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 
 		ASSERT( GAMESTATE->IsHumanPlayer(p) );	// they better be enabled if they made a high score!
 
-		m_GrayArrowRow[p].Load( (PlayerNumber)p );
+		/* Ensure that this is up-to-date. */
+		GAMESTATE->m_pPosition->Load( (PlayerNumber)p );
+
+		m_GrayArrowRow[p].Load( (PlayerNumber)p, 0 );
 		m_GrayArrowRow[p].SetX( (float)GAMESTATE->GetCurrentStyleDef()->m_iCenterX[p] );
 		m_GrayArrowRow[p].SetY( SCREEN_TOP + 100 );
 		this->AddChild( &m_GrayArrowRow[p] );

@@ -26,7 +26,7 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
-	void Load( PlayerNumber pn );
+	void Load( PlayerNumber pn, float fYReverseOffset );
 	
 	void TapNote( int iCol, TapNoteScore score, bool bBright );
 	void TapMine( int iCol, TapNoteScore score );
@@ -34,6 +34,7 @@ public:
 	
 protected:
 	int m_iNumCols;
+	float m_fYReverseOffsetPixels;
 	PlayerNumber m_PlayerNumber;
 
 	GhostArrow		m_GhostDim[MAX_NOTE_TRACKS];

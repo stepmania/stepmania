@@ -278,8 +278,8 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	m_SnapDisplay.Load( PLAYER_1 );
 	m_SnapDisplay.SetZoom( 0.5f );
 
-	m_GrayArrowRowEdit.SetXY( EDIT_X, PLAYER_Y_STANDARD );
-	m_GrayArrowRowEdit.Load( PLAYER_1 );
+	m_GrayArrowRowEdit.SetXY( EDIT_X, PLAYER_Y );
+	m_GrayArrowRowEdit.Load( PLAYER_1, PLAYER_HEIGHT*2 );
 	m_GrayArrowRowEdit.SetZoom( 0.5f );
 
 	m_NoteFieldEdit.SetXY( EDIT_X, PLAYER_Y );
@@ -290,7 +290,7 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0) );
 
 	m_GrayArrowRowRecord.SetXY( EDIT_X, PLAYER_Y_STANDARD );
-	m_GrayArrowRowRecord.Load( PLAYER_1 );
+	m_GrayArrowRowRecord.Load( PLAYER_1, PLAYER_HEIGHT*2 );
 	m_GrayArrowRowRecord.SetZoom( 1.0f );
 
 	m_NoteFieldRecord.SetXY( EDIT_X, PLAYER_Y );

@@ -22,16 +22,18 @@ class GrayArrowRow : public ActorFrame
 public:
 	GrayArrowRow();
 
-	void Load( PlayerNumber pn );
+	void Load( PlayerNumber pn, float fYReverseOffset );
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
 	void Step( int iCol );
+	void UpdateBars( int iCol );
 	
 protected:
 	int m_iNumCols;
 	PlayerNumber m_PlayerNumber;
+	float m_fYReverseOffsetPixels;
 
 	GrayArrow	m_GrayArrow[MAX_NOTE_TRACKS];
 };
