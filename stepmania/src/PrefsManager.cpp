@@ -62,14 +62,14 @@ PrefsManager::PrefsManager()
 	m_bAutoPlay = false;
 	m_fJudgeWindowScale = 1.0f;
 	m_fLifeDifficultyScale = 1.0f;
-	m_fJudgeWindowSecondsMarvelous = 0.0225f;
-	m_fJudgeWindowSecondsPerfect = 0.045f;
-	m_fJudgeWindowSecondsGreat = 0.090f;
-	m_fJudgeWindowSecondsGood = 0.135f;
-	m_fJudgeWindowSecondsBoo = 0.180f;
-	m_fJudgeWindowSecondsOK = 0.250f;	// allow enough time to take foot off and put back on
-	m_fJudgeWindowSecondsMine = 0.090f;	// same as great
-	m_fJudgeWindowSecondsAttack = 0.135f;
+	m_fJudgeWindowSecondsMarvelous =	0.0225f;
+	m_fJudgeWindowSecondsPerfect =		0.045f;
+	m_fJudgeWindowSecondsGreat =		0.090f;
+	m_fJudgeWindowSecondsGood =			0.135f;
+	m_fJudgeWindowSecondsBoo =			0.180f;
+	m_fJudgeWindowSecondsOK =			0.250f;	// allow enough time to take foot off and put back on
+	m_fJudgeWindowSecondsMine =			0.090f;	// same as great
+	m_fJudgeWindowSecondsAttack =		0.135f;
 	m_fLifeDeltaPercentChangeMarvelous =	+0.008f;
 	m_fLifeDeltaPercentChangePerfect =		+0.008f;
 	m_fLifeDeltaPercentChangeGreat =		+0.004f;
@@ -213,6 +213,7 @@ PrefsManager::PrefsManager()
 
 	m_iAttractSoundFrequency = 1;
 	m_bAllowExtraStage = true;
+	m_fPadStickSeconds = 0;
 	g_bAutoRestart = false;
 	m_bSignProfileData = false;
 
@@ -490,6 +491,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "CenterImageScaleY",				m_fCenterImageScaleY );
 	ini.GetValue( "Options", "AttractSoundFrequency",			m_iAttractSoundFrequency );
 	ini.GetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
+	ini.GetValue( "Options", "PadStickSeconds",					m_fPadStickSeconds );
 	ini.GetValue( "Options", "AutoRestart",						g_bAutoRestart );
 	ini.GetValue( "Options", "SignProfileData",					m_bSignProfileData );
 
@@ -701,6 +703,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "CenterImageScaleY",				m_fCenterImageScaleY );
 	ini.SetValue( "Options", "AttractSoundFrequency",			m_iAttractSoundFrequency );
 	ini.SetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
+	ini.SetValue( "Options", "PadStickSeconds",					m_fPadStickSeconds );
 	ini.SetValue( "Options", "AutoRestart",						g_bAutoRestart );
 	ini.SetValue( "Options", "SignProfileData",					m_bSignProfileData );
 

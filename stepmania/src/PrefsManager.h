@@ -188,7 +188,11 @@ public:
 	float			m_fCenterImageScaleY;
 	int				m_iAttractSoundFrequency;	// 0 = never, 1 = every time
 	bool			m_bAllowExtraStage;
-	
+
+	// Number of seconds it takes for a button on the controller to release
+	// after pressed.
+	float			m_fPadStickSeconds;
+
 	// If true, then signatures created when writing profile data 
 	// and verified when reading profile data.  Leave this false if 
 	// you want to use a profile on different machines that don't 

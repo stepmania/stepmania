@@ -50,6 +50,7 @@ public:
 
 	void Load( PlayerNumber player_no, const NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScoreDisplay, ScoreDisplay* pSecondaryScoreDisplay, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper, NoteField* pNoteField );
 	void CrossedRow( int iNoteRow );
+	void CrossedMineRow( int iNoteRow );
 	void Step( int col, RageTimer tm );
 	void RandomiseNotes( int iNoteRow );
 	void FadeToFail();
@@ -99,6 +100,7 @@ protected:
 	Inventory*		m_pInventory;
 
 	int				m_iRowLastCrossed;
+	int				m_iMineRowLastCrossed;
 
 	RageSound		m_soundMine;
 	RageSound		m_soundAttackLaunch;

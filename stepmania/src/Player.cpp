@@ -117,8 +117,8 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	m_pPrimaryScoreKeeper = pPrimaryScoreKeeper;
 	m_pSecondaryScoreKeeper = pSecondaryScoreKeeper;
 	m_pNoteField = pNoteField;
-	m_iRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;
-	// m_iRowLastCrossed = -1;
+	m_iRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;	// why this?
+	m_iMineRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;	// why this?
 
 	/* Ensure that this is up-to-date. */
 	GAMESTATE->m_pPosition->Load(pn);
@@ -383,16 +383,32 @@ void PlayerMinus::Update( float fDeltaTime )
 		SetHoldNoteScore(hn, hns);
 	}
 
-	// Why was this originally "BeatToNoteRowNotRounded"?  It should be rounded.  -Chris
-	/* We want to send the crossed row message exactly when we cross the row--not
-	 * .5 before the row.  Use a very slow song (around 2 BPM) as a test case: without
-	 * rounding, autoplay steps early. -glenn */
-	const int iRowNow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat );
-	if( iRowNow >= 0 )
 	{
-		for( ; m_iRowLastCrossed <= iRowNow; m_iRowLastCrossed++ )  // for each index we crossed since the last update
-			if( GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
-				CrossedRow( m_iRowLastCrossed );
+		// Why was this originally "BeatToNoteRowNotRounded"?  It should be rounded.  -Chris
+		/* We want to send the crossed row message exactly when we cross the row--not
+		 * .5 before the row.  Use a very slow song (around 2 BPM) as a test case: without
+		 * rounding, autoplay steps early. -glenn */
+		const int iRowNow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat );
+		if( iRowNow >= 0 )
+		{
+			for( ; m_iRowLastCrossed <= iRowNow; m_iRowLastCrossed++ )  // for each index we crossed since the last update
+				if( GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
+					CrossedRow( m_iRowLastCrossed );
+		}
+	}
+
+	{
+		// TRICKY: 
+		float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
+		fPositionSeconds -= PREFSMAN->m_fPadStickSeconds;
+		const float fSongBeat = GAMESTATE->m_pCurSong ? GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds ) : 0;
+		const int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
+		if( iRowNow >= 0 )
+		{
+			for( ; m_iMineRowLastCrossed <= iRowNow; m_iMineRowLastCrossed++ )  // for each index we crossed since the last update
+				if( GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
+					CrossedMineRow( m_iMineRowLastCrossed );
+		}
 	}
 
 
@@ -574,10 +590,14 @@ void PlayerMinus::Step( int col, RageTimer tm )
 
 	ASSERT( col >= 0  &&  col <= GetNumTracks() );
 
+	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
+	fPositionSeconds -= tm.Ago();
+	const float fSongBeat = GAMESTATE->m_pCurSong ? GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds ) : GAMESTATE->m_fSongBeat;
+
 	//
 	// Check for step on a TapNote
 	//
-	int iIndexOverlappingNote = GetClosestNote( col, GAMESTATE->m_fSongBeat, 
+	int iIndexOverlappingNote = GetClosestNote( col, fSongBeat, 
 						   StepSearchDistanceForwards * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate,
 						   StepSearchDistanceBackwards * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate );
 	
@@ -1036,18 +1056,22 @@ void PlayerMinus::CrossedRow( int iNoteRow )
 				if( GetTapNoteScore(t, iNoteRow) == TNS_NONE )
 					Step( t, now );
 	}
+}
 
+void PlayerMinus::CrossedMineRow( int iNoteRow )
+{
 	// Hold the panel while crossing a mine will cause the mine to explode
+	RageTimer now;
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		if( GetTapNote(t,iNoteRow) == TAP_MINE )
 		{
 			const StyleInput StyleI( m_PlayerNumber, t );
 			const GameInput GameI = GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
-			bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
+			float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
 
-			if( bIsHoldingButton )
-				Step( t, now );
+			if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
+				Step( t, now+(-PREFSMAN->m_fPadStickSeconds) );
 		}
 	}
 }
