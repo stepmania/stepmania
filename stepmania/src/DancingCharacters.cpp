@@ -38,6 +38,7 @@ const float CAMERA_STILL_LOOK_AT_HEIGHT = -14.f;
 
 const float MODEL_X_ONE_PLAYER = 0;
 const float MODEL_X_TWO_PLAYERS[NUM_PLAYERS] = { +8, -8 };
+const float MODEL_ROTATIONY_TWO_PLAYERS[NUM_PLAYERS] = { -90, 90 };
 
 
 DancingCharacters::DancingCharacters()
@@ -56,12 +57,20 @@ DancingCharacters::DancingCharacters()
 			m_Character[p].SetX( MODEL_X_TWO_PLAYERS[p] );
 		else
 			m_Character[p].SetX( MODEL_X_ONE_PLAYER );
+
+		switch( GAMESTATE->m_PlayMode )
+		{
+		case PLAY_MODE_BATTLE:
+		case PLAY_MODE_RAVE:
+			m_Character[p].SetRotationY( MODEL_ROTATIONY_TWO_PLAYERS[p] );
+			break;
+		}
+
 		m_Character[p].LoadMilkshapeAscii( pChar->GetModelPath() );
 		m_Character[p].LoadMilkshapeAsciiBones( "rest", pChar->GetRestAnimationPath() );
 		m_Character[p].LoadMilkshapeAsciiBones( "warmup", pChar->GetWarmUpAnimationPath() );
 		m_Character[p].LoadMilkshapeAsciiBones( "dance", pChar->GetDanceAnimationPath() );
 		m_Character[p].LoadMilkshapeAsciiBones( "howtoplay", pChar->GetHowToPlayAnimationPath() );
-		this->AddChild( &m_Character[p] );
 	}
 }
 
@@ -108,7 +117,11 @@ void DancingCharacters::Update( float fDelta )
 		 * at a very low music rate. */
 		fUpdateScale *= GAMESTATE->m_SongOptions.m_fMusicRate;
 
-		ActorFrame::Update( fDelta*fUpdateScale );
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( GAMESTATE->IsPlayerEnabled(p) )
+				m_Character[p].Update( fDelta );
+		}
 	}
 
 	static bool bWasHereWeGo = false;
@@ -116,9 +129,11 @@ void DancingCharacters::Update( float fDelta )
 	if( !bWasHereWeGo && bIsHereWeGo )
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )
-			m_Character[p].PlayAnimation( "warmup" );
+			if( GAMESTATE->IsPlayerEnabled(p) )
+				m_Character[p].PlayAnimation( "warmup" );
 	}
 	bWasHereWeGo = bIsHereWeGo;
+
 
 	static float fLastBeat = GAMESTATE->m_fSongBeat;
 	float fThisBeat = GAMESTATE->m_fSongBeat;
@@ -191,23 +206,32 @@ void DancingCharacters::DrawPrimitives()
 		m_LookAt,
 		RageVector3(0,1,0) );
 
-	RageColor	DL;
-	DL = RageColor(0.8f,0.8f,0.8f,0.8f);
-	if( m_bDrawDangerLight )
-		DL = RageColor(1,0,0,1);
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( GAMESTATE->IsPlayerEnabled(p) )
+		{
+			bool bFailed = GAMESTATE->m_CurStageStats.bFailed[p];
+			bool bDanger = m_bDrawDangerLight;
 
-	DISPLAY->SetLighting( true );
-	DISPLAY->SetLightDirectional( 
-		0, 
-		RageColor(0.4f,0.4f,0.4f,1), 
-		DL,
-		RageColor(0.8f,0.8f,0.8f,0.8f),
-		RageVector3(+1, 0, +1) );
+			DISPLAY->SetLighting( true );
+			RageColor ambient  = bFailed ? RageColor(0.2f,0.0f,0.0f,1) : (bDanger ? RageColor(0.4f,0.0f,0.0f,1) : RageColor(0.4f,0.4f,0.4f,1));
+			RageColor diffuse  = bFailed ? RageColor(0.4f,0.0f,0.0f,1) : (bDanger ? RageColor(0.8f,0.0f,0.0f,1) : RageColor(0.8f,0.8f,0.8f,1));
+			RageColor specular = RageColor(0.8f,0.8f,0.8f,1);
 
-	ActorFrame::DrawPrimitives();
+			DISPLAY->SetLightDirectional( 
+				0, 
+				ambient, 
+				diffuse,
+				specular,
+				RageVector3(+1, 0, +1) );
 
-	DISPLAY->SetLightOff( 0 );
-	DISPLAY->SetLighting( false );
+			m_Character[p].Draw();
+
+			DISPLAY->SetLightOff( 0 );
+			DISPLAY->SetLighting( false );
+		}
+	}
+
 
 	DISPLAY->ExitPerspective();
 }
