@@ -548,7 +548,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, cons
 		{
 			Notes* pNotes = apNotes[n];
 
-			if( pExtra1Notes == NULL  ||  CompareNotesPointersByDifficulty(pExtra1Notes,pNotes) == -1 )	// pNotes is harder than pHardestNotes
+			if( pExtra1Notes == NULL  ||  CompareNotesPointersByDifficulty(pExtra1Notes,pNotes) )	// pNotes is harder than pHardestNotes
 			{
 				pExtra1Song = pSong;
 				pExtra1Notes = pNotes;
@@ -557,7 +557,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, cons
 			// for extra 2, we don't want to choose the hardest notes possible.  So, we'll disgard Notes with meter > 8
 			if(	bExtra2  &&  pNotes->m_iMeter > 8 )	
 				continue;	// skip
-			if( pExtra2Notes == NULL  ||  CompareNotesPointersByDifficulty(pExtra2Notes,pNotes) == -1 )	// pNotes is harder than pHardestNotes
+			if( pExtra2Notes == NULL  ||  CompareNotesPointersByDifficulty(pExtra2Notes,pNotes) )	// pNotes is harder than pHardestNotes
 			{
 				pExtra2Song = pSong;
 				pExtra2Notes = pNotes;

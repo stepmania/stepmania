@@ -260,23 +260,13 @@ void Course::GetSongOptions( SongOptions* pSO_out )
 // Sorting stuff
 //
 
-int CompareCoursePointersByDifficulty(const void *arg1, const void *arg2)
+static int CompareCoursePointersByDifficulty(const Course* pCourse1, const Course* pCourse2)
 {
-	Course* pCourse1 = *(Course**)arg1;
-	Course* pCourse2 = *(Course**)arg2;
-	
-	float fScore1 = (float)pCourse1->m_iStages;
-	float fScore2 = (float)pCourse2->m_iStages;
-
-	if( fScore1 < fScore2 )
-		return -1;
-	else if( fScore1 == fScore2 )
-		return 0;
-	else
-		return 1;
+	return pCourse1->m_iStages < pCourse2->m_iStages;
 }
 
 void SortCoursePointerArrayByDifficulty( CArray<Course*,Course*> &apCourses )
 {
-	qsort( apCourses.GetData(), apCourses.GetSize(), sizeof(Course*), CompareCoursePointersByDifficulty );
+	sort( apCourses.GetData(), apCourses.GetData()+apCourses.GetSize(), 
+		CompareCoursePointersByDifficulty );
 }

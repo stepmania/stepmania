@@ -673,25 +673,21 @@ bool IsADirectory( const CString &sPath )
     return (dwAttr & FILE_ATTRIBUTE_DIRECTORY) != 0;
 }
 
-
-
-int CompareCStringsAsc(const void *arg1, const void *arg2)
+bool CompareCStringsAsc(const CString &str1, const CString &str2)
 {
-	CString str1 = *(CString *)arg1;
-	CString str2 = *(CString *)arg2;
-	return str1.CompareNoCase( str2 );
+	return str2.CompareNoCase( str1 ) < 0;
 }
 
-int CompareCStringsDesc(const void *arg1, const void *arg2)
+bool CompareCStringsDesc(const CString &str1, const CString &str2)
 {
-	CString str1 = *(CString *)arg1;
-	CString str2 = *(CString *)arg2;
-	return str2.CompareNoCase( str1 );
+	return str2.CompareNoCase( str1 ) > 0;
 }
 
-void SortCStringArray( CStringArray &arrayCStrings, const bool bSortAcsending )
+void SortCStringArray( CStringArray &arrayCStrings, const bool bSortAscending )
 {
-	qsort( arrayCStrings.GetData(), arrayCStrings.GetSize(), sizeof(CString), bSortAcsending ? CompareCStringsAsc : CompareCStringsDesc );
+	sort( arrayCStrings.GetData(),
+			arrayCStrings.GetData()+arrayCStrings.GetSize(),
+			bSortAscending?CompareCStringsAsc:CompareCStringsDesc);
 }
 
 

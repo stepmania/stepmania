@@ -177,11 +177,8 @@ Difficulty Notes::DifficultyFromDescriptionAndMeter( CString sDescription, int i
 //
 //////////////////////////////////////////////
 
-int CompareNotesPointersByRadarValues(const void *arg1, const void *arg2)
+bool CompareNotesPointersByRadarValues(const Notes* pNotes1, const Notes* pNotes2)
 {
-	Notes* pNotes1 = *(Notes**)arg1;
-	Notes* pNotes2 = *(Notes**)arg2;
-
 	float fScore1 = 0;
 	float fScore2 = 0;
 	
@@ -191,53 +188,30 @@ int CompareNotesPointersByRadarValues(const void *arg1, const void *arg2)
 		fScore2 += pNotes2->m_fRadarValues[r];
 	}
 
-	if( fScore1 < fScore2 )
-		return -1;
-	else if( fScore1 == fScore2 )
-		return 0;
-	else
-		return 1;
+	return fScore1 < fScore2;
 }
 
-int CompareNotesPointersByMeter(const void *arg1, const void *arg2)
+bool CompareNotesPointersByMeter(const Notes *pNotes1, const Notes* pNotes2)
 {
-	Notes* pNotes1 = *(Notes**)arg1;
-	Notes* pNotes2 = *(Notes**)arg2;
-
-	int iScore1 = pNotes1->m_iMeter;
-	int iScore2 = pNotes2->m_iMeter;
-
-	if( iScore1 < iScore2 )
-		return -1;
-	else if( iScore1 == iScore2 )
-		return CompareNotesPointersByRadarValues( arg1, arg2 );
-	else
-		return 1;
+	if( pNotes1->m_iMeter < pNotes2->m_iMeter )
+		return true;
+	if( pNotes1->m_iMeter > pNotes2->m_iMeter )
+		return false;
+	return CompareNotesPointersByRadarValues( pNotes1, pNotes2 );
 }
 
-int CompareNotesPointersByDifficulty(Notes* pNotes1, Notes* pNotes2)
+bool CompareNotesPointersByDifficulty(const Notes *pNotes1, const Notes *pNotes2)
 {
-	Difficulty class1 = pNotes1->m_Difficulty;
-	Difficulty class2 = pNotes2->m_Difficulty;
-
-	if( class1 < class2 )
-		return -1;
-	else if( class1 == class2 )
-		return CompareNotesPointersByMeter( &pNotes1, &pNotes2 );
-	else
-		return 1;
-}
-
-int CompareNotesPointersByDifficulty2(const void *arg1, const void *arg2)
-{
-	Notes* pNotes1 = *(Notes**)arg1;
-	Notes* pNotes2 = *(Notes**)arg2;
-
-	return CompareNotesPointersByDifficulty( pNotes1, pNotes2 );
+	if( pNotes1->m_Difficulty < pNotes2->m_Difficulty )
+		return true;
+	if( pNotes1->m_Difficulty > pNotes2->m_Difficulty )
+		return false;
+	return CompareNotesPointersByMeter( pNotes1, pNotes2 );
 }
 
 void SortNotesArrayByDifficulty( CArray<Notes*,Notes*> &arraySteps )
 {
-	qsort( arraySteps.GetData(), arraySteps.GetSize(), sizeof(Notes*), CompareNotesPointersByDifficulty2 );
+	sort( arraySteps.GetData(), arraySteps.GetData()+arraySteps.GetSize(),
+		CompareNotesPointersByDifficulty );
 }
 

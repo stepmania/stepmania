@@ -34,26 +34,15 @@ const float FADE_SECONDS = 1.0f;
 
 #define RECT_BACKGROUND CRect(LEFT_EDGE,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE)
 
-int CompareBGSegments(const void *arg1, const void *arg2)
+int CompareBGSegments(const BGSegment &seg1, const BGSegment &seg2)
 {
-	// arg1 and arg2 are of type Step**
-	BGSegment* seg1 = (BGSegment*)arg1;
-	BGSegment* seg2 = (BGSegment*)arg2;
-
-	float score1 = seg1->m_fStartBeat;
-	float score2 = seg2->m_fStartBeat;
-
-	if( score1 == score2 )
-		return 0;
-	else if( score1 < score2 )
-		return -1;
-	else
-		return 1;
+	return seg1.m_fStartBeat < seg2.m_fStartBeat;
 }
 
 void SortBGSegmentArray( CArray<BGSegment,BGSegment&> &arrayBGSegments )
 {
-	qsort( arrayBGSegments.GetData(), arrayBGSegments.GetSize(), sizeof(BGSegment), CompareBGSegments );
+	sort( arrayBGSegments.GetData(), arrayBGSegments.GetData()+arrayBGSegments.GetSize(),
+		CompareBGSegments );
 }
 
 

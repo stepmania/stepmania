@@ -172,8 +172,8 @@ bool IsAFile( const CString &sPath );
 bool IsADirectory( const CString &sPath );
 DWORD GetFileSizeInBytes( const CString &sFilePath );
 
-int CompareCStringsAsc(const void *arg1, const void *arg2);
-int CompareCStringsDesc(const void *arg1, const void *arg2);
+bool CompareCStringsAsc(const CString &str1, const CString &str2);
+bool CompareCStringsDesc(const CString &str1, const CString &str2);
 void SortCStringArray( CStringArray &AddTo, const bool bSortAcsending = true );
 
 
