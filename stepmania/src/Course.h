@@ -62,9 +62,9 @@ public:
 
 	struct Info
 	{
-		Info(): Song(NULL), Notes(NULL), Random(false) { }
-		Song*	Song;
-		Notes*	Notes;
+		Info(): pSong(NULL), pNotes(NULL), Random(false) { }
+		Song*	pSong;
+		Notes*	pNotes;
 		CString	Modifiers;
 		bool	Random;
 		/* Corresponding entry in m_entries: */

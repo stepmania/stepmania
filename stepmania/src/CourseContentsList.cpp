@@ -74,7 +74,7 @@ void CourseContentsList::SetFromCourse( Course* pCourse )
 		}
 		else
 		{
-			display.LoadFromSongAndNotes( m_iNumContents+1, ci[i].Song, ci[i].Notes, ci[i].Modifiers );
+			display.LoadFromSongAndNotes( m_iNumContents+1, ci[i].pSong, ci[i].pNotes, ci[i].Modifiers );
 		}
 		
 		m_iNumContents ++;

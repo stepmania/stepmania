@@ -140,7 +140,7 @@ int Course::GetMeter() const
 			}
 		}
 		else
-			fTotalMeter += ci[c].Notes->GetMeter();
+			fTotalMeter += ci[c].pNotes->GetMeter();
 	}
 	return (int)roundf( fTotalMeter / ci.size() );
 }
@@ -448,7 +448,7 @@ bool Course::HasDifficult( NotesType nt ) const
 			continue;
 		}
 		
-		if( Normal[i].Song != Hard[i].Song || Normal[i].Notes != Hard[i].Notes )
+		if( Normal[i].pSong != Hard[i].pSong || Normal[i].pNotes != Hard[i].pNotes )
 			return true;
 	}
 	return false;
@@ -474,8 +474,8 @@ bool Course::GetFirstStageInfo(
 	if( ci.empty() )
 		return false;
 	
-	pSongOut = ci[0].Song;
-	pNotesOut = ci[0].Notes;
+	pSongOut = ci[0].pSong;
+	pNotesOut = ci[0].pNotes;
 	sModifiersOut = ci[0].Modifiers;
 	return true;
 }
@@ -607,8 +607,8 @@ void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci ) const
 		}
 
 		Info cinfo;
-		cinfo.Song = pSong;
-		cinfo.Notes = pNotes;
+		cinfo.pSong = pSong;
+		cinfo.pNotes = pNotes;
 		cinfo.Modifiers = e.modifiers;
 		cinfo.Random = ( e.type == Entry::random || e.type == Entry::random_within_group );
 		cinfo.CourseIndex = i;
@@ -667,7 +667,7 @@ bool Course::GetTotalSeconds( float& fSecondsOut ) const
 	{
 		if( ci[i].Random )
 			return false;
-		fSecondsOut += ci[i].Song->m_fMusicLengthSeconds;
+		fSecondsOut += ci[i].pSong->m_fMusicLengthSeconds;
 	}
 	return true;
 }

@@ -193,7 +193,7 @@ void BPMDisplay::SetBPM( const Course* pCourse )
 			continue;
 		}
 
-		Song *pSong = ci[i].Song;
+		Song *pSong = ci[i].pSong;
 		ASSERT( pSong );
 		switch( pSong->m_DisplayBPMType )
 		{
