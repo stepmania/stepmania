@@ -20,17 +20,13 @@
 
 Actor* MakeActor( CString sPath )
 {
-	CString sDir, sFName, sExt;
-	splitrelpath( sPath, sDir, sFName, sExt );
+	CString sExt = GetExtension(sPath);
 	sExt.MakeLower();
 	
 
 	if( sExt=="actor" )
 	{
 		// TODO: Check for recursive loading
-		CString sDir, sThrowAway;
-		splitrelpath( sPath, sDir, sThrowAway, sThrowAway );
-
 		IniFile ini;
 		ini.SetPath( sPath );
 		ini.ReadFile();
@@ -41,7 +37,7 @@ Actor* MakeActor( CString sPath )
 		CString sFileName;
 		ini.GetValue( "Actor", "File", sFileName );
 		
-		CString sNewPath = sDir+sFileName;
+		CString sNewPath = Dirname( sPath ) + sFileName;
 
 		if( !DoesFileExist(sNewPath) )
 			RageException::Throw( "The actor file '%s' references a file '%s' which doesn't exist.", sPath.c_str(), sNewPath.c_str() );

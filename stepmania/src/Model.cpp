@@ -51,9 +51,8 @@ void Model::Clear ()
 
 bool Model::LoadMilkshapeAscii( CString sPath )
 {
-	CString sDir, sThrowAway;
 	FixSlashesInPlace(sPath);
-	splitrelpath( sPath, sDir, sThrowAway, sThrowAway );
+	const CString sDir = Dirname( sPath );
 
 	FILE *file = fopen (sPath, "rt");
 	if (!file)
@@ -419,9 +418,8 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 
 bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 {
-	CString sDir, sThrowAway;
 	FixSlashesInPlace(sPath);
-	splitrelpath( sPath, sDir, sThrowAway, sThrowAway );
+	const CString sDir = Dirname( sPath );
 
 	FILE *file = fopen (sPath, "rt");
 	if (!file)
