@@ -1068,8 +1068,8 @@ void ScreenGameplay::LoadNextSong()
 	// (Re)Calculate the song position meter
 	m_fSongPosMeterOffset = GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeat(
                         GAMESTATE->m_pCurSong->m_fFirstBeat );
-	m_fSongPosMeterEnd = ( GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeat(
-                        GAMESTATE->m_pCurSong->m_fLastBeat ) - m_fSongPosMeterOffset );
+	m_fSongPosMeterEnd = GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeat(
+                        GAMESTATE->m_pCurSong->m_fLastBeat );
 
 	//
 	// Load cabinet lights data
@@ -1602,8 +1602,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 	// step sequence the players are. It looks "better" that way, showing a
 	// song "depleting" as the players wear on. So, it starts "ticking" at
 	// the first arrow and winds down to the very end.
-	float fPercentPositionSong = ( GAMESTATE->m_fMusicSeconds - m_fSongPosMeterOffset ) /
-				     m_fSongPosMeterEnd;
+	float fPercentPositionSong = SCALE( GAMESTATE->m_fMusicSeconds, m_fSongPosMeterOffset, 
+					    m_fSongPosMeterEnd, 0.0f, 1.0f );
 
 	CLAMP( fPercentPositionSong, 0, 1 );
 	m_meterSongPosition.SetPercent( fPercentPositionSong );
