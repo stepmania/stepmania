@@ -1260,7 +1260,7 @@ CString Song::GetBannerPath() const
 
 CString Song::GetLyricsPath() const
 {
-	LOG->Trace("\n\n\n TRYING TO GET LYRICS FROM:: %s", m_sSongDir+m_sBannerFile);
+	LOG->Trace("\n\n\n TRYING TO GET LYRICS FROM:: %s%s", m_sSongDir.GetString(), m_sBannerFile.GetString());
 	return m_sSongDir+m_sLyricsFile;
 }
 
