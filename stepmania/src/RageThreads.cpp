@@ -844,7 +844,20 @@ RageMutex::RageMutex( const CString name ):
 			g_FreeMutexIDs->insert( i );
 	}
 
-	RAGE_ASSERT_M( !g_FreeMutexIDs->empty(), ssprintf("MAX_MUTEXES exceeded creating \"%s\"", name.c_str() ) );
+	if( g_FreeMutexIDs->empty() )
+	{
+		ASSERT_M( g_MutexList, "!g_FreeMutexIDs but !g_MutexList?" ); // doesn't make sense to be out of mutexes yet never created any
+		CString s;
+		for( unsigned i = 0; i < g_MutexList->size(); ++i )
+		{
+			if( i )
+				s += ", ";
+			s += ssprintf( "\"%s\"", (*g_MutexList)[i]->GetName().c_str() );
+		}
+		LOG->Trace( "%s", s.c_str() );
+		FAIL_M( ssprintf("MAX_MUTEXES exceeded creating \"%s\"", name.c_str() ) );
+	}
+
 	m_UniqueID = *g_FreeMutexIDs->begin();
 	g_FreeMutexIDs->erase( g_FreeMutexIDs->begin() );
 
