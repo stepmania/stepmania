@@ -1071,8 +1071,6 @@ int main(int argc, char* argv[])
 	if( loading_window == NULL )
 		RageException::Throw( "Couldn't open any loading windows." );
 
-	loading_window->Paint();
-
 	srand( time(NULL) );	// seed number generator	
 	
 	/* Do this early, so we have debugging output if anything else fails.  LOG and
