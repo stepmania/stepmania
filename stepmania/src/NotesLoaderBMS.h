@@ -13,6 +13,10 @@ class BMSLoader: public NotesLoader
 
 	void SlideDuplicateDifficulties( Song &p );
 
+	map<int, float> m_MeasureToTimeSig;
+	float GetBeatsPerMeasure( int iMeasure ) const;
+	int GetMeasureStartRow( int iMeasureNo ) const;
+
 public:
 	void GetApplicableFiles( CString sPath, CStringArray &out );
 	bool LoadFromDir( CString sDir, Song &out );

@@ -188,6 +188,22 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd )
 	}
 }
 
+float BMSLoader::GetBeatsPerMeasure( int iMeasure ) const
+{
+	map<int, float>::const_iterator time_sig = m_MeasureToTimeSig.find( iMeasure );
+	if( time_sig != m_MeasureToTimeSig.end() )
+		return 4.0f * time_sig->second;
+	return 4.0f;
+}
+
+int BMSLoader::GetMeasureStartRow( int iMeasureNo ) const
+{
+	int iRowNo = 0;
+	for( int i = 0; i < iMeasureNo; ++i )
+		iRowNo += BeatToNoteRow( GetBeatsPerMeasure(i) );
+	return iRowNo;
+}
+
 bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out, const map<CString,int> &mapWavIdToKeysoundIndex )
 {
 	LOG->Trace( "Steps::LoadFromBMSFile( '%s' )", sPath.c_str() );
@@ -279,6 +295,9 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out, const map<CSt
 			int iMeasureNo		= atoi( value_name.substr(1,3).c_str() );
 			int iRawTrackNum	= atoi( value_name.substr(4,2).c_str() );
 
+			int iRowNo = GetMeasureStartRow( iMeasureNo );
+			float fBeatsPerMeasure = GetBeatsPerMeasure( iMeasureNo );
+
 			CString &sNoteData = value_data;
 			vector<TapNote> vTapNotes;
 
@@ -310,8 +329,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out, const map<CSt
 				{
 					float fPercentThroughMeasure = (float)j/(float)uNumNotesInThisMeasure;
 
-					int row = (int) ( (iMeasureNo + fPercentThroughMeasure)
-						* BEATS_PER_MEASURE * ROWS_PER_BEAT );
+					int row = iRowNo + (int) ( fPercentThroughMeasure * fBeatsPerMeasure * ROWS_PER_BEAT );
 
 					// some BMS files seem to have funky alignment, causing us to write gigantic cache files.
 					// Try to correct for this by quantizing.
@@ -636,8 +654,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		{
 			int iMeasureNo	= atoi( value_name.substr(1,3).c_str() );
 			int iBMSTrackNo	= atoi( value_name.substr(4,2).c_str() );
-
-			int iStepIndex = (int) ( iMeasureNo * ROWS_PER_MEASURE );
+			int iStepIndex = GetMeasureStartRow( iMeasureNo );
 
 			{
 				switch( iBMSTrackNo )
@@ -654,30 +671,25 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 				}
 				case 2:
 				{
-					/* Yuck: BPM divide for this measure only. */
-					float fBPM = out.GetBPMAtBeat( NoteRowToBeat(iStepIndex) );
-					float fNewBPM = fBPM / (float) atof(value_data);
-
-					out.SetBPMAtBeat( NoteRowToBeat(iStepIndex), fNewBPM );
-
-					/* Undo the BPM change at the end of the measure. */
-					out.SetBPMAtBeat( NoteRowToBeat(iStepIndex)+4, fBPM );
-					LOG->Trace( "Inserting new temp BPM change at beat %f, BPM %f", NoteRowToBeat(iStepIndex), fNewBPM );
+					m_MeasureToTimeSig[iMeasureNo] = (float) atof(value_data);
 					break;
 				}
 				case 3:	{ // bpm change
 					// A 03: is a set of hex pairs in the same layout as a normal
 					// (note-defining) line, where each non-0 hex pair is a BPM
 					// change at that point.
+					float fBeatsPerMeasure = GetBeatsPerMeasure( iMeasureNo );
+					int iRowsPerMeasure = BeatToNoteRow( fBeatsPerMeasure );
+
 					int totalPairs = value_data.GetLength() / 2;
-					for( int i = 0; i < totalPairs*2; i+=2 )
+					for( int i = 0; i < totalPairs; ++i )
 					{
-						CString sPair = value_data.substr(i,2);
+						CString sPair = value_data.substr(i*2,2);
 						int iBPM = 0;
 						
 					    if( sscanf( sPair, "%x", &iBPM ) == 1 && iBPM != 0 )
 					    {
-							int iRow = iStepIndex+(1/(totalPairs*ROWS_PER_MEASURE));
+							int iRow = iStepIndex + (i * iRowsPerMeasure) / totalPairs;
 							float fBeat = NoteRowToBeat( iRow );
 							out.SetBPMAtBeat( fBeat, (float) iBPM );
 							LOG->Trace( "Inserting new BPM change at beat %f, BPM %i", fBeat, iBPM );
