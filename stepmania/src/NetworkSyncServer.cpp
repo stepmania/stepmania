@@ -383,7 +383,10 @@ void StepManiaLanServer::AssignPlayerIDs()
 }
 
 void StepManiaLanServer::PopulatePlayersPtr(vector<LanPlayer*> &playersPtr) {
-	playersPtr.resize(0);
+//	for (unsigned int x = 0; x < Client.size(); ++x)
+//		delete playersPtr[x];
+
+	playersPtr.clear();
 
 	//Populate with in game players only
 	for (unsigned int x = 0; x < Client.size(); ++x)
@@ -391,8 +394,9 @@ void StepManiaLanServer::PopulatePlayersPtr(vector<LanPlayer*> &playersPtr) {
 			for (int y = 0; y < 2; ++y)
 				if (Client[x]->IsPlaying(y))
 				{
-					playersPtr.push_back(new LanPlayer);
-					playersPtr[playersPtr.size()-1] = &Client[x]->Player[y];
+//					playersPtr.push_back(new LanPlayer);
+//					playersPtr[playersPtr.size()-1] = &Client[x]->Player[y];
+					playersPtr.push_back(&Client[x]->Player[y]);
 				}
 }
 
