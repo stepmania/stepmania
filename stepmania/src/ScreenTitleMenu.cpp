@@ -63,6 +63,15 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 	LOG->Trace( "ScreenTitleMenu::ScreenTitleMenu()" );
 
 
+	// Don't show screen title menu (says "Press Start") 
+	// if there are 0 credits and inserted and CoinMode is pay.
+	if( PREFSMAN->m_iCoinMode == COIN_PAY  &&
+		GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
+	{
+		SCREENMAN->SetNewScreen( THEME->GetMetric("Common","InitialScreen") );
+		return;
+	}
+
 	/* XXX We really need two common calls: 1, something run when exiting from gameplay
 	 * (to do this reset), and 2, something run when entering gameplay, to apply default
 	 * options.  Having special cases in attract screens and the title menu to reset
@@ -327,7 +336,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 		m_aModeChoices[m_Choice].ApplyToAllPlayers();
 		break;
 	case SM_GoToAttractLoop:
-		SCREENMAN->SetNewScreen( "ScreenCompany" );
+		SCREENMAN->SetNewScreen( THEME->GetMetric("Common","InitialScreen") );
 		break;
 	}
 }
