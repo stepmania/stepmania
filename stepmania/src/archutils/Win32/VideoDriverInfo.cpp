@@ -7,11 +7,11 @@
 static void GetRegSubKeys( HKEY hKey, vector<CString> &lst )
 {
 	char szBuffer[MAX_PATH];
-	DWORD nSize = sizeof(szBuffer)-1;
 	FILETIME ft;
 
 	for( int index = 0; ; ++index )
 	{
+		DWORD nSize = sizeof(szBuffer)-1;
 		LONG ret = RegEnumKeyEx( hKey, index, szBuffer, &nSize, NULL, NULL, NULL, &ft);
 		if( ret == ERROR_NO_MORE_ITEMS )
 			return;
@@ -123,7 +123,11 @@ bool GetVideoDriverInfo(int cardno, VideoDriverInfo &info)
 		{
 			/* Remove all keys that aren't four characters long ("Properties"). */
 			if( lst[i].size() != 4 )
+			{
 				lst.erase( lst.begin()+i );
+				continue;
+			}
+
 			lst[i] = TopKey + "\\" + lst[i];
 		}
 
