@@ -26,7 +26,6 @@ public:
 	void TweenBarWidth( int iNewWidth );
 
 protected:
-	void TweenBarWidth( int iNewWidth, float fTweenTime );
 
 	Sprite m_sprLeft;
 	Sprite m_sprMiddle;

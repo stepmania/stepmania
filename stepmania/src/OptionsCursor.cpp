@@ -51,30 +51,25 @@ void OptionsCursor::Load( PlayerNumber pn, bool bUnderline )
 
 void OptionsCursor::SetBarWidth( int iWidth )
 {
-	TweenBarWidth( iWidth, 0.001f );
+	if( iWidth%2 == 1 )
+		iWidth++;	// round up to nearest even number
+	float fFrameWidth = m_sprLeft.GetUnzoomedWidth();
+
+	m_sprMiddle.SetZoomX( iWidth/(float)fFrameWidth );
+
+	m_sprLeft.SetX( -iWidth/2 - fFrameWidth/2 );
+	m_sprRight.SetX( +iWidth/2 + fFrameWidth/2 );
 }
 
 void OptionsCursor::TweenBarWidth( int iNewWidth )
 {
-	TweenBarWidth( iNewWidth, 0.2f );	
-}
-
-void OptionsCursor::TweenBarWidth( int iNewWidth, float fTweenTime )
-{
-	if( iNewWidth%2 == 1 )
-		iNewWidth++;	// round up to nearest even number
-	float fFrameWidth = m_sprLeft.GetUnzoomedWidth();
-
 	m_sprLeft.StopTweening();
 	m_sprMiddle.StopTweening();
 	m_sprRight.StopTweening();
 
-	m_sprLeft.BeginTweening( fTweenTime );
-	m_sprMiddle.BeginTweening( fTweenTime );
-	m_sprRight.BeginTweening( fTweenTime );
+	m_sprLeft.BeginTweening( 0.2f );
+	m_sprMiddle.BeginTweening( 0.2f );
+	m_sprRight.BeginTweening( 0.2f );
 
-	m_sprMiddle.SetZoomX( iNewWidth/(float)fFrameWidth );
-
-	m_sprLeft.SetX( -iNewWidth/2 - fFrameWidth/2 );
-	m_sprRight.SetX( +iNewWidth/2 + fFrameWidth/2 );
+	SetBarWidth( iNewWidth );	
 }
