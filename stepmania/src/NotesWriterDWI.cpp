@@ -95,7 +95,7 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Notes &out, int start )
 		{
 		case NOTE_TYPE_4TH:
 		case NOTE_TYPE_8TH:	
-			fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
+			fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE * ROWS_PER_BEAT;
 			break;
 		case NOTE_TYPE_12TH:
 		case NOTE_TYPE_24TH:
@@ -106,14 +106,19 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Notes &out, int start )
 			fprintf( fp, "(" );
 			fCurrentIncrementer = 1.0/16 * BEATS_PER_MEASURE;
 			break;
-		default:
-			ASSERT(0);
-			// fall though
 		case NOTE_TYPE_32ND:
-		case NOTE_TYPE_INVALID:
+			/* XXX: This is valid for 64ths, too, but we don't
+			 * have NOTE_TYPE_64TH, so we'll write 64ths as
+			 * 192nds. */
 			fprintf( fp, "{" );
 			fCurrentIncrementer = 1.0/64 * BEATS_PER_MEASURE;
 			break;
+		default:
+			ASSERT(0);
+			// fall though
+		case NOTE_TYPE_INVALID:
+			fprintf( fp, "`" );
+			fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
 		}
 
 		double fFirstBeatInMeasure = m * BEATS_PER_MEASURE;
@@ -123,16 +128,17 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Notes &out, int start )
 		{
 			int row = BeatToNoteRow( (float)b );
 
+			CString str;
 			switch( out.m_NotesType )
 			{
 			case NOTES_TYPE_DANCE_SINGLE:
 			case NOTES_TYPE_DANCE_COUPLE:
 			case NOTES_TYPE_DANCE_DOUBLE:
-				fprintf( fp, NotesToDWIString( 
+				str = NotesToDWIString( 
 					notedata.GetTapNote(start+0, row), 
 					notedata.GetTapNote(start+1, row),
 					notedata.GetTapNote(start+2, row),
-					notedata.GetTapNote(start+3, row) ) );
+					notedata.GetTapNote(start+3, row) );
 
 				// Blank out the notes so we don't write them again if the incrementer is small
 				notedata.SetTapNote(start+0, row, TAP_EMPTY);
@@ -141,13 +147,13 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Notes &out, int start )
 				notedata.SetTapNote(start+3, row, TAP_EMPTY);
 				break;
 			case NOTES_TYPE_DANCE_SOLO:
-				fprintf( fp, NotesToDWIString( 
+				str = NotesToDWIString( 
 					notedata.GetTapNote(0, row),
 					notedata.GetTapNote(1, row),
 					notedata.GetTapNote(2, row),
 					notedata.GetTapNote(3, row),
 					notedata.GetTapNote(4, row),
-					notedata.GetTapNote(5, row) ) );
+					notedata.GetTapNote(5, row) );
 
 				// Blank out the notes so we don't write them again if the incrementer is small
 				notedata.SetTapNote(start+0, row, TAP_EMPTY);
@@ -160,6 +166,7 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Notes &out, int start )
 			default:
 				ASSERT(0);	// not a type supported by DWI.  We shouldn't have called in here if that's the case
 			}
+			fprintf( fp, "%s", str.c_str() );
 		}
 
 		switch( nt )
@@ -174,12 +181,14 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Notes &out, int start )
 		case NOTE_TYPE_16TH:
 			fprintf( fp, ")" );
 			break;
+		case NOTE_TYPE_32ND:
+			fprintf( fp, "}" );
+			break;
 		default:
 			ASSERT(0);
 			// fall though
-		case NOTE_TYPE_32ND:
 		case NOTE_TYPE_INVALID:
-			fprintf( fp, "}" );
+			fprintf( fp, "'" );
 			break;
 		}
 		fprintf( fp, "\n" );
