@@ -300,7 +300,10 @@ static void child_process()
 	case SIGFPE:
 	case SIGSEGV:
 	case SIGBUS:
-	    reason += ssprintf( " at 0x%08x", (unsigned int) crash.si.si_addr );
+	    if( crash.si.si_code == SI_USER )
+		    reason += ssprintf( " from pid %i", (int) crash.si.si_addr );
+	    else
+		    reason += ssprintf( " at 0x%08x", (unsigned int) crash.si.si_addr );
 	}
 	break;
     }
