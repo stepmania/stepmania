@@ -18,7 +18,7 @@ NoteData::NoteData()
 void NoteData::Init()
 {
 	ClearAll();
-	m_TapNotes.clear();
+	m_TapNotes = vector<TrackMap>();	// ensure that the memory is freed
 }
 
 NoteData::~NoteData()
