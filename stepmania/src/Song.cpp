@@ -468,6 +468,15 @@ void FixupPath( CString &path, const CString &sSongPath )
 /* Songs in BlacklistImages will never be autodetected as song images. */
 void Song::TidyUpData()
 {
+	/* We need to do this before calling any of HasMusic, HasHasCDTitle, etc. */
+	ASSERT_M( m_sSongDir.Left(3) != "../", m_sSongDir ); /* meaningless */
+	FixupPath( m_sSongDir, "" );
+	FixupPath( m_sMusicFile, m_sSongDir );
+	FixupPath( m_sBannerFile, m_sSongDir );
+	FixupPath( m_sLyricsFile, m_sSongDir );
+	FixupPath( m_sBackgroundFile, m_sSongDir );
+	FixupPath( m_sCDTitleFile, m_sSongDir );
+
 	if( !HasMusic() )
 	{
 		CStringArray arrayPossibleMusic;
@@ -592,14 +601,6 @@ void Song::TidyUpData()
 	//
 
 	CHECKPOINT_M( "Looking for images..." );
-
-	ASSERT_M( m_sSongDir.Left(3) != "../", m_sSongDir ); /* meaningless */
-	FixupPath( m_sSongDir, "" );
-	FixupPath( m_sMusicFile, m_sSongDir );
-	FixupPath( m_sBannerFile, m_sSongDir );
-	FixupPath( m_sLyricsFile, m_sSongDir );
-	FixupPath( m_sBackgroundFile, m_sSongDir );
-	FixupPath( m_sCDTitleFile, m_sSongDir );
 
 	//
 	// First, check the file name for hints.
