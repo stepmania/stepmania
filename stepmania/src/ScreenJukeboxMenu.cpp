@@ -39,6 +39,9 @@ ScreenJukeboxMenu::ScreenJukeboxMenu( CString sClassName ) : Screen( sClassName 
 
 	GAMESTATE->m_CurStyle = STYLE_INVALID;
 
+	for( int pn=0; pn<NUM_PLAYERS; pn++ )
+		GAMESTATE->m_bSideIsJoined[pn] = true;
+
 	m_Selector.SetXY( 0, 0 );
 //	m_Selector.AllowNewNotes();
 	this->AddChild( &m_Selector );
