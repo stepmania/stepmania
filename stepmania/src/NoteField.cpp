@@ -20,6 +20,8 @@
 
 NoteField::NoteField()
 {	
+	m_pNoteData = NULL;
+
 	m_textMeasureNumber.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textMeasureNumber.SetZoom( 1.0f );
 
@@ -57,8 +59,8 @@ void NoteField::CacheNoteSkin( CString skin )
 		return;
 
 	LOG->Trace("NoteField::CacheNoteSkin: cache %s", skin.c_str() );
-	NoteDisplayCols *nd = new NoteDisplayCols( GetNumTracks() );
-	for( int c=0; c<GetNumTracks(); c++ ) 
+	NoteDisplayCols *nd = new NoteDisplayCols( m_pNoteData->GetNumTracks() );
+	for( int c=0; c<m_pNoteData->GetNumTracks(); c++ ) 
 		nd->display[c].Load( c, m_pPlayerState, skin, m_fYReverseOffsetPixels );
 	nd->m_ReceptorArrowRow.Load( m_pPlayerState, skin, m_fYReverseOffsetPixels );
 	nd->m_GhostArrowRow.Load( m_pPlayerState, skin, m_fYReverseOffsetPixels );
@@ -101,12 +103,13 @@ void NoteField::CacheAllUsedNoteSkins( bool bDeleteUnused )
 }
 
 void NoteField::Load( 
-	const NoteData* pNoteData, 
+	const NoteData *pNoteData,
 	const PlayerState* pPlayerState, 
 	int iFirstPixelToDraw, 
 	int iLastPixelToDraw, 
 	float fYReverseOffsetPixels )
 {
+	m_pNoteData = pNoteData;
 	m_pPlayerState = pPlayerState;
 	m_iStartDrawingPixel = iFirstPixelToDraw;
 	m_iEndDrawingPixel = iLastPixelToDraw;
@@ -115,10 +118,7 @@ void NoteField::Load(
 	m_fPercentFadeToFail = -1;
 	m_LastSeenBeatToNoteSkinRev = -1;
 
-	NoteDataWithScoring::Init();
-
-	this->CopyAll( *pNoteData );
-	ASSERT( GetNumTracks() == GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
+	ASSERT( m_pNoteData->GetNumTracks() == GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
 
 	/* If we're in gameplay, we havn't applied course modifiers yet, so we don't know what
 	 * note skins we'll need. Don't delete unused skins yet. */
@@ -543,7 +543,7 @@ void NoteField::DrawPrimitives()
 
 	float fSelectedRangeGlow = SCALE( cosf(RageTimer::GetTimeSinceStart()*2), -1, 1, 0.1f, 0.3f );
 
-	for( int c=0; c<GetNumTracks(); c++ )	// for each arrow column
+	for( int c=0; c<m_pNoteData->GetNumTracks(); c++ )	// for each arrow column
 	{
 		// TODO: Remove use of PlayerNumber.
 		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
@@ -555,9 +555,9 @@ void NoteField::DrawPrimitives()
 		NDMap::iterator CurDisplay = m_BeatToNoteDisplays.begin();
 		ASSERT( CurDisplay != m_BeatToNoteDisplays.end() );
 		NDMap::iterator NextDisplay = CurDisplay; ++NextDisplay;
-		for( int i=0; i < GetNumHoldNotes(); i++ )
+		for( int i=0; i < m_pNoteData->GetNumHoldNotes(); i++ )
 		{
-			const HoldNote &hn = GetHoldNote(i);
+			const HoldNote &hn = m_pNoteData->GetHoldNote(i);
 			if( hn.iTrack != c )	// this HoldNote doesn't belong to this column
 				continue;
 
@@ -605,14 +605,19 @@ void NoteField::DrawPrimitives()
 		NextDisplay = CurDisplay; ++NextDisplay;
 
 		// draw notes from furthest to closest
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE_REVERSE( *this, c, i, iFirstIndexToDraw, iLastIndexToDraw )
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE_REVERSE( *m_pNoteData, c, i, iFirstIndexToDraw, iLastIndexToDraw )
 		{	
-			TapNote tn = GetTapNote(c, i);
+			const TapNote &tn = m_pNoteData->GetTapNote(c, i);
 			if( tn.type == TapNote::empty )	// no note here
 				continue;	// skip
 			
 			if( tn.type == TapNote::hold_head )	// this is a HoldNote begin marker.  Grade it, but don't draw
 				continue;	// skip
+
+			/* Don't draw hidden (fully judged) steps. */
+			if( tn.result.bHidden )
+				continue;
+
 
 			// TRICKY: If boomerang is on, then all notes in the range 
 			// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
@@ -625,9 +630,9 @@ void NoteField::DrawPrimitives()
 
 			// See if there is a hold step that begins on this index.
 			bool bHoldNoteBeginsOnThisBeat = false;
-			for( int c2=0; c2<GetNumTracks(); c2++ )
+			for( int c2=0; c2<m_pNoteData->GetNumTracks(); c2++ )
 			{
-				if( GetTapNote(c2, i).type == TapNote::hold_head)
+				if( m_pNoteData->GetTapNote(c2, i).type == TapNote::hold_head)
 				{
 					bHoldNoteBeginsOnThisBeat = true;
 					break;

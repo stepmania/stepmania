@@ -1,7 +1,7 @@
-/* NoteField - adds rendering to NoteDataWithScoring */
+/* NoteField - renders a NoteData */
 
-#ifndef NOTEFIELD_H
-#define NOTEFIELD_H
+#ifndef NOTE_FIELD_H
+#define NOTE_FIELD_H
 
 #include "Sprite.h"
 #include "ActorFrame.h"
@@ -14,7 +14,7 @@
 #include "ReceptorArrowRow.h"
 #include "GhostArrowRow.h"
 
-class NoteField : public NoteDataWithScoring, public ActorFrame
+class NoteField : public ActorFrame
 {
 public:
 	NoteField();
@@ -52,6 +52,8 @@ protected:
 	float GetWidth();
 
 	void RefreshBeatToNoteSkin();
+
+	const NoteData *m_pNoteData;
 
 	float	m_fPercentFadeToFail;	// -1 of not fading to fail
 

@@ -10,11 +10,6 @@
 
 struct RadarValues;
 
-struct RowTrack: public pair<int,int>
-{
-	RowTrack( const HoldNote &hn ): pair<int,int>( hn.iEndRow, hn.iTrack ) { }
-};
-
 class NoteDataWithScoring : public NoteData
 {
 public:

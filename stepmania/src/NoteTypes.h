@@ -16,6 +16,9 @@ struct TapNoteResult
 	 * was hit early; positive numbers mean it was hit late.  These values are
 	 * only meaningful for graded taps (tns >= TNS_BOO). */
 	float fTapNoteOffset;
+
+	/* If the whole row has been judged, all taps on the row will be set to hidden. */
+	bool bHidden;
 };
 
 struct HoldNoteResult

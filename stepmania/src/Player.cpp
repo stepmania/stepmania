@@ -342,20 +342,9 @@ void Player::Update( float fDeltaTime )
 	{
 		HoldNote &hn = m_NoteData.GetHoldNote(i);
 
-		/* Find the associated hold note in m_pNoteField. */
-		/* ack: this iterates over all hold notes */
-		int iHN = m_pNoteField->GetMatchingHoldNote( hn );
-		HoldNote &NoteFieldHoldNote = m_pNoteField->GetHoldNote( iHN );
-
-
 		// set hold flags so NoteField can do intelligent drawing
 		hn.bHeld = false;
 		hn.bActive = false;
-		if( m_pNoteField )
-		{
-			NoteFieldHoldNote.bHeld = false;
-			NoteFieldHoldNote.bActive = false;
-		}
 
 
 		HoldNoteScore hns = hn.result.hns;
@@ -386,9 +375,6 @@ void Player::Update( float fDeltaTime )
 			/* This hold note is not judged and we stepped on its head.  Update iLastHeldRow.
 			 * Do this even if we're a little beyond the end of the hold note, to make sure
 			 * iLastHeldRow is clamped to iEndRow if the hold note is held all the way. */
-			if( m_pNoteField )
-				NoteFieldHoldNote.result.iLastHeldRow = min( iSongRow, hn.iEndRow );
-
 			hn.result.iLastHeldRow = min( iSongRow, hn.iEndRow );
 		}
 
@@ -398,11 +384,6 @@ void Player::Update( float fDeltaTime )
 			// set hold flag so NoteField can do intelligent drawing
 			hn.bHeld = bIsHoldingButton && bSteppedOnTapNote;
 			hn.bActive = bSteppedOnTapNote;
-			if( m_pNoteField )
-			{
-				NoteFieldHoldNote.bHeld = bIsHoldingButton && bSteppedOnTapNote;
-				NoteFieldHoldNote.bActive = bSteppedOnTapNote;
-			}
 
 			if( bSteppedOnTapNote && bIsHoldingButton )
 			{
@@ -453,12 +434,6 @@ void Player::Update( float fDeltaTime )
 				m_pPlayerStageStats->iTotalError += ms_error;
 			if( hns == HNS_NG ) /* don't show a 0 for an OK */
 				m_ProTimingDisplay.SetJudgment( ms_error, TNS_MISS );
-		}
-
-		if( m_pNoteField )
-		{
-			NoteFieldHoldNote.result.fLife = fLife;
-			NoteFieldHoldNote.result.hns = hns;
 		}
 
 		hn.result.fLife = fLife;
@@ -524,8 +499,6 @@ void Player::ApplyWaitingTransforms()
 			GAMESTATE->SetNoteSkinForBeatRange( m_pPlayerState, po.m_sNoteSkin, fStartBeat, fEndBeat );
 
 		NoteDataUtil::TransformNoteData( m_NoteData, po, GAMESTATE->GetCurrentStyle()->m_StepsType, fStartBeat, fEndBeat );
-		if( m_pNoteField )
-			m_pNoteField->CopyRange( m_NoteData, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat), BeatToNoteRow(fStartBeat) );
 	}
 	m_pPlayerState->m_ModsToApply.clear();
 }
@@ -763,17 +736,16 @@ void Player::Step( int col, RageTimer tm )
 
 					if( m_pCombinedLifeMeter )
 						m_pCombinedLifeMeter->ChangeLifeMine( pn );
+					tn.result.bHidden = true;
+					m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
 					if( m_pNoteField )
-					{
-						m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
 						m_pNoteField->DidTapNote( col, score, false );
-					}
 				}
 				break;
 
 			case TapNote::attack:
 				score = TNS_NONE;	// don't score this as anything
-				if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Attack) )
+				if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Attack) && !tn.result.bHidden )
 				{
 					m_soundAttackLaunch.Play();
 
@@ -798,9 +770,8 @@ void Player::Step( int col, RageTimer tm )
 						TapNote tn = m_NoteData.GetTapNote(t, iIndexOverlappingNote);
 						if( tn.type == TapNote::attack )
 						{
-							m_NoteData.SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
-							if( m_pNoteField )
-								m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
+							tn.result.bHidden = true;
+							m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
 						}
 					}
 				}
@@ -862,11 +833,10 @@ void Player::Step( int col, RageTimer tm )
 
 					if( m_pCombinedLifeMeter )
 						m_pCombinedLifeMeter->ChangeLifeMine( pn );
+					tn.result.bHidden = true;
+					m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
 					if( m_pNoteField )
-					{
-						m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
 						m_pNoteField->DidTapNote( col, score, false );
-					}
 				}
 			}
 
@@ -904,9 +874,8 @@ void Player::Step( int col, RageTimer tm )
 					TapNote tn = m_NoteData.GetTapNote(t, iIndexOverlappingNote);
 					if( tn.type == TapNote::attack )
 					{
-						m_NoteData.SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
-						if( m_pNoteField )
-							m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
+						tn.result.bHidden = true;
+						m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
 					}
 				}
 			}
@@ -954,6 +923,7 @@ void Player::Step( int col, RageTimer tm )
 			tn.result.fTapNoteOffset = -fNoteOffset;
 
 		m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
+
 
 		if( m_pPlayerState->m_PlayerController == PC_HUMAN  && 
 			score >= TNS_GREAT ) 
@@ -1074,8 +1044,10 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 		// If the score is great or better, remove the note from the screen to 
 		// indicate success.  (Or always if blind is on.)
 		if( score >= TNS_GREAT || m_pPlayerState->m_PlayerOptions.m_fBlind )
-			if( m_pNoteField )
-				m_pNoteField->SetTapNote(c, iIndexThatWasSteppedOn, TAP_EMPTY);
+		{
+			tn.result.bHidden = true;
+			m_NoteData.SetTapNote( c, iIndexThatWasSteppedOn, tn );
+		}
 
 		// show the ghost arrow for this column
 		if (m_pPlayerState->m_PlayerOptions.m_fBlind)
@@ -1252,14 +1224,6 @@ void Player::RandomizeNotes( int iNoteRow )
 		
 		m_NoteData.SetTapNote( t, iNewNoteRow, t2 );
 		m_NoteData.SetTapNote( iSwapWith, iNewNoteRow, t1 );
-
-		if( m_pNoteField )
-		{
-			const TapNote nft1 = m_pNoteField->GetTapNote( t, iNewNoteRow );
-			const TapNote nft2 = m_pNoteField->GetTapNote( iSwapWith, iNewNoteRow );
-			m_pNoteField->SetTapNote( t, iNewNoteRow, nft2 );
-			m_pNoteField->SetTapNote( iSwapWith, iNewNoteRow, nft1 );
-		}
 	}
 }
 
