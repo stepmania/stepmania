@@ -352,12 +352,16 @@ void ScreenNetSelectMusic::MenuStart( PlayerNumber pn )
 	if ( m_MusicWheel.GetSelectedType() != TYPE_SONG )
 		return;
 
-	GAMESTATE->m_pCurSong = m_MusicWheel.GetSelectedSong();
+	Song * pSong = m_MusicWheel.GetSelectedSong();
+
+	if ( pSong == NULL )
+		return;
+
+	GAMESTATE->m_pCurSong = pSong;
 
 	if ( NSMAN->useSMserver )
 	{
 		//int j = m_iSongNum % m_vSongs.size();
-		Song * pSong = m_MusicWheel.GetSelectedSong();
 		NSMAN->m_sArtist = pSong->GetTranslitArtist();
 		NSMAN->m_sMainTitle = pSong->GetTranslitMainTitle();
 		NSMAN->m_sSubTitle = pSong->GetTranslitSubTitle();
