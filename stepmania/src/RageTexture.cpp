@@ -38,11 +38,6 @@ void RageTextureID::Init()
 	/* If true, enable HOT PINK color keying. (deprecated but needed for
 	 * banners) */
 	bHotPinkColorKey = false;
-
-	/* This indicates that the image is a transparency.  This allows for
-	 * high-resolution, memory-compact transparent layers.  The diffuse
-	 * color will be used with no texture color.  (0, 4, 8) */
-	iTransparencyOnly = 0;
 }
 
 bool RageTextureID::operator<(const RageTextureID &rhs) const
@@ -53,7 +48,6 @@ bool RageTextureID::operator<(const RageTextureID &rhs) const
 	COMP(iMipMaps);
 	COMP(iAlphaBits);
 	COMP(iColorDepth);
-	COMP(iTransparencyOnly);
 	COMP(bDither);
 	COMP(bStretch);
 	COMP(bHotPinkColorKey);
@@ -70,7 +64,6 @@ bool RageTextureID::operator==(const RageTextureID &rhs) const
 		EQUAL(iMipMaps) &&
 		EQUAL(iAlphaBits) &&
 		EQUAL(iColorDepth) &&
-		EQUAL(iTransparencyOnly) &&
 		EQUAL(bDither) &&
 		EQUAL(bStretch) &&
 		EQUAL(bHotPinkColorKey);

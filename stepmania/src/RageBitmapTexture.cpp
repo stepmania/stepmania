@@ -141,21 +141,16 @@ apply_color_key:
 			actualID.iAlphaBits = 0;
 		else if(traits & TRAIT_BOOL_TRANSPARENCY) 
 			actualID.iAlphaBits = 1;
-		if(traits & TRAIT_WHITE_ONLY) 
-			actualID.iTransparencyOnly = 8;
 	}
 
 	// look in the file name for a format hints
 	CString HintString = GetID().filename;
 	HintString.MakeLower();
 
-	if( HintString.Find("4alphaonly") != -1 )		actualID.iTransparencyOnly = 4;
-	else if( HintString.Find("8alphaonly") != -1 )	actualID.iTransparencyOnly = 8;
+	if( HintString.Find("32bpp") != -1 )			actualID.iColorDepth = 32;
+	else if( HintString.Find("16bpp") != -1 )		actualID.iColorDepth = 16;
 	if( HintString.Find("dither") != -1 )			actualID.bDither = true;
 	if( HintString.Find("stretch") != -1 )			actualID.bStretch = true;
-
-	if( actualID.iTransparencyOnly )
-		actualID.iColorDepth = 32;	/* Treat the image as 32-bit, so we don't lose any alpha precision. */
 
 	/* Cap the max texture size to the hardware max. */
 	actualID.iMaxSize = min( actualID.iMaxSize, DISPLAY->GetMaxTextureSize() );
@@ -245,18 +240,6 @@ apply_color_key:
 		default:
 			RageException::Throw( "Invalid color depth: %d bits", actualID.iColorDepth );
 		}
-
-		/* Override the internalformat with an alpha format if it was requested. 
-		 * Don't use iTransparencyOnly with paletted images; there's no point--paletted
-		 * images are as small or smaller (and the load will fail). */
-		/* SDL surfaces don't allow for 8 bpp surfaces that aren't paletted.  Arg! 
-		 * fix this later. -Chris */
-//		if(actualID.iTransparencyOnly > 0)
-//		{
-//			imagePixfmt = FMT_ALPHA8;
-//			texturePixfmt = FMT_ALPHA8;
-//		}
-
 
 		/* It's either not a paletted image, or we can't handle paletted textures.
 		 * Convert to the desired RGBA format, dithering if appropriate. */
@@ -351,7 +334,6 @@ apply_color_key:
 	props += PixelFormatToString( pixfmt ) + " ";
 	if(actualID.iAlphaBits == 0) props += "opaque ";
 	if(actualID.iAlphaBits == 1) props += "matte ";
-	if(actualID.iTransparencyOnly) props += "mask ";
 	if(actualID.bStretch) props += "stretch ";
 	if(actualID.bDither) props += "dither ";
 	props.erase(props.size()-1);
