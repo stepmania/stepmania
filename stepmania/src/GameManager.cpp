@@ -816,7 +816,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			},
 		}
 	},
-	{	// GAME_MANIAX
+	{	// GAME_TECHNO
 		"techno",					// m_szName
 		"TechnoMotion",				// m_szDescription
 		2,							// m_iNumControllers
