@@ -80,7 +80,7 @@ Actor.cpp Actor.h ActorFrame.cpp ActorFrame.h BitmapText.cpp BitmapText.h Quad.h
 Sprite.cpp Sprite.h ActorScroller.cpp ActorScroller.h Model.cpp Model.h mathlib.c mathlib.h ModelTypes.cpp ModelTypes.h
 
 ActorsInMenus = \
-Banner.cpp Banner.h BannerWithFrame.cpp BannerWithFrame.h BPMDisplay.cpp BPMDisplay.h CourseContentsList.cpp \
+Banner.cpp Banner.h BannerCache.cpp BannerCache.h BannerWithFrame.cpp BannerWithFrame.h BPMDisplay.cpp BPMDisplay.h CourseContentsList.cpp \
 CourseContentsList.h CourseEntryDisplay.cpp CourseEntryDisplay.h CroppedSprite.cpp CroppedSprite.h \
 DifficultyIcon.cpp DifficultyIcon.h DifficultyRating.cpp DifficultyRating.h EditMenu.cpp EditMenu.h \
 FadingBanner.cpp FadingBanner.h DifficultyMeter.cpp DifficultyMeter.h GradeDisplay.cpp GradeDisplay.h GrooveRadar.cpp \
