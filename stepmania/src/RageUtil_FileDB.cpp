@@ -106,11 +106,15 @@ void FileSet::LoadFromDir(const CString &dir)
 		struct stat st;
 		if( stat(ent->d_name, &st) == -1 )
 		{
+			/* If it's a broken symlink, ignore it.  Otherwise, warn. */
+			if( lstat(ent->d_name, &st) == 0 )
+				continue;
+			
 			/* Huh? */
 			if(LOG)
 				LOG->Warn("Got file '%s' in '%s' from list, but can't stat? (%s)",
 					ent->d_name, dir.c_str(), strerror(errno));
-			f.dir = false;
+			continue;
 		} else {
 			f.dir = (st.st_mode & S_IFDIR);
 			f.size = st.st_size;
