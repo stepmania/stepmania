@@ -27,7 +27,7 @@ NoteData::NoteData()
 
 void NoteData::Init()
 {
-	memset( m_TapNotes, '0', MAX_NOTE_TRACKS*MAX_TAP_NOTE_ROWS );
+	memset( m_TapNotes, '0', MAX_NOTE_TRACKS*MAX_TAP_NOTE_ROWS*sizeof(m_TapNotes[0][0]) );
 	m_iNumTracks = 0;
 	m_iNumHoldNotes = 0;
 }
@@ -61,6 +61,12 @@ void NoteData::LoadFromSMNoteDataString( CString sSMNoteData )
 		CStringArray asMeasureLines;
 		split( sMeasureString, "\n", asMeasureLines, true );	// ignore empty is important
 
+		//ASSERT( asMeasureLines.GetSize() == 4  ||
+		//	    asMeasureLines.GetSize() == 8  ||
+		//	    asMeasureLines.GetSize() == 12  ||
+		//	    asMeasureLines.GetSize() == 16 );
+
+
 		for( int l=0; l<asMeasureLines.GetSize(); l++ )
 		{
 			CString &sMeasureLine = asMeasureLines[l];
@@ -78,6 +84,7 @@ void NoteData::LoadFromSMNoteDataString( CString sSMNoteData )
 				m_TapNotes[c][iIndex] = sMeasureLine[c];
 		}
 	}
+	this->Convert2sAnd3sToHoldNotes();
 }
 
 CString NoteData::GetSMNoteDataString()
@@ -709,28 +716,27 @@ float NoteData::GetStreamRadarValue( float fSongSeconds )
 	// density of steps
 	int iNumNotes = GetNumTapNotes() + GetNumHoldNotes();
 	float fNotesPerSecond = iNumNotes/fSongSeconds;
-	float fReturn = fNotesPerSecond / 10;
+	float fReturn = fNotesPerSecond / 7;
 	return min( fReturn, 1.0f );
 }
 
 float NoteData::GetVoltageRadarValue( float fSongSeconds )
 {
+	float fAvgBPS = GetLastBeat() / fSongSeconds;
+
 	// peak density of steps
-	float fMaxDensityPerSecSoFar = 0;
+	float fMaxDensitySoFar = 0;
 
-	for( int i=0; i<MAX_BEATS; i+=16 )
+	const int BEAT_WINDOW = 8;
+
+	for( int i=0; i<MAX_BEATS; i+=BEAT_WINDOW )
 	{
-		int iNumNotesThisMeasure = GetNumTapNotes((float)i,(float)i+8) + GetNumHoldNotes((float)i,(float)i+8);
-
-		float fDensityThisMeasure = iNumNotesThisMeasure/2.0f;
-
-		float fDensityPerSecThisMeasure = fDensityThisMeasure / fSongSeconds;
-
-		if( fDensityPerSecThisMeasure > fMaxDensityPerSecSoFar )
-			fMaxDensityPerSecSoFar = fDensityPerSecThisMeasure;
+		int iNumNotesThisWindow = GetNumTapNotes((float)i,(float)i+BEAT_WINDOW) + GetNumHoldNotes((float)i,(float)i+BEAT_WINDOW);
+		float fDensityThisWindow = iNumNotesThisWindow/(float)BEAT_WINDOW;
+		fMaxDensitySoFar = max( fMaxDensitySoFar, fDensityThisWindow );
 	}
 
-	float fReturn = fMaxDensityPerSecSoFar*5;
+	float fReturn = fMaxDensitySoFar*fAvgBPS/10;
 	return min( fReturn, 1.0f );
 }
 
@@ -745,14 +751,14 @@ float NoteData::GetAirRadarValue( float fSongSeconds )
 float NoteData::GetChaosRadarValue( float fSongSeconds )
 {
 	// count number of triplets
-	int iNumTriplets = 0;
+	int iNumChaosNotes = 0;
 	for( int r=0; r<MAX_TAP_NOTE_ROWS; r++ )
 	{
-		if( !IsRowEmpty(r) && IsNoteOfType(r, NOTE_12TH) )
-		iNumTriplets++;
+		if( !IsRowEmpty(r)  &&  GetNoteType(r) >= NOTE_12TH )
+		iNumChaosNotes++;
 	}
 
-	float fReturn = iNumTriplets / fSongSeconds;
+	float fReturn = iNumChaosNotes / fSongSeconds * 0.5;
 	return min( fReturn, 1.0f );
 }
 
@@ -767,16 +773,9 @@ float NoteData::GetFreezeRadarValue( float fSongSeconds )
 void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, int iNewToOriginalTrack[] )
 {
 	// init
-	for( int i=0; i<MAX_NOTE_TRACKS; i++ )
-	{
-		for( int j=0; j<MAX_TAP_NOTE_ROWS; j++ )
-			m_TapNotes[i][j] = '0';
-	}
-	m_iNumHoldNotes = 0;
-	
+	Init();
 	
 	m_iNumTracks = iNewNumTracks;
-
 
 	// copy tracks
 	for( int t=0; t<m_iNumTracks; t++ )
@@ -785,12 +784,11 @@ void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, int iNew
 
 		int i;
 
-		for( i=0; i<MAX_TAP_NOTE_ROWS; i++ )
-			m_TapNotes[t][i] = pOriginal->m_TapNotes[iOriginalTrack][i];
+		memcpy( m_TapNotes[t], pOriginal->m_TapNotes[iOriginalTrack], MAX_TAP_NOTE_ROWS*sizeof(m_TapNotes[0][0]) );
 
-		for( i=0; i<MAX_HOLD_NOTE_ELEMENTS; i++ )
+		for( i=0; i<pOriginal->m_iNumHoldNotes; i++ )
 		{
-			HoldNote hn = pOriginal->m_HoldNotes[i];
+			HoldNote &hn = pOriginal->m_HoldNotes[i];
 			if( hn.m_iTrack == iOriginalTrack )
 			{
 				hn.m_iTrack = t;

@@ -19,7 +19,7 @@
 #include "NoteData.h"
 
 
-const int FILE_CACHE_VERSION = 26;	// increment this to force a cache reload (useful when the SM file format changes)
+const int FILE_CACHE_VERSION = 29;	// increment this to force a cache reload (useful when the SM file format changes)
 
 
 int CompareBPMSegments(const void *arg1, const void *arg2)
@@ -73,7 +73,7 @@ void SortFreezeSegmentsArray( CArray<FreezeSegment,FreezeSegment&> &arrayFreezeS
 Song::Song()
 {
 	m_bChangedSinceSave = false;
-	m_fOffsetInSeconds = 0;
+	m_fBeat0OffsetInSeconds = 0;
 	m_fMusicSampleStartSeconds = 0;
 	m_fMusicSampleLengthSeconds = 16;	// start fading out at m_fMusicSampleLengthSeconds-1 seconds
 	m_iMusicBytes = 0;
@@ -108,7 +108,7 @@ void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, fl
 //	LOG->WriteLine( "GetBeatAndBPSFromElapsedTime( fElapsedTime = %f )", fElapsedTime );
 	// This function is a nightmare.  Don't even try to understand it. :-)
 
-	fElapsedTime += m_fOffsetInSeconds;
+	fElapsedTime += m_fBeat0OffsetInSeconds;
 
 
 	for( int i=0; i<m_BPMSegments.GetSize(); i++ ) // foreach BPMSegment
@@ -284,14 +284,6 @@ bool Song::LoadFromSongDir( CString sDir )
 			goto load_without_cache;
 		LoadFromSMFile( GetCacheFilePath() );	// don't load NoteData
 
-		// Save length of music
-		if( GetMusicPath() != "" )
-		{
-			RageSoundStream sound;
-			sound.Load( GetMusicPath() );
-			m_fMusicLengthSeconds = sound.GetLengthSeconds();
-		}
-
 		LOG->WriteLine( "Loading '%s' from cache file '%s'.", m_sSongDir, GetCacheFilePath() );
 		return true;
 	}
@@ -463,12 +455,15 @@ bool Song::LoadFromBMSDir( CString sDir )
 					switch( iBMSTrackNo )
 					{
 					case 1:	// background music track
-						float fBeatOffset;
-						fBeatOffset = NoteRowToBeat( (float)iStepIndex );
-						float fBPS;
-						fBPS = m_BPMSegments[0].m_fBPM/60.0f;
-						m_fOffsetInSeconds = fBeatOffset / fBPS;
-						//LOG->WriteLine( "Found offset to be index %d, beat %f", iStepIndex, NoteRowToBeat(iStepIndex) );
+						{
+							float fBeatOffset = fBeatOffset = NoteRowToBeat( (float)iStepIndex );
+							if( fBeatOffset > 10 )	// some BPMs's play the music again at the end.  Why?  Who knows...
+								break;
+							float fBPS;
+							fBPS = m_BPMSegments[0].m_fBPM/60.0f;
+							m_fBeat0OffsetInSeconds = fBeatOffset / fBPS;
+							//LOG->WriteLine( "Found offset to be index %d, beat %f", iStepIndex, NoteRowToBeat(iStepIndex) );
+						}
 						break;
 					case 3:	// bpm change
 						{
@@ -718,7 +713,7 @@ bool Song::LoadFromDWIFile( CString sPath )
 		}
 		else if( sValueName == "#GAP" )
 			// the units of GAP is 1/1000 second
-			m_fOffsetInSeconds = -atoi( arrayValueTokens[1] ) / 1000.0f;
+			m_fBeat0OffsetInSeconds = -atoi( arrayValueTokens[1] ) / 1000.0f;
 
 		else if( sValueName == "#SAMPLESTART" )
 			m_fMusicSampleStartSeconds = TimeToSeconds( arrayValueTokens[1] );
@@ -862,8 +857,8 @@ bool Song::LoadFromSMFile( CString sPath )
 		else if( sValueName == "#BACKGROUND" )
 			m_sBackgroundFile = arrayValueTokens[1];
 
-		else if( sValueName == "#BACKGROUNDMOVIE" )
-			m_sBackgroundMovieFile = arrayValueTokens[1];
+//		else if( sValueName == "#BACKGROUNDMOVIE" )
+//			m_sBackgroundMovieFile = arrayValueTokens[1];
 
 		else if( sValueName == "#CDTITLE" )
 			m_sCDTitleFile = arrayValueTokens[1];
@@ -874,6 +869,9 @@ bool Song::LoadFromSMFile( CString sPath )
 		else if( sValueName == "#MUSICBYTES" )
 			m_iMusicBytes = atoi( arrayValueTokens[1] );
 
+		else if( sValueName == "#MUSICLENGTH" )
+			m_fMusicLengthSeconds = (float)atof( arrayValueTokens[1] );
+
 		else if( sValueName == "#SAMPLESTART" )
 			m_fMusicSampleStartSeconds = TimeToSeconds( arrayValueTokens[1] );
 
@@ -881,7 +879,7 @@ bool Song::LoadFromSMFile( CString sPath )
 			m_fMusicSampleLengthSeconds = TimeToSeconds( arrayValueTokens[1] );
 
 		else if( sValueName == "#OFFSET" )
-			m_fOffsetInSeconds = (float)atof( arrayValueTokens[1] );
+			m_fBeat0OffsetInSeconds = (float)atof( arrayValueTokens[1] );
 
 		else if( sValueName == "#FREEZES" )
 		{
@@ -940,8 +938,8 @@ bool Song::LoadFromSMFile( CString sPath )
 				m_arrayNotes.Add( pNewNotes );
 			}
 
-			if( arrayValueTokens.GetSize() != 8 )
-				throw RageException( "The song file '%s' is has %d in a #NOTES tag, but should have %d.", sPath, arrayValueTokens.GetSize(), 8 );
+			if( arrayValueTokens.GetSize() != 7 )
+				throw RageException( "The song file '%s' is has %d fields in a #NOTES tag, but should have %d.", sPath, arrayValueTokens.GetSize(), 7 );
 
 			pNewNotes->LoadFromSMTokens( 
 				arrayValueTokens[1], 
@@ -949,8 +947,7 @@ bool Song::LoadFromSMFile( CString sPath )
 				arrayValueTokens[3], 
 				arrayValueTokens[4], 
 				arrayValueTokens[5], 
-				arrayValueTokens[6], 
-				arrayValueTokens[7]
+				arrayValueTokens[6]
 				);
 		}
 
@@ -992,7 +989,7 @@ void Song::TidyUpData()
 		m_fMusicLengthSeconds = sound.GetLengthSeconds();
 	}
 
-	if( !DoesFileExist(GetBannerPath()) )
+	if( !HasBanner() )
 	{
 		m_sBannerFile = "";
 		// find the smallest image in the directory
@@ -1023,7 +1020,7 @@ void Song::TidyUpData()
 		//throw RageException( ssprintf("Banner could not be found.  Please check the Song file '%s' and verify the specified #BANNER exists.", GetSongFilePath()) );
 	}
 
-	if( !DoesFileExist(GetBackgroundPath()) )
+	if( !HasBackground() )
 	{
 		m_sBackgroundFile = "";
 		// find the largest image in the directory
@@ -1050,20 +1047,20 @@ void Song::TidyUpData()
 			m_sBackgroundFile = sLargestFileSoFar;
 	}
 
-	if( !DoesFileExist(GetBackgroundMoviePath()) )
-	{
-		m_sBackgroundMovieFile = "";
+//	if( !DoesFileExist(GetBackgroundMoviePath()) )
+//	{
+//		m_sBackgroundMovieFile = "";
+//
+//		CStringArray arrayPossibleBackgroundMovies;
+//		GetDirListing( m_sSongDir + CString("*.avi"), arrayPossibleBackgroundMovies );
+//		GetDirListing( m_sSongDir + CString("*.mpg"), arrayPossibleBackgroundMovies );
+//		GetDirListing( m_sSongDir + CString("*.mpeg"), arrayPossibleBackgroundMovies );
+//
+//		if( arrayPossibleBackgroundMovies.GetSize() > 0 )		// we found a match
+//			m_sBackgroundMovieFile = arrayPossibleBackgroundMovies[0];
+//	}
 
-		CStringArray arrayPossibleBackgroundMovies;
-		GetDirListing( m_sSongDir + CString("*.avi"), arrayPossibleBackgroundMovies );
-		GetDirListing( m_sSongDir + CString("*.mpg"), arrayPossibleBackgroundMovies );
-		GetDirListing( m_sSongDir + CString("*.mpeg"), arrayPossibleBackgroundMovies );
-
-		if( arrayPossibleBackgroundMovies.GetSize() > 0 )		// we found a match
-			m_sBackgroundMovieFile = arrayPossibleBackgroundMovies[0];
-	}
-
-	if( !DoesFileExist(GetCDTitlePath()) )
+	if( !HasCDTitle() )
 	{
 		m_sCDTitleFile = "";
 	}
@@ -1141,11 +1138,12 @@ void Song::SaveToSMFile( CString sPath )
 	fprintf( fp, "#CREDIT:%s;\n", m_sCredit );
 	fprintf( fp, "#BANNER:%s;\n", m_sBannerFile );
 	fprintf( fp, "#BACKGROUND:%s;\n", m_sBackgroundFile );
-	fprintf( fp, "#BACKGROUNDMOVIE:%s;\n", m_sBackgroundMovieFile );
+//	fprintf( fp, "#BACKGROUNDMOVIE:%s;\n", m_sBackgroundMovieFile );
 	fprintf( fp, "#CDTITLE:%s;\n", m_sCDTitleFile );
 	fprintf( fp, "#MUSIC:%s;\n", m_sMusicFile );
 	fprintf( fp, "#MUSICBYTES:%u;\n", m_iMusicBytes );
-	fprintf( fp, "#OFFSET:%.2f;\n", m_fOffsetInSeconds );
+	fprintf( fp, "#MUSICLENGTH:%.2f;\n", m_fMusicLengthSeconds );
+	fprintf( fp, "#OFFSET:%.2f;\n", m_fBeat0OffsetInSeconds );
 	fprintf( fp, "#SAMPLESTART:%.2f;\n", m_fMusicSampleStartSeconds );
 	fprintf( fp, "#SAMPLELENGTH:%.2f;\n", m_fMusicSampleLengthSeconds );
 

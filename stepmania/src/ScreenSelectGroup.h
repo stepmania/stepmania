@@ -18,7 +18,7 @@
 #include "GroupInfoFrame.h"
 
 
-const int MAX_GROUPS = 12;
+const int MAX_GROUPS = 15;
 const int NUM_CONTENTS_COLUMNS = 3;
 
 class ScreenSelectGroup : public Screen
@@ -54,6 +54,9 @@ private:
 	BitmapText		m_textGroup[MAX_GROUPS];
 	Sprite			m_sprContentsHeader;
 	BitmapText		m_textContents[NUM_CONTENTS_COLUMNS];
+
+	CString			m_sContentsText[MAX_GROUPS][NUM_CONTENTS_COLUMNS];
+	int				m_iNumSongsInGroup[MAX_GROUPS];
 
 	RandomSample m_soundChange;
 	RandomSample m_soundSelect;

@@ -127,7 +127,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_iSelection[p] = 0;
+		m_iSelection[p] = 1;	// Select "medium"
 		m_bChosen[p] = false;
 
 		if( !GAMEMAN->IsPlayerEnabled((PlayerNumber)p) )

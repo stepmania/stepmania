@@ -102,7 +102,7 @@ inline NoteType GetNoteType( int iNoteIndex )
 		return NOTE_12TH;
 	else if( iNoteIndex % (ELEMENTS_PER_MEASURE/16) == 0)
 		return NOTE_16TH;
-	ASSERT(0);
+//	ASSERT(0);
 	return NOTE_INVALID;
 };
 
@@ -337,18 +337,6 @@ inline Game StyleToGame( Style s )
 
 struct PlayerOptions
 {
-	PlayerOptions() {
-		m_fArrowScrollSpeed = 1.0f;
-		m_EffectType = EFFECT_NONE;
-		m_AppearanceType = APPEARANCE_VISIBLE;
-		m_TurnType = TURN_NONE;
-		m_bLittle = false;
-		m_bReverseScroll = false;
-		m_ColorType = COLOR_ARCADE;
-		m_bHoldNotes = true;
-		m_DrainType = DRAIN_NORMAL;
-	};
-
 	float m_fArrowScrollSpeed;
 	enum EffectType	{ EFFECT_NONE=0, EFFECT_BOOST, EFFECT_WAVE, EFFECT_DRUNK, EFFECT_DIZZY, EFFECT_SPACE };
 	EffectType m_EffectType;
@@ -361,8 +349,22 @@ struct PlayerOptions
 	enum ColorType { COLOR_ARCADE=0, COLOR_NOTE, COLOR_FLAT, COLOR_PLAIN };
 	ColorType m_ColorType;
 	bool m_bHoldNotes;
+	bool m_bDark;
 	enum DrainType { DRAIN_NORMAL=0, DRAIN_NO_RECOVER, DRAIN_SUDDEN_DEATH };
 	DrainType m_DrainType;
+
+	PlayerOptions() {
+		m_fArrowScrollSpeed = 1.0f;
+		m_EffectType = EFFECT_NONE;
+		m_AppearanceType = APPEARANCE_VISIBLE;
+		m_TurnType = TURN_NONE;
+		m_bLittle = false;
+		m_bReverseScroll = false;
+		m_ColorType = COLOR_ARCADE;
+		m_bHoldNotes = true;
+		m_bDark = false;
+		m_DrainType = DRAIN_NORMAL;
+	};
 
 	CString GetString()
 	{

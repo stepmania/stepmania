@@ -112,6 +112,39 @@ ScreenSelectGroup::ScreenSelectGroup()
 	}
 
 
+	//
+	// Generate what text will show in the contents for each group
+	//
+	for( i=0; i<min(m_arrayGroupNames.GetSize(), MAX_GROUPS); i++ )
+	{
+		CArray<Song*, Song*> arraySongs;
+		const CString &sCurGroupName = m_arrayGroupNames[i];
+		
+		if( i == 0 )	arraySongs.Copy( SONGMAN->m_pSongs );
+		else			SONGMAN->GetSongsInGroup( sCurGroupName, arraySongs );
+
+		m_iNumSongsInGroup[i] = arraySongs.GetSize();
+
+		SortSongPointerArrayByTitle( arraySongs );
+
+		for( int c=0; c<NUM_CONTENTS_COLUMNS; c++ )
+		{
+			CString sText;
+			for( int j=c*TITLES_PER_COLUMN; j<(c+1)*TITLES_PER_COLUMN; j++ )
+			{
+				if( j < arraySongs.GetSize() )
+				{
+					if( j == NUM_CONTENTS_COLUMNS * TITLES_PER_COLUMN - 1 )
+						sText += ssprintf( "%d more.....", arraySongs.GetSize() - NUM_CONTENTS_COLUMNS * TITLES_PER_COLUMN - 1 );
+					else
+						sText += arraySongs[j]->GetFullTitle() + "\n";
+				}
+			}
+			m_sContentsText[i][c] = sText;
+		}
+	}
+
+
 	m_soundChange.Load( THEME->GetPathTo(SOUND_SELECT_GROUP_CHANGE) );
 	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
 
@@ -198,30 +231,10 @@ void ScreenSelectGroup::AfterChange()
 	m_textGroup[iSel].SetTweenX( BUTTON_SELECTED_X );
 	m_textGroup[iSel].SetEffectGlowing();
 
+	for( int c=0; c<NUM_CONTENTS_COLUMNS; c++ )
+		m_textContents[c].SetText( m_sContentsText[m_iSelection][c] );
 
-	CArray<Song*, Song*> arraySongs;
-	const CString sSelectedGroupName = m_arrayGroupNames[m_iSelection];
-	
-	if( m_iSelection == 0 )		arraySongs.Copy( SONGMAN->m_pSongs );
-	else						SONGMAN->GetSongsInGroup( m_arrayGroupNames[m_iSelection], arraySongs );
-
-	SortSongPointerArrayByTitle( arraySongs );
-
-	for( int i=0; i<NUM_CONTENTS_COLUMNS; i++ )
-	{
-		CString sText;
-		for( int j=i*TITLES_PER_COLUMN; j<(i+1)*TITLES_PER_COLUMN; j++ )
-		{
-			if( j < arraySongs.GetSize() )
-			{
-				if( j == NUM_CONTENTS_COLUMNS * TITLES_PER_COLUMN - 1 )
-					sText += ssprintf( "(%d more).....", arraySongs.GetSize() - NUM_CONTENTS_COLUMNS * TITLES_PER_COLUMN - 2 );
-				else
-					sText += arraySongs[j]->GetFullTitle() + "\n";
-			}
-		}
-		m_textContents[i].SetText( sText );
-	}
+	CString sSelectedGroupName = m_arrayGroupNames[m_iSelection];
 
 	CString sGroupBannerPath;
 	if( 0 == stricmp(sSelectedGroupName, "ALL MUSIC") )
@@ -232,7 +245,7 @@ void ScreenSelectGroup::AfterChange()
 		sGroupBannerPath = THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER);
 
 	// There is too much Z-fighting when we rotate this, so fake a rotation with a squash
-	m_GroupInfoFrame.Set( sGroupBannerPath, arraySongs.GetSize() );
+	m_GroupInfoFrame.Set( sGroupBannerPath, m_iNumSongsInGroup[m_iSelection] );
 }
 
 

@@ -10,14 +10,15 @@
 -----------------------------------------------------------------------------
 */
 
+#include <exception>
 
-class RageException 
+class RageException : exception
 {
 public:
 	RageException( LPCTSTR fmt, ...);
 	RageException( HRESULT hr, LPCTSTR fmt, ...);
 
-	CString GetError()	{ return m_sError; };
+	virtual const char *what() const;
 
 protected:
 	CString m_sError;

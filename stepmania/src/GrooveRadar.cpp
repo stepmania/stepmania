@@ -142,7 +142,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 	ActorFrame::DrawPrimitives();
 
 	// draw radar filling
-	const float fRadius = m_sprRadarBase.GetZoomedHeight()/2.0f;
+	const float fRadius = m_sprRadarBase.GetZoomedHeight()/2.0f*1.1f;
 	LPDIRECT3DVERTEXBUFFER8 pVB = DISPLAY->GetVertexBuffer();
 	LPDIRECT3DDEVICE8 pd3dDevice = DISPLAY->GetDevice();
 	pd3dDevice->SetTexture( 0, NULL );
@@ -173,7 +173,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		{
 			const int c = i%NUM_RADAR_CATEGORIES;
 			const float fDistFromCenter = 
-				( m_fValuesOld[p][c] * (1-m_PercentTowardNew[p]) + m_fValuesNew[p][c] * m_PercentTowardNew[p] + 0.15f ) * fRadius;
+				( m_fValuesOld[p][c] * (1-m_PercentTowardNew[p]) + m_fValuesNew[p][c] * m_PercentTowardNew[p] + 0.07f ) * fRadius;
 			const float fRotation = RADAR_VALUE_ROTATION(i);
 			const float fX = cosf(fRotation) * fDistFromCenter;
 			const float fY = -sinf(fRotation) * fDistFromCenter;
@@ -196,7 +196,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		{
 			const int c = i%NUM_RADAR_CATEGORIES;
 			const float fDistFromCenter = 
-				( m_fValuesOld[p][c] * (1-m_PercentTowardNew[p]) + m_fValuesNew[p][c] * m_PercentTowardNew[p] + 0.15f ) * fRadius;
+				( m_fValuesOld[p][c] * (1-m_PercentTowardNew[p]) + m_fValuesNew[p][c] * m_PercentTowardNew[p] + 0.07f ) * fRadius;
 			const float fDistFromCenterInner = fDistFromCenter-2;
 			const float fDistFromCenterOutter = fDistFromCenter+2;
 			const float fRotation = RADAR_VALUE_ROTATION(i);

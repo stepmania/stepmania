@@ -32,7 +32,6 @@ void GrayArrowRow::Load( PlayerNumber pn, StyleDef* pStyleDef, PlayerOptions po 
 
 	m_iNumCols = pStyleDef->m_iColsPerPlayer;
 
-	// init arrow rotations
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
 		m_GrayArrow[c].Load( GAMEMAN->GetPathToGraphic(pn, c, GRAPHIC_RECEPTOR) );
@@ -54,6 +53,9 @@ void GrayArrowRow::Update( float fDeltaTime, float fSongBeat )
 
 void GrayArrowRow::DrawPrimitives()
 {
+	if( m_PlayerOptions.m_bDark )
+		return;
+
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
 		// set arrow X

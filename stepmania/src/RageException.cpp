@@ -23,6 +23,7 @@ RageException::RageException( LPCTSTR fmt, ...)
     va_start(va, fmt);
     m_sError = vssprintf( fmt, va );
 #ifdef _DEBUG
+	MessageBox( NULL, m_sError, "Fatal Error", MB_OK );
 	DebugBreak();
 #endif
 }
@@ -34,6 +35,12 @@ RageException::RageException( HRESULT hr, LPCTSTR fmt, ...)
     m_sError = vssprintf( fmt, va );
 	m_sError += ssprintf( "(%s)", DXGetErrorString8(hr) );
 #ifdef _DEBUG
+	MessageBox( NULL, m_sError, "Fatal Error", MB_OK );
 	DebugBreak();
 #endif
+}
+
+const char* RageException::what() const
+{
+	return m_sError;
 }

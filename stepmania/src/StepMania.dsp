@@ -528,14 +528,6 @@ SOURCE=.\BPMDisplay.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Course.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Course.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\CourseContentsFrame.cpp
 # End Source File
 # Begin Source File

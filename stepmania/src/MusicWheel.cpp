@@ -501,7 +501,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 					if( sThisSection != sLastSection )	// new section, make a section item
 					{
 						WheelItemData &WID = arrayWheelItemDatas[iCurWheelItem++];
-						colorSection = (so==SORT_TITLE) ? SONGMAN->GetGroupColor(pSong->m_sGroupName) : SECTION_COLORS[iSectionColorIndex];
+						colorSection = (so==SORT_GROUP) ? SONGMAN->GetGroupColor(pSong->m_sGroupName) : SECTION_COLORS[iSectionColorIndex];
 						iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
 						WID.Load( TYPE_SECTION, NULL, sThisSection, NULL, colorSection );
 						sLastSection = sThisSection;

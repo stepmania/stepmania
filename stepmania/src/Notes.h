@@ -27,15 +27,14 @@ public:
 	bool LoadFromNotesFile( const CString &sPath );
 	bool LoadFromBMSFile( const CString &sPath );
 	bool LoadFromDWITokens( 
-		const CString &sMode,
-		const CString &sDescription,
-		const int &iNumFeet,
-		const CString &sStepData1, const CString &sStepData2 
+		CString sMode,
+		CString sDescription,
+		int iNumFeet,
+		CString sStepData1, const CString sStepData2 
 		);
 	void LoadFromSMTokens( 
 		const CString &sNotesType, 
 		const CString &sDescription,
-		const CString &sCredit,
 		const CString &sDifficultyClass,
 		const CString &sMeter,
 		const CString &sRadarValues,
@@ -46,7 +45,6 @@ public:
 public:
 	NotesType		m_NotesType;
 	CString			m_sDescription;			// This text is displayed next to thte number of feet when a song is selected
-	CString			m_sCredit;				// name of the person who created these Notes
 	DifficultyClass m_DifficultyClass;		// this is inferred from m_sDescription
 	int				m_iMeter;				// difficulty from 1-10
 	float			m_fRadarValues[NUM_RADAR_VALUES];	// between 0.0-1.2 starting from 12-o'clock rotating clockwise

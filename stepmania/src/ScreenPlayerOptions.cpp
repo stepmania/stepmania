@@ -33,6 +33,7 @@ enum {
 	PO_SCROLL,
 	PO_COLOR,
 	PO_HOLD_NOTES,
+	PO_DARK,
 	PO_DRAIN,
 	PO_SKIN,
 	NUM_PLAYER_OPTIONS_LINES
@@ -46,6 +47,7 @@ OptionLineData g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 	{ "Scroll", 2, {"STANDARD","REVERSE"} },	
 	{ "Color",	4, {"ARCADE","NOTE","FLAT","PLAIN"} },	
 	{ "Holds",	2, {"OFF","ON"} },	
+	{ "Dark",	2, {"OFF","ON"} },	
 	{ "Drain",	3, {"NORMAL", "NO-RECOVER", "SUDDEN-DEATH"} },
 	{ "Skin",	0, {""} },	// fill this in on ImportOptions();
 };
@@ -99,6 +101,7 @@ void ScreenPlayerOptions::ImportOptions()
 		m_iSelectedOption[p][PO_SCROLL]		= po.m_bReverseScroll ? 1 : 0 ;
 		m_iSelectedOption[p][PO_COLOR]		= po.m_ColorType;
 		m_iSelectedOption[p][PO_HOLD_NOTES]	= po.m_bHoldNotes ? 1 : 0;
+		m_iSelectedOption[p][PO_DARK]		= po.m_bDark ? 1 : 0;
 		m_iSelectedOption[p][PO_DRAIN]		= po.m_DrainType;
 
 		// highlight currently selected skin
@@ -135,6 +138,7 @@ void ScreenPlayerOptions::ExportOptions()
 		po.m_bReverseScroll	= (m_iSelectedOption[p][PO_SCROLL] == 1);
 		po.m_ColorType		= (PlayerOptions::ColorType)m_iSelectedOption[p][PO_COLOR];
 		po.m_bHoldNotes		= (m_iSelectedOption[p][PO_HOLD_NOTES] == 1);
+		po.m_bDark			= (m_iSelectedOption[p][PO_DARK] == 1);
 		po.m_DrainType		= (PlayerOptions::DrainType)m_iSelectedOption[p][PO_DRAIN];
 		
 		int iSelectedSkin = m_iSelectedOption[p][PO_SKIN];

@@ -79,8 +79,10 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 			CString sSongDir = arrayValueTokens[1];
 			CString sNotesDescription = arrayValueTokens[2];
 
+			int i;
+
 			Song* pSong = NULL;
-			for( int i=0; i<apSongs.GetSize(); i++ )
+			for( i=0; i<apSongs.GetSize(); i++ )
 				if( 0 == stricmp(apSongs[i]->m_sSongDir, sSongDir) )
 					pSong = apSongs[i];
 

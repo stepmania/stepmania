@@ -39,23 +39,6 @@ Player::Player()
 	m_fSongBeat = 0;
 	m_PlayerNumber = PLAYER_INVALID;
 
-	// init step elements
-	for( int t=0; t<MAX_NOTE_TRACKS; t++ )
-	{
-		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )
-		{
-			m_TapNotes[t][i] = '0';
-			m_TapNoteScores[t][i] = TNS_NONE;
-		}
-	}
-
-	m_iNumHoldNotes = 0;
-	for( int i=0; i<MAX_HOLD_NOTE_ELEMENTS; i++ )
-	{
-		m_HoldNoteScores[i] = HNS_NONE;
-		m_fHoldNoteLife[i] = 1.0f;
-	}
-
 	m_pLifeMeter = NULL;
 	m_pScore = NULL;
 
@@ -77,6 +60,8 @@ void Player::Load( PlayerNumber player_no, StyleDef* pStyleDef, NoteData* pNoteD
 	//LOG->WriteLine( "Player::Load()", );
 	this->CopyAll( pNoteData );
 	NoteDataWithScoring::Init();
+	for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )
+		m_fHoldNoteLife[i] = 1.0f;
 
 	m_PlayerNumber = player_no;
 	m_PlayerOptions = po;
@@ -499,7 +484,6 @@ GameplayStatistics Player::GetGameplayStatistics()
 	GSreturn.score = m_pScore ? m_pScore->GetScore() : 0;
 
 	GSreturn.failed = m_pLifeMeter ? m_pLifeMeter->HasFailed() : false;
-
 
 	for( int r=0; r<NUM_RADAR_VALUES; r++ )
 	{

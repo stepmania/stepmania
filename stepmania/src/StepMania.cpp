@@ -70,7 +70,7 @@ const CString g_sAppClassName	= "StepMania Class";
 HWND		g_hWndMain;		// Main Window Handle
 HINSTANCE	g_hInstance;	// The Handle to Window Instance
 HANDLE		g_hMutex;		// Used to check if an instance of our app is already
-const DWORD g_dwWindowStyle = WS_VISIBLE|WS_POPUP|WS_CAPTION|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_SYSMENU|WS_THICKFRAME;
+const DWORD g_dwWindowStyle = WS_VISIBLE|WS_POPUP|WS_CAPTION|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_SYSMENU;
 
 
 BOOL	g_bIsActive		= FALSE;	// Whether the focus is on our app
@@ -101,18 +101,43 @@ void ApplyGraphicOptions();	// Set the display mode according to the user's pref
 CString		g_sErrorString;
 
 //-----------------------------------------------------------------------------
+// Name: StructuredExceptionHandler()
+// Desc: Callback for SEH exceptions
+//-----------------------------------------------------------------------------
+void StructuredExceptionHandler(unsigned int uCode,
+								struct _EXCEPTION_POINTERS* /* pXPointers */)
+{
+	const char* msg;
+	switch( uCode )
+	{
+	case EXCEPTION_ACCESS_VIOLATION:		msg = "Access Violation";						break;
+	case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:	msg = "Array Bounds Exceeded";					break;
+	case EXCEPTION_STACK_OVERFLOW:			msg = "Stack Overflow";							break;
+	case EXCEPTION_FLT_DENORMAL_OPERAND:	msg = "Floating Point Denormal Operation";		break;
+	case EXCEPTION_FLT_DIVIDE_BY_ZERO:		msg = "Floating Point Divide by Zero";			break;
+	case EXCEPTION_FLT_INVALID_OPERATION:	msg = "Floating Point Invalid Operation";		break;
+	case EXCEPTION_FLT_UNDERFLOW:			msg = "Floating Point Underflow";				break;
+	case EXCEPTION_FLT_OVERFLOW:			msg = "Floating Point Overflow";				break;
+	case EXCEPTION_FLT_STACK_CHECK:			msg = "Floating Point Stack Over/Underflow";	break;
+	case EXCEPTION_INT_DIVIDE_BY_ZERO:		msg = "Integer Divide by Zero";					break;
+	case EXCEPTION_INT_OVERFLOW:			msg = "Integer Overflow";						break;
+	default:								msg = "Unknown Exception";						break;
+	}
+	throw std::exception(msg);
+}
+
+//-----------------------------------------------------------------------------
 // Name: WinMain()
 // Desc: Application entry point
 //-----------------------------------------------------------------------------
 int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 {
-#ifdef RELEASE
-	try
-#endif
-	{
-		// Initialize ActiveX for Flash
-		//AfxEnableControlContainer();
+	_set_se_translator( StructuredExceptionHandler );
 
+#ifndef _DEBUG
+	try
+	{
+#endif
 		//
 		// Check to see if the app is already running.
 		//
@@ -191,9 +216,9 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 		CreateObjects( g_hWndMain );	// Create the game objects
 
 		ShowWindow( g_hWndMain, SW_SHOW );
-	#ifdef RELEASE
+#ifndef _DEBUG	// release
 		LOG->HideConsole();
-	#endif
+#endif
 
 		// Now we're ready to recieve and process Windows messages.
 		MSG msg;
@@ -229,41 +254,33 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 		DestroyObjects();			// deallocate our game objects and leave fullscreen
 		ShowWindow( g_hWndMain, SW_HIDE );
 
+#ifndef _DEBUG
 	}
-#ifdef _RELEASE
 	catch( RageException e )
 	{
-		g_sErrorString = e.GetError();
+		g_sErrorString = e.what();
+	}
+	catch( exception e )
+	{
+		g_sErrorString = e.what();
 	}
 	catch( ... )
 	{
-		switch( GetExceptionCode() )
-		{
-		case EXCEPTION_ACCESS_VIOLATION:		g_sErrorString = "EXCEPTION_ACCESS_VIOLATION";		break;
-		case EXCEPTION_BREAKPOINT:				g_sErrorString = "EXCEPTION_BREAKPOINT";			break;
-		case EXCEPTION_DATATYPE_MISALIGNMENT:	g_sErrorString = "EXCEPTION_DATATYPE_MISALIGNMENT";	break;
-		case EXCEPTION_SINGLE_STEP:				g_sErrorString = "EXCEPTION_SINGLE_STEP";			break;
-		case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:	g_sErrorString = "EXCEPTION_ARRAY_BOUNDS_EXCEEDED";	break;
-		case EXCEPTION_FLT_DENORMAL_OPERAND:	g_sErrorString = "EXCEPTION_FLT_DENORMAL_OPERAND";	break;
-		case EXCEPTION_FLT_DIVIDE_BY_ZERO:		g_sErrorString = "EXCEPTION_FLT_DIVIDE_BY_ZERO";	break;
-		case EXCEPTION_FLT_INEXACT_RESULT:		g_sErrorString = "EXCEPTION_FLT_INEXACT_RESULT";	break;
-		case EXCEPTION_FLT_INVALID_OPERATION:	g_sErrorString = "EXCEPTION_FLT_INVALID_OPERATION";	break;
-		case EXCEPTION_FLT_OVERFLOW:			g_sErrorString = "EXCEPTION_FLT_OVERFLOW";			break;
-		case EXCEPTION_FLT_STACK_CHECK:			g_sErrorString = "EXCEPTION_FLT_STACK_CHECK";		break;
-		case EXCEPTION_FLT_UNDERFLOW:			g_sErrorString = "EXCEPTION_FLT_UNDERFLOW";			break;
-		case EXCEPTION_INT_DIVIDE_BY_ZERO:		g_sErrorString = "EXCEPTION_INT_DIVIDE_BY_ZERO";	break;
-		case EXCEPTION_INT_OVERFLOW:			g_sErrorString = "EXCEPTION_INT_OVERFLOW";			break;
-		case EXCEPTION_PRIV_INSTRUCTION:		g_sErrorString = "EXCEPTION_PRIV_INSTRUCTION";		break;
-		case EXCEPTION_NONCONTINUABLE_EXCEPTION:g_sErrorString = "EXCEPTION_NONCONTINUABLE_EXCEPTION";	break;
-		case EXCEPTION_ACCESS_VIOLATION:		g_sErrorString = "EXCEPTION_ACCESS_VIOLATION";		break;
-		case EXCEPTION_ACCESS_VIOLATION:		g_sErrorString = "EXCEPTION_ACCESS_VIOLATION";		break;
-		default:								g_sErrorString = "Unknown exception.";				break;
-		}
-		
+		g_sErrorString = "Unknown exception";
 	}
 
 	if( g_sErrorString != "" )
 	{
+		if( LOG )
+			LOG->WriteLine( 
+				"\n"
+				"//////////////////////////////////////////////////////\n"
+				"Exception: %s"
+				"//////////////////////////////////////////////////////\n"
+				"\n",
+				g_sErrorString
+				);
+
 		// throw up a pretty error dialog
 		DialogBox(
 			hInstance,

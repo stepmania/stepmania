@@ -115,6 +115,7 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 	LOG->WriteLine( "Notes::LoadFromBMSFile( '%s' )", sPath );
 
 	NoteData tempNoteData;
+	tempNoteData.m_iNumTracks = MAX_NOTE_TRACKS;
 
 	CStdioFile file;	
 	if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
@@ -235,78 +236,63 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 	
 	if( m_NotesType == NOTES_TYPE_DANCE_SINGLE  || 
 		m_NotesType == NOTES_TYPE_DANCE_DOUBLE  || 
-		m_NotesType == NOTES_TYPE_DANCE_COUPLE )	// if there are 4 panels, then we have to flip the Up and Up+Right bits
+		m_NotesType == NOTES_TYPE_DANCE_COUPLE )	// if there are 4 panels, then the Up+Right track really contains the notes for Up
 	{
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )	// for each TapNote
 		{
-			if( tempNoteData.m_TapNotes[DANCE_NOTE_PAD1_UPRIGHT][i] != '0' )	// if up+right is a step
-			{
-				tempNoteData.m_TapNotes[DANCE_NOTE_PAD1_UP][i] = tempNoteData.m_TapNotes[DANCE_NOTE_PAD1_UPRIGHT][i];			// add up
-				tempNoteData.m_TapNotes[DANCE_NOTE_PAD1_UPRIGHT][i] = '0';	// subtract up+right
-			}
-			if( tempNoteData.m_TapNotes[DANCE_NOTE_PAD2_UPRIGHT][i] != '0' )	// if up+right is a step
-			{
-				tempNoteData.m_TapNotes[DANCE_NOTE_PAD2_UP][i] = tempNoteData.m_TapNotes[DANCE_NOTE_PAD2_UPRIGHT][i];			// add up
-				tempNoteData.m_TapNotes[DANCE_NOTE_PAD2_UPRIGHT][i] = '0';	// subtract up+right
-			}
+			memcpy( 
+				tempNoteData.m_TapNotes[DANCE_NOTE_PAD1_UP], 
+				tempNoteData.m_TapNotes[DANCE_NOTE_PAD1_UPRIGHT],
+				MAX_TAP_NOTE_ROWS*sizeof(tempNoteData.m_TapNotes[0][0]) 
+				);
+			memcpy( 
+				tempNoteData.m_TapNotes[DANCE_NOTE_PAD2_UP], 
+				tempNoteData.m_TapNotes[DANCE_NOTE_PAD2_UPRIGHT],
+				MAX_TAP_NOTE_ROWS*sizeof(tempNoteData.m_TapNotes[0][0]) 
+				);
 		}
 	}
 
 	// we're done reading in all of the BMS values
+	int iNumNewTracks = NotesTypeToNumTracks( m_NotesType );
+	int iTransformNewToOld[MAX_NOTE_TRACKS];
 
-	CMap<int, int, int, int>  mapDanceNoteToNoteDataColumn;
-	if( m_NotesType == NOTES_TYPE_DANCE_SINGLE )
+	switch( m_NotesType )
 	{
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 2;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 3;
-	}
-	else if( m_NotesType == NOTES_TYPE_DANCE_DOUBLE )
-	{
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 2;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 3;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_LEFT] = 4;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_DOWN] = 5;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_UP] = 6;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_RIGHT] = 7;
-	}
-	else if( m_NotesType == NOTES_TYPE_DANCE_COUPLE )
-	{
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 2;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 3;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_LEFT] = 4;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_DOWN] = 5;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_UP] = 6;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_RIGHT] = 7;
-	}
-	else if( m_NotesType == NOTES_TYPE_DANCE_SOLO )
-	{
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UPLEFT] = 1;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 2;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 3;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UPRIGHT] = 4;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 5;
+	case NOTES_TYPE_DANCE_SINGLE:
+		iTransformNewToOld[0] = DANCE_NOTE_PAD1_LEFT;
+		iTransformNewToOld[1] = DANCE_NOTE_PAD1_DOWN;
+		iTransformNewToOld[2] = DANCE_NOTE_PAD1_UP;
+		iTransformNewToOld[3] = DANCE_NOTE_PAD1_RIGHT;
+		break;
+	case NOTES_TYPE_DANCE_DOUBLE:
+	case NOTES_TYPE_DANCE_COUPLE:
+		iTransformNewToOld[0] = DANCE_NOTE_PAD1_LEFT;
+		iTransformNewToOld[1] = DANCE_NOTE_PAD1_UP;
+		iTransformNewToOld[2] = DANCE_NOTE_PAD1_UP;
+		iTransformNewToOld[3] = DANCE_NOTE_PAD1_RIGHT;
+		iTransformNewToOld[4] = DANCE_NOTE_PAD2_LEFT;
+		iTransformNewToOld[5] = DANCE_NOTE_PAD2_DOWN;
+		iTransformNewToOld[6] = DANCE_NOTE_PAD2_UP;
+		iTransformNewToOld[7] = DANCE_NOTE_PAD2_RIGHT;
+		break;
+	case NOTES_TYPE_DANCE_SOLO:
+		iTransformNewToOld[0] = DANCE_NOTE_PAD1_LEFT;
+		iTransformNewToOld[1] = DANCE_NOTE_PAD1_UPLEFT;
+		iTransformNewToOld[2] = DANCE_NOTE_PAD1_DOWN;
+		iTransformNewToOld[3] = DANCE_NOTE_PAD1_UP;
+		iTransformNewToOld[4] = DANCE_NOTE_PAD1_UPRIGHT;
+		iTransformNewToOld[5] = DANCE_NOTE_PAD1_RIGHT;
+		break;
+	default:
+		throw RageException( "Invalid NotesType." );
 	}
 
 	NoteData tempNoteData2;
-	int iTransformNewToOld[MAX_NOTE_TRACKS];
-	POSITION pos = mapDanceNoteToNoteDataColumn.GetStartPosition();
-	while( pos != NULL )  // iterate over all k/v pairs in map
-	{
-		int iOldTrack;
-		int iNewTrack;
-		mapDanceNoteToNoteDataColumn.GetNextAssoc( pos, iOldTrack, iNewTrack );
-		iTransformNewToOld[iNewTrack] = iOldTrack;
-	}
+	tempNoteData2.m_iNumTracks = iNumNewTracks;
+	tempNoteData2.LoadTransformed( &tempNoteData, iNumNewTracks, iTransformNewToOld );
 
-	tempNoteData2.LoadTransformed( &tempNoteData, mapDanceNoteToNoteDataColumn.GetCount(), iTransformNewToOld );
-	
+	m_sSMNoteData = tempNoteData2.GetSMNoteDataString();
 
 	TidyUpData();
 
@@ -363,11 +349,16 @@ void DWIcharToNote( char c, InstrumentNumber i, DanceNote &note1Out, DanceNote &
 
 
 bool Notes::LoadFromDWITokens( 
-	const CString &sMode, const CString &sDescription,
-	const int &iNumFeet,
-	const CString &sStepData1, const CString &sStepData2 )
+	CString sMode, CString sDescription,
+	int iNumFeet,
+	CString sStepData1, CString sStepData2 )
 {
 	LOG->WriteLine( "Notes::LoadFromDWITokens()" );
+
+	sStepData1.Replace( "\n", "" );
+	sStepData1.Replace( " ", "" );
+	sStepData2.Replace( "\n", "" );
+	sStepData2.Replace( " ", "" );
 
 	if(		 sMode == "#SINGLE" )	m_NotesType = NOTES_TYPE_DANCE_SINGLE;
 	else if( sMode == "#DOUBLE" )	m_NotesType = NOTES_TYPE_DANCE_DOUBLE;
@@ -412,9 +403,6 @@ bool Notes::LoadFromDWITokens(
 	m_iMeter = iNumFeet;
 
 	//m_DifficultyClass = DifficultyClassFromDescriptionAndMeter( m_sDescription, m_iMeter );
-
-	m_sCredit = "";
-
 
 	NoteData tempNoteData;
 	tempNoteData.m_iNumTracks = mapDanceNoteToNoteDataColumn.GetCount();
@@ -532,7 +520,6 @@ bool Notes::LoadFromDWITokens(
 void Notes::LoadFromSMTokens( 
 	const CString &sNotesType, 
 	const CString &sDescription,
-	const CString &sCredit,
 	const CString &sDifficultyClass,
 	const CString &sMeter,
 	const CString &sRadarValues,
@@ -543,7 +530,6 @@ void Notes::LoadFromSMTokens(
 
 	m_NotesType = StringToNotesType(sNotesType);
 	m_sDescription = sDescription;
-	m_sCredit = sCredit;
 	m_DifficultyClass = StringToDifficultyClass( sDifficultyClass );
 	m_iMeter = atoi(sMeter);
 	CStringArray saValues;
@@ -563,29 +549,27 @@ void Notes::WriteSMNotesTag( FILE* fp )
 	fprintf( fp, "#NOTES:\n" );
 	fprintf( fp, "     %s:\n", NotesTypeToString(m_NotesType) );
 	fprintf( fp, "     %s:\n", m_sDescription );
-	fprintf( fp, "     %s:\n", m_sCredit );
 	fprintf( fp, "     %s:\n", DifficultyClassToString(m_DifficultyClass) );
 	fprintf( fp, "     %d:\n", m_iMeter );
 	
 	CStringArray asRadarValues;
 	for( int r=0; r<NUM_RADAR_VALUES; r++ )
-		asRadarValues.Add( ssprintf("%.1f", m_fRadarValues[r]) );
+		asRadarValues.Add( ssprintf("%.2f", m_fRadarValues[r]) );
 	fprintf( fp, "     %s:\n", join(",",asRadarValues) );
 
-	fprintf( fp, "     %s;\n", m_sSMNoteData );
-}
-
-
-void Notes::GetNoteData( NoteData* pNoteDataOut )
-{
-	pNoteDataOut->m_iNumTracks = NotesTypeToNumTracks( m_NotesType );
-	pNoteDataOut->LoadFromSMNoteDataString( m_sSMNoteData );
+	fprintf( fp, "%s;\n", m_sSMNoteData );
 }
 
 void Notes::SetNoteData( NoteData* pNewNoteData )
 {
 	ASSERT( pNewNoteData->m_iNumTracks == NotesTypeToNumTracks(m_NotesType) );
 	m_sSMNoteData = pNewNoteData->GetSMNoteDataString();
+}
+
+void Notes::GetNoteData( NoteData* pNoteDataOut )
+{
+	pNoteDataOut->m_iNumTracks = NotesTypeToNumTracks( m_NotesType );
+	pNoteDataOut->LoadFromSMNoteDataString( m_sSMNoteData );
 }
 
 void Notes::TidyUpData()

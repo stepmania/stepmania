@@ -545,31 +545,34 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 
 
 	// Handle special keys to adjust the offset
-	if( type == IET_FIRST_PRESS  &&  DeviceI.device == DEVICE_KEYBOARD )
+	if( DeviceI.device == DEVICE_KEYBOARD )
 	{
 		switch( DeviceI.button )
 		{
-		case DIK_F9:	m_pCurSong->m_fOffsetInSeconds -= 0.01f;	break;
-		case DIK_F10:	m_pCurSong->m_fOffsetInSeconds += 0.01f;	break;
-		case DIK_F11:	m_pCurSong->m_fOffsetInSeconds -= 1/fBPS;	break;
-		case DIK_F12:	m_pCurSong->m_fOffsetInSeconds += 1/fBPS;	break;
-		}
-
-		switch( DeviceI.button )
-		{
-		case DIK_F9:
-		case DIK_F10:
 		case DIK_F11:
 		case DIK_F12:
-			m_textDebug.SetText( ssprintf("Offset = %f.", m_pCurSong->m_fOffsetInSeconds) );
-			m_textDebug.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-			m_textDebug.StopTweening();
-			m_textDebug.BeginTweeningQueued( 3 );		// sleep
-			m_textDebug.BeginTweeningQueued( 0.5f );	// fade out
-			m_textDebug.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+			{
+				float fOffsetDelta;
+				switch( DeviceI.button )
+				{
+				case DIK_F11:	fOffsetDelta = -0.025f;		break;
+				case DIK_F12:	fOffsetDelta = +0.025f;		break;
+				default:	ASSERT(0);
+				}
+				if( type == IET_FAST_REPEAT )
+					fOffsetDelta *= 40;
+
+				m_pCurSong->m_fBeat0OffsetInSeconds += fOffsetDelta;
+
+				m_textDebug.SetText( ssprintf("Offset = %f.", m_pCurSong->m_fBeat0OffsetInSeconds) );
+				m_textDebug.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+				m_textDebug.StopTweening();
+				m_textDebug.BeginTweeningQueued( 3 );		// sleep
+				m_textDebug.BeginTweeningQueued( 0.5f );	// fade out
+				m_textDebug.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+			}
 			break;
 		}
-
 	}
 
 
@@ -665,6 +668,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToResults:
 		SaveSummary();
+		m_pCurSong->SaveToSMFile();	// save offset changes
 		SCREENMAN->SetNewScreen( new ScreenEvaluation(false) );
 		break;
 

@@ -1,60 +1,57 @@
- ____    __                                                             
+ ____    __                                                             
 /\  _`\ /\ \__                 /'\_/`\                   __             
 \ \,\L\_\ \ ,_\    __   _____ /\      \     __      ___ /\_\     __     
- \/_\__ \\ \ \/  /'__`\/\ '__`\ \ \__\ \  /'__`\  /' _ `\/\ \  /'__`\   
+ \/_\__ \\ \ \/  /'__`\/\ '__`\ \ \__\ \  /'__`\  /' _ `\/\ \  /'__`\   
    /\ \L\ \ \ \_/\  __/\ \ \L\ \ \ \_/\ \/\ \L\.\_/\ \/\ \ \ \/\ \L\.\_ 
    \ `\____\ \__\ \____\\ \ ,__/\ \_\\ \_\ \__/.\_\ \_\ \_\ \_\ \__/.\_\
     \/_____/\/__/\/____/ \ \ \/  \/_/ \/_/\/__/\/_/\/_/\/_/\/_/\/__/\/_/
                           \ \_\                                         
                            \/_/                                         
-   __         __     
- /'__`\     /'__`\   
-/\_\L\ \   /\ \/\ \  
-\/_/_\_<_  \ \ \ \ \ 
-  /\ \L\ \__\ \ \_\ \
-  \ \____/\_\\ \____/
-   \/___/\/_/ \/___/ 
+                           __         __     
+                         /'__`\     /'__`\   
+                        /\_\L\ \   /\ \/\ \  
+                        \/_/_\_<_  \ \ \ \ \ 
+                          /\ \L\ \__\ \ \_\ \
+                          \ \____/\_\\ \____/
+                           \/___/\/_/ \/___/ 
 
 (c)2001-2002, StepMania team
 http://www.stepmania.com
 
 ************************************************************
-Readme Table of Contents
+Table of Contents
 ************************************************************
 
-1.  About StepMania
-2.  Minimum Requirements
-3.  DirectX 
-4.  Installation 
-5.  How StepMania Loads Songs
-5.  Connecting Dance Pads 
-6.  Compatibility Issues
-7.  FAQ / Troubleshooting
-8.  StepMania Packages - .smzip
-9.  Questions, Bugs, Suggestions, and Help 
-11. Song and Notes File Formats 
-12. Game and Style File Formats
-13. Building StepMania from Source Code
-14. Version History
+1. About StepMania
+2. Minimum Requirements
+3. DirectX 
+4. Installation 
+5. Controls
+6. How StepMania Loads Songs
+7. Connecting Dance Pads 
+8. Compatibility Issues
+9. FAQ / Troubleshooting
+10. StepMania Packages - .smzip
+11. Questions, Bugs, Suggestions, and Help 
+12. The StepMania Editor
+13. The .SM File Format
+14. Building StepMania from CVS Source
+15. Version History
 
 ************************************************************
-1.  About StepMania
+1. About StepMania
 ************************************************************
 
-StepMania game system is capable of playing many game types.  Currently, it supports games Dance Dance Revolution and Pump It Up, with future support for EZ 2 Dancer, BeatMania, Guitar Freaks, Drum Mania, Para Para Paradise and more.
+StepMania game system is capable of playing many game types.  Currently, it supports games Dance Dance Revolution and Pump It Up, with future support for EZ 2 Dancer, BeatMania, Guitar Freaks, DrumMania, Para Para Paradise and more.
 
 ************************************************************
-2.  Minimum Requirements
+2. Minimum Requirements
 ************************************************************
-
 
 * Windows 98, Windows ME, Windows 2000, or Windows XP.
 * Required: Pentium II, Pentium III, Celeron, Athlon, or compatible processor, 266MHz minimum (400 MHz highly recommended).
 * 64 MB of RAM.
-* 75 MB of hard drive space.
-
-* 16-bit video card (24-bit or higher recommended).
-* Video card that supports High Color (16-bit color).
+* Video card that supports High Color (16-bit color) and has 16MB video RAM.
 * DirectX 8.1 compatible video card with drivers.
 * DirectX 8.1 compatible sound card with drivers.
 * DivX 5 video codec (for movie visualizations).
@@ -72,58 +69,43 @@ DirectX 8.1 is required before installing StepMania. If DirectX 8.1 is not insta
 To install StepMania, download the file stepmania3.exe to a known location on your hard drive, then double-click the file icon to begin the installation. The installer automatically remove an older version of the program if one is present. The default installation directory is 'C:\Program Files\StepMania'.
 
 ************************************************************
-5. How StepMania Loads Songs
+5. Controls
 ************************************************************
 
-StepMania supports two completely independent directory structures for organizing your songs: 
-The StepMania directory structure, which resides in the folder called "Songs" 
-The DWI's directory structure, which resides in the folder called "DWI support". 
-The organization method you use is up to you. The StepMania directory structure gains many advantages from the fact that all files needed to play a song reside in a single directory. 
-Sharing a song is as easy as zipping up the directory. 
-Remove a song by delete the song directory. 
-Change the group of a song just by moving the whole directory. 
-The advantage of the DWI directory structure is that it's compatible with the very popular and very good simulator called Dance With Intensity. The disadvantage of this structure is that the files needed to play a song are spread over 3 different directories, making songs difficult to manage.
+Use the "Config Key/Joy" option from the Title Menu to configure your keyboad or dance pad.
 
-STEPMANIA DIRECTORY STRUCTURE
-example: 
-StepMania 
-Songs 
-3rd Mix 
-Dam Dariram 
-Turn Me On 
-4th Mix 
-B4U 
-One Two 
+Any time:
+  * F4 = toggle fullscreen
+  * F5 = toggle detail
 
-Inside the "Songs" folder you must create group folders for organizing your songs. StepMania initially comes with one group folder called "Default". Inside the group folders are your song folders. Each song folder contains all of the files needed to play a song: 
-Background (optional) - Can be in PNG, JPG, GIF, or BMP format. No restrictions on dimensions, but looks best with a 4:3 aspect ratio. Be aware that the file will be stretched to the entire screen while dancing. 
-Banner (optional) - Can be in PNG, JPG, GIF, or BMP format. No restrictions on dimensions, but the most common size is 192x55. 
-Music (required) - Can be in MP3, WAV, or OGG format. 
-Steps file(s) (required) - For any given song, you can use either multiple BMS files or a single DWI file. 
+In menus:
+  * Arrow keys navigate menus
+  * Enter = Start, Escape = Back
 
-DWI DIRECTORY STRUCTURE
-DWI directory support means gives StepMania 100% compatibly with the simulator Dance With Intensity. 
-If you want to copy all of your songs from DWI into StepMania, go to your DWI program folder and copy "Backgrounds", "Banners", "Music", and "DWIs" into the StepMania folder called "DWI support". 
-If you want to copy your songs back into DWI, take all of the folders inside StepMania's folder called "DWI support" and copy them back into your DWI program folder. 
-If you some zipped DWI song files that you would like to use with StepMania, just unzip them into the StepMania folder "DWI support". 
-
-Inside the "DWI support" folder, there are 4 directories: 
-Backgrounds (optional) - For StepMania, these files can be in PNG, JPG, GIF, or BMP format. To be compatible with DWI though, they must be PNG and have dimensions 320x240. 
-Banners (optional) - For StepMania, these files can be in PNG, JPG, GIF, or BMP format. To be compatible with DWI though, they must be PNG, be rotated 45 degrees counter-clockwise and have dimensions 175x175. (Note that StepMania will automatically detect and correct the rotation of any DWI-formatted banners. 
-Music (required) - For StepMania, these files can be in PNG, JPG, GIF, or BMP format. To be compatible with DWI though, they must be PNG, be rotated 45 degrees counter-clockwise and have dimensions 175x175. (Note that StepMania will automatically detect and correct the rotation of any DWI-formatted banners. 
-DWI file (required) - See the Dance With Intensity readme for more information on the DWI file format.
-Goals of a new file format:
-
- support multiple game types
-
+In gameplay:
+  * F11 = decrease offset
+  * F12 = increase offset
 
 ************************************************************
-5. Connecting Dance Pads
+6. How StepMania Loads Songs
+************************************************************
+
+All song files for a specific song (data file, music file, banner, background) must reside in a single folder.  This folder must have the following path:
+
+   Songs/<group folder>/<song folder>/
+
+For example, the song B4U may consist of the following files:
+
+   Songs/Dance Dance Revolution 4th Mix/B4U/b4u.dwi
+   Songs/Dance Dance Revolution 4th Mix/B4U/b4u.mp3
+   Songs/Dance Dance Revolution 4th Mix/B4U/b4u-banner.png
+   Songs/Dance Dance Revolution 4th Mix/B4U/b4u.png
+
+************************************************************
+7. Connecting Dance Pads
 ************************************************************
 
 There are several devices that allow you to connect PlayStation dance pads to your PC.
-
-
 
 * Not recommended:  generic PlayStation->USB converter 
 
@@ -140,7 +122,7 @@ PlayStation->Parallel converters do not have the simultaneous button problem tha
 For Windows 98 and Windows Me users, the recommended driver is “DirectPad Pro 5.0 for Win9x”.  For Windows 2000 and Windows XP, the recommended drivers are NTPad XP 1.x.  Both of these drivers can be downloaded from Aldos web site: http://www.aldostools.com/dpad.html
 
 ************************************************************
-6. Compatibility Issues
+8. Compatibility Issues
 ************************************************************
 
 Some video card/driver combinations have visual errors when running StepMania. If you experience any visual errors, please visit your video card manufacturer's web site and download the latest Direct3D 8.1 drivers. Below is a list of known issues that are thought to be video card driver bugs:
@@ -159,7 +141,7 @@ Explanation: These problems are most often video card driver bugs.  Please upgra
 
 
 ************************************************************
-7. FAQ / Troubleshooting
+9. FAQ / Troubleshooting
 ************************************************************
 
 * The error "Cannot find Dinput8.dll" appears when launching the game.
@@ -171,36 +153,37 @@ You need to download DirectX 8.1.  http://www.microsoft.com/directx
 Some very old sound cards do not support sound playback rates that are greater than the original sample rate.  This problem is likely to be corrected by newer sound card drivers.
 
 * StepMania reports “Direct3D Create Device failed”.
- 
+
 This error means that your video card or drivers do not support Direct3D 8.  Download the latest drivers for your video card.  If your video card is older than 2 or 3 years, Direct3D 8 drivers may not be available.  Sorry.
 
 * I’m looking to purchase a video card.  What works well with StepMania?
- 
+
 Just about any video card manufactured in the last year will run StepMania flawlessly at 60 frames per second.  I recommend any card with an nVidia GeForce chip or an ATI Radeon chip.
 
 * How can I improve performance with my existing video card
 
 1. Install the latest drivers for your video card.
 2. Press F5 in the game to toggle between high detail and low detail modes.
+
 ************************************************************
-8. StepMania Packages - .smzip
+10. StepMania Packages - .smzip
 ************************************************************
 
-The StepMania package format was created to make the distribution of songs and other add-ons very easy.  StepMania package files have the extension '.smzip' and can be installed by double-clicking the .smzip file.
+The StepMania package format was created to make the distribution of songs and other add-ons very easy.  StepMania package files have the extension '.smzip' and can be installed by double-clicking the .smzip file.
 
 A StepMania package is 'installed' by extracting all files in the package to the StepMania program directory. This allows songs, courses, themes, and visualizations to all be installed by the Package Manager.
 
-The file format of an .smzip file is actually the PK-Zip standard.  This means you can rename any .smzip file to have the extension '.zip', and then open the file in any compression package (e.g. WinZip).
+The file format of an .smzip file is actually the PK-Zip standard.  This means you can rename any .smzip file to have the extension '.zip', and then open the file in any compression package (e.g. WinZip).
 
 The StepMania Package Manager (smpackage.exe) can also create song packages for you.  Simply launch the Package Manager (Start Menu->Programs->StepMania->Package Manager), click the song you want to create a package for, click the Export button, and a .smzip package will be placed on your desktop.
 
 ************************************************************
-9. Questions, Bugs, Suggestions, and Help
+11. Questions, Bugs, Suggestions, and Help
 ************************************************************
 
 If you have a question or problem about StepMania, please try asking your question to the StepMania message board.  A link is available from the StepMania web site – http://www.stepmania.com.
 
-If you have found a bug, please file a bug report into the SourceForge bug tracking system (http://sourceforge.net/tracker/?group_id=37892&atid=421366).  This will allow the developers to track and fix bugs much more efficiently.  
+If you have found a bug, please file a bug report into the SourceForge bug tracking system (http://sourceforge.net/tracker/?group_id=37892&atid=421366).  This will allow the developers to track and fix bugs much more efficiently.  
 
 * In a bug report, please specify your video card brand and model, and your OS version.
 * PLEASE, PLEASE enter your e-mail address on the bug reports. In many cases, we need more information from the bug reporter.
@@ -209,111 +192,135 @@ Please use SourceForge's feature request system to enter new feature requests (h
 
 If you would like to help with development of StepMania, please send an email to the StepMania developers list (stepmania-devs@sourceforge.net) or to Chris (chris@videogamers.com).
 
+************************************************************
+12. The StepMania editor
+************************************************************
+
+The StepMania editor allows you to edit, record, synchronize, and play back note patterns.  Current, it support saving only in the .SM format.  If you save a song that was originally in DWI or BMS format, the old DWI and BMS files will be renamed to have ".old" appended to avoid conflicts when the song is next loaded.  All of the commands are listed along the left side of the screen.
+
+************************************************************
+13. The .SM file format
+************************************************************
+
+The .SM song file format was created to be one file format that supports all game types that StepMania can play (dance, pump, beat, guitar, etc).  The .SM file syntax is identical to DWI except for some different tags and meanings.  These are a list of all supported tags.
+
+All images can be in png, gif, jpg, or bmp format.  All sounds can be in ogg, mp3, or wav format.
+
+
+#TITLE:...;    - The "main title" of the song.
+#SUBTITLE:...; - This text will appear underneath the main title of the song on the Select Music screen.  e.g. "-Dirty Mix-", "(remix)".
+#ARTIST:...;   - The artist of the song.
+#CREDIT:...;   - Give yourself some credit here for creating a wonderful song.
+#BPM:...;      - BPM of the music
+#BANNER:...;   - The file name of the banner image.  e.g. "b4u-banner.png".  This image must reside in the song folder.
+#BACKGROUND:...;   - The file name of the background image.  e.g. "b4u-bg.png".  This image must reside in the song folder.
+#CDTITLE:...;   - The file name of the spinning CD logo.  e.g. "b4u-cdtitle.png".  This image must reside in the song folder.
+#MUSIC:...;   - The file name of the music file.  e.g. "b4u.mp3".  This image must reside in the song folder.
+#MUSICBYTES:...;   - The size in bytes of the music file that this song was last synchronized with.  A "Song may be out of synch" warning will be displayed if the value of this tag does not match the actual size of the music file.
+#OFFSET:...;   - The time in seconds at which beat 0 occurs in the music.  This is specified as a floating point value.  e.g. "2.34".
+#SAMPLESTART:...;   - The time in seconds to start the music sample that plays on the Select Music screen.  This is specified as a floating point value.  e.g. "32.34".
+#SAMPLELENGTH:...;   - The time in seconds let the sample music play after starting.  This is specified as a floating point value.  e.g. "32.34".  Note that in the last 1 second of playing the music will fade out.
+#FREEZE:...;   - A value of the format "beat=sec".  Indicates that at 'beat', the motion of the arrows should stop for "sec" seconds.  Both of these values are specified as floating point values.  Multiple freezes can be given by separating them with commas.  e.g. "60=2.23,80=1.12".
+
+#BPMS:...; - A value of the format "beat=bpm".  Indicates that at 'beat', the speed of the arrows will change to "bpm".  Both of these values are specified as floating point values.  You must specifiy a BPM value for beat 0.  Multiple freezes can be given by separating them with commas.  e.g. "0=160,120=80".  
+
+
+Each pattern of steps for different modes have the same basic format:
+
+#NOTES:(NotesType):(Description):(DifficultyClass):(DifficultyMeter):(RadarValues):(NoteData);
+
+NotesType:  Must be one of the currently supported types in StepMania: "dance-single", "dance-double", "dance-couple", "dance-solo", "pump-single", "pump-double".
+
+Description:  This will be displayed on the gameplay screen.  This can be any text, but is most commonly "Basic", "Another", "Trick", "Standard", "SSR", "Maniac", "Heavy", or "Challenge".
+
+DifficultyClass:  This value must be "easy", "medium", or "hard".  These values correspond the levels of difficulty on the Select Difficulty screen.
+
+DifficultyMeter:  The difficulty of these notes as a bar rating.  The value must be an integer between 1 and 10.
+
+RadarValues:  The values that will be displayed on the Groove Radar as floats between 0.00 and 1.00.  The 5 values must be separated by commas, and are specified in the order: "stream,voltage,air,freeze,chaos".  For MAX300, these values are "0.95,0.98,0.22,0.12,0.13".  These values will automatically be written when you save the song in the StepMania editor, but you may edit the .SM file afterward to tweak them.
+
+NoteData:  
+
+,  // measure 32
+1000
+0000
+0000
+0001
+0000
+0000
+1000
+0000
+,  // measure 33
+0010
+0100
+0010
+0000
 
 
 ************************************************************
-11. Song and Notes File Formats
+14. Building StepMania from CVS source
 ************************************************************
 
-very strict syntax
-trivial to parse
-human readable notes
-Analysis of BMS:
-+ support for an arbitrary number of note types through “tracks”
-+ can define couple and double patterns without having two blocks of notes
-+/- note format is pretty human readable (better than DWI anyway)
-+ supports more than 2 simultaneous notes (required for some game types)
-- redefines song attributes in every file
-- not a strict file format
-- has confusing definitions for “offset”
-- doesn’t support freezes
-- terrible way of defining hold notes (run of 32nd notes)
-
-Analysis of DWI:
-+ more strict file format than BMS
-+ defines song attributes only once
-+ great way of defining BPM changes and freezes
-- notes are not human readable (especially with escape sequences like “04{300500}54”
-- bad way of defining hold notes (especially for overlapping holds like Exotic Ethnic double Maniac)
-- no support for an arbitrary number of note types (doesn’t even handle 6 panel DDR well)
-- requires two blocks of notes for styles like couple and double (related to “no support for an arbitrary number of note types”)
-
-
-************************************************************
-12. .SM File Format
-************************************************************
-
-
-
-************************************************************
-13. Building StepMania from Source Code
-************************************************************
+CVS is the repository that manages the StepMania source code.  Our CVS server is graciously provided by SourceForge.  You can get the absolute-latest bleeding edge updates to StepMania by taking the source from CVS.  Below are instructions on how to configure your computer to download source code from CVS and complile the source into a working executable.
 
 * Step 1: Install and configure Visual C++
 
-The StepMania source can currently be built only on Microsoft Visual C++ 6.0. Installing Visual C++ or Visual Studio with all the default options is sufficient. Also, this is a good time to grab the latest Service Pack from Microsoft.
+The StepMania source can currently be built with Microsoft Visual C++ 6.0 or Visual C++ .Net.  Installing Visual C++ or Visual Studio with all the default options is sufficient.
 
 * Step 2: Install the Direct X 8.1 SDK
 
-The DirectX 8.1 SDK is a free download from Microsoft available here. Using the default installation path ("C:\DXSDK") works well.
-
-* Step 3: Build the DirectShow baseclasses and configure MSVC paths
-
-StepMania's movie texture support depends on a DirectShow wrapper library included with the DirectX SDK. You must build this library and add it to your MSVC paths before compiling StepMania.
-Open the project "C:\DXSDK\samples\Multimedia\DirectShow\BaseClasses" and build in both Debug and Release modes.
-- Click Tools->Options. 
-- Click the Directories tab. 
-- In the Show directories for: dropdown, choose Include files. 
-- Click the New toolbar button and add a new entry for C:\DXSDK\samples\Multimedia\DirectShow\BaseClasses. 
-- In the Show directories for: dropdown, choose Library files. 
-- Click the New toolbar button and add a new entry for C:\DXSDK\samples\Multimedia\DirectShow\BaseClasses\Debug. 
-- Click the New toolbar button and add a new entry for C:\DXSDK\samples\Multimedia\DirectShow\BaseClasses\Release.
-- IMPORTANT: Using the mouse, drag the last two library paths you just added to the top of the list. If you don't do this, you'll get linking errors that look like this: unresolved external symbol class CFactoryTemplate * g_Templates
+The DirectX 8.1 SDK is a free (but large) download from Microsoft (link here).  Install it using all the default settings.  The SDK installer will configure Visual C++ with the correct paths needed to find the DirectX 8.1 libraries and headers.
 
 * Step 3: Install WinCVS
 
-CVS is required to "checkout" the latest versions from the SourceForge-hosted code repository. Download the latest stable version of WinCVS from here, and choose the default installation options. 
-IMPORTANT: Now, open and close WinCVS once. This will let CVS refresh its registry entries, which is required for the next step...
+A CVS client is required to "checkout" the course from the CVS server.  Download version 1.2 of WinCVS here - http://www.cvsgui.org.
+IMPORTANT: Now, open and close WinCVS once.  This will cause WinCVS to create registry entries, which is required for the next step...
 
-* Step 4: Use SourceForge Setup to install SSH and configure CVS
+* Step 4: Use SourceForge Setup to install SSH and configure WinCVS
 
-IMPORTANT: If you are using Windows 2000 or Windows XP, you must unhide the file c:\autoexec.bat. If you don't unhide this file, SourceForge Setup won't be able to add environment variables for you.
-A small utility called SourceForge Setup will greatly simplify the steps needed to configure WinCVS and SSH. Download the program from here, choose the default installation options, and answer the questions as follows:
+A small utility called SourceForge Setup will greatly simplify the steps needed to configure SSH and WinCVS.  Download SourceForge Setup here - link here.  Use the following settings when prompted by SF Setup:
 - Unpack SSH directory: c:\ssh
 - SSH install direcotory: c:\ssh
 - Your home directory: c:\ssh
 - Your SourceForge user name: -yourusername-
 - Name of the project: stepmania
 - The directory where you will be keeping checked out project sources: c:\stepmania
-IMPORTANT: You must restart after running SourceForge Setup so that the new environment variables take effect.
-If you need more help, a HOWTO is available here.
+IMPORTANT: If you are using Windows 2000 or Windows XP SourceForge Setup will not correctly write changes to the c:\autoexec.bat file.  Verify that the following lines are present after you run SF Setup:
 
-* DONE! Enjoy staying on the bleeding edge of StepMania releases!
+rem SourceForge setup stuff
+SET PATH=%PATH%;c:\ssh
+SET HOME=c:\ssh
 
-If you're interested in helping in any capacity, please join the StepMania developers mailing list.
+IMPORTANT: You must restart after running SF Setup so that the new environment variables take effect.
 
+* DONE! Enjoy staying on the bleeding edge of StepMania releases! 
 
 ************************************************************
-14. Version History
+15. Version History
 ************************************************************
 
 ------------------------Version 3.00 beta 1------------------
 NEW FEATURE:  Roulette
+NEW FEATURE:  AutoPlay (selectable from Game Options screen)
 NEW FEATURE:  Read Delight BMS 0.5 (hold notes, freezes, and new BPM changes supported)
 NEW FEATURE:  Editor - edit, record, playback, and synchronize from one screen
 NEW FEATURE:  Oni Nonstop Challenge (not finished)
 NEW FEATURE:  "Judge Window" option to adjust difficulty of step judging
+NEW FEATURE:  Song data cache for faster loading.
+NEW FEATURE:  Groove Radar
+NEW FEATURE:  Dark Mode (selectable from Player Options screen)
+NEW FEATURE (partially complete):  Pump It Up support
+NEW FEATURE (partially complete):  Background Animations (defaut animations go in BGAnimations dir)
 
 ------------------------Version 2.90-------------------------
 CHANGE:  Ogg Vorbis music support re-enabled
-NEW FEATURE:  Game skins (selectable from Player Options screen)
+NEW FEATURE:  Note Skins (selectable from Player Options screen)
 
 ------------------------Version 2.50-------------------------
 NEW FEATURE:  New multi game compatible .sm file format.
 CHANGE:  "Graphic Detail" presets
 BUG FIX:  Installer DirectX check now works
 NEW FEATURE:  Aracde and Free Play game modes
-
 
 ------------------------Version 1.90-------------------------
 OPTIMIZATION:  Major speedup to BitmapText loading
@@ -326,10 +333,9 @@ NEW FEATURE:  Select Group menu
 NEW FEATURE:  Edit / Record / Playback
 NEW FEATURE:  Support for DWI solo notes in DWI reader
 
-
 ------------------------Version 1.65-------------------------
 BUG FIX:  Statistics now save and load correctly
-BUG FIX:  Less jitter while dancing on slower computers
+BUG FIX:  Better framerate during gameplay
 
 ------------------------Version 1.64-------------------------
 NEW FEATURE:  Group banners on Select Music screen.  Just put a banner in the group folder.

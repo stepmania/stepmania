@@ -31,7 +31,7 @@ const float HELP_Y		=		SCREEN_HEIGHT-35;
 const float ITEM_GAP_X	=		12;
 const float LABELS_X	=		80;
 const float LINE_START_Y=		80;
-const float LINE_GAP_Y	=		36;
+const float LINE_GAP_Y	=		34;
 
 
 const ScreenMessage SM_PlaySample			= ScreenMessage(SM_User-4);

@@ -129,12 +129,10 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		break;
 	case RM_ARCADE_SUMMARY:
 		{
-			if( SONGMAN->m_aGameplayStatistics[0].GetSize() > STAGES_TO_SHOW_IN_SUMMARY )
-			{
-				// crop down to 3
-				for( int p=0; p<NUM_PLAYERS; p++ )
+			// crop down to 3
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( SONGMAN->m_aGameplayStatistics[p].GetSize() > STAGES_TO_SHOW_IN_SUMMARY )
 					SONGMAN->m_aGameplayStatistics[p].RemoveAt( 0, SONGMAN->m_aGameplayStatistics[p].GetSize() - STAGES_TO_SHOW_IN_SUMMARY );
-			}
 
 			const int iSongsToShow = SONGMAN->m_aGameplayStatistics[0].GetSize();
 			ASSERT( iSongsToShow > 0 );

@@ -300,7 +300,7 @@ void ScreenEdit::Update( float fDeltaTime )
 		DifficultyClassToString( m_pNotes->m_DifficultyClass ),
 		SONGMAN->GetCurrentNotes(PLAYER_1) ? SONGMAN->GetCurrentNotes(PLAYER_1)->m_sDescription : "no description",
 		iNumTapNotes, iNumHoldNotes,
-		m_pSong->m_fOffsetInSeconds,
+		m_pSong->m_fBeat0OffsetInSeconds,
 		m_pSong->m_fMusicSampleStartSeconds, m_pSong->m_fMusicSampleLengthSeconds
 		) );
 }
@@ -736,7 +736,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				if( type == IET_FAST_REPEAT )
 					fOffsetDelta *= 40;
 
-				m_pSong->m_fOffsetInSeconds += fOffsetDelta;
+				m_pSong->m_fBeat0OffsetInSeconds += fOffsetDelta;
 			}
 			break;
 		case DIK_M:

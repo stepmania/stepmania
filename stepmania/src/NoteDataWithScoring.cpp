@@ -21,14 +21,12 @@ NoteDataWithScoring::NoteDataWithScoring()
 
 void NoteDataWithScoring::Init()
 {
-	// init step elements
 	for( int t=0; t<MAX_NOTE_TRACKS; t++ )
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )
 			m_TapNoteScores[t][i] = TNS_NONE;
 
 	for( int i=0; i<MAX_HOLD_NOTE_ELEMENTS; i++ )
 		m_HoldNoteScores[i] = HNS_NONE;
-
 }
 
 
@@ -99,28 +97,27 @@ float NoteDataWithScoring::GetActualStreamRadarValue( float fSongSeconds )
 	// density of steps
 	int iNumSuccessfulNotes = GetNumSuccessfulTapNotes() + GetNumSuccessfulHoldNotes();
 	float fNotesPerSecond = iNumSuccessfulNotes/fSongSeconds;
-	float fReturn = fNotesPerSecond / 10;
+	float fReturn = fNotesPerSecond / 7;
 	return min( fReturn, 1.0f );
 }
 
 float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds )
 {
+	float fAvgBPS = GetLastBeat() / fSongSeconds;
+
 	// peak density of steps
-	float fMaxDensityPerSecSoFar = 0;
+	float fMaxDensitySoFar = 0;
 
-	for( int i=0; i<MAX_BEATS; i+=16 )
+	const int BEAT_WINDOW = 8;
+
+	for( int i=0; i<MAX_BEATS; i+=BEAT_WINDOW )
 	{
-		int iNumNotesThisMeasure = GetNumSuccessfulTapNotes((float)i,(float)i+8) + GetNumSuccessfulHoldNotes((float)i,(float)i+8);
-
-		float fDensityThisMeasure = iNumNotesThisMeasure/2.0f;
-
-		float fDensityPerSecThisMeasure = fDensityThisMeasure / fSongSeconds;
-
-		if( fDensityPerSecThisMeasure > fMaxDensityPerSecSoFar )
-			fMaxDensityPerSecSoFar = fDensityPerSecThisMeasure;
+		int iNumNotesThisWindow = GetNumSuccessfulTapNotes((float)i,(float)i+BEAT_WINDOW) + GetNumSuccessfulHoldNotes((float)i,(float)i+BEAT_WINDOW);
+		float fDensityThisWindow = iNumNotesThisWindow/(float)BEAT_WINDOW;
+		fMaxDensitySoFar = max( fMaxDensitySoFar, fDensityThisWindow );
 	}
 
-	float fReturn = fMaxDensityPerSecSoFar*5;
+	float fReturn = fMaxDensitySoFar*fAvgBPS/10;
 	return min( fReturn, 1.0f );
 }
 
@@ -135,14 +132,14 @@ float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds )
 float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds )
 {
 	// count number of triplets
-	int iNumTripletsCompleted = 0;
+	int iNumChaosNotesCompleted = 0;
 	for( int r=0; r<MAX_TAP_NOTE_ROWS; r++ )
 	{
-		if( !IsRowComplete(r) && IsNoteOfType(r, NOTE_12TH) )
-		iNumTripletsCompleted++;
+		if( !IsRowComplete(r)  &&  GetNoteType(r) >= NOTE_12TH )
+		iNumChaosNotesCompleted++;
 	}
 
-	float fReturn = iNumTripletsCompleted / fSongSeconds;
+	float fReturn = iNumChaosNotesCompleted / fSongSeconds * 0.5;
 	return min( fReturn, 1.0f );
 }
 

@@ -71,26 +71,23 @@ public:
 
 	CString	m_sMusicFile;
 	DWORD	m_iMusicBytes;
-	float	m_fOffsetInSeconds;
+	float	m_fBeat0OffsetInSeconds;
 	float	m_fMusicLengthSeconds;
 	float	m_fMusicSampleStartSeconds;
 	float	m_fMusicSampleLengthSeconds;
 	CString	m_sBannerFile;
 	CString	m_sBackgroundFile;
-	CString	m_sBackgroundMovieFile;
 	CString	m_sCDTitleFile;
 
 	CString GetMusicPath()			{return m_sSongDir+m_sMusicFile; };
 	CString GetBannerPath()			{return m_sSongDir+m_sBannerFile; };
 	CString GetBackgroundPath()		{return m_sSongDir+m_sBackgroundFile; };
-	CString GetBackgroundMoviePath(){return m_sSongDir+m_sBackgroundMovieFile; };
 	CString GetCDTitlePath()		{return m_sSongDir+m_sCDTitleFile; };
 
 
 	bool HasMusic()				{return m_sMusicFile != ""			&&	DoesFileExist(GetMusicPath()); };
 	bool HasBanner()			{return m_sBannerFile != ""			&&  DoesFileExist(GetBannerPath()); };
 	bool HasBackground()		{return m_sBackgroundFile != ""		&&  DoesFileExist(GetBackgroundPath()); };
-	bool HasBackgroundMovie()	{return m_sBackgroundMovieFile != ""&&  DoesFileExist(GetBackgroundMoviePath()); };
 	bool HasCDTitle()			{return m_sCDTitleFile != ""		&&  DoesFileExist(GetCDTitlePath()); };
 
 

@@ -61,13 +61,14 @@ bool Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 	//
 	// load song background
 	//
-	CString sBackgroundMoviePath;
-	if( pSong->HasBackgroundMovie() )
-	{
-		m_sprSongBackground.Load( pSong->GetBackgroundMoviePath() );
-		m_sprSongBackground.SetZoomY( -1 );	// flip
-	}
-	else if( pSong->HasBackground() )
+//	CString sBackgroundMoviePath;
+//	if( pSong->HasBackgroundMovie() )
+//	{
+//		m_sprSongBackground.Load( pSong->GetBackgroundMoviePath() );
+//		m_sprSongBackground.SetZoomY( -1 );	// flip
+//	}
+//	else 
+	if( pSong->HasBackground() )
 	{
 		m_sprSongBackground.Load( pSong->GetBackgroundPath(), false, 2, 0, true );
 	}
