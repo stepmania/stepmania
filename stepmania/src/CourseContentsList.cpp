@@ -81,7 +81,7 @@ void CourseContentsList::SetFromGameState()
 			Trail* pTrail = GAMESTATE->m_pCurTrail[pn];
 			if( pTrail == NULL )
 				continue;	// skip
-			if( i < pTrail->m_vEntries.size() )
+			if( unsigned(i) < pTrail->m_vEntries.size() )
 				pte[pn] = &pTrail->m_vEntries[i];
 		}
 		display.LoadFromTrailEntry( m_iNumContents+1, pte );
