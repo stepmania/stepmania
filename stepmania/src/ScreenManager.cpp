@@ -296,11 +296,13 @@ void ScreenManager::PrepareScreen( const CString &sScreenName )
 	m_bZeroNextUpdate = true;
 
 	// Delete previously prepared versions of the screen.
-	FOREACH( Screen*, m_vPreparedScreens, s )
+	for( int i = (int)m_vPreparedScreens.size()-1; i>=0; i-- )
 	{
-		if( (*s)->m_sName == sScreenName )
+		Screen *&pScreen = m_vPreparedScreens[i];
+		if( pScreen->m_sName == sScreenName )
 		{
-			SAFE_DELETE( *s );
+			SAFE_DELETE( pScreen );
+			m_vPreparedScreens.erase( m_vPreparedScreens.begin()+i );
 			break;
 		}
 	}
