@@ -332,7 +332,7 @@ void RageInput::Update( float fDeltaTime )
 		}
 
 		int iNumJoyHats = min(NUM_JOYSTICK_HATS,SDL_JoystickNumHats(pJoy));
-		for( int hat=0; axis<iNumJoyHats; hat++ )
+		for( int hat=0; hat<iNumJoyHats; hat++ )
 		{
 			Uint8 val = SDL_JoystickGetHat(pJoy,hat);
 			m_joyState[joy].button[JOY_HAT_UP] = (val & SDL_HAT_UP) != 0;
