@@ -248,6 +248,11 @@ void RageSoundManager::PlayMusic(CString file, bool loop, float start_sec, float
 
 	if(music->IsPlaying())
 		music->StopPlaying();
+
+	/* If file is blank, just stop. */
+	if(file.empty())
+		return;
+
 	music->Load( file, false );
 
 	music->SetStopMode(loop? RageSound::M_LOOP:RageSound::M_STOP);
