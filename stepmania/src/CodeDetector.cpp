@@ -143,7 +143,8 @@ bool CodeItem::Load( CString sButtonsNames )
 	switch( m_Type )
 	{
 	case sequence:
-		fMaxSecondsBack = buttons.size()*0.4f;
+		ASSERT( buttons.size() >= 2 )
+		fMaxSecondsBack = (buttons.size()-1)*0.6f;
 		break;
 	case hold_and_press:
 		fMaxSecondsBack = -1.f;	// not applicable
