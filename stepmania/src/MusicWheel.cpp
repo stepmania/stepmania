@@ -80,6 +80,8 @@ MusicWheel::MusicWheel()
 	else
 		LOG->Trace( "Current Song: NULL" );
 
+	SONGMAN->UpdateRankingCourses();
+
 	// update theme metric cache
 	ITEM_CURVE_X.Refresh();
 	ITEM_SPACING_Y.Refresh();
