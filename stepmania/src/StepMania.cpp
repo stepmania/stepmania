@@ -60,20 +60,6 @@
 #include "CryptManager.h"
 #include "NetworkSyncManager.h"
 
-#if defined(_XBOX)
-	#ifdef _DEBUG
-		#pragma comment(lib, "SDL-1.2.6/lib/xboxSDLmaind.lib")
-	#else
-		#pragma comment(lib, "SDL-1.2.6/lib/xboxSDLmain.lib")
-	#endif	
-#elif defined(_WINDOWS)
-	#ifdef DEBUG
-		#pragma comment(lib, "SDL-1.2.6/lib/SDLmaind.lib")
-	#else
-		#pragma comment(lib, "SDL-1.2.6/lib/SDLmain.lib")
-	#endif	
-#endif
-
 #define ZIPS_DIR "Packages/"
 
 #ifdef _WINDOWS
