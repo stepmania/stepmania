@@ -14,6 +14,7 @@
 #include "ScrollBar.h"
 #include "RageTimer.h"
 #include "MusicWheelItem.h"
+#include "ThemeMetric.h"
 class Course;
 class Song;
 
@@ -30,7 +31,7 @@ class MusicWheel : public ActorFrame
 public:
 	MusicWheel();
 	~MusicWheel();
-	void Load();
+	void Load( CString sType );
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -123,6 +124,33 @@ protected:
 	bool WheelItemIsVisible(int n);
 	void UpdateScrollbar();
 
+
+	ThemeMetric<float>	SWITCH_SECONDS;
+	ThemeMetric<float> ROULETTE_SWITCH_SECONDS;
+	ThemeMetric<int> ROULETTE_SLOW_DOWN_SWITCHES;
+	ThemeMetric<float> LOCKED_INITIAL_VELOCITY;
+	ThemeMetric<float> SCROLL_BAR_X;
+	ThemeMetric<int> SCROLL_BAR_HEIGHT;
+	ThemeMetric<float>	ITEM_CURVE_X;
+	ThemeMetric<bool> USE_LINEAR_WHEEL;
+	ThemeMetric<float>	ITEM_SPACING_Y;
+	ThemeMetric<float>	WHEEL_3D_RADIUS;
+	ThemeMetric<float>	CIRCLE_PERCENT;
+	ThemeMetric<int> NUM_SECTION_COLORS;
+	ThemeMetric<RageColor> SONG_REAL_EXTRA_COLOR;
+	ThemeMetric<RageColor> SORT_MENU_COLOR;
+	ThemeMetric<bool> SHOW_ROULETTE;
+	ThemeMetric<bool> SHOW_RANDOM;
+	ThemeMetric<bool> SHOW_PORTAL;
+	ThemeMetric<bool>	USE_3D;
+	ThemeMetric<float>	NUM_WHEEL_ITEMS_TO_DRAW;
+	ThemeMetric<int> MOST_PLAYED_SONGS_TO_SHOW;
+	ThemeMetric<CString> MODE_MENU_CHOICE_NAMES;
+	ThemeMetricMap<CString> CHOICE;
+	ThemeMetric<float> WHEEL_ITEM_ON_DELAY_CENTER;
+	ThemeMetric<float> WHEEL_ITEM_ON_DELAY_OFFSET;
+	ThemeMetric<float> WHEEL_ITEM_OFF_DELAY_CENTER;
+	ThemeMetric<float> WHEEL_ITEM_OFF_DELAY_OFFSET;
 	ThemeMetric1D<RageColor> SECTION_COLORS;
 };
 

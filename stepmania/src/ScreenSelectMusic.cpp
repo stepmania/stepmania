@@ -62,7 +62,8 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	SHOW_DIFFICULTY_LIST( m_sName, "ShowDifficultyList" ),
 	DO_ROULETTE_ON_MENU_TIMER( m_sName, "DoRouletteOnMenuTimer" ),
 	ALIGN_MUSIC_BEATS( m_sName, "AlignMusicBeat" ),
-	CODES( m_sName, "Codes" )
+	CODES( m_sName, "Codes" ),
+	MUSIC_WHEEL_TYPE( m_sName, "MusicWheelType" )
 {
 	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );
 
@@ -102,7 +103,7 @@ void ScreenSelectMusic::Init()
 	/* Load low-res banners, if needed. */
 	BANNERCACHE->Demand();
 
-	m_MusicWheel.Load();
+	m_MusicWheel.Load( MUSIC_WHEEL_TYPE );
 
 	// pop'n music has this under the songwheel...
 	FOREACH_PlayerNumber( p )

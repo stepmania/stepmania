@@ -26,42 +26,15 @@
 #include "ThemeMetric.h"
 #include "PlayerState.h"
 
-
-ThemeMetric<float>	SWITCH_SECONDS				("MusicWheel","SwitchSeconds");
-ThemeMetric<float> ROULETTE_SWITCH_SECONDS		("MusicWheel","RouletteSwitchSeconds");
-ThemeMetric<int> ROULETTE_SLOW_DOWN_SWITCHES	("MusicWheel","RouletteSlowDownSwitches");
-ThemeMetric<float> LOCKED_INITIAL_VELOCITY		("MusicWheel","LockedInitialVelocity");
-ThemeMetric<float> SCROLL_BAR_X					("MusicWheel","ScrollBarX");
-ThemeMetric<int> SCROLL_BAR_HEIGHT				("MusicWheel","ScrollBarHeight");
-ThemeMetric<float>	ITEM_CURVE_X				("MusicWheel","ItemCurveX");
-ThemeMetric<bool> USE_LINEAR_WHEEL				("MusicWheel","NoCurving");
-ThemeMetric<float>	ITEM_SPACING_Y				("MusicWheel","ItemSpacingY");
-ThemeMetric<float>	WHEEL_3D_RADIUS				("MusicWheel","Wheel3DRadius");
-ThemeMetric<float>	CIRCLE_PERCENT				("MusicWheel","CirclePercent");
-ThemeMetric<int> NUM_SECTION_COLORS				("MusicWheel","NumSectionColors");
-ThemeMetric<RageColor> SONG_REAL_EXTRA_COLOR	("MusicWheel","SongRealExtraColor");
-ThemeMetric<RageColor> SORT_MENU_COLOR			("MusicWheel","SortMenuColor");
-ThemeMetric<bool> SHOW_ROULETTE					("MusicWheel","ShowRoulette");
-ThemeMetric<bool> SHOW_RANDOM					("MusicWheel","ShowRandom");
-ThemeMetric<bool> SHOW_PORTAL					("MusicWheel","ShowPortal");
-ThemeMetric<bool>	USE_3D						("MusicWheel","Use3D");
-ThemeMetric<float>	NUM_WHEEL_ITEMS_TO_DRAW		("MusicWheel","NumWheelItems");
 #define NUM_WHEEL_ITEMS		((int)ceil(NUM_WHEEL_ITEMS_TO_DRAW+2))
-ThemeMetric<int> MOST_PLAYED_SONGS_TO_SHOW		("MusicWheel","MostPlayedSongsToShow");
-ThemeMetric<CString> MODE_MENU_CHOICE_NAMES		("MusicWheel","ModeMenuChoiceNames");
-#define CHOICE( sChoiceName ) THEME->GetMetricM ("MusicWheel",ssprintf("Choice%s",sChoiceName.c_str()))
-ThemeMetric<float> WHEEL_ITEM_ON_DELAY_CENTER	("MusicWheel","WheelItemOnDelayCenter");
-ThemeMetric<float> WHEEL_ITEM_ON_DELAY_OFFSET	("MusicWheel","WheelItemOnDelayOffset");
-ThemeMetric<float> WHEEL_ITEM_OFF_DELAY_CENTER	("MusicWheel","WheelItemOffDelayCenter");
-ThemeMetric<float> WHEEL_ITEM_OFF_DELAY_OFFSET	("MusicWheel","WheelItemOffDelayOffset");
+
 // leaving this one under ScreenSelectMusic because that is the only place it takes effect anyway.
 ThemeMetric<CString> DEFAULT_SORT				("ScreenSelectMusic","DefaultSort");
 
 static CString SECTION_COLORS_NAME( size_t i )	{ return ssprintf("SectionColor%d",i+1); }
-ThemeMetric1D<RageColor> SECTION_COLORS			("MusicWheel",SECTION_COLORS_NAME,NUM_SECTION_COLORS);
+static CString CHOICE_NAME( CString s )			{ return ssprintf("Choice%s",s.c_str()); }
 			
 const int MAX_WHEEL_SOUND_SPEED = 15;
-
 
 static const SortOrder g_SongSortOrders[] =
 {
@@ -72,13 +45,10 @@ static const SortOrder g_SongSortOrders[] =
 	SORT_ARTIST,
 	SORT_GENRE,
 };
-vector<SortOrder> SONG_SORT_ORDERS( g_SongSortOrders, g_SongSortOrders + ARRAYSIZE(g_SongSortOrders) );
+const vector<SortOrder> SONG_SORT_ORDERS( g_SongSortOrders, g_SongSortOrders + ARRAYSIZE(g_SongSortOrders) );
 	
-MusicWheel::MusicWheel() :
-	SECTION_COLORS		("MusicWheel",SECTION_COLORS_NAME,NUM_SECTION_COLORS)
+MusicWheel::MusicWheel()
 {
-	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
-		m_MusicWheelItems.push_back( new MusicWheelItem );
 }
 
 SortOrder ForceAppropriateSort( PlayMode pm, SortOrder so )
@@ -113,9 +83,49 @@ SortOrder ForceAppropriateSort( PlayMode pm, SortOrder so )
 }
 
 
-void MusicWheel::Load() 
-{ 
-	LOG->Trace( "MusicWheel::MusicWheel()" );
+void MusicWheel::Load( CString sType ) 
+{
+	LOG->Trace( "MusicWheel::Load('%s')", sType.c_str() );
+
+	SWITCH_SECONDS				.Load(sType,"SwitchSeconds");
+	ROULETTE_SWITCH_SECONDS		.Load(sType,"RouletteSwitchSeconds");
+	ROULETTE_SLOW_DOWN_SWITCHES	.Load(sType,"RouletteSlowDownSwitches");
+	LOCKED_INITIAL_VELOCITY		.Load(sType,"LockedInitialVelocity");
+	SCROLL_BAR_X				.Load(sType,"ScrollBarX");
+	SCROLL_BAR_HEIGHT			.Load(sType,"ScrollBarHeight");
+	ITEM_CURVE_X				.Load(sType,"ItemCurveX");
+	USE_LINEAR_WHEEL			.Load(sType,"NoCurving");
+	ITEM_SPACING_Y				.Load(sType,"ItemSpacingY");
+	WHEEL_3D_RADIUS				.Load(sType,"Wheel3DRadius");
+	CIRCLE_PERCENT				.Load(sType,"CirclePercent");
+	NUM_SECTION_COLORS			.Load(sType,"NumSectionColors");
+	SONG_REAL_EXTRA_COLOR		.Load(sType,"SongRealExtraColor");
+	SORT_MENU_COLOR				.Load(sType,"SortMenuColor");
+	SHOW_ROULETTE				.Load(sType,"ShowRoulette");
+	SHOW_RANDOM					.Load(sType,"ShowRandom");
+	SHOW_PORTAL					.Load(sType,"ShowPortal");
+	USE_3D						.Load(sType,"Use3D");
+	NUM_WHEEL_ITEMS_TO_DRAW		.Load(sType,"NumWheelItems");
+	MOST_PLAYED_SONGS_TO_SHOW	.Load(sType,"MostPlayedSongsToShow");
+	MODE_MENU_CHOICE_NAMES		.Load(sType,"ModeMenuChoiceNames");
+	vector<CString> vsModeChoiceNames;
+	split( MODE_MENU_CHOICE_NAMES, ",", vsModeChoiceNames );
+	CHOICE						.Load(sType,CHOICE_NAME,vsModeChoiceNames);
+	WHEEL_ITEM_ON_DELAY_CENTER	.Load(sType,"WheelItemOnDelayCenter");
+	WHEEL_ITEM_ON_DELAY_OFFSET	.Load(sType,"WheelItemOnDelayOffset");
+	WHEEL_ITEM_OFF_DELAY_CENTER	.Load(sType,"WheelItemOffDelayCenter");
+	WHEEL_ITEM_OFF_DELAY_OFFSET	.Load(sType,"WheelItemOffDelayOffset");
+	SECTION_COLORS				.Load(sType,SECTION_COLORS_NAME,NUM_SECTION_COLORS);
+
+
+	FOREACH( MusicWheelItem*, m_MusicWheelItems, i )
+		SAFE_DELETE( *i );
+	m_MusicWheelItems.clear();
+	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
+		m_MusicWheelItems.push_back( new MusicWheelItem );
+
+
+	LOG->Trace( "MusicWheel::Load('%s')", sType.c_str() );
 	if (GAMESTATE->m_pCurSong != NULL)
 		LOG->Trace( "Current Song: %s", GAMESTATE->m_pCurSong->GetSongDir().c_str() );
 	else
@@ -130,20 +140,20 @@ void MusicWheel::Load()
 		GAMESTATE->m_CurStyle = GAMEMAN->STYLE_DANCE_SINGLE;
 	*/
 
-	m_sprHighlight.Load( THEME->GetPathG("MusicWheel","highlight") );
+	m_sprHighlight.Load( THEME->GetPathG(sType,"highlight") );
 	m_sprHighlight->SetName( "Highlight" );
 	this->AddChild( m_sprHighlight );
-	ActorUtil::OnCommand( m_sprHighlight, "MusicWheel" );
+	ActorUtil::OnCommand( m_sprHighlight, sType );
 
 	m_ScrollBar.SetX( SCROLL_BAR_X ); 
 	m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT ); 
 	this->AddChild( &m_ScrollBar );
 	
 	/* We play a lot of this one, so precache it. */
-	m_soundChangeMusic.Load(	THEME->GetPathS("MusicWheel","change"), true );
-	m_soundChangeSort.Load(		THEME->GetPathS("MusicWheel","sort") );
-	m_soundExpand.Load(			THEME->GetPathS("MusicWheel","expand") );
-	m_soundLocked.Load(			THEME->GetPathS("MusicWheel","locked"), true );
+	m_soundChangeMusic.Load(	THEME->GetPathS(sType,"change"), true );
+	m_soundChangeSort.Load(		THEME->GetPathS(sType,"sort") );
+	m_soundExpand.Load(			THEME->GetPathS(sType,"expand"), true );
+	m_soundLocked.Load(			THEME->GetPathS(sType,"locked"), true );
 
 	
 	m_iSelection = 0;
@@ -468,14 +478,13 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 	case SORT_MODE_MENU:
 	{
 		arrayWheelItemDatas.clear();	// clear out the previous wheel items 
-		CString sNames = MODE_MENU_CHOICE_NAMES;
 		vector<CString> vsNames;
-		split( sNames, ",", vsNames );
+		split( MODE_MENU_CHOICE_NAMES, ",", vsNames );
 		for( unsigned i=0; i<vsNames.size(); ++i )
 		{
 			WheelItemData wid( TYPE_SORT, NULL, "", NULL, SORT_MENU_COLOR );
 			wid.m_sLabel = vsNames[i];
-			wid.m_Action.Load( i, CHOICE(vsNames[i]) );
+			wid.m_Action.Load( i, ParseCommands(CHOICE.GetValue(vsNames[i])) );
 			wid.m_sLabel = wid.m_Action.m_sName;
 
 			switch( so )

@@ -84,6 +84,7 @@ protected:
 	ThemeMetric<bool> DO_ROULETTE_ON_MENU_TIMER;
 	ThemeMetric<bool> ALIGN_MUSIC_BEATS;
 	ThemeMetric<CString> CODES;
+	ThemeMetric<CString> MUSIC_WHEEL_TYPE;
 
 	CString m_sSectionMusicPath;
 	CString m_sSortMusicPath;

@@ -69,7 +69,7 @@ void ScreenNetSelectMusic::Init()
 		this->AddChild( &m_DifficultyMeters[p] );
 	}
 
-	m_MusicWheel.Load();
+	m_MusicWheel.Load( "MusicWheel" );
 	m_MusicWheel.SetName( "MusicWheel", "Wheel" );
 	SET_XY( m_MusicWheel );
 	m_MusicWheel.TweenOnScreen();
