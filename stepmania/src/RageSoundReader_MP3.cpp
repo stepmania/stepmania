@@ -391,7 +391,42 @@ int RageSoundReader_MP3::do_mad_frame_decode( bool headers_only )
 			ret=mad_header_decode( &mad->Frame.header,&mad->Stream );
 		else
 			ret=mad_frame_decode( &mad->Frame,&mad->Stream );
-		if( mad->Stream.error == MAD_ERROR_BADDATAPTR && mad->first_frame )
+
+		if( ret == -1 && (mad->Stream.error == MAD_ERROR_BUFLEN || mad->Stream.error == MAD_ERROR_BUFPTR) )
+		{
+			if( bytes_read > 25000 )
+			{
+				/* We've read this much without actually getting a frame; error. */
+				SetError( "Can't find data" );
+				return -1;
+			}
+
+			int ret = fill_buffer();
+			if( ret <= 0 )
+				return ret;
+			bytes_read += ret;
+
+			continue;
+		}
+
+		if(mad->Stream.error == MAD_ERROR_LOSTSYNC)
+		{
+			/* This might be an ID3V2 tag. */
+			const int tagsize = id3_tag_query(mad->Stream.this_frame,
+				mad->Stream.bufend - mad->Stream.this_frame);
+
+			if( tagsize )
+			{
+				mad_stream_skip(&mad->Stream, tagsize);
+
+				/* Don't count the tagsize against the max-read-per-call figure. */
+				bytes_read -= tagsize;
+
+				continue;
+			}
+		}
+
+		if( mad->Stream.error == MAD_ERROR_BADDATAPTR || mad->Stream.error == MAD_ERROR_LOSTSYNC )
 		{
 			/*
 			 * Something's corrupt.  One cause of this is cutting an MP3 in the middle
@@ -399,11 +434,8 @@ int RageSoundReader_MP3::do_mad_frame_decode( bool headers_only )
 			 * frames that have been removed.  The frame is valid--we can get a header from
 			 * it, we just can't synth useful data.
 			 *
-			 * BASS pretends the bad frame is silent.  Let's emulate that if we're at the
-			 * beginning, since that's probably a cut.  The only time I've seen this in
-			 * the middle of a stream is a corruption, which will probably lose sync anyway.
+			 * BASS pretends the bad frames are silent.  Emulate that, for compatibility.
 			 */
-
 			ret = 0; /* pretend success */
 		}
 
@@ -439,23 +471,6 @@ int RageSoundReader_MP3::do_mad_frame_decode( bool headers_only )
 			return 1;
 		}
 
-		if(mad->Stream.error == MAD_ERROR_LOSTSYNC)
-		{
-			/* This might be an ID3V2 tag. */
-			const int tagsize = id3_tag_query(mad->Stream.this_frame,
-				mad->Stream.bufend - mad->Stream.this_frame);
-
-			if( tagsize )
-			{
-				mad_stream_skip(&mad->Stream, tagsize);
-
-				/* Don't count the tagsize against the max-read-per-call figure. */
-				bytes_read -= tagsize;
-
-				continue;
-			}
-		}
-
 		if( mad->Stream.error == MAD_ERROR_BADCRC )
 		{
 			/* XXX untested */
@@ -465,29 +480,12 @@ int RageSoundReader_MP3::do_mad_frame_decode( bool headers_only )
 			continue;
 		}
 
-		if( mad->Stream.error == MAD_ERROR_BUFLEN || mad->Stream.error == MAD_ERROR_BUFPTR )
+		if( !MAD_RECOVERABLE(mad->Stream.error) )
 		{
-			if( bytes_read > 25000 )
-			{
-				/* We've read this much without actually getting a frame; error. */
-				SetError( "Can't find data" );
-				return -1;
-			}
-
-			int ret = fill_buffer();
-			if( ret <= 0 )
-				return ret;
-			bytes_read += ret;
-
-			continue;
+			/* We've received an unrecoverable error. */
+			SetError( mad_stream_errorstr(&mad->Stream) );
+			return -1;
 		}
-
-		/* If it's some other recoverable error, just keep going. */
-		if( MAD_RECOVERABLE(mad->Stream.error) )
-			continue;
-
-		SetError( mad_stream_errorstr(&mad->Stream) );
-		return -1;
 	}
 }
 
