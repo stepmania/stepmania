@@ -83,7 +83,7 @@ public:
 	 * information.) */
 	const CString &GetName() const		{ return m_sName; }
 	const CString &GetID() const		{ return m_sID.empty() ? m_sName : m_sID; }
-	void SetName( const CString &sName, const CString &sID = "" ) { m_sName = sName; m_sID = sID; }
+	virtual void SetName( const CString &sName, const CString &sID = "" ) { m_sName = sName; m_sID = sID; }
 
 
 
