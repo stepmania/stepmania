@@ -44,9 +44,15 @@
 				AAA0F7D0047AC7EA005F316C,
 				AA8DD84904A2E51400D02EE9,
 				AAA0F7D2047ACBC9005F316C,
-				AAE443F804B1032300D02EE9,
-				AAE443F704B1032300D02EE9,
 				AAECB3730512794D001B792B,
+				AA4B425705733D71005FB5DB,
+				AA4B425805733D71005FB5DB,
+				AA4B425905733D71005FB5DB,
+				AA4B425A05733D71005FB5DB,
+				AA4B425B05733D71005FB5DB,
+				AA4B4737057396D3005FB5DB,
+				AA4B4783057396F8005FB5DB,
+				AA4B4784057396F8005FB5DB,
 			);
 			isa = PBXGroup;
 			name = "Linked Frameworks";
@@ -107,6 +113,8 @@
 //294
 		29B97313FDCFA39411CA2CEA = {
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				SDKROOT = /Developer/SDKs/MacOSX10.2.7.sdk;
 			};
 			buildStyles = (
 				4A9504CCFFE6A4B311CA0CBA,
@@ -244,6 +252,7 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				LIBRARY_STYLE = Static;
 				ZERO_LINK = NO;
 			};
@@ -817,27 +826,28 @@
 				AA67C0AD0558B1D000EF34A6,
 				AA29CC270558741A00961A51,
 				AA29CD3C0558741A00961A51,
+				AA4B428C05733DF2005FB5DB,
 				AA29CD410558741A00961A51,
 				AA29CE3B0558741A00961A51,
 			);
 			buildRules = (
+				AA4B42D905736AB5005FB5DB,
 			);
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "$(SYSTEM_LIBRARY_DIR)/Frameworks";
-				GCC_ENABLE_CPP_RTTI = NO;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks\" /Users/steve/stepmania/PBProject/Frameworks";
+				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = PBBUILD;
 				GCC_USE_GCC3_PFE_SUPPORT = NO;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				HEADER_SEARCH_PATHS = "$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers ../src $(SYSTEM_LIBRARY_DIR)/Frameworks/SDL_image.framework/Versions/A/Headers $(SYSTEM_LIBRARY_DIR)/SDL.framework/Headers ../src /usr/local/include/SDL";
+				HEADER_SEARCH_PATHS = "/usr/include $(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers ../src $(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL_image.framework/Versions/A/Headers $(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers";
 				INFOPLIST_FILE = "Info-StepMania.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = /usr/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OTHER_CFLAGS = "-Wno-switch -Wno-missing-braces -fcoalesce-templates";
-				OTHER_LDFLAGS = "-F/System/Library/Frameworks -L/usr/local/lib";
 				PRODUCT_NAME = StepMania;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -1140,9 +1150,9 @@
 				AAC6DCE60567660A00B5D56F,
 				AAC6DCF20567663800B5D56F,
 				AAC6DCF30567663800B5D56F,
-				AAC6DCFF056846E600B5D56F,
 				AAC6DDE10569C71000B5D56F,
 				AAC6DDE90569C80900B5D56F,
+				AAB691F505704FA50078BED4,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3071,9 +3081,12 @@
 				AA29CE3A0558741A00961A51,
 				AA9EC2F2055F5126007E5098,
 				AAC6DCE50567660A00B5D56F,
-				AAC6DD500568510000B5D56F,
 				AAC6DDE00569C71000B5D56F,
 				AAC6DDE80569C80900B5D56F,
+				AAB691F405704FA50078BED4,
+				AA4B59CB0573A7FC005FB5DB,
+				AA4B59EF0573AA5B005FB5DB,
+				AA4B5CC50573AD81005FB5DB,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4573,20 +4586,21 @@
 				AA29CE430558741A00961A51,
 				AA29CE440558741A00961A51,
 				AA29CE490558741A00961A51,
-				AA29CE450558741A00961A51,
-				AA29CE460558741A00961A51,
-				AA29CE470558741A00961A51,
 				AA29CE4A0558741A00961A51,
-				AA29CE4B0558741A00961A51,
-				AA29CE4C0558741A00961A51,
-				AA29CE4D0558741A00961A51,
-				AA29CE4E0558741A00961A51,
-				AA29CE4F0558741A00961A51,
-				AA29CE500558741A00961A51,
-				AA67C0A00558AFFC00EF34A6,
-				AA67C0A10558AFFC00EF34A6,
-				AA67C0A40558B17A00EF34A6,
 				AA67C0A60558B19B00EF34A6,
+				AA4B425C05733D71005FB5DB,
+				AA4B425D05733D71005FB5DB,
+				AA4B425E05733D71005FB5DB,
+				AA4B425F05733D71005FB5DB,
+				AA4B426005733D71005FB5DB,
+				AA4B4738057396D3005FB5DB,
+				AA4B4785057396F8005FB5DB,
+				AA4B4786057396F8005FB5DB,
+				AA4B47AA05739706005FB5DB,
+				AA4B47AB05739708005FB5DB,
+				AA4B47AC05739708005FB5DB,
+				AA4B47AD0573970A005FB5DB,
+				AA4B47AE0573970C005FB5DB,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4645,24 +4659,6 @@
 			settings = {
 			};
 		};
-		AA29CE450558741A00961A51 = {
-			fileRef = AA14ED160509F98600E3FAD7;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CE460558741A00961A51 = {
-			fileRef = AA14ED170509F98600E3FAD7;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CE470558741A00961A51 = {
-			fileRef = AA25D887051B121C00D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AA29CE490558741A00961A51 = {
 			fileRef = AAE443F804B1032300D02EE9;
 			isa = PBXBuildFile;
@@ -4671,42 +4667,6 @@
 		};
 		AA29CE4A0558741A00961A51 = {
 			fileRef = AAE443F704B1032300D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CE4B0558741A00961A51 = {
-			fileRef = AA25D882051B114700D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CE4C0558741A00961A51 = {
-			fileRef = AA25D884051B11C700D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CE4D0558741A00961A51 = {
-			fileRef = AA25D886051B121C00D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CE4E0558741A00961A51 = {
-			fileRef = AA25D888051B121C00D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CE4F0558741A00961A51 = {
-			fileRef = AA25D889051B121C00D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CE500558741A00961A51 = {
-			fileRef = AA170D2905549C160068A894;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -4734,6 +4694,265 @@
 			path = ArchHooks/ArchHooks.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+		};
+		AA4B425705733D71005FB5DB = {
+			expectedFileType = wrapper.framework;
+			isa = PBXFileReference;
+			name = jpeg62.framework;
+			path = Frameworks/jpeg62.framework;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4B425805733D71005FB5DB = {
+			expectedFileType = wrapper.framework;
+			isa = PBXFileReference;
+			name = mad.framework;
+			path = Frameworks/mad.framework;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4B425905733D71005FB5DB = {
+			expectedFileType = wrapper.framework;
+			isa = PBXFileReference;
+			name = Ogg.framework;
+			path = Frameworks/Ogg.framework;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4B425A05733D71005FB5DB = {
+			expectedFileType = wrapper.framework;
+			isa = PBXFileReference;
+			name = png.framework;
+			path = Frameworks/png.framework;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4B425B05733D71005FB5DB = {
+			expectedFileType = wrapper.framework;
+			isa = PBXFileReference;
+			name = Vorbis.framework;
+			path = Frameworks/Vorbis.framework;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4B425C05733D71005FB5DB = {
+			fileRef = AA4B425705733D71005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B425D05733D71005FB5DB = {
+			fileRef = AA4B425805733D71005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B425E05733D71005FB5DB = {
+			fileRef = AA4B425905733D71005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B425F05733D71005FB5DB = {
+			fileRef = AA4B425A05733D71005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B426005733D71005FB5DB = {
+			fileRef = AA4B425B05733D71005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B428C05733DF2005FB5DB = {
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				AA4B47AF05739711005FB5DB,
+				AA4B47B005739711005FB5DB,
+				AA4B47B105739711005FB5DB,
+				AA4B47B205739711005FB5DB,
+				AA4B47B305739711005FB5DB,
+				AA4B47B405739711005FB5DB,
+				AA4B47B505739711005FB5DB,
+				AA4B47B605739711005FB5DB,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA4B42D905736AB5005FB5DB = {
+			compilerSpec = com.apple.compilers.gcc;
+			filePatterns = .mm;
+			fileType = pattern.proxy;
+			isEditable = 1;
+			isa = PBXBuildRule;
+			outputFiles = (
+			);
+		};
+		AA4B4737057396D3005FB5DB = {
+			expectedFileType = wrapper.framework;
+			isa = PBXFileReference;
+			name = ffmpeg.framework;
+			path = Frameworks/ffmpeg.framework;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4B4738057396D3005FB5DB = {
+			fileRef = AA4B4737057396D3005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B4783057396F8005FB5DB = {
+			expectedFileType = wrapper.framework;
+			isa = PBXFileReference;
+			name = SDL_image.framework;
+			path = Frameworks/SDL_image.framework;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4B4784057396F8005FB5DB = {
+			expectedFileType = wrapper.framework;
+			isa = PBXFileReference;
+			name = SDL.framework;
+			path = Frameworks/SDL.framework;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4B4785057396F8005FB5DB = {
+			fileRef = AA4B4783057396F8005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B4786057396F8005FB5DB = {
+			fileRef = AA4B4784057396F8005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B47AA05739706005FB5DB = {
+			fileRef = AA4B425B05733D71005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B47AB05739708005FB5DB = {
+			fileRef = AA4B425A05733D71005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B47AC05739708005FB5DB = {
+			fileRef = AA4B425905733D71005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B47AD0573970A005FB5DB = {
+			fileRef = AA4B425805733D71005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B47AE0573970C005FB5DB = {
+			fileRef = AA4B425705733D71005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B47AF05739711005FB5DB = {
+			fileRef = AA4B425705733D71005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B47B005739711005FB5DB = {
+			fileRef = AA4B425805733D71005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B47B105739711005FB5DB = {
+			fileRef = AA4B425905733D71005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B47B205739711005FB5DB = {
+			fileRef = AA4B425A05733D71005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B47B305739711005FB5DB = {
+			fileRef = AA4B425B05733D71005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B47B405739711005FB5DB = {
+			fileRef = AA4B4737057396D3005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B47B505739711005FB5DB = {
+			fileRef = AA4B4783057396F8005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B47B605739711005FB5DB = {
+			fileRef = AA4B4784057396F8005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B59CA0573A7FC005FB5DB = {
+			expectedFileType = sourcecode.cpp.cpp;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = StepmaniaTemplates.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4B59CB0573A7FC005FB5DB = {
+			fileRef = AA4B59CA0573A7FC005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B59EE0573AA5B005FB5DB = {
+			expectedFileType = sourcecode.c.objc;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SDLMain.m;
+			path = "SDL-1.2.6/src/main/macosx/SDLMain.m";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4B59EF0573AA5B005FB5DB = {
+			fileRef = AA4B59EE0573AA5B005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA4B5CC40573AD81005FB5DB = {
+			expectedFileType = sourcecode.cpp.cpp;
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = wchar.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA4B5CC50573AD81005FB5DB = {
+			fileRef = AA4B5CC40573AD81005FB5DB;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		AA4F38C004E2D0B700D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -4942,8 +5161,6 @@
 				AA590A4B0541CF5800D02EE9,
 				AA590A4C0541CFE100D02EE9,
 				AA590A4D0541CFE100D02EE9,
-				AA590A690541D23900D02EE9,
-				AA590A6A0541D23A00D02EE9,
 				AA590A6C0541D25E00D02EE9,
 			);
 			isa = PBXFrameworksBuildPhase;
@@ -5236,18 +5453,6 @@
 			settings = {
 			};
 		};
-		AA590A690541D23900D02EE9 = {
-			fileRef = AAE443F804B1032300D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA590A6A0541D23A00D02EE9 = {
-			fileRef = AAE443F704B1032300D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AA590A6C0541D25E00D02EE9 = {
 			fileRef = 1058C7A1FEA54F0111CA2CBB;
 			isa = PBXBuildFile;
@@ -5415,6 +5620,7 @@
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				HEADER_SEARCH_PATHS = "../src Installer";
 				INFOPLIST_FILE = "Info-Installer.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OTHER_CFLAGS = "-Wwrite-strings";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -5750,24 +5956,6 @@
 			path = libresample.a;
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		AA67C0A00558AFFC00EF34A6 = {
-			fileRef = AAE443F804B1032300D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67C0A10558AFFC00EF34A6 = {
-			fileRef = AAE443F704B1032300D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67C0A40558B17A00EF34A6 = {
-			fileRef = AA170D2205549B340068A894;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		AA67C0A60558B19B00EF34A6 = {
 			fileRef = AA67BFDF0558752500EF34A6;
@@ -9382,6 +9570,8 @@
 				AA6EFE6304770CF7005F316C,
 				AA6EFE6404770CF7005F316C,
 				AA6EFE6004770CF7005F316C,
+				AA4B59CA0573A7FC005FB5DB,
+				AA4B59EE0573AA5B005FB5DB,
 			);
 			isa = PBXGroup;
 			name = StepMania;
@@ -11854,6 +12044,34 @@
 			sourceTree = "<group>";
 			usesTabs = 1;
 		};
+		AAB691F205704FA50078BED4 = {
+			expectedFileType = sourcecode.cpp.cpp;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = LightsDriver_SystemMessage.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAB691F305704FA50078BED4 = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = LightsDriver_SystemMessage.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAB691F405704FA50078BED4 = {
+			fileRef = AAB691F205704FA50078BED4;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAB691F505704FA50078BED4 = {
+			fileRef = AAB691F305704FA50078BED4;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		AAB895E504A9057100D02EE9 = {
 			expectedFileType = image.icns;
 			isa = PBXFileReference;
@@ -12203,6 +12421,8 @@
 				AAC6DCF10567663800B5D56F,
 				AAC6DCFC056846E600B5D56F,
 				AAC6DCFD056846E600B5D56F,
+				AAB691F205704FA50078BED4,
+				AAB691F305704FA50078BED4,
 			);
 			isa = PBXGroup;
 			path = Lights;
@@ -12268,18 +12488,6 @@
 			path = LightsDriver_LinuxSerial.h;
 			refType = 4;
 			sourceTree = "<group>";
-		};
-		AAC6DCFF056846E600B5D56F = {
-			fileRef = AAC6DCFD056846E600B5D56F;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AAC6DD500568510000B5D56F = {
-			fileRef = AAC6DCFC056846E600B5D56F;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		AAC6DDDE0569C71000B5D56F = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -12541,6 +12749,7 @@
 				AABE7D3F051F07E900D02EE9,
 				AABE7D3E051F07E900D02EE9,
 				AADB4E8F04D5263200D02EE9,
+				AA4B5CC40573AD81005FB5DB,
 			);
 			isa = PBXGroup;
 			path = Darwin;
