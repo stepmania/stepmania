@@ -40,7 +40,6 @@
 #define FADE_SECONDS				THEME->GetMetricF("MusicWheel","FadeSeconds")
 #define SWITCH_SECONDS				THEME->GetMetricF("MusicWheel","SwitchSeconds")
 #define ROULETTE_SWITCH_SECONDS		THEME->GetMetricF("MusicWheel","RouletteSwitchSeconds")
-#define FAST_SPIN_SWITCH_SECONDS	0.05 // THEME->GetMetricF("MusicWheel","RouletteSwitchSeconds")
 #define ROULETTE_SLOW_DOWN_SWITCHES	THEME->GetMetricI("MusicWheel","RouletteSlowDownSwitches")
 #define LOCKED_INITIAL_VELOCITY		THEME->GetMetricF("MusicWheel","LockedInitialVelocity")
 #define SCROLL_BAR_X				THEME->GetMetricF("MusicWheel","ScrollBarX")
@@ -50,7 +49,7 @@
 #define NUM_SECTION_COLORS			THEME->GetMetricI("MusicWheel","NumSectionColors")
 #define SECTION_COLORS( i )			THEME->GetMetricC("MusicWheel",ssprintf("SectionColor%d",i+1))
 
-const float WHEEL_SOUND_DELAY = 1/16.f;
+const int MAX_WHEEL_SOUND_SPEED = 15;
 float g_fItemSpacingY, g_fItemCurveX;	// cache
 
 inline RageColor GetNextSectionColor() {
@@ -812,16 +811,6 @@ void MusicWheel::Update( float fDeltaTime )
 	{
 		m_TimeBeforeMovingBegins -= fDeltaTime;
 		m_TimeBeforeMovingBegins = max(m_TimeBeforeMovingBegins, 0);
-		if(m_TimeBeforeMovingBegins == 0 && m_WheelState != STATE_LOCKED &&
-			fabsf(m_fPositionOffsetFromSelection) < 0.5f)
-		{
-			// spin as fast as possible
-			if(m_Moving == 1) NextMusic();
-			else PrevMusic();
-
-			if(m_WheelState == STATE_RANDOM_SPINNING)
-				m_iSwitchesLeftInSpinDown--;
-		}
 	}
 
 	// update wheel state
@@ -944,9 +933,9 @@ void MusicWheel::Update( float fDeltaTime )
 				LOG->Trace( "m_iSwitchesLeftInSpinDown id %d, m_fTimeLeftInState is %f", m_iSwitchesLeftInSpinDown, m_fTimeLeftInState );
 
 				if( m_iSwitchesLeftInSpinDown < 2 )
-					randomf(0,1) >= 0.5f ? NextMusic() : PrevMusic();
+					ChangeMusic(randomf(0,1) >= 0.5f? 1:-1);
 				else
-					NextMusic();
+					ChangeMusic(1);
 			}
 			break;
 		default:
@@ -954,7 +943,6 @@ void MusicWheel::Update( float fDeltaTime )
 			break;
 		}
 	}
-
 
 	if( m_WheelState == STATE_LOCKED )
 	{
@@ -984,14 +972,38 @@ void MusicWheel::Update( float fDeltaTime )
 			}
 		}
 	}
+	else if( IsMoving() )
+	{
+		/* We're automatically moving.  Move linearly, and don't clamp
+		 * to the selection. */
+		float fSpinSpeed = m_SpinSpeed*m_Moving;
+		m_fPositionOffsetFromSelection -= fSpinSpeed*fDeltaTime;
+
+		/* Make sure that we don't go further than 1 away, in case the
+		 * speed is very high or we miss a lot of frames. */
+		m_fPositionOffsetFromSelection  = clamp(m_fPositionOffsetFromSelection, -1.0f, 1.0f);
+		
+		/* If it passed the selection, move again. */
+		if((m_Moving == -1 && m_fPositionOffsetFromSelection >= 0) ||
+		   (m_Moving == 1 && m_fPositionOffsetFromSelection <= 0))
+		{
+			ChangeMusic(m_Moving);
+
+			if(PREFSMAN->m_iMusicWheelSwitchSpeed < MAX_WHEEL_SOUND_SPEED)
+				m_soundChangeMusic.Play();
+		}
+
+		if(PREFSMAN->m_iMusicWheelSwitchSpeed >= MAX_WHEEL_SOUND_SPEED &&
+			m_MovingSoundTimer.PeekDeltaTime() >= 1.0f / MAX_WHEEL_SOUND_SPEED)
+		{
+			m_MovingSoundTimer.GetDeltaTime();
+			m_soundChangeMusic.Play();
+		}
+	}
 	else
 	{
 		// "rotate" wheel toward selected song
-		float fSpinSpeed;
-		if( m_Moving && m_TimeBeforeMovingBegins == 0 )
-			fSpinSpeed = m_SpinSpeed;
-		else
-			fSpinSpeed = 0.2f + fabsf(m_fPositionOffsetFromSelection)/SWITCH_SECONDS;
+		float fSpinSpeed = 0.2f + fabsf(m_fPositionOffsetFromSelection)/SWITCH_SECONDS;
 
 		if( m_fPositionOffsetFromSelection > 0 )
 		{
@@ -1009,92 +1021,23 @@ void MusicWheel::Update( float fDeltaTime )
 }
 
 
-void MusicWheel::PrevMusic()
+void MusicWheel::ChangeMusic(int dist)
 {
-	if( m_WheelState == STATE_LOCKED )
-	{
-		m_fLockedWheelVelocity = LOCKED_INITIAL_VELOCITY;
-		m_soundLocked.Play();
-		return;
-	}
-
-	if( fabsf(m_fPositionOffsetFromSelection) > 0.5f )	// wheel is busy spinning
-		return;
-	
-	switch( m_WheelState )
-	{
-	case STATE_SELECTING_MUSIC:
-	case STATE_ROULETTE_SPINNING:
-	case STATE_ROULETTE_SLOWING_DOWN:
-	case STATE_RANDOM_SPINNING:
-		break;	// fall through
-	default:
-		return;	// don't fall through
-	}
-
-	// decrement m_iSelection
-	m_iSelection--;
+	m_iSelection += dist;
 	if( m_iSelection < 0 )
 		m_iSelection = m_CurWheelItemData.size()-1;
-
-	RebuildWheelItemDisplays();
-
-	m_fPositionOffsetFromSelection -= 1;
-
-	/* If we're moving fast, only play the change music occasionally.
-	 * If we play full throttle, we'll play as many as the sound driver
-	 * will do, which is slow.  This doesn't sound too great, though
-	 * it's better than the intermittent effect we had before ... */
-	if(!m_Moving || m_MovingSoundTimer.PeekDeltaTime() >= WHEEL_SOUND_DELAY)
-	{
-		m_MovingSoundTimer.GetDeltaTime();
-		m_soundChangeMusic.Play();
-	}
-
-	SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
-}
-
-void MusicWheel::NextMusic()
-{
-	if( m_WheelState == STATE_LOCKED )
-	{
-		m_fLockedWheelVelocity = -LOCKED_INITIAL_VELOCITY;
-		m_soundLocked.Play();
-		return;
-	}
-
-	if( fabsf(m_fPositionOffsetFromSelection) > 0.5f )	// wheel is very busy spinning
-		return;
-	
-	switch( m_WheelState )
-	{
-	case STATE_SELECTING_MUSIC:
-	case STATE_ROULETTE_SPINNING:
-	case STATE_ROULETTE_SLOWING_DOWN:
-	case STATE_RANDOM_SPINNING:
-		break;
-	default:
-		LOG->Trace( "NextMusic() ignored" );
-		return;	// don't continue
-	}
-
-
-	// increment m_iSelection
-	m_iSelection++;
-	if( m_iSelection > int(m_CurWheelItemData.size()-1) )
+	else if( m_iSelection > int(m_CurWheelItemData.size()-1) )
 		m_iSelection = 0;
 
 	RebuildWheelItemDisplays();
 
-	m_fPositionOffsetFromSelection += 1;
-	
-	if(!m_Moving || m_MovingSoundTimer.PeekDeltaTime() >= WHEEL_SOUND_DELAY)
-	{
-		m_MovingSoundTimer.GetDeltaTime();
-		m_soundChangeMusic.Play();
-	}
+	m_fPositionOffsetFromSelection += dist;
 
 	SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
+
+	/* If we're moving automatically, don't play this; it'll be called in Update. */
+	if(!IsMoving())
+		m_soundChangeMusic.Play();
 }
 
 bool MusicWheel::PrevSort()
@@ -1262,8 +1205,7 @@ bool MusicWheel::IsRouletting() const
 
 int MusicWheel::IsMoving() const
 {
-	if(!m_Moving) return false;
-	return m_TimeBeforeMovingBegins == 0;
+	return m_Moving && m_TimeBeforeMovingBegins == 0;
 }
 
 void MusicWheel::TweenOnScreen(bool changing_sort)
@@ -1395,25 +1337,41 @@ void MusicWheel::Move(int n)
 	if(n == m_Moving)
 		return;
 
-	/* Give us one last chance to move.  This will ensure that we're at least
-	 * 0.5f from the selection, so we have a chance to spin down smoothly. */
-	Update(0);
+	if( m_WheelState == STATE_LOCKED )
+	{
+		if(n)
+		{
+			m_fLockedWheelVelocity = LOCKED_INITIAL_VELOCITY;
+			m_soundLocked.Play();
+		}
+		return;
+	}
 
-	bool Stopping = (m_Moving != 0 && n == 0 && m_TimeBeforeMovingBegins == 0);
+	/* If we're not selecting, discard this.  We won't ignore it; we'll
+	 * get called again every time the key is repeated. */
+	if( m_WheelState != STATE_SELECTING_MUSIC )
+		return;
+
+	if(m_Moving != 0 && n == 0 && m_TimeBeforeMovingBegins == 0)
+	{
+		/* We were moving, and now we're stopping.  If we're really close to
+		 * the selection, move to the next one, so we have a chance to spin down
+		 * smoothly. */
+		if(fabsf(m_fPositionOffsetFromSelection) < 0.25f )
+			ChangeMusic(m_Moving);
+
+		/* Make sure the user always gets an SM_SongChanged when
+		 * Moving() is 0, so the final banner, etc. always gets set. */
+		SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
+	}
 
 	m_TimeBeforeMovingBegins = TIME_BEFORE_SLOW_REPEATS;
-	m_SpinSpeed = 1.0f/FAST_SPIN_SWITCH_SECONDS;
+	m_SpinSpeed = float(PREFSMAN->m_iMusicWheelSwitchSpeed);
 	m_Moving = n;
 
-	if(Stopping)
-	{
-		/* Make sure the user always gets an SM_SongChanged when
-		 * Moving() is 0, so the final banner, etc. always get set. */
-		SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
-	} else {
-		if(n == 1)
-			NextMusic();
-		else if(n == -1)
-			PrevMusic();
-	}
+	if( fabsf(m_fPositionOffsetFromSelection) > 0.5f )	// wheel is very busy spinning
+		return;
+	
+	if(m_Moving)
+		ChangeMusic(m_Moving);
 }

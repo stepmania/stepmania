@@ -131,8 +131,7 @@ protected:
 	void SetOpenGroup(CString group, SongSortOrder so = NUM_SORT_ORDERS);
 	bool SelectSong(const Song *p);
 	bool SelectCourse(const Course *p);
-	void NextMusic();
-	void PrevMusic();
+	void ChangeMusic(int dist); /* +1 or -1 */
 
 	ScrollBar			m_ScrollBar;
 	Sprite				m_sprSelectionOverlay;
