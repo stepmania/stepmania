@@ -364,13 +364,6 @@ void ForceCrashHandler( const char *reason )
 
 void ForceCrashHandlerDeadlock( CString reason, uint64_t iID )
 {
-	/* How can this possibly work without suspending the thread first? What
-	 * stops the thread from returning from the function it was in when
-	 * GetThreadBacktraceContext was called and then changing the stack?
-	 */
-	/* There's just no good way to pause other threads, that doesn't result in us
-	 * being paused, weird stuff happening to the TTY, or kernel hung processes.
-	 * We just hope that we backtrace in time (which we almost always do). */
 #if defined(DARWIN)
 	SuspendThread(iID);
 #endif
