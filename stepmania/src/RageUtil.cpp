@@ -348,7 +348,15 @@ bool CreateDirectories( CString Path )
 		{
 			if( LOG )
 				LOG->Warn("Couldn't create %s: %s", curpath.c_str(), strerror(errno) );
-			return false;
+
+			/* When creating a directory that already exists over Samba, Windows is
+			 * returning ENOENT instead of EEXIST.  Continue if we get that error, but
+			 * log it just in case it was a real ENOENT.  (Otherwise, we'll fail to
+			 * create a directory when we could have succeeded.) */
+			if( errno != ENOENT )
+				return false;
+			else
+				continue;
 		}
 
 		/* Make sure it's a directory. */
