@@ -7,7 +7,7 @@ public:
 	CryptManager();
 	~CryptManager();
 
-	static void GenerateRSAKey(unsigned int keyLength, const char *privFilename, const char *pubFilename, const char *seed );
+	static void GenerateRSAKey( unsigned int keyLength, CString privFilename, CString pubFilename, CString seed );
 
 	static void SignFile( CString sPath );
 	static bool VerifyFile( CString sPath );
@@ -15,7 +15,7 @@ public:
 	static CString GetFileSignature( CString sPath );
 	static bool VerifyFile( CString sPath, CString sSignature );
 
-	static void DigestFile(const char *filename);
+	static void DigestFile( CString fn );
 
 	static CString GetPublicKeyFileName();
 };
