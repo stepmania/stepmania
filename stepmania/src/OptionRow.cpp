@@ -408,7 +408,7 @@ void OptionRow::PositionUnderlines()
 
 			bool bSelected = m_vbSelected[pnTakeSelectedFrom][ iChoiceWithFocus ];
 			bool bHidden = !bSelected || m_bHidden;
-			if( !SHOW_UNDERLINES )
+			if( !(bool)SHOW_UNDERLINES )
 				bHidden = true;
 
 			if( ul.GetDestY() != m_fY )
