@@ -512,6 +512,7 @@ static void DeleteDuplicateSteps( Song *song, vector<Steps*> &vSteps )
 				song->GetSongDir().c_str(), s1->GetDescription().c_str(), s1->GetMeter() );
 				
 			song->RemoveNotes(s2);
+			vSteps.erase(vSteps.begin()+j);
 			--j;
 		}
 	}
