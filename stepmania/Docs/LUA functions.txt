@@ -35,7 +35,7 @@ LuaFunction_NoArgs( DayOfYear, 			GetLocalTime().tm_yday );
 LuaFunction_NoArgs( IsAnyPlayerUsingMemoryCard,	IsAnyPlayerUsingMemoryCard() )
 LuaFunction_NoArgs( IsNetConnected,		NSMAN->useSMserver )
 LuaFunction_NoArgs( IsNetSMOnline,		NSMAN->isSMOnline )
-LuaFunction_NoArgs( IsSMOnlineLoggedIn,		NSMAN->isSMOLoggedIn )
+LuaFunction_PlayerNumber( IsSMOnlineLoggedIn,	NSMAN->isSMOLoggedIn[pn] )
 LuaFunction_Str( Song, 				SONGMAN->FindSong( str ) );
 LuaFunction_Song( SongFullDisplayTitle, 	p->GetFullDisplayTitle() );
 LuaFunction_Steps( StepsMeter, 			p->GetMeter() );
