@@ -154,7 +154,6 @@ void RageDisplay::SetupExtensions()
 {
 	double fGLVersion = atof( (const char *) glGetString(GL_VERSION) );
 	m_oglspecs->glVersion = int(roundf(fGLVersion * 10));
-	LOG->Trace( "OpenGL version %.1f", m_oglspecs->glVersion / 10.);
 	GetGLExtensions(m_oglspecs->glExts);
 
 	/* Check for extensions: */
@@ -347,7 +346,7 @@ void RageDisplay::DumpOpenGLDebugInfo()
 			/* We chose a bogus format. */
 			LOG->Warn("%s", str.GetString());
 		} else
-			LOG->Trace("%s", str.GetString());
+			LOG->Info("%s", str.GetString());
 	}
 #endif
 }
