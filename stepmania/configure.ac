@@ -19,6 +19,15 @@ test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="-Wall -W -Wno-unused -Wno-switch"
 test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="-Wall -W -Wno-unused -Wno-switch"
 test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS=""
 
+AC_ARG_WITH(debug, AC_HELP_STRING([--with-debug], [Enable debug mode]), with_debug=$withval, with_debug=no)
+if test "$with_debug" = "yes"; then
+	test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="$CFLAGS -g"
+	test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="$CXXFLAGS -g"
+else
+	test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="$CFLAGS -O3"
+	test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="$CXXFLAGS -O3"
+fi
+
 SM_OPENGL
 
 AM_PATH_SDL(1.2.6,enable_sdl=yes,enable_sdl=no)
