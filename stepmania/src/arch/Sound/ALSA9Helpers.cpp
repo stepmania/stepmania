@@ -7,9 +7,9 @@
 
 /* int err; must be defined before using this macro */
 #define ALSA_CHECK(x) \
-       if ( err < 0 ) { LOG->Info("ALSA9: %s: %s (%i)", x, dsnd_strerror(err), err); return false; }
+       if ( err < 0 ) { LOG->Info("ALSA9: %s: %s", x, dsnd_strerror(err)); return false; }
 #define ALSA_ASSERT(x) \
-        if (err < 0) { LOG->Trace("ALSA9: %s: %s (%i)", x, dsnd_strerror(err), err); }
+        if (err < 0) { LOG->Trace("ALSA9: %s: %s", x, dsnd_strerror(err)); }
 
 bool Alsa9Buf::SetHWParams()
 {
@@ -76,10 +76,9 @@ void Alsa9Buf::GetSoundCardDebugInfo()
 		snd_ctl_t *handle;
 		int err;
 		err = dsnd_ctl_open( &handle, id, 0 );
-		ALSA_ASSERT("dsnd_pcm_sw_params_set_stop_threshold");
 		if ( err < 0 )
 		{
-			LOG->Info( "Couldn't open card #%i (\"%s\"): %s", card, id.c_str(), dsnd_strerror(err) );
+			LOG->Info( "Couldn't open card #%i (\"%s\") to probe: %s", card, id.c_str(), dsnd_strerror(err) );
 			continue;
 		}
 

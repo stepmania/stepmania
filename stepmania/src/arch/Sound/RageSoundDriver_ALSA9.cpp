@@ -231,13 +231,12 @@ try {
 			for(int n = 0; n < i; ++n)
 				delete stream_pool[n];
 
-			if(i)
-			{
-				/* We created at least one hardware buffer. */
-				LOG->Trace("Could only create %i buffers; need at least 8 (failed with %s).  Hardware ALSA driver can't be used.", i, e.what());
-				RageException::ThrowNonfatal("Driver unusable (not enough hardware buffers)");
-			}
-			RageException::ThrowNonfatal("Driver unusable (no hardware buffers)");
+			if( !i )
+				RageException::ThrowNonfatal( "%s", e.what() );
+
+			/* We created at least one hardware buffer. */
+			LOG->Trace("Could only create %i buffers; need at least 8 (failed with %s).  Hardware ALSA driver can't be used.", i, e.what());
+			RageException::ThrowNonfatal("Driver unusable (not enough mixing streams)");
 		}
 
 		stream *s = new stream;
