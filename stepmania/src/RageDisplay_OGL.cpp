@@ -411,7 +411,7 @@ CString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRender
 	{
 		if( !bAllowUnacceleratedRenderer )
 			return "Your system is reporting that direct rendering is not available.  "
-				"Please obtain an updated driver from your video card manufacturer." );
+				"Please obtain an updated driver from your video card manufacturer.";
 
 		LOG->Warn("Direct rendering is not enabled!");
 	}
