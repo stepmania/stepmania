@@ -4,7 +4,7 @@
 
  Desc: A graphic displayed in the FootMeter during Dancing.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -29,12 +29,12 @@ public:
 		SetNumFeet( 0, "" );
 	};
 
-	void SetFromSteps( Pattern* pSteps )
+	void SetFromNoteMetadata( NoteMetadata* pNoteMetadata )
 	{
-		if( pSteps != NULL )
+		if( pNoteMetadata != NULL )
 		{
 			SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-			SetNumFeet( pSteps->m_iNumFeet, pSteps->m_sDescription );
+			SetNumFeet( pNoteMetadata->m_iMeter, pNoteMetadata->m_sDescription );
 		}
 		else
 		{

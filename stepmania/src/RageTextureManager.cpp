@@ -5,7 +5,7 @@
 
  Desc: Interface for loading and releasing textures.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -18,6 +18,7 @@
 #include "RageMovieTexture.h"
 #include "RageUtil.h"
 #include "RageHelper.h"
+#include "ErrorCatcher/ErrorCatcher.h"
 
 RageTextureManager*		TEXTURE		= NULL;
 
@@ -139,7 +140,7 @@ void RageTextureManager::UnloadTexture( CString sTexturePath )
 	}
 	else // texture not found
 	{
-		HELPER.FatalError( ssprintf("Tried to Unload texture '%s' that wasn't loaded.", sTexturePath) );
+		FatalError( ssprintf("Tried to Unload texture '%s' that wasn't loaded.", sTexturePath) );
 	}
 	
 }

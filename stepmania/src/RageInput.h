@@ -4,7 +4,7 @@
 
  Desc: Wrapper for DirectInput.  Generates InputEvents.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -25,10 +25,10 @@ const int NUM_JOYSTICKS = 4;
 
 enum InputDevice {
 	DEVICE_KEYBOARD = 0,
-	DEVICE_JOYSTICK1,
-	DEVICE_JOYSTICK2,
-	DEVICE_JOYSTICK3,
-	DEVICE_JOYSTICK4,
+	DEVICE_JOY1,
+	DEVICE_JOY2,
+	DEVICE_JOY3,
+	DEVICE_JOY4,
 	NUM_INPUT_DEVICES,	// leave this at the end
 	DEVICE_NONE			// means this is NULL
 };
@@ -75,6 +75,8 @@ struct DeviceInput
 public:
 	InputDevice device;
 	int button;
+	enum EventType { EVENT_PRESS, EVENT_REPEAT };	// maybe add EVENT_RELEASE later?
+	float fTimeHeld;	// only relevant for EVENT_REPEAT 
 
 	DeviceInput() { device=DEVICE_NONE; };
 	DeviceInput( InputDevice d, int b ) { device=d; button=b; };
@@ -95,9 +97,6 @@ public:
 
 
 
-typedef CArray<DeviceInput, DeviceInput> DeviceInputArray;
-
-
 class RageInput
 {
 	// Our Windows Handle
@@ -116,15 +115,15 @@ public:
 
 private:
 	// Arrays for Keyboard Data
-	byte m_keys[256];
-	byte m_oldKeys[256];
+	byte m_keys[NUM_KEYBOARD_BUTTONS];
+	byte m_oldKeys[NUM_KEYBOARD_BUTTONS];
 
 	// DirectInput mouse state structure
 	DIMOUSESTATE2 m_mouseState;
 
-	// Joystick data for 4 controllers
-    DIJOYSTATE2 m_joyState[4];
-    DIJOYSTATE2 m_oldJoyState[4];
+	// Joystick data for NUM_JOYSTICKS controllers
+    DIJOYSTATE2 m_joyState[NUM_JOYSTICKS];
+    DIJOYSTATE2 m_oldJoyState[NUM_JOYSTICKS];
 
 	INT m_AbsPosition_x;
 	INT m_AbsPosition_y;
@@ -141,8 +140,9 @@ public:
 	// Release all DirectInput Resources
 	VOID Release();
 	// Get our Devices State
-	HRESULT GetDeviceInputs( DeviceInputArray &listDeviceInputs );
-	BOOL IsBeingPressed( DeviceInput di );
+	HRESULT Update();
+	bool IsBeingPressed( DeviceInput di );
+	bool WasBeingPressed( DeviceInput di );
 
 	LPDIRECTINPUT8		 GetDirectInput() { return m_pDI; }
 	LPDIRECTINPUTDEVICE8 GetMouseDevice() { return m_pMouse; }

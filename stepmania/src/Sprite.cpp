@@ -5,7 +5,7 @@
 
  Desc: A bitmap actor that animates and moves around.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -16,6 +16,7 @@
 #include "IniFile.h"
 #include <math.h>
 #include "RageHelper.h"
+#include "ErrorCatcher/ErrorCatcher.h"
 
 
 Sprite::Sprite()
@@ -74,11 +75,11 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath, DWORD dwHints, bool bForce
 	IniFile ini;
 	ini.SetPath( m_sSpritePath );
 	if( !ini.ReadFile() )
-		HELPER.FatalError( ssprintf("Error opening Sprite file '%s'.", m_sSpritePath) );
+		FatalError( ssprintf("Error opening Sprite file '%s'.", m_sSpritePath) );
 
 	CString sTextureFile = ini.GetValue( "Sprite", "Texture" );
 	if( sTextureFile == "" )
-		HELPER.FatalError( ssprintf("Error reading  value 'Texture' from %s.", m_sSpritePath) );
+		FatalError( ssprintf("Error reading  value 'Texture' from %s.", m_sSpritePath) );
 
 	CString sTexturePath = sFontDir + sTextureFile;	// save the path of the new texture
 
@@ -99,7 +100,7 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath, DWORD dwHints, bool bForce
 		
 		m_iStateToFrame[i] = ini.GetValueI( "Sprite", sFrameKey );
 		if( m_iStateToFrame[i] >= m_pTexture->GetNumFrames() )
-			HELPER.FatalError( ssprintf("In '%s', %s is %d, but the texture %s only has %d frames.",
+			FatalError( ssprintf("In '%s', %s is %d, but the texture %s only has %d frames.",
 						m_sSpritePath, sFrameKey, m_iStateToFrame[i], sTexturePath, m_pTexture->GetNumFrames()) );
 		m_fDelay[i] = (float)ini.GetValueF( "Sprite", sDelayKey );
 
@@ -120,10 +121,18 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath, DWORD dwHints, bool bForce
 	return true;
 }
 
-bool Sprite::LoadTexture( CString sTexturePath, DWORD dwHints, bool bForceReload )
+void Sprite::UnloadTexture()
 {
 	if( m_pTexture != NULL )			// If there was a previous bitmap...
 		TEXTURE->UnloadTexture( m_sTexturePath );	// Unload it.
+	m_pTexture = NULL;
+	m_sTexturePath = "";
+}
+
+bool Sprite::LoadTexture( CString sTexturePath, DWORD dwHints, bool bForceReload )
+{
+	if( m_pTexture != NULL )			// If there was a previous bitmap...
+		UnloadTexture();
 
 
 	m_sTexturePath = sTexturePath;

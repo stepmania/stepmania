@@ -5,7 +5,7 @@
 
  Desc: See header.
 
- Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -14,12 +14,28 @@
 #include "IniFile.h"
 #include "FontManager.h"
 #include "RageHelper.h"
+#include "ErrorCatcher/ErrorCatcher.h"
+
+
+D3DXCOLOR RAINBOW_COLORS[] = { 
+	D3DXCOLOR( 1.0f, 0.2f, 0.4f, 1 ),	// red
+	D3DXCOLOR( 0.8f, 0.2f, 0.6f, 1 ),	// pink
+	D3DXCOLOR( 0.4f, 0.3f, 0.5f, 1 ),	// purple
+	D3DXCOLOR( 0.2f, 0.6f, 1.0f, 1 ),	// sky blue
+	D3DXCOLOR( 0.2f, 0.8f, 0.8f, 1 ),	// sea green
+	D3DXCOLOR( 0.2f, 0.8f, 0.4f, 1 ),	// green
+	D3DXCOLOR( 1.0f, 0.8f, 0.2f, 1 ),	// orange
+};
+const int NUM_RAINBOW_COLORS = sizeof(RAINBOW_COLORS) / sizeof(D3DXCOLOR);
 
 
 BitmapText::BitmapText()
 {
 	m_HorizAlign = align_center;
 	m_VertAlign = align_middle;
+
+	m_fShadowLength = 2;
+
 
 	m_pFont = NULL;
 
@@ -33,6 +49,8 @@ BitmapText::BitmapText()
 		m_iLineLengths[i] = -1;
 		m_iLineWidths[i] = 1;
 	}
+
+	m_bRainbow = false;
 }
 
 BitmapText::~BitmapText()
@@ -161,7 +179,7 @@ void BitmapText::RebuildVertexBuffer()
 			const char c = szLine[j];
 			const int iFrameNo = m_pFont->m_iCharToFrameNo[c];
 			if( iFrameNo == -1 )	// this font doesn't impelemnt this character
-				HELPER.FatalError( ssprintf("The font '%s' does not implement the character '%c'", m_sFontFilePath, c) );
+				FatalError( ssprintf("The font '%s' does not implement the character '%c'", m_sFontFilePath, c) );
 			const int iCharWidth = m_pFont->m_iFrameNoToWidth[iFrameNo];
 
 			// HACK:
@@ -288,14 +306,28 @@ void BitmapText::RenderPrimitives()
 		//////////////////////
 		pVB->Lock( 0, 0, (BYTE**)&v, 0 );
 
-		for( int i=0; i<m_iNumV; i++ )
+		if( m_bRainbow )
 		{
-			if( i%2 == 0 )	// this is a bottom vertex
-				v[i].color = m_temp_colorDiffuse[0];
-			else				// this is a top vertex
-				v[i].color = m_temp_colorDiffuse[1];
+			int color_index = (GetTickCount() / 200) % NUM_RAINBOW_COLORS;
+			for( int i=0; i<m_iNumV; i+=6 )
+			{
+				const D3DXCOLOR color = RAINBOW_COLORS[color_index];
+				for( int j=i; j<i+6; j++ )
+					v[j].color = color;
+
+				color_index = (color_index+1)%NUM_RAINBOW_COLORS;
+			}
 		}
-		
+		else
+		{
+			for( int i=0; i<m_iNumV; i++ )
+			{
+				if( i%2 == 0 )	// this is a bottom vertex
+					v[i].color = m_temp_colorDiffuse[0];
+				else				// this is a top vertex
+					v[i].color = m_temp_colorDiffuse[1];
+			}
+		}
 		
 		pVB->Unlock();
 

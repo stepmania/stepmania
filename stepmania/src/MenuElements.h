@@ -4,7 +4,7 @@
 
  Desc: Base class for menu Windows.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 #ifndef _MenuElements_H_

@@ -4,7 +4,7 @@
 
  Desc: Based on the DShowTextures example in the DX8 SDK.
 
- Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */

@@ -5,7 +5,7 @@
 
  Desc: Base class for all objects that appear on the screen.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -40,7 +40,7 @@ Actor::Actor()
 
 	if( PREFS )	m_bShadow = PREFS->m_GraphicOptions.m_bShadows;
 	else		m_bShadow = true;
-	m_fShadowLength = 5;
+	m_fShadowLength = 4;
 
 	m_bBlendAdd = false;
 }
@@ -278,7 +278,7 @@ void Actor::BeginTweening( float time, TweenType tt )
 
 void Actor::BeginTweeningQueued( float time, TweenType tt )
 {
-	ASSERT( time > 0 );
+	ASSERT( time >= 0 );
 
 	// add a new TweenState to the tail, and initialize it
 	m_QueuedTweens.Add( TweenState() );

@@ -5,7 +5,7 @@
 
  Desc: See header.
 
- Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -32,6 +32,7 @@
 #include "DXUtil.h"
 #include "RageUtil.h"
 #include "RageHelper.h"
+#include "ErrorCatcher/ErrorCatcher.h"
 
 #include <stdio.h>
 
@@ -297,26 +298,26 @@ VOID RageMovieTexture::Create()
 	// Initialize the filter graph find and get information about the
 	// video (dimensions, color depth, etc.)
 	if( FAILED( hr = InitDShowTextureRenderer() ) )
-        HELPER.FatalErrorHr( hr, "Could not initialize the DirectShow Texture Renderer!" );
+        FatalErrorHr( hr, "Could not initialize the DirectShow Texture Renderer!" );
 
 	if( FAILED( hr = CreateD3DTexture() ) )
-        HELPER.FatalErrorHr( hr, "Could not create the D3D Texture!" );
+        FatalErrorHr( hr, "Could not create the D3D Texture!" );
 
 	// Pass the D3D texture to our TextureRenderer so it knows 
 	// where to render new movie frames to.
 	if( FAILED( hr = m_pCTR->SetRenderTarget( this ) ) )
-        HELPER.FatalErrorHr( hr, "RageMovieTexture: SetRenderTarget failed." );
+        FatalErrorHr( hr, "RageMovieTexture: SetRenderTarget failed." );
 
 	// Start the graph running
     if( FAILED( hr = PlayMovie() ) )
-        HELPER.FatalErrorHr( hr, "Could not run the DirectShow graph." );
+        FatalErrorHr( hr, "Could not run the DirectShow graph." );
 
 }
 
 
 void HandleDivXError()
 {
-	HELPER.FatalError( 
+	FatalError( 
 		"Could not locate the DivX video codec.\n"
 		"DivX is required to movie textures and must\n"
 		"be installed before running the application.\n\n"
@@ -338,17 +339,17 @@ HRESULT RageMovieTexture::InitDShowTextureRenderer()
     
     // Create the filter graph
     if( FAILED( m_pGB.CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC) ) )
-        HELPER.FatalErrorHr( hr, "Could not create CLSID_FilterGraph!" );
+        FatalErrorHr( hr, "Could not create CLSID_FilterGraph!" );
     
     // Create the Texture Renderer object
     m_pCTR = new CTextureRenderer(NULL, &hr);
     if( FAILED(hr) )
-        HELPER.FatalErrorHr( hr, "Could not create texture renderer object!" );
+        FatalErrorHr( hr, "Could not create texture renderer object!" );
     
     // Get a pointer to the IBaseFilter on the TextureRenderer, add it to graph
     pFTR = m_pCTR;
     if( FAILED( hr = m_pGB->AddFilter(pFTR, L"TEXTURERENDERER" ) ) )
-        HELPER.FatalErrorHr( hr, "Could not add renderer filter to graph!" );
+        FatalErrorHr( hr, "Could not add renderer filter to graph!" );
     
     // convert movie file path to wide char string
 	WCHAR wFileName[MAX_PATH];
@@ -364,21 +365,21 @@ HRESULT RageMovieTexture::InitDShowTextureRenderer()
     if( FAILED( hr = m_pGB->AddSourceFilter( wFileName, L"SOURCE", &pFSrc ) ) )		// if this fails, it's probably because the user doesn't have DivX installed
 	{
 		HandleDivXError();
-        HELPER.FatalErrorHr( hr, "Could not create source filter to graph!" );
+        FatalErrorHr( hr, "Could not create source filter to graph!" );
 	}
     
     // Find the source's output and the renderer's input
     if( FAILED( hr = pFTR->FindPin( L"In", &pFTRPinIn ) ) )
-        HELPER.FatalErrorHr( hr, "Could not find input pin!" );
+        FatalErrorHr( hr, "Could not find input pin!" );
 
     if( FAILED( hr = pFSrc->FindPin( L"Output", &pFSrcPinOut ) ) )
-        HELPER.FatalErrorHr( hr, "Could not find output pin!" );
+        FatalErrorHr( hr, "Could not find output pin!" );
     
     // Connect these two filters
     if( FAILED( hr = m_pGB->Connect( pFSrcPinOut, pFTRPinIn ) ) )
 	{
  		HandleDivXError();
-		HELPER.FatalErrorHr( hr, "Could not connect pins!" );
+		FatalErrorHr( hr, "Could not connect pins!" );
 	}
     
     // Get the graph's media control, event & position interfaces
@@ -408,25 +409,25 @@ HRESULT RageMovieTexture::CreateD3DTexture()
                     m_iSourceHeight, m_iSourceHeight,
                     1, 0, 
                     D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &m_pd3dTexture[0] ) ) )
-        HELPER.FatalErrorHr( hr, "Could not create the D3DX texture!" );
+        FatalErrorHr( hr, "Could not create the D3DX texture!" );
 
     if( FAILED( hr = D3DXCreateTexture(m_pd3dDevice,
                     m_iSourceHeight, m_iSourceHeight,
                     1, 0, 
                     D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &m_pd3dTexture[1] ) ) )
-        HELPER.FatalErrorHr( hr, "Could not create the D3DX texture!" );
+        FatalErrorHr( hr, "Could not create the D3DX texture!" );
 
     // D3DXCreateTexture can silently change the parameters on us
     D3DSURFACE_DESC ddsd;
     if ( FAILED( hr = m_pd3dTexture[0]->GetLevelDesc( 0, &ddsd ) ) )
-        HELPER.FatalErrorHr( hr, "Could not get level Description of D3DX texture!" );
+        FatalErrorHr( hr, "Could not get level Description of D3DX texture!" );
 
 	m_iTextureWidth = ddsd.Width;
 	m_iTextureHeight = ddsd.Height;
 	m_TextureFormat = ddsd.Format;
     if( m_TextureFormat != D3DFMT_A8R8G8B8 &&
 		m_TextureFormat != D3DFMT_A1R5G5B5 )
-        HELPER.FatalError( "Texture is format we can't handle! Format = 0x%x!", m_TextureFormat );
+        FatalError( "Texture is format we can't handle! Format = 0x%x!", m_TextureFormat );
 
 
 	return S_OK;
@@ -438,7 +439,7 @@ HRESULT RageMovieTexture::PlayMovie()
 
     // Start the graph running;
     if( FAILED( hr = m_pMC->Run() ) )
-        HELPER.FatalErrorHr( hr, "Could not run the DirectShow graph." );
+        FatalErrorHr( hr, "Could not run the DirectShow graph." );
 
     return S_OK;
 }

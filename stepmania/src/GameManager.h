@@ -1,40 +1,64 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
  Class: GameManager
 
- Desc: Manages "Game" and "StyleDef", and "Instrument" definitions, which define
-	different ways of playing - like "dance" and "pump".
+ Desc: Manages GameDefs (which define different games, like "dance" and "pump")
+	and StyleDefs (which define different games, like "single" and "couple")
 
- Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-#ifndef _GameManager_H_
-#define _GameManager_H_
-
+#include "GameDef.h"
 #include "StyleDef.h"
+
+
+const int NUM_GAME_DEFS = 1;
+
 
 class GameManager
 {
 public:
 	GameManager();
-	~GameManager();
 
-	DanceStyle		m_DanceStyle;			// the current style
+	void SwitchGame( CString sGame )
+	{
+		m_sCurrentGame = sGame;
+		m_pCurrentGameDef = GetGameDef( sGame );
+		ASSERT( m_pCurrentGameDef != NULL );
+	};
+	void SwitchStyle( CString sStyle )
+	{
+		m_sCurrentStyle = sStyle;
+		m_pCurrentStyleDef = GetStyleDef( m_sCurrentGame, sStyle );
+		ASSERT( m_pCurrentStyleDef != NULL );
+	};
 
+	CString		m_sCurrentGame;		// currently only "dance"
+	CString		m_sCurrentStyle;	// currently only "single", "versus", "double", "couple", "solo"
+	inline GameDef*		GetCurrentGameDef()	{ return m_pCurrentGameDef; };
+	inline StyleDef*	GetCurrentStyleDef() { return m_pCurrentStyleDef; };
 
 	bool IsPlayerEnabled( PlayerNumber PlayerNo );
 
-	StyleDef GetStyleDef( DanceStyle mode );
-	StyleDef GetCurrentStyleDef()	{ return GetStyleDef(m_DanceStyle); };
+	// graphic stuff
+	CString GetPathToGraphic( const PlayerNumber p, const NoteColumn col, const GameButtonGraphic gbg )
+	{
+		StyleInput si( p, col );
+		GameInput gi = GetCurrentStyleDef()->StyleInputToGameInput( si );
+		InstrumentButton b = gi.button;
+		return GetCurrentGameDef()->GetPathToGraphic( b, gbg );
+	}
+
 
 protected:
+	GameDef*	m_pCurrentGameDef;
+	StyleDef*	m_pCurrentStyleDef;
 
+	GameDef*	GetGameDef( CString sGame );
+	StyleDef*	GetStyleDef( CString sGame, CString sStyle );
 };
 
 
 extern GameManager*	GAME;	// global and accessable from anywhere in our program
-
-
-#endif

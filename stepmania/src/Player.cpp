@@ -1,11 +1,11 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- Class: Pattern
+ Class: NoteMetadata
 
  Desc: See header.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -16,6 +16,8 @@
 #include "ThemeManager.h"
 #include "GameTypes.h"
 #include "ArrowEffects.h"
+#include "GameManager.h"
+#include "InputMapper.h"
 
 
 const float JUDGEMENT_Y			= CENTER_Y;
@@ -37,18 +39,21 @@ Player::Player()
 	// init step elements
 	for( int i=0; i<MAX_TAP_NOTE_ELEMENTS; i++ )
 	{
-		m_TapNotesOriginal[i] = NOTE_NONE;
-		m_TapNotesRemaining[i] = NOTE_NONE;
+		for( int c=0; c<MAX_NOTE_TRACKS; c++ )
+		{
+			m_TapNotesOriginal[c][i] = '0';
+			m_TapNotes[c][i] = '0';
+		}
 		m_TapNoteScores[i] = TNS_NONE;
 	}
 	m_iNumHoldNotes = 0;
 
 
-	this->AddActor( &m_GrayArrows );
-	this->AddActor( &m_ColorArrowField );
-	this->AddActor( &m_GhostArrows );
+	this->AddActor( &m_GrayArrowRow );
+	this->AddActor( &m_NoteField );
+	this->AddActor( &m_GhostArrowRow );
 	this->AddActor( &m_Judgement );
-	for( int c=0; c<MAX_NUM_COLUMNS; c++ )
+	for( int c=0; c<MAX_NOTE_TRACKS; c++ )
 		this->AddActor( &m_HoldJudgement[c] );
 	this->AddActor( &m_Combo );
 	this->AddActor( &m_LifeMeter );
@@ -56,51 +61,38 @@ Player::Player()
 }
 
 
-void Player::Load( const StyleDef& StyleDef, PlayerNumber player_no, const Pattern& pattern, const PlayerOptions& po )
+void Player::Load( PlayerNumber player_no, NoteData* pNoteData, const PlayerOptions& po )
 {
 	//HELPER.Log( "Player::Load()", );
+	this->CopyAll( pNoteData );
 
-	m_Style = StyleDef;
 	m_PlayerNumber = player_no;
 	m_PlayerOptions = po;
 
-	Pattern pattern2 = pattern;
-
 	if( !po.m_bAllowFreezeArrows )
-		pattern2.RemoveHoldNotes();
+		this->RemoveHoldNotes();
 
-	pattern2.Turn( po.m_TurnType );
+	this->Turn( po.m_TurnType );
 
 	if( po.m_bLittle )
-		pattern2.MakeLittle();
+		this->MakeLittle();
 
-	m_ColorArrowField.Load( StyleDef, pattern2, po, 1.5f, 5.5f, ColorArrowField::MODE_DANCING );
-	m_GrayArrows.Load( po, StyleDef );
-	m_GhostArrows.Load( po, StyleDef );
+	m_NoteField.Load( (NoteData*)this, po, 1.5f, 5.5f, NoteField::MODE_DANCING );
 
-	// load step elements
-	for( int i=0; i<MAX_TAP_NOTE_ELEMENTS; i++ )
-	{
-		m_TapNotesOriginal[i] = pattern2.m_TapNotes[i];
-		m_TapNotesRemaining[i] = pattern2.m_TapNotes[i];
-	}
-	for( i=0; i<pattern2.m_iNumHoldNotes; i++ )
-	{
-		m_HoldNotes[i] = pattern2.m_HoldNotes[i];
-	}
-	m_iNumHoldNotes = pattern2.m_iNumHoldNotes;
+	m_GrayArrowRow.Load( po );
+	m_GhostArrowRow.Load( po );
 
 
 	m_Combo.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - COMBO_Y : COMBO_Y );
 	m_LifeMeter.SetY( LIFEMETER_Y );
 	m_Judgement.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - JUDGEMENT_Y : JUDGEMENT_Y );
-	for( int c=0; c<MAX_NUM_COLUMNS; c++ )
+	for( int c=0; c<MAX_NOTE_TRACKS; c++ )
 		m_HoldJudgement[c].SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - HOLD_JUDGEMENT_Y : HOLD_JUDGEMENT_Y );
 	m_Score.SetY( SCORE_Y );	
 
-	m_ColorArrowField.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - ARROWS_Y : ARROWS_Y );
-	m_GrayArrows.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - ARROWS_Y : ARROWS_Y );
-	m_GhostArrows.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - ARROWS_Y : ARROWS_Y );
+	m_NoteField.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - ARROWS_Y : ARROWS_Y );
+	m_GrayArrowRow.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - ARROWS_Y : ARROWS_Y );
+	m_GhostArrowRow.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - ARROWS_Y : ARROWS_Y );
 	
 	// Load options into Life Meter
 	m_LifeMeter.SetPlayerOptions(po);
@@ -114,7 +106,7 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 	//
 	// Check for TapNote misses
 	//
-	int iNumMisses = UpdateStepsMissedOlderThan( m_fSongBeat-fMaxBeatDifference );
+	int iNumMisses = UpdateTapNotesMissedOlderThan( m_fSongBeat-fMaxBeatDifference );
 	if( iNumMisses > 0 )
 	{
 		m_Judgement.SetJudgement( TNS_MISS );
@@ -138,32 +130,33 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 		float fStartBeat = NoteIndexToBeat( (float)hn.m_iStartIndex );
 		float fEndBeat = NoteIndexToBeat( (float)hn.m_iEndIndex );
 
+		const int iCol = hn.m_iTrack;
+		const StyleInput StyleI( m_PlayerNumber, hn.m_iTrack );
+		const GameInput GameI = GAME->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
 
 		// update the life
 		if( fStartBeat < m_fSongBeat && m_fSongBeat < fEndBeat )	// if the song beat is in the range of this hold
 		{
-			PlayerInput PlayerI( m_PlayerNumber, hn.m_TapNote );
-			bool bIsHoldingButton = PREFS->IsButtonDown( PlayerI );
+			const bool bIsHoldingButton = MAPPER->IsButtonDown( GameI );
+
 			if( bIsHoldingButton )
 			{
 				hns.m_fLife += fDeltaTime/HOLD_ARROW_NG_TIME;
 				hns.m_fLife = min( hns.m_fLife, 1 );	// clamp
-				int iCol = m_Style.TapNoteToColumnNumber( hn.m_TapNote );
-				m_GhostArrows.HoldNote( iCol );		// update the "electric ghost" effect
+				m_GhostArrowRow.HoldNote( iCol );		// update the "electric ghost" effect
 			}
 			else	// !bIsHoldingButton
 			{
 				hns.m_fLife -= fDeltaTime/HOLD_ARROW_NG_TIME;
 				hns.m_fLife = max( hns.m_fLife, 0 );	// clamp
 			}
-			m_ColorArrowField.SetHoldNoteLife( i, hns.m_fLife );	// update the ColorArrowField display
+			m_NoteField.SetHoldNoteLife( i, hns.m_fLife );	// update the NoteField display
 		}
 
 		// check for NG
 		if( hns.m_fLife == 0 )	// the player has not pressed the button for a long time!
 		{
 			hns.m_Result = HNR_NG;
-			int iCol = m_Style.TapNoteToColumnNumber( hn.m_TapNote );
 			m_HoldJudgement[iCol].SetHoldJudgement( HNR_NG );
 		}
 
@@ -173,9 +166,8 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 			// this implies that hns.m_fLife > 0, or else we would have marked it NG above
 			hns.m_fLife = 1;
 			hns.m_Result = HNR_OK;
-			int iCol = m_Style.TapNoteToColumnNumber( hn.m_TapNote );
 			m_HoldJudgement[iCol].SetHoldJudgement( HNR_OK );
-			m_ColorArrowField.SetHoldNoteLife( i, hns.m_fLife );	// update the ColorArrowField display
+			m_NoteField.SetHoldNoteLife( i, hns.m_fLife );	// update the NoteField display
 		}
 	}
 
@@ -185,9 +177,9 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 
 	m_LifeMeter.SetBeat( fSongBeat );
 
-	m_GrayArrows.Update( fDeltaTime, fSongBeat );
-	m_ColorArrowField.Update( fDeltaTime, fSongBeat );
-	m_GhostArrows.Update( fDeltaTime, fSongBeat );
+	m_GrayArrowRow.Update( fDeltaTime, fSongBeat );
+	m_NoteField.Update( fDeltaTime, fSongBeat );
+	m_GhostArrowRow.Update( fDeltaTime, fSongBeat );
 
 	m_fSongBeat = fSongBeat;	// save song beat
 
@@ -221,9 +213,9 @@ void Player::RenderPrimitives()
 		SCREEN->GetDevice()->SetTransform( D3DTS_PROJECTION, &matNewProj );
 	}
 
-	m_GrayArrows.Draw();
-	m_ColorArrowField.Draw();
-	m_GhostArrows.Draw();
+	m_GrayArrowRow.Draw();
+	m_NoteField.Draw();
+	m_GhostArrowRow.Draw();
 
 	if( m_PlayerOptions.m_EffectType == PlayerOptions::EFFECT_SPACE )
 	{
@@ -238,7 +230,7 @@ void Player::RenderPrimitives()
 
 
 	m_Judgement.Draw();
-	for( int c=0; c<m_Style.m_iNumColumns; c++ )
+	for( int c=0; c<m_iNumTracks; c++ )
 		m_HoldJudgement[c].Draw();
 	m_Combo.Draw();
 	m_LifeMeter.Draw();
@@ -249,8 +241,11 @@ void Player::RenderPrimitives()
 
 bool Player::IsThereANoteAtIndex( int iIndex )
 {
-	if( m_TapNotesOriginal[iIndex] != NOTE_NONE )
-		return true;
+	for( int t=0; t<m_iNumTracks; t++ )
+	{
+		if( m_TapNotesOriginal[t][iIndex] != '0' )
+			return true;
+	}
 
 	for( int i=0; i<m_iNumHoldNotes; i++ )	// for each HoldNote
 	{
@@ -264,17 +259,15 @@ bool Player::IsThereANoteAtIndex( int iIndex )
 
 
 
-void Player::HandlePlayerStep( float fSongBeat, TapNote player_step, float fMaxBeatDiff )
+void Player::HandlePlayerStep( float fSongBeat, NoteColumn col, float fMaxBeatDiff )
 {
 	//HELPER.Log( "Player::HandlePlayerStep()" );
 
-	int iColumnNum = m_Style.TapNoteToColumnNumber( player_step );
-	if( iColumnNum == -1 )	// if this TapNote is not used in the current StyleDef
-		return;		// ignore the step
+	ASSERT( col >= 0  &&  col <= m_iNumTracks );
 
-	m_GrayArrows.Step( iColumnNum );
+	m_GrayArrowRow.Step( col );
 
-	CheckForCompleteStep( fSongBeat, player_step, fMaxBeatDiff );
+	CheckForCompleteRow( fSongBeat, col, fMaxBeatDiff );
 
 	//
 	// check if we stepped on the TapNote part of a HoldNote
@@ -290,7 +283,7 @@ void Player::HandlePlayerStep( float fSongBeat, TapNote player_step, float fMaxB
 		if( hns.m_TapNoteScore != TNS_NONE )	// the TapNote already has a score
 			continue;	// no need to continue;
 			
-		if( player_step == m_HoldNotes[i].m_TapNote ) // the player's step is the same as this HoldNote
+		if( col == m_HoldNotes[i].m_iTrack ) // the player's step is the same as this HoldNote
 		{
 			float fBeatDifference = fabsf( NoteIndexToBeat(hn.m_iStartIndex) - fSongBeat );
 			
@@ -315,8 +308,7 @@ void Player::HandlePlayerStep( float fSongBeat, TapNote player_step, float fMaxB
 				m_LifeMeter.ChangeLife( score );
 
 				// show the gray arrow ghost
-				int iColNum = m_Style.TapNoteToColumnNumber( player_step );
-				m_GhostArrows.TapNote( iColNum, score, m_Combo.GetCurrentCombo() > 100 );
+				m_GhostArrowRow.TapNote( col, score, m_Combo.GetCurrentCombo() > 100 );
 
 				// update the combo display
 				switch( score )
@@ -339,9 +331,9 @@ void Player::HandlePlayerStep( float fSongBeat, TapNote player_step, float fMaxB
 }
 
 
-void Player::CheckForCompleteStep( float fSongBeat, TapNote player_step, float fMaxBeatDiff )
+void Player::CheckForCompleteRow( float fSongBeat, NoteColumn col, float fMaxBeatDiff )
 {
-	//HELPER.Log( "Player::CheckForCompleteStep()" );
+	//HELPER.Log( "Player::CheckForCompleteRow()" );
 
 	// look for the closest matching step
 	int iIndexStartLookingAt = BeatToNoteIndex( fSongBeat );
@@ -362,32 +354,44 @@ void Player::CheckForCompleteStep( float fSongBeat, TapNote player_step, float f
 		////////////////////////////
 		// check the step to the left of iIndexStartLookingAt
 		////////////////////////////
-		//HELPER.Log( "Checking Pattern[%d]", iCurrentIndexEarlier );
-		if( m_TapNotesRemaining[iCurrentIndexEarlier] & player_step )	// these Pattern overlap
+		//HELPER.Log( "Checking NoteMetadata[%d]", iCurrentIndexEarlier );
+		if( m_TapNotes[col][iCurrentIndexEarlier] != '0' )	// these NoteMetadata overlap
 		{
-			m_TapNotesRemaining[iCurrentIndexEarlier] &= ~player_step;	// subtract player_step
-			if( m_TapNotesRemaining[iCurrentIndexEarlier] == 0 )	{		// did this complete the step?
-				OnCompleteStep( fSongBeat, player_step, fMaxBeatDiff, iCurrentIndexEarlier );
-				return;
+			m_TapNotes[col][iCurrentIndexEarlier] = '0';	// mark hit
+			
+			bool bRowDestroyed = true;
+			for( int t=0; t<m_iNumTracks; t++ )			// did this complete the elminiation of the row?
+			{
+				if( m_TapNotes[col][iCurrentIndexEarlier] != '0' )
+					bRowDestroyed = false;
 			}
+			if( bRowDestroyed )
+				OnRowDestroyed( fSongBeat, col, fMaxBeatDiff, iCurrentIndexEarlier );
+			return;
 		}
 
 		////////////////////////////
 		// check the step to the right of iIndexStartLookingAt
 		////////////////////////////
-		//HELPER.Log( "Checking Pattern[%d]", iCurrentIndexLater );
-		if( m_TapNotesRemaining[iCurrentIndexLater] & player_step )		// these Pattern overlap
+		//HELPER.Log( "Checking NoteMetadata[%d]", iCurrentIndexLater );
+		if( m_TapNotes[col][iCurrentIndexLater] != '0' )	// these NoteMetadata overlap
 		{
-			m_TapNotesRemaining[iCurrentIndexLater] &= ~player_step;		// subtract player_step
-			if( m_TapNotesRemaining[iCurrentIndexLater] == 0 ) {			// did this complete the step?
-				OnCompleteStep( fSongBeat, player_step, fMaxBeatDiff, iCurrentIndexLater );
-				return;
+			m_TapNotes[col][iCurrentIndexLater] = '0';	// mark hit
+			
+			bool bRowDestroyed = true;
+			for( int t=0; t<m_iNumTracks; t++ )			// did this complete the elminiation of the row?
+			{
+				if( m_TapNotes[col][iCurrentIndexLater] != '0' )
+					bRowDestroyed = false;
 			}
+			if( bRowDestroyed )
+				OnRowDestroyed( fSongBeat, col, fMaxBeatDiff, iCurrentIndexLater );
+			return;
 		}
 	}
 }
 
-void Player::OnCompleteStep( float fSongBeat, TapNote player_step, float fMaxBeatDiff, int iIndexThatWasSteppedOn )
+void Player::OnRowDestroyed( float fSongBeat, NoteColumn col, float fMaxBeatDiff, int iIndexThatWasSteppedOn )
 {
 	float fStepBeat = NoteIndexToBeat( (float)iIndexThatWasSteppedOn );
 
@@ -412,14 +416,14 @@ void Player::OnCompleteStep( float fSongBeat, TapNote player_step, float fMaxBea
 	m_LifeMeter.ChangeLife( score );
 
 
-	// remove this row from the ColorArrowField
-	m_ColorArrowField.RemoveTapNoteRow( iIndexThatWasSteppedOn );
+	// remove this row from the NoteField
+	m_NoteField.RemoveTapNoteRow( iIndexThatWasSteppedOn );
 
-	// check to see if this completes a row of notes
-	for( int c=0; c<m_Style.m_iNumColumns; c++ )	// for each column
+	// show ghost arrows
+	for( int c=0; c<m_iNumTracks; c++ )	// for each column
 	{
-		if( m_TapNotesOriginal[iIndexThatWasSteppedOn] & m_Style.m_ColumnToTapNote[c] )	// if this colum was part of the original step
-			m_GhostArrows.TapNote( c, score, m_Combo.GetCurrentCombo()>100 );	// show the ghost arrow for this column
+		if( m_TapNotesOriginal[c][iIndexThatWasSteppedOn] != '0' )	// if there is an original note note in this column
+			m_GhostArrowRow.TapNote( c, score, m_Combo.GetCurrentCombo()>100 );	// show the ghost arrow for this column
 	}
 
 	// update the combo display
@@ -481,22 +485,25 @@ ScoreSummary Player::GetScoreSummary()
 }
 
 
-int Player::UpdateStepsMissedOlderThan( float fMissIfOlderThanThisBeat )
+int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat )
 {
-	//HELPER.Log( "Pattern::UpdateStepsMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
+	//HELPER.Log( "NoteMetadata::UpdateTapNotesMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
 
 	int iMissIfOlderThanThisIndex = BeatToNoteIndex( fMissIfOlderThanThisBeat );
 
 	int iNumMissesFound = 0;
-	// Since this is being called frame, let's not check the whole array every time.
+	// Since this is being called every frame, let's not check the whole array every time.
 	// Instead, only check 10 elements back.  Even 10 is overkill.
 	int iStartCheckingAt = max( 0, iMissIfOlderThanThisIndex-10 );
 
 	//HELPER.Log( "iStartCheckingAt: %d   iMissIfOlderThanThisIndex:  %d", iStartCheckingAt, iMissIfOlderThanThisIndex );
 	for( int i=iStartCheckingAt; i<iMissIfOlderThanThisIndex; i++ )
 	{
-		//HELPER.Log( "Checking for miss:  %d: lefttostepon == %d, score == %d", i, m_LeftToStepOn[i], m_StepScore[i] );
-		if( m_TapNotesRemaining[i] != 0  &&  m_TapNoteScores[i] != TNS_MISS )
+		if( m_TapNoteScores[i] != TNS_NONE )	// this index already has a score
+			continue;
+
+		// look for any track at this index that still has data
+		if( !this->IsRowEmpty( i ) )
 		{
 			m_TapNoteScores[i] = TNS_MISS;
 			iNumMissesFound++;

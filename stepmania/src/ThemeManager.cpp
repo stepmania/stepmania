@@ -5,14 +5,14 @@
 
  Desc: See header.
 
- Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
 
 #include "ThemeManager.h"
 #include "RageHelper.h"
-
+#include "ErrorCatcher/ErrorCatcher.h"
 
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
@@ -51,7 +51,7 @@ bool ThemeManager::SetTheme( CString sThemeName )		// return false if theme does
 
 	if( !DoesFileExist( sThemeDir ) )
 	{
-		HELPER.FatalError( ssprintf( "The theme in diretory '%' could not be loaded.", sThemeDir ) );
+		FatalError( ssprintf( "The theme in diretory '%' could not be loaded.", sThemeDir ) );
 		return false;
 	}
 
@@ -63,7 +63,7 @@ void ThemeManager::AssertThemeIsComplete( CString sThemeName )		// return false 
 	for( int i=0; i<NUM_THEME_ELEMENTS; i++ )
 	{
 		if( GetPathTo( (ThemeElement)i, sThemeName ) == "" )
-			HELPER.FatalError( ssprintf( "The theme element for theme '%s' called '%s' could not be found.", sThemeName, ElementToAssetPath((ThemeElement)i) ) );
+			FatalError( ssprintf( "The theme element for theme '%s' called '%s' could not be found.", sThemeName, ElementToAssetPath((ThemeElement)i) ) );
 	}
 }
 
@@ -86,72 +86,89 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 
 	switch( te )
 	{
-		case GRAPHIC_TITLE_MENU_BACKGROUND:		sAssetPath = "Graphics\\title menu background";		break;
-		case GRAPHIC_SELECT_STYLE_BACKGROUND:	sAssetPath = "Graphics\\select Style background";	break;
-		case GRAPHIC_SELECT_MUSIC_BACKGROUND:	sAssetPath = "Graphics\\select music background";	break;
-		case GRAPHIC_RESULT_BACKGROUND:			sAssetPath = "Graphics\\result background";			break;
-		case GRAPHIC_SELECT_STYLE_TOP_EDGE:		sAssetPath = "Graphics\\select Style top edge";		break;
-		case GRAPHIC_SELECT_MUSIC_TOP_EDGE:		sAssetPath = "Graphics\\select music top edge";		break;
-		case GRAPHIC_GAME_OPTIONS_TOP_EDGE:		sAssetPath = "Graphics\\game options top edge";		break;
-		case GRAPHIC_GRAPHIC_OPTIONS_TOP_EDGE:	sAssetPath = "Graphics\\graphic options top edge";	break;
-		case GRAPHIC_PLAYER_OPTIONS_TOP_EDGE:	sAssetPath = "Graphics\\player options top edge";	break;
-		case GRAPHIC_SONG_OPTIONS_TOP_EDGE:		sAssetPath = "Graphics\\song options top edge";		break;
-		case GRAPHIC_RESULT_TOP_EDGE:			sAssetPath = "Graphics\\result top edge";			break;
-		case GRAPHIC_FALLBACK_BANNER:			sAssetPath = "Graphics\\Fallback Banner";			break;
-		case GRAPHIC_FALLBACK_BACKGROUND:		sAssetPath = "Graphics\\Fallback Background";		break;
-		case GRAPHIC_JUDGEMENT:					sAssetPath = "Graphics\\judgement 1x9";				break;
-		case GRAPHIC_MENU_BOTTOM_EDGE:			sAssetPath = "Graphics\\menu bottom edge";			break;
-		case GRAPHIC_SCORE_FRAME:				sAssetPath = "Graphics\\score frame";				break;
-		case GRAPHIC_LIFEMETER_FRAME:			sAssetPath = "Graphics\\Life Meter Frame";			break;
-		case GRAPHIC_LIFEMETER_PILLS:			sAssetPath = "Graphics\\life meter pills 17x1";		break;
-		case GRAPHIC_COMBO:						sAssetPath = "Graphics\\combo";						break;
-		case GRAPHIC_CLOSING_STAR:				sAssetPath = "Graphics\\closing star";				break;
-		case GRAPHIC_OPENING_STAR:				sAssetPath = "Graphics\\opening star";				break;
-		case GRAPHIC_CAUTION:					sAssetPath = "Graphics\\Caution";					break;
-		case GRAPHIC_READY:						sAssetPath = "Graphics\\Ready";						break;
-		case GRAPHIC_HERE_WE_GO:				sAssetPath = "Graphics\\here we go";				break;
-		case GRAPHIC_CLEARED:					sAssetPath = "Graphics\\cleared";					break;
-		case GRAPHIC_FAILED:					sAssetPath = "Graphics\\failed";					break;
-		case GRAPHIC_GRADES:					sAssetPath = "Graphics\\grades 1x8";				break;
-		case GRAPHIC_KEEP_ALIVE:				sAssetPath = "Graphics\\keep alive";				break;
-		case GRAPHIC_DANCER_P1:					sAssetPath = "Graphics\\dancer p1";					break;
-		case GRAPHIC_DANCER_P2:					sAssetPath = "Graphics\\dancer p2";					break;
-		case GRAPHIC_PAD_SINGLE:				sAssetPath = "Graphics\\Pad single";				break;
-		case GRAPHIC_PAD_DOUBLE:				sAssetPath = "Graphics\\Pad double";				break;
-		case GRAPHIC_PAD_SOLO:					sAssetPath = "Graphics\\Pad solo";					break;
-		case GRAPHIC_STYLE_ICONS:				sAssetPath = "Graphics\\Style icons 1x5";			break;
-		case GRAPHIC_MUSIC_SELECTION_HIGHLIGHT:	sAssetPath = "Graphics\\music selection highlight";	break;
-		case GRAPHIC_STEPS_DESCRIPTION:			sAssetPath = "Graphics\\Steps description 1x8";		break;
-		case GRAPHIC_SECTION_BACKGROUND:		sAssetPath = "Graphics\\section background";		break;
-		case GRAPHIC_MUSIC_SORT_ICONS:			sAssetPath = "Graphics\\music sort icons 1x4";		break;
-		case GRAPHIC_MUSIC_STATUS_ICONS:		sAssetPath = "Graphics\\music status icons 1x4";	break;
-		case GRAPHIC_DANGER_TEXT:				sAssetPath = "Graphics\\danger text";				break;
-		case GRAPHIC_DANGER_BACKGROUND:			sAssetPath = "Graphics\\danger background";			break;
-		case GRAPHIC_ARROWS_LEFT:				sAssetPath = "Graphics\\arrows left 1x4";			break;
-		case GRAPHIC_ARROWS_RIGHT:				sAssetPath = "Graphics\\arrows right 1x4";			break;
-		case GRAPHIC_EDIT_BACKGROUND:			sAssetPath = "Graphics\\edit background";			break;
-		case GRAPHIC_EDIT_SNAP_INDICATOR:		sAssetPath = "Graphics\\edit snap indicator";		break;
-		case GRAPHIC_GAME_OPTIONS_BACKGROUND:	sAssetPath = "Graphics\\game options background";		break;
-		case GRAPHIC_GRAPHIC_OPTIONS_BACKGROUND:sAssetPath = "Graphics\\graphic options background";	break;
-		case GRAPHIC_PLAYER_OPTIONS_BACKGROUND:	sAssetPath = "Graphics\\player options background";		break;
-		case GRAPHIC_SONG_OPTIONS_BACKGROUND:	sAssetPath = "Graphics\\song options background";		break;	
-		case GRAPHIC_SYNCHRONIZE_BACKGROUND:	sAssetPath = "Graphics\\synchronize background";	break;
-		case GRAPHIC_SYNCHRONIZE_TOP_EDGE:		sAssetPath = "Graphics\\synchronize top edge";		break;
-		case GRAPHIC_TITLE_MENU_LOGO:			sAssetPath = "Graphics\\title menu logo";			break;
-		case GRAPHIC_SELECT_DIFFICULTY_BACKGROUND:	sAssetPath = "Graphics\\select difficulty background";			break;
-		case GRAPHIC_SELECT_DIFFICULTY_TOP_EDGE:	sAssetPath = "Graphics\\select difficulty top edge";			break;
-		case GRAPHIC_SELECT_DIFFICULTY_EXPLANATION:	sAssetPath = "Graphics\\select difficulty explanation";			break;
+		case GRAPHIC_TITLE_MENU_BACKGROUND:			sAssetPath = "Graphics\\title menu background";		break;
+		case GRAPHIC_SELECT_STYLE_BACKGROUND:		sAssetPath = "Graphics\\select Style background";	break;
+		case GRAPHIC_SELECT_MUSIC_BACKGROUND:		sAssetPath = "Graphics\\select music background";	break;
+		case GRAPHIC_RESULT_BACKGROUND:				sAssetPath = "Graphics\\result background";			break;
+		case GRAPHIC_SELECT_STYLE_TOP_EDGE:			sAssetPath = "Graphics\\select Style top edge";		break;
+		case GRAPHIC_SELECT_MUSIC_TOP_EDGE:			sAssetPath = "Graphics\\select music top edge";		break;
+		case GRAPHIC_GAME_OPTIONS_TOP_EDGE:			sAssetPath = "Graphics\\game options top edge";		break;
+		case GRAPHIC_GRAPHIC_OPTIONS_TOP_EDGE:		sAssetPath = "Graphics\\graphic options top edge";	break;
+		case GRAPHIC_PLAYER_OPTIONS_TOP_EDGE:		sAssetPath = "Graphics\\player options top edge";	break;
+		case GRAPHIC_SONG_OPTIONS_TOP_EDGE:			sAssetPath = "Graphics\\song options top edge";		break;
+		case GRAPHIC_RESULT_TOP_EDGE:				sAssetPath = "Graphics\\result top edge";			break;
+		case GRAPHIC_FALLBACK_BANNER:				sAssetPath = "Graphics\\Fallback Banner";			break;
+		case GRAPHIC_FALLBACK_BACKGROUND:			sAssetPath = "Graphics\\Fallback Background";		break;
+		case GRAPHIC_FALLBACK_CD_TITLE:				sAssetPath = "Graphics\\Fallback CD Title";			break;
+		case GRAPHIC_JUDGEMENT:						sAssetPath = "Graphics\\judgement 1x9";				break;
+		case GRAPHIC_MENU_BOTTOM_EDGE:				sAssetPath = "Graphics\\menu bottom edge";			break;
+		case GRAPHIC_SCORE_FRAME:					sAssetPath = "Graphics\\score frame";				break;
+		case GRAPHIC_LIFEMETER_FRAME:				sAssetPath = "Graphics\\Life Meter Frame";			break;
+		case GRAPHIC_LIFEMETER_PILLS:				sAssetPath = "Graphics\\life meter pills 17x1";		break;
+		case GRAPHIC_COMBO:							sAssetPath = "Graphics\\combo";						break;
+		case GRAPHIC_CLOSING_STAR:					sAssetPath = "Graphics\\closing star";				break;
+		case GRAPHIC_OPENING_STAR:					sAssetPath = "Graphics\\opening star";				break;
+		case GRAPHIC_CAUTION:						sAssetPath = "Graphics\\Caution";					break;
+		case GRAPHIC_READY:							sAssetPath = "Graphics\\Ready";						break;
+		case GRAPHIC_HERE_WE_GO:					sAssetPath = "Graphics\\here we go";				break;
+		case GRAPHIC_CLEARED:						sAssetPath = "Graphics\\cleared";					break;
+		case GRAPHIC_FAILED:						sAssetPath = "Graphics\\failed";					break;
+		case GRAPHIC_GRADES:						sAssetPath = "Graphics\\grades 1x8";				break;
+		case GRAPHIC_KEEP_ALIVE:					sAssetPath = "Graphics\\keep alive";				break;
+		case GRAPHIC_DANCER_P1:						sAssetPath = "Graphics\\dancer p1";					break;
+		case GRAPHIC_DANCER_P2:						sAssetPath = "Graphics\\dancer p2";					break;
+		case GRAPHIC_PAD_SINGLE:					sAssetPath = "Graphics\\Pad single";				break;
+		case GRAPHIC_PAD_DOUBLE:					sAssetPath = "Graphics\\Pad double";				break;
+		case GRAPHIC_PAD_SOLO:						sAssetPath = "Graphics\\Pad solo";					break;
+		case GRAPHIC_STYLE_ICONS:					sAssetPath = "Graphics\\Style icons 1x5";			break;
+		case GRAPHIC_SELECT_MUSIC_SONG_BAR:			sAssetPath = "Graphics\\select music song bar";			break;
+		case GRAPHIC_SELECT_MUSIC_SONG_HIGHLIGHT:	sAssetPath = "Graphics\\select music song highlight";	break;
+		case GRAPHIC_STEPS_DESCRIPTION:					sAssetPath = "Graphics\\Steps description 1x8";				break;
+		case GRAPHIC_SELECT_MUSIC_SECTION_BAR:			sAssetPath = "Graphics\\select music section bar";			break;
+		case GRAPHIC_MUSIC_SORT_ICONS:					sAssetPath = "Graphics\\music sort icons 4x1";				break;
+		case GRAPHIC_MUSIC_STATUS_ICONS:				sAssetPath = "Graphics\\music status icons 1x4";			break;
+		case GRAPHIC_DANGER_TEXT:						sAssetPath = "Graphics\\danger text";						break;
+		case GRAPHIC_DANGER_BACKGROUND:					sAssetPath = "Graphics\\danger background";					break;
+		case GRAPHIC_ARROWS_LEFT:						sAssetPath = "Graphics\\arrows left 1x4";					break;
+		case GRAPHIC_ARROWS_RIGHT:						sAssetPath = "Graphics\\arrows right 1x4";					break;
+		case GRAPHIC_EDIT_BACKGROUND:					sAssetPath = "Graphics\\edit background";					break;
+		case GRAPHIC_EDIT_SNAP_INDICATOR:				sAssetPath = "Graphics\\edit snap indicator";				break;
+		case GRAPHIC_GAME_OPTIONS_BACKGROUND:			sAssetPath = "Graphics\\game options background";			break;
+		case GRAPHIC_GRAPHIC_OPTIONS_BACKGROUND:		sAssetPath = "Graphics\\graphic options background";		break;
+		case GRAPHIC_PLAYER_OPTIONS_BACKGROUND:			sAssetPath = "Graphics\\player options background";			break;
+		case GRAPHIC_SONG_OPTIONS_BACKGROUND:			sAssetPath = "Graphics\\song options background";			break;	
+		case GRAPHIC_SYNCHRONIZE_BACKGROUND:			sAssetPath = "Graphics\\synchronize background";			break;
+		case GRAPHIC_SYNCHRONIZE_TOP_EDGE:				sAssetPath = "Graphics\\synchronize top edge";				break;
+		case GRAPHIC_TITLE_MENU_LOGO:					sAssetPath = "Graphics\\title menu logo";					break;
+		case GRAPHIC_SELECT_DIFFICULTY_BACKGROUND:		sAssetPath = "Graphics\\select difficulty background";		break;
+		case GRAPHIC_SELECT_DIFFICULTY_TOP_EDGE:		sAssetPath = "Graphics\\select difficulty top edge";		break;
+		case GRAPHIC_SELECT_DIFFICULTY_EXPLANATION:		sAssetPath = "Graphics\\select difficulty explanation";		break;
 		case GRAPHIC_SELECT_DIFFICULTY_EASY_HEADER:		sAssetPath = "Graphics\\select difficulty easy header";		break;
 		case GRAPHIC_SELECT_DIFFICULTY_MEDIUM_HEADER:	sAssetPath = "Graphics\\select difficulty medium header";	break;
 		case GRAPHIC_SELECT_DIFFICULTY_HARD_HEADER:		sAssetPath = "Graphics\\select difficulty hard header";		break;
 		case GRAPHIC_SELECT_DIFFICULTY_EASY_PICTURE:	sAssetPath = "Graphics\\select difficulty easy picture";	break;
 		case GRAPHIC_SELECT_DIFFICULTY_MEDIUM_PICTURE:	sAssetPath = "Graphics\\select difficulty medium picture";	break;
 		case GRAPHIC_SELECT_DIFFICULTY_HARD_PICTURE:	sAssetPath = "Graphics\\select difficulty hard picture";	break;
-		case GRAPHIC_SELECT_DIFFICULTY_ARROW:		sAssetPath = "Graphics\\select difficulty arrow";			break;
-		case GRAPHIC_SELECT_DIFFICULTY_OK:			sAssetPath = "Graphics\\select difficulty ok";				break;
-		case GRAPHIC_SELECT_MUSIC_INFO_FRAME:		sAssetPath = "Graphics\\select music info frame";			break;
-		case GRAPHIC_SELECT_MUSIC_RADAR:			sAssetPath = "Graphics\\select music radar";				break;
-		case GRAPHIC_SELECT_MUSIC_SCORE_FRAME:		sAssetPath = "Graphics\\select music score frame";			break;
+		case GRAPHIC_SELECT_DIFFICULTY_ARROW_P1:		sAssetPath = "Graphics\\select difficulty arrow p1";		break;
+		case GRAPHIC_SELECT_DIFFICULTY_ARROW_P2:		sAssetPath = "Graphics\\select difficulty arrow p2";		break;
+		case GRAPHIC_SELECT_DIFFICULTY_OK:				sAssetPath = "Graphics\\select difficulty ok";				break;
+		case GRAPHIC_SELECT_MUSIC_INFO_FRAME:			sAssetPath = "Graphics\\select music info frame";			break;
+		case GRAPHIC_SELECT_MUSIC_RADAR_BASE:			sAssetPath = "Graphics\\select music radar base";			break;
+		case GRAPHIC_SELECT_MUSIC_RADAR_WORDS:			sAssetPath = "Graphics\\select music radar words";			break;
+		case GRAPHIC_SELECT_MUSIC_SCORE_FRAME:			sAssetPath = "Graphics\\select music score frame";			break;
+		case GRAPHIC_SELECT_GROUP_EXPLANATION:			sAssetPath = "Graphics\\select group explanation";			break;
+		case GRAPHIC_SELECT_GROUP_INFO_FRAME:			sAssetPath = "Graphics\\select group info frame";			break;
+		case GRAPHIC_SELECT_GROUP_BUTTON:				sAssetPath = "Graphics\\select group button";				break;
+		case GRAPHIC_SELECT_GROUP_CONTENTS_HEADER:		sAssetPath = "Graphics\\select group contents header";		break;
+		case GRAPHIC_ENDING_BACKGROUND:					sAssetPath = "Graphics\\ending background";					break;
+		case GRAPHIC_DIFFICULTY_ICONS:					sAssetPath = "Graphics\\difficulty icons";					break;
+		case GRAPHIC_DANCING_DIFFICULTY_FRAME:			sAssetPath = "Graphics\\dancing difficulty frame";			break;
+		case GRAPHIC_DANCING_TOP_FRAME:					sAssetPath = "Graphics\\dancing top frame";					break;
+		case GRAPHIC_DANCING_BOTTOM_FRAME:				sAssetPath = "Graphics\\dancing bottom frame";				break;
+		case GRAPHIC_SELECT_MUSIC_OPTION_ICONS:			sAssetPath = "Graphics\\select music option icons";			break;
+		case GRAPHIC_SELECT_MUSIC_DIFFICULTY_FRAME:		sAssetPath = "Graphics\\select music difficulty frame";		break;
+		case GRAPHIC_SELECT_MUSIC_METER_FRAME:			sAssetPath = "Graphics\\select music meter frame";			break;
+		case GRAPHIC_ALL_MUSIC_BANNER:					sAssetPath = "Graphics\\all music banner";					break;
 
 		case SOUND_FAILED:						sAssetPath = "Sounds\\failed";						break;
 		case SOUND_ASSIST:						sAssetPath = "Sounds\\Assist";						break;
@@ -164,11 +181,12 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case SOUND_TITLE_CHANGE:				sAssetPath = "Sounds\\title change";				break;
 		case SOUND_MENU_SWOOSH:					sAssetPath = "Sounds\\menu swoosh";					break;
 		case SOUND_MENU_BACK:					sAssetPath = "Sounds\\menu back";					break;
-		case SOUND_TRAINING_MUSIC:				sAssetPath = "Sounds\\training music";				break;
 		case SOUND_INVALID:						sAssetPath = "Sounds\\invalid";						break;
 		case SOUND_EDIT_CHANGE_LINE:			sAssetPath = "Sounds\\edit change line";			break;
 		case SOUND_EDIT_CHANGE_SNAP:			sAssetPath = "Sounds\\edit change snap";			break;
 		case SOUND_SELECT_DIFFICULTY_CHANGE:	sAssetPath = "Sounds\\select difficulty change";	break;
+		case SOUND_MENU_MUSIC:					sAssetPath = "Sounds\\menu music";					break;
+		case SOUND_ENDING_MUSIC:				sAssetPath = "Sounds\\ending music";				break;
 
 		case FONT_BOLD:							sAssetPath = "Fonts\\Bold";							break;
 		case FONT_COMBO_NUMBERS:				sAssetPath = "Fonts\\Combo Numbers";				break;
@@ -176,6 +194,7 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case FONT_NORMAL:						sAssetPath = "Fonts\\Normal";						break;
 		case FONT_SCORE_NUMBERS:				sAssetPath = "Fonts\\Score Numbers";				break;
 		case FONT_TEXT_BANNER:					sAssetPath = "Fonts\\Text Banner";					break;
+		case FONT_BIG_MESSAGE:					sAssetPath = "Fonts\\big message";					break;
 
 		case ANNOUNCER_ATTRACT:					sAssetPath = "Announcer\\attract";					break;
 		case ANNOUNCER_BAD_COMMENT:				sAssetPath = "Announcer\\bad comment";				break;
@@ -199,7 +218,7 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case ANNOUNCER_DIFFICULTY_COMMENT:		sAssetPath = "Announcer\\difficulty comment";		break;
 
 		default:
-			HELPER.FatalError( ssprintf("Unhandled theme element %d", te) );
+			FatalError( ssprintf("Unhandled theme element %d", te) );
 	}
 	
 	return sAssetPath;
@@ -246,7 +265,7 @@ CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName )
 	}
 	else
 	{
-		HELPER.FatalError( ssprintf("Unknown theme asset dir '%s'.", sAssetDir) );
+		FatalError( ssprintf("Unknown theme asset dir '%s'.", sAssetDir) );
 	}
 
 	if( arrayPossibleElementFileNames.GetSize() > 0 )
@@ -281,7 +300,7 @@ CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName )
 	}
 	else
 	{
-		HELPER.FatalError( ssprintf("Unknown theme asset dir '%s'.", sAssetDir) );
+		FatalError( ssprintf("Unknown theme asset dir '%s'.", sAssetDir) );
 	}
 
 	if( arrayPossibleElementFileNames.GetSize() > 0 )
@@ -289,6 +308,6 @@ CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName )
 
 
 
-	HELPER.FatalError( ssprintf("The theme element '%s' does not exist in the current theme directory or the default theme directory.", sAssetDir + "\\" + sAssetFileName) );
+	FatalError( ssprintf("The theme element '%s' does not exist in the current theme directory or the default theme directory.", sAssetDir + "\\" + sAssetFileName) );
 	return "";
 }

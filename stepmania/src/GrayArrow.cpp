@@ -5,7 +5,7 @@
 
  Desc: A gray arrow that "receives" ColorArrows.
 
- Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 	Ben Nordstrom
 	Chris Danford
 -----------------------------------------------------------------------------
@@ -24,7 +24,10 @@ GrayArrow::GrayArrow()
 
 void GrayArrow::SetBeat( const float fSongBeat )
 {
-	SetState( (int)( fmod(fSongBeat,1) * Sprite::GetNumStates() ) );
+	int iNewState = (int)( fmod(fSongBeat,1) * Sprite::GetNumStates() );
+	if( iNewState < 0 )
+		iNewState += Sprite::GetNumStates();
+	SetState( iNewState );
 }
 
 void GrayArrow::Step()

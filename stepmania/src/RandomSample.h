@@ -4,7 +4,7 @@
 
  Desc: Holds multiple sounds samples and can play a random sound easily.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 

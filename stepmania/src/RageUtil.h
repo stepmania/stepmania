@@ -4,7 +4,7 @@
 
  Desc: Miscellaneous helper functions.
 
- Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -50,7 +50,10 @@ inline float randomf( const float low=-1.0f, const float high=1.0f )
 }
 inline int roundf( const float f )	{ return (int)((f)+0.5f); };
 inline int roundf( const double f )	{ return (int)((f)+0.5);  };
-
+inline float froundf( const float f, const float fRoundInterval )
+{
+	return int( (f + fRoundInterval/2)/fRoundInterval ) * fRoundInterval;
+}
 
 bool IsAnInt( LPCTSTR s );
 
@@ -79,7 +82,7 @@ void splitrelpath(
 	CString& Ext 
 );
 
-// Splits a CString into an CStringArray according the Deliminator.  Supports UNC path names.
+// Splits a CString into an CStringArray according the Deliminator.
 void split(
 	const CString &Source, 
 	const CString &Deliminator, 

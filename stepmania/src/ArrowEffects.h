@@ -4,7 +4,7 @@
 
  Desc: Functions that return properties of arrows based on StyleDef and PlayerOptions
 
- Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -26,13 +26,13 @@ float ArrowGetYOffset( const PlayerOptions& po, float fStepIndex, float fSongBea
 //	fXPos is a horizontal position in pixels relative to the center of the field.
 //	This depends on the column of the arrow and possibly the Arrow effect and
 //	fYOffset (in the case of EFFECT_DRUNK).
-float ArrowGetXPos(	const PlayerOptions& po, const StyleDef &StyleDef, int iCol, float fYOffset, float fSongBeat );
+float ArrowGetXPos(	const PlayerOptions& po, int iCol, float fYOffset, float fSongBeat );
 
 
 //	fRotation is Z rotation of an arrow.  This will depend on the column of 
 //	the arrow and possibly the Arrow effect and the fYOffset (in the case of 
 //	EFFECT_DIZZY).
-float ArrowGetRotation(	const PlayerOptions& po, const StyleDef &StyleDef, int iCol, float fYOffset );
+float ArrowGetRotation(	const PlayerOptions& po, int iCol, float fYOffset );
 
 
 //	fYPos is the position of the note in pixels relative to the center.

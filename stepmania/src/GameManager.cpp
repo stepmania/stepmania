@@ -5,176 +5,208 @@
 
  Desc: See Header.
 
- Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
 
 #include "GameManager.h"
-#include "D3DXmath.h"
 
 
 GameManager*	GAME = NULL;	// global and accessable from anywhere in our program
 
+#define DANCE_PAD_BUTTON_LEFT		INSTRUMENT_BUTTON_1
+#define DANCE_PAD_BUTTON_RIGHT		INSTRUMENT_BUTTON_2
+#define DANCE_PAD_BUTTON_UP			INSTRUMENT_BUTTON_3
+#define DANCE_PAD_BUTTON_DOWN		INSTRUMENT_BUTTON_4
+#define DANCE_PAD_BUTTON_UPLEFT		INSTRUMENT_BUTTON_5
+#define DANCE_PAD_BUTTON_UPRIGHT	INSTRUMENT_BUTTON_6
+#define DANCE_PAD_BUTTON_NEXT		INSTRUMENT_BUTTON_7
+#define DANCE_PAD_BUTTON_BACK		INSTRUMENT_BUTTON_8
+#define NUM_DANCE_PAD_BUTTONS		8
+
+
+//
+// ----------------------------------
+//   This is where all Games and Styles are definied.  
+//   If you want to add support for new games or styles, do it here.
+// ----------------------------------
+//
+GameDef g_GameDefs[] = 
+{
+	{
+		"dance",					// m_szName
+		"Dance Dance Revolution",	// m_szDescription
+		"",							// m_szGraphicPath
+
+		2,							// m_iNumInstruments
+		NUM_DANCE_PAD_BUTTONS,		// m_iNumButtons
+		{ "Left", "Right", "Up", "Down", "UpLeft", "UpRight", "Next", "Back" },	// m_sButtonNames[NUM_INSTRUMENT_BUTTONS]
+		{	// m_iMenuButtons
+			DANCE_PAD_BUTTON_LEFT,
+			DANCE_PAD_BUTTON_RIGHT,
+			DANCE_PAD_BUTTON_UP,
+			DANCE_PAD_BUTTON_DOWN,
+			DANCE_PAD_BUTTON_NEXT,
+			DANCE_PAD_BUTTON_BACK,
+		},
+		5,							// m_iNumStyleDefs
+		{ // StyleDef list
+			{	// StyleDef
+				"single",	// m_szName
+				"single",	// m_szReads
+				1,			// m_iNumPlayers
+				4,			// m_iNumTracks
+				{	// m_StyleInputToGameInput[NUM_PLAYERS][NUM_NOTE_COLS];
+					{	// player 1
+						{ 0, INSTRUMENT_1, DANCE_PAD_BUTTON_LEFT },		// column 1
+						{ 1, INSTRUMENT_1, DANCE_PAD_BUTTON_DOWN },		// column 2
+						{ 2, INSTRUMENT_1, DANCE_PAD_BUTTON_UP },		// column 3
+						{ 3, INSTRUMENT_1, DANCE_PAD_BUTTON_RIGHT },	// column 4
+					}
+				},
+			},
+			{	// StyleDef
+				"versus",	// m_szName
+				"single",	// m_szReads
+				1,			// m_iNumPlayers
+				4,			// m_iNumTracks
+				{	// m_StyleInputToGameInput[NUM_PLAYERS][NUM_NOTE_COLS];
+					{	// player 1
+						{ 0, INSTRUMENT_1, DANCE_PAD_BUTTON_LEFT },		// column 1
+						{ 1, INSTRUMENT_1, DANCE_PAD_BUTTON_DOWN },		// column 2
+						{ 2, INSTRUMENT_1, DANCE_PAD_BUTTON_UP },		// column 3
+						{ 3, INSTRUMENT_1, DANCE_PAD_BUTTON_RIGHT },	// column 4
+					},
+					{	// player 2
+						{ 0, INSTRUMENT_2, DANCE_PAD_BUTTON_LEFT },		// column 1
+						{ 1, INSTRUMENT_2, DANCE_PAD_BUTTON_DOWN },		// column 2
+						{ 2, INSTRUMENT_2, DANCE_PAD_BUTTON_UP },		// column 3
+						{ 3, INSTRUMENT_2, DANCE_PAD_BUTTON_RIGHT },	// column 4
+					}
+
+				},
+			},
+			{	// StyleDef
+				"double",	// m_szName
+				"double",	// m_szReads
+				1,			// m_iNumPlayers
+				8,			// m_iNumTracks
+				{	// m_StyleInputToGameInput[NUM_PLAYERS][NUM_NOTE_COLS];
+					{	// player 1
+						{ 0, INSTRUMENT_1, DANCE_PAD_BUTTON_LEFT },		// column 1
+						{ 1, INSTRUMENT_1, DANCE_PAD_BUTTON_DOWN },		// column 2
+						{ 2, INSTRUMENT_1, DANCE_PAD_BUTTON_UP },		// column 3
+						{ 3, INSTRUMENT_1, DANCE_PAD_BUTTON_RIGHT },	// column 4
+						{ 4, INSTRUMENT_2, DANCE_PAD_BUTTON_LEFT },		// column 5
+						{ 5, INSTRUMENT_2, DANCE_PAD_BUTTON_DOWN },		// column 6
+						{ 6, INSTRUMENT_2, DANCE_PAD_BUTTON_UP },		// column 7
+						{ 7, INSTRUMENT_2, DANCE_PAD_BUTTON_RIGHT },	// column 8
+					},
+				},
+			},
+			{	// StyleDef
+				"couple",	// m_szName
+				"couple",	// m_szReads
+				1,			// m_iNumPlayers
+				8,			// m_iNumTracks
+				{	// m_StyleInputToGameInput[NUM_PLAYERS][NUM_NOTE_COLS];
+					{	// player 1
+						{ 0, INSTRUMENT_1, DANCE_PAD_BUTTON_LEFT },		// column 1
+						{ 1, INSTRUMENT_1, DANCE_PAD_BUTTON_DOWN },		// column 2
+						{ 2, INSTRUMENT_1, DANCE_PAD_BUTTON_UP },		// column 3
+						{ 3, INSTRUMENT_1, DANCE_PAD_BUTTON_RIGHT },	// column 4
+					},
+					{	// player 2
+						{ 4, INSTRUMENT_2, DANCE_PAD_BUTTON_LEFT },		// column 1
+						{ 5, INSTRUMENT_2, DANCE_PAD_BUTTON_DOWN },		// column 2
+						{ 6, INSTRUMENT_2, DANCE_PAD_BUTTON_UP },		// column 3
+						{ 7, INSTRUMENT_2, DANCE_PAD_BUTTON_RIGHT },	// column 4
+					}
+
+				},
+			},
+			{	// StyleDef
+				"solo",		// m_szName
+				"solo",		// m_szReads
+				1,			// m_iNumPlayers
+				6,			// m_iNumTracks
+				{	// m_StyleInputToGameInput[NUM_PLAYERS][NUM_NOTE_COLS];
+					{	// player 1
+						{ 0, INSTRUMENT_1, DANCE_PAD_BUTTON_LEFT },		// column 1
+						{ 1, INSTRUMENT_1, DANCE_PAD_BUTTON_UPLEFT },	// column 2
+						{ 2, INSTRUMENT_1, DANCE_PAD_BUTTON_DOWN },		// column 3
+						{ 3, INSTRUMENT_1, DANCE_PAD_BUTTON_UP },		// column 4
+						{ 4, INSTRUMENT_1, DANCE_PAD_BUTTON_UPRIGHT },	// column 5
+						{ 5, INSTRUMENT_1, DANCE_PAD_BUTTON_RIGHT },	// column 6
+					}
+				},
+			},
+
+		}
+	}
+};
 
 
 GameManager::GameManager()
 {
-	m_DanceStyle = STYLE_SINGLE;
+	SwitchGame( "dance" );
+	SwitchStyle( "single" );
 }
 
-GameManager::~GameManager()
+
+GameDef* GameManager::GetGameDef( CString sGame )
 {
+	for( int i=0; i<NUM_GAME_DEFS; i++ )
+	{
+		if( g_GameDefs[i].m_szName == sGame )
+			return &g_GameDefs[i];
+	}
 
+	return NULL;
 }
+
+StyleDef* GameManager::GetStyleDef( CString sGame, CString sStyle )
+{
+	GameDef* pGameDef = GetGameDef( sGame );
+
+	for( int i=0; i<pGameDef->m_iNumStyleDefs; i++ )
+	{
+		if( pGameDef->m_StyleDefs[i].m_szName == sStyle )
+			return &pGameDef->m_StyleDefs[i];
+	}
+
+	return NULL;
+}
+
 
 bool GameManager::IsPlayerEnabled( PlayerNumber PlayerNo )
 {
-	switch( m_DanceStyle )
+	StyleDef* pStyleDef = GetCurrentStyleDef();
+	ASSERT( pStyleDef != NULL );
+
+	switch( pStyleDef->m_iNumPlayers )
 	{
-	case STYLE_VERSUS:
-	case STYLE_COUPLE:
-		if( PlayerNo == PLAYER_1 )
-			return true;
-		if( PlayerNo == PLAYER_2 )
-			return true;
+	case 1:
+		switch( PlayerNo )
+		{
+		case PLAYER_1:	return true;
+		case PLAYER_2:	return false;
+		default:	ASSERT( false );
+		}
 		break;
-	case STYLE_SINGLE:
-	case STYLE_SOLO:
-	case STYLE_DOUBLE:
-		if( PlayerNo == PLAYER_1 )
-			return true;
-		if( PlayerNo == PLAYER_2 )
-			return false;
+	case 2:
+		switch( PlayerNo )
+		{
+		case PLAYER_1:	return true;
+		case PLAYER_2:	return true;
+		default:	ASSERT( false );
+		}
 		break;
 	default:
-		ASSERT( false );	// invalid StyleDef
+		ASSERT( false );	// invalid m_iNumPlayers
 	}
+
 	return false;
 }
 
-
-StyleDef GameManager::GetStyleDef( DanceStyle mode )
-{
-	StyleDef sd;
-
-
-	/*
-	CMap<TapNote, TapNote, float, float> mapTapNoteToRotation;	// arrow facing left is rotation 0
-	mapTapNoteToRotation[NOTE_PAD1_LEFT]	= 0;
-	mapTapNoteToRotation[NOTE_PAD1_UPLEFT]	= D3DX_PI/4.0f;
-	mapTapNoteToRotation[NOTE_PAD1_DOWN]	= -D3DX_PI/2.0f;
-	mapTapNoteToRotation[NOTE_PAD1_UP]		= D3DX_PI/2.0f;
-	mapTapNoteToRotation[NOTE_PAD1_UPRIGHT]	= D3DX_PI*3.0f/4.0f;
-	mapTapNoteToRotation[NOTE_PAD1_RIGHT]	= D3DX_PI;
-	mapTapNoteToRotation[NOTE_PAD2_LEFT]	= mapTapNoteToRotation[NOTE_PAD1_LEFT];
-	mapTapNoteToRotation[NOTE_PAD2_UPLEFT]	= mapTapNoteToRotation[NOTE_PAD1_UPLEFT];
-	mapTapNoteToRotation[NOTE_PAD2_DOWN]	= mapTapNoteToRotation[NOTE_PAD1_DOWN];
-	mapTapNoteToRotation[NOTE_PAD2_UP]		= mapTapNoteToRotation[NOTE_PAD1_UP];
-	mapTapNoteToRotation[NOTE_PAD2_UPRIGHT]	= mapTapNoteToRotation[NOTE_PAD1_UPRIGHT];
-	mapTapNoteToRotation[NOTE_PAD2_RIGHT]	= mapTapNoteToRotation[NOTE_PAD1_RIGHT];
-	*/
-
-	switch( mode )
-	{
-	case STYLE_SINGLE:
-	case STYLE_DOUBLE:
-	case STYLE_SOLO:
-		sd.m_iNumPlayers = 1;
-		break;
-	case STYLE_VERSUS:
-	case STYLE_COUPLE:
-		sd.m_iNumPlayers = 2;
-		break;
-	default:
-		ASSERT( false );	// invalid GameMode
-	}
-
-
-	switch( mode )
-	{
-	case STYLE_SINGLE:
-	case STYLE_VERSUS:
-	case STYLE_COUPLE:
-		sd.m_iNumColumns = 4;
-		sd.m_ColumnToTapNote[0]		= NOTE_PAD1_LEFT;
-		sd.m_ColumnToTapNote[1]		= NOTE_PAD1_DOWN;
-		sd.m_ColumnToTapNote[2]		= NOTE_PAD1_UP;
-		sd.m_ColumnToTapNote[3]		= NOTE_PAD1_RIGHT;
-		sd.m_sColumnToNoteName[0] = "left";
-		sd.m_sColumnToNoteName[1] = "down";
-		sd.m_sColumnToNoteName[2] = "up";
-		sd.m_sColumnToNoteName[3] = "right";
-/*		sd.m_ColumnToRotation[0] = mapTapNoteToRotation[NOTE_PAD1_LEFT];
-		sd.m_ColumnToRotation[1] = mapTapNoteToRotation[NOTE_PAD1_DOWN];
-		sd.m_ColumnToRotation[2] = mapTapNoteToRotation[NOTE_PAD1_UP];
-		sd.m_ColumnToRotation[3] = mapTapNoteToRotation[NOTE_PAD1_RIGHT];
-*/		break;
-	case STYLE_SOLO:
-		sd.m_iNumColumns = 6;		// LEFT, UP+LEFT, DOWN, UP, UP+RIGHT, RIGHT
-		sd.m_ColumnToTapNote[0]		= NOTE_PAD1_LEFT;
-		sd.m_ColumnToTapNote[1]		= NOTE_PAD1_UPLEFT;
-		sd.m_ColumnToTapNote[2]		= NOTE_PAD1_DOWN;
-		sd.m_ColumnToTapNote[3]		= NOTE_PAD1_UP;
-		sd.m_ColumnToTapNote[4]		= NOTE_PAD1_UPRIGHT;
-		sd.m_ColumnToTapNote[5]		= NOTE_PAD1_RIGHT;
-		sd.m_sColumnToNoteName[0] = "left";
-		sd.m_sColumnToNoteName[1] = "upleft";
-		sd.m_sColumnToNoteName[2] = "down";
-		sd.m_sColumnToNoteName[3] = "up";
-		sd.m_sColumnToNoteName[4] = "upright";
-		sd.m_sColumnToNoteName[5] = "right";
-/*		sd.m_ColumnToRotation[0] = mapTapNoteToRotation[NOTE_PAD1_LEFT];
-		sd.m_ColumnToRotation[1] = mapTapNoteToRotation[NOTE_PAD1_UPLEFT];
-		sd.m_ColumnToRotation[2] = mapTapNoteToRotation[NOTE_PAD1_DOWN];
-		sd.m_ColumnToRotation[3] = mapTapNoteToRotation[NOTE_PAD1_UP];
-		sd.m_ColumnToRotation[4] = mapTapNoteToRotation[NOTE_PAD1_UPRIGHT];
-		sd.m_ColumnToRotation[5] = mapTapNoteToRotation[NOTE_PAD1_RIGHT];
-*/		break;
-	case STYLE_DOUBLE:
-		sd.m_iNumColumns = 8;		// 1_LEFT, 1_DOWN, 1_UP, 1_RIGHT, 2_LEFT, 2_DOWN, 2_UP, 2_RIGHT
-		sd.m_ColumnToTapNote[0]		= NOTE_PAD1_LEFT;
-		sd.m_ColumnToTapNote[1]		= NOTE_PAD1_DOWN;
-		sd.m_ColumnToTapNote[2]		= NOTE_PAD1_UP;
-		sd.m_ColumnToTapNote[3]		= NOTE_PAD1_RIGHT;
-		sd.m_ColumnToTapNote[4]		= NOTE_PAD2_LEFT;
-		sd.m_ColumnToTapNote[5]		= NOTE_PAD2_DOWN;
-		sd.m_ColumnToTapNote[6]		= NOTE_PAD2_UP;
-		sd.m_ColumnToTapNote[7]		= NOTE_PAD2_RIGHT;
-		sd.m_ColumnToTapNote[8]		= NOTE_PAD1_UPLEFT;// Even though this isn't used, Need them here so
-		sd.m_ColumnToTapNote[9]		= NOTE_PAD1_UPRIGHT;// TapNoteToColumnNumber doesn't get confused by them
-		sd.m_ColumnToTapNote[10]		= NOTE_PAD2_UPLEFT;
-		sd.m_ColumnToTapNote[11]		= NOTE_PAD2_UPRIGHT;
-		sd.m_sColumnToNoteName[0] = "left";
-		sd.m_sColumnToNoteName[1] = "upleft";
-		sd.m_sColumnToNoteName[2] = "down";
-		sd.m_sColumnToNoteName[3] = "up";
-		sd.m_sColumnToNoteName[4] = "upright";
-		sd.m_sColumnToNoteName[5] = "right";
-		sd.m_sColumnToNoteName[6] = "left";
-		sd.m_sColumnToNoteName[7] = "upleft";
-		sd.m_sColumnToNoteName[8] = "down";
-		sd.m_sColumnToNoteName[9] = "up";
-		sd.m_sColumnToNoteName[10] = "upright";
-		sd.m_sColumnToNoteName[11] = "right";
-		/*
-		sd.m_ColumnToRotation[0] = mapTapNoteToRotation[NOTE_PAD1_LEFT];
-		sd.m_ColumnToRotation[1] = mapTapNoteToRotation[NOTE_PAD1_DOWN];
-		sd.m_ColumnToRotation[2] = mapTapNoteToRotation[NOTE_PAD1_UP];
-		sd.m_ColumnToRotation[3] = mapTapNoteToRotation[NOTE_PAD1_RIGHT];
-		sd.m_ColumnToRotation[4] = mapTapNoteToRotation[NOTE_PAD2_LEFT];
-		sd.m_ColumnToRotation[5] = mapTapNoteToRotation[NOTE_PAD2_DOWN];
-		sd.m_ColumnToRotation[6] = mapTapNoteToRotation[NOTE_PAD2_UP];
-		sd.m_ColumnToRotation[7] = mapTapNoteToRotation[NOTE_PAD2_RIGHT];
-		sd.m_ColumnToRotation[8] = mapTapNoteToRotation[NOTE_PAD1_UPLEFT];
-		sd.m_ColumnToRotation[9] = mapTapNoteToRotation[NOTE_PAD1_UPRIGHT];
-		sd.m_ColumnToRotation[10] = mapTapNoteToRotation[NOTE_PAD2_UPLEFT];
-		sd.m_ColumnToRotation[11] = mapTapNoteToRotation[NOTE_PAD2_UPRIGHT];
-		*/
-		break;
-	default:
-		ASSERT( false );	// invalid GameMode
-	}
-
-	return sd;
-}

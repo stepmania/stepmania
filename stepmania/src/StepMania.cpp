@@ -5,7 +5,7 @@
 
  Desc: 
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -14,19 +14,31 @@
 //-----------------------------------------------------------------------------
 #include "resource.h"
 
-#include "RageHelper.h"
-#include "RageScreen.h"
-#include "RageTextureManager.h"
-#include "RageSound.h"
-#include "RageMusic.h"
-#include "RageInput.h"
-
+//
+// StepMania global classes
+//
 #include "PrefsManager.h"
 #include "SongManager.h"
 #include "ThemeManager.h"
 #include "WindowManager.h"
 #include "GameManager.h"
 #include "FontManager.h"
+#include "InputFilter.h"
+#include "InputMapper.h"
+
+//
+// StepMania common classes
+//
+#include "Font.h"
+#include "GameConstants.h"
+#include "GameTypes.h"
+#include "GameInput.h"
+#include "StyleInput.h"
+#include "Song.h"
+#include "StyleDef.h"
+#include "NoteData.h"
+#include "NoteMetadata.h"
+
 
 #include "WindowSandbox.h"
 #include "WindowResults.h"
@@ -35,6 +47,17 @@
 
 #include "ScreenDimensions.h"
 
+// error catcher stuff
+#include "ErrorCatcher/ErrorCatcher.h"
+#pragma comment(lib, "ErrorCatcher/dbghelp.lib") 
+#if defined(DEBUG) | defined(_DEBUG)
+	#pragma comment(lib, "ErrorCatcher/ErrorCatcherD.lib") 
+#else
+	#pragma comment(lib, "ErrorCatcher/ErrorCatcher.lib") 
+#endif
+
+
+#include "dxerr8.h"
 #include "DXUtil.h"
 #include <Afxdisp.h>
 
@@ -98,7 +121,6 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 	if( GetLastError() == ERROR_ALREADY_EXISTS )
 	{
 		CloseHandle( g_hMutex );
-		HELPER.FatalError( "StepMania is already running!" );
 	}
 
 
@@ -163,9 +185,14 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 
 
 
+#ifdef DEBUG
+#define BCATCHERRORS false
+#else
+#define BCATCHERRORS true
+#endif
 
 
-	bool bSuccess = HELPER.Run( MainLoop );
+	bool bSuccess = RunAndCatchErrors( MainLoop, BCATCHERRORS );
 
 	
 
@@ -227,7 +254,9 @@ void MainLoop()
 			Update();
 			Render();
 			//if( !g_bFullscreen )
-			//::Sleep(0 );	// give some time for the movie decoding thread
+#ifdef DEBUG
+			::Sleep(1 );	// give some time for the movie decoding thread
+#endif
 		}
 	}	// end  while( WM_QUIT != msg.message  )
 
@@ -244,7 +273,10 @@ BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 	{
 	case WM_INITDIALOG:
 		{
-			CString sMessage = HELPER.GetError() + "\n\nStack Trace:\n" + HELPER.GetErrorStackTrace();
+			CString sMessage = ssprintf("%s", GetError() );
+			if( GetErrorHr() != 0 )
+				sMessage += ssprintf(" ('%d - %s)'", GetErrorHr(), DXGetErrorString8(GetErrorHr()) );
+			sMessage +=	ssprintf("\n\n%s", GetStackTrace() );
 			sMessage.Replace( "\n", "\r\n" );
 			SendDlgItemMessage( 
 				hWnd, 
@@ -384,8 +416,8 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 					go.m_bWindowed = !go.m_bWindowed;
 					ApplyGraphicOptions();
 					return 0;
-				case IDM_CHANGERESOLUTION:
-					go.m_iResolution = (go.m_iResolution==640) ? 320 : 640;
+				case IDM_CHANGEDETAIL:
+					go.m_Profile = GraphicProfile( (go.m_Profile+1)%NUM_GRAPHIC_PROFILES );
 					ApplyGraphicOptions();
 					return 0;
                case IDM_EXIT:
@@ -463,6 +495,8 @@ HRESULT CreateObjects( HWND hWnd )
 	SONG	= new SongManager;		// this takes a long time to load
 	GAME	= new GameManager;
 	THEME	= new ThemeManager;
+	FILTER	= new InputFilter();
+	MAPPER	= new InputMapper();
 
 	BringWindowToTop( hWnd );
 	SetForegroundWindow( hWnd );
@@ -512,6 +546,8 @@ void DestroyObjects()
 	SAFE_DELETE( SONG );
 	SAFE_DELETE( GAME );
 	SAFE_DELETE( FONT );
+	SAFE_DELETE( FILTER );
+	SAFE_DELETE( MAPPER );
 
 	SAFE_DELETE( INPUTM );
 	SAFE_DELETE( MUSIC );
@@ -589,27 +625,41 @@ void Update()
 	if( fDeltaTime > 0.050f )	// we dropped a bunch of frames
 		fDeltaTime = 0.050f;
 	
+	if( INPUTM->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_TAB) ) )
+		fDeltaTime *= 4;
+	if( INPUTM->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_LSHIFT) ) )
+		fDeltaTime /= 4;
+
+
 	MUSIC->Update( fDeltaTime );
 
 	WM->Update( fDeltaTime );
 
 
-	static DeviceInputArray diArray;
-	diArray.SetSize( 0, 10 );	// zero the array
-	INPUTM->GetDeviceInputs( diArray );
+	static InputEventArray ieArray;
+	ieArray.SetSize( 0, 20 );	// zero the array
+	FILTER->GetInputEvents( ieArray, fDeltaTime );
 
 	DeviceInput DeviceI;
-	PadInput PadI;
-	PlayerInput PlayerI;
+	InputEventType type;
+	GameInput GameI;
+	MenuInput MenuI;
+	StyleInput StyleI;
 
-	for( int i=0; i<diArray.GetSize(); i++ )
+	for( int i=0; i<ieArray.GetSize(); i++ )
 	{
-		DeviceI = diArray[i];
+		DeviceI = (DeviceInput)ieArray[i];
+		type = ieArray[i].type;
 
-		PREFS->DeviceToPad( DeviceI, PadI );
-		PREFS->PadToPlayer( PadI, PlayerI );
+		MAPPER->DeviceToGame( DeviceI, GameI );
+		
+		MenuI = MAPPER->DeviceToMenu( DeviceI );
+		if( !MenuI.IsValid() )	// try again
+			MAPPER->GameToMenu( GameI, MenuI );
+		
+		MAPPER->GameToStyle( GameI, StyleI );
 
-		WM->Input( DeviceI, PadI, PlayerI );
+		WM->Input( DeviceI, type, GameI, MenuI, StyleI );
 	}
 
 }
@@ -640,7 +690,7 @@ void Render()
             }
 			else
 			{
-				HELPER.FatalErrorHr( hr, "Failed to SCREEN->Reset()" );
+				FatalErrorHr( hr, "Failed to SCREEN->Reset()" );
 			}
 
 			break;
@@ -651,7 +701,7 @@ void Render()
 
 				// calculate view and projection transforms
 				D3DXMATRIX matProj;
-				D3DXMatrixOrthoOffCenterLH( &matProj, 0, 640, 480, 0, -100, 100 );
+				D3DXMatrixOrthoOffCenterLH( &matProj, 0, 640, 480, 0, -1000, 1000 );
 				pd3dDevice->SetTransform( D3DTS_PROJECTION, &matProj );
 
 				D3DXMATRIX matView;
@@ -695,78 +745,139 @@ void ApplyGraphicOptions()
 
 	GraphicOptions &go = PREFS->m_GraphicOptions;
 
-	//
-	// Let the texture manager know about our preferences
-	//
-	if( TEXTURE != NULL )
-	{
-		TEXTURE->SetMaxTextureSize( go.m_iMaxTextureSize );
-		TEXTURE->SetTextureColorDepth( go.m_iTextureColor );
-	}
+	bool bWindowed = go.m_bWindowed;
 
 	//
-	// use GameOptions to get the display settings
+	// fill these in below depending on the profile
 	//
-	bool bWindowed	=	go.m_bWindowed;
-	DWORD dwWidth	=	go.m_iResolution;
-	DWORD dwHeight;
-	// fill in dwHeight
-	switch( dwWidth )
+	CString sProfileName;
+	DWORD dwWidth, dwHeight;
+	DWORD dwDisplayBPP;
+	DWORD dwTextureBPP;
+	DWORD dwMaxTextureSize;
+	bool bShadows;
+	bool bBackgrounds;
+	
+	switch( go.m_Profile )
 	{
-	case 320:	dwHeight = 240;		break;
-	case 400:	dwHeight = 300;		break;
-	case 512:	dwHeight = 384;		break;
-	case 640:	dwHeight = 480;		break;
-	case 800:	dwHeight = 600;		break;
-	case 1024:	dwHeight = 768;		break;
-	case 1280:	dwHeight = 1024;	break;
-	default:	dwHeight = 480;		break;
+	case PROFILE_SUPER_LOW:
+		sProfileName = "Super Low";
+		dwWidth = 320;
+		dwHeight = 240;
+		dwDisplayBPP = 16;
+		dwTextureBPP = 16;
+		dwMaxTextureSize = 256;
+		bShadows = false;
+		bBackgrounds = false;
+		break;
+	case PROFILE_LOW:
+		sProfileName = "Low";
+		dwWidth = 400;
+		dwHeight = 300;
+		dwDisplayBPP = 16;
+		dwTextureBPP = 16;
+		dwMaxTextureSize = 256;
+		bShadows = false;
+		bBackgrounds = true;
+		break;
+	case PROFILE_MEDIUM:
+		sProfileName = "Medium";
+		dwWidth = 640;
+		dwHeight = 480;
+		dwDisplayBPP = 16;
+		dwTextureBPP = 16;
+		dwMaxTextureSize = 512;
+		bShadows = false;
+		bBackgrounds = true;
+		break;
+	case PROFILE_HIGH:
+		sProfileName = "High";
+		dwWidth = 640;
+		dwHeight = 480;
+		dwDisplayBPP = 16;
+		dwTextureBPP = 16;
+		dwMaxTextureSize = 1024;
+		bShadows = true;
+		bBackgrounds = true;
+		break;
+	case PROFILE_CUSTOM:
+		sProfileName = "Custom";
+		dwWidth = go.m_iResolution;
+		switch( dwWidth )
+		{
+		case 320:	dwHeight = 240;		break;
+		case 400:	dwHeight = 300;		break;
+		case 512:	dwHeight = 384;		break;
+		case 640:	dwHeight = 480;		break;
+		case 800:	dwHeight = 600;		break;
+		case 1024:	dwHeight = 768;		break;
+		case 1280:	dwHeight = 1024;	break;
+		default:	dwHeight = 480;		break;
+		}
+		dwDisplayBPP = go.m_iDisplayColor;
+		dwTextureBPP = go.m_iTextureColor;
+		dwMaxTextureSize = go.m_iMaxTextureSize;
+		bShadows = go.m_bShadows;
+		bBackgrounds = go.m_bBackgrounds;
+		break;
+	default:
+		ASSERT( false );
 	}
-	DWORD dwBPP		=	go.m_iDisplayColor;
 
-	DWORD dwFlags = 0 | (go.m_b30fpsLock ? SCREEN_FLAG_CAP_AT_30HZ : 0);
+	DWORD dwFlags = 0;	// not used
 
 	//
 	// If the requested resolution doesn't work, keep switching until we find one that does.
 	//
-	if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP, dwFlags ) )
+	if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwDisplayBPP, dwFlags ) )
 	{
 		// We failed.  Try full screen with same params.
 		bWindowed = false;
-		if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP, dwFlags ) )
+		if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwDisplayBPP, dwFlags ) )
 		{
 			// Failed again.  Try 16 BPP
-			dwBPP = 16;
-			if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP, dwFlags ) )
+			dwDisplayBPP = 16;
+			if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwDisplayBPP, dwFlags ) )
 			{
 				// Failed again.  Try 640x480
 				dwWidth = 640;
 				dwHeight = 480;
-				if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP, dwFlags ) )
+				if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwDisplayBPP, dwFlags ) )
 				{
 					// Failed again.  Try 320x240
 					dwWidth = 320;
 					dwHeight = 240;
-					if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP, dwFlags ) )
+					if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwDisplayBPP, dwFlags ) )
 					{
-						HELPER.FatalError( "Tried every possible display mode, and couldn't change to any of them." );
+						FatalError( "Tried every possible display mode, and couldn't change to any of them." );
 					}
 				}
 			}
 		}
 	}
 
+	//
+	// Let the texture manager know about our preferences
+	//
+	if( TEXTURE != NULL )
+	{
+		TEXTURE->SetMaxTextureSize( dwMaxTextureSize );
+		TEXTURE->SetTextureColorDepth( dwTextureBPP );
+	}
 
 	RestoreObjects();
 
-    go.m_bWindowed = bWindowed;
-    go.m_iDisplayColor = dwBPP;
-    go.m_iResolution = dwWidth;
 	PREFS->SavePrefsToDisk();
 
 	if( WM )
 	{
-		WM->SystemMessage( ssprintf("%s - %ux%u - %u bits", bWindowed ? "Windowed" : "FullScreen", dwWidth, dwHeight, dwBPP) );
+		CString sMessage;
+		if( sProfileName == "Custom" )
+			sMessage = ssprintf("%s - %ux%u - %u color, %u texture", bWindowed ? "Windowed" : "FullScreen", dwWidth, dwHeight, dwDisplayBPP, dwTextureBPP);
+		else
+			sMessage = ssprintf("%s - %s detail", bWindowed ? "Windowed" : "FullScreen", sProfileName );
+
+		WM->SystemMessage( sMessage );
 	}
 }
 

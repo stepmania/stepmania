@@ -5,7 +5,7 @@
 
  Desc: See header.
 
- Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -16,6 +16,7 @@
 #include "RageTextureManager.h"
 #include "RageUtil.h"
 #include "RageHelper.h"
+#include "ErrorCatcher/ErrorCatcher.h"
 
 
 Font::Font( const CString &sFontFilePath )
@@ -44,7 +45,7 @@ Font::Font( const CString &sFontFilePath )
 	IniFile ini;
 	ini.SetPath( m_sFontFilePath );
 	if( !ini.ReadFile() )
-		HELPER.FatalError( ssprintf("Error opening Font file '%s'.", m_sFontFilePath) );
+		FatalError( ssprintf("Error opening Font file '%s'.", m_sFontFilePath) );
 
 
 	//
@@ -52,7 +53,7 @@ Font::Font( const CString &sFontFilePath )
 	//
 	CString sTextureFile = ini.GetValue( "Font", "Texture" );
 	if( sTextureFile == "" )
-		HELPER.FatalError( ssprintf("Error reading  value 'Texture' from %s.", m_sFontFilePath) );
+		FatalError( ssprintf("Error reading  value 'Texture' from %s.", m_sFontFilePath) );
 
 	m_sTexturePath = sFontDir + sTextureFile;	// save the path of the new texture
 	m_sTexturePath.MakeLower();
@@ -73,7 +74,7 @@ Font::Font( const CString &sFontFilePath )
 	{
 		// sanity check
 		if( sCharacters.GetLength() != (int)m_pTexture->GetNumFrames() )
-			HELPER.FatalError( ssprintf("The characters in '%s' does not match the number of frames in the texture.", m_sFontFilePath) );
+			FatalError( ssprintf("The characters in '%s' does not match the number of frames in the texture.", m_sFontFilePath) );
 
 		// set the char to frame number map
 		for( int i=0; i<sCharacters.GetLength(); i++ )
@@ -103,7 +104,7 @@ Font::Font( const CString &sFontFilePath )
 		split( sWidthsValue, ",", arrayCharWidths );
 
 		if( arrayCharWidths.GetSize() != (int)m_pTexture->GetNumFrames() )
-			HELPER.FatalError( ssprintf("The number of widths specified in '%s' (%d) do not match the number of frames in the texture (%u).", m_sFontFilePath, arrayCharWidths.GetSize(), m_pTexture->GetNumFrames()) );
+			FatalError( ssprintf("The number of widths specified in '%s' (%d) do not match the number of frames in the texture (%u).", m_sFontFilePath, arrayCharWidths.GetSize(), m_pTexture->GetNumFrames()) );
 
 		for( int i=0; i<arrayCharWidths.GetSize(); i++ )
 		{
@@ -157,7 +158,7 @@ int Font::GetLineWidthInSourcePixels( LPCTSTR szLine, int iLength )
 		const char c = szLine[i];
 		const int iFrameNo = m_iCharToFrameNo[c];
 		if( iFrameNo == -1 )	// this font doesn't impelemnt this character
-			HELPER.FatalError( ssprintf("The font '%s' does not implement the character '%c'", m_sFontFilePath, c) );
+			FatalError( ssprintf("The font '%s' does not implement the character '%c'", m_sFontFilePath, c) );
 
 		iLineWidth += m_iFrameNoToWidth[iFrameNo];
 	}

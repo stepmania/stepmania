@@ -5,7 +5,7 @@
 
  Desc: Wrapper for DirectInput.  Generates InputEvents.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -25,6 +25,7 @@
 #include <dinput.h>
 #include "RageUtil.h"
 #include "RageHelper.h"
+#include "ErrorCatcher/ErrorCatcher.h"
 
 
 RageInput*		INPUTM	= NULL;		// globally accessable input device
@@ -41,11 +42,11 @@ CString DeviceInput::GetDescription()
 		ASSERT( false );	// called GetDescription on a blank DeviceInput!
 		break;
 
-	case DEVICE_JOYSTICK1:	// joystick
-	case DEVICE_JOYSTICK2:
-	case DEVICE_JOYSTICK3:
-	case DEVICE_JOYSTICK4:
-		sReturn = ssprintf("Joystick %d: ", device - DEVICE_JOYSTICK1 + 1 );
+	case DEVICE_JOY1:	// joystick
+	case DEVICE_JOY2:
+	case DEVICE_JOY3:
+	case DEVICE_JOY4:
+		sReturn = ssprintf("Joystick %d: ", device - DEVICE_JOY1 + 1 );
 
 		switch( button )
 		{
@@ -223,7 +224,7 @@ bool DeviceInput::fromString( const CString &s )
 
 
 //-----------------------------------------------------------------------------
-// Name: EnumJoysticksCallback()
+// Name: EnumJoysticksCallMenuBack( PlayerNumber p )
 // Desc: Called once for each enumerated joystick. If we find one, create a
 //       device interface on it so we can play with it.
 //-----------------------------------------------------------------------------
@@ -245,7 +246,7 @@ BOOL CALLBACK	EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance,
 	HRESULT hr = pDI->CreateDevice( pdidInstance->guidInstance, 
 									&pInput->m_pJoystick[i++], 
 									NULL );
-		HELPER.FatalErrorHr( hr, "Error in CreateDevice() for joystick %d.", i );
+		FatalErrorHr( hr, "Error in CreateDevice() for joystick %d.", i );
 
 	return DIENUM_CONTINUE;
 }
@@ -254,7 +255,7 @@ BOOL CALLBACK	EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance,
 
 
 //-----------------------------------------------------------------------------
-// Name: EnumAxesCallback()
+// Name: EnumAxesCallMenuBack( PlayerNumber p )
 // Desc: Callback function for enumerating the axes on a joystick
 //-----------------------------------------------------------------------------
 BOOL CALLBACK	EnumAxesCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,
@@ -283,24 +284,25 @@ BOOL CALLBACK	EnumAxesCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,
 
 RageInput::RageInput( HWND hWnd )
 {
+	int i;
+
 	m_hWnd = hWnd;
 
 
 	m_pDI = NULL;
 	m_pKeyboard = NULL;
 	m_pMouse = NULL;
-	for( int i=0; i<NUM_JOYSTICKS; i++ )
+	for( i=0; i<NUM_JOYSTICKS; i++ )
 		m_pJoystick[i]=NULL;
 
 
 	ZeroMemory( &m_keys, sizeof(m_keys) );
 	ZeroMemory( &m_oldKeys, sizeof(m_oldKeys) );
-	for( int j=0; j<NUM_JOYSTICKS; j++ )
+	for( i=0; i<NUM_JOYSTICKS; i++ )
 	{
-		ZeroMemory( &m_joyState[j], sizeof(m_joyState[j]) );
-		ZeroMemory( &m_oldKeys[j], sizeof(m_joyState[j]) );
+		ZeroMemory( &m_joyState[i], sizeof(m_joyState[i]) );
+		ZeroMemory( &m_oldKeys[i], sizeof(m_joyState[i]) );
 	}
-
 
 	Initialize();
 }
@@ -319,7 +321,7 @@ HRESULT RageInput::Initialize()
 	////////////////////////////////
     if( FAILED(hr = DirectInput8Create( GetModuleHandle(NULL), DIRECTINPUT_VERSION, 
                                          IID_IDirectInput8, (VOID**)&m_pDI, NULL ) ) )
-		HELPER.FatalErrorHr( hr, "DirectInput8Create failed." );
+		FatalErrorHr( hr, "DirectInput8Create failed." );
 	
 	/////////////////////////////
 	// Create the keyboard device
@@ -327,21 +329,21 @@ HRESULT RageInput::Initialize()
 
 	// Create our DirectInput Object for the Keyboard
     if( FAILED( hr = m_pDI->CreateDevice( GUID_SysKeyboard, &m_pKeyboard, NULL ) ) )
-		HELPER.FatalErrorHr( hr, "CreateDevice keyboard failed." );
+		FatalErrorHr( hr, "CreateDevice keyboard failed." );
 
 	// Set our Cooperation Level with each Device
 	if( FAILED( hr = m_pKeyboard->SetCooperativeLevel(m_hWnd, DISCL_FOREGROUND | 
 															  DISCL_NOWINKEY |
 															  DISCL_NONEXCLUSIVE) ) )
-		HELPER.FatalErrorHr( hr, "m_pKeyboard->SetCooperativeLevel failed." );
+		FatalErrorHr( hr, "m_pKeyboard->SetCooperativeLevel failed." );
 
 	// Set the Data Format of each device
 	if( FAILED( hr = m_pKeyboard->SetDataFormat(&c_dfDIKeyboard) ) )
-		HELPER.FatalErrorHr( hr, "m_pKeyboard->SetDataFormat failed." );
+		FatalErrorHr( hr, "m_pKeyboard->SetDataFormat failed." );
 
 	// Acquire the Keyboard Device
 	//if( FAILED( hr = m_pKeyboard->Acquire() ) )
-	//	HELPER.FatalErrorHr( "m_pKeyboard->Acquire failed.", hr );
+	//	FatalErrorHr( "m_pKeyboard->Acquire failed.", hr );
 
 
 
@@ -351,13 +353,13 @@ HRESULT RageInput::Initialize()
 	
 	// Obtain an interface to the system mouse device.
 	if( FAILED( hr = m_pDI->CreateDevice( GUID_SysMouse, &m_pMouse, NULL ) ) )
-		HELPER.FatalErrorHr( hr, "CreateDevice mouse failed." );
+		FatalErrorHr( hr, "CreateDevice mouse failed." );
 
     if( FAILED( hr = m_pMouse->SetCooperativeLevel( m_hWnd, DISCL_NONEXCLUSIVE|DISCL_FOREGROUND ) ) )
-		HELPER.FatalErrorHr( hr, "m_pMouse->SetCooperativeLevel failed." );
+		FatalErrorHr( hr, "m_pMouse->SetCooperativeLevel failed." );
     
 	if( FAILED( hr = m_pMouse->SetDataFormat( &c_dfDIMouse2 ) ) )
-		HELPER.FatalErrorHr( hr, "m_pMouse->SetDataFormat failed." );
+		FatalErrorHr( hr, "m_pMouse->SetDataFormat failed." );
 
 /*
     DIPROPDWORD dipdw;
@@ -370,7 +372,7 @@ HRESULT RageInput::Initialize()
     if( FAILED( m_pMouse->SetProperty( DIPROP_AXISMODE, &dipdw.diph ) ) )
         return E_FAIL;*/
 	//if( FAILED( hr = m_pMouse->Acquire()))
-	//	HELPER.FatalErrorHr( "m_pMouse->Acquire failed.", hr );
+	//	FatalErrorHr( "m_pMouse->Acquire failed.", hr );
 
 	m_RelPosition_x = 0;
 	m_RelPosition_y = 0;
@@ -387,7 +389,7 @@ HRESULT RageInput::Initialize()
                                          EnumJoysticksCallback,
                                          (VOID*)this, 
 										 DIEDFL_ATTACHEDONLY ) ) )
-		HELPER.FatalErrorHr( hr, "m_pDI->EnumDevices failed." );
+		FatalErrorHr( hr, "m_pDI->EnumDevices failed." );
 
 	for( int i=0; i<NUM_JOYSTICKS; i++ )
 	{
@@ -398,14 +400,14 @@ HRESULT RageInput::Initialize()
 		// passing a DIJOYSTATE2 structure to IDirectInputDevice::GetDeviceState().
 		if( m_pJoystick[i] )
 			if( FAILED( hr = m_pJoystick[i]->SetDataFormat( &c_dfDIJoystick2 ) ) )
-				HELPER.FatalErrorHr( hr, "m_pJoystick[i]->SetDataFormat failed." );
+				FatalErrorHr( hr, "m_pJoystick[i]->SetDataFormat failed." );
 
 
 		// Set the cooperative level to let DInput know how this device should
 		// interact with the system and with other DInput applications.
 		if( m_pJoystick[i] )
 			if( FAILED( hr = m_pJoystick[i]->SetCooperativeLevel( m_hWnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND ) ) )
-				HELPER.FatalErrorHr( hr, "m_pJoystick[i]->SetCooperativeLevel failed." );
+				FatalErrorHr( hr, "m_pJoystick[i]->SetCooperativeLevel failed." );
 
 
 		/*
@@ -423,12 +425,12 @@ HRESULT RageInput::Initialize()
 		// of enumerating device objects (axes, buttons, etc.).
 		if( m_pJoystick[i] )
 			if ( FAILED( hr = m_pJoystick[i]->EnumObjects( EnumAxesCallback, (VOID*)m_pJoystick[i], DIDFT_AXIS ) ) )
-				HELPER.FatalErrorHr( hr, "m_pJoystick[i]->EnumObjects failed." );
+				FatalErrorHr( hr, "m_pJoystick[i]->EnumObjects failed." );
 
 		// Acquire the newly created devices
 		if( m_pJoystick[i] )
 			if( FAILED( hr = m_pJoystick[i]->Acquire() ) )
-				HELPER.FatalErrorHr( hr, "m_pJoystick[i]->Acquire failed." );
+				FatalErrorHr( hr, "m_pJoystick[i]->Acquire failed." );
 	}
 
 	return S_OK;
@@ -461,7 +463,7 @@ void RageInput::Release()
 
 
 
-HRESULT RageInput::GetDeviceInputs( DeviceInputArray &listDeviceInputs )
+HRESULT RageInput::Update()
 {
 // macros for reading DI state structures
 #define IS_PRESSED(b)	(b & 0x80) 
@@ -504,14 +506,6 @@ HRESULT RageInput::GetDeviceInputs( DeviceInputArray &listDeviceInputs )
 			hr = m_pKeyboard->Acquire();
 
 		return E_FAIL;
-	}
-
-	// get keyboard state was successful.  Compare this state to the last state
-	for( int k = 0; k < 256; k++ )	// foreach key
-	{
-		// check if key is depressed this update and was not depressed last update
-		if( IS_PRESSED( m_keys[k] )  &&  !IS_PRESSED( m_oldKeys[k] ) ) 
-			listDeviceInputs.Add( DeviceInput(DEVICE_KEYBOARD, k) );
 	}
 
 
@@ -587,33 +581,6 @@ HRESULT RageInput::GetDeviceInputs( DeviceInputArray &listDeviceInputs )
 			// Get the input's device state
 			if( FAILED( hr = m_pJoystick[i]->GetDeviceState( sizeof(DIJOYSTATE2), &m_joyState[i] ) ) )
 				return hr; // The device should have been acquired during the Poll()
-			else
-			{
-
-				// check if key is depressed this update and was not depressed last update
-				if(  IS_LEFT( m_joyState[i].lX )  &&
-					!IS_LEFT( m_oldJoyState[i].lX )  )
-					listDeviceInputs.Add( DeviceInput(InputDevice(DEVICE_JOYSTICK1+i), JOY_LEFT) );
-
-				if(  IS_RIGHT( m_joyState[i].lX )  &&  
-					!IS_RIGHT( m_oldJoyState[i].lX )  )
-					listDeviceInputs.Add( DeviceInput(InputDevice(DEVICE_JOYSTICK1+i), JOY_RIGHT) );
-				
-				if(  IS_UP( m_joyState[i].lY ) &&  
-					!IS_UP( m_oldJoyState[i].lY )  )
-					listDeviceInputs.Add( DeviceInput(InputDevice(DEVICE_JOYSTICK1+i), JOY_UP) );
-				
-				if(	 IS_DOWN(  m_joyState[i].lY ) &&  
-					!IS_DOWN(  m_oldJoyState[i].lY )  )
-					listDeviceInputs.Add( DeviceInput(InputDevice(DEVICE_JOYSTICK1+i), JOY_DOWN) );
-
-
-				for( BYTE b=0; b<NUM_JOYSTICK_BUTTONS; b++ )
-				{
-					if( IS_PRESSED(m_joyState[i].rgbButtons[b]) && !IS_PRESSED(m_oldJoyState[i].rgbButtons[b]) )
-						listDeviceInputs.Add( DeviceInput( InputDevice(DEVICE_JOYSTICK1+i), JOY_1+b ) );
-				}
-			}
 		}
 	}
 
@@ -623,18 +590,18 @@ HRESULT RageInput::GetDeviceInputs( DeviceInputArray &listDeviceInputs )
 }
 
 
-BOOL RageInput::IsBeingPressed( DeviceInput di )
+bool RageInput::IsBeingPressed( DeviceInput di )
 {
 	switch( di.device )
 	{
 	case DEVICE_KEYBOARD:
-		return m_keys[ di.button ];
-	case DEVICE_JOYSTICK1:
-	case DEVICE_JOYSTICK2:
-	case DEVICE_JOYSTICK3:
-	case DEVICE_JOYSTICK4:
+		return 0 != m_keys[ di.button ];
+	case DEVICE_JOY1:
+	case DEVICE_JOY2:
+	case DEVICE_JOY3:
+	case DEVICE_JOY4:
 		int joy_index;
-		joy_index = di.device - DEVICE_JOYSTICK1;
+		joy_index = di.device - DEVICE_JOY1;
 
 		switch( di.button )
 		{
@@ -648,10 +615,44 @@ BOOL RageInput::IsBeingPressed( DeviceInput di )
 			return IS_DOWN( m_joyState[joy_index].lX );
 		default:	// a joystick button
 			int button_index = di.button - JOY_1;
-			return IS_PRESSED( m_joyState[joy_index].rgbButtons[button_index] );
+			return 0 != IS_PRESSED( m_joyState[joy_index].rgbButtons[button_index] );
 		}
 	default:
-		HELPER.FatalError( "Invalid device" );
+		ASSERT( false ); // bad device
+	}
+
+	return false;	// how did we get here?!?
+}
+
+bool RageInput::WasBeingPressed( DeviceInput di )
+{
+	switch( di.device )
+	{
+	case DEVICE_KEYBOARD:
+		return 0 != m_oldKeys[ di.button ];
+	case DEVICE_JOY1:
+	case DEVICE_JOY2:
+	case DEVICE_JOY3:
+	case DEVICE_JOY4:
+		int joy_index;
+		joy_index = di.device - DEVICE_JOY1;
+
+		switch( di.button )
+		{
+		case JOY_LEFT:
+			return IS_LEFT( m_oldJoyState[joy_index].lX );
+		case JOY_RIGHT:
+			return IS_RIGHT( m_oldJoyState[joy_index].lX );
+		case JOY_UP:
+			return IS_UP( m_oldJoyState[joy_index].lX );
+		case JOY_DOWN:
+			return IS_DOWN( m_oldJoyState[joy_index].lX );
+		default:	// a joystick button
+			int button_index = di.button - JOY_1;
+			return 0 != IS_PRESSED( m_oldJoyState[joy_index].rgbButtons[button_index] );
+		}
+	default:
+		ASSERT( false ); // bad device
 	}
 
 	return false;	// how did we get here?!?

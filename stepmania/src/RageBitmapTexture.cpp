@@ -5,7 +5,7 @@
 
  Desc: Holder for a static texture with metadata.  Can load just about any image format.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -24,6 +24,7 @@
 #include "DXUtil.h"
 #include "RageUtil.h"
 #include "RageHelper.h"
+#include "ErrorCatcher/ErrorCatcher.h"
 
 
 //-----------------------------------------------------------------------------
@@ -109,7 +110,7 @@ void RageBitmapTexture::Create( DWORD dwMaxSize, DWORD dwTextureColorDepth, DWOR
 		m_sFilePath,
 		&ddii ) ) )
 	{
-        HELPER.FatalErrorHr( hr, "D3DXGetImageInfoFromFile() failed for file '%s'.", m_sFilePath );
+        FatalErrorHr( hr, "D3DXGetImageInfoFromFile() failed for file '%s'.", m_sFilePath );
 	}
 
 	D3DCAPS8 caps;
@@ -144,7 +145,7 @@ void RageBitmapTexture::Create( DWORD dwMaxSize, DWORD dwTextureColorDepth, DWOR
 		NULL,						// no palette
 		&m_pd3dTexture ) ) )
 	{
-		HELPER.FatalErrorHr( hr, "D3DXCreateTextureFromFileEx() failed for file '%s'.", m_sFilePath );
+		FatalErrorHr( hr, "D3DXCreateTextureFromFileEx() failed for file '%s'.", m_sFilePath );
 	}
 
 	/////////////////////
@@ -155,7 +156,7 @@ void RageBitmapTexture::Create( DWORD dwMaxSize, DWORD dwTextureColorDepth, DWOR
 
 	D3DSURFACE_DESC ddsd;
 	if ( FAILED( hr = m_pd3dTexture->GetLevelDesc( 0, &ddsd ) ) ) 
-		HELPER.FatalErrorHr( hr, "Could not get level Description of D3DX texture!" );
+		FatalErrorHr( hr, "Could not get level Description of D3DX texture!" );
 
 	// save information about the texture
 	m_iTextureWidth		= ddsd.Width;

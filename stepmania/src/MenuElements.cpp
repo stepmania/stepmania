@@ -5,7 +5,7 @@
 
  Desc: Base class for menu Windows.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -44,6 +44,7 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	m_sprTopEdge.Load( sTopEdgePath );
 	m_sprTopEdge.TurnShadowOff();
 	m_sprTopEdge.SetZ( -1 );
+	m_sprTopEdge.SetY( SCREEN_TOP + m_sprTopEdge.GetZoomedHeight()/2.0f );
 
 	m_sprBottomEdge.Load( THEME->GetPathTo(GRAPHIC_MENU_BOTTOM_EDGE) );
 	m_sprBottomEdge.TurnShadowOff();
@@ -71,8 +72,8 @@ void MenuElements::TweenTopEdgeOnScreen()
 {
 	SetTopEdgeOffScreen();
 
-	m_sprTopEdge.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-	m_sprTopEdge.SetTweenY( m_sprTopEdge.GetZoomedHeight()/2 );
+	m_sprTopEdge.BeginTweening( MENU_ELEMENTS_TWEEN_TIME*2, TWEEN_SPRING );
+	m_sprTopEdge.SetTweenX( CENTER_X );
 
 	float fOriginalZoomY = m_textHelp.GetZoomY();
 	m_textHelp.SetZoomY( 0 );
@@ -86,8 +87,9 @@ void MenuElements::TweenTopEdgeOffScreen()
 {
 	SetTopEdgeOnScreen();
 
-	m_sprTopEdge.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-	m_sprTopEdge.SetTweenY( -m_sprTopEdge.GetZoomedHeight() );
+	m_sprTopEdge.BeginTweening( MENU_ELEMENTS_TWEEN_TIME*2, TWEEN_BIAS_END );
+	m_sprTopEdge.SetTweenX( SCREEN_WIDTH*1.5f );
+
 
 	m_textHelp.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
 	m_textHelp.SetTweenZoomY( 0 );
@@ -147,12 +149,12 @@ void MenuElements::SetBackgroundOffScreen()
 
 void MenuElements::SetTopEdgeOnScreen()
 {
-	m_sprTopEdge.SetXY( CENTER_X, m_sprTopEdge.GetZoomedHeight() );
+	m_sprTopEdge.SetXY( CENTER_X, m_sprTopEdge.GetZoomedHeight()/2 );
 }
 
 void MenuElements::SetTopEdgeOffScreen()
 {
-	m_sprTopEdge.SetXY( CENTER_X, -m_sprTopEdge.GetZoomedHeight() );
+	m_sprTopEdge.SetXY( CENTER_X+SCREEN_WIDTH, m_sprTopEdge.GetZoomedHeight()/2 );
 }
 
 

@@ -1,5 +1,5 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Developer Studio generated include file.
+// Microsoft Visual C++ generated include file.
 // Used by StepMania.RC
 //
 #define IDD_ERROR_DIALOG                111
@@ -11,6 +11,7 @@
 #define IDC_BUTTON_REPORT               1002
 #define IDM_CHANGERESOLUTION            1003
 #define IDC_BUTTON_VIEW_LOG             1003
+#define IDM_CHANGEDETAIL                1003
 #define IDM_CHANGEDISPLAYCOLOR          1004
 #define IDM_CHANGETEXTURECOLOR          1005
 #define IDC_EDIT_ERROR                  1005

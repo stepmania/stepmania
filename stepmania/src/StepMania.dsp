@@ -200,14 +200,6 @@ SOURCE=.\Window.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\WindowAdvancedOptions.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowAdvancedOptions.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\WindowCaution.cpp
 # End Source File
 # Begin Source File
@@ -221,6 +213,14 @@ SOURCE=.\WindowConfigurePads.cpp
 # Begin Source File
 
 SOURCE=.\WindowConfigurePads.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowCustomGraphicOptions.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowCustomGraphicOptions.h
 # End Source File
 # Begin Source File
 
@@ -248,14 +248,6 @@ SOURCE=.\WindowEditMenu.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\WindowEditOptions.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowEditOptions.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\WindowGameOptions.cpp
 # End Source File
 # Begin Source File
@@ -277,14 +269,6 @@ SOURCE=.\WindowManager.cpp
 # Begin Source File
 
 SOURCE=.\WindowManager.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowMenu.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowMenu.h
 # End Source File
 # Begin Source File
 
@@ -337,6 +321,14 @@ SOURCE=.\WindowSelectDifficulty.cpp
 # Begin Source File
 
 SOURCE=.\WindowSelectDifficulty.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowSelectGroup.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowSelectGroup.h
 # End Source File
 # Begin Source File
 
@@ -412,6 +404,18 @@ SOURCE=.\GameConstants.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\GameDef.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GameDef.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GameInput.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\GameManager.cpp
 # End Source File
 # Begin Source File
@@ -432,15 +436,39 @@ SOURCE=.\Grade.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\InputFilter.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\InputFilter.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\InputMapper.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\InputMapper.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\NoteData.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\NoteData.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\NoteMetadata.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\NoteMetadata.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\PadInput.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Pattern.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Pattern.h
 # End Source File
 # Begin Source File
 
@@ -504,6 +532,10 @@ SOURCE=.\StyleDef.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\StyleInput.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ThemeManager.cpp
 # End Source File
 # Begin Source File
@@ -521,14 +553,6 @@ SOURCE=.\IniFile.cpp
 # Begin Source File
 
 SOURCE=.\IniFile.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\XMLMarkup.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\XMLMarkup.h
 # End Source File
 # End Group
 # Begin Group "System"
@@ -704,6 +728,14 @@ SOURCE=.\BPMDisplay.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\CroppedSprite.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CroppedSprite.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\DifficultyIcon.cpp
 # End Source File
 # Begin Source File
@@ -736,11 +768,19 @@ SOURCE=.\GranularityIndicator.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\InfoFrame.cpp
+SOURCE=.\GrooveRadar.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\InfoFrame.h
+SOURCE=.\GrooveRadar.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GroupInfoFrame.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GroupInfoFrame.h
 # End Source File
 # Begin Source File
 
@@ -776,11 +816,11 @@ SOURCE=.\MusicWheel.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\StepsSelector.cpp
+SOURCE=.\SongInfoFrame.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\StepsSelector.h
+SOURCE=.\SongInfoFrame.h
 # End Source File
 # Begin Source File
 
@@ -828,14 +868,6 @@ SOURCE=.\ColorArrow.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ColorArrowField.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ColorArrowField.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\Combo.cpp
 # End Source File
 # Begin Source File
@@ -868,11 +900,11 @@ SOURCE=.\GhostArrowBright.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\GhostArrows.cpp
+SOURCE=.\GhostArrowRow.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\GhostArrows.h
+SOURCE=.\GhostArrowRow.h
 # End Source File
 # Begin Source File
 
@@ -884,11 +916,11 @@ SOURCE=.\GrayArrow.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\GrayArrows.cpp
+SOURCE=.\GrayArrowRow.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\GrayArrows.h
+SOURCE=.\GrayArrowRow.h
 # End Source File
 # Begin Source File
 
@@ -932,6 +964,14 @@ SOURCE=.\MotionBlurSprite.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\NoteField.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\NoteField.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScoreDisplayRolling.cpp
 # End Source File
 # Begin Source File
@@ -945,54 +985,6 @@ SOURCE=.\ScoreDisplayRollingWithFrame.cpp
 # Begin Source File
 
 SOURCE=.\ScoreDisplayRollingWithFrame.h
-# End Source File
-# End Group
-# Begin Group "exception"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\exception\AtlAux2.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\exception\debug_stream.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\exception\exception2.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\exception\exception_trap.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\exception\kbase.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\exception\se_translator.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\exception\se_translator.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\exception\StdAfx.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\exception\sym_engine.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\exception\sym_engine.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\exception\unhandled_report.h
 # End Source File
 # End Group
 # Begin Source File

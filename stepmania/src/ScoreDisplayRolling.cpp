@@ -5,7 +5,7 @@
 
  Desc: A graphic displayed in the ScoreDisplayRolling during Dancing.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -99,7 +99,7 @@ void ScoreDisplayRolling::AddToScore( TapNoteScore score, int iCurCombo )
 	// The scoring system for DDR versions 1 and 2 (including the Plus remixes) is as follows: 
 	// For every step: 
 	//
-	// Multiplier (M) = (# of Pattern in your current combo / 4) rounded down 
+	// Multiplier (M) = (# of NoteMetadata in your current combo / 4) rounded down 
 	// "Good" step = M * 100 (and this ends your combo)
 	// "Great" step = M * M * 100 
 	// "Perfect" step = M * M * 300 
@@ -139,11 +139,11 @@ void ScoreDisplayRolling::AddToScore( TapNoteScore score, int iCurCombo )
   The base step value is the max score divided by 10, divided by 
  one-half of the max combo  squared plus the max combo. This value is 
  multiplied by 10 for a perfect or 5 for a great,  and further 
- multiplied by the number of Pattern currently in the combo. */ 
+ multiplied by the number of NoteMetadata currently in the combo. */ 
 /*
 	int iScoreToAdd = 0; int iBonus = 0;
 
- Pattern *pSteps = GAMEINFO->m_pStepsPlayer[m_PlayerNumber];
+ NoteMetadata *pSteps = GAMEINFO->m_pStepsPlayer[m_PlayerNumber];
  int iNumFeet = pSteps->m_iNumFeet;
  int iMaxCombo = pSteps->GetNumSteps();
 

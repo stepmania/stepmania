@@ -16,7 +16,7 @@ class GhostArrow;
 
 
 #include "Sprite.h"
-#include "Pattern.h"
+#include "NoteMetadata.h"
 
 
 class GhostArrow : public Sprite

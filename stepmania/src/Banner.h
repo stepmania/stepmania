@@ -1,36 +1,31 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
  File: Banner.h
 
  Desc: The song's banner displayed in SelectSong.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
-#ifndef _Banner_H_
-#define _Banner_H_
-
-
-#include "Sprite.h"
+#include "CroppedSprite.h"
 #include "Song.h"
 
 
-const float BANNER_WIDTH	= 253;
-const float BANNER_HEIGHT	= 94;
+const float BANNER_WIDTH	= 286;
+const float BANNER_HEIGHT	= 92;
 
 
-class Banner : public Sprite
+class Banner : public CroppedSprite
 {
 public:
-	bool LoadFromSong( Song* pSong );	// NULL means no Song
-	virtual bool Load( const CString &sFilePath, DWORD dwHints = 0, bool bForceReload = false );
+	Banner()
+	{
+		m_fCropWidth = BANNER_WIDTH;
+		m_fCropHeight = BANNER_HEIGHT;
+	};
 
-protected:
-	void CropToRightSize();
+	bool LoadFromSong( Song* pSong );		// NULL means no song
+
 };
-
-
-
-
-#endif

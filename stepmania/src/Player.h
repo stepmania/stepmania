@@ -5,7 +5,7 @@
  Desc: Object that accepts pad input, knocks down ColorArrows that were stepped on, 
 		and keeps score for the player.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -13,7 +13,7 @@
 #define _PLAYER_H_
 
 #include "PrefsManager.h"	// for ScoreSummary
-#include "Pattern.h"
+#include "NoteMetadata.h"
 #include "Sprite.h"
 #include "BitmapText.h"
 
@@ -29,14 +29,14 @@
 #include "Judgement.h"
 #include "HoldJudgement.h"
 #include "Combo.h"
-#include "ColorArrowField.h"
-#include "GrayArrows.h"
-#include "GhostArrows.h"
+#include "NoteField.h"
+#include "GrayArrowRow.h"
+#include "GhostArrowRow.h"
 
 
 
 
-class Player : public ActorFrame
+class Player : public NoteData, public ActorFrame
 {
 public:
 	Player();
@@ -44,10 +44,10 @@ public:
 	void Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference );
 	void RenderPrimitives();
 
-	void Load( const StyleDef& StyleDef, PlayerNumber player_no, const Pattern& pattern, const PlayerOptions& po );
+	void Load( PlayerNumber player_no, NoteData* pNoteData, const PlayerOptions& po );
 	void CrossedIndex( int iIndex );
-	void HandlePlayerStep( float fSongBeat, TapNote step, float fMaxBeatDiff );
-	int UpdateStepsMissedOlderThan( float fMissIfOlderThanThisBeat );
+	void HandlePlayerStep( float fSongBeat, NoteColumn col, float fMaxBeatDiff );
+	int UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
 
 	ScoreSummary GetScoreSummary();
 
@@ -55,28 +55,25 @@ public:
 	bool IsThereANoteAtIndex( int iIndex );
 
 protected:
-	void CheckForCompleteStep( float fSongBeat, TapNote step, float fMaxBeatDiff );
-	void OnCompleteStep( float fSongBeat, TapNote step, float fMaxBeatDiff, int iStepIndex );
+	void CheckForCompleteRow( float fSongBeat, NoteColumn col, float fMaxBeatDiff );
+	void OnRowDestroyed( float fSongBeat, NoteColumn col, float fMaxBeatDiff, int iStepIndex );
 
 	float			m_fSongBeat;
-	StyleDef			m_Style;
 	PlayerNumber	m_PlayerNumber;
 	PlayerOptions	m_PlayerOptions;
 
-	TapNote			m_TapNotesOriginal[MAX_TAP_NOTE_ELEMENTS];	// the original Pattern that were loaded into player
-	TapNote			m_TapNotesRemaining[MAX_TAP_NOTE_ELEMENTS];	// mask off the bits as the player Pattern
+	// maintain this extra data in addition to the NoteData
+	TapNote			m_TapNotesOriginal[MAX_NOTE_TRACKS][MAX_TAP_NOTE_ELEMENTS];	// the original NoteMetadata that were loaded into player
 	TapNoteScore	m_TapNoteScores[MAX_TAP_NOTE_ELEMENTS];
-	HoldNote		m_HoldNotes[MAX_HOLD_NOTE_ELEMENTS];
 	HoldNoteScore	m_HoldNoteScores[MAX_HOLD_NOTE_ELEMENTS];
-	int				m_iNumHoldNotes;
 
 
-	GrayArrows		m_GrayArrows;
-	ColorArrowField	m_ColorArrowField;
-	GhostArrows		m_GhostArrows;
+	GrayArrowRow		m_GrayArrowRow;
+	NoteField		m_NoteField;
+	GhostArrowRow		m_GhostArrowRow;
 
 	Judgement						m_Judgement;
-	HoldJudgement					m_HoldJudgement[MAX_NUM_COLUMNS];
+	HoldJudgement					m_HoldJudgement[MAX_NOTE_TRACKS];
 	Combo							m_Combo;
 	LifeMeterPills					m_LifeMeter;
 	ScoreDisplayRollingWithFrame	m_Score;

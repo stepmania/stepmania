@@ -5,14 +5,15 @@
 
  Desc: Functions that return properties of arrows based on StyleDef and PlayerOptions
 
- Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
 #include "ArrowEffects.h"
-#include "Pattern.h"
+#include "NoteMetadata.h"
 #include "ColorArrow.h"
 #include "ScreenDimensions.h"
+#include "GameManager.h"
 
 
 float ArrowGetYOffset( const PlayerOptions& po, float fStepIndex, float fSongBeat )
@@ -31,9 +32,9 @@ float ArrowGetYOffset( const PlayerOptions& po, float fStepIndex, float fSongBea
 	return fYOffset;
 }
 
-float ArrowGetXPos( const PlayerOptions& po, const StyleDef &StyleDef, int iColNum, float fYOffset, float fSongBeat ) 
+float ArrowGetXPos( const PlayerOptions& po, int iColNum, float fYOffset, float fSongBeat ) 
 {
-	float fColOffsetFromCenter = iColNum - (StyleDef.m_iNumColumns-1)/2.0f;
+	float fColOffsetFromCenter = iColNum - (GAME->GetCurrentStyleDef()->GetColsPerPlayer()-1)/2.0f;
 	float fPixelOffsetFromCenter = fColOffsetFromCenter * ARROW_SIZE;
 	
 	switch( po.m_EffectType )
@@ -45,7 +46,7 @@ float ArrowGetXPos( const PlayerOptions& po, const StyleDef &StyleDef, int iColN
 	return fPixelOffsetFromCenter;
 }
 
-float ArrowGetRotation( const PlayerOptions& po, const StyleDef &StyleDef, int iColNum, float fYOffset ) 
+float ArrowGetRotation( const PlayerOptions& po, int iColNum, float fYOffset ) 
 {
 	float fRotation = 0; //StyleDef.m_ColumnToRotation[iColNum];
 

@@ -5,7 +5,7 @@
 
  Desc: The song's TextBanner displayed in SelectSong.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -46,7 +46,7 @@ bool TextBanner::LoadFromSong( Song* pSong )
 		return true;
 	}
 
-	CString sTitle = pSong->GetTitle();
+	CString sTitle = pSong->GetFullTitle();
 	CString sSubTitle;
 
 	m_textTitle.SetText( sTitle );
@@ -90,9 +90,9 @@ bool TextBanner::LoadFromSong( Song* pSong )
 
 	if( sSubTitle == "" )
 	{
-		m_textTitle.SetY( -7 );
+		m_textTitle.SetY( -6 );
 		m_textSubTitle.SetY( 0 );
-		m_textArtist.SetY( 10 );
+		m_textArtist.SetY( 9 );
 	}
 	else
 	{

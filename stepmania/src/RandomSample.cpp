@@ -5,7 +5,7 @@
 
  Desc: Holds multiple sounds samples and can play a random sound easily.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -14,6 +14,7 @@
 #include "RandomSample.h"
 #include "RageUtil.h"
 #include "RageHelper.h"
+#include "ErrorCatcher/ErrorCatcher.h"
 
 
 RandomSample::RandomSample()
@@ -48,7 +49,7 @@ bool RandomSample::LoadRandomSample( CString sSetFilePath )
 {
 	CStdioFile file;
 	if( !file.Open(sSetFilePath, CFile::modeRead|CFile::shareDenyNone) )
-		HELPER.FatalError( ssprintf("Error opening sound set file '%s'.", sSetFilePath) );
+		FatalError( ssprintf("Error opening sound set file '%s'.", sSetFilePath) );
 
 	
 	// Split for the directory of the sound set file.  We'll need it below
@@ -70,17 +71,12 @@ bool RandomSample::LoadSound( CString sSoundFilePath )
 {
 	HELPER.Log( "RandomSample::LoadSound( %s )", sSoundFilePath );
 
-	HELPER.Log( "Made it here - A" );
-
 	RageSoundSample* pSS = new RageSoundSample;
-	HELPER.Log( "Made it here - B" );
 	pSS->Load( sSoundFilePath );
 
 
 	m_pSamples.Add( pSS );
 	
-	HELPER.Log( "Made it here - C" );
-
 	return true;
 }
 

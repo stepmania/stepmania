@@ -4,7 +4,7 @@
 
  Desc: A graphic displayed in the DifficultyIcon during Dancing.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -24,18 +24,18 @@ class DifficultyIcon : public Sprite
 public:
 	DifficultyIcon()
 	{
-		Load( THEME->GetPathTo(GRAPHIC_STEPS_DESCRIPTION) );
+		Load( THEME->GetPathTo(GRAPHIC_DIFFICULTY_ICONS) );
 		StopAnimating();
 
-		SetFromDescription( "" );
+		SetFromNoteMetadata( NULL );
 	};
 
-	void SetFromSteps( Pattern* pSteps )
+	void SetFromNoteMetadata( NoteMetadata* pNoteMetadata )
 	{
-		if( pSteps != NULL )
+		if( pNoteMetadata != NULL )
 		{
 			SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-			SetFromDescription( pSteps->m_sDescription );
+			SetFromDescription( pNoteMetadata->m_sDescription );
 		}
 		else
 		{
@@ -52,12 +52,12 @@ private:
 		sTemp.MakeLower();
 		if(	sTemp.Find( "basic" ) != -1 )			SetState( 0 );
 		else if( sTemp.Find( "trick" ) != -1 )		SetState( 1 );
-		else if( sTemp.Find( "another" ) != -1  )	SetState( 2 );
-		else if( sTemp.Find( "maniac" ) != -1 )		SetState( 3 );
-		else if( sTemp.Find( "ssr" ) != -1 )		SetState( 4 );
-		else if( sTemp.Find( "battle" ) != -1 )		SetState( 5 );
-		else if( sTemp.Find( "couple" ) != -1 )		SetState( 6 );
-		else										SetState( 7 );
+		else if( sTemp.Find( "another" ) != -1  )	SetState( 1 );
+		else if( sTemp.Find( "maniac" ) != -1 )		SetState( 2 );
+		else if( sTemp.Find( "ssr" ) != -1 )		SetState( 2 );
+		else if( sTemp.Find( "battle" ) != -1 )		SetState( 0 );
+		else if( sTemp.Find( "couple" ) != -1 )		SetState( 0 );
+		else										SetState( 0 );
 	};
 };
 

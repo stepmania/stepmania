@@ -4,7 +4,7 @@
 
  Desc: An actor that holds a Font and draws text to the screen.
 
- Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
@@ -37,6 +37,8 @@ public:
 	void RebuildVertexBuffer();		// fill the RageScreen's vertex buffer with what we're going to draw
 	virtual void RenderPrimitives();
 
+	void TurnRainbowOn()	{ m_bRainbow = true; };
+	void TurnRainbowOff()	{ m_bRainbow = false; };
 
 protected:
 	CString m_sFontFilePath;
@@ -52,6 +54,8 @@ protected:
 
 	// recalculate on RebuildVertexBuffer()
 	int		m_iNumV;		// number of verticies we filled in the vertex buffer
+
+	bool m_bRainbow;
 };
 
 

@@ -4,7 +4,7 @@
 
  Desc: A graphic displayed in the MusicWheel during Dancing.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -29,13 +29,13 @@
 
 const int NUM_WHEEL_ITEMS_TO_DRAW	=	11;
 
-const float FADE_TIME			=	0.5f;
+const float FADE_TIME	=	0.7f;
 
 const WindowMessage	SM_SongChanged		=	WindowMessage(SM_User+47);	// this should be unique!
 const WindowMessage SM_PlaySongSample	=	WindowMessage(SM_User+48);	
 
 
-enum WheelItemType { TYPE_SECTION, TYPE_MUSIC };
+enum WheelItemType { TYPE_SECTION, TYPE_SONG };
 
 
 struct WheelItemData
@@ -73,12 +73,14 @@ public:
 	void LoadFromWheelItemData( WheelItemData* pWID );
 
 	// for a section
-	Sprite m_sprSectionBackground;
-	BitmapText m_textSectionName;
+	Sprite			m_sprSectionBar;
+	BitmapText		m_textSectionName;
 
 	// for a music
+	Sprite				m_sprSongBar;
 	MusicStatusDisplay	m_MusicStatusDisplay;
 	TextBanner			m_Banner;
+	GradeDisplay		m_GradeDisplay[NUM_PLAYERS];
 };
 
 
@@ -116,7 +118,6 @@ protected:
 	void SwitchSortOrder();
 
 
-	Sprite		m_sprSelectionBackground;
 	Sprite		m_sprSelectionOverlay;
 
 	MusicSortDisplay	m_MusicSortDisplay;
@@ -173,7 +174,7 @@ protected:
 //				sTemp = "NUM";
 //			return sTemp;
 		case SORT_TITLE:	
-			sTemp = pSong->GetTitle();
+			sTemp = pSong->GetFullTitle();
 			sTemp.MakeUpper();
 			sTemp = (sTemp.GetLength() > 0) ? sTemp.Left(1) : "";
 			if( IsAnInt(sTemp) )

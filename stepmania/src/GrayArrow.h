@@ -4,7 +4,7 @@
 
  Desc: A gray arrow that "receives" ColorArrows.
 
- Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 	Ben Nordstrom
 	Chris Danford
 -----------------------------------------------------------------------------
@@ -16,7 +16,7 @@
 
 
 #include "Sprite.h"
-#include "Pattern.h"
+#include "NoteMetadata.h"
 
 class GrayArrow : public Sprite
 {

@@ -12,20 +12,78 @@
 	</Platforms>
 	<Configurations>
 		<Configuration
-			Name="Release|Win32"
+			Name="Debug|Win32"
 			OutputDirectory=".\.."
-			IntermediateDirectory=".\../Release"
+			IntermediateDirectory=".\../Debug"
+			ConfigurationType="1"
+			UseOfMFC="1"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="/EHa"
+				Optimization="0"
+				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,DEBUG"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="1"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderFile=".\../Debug/StepMania.pch"
+				AssemblerListingLocation=".\../Debug/"
+				ObjectFile=".\../Debug/"
+				ProgramDataBaseFileName=".\../Debug/"
+				BrowseInformation="1"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				DebugInformationFormat="4"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="/MACHINE:I386"
+				OutputFile="../StepMania-debug.exe"
+				LinkIncremental="2"
+				SuppressStartupBanner="TRUE"
+				IgnoreAllDefaultLibraries="FALSE"
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile=".\../StepMania-debug.pdb"
+				SubSystem="2"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName=".\../StepMania.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="Release and Debug"
+			IntermediateDirectory="Release and Debug"
 			ConfigurationType="1"
 			UseOfMFC="1"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
 			CharacterSet="2"
-			WholeProgramOptimization="TRUE">
+			WholeProgramOptimization="FALSE">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHa"
 				Optimization="3"
-				GlobalOptimizations="TRUE"
-				InlineFunctionExpansion="2"
+				GlobalOptimizations="FALSE"
+				InlineFunctionExpansion="0"
 				EnableIntrinsicFunctions="TRUE"
 				FavorSizeOrSpeed="1"
 				OptimizeForProcessor="2"
@@ -43,7 +101,8 @@
 				ProgramDataBaseFileName=".\../Release/"
 				BrowseInformation="1"
 				WarningLevel="3"
-				SuppressStartupBanner="TRUE"/>
+				SuppressStartupBanner="TRUE"
+				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -76,63 +135,6 @@
 			<Tool
 				Name="VCWebDeploymentTool"/>
 		</Configuration>
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory=".\.."
-			IntermediateDirectory=".\../Debug"
-			ConfigurationType="1"
-			UseOfMFC="1"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/EHa"
-				Optimization="0"
-				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,DEBUG"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderFile=".\../Debug/StepMania.pch"
-				AssemblerListingLocation=".\../Debug/"
-				ObjectFile=".\../Debug/"
-				ProgramDataBaseFileName=".\../Debug/"
-				BrowseInformation="1"
-				WarningLevel="3"
-				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="4"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				OutputFile="../StepMania-debug.exe"
-				LinkIncremental="2"
-				SuppressStartupBanner="TRUE"
-				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\../StepMania-debug.pdb"
-				SubSystem="2"/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="TRUE"
-				SuppressStartupBanner="TRUE"
-				TargetEnvironment="1"
-				TypeLibraryName=".\../StepMania.tlb"/>
-			<Tool
-				Name="VCPostBuildEventTool"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-				Culture="1033"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-		</Configuration>
 	</Configurations>
 	<Files>
 		<Filter
@@ -145,12 +147,6 @@
 				RelativePath=".\Window.h">
 			</File>
 			<File
-				RelativePath="WindowAdvancedOptions.cpp">
-			</File>
-			<File
-				RelativePath="WindowAdvancedOptions.h">
-			</File>
-			<File
 				RelativePath=".\WindowCaution.cpp">
 			</File>
 			<File
@@ -161,6 +157,12 @@
 			</File>
 			<File
 				RelativePath=".\WindowConfigurePads.h">
+			</File>
+			<File
+				RelativePath="WindowCustomGraphicOptions.cpp">
+			</File>
+			<File
+				RelativePath="WindowCustomGraphicOptions.h">
 			</File>
 			<File
 				RelativePath=".\WindowDancing.cpp">
@@ -181,10 +183,10 @@
 				RelativePath=".\WindowEditMenu.h">
 			</File>
 			<File
-				RelativePath=".\WindowEditOptions.cpp">
+				RelativePath="WindowEnding.cpp">
 			</File>
 			<File
-				RelativePath=".\WindowEditOptions.h">
+				RelativePath="WindowEnding.h">
 			</File>
 			<File
 				RelativePath=".\WindowGameOptions.cpp">
@@ -203,12 +205,6 @@
 			</File>
 			<File
 				RelativePath=".\WindowManager.h">
-			</File>
-			<File
-				RelativePath=".\WindowMenu.cpp">
-			</File>
-			<File
-				RelativePath=".\WindowMenu.h">
 			</File>
 			<File
 				RelativePath=".\WindowMessage.h">
@@ -248,6 +244,12 @@
 			</File>
 			<File
 				RelativePath="WindowSelectDifficulty.h">
+			</File>
+			<File
+				RelativePath="WindowSelectGroup.cpp">
+			</File>
+			<File
+				RelativePath="WindowSelectGroup.h">
 			</File>
 			<File
 				RelativePath="WindowSelectMusic.cpp">
@@ -305,6 +307,15 @@
 				RelativePath=".\GameConstants.h">
 			</File>
 			<File
+				RelativePath="GameDef.cpp">
+			</File>
+			<File
+				RelativePath="GameDef.h">
+			</File>
+			<File
+				RelativePath="GameInput.h">
+			</File>
+			<File
 				RelativePath=".\GameManager.cpp">
 			</File>
 			<File
@@ -320,22 +331,37 @@
 				RelativePath=".\Grade.h">
 			</File>
 			<File
-				RelativePath=".\PadInput.h">
+				RelativePath="InputFilter.cpp">
 			</File>
 			<File
-				RelativePath=".\Pattern.cpp">
+				RelativePath="InputFilter.h">
 			</File>
 			<File
-				RelativePath=".\Pattern.h">
+				RelativePath="InputMapper.cpp">
+			</File>
+			<File
+				RelativePath="InputMapper.h">
+			</File>
+			<File
+				RelativePath="MenuInput.h">
+			</File>
+			<File
+				RelativePath="NoteData.cpp">
+			</File>
+			<File
+				RelativePath="NoteData.h">
+			</File>
+			<File
+				RelativePath="NoteMetadata.cpp">
+			</File>
+			<File
+				RelativePath="NoteMetadata.h">
 			</File>
 			<File
 				RelativePath=".\Player.cpp">
 			</File>
 			<File
 				RelativePath=".\Player.h">
-			</File>
-			<File
-				RelativePath=".\PlayerInput.h">
 			</File>
 			<File
 				RelativePath=".\PrefsManager.cpp">
@@ -371,6 +397,9 @@
 				RelativePath=".\StyleDef.h">
 			</File>
 			<File
+				RelativePath="StyleInput.h">
+			</File>
+			<File
 				RelativePath=".\ThemeManager.cpp">
 			</File>
 			<File
@@ -388,12 +417,6 @@
 			</File>
 			<File
 				RelativePath=".\IniFile.h">
-			</File>
-			<File
-				RelativePath=".\XMLMarkup.cpp">
-			</File>
-			<File
-				RelativePath=".\XMLMarkup.h">
 			</File>
 		</Filter>
 		<Filter
@@ -529,6 +552,12 @@
 				RelativePath=".\Banner.h">
 			</File>
 			<File
+				RelativePath="CroppedSprite.cpp">
+			</File>
+			<File
+				RelativePath="CroppedSprite.h">
+			</File>
+			<File
 				RelativePath=".\DifficultyIcon.cpp">
 			</File>
 			<File
@@ -559,10 +588,10 @@
 				RelativePath="GrooveRadar.h">
 			</File>
 			<File
-				RelativePath="InfoFrame.cpp">
+				RelativePath="GroupInfoFrame.cpp">
 			</File>
 			<File
-				RelativePath="InfoFrame.h">
+				RelativePath="GroupInfoFrame.h">
 			</File>
 			<File
 				RelativePath="MenuElements.cpp">
@@ -589,10 +618,10 @@
 				RelativePath=".\MusicWheel.h">
 			</File>
 			<File
-				RelativePath=".\StepsSelector.cpp">
+				RelativePath="SongInfoFrame.cpp">
 			</File>
 			<File
-				RelativePath=".\StepsSelector.h">
+				RelativePath="SongInfoFrame.h">
 			</File>
 			<File
 				RelativePath=".\TextBanner.cpp">
@@ -629,12 +658,6 @@
 				RelativePath=".\ColorArrow.h">
 			</File>
 			<File
-				RelativePath=".\ColorArrowField.cpp">
-			</File>
-			<File
-				RelativePath=".\ColorArrowField.h">
-			</File>
-			<File
 				RelativePath=".\Combo.cpp">
 			</File>
 			<File
@@ -659,10 +682,10 @@
 				RelativePath=".\GhostArrowBright.h">
 			</File>
 			<File
-				RelativePath=".\GhostArrows.cpp">
+				RelativePath="GhostArrowRow.cpp">
 			</File>
 			<File
-				RelativePath=".\GhostArrows.h">
+				RelativePath="GhostArrowRow.h">
 			</File>
 			<File
 				RelativePath=".\GrayArrow.cpp">
@@ -671,10 +694,10 @@
 				RelativePath=".\GrayArrow.h">
 			</File>
 			<File
-				RelativePath=".\GrayArrows.cpp">
+				RelativePath="GrayArrowRow.cpp">
 			</File>
 			<File
-				RelativePath=".\GrayArrows.h">
+				RelativePath="GrayArrowRow.h">
 			</File>
 			<File
 				RelativePath=".\HoldGhostArrow.cpp">
@@ -707,6 +730,12 @@
 				RelativePath=".\MotionBlurSprite.h">
 			</File>
 			<File
+				RelativePath="NoteField.cpp">
+			</File>
+			<File
+				RelativePath="NoteField.h">
+			</File>
+			<File
 				RelativePath="ScoreDisplayRolling.cpp">
 			</File>
 			<File
@@ -717,40 +746,6 @@
 			</File>
 			<File
 				RelativePath="ScoreDisplayRollingWithFrame.h">
-			</File>
-		</Filter>
-		<Filter
-			Name="exception"
-			Filter="">
-			<File
-				RelativePath="exception\AtlAux2.h">
-			</File>
-			<File
-				RelativePath="exception\debug_stream.h">
-			</File>
-			<File
-				RelativePath="exception\exception2.h">
-			</File>
-			<File
-				RelativePath="exception\exception_trap.h">
-			</File>
-			<File
-				RelativePath="exception\kbase.h">
-			</File>
-			<File
-				RelativePath="exception\se_translator.cpp">
-			</File>
-			<File
-				RelativePath="exception\se_translator.h">
-			</File>
-			<File
-				RelativePath="exception\sym_engine.cpp">
-			</File>
-			<File
-				RelativePath="exception\sym_engine.h">
-			</File>
-			<File
-				RelativePath="exception\unhandled_report.h">
 			</File>
 		</Filter>
 		<Filter

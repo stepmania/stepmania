@@ -5,7 +5,7 @@
 
  Desc: Shooting start across the screen leave a black trail.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 

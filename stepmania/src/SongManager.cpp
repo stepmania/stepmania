@@ -5,27 +5,39 @@
 
  Desc: See header.
 
- Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
 
+//#include <d3dxmath.h>
 #include "SongManager.h"
 #include "IniFile.h"
 #include "RageHelper.h"
-
+#include "ErrorCatcher/ErrorCatcher.h"
 
 SongManager*	SONG = NULL;	// global and accessable from anywhere in our program
 
 
 const CString g_sStatisticsFileName = "statistics.ini";
 
+D3DXCOLOR GROUP_COLORS[] = { 
+	D3DXCOLOR( 0.9f, 0.0f, 0.2f, 1 ),	// red
+	D3DXCOLOR( 0.6f, 0.0f, 0.4f, 1 ),	// pink
+	D3DXCOLOR( 0.2f, 0.1f, 0.3f, 1 ),	// purple
+	D3DXCOLOR( 0.0f, 0.4f, 0.8f, 1 ),	// sky blue
+	D3DXCOLOR( 0.0f, 0.6f, 0.6f, 1 ),	// sea green
+	D3DXCOLOR( 0.0f, 0.6f, 0.2f, 1 ),	// green
+	D3DXCOLOR( 0.8f, 0.6f, 0.0f, 1 ),	// orange
+};
+const int NUM_GROUP_COLORS = sizeof(GROUP_COLORS) / sizeof(D3DXCOLOR);
+
 
 SongManager::SongManager()
 {
 	m_pCurSong = NULL;
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		m_pCurPattern[p] = NULL;
+		m_pCurNoteMetadata[p] = NULL;
 
 	InitSongArrayFromDisk();
 	ReadStatisticsFromDisk();
@@ -36,6 +48,7 @@ SongManager::~SongManager()
 {
 	SaveStatisticsToDisk();
 	CleanUpSongArray();
+	m_arrayGroupNames.RemoveAll();
 }
 
 
@@ -43,6 +56,21 @@ void SongManager::InitSongArrayFromDisk()
 {
 	LoadStepManiaSongDir( "Songs" );
 	LoadDWISongDir( "DWI Support" );
+	
+	// computer group names
+	CArray<Song*, Song*> arraySongs;
+	arraySongs.Copy( m_pSongs );
+	SortSongPointerArrayByGroup( arraySongs );
+
+	for( int i=0; i<m_pSongs.GetSize(); i++ )
+	{
+		Song* pSong = m_pSongs[i];
+		const CString sGroupName = m_pSongs[i]->GetGroupName();
+
+		if( m_arrayGroupNames.GetSize() == 0  ||  m_arrayGroupNames[m_arrayGroupNames.GetSize()-1] != sGroupName )
+			m_arrayGroupNames.Add( sGroupName );
+	}
+
 	HELPER.Log( "Found %d Songs.", m_pSongs.GetSize() );
 }
 
@@ -68,7 +96,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir )
 		GetDirListing( ssprintf("%s\\%s\\*.mp3", sDir, sGroupDirName), arrayFiles );
 		GetDirListing( ssprintf("%s\\%s\\*.wav", sDir, sGroupDirName), arrayFiles );
 		if( arrayFiles.GetSize() > 0 )
-			HELPER.FatalError( 
+			FatalError( 
 				ssprintf( "The song folder '%s' must be placed inside of a group folder.\n\n"
 					"All song folders must be placed below a group folder.  For example, 'Songs\\DDR 4th Mix\\B4U'.  See the StepMania readme for more info.",
 					ssprintf("%s\\%s", sDir, sGroupDirName ) )
@@ -135,7 +163,7 @@ void SongManager::LoadDWISongDir( CString sDir )
 
 			// load DWIs from the sub dirs
 			Song* pNewSong = new Song;
-			pNewSong->LoadSongInfoFromDWIFile( ssprintf("DWI Support\\DWIs\\%s\\%s", sDirName, sDWIFileName) );
+			pNewSong->LoadFromDWIFile( ssprintf("DWI Support\\DWIs\\%s\\%s", sDirName, sDWIFileName) );
 			m_pSongs.Add( pNewSong );
 		}
 	}
@@ -190,7 +218,7 @@ void SongManager::ReadStatisticsFromDisk()
 			int iRetVal;
 			int i;
 
-			// Parse for Song name and Pattern name
+			// Parse for Song name and NoteMetadata name
 			iRetVal = sscanf( name_string, "%[^:]::%[^\n]", szSongName, szStepsName );
 			if( iRetVal != 2 )
 				continue;	// this line doesn't match what is expected
@@ -200,7 +228,7 @@ void SongManager::ReadStatisticsFromDisk()
 			Song* pSong = NULL;
 			for( i=0; i<m_pSongs.GetSize(); i++ )
 			{
-				if( m_pSongs[i]->GetTitle() == szSongName )	// match!
+				if( m_pSongs[i]->GetFullTitle() == szSongName )	// match!
 				{
 					pSong = m_pSongs[i];
 					break;
@@ -210,35 +238,35 @@ void SongManager::ReadStatisticsFromDisk()
 				continue;	// skip this entry
 
 
-			// Search for the corresponding Pattern pointer.
-			Pattern* pPattern = NULL;
-			for( i=0; i<pSong->m_arrayPatterns.GetSize(); i++ )
+			// Search for the corresponding NoteMetadata pointer.
+			NoteMetadata* pNoteMetadata = NULL;
+			for( i=0; i<pSong->m_arrayNoteMetadatas.GetSize(); i++ )
 			{
-				if( pSong->m_arrayPatterns[i].m_sDescription == szStepsName )	// match!
+				if( pSong->m_arrayNoteMetadatas[i].m_sDescription == szStepsName )	// match!
 				{
-					pPattern = &pSong->m_arrayPatterns[i];
+					pNoteMetadata = &pSong->m_arrayNoteMetadatas[i];
 					break;
 				}
 			}
-			if( pPattern == NULL )	// didn't find a match
+			if( pNoteMetadata == NULL )	// didn't find a match
 				continue;	// skip this entry
 
 
-			// Parse the Pattern statistics.
+			// Parse the NoteMetadata statistics.
 			char szGradeLetters[10];	// longest possible string is "AAA"
 
 			iRetVal = sscanf( 
 				value_string, 
 				"%d::%[^:]::%d::%d", 
-				&pPattern->m_iNumTimesPlayed,
+				&pNoteMetadata->m_iNumTimesPlayed,
 				szGradeLetters,
-				&pPattern->m_iTopScore,
-				&pPattern->m_iMaxCombo
+				&pNoteMetadata->m_iTopScore,
+				&pNoteMetadata->m_iMaxCombo
 			);
 			if( iRetVal != 4 )
 				continue;
 
-			pPattern->m_TopGrade = StringToGrade( szGradeLetters );
+			pNoteMetadata->m_TopGrade = StringToGrade( szGradeLetters );
 		}
 	}
 }
@@ -253,22 +281,22 @@ void SongManager::SaveStatisticsToDisk()
 	{
 		Song* pSong = m_pSongs[i];
 
-		for( int j=0; j<pSong->m_arrayPatterns.GetSize(); j++ )		// for each Pattern
+		for( int j=0; j<pSong->m_arrayNoteMetadatas.GetSize(); j++ )		// for each NoteMetadata
 		{
-			Pattern* pPattern = &pSong->m_arrayPatterns[j];
+			NoteMetadata* pNoteMetadata = &pSong->m_arrayNoteMetadatas[j];
 
-			if( pPattern->m_TopGrade == GRADE_NO_DATA )
+			if( pNoteMetadata->m_TopGrade == GRADE_NO_DATA )
 				continue;		// skip
 
-			// Each value has the format "SongName::PatternName=TimesPlayed::TopGrade::TopScore::MaxCombo".
+			// Each value has the format "SongName::NoteMetadataName=TimesPlayed::TopGrade::TopScore::MaxCombo".
 
-			CString sName = ssprintf( "%s::%s", pSong->GetTitle(), pPattern->m_sDescription );
+			CString sName = ssprintf( "%s::%s", pSong->GetFullTitle(), pNoteMetadata->m_sDescription );
 			CString sValue = ssprintf( 
 				"%d::%s::%d::%d",
-				pPattern->m_iNumTimesPlayed,
-				GradeToString( pPattern->m_TopGrade ),
-				pPattern->m_iTopScore, 
-				pPattern->m_iMaxCombo
+				pNoteMetadata->m_iNumTimesPlayed,
+				GradeToString( pNoteMetadata->m_TopGrade ),
+				pNoteMetadata->m_iTopScore, 
+				pNoteMetadata->m_iMaxCombo
 			);
 
 			ini.SetValue( "Statistics", sName, sValue );
@@ -291,18 +319,20 @@ CString SongManager::GetGroupBannerPath( CString sGroupName )
 
 void SongManager::GetGroupNames( CStringArray &AddTo )
 {
-	CArray<Song*, Song*> arraySongs;
-	arraySongs.Copy( m_pSongs );
-	SortSongPointerArrayByGroup( arraySongs );
+	AddTo.Copy( m_arrayGroupNames );
+}
 
-	for( int i=0; i<m_pSongs.GetSize(); i++ )
+D3DXCOLOR SongManager::GetGroupColor( const CString &sGroupName )
+{
+	// search for the group index
+	for( int i=0; i<m_arrayGroupNames.GetSize(); i++ )
 	{
-		Song* pSong = m_pSongs[i];
-		const CString sGroupName = m_pSongs[i]->GetGroupName();
-
-		if( AddTo.GetSize() == 0  ||  AddTo[AddTo.GetSize()-1] != sGroupName )
-			AddTo.Add( sGroupName );
+		if( m_arrayGroupNames[i] == sGroupName )
+			break;
 	}
+	ASSERT( i != m_arrayGroupNames.GetSize() );	// this is not a valid group
+
+	return GROUP_COLORS[i%NUM_GROUP_COLORS];
 }
 
 void SongManager::GetSongsInGroup( const CString sGroupName, CArray<Song*, Song*> &AddTo )
@@ -314,4 +344,13 @@ void SongManager::GetSongsInGroup( const CString sGroupName, CArray<Song*, Song*
 			AddTo.Add( pSong );
 	}
 	SortSongPointerArrayByGroup( AddTo );
+}
+
+CString SongManager::ShortenGroupName( const CString &sOrigGroupName )
+{
+	CString sShortName = sOrigGroupName;
+	sShortName.Replace( "Dance Dance Revolution", "DDR" );
+	sShortName.Replace( "dance dance revolution", "DDR" );
+	sShortName.Replace( "DANCE DANCE REVOLUTION", "DDR" );
+	return sShortName;
 }

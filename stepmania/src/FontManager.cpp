@@ -5,7 +5,7 @@
 
  Desc: Interface for loading and releasing textures.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 
@@ -17,6 +17,7 @@
 #include "Font.h"
 #include "RageUtil.h"
 #include "RageHelper.h"
+#include "ErrorCatcher/ErrorCatcher.h"
 
 FontManager*	FONT	= NULL;
 
@@ -126,7 +127,7 @@ void FontManager::UnloadFont( CString sFontFilePath )
 	}
 	else	// lookup failed
 	{
-		HELPER.FatalError( ssprintf("Tried to Unload a font that wasn't loaded. '%s'", sFontFilePath) );
+		FatalError( ssprintf("Tried to Unload a font that wasn't loaded. '%s'", sFontFilePath) );
 	}
 	
 }
