@@ -361,8 +361,7 @@ void Background::LoadFromSong( const Song* pSong )
 
 
 	// Look for the filename "Random", and replace the segment with LoadFromRandom.
-	unsigned i = 0;
-	for( i=0; i<m_aBGChanges.size(); i++ )
+	for( unsigned i=0; i<m_aBGChanges.size(); i++ )
 	{
 		BackgroundChange &change = m_aBGChanges[i];
 		if( change.m_sBGName.CompareNoCase("-random-") )
@@ -378,7 +377,7 @@ void Background::LoadFromSong( const Song* pSong )
 	}
 
 	// At this point, we shouldn't have any BGChanges to "".  "" is an invalid name.
-	for( i=0; i<m_aBGChanges.size(); i++ )
+	for( unsigned i=0; i<m_aBGChanges.size(); i++ )
 		ASSERT( !m_aBGChanges[i].m_sBGName.empty() );
 
 
