@@ -159,7 +159,7 @@ void PaneDisplay::SetContent( PaneContents c )
 	else if( g_Contents[c].req&NEED_COURSE )
 	{
 		vector<Course::Info> ci;
-		GAMESTATE->m_pCurCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci );
+		GAMESTATE->m_pCurCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci, GAMESTATE->m_CourseDifficulty[m_PlayerNumber] );
 		for( unsigned i = 0; i < ci.size(); ++i )
 		{
 			for( unsigned r = 0; r < NUM_RADAR_CATEGORIES; ++r )

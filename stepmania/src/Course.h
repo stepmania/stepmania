@@ -112,7 +112,7 @@ public:
 	};
 
 	// Dereferences course_entries and returns only the playable Songs and Steps
-	void GetCourseInfo( StepsType nt, vector<Info> &ci, CourseDifficulty cd = COURSE_DIFFICULTY_INVALID ) const;
+	void GetCourseInfo( StepsType nt, vector<Info> &ci, CourseDifficulty cd = COURSE_DIFFICULTY_REGULAR ) const;
 
 	int GetEstimatedNumStages() const { return m_entries.size(); }
 	bool HasCourseDifficulty( StepsType nt, CourseDifficulty cd ) const;
@@ -127,7 +127,8 @@ public:
 	bool IsOni() const { return GetPlayMode() == PLAY_MODE_ONI; }
 	bool IsEndless() const { return GetPlayMode() == PLAY_MODE_ENDLESS; }
 	PlayMode GetPlayMode() const;
-	float GetMeter( CourseDifficulty cd = COURSE_DIFFICULTY_INVALID ) const;
+	float GetMeter( CourseDifficulty cd = COURSE_DIFFICULTY_REGULAR ) const;
+	float GetMeterForPlayer( PlayerNumber pn ) const;
 
 	bool IsFixed() const;
 
@@ -201,7 +202,7 @@ public:
 	void ClearCache();
 
 private:
-	void GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut, CourseDifficulty cd = COURSE_DIFFICULTY_INVALID ) const;
+	void GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut, CourseDifficulty cd ) const;
 
 	typedef pair<StepsType,CourseDifficulty> InfoParams;
 	typedef vector<Info> InfoData;

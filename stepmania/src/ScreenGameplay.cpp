@@ -174,10 +174,11 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 				++GAMESTATE->m_pCurCourse->m_MemCardDatas[st][mc].iNumTimesPlayed;
 		}
 
-		vector<Course::Info> ci;
-		GAMESTATE->m_pCurCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci );
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
+			vector<Course::Info> ci;
+			GAMESTATE->m_pCurCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci, GAMESTATE->m_CourseDifficulty[p] );
+
 			m_apNotesQueue[p].clear();
 			m_asModifiersQueue[p].clear();
 			for( unsigned c=0; c<ci.size(); ++c )
@@ -187,10 +188,14 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 				ci[c].GetAttackArray( a );
 				m_asModifiersQueue[p].push_back( a );
 			}
+
+			if( p == 0 )
+			{
+				m_apSongsQueue.clear();
+				for( unsigned c=0; c<ci.size(); ++c )
+					m_apSongsQueue.push_back( ci[c].pSong );
+			}
 		}
-		m_apSongsQueue.clear();
-		for( unsigned c=0; c<ci.size(); ++c )
-			m_apSongsQueue.push_back( ci[c].pSong );
 	}
 	else
 	{

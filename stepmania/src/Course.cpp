@@ -37,16 +37,6 @@ const int COURSE_DIFFICULTY_METER_CHANGE[NUM_COURSE_DIFFICULTIES] = { 0, 2 };
 const int MAX_BOTTOM_RANGE = 10;
 
 
-/* COURSE_DIFFICULTY_INVALID is the default parameter of a few Course calls; 
- * leaving it out indicates to use GAMESTATE->m_CourseDifficulty. */
-static CourseDifficulty DerefDifficulty( CourseDifficulty d )
-{
-	if( d == COURSE_DIFFICULTY_INVALID )
-		return GAMESTATE->m_CourseDifficulty;
-	else
-		return d;
-}
-
 Course::Course()
 {
 	m_bIsAutogen = false;
@@ -64,11 +54,16 @@ PlayMode Course::GetPlayMode() const
 	return m_iLives > 0? PLAY_MODE_ONI:PLAY_MODE_NONSTOP;
 }
 
+float Course::GetMeterForPlayer( PlayerNumber pn ) const
+{
+	return GetMeter( GAMESTATE->m_CourseDifficulty[pn] );
+}
+
 const int DifficultMeterRamp[NUM_COURSE_DIFFICULTIES] = { 0, 3 };
 float Course::GetMeter( CourseDifficulty cd ) const
 {
 	if( m_iMeter != -1 )
-		return float(m_iMeter + DifficultMeterRamp[DerefDifficulty(cd)]);
+		return float( m_iMeter + DifficultMeterRamp[cd] );
 
 	/*LOG->Trace( "Course file '%s' contains a song '%s%s%s' that is not present",
 			m_sPath.c_str(), sGroup.c_str(), sGroup.size()? "/":"", sSong.c_str());*/
@@ -553,7 +548,7 @@ static vector<Song*> GetFilteredBestSongs( StepsType nt )
  * results. */
 void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, CourseDifficulty cd ) const
 {
-	const InfoParams params( nt, DerefDifficulty(cd) );
+	const InfoParams params( nt, cd );
 	InfoCache::const_iterator it = m_InfoCache.find( params );
 	if( it != m_InfoCache.end() )
 	{
@@ -690,12 +685,12 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, CourseDiffic
 
 		/* If e.difficulty == DIFFICULTY_INVALID, then we already increased difficulty
 		 * based on meter. */
-		if( DerefDifficulty(cd) > COURSE_DIFFICULTY_REGULAR  &&  e.difficulty != DIFFICULTY_INVALID )
+		if( cd > COURSE_DIFFICULTY_REGULAR  &&  e.difficulty != DIFFICULTY_INVALID )
 		{
 			/* See if we can find a NoteData that's one notch more difficult than
 			 * the one we found above. */
 			Difficulty dc = pNotes->GetDifficulty();
-			Difficulty new_dc = Difficulty(dc + DerefDifficulty(cd));
+			Difficulty new_dc = Difficulty( dc + cd );
 			if( new_dc < NUM_DIFFICULTIES )
 			{
 				Steps* pNewNotes = pSong->GetStepsByDifficulty( nt, new_dc, PREFSMAN->m_bAutogenMissingTypes );
@@ -712,7 +707,7 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, CourseDiffic
 		cinfo.Random = ( e.type == COURSE_ENTRY_RANDOM || e.type == COURSE_ENTRY_RANDOM_WITHIN_GROUP );
 		cinfo.Mystery = e.mystery;
 		cinfo.CourseIndex = i;
-		cinfo.Difficulty = DerefDifficulty(cd);
+		cinfo.Difficulty = cd;
 		ci.push_back( cinfo ); 
 	}
 
@@ -800,12 +795,9 @@ void Course::GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut, Co
 	iMeterLowOut = m_entries[stage].low_meter;
 	iMeterHighOut = m_entries[stage].high_meter;
 
-	if( m_entries[stage].difficulty == DIFFICULTY_INVALID )
-	{
-		iMeterHighOut += COURSE_DIFFICULTY_METER_CHANGE[ DerefDifficulty(cd) ];
-		iMeterLowOut += COURSE_DIFFICULTY_METER_CHANGE[ DerefDifficulty(cd) ];
-		iMeterLowOut = min( iMeterLowOut, MAX_BOTTOM_RANGE );
-	}
+	iMeterHighOut += COURSE_DIFFICULTY_METER_CHANGE[ cd ];
+	iMeterLowOut += COURSE_DIFFICULTY_METER_CHANGE[ cd ];
+	iMeterLowOut = min( iMeterLowOut, MAX_BOTTOM_RANGE );
 }
 
 
@@ -1066,7 +1058,7 @@ void SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCourses )
 	RageTimer foo;
 	course_sort_val.clear();
 	for(unsigned i = 0; i < apCourses.size(); ++i)
-		course_sort_val[apCourses[i]] = apCourses[i]->GetMeter( COURSE_DIFFICULTY_REGULAR );
+		course_sort_val[apCourses[i]] = apCourses[i]->GetMeter();
 	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByTitle );
 	stable_sort( apCourses.begin(), apCourses.end(), CompareCoursePointersBySortValueAscending );
 

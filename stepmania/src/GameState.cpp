@@ -86,7 +86,10 @@ void GameState::Reset()
 	m_sPreferredGroup	= GROUP_ALL_MUSIC;
 	m_bChangedFailType = false;
 	for( p=0; p<NUM_PLAYERS; p++ )
+	{
 		m_PreferredDifficulty[p] = DIFFICULTY_INVALID;
+		m_CourseDifficulty[p] = COURSE_DIFFICULTY_REGULAR;
+	}
 	m_SongSortOrder = SORT_INVALID;
 	m_PlayMode = PLAY_MODE_INVALID;
 	m_bEditing = false;
@@ -94,7 +97,6 @@ void GameState::Reset()
 	m_bJukeboxUsesModifiers = false;
 	m_iCurrentStageIndex = 0;
 	m_bAllow2ndExtraStage = true;
-	m_CourseDifficulty = COURSE_DIFFICULTY_REGULAR;
 	m_BeatToNoteSkinRev = 0;
 
 	NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_CurGame );
@@ -1271,5 +1273,19 @@ bool GameState::IsTimeToPlayAttractSounds()
 		return false;
 	m_iNumTimesThroughAttract %= PREFSMAN->m_iAttractSoundFrequency;
 	return m_iNumTimesThroughAttract==0;
+}
+
+bool GameState::ChangeCourseDifficulty( PlayerNumber pn, int dir )
+{
+	CourseDifficulty diff = (CourseDifficulty)(m_CourseDifficulty[pn]+dir);
+	if( diff < 0 || diff >= NUM_COURSE_DIFFICULTIES )
+		return false;
+
+	GAMESTATE->m_CourseDifficulty[pn] = diff;
+	if( PREFSMAN->m_bLockCourseDifficulties )
+		for( int p = 0; p < NUM_PLAYERS; ++p )
+			m_CourseDifficulty[p] = m_CourseDifficulty[pn];
+
+	return true;
 }
 

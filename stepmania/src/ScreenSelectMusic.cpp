@@ -825,10 +825,9 @@ void ScreenSelectMusic::EasierDifficulty( PlayerNumber pn )
 
 	if( m_MusicWheel.GetSelectedType() == TYPE_COURSE )
 	{
-		if( GAMESTATE->m_CourseDifficulty > 0 )
+		if( GAMESTATE->ChangeCourseDifficulty( pn, -1 ) )
 		{
 			m_soundDifficultyEasier.Play();
-			GAMESTATE->m_CourseDifficulty = (CourseDifficulty)(GAMESTATE->m_CourseDifficulty-1);
 			AfterMusicChange();
 		}
 		return;
@@ -860,10 +859,9 @@ void ScreenSelectMusic::HarderDifficulty( PlayerNumber pn )
 
 	if( m_MusicWheel.GetSelectedType() == TYPE_COURSE )
 	{
-		if( GAMESTATE->m_CourseDifficulty < NUM_COURSE_DIFFICULTIES-1 )
+		if( GAMESTATE->ChangeCourseDifficulty( pn, +1 ) )
 		{
 			m_soundDifficultyHarder.Play();
-			GAMESTATE->m_CourseDifficulty = (CourseDifficulty)(GAMESTATE->m_CourseDifficulty+1);
 			AfterMusicChange();
 		}
 		return;

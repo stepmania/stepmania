@@ -109,7 +109,7 @@ void DifficultyMeter::SetFromNotes( const Steps* pNotes )
 	SetDifficulty( DifficultyToString( pNotes->GetDifficulty() ) );
 }
 
-void DifficultyMeter::SetFromCourse( const Course* pCourse )
+void DifficultyMeter::SetFromCourse( const Course* pCourse, PlayerNumber pn )
 {
 	if( pCourse == NULL )
 	{
@@ -117,7 +117,7 @@ void DifficultyMeter::SetFromCourse( const Course* pCourse )
 		return;
 	}
 
-	const int meter = (int) roundf(pCourse->GetMeter());
+	const int meter = (int) roundf(pCourse->GetMeterForPlayer( pn ));
 	
 	// XXX metrics
 	Difficulty FakeDifficulty;
@@ -150,7 +150,7 @@ void DifficultyMeter::SetFromGameState( PlayerNumber pn )
 	if( GAMESTATE->m_pCurNotes[pn] )
 		SetFromNotes( GAMESTATE->m_pCurNotes[pn] );
 	else if( GAMESTATE->m_pCurCourse )
-		SetFromCourse( GAMESTATE->m_pCurCourse );
+		SetFromCourse( GAMESTATE->m_pCurCourse, pn );
 	else
 		Unset();
 }

@@ -29,7 +29,7 @@ public:
 	void Load();
 	void SetFromGameState( PlayerNumber pn );
 	void SetFromNotes( const Steps* pNotes );
-	void SetFromCourse( const Course* pCourse );
+	void SetFromCourse( const Course* pCourse, PlayerNumber pn );
 	void Unset();
 
 private:
