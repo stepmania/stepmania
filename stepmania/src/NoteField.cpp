@@ -61,7 +61,7 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber p, StyleDef* pStyleDef, 
 	}
 
 
-	for( int i=0; i<MAX_HOLD_NOTE_ELEMENTS; i++ )
+	for( int i=0; i<MAX_HOLD_NOTES; i++ )
 		m_HoldNoteLife[i] = 1;		// start with full life
 
 
@@ -223,10 +223,10 @@ void NoteField::DrawPrimitives()
 		//
 		// Freeze text
 		//
-		CArray<FreezeSegment,FreezeSegment&> &aFreezeSegments = SONGMAN->GetCurrentSong()->m_FreezeSegments;
-		for( i=0; i<aFreezeSegments.GetSize(); i++ )
+		CArray<StopSegment,StopSegment&> &aStopSegments = SONGMAN->GetCurrentSong()->m_StopSegments;
+		for( i=0; i<aStopSegments.GetSize(); i++ )
 		{
-			DrawFreezeText( BeatToNoteRow(aFreezeSegments[i].m_fStartBeat), aFreezeSegments[i].m_fFreezeSeconds );
+			DrawFreezeText( BeatToNoteRow(aStopSegments[i].m_fStartBeat), aStopSegments[i].m_fStopSeconds );
 		}
 
 		//
@@ -266,6 +266,7 @@ void NoteField::DrawPrimitives()
 		for( int i=0; i<m_iNumHoldNotes; i++ )
 		{
 			HoldNote &hn = m_HoldNotes[i];
+			const float fLife = m_HoldNoteLife[i];
 
 			if( hn.m_iTrack != c )	// this HoldNote doesn't belong to this column
 				continue;
@@ -280,7 +281,7 @@ void NoteField::DrawPrimitives()
 
 
 			// If this note was in the past and has life > 0, then it was completed and don't draw it!
-			if( hn.m_iEndIndex < BeatToNoteRow(m_fSongBeat)  &&  m_HoldNoteLife[i] > 0 )
+			if( hn.m_iEndIndex < BeatToNoteRow(m_fSongBeat)  &&  fLife > 0 )
 				continue;	// skip
 
 
@@ -297,6 +298,9 @@ void NoteField::DrawPrimitives()
  				// check if this arrow is off the the screen
 				if( j < iIndexFirstArrowToDraw || iIndexLastArrowToDraw < j)
 					continue;	// skip this arrow
+
+				if( fLife > 0  &&  NoteRowToBeat(j) < m_fSongBeat )
+					continue;
 
 				CreateHoldNoteInstance( instances[iCount++], bActive, (float)j, hn, fHoldNoteLife );
 			}

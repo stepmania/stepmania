@@ -24,6 +24,7 @@ private:
 	bool			m_bTryExtraStage;
 
 	BitmapText		m_textStage;
+	Screen*			m_pNextScreen;
 };
 
 

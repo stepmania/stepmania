@@ -242,7 +242,7 @@ bool RageDisplay::SwitchDisplayMode(
 		// device is not yet created.  We need to create it
 		if( FAILED( hr = m_pd3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, 
 											m_hWnd,
-											D3DCREATE_SOFTWARE_VERTEXPROCESSING,
+											D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED,
 											&m_d3dpp, &m_pd3dDevice) ) )
 		{
 			LOG->WriteLineHr( hr, "failed to create device: %d, %u, %u, %u.", bWindowed, dwWidth, dwHeight, dwBPP );

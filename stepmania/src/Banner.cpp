@@ -52,7 +52,7 @@ bool Banner::LoadFromSong( Song* pSong )		// NULL means no song
 
 	if( pSong == NULL )					Banner::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER) );
 	else if( pSong->HasBanner() )		Banner::Load( pSong->GetBannerPath() );
-	else if( pSong->HasBackground() )	Banner::Load( pSong->GetBackgroundPath() );
+//	else if( pSong->HasBackground() )	Banner::Load( pSong->GetBackgroundPath() );
 	else								Banner::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER) );
 
 	return true;

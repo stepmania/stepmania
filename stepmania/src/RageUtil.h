@@ -102,6 +102,8 @@ int GetHashForFile( CString sPath );
 int GetHashForDirectory( CString sDir );	// a hash value that remains the same as long as nothing in the directory has changed
 
 bool DoesFileExist( const CString &sPath );
+bool IsAFile( const CString &sPath );
+bool IsADirectory( const CString &sPath );
 DWORD GetFileSizeInBytes( const CString &sFilePath );
 
 int CompareCStringsAsc(const void *arg1, const void *arg2);

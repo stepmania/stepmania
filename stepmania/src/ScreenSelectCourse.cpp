@@ -61,8 +61,9 @@ ScreenSelectCourse::ScreenSelectCourse()
 		THEME->GetPathTo(GRAPHIC_SELECT_COURSE_BACKGROUND), 
 		THEME->GetPathTo(GRAPHIC_SELECT_COURSE_TOP_EDGE),
 		ssprintf("%c or %c change course    then press START", 
-		char(1), char(2), char(3), char(3), char(4), char(4), char(3), char(4), char(3), char(4) )
-				);
+		char(1), char(2), char(3), char(3), char(4), char(4), char(3), char(4), char(3), char(4) ),
+		false, true, 60 
+		);
 	this->AddActor( &m_Menu );
 
 	m_CourseInfoFrame.SetXY( COURSE_INFO_FRAME_X, COURSE_INFO_FRAME_Y );

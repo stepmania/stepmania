@@ -50,7 +50,8 @@ ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sTopEdgePath )
 	m_Menu.Load(
 		sBackgroundPath, 
 		sTopEdgePath, 
-		ssprintf("%s %s to change line   %s %s to select between options      then press START", CString(char(3)), CString(char(4)), CString(char(1)), CString(char(2)) )
+		ssprintf("%s %s to change line   %s %s to select between options      then press START", CString(char(3)), CString(char(4)), CString(char(1)), CString(char(2)) ),
+		false, true, 40 
 		);
 	this->AddActor( &m_Menu );
 	m_Menu.TweenOnScreenFromBlack( SM_None );
@@ -132,12 +133,14 @@ void ScreenOptions::GetWidthXY( PlayerNumber p, int iRow, float &fWidthOut, floa
 
 void ScreenOptions::InitOptionsText()
 {
+	const float fLineGap = LINE_GAP_Y - max(0, (m_iNumOptionLines-10)*2);
+
 	// init m_textOptions from optionLines
 	for( int i=0; i<m_iNumOptionLines; i++ )	// foreach options line
 	{
 		OptionLineData &optline = m_OptionLineData[i];
 
-		float fY = LINE_START_Y + LINE_GAP_Y*i;
+		float fY = LINE_START_Y + fLineGap*i;
 
 		BitmapText &title = m_textOptionLineTitles[i];
 

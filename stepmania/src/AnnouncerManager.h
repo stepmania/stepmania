@@ -43,6 +43,7 @@ enum AnnouncerElement {
 	ANNOUNCER_EVALUATION_FINAL_C,
 	ANNOUNCER_EVALUATION_FINAL_D,
 	ANNOUNCER_GAME_OVER,
+	ANNOUNCER_MENU_HURRY_UP,
 	ANNOUNCER_MUSIC_SCROLL,
 	ANNOUNCER_EVALUATION_A,
 	ANNOUNCER_EVALUATION_AA,
@@ -100,7 +101,7 @@ protected:
 	CString GetAnnouncerDirFromName( CString sAnnouncerName );
 	CString GetElementDir( AnnouncerElement te );
 
-	CString m_sCurAnnouncerName;
+	CString m_sCurAnnouncerName;	// "" means no announcer
 };
 
 

@@ -114,8 +114,8 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 {
 	LOG->WriteLine( "Notes::LoadFromBMSFile( '%s' )", sPath );
 
-	NoteData tempNoteData;
-	tempNoteData.m_iNumTracks = MAX_NOTE_TRACKS;
+	NoteData* pNoteData = new NoteData;
+	pNoteData->m_iNumTracks = MAX_NOTE_TRACKS;
 
 	CStdioFile file;	
 	if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
@@ -228,7 +228,7 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 					mapBMSTrackToDanceNote( iTrackNum, iColumnNumber, cNoteChar );
 
 					if( iColumnNumber != -1 )
-						tempNoteData.m_TapNotes[iColumnNumber][iNoteIndex] = cNoteChar;
+						pNoteData->m_TapNotes[iColumnNumber][iNoteIndex] = cNoteChar;
 				}
 			}
 		}
@@ -241,14 +241,14 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )	// for each TapNote
 		{
 			memcpy( 
-				tempNoteData.m_TapNotes[DANCE_NOTE_PAD1_UP], 
-				tempNoteData.m_TapNotes[DANCE_NOTE_PAD1_UPRIGHT],
-				MAX_TAP_NOTE_ROWS*sizeof(tempNoteData.m_TapNotes[0][0]) 
+				pNoteData->m_TapNotes[DANCE_NOTE_PAD1_UP], 
+				pNoteData->m_TapNotes[DANCE_NOTE_PAD1_UPRIGHT],
+				MAX_TAP_NOTE_ROWS*sizeof(pNoteData->m_TapNotes[0][0]) 
 				);
 			memcpy( 
-				tempNoteData.m_TapNotes[DANCE_NOTE_PAD2_UP], 
-				tempNoteData.m_TapNotes[DANCE_NOTE_PAD2_UPRIGHT],
-				MAX_TAP_NOTE_ROWS*sizeof(tempNoteData.m_TapNotes[0][0]) 
+				pNoteData->m_TapNotes[DANCE_NOTE_PAD2_UP], 
+				pNoteData->m_TapNotes[DANCE_NOTE_PAD2_UPRIGHT],
+				MAX_TAP_NOTE_ROWS*sizeof(pNoteData->m_TapNotes[0][0]) 
 				);
 		}
 	}
@@ -288,11 +288,14 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 		throw RageException( "Invalid NotesType." );
 	}
 
-	NoteData tempNoteData2;
-	tempNoteData2.m_iNumTracks = iNumNewTracks;
-	tempNoteData2.LoadTransformed( &tempNoteData, iNumNewTracks, iTransformNewToOld );
+	NoteData* pNoteData2 = new NoteData;
+	pNoteData2->m_iNumTracks = iNumNewTracks;
+	pNoteData2->LoadTransformed( pNoteData, iNumNewTracks, iTransformNewToOld );
 
-	m_sSMNoteData = tempNoteData2.GetSMNoteDataString();
+	m_sSMNoteData = pNoteData2->GetSMNoteDataString();
+
+	delete pNoteData;
+	delete pNoteData2;
 
 	TidyUpData();
 
@@ -370,15 +373,16 @@ bool Notes::LoadFromDWITokens(
 
 
 	CMap<int, int, int, int>  mapDanceNoteToNoteDataColumn;
-	if( m_NotesType == NOTES_TYPE_DANCE_SINGLE )
+	switch( m_NotesType )
 	{
+	case NOTES_TYPE_DANCE_SINGLE:
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 2;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 3;
-	}
-	else if( m_NotesType == NOTES_TYPE_DANCE_DOUBLE  ||  m_NotesType == NOTES_TYPE_DANCE_COUPLE )
-	{
+		break;
+	case NOTES_TYPE_DANCE_DOUBLE:
+	case NOTES_TYPE_DANCE_COUPLE:
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 2;
@@ -387,18 +391,18 @@ bool Notes::LoadFromDWITokens(
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_DOWN] = 5;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_UP] = 6;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_RIGHT] = 7;
-	}
-	else if( m_NotesType == NOTES_TYPE_DANCE_SOLO )
-	{
+		break;
+	case NOTES_TYPE_DANCE_SOLO:
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UPLEFT] = 1;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 2;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 3;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UPRIGHT] = 4;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 5;
-	}
-	else
+		break;
+	default:
 		ASSERT(0);
+	}
 
 	m_sDescription = sDescription;
 
@@ -406,8 +410,10 @@ bool Notes::LoadFromDWITokens(
 
 	//m_DifficultyClass = DifficultyClassFromDescriptionAndMeter( m_sDescription, m_iMeter );
 
-	NoteData tempNoteData;
-	tempNoteData.m_iNumTracks = mapDanceNoteToNoteDataColumn.GetCount();
+	NoteData* pNoteData = new NoteData;
+	ASSERT( pNoteData );
+	printf( "sizeof NoteData = %d\n", sizeof(NoteData) );
+	pNoteData->m_iNumTracks = mapDanceNoteToNoteDataColumn.GetCount();
 
 	for( int pad=0; pad<2; pad++ )		// foreach pad
 	{
@@ -428,6 +434,7 @@ bool Notes::LoadFromDWITokens(
 
 		double fCurrentBeat = 0;
 		double fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
+
 		for( int i=0; i<sStepData.GetLength(); )
 		{
 			char c = sStepData[i++];
@@ -473,45 +480,47 @@ bool Notes::LoadFromDWITokens(
 					if( note1 != DANCE_NOTE_NONE )
 					{
 						int iCol1 = mapDanceNoteToNoteDataColumn[note1];
-						tempNoteData.m_TapNotes[iCol1][iIndex] = '2';
+						pNoteData->m_TapNotes[iCol1][iIndex] = '2';
 					}
 					if( note2 != DANCE_NOTE_NONE )
 					{
 						int iCol2 = mapDanceNoteToNoteDataColumn[note2];
-						tempNoteData.m_TapNotes[iCol2][iIndex] = '2';
+						pNoteData->m_TapNotes[iCol2][iIndex] = '2';
 					}
 				}
 				break;
 			default:	// this is a note character
 				{
-				int iIndex = BeatToNoteRow( (float)fCurrentBeat );
+					int iIndex = BeatToNoteRow( (float)fCurrentBeat );
 
-				DanceNote note1, note2;
-				DWIcharToNote( c, (InstrumentNumber)pad, note1, note2 );
+					DanceNote note1, note2;
+					DWIcharToNote( c, (InstrumentNumber)pad, note1, note2 );
 
-				if( note1 != DANCE_NOTE_NONE )
-				{
-					int iCol1 = mapDanceNoteToNoteDataColumn[note1];
-					tempNoteData.m_TapNotes[iCol1][iIndex] = '1';
-				}
-				if( note2 != DANCE_NOTE_NONE )
-				{
-					int iCol2 = mapDanceNoteToNoteDataColumn[note2];
-					tempNoteData.m_TapNotes[iCol2][iIndex] = '1';
-				}
+					if( note1 != DANCE_NOTE_NONE )
+					{
+						int iCol1 = mapDanceNoteToNoteDataColumn[note1];
+						pNoteData->m_TapNotes[iCol1][iIndex] = '1';
+					}
+					if( note2 != DANCE_NOTE_NONE )
+					{
+						int iCol2 = mapDanceNoteToNoteDataColumn[note2];
+						pNoteData->m_TapNotes[iCol2][iIndex] = '1';
+					}
 
-				fCurrentBeat += fCurrentIncrementer;
+					fCurrentBeat += fCurrentIncrementer;
 				}
 				break;
 			}
 		}
 	}
 
-	tempNoteData.Convert2sAnd3sToHoldNotes();	// this will expand the HoldNote begin markers we wrote into actual HoldNotes
+	pNoteData->Convert2sAnd3sToHoldNotes();	// this will expand the HoldNote begin markers we wrote into actual HoldNotes
 
-	ASSERT( tempNoteData.m_iNumTracks > 0 );
+	ASSERT( pNoteData->m_iNumTracks > 0 );
 
-	m_sSMNoteData = tempNoteData.GetSMNoteDataString();
+	m_sSMNoteData = pNoteData->GetSMNoteDataString();
+
+	delete pNoteData;
 
 	TidyUpData();
 
@@ -628,6 +637,28 @@ DifficultyClass Notes::DifficultyClassFromDescriptionAndMeter( CString sDescript
 //
 //////////////////////////////////////////////
 
+int CompareNotesPointersByRadarValues(const void *arg1, const void *arg2)
+{
+	Notes* pNotes1 = *(Notes**)arg1;
+	Notes* pNotes2 = *(Notes**)arg2;
+
+	float fScore1 = 0;
+	float fScore2 = 0;
+	
+	for( int r=0; r<NUM_RADAR_VALUES; r++ )
+	{
+		fScore1 += pNotes1->m_fRadarValues[r];
+		fScore2 += pNotes2->m_fRadarValues[r];
+	}
+
+	if( fScore1 < fScore2 )
+		return -1;
+	else if( fScore1 == fScore2 )
+		return 0;
+	else
+		return 1;
+}
+
 int CompareNotesPointersByMeter(const void *arg1, const void *arg2)
 {
 	Notes* pNotes1 = *(Notes**)arg1;
@@ -639,7 +670,7 @@ int CompareNotesPointersByMeter(const void *arg1, const void *arg2)
 	if( iScore1 < iScore2 )
 		return -1;
 	else if( iScore1 == iScore2 )
-		return 0;
+		return CompareNotesPointersByRadarValues( arg1, arg2 );
 	else
 		return 1;
 }

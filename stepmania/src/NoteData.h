@@ -48,7 +48,7 @@ public:
 
 	int			m_iNumTracks;
 	TapNote		m_TapNotes[MAX_NOTE_TRACKS][MAX_TAP_NOTE_ROWS];
-	HoldNote	m_HoldNotes[MAX_HOLD_NOTE_ELEMENTS];
+	HoldNote	m_HoldNotes[MAX_HOLD_NOTES];
 	int			m_iNumHoldNotes;
 
 	void LoadFromSMNoteDataString( CString sSMNoteData );
@@ -73,6 +73,8 @@ public:
 
 	// statistics
 	bool IsThereANoteAtRow( int iRow );
+	float GetFirstBeat();	// return the beat number of the first note
+	int GetFirstRow();
 	float GetLastBeat();	// return the beat number of the last note
 	int GetLastRow();
 	int GetNumTapNotes( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );

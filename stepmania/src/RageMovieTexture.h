@@ -96,6 +96,9 @@ public:
 		);
 
 	LPDIRECT3DTEXTURE8 GetD3DTexture();
+	virtual void Play();
+	virtual void SetPosition( float fSeconds );
+	virtual void Pause();
 
 	LPDIRECT3DTEXTURE8  m_pd3dTexture[2];	// double buffered
 	int m_iIndexActiveTexture;	// either 0 or 1

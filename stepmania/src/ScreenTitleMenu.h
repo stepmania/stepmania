@@ -33,6 +33,7 @@ public:
 		CHOICE_SELECT_GAME,
 		CHOICE_MAP_INSTRUMENTS,
 		CHOICE_GAME_OPTIONS,
+		CHOICE_APPEARANCE_OPTIONS,
 		CHOICE_EDIT,
 		CHOICE_EXIT,
 		NUM_TITLE_MENU_CHOICES	// leave this at the end!
@@ -57,7 +58,6 @@ private:
 
 	TransitionFade	m_Fade;
 
-	RandomStream		m_soundTitle;
 	RandomStream		m_soundAttract;
 	RandomSample		m_soundChange;
 	RandomSample		m_soundSelect;

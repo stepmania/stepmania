@@ -62,7 +62,7 @@ MenuElements::MenuElements()
 	this->AddActor( &m_Invisible );
 }
 
-void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString sHelpText )
+void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString sHelpText, bool bShowStyleIcon, bool bTimerEnabled, int iTimerSeconds )
 {
 	LOG->WriteLine( "MenuElements::MenuElements()" );
 
@@ -80,13 +80,20 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	m_sprStyleIcon.StopAnimating();
 	m_sprStyleIcon.SetXY( STYLE_ICON_LOCAL_X, STYLE_ICON_LOCAL_Y );
 	m_sprStyleIcon.SetZ( -1 );
-	if( GAMEMAN->m_CurStyle == STYLE_NONE )
+	if( GAMEMAN->m_CurStyle == STYLE_NONE  ||  !bShowStyleIcon )
 		m_sprStyleIcon.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	else
 		m_sprStyleIcon.SetState( GAMEMAN->m_CurStyle );
 
 	m_MenuTimer.SetXY( TIMER_LOCAL_X, TIMER_LOCAL_Y );
 	m_MenuTimer.SetZ( -1 );
+	if( !bTimerEnabled  ||  !PREFSMAN->m_bMenuTimer )
+	{
+		m_MenuTimer.SetTimer( 99 );
+		m_MenuTimer.StopTimer();
+	}
+	else
+		m_MenuTimer.SetTimer( iTimerSeconds );
 
 	m_frameBottomBar.SetZ( -1 );
 
@@ -231,6 +238,11 @@ void MenuElements::DrawTopLayer()
 void MenuElements::DrawBottomLayer()
 {
 	m_sprBG.Draw();
+}
+
+void MenuElements::StopTimer()
+{
+	m_MenuTimer.StopTimer();
 }
 
 

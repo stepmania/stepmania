@@ -25,12 +25,13 @@ PrefsManager::PrefsManager()
 	m_bHighTextureDetail = false;
 	m_bIgnoreJoyAxes = false;
 	m_bShowFPS = false;
-	m_visMode = VIS_MODE_ANIMATION;
-	m_bAnnouncer = true;
+	m_BackgroundMode = BGMODE_ANIMATIONS;
+	m_fBGBrightness = 0.8f;
+	m_bMenuTimer = true;
 	m_bEventMode = false;
 	m_iNumArcadeStages = 3;
 	m_bAutoPlay = false;
-	m_fJudgeWindow = 0.12f;
+	m_fJudgeWindow = 0.18f;
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		m_PreferredDifficultyClass[p] = CLASS_EASY;
@@ -58,13 +59,17 @@ void PrefsManager::ReadPrefsFromDisk()
 	ini.GetValueB( "Options", "HighTextureDetail",	m_bHighTextureDetail );
 	ini.GetValueB( "Options", "IgnoreJoyAxes",		m_bIgnoreJoyAxes );
 	ini.GetValueB( "Options", "ShowFPS",			m_bShowFPS );
-	ini.GetValueI( "Options", "VisMode",			m_visMode );
-	ini.GetValueB( "Options", "Announcer",			m_bAnnouncer );
+	ini.GetValueI( "Options", "BackgroundMode",		(int&)m_BackgroundMode );
+	ini.GetValueF( "Options", "BGBrightness",		m_fBGBrightness );
+	ini.GetValueB( "Options", "MenuTimer",			m_bMenuTimer );
 	ini.GetValueB( "Options", "EventMode",			m_bEventMode );
 	ini.GetValueI( "Options", "NumArcadeStages",	m_iNumArcadeStages );
 	ini.GetValueB( "Options", "AutoPlay",			m_bAutoPlay );
 	ini.GetValueF( "Options", "JudgeWindow",		m_fJudgeWindow );
-	
+
+	ini.GetValue( "Options", "Announer",			m_sAnnouncer );
+	ini.GetValue( "Options", "NoteSkin",			m_sNoteSkin );
+
 	CString sAdditionalSongFolders;
 	ini.GetValue( "Options", "SongFolders", sAdditionalSongFolders );
 	split( sAdditionalSongFolders, ",", m_asSongFolders, true );
@@ -81,12 +86,16 @@ void PrefsManager::SavePrefsToDisk()
 	ini.SetValueB( "Options", "HighTextureDetail",	m_bHighTextureDetail );
 	ini.SetValueB( "Options", "IgnoreJoyAxes",		m_bIgnoreJoyAxes );
 	ini.SetValueB( "Options", "ShowFPS",			m_bShowFPS );
-	ini.SetValueI( "Options", "VisMode",			m_visMode );
-	ini.SetValueB( "Options", "Announcer",			m_bAnnouncer );
+	ini.SetValueI( "Options", "BackgroundMode",		m_BackgroundMode);
+	ini.SetValueF( "Options", "BGBrightness",		m_fBGBrightness );
 	ini.SetValueB( "Options", "EventMode",			m_bEventMode );
+	ini.SetValueB( "Options", "MenuTimer",			m_bMenuTimer );
 	ini.SetValueI( "Options", "NumArcadeStages",	m_iNumArcadeStages );
 	ini.SetValueB( "Options", "AutoPlay",			m_bAutoPlay );
 	ini.SetValueF( "Options", "JudgeWindow",		m_fJudgeWindow );
+
+	ini.SetValue( "Options", "Announer",			m_sAnnouncer );
+	ini.SetValue( "Options", "NoteSkin",			m_sNoteSkin );
 
 	ini.SetValue( "Options", "SongFolders", join(",", m_asSongFolders) );
 

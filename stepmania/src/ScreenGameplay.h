@@ -26,6 +26,20 @@
 #include "DifficultyBanner.h"
 
 
+// messages sent by Combo
+const ScreenMessage	SM_100Combo					= ScreenMessage(SM_User+200);
+const ScreenMessage	SM_200Combo					= ScreenMessage(SM_User+201);
+const ScreenMessage	SM_300Combo					= ScreenMessage(SM_User+202);
+const ScreenMessage	SM_400Combo					= ScreenMessage(SM_User+203);
+const ScreenMessage	SM_500Combo					= ScreenMessage(SM_User+204);
+const ScreenMessage	SM_600Combo					= ScreenMessage(SM_User+205);
+const ScreenMessage	SM_700Combo					= ScreenMessage(SM_User+206);
+const ScreenMessage	SM_800Combo					= ScreenMessage(SM_User+207);
+const ScreenMessage	SM_900Combo					= ScreenMessage(SM_User+208);
+const ScreenMessage	SM_1000Combo				= ScreenMessage(SM_User+209);
+const ScreenMessage	SM_ComboStopped				= ScreenMessage(SM_User+210);
+
+
 class ScreenGameplay : public Screen
 {
 public:
@@ -95,6 +109,17 @@ private:
 	RandomSample	m_announcerDanger;
 	RandomSample	m_announcerGood;
 	RandomSample	m_announcerHot;
+	RandomSample	m_announcer100Combo;
+	RandomSample	m_announcer200Combo;
+	RandomSample	m_announcer300Combo;
+	RandomSample	m_announcer400Combo;
+	RandomSample	m_announcer500Combo;
+	RandomSample	m_announcer600Combo;
+	RandomSample	m_announcer700Combo;
+	RandomSample	m_announcer800Combo;
+	RandomSample	m_announcer900Combo;
+	RandomSample	m_announcer1000Combo;
+	RandomSample	m_announcerComboStopped;
 	RandomStream	m_announcerCleared;
 	RandomStream	m_announcerFailComment;
 	RandomStream	m_announcerGameOver;

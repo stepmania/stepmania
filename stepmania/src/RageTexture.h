@@ -60,6 +60,9 @@ public:
 		) = 0;
 
 	virtual LPDIRECT3DTEXTURE8 GetD3DTexture() = 0;
+	virtual void Play() {};
+	virtual void SetPosition( float fSeconds ) {};
+	virtual void Pause() {};
 
 	int GetSourceWidth()	{return m_iSourceWidth;};
 	int GetSourceHeight()	{return m_iSourceHeight;};

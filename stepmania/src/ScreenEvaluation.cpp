@@ -164,7 +164,8 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	m_Menu.Load(
 		THEME->GetPathTo(GRAPHIC_EVALUATION_BACKGROUND), 
 		m_ResultMode==RM_ARCADE_SUMMARY ? THEME->GetPathTo(GRAPHIC_EVALUATION_SUMMARY_TOP_EDGE) : THEME->GetPathTo(GRAPHIC_EVALUATION_TOP_EDGE),
-		"Press START to continue."
+		"Press START to continue.",
+		false, true, 40 
 		);
 	this->AddActor( &m_Menu );
 

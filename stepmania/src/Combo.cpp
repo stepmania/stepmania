@@ -11,6 +11,8 @@
 
 #include "Combo.h"
 #include "ThemeManager.h"
+#include "ScreenManager.h"
+#include "ScreenGameplay.h"
 
 
 Combo::Combo()
@@ -46,6 +48,21 @@ void Combo::ContinueCombo()
 	if( m_iCurCombo > m_iMaxCombo )
 		m_iMaxCombo = m_iCurCombo;
 
+	switch( m_iMaxCombo )
+	{
+	case 100: 		SCREENMAN->SendMessageToTopScreen( SM_100Combo, 0 );	break;
+	case 200: 		SCREENMAN->SendMessageToTopScreen( SM_200Combo, 0 );	break;
+	case 300: 		SCREENMAN->SendMessageToTopScreen( SM_300Combo, 0 );	break;
+	case 400: 		SCREENMAN->SendMessageToTopScreen( SM_400Combo, 0 );	break;
+	case 500: 		SCREENMAN->SendMessageToTopScreen( SM_500Combo, 0 );	break;
+	case 600: 		SCREENMAN->SendMessageToTopScreen( SM_600Combo, 0 );	break;
+	case 700: 		SCREENMAN->SendMessageToTopScreen( SM_700Combo, 0 );	break;
+	case 800: 		SCREENMAN->SendMessageToTopScreen( SM_800Combo, 0 );	break;
+	case 900: 		SCREENMAN->SendMessageToTopScreen( SM_900Combo, 0 );	break;
+	case 1000: 		SCREENMAN->SendMessageToTopScreen( SM_1000Combo, 0 );	break;
+	}
+
+
 	if( m_iCurCombo <= 4 )
 	{
 		m_textComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
@@ -57,7 +74,7 @@ void Combo::ContinueCombo()
 		m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	// visible
 
 		m_textComboNumber.SetText( ssprintf("%d", m_iCurCombo) );
-		float fNewZoom = 0.5f + m_iCurCombo/800.0f;
+		float fNewZoom = min( 0.5f + m_iCurCombo/800.0f, 1.1f );
 		m_textComboNumber.SetZoom( fNewZoom ); 
 		
 		//this->SetZoom( 1.2f );
@@ -68,6 +85,9 @@ void Combo::ContinueCombo()
 
 void Combo::EndCombo()
 {
+	if( m_iCurCombo > 50 )
+		SCREENMAN->SendMessageToTopScreen( SM_ComboStopped, 0 );
+
 	m_iCurCombo = 0;
 
 	m_textComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible

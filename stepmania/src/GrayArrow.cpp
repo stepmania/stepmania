@@ -14,7 +14,7 @@
 #include "GrayArrow.h"
 #include "ThemeManager.h"
 
-const float GRAY_ARROW_POP_UP_TIME			= 0.3f;
+const float GRAY_ARROW_POP_UP_TIME			= 0.15f;
 
 
 GrayArrow::GrayArrow()
@@ -32,7 +32,7 @@ void GrayArrow::SetBeat( const float fSongBeat )
 
 void GrayArrow::Step()
 {
-	SetZoom( 0.50 );
+	SetZoom( 0.75f );
 	BeginTweening( GRAY_ARROW_POP_UP_TIME );
 	SetTweenZoom( 1.0f );
 }

@@ -60,7 +60,8 @@ ScreenSelectGroup::ScreenSelectGroup()
 	m_Menu.Load(
 		THEME->GetPathTo(GRAPHIC_SELECT_GROUP_BACKGROUND) , 
 		THEME->GetPathTo(GRAPHIC_SELECT_GROUP_TOP_EDGE),
-		ssprintf("Use %c %c to select, then press START", char(1), char(2))
+		ssprintf("Use %c %c to select, then press START", char(1), char(2)),
+		false, true, 40 
 		);
 	this->AddActor( &m_Menu );
 
@@ -101,8 +102,6 @@ ScreenSelectGroup::ScreenSelectGroup()
 		m_textGroup[i].SetXY( BUTTON_X, BUTTON_START_Y + BUTTON_GAP_Y*i );
 		m_textGroup[i].SetText( SONGMAN->ShortenGroupName( sGroupName ) );
 		m_textGroup[i].SetZoom( 0.8f );
-		if( m_textGroup[i].GetWidestLineWidthInSourcePixels()*0.8f > m_sprGroupButton[i].GetUnzoomedWidth() )
-			m_textGroup[i].SetZoomX( m_textGroup[i].GetWidestLineWidthInSourcePixels()*0.8f / (float)m_sprGroupButton[i].GetUnzoomedWidth() );
 		m_textGroup[i].SetShadowLength( 2 );
 
 		if( i == 0 )	m_textGroup[i].TurnRainbowOn();

@@ -18,31 +18,32 @@
 const int NUM_PAD_TO_DEVICE_SLOTS	= 3;	// three device inputs may map to one pad input
 
 
-enum VisualizationMode {
-	VIS_MODE_NONE = 0,
-	VIS_MODE_ANIMATION,
-	VIS_MODE_MOVIE,
-};
-
-
 class PrefsManager
 {
 public:
 	PrefsManager();
 	~PrefsManager();
 
-	// Options that ARE saved between sessions
+	enum BackgroundMode { BGMODE_OFF, BGMODE_ANIMATIONS, BGMODE_MOVIEVIS };
+
+	// GameOptions (ARE saved between sessions)
 	bool	m_bWindowed;
 	bool	m_bHighDetail;
 	bool	m_bHighTextureDetail;
 	bool	m_bIgnoreJoyAxes;
 	bool	m_bShowFPS;
-	int		m_visMode;
-	bool	m_bAnnouncer;
+	BackgroundMode	m_BackgroundMode;
+	float	m_fBGBrightness;
+	bool	m_bMenuTimer;
 	bool	m_bEventMode;
 	int		m_iNumArcadeStages;
 	bool	m_bAutoPlay;
 	float	m_fJudgeWindow;
+
+	// AppearanceOptions (ARE saved between sessions)
+	CString m_sAnnouncer;
+	CString m_sNoteSkin;
+
 	CStringArray m_asSongFolders;
 
 	void ReadPrefsFromDisk();

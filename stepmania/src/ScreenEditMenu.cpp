@@ -112,7 +112,8 @@ ScreenEditMenu::ScreenEditMenu()
 	m_Menu.Load( 
 		THEME->GetPathTo(GRAPHIC_EDIT_BACKGROUND), 
 		THEME->GetPathTo(GRAPHIC_EDIT_TOP_EDGE),
-		ssprintf("%s %s change music    START to continue", CString(char(1)), CString(char(2)) )
+		ssprintf("%s %s change music    START to continue", CString(char(1)), CString(char(2)) ),
+		false, true, 40 
 		);
 	this->AddActor( &m_Menu );
 

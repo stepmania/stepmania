@@ -15,12 +15,15 @@
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 #include "ScreenManager.h"
+#include "AnnouncerManager.h"
 
 const float TIMER_SECONDS = 99;
 
 MenuTimer::MenuTimer()
 {
 	m_fSecondsLeft = TIMER_SECONDS;
+	m_fStallSeconds = 0;
+	m_bTimerStopped = false;
 
 	m_textDigit1.Load( THEME->GetPathTo(FONT_TIMER_NUMBERS) );
 	m_textDigit1.TurnShadowOff();
@@ -40,10 +43,21 @@ void MenuTimer::Update( float fDeltaTime )
 { 
 	ActorFrame::Update( fDeltaTime );
 
+	if( m_bTimerStopped )
+		return;
+
+	if( m_fStallSeconds > 0 )
+	{
+		m_fStallSeconds -= fDeltaTime;
+		return;
+	}
+
 	float fOldSecondsLeft = m_fSecondsLeft;
 	float fNewSecondsLeft = fOldSecondsLeft - fDeltaTime;
 
-	if( fOldSecondsLeft > 5  &&  fNewSecondsLeft < 5 )	// transition to below 5
+	if( fOldSecondsLeft > 5.5  &&  fNewSecondsLeft < 5.5 )	// transition to below 5.5
+		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_MENU_HURRY_UP) );
+	else if( fOldSecondsLeft > 5  &&  fNewSecondsLeft < 5 )	// transition to below 5
 	{
 		m_textDigit1.SetEffectGlowing( 10, D3DXCOLOR(1,0,0,0), D3DXCOLOR(1,0,0,1) );
 		m_textDigit2.SetEffectGlowing( 10, D3DXCOLOR(1,0,0,0), D3DXCOLOR(1,0,0,1) );
@@ -80,10 +94,15 @@ void MenuTimer::Update( float fDeltaTime )
 
 void MenuTimer::StopTimer()
 {
-
+	m_bTimerStopped = true;
 }
 
 void MenuTimer::StallTimer()
 {
+	m_fStallSeconds = 1;
+}
 
+void MenuTimer::SetTimer( int iSeconds )
+{
+	m_fSecondsLeft = (float)iSeconds;
 }

@@ -289,11 +289,11 @@ void SongManager::ReadStatisticsFromDisk()
 
 			// Search for the corresponding Notes pointer.
 			Notes* pNotes = NULL;
-			for( i=0; i<pSong->m_arrayNotes.GetSize(); i++ )
+			for( i=0; i<pSong->m_apNotes.GetSize(); i++ )
 			{
-				if( pSong->m_arrayNotes[i]->m_sDescription == szNotesName )	// match!
+				if( pSong->m_apNotes[i]->m_sDescription == szNotesName )	// match!
 				{
-					pNotes = pSong->m_arrayNotes[i];
+					pNotes = pSong->m_apNotes[i];
 					break;
 				}
 			}
@@ -330,9 +330,9 @@ void SongManager::SaveStatisticsToDisk()
 	{
 		Song* pSong = m_pSongs[i];
 
-		for( int j=0; j<pSong->m_arrayNotes.GetSize(); j++ )		// for each Notes
+		for( int j=0; j<pSong->m_apNotes.GetSize(); j++ )		// for each Notes
 		{
-			Notes* pNotes = pSong->m_arrayNotes[j];
+			Notes* pNotes = pSong->m_apNotes[j];
 
 			if( pNotes->m_TopGrade == GRADE_NO_DATA )
 				continue;		// skip

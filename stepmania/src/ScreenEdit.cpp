@@ -93,7 +93,7 @@ ScreenEdit::ScreenEdit()
 	if( m_pNotes == NULL )
 	{
 		m_pNotes = new Notes;
-		m_pSong->m_arrayNotes.Add( m_pNotes );
+		m_pSong->m_apNotes.Add( m_pNotes );
 	}
 
 	NoteData noteData;
@@ -165,7 +165,7 @@ ScreenEdit::ScreenEdit()
 	m_soundInvalid.Load( THEME->GetPathTo(SOUND_MENU_INVALID) );
 
 
-	m_soundMusic.Load( m_pSong->GetMusicPath() );
+	m_soundMusic.Load( m_pSong->GetMusicPath(), true );	// enable accurate sync
 	m_soundMusic.SetPlaybackRate( 0.5f );
 
 
@@ -402,20 +402,19 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 			break;
 		case DIK_ESCAPE:
-			m_pSong->LoadFromSMFile( m_pSong->GetCacheFilePath() );
 			SCREENMAN->SetNewScreen( new ScreenEditMenu );
 			break;
 		case DIK_S:
 			{
 				// copy edit into current Notes
-				Notes* pNotes;
-				pNotes = SONGMAN->GetCurrentNotes(PLAYER_1);
+				Song* pSong = SONGMAN->GetCurrentSong();
+				Notes* pNotes = SONGMAN->GetCurrentNotes(PLAYER_1);
 
 				if( pNotes == NULL )
 				{
 					// allocate a new Notes
-					SONGMAN->GetCurrentSong()->m_arrayNotes.SetSize( SONGMAN->GetCurrentSong()->m_arrayNotes.GetSize() + 1 );
-					pNotes = SONGMAN->GetCurrentSong()->m_arrayNotes[ SONGMAN->GetCurrentSong()->m_arrayNotes.GetSize()-1 ];
+					pNotes = new Notes;
+					pSong->m_apNotes.Add( pNotes );
 					pNotes->m_NotesType = GAMEMAN->m_CurNotesType;
 					pNotes->m_sDescription = "Untitled";
 					pNotes->m_iMeter = 1;
@@ -664,12 +663,15 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				float fDeltaBPM;
 				switch( DeviceI.button )
 				{
-				case DIK_F7:	fDeltaBPM = - 0.025f;		break;
-				case DIK_F8:	fDeltaBPM = + 0.025f;		break;
+				case DIK_F7:	fDeltaBPM = - 0.020f;		break;
+				case DIK_F8:	fDeltaBPM = + 0.020f;		break;
 				default:	ASSERT(0);
 				}
-				if( type == IET_FAST_REPEAT )
-					fDeltaBPM *= 40;
+				switch( type )
+				{
+				case IET_SLOW_REPEAT:	fDeltaBPM *= 10;	break;
+				case IET_FAST_REPEAT:	fDeltaBPM *= 40;	break;
+				}
 				float fNewBPM = fBPM + fDeltaBPM;
 
 				for( int i=0; i<m_pSong->m_BPMSegments.GetSize(); i++ )
@@ -696,30 +698,33 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				float fFreezeDelta;
 				switch( DeviceI.button )
 				{
-				case DIK_F9:	fFreezeDelta = -0.025f;		break;
-				case DIK_F10:	fFreezeDelta = +0.025f;		break;
+				case DIK_F9:	fFreezeDelta = -0.020f;		break;
+				case DIK_F10:	fFreezeDelta = +0.020f;		break;
 				default:	ASSERT(0);
 				}
-				if( type == IET_FAST_REPEAT )
-					fFreezeDelta *= 40;
-
-				for( int i=0; i<m_pSong->m_FreezeSegments.GetSize(); i++ )
+				switch( type )
 				{
-					if( m_pSong->m_FreezeSegments[i].m_fStartBeat == m_fBeat )
+				case IET_SLOW_REPEAT:	fFreezeDelta *= 10;	break;
+				case IET_FAST_REPEAT:	fFreezeDelta *= 40;	break;
+				}
+
+				for( int i=0; i<m_pSong->m_StopSegments.GetSize(); i++ )
+				{
+					if( m_pSong->m_StopSegments[i].m_fStartBeat == m_fBeat )
 						break;
 				}
 
-				if( i == m_pSong->m_FreezeSegments.GetSize() )	// there is no BPMSegment at the current beat
+				if( i == m_pSong->m_StopSegments.GetSize() )	// there is no BPMSegment at the current beat
 				{
-					// create a new FreezeSegment
+					// create a new StopSegment
 					if( fFreezeDelta > 0 )
-						m_pSong->AddFreezeSegment( FreezeSegment(m_fBeat, fFreezeDelta) );
+						m_pSong->AddStopSegment( StopSegment(m_fBeat, fFreezeDelta) );
 				}
-				else	// FreezeSegment being modified is m_FreezeSegments[i]
+				else	// StopSegment being modified is m_StopSegments[i]
 				{
-					m_pSong->m_FreezeSegments[i].m_fFreezeSeconds += fFreezeDelta;
-					if( m_pSong->m_FreezeSegments[i].m_fFreezeSeconds <= 0 )
-						m_pSong->m_FreezeSegments.RemoveAt( i );
+					m_pSong->m_StopSegments[i].m_fStopSeconds += fFreezeDelta;
+					if( m_pSong->m_StopSegments[i].m_fStopSeconds <= 0 )
+						m_pSong->m_StopSegments.RemoveAt( i );
 				}
 			}
 			break;
@@ -729,12 +734,15 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				float fOffsetDelta;
 				switch( DeviceI.button )
 				{
-				case DIK_F11:	fOffsetDelta = -0.025f;		break;
-				case DIK_F12:	fOffsetDelta = +0.025f;		break;
+				case DIK_F11:	fOffsetDelta = -0.020f;		break;
+				case DIK_F12:	fOffsetDelta = +0.020f;		break;
 				default:	ASSERT(0);
 				}
-				if( type == IET_FAST_REPEAT )
-					fOffsetDelta *= 40;
+				switch( type )
+				{
+				case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
+				case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
+				}
 
 				m_pSong->m_fBeat0OffsetInSeconds += fOffsetDelta;
 			}
@@ -753,8 +761,11 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				case DIK_F2:	fOffsetDelta = +0.025f;		break;
 				default:	ASSERT(0);
 				}
-				if( type == IET_FAST_REPEAT )
-					fOffsetDelta *= 40;
+				switch( type )
+				{
+				case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
+				case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
+				}
 
 				m_pSong->m_fMusicSampleStartSeconds += fOffsetDelta;
 			}
@@ -769,8 +780,11 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				case DIK_ADD:		fDelta = +0.025f;		break;
 				default:	ASSERT(0);
 				}
-				if( type == IET_FAST_REPEAT )
-					fDelta *= 40;
+				switch( type )
+				{
+				case IET_SLOW_REPEAT:	fDelta *= 10;	break;
+				case IET_FAST_REPEAT:	fDelta *= 40;	break;
+				}
 
 				m_pSong->m_fMusicSampleLengthSeconds += fDelta;
 			}
@@ -849,10 +863,15 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 		}
 	}
 
+	float fSongBeat, fBPS;
+	bool bFreeze;
+	m_pSong->GetBeatAndBPSFromElapsedTime( m_soundMusic.GetPositionSeconds(), fSongBeat, fBPS, bFreeze );
+	const float fMaxBeatDifference = fBPS * PREFSMAN->m_fJudgeWindow / PREFSMAN->m_SongOptions.m_fMusicRate;
+
 	switch( StyleI.player )
 	{
 		case PLAYER_1:	
-			m_Player.HandlePlayerStep( m_fBeat, StyleI.col, 0.35f ); 
+			m_Player.HandlePlayerStep( m_fBeat, StyleI.col, fMaxBeatDifference ); 
 			return;
 	}
 

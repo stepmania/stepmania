@@ -23,7 +23,7 @@
 
 const float FADE_TIME	=	1.0f;
 
-const float SWITCH_MUSIC_TIME	=	0.15f;
+const float SWITCH_MUSIC_TIME	=	0.10f;
 const float SAMPLE_MUSIC_DELAY	=	0.20f;
 const float ROULETTE_SWITCH_MUSIC_TIME	=	SWITCH_MUSIC_TIME/2;
 const int ROULETTE_SWITCHES_IN_SLOWING_DOWN = 5;
@@ -924,6 +924,8 @@ void MusicWheel::PrevMusic( bool bSendSongChangedMessage )
 	if( fabsf(m_fPositionOffsetFromSelection) > 0.5f )	// wheel is busy spinning
 		return;
 	
+	m_fTimeLeftBeforePlayMusicSample = 0;
+
 	switch( m_WheelState )
 	{
 	case STATE_SELECTING_MUSIC:
@@ -966,9 +968,11 @@ void MusicWheel::NextMusic( bool bSendSongChangedMessage )
 		return;
 	}
 
-	if( fabsf(m_fPositionOffsetFromSelection) > 0.5 )	// wheel is very busy spinning
+	if( fabsf(m_fPositionOffsetFromSelection) > 0.5f )	// wheel is very busy spinning
 		return;
 	
+	m_fTimeLeftBeforePlayMusicSample = 0;
+
 	switch( m_WheelState )
 	{
 	case STATE_SELECTING_MUSIC:
@@ -1038,7 +1042,7 @@ bool MusicWheel::Select()	// return true of a playable item was chosen
 	if( m_WheelState == STATE_ROULETTE_SPINNING )
 	{
 		m_WheelState = STATE_ROULETTE_SLOWING_DOWN;
-		m_iSwitchesLeftInSpinDown = ROULETTE_SWITCHES_IN_SLOWING_DOWN;
+		m_iSwitchesLeftInSpinDown = ROULETTE_SWITCHES_IN_SLOWING_DOWN/2+1 + rand()%(ROULETTE_SWITCHES_IN_SLOWING_DOWN/2);
 		m_fTimeLeftInState = 0.1f;
 		return false;
 	}

@@ -426,13 +426,13 @@ HRESULT RageMovieTexture::CreateD3DTexture()
     // Create the texture that maps to this media type
 	//////////////////////////////////////////////////
     if( FAILED( hr = D3DXCreateTexture(m_pd3dDevice,
-                    m_iSourceHeight, m_iSourceHeight,
+                    m_iSourceWidth, m_iSourceHeight,
                     1, 0, 
                     D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &m_pd3dTexture[0] ) ) )
         throw RageException( hr, "Could not create the D3DX texture!" );
 
     if( FAILED( hr = D3DXCreateTexture(m_pd3dDevice,
-                    m_iSourceHeight, m_iSourceHeight,
+                    m_iSourceWidth, m_iSourceHeight,
                     1, 0, 
                     D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &m_pd3dTexture[1] ) ) )
         throw RageException( hr, "Could not create the D3DX texture!" );
@@ -491,3 +491,20 @@ void RageMovieTexture::CleanupDShow()
     if (m_pGB) m_pGB.Release ();
 }
     
+void RageMovieTexture::Play()
+{
+	PlayMovie();
+}
+
+void RageMovieTexture::SetPosition( float fSeconds )
+{
+     m_pMP->put_CurrentPosition(0);
+}
+
+void RageMovieTexture::Pause()
+{
+	HRESULT hr;
+	if( FAILED( hr = m_pMC->Pause() ) )
+        throw RageException( hr, "Could not pause the DirectShow graph." );
+
+}

@@ -50,7 +50,7 @@ const float TIME_BETWEEN_DANCING_COMMENTS	=	15;
 
 
 // received while STATE_DANCING
-const ScreenMessage	SM_SongEnded			= ScreenMessage(SM_User+102);
+const ScreenMessage	SM_NotesEnded			= ScreenMessage(SM_User+102);
 const ScreenMessage	SM_LifeIs0				= ScreenMessage(SM_User+103);
 
 
@@ -91,10 +91,10 @@ ScreenGameplay::ScreenGameplay()
 				Song* pSong = pCourse->m_apSongs[i];
 				DifficultyClass dc = pCourse->m_aDifficultyClasses[i];
 
-				for( int j=0; j<pSong->m_arrayNotes.GetSize(); j++ )
+				for( int j=0; j<pSong->m_apNotes.GetSize(); j++ )
 				{
-					Notes* pNotes = pSong->m_arrayNotes[j];
-					if( pSong->m_arrayNotes[j]->m_DifficultyClass == dc )
+					Notes* pNotes = pSong->m_apNotes[j];
+					if( pSong->m_apNotes[j]->m_DifficultyClass == dc )
 					{
 						m_apSongQueue.Add( pSong );
 						for( int p=0; p<NUM_PLAYERS; p++ )
@@ -252,10 +252,28 @@ ScreenGameplay::ScreenGameplay()
 
 	m_soundFail.Load(			THEME->GetPathTo(SOUND_GAMEPLAY_FAILED) );
 	m_announcerReady.Load(		ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_READY) );
-	m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_HERE_WE_GO_NORMAL) );
+	if( PREFSMAN->IsExtraStage() || PREFSMAN->IsExtraStage2() )
+		m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_HERE_WE_GO_EXTRA) );
+	else if( PREFSMAN->IsFinalStage() )
+		m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_HERE_WE_GO_FINAL) );
+	else
+		m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_HERE_WE_GO_NORMAL) );
 	m_announcerDanger.Load(		ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_COMMENT_DANGER) );
 	m_announcerGood.Load(		ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_COMMENT_GOOD) );
 	m_announcerHot.Load(		ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_COMMENT_HOT) );
+
+	m_announcer100Combo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_100_COMBO) );
+	m_announcer200Combo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_200_COMBO) );
+	m_announcer300Combo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_300_COMBO) );
+	m_announcer400Combo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_400_COMBO) );
+	m_announcer500Combo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_500_COMBO) );
+	m_announcer600Combo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_600_COMBO) );
+	m_announcer700Combo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_700_COMBO) );
+	m_announcer800Combo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_800_COMBO) );
+	m_announcer900Combo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_900_COMBO) );
+	m_announcer1000Combo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_1000_COMBO) );
+	m_announcerComboStopped.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_COMBO_STOPPED) );
+
 	m_announcerCleared.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_CLEARED) );
 	m_announcerFailComment.Load(ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_FAILED) );
 
@@ -342,7 +360,9 @@ void ScreenGameplay::LoadNextSong()
 		);
 	}
 
-	m_soundMusic.Load( m_pCurSong->GetMusicPath() );
+	m_soundMusic.Load( m_pCurSong->GetMusicPath(), true );	// enable accurate sync
+	float fStartSeconds = min( 0, m_pCurSong->GetElapsedTimeFromBeat(m_pCurSong->m_fFirstBeat-4) );
+	m_soundMusic.SetPositionSeconds( fStartSeconds );
 	m_soundMusic.SetPlaybackRate( PREFSMAN->m_SongOptions.m_fMusicRate );
 	
 	m_Background.LoadFromSong( m_pCurSong );
@@ -357,6 +377,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	//LOG->WriteLine( "ScreenGameplay::Update(%f)", fDeltaTime );
 	Screen::Update( fDeltaTime );
 
+	m_soundMusic.Update( fDeltaTime );
 
 	if( m_pCurSong == NULL )
 		return;
@@ -368,7 +389,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	m_pCurSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS, bFreeze );
 
 	
-	m_Background.SetSongBeat( fSongBeat, bFreeze );
+	m_Background.SetSongBeat( fSongBeat, bFreeze, fPositionSeconds );
 
 	
 	//LOG->WriteLine( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
@@ -427,35 +448,31 @@ void ScreenGameplay::Update( float fDeltaTime )
 	case STATE_DANCING:
 		
 		// Check for end of song
-		if( m_DancingState == STATE_DANCING  &&
-			m_soundMusic.GetLengthSeconds() - m_soundMusic.GetPositionSeconds() < 2 )
-			this->SendScreenMessage( SM_SongEnded, 1 );
+		if( fSongBeat > m_pCurSong->m_fLastBeat+4 )
+			this->SendScreenMessage( SM_NotesEnded, 0 );
 	
 		// Check to see if it's time to play a gameplay comment
-		if( PREFSMAN->m_bAnnouncer )
+		m_fTimeLeftBeforeDancingComment -= fDeltaTime;
+		if( m_fTimeLeftBeforeDancingComment <= 0 )
 		{
-			m_fTimeLeftBeforeDancingComment -= fDeltaTime;
-			if( m_fTimeLeftBeforeDancingComment <= 0 )
-			{
-				m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;	// reset for the next comment
+			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;	// reset for the next comment
 
-				bool bAllInDanger = true;
-				for( int p=0; p<NUM_PLAYERS; p++ )
-					if( !m_LifeMeter[p].IsInDanger() )
-						bAllInDanger = false;
+			bool bAllInDanger = true;
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( !m_LifeMeter[p].IsInDanger() )
+					bAllInDanger = false;
 
-				bool bOneIsHot = false;
-				for( p=0; p<NUM_PLAYERS; p++ )
-					if( m_LifeMeter[p].IsHot() )
-						bOneIsHot = true;
+			bool bOneIsHot = false;
+			for( p=0; p<NUM_PLAYERS; p++ )
+				if( m_LifeMeter[p].IsHot() )
+					bOneIsHot = true;
 
-				if( bOneIsHot )
-					m_announcerHot.PlayRandom();
-				else if( bAllInDanger )
-					m_announcerDanger.PlayRandom();
-				else
-					m_announcerGood.PlayRandom();
-			}
+			if( bOneIsHot )
+				m_announcerHot.PlayRandom();
+			else if( bAllInDanger )
+				m_announcerDanger.PlayRandom();
+			else
+				m_announcerGood.PlayRandom();
 		}
 	}
 
@@ -620,8 +637,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_User+2:
 		m_sprReady.StartFocusing();
-		if( PREFSMAN->m_bAnnouncer )
-			m_announcerReady.PlayRandom();
+		m_announcerReady.PlayRandom();
 		break;
 	case SM_User+3:
 		break;
@@ -630,9 +646,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_User+5:
 		m_sprHereWeGo.StartFocusing();
-		if( PREFSMAN->m_bAnnouncer )
-			m_announcerHereWeGo.PlayRandom();
-		m_Background.SetDiffuseColor( D3DXCOLOR(0.8f,0.8f,0.8f,1) );
+		m_announcerHereWeGo.PlayRandom();
+		m_Background.FadeIn();
 		m_soundMusic.Play();
 		m_soundMusic.SetPlaybackRate( PREFSMAN->m_SongOptions.m_fMusicRate );
 		break;
@@ -653,7 +668,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			this->SendScreenMessage( SM_BeginFailed, 0 );
 		m_DancingState = STATE_OUTRO;
 		break;
-	case SM_SongEnded:
+	case SM_NotesEnded:
 		if( m_DancingState == STATE_OUTRO )	// gameplay already ended
 			return;		// ignore
 
@@ -664,13 +679,91 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		else	// cleared
 		{
 			m_StarWipe.CloseWipingRight( SM_ShowCleared );
-			if( PREFSMAN->m_bAnnouncer )
-				m_announcerCleared.PlayRandom();	// crowd cheer
+			m_announcerCleared.PlayRandom();	// crowd cheer
 		}
 		m_DancingState = STATE_OUTRO;
 		break;
 
-		// received while STATE_OUTRO
+	case SM_100Combo:
+		if( m_fTimeLeftBeforeDancingComment < 12 )
+		{
+			m_announcer100Combo.PlayRandom();
+			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+		}
+		break;
+	case SM_200Combo:
+		if( m_fTimeLeftBeforeDancingComment < 12 )
+		{
+			m_announcer200Combo.PlayRandom();
+			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+		}
+		break;
+	case SM_300Combo:
+		if( m_fTimeLeftBeforeDancingComment < 12 )
+		{
+			m_announcer300Combo.PlayRandom();
+			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+		}
+		break;
+	case SM_400Combo:
+		if( m_fTimeLeftBeforeDancingComment < 12 )
+		{
+			m_announcer400Combo.PlayRandom();
+			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+		}
+		break;
+	case SM_500Combo:
+		if( m_fTimeLeftBeforeDancingComment < 12 )
+		{
+			m_announcer500Combo.PlayRandom();
+			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+		}
+		break;
+	case SM_600Combo:
+		if( m_fTimeLeftBeforeDancingComment < 12 )
+		{
+			m_announcer600Combo.PlayRandom();
+			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+		}
+		break;
+	case SM_700Combo:
+		if( m_fTimeLeftBeforeDancingComment < 12 )
+		{
+			m_announcer700Combo.PlayRandom();
+			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+		}
+		break;
+	case SM_800Combo:
+		if( m_fTimeLeftBeforeDancingComment < 12 )
+		{
+			m_announcer800Combo.PlayRandom();
+			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+		}
+		break;
+	case SM_900Combo:
+		if( m_fTimeLeftBeforeDancingComment < 12 )
+		{
+			m_announcer900Combo.PlayRandom();
+			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+		}
+		break;
+	case SM_1000Combo:
+		if( m_fTimeLeftBeforeDancingComment < 12 )
+		{
+			m_announcer1000Combo.PlayRandom();
+			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+		}
+		break;
+	case SM_ComboStopped:
+		if( m_fTimeLeftBeforeDancingComment < 12 )
+		{
+			m_announcerComboStopped.PlayRandom();
+			m_fTimeLeftBeforeDancingComment = TIME_BETWEEN_DANCING_COMMENTS;
+		}
+		break;
+
+
+	// received while STATE_OUTRO
 	case SM_ShowCleared:
 		m_sprCleared.StartFocusing();
 		SCREENMAN->SendMessageToTopScreen( SM_HideCleared, 2.5 );
@@ -692,8 +785,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		this->SendScreenMessage( SM_ShowFailed, 0.2f );
 		break;
 	case SM_ShowFailed:
-		if( PREFSMAN->m_bAnnouncer )
-			m_soundFail.PlayRandom();
+		m_soundFail.PlayRandom();
 
 		// make the background invisible so we don't waste mem bandwidth drawing it
 		m_Background.BeginTweening( 1 );
@@ -714,8 +806,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SendMessageToTopScreen( SM_HideFailed, 3.0f );
 		break;
 	case SM_PlayFailComment:
-		if( PREFSMAN->m_bAnnouncer )
-			m_announcerFailComment.PlayRandom();
+		m_announcerFailComment.PlayRandom();
 		break;
 	case SM_HideFailed:
 		m_sprFailed.StopTweening();

@@ -19,7 +19,7 @@
 #include "NoteData.h"
 
 
-const int FILE_CACHE_VERSION = 29;	// increment this to force a cache reload (useful when the SM file format changes)
+const int FILE_CACHE_VERSION = 43;	// increment this to force a cache reload (useful when the SM file format changes)
 
 
 int CompareBPMSegments(const void *arg1, const void *arg2)
@@ -44,11 +44,11 @@ void SortBPMSegmentsArray( CArray<BPMSegment,BPMSegment&> &arrayBPMSegments )
 	qsort( arrayBPMSegments.GetData(), arrayBPMSegments.GetSize(), sizeof(BPMSegment), CompareBPMSegments );
 }
 
-int CompareFreezeSegments(const void *arg1, const void *arg2)
+int CompareStopSegments(const void *arg1, const void *arg2)
 {
 	// arg1 and arg2 are of type Step**
-	FreezeSegment* seg1 = (FreezeSegment*)arg1;
-	FreezeSegment* seg2 = (FreezeSegment*)arg2;
+	StopSegment* seg1 = (StopSegment*)arg1;
+	StopSegment* seg2 = (StopSegment*)arg2;
 
 	float score1 = seg1->m_fStartBeat;
 	float score2 = seg2->m_fStartBeat;
@@ -61,9 +61,31 @@ int CompareFreezeSegments(const void *arg1, const void *arg2)
 		return 1;
 }
 
-void SortFreezeSegmentsArray( CArray<FreezeSegment,FreezeSegment&> &arrayFreezeSegments )
+void SortStopSegmentsArray( CArray<StopSegment,StopSegment&> &arrayStopSegments )
 {
-	qsort( arrayFreezeSegments.GetData(), arrayFreezeSegments.GetSize(), sizeof(FreezeSegment), CompareFreezeSegments );
+	qsort( arrayStopSegments.GetData(), arrayStopSegments.GetSize(), sizeof(StopSegment), CompareStopSegments );
+}
+
+int CompareAnimationSegments(const void *arg1, const void *arg2)
+{
+	// arg1 and arg2 are of type Step**
+	AnimationSegment* seg1 = (AnimationSegment*)arg1;
+	AnimationSegment* seg2 = (AnimationSegment*)arg2;
+
+	float score1 = seg1->m_fStartBeat;
+	float score2 = seg2->m_fStartBeat;
+
+	if( score1 == score2 )
+		return 0;
+	else if( score1 < score2 )
+		return -1;
+	else
+		return 1;
+}
+
+void SortAnimationSegmentsArray( CArray<AnimationSegment,AnimationSegment&> &arrayAnimationSegments )
+{
+	qsort( arrayAnimationSegments.GetData(), arrayAnimationSegments.GetSize(), sizeof(AnimationSegment), CompareAnimationSegments );
 }
 
 
@@ -78,14 +100,16 @@ Song::Song()
 	m_fMusicSampleLengthSeconds = 16;	// start fading out at m_fMusicSampleLengthSeconds-1 seconds
 	m_iMusicBytes = 0;
 	m_fMusicLengthSeconds = 0;
+	m_fFirstBeat = -1;
+	m_fLastBeat = -1;
 }
 
 Song::~Song()
 {
-	for( int i=0; i<m_arrayNotes.GetSize(); i++ )
-		SAFE_DELETE( m_arrayNotes[i] );
+	for( int i=0; i<m_apNotes.GetSize(); i++ )
+		SAFE_DELETE( m_apNotes[i] );
 
-	m_arrayNotes.RemoveAll();
+	m_apNotes.RemoveAll();
 }
 
 
@@ -96,10 +120,17 @@ void Song::AddBPMSegment( BPMSegment seg )
 }
 
 
-void Song::AddFreezeSegment( FreezeSegment seg )
+void Song::AddStopSegment( StopSegment seg )
 {
-	m_FreezeSegments.Add( seg );
-	SortFreezeSegmentsArray( m_FreezeSegments );
+	m_StopSegments.Add( seg );
+	SortStopSegmentsArray( m_StopSegments );
+}
+
+
+void Song::AddAnimationSegment( AnimationSegment seg )
+{
+	m_AnimationSegments.Add( seg );
+	SortAnimationSegmentsArray( m_AnimationSegments );
 }
 
 
@@ -124,12 +155,12 @@ void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, fl
 
 		// calculate the number of seconds in this segment
 		float fSecondsInThisSegment =  fBeatsInThisSegment / fBPS;
-		for( int j=0; j<m_FreezeSegments.GetSize(); j++ )	// foreach freeze
+		for( int j=0; j<m_StopSegments.GetSize(); j++ )	// foreach freeze
 		{
-			if( fStartBeatThisSegment <= m_FreezeSegments[j].m_fStartBeat  &&  m_FreezeSegments[j].m_fStartBeat < fStartBeatNextSegment )	
+			if( fStartBeatThisSegment <= m_StopSegments[j].m_fStartBeat  &&  m_StopSegments[j].m_fStartBeat < fStartBeatNextSegment )	
 			{
 				// this freeze lies within this BPMSegment
-				fSecondsInThisSegment += m_FreezeSegments[j].m_fFreezeSeconds;
+				fSecondsInThisSegment += m_StopSegments[j].m_fStopSeconds;
 			}
 		}
 
@@ -145,20 +176,20 @@ void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, fl
 
 			float fBeatEstimate = fStartBeatThisSegment + fElapsedTime*fBPS;
 
-			for( int j=0; j<m_FreezeSegments.GetSize(); j++ )	// foreach freeze
+			for( int j=0; j<m_StopSegments.GetSize(); j++ )	// foreach freeze
 			{
-				if( fStartBeatThisSegment <= m_FreezeSegments[j].m_fStartBeat  &&  m_FreezeSegments[j].m_fStartBeat <= fStartBeatNextSegment )	
+				if( fStartBeatThisSegment <= m_StopSegments[j].m_fStartBeat  &&  m_StopSegments[j].m_fStartBeat <= fStartBeatNextSegment )	
 				{
 					// this freeze lies within this BPMSegment
 
-					if( m_FreezeSegments[j].m_fStartBeat <= fBeatEstimate )
+					if( m_StopSegments[j].m_fStartBeat <= fBeatEstimate )
 					{
-						fElapsedTime -= m_FreezeSegments[j].m_fFreezeSeconds;
+						fElapsedTime -= m_StopSegments[j].m_fStopSeconds;
 						// re-estimate
 						fBeatEstimate = fStartBeatThisSegment + fElapsedTime*fBPS;
-						if( fBeatEstimate < m_FreezeSegments[j].m_fStartBeat )
+						if( fBeatEstimate < m_StopSegments[j].m_fStartBeat )
 						{
-							fBeatOut = m_FreezeSegments[j].m_fStartBeat;
+							fBeatOut = m_StopSegments[j].m_fStartBeat;
 							fBPSOut = fBPS;
 							bFreezeOut = true;
 							return;
@@ -185,7 +216,7 @@ void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, fl
 float Song::GetElapsedTimeFromBeat( float fBeat )
 {
 	float fElapsedTimeBestGuess = 100;	//  seconds
-	float fSecondsToMove = fElapsedTimeBestGuess/2;	//  seconds
+	float fSecondsToMove = fElapsedTimeBestGuess;	//  seconds
 	float fBeatOut, fBPSOut;
 	bool bFreezeOut;
 
@@ -203,21 +234,17 @@ float Song::GetElapsedTimeFromBeat( float fBeat )
 	return fElapsedTimeBestGuess;
 }
 
-void Song::GetMainAndSubTitlesFromFullTitle( CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut )
+void Song::GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut )
 {
-	char sLeftSeps[]  = { '-', '~', '(', '[' };
-	char sRightSeps[] = { '-', '~', ')', ']' };
-	ASSERT( sizeof(sLeftSeps) == sizeof(sRightSeps) );
-	for( int i=0; i<sizeof(sLeftSeps); i++ )
+	const CString sLeftSeps[]  = { " -", " ~", " (", " [" };
+	int iNumSeps = sizeof(sLeftSeps)/sizeof(CString);
+	for( int i=0; i<iNumSeps; i++ )
 	{
 		int iBeginIndex = sFullTitle.Find( sLeftSeps[i] );
 		if( iBeginIndex == -1 )
 			continue;
-		int iEndIndex = sFullTitle.Find( sRightSeps[i], iBeginIndex+1 );	
-		if( iEndIndex == -1 )
-			continue;
-		sMainTitleOut = sFullTitle.Left( iBeginIndex-1 );
-		sSubTitleOut = sFullTitle.Mid( iBeginIndex, iEndIndex-iBeginIndex+1 );
+		sMainTitleOut = sFullTitle.Left( iBeginIndex );
+		sSubTitleOut = sFullTitle.Mid( iBeginIndex+1, sFullTitle.GetLength()-iBeginIndex+1 );
 		return;
 	}
 	sMainTitleOut = sFullTitle; 
@@ -343,7 +370,7 @@ bool Song::LoadFromBMSDir( CString sDir )
 	{
 		Notes* pNewNotes = new Notes;
 		pNewNotes->LoadFromBMSFile( m_sSongDir + arrayBMSFileNames[i] );
-		m_arrayNotes.Add( pNewNotes );
+		m_apNotes.Add( pNewNotes );
 	}
 
 	CString sPath = m_sSongDir + arrayBMSFileNames[0];
@@ -525,7 +552,7 @@ bool Song::LoadFromBMSDir( CString sDir )
 									value_name = line;
 								}
 
-								if( stricmp(value_name, sTagToLookFor) == 0 )
+								if( 0==stricmp(value_name, sTagToLookFor) == 0 )
 								{
 									fBPM = (float)atof( value_data );
 									break;
@@ -588,7 +615,7 @@ bool Song::LoadFromBMSDir( CString sDir )
 									value_name = line;
 								}
 
-								if( stricmp(value_name, sTagToLookFor) == 0 )
+								if( 0==stricmp(value_name, sTagToLookFor) == 0 )
 								{
 									// find the BPM at the time of this freeze
 									float fBPM = -1;
@@ -616,9 +643,9 @@ bool Song::LoadFromBMSDir( CString sDir )
 							}
 							else
 							{
-								FreezeSegment newSeg( fFreezeStartBeat, fFreezeSecs );
-								AddFreezeSegment( newSeg );
-								LOG->WriteLine( "Inserting new Freeze at beat %f, secs %f", newSeg.m_fStartBeat, newSeg.m_fFreezeSeconds );
+								StopSegment newSeg( fFreezeStartBeat, fFreezeSecs );
+								AddStopSegment( newSeg );
+								LOG->WriteLine( "Inserting new Freeze at beat %f, secs %f", newSeg.m_fStartBeat, newSeg.m_fStopSeconds );
 							}
 
 							file.Close();
@@ -681,7 +708,7 @@ bool Song::LoadFromDWIFile( CString sPath )
 
 		// split the value string into tokens
 		CStringArray arrayValueTokens;
-		split( sValueString, ":", arrayValueTokens );
+		split( sValueString, ":", arrayValueTokens, false );
 		for( int j=0; j<arrayValueTokens.GetSize(); j++ )
 		{
 			arrayValueTokens[j].TrimLeft();
@@ -693,16 +720,19 @@ bool Song::LoadFromDWIFile( CString sPath )
 		CString sValueName = arrayValueTokens.GetAt( 0 );
 
 		// handle the data
-		if( sValueName == "#FILE" )
+		if( 0==stricmp(sValueName,"#FILE") )
 			m_sMusicFile = arrayValueTokens[1];
 
-		else if( sValueName == "#TITLE" )
+		else if( 0==stricmp(sValueName,"#TITLE") )
 			GetMainAndSubTitlesFromFullTitle( arrayValueTokens[1], m_sMainTitle, m_sSubTitle );
 
-		else if( sValueName == "#ARTIST" )
+		else if( 0==stricmp(sValueName,"#ARTIST") )
 			m_sArtist = arrayValueTokens[1];
 
-		else if( sValueName == "#BPM" )
+		else if( 0==stricmp(sValueName,"#CDTITLE") )
+			m_sCDTitleFile = arrayValueTokens[1];
+
+		else if( 0==stricmp(sValueName,"#BPM") )
 		{
 			BPMSegment new_seg;
 			new_seg.m_fStartBeat = 0;
@@ -711,17 +741,17 @@ bool Song::LoadFromDWIFile( CString sPath )
 			m_BPMSegments.Add( new_seg );
 			SortBPMSegmentsArray( m_BPMSegments );
 		}
-		else if( sValueName == "#GAP" )
+		else if( 0==stricmp(sValueName,"#GAP") )
 			// the units of GAP is 1/1000 second
 			m_fBeat0OffsetInSeconds = -atoi( arrayValueTokens[1] ) / 1000.0f;
 
-		else if( sValueName == "#SAMPLESTART" )
+		else if( 0==stricmp(sValueName,"#SAMPLESTART") )
 			m_fMusicSampleStartSeconds = TimeToSeconds( arrayValueTokens[1] );
 
-		else if( sValueName == "#SAMPLELENGTH" )
+		else if( 0==stricmp(sValueName,"#SAMPLELENGTH") )
 			m_fMusicSampleLengthSeconds = TimeToSeconds(  arrayValueTokens[1] );
 
-		else if( sValueName == "#FREEZE" )
+		else if( 0==stricmp(sValueName,"#FREEZE") )
 		{
 			CStringArray arrayFreezeExpressions;
 			split( arrayValueTokens[1], ",", arrayFreezeExpressions );
@@ -734,12 +764,12 @@ bool Song::LoadFromDWIFile( CString sPath )
 				float fFreezeBeat = NoteRowToBeat( fIndex );
 				float fFreezeSeconds = (float)atof( arrayFreezeValues[1] ) / 1000.0f;
 				
-				AddFreezeSegment( FreezeSegment(fFreezeBeat, fFreezeSeconds) );
+				AddStopSegment( StopSegment(fFreezeBeat, fFreezeSeconds) );
 				LOG->WriteLine( "Adding a freeze segment: beat: %f, seconds = %f", fFreezeBeat, fFreezeSeconds );
 			}
 		}
 
-		else if( sValueName == "#CHANGEBPM"  || sValueName == "#BPMCHANGE" )
+		else if( 0==stricmp(sValueName,"#CHANGEBPM")  || 0==stricmp(sValueName,"#BPMCHANGE") )
 		{
 			CStringArray arrayBPMChangeExpressions;
 			split( arrayValueTokens[1], ",", arrayBPMChangeExpressions );
@@ -750,13 +780,13 @@ bool Song::LoadFromDWIFile( CString sPath )
 				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
 				float fIndex = atoi( arrayBPMChangeValues[0] ) * ELEMENTS_PER_BEAT / 4.0f;
 				float fBeat = NoteRowToBeat( fIndex );
-				float fNewBPM = (float)atoi( arrayBPMChangeValues[1] );
+				float fNewBPM = (float)atof( arrayBPMChangeValues[1] );
 				
 				AddBPMSegment( BPMSegment(fBeat, fNewBPM) );
 			}
 		}
 
-		else if( sValueName == "#SINGLE" || sValueName == "#DOUBLE" || sValueName == "#COUPLE" )
+		else if( 0==stricmp(sValueName,"#SINGLE") || 0==stricmp(sValueName,"#DOUBLE") || 0==stricmp(sValueName,"#COUPLE") )
 		{
 			Notes* pNewNotes = new Notes;
 			pNewNotes->LoadFromDWITokens( 
@@ -766,7 +796,7 @@ bool Song::LoadFromDWIFile( CString sPath )
 				arrayValueTokens[3], 
 				arrayValueTokens.GetSize() == 5 ? arrayValueTokens[4] : "" 
 				);
-			m_arrayNotes.Add( pNewNotes );
+			m_apNotes.Add( pNewNotes );
 		}
 		else
 			// do nothing.  We don't care about this value name
@@ -782,7 +812,7 @@ bool Song::LoadFromSMFile( CString sPath )
 	LOG->WriteLine( "Song::LoadFromSMDir(%s)", sPath );
 
 	m_BPMSegments.RemoveAll();
-	m_FreezeSegments.RemoveAll();
+	m_StopSegments.RemoveAll();
 
 	int i;
 
@@ -839,49 +869,55 @@ bool Song::LoadFromSMFile( CString sPath )
 		CString sValueName = arrayValueTokens.GetAt( 0 );
 
 		// handle the data
-		if( sValueName == "#TITLE" )
+		if( 0==stricmp(sValueName,"#TITLE") )
 			GetMainAndSubTitlesFromFullTitle( arrayValueTokens[1], m_sMainTitle, m_sSubTitle );
 
-		else if( sValueName == "#SUBTITLE" )
+		else if( 0==stricmp(sValueName,"#SUBTITLE") )
 			m_sSubTitle = arrayValueTokens[1];
 
-		else if( sValueName == "#ARTIST" )
+		else if( 0==stricmp(sValueName,"#ARTIST") )
 			m_sArtist = arrayValueTokens[1];
 
-		else if( sValueName == "#CREDIT" )
+		else if( 0==stricmp(sValueName,"#CREDIT") )
 			m_sCredit = arrayValueTokens[1];
 
-		else if( sValueName == "#BANNER" )
+		else if( 0==stricmp(sValueName,"#BANNER") )
 			m_sBannerFile = arrayValueTokens[1];
 
-		else if( sValueName == "#BACKGROUND" )
+		else if( 0==stricmp(sValueName,"#BACKGROUND") )
 			m_sBackgroundFile = arrayValueTokens[1];
 
-//		else if( sValueName == "#BACKGROUNDMOVIE" )
-//			m_sBackgroundMovieFile = arrayValueTokens[1];
-
-		else if( sValueName == "#CDTITLE" )
+		else if( 0==stricmp(sValueName,"#CDTITLE") )
 			m_sCDTitleFile = arrayValueTokens[1];
 
-		else if( sValueName == "#MUSIC" )
+		else if( 0==stricmp(sValueName,"#MOVIEBACKGROUND") )
+			m_sMovieBackgroundFile = arrayValueTokens[1];
+
+		else if( 0==stricmp(sValueName,"#MUSIC") )
 			m_sMusicFile = arrayValueTokens[1];
 
-		else if( sValueName == "#MUSICBYTES" )
+		else if( 0==stricmp(sValueName,"#MUSICBYTES") )
 			m_iMusicBytes = atoi( arrayValueTokens[1] );
 
-		else if( sValueName == "#MUSICLENGTH" )
+		else if( 0==stricmp(sValueName,"#MUSICLENGTH") )
 			m_fMusicLengthSeconds = (float)atof( arrayValueTokens[1] );
 
-		else if( sValueName == "#SAMPLESTART" )
+		else if( 0==stricmp(sValueName,"#FIRSTBEAT") )
+			m_fFirstBeat = (float)atof( arrayValueTokens[1] );
+
+		else if( 0==stricmp(sValueName,"#LASTBEAT") )
+			m_fLastBeat = (float)atof( arrayValueTokens[1] );
+
+		else if( 0==stricmp(sValueName,"#SAMPLESTART") )
 			m_fMusicSampleStartSeconds = TimeToSeconds( arrayValueTokens[1] );
 
-		else if( sValueName == "#SAMPLELENGTH" )
+		else if( 0==stricmp(sValueName,"#SAMPLELENGTH") )
 			m_fMusicSampleLengthSeconds = TimeToSeconds( arrayValueTokens[1] );
 
-		else if( sValueName == "#OFFSET" )
+		else if( 0==stricmp(sValueName,"#OFFSET") )
 			m_fBeat0OffsetInSeconds = (float)atof( arrayValueTokens[1] );
 
-		else if( sValueName == "#FREEZES" )
+		else if( 0==stricmp(sValueName,"#STOPS") || 0==stricmp(sValueName,"#FREEZES") )
 		{
 			CStringArray arrayFreezeExpressions;
 			split( arrayValueTokens[1], ",", arrayFreezeExpressions );
@@ -893,17 +929,17 @@ bool Song::LoadFromSMFile( CString sPath )
 				float fFreezeBeat = (float)atof( arrayFreezeValues[0] );
 				float fFreezeSeconds = (float)atof( arrayFreezeValues[1] );
 				
-				FreezeSegment new_seg;
+				StopSegment new_seg;
 				new_seg.m_fStartBeat = fFreezeBeat;
-				new_seg.m_fFreezeSeconds = fFreezeSeconds;
+				new_seg.m_fStopSeconds = fFreezeSeconds;
 
-				LOG->WriteLine( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fFreezeSeconds );
+				LOG->WriteLine( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
 
-				AddFreezeSegment( new_seg );
+				AddStopSegment( new_seg );
 			}
 		}
 
-		else if( sValueName == "#BPMS" )
+		else if( 0==stricmp(sValueName,"#BPMS") )
 		{
 			CStringArray arrayBPMChangeExpressions;
 			split( arrayValueTokens[1], ",", arrayBPMChangeExpressions );
@@ -913,7 +949,7 @@ bool Song::LoadFromSMFile( CString sPath )
 				CStringArray arrayBPMChangeValues;
 				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
 				float fBeat = (float)atof( arrayBPMChangeValues[0] );
-				float fNewBPM = (float)atoi( arrayBPMChangeValues[1] );
+				float fNewBPM = (float)atof( arrayBPMChangeValues[1] );
 				
 				BPMSegment new_seg;
 				new_seg.m_fStartBeat = fBeat;
@@ -923,19 +959,36 @@ bool Song::LoadFromSMFile( CString sPath )
 			}
 		}
 
-		else if( sValueName == "#NOTES" )
+		else if( 0==stricmp(sValueName,"#ANIMATIONS") )
+		{
+			CStringArray arrayAnimationExpressions;
+			split( arrayValueTokens[1], ",", arrayAnimationExpressions );
+
+			for( int b=0; b<arrayAnimationExpressions.GetSize(); b++ )
+			{
+				CStringArray arrayAnimationValues;
+				split( arrayAnimationExpressions[b], "=", arrayAnimationValues );
+				float fBeat = (float)atof( arrayAnimationValues[0] );
+				CString sAnimName = arrayAnimationValues[1];
+				sAnimName.MakeLower();
+				
+				AddAnimationSegment( AnimationSegment(fBeat, sAnimName) );
+			}
+		}
+
+		else if( 0==stricmp(sValueName,"#NOTES") )
 		{
 			Notes* pNewNotes = NULL;
 			// Check to see if this notes already has been allocated
-			for( int j=0; j<m_arrayNotes.GetSize(); j++ )
-				if( m_arrayNotes[j]->m_NotesType == StringToNotesType(arrayValueTokens[1])  &&
-					m_arrayNotes[j]->m_sDescription == arrayValueTokens[2] )
-					pNewNotes = m_arrayNotes[j];
+			for( int j=0; j<m_apNotes.GetSize(); j++ )
+				if( m_apNotes[j]->m_NotesType == StringToNotesType(arrayValueTokens[1])  &&
+					m_apNotes[j]->m_sDescription == arrayValueTokens[2] )
+					pNewNotes = m_apNotes[j];
 
 			if( pNewNotes == NULL )	// we didn't find a match that was already loaded
 			{
 				pNewNotes = new Notes;
-				m_arrayNotes.Add( pNewNotes );
+				m_apNotes.Add( pNewNotes );
 			}
 
 			if( arrayValueTokens.GetSize() != 7 )
@@ -968,120 +1021,164 @@ void Song::TidyUpData()
 	if( m_BPMSegments.GetSize() == 0 )
 		throw RageException( "No #BPM specified in '%s.'", GetSongFilePath() );
 
-	if( m_sMusicFile == "" || !DoesFileExist(GetMusicPath()) )
+	if( !HasMusic() )
 	{
 		CStringArray arrayPossibleMusic;
 		GetDirListing( m_sSongDir + CString("*.mp3"), arrayPossibleMusic );
 		GetDirListing( m_sSongDir + CString("*.ogg"), arrayPossibleMusic );
 		GetDirListing( m_sSongDir + CString("*.wav"), arrayPossibleMusic );
 
-		if( arrayPossibleMusic.GetSize() != 0 )		// we found a match
+		if( arrayPossibleMusic.GetSize() > 0 )		// we found a match
 			m_sMusicFile = arrayPossibleMusic[0];
 		else
 			throw RageException( "The song in '%s' is missing a music file.  You must place a music file in the song folder or remove the song", m_sSongDir );
 	}
 
-	// Save length of music
-	if( GetMusicPath() != "" )
-	{
-		RageSoundStream sound;
-		sound.Load( GetMusicPath() );
-		m_fMusicLengthSeconds = sound.GetLengthSeconds();
-	}
+	RageSoundStream sound;
+	sound.Load( GetMusicPath() );
+	m_fMusicLengthSeconds = sound.GetLengthSeconds();
 
+
+
+	//
+	// Here's the problem:  We have a directory full of images.  We want to determine which 
+	// image is the banner, which is the background, and which is the CDTitle.
+	//
+
+	//
+	// First, check the file name for hints.
+	//
 	if( !HasBanner() )
 	{
 		m_sBannerFile = "";
-		// find the smallest image in the directory
 
+		// find an image with "banner" in the file name
 		CStringArray arrayPossibleBanners;
-		GetDirListing( m_sSongDir + CString("*.png"), arrayPossibleBanners );
-		GetDirListing( m_sSongDir + CString("*.jpg"), arrayPossibleBanners );
-		GetDirListing( m_sSongDir + CString("*.bmp"), arrayPossibleBanners );
-
-		DWORD dwSmallestFileSoFar = 0xFFFFFFFF;
-		CString sSmallestFileSoFar = "";
-
-		for( int i=0; i<arrayPossibleBanners.GetSize(); i++ )
-		{
-			DWORD this_size = GetFileSizeInBytes( m_sSongDir + arrayPossibleBanners[i] );
-			if( this_size < dwSmallestFileSoFar )	// we have a new leader!
-			{
-				dwSmallestFileSoFar = this_size;
-				sSmallestFileSoFar = arrayPossibleBanners[i];
-			}
-		}
-
-		if( sSmallestFileSoFar != "" )		// we found a match
-			m_sBannerFile = sSmallestFileSoFar;
-		else
-			m_sBannerFile = "";
-
-		//throw RageException( ssprintf("Banner could not be found.  Please check the Song file '%s' and verify the specified #BANNER exists.", GetSongFilePath()) );
+		GetDirListing( m_sSongDir + CString("*banner*.png"), arrayPossibleBanners );
+		GetDirListing( m_sSongDir + CString("*banner*.jpg"), arrayPossibleBanners );
+		GetDirListing( m_sSongDir + CString("*banner*.bmp"), arrayPossibleBanners );
+		if( arrayPossibleBanners.GetSize() > 0 )
+			m_sBannerFile = arrayPossibleBanners[0];
 	}
 
 	if( !HasBackground() )
 	{
 		m_sBackgroundFile = "";
-		// find the largest image in the directory
 
-		CStringArray arrayPossibleBackgrounds;
-		GetDirListing( m_sSongDir + CString("*.png"), arrayPossibleBackgrounds );
-		GetDirListing( m_sSongDir + CString("*.jpg"), arrayPossibleBackgrounds );
-		GetDirListing( m_sSongDir + CString("*.bmp"), arrayPossibleBackgrounds );
-
-		DWORD dwLargestFileSoFar = 0;
-		CString sLargestFileSoFar = "";
-
-		for( int i=0; i<arrayPossibleBackgrounds.GetSize(); i++ )
-		{
-			DWORD this_size = GetFileSizeInBytes( m_sSongDir + arrayPossibleBackgrounds[i] );
-			if( this_size > dwLargestFileSoFar )	// we have a new leader!
-			{
-				dwLargestFileSoFar = this_size;
-				sLargestFileSoFar = arrayPossibleBackgrounds[i];
-			}
-		}
-		
-		if( sLargestFileSoFar != "" )		// we found a match
-			m_sBackgroundFile = sLargestFileSoFar;
+		// find an image with "bg" or "background" in the file name
+		CStringArray arrayPossibleBGs;
+		GetDirListing( m_sSongDir + CString("*bg*.png"), arrayPossibleBGs );
+		GetDirListing( m_sSongDir + CString("*bg*.jpg"), arrayPossibleBGs );
+		GetDirListing( m_sSongDir + CString("*bg*.bmp"), arrayPossibleBGs );
+		GetDirListing( m_sSongDir + CString("*background*.png"), arrayPossibleBGs );
+		GetDirListing( m_sSongDir + CString("*background*.jpg"), arrayPossibleBGs );
+		GetDirListing( m_sSongDir + CString("*background*.bmp"), arrayPossibleBGs );
+		if( arrayPossibleBGs.GetSize() > 0 )
+			m_sBackgroundFile = arrayPossibleBGs[0];
 	}
-
-//	if( !DoesFileExist(GetBackgroundMoviePath()) )
-//	{
-//		m_sBackgroundMovieFile = "";
-//
-//		CStringArray arrayPossibleBackgroundMovies;
-//		GetDirListing( m_sSongDir + CString("*.avi"), arrayPossibleBackgroundMovies );
-//		GetDirListing( m_sSongDir + CString("*.mpg"), arrayPossibleBackgroundMovies );
-//		GetDirListing( m_sSongDir + CString("*.mpeg"), arrayPossibleBackgroundMovies );
-//
-//		if( arrayPossibleBackgroundMovies.GetSize() > 0 )		// we found a match
-//			m_sBackgroundMovieFile = arrayPossibleBackgroundMovies[0];
-//	}
 
 	if( !HasCDTitle() )
 	{
 		m_sCDTitleFile = "";
+
+		// find an image with "cdtitle" in the file name
+		CStringArray arrayPossibleCDTitles;
+		GetDirListing( m_sSongDir + CString("*cdtitle*.png"), arrayPossibleCDTitles );
+		GetDirListing( m_sSongDir + CString("*cdtitle*.jpg"), arrayPossibleCDTitles );
+		GetDirListing( m_sSongDir + CString("*cdtitle*.bmp"), arrayPossibleCDTitles );
+		if( arrayPossibleCDTitles.GetSize() > 0 )
+			m_sCDTitleFile = arrayPossibleCDTitles[0];
 	}
 
-	for( int i=0; i<m_arrayNotes.GetSize(); i++ )
+
+	//
+	// Now, For the images we still haven't found, look at the image dimensions of the remaining unclassified images.
+	//
+	CStringArray arrayImages;
+	GetDirListing( m_sSongDir + CString("*.png"), arrayImages );
+	GetDirListing( m_sSongDir + CString("*.jpg"), arrayImages );
+	GetDirListing( m_sSongDir + CString("*.bmp"), arrayImages );
+
+	for( int i=0; i<arrayImages.GetSize(); i++ )	// foreach image
 	{
-		Notes* pNotes = m_arrayNotes[i];
+		// Skip any image that we've already classified
+
+		if( HasBanner()  &&  stricmp(GetBannerPath(), arrayImages[i])==0 )
+			continue;	// skip
+
+		if( HasBackground()  &&  stricmp(GetBackgroundPath(), arrayImages[i])==0 )
+			continue;	// skip
+
+		if( HasCDTitle()  &&  stricmp(GetCDTitlePath(), arrayImages[i])==0 )
+			continue;	// skip
+
+		D3DXIMAGE_INFO ddii;
+		if( !FAILED( D3DXGetImageInfoFromFile( m_sSongDir + arrayImages[i], &ddii ) ) )
+		{
+			if( !HasBackground()  &&  ddii.Width >= 320  &&  ddii.Height >= 240 )
+			{
+				m_sBackgroundFile = arrayImages[i];
+				continue;
+			}
+			if( !HasBanner()  &&  100 < ddii.Width &&  ddii.Width < 320  &&  64 < ddii.Height  &&  ddii.Height < 240 )
+			{
+				m_sBannerFile = arrayImages[i];
+				continue;
+			}
+			if( !HasCDTitle()  &&  ddii.Width <= 100  &&  ddii.Height <= 64 )
+			{
+				m_sCDTitleFile = arrayImages[i];
+				continue;
+			}
+		}
+	}
+
+
+
+	if( !HasMovieBackground() )
+	{
+		CStringArray arrayPossibleMovies;
+		GetDirListing( m_sSongDir + CString("*movie*.avi"), arrayPossibleMovies );
+		GetDirListing( m_sSongDir + CString("*movie*.mpg"), arrayPossibleMovies );
+		GetDirListing( m_sSongDir + CString("*movie*.mpeg"), arrayPossibleMovies );
+		GetDirListing( m_sSongDir + CString("*.avi"), arrayPossibleMovies );
+		GetDirListing( m_sSongDir + CString("*.mpg"), arrayPossibleMovies );
+		GetDirListing( m_sSongDir + CString("*.mpeg"), arrayPossibleMovies );
+		if( arrayPossibleMovies.GetSize() > 0 )
+			m_sMovieBackgroundFile = arrayPossibleMovies[0];
+	}
+
+	//
+	// calculate radar values and first/last beat
+	//
+	for( i=0; i<m_apNotes.GetSize(); i++ )
+	{
+		Notes* pNotes = m_apNotes[i];
 		NoteData tempNoteData;
 		pNotes->GetNoteData( &tempNoteData );
 
 		for( int r=0; r<NUM_RADAR_VALUES; r++ )
 			pNotes->m_fRadarValues[r] = tempNoteData.GetRadarValue( (RadarCategory)r, m_fMusicLengthSeconds );
+
+		float fFirstBeat = tempNoteData.GetFirstBeat();
+		float fLastBeat = tempNoteData.GetLastBeat();
+		if( m_fFirstBeat == -1 )
+			m_fFirstBeat = fFirstBeat;
+		else
+			m_fFirstBeat = min( m_fFirstBeat, fFirstBeat );
+		if( m_fLastBeat == -1 )
+			m_fLastBeat = fLastBeat;
+		else
+			m_fLastBeat = max( m_fLastBeat, fLastBeat );
 	}
 }
 
 
 void Song::GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo )
 {
-	for( int i=0; i<m_arrayNotes.GetSize(); i++ )	// for each of the Song's Notes
-		if( m_arrayNotes[i]->m_NotesType == nt )
-			arrayAddTo.Add( m_arrayNotes[i] );
+	for( int i=0; i<m_apNotes.GetSize(); i++ )	// for each of the Song's Notes
+		if( m_apNotes[i]->m_NotesType == nt )
+			arrayAddTo.Add( m_apNotes[i] );
 }
 
 void Song::SaveToCacheFile()
@@ -1138,26 +1235,17 @@ void Song::SaveToSMFile( CString sPath )
 	fprintf( fp, "#CREDIT:%s;\n", m_sCredit );
 	fprintf( fp, "#BANNER:%s;\n", m_sBannerFile );
 	fprintf( fp, "#BACKGROUND:%s;\n", m_sBackgroundFile );
-//	fprintf( fp, "#BACKGROUNDMOVIE:%s;\n", m_sBackgroundMovieFile );
 	fprintf( fp, "#CDTITLE:%s;\n", m_sCDTitleFile );
+	fprintf( fp, "#MOVIEBACKGROUND:%s;\n", m_sMovieBackgroundFile );
 	fprintf( fp, "#MUSIC:%s;\n", m_sMusicFile );
 	fprintf( fp, "#MUSICBYTES:%u;\n", m_iMusicBytes );
 	fprintf( fp, "#MUSICLENGTH:%.2f;\n", m_fMusicLengthSeconds );
+	fprintf( fp, "#FIRSTBEAT:%.2f;\n", m_fFirstBeat );
+	fprintf( fp, "#LASTBEAT:%.2f;\n", m_fLastBeat );
 	fprintf( fp, "#OFFSET:%.2f;\n", m_fBeat0OffsetInSeconds );
 	fprintf( fp, "#SAMPLESTART:%.2f;\n", m_fMusicSampleStartSeconds );
 	fprintf( fp, "#SAMPLELENGTH:%.2f;\n", m_fMusicSampleLengthSeconds );
 
-	fprintf( fp, "#FREEZES:" );
-	for( i=0; i<m_FreezeSegments.GetSize(); i++ )
-	{
-		FreezeSegment &fs = m_FreezeSegments[i];
-
-		fprintf( fp, "%.2f=%.2f", fs.m_fStartBeat, fs.m_fFreezeSeconds );
-		if( i != m_FreezeSegments.GetSize()-1 )
-			fprintf( fp, "," );
-	}
-	fprintf( fp, ";\n" );
-	
 	fprintf( fp, "#BPMS:" );
 	for( i=0; i<m_BPMSegments.GetSize(); i++ )
 	{
@@ -1168,12 +1256,34 @@ void Song::SaveToSMFile( CString sPath )
 			fprintf( fp, "," );
 	}
 	fprintf( fp, ";\n" );
+
+	fprintf( fp, "#STOPS:" );
+	for( i=0; i<m_StopSegments.GetSize(); i++ )
+	{
+		StopSegment &fs = m_StopSegments[i];
+
+		fprintf( fp, "%.2f=%.2f", fs.m_fStartBeat, fs.m_fStopSeconds );
+		if( i != m_StopSegments.GetSize()-1 )
+			fprintf( fp, "," );
+	}
+	fprintf( fp, ";\n" );
+	
+	fprintf( fp, "#ANIMATIONS:" );
+	for( i=0; i<m_AnimationSegments.GetSize(); i++ )
+	{
+		AnimationSegment &seg = m_AnimationSegments[i];
+
+		fprintf( fp, "%.2f=%s", seg.m_fStartBeat, seg.m_sAnimationName );
+		if( i != m_AnimationSegments.GetSize()-1 )
+			fprintf( fp, "," );
+	}
+	fprintf( fp, ";\n" );
 	
 	//
 	// Save all Notes for this file
 	//
-	for( i=0; i<m_arrayNotes.GetSize(); i++ ) 
-		m_arrayNotes[i]->WriteSMNotesTag( fp );
+	for( i=0; i<m_apNotes.GetSize(); i++ ) 
+		m_apNotes[i]->WriteSMNotesTag( fp );
 
 	fclose( fp );
 }

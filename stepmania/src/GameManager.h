@@ -25,7 +25,7 @@ public:
 	Game			m_CurGame;
 	Style			m_CurStyle;
 	NotesType		m_CurNotesType;		// only used in Edit
-	CString			m_sCurrentSkin[NUM_PLAYERS];
+	CString			m_sCurrentSkin;
 	PlayerNumber	m_sMasterPlayerNumber;
 
 	GameDef*		GetCurrentGameDef();

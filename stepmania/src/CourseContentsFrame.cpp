@@ -66,10 +66,10 @@ void CourseContentsFrame::SetFromCourse( Course* pCourse )
 		m_Meters[i].SetFromNotes( NULL );
 
 		Song* pSong = pCourse->m_apSongs[i];
-		for( int j=0; j<pSong->m_arrayNotes.GetSize(); j++ )
+		for( int j=0; j<pSong->m_apNotes.GetSize(); j++ )
 		{
-			Notes* pNotes = pSong->m_arrayNotes[j];
-			if( pSong->m_arrayNotes[j]->m_DifficultyClass == pCourse->m_aDifficultyClasses[i] )
+			Notes* pNotes = pSong->m_apNotes[j];
+			if( pSong->m_apNotes[j]->m_DifficultyClass == pCourse->m_aDifficultyClasses[i] )
 			{
 				m_Meters[i].SetFromNotes( pNotes );
 				break;

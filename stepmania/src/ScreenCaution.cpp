@@ -54,8 +54,7 @@ void ScreenCaution::HandleScreenMessage( const ScreenMessage SM )
 			m_Wipe.CloseWipingRight( SM_GoToSelectMusic );
 		break;
 	case SM_DoneOpening:
-		if( PREFSMAN->m_bAnnouncer )
-			SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_CAUTION) );
+		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_CAUTION) );
 		break;
 	case SM_GoToSelectMusic:
 		SCREENMAN->SetNewScreen( new ScreenSelectStyle );

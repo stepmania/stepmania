@@ -147,6 +147,12 @@
 				RelativePath="Screen.h">
 			</File>
 			<File
+				RelativePath="ScreenAppearanceOptions.cpp">
+			</File>
+			<File
+				RelativePath="ScreenAppearanceOptions.h">
+			</File>
+			<File
 				RelativePath="ScreenCaution.cpp">
 			</File>
 			<File

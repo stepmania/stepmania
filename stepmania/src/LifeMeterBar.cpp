@@ -45,7 +45,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	case TNS_MISS:		fDeltaLife = -0.080f;	break;
 	}
 
-	if( IsHot()  &&  score < TNS_GREAT )
+	if( IsHot()  &&  score < TNS_GOOD )
 		fDeltaLife = -0.10f;		// make it take a while to get back to "doing great"
 
 	m_fLifePercentage += fDeltaLife;

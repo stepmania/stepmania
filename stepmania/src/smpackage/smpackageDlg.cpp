@@ -166,7 +166,7 @@ void CSmpackageDlg::OnButtonExport()
 		'+', '=', '[', ']', '{', '}', '|', ':', '\"', '\\',
 		'<', '>', ',', '?', '/' 
 	};
-	for( int i=0; i<sizeof(charsToReplace[]); i++ )
+	for( int i=0; i<sizeof(charsToReplace); i++ )
 		sZipFileName.Replace( charsToReplace[i], '_' );
 
 	CString sZipFilePath = sDesktopPath + sZipFileName;
@@ -192,7 +192,7 @@ void CSmpackageDlg::OnButtonExport()
 	m_zip.AddNewFile( sGroupDir, 0, true );
 	m_zip.AddNewFile( sSongDir, 0, true );
 
-	for( int i=0; i<arrayFiles.GetSize(); i++ )
+	for( i=0; i<arrayFiles.GetSize(); i++ )
 	{
 		CString sFileName = arrayFiles[i];
 		CString sFilePath = sSongDir + "\\" + sFileName;

@@ -143,30 +143,39 @@ void RageBitmapTexture::Create(
 	bStretch |= ddii.Width > dwMaxSize || ddii.Height > dwMaxSize;
 	
 /*
-	// HACK:  The stupid Savage driver will report that it can hold the entire texture, 
-	//   then allocate something smaller than the dimensions we need!
-	//   after allocating the texture, make sure it's the size we expect.  If not,
-	//   load it again with scaling turned on.
+	// HACK:  On a Voodoo3 and Win98, D3DXCreateTextureFromFileEx sometimes fails for no good reason.
+	// So, we'll try the call 2x in a row in case the first one fails
 */
 	// I'm taking out the Savage hack because it's causing problems.  Tough luck for them.  I think
 	// the problem can be worked around by setting MaxTextureSize to 512.
-	if( FAILED( hr = D3DXCreateTextureFromFileEx( 
-		m_pd3dDevice,				// device
-		m_sFilePath,				// soure file
-		bStretch ? dwMaxSize : D3DX_DEFAULT,	// width 
-		bStretch ? dwMaxSize : D3DX_DEFAULT,	// height 
-		iMipMaps,					// mip map levels
-		0,							// usage (is a render target?)
-		fmtTexture,					// our preferred texture format
-		D3DPOOL_MANAGED,			// which memory pool
-		(bStretch ? D3DX_FILTER_BOX : D3DX_FILTER_NONE) | (bDither ? D3DX_FILTER_DITHER : 0),		// filter
-		D3DX_FILTER_BOX | (bDither ? D3DX_FILTER_DITHER : 0),				// mip filter
-		0,							// no color key
-		&ddii,						// struct to fill with source image info
-		NULL,						// no palette
-		&m_pd3dTexture ) ) )
+	for( int i=0; i<2; i++ )
 	{
-		throw RageException( hr, "D3DXCreateTextureFromFileEx() failed for file '%s'.", m_sFilePath );
+		if( FAILED( hr = D3DXCreateTextureFromFileEx( 
+			m_pd3dDevice,				// device
+			m_sFilePath,				// soure file
+			bStretch ? dwMaxSize : D3DX_DEFAULT,	// width 
+			bStretch ? dwMaxSize : D3DX_DEFAULT,	// height 
+			iMipMaps,					// mip map levels
+			0,							// usage (is a render target?)
+			fmtTexture,					// our preferred texture format
+			D3DPOOL_MANAGED,			// which memory pool
+			(bStretch ? D3DX_FILTER_BOX : D3DX_FILTER_NONE) | (bDither ? D3DX_FILTER_DITHER : 0),		// filter
+			D3DX_FILTER_BOX | (bDither ? D3DX_FILTER_DITHER : 0),				// mip filter
+			0,							// no color key
+			&ddii,						// struct to fill with source image info
+			NULL,						// no palette
+			&m_pd3dTexture ) ) )
+		{
+			if( i==0 )
+			{
+				LOG->WriteLine( "WARNING! D3DXCreateTextureFromFileEx failed.  Sleep and try one more time..." );
+				::Sleep( 10 );
+				continue;
+			}
+			throw RageException( hr, "D3DXCreateTextureFromFileEx() failed for file '%s'.", m_sFilePath );
+		}
+		else
+			break;
 	}
 
 	/////////////////////

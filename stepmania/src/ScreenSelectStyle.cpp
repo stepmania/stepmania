@@ -99,7 +99,8 @@ ScreenSelectStyle::ScreenSelectStyle()
 	m_Menu.Load( 	
 		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_BACKGROUND), 
 		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_TOP_EDGE),
-		ssprintf("Use %c %c to select, then press START", char(1), char(2) )
+		ssprintf("Use %c %c to select, then press START", char(1), char(2) ),
+		false, true, 40 
 		);
 	this->AddActor( &m_Menu );
 

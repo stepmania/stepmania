@@ -249,8 +249,6 @@ void Player::HandlePlayerStep( float fSongBeat, int col, float fMaxBeatDiff )
 
 	ASSERT( col >= 0  &&  col <= m_iNumTracks );
 
-	m_GrayArrowRow.Step( col );
-
 
 	// look for the closest matching step
 	int iIndexStartLookingAt = BeatToNoteRow( fSongBeat );
@@ -294,6 +292,8 @@ void Player::HandlePlayerStep( float fSongBeat, int col, float fMaxBeatDiff )
 		}
 	}
 
+	bool bDestroyedNote = false;
+
 	if( iIndexOverlappingNote != -1 )
 	{
 		// compute the score for this hit
@@ -303,10 +303,12 @@ void Player::HandlePlayerStep( float fSongBeat, int col, float fMaxBeatDiff )
 
 		TapNoteScore &score = m_TapNoteScores[col][iIndexOverlappingNote];
 
-		if(		 fPercentFromPerfect < 0.30f )	score = TNS_PERFECT;
-		else if( fPercentFromPerfect < 0.55f )	score = TNS_GREAT;
-		else if( fPercentFromPerfect < 0.78f )	score = TNS_GOOD;
+		if(		 fPercentFromPerfect < 0.25f )	score = TNS_PERFECT;
+		else if( fPercentFromPerfect < 0.50f )	score = TNS_GREAT;
+		else if( fPercentFromPerfect < 0.75f )	score = TNS_GOOD;
 		else									score = TNS_BOO;
+
+		bDestroyedNote = score >= TNS_GOOD;
 
 
 		bool bRowDestroyed = true;
@@ -322,6 +324,9 @@ void Player::HandlePlayerStep( float fSongBeat, int col, float fMaxBeatDiff )
 		if( bRowDestroyed )
 			OnRowDestroyed( fSongBeat, col, fMaxBeatDiff, iIndexOverlappingNote );
 	}
+
+	if( !bDestroyedNote )
+		m_GrayArrowRow.Step( col );
 }
 
 void Player::OnRowDestroyed( float fSongBeat, int col, float fMaxBeatDiff, int iIndexThatWasSteppedOn )

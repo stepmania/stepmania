@@ -1,0 +1,138 @@
+#include "stdafx.h"
+/*
+-----------------------------------------------------------------------------
+ Class: ScreenAppearanceOptions
+
+ Desc: See header.
+
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
+-----------------------------------------------------------------------------
+*/
+
+#include "ScreenAppearanceOptions.h"
+#include <assert.h>
+#include "RageTextureManager.h"
+#include "RageUtil.h"
+#include "RageMusic.h"
+#include "ScreenManager.h"
+#include "PrefsManager.h"
+#include "ScreenOptions.h"
+#include "ScreenTitleMenu.h"
+#include "GameConstantsAndTypes.h"
+#include "StepMania.h"
+#include "ThemeManager.h"
+#include "RageLog.h"
+#include "AnnouncerManager.h"
+#include "GameManager.h"
+
+
+
+enum {
+	AO_ANNOUNCER = 0,
+	AO_SKIN,
+	NUM_APPEARANCE_OPTIONS_LINES
+};
+
+OptionLineData g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
+	{ "Announcer",	1, {"OFF"} },	// fill this in on ImportOptions()
+	{ "Note Skin",	0, {""} },	// fill this in on ImportOptions()
+};
+
+ScreenAppearanceOptions::ScreenAppearanceOptions() :
+	ScreenOptions(
+		THEME->GetPathTo(GRAPHIC_PLAYER_OPTIONS_BACKGROUND),
+		THEME->GetPathTo(GRAPHIC_PLAYER_OPTIONS_TOP_EDGE)
+		)
+{
+	LOG->WriteLine( "ScreenAppearanceOptions::ScreenAppearanceOptions()" );
+
+	Init( 
+		INPUTMODE_BOTH, 
+		g_AppearanceOptionsLines, 
+		NUM_APPEARANCE_OPTIONS_LINES
+		);
+	m_Menu.StopTimer();
+}
+
+void ScreenAppearanceOptions::ImportOptions()
+{
+	// fill in announcer names
+	CStringArray arrayAnnouncerNames;
+	ANNOUNCER->GetAnnouncerNames( arrayAnnouncerNames );
+
+	m_OptionLineData[AO_ANNOUNCER].iNumOptions	=	arrayAnnouncerNames.GetSize() + 1; 
+	
+	for( int i=0; i<arrayAnnouncerNames.GetSize(); i++ )
+		strcpy( m_OptionLineData[AO_ANNOUNCER].szOptionsText[i+1], arrayAnnouncerNames[i] ); 
+
+
+	// highlight currently selected announcer
+	m_iSelectedOption[0][AO_ANNOUNCER] = -1;
+	for( i=1; i<m_OptionLineData[AO_ANNOUNCER].iNumOptions; i++ )
+	{
+		if( stricmp(m_OptionLineData[AO_ANNOUNCER].szOptionsText[i], ANNOUNCER->GetCurrentAnnouncerName())==0 )
+		{
+			m_iSelectedOption[0][AO_ANNOUNCER] = i;
+			break;
+		}
+	}
+	if( m_iSelectedOption[0][AO_ANNOUNCER] == -1 )
+		m_iSelectedOption[0][AO_ANNOUNCER] = 0;
+
+
+	// fill in skin names
+	CStringArray arraySkinNames;
+	GAMEMAN->GetSkinNames( arraySkinNames );
+
+	m_OptionLineData[AO_SKIN].iNumOptions	=	arraySkinNames.GetSize(); 
+	
+	for( i=0; i<arraySkinNames.GetSize(); i++ )
+		strcpy( m_OptionLineData[AO_SKIN].szOptionsText[i], arraySkinNames[i] ); 
+
+	// highlight currently selected skin
+	m_iSelectedOption[0][AO_SKIN] = -1;
+	for( i=0; i<m_OptionLineData[AO_SKIN].iNumOptions; i++ )
+	{
+		if( stricmp(m_OptionLineData[AO_SKIN].szOptionsText[i], GAMEMAN->m_sCurrentSkin)==0 )
+		{
+			m_iSelectedOption[0][AO_SKIN] = i;
+			break;
+		}
+	}
+	if( m_iSelectedOption[0][AO_SKIN] == -1 )
+		m_iSelectedOption[0][AO_SKIN] = 0;
+}
+
+void ScreenAppearanceOptions::ExportOptions()
+{
+	int iSelectedAnnouncer = m_iSelectedOption[0][AO_ANNOUNCER];
+	CString sNewAnnouncer = m_OptionLineData[AO_ANNOUNCER].szOptionsText[iSelectedAnnouncer];
+	if( iSelectedAnnouncer == 0 )
+		sNewAnnouncer = "";
+	PREFSMAN->m_sAnnouncer = sNewAnnouncer;
+	ANNOUNCER->SwitchAnnouncer( sNewAnnouncer );
+
+	int iSelectedSkin = m_iSelectedOption[0][AO_SKIN];
+	CString sNewSkin = m_OptionLineData[AO_SKIN].szOptionsText[iSelectedSkin];
+	PREFSMAN->m_sNoteSkin = sNewSkin;
+	GAMEMAN->m_sCurrentSkin = sNewSkin;
+}
+
+void ScreenAppearanceOptions::GoToPrevState()
+{
+	SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+	PREFSMAN->SavePrefsToDisk();
+
+}
+
+void ScreenAppearanceOptions::GoToNextState()
+{
+	SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+	PREFSMAN->SavePrefsToDisk();
+}
+
+
+
+
+

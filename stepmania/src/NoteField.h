@@ -41,7 +41,7 @@ public:
 	void RemoveTapNoteRow( int iIndex );
 	void SetHoldNoteLife( int iIndex, float fLife );
 
-	float	m_HoldNoteLife[MAX_HOLD_NOTE_ELEMENTS];		// 1.0 = full life, 0 = dead
+	float	m_HoldNoteLife[MAX_HOLD_NOTES];		// 1.0 = full life, 0 = dead
 
 	float	m_fBeginMarker, m_fEndMarker;	// only used with MODE_EDIT
 

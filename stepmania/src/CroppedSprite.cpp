@@ -55,7 +55,7 @@ void CroppedSprite::CropToSize( float fWidth, float fHeight )
 		float fFinalZoom = this->GetZoom();
 		
 		// find which dimension is larger
-		bool bXDimNeedsToBeCropped = GetZoomedWidth() > m_fCropWidth;
+		bool bXDimNeedsToBeCropped = GetZoomedWidth() > m_fCropWidth+0.01;
 		
 		if( bXDimNeedsToBeCropped )	// crop X
 		{

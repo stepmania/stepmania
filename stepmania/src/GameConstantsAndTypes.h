@@ -48,7 +48,7 @@ enum
 	MAX_NOTE_TRACKS		// leave this at the end
 };
 
-const int MAX_BEATS			= 300 * 2;	// 300 bpm * 2 mins
+const int MAX_BEATS			= 1500;	// BMR's Pulse has about 1300
 const int BEATS_PER_MEASURE = 4;
 const int MAX_MEASURES		= MAX_BEATS / BEATS_PER_MEASURE;
 
@@ -56,7 +56,7 @@ const int ELEMENTS_PER_BEAT	= 12;	// It is important that this number is evenly 
 const int ELEMENTS_PER_MEASURE = ELEMENTS_PER_BEAT * BEATS_PER_MEASURE;
 const int MAX_TAP_NOTE_ROWS = MAX_BEATS*ELEMENTS_PER_BEAT;
 
-const int MAX_HOLD_NOTE_ELEMENTS = 200;
+const int MAX_HOLD_NOTES = 400;	// BMR's Connected has about 300
 
 enum NoteType 
 { 

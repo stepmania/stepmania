@@ -74,8 +74,9 @@ ScreenSelectMusic::ScreenSelectMusic()
 		THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_BACKGROUND), 
 		THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_TOP_EDGE),
 		ssprintf("%c or %c change music    %c%c easier difficulty     %c%c harder difficulty      %c%c%c%c change sort", 
-		char(1), char(2), char(3), char(3), char(4), char(4), char(3), char(4), char(3), char(4) )
-				);
+		char(1), char(2), char(3), char(3), char(4), char(4), char(3), char(4), char(3), char(4) ),
+		false, true, 60 
+		);
 	this->AddActor( &m_Menu );
 
 	m_SongInfoFrame.SetXY( SONG_INFO_FRAME_X, SONG_INFO_FRAME_Y );

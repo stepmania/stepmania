@@ -20,7 +20,7 @@ struct NoteDataWithScoring : public NoteData
 
 	// maintain this extra data in addition to the NoteData
 	TapNoteScore	m_TapNoteScores[MAX_NOTE_TRACKS][MAX_TAP_NOTE_ROWS];
-	HoldNoteScore	m_HoldNoteScores[MAX_HOLD_NOTE_ELEMENTS];
+	HoldNoteScore	m_HoldNoteScores[MAX_HOLD_NOTES];
 
 
 	// statistics

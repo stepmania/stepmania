@@ -28,6 +28,8 @@ public:
 
 	void SetPrefs( const DWORD dwMaxSize, const DWORD dwTextureColorDepth )
 	{
+		if( dwMaxSize == m_iMaxTextureSize  &&  dwTextureColorDepth == m_iTextureColorDepth )
+			return; 
 		ASSERT( m_iMaxTextureSize >= 64 );
 		m_iMaxTextureSize = dwMaxSize; 
 		m_iTextureColorDepth = dwTextureColorDepth;

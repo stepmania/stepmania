@@ -11,7 +11,7 @@
 */
 
 #include "GameManager.h"
-
+#include "PrefsManager.h"
 
 
 GameManager*	GAMEMAN = NULL;	// global and accessable from anywhere in our program
@@ -557,8 +557,15 @@ GameManager::GameManager()
 
 	CStringArray asSkinNames;	
 	GetSkinNames( asSkinNames );
-	for( int p=0; p<NUM_PLAYERS; ++p )
-		m_sCurrentSkin[p] = asSkinNames[0];
+	m_sCurrentSkin = PREFSMAN->m_sNoteSkin;
+	for( int i=0; i<asSkinNames.GetSize(); i++ )
+	{
+		if( m_sCurrentSkin == asSkinNames[i] )
+			goto skin_exists;
+	}
+	m_sCurrentSkin = asSkinNames[0];
+	
+skin_exists:
 	
 	m_sMasterPlayerNumber = PLAYER_1;
 }
@@ -600,12 +607,12 @@ CString GameManager::GetPathToGraphic( const PlayerNumber p, const int col, cons
 	StyleInput si( p, col );
 	GameInput gi = GetCurrentStyleDef()->StyleInputToGameInput( si );
 	InstrumentButton b = gi.button;
-	return GetCurrentGameDef()->GetPathToGraphic( m_sCurrentSkin[p], b, gbg );
+	return GetCurrentGameDef()->GetPathToGraphic( m_sCurrentSkin, b, gbg );
 }
 
 void GameManager::GetTweenColors( const PlayerNumber p, const int col, CArray<D3DXCOLOR,D3DXCOLOR> &aTweenColorsAddTo )
 {
 	StyleInput StyleI( p, col );
 	GameInput GameI = GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
-	GetCurrentGameDef()->GetTweenColors( m_sCurrentSkin[p], GameI.button, aTweenColorsAddTo );
+	GetCurrentGameDef()->GetTweenColors( m_sCurrentSkin, GameI.button, aTweenColorsAddTo );
 }

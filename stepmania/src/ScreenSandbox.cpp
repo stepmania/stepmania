@@ -22,7 +22,12 @@
 
 ScreenSandbox::ScreenSandbox()
 {	
-	m_sound.Load( THEME->GetPathTo(SOUND_MENU_START) );
+	m_text.Load( THEME->GetPathTo(FONT_NORMAL) );
+	m_text.SetXY( CENTER_X, CENTER_Y );
+	this->AddActor( &m_text );
+
+	m_sound.Load( THEME->GetPathTo(SOUND_MENU_MUSIC) );
+	m_sound.SetPositionSeconds( -10 );
 	m_sound.Play();
 
 	//this->AddActor( &m_spr );
@@ -32,6 +37,8 @@ ScreenSandbox::ScreenSandbox()
 void ScreenSandbox::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
+	m_sound.Update( fDeltaTime );
+	m_text.SetText( ssprintf("%f", m_sound.GetPositionSeconds()) );
 }
 
 void ScreenSandbox::DrawPrimitives()

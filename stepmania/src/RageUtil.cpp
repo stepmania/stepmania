@@ -347,15 +347,22 @@ DWORD GetFileSizeInBytes( const CString &sFilePath )
 
 bool DoesFileExist( const CString &sPath )
 {
-	//LOG->WriteLine( "DoesFileExist(%s)", sPath );
-
     DWORD dwAttr = GetFileAttributes( sPath );
-    if( dwAttr == (DWORD)-1 )
-        return FALSE;
-	else
-		return TRUE;
-
+    return bool(dwAttr != (DWORD)-1);
 }
+
+bool IsAFile( const CString &sPath )
+{
+    return DoesFileExist(sPath)  &&  ! IsADirectory(sPath);
+}
+
+bool IsADirectory( const CString &sPath )
+{
+    DWORD dwAttr = GetFileAttributes( sPath );
+    return (dwAttr & FILE_ATTRIBUTE_DIRECTORY) != 0;
+}
+
+
 
 int CompareCStringsAsc(const void *arg1, const void *arg2)
 {

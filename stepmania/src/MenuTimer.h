@@ -25,9 +25,13 @@ public:
 	virtual void Update( float fDeltaTime ); 
 	void StopTimer();
 	void StallTimer();
+	void SetTimer( int iTimerSeconds );
 
 protected:
 	float m_fSecondsLeft;
+	float m_fStallSeconds;
+
+	bool m_bTimerStopped;
 
 	BitmapText m_textDigit1;
 	BitmapText m_textDigit2;

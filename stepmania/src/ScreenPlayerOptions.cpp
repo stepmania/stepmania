@@ -35,7 +35,6 @@ enum {
 	PO_HOLD_NOTES,
 	PO_DARK,
 	PO_DRAIN,
-	PO_SKIN,
 	NUM_PLAYER_OPTIONS_LINES
 };
 OptionLineData g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
@@ -49,7 +48,6 @@ OptionLineData g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 	{ "Holds",	2, {"OFF","ON"} },	
 	{ "Dark",	2, {"OFF","ON"} },	
 	{ "Drain",	3, {"NORMAL", "NO-RECOVER", "SUDDEN-DEATH"} },
-	{ "Skin",	0, {""} },	// fill this in on ImportOptions();
 };
 
 
@@ -72,16 +70,6 @@ ScreenPlayerOptions::ScreenPlayerOptions() :
 
 void ScreenPlayerOptions::ImportOptions()
 {
-	// fill in skin names
-	CStringArray arraySkinNames;
-	GAMEMAN->GetSkinNames( arraySkinNames );
-
-	m_OptionLineData[PO_SKIN].iNumOptions	=	arraySkinNames.GetSize(); 
-	
-	for( int i=0; i<arraySkinNames.GetSize(); i++ )
-		strcpy( m_OptionLineData[PO_SKIN].szOptionsText[i], arraySkinNames[i] ); 
-
-
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		PlayerOptions &po = PREFSMAN->m_PlayerOptions[p];
@@ -103,14 +91,6 @@ void ScreenPlayerOptions::ImportOptions()
 		m_iSelectedOption[p][PO_HOLD_NOTES]	= po.m_bHoldNotes ? 1 : 0;
 		m_iSelectedOption[p][PO_DARK]		= po.m_bDark ? 1 : 0;
 		m_iSelectedOption[p][PO_DRAIN]		= po.m_DrainType;
-
-		// highlight currently selected skin
-		for( int s=0; i<m_OptionLineData[PO_SKIN].iNumOptions; s++ )	// foreach skin
-			if( m_OptionLineData[PO_SKIN].szOptionsText[s] == GAMEMAN->m_sCurrentSkin[p] )
-			{
-				m_iSelectedOption[p][PO_SKIN] = s;
-				break;
-			}
 	}
 }
 
@@ -139,10 +119,7 @@ void ScreenPlayerOptions::ExportOptions()
 		po.m_ColorType		= (PlayerOptions::ColorType)m_iSelectedOption[p][PO_COLOR];
 		po.m_bHoldNotes		= (m_iSelectedOption[p][PO_HOLD_NOTES] == 1);
 		po.m_bDark			= (m_iSelectedOption[p][PO_DARK] == 1);
-		po.m_DrainType		= (PlayerOptions::DrainType)m_iSelectedOption[p][PO_DRAIN];
-		
-		int iSelectedSkin = m_iSelectedOption[p][PO_SKIN];
-		GAMEMAN->m_sCurrentSkin[p] = m_OptionLineData[PO_SKIN].szOptionsText[iSelectedSkin];
+		po.m_DrainType		= (PlayerOptions::DrainType)m_iSelectedOption[p][PO_DRAIN];		
 	}
 }
 

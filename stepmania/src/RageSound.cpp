@@ -41,7 +41,7 @@ RageSound::RageSound( HWND hWnd )
 			"The most likely cause of this problem is that you do not have a sound card\n"
 			"installed, or that you have not yet installed a driver for your sound card.\n"
 			"Before running this program again, please verify that your sound card is\n"
-			"is working in other Screens applications."
+			"is working in other applications."
 		);
 	}
 
@@ -93,6 +93,9 @@ void RageSound::PlayOnceStreamed( CString sPath )
 
 void RageSound::PlayOnceStreamedFromDir( CString sDir )
 {
+	if( sDir == "" )
+		return;
+
 	// make sure there's a backslash at the end of this path
 	if( sDir[sDir.GetLength()-1] != '\\' )
 		sDir += "\\";

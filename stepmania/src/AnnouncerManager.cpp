@@ -11,6 +11,7 @@
 */
 
 #include "AnnouncerManager.h"
+#include "PrefsManager.h"
 #include "RageLog.h"
 
 
@@ -26,11 +27,10 @@ AnnouncerManager::AnnouncerManager()
 {
 	CStringArray arrayAnnouncerNames;
 	GetAnnouncerNames( arrayAnnouncerNames );
-	for( int i=0; i<arrayAnnouncerNames.GetSize(); i++ )
-		AssertAnnouncerIsComplete( arrayAnnouncerNames[i] );
+//	for( int i=0; i<arrayAnnouncerNames.GetSize(); i++ )
+//		AssertAnnouncerIsComplete( arrayAnnouncerNames[i] );
 
-	//SwitchAnnouncer( DEFAULT_ANNOUNCER_NAME );
-	SwitchAnnouncer( arrayAnnouncerNames[0] );
+	SwitchAnnouncer( PREFSMAN->m_sAnnouncer );
 }
 
 void AnnouncerManager::GetAnnouncerNames( CStringArray& AddTo )
@@ -47,6 +47,24 @@ void AnnouncerManager::GetAnnouncerNames( CStringArray& AddTo )
 
 void AnnouncerManager::SwitchAnnouncer( CString sAnnouncerName )
 {
+	if( sAnnouncerName == "" )
+	{
+		m_sCurAnnouncerName = "";
+		return;
+	}
+
+
+	CStringArray asAnnouncerNames;
+	GetAnnouncerNames( asAnnouncerNames );
+	for( int i=0; i<asAnnouncerNames.GetSize(); i++ )
+		if( asAnnouncerNames[i] == sAnnouncerName )
+			goto announcer_exists;
+
+	// if we get here, the announcer doesn't exist
+	sAnnouncerName = asAnnouncerNames[0];
+
+announcer_exists:
+
 	m_sCurAnnouncerName = sAnnouncerName;
 	CString sAnnouncerDir = GetAnnouncerDirFromName( m_sCurAnnouncerName );
 	if( !DoesFileExist( sAnnouncerDir ) )
@@ -75,6 +93,9 @@ CString AnnouncerManager::GetPathTo( AnnouncerElement ae )
 
 CString AnnouncerManager::GetPathTo( AnnouncerElement ae, CString sAnnouncerName ) 
 {
+	if( sAnnouncerName == "" )
+		return "";	// hopefully there are no sound files here
+
 	CString sAssetDir;
 
 	switch( ae )
@@ -107,6 +128,7 @@ CString AnnouncerManager::GetPathTo( AnnouncerElement ae, CString sAnnouncerName
 		case ANNOUNCER_EVALUATION_FINAL_C:				sAssetDir = "evaluation final c";			break;
 		case ANNOUNCER_EVALUATION_FINAL_D:				sAssetDir = "evaluation final d";			break;
 		case ANNOUNCER_GAME_OVER:						sAssetDir = "game over";				break;
+		case ANNOUNCER_MENU_HURRY_UP:					sAssetDir = "menu hurry up";				break;
 		case ANNOUNCER_MUSIC_SCROLL:					sAssetDir = "music scroll";				break;
 		case ANNOUNCER_EVALUATION_A:					sAssetDir = "evaluation a";					break;
 		case ANNOUNCER_EVALUATION_AA:					sAssetDir = "evaluation aa";				break;

@@ -23,6 +23,7 @@
 #include "ScreenEditMenu.h"
 #include "ScreenSelectStyle.h"
 #include "ScreenSelectGame.h"
+#include "ScreenAppearanceOptions.h"
 #include "RageLog.h"
 #include "SongManager.h"
 #include "AnnouncerManager.h"
@@ -40,12 +41,13 @@ const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
 	"SWITCH GAME",
 	"CONFIG KEY/JOY",
 	"GAME OPTIONS",
+	"APPEARANCE OPTIONS",
 	"EDIT/RECORD/SYNCH",
 	"EXIT",
 };
 
-const float CHOICES_START_Y		= 66;
-const float CHOICES_GAP_Y		= 56;
+const float CHOICES_START_Y		= 62;
+const float CHOICES_GAP_Y		= 52;
 
 const float HELP_X				= CENTER_X;
 const float HELP_Y				= SCREEN_HEIGHT-55;
@@ -57,6 +59,7 @@ const ScreenMessage SM_GoToSelectStyle		=	ScreenMessage(SM_User+3);
 const ScreenMessage SM_GoToSelectGame		=	ScreenMessage(SM_User+4);
 const ScreenMessage SM_GoToMapInstruments	=	ScreenMessage(SM_User+5);
 const ScreenMessage SM_GoToGameOptions		=	ScreenMessage(SM_User+6);
+const ScreenMessage SM_GoToAppearanceOptions=	ScreenMessage(SM_User+7);
 const ScreenMessage SM_GoToEdit				=	ScreenMessage(SM_User+10);
 const ScreenMessage SM_DoneOpening			=	ScreenMessage(SM_User+11);
 const ScreenMessage SM_GoToEz2				=	ScreenMessage(SM_User+12);
@@ -101,7 +104,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	
 	m_textVersion.Load( THEME->GetPathTo(FONT_NORMAL) );
 	m_textVersion.SetHorizAlign( Actor::align_right );
-	m_textVersion.SetText( "v3.0 beta 1" );
+	m_textVersion.SetText( "v3.0 beta 4" );
 	m_textVersion.SetDiffuseColor( D3DXCOLOR(0.6f,0.6f,0.6f,1) );	// light gray
 	m_textVersion.SetXY( SCREEN_RIGHT-16, SCREEN_BOTTOM-20 );
 	m_textVersion.SetZoom( 0.5f );
@@ -146,12 +149,14 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_TITLE_MENU_GAME_NAME) );
 
+	m_soundAttract.Load( ANNOUNCER->GetPathTo(ANNOUNCER_TITLE_MENU_ATTRACT) );
 	m_soundChange.Load( THEME->GetPathTo(SOUND_TITLE_MENU_CHANGE) );	
 	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
 	m_soundInvalid.Load( THEME->GetPathTo(SOUND_MENU_INVALID) );
 
+
 	for( i=0; i<3000; i++ )
-		this->SendScreenMessage( SM_PlayAttract, (float)15+i*15 );
+		this->SendScreenMessage( SM_PlayAttract, (float)20+i*20 );
 
 
 	m_TitleMenuChoice = CHOICE_GAME_START;
@@ -184,13 +189,9 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_DoneOpening:
-		if( PREFSMAN->m_bAnnouncer )
-		{
-			m_soundTitle.PlayRandom();
-		}
 		break;
 	case SM_PlayAttract:
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_TITLE_MENU_ATTRACT) );
+		m_soundAttract.PlayRandom();
 		break;
 	case SM_GoToCaution:
 		SCREENMAN->SetNewScreen( new ScreenCaution );
@@ -206,6 +207,9 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToGameOptions:
 		SCREENMAN->SetNewScreen( new ScreenGameOptions );
+		break;
+	case SM_GoToAppearanceOptions:
+		SCREENMAN->SetNewScreen( new ScreenAppearanceOptions );
 		break;
 	case SM_GoToEdit:
 		SCREENMAN->SetNewScreen( new ScreenEditMenu );
@@ -294,6 +298,10 @@ void ScreenTitleMenu::MenuStart( const PlayerNumber p )
 		m_soundSelect.PlayRandom();
 		m_Fade.CloseWipingRight( SM_GoToGameOptions );
 		return;
+	case CHOICE_APPEARANCE_OPTIONS:
+		m_soundSelect.PlayRandom();
+		m_Fade.CloseWipingRight( SM_GoToAppearanceOptions );
+		return;
 	case CHOICE_EDIT:
 		if( SONGMAN->m_pSongs.GetSize() == 0 )
 		{
@@ -322,6 +330,8 @@ void ScreenTitleMenu::MenuStart( const PlayerNumber p )
 		m_soundSelect.PlayRandom();
 		PostQuitMessage(0);
 		return;
+	default:
+		ASSERT(0);
 	}
 }
 

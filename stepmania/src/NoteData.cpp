@@ -134,13 +134,16 @@ CString NoteData::GetSMNoteDataString()
 
 		CStringArray asMeasureLines;
 		asMeasureLines.Add( ssprintf("  // measure %d", m+1) );
+
 		for( int i=iMeasureStartIndex; i<=iMeasureLastIndex; i+=iNoteIndexSpacing )
 		{
-			CString sLineString;
-			for( int c=0; c<m_iNumTracks; c++ )
-				sLineString += m_TapNotes[c][i];
-			asMeasureLines.Add( sLineString );
+			char szLineString[MAX_NOTE_TRACKS];
+			for( int t=0; t<m_iNumTracks; t++ )
+				szLineString[t] = m_TapNotes[t][i];
+			szLineString[t] = '\0';
+			asMeasureLines.Add( szLineString );
 		}
+
 		CString sMeasureString = join( "\n", asMeasureLines );
 
 		asMeasureStrings.Add( sMeasureString );
@@ -242,6 +245,7 @@ void NoteData::AddHoldNote( HoldNote add )
 	// add a tap note at the start of this hold
 	m_TapNotes[add.m_iTrack][add.m_iStartIndex] = '1';
 
+	ASSERT( m_iNumHoldNotes < MAX_HOLD_NOTES );
 	m_HoldNotes[m_iNumHoldNotes++] = add;
 }
 
@@ -279,31 +283,56 @@ bool NoteData::IsThereANoteAtRow( int iRow )
 }
 
 
-int NoteData::GetLastRow()			
+int NoteData::GetFirstRow()
+{ 
+	int iFirstIndexFoundSoFar = MAX_TAP_NOTE_ROWS-1;
+	
+	int i;
+
+	for( i=0; i<MAX_TAP_NOTE_ROWS, i<iFirstIndexFoundSoFar; i++ )		// iterate back to front
+	{
+		if( !IsRowEmpty(i) )
+		{
+			iFirstIndexFoundSoFar = i;
+			break;
+		}
+	}
+
+	for( i=0; i<m_iNumHoldNotes; i++ )
+	{
+		if( m_HoldNotes[i].m_iStartIndex < iFirstIndexFoundSoFar )
+			iFirstIndexFoundSoFar = m_HoldNotes[i].m_iStartIndex;
+	}
+
+
+	return iFirstIndexFoundSoFar;
+}
+
+float NoteData::GetFirstBeat()			
+{ 
+	return NoteRowToBeat( GetFirstRow() );
+}
+
+int NoteData::GetLastRow()
 { 
 	int iOldestIndexFoundSoFar = 0;
 	
 	int i;
+
+	for( i=MAX_TAP_NOTE_ROWS-1; i>=iOldestIndexFoundSoFar; i-- )		// iterate back to front
+	{
+		if( !IsRowEmpty(i) )
+		{
+			iOldestIndexFoundSoFar = i;
+			break;
+		}
+	}
 
 	for( i=0; i<m_iNumHoldNotes; i++ )
 	{
 		if( m_HoldNotes[i].m_iEndIndex > iOldestIndexFoundSoFar )
 			iOldestIndexFoundSoFar = m_HoldNotes[i].m_iEndIndex;
 	}
-
-	for( i=MAX_TAP_NOTE_ROWS-1; i>=iOldestIndexFoundSoFar; i-- )		// iterate back to front
-	{
-		for( int t=0; t<m_iNumTracks; t++ )
-		{
-			if( m_TapNotes[t][i] != '0' )
-			{
-				iOldestIndexFoundSoFar = i;
-				goto done_searching_tap_notes;
-			}
-		}
-	}
-done_searching_tap_notes:
-
 
 	return iOldestIndexFoundSoFar;
 }
@@ -623,8 +652,8 @@ void NoteData::MakeLittle()
 
 void NoteData::Convert2sAnd3sToHoldNotes()
 {
-	// Note that a 3 or a 1 can end a HoldNote.  
-	// A 1 can end a HoldNote because it's easier for parsing DWIs
+	// Any note will end a hold (not just a '3').  This makes parsing DWIs much easier, 
+	// plus we don't want tap notes in the middle of a hold!
 
 	for( int col=0; col<m_iNumTracks; col++ )	// foreach column
 	{

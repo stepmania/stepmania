@@ -26,11 +26,14 @@
 #include "AnnouncerManager.h"
 
 const ScreenMessage SM_StartFadingOut	=	ScreenMessage(SM_User + 1);
+const ScreenMessage SM_DoneFadingIn		=	ScreenMessage(SM_User + 2);
 const ScreenMessage SM_GoToNextState	=	ScreenMessage(SM_User + 3);
 
 
 ScreenStage::ScreenStage()
 {
+	m_pNextScreen = NULL;
+
 	m_textStage.Load( THEME->GetPathTo(FONT_STAGE) );
 	m_textStage.TurnShadowOff();
 
@@ -79,7 +82,8 @@ ScreenStage::ScreenStage()
 	m_textStage.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
 	this->AddActor( &m_textStage );
 
-	this->SendScreenMessage( SM_StartFadingOut, 3 );
+	this->SendScreenMessage( SM_DoneFadingIn, 0.6f );
+	this->SendScreenMessage( SM_StartFadingOut, 1.2f );
 }
 
 
@@ -92,8 +96,11 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 		m_textStage.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
 		this->SendScreenMessage( SM_GoToNextState, 0.8f );
 		break;
+	case SM_DoneFadingIn:
+		m_pNextScreen = new ScreenGameplay;
+		break;
 	case SM_GoToNextState:
-		SCREENMAN->SetNewScreen( new ScreenGameplay );
+		SCREENMAN->SetNewScreen( m_pNextScreen );
 		break;
 	}
 }

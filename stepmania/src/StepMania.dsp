@@ -848,6 +848,14 @@ SOURCE=.\Screen.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenAppearanceOptions.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenAppearanceOptions.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenCaution.cpp
 # End Source File
 # Begin Source File

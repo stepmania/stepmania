@@ -25,7 +25,7 @@ void NoteDataWithScoring::Init()
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )
 			m_TapNoteScores[t][i] = TNS_NONE;
 
-	for( int i=0; i<MAX_HOLD_NOTE_ELEMENTS; i++ )
+	for( int i=0; i<MAX_HOLD_NOTES; i++ )
 		m_HoldNoteScores[i] = HNS_NONE;
 }
 
@@ -139,7 +139,7 @@ float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds )
 		iNumChaosNotesCompleted++;
 	}
 
-	float fReturn = iNumChaosNotesCompleted / fSongSeconds * 0.5;
+	float fReturn = iNumChaosNotesCompleted / fSongSeconds * 0.5f;
 	return min( fReturn, 1.0f );
 }
 
