@@ -11,8 +11,8 @@ XToString( SelectType );
 StringToX( SelectType );
 
 static const CString LayoutTypeNames[NUM_LAYOUT_TYPES] = {
-	"ShowAllInLine",
-	"ShowOneLine",
+	"ShowAllInRow",
+	"ShowOneInRow",
 };
 XToString( LayoutType );
 StringToX( LayoutType );
@@ -34,7 +34,7 @@ OptionRow::~OptionRow()
 
 int OptionRow::GetOneSelection( PlayerNumber pn, bool bAllowFail ) const
 {
-	for( unsigned i=0; i<(unsigned)m_vbSelected[pn].size(); i++ )
+	for( unsigned i=0; i<m_vbSelected[pn].size(); i++ )
 		if( m_vbSelected[pn][i] )
 			return i;
 
