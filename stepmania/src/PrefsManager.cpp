@@ -201,7 +201,7 @@ void PrefsManager::Init()
 	m_bDancePointsForOni = false;
 	m_bPercentageScoring = false;
 	m_fMinPercentageForMachineSongHighScore = 0.5f;
-	m_fMinPercentageForMachineCourseHighScore = 0.001f;	// don't save course scores with 0 percentage
+	m_fMinPercentageForMachineCourseHighScore = 0.0001f;	// don't save course scores with 0 percentage
 	m_bDisqualification = false;
 	m_bShowLyrics = true;
 	m_bAutogenSteps = true;
