@@ -46,7 +46,7 @@ void AutoKeysounds::FinishLoading()
 	int iNumTracks = m_ndAutoKeysoundsOnly[GAMESTATE->m_MasterPlayerNumber].GetNumTracks();
 	for( int t = 0; t < iNumTracks; t++ )
 	{
-		int iRow = 0;
+		int iRow = -1;
 		while(1)
 		{
 			/* Find the next row that either player has a note on. */

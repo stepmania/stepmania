@@ -9,13 +9,13 @@
 #include "Attack.h"
 
 #define FOREACH_NONEMPTY_ROW_IN_TRACK( nd, track, row ) \
-	for( int row = 0; (nd).GetNextTapNoteRowForTrack(track,row); )
+	for( int row = -1; (nd).GetNextTapNoteRowForTrack(track,row); )
 #define FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( nd, track, row, start, last ) \
 	for( int row = start-1; (nd).GetNextTapNoteRowForTrack(track,row) && row <= (last); )
 #define FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE_REVERSE( nd, track, row, start, last ) \
 	for( int row = last+1; (nd).GetPrevTapNoteRowForTrack(track,row) && row >= (start); )
 #define FOREACH_NONEMPTY_ROW_ALL_TRACKS( nd, row ) \
-	for( int row = 0; (nd).GetNextTapNoteRowForAllTracks(row); )
+	for( int row = -1; (nd).GetNextTapNoteRowForAllTracks(row); )
 #define FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( nd, row, start, last ) \
 	for( int row = start-1; (nd).GetNextTapNoteRowForAllTracks(row) && row <= (last); )
 
