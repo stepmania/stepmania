@@ -1,7 +1,4 @@
-/* ScreenSystemLayer -  
- * This screen is drawn on top of everything else, and receives updates,
- * but not input.
- */
+/* ScreenSystemLayer - credits and statistics drawn on top of everything else. */
 
 #ifndef ScreenSystemLayer_H
 #define ScreenSystemLayer_H
