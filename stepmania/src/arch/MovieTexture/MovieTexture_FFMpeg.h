@@ -25,6 +25,7 @@ namespace avcodec
 #endif
 };
 
+class FFMpeg_Helper;
 
 class MovieTexture_FFMpeg: public RageMovieTexture
 {
@@ -46,14 +47,13 @@ public:
 	unsigned GetTexHandle() const { return m_uTexHandle; }
 
 private:
-	avcodec::AVFormatContext *m_fctx;
-	avcodec::AVStream *m_stream;
+	FFMpeg_Helper *decoder;
 
 	/* The time the movie is actually at: */
-	float m_Position;
 	float m_Rate;
 	bool m_ImageWaiting;
 	bool m_bLoop;
+	bool m_bWantRewind;
 
 	/*
 	 * Only the main thread can change m_State.
@@ -70,24 +70,26 @@ private:
 	 * m_FrameDecoded semaphore and change to the PAUSE_DECODER state.
 	 * This is only used by Create().
 	 */
-	enum State { DECODER_QUIT, PAUSE_DECODER, PLAYING, PLAYING_ONE } m_State;
+	enum State { DECODER_QUIT, PAUSE_DECODER, PLAYING } m_State;
 
 	unsigned m_uTexHandle;
 
 	SDL_Surface *m_img;
 	int m_AVTexfmt; /* AVPixelFormat_t of m_img */
 
-	SDL_sem *m_BufferFinished, *m_OneFrameDecoded;
+	SDL_sem *m_BufferFinished;
 
 	static int DecoderThread_start(void *p) { ((MovieTexture_FFMpeg *)(p))->DecoderThread(); return 0; }
 	void DecoderThread();
 	RageThread m_DecoderThread;
 
+	void ConvertFrame();
+	void UpdateFrame();
+
 	void CreateDecoder();
 	void CreateTexture();
 	void DestroyDecoder();
 	void DestroyTexture();
-	void CheckFrame();
 	void StartThread();
 	void StopThread();
 };
