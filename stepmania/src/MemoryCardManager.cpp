@@ -162,7 +162,9 @@ void MemoryCardManager::UpdateUnassignedCards()
 			vector<UsbStorageDevice>::iterator it = find(vUnassignedDevices.begin(),vUnassignedDevices.end(),m_Device[p]);
 			if( it != vUnassignedDevices.end() )
 			{
-				// TRICKY: 
+				// TRICKY: Update m_Device with the latest info we received from the 
+				// driver.  It may contain updated info like WriteTest results and a
+				// sName.
 				m_Device[p] = *it;
 
 				vUnassignedDevices.erase( it );
