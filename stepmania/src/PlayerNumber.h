@@ -28,8 +28,8 @@ enum PlayerNumber {
 	PLAYER_INVALID
 };
 #define FOREACH_PlayerNumber( pn ) FOREACH_ENUM( PlayerNumber, NUM_PLAYERS, pn )
-#define FOREACH_HumanPlayer( pn ) for( PlayerNumber pn=(PlayerNumber)0; pn!=PLAYER_INVALID; pn=GetNextHumanPlayer(pn) )
-#define FOREACH_EnabledPlayer( pn ) for( PlayerNumber pn=(PlayerNumber)0; pn!=PLAYER_INVALID; pn=GetNextEnabledPlayer(pn) )
+#define FOREACH_HumanPlayer( pn ) for( PlayerNumber pn=GetNextHumanPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID; pn=GetNextHumanPlayer(pn) )
+#define FOREACH_EnabledPlayer( pn ) for( PlayerNumber pn=GetNextEnabledPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID; pn=GetNextEnabledPlayer(pn) )
 
 PlayerNumber GetNextHumanPlayer( PlayerNumber pn );
 PlayerNumber GetNextEnabledPlayer( PlayerNumber pn );
