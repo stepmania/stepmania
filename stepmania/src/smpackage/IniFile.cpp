@@ -140,7 +140,7 @@ void IniFile::WriteFile()
 	if( fp == NULL )
 		return;
 	
-	fwrite(buf.GetBuffer(), buf.GetLength(), 1, fp);
+	fwrite(buf.GetBuffer(0), buf.GetLength(), 1, fp);
 	fclose( fp );
 }
 
