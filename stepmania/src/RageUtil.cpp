@@ -748,56 +748,6 @@ HINSTANCE GotoURL(const char *url)
 	return result;
 }
 
-void WriteStringToFile( FILE* file, CString s )
-{
-	if( s == "" )
-		s = "_";
-	fprintf( file, "%s\n", s );
-}
-
-void ReadStringFromFile( FILE* file, CString& s )
-{
-	char szTemp[MAX_PATH];
-	fscanf( file, "%[^\n]\n", szTemp );
-	s = szTemp;
-	if( s == "_" )
-		s = "";
-}
-
-
-void WriteIntToFile( FILE* file, int i )
-{
-	fprintf( file, "%d\n", i );
-}
-
-void ReadIntFromFile( FILE* file, int& i )
-{
-	fscanf( file, "%d\n", &i );
-}
-
-
-void WriteFloatToFile( FILE* file, float f )
-{
-	fprintf( file, "%f\n", f );
-}
-
-void ReadFloatFromFile( FILE* file, float& f )
-{
-	fscanf( file, "%f\n", &f );
-}
-
-
-
-void WriteUlongToFile( FILE* file, ULONG u )
-{
-	fprintf( file, "%u\n", u );
-}
-
-void ReadUlongFromFile( FILE* file, ULONG& u )
-{
-	fscanf( file, "%u\n", &u );
-}
-
 float calc_mean(const float *start, const float *end)
 {
 	return accumulate(start, end, 0.f) / distance(start, end);
