@@ -269,19 +269,6 @@
 typedef const char*		PCSTR;
 typedef char*			PSTR;
 typedef char			TCHAR;
-#ifdef SS_ANSI
-	// Make sure ASSERT is defined in an ANSI fashion
-	#ifndef ASSERT
-		#include <assert.h>
-		#define ASSERT(f) assert((f))
-	#endif
-#else
-	// Make sure ASSERT is defined
-	#ifndef ASSERT
-		#include <crtdbg.h>
-		#define ASSERT(f) _ASSERTE((f))
-	#endif
-#endif // #ifdef SS_ANSI
 
 // Standard headers needed
 #include <string>			// basic_string
@@ -411,7 +398,6 @@ inline void	ssasn(std::string& sDst, PCSTR pA)
 }
 inline void ssasn(std::string& sDst, const int nNull)
 {
-	ASSERT(nNull==0);
 	sDst.erase();
 }	
 #undef StrSizeType
