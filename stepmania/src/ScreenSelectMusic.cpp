@@ -770,7 +770,7 @@ void ScreenSelectMusic::AfterMusicChange()
 
 			if(!no_banner_change)
 				m_Banner.LoadFromGroup( sGroup );	// if this isn't a group, it'll default to the fallback banner
-			m_BPMDisplay.SetBPMRange( 0, 0 );
+			m_BPMDisplay.NoBPM();
 			m_sprCDTitle.UnloadTexture();
 		}
 		break;
@@ -791,9 +791,16 @@ void ScreenSelectMusic::AfterMusicChange()
 			if(!no_banner_change)
 				m_Banner.LoadFromSong( pSong );
 
-			float fMinBPM, fMaxBPM;
-			pSong->GetMinMaxBPM( fMinBPM, fMaxBPM );
-			m_BPMDisplay.SetBPMRange( fMinBPM, fMaxBPM );
+			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+			{
+				m_BPMDisplay.CycleRandomly();				
+			}
+			else
+			{
+				float fMinBPM, fMaxBPM;
+				pSong->GetMinMaxBPM( fMinBPM, fMaxBPM );
+				m_BPMDisplay.SetBPMRange( fMinBPM, fMaxBPM );
+			}
 
 			if( pSong->HasCDTitle() )
 				m_sprCDTitle.Load( pSong->GetCDTitlePath() );
@@ -837,7 +844,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	case TYPE_ROULETTE:
 		if(!no_banner_change)
 			m_Banner.LoadRoulette();
-		m_BPMDisplay.SetBPMRange( 0, 0 );
+		m_BPMDisplay.NoBPM();
 		m_sprCDTitle.UnloadTexture();
 
 		SOUNDMAN->StopMusic();
@@ -850,7 +857,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	case TYPE_RANDOM:
 		if(!no_banner_change)
 			m_Banner.LoadRandom();
-		m_BPMDisplay.SetBPMRange( 0, 0 );
+		m_BPMDisplay.NoBPM();
 		m_sprCDTitle.UnloadTexture();
 
 		SOUNDMAN->StopMusic();

@@ -186,7 +186,7 @@ ScreenNameEntry::ScreenNameEntry()
 			//this->AddChild( &m_textScrollingChars[p][t] );	// draw these manually
 		}
 
-		m_textCategory[p].LoadFromFont( THEME->GetPathTo("Fonts","header2") );
+		m_textCategory[p].LoadFromFont( THEME->GetPathTo("Fonts","ScreenNameEntry category") );
 		m_textCategory[p].SetX( (float)GAMESTATE->GetCurrentStyleDef()->m_iCenterX[p] );
 		m_textCategory[p].SetY( CATEGORY_Y );
 		CString sCategoryText = ssprintf("No. %d in\n", GAMESTATE->m_iRankingIndex[p]+1);

@@ -25,9 +25,8 @@
 BPMDisplay::BPMDisplay()
 {
 	m_fCurrentBPM = m_fLowBPM = m_fHighBPM = 0;
-	m_CountingState = holding_down;
 	m_fTimeLeftInState = 0;
-	m_bExtraStage = GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2();
+	m_CountingState = holding_down;
 
 	m_textBPM.LoadFromNumbers( THEME->GetPathTo("Numbers","BPMDisplay") );
 	m_textBPM.EnableShadow( false );
@@ -50,40 +49,64 @@ void BPMDisplay::Update( float fDeltaTime )
 { 
 	ActorFrame::Update( fDeltaTime ); 
 	
-	if( m_bExtraStage )
+	m_fTimeLeftInState -= fDeltaTime;
+	if( m_fTimeLeftInState < 0 )
 	{
-		m_fTimeLeftInState -= fDeltaTime;
-		if( m_fTimeLeftInState < 0 )
-		{
-			// XXX: the numbers font doesn't have "?".
-			m_textBPM.SetText( (RandomFloat(0,1)>0.90) ? "xxx" : ssprintf("%03.0f",RandomFloat(0,600)) ); 
-			m_fTimeLeftInState = 0.2f;		// reset timer
-		}
-	}
-	else	// !m_bExtraStage
-	{
-		m_fTimeLeftInState -= fDeltaTime;
-		if( m_fTimeLeftInState < 0 )
-		{
-			// go to next state
-			switch( m_CountingState )
-			{
-			case counting_up:	m_CountingState = holding_up;		break;
-			case holding_up:	m_CountingState = counting_down;	break;
-			case counting_down:	m_CountingState = holding_down;		break;
-			case holding_down:	m_CountingState = counting_up;		break;
-			}
-			m_fTimeLeftInState = 1;		// reset timer
-		}
-
+		// go to next state
 		switch( m_CountingState )
 		{
-		case counting_down:	m_fCurrentBPM = m_fLowBPM + (m_fHighBPM-m_fLowBPM)*m_fTimeLeftInState;	break;
-		case counting_up:	m_fCurrentBPM = m_fHighBPM + (m_fLowBPM-m_fHighBPM)*m_fTimeLeftInState;	break;
-		case holding_up:	m_fCurrentBPM = m_fHighBPM;												break;
-		case holding_down:	m_fCurrentBPM = m_fLowBPM;												break;
+		case counting_up:
+			m_CountingState = holding_up;
+			m_fTimeLeftInState = 1;		// reset timer
+			break;
+		case holding_up:
+			m_CountingState = counting_down;
+			m_fTimeLeftInState = 1;		// reset timer
+			break;
+		case counting_down:
+			m_CountingState = holding_down;
+			m_fTimeLeftInState = 1;		// reset timer
+			break;
+		case holding_down:
+			m_CountingState = counting_up;
+			m_fTimeLeftInState = 1;		// reset timer
+			break;
+		case cycle_randomly:
+			m_textBPM.SetText( (RandomFloat(0,1)>0.90) ? "xxx" : ssprintf("%03.0f",RandomFloat(0,600)) ); 
+			m_fTimeLeftInState = 0.2f;		// reset timer
+			break;
+		case no_bpm:
+			m_fTimeLeftInState = 0;
+			break;
+		default:
+			ASSERT(0);
 		}
-		m_textBPM.SetText( ssprintf("%03.0f", m_fCurrentBPM) ); 
+	}
+
+	// update m_fCurrentBPM
+	int iLastCurBPM = (int)m_fCurrentBPM;
+	switch( m_CountingState )
+	{
+	case counting_down:	m_fCurrentBPM = m_fLowBPM + (m_fHighBPM-m_fLowBPM)*m_fTimeLeftInState;	break;
+	case counting_up:	m_fCurrentBPM = m_fHighBPM + (m_fLowBPM-m_fHighBPM)*m_fTimeLeftInState;	break;
+	case holding_up:	m_fCurrentBPM = m_fHighBPM;												break;
+	case holding_down:	m_fCurrentBPM = m_fLowBPM;												break;
+	case cycle_randomly:																		break;
+	case no_bpm:																				break;
+	default:
+		ASSERT(0);
+	}
+
+	// update text
+	switch( m_CountingState )
+	{
+	case counting_down:
+	case counting_up:
+	case holding_up:
+	case holding_down:
+		if( (int)m_fCurrentBPM != iLastCurBPM )
+			m_textBPM.SetText( ssprintf("%03.0f", m_fCurrentBPM) ); 
+		break;
 	}
 }
 
@@ -119,4 +142,16 @@ void BPMDisplay::SetBPMRange( float fLowBPM, float fHighBPM )
 		m_sprLabel.SetTweenDiffuse( NORMAL_COLOR );
 	}
 
+}
+
+void BPMDisplay::CycleRandomly()
+{
+	m_CountingState = cycle_randomly;
+	m_fTimeLeftInState = 0;
+}
+
+void BPMDisplay::NoBPM()
+{
+	m_CountingState = no_bpm;
+	m_textBPM.SetText( "..." ); 
 }

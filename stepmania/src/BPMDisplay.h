@@ -24,6 +24,8 @@ public:
 	BPMDisplay();
 	virtual void Update( float fDeltaTime ); 
 	void SetBPMRange( float fLowBPM, float fHighBPM );
+	void CycleRandomly();
+	void NoBPM();
 
 protected:
 	BitmapText m_textBPM;
@@ -31,11 +33,15 @@ protected:
 
 	float m_fCurrentBPM;
 	float m_fLowBPM, m_fHighBPM;
-	enum CountingState{ counting_up, holding_up, counting_down, holding_down };
-	CountingState m_CountingState;
+	enum CountingState {
+		counting_up, 
+		holding_up, 
+		counting_down, 
+		holding_down,
+		cycle_randomly,
+		no_bpm	// show dashes
+	} m_CountingState;
 	float m_fTimeLeftInState;
-
-	bool m_bExtraStage;		// cycle BPM through random values if extra stage
 };
 
 #endif
