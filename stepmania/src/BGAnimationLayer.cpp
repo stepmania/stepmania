@@ -112,6 +112,8 @@ void BGAnimationLayer::Init()
 	*/
 }
 
+static const RectI FullScreenRectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM);
+
 /* Static background layers are simple, uncomposited background images with nothing
  * behind them.  Since they have nothing behind them, they have no need for alpha,
  * so turn that off. */
@@ -122,7 +124,7 @@ void BGAnimationLayer::LoadFromStaticGraphic( CString sPath )
 	ID.iAlphaBits = 0;
 	Sprite* pSprite = new Sprite;
 	pSprite->LoadBG( ID );
-	pSprite->StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+	pSprite->StretchTo( FullScreenRectI );
 	m_pActors.push_back( pSprite );
 }
 
@@ -131,7 +133,7 @@ void BGAnimationLayer::LoadFromMovie( CString sMoviePath )
 	Init();
 	Sprite* pSprite = new Sprite;
 	pSprite->LoadBG( sMoviePath );
-	pSprite->StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+	pSprite->StretchTo( FullScreenRectI );
 	pSprite->GetTexture()->Pause();
 	m_pActors.push_back( pSprite );
 }
@@ -142,7 +144,7 @@ void BGAnimationLayer::LoadFromVisualization( CString sMoviePath )
 	Sprite* pSprite = new Sprite;
 	m_pActors.push_back( pSprite );
 	pSprite->LoadBG( sMoviePath );
-	pSprite->StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+	pSprite->StretchTo( FullScreenRectI );
 	pSprite->SetBlendMode( BLEND_ADD );
 }
 
@@ -226,7 +228,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 			RageTextureID ID(sPath);
 			ID.bStretch = true;
 			pSprite->LoadBG( ID );
-			pSprite->StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+			pSprite->StretchTo( FullScreenRectI );
 			pSprite->SetCustomTextureRect( RectF(0,0,1,1) );
 
 			switch( effect )
@@ -245,7 +247,13 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 			Sprite* pSprite = new Sprite;
 			m_pActors.push_back( pSprite );
 			pSprite->LoadBG( sPath );
-			pSprite->ScaleToCover( RectI(SCREEN_LEFT-200,SCREEN_TOP-200,SCREEN_RIGHT+200,SCREEN_BOTTOM+200) );
+			const RectI StretchedFullScreenRectI(
+				FullScreenRectI.left-200,
+				FullScreenRectI.top-200,
+				FullScreenRectI.right+200,
+				FullScreenRectI.bottom+200 );
+
+			pSprite->ScaleToCover( StretchedFullScreenRectI );
 			pSprite->SetEffectSpin( RageVector3(0,0,60) );
 		}
 		break;
@@ -580,7 +588,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 			 * it at all for movie textures, and it lowers the quality of the image slightly. */
 //			ID.bStretch = true;
 			pSprite->LoadBG( ID );
-			pSprite->StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+			pSprite->StretchTo( FullScreenRectI );
 //			pSprite->SetCustomTextureRect( RectF(0,0,1,1) );
 		}
 		break;
@@ -590,7 +598,8 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 			{
 				Actor* pActor = MakeActor( sPath );
 				m_pActors.push_back( pActor );
-				pActor->SetXY( randomf(SCREEN_LEFT,SCREEN_RIGHT), randomf(SCREEN_TOP,SCREEN_BOTTOM) );
+				pActor->SetXY( randomf(float(FullScreenRectI.left),float(FullScreenRectI.right)),
+							   randomf(float(FullScreenRectI.top),float(FullScreenRectI.bottom)) );
 				pActor->SetZoom( randomf(m_fZoomMin,m_fZoomMax) );
 				m_vParticleVelocity.push_back( RageVector3( 
 					randomf(m_fVelocityXMin,m_fVelocityXMax),
@@ -986,9 +995,7 @@ void BGAnimationLayer::GainingFocus( float fRate, bool bRewindMovie, bool bLoop 
 {
 	m_fUpdateRate = fRate;
 
-	// FIXME:  Very dangerous.  How could we handle this better?
-	Sprite* pSprite = (Sprite*)m_pActors[0];
-
+	ASSERT( m_pActors.size() );
 
 	//
 	// The order of these actions is important.
@@ -997,11 +1004,10 @@ void BGAnimationLayer::GainingFocus( float fRate, bool bRewindMovie, bool bLoop 
 	// potentially pause the movie again).
 	//
 	if( bRewindMovie )
-		pSprite->GetTexture()->SetPosition( 0 );
-	pSprite->GetTexture()->SetLooping(bLoop);
-
-	pSprite->GetTexture()->Play();
-	pSprite->GetTexture()->SetPlaybackRate(fRate);
+		m_pActors[0]->Command( "position,0" );
+	m_pActors[0]->Command( ssprintf("loop,%i",bLoop) );
+	m_pActors[0]->Command( "play" );
+	m_pActors[0]->Command( ssprintf("rate,%f",fRate) );
 
 	if( m_fRepeatCommandEverySeconds == -1 )	// if not repeating
 	{
@@ -1012,10 +1018,7 @@ void BGAnimationLayer::GainingFocus( float fRate, bool bRewindMovie, bool bLoop 
 
 void BGAnimationLayer::LosingFocus()
 {
-	// FIXME:  Very dangerous.  How could we handle this better?
-	Sprite* pSprite = (Sprite*)m_pActors[0];
-
-	pSprite->GetTexture()->Pause();
+	m_pActors[0]->Command( "pause" );
 }
 
 
