@@ -54,6 +54,40 @@ void BacktraceNames::Demangle()
     Symbol = f;
     free(f);
 }
+#elif defined(HAVE_CXA_DEMANGLE)
+#include <cxxabi.h>
+
+void BacktraceNames::Demangle()
+{
+    /* demangle the name using __cxa_demangle() if needed */
+    if (Symbol.substr(0, 2) == "_Z")
+    {
+        int status = 0;
+        const char *name = abi::__cxa_demangle(Symbol, 0, 0, &status);
+        if (name)
+            Symbol = name;
+        else
+        {
+            switch (status)
+            {
+                case 0:
+                    fprintf(stderr, "Something went wrong, it returned success, but failed.\n");
+                    break;
+                case -1:
+                    fprintf(stderr, "Memory allocation failure.\n");
+                    break;
+                case -2:
+                    fprintf(stderr, "Invalid mangled name: %s.\n", Symbol.c_str());
+                    break;
+                case -3:
+                    fprintf(stderr, "Invalid arguments.\n");
+                    break;
+                default:
+                    fprintf(stderr, "No idea what happened here.");
+            }
+        }
+    }
+}
 #else
 void BacktraceNames::Demangle() { }
 #endif
@@ -150,8 +184,6 @@ void BacktraceNames::FromString( CString s )
     }
 }
 #elif defined(BACKTRACE_LOOKUP_METHOD_ATOS)
-#include <cxxabi.h>
-
 void BacktraceNames::FromAddr( void *p )
 {
     int fds[2];
@@ -245,35 +277,6 @@ void BacktraceNames::FromAddr( void *p )
     if (Symbol[0] == '_')
         Symbol = Symbol.substr(1);
     
-    /* demangle the name using __cxa_demangle() if needed */
-    if (Symbol.substr(0, 2) == "_Z")
-    {
-        const char *name;
-        int status = 0;
-        name = abi::__cxa_demangle(Symbol, 0, 0, &status);
-        if (name)
-            Symbol = name;
-        else
-        {
-            switch (status)
-            {
-                case 0:
-                    fprintf(stderr, "Something went wrong, it returned success, but failed.\n");
-                    break;
-                case -1:
-                    fprintf(stderr, "Memory allocation failure.\n");
-                    break;
-                case -2:
-                    fprintf(stderr, "Invalid mangled name: %s.\n", Symbol.c_str());
-                    break;
-                case -3:
-                    fprintf(stderr, "Invalid arguments.\n");
-                    break;
-                default:
-                    fprintf(stderr, "No idea what happened here.");
-            }
-        }
-    }
     /* eg, the full line:
      * __Z1Ci (in a.out) (asmtest.cc:33)
      * _main (in a.out) (asmtest.cc:52)
