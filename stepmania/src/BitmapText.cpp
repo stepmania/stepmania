@@ -80,9 +80,10 @@ void BitmapText::Draw()
 	for( int i=0; i<m_sText.GetLength(); i++ ) {
 		char c = m_sText[i];
 		SetState( c );
+		fX += m_fCharWidthsInSourcePixels[c]/2;
 		SetX( fX );		// set X acording to offset
 		Sprite::Draw();
-		fX += m_fCharWidthsInSourcePixels[c] * GetZoom();
+		fX += m_fCharWidthsInSourcePixels[c]/2;
 	}
 
 	// set properties back to original

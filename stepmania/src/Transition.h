@@ -35,10 +35,10 @@ public:
 	virtual void SetOpened();
 	virtual void SetClosed();
 
-	virtual void OpenWipingRight( WindowMessage send_when_done );
-	virtual void OpenWipingLeft(  WindowMessage send_when_done );
-	virtual void CloseWipingRight(WindowMessage send_when_done );
-	virtual void CloseWipingLeft( WindowMessage send_when_done );
+	virtual void OpenWipingRight( WindowMessage send_when_done = SM_None );
+	virtual void OpenWipingLeft(  WindowMessage send_when_done = SM_None );
+	virtual void CloseWipingRight(WindowMessage send_when_done = SM_None );
+	virtual void CloseWipingLeft( WindowMessage send_when_done = SM_None );
 
 	bool IsClosed() { return m_TransitionState == closed; };
 	bool IsClosing() { return m_TransitionState == closing_right  ||  m_TransitionState == closing_left; };
