@@ -350,7 +350,7 @@ static void CheckSettings()
 #include "RageDisplay_D3D.h"
 #endif
 
-#if !defined(_XBOX)
+#if defined(SUPPORT_OPENGL)
 #include "RageDisplay_OGL.h"
 #endif
 
