@@ -60,6 +60,9 @@ public:
 	float GetCurFrame();
 	void SetFrame( float fNewFrame );
 	virtual int GetNumStates();
+	CString		GetDefaultAnimation() { return m_sDefaultAnimation; };
+	void		SetDefaultAnimation( CString sAnimation );
+	bool		m_bRevertToDefaultAnimation;
 
 
 private:
@@ -73,6 +76,7 @@ private:
 	typedef vector<RageModelVertex>	RageModelVertexVector;
 	vector<RageModelVertexVector>	m_vTempVerticesByBone;
 	float				m_fCurrFrame;
+	CString				m_sDefaultAnimation;
 };
 
 

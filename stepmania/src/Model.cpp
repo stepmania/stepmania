@@ -17,6 +17,7 @@
 #include "RageTextureManager.h"
 #include "IniFile.h"
 #include "RageFile.h"
+#include "RageLog.h"
 
 const float FRAMES_PER_SECOND = 30;
 const CString DEFAULT_ANIMATION_NAME = "default";
@@ -27,6 +28,7 @@ Model::Model ()
 	m_bTextureWrapping = true;
 	m_bUseZBuffer = true;
 	m_pCurAnimation = NULL;
+	m_bRevertToDefaultAnimation = false;
 }
 
 Model::~Model ()
@@ -676,6 +678,10 @@ void Model::DrawPrimitives()
 
 }
 
+void Model::SetDefaultAnimation( CString sAnimation )
+{
+	m_sDefaultAnimation = sAnimation;
+}
 
 void Model::PlayAnimation( CString sAniName )
 {
@@ -752,8 +758,16 @@ Model::AdvanceFrame (float dt)
 		return;	// bail early
 
 	m_fCurrFrame += FRAMES_PER_SECOND * dt;
-	if (m_fCurrFrame > (float) m_pCurAnimation->nTotalFrames)
-		m_fCurrFrame = 0.0f;
+	if (m_fCurrFrame >= (float) m_pCurAnimation->nTotalFrames)
+	{
+		if( (m_bRevertToDefaultAnimation) && (m_sDefaultAnimation != "") )
+		{
+			this->PlayAnimation( m_sDefaultAnimation );
+			m_fCurrFrame = 0.0f;
+			return;
+		}
+	}
+
 
 	int nBoneCount = (int)m_pCurAnimation->Bones.size();
 	int i, j;
@@ -870,6 +884,7 @@ void Model::Update( float fDelta )
 {
 	Actor::Update( fDelta );
 	AdvanceFrame( fDelta );
+
 	for( int i=0; i<(int)m_Materials.size(); i++ )
 		m_Materials[i].aniTexture.Update( fDelta );
 }
