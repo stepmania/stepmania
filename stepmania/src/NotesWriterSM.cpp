@@ -91,7 +91,7 @@ void NotesWriterSM::WriteGlobalTags(FILE *fp, const Song &out)
 
 }
 
-void NotesWriterSM::WriteSMNotesTag( const Steps &in, FILE* fp )
+void NotesWriterSM::WriteSMNotesTag( const Steps &in, FILE* fp, bool bSavingCache )
 {
 	fprintf( fp, "\n//---------------%s - %s----------------\n",
 		GameManager::NotesTypeToString(in.m_StepsType).c_str(), in.GetDescription().c_str() );
@@ -101,8 +101,9 @@ void NotesWriterSM::WriteSMNotesTag( const Steps &in, FILE* fp )
 	fprintf( fp, "     %s:\n", DifficultyToString(in.GetDifficulty()).c_str() );
 	fprintf( fp, "     %d:\n", in.GetMeter() );
 	
+	int MaxRadar = bSavingCache? NUM_RADAR_CATEGORIES:5;
 	CStringArray asRadarValues;
-	for( int r=0; r < NUM_RADAR_CATEGORIES; r++ )
+	for( int r=0; r < MaxRadar; r++ )
 		asRadarValues.push_back( ssprintf("%.3f", in.GetRadarValues()[r]) );
 	/* Don't append a newline here; it's added in NoteDataUtil::GetSMNoteDataString.
 	 * If we add it here, then every time we write unmodified data we'll add an extra
@@ -150,7 +151,7 @@ bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 		if( pNotes->IsAutogen() )
 			continue; /* don't write autogen notes */
 
-		WriteSMNotesTag( *out.m_apNotes[i], fp );
+		WriteSMNotesTag( *out.m_apNotes[i], fp, bSavingCache );
 	}
 
 	fclose( fp );

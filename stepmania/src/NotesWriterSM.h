@@ -6,7 +6,7 @@
 class NotesWriterSM
 {
 	void WriteGlobalTags(FILE *fp, const Song &out);
-	void WriteSMNotesTag( const Steps &in, FILE* fp );
+	void WriteSMNotesTag( const Steps &in, FILE* fp, bool bSavingCache );
 
 public:
 	bool Write( CString sPath, const Song &out, bool bSavingCache );
