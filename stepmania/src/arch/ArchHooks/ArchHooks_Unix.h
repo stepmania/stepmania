@@ -7,6 +7,8 @@ class ArchHooks_Unix: public ArchHooks
 public:
     ArchHooks_Unix();
     void DumpDebugInfo();
+
+	void SetTime( tm newtime );
 };
 
 #undef ARCH_HOOKS

@@ -108,6 +108,21 @@ void ArchHooks_Unix::DumpDebugInfo()
 	LOG->Info( "Threads library: %s", ThreadsVersion().c_str() );
 }
 
+void ArchHooks_Unix::SetTime( tm newtime )
+{
+	CString sCommand = ssprintf( "%02d%02d%02d%02d%04d.%02d",
+		newtime.tm_mon+1,
+		newtime.tm_mday,
+		newtime.tm_hour,
+		newtime.tm_min,
+		newtime.tm_year+1900,
+		newtime.tm_sec );
+
+	LOG->Trace( "executing '%s'", sCommand.c_str() ); 
+	system( sCommand );
+}
+
+
 /*
  * Copyright (c) 2003 by the person(s) listed below.  All rights reserved.
  *
