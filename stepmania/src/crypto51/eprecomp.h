@@ -37,33 +37,6 @@ public:
 	virtual Element CascadeExponentiate(const DL_GroupPrecomputation<Element> &group, const Integer &exponent, const DL_FixedBasePrecomputation<Element> &pc2, const Integer &exponent2) const =0;
 };
 
-template <class T>
-class DL_FixedBasePrecomputationImpl : public DL_FixedBasePrecomputation<T>
-{
-public:
-	typedef T Element;
-
-	// DL_FixedBasePrecomputation
-	bool IsInitialized() const
-		{return !m_bases.empty();}
-	void SetBase(const DL_GroupPrecomputation<Element> &group, const Element &base);
-	const Element & GetBase(const DL_GroupPrecomputation<Element> &group) const
-		{return group.NeedConversions() ? m_base : m_bases[0];}
-	void Precompute(const DL_GroupPrecomputation<Element> &group, unsigned int maxExpBits, unsigned int storage);
-	void Load(const DL_GroupPrecomputation<Element> &group, BufferedTransformation &storedPrecomputation);
-	void Save(const DL_GroupPrecomputation<Element> &group, BufferedTransformation &storedPrecomputation) const;
-	Element Exponentiate(const DL_GroupPrecomputation<Element> &group, const Integer &exponent) const;
-	Element CascadeExponentiate(const DL_GroupPrecomputation<Element> &group, const Integer &exponent, const DL_FixedBasePrecomputation<Element> &pc2, const Integer &exponent2) const;
-
-private:
-	void PrepareCascade(const DL_GroupPrecomputation<Element> &group, std::vector<BaseAndExponent<Element> > &eb, const Integer &exponent) const;
-
-	Element m_base;
-	unsigned int m_windowSize;
-	Integer m_exponentBase;			// what base to represent the exponent in
-	std::vector<Element> m_bases;	// precalculated bases
-};
-
 NAMESPACE_END
 
 #endif
