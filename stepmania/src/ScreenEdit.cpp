@@ -847,7 +847,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			g_AreaMenu.rows[tempo].enabled = bAreaSelected;
 			g_AreaMenu.rows[play].enabled = bAreaSelected;
 			g_AreaMenu.rows[record].enabled = bAreaSelected;
-			g_AreaMenu.rows[convert_beats_to_pause].enabled = bAreaSelected;
+			g_AreaMenu.rows[convert_beat_to_pause].enabled = bAreaSelected;
 			SCREENMAN->MiniMenu( &g_AreaMenu, SM_BackFromAreaMenu );
 		}
 		break;
