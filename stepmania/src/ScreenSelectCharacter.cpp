@@ -63,25 +63,34 @@ ScreenSelectCharacter::ScreenSelectCharacter() : Screen("ScreenSelectCharacter")
 {	
 	LOG->Trace( "ScreenSelectCharacter::ScreenSelectCharacter()" );	
 
-
 	switch( GAMESTATE->m_PlayMode )
 	{
 	//
-	// Must have at least one character installed to play battle or rave
+	// For Rave/Battle mode, we force the players to select characters
+	// (by not returning in this switch)
 	//
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
-		if(	GAMESTATE->m_pCharacters.empty() )
-		{
-			SCREENMAN->Prompt( SM_GoToPrevScreen, "No characters are installed.\n\nAt least one character must be installed\nto play this mode." );
-			return;
-		}
+		//
+		// The case of disallowing the playing of Rave/Battle mode when there
+		// are no characters should be handled by ScreenSelectXxx consulting
+		// GAMESTATE->IsPlayable(), and not here.
+		//
+		// if(	GAMESTATE->m_pCharacters.empty() )
+		// {
+		//	SCREENMAN->Prompt( SM_GoToPrevScreen, "No characters are installed.\n\nAt least one character must be installed\nto play this mode." );
+		//	return;
+		//}
+		ASSERT( !GAMESTATE->m_pCharacters.empty() );
 		break;
+
+	//
+	// Non Rave/Battle mode, just skip this screen if there are no
+	// characters or if this screen should be hidden
+	//
 	default:
-		//
-		//
-		if(	GAMESTATE->m_pCharacters.empty() || 		// Bail early if no characters
-			PREFSMAN->m_ShowDancingCharacters != PrefsManager::CO_SELECT )		// Bail early if this screen should be hidden
+		if(	GAMESTATE->m_pCharacters.empty() || 
+			PREFSMAN->m_ShowDancingCharacters != PrefsManager::CO_SELECT )
 		{
 			HandleScreenMessage( SM_GoToNextScreen );
 			return;
