@@ -7,7 +7,6 @@
 #include "RageException.h"
 #include "RageUtil.h"
 #include "LyricsLoader.h"
-#include "Regex.h"
 
 #include <fstream>
 #include <map>
