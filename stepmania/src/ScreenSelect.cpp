@@ -17,6 +17,7 @@
 #include "RageSounds.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
+#include "SongManager.h"
 #include "GameManager.h"
 #include "RageLog.h"
 #include "AnnouncerManager.h"
@@ -69,6 +70,9 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 
 		m_aCodes.push_back( code );
 		m_aCodeActions.push_back( CODE_ACTION(c) );
+		ModeChoice mc;
+		mc.Load( c, CODE_ACTION(c) );
+		m_aCodeChoices.push_back( mc );
 	}
 }
 
@@ -144,6 +148,7 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 				SOUND->PlayOnce( THEME->GetPathToS( asBits[1] ) );
 		}
 
+		m_aCodeChoices[i].Apply( MenuI.player );
 	}
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
 }

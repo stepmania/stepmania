@@ -46,6 +46,7 @@ protected:
 	vector<ModeChoice>	m_aModeChoices;		// derived classes should look here for what choices are available
 
 	vector<CodeItem>	m_aCodes;
+	vector<ModeChoice>	m_aCodeChoices;
 	vector<CString>		m_aCodeActions;
 };
 
