@@ -284,21 +284,17 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 		GetExplanationTitle( r );
 	}
 
-
 	CHECKPOINT;
 
 	PositionItems();
 	PositionUnderlines();
 	PositionIcons();
-	CHECKPOINT;
 	RefreshIcons();
-	CHECKPOINT;
 	PositionCursors();
-	CHECKPOINT;
 	UpdateEnabledDisabled();
-	CHECKPOINT;
 	for( p=0; p<NUM_PLAYERS; p++ )
 		OnChange( (PlayerNumber)p );
+
 	CHECKPOINT;
 
 	/* It's tweening into position, but on the initial tween-in we only want to

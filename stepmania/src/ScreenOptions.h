@@ -100,12 +100,15 @@ protected:
 	OptionRow*		m_OptionRow;
 
 protected:	// derived classes need access to these
-	int m_iSelectedOption[NUM_PLAYERS][MAX_OPTION_LINES];
-	int m_iCurrentRow[NUM_PLAYERS];
+	int				m_iSelectedOption[NUM_PLAYERS][MAX_OPTION_LINES];
+	int				m_iNumOptionRows;
+	int				m_iCurrentRow[NUM_PLAYERS];
+
+	OptionIcon		m_OptionIcons[NUM_PLAYERS][MAX_OPTION_LINES];
+
+private:
 
 	InputMode		m_InputMode;
-
-	int				m_iNumOptionRows;
 
 	ActorFrame		m_framePage;
 	AutoActor		m_sprPage;
@@ -122,7 +125,6 @@ protected:	// derived classes need access to these
 
 
 	OptionsCursor	m_Underline[NUM_PLAYERS][MAX_OPTION_LINES];
-	OptionIcon		m_OptionIcons[NUM_PLAYERS][MAX_OPTION_LINES];
 	OptionsCursor	m_Highlight[NUM_PLAYERS];
 	Sprite			m_sprLineHighlight[NUM_PLAYERS];
 
