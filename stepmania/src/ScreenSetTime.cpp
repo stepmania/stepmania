@@ -86,11 +86,16 @@ void ScreenSetTime::Update( float fDelta )
 	tm now;
 	localtime_r( &iNow, &now );
 	
-	m_textValue[hour].SetText(	ssprintf("%02d",now.tm_hour) );
+	int iPrettyHour = now.tm_hour%12;
+	if( iPrettyHour == 0 )
+		iPrettyHour = 12;
+	CString sPrettyHour = ssprintf( "%d %s", iPrettyHour, now.tm_hour>=12 ? "pm" : "am" );
+
+	m_textValue[hour].SetText(	sPrettyHour );
 	m_textValue[minute].SetText( ssprintf("%02d",now.tm_min) );
 	m_textValue[second].SetText( ssprintf("%02d",now.tm_sec) );
 	m_textValue[year].SetText(	ssprintf("%02d",now.tm_year+1900) );
-	m_textValue[month].SetText(	ssprintf("%02d",now.tm_mon) );
+	m_textValue[month].SetText(	ssprintf("%02d",now.tm_mon+1) );
 	m_textValue[day].SetText(	ssprintf("%02d",now.tm_mday) );
 }
 
