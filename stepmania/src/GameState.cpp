@@ -152,7 +152,7 @@ void GameState::Reset()
 
 	/* We may have cached trails from before everything was loaded (eg. from before
 	 * SongManager::UpdateBest could be called).  Erase the cache. */
-	SONGMAN->RegenRandomTrailEntries();
+	SONGMAN->FlushCaches();
 
 	g_vPlayedStageStats.clear();
 

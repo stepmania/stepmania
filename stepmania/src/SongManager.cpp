@@ -661,24 +661,18 @@ void SongManager::Cleanup()
 			pSteps->Compress();
 		}
 	}
+}
 
-	// FIXME
-	/* Why was this commented out?  If this isn't done, we'll have stale Steps* in
-	 * course caches, and we'll crash later. */
+/* Flush all Song*, Steps* and Course* caches.  This is called on reload, and when
+ * any of those are removed or changed.  This doesn't touch GAMESTATE and StageStats
+ * pointers, which are updated explicitly in Song::RevertFromDisk. */
+void SongManager::FlushCaches()
+{
 	/* Erase cached course info. */
 	for( unsigned i=0; i < m_pCourses.size(); i++ )
 		m_pCourses[i]->RegenTrails();
-	StepsID::FlushCache();
-}
 
-void SongManager::RegenRandomTrailEntries()
-{
-	/* Regenerate Trails so that any random entires get re-picked. */
-	for( unsigned i=0; i < m_pCourses.size(); i++ )
-	{
-		// FIXME: only regen entries that are random - not all entries
-		m_pCourses[i]->RegenTrails();
-	}
+	StepsID::FlushCache();
 }
 
 void SongManager::SetPreferences()

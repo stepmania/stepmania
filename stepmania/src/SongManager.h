@@ -25,7 +25,7 @@ public:
 	void InitSongsFromDisk( LoadingWindow *ld );
 	void FreeSongs();
 	void Cleanup();
-	void RegenRandomTrailEntries();
+	void FlushCaches();
 	void SetPreferences();
 
 	void LoadAllFromProfiles();	// song, edits
