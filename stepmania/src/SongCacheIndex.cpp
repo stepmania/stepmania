@@ -35,6 +35,8 @@ static void EmptyDir( CString dir )
 	{
 		if (0 == stricmp( asCacheFileNames[i], ".cvsignore" ))	// don't delete .cvsignore files
 			continue;
+		if (0 == stricmp( asCacheFileNames[i], "instructions.txt" ))	// don't delete the instructions file.
+			continue;
 
 		remove( dir + asCacheFileNames[i] );
 	}
