@@ -15,6 +15,7 @@ test -z "$LDFLAGS"   && DEFAULT_LDFLAGS=yes
 
 AC_PROG_CC
 AC_PROG_CXX
+AC_PROG_RANLIB
 
 test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="-Wall -W -Wno-unused -Wno-switch"
 test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="-Wall -W -Wno-unused -Wno-switch"
@@ -131,6 +132,8 @@ AC_TRY_COMPILE(	[#include <stdlib.h>
 		[AC_MSG_RESULT(yes)
 		 AC_DEFINE([NEED_CSTDLIB_WORKAROUND], 1, [cstdlib breaks llabs])]
 	      )
+
+AC_CHECK_LIB( pthread, pthread_mutex_timedlock, AC_DEFINE([HAVE_PTHREAD_MUTEX_TIMEDLOCK],1,[pthreads has pthread_mutex_timedlock()]) )
 
 AM_CONDITIONAL(HAVE_ALSA, test x$alsa != xfalse )
 AM_CONDITIONAL(HAVE_GTK, test "$enable_gtk2" != "no" )
