@@ -1601,7 +1601,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	//
 	if( type==IET_FIRST_PRESS && 
 		StyleI.IsValid() &&
-		GAMESTATE->IsPlayerEnabled( StyleI.player ) )
+		GAMESTATE->IsHumanPlayer( StyleI.player ) )
 	{
 		AbortGiveUp();
 		
