@@ -16,14 +16,14 @@
 #include "SDL.h"
 
 const int channels = 2;
-const int samplesize = 2 * channels; /* 16-bit */
+const int bytes_per_frame = 2 * channels; /* 16-bit */
 const int samplerate = 44100;
 
 /* The total write-ahead.  Don't make this *too* high; we fill the entire
  * buffer when we start playing, so it can cause frame skips.  This should be
  * high enough that sound cards won't skip. */
 const int buffersize_frames = 1024*8;	/* in frames */
-const int buffersize = buffersize_frames * samplesize; /* in bytes */
+const int buffersize = buffersize_frames * bytes_per_frame; /* in bytes */
 
 const int num_chunks = 8;
 const int chunksize = buffersize / num_chunks;
@@ -138,8 +138,8 @@ bool RageSound_DSound::stream::GetData(bool init)
 
 			const float fSilentSecondsInThisBuffer = max( 0, fSecondsBeforeStart-fSecondsUntilThisBuffer );
 			const int iSilentFramesInThisBuffer = int( fSilentSecondsInThisBuffer * str_ds->GetSampleRate() );
-			const int iActualSilentFramesInThisBuffer = min( iSilentFramesInThisBuffer, (int) bytes_left/samplesize );
-			const int iSilentBytesInThisBuffer = iActualSilentFramesInThisBuffer * samplesize;
+			const int iActualSilentFramesInThisBuffer = min( iSilentFramesInThisBuffer, (int) bytes_left/bytes_per_frame );
+			const int iSilentBytesInThisBuffer = iActualSilentFramesInThisBuffer * bytes_per_frame;
 
 			memset( locked_buf, 0, iSilentBytesInThisBuffer );
 			bytes_read += iSilentBytesInThisBuffer;
@@ -149,7 +149,7 @@ bool RageSound_DSound::stream::GetData(bool init)
 				start_time.SetZero();
 		}
 
-		unsigned got = snd->GetPCM( locked_buf+bytes_read, len-bytes_read, play_pos + (bytes_read/samplesize));
+		unsigned got = snd->GetPCM( locked_buf+bytes_read, len-bytes_read, play_pos + (bytes_read/bytes_per_frame));
 		bytes_read += got;
 
 		if( bytes_read < len )
