@@ -225,8 +225,8 @@ CString Background::CreateRandomBGA()
 			int i;
 			for( i=arrayPaths.size()-1; i>=0; i-- )
 				if( 0==stricmp(arrayPaths[i].Right(3),"cvs") || 0==stricmp(arrayPaths[i].Right(3),"danger") )
-					arrayPaths.erase(arrayPaths.begin()+i,
-												arrayPaths.begin()+i+1);
+					arrayPaths.erase(arrayPaths.begin()+i, arrayPaths.begin()+i+1);
+			break;
 		}
 	case PrefsManager::BGMODE_MOVIEVIS:
 		GetDirListing( VISUALIZATIONS_DIR + "*.avi", arrayPaths, false, true );
