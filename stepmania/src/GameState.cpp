@@ -1900,7 +1900,7 @@ public:
 	static int SetCurrentCourse( T* p, lua_State *L )
 	{ 
 		if( lua_isnil(L,1) ) { p->m_pCurCourse = NULL; }
-		else { Song *pC = Luna<Course>::check(L,1); p->m_pCurCourse = pC; }
+		else { Course *pC = Luna<Course>::check(L,1); p->m_pCurCourse = pC; }
 		return 0;
 	}
 	static int SetTemporaryEventMode( T* p, lua_State *L )	{ p->m_bTemporaryEventMode = BArg(1); return 0; }
