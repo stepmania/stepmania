@@ -30,6 +30,16 @@ void SMLoader::LoadFromSMTokens(
 	out.m_NotesType = GameManager::StringToNotesType(sNotesType);
 	out.SetDescription(sDescription);
 	out.SetDifficulty(StringToDifficulty( sDifficulty ));
+
+	// HACK:  We used to store SMANIAC as DIFFICULTY_HARD with special description.
+	// Now, it has it's own DIFFICULTY_CHALLENGE
+	if( sDescription.CompareNoCase("smaniac") == 0 ) 
+		out.SetDifficulty( DIFFICULTY_CHALLENGE );
+	// HACK:  We used to store CHALLENGE as DIFFICULTY_HARD with special description.
+	// Now, it has it's own DIFFICULTY_CHALLENGE
+	if( sDescription.CompareNoCase("challenge") == 0 ) 
+		out.SetDifficulty( DIFFICULTY_CHALLENGE );
+
 	out.SetMeter(atoi(sMeter));
 	CStringArray saValues;
 	split( sRadarValues, ",", saValues, true );

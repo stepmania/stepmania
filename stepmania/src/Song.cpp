@@ -692,6 +692,9 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 		ttab.push_back(TitleTrans("^Sakura$", "", "", "&sakura;", "", "") );
 
 		/* XXX: "door of magic" (tobira no mahou) -> 魔法の扉 */
+        ttab.push_back(TitleTrans("^Door of Magic$", "", "", "&mahou1;&mahou2;&hno;&tobira;", "", "") ); 
+        ttab.push_back(TitleTrans("^mahou no tobira$", "", "", "&mahou1;&mahou2;&hno;&tobira;", "", "") ); 
+
 		/* XXX スペース★マコのテーマ (space? special? * "mako"?'s team) (title or subtitle, not sure) */
 
 		/* Subtitles: */
