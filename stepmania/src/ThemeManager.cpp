@@ -38,7 +38,8 @@ ThemeManager::ThemeManager()
 	m_fNextReloadTicks = 0;
 
 	m_sCurThemeName = BASE_THEME_NAME;	// Use the base theme for now.  It's up to PrefsManager to change this.
-
+	m_uHashForCurThemeMetrics = m_uHashForBaseThemeMetrics = 0;
+	
 	CStringArray arrayThemeNames;
 	GetAllThemeNames( arrayThemeNames );
 }
@@ -284,8 +285,11 @@ try_metric_again:
 		if( m_uHashForCurThemeMetrics != GetHashForFile(sCurMetricPath)  ||
 			m_uHashForBaseThemeMetrics != GetHashForFile(sDefaultMetricPath) )
 		{
-			LOG->Warn( "Metrics file is out of date.  Reloading..." );
-//			MessageBeep( MB_OK );
+			if(m_uHashForBaseThemeMetrics)
+			{
+				LOG->Warn( "Metrics file is out of date.  Reloading..." );
+//				MessageBeep( MB_OK );
+			}
 			SwitchTheme(m_sCurThemeName);	// force a reload of the metrics cache
 		}
 	}
