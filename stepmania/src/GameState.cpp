@@ -148,6 +148,14 @@ void GameState::ResetStageStatistics()
 {
 	m_iSongsIntoCourse = 0;
 
+	switch( m_PlayMode )
+	{
+	case PLAY_MODE_ONI:
+	case PLAY_MODE_ENDLESS:
+		m_apSongsPlayed.RemoveAll();
+		break;
+	}
+
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		int s;

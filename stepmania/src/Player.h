@@ -47,9 +47,8 @@ public:
 	void Step( int col );
 
 
-	void	SetOverrideAdd( float fAdd )	{ m_NoteField.m_fOverrideAdd = fAdd; };
-	float	GetOverrideAdd()				{ return m_NoteField.m_fOverrideAdd; };
-
+	void	FadeToFail()	{ m_NoteField.FadeToFail(); };
+	
 protected:
 	int UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
 	void OnRowDestroyed( int col, int iStepIndex );

@@ -38,7 +38,7 @@ public:
 
 	float	m_fBeginMarker, m_fEndMarker;	// only used with MODE_EDIT
 
-	float  m_fOverrideAdd;	// -1 of not overriding
+	void FadeToFail();
 
 protected:
 	inline void CreateTapNoteInstance( ColorNoteInstance &cni, const int iCol, const float fIndex, const D3DXCOLOR color = D3DXCOLOR(-1,-1,-1,-1) );
@@ -47,6 +47,8 @@ protected:
 	inline void DrawMarkerBar( const int iIndex );
 	inline void DrawBPMText( const int iIndex, const float fBPM );
 	inline void DrawFreezeText( const int iIndex, const float fBPM );
+
+	float	m_fPercentFadeToFail;	// -1 of not fading to fail
 
 	PlayerNumber	m_PlayerNumber;
 	int				m_iPixelsToDrawBehind;

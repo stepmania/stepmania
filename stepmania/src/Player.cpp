@@ -69,16 +69,19 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 
 	StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 
+	// init scoring
+	NoteDataWithScoring::Init();
+
 	// copy note data
 	this->CopyAll( pNoteData );
+	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  GAMESTATE->m_fSecondsBeforeFail[m_PlayerNumber] != -1 )	// Oni dead
+		this->ClearAll();
 
 
 	m_iNumTapNotes = pNoteData->GetNumTapNotes();
 	m_iTapNotesHit = 0;
 	m_iMeter = GAMESTATE->m_pCurNotes[m_PlayerNumber]->m_iMeter;
 
-	// init scoring
-	NoteDataWithScoring::Init();
 
 
 	if( m_pScore )
@@ -130,6 +133,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 void Player::Update( float fDeltaTime )
 {
 	//LOG->Trace( "Player::Update(%f)", fDeltaTime );
+
 
 	const float fSongBeat = GAMESTATE->m_fSongBeat;
 
@@ -274,6 +278,9 @@ void Player::DrawPrimitives()
 
 void Player::Step( int col )
 {
+	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  GAMESTATE->m_fSecondsBeforeFail[m_PlayerNumber] != -1 )	// Oni dead
+		return;	// do nothing
+
 	//LOG->Trace( "Player::HandlePlayerStep()" );
 
 	ASSERT( col >= 0  &&  col <= m_iNumTracks );

@@ -17,6 +17,7 @@ struct NoteDataWithScoring : public NoteData
 {
 	NoteDataWithScoring();
 	void Init();
+	void InitScoringData();
 
 	// maintain this extra data in addition to the NoteData
 	TapNoteScore	m_TapNoteScores[MAX_NOTE_TRACKS][MAX_TAP_NOTE_ROWS];

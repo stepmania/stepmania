@@ -17,7 +17,7 @@
 #include "RageLog.h"
 
 const float NUMBER_X = 16;
-const float NUMBER_Y = 24;
+const float NUMBER_Y = 10;
 
 const float ST_X = NUMBER_X+4;
 const float ST_Y = NUMBER_Y;

@@ -130,10 +130,10 @@ void ScreenSelectCourse::TweenOnScreen()
 
 void ScreenSelectCourse::TweenOffScreen()
 {
-	m_CourseInfoFrame.BeginTweening( TWEEN_TIME, Actor::TWEEN_BOUNCE_END );
+	m_CourseInfoFrame.BeginTweeningQueued( TWEEN_TIME*1.5f, Actor::TWEEN_BOUNCE_BEGIN );
 	m_CourseInfoFrame.SetTweenXY( COURSE_INFO_FRAME_X - 400, COURSE_INFO_FRAME_Y );
 
-	m_CourseContentsFrame.BeginTweeningQueued( TWEEN_TIME, Actor::TWEEN_BOUNCE_END );
+	m_CourseContentsFrame.BeginTweeningQueued( TWEEN_TIME, Actor::TWEEN_BOUNCE_BEGIN );
 	m_CourseContentsFrame.SetTweenXY( COURSE_CONTENTS_FRAME_X - 400, COURSE_CONTENTS_FRAME_Y );
 
 	m_MusicWheel.TweenOffScreen();

@@ -437,6 +437,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				m_textOniPercent[p].SetEffectGlowing( 1.0f );
 
 				float fPercentDancePoints =  iActualDancePoints[p] / (float)iPossibleDancePoints[p] + 0.0001f;	// correct for rounding errors
+				fPercentDancePoints = max( 0, fPercentDancePoints );
 				m_textOniPercent[p].SetText( ssprintf("%.1f%%", fPercentDancePoints*100) );
 				this->AddSubActor( &m_textOniPercent[p] );
 

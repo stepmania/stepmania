@@ -21,6 +21,12 @@ NoteDataWithScoring::NoteDataWithScoring()
 
 void NoteDataWithScoring::Init()
 {
+	NoteData::Init();
+	InitScoringData();
+}
+
+void NoteDataWithScoring::InitScoringData()
+{
 	for( int t=0; t<MAX_NOTE_TRACKS; t++ )
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )
 			m_TapNoteScores[t][i] = TNS_NONE;
@@ -31,7 +37,6 @@ void NoteDataWithScoring::Init()
 		m_fHoldNoteLife[i] = 1.0f;
 	}
 }
-
 
 int NoteDataWithScoring::GetNumSuccessfulTapNotes( const float fStartBeat, const float fEndBeat )			
 { 

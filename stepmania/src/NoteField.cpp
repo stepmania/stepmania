@@ -38,7 +38,7 @@ NoteField::NoteField()
 
 	m_fBeginMarker = m_fEndMarker = -1;
 
-	m_fOverrideAdd = -1;
+	m_fPercentFadeToFail = -1;
 }
 
 
@@ -47,6 +47,8 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iPixelsToDrawBeh
 	m_PlayerNumber = pn;
 	m_iPixelsToDrawBehind = iPixelsToDrawBehind;
 	m_iPixelsToDrawAhead = iPixelsToDrawAhead;
+
+	m_fPercentFadeToFail = -1;
 
 	NoteDataWithScoring::Init();
 
@@ -77,6 +79,9 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iPixelsToDrawBeh
 void NoteField::Update( float fDeltaTime )
 {
 	m_rectMarkerBar.Update( fDeltaTime );
+
+	if( m_fPercentFadeToFail >= 0 )
+		m_fPercentFadeToFail = min( m_fPercentFadeToFail + fDeltaTime/3, 1 );	// take 3 seconds to totally fade
 }
 
 
@@ -88,7 +93,10 @@ void NoteField::CreateTapNoteInstance( ColorNoteInstance &cni, const int iCol, c
 	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 	const float fRotation	= ArrowGetRotation(	m_PlayerNumber, iCol, fYOffset );
 	const float fXPos		= ArrowGetXPos(		m_PlayerNumber, iCol, fYOffset );
-	const float fAlpha		= ArrowGetAlpha(	m_PlayerNumber, fYPos );
+	      float fAlpha		= ArrowGetAlpha(	m_PlayerNumber, fYPos );
+
+	if( m_fPercentFadeToFail != -1 )
+		fAlpha = 1-m_fPercentFadeToFail;
 
 	D3DXCOLOR colorLeading, colorTrailing;	// of the color part.  Alpha here be overwritten with fAlpha!
 	if( color.a == -1 )	// indicated "NULL"
@@ -97,8 +105,6 @@ void NoteField::CreateTapNoteInstance( ColorNoteInstance &cni, const int iCol, c
 		colorLeading = colorTrailing = color;
 
 	float fAddAlpha = m_ColorNote[iCol].GetAddAlphaFromDiffuseAlpha( fAlpha );
-	if( m_fOverrideAdd != -1 )
-		fAddAlpha = m_fOverrideAdd;
 	int iGrayPartFrameNo = m_ColorNote[iCol].GetGrayPartFrameNoFromIndexAndBeat( roundf(fIndex), GAMESTATE->m_fSongBeat );
 
 
@@ -114,7 +120,10 @@ void NoteField::CreateHoldNoteInstance( ColorNoteInstance &cni, const bool bActi
 	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 	const float fRotation	= ArrowGetRotation(	m_PlayerNumber, iCol, fYOffset );
 	const float fXPos		= ArrowGetXPos(		m_PlayerNumber, iCol, fYOffset );
-	const float fAlpha		= ArrowGetAlpha(	m_PlayerNumber, fYPos );
+	      float fAlpha		= ArrowGetAlpha(	m_PlayerNumber, fYPos );
+
+	if( m_fPercentFadeToFail != -1 )
+		fAlpha = 1-m_fPercentFadeToFail;
 
 	int iGrayPartFrameNo;
 	if( bActive )
@@ -129,8 +138,6 @@ void NoteField::CreateHoldNoteInstance( ColorNoteInstance &cni, const bool bActi
 	D3DXCOLOR colorTrailing = colorLeading;
 
 	float fAddAlpha = m_ColorNote[iCol].GetAddAlphaFromDiffuseAlpha( fAlpha );
-	if( m_fOverrideAdd != -1 )
-		fAddAlpha = m_fOverrideAdd;
 
 	ColorNoteInstance instance = { fXPos, fYPos, fRotation, fAlpha, colorLeading, colorTrailing, fAddAlpha, iGrayPartFrameNo };
 	cni = instance;
@@ -373,3 +380,8 @@ void NoteField::RemoveTapNoteRow( int iIndex )
 		m_TapNotes[c][iIndex] = '0';
 }
 
+void NoteField::FadeToFail()
+{
+	m_fPercentFadeToFail = max( 0.0f, m_fPercentFadeToFail );	// this will slowly increase every Update()
+		// don't fade all over again if this is called twice
+}

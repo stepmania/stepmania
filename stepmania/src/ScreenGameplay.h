@@ -110,7 +110,11 @@ private:
 
 	DifficultyBanner	m_DifficultyBanner[NUM_PLAYERS];
 
+	Sprite				m_sprOniGameOver[NUM_PLAYERS];
+	void				ShowOniGameOver( PlayerNumber p );
+
 	RandomSample	m_soundFail;
+	RandomSample	m_soundOniDie;
 	RandomSample	m_announcerReady;
 	RandomSample	m_announcerHereWeGo;
 	RandomSample	m_announcerDanger;
@@ -127,9 +131,6 @@ private:
 	RandomSample	m_announcer900Combo;
 	RandomSample	m_announcer1000Combo;
 	RandomSample	m_announcerComboStopped;
-	RandomStream	m_announcerCleared;
-	RandomStream	m_announcerFailComment;
-	RandomStream	m_announcerGameOver;
 
 	RandomSample	m_soundAssistTick;
 

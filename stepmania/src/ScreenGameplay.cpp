@@ -144,18 +144,25 @@ ScreenGameplay::ScreenGameplay()
 	this->AddSubActor( &m_Background );
 
 
-	m_OniFade.SetOpened();
-	this->AddSubActor( &m_OniFade );
-
-
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
 
-		m_Player[p].SetX( (float) GAMESTATE->GetCurrentStyleDef()->m_iCenterX[p] );
+		float fPlayerX = (float) GAMESTATE->GetCurrentStyleDef()->m_iCenterX[p];
+		m_Player[p].SetX( fPlayerX );
 		this->AddSubActor( &m_Player[p] );
+	
+		m_sprOniGameOver[p].Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_ONI_GAMEOVER) );
+		m_sprOniGameOver[p].SetX( fPlayerX );
+		m_sprOniGameOver[p].SetY( SCREEN_TOP - m_sprOniGameOver[p].GetZoomedHeight()/2 );
+		m_sprOniGameOver[p].SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// 0 alpha so we don't waste time drawing while not visible
+		this->AddSubActor( &m_sprOniGameOver[p] );
 	}
+
+
+	m_OniFade.SetOpened();
+	this->AddSubActor( &m_OniFade );
 
 
 	//////////////////////////////////
@@ -397,6 +404,7 @@ ScreenGameplay::ScreenGameplay()
 
 
 	m_soundFail.Load(			THEME->GetPathTo(SOUND_GAMEPLAY_FAILED) );
+	m_soundOniDie.Load(			THEME->GetPathTo(SOUND_GAMEPLAY_ONI_DIE) );
 	m_announcerReady.Load(		ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_READY) );
 	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 		m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_HERE_WE_GO_EXTRA) );
@@ -420,8 +428,6 @@ ScreenGameplay::ScreenGameplay()
 	m_announcer1000Combo.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_1000_COMBO) );
 	m_announcerComboStopped.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_COMBO_STOPPED) );
 
-	m_announcerCleared.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_CLEARED) );
-	m_announcerFailComment.Load(ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_FAILED) );
 
 	m_soundAssistTick.Load(		THEME->GetPathTo(SOUND_GAMEPLAY_ASSIST_TICK) );
 
@@ -522,6 +528,14 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
+
+		// reset oni game over graphic
+		m_sprOniGameOver[p].SetY( SCREEN_TOP - m_sprOniGameOver[p].GetZoomedHeight()/2 );
+		m_sprOniGameOver[p].SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// 0 alpha so we don't waste time drawing while not visible
+
+		if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  GAMESTATE->m_fSecondsBeforeFail[p] != -1 )	// already failed
+			ShowOniGameOver((PlayerNumber)p);
+
 
 		m_DifficultyBanner[p].SetFromNotes( PlayerNumber(p), GAMESTATE->m_pCurNotes[p] );
 
@@ -636,13 +650,32 @@ void ScreenGameplay::Update( float fDeltaTime )
 		switch( GAMESTATE->m_SongOptions.m_FailType )
 		{
 		case SongOptions::FAIL_ARCADE:
-			if( AllAreFailing() )
-				SCREENMAN->SendMessageToTopScreen( SM_BeginFailed, 0 );
+			switch( GAMESTATE->m_SongOptions.m_LifeType )
+			{
+			case SongOptions::LIFE_BAR:
+				if( AllAreFailing() )	SCREENMAN->SendMessageToTopScreen( SM_BeginFailed, 0 );
+				if( AllAreInDanger() )	m_Background.TurnDangerOn();
+				else					m_Background.TurnDangerOff();
+				break;
+			case SongOptions::LIFE_BATTERY:
+				if( AllFailedEarlier() )SCREENMAN->SendMessageToTopScreen( SM_BeginFailed, 0 );
+				if( AllAreInDanger() )	m_Background.TurnDangerOn();
+				else					m_Background.TurnDangerOff();
 
-			if( AllAreInDanger() )	
-				m_Background.TurnDangerOn();
-			else
-				m_Background.TurnDangerOff();
+				// check for individual fail
+				for( int p=0; p<NUM_PLAYERS; p++ )
+					if( GAMESTATE->IsPlayerEnabled(p) )
+						if( m_pLifeMeter[p]->IsFailing()  &&  GAMESTATE->m_fSecondsBeforeFail[p] == -1 )	// not yet failed
+						{
+							// kill them!
+							GAMESTATE->m_fSecondsBeforeFail[p] = GAMESTATE->GetElapsedSeconds();
+							m_soundOniDie.PlayRandom();
+							ShowOniGameOver((PlayerNumber)p);
+							m_Player[p].Init();		// remove all notes and scoring
+							m_Player[p].FadeToFail();	// tell the NoteField to fade to white
+						}
+				break;
+			}
 			break;
 		case SongOptions::FAIL_END_OF_SONG:
 		case SongOptions::FAIL_OFF:
@@ -1017,7 +1050,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				else
 				{
 					m_StarWipe.CloseWipingRight( SM_ShowCleared );
-					m_announcerCleared.PlayRandom();	// crowd cheer
+					SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_CLEARED) );
 				}
 			}
 		}
@@ -1154,6 +1187,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_DancingState = STATE_OUTRO;
 		m_soundMusic.Pause();
 		m_StarWipe.CloseWipingRight( SM_None );
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			if( GAMESTATE->IsPlayerEnabled(p) )
+				m_Player[p].FadeToFail();
 
 		this->SendScreenMessage( SM_ShowFailed, 0.2f );
 		break;
@@ -1193,7 +1229,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SendMessageToTopScreen( SM_HideFailed, 3.0f );
 		break;
 	case SM_PlayFailComment:
-		m_announcerFailComment.PlayRandom();
+		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_FAILED) );
 		break;
 	case SM_HideFailed:
 		m_sprFailed.StopTweening();
@@ -1236,3 +1272,10 @@ void ScreenGameplay::TweenOffScreen()
 
 }
 
+void ScreenGameplay::ShowOniGameOver( PlayerNumber p )
+{
+	m_sprOniGameOver[p].SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+	m_sprOniGameOver[p].BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
+	m_sprOniGameOver[p].SetTweenY( CENTER_Y );
+	m_sprOniGameOver[p].SetEffectBobbing( D3DXVECTOR3(0,6,0), 4 );
+}

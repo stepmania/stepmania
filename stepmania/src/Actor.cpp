@@ -116,7 +116,7 @@ void Actor::Draw()		// set the world matrix and calculate actor properties, the 
 	case bobbing:
 		{
 		float fPercentThroughBounce = m_fTimeIntoBounce / m_fBouncePeriod;
-		float fPercentOffset = sinf( fPercentThroughBounce*D3DX_PI ); 
+		float fPercentOffset = sinf( fPercentThroughBounce*D3DX_PI*2 ); 
 		m_temp_pos += m_vectBounce * fPercentOffset;
 		}
 		break;
