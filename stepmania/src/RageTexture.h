@@ -83,8 +83,8 @@ public:
 	const RectF *GetTextureCoordRect( int frameNo ) const;
 	int   GetNumFrames() const { return m_iFramesWide*m_iFramesHigh; }
 
-	/* Used by RageTextureManager: */
-	enum TexPolicy { TEX_DEFAULT, TEX_CACHED, TEX_VOLATILE } m_Policy;
+	/* Used by RageTextureManager.  Order is important; see RageTextureManager.cpp. */
+	enum TexPolicy { TEX_CACHED, TEX_VOLATILE, TEX_DEFAULT } m_Policy;
 	int		m_iRefCount;
 	bool	m_bWasUsed;
 
