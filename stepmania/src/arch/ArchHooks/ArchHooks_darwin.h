@@ -21,7 +21,6 @@ public:
     void DumpDebugInfo();
     void MessageBoxOK(CString sMessage, CString ID = "");
     MessageBoxResult MessageBoxAbortRetryIgnore(CString sMessage, CString ID = "");
-    void Update(float delta);
 };
 
 #undef ARCH_HOOKS

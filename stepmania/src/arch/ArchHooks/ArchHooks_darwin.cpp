@@ -11,11 +11,11 @@
 #include "PrefsManager.h"
 #include "ArchHooks_darwin.h"
 #include "RageLog.h"
+#include "RageThreads.h"
 #include "archutils/Darwin/Crash.h"
 #include "archutils/Unix/CrashHandler.h"
 #include "archutils/Unix/SignalHandler.h"
 #include <Carbon/Carbon.h>
-#include <QuickTime/QuickTime.h>
 
 /* You would think that these would be defined somewhere. */
 enum {
@@ -45,10 +45,6 @@ ArchHooks_darwin::ArchHooks_darwin()
         exit(0);
     }
     InstallExceptionHandler(HandleException);
-    ASSERT(GetMoviesError() == noErr);
-    SetMoviesErrorProc(HandleQTMovieError, 0);
-    err = EnterMovies();
-    ASSERT(err == noErr);
 }
 
 #define CASE_GESTALT_M(str,code,result) case gestalt##code: str = result; break
@@ -239,37 +235,27 @@ void ArchHooks_darwin::MessageBoxOK(CString sMessage, CString ID)
     if (allowHush && MessageIsIgnored(ID))
         return;
 
-    CFStringRef boxName = CFStringCreateWithCString(NULL, "Don't show again", kCFStringEncodingASCII);
+    CFStringRef noShow = CFStringCreateWithCString(NULL, "Don't show again", kCFStringEncodingASCII);
     CFStringRef error = CFStringCreateWithCString(NULL, sMessage.c_str(), kCFStringEncodingASCII);
     CFStringRef OK = CFStringCreateWithCString(NULL, "OK", kCFStringEncodingASCII);
-    struct AlertStdCFStringAlertParamRec params = {kStdCFStringAlertVersionOne, true, false, OK, NULL, NULL,
+    struct AlertStdCFStringAlertParamRec params = {kStdCFStringAlertVersionOne, true, false, OK, NULL,
+        (allowHush ? noShow : NULL),
         kAlertStdAlertOKButton, NULL, kWindowAlertPositionParentWindowScreen, NULL};
     DialogRef dialog;
     CreateStandardAlert(kAlertNoteAlert, error, NULL, &params, &dialog);
     OSErr err;
-    ControlRef box;
-    SInt16 unused;
-    
-    if (allowHush)
-    {
-        Rect boxBounds = {20, 40, 300, 25}; /* again, whatever */
-        CreateCheckBoxControl(GetDialogWindow(dialog), &boxBounds, boxName, 0, true, &box);
-        GetBestControlRect(box, &boxBounds, &unused);
-        OSStatus status = InsertDialogItem(dialog, 0, kCheckBoxDialogItem, (Handle)box, &boxBounds);
-        ASSERT(status == noErr);
-    }
+    SInt16 result;
+
     err = AutoSizeDialog(dialog);
     ASSERT(err == noErr);
-    
-    RunStandardAlert(dialog, NULL, &unused);
-    if (allowHush && GetControl32BitValue(box))
-	{
-        LOG->Trace("Ignore dialog ID, \"%s\"", ID.c_str());
+
+    RunStandardAlert(dialog, NULL, &result);
+    if (result != kAlertStdAlertOKButton && allowHush)
         IgnoreMessage(ID);
-    }
+        
     CFRelease(error);
     CFRelease(OK);
-    CFRelease(boxName);
+    CFRelease(noShow);
 }
 
 ArchHooks::MessageBoxResult ArchHooks_darwin::MessageBoxAbortRetryIgnore(CString sMessage, CString ID)
@@ -304,21 +290,4 @@ ArchHooks::MessageBoxResult ArchHooks_darwin::MessageBoxAbortRetryIgnore(CString
     CFRelease(i);
     CFRelease(r);
     return result;
-}
-
-inline void ArchHooks_darwin::Update(float delta)
-{
-#pragma unused(delta)
-    MoviesTask(NULL, 0);
-    OSErr err = GetMoviesError();
-    if (__builtin_expect(err, noErr))
-        RageException::Throw("MoviesTask failed with error: %d", err);
-}
-
-void HandleQTMovieError(OSErr err, long refcon)
-{
-    LOG->Warn("A movie error occured. Error number %d.", err);
-#if defined(DEBUG)
-    ASSERT(0);
-#endif
 }
