@@ -16,7 +16,6 @@
 #include "archutils/Unix/CrashHandler.h"
 #endif
 
-#include "SDL_utils.h"
 
 static bool IsFatalSignal( int signal )
 {
