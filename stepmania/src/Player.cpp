@@ -886,7 +886,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 		if( score != TNS_NONE )
 			m_NoteData.SetTapNoteOffset(col, iIndexOverlappingNote, -fNoteOffset);
 
-		if( score != TNS_NONE  &&  tn.bKeysound )
+		if( tn.bKeysound )
 		{
 			m_vKeysounds[tn.iKeysoundIndex].Play();
 		}
