@@ -99,9 +99,13 @@ void Player::Init(
 	JUDGMENT_X.Load(sType,JUDGMENT_X_NAME,NUM_PLAYERS,2);
 	JUDGMENT_Y.Load(sType,"JudgmentY");
 	JUDGMENT_Y_REVERSE.Load(sType,"JudgmentYReverse");
+	JUDGMENT_CENTERED_ADDY.Load(sType,"JudgmentCenteredAddY");
+	JUDGMENT_CENTERED_ADDY_REVERSE.Load(sType,"JudgmentCenteredAddYReverse");
 	COMBO_X.Load(sType,COMBO_X_NAME,NUM_PLAYERS,2);
 	COMBO_Y.Load(sType,"ComboY");
 	COMBO_Y_REVERSE.Load(sType,"ComboYReverse");
+	COMBO_CENTERED_ADDY.Load(sType,"ComboCenteredAddY");
+	COMBO_CENTERED_ADDY_REVERSE.Load(sType,"ComboCenteredAddYReverse");
 	ATTACK_DISPLAY_X.Load(sType,ATTACK_DISPLAY_X_NAME,NUM_PLAYERS,2);
 	ATTACK_DISPLAY_Y.Load(sType,"AttackDisplayY");
 	ATTACK_DISPLAY_Y_REVERSE.Load(sType,"AttackDisplayYReverse");
@@ -244,9 +248,9 @@ void Player::Load( const NoteData& noteData )
 	m_Combo.SetX( COMBO_X.GetValue(pn,bPlayerUsingBothSides) );
 	m_Combo.SetY( bReverse ? COMBO_Y_REVERSE : COMBO_Y );
 	m_AttackDisplay.SetX( ATTACK_DISPLAY_X.GetValue(pn,bPlayerUsingBothSides) - 40 );
-	m_AttackDisplay.SetY( bReverse ? ATTACK_DISPLAY_Y_REVERSE : ATTACK_DISPLAY_Y );
+	// set this in Update //m_AttackDisplay.SetY( bReverse ? ATTACK_DISPLAY_Y_REVERSE : ATTACK_DISPLAY_Y );
 	m_Judgment.SetX( JUDGMENT_X.GetValue(pn,bPlayerUsingBothSides) );
-	m_Judgment.SetY( bReverse ? JUDGMENT_Y_REVERSE : JUDGMENT_Y );
+	// set this in Update //m_Judgment.SetY( bReverse ? JUDGMENT_Y_REVERSE : JUDGMENT_Y );
 
 	// Need to set Y positions of all these elements in Update since
 	// they change depending on PlayerOptions.
@@ -318,6 +322,18 @@ void Player::Update( float fDeltaTime )
 	// NoteField accounts for reverse on its own now.
 	//if( m_pNoteField )
 	//	m_pNoteField->SetY( fGrayYPos );
+
+	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetReversePercentForColumn(0) == 1;
+	float fPercentCentered = m_pPlayerState->m_CurrentPlayerOptions.m_fScrolls[PlayerOptions::SCROLL_CENTERED];
+	m_Combo.SetY( 
+		bReverse ? 
+		COMBO_Y_REVERSE + fPercentCentered * COMBO_CENTERED_ADDY_REVERSE : 
+		COMBO_Y + fPercentCentered * COMBO_CENTERED_ADDY );
+	m_Judgment.SetY(
+		bReverse ? 
+		JUDGMENT_Y_REVERSE + fPercentCentered * JUDGMENT_CENTERED_ADDY_REVERSE : 
+		JUDGMENT_Y + fPercentCentered * JUDGMENT_CENTERED_ADDY );
+
 
 	float fMiniPercent = m_pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI];
 	float fNoteFieldZoom = 1 - fMiniPercent*0.5f;

@@ -239,8 +239,7 @@ void PlayerOptions::FromString( CString sOptions )
 		}
 		sBit = asParts[asParts.size()-1];
 
-#define SET_FLOAT( opt ) \
-		{ m_ ## opt = level; m_Speed ## opt = speed; }
+#define SET_FLOAT( opt ) { m_ ## opt = level; m_Speed ## opt = speed; }
 		const bool on = (level > 0.5f);
 			 if( sBit == "clearall" )	Init();
 		else if( sBit == "boost" )		SET_FLOAT( fAccels[ACCEL_BOOST] )

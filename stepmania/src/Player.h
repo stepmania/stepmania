@@ -113,9 +113,13 @@ protected:
 	ThemeMetric2D<float>	JUDGMENT_X;
 	ThemeMetric<float>		JUDGMENT_Y;
 	ThemeMetric<float>		JUDGMENT_Y_REVERSE;
+	ThemeMetric<float>		JUDGMENT_CENTERED_ADDY;
+	ThemeMetric<float>		JUDGMENT_CENTERED_ADDY_REVERSE;
 	ThemeMetric2D<float>	COMBO_X;
 	ThemeMetric<float>		COMBO_Y;
 	ThemeMetric<float>		COMBO_Y_REVERSE;
+	ThemeMetric<float>		COMBO_CENTERED_ADDY;
+	ThemeMetric<float>		COMBO_CENTERED_ADDY_REVERSE;
 	ThemeMetric2D<float>	ATTACK_DISPLAY_X;
 	ThemeMetric<float>		ATTACK_DISPLAY_Y;
 	ThemeMetric<float>		ATTACK_DISPLAY_Y_REVERSE;
