@@ -190,3 +190,8 @@ void BPMDisplay::SetBPM( const Song* pSong )
 		ASSERT(0);
 	}
 }
+
+void BPMDisplay::DrawPrimitives()
+{
+	ActorFrame::DrawPrimitives();
+}

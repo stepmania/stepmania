@@ -1,8 +1,8 @@
-#ifndef SCREENPLAYEROPTIONS_H
-#define SCREENPLAYEROPTIONS_H
+#ifndef ScreenPlayerOptions2_H
+#define ScreenPlayerOptions2_H
 /*
 -----------------------------------------------------------------------------
- Class: ScreenPlayerOptions
+ Class: ScreenPlayerOptions2
 
  Desc: Select a song.
 
@@ -15,10 +15,10 @@
 #include "PrefsManager.h"
 
 
-class ScreenPlayerOptions : public ScreenOptions
+class ScreenPlayerOptions2 : public ScreenOptions
 {
 public:
-	ScreenPlayerOptions();
+	ScreenPlayerOptions2();
 
 	virtual void Update( float fDelta );
 	virtual void DrawPrimitives();
@@ -31,6 +31,10 @@ private:
 
 	void GoToNextState();
 	void GoToPrevState();
+
+	bool            m_bAcceptedChoices;
+	bool            m_bGoToOptions;
+	Sprite          m_sprOptionsMessage;
 };
 
 

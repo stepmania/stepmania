@@ -225,14 +225,14 @@ ScreenSelectMusic::~ScreenSelectMusic()
 
 void ScreenSelectMusic::DrawPrimitives()
 {
-	DISPLAY->LoadMenuPerspective(FOV);
+//	DISPLAY->LoadMenuPerspective(FOV);
 
 	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
 	m_Menu.DrawTopLayer();
 	m_sprOptionsMessage.Draw();
 	
-	DISPLAY->LoadMenuPerspective(0);
+//	DISPLAY->LoadMenuPerspective(0);
 }
 
 void ScreenSelectMusic::TweenOnScreen()
