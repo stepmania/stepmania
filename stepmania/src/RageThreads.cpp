@@ -182,6 +182,10 @@ void ThreadSlot::SetupThisThread()
 
 void ThreadSlot::ShutdownThisThread()
 {
+#ifdef _WINDOWS
+	DeinitThreadData();
+#endif
+
 	Init();
 }
 
