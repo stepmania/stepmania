@@ -402,8 +402,6 @@ void PlayerMinus::Update( float fDeltaTime )
 		 * notes.  CopyRange below converts through 4s, which means the hold note
 		 * array will be reconstructed; if hold notes end up in a different order,
 		 * they won't align with this->m_HoldNoteScores. */
-		if( po.m_Turn != PlayerOptions::TURN_NONE )
-			RageException::Throw("Can't use turns as battle attacks");
 		if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHOLDS] )
 			RageException::Throw("Can't use NoHolds as a battle attack");
 		if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOMINES] )

@@ -42,7 +42,7 @@ namespace NoteDataUtil
 	void RemoveHoldNotes( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void RemoveMines( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	enum TurnType { left, right, mirror, shuffle, super_shuffle, NUM_TURN_TYPES };
-	void Turn( NoteData &in, StepsType st, TurnType tt );
+	void Turn( NoteData &in, StepsType st, TurnType tt, float fStartBeat = 0, float fEndBeat = -1 );
 	void Little( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void Wide( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void Big( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
@@ -55,7 +55,6 @@ namespace NoteDataUtil
 	void Stomp( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void Twister( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void ConvertTapsToHolds( NoteData &in, int iSimultaneousHolds, float fStartBeat = 0, float fEndBeat = 99999 );
-	void SuperShuffleTaps( NoteData &in );
 
 	// change all TAP_ADDITIONs to TAP_TAPs
 	void ConvertAdditionsToRegular( NoteData &in );

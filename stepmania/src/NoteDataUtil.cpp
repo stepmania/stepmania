@@ -383,16 +383,14 @@ void NoteDataUtil::RemoveMines(NoteData &in, float fStartBeat, float fEndBeat )
 }
 
 
-void NoteDataUtil::Turn( NoteData &in, StepsType st, TurnType tt )
+static void GetTurnMapping( StepsType st, NoteDataUtil::TurnType tt, int NumTracks, int *iTakeFromTrack )
 {
-	int iTakeFromTrack[MAX_NOTE_TRACKS];	// New track "t" will take from old track iTakeFromTrack[t]
-
 	int t;
 
 	switch( tt )
 	{
-	case left:
-	case right:
+	case NoteDataUtil::left:
+	case NoteDataUtil::right:
 		// Is there a way to do this withoutn handling each StepsType? -Chris
 		// Identity transform for ones not handled below.  What should we do here?
 		for( t = 0; t < MAX_NOTE_TRACKS; ++t )
@@ -455,7 +453,7 @@ void NoteDataUtil::Turn( NoteData &in, StepsType st, TurnType tt )
 		default: break;
 		}
 
-		if( tt == right )
+		if( tt == NoteDataUtil::right )
 		{
 			/* Invert. */
 			int iTrack[MAX_NOTE_TRACKS];
@@ -468,18 +466,18 @@ void NoteDataUtil::Turn( NoteData &in, StepsType st, TurnType tt )
 		}
 
 		break;
-	case mirror:
-		for( t=0; t<in.GetNumTracks(); t++ )
-			iTakeFromTrack[t] = in.GetNumTracks()-t-1;
+	case NoteDataUtil::mirror:
+		for( t=0; t<NumTracks; t++ )
+			iTakeFromTrack[t] = NumTracks-t-1;
 		break;
-	case shuffle:
-	case super_shuffle:		// use shuffle code to mix up HoldNotes without creating impossible patterns
+	case NoteDataUtil::shuffle:
+	case NoteDataUtil::super_shuffle:		// use shuffle code to mix up HoldNotes without creating impossible patterns
 		{
 			vector<int> aiTracksLeftToMap;
-			for( t=0; t<in.GetNumTracks(); t++ )
+			for( t=0; t<NumTracks; t++ )
 				aiTracksLeftToMap.push_back( t );
 			
-			for( t=0; t<in.GetNumTracks(); t++ )
+			for( t=0; t<NumTracks; t++ )
 			{
 				int iRandTrackIndex = rand()%aiTracksLeftToMap.size();
 				int iRandTrack = aiTracksLeftToMap[iRandTrackIndex];
@@ -492,57 +490,78 @@ void NoteDataUtil::Turn( NoteData &in, StepsType st, TurnType tt )
 	default:
 		ASSERT(0);
 	}
-
-	NoteData tempNoteData;	// write into here as we tranform
-	tempNoteData.Config(in);
-
-	in.ConvertHoldNotesTo2sAnd3s();
-
-	// transform notes
-	int max_row = in.GetLastRow();
-	for( t=0; t<in.GetNumTracks(); t++ )
-		for( int r=0; r<=max_row; r++ ) 			
-			tempNoteData.SetTapNote(t, r, in.GetTapNote(iTakeFromTrack[t], r));
-
-	in.CopyAll( &tempNoteData );		// copy note data from newData back into this
-	in.Convert2sAnd3sToHoldNotes();
-
-	if( tt == super_shuffle )
-		SuperShuffleTaps( in );
 }
 
-void NoteDataUtil::SuperShuffleTaps( NoteData &in )
+static void SuperShuffleTaps( NoteData &in, int iStartIndex, int iEndIndex )
 {
-	// We already did the normal shuffling code above, which did a good job
-	// of shuffling HoldNotes without creating impossible patterns.
-	// Now, go in and shuffle the TapNotes per-row.
-	in.ConvertHoldNotesTo4s();
-
-	int max_row = in.GetLastRow();
-	for( int r=0; r<=max_row; r++ )
+	/* We already did the normal shuffling code above, which did a good job
+	 * of shuffling HoldNotes without creating impossible patterns.
+	 * Now, go in and shuffle the TapNotes per-row.
+	 *
+	 * This is only called by NoteDataUtil::Turn.  "in" is in 4s, and iStartIndex
+	 * and iEndIndex are in range. */
+	for( int r=iStartIndex; r<=iEndIndex; r++ )
 	{
 		for( int t1=0; t1<in.GetNumTracks(); t1++ )
 		{
 			TapNote tn1 = in.GetTapNote(t1, r);
-			if( tn1!=TAP_HOLD )	// a tap that is not part of a hold
+			if( tn1==TAP_HOLD )
+				continue;
+
+			// a tap that is not part of a hold
+			// probe for a spot to swap with
+			while( 1 )
 			{
-				// probe for a spot to swap with
-				while( 1 )
-				{
-					int t2 = rand() % in.GetNumTracks();
-					TapNote tn2 = in.GetTapNote(t2, r);
-					if( tn2!=TAP_HOLD )	// a tap that is not part of a hold
-					{
-						// swap
-						in.SetTapNote(t1, r, tn2);
-						in.SetTapNote(t2, r, tn1);
-						break;
-					}
-				}
+				const int t2 = rand() % in.GetNumTracks();
+				TapNote tn2 = in.GetTapNote(t2, r);
+				if( tn2==TAP_HOLD )	// a tap that is not part of a hold
+					continue;
+
+				// swap
+				in.SetTapNote(t1, r, tn2);
+				in.SetTapNote(t2, r, tn1);
+				break;
 			}
 		}
 	}
-	in.Convert4sToHoldNotes();
+}
+
+
+void NoteDataUtil::Turn( NoteData &in, StepsType st, TurnType tt, float fStartBeat, float fEndBeat )
+{
+	int iTakeFromTrack[MAX_NOTE_TRACKS];	// New track "t" will take from old track iTakeFromTrack[t]
+	GetTurnMapping( st, tt, in.GetNumTracks(), iTakeFromTrack );
+
+	if( fEndBeat == -1 )
+		fEndBeat = in.GetMaxBeat();
+
+	int iStartIndex = BeatToNoteRow( fStartBeat );
+	int iEndIndex = BeatToNoteRow( fEndBeat );
+
+	/* Clamp to known-good ranges. */
+	iStartIndex = max( iStartIndex, 0 );
+	iEndIndex = min( iEndIndex, in.GetMaxRow()-1 );
+
+	/* XXX: We could do this without an extra temporary NoteData: calculate
+	 * a list of "swaps".  For example, the 4-track mapping 1 0 2 3 is swaps
+	 * 1, -1, -1, -1: track 0 swaps with track 1, track 1 doesn't swap (it's
+	 * already in place--due to the first swap), and track 2 and 3 don't swap
+	 * (they were already in place to begin with). */
+
+	NoteData tempNoteData;
+	tempNoteData.To4s( in );
+	NoteData tempNoteDataOut;	// write into here as we tranform
+	tempNoteDataOut.Config( in );
+
+	// transform notes
+	for( int t=0; t<in.GetNumTracks(); t++ )
+		for( int r=iStartIndex; r<=iEndIndex; r++ ) 			
+			tempNoteDataOut.SetTapNote(t, r, tempNoteData.GetTapNote(iTakeFromTrack[t], r));
+
+	if( tt == super_shuffle )
+		SuperShuffleTaps( tempNoteDataOut, iStartIndex, iEndIndex ); /* expects 4s */
+
+	in.From4s( tempNoteDataOut );
 }
 
 void NoteDataUtil::Backwards( NoteData &in )
