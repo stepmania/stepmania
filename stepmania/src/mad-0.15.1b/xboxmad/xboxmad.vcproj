@@ -121,6 +121,7 @@
 				Optimization="3"
 				OmitFramePointers="TRUE"
 				OptimizeForProcessor="2"
+				AdditionalIncludeDirectories="."
 				PreprocessorDefinitions="NDEBUG;_XBOX;_LIB;FPM_INTEL;WIN32;HAVE_CONFIG_H;ASO_ZEROCHECK"
 				StringPooling="TRUE"
 				RuntimeLibrary="0"
