@@ -329,9 +329,6 @@ void Sprite::DrawTexture( const TweenState *state )
 
 	switch( m_VertAlign )
 	{
-	// FIXME:  Top and bottom are flipped, but changing them now breaks a lot
-	// in our themes.  -Chris
-	// Looks correct to me? -glenn
 	case align_top:		quadVerticies.top = 0;				quadVerticies.bottom = m_size.y;	break;
 	case align_middle:	quadVerticies.top = -m_size.y/2;	quadVerticies.bottom = m_size.y/2;	break;
 	case align_bottom:	quadVerticies.top = -m_size.y;		quadVerticies.bottom = 0;			break;
@@ -339,11 +336,21 @@ void Sprite::DrawTexture( const TweenState *state )
 	}
 
 
+	/* Don't draw anything outside of the texture's image area.  Texels outside 
+	 * of the image area aren't guaranteed to be initialized. */
+	/* HACK: Clamp the crop values. It would be more accurate to clip the 
+	 * vertices to that the diffuse value is adjusted. */
+	RectF crop = state->crop;
+	CLAMP( crop.left, 0, 1 );
+	CLAMP( crop.right, 0, 1 );
+	CLAMP( crop.top, 0, 1 );
+	CLAMP( crop.bottom, 0, 1 );
+
 	RectF croppedQuadVerticies = quadVerticies; 
 #define IF_CROP_POS(side,opp_side) \
-	if(state->crop.side>0) \
+	if(state->crop.side!=0) \
 		croppedQuadVerticies.side = \
-			SCALE( state->crop.side, 0.f, 1.f, quadVerticies.side, quadVerticies.opp_side ); 
+			SCALE( crop.side, 0.f, 1.f, quadVerticies.side, quadVerticies.opp_side ); 
 	IF_CROP_POS( left, right ); 
 	IF_CROP_POS( top, bottom ); 
 	IF_CROP_POS( right, left ); 
@@ -377,25 +384,25 @@ void Sprite::DrawTexture( const TweenState *state )
 		};
 	
 
-		if( state->crop.left>0 )
+		if( crop.left!=0 )
 		{
-			v[0].t.x = SCALE( state->crop.left, 0.f, 1.f, texCoords[0].x, texCoords[3].x );
-			v[1].t.x = SCALE( state->crop.left, 0.f, 1.f, texCoords[1].x, texCoords[2].x );
+			v[0].t.x = SCALE( crop.left, 0.f, 1.f, texCoords[0].x, texCoords[3].x );
+			v[1].t.x = SCALE( crop.left, 0.f, 1.f, texCoords[1].x, texCoords[2].x );
 		}
-		if( state->crop.right>0 )
+		if( crop.right!=0 )
 		{
-			v[2].t.x = SCALE( state->crop.right, 0.f, 1.f, texCoords[2].x, texCoords[1].x );
-			v[3].t.x = SCALE( state->crop.right, 0.f, 1.f, texCoords[3].x, texCoords[0].x );
+			v[2].t.x = SCALE( crop.right, 0.f, 1.f, texCoords[2].x, texCoords[1].x );
+			v[3].t.x = SCALE( crop.right, 0.f, 1.f, texCoords[3].x, texCoords[0].x );
 		}
-		if( state->crop.top>0 )
+		if( crop.top!=0 )
 		{
-			v[0].t.y = SCALE( state->crop.top, 0.f, 1.f, texCoords[0].y, texCoords[1].y );
-			v[3].t.y = SCALE( state->crop.top, 0.f, 1.f, texCoords[3].y, texCoords[2].y );
+			v[0].t.y = SCALE( crop.top, 0.f, 1.f, texCoords[0].y, texCoords[1].y );
+			v[3].t.y = SCALE( crop.top, 0.f, 1.f, texCoords[3].y, texCoords[2].y );
 		}
-		if( state->crop.bottom>0 )
+		if( crop.bottom!=0 )
 		{
-			v[1].t.y = SCALE( state->crop.bottom, 0.f, 1.f, texCoords[1].y, texCoords[0].y );
-			v[2].t.y = SCALE( state->crop.bottom, 0.f, 1.f, texCoords[2].y, texCoords[3].y );
+			v[1].t.y = SCALE( crop.bottom, 0.f, 1.f, texCoords[1].y, texCoords[0].y );
+			v[2].t.y = SCALE( crop.bottom, 0.f, 1.f, texCoords[2].y, texCoords[3].y );
 		}
 	}
 	else
@@ -573,26 +580,6 @@ void Sprite::DrawPrimitives()
 			ts.diffuse[1] *= BottomColor;		// top right
 			DrawTexture( &ts );
 		}
-
-#if 0
-		/* Not yet sure how to compute the inner diffuse color. */
-		if( FadeSize.top > 0.001f && FadeSize.left > 0.001f )
-		{
-			/* Draw the top-left: */
-			ts.crop = m_pTempState->crop; // restore
-			memcpy( ts.diffuse, m_pTempState->diffuse, sizeof(ts.diffuse) ); // restore
-
-			ts.crop.right = 1 - (ts.crop.left + FadeSize.left);
-			ts.crop.bottom = 1 - (ts.crop.top + FadeSize.top);
-
-			ts.diffuse[0] *= FadeColor;			// top left
-			ts.diffuse[2] *= FadeColor;			// bottom left
-			// XXX?
-			ts.diffuse[3] *= (TopColor+LeftColor) * 0.5f;		// bottom right
-			ts.diffuse[1] *= FadeColor;			// top right
-			DrawTexture( &ts );
-		}
-#endif
 	}
 	else
 	{
