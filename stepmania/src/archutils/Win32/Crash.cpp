@@ -857,7 +857,7 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 	return FALSE;
 }
 
-void crash() {
+void debug_crash() {
 	__try {
 		__asm xor ebx,ebx
 		__asm mov eax,dword ptr [ebx]
