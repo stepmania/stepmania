@@ -90,6 +90,9 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 	m_banner.SetName( "Banner" );
 	this->AddChild( &m_banner );
 
+	m_sprBannerFrame.SetName( "BannerFrame" );
+	this->AddChild( &m_sprBannerFrame );
+
 	m_textCategory.SetName( "Category" );
 	m_textCategory.LoadFromFont( THEME->GetPathToF("ScreenRanking title") );
 	m_textCategory.EnableShadow( false );
@@ -320,6 +323,8 @@ void ScreenRanking::SetPage( PageToShow pts )
 	SET_XY_AND_ON_COMMAND( m_sprCategory );
 	m_banner.Reset();
 	SET_XY_AND_ON_COMMAND( m_banner );
+	m_sprBannerFrame.Reset();
+	SET_XY_AND_ON_COMMAND( m_sprBannerFrame );
 	m_textCategory.Reset();
 	SET_XY_AND_ON_COMMAND( m_textCategory );
 	m_sprType.Reset();
@@ -524,6 +529,9 @@ void ScreenRanking::SetPage( PageToShow pts )
 			m_banner.ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
 			m_banner.SetDiffuseAlpha(1);
 
+			m_sprBannerFrame.Load( THEME->GetPathToG("ScreenRanking banner frame") );
+			m_sprBannerFrame.SetDiffuseAlpha(1);
+
 			m_textCategory.SetMaxWidth( CATEGORY_WIDTH );
 			m_textCategory.SetText( pts.pSong->GetFullTranslitTitle() );
 			m_textCategory.SetDiffuseAlpha(1);
@@ -579,6 +587,7 @@ void ScreenRanking::TweenPageOffScreen()
 
 	OFF_COMMAND( m_sprCategory );
 	OFF_COMMAND( m_banner );
+	OFF_COMMAND( m_sprBannerFrame );
 	OFF_COMMAND( m_sprType );
 	OFF_COMMAND( m_textCategory );
 

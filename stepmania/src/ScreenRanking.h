@@ -45,6 +45,7 @@ protected:
 
 	Sprite m_sprCategory;
 	Banner m_banner;
+	Sprite m_sprBannerFrame;
 	BitmapText m_textCategory;
 	Sprite m_sprType;
 	Sprite m_sprBullets[NUM_RANKING_LINES];
