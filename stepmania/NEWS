@@ -1,6 +1,11 @@
 -------------------------- CVS after 3.00 final ----------------
 CHANGE: OKs now count as a step in score calculation.
 CHANGE: Maximum number of hold steps removed.
+BUG FIX:  Oni score now displays a % sign after the score.
+BUG FIX:  An E Grade is now properly awarded to a player who fails a song
+          when two players are playing.
+BUG FIX:  Modifiers applied to a single song in an .CRS file are no longer 
+          applied to the following songs.
 
 ------------------------CVS after 3.00 beta 6rc2----------------
 BUG FIX:  Crash handler works better in full screen.
