@@ -164,47 +164,161 @@ void InitializeBacktrace()
 }
 
 /* backtrace() for x86 Linux, tested with kernel 2.4.18, glibc 2.3.1. */
+const void *g_ReadableBegin[1024], *g_ReadableEnd[1024];
+const void *g_ExecutableBegin[1024], *g_ExecutableEnd[1024];
+/* Indexes in g_ReadableBegin of the stack(s), or -1: */
+int g_StackBlock1, g_StackBlock2;
+
+/* This matches the layout of the stack.  The frame pointer makes the
+ * stack a linked list. */
+struct StackFrame
+{
+	const StackFrame *link;
+	const void *return_address;
+};
+
+/* Return true if the given stack pointer is in readable memory. */
+bool IsOnStack( const void *p )
+{
+	int val = find_address( p, g_ReadableBegin, g_ReadableEnd );
+	return val != -1 && (val == g_StackBlock1 || val == g_StackBlock2 );
+}
+
+/* Return true if the given stack frame is in readable memory. */
+bool IsReadableFrame( const StackFrame *frame )
+{
+	if( !IsOnStack( &frame->link ) )
+		return false;
+	if( !IsOnStack( &frame->return_address ) )
+		return false;
+	return true;
+}
+
+/* The following from VirtualDub: */
+/* ptr points to a return address, and does not have to be word-aligned. */
+static bool PointsToValidCall( const void *ptr )
+{
+	const char *buf = (char *) ptr;
+
+	/* We're reading buf backwards, between buf[-7] and buf[-1].  Find out how
+	 * far we can read. */
+	int len = 7;
+	while( len )
+	{
+		int val = find_address( buf-len, g_ReadableBegin, g_ReadableEnd );
+		if( val != -1 )
+			break;
+		--len;
+	}
+
+	// Permissible CALL sequences that we care about:
+	//
+	//	E8 xx xx xx xx			CALL near relative
+	//	FF (group 2)			CALL near absolute indirect
+	//
+	// Minimum sequence is 2 bytes (call eax).
+	// Maximum sequence is 7 bytes (call dword ptr [eax+disp32]).
+
+	if (len >= 5 && buf[-5] == '\xe8')
+		return true;
+
+	// FF 14 xx					CALL [reg32+reg32*scale]
+	if (len >= 3 && buf[-3] == '\xff' && buf[-2]=='\x14')
+		return true;
+
+	// FF 15 xx xx xx xx		CALL disp32
+	if (len >= 6 && buf[-6] == '\xff' && buf[-5]=='\x15')
+		return true;
+
+	// FF 00-3F(!14/15)			CALL [reg32]
+	if (len >= 2 && buf[-2] == '\xff' && (unsigned char)buf[-1] < '\x40')
+		return true;
+
+	// FF D0-D7					CALL reg32
+	if (len >= 2 && buf[-2] == '\xff' && (buf[-1]&0xF8) == '\xd0')
+		return true;
+
+	// FF 50-57 xx				CALL [reg32+reg32*scale+disp8]
+	if (len >= 3 && buf[-3] == '\xff' && (buf[-2]&0xF8) == '\x50')
+		return true;
+
+	// FF 90-97 xx xx xx xx xx	CALL [reg32+reg32*scale+disp32]
+	if (len >= 7 && buf[-7] == '\xff' && (buf[-6]&0xF8) == '\x90')
+		return true;
+
+	return false;
+}
+
+
+/* Return true if frame appears to be a legitimate, readable stack frame. */
+bool IsValidFrame( const StackFrame *frame )
+{
+	if( !IsReadableFrame( frame ) )
+		return false;
+
+	/* The frame link should only go upwards. */
+	if( frame->link <= frame )
+		return false;
+
+	/* The link should be on the stack. */
+	if( !IsOnStack( frame->link ) )
+		return false;
+
+	/* The return address should be in a readable, executable page. */
+	int val = find_address( frame->return_address, g_ExecutableBegin, g_ExecutableEnd );
+	if( val == -1 )
+		return false;
+
+	/* The return address should follow a CALL opcode. */
+	if( !PointsToValidCall(frame->return_address) )
+		return false;
+
+	return true;
+}
+
+/* This x86 backtracer attempts to walk the stack frames.  If we come to a
+ * place that doesn't look like a valid frame, we'll look forward and try
+ * to find it again. */
 static void do_backtrace( const void **buf, size_t size, const BacktraceContext *ctx )
 {
 	/* Read /proc/pid/maps to find the address range of the stack. */
-	const void *readable_begin[1024], *readable_end[1024];
-	get_readable_ranges( readable_begin, readable_end, 1024 );
-		
+	get_readable_ranges( g_ReadableBegin, g_ReadableEnd, 1024 );
+	get_readable_ranges( g_ExecutableBegin, g_ExecutableEnd, 1024, READABLE_ONLY|EXECUTABLE_ONLY );
+
 	/* Find the stack memory blocks. */
-	const int stack_block1 = find_address( ctx->ebp, readable_begin, readable_end );
-	const int stack_block2 = find_address( SavedStackPointer, readable_begin, readable_end );
+	g_StackBlock1 = find_address( ctx->esp, g_ReadableBegin, g_ReadableEnd );
+	g_StackBlock2 = find_address( SavedStackPointer, g_ReadableBegin, g_ReadableEnd );
 
-	/* This matches the layout of the stack.  The frame pointer makes the
-	 * stack a linked list. */
-	struct StackFrame
-	{
-		const StackFrame *link;
-		const void *return_address;
-	};
-
-	const StackFrame *frame = (StackFrame *) ctx->ebp;
-
+	/* If eip is valid, put it at the top of the backtrace. */
 	unsigned i=0;
 	if( i < size-1 && ctx->eip ) // -1 for NULL
 		buf[i++] = ctx->eip;
 
+	/* ebp is usually the frame pointer. */
+	const StackFrame *frame = (StackFrame *) ctx->ebp;
+
+	/* If ebp doesn't point to a valid stack frame, we're probably in
+	 * -fomit-frame-pointer code.  Ignore it; use esp instead.  It probably
+	 * won't * point to a stack frame, but it should at least give us a starting
+	 * point in the stack. */
+	if( !IsValidFrame( frame ) )
+		frame = (StackFrame *) ctx->esp;
+
 	while( i < size-1 ) // -1 for NULL
 	{
 		/* Make sure that this frame address is readable, and is on the stack. */
-		int val = find_address(frame, readable_begin, readable_end);
-		if( val == -1 )
-			break;
-		if( val != stack_block1 && val != stack_block2 )
+		if( !IsReadableFrame( frame ) )
 			break;
 
-		if( frame->return_address )
-			buf[i++] = frame->return_address;
+		if( !IsValidFrame( frame ) )
+		{
+			/* The frame pointer is invalid.  Just move forward one word. */
+			frame = (StackFrame *) (((char *)frame)+4);
+			continue;
+		}
 
-		/* frame always goes up.  Make sure it doesn't go down; that could
-		 * cause an infinite loop. */
-		if( frame->link <= frame )
-			break;
-
+		/* Valid frame.  Store the return address, and hop forward. */
+		buf[i++] = frame->return_address;
 		frame = frame->link;
 	}
 
@@ -215,6 +329,7 @@ void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
 {
 	ctx->eip = (void *) uc->uc_mcontext.gregs[REG_EIP];
 	ctx->ebp = (void *) uc->uc_mcontext.gregs[REG_EBP];
+	ctx->esp = (void *) uc->uc_mcontext.gregs[REG_ESP];
 	ctx->pid = GetCurrentThreadId();
 }
 
@@ -229,6 +344,7 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 
 		CurrentCtx.eip = NULL;
 		CurrentCtx.ebp = __builtin_frame_address(0);
+		CurrentCtx.esp = __builtin_frame_address(0);
 		CurrentCtx.pid = GetCurrentThreadId();
 	}
 

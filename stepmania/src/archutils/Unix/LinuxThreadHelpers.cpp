@@ -178,6 +178,7 @@ bool GetThreadBacktraceContext( int ThreadID, BacktraceContext *ctx )
 	ctx->pid = ThreadID;
 	ctx->eip = (void *) regs.eip;
 	ctx->ebp = (void *) regs.ebp;
+	ctx->esp = (void *) regs.esp;
 
 	return true;
 }
