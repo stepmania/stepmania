@@ -83,7 +83,7 @@ private:
 	{
 		HighScoreWheel		m_Wheel;
 		GradeDisplay		m_Grade;
-		DifficultyIcon		m_Difficulty;
+		AutoActor			m_sprDifficulty;
 		BitmapText			m_textCategory;
 		PercentageDisplay	m_textScore;
 		Banner				m_sprBanner;
