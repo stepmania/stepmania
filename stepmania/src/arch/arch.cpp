@@ -26,25 +26,34 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 	CStringArray DriversToTry;
 	split(drivers, ",", DriversToTry, true);
 
-	for(unsigned i = 0; i < DriversToTry.size(); ++i)
+	CString Driver;
+RageSoundDriver *ret = NULL;
+
+	for(unsigned i = 0; ret == NULL && i < DriversToTry.size(); ++i)
 	{
 		try {
+			Driver = DriversToTry[i];
 			LOG->Trace("Initializing driver: %s", DriversToTry[i].GetString());
 
 #if defined(WIN32)
-			if(DriversToTry[i] == "DirectSound") return new RageSound_DSound;
-			if(DriversToTry[i] == "DirectSound-sw") return new RageSound_DSound_Software;
-			if(DriversToTry[i] == "WaveOut") return new RageSound_WaveOut;
+			if(DriversToTry[i] == "DirectSound") ret = new RageSound_DSound;
+			else if(DriversToTry[i] == "DirectSound-sw") ret = new RageSound_DSound_Software;
+			else if(DriversToTry[i] == "WaveOut") ret = new RageSound_WaveOut;
+#else
+#error No sound drivers defined!
 #endif
-
-			LOG->Warn("Unknown sound driver name: %s", DriversToTry[i].GetString());
+			else
+				LOG->Warn("Unknown sound driver name: %s", DriversToTry[i].GetString());
 		}
 		catch(const RageException &e) {
 			LOG->Trace("Couldn't load driver %s: %s", DriversToTry[i].GetString(), e.what());
 		}
 	}
 
-	return NULL;
+	if(ret)
+		LOG->Info("Sound driver: %s", Driver.GetString());
+	
+	return ret;
 }
 
 /*
