@@ -522,17 +522,12 @@ void Song::TidyUpData()
 
 		m_Timing.AddBPMSegment( BPMSegment(0, 60) );
 	}
-
-	/* Only automatically set the sample time if there was no sample length
-	 * (m_fMusicSampleStartSeconds == -1). */
-	/* We don't want to test if m_fMusicSampleStartSeconds == 0, since some 
-	 * people really do want the sample to start at the very beginning of the song. */
 	
-	/* Having a sample start of 0 sounds terrible for most songs because because
-	 * of the silence at the beginning.  Many of my files have a 0 for the 
-	 * sample start that was not manually set, and I assume other people have the same.
-	 * If there are complaints atou manually-set sample start at 0 is being ignored, 
-	 * then change this back.  -Chris */
+	/* Make sure the first BPM segment starts at beat 0. */
+	if( m_Timing.m_BPMSegments[0].m_fStartBeat != 0 )
+		m_Timing.m_BPMSegments[0].m_fStartBeat = 0;
+
+
 	if( m_fMusicSampleStartSeconds == -1 ||
 		m_fMusicSampleStartSeconds == 0 ||
 		m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds )
@@ -541,13 +536,8 @@ void Song::TidyUpData()
 
 		if( m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds )
 		{
-			// fix for BAG and other slow songs
-			int iBeat = (int)(m_fLastBeat/2);
-			/* Er.  I see that this truncates the beat down to a multiple
-			 * of 10, but what's the logic behind doing that?  (It'd make
-			 * sense to use a multiple of 4, so we try to line up to a
-			 * measure ...) -glenn */
-			iBeat = iBeat - iBeat%10;
+			int iBeat = lrintf( m_fLastBeat/2 );
+			iBeat -= iBeat%4;
 			m_fMusicSampleStartSeconds = this->GetElapsedTimeFromBeat( (float)iBeat );
 		}
 	}
