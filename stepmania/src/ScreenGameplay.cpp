@@ -737,18 +737,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 		return;
 
 	// update the global music statistics for other classes to access
-	float fPositionSeconds = m_soundMusic.GetPositionSeconds();
-	float fSongBeat, fBPS;
-	bool bFreeze;	
-	GAMESTATE->m_pCurSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS, bFreeze );
+	GAMESTATE->UpdateSongPosition(m_soundMusic.GetPositionSeconds());
 
-
-	GAMESTATE->m_fMusicSeconds = fPositionSeconds;
-	GAMESTATE->m_fSongBeat = fSongBeat;
-	GAMESTATE->m_fCurBPS = fBPS;
-	GAMESTATE->m_bFreeze = bFreeze;
 	m_MaxCombo.SetText( ssprintf("%d", m_Player[GAMESTATE->m_MasterPlayerNumber].GetPlayersMaxCombo()) ); /* MAKE THIS WORK FOR BOTH PLAYERS! */
-
 	//LOG->Trace( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
 
 
@@ -860,7 +851,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	//
 	// Send crossed row messages to Player
 	//
-	int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
+	int iRowNow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat );
 	if( iRowNow >= 0  &&  iRowNow < MAX_TAP_NOTE_ROWS )
 	{
 		for( int r=m_iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
