@@ -87,7 +87,15 @@ void Model::LoadFromModelFile( CString sPath )
 	if( !ini.GetValue( "Model", "Bones", sBones ) )
 		RageException::Throw( "The model file '%s' is missing the value [Model] Bones.", sPath.c_str() );
 
-	LoadPieces( sDir+sMeshes, sDir+sMaterials, sDir+sBones );
+	sMeshes = sDir+sMeshes;
+	sMaterials = sDir+sMaterials;
+	sBones = sDir+sBones;
+
+	CollapsePath( sMeshes );
+	CollapsePath( sMaterials );
+	CollapsePath( sBones );
+
+	LoadPieces( sMeshes, sMaterials, sBones );
 }
 
 void Model::LoadMilkshapeAscii( CString sPath )
