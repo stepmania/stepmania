@@ -50,7 +50,6 @@ int					g_iNumVerts;
 int					g_iFPS, g_iVPF, g_iDPF;
 
 int					g_PerspectiveMode = 0;
-RageMatrix			matOldProj;
 
 struct oglspecs_t {
     /* OpenGL system information that generally doesn't change at runtime. */
@@ -497,8 +496,8 @@ void RageDisplay::EnterPerspective(float fov, bool preserve_loc)
 
 	/* Save the old matrices. */
 	DISPLAY->PushMatrix();
-	DISPLAY->GetProjectionTransform( &matOldProj );
 	glMatrixMode( GL_PROJECTION );
+	glPushMatrix();
 	glLoadIdentity();
 	float aspect = SCREEN_WIDTH/(float)SCREEN_HEIGHT;
 	gluPerspective(fov, aspect, 1.000f, 1000.0f);
@@ -550,7 +549,9 @@ void RageDisplay::ExitPerspective()
 	if(g_PerspectiveMode) return;
 
 	/* Restore the old matrices. */
-	DISPLAY->SetProjectionTransform( &matOldProj );
+	glMatrixMode( GL_PROJECTION );
+	glPopMatrix();
+	glMatrixMode( GL_MODELVIEW );
 	DISPLAY->PopMatrix();
 
 	/* Restore the viewport. */
