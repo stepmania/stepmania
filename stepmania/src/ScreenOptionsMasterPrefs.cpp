@@ -320,6 +320,16 @@ static void SongsPerPlay( int &sel, bool ToSel, const ConfOption *pConfOption )
 	const int mapping[] = { 1,2,3,4,5,6,7 };
 	MoveMap( sel, PREFSMAN->m_iNumArcadeStages, ToSel, mapping, ARRAYSIZE(mapping) );
 }
+static void SongsPerPlayOrEventMode( int &sel, bool ToSel, const ConfOption *pConfOption )
+{
+	const int mapping[] = { 1,2,3,4,5,6,7,8 };
+	MoveMap( sel, PREFSMAN->m_iNumArcadeStages, ToSel, mapping, ARRAYSIZE(mapping) );
+
+	if( ToSel && PREFSMAN->m_bEventMode )
+		sel = 7;
+	if( !ToSel )
+		PREFSMAN->m_bEventMode = (sel == 7);
+}
 MOVE( EventMode,			PREFSMAN->m_bEventMode );
 
 /* Machine options */
@@ -536,6 +546,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "CoinMode",				CoinModeM,			"HOME","PAY","FREE PLAY" ) );
 	ADD( ConfOption( "CoinModeNoHome",			CoinModeNoHome,		"PAY","FREE PLAY" ) );
 	ADD( ConfOption( "Songs Per\nPlay",			SongsPerPlay,		"1","2","3","4","5","6","7" ) );
+	ADD( ConfOption( "SongsPerPlayOrEvent",			SongsPerPlayOrEventMode, "1","2","3","4","5","6","7","EVENT" ) );
 	ADD( ConfOption( "Event\nMode",				EventMode,			"OFF","ON" ) );
 	ADD( ConfOption( "Scoring\nType",			ScoringType,		"MAX2","5TH" ) );
 	ADD( ConfOption( "Judge\nDifficulty",		JudgeDifficulty,	"1","2","3","4","5","6","7","8","JUSTICE" ) );
