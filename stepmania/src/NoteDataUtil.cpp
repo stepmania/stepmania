@@ -1358,6 +1358,7 @@ void NoteDataUtil::SnapToNearestNoteType( NoteData &inout, NoteType nt1, NoteTyp
 
 void NoteDataUtil::CopyLeftToRight( NoteData &inout )
 {
+	/* XXX
 	inout.ConvertHoldNotesTo4s();
 	for( int t=0; t<inout.GetNumTracks()/2; t++ )
 	{
@@ -1371,10 +1372,12 @@ void NoteDataUtil::CopyLeftToRight( NoteData &inout )
 		}
 	}
 	inout.Convert4sToHoldNotes();
+*/
 }
 
 void NoteDataUtil::CopyRightToLeft( NoteData &inout )
 {
+	/* XXX
 	inout.ConvertHoldNotesTo4s();
 	for( int t=0; t<inout.GetNumTracks()/2; t++ )
 	{
@@ -1388,6 +1391,7 @@ void NoteDataUtil::CopyRightToLeft( NoteData &inout )
 		}
 	}
 	inout.Convert4sToHoldNotes();
+*/
 }
 
 void NoteDataUtil::ClearLeft( NoteData &inout )
