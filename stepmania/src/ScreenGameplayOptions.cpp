@@ -5,8 +5,9 @@
 
  Desc: See header.
 
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+ Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
 	Chris Danford
+	Chris Gomez
 -----------------------------------------------------------------------------
 */
 
@@ -31,6 +32,7 @@ enum {
 	GO_MARVELOUS,
 	GO_HIDDEN_SONGS,
 	GO_SHOW_DANGER,
+	GO_PICK_EXTRA_STAGE,
 	NUM_GAMEPLAY_OPTIONS_LINES
 };
 
@@ -42,6 +44,7 @@ OptionRowData g_GameplayOptionsLines[NUM_GAMEPLAY_OPTIONS_LINES] = {
 	{ "Hidden\nSongs",			2, {"OFF","ON"} },
 	{ "Easter\nEggs",			2, {"OFF","ON"} },
 	{ "Marvelous\nTiming",		2, {"OFF","ON"} },
+	{ "Pick Extra\nStage",		2, {"OFF","ON"} }
 };
 
 ScreenGameplayOptions::ScreenGameplayOptions() :
@@ -81,6 +84,7 @@ void ScreenGameplayOptions::ImportOptions()
 	m_iSelectedOption[0][GO_HIDDEN_SONGS]			= PREFSMAN->m_bHiddenSongs ? 1:0;
 	m_iSelectedOption[0][GO_EASTER_EGGS]			= PREFSMAN->m_bEasterEggs ? 1:0;
 	m_iSelectedOption[0][GO_MARVELOUS]				= PREFSMAN->m_bMarvelousTiming ? 1:0;
+	m_iSelectedOption[0][GO_PICK_EXTRA_STAGE]		= PREFSMAN->m_bPickExtraStage? 1:0;
 }
 
 void ScreenGameplayOptions::ExportOptions()
@@ -92,6 +96,7 @@ void ScreenGameplayOptions::ExportOptions()
 	PREFSMAN->m_bHiddenSongs			= m_iSelectedOption[0][GO_HIDDEN_SONGS]	== 1;
 	PREFSMAN->m_bEasterEggs			= m_iSelectedOption[0][GO_EASTER_EGGS] == 1;
 	PREFSMAN->m_bMarvelousTiming	= m_iSelectedOption[0][GO_MARVELOUS] == 1;
+	PREFSMAN->m_bPickExtraStage		= m_iSelectedOption[0][GO_PICK_EXTRA_STAGE] == 1;
 }
 
 void ScreenGameplayOptions::GoToPrevState()

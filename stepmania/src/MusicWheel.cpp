@@ -340,10 +340,10 @@ MusicWheel::MusicWheel()
 
 	m_iSwitchesLeftInSpinDown = 0;
 	
-	if( GAMESTATE->IsExtraStage()  ||  GAMESTATE->IsExtraStage2() )
+	if( GAMESTATE->IsExtraStage() ||  GAMESTATE->IsExtraStage2() )
 	{
 		// make the preferred group the group of the last song played.
-		if( GAMESTATE->m_sPreferredGroup == "ALL MUSIC" )
+		if( GAMESTATE->m_sPreferredGroup == "ALL MUSIC" && !PREFSMAN->m_bPickExtraStage )
 			GAMESTATE->m_sPreferredGroup = GAMESTATE->m_pCurSong->m_sGroupName;
 
 		Song* pSong;
@@ -876,7 +876,7 @@ void MusicWheel::Update( float fDeltaTime )
 
 		case STATE_TWEENING_ON_SCREEN:
 			m_fTimeLeftInState = 0;
-			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+			if( (GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage) || GAMESTATE->IsExtraStage2() )
 			{
 //				if ( m_bUseRandomExtra )
 //				{

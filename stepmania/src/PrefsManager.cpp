@@ -5,8 +5,9 @@
 
  Desc: See Header.
 
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+ Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
 	Chris Danford
+	Chris Gomez
 -----------------------------------------------------------------------------
 */
 
@@ -80,6 +81,11 @@ PrefsManager::PrefsManager()
 	m_iBoostAppPriority = -1;
 	m_iPolygonRadar = -1;
 
+	/* DDR Extreme-style extra stage support.									*
+	 * Default off so people used to the current behavior (or those with extra  *
+	 * stage CRS files) don't get it changed around on them						*/
+	m_bPickExtraStage = false;
+
 	/* I'd rather get occasional people asking for support for this even though it's
 	 * already here than lots of people asking why songs aren't being displayed. */
 	m_bHiddenSongs = false;
@@ -150,6 +156,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "JointPremium",				m_bJointPremium );
 	ini.GetValueI( "Options", "BoostAppPriority",			m_iBoostAppPriority );
 	ini.GetValueI( "Options", "PolygonRadar",				m_iPolygonRadar );
+	ini.GetValueB( "Options", "PickExtraStage",				m_bPickExtraStage );
 
 	m_asAdditionalSongFolders.clear();
 	CString sAdditionalSongFolders;
@@ -215,6 +222,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "JointPremium",				m_bJointPremium );
 	ini.SetValueI( "Options", "BoostAppPriority",			m_iBoostAppPriority );
 	ini.SetValueI( "Options", "PolygonRadar",				m_iPolygonRadar );
+	ini.SetValueB( "Options", "PickExtraStage",				m_bPickExtraStage );
 
 	/* Only write these if they aren't the default.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who

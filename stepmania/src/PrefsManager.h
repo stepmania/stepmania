@@ -6,8 +6,9 @@
 
  Desc: Holds user-chosen preferences that are saved between sessions.
 
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+ Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
 	Chris Danford
+	Chris Gomez
 -----------------------------------------------------------------------------
 */
 
@@ -61,6 +62,7 @@ public:
 	enum { COIN_HOME, COIN_PAY, COIN_FREE, NUM_COIN_MODES } m_CoinMode;
 	int				m_iCoinsPerCredit;
 	bool			m_bJointPremium;
+	bool			m_bPickExtraStage;
 
 
 

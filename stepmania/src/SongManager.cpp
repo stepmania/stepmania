@@ -533,7 +533,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, cons
 	Notes*	pExtra2Notes = NULL;
 	
 	vector<Song*> apSongs;
-	SONGMAN->GetSongsInGroup( GAMESTATE->m_sPreferredGroup, apSongs );
+	SONGMAN->GetSongsInGroup( (GAMESTATE->m_sPreferredGroup == "ALL MUSIC" ? GAMESTATE->m_pCurSong->m_sGroupName : GAMESTATE->m_sPreferredGroup), apSongs );
 	for( unsigned s=0; s<apSongs.size(); s++ )	// foreach song
 	{
 		Song* pSong = apSongs[s];
