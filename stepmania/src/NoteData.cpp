@@ -1192,7 +1192,7 @@ void NoteDataUtil::CopyLeftToRight( NoteData &in )
 
 			// swap
 			TapNote tnEarlier = in.GetTapNote(iTrackEarlier, r);
-			TapNote tnLater = in.GetTapNote(iTrackLater, r);
+//			TapNote tnLater = in.GetTapNote(iTrackLater, r);
 //			in.SetTapNote(iTrackEarlier, r, tnLater);
 			in.SetTapNote(iTrackLater, r, tnEarlier);
 		}
@@ -1212,7 +1212,7 @@ void NoteDataUtil::CopyRightToLeft( NoteData &in )
 			int iTrackLater = in.GetNumTracks()-1-t;
 
 			// swap
-			TapNote tnEarlier = in.GetTapNote(iTrackEarlier, r);
+//			TapNote tnEarlier = in.GetTapNote(iTrackEarlier, r);
 			TapNote tnLater = in.GetTapNote(iTrackLater, r);
 			in.SetTapNote(iTrackEarlier, r, tnLater);
 //			in.SetTapNote(iTrackLater, r, tnEarlier);
