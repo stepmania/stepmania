@@ -392,7 +392,7 @@ try_element_again:
 		for( unsigned p = 0; p < asPaths.size(); ++p )
 		{
 			static const char *masks[NUM_ELEMENT_CATEGORIES][13] = {
-				{ "", "xml", NULL },
+				{ "", "actor", "xml", NULL },
 				{ "ini", NULL },
 				{ "xml", "actor", "sprite", "png", "jpg", "bmp", "gif","avi", "mpg", "mpeg", "txt", "", NULL},
 				{ "png", NULL },
