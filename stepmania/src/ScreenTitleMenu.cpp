@@ -112,63 +112,63 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 {
 	LOG->Trace( "ScreenTitleMenu::Input( %d-%d )", DeviceI.device, DeviceI.button );	// debugging gameport joystick problem
 
-	if( type != IET_FIRST_PRESS )
-		return;
-
-	/* If the CoinMode was changed, we need to reload this screen
-	 * so that the right m_aGameCommands will show */
-	if( ScreenAttract::ChangeCoinModeInput( DeviceI, type, GameI, MenuI, StyleI ) )
+	if( type == IET_FIRST_PRESS )
 	{
-		SCREENMAN->SetNewScreen( COIN_MODE_CHANGE_SCREEN );
-		return;
-	}
+		/* If the CoinMode was changed, we need to reload this screen
+		 * so that the right m_aGameCommands will show */
+		if( ScreenAttract::ChangeCoinModeInput( DeviceI, type, GameI, MenuI, StyleI ) )
+		{
+			SCREENMAN->SetNewScreen( COIN_MODE_CHANGE_SCREEN );
+			return;
+		}
 
-	if( m_In.IsTransitioning() || m_Cancel.IsTransitioning() ) /* not m_Out */
-		return;
-	
-	//
-	// detect codes
-	//
-	if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_THEME) ||
-		CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_THEME2) )
-	{
-		THEME->NextTheme();
-		ApplyGraphicOptions();	// update window title and icon
-		SCREENMAN->SystemMessage( "Theme: "+THEME->GetCurThemeName() );
-		SCREENMAN->SetNewScreen( m_sName );
-		TEXTUREMAN->DoDelayedDelete();
-	}
-	if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_ANNOUNCER) ||
-		CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_ANNOUNCER2) )
-	{
-		ANNOUNCER->NextAnnouncer();
-		CString sName = ANNOUNCER->GetCurAnnouncerName();
-		if( sName=="" ) sName = "(none)";
-		SCREENMAN->SystemMessage( "Announcer: "+sName );
-		SCREENMAN->SetNewScreen( m_sName );
-	}
-	if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_GAME) ||
-		CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_GAME2) )
-	{
-		vector<const Game*> vGames;
-		GAMEMAN->GetEnabledGames( vGames );
-		ASSERT( !vGames.empty() );
-		vector<const Game*>::iterator iter = find(vGames.begin(),vGames.end(),GAMESTATE->m_pCurGame);
-		ASSERT( iter != vGames.end() );
+		if( m_In.IsTransitioning() || m_Cancel.IsTransitioning() ) /* not m_Out */
+			return;
+		
+		//
+		// detect codes
+		//
+		if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_THEME) ||
+			CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_THEME2) )
+		{
+			THEME->NextTheme();
+			ApplyGraphicOptions();	// update window title and icon
+			SCREENMAN->SystemMessage( "Theme: "+THEME->GetCurThemeName() );
+			SCREENMAN->SetNewScreen( m_sName );
+			TEXTUREMAN->DoDelayedDelete();
+		}
+		if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_ANNOUNCER) ||
+			CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_ANNOUNCER2) )
+		{
+			ANNOUNCER->NextAnnouncer();
+			CString sName = ANNOUNCER->GetCurAnnouncerName();
+			if( sName=="" ) sName = "(none)";
+			SCREENMAN->SystemMessage( "Announcer: "+sName );
+			SCREENMAN->SetNewScreen( m_sName );
+		}
+		if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_GAME) ||
+			CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_GAME2) )
+		{
+			vector<const Game*> vGames;
+			GAMEMAN->GetEnabledGames( vGames );
+			ASSERT( !vGames.empty() );
+			vector<const Game*>::iterator iter = find(vGames.begin(),vGames.end(),GAMESTATE->m_pCurGame);
+			ASSERT( iter != vGames.end() );
 
-		iter++;	// move to the next game
+			iter++;	// move to the next game
 
-		// wrap
-		if( iter == vGames.end() )
-			iter = vGames.begin();
+			// wrap
+			if( iter == vGames.end() )
+				iter = vGames.begin();
 
-		GAMESTATE->m_pCurGame = *iter;
+			GAMESTATE->m_pCurGame = *iter;
 
-		/* Reload the theme if it's changed, but don't back to the initial screen. */
-		ResetGame( false );
+			/* Reload the theme if it's changed, but don't back to the initial screen. */
+			ResetGame( false );
 
-		SCREENMAN->SystemMessage( CString("Game: ") + GAMESTATE->GetCurrentGame()->m_szName );
-		SCREENMAN->SetNewScreen( m_sName );
+			SCREENMAN->SystemMessage( CString("Game: ") + GAMESTATE->GetCurrentGame()->m_szName );
+			SCREENMAN->SetNewScreen( m_sName );
+		}
 	}
 
 	ScreenSelectMaster::Input( DeviceI, type, GameI, MenuI, StyleI );

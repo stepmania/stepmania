@@ -22,10 +22,10 @@ public:
 
 	virtual void Update( float fDelta );
 
-	virtual void MenuLeft( PlayerNumber pn );
-	virtual void MenuRight( PlayerNumber pn );
-	virtual void MenuUp( PlayerNumber pn );
-	virtual void MenuDown( PlayerNumber pn );
+	virtual void MenuLeft( PlayerNumber pn, const InputEventType type );
+	virtual void MenuRight( PlayerNumber pn, const InputEventType type );
+	virtual void MenuUp( PlayerNumber pn, const InputEventType type );
+	virtual void MenuDown( PlayerNumber pn, const InputEventType type );
 	virtual void MenuStart( PlayerNumber pn );
 	void TweenOffScreen();
 	void TweenOnScreen();
@@ -52,6 +52,7 @@ protected:
 	ThemeMetric<float>		SLEEP_AFTER_TWEEN_OFF_SECONDS;
 	ThemeMetric1D<CString>	OPTION_ORDER;
 	ThemeMetric<bool>		WRAP_CURSOR;
+	ThemeMetric<bool>		ALLOW_REPEATING_INPUT;
 	ThemeMetric<bool>		SHOW_SCROLLER;
 	ThemeMetric<float>		SCROLLER_SECONDS_PER_ITEM;
 	ThemeMetric<float>		SCROLLER_NUM_ITEMS_TO_DRAW;

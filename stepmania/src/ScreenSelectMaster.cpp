@@ -38,6 +38,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	SLEEP_AFTER_TWEEN_OFF_SECONDS(m_sName,"SleepAfterTweenOffSeconds"),
 	OPTION_ORDER(m_sName,OPTION_ORDER_NAME,NUM_MENU_DIRS),
 	WRAP_CURSOR(m_sName,"WrapCursor"),
+	ALLOW_REPEATING_INPUT(m_sName,"AllowRepeatingInput"),
 	SHOW_SCROLLER(m_sName,"ShowScroller"),
 	SCROLLER_SECONDS_PER_ITEM(m_sName,"ScrollerSecondsPerItem"),
 	SCROLLER_NUM_ITEMS_TO_DRAW(m_sName,"ScrollerNumItemsToDraw"),
@@ -391,33 +392,49 @@ bool ScreenSelectMaster::Move( PlayerNumber pn, MenuDir dir )
 	return ChangeSelection( pn, iSwitchToIndex );
 }
 
-void ScreenSelectMaster::MenuLeft( PlayerNumber pn )
+void ScreenSelectMaster::MenuLeft( PlayerNumber pn, const InputEventType type )
 {
 	if( m_fLockInputSecs > 0 || m_bChosen[pn] )
+		return;
+	if( type == IET_RELEASE )
+		return;
+	if( !ALLOW_REPEATING_INPUT && type != IET_FIRST_PRESS )
 		return;
 	if( Move(pn, MENU_DIR_LEFT) )
 		m_soundChange.Play();
 }
 
-void ScreenSelectMaster::MenuRight( PlayerNumber pn )
+void ScreenSelectMaster::MenuRight( PlayerNumber pn, const InputEventType type )
 {
 	if( m_fLockInputSecs > 0 || m_bChosen[pn] )
+		return;
+	if( type == IET_RELEASE )
+		return;
+	if( !ALLOW_REPEATING_INPUT && type != IET_FIRST_PRESS )
 		return;
 	if( Move(pn, MENU_DIR_RIGHT) )
 		m_soundChange.Play();
 }
 
-void ScreenSelectMaster::MenuUp( PlayerNumber pn )
+void ScreenSelectMaster::MenuUp( PlayerNumber pn, const InputEventType type )
 {
 	if( m_fLockInputSecs > 0 || m_bChosen[pn] )
+		return;
+	if( type == IET_RELEASE )
+		return;
+	if( !ALLOW_REPEATING_INPUT && type != IET_FIRST_PRESS )
 		return;
 	if( Move(pn, MENU_DIR_UP) )
 		m_soundChange.Play();
 }
 
-void ScreenSelectMaster::MenuDown( PlayerNumber pn )
+void ScreenSelectMaster::MenuDown( PlayerNumber pn, const InputEventType type )
 {
 	if( m_fLockInputSecs > 0 || m_bChosen[pn] )
+		return;
+	if( type == IET_RELEASE )
+		return;
+	if( !ALLOW_REPEATING_INPUT && type != IET_FIRST_PRESS )
 		return;
 	if( Move(pn, MENU_DIR_DOWN) )
 		m_soundChange.Play();
