@@ -269,10 +269,10 @@ void BitmapText::DrawChars()
 				fPercent = clamp( fPercent, 0.0f, 1.0f );
 				fPercent *= LeftColor.a;
 
-				verts[i+0].c.a = unsigned char( verts[i+0].c.a * fPercent ); // top left
-				verts[i+1].c.a = unsigned char( verts[i+1].c.a * fPercent ); // bottom left
-				verts[i+2].c.a = unsigned char( verts[i+2].c.a * fPercent ); // bottom right
-				verts[i+3].c.a = unsigned char( verts[i+3].c.a * fPercent ); // top right
+				verts[i+0].c.a = (unsigned char)( verts[i+0].c.a * fPercent ); // top left
+				verts[i+1].c.a = (unsigned char)( verts[i+1].c.a * fPercent ); // bottom left
+				verts[i+2].c.a = (unsigned char)( verts[i+2].c.a * fPercent ); // bottom right
+				verts[i+3].c.a = (unsigned char)( verts[i+3].c.a * fPercent ); // top right
 			}
 
 			if( FadeSize.right > 0.001f )
@@ -281,10 +281,10 @@ void BitmapText::DrawChars()
 				fPercent = clamp( fPercent, 0.0f, 1.0f );
 				fPercent *= RightColor.a;
 
-				verts[i+0].c.a = unsigned char( verts[i+0].c.a * fPercent ); // top left
-				verts[i+1].c.a = unsigned char( verts[i+1].c.a * fPercent ); // bottom left
-				verts[i+2].c.a = unsigned char( verts[i+2].c.a * fPercent ); // bottom right
-				verts[i+3].c.a = unsigned char( verts[i+3].c.a * fPercent ); // top right
+				verts[i+0].c.a = (unsigned char)( verts[i+0].c.a * fPercent ); // top left
+				verts[i+1].c.a = (unsigned char)( verts[i+1].c.a * fPercent ); // bottom left
+				verts[i+2].c.a = (unsigned char)( verts[i+2].c.a * fPercent ); // bottom right
+				verts[i+3].c.a = (unsigned char)( verts[i+3].c.a * fPercent ); // top right
 			}
 		}
 	}
