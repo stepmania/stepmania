@@ -1018,16 +1018,20 @@ int Course::GetNumTimesPlayed( MemoryCard card ) const
 
 static map<const Course*, int> course_sort_val;
 
-bool CompareCoursePointersBySortVal(const Course *pSong1, const Course *pSong2)
+bool CompareCoursePointersBySortValueAscending(const Course *pSong1, const Course *pSong2)
 {
 	return course_sort_val[pSong1] < course_sort_val[pSong2];
+}
+
+bool CompareCoursePointersBySortValueDescending(const Course *pSong1, const Course *pSong2)
+{
+	return course_sort_val[pSong1] > course_sort_val[pSong2];
 }
 
 void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, MemoryCard card )
 {
 	for(unsigned i = 0; i < arrayCoursePointers.size(); ++i)
 		course_sort_val[arrayCoursePointers[i]] = arrayCoursePointers[i]->GetNumTimesPlayed( card );
-	stable_sort( arrayCoursePointers.begin(), arrayCoursePointers.end(), CompareCoursePointersBySortVal );
-	reverse( arrayCoursePointers.begin(), arrayCoursePointers.end() );
+	stable_sort( arrayCoursePointers.begin(), arrayCoursePointers.end(), CompareCoursePointersBySortValueDescending );
 	course_sort_val.clear();
 }

@@ -871,174 +871,279 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 	}
 
 	//
-	// Make local song list
+	// Gather data
 	//
 	vector<Song*> vpSongs = SONGMAN->GetAllSongs();
-	SortSongPointerArrayByGroupAndTitle( vpSongs );
+	vector<Steps*> vpAllSteps;
+	map<Steps*,Song*> mapStepsToSong;
+	{
+		for( unsigned i=0; i<vpSongs.size(); i++ )
+		{
+			Song* pSong = vpSongs[i];
+			vector<Steps*> vpSteps = pSong->GetAllSteps();
+			for( unsigned j=0; j<vpSteps.size(); j++ )
+			{
+				Steps* pSteps = vpSteps[j];
+				if( pSteps->IsAutogen() )
+					continue;	// skip
+				vpAllSteps.push_back( pSteps );
+				mapStepsToSong[pSteps] = pSong;
+			}
+		}
+	}
+	vector<Course*> vpCourses;
+	SONGMAN->GetAllCourses( vpCourses, false );
+
+	//
+	// Calculate which StepTypes to show
+	//
+	vector<StepsType> vStepsTypesToShow;
+	{
+		for( StepsType st=(StepsType)0; st<NUM_STEPS_TYPES; st=(StepsType)(st+1) )
+		{
+			// don't show if there are no Steps of this StepsType 
+			bool bOneSongHasStepsForThisStepsType = false;
+			for( unsigned i=0; i<vpSongs.size(); i++ )
+			{
+				Song* pSong = vpSongs[i];
+				vector<Steps*> vpSteps;
+				pSong->GetSteps( vpSteps, st, DIFFICULTY_INVALID, -1, -1, "", false );
+				if( !vpSteps.empty() )
+				{
+					bOneSongHasStepsForThisStepsType = true;
+					break;
+				}
+			}
+
+			if( bOneSongHasStepsForThisStepsType )
+				vStepsTypesToShow.push_back( st );
+		}
+	}
 
 	//
 	// print HTML headers
 	//
-	f.PutLine( "<html>" );
-	f.PutLine( "<head>" );
-	f.PutLine( "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">" );
-	f.PutLine( ssprintf("<title>%s</title>", PRODUCT_NAME_VER) );
-	f.PutLine( "<link rel='stylesheet' type='text/css' href='style.css'>" );
-	f.PutLine( "</head>" );
-	f.PutLine( "<body>" );
+	{
+		f.PutLine( "<html>" );
+		f.PutLine( "<head>" );
+		f.PutLine( "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">" );
+		f.PutLine( ssprintf("<title>%s</title>", PRODUCT_NAME_VER) );
+		f.PutLine( "<link rel='stylesheet' type='text/css' href='style.css'>" );
+		f.PutLine( "</head>" );
+		f.PutLine( "<body>" );
+	}
 
-#define PRINT_LINK(szName,szLink)	f.Write( ssprintf("<p><a href='%s'>%s</a></p>\n",szLink,szName) )
-#define PRINT_LINE_S(szName,sVal) 	f.Write( ssprintf("<p>%s = <b>%s</b></p>\n",szName,sVal.c_str()) )
-#define PRINT_LINE_B(szName,bVal) 	f.Write( ssprintf("<p>%s = <b>%s</b></p>\n",szName,(bVal)?"yes":"no") )
-#define PRINT_LINE_I(szName,iVal) 	f.Write( ssprintf("<p>%s = <b>%d</b></p>\n",szName,iVal) )
+#define PRINT_SECTION_START(szName)				f.Write( ssprintf("<h2><a name='%s'>"szName"</a> <a href='#Table of Contents'>(top)</a></h2>\n", szName) )
+#define PRINT_SECTION_END						f.Write( "\n" )
+#define PRINT_DIV_START(szName)					f.Write( ssprintf("<div class='section1'>\n" "<h3>%s</h3>\n", szName) )
+#define PRINT_DIV_START_ANCHOR(uAnchor,szName)	f.Write( ssprintf("<div class='section1'>\n" "<h3><a name='%u'>%s</a></h3>\n", uAnchor, szName) )
+#define PRINT_DIV_END							f.Write( "</div>\n" )
+#define PRINT_DIV2_START(szName)				f.Write( ssprintf("<div class='section2'>\n" "<h3>%s</h3>\n", szName) )
+#define PRINT_DIV2_START_ANCHOR(uAnchor,szName)	f.Write( ssprintf("<div class='section2'>\n" "<h3><a name='%u'>%s</a></h3>\n", uAnchor, szName) )
+#define PRINT_DIV2_END							f.Write( "</div>\n" )
+#define PRINT_LINK(szName,szLink)				f.Write( ssprintf("<p><a href='%s'>%s</a></p>\n",szLink,szName) )
+#define PRINT_LINE_S(szName,sVal) 				f.Write( ssprintf("<p>%s = <b>%s</b></p>\n",szName,sVal.c_str()) )
+#define PRINT_LINE_B(szName,bVal) 				f.Write( ssprintf("<p>%s = <b>%s</b></p>\n",szName,(bVal)?"yes":"no") )
+#define PRINT_LINE_I(szName,iVal) 				f.Write( ssprintf("<p>%s = <b>%d</b></p>\n",szName,iVal) )
+#define PRINT_LINE_RANK(iRank,sName,iVal)		f.Write( ssprintf("<p><b>%d</b> - %s (%d)</p>\n",iRank,sName.c_str(),iVal) )
+
 	//
 	// Print table of contents
 	//
-	f.PutLine( "<h2><a name='Table of Contents'>Table of Contents</a></h2>\n" );
-	f.PutLine( "<div class='section1'>\n" );
-	f.PutLine( "<h3>Sections</h3>\n" );
-	PRINT_LINK( "My Statistics", "#My Statistics" );
-	PRINT_LINK( "Difficulty Table", "#Difficulty Table" );
-	PRINT_LINK( "Song/Steps List", "#Song/Steps List" );
-	f.PutLine( "</div>\n" );
-
-
+	{
+		PRINT_SECTION_START( "Table of Contents" );
+		PRINT_DIV_START("Sections");
+		PRINT_LINK( "My Statistics", "#My Statistics" );
+		PRINT_LINK( "Popularity Lists", "#Popularity Lists" );
+		PRINT_LINK( "Difficulty Table", "#Difficulty Table" );
+		PRINT_LINK( "Song/Steps List", "#Song/Steps List" );
+		PRINT_DIV_END;
+		PRINT_SECTION_END;
+	}
 
 	//
 	// Print My Statistics
 	//
-	f.PutLine( "<h2><a name='My Statistics'>My Statistics</a> <a href='#Table of Contents'>(top)</a></h2>\n" );
-	f.PutLine( "<div class='section1'>\n" );
-	CString sName = pProfile->m_sLastUsedHighScoreName.empty() ?
-		pProfile->m_sName :
-		pProfile->m_sLastUsedHighScoreName;
-	f.PutLine( ssprintf("<h3>%s</h3>\n",sName.c_str()) );
-	PRINT_LINE_S( "LastUsedHighScoreName", pProfile->m_sLastUsedHighScoreName );
-	PRINT_LINE_B( "UsingProfileDefaultModifiers", pProfile->m_bUsingProfileDefaultModifiers );
-	PRINT_LINE_S( "DefaultModifiers", pProfile->m_sDefaultModifiers );
-	PRINT_LINE_I( "TotalPlays", pProfile->m_iTotalPlays );
-	PRINT_LINE_I( "TotalPlaySeconds", pProfile->m_iTotalPlaySeconds );
-	PRINT_LINE_I( "TotalGameplaySeconds", pProfile->m_iTotalGameplaySeconds );
-	PRINT_LINE_I( "CurrentCombo", pProfile->m_iCurrentCombo );
-	f.PutLine( "</div>\n" );
+	{
+		PRINT_SECTION_START( "My Statistics" );
+		CString sName = pProfile->m_sLastUsedHighScoreName.empty() ?
+			pProfile->m_sName :
+			pProfile->m_sLastUsedHighScoreName;
+		PRINT_DIV_START( sName.c_str() );
+		PRINT_LINE_S( "LastUsedHighScoreName", pProfile->m_sLastUsedHighScoreName );
+		PRINT_LINE_B( "UsingProfileDefaultModifiers", pProfile->m_bUsingProfileDefaultModifiers );
+		PRINT_LINE_S( "DefaultModifiers", pProfile->m_sDefaultModifiers );
+		PRINT_LINE_I( "TotalPlays", pProfile->m_iTotalPlays );
+		PRINT_LINE_I( "TotalPlaySeconds", pProfile->m_iTotalPlaySeconds );
+		PRINT_LINE_I( "TotalGameplaySeconds", pProfile->m_iTotalGameplaySeconds );
+		PRINT_LINE_I( "CurrentCombo", pProfile->m_iCurrentCombo );
+		PRINT_DIV_END;
+		PRINT_SECTION_END;
+	}
+
+	//
+	// Print Popularity Lists
+	//
+	{
+		PRINT_SECTION_START( "Popularity Lists" );
+
+		// Songs by popularity
+		{
+			unsigned uNumToShow = min( vpSongs.size(), (unsigned)100 );
+
+			SortSongPointerArrayByMostPlayed( vpSongs, mc );
+			PRINT_DIV_START( "Songs by Popularity" );
+			for( unsigned i=0; i<uNumToShow; i++ )
+			{
+				Song* pSong = vpSongs[i];
+				PRINT_LINE_RANK( i+1, pSong->GetFullDisplayTitle(), pSong->GetNumTimesPlayed(mc) );
+			}
+			PRINT_DIV_END;
+		}
+
+		// Steps by popularity
+		{
+			unsigned uNumToShow = min( vpAllSteps.size(), (unsigned)100 );
+
+			SortStepsPointerArrayByMostPlayed( vpAllSteps, mc );
+			PRINT_DIV_START( "Steps by Popularity" );
+			for( unsigned i=0; i<uNumToShow; i++ )
+			{
+				Steps* pSteps = vpAllSteps[i];
+				Song* pSong = mapStepsToSong[pSteps];
+				CString s;
+				s += pSong->GetFullDisplayTitle();
+				s += " - ";
+				s += GAMEMAN->NotesTypeToString(pSteps->m_StepsType);
+				s += " ";
+				s += DifficultyToString(pSteps->GetDifficulty());
+				PRINT_LINE_RANK( i+1, s, pSteps->GetNumTimesPlayed(mc) );
+			}
+			PRINT_DIV_END;
+		}
+
+		// Course by popularity
+		{
+			unsigned uNumToShow = min( vpCourses.size(), (unsigned)100 );
+
+			SortCoursePointerArrayByMostPlayed( vpCourses, mc );
+			PRINT_DIV_START( "Courses by Popularity" );
+			for( unsigned i=0; i<uNumToShow; i++ )
+			{
+				Course* pCourse = vpCourses[i];
+				PRINT_LINE_RANK( i+1, pCourse->m_sName, pCourse->GetNumTimesPlayed(mc) );
+			}
+			PRINT_DIV_END;
+		}
+		PRINT_SECTION_END;
+	}
 
 	//
 	// Print Difficulty tables
 	//
-	f.PutLine( "<h2><a name='Difficulty Table'>Difficulty Table</a> <a href='#Table of Contents'>(top)</a></h2>\n" );
-	for( StepsType st=(StepsType)0; st<NUM_STEPS_TYPES; st=(StepsType)(st+1) )
 	{
-		unsigned i;
+		SortSongPointerArrayByGroupAndTitle( vpSongs );
 
-		// don't print this table if there are no songs that have this StepsType 
-		bool bOneSongHasStepsForThisStepsType = false;
-		for( i=0; i<vpSongs.size(); i++ )
+		PRINT_SECTION_START( "Difficulty Table" );
+		for( unsigned s=0; s<vStepsTypesToShow.size(); s++ )
 		{
-			Song* pSong = vpSongs[i];
-			vector<Steps*> vpSteps;
-			pSong->GetSteps( vpSteps, st, DIFFICULTY_INVALID, -1, -1, "", false );
-			if( !vpSteps.empty() )
+			StepsType st = vStepsTypesToShow[s];
+
+			unsigned i;
+
+ 			PRINT_DIV_START( GAMEMAN->NotesTypeToString(st).c_str() );
+			f.PutLine( "<table border='1' cellpadding='2' cellspacing='0'>\n" );
+
+			// table header row
+			f.Write( "<tr><td>&nbsp;</td>" );
+			for( unsigned k=0; k<NUM_DIFFICULTIES; k++ )
 			{
-				bOneSongHasStepsForThisStepsType = true;
-				break;
+				Difficulty d = (Difficulty)k;
+				f.PutLine( ssprintf("<td>%s</td>", Capitalize(DifficultyToString(d).Left(3)).c_str()) );
 			}
-		}
-		
-		if( !bOneSongHasStepsForThisStepsType )
-			continue;	// don't print this table
+			f.PutLine( "</tr>" );
 
- 		f.PutLine( "<div class='section1'>\n" );
-		f.PutLine( ssprintf("<h3>%s</h3>\n", GAMEMAN->NotesTypeToString(st).c_str()) );
-		f.PutLine( "<table border='1' cellpadding='2' cellspacing='0'>\n" );
-
-		// table header row
-		f.Write( "<tr><td>&nbsp;</td>" );
-		for( unsigned k=0; k<NUM_DIFFICULTIES; k++ )
-		{
-			Difficulty d = (Difficulty)k;
-			f.PutLine( ssprintf("<td>%s</td>", Capitalize(DifficultyToString(d).Left(3)).c_str()) );
-		}
-		f.PutLine( "</tr>" );
-
-		// table body rows
-		for( i=0; i<vpSongs.size(); i++ )
-		{
-			Song* pSong = vpSongs[i];
-
-			f.PutLine( "<tr>" );
-			
-			f.Write( ssprintf("<td><a href='#%u'>%s</a></td>", 
-				pSong,	// use pointer value as the hash
-				pSong->GetFullDisplayTitle().c_str()) );
-
-			for( Difficulty dc=(Difficulty)0; dc<NUM_DIFFICULTIES; dc=(Difficulty)(dc+1) )
+			// table body rows
+			for( i=0; i<vpSongs.size(); i++ )
 			{
-				Steps* pSteps = pSong->GetStepsByDifficulty( st, dc, false );
-				if( pSteps )
-					f.PutLine( ssprintf("<td><p align='right'><a href='#%u'>%d</a></p></td>", 
-					pSteps,		// use pointer value as the hash
-					pSteps->GetMeter()) );
-				else
-					f.PutLine( "<td>&nbsp;</td>" );
+				Song* pSong = vpSongs[i];
+
+				f.PutLine( "<tr>" );
+				
+				f.Write( ssprintf("<td><a href='#%u'>%s</a></td>", 
+					pSong,	// use pointer value as the hash
+					pSong->GetFullDisplayTitle().c_str()) );
+
+				for( Difficulty dc=(Difficulty)0; dc<NUM_DIFFICULTIES; dc=(Difficulty)(dc+1) )
+				{
+					Steps* pSteps = pSong->GetStepsByDifficulty( st, dc, false );
+					if( pSteps )
+						f.PutLine( ssprintf("<td><p align='right'><a href='#%u'>%d</a></p></td>", 
+						pSteps,		// use pointer value as the hash
+						pSteps->GetMeter()) );
+					else
+						f.PutLine( "<td>&nbsp;</td>" );
+				}
+
+				f.Write( "</tr>" );
 			}
 
-			f.Write( "</tr>" );
+			f.PutLine( "</table>\n" );
+			PRINT_DIV_END;
 		}
-
-		f.PutLine( "</table>\n" );
-		f.PutLine( "</div>\n" );
+		PRINT_SECTION_END;
 	}
-
 
 	//
 	// Print song list
 	//
-	f.PutLine( "<h2><a name='Song/Steps List'>Song/Steps List</a> <a href='#Table of Contents'>(top)</a></h2>\n" );
-	for( unsigned i=0; i<vpSongs.size(); i++ )
 	{
-		Song* pSong = vpSongs[i];
-		vector<Steps*> vpSteps = pSong->GetAllSteps();
-
-		/* XXX: We can't call pSong->HasBanner on every song; it'll effectively re-traverse the entire
-		 * song directory tree checking if each banner file really exists.
-		 *
-		 * (Note for testing this: remember that we'll cache directories for a time; this is only slow if
-		 * the directory cache expires before we get here.) */
-		/* Don't print the song banner anyway since this is going on the memory card. -Chris */
-		//CString sImagePath = pSong->HasBanner() ? pSong->GetBannerPath() : (pSong->HasBackground() ? pSong->GetBackgroundPath() : "" );
-		f.PutLine( "<div class='section1'>\n" );
-		f.PutLine( ssprintf("<h3><a name='%u'>%s</a></h3>\n",
-			pSong,	// use pointer value as the hash
-			pSong->GetFullDisplayTitle().c_str()) );
-		PRINT_LINE_S( "Artist", pSong->GetDisplayArtist() );
-		PRINT_LINE_S( "GroupName", pSong->m_sGroupName );
-		float fMinBPM, fMaxBPM;
-		pSong->GetDisplayBPM( fMinBPM, fMaxBPM );
-		CString sBPM = (fMinBPM==fMaxBPM) ? ssprintf("%.1f",fMinBPM) : ssprintf("%.1f - %.1f",fMinBPM,fMaxBPM);
-		PRINT_LINE_S( "BPM", sBPM );
-		PRINT_LINE_I( "NumTimesPlayed", pSong->GetNumTimesPlayed(mc) );
-		PRINT_LINE_S( "Credit", pSong->m_sCredit );
-		PRINT_LINE_S( "MusicLength", SecondsToTime(pSong->m_fMusicLengthSeconds) );
-		PRINT_LINE_B( "Lyrics", !pSong->m_sLyricsFile.empty() );
-		f.PutLine( "</div>\n" );
-
-		//
-		// Print Steps list
-		//
-		for( unsigned j=0; j<vpSteps.size(); j++ )
+		PRINT_SECTION_START( "Song/Steps List" );
+		for( unsigned i=0; i<vpSongs.size(); i++ )
 		{
-			Steps* pSteps = vpSteps[j];
-			if( pSteps->IsAutogen() )
-				continue;	// skip autogen
-			f.PutLine( "<div class='section2'>\n" );
-			f.PutLine( ssprintf("<h4><a name='%u'>%s - %s</a></h4>\n",
-				pSteps,	// use pointer value as the hash
-				GAMEMAN->NotesTypeToString(pSteps->m_StepsType).c_str(),
-				DifficultyToString(pSteps->GetDifficulty()).c_str()) );
-			PRINT_LINE_I( "NumTimesPlayed", pSteps->m_MemCardDatas[mc].iNumTimesPlayed );
-			f.PutLine( "</div>\n" );
-		}
+			Song* pSong = vpSongs[i];
+			vector<Steps*> vpSteps = pSong->GetAllSteps();
 
+			/* XXX: We can't call pSong->HasBanner on every song; it'll effectively re-traverse the entire
+			 * song directory tree checking if each banner file really exists.
+			 *
+			 * (Note for testing this: remember that we'll cache directories for a time; this is only slow if
+			 * the directory cache expires before we get here.) */
+			/* Don't print the song banner anyway since this is going on the memory card. -Chris */
+			//CString sImagePath = pSong->HasBanner() ? pSong->GetBannerPath() : (pSong->HasBackground() ? pSong->GetBackgroundPath() : "" );
+			PRINT_DIV_START_ANCHOR( /*Song primary key*/pSong, pSong->GetFullDisplayTitle().c_str() );
+			PRINT_LINE_S( "Artist", pSong->GetDisplayArtist() );
+			PRINT_LINE_S( "GroupName", pSong->m_sGroupName );
+			float fMinBPM, fMaxBPM;
+			pSong->GetDisplayBPM( fMinBPM, fMaxBPM );
+			CString sBPM = (fMinBPM==fMaxBPM) ? ssprintf("%.1f",fMinBPM) : ssprintf("%.1f - %.1f",fMinBPM,fMaxBPM);
+			PRINT_LINE_S( "BPM", sBPM );
+			PRINT_LINE_I( "NumTimesPlayed", pSong->GetNumTimesPlayed(mc) );
+			PRINT_LINE_S( "Credit", pSong->m_sCredit );
+			PRINT_LINE_S( "MusicLength", SecondsToTime(pSong->m_fMusicLengthSeconds) );
+			PRINT_LINE_B( "Lyrics", !pSong->m_sLyricsFile.empty() );
+			PRINT_DIV_END;
+
+			//
+			// Print Steps list
+			//
+			for( unsigned j=0; j<vpSteps.size(); j++ )
+			{
+				Steps* pSteps = vpSteps[j];
+				if( pSteps->IsAutogen() )
+					continue;	// skip autogen
+				f.PutLine( "<div class='section2'>\n" );
+				CString s = 
+					GAMEMAN->NotesTypeToString(pSteps->m_StepsType) + 
+					" - " +
+					DifficultyToString(pSteps->GetDifficulty());
+				PRINT_DIV2_START_ANCHOR( /*Steps primary key*/pSteps, s.c_str() );	// use pointer value as the hash
+				PRINT_LINE_I( "NumTimesPlayed", pSteps->m_MemCardDatas[mc].iNumTimesPlayed );
+				f.PutLine( "</div>\n" );
+				PRINT_DIV2_END;
+			}
+		}
+		PRINT_SECTION_END;
 	}
 
 	f.PutLine( "</body>" );

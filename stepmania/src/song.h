@@ -273,6 +273,8 @@ void SortSongPointerArrayByGroupAndDifficulty( vector<Song*> &arraySongPointers 
 void SortSongPointerArrayByGroupAndTitle( vector<Song*> &arraySongPointers );
 void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers, MemoryCard card );
 void SortSongPointerArrayByMeter( vector<Song*> &arraySongPointers, Difficulty dc );
+CString GetSectionNameFromSongAndSort( const Song* pSong, SongSortOrder so );
+void SortSongPointerArrayBySectionName( vector<Song*> &arraySongPointers, SongSortOrder so );
 
 
 

@@ -125,8 +125,6 @@ protected:
 	RageSound m_soundStart;
 	RageSound m_soundLocked;
 
-	static CString GetSectionNameFromSongAndSort( const Song* pSong, SongSortOrder so );
-	static void SortSongPointerArrayBySectionName( vector<Song*> &arraySongPointers, SongSortOrder so );
 	bool WheelItemIsVisible(int n);
 	void UpdateScrollbar();
 };

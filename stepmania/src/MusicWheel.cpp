@@ -362,26 +362,7 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CStrin
 	}
 }
 
-extern map<const Song*, CString> song_sort_val;
-bool CompareSongPointersBySortVal(const Song *pSong1, const Song *pSong2);
 
-void MusicWheel::SortSongPointerArrayBySectionName( vector<Song*> &arraySongPointers, SongSortOrder so )
-{
-	for(unsigned i = 0; i < arraySongPointers.size(); ++i)
-	{
-		CString val = MusicWheel::GetSectionNameFromSongAndSort( arraySongPointers[i], so );
-
-		/* Make sure NUM comes first and OTHER comes last. */
-		if( val == "NUM" )			val = "0";
-		else if( val == "OTHER" )	val = "2";
-		else						val = "1" + val;
-
-		song_sort_val[arraySongPointers[i]] = val;
-	}
-
-	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortVal );
-	song_sort_val.clear();
-}
 
 
 void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas, SongSortOrder so )
@@ -1406,93 +1387,6 @@ void MusicWheel::TweenOffScreen(bool changing_sort)
 		HurryTweening( 0.25f );
 
 	m_fTimeLeftInState = GetTweenTimeLeft() + 0.100f;
-}
-
-CString MusicWheel::GetSectionNameFromSongAndSort( const Song* pSong, SongSortOrder so )
-{
-	if( pSong == NULL )
-		return "";
-
-	switch( so )
-	{
-	case SORT_PREFERRED:
-		return "";
-	case SORT_GROUP:	
-		return pSong->m_sGroupName;
-	case SORT_TITLE:
-	case SORT_ARTIST:	
-		{
-			CString s;
-			switch( so )
-			{
-			case SORT_TITLE:	s = pSong->GetTranslitMainTitle();	break;
-			case SORT_ARTIST:	s = pSong->GetTranslitArtist();		break;
-			default:	ASSERT(0);
-			}
-			s = MakeSortString(s);	// resulting string will be uppercase
-			
-			if( s.empty() )
-				return "";
-			else if( s[0] >= '0' && s[0] <= '9' )
-				return "NUM";
-			else if( s[0] < 'A' || s[0] > 'Z')
-				return "OTHER";
-			else
-				return s.Left(1);
-		}
-	case SORT_BPM:
-		{
-			const int iBPMGroupSize = 20;
-			float fMinBPM, fMaxBPM;
-			pSong->GetDisplayBPM( fMinBPM, fMaxBPM );
-			int iMaxBPM = (int)fMaxBPM;
-			iMaxBPM += iBPMGroupSize - (iMaxBPM%iBPMGroupSize) - 1;
-			return ssprintf("%03d-%03d",iMaxBPM-(iBPMGroupSize-1), iMaxBPM);
-		}
-	case SORT_MOST_PLAYED:
-		return "";
-	case SORT_GRADE:
-		{
-			for( int i=NUM_GRADES; i>GRADE_NO_DATA; i-- )
-			{
-				Grade g = (Grade)i;
-				int iCount = pSong->GetNumNotesWithGrade( g );
-				if( iCount > 0 )
-					return ssprintf( "%4s x %d", GradeToString(g).c_str(), iCount );
-			}
-			return "NO DATA";
-		}
-	case SORT_EASY_METER:
-		{
-			Steps* pNotes = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyleDef()->m_StepsType,DIFFICULTY_EASY);
-			if( pNotes )	
-				return ssprintf("%02d", pNotes->GetMeter() );
-			return "N/A";
-		}
-	case SORT_MEDIUM_METER:
-		{
-			Steps* pNotes = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyleDef()->m_StepsType,DIFFICULTY_MEDIUM);
-			if( pNotes )	
-				return ssprintf("%02d", pNotes->GetMeter() );
-			return "N/A";
-		}
-	case SORT_HARD_METER:
-		{
-			Steps* pNotes = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyleDef()->m_StepsType,DIFFICULTY_HARD);
-			if( pNotes )	
-				return ssprintf("%02d", pNotes->GetMeter() );
-			return "N/A";
-		}
-	case SORT_MENU:
-		return "";
-	case SORT_ALL_COURSES:
-	case SORT_NONSTOP_COURSES:
-	case SORT_ONI_COURSES:
-	case SORT_ENDLESS_COURSES:
-	default:
-		ASSERT(0);
-		return "";
-	}
 }
 
 void MusicWheel::Move(int n)

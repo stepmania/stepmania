@@ -280,6 +280,25 @@ void Steps::SetRadarValue(int r, float val)
 //
 // Sorting stuff
 //
+map<const Steps*, CString> steps_sort_val;
+
+bool CompareStepsPointersBySortValueAscending(const Steps *pSteps1, const Steps *pSteps2)
+{
+	return steps_sort_val[pSteps1] < steps_sort_val[pSteps2];
+}
+
+bool CompareStepsPointersBySortValueDescending(const Steps *pSteps1, const Steps *pSteps2)
+{
+	return steps_sort_val[pSteps1] > steps_sort_val[pSteps2];
+}
+
+void SortStepsPointerArrayByMostPlayed( vector<Steps*> &vStepsPointers, MemoryCard card )
+{
+	for(unsigned i = 0; i < vStepsPointers.size(); ++i)
+		steps_sort_val[vStepsPointers[i]] = ssprintf("%9i", vStepsPointers[i]->GetNumTimesPlayed(card));
+	stable_sort( vStepsPointers.begin(), vStepsPointers.end(), CompareStepsPointersBySortValueDescending );
+	steps_sort_val.clear();
+}
 
 bool CompareNotesPointersByRadarValues(const Steps* pNotes1, const Steps* pNotes2)
 {

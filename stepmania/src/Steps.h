@@ -137,5 +137,6 @@ bool CompareNotesPointersByDifficulty(const Steps *pNotes1, const Steps *pNotes2
 void SortNotesArrayByDifficulty( vector<Steps*> &arrayNotess );
 bool CompareStepsPointersByTypeAndDifficulty(const Steps *pStep1, const Steps *pStep2);
 void SortStepsByTypeAndDifficulty( vector<Steps*> &arraySongPointers );
+void SortStepsPointerArrayByMostPlayed( vector<Steps*> &vStepsPointers, MemoryCard card );
 
 #endif
