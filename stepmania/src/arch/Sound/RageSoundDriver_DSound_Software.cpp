@@ -76,6 +76,7 @@ bool RageSound_DSound_Software::GetData()
 	memset(buf, 0, bufsize*sizeof(Uint16));
 
 	static SoundMixBuffer mix;
+	mix.SetVolume( SOUNDMAN->GetMixVolume() );
 
 	for(unsigned i = 0; i < sounds.size(); ++i)
 	{

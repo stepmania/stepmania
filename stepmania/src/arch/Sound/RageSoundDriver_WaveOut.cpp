@@ -77,6 +77,7 @@ bool RageSound_WaveOut::GetData()
 	memset(buf, 0, bufsize*sizeof(Uint16));
 	memset(buffers[b].lpData, 0, bufsize*sizeof(Uint16));
 	static SoundMixBuffer mix;
+	mix.SetVolume( SOUNDMAN->GetMixVolume() );
 
 	for(unsigned i = 0; i < sounds.size(); ++i)
 	{
