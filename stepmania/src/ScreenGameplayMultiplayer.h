@@ -43,7 +43,7 @@ class ScreenGameplayMultiplayer : public Screen
 {
 public:
 	ScreenGameplayMultiplayer( CString sName, bool bDemonstration = false );
-	void Init();
+	virtual void Init();
 	virtual ~ScreenGameplayMultiplayer();
 
 	virtual void Update( float fDeltaTime );
