@@ -46,11 +46,14 @@ rm -rf vorbis
 rm -rf BaseClasses
 rm -rf ddk
 rm -rf smpackage
+rm -rf sdl_xbox_includes
 
 find -type d -name 'CVS' | xargs rm -rf
 find -type f -name '*.lib' | xargs rm -rf
 
 cd ../..
+rm -f Utils/*.exe
+rm -rf Utils/Font\ generation/
 
 echo Archiving...
 tar zchvf "$PRODUCTVER".tar.gz $PRODUCTVER/
