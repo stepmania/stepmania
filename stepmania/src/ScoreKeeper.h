@@ -47,10 +47,6 @@ public:
 
 	virtual void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, int iNumAdditions ) = 0;
 	virtual void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore ) = 0;
-
-	virtual int TapNoteScoreToDancePoints( TapNoteScore tns ) = 0;
-	virtual int HoldNoteScoreToDancePoints( HoldNoteScore hns ) = 0;
-	virtual int	GetPossibleDancePoints( const NoteData* pNoteData ) = 0;
 };
 
 #endif
