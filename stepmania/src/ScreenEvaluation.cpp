@@ -1385,6 +1385,11 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToNextScreen:
 	{
+		/* Hack: finish the stage before moving on.  This will increment the stage
+		 * counter.  If we don't do this, the stage counter will be wrong for
+		 * ScreenSelectMusic code which is called before the ctor. */
+		GAMESTATE->FinishStage();
+
 		if( PREFSMAN->m_bEventMode )
 			SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		else
