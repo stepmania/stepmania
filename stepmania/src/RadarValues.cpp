@@ -3,7 +3,10 @@
 #include "ThemeManager.h"
 #include "RageUtil.h"
 #include "XmlFile.h"
+#include "ThemeManager.h"
 
+#define WRITE_COMPLEX_VALUES		THEME->GetMetricB("RadarValues","WriteComplexValues")
+#define WRITE_SIMPLE_VALUES			THEME->GetMetricB("RadarValues","WriteSimpleValues")
 
 RadarValues::RadarValues()
 {
@@ -31,9 +34,15 @@ XNode* RadarValues::CreateNode() const
 	FOREACH_RadarCategory( rc )
 	{
 		if( rc >= RADAR_NUM_TAPS_AND_HOLDS )
-			pNode->AppendChild( RadarCategoryToString(rc),	(int)m_fValues[rc] );
+		{
+			if( WRITE_SIMPLE_VALUES )
+				pNode->AppendChild( RadarCategoryToString(rc),	(int)m_fValues[rc] );
+		}
 		else
-			pNode->AppendChild( RadarCategoryToString(rc),	m_fValues[rc] );
+		{
+			if( WRITE_COMPLEX_VALUES )
+				pNode->AppendChild( RadarCategoryToString(rc),	m_fValues[rc] );
+		}
 	}
 
 	return pNode;
@@ -42,6 +51,8 @@ XNode* RadarValues::CreateNode() const
 void RadarValues::LoadFromNode( const XNode* pNode ) 
 {
 	ASSERT( pNode->name == "RadarValues" );
+
+	Zero();
 
 	CString s;
 
