@@ -62,7 +62,7 @@ void HandleFile(const CString& file, const CString& dir, const CString& archiveP
         status = AuthorizationExecuteWithPrivileges(auth, path, kAuthorizationFlagDefaults, arguments+1, NULL);
         if (status != errAuthorizationSuccess)
             [c postMessage:@"failed"];
-        wait(&int(status));
+        wait((int*)&status);
     }
     else
     {

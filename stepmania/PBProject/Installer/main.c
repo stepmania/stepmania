@@ -7,7 +7,7 @@
  *
  */
 
-#include <Carbon/Carbon.h>
+#import <Carbon/Carbon.h>
 
 enum
 {
