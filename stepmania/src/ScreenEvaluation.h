@@ -73,7 +73,6 @@ protected:
 	Sprite				m_sprScoreLabel;
 	ScoreDisplayNormal	m_ScoreDisplay[NUM_PLAYERS];
 
-	bool				m_bNewRecord[NUM_PLAYERS];
 	BitmapText			m_textNewRecord[NUM_PLAYERS];
 
 	bool				m_bTryExtraStage;

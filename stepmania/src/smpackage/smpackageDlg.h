@@ -12,9 +12,6 @@
 // CSmpackageDlg dialog
 
 
-#include "ZipArchive\ZipArchive.h"	
-
-
 class CSmpackageDlg : public CDialog
 {
 // Construction
@@ -24,8 +21,9 @@ public:
 // Dialog Data
 	//{{AFX_DATA(CSmpackageDlg)
 	enum { IDD = IDD_SMPACKAGE_DIALOG };
-	CButton	m_buttonExport;
-	CListBox	m_listBoxSongs;
+	CButton	m_buttonExportAsOne;
+	CButton	m_buttonExportAsIndividual;
+	CListBox	m_listBox;
 	//}}AFX_DATA
 
 	// ClassWizard generated virtual function overrides
@@ -37,7 +35,6 @@ public:
 // Implementation
 protected:
 	HICON m_hIcon;
-	CZipArchive m_zip;
 
 
 	// Generated message map functions
@@ -45,8 +42,9 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
-	afx_msg void OnSelchangeListSongs();
-	afx_msg void OnButtonExport();
+	afx_msg void OnSelchangeList();
+	afx_msg void OnButtonExportAsOne();
+	afx_msg void OnButtonExportAsIndividual();
 	afx_msg void OnButtonPlay();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

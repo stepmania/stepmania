@@ -1,3 +1,15 @@
+﻿------------------------CVS after 3.00 beta 6----------------
+NEW FEATURE:  Package Exporter now can export Announcers, BGAnimations,
+	Courses, NoteSkins, RandomMovies, Themes, and Visualizations.
+NEW FEATURE:  Package Exporter now has two options: "Export As One", and 
+	"Export As Individual".  Export As One will create a package of all
+	selected items, and Export As Individual will create packages for each
+	of the selected items.
+CHANGE:  Renamed "Skins" folder to "NoteSkins" to avoid confusion with DWI 
+	and KIU.
+NEW FEATURE:  F6 during gameplay to toggle assist tick.
+CHANGE:  While AutoPlay is ON, life will not change and score/dance points 
+	will not accumulate.
 NEW FEATURE:  Song list can handle any number of groups.
 BUG FIX:  Fix joystick Y axis.
 NEW FEATURE:  Add level 8 judge difficulty.

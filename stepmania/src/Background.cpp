@@ -119,13 +119,15 @@ void Background::LoadFromSong( Song* pSong )
 		m_BackgroundMode = MODE_ANIMATIONS;
 
 
+	const CString sSongBackgroundPath = sSongBackgroundPath;
+
 	//
 	// Load the static background that will before notes start and after notes end
 	//
 	BackgroundAnimation* pTempBGA;
 
 	pTempBGA = new BackgroundAnimation;
-	pTempBGA->LoadFromStaticGraphic( pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","fallback background") );
+	pTempBGA->LoadFromStaticGraphic( sSongBackgroundPath );
 	m_BackgroundAnimations.Add( pTempBGA );
 
 
@@ -153,7 +155,7 @@ void Background::LoadFromSong( Song* pSong )
 			if( asFiles.GetSize() > 0 )
 			{
 				pTempBGA = new BackgroundAnimation;
-				pTempBGA->LoadFromMovie( asFiles[0], true, true );
+				pTempBGA->LoadFromMovie( asFiles[0], true, true, i==0/*first BGChange*/, sSongBackgroundPath );
 				m_BackgroundAnimations.Add( pTempBGA );
 
 				m_aBGSegments.Add( BGSegment(aniseg.m_fStartBeat, m_BackgroundAnimations.GetSize()-1) );	// add to the plan
@@ -165,7 +167,7 @@ void Background::LoadFromSong( Song* pSong )
 			if( asFiles.GetSize() > 0 )
 			{
 				pTempBGA = new BackgroundAnimation;
-				pTempBGA->LoadFromAniDir( asFiles[0], pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","fallback background") );
+				pTempBGA->LoadFromAniDir( asFiles[0], sSongBackgroundPath );
 				m_BackgroundAnimations.Add( pTempBGA );
 
 				m_aBGSegments.Add( BGSegment(aniseg.m_fStartBeat, m_BackgroundAnimations.GetSize()-1) );	// add to the plan
@@ -179,7 +181,7 @@ void Background::LoadFromSong( Song* pSong )
 			if( asFiles.GetSize() > 0 )
 			{
 				pTempBGA = new BackgroundAnimation;
-				pTempBGA->LoadFromMovie( asFiles[0], true, false );
+				pTempBGA->LoadFromMovie( asFiles[0], true, false, i==0/*first BGChange*/, sSongBackgroundPath );
 				m_BackgroundAnimations.Add( pTempBGA );
 
 				m_aBGSegments.Add( BGSegment(aniseg.m_fStartBeat, m_BackgroundAnimations.GetSize()-1) );	// add to the plan
@@ -191,18 +193,20 @@ void Background::LoadFromSong( Song* pSong )
 			if( asFiles.GetSize() > 0 )
 			{
 				pTempBGA = new BackgroundAnimation;
-				pTempBGA->LoadFromAniDir( asFiles[0], pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","fallback background") );
+				pTempBGA->LoadFromAniDir( asFiles[0], sSongBackgroundPath  );
 				m_BackgroundAnimations.Add( pTempBGA );
 
 				m_aBGSegments.Add( BGSegment(aniseg.m_fStartBeat, m_BackgroundAnimations.GetSize()-1) );	// add to the plan
 				continue;	// stop looking for this background
 			}
+
+			// if we make it here, ignore the background change
 		}
 
 		// end showing the static song background
 		m_aBGSegments.Add( BGSegment(pSong->m_fLastBeat,0) );
 
-		SortBGSegmentArray( m_aBGSegments );	// Need to sort in case the song has a background change after the last beat
+		SortBGSegmentArray( m_aBGSegments );	// Need to sort in case there is a background change after the last beat (not likely)
 	}
 	else	// pSong doesn't have an animation plan
 	{
@@ -230,7 +234,7 @@ void Background::LoadFromSong( Song* pSong )
 				{
 					int index = rand() % arrayPossibleMovies.GetSize();
 					pTempBGA = new BackgroundAnimation;
-					pTempBGA->LoadFromVisualization( arrayPossibleMovies[index], pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","fallback background") );
+					pTempBGA->LoadFromVisualization( arrayPossibleMovies[index], sSongBackgroundPath );
 					m_BackgroundAnimations.Add( pTempBGA );
 					arrayPossibleMovies.RemoveAt( index );
 				}	
@@ -244,7 +248,7 @@ void Background::LoadFromSong( Song* pSong )
 				{
 					int index = rand() % arrayPossibleAnims.GetSize();
 					pTempBGA = new BackgroundAnimation;
-					pTempBGA->LoadFromAniDir( arrayPossibleAnims[index], pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","fallback background") );
+					pTempBGA->LoadFromAniDir( arrayPossibleAnims[index], sSongBackgroundPath );
 					m_BackgroundAnimations.Add( pTempBGA );
 					arrayPossibleAnims.RemoveAt( index );
 				}
@@ -260,7 +264,7 @@ void Background::LoadFromSong( Song* pSong )
 				{
 					int index = rand() % arrayPossibleMovies.GetSize();
 					pTempBGA = new BackgroundAnimation;
-					pTempBGA->LoadFromMovie( arrayPossibleMovies[index], true, false );
+					pTempBGA->LoadFromMovie( arrayPossibleMovies[index], true, false, false, "" );
 					m_BackgroundAnimations.Add( pTempBGA );
 					arrayPossibleMovies.RemoveAt( index );
 				}	

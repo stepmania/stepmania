@@ -362,6 +362,10 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		max_grade = max( max_grade, grade[p] ); 
 
 
+	bool bNewRecord[NUM_PLAYERS];
+	for( p=0; p<NUM_PLAYERS; p++ )
+		bNewRecord[p] = false;
+
 	////////////////////////
 	// update persistent statistics
 	////////////////////////
@@ -386,7 +390,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			if( fScore[p] > pNotes->m_iTopScore )
 			{
 				pNotes->m_iTopScore = (int)fScore[p];
-				m_bNewRecord[p] = true;
+				bNewRecord[p] = true;
 			}
 
 			if( grade[p] > pNotes->m_TopGrade )
@@ -590,7 +594,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		}
 
 		//	Chris:  If EZ2 wants to hide these things, place them off screen using theme metrics
-		if( m_bNewRecord[p] )
+		if( bNewRecord[p] )
 		{
 			m_textNewRecord[p].LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 			m_textNewRecord[p].SetXY( NEW_RECORD_X(p), NEW_RECORD_Y );

@@ -9,12 +9,16 @@
 #define INSTALL                         133
 #define MANAGE                          135
 #define IDC_LIST_SONGS                  1000
+#define IDC_LIST                        1000
 #define IDC_BUTTON_PLAY                 1001
 #define IDC_BUTTON_EXPORT               1002
+#define IDC_BUTTON_EXPORT_AS_ONE        1002
 #define IDC_BUTTON_BACK                 1003
+#define IDC_BUTTON_EXPORT_AS_INDIVIDUAL 1003
 #define IDC_EDIT_MESSAGE1               1005
 #define IDC_EDIT_MESSAGE3               1006
 #define IDC_EDIT_MESSAGE2               1007
+#define IDC_TREE1                       1008
 
 // Next default values for new objects
 // 
@@ -22,7 +26,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        137
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1007
+#define _APS_NEXT_CONTROL_VALUE         1009
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

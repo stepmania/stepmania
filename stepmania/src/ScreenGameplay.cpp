@@ -880,7 +880,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	// fPositionSeconds ahead
 	if( GAMESTATE->m_SongOptions.m_AssistType == SongOptions::ASSIST_TICK )
 	{
-		fPositionSeconds += (SOUND->GetPlayLatency()+0.01f) * m_soundMusic.GetPlaybackRate();	// HACK:  Add 0.02 seconds to account for the fact that the sound file has 0.01 seconds of silence at the beginning
+		fPositionSeconds += (SOUND->GetPlayLatency()+0.015f) * m_soundMusic.GetPlaybackRate();	// HACK:  Add 0.015 seconds to account for the fact that the middle of the tick sounds occurs 0.015 seconds into playing.
 		GAMESTATE->m_pCurSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS, bFreeze );
 
 		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
@@ -951,6 +951,18 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	{
 		switch( DeviceI.button )
 		{
+		case DIK_F7:
+			if( GAMESTATE->m_SongOptions.m_AssistType == SongOptions::ASSIST_NONE )
+				GAMESTATE->m_SongOptions.m_AssistType = SongOptions::ASSIST_TICK;
+			else
+				GAMESTATE->m_SongOptions.m_AssistType = SongOptions::ASSIST_NONE;
+			m_textDebug.SetText( ssprintf( "Assist tick is %s.", (GAMESTATE->m_SongOptions.m_AssistType==SongOptions::ASSIST_NONE)?"OFF":"ON") );
+			m_textDebug.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+			m_textDebug.StopTweening();
+			m_textDebug.BeginTweeningQueued( 3 );		// sleep
+			m_textDebug.BeginTweeningQueued( 0.5f );	// fade out
+			m_textDebug.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+			break;
 		case DIK_F8:
 			PREFSMAN->m_bAutoPlay = !PREFSMAN->m_bAutoPlay;
 			break;

@@ -43,7 +43,7 @@ CString GameDef::ElementToGraphicSuffix( const SkinElement gbg ) const
 
 CString GameDef::GetPathToGraphic( const CString sSkinName, const CString sButtonName, const SkinElement gbg ) const
 {
-	const CString sSkinDir	= ssprintf("Skins\\%s\\%s\\", m_szName, sSkinName);
+	const CString sSkinDir	= ssprintf("NoteSkins\\%s\\%s\\", m_szName, sSkinName);
 	const CString sGraphicSuffix = ElementToGraphicSuffix( gbg );
 
 	CStringArray arrayPossibleFileNames;		// fill this with the possible files

@@ -5,6 +5,7 @@
 #include "smpackage.h"
 #include "smpackageDlg.h"
 #include "../RageUtil.h"
+#include "ZipArchive\ZipArchive.h"	
 
 
 #ifdef _DEBUG
@@ -30,8 +31,9 @@ void CSmpackageDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CSmpackageDlg)
-	DDX_Control(pDX, IDC_BUTTON_EXPORT, m_buttonExport);
-	DDX_Control(pDX, IDC_LIST_SONGS, m_listBoxSongs);
+	DDX_Control(pDX, IDC_BUTTON_EXPORT_AS_ONE, m_buttonExportAsOne);
+	DDX_Control(pDX, IDC_BUTTON_EXPORT_AS_INDIVIDUAL, m_buttonExportAsIndividual);
+	DDX_Control(pDX, IDC_LIST, m_listBox);
 	//}}AFX_DATA_MAP
 }
 
@@ -39,8 +41,9 @@ BEGIN_MESSAGE_MAP(CSmpackageDlg, CDialog)
 	//{{AFX_MSG_MAP(CSmpackageDlg)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_LBN_SELCHANGE(IDC_LIST_SONGS, OnSelchangeListSongs)
-	ON_BN_CLICKED(IDC_BUTTON_EXPORT, OnButtonExport)
+	ON_LBN_SELCHANGE(IDC_LIST, OnSelchangeList)
+	ON_BN_CLICKED(IDC_BUTTON_EXPORT_AS_ONE, OnButtonExportAsOne)
+	ON_BN_CLICKED(IDC_BUTTON_EXPORT_AS_INDIVIDUAL, OnButtonExportAsIndividual)
 	ON_BN_CLICKED(IDC_BUTTON_PLAY, OnButtonPlay)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
@@ -61,22 +64,53 @@ BOOL CSmpackageDlg::OnInitDialog()
 	// TODO: Add extra initialization here
 	//
 
-	// Find all song directories
-	CStringArray arrayGroupDirs;
-	GetDirListing( "Songs\\*.*", arrayGroupDirs, true );
-	
-	for( int i=0; i<arrayGroupDirs.GetSize(); i++ )
+	//
+	// Add announcers, themes, BGAnimations, random movies, and visualizations
+	//
 	{
-		CString sGroupName = arrayGroupDirs[i];
+		CStringArray as1;
+		GetDirListing( "Announcers/*.*", as1, true, true );
+		GetDirListing( "Themes/*.*", as1, true, true );
+		GetDirListing( "BGAnimations/*.*", as1, true, true );
+		GetDirListing( "RandomMovies/*.avi", as1, false, true );
+		GetDirListing( "RandomMovies/*.mpg", as1, false, true );
+		GetDirListing( "RandomMovies/*.mpeg", as1, false, true );
+		GetDirListing( "Visualizations/*.avi", as1, false, true );
+		GetDirListing( "Visualizations/*.mpg", as1, false, true );
+		GetDirListing( "Visualizations/*.mpeg", as1, false, true );
+		for( int i=0; i<as1.GetSize(); i++ )
+			m_listBox.AddString( as1[i] );
+	}
 
-		CStringArray arraySongDirs;
-		GetDirListing( "Songs\\" + sGroupName + "\\*.*", arraySongDirs, true );
+	m_listBox.AddString( "Courses\\" );
 
-		for( int j=0; j<arraySongDirs.GetSize(); j++ )
+	//
+	// Add NoteSkins
+	//
+	{
+		CStringArray as1;
+		GetDirListing( "NoteSkins/*.*", as1, true, true );
+		for( int i=0; i<as1.GetSize(); i++ )
 		{
-			CString sSongName = arraySongDirs[j];
+			CStringArray as2;
+			GetDirListing( as1[i] + "\\*.*", as2, true, true );
+			for( int j=0; j<as2.GetSize(); j++ )
+				m_listBox.AddString( as2[j] );
+		}
+	}
 
-			m_listBoxSongs.AddString( sGroupName + "\\" + sSongName );
+	//
+	// Add Songs
+	//
+	{
+		CStringArray as1;
+		GetDirListing( "Songs/*.*", as1, true, true );
+		for( int i=0; i<as1.GetSize(); i++ )
+		{
+			CStringArray as2;
+			GetDirListing( as1[i] + "\\*.*", as2, true, true );
+			for( int j=0; j<as2.GetSize(); j++ )
+				m_listBox.AddString( as2[j] );
 		}
 	}
 
@@ -119,72 +153,102 @@ HCURSOR CSmpackageDlg::OnQueryDragIcon()
 	return (HCURSOR) m_hIcon;
 }
 
-void CSmpackageDlg::OnSelchangeListSongs() 
+void CSmpackageDlg::OnSelchangeList() 
 {
 	// TODO: Add your control notification handler code here
-	int iCurSel = m_listBoxSongs.GetCurSel();
-	if( iCurSel == LB_ERR )		// no song is selected
-	{
-		m_buttonExport.EnableWindow( false );
-		return;
-	}
 
-	m_buttonExport.EnableWindow( true );
-	
+	if( m_listBox.GetSelCount() == LB_ERR )		// no song is selected
+	{
+		m_buttonExportAsOne.EnableWindow( false );
+		m_buttonExportAsIndividual.EnableWindow( false );
+	}
+	else
+	{
+		m_buttonExportAsOne.EnableWindow( true );
+		m_buttonExportAsIndividual.EnableWindow( true );
+	}	
 }
 
-void CSmpackageDlg::OnButtonExport() 
+CString ReplaceInvalidFileNameChars( CString sOldFileName )
 {
-	// TODO: Add your control notification handler code here
-
-	// Get the path to the selected song folder
-	int iCurSel = m_listBoxSongs.GetCurSel();
-	CString sSongDir;
-	m_listBoxSongs.GetText( iCurSel, sSongDir );
-	sSongDir = "Songs\\" + sSongDir;
-	//MessageBox( ssprintf("sSongDir is '%s'", sSongDir), "", MB_OK );
-
-
-	// Extract the group name and song name
-	CStringArray arrayPathBits;
-	split( sSongDir, "\\", arrayPathBits );
-	CString sGroupName = arrayPathBits[1];
-	CString sSongName = arrayPathBits[2];
-	CString sGroupDir = "Songs\\" + sGroupName;
-
-
-	// Get path to desktop
-	CString sDesktopPath = getenv("USERPROFILE");
-	sDesktopPath += "\\Desktop\\";
-	//MessageBox( ssprintf("Desktop path is '%s'", sDesktopPath), "", MB_OK );
-
-
-	// Create a new zip file on the desktop
-	CString sZipFileName = sSongName + ".smzip";
+	CString sNewFileName = sOldFileName;
 	const char charsToReplace[] = { 
 		' ', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', 
 		'+', '=', '[', ']', '{', '}', '|', ':', '\"', '\\',
 		'<', '>', ',', '?', '/' 
 	};
 	for( int i=0; i<sizeof(charsToReplace); i++ )
-		sZipFileName.Replace( charsToReplace[i], '_' );
+		sNewFileName.Replace( charsToReplace[i], '_' );
+	return sNewFileName;
+}
 
-	CString sZipFilePath = sDesktopPath + sZipFileName;
-	//MessageBox( ssprintf("sZipFilePath is '%s'", sZipFilePath), "", MB_OK );
+void GetFilePathsInDirectory( CString sDir, CStringArray& asPathToFilesOut )
+{
+	CStringArray asDirectoriesToExplore;
+
+	// HACK:
+	// Must use backslashes in the path, or else WinZip and WinRAR don't see the files.
+	// Not sure if this is ZipArchive's fault.
+
+	GetDirListing( sDir + "\\*.*", asPathToFilesOut, false, true );
+	GetDirListing( sDir + "\\*.*", asDirectoriesToExplore, true, true );
+	while( asDirectoriesToExplore.GetSize() > 0 )
+	{
+		GetDirListing( asDirectoriesToExplore[0] + "\\*.*", asPathToFilesOut, false, true );
+		GetDirListing( asDirectoriesToExplore[0] + "\\*.*", asDirectoriesToExplore, true, true );
+		asDirectoriesToExplore.RemoveAt( 0 );
+	}
+}
+
+bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExport )	
+{
+	CZipArchive zip;
+	
+	const CString sDesktopPath = CString(getenv("USERPROFILE")) + "/Desktop/";
+
+	//
+	// Create the package zip file
+	//
+	const CString sPackagePath = sDesktopPath + sPackageName;
 	try
 	{
-		m_zip.Open( sZipFilePath, CZipArchive::zipCreate );
+		zip.Open( sPackagePath, CZipArchive::zipCreate );
 	}
 	catch( CException* e )
 	{
-		MessageBox( ssprintf("Error creating zip file '%s'", sDesktopPath), "", MB_OK );
-		m_zip.Close();
+		AfxMessageBox( ssprintf("Error creating zip file '%s'", sPackagePath) );
+		zip.Close();
 		e->Delete();
-		return;
+		return false;
 	}
 
 
-	CStringArray arrayFiles;
+	//
+	// Add files to zip
+	//
+	for( int i=0; i<asDirectoriesToExport.GetSize(); i++ )
+	{
+		CStringArray asFilePaths;
+		GetFilePathsInDirectory( asDirectoriesToExport[i], asFilePaths );
+
+		for( int j=0; j<asFilePaths.GetSize(); j++ )
+		{
+			CString sFilePath = asFilePaths[j];
+			try
+			{
+				zip.AddNewFile( sFilePath, Z_BEST_COMPRESSION, true );
+			}
+			catch (CException* e)
+			{
+				AfxMessageBox( ssprintf("Error adding file '%s'.", sFilePath) );
+				zip.Close();
+				e->Delete();
+				return false;
+			}
+		}
+	}
+
+/*	CStringArray arrayFiles;
 	GetDirListing( sSongDir + "\\*.*", arrayFiles );
 	//m_zip.AddNewFile( sRelPathToSelectedSong, 0, true );		// add the directory
 
@@ -195,7 +259,7 @@ void CSmpackageDlg::OnButtonExport()
 	for( i=0; i<arrayFiles.GetSize(); i++ )
 	{
 		CString sFileName = arrayFiles[i];
-		CString sFilePath = sSongDir + "\\" + sFileName;
+		CString sFilePath = sSongDir + "/" + sFileName;
 		try
 		{
 			m_zip.AddNewFile( sFilePath, 9, true );
@@ -208,14 +272,92 @@ void CSmpackageDlg::OnButtonExport()
 			return;
 		}	
 	}
-
-	AfxMessageBox( ssprintf("Successfully exported '%s' to '%s' on your Desktop.", sSongDir, sZipFileName) );
-
-
-	m_zip.Close();
-
+*/
+	zip.Close();
+	return true;
 }
 
+
+void CSmpackageDlg::OnButtonExportAsOne() 
+{
+	// TODO: Add your control notification handler code here
+
+	ASSERT( m_listBox.GetSelCount() != LB_ERR );
+
+	if( m_listBox.GetSelCount() == 1 )
+	{
+		OnButtonExportAsIndividual();
+		return;
+	}
+
+	int i;
+
+	// Generate a package name
+	CString sPackageName;
+	int iNumNameTries = 0;
+try_another_name:
+	iNumNameTries++;
+	sPackageName = ReplaceInvalidFileNameChars( ssprintf("New Package %d.smzip",iNumNameTries) );
+	CStringArray asFilesOnDesktop;
+	const CString sDesktopPath = CString(getenv("USERPROFILE")) + "\\Desktop";
+	GetDirListing( sDesktopPath + "\\*.*", asFilesOnDesktop );
+	for( i=0; i<asFilesOnDesktop.GetSize(); i++ )
+		if( stricmp(asFilesOnDesktop[i],sPackageName) == 0 )
+			goto try_another_name;
+
+
+	CStringArray asPathsToExport;
+	int iSelectedItems[200];
+	int iNumSelectedItems = m_listBox.GetSelItems( 200, iSelectedItems );
+	for( i=0; i<iNumSelectedItems; i++ )
+	{
+		CString sPath;
+		m_listBox.GetText( iSelectedItems[i], sPath );
+		asPathsToExport.Add( sPath );
+	}
+
+	if( ExportPackage( sPackageName, asPathsToExport ) )
+		AfxMessageBox( ssprintf("Successfully exported package '%s' to your Desktop.",sPackageName) );
+}
+
+void CSmpackageDlg::OnButtonExportAsIndividual() 
+{
+	// TODO: Add your control notification handler code here
+
+	ASSERT( m_listBox.GetSelCount() != LB_ERR );
+
+	
+	int iSelectedItems[200];
+	int iNumSelectedItems = m_listBox.GetSelItems( 200, iSelectedItems );
+	bool bAllSucceeded = true;
+	CStringArray asExportedPackages;
+	CStringArray asFailedPackages;
+	for( int i=0; i<iNumSelectedItems; i++ )
+	{		
+		// Generate a package name for every path
+		CString sPath;
+		m_listBox.GetText( iSelectedItems[i], sPath );
+
+		CString sPackageName;
+		CStringArray asPathBits;
+		split( sPath, "/", asPathBits, true );
+		sPackageName = asPathBits[ asPathBits.GetSize()-1 ] + ".smzip";
+		sPackageName = ReplaceInvalidFileNameChars( sPackageName );
+
+		CStringArray asPathsToExport;
+		asPathsToExport.Add( sPath );
+		
+		if( ExportPackage( sPackageName, asPathsToExport ) )
+			asExportedPackages.Add( sPackageName );
+		else
+			asFailedPackages.Add( sPackageName );
+	}
+
+	CString sMessage = ssprintf("Successfully exported the packages %s to your Desktop.", join(", ",asExportedPackages) );
+	if( asFailedPackages.GetSize() > 0 )
+		sMessage += ssprintf("  The packages %s failed to export.", join(", ",asFailedPackages) );
+	AfxMessageBox( sMessage );
+}
 
 
 void CSmpackageDlg::OnButtonPlay() 
