@@ -182,6 +182,7 @@ public:
 
 
 	bool HasEarnedExtraStage();
+	PlayerNumber GetWinner();
 	bool m_bAllow2ndExtraStage; //only used when "Allow Selection of Extra Stage is on"
 
 

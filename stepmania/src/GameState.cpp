@@ -328,6 +328,15 @@ bool GameState::HasEarnedExtraStage()
 	return false;
 }
 
+PlayerNumber GameState::GetWinner()
+{
+	PlayerNumber winner = PLAYER_1;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		if( GAMESTATE->m_CurStageStats.iActualDancePoints[p] > GAMESTATE->m_CurStageStats.iActualDancePoints[winner] )
+			winner = (PlayerNumber)p;
+	return winner;
+}
+
 void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& vSongsOut )
 {
 	statsOut = StageStats();

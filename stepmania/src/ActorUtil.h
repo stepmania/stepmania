@@ -14,10 +14,36 @@
 #include "Actor.h"
 
 
-#define SET_XY( actor )			(actor).SetXY( THEME->GetMetricF(m_sName,(actor).GetName()+"X"), THEME->GetMetricF(m_sName,(actor).GetName()+"Y") );
-#define ON_COMMAND( actor )		(actor).Command( THEME->GetMetric(m_sName,(actor).GetName()+"OnCommand") )
-#define OFF_COMMAND( actor )	(actor).Command( THEME->GetMetric(m_sName,(actor).GetName()+"OffCommand") )
-#define SET_XY_AND_ON_COMMAND( actor )		{ SET_XY(actor);	ON_COMMAND(actor); }
+#define SET_XY( actor )			UtilSetXY( actor, m_sName );
+#define ON_COMMAND( actor )		UtilOnCommand( actor, m_sName );
+#define OFF_COMMAND( actor )	UtilOffCommand( actor, m_sName );
+#define SET_XY_AND_ON_COMMAND( actor )		UtilSetXYAndOnCommand( actor, m_sName );
 
+
+inline void UtilSetXY( Actor& actor, CString sClassName )
+{
+	actor.SetXY( THEME->GetMetricF(sClassName,actor.GetName()+"X"), THEME->GetMetricF(sClassName,actor.GetName()+"Y") );
+}
+
+inline void UtilOnCommand( Actor& actor, CString sClassName )
+{
+	actor.Command( THEME->GetMetric(sClassName,actor.GetName()+"OnCommand") );
+}
+
+inline void UtilOffCommand( Actor& actor, CString sClassName )
+{
+	// HACK:  It's very often that we command things to TweenOffScreen 
+	// that we aren't drawing.  We know that an Actor is not being
+	// used if it's name is blank.  So, do nothing on Actors with a blank name.
+	if( actor.GetName().empty() )
+		return;
+	actor.Command( THEME->GetMetric(sClassName,actor.GetName()+"OffCommand") );
+}
+
+inline void UtilSetXYAndOnCommand( Actor& actor, CString sClassName )
+{
+	UtilSetXY( actor, sClassName );
+	UtilOnCommand( actor, sClassName );
+}
 
 #endif

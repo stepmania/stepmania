@@ -285,6 +285,8 @@ Screen* Screen::Create( CString sClassName )
 	else if( sClassName=="ScreenEvaluationNonstop" )	ret = new ScreenEvaluationNonstop;
 	else if( sClassName=="ScreenEvaluationOni" )		ret = new ScreenEvaluationOni;
 	else if( sClassName=="ScreenEvaluationEndless" )	ret = new ScreenEvaluationEndless;
+	else if( sClassName=="ScreenEvaluationBattle" )		ret = new ScreenEvaluationBattle;
+	else if( sClassName=="ScreenEvaluationRave" )		ret = new ScreenEvaluationRave;
 	else if( sClassName=="ScreenEz2SelectPlayer" )		ret = new ScreenEz2SelectPlayer;
 	else if( sClassName=="ScreenSelectMode" )			ret = new ScreenSelectMode;
 	else if( sClassName=="ScreenGameOver" )				ret = new ScreenGameOver;

@@ -1331,10 +1331,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 						{
 						case PLAY_MODE_BATTLE:
 							{
-								PlayerNumber winner = PLAYER_1;
-								for( int p=0; p<NUM_PLAYERS; p++ )
-									if( GAMESTATE->m_CurStageStats.iActualDancePoints[p] > GAMESTATE->m_CurStageStats.iActualDancePoints[winner] )
-										winner = (PlayerNumber)p;
+								PlayerNumber winner = GAMESTATE->GetWinner();
 								m_Win[winner].StartTransitioning( SM_GoToStateAfterCleared );
 							}
 							break;

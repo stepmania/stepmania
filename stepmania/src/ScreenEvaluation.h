@@ -77,6 +77,10 @@ protected:
 	Sprite				m_sprSurvivedFrame[NUM_PLAYERS];
 	BitmapText			m_textSurvivedNumber[NUM_PLAYERS];
 
+	// win area
+	Sprite				m_sprWinFrame[NUM_PLAYERS];
+	Sprite				m_sprWin[NUM_PLAYERS];
+
 	// judgment area
 	Sprite				m_sprJudgeLabels[NUM_JUDGE_LINES];
 	BitmapText			m_textJudgeNumbers[NUM_JUDGE_LINES][NUM_PLAYERS];
@@ -123,6 +127,18 @@ class ScreenEvaluationEndless : public ScreenEvaluation
 {
 public:
 	ScreenEvaluationEndless() : ScreenEvaluation("ScreenEvaluationEndless",ScreenEvaluation::course) {};
+};
+
+class ScreenEvaluationBattle : public ScreenEvaluation
+{
+public:
+	ScreenEvaluationBattle() : ScreenEvaluation("ScreenEvaluationBattle",ScreenEvaluation::stage) {};
+};
+
+class ScreenEvaluationRave : public ScreenEvaluation
+{
+public:
+	ScreenEvaluationRave() : ScreenEvaluation("ScreenEvaluationRave",ScreenEvaluation::stage) {};
 };
 
 
