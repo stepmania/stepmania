@@ -114,7 +114,7 @@ public:
 		float fY,
 		const ThemeMetric<apActorCommands> &cmdLabelOn
 		);
-	void DetachHandler() { m_pHand = NULL; }
+	void DetachHandler();
 
 	void PositionUnderlines( bool bShowUnderlines, float fTweenSeconds );
 	void PositionIcons( const ThemeMetric1D<float> &fIconX, float fTweenSeconds );

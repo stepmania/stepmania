@@ -57,15 +57,19 @@ void OptionRow::Clear()
 		m_Underline[p].clear();
 	}
 
+	ASSERT( m_pHand == NULL );
+
+	m_bFirstItemGoesDown = false;
+}
+
+void OptionRow::DetachHandler()
+{
 	if( m_pHand )
 	{
 		FOREACH_CONST( CString, m_pHand->m_vsReloadRowMessages, m )
 			MESSAGEMAN->Unsubscribe( this, *m );
 	}
-
 	m_pHand = NULL;
-
-	m_bFirstItemGoesDown = false;
 }
 
 void OptionRow::LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pHand, bool bFirstItemGoesDown )
