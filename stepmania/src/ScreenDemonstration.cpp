@@ -140,7 +140,7 @@ ScreenDemonstration::ScreenDemonstration() : ScreenGameplay(SetUpSongOptions())	
 
 	m_sprDemonstrationBlink.Load( THEME->GetPathTo("Graphics","demonstration blink") );
 	m_sprDemonstrationBlink.SetXY( CENTER_X, CENTER_Y );
-	m_sprDemonstrationBlink.SetEffectDiffuseBlinking();
+	m_sprDemonstrationBlink.SetEffectDiffuseBlink();
 	this->AddChild( &m_sprDemonstrationBlink );
 
 	this->MoveToTail( &m_Fade );

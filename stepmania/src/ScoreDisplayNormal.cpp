@@ -29,7 +29,7 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 
 	// init the text
 	m_text.LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay score numbers") );
-	m_text.TurnShadowOff();
+	m_text.EnableShadow( false );
 
 	m_fScore = 0;
 	m_fTrailingScore = 0;

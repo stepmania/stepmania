@@ -30,8 +30,8 @@ MenuTimer::MenuTimer()
 	m_textDigit1.LoadFromNumbers( THEME->GetPathTo("Numbers","menu timer numbers") );
 	m_textDigit2.LoadFromNumbers( THEME->GetPathTo("Numbers","menu timer numbers") );
 
-	m_textDigit1.TurnShadowOff();
-	m_textDigit2.TurnShadowOff();
+	m_textDigit1.EnableShadow( false );
+	m_textDigit2.EnableShadow( false );
 
 	const glyph &g = m_textDigit1.m_pFont->GetGlyph('0');
 	float fCharWidth = (float)g.Texture->GetSourceFrameWidth();

@@ -26,7 +26,7 @@ public:
 protected:
 	void BeforeChange();
 
-	Banner		m_BackBanner;
+	Banner		m_FrontBanner;
 };
 
 #endif

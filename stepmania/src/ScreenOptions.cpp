@@ -81,7 +81,7 @@ ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sPagePath, CStrin
 	this->AddChild( &m_Wipe );
 
 	m_framePage.SetX( SCREEN_LEFT-SCREEN_WIDTH );
-	m_framePage.BeginTweening( 0.3f, Actor::TWEEN_BIAS_BEGIN );
+	m_framePage.BeginTweening( 0.3f, Actor::TWEEN_DECELERATE );
 	m_framePage.SetTweenX( 0 );
 	memset(&m_OptionDim, 0, sizeof(m_OptionDim));
 }
@@ -194,7 +194,7 @@ void ScreenOptions::InitOptionsText()
 		title.SetZoom( LABELS_ZOOM );
 		title.SetHorizAlign( (Actor::HorizAlign)LABELS_H_ALIGN );
 		title.SetVertAlign( Actor::align_middle );		
-		title.TurnShadowOff();		
+		title.EnableShadow( false );		
 
 
 		Sprite &arrow = m_sprLineArrows[i];
@@ -428,7 +428,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 		m_SoundStart.Play();
 		m_Wipe.CloseWipingRight( SM_GoToNextScreen );
 
-		m_framePage.BeginTweening( 0.3f, Actor::TWEEN_BIAS_END );
+		m_framePage.BeginTweening( 0.3f, Actor::TWEEN_DECELERATE );
 		m_framePage.SetTweenX( SCREEN_RIGHT );
 		break;
 	}

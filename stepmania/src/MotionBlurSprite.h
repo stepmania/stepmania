@@ -50,12 +50,12 @@ public:
 	virtual void  SetZoomX( float zoom ){ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetZoomX(zoom); }
 	virtual void  SetZoomY( float zoom ){ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetZoomY(zoom); }
 
-	virtual float GetRotation()				{ return m_sprites[0].GetRotation(); }
 	virtual float GetRotationX()			{ return m_sprites[0].GetRotationX(); }
 	virtual float GetRotationY()			{ return m_sprites[0].GetRotationY(); }
-	virtual void  SetRotation( float rot )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetRotation(rot); }
+	virtual float GetRotationZ()			{ return m_sprites[0].GetRotationZ(); }
 	virtual void  SetRotationX( float rot )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetRotationX(rot); }
 	virtual void  SetRotationY( float rot )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetRotationY(rot); }
+	virtual void  SetRotationZ( float rot )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetRotationZ(rot); }
 
 	virtual void SetDiffuse( RageColor c )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetDiffuse(c); };
 	virtual RageColor GetDiffuse()			{ return m_sprites[0].GetDiffuse(); };

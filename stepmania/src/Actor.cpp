@@ -16,6 +16,7 @@
 #include "PrefsManager.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
+#include "RageLog.h"
 
 
 Actor::Actor()
@@ -35,16 +36,14 @@ Actor::Actor()
 	m_Effect =  no_effect;
 	m_fSecsIntoEffect = 0;
 	m_fEffectPeriodSeconds = 1;
-	m_fWagRadians =  0.2f;
-	m_vSpinVelocity =  RageVector3(0,0,0);
-	m_fVibrationDistance =  5.0f;
-	m_bVisibleThisFrame = false;
+	m_vEffectMagnitude = RageVector3(0,0,10);
+	m_effectColor1 = RageColor(1,1,1,1);
+	m_effectColor2 = RageColor(1,1,1,1);
 
 	m_bShadow = false;
 	m_fShadowLength = 4;
 
 	m_bBlendAdd = false;
-
 }
 
 void Actor::Draw()
@@ -67,9 +66,9 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 	//
 	// set temporary drawing properties based on Effects 
 	//
-
-	bool bBlinkOn = m_fSecsIntoEffect/m_fEffectPeriodSeconds > 0.5f;
-	float fPercentBetweenColors = sinf( m_fSecsIntoEffect/m_fEffectPeriodSeconds * 2 * PI ) / 2 + 0.5f;
+	float fPercentThroughEffect = m_fSecsIntoEffect / m_fEffectPeriodSeconds;
+	bool bBlinkOn = fPercentThroughEffect > 0.5f;
+	float fPercentBetweenColors = sinf( fPercentThroughEffect * 2 * PI ) / 2 + 0.5f;
 	ASSERT( fPercentBetweenColors >= 0  &&  fPercentBetweenColors <= 1 );
 	float fOriginalAlpha = m_temp.diffuse[0].a;
 
@@ -77,7 +76,7 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 	{
 	case no_effect:
 		break;
-	case diffuse_blinking:
+	case diffuse_blink:
 		for(i=0; i<4; i++)
 			m_temp.diffuse[i] = bBlinkOn ? m_effectColor1 : m_effectColor2;
 		break;
@@ -85,7 +84,7 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		for(i=0; i<4; i++)
 			m_temp.diffuse[i] = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
 		break;
-	case glow_blinking:
+	case glow_blink:
 		m_temp.glow = bBlinkOn ? m_effectColor1 : m_effectColor2;
 		m_temp.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
 		break;
@@ -93,39 +92,30 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		m_temp.glow = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
 		m_temp.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
 		break;
-	case wagging:
-		m_temp.rotation.z = m_fWagRadians * sinf( 
-			(m_fSecsIntoEffect / m_fEffectPeriodSeconds)	// percent through wag
-			* 2.0f * PI );
+	case wag:
+		m_temp.rotation = m_vEffectMagnitude * sinf( fPercentThroughEffect * 2.0f * PI );
 		break;
-	case spinning:
+	case spin:
 		// nothing needs to be here
 		break;
-	case vibrating:
-		m_temp.pos.x += m_fVibrationDistance * randomf(-1.0f, 1.0f) * GetZoom();
-		m_temp.pos.y += m_fVibrationDistance * randomf(-1.0f, 1.0f) * GetZoom();
+	case vibrate:
+		m_temp.pos.x += m_vEffectMagnitude.x * randomf(-1.0f, 1.0f) * GetZoom();
+		m_temp.pos.y += m_vEffectMagnitude.y * randomf(-1.0f, 1.0f) * GetZoom();
+		m_temp.pos.z += m_vEffectMagnitude.z * randomf(-1.0f, 1.0f) * GetZoom();
 		break;
-	case flickering:
-		m_bVisibleThisFrame = !m_bVisibleThisFrame;
-		if( !m_bVisibleThisFrame )
-			for(int i=0; i<4; i++)
-				m_temp.diffuse[i] = RageColor(0,0,0,0);		// don't draw the frame
-		break;
-	case bouncing:
+	case bounce:
 		{
-			float fPercentThroughBounce = m_fSecsIntoEffect / m_fEffectPeriodSeconds;
-			float fPercentOffset = sinf( fPercentThroughBounce*PI ); 
-			m_temp.pos += m_vectBounce * fPercentOffset;
+			float fPercentOffset = sinf( fPercentThroughEffect*PI ); 
+			m_temp.pos += m_vEffectMagnitude * fPercentOffset;
 			m_temp.pos.x = roundf( m_temp.pos.x );
 			m_temp.pos.y = roundf( m_temp.pos.y );
 			m_temp.pos.z = roundf( m_temp.pos.z );
 		}
 		break;
-	case bobbing:
+	case bob:
 		{
-			float fPercentThroughBounce = m_fSecsIntoEffect / m_fEffectPeriodSeconds;
-			float fPercentOffset = sinf( fPercentThroughBounce*PI*2 ); 
-			m_temp.pos += m_vectBounce * fPercentOffset;
+			float fPercentOffset = sinf( fPercentThroughEffect*PI*2 ); 
+			m_temp.pos += m_vEffectMagnitude * fPercentOffset;
 			m_temp.pos.x = roundf( m_temp.pos.x );
 			m_temp.pos.y = roundf( m_temp.pos.y );
 			m_temp.pos.z = roundf( m_temp.pos.z );
@@ -196,20 +186,15 @@ void Actor::UpdateTweening( float fDeltaTime )
 		switch( TI.m_TweenType )
 		{
 		case TWEEN_LINEAR:		fPercentAlongPath = fPercentThroughTween;													break;
-		case TWEEN_BIAS_BEGIN:	fPercentAlongPath = 1 - (1-fPercentThroughTween) * (1-fPercentThroughTween);				break;
-		case TWEEN_BIAS_END:	fPercentAlongPath = fPercentThroughTween * fPercentThroughTween;							break;
+		case TWEEN_ACCELERATE:	fPercentAlongPath = fPercentThroughTween * fPercentThroughTween;							break;
+		case TWEEN_DECELERATE:	fPercentAlongPath = 1 - (1-fPercentThroughTween) * (1-fPercentThroughTween);				break;
 		case TWEEN_BOUNCE_BEGIN:fPercentAlongPath = 1 - sinf( 1.1f + fPercentThroughTween*(PI-1.1f) ) / 0.89f;				break;
 		case TWEEN_BOUNCE_END:	fPercentAlongPath = sinf( 1.1f + (1-fPercentThroughTween)*(PI-1.1f) ) / 0.89f;				break;
 		case TWEEN_SPRING:		fPercentAlongPath = 1 - cosf( fPercentThroughTween*PI*2.5f )/(1+fPercentThroughTween*3);	break;
 		default:	ASSERT(0);
 		}
 
-		m_current.pos			= m_start.pos	  + (TS.pos		 - m_start.pos	   )*fPercentAlongPath;
-		m_current.scale			= m_start.scale	  + (TS.scale	 - m_start.scale   )*fPercentAlongPath;
-		m_current.rotation		= m_start.rotation+ (TS.rotation - m_start.rotation)*fPercentAlongPath;
-		for(int i=0; i<4; i++) 
-			m_current.diffuse[i]= m_start.diffuse[i]*(1.0f-fPercentAlongPath) + TS.diffuse[i]*(fPercentAlongPath);
-		m_current.glow			= m_start.glow      *(1.0f-fPercentAlongPath) + TS.glow      *(fPercentAlongPath);
+		TweenState::MakeWeightedAverage( m_current, m_start, TS, fPercentAlongPath );
 	}
 }
 
@@ -227,26 +212,27 @@ void Actor::Update( float fDeltaTime )
 	{
 	case no_effect:
 		break;
-	case diffuse_blinking:
+	case diffuse_blink:
 	case diffuse_shift:
-	case glow_blinking:
+	case glow_blink:
 	case glow_shift:
-	case wagging:
-	case bouncing:
-	case bobbing:
+	case wag:
+	case bounce:
+	case bob:
 		m_fSecsIntoEffect += fDeltaTime;
 		while( m_fSecsIntoEffect >= m_fEffectPeriodSeconds )
 			m_fSecsIntoEffect -= m_fEffectPeriodSeconds;
 		break;
-	case spinning:
-		m_current.rotation += m_vSpinVelocity;
-		if( m_current.rotation.x > 1000*PI*2 )	m_current.rotation.x -= 1000*PI*2;
-		if( m_current.rotation.y > 1000*PI*2 )	m_current.rotation.y -= 1000*PI*2;
-		if( m_current.rotation.z > 1000*PI*2 )	m_current.rotation.z -= 1000*PI*2;
+	case spin:
+		m_current.rotation += m_vEffectMagnitude;
+		if( m_current.rotation.x > PI*2 )	m_current.rotation.x -= PI*2;
+		if( m_current.rotation.y > PI*2 )	m_current.rotation.y -= PI*2;
+		if( m_current.rotation.z > PI*2 )	m_current.rotation.z -= PI*2;
+		if( m_current.rotation.x < -PI*2 )	m_current.rotation.x += PI*2;
+		if( m_current.rotation.y < -PI*2 )	m_current.rotation.y += PI*2;
+		if( m_current.rotation.z < -PI*2 )	m_current.rotation.z += PI*2;
 		break;
-	case vibrating:
-		break;
-	case flickering:
+	case vibrate:
 		break;
 	}
 
@@ -292,44 +278,11 @@ void Actor::StopTweening()
 {
 	m_TweenStates.clear();
 	m_TweenInfo.clear();
+	ASSERT( m_TweenStates.empty() );
+	ASSERT( m_TweenInfo.empty() );
 }
 
 
-void Actor::SetTweenX( float x )				{ LatestTween().pos.x = x; } 
-void Actor::SetTweenY( float y )				{ LatestTween().pos.y = y; }
-void Actor::SetTweenZ( float z )				{ LatestTween().pos.z = z; }
-void Actor::SetTweenXY( float x, float y )		{ LatestTween().pos.x = x; LatestTween().pos.y = y; }
-void Actor::SetTweenZoom( float zoom )			{ LatestTween().scale.x = zoom;  LatestTween().scale.y = zoom; }
-void Actor::SetTweenZoomX( float zoom )			{ LatestTween().scale.x = zoom; }
-void Actor::SetTweenZoomY( float zoom )			{ LatestTween().scale.y = zoom; }
-void Actor::SetTweenZoomToWidth( float zoom )	{ SetTweenZoomX( zoom/GetUnzoomedWidth() ); }
-void Actor::SetTweenZoomToHeight( float zoom )	{ SetTweenZoomX( zoom/GetUnzoomedHeight() ); }
-void Actor::SetTweenRotationX( float r )		{ LatestTween().rotation.x = r; }
-void Actor::SetTweenRotationY( float r )		{ LatestTween().rotation.y = r; }
-void Actor::SetTweenRotationZ( float r )		{ LatestTween().rotation.z = r; }
-void Actor::SetTweenDiffuse( RageColor c )				{ for(int i=0; i<4; i++) LatestTween().diffuse[i] = c; };
-void Actor::SetTweenDiffuseUpperLeft( RageColor c )		{ LatestTween().diffuse[0] = c; };
-void Actor::SetTweenDiffuseUpperRight( RageColor c )	{ LatestTween().diffuse[1] = c; };
-void Actor::SetTweenDiffuseLowerLeft( RageColor c )		{ LatestTween().diffuse[2] = c; };
-void Actor::SetTweenDiffuseLowerRight( RageColor c )	{ LatestTween().diffuse[3] = c; };
-void Actor::SetTweenDiffuseTopEdge( RageColor c )		{ LatestTween().diffuse[0] = LatestTween().diffuse[1] = c; };
-void Actor::SetTweenDiffuseRightEdge( RageColor c )		{ LatestTween().diffuse[1] = LatestTween().diffuse[3] = c; };
-void Actor::SetTweenDiffuseBottomEdge( RageColor c )	{ LatestTween().diffuse[2] = LatestTween().diffuse[3] = c; };
-void Actor::SetTweenDiffuseLeftEdge( RageColor c )		{ LatestTween().diffuse[0] = LatestTween().diffuse[2] = c; };
-void Actor::SetTweenGlow( RageColor c )					{ LatestTween().glow = c; };
-
-Actor::TweenState Actor::GetDestTweenState()
-{
-	if( m_TweenStates.empty() )	// not tweening
-		return m_current;
-	else
-		return LatestTween();
-}
-
-void Actor::SetTweenState( const Actor::TweenState &ts )
-{
-	LatestTween() = ts;
-}
 
 void Actor::ScaleTo( const RectI &rect, StretchType st )
 {
@@ -391,17 +344,11 @@ void Actor::StretchTo( const RectF &r )
 
 
 
-// effects
+// effect "macros"
 
-void Actor::SetEffectNone()
+void Actor::SetEffectDiffuseBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
-	m_Effect = no_effect;
-	//m_color = RageColor( 1.0,1.0,1.0,1.0 );
-}
-
-void Actor::SetEffectDiffuseBlinking( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
-{
-	m_Effect = diffuse_blinking;
+	m_Effect = diffuse_blink;
 	m_effectColor1 = c1;
 	m_effectColor2 = c2;
 	m_fEffectPeriodSeconds = fEffectPeriodSeconds;
@@ -417,9 +364,9 @@ void Actor::SetEffectDiffuseShift( float fEffectPeriodSeconds, RageColor c1, Rag
 	m_fSecsIntoEffect = 0;
 }
 
-void Actor::SetEffectGlowBlinking( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
+void Actor::SetEffectGlowBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
-	m_Effect = glow_blinking;
+	m_Effect = glow_blink;
 	m_effectColor1 = c1;
 	m_effectColor2 = c2;
 	m_fEffectPeriodSeconds = fEffectPeriodSeconds;
@@ -435,93 +382,59 @@ void Actor::SetEffectGlowShift( float fEffectPeriodSeconds, RageColor c1, RageCo
 	m_fSecsIntoEffect = 0;
 }
 
-void Actor::SetEffectWagging(	float fWagRadians, float fWagPeriod )
+void Actor::SetEffectWag( float fPeriod, RageVector3 vect )
 {
-	m_Effect = wagging;
-	m_fWagRadians = fWagRadians;
-	m_fEffectPeriodSeconds = fWagPeriod;
-}
-
-void Actor::SetEffectSpinning( RageVector3 vectRotationVelocity )
-{
-	m_Effect = spinning;
-	m_vSpinVelocity = vectRotationVelocity;
-}
-
-void Actor::SetEffectVibrating( float fVibrationDistance )
-{
-	m_Effect = vibrating;
-	m_fVibrationDistance = fVibrationDistance;
-}
-
-void Actor::SetEffectFlickering()
-{
-	m_Effect = flickering;
-}
-
-void Actor::SetEffectBouncing( RageVector3 vectBounce, float fPeriod )
-{
-	m_Effect = bouncing;
-	
-	m_vectBounce = vectBounce;
+	m_Effect = wag;
 	m_fEffectPeriodSeconds = fPeriod;
+	m_vEffectMagnitude = vect;
 	m_fSecsIntoEffect = 0;
-
 }
 
-void Actor::SetEffectBobbing( RageVector3 vectBob, float fPeriod )
+void Actor::SetEffectBounce( float fPeriod, RageVector3 vect )
 {
-	m_Effect = bobbing;
-	
-	m_vectBounce = vectBob;
+	m_Effect = bounce;
 	m_fEffectPeriodSeconds = fPeriod;
+	m_vEffectMagnitude = vect;
 	m_fSecsIntoEffect = 0;
-
 }
 
-
-void GetFadeFlagsFromString( CString sFadeString, 
-	bool& linear, bool& accelerate, bool& bounce, bool& spring, 
-	bool& foldx, bool& foldy, bool& fade, bool& zoombig, bool& zoomsmall, bool& spinx, bool& spiny, bool& spinz, bool& ghost, 
-	bool& left, bool& right, bool& top, bool& bottom )
+void Actor::SetEffectBob( float fPeriod, RageVector3 vect )
 {
-	sFadeString.MakeLower();
-	foldx = -1!=sFadeString.Find("foldx");
-	foldy = -1!=sFadeString.Find("foldy");
-	fade = -1!=sFadeString.Find("fade");
-	zoombig = -1!=sFadeString.Find("zoombig");
-	zoomsmall = -1!=sFadeString.Find("zoomsmall");
-	spinx = -1!=sFadeString.Find("spinx");
-	spiny = -1!=sFadeString.Find("spiny");
-	spinz = -1!=sFadeString.Find("spinz");
-	ghost = -1!=sFadeString.Find("ghost");
-	linear = -1!=sFadeString.Find("linear");
-	accelerate = -1!=sFadeString.Find("accelerate");
-	bounce = -1!=sFadeString.Find("bounce");
-	spring = -1!=sFadeString.Find("spring");
-	left = -1!=sFadeString.Find("left");
-	right = -1!=sFadeString.Find("right");
-	top = -1!=sFadeString.Find("top");
-	bottom = -1!=sFadeString.Find("bottom");
+	m_Effect = bob;
+	m_fEffectPeriodSeconds = fPeriod;
+	m_vEffectMagnitude = vect;
+	m_fSecsIntoEffect = 0;
 }
 
+void Actor::SetEffectSpin( RageVector3 vect )
+{
+	m_Effect = spin;
+	m_vEffectMagnitude = vect;
+}
+
+void Actor::SetEffectVibrate( RageVector3 vect )
+{
+	m_Effect = vibrate;
+	m_vEffectMagnitude = vect;
+}
 
 
 void Actor::Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, bool bFadingOff )
 {
 	sFadeString.MakeLower();
+	sFadeString.Replace( ' ', ',' );
 
 	TweenState original = m_current;
 	TweenState mod = m_current;
 
 	CStringArray asBits;
-	split( sFadeString, " ", asBits );
+	split( sFadeString, ",", asBits );
 	
 #define CONTAINS(needle)	(find( asBits.begin(), asBits.end(), needle ) != asBits.end())
 
 	TweenType tt;
 	if( CONTAINS("linear") )			tt = TWEEN_LINEAR;
-	else if( CONTAINS("accelerate") )	tt = bFadingOff ? TWEEN_BIAS_END : TWEEN_BIAS_BEGIN;
+	else if( CONTAINS("accelerate") )	tt = bFadingOff ? TWEEN_ACCELERATE : TWEEN_DECELERATE;
 	else if( CONTAINS("bounce") )		tt = bFadingOff ? TWEEN_BOUNCE_BEGIN : TWEEN_BOUNCE_END;
 	else if( CONTAINS("spring") )		tt = TWEEN_SPRING;
 	else								tt = TWEEN_LINEAR;
@@ -553,14 +466,124 @@ void Actor::Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, 
 	mod.glow.a *= CONTAINS("glow")?1:0;
 
 
+
+	TweenState& start = bFadingOff ? original : mod;
+	TweenState& end = bFadingOff ? mod : original;
+
+	// apply tweens
 	StopTweening();
-	m_current = bFadingOff ? original : mod;
-	BeginTweening( fSleepSeconds );
-	BeginTweening( fFadeSeconds, tt );
-	LatestTween() = bFadingOff ? mod : original;
+
+	if( CONTAINS("ghost") )
+	{
+		// start with no glow, no alpha
+		start.glow.a = 0;
+		for( int i=0; i<4; i++ )
+			start.diffuse[i].a = 0;
+		
+		m_current = start;
+
+
+		TweenState mid;
+		TweenState::MakeWeightedAverage( mid, start, end, 0.5 );
+
+		// tween to full glow, no alpha
+		mid.glow.a = 1;
+		for( i=0; i<4; i++ )
+			mid.diffuse[i].a = 0;
+		BeginTweening( fFadeSeconds/2, tt );
+		LatestTween() = mid;
+
+		// snap to full alpha
+		for( i=0; i<4; i++ )
+			mid.diffuse[i].a = 1;
+		BeginTweening( 0.0001f, tt );
+		LatestTween() = mid;
+
+		// tween to no glow
+		mid.glow.a = 0;
+		BeginTweening( fFadeSeconds/2, tt );
+		LatestTween() = mid;
+	}
+	else
+	{
+		m_current = start;
+		BeginTweening( fSleepSeconds );
+		BeginTweening( fFadeSeconds, tt );
+		LatestTween() = end;
+	}
 }
 
-float Actor::TweenTime() const
+void Actor::Command( CString sCommandString )
+{
+	// add a snap tween in case the user forgets to use a tween as the first command
+//	BeginTweening( 0.0001f, TWEEN_LINEAR );
+
+	CStringArray asCommands;
+	split( sCommandString, ";", asCommands, true );
+	
+	for( unsigned c=0; c<asCommands.size(); c++ )
+	{
+		CStringArray asTokens;
+		split( asCommands[c], ",", asTokens, true );
+		asTokens.resize(5);	// make this big so we don't go out of bounds below
+							// if the user doesn't provide enough parameters, tough.
+
+		CString& sName = asTokens[0];
+		sName.MakeLower();
+
+#define sParam(i) (asTokens[(unsigned)i+1])
+#define fParam(i) ((float)atof(sParam(i)))
+#define iParam(i) (atoi(sParam(i)))
+#define bParam(i) (iParam(i)!=0)
+
+		// Act on command
+		if     ( sName=="sleep" )			BeginTweening( fParam(0), TWEEN_LINEAR );
+		else if( sName=="linear" )			BeginTweening( fParam(0), TWEEN_LINEAR );
+		else if( sName=="accelerate" )		BeginTweening( fParam(0), TWEEN_ACCELERATE );
+		else if( sName=="decelerate" )		BeginTweening( fParam(0), TWEEN_DECELERATE );
+		else if( sName=="bouncebegin" )		BeginTweening( fParam(0), TWEEN_BOUNCE_BEGIN );
+		else if( sName=="bounceend" )		BeginTweening( fParam(0), TWEEN_BOUNCE_END );
+		else if( sName=="spring" )			BeginTweening( fParam(0), TWEEN_SPRING );
+		else if( sName=="stoptweening" )	{ StopTweening(); BeginTweening( 0.0001f, TWEEN_LINEAR ); }
+		else if( sName=="x" )				SetX( fParam(0) );
+		else if( sName=="y" )				SetY( fParam(0) );
+		else if( sName=="xoffset" )			SetX( GetX()+fParam(0) );
+		else if( sName=="yoffset" )			SetY( GetY()+fParam(0) );
+		else if( sName=="zoom" )			SetZoom( fParam(0) );
+		else if( sName=="zoomx" )			SetZoomY( fParam(0) );
+		else if( sName=="zoomy" )			SetZoomY( fParam(0) );
+		else if( sName=="diffuse" )			SetDiffuse( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );
+		else if( sName=="glow" )			SetGlow( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );
+		else if( sName=="rotationx" )		SetRotationX( fParam(0) );
+		else if( sName=="rotationy" )		SetRotationY( fParam(0) );
+		else if( sName=="rotationz" )		SetRotationZ( fParam(0) );
+		else if( sName=="shadowlength" )	SetShadowLength( fParam(0) );
+		else if( sName=="horizalign" )		SetHorizAlign( sParam(0) );
+		else if( sName=="vertalign" )		SetVertAlign( sParam(0) );
+		else if( sName=="diffuseblink" )	SetEffectDiffuseBlink();
+		else if( sName=="diffuseshift" )	SetEffectDiffuseShift();
+		else if( sName=="glowblink" )		SetEffectGlowBlink();
+		else if( sName=="glowshift" )		SetEffectGlowShift();
+		else if( sName=="wag" )				SetEffectWag();
+		else if( sName=="bounce" )			SetEffectBounce();
+		else if( sName=="bob" )				SetEffectBob();
+		else if( sName=="spin" )			SetEffectSpin();
+		else if( sName=="vibrate" )			SetEffectVibrate();
+		else if( sName=="stopeffect" )		SetEffectNone();
+		else if( sName=="effectcolor1" )	SetEffectColor1( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );
+		else if( sName=="effectcolor2" )	SetEffectColor2( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );
+		else if( sName=="effectperiod" )	SetEffectPeriod( fParam(0) );
+		else if( sName=="effectmagnitude" )	SetEffectMagnitude( RageVector3(fParam(0),fParam(1),fParam(2)) );
+		else if( sName=="additiveblend" )	EnableAdditiveBlend( iParam(0)!=0 );
+		else
+		{
+			LOG->Warn( "Unrecognized command name '%s' in command string '%s'.", sName.GetString(), sCommandString.GetString() );
+			ASSERT(0);
+		}
+	}
+}
+
+float Actor::GetTweenTimeLeft() const
 {
 	float tot = 0;
 

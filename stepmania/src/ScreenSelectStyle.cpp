@@ -3,7 +3,7 @@
 -----------------------------------------------------------------------------
  Class: ScreenSelectStyle
 
- Desc: Testing the Screen class.
+ Desc: See Header.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -23,100 +23,58 @@
 #include "GameState.h"
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
+#include "ModeSelector.h"
 
 
-#define JOINT_PREMIUM_BANNER_X	THEME->GetMetricF("ScreenSelectStyle","JointPremiumBannerX")
-#define JOINT_PREMIUM_BANNER_Y	THEME->GetMetricF("ScreenSelectStyle","JointPremiumBannerY")
-#define ICONS_START_X			THEME->GetMetricF("ScreenSelectStyle","IconsStartX")
-#define ICONS_SPACING_X			THEME->GetMetricF("ScreenSelectStyle","IconsSpacingX")
-#define ICONS_START_Y			THEME->GetMetricF("ScreenSelectStyle","IconsStartY")
-#define ICONS_SPACING_Y			THEME->GetMetricF("ScreenSelectStyle","IconsSpacingY")
-#define EXPLANATION_X			THEME->GetMetricF("ScreenSelectStyle","ExplanationX")
-#define EXPLANATION_Y			THEME->GetMetricF("ScreenSelectStyle","ExplanationY")
-#define INFO_X					THEME->GetMetricF("ScreenSelectStyle","InfoX")
-#define INFO_Y					THEME->GetMetricF("ScreenSelectStyle","InfoY")
-#define PREVIEW_X				THEME->GetMetricF("ScreenSelectStyle","PreviewX")
-#define PREVIEW_Y				THEME->GetMetricF("ScreenSelectStyle","PreviewY")
-#define HELP_TEXT				THEME->GetMetric("ScreenSelectStyle","HelpText")
+#define SELECTOR				THEME->GetMetric ("ScreenSelectStyle","Selector")
+#define HELP_TEXT				THEME->GetMetric ("ScreenSelectStyle","HelpText")
 #define TIMER_SECONDS			THEME->GetMetricI("ScreenSelectStyle","TimerSeconds")
-#define NEXT_SCREEN				THEME->GetMetric("ScreenSelectStyle","NextScreen")
-/* I couldn't find a cleaner way to add this so that SM can show DDREX style,
-	if configured to, in place of the normal style select difficulty screen..
-	I know the screen after this one is supposed to be dynamic to whatever
-	is in the metrics file.. But logically, shouldn't select difficulty always
-	come after select style? -- Miryokuteki
-*/
+#define NEXT_SCREEN				THEME->GetMetric ("ScreenSelectStyle","NextScreen")
 
 
 ScreenSelectStyle::ScreenSelectStyle()
 {
 	LOG->Trace( "ScreenSelectStyle::ScreenSelectStyle()" );
 
-	// Reset the current style and game
-	GAMESTATE->m_CurStyle = STYLE_INVALID;
+
 	GAMESTATE->m_bPlayersCanJoin = true;
 
-	GAMEMAN->GetStylesForGame( GAMESTATE->m_CurGame, m_aPossibleStyles );
-	ASSERT( !m_aPossibleStyles.empty() );	// every game should have at least one Style, or else why have the Game? :-)
-	m_iSelection = 0;
 
-	unsigned i;
-	for( i=0; i<m_aPossibleStyles.size(); i++ )
+	vector<ModeChoice> aModeChoices;
+	
+	vector<Style> aStyles;
+	GAMEMAN->GetStylesForGame( GAMESTATE->m_CurGame, aStyles );
+	ASSERT( !aStyles.empty() );	// every game should have at least one Style, or else why have the Game? :-)
+
+	for( unsigned s=0; s<aStyles.size(); s++ )
 	{
-		CString IconPath = THEME->GetPathToOptional("Graphics",ssprintf("select style icons %s",GAMESTATE->GetCurrentGameDef()->m_szName) );
-		if(IconPath.empty())
+		Style style = aStyles[s];
+		const StyleDef* pStyleDef = GAMEMAN->GetStyleDefForStyle(aStyles[s]);
+
+		int iNumSidesJoinedToPlay;
+		switch( pStyleDef->m_StyleType )
 		{
-			BitmapText *b = new BitmapText;
-			b->LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-			b->SetText(GAMEMAN->GetStyleDefForStyle( m_aPossibleStyles[i] )->m_szName);
-			b->SetDiffuse(RageColor(.5,.5,.5,1));
-			b->SetZoom(0.5f);
-			m_sprIcon[i] = b;
-			IconsAreText = true;
+		case StyleDef::ONE_PLAYER_ONE_CREDIT:	iNumSidesJoinedToPlay = 1;	break;
+		case StyleDef::TWO_PLAYERS_TWO_CREDITS:	iNumSidesJoinedToPlay = 2;	break;
+		case StyleDef::ONE_PLAYER_TWO_CREDITS:	iNumSidesJoinedToPlay = 2;	break;
+		default:	ASSERT(0);	iNumSidesJoinedToPlay = 1;	
 		}
-		else
-		{
-			Sprite *s = new Sprite;
-			s->Load( IconPath );
-			s->StopAnimating();
-			s->SetState( i );
-			m_sprIcon[i] = s;
-			IconsAreText = false;
-		}
-
-		m_sprIcon[i]->SetXY( ICONS_START_X + i*ICONS_SPACING_X, ICONS_START_Y + i*ICONS_SPACING_Y );
-		this->AddChild( m_sprIcon[i] );
+		
+		ModeChoice mc = {
+			GAMESTATE->m_CurGame,
+			PLAY_MODE_INVALID,
+			style,
+			DIFFICULTY_INVALID,
+			"",
+			iNumSidesJoinedToPlay			
+		};
+		strcpy( mc.name, pStyleDef->m_szName );
+		aModeChoices.push_back( mc );
 	}
 
-	UpdateEnabledDisabled();
-
-	m_sprExplanation.Load( THEME->GetPathTo("Graphics","select style explanation") );
-	m_sprExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
-	this->AddChild( &m_sprExplanation );
-	
-	m_sprPreview.SetXY( PREVIEW_X, PREVIEW_Y );
-	this->AddChild( &m_sprPreview );
-	
-	m_sprInfo.SetXY( INFO_X, INFO_Y );
-	this->AddChild( &m_sprInfo );
-	
-	if( PREFSMAN->m_bJointPremium )
-	{
-		m_sprJointPremium.Load( THEME->GetPathTo("Graphics","select style joint premium banner") );
-		m_sprJointPremium.SetXY( JOINT_PREMIUM_BANNER_X, JOINT_PREMIUM_BANNER_Y );
-		this->AddChild( &m_sprJointPremium );
-	}
-
-	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
-	const StyleDef* pStyleDef = GAMEMAN->GetStyleDefForStyle( m_aPossibleStyles[m_iSelection] );
-
-	// Load dummy Sprites
-	for( i=0; i<m_aPossibleStyles.size(); i++ )
-	{
-		m_sprDummyPreview[i].Load( THEME->GetPathToOptional("Graphics",ssprintf("select style preview %s %s",pGameDef->m_szName,pStyleDef->m_szName)) );
-		m_sprDummyInfo[i].Load(    THEME->GetPathToOptional("Graphics",ssprintf("select style info %s %s",pGameDef->m_szName,pStyleDef->m_szName)) );
-	}
-
+	m_pSelector = ModeSelector::Create( SELECTOR );
+	m_pSelector->Init( aModeChoices, "ScreenSelectStyle", "select style" );
+	this->AddChild( m_pSelector );
 
 	m_Menu.Load( 	
 		THEME->GetPathTo("BGAnimations","select style"), 
@@ -125,16 +83,10 @@ ScreenSelectStyle::ScreenSelectStyle()
 		);
 	this->AddChild( &m_Menu );
 
-	m_soundChange.Load( THEME->GetPathTo("Sounds","select style change") );
-	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
-
-
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select style intro") );
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","select style music") );
 
-	AfterChange();
-	TweenOnScreen();
 	m_Menu.TweenOnScreenFromBlack( SM_None );
 }
 
@@ -142,8 +94,11 @@ ScreenSelectStyle::ScreenSelectStyle()
 ScreenSelectStyle::~ScreenSelectStyle()
 {
 	LOG->Trace( "ScreenSelectStyle::~ScreenSelectStyle()" );
-	for( unsigned i=0; i<m_aPossibleStyles.size(); i++ )
-		delete m_sprIcon[i];
+}
+
+void ScreenSelectStyle::Update( float fDelta )
+{
+	Screen::Update( fDelta );
 }
 
 void ScreenSelectStyle::DrawPrimitives()
@@ -165,12 +120,27 @@ void ScreenSelectStyle::Input( const DeviceInput& DeviceI, const InputEventType 
 
 void ScreenSelectStyle::HandleScreenMessage( const ScreenMessage SM )
 {
-	Screen::HandleScreenMessage( SM );
-
 	switch( SM )
 	{
+	case SM_BeginFadingOut:		// sent by our ModeSelector
+		ModeChoice mc;
+		m_pSelector->GetSelectedModeChoice( GAMESTATE->m_MasterPlayerNumber, &mc );
+		GAMESTATE->ApplyModeChoice( &mc, GAMESTATE->m_MasterPlayerNumber );
+
+		GAMESTATE->m_bPlayersCanJoin = false;
+		SCREENMAN->RefreshCreditsMessages();
+
+		m_Menu.StopTimer();
+		m_pSelector->TweenOffScreen();
+
+		m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
+		break;
 	case SM_MenuTimer:
-		MenuStart(PLAYER_INVALID);
+		{
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( GAMESTATE->IsPlayerEnabled(p) )
+					MenuStart( (PlayerNumber)p );
+		}
 		break;
 	case SM_GoToPrevScreen:
 		SOUNDMAN->StopMusic();
@@ -182,90 +152,25 @@ void ScreenSelectStyle::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenSelectStyle::BeforeChange()
-{
-	m_sprIcon[m_iSelection]->SetEffectNone();
-}
-
-void ScreenSelectStyle::AfterChange()
-{
-	m_sprIcon[m_iSelection]->SetEffectGlowShift();
-
-	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
-	const StyleDef* pStyleDef = GAMEMAN->GetStyleDefForStyle( m_aPossibleStyles[m_iSelection] );
-
-	// Tween Preview
-	m_sprPreview.Load( THEME->GetPathToOptional("Graphics",ssprintf("select style preview %s %s",pGameDef->m_szName,pStyleDef->m_szName)) );
-
-	m_sprPreview.StopTweening();
-	m_sprPreview.SetGlow( RageColor(1,1,1,0) );
-	m_sprPreview.SetDiffuse( RageColor(1,1,1,0) );
-
-	m_sprPreview.BeginTweening( 0.25f );			// sleep
-
-	m_sprPreview.BeginTweening( 0.2f );			// fade to white
-	m_sprPreview.SetTweenGlow( RageColor(1,1,1,1) );
-	m_sprPreview.SetTweenDiffuse( RageColor(1,1,1,0) );
-
-	m_sprPreview.BeginTweening( 0.01f );			// turn color on
-	m_sprPreview.SetTweenDiffuse( RageColor(1,1,1,1) );
-
-	m_sprPreview.BeginTweening( 0.2f );			// fade to color
-	m_sprPreview.SetTweenGlow( RageColor(1,1,1,0) );
-	m_sprPreview.SetTweenDiffuse( RageColor(1,1,1,1) );
-
-
-	// Tween Info
-	m_sprInfo.Load( THEME->GetPathToOptional("Graphics",ssprintf("select style info %s %s",pGameDef->m_szName,pStyleDef->m_szName)) );
-	m_sprInfo.StopTweening();
-	m_sprInfo.SetZoomY( 0 );
-	m_sprInfo.BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
-	m_sprInfo.SetTweenZoomY( 1 );
-}
 
 void ScreenSelectStyle::MenuLeft( PlayerNumber pn )
 {
-	// search for a style to the left of the current selection that is enabled
-	int iSwitchToStyleIndex = -1;	// -1 means none found
-	for( int i=m_iSelection-1; i>=0; i-- )
-	{
-		if( IsEnabled(i) )
-		{
-			iSwitchToStyleIndex = i;
-			break;
-		}
-	}
-
-	if( iSwitchToStyleIndex == -1 )
-		return;
-
-	BeforeChange();
-	m_iSelection = iSwitchToStyleIndex;
-	m_soundChange.PlayRandom();
-	AfterChange();
+	m_pSelector->MenuLeft( pn );
 }
-
 
 void ScreenSelectStyle::MenuRight( PlayerNumber pn )
 {
-	// search for a style to the right of the current selection that is enabled
-	int iSwitchToStyleIndex = -1;	// -1 means none found
-	for( unsigned i=m_iSelection+1; i<m_aPossibleStyles.size(); i++ )	
-	{
-		if( IsEnabled(i) )
-		{
-			iSwitchToStyleIndex = i;
-			break;
-		}
-	}
+	m_pSelector->MenuRight( pn );
+}
 
-	if( iSwitchToStyleIndex == -1 )
-		return;
+void ScreenSelectStyle::MenuUp( PlayerNumber pn )
+{
+	m_pSelector->MenuUp( pn );
+}
 
-	BeforeChange();
-	m_iSelection = iSwitchToStyleIndex;
-	m_soundChange.PlayRandom();
-	AfterChange();
+void ScreenSelectStyle::MenuDown( PlayerNumber pn )
+{
+	m_pSelector->MenuDown( pn );
 }
 
 void ScreenSelectStyle::MenuStart( PlayerNumber pn )
@@ -301,29 +206,10 @@ void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
 		GAMESTATE->m_bSideIsJoined[pn] = true;
 		SCREENMAN->RefreshCreditsMessages();
-		UpdateEnabledDisabled();
-		return; // don't fall through
+		m_pSelector->UpdateSelectableChoices();
 	}
-
-	GAMESTATE->m_CurStyle = GetSelectedStyle();
-
-	CString sCurStyleName = GAMESTATE->GetCurrentStyleDef()->m_szName;
-	sCurStyleName.MakeLower();
-	if(	     -1!=sCurStyleName.Find("single") )	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select style comment single") );
-	else if( -1!=sCurStyleName.Find("versus") )	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select style comment versus") );
-	else if( -1!=sCurStyleName.Find("double") )	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select style comment double") );
-	else if( -1!=sCurStyleName.Find("couple") )	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select style comment couple") );
-	else if( -1!=sCurStyleName.Find("solo") )	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select style comment solo") );
-
-	m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
-	GAMESTATE->m_bPlayersCanJoin = false;
-	SCREENMAN->RefreshCreditsMessages();
-
-	m_soundSelect.PlayRandom();
-
-	m_Menu.StopTimer();
-
-	TweenOffScreen();
+	else
+		m_pSelector->MenuStart( pn );
 }
 
 void ScreenSelectStyle::MenuBack( PlayerNumber pn )
@@ -331,88 +217,4 @@ void ScreenSelectStyle::MenuBack( PlayerNumber pn )
 	SOUNDMAN->StopMusic();
 
 	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
-
-//	m_Fade.CloseWipingLeft( SM_GoToPrevScreen );
-
-//	TweenOffScreen();
 }
-
-
-void ScreenSelectStyle::TweenOnScreen() 
-{
-	for( unsigned i=0; i<m_aPossibleStyles.size(); i++ )
-		m_sprIcon[i]->FadeOn( (m_aPossibleStyles.size()-i)*0.05f, "Left Accelerate", MENU_ELEMENTS_TWEEN_TIME );
-
-	m_sprExplanation.FadeOn( 0, "Right Accelerate", MENU_ELEMENTS_TWEEN_TIME );
-	m_sprJointPremium.FadeOn( 0, "fade", MENU_ELEMENTS_TWEEN_TIME );
-
-	// let AfterChange tween Preview and Info
-}
-
-void ScreenSelectStyle::TweenOffScreen()
-{
-	for( unsigned i=0; i<m_aPossibleStyles.size(); i++ )
-		m_sprIcon[i]->FadeOff( 0, "FoldY", MENU_ELEMENTS_TWEEN_TIME );
-
-	m_sprExplanation.FadeOff( 0, "FoldY", MENU_ELEMENTS_TWEEN_TIME );
-
-	m_sprPreview.FadeOff( 0, "FoldY", MENU_ELEMENTS_TWEEN_TIME );
-
-	m_sprInfo.FadeOff( 0, "FoldY", MENU_ELEMENTS_TWEEN_TIME );
-
-	m_sprJointPremium.FadeOff( 0, "fade", MENU_ELEMENTS_TWEEN_TIME );
-}
-
-
-bool ScreenSelectStyle::IsEnabled( int iStyleIndex )
-{
-	Style style = m_aPossibleStyles[iStyleIndex];
-
-	int iNumSidesJoined = 0;
-	for( int c=0; c<2; c++ )
-		if( GAMESTATE->m_bSideIsJoined[c] )
-			iNumSidesJoined++;	// left side, and right side
-
-	switch( GAMEMAN->GetStyleDefForStyle(style)->m_StyleType )
-	{
-	case StyleDef::ONE_PLAYER_ONE_CREDIT:	return iNumSidesJoined==1;
-	case StyleDef::ONE_PLAYER_TWO_CREDITS:	return iNumSidesJoined==2;
-	case StyleDef::TWO_PLAYERS_TWO_CREDITS:	return iNumSidesJoined==2;
-	default:	ASSERT(0);	return false;
-	}
-}
-
-void ScreenSelectStyle::UpdateEnabledDisabled()
-{
-	unsigned i;
-	/* XXX: If a player joins during the tween-in, this diffuse change
-	 * will be undone by the tween.  Hmm. */
-	for( i=0; i<m_aPossibleStyles.size(); i++ )
-	{
-		/* If the icon is text, use a dimmer diffuse, or we won't be
-		 * able to see the glow. */
-		if( IsEnabled(i) )
-			m_sprIcon[i]->SetDiffuse( IconsAreText? RageColor(0.75f, 0.75f, 0.75f, 1):
-													RageColor(1,1,1,1) );
-		else
-			m_sprIcon[i]->SetDiffuse( RageColor(0.25f,0.25f,0.25f,1) );
-	}
-
-	// Select first enabled style
-	BeforeChange();
-
-	int iSwitchToStyleIndex = -1;	// -1 means none found
-	for( i=0; i<m_aPossibleStyles.size(); i++ )
-	{
-		if( IsEnabled(i) )
-		{
-			iSwitchToStyleIndex = i;
-			break;
-		}
-	}
-	ASSERT( iSwitchToStyleIndex != -1 );	// no styles are enabled.  We're stuck!  This should never happen
-
-	m_iSelection = iSwitchToStyleIndex;
-	AfterChange();
-}
-

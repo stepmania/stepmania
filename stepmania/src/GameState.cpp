@@ -23,6 +23,7 @@
 #include "SongManager.h"
 #include "Notes.h"
 #include "NoteSkinManager.h"
+#include "ModeChoice.h"
 
 
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
@@ -238,6 +239,18 @@ const StyleDef* GameState::GetCurrentStyleDef()
 {
 	ASSERT( m_CurStyle != STYLE_INVALID );	// the style must be set before calling this
 	return GAMEMAN->GetStyleDefForStyle( m_CurStyle );
+}
+
+void GameState::ApplyModeChoice( const ModeChoice* pModeChoice, PlayerNumber pn )
+{
+	if( pModeChoice->game != GAME_INVALID )
+		m_CurGame = pModeChoice->game;
+	if( pModeChoice->pm != PLAY_MODE_INVALID )
+		m_PlayMode = pModeChoice->pm;
+	if( pModeChoice->style != STYLE_INVALID )
+		m_CurStyle = pModeChoice->style;
+	if( pModeChoice->dc != DIFFICULTY_INVALID  &&  pn != PLAYER_INVALID )
+		m_PreferredDifficulty[pn] = pModeChoice->dc;
 }
 
 bool GameState::IsPlayerEnabled( PlayerNumber pn )

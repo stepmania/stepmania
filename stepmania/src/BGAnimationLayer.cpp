@@ -101,7 +101,7 @@ void BGAnimationLayer::LoadFromVisualization( CString sMoviePath )
 	m_iNumSprites = 1;
 	m_Sprites[0].LoadBG( sMoviePath );
 	m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-	m_Sprites[0].SetBlendModeAdd();
+	m_Sprites[0].EnableAdditiveBlend( true );
 }
 
 void BGAnimationLayer::LoadFromAniLayerFile( CString sPath, CString sSongBGPath )
@@ -231,7 +231,7 @@ found_effect:
 			{
 				m_Sprites[i].LoadBG( sPath );
 				m_Sprites[i].SetZoom( randomf(0.2f,2) );
-				m_Sprites[i].SetRotation( randomf(0,PI*2) );
+				m_Sprites[i].SetRotationZ( randomf(0,PI*2) );
 			}
 		}
 		break;
@@ -317,7 +317,7 @@ found_effect:
 
 	if( sPath.Find("add") != -1 )
 		for( int i=0; i<m_iNumSprites; i++ )
-			m_Sprites[i].SetBlendModeAdd();
+			m_Sprites[i].EnableAdditiveBlend( true );
 
 	CString sDir, sFName, sExt;
 	splitrelpath( sPath, sDir, sFName, sExt );
@@ -360,7 +360,7 @@ found_effect:
 	}
 	if(m_Rot != 0)
 	{
-		m_Sprites[0].SetRotation(m_Rot);
+		m_Sprites[0].SetRotationZ(m_Rot);
 	}
 }
 
@@ -425,7 +425,7 @@ void BGAnimationLayer::Update( float fDeltaTime  )
 		
 		break;
 	case EFFECT_STRETCH_SPIN:
-		m_Sprites[0].SetRotation( m_Sprites[0].GetRotation() + fDeltaTime*m_fRotationalVelocity );
+		m_Sprites[0].SetRotationZ( m_Sprites[0].GetRotationZ() + fDeltaTime*m_fRotationalVelocity );
 	case EFFECT_STRETCH_WATER:
 	case EFFECT_STRETCH_BUBBLE:
 	case EFFECT_STRETCH_TWIST:
@@ -437,13 +437,13 @@ void BGAnimationLayer::Update( float fDeltaTime  )
 			if( m_Sprites[i].GetZoom() > SPIRAL_MAX_ZOOM )
 				m_Sprites[i].SetZoom( SPIRAL_MIN_ZOOM );
 
-			m_Sprites[i].SetRotation( m_Sprites[i].GetRotation() + fDeltaTime );
+			m_Sprites[i].SetRotationZ( m_Sprites[i].GetRotationZ() + fDeltaTime );
 
 			float fRadius = (m_Sprites[i].GetZoom()-SPIRAL_MIN_ZOOM);
 			fRadius *= fRadius;
 			fRadius *= 200;
-			m_Sprites[i].SetX( CENTER_X + cosf(m_Sprites[i].GetRotation())*fRadius );
-			m_Sprites[i].SetY( CENTER_Y + sinf(m_Sprites[i].GetRotation())*fRadius );
+			m_Sprites[i].SetX( CENTER_X + cosf(m_Sprites[i].GetRotationZ())*fRadius );
+			m_Sprites[i].SetY( CENTER_Y + sinf(m_Sprites[i].GetRotationZ())*fRadius );
 		}
 		break;
 	case EFFECT_PARTICLES_SPIRAL_IN:
@@ -453,13 +453,13 @@ void BGAnimationLayer::Update( float fDeltaTime  )
 			if( m_Sprites[i].GetZoom() < SPIRAL_MIN_ZOOM )
 				m_Sprites[i].SetZoom( SPIRAL_MAX_ZOOM );
 
-			m_Sprites[i].SetRotation( m_Sprites[i].GetRotation() - fDeltaTime );
+			m_Sprites[i].SetRotationZ( m_Sprites[i].GetRotationZ() - fDeltaTime );
 
 			float fRadius = (m_Sprites[i].GetZoom()-SPIRAL_MIN_ZOOM);
 			fRadius *= fRadius;
 			fRadius *= 200;
-			m_Sprites[i].SetX( CENTER_X + cosf(m_Sprites[i].GetRotation())*fRadius );
-			m_Sprites[i].SetY( CENTER_Y + sinf(m_Sprites[i].GetRotation())*fRadius );
+			m_Sprites[i].SetX( CENTER_X + cosf(m_Sprites[i].GetRotationZ())*fRadius );
+			m_Sprites[i].SetY( CENTER_Y + sinf(m_Sprites[i].GetRotationZ())*fRadius );
 		}
 		break;
 	case EFFECT_PARTICLES_FLOAT_UP:

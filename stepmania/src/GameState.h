@@ -19,12 +19,12 @@
 #include "Grade.h"
 #include "StageStats.h"
 
-
 class Song;
 struct Notes;
 class Course;
 class GameDef;
 class StyleDef;
+struct ModeChoice;
 
 
 class GameState
@@ -44,6 +44,7 @@ public:
 	Style			m_CurStyle;
 	bool			m_bPlayersCanJoin;	// true if it's not too late for a player to join - this only has an effect on the credits message
 	bool			m_bSideIsJoined[NUM_PLAYERS];	// left side, right side
+	PlayMode		m_PlayMode;			// many screens display different info depending on this value
 	int				m_iCoins;			// not "credits"
 	PlayerNumber	m_MasterPlayerNumber;	// used in Styles where one player controls both sides
 	bool			m_bIsOnSystemMenu; // system screens will not be effected by the operator key -- Miryokuteki
@@ -56,9 +57,10 @@ public:
 		return iNumSidesJoined;
 	};
 
-
 	GameDef*	GetCurrentGameDef();
 	const StyleDef*	GetCurrentStyleDef();
+
+	void ApplyModeChoice( const ModeChoice* pModeChoice, PlayerNumber pn );
 
 	bool IsPlayerEnabled( PlayerNumber pn );
 	bool IsPlayerEnabled( int p ) { return IsPlayerEnabled( (PlayerNumber)p ); };	// for those too lasy to cast all those p's to a PlayerNumber
@@ -68,7 +70,6 @@ public:
 	CString			m_sPreferredGroup;	// GROUP_ALL_MUSIC denotes no preferred group
 	Difficulty		m_PreferredDifficulty[NUM_PLAYERS];
 	SongSortOrder	m_SongSortOrder;			// used by MusicWheel
-	PlayMode		m_PlayMode;			// many screen display different info depending on this value
 	bool			m_bEditing;			// NoteField does special stuff when this is true
 	bool			m_bDemonstration;	// ScreenGameplay does special stuff when this is true
 	bool			m_bJukeboxUsesModifiers;

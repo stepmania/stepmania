@@ -33,7 +33,7 @@ HoldJudgment::HoldJudgment()
 	m_fShowCountdown = 0;
 	m_sprJudgment.Load( THEME->GetPathTo("Graphics","gameplay hold Judgment 1x2") );
 	m_sprJudgment.StopAnimating();
-	m_sprJudgment.TurnShadowOn();
+	m_sprJudgment.EnableShadow( true );
 	this->AddChild( &m_sprJudgment );
 }
 

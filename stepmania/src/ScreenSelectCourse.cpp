@@ -87,12 +87,12 @@ ScreenSelectCourse::ScreenSelectCourse()
 
 	m_textNumSongs.LoadFromFont( THEME->GetPathTo("Fonts","select course num songs") );
 	m_textNumSongs.SetXY( STAGES_X, STAGES_Y );
-	m_textNumSongs.TurnShadowOff();
+	m_textNumSongs.EnableShadow( false );
 	this->AddChild( &m_textNumSongs );
 
 	m_textTime.LoadFromFont( THEME->GetPathTo("Fonts","select course total time") );
 	m_textTime.SetXY( TIME_X, TIME_Y );
-	m_textTime.TurnShadowOff();
+	m_textTime.EnableShadow( false );
 	this->AddChild( &m_textTime );
 
 	m_CourseContentsFrame.SetXY( CONTENTS_X, CONTENTS_Y );

@@ -66,7 +66,7 @@ void Banner::SetScrolling( bool bScroll, float Percent)
 
 void Banner::LoadFromSong( Song* pSong )		// NULL means no song
 {
-	Sprite::TurnShadowOff();
+	Sprite::EnableShadow( false );
 
 	if( pSong == NULL )					LoadFallback();
 	else if( pSong->HasBanner() )		Load( pSong->GetBannerPath() );
@@ -92,7 +92,7 @@ void Banner::LoadFromGroup( CString sGroupName )
 
 void Banner::LoadFromCourse( Course* pCourse )		// NULL means no course
 {
-	Sprite::TurnShadowOff();
+	Sprite::EnableShadow( false );
 
 	if( pCourse == NULL )						LoadFallback();
 	else if( pCourse->m_sBannerPath != "" )		Load( pCourse->m_sBannerPath );

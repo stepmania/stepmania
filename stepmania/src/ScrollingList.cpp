@@ -144,7 +144,7 @@ void ScrollingList::Load( const CStringArray& asGraphicPaths )
 			else if(m_iBannerPrefs == BANNERPREFS_DDRROT)
 			{
 				pNewCSprite->SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
-				pNewCSprite->SetRotation( DDRROT_ROTATION );
+				pNewCSprite->SetRotationZ( DDRROT_ROTATION );
 			}
 			else if(m_iBannerPrefs == BANNERPREFS_EZ2)
 			{
@@ -347,7 +347,7 @@ void ScrollingList::Replace(CString sGraphicPath, int ElementNumber)
 		else if(m_iBannerPrefs == BANNERPREFS_DDRROT)
 		{
 			pNewCSprite->SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
-			pNewCSprite->SetRotation( DDRROT_ROTATION );
+			pNewCSprite->SetRotationZ( DDRROT_ROTATION );
 		}
 		else if(m_iBannerPrefs == BANNERPREFS_EZ2)
 		{

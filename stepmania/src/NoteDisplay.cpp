@@ -665,7 +665,7 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 	{
 		// draw tap
 		pSprite = GetTapNoteSprite( fBeat );
-		pSprite->SetRotation( fRotation );
+		pSprite->SetRotationZ( fRotation );
 	}
 
 	pSprite->SetXY( fXPos, fYPos );

@@ -22,180 +22,19 @@ public:
 
 	enum TweenType { 
 		TWEEN_LINEAR, 
-		TWEEN_BIAS_BEGIN, 
-		TWEEN_BIAS_END, 
+		TWEEN_ACCELERATE, 
+		TWEEN_DECELERATE, 
 		TWEEN_BOUNCE_BEGIN, 
 		TWEEN_BOUNCE_END,
 		TWEEN_SPRING,
 	};
 	enum Effect { no_effect,
-				diffuse_blinking,	diffuse_shift,
-				glow_blinking,		glow_shift,
-				wagging,	spinning,
-				vibrating,	flickering,
-				bouncing,	bobbing
+				diffuse_blink,	diffuse_shift,
+				glow_blink,		glow_shift,
+				wag,	bounce,		bob,
+				spin,	vibrate,	
 				};
 
-
-	// let subclasses override
-
-	/* Do subclasses really need to override tweening?  Tween data should
-	 * probably be private ... - glenn */
-	virtual void Restore() {};
-	virtual void Invalidate() {};
-
-	virtual void Draw();		// calls, BeginDraw, DrawPrimitives, EndDraw
-	virtual void BeginDraw();	// pushes transform onto world matrix stack
-	virtual void DrawPrimitives() = 0;	// override with Actor specific action
-	virtual void EndDraw();		// pops transform from world matrix stack
-	bool IsFirstUpdate();
-	virtual void Update( float fDeltaTime );
-	virtual void UpdateTweening( float fDeltaTime );
-
-	virtual float GetX()					{ return m_current.pos.x; };
-	virtual float GetY()					{ return m_current.pos.y; };
-	virtual float GetZ()					{ return m_current.pos.z; };
-	virtual void  SetX( float x )			{ m_current.pos.x = x; };
-	virtual void  SetY( float y )			{ m_current.pos.y = y; };
-	virtual void  SetZ( float z )			{ m_current.pos.z = z; };
-	virtual void  SetXY( float x, float y )	{ m_current.pos.x = x; m_current.pos.y = y; };
-
-	// height and width vary depending on zoom
-	virtual float GetUnzoomedWidth()		{ return m_size.x; }
-	virtual float GetUnzoomedHeight()		{ return m_size.y; }
-	virtual float GetZoomedWidth()			{ return m_size.x * m_current.scale.x; }
-	virtual float GetZoomedHeight()			{ return m_size.y * m_current.scale.y; }
-//	virtual void  SetWidth( float width )	{ m_current.size.x = width; }
-//	virtual void  SetHeight( float height )	{ m_current.size.y = height; }
-
-	virtual float GetZoom()					{ return m_current.scale.x; }	// not accurate in some cases
-	virtual float GetZoomX()				{ return m_current.scale.x; }
-	virtual float GetZoomY()				{ return m_current.scale.y; }
-	virtual void  SetZoom( float zoom )		{ m_current.scale.x = zoom;	m_current.scale.y = zoom; }
-	virtual void  SetZoomX( float zoom )	{ m_current.scale.x = zoom;	}
-	virtual void  SetZoomY( float zoom )	{ m_current.scale.y = zoom; }
-	virtual void  ZoomToWidth( float zoom )	{ SetZoomX( zoom / GetUnzoomedWidth() ); }
-	virtual void  ZoomToHeight( float zoom ){ SetZoomY( zoom / GetUnzoomedHeight() ); }
-
-	virtual float GetRotation()				{ return m_current.rotation.z; }
-	virtual float GetRotationX()			{ return m_current.rotation.x; }
-	virtual float GetRotationY()			{ return m_current.rotation.y; }
-	virtual float GetRotationZ()			{ return m_current.rotation.z; }
-	virtual void  SetRotation( float rot )	{ m_current.rotation.z = rot; }
-	virtual void  SetRotationX( float rot )	{ m_current.rotation.x = rot; }
-	virtual void  SetRotationY( float rot )	{ m_current.rotation.y = rot; }
-	virtual void  SetRotationZ( float rot )	{ m_current.rotation.z = rot; }
-
-	virtual void SetDiffuse( RageColor c ) { for(int i=0; i<4; i++) m_current.diffuse[i] = c; };
-	virtual void SetDiffuses( int i, RageColor c )		{ m_current.diffuse[i] = c; };
-	virtual void SetDiffuseUpperLeft( RageColor c )		{ m_current.diffuse[0] = c; };
-	virtual void SetDiffuseUpperRight( RageColor c )	{ m_current.diffuse[1] = c; };
-	virtual void SetDiffuseLowerLeft( RageColor c )		{ m_current.diffuse[2] = c; };
-	virtual void SetDiffuseLowerRight( RageColor c )	{ m_current.diffuse[3] = c; };
-	virtual void SetDiffuseTopEdge( RageColor c )		{ m_current.diffuse[0] = m_current.diffuse[1] = c; };
-	virtual void SetDiffuseRightEdge( RageColor c )		{ m_current.diffuse[1] = m_current.diffuse[3] = c; };
-	virtual void SetDiffuseBottomEdge( RageColor c )	{ m_current.diffuse[2] = m_current.diffuse[3] = c; };
-	virtual void SetDiffuseLeftEdge( RageColor c )		{ m_current.diffuse[0] = m_current.diffuse[2] = c; };
-	virtual RageColor GetDiffuse()						{ return m_current.diffuse[0]; };
-	virtual RageColor GetDiffuses( int i )				{ return m_current.diffuse[i]; };
-	virtual void SetGlow( RageColor c )					{ m_current.glow = c; };
-	virtual RageColor GetGlow()							{ return m_current.glow; };
-
-
-
-	virtual void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
-	virtual void StopTweening();
-	/* Amount of time until all tweens have stopped: */
-	virtual float TweenTime() const;
-	virtual void SetTweenX( float x );
-	virtual void SetTweenY( float y );
-	virtual void SetTweenZ( float z );
-	virtual void SetTweenXY( float x, float y );
-	virtual void SetTweenZoom( float zoom );
-	virtual void SetTweenZoomX( float zoom );
-	virtual void SetTweenZoomY( float zoom );
-	virtual void SetTweenZoomToWidth( float zoom );
-	virtual void SetTweenZoomToHeight( float zoom );
-	virtual void SetTweenRotationX( float r );
-	virtual void SetTweenRotationY( float r );
-	virtual void SetTweenRotationZ( float r );
-	virtual void SetTweenDiffuse( RageColor colorDiffuse );
-	virtual void SetTweenDiffuseUpperLeft( RageColor colorDiffuse );
-	virtual void SetTweenDiffuseUpperRight( RageColor colorDiffuse );
-	virtual void SetTweenDiffuseLowerLeft( RageColor colorDiffuse );
-	virtual void SetTweenDiffuseLowerRight( RageColor colorDiffuse );
-	virtual void SetTweenDiffuseTopEdge( RageColor colorDiffuse );
-	virtual void SetTweenDiffuseRightEdge( RageColor colorDiffuse );
-	virtual void SetTweenDiffuseBottomEdge( RageColor colorDiffuse );
-	virtual void SetTweenDiffuseLeftEdge( RageColor colorDiffuse );
-	virtual void SetTweenGlow( RageColor c );
-	
-	enum StretchType { fit_inside, cover };
-
-	void ScaleToCover( const RectI &rect )		{ ScaleTo( rect, cover ); }
-	void ScaleToFitInside( const RectI &rect )	{ ScaleTo( rect, fit_inside); };
-	void ScaleTo( const RectI &rect, StretchType st );
-
-	void StretchTo( const RectI &rect );
-	void StretchTo( const RectF &rect );
-
-
-
-
-	enum HorizAlign { align_left, align_center, align_right };
-	virtual void SetHorizAlign( HorizAlign ha ) { m_HorizAlign = ha; }
-
-	enum VertAlign { align_top, align_middle, align_bottom };
-	virtual void SetVertAlign( VertAlign va ) { m_VertAlign = va; }
-
-
-
-	// effects
-	void SetEffectNone();
-	void SetEffectDiffuseBlinking( float fEffectPeriodSeconds = 1.0f,
-						    RageColor c1 = RageColor(0.5f,0.5f,0.5f,1), 
-						    RageColor c2 = RageColor(1,1,1,1) );
-	void SetEffectDiffuseShift( float fEffectPeriodSeconds = 1.0f,
-						    RageColor c1 = RageColor(0,0,0,1), 
-						    RageColor c2 = RageColor(1,1,1,1) );
-	void SetEffectGlowBlinking( float fEffectPeriodSeconds = 1.0f,
-						   RageColor c1 = RageColor(1,1,1,0.2f),
-						   RageColor c2 = RageColor(1,1,1,0.8f) );
-	void SetEffectGlowShift( float fEffectPeriodSeconds = 1.0f,
-						   RageColor c1 = RageColor(1,1,1,0.2f),
-						   RageColor c2 = RageColor(1,1,1,0.8f) );
-	void SetEffectWagging( float fWagRadians =  0.2,
-						   float fWagPeriod = 2.0 );
-	void SetEffectSpinning( RageVector3 vectRotationVelocity );
-	void SetEffectVibrating( float fVibrationDistance = 5.0 );
-	void SetEffectFlickering();
-	void SetEffectBouncing( RageVector3 vectBounceDir, float fPeriod );
-	void SetEffectBobbing( RageVector3 vectBobDir, float fPeriod );
-	Effect GetEffect() { return m_Effect; };
-
-
-	//
-	// other properties
-	//
-	void TurnShadowOn()		{ m_bShadow = true; };
-	void TurnShadowOff()	{ m_bShadow = false; };
-	void SetShadowLength( float fLength )	{ m_fShadowLength = fLength; };
-
-	void SetBlendModeAdd() 		{ m_bBlendAdd = true; }; 
-	void SetBlendModeNormal() 	{ m_bBlendAdd = false; };
-
-
-	//
-	// fade command
-	//
-	void Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, bool bFadingOff );
-	void FadeOn( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,false); };
-	void FadeOff( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,true); };
-
-
-	//
-	// Stuff for tweening
-	//
 	struct TweenState
 	{
 		// start and end position for tweening
@@ -214,14 +53,220 @@ public:
 				diffuse[i] = RageColor( 1, 1, 1, 1 );
 			glow = RageColor( 1, 1, 1, 0 );
 		};
+
+		static void MakeWeightedAverage( TweenState& average_out, const TweenState& ts1, const TweenState& ts2, float fPercentBetween )
+		{
+			average_out.pos			= ts1.pos	  + (ts2.pos		- ts1.pos	  )*fPercentBetween;
+			average_out.scale		= ts1.scale	  + (ts2.scale		- ts1.scale   )*fPercentBetween;
+			average_out.rotation	= ts1.rotation+ (ts2.rotation	- ts1.rotation)*fPercentBetween;
+			for(int i=0; i<4; i++) 
+				average_out.diffuse[i]	= ts1.diffuse[i]+ (ts2.diffuse[i]	- ts1.diffuse[i])*fPercentBetween;
+			average_out.glow			= ts1.glow      + (ts2.glow			- ts1.glow		)*fPercentBetween;
+		}
 	};
 
-	/* Intended for a very limited use: you can query the destination
-	 * state (that is, where the actor would end up if its tween finished),
-	 * stop tweening (possibly leaving it partially tweened), do something,
-	 * then tween to the original destination. */
-	virtual TweenState GetDestTweenState();
-	virtual void SetTweenState( const TweenState &ts );
+	// let subclasses override
+
+	/* Do subclasses really need to override tweening?  Tween data should
+	 * probably be private ... - glenn */
+	virtual void Restore() {};
+	virtual void Invalidate() {};
+
+	virtual void Draw();		// calls, BeginDraw, DrawPrimitives, EndDraw
+	virtual void BeginDraw();	// pushes transform onto world matrix stack
+	virtual void DrawPrimitives() = 0;	// override with Actor specific action
+	virtual void EndDraw();		// pops transform from world matrix stack
+	bool IsFirstUpdate();
+	virtual void Update( float fDeltaTime );
+	virtual void UpdateTweening( float fDeltaTime );
+
+	virtual float GetX()					{ return DestTweenState().pos.x; };
+	virtual float GetY()					{ return DestTweenState().pos.y; };
+	virtual float GetZ()					{ return DestTweenState().pos.z; };
+	virtual void  SetX( float x )			{ DestTweenState().pos.x = x; };
+	virtual void  SetY( float y )			{ DestTweenState().pos.y = y; };
+	virtual void  SetZ( float z )			{ DestTweenState().pos.z = z; };
+	virtual void  SetXY( float x, float y )	{ DestTweenState().pos.x = x; DestTweenState().pos.y = y; };
+
+	// height and width vary depending on zoom
+	virtual float GetUnzoomedWidth()		{ return m_size.x; }
+	virtual float GetUnzoomedHeight()		{ return m_size.y; }
+	virtual float GetZoomedWidth()			{ return m_size.x * DestTweenState().scale.x; }
+	virtual float GetZoomedHeight()			{ return m_size.y * DestTweenState().scale.y; }
+//	virtual void  SetWidth( float width )	{ DestTweenState().size.x = width; }
+//	virtual void  SetHeight( float height )	{ DestTweenState().size.y = height; }
+
+	virtual float GetZoom()					{ return DestTweenState().scale.x; }	// not accurate in some cases
+	virtual float GetZoomX()				{ return DestTweenState().scale.x; }
+	virtual float GetZoomY()				{ return DestTweenState().scale.y; }
+	virtual void  SetZoom( float zoom )		{ DestTweenState().scale.x = zoom;	DestTweenState().scale.y = zoom; }
+	virtual void  SetZoomX( float zoom )	{ DestTweenState().scale.x = zoom;	}
+	virtual void  SetZoomY( float zoom )	{ DestTweenState().scale.y = zoom; }
+	virtual void  ZoomToWidth( float zoom )	{ SetZoomX( zoom / GetUnzoomedWidth() ); }
+	virtual void  ZoomToHeight( float zoom ){ SetZoomY( zoom / GetUnzoomedHeight() ); }
+
+	virtual float GetRotationX()			{ return DestTweenState().rotation.x; }
+	virtual float GetRotationY()			{ return DestTweenState().rotation.y; }
+	virtual float GetRotationZ()			{ return DestTweenState().rotation.z; }
+	virtual void  SetRotationX( float rot )	{ DestTweenState().rotation.x = rot; }
+	virtual void  SetRotationY( float rot )	{ DestTweenState().rotation.y = rot; }
+	virtual void  SetRotationZ( float rot )	{ DestTweenState().rotation.z = rot; }
+
+	virtual void SetDiffuse( RageColor c ) { for(int i=0; i<4; i++) DestTweenState().diffuse[i] = c; };
+	virtual void SetDiffuses( int i, RageColor c )		{ DestTweenState().diffuse[i] = c; };
+	virtual void SetDiffuseUpperLeft( RageColor c )		{ DestTweenState().diffuse[0] = c; };
+	virtual void SetDiffuseUpperRight( RageColor c )	{ DestTweenState().diffuse[1] = c; };
+	virtual void SetDiffuseLowerLeft( RageColor c )		{ DestTweenState().diffuse[2] = c; };
+	virtual void SetDiffuseLowerRight( RageColor c )	{ DestTweenState().diffuse[3] = c; };
+	virtual void SetDiffuseTopEdge( RageColor c )		{ DestTweenState().diffuse[0] = DestTweenState().diffuse[1] = c; };
+	virtual void SetDiffuseRightEdge( RageColor c )		{ DestTweenState().diffuse[1] = DestTweenState().diffuse[3] = c; };
+	virtual void SetDiffuseBottomEdge( RageColor c )	{ DestTweenState().diffuse[2] = DestTweenState().diffuse[3] = c; };
+	virtual void SetDiffuseLeftEdge( RageColor c )		{ DestTweenState().diffuse[0] = DestTweenState().diffuse[2] = c; };
+	virtual RageColor GetDiffuse()						{ return DestTweenState().diffuse[0]; };
+	virtual RageColor GetDiffuses( int i )				{ return DestTweenState().diffuse[i]; };
+	virtual void SetGlow( RageColor c )					{ DestTweenState().glow = c; };
+	virtual RageColor GetGlow()							{ return DestTweenState().glow; };
+
+
+	// TODO: Get rid of these once we're sure everything is working
+	virtual void SetTweenX( float x )		{ SetX(x); }
+	virtual void SetTweenY( float y )		{ SetY(y); }
+	virtual void SetTweenZ( float z )		{ SetZ(z); }
+	virtual void SetTweenXY( float x, float y )	{ SetXY(x,y); }
+	virtual void SetTweenZoom( float zoom )		{ SetZoom(zoom); }
+	virtual void SetTweenZoomX( float zoom )	{ SetZoomX(zoom); }
+	virtual void SetTweenZoomY( float zoom )	{ SetZoomY(zoom); }
+	virtual void SetTweenZoomToWidth( float zoom )	{ ZoomToWidth(zoom); }
+	virtual void SetTweenZoomToHeight( float zoom )	{ ZoomToHeight(zoom); }
+	virtual void SetTweenRotationX( float r )	{ SetRotationX(r); }
+	virtual void SetTweenRotationY( float r )	{ SetRotationY(r); }
+	virtual void SetTweenRotationZ( float r )	{ SetRotationZ(r); }
+	virtual void SetTweenDiffuse( RageColor c )				{ SetDiffuse(c); }
+	virtual void SetTweenDiffuseUpperLeft( RageColor c )	{ SetDiffuseUpperLeft(c); }
+	virtual void SetTweenDiffuseUpperRight( RageColor c )	{ SetDiffuseUpperRight(c); }
+	virtual void SetTweenDiffuseLowerLeft( RageColor c )	{ SetDiffuseLowerLeft(c); }
+	virtual void SetTweenDiffuseLowerRight( RageColor c )	{ SetDiffuseLowerRight(c); }
+	virtual void SetTweenDiffuseTopEdge( RageColor c )		{ SetDiffuseTopEdge(c); }
+	virtual void SetTweenDiffuseRightEdge( RageColor c )	{ SetDiffuseRightEdge(c); }
+	virtual void SetTweenDiffuseBottomEdge( RageColor c )	{ SetDiffuseBottomEdge(c); }
+	virtual void SetTweenDiffuseLeftEdge( RageColor c )		{ SetDiffuseLeftEdge(c); }
+	virtual void SetTweenGlow( RageColor c )				{ SetGlow(c); }
+
+
+	virtual void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
+	virtual void StopTweening();
+	virtual float GetTweenTimeLeft() const;	// Amount of time until all tweens have stopped
+	virtual TweenState& DestTweenState()	// where Actor will end when its tween finish
+	{
+		if( m_TweenStates.empty() )	// not tweening
+			return m_current;
+		else
+			return LatestTween();
+	}
+	virtual void SetLatestTween( TweenState ts )	{ LatestTween() = ts; }
+
+	
+	enum StretchType { fit_inside, cover };
+
+	void ScaleToCover( const RectI &rect )		{ ScaleTo( rect, cover ); }
+	void ScaleToFitInside( const RectI &rect )	{ ScaleTo( rect, fit_inside); };
+	void ScaleTo( const RectI &rect, StretchType st );
+
+	void StretchTo( const RectI &rect );
+	void StretchTo( const RectF &rect );
+
+
+
+
+	enum HorizAlign { align_left, align_center, align_right };
+	virtual void SetHorizAlign( HorizAlign ha ) { m_HorizAlign = ha; }
+	virtual void SetHorizAlign( CString s )
+	{
+		s.MakeLower();
+		if     (s=="left")		m_HorizAlign = align_left;
+		else if(s=="center")	m_HorizAlign = align_center;
+		else if(s=="right")		m_HorizAlign = align_right;
+		else	ASSERT(0);
+	}
+
+	enum VertAlign { align_top, align_middle, align_bottom };
+	virtual void SetVertAlign( VertAlign va ) { m_VertAlign = va; }
+	virtual void SetVertAlign( CString s )
+	{
+		s.MakeLower();
+		if     (s=="top")		m_VertAlign = align_top;
+		else if(s=="middle")	m_VertAlign = align_middle;
+		else if(s=="bottom")	m_VertAlign = align_bottom;
+		else	ASSERT(0);
+	}
+
+
+
+	// effects
+	void SetEffectNone()						{ m_Effect = no_effect; }
+	Effect GetEffect()							{ return m_Effect; }
+	void SetEffectColor1( RageColor c )			{ m_effectColor1 = c; }
+	void SetEffectColor2( RageColor c )			{ m_effectColor2 = c; }
+	void SetEffectPeriod( float fSecs )			{ m_fEffectPeriodSeconds = fSecs; } 
+	void SetEffectMagnitude( RageVector3 vec )	{ m_vEffectMagnitude = vec; }
+
+	void SetEffectDiffuseBlink( 
+		float fEffectPeriodSeconds = 1.0f,
+		RageColor c1 = RageColor(0.5f,0.5f,0.5f,1), 
+		RageColor c2 = RageColor(1,1,1,1) );
+	void SetEffectDiffuseShift( float fEffectPeriodSeconds = 1.f,
+		RageColor c1 = RageColor(0,0,0,1), 
+		RageColor c2 = RageColor(1,1,1,1) );
+	void SetEffectGlowBlink( float fEffectPeriodSeconds = 1.f,
+		RageColor c1 = RageColor(1,1,1,0.2f),
+		RageColor c2 = RageColor(1,1,1,0.8f) );
+	void SetEffectGlowShift( 
+		float fEffectPeriodSeconds = 1.0f,
+		RageColor c1 = RageColor(1,1,1,0.2f),
+		RageColor c2 = RageColor(1,1,1,0.8f) );
+	void SetEffectWag( 
+		float fPeriod = 2.f, 
+		RageVector3 vect = RageVector3(0,0,0.2f) );
+	void SetEffectBounce( 
+		float fPeriod = 2.f, 
+		RageVector3 vect = RageVector3(0,0,20) );
+	void SetEffectBob( 
+		float fPeriod = 2.f, 
+		RageVector3 vect = RageVector3(0,0,20) );
+	void SetEffectSpin( 
+		RageVector3 vect = RageVector3(0,0,1) );
+	void SetEffectVibrate( 
+		RageVector3 vect = RageVector3(10,10,10) );
+
+
+	//
+	// other properties
+	//
+	void SetShadowLength( float fLength )
+	{
+		if( fLength==0 )
+			m_bShadow = false;
+		else
+		{
+			m_fShadowLength = fLength;
+			m_bShadow = true;
+		}
+	}
+	void EnableShadow( bool b )	{ m_bShadow = b; };
+
+
+	void EnableAdditiveBlend( bool b ) 		{ m_bBlendAdd = b; }; 
+
+
+	//
+	// fade command
+	//
+	void Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, bool bFadingOff );
+	void FadeOn( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,false); };
+	void FadeOff( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,true); };
+
+	void Command( CString sCommandString );
+
 
 protected:
 
@@ -275,25 +320,9 @@ protected:
 	Effect m_Effect;
 	float m_fSecsIntoEffect;
 	float m_fEffectPeriodSeconds;
-
-	// Counting variables for shift and glowing:
 	RageColor   m_effectColor1;
 	RageColor   m_effectColor2;
-
-	// wagging:
-	float m_fWagRadians;
-
-	// spinning:
-	RageVector3 m_vSpinVelocity;	// delta per second
-
-	// vibrating:
-	float m_fVibrationDistance;
-
-	// flickering:
-	bool m_bVisibleThisFrame;
-
-	// bouncing:
-	RageVector3 m_vectBounce;
+	RageVector3 m_vEffectMagnitude;
 
 
 	//

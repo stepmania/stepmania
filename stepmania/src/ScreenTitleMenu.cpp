@@ -73,8 +73,8 @@ ScreenTitleMenu::ScreenTitleMenu()
 	m_textHelp.SetText( sHelpText );
 	m_textHelp.SetXY( HELP_X, HELP_Y );
 	m_textHelp.SetZoom( 0.5f );
-	m_textHelp.SetEffectDiffuseBlinking();
-	m_textHelp.TurnShadowOn();
+	m_textHelp.SetEffectDiffuseBlink();
+	m_textHelp.EnableShadow( true );
 	m_textHelp.SetShadowLength( 2 );
 	this->AddChild( &m_textHelp );
 
@@ -88,7 +88,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 			m_textChoice[i].SetText( ChoiceToString((Choice)i) );
 			m_textChoice[i].SetXY( CHOICES_X, CHOICES_START_Y + i*CHOICES_SPACING_Y );
 			m_textChoice[i].SetShadowLength( CHOICES_SHADOW_LENGTH );
-			m_textChoice[i].TurnShadowOn();
+			m_textChoice[i].EnableShadow( true );
 			this->AddChild( &m_textChoice[i] );
 		}	
 		break;
@@ -293,7 +293,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 			m_sprJointPremiumMsg.SetX( SCREEN_RIGHT+m_sprJointPremiumMsg.GetUnzoomedWidth()/2 );
 			m_sprJointPremiumMsg.SetY( SCREEN_BOTTOM/2 );
 			
-			m_sprJointPremiumMsg.BeginTweening( 13.0f, Actor::TWEEN_BIAS_BEGIN ); // slide on
+			m_sprJointPremiumMsg.BeginTweening( 13.0f, Actor::TWEEN_ACCELERATE ); // slide on
 			m_sprJointPremiumMsg.SetTweenX( SCREEN_LEFT-m_sprJointPremiumMsg.GetUnzoomedWidth()*2 );
 		}
 		break;

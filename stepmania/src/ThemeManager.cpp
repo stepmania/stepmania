@@ -21,8 +21,8 @@
 #include "RageTimer.h"
 #include "Font.h"
 #include "FontCharAliases.h"
+#include "RageDisplay.h"
 
-using namespace std;
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
 
@@ -118,7 +118,7 @@ CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
 
 CString ThemeManager::GetPathTo( CString sThemeName, CString sAssetCategory, CString sFileName ) 
 {
-#if defined(DEBUG) && defined(WIN32) // XXX arch?
+#if defined(WIN32) // XXX arch?
 try_element_again:
 #endif
 	sAssetCategory.MakeLower();
@@ -149,9 +149,10 @@ try_element_again:
 						"Verify that this redirect is correct.",
 						asPossibleElementFilePaths[0].GetString(), sNewFilePath.GetString());
 
-#if defined(DEBUG) && defined(WIN32) // XXX arch?
-			if( MessageBox(NULL, message.GetString(), "ThemeManager", MB_RETRYCANCEL ) == IDRETRY)
-				goto try_element_again;
+#if defined(WIN32) // XXX arch?
+			if( DISPLAY->IsWindowed() )
+				if( MessageBox(NULL, message.GetString(), "ThemeManager", MB_RETRYCANCEL ) == IDRETRY)
+					goto try_element_again;
 #endif
 			RageException::Throw( "%s", message.GetString() ); 
 		}

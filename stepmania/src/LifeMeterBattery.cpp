@@ -59,21 +59,21 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 
 	m_textNumLives.LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay battery life numbers") );
 	m_textNumLives.SetDiffuse( RageColor(1,1,1,1) );
-	m_textNumLives.TurnShadowOff();
+	m_textNumLives.EnableShadow( false );
 	if( bPlayerEnabled )
 		this->AddChild( &m_textNumLives );
 
 	if(PREFSMAN->m_bDancePointsForOni)
 	{
 		m_textPercent.LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay battery dance point numbers") );
-		m_textPercent.TurnShadowOff();
+		m_textPercent.EnableShadow( false );
 		m_textPercent.SetZoom( 0.7f );
 		m_textPercent.SetText( "     " );
 	}
 	else
 	{
 		m_textPercent.LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay battery percent numbers") );
-		m_textPercent.TurnShadowOff();
+		m_textPercent.EnableShadow( false );
 		m_textPercent.SetZoom( 0.7f );
 		m_textPercent.SetText( "00.0%" );
 	}

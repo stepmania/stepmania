@@ -18,7 +18,7 @@
 StageDisplay::StageDisplay()
 {
 	LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
-	TurnShadowOff();
+	EnableShadow( false );
 	Refresh();
 }
 

@@ -221,7 +221,7 @@ ScreenStage::ScreenStage()
 		m_quadMask.SetZ( 1 );
 
 		m_frameStage.SetXY( CENTER_X, fStageOffScreenY );
-		m_frameStage.BeginTweening(0.8f, Actor::TWEEN_BIAS_BEGIN );
+		m_frameStage.BeginTweening(0.8f, Actor::TWEEN_ACCELERATE );
 		m_frameStage.SetTweenY( CENTER_Y );
 
 		this->AddChild( &m_quadMask );	// add quad mask before stage so that it will block out the stage sprites
@@ -267,9 +267,9 @@ ScreenStage::ScreenStage()
 			m_sprNumbers[i].ZoomToWidth( 200.0f ); // make the numbers that appear really big
 			m_sprNumbers[i].ZoomToHeight( 200.0f); // so they can 'shrink' onto the screen
 			m_sprNumbers[i].SetZoom( 20.0f ); // make it really really big on-screen
-			m_sprNumbers[i].SetRotation( 10 ); // make this thing rotated
+			m_sprNumbers[i].SetRotationZ( 10 ); // make this thing rotated
 
-			m_sprNumbers[i].BeginTweening(0.8f, Actor::TWEEN_BIAS_BEGIN );
+			m_sprNumbers[i].BeginTweening(0.8f, Actor::TWEEN_ACCELERATE );
 			m_sprNumbers[i].SetTweenZoom( 3.0f ); // shrink it down to it's proper size
 			m_sprNumbers[i].SetTweenRotationZ( 0 ); // make it rotate into place
 		}
@@ -311,7 +311,7 @@ ScreenStage::ScreenStage()
 			m_sprbgxtra.SetXY( CENTER_X-30, CENTER_Y+180); // set it's initial XY coordinates
 			m_sprbgxtra.ZoomToHeight( 30 ); // set it's height and width. As we're only dealing with solid color
 			m_sprbgxtra.ZoomToWidth( SCREEN_WIDTH + 50 ); // stretching shouldn't be a concern.
-			m_sprbgxtra.SetRotation( -20 ); // rotate this graphic
+			m_sprbgxtra.SetRotationZ( -20 ); // rotate this graphic
 			m_sprbgxtra.BeginTweening(0.3f); // start tweening
 			m_sprbgxtra.SetTweenRotationZ( 0 ); // set the rotation we want it to finally appear as
 		}
@@ -328,21 +328,21 @@ ScreenStage::ScreenStage()
 			m_sprbg[0].ZoomToHeight( 100 ); 
 
 		m_sprbg[0].ZoomToWidth( SCREEN_WIDTH + 50 ); // no matter what... it's this wide
-		m_sprbg[0].SetRotation( -20 ); // and is initially this rotation
+		m_sprbg[0].SetRotationZ( -20 ); // and is initially this rotation
 		m_sprbg[0].BeginTweening(0.3f); // start tweening
 		m_sprbg[0].SetTweenRotationZ( 0 ); // and set the rotation to where we want it to end up
 		
 		m_sprbg[1].SetXY( CENTER_X-(SCREEN_WIDTH/2)-20, CENTER_Y+element_y_offsets);
 		m_sprbg[1].ZoomToHeight( SCREEN_HEIGHT - 140 );
 		m_sprbg[1].ZoomToWidth( 130 );
-		m_sprbg[1].SetRotation( -20 );
+		m_sprbg[1].SetRotationZ( -20 );
 		m_sprbg[1].BeginTweening(0.3f);
 		m_sprbg[1].SetTweenRotationZ( 0 );
 
 		m_sprbg[2].SetXY( CENTER_X+430, CENTER_Y+element_y_offsets);
 		m_sprbg[2].ZoomToHeight( SCREEN_HEIGHT - 140 );
 		m_sprbg[2].ZoomToWidth( SCREEN_WIDTH + 50 );
-		m_sprbg[2].SetRotation( -20 );
+		m_sprbg[2].SetRotationZ( -20 );
 		m_sprbg[2].BeginTweening(0.3f);
 		m_sprbg[2].SetTweenX( CENTER_X );
 		m_sprbg[2].SetTweenRotationZ( 0 );
@@ -369,9 +369,9 @@ ScreenStage::ScreenStage()
 		for (i=0; i<2; i++) // specify the font file.
 		{
 			m_ez2ukm[i].LoadFromFont( THEME->GetPathTo("Fonts","Stage ez2") );
-			m_ez2ukm[i].TurnShadowOff();
+			m_ez2ukm[i].EnableShadow( false );
 			m_stagedesc[i].LoadFromFont( THEME->GetPathTo("Fonts","Stage ez2") );
-			m_stagedesc[i].TurnShadowOff();
+			m_stagedesc[i].EnableShadow( false );
 		}
 
 		m_ez2ukm[0].SetXY( CENTER_X-400, CENTER_Y-220 ); // set the intiial UKMOVE positions
@@ -485,7 +485,7 @@ ScreenStage::ScreenStage()
 
 		// write the stage name
 		m_stagename.LoadFromFont( THEME->GetPathTo("Fonts","Stage ez2") );
-		m_stagename.TurnShadowOff();
+		m_stagename.EnableShadow( false );
 
 		m_stagename.SetXY( CENTER_X+400, CENTER_Y-30+element_y_offsets );  // set initial position			
 

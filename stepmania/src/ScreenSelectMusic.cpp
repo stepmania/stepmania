@@ -120,7 +120,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	this->AddChild( &m_StageDisplay );
 
 	m_sprCDTitle.Load( THEME->GetPathTo("Graphics","fallback cd title") );
-	m_sprCDTitle.TurnShadowOff();
+	m_sprCDTitle.EnableShadow( false );
 	m_sprCDTitle.SetXY( CD_TITLE_X, CD_TITLE_Y );
 	this->AddChild( &m_sprCDTitle );
 
@@ -208,7 +208,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_sprMarathonBalloon.SetXY( BALLOON_X, BALLOON_Y );
 	m_sprMarathonBalloon.SetZoomY( 0 );
 	m_sprMarathonBalloon.SetDiffuse( RageColor(1,1,1,1) );
-	m_sprMarathonBalloon.SetEffectBobbing( RageVector3(0,10,0), 2 );
+	m_sprMarathonBalloon.SetEffectBob( 2, RageVector3(0,10,0) );
 	this->AddChild( &m_sprMarathonBalloon );
 
 	m_sprLongBalloon.Load( THEME->GetPathTo("Graphics","select music long balloon") );
@@ -216,7 +216,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_sprLongBalloon.SetXY( BALLOON_X, BALLOON_Y );
 	m_sprLongBalloon.SetZoomY( 0 );
 	m_sprLongBalloon.SetDiffuse( RageColor(1,1,1,1) );
-	m_sprLongBalloon.SetEffectBobbing( RageVector3(0,10,0), 2 );
+	m_sprLongBalloon.SetEffectBob( 2, RageVector3(0,10,0) );
 	this->AddChild( &m_sprLongBalloon );
 
 	m_sprOptionsMessage.Load( THEME->GetPathTo("Graphics","select music options message") );
@@ -346,7 +346,7 @@ void ScreenSelectMusic::TweenOffScreen()
 	}
 	for( unsigned i=0; i<apActorsInScore.size(); i++ )
 	{
-		apActorsInScore[i]->BeginTweening( TWEEN_TIME, TWEEN_BIAS_END );
+		apActorsInScore[i]->BeginTweening( TWEEN_TIME, TWEEN_DECELERATE );
 		apActorsInScore[i]->SetTweenX( SCORE_CONNECTED_TO_MUSIC_WHEEL ? apActorsInScore[i]->GetX()+400 : apActorsInScore[i]->GetX()-400 );
 	}
 
@@ -378,19 +378,19 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 	{
 		/* Grab the tween destination.  (If we're tweening, this is where
 		 * it'll end up; otherwise it's the static position.) */
-		Actor::TweenState original = apActorsInScore[i]->GetDestTweenState();
+		Actor::TweenState original = apActorsInScore[i]->DestTweenState();
 
 		apActorsInScore[i]->StopTweening();
 
 		float fOriginalX = apActorsInScore[i]->GetX();
-		apActorsInScore[i]->BeginTweening( factor*TWEEN_TIME, TWEEN_BIAS_END );		// tween off screen
+		apActorsInScore[i]->BeginTweening( factor*TWEEN_TIME, TWEEN_DECELERATE );		// tween off screen
 		apActorsInScore[i]->SetTweenX( fOriginalX+400 );
 		
 		apActorsInScore[i]->BeginTweening( factor*0.5f );		// sleep
 
 		/* Go back to where we were (or to where we were going.) */
-		apActorsInScore[i]->BeginTweening( factor*1, TWEEN_BIAS_BEGIN );		// tween back on screen
-		apActorsInScore[i]->SetTweenState(original);
+		apActorsInScore[i]->BeginTweening( factor*1, TWEEN_ACCELERATE );		// tween back on screen
+		apActorsInScore[i]->SetLatestTween(original);
 	}
 }
 

@@ -71,7 +71,7 @@ void TransitionStarWipe::DrawPrimitives()
 			SCREEN_WIDTH+SCREEN_HEIGHT/2 - x_offset + x_tilt;
 
 
-		m_sprStar.SetRotation( bIsAnEvenRow ? PI : 0.0f );	// flip the sprite
+		m_sprStar.SetRotationZ( bIsAnEvenRow ? PI : 0.0f );	// flip the sprite
 		m_sprStar.SetXY( bIsAnEvenRow?x-1.0f:x+0.0f, bIsAnEvenRow?y-1.0f:y+0.0f );	// fudge.  The rotation makes it off center
 		m_sprStar.Draw();
 		

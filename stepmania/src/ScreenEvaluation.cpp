@@ -167,7 +167,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			this->AddChild( &m_BannerWithFrame[0] );
 
 			m_textStage.LoadFromFont( THEME->GetPathTo("Fonts","evaluation stage") );
-			m_textStage.TurnShadowOff();
+			m_textStage.EnableShadow( false );
 			m_textStage.SetXY( STAGE_X, STAGE_Y );
 			m_textStage.SetZoom( 0.5f );
 			m_textStage.SetText( GAMESTATE->GetStageText() + " Stage" );
@@ -328,7 +328,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				this->AddChild( &m_sprPercentFrame[p] );
 
 				m_textOniPercentLarge[p].LoadFromNumbers( THEME->GetPathTo("Numbers","evaluation percent numbers") );
-				m_textOniPercentLarge[p].TurnShadowOff();
+				m_textOniPercentLarge[p].EnableShadow( false );
 				m_textOniPercentLarge[p].SetXY( (PREFSMAN->m_bDancePointsForOni ? DANCE_POINT_X(p) : PERCENT_BASE_X(p) ), PERCENT_BASE_Y );
 				m_textOniPercentLarge[p].SetHorizAlign( Actor::align_right );
 				m_textOniPercentLarge[p].SetVertAlign( Actor::align_bottom );
@@ -338,7 +338,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				if(!PREFSMAN->m_bDancePointsForOni)
 				{
 					m_textOniPercentSmall[p].LoadFromNumbers( THEME->GetPathTo("Numbers","evaluation percent numbers") );
-					m_textOniPercentSmall[p].TurnShadowOff();
+					m_textOniPercentSmall[p].EnableShadow( false );
 					m_textOniPercentSmall[p].SetZoom( 0.5f );
 					m_textOniPercentSmall[p].SetXY( PERCENT_BASE_X(p), PERCENT_BASE_Y );
 					m_textOniPercentSmall[p].SetHorizAlign( Actor::align_left );
@@ -375,7 +375,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				this->AddChild( &m_sprCourseFrame[p] );
 		
 				m_textSongsSurvived[p].LoadFromNumbers( THEME->GetPathTo("Numbers","evaluation stage numbers") );
-				m_textSongsSurvived[p].TurnShadowOff();
+				m_textSongsSurvived[p].EnableShadow( false );
 				m_textSongsSurvived[p].SetXY( SONGS_SURVIVED_X(p), SONGS_SURVIVED_Y );
 				m_textSongsSurvived[p].SetText( ssprintf("%02d", stageStats.iSongsPlayed[p]) );
 				this->AddChild( &m_textSongsSurvived[p] );
@@ -416,7 +416,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 					m_sprPossibleBar[p][r].SetHorizAlign( Actor::align_left );
 					m_sprPossibleBar[p][r].SetX( BAR_BASE_X(p) );
 					m_sprPossibleBar[p][r].SetY( BAR_START_Y + BAR_SPACING_Y*r );
-					m_sprPossibleBar[p][r].SetRotation( BAR_ROTATION(p) );
+					m_sprPossibleBar[p][r].SetRotationZ( BAR_ROTATION(p) );
 					m_sprPossibleBar[p][r].SetZoomX( 0 );
 					m_sprPossibleBar[p][r].ZoomToHeight( BAR_HEIGHT );
 					m_sprPossibleBar[p][r].BeginTweening( 0.2f + r*0.1f );	// sleep
@@ -430,7 +430,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 					m_sprActualBar[p][r].SetHorizAlign( Actor::align_left );
 					m_sprActualBar[p][r].SetX( BAR_BASE_X(p) );
 					m_sprActualBar[p][r].SetY( BAR_START_Y + BAR_SPACING_Y*r );
-					m_sprActualBar[p][r].SetRotation( BAR_ROTATION(p) );
+					m_sprActualBar[p][r].SetRotationZ( BAR_ROTATION(p) );
 					m_sprActualBar[p][r].SetZoomX( 0 );
 					m_sprActualBar[p][r].ZoomToHeight( BAR_HEIGHT );
 					m_sprActualBar[p][r].BeginTweening( 1.0f + r*0.2f );	// sleep
@@ -486,7 +486,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		for( l=0; l<NUM_JUDGE_LINES; l++ ) 
 		{
 			m_textJudgeNumbers[l][p].LoadFromNumbers( THEME->GetPathTo("Numbers","evaluation judge numbers") );
-			m_textJudgeNumbers[l][p].TurnShadowOff();
+			m_textJudgeNumbers[l][p].EnableShadow( false );
 			m_textJudgeNumbers[l][p].SetXY( JUDGE_X(m_ResultMode==RM_COURSE,p,l), JUDGE_Y(l) );
 			m_textJudgeNumbers[l][p].SetZoom( 1.0f );
 			m_textJudgeNumbers[l][p].SetDiffuse( PlayerToColor(p) );
@@ -577,12 +577,12 @@ void ScreenEvaluation::TweenOnScreen()
 		fOriginalY = m_BannerWithFrame[i].GetY();
 		m_BannerWithFrame[i].SetY( fOriginalY + SCREEN_HEIGHT );
 		m_BannerWithFrame[i].BeginTweening( 0.0f );
-		m_BannerWithFrame[i].BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+		m_BannerWithFrame[i].BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_ACCELERATE );
 		m_BannerWithFrame[i].SetTweenY( fOriginalY );
 	}
 	
 	fOriginalY = m_textStage.GetY();
-	m_textStage.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+	m_textStage.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_ACCELERATE );
 	m_textStage.SetTweenY( fOriginalY );
 
 	for( p=0; p<NUM_PLAYERS; p++ ) 
@@ -593,7 +593,7 @@ void ScreenEvaluation::TweenOnScreen()
 		fOriginalY = m_sprJudgeLabels[i].GetY();
 		m_sprJudgeLabels[i].SetY( fOriginalY + SCREEN_HEIGHT );
 		m_sprJudgeLabels[i].BeginTweening( 0.2f + 0.1f*i );
-		m_sprJudgeLabels[i].BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+		m_sprJudgeLabels[i].BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_ACCELERATE );
 		m_sprJudgeLabels[i].SetTweenY( fOriginalY );
 
 		for( int p=0; p<NUM_PLAYERS; p++ ) 
@@ -601,7 +601,7 @@ void ScreenEvaluation::TweenOnScreen()
 			fOriginalX = m_textJudgeNumbers[i][p].GetX();
 			m_textJudgeNumbers[i][p].SetX( fOriginalX + SCREEN_WIDTH/2*(p==PLAYER_1 ? 1 : -1) );
 			m_textJudgeNumbers[i][p].BeginTweening( 0.2f + 0.1f*i );
-			m_textJudgeNumbers[i][p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+			m_textJudgeNumbers[i][p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_ACCELERATE );
 			m_textJudgeNumbers[i][p].SetTweenX( fOriginalX );
 		}
 	}
@@ -611,7 +611,7 @@ void ScreenEvaluation::TweenOnScreen()
 	fOriginalY = m_sprScoreLabel.GetY();
 	m_sprScoreLabel.SetY( fOriginalY + SCREEN_HEIGHT );
 	m_sprScoreLabel.BeginTweening( 0.8f + 0.1f*i );
-	m_sprScoreLabel.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+	m_sprScoreLabel.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_ACCELERATE );
 	m_sprScoreLabel.SetTweenY( fOriginalY );
 	
 	for( p=0; p<NUM_PLAYERS; p++ ) 
@@ -619,7 +619,7 @@ void ScreenEvaluation::TweenOnScreen()
 		fOriginalX = m_ScoreDisplay[p].GetX();
 		m_ScoreDisplay[p].SetX( fOriginalX + SCREEN_WIDTH/2*(p==PLAYER_1 ? 1 : -1) );
 		m_ScoreDisplay[p].BeginTweening( 0.8f + 0.1f*i );
-		m_ScoreDisplay[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+		m_ScoreDisplay[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_ACCELERATE );
 		m_ScoreDisplay[p].SetTweenX( fOriginalX );
 	}
 
@@ -642,7 +642,7 @@ void ScreenEvaluation::TweenOnScreen()
 			fOriginalX = apActorsInBonusOrStageInfo[i]->GetX();
 			apActorsInBonusOrStageInfo[i]->SetX( fOriginalX + SCREEN_WIDTH/2*(p==PLAYER_1 ? 1 : -1) );
 			apActorsInBonusOrStageInfo[i]->BeginTweening( 0.2f );
-			apActorsInBonusOrStageInfo[i]->BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+			apActorsInBonusOrStageInfo[i]->BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_ACCELERATE );
 			apActorsInBonusOrStageInfo[i]->SetTweenX( fOriginalX );
 		}
 

@@ -45,7 +45,7 @@ Judgment::Judgment()
 	m_sprJudgment.Load( THEME->GetPathTo("Graphics","gameplay Judgment 1x6") );
 	m_sprJudgment.SetXY( WORD_X, WORD_Y );
 	m_sprJudgment.StopAnimating();
-	m_sprJudgment.TurnShadowOn();
+	m_sprJudgment.EnableShadow( true );
 	this->AddChild( &m_sprJudgment );
 }
 
@@ -99,7 +99,7 @@ void Judgment::SetJudgment( TapNoteScore score )
 		// vibrate
 		m_sprJudgment.SetY( 0 );
 		m_sprJudgment.SetZoom( 1.0f );
-		m_sprJudgment.SetEffectVibrating();
+		m_sprJudgment.SetEffectVibrate();
 	}
 	else
 	{
@@ -120,7 +120,7 @@ void Judgment::SetJudgment( TapNoteScore score )
 	}
 
 	if( score == TNS_MARVELOUS )
-		m_sprJudgment.SetEffectGlowBlinking(0.05f, RageColor(1,1,1,0), RageColor(1,1,1,0.5f));
+		m_sprJudgment.SetEffectGlowBlink(0.05f, RageColor(1,1,1,0), RageColor(1,1,1,0.5f));
 	else
 		m_sprJudgment.SetEffectNone();
 }

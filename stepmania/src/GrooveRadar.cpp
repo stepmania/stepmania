@@ -58,7 +58,7 @@ void GrooveRadar::TweenOnScreen()
 		m_sprRadarLabels[c].BeginTweening( 0.1f );	// begin fading on screen
 		m_sprRadarLabels[c].SetTweenGlow( RageColor(1,1,1,1) );
 		
-		m_sprRadarLabels[c].BeginTweening( 0.3f, Actor::TWEEN_BIAS_BEGIN );	// fly to the right
+		m_sprRadarLabels[c].BeginTweening( 0.3f, Actor::TWEEN_ACCELERATE );	// fly to the right
 		m_sprRadarLabels[c].SetTweenX( fOriginalX );
 		m_sprRadarLabels[c].SetTweenZoom( 1 );
 		m_sprRadarLabels[c].SetTweenGlow( RageColor(1,1,1,0) );
@@ -204,7 +204,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 void GrooveRadar::GrooveRadarValueMap::TweenOnScreen()
 {
 	SetZoom( 0.5f );
-	SetRotation( PI*4 );
+	SetRotationZ( PI*4 );
 	BeginTweening( 0.6f );
 	SetTweenZoom( 1 );
 	SetTweenRotationZ( 0 );

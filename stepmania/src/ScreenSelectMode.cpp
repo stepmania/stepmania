@@ -96,7 +96,7 @@ ScreenSelectMode::ScreenSelectMode()
 		m_sprJoinMessage[p].SetState( p );
 		m_sprJoinMessage[p].SetXY( JOIN_MESSAGE_X(p), JOIN_MESSAGE_Y(p) );
 		if( BOUNCE_JOIN_MESSAGE )
-			m_sprJoinMessage[p].SetEffectBouncing( RageVector3(0,10,0), 0.5f );
+			m_sprJoinMessage[p].SetEffectBounce( 0.5f, RageVector3(0,10,0) );
 		this->AddChild( &m_sprJoinMessage[p] );
 	
 		if( GAMESTATE->m_bSideIsJoined[p] )
@@ -418,9 +418,9 @@ void ScreenSelectMode::TweenOffScreen()
 	{
 		float fOffScreenOffset = float( (p==PLAYER_1) ? -SCREEN_WIDTH : +SCREEN_WIDTH );
 
-		m_sprJoinMessage[p].BeginTweening( 0.5f, Actor::TWEEN_BIAS_END );
+		m_sprJoinMessage[p].BeginTweening( 0.5f, Actor::TWEEN_DECELERATE );
 		m_sprJoinMessage[p].SetTweenX( m_sprJoinMessage[p].GetX()+fOffScreenOffset );
-		m_sprJoinFrame[p].BeginTweening( 0.5f, Actor::TWEEN_BIAS_END );
+		m_sprJoinFrame[p].BeginTweening( 0.5f, Actor::TWEEN_DECELERATE );
 		m_sprJoinFrame[p].SetTweenX( m_sprJoinMessage[p].GetX()+fOffScreenOffset );
 	}
 }

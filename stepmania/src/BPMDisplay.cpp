@@ -30,13 +30,13 @@ BPMDisplay::BPMDisplay()
 	m_bExtraStage = GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2();
 
 	m_textBPM.LoadFromNumbers( THEME->GetPathTo("Numbers","select music bpm numbers") );
-	m_textBPM.TurnShadowOff();
+	m_textBPM.EnableShadow( false );
 	m_textBPM.SetHorizAlign( Actor::align_right );
 	m_textBPM.SetDiffuse( NORMAL_COLOR );
 	m_textBPM.SetXY( 0, 0 );
 
 	m_sprLabel.Load( THEME->GetPathTo("Graphics","select music bpm label") );
-	m_sprLabel.TurnShadowOff();
+	m_sprLabel.EnableShadow( false );
 	m_sprLabel.SetDiffuse( NORMAL_COLOR );
 	m_sprLabel.SetHorizAlign( Actor::align_left );
 	m_sprLabel.SetXY( 0, 0 );

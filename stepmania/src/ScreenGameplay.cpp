@@ -265,7 +265,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 
 
 	m_textStageNumber.LoadFromFont( THEME->GetPathTo("Fonts","gameplay stage") );
-	m_textStageNumber.TurnShadowOff();
+	m_textStageNumber.EnableShadow( false );
 	m_textStageNumber.SetXY( STAGE_X, STAGE_Y(bExtra) );
 	m_textStageNumber.SetText( GAMESTATE->GetStageText() );
 	m_textStageNumber.SetDiffuse( GAMESTATE->GetStageColor() );
@@ -273,7 +273,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_textCourseSongNumber[p].LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
-		m_textCourseSongNumber[p].TurnShadowOff();
+		m_textCourseSongNumber[p].EnableShadow( false );
 		m_textCourseSongNumber[p].SetXY( SONG_NUMBER_X(p), SONG_NUMBER_Y(p,bExtra) );
 		m_textCourseSongNumber[p].SetText( "" );
 		m_textCourseSongNumber[p].SetDiffuse( GAMESTATE->GetStageColor() );	// light blue
@@ -312,7 +312,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	this->AddChild( &m_sprScoreFrame );
 
 	m_StageName.LoadFromFont( THEME->GetPathTo("Fonts","musicwheel text banner") );
-	m_StageName.TurnShadowOff();
+	m_StageName.EnableShadow( false );
 	m_StageName.SetXY( STAGENAME_X, STAGENAME_Y );
 	m_StageName.SetZoom( STAGENAME_ZOOM );
 	this->AddChild( &m_StageName );
@@ -351,7 +351,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		this->AddChild( m_pScoreDisplay[p] );
 		
 		m_textPlayerOptions[p].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-		m_textPlayerOptions[p].TurnShadowOff();
+		m_textPlayerOptions[p].EnableShadow( false );
 		m_textPlayerOptions[p].SetXY( PLAYER_OPTIONS_X(p), PLAYER_OPTIONS_Y(p,bExtra) );
 		m_textPlayerOptions[p].SetZoom( 0.5f );
 		m_textPlayerOptions[p].SetDiffuse( RageColor(1,1,1,1) );
@@ -359,7 +359,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	}
 
 	m_textSongOptions.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-	m_textSongOptions.TurnShadowOff();
+	m_textSongOptions.EnableShadow( false );
 	m_textSongOptions.SetXY( SONG_OPTIONS_X, SONG_OPTIONS_Y(bExtra) );
 	m_textSongOptions.SetZoom( 0.5f );
 	m_textSongOptions.SetDiffuse( RageColor(1,1,1,1) );
@@ -430,7 +430,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	this->AddChild( &m_Fade );
 
 	m_textSurviveTime.LoadFromFont( THEME->GetPathTo("Fonts","survive time") );
-	m_textSurviveTime.TurnShadowOff();
+	m_textSurviveTime.EnableShadow( false );
 	m_textSurviveTime.SetXY( SURVIVE_TIME_X, SURVIVE_TIME_Y );
 	m_textSurviveTime.SetText( "" );
 	m_textSurviveTime.SetDiffuse( RageColor(1,1,1,0) );
@@ -1357,10 +1357,10 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_sprToasty.SetDiffuse( RageColor(1,1,1,1) );
 			m_sprToasty.SetX( SCREEN_RIGHT+m_sprToasty.GetUnzoomedWidth()/2 );
 			m_sprToasty.SetY( SCREEN_BOTTOM-m_sprToasty.GetUnzoomedHeight()/2 );
-			m_sprToasty.BeginTweening( 0.2f, Actor::TWEEN_BIAS_BEGIN ); // slide on
+			m_sprToasty.BeginTweening( 0.2f, Actor::TWEEN_ACCELERATE ); // slide on
 			m_sprToasty.SetTweenX( SCREEN_RIGHT-m_sprToasty.GetUnzoomedWidth()/2 );
 			m_sprToasty.BeginTweening( 0.6f );	// sleep
-			m_sprToasty.BeginTweening( 0.3f, Actor::TWEEN_BIAS_END );	// slide off
+			m_sprToasty.BeginTweening( 0.3f, Actor::TWEEN_DECELERATE );	// slide off
 			m_sprToasty.SetTweenX( SCREEN_RIGHT+m_sprToasty.GetUnzoomedWidth()/2 );
 			m_sprToasty.BeginTweening( 0.001f );	// fade out
 			m_sprToasty.SetDiffuse( RageColor(1,1,1,0) );
@@ -1468,7 +1468,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			colorStage.a *= 0.7f;
 
 			m_sprTryExtraStage.SetZoom( 4 );
-			m_sprTryExtraStage.BeginBlurredTweening( 0.8f, TWEEN_BIAS_END );
+			m_sprTryExtraStage.BeginBlurredTweening( 0.8f, TWEEN_DECELERATE );
 			m_sprTryExtraStage.SetTweenZoom( 0.4f );			// zoom out
 			m_sprTryExtraStage.SetTweenDiffuse( colorStage );	// and fade in
 			m_sprTryExtraStage.BeginTweening( 0.2f );
@@ -1549,7 +1549,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_Background.SetTweenDiffuse( RageColor(1,1,1,0) );
 
 		m_sprFailed.SetZoom( 4 );
-		m_sprFailed.BeginBlurredTweening( 0.8f, TWEEN_BIAS_END );
+		m_sprFailed.BeginBlurredTweening( 0.8f, TWEEN_DECELERATE );
 		m_sprFailed.SetTweenZoom( 0.5f );			// zoom out
 		m_sprFailed.SetTweenDiffuse( RageColor(1,1,1,0.7f) );	// and fade in
 		m_sprFailed.BeginTweening( 0.3f );
@@ -1671,5 +1671,5 @@ void ScreenGameplay::ShowOniGameOver( PlayerNumber pn )
 	m_sprOniGameOver[pn].SetDiffuse( RageColor(1,1,1,1) );
 	m_sprOniGameOver[pn].BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
 	m_sprOniGameOver[pn].SetTweenY( CENTER_Y );
-	m_sprOniGameOver[pn].SetEffectBobbing( RageVector3(0,6,0), 4 );
+	m_sprOniGameOver[pn].SetEffectBob( 4, RageVector3(0,6,0) );
 }

@@ -79,9 +79,9 @@ TextBanner::TextBanner()
 	m_textSubTitle.SetHorizAlign( (Actor::HorizAlign)g_iHorizAlign );
 	m_textArtist.SetHorizAlign( (Actor::HorizAlign)g_iHorizAlign );
 
-	m_textTitle.TurnShadowOff();
-	m_textSubTitle.TurnShadowOff();
-	m_textArtist.TurnShadowOff();
+	m_textTitle.EnableShadow( false );
+	m_textSubTitle.EnableShadow( false );
+	m_textArtist.EnableShadow( false );
 
 	this->AddChild( &m_textTitle );
 	this->AddChild( &m_textSubTitle );

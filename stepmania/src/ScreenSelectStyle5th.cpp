@@ -140,7 +140,7 @@ ScreenSelectStyle5th::ScreenSelectStyle5th()
 
 
 	m_sprStyleIcon.Load( THEME->GetPathTo("Graphics",ssprintf("select style icons game %d",GAMESTATE->m_CurGame)) );
-	m_sprStyleIcon.TurnShadowOff();
+	m_sprStyleIcon.EnableShadow( false );
 	m_sprStyleIcon.StopAnimating();
 	m_sprStyleIcon.SetXY( ICON_X, ICON_Y );
 	this->AddChild( &m_sprStyleIcon );

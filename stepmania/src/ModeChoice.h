@@ -13,6 +13,7 @@
 
 #include "Game.h"
 #include "Style.h"
+#include "GameConstantsAndTypes.h"
 
 struct ModeChoice		// used in SelectMode
 {

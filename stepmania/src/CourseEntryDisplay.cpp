@@ -51,7 +51,7 @@ CourseEntryDisplay::CourseEntryDisplay()
 
 	m_textNumber.LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
 	m_textNumber.SetXY( NUMBER_X, NUMBER_Y );
-	m_textNumber.TurnShadowOff();
+	m_textNumber.EnableShadow( false );
 	this->AddChild( &m_textNumber );
 
 	m_TextBanner.SetXY( TEXT_BANNER_X, TEXT_BANNER_Y );
@@ -59,20 +59,20 @@ CourseEntryDisplay::CourseEntryDisplay()
 
 	m_textFoot.LoadFromTextureAndChars( THEME->GetPathTo("Graphics","select music meter 2x1"),"10" );
 	m_textFoot.SetXY( FOOT_X, FOOT_Y );
-	m_textFoot.TurnShadowOff();
+	m_textFoot.EnableShadow( false );
 	this->AddChild( &m_textFoot );
 
 	m_textDifficultyNumber.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textDifficultyNumber.SetXY( DIFFICULTY_X, DIFFICULTY_Y );
 	m_textDifficultyNumber.SetZoom( DIFFICULTY_ZOOM );
-	m_textDifficultyNumber.TurnShadowOff();
+	m_textDifficultyNumber.EnableShadow( false );
 	this->AddChild( &m_textDifficultyNumber );
 
 	m_textModifiers.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textModifiers.SetXY( MODIFIERS_X, MODIFIERS_Y );
 	m_textModifiers.SetZoom( MODIFIERS_ZOOM );
 	m_textModifiers.SetHorizAlign( (Actor::HorizAlign)MODIFIERS_HORIZ_ALIGN );
-	m_textModifiers.TurnShadowOff();
+	m_textModifiers.EnableShadow( false );
 	this->AddChild( &m_textModifiers );
 }
 

@@ -30,7 +30,7 @@ OptionIcon::OptionIcon()
 	this->AddChild( &m_spr );
 
 	m_text.LoadFromFont( THEME->GetPathTo("Fonts","option icons") );
-	m_text.TurnShadowOff();
+	m_text.EnableShadow( false );
 	m_text.SetZoom( TEXT_ZOOM );
 	m_text.SetXY( TEXT_OFFSET_X, TEXT_OFFSET_Y );
 	m_text.SetHorizAlign( (Actor::HorizAlign)TEXT_H_ALIGN );

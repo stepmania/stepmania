@@ -105,7 +105,7 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX()
 		m_sprCursor[p].SetXY( -1600, -1600 );
 		m_sprCursor[p].StopAnimating();
 		m_sprCursor[p].SetState( p );
-		m_sprCursor[p].TurnShadowOff();
+		m_sprCursor[p].EnableShadow( false );
 		m_framePages.AddChild( &m_sprCursor[p] );
 
 		m_sprOK[p].Load( THEME->GetPathTo("Graphics", "select difficulty ex ok 2x1") );

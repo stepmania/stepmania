@@ -147,7 +147,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 	m_textNumber.LoadFromFont( THEME->GetPathTo("Fonts","select group num songs") );
 	m_textNumber.SetXY( NUMBER_X, NUMBER_Y );
 	m_textNumber.SetHorizAlign( Actor::align_right );
-	m_textNumber.TurnShadowOff();
+	m_textNumber.EnableShadow( false );
 	this->AddChild( &m_textNumber );
 	
 	m_sprContents.Load( THEME->GetPathTo("Graphics","select group contents header") );
@@ -317,7 +317,7 @@ void ScreenSelectGroup::TweenOffScreen()
 	}
 
 	m_sprContents.BeginTweening( 0.7f );
-	m_sprContents.BeginTweening( 0.5f, TWEEN_BIAS_END );
+	m_sprContents.BeginTweening( 0.5f, TWEEN_DECELERATE );
 	m_sprContents.SetTweenY( CONTENTS_Y+400 );
 	
 	m_MusicList.TweenOffScreen();
@@ -341,8 +341,8 @@ void ScreenSelectGroup::TweenOnScreen()
 	}
 
 	m_sprContents.SetY( CONTENTS_Y+400 );
-	m_sprContents.BeginTweening( 0.5f, TWEEN_BIAS_END );	// sleep
-	m_sprContents.BeginTweening( 0.5f, TWEEN_BIAS_END );
+	m_sprContents.BeginTweening( 0.5f, TWEEN_DECELERATE );	// sleep
+	m_sprContents.BeginTweening( 0.5f, TWEEN_DECELERATE );
 	m_sprContents.SetTweenY( CONTENTS_Y );
 
 	m_MusicList.TweenOnScreen();
