@@ -520,6 +520,7 @@ void RageSound::StartPlaying()
 	/* Tell the sound manager to start mixing us. */
 	playing = true;
 	SOUNDMAN->StartMixing(this);
+	SOUNDMAN->playing_sounds.insert( this );
 }
 
 void RageSound::StopPlaying()
@@ -531,6 +532,7 @@ void RageSound::StopPlaying()
 
 	/* Tell the sound manager to stop mixing this sound. */
 	SOUNDMAN->StopMixing(this);
+	SOUNDMAN->playing_sounds.erase( this );
 	playing = false;
 
 	pos_map.clear();

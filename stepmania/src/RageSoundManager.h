@@ -18,8 +18,6 @@ class RageSoundManager
 	/* Set of sounds that are finished and should be deleted. */
 	set<RageSound *> sounds_to_delete;
 
-	set<RageSound *> playing_sounds;
-
 	struct FakeSound {
 		float begin;
 		int samples_read;
@@ -58,6 +56,9 @@ public:
 	/* A list of all sounds that currently exist.  RageSound adds and removes
 	 * itself to this. */
 	set<RageSound *> all_sounds;
+	
+	/* RageSound adds and removes itself to this. */
+	set<RageSound *> playing_sounds;
 
 	static void MixAudio(Sint16 *dst, const Sint16 *src, Uint32 len, float volume);
 	static void AttenuateBuf( Sint16 *buf, int samples, float vol );

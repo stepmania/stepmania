@@ -46,14 +46,11 @@ RageSoundManager::~RageSoundManager()
 
 void RageSoundManager::StartMixing(RageSound *snd)
 {
-	playing_sounds.insert(snd);
 	driver->StartMixing(snd);
 }
 
 void RageSoundManager::StopMixing(RageSound *snd)
 {
-	playing_sounds.erase(snd);
-
 	driver->StopMixing(snd);
 
 	/* The sound is finished, and should be deleted if it's in owned_sounds.
