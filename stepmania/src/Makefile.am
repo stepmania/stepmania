@@ -118,7 +118,7 @@ CombinedLifeMeterEnemy.h CombinedLifeMeterEnemy.cpp NoteDisplay.cpp NoteDisplay.
 NoteField.h ScoreDisplay.cpp ScoreDisplay.h ScoreDisplayNormal.cpp ScoreDisplayNormal.h ScoreDisplayOni.cpp \
 ScoreDisplayOni.h ScoreKeeperRave.h ScoreKeeperRave.cpp ScoreKeeperMAX2.cpp ScoreKeeperMAX2.h ScoreDisplayBattle.cpp \
 ScoreDisplayBattle.h ActiveItemList.cpp ActiveItemList.h LyricDisplay.cpp LyricDisplay.h \
-TimingAssist.cpp TimingAssist.h ScoreDisplayRave.cpp ScoreDisplayRave.h DancingCharacters.cpp DancingCharacters.h \ 
+TimingAssist.cpp TimingAssist.h ScoreDisplayRave.cpp ScoreDisplayRave.h DancingCharacters.cpp DancingCharacters.h
 
 Screens = \
 Screen.cpp Screen.h ScreenAlbums.cpp ScreenAlbums.h ScreenAppearanceOptions.cpp ScreenAppearanceOptions.h \
