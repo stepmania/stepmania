@@ -80,7 +80,12 @@ void ScreenSelectGame::ExportOptions()
 	case GAME_DANCE:	
 		GAMEMAN->m_CurStyle = STYLE_DANCE_SINGLE;
 		GAMEMAN->m_CurGame = GAME_DANCE;
-		ANNOUNCER->SwitchAnnouncer( "default" );
+		ANNOUNCER->SwitchAnnouncer( "default" ); 
+		// Does anyone wanna code something fancy that 'remembers' each
+		// announcer preference per game type?, I think it would be better than
+		// resetting the annoncer to a default each time?
+		//
+		// - Andy.
 		break;
 	case GAME_PUMP:		
 		GAMEMAN->m_CurStyle = STYLE_PUMP_SINGLE;
@@ -99,7 +104,44 @@ void ScreenSelectGame::ExportOptions()
 	CStringArray asGameNames;
 	GAMEMAN->GetGameNames( asGameNames );
 	CString sGameName = asGameNames[game];
-	THEME->SwitchTheme( sGameName );	
+	THEME->SwitchTheme( sGameName );
+	
+	// THE NEXT FEW LINES OF CODE:
+	// Figure out all the valid skin names for the game and....
+	// Chooses the first one and loads it in
+	// This is needed because otherwise ALL gametypes will be looking
+	// for a MAX skin. Ez2dancer MAX? Pump It Up MAX? Not likely.
+
+	// This was stolen from ScreenAppearance Options, if you can do a cleaner 
+	// version PLEASE DO!!!
+	//
+	// - Andy.
+
+	CStringArray arraySkinNames;
+	GAMEMAN->GetSkinNames( arraySkinNames );
+
+	m_OptionLineData[0].iNumOptions	=	arraySkinNames.GetSize(); 
+	
+	for(int i=0; i<arraySkinNames.GetSize(); i++ )
+		strcpy( m_OptionLineData[0].szOptionsText[i], arraySkinNames[i] ); 
+
+	m_iSelectedOption[0][0] = -1;
+	for( i=0; i<m_OptionLineData[0].iNumOptions; i++ )
+	{
+		if( stricmp(m_OptionLineData[0].szOptionsText[i], GAMEMAN->m_sCurrentSkin)==0 )
+		{
+			m_iSelectedOption[0][0] = i;
+			break;
+		}
+	}
+	if( m_iSelectedOption[0][0] == -1 )
+		m_iSelectedOption[0][0] = 0;
+
+	int iSelectedSkin = m_iSelectedOption[0][0];
+	CString sNewSkin = m_OptionLineData[0].szOptionsText[iSelectedSkin];
+	PREFSMAN->m_sNoteSkin = sNewSkin;
+	GAMEMAN->m_sCurrentSkin = sNewSkin;
+
 }
 
 void ScreenSelectGame::GoToPrevState()

@@ -12,7 +12,7 @@
 
 #include "LifeMeterBar.h"
 #include "ThemeManager.h"
-
+#include "GameManager.h"
 
 const int NUM_SECTIONS = 3;
 const float SECTION_WIDTH = 1.0f/NUM_SECTIONS;
@@ -94,7 +94,14 @@ void LifeMeterBar::Update( float fDeltaTime )
 	m_fTrailingLifePercentage = clamp( m_fTrailingLifePercentage, 0, 1 );
 }
 
-
+const D3DXCOLOR COLOR_EZ2NORMAL_1	= D3DXCOLOR(0.7f,0.4f,0,1);
+const D3DXCOLOR COLOR_EZ2NORMAL_2	= D3DXCOLOR(0.8f,0.4f,0,1);
+const D3DXCOLOR COLOR_EZ2NEARFULL_1	= D3DXCOLOR(0.7f,0.6f,0,1);
+const D3DXCOLOR COLOR_EZ2NEARFULL_2	= D3DXCOLOR(0.8f,0.7f,0,1);
+const D3DXCOLOR COLOR_EZ2NEARFAIL_1	= D3DXCOLOR(0.9f,0.0f,0,1);
+const D3DXCOLOR COLOR_EZ2NEARFAIL_2	= D3DXCOLOR(0.8f,0.1f,0,1);
+const D3DXCOLOR COLOR_EZ2FULL_1	= D3DXCOLOR(0.3f,0.9f,0.4f,1);
+const D3DXCOLOR COLOR_EZ2FULL_2	= D3DXCOLOR(0.2f,0.7f,0.3f,1);
 const D3DXCOLOR COLOR_NORMAL_1	= D3DXCOLOR(1,1,1,1);
 const D3DXCOLOR COLOR_NORMAL_2	= D3DXCOLOR(0,1,0,1);
 const D3DXCOLOR COLOR_FULL_1	= D3DXCOLOR(1,0,0,1);
@@ -104,10 +111,24 @@ D3DXCOLOR LifeMeterBar::GetColor( float fPercentIntoSection )
 {
 	float fPercentColor1 = fabsf( fPercentIntoSection*2 - 1 );
 	fPercentColor1 *= fPercentColor1 * fPercentColor1 * fPercentColor1;	// make the color bunch around one side
-	if( m_fLifePercentage == 1 )
-		return COLOR_FULL_1 * fPercentColor1 + COLOR_FULL_2 * (1-fPercentColor1);
+	if (GAMEMAN->m_CurGame != GAME_EZ2)
+	{
+		if( m_fLifePercentage == 1 )
+			return COLOR_FULL_1 * fPercentColor1 + COLOR_FULL_2 * (1-fPercentColor1);
+		else
+			return COLOR_NORMAL_1 * fPercentColor1 + COLOR_NORMAL_2 * (1-fPercentColor1);
+	}
 	else
-        return COLOR_NORMAL_1 * fPercentColor1 + COLOR_NORMAL_2 * (1-fPercentColor1);
+	{
+		if( m_fLifePercentage == 1 )
+			return COLOR_EZ2FULL_1 * fPercentColor1 + COLOR_EZ2FULL_2 * (1-fPercentColor1);
+		else if ( m_fLifePercentage > 0.60 )
+			return COLOR_EZ2NEARFULL_1 * fPercentColor1 + COLOR_EZ2NEARFULL_2 * (1-fPercentColor1);
+		else if ( m_fLifePercentage < 0.25 )
+			return COLOR_EZ2NEARFAIL_1 * fPercentColor1 + COLOR_EZ2NEARFAIL_2 * (1-fPercentColor1);
+		else
+			return COLOR_EZ2NORMAL_1 * fPercentColor1 + COLOR_EZ2NORMAL_2 * (1-fPercentColor1);
+	}
 }
 
 void LifeMeterBar::DrawPrimitives()

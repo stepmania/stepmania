@@ -3,6 +3,9 @@ ScreenEzSelectPlayer,cpp
 Desc: See Header
 Copyright (C):
 Andrew Livy
+
+NOTES: Needs a good cleanup. Code is messy
+and sloppy and err needs cleaning up ;)
 *****************************************/
 
 /* Includes */
@@ -27,7 +30,7 @@ Andrew Livy
 
 /* Constants */
 
-const CString BG_ANIMS_DIR = "BGAnimations\\";
+// const CString BG_ANIMS_DIR = "BGAnimations\\";
 
 const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User + 2);

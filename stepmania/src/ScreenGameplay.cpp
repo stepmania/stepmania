@@ -802,6 +802,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_sprFailed.SetTweenZoom( 1.0f );			// come to rest
 		m_sprFailed.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0.7f) );	// and fade in
 
+		// BUGFIX by ANDY: Stage will now reset back to 0 when game ends.
+		PREFSMAN->m_iCurrentStageIndex = 0;
+
 		SCREENMAN->SendMessageToTopScreen( SM_PlayFailComment, 1.5f );
 		SCREENMAN->SendMessageToTopScreen( SM_HideFailed, 3.0f );
 		break;

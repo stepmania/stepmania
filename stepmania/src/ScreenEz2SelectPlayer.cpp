@@ -58,7 +58,7 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 	LOG->WriteLine( "ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()" );
 	ez2_lasttimercheck[0] = TIMER->GetTimeSinceStart();
 	ez2_lasttimercheck[1] = 0.0f;
-	m_iSelectedStyle=0;
+	m_iSelectedStyle=3; // set to invalid style
 	GAMEMAN->m_CurStyle = STYLE_NONE;
 	GAMEMAN->m_sMasterPlayerNumber = PLAYER_INVALID;
 
@@ -280,6 +280,11 @@ presses the button bound to start
 ************************************/
 void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
 {
+	//disallow multiple presses of the menu start.
+	if (m_iSelectedStyle == 0 && p == PLAYER_1 || m_iSelectedStyle == 1 && p == PLAYER_2)
+	{
+		return;
+	}
 
 	// figure out whether we should add a player into the fray or not
 	if(	GAMEMAN->m_sMasterPlayerNumber != PLAYER_2 && GAMEMAN->m_sMasterPlayerNumber != PLAYER_1 )
@@ -301,6 +306,7 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
 		m_iSelectedStyle = 2;
 		m_soundSelect.PlayRandom();
 	}
+
 	TweenOffScreen();
 
 }

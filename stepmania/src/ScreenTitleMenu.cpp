@@ -153,6 +153,12 @@ ScreenTitleMenu::ScreenTitleMenu()
 	// Cheers
 	// -- dro kulix
 
+	// Good call, actually, I made this change when announcer switching wasn't possible.
+	// or rather, announcer switching WASN'T possible from the title menu (it used to be
+	// in song options)
+	// but since it is now changed before we get here, 
+	// care needs to be taken to ensure the player can still switch.
+
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_TITLE_MENU_GAME_NAME) );
 
 	m_soundAttract.Load( ANNOUNCER->GetPathTo(ANNOUNCER_TITLE_MENU_ATTRACT) );

@@ -44,6 +44,7 @@ const CString CREDIT_LINES[] =
 	"TofuBoy (Lucas Tang)",
 	"SPiGuMuS",
 	"DJ McFox (Ryan McKanna)",
+	"Cloud34 (Lamden Travis)",
 	"",
 	"",
 	"",
@@ -122,7 +123,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 {
 	LOG->WriteLine( "ScreenMusicScroll::ScreenMusicScroll()" );
 
-	int i;
+	 int i;
 
 	// BUGFIX by ANDY: Stage will now reset back to 0 when game ends.
 	PREFSMAN->m_iCurrentStageIndex = 0;
