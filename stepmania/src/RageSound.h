@@ -12,7 +12,6 @@ class RageSoundBase
 {
 public:
 	virtual ~RageSoundBase() { }
-	virtual void StopPlaying() = 0; // deprecated
 	virtual void SoundIsFinishedPlaying() = 0;
 	virtual bool GetDataToPlay( int16_t *buffer, int size, int &pos, int &got_bytes ) = 0;
 	virtual int GetPCM( char *buffer, int size, int64_t frameno ) = 0;
