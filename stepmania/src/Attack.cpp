@@ -1,15 +1,18 @@
 #include "global.h"
 #include "Attack.h"
 #include "GameState.h"
+#include "RageUtil.h"
 #include "song.h"
 
 void Attack::GetAttackBeats( const Song *song, PlayerNumber pn, float &fStartBeat, float &fEndBeat ) const
 {
 	if( fStartSecond >= 0 )
 	{
+		CHECKPOINT;
 		fStartBeat = song->GetBeatFromElapsedTime( fStartSecond );
 		fEndBeat = song->GetBeatFromElapsedTime( fStartSecond+fSecsRemaining );
 	} else {
+		CHECKPOINT;
 		/* If fStartSecond < 0, then the attack starts right off the screen; this requires
 		 * that a song actually be playing.  Pre-queued course attacks must always have 
 		 * fStartSecond >= 0. */
@@ -21,5 +24,5 @@ void Attack::GetAttackBeats( const Song *song, PlayerNumber pn, float &fStartBea
 		GAMESTATE->GetUndisplayedBeats( pn, fSecsRemaining, fStartBeat, fEndBeat );
 	}
 
-	ASSERT( fEndBeat >= fStartBeat );
+	RAGE_ASSERT_M( fEndBeat >= fStartBeat, ssprintf("%f >= %f", fEndBeat, fStartBeat) );
 }
