@@ -141,6 +141,10 @@ void GradeDisplay::SettleQuickly()
 	if(m_bDoScrolling != 1)
 		return;
 
+	/* If we're in the last phase of scrolling, don't do this. */
+	if( 1 - (m_fTimeLeftInScroll/SCROLL_TIME) >= 0.9 )
+		return;
+
 	/* m_frectDestTexCoords.top is between 0 and 1 (inclusive).  m_frectCurTexCoords
 	 * is somewhere above that.  Shift m_frectCurTexCoords downwards so it's pointing
 	 * at the same physical place (remember, the grade texture is tiled) but no more
