@@ -26,17 +26,17 @@ REGISTER_SCREEN_CLASS( ScreenSelectGroup );
 ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {	
 	LOG->Trace( "ScreenSelectGroup::ScreenSelectGroup()" );	
+}
 
+void ScreenSelectGroup::Init()
+{
 	if( !PREFSMAN->m_bShowSelectGroup )
 	{
 		GAMESTATE->m_sPreferredSongGroup = GROUP_ALL_MUSIC;
 		HandleScreenMessage( SM_GoToNextScreen );
 		return;
 	}
-}
 
-void ScreenSelectGroup::Init()
-{
 	ScreenWithMenuElements::Init();
 
 	vector<Song*> aAllSongs;

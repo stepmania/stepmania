@@ -52,7 +52,11 @@ REGISTER_SCREEN_CLASS( ScreenSelectCharacter );
 ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {	
 	LOG->Trace( "ScreenSelectCharacter::ScreenSelectCharacter()" );	
+}
 
+
+void ScreenSelectCharacter::Init()
+{
 	vector<Character*> apCharacters;
 	GAMESTATE->GetCharacters( apCharacters );
 	if(	apCharacters.empty() )
@@ -77,16 +81,6 @@ ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : ScreenWithM
 			return;
 		}
 	}
-}
-
-
-void ScreenSelectCharacter::Init()
-{
-	vector<Character*> apCharacters;
-	GAMESTATE->GetCharacters( apCharacters );
-	if(	apCharacters.empty() )
-		return;
-
 
 	ScreenWithMenuElements::Init();
 	

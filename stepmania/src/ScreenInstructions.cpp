@@ -15,7 +15,10 @@ REGISTER_SCREEN_CLASS( ScreenInstructions );
 ScreenInstructions::ScreenInstructions( CString sName ) : ScreenWithMenuElements( sName )
 {
 	LOG->Trace( "ScreenInstructions::ScreenInstructions()" );
+}
 
+void ScreenInstructions::Init()
+{
 	//
 	// Skip this screen unless someone chose easy or beginner
 	//
@@ -39,10 +42,7 @@ ScreenInstructions::ScreenInstructions( CString sName ) : ScreenWithMenuElements
 
 	if( GAMESTATE->m_PlayMode == PLAY_MODE_INVALID )
 		RageException::Throw( "The PlayMode has not been set.  A theme must set the PlayMode before showing ScreenInstructions." );
-}
 
-void ScreenInstructions::Init()
-{
 	ScreenWithMenuElements::Init();
 
 	m_sprHowToPlay.Load( THEME->GetPathG(m_sName,PlayModeToString(GAMESTATE->m_PlayMode)) );
