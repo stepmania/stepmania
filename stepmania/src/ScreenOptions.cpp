@@ -247,7 +247,8 @@ void ScreenOptions::InitOptionsText()
 		if( m_bRowIsLong[i] )
 		{
 			// re-init with "long row" style
-			for( unsigned j=0; j<optline.choices.size(); j++ )	// for each option on this line
+		        unsigned j;
+			for( j=0; j<optline.choices.size(); j++ )	// for each option on this line
 				m_textItems[i][j].SetText( "" );
 
 			for( int p=0; p<NUM_PLAYERS; p++ )
