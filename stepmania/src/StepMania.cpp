@@ -319,7 +319,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR CmdLine, int nCmdShow 
 				Update();
 				Render();
 				if( !g_bIsActive  &&  DISPLAY  &&  DISPLAY->IsWindowed() )
-					::Sleep( 0 );	// give some time to other processes
+					::Sleep( 0 );	// give some time to other processes because this process has such a high priority
 #ifdef _DEBUG
 				::Sleep( 1 );
 #endif
@@ -338,6 +338,9 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR CmdLine, int nCmdShow 
 	catch( RageException e )
 	{
 		g_sErrorString = e.what();
+
+		DestroyObjects();			// destroy game objects so we can see the error dialog
+		ShowWindow( g_hWndMain, SW_HIDE );
 	}
 
 	if( g_sErrorString != "" )
