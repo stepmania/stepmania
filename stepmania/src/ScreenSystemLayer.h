@@ -35,6 +35,7 @@ private:
 	RageTimer SkipTimer;
 	void AddTimestampLine( const CString &txt, const RageColor &color );
 	void UpdateTimestampAndSkips();
+	CString GetCreditsMessage( PlayerNumber pn ) const;
 };
 
 

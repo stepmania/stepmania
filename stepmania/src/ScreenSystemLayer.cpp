@@ -121,108 +121,100 @@ void ScreenSystemLayer::SystemMessageNoAnimate( const CString &sMessage )
 	m_textMessage.SetDiffuse( RageColor(1,1,1,0) );
 }
 
+CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
+{
+	if( CREDITS_JOIN_ONLY && !GAMESTATE->PlayersCanJoin() )
+		return "";
+
+	bool bShowCreditsMessage;
+	if( GAMESTATE->m_bIsOnSystemMenu )
+		bShowCreditsMessage = true;
+	else if( MEMCARDMAN->GetCardsLocked() )
+		bShowCreditsMessage = !GAMESTATE->IsPlayerEnabled( pn );
+	else 
+		bShowCreditsMessage = !GAMESTATE->m_bSideIsJoined[pn];
+		
+	if( !bShowCreditsMessage )
+	{
+		MemoryCardState mcs = MEMCARDMAN->GetCardState( pn );
+		const Profile* pProfile = PROFILEMAN->GetProfile( pn );
+		switch( mcs )
+		{
+		case MEMORY_CARD_STATE_NO_CARD:
+			// this is a local machine profile
+			if( PROFILEMAN->LastLoadWasFromLastGood(pn) && pProfile )
+				return pProfile->GetDisplayName() + CREDITS_LOADED_FROM_LAST_GOOD_APPEND;
+			else if( PROFILEMAN->LastLoadWasTamperedOrCorrupt(pn) )
+				return CREDITS_LOAD_FAILED;
+			// Prefer the name of the profile over the name of the card.
+			else if( pProfile )
+				return pProfile->GetDisplayName();
+			else if( GAMESTATE->PlayersCanJoin() )
+				return CREDITS_INSERT_CARD;
+			else
+				return "";
+
+		case MEMORY_CARD_STATE_WRITE_ERROR: return CREDITS_CARD_ERROR;
+		case MEMORY_CARD_STATE_TOO_LATE:	return CREDITS_CARD_TOO_LATE;
+		case MEMORY_CARD_STATE_CHECKING:	return CREDITS_CARD_CHECKING;
+		case MEMORY_CARD_STATE_REMOVED:		return CREDITS_CARD_REMOVED;
+		case MEMORY_CARD_STATE_READY:
+			if( PROFILEMAN->LastLoadWasFromLastGood(pn) && pProfile )
+				return pProfile->GetDisplayName() + CREDITS_LOADED_FROM_LAST_GOOD_APPEND;
+			else if( PROFILEMAN->LastLoadWasTamperedOrCorrupt(pn) )
+				return CREDITS_LOAD_FAILED;
+			// Prefer the name of the profile over the name of the card.
+			else if( pProfile )
+				return pProfile->GetDisplayName();
+			else if( !MEMCARDMAN->IsNameAvailable(pn) )
+				return CREDITS_CARD_READY;
+			else if( !MEMCARDMAN->GetName(pn).empty() )
+				return MEMCARDMAN->GetName(pn);
+			else
+				return CREDITS_CARD_NO_NAME;
+
+		default:
+			FAIL_M( ssprintf("%i",mcs) );
+		}
+	}
+	else // bShowCreditsMessage
+	{
+		switch( GAMESTATE->GetCoinMode() )
+		{
+		case COIN_HOME:
+			if( GAMESTATE->PlayersCanJoin() )
+				return CREDITS_PRESS_START;
+			else
+				return CREDITS_NOT_PRESENT;
+
+		case COIN_PAY:
+		{
+			int Credits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
+			int Coins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
+			CString sCredits = CREDITS_CREDITS;
+			if( Credits > 0 || PREFSMAN->m_iCoinsPerCredit == 1 )
+				sCredits += ssprintf("  %d", Credits);
+			if( PREFSMAN->m_iCoinsPerCredit > 1 )
+				sCredits += ssprintf("  %d/%d", Coins, PREFSMAN->m_iCoinsPerCredit );
+			return sCredits;
+		}
+		case COIN_FREE:
+			if( GAMESTATE->PlayersCanJoin() )
+				return CREDITS_FREE_PLAY;
+			else
+				return CREDITS_NOT_PRESENT;
+
+		default:
+			ASSERT(0);
+		}
+	}
+}
+
 void ScreenSystemLayer::RefreshCreditsMessages()
 {
 	// update joined
-	FOREACH_PlayerNumber( p )
-	{
-		CString sCredits;
-
-		bool bShowCreditsMessage;
-		if( GAMESTATE->m_bIsOnSystemMenu )
-			bShowCreditsMessage = true;
-		else if( MEMCARDMAN->GetCardsLocked() )
-			bShowCreditsMessage = !GAMESTATE->IsPlayerEnabled( p );	
-		else 
-			bShowCreditsMessage = !GAMESTATE->m_bSideIsJoined[p];
-		
-		if( !bShowCreditsMessage )
-		{
-			MemoryCardState mcs = MEMCARDMAN->GetCardState( p );
-			const Profile* pProfile = PROFILEMAN->GetProfile( p );
-			switch( mcs )
-			{
-			case MEMORY_CARD_STATE_NO_CARD:
-				// this is a local machine profile
-				if( PROFILEMAN->LastLoadWasFromLastGood(p) && pProfile )
-					sCredits = pProfile->GetDisplayName() + CREDITS_LOADED_FROM_LAST_GOOD_APPEND;
-				else if( PROFILEMAN->LastLoadWasTamperedOrCorrupt(p) )
-					sCredits = CREDITS_LOAD_FAILED;
-				// Prefer the name of the profile over the name of the card.
-				else if( pProfile )
-					sCredits = pProfile->GetDisplayName();
-				else if( GAMESTATE->PlayersCanJoin() )
-					sCredits = CREDITS_INSERT_CARD;
-				else
-					sCredits = "";
-				break;
-			case MEMORY_CARD_STATE_WRITE_ERROR:
-				sCredits = CREDITS_CARD_ERROR;
-				break;
-			case MEMORY_CARD_STATE_TOO_LATE:
-				sCredits = CREDITS_CARD_TOO_LATE;
-				break;
-			case MEMORY_CARD_STATE_CHECKING:
-				sCredits = CREDITS_CARD_CHECKING;
-				break;
-			case MEMORY_CARD_STATE_REMOVED:
-				sCredits = CREDITS_CARD_REMOVED;
-				break;
-			case MEMORY_CARD_STATE_READY:
-				if( PROFILEMAN->LastLoadWasFromLastGood(p) && pProfile )
-					sCredits = pProfile->GetDisplayName() + CREDITS_LOADED_FROM_LAST_GOOD_APPEND;
-				else if( PROFILEMAN->LastLoadWasTamperedOrCorrupt(p) )
-					sCredits = CREDITS_LOAD_FAILED;
-				// Prefer the name of the profile over the name of the card.
-				else if( pProfile )
-					sCredits = pProfile->GetDisplayName();
-				else if( !MEMCARDMAN->IsNameAvailable(p) )
-					sCredits = CREDITS_CARD_READY;
-				else if( !MEMCARDMAN->GetName(p).empty() )
-					sCredits = MEMCARDMAN->GetName(p);
-				else
-					sCredits = CREDITS_CARD_NO_NAME;
-				break;
-			default:
-				FAIL_M( ssprintf("%i",mcs) );
-			}
-		}
-		else // bShowCreditsMessage
-		{
-			switch( GAMESTATE->GetCoinMode() )
-			{
-			case COIN_HOME:
-				if( GAMESTATE->PlayersCanJoin() )
-					sCredits = CREDITS_PRESS_START;
-				else
-					sCredits = CREDITS_NOT_PRESENT;
-				break;
-			case COIN_PAY:
-				{
-					int Credits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
-					int Coins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
-					sCredits = CREDITS_CREDITS;
-					if( Credits > 0 || PREFSMAN->m_iCoinsPerCredit == 1 )
-						sCredits += ssprintf("  %d", Credits);
-					if( PREFSMAN->m_iCoinsPerCredit > 1 )
-						sCredits += ssprintf("  %d/%d", Coins, PREFSMAN->m_iCoinsPerCredit );
-				}
-				break;
-			case COIN_FREE:
-				if( GAMESTATE->PlayersCanJoin() )
-					sCredits = CREDITS_FREE_PLAY;
-				else
-					sCredits = CREDITS_NOT_PRESENT;
-				break;
-			default:
-				ASSERT(0);
-			}
-		}
-
-		if( CREDITS_JOIN_ONLY && !GAMESTATE->PlayersCanJoin() )
-			sCredits = "";
-		m_textCredits[p].SetText( sCredits );
-	}
+	FOREACH_PlayerNumber( pn )
+		m_textCredits[pn].SetText( GetCreditsMessage(pn) );
 }
 
 void ScreenSystemLayer::AddTimestampLine( const CString &txt, const RageColor &color )
