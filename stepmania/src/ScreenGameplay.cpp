@@ -885,6 +885,11 @@ void ScreenGameplay::LoadNextSong()
 	// Restore the player's originally selected options.
 	GAMESTATE->RestoreSelectedOptions();
 
+	/* If we're in battery mode, force FailImmediate.  We assume in PlayerMinus::Step that
+	 * failed players can't step. */
+	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY )
+		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_IMMEDIATE;
+
 	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );
 
 
