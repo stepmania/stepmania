@@ -12,6 +12,9 @@
 
 /* Obsolete: use DifficultyClass. */
 /* DifficultyClass was the old name for enum Difficulty, right? -Chris */
+/* Maybe, but that wouldn't make sense.  I might have meant DifficultyMeter, whose
+ * functionality is a superset of DifficultyIcon; this class can probably be phased
+ * out. -glenn */
 
 #include "DifficultyIcon.h"
 #include "RageUtil.h"
