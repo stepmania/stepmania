@@ -7,6 +7,7 @@
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
+	Glenn Maynard
 -----------------------------------------------------------------------------
 */
 
@@ -18,16 +19,12 @@
 #include "RageLog.h"
 #include "RageException.h"
 
-#include <stdio.h>
-#include <assert.h>
-
-void Font::Init()
+FontPage::FontPage()
 {
-	m_bCapitalsOnly = false;
-	m_iRefCount = 1;
+	m_pTexture = NULL;
 }
 
-void Font::Load( const CString &TexturePath, IniFile &ini )
+void FontPage::Load( const CString &TexturePath, IniFile &ini )
 {
 	m_sTexturePath = TexturePath;
 
@@ -36,13 +33,11 @@ void Font::Load( const CString &TexturePath, IniFile &ini )
 	m_pTexture = TEXTUREMAN->LoadTexture( m_sTexturePath );
 	ASSERT( m_pTexture != NULL );
 
-	m_iLineSpacing = m_pTexture->GetSourceFrameHeight();
-
 	// load character widths
 	vector<int> FrameWidths;
 	int i;
 	// Assume each character is the width of the frame by default.
-	for( i=0; i<256; i++ )
+	for( i=0; i<m_pTexture->GetNumFrames(); i++ )
 		FrameWidths.push_back(m_pTexture->GetSourceFrameWidth());
 
 	{
@@ -80,13 +75,12 @@ void Font::Load( const CString &TexturePath, IniFile &ini )
 						RageException::Throw( "The font '%s' has an invalid INI value '%s'.",
 							m_sTexturePath.GetString(), val.GetString() );
 
-					m_iCharToFrameNo[i] = atoi(data);
+					m_iCharToGlyphNo[i] = atoi(data);
 				}
 			}
 		}
 	}
 
-	ini.GetValueB( "main", "CapitalsOnly", m_bCapitalsOnly );
 	int DrawExtraPixelsLeft = 0, DrawExtraPixelsRight = 0;
 
 	ini.GetValueI( "main", "DrawExtraPixelsLeft", DrawExtraPixelsLeft );
@@ -106,62 +100,15 @@ void Font::Load( const CString &TexturePath, IniFile &ini )
 			FrameWidths[i] = int(roundf( FrameWidths[i] * fScaleAllWidthsBy ));
 	}
 
-	ini.GetValueI( "main", "LineSpacing", m_iLineSpacing );
+	/* All characters on a page have the same vertical spacing. */
+	int LineSpacing = m_pTexture->GetSourceFrameHeight();
+	ini.GetValueI( "main", "LineSpacing", LineSpacing );
 
-	SetTextureCoords(FrameWidths);
+	SetTextureCoords(FrameWidths, LineSpacing);
 	SetExtraPixels(DrawExtraPixelsLeft, DrawExtraPixelsRight);
 }
 
-Font::Font( const CString &sASCIITexturePath )
-{
-	//LOG->Trace( "Font::LoadFromFontName(%s)", sASCIITexturePath.GetString() );
-
-	Init();
-
-	/* Default to 0..255. */
-	for( int i=0; i<256; i++ )
-		m_iCharToFrameNo[i] = i;
-
-	// Find .ini widths path from texture path
-	CString sDir, sFileName, sExtension;
-	splitrelpath( sASCIITexturePath, sDir, sFileName, sExtension );
-	const CString sIniPath = sDir + sFileName + ".ini";
-
-	IniFile ini;
-	ini.SetPath( sIniPath );
-	ini.ReadFile();
-	ini.RenameKey("Char Widths", "main");
-	Load(sASCIITexturePath, ini);
-
-	if( m_pTexture->GetNumFrames() != 16*16 )
-		RageException::Throw( "The font '%s' has only %d frames.  All fonts must have 16*16 frames.", m_sTexturePath.GetString() );
-}
-
-
-Font::Font( const CString &sTexturePath, const CString& sCharacters )
-{
-	//LOG->Trace( "Font::LoadFromFontName(%s)", sFontFilePath.GetString() );
-
-	Init();
-
-	/* Map characters to frames; we don't actually have an INI. */
-	for( int i=0; i<sCharacters.GetLength(); i++ )
-	{
-		char c = sCharacters[i];
-		m_iCharToFrameNo[c] = i;
-	}
-
-	/* load texture */
-	IniFile ini;
-	Load(sTexturePath, ini);
-
-	// sanity check
-	if( sCharacters.GetLength() != m_pTexture->GetNumFrames() )
-		RageException::Throw( "The image '%s' doesn't have the correct number of frames.  It has %d frames but should have %d frames.",
-					m_sTexturePath.GetString(), m_pTexture->GetNumFrames(), sCharacters.GetLength() );
-}
-
-void Font::SetTextureCoords(const vector<int> &widths)
+void FontPage::SetTextureCoords(const vector<int> &widths, int LineSpacing)
 {
 	for(int i = 0; i < m_pTexture->GetNumFrames(); ++i)
 	{
@@ -177,7 +124,7 @@ void Font::SetTextureCoords(const vector<int> &widths)
 
 		/* Shift the character up so the top of the rendered quad is at the top
 		 * of the character. */
-		g.vshift = -(m_pTexture->GetSourceFrameHeight() - m_iLineSpacing)/2.0f;
+		g.vshift = -(m_pTexture->GetSourceFrameHeight() - LineSpacing)/2.0f;
 
 		/* Do the same thing with X.  Do this by changing the actual rendered
 		 * rect, instead of shifting it, so we don't render more than we need to. */
@@ -192,7 +139,8 @@ void Font::SetTextureCoords(const vector<int> &widths)
 
 		/* By default, advance one pixel more than the width.  (This could be
 		 * an option.) */
-		g.advance = g.width + 1;
+		g.hadvance = g.width + 1;
+		g.vadvance = float(LineSpacing);
 		glyphs.push_back(g);
 	}
 
@@ -204,13 +152,18 @@ void Font::SetTextureCoords(const vector<int> &widths)
 //			glyphs[i].width++;
 }
 
-void Font::SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight)
+void FontPage::SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight)
 {
+	/* Hack: do one more than we were asked to; I think a lot of fonts are one
+	 * too low. */
+	DrawExtraPixelsRight++;
+	DrawExtraPixelsLeft++;
+
 	/* Adjust for DrawExtraPixelsLeft and DrawExtraPixelsRight. */
 	for(unsigned i = 0; i < glyphs.size(); ++i)
 	{
 		int iFrameWidth = m_pTexture->GetSourceFrameWidth();
-		float iCharWidth = glyphs[i].advance;
+		float iCharWidth = glyphs[i].hadvance;
 
 		/* Extra pixels to draw to the left and right. */
 		float ExtraLeft = min( float(DrawExtraPixelsLeft), (iFrameWidth-iCharWidth)/2.0f );
@@ -221,11 +174,12 @@ void Font::SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight)
 		glyphs[i].rect.right += ExtraRight / m_pTexture->GetSourceWidth();
 		glyphs[i].hshift -= ExtraLeft;
 		glyphs[i].width += ExtraLeft + ExtraRight;
-//		glyphs[i].advance += ExtraLeft + ExtraRight;
+
+		glyphs[i].Texture = m_pTexture;
 	}
 }
 
-Font::~Font()
+FontPage::~FontPage()
 {
 	if( m_pTexture != NULL )
 		TEXTUREMAN->UnloadTexture( m_pTexture );
@@ -238,12 +192,8 @@ int Font::GetLineWidthInSourcePixels( const CString &szLine )
 	
 	for( unsigned i=0; i<szLine.size(); i++ )
 	{
-		const char c = szLine[i];
-		if(m_iCharToFrameNo.find(c) == m_iCharToFrameNo.end())
-			RageException::Throw( "The font '%s' does not implement the character '%c'", m_sTexturePath.GetString(), c );
-
-		const int iFrameNo = m_iCharToFrameNo[ (unsigned char)c ];
-		LineWidth += glyphs[iFrameNo].advance;
+		const glyph &g = GetGlyph(szLine[i]);
+		LineWidth += g.hadvance;
 	}
 
 	return int(LineWidth);
@@ -251,6 +201,70 @@ int Font::GetLineWidthInSourcePixels( const CString &szLine )
 
 int Font::GetLineHeightInSourcePixels( const CString &szLine )
 {
-	return m_iLineSpacing;
+	float iLineSpacing = 0;
+	
+	for( unsigned i=0; i<szLine.size(); i++ )
+	{
+		const glyph &g = GetGlyph(szLine[i]);
+
+		iLineSpacing = max(iLineSpacing, g.vadvance);
+	}
+
+	return int(iLineSpacing);
 }
 
+
+Font::Font()
+{
+	//LOG->Trace( "Font::LoadFromFontName(%s)", sASCIITexturePath.GetString() );
+
+	m_iRefCount = 1;
+}
+
+Font::~Font()
+{
+	for(unsigned i = 0; i < pages.size(); ++i)
+		delete pages[i];
+}
+
+void Font::AddPage(FontPage *fp)
+{
+	pages.push_back(fp);
+
+	for(map<int,int>::const_iterator it = fp->m_iCharToGlyphNo.begin();
+		it != fp->m_iCharToGlyphNo.end(); ++it)
+	{
+		m_iCharToGlyph[it->first] = &fp->glyphs[it->second];
+	}
+}
+
+const glyph &Font::GetGlyph( int c ) const
+{
+	map<int,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
+
+	if(it == m_iCharToGlyph.end())
+		RageException::Throw( "The font '%s' does not implement the character '%c'", path.GetString(), c );
+
+	return *it->second;
+}
+
+/* Load font-global settings. */
+void Font::LoadINI(IniFile &ini)
+{
+	bool CapitalsOnly = false;
+	ini.GetValueB( "main", "CapitalsOnly", CapitalsOnly );
+	if(CapitalsOnly)
+	{
+		/* For each uppercase character that we have a mapping for, add
+		 * a lowercase one. */
+		for(char c = 'A'; c <= 'Z'; ++c)
+		{
+			map<int,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
+
+			if(it == m_iCharToGlyph.end())
+				continue;
+
+			m_iCharToGlyph[tolower(c)] = it->second;
+		}
+	}
+}

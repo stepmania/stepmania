@@ -55,7 +55,7 @@ BitmapText::BitmapText()
 BitmapText::~BitmapText()
 {
 	if( m_pFont )
-		FONT->UnloadFont( m_pFont->m_sTexturePath );
+		FONT->UnloadFont( m_pFont );
 }
 
 bool BitmapText::LoadFromFont( CString sFontFilePath )
@@ -63,7 +63,7 @@ bool BitmapText::LoadFromFont( CString sFontFilePath )
 	LOG->Trace( "BitmapText::LoadFromFontName(%s)", sFontFilePath.GetString() );
 
 	if( m_pFont ) {
-		FONT->UnloadFont( m_pFont->m_sTexturePath );
+		FONT->UnloadFont( m_pFont );
 		m_pFont = NULL;
 	}
 
@@ -79,7 +79,7 @@ bool BitmapText::LoadFromTextureAndChars( CString sTexturePath, CString sChars )
 	LOG->Trace( "BitmapText::LoadFromTextureAndChars(%s)", sTexturePath.GetString() );
 
 	if( m_pFont ) {
-		FONT->UnloadFont( m_pFont->m_sTexturePath );
+		FONT->UnloadFont( m_pFont );
 		m_pFont = NULL;
 	}
 
@@ -95,9 +95,6 @@ bool BitmapText::LoadFromTextureAndChars( CString sTexturePath, CString sChars )
 void BitmapText::SetText( CString sText )
 {
 	ASSERT( m_pFont );
-
-	if( m_pFont->m_bCapitalsOnly )
-		sText.MakeUpper();
 
 	m_szText = sText;
 
@@ -139,7 +136,8 @@ void BitmapText::DrawPrimitives()
 	if( m_szTextLines.empty() )
 		return;
 
-	RageTexture* pTexture = m_pFont->m_pTexture;
+	/* XXX */
+	RageTexture* pTexture = m_pFont->GetGlyph('0').Texture;
 
 	static RageVertex *v = NULL;
 	static int vcnt = 0;
@@ -189,13 +187,7 @@ void BitmapText::DrawPrimitives()
 
 		for( unsigned j=0; j<szLine.size(); j++ )	// for each character in the line
 		{
-			const char c = szLine[j];
-			if(m_pFont->m_iCharToFrameNo.find(c) == m_pFont->m_iCharToFrameNo.end())
-				RageException::Throw( "The font '%s' does not implement the character '%c'", m_sFontFilePath.GetString(), c );
-
-			const int iFrameNo = m_pFont->m_iCharToFrameNo[ (unsigned char)c ];
-
-			const glyph &g = m_pFont->GetGlyph(iFrameNo);
+			const glyph &g = m_pFont->GetGlyph(szLine[j]);
 
 			/* set vertex positions */
 			v[iNumV++].p = RageVector3( (float)iX+g.hshift,			iY+g.vshift,		  0 );	// top left
@@ -204,7 +196,7 @@ void BitmapText::DrawPrimitives()
 			v[iNumV++].p = RageVector3( (float)iX+g.hshift+g.width,	iY+g.vshift,		  0 );	// top right
 
 			/* Advance the cursor. */
-			iX += g.advance;
+			iX += g.hadvance;
 
 			/* set texture coordinates */
 			iNumV -= 4;
