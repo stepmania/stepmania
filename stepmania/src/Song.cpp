@@ -903,22 +903,50 @@ void Song::GetSteps( vector<Steps*>& arrayAddTo, StepsType st, Difficulty dc, in
 
 Steps* Song::GetStepsByDifficulty( StepsType st, Difficulty dc, bool bIncludeAutoGen ) const
 {
-	vector<Steps*> vNotes;
-	GetSteps( vNotes, st, dc, -1, -1, "", bIncludeAutoGen, 1 );
-	if( vNotes.size() == 0 )
-		return NULL;
-	else 
-		return vNotes[0];
+	/* Ignore m_bAutogenSteps for STEPS_TYPE_LIGHTS_CABINET. */
+	if( st != STEPS_TYPE_LIGHTS_CABINET && !PREFSMAN->m_bAutogenSteps )
+		bIncludeAutoGen = false;
+	const vector<Steps*>& vpSteps = m_vpSteps;
+	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
+	{
+		Steps* pSteps = vpSteps[i];
+
+		if( st != STEPS_TYPE_INVALID && pSteps->m_StepsType != st )
+			continue;
+		if( dc != DIFFICULTY_INVALID && dc != pSteps->GetDifficulty() )
+			continue;
+		if( !bIncludeAutoGen && pSteps->IsAutogen() )
+			continue;
+
+		return pSteps;
+	}
+
+	return NULL;
 }
 
 Steps* Song::GetStepsByMeter( StepsType st, int iMeterLow, int iMeterHigh ) const
 {
-	vector<Steps*> vNotes;
-	GetSteps( vNotes, st, DIFFICULTY_INVALID, iMeterLow, iMeterHigh, "", true, 1 );
-	if( vNotes.size() == 0 )
-		return NULL;
-	else 
-		return vNotes[0];
+	/* Ignore m_bAutogenSteps for STEPS_TYPE_LIGHTS_CABINET. */
+	bool bIncludeAutoGen = (st == STEPS_TYPE_LIGHTS_CABINET || PREFSMAN->m_bAutogenSteps);
+
+	const vector<Steps*>& vpSteps = m_vpSteps;
+	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
+	{
+		Steps* pSteps = vpSteps[i];
+
+		if( st != STEPS_TYPE_INVALID && pSteps->m_StepsType != st )
+			continue;
+		if( iMeterLow > pSteps->GetMeter() )
+			continue;
+		if( iMeterHigh < pSteps->GetMeter() )
+			continue;
+		if( !bIncludeAutoGen && pSteps->IsAutogen() )
+			continue;
+
+		return pSteps;
+	}
+
+	return NULL;
 }
 
 Steps* Song::GetStepsByDescription( StepsType st, CString sDescription ) const
