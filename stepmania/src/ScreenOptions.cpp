@@ -54,6 +54,8 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 #define SHOW_BPM_IN_SPEED_TITLE			THEME->GetMetricB("ScreenOptions","ShowBpmInSpeedTitle")
 #define FRAME_ON_COMMAND				THEME->GetMetric ("ScreenOptions","FrameOnCommand")
 #define FRAME_OFF_COMMAND				THEME->GetMetric ("ScreenOptions","FrameOffCommand")
+#define SEPARATE_EXIT_ROW				THEME->GetMetricB("ScreenOptions","SeparateExitRow")
+#define SEPARATE_EXIT_ROW_Y				THEME->GetMetricF("ScreenOptions","SeparateExitRowY")
 
 /*
  * Three navigation types are provided:
@@ -783,8 +785,24 @@ void ScreenOptions::PositionItems()
 	int first_start, first_end, second_start, second_end;
 
 	/* Choices for each player.  If only one player is active, it's the same for both. */
-	const int P1Choice = GAMESTATE->IsHumanPlayer(PLAYER_1)? m_iCurrentRow[PLAYER_1]: m_iCurrentRow[PLAYER_2];
-	const int P2Choice = GAMESTATE->IsHumanPlayer(PLAYER_2)? m_iCurrentRow[PLAYER_2]: m_iCurrentRow[PLAYER_1];
+	int P1Choice = GAMESTATE->IsHumanPlayer(PLAYER_1)? m_iCurrentRow[PLAYER_1]: m_iCurrentRow[PLAYER_2];
+	int P2Choice = GAMESTATE->IsHumanPlayer(PLAYER_2)? m_iCurrentRow[PLAYER_2]: m_iCurrentRow[PLAYER_1];
+
+	vector<Row*> Rows( m_Rows );
+	Row *ExitRow = NULL;
+
+	if( SEPARATE_EXIT_ROW && Rows.back()->Type == Row::ROW_EXIT )
+	{
+		ExitRow = &*Rows.back();
+
+		/* Remove the exit row for purposes of positioning everything else. */
+		if( P1Choice == (int) Rows.size()-1 )
+			--P1Choice;
+		if( P2Choice == (int) Rows.size()-1 )
+			--P2Choice;
+
+		Rows.erase( Rows.begin()+Rows.size()-1, Rows.end() );
+	}
 
 	const bool BothPlayersActivated = GAMESTATE->IsHumanPlayer(PLAYER_1) && GAMESTATE->IsHumanPlayer(PLAYER_2);
 	if( m_InputMode == INPUTMODE_TOGETHER || !BothPlayersActivated )
@@ -810,15 +828,15 @@ void ScreenOptions::PositionItems()
 		second_end = second_start + halfsize;
 	}
 
-	first_end = min( first_end, (int) m_Rows.size() );
-	second_end = min( second_end, (int) m_Rows.size() );
+	first_end = min( first_end, (int) Rows.size() );
+	second_end = min( second_end, (int) Rows.size() );
 
-	/* If less than total (and m_Rows.size()) are displayed, fill in the empty
+	/* If less than total (and Rows.size()) are displayed, fill in the empty
 	 * space intelligently. */
 	while(1)
 	{
 		const int sum = (first_end - first_start) + (second_end - second_start);
-		if( sum >= (int) m_Rows.size() || sum >= total)
+		if( sum >= (int) Rows.size() || sum >= total)
 			break; /* nothing more to display, or no room */
 
 		/* First priority: expand the top of the second half until it meets
@@ -828,14 +846,14 @@ void ScreenOptions::PositionItems()
 		/* Otherwise, expand either end. */
 		else if( first_start > 0 )
 			first_start--;
-		else if( second_end < (int) m_Rows.size() )
+		else if( second_end < (int) Rows.size() )
 			second_end++;
 		else
 			ASSERT(0); /* do we have room to grow or don't we? */
 	}
 
 	int pos = 0;
-	for( int i=0; i<(int) m_Rows.size(); i++ )		// foreach row
+	for( int i=0; i<(int) Rows.size(); i++ )		// foreach row
 	{
 		float ItemPosition;
 		if( i < first_start )
@@ -849,13 +867,19 @@ void ScreenOptions::PositionItems()
 		else
 			ItemPosition = (float) total - 0.5f;
 			
-		Row &row = *m_Rows[i];
+		Row &row = *Rows[i];
 
 		float fY = ITEMS_START_Y + ITEMS_SPACING_Y*ItemPosition;
 		row.m_fY = fY;
 		row.m_bHidden = i < first_start ||
 							(i >= first_end && i < second_start) ||
 							i >= second_end;
+	}
+
+	if( ExitRow )
+	{
+		ExitRow->m_fY = SEPARATE_EXIT_ROW_Y;
+		ExitRow->m_bHidden = ( second_end != (int) Rows.size() );
 	}
 }
 
