@@ -19,6 +19,7 @@ class HelpDisplay : public ActorFrame
 {
 public:
 	HelpDisplay();
+	void Load();
 	void SetTips( const CStringArray &arrayTips );
 
 	virtual void Update( float fDeltaTime );

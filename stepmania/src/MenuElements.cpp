@@ -82,7 +82,8 @@ void MenuElements::Load( CString sClassName )
 	UtilOnCommand( m_autoFooter, "MenuElements" );
 	this->AddChild( m_autoFooter );
 
-	m_textHelp->SetName( "Help" );
+	m_textHelp->SetName( "HelpDisplay", "Help" );
+	m_textHelp->Load();
 	UtilOnCommand( m_textHelp, "MenuElements" );
 	CStringArray asHelpTips;
 	split( THEME->GetMetric(m_sName,"HelpText"), "\n", asHelpTips );
