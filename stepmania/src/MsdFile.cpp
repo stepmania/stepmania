@@ -66,7 +66,7 @@ void MsdFile::ReadBuf( char *buf, int len )
 	int i = 0;
 	while(i < len)
 	{
-		if(!strncmp(buf+i, "//", 2))
+		if( buf[i] == '/' && buf[i+1] == '/' )
 		{
 			/* //; erase with spaces until newline */
 			do {
