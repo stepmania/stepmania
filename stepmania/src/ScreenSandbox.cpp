@@ -72,7 +72,7 @@ SOUNDMAN->music->StopPlaying();
 	s[0].s.Load("Themes/default/Sounds/_common menu music.ogg");
 	s[1].s.Load("Themes/default/Sounds/music scroll music.ogg");
 	s[2].s.Load("Themes/default/Sounds/evaluation extra stage.mp3");
-	s[3].s.Load("Themes/default/Sounds/gameplay oni die.wav");
+	s[3].s.Load("Themes/default/Sounds/gameplay oni die.mp3");
 	s[4].s.Load("Themes/default/Sounds/gameplay toasty.mp3");
 
 //s[0].s.SetStartSeconds(45);
