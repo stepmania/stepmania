@@ -7,7 +7,7 @@
  Desc: A wheel with song banners used in the Select Music screen.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
-	Andrew Livy
+	Frieza
 -----------------------------------------------------------------------------
 */
 

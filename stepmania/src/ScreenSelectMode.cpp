@@ -3,7 +3,7 @@
 ScreenSelectMode.cpp
 Desc: See Header
 Copyright (C):
-Andrew Livy
+Frieza
 Chris Danford
 *****************************************/
 

@@ -7,7 +7,7 @@
  Desc: Displays a whole bunch of graphics, either left aligned or center aligned.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
-	Andrew Livy
+	Frieza
 -----------------------------------------------------------------------------
 */
 

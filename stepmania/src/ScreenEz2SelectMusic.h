@@ -7,7 +7,7 @@
  Desc: A Scrolling List Of Song Banners used to select the song the player wants.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
-	Andrew Livy
+	Frieza
 -----------------------------------------------------------------------------
 */
 

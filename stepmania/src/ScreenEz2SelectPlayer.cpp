@@ -3,7 +3,7 @@
 ScreenEzSelectPlayer,cpp
 Desc: See Header
 Copyright (C):
-Andrew Livy
+Frieza
 *****************************************/
 
 /* Includes */

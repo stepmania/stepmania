@@ -2,7 +2,7 @@
 ScreenEz2SelectPlayer.h
 Desc: The "Player Select Screen" for Ez2dancer
 Copyright (c):
-Andrew Livy
+Frieza
 *********************************/
 
 /* Includes */

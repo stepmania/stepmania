@@ -92,7 +92,7 @@ static const CreditLine CREDIT_LINES[] =
 	{0,""},
 	{2,"☆☆PROGRAMMING☆☆"},
 	{0,"Chris Danford"},
-	{0,"Andrew “Frieza” Livy"},
+	{0,"Frieza"},
 	{0,"Glenn Maynard"},
 	{0,"Bruno Figueiredo"},
 	{0,"Peter “Dro Kulix” May"},

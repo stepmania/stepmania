@@ -2,7 +2,7 @@
 ScreenSelectMode.h
 Desc: The "Style Select Screen" for Ez2dancer
 Copyright (c):
-Andrew Livy
+Frieza
 *********************************/
 #ifndef __SCREEN_SELECT_MODE_H
 #define __SCREEN_SELECT_MODE_H

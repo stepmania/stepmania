@@ -6,7 +6,7 @@
 /****************************
 DifficultyRating
 Desc: see header
-Copyright: Andrew Livy
+Copyright: Frieza
 *****************************/
 
 const int ORIENTATION_LEFT = 0;
