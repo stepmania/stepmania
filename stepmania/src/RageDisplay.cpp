@@ -134,6 +134,10 @@ void RageDisplay::SetupOpenGL()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
+	/* Use <= for depth testing.  This lets us set all components of an actor to the
+	 * same depth. */
+	glDepthFunc(GL_LEQUAL);
+
 	/* Line antialiasing is fast on most hardware, and saying "don't care"
 	 * should turn it off if it isn't. */
 	glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
