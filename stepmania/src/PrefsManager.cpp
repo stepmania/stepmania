@@ -92,7 +92,7 @@ PrefsManager::PrefsManager() :
 	m_bPalettedBannerCache	( Options, "PalettedBannerCache",	false ),
 	m_bFastLoad				( Options, "FastLoad",				true ),
 
-	m_bOnlyDedicatedMenuButtons	( Options, "OnlyDedicatedMenuButtons",	false ),
+	m_bOnlyDedicatedMenuButtons	( Options, "UseDedicatedMenuButtons",	false ),
 	m_bMenuTimer				( Options, "MenuTimer",					true ),
 	m_bShowDanger				( Options, "ShowDanger",					true ),
 
@@ -128,8 +128,6 @@ void PrefsManager::Init()
 {
 	m_bCelShadeModels = false;		// Work-In-Progress.. disable by default.
 	m_fConstantUpdateDeltaSeconds = 0;
-	m_bShowDanger = true;
-	m_bMenuTimer = true;
 	m_iNumArcadeStages = 3;
 	m_bAutoPlay = false;
 
@@ -588,12 +586,9 @@ void PrefsManager::SaveGlobalPrefsToIni( IniFile &ini ) const
 {
 	ini.SetValue( "Options", "CelShadeModels",					m_bCelShadeModels );
 	ini.SetValue( "Options", "ConstantUpdateDeltaSeconds",		m_fConstantUpdateDeltaSeconds );
-	ini.SetValue( "Options", "UseDedicatedMenuButtons",			m_bOnlyDedicatedMenuButtons );
 	ini.SetValue( "Options", "BackgroundMode",					m_iBackgroundMode);
 	ini.SetValue( "Options", "NumBackgrounds",					m_iNumBackgrounds);
-	ini.SetValue( "Options", "ShowDanger",						m_bShowDanger );
 	ini.SetValue( "Options", "BGBrightness",					m_fBGBrightness );
-	ini.SetValue( "Options", "MenuTimer",						m_bMenuTimer );
 	ini.SetValue( "Options", "NumArcadeStages",					m_iNumArcadeStages );
 	ini.SetValue( "Options", "AutoPlay",						m_bAutoPlay );
 	ini.SetValue( "Options", "JudgeWindowScale",				m_fJudgeWindowScale );
