@@ -469,7 +469,7 @@ void FilenameDB::FlushDirCache()
 
 FilenameDB FDB;
 
-void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
+void FDB_GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
 //	LOG->Trace( "GetDirListing( %s )", sPath.c_str() );
 
@@ -521,7 +521,7 @@ void FlushDirCache()
 }
 
 
-#if 1
+#if 0
 bool DoesFileExist( const CString &sPath ) { return FDB.DoesFileExist(sPath); }
 bool IsAFile( const CString &sPath ) { return FDB.IsAFile(sPath); }
 bool IsADirectory( const CString &sPath ) { return FDB.IsADirectory(sPath); }
@@ -534,7 +534,11 @@ unsigned GetFileSizeInBytes( const CString &sPath )
 		return 0;
 	return ret;
 }
-#else
+void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
+{
+	FDB_GetDirListing( sPath, AddTo, bOnlyDirs, bReturnPathToo );
+}
+#elif 0
 static bool DoStat(CString sPath, struct stat *st)
 {
 	TrimRight(sPath, "/\\");
@@ -578,5 +582,37 @@ int GetFileModTime( const CString &sPath )
 		return -1;
 	
 	return st.st_mtime;
+}
+#else
+#include "RageFileManager.h"
+
+bool DoesFileExist( const CString &sPath )
+{
+	return FILEMAN->DoesFileExist( sPath );
+}
+
+bool IsAFile( const CString &sPath )
+{
+	return FILEMAN->IsAFile( sPath );
+}
+
+bool IsADirectory( const CString &sPath )
+{
+	return FILEMAN->IsADirectory( sPath );
+}
+
+unsigned GetFileSizeInBytes( const CString &sPath )
+{
+	return FILEMAN->GetFileSizeInBytes( sPath );
+}
+
+int GetFileModTime( const CString &sPath )
+{
+	return FILEMAN->GetFileModTime( sPath );
+}
+
+void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
+{
+	FILEMAN->GetDirListing( sPath, AddTo, bOnlyDirs, bReturnPathToo );
 }
 #endif
