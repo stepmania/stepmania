@@ -11,7 +11,8 @@
 
 #include "ErrorDialog.h"
 
-class ErrorDialog_darwin : public ErrorDialog {
+class ErrorDialog_darwin : public ErrorDialog
+{
 public:
     void ShowError();
 };
@@ -20,4 +21,3 @@ public:
 #define ARCH_ERROR_DIALOG ErrorDialog_darwin 
 
 #endif /* ERROR_DIALOG_DARWIN_H */
-    
