@@ -1,0 +1,49 @@
+A sound driver implements RageSoundDriver, and must implement:
+
+ void StartMixing(RageSound *snd);
+ void StopMixing(RageSound *snd);
+ int GetPosition(const RageSound *snd) const;
+
+A sound driver may implement, if needed:
+
+ void Update(float)
+
+Details:
+
+When a sound is playing, call RageSound::GetPCM(buf, size, pos) to get data.
+"buf" will receive signed, 16-bit stereo PCM data.  "pos" must be the position
+at which this sound will be played, in samples relative to GetPosition().
+(That is, when GetPosition() == pos, the first sample is being heard.)
+GetPCM returns the number of bytes placed in buf.
+
+If GetPCM returns less than size, it has no more data.  When this happens, 
+1. Do not call GetPCM again unless StartMixing() is called again. (It's
+   done; it has no more to say.)
+2. When all data has been flushed from the sound buffer (eg. all sound
+   has been heard), call Sound->StopPlaying().  (This tells the sound that
+   it's *really* stopped, and can be reused.)
+
+Notes:
+
+If StopMixing(snd) is called, do *not* call snd->StopPlaying.  It's already
+stopped.  Only call snd->StopPlaying when the sound is stopped by a small
+GetPCM return value.
+
+If there's latency between StartMixing(snd) being called and the sound
+actually being heard, GetPosition can return time less than "pos".  For
+example, if the first GetPCM call has a pos of 1000, and it'll take time
+before any sound is actually heard, GetPosition may return values
+less than 1000 if it's called before the sound is heard.  (RageSound will
+cope with this.)
+
+Likewise, GetPosition may return values that havn't actually been queued
+in underrun conditions.  For example, if the last GetPCM call had a pos
+of 1000, and returned 100 samples (so it returned samples 1000 through
+1100), GetPosition may return values greater than 1100 in underrun
+conditions.
+
+A global lock on the sound system can be acquired:
+
+	LockMut(SOUNDMAN->lock);
+
+The simplest sound driver is WaveOut; use it as an example.
