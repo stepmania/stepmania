@@ -280,8 +280,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 
 	m_bTryExtraStage = 
 		GAMESTATE->HasEarnedExtraStage()  && 
-		m_ResultMode==RM_ARCADE_STAGE  &&
-		!PREFSMAN->m_bEventMode;
+		m_ResultMode==RM_ARCADE_STAGE;
 
 	//
 	// Init ResultMode-specific displays

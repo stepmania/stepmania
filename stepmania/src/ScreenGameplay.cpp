@@ -1246,25 +1246,18 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_END_OF_SONG  &&  AllFailedEarlier() )
 				{
 					this->SendScreenMessage( SM_BeginFailed, 0 );
+					return;
 				}
+
+				m_StarWipe.CloseWipingRight( SM_None );
+
+				// do they deserve an extra stage?
+				if( GAMESTATE->HasEarnedExtraStage() )
+					this->SendScreenMessage( SM_ShowTryExtraStage, 1 );
 				else
 				{
-					m_StarWipe.CloseWipingRight( SM_None );
-
-					// do they deserve an extra stage?
-					bool bTryExtraStage = GAMESTATE->HasEarnedExtraStage();
-					if( PREFSMAN->m_bEventMode )
-						bTryExtraStage = false;
-
-					if( bTryExtraStage )
-					{
-						this->SendScreenMessage( SM_ShowTryExtraStage, 1 );
-					}
-					else
-					{
-						this->SendScreenMessage( SM_ShowCleared, 1 );
-						SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay cleared") );
-					}
+					this->SendScreenMessage( SM_ShowCleared, 1 );
+					SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay cleared") );
 				}
 			}
 		}
