@@ -193,9 +193,10 @@ int RageSoundReader_WAV::seek_sample_fmt_normal( Uint32 ms )
 
 int RageSoundReader_WAV::get_length_fmt_adpcm() const
 {
-	int offset = fseek(this->rw, 0, SEEK_END);
-    BAIL_IF_MACRO( offset == -1, strerror(errno), -1 );
+	int ret = fseek(this->rw, 0, SEEK_END);
+    BAIL_IF_MACRO( ret == -1, strerror(errno), -1 );
 
+	int offset = ftell( this->rw );
     offset -= fmt.data_starting_offset;
 
 	/* pcm bytes per block */
