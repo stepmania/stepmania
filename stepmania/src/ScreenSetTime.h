@@ -17,6 +17,16 @@
 #include "MenuElements.h"
 #include "RageInputDevice.h"
 
+enum SetTimeSelection
+{ 
+	year, 
+	month, 
+	day, 
+	hour, 
+	minute, 
+	second, 
+	NUM_SET_TIME_SELECTIONS 
+};
 
 class ScreenSetTime : public Screen
 {
@@ -36,11 +46,12 @@ public:
 	virtual void MenuBack( PlayerNumber pn );
 
 private:
-	enum Selection { hour, minute, second, year, month, day, NUM_SELECTIONS } m_Selection;
+	SetTimeSelection m_Selection;
 	void ChangeSelection( int iDirection );
 	void ChangeValue( int iDirection );
 
-	BitmapText	m_text[NUM_SELECTIONS];
+	BitmapText	m_textTitle[NUM_SET_TIME_SELECTIONS];
+	BitmapText	m_textValue[NUM_SET_TIME_SELECTIONS];
 	BitmapText	m_textDayOfWeek;
 
 	MenuElements m_Menu;
