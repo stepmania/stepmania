@@ -146,7 +146,7 @@ endif
 
 stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transitions) \
 		    $(Actors) $(ActorsInMenus) $(ActorsInGameplay) $(Screens) $(GlobalSingletons) \
-            arch/arch.cpp \
+	            arch/arch.cpp \
 		    arch/InputHandler/InputHandler_SDL.cpp \
 		    arch/InputHandler/InputHandler_SDL.h \
 		    arch/LoadingWindow/LoadingWindow_SDL.cpp \
@@ -156,7 +156,9 @@ stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transi
 		    $(Sound) \
 		    arch/LowLevelWindow/LowLevelWindow.h \
 		    arch/LowLevelWindow/LowLevelWindow_SDL.cpp \
-		    arch/LowLevelWindow/LowLevelWindow_SDL.h
+		    arch/LowLevelWindow/LowLevelWindow_SDL.h \
+		    archutils/Unix/SignalHandler.cpp \
+		    archutils/Unix/SignalHandler.h
 
 # Note that we still end up linking dynamically to the shared system library
 # for SDL_image.  This is annoying, but it's not a major problem.  The
