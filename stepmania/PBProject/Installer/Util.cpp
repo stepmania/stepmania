@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include <sys/errno.h>
 #include <sys/wait.h>
+#include <unistd.h>
 #include <dirent.h>
 #include <fcntl.h>
 #include "Util.h"
