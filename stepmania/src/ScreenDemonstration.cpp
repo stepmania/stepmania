@@ -109,7 +109,8 @@ void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_NotesEnded:
 	case SM_BeginFadingOut:
-		m_Out.StartTransitioning( SM_GoToNextScreen );
+		if(!m_Out.IsTransitioning())
+			m_Out.StartTransitioning( SM_GoToNextScreen );
 		return;
 	case SM_GoToNextScreen:
 		m_soundMusic.Stop();
