@@ -20,18 +20,22 @@ RageSoundManager::RageSoundManager(CString drivers)
 	if(!driver)
 		RageException::Throw("Couldn't find a sound driver that works");
 
+	/* needs to be done before RageSound::RageSound */
+	SOUNDMAN = this;
+
 	music = new RageSound;
 }
 
 RageSoundManager::~RageSoundManager()
 {
+	delete music;
+
 	/* Clear any sounds that we own and havn't freed yet. */
 	set<RageSound *>::iterator j = owned_sounds.begin();
 	while(j != owned_sounds.end())
 		delete *(j++);
 
 	delete driver;
-	delete music;
 }
 
 void RageSoundManager::StartMixing(RageSound *snd)
