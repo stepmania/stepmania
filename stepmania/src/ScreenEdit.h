@@ -134,7 +134,7 @@ public:
 		NUM_AREA_MENU_CHOICES
 	};
 	void HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers );
-	enum TransformType { little, big, left, right, mirror, shuffle, super_shuffle, backwards, swap_sides, NUM_TRANSFORM_TYPES };
+	enum TransformType { little, wide, tall, left, right, mirror, shuffle, super_shuffle, backwards, swap_sides, NUM_TRANSFORM_TYPES };
 
 	enum EditNotesStatisticsChoice {
 		difficulty,

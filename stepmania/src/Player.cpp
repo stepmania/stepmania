@@ -117,7 +117,8 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	{
 	case PlayerOptions::TRANSFORM_NONE:										break;
 	case PlayerOptions::TRANSFORM_LITTLE:	NoteDataUtil::Little(*this);	break;
-	case PlayerOptions::TRANSFORM_BIG:		NoteDataUtil::Big(*this);		break;
+	case PlayerOptions::TRANSFORM_WIDE:		NoteDataUtil::Wide(*this);		break;
+	case PlayerOptions::TRANSFORM_TALL:		NoteDataUtil::Tall(*this);		break;
 	default:		ASSERT(0);
 	}
 

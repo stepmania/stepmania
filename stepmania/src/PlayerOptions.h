@@ -57,7 +57,8 @@ struct PlayerOptions
 	enum Transform {
 		TRANSFORM_NONE=0,
 		TRANSFORM_LITTLE,
-		TRANSFORM_BIG,
+		TRANSFORM_WIDE,
+		TRANSFORM_TALL,
 		NUM_TRANSFORMS
 	} m_Transform;
 	void NextTransform();

@@ -40,7 +40,7 @@ OptionRowData g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 	{ "Effect",			7, {"OFF","DRUNK","DIZZY","SPACE","MINI","FLIP","TORNADO"} },	
 	{ "Appear\n-ance",	5, {"VISIBLE","HIDDEN","SUDDEN","STEALTH","BLINK"} },	
 	{ "Turn",			6, {"OFF","MIRROR","LEFT","RIGHT","SHUFFLE","SUPER SHUFFLE"} },	
-	{ "Trans\n-form",	3, {"OFF","LITTLE","BIG"} },	
+	{ "Trans\n-form",	4, {"OFF","LITTLE","WIDE","TALL"} },	
 	{ "Scroll",			2, {"STANDARD","REVERSE"} },	
 	{ "Note\nSkin",		0, {""} },	
 	{ "Holds",			2, {"OFF","ON"} },	

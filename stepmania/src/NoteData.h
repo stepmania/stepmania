@@ -139,7 +139,8 @@ namespace NoteDataUtil
 	enum TurnType { left, right, mirror, shuffle, super_shuffle, NUM_TURN_TYPES };
 	void Turn( NoteData &in, TurnType tt );
 	void Little( NoteData &in );
-	void Big( NoteData &in );
+	void Wide( NoteData &in );
+	void Tall( NoteData &in );
 	void SuperShuffleTaps( NoteData &in );
 	void Backwards( NoteData &in );
 	void SwapSides( NoteData &in );

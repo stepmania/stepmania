@@ -90,7 +90,8 @@ CString PlayerOptions::GetString()
 	{
 	case TRANSFORM_NONE:								break;
 	case TRANSFORM_LITTLE:	sReturn += "Little, ";		break;
-	case TRANSFORM_BIG:		sReturn += "Big, ";			break;
+	case TRANSFORM_WIDE:	sReturn += "Wide, ";		break;
+	case TRANSFORM_TALL:	sReturn += "Tall, ";		break;
 	default:	ASSERT(0);	// invalid
 	}
 
@@ -151,7 +152,8 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "shuffle" )	m_TurnType = TURN_SHUFFLE;
 		else if( sBit == "supershuffle" )m_TurnType = TURN_SUPER_SHUFFLE;
 		else if( sBit == "little" )		m_Transform = TRANSFORM_LITTLE;
-		else if( sBit == "big" )		m_Transform = TRANSFORM_BIG;
+		else if( sBit == "wide" )		m_Transform = TRANSFORM_WIDE;
+		else if( sBit == "tall" )		m_Transform = TRANSFORM_TALL;
 		else if( sBit == "reverse" )	m_bReverseScroll = true;
 		else if( sBit == "noholds" )	m_bHoldNotes = false;
 		else if( sBit == "nofreeze" )	m_bHoldNotes = false;

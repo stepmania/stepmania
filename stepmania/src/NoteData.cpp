@@ -1009,7 +1009,7 @@ void NoteDataUtil::Little(NoteData &in)
 	// leave HoldNotes unchanged (what should be do with them?)
 }
 
-void NoteDataUtil::Big( NoteData &in )
+void NoteDataUtil::Wide( NoteData &in )
 {
 	in.ConvertHoldNotesTo4s();
 
@@ -1038,6 +1038,48 @@ void NoteDataUtil::Big( NoteData &in )
 			}
 			in.SetTapNote(iTrackToAdd, i, TAP_TAP);
 		}
+	}
+
+	in.Convert4sToHoldNotes();
+}
+
+void NoteDataUtil::Tall( NoteData &in )
+{
+	in.ConvertHoldNotesTo4s();
+
+	// insert 16th between all 4th-8ths
+	int max_row = in.GetLastRow();
+	int rows_per_eighth = ROWS_PER_BEAT/2;
+	for( int i=0; i<=max_row; i+=rows_per_eighth ) 
+	{
+		int iRowEarlier = i;
+		int iRowLater = i + rows_per_eighth;
+		int iRowMiddle = i + rows_per_eighth/2;
+		if( in.GetNumTapNonEmptyTracks(iRowEarlier) != 1 )
+			continue;
+		if( in.GetNumTapNonEmptyTracks(iRowLater) != 1 )
+			continue;
+		// there is a 4th and 8th note surrounding iRowBetween
+		
+		if( !in.IsRowEmpty(iRowMiddle) )	// there's already a 16th here
+			continue;
+
+		// add a note determinitsitcally somewhere on a track different from the two surrounding notes
+		int iTrackOfNoteEarlier = in.GetFirstNonEmptyTrack(iRowEarlier);
+		int iTrackOfNoteLater = in.GetFirstNonEmptyTrack(iRowLater);
+		int iTrackOfNoteMiddle = 0;
+		if( abs(iTrackOfNoteEarlier-iTrackOfNoteLater) == 2 )
+			iTrackOfNoteMiddle = (iTrackOfNoteEarlier+iTrackOfNoteLater)/2;
+		else
+			for( int t=min(iTrackOfNoteEarlier,iTrackOfNoteLater)-1; t<=max(iTrackOfNoteEarlier,iTrackOfNoteLater)+1; t++ )
+			{
+				iTrackOfNoteMiddle = t;
+				CLAMP( iTrackOfNoteMiddle, 0, in.GetNumTracks()-1 );
+				if( iTrackOfNoteMiddle!=iTrackOfNoteEarlier && iTrackOfNoteMiddle!=iTrackOfNoteLater )
+					break;
+			}
+
+		in.SetTapNote(iTrackOfNoteMiddle, iRowMiddle, TAP_TAP);
 	}
 
 	in.Convert4sToHoldNotes();
