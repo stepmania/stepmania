@@ -322,10 +322,13 @@ int FFMpeg_Helper::DecodePacket()
 
 		int got_frame;
 		CHECKPOINT;
+		/* Hack: we need to send size = 0 to flush frames at the end, but we have
+		 * to give it a buffer to read from since it tries to read anyway. */
+		static uint8_t dummy[FF_INPUT_BUFFER_PADDING_SIZE] = { 0 };
 		int len = avcodec::avcodec_decode_video(
 				&m_stream->codec, 
 				&frame, &got_frame,
-				pkt.data, pkt.size );
+				pkt.size? pkt.data:dummy, pkt.size );
 		CHECKPOINT;
 
 		if (len < 0)
