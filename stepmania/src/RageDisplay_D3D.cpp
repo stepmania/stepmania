@@ -332,7 +332,7 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 	if( !bWindowed && iBPP != 16 && iBPP != 32 )
 	{
 		GraphicsWindow::Shutdown();
-		throw RageException( ssprintf("Invalid BPP '%u' specified", iBPP) );
+		RageException::Throw( "Invalid BPP '%i' specified", iBPP );
 	}
 
 	// Test each back buffer format until we find something that works.
