@@ -23,6 +23,7 @@
 #include "LifeMeter.h"
 #include "ScoreDisplay.h"
 #include "DifficultyIcon.h"
+#include "DifficultyMeter.h"
 #include "BPMDisplay.h"
 class Inventory;
 #include "BeginnerHelper.h"
@@ -165,6 +166,7 @@ protected:
 	Inventory*			m_pInventory[NUM_PLAYERS];
 	
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
+	DifficultyMeter		m_DifficultyMeter[NUM_PLAYERS];
 
 	Sprite				m_sprOniGameOver[NUM_PLAYERS];
 	void				ShowOniGameOver( PlayerNumber pn );

@@ -613,15 +613,16 @@ void ScreenGameplay::Init()
 
 
 
-    FOREACH_PlayerNumber(p)
+    FOREACH_EnabledPlayer(p)
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
-			continue;
-
 		m_DifficultyIcon[p].Load( THEME->GetPathToG(ssprintf("ScreenGameplay difficulty icons 2x%d",NUM_DIFFICULTIES)) );
-		
 		/* Position it in LoadNextSong. */
 		this->AddChild( &m_DifficultyIcon[p] );
+
+		m_DifficultyMeter[p].SetName( ssprintf("ScreenGameplay DifficultyMeterP%d",p+1) );
+		m_DifficultyMeter[p].Load();
+		/* Position it in LoadNextSong. */
+		this->AddChild( &m_DifficultyMeter[p] );
 	}
 
 
@@ -912,7 +913,8 @@ void ScreenGameplay::LoadNextSong()
 					PREFSMAN->m_iProgressiveNonstopLifebar);
 			}
 
-			m_DifficultyIcon[p].SetFromSteps( PlayerNumber(p), GAMESTATE->m_pCurSteps[p] );
+			m_DifficultyIcon[p].SetFromSteps( p, GAMESTATE->m_pCurSteps[p] );
+			m_DifficultyMeter[p].SetFromSteps( GAMESTATE->m_pCurSteps[p] );
 
 			/* The actual note data for scoring is the base class of Player.  This includes
 			 * transforms, like Wide.  Otherwise, the scoring will operate on the wrong data. */
@@ -964,11 +966,11 @@ void ScreenGameplay::LoadNextSong()
 	{
 		FOREACH_EnabledPlayer( p )
 		{
-			if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
-				continue;
-
 			m_DifficultyIcon[p].SetName( ssprintf("DifficultyP%d%s%s",p+1,bExtra?"Extra":"",bReverse[p]?"Reverse":"") );
 			SET_XY( m_DifficultyIcon[p] );
+
+			m_DifficultyMeter[p].SetName( ssprintf("DifficultyMeterP%d%s%s",p+1,bExtra?"Extra":"",bReverse[p]?"Reverse":"") );
+			SET_XY( m_DifficultyMeter[p] );
 		}
 	}
 
@@ -2317,6 +2319,7 @@ void ScreenGameplay::TweenOnScreen()
 		ON_COMMAND( m_textPlayerOptions[p] );
 		ON_COMMAND( m_ActiveAttackList[p] );
 		ON_COMMAND( m_DifficultyIcon[p] );
+		ON_COMMAND( m_DifficultyMeter[p] );
 	}
 	m_Overlay.PlayCommand("On");
 }
@@ -2350,6 +2353,7 @@ void ScreenGameplay::TweenOffScreen()
 		OFF_COMMAND( m_textPlayerOptions[p] );
 		OFF_COMMAND( m_ActiveAttackList[p] );
 		OFF_COMMAND( m_DifficultyIcon[p] );
+		OFF_COMMAND( m_DifficultyMeter[p] );
 	}
 	m_Overlay.PlayCommand("Off");
 

@@ -732,7 +732,7 @@ int GameState::GetCourseSongIndex() const
 CString GameState::GetPlayerDisplayName( PlayerNumber pn ) const
 {
 	ASSERT( IsPlayerEnabled(pn) );
-	const CString defaultnames[NUM_PLAYERS] = { "PLAYER 1", "PLAYER 2" };
+	const CString defaultnames[NUM_PLAYERS] = { "Player 1", "Player 2" };
 	if( IsHumanPlayer(pn) )
 	{
 		if( !PROFILEMAN->GetPlayerName(pn).empty() )

@@ -290,6 +290,19 @@ void ScreenEvaluation::Init()
 	//
 	m_soundStart.Load( THEME->GetPathToS("ScreenEvaluation start") );
 
+	
+	//
+	// init player name area
+	//
+	FOREACH_EnabledPlayer( p )
+	{
+		m_textPlayerName[p].LoadFromFont( THEME->GetPathF(m_sName,"PlayerName") );
+		m_textPlayerName[p].SetName( ssprintf("PlayerNameP%d",p+1) );
+		m_textPlayerName[p].SetText( GAMESTATE->GetPlayerDisplayName(p) );
+		SET_XY_AND_ON_COMMAND( m_textPlayerName[p] );
+		this->AddChild( &m_textPlayerName[p] );
+	}
+
 	//
 	// init banner area
 	//
@@ -374,6 +387,23 @@ void ScreenEvaluation::Init()
 					m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
 					SET_XY_AND_ON_COMMAND( m_DifficultyIcon[p] );
 					this->AddChild( &m_DifficultyIcon[p] );
+					
+					m_DifficultyMeter[p].SetName( ssprintf("ScreenEvaluation DifficultyMeterP%d",p+1) );
+					m_DifficultyMeter[p].Load();
+					switch( m_Type )
+					{
+					case stage:
+						m_DifficultyMeter[p].SetFromSteps( GAMESTATE->m_pCurSteps[p] );
+						break;
+					case course:
+						m_DifficultyMeter[p].SetFromCourse( GAMESTATE->m_pCurCourse, p );
+						break;
+					default:
+						ASSERT(0);
+					}
+					m_DifficultyMeter[p].SetName( ssprintf("DifficultyMeterP%d",p+1) );
+					SET_XY_AND_ON_COMMAND( m_DifficultyMeter[p] );
+					this->AddChild( &m_DifficultyMeter[p] );
 					
 					m_textPlayerOptions[p].LoadFromFont( THEME->GetPathToF("Common normal") );
 					CString sPO = GAMESTATE->m_PlayerOptions[p].GetThemedString();
@@ -1127,15 +1157,20 @@ void ScreenEvaluation::CommitScores(
 
 void ScreenEvaluation::TweenOffScreen()
 {
+	// player name area
+	FOREACH_EnabledPlayer( p ) 
+	{
+		OFF_COMMAND( m_textPlayerName[p] );
+	}
+
 	// large banner area
 	OFF_COMMAND( m_LargeBanner );
 	OFF_COMMAND( m_sprLargeBannerFrame );
 	OFF_COMMAND( m_sprStage );
-	FOREACH_PlayerNumber( p )
+	FOREACH_EnabledPlayer( p )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
-			continue;
 		OFF_COMMAND( m_DifficultyIcon[p] );
+		OFF_COMMAND( m_DifficultyMeter[p] );
 		OFF_COMMAND( m_textPlayerOptions[p] );
 		OFF_COMMAND( m_sprDisqualified[p] );
 	}
@@ -1150,10 +1185,8 @@ void ScreenEvaluation::TweenOffScreen()
 	// grade area
 	if( SHOW_GRADE_AREA )
 	{
-		FOREACH_PlayerNumber( p ) 
+		FOREACH_EnabledPlayer( p ) 
 		{
-			if( !GAMESTATE->IsPlayerEnabled(p) )
-				continue;
 			OFF_COMMAND( m_sprGradeFrame[p] );
 			OFF_COMMAND( m_Grades[p] );
 			OFF_COMMAND( m_sprGrade[p] );
@@ -1162,11 +1195,8 @@ void ScreenEvaluation::TweenOffScreen()
 
 	if( SHOW_GRAPH_AREA )
 	{
-		FOREACH_PlayerNumber( p ) 
+		FOREACH_EnabledPlayer( p ) 
 		{
-			if( !GAMESTATE->IsPlayerEnabled(p) )
-				continue;	// skip
-
 			OFF_COMMAND( m_sprGraphFrame[p] );
 			OFF_COMMAND( m_Graph[p] );
 		}
@@ -1174,11 +1204,8 @@ void ScreenEvaluation::TweenOffScreen()
 
 	if( SHOW_COMBO_AREA )
 	{
-		FOREACH_PlayerNumber( p ) 
+		FOREACH_EnabledPlayer( p ) 
 		{
-			if( !GAMESTATE->IsPlayerEnabled(p) )
-				continue;	// skip
-
 			OFF_COMMAND( m_Combo[p] );
 		}
 	}

@@ -21,6 +21,7 @@
 #include "ScoreDisplayNormal.h"
 #include "Banner.h"
 #include "DifficultyIcon.h"
+#include "DifficultyMeter.h"
 #include "PercentageDisplay.h"
 #include "GraphDisplay.h"
 #include "ComboGraph.h"
@@ -76,11 +77,15 @@ protected:
 	BGAnimation m_bgOverlay;
 	ConditionalBGA m_bgCondBga;
 
+	// player name area
+	BitmapText			m_textPlayerName[NUM_PLAYERS];
+
 	// banner area
 	Banner				m_LargeBanner;
 	AutoActor			m_sprLargeBannerFrame;
 	AutoActor			m_sprStage;
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
+	DifficultyMeter		m_DifficultyMeter[NUM_PLAYERS];
 	BitmapText			m_textPlayerOptions[NUM_PLAYERS];
 	AutoActor			m_sprDisqualified[NUM_PLAYERS];
 	Banner				m_SmallBanner[MAX_SONGS_TO_SHOW];

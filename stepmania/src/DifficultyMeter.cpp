@@ -74,14 +74,14 @@ void DifficultyMeter::Load()
 		}
 		else
 			Feet = "0X";
-		m_textFeet.LoadFromTextureAndChars( THEME->GetPathToG( ssprintf("%s bar", m_sName.c_str())), Feet );
+		m_textFeet.LoadFromTextureAndChars( THEME->GetPathG(m_sName,"bar"), Feet );
 		SET_XY_AND_ON_COMMAND( &m_textFeet );
 		this->AddChild( &m_textFeet );
 	}
 
 	if( SHOW_DIFFICULTY )
 	{
-		m_Difficulty.Load( THEME->GetPathToG( ssprintf("%s difficulty", m_sName.c_str())) );
+		m_Difficulty.Load( THEME->GetPathG(m_sName,"difficulty") );
 		m_Difficulty->SetName( "Difficulty" );
 		SET_XY_AND_ON_COMMAND( m_Difficulty );
 		this->AddChild( m_Difficulty );
@@ -90,7 +90,7 @@ void DifficultyMeter::Load()
 	if( SHOW_METER )
 	{
 		m_textMeter.SetName( "Meter" );
-		m_textMeter.LoadFromFont( THEME->GetPathToN( ssprintf("%s meter", m_sName.c_str())) );
+		m_textMeter.LoadFromFont( THEME->GetPathN(m_sName,"meter") );
 		SET_XY_AND_ON_COMMAND( m_textMeter );
 		this->AddChild( &m_textMeter );
 	}
