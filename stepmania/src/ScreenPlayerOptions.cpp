@@ -18,6 +18,7 @@
 #include "ThemeManager.h"
 #include "AnnouncerManager.h"
 
+#define SONGSEL_SCREEN				THEME->GetMetric("ScreenGameplay","SongSelectScreen")
 
 enum {
 	PO_SPEED = 0,
@@ -141,7 +142,7 @@ void ScreenPlayerOptions::GoToPrevState()
 		GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS)
 		SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
 	else
-		SCREENMAN->SetNewScreen( "ScreenSelectMusic" );
+		SCREENMAN->SetNewScreen( SONGSEL_SCREEN );
 }
 
 void ScreenPlayerOptions::GoToNextState()

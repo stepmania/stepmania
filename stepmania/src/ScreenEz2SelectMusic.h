@@ -47,6 +47,7 @@ protected:
 	Sprite  m_ChoiceListHighlight;
 	Sprite  m_Guide;
 	Sprite				m_sprOptionsMessage;
+	Sprite  m_PumpDifficultyCircle;
 	BitmapText	m_PumpDifficultyRating;
 	MusicBannerWheel			m_MusicBannerWheel;
 	MenuElements		m_Menu;

@@ -86,6 +86,10 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 			m_iSelection[p] = 0;
 		}
 
+		m_PumpDifficultyCircle.Load( THEME->GetPathTo("Graphics","select music pump difficulty circle"));
+		m_PumpDifficultyCircle.SetXY( PUMP_DIFF_X, PUMP_DIFF_Y );
+		this->AddChild( &m_PumpDifficultyCircle );
+
 		m_PumpDifficultyRating.LoadFromFont( THEME->GetPathTo("Fonts","pump songselect difficulty") );
 		m_PumpDifficultyRating.SetXY( PUMP_DIFF_X, PUMP_DIFF_Y );
 		this->AddChild(&m_PumpDifficultyRating);
