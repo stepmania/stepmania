@@ -63,21 +63,6 @@ const int NUM_SCORE_DIGITS	=	9;
 static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
 CString g_sFallbackCDTitlePath;
 
-/* We make a backface for the CDTitle by rotating it on Y and mirroring it
- * on Y by flipping texture coordinates. */
-static void FlipSpriteHorizontally(Sprite &s)
-{
-	s.StopUsingCustomCoords();
-
-	float Coords[8];
-	s.GetActiveTextureCoords(Coords);
-	swap(Coords[0], Coords[6]); /* top left X <-> top right X */
-	swap(Coords[1], Coords[7]); /* top left Y <-> top right Y */
-	swap(Coords[2], Coords[4]); /* bottom left X <-> bottom left X */
-	swap(Coords[3], Coords[5]); /* bottom left Y <-> bottom left Y */
-	s.SetCustomTextureCoords(Coords);
-}
-
 ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );
@@ -182,10 +167,8 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 
 	m_sprCDTitleBack.SetName( "CDTitle" );
 	m_sprCDTitleBack.Load( THEME->GetPathG(m_sName,"fallback cdtitle") );
-	FlipSpriteHorizontally(m_sprCDTitleBack);
-	m_sprCDTitleBack.SetCullMode( CULL_BACK );
+	m_sprCDTitleBack.SetCullMode( CULL_FRONT );
 	m_sprCDTitleBack.SetDiffuse( RageColor(0.2f,0.2f,0.2f,1) );
-	m_sprCDTitleBack.SetRotationY( 180 );
 	m_sprCDTitleBack.SetEffectSpin( RageVector3(0, 360/CDTITLE_SPIN_SECONDS, 0) );
 	SET_XY( m_sprCDTitleBack );
 	this->AddChild( &m_sprCDTitleBack );
@@ -1398,7 +1381,6 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_sprCDTitleFront.Load( CDTitlePath );
 			m_sprCDTitleBack.Load( CDTitlePath );
 			TEXTUREMAN->EnableOddDimensionWarning();
-			FlipSpriteHorizontally(m_sprCDTitleBack);
 
 			const vector<Song*> best = SONGMAN->GetBestSongs( PROFILE_SLOT_MACHINE );
 			const int index = FindIndex( best.begin(), best.end(), pSong );
