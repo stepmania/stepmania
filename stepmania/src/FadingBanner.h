@@ -31,6 +31,7 @@ public:
 	void LoadRandom();
 	void LoadFallback();
 
+	void SetMovingFast( bool fast ) { m_bMovingFast=fast; }
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
@@ -45,6 +46,7 @@ protected:
 
 	CString		m_sPendingBanner;
 	RageTimer	m_PendingTimer;
+	bool		m_bMovingFast;
 };
 
 #endif

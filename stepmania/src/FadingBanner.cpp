@@ -22,6 +22,7 @@ static const float FadeTime = 0.25;
 
 FadingBanner::FadingBanner()
 {
+	m_bMovingFast = false;
 	m_iIndexFront = 0;
 	for( int i=0; i<2; i++ )
 		this->AddChild( &m_Banner[i] );
@@ -86,9 +87,13 @@ void FadingBanner::BeforeChange()
 /* If this returns false, the banner couldn't be loaded. */
 bool FadingBanner::LoadFromCachedBanner( const CString &path )
 {
+	/* No matter what we load, ensure we don't fade to a stale path. */
+	m_sPendingBanner = "";
+
 	if( TEXTUREMAN->IsTextureRegistered( Banner::BannerTex( path ) ) )
 	{
 		/* The actual file is already cached.  Use it. */
+		BeforeChange();
 		m_Banner[GetBackIndex()].Load( Banner::BannerTex(path) );
 		return true;
 	}
@@ -98,6 +103,7 @@ bool FadingBanner::LoadFromCachedBanner( const CString &path )
 	if( !TEXTUREMAN->IsTextureRegistered(ID) )
 		return false;
 
+	BeforeChange();
 	m_Banner[GetBackIndex()].Load( ID );
 	m_sPendingBanner = path;
 	m_PendingTimer.GetDeltaTime(); /* reset */
@@ -107,10 +113,20 @@ bool FadingBanner::LoadFromCachedBanner( const CString &path )
 
 void FadingBanner::LoadFromSong( Song* pSong )
 {
-	BeforeChange();
-
 	if( !LoadFromCachedBanner(pSong->GetBannerPath()) )
-		m_Banner[GetBackIndex()].LoadFromSong( pSong );
+	{
+		/* Oops.  We couldn't load a banner quickly.  We can load the actual
+		 * banner, but that's slow, so we don't want to do that when we're moving
+		 * fast on the music wheel.  In that case, we should just keep the banner
+		 * that's there (or load a "moving fast" banner).  Once we settle down,
+		 * we'll get called again and load the real banner. */
+
+		if( !m_bMovingFast )
+		{
+			BeforeChange();
+			m_Banner[GetBackIndex()].LoadFromSong( pSong );
+		}
+	}
 }
 
 void FadingBanner::LoadAllMusic()
