@@ -13,20 +13,22 @@
 */
 
 
-#include "Song.h"
 #include "Course.h"
 
-const int MAX_SONG_QUEUE_SIZE = 400;	// this has to be gigantic to fit an "endless" number of songs
+class LoadingWindow;
+class Song;
+class StyleDef;
+struct PlayerOptions;
 
 class SongManager
 {
 public:
-	SongManager( void(*callback)() );
+	SongManager( LoadingWindow *ld );
 	~SongManager();
 
 	CArray<Song*, Song*>	m_pSongs;	// all songs that can be played
 
-	void InitSongArrayFromDisk( void(*callback)() );
+	void InitSongArrayFromDisk( LoadingWindow *ld );
 	void FreeSongArray();
 	void ReloadSongArray();
 
@@ -66,7 +68,7 @@ public:
 	Song* GetSongFromPath( const CString &sSongPath );
 
 protected:
-	void LoadStepManiaSongDir( CString sDir, void(*callback)() );
+	void LoadStepManiaSongDir( CString sDir, LoadingWindow *ld );
 	void LoadDWISongDir( CString sDir );
 	bool GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredGroup,
 					   Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out );

@@ -19,6 +19,7 @@
 #include "PrefsManager.h"
 #include "RageException.h"
 #include "RageTimer.h"
+#include "arch/LoadingWindow.h"
 
 #include "AnnouncerManager.h"
 #include "ThemeManager.h"
@@ -37,13 +38,13 @@ RageColor g_GroupColors[30];
 RageColor g_ExtraColor;
 
 
-SongManager::SongManager( void(*callback)() )
+SongManager::SongManager( LoadingWindow *ld )
 {
 	for( int i=0; i<NUM_GROUP_COLORS; i++ )
 		g_GroupColors[i] = GROUP_COLOR( i );
 	g_ExtraColor = EXTRA_COLOR;
 
-	InitSongArrayFromDisk( callback );
+	InitSongArrayFromDisk( ld );
 	ReadStatisticsFromDisk();
 
 	InitCoursesFromDisk();
@@ -56,15 +57,15 @@ SongManager::~SongManager()
 }
 
 
-void SongManager::InitSongArrayFromDisk( void(*callback)() )
+void SongManager::InitSongArrayFromDisk( LoadingWindow *ld )
 {
-	LoadStepManiaSongDir( "Songs", callback );
+	LoadStepManiaSongDir( "Songs", ld );
 
 	for( unsigned i=0; i<PREFSMAN->m_asAdditionalSongFolders.size(); i++ )
-        LoadStepManiaSongDir( PREFSMAN->m_asAdditionalSongFolders[i], callback );
+        LoadStepManiaSongDir( PREFSMAN->m_asAdditionalSongFolders[i], ld );
 
 	if( PREFSMAN->m_DWIPath != "" )
-		LoadStepManiaSongDir( PREFSMAN->m_DWIPath + "\\Songs", callback );
+		LoadStepManiaSongDir( PREFSMAN->m_DWIPath + "\\Songs", ld );
 
 	LOG->Trace( "Found %d Songs.", m_pSongs.size() );
 }
@@ -114,7 +115,7 @@ void SongManager::AddGroup( CString sDir, CString sGroupDirName )
 	m_GroupBannerPaths.push_back(sBannerPath);
 }
 
-void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
+void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 {
 	// trim off the trailing slash if any
 	TrimRight( sDir, "/\\" );
@@ -149,9 +150,10 @@ void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 				continue;		// ignore it
 
 			// this is a song directory.  Load a new song!
-			GAMESTATE->m_sLoadingMessage = ssprintf("Loading songs...\n%s\n%s", sGroupDirName.GetString(), sSongDirName.GetString());
-			if( callback )
-				callback();
+			if( ld ) {
+				ld->SetText( ssprintf("Loading songs...\n%s\n%s", sGroupDirName.GetString(), sSongDirName.GetString()));
+				ld->Paint();
+			}
 			Song* pNewSong = new Song;
 			if( !pNewSong->LoadFromSongDir( ssprintf("%s\\%s\\%s", sDir.GetString(), sGroupDirName.GetString(), sSongDirName.GetString()) ) ) {
 				/* The song failed to load. */
@@ -169,10 +171,11 @@ void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 		/* Add this group to the group array. */
 		AddGroup(sDir, sGroupDirName);
 	}
-
-	GAMESTATE->m_sLoadingMessage = "Done loading songs.";
-	if( callback )
-		callback();
+	
+	if( ld ) {
+		ld->Paint();
+		ld->SetText("Done loading songs.");
+	}
 }
 
 /*

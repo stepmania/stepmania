@@ -30,6 +30,9 @@
 #include "RageNetwork.h"
 #include "RageMath.h"
 
+#include "arch/arch.h"
+#include "arch/LoadingWindow.h"
+
 #include "SDL.h"
 #include "SDL_syswm.h"		// for SDL_SysWMinfo
 
@@ -85,9 +88,8 @@ const int SM_PORT = 26573;	// Quake port + "Ko" + "na" + "mitsu"
 	Common stuff
 ------------------------------------------------*/
 int		flags = 0;		/* SDL video flags */
-int		bpp = 0;		/* Preferred screen bpp */
 int		window_w = SCREEN_WIDTH, window_h = SCREEN_HEIGHT;	/* window width and height */
-SDL_Surface *loading_screen = NULL;
+LoadingWindow *loading_window = NULL;
 CString  g_sErrorString = "";
 
 void ChangeToDirOfExecutable()
@@ -109,54 +111,14 @@ void ChangeToDirOfExecutable()
 	}
 }
 
-	
-void PaintLoadingWindow()
-{
-	SDL_UpdateRect(loading_screen, 0,0,0,0);
-}
-
 void CreateLoadingWindow()
 {
-	ASSERT( loading_screen == NULL );
+	ASSERT( loading_window == NULL );
 
-    /* Initialize the SDL library */
-    if( SDL_InitSubSystem(SDL_INIT_VIDEO) < 0 )
-        throw RageException( "Couldn't initialize SDL: %s\n", SDL_GetError() );
-
-    SDL_Surface *image;
-
-    /* Load the BMP file into a surface */
-    image = SDL_LoadBMP("loading.bmp");
-    if( image == NULL )
-        throw RageException("Couldn't load loading.bmp: %s\n",SDL_GetError());
-
-    /* Initialize the display in a 640x480 16-bit mode */
-    loading_screen = SDL_SetVideoMode(image->w, image->h, 16, SDL_SWSURFACE|SDL_ANYFORMAT|SDL_NOFRAME);
-    if( loading_screen == NULL )
-        throw RageException( "Couldn't initialize loading window: %s\n", SDL_GetError() );
-
+	loading_window = MakeLoadingWindow();
 	SDL_WM_SetCaption("StepMania", "StepMania");
 
-    /* Blit onto the screen surface */
-    SDL_Rect dest;
-    dest.x = 0;
-    dest.y = 0;
-    dest.w = (Uint16)image->w;
-    dest.h = (Uint16)image->h;
-    SDL_BlitSurface(image, NULL, loading_screen, NULL);
-
-	SDL_WM_SetCaption( "StepMania", NULL);
-
-	PaintLoadingWindow();
-
-    /* Free the allocated BMP surface */
-    SDL_FreeSurface(image);
-}
-
-void DestroyLoadingWindow()
-{
-	SDL_QuitSubSystem( SDL_INIT_VIDEO );
-	loading_screen = NULL;
+	loading_window->Paint();
 }
 
 
@@ -269,6 +231,28 @@ void ApplyGraphicOptions()
 
 
 void GameLoop();
+#include "SDL_utils.h"
+#include "SDL_image.h"
+#include "SDL_rotozoom.h"
+#include "StepMania.xpm" /* icon */
+
+void SetIcon()
+{
+	SDL_Surface *srf = IMG_ReadXPMFromArray(icon);
+	SDL_SetColorKey( srf, SDL_SRCCOLORKEY, SDL_MapRGB(srf->format, 0xFF, 0, 0xFF));
+
+	/* Windows icons are 32x32 and SDL can't resize them for us, which
+	 * causes mask corruption.  (Actually, the above icon *is* 32x32;
+	 * this is here just in case it changes.) */
+	ConvertSDLSurface(srf, srf->w, srf->h,
+		32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+	SDL_Surface *dst = zoomSurface(srf, 32, 32);
+
+	SDL_SetAlpha( dst, SDL_SRCALPHA, SDL_ALPHA_OPAQUE );
+	SDL_WM_SetIcon(dst, NULL /* derive from alpha */);
+	SDL_FreeSurface(srf);
+	SDL_FreeSurface(dst);
+}
 
 //-----------------------------------------------------------------------------
 // Name: WinMain()
@@ -316,9 +300,14 @@ int main(int argc, char* argv[])
 	try{
 #endif
 
+	/* Initialize the SDL library. */
+    if( SDL_InitSubSystem(SDL_INIT_VIDEO) < 0 )
+        throw RageException( "Couldn't initialize SDL: %s\n", SDL_GetError() );
+
+	SetIcon();
 
 	CreateLoadingWindow();
-	PaintLoadingWindow();
+	loading_window->Paint();
 
 	//
 	// Create game objects
@@ -343,9 +332,9 @@ int main(int argc, char* argv[])
 	INPUTQUEUE	= new InputQueue;
 	SONGINDEX	= new SongCacheIndex;
 	/* depends on SONGINDEX: */
-	SONGMAN		= new SongManager( PaintLoadingWindow );		// this takes a long time to load
+	SONGMAN		= new SongManager( loading_window );		// this takes a long time to load
 
-	DestroyLoadingWindow();	// destroy this before init'ing Display
+	delete loading_window;		// destroy this before init'ing Display
 
 	PREFSMAN->ReadGlobalPrefsFromDisk( true );
 
