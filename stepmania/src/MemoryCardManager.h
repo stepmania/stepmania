@@ -32,11 +32,8 @@ public:
 	CString GetName( PlayerNumber pn ) const;
 
 protected:
-	void UpdateUnassignedCards();	// do our best to assign a Device to each player
 	void PauseMountingThread();	// call this before mouting, reading, or writing to memory card
 	void UnPauseMountingThread();	// call this when done mouting, reading, or writing to memory card
-
-	MemoryCardDriver *m_pDriver;
 
 	vector<UsbStorageDevice> m_vStorageDevices;	// all currently connected
 

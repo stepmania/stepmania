@@ -7,10 +7,12 @@
 #include "RageLog.h"
 #include "RageFileManager.h"
 #include "RageFileDriver.h"
+#include "RageFileDriverTimeout.h"
 #include "ScreenManager.h"
 #include "ProfileManager.h"
 #include "Foreach.h"
 #include "GameState.h"
+#include "RageUtil_WorkerThread.h"
 
 MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -28,9 +30,214 @@ static const CString MEM_CARD_MOUNT_POINT_INTERNAL[NUM_PLAYERS] =
 	"@mc2int/",
 };
 
-MemoryCardManager::MemoryCardManager()
+/* Only access the memory card driver in a timeout-safe thread. */
+class ThreadedMemoryCardWorker: public WorkerThread
+{
+public:
+	ThreadedMemoryCardWorker();
+	~ThreadedMemoryCardWorker();
+
+	enum MountThreadState 
+	{
+		detect_and_mount,
+		detect_and_dont_mount,
+		paused
+	};
+	void SetMountThreadState( MountThreadState mts );
+
+	/* These functions may time out. */
+	bool Mount( const UsbStorageDevice *pDevice );
+	bool Unmount( const UsbStorageDevice *pDevice );
+	bool Flush( const UsbStorageDevice *pDevice );
+	void Reset();
+
+	/* This function will not time out. */
+	bool StorageDevicesChanged( vector<UsbStorageDevice> &aOut );
+
+protected:
+	void HandleRequest( int iRequest );
+	void RequestTimedOut();
+	void DoHeartbeat();
+
+private:
+	MemoryCardDriver *m_pDriver;
+	MountThreadState m_MountThreadState;
+
+	/* We make a copy of the device info we're working with, since the pointer
+	 * we're given will become invalid if the operation times out and DoRequest
+	 * returns. */
+	UsbStorageDevice m_RequestDevice;
+
+	bool m_bResult;
+
+	RageMutex UsbStorageDevicesMutex;
+	bool m_bUsbStorageDevicesChanged;
+	vector<UsbStorageDevice> m_aUsbStorageDevices;
+
+	enum
+	{
+		REQ_MOUNT,
+		REQ_UNMOUNT,
+		REQ_FLUSH,
+		REQ_RESET
+	};
+};
+
+bool ThreadedMemoryCardWorker::StorageDevicesChanged( vector<UsbStorageDevice> &aOut )
+{
+	UsbStorageDevicesMutex.Lock();
+	if( !m_bUsbStorageDevicesChanged )
+	{
+		UsbStorageDevicesMutex.Unlock();
+		return false;
+	}
+
+	aOut = m_aUsbStorageDevices;
+	m_aUsbStorageDevices.clear();
+	m_bUsbStorageDevicesChanged = false;
+
+	UsbStorageDevicesMutex.Unlock();
+	return true;
+}
+
+
+ThreadedMemoryCardWorker::ThreadedMemoryCardWorker():
+	WorkerThread("ThreadedMemoryCardWorker"),
+	UsbStorageDevicesMutex("UsbStorageDevicesMutex")
 {
 	m_pDriver = MakeMemoryCardDriver();
+	m_MountThreadState = detect_and_mount;
+	SetHeartbeat( 0.1f );
+
+	StartThread();
+}
+
+ThreadedMemoryCardWorker::~ThreadedMemoryCardWorker()
+{
+	StopThread();
+
+	delete m_pDriver;
+}
+
+void ThreadedMemoryCardWorker::SetMountThreadState( MountThreadState mts )
+{
+	/* If "pause", stop calling updates in the heartbeat.  In principle, we should
+	 * also not return from this function until the current heartbeat, if running,
+	 * finishes.  However, since we can't guarantee that it'll exit within the timeout,
+	 * there's no point: we have to return when we time out, and in that case the
+	 * heartbeat will still be running.  I don't know if the reasons for pausing
+	 * really need us to wait, so don't. */
+	m_MountThreadState = mts;
+}
+
+void ThreadedMemoryCardWorker::HandleRequest( int iRequest )
+{
+	switch( iRequest )
+	{
+	case REQ_MOUNT:
+		m_bResult = m_pDriver->Mount( &m_RequestDevice );
+		break;
+
+	case REQ_UNMOUNT:
+		m_pDriver->Unmount( &m_RequestDevice );
+		break;
+
+	case REQ_FLUSH:
+		m_pDriver->Flush( &m_RequestDevice );
+		break;
+	case REQ_RESET:
+		m_pDriver->Reset();
+		break;
+	}
+}
+
+void ThreadedMemoryCardWorker::RequestTimedOut()
+{
+}
+
+void ThreadedMemoryCardWorker::DoHeartbeat()
+{
+	if( m_MountThreadState == paused )
+		return;
+
+	/* If true, detect and mount.  If false, only detect. */
+	bool bMount = (m_MountThreadState == detect_and_mount);
+
+	vector<UsbStorageDevice> aStorageDevices;
+//	LOG->Trace("update");
+	if( !m_pDriver->DoOneUpdate( bMount, aStorageDevices ) )
+		return;
+
+	UsbStorageDevicesMutex.Lock();
+	m_aUsbStorageDevices = aStorageDevices;
+	m_bUsbStorageDevicesChanged = true;
+	UsbStorageDevicesMutex.Unlock();
+}
+
+bool ThreadedMemoryCardWorker::Mount( const UsbStorageDevice *pDevice )
+{
+	ASSERT( TimeoutEnabled() );
+
+	/* If we're currently in a timed-out state, fail. */
+	if( IsTimedOut() )
+		return false;
+
+	m_RequestDevice = *pDevice;
+	if( !DoRequest(REQ_MOUNT) )
+		return false;
+
+	return m_bResult;
+}
+
+bool ThreadedMemoryCardWorker::Unmount( const UsbStorageDevice *pDevice )
+{
+	ASSERT( TimeoutEnabled() );
+
+	/* If we're currently in a timed-out state, fail. */
+	if( IsTimedOut() )
+		return false;
+
+	m_RequestDevice = *pDevice;
+	if( !DoRequest(REQ_UNMOUNT) )
+		return false;
+
+	return true;
+}
+
+bool ThreadedMemoryCardWorker::Flush( const UsbStorageDevice *pDevice )
+{
+	ASSERT( TimeoutEnabled() );
+
+	/* If we're currently in a timed-out state, fail. */
+	if( IsTimedOut() )
+		return false;
+
+	m_RequestDevice = *pDevice;
+	if( !DoRequest(REQ_FLUSH) )
+		return false;
+
+	return true;
+}
+
+void ThreadedMemoryCardWorker::Reset()
+{
+	ASSERT( TimeoutEnabled() );
+
+	/* If we're currently in a timed-out state, fail. */
+	if( IsTimedOut() )
+		return;
+
+	DoRequest( REQ_RESET );
+}
+
+static ThreadedMemoryCardWorker *g_pWorker = NULL;
+
+MemoryCardManager::MemoryCardManager()
+{
+	ASSERT( g_pWorker == NULL );
+
+	g_pWorker = new ThreadedMemoryCardWorker;
+
 	m_bCardsLocked = false;
 	FOREACH_PlayerNumber( p )
 	{
@@ -47,7 +254,8 @@ MemoryCardManager::MemoryCardManager()
 
 MemoryCardManager::~MemoryCardManager()
 {
-	delete m_pDriver;
+	ASSERT( g_pWorker != NULL );
+	SAFE_DELETE(g_pWorker);
 
 	FOREACH_PlayerNumber( pn )
 	{
@@ -58,147 +266,146 @@ MemoryCardManager::~MemoryCardManager()
 
 void MemoryCardManager::Update( float fDelta )
 {
-	if( m_pDriver->StorageDevicesChanged() )
+	const vector<UsbStorageDevice> vOld = m_vStorageDevices;	// copy
+	if( !g_pWorker->StorageDevicesChanged( m_vStorageDevices ) )
+		return;
+	const vector<UsbStorageDevice> &vNew = m_vStorageDevices;
+
+	vector<UsbStorageDevice> vConnects;	// fill these in below
+	vector<UsbStorageDevice> vDisconnects;	// fill these in below
+	
+	// check for disconnects
+	FOREACH_CONST( UsbStorageDevice, vOld, old )
 	{
-		vector<UsbStorageDevice> vOld = m_vStorageDevices;	// copy
-		m_pDriver->GetStorageDevices( m_vStorageDevices );
-		vector<UsbStorageDevice> &vNew = m_vStorageDevices;
-		vector<UsbStorageDevice> vConnects;	// fill these in below
-		vector<UsbStorageDevice> vDisconnects;	// fill these in below
-		
-		// check for disconnects
-		FOREACH( UsbStorageDevice, vOld, old )
+		vector<UsbStorageDevice>::const_iterator iter = find( vNew.begin(), vNew.end(), *old );
+		if( iter == vNew.end() )	// card no longer present
 		{
-			vector<UsbStorageDevice>::iterator iter = find( vNew.begin(), vNew.end(), *old );
-			if( iter == vNew.end() )	// card no longer present
-			{
-				LOG->Trace( "Disconnected bus %d port %d device %d path %s", old->iBus, old->iPort, old->iLevel, old->sOsMountDir.c_str() );
-				vDisconnects.push_back( *old );
-			}
+			LOG->Trace( "Disconnected bus %d port %d device %d path %s", old->iBus, old->iPort, old->iLevel, old->sOsMountDir.c_str() );
+			vDisconnects.push_back( *old );
 		}
-		
-		// check for connects
-		FOREACH( UsbStorageDevice, vNew, newd )
+	}
+	
+	// check for connects
+	FOREACH_CONST( UsbStorageDevice, vNew, newd )
+	{
+		vector<UsbStorageDevice>::const_iterator iter = find( vOld.begin(), vOld.end(), *newd );
+		if( iter == vOld.end() )	// card wasn't present last update
 		{
-			vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), *newd );
-			if( iter == vOld.end() )	// card wasn't present last update
-			{
-				LOG->Trace( "Connected bus %d port %d device %d path %s", newd->iBus, newd->iPort, newd->iLevel, newd->sOsMountDir.c_str() );
-				vConnects.push_back( *newd );
-			}
+			LOG->Trace( "Connected bus %d port %d device %d path %s", newd->iBus, newd->iPort, newd->iLevel, newd->sOsMountDir.c_str() );
+			vConnects.push_back( *newd );
 		}
+	}
+	
+	// unassign cards that were disconnected
+	FOREACH_PlayerNumber( p )
+	{
+		UsbStorageDevice &assigned_device = m_Device[p];
+		if( assigned_device.IsBlank() )	// not assigned a card
+			continue;
 		
-		// unassign cards that were disconnected
-		FOREACH_PlayerNumber( p )
+		vector<UsbStorageDevice>::iterator iter = find( vDisconnects.begin(), vDisconnects.end(), assigned_device );
+		if( iter != vDisconnects.end() )
 		{
-			UsbStorageDevice &assigned_device = m_Device[p];
-			if( assigned_device.IsBlank() )	// not assigned a card
-				continue;
+			UnmountCard( p );
 			
-			vector<UsbStorageDevice>::iterator iter = find( vDisconnects.begin(), vDisconnects.end(), assigned_device );
-			if( iter != vDisconnects.end() )
-			{
-				UnmountCard( p );
-				
-				assigned_device.MakeBlank();
-				m_soundDisconnect.Play();
-				
-				if( PROFILEMAN->ProfileWasLoadedFromMemoryCard(p) )
-					PROFILEMAN->UnloadProfile( p );
-			}
+			assigned_device.MakeBlank();
+			m_soundDisconnect.Play();
+			
+			if( PROFILEMAN->ProfileWasLoadedFromMemoryCard(p) )
+				PROFILEMAN->UnloadProfile( p );
 		}
+	}
+	
+	// Update the status of already-assigned cards.  It may contain updated info 
+	// like WriteTest results and a new sName.
+	FOREACH_PlayerNumber( p )
+	{
+		UsbStorageDevice &assigned_device = m_Device[p];
+		if( assigned_device.IsBlank() )     // no card assigned to this player
+			continue;
 		
-		// Update the status of already-assigned cards.  It may contain updated info 
-		// like WriteTest results and a new sName.
-		FOREACH_PlayerNumber( p )
+		vector<UsbStorageDevice>::iterator iter = find( m_vStorageDevices.begin(), m_vStorageDevices.end(), assigned_device );
+		if( iter != m_vStorageDevices.end() )
 		{
-			UsbStorageDevice &assigned_device = m_Device[p];
-			if( assigned_device.IsBlank() )     // no card assigned to this player
-				continue;
-			
-			vector<UsbStorageDevice>::iterator iter = find( m_vStorageDevices.begin(), m_vStorageDevices.end(), assigned_device );
-			if( iter != m_vStorageDevices.end() )
-			{
-				// play write test error sound if write test failed since we last checked
-				if( assigned_device.bNeedsWriteTest && !iter->bNeedsWriteTest && !iter->bWriteTestSucceeded )
-					m_soundError.Play();
-				assigned_device = *iter;
-			}
+			// play write test error sound if write test failed since we last checked
+			if( assigned_device.bNeedsWriteTest && !iter->bNeedsWriteTest && !iter->bWriteTestSucceeded )
+				m_soundError.Play();
+			assigned_device = *iter;
 		}
+	}
+	
+	// make a list of unassigned
+	vector<UsbStorageDevice> vUnassignedDevices = m_vStorageDevices;        // copy
+	
+	// remove cards that are already assigned
+	FOREACH_PlayerNumber( p )
+	{
+		UsbStorageDevice &assigned_device = m_Device[p];
+		if( assigned_device.IsBlank() )     // no card assigned to this player
+			continue;
 		
-		// make a list of unassigned
-		vector<UsbStorageDevice> vUnassignedDevices = m_vStorageDevices;        // copy
-		
-		// remove cards that are already assigned
-		FOREACH_PlayerNumber( p )
+		FOREACH( UsbStorageDevice, vUnassignedDevices, d )
 		{
-			UsbStorageDevice &assigned_device = m_Device[p];
-			if( assigned_device.IsBlank() )     // no card assigned to this player
-				continue;
-			
-			FOREACH( UsbStorageDevice, vUnassignedDevices, d )
+			if( *d == assigned_device )
 			{
-				if( *d == assigned_device )
-				{
-					vUnassignedDevices.erase( d );
-					break;
-				}
-			}
-		}
-		
-		// try to assign each device to a player
-		FOREACH_PlayerNumber( p )
-		{
-			LOG->Trace( "Looking for a card for Player %d", p+1 );
-			
-			UsbStorageDevice &assigned_device = m_Device[p];		    
-			if( !assigned_device.IsBlank() )    // they already have an assigned card
-			{
-				LOG->Trace( "Player %d already has a card: '%s'", p+1, assigned_device.sOsMountDir.c_str() );
-				continue;       // skip
-			}
-			
-			FOREACH( UsbStorageDevice, vUnassignedDevices, d )
-			{
-				// search for card dir match
-				if( !PREFSMAN->m_sMemoryCardOsMountPoint[p].empty() &&
-					d->sOsMountDir.CompareNoCase(PREFSMAN->m_sMemoryCardOsMountPoint[p]) )
-					continue;      // not a match
-				
-				// search for USB bus match
-				if( PREFSMAN->m_iMemoryCardUsbBus[p] != -1 &&
-					PREFSMAN->m_iMemoryCardUsbBus[p] != d->iBus )
-					continue;       // not a match
-				
-				if( PREFSMAN->m_iMemoryCardUsbPort[p] != -1 &&
-					PREFSMAN->m_iMemoryCardUsbPort[p] != d->iPort )
-					continue;       // not a match
-				
-				if( PREFSMAN->m_iMemoryCardUsbLevel[p] != -1 &&
-					PREFSMAN->m_iMemoryCardUsbLevel[p] != d->iLevel )
-					continue;       // not a match
-				
-				LOG->Trace( "device match:  iScsiIndex: %d, iBus: %d, iLevel: %d, iPort: %d, sOsMountDir: %s",
-					d->iScsiIndex, d->iBus, d->iLevel, d->iPort, d->sOsMountDir.c_str() );
-				
-				assigned_device = *d;    // save a copy
-				vUnassignedDevices.erase( d );       // remove the device so we don't match it for another player
-				m_bTooLate[p] = GAMESTATE->m_bPlayersFinalized;    // the device is too late if inserted when cards were locked
-				
-				// play sound
-				if( m_bTooLate[p] )
-					m_soundTooLate.Play();
-				else if( !d->bNeedsWriteTest && !d->bWriteTestSucceeded )
-					m_soundError.Play();
-				else
-					m_soundReady.Play();
-				
+				vUnassignedDevices.erase( d );
 				break;
 			}
 		}
-		
-		SCREENMAN->RefreshCreditsMessages();
 	}
+	
+	// try to assign each device to a player
+	FOREACH_PlayerNumber( p )
+	{
+		LOG->Trace( "Looking for a card for Player %d", p+1 );
+		
+		UsbStorageDevice &assigned_device = m_Device[p];		    
+		if( !assigned_device.IsBlank() )    // they already have an assigned card
+		{
+			LOG->Trace( "Player %d already has a card: '%s'", p+1, assigned_device.sOsMountDir.c_str() );
+			continue;       // skip
+		}
+		
+		FOREACH( UsbStorageDevice, vUnassignedDevices, d )
+		{
+			// search for card dir match
+			if( !PREFSMAN->m_sMemoryCardOsMountPoint[p].empty() &&
+				d->sOsMountDir.CompareNoCase(PREFSMAN->m_sMemoryCardOsMountPoint[p]) )
+				continue;      // not a match
+			
+			// search for USB bus match
+			if( PREFSMAN->m_iMemoryCardUsbBus[p] != -1 &&
+				PREFSMAN->m_iMemoryCardUsbBus[p] != d->iBus )
+				continue;       // not a match
+			
+			if( PREFSMAN->m_iMemoryCardUsbPort[p] != -1 &&
+				PREFSMAN->m_iMemoryCardUsbPort[p] != d->iPort )
+				continue;       // not a match
+			
+			if( PREFSMAN->m_iMemoryCardUsbLevel[p] != -1 &&
+				PREFSMAN->m_iMemoryCardUsbLevel[p] != d->iLevel )
+				continue;       // not a match
+			
+			LOG->Trace( "device match:  iScsiIndex: %d, iBus: %d, iLevel: %d, iPort: %d, sOsMountDir: %s",
+				d->iScsiIndex, d->iBus, d->iLevel, d->iPort, d->sOsMountDir.c_str() );
+			
+			assigned_device = *d;    // save a copy
+			vUnassignedDevices.erase( d );       // remove the device so we don't match it for another player
+			m_bTooLate[p] = GAMESTATE->m_bPlayersFinalized;    // the device is too late if inserted when cards were locked
+			
+			// play sound
+			if( m_bTooLate[p] )
+				m_soundTooLate.Play();
+			else if( !d->bNeedsWriteTest && !d->bWriteTestSucceeded )
+				m_soundError.Play();
+			else
+				m_soundReady.Play();
+			
+			break;
+		}
+	}
+	
+	SCREENMAN->RefreshCreditsMessages();
 }
 
 MemoryCardState MemoryCardManager::GetCardState( PlayerNumber pn )
@@ -229,8 +436,8 @@ void MemoryCardManager::UnlockCards()
 	// clear too late flag
 	FOREACH_PlayerNumber( p )
 		m_bTooLate[p] = false;
-	
-	m_pDriver->SetMountThreadState( MemoryCardDriver::detect_and_mount );
+
+	g_pWorker->SetMountThreadState( ThreadedMemoryCardWorker::detect_and_mount );
 }
 
 /* Called just before reading or writing to the memory card.  Should block. */
@@ -251,7 +458,7 @@ void MemoryCardManager::MountCard( PlayerNumber pn )
 		this->PauseMountingThread();
 	}
 
-	if( !m_pDriver->MountAndTestWrite(&m_Device[pn]) )
+	if( !g_pWorker->Mount( &m_Device[pn] ) )
 	{
 		if( bStartingMemoryCardAccess )
 			this->UnPauseMountingThread();
@@ -291,7 +498,7 @@ void MemoryCardManager::UnmountCard( PlayerNumber pn )
 		return;
 
 	/* Leave our own filesystem drivers mounted. */
-	m_pDriver->Unmount( &m_Device[pn] );
+	g_pWorker->Unmount( &m_Device[pn] );
 
 	m_bMounted[pn] = false;
 
@@ -313,10 +520,10 @@ void MemoryCardManager::FlushAndReset()
 			continue;	// skip
 		if( (!d.bNeedsWriteTest && !d.bWriteTestSucceeded) || m_bTooLate[p] )
 			continue;	// skip
-		m_pDriver->Flush(&m_Device[p]);
+		g_pWorker->Flush( &m_Device[p] );
 	}
 	
-	m_pDriver->ResetUsbStorage();	// forces cards to be re-detected
+	g_pWorker->Reset();	// forces cards to be re-detected
 }
 
 bool MemoryCardManager::PathIsMemCard( CString sDir ) const
@@ -339,15 +546,22 @@ CString MemoryCardManager::GetName( PlayerNumber pn ) const
 
 void MemoryCardManager::PauseMountingThread()
 {
-	m_pDriver->SetMountThreadState( MemoryCardDriver::paused );
+	g_pWorker->SetMountThreadState( ThreadedMemoryCardWorker::paused );
+
+	/* Start the timeout period. */
+	g_pWorker->SetTimeout( 10 );
+	RageFileDriverTimeout::SetTimeout( 10 );
 }
 
 void MemoryCardManager::UnPauseMountingThread()
 {
-	m_pDriver->SetMountThreadState( 
+	g_pWorker->SetMountThreadState( 
 		m_bCardsLocked ? 
-		MemoryCardDriver::detect_and_dont_mount : 
-	MemoryCardDriver::detect_and_mount );
+		ThreadedMemoryCardWorker::detect_and_dont_mount : ThreadedMemoryCardWorker::detect_and_mount );
+
+	/* End the timeout period. */
+	g_pWorker->SetTimeout( -1 );
+	RageFileDriverTimeout::SetTimeout( -1 );
 }
 
 bool IsAnyPlayerUsingMemoryCard()
@@ -364,7 +578,7 @@ bool IsAnyPlayerUsingMemoryCard()
 LuaFunction_NoArgs( IsAnyPlayerUsingMemoryCard,		IsAnyPlayerUsingMemoryCard() )
 
 /*
- * (c) 2003-2004 Chris Danford
+ * (c) 2003-2005 Chris Danford, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
