@@ -1204,8 +1204,8 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 	      INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LMETA)))))
 	{
 		// If holding LShift save a BMP, else save a JPG
-		bool bSaveBmp = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT) );
-		SaveScreenshot( "Screenshots/", bSaveBmp ? RageDisplay::bmp : RageDisplay::jpg );
+		bool bSaveUncompressed = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT) );
+		SaveScreenshot( "Screenshots/", bSaveUncompressed );
 		return true;	// handled
 	}
 
