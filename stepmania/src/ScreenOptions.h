@@ -58,7 +58,7 @@ protected:
 	void PositionUnderlines();
 	void PositionHighlights();
 	void TweenHighlight( PlayerNumber player_no );
-	void OnChange();
+	virtual void OnChange();
 
 	void MenuBack( const PlayerNumber p );
 	void MenuStart( const PlayerNumber p );
@@ -82,6 +82,8 @@ protected:
 	Sprite			m_sprPage;
 	BitmapText		m_textOptionLineTitles[MAX_OPTION_LINES];
 	BitmapText		m_textOptions[MAX_OPTION_LINES][MAX_OPTIONS_PER_LINE];	// this array has to be big enough to hold all of the options
+	bool			m_OptionDim[MAX_OPTION_LINES][MAX_OPTIONS_PER_LINE];
+	void DimOption(int line, int option, bool dim);
 
 	int m_iSelectedOption[NUM_PLAYERS][MAX_OPTION_LINES];
 	int m_iCurrentRow[NUM_PLAYERS];

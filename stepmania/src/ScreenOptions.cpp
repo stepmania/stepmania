@@ -79,6 +79,7 @@ ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sPagePath, CStrin
 	m_framePage.SetX( SCREEN_LEFT-SCREEN_WIDTH );
 	m_framePage.BeginTweening( 0.3f, Actor::TWEEN_BIAS_BEGIN );
 	m_framePage.SetTweenX( 0 );
+	ZeroMemory(&m_OptionDim, sizeof(m_OptionDim));
 }
 
 void ScreenOptions::Init( InputMode im, OptionLineData optionLineData[], int iNumOptionLines )
@@ -192,6 +193,17 @@ void ScreenOptions::InitOptionsText()
 		}
 	}
 }
+
+void ScreenOptions::DimOption(int line, int option, bool dim)
+{
+	m_OptionDim[line][option] = dim;
+	m_textOptions[line][option].BeginTweening(.250);
+	if(m_OptionDim[line][option])
+		m_textOptions[line][option].SetTweenDiffuseColor( D3DXCOLOR(.5,.5,.5,1) );
+	else
+		m_textOptions[line][option].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+}
+
 
 void ScreenOptions::PositionUnderlines()
 {
@@ -322,10 +334,16 @@ void ScreenOptions::MenuLeft( const PlayerNumber pn )
 			continue;	// skip
 
 		int iCurRow = m_iCurrentRow[p];
-		if( m_iSelectedOption[p][iCurRow] == 0 )	// can't go left any more
+
+		int new_opt = m_iSelectedOption[p][iCurRow];
+		do {
+			new_opt--;
+		} while(new_opt >= 0 && m_OptionDim[iCurRow][new_opt]);
+		
+		if( new_opt < 0 )	// can't go left any more
 			return;
 
-		m_iSelectedOption[p][iCurRow]--;
+		m_iSelectedOption[p][iCurRow] = new_opt;
 		
 		TweenHighlight( (PlayerNumber)p );
 	}
@@ -341,10 +359,16 @@ void ScreenOptions::MenuRight( const PlayerNumber pn )
 			continue;	// skip
 
 		int iCurRow = m_iCurrentRow[p];
-		if( m_iSelectedOption[p][iCurRow] == m_OptionLineData[iCurRow].iNumOptions-1 )	// can't go right any more
+		int new_opt = m_iSelectedOption[p][iCurRow];
+		do {
+			new_opt++;
+		} while(new_opt < m_OptionLineData[iCurRow].iNumOptions && 
+			    m_OptionDim[iCurRow][new_opt]);
+		
+		if( new_opt == m_OptionLineData[iCurRow].iNumOptions )	// can't go right any more
 			return;
 		
-		m_iSelectedOption[p][iCurRow]++;
+		m_iSelectedOption[p][iCurRow] = new_opt;
 		
 		TweenHighlight( (PlayerNumber)p );
 	}
