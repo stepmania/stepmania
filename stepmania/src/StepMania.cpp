@@ -295,6 +295,7 @@ static bool ChangeAppPri()
 		return false;
 
 	// if using NTPAD don't boost or else input is laggy
+#if defined(_WINDOWS)
 	if( PREFSMAN->m_iBoostAppPriority == -1 )
 	{
 		vector<InputDevice> vDevices;
@@ -307,6 +308,7 @@ static bool ChangeAppPri()
 			return false;
 		}
 	}
+#endif
 
 	return true;
 }
