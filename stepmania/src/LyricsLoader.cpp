@@ -15,12 +15,12 @@ using namespace std;
 
 bool LyricsLoader::LoadFromLRCFile( CString sPath, Song &out )
 {
-	LOG->Trace( "Song::LoadFromLRCFile(%s)", sPath.GetString() );
+	LOG->Trace( "LyricsLoader::LoadFromLRCFile(%s)", sPath.GetString() );
 	
 
 	LRCFile lrc;
 	bool bResult = lrc.ReadFile( sPath );
-	CString	m_sLastFoundColor = "0x00ff00";
+	RageColor	m_LastFoundColor(0,1,0,1);
 
 	if( !bResult )
 		RageException::Throw( "Error opening file '%s' for reading.", sPath.GetString() );
@@ -44,7 +44,16 @@ bool LyricsLoader::LoadFromLRCFile( CString sPath, Song &out )
 		if( 0==stricmp(sValueName,"COLOUR") || 0==stricmp(sValueName,"COLOR") )
 		{
 			// set color var here for this segment
-			m_sLastFoundColor = sValueData;
+			float r=1,b=1,g=1;	// initialize in case sscanf fails
+			int result = sscanf( sValueData.GetString(), "0x%2x%2x%2x", &r, &g, &b );
+			if(result != 3)
+			{
+				LOG->Trace( "The color value '%s' in '%s' is invalid.",
+				sValueData.GetString(), sPath.GetString() );
+				continue;
+			}
+
+			m_LastFoundColor = RageColor(r,g,b,1);
 			continue;
 		}
 
@@ -53,17 +62,19 @@ bool LyricsLoader::LoadFromLRCFile( CString sPath, Song &out )
 			/* If we've gotten this far, and no other statement caught
 			   this value before this does, assume it's a time value. */		
 			
-			LyricSegment	LYRICSTRING;
-			LYRICSTRING.m_sColor = m_sLastFoundColor;
-			LYRICSTRING.m_fStartTime = TimeToSeconds(sValueName);
-			LYRICSTRING.m_sLyric = sValueData;
+			LyricSegment seg;
+			seg.m_Color = m_LastFoundColor;
+			seg.m_fStartTime = TimeToSeconds(sValueName);
+			seg.m_sLyric = sValueData;
 			
-			LYRICSTRING.m_sLyric.Replace( "\\", "\\" ); // to avoid possible screw-ups 
+			/* Er, huh?  This won't do anything (replace \ with \). What's wrong
+			 * with using \ in lyrics? */
+			seg.m_sLyric.Replace( "\\", "\\" ); // to avoid possible screw-ups 
 							    						// if someone uses a \ for whatever
 												        // reason in their lyrics -- Miryokuteki
 			
-			LYRICSTRING.m_sLyric.Replace( "|","\n" ); // Pipe symbols denote a new line in LRC files
-			out.AddLyricSegment( LYRICSTRING );
+			seg.m_sLyric.Replace( "|","\n" ); // Pipe symbols denote a new line in LRC files
+			out.AddLyricSegment( seg );
 		}
 		
 	}

@@ -53,9 +53,7 @@ struct LyricSegment
 {
 	float	m_fStartTime;
 	CString m_sLyric;
-	CString m_sColor;	/* This will eventually be a RAGECOLOR, but until a function
-						   is made to convert a hex color to RAGECOLOR, it's a CString.
-						   This allows for multiple colors of lyric blocks. -- Miryokuteki */
+	RageColor m_Color;
 };
 
 
