@@ -799,17 +799,20 @@ void Song::AddAutoGenNotes()
 
 Grade Song::GetGradeForDifficulty( const StyleDef *st, int p, Difficulty dc ) const
 {
+	// return max grade of notes in difficulty class
 	CArray<Notes*, Notes*> aNotes;
 	this->GetNotesThatMatch( st, p, aNotes );
 	SortNotesArrayByDifficulty( aNotes );
+
+	Grade grade = GRADE_NO_DATA;
 
 	for( int i=0; i<aNotes.GetSize(); i++ )
 	{
 		const Notes* pNotes = aNotes[i];
 		if( pNotes->m_Difficulty == dc )
-			return pNotes->m_TopGrade;
+			grade = max( grade, pNotes->m_TopGrade );
 	}
-	return GRADE_NO_DATA;
+	return grade;
 }
 
 

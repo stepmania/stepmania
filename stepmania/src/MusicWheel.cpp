@@ -185,10 +185,17 @@ void WheelItemDisplay::RefreshGrades()
 
 		if( m_pSong )	// this is a song display
 		{
-			const Difficulty dc = GAMESTATE->m_PreferredDifficulty[p];
-			const Grade grade = m_pSong->GetGradeForDifficulty( GAMESTATE->GetCurrentStyleDef(), p, dc );
-			m_GradeDisplay[p].SetGrade( (PlayerNumber)p, grade );
-			//m_GradeDisplay[p].SetDiffuse( PlayerToColor((PlayerNumber)p) );
+			if( m_pSong == GAMESTATE->m_pCurSong )
+			{
+				Notes* pNotes = GAMESTATE->m_pCurNotes[p];
+				m_GradeDisplay[p].SetGrade( (PlayerNumber)p, pNotes->m_TopGrade );
+			}
+			else
+			{
+				const Difficulty dc = GAMESTATE->m_PreferredDifficulty[p];
+				const Grade grade = m_pSong->GetGradeForDifficulty( GAMESTATE->GetCurrentStyleDef(), p, dc );
+				m_GradeDisplay[p].SetGrade( (PlayerNumber)p, grade );
+			}
 		}
 		else	// this is a section display
 		{
