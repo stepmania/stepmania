@@ -41,10 +41,6 @@
 #define COLOR_NOT_SELECTED	THEME->GetMetricC("ScreenOptions","ColorNotSelected")
 
 
-const ScreenMessage SM_PlaySample			= ScreenMessage(SM_User-4);
-const ScreenMessage SM_TweenOffScreen		= ScreenMessage(SM_User-7);
-
-
 ScreenOptions::ScreenOptions( CString sClassName, bool bEnableTimer )
 {
 	LOG->Trace( "ScreenOptions::ScreenOptions()" );
@@ -404,7 +400,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_MenuTimer:
-		this->SendScreenMessage( SM_TweenOffScreen, 0 );
+		this->SendScreenMessage( SM_BeginFadingOut, 0 );
 		break;
 	case SM_GoToPrevScreen:
 //		this->ExportOptions();	// Don't save options if we're going back!
@@ -414,7 +410,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 		this->ExportOptions();
 		this->GoToNextState();
 		break;
-	case SM_TweenOffScreen:
+	case SM_BeginFadingOut:
 		m_Menu.StartTransitioning( SM_GoToNextScreen );
 
 		m_SoundStart.Play();
@@ -450,7 +446,7 @@ void ScreenOptions::MenuBack( PlayerNumber pn )
 
 void ScreenOptions::StartGoToNextState()
 {
-	this->SendScreenMessage( SM_TweenOffScreen, 0 );
+	this->SendScreenMessage( SM_BeginFadingOut, 0 );
 }
 
 void ScreenOptions::MenuStart( PlayerNumber pn )
@@ -465,11 +461,11 @@ void ScreenOptions::MenuStart( PlayerNumber pn )
 		if( m_iCurrentRow[pn] != m_iNumOptionRows )	// not on exit
 			MenuDown( pn );	// can't go down any more
 		else if( bAllOnExit )
-			this->SendScreenMessage( SM_TweenOffScreen, 0 );
+			this->SendScreenMessage( SM_BeginFadingOut, 0 );
 	}
 	else	// !m_bArcadeOptionsNavigation
 	{
-		this->SendScreenMessage( SM_TweenOffScreen, 0 );
+		this->SendScreenMessage( SM_BeginFadingOut, 0 );
 	}
 }
 

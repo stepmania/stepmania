@@ -161,8 +161,6 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 	if( !MenuI.IsValid() )
 		return;
 
-
-
 	switch( MenuI.button )
 	{
 	case MENU_BUTTON_UP:
@@ -200,29 +198,21 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		if( m_In.IsTransitioning() )
 			break;
 		/* break if the choice is invalid */
-		switch( m_Choice )
+		if( m_Choice == CHOICE_JUKEBOX  ||
+			m_Choice == CHOICE_EDIT )
 		{
-		case CHOICE_GAME_START:
-		case CHOICE_SELECT_GAME:
-		case CHOICE_OPTIONS:
-		#ifdef DEBUG
-		case CHOICE_SANDBOX:
-		#endif
-		case CHOICE_JUKEBOX:
-		case CHOICE_EDIT:
 			if( SONGMAN->GetNumSongs() == 0 )
 			{
 				m_soundInvalid.Play();
 				SCREENMAN->SystemMessage( "No songs are installed" );
-				break;
+				return;
 			}
-			break;
-		case CHOICE_EXIT:
-			ExitGame();
+		}
+		if( m_Choice == CHOICE_EXIT )
+		{
 			LOG->Trace("CHOICE_EXIT: shutting down");
+			ExitGame();
 			return;
-		default:
-			ASSERT(0);
 		}
 
 		if( Screen::JoinInput( DeviceI, type, GameI, MenuI, StyleI ) )

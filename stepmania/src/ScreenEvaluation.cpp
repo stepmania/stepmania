@@ -208,7 +208,9 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	//////////////////////////
 	m_Menu.Load( "ScreenEvaluation" );
 // FIXME:
-//	The header needs to be different depending on the result mode.  How can we do this elegantly?
+//	The header needs to be different depending on the result mode.  
+//  We should really split these different ResultModes into separate derived classes
+//	so that each can have its own Transitions, headers, and such.
 //		THEME->GetPathTo("Graphics",m_ResultMode==RM_ARCADE_SUMMARY?"evaluation summary top edge":"evaluation top edge"),
 	this->AddChild( &m_Menu );
 
@@ -317,13 +319,13 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		{
 		case RM_COURSE:
 			{
-				m_sprPercentFrame[p].Load( THEME->GetPathTo("Graphics","evaluation percent frame") );
+				m_sprPercentFrame[p].Load( THEME->GetPathTo("Graphics","ScreenEvaluation percent frame") );
 				m_sprPercentFrame[p].StopAnimating();
 				m_sprPercentFrame[p].SetState( p );
 				m_sprPercentFrame[p].SetXY( GRADE_X(p), GRADE_Y );
 				this->AddChild( &m_sprPercentFrame[p] );
 
-				m_textOniPercentLarge[p].LoadFromNumbers( THEME->GetPathTo("Numbers","evaluation percent numbers") );
+				m_textOniPercentLarge[p].LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenEvaluation percent numbers") );
 				m_textOniPercentLarge[p].EnableShadow( false );
 				m_textOniPercentLarge[p].SetXY( (PREFSMAN->m_bDancePointsForOni ? DANCE_POINT_X(p) : PERCENT_BASE_X(p) ), PERCENT_BASE_Y );
 				m_textOniPercentLarge[p].SetHorizAlign( Actor::align_right );
@@ -333,7 +335,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 
 				if(!PREFSMAN->m_bDancePointsForOni)
 				{
-					m_textOniPercentSmall[p].LoadFromNumbers( THEME->GetPathTo("Numbers","evaluation percent numbers") );
+					m_textOniPercentSmall[p].LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenEvaluation percent numbers") );
 					m_textOniPercentSmall[p].EnableShadow( false );
 					m_textOniPercentSmall[p].SetZoom( 0.5f );
 					m_textOniPercentSmall[p].SetXY( PERCENT_BASE_X(p), PERCENT_BASE_Y );
@@ -364,13 +366,13 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				}
 
 				// StageInfo stuff
-				m_sprCourseFrame[p].Load( THEME->GetPathTo("Graphics","evaluation stage frame 2x1") );
+				m_sprCourseFrame[p].Load( THEME->GetPathTo("Graphics","ScreenEvaluation stage frame 2x1") );
 				m_sprCourseFrame[p].StopAnimating();
 				m_sprCourseFrame[p].SetState( p );
 				m_sprCourseFrame[p].SetXY( BONUS_X(p), BONUS_Y );
 				this->AddChild( &m_sprCourseFrame[p] );
 		
-				m_textSongsSurvived[p].LoadFromNumbers( THEME->GetPathTo("Numbers","evaluation stage numbers") );
+				m_textSongsSurvived[p].LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenEvaluation stage numbers") );
 				m_textSongsSurvived[p].EnableShadow( false );
 				m_textSongsSurvived[p].SetXY( SONGS_SURVIVED_X(p), SONGS_SURVIVED_Y );
 				m_textSongsSurvived[p].SetText( ssprintf("%02d", stageStats.iSongsPlayed[p]) );
@@ -380,7 +382,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		case RM_ARCADE_STAGE:
 		case RM_ARCADE_SUMMARY:
 			{
-				m_sprGradeFrame[p].Load( THEME->GetPathTo("Graphics","evaluation grade frame 1x2") );
+				m_sprGradeFrame[p].Load( THEME->GetPathTo("Graphics","ScreenEvaluation grade frame 1x2") );
 				m_sprGradeFrame[p].StopAnimating();
 				m_sprGradeFrame[p].SetState( p );
 				m_sprGradeFrame[p].SetXY( GRADE_X(p), GRADE_Y );
@@ -398,7 +400,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				this->AddChild( &m_Grades[p] );
 
 				// Bonus info frame
-				m_sprBonusFrame[p].Load( THEME->GetPathTo("Graphics","evaluation bonus frame 2x1") );
+				m_sprBonusFrame[p].Load( THEME->GetPathTo("Graphics","ScreenEvaluation bonus frame 2x1") );
 				m_sprBonusFrame[p].StopAnimating();
 				m_sprBonusFrame[p].SetState( p );
 				m_sprBonusFrame[p].SetXY( BONUS_X(p), BONUS_Y );
@@ -406,7 +408,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	
 				for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )	// foreach line
 				{
-					m_sprPossibleBar[p][r].Load( THEME->GetPathTo("Graphics","evaluation bars possible 1x2") );
+					m_sprPossibleBar[p][r].Load( THEME->GetPathTo("Graphics","ScreenEvaluation bars possible 1x2") );
 					m_sprPossibleBar[p][r].StopAnimating();
 					m_sprPossibleBar[p][r].SetState( p );
 					m_sprPossibleBar[p][r].SetHorizAlign( Actor::align_left );
@@ -420,7 +422,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 					m_sprPossibleBar[p][r].SetTweenZoomToWidth( BAR_WIDTH*stageStats.fRadarPossible[p][r] );
 					this->AddChild( &m_sprPossibleBar[p][r] );
 
-					m_sprActualBar[p][r].Load( THEME->GetPathTo("Graphics","evaluation bars actual 1x2") );
+					m_sprActualBar[p][r].Load( THEME->GetPathTo("Graphics","ScreenEvaluation bars actual 1x2") );
 					m_sprActualBar[p][r].StopAnimating();
 					m_sprActualBar[p][r].SetState( p );
 					m_sprActualBar[p][r].SetHorizAlign( Actor::align_left );
@@ -442,7 +444,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 
 		if( bNewRecord[p] )
 		{
-			m_sprNewRecord[p].Load( THEME->GetPathTo("Graphics","evaluation new record") );
+			m_sprNewRecord[p].Load( THEME->GetPathTo("Graphics","ScreenEvaluation new record") );
 			m_sprNewRecord[p].SetXY( NEW_RECORD_X(p), NEW_RECORD_Y );
 			m_sprNewRecord[p].SetEffectGlowShift( 2.5f );
 			this->AddChild( &m_sprNewRecord[p] );
@@ -458,7 +460,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	for( l=0; l<NUM_JUDGE_LINES; l++ ) 
 	{
 		// EZ2 should hide these things by placing them off screen with theme metrics
-		m_sprJudgeLabels[l].Load( THEME->GetPathTo("Graphics","evaluation judge labels 1x8") );
+		m_sprJudgeLabels[l].Load( THEME->GetPathTo("Graphics","ScreenEvaluation judge labels 1x8") );
 		m_sprJudgeLabels[l].StopAnimating();
 		m_sprJudgeLabels[l].SetState( l );
 		m_sprJudgeLabels[l].SetXY( JUDGE_LABELS_X, JUDGE_Y(l) );
@@ -466,7 +468,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		this->AddChild( &m_sprJudgeLabels[l] );
 	}
 
-	m_sprScoreLabel.Load( THEME->GetPathTo("Graphics","evaluation score labels") );
+	m_sprScoreLabel.Load( THEME->GetPathTo("Graphics","ScreenEvaluation score labels") );
 	m_sprScoreLabel.SetState( m_ResultMode==RM_COURSE ? 1 : 0 );
 	m_sprScoreLabel.StopAnimating();
 	m_sprScoreLabel.SetXY( SCORE_LABELS_X, SCORE_Y );
@@ -481,7 +483,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 
 		for( l=0; l<NUM_JUDGE_LINES; l++ ) 
 		{
-			m_textJudgeNumbers[l][p].LoadFromNumbers( THEME->GetPathTo("Numbers","evaluation judge numbers") );
+			m_textJudgeNumbers[l][p].LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenEvaluation judge numbers") );
 			m_textJudgeNumbers[l][p].EnableShadow( false );
 			m_textJudgeNumbers[l][p].SetXY( JUDGE_X(m_ResultMode==RM_COURSE,p,l), JUDGE_Y(l) );
 			m_textJudgeNumbers[l][p].SetZoom( 1.0f );
@@ -514,12 +516,12 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	
 	if( m_bTryExtraStage )
 	{
-		m_sprTryExtraStage.Load( THEME->GetPathTo("Graphics",GAMESTATE->IsExtraStage()?"evaluation try extra stage2":"evaluation try extra stage1") );
+		m_sprTryExtraStage.Load( THEME->GetPathTo("Graphics",GAMESTATE->IsExtraStage()?"ScreenEvaluation extra2":"ScreenEvaluation extra1") );
 		m_sprTryExtraStage.SetXY( TRY_EXTRA_STAGE_X, TRY_EXTRA_STAGE_Y );
 		m_sprTryExtraStage.SetEffectGlowShift( 2.5f );
 		this->AddChild( &m_sprTryExtraStage );
 
-		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","evaluation extra stage") );
+		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenEvaluation extra stage") );
 	}
 	else if( bOneHasNewRecord  &&  ANNOUNCER->HasSoundsFor("evaluation new record") )
 	{

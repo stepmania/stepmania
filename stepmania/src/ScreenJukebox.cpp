@@ -144,8 +144,6 @@ ScreenJukebox::ScreenJukebox( bool bDemonstration ) : ScreenGameplay( PrepareFor
 
 ScreenJukebox::~ScreenJukebox()
 {
-//	GAMESTATE->m_bDemonstration = false;
-	//GAMESTATE->Reset();
 }
 
 void ScreenJukebox::Update( float fDeltaTime )
@@ -167,9 +165,6 @@ void ScreenJukebox::Input( const DeviceInput& DeviceI, const InputEventType type
 	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F3 )
 	{
 		(int&)PREFSMAN->m_CoinMode = (PREFSMAN->m_CoinMode+1) % PrefsManager::NUM_COIN_MODES;
-		/*ResetGame();
-				You only changed the coin mode.. as with the arcade versions,
-				the machine should not reset.	-- Miryokuteki				*/
 
 		CString sMessage = "Coin Mode: ";
 		switch( PREFSMAN->m_CoinMode )
@@ -236,7 +231,6 @@ void ScreenJukebox::HandleScreenMessage( const ScreenMessage SM )
 		/* We're actually under Update(), so make sure ScreenGameplay doesn't
 		 * continue grading for this call. */
 		m_soundMusic.StopPlaying();
-
 		SCREENMAN->SetNewScreen( "ScreenJukebox" );
 		return;
 	}

@@ -145,6 +145,9 @@ void MenuTimer::SetTimer( int iSeconds )
 	m_textDigit2.SetZoomX( 1 ); 
 	m_textDigit1.SetEffectNone();
 	m_textDigit2.SetEffectNone();
+
+	m_textDigit1.SetText( ssprintf("%d", ((int)m_fSecondsLeft+1)/10) ); 
+	m_textDigit2.SetText( ssprintf("%d", ((int)m_fSecondsLeft+1)%10) ); 
 }
 
 void MenuTimer::StartTimer()

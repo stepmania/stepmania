@@ -119,7 +119,6 @@ void ResetGame()
 	GAMESTATE->Reset();
 	PREFSMAN->ReadGamePrefsFromDisk();
 	INPUTMAPPER->ReadMappingsFromDisk();
-	GAMESTATE->m_bPlayersCanJoin = true;
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{

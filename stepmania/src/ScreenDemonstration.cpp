@@ -72,8 +72,6 @@ ScreenDemonstration::ScreenDemonstration() : ScreenJukebox( PrepareForDemonstrat
 
 ScreenDemonstration::~ScreenDemonstration()
 {
-	GAMESTATE->m_bDemonstrationOrJukebox = false;
-	GAMESTATE->Reset();
 }
 
 void ScreenDemonstration::Update( float fDeltaTime )
@@ -115,6 +113,7 @@ void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 		return;
 	case SM_GoToNextScreen:
 		m_soundMusic.Stop();
+		GAMESTATE->Reset();
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		return;
 	}

@@ -285,7 +285,7 @@ try_metric_again:
 			m_uHashForBaseThemeMetrics != GetHashForFile(sDefaultMetricPath) )
 		{
 			LOG->Warn( "Metrics file is out of date.  Reloading..." );
-			MessageBeep( MB_OK );
+//			MessageBeep( MB_OK );
 			SwitchTheme(m_sCurThemeName);	// force a reload of the metrics cache
 		}
 	}

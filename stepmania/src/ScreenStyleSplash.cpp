@@ -29,7 +29,6 @@ const ScreenMessage SM_StartClosing		= ScreenMessage(SM_User-8);
 
 ScreenStyleSplash::ScreenStyleSplash()
 {
-	GAMESTATE->m_bPlayersCanJoin = false;
 	SOUNDMAN->StopMusic();
 
 	if(!PREFSMAN->m_bShowDontDie)

@@ -60,6 +60,16 @@ ScreenPlayerOptions::ScreenPlayerOptions() :
 		true );
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("player options intro") );
+
+	m_sprOptionsMessage.Load( THEME->GetPathTo("Graphics","ScreenPlayerOptions options") );
+	m_sprOptionsMessage.StopAnimating();
+	m_sprOptionsMessage.SetXY( CENTER_X, CENTER_Y );
+	m_sprOptionsMessage.SetZoom( 1 );
+	m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
+	//this->AddChild( &m_sprOptionsMessage );	// we have to draw this manually over the top of transitions
+
+	m_bAcceptedChoices = false;
+	m_bGoToOptions = false;
 }
 
 
@@ -187,11 +197,66 @@ void ScreenPlayerOptions::GoToNextState()
 {
 	if( GAMESTATE->m_bEditing )
 		SCREENMAN->PopTopScreen();
-	else if( PREFSMAN->m_bShowSongOptions == true )
+	else if( m_bGoToOptions )
 		SCREENMAN->SetNewScreen( "ScreenSongOptions" );
 	else
 		SCREENMAN->SetNewScreen( "ScreenStage" );
 }
 
 
+void ScreenPlayerOptions::Update( float fDelta )
+{
+	ScreenOptions::Update( fDelta );
+	m_sprOptionsMessage.Update( fDelta );
+}
 
+void ScreenPlayerOptions::DrawPrimitives()
+{
+	ScreenOptions::DrawPrimitives();
+	m_sprOptionsMessage.Draw();
+}
+
+
+void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+{
+	if( type == IET_FIRST_PRESS  &&
+		!m_Menu.m_In.IsTransitioning()  &&
+		MenuI.IsValid()  &&
+		MenuI.button == MENU_BUTTON_START  &&
+		PREFSMAN->m_bShowSongOptions )
+	{
+		if( m_bAcceptedChoices  &&  !m_bGoToOptions )
+		{
+			m_bGoToOptions = true;
+			m_sprOptionsMessage.SetState( 1 );
+			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common start") );
+		}
+	}
+
+	ScreenOptions::Input( DeviceI, type, GameI, MenuI, StyleI );
+}
+
+void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
+{
+	switch( SM )
+	{
+	case SM_BeginFadingOut:	// when the user accepts the page of options
+		{
+			m_bAcceptedChoices = true;
+
+			float fShowSeconds = m_Menu.m_Out.GetLengthSeconds();
+
+			// show "hold START for options"
+			m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
+			m_sprOptionsMessage.BeginTweening( 0.15f );	// fade in
+			m_sprOptionsMessage.SetTweenZoomY( 1 );
+			m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,1) );
+			m_sprOptionsMessage.BeginTweening( fShowSeconds-0.3f );	// sleep
+			m_sprOptionsMessage.BeginTweening( 0.15f );	// fade out
+			m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,0) );
+			m_sprOptionsMessage.SetTweenZoomY( 0 );
+		}
+		break;
+	}
+	ScreenOptions::HandleScreenMessage( SM );
+}

@@ -725,7 +725,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 			m_sprOptionsMessage.BeginTweening( 0.15f );	// fade in
 			m_sprOptionsMessage.SetTweenZoomY( 1 );
 			m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,1) );
-			m_sprOptionsMessage.BeginTweening( fShowSeconds-0.3f );	// sleep
+			m_sprOptionsMessage.BeginTweening( fShowSeconds-0.35f );	// sleep
 			m_sprOptionsMessage.BeginTweening( 0.15f );	// fade out
 			m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,0) );
 			m_sprOptionsMessage.SetTweenZoomY( 0 );
