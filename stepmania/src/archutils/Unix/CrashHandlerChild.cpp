@@ -27,7 +27,7 @@ extern const unsigned version_num;
 const char *g_pCrashHandlerArgv0 = NULL;
 
 
-static void output_stack_trace( FILE *out, void **BacktracePointers )
+static void output_stack_trace( FILE *out, const void **BacktracePointers )
 {
 	if( BacktracePointers[0] == BACKTRACE_METHOD_NOT_AVAILABLE )
 	{
@@ -164,26 +164,22 @@ static void child_process()
 {
     int ret;
 
-    /* 1. Read the backtrace pointers. */
-    void *BacktracePointers[BACKTRACE_MAX_SIZE];
-    ret = read(3, BacktracePointers, sizeof(void *)*BACKTRACE_MAX_SIZE);
-
-    /* 2. Read the CrashData. */
+    /* 1. Read the CrashData. */
     CrashData crash;
     ret = read(3, &crash, sizeof(CrashData));
 
-    /* 3. Read info. */
+    /* 2. Read info. */
     int size;
     ret = read(3, &size, sizeof(size));
     char *Info = new char [size];
     ret = read(3, Info, size);
 
-    /* 4. Read AdditionalLog. */
+    /* 3. Read AdditionalLog. */
     ret = read(3, &size, sizeof(size));
     char *AdditionalLog = new char [size];
     ret = read(3, AdditionalLog, size);
 
-    /* 5. Read RecentLogs. */
+    /* 4. Read RecentLogs. */
     int cnt = 0;
     ret = read(3, &cnt, sizeof(cnt));
     char *Recent[1024];
@@ -194,7 +190,7 @@ static void child_process()
         ret = read(3, Recent[i], size);
     }
 
-    /* 6. Read CHECKPOINTs. */
+    /* 5. Read CHECKPOINTs. */
     ret = read(3, &size, sizeof(size));
     char *temp = new char [size];
     ret = read(3, temp, size);
@@ -202,7 +198,7 @@ static void child_process()
     split(temp, "$$", Checkpoints);
     delete [] temp;
 
-    /* 7. Read the crashed thread's name. */
+    /* 6. Read the crashed thread's name. */
     ret = read(3, &size, sizeof(size));
     temp = new char [size];
     ret = read(3, temp, size);
@@ -270,6 +266,7 @@ static void child_process()
 #endif
 
     case CrashData::FORCE_CRASH_THIS_THREAD:
+    case CrashData::FORCE_CRASH_DEADLOCK:
 	crash.reason[ sizeof(crash.reason)-1] = 0;
 	reason = crash.reason;
 	break;
@@ -283,8 +280,14 @@ static void child_process()
         fprintf(CrashDump, Checkpoints[i]);
     fprintf(CrashDump, "\n");
 
-    output_stack_trace( CrashDump, BacktracePointers );
+    output_stack_trace( CrashDump, crash.BacktracePointers );
     fprintf(CrashDump, "\n");
+    if( crash.type == CrashData::FORCE_CRASH_DEADLOCK )
+    {
+	    fprintf(CrashDump, "Deadlocked with:\n");
+	    output_stack_trace( CrashDump, crash.BacktracePointers2 );
+	    fprintf(CrashDump, "\n");
+    }
 
     fprintf(CrashDump, "Static log:\n");
     fprintf(CrashDump, "%s", Info);

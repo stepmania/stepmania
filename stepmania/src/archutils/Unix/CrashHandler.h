@@ -2,6 +2,8 @@
 #define CRASH_HANDLER_H
 
 void ForceCrashHandler( const char *reason );
+struct BacktraceContext;
+void ForceCrashHandlerDeadlock( const char *reason, const BacktraceContext *ctx );
 void CrashHandlerHandleArgs( int argc, char* argv[] );
 void InitializeCrashHandler();
 	

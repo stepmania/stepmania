@@ -81,27 +81,24 @@ static void parent_write(int to_child, const void *p, size_t size)
 	}
 }
 
-static void parent_process( int to_child, const void **BacktracePointers, const CrashData *crash )
+static void parent_process( int to_child, const CrashData *crash )
 {
-	/* 1. Write the backtrace pointers. */
-	parent_write(to_child, BacktracePointers, sizeof(void *)*BACKTRACE_MAX_SIZE);
-
-	/* 2. Write the CrashData. */
+	/* 1. Write the CrashData. */
 	parent_write(to_child, crash, sizeof(CrashData));
 	
-	/* 3. Write info. */
+	/* 2. Write info. */
 	const char *p = RageLog::GetInfo();
 	int size = strlen(p)+1;
 	parent_write(to_child, &size, sizeof(size));
 	parent_write(to_child, p, size);
 
-	/* 4. Write AdditionalLog. */
+	/* 3. Write AdditionalLog. */
 	p = RageLog::GetAdditionalLog();
 	size = strlen(p)+1;
 	parent_write(to_child, &size, sizeof(size));
 	parent_write(to_child, p, size);
 	
-	/* 5. Write RecentLogs. */
+	/* 4. Write RecentLogs. */
 	int cnt = 0;
 	const char *ps[1024];
 	while( cnt < 1024 && (ps[cnt] = RageLog::GetRecentLog( cnt )) != NULL )
@@ -115,13 +112,13 @@ static void parent_process( int to_child, const void **BacktracePointers, const 
 		parent_write(to_child, ps[i], size);
 	}
 
-    /* 6. Write CHECKPOINTs. */
+    /* 5. Write CHECKPOINTs. */
     p = Checkpoints::GetLogs("\n");
     size = strlen(p)+1;
     parent_write(to_child, &size, sizeof(size));
     parent_write(to_child, p, size);
 	
-    /* 7. Write the crashed thread's name. */
+    /* 6. Write the crashed thread's name. */
     p = RageThread::GetCurThreadName();
     size = strlen(p)+1;
     parent_write(to_child, &size, sizeof(size));
@@ -290,13 +287,6 @@ static void RunCrashHandler( const CrashData *crash )
 	 * tends to do more harm than good.  Let's just try to get the crashdump written quickly. */
 	// RageThread::HaltAllThreads();
 	
-	/* Do this early, so functions called below don't end up on the backtrace. */
-	const void *BacktracePointers[BACKTRACE_MAX_SIZE];
-	if( crash->type == CrashData::FORCE_CRASH_THIS_THREAD )
-		GetBacktrace( BacktracePointers, BACKTRACE_MAX_SIZE, NULL );
-	else
-		GetBacktrace( BacktracePointers, BACKTRACE_MAX_SIZE, &crash->ctx );
-	
 	/* We need to be very careful, since we're under crash conditions.  Let's fork
 	 * a process and exec ourself to get a clean environment to work in. */
 	int fds[2];
@@ -321,7 +311,7 @@ static void RunCrashHandler( const CrashData *crash )
 	else
 	{
 		close(fds[0]);
-		parent_process( fds[1], BacktracePointers, crash );
+		parent_process( fds[1], crash );
 		int status = 0;
 		waitpid( childpid, &status, 0 );
 		if( WIFSIGNALED(status) )
@@ -332,22 +322,48 @@ static void RunCrashHandler( const CrashData *crash )
 void ForceCrashHandler( const char *reason )
 {
 	CrashData crash;
+	memset( &crash, 0, sizeof(crash) );
+
 	crash.type = CrashData::FORCE_CRASH_THIS_THREAD;
 	strncpy( crash.reason, reason, sizeof(crash.reason) );
 	crash.reason[ sizeof(crash.reason)-1 ] = 0;
 
+	GetBacktrace( crash.BacktracePointers, BACKTRACE_MAX_SIZE, NULL );
+
 	RunCrashHandler( &crash );
 }
+
+void ForceCrashHandlerDeadlock( const char *reason, const BacktraceContext *ctx )
+{
+	CrashData crash;
+	memset( &crash, 0, sizeof(crash) );
+
+	crash.type = CrashData::FORCE_CRASH_DEADLOCK;
+	strncpy( crash.reason, reason, sizeof(crash.reason) );
+	crash.reason[ sizeof(crash.reason)-1 ] = 0;
+
+	GetBacktrace( crash.BacktracePointers, BACKTRACE_MAX_SIZE, NULL );
+	GetBacktrace( crash.BacktracePointers2, BACKTRACE_MAX_SIZE, ctx );
+
+	RunCrashHandler( &crash );
+}
+
+/* XXX test for recursive crashes here (eg. GetBacktrace crashing) */
 
 #if !defined(DARWIN)
 void CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 {
 	CrashData crash;
+	memset( &crash, 0, sizeof(crash) );
+
 	crash.type = CrashData::SIGNAL;
 	crash.signal = signal;
 	crash.si = *si;
 
-	GetSignalBacktraceContext( &crash.ctx, uc );
+	BacktraceContext ctx;
+	GetSignalBacktraceContext( &ctx, uc );
+	GetBacktrace( crash.BacktracePointers, BACKTRACE_MAX_SIZE, &ctx );
+
 	RunCrashHandler( &crash );
 }
 #endif
@@ -356,10 +372,15 @@ void CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 OSStatus CrashExceptionHandler( ExceptionInformation *e )
 {
 	CrashData crash;
+	memset( &crash, 0, sizeof(crash) );
+
 	crash.type = CrashData::OSX_EXCEPTION;
 	crash.kind = e->theKind;
 
-	GetExceptionBacktraceContext( &crash.ctx, e );
+	BacktraceContext ctx;
+	GetExceptionBacktraceContext( &ctx, e );
+	GetBacktrace( crash.BacktracePointers, BACKTRACE_MAX_SIZE, &ctx );
+
 	RunCrashHandler( &crash );
 	return -1;
 }

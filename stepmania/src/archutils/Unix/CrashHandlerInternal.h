@@ -2,6 +2,7 @@
 #define CRASH_HANDLER_INTERNAL_H
 
 #include "Backtrace.h"
+#define BACKTRACE_MAX_SIZE 1024
 
 struct CrashData
 {
@@ -19,14 +20,14 @@ struct CrashData
 		FORCE_CRASH_THIS_THREAD,
 
 		/* Deadlock detected; give a stack trace for two threads. */
-		// FORCE_CRASH_DEADLOCK
+		FORCE_CRASH_DEADLOCK
 	} type;
 
 	/* Everything except FORCE_CRASH_THIS_THREAD: */
-	BacktraceContext ctx;
+	const void *BacktracePointers[BACKTRACE_MAX_SIZE];
 
 	/* FORCE_CRASH_DEADLOCK only: */
-	// BacktraceContext ctx2;
+	const void *BacktracePointers2[BACKTRACE_MAX_SIZE];
 
 	/* SIGNAL only: */
 	int signal;
@@ -35,11 +36,10 @@ struct CrashData
 	/* OSX_EXCEPTION only: */
 	int kind;
 	
-	/* FORCE_CRASH_THIS_THREAD only: */
+	/* FORCE_CRASH_THIS_THREAD and FORCE_CRASH_DEADLOCK only: */
 	char reason[256];
 };
 
-#define BACKTRACE_MAX_SIZE 1024
 #define CHILD_MAGIC_PARAMETER "--private-do-crash-handler"
 
 const char *SignalName( int signo );
