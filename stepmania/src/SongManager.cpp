@@ -1249,7 +1249,6 @@ void SongManager::WriteStatsWebPage()
 	// Print song list
 	//
 	fprintf( fp, "<table border='1'>\n" );
-	fprintf( fp, "<tr>&nbsp;<td>image</td><td>title</td></tr>" );
 	for( unsigned i=0; i<vSongs.size(); i++ )
 	{
 		Song* pSong = m_pSongs[i];
