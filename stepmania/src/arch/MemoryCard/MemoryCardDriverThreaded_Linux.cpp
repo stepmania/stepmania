@@ -258,15 +258,13 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 			d.bWriteTestSucceeded = bMountedSuccessfully && TestWrite( d.sOsMountDir );
 			
 			// read name
-			this->Mount( &d, TEMP_MOUNT_POINT );
+			this->Mount( &d );
 			FILEMAN->FlushDirCache( TEMP_MOUNT_POINT );
 
 			Profile profile;
 			CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
 			profile.LoadEditableDataFromDir( sProfileDir );
 			d.sName = profile.GetDisplayName();
-
-			UnmountMountPoint( TEMP_MOUNT_POINT );
 
 			LOG->Trace( "WriteTest: %s, Name: %s", d.bWriteTestSucceeded ? "succeeded" : "failed", d.sName.c_str() );
 		}
