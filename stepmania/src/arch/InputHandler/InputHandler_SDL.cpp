@@ -191,14 +191,6 @@ InputHandler_SDL::~InputHandler_SDL()
 
 void InputHandler_SDL::Update(float fDeltaTime)
 {
-#ifdef _XBOX
-	static int lastValX1 = 0;
-	static int lastValY1 = 0;
-	static int lastValX2 = 0;
-	static int lastValY2 = 0;
-	static int resolutionChanged = 0;
-#endif
-
 	SDL_Event event;
 	while(SDL_GetEvent(event, SDL_EventMask))
 	{
@@ -231,43 +223,12 @@ void InputHandler_SDL::Update(float fDeltaTime)
 		
 		case SDL_JOYAXISMOTION:
 		{
-#ifdef _XBOX
-			if(PREFSMAN->resizing)
-			{
-				/* XXX: If you want to adjust the screen, use the menu.  Screen
-				* adjustment code doesn't belong in the input driver. */
-				/* As far as I can tell, you can't send on the analog values
-				* of the joysticks, so this is probably the only place for it.
-				* This should limit it to the centering screen though */
-				resolutionChanged = 1;
-				if ( abs(event.jaxis.value) > 15600 )
-				{
-					switch ( event.jaxis.axis )
-					{
-					case 0: lastValX1 = event.jaxis.value; break;
-					case 1: lastValY1 = event.jaxis.value; break;
-					case 2: lastValX2 = event.jaxis.value; break;
-					case 3: lastValY2 = event.jaxis.value; break;
-					}
-				}
-				else
-				{
-					switch ( event.jaxis.axis )
-					{
-					case 0: lastValX1 = 0; break;
-					case 1: lastValY1 = 0; break;
-					case 2: lastValX2 = 0; break;
-					case 3: lastValY2 = 0; break;
-					}
-				}
-			}
-#else
 			InputDevice i = InputDevice(DEVICE_JOY1 + event.jaxis.which);
 			JoystickButton neg = (JoystickButton)(JOY_LEFT+2*event.jaxis.axis);
 			JoystickButton pos = (JoystickButton)(JOY_RIGHT+2*event.jaxis.axis);
-			ButtonPressed(DeviceInput(i, neg), event.jaxis.value < -16000);
-			ButtonPressed(DeviceInput(i, pos), event.jaxis.value > +16000);
-#endif
+			float l = SCALE( event.jaxis.value, 0.0f, 32768.0f, 0.0f, 1.0f );
+			ButtonPressed(DeviceInput(i, neg,max(-l,0),RageZeroTimer), event.jaxis.value < -16000);
+			ButtonPressed(DeviceInput(i, pos,max(+l,0),RageZeroTimer), event.jaxis.value > +16000);
 			continue;
 		}
 		
@@ -282,32 +243,6 @@ void InputHandler_SDL::Update(float fDeltaTime)
 		}
 		}
 	}
-
-#ifdef _XBOX
-
-	if ( resolutionChanged )
-	{
-		if ( lastValX1 || lastValY1 || lastValX2 || lastValY2 )
-		{
-			PREFSMAN->m_fScreenPosX += ((float)lastValX1/32767.0f);
-			if ( PREFSMAN->m_fScreenPosX < 0)
-				PREFSMAN->m_fScreenPosX  = 0;
-
-			PREFSMAN->m_fScreenPosY -= ((float)lastValY1/32767.0f);
-			if ( PREFSMAN->m_fScreenPosY < 0)
-				PREFSMAN->m_fScreenPosY  = 0;
-
-			PREFSMAN->m_fScreenWidth += ((float)lastValX2/32767.0f);
-			PREFSMAN->m_fScreenHeight -= ((float)lastValY2/32767.0f);
-
-			DISPLAY->ResolutionChanged();
-		}
-		else
-		{
-			resolutionChanged = 0;
-		}
-	}
-#endif
 
 	InputHandler::UpdateTimer();
 }

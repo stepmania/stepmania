@@ -265,45 +265,53 @@ void InputHandler_DInput::UpdatePolled(DIDevice &device, const RageTimer &tm)
 		{
 		case in.BUTTON:
 		{
-			DeviceInput di(dev, JOY_1 + in.num, tm);
+			DeviceInput di(dev, JOY_1 + in.num, -1, tm);
 			ButtonPressed(di, !!state.rgbButtons[in.ofs - DIJOFS_BUTTON0]);
 			break;
 		}
 
 		case in.AXIS:
 		{
+			JoystickButton neg = NUM_JOYSTICK_BUTTONS, pos = NUM_JOYSTICK_BUTTONS;
+			int val = 0;
 			switch(in.ofs)
 			{
-			case DIJOFS_X:  ButtonPressed(DeviceInput(dev, JOY_LEFT, tm), state.lX < -50);
-							ButtonPressed(DeviceInput(dev, JOY_RIGHT, tm), state.lX > 50);
+			case DIJOFS_X:  neg = JOY_LEFT; pos = JOY_RIGHT;
+							val = state.lX;
 							break;
-			case DIJOFS_Y:  ButtonPressed(DeviceInput(dev, JOY_UP, tm), state.lY < -50);
-							ButtonPressed(DeviceInput(dev, JOY_DOWN, tm), state.lY > 50);
+			case DIJOFS_Y:  neg = JOY_UP; pos = JOY_DOWN;
+							val = state.lY;
 							break;
-			case DIJOFS_Z:  ButtonPressed(DeviceInput(dev, JOY_Z_UP, tm), state.lZ < -50);
-							ButtonPressed(DeviceInput(dev, JOY_Z_DOWN, tm), state.lZ > 50);
+			case DIJOFS_Z:  neg = JOY_Z_UP; pos = JOY_Z_DOWN;
+							val = state.lZ;
 							break;
-			case DIJOFS_RX: ButtonPressed(DeviceInput(dev, JOY_ROT_LEFT, tm), state.lRx < -50);
-							ButtonPressed(DeviceInput(dev, JOY_ROT_RIGHT, tm), state.lRx > 50);
+			case DIJOFS_RX: neg = JOY_ROT_LEFT; pos = JOY_ROT_RIGHT;
+							val = state.lRx;
 							break;
-			case DIJOFS_RY: ButtonPressed(DeviceInput(dev, JOY_ROT_UP, tm), state.lRy < -50);
-							ButtonPressed(DeviceInput(dev, JOY_ROT_DOWN, tm), state.lRy > 50);
+			case DIJOFS_RY: neg = JOY_ROT_UP; pos = JOY_ROT_DOWN;
+							val = state.lRy;
 							break;
-			case DIJOFS_RZ: ButtonPressed(DeviceInput(dev, JOY_ROT_Z_UP, tm), state.lRz < -50);
-							ButtonPressed(DeviceInput(dev, JOY_ROT_Z_DOWN, tm), state.lRz > 50);
+			case DIJOFS_RZ: neg = JOY_ROT_Z_UP; pos = JOY_ROT_Z_DOWN;
+							val = state.lRz;
 							break;
 			case DIJOFS_SLIDER(0):
-							ButtonPressed(DeviceInput(dev, JOY_AUX_1, tm), state.rglSlider[0] < -50);
-							ButtonPressed(DeviceInput(dev, JOY_AUX_2, tm), state.rglSlider[0] > 50);
+							neg = JOY_AUX_1; pos = JOY_AUX_2;
+							val = state.rglSlider[0];
 							break;
 			case DIJOFS_SLIDER(1):
-							ButtonPressed(DeviceInput(dev, JOY_AUX_3, tm), state.rglSlider[1] < -50);
-							ButtonPressed(DeviceInput(dev, JOY_AUX_4, tm), state.rglSlider[1] > 50);
+							neg = JOY_AUX_3; pos = JOY_AUX_4;
+							val = state.rglSlider[1];
 							break;
 			default: LOG->MapLog("unknown input", 
 							"Controller '%s' is returning an unknown joystick offset, %i",
 							device.JoystickInst.tszProductName, in.ofs );
 					 continue;
+			}
+			if( neg != NUM_JOYSTICK_BUTTONS )
+			{
+				float l = SCALE( int(val), 0.0f, 100.0f, 0.0f, 1.0f );
+				ButtonPressed(DeviceInput(dev, neg, max(-l,0), tm), val < -50);
+				ButtonPressed(DeviceInput(dev, pos, max(+l,0), tm), val > 50);
 			}
 
 			break;
@@ -313,10 +321,10 @@ void InputHandler_DInput::UpdatePolled(DIDevice &device, const RageTimer &tm)
 			if( in.num == 0 )
 			{
 				const int pos = TranslatePOV(state.rgdwPOV[in.ofs - DIJOFS_POV(0)]);
-				ButtonPressed(DeviceInput(dev, JOY_HAT_UP, tm), !!(pos & HAT_UP_MASK));
-				ButtonPressed(DeviceInput(dev, JOY_HAT_DOWN, tm), !!(pos & HAT_DOWN_MASK));
-				ButtonPressed(DeviceInput(dev, JOY_HAT_LEFT, tm), !!(pos & HAT_LEFT_MASK));
-				ButtonPressed(DeviceInput(dev, JOY_HAT_RIGHT, tm), !!(pos & HAT_RIGHT_MASK));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_UP, -1, tm), !!(pos & HAT_UP_MASK));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_DOWN, -1, tm), !!(pos & HAT_DOWN_MASK));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_LEFT, -1, tm), !!(pos & HAT_LEFT_MASK));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_RIGHT, -1, tm), !!(pos & HAT_RIGHT_MASK));
 			}
 
 			break;
@@ -359,11 +367,11 @@ void InputHandler_DInput::UpdateBuffered(DIDevice &device, const RageTimer &tm)
 			switch(in.type)
 			{
 			case in.KEY:
-				ButtonPressed(DeviceInput(dev, in.num, tm), !!(evtbuf[i].dwData & 0x80));
+				ButtonPressed(DeviceInput(dev, in.num, -1, tm), !!(evtbuf[i].dwData & 0x80));
 				break;
 
 			case in.BUTTON:
-				ButtonPressed(DeviceInput(dev, JOY_1 + in.num, tm), !!evtbuf[i].dwData);
+				ButtonPressed(DeviceInput(dev, JOY_1 + in.num, -1, tm), !!evtbuf[i].dwData);
 				break;
 
 			case in.AXIS:
@@ -385,17 +393,18 @@ void InputHandler_DInput::UpdateBuffered(DIDevice &device, const RageTimer &tm)
 					continue;
 				}
 
-				ButtonPressed(DeviceInput(dev, up, tm), int(evtbuf[i].dwData) < -50);
-				ButtonPressed(DeviceInput(dev, down, tm), int(evtbuf[i].dwData) > 50);
+				float l = SCALE( int(evtbuf[i].dwData), 0.0f, 100.0f, 0.0f, 1.0f );
+				ButtonPressed(DeviceInput(dev, up, max(-l,0), tm), int(evtbuf[i].dwData) < -50);
+				ButtonPressed(DeviceInput(dev, down, max(+l,0), tm), int(evtbuf[i].dwData) > 50);
 				break;
 			}
 			case in.HAT:
 		    {
 				const int pos = TranslatePOV(evtbuf[i].dwData);
-				ButtonPressed(DeviceInput(dev, JOY_HAT_UP, tm), !!(pos & HAT_UP_MASK));
-				ButtonPressed(DeviceInput(dev, JOY_HAT_DOWN, tm), !!(pos & HAT_DOWN_MASK));
-				ButtonPressed(DeviceInput(dev, JOY_HAT_LEFT, tm), !!(pos & HAT_LEFT_MASK));
-				ButtonPressed(DeviceInput(dev, JOY_HAT_RIGHT, tm), !!(pos & HAT_RIGHT_MASK));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_UP, -1, tm), !!(pos & HAT_UP_MASK));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_DOWN, -1, tm), !!(pos & HAT_DOWN_MASK));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_LEFT, -1, tm), !!(pos & HAT_LEFT_MASK));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_RIGHT, -1, tm), !!(pos & HAT_RIGHT_MASK));
 		    }
 			}
 		}
