@@ -1204,12 +1204,7 @@ void GameState::AdjustFailType()
 		return;
 
 	/* Find the easiest difficulty notes selected by either player. */
-	Difficulty dc = DIFFICULTY_INVALID;
-	FOREACH_HumanPlayer( p )
-	{
-		ASSERT( this->m_pCurNotes[p] );
-		dc = min(dc, this->m_pCurNotes[p]->GetDifficulty());
-	}
+	const Difficulty dc = GetEasiestNotesDifficulty();
 
 	/* Reset the fail type to the default. */
 	SongOptions so;
@@ -1643,6 +1638,21 @@ bool GameState::ChangeCourseDifficulty( PlayerNumber pn, int dir )
 	return true;
 }
 
+Difficulty GameState::GetEasiestNotesDifficulty() const
+{
+	Difficulty dc = DIFFICULTY_INVALID;
+	FOREACH_HumanPlayer( p )
+	{
+		if( this->m_pCurNotes[p] == NULL )
+		{
+			LOG->Warn( "GetEasiestNotesDifficulty called but p%i hasn't chosen notes", p+1 );
+			continue;
+		}
+		dc = min( dc, this->m_pCurNotes[p]->GetDifficulty() );
+	}
+	return dc;
+}
+
 bool PlayerIsUsingModifier( PlayerNumber pn, const CString sModifier )
 {
 	PlayerOptions po = GAMESTATE->m_PlayerOptions[pn];
@@ -1670,6 +1680,7 @@ LuaFunction_NoArgs( PlayModeName,			PlayModeToString(GAMESTATE->m_PlayMode) )
 LuaFunction_NoArgs( CurStyleName,			CString( GAMESTATE->m_CurStyle == STYLE_INVALID? "none": GAMESTATE->GetCurrentStyleDef()->m_szName ) )
 LuaFunction_NoArgs( GetNumPlayersEnabled,	GAMESTATE->GetNumPlayersEnabled() )
 LuaFunction_NoArgs( PlayerUsingBothSides,	GAMESTATE->PlayerUsingBothSides() )
+LuaFunction_NoArgs( GetEasiestNotesDifficulty, GAMESTATE->GetEasiestNotesDifficulty() )
 
 /* Return an integer into SONGMAN->m_pSongs.  This lets us do input checking, which we
  * can't easily do if we return pointers. */

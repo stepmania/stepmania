@@ -65,6 +65,7 @@ public:
 	bool ChangeDifficulty( PlayerNumber pn, Difficulty dc );
 	bool ChangeDifficulty( PlayerNumber pn, int dir );
 	bool ChangeCourseDifficulty( PlayerNumber pn, int dir );
+	Difficulty GetEasiestNotesDifficulty() const;
 	RageTimer			m_timeGameStarted;	// from the moment the first player pressed Start
 
 	/* This is set to a random number per-game/round; it can be used for a random seed. */
