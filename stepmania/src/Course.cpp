@@ -122,8 +122,15 @@ void Course::CreateEndlessCourseFromGroupAndDifficultyClass( CString sGroupName,
 		Song* pSong = apSongsInGroup[s];
 		AddStage( pSong, DifficultyClassToString(dc), "" );
 	}
+	Shuffle();
 }
 
+void Course::Shuffle()
+{
+	/* Shuffle the list. */
+	for( int i = 0; i < m_iStages; ++i)
+		swap(SongOrdering[i], SongOrdering[rand() % m_iStages]);
+}
 
 Notes* Course::GetNotesForStage( int iStage )
 {
@@ -154,13 +161,20 @@ Notes* Course::GetNotesForStage( int iStage )
 }
 
 
-void Course::GetSongAndNotesForCurrentStyle( CArray<Song*,Song*>& apSongsOut, CArray<Notes*,Notes*>& apNotesOut, CStringArray& asModifiersOut )
+/* When bShuffled is true, returns courses in the song ordering list. */
+void Course::GetSongAndNotesForCurrentStyle( 
+	CArray<Song*,Song*>& apSongsOut,
+	CArray<Notes*,Notes*>& apNotesOut, 
+	CStringArray& asModifiersOut,
+	bool bShuffled )
 {
 	for( int i=0; i<m_iStages; i++ )
 	{
-		Song* pSong = m_apSongs[i];
-		Notes* pNotes = GetNotesForStage( i );
-		CString sModifiers = m_asModifiers[i];
+		int num = bShuffled? SongOrdering[i]:i;
+
+		Song* pSong = m_apSongs[num];
+		Notes* pNotes = GetNotesForStage( num );
+		CString sModifiers = m_asModifiers[num];
 
 		if( pNotes == NULL )
 			continue;	// skip

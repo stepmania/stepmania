@@ -558,7 +558,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 				CArray<Song*,Song*> apSongs;
 				CArray<Notes*,Notes*> apNotes;
 				CStringArray asModifiers;
-				pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers );
+				pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers, false );
 
 				if( apNotes.GetSize() > 0 )
 					arrayWheelItemDatas.Add( WheelItemData(TYPE_COURSE, NULL, "", pCourse, pCourse->GetColor()) );

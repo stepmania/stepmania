@@ -131,7 +131,7 @@ ScreenGameplay::ScreenGameplay()
 				CArray<Song*,Song*> apSongs;
 				CArray<Notes*,Notes*> apNotes;
 				CStringArray asModifiers;
-				pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers );
+				pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers, true );
 
 				for( int i=0; i<apNotes.GetSize(); i++ )
 				{
@@ -451,7 +451,7 @@ bool ScreenGameplay::IsLastSong()
 			CArray<Song*,Song*> apSongs;
 			CArray<Notes*,Notes*> apNotes;
 			CStringArray asModifiers;
-			pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers );
+			pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers, true );
 
 			return GAMESTATE->m_iSongsIntoCourse >= apSongs.GetSize();	// there are no more songs left
 		}
@@ -480,13 +480,11 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 			CArray<Song*,Song*> apSongs;
 			CArray<Notes*,Notes*> apNotes;
 			CStringArray asModifiers;
-			pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers );
 
-			int iPlaySongIndex = -1;
-			if( pCourse->m_bRandomize )
-				iPlaySongIndex = rand() % apSongs.GetSize();
-			else
-				iPlaySongIndex = GAMESTATE->m_iSongsIntoCourse;
+			pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers, true );
+
+			int iPlaySongIndex = GAMESTATE->m_iSongsIntoCourse;
+			iPlaySongIndex %= apSongs.GetSize();
 
 			GAMESTATE->m_pCurSong = apSongs[iPlaySongIndex];
 			for( p=0; p<NUM_PLAYERS; p++ )

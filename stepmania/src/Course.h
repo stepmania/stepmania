@@ -59,11 +59,17 @@ public:
 		m_apSongs[m_iStages] = pSong;
 		m_asDescriptions[m_iStages] = sDescription;
 		m_asModifiers[m_iStages] = sModifiers;
+		SongOrdering[m_iStages] = m_iStages;
+
 		m_iStages++;
 	}
 
-	void GetSongAndNotesForCurrentStyle( CArray<Song*,Song*>& apSongsOut, CArray<Notes*,Notes*>& apNotesOut, CStringArray& asModifiersOut );
+	void GetSongAndNotesForCurrentStyle( CArray<Song*,Song*>& apSongsOut, CArray<Notes*,Notes*>& apNotesOut, CStringArray& asModifiersOut, bool bShuffled );
 	D3DXCOLOR	GetColor();
+
+private:
+	int SongOrdering[MAX_COURSE_STAGES];
+	void Shuffle();
 };
 
 
