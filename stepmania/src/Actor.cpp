@@ -18,7 +18,6 @@
 #include "RageMath.h"
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
-#include "ThemeManager.h"
 
 /* This is Reset instead of Init since many derived classes have Init() functions
  * that shouldn't change the position of the actor. */
@@ -648,8 +647,6 @@ void Actor::Command( CString sCommandString )
 	CStringArray asCommands;
 	split( sCommandString, ";", asCommands, true );
 	
-	float fTimeElapsed=0;
-
 	for( unsigned c=0; c<asCommands.size(); c++ )
 	{
 		CStringArray asTokens;
