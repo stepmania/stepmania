@@ -110,14 +110,14 @@ public:
 	}
 
 	void ReadSM300NoteScores();
-	void ReadSongScoresFromFile( CString fn, MemoryCard mc );
-	void ReadCourseScoresFromFile( CString fn, MemoryCard mc );
-	void ReadCategoryScoresFromFile( CString fn, MemoryCard mc );
+	void ReadSongScoresFromDir( CString sDir, MemoryCard mc );
+	void ReadCourseScoresFromDir( CString sDir, MemoryCard mc );
+	void ReadCategoryScoresFromDir( CString sDir, MemoryCard mc );
 
-	void SaveSongScoresToFile( CString fn, MemoryCard mc );
-	void SaveCourseScoresToFile( CString fn, MemoryCard mc );
-	void SaveCategoryScoresToFile( CString fn, MemoryCard mc );
-	void SaveStatsWebPageToFile( CString fn, MemoryCard mc );
+	void SaveSongScoresToDir( CString sDir, MemoryCard mc );
+	void SaveCourseScoresToDir( CString sDir, MemoryCard mc );
+	void SaveCategoryScoresToDir( CString sDir, MemoryCard mc );
+	void SaveStatsWebPageToDir( CString sDir, MemoryCard mc );
 
 private:
 	bool LoadDefaultProfileFromMachine( PlayerNumber pn );

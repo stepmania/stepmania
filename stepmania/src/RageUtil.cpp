@@ -1023,3 +1023,26 @@ void FileWrite(RageFile& f, float fWrite)
 {
 	f.PutLine( ssprintf("%f", fWrite) );
 }
+
+bool CopyFile2( CString sSrcFile, CString sDstFile )
+{
+	RageFile in;
+	if( !in.Open(sSrcFile, RageFile::READ) )
+		return false;
+
+	RageFile out;
+	if( !out.Open(sDstFile, RageFile::WRITE) )
+		return false;
+
+#define CLEANUP_AND_RETURN(b) {	delete data; return b; }
+
+	int size = in.GetFileSize();
+	char *data = new char[size];
+	if( !data )
+		CLEANUP_AND_RETURN( false );
+	if( !in.Read(data,size) )
+		CLEANUP_AND_RETURN( false );
+	if( !out.Write(data,size) )
+		CLEANUP_AND_RETURN( false );
+	CLEANUP_AND_RETURN( true );
+}
