@@ -68,9 +68,10 @@ void PercentageDisplay::Refresh()
 	if( !PREFSMAN->m_bDancePointsForOni )
 	{
 		int iPossibleDancePoints = GAMESTATE->m_CurStageStats.iPossibleDancePoints[m_PlayerNumber];
-		iPossibleDancePoints = max( 1, iPossibleDancePoints );
-		float fPercentDancePoints =  iActualDancePoints / (float)iPossibleDancePoints + 0.00001f;	// correct for rounding errors
-		fPercentDancePoints = max( fPercentDancePoints, 0 );
+		float fPercentDancePoints =  iActualDancePoints / (float)iPossibleDancePoints;
+		if( iActualDancePoints == iPossibleDancePoints )
+			fPercentDancePoints = 1;	// correct for rounding error
+		fPercentDancePoints = clamp( fPercentDancePoints, 0, 1 );
 
 		if( PERCENT_USE_REMAINDER )
 		{
