@@ -308,8 +308,8 @@ try_element_again:
 				"Theme element '%s/%s' could not be found in '%s' or '%s'.", 
 				sAssetCategory.GetString(),
 				sFileName.GetString(), 
-				GetThemeDirFromName(m_sCurThemeName), 
-				GetThemeDirFromName(BASE_THEME_NAME) );
+				GetThemeDirFromName(m_sCurThemeName).GetString(), 
+				GetThemeDirFromName(BASE_THEME_NAME).GetString() );
 			return GetPathTo( sAssetCategory, "_missing" );
 			break;
 		}
