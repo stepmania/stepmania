@@ -194,10 +194,14 @@ bool UnlockSystem::ParseRow(CString text, CString &type, float &qty,
 							CString &songname)
 {
 	int pos = -1;
-	int end = text.GetLength();  // sets a value in case | does not exist
+	int end = text.size();  // sets a value in case | does not exist
 	char unlock_type[4];
 	char qty_text[20];
 
+	/* XXX: What's this supposed to do?  text[-1] is invalid, and it's not
+	 * legal to access text[5] if text == "hello"; they're not NULL-terminated
+	 * like C strings (unless you use c_str(), but that's ugly).  Did you mean
+	 * "pos < text.size()"? */
 	while (text[pos] != '|' && pos < text[pos] != '\0')
 	{
 		pos++;
@@ -210,7 +214,7 @@ bool UnlockSystem::ParseRow(CString text, CString &type, float &qty,
 		}
 	}
 
-	songname = text.Right(text.GetLength() - 1 - end);
+	songname = text.Right(text.size() - 1 - end);
 	
 	sscanf(text, "%s %s|", unlock_type, qty_text);
 
@@ -283,16 +287,16 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 		return false;
 	}
 
-	char line[256]; 
 	CString unlock_type, song_title;
 	float datavalue;
 	int MaxRouletteSlot = 0;
 
 //	m_SongEntries.clear();
 
-	while(input.getline(line, 255))
+	CString line;
+	while( getline(input, line) )
 	{
-		if(line[0] == '/' && line[1] == '/')	//Check for comments
+		if(line.substr(0, 2) == "//")	// Check for comments
 			continue;
 
 		/* "[data1] data2".  Ignore whitespace at the beginning of the line. */
