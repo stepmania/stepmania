@@ -1,4 +1,7 @@
-bin_PROGRAMS = stepmania test_audio_readers test_file_readers test_timing_data
+bin_PROGRAMS = stepmania
+if BUILD_TESTS
+bin_PROGRAMS += test_audio_readers test_file_readers test_timing_data
+endif
 
 AM_LDFLAGS =
 AM_CXXFLAGS = 
