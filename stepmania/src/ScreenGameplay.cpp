@@ -513,7 +513,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	UpdateAutoPlayText();
 	
 
-	m_BPMDisplay.SetName( "BPM" );
+	m_BPMDisplay.SetName( "BPMDisplay" );
 	m_BPMDisplay.Load();
 	SET_XY( m_BPMDisplay );
 	this->AddChild( &m_BPMDisplay );
