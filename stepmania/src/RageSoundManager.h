@@ -31,8 +31,6 @@ class RageSoundManager
 	/* Prefs: */
 	float MixVolume;
 
-	RageSound *music;
-
 public:
 	RageMutex lock;
 
