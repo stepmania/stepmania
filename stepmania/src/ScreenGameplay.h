@@ -28,6 +28,7 @@
 #include "ScoreDisplay.h"
 #include "DifficultyIcon.h"
 #include "BPMDisplay.h"
+#include "FocusingSprite.h"
 
 // messages sent by Combo
 const ScreenMessage SM_BeginToasty			= ScreenMessage(SM_User+104);
@@ -111,8 +112,8 @@ protected:
 	TransitionFadeWipe	m_Fade;
 	TransitionStarWipe	m_StarWipe;
 
-	Sprite				m_sprReady;
-	Sprite				m_sprHereWeGo;
+	FocusingSprite		m_sprReady;
+	FocusingSprite		m_sprHereWeGo;
 	MotionBlurSprite	m_sprCleared;
 	MotionBlurSprite	m_sprFailed;
 	MotionBlurSprite	m_sprTryExtraStage;
