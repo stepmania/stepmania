@@ -20,7 +20,8 @@ void split(const CString& Source, const CString& Deliminator, vector<CString>& A
 {
     unsigned startpos = 0;
 
-    do {
+    do
+    {
         unsigned pos = Source.find(Deliminator, startpos);
         if (pos == Source.npos) pos=Source.size();
 
@@ -28,15 +29,17 @@ void split(const CString& Source, const CString& Deliminator, vector<CString>& A
         AddIt.push_back(AddCString);
 
         startpos=pos+Deliminator.size();
-    } while (startpos <= Source.size());
+    }
+    while (startpos <= Source.size());
 }
 
 bool IsADirectory(const CString& path)
 {
     struct stat s;
-    if (stat(path, &s))
+    if (lstat(path, &s))
         return false;
-    return (s.st_mode & S_IFDIR) && !(s.st_mode & S_IFLNK);
+    return ((s.st_mode & S_IFDIR) == S_IFDIR) &&
+           ((s.st_mode & S_IFLNK) != S_IFLNK);
 }
 
 bool DoesFileExist(const CString& path)
