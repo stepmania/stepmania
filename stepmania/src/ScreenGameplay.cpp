@@ -174,7 +174,21 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		}
 	}
 
-	
+
+	if( !GAMESTATE->IsCourseMode() )
+		GAMESTATE->m_CurStageStats.pSong = GAMESTATE->m_pCurSong;
+	else
+		GAMESTATE->m_CurStageStats.pSong = NULL;
+
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsPlayerEnabled(p) )
+			continue;	// skip
+
+		ASSERT( !m_apNotesQueue[p].empty() );
+		GAMESTATE->m_CurStageStats.iMeter[p] = m_apNotesQueue[p][0]->GetMeter();
+	}
+
 	//
 	// Init ScoreKeepers
 	//
