@@ -212,6 +212,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 
 	/* */
 
+	// init old offset in case offset changes in song
+	GAMESTATE->m_fOldOffset = GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds;
 
 
 
@@ -1468,13 +1470,18 @@ void ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 	case PLAY_MODE_HUMAN_BATTLE:
 	case PLAY_MODE_CPU_BATTLE:
 	case PLAY_MODE_RAVE:
+		{
+		float m_fOffsetChange = GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds - GAMESTATE->m_fOldOffset;
 		sMessage = ssprintf( 
+			"Change to offset: %f\n\n"
 			"You have changed the offset or BPM of\n"
 			"%s.\n"
 			"Would you like to save these changes back\n"
 			"to the song file?\n"
 			"Choosing NO will discard your changes.",
+			m_fOffsetChange,
 			GAMESTATE->m_pCurSong->GetFullDisplayTitle().c_str() );
+		}
 		break;
 	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ONI:
