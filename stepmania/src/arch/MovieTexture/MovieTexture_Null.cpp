@@ -13,7 +13,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
-#include "MovieTexture_null.h"
+#include "MovieTexture_Null.h"
 #include "SDL_utils.h"
 
 MovieTexture_Null::MovieTexture_Null(RageTextureID ID) : RageMovieTexture(ID) {

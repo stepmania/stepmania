@@ -2,7 +2,7 @@
 #include "MovieTexture.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "MovieTexture_null.h"
+#include "MovieTexture_Null.h"
 
 /* Why is this _WINDOWS and not WIN32?
  * --steve */
