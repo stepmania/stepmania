@@ -59,7 +59,7 @@ void SMLoader::GetApplicableFiles( CString sPath, CStringArray &out )
 
 bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 {
-	LOG->Trace( "Song::LoadFromSMDir(%s)", sPath.c_str() );
+	LOG->Trace( "Song::LoadFromSMFile(%s)", sPath.c_str() );
 
 	out.m_BPMSegments.clear();
 	out.m_StopSegments.clear();
