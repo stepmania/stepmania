@@ -34,12 +34,18 @@ DancingCharacters::DancingCharacters()
 	{
 		m_Character[PLAYER_1].SetX( MODEL_X[PLAYER_1] );
 		m_Character[PLAYER_1].LoadMilkshapeAscii( "C:\\My Documents\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\char0000\\model.txt" );
-		m_Character[PLAYER_1].LoadMilkshapeAsciiBones( "C:\\My Documents\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\dance0001.bones.txt" );
+		m_Character[PLAYER_1].LoadMilkshapeAsciiBones( "rest", "C:\\My Documents\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\rest.bones.txt" );
+		m_Character[PLAYER_1].LoadMilkshapeAsciiBones( "warmup", "C:\\My Documents\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\warmup.bones.txt" );
+		m_Character[PLAYER_1].LoadMilkshapeAsciiBones( "default", "C:\\My Documents\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\dance0001.bones.txt" );
+		m_Character[PLAYER_1].PlayAnimation( "rest" );
 		this->AddChild( &m_Character[PLAYER_1] );
 
 		m_Character[PLAYER_2].SetX( MODEL_X[PLAYER_2] );
 		m_Character[PLAYER_2].LoadMilkshapeAscii( "C:\\My Documents\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\char0011\\model.txt" );
-		m_Character[PLAYER_2].LoadMilkshapeAsciiBones( "C:\\My Documents\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\dance0002.bones.txt" );
+		m_Character[PLAYER_2].LoadMilkshapeAsciiBones( "rest", "C:\\My Documents\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\rest.bones.txt" );
+		m_Character[PLAYER_2].LoadMilkshapeAsciiBones( "warmup", "C:\\My Documents\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\warmup.bones.txt" );
+		m_Character[PLAYER_2].LoadMilkshapeAsciiBones( "default", "C:\\My Documents\\Dev\\ddrpc char hacking\\DDRPCRip\\models\\dance0001.bones.txt" );
+		m_Character[PLAYER_2].PlayAnimation( "rest" );
 		this->AddChild( &m_Character[PLAYER_2] );
 
 		StartCameraSweep();
@@ -49,6 +55,11 @@ DancingCharacters::DancingCharacters()
 void DancingCharacters::Update( float fDelta )
 {
 	ActorFrame::Update( fDelta );
+	
+	if( PREFSMAN->m_bShowDancingCharacters )
+	{
+
+	}
 
 	// update camera sweep
 	m_fSecsIntoSweep += fDelta;

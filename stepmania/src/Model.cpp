@@ -19,13 +19,14 @@
 
 
 const float FRAMES_PER_SECOND = 30;
+const CString DEFAULT_ANIMATION_NAME = "default";
 
 Model::Model ()
 {
-	m_pModel = NULL;
 	m_pBones = NULL;
 	m_bTextureWrapping = true;
 	m_bUseZBuffer = true;
+	m_pCurAnimation = NULL;
 }
 
 Model::~Model ()
@@ -38,8 +39,10 @@ void Model::Clear ()
 	delete[] m_pBones;
 	m_pBones = NULL;
 
-	delete m_pModel;
-	m_pModel = NULL;
+	m_Meshes.clear();
+	m_Materials.clear();
+	m_mapNameToAnimation.clear();
+	m_pCurAnimation = NULL;
 }
 
 bool Model::LoadFromModelFile( CString sPath )
@@ -80,10 +83,6 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 
 	Clear ();
 
-	m_pModel = new msModel;
-// Never zero out a non-POD data type.
-//	memset (m_pModel, 0, sizeof (msModel));
-
     bool bError = false;
     char szLine[256];
     char szName[MS_MAX_NAME];
@@ -99,21 +98,23 @@ bool Model::LoadMilkshapeAscii( CString sPath )
         int nFrame;
         if (sscanf (szLine, "Frames: %d", &nFrame) == 1)
         {
-            m_pModel->nTotalFrames = nFrame;
+			// ignore
+			// m_pModel->nTotalFrames = nFrame;
         }
         if (sscanf (szLine, "Frame: %d", &nFrame) == 1)
         {
-            m_pModel->nFrame = nFrame;
+			// ignore
+			// m_pModel->nFrame = nFrame;
         }
 
         int nNumMeshes = 0;
         if (sscanf (szLine, "Meshes: %d", &nNumMeshes) == 1)
         {
-            m_pModel->Meshes.resize( nNumMeshes );
+            m_Meshes.resize( nNumMeshes );
 
             for (i = 0; i < nNumMeshes && !bError; i++)
             {
-				msMesh& mesh = m_pModel->Meshes[i];
+				msMesh& mesh = m_Meshes[i];
 
                 if (!fgets (szLine, 256, file))
                 {
@@ -282,14 +283,14 @@ bool Model::LoadMilkshapeAscii( CString sPath )
         int nNumMaterials = 0;
         if (sscanf (szLine, "Materials: %d", &nNumMaterials) == 1)
         {
-            m_pModel->Materials.resize( nNumMaterials );
+            m_Materials.resize( nNumMaterials );
       
 			int i;
             char szName[MS_MAX_NAME];
 
             for (i = 0; i < nNumMaterials && !bError; i++)
             {
-				msMaterial& Material = m_pModel->Materials[i];
+				msMaterial& Material = m_Materials[i];
 
                 // name
                 if (!fgets (szLine, 256, file))
@@ -415,150 +416,24 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 				}
             }
         }
-
-        //
-        // bones
-        //
-        int nNumBones = 0;
-        if (sscanf (szLine, "Bones: %d", &nNumBones) == 1)
-        {
-            int i;
-            char szName[MS_MAX_NAME];
-
-            m_pModel->Bones.resize( nNumBones );
-
-            for (i = 0; i < nNumBones && !bError; i++)
-            {
-				msBone& Bone = m_pModel->Bones[i];
-
-                // name
-                if (!fgets (szLine, 256, file))
-                {
-                    bError = true;
-                    break;
-                }
-                if (sscanf (szLine, "\"%[^\"]\"", szName) != 1)
-                {
-                    bError = true;
-                    break;
-                }
-                strcpy( Bone.szName, szName );
-
-                // parent
-                if (!fgets (szLine, 256, file))
-                {
-                    bError = true;
-                    break;
-                }
-                strcpy (szName, "");
-                sscanf (szLine, "\"%[^\"]\"", szName);
-
-                strcpy( Bone.szParentName, szName );
-
-                // flags, position, rotation
-                msVec3 Position, Rotation;
-                if (!fgets (szLine, 256, file))
-                {
-                    bError = true;
-                    break;
-                }
-                if (sscanf (szLine, "%d %f %f %f %f %f %f",
-                    &nFlags,
-                    &Position.v[0], &Position.v[1], &Position.v[2],
-                    &Rotation.v[0], &Rotation.v[1], &Rotation.v[2]) != 7)
-                {
-                    bError = true;
-                    break;
-                }
-                Bone.nFlags = nFlags;
-                memcpy( &Bone.Position, &Position, sizeof(Bone.Position) );
-                memcpy( &Bone.Rotation, &Rotation, sizeof(Bone.Rotation) );
-
-                float fTime;
-
-                // position key count
-                if (!fgets (szLine, 256, file))
-                {
-                    bError = true;
-                    break;
-                }
-                int nNumPositionKeys = 0;
-                if (sscanf (szLine, "%d", &nNumPositionKeys) != 1)
-                {
-                    bError = true;
-                    break;
-                }
-
-                Bone.PositionKeys.resize( nNumPositionKeys );
-
-                for (j = 0; j < nNumPositionKeys; j++)
-                {
-                    if (!fgets (szLine, 256, file))
-                    {
-                        bError = true;
-                        break;
-                    }
-                    if (sscanf (szLine, "%f %f %f %f", &fTime, &Position[0], &Position[1], &Position[2]) != 4)
-                    {
-                        bError = true;
-                        break;
-                    }
-
-					msPositionKey key = { fTime, { Position[0], Position[1], Position[2] } };
-					Bone.PositionKeys[j] = key;
-                }
-
-                // rotation key count
-                if (!fgets (szLine, 256, file))
-                {
-                    bError = true;
-                    break;
-                }
-                int nNumRotationKeys = 0;
-                if (sscanf (szLine, "%d", &nNumRotationKeys) != 1)
-                {
-                    bError = true;
-                    break;
-                }
-
-                Bone.RotationKeys.resize( nNumRotationKeys );
-
-                for (j = 0; j < nNumRotationKeys; j++)
-                {
-                    if (!fgets (szLine, 256, file))
-                    {
-                        bError = true;
-                        break;
-                    }
-                    if (sscanf (szLine, "%f %f %f %f", &fTime, &Rotation[0], &Rotation[1], &Rotation[2]) != 4)
-                    {
-                        bError = true;
-                        break;
-                    }
-
-					msRotationKey key = { fTime, { Rotation[0], Rotation[1], Rotation[2] } };
-                    Bone.RotationKeys[j] = key;
-                }
-            }
-        }
     }
 
 	fclose (file);
 
-	LoadMilkshapeAsciiBones( sPath );
+	LoadMilkshapeAsciiBones( DEFAULT_ANIMATION_NAME, sPath );
 
     // Setup temp vertices
-	m_vTempVerticesByBone.resize( m_pModel->Meshes.size() );
-	for (i = 0; i < (int)m_pModel->Meshes.size(); i++)
+	m_vTempVerticesByBone.resize( m_Meshes.size() );
+	for (i = 0; i < (int)m_Meshes.size(); i++)
     {
-		msMesh& Mesh = m_pModel->Meshes[i];
+		msMesh& Mesh = m_Meshes[i];
 		m_vTempVerticesByBone[i].resize( Mesh.Vertices.size() );
 	}	
 
 	return true;
 }
 
-bool Model::LoadMilkshapeAsciiBones( CString sPath )
+bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 {
 	CString sDir, sThrowAway;
 	splitrelpath( sPath, sDir, sThrowAway, sThrowAway );
@@ -582,14 +457,17 @@ bool Model::LoadMilkshapeAsciiBones( CString sPath )
         int nNumBones = 0;
         if (sscanf (szLine, "Bones: %d", &nNumBones) == 1)
         {
+			m_mapNameToAnimation[sAniName] = msAnimation();
+			msAnimation &Animation = m_mapNameToAnimation[sAniName];
+
             int i;
             char szName[MS_MAX_NAME];
 
-            m_pModel->Bones.resize( nNumBones );
+            Animation.Bones.resize( nNumBones );
 
             for (i = 0; i < nNumBones && !bError; i++)
             {
-				msBone& Bone = m_pModel->Bones[i];
+				msBone& Bone = Animation.Bones[i];
 
                 // name
                 if (!fgets (szLine, 256, file))
@@ -700,22 +578,23 @@ bool Model::LoadMilkshapeAsciiBones( CString sPath )
                     Bone.RotationKeys[j] = key;
                 }
             }
+
+			// Ignore "Frames:" in file.  Calculate it ourself
+			Animation.nTotalFrames = 0;
+			for ( i = 0; i < (int)Animation.Bones.size(); i++)
+			{
+				msBone& Bone = Animation.Bones[i];
+				for( int j=0; j<(int)Bone.PositionKeys.size(); j++ )
+				{
+					Animation.nTotalFrames = max( Animation.nTotalFrames, (int)Bone.PositionKeys[j].fTime+1 );
+					Animation.nTotalFrames = max( Animation.nTotalFrames, (int)Bone.RotationKeys[j].fTime+1 );
+				}
+			}
+
+			PlayAnimation( sAniName );
 		}
 	}
 
-	// ignore "Frames:" in file
-	m_pModel->nTotalFrames = 0;
-    for (int i = 0; i < (int)m_pModel->Bones.size(); i++)
-    {
-		msBone& Bone = m_pModel->Bones[i];
-		for( int j=0; j<(int)Bone.PositionKeys.size(); j++ )
-		{
-			m_pModel->nTotalFrames = max( m_pModel->nTotalFrames, (int)Bone.PositionKeys[j].fTime+1 );
-			m_pModel->nTotalFrames = max( m_pModel->nTotalFrames, (int)Bone.RotationKeys[j].fTime+1 );
-		}
-	}
-
-	SetupBones ();
 
 	return true;
 }
@@ -725,22 +604,22 @@ bool Model::LoadMilkshapeAsciiBones( CString sPath )
 
 void Model::DrawPrimitives()
 {
-	if (!m_pModel)
-		return;
+	if(m_Meshes.empty())
+		return;	// bail early
 
 	Actor::SetRenderStates();	// set Actor-specified render states
 
 	DISPLAY->Scale( 1, -1, 1 );	// flip Y so positive is up
 
-	for (int i = 0; i < (int)m_pModel->Meshes.size(); i++)
+	for (int i = 0; i < (int)m_Meshes.size(); i++)
 	{
-		msMesh *pMesh = &m_pModel->Meshes[i];
+		msMesh *pMesh = &m_Meshes[i];
 		RageVertexVector& TempVertices = m_vTempVerticesByBone[i];
 
 		// apply material
 		if( pMesh->nMaterialIndex != -1 )
 		{
-			msMaterial& mat = m_pModel->Materials[ pMesh->nMaterialIndex ];
+			msMaterial& mat = m_Materials[ pMesh->nMaterialIndex ];
 			DISPLAY->SetMaterial( 
 				mat.Emissive,
 				mat.Ambient,
@@ -801,25 +680,16 @@ void Model::DrawPrimitives()
 
 }
 
-float
-Model::CalcDistance () const
-{
-	float dx = m_vMaxs[0] - m_vMins[0];
-	float dy = m_vMaxs[1] - m_vMins[1];
-	float dz = m_vMaxs[2] - m_vMins[2];
-	float d = dx;
-	if (dy > d)
-		d = dy;
-	if (dz > d)
-		d = dz;
 
-	return d;
-}
-
-void
-Model::SetupBones ()
+void Model::PlayAnimation( CString sAniName )
 {
-	int nBoneCount = (int)m_pModel->Bones.size();
+	if( m_mapNameToAnimation.find(sAniName) == m_mapNameToAnimation.end() )
+		return;
+	else
+		m_pCurAnimation = &m_mapNameToAnimation[sAniName];
+
+	// setup bones
+	int nBoneCount = (int)m_pCurAnimation->Bones.size();
 	if (!m_pBones)
 	{
 		m_pBones = new myBone_t[nBoneCount];
@@ -828,7 +698,7 @@ Model::SetupBones ()
 	int i, j;
 	for (i = 0; i < nBoneCount; i++)
 	{
-		msBone *pBone = &m_pModel->Bones[i];
+		msBone *pBone = &m_pCurAnimation->Bones[i];
 		msVec3 vRot;
 		vRot[0] = pBone->Rotation[0] * 180 / (float) Q_PI;
 		vRot[1] = pBone->Rotation[1] * 180 / (float) Q_PI;
@@ -838,7 +708,7 @@ Model::SetupBones ()
 		m_pBones[i].mRelative[1][3] = pBone->Position[1];
 		m_pBones[i].mRelative[2][3] = pBone->Position[2];
 		
-		int nParentBone = m_pModel->FindBoneByName( pBone->szParentName );
+		int nParentBone = m_pCurAnimation->FindBoneByName( pBone->szParentName );
 		if (nParentBone != -1)
 		{
 			R_ConcatTransforms (m_pBones[nParentBone].mAbsolute, m_pBones[i].mRelative, m_pBones[i].mAbsolute);
@@ -851,9 +721,9 @@ Model::SetupBones ()
 		}
 	}
 
-	for (i = 0; i < (int)m_pModel->Meshes.size(); i++)
+	for (i = 0; i < (int)m_Meshes.size(); i++)
 	{
-		msMesh *pMesh = &m_pModel->Meshes[i];
+		msMesh *pMesh = &m_Meshes[i];
 		for (j = 0; j < (int)pMesh->Vertices.size(); j++)
 		{
 			msVertex *pVertex = &pMesh->Vertices[j];
@@ -869,24 +739,24 @@ Model::SetupBones ()
 		}
 	}
 
-	m_fCurrFrame = (float) m_pModel->nFrame;
+	m_fCurrFrame = 0;
 }
 
 void
 Model::AdvanceFrame (float dt)
 {
-	if (!m_pModel)
-		return;
+	if( m_Meshes.empty() || !m_pCurAnimation )
+		return;	// bail early
 
 	m_fCurrFrame += FRAMES_PER_SECOND * dt;
-	if (m_fCurrFrame > (float) m_pModel->nTotalFrames)
+	if (m_fCurrFrame > (float) m_pCurAnimation->nTotalFrames)
 		m_fCurrFrame = 0.0f;
 
-	int nBoneCount = (int)m_pModel->Bones.size();
+	int nBoneCount = (int)m_pCurAnimation->Bones.size();
 	int i, j;
 	for (i = 0; i < nBoneCount; i++)
 	{
-		msBone *pBone = &m_pModel->Bones[i];
+		msBone *pBone = &m_pCurAnimation->Bones[i];
 		int nPositionKeyCount = pBone->PositionKeys.size();
 		int nRotationKeyCount = pBone->RotationKeys.size();
 		if (nPositionKeyCount == 0 && nRotationKeyCount == 0)
@@ -980,7 +850,7 @@ Model::AdvanceFrame (float dt)
 			m[1][3] = vPos[1];
 			m[2][3] = vPos[2];
 			R_ConcatTransforms (m_pBones[i].mRelative, m, m_pBones[i].mRelativeFinal);
-			int nParentBone = m_pModel->FindBoneByName( pBone->szParentName );
+			int nParentBone = m_pCurAnimation->FindBoneByName( pBone->szParentName );
 			if (nParentBone == -1)
 			{
 				memcpy (m_pBones[i].mFinal, m_pBones[i].mRelativeFinal, sizeof (matrix_t));
@@ -997,23 +867,20 @@ void Model::Update( float fDelta )
 {
 	Actor::Update( fDelta );
 	AdvanceFrame( fDelta );
-	if( m_pModel )
-		for( int i=0; i<(int)m_pModel->Materials.size(); i++ )
-			m_pModel->Materials[i].aniTexture.Update( fDelta );
+	for( int i=0; i<(int)m_Materials.size(); i++ )
+		m_Materials[i].aniTexture.Update( fDelta );
 }
 
 void Model::SetState( int iNewState )
 {
-	if( m_pModel )
-		for( int i=0; i<(int)m_pModel->Materials.size(); i++ )
-			m_pModel->Materials[i].aniTexture.SetState( iNewState );
+	for( int i=0; i<(int)m_Materials.size(); i++ )
+		m_Materials[i].aniTexture.SetState( iNewState );
 }
 
 int Model::GetNumStates()
 {
 	int iMaxStates = 0;
-	if( m_pModel )
-		for( int i=0; i<(int)m_pModel->Materials.size(); i++ )
-			iMaxStates = max( iMaxStates, m_pModel->Materials[i].aniTexture.GetNumStates() );
+	for( int i=0; i<(int)m_Materials.size(); i++ )
+		iMaxStates = max( iMaxStates, m_Materials[i].aniTexture.GetNumStates() );
 	return iMaxStates;
 }

@@ -13,7 +13,9 @@
 
 #include "Actor.h"
 #include "RageTypes.h"
+#include "ModelTypes.h"
 #include <vector>
+#include <map>
 
 struct msModel;
 
@@ -35,24 +37,23 @@ public:
 
 public:
 	void	Clear ();
-	void	Load( CString sPath )
+	void	Load( CString sFile )
 	{
-		if( sPath == "" ) return;
-		if( sPath.Right(6) == ".model" )
-			LoadFromModelFile( sPath );
+		if( sFile == "" ) return;
+		if( sFile.Right(6) == ".model" )
+			LoadFromModelFile( sFile );
 		else 
-			LoadMilkshapeAscii( sPath );
+			LoadMilkshapeAscii( sFile );
 	};
 
-	bool	LoadFromModelFile( CString sPath );
-	bool	LoadMilkshapeAscii( CString sPath );
-	bool	LoadMilkshapeAsciiBones( CString sPath );
+	bool	LoadFromModelFile( CString sFile );
+	bool	LoadMilkshapeAscii( CString sFile );
+	bool	LoadMilkshapeAsciiBones( CString sAniName, CString sFile );
+	void	PlayAnimation( CString sAniName );
 
 	virtual void	Update( float fDelta );
 	virtual void	DrawPrimitives();
 
-	float	CalcDistance () const;
-	void	SetupBones ();
 	void	AdvanceFrame (float dt);
 
 	virtual void SetState( int iNewState );
@@ -60,12 +61,16 @@ public:
 
 
 private:
-	msModel		*m_pModel;
-	RageVector3	m_vMins, m_vMaxs;
-	myBone_t	*m_pBones;
-	typedef vector<RageVertex> RageVertexVector;
+    vector<msMesh>				m_Meshes;
+    vector<msMaterial>			m_Materials;
+	map<CString,msAnimation>	m_mapNameToAnimation;
+	msAnimation*				m_pCurAnimation;
+
+	RageVector3			m_vMins, m_vMaxs;
+	myBone_t			*m_pBones;
+	typedef vector<RageVertex>	RageVertexVector;
 	vector<RageVertexVector>	m_vTempVerticesByBone;
-	float		m_fCurrFrame;
+	float				m_fCurrFrame;
 };
 
 

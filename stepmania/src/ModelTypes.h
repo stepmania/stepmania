@@ -170,7 +170,10 @@ typedef struct msModel
     vector<msMesh>     Meshes;
 
     vector<msMaterial> Materials;
+} msModel;
 
+struct msAnimation
+{
     vector<msBone>     Bones;
 
 	int FindBoneByName( const char* szName )
@@ -181,11 +184,12 @@ typedef struct msModel
 		return -1;
 	}
 
-    int         nFrame;
+	// not used
+//    int         nFrame;
     int         nTotalFrames;
 
     msVec3      Position;
     msVec3      Rotation;
-} msModel;
+};
 
 #endif
