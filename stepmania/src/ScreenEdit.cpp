@@ -1805,7 +1805,12 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			}
 			break;
 		case edit_bpm:
-			SCREENMAN->TextEntry( SM_BackFromBPMChange, "Enter new BPM value.", ssprintf( "%.4f", m_pSong->GetBPMAtBeat( GAMESTATE->m_fSongBeat ) ) );
+			SCREENMAN->TextEntry( 
+				SM_BackFromBPMChange, 
+				"Enter new BPM value.", 
+				ssprintf( "%.4f", m_pSong->GetBPMAtBeat(GAMESTATE->m_fSongBeat) ),
+				10
+				);
 			break;
 		case edit_stop:
 			{
@@ -1817,9 +1822,23 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 						break;
 				}
 				if ( i == m_pSong->m_Timing.m_StopSegments.size() )
-					SCREENMAN->TextEntry( SM_BackFromStopChange, "Enter new Stop value.", "0.00" );
+				{
+					SCREENMAN->TextEntry( 
+						SM_BackFromStopChange, 
+						"Enter new Stop value.", 
+						"0.00", 
+						10
+						);
+				}
 				else
-					SCREENMAN->TextEntry( SM_BackFromStopChange, "Enter new Stop value.", ssprintf( "%.4f", m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds ) );
+				{
+					SCREENMAN->TextEntry( 
+						SM_BackFromStopChange, 
+						"Enter new Stop value.", 
+						ssprintf( "%.4f", m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds ),
+						10
+						);
+				}
 				break;
 			}
 		case edit_bg_change:
@@ -2297,7 +2316,14 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 	switch( c )
 	{
 	case description:
-		SCREENMAN->TextEntry( SM_None, "Enter a description.\nPress Enter to confirm,\nEscape to cancel.", m_pSteps->GetDescription(), ChangeDescription, NULL );
+		SCREENMAN->TextEntry( 
+			SM_None, 
+			"Enter a description.", 
+			m_pSteps->GetDescription(), 
+			MAX_DESCRIPTION_LENGTH,
+			ChangeDescription, 
+			NULL 
+			);
 		break;
 	}
 }
@@ -2309,25 +2335,25 @@ void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vec
 	switch( c )
 	{
 	case main_title:
-		SCREENMAN->TextEntry( SM_None, "Edit main title.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sMainTitle, ChangeMainTitle, NULL );
+		SCREENMAN->TextEntry( SM_None, "Edit main title.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sMainTitle, 100, ChangeMainTitle, NULL );
 		break;
 	case sub_title:
-		SCREENMAN->TextEntry( SM_None, "Edit sub title.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sSubTitle, ChangeSubTitle, NULL );
+		SCREENMAN->TextEntry( SM_None, "Edit sub title.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sSubTitle, 100, ChangeSubTitle, NULL );
 		break;
 	case artist:
-		SCREENMAN->TextEntry( SM_None, "Edit artist.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sArtist, ChangeArtist, NULL );
+		SCREENMAN->TextEntry( SM_None, "Edit artist.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sArtist, 100, ChangeArtist, NULL );
 		break;
 	case credit:
-		SCREENMAN->TextEntry( SM_None, "Edit credit.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sCredit, ChangeCredit, NULL );
+		SCREENMAN->TextEntry( SM_None, "Edit credit.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sCredit, 100, ChangeCredit, NULL );
 		break;
 	case main_title_transliteration:
-		SCREENMAN->TextEntry( SM_None, "Edit main title transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sMainTitleTranslit, ChangeMainTitleTranslit, NULL );
+		SCREENMAN->TextEntry( SM_None, "Edit main title transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sMainTitleTranslit, 100, ChangeMainTitleTranslit, NULL );
 		break;
 	case sub_title_transliteration:
-		SCREENMAN->TextEntry( SM_None, "Edit sub title transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sSubTitleTranslit, ChangeSubTitleTranslit, NULL );
+		SCREENMAN->TextEntry( SM_None, "Edit sub title transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sSubTitleTranslit, 100, ChangeSubTitleTranslit, NULL );
 		break;
 	case artist_transliteration:
-		SCREENMAN->TextEntry( SM_None, "Edit artist transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sArtistTranslit, ChangeArtistTranslit, NULL );
+		SCREENMAN->TextEntry( SM_None, "Edit artist transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sArtistTranslit, 100, ChangeArtistTranslit, NULL );
 		break;
 	default:
 		ASSERT(0);

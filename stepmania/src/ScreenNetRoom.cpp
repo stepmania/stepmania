@@ -146,7 +146,7 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 		if ( !ScreenTextEntry::s_bCancelledLast )
 		{
 			m_newRoomName = ScreenTextEntry::s_sLastAnswer;
-			SCREENMAN->TextEntry( SM_BackFromRoomDesc, "Enter Room Description:", "");
+			SCREENMAN->TextEntry( SM_BackFromRoomDesc, "Enter Room Description:", "", 255 );
 		}
 		break;
 	case SM_BackFromRoomDesc:
@@ -192,7 +192,7 @@ void ScreenNetRoom::MenuStart( PlayerNumber pn )
 		}
 		break;
 	case SelectMakeRoom:
-		SCREENMAN->TextEntry( SM_BackFromRoomName, "Enter Room Name:", "");
+		SCREENMAN->TextEntry( SM_BackFromRoomName, "Enter Room Name:", "", 255 );
 		break;
 	};
 }

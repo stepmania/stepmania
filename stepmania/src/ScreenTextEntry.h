@@ -27,7 +27,14 @@ enum KeyboardRowSpecialKey
 class ScreenTextEntry : public Screen
 {
 public:
-	ScreenTextEntry( CString sName, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer) = NULL, void(*OnCanel)() = NULL, bool bPassword = false );
+	ScreenTextEntry( 
+		CString sName, 
+		CString sQuestion, 
+		CString sInitialAnswer, 
+		int iMaxInputLength,
+		void(*OnOK)(CString sAnswer) = NULL, 
+		void(*OnCanel)() = NULL, 
+		bool bPassword = false );
 	~ScreenTextEntry();
 	virtual void Init();
 
@@ -59,6 +66,7 @@ protected:
 	void UpdateAnswerText();
 
 	CString			m_sQuestion;
+	int				m_iMaxInputLength;
 	bool            m_bPassword;
 	AutoActor		m_Background;
 	BitmapText		m_textQuestion;
@@ -67,8 +75,7 @@ protected:
 	BitmapText		m_textAnswer;
 	void(*m_pOnOK)( CString sAnswer );
 	void(*m_pOnCancel)();
-	bool			m_bCancelled;
-
+	
 	AutoActor		m_sprCursor;
 
 	int				m_iFocusX;

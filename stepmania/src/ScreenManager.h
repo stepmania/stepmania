@@ -57,8 +57,19 @@ public:
 	void SetNewScreen( const CString &sName );
 	void AddNewScreenToTop( const CString &sName, ScreenMessage messageSendOnPop );
 	void Prompt( ScreenMessage SM_SendWhenDone, const CString &sText, PromptType type = PROMPT_OK, PromptAnswer defaultAnswer = ANSWER_NO, void(*OnYes)(void*) = NULL, void(*OnNo)(void*) = NULL, void* pCallbackData = NULL );
-	void Password( ScreenMessage SM_SendWhenDone, const CString &sText, void(*OnOK)(CString sPassword) = NULL, void(*OnCanel)() = NULL ); 
-	void TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer) = NULL, void(*OnCanel)() = NULL );
+	void TextEntry( 
+		ScreenMessage SM_SendWhenDone, 
+		CString sQuestion, 
+		CString sInitialAnswer, 
+		int iMaxInputLength, 
+		void(*OnOK)(CString sAnswer) = NULL, 
+		void(*OnCanel)() = NULL,
+		bool bPassword = false
+		);
+	void Password( ScreenMessage SM_SendWhenDone, const CString &sQuestion, void(*OnOK)(CString sPassword) = NULL, void(*OnCanel)() = NULL )
+	{
+		TextEntry( SM_SendWhenDone, sQuestion, "", 255, OnOK, OnCanel, true );
+	}
 	void MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel = SM_None );
 	void PopTopScreen( ScreenMessage SM = SM_None );
 	void SystemMessage( const CString &sMessage );

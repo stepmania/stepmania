@@ -495,27 +495,21 @@ void ScreenManager::Prompt( ScreenMessage SM_SendWhenDone, const CString &sText,
 	m_MessageSendOnPop = SM_SendWhenDone;
 }
 
-void ScreenManager::TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer), void(*OnCancel)() )
+void ScreenManager::TextEntry( 
+	ScreenMessage SM_SendWhenDone, 
+	CString sQuestion, 
+	CString sInitialAnswer, 
+	int iMaxInputLength,
+	void(*OnOK)(CString sAnswer), 
+	void(*OnCancel)(),
+	bool bPassword
+	)
 {	
 	if( m_ScreenStack.size() )
 		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
 
 	// add the new state onto the back of the array
-	Screen *pNewScreen = new ScreenTextEntry( "ScreenTextEntry", sQuestion, sInitialAnswer, OnOK, OnCancel );
-	pNewScreen->Init();
-	this->ZeroNextUpdate();
-	SetFromNewScreen( pNewScreen, true );
-
-	m_MessageSendOnPop = SM_SendWhenDone;
-}
-
-void ScreenManager::Password( ScreenMessage SM_SendWhenDone, const CString &sText, void(*OnOK)(CString sPassword), void(*OnCancel)() )
-{	
-	if( m_ScreenStack.size() )
-		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
-
-	// add the new state onto the back of the array
-	Screen *pNewScreen = new ScreenTextEntry( "ScreenTextEntry", sText, "", OnOK, OnCancel, true );
+	Screen *pNewScreen = new ScreenTextEntry( "ScreenTextEntry", sQuestion, sInitialAnswer, iMaxInputLength, OnOK, OnCancel, bPassword );
 	pNewScreen->Init();
 	this->ZeroNextUpdate();
 	SetFromNewScreen( pNewScreen, true );

@@ -46,21 +46,25 @@ bool ScreenTextEntry::s_bCancelledLast = false;
  */
 //REGISTER_SCREEN_CLASS( ScreenTextEntry );
 
-ScreenTextEntry::ScreenTextEntry( CString sClassName, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer), void(*OnCancel)(), bool bPassword ) :
-  Screen( sClassName )
+ScreenTextEntry::ScreenTextEntry( 
+	CString sClassName, 
+	CString sQuestion, 
+	CString sInitialAnswer, 
+	int iMaxInputLength,
+	void(*OnOK)(CString sAnswer), 
+	void(*OnCancel)(), 
+	bool bPassword ) :
+	Screen( sClassName )
 {
-	m_sName = "ScreenTextEntry";
-
 	m_bIsTransparent = true;	// draw screens below us
-	m_bPassword = bPassword;
-
-	m_pOnOK = OnOK;
-	m_pOnCancel = OnCancel;
-
-	m_sAnswer = CStringToWstring( sInitialAnswer );
 	m_bCancelled = false;
 
 	m_sQuestion = sQuestion;
+	m_sAnswer = CStringToWstring( sInitialAnswer );
+	m_iMaxInputLength = iMaxInputLength;
+	m_pOnOK = OnOK;
+	m_pOnCancel = OnCancel;
+	m_bPassword = bPassword;
 }
 
 void ScreenTextEntry::Init()
@@ -247,7 +251,14 @@ void ScreenTextEntry::MoveY( int iDir )
 
 void ScreenTextEntry::AppendToAnswer( CString s )
 {
-	m_sAnswer += CStringToWstring( s );
+	wstring sNewAnswer = m_sAnswer+CStringToWstring(s);
+	if( (int)sNewAnswer.length() > m_iMaxInputLength )
+	{
+		SCREENMAN->PlayInvalidSound();
+		return;
+	}
+
+	m_sAnswer = sNewAnswer;
 	m_sndType.Play();
 	UpdateAnswerText();
 
@@ -322,8 +333,8 @@ void ScreenTextEntry::End( bool bCancelled )
 		}
 	}
 
-	s_bCancelledLast = m_bCancelled;
-	s_sLastAnswer = m_bCancelled ? CString("") : WStringToCString(m_sAnswer);
+	s_bCancelledLast = bCancelled;
+	s_sLastAnswer = bCancelled ? CString("") : WStringToCString(m_sAnswer);
 }
 
 void ScreenTextEntry::MenuBack( PlayerNumber pn )
