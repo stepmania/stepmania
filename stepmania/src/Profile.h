@@ -254,19 +254,19 @@ public:
 	//
 	// RecentCourseScores
 	//
-	struct HighScoreForACourse
+	struct HighScoreForACourseAndTrail
 	{
 		CourseID courseID;
 		TrailID	trailID;
 		HighScore hs;
 
-		HighScoreForACourse() { Unset(); }
+		HighScoreForACourseAndTrail() { Unset(); }
 		void Unset() { courseID.Unset(); hs.Unset(); }
 
 		XNode* CreateNode() const;
 		void LoadFromNode( const XNode* pNode );
 	};
-	vector<HighScoreForACourse> m_vRecentCourseScores;
+	vector<HighScoreForACourseAndTrail> m_vRecentCourseScores;
 	void AddCourseRecentScore( const Course* pCourse, const Trail* pTrail, HighScore hs );
 
 	//

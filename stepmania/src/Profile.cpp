@@ -1600,25 +1600,28 @@ void Profile::AddStepsRecentScore( const Song* pSong, const Steps* pSteps, HighS
 }
 
 
-XNode* Profile::HighScoreForACourse::CreateNode() const
+XNode* Profile::HighScoreForACourseAndTrail::CreateNode() const
 {
 	XNode* pNode = new XNode;
-	pNode->name = "HighScoreForACourse";
+	pNode->name = "HighScoreForACourseAndTrail";
 
 	pNode->AppendChild( courseID.CreateNode() );
+	pNode->AppendChild( trailID.CreateNode() );
 	pNode->AppendChild( hs.CreateNode() );
 
 	return pNode;
 }
 
-void Profile::HighScoreForACourse::LoadFromNode( const XNode* pNode )
+void Profile::HighScoreForACourseAndTrail::LoadFromNode( const XNode* pNode )
 {
 	Unset();
 
-	ASSERT( pNode->name == "HighScoreForACourse" );
+	ASSERT( pNode->name == "HighScoreForACourseAndTrail" );
 	XNode* p;
 	if( (p = pNode->GetChild("Course")) )
 		courseID.LoadFromNode( p );
+	if( (p = pNode->GetChild("Trail")) )
+		trailID.LoadFromNode( p );
 	if( (p = pNode->GetChild("HighScore")) )
 		hs.LoadFromNode( p );
 }
@@ -1632,9 +1635,9 @@ void Profile::LoadRecentCourseScoresFromNode( const XNode* pNode )
 		p != pNode->childs.end(); 
 		p++ )
 	{
-		if( (*p)->name == "HighScoreForACourse" )
+		if( (*p)->name == "HighScoreForACourseAndTrail" )
 		{
-			HighScoreForACourse h;
+			HighScoreForACourseAndTrail h;
 			h.LoadFromNode( *p );
 
 			m_vRecentCourseScores.push_back( h );
@@ -1666,7 +1669,7 @@ XNode* Profile::SaveRecentCourseScoresCreateNode() const
 
 void Profile::AddCourseRecentScore( const Course* pCourse, const Trail* pTrail, HighScore hs )
 {
-	HighScoreForACourse h;
+	HighScoreForACourseAndTrail h;
 	h.courseID.FromCourse( pCourse );
 	h.trailID.FromTrail( pTrail );
 	h.hs = hs;
