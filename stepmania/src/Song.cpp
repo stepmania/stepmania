@@ -627,7 +627,7 @@ void Song::TranslateTitles()
 		ttab.push_back(TitleTrans("^Sobakasu$", "", "", "&hso;&hba;&hka;&hsu;", "", "") );
 
 		/* 夜空のムコウ */
-		ttab.push_back(TitleTrans("^Yozora no Muko$", "", "", "&yozora1;&yozora2;&hno;&kmu;&kko;", "", "") );
+		ttab.push_back(TitleTrans("^Yozora no Muko$", "", "", "&yozora1;&yozora2;&hno;&kmu;&kko;&ku;", "", "") );
 
 		/* 17才 */
 		ttab.push_back(TitleTrans("^17 ?(Sai)?$", "", "", "17&sai;", "", "") );
