@@ -370,6 +370,14 @@ struct VideoCardDefaults
 } const g_VideoCardDefaults[] = 
 {
 	{
+		"Xbox",
+		"d3d,opengl",
+		600,400,
+		32,32,32,
+		2048,
+		true
+	},
+	{
 		"Voodoo *5",
 		"d3d,opengl",	// received 3 reports of opengl crashing. -Chris
 		640,480,
@@ -1012,14 +1020,6 @@ int main(int argc, char* argv[])
 
 	/* Initialize which courses are ranking courses here. */
 	SONGMAN->UpdateRankingCourses();
-
-#ifdef _XBOX
-	/* XXX: This is a bad way to do this.  Instead, add an "XBOX" entry to
-	 * g_VideoCardDefaults (and make sure the name shows up, so it matches). */
-	g_CurrentParams.width = 600;
-	g_CurrentParams.height= 400;
-	DISPLAY->ResolutionChanged();
-#endif
 
 	/* Run the main loop. */
 	GameLoop();
