@@ -1361,7 +1361,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 	// Copy CSS file from theme.  If the copy fails, oh well...
 	// 
 	CString sStyleFile = THEME->GetPathToO("ProfileManager style.css");
-	CopyFile2( sStyleFile, sDir+STYLE_CSS_FILE );
+	FileCopy( sStyleFile, sDir+STYLE_CSS_FILE );
 	LOG->Trace( "Done." );
 		
 }

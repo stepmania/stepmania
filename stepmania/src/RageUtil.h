@@ -309,6 +309,6 @@ void FileWrite(RageFile& f, int iWrite);
 void FileWrite(RageFile& f, size_t uWrite);
 void FileWrite(RageFile& f, float fWrite);
 
-bool CopyFile2( CString sSrcFile, CString sDstFile );	// using "CopyFile" gives "unresolved external" link error in VC6. Grr. -Chris
+bool FileCopy( CString sSrcFile, CString sDstFile );
 
 #endif

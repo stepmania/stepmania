@@ -1101,7 +1101,7 @@ void FileWrite(RageFile& f, float fWrite)
 	f.PutLine( ssprintf("%f", fWrite) );
 }
 
-bool CopyFile2( CString sSrcFile, CString sDstFile )
+bool FileCopy( CString sSrcFile, CString sDstFile )
 {
 	RageFile in;
 	if( !in.Open(sSrcFile, RageFile::READ) )
