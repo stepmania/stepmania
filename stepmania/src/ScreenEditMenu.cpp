@@ -149,27 +149,6 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		m_Selector.RefreshAll();
 		return;
 	case EditMenu::ACTION_COPY:
-		ASSERT( !pSteps );
-		ASSERT( pSourceSteps );
-		{
-			// Yuck.  Doing the memory allocation doesn't seem right since
-			// Song allocates all of the other Steps.
-			Steps* pNewSteps = new Steps;
-			pNewSteps->CopyFrom( pSourceSteps, st );
-			pNewSteps->SetDifficulty( dc );
-			pNewSteps->SetDescription( GetCopyDescription(pSourceSteps) );
-			pSong->AddSteps( pNewSteps );
-		
-			SCREENMAN->SystemMessage( "Steps created from copy." );
-			SOUND->PlayOnce( THEME->GetPathS(m_sName,"create") );
-			pSong->Save();
-
-			GAMESTATE->m_pCurSong.Set( pSong );
-			GAMESTATE->m_pCurSteps[0].Set( pNewSteps );
-
-			m_Selector.RefreshAll();
-		}
-		return;
 	case EditMenu::ACTION_AUTOGEN:
 		ASSERT( !pSteps );
 		ASSERT( pSourceSteps );
@@ -177,10 +156,22 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			// Yuck.  Doing the memory allocation doesn't seem right since
 			// Song allocates all of the other Steps.
 			Steps* pNewSteps = new Steps;
-			pNewSteps->AutogenFrom( pSourceSteps, st );
-			pNewSteps->DeAutogen();
+			switch( action )
+			{
+				case EditMenu::ACTION_COPY:
+					pNewSteps->CopyFrom( pSourceSteps, st );
+					break;
+				case EditMenu::ACTION_AUTOGEN:
+					pNewSteps->AutogenFrom( pSourceSteps, st );
+					pNewSteps->DeAutogen();
+					break;
+				default:
+					ASSERT(0);
+			}
 			pNewSteps->SetDifficulty( dc );	// override difficulty with the user's choice
-			pNewSteps->SetDescription( GetCopyDescription(pSourceSteps) );
+			CString sPreferredEditName = GetCopyDescription(pSourceSteps);
+			pSong->MakeUniqueEditDescription( st, sPreferredEditName ); 
+			pNewSteps->SetDescription( sPreferredEditName );
 			pSong->AddSteps( pNewSteps );
 				
 			SCREENMAN->SystemMessage( "Steps created from AutoGen." );

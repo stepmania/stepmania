@@ -31,8 +31,6 @@
 #include "PrefsManager.h"
 #include "NotesLoaderSM.h"
 
-const int MAX_DESCRIPTION_LENGTH = 12;
-
 Steps::Steps()
 {
 	m_StepsType = STEPS_TYPE_INVALID;
@@ -303,8 +301,17 @@ void Steps::SetDescription(CString desc)
 {
 	DeAutogen();
 	m_sDescription = desc;
-	if( int(m_sDescription.size()) > MAX_DESCRIPTION_LENGTH )
-		m_sDescription = m_sDescription.Left( MAX_DESCRIPTION_LENGTH );
+	MakeValidDescription( m_sDescription );
+}
+
+bool Steps::MakeValidDescription( CString &sPreferredDescription )
+{
+	if( int(sPreferredDescription.size()) > MAX_DESCRIPTION_LENGTH )
+	{
+		sPreferredDescription = sPreferredDescription.Left( MAX_DESCRIPTION_LENGTH );
+		return true;
+	}
+	return false;
 }
 
 void Steps::SetDifficulty(Difficulty d)

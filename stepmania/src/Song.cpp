@@ -855,7 +855,7 @@ void Song::GetSteps(
 	}
 }
 
-Steps* Song::GetSteps( 
+Steps* Song::GetOneSteps( 
 	StepsType st, 
 	Difficulty dc, 
 	int iMeterLow, 
@@ -952,12 +952,12 @@ bool Song::SongCompleteForStyle( const Style *st ) const
 
 bool Song::HasStepsType( StepsType st ) const
 {
-	return GetSteps( st ) != NULL;
+	return GetOneSteps( st ) != NULL;
 }
 
 bool Song::HasStepsTypeAndDifficulty( StepsType st, Difficulty dc ) const
 {
-	return GetSteps( st, dc ) != NULL;
+	return GetOneSteps( st, dc ) != NULL;
 }
 
 void Song::Save()
@@ -1402,6 +1402,47 @@ bool Song::HasSignificantBpmChangesOrStops() const
 		return false;
 
 	return m_Timing.HasBpmChangesOrStops();
+}
+
+bool IsEditDescriptionUnique( vector<Steps*> vSteps, StepsType st, CString sPreferredDescription )
+{
+	FOREACH( Steps*, vSteps, s )
+	{
+		if( (*s)->GetDifficulty() != DIFFICULTY_EDIT )
+			continue;
+
+		if( (*s)->m_StepsType != st )
+			continue;
+
+		if( (*s)->GetDescription() == sPreferredDescription )
+			return false;
+	}
+	return true;
+}
+
+void Song::MakeUniqueEditDescription( StepsType st, CString &sPreferredDescriptionInOut )
+{
+	if( IsEditDescriptionUnique( m_vpSteps, st, sPreferredDescriptionInOut ) )
+		return;
+
+	int i=0;
+	CString sTemp;
+
+	for( int i=0; i<1000; i++ )
+	{
+		// make name "My Edit" -> "My Edit"
+		CString sNum = ssprintf("%d", i+1);
+		sTemp = sPreferredDescriptionInOut.Left( MAX_DESCRIPTION_LENGTH - sNum.size() ) + sNum;
+
+		if( IsEditDescriptionUnique(m_vpSteps, st, sTemp) )
+		{
+			sPreferredDescriptionInOut = sTemp;
+			return;
+		}
+	}
+	
+	// Edit limit guards should keep us from ever having more than 1000 edits per song.
+	return;
 }
 
 

@@ -189,7 +189,7 @@ public:
 		unsigned uHash = 0,
 		int iMaxToGet = -1 
 		) const;
-	Steps* GetSteps( 
+	Steps* GetOneSteps( 
 		StepsType st = STEPS_TYPE_INVALID, 
 		Difficulty dc = DIFFICULTY_INVALID, 
 		int iMeterLow = -1, 
@@ -218,6 +218,8 @@ public:
 	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != PROFILE_SLOT_INVALID; }
 	int GetNumStepsLoadedFromProfile( ProfileSlot slot ) const;
 	bool IsEditAlreadyLoaded( Steps* pSteps ) const;
+
+	void MakeUniqueEditDescription( StepsType st, CString &sPreferredDescriptionInOut );
 
 	// An array of keysound file names (e.g. "beep.wav").
 	// The index in this array corresponds to the index in TapNote.  If you 

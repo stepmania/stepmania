@@ -12,6 +12,8 @@ class NoteData;
 class Profile;
 struct lua_State;
 
+const int MAX_DESCRIPTION_LENGTH = 12;
+
 class Steps
 {
 public:
@@ -40,6 +42,8 @@ public:
 
 	void SetFile( CString fn );
 	void SetDescription(CString desc);
+	static bool MakeValidDescription( CString &sPreferredDescription );	// return true if was modified
+
 	void SetDifficulty(Difficulty d);
 	void SetLoadedFromProfile( ProfileSlot slot ) { m_LoadedFromProfile = slot; }
 	void SetMeter(int meter);
