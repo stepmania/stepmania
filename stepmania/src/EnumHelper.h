@@ -1,7 +1,38 @@
 #ifndef EnumHelper_H
 #define EnumHelper_H
 
-#define FOREACH_ENUM( e, max, var )	for( e var=(e)0; var<max; ((int&)var)++ )
+/*
+ * Safely add an integer to an enum.
+ *
+ * This is illegal:
+ *
+ *  ((int&)val) += iAmt;
+ *
+ * It breaks aliasing rules; the compiler is allowed to assume that "val" doesn't
+ * change (unless it's declared volatile), and in some cases, you'll end up getting
+ * old values for "val" following the add.  (What's probably really happening is
+ * that the memory location is being added to, but the value is stored in a register,
+ * and breaking aliasing rules means the compiler doesn't know that the register
+ * value is invalid.)
+ *
+ * Always do these conversions through a union.
+ */
+template<typename T>
+static inline void enum_add( T &val, int iAmt )
+{
+	union conv
+	{
+		T value;
+		int i;
+	};
+
+	conv c;
+	c.value = val;
+	c.i += iAmt;
+	val = c.value;
+}
+
+#define FOREACH_ENUM( e, max, var )	for( e var=(e)0; var<max; enum_add<e>( var, +1 ) )
 
 
 static const CString EMPTY_STRING;

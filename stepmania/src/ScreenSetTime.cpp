@@ -12,6 +12,7 @@
 #include "ThemeManager.h"
 #include "RageDisplay.h"
 #include "Bookkeeper.h"
+#include "EnumHelper.h"
 #include "arch/ArchHooks/ArchHooks.h"
 
 static const CString SetTimeSelectionNames[NUM_SET_TIME_SELECTIONS] = {
