@@ -3,6 +3,9 @@
 #include "dsound.h"	// for timeGetTime
 #include "archutils/Xbox/custom_launch_params.h" // for XGetCustomLaunchData
 
+typedef struct _UNICODE_STRING {unsigned short Length; unsigned short MaximumLength; PSTR Buffer;} UNICODE_STRING,*PUNICODE_STRING;
+extern "C" XBOXAPI DWORD WINAPI IoCreateSymbolicLink(IN PUNICODE_STRING SymbolicLinkName,IN PUNICODE_STRING DeviceName);
+
 static bool g_bTimerInitialized;
 static DWORD g_iStartTime;
 
@@ -30,9 +33,51 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 	return ret;
 }
 
+void MountDriveLetter(char drive, char* szDevice, char* szDir)
+{
+	char szSourceDevice[256];
+	char szDestinationDrive[16];
+	sprintf(szDestinationDrive, "\\??\\%c:", drive);
+	sprintf(szSourceDevice,"\\Device\\%s",szDevice);
+	if (*szDir != 0x00 && *szDir != '\\') 
+	{
+		strcat(szSourceDevice, "\\");
+		strcat(szSourceDevice, szDir);
+	}
+
+	UNICODE_STRING LinkName = 
+	{
+		strlen(szDestinationDrive),
+		strlen(szDestinationDrive) + 1,
+		szDestinationDrive
+	};
+	UNICODE_STRING DeviceName = 
+	{
+		strlen(szSourceDevice),
+		strlen(szSourceDevice) + 1,
+		szSourceDevice
+	};
+
+	IoCreateSymbolicLink(&LinkName, &DeviceName);
+}
+
+void MountDrives()
+{
+	MountDriveLetter('A', "Cdrom0", "\\");
+	MountDriveLetter('E', "Harddisk0\\Partition1", "\\");
+	MountDriveLetter('C', "Harddisk0\\Partition2", "\\");
+	MountDriveLetter('X', "Harddisk0\\Partition3", "\\");
+	MountDriveLetter('Y', "Harddisk0\\Partition4", "\\");
+	MountDriveLetter('F', "Harddisk0\\Partition6", "\\");
+	MountDriveLetter('G', "Harddisk0\\Partition7", "\\");
+}
+
 ArchHooks_Xbox::ArchHooks_Xbox()
 {
 	XGetCustomLaunchData();
+
+	// mount A to DVD, C, E, F, G, X, and Y to the harddisk
+	MountDrives();
 }
 
 ArchHooks_Xbox::~ArchHooks_Xbox()
