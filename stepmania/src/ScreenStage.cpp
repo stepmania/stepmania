@@ -257,301 +257,301 @@ ScreenStage::ScreenStage()
 		// START moving the numbers how ez2 wants them //
 		/////////////////////////////////////////////////
 
-			for( i=0; i<4; i++ )
-			{
-			//	float fOffsetX = SCALE(i, 0, iNumChars-1, -(iNumChars-1)/2.0f*fFrameWidth, (iNumChars-1)/2.0f*fFrameWidth);
-				m_sprNumbers[i].SetX( CENTER_X - 170 + (90 * i) );
-				m_sprNumbers[i].SetY( CENTER_Y );
-			}
+		for( i=0; i<4; i++ )
+		{
+		//	float fOffsetX = SCALE(i, 0, iNumChars-1, -(iNumChars-1)/2.0f*fFrameWidth, (iNumChars-1)/2.0f*fFrameWidth);
+			m_sprNumbers[i].SetX( CENTER_X - 170 + (90 * i) );
+			m_sprNumbers[i].SetY( CENTER_Y );
+		}
 
 
-			for( i=0; i<4; i++ ) // redefine the size of the numbers
-			{
-				m_sprNumbers[i].ZoomToWidth( 200.0f ); // make the numbers that appear really big
-				m_sprNumbers[i].ZoomToHeight( 200.0f); // so they can 'shrink' onto the screen
-			}
+		for( i=0; i<4; i++ ) // redefine the size of the numbers
+		{
+			m_sprNumbers[i].ZoomToWidth( 200.0f ); // make the numbers that appear really big
+			m_sprNumbers[i].ZoomToHeight( 200.0f); // so they can 'shrink' onto the screen
+		}
+	
+	//	m_frameStage.SetXY( CENTER_X, CENTER_Y );
 		
-		//	m_frameStage.SetXY( CENTER_X, CENTER_Y );
-			
-			for( i=0; i<4; i++)
-			{
-				m_sprNumbers[i].SetZoom( 20.0f ); // make it really really big on-screen
-				m_sprNumbers[i].SetRotation( 10 ); // make this thing rotated
-				m_sprNumbers[i].BeginTweening(0.8f, Actor::TWEEN_BIAS_BEGIN );
-				m_sprNumbers[i].SetTweenZoom( 1.0f ); // shrink it down to it's proper size
-				m_sprNumbers[i].SetTweenRotationZ( 0 ); // make it rotate into place
-			}
+		for( i=0; i<4; i++)
+		{
+			m_sprNumbers[i].SetZoom( 20.0f ); // make it really really big on-screen
+			m_sprNumbers[i].SetRotation( 10 ); // make this thing rotated
+			m_sprNumbers[i].BeginTweening(0.8f, Actor::TWEEN_BIAS_BEGIN );
+			m_sprNumbers[i].SetTweenZoom( 1.0f ); // shrink it down to it's proper size
+			m_sprNumbers[i].SetTweenRotationZ( 0 ); // make it rotate into place
+		}
+	
+
+		///////////////////////////
+		// Start Ez2 Backgrounds //
+		///////////////////////////
+	
+		// Background Blocks rotate their way in
+
+		int bg_modeoffset=0; // used to shuffle some graphics if we're in FINAL rather than normal stage
+		float element_y_offsets=0.0f; // used to shuffle some graphics if we're in FINAL rather than nornal stage
+		if (ez2Final) // if we're in final redefine those offsets
+		{
+			element_y_offsets = 25.0f;
+			bg_modeoffset = 4; // shuffle graphics +4 in the elements file for FINAL graphics.
+		}
+
+		for (i=0; i<3; i++) // Load In The Background Graphics
+		{
+			m_sprbg[i].Load( THEME->GetPathTo("Graphics","stage elements") );
+			m_sprbg[i].StopAnimating();
+			m_sprbg[i].SetState( i+bg_modeoffset ); // We wanna use i to load in an element from the graphicmap OR the offset will
+													// give us alternative locations if we're in final
+		}
+
+		// Final mode is a little more special than our regular normal stage screen
+		// it has FOUR background elements.
+		// so if we should actually be on final stage
+		// setup this extra background element
+		
+		if (ez2Final) 
+		{
+			m_sprbgxtra.Load( THEME->GetPathTo("Graphics","stage elements") ); // get the graphic
+			m_sprbgxtra.StopAnimating(); 
+			m_sprbgxtra.SetState( bg_modeoffset ); // use the first element of the offset for this graphic
+			m_sprbgxtra.SetXY( CENTER_X-30, CENTER_Y+180); // set it's initial XY coordinates
+			m_sprbgxtra.ZoomToHeight( 30 ); // set it's height and width. As we're only dealing with solid color
+			m_sprbgxtra.ZoomToWidth( SCREEN_WIDTH + 50 ); // stretching shouldn't be a concern.
+			m_sprbgxtra.SetRotation( -20 ); // rotate this graphic
+			m_sprbgxtra.BeginTweening(0.3f); // start tweening
+			m_sprbgxtra.SetTweenRotationZ( 0 ); // set the rotation we want it to finally appear as
+		}
+
+
+		m_sprbg[0].SetXY( CENTER_X, CENTER_Y+150); // this is where we want the red bar graphic....
+		if (ez2Final) // however in final...
+			m_sprbg[0].SetXY( CENTER_X-30, CENTER_Y-160); // we want it somewhere else
+		m_sprbg[0].ZoomToHeight( 100 ); // it's fairly high in normal
+		if (ez2Final) // but in final...
+			m_sprbg[0].ZoomToHeight( 30 ); // it needs to be a bit more squashed
+		m_sprbg[0].ZoomToWidth( SCREEN_WIDTH + 50 ); // no matter what... it's this wide
+		m_sprbg[0].SetRotation( -20 ); // and is initially this rotation
+		m_sprbg[0].BeginTweening(0.3f); // start tweening
+		m_sprbg[0].SetTweenRotationZ( 0 ); // and set the rotation to where we want it to end up
+		
+		m_sprbg[1].SetXY( CENTER_X-(SCREEN_WIDTH/2)-20, CENTER_Y+element_y_offsets);
+		m_sprbg[1].ZoomToHeight( SCREEN_HEIGHT - 140 );
+		m_sprbg[1].ZoomToWidth( 130 );
+		m_sprbg[1].SetRotation( -20 );
+		m_sprbg[1].BeginTweening(0.3f);
+		m_sprbg[1].SetTweenRotationZ( 0 );
+
+		m_sprbg[2].SetXY( CENTER_X+430, CENTER_Y+element_y_offsets);
+		m_sprbg[2].ZoomToHeight( SCREEN_HEIGHT - 140 );
+		m_sprbg[2].ZoomToWidth( SCREEN_WIDTH + 50 );
+		m_sprbg[2].SetRotation( -20 );
+		m_sprbg[2].BeginTweening(0.3f);
+		m_sprbg[2].SetTweenX( CENTER_X );
+		m_sprbg[2].SetTweenRotationZ( 0 );
+
+		for (i=3; i>=0; i--) // work backwards as we wanna add em in reverse 
+		{
+			m_frameStage.AddChild( &m_sprbg[i] ); 
+		}
+
+		if (ez2Final) // if we're in FINAL add that extra background element mentioned earlier.
+		{
+			m_frameStage.AddChild( &m_sprbgxtra );
+		}
+
+
+		/////////////////////////
+		// END Ez2 Backgrounds //
+		/////////////////////////
+
+
+		//////////////////////////////
+		// START stage description  //
+		// and gamename tag display //
+		//////////////////////////////
+
+		// scroll in the name of the game ("ez2dancer ukmove" on arcade) across the top of the screen
+
+		for (i=0; i<2; i++) // specify the font file.
+		{
+			m_ez2ukm[i].LoadFromFont( THEME->GetPathTo("Fonts","stage") );
+			m_ez2ukm[i].TurnShadowOff();
+			m_stagedesc[i].LoadFromFont( THEME->GetPathTo("Fonts","stage") );
+			m_stagedesc[i].TurnShadowOff();
+		}
+
+		m_ez2ukm[0].SetXY( CENTER_X-400, CENTER_Y-220 ); // set the intiial UKMOVE positions
+		m_ez2ukm[1].SetXY( CENTER_X+400, CENTER_Y+220 );
 		
 
-			///////////////////////////
-			// Start Ez2 Backgrounds //
-			///////////////////////////
+		m_stagedesc[0].SetXY( CENTER_X-400, CENTER_Y-150+element_y_offsets ); // set the intiial desc positions
+		m_stagedesc[1].SetXY( CENTER_X+400, CENTER_Y+70+element_y_offsets ); 
 		
-			// Background Blocks rotate their way in
-
-			int bg_modeoffset=0; // used to shuffle some graphics if we're in FINAL rather than normal stage
-			float element_y_offsets=0.0f; // used to shuffle some graphics if we're in FINAL rather than nornal stage
-			if (ez2Final) // if we're in final redefine those offsets
-			{
-				element_y_offsets = 25.0f;
-				bg_modeoffset = 4; // shuffle graphics +4 in the elements file for FINAL graphics.
-			}
-
-			for (i=0; i<3; i++) // Load In The Background Graphics
-			{
-				m_sprbg[i].Load( THEME->GetPathTo("Graphics","stage elements") );
-				m_sprbg[i].StopAnimating();
-				m_sprbg[i].SetState( i+bg_modeoffset ); // We wanna use i to load in an element from the graphicmap OR the offset will
-														// give us alternative locations if we're in final
-			}
-
-			// Final mode is a little more special than our regular normal stage screen
-			// it has FOUR background elements.
-			// so if we should actually be on final stage
-			// setup this extra background element
-			
-			if (ez2Final) 
-			{
-				m_sprbgxtra.Load( THEME->GetPathTo("Graphics","stage elements") ); // get the graphic
-				m_sprbgxtra.StopAnimating(); 
-				m_sprbgxtra.SetState( bg_modeoffset ); // use the first element of the offset for this graphic
-				m_sprbgxtra.SetXY( CENTER_X-30, CENTER_Y+180); // set it's initial XY coordinates
-				m_sprbgxtra.ZoomToHeight( 30 ); // set it's height and width. As we're only dealing with solid color
-				m_sprbgxtra.ZoomToWidth( SCREEN_WIDTH + 50 ); // stretching shouldn't be a concern.
-				m_sprbgxtra.SetRotation( -20 ); // rotate this graphic
-				m_sprbgxtra.BeginTweening(0.3f); // start tweening
-				m_sprbgxtra.SetTweenRotationZ( 0 ); // set the rotation we want it to finally appear as
-			}
-
-
-			m_sprbg[0].SetXY( CENTER_X, CENTER_Y+150); // this is where we want the red bar graphic....
-			if (ez2Final) // however in final...
-				m_sprbg[0].SetXY( CENTER_X-30, CENTER_Y-160); // we want it somewhere else
-			m_sprbg[0].ZoomToHeight( 100 ); // it's fairly high in normal
-			if (ez2Final) // but in final...
-				m_sprbg[0].ZoomToHeight( 30 ); // it needs to be a bit more squashed
-			m_sprbg[0].ZoomToWidth( SCREEN_WIDTH + 50 ); // no matter what... it's this wide
-			m_sprbg[0].SetRotation( -20 ); // and is initially this rotation
-			m_sprbg[0].BeginTweening(0.3f); // start tweening
-			m_sprbg[0].SetTweenRotationZ( 0 ); // and set the rotation to where we want it to end up
-			
-			m_sprbg[1].SetXY( CENTER_X-(SCREEN_WIDTH/2)-20, CENTER_Y+element_y_offsets);
-			m_sprbg[1].ZoomToHeight( SCREEN_HEIGHT - 140 );
-			m_sprbg[1].ZoomToWidth( 130 );
-			m_sprbg[1].SetRotation( -20 );
-			m_sprbg[1].BeginTweening(0.3f);
-			m_sprbg[1].SetTweenRotationZ( 0 );
-
-			m_sprbg[2].SetXY( CENTER_X+430, CENTER_Y+element_y_offsets);
-			m_sprbg[2].ZoomToHeight( SCREEN_HEIGHT - 140 );
-			m_sprbg[2].ZoomToWidth( SCREEN_WIDTH + 50 );
-			m_sprbg[2].SetRotation( -20 );
-			m_sprbg[2].BeginTweening(0.3f);
-			m_sprbg[2].SetTweenX( CENTER_X );
-			m_sprbg[2].SetTweenRotationZ( 0 );
-
-			for (i=3; i>=0; i--) // work backwards as we wanna add em in reverse 
-			{
-				m_frameStage.AddChild( &m_sprbg[i] ); 
-			}
-
-			if (ez2Final) // if we're in FINAL add that extra background element mentioned earlier.
-			{
-				m_frameStage.AddChild( &m_sprbgxtra );
-			}
-
-
-			/////////////////////////
-			// END Ez2 Backgrounds //
-			/////////////////////////
-
-
-			//////////////////////////////
-			// START stage description  //
-			// and gamename tag display //
-			//////////////////////////////
-
-			// scroll in the name of the game ("ez2dancer ukmove" on arcade) across the top of the screen
-
-			for (i=0; i<2; i++) // specify the font file.
-			{
-				m_ez2ukm[i].LoadFromFont( THEME->GetPathTo("Fonts","stage") );
-				m_ez2ukm[i].TurnShadowOff();
-				m_stagedesc[i].LoadFromFont( THEME->GetPathTo("Fonts","stage") );
-				m_stagedesc[i].TurnShadowOff();
-			}
-
-			m_ez2ukm[0].SetXY( CENTER_X-400, CENTER_Y-220 ); // set the intiial UKMOVE positions
-			m_ez2ukm[1].SetXY( CENTER_X+400, CENTER_Y+220 );
-			
-
-			m_stagedesc[0].SetXY( CENTER_X-400, CENTER_Y-150+element_y_offsets ); // set the intiial desc positions
-			m_stagedesc[1].SetXY( CENTER_X+400, CENTER_Y+70+element_y_offsets ); 
-			
+		if (ez2Final)
+		{
+			m_stagedesc[1].SetY( CENTER_Y+140.0f ); // description text is in a different Y location on final stage
+		}
+		
+		for (i=0; i<2; i++) // initialize the UK MOVE text and positions
+		{
+			m_ez2ukm[i].SetText( "STEPMANIA EZ2 MOVE" ); // choose something better if you like ;)
+			m_ez2ukm[i].SetDiffuse( D3DXCOLOR(1,1,1,1) ); // it's white
+			m_ez2ukm[i].BeginTweening(0.5f); // start it tweening
 			if (ez2Final)
 			{
-				m_stagedesc[1].SetY( CENTER_Y+140.0f ); // description text is in a different Y location on final stage
+				m_stagedesc[i].SetText( "FINAL FINAL FINAL FINAL FINAL FINAL FINAL FINAL FINAL FINAL" ); // this is the desc text for final stage
+				m_stagedesc[i].SetDiffuse( D3DXCOLOR(1.0f/225.0f*227.0f,1.0f/225.0f*228.0f,1/225.0f*255.0f,1) ); // it's blueish
 			}
-			
-			for (i=0; i<2; i++) // initialize the UK MOVE text and positions
+			else
 			{
-				m_ez2ukm[i].SetText( "STEPMANIA EZ2 MOVE" ); // choose something better if you like ;)
-				m_ez2ukm[i].SetDiffuse( D3DXCOLOR(1,1,1,1) ); // it's white
-				m_ez2ukm[i].BeginTweening(0.5f); // start it tweening
-				if (ez2Final)
-				{
-					m_stagedesc[i].SetText( "FINAL FINAL FINAL FINAL FINAL FINAL FINAL FINAL FINAL FINAL" ); // this is the desc text for final stage
-					m_stagedesc[i].SetDiffuse( D3DXCOLOR(1.0f/225.0f*227.0f,1.0f/225.0f*228.0f,1/225.0f*255.0f,1) ); // it's blueish
-				}
-				else
-				{
-					m_stagedesc[i].SetText( "NEXT NEXT NEXT NEXT NEXT NEXT NEXT NEXT NEXT NEXT NEXT" ); // normal stages use this text
-					m_stagedesc[i].SetDiffuse( D3DXCOLOR(1.0f/225.0f*166.0f,1.0f/225.0f*83.0f,1/225.0f*16.0f,1) ); // it's orangey
-				}
-				m_stagedesc[i].BeginTweening(0.5f); // start tweening the descriptions
-
+				m_stagedesc[i].SetText( "NEXT NEXT NEXT NEXT NEXT NEXT NEXT NEXT NEXT NEXT NEXT" ); // normal stages use this text
+				m_stagedesc[i].SetDiffuse( D3DXCOLOR(1.0f/225.0f*166.0f,1.0f/225.0f*83.0f,1/225.0f*16.0f,1) ); // it's orangey
 			}
-			
-			m_ez2ukm[0].SetTweenX(CENTER_X+90); // set their new locations
-			m_ez2ukm[1].SetTweenX(CENTER_X-160);
-			m_stagedesc[0].SetTweenX(CENTER_X+10); // set their new locations
-			m_stagedesc[1].SetTweenX(CENTER_X-100);
+			m_stagedesc[i].BeginTweening(0.5f); // start tweening the descriptions
 
-			for (i=0; i<2; i++) // add the actors
-			{
-				m_frameStage.AddChild( &m_ez2ukm[i] );
-				m_frameStage.AddChild( &m_stagedesc[i] );
-			}
-			
-			//////////////////////////////
-			// END stage description    //
-			// and gamename tag display //
-			//////////////////////////////
-
-			//////////////////////////////
-			// START scrolling blobs    //
-			//////////////////////////////
-
-
-			// 20 Scrolling Blobs come in one at a time from either side at the bottom in the following code:
-
-			// there are two sets of blobs, each with 20 elements in them
-			// they don't just scroll all together at the same time.
-			// theres an effect as if the'res a long line of them and they 'bump' into each other when the first one stops
-			// so take a careful look at the starting position and the final tween positions of these critters.
-
-			for( int j=0; j<2; j++) // 2 sets.....
-			{
-				for (i=0; i<20; i++) // 20 blobs...
-				{
-					m_sprScrollingBlobs[j][i].Load( THEME->GetPathTo("Graphics","stage elements") ); // load the graphics
-					m_sprScrollingBlobs[j][i].StopAnimating();
-					m_sprScrollingBlobs[j][i].SetState( 3+bg_modeoffset ); // shuffle the state according to offset
-																		  // (final uses different blobs)
-				}
-			}
-
-			for( j=0; j<2; j++) // 2 sets...
-			{
-				for (i=0; i<20; i++) // 20 blobs....
-				{
-					if (j == 0) // if it's the first set
-					{
-						m_sprScrollingBlobs[j][i].SetXY( CENTER_X-(SCREEN_WIDTH/2)-500-((i*i)*4), CENTER_Y + 135 ); // starting position
-						if (ez2Final)
-						{
-							m_sprScrollingBlobs[j][i].SetY( CENTER_Y-160); // different Y position for FINAL stage
-						}
-					}
-					else // if it's the second set
-					{
-						m_sprScrollingBlobs[j][i].SetXY( CENTER_X+(SCREEN_WIDTH/2)+500-((i*i)*4), CENTER_Y+170 ); // starting position
-						if (ez2Final)
-						{
-							m_sprScrollingBlobs[j][i].SetY( CENTER_Y+180 ); // different Y position for FINAL stage
-						}
-					}
-				}
-			}
-
-			for( j=0; j<2; j++) // 2 sets...
-			{
-				for (i=0; i<20; i++) // 20 blobs...
-				{
-					m_sprScrollingBlobs[j][i].BeginTweening(0.2f * i / 7); // start them tweening, different delay for each blob
-					if (j == 0) // set 1
-						m_sprScrollingBlobs[j][i].SetTweenX(CENTER_X-(SCREEN_WIDTH/2)+30+(i*30.0f)); // keep them at equal distance when they arrive
-					else // set 2
-						m_sprScrollingBlobs[j][i].SetTweenX(CENTER_X+(SCREEN_WIDTH/2)+30-70-(i*30.0f)); 
+		}
 		
-					m_frameStage.AddChild( &m_sprScrollingBlobs[j][i] ); // add the actor
+		m_ez2ukm[0].SetTweenX(CENTER_X+90); // set their new locations
+		m_ez2ukm[1].SetTweenX(CENTER_X-160);
+		m_stagedesc[0].SetTweenX(CENTER_X+10); // set their new locations
+		m_stagedesc[1].SetTweenX(CENTER_X-100);
+
+		for (i=0; i<2; i++) // add the actors
+		{
+			m_frameStage.AddChild( &m_ez2ukm[i] );
+			m_frameStage.AddChild( &m_stagedesc[i] );
+		}
+		
+		//////////////////////////////
+		// END stage description    //
+		// and gamename tag display //
+		//////////////////////////////
+
+		//////////////////////////////
+		// START scrolling blobs    //
+		//////////////////////////////
+
+
+		// 20 Scrolling Blobs come in one at a time from either side at the bottom in the following code:
+
+		// there are two sets of blobs, each with 20 elements in them
+		// they don't just scroll all together at the same time.
+		// theres an effect as if the'res a long line of them and they 'bump' into each other when the first one stops
+		// so take a careful look at the starting position and the final tween positions of these critters.
+
+		for( int j=0; j<2; j++) // 2 sets.....
+		{
+			for (i=0; i<20; i++) // 20 blobs...
+			{
+				m_sprScrollingBlobs[j][i].Load( THEME->GetPathTo("Graphics","stage elements") ); // load the graphics
+				m_sprScrollingBlobs[j][i].StopAnimating();
+				m_sprScrollingBlobs[j][i].SetState( 3+bg_modeoffset ); // shuffle the state according to offset
+																		// (final uses different blobs)
+			}
+		}
+
+		for( j=0; j<2; j++) // 2 sets...
+		{
+			for (i=0; i<20; i++) // 20 blobs....
+			{
+				if (j == 0) // if it's the first set
+				{
+					m_sprScrollingBlobs[j][i].SetXY( CENTER_X-(SCREEN_WIDTH/2)-500-((i*i)*4), CENTER_Y + 135 ); // starting position
+					if (ez2Final)
+					{
+						m_sprScrollingBlobs[j][i].SetY( CENTER_Y-160); // different Y position for FINAL stage
+					}
+				}
+				else // if it's the second set
+				{
+					m_sprScrollingBlobs[j][i].SetXY( CENTER_X+(SCREEN_WIDTH/2)+500-((i*i)*4), CENTER_Y+170 ); // starting position
+					if (ez2Final)
+					{
+						m_sprScrollingBlobs[j][i].SetY( CENTER_Y+180 ); // different Y position for FINAL stage
+					}
 				}
 			}
+		}
 
-			//////////////////////////////
-			// END scrolling blobs    //
-			//////////////////////////////
-			
-			//////////////////////////////
-			// START stage name         //
-			//////////////////////////////
-
-			// in this bit we write the stage name onto the screen
-			// basically instead of 1st 2nd 3rd e.t.c.
-			// ez2dancer spells it fully 
-			// The First Stage.... The Second Stage
-			// this is what this bit implements
-
-
-			// write the stage name
-			m_stagename.LoadFromFont( THEME->GetPathTo("Fonts","stage") );
-			m_stagename.TurnShadowOff();
-
-			m_stagename.SetXY( CENTER_X+400, CENTER_Y-30+element_y_offsets );  // set initial position			
-
-			switch (iStageNo) // from the stage number figure out which text to use
+		for( j=0; j<2; j++) // 2 sets...
+		{
+			for (i=0; i<20; i++) // 20 blobs...
 			{
-				case 0: m_stagename.SetText( "THE NEXT STAGE" ); break;
-				case 1: m_stagename.SetText( "THE FIRST STAGE" ); break;
-				case 2: m_stagename.SetText( "THE SECOND STAGE" ); break;
-				case 3: m_stagename.SetText( "THE THIRD STAGE" ); break;
-				case 4: m_stagename.SetText( "THE FOURTH STAGE" ); break;
-				case 5: m_stagename.SetText( "THE FIFTH STAGE" ); break;
-				case 6: m_stagename.SetText( "THE SIXTH STAGE" ); break;
-				case 7: m_stagename.SetText( "THE SEVENTH STAGE" ); break;
-				default: m_stagename.SetText("THE NEXT STAGE"); break;
+				m_sprScrollingBlobs[j][i].BeginTweening(0.2f * i / 7); // start them tweening, different delay for each blob
+				if (j == 0) // set 1
+					m_sprScrollingBlobs[j][i].SetTweenX(CENTER_X-(SCREEN_WIDTH/2)+30+(i*30.0f)); // keep them at equal distance when they arrive
+				else // set 2
+					m_sprScrollingBlobs[j][i].SetTweenX(CENTER_X+(SCREEN_WIDTH/2)+30-70-(i*30.0f)); 
+	
+				m_frameStage.AddChild( &m_sprScrollingBlobs[j][i] ); // add the actor
 			}
+		}
 
-			if (iStageNo > 9) // if we're in two digits or more
-			{
-				m_stagename.SetText( "" ); // make this text disappear.
-			}
+		//////////////////////////////
+		// END scrolling blobs    //
+		//////////////////////////////
+		
+		//////////////////////////////
+		// START stage name         //
+		//////////////////////////////
 
-			m_stagename.SetDiffuse( D3DXCOLOR(1.0f/225.0f*166.0f,1.0f/225.0f*83.0f,1/225.0f*16.0f,1) ); // orangey colour
+		// in this bit we write the stage name onto the screen
+		// basically instead of 1st 2nd 3rd e.t.c.
+		// ez2dancer spells it fully 
+		// The First Stage.... The Second Stage
+		// this is what this bit implements
 
-			if (ez2Final) // if we're final stage 
-			{
-				m_stagename.SetDiffuse( D3DXCOLOR(1.0f/225.0f*227.0f,1.0f/225.0f*228.0f,1/225.0f*255.0f,1) ); // blueish colour
-				m_stagename.SetText( "THE FINAL STAGE" );
-				stage_mode = MODE_FINAL; // set back to final again.
-				ez2Final = false;
-			}
 
-			m_stagename.BeginTweening(0.5f); // start tweening them to their new home
-			
-			m_stagename.SetTweenX(CENTER_X+70); // set their new locations
-			m_frameStage.AddChild( &m_stagename ); //add the actor
-			//////////////////////////////
-			// END stage name         //
-			//////////////////////////////
+		// write the stage name
+		m_stagename.LoadFromFont( THEME->GetPathTo("Fonts","stage") );
+		m_stagename.TurnShadowOff();
 
-				// Add in the number graphics that were neglected earlier
-				CString sStageNo = ssprintf("%d", iStageNo);
-				const int iNumChars = sStageNo.GetLength()+1;
-				for( i=0; i<iNumChars; i++ )
-					m_frameStage.AddChild( &m_sprNumbers[i] );
-				m_frameStage.AddChild( &m_sprStage );
-				m_sprStage.SetZoom( 0 ); // hide this element for Ez2 :)
+		m_stagename.SetXY( CENTER_X+400, CENTER_Y-30+element_y_offsets );  // set initial position			
+
+		switch (iStageNo) // from the stage number figure out which text to use
+		{
+			case 0: m_stagename.SetText( "THE NEXT STAGE" ); break;
+			case 1: m_stagename.SetText( "THE FIRST STAGE" ); break;
+			case 2: m_stagename.SetText( "THE SECOND STAGE" ); break;
+			case 3: m_stagename.SetText( "THE THIRD STAGE" ); break;
+			case 4: m_stagename.SetText( "THE FOURTH STAGE" ); break;
+			case 5: m_stagename.SetText( "THE FIFTH STAGE" ); break;
+			case 6: m_stagename.SetText( "THE SIXTH STAGE" ); break;
+			case 7: m_stagename.SetText( "THE SEVENTH STAGE" ); break;
+			default: m_stagename.SetText("THE NEXT STAGE"); break;
+		}
+
+		if (iStageNo > 9) // if we're in two digits or more
+		{
+			m_stagename.SetText( "" ); // make this text disappear.
+		}
+
+		m_stagename.SetDiffuse( D3DXCOLOR(1.0f/225.0f*166.0f,1.0f/225.0f*83.0f,1/225.0f*16.0f,1) ); // orangey colour
+
+		if (ez2Final) // if we're final stage 
+		{
+			m_stagename.SetDiffuse( D3DXCOLOR(1.0f/225.0f*227.0f,1.0f/225.0f*228.0f,1/225.0f*255.0f,1) ); // blueish colour
+			m_stagename.SetText( "THE FINAL STAGE" );
+			stage_mode = MODE_FINAL; // set back to final again.
+			ez2Final = false;
+		}
+
+		m_stagename.BeginTweening(0.5f); // start tweening them to their new home
+		
+		m_stagename.SetTweenX(CENTER_X+70); // set their new locations
+		m_frameStage.AddChild( &m_stagename ); //add the actor
+		//////////////////////////////
+		// END stage name         //
+		//////////////////////////////
+
+			// Add in the number graphics that were neglected earlier
+			CString sStageNo = ssprintf("%d", iStageNo);
+			const int iNumChars = sStageNo.GetLength()+1;
+			for( i=0; i<iNumChars; i++ )
+				m_frameStage.AddChild( &m_sprNumbers[i] );
+			m_frameStage.AddChild( &m_sprStage );
+			m_sprStage.SetZoom( 0 ); // hide this element for Ez2 :)
 	}
 
 	this->SendScreenMessage( SM_DoneFadingIn, 1.0f );
