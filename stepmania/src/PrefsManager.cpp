@@ -64,6 +64,7 @@ PrefsManager::PrefsManager()
 	m_fJudgeWindowGoodSeconds = 0.135f;
 	m_fJudgeWindowBooSeconds = 0.180f;
 	m_fJudgeWindowOKSeconds = 0.250f;	// allow enough time to take foot off and put back on
+	m_fJudgeWindowMineSeconds = 0.135f;
 	m_fLifeDifficultyScale = 1.0f;
 	m_iRegenComboAfterFail = 10; // cumulative
 	m_iRegenComboAfterMiss = 5; // cumulative
@@ -229,6 +230,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "JudgeWindowGoodSeconds",			m_fJudgeWindowGoodSeconds );
 	ini.GetValue( "Options", "JudgeWindowBooSeconds",			m_fJudgeWindowBooSeconds );
 	ini.GetValue( "Options", "JudgeWindowOKSeconds",			m_fJudgeWindowOKSeconds );
+	ini.GetValue( "Options", "JudgeWindowMineSeconds",			m_fJudgeWindowMineSeconds );
 	ini.GetValue( "Options", "LifeDifficultyScale",				m_fLifeDifficultyScale );
 	ini.GetValue( "Options", "RegenComboAfterFail",				m_iRegenComboAfterFail );
 	ini.GetValue( "Options", "RegenComboAfterMiss",				m_iRegenComboAfterMiss );
@@ -368,6 +370,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "JudgeWindowGoodSeconds",			m_fJudgeWindowGoodSeconds );
 	ini.SetValue( "Options", "JudgeWindowBooSeconds",			m_fJudgeWindowBooSeconds );
 	ini.SetValue( "Options", "JudgeWindowOKSeconds",			m_fJudgeWindowOKSeconds );
+	ini.SetValue( "Options", "JudgeWindowMineSeconds",			m_fJudgeWindowMineSeconds );
 	ini.SetValue( "Options", "LifeDifficultyScale",				m_fLifeDifficultyScale );
 	ini.SetValue( "Options", "RegenComboAfterFail",				m_iRegenComboAfterFail );
 	ini.SetValue( "Options", "RegenComboAfterMiss",				m_iRegenComboAfterMiss );

@@ -56,6 +56,7 @@ public:
 	float			m_fJudgeWindowGoodSeconds;
 	float			m_fJudgeWindowBooSeconds;
 	float			m_fJudgeWindowOKSeconds;
+	float			m_fJudgeWindowMineSeconds;
 	int				m_iRegenComboAfterFail;
 	int				m_iRegenComboAfterMiss;
 	int				m_iMaxRegenComboAfterFail;

@@ -518,6 +518,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 		const float fNoteOffset = (fStepSeconds - fMusicSeconds) / GAMESTATE->m_SongOptions.m_fMusicRate;	// account for music rate
 
 		const float fSecondsFromPerfect = fabsf( fNoteOffset );
+		float fScaledSecondsFromPerfect = fSecondsFromPerfect / PREFSMAN->m_fJudgeWindowScale;
 
 
 		TapNote tn = GetTapNote(col,iIndexOverlappingNote);
@@ -528,37 +529,45 @@ void PlayerMinus::Step( int col, RageTimer tm )
 		switch( GAMESTATE->m_PlayerController[m_PlayerNumber] )
 		{
 		case PC_HUMAN: {
-			if(GAMESTATE->m_CurGame == GAME_EZ2)
-			{
-				/* 1 is normal.  2 means scoring is half as hard; .5 means it's twice as hard. */
-				/* Ez2 is only perfect / good / miss */
-				float fScaledSecondsFromPerfect = fSecondsFromPerfect / PREFSMAN->m_fJudgeWindowScale;
-				if(		 fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMarvelousSeconds )	score = TNS_PERFECT; 
-				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
-				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_PERFECT;
-				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
-				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_MISS;
-				else	score = TNS_NONE;
-			}
-			else
-			{
-				/* 1 is normal.  2 means scoring is half as hard; .5 means it's twice as hard. */
-				float fScaledSecondsFromPerfect = fSecondsFromPerfect / PREFSMAN->m_fJudgeWindowScale;
-				if(		 fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMarvelousSeconds )	score = TNS_MARVELOUS;
-				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
-				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_GREAT;
-				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
-				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_BOO;
-				else	score = TNS_NONE;
-			}
-			// Penalize for stepping on mines
-			if( tn == TAP_MINE  &&  score > TNS_NONE )
-			{
-				m_soundMineExplosion.Play();
-				score = TNS_MISS;
-				m_pNoteField->TapMine( col, TNS_MISS );
-			}
 
+			if( tn == TAP_MINE )
+			{
+				// stepped too close to mine?
+				if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMineSeconds )
+				{
+					m_soundMineExplosion.Play();
+					score = TNS_MISS;
+					m_pNoteField->TapMine( col, TNS_MISS );
+				}
+				else
+				{
+					score = TNS_NONE;
+				}
+			}
+			else	// not a mine
+			{
+				if(GAMESTATE->m_CurGame == GAME_EZ2)
+				{
+					/* 1 is normal.  2 means scoring is half as hard; .5 means it's twice as hard. */
+					/* Ez2 is only perfect / good / miss */
+					if(		 fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMarvelousSeconds )	score = TNS_PERFECT; 
+					else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
+					else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_PERFECT;
+					else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
+					else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_MISS;
+					else	score = TNS_NONE;
+				}
+				else
+				{
+					/* 1 is normal.  2 means scoring is half as hard; .5 means it's twice as hard. */
+					if(		 fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMarvelousSeconds )	score = TNS_MARVELOUS;
+					else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
+					else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_GREAT;
+					else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
+					else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_BOO;
+					else	score = TNS_NONE;
+				}
+			}
 			break;
 		}
 		case PC_CPU:
