@@ -161,7 +161,7 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 		
 		bool bFirstRowGoesDown = m_OptionsNavigation==NAV_TOGGLE_THREE_KEY;
 
-		row.LoadMetrics( OPTION_ROW_TYPE );
+		row.LoadMetrics( m_sName );
 		row.LoadNormal( def, hand, bFirstRowGoesDown );
 
 		FOREACH_HumanPlayer( p )
