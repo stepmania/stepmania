@@ -370,7 +370,7 @@ GLhandleARB CompileShader( GLenum ShaderType, CString sBuffer )
 	GLhandleARB VertexShader = GLExt.glCreateShaderObjectARB( GL_VERTEX_SHADER_ARB );
 	const GLcharARB *pData = sBuffer.data();
 	int iLength = sBuffer.size();
-	GLExt.glShaderSourceARB( VertexShader, 1, &pData, &iLength );
+	GLExt.glShaderSourceARB( VertexShader, 1, &pData, (GLint*)&iLength );
 
 	GLExt.glCompileShaderARB( VertexShader );
 

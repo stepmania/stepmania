@@ -31,7 +31,7 @@
 // leaving this one under ScreenSelectMusic because that is the only place it takes effect anyway.
 ThemeMetric<CString> DEFAULT_SORT				("ScreenSelectMusic","DefaultSort");
 
-static CString SECTION_COLORS_NAME( size_t i )	{ return ssprintf("SectionColor%d",i+1); }
+static CString SECTION_COLORS_NAME( size_t i )	{ return ssprintf("SectionColor%d",int(i+1)); }
 static CString CHOICE_NAME( CString s )			{ return ssprintf("Choice%s",s.c_str()); }
 
 const AutoScreenMessage SM_SongChanged;          // TODO: Replace this with a Message and MESSAGEMAN

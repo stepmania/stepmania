@@ -47,7 +47,7 @@ const AutoScreenMessage SM_ShowNextPage;
 const AutoScreenMessage SM_HidePage;
 
 
-CString STEPS_TYPE_COLOR_NAME( size_t i ) { return ssprintf("StepsTypeColor%d",i+1); }
+CString STEPS_TYPE_COLOR_NAME( size_t i ) { return ssprintf("StepsTypeColor%d",int(i+1)); }
 
 REGISTER_SCREEN_CLASS( ScreenRanking );
 ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName ),

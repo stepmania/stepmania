@@ -55,8 +55,8 @@ static CString OPTION_TITLE( CString s )
 	return THEME->GetMetric("OptionTitles",s);
 }
 
-CString ITEMS_LONG_ROW_X_NAME( size_t p )		{ return ssprintf("ItemsLongRowP%dX",p+1); }
-CString ICONS_X_NAME( size_t p )				{ return ssprintf("IconsP%dX",p+1); }
+CString ITEMS_LONG_ROW_X_NAME( size_t p )		{ return ssprintf("ItemsLongRowP%dX",int(p+1)); }
+CString ICONS_X_NAME( size_t p )				{ return ssprintf("IconsP%dX",int(p+1)); }
 
 OptionRow::OptionRow()
 {
@@ -789,11 +789,11 @@ static void VerifySelected( SelectType st, const vector<bool> &vbSelected, const
 	int iNumSelected = 0;
 	if( st == SELECT_ONE )
 	{
-		ASSERT_M( vbSelected.size() > 0, ssprintf("%s: %i/%i", sName.c_str(), iNumSelected, vbSelected.size()) );
+		ASSERT_M( vbSelected.size() > 0, ssprintf("%s: %i/%i", sName.c_str(), iNumSelected, int(vbSelected.size())) );
 		for( unsigned e = 0; e < vbSelected.size(); ++e )
 			if( vbSelected[e] )
 				iNumSelected++;
-		ASSERT_M( iNumSelected == 1, ssprintf("%s: %i/%i", sName.c_str(), iNumSelected, vbSelected.size()) );
+		ASSERT_M( iNumSelected == 1, ssprintf("%s: %i/%i", sName.c_str(), iNumSelected, int(vbSelected.size())) );
 	}
 }
 

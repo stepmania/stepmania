@@ -441,7 +441,7 @@ void InputMapper::SaveMappingsToDisk()
 			CString sNameString = GameI.toString();
 			
 			vector<CString> asValues;
-			for( unsigned button = 0; button < NUM_GAME_TO_DEVICE_SLOTS; ++button )
+			for( int button = 0; button < NUM_GAME_TO_DEVICE_SLOTS; ++button )
 				asValues.push_back( m_GItoDI[i][j][button].toString() );
 			while( asValues.size() && asValues.back() == "" )
 				asValues.erase( asValues.begin()+asValues.size()-1 );

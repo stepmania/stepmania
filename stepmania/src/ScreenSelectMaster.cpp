@@ -17,8 +17,8 @@
 
 const AutoScreenMessage SM_PlayPostSwitchPage;
 
-CString CURSOR_OFFSET_X_FROM_ICON_NAME( size_t p, size_t part ) { return ssprintf("CursorPart%dP%dOffsetXFromIcon",part+1,p+1); }
-CString CURSOR_OFFSET_Y_FROM_ICON_NAME( size_t p, size_t part ) { return ssprintf("CursorPart%dP%dOffsetYFromIcon",part+1,p+1); }
+CString CURSOR_OFFSET_X_FROM_ICON_NAME( size_t p, size_t part ) { return ssprintf("CursorPart%dP%dOffsetXFromIcon",int(part+1),int(p+1)); }
+CString CURSOR_OFFSET_Y_FROM_ICON_NAME( size_t p, size_t part ) { return ssprintf("CursorPart%dP%dOffsetYFromIcon",int(part+1),int(p+1)); }
 /* e.g. "OptionOrderLeft=0:1,1:2,2:3,3:4" */
 CString OPTION_ORDER_NAME( size_t dir )							{ return "OptionOrder"+MenuDirToString((MenuDir)dir); }
 

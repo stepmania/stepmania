@@ -107,7 +107,7 @@ void ScreenTextEntry::Init()
 	// Init keyboard
 	FOREACH_KeyboardRow( r )
 	{
-		for( unsigned x=0; x<KEYS_PER_ROW; x++ )
+		for( int x=0; x<KEYS_PER_ROW; ++x )
 		{
 			BitmapText &bt = m_textKeyboardChars[r][x];
 			bt.LoadFromFont( THEME->GetPathF(m_sName,"keyboard") );
@@ -144,7 +144,7 @@ void ScreenTextEntry::UpdateKeyboardText()
 {
 	FOREACH_KeyboardRow( r )
 	{
-		for( unsigned x=0; x<KEYS_PER_ROW; x++ )
+		for( int x=0; x<KEYS_PER_ROW; ++x )
 		{
 			const char *s = g_szKeys[r][x];
 			BitmapText &bt = m_textKeyboardChars[r][x];

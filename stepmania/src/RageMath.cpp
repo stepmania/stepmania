@@ -536,7 +536,7 @@ float RageFastSin( float x )
 	if( !bInited )
 	{
 		bInited = true;
-		for( int i=0; i<ARRAYSIZE(table); i++ )
+		for( unsigned i=0; i<ARRAYSIZE(table); i++ )
 		{
 			float x = SCALE(i,0,ARRAYSIZE(table),0.0f,PI);
 			table[i] = sinf(x);
@@ -549,7 +549,7 @@ float RageFastSin( float x )
 	DEBUG_ASSERT( i>=0 && i<ARRAYSIZE(table)*2 );
 
 	float fRet;
-	if( i >= ARRAYSIZE(table) )	// PI <= i < 2*PI
+	if( i >= int(ARRAYSIZE(table)) )	// PI <= i < 2*PI
 	{
 		// sin(x) == -sin(2*PI-x)
 		i = ARRAYSIZE(table)*2 - 1 - i;	// mirror about ARRAYSIZE(table)

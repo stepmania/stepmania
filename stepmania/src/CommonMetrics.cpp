@@ -4,7 +4,7 @@
 #include "Foreach.h"
 
 
-CString PLAYER_COLOR_NAME( size_t p ) { return ssprintf("ColorP%d",p+1); }
+CString PLAYER_COLOR_NAME( size_t p ) { return ssprintf("ColorP%d",int(p+1)); }
 
 ThemeMetric<CString>	INITIAL_SCREEN						("Common","InitialScreen");
 ThemeMetric<CString>	FIRST_RUN_INITIAL_SCREEN			("Common","FirstRunInitialScreen");
