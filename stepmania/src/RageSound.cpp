@@ -193,10 +193,7 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
  * two chunks for each file at a time, which reduces the chance of underrun. */
 void RageSound::Update(float delta)
 {
-//	LockMut(SOUNDMAN->lock);
-
-//	if( playing && delta )
-//		FillBuf(int(delta * GetSampleRate() * framesize));
+	LockMut(SOUNDMAN->lock);
 
 	/* Erase old pos_map data. */
 	CleanPosMap( pos_map );
@@ -269,7 +266,7 @@ void RageSound::RateChange(char *buf, int &cnt,
 /* Fill the buffer by about "bytes" worth of data.  (We might go a little
  * over, and we won't overflow our buffer.)  Return the number of bytes
  * actually read; 0 = EOF. */
-int RageSound::FillBuf(int bytes)
+int RageSound::FillBuf( int frames )
 {
 	LockMut(SOUNDMAN->lock);
 
@@ -277,7 +274,7 @@ int RageSound::FillBuf(int bytes)
 
 	bool got_something = false;
 
-	while(bytes > 0)
+	while( frames > 0 )
 	{
 		if(read_block_size > databuf.num_writable())
 			break; /* full */
@@ -316,7 +313,7 @@ int RageSound::FillBuf(int bytes)
 
 		/* Add the data to the buffer. */
 		databuf.write((const char *) inbuf, cnt);
-		bytes -= cnt;
+		frames -= cnt/framesize;
 		got_something = true;
 	}
 
@@ -382,7 +379,7 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 		/* If we don't have any data left buffered, fill the buffer by
 		 * up to as much as we need. */
 		if( !Bytes_Available() )
-			FillBuf( size*framesize );
+			FillBuf( size );
 
 		/* Get a block of data. */
 		int got = GetData( (char *) buffer, size*framesize );
@@ -411,7 +408,7 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 				/* Make sure we can get some data.  If we can't, then we'll have
 				 * nothing to send and we'll just end up coming back here. */
 				if( !Bytes_Available() )
-					FillBuf( size*framesize );
+					FillBuf( size );
 				if( GetData(NULL, size*framesize) == 0 )
 				{
 					LOG->Warn( "Can't loop data in %s; no data available at start point %f",
