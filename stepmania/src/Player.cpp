@@ -451,9 +451,11 @@ void Player::Update( float fDeltaTime )
 		const int iRowNow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat );
 		if( iRowNow >= 0 )
 		{
-			for( ; m_iRowLastCrossed <= iRowNow; m_iRowLastCrossed++ )  // for each index we crossed since the last update
-				if( GAMESTATE->IsPlayerEnabled(pn) )
-					CrossedRow( m_iRowLastCrossed );
+			// for each index we crossed since the last update
+			if( GAMESTATE->IsPlayerEnabled(pn) )
+				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, m_iRowLastCrossed+1, iRowNow )
+					CrossedRow( r );
+			m_iRowLastCrossed = iRowNow;
 		}
 	}
 
@@ -465,9 +467,11 @@ void Player::Update( float fDeltaTime )
 		const int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
 		if( iRowNow >= 0 )
 		{
-			for( ; m_iMineRowLastCrossed <= iRowNow; m_iMineRowLastCrossed++ )  // for each index we crossed since the last update
-				if( GAMESTATE->IsPlayerEnabled(pn) )
-					CrossedMineRow( m_iMineRowLastCrossed );
+			// for each index we crossed since the last update
+			if( GAMESTATE->IsPlayerEnabled(pn) )
+				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, m_iMineRowLastCrossed+1, iRowNow )
+					CrossedMineRow( r );
+			m_iMineRowLastCrossed = iRowNow;
 		}
 	}
 
@@ -1091,13 +1095,14 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 	}
 
 	// Since this is being called every frame, let's not check the whole array every time.
-	// Instead, only check 10 elements back.  Even 10 is overkill.
-	const int iStartCheckingAt = max( 0, iMissIfOlderThanThisIndex-10 );
+	// Instead, only check 1 beat back.  Even 10 is overkill.
+	const int iStartCheckingAt = max( 0, iMissIfOlderThanThisIndex-BeatToNoteRow(1) );
 
 	//LOG->Trace( "iStartCheckingAt: %d   iMissIfOlderThanThisIndex:  %d", iStartCheckingAt, iMissIfOlderThanThisIndex );
 
 	int iNumMissesFound = 0;
-	for( int r=iStartCheckingAt; r<iMissIfOlderThanThisIndex; r++ )
+
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, iStartCheckingAt, iMissIfOlderThanThisIndex-1 )
 	{
 		bool MissedNoteOnThisRow = false;
 		for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
