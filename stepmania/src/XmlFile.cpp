@@ -8,6 +8,7 @@
 #include <sstream>
 #include <string>
 #include "RageFile.h"
+#include "RageLog.h"
 
 
 static const TCHAR chXMLTagOpen		= '<';
@@ -1222,7 +1223,10 @@ bool _tagXMLNode::LoadFromFile( CString sFile, LPPARSEINFO pi )
 {
 	RageFile f;
 	if( !f.Open(sFile, RageFile::READ) )
+	{
+		LOG->Warn("Couldn't open %s for reading: %s", sFile.c_str(), f.GetError().c_str() );
 		return false;
+	}
 	CString s;
 	f.Read( s );
 	this->Load( s, pi );
@@ -1233,7 +1237,10 @@ bool _tagXMLNode::SaveToFile( CString sFile, LPDISP_OPT opt )
 {
 	RageFile f;
 	if( !f.Open(sFile, RageFile::WRITE) )
+	{
+		LOG->Warn("Couldn't open %s for writing: %s", sFile.c_str(), f.GetError().c_str() );
 		return false;
+	}
 	f.Write( this->GetXML(opt) );
 	return true;
 }
