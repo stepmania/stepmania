@@ -22,7 +22,7 @@ const int bytes_per_frame = sizeof(Sint16) * samples_per_frame;
 
 /* Linux 2.6 has a fine-grained scheduler; use a small buffer size.  Otherwise, use a larger one. */
 static const unsigned max_writeahead_linux_26 = 512;
-static const unsigned safe_writeahead = 1024*8;
+static const unsigned safe_writeahead = 1024*4;
 static unsigned max_writeahead;
 const int num_chunks = 8;
 
