@@ -38,6 +38,7 @@ ScreenSelectGroup::ScreenSelectGroup() : Screen("ScreenSelectGroup")
 	if( !PREFSMAN->m_bShowSelectGroup )
 	{
 		GAMESTATE->m_sPreferredGroup = GROUP_ALL_MUSIC;
+		GAMESTATE->m_SongSortOrder = SORT_GROUP;
 		HandleScreenMessage( SM_GoToNextScreen );
 		return;
 	}
@@ -254,6 +255,9 @@ void ScreenSelectGroup::MenuStart( PlayerNumber pn )
 
 	GAMESTATE->m_pCurSong = NULL;
 	GAMESTATE->m_sPreferredGroup = (m_GroupList.GetSelectionName()=="ALL MUSIC" ? GROUP_ALL_MUSIC : m_GroupList.GetSelectionName() );
+
+	if( GAMESTATE->m_sPreferredGroup == GROUP_ALL_MUSIC )
+		GAMESTATE->m_SongSortOrder = SORT_GROUP;
 
 	if( GAMESTATE->m_sPreferredGroup == GROUP_ALL_MUSIC )
         SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group comment all music") );

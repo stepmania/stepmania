@@ -12,7 +12,7 @@
 */
 
 #include "CroppedSprite.h"
-#include "song.h"
+class Song;
 class Course;
 
 

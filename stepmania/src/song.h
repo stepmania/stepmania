@@ -250,7 +250,8 @@ void SortSongPointerArrayByDifficulty( vector<Song*> &arraySongPointers );
 void SortSongPointerArrayByTitle( vector<Song*> &arraySongPointers );
 void SortSongPointerArrayByBPM( vector<Song*> &arraySongPointers );
 void SortSongPointerArrayByArtist( vector<Song*> &arraySongPointers );
-void SortSongPointerArrayByGroup( vector<Song*> &arraySongPointers );
+void SortSongPointerArrayByGroupAndDifficulty( vector<Song*> &arraySongPointers );
+void SortSongPointerArrayByGroupAndTitle( vector<Song*> &arraySongPointers );
 void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers );
 
 

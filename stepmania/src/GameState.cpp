@@ -58,7 +58,7 @@ void GameState::Reset()
 	m_sPreferredGroup	= GROUP_ALL_MUSIC;
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_PreferredDifficulty[p] = DIFFICULTY_INVALID;
-	m_SongSortOrder = SORT_GROUP;
+	m_SongSortOrder = SORT_PREFERRED;
 	m_PlayMode = PLAY_MODE_INVALID;
 	m_bEditing = false;
 	m_bDemonstrationOrJukebox = false;

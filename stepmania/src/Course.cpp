@@ -730,3 +730,8 @@ void SortCoursePointerArrayByDifficulty( vector<Course*> &apCourses )
 {
 	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByDifficulty );
 }
+
+bool Course::HasBanner() const
+{
+	return m_sBannerPath != ""  &&  IsAFile(m_sBannerPath);
+}

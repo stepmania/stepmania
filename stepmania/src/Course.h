@@ -47,6 +47,9 @@ public:
 	bool		m_bIsAutogen;	// was this created by AutoGen?
 	CString		m_sPath;
 	CString		m_sName;
+
+	bool HasBanner() const;
+
 	CString		m_sBannerPath;
 	CString		m_sCDTitlePath;
 

@@ -28,11 +28,8 @@ class Song;
 
 const int MAX_WHEEL_ITEMS	=	15;
 
-
 const ScreenMessage	SM_SongChanged		=	ScreenMessage(SM_User+47);	// this should be unique!
 const ScreenMessage SM_SortOrderChanged	=	ScreenMessage(SM_User+48);	
-
-
 
 
 struct CompareSongPointerArrayBySectionName;
@@ -76,7 +73,7 @@ public:
 	void RebuildMusicWheelItems();
 
 protected:
-	void GetSongList(vector<Song*> &arraySongs, bool bRoulette );
+	void GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CString sPreferredGroup );
 	void BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItems, SongSortOrder so );
 	void SetOpenGroup(CString group, SongSortOrder so = NUM_SORT_ORDERS);
 	bool SelectSong(const Song *p);

@@ -93,7 +93,7 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 	else
 		pTexture = new RageBitmapTexture( ID );
 
-//	LOG->Trace( "RageTextureManager: Loaded '%s'.", ID.filename.GetString() );
+	LOG->Trace( "RageTextureManager: Loaded '%s'.", ID.filename.GetString() );
 
 	m_mapPathToTexture[ID] = pTexture;
 

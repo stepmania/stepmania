@@ -13,12 +13,21 @@
 
 #include "Banner.h"
 
-class FadingBanner : public Banner
+class FadingBanner : public Actor
 {
 public:
-	virtual ~FadingBanner() { }
+	FadingBanner();
+
 	virtual bool Load( RageTextureID ID );
 	void SetCroppedSize( float fWidth, float fHeight );
+
+	void LoadFromSong( Song* pSong );		// NULL means no song
+	void LoadAllMusic();
+	void LoadFromGroup( CString sGroupName );
+	void LoadFromCourse( Course* pCourse );
+	void LoadRoulette();
+	void LoadRandom();
+	void LoadFallback();
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -26,7 +35,9 @@ public:
 protected:
 	void BeforeChange();
 
-	Banner		m_FrontBanner;
+	Banner		m_Banner[2];
+	int			m_iIndexFront;
+	int			GetBackIndex() { return m_iIndexFront==0 ? 1 : 0; }
 };
 
 #endif

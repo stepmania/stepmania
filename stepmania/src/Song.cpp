@@ -11,12 +11,12 @@
 -----------------------------------------------------------------------------
 */
 
+#include "song.h"
 #include "Notes.h"
 #include "RageUtil.h"
 #include <math.h>	// for fmod
 #include "RageLog.h"
 #include "IniFile.h"
-#include "song.h"
 #include "NoteData.h"
 #include "MsdFile.h"
 #include "RageSound.h"
@@ -1071,7 +1071,7 @@ void SortSongPointerArrayByArtist( vector<Song*> &arraySongPointers )
 	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByArtist );
 }
 
-int CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2)
+int CompareSongPointersByGroupAndDifficulty(const Song *pSong1, const Song *pSong2)
 {
 	const CString &sGroup1 = pSong1->m_sGroupName;
 	const CString &sGroup2 = pSong2->m_sGroupName;
@@ -1085,9 +1085,28 @@ int CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2)
 	return CompareSongPointersByDifficulty( pSong1, pSong2 );
 }
 
-void SortSongPointerArrayByGroup( vector<Song*> &arraySongPointers )
+void SortSongPointerArrayByGroupAndDifficulty( vector<Song*> &arraySongPointers )
 {
-	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByGroup );
+	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByGroupAndDifficulty );
+}
+
+int CompareSongPointersByGroupAndTitle(const Song *pSong1, const Song *pSong2)
+{
+	const CString &sGroup1 = pSong1->m_sGroupName;
+	const CString &sGroup2 = pSong2->m_sGroupName;
+
+	if( sGroup1 < sGroup2 )
+		return true;
+	if( sGroup1 > sGroup2 )
+		return false;
+
+	/* Same group; compare by name. */
+	return CompareSongPointersByTitle( pSong1, pSong2 );
+}
+
+void SortSongPointerArrayByGroupAndTitle( vector<Song*> &arraySongPointers )
+{
+	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByGroupAndTitle );
 }
 
 bool CompareSongPointersByMostPlayed(const Song *pSong1, const Song *pSong2)

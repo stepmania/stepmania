@@ -15,6 +15,8 @@
 #include "RageBitmapTexture.h"
 #include "ThemeManager.h"
 #include "RageUtil.h"
+#include "Song.h"
+#include "RageTextureManager.h"
 
 
 Banner::Banner()
@@ -22,7 +24,10 @@ Banner::Banner()
 	m_bScrolling = false;
 	m_fPercentScrolling = 0;
 
-//	LoadFallback();
+	TEXTUREMAN->CacheTexture( THEME->GetPathToG("Banner all music") );
+	TEXTUREMAN->CacheTexture( THEME->GetPathToG("Common fallback banner") );
+	TEXTUREMAN->CacheTexture( THEME->GetPathToG("Banner roulette") );
+	TEXTUREMAN->CacheTexture( THEME->GetPathToG("Banner random") );
 }
 
 bool Banner::Load( RageTextureID ID )

@@ -27,6 +27,7 @@
 #include "song.h"
 #include "Course.h"
 #include "RageDisplay.h"
+#include "RageTextureManager.h"
 
 
 #define NUM_WHEEL_ITEMS				min( MAX_WHEEL_ITEMS, THEME->GetMetricI("MusicWheel","NumWheelItems") )
@@ -98,12 +99,6 @@ MusicWheel::MusicWheel()
 	m_soundStart.Load(			THEME->GetPathToS("Common start") );
 	m_soundLocked.Load(			THEME->GetPathToS("MusicWheel locked") );
 
-
-	// init m_mapGroupNameToBannerColor
-
-	vector<Song*> arraySongs;
-	SONGMAN->GetSongs( arraySongs, GAMESTATE->GetNumStagesLeft() );
-	SortSongPointerArrayByGroup( arraySongs );
 	
 	m_iSelection = 0;
 
@@ -247,10 +242,13 @@ bool MusicWheel::SelectCourse( const Course *p )
 	return true;
 }
 
-void MusicWheel::GetSongList(vector<Song*> &arraySongs, bool bRoulette )
+void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CString sPreferredGroup )
 {
 	vector<Song*> apAllSongs;
-	SONGMAN->GetSongs( apAllSongs, GAMESTATE->GetNumStagesLeft() );
+	if( so==SORT_PREFERRED && GAMESTATE->m_sPreferredGroup!=GROUP_ALL_MUSIC)
+		SONGMAN->GetSongs( apAllSongs, GAMESTATE->m_sPreferredGroup, GAMESTATE->GetNumStagesLeft() );	
+	else
+		SONGMAN->GetSongs( apAllSongs, GAMESTATE->GetNumStagesLeft() );
 
 	// copy only songs that have at least one Notes for the current GameMode
 	for( unsigned i=0; i<apAllSongs.size(); i++ )
@@ -262,9 +260,9 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, bool bRoulette )
 		if( pSong != GAMESTATE->m_pCurSong || 
 			(!GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2()) ) {
 			/* Hide songs that asked to be hidden via #SELECTABLE. */
-			if( !bRoulette && !pSong->NormallyDisplayed() )
+			if( so!=SORT_ROULETTE && !pSong->NormallyDisplayed() )
 				continue;
-			if( bRoulette && !pSong->RouletteDisplayed() )
+			if( so==SORT_ROULETTE && !pSong->RouletteDisplayed() )
 				continue;
 		}
 
@@ -327,14 +325,17 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			///////////////////////////////////
 			vector<Song*> arraySongs;
 			
-			GetSongList(arraySongs, so == SORT_ROULETTE);
+			GetSongList(arraySongs, so, GAMESTATE->m_sPreferredGroup );
 
 			// sort the songs
 			switch( so )
 			{
-			case SORT_GROUP:
+			case SORT_PREFERRED:
 			case SORT_ROULETTE:
-				SortSongPointerArrayByGroup( arraySongs );
+				SortSongPointerArrayByGroupAndDifficulty( arraySongs );
+				break;
+			case SORT_GROUP:
+				SortSongPointerArrayByGroupAndTitle( arraySongs );
 				break;
 			case SORT_TITLE:
 				SortSongPointerArrayByTitle( arraySongs );
@@ -342,9 +343,6 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			case SORT_BPM:
 				SortSongPointerArrayByBPM( arraySongs );
 				break;
-		//	case SORT_ARTIST:
-		//		SortSongPointerArrayByArtist( arraySongs );
-		//		break;
 			case SORT_MOST_PLAYED:
 				SortSongPointerArrayByMostPlayed( arraySongs );
 				if( arraySongs.size() > 30 )
@@ -355,7 +353,6 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			}
 
 
-
 			///////////////////////////////////
 			// Build an array of WheelItemDatas from the sorted list of Song*'s
 			///////////////////////////////////
@@ -364,9 +361,10 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			bool bUseSections = false;
 			switch( so )
 			{
+			case SORT_PREFERRED:	bUseSections = false;	break;
 			case SORT_MOST_PLAYED:	bUseSections = false;	break;
 			case SORT_BPM:			bUseSections = false;	break;
-			case SORT_GROUP:		bUseSections = GAMESTATE->m_sPreferredGroup == GROUP_ALL_MUSIC;	break;
+			case SORT_GROUP:		bUseSections = true;	break;
 			case SORT_TITLE:		bUseSections = true;	break;
 			case SORT_ROULETTE:		bUseSections = false;	break;
 			default:		ASSERT( 0 );
@@ -377,7 +375,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 
 			if( bUseSections )
 			{
-				/* We're using sections, so use the section name as the top-levle
+				/* We're using sections, so use the section name as the top-level
 				 * sort. */
 				stable_sort(arraySongs.begin(), arraySongs.end(),
 							CompareSongPointerArrayBySectionName(so));
@@ -390,9 +388,6 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 					Song* pSong = arraySongs[i];
 					CString sThisSection = GetSectionNameFromSongAndSort( pSong, so );
 					int iSectionColorIndex = 0;
-
-					if( GAMESTATE->m_sPreferredGroup != GROUP_ALL_MUSIC  &&  pSong->m_sGroupName != GAMESTATE->m_sPreferredGroup )
-							continue;
 
 					if( sThisSection != sLastSection)	// new section, make a section item
 					{
@@ -410,8 +405,6 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				for( unsigned i=0; i<arraySongs.size(); i++ )
 				{
 					Song* pSong = arraySongs[i];
-					if( GAMESTATE->m_sPreferredGroup != GROUP_ALL_MUSIC  &&  pSong->m_sGroupName != GAMESTATE->m_sPreferredGroup )
-						continue;	// skip
 					arrayWheelItemDatas.push_back( WheelItemData(TYPE_SONG, pSong, "", NULL, SONGMAN->GetSongColor(pSong)) );
 				}
 			}
@@ -1051,6 +1044,35 @@ void MusicWheel::SetOpenGroup(CString group, SongSortOrder so)
 			 continue;
 		m_CurWheelItemData.push_back(&from[i]);
 
+		//
+		// cache banners
+		//
+		switch( from[i].m_Type )
+		{
+		case TYPE_SONG:
+			{
+				Song* pSong = from[i].m_pSong;
+				if( pSong->HasBanner() )
+					TEXTUREMAN->CacheTexture( pSong->GetBannerPath() );
+			}
+			break;
+		case TYPE_COURSE:
+			{
+				Course* pCourse = from[i].m_pCourse;
+				if( pCourse->HasBanner() )
+					TEXTUREMAN->CacheTexture( pCourse->m_sBannerPath );
+			}
+			break;
+		case TYPE_SECTION:
+			{
+				CString sPath = SONGMAN->GetGroupBannerPath( from[i].m_sSectionName );
+				if( !sPath.empty() )
+					TEXTUREMAN->CacheTexture( sPath );
+			}
+			break;
+		default:
+			break;
+		}
 	}
 
 	m_iSelection = 0;

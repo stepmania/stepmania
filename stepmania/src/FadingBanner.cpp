@@ -13,47 +13,87 @@
 
 #include "FadingBanner.h"
 
+FadingBanner::FadingBanner()
+{
+	m_iIndexFront = 0;
+}
+
 void FadingBanner::SetCroppedSize( float fWidth, float fHeight )
 {
-	m_FrontBanner.SetCroppedSize( fWidth, fHeight );
-	Banner::SetCroppedSize( fWidth, fHeight );
+	for( int i=0; i<2; i++ )
+		m_Banner[i].SetCroppedSize( fWidth, fHeight );
 }
 
 void FadingBanner::Update( float fDeltaTime )
 {
-	m_FrontBanner.Update(fDeltaTime);
-	Banner::Update( fDeltaTime );
+	Actor::Update( fDeltaTime );
+	for( int i=0; i<2; i++ )
+		m_Banner[i].Update( fDeltaTime );
 }
 
 void FadingBanner::DrawPrimitives()
 {
-	Banner::DrawPrimitives();
-	m_FrontBanner.Draw();
+	Actor::DrawPrimitives();
+	m_Banner[GetBackIndex()].Draw();
+	m_Banner[m_iIndexFront].Draw();
 }
 
 bool FadingBanner::Load( RageTextureID ID )
 {
 	BeforeChange();
-	
-	if(!Banner::Load(ID))
-		return false;
-
-	Update(0);
-	return true;
+	return m_Banner[m_iIndexFront].Load(ID);
 }
 
 void FadingBanner::BeforeChange()
 {
-	// move the back banner to the front in preparation for a cross fade
-	if( this->GetTexture() )
-	{
-		m_FrontBanner.Load( this->GetTexture()->GetID() );
-		m_FrontBanner.SetScrolling( this->IsScrolling(), this->ScrollingPercent() );
-	}
+	m_Banner[m_iIndexFront].SetDiffuse( RageColor(1,1,1,1) );
 
-	m_FrontBanner.SetDiffuse( RageColor(1,1,1,1) );
-	m_FrontBanner.StopTweening();
-	m_FrontBanner.BeginTweening( 0.25f );		// fade out
-	m_FrontBanner.SetDiffuse( RageColor(1,1,1,0) );
+	m_iIndexFront = GetBackIndex();
+
+	m_Banner[m_iIndexFront].SetDiffuse( RageColor(1,1,1,1) );
+	m_Banner[m_iIndexFront].StopTweening();
+	m_Banner[m_iIndexFront].BeginTweening( 0.25f );		// fade out
+	m_Banner[m_iIndexFront].SetDiffuse( RageColor(1,1,1,0) );
 }
 
+void FadingBanner::LoadFromSong( Song* pSong )
+{
+	BeforeChange();
+	m_Banner[GetBackIndex()].LoadFromSong( pSong );
+}
+
+void FadingBanner::LoadAllMusic()
+{
+	BeforeChange();
+	m_Banner[GetBackIndex()].LoadAllMusic();
+}
+
+void FadingBanner::LoadFromGroup( CString sGroupName )
+{
+	BeforeChange();
+	m_Banner[GetBackIndex()].LoadFromGroup( sGroupName );
+}
+
+void FadingBanner::LoadFromCourse( Course* pCourse )
+{
+	BeforeChange();
+	m_Banner[GetBackIndex()].LoadFromCourse( pCourse );
+}
+
+void FadingBanner::LoadRoulette()
+{
+	BeforeChange();
+	m_Banner[GetBackIndex()].LoadRoulette();
+}
+
+void FadingBanner::LoadRandom()
+{
+	BeforeChange();
+	m_Banner[GetBackIndex()].LoadRandom();
+}
+
+void FadingBanner::LoadFallback()
+{
+	BeforeChange();
+	m_Banner[GetBackIndex()].LoadFallback();
+}

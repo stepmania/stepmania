@@ -101,6 +101,7 @@ PlayMode StringToPlayMode( CString s );
 
 
 enum SongSortOrder {
+	SORT_PREFERRED,
 	SORT_GROUP, 
 	SORT_TITLE, 
 	SORT_BPM, 
