@@ -15,8 +15,6 @@
 #include "Style.h"
 #include "ScreenDimensions.h"
 #include "Command.h"
-#include "FontManager.h"
-#include "Font.h"
 
 
 /*
@@ -144,8 +142,6 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 
 	m_bShowUnderlines = bShowUnderlines;
 
-	Font* pFont = FONT->LoadFont( THEME->GetPathF(m_sName,"item") );
-
 	for( unsigned r=0; r<vDefs.size(); r++ )		// foreach row
 	{
 		m_Rows.push_back( new OptionRow() );
@@ -165,14 +161,10 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 		const float fY = ROW_Y.GetValue( pos );
 
 		row.AfterImportOptions( 
-			pFont, 
 			GetExplanationTitle( r ),
 			fY
 			);
 	}
-
-	FONT->UnloadFont( pFont );
-	pFont = NULL;
 
 	m_sprPage.Load( THEME->GetPathG(m_sName,"page") );
 	m_sprPage->SetName( "Page" );

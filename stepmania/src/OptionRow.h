@@ -9,7 +9,6 @@
 #include "OptionIcon.h"
 #include "ThemeMetric.h"
 
-class Font;
 class OptionRowHandler;
 
 enum SelectType
@@ -93,7 +92,6 @@ public:
 	int ExportOptions();
 
 	void AfterImportOptions( 
-		Font* pFont, 
 		const CString &sTitle,
 		float fY
 		);

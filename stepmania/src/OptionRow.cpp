@@ -5,6 +5,8 @@
 #include "Font.h"
 #include "Foreach.h"
 #include "OptionRowHandler.h"
+#include "FontManager.h"
+#include "Font.h"
 
 static const CString SelectTypeNames[NUM_SELECT_TYPES] = {
 	"SelectOne",
@@ -132,7 +134,6 @@ void OptionRow::LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pH
 }
 
 void OptionRow::AfterImportOptions( 
-	Font* pFont, 
 	const CString &sTitle,
 	float fY
 	)
@@ -199,6 +200,8 @@ void OptionRow::AfterImportOptions(
 
 	// If the items will go off the edge of the screen, then re-init with the "long row" style.
 	{
+		Font* pFont = FONT->LoadFont( THEME->GetPathF(m_sType,"item") );
+
 		float fX = ITEMS_START_X;
 		
 		for( unsigned c=0; c<m_RowDef.choices.size(); c++ )
@@ -217,6 +220,9 @@ void OptionRow::AfterImportOptions(
 				break;
 			}
 		}
+
+		FONT->UnloadFont( pFont );
+		pFont = NULL;
 	}
 
 	//
