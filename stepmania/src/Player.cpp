@@ -28,7 +28,9 @@ const float SCORE_Y				= SCREEN_HEIGHT - 40;
 const float HOLD_ARROW_NG_TIME	=	0.27f;
 
 
-Player::Player()
+Player::Player() :
+m_PlayerOptions(),
+m_LifeMeter(m_PlayerOptions)
 {
 
 	m_fSongBeat = 0;
