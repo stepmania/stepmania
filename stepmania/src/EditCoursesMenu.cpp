@@ -11,6 +11,8 @@
 #include "ScreenMiniMenu.h"
 #include "ScreenManager.h"
 #include "PlayerState.h"
+#include "ScreenPlayerOptions.h"	// for SM_BackFromPlayerOptions
+#include "ScreenSongOptions.h"	// for SM_BackFromSongOptions
 
 //
 // Defines specific to EditCoursesMenu
@@ -33,8 +35,6 @@
 #define ROW_Y( i )				THEME->GetMetricF("EditCoursesMenu",ssprintf("Row%dY",i+1))
 
 const ScreenMessage SM_BackFromCourseOptionsMenu		= (ScreenMessage)(SM_User+1);
-const ScreenMessage SM_BackFromPlayerOptions			= (ScreenMessage)(SM_User+3);
-const ScreenMessage SM_BackFromSongOptions				= (ScreenMessage)(SM_User+4);
 							  
 enum CourseEntryMenuRow
 {

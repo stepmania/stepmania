@@ -18,6 +18,7 @@ public:
 	ScreenPrompt( CString sName );
 	virtual void Init();
 	ScreenPrompt( 
+		ScreenMessage smSendOnPop,
 		CString sText, 
 		PromptType type = PROMPT_OK, 
 		PromptAnswer defaultAnswer = ANSWER_NO, 
@@ -67,7 +68,7 @@ protected:
 	BitmapText		m_textAnswer[NUM_PROMPT_ANSWERS];
 	PromptType		m_PromptType;
 	PromptAnswer	m_Answer;
-	ScreenMessage	m_SMSendWhenDone;	// don't send on ANSWER_CANCEL
+	ScreenMessage	m_smSendOnPop;	// don't send on ANSWER_CANCEL
 	void(*m_pOnYes)(void*);
 	void(*m_pOnNo)(void*);
 	void* m_pCallbackData;

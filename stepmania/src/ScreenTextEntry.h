@@ -29,6 +29,7 @@ class ScreenTextEntry : public Screen
 public:
 	ScreenTextEntry( 
 		CString sName, 
+		ScreenMessage smSendOnPop,
 		CString sQuestion, 
 		CString sInitialAnswer, 
 		int iMaxInputLength,
@@ -66,6 +67,7 @@ protected:
 	void UpdateKeyboardText();
 	void UpdateAnswerText();
 
+	ScreenMessage	m_smSendOnPop;
 	CString			m_sQuestion;
 	int				m_iMaxInputLength;
 	bool            m_bPassword;

@@ -20,10 +20,10 @@
 #include "MusicWheel.h"
 #include "InputMapper.h"
 #include "RageLog.h"
+#include "ScreenPlayerOptions.h"	// for SM_BackFromPlayerOptions
 
 const ScreenMessage SM_NoSongs		= ScreenMessage(SM_User+3);
 const ScreenMessage SM_ChangeSong	= ScreenMessage(SM_User+5);
-const ScreenMessage SM_BackFromOpts	= ScreenMessage(SM_User+6);
 const ScreenMessage SM_SMOnlinePack	= ScreenMessage(SM_User+8);	//Unused, but should be known
 const ScreenMessage	SM_SetWheelSong = ScreenMessage(SM_User+19);
 const ScreenMessage SM_RefreshWheelLocation = ScreenMessage(SM_User+20);
@@ -257,7 +257,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		m_MusicWheel.Select();
 		m_bAllowInput = true;
 		break;
-	case SM_BackFromOpts:
+	case SM_BackFromPlayerOptions:
 		//XXX: HACK: This will causes ScreenSelectOptions to go back here.
 		NSMAN->ReportNSSOnOff(1);
 		GAMESTATE->m_bEditing = false;
@@ -328,7 +328,7 @@ void ScreenNetSelectMusic::MenuUp( PlayerNumber pn, const InputEventType type )
 {
 	NSMAN->ReportNSSOnOff(3);
 	GAMESTATE->m_bEditing = true;
-	SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromOpts );
+	SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions" );
 }
 
 void ScreenNetSelectMusic::MenuDown( PlayerNumber pn, const InputEventType type )

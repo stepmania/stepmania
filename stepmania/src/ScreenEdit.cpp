@@ -30,6 +30,8 @@
 #include "ActorUtil.h"
 #include "ScreenPrompt.h"
 #include "CommonMetrics.h"
+#include "ScreenPlayerOptions.h"	// for SM_BackFromPlayerOptions
+#include "ScreenSongOptions.h"	// for SM_BackFromSongOptions
 
 //
 // Defines specific to ScreenEdit
@@ -51,8 +53,6 @@ const ScreenMessage SM_BackFromStepsInformation	= (ScreenMessage)(SM_User+3);
 const ScreenMessage SM_BackFromEditOptions			= (ScreenMessage)(SM_User+4);
 const ScreenMessage SM_BackFromSongInformation			= (ScreenMessage)(SM_User+5);
 const ScreenMessage SM_BackFromBGChange				= (ScreenMessage)(SM_User+6);
-const ScreenMessage SM_BackFromPlayerOptions		= (ScreenMessage)(SM_User+7);
-const ScreenMessage SM_BackFromSongOptions			= (ScreenMessage)(SM_User+8);
 const ScreenMessage SM_BackFromInsertAttack			= (ScreenMessage)(SM_User+9);
 const ScreenMessage SM_BackFromInsertAttackModifiers= (ScreenMessage)(SM_User+10);
 const ScreenMessage SM_BackFromPrefs				= (ScreenMessage)(SM_User+11);
@@ -1520,7 +1520,9 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			int iDurationChoice = ScreenMiniMenu::s_viLastAnswers[0];
 			g_fLastInsertAttackDurationSeconds = strtof( g_InsertAttack.rows[0].choices[iDurationChoice], NULL );
 			GAMESTATE->StoreSelectedOptions();	// save so that we don't lose the options chosen for edit and playback
-			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertAttackModifiers );
+
+			// XXX: Fix me
+			//SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertAttackModifiers );
 		}
 		break;
 	case SM_BackFromInsertAttackModifiers:
@@ -1755,7 +1757,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 					case save_on_exit:	s = "ScreenMemcardSaveEditsAfterExit";	break;
 					default:		ASSERT(0);
 					}
-					SCREENMAN->AddNewScreenToTop( s, SM_None );
+					SCREENMAN->AddNewScreenToTop( s );
 				}
 				else
 				{
@@ -1785,10 +1787,10 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				PROMPT_YES_NO, ANSWER_NO );
 			break;
 		case player_options:
-			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromPlayerOptions );
+			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions" );
 			break;
 		case song_options:
-			SCREENMAN->AddNewScreenToTop( "ScreenSongOptions", SM_BackFromSongOptions );
+			SCREENMAN->AddNewScreenToTop( "ScreenSongOptions" );
 			break;
 		case edit_song_info:
 			{

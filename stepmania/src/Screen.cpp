@@ -160,14 +160,14 @@ void Screen::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToNextScreen:
 		if( SCREENMAN->IsStackedScreen(this) )
-			SCREENMAN->PopTopScreen();
+			SCREENMAN->PopTopScreen( SM_None );
 		else
 			SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	case SM_GoToPrevScreen:
 		SCREENMAN->DeletePreparedScreens();
 		if( SCREENMAN->IsStackedScreen(this) )
-			SCREENMAN->PopTopScreen();
+			SCREENMAN->PopTopScreen( SM_None );
 		else
 			SCREENMAN->SetNewScreen( PREV_SCREEN );
 		break;

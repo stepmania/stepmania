@@ -17,6 +17,7 @@ bool ScreenPrompt::s_bCancelledLast = false;
 
 //REGISTER_SCREEN_CLASS( ScreenPrompt );
 ScreenPrompt::ScreenPrompt( 
+	ScreenMessage smSendOnPop,
 	CString sText, 
 	PromptType type, 
 	PromptAnswer defaultAnswer, 
@@ -28,13 +29,14 @@ ScreenPrompt::ScreenPrompt(
 {
 	m_bIsTransparent = true;	// draw screens below us
 
+	m_smSendOnPop = smSendOnPop;
+	m_sText = sText;
 	m_PromptType = type;
 	m_Answer = defaultAnswer;
 	CLAMP( (int&)m_Answer, 0, m_PromptType );
 	m_pOnYes = OnYes;
 	m_pOnNo = OnNo;
 	m_pCallbackData = pCallbackData;
-	m_sText = sText;
 }
 
 void ScreenPrompt::Init()
@@ -128,7 +130,7 @@ void ScreenPrompt::HandleScreenMessage( const ScreenMessage SM )
 	case SM_DoneOpeningWipingLeft:
 		break;
 	case SM_DoneOpeningWipingRight:
-		SCREENMAN->PopTopScreen();
+		SCREENMAN->PopTopScreen( m_smSendOnPop );
 		break;
 	}
 }

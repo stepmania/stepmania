@@ -40,7 +40,7 @@ void ScreenSongOptions::GoToPrevScreen()
 {
 	if( GAMESTATE->m_bEditing )
 	{
-		SCREENMAN->PopTopScreen( SM_None );
+		SCREENMAN->PopTopScreen( SM_BackFromSongOptions );
 	}
 	else
 	{
@@ -52,7 +52,7 @@ void ScreenSongOptions::GoToPrevScreen()
 void ScreenSongOptions::GoToNextScreen()
 {
 	if( GAMESTATE->m_bEditing )
-		SCREENMAN->PopTopScreen();
+		SCREENMAN->PopTopScreen( SM_BackFromSongOptions );
 	else
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 }

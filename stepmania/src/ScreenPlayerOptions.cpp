@@ -79,7 +79,7 @@ void ScreenPlayerOptions::GoToPrevScreen()
 {
 	if( GAMESTATE->m_bEditing )
 	{
-		SCREENMAN->PopTopScreen();
+		SCREENMAN->PopTopScreen( SM_BackFromPlayerOptions );
 	}
 	else
 	{
@@ -91,7 +91,9 @@ void ScreenPlayerOptions::GoToPrevScreen()
 void ScreenPlayerOptions::GoToNextScreen()
 {
 	if( GAMESTATE->m_bEditing )
-		SCREENMAN->PopTopScreen();
+	{
+		SCREENMAN->PopTopScreen( SM_BackFromPlayerOptions );
+	}
 	else
 	{
 		GAMESTATE->AdjustFailType();

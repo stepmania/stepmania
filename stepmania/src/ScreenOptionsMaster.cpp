@@ -145,7 +145,7 @@ void ScreenOptionsMaster::BeginFadingOut()
 void ScreenOptionsMaster::GoToNextScreen()
 {
 	if( GAMESTATE->m_bEditing )
-		SCREENMAN->PopTopScreen();
+		SCREENMAN->PopTopScreen( SM_None );
 	else if( m_sExportedNextScreen != "" )
 		SCREENMAN->SetNewScreen( m_sExportedNextScreen );
 	else if( NEXT_SCREEN != "" )
@@ -157,7 +157,7 @@ void ScreenOptionsMaster::GoToPrevScreen()
 	/* XXX: A better way to handle this would be to check if we're a pushed screen. */
 	if( GAMESTATE->m_bEditing )
 	{
-		SCREENMAN->PopTopScreen();
+		SCREENMAN->PopTopScreen( SM_None );
 		// XXX: handle different destinations based on play mode?
 	}
 	else

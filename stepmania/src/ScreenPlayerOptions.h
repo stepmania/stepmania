@@ -3,6 +3,8 @@
 
 #include "ScreenOptionsMaster.h"
 
+const ScreenMessage SM_BackFromPlayerOptions			= (ScreenMessage)(SM_User+3);
+
 class ScreenPlayerOptions : public ScreenOptionsMaster
 {
 public:

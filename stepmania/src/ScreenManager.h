@@ -55,10 +55,10 @@ public:
 	void DeletePreparedScreens();
 	
 	void SetNewScreen( const CString &sName );
-	void AddNewScreenToTop( const CString &sName, ScreenMessage messageSendOnPop );
-	void Prompt( ScreenMessage SM_SendWhenDone, const CString &sText, PromptType type = PROMPT_OK, PromptAnswer defaultAnswer = ANSWER_NO, void(*OnYes)(void*) = NULL, void(*OnNo)(void*) = NULL, void* pCallbackData = NULL );
+	void AddNewScreenToTop( const CString &sName );
+	void Prompt( ScreenMessage smSendOnPop, const CString &sText, PromptType type = PROMPT_OK, PromptAnswer defaultAnswer = ANSWER_NO, void(*OnYes)(void*) = NULL, void(*OnNo)(void*) = NULL, void* pCallbackData = NULL );
 	void TextEntry( 
-		ScreenMessage SM_SendWhenDone, 
+		ScreenMessage smSendOnPop, 
 		CString sQuestion, 
 		CString sInitialAnswer, 
 		int iMaxInputLength, 
@@ -67,12 +67,12 @@ public:
 		void(*OnCanel)() = NULL,
 		bool bPassword = false
 		);
-	void Password( ScreenMessage SM_SendWhenDone, const CString &sQuestion, void(*OnOK)(CString sPassword) = NULL, void(*OnCanel)() = NULL )
+	void Password( ScreenMessage smSendOnPop, const CString &sQuestion, void(*OnOK)(CString sPassword) = NULL, void(*OnCanel)() = NULL )
 	{
-		TextEntry( SM_SendWhenDone, sQuestion, "", 255, NULL, OnOK, OnCanel, true );
+		TextEntry( smSendOnPop, sQuestion, "", 255, NULL, OnOK, OnCanel, true );
 	}
-	void MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel = SM_None );
-	void PopTopScreen( ScreenMessage SM = SM_None );
+	void MiniMenu( Menu* pDef, ScreenMessage smSendOnOK, ScreenMessage smSendOnCancel = SM_None );
+	void PopTopScreen( ScreenMessage SM );
 	void SystemMessage( const CString &sMessage );
 	void SystemMessageNoAnimate( const CString &sMessage );
 
@@ -108,7 +108,6 @@ private:
 	CString				m_sLastLoadedBackgroundPath;
 	CString				m_sDelayedScreen;
 	CString				m_sSystemMessage;
-	ScreenMessage		m_MessageSendOnPop;
 	vector<Screen*>		m_vPreparedScreens;
 	vector<Screen*>		m_vScreensToDelete;
 	

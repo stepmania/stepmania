@@ -217,7 +217,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		ASSERT( pSteps );
 		if( HOME_EDIT_MODE )
 		{
-			SCREENMAN->AddNewScreenToTop( "ScreenEditMenuDeleteSteps", SM_None );
+			SCREENMAN->AddNewScreenToTop( "ScreenEditMenuDeleteSteps" );
 		}
 		else
 		{

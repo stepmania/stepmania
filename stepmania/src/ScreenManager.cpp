@@ -55,8 +55,6 @@ ScreenManager::ScreenManager()
 {
 	m_pSharedBGA = new Actor;
 
-	m_MessageSendOnPop = SM_None;
-
 	m_bZeroNextUpdate = false;
 
 	/* By the time this is constructed, THEME has already been set up and set to
@@ -463,7 +461,7 @@ retry:
 	SetFromNewScreen( pNewScreen, false );
 }
 
-void ScreenManager::AddNewScreenToTop( const CString &sScreenName, ScreenMessage messageSendOnPop )
+void ScreenManager::AddNewScreenToTop( const CString &sScreenName )
 {
 	m_bZeroNextUpdate = true;
 
@@ -474,29 +472,26 @@ void ScreenManager::AddNewScreenToTop( const CString &sScreenName, ScreenMessage
 
 	Screen* pNewScreen = MakeNewScreen(sScreenName);
 	SetFromNewScreen( pNewScreen, true );
-	m_MessageSendOnPop = messageSendOnPop;
 }
 
 #include "ScreenPrompt.h"
 #include "ScreenTextEntry.h"
 #include "ScreenMiniMenu.h"
 
-void ScreenManager::Prompt( ScreenMessage SM_SendWhenDone, const CString &sText, PromptType type, PromptAnswer defaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
+void ScreenManager::Prompt( ScreenMessage smSendOnPop, const CString &sText, PromptType type, PromptAnswer defaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
 {
 	if( m_ScreenStack.size() )
 		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
 
 	// add the new state onto the back of the array
-	Screen *pNewScreen = new ScreenPrompt( sText, type, defaultAnswer, OnYes, OnNo, pCallbackData);
+	Screen *pNewScreen = new ScreenPrompt( smSendOnPop, sText, type, defaultAnswer, OnYes, OnNo, pCallbackData);
 	pNewScreen->Init();
 	this->ZeroNextUpdate();
 	SetFromNewScreen( pNewScreen, true );
-
-	m_MessageSendOnPop = SM_SendWhenDone;
 }
 
 void ScreenManager::TextEntry( 
-	ScreenMessage SM_SendWhenDone, 
+	ScreenMessage smSendOnPop, 
 	CString sQuestion, 
 	CString sInitialAnswer, 
 	int iMaxInputLength,
@@ -512,6 +507,7 @@ void ScreenManager::TextEntry(
 	// add the new state onto the back of the array
 	Screen *pNewScreen = new ScreenTextEntry( 
 		"ScreenTextEntry", 
+		smSendOnPop,
 		sQuestion, 
 		sInitialAnswer, 
 		iMaxInputLength, 
@@ -522,8 +518,6 @@ void ScreenManager::TextEntry(
 	pNewScreen->Init();
 	this->ZeroNextUpdate();
 	SetFromNewScreen( pNewScreen, true );
-
-	m_MessageSendOnPop = SM_SendWhenDone;
 }
 
 void ScreenManager::MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
@@ -549,14 +543,9 @@ void ScreenManager::PopTopScreen( ScreenMessage SM )
 
 	/* Post to the new top.  This must be done now; otherwise, we'll have a single
 	 * frame between popping and these messages, which can result in a frame where eg.
-	 * input is accepted where it shouldn't be.  Watch out; sending m_MessageSendOnPop
-	 * might push another screen (eg. editor menu -> PlayerOptions), which will set
-	 * a new m_MessageSendOnPop. */
-	ScreenMessage MessageToSend = m_MessageSendOnPop;
-	m_MessageSendOnPop = SM_None;
+	 * input is accepted where it shouldn't be. */
 	SendMessageToTopScreen( SM );
 	SendMessageToTopScreen( SM_GainFocus );
-	SendMessageToTopScreen( MessageToSend );
 }
 
 void ScreenManager::PostMessageToTopScreen( ScreenMessage SM, float fDelay )

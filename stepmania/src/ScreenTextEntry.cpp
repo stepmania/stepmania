@@ -48,6 +48,7 @@ bool ScreenTextEntry::s_bCancelledLast = false;
 
 ScreenTextEntry::ScreenTextEntry( 
 	CString sClassName, 
+	ScreenMessage smSendOnPop,
 	CString sQuestion, 
 	CString sInitialAnswer, 
 	int iMaxInputLength,
@@ -59,6 +60,7 @@ ScreenTextEntry::ScreenTextEntry(
 {
 	m_bIsTransparent = true;	// draw screens below us
 
+	m_smSendOnPop = smSendOnPop;
 	m_sQuestion = sQuestion;
 	m_sAnswer = CStringToWstring( sInitialAnswer );
 	m_iMaxInputLength = iMaxInputLength;
@@ -200,7 +202,7 @@ void ScreenTextEntry::HandleScreenMessage( const ScreenMessage SM )
 	case SM_DoneOpeningWipingLeft:
 		break;
 	case SM_DoneOpeningWipingRight:
-		SCREENMAN->PopTopScreen();
+		SCREENMAN->PopTopScreen( m_smSendOnPop );
 		break;
 	}
 }
