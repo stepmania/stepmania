@@ -53,8 +53,7 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 
 	if( bPlayerEnabled )
 	{
-		m_Percent.SetName( "LifeMeterBattery Percent" );
-		m_Percent.Load( pn, &STATSMAN->m_CurStageStats.m_player[pn], true );
+		m_Percent.Load( pn, &STATSMAN->m_CurStageStats.m_player[pn], "LifeMeterBattery Percent", true );
 		this->AddChild( &m_Percent );
 	}
 

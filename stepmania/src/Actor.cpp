@@ -110,7 +110,7 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 			sCmdName="on";
 		else
 			sCmdName = sKeyName.Left( sKeyName.size()-7 );
-		m_mapNameToCommands[sCmdName] = apac;
+		AddCommand( sCmdName, apac );
 	}
 }
 
@@ -987,6 +987,11 @@ void Actor::QueueCommand( const CString& sCommandName )
 {
 	BeginTweening( 0, TWEEN_LINEAR );
 	DestTweenState().sCommandName = sCommandName;
+}
+
+void Actor::AddCommand( const CString &sCmdName, apActorCommands apac )
+{
+	m_mapNameToCommands[sCmdName] = apac;
 }
 
 void Actor::PlayCommand( const CString &sCommandName )

@@ -13,9 +13,8 @@ class PercentageDisplay: public ActorFrame
 {
 public:
 	PercentageDisplay();
-	void Load( PlayerNumber pn, PlayerStageStats *pSource, bool bAutoRefresh );
+	void Load( PlayerNumber pn, PlayerStageStats *pSource, const CString &sMetricsGroup, bool bAutoRefresh );
 	void Update( float fDeltaTime );
-	void SetName( const CString &sName, const CString &sID = "" );
 	void TweenOffScreen();
 
 private:

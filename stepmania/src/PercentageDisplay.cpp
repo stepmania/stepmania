@@ -14,38 +14,35 @@ PercentageDisplay::PercentageDisplay()
 	m_pSource = NULL;
 }
 
-void PercentageDisplay::SetName( const CString &sName, const CString &sID )
+void PercentageDisplay::Load( PlayerNumber pn, PlayerStageStats* pSource, const CString &sMetricsGroup, bool bAutoRefresh )
 {
-	ActorFrame::SetName( sName, sID );
-
-	DANCE_POINT_DIGITS.Load( m_sName, "DancePointsDigits" );
-	PERCENT_DECIMAL_PLACES.Load( m_sName, "PercentDecimalPlaces" );
-	PERCENT_TOTAL_SIZE.Load( m_sName, "PercentTotalSize" );
-	PERCENT_USE_REMAINDER.Load( m_sName, "PercentUseRemainder" );
-}
-
-void PercentageDisplay::Load( PlayerNumber pn, PlayerStageStats* pSource, bool bAutoRefresh )
-{
-	ASSERT( m_sName != "" ); // set this!
 	m_PlayerNumber = pn;
 	m_pSource = pSource;
 	m_bAutoRefresh = bAutoRefresh;
 	m_Last = -1;
+
+	DANCE_POINT_DIGITS.Load( sMetricsGroup, "DancePointsDigits" );
+	PERCENT_DECIMAL_PLACES.Load( sMetricsGroup, "PercentDecimalPlaces" );
+	PERCENT_TOTAL_SIZE.Load( sMetricsGroup, "PercentTotalSize" );
+	PERCENT_USE_REMAINDER.Load( sMetricsGroup, "PercentUseRemainder" );
+
 
 	if( PREFSMAN->m_bDancePointsForOni )
 		m_textPercent.SetName( ssprintf("DancePointsP%i", pn+1) );
 	else
 		m_textPercent.SetName( ssprintf("PercentP%i", pn+1) );
 
-	m_textPercent.LoadFromFont( THEME->GetPathF(m_sName,"text") );
-	SET_XY_AND_ON_COMMAND( m_textPercent );
+	m_textPercent.LoadFromFont( THEME->GetPathF(sMetricsGroup,"text") );
+	ActorUtil::SetXYAndOnCommand( m_textPercent, sMetricsGroup );
+	m_textPercent.AddCommand( "Off", THEME->GetMetricA(sMetricsGroup, m_textPercent.GetName()+"OffCommand") );
 	this->AddChild( &m_textPercent );
 
 	if( !PREFSMAN->m_bDancePointsForOni && (bool)PERCENT_USE_REMAINDER )
 	{
 		m_textPercentRemainder.SetName( ssprintf("PercentRemainderP%d",pn+1) );
-		m_textPercentRemainder.LoadFromFont( THEME->GetPathF(m_sName,"remainder") );
-		SET_XY_AND_ON_COMMAND( m_textPercentRemainder );
+		m_textPercentRemainder.LoadFromFont( THEME->GetPathF(sMetricsGroup,"remainder") );
+		ActorUtil::SetXYAndOnCommand( m_textPercentRemainder, sMetricsGroup );
+		m_textPercentRemainder.AddCommand( "Off", THEME->GetMetricA(sMetricsGroup, m_textPercentRemainder.GetName()+"OffCommand") );
 		m_textPercentRemainder.SetText( "456" );
 		this->AddChild( &m_textPercentRemainder );
 	}
@@ -55,9 +52,9 @@ void PercentageDisplay::Load( PlayerNumber pn, PlayerStageStats* pSource, bool b
 
 void PercentageDisplay::TweenOffScreen()
 {
-	OFF_COMMAND( m_textPercent );
+	m_textPercent.PlayCommand( "Off" );
 	if( !PREFSMAN->m_bDancePointsForOni && (bool)PERCENT_USE_REMAINDER )
-		OFF_COMMAND( m_textPercentRemainder );
+		m_textPercentRemainder.PlayCommand( "Off" );
 }
 
 void PercentageDisplay::Update( float fDeltaTime )
