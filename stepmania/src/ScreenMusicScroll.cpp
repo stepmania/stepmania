@@ -160,7 +160,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 	for( i=0; i<min(arraySongs.size(), MAX_MUSIC_LINES); i++ )
 	{
 		Song* pSong = arraySongs[i];
-		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathTo("Fonts","Screen MusicScroll titles") );
+		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathTo("Fonts","ScreenMusicScroll titles") );
 		m_textLines[m_iNumLines].SetText( pSong->GetFullDisplayTitle(), pSong->GetFullTranslitTitle() );
 		m_textLines[m_iNumLines].SetDiffuse( SONGMAN->GetSongColor(pSong) );
 		m_textLines[m_iNumLines].SetZoom( TEXT_ZOOM );
@@ -170,7 +170,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 
 	for( i=0; i<min(NUM_CREDIT_LINES, MAX_CREDIT_LINES); i++ )
 	{
-		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathTo("Fonts","music scroll") );
+		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathTo("Fonts","ScreenMusicScroll titles") );
 		m_textLines[m_iNumLines].SetText( CREDIT_LINES[i] );
 		m_textLines[m_iNumLines].SetZoom( TEXT_ZOOM );
 
