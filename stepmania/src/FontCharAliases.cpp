@@ -68,66 +68,7 @@ static void InitCharAliases()
 	CharAliases["invalid"]		= INVALID_CHAR;			/* 0xFFFF */
 
 	/* The comments here are UTF-8; they won't show up in VC6 (use your
-	 * imagination).
-	 *
-	 * Kanji:
-	 *
-	 * I've chosen semi-arbitrary names for these kanji.  Almost all have other
-	 * readings.  Some of the names are just words that use it (大きい -> ookii).
-	 * A character can have more than one alias, but keep aliases separate so
-	 * a list of all named kanji can be made without having to weed dupes. Avoid
-	 * really short names; eg. let's save "me" for め if we make hiragana aliases. */
-	CharAliases["kakumei1"]		= 0x9769; /* 革 */
-	CharAliases["kakumei2"]		= 0x547D; /* 命 */
-	CharAliases["matsuri"]		= 0x796D; /* 祭 */
-	CharAliases["sakura"]		= 0x685C; /* 桜 */
-	CharAliases["kosaka1"]		= 0x5C0F; /* 小 */
-	CharAliases["kosaka2"]		= 0x5742; /* 坂 */
-	CharAliases["oni"]			= 0x9B3C; /* 鬼 */
-	CharAliases["michi"]		= 0x9053; /* 道 */
-	CharAliases["futatsu"]		= 0x5F10; /* 弐 */
-	CharAliases["kami"]			= 0x795E; /* 神 */
-	CharAliases["sama"]			= 0x69D8; /* 様 */
-	CharAliases["minyou1"]		= 0x6C11; /* 民 */
-	CharAliases["minyou2"]		= 0x8B21; /* 謡 */
-	CharAliases["aka"]			= 0x660E; /* 明 */
-	CharAliases["nichi"]		= 0x65E5; /* 日 */
-	CharAliases["aoi"]			= 0x9752; /* 青 */
-	CharAliases["shoudou1"]		= 0x885D; /* 衝 */
-	CharAliases["shoudou2"]		= 0x52D5; /* 動 */
-	CharAliases["neko"]			= 0x732B; /* 猫 */
-	CharAliases["hair"]			= 0x6BDB; /* 毛 */
-	CharAliases["anettai1"]		= 0x5E2F; /* 亜 */
-	CharAliases["anettai2"]		= 0x71B1; /* 熱 */
-	CharAliases["anettai3"]		= 0x4E9C; /* 帯 */
-	CharAliases["bakudan1"]		= 0x7206; /* 爆 */
-	CharAliases["bakudan2"]		= 0x5F3E; /* 弾 */
-	CharAliases["shintani1"]	= 0x65B0; /* 新 */
-	CharAliases["shintani2"]	= 0x8C37; /* 谷 */
-	CharAliases["ookii"]		= 0x5927; /* 大 */
-	CharAliases["kenkai1"]		= 0x898B; /* 見 */
-	CharAliases["kenkai2"]		= 0x89E3; /* 解 */
-	CharAliases["mahou1"]		= 0x9B54; /* 魔 */
-	CharAliases["mahou2"]		= 0x6CD5; /* 法 */
-	CharAliases["tobira"]		= 0x6249; /* 扉 */
-	CharAliases["yozora1"]		= 0x7A7A; /* 夜 */
-	CharAliases["yozora2"]		= 0x6249; /* 空 */
-	CharAliases["sai"]			= 0x624D; /* 才 */
-	CharAliases["osoi"]			= 0x9045; /* 遅 */
-	CharAliases["tsutau"]		= 0x4F1D; /* 伝 */
-	CharAliases["setsu"]		= 0x8AAC; /* 説 */
-	CharAliases["true"]			= 0x771F; /* 真 */
-
-	CharAliases["num-ichi"]		= 0x4E00; /* 一 */
-	CharAliases["num-ni"]		= 0x4E01; /* 二 */
-	CharAliases["num-san"]		= 0x4E02; /* 三 */
-	CharAliases["num-yon"]		= 0x4E03; /* 四 */
-	CharAliases["num-go"]		= 0x4E04; /* 五 */
-	CharAliases["num-roku"]		= 0x4E05; /* 六 */
-	CharAliases["num-nana"]		= 0x4E06; /* 七 */
-	CharAliases["num-hachi"]	= 0x4E07; /* 八 */
-	CharAliases["num-kyuu"]		= 0x4E08; /* 九 */
-	CharAliases["num-juu"]		= 0x4E09; /* 十 */
+	 * imagination). */
 
 	/* Hiragana: */
 	CharAliases["ha"]	= 0x3042; /* あ */
