@@ -26,6 +26,7 @@
 #include "GameState.h"
 #include "FontCharAliases.h"
 #include "TitleSubstitution.h"
+#include "BannerCache.h"
 
 #include "NotesLoaderSM.h"
 #include "NotesLoaderDWI.h"
@@ -315,7 +316,7 @@ NotesLoader *Song::MakeLoader( CString sDir ) const
 bool Song::LoadWithoutCache( CString sDir )
 {
 	//
-	// There was no entry in the cache for this song.
+	// There was no entry in the cache for this song, or it was out of date.
 	// Let's load it from a file, then write a cache entry.
 	//
 	
@@ -672,7 +673,7 @@ void Song::TidyUpData()
 		}
 		/* Agh.  DWI's inline title images are triggering this, resulting in kanji,
 		 * etc., being used as a CDTitle for songs with none.  Some sample data
-		 * from random incarnatoins:
+		 * from random incarnations:
 		 *   42x50 35x50 50x50 144x49
 		 * It looks like ~50 height is what people use to align to DWI's font.
 		 *
@@ -684,6 +685,9 @@ void Song::TidyUpData()
 			continue;
 		}
 	}
+
+	if( HasBanner() )
+		BANNERCACHE->CacheSongBanner( GetBannerPath() );
 
 
 	// If no BGChanges are specified and there are movies in the song directory, then assume
