@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding = "Windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.00"
+	Version="7.10"
 	Name="StepMania"
 	SccProjectName=""
 	SccLocalPath=""
@@ -80,7 +80,13 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Debug|Xbox"
@@ -215,7 +221,13 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Xbox"
@@ -251,7 +263,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				IgnoreDefaultLibraryNames="libc,libcmtd"
+				GenerateDebugInformation="FALSE"
 				ProgramDatabaseFile="./../ReleaseXbox/StepMania.pdb"
+				GenerateMapFile="FALSE"
+				MapExports="FALSE"
 				OptimizeReferences="2"/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
@@ -278,6 +293,8 @@ cl                                                                              
 				TitleImage=""/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
 		<Filter
 			Name="Screens"
@@ -851,12 +868,6 @@ cl                                                                              
 				RelativePath="NoteFieldPositioning.h">
 			</File>
 			<File
-				RelativePath="NoteTypes.cpp">
-			</File>
-			<File
-				RelativePath="NoteTypes.h">
-			</File>
-			<File
 				RelativePath="NotesLoader.cpp">
 			</File>
 			<File
@@ -897,6 +908,12 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath="NotesWriterSM.h">
+			</File>
+			<File
+				RelativePath="NoteTypes.cpp">
+			</File>
+			<File
+				RelativePath="NoteTypes.h">
 			</File>
 			<File
 				RelativePath="PlayerAI.cpp">
@@ -1057,6 +1074,12 @@ cl                                                                              
 			Name="StepMania"
 			Filter="">
 			<File
+				RelativePath=".\global.cpp">
+			</File>
+			<File
+				RelativePath=".\global.h">
+			</File>
+			<File
 				RelativePath="ProductInfo.h">
 			</File>
 			<File
@@ -1068,12 +1091,6 @@ cl                                                                              
 			<File
 				RelativePath=".\StepMania.h">
 			</File>
-			<File
-				RelativePath=".\global.cpp">
-			</File>
-			<File
-				RelativePath=".\global.h">
-			</File>
 			<Filter
 				Name="arch"
 				Filter="">
@@ -1084,13 +1101,13 @@ cl                                                                              
 					RelativePath="arch\arch.h">
 				</File>
 				<File
-					RelativePath="arch\arch_Win32.h">
-				</File>
-				<File
 					RelativePath="arch\arch_default.h">
 				</File>
 				<File
 					RelativePath="arch\arch_platform.h">
+				</File>
+				<File
+					RelativePath="arch\arch_Win32.h">
 				</File>
 				<File
 					RelativePath="arch\arch_xbox.h">
@@ -1258,6 +1275,19 @@ cl                                                                              
 						RelativePath="arch\Threads\Threads_Win32.h">
 					</File>
 				</Filter>
+				<Filter
+					Name="Power"
+					Filter="">
+					<File
+						RelativePath=".\powerXBMC\IoSupport.h">
+					</File>
+					<File
+						RelativePath=".\powerXBMC\XKUtils.cpp">
+					</File>
+					<File
+						RelativePath=".\powerXBMC\XKUtils.h">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="system"
@@ -1280,6 +1310,12 @@ cl                                                                              
 			Name="Actors used in Gameplay and Menus"
 			Filter="">
 			<File
+				RelativePath=".\Banner.cpp">
+			</File>
+			<File
+				RelativePath=".\Banner.h">
+			</File>
+			<File
 				RelativePath="BGAnimation.cpp">
 			</File>
 			<File
@@ -1290,12 +1326,6 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath="BGAnimationLayer.h">
-			</File>
-			<File
-				RelativePath=".\Banner.cpp">
-			</File>
-			<File
-				RelativePath=".\Banner.h">
 			</File>
 			<File
 				RelativePath="ConditionalBGA.cpp">
@@ -1943,18 +1973,6 @@ cl                                                                              
 				RelativePath="RageSurface.h">
 			</File>
 			<File
-				RelativePath="RageSurfaceUtils.cpp">
-			</File>
-			<File
-				RelativePath="RageSurfaceUtils.h">
-			</File>
-			<File
-				RelativePath="RageSurfaceUtils_Palettize.cpp">
-			</File>
-			<File
-				RelativePath="RageSurfaceUtils_Palettize.h">
-			</File>
-			<File
 				RelativePath="RageSurface_Load.cpp">
 			</File>
 			<File
@@ -1995,6 +2013,18 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath="RageSurface_Save_BMP.h">
+			</File>
+			<File
+				RelativePath="RageSurfaceUtils.cpp">
+			</File>
+			<File
+				RelativePath="RageSurfaceUtils.h">
+			</File>
+			<File
+				RelativePath="RageSurfaceUtils_Palettize.cpp">
+			</File>
+			<File
+				RelativePath="RageSurfaceUtils_Palettize.h">
 			</File>
 			<File
 				RelativePath=".\RageTexture.cpp">
@@ -2060,10 +2090,13 @@ cl                                                                              
 				Name="Helpers"
 				Filter="">
 				<File
-					RelativePath="SDL_SaveJPEG.cpp">
+					RelativePath="ezsockets.cpp">
 				</File>
 				<File
-					RelativePath="SDL_SaveJPEG.h">
+					RelativePath="ezsockets.h">
+				</File>
+				<File
+					RelativePath="glext.h">
 				</File>
 				<File
 					RelativePath="SDL_dither.cpp">
@@ -2078,19 +2111,16 @@ cl                                                                              
 					RelativePath="SDL_rotozoom.h">
 				</File>
 				<File
+					RelativePath="SDL_SaveJPEG.cpp">
+				</File>
+				<File
+					RelativePath="SDL_SaveJPEG.h">
+				</File>
+				<File
 					RelativePath="SDL_utils.cpp">
 				</File>
 				<File
 					RelativePath="SDL_utils.h">
-				</File>
-				<File
-					RelativePath="ezsockets.cpp">
-				</File>
-				<File
-					RelativePath="ezsockets.h">
-				</File>
-				<File
-					RelativePath="glext.h">
 				</File>
 				<Filter
 					Name="pcre"
@@ -2208,6 +2238,12 @@ cl                                                                              
 				RelativePath="CryptManager.h">
 			</File>
 			<File
+				RelativePath="ezsockets.cpp">
+			</File>
+			<File
+				RelativePath="ezsockets.h">
+			</File>
+			<File
 				RelativePath=".\FontManager.cpp">
 			</File>
 			<File
@@ -2315,12 +2351,6 @@ cl                                                                              
 			<File
 				RelativePath="UnlockSystem.h">
 			</File>
-			<File
-				RelativePath="ezsockets.cpp">
-			</File>
-			<File
-				RelativePath="ezsockets.h">
-			</File>
 		</Filter>
 		<Filter
 			Name="Crypto"
@@ -2353,16 +2383,16 @@ cl                                                                              
 				RelativePath="crypto\CryptPrime.h">
 			</File>
 			<File
-				RelativePath="crypto\CryptRSA.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptRSA.h">
-			</File>
-			<File
 				RelativePath="crypto\CryptRand.cpp">
 			</File>
 			<File
 				RelativePath="crypto\CryptRand.h">
+			</File>
+			<File
+				RelativePath="crypto\CryptRSA.cpp">
+			</File>
+			<File
+				RelativePath="crypto\CryptRSA.h">
 			</File>
 			<File
 				RelativePath="crypto\CryptSH512.cpp">
