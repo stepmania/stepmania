@@ -342,7 +342,9 @@ int RageFile::GetFileSize() const
 	/* GetFileSize() may need to do non-const-like things--the default implementation reads
 	 * until the end of file to emulate it.  However, it should always restore the state to
 	 * the way it was, so pretend it's const. */
-	return const_cast<RageFileObj*>(m_File)->GetFileSize();
+	int iRet = const_cast<RageFileObj*>(m_File)->GetFileSize();
+	ASSERT_M( iRet >= 0, ssprintf("%i", iRet) );
+	return iRet;
 }
 
 void RageFile::Rewind()
@@ -351,7 +353,7 @@ void RageFile::Rewind()
 		RageException::Throw("\"%s\" is not open.", GetPath().c_str());
 
 	if( !(m_Mode&READ) )
-		RageException::Throw("\"%s\" is not open for reading; can't GetFileSize", GetPath().c_str());
+		RageException::Throw("\"%s\" is not open for reading; can't Rewind", GetPath().c_str());
 
 	m_EOF = false;
 
