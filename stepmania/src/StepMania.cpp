@@ -58,8 +58,8 @@
 //
 #include "GameConstantsAndTypes.h"
 
-//#include "tls.h"
-//#include "crash.h"
+#include "tls.h"
+#include "crash.h"
 
 
 #include "SDL.h"
@@ -74,7 +74,9 @@
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.Lib")
 
-
+#ifdef WIN32
+HWND g_hWndMain = NULL;
+#endif
 
 // command line arguments
 CString		g_sSongPath = "";
@@ -271,11 +273,17 @@ int main(int argc, char* argv[])
 	if( argc > 2 )
 		g_sServerIP = argv[2];
 
-	//	SetUnhandledExceptionFilter(CrashHandler);
-//	InitThreadData("Main thread");
-//	VDCHECKPOINT;
+	SetUnhandledExceptionFilter(CrashHandler);
+	InitThreadData("Main thread");
+	VDCHECKPOINT;
 
-	SDL_Init(0);	/* Fire up the SDL, but don't actually start any subsystems. */
+	/* Fire up the SDL, but don't actually start any subsystems. */
+	int SDL_flags = 0;
+#ifdef WIN32
+	/* We use our own error handler in Windows. */
+	SDL_flags |= SDL_INIT_NOPARACHUTE;
+#endif
+	SDL_Init(SDL_flags);
 
 	atexit(SDL_Quit);
 
@@ -334,7 +342,10 @@ int main(int argc, char* argv[])
 	SDL_VERSION(&info.version);
 	if ( SDL_GetWMInfo(&info) < 0 ) 
 		throw RageException( "SDL_GetWMInfo failed" );
-	HWND hwnd = info.window;
+
+#ifdef WIN32
+	g_hWndMain = info.window;
+#endif
 
 	INPUTMAN	= new RageInput();
 //	SOUNDMAN	= new RageSoundManager();
