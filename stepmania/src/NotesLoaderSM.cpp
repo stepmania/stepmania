@@ -372,7 +372,7 @@ bool SMLoader::LoadFromDir( CString sPath, Song &out )
 	return LoadFromSMFile( sPath + aFileNames[0], out );
 }
 
-bool SMLoader::LoadEdit( CString sEditFilePath )
+bool SMLoader::LoadEdit( CString sEditFilePath, ProfileSlot slot )
 {
 	LOG->Trace( "Song::LoadEdit(%s)", sEditFilePath.c_str() );
 
@@ -430,7 +430,9 @@ bool SMLoader::LoadEdit( CString sEditFilePath )
 			LoadFromSMTokens( 
 				sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6], (iNumParams>=8)?sParams[7]:"",
 				*pNewNotes);
-			/* XXX: set m_LoadedFromProfile, force m_Difficulty == DIFFICULTY_EDIT */
+
+			pNewNotes->SetLoadedFromProfile( slot );
+			pNewNotes->SetDifficulty( DIFFICULTY_EDIT );
 		}
 		else
 			LOG->Trace( "Unexpected value named '%s'", sValueName.c_str() );

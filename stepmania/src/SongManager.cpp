@@ -967,7 +967,7 @@ void SongManager::LoadAllFromProfiles()
 			{
 				CString sEditFileWithPath = asEditsFilesWithPath[i];
 
-				SMLoader::LoadEdit( sEditFileWithPath );
+				SMLoader::LoadEdit( sEditFileWithPath, (ProfileSlot) s );
 			}
 		}
 
