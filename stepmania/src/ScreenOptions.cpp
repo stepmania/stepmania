@@ -339,7 +339,7 @@ CString ScreenOptions::GetExplanationTitle( int iRow ) const
 				pTrail->GetDisplayBpms( bpms );
 			}
 
-			if( bpms.vfBpms.size() > MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
+			if( (int) bpms.vfBpms.size() > MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
 			{}	// add nothing
 			else if( bpms.IsSecret() )
 				sTitle += ssprintf( " (??" "?)" ); /* split so gcc doesn't think this is a trigraph */

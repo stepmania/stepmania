@@ -92,7 +92,7 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 
 	const vector<float> &BPMS = bpms.vfBpms;
 
-	if( BPMS.size() > MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
+	if( (int) BPMS.size() > MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
 	{
 		m_BPMS.push_back( -1 );
 		m_textBPM.SetText( "Various" );
