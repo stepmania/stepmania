@@ -46,7 +46,7 @@ public:
 	void MixerThread();
 	SDL_Thread *MixerThreadPtr;
 
-	bool GetData();
+	unsigned int GetData();
 	void Recover(int r);
 
 	/* virtuals: */

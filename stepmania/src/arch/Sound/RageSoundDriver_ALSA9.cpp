@@ -56,13 +56,37 @@ void RageSound_ALSA9::MixerThread()
 	 * assigns it; we might get here before that happens, though. */
 	while(!SOUNDMAN && !shutdown) SDL_Delay(10);
 
+	RageTimer Speaker;
+
+	float delay_ms, passed_ms;
+	unsigned int frames_read;
+
 	while(!shutdown) {
-		GetData();
-		//SDL_Delay(10);
+		frames_read = GetData();
+		delay_ms = 1000 * float(frames_read) / samplerate;
+
+		passed_ms = Speaker.GetDeltaTime();
+
+		//LOG->Trace("@@@@@ DELAY %f - %f = %f ms", delay_ms, passed_ms, delay_ms - passed_ms);
+		
+		if (delay_ms > passed_ms)
+			/* If we sleep for the full delay, we will just
+			 * miss the deadline, the ALSA pipe will underrun,
+			 * we will have to recover, lots of bad things to
+			 * make the sound start skipping.
+			 * Instead, just sleep for half the time
+			 * so we wake up with time to spare
+			 */
+			SDL_Delay(int(delay_ms-passed_ms) / 2);
+		else
+			LOG->Trace("RageSound_ALSA9: Missed deadline by %f ms", (delay_ms - passed_ms) );
+
 	}
 }
 
-bool RageSound_ALSA9::GetData()
+/* Returns the number of frames processed
+ */
+unsigned int RageSound_ALSA9::GetData()
 {
 	LockMutex L(SOUNDMAN->lock);
 
@@ -127,8 +151,9 @@ bool RageSound_ALSA9::GetData()
 	}
 
 	last_cursor_pos = new_cursor;
+	//last_cursor_pos += buffersize_frames;
 
-	return true;
+	return buffersize_frames;
 }
 
 /**
