@@ -741,21 +741,28 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 
 static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 {
-	// convertTo4s before calling this
+	// convert to 2sAnd3s before calling this
 	ASSERT( inout.GetNumHoldNotes() == 0 );
 	
 	/* We already did the normal shuffling code above, which did a good job
 	 * of shuffling HoldNotes without creating impossible patterns.
 	 * Now, go in and shuffle the TapNotes per-row.
 	 *
-	 * This is only called by NoteDataUtil::Turn.  "in" is in 4s, and iStartIndex
-	 * and iEndIndex are in range. */
+	 * This is only called by NoteDataUtil::Turn.  "in" is in 2sAnd3s. */
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, r, iStartIndex, iEndIndex )
 	{
 		for( int t1=0; t1<inout.GetNumTracks(); t1++ )
 		{
 			const TapNote tn1 = inout.GetTapNote(t1, r);
-			if( tn1.type == TapNote::hold )
+			switch( tn1.type )
+			{
+			case TapNote::empty:
+			case TapNote::hold_head:
+			case TapNote::hold_tail:
+				continue;
+			}
+
+			if( inout.IsHoldNoteAtBeat(t1,r) )
 				continue;
 
 			// a tap that is not part of a hold
@@ -764,7 +771,7 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 			{
 				const int t2 = rand() % inout.GetNumTracks();
 				const TapNote tn2 = inout.GetTapNote(t2, r);
-				if( tn2.type == TapNote::hold )	// a tap that is not part of a hold
+				if( inout.IsHoldNoteAtBeat(t2,r) )
 					continue;
 
 				// swap
@@ -788,9 +795,9 @@ void NoteDataUtil::Turn( NoteData &inout, StepsType st, TrackMapping tt, int iSt
 	if( tt == super_shuffle )
 	{
 		NoteData tempNoteData2;	// write into here as we tranform
-		tempNoteData2.To4s( tempNoteData );
-		SuperShuffleTaps( tempNoteData2, iStartIndex, iEndIndex ); /* expects 4s */
-		tempNoteData.From4s( tempNoteData2 );
+		tempNoteData2.To2sAnd3s( tempNoteData );
+		SuperShuffleTaps( tempNoteData2, iStartIndex, iEndIndex ); /* expects 2sAnd3s */
+		tempNoteData.From2sAnd3s( tempNoteData2 );
 	}
 
 	inout.CopyAll( tempNoteData );
