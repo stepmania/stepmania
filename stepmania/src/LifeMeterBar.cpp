@@ -480,31 +480,78 @@ void LifeMeterBar::UpdateNonstopLifebar(const int cleared,
 
 	if (m_fLifeDifficulty >= 0.4) return;
 
+    /* Approximate deductions for a miss
+	 * Life 1: 5%
+	 * Life 2: 5.7%
+	 * Life 3: 6.6%
+	 * Life 4: 8%
+	 * Life 5: 10%
+	 * Life 6: 13.3%
+	 * Life 7: 20%
+	 * Life 8: 26.6%
+	 * Life 9: 32%
+	 * Life 10: 40%
+	 * Life 11: 50%
+	 * Life 12: 57.1%
+	 * Life 13: 66.6%
+	 * Life 14: 80%
+	 * Life 15: 100%
+	 * Life 16+: 200%
+	 *
+	 * Note there is 200%, because boos take off 1/2 as much as
+	 * a miss, and a boo would suck up half of your lifebar.
+	 *
+	 * Everything past 7 is intended mainly for nonstop mode.
+     */
+
+
 	// the lifebar is pretty harsh at 0.4 already (you lose
 	// about 20% of your lifebar); at 0.2 it would be 40%, which
 	// is too harsh at one difficulty level higher.  Override.
-	if (m_fLifeDifficulty >= 0.2)
+	if (m_fLifeDifficulty >= 0.2) // judge 8
 	{
 		m_fLifeDifficulty = 0.3f;
 		return;
 	}
-	if (m_fLifeDifficulty >= 0)
+	if (m_fLifeDifficulty >= 0)   // judge 9
 	{
 		m_fLifeDifficulty = 0.25f;
 		return;
 	}
-	if (m_fLifeDifficulty >= -0.2)
+	if (m_fLifeDifficulty >= -0.2) // judge 10
 	{
 		m_fLifeDifficulty = 0.2f;
 		return;
 	}
-	if (m_fLifeDifficulty >= -0.4)
+	if (m_fLifeDifficulty >= -0.4) // judge 11
 	{
 		m_fLifeDifficulty = 0.16f;
 		return;
 	}
-	m_fLifeDifficulty = 0.1f;
+	if (m_fLifeDifficulty >= -0.6) // judge 12
+	{
+		m_fLifeDifficulty = 0.14f;
+		return;
+	}
+	if (m_fLifeDifficulty >= -0.8) // judge 13
+	{
+		m_fLifeDifficulty = 0.12f;
+		return;
+	}
+	if (m_fLifeDifficulty >= -1.0) // judge 14
+	{
+		m_fLifeDifficulty = 0.10f;
+		return;
+	}
+	if (m_fLifeDifficulty >= -1.2) // judge 15
+	{
+		m_fLifeDifficulty = 0.08f;
+		return;
+	}
 
+	// judge 16 or higher
+	m_fLifeDifficulty = 0.04f;
+	return;
 }
 
 
