@@ -315,7 +315,6 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 		else if( 0==stricmp(sValueName,"ARTIST") )
 		{
 			out.m_sArtist = sParams[1];
-			LOG->Trace("conv '%s'", out.m_sArtist.c_str());
 			ConvertString( out.m_sArtist, "utf-8,english" );
 		}
 
