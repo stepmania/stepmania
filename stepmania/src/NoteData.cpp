@@ -298,7 +298,7 @@ int NoteData::GetPossibleDancePoints()
 //An "OK" (Successful Freeze step) will add 6 points
 //A "NG" (Unsuccessful Freeze step) is worth 0 points
 
-	return GetNumTapNotes()*TapNoteScoreToDancePoints(TNS_PERFECT) +
+	return GetNumTapNotes()*TapNoteScoreToDancePoints(TNS_PERFECT) +	// not Marvelous
 		   GetNumHoldNotes()*HoldNoteScoreToDancePoints(HNS_OK);
 }
 

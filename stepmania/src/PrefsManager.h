@@ -42,18 +42,22 @@ public:
 	bool			m_bShowDanger;
 	int				m_iNumArcadeStages;
 	bool			m_bEventMode;
-	float			m_fJudgeWindowSeconds;
+	float			m_fJudgeWindowScale;
 	float			m_fLifeDifficultyScale;
-	float			m_fJudgeWindowPerfectPercent;
-	float			m_fJudgeWindowGreatPercent;
-	float			m_fJudgeWindowGoodPercent;
+	float			m_fJudgeWindowMarvelousSeconds;
+	float			m_fJudgeWindowPerfectSeconds;
+	float			m_fJudgeWindowGreatSeconds;
+	float			m_fJudgeWindowGoodSeconds;
+	float			m_fJudgeWindowBooSeconds;
 	bool			m_bAutoPlay;
 	bool			m_bDelayedEscape;
-	bool			m_bHowToPlay, m_bShowDontDie, m_bShowSelectGroup;
+	bool			m_bInstructions, m_bShowDontDie, m_bShowSelectGroup;
 	bool			m_bArcadeOptionsNavigation;
 	bool			m_bCoinOpMode;
 	bool			m_bMusicWheelUsesSections;
 	bool			m_bChangeBannersWhenFast;
+	bool			m_bEasterEggs;
+	bool			m_bMarvelousTiming;
 
 	CStringArray m_asAdditionalSongFolders;
 	CString m_DWIPath;

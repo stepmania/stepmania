@@ -139,6 +139,10 @@ ScreenSelectMusic::ScreenSelectMusic()
 		m_DifficultyIcon[p].Load( THEME->GetPathTo("graphics","select music difficulty icons 1x6") );
 		m_DifficultyIcon[p].SetXY( DIFFICULTY_ICON_X(p), DIFFICULTY_ICON_Y(p) );
 		this->AddChild( &m_DifficultyIcon[p] );
+
+		m_AutoGenIcon[p].Load( THEME->GetPathTo("graphics","select music autogen icon") );
+		m_AutoGenIcon[p].SetXY( DIFFICULTY_ICON_X(p), DIFFICULTY_ICON_Y(p) );
+		this->AddChild( &m_AutoGenIcon[p] );
 	}
 
 	m_GrooveRadar.SetXY( RADAR_X, RADAR_Y );
@@ -286,6 +290,7 @@ void ScreenSelectMusic::TweenOnScreen()
 //		m_textPlayerOptions[p].SetTweenZoomY( fOriginalZoomY );
 
 		m_DifficultyIcon[p].FadeOn( 0, "foldy", TWEEN_TIME );
+		m_AutoGenIcon[p].FadeOn( 0, "foldy", TWEEN_TIME );
 
 		m_FootMeter[p].FadeOn( 0, "foldy", TWEEN_TIME );
 	}
@@ -328,6 +333,7 @@ void ScreenSelectMusic::TweenOffScreen()
 //		m_textPlayerOptions[p].FadeOff( 0, "fade", TWEEN_TIME );
 
 		m_DifficultyIcon[p].FadeOff( 0, "foldy", TWEEN_TIME );
+		m_AutoGenIcon[p].FadeOff( 0, "foldy", TWEEN_TIME );
 
 		m_FootMeter[p].FadeOff( 0, "foldy", TWEEN_TIME );
 	}
@@ -690,6 +696,15 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 		m_HighScore[pn].SetScore( (float)m_pNotes->m_iTopScore );
 
 	m_DifficultyIcon[pn].SetFromNotes( pn, pNotes );
+	if( pNotes && pNotes->IsAutogen() )
+	{
+		m_AutoGenIcon[pn].SetEffectCamelion();
+	}
+	else
+	{
+		m_AutoGenIcon[pn].SetEffectNone();
+		m_AutoGenIcon[pn].SetDiffuse( RageColor(1,1,1,0) );
+	}
 	m_FootMeter[pn].SetFromNotes( pNotes );
 	m_GrooveRadar.SetFromNotes( pn, pNotes );
 	m_MusicWheel.NotesChanged( pn );

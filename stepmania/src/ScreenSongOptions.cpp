@@ -27,7 +27,7 @@ enum {
 	SO_FAIL,
 	SO_ASSIST,
 	SO_RATE,
-	SO_AUTOADJ,
+	SO_AUTOSYNC,
 	NUM_SONG_OPTIONS_LINES
 };
 
@@ -65,7 +65,7 @@ void ScreenSongOptions::ImportOptions()
 	m_iSelectedOption[0][SO_BAT_LIVES] = so.m_iBatteryLives-1;
 	m_iSelectedOption[0][SO_FAIL] = so.m_FailType;
 	m_iSelectedOption[0][SO_ASSIST] = so.m_AssistType;
-	m_iSelectedOption[0][SO_AUTOADJ] = so.m_AutoAdjust;
+	m_iSelectedOption[0][SO_AUTOSYNC] = so.m_bAutoSync;
 
 	if(		 so.m_fMusicRate == 0.7f )		m_iSelectedOption[0][SO_RATE] = 0;
 	else if( so.m_fMusicRate == 0.8f )		m_iSelectedOption[0][SO_RATE] = 1;
@@ -88,7 +88,7 @@ void ScreenSongOptions::ExportOptions()
 	so.m_iBatteryLives = m_iSelectedOption[0][SO_BAT_LIVES]+1;
 	so.m_FailType =	(SongOptions::FailType)m_iSelectedOption[0][SO_FAIL];
 	so.m_AssistType = (SongOptions::AssistType)m_iSelectedOption[0][SO_ASSIST];
-	so.m_AutoAdjust = (SongOptions::AutoAdjustType)m_iSelectedOption[0][SO_AUTOADJ];
+	so.m_bAutoSync = m_iSelectedOption[0][SO_AUTOSYNC] != 0;
 
 	switch( m_iSelectedOption[0][SO_RATE] )
 	{

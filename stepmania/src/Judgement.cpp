@@ -53,27 +53,14 @@ void Judgement::SetJudgement( TapNoteScore score )
 
 	switch( score )
 	{
-	case TNS_PERFECT:	m_sprJudgement.SetState( 0 );	break;
-	case TNS_GREAT:		m_sprJudgement.SetState( 1 );	break;
-	case TNS_GOOD:		m_sprJudgement.SetState( 2 );	break;
-	case TNS_BOO:		m_sprJudgement.SetState( 3 );	break;
-	case TNS_MISS:		m_sprJudgement.SetState( 4 );	break;
-	default:	ASSERT( false );
+	case TNS_MARVELOUS:	m_sprJudgement.SetState( 0 );	break;
+	case TNS_PERFECT:	m_sprJudgement.SetState( 1 );	break;
+	case TNS_GREAT:		m_sprJudgement.SetState( 2 );	break;
+	case TNS_GOOD:		m_sprJudgement.SetState( 3 );	break;
+	case TNS_BOO:		m_sprJudgement.SetState( 4 );	break;
+	case TNS_MISS:		m_sprJudgement.SetState( 5 );	break;
+	default:	ASSERT(0);
 	}
-
-	// Chris:  Resize the graphic file itself if you want the size different for Ez2.
-	/*
-	if ( GAMESTATE->m_CurGame == GAME_EZ2 ) // Resize Judgement graphics for Ez2.
-	{
-		m_sprJudgement.SetHeight( 22.0f * 2.1f );
-		m_sprJudgement.SetWidth( 143.0f * 2.1f );
-		if ( score == TNS_PERFECT || score == TNS_GREAT )
-		{
-			m_sprJudgement.SetHeight( 22.0f * 2.6f );
-			m_sprJudgement.SetWidth( 143.0f * 2.8f );
-		}
-	}
-	*/
 
 	m_fDisplayCountdown = JUDGEMENT_DISPLAY_TIME;
 
@@ -100,6 +87,7 @@ void Judgement::SetJudgement( TapNoteScore score )
 		float fMagnitudeX, fMagnitudeY;
 		switch( score )
 		{
+		case TNS_MARVELOUS:	fMagnitudeX = 1.50f;	fMagnitudeY = 2.00f;	break;
 		case TNS_PERFECT:	fMagnitudeX = 1.50f;	fMagnitudeY = 2.00f;	break;
 		case TNS_GREAT:		fMagnitudeX = 1.30f;	fMagnitudeY = 1.50f;	break;
 		case TNS_GOOD:		fMagnitudeX = 1.10f;	fMagnitudeY = 1.25f;	break;

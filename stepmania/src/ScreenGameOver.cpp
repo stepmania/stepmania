@@ -30,6 +30,8 @@ const ScreenMessage SM_PlayAnnouncer	=	ScreenMessage(SM_User + 3);
 
 ScreenGameOver::ScreenGameOver()
 {
+	GAMESTATE->Reset();
+
 	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","game over") );
 	this->AddChild( &m_Background );
 

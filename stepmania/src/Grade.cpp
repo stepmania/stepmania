@@ -16,6 +16,7 @@ CString GradeToString( Grade g )
 {
 	switch( g )
 	{
+	case GRADE_AAAA:	return "AAAA";
 	case GRADE_AAA:		return "AAA";
 	case GRADE_AA:		return "AA";
 	case GRADE_A:		return "A";
@@ -32,7 +33,8 @@ Grade StringToGrade( const CString &sGrade )
 {
 	CString s = sGrade;
 	s.MakeUpper();
-	if	   ( s == "AAA" )	return GRADE_AAA;
+	if	   ( s == "AAAA" )	return GRADE_AAAA;
+	else if( s == "AAA" )	return GRADE_AAA;
 	else if( s == "AA" )	return GRADE_AA;
 	else if( s == "A" )		return GRADE_A;
 	else if( s == "B" )		return GRADE_B;

@@ -343,10 +343,11 @@ Grade GameState::GetCurrentGrade( PlayerNumber pn )
 	LOG->Trace( "iPossibleDancePoints: %i", m_iPossibleDancePoints[pn] );
 	LOG->Trace( "fPercentDancePoints: %f", fPercentDancePoints  );
 
-	if     ( fPercentDancePoints >= 1.00 )	return GRADE_AAA;
-	else if( fPercentDancePoints >= 0.93 )	return GRADE_AA;
-	else if( fPercentDancePoints >= 0.80 )	return GRADE_A;
-	else if( fPercentDancePoints >= 0.65 )	return GRADE_B;
-	else if( fPercentDancePoints >= 0.45 )	return GRADE_C;
-	else									return GRADE_D;
+	if     ( fPercentDancePoints >= 1+1/3.0f )	return GRADE_AAAA;
+	if     ( fPercentDancePoints >= 1.00 )		return GRADE_AAA;
+	else if( fPercentDancePoints >= 0.93 )		return GRADE_AA;
+	else if( fPercentDancePoints >= 0.80 )		return GRADE_A;
+	else if( fPercentDancePoints >= 0.65 )		return GRADE_B;
+	else if( fPercentDancePoints >= 0.45 )		return GRADE_C;
+	else										return GRADE_D;
 }

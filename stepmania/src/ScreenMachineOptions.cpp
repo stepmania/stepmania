@@ -31,6 +31,8 @@ enum {
 	MO_LIFE_DIFFICULTY,
 	MO_HIDDEN_SONGS,
 	MO_SHOWSTATS,
+	MO_EASTER_EGGS,
+	MO_MARVELOUS,
 	NUM_MACHINE_OPTIONS_LINES
 };
 /* Hmm.  Ignore JoyAxes and Back Delayed probably belong in "input options",
@@ -43,6 +45,8 @@ OptionRowData g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
 	{ "Life\nDifficulty",	7, {"1","2","3","4","5","6","7"} },
 	{ "Hidden\nSongs",		2, {"OFF","ON"} },
 	{ "Show\nStats",		2, {"OFF","ON"} },
+	{ "Easter\nEggs",		2, {"OFF","ON"} },
+	{ "Marvelous\nTiming",	2, {"OFF","ON"} },
 };
 
 ScreenMachineOptions::ScreenMachineOptions() :
@@ -88,15 +92,15 @@ void ScreenMachineOptions::ImportOptions()
 	 * impossible, and perhaps it *is* justice that even the CPU fails
 	 * it.  :)
 	 */
-	if(      PREFSMAN->m_fJudgeWindowSeconds == 0.27f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 0;
-	else if( PREFSMAN->m_fJudgeWindowSeconds == 0.24f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 1;
-	else if( PREFSMAN->m_fJudgeWindowSeconds == 0.21f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 2;
-	else if( PREFSMAN->m_fJudgeWindowSeconds == 0.18f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 3;
-	else if( PREFSMAN->m_fJudgeWindowSeconds == 0.15f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 4;
-	else if( PREFSMAN->m_fJudgeWindowSeconds == 0.12f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 5;
-	else if( PREFSMAN->m_fJudgeWindowSeconds == 0.09f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 6;
-	else if( PREFSMAN->m_fJudgeWindowSeconds == 0.06f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 7;
-	else											m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 3;
+	if(      PREFSMAN->m_fJudgeWindowScale == 1.50f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 0;
+	else if( PREFSMAN->m_fJudgeWindowScale == 1.33f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 1;
+	else if( PREFSMAN->m_fJudgeWindowScale == 1.16f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 2;
+	else if( PREFSMAN->m_fJudgeWindowScale == 1.00f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 3;
+	else if( PREFSMAN->m_fJudgeWindowScale == 0.84f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 4;
+	else if( PREFSMAN->m_fJudgeWindowScale == 0.66f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 5;
+	else if( PREFSMAN->m_fJudgeWindowScale == 0.50f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 6;
+	else if( PREFSMAN->m_fJudgeWindowScale == 0.33f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 7;
+	else												m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 3;
 
 	if(      PREFSMAN->m_fLifeDifficultyScale == 1.60f )	m_iSelectedOption[0][MO_LIFE_DIFFICULTY] = 0;
 	else if( PREFSMAN->m_fLifeDifficultyScale == 1.40f )	m_iSelectedOption[0][MO_LIFE_DIFFICULTY] = 1;
@@ -108,6 +112,8 @@ void ScreenMachineOptions::ImportOptions()
 	else													m_iSelectedOption[0][MO_LIFE_DIFFICULTY] = 3;
 
 	m_iSelectedOption[0][MO_SHOWSTATS]				= PREFSMAN->m_bShowStats ? 1:0;
+	m_iSelectedOption[0][MO_EASTER_EGGS]			= PREFSMAN->m_bEasterEggs ? 1:0;
+	m_iSelectedOption[0][MO_MARVELOUS]				= PREFSMAN->m_bMarvelousTiming ? 1:0;
 }
 
 void ScreenMachineOptions::ExportOptions()
@@ -120,14 +126,14 @@ void ScreenMachineOptions::ExportOptions()
 
 	switch( m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] )
 	{
-	case 0:	PREFSMAN->m_fJudgeWindowSeconds = 0.27f;	break;
-	case 1:	PREFSMAN->m_fJudgeWindowSeconds = 0.24f;	break;
-	case 2:	PREFSMAN->m_fJudgeWindowSeconds = 0.21f;	break;
-	case 3:	PREFSMAN->m_fJudgeWindowSeconds = 0.18f;	break;
-	case 4:	PREFSMAN->m_fJudgeWindowSeconds = 0.15f;	break;
-	case 5:	PREFSMAN->m_fJudgeWindowSeconds = 0.12f;	break;
-	case 6:	PREFSMAN->m_fJudgeWindowSeconds = 0.09f;	break;
-	case 7:	PREFSMAN->m_fJudgeWindowSeconds = 0.06f;	break;
+	case 0:	PREFSMAN->m_fJudgeWindowScale = 1.50f;	break;
+	case 1:	PREFSMAN->m_fJudgeWindowScale = 1.33f;	break;
+	case 2:	PREFSMAN->m_fJudgeWindowScale = 1.16f;	break;
+	case 3:	PREFSMAN->m_fJudgeWindowScale = 1.00f;	break;
+	case 4:	PREFSMAN->m_fJudgeWindowScale = 0.84f;	break;
+	case 5:	PREFSMAN->m_fJudgeWindowScale = 0.66f;	break;
+	case 6:	PREFSMAN->m_fJudgeWindowScale = 0.50f;	break;
+	case 7:	PREFSMAN->m_fJudgeWindowScale = 0.33f;	break;
 	default:	ASSERT(0);
 	}
 
@@ -143,7 +149,9 @@ void ScreenMachineOptions::ExportOptions()
 	default:	ASSERT(0);
 	}
 	
-	PREFSMAN->m_bShowStats	= m_iSelectedOption[0][MO_SHOWSTATS] == 1;
+	PREFSMAN->m_bShowStats			= m_iSelectedOption[0][MO_SHOWSTATS] == 1;
+	PREFSMAN->m_bEasterEggs			= m_iSelectedOption[0][MO_EASTER_EGGS] == 1;
+	PREFSMAN->m_bMarvelousTiming	= m_iSelectedOption[0][MO_MARVELOUS] == 1;
 }
 
 void ScreenMachineOptions::GoToPrevState()

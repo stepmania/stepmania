@@ -22,7 +22,7 @@
 #include "DifficultyIcon.h"
 
 
-const int NUM_JUDGE_LINES =	7;	// perfect, great, good, boo, miss, ok, max_combo
+const int NUM_JUDGE_LINES =	8;	// marvelous, perfect, great, good, boo, miss, ok, max_combo
 const int STAGES_TO_SHOW_IN_SUMMARY = 3;	// only show the latest three stages in a summary
 
 

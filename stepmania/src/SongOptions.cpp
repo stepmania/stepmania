@@ -49,11 +49,8 @@ CString SongOptions::GetString()
 		sReturn += s + "xMusic, ";
 	}
 
-	switch( m_AutoAdjust )
-	{
-	case ADJUST_OFF:											break;
-	case ADJUST_ON:				sReturn += "AutoAdjust, ";		break;
-	}
+	if( m_bAutoSync )
+		sReturn += "AutoSync, ";
 
 	if( sReturn.GetLength() > 2 )
 		sReturn.erase( sReturn.GetLength()-2 );	// delete the trailing ", "

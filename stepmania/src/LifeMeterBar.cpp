@@ -276,11 +276,14 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	case SongOptions::DRAIN_NORMAL:
 		switch( score )
 		{
+		case TNS_MARVELOUS:	fDeltaLife = +0.008f;	break;
 		case TNS_PERFECT:	fDeltaLife = +0.008f;	break;
 		case TNS_GREAT:		fDeltaLife = +0.004f;	break;
 		case TNS_GOOD:		fDeltaLife = +0.000f;	break;
 		case TNS_BOO:		fDeltaLife = -0.040f;	break;
 		case TNS_MISS:		fDeltaLife = -0.080f;	break;
+		default:
+			ASSERT(0);
 		}
 		if( IsHot()  &&  score < TNS_GOOD )
 			fDeltaLife = -0.10f;		// make it take a while to get back to "doing great"
@@ -288,21 +291,27 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	case SongOptions::DRAIN_NO_RECOVER:
 		switch( score )
 		{
+		case TNS_MARVELOUS:	fDeltaLife = +0.000f;	break;
 		case TNS_PERFECT:	fDeltaLife = +0.000f;	break;
 		case TNS_GREAT:		fDeltaLife = +0.000f;	break;
 		case TNS_GOOD:		fDeltaLife = +0.000f;	break;
 		case TNS_BOO:		fDeltaLife = -0.040f;	break;
 		case TNS_MISS:		fDeltaLife = -0.080f;	break;
+		default:
+			ASSERT(0);
 		}
 		break;
 	case SongOptions::DRAIN_SUDDEN_DEATH:
 		switch( score )
 		{
+		case TNS_MARVELOUS:	fDeltaLife = +0;	break;
 		case TNS_PERFECT:	fDeltaLife = +0;	break;
 		case TNS_GREAT:		fDeltaLife = +0;	break;
 		case TNS_GOOD:		fDeltaLife = -1.0;	break;
 		case TNS_BOO:		fDeltaLife = -1.0;	break;
 		case TNS_MISS:		fDeltaLife = -1.0;	break;
+		default:
+			ASSERT(0);
 		}
 		break;
 	default:

@@ -26,7 +26,7 @@
 #include "RageSoundManager.h"
 
 
-#define SONGSEL_SCREEN				THEME->GetMetric("ScreenEvaluation","SongSelectScreen")
+#define SONGSEL_SCREEN			THEME->GetMetric("ScreenEvaluation","SongSelectScreen")
 #define BANNER_X				THEME->GetMetricF("ScreenEvaluation","BannerX")
 #define BANNER_Y				THEME->GetMetricF("ScreenEvaluation","BannerY")
 #define STAGE_X					THEME->GetMetricF("ScreenEvaluation","StageX")
@@ -38,6 +38,8 @@
 #define PERCENT_BASE_X( p )		THEME->GetMetricF("ScreenEvaluation",ssprintf("PercentBaseP%dX",p+1))
 #define PERCENT_BASE_Y			THEME->GetMetricF("ScreenEvaluation","PercentBaseY")
 #define JUDGE_LABELS_X			THEME->GetMetricF("ScreenEvaluation","JudgeLabelsX")
+#define MARVELOUS_X(o,p)		THEME->GetMetricF("ScreenEvaluation",ssprintf("Marvelous%sP%dX",o?"Oni":"",p+1))
+#define MARVELOUS_Y				THEME->GetMetricF("ScreenEvaluation","MarvelousY")
 #define PERFECT_X(o,p)			THEME->GetMetricF("ScreenEvaluation",ssprintf("Perfect%sP%dX",o?"Oni":"",p+1))
 #define PERFECT_Y				THEME->GetMetricF("ScreenEvaluation","PerfectY")
 #define GREAT_X(o,p)			THEME->GetMetricF("ScreenEvaluation",ssprintf("Great%sP%dX",o?"Oni":"",p+1))
@@ -77,25 +79,27 @@
 
 float JUDGE_X( bool oni, int p, int l ) {
 	switch( l ) {
-		case 0:		return PERFECT_X(oni,p);
-		case 1:		return GREAT_X(oni,p);
-		case 2:		return GOOD_X(oni,p);
-		case 3:		return BOO_X(oni,p);
-		case 4:		return MISS_X(oni,p);
-		case 5:		return OK_X(oni,p);
-		case 6:		return MAX_COMBO_X(oni,p);
+		case 0:		return MARVELOUS_X(oni,p);
+		case 1:		return PERFECT_X(oni,p);
+		case 2:		return GREAT_X(oni,p);
+		case 3:		return GOOD_X(oni,p);
+		case 4:		return BOO_X(oni,p);
+		case 5:		return MISS_X(oni,p);
+		case 6:		return OK_X(oni,p);
+		case 7:		return MAX_COMBO_X(oni,p);
 		default:	ASSERT(0);	return 0;
 	}
 }
 float JUDGE_Y( int l ) {
 	switch( l ) {
-		case 0:		return PERFECT_Y;
-		case 1:		return GREAT_Y;
-		case 2:		return GOOD_Y;
-		case 3:		return BOO_Y;
-		case 4:		return MISS_Y;
-		case 5:		return OK_Y;
-		case 6:		return MAX_COMBO_Y;
+		case 0:		return MARVELOUS_Y;
+		case 1:		return PERFECT_Y;
+		case 2:		return GREAT_Y;
+		case 3:		return GOOD_Y;
+		case 4:		return BOO_Y;
+		case 5:		return MISS_Y;
+		case 6:		return OK_Y;
+		case 7:		return MAX_COMBO_Y;
 		default:	ASSERT(0);	return 0;
 	}
 }
@@ -167,23 +171,6 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		break;
 	}
 
-
-	///////////////////////////
-	// Andy:
-	// Fake COOL! / GOOD / OOPS for Ez2dancer using the DDR Rankings.
-/*	Todo:  Accomodate this using theme metrics
-
-	if( GAMESTATE->m_CurGame == GAME_EZ2 ) 
-	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
-		{
-			iTapNoteScores[p][TNS_PERFECT] += iTapNoteScores[p][TNS_GREAT];
-			iTapNoteScores[p][TNS_GREAT] = 0;
-			iTapNoteScores[p][TNS_MISS] += iTapNoteScores[p][TNS_BOO];
-			iTapNoteScores[p][TNS_BOO] = 0;
-		}
-	}
-*/
 
 	///////////////////////////
 	// Init the song banners depending on m_ResultMode
@@ -280,29 +267,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			grade[p] = GRADE_E;
 			continue;
 		}
-		/* Based on the percentage of your total "Dance Points" to the maximum
-		 * possible number, the following rank is assigned: 
-		 *
-		 * 100% - AAA
-		 *  93% - AA
-		 *  80% - A
-		 *  65% - B
-		 *  45% - C
-		 * Less - D
-		 * Fail - E
-		 */
-		float fPercentDancePoints = iActualDancePoints[p] / (float)iPossibleDancePoints[p];
-		fPercentDancePoints = max( fPercentDancePoints, 0 );
-		LOG->Trace( "iActualDancePoints: %i", iActualDancePoints[p] );
-		LOG->Trace( "iPossibleDancePoints: %i", iPossibleDancePoints[p] );
-		LOG->Trace( "fPercentDancePoints: %f", fPercentDancePoints  );
-
-		if     ( fPercentDancePoints >= 1.00 )	grade[p] = GRADE_AAA;
-		else if( fPercentDancePoints >= 0.93 )	grade[p] = GRADE_AA;
-		else if( fPercentDancePoints >= 0.80 )	grade[p] = GRADE_A;
-		else if( fPercentDancePoints >= 0.65 )	grade[p] = GRADE_B;
-		else if( fPercentDancePoints >= 0.45 )	grade[p] = GRADE_C;
-		else									grade[p] = GRADE_D;
+		grade[p] = GAMESTATE->GetCurrentGrade( (PlayerNumber)p );
 	}
 
 	Grade max_grade = GRADE_NO_DATA;
@@ -505,7 +470,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	for( l=0; l<NUM_JUDGE_LINES; l++ ) 
 	{
 		// EZ2 should hide these things by placing them off screen with theme metrics
-		m_sprJudgeLabels[l].Load( THEME->GetPathTo("Graphics","evaluation judge labels 1x7") );
+		m_sprJudgeLabels[l].Load( THEME->GetPathTo("Graphics","evaluation judge labels 1x8") );
 		m_sprJudgeLabels[l].StopAnimating();
 		m_sprJudgeLabels[l].SetState( l );
 		m_sprJudgeLabels[l].SetXY( JUDGE_LABELS_X, JUDGE_Y(l) );
@@ -536,13 +501,14 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			this->AddChild( &m_textJudgeNumbers[l][p] );
 		}
 
-		m_textJudgeNumbers[0][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_PERFECT]) );
-		m_textJudgeNumbers[1][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_GREAT]) );
-		m_textJudgeNumbers[2][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_GOOD]) );
-		m_textJudgeNumbers[3][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_BOO]) );
-		m_textJudgeNumbers[4][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_MISS]) );
-		m_textJudgeNumbers[5][p].SetText( ssprintf("%4d", iHoldNoteScores[p][HNS_OK]) );
-		m_textJudgeNumbers[6][p].SetText( ssprintf("%4d", iMaxCombo[p]) );
+		m_textJudgeNumbers[0][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_MARVELOUS]) );
+		m_textJudgeNumbers[1][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_PERFECT]) );
+		m_textJudgeNumbers[2][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_GREAT]) );
+		m_textJudgeNumbers[3][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_GOOD]) );
+		m_textJudgeNumbers[4][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_BOO]) );
+		m_textJudgeNumbers[5][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_MISS]) );
+		m_textJudgeNumbers[6][p].SetText( ssprintf("%4d", iHoldNoteScores[p][HNS_OK]) );
+		m_textJudgeNumbers[7][p].SetText( ssprintf("%4d", iMaxCombo[p]) );
 
 
 		if( m_ResultMode==RM_ONI )
@@ -579,13 +545,14 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		case RM_ARCADE_STAGE:
 			switch( max_grade )
 			{
-			case GRADE_E:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation e") );		break;
-			case GRADE_D:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation d") );		break;
-			case GRADE_C:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation c") );		break;
-			case GRADE_B:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation b") );		break;
-			case GRADE_A:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation a") );		break;
-			case GRADE_AA:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation aa") );	break;
-			case GRADE_AAA:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation aaa") );	break;
+			case GRADE_E:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation e") );		break;
+			case GRADE_D:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation d") );		break;
+			case GRADE_C:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation c") );		break;
+			case GRADE_B:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation b") );		break;
+			case GRADE_A:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation a") );		break;
+			case GRADE_AA:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation aa") );		break;
+			case GRADE_AAA:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation aaa") );	break;
+			case GRADE_AAAA:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation aaaa") );	break;
 			case GRADE_NO_DATA:
 			default:
 				ASSERT(0);	// invalid grade
@@ -595,13 +562,14 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		case RM_ARCADE_SUMMARY:
 			switch( max_grade )
 			{
-			case GRADE_E:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final e") );	break;
-			case GRADE_D:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final d") );	break;
-			case GRADE_C:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final c") );	break;
-			case GRADE_B:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final b") );	break;
-			case GRADE_A:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final a") );	break;
-			case GRADE_AA:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final aa") );	break;
-			case GRADE_AAA:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final aaa") );	break;
+			case GRADE_E:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final e") );	break;
+			case GRADE_D:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final d") );	break;
+			case GRADE_C:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final c") );	break;
+			case GRADE_B:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final b") );	break;
+			case GRADE_A:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final a") );	break;
+			case GRADE_AA:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final aa") );	break;
+			case GRADE_AAA:		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final aaa") );	break;
+			case GRADE_AAAA:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final aaaa") );	break;
 			case GRADE_NO_DATA:
 			default:
 				ASSERT(0);	// invalid grade
@@ -616,6 +584,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	{
 	case GRADE_AA:
 	case GRADE_AAA:	
+	case GRADE_AAAA:	
 		this->SendScreenMessage( SM_PlayCheer, 2.5f );	
 		break;
 	}

@@ -67,8 +67,8 @@
 #define DIFFICULTY_Y( p, e, r )			THEME->GetMetricF("ScreenGameplay",ssprintf("DifficultyP%d%s%sY",p+1,e?"Extra":"",r?"Reverse":""))
 #define DEBUG_X							THEME->GetMetricF("ScreenGameplay","DebugX")
 #define DEBUG_Y							THEME->GetMetricF("ScreenGameplay","DebugY")
-#define AUTOPLAY_X						THEME->GetMetricF("ScreenGameplay","AutoPlayX")
-#define AUTOPLAY_Y						THEME->GetMetricF("ScreenGameplay","AutoPlayY")
+#define STATUS_ICONS_X					THEME->GetMetricF("ScreenGameplay","StatusIconsX")
+#define STATUS_ICONS_Y					THEME->GetMetricF("ScreenGameplay","StatusIconsY")
 #define SURVIVE_TIME_X					THEME->GetMetricF("ScreenGameplay","SurviveTimeX")
 #define SURVIVE_TIME_Y					THEME->GetMetricF("ScreenGameplay","SurviveTimeY")
 #define SECONDS_BETWEEN_COMMENTS		THEME->GetMetricF("ScreenGameplay","SecondsBetweenComments")
@@ -209,7 +209,7 @@ void ScreenGameplay::FirstUpdate()
 
 
 
-	m_bChangedOffsetOrBPM = (GAMESTATE->m_SongOptions.m_AutoAdjust == SongOptions::ADJUST_ON);
+	m_bChangedOffsetOrBPM = GAMESTATE->m_SongOptions.m_bAutoSync;
 
 
 	m_DancingState = STATE_INTRO;
@@ -392,11 +392,16 @@ void ScreenGameplay::FirstUpdate()
 	m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 	this->AddChild( &m_textDebug );
 	
-	m_textAutoPlay.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-	m_textAutoPlay.SetXY( AUTOPLAY_X, AUTOPLAY_Y );
-	m_textAutoPlay.SetText( "AutoPlay is ON" );
-	m_textAutoPlay.SetDiffuse( RageColor(1,1,1,PREFSMAN->m_bAutoPlay?1:0) );
-	this->AddChild( &m_textAutoPlay );
+
+	for( int s=0; s<NUM_STATUS_ICONS; s++ )
+	{
+		m_sprStatusIcons[s].Load( THEME->GetPathTo("Graphics",ssprintf("gameplay status icons 1x%d",NUM_STATUS_ICONS)) );
+		m_sprStatusIcons[s].StopAnimating();
+		m_sprStatusIcons[s].SetState(s);
+		this->AddChild( &m_sprStatusIcons[s] );
+	}	
+
+	PositionStatusIcons();	// position them
 	
 	
 	m_StarWipe.SetClosed();
@@ -861,26 +866,16 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		{
 		case SDLK_F6:
 			m_bChangedOffsetOrBPM = true;
-
-			if (GAMESTATE->m_SongOptions.m_AutoAdjust == SongOptions::ADJUST_ON) {
-				GAMESTATE->m_SongOptions.m_AutoAdjust = SongOptions::ADJUST_OFF;
-				m_textDebug.SetText( "AutoAdjust is OFF" );
-			} else {
-				GAMESTATE->m_SongOptions.m_AutoAdjust = SongOptions::ADJUST_ON;
-				m_textDebug.SetText( "AutoAdjust is ON" );
-			}
-			m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
-			m_textDebug.StopTweening();
-			m_textDebug.BeginTweening( 3 );		// sleep
-			m_textDebug.BeginTweening( 0.5f );	// fade out
-			m_textDebug.SetTweenDiffuse( RageColor(1,1,1,0) );
+			GAMESTATE->m_SongOptions.m_bAutoSync = !GAMESTATE->m_SongOptions.m_bAutoSync;	// toggle
+			PositionStatusIcons();
 			break;
 		case SDLK_F7:
 			if( GAMESTATE->m_SongOptions.m_AssistType == SongOptions::ASSIST_NONE )
 				GAMESTATE->m_SongOptions.m_AssistType = SongOptions::ASSIST_TICK;
 			else
 				GAMESTATE->m_SongOptions.m_AssistType = SongOptions::ASSIST_NONE;
-			m_textDebug.SetText( ssprintf( "Assist tick is %s.", (GAMESTATE->m_SongOptions.m_AssistType==SongOptions::ASSIST_NONE)?"OFF":"ON") );
+			
+			m_textDebug.SetText( ssprintf("Assist Tick is %s", GAMESTATE->m_SongOptions.m_AssistType==SongOptions::ASSIST_TICK?"ON":"OFF") );
 			m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 			m_textDebug.StopTweening();
 			m_textDebug.BeginTweening( 3 );		// sleep
@@ -889,7 +884,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			break;
 		case SDLK_F8:
 			PREFSMAN->m_bAutoPlay = !PREFSMAN->m_bAutoPlay;
-			m_textAutoPlay.SetDiffuse( RageColor(1,1,1,PREFSMAN->m_bAutoPlay?1:0) );
+			PositionStatusIcons();
 			break;
 		case SDLK_F9:
 		case SDLK_F10:
@@ -988,12 +983,44 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			m_Player[StyleI.player].Step( StyleI.col ); 
 }
 
+void ScreenGameplay::PositionStatusIcons()
+{
+	bool status[NUM_STATUS_ICONS] = {
+		PREFSMAN->m_bAutoPlay,
+		GAMESTATE->m_SongOptions.m_bAutoSync
+	};
+
+	vector<Actor*> vActorsToShow;
+
+	for( int i=0; i<NUM_STATUS_ICONS; i++ )
+	{
+		m_sprStatusIcons[i].SetDiffuse( RageColor(1,1,1,status[i]?1.f:0.f) );
+		if( status[i] )
+			vActorsToShow.push_back( &m_sprStatusIcons[i] );
+	}
+
+	float width_of_one = m_sprStatusIcons[0].GetUnzoomedWidth();
+	float center_x = STATUS_ICONS_X;
+	float left_most_x = center_x-(vActorsToShow.size()-1)*width_of_one/2;
+	float right_most_x = center_x+(vActorsToShow.size()-1)*width_of_one/2;
+
+	for( unsigned a=0; a<vActorsToShow.size(); a++ )
+	{
+		vActorsToShow[a]->SetY( STATUS_ICONS_Y );
+		if( vActorsToShow.size()-1 == 0 )
+			vActorsToShow[a]->SetX( center_x );
+		else
+			vActorsToShow[a]->SetX( SCALE(a, 0.0f, vActorsToShow.size()-1, left_most_x, right_most_x) );		
+	}
+}
+
 void SaveChanges()
 {
 	/* XXX: Hmm.  Better would be to make sure m_pCurCourse is only set when we're
 	 * playing out of a course, and use that here, so these things wouldn't need to
 	 * special case play modes.  Need to make sure m_pCurCourse gets erased
 	 * correctly, though. -glenn */
+	/* That's a very clever idea!   I will look into this soon.  -Chris */
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
@@ -1195,24 +1222,23 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 
 	case SM_BeginToasty:
-		this->SendScreenMessage( SM_PlayToastySound, 0.3f );
+		if( PREFSMAN->m_bEasterEggs )
+		{
+			m_soundToasty.Play();
 
-		// set off screen
-		m_sprToasty.StopTweening();
-		m_sprToasty.SetDiffuse( RageColor(1,1,1,1) );
-		m_sprToasty.SetX( SCREEN_RIGHT+m_sprToasty.GetUnzoomedWidth()/2 );
-		m_sprToasty.SetY( SCREEN_BOTTOM-m_sprToasty.GetUnzoomedHeight()/2 );
-		m_sprToasty.BeginTweening( 0.2f, Actor::TWEEN_BIAS_BEGIN ); // slide on
-		m_sprToasty.SetTweenX( SCREEN_RIGHT-m_sprToasty.GetUnzoomedWidth()/2 );
-		m_sprToasty.BeginTweening( 0.6f );	// sleep
-		m_sprToasty.BeginTweening( 0.3f, Actor::TWEEN_BIAS_END );	// slide off
-		m_sprToasty.SetTweenX( SCREEN_RIGHT+m_sprToasty.GetUnzoomedWidth()/2 );
-		m_sprToasty.BeginTweening( 0.001f );	// fade out
-		m_sprToasty.SetDiffuse( RageColor(1,1,1,0) );
-		break;
-
-	case SM_PlayToastySound:
-		m_soundToasty.Play();
+			// set off screen
+			m_sprToasty.StopTweening();
+			m_sprToasty.SetDiffuse( RageColor(1,1,1,1) );
+			m_sprToasty.SetX( SCREEN_RIGHT+m_sprToasty.GetUnzoomedWidth()/2 );
+			m_sprToasty.SetY( SCREEN_BOTTOM-m_sprToasty.GetUnzoomedHeight()/2 );
+			m_sprToasty.BeginTweening( 0.2f, Actor::TWEEN_BIAS_BEGIN ); // slide on
+			m_sprToasty.SetTweenX( SCREEN_RIGHT-m_sprToasty.GetUnzoomedWidth()/2 );
+			m_sprToasty.BeginTweening( 0.6f );	// sleep
+			m_sprToasty.BeginTweening( 0.3f, Actor::TWEEN_BIAS_END );	// slide off
+			m_sprToasty.SetTweenX( SCREEN_RIGHT+m_sprToasty.GetUnzoomedWidth()/2 );
+			m_sprToasty.BeginTweening( 0.001f );	// fade out
+			m_sprToasty.SetDiffuse( RageColor(1,1,1,0) );
+		}
 		break;
 
 	case SM_100Combo:

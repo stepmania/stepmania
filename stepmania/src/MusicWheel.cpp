@@ -100,7 +100,6 @@ WheelItemDisplay::WheelItemDisplay()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_GradeDisplay[p].Load( THEME->GetPathTo("Graphics","select music small grades 2x8") );
 		m_GradeDisplay[p].SetZoom( 1.0f );
 		m_GradeDisplay[p].SetXY( GRADE_X(p), 0 );
 	}

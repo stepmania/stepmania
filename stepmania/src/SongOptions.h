@@ -25,8 +25,7 @@ struct SongOptions
 	enum AssistType { ASSIST_NONE=0, ASSIST_TICK };
 	AssistType m_AssistType;
 	float m_fMusicRate;
-	enum AutoAdjustType { ADJUST_OFF=0, ADJUST_ON };
-	AutoAdjustType m_AutoAdjust;
+	bool m_bAutoSync;
 
 	SongOptions() { Init(); };
 	void Init() 
@@ -37,7 +36,7 @@ struct SongOptions
 		m_FailType = FAIL_ARCADE;
 		m_AssistType = ASSIST_NONE;
 		m_fMusicRate = 1.0f;
-		m_AutoAdjust = ADJUST_OFF;
+		m_bAutoSync = false;
 	};
 	CString GetString();
 	void FromString( CString sOptions );

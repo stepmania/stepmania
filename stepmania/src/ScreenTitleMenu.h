@@ -9,7 +9,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Screen.h"
+#include "ScreenLogo.h"
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "TransitionFade.h"
@@ -18,11 +18,13 @@
 #include "RageTimer.h"
 
 
-class ScreenTitleMenu : public Screen
+class ScreenTitleMenu : public ScreenLogo
 {
 public:
 	ScreenTitleMenu();
 	virtual ~ScreenTitleMenu();
+
+	virtual void FirstUpdate();
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void Update( float fDelta );
@@ -54,14 +56,8 @@ private:
 
 	TitleMenuChoice m_TitleMenuChoice;
 
-	BGAnimation	m_Background;
-	Sprite				m_sprLogo;
 	BitmapText			m_textHelp;
-	BitmapText			m_textVersion;
-	BitmapText			m_textSongs;
 	BitmapText			m_textChoice[NUM_TITLE_MENU_CHOICES];
-
-	TransitionFade		m_Fade;
 
 	RandomSample		m_soundAttract;
 	RandomSample		m_soundChange;

@@ -16,22 +16,25 @@
 #include "ThemeManager.h"
 
 
-#define SHOW_SECONDS		THEME->GetMetricF("GhostArrowBright","ShowSeconds")
-#define ZOOM_START			THEME->GetMetricF("GhostArrowBright","ZoomStart")
-#define ZOOM_END			THEME->GetMetricF("GhostArrowBright","ZoomEnd")
-#define COLOR_PERFECT_START	THEME->GetMetricC("GhostArrowBright","ColorPerfectStart")
-#define COLOR_PERFECT_END	THEME->GetMetricC("GhostArrowBright","ColorPerfectEnd")
-#define COLOR_GREAT_START	THEME->GetMetricC("GhostArrowBright","ColorGreatStart")
-#define COLOR_GREAT_END		THEME->GetMetricC("GhostArrowBright","ColorGreatEnd")
-#define COLOR_GOOD_START	THEME->GetMetricC("GhostArrowBright","ColorGoodStart")
-#define COLOR_GOOD_END		THEME->GetMetricC("GhostArrowBright","ColorGoodEnd")
-#define COLOR_BOO_START		THEME->GetMetricC("GhostArrowBright","ColorBooStart")
-#define COLOR_BOO_END		THEME->GetMetricC("GhostArrowBright","ColorBooEnd")
+#define SHOW_SECONDS			THEME->GetMetricF("GhostArrowBright","ShowSeconds")
+#define ZOOM_START				THEME->GetMetricF("GhostArrowBright","ZoomStart")
+#define ZOOM_END				THEME->GetMetricF("GhostArrowBright","ZoomEnd")
+#define COLOR_MARVELOUS_START	THEME->GetMetricC("GhostArrowBright","ColorMarvelousStart")
+#define COLOR_MARVELOUS_END		THEME->GetMetricC("GhostArrowBright","ColorMarvelousEnd")
+#define COLOR_PERFECT_START		THEME->GetMetricC("GhostArrowBright","ColorPerfectStart")
+#define COLOR_PERFECT_END		THEME->GetMetricC("GhostArrowBright","ColorPerfectEnd")
+#define COLOR_GREAT_START		THEME->GetMetricC("GhostArrowBright","ColorGreatStart")
+#define COLOR_GREAT_END			THEME->GetMetricC("GhostArrowBright","ColorGreatEnd")
+#define COLOR_GOOD_START		THEME->GetMetricC("GhostArrowBright","ColorGoodStart")
+#define COLOR_GOOD_END			THEME->GetMetricC("GhostArrowBright","ColorGoodEnd")
+#define COLOR_BOO_START			THEME->GetMetricC("GhostArrowBright","ColorBooStart")
+#define COLOR_BOO_END			THEME->GetMetricC("GhostArrowBright","ColorBooEnd")
 
 // "2" appended so the names won't conflict with the GhostArrow
 float g_fShowSeconds2;
 float g_fZoomStart2, g_fZoomEnd2;
 RageColor 
+	g_colorMarvelousStart2, g_colorMarvelousEnd2, 
 	g_colorPerfectStart2, g_colorPerfectEnd2, 
 	g_colorGreatStart2, g_colorGreatEnd2, 
 	g_colorGoodStart2, g_colorGoodEnd2, 
@@ -40,17 +43,19 @@ RageColor
 
 GhostArrowBright::GhostArrowBright()
 {
-	g_fShowSeconds2		= SHOW_SECONDS;
-	g_fZoomStart2		= ZOOM_START;
-	g_fZoomEnd2			= ZOOM_END;
-	g_colorPerfectStart2= COLOR_PERFECT_START;
-	g_colorPerfectEnd2	= COLOR_PERFECT_END;
-	g_colorGreatStart2	= COLOR_GREAT_START;
-	g_colorGreatEnd2	= COLOR_GREAT_END;
-	g_colorGoodStart2	= COLOR_GOOD_START;
-	g_colorGoodEnd2		= COLOR_GOOD_END;
-	g_colorBooStart2	= COLOR_BOO_START;
-	g_colorBooEnd2		= COLOR_BOO_END;
+	g_fShowSeconds2			= SHOW_SECONDS;
+	g_fZoomStart2			= ZOOM_START;
+	g_fZoomEnd2				= ZOOM_END;
+	g_colorMarvelousStart2	= COLOR_MARVELOUS_START;
+	g_colorMarvelousEnd2	= COLOR_MARVELOUS_END;
+	g_colorPerfectStart2	= COLOR_PERFECT_START;
+	g_colorPerfectEnd2		= COLOR_PERFECT_END;
+	g_colorGreatStart2		= COLOR_GREAT_START;
+	g_colorGreatEnd2		= COLOR_GREAT_END;
+	g_colorGoodStart2		= COLOR_GOOD_START;
+	g_colorGoodEnd2			= COLOR_GOOD_END;
+	g_colorBooStart2		= COLOR_BOO_START;
+	g_colorBooEnd2			= COLOR_BOO_END;
 
 
 	SetDiffuse( RageColor(1,1,1,0) );
@@ -71,10 +76,11 @@ void GhostArrowBright::Step( TapNoteScore score )
 	RageColor colorStart, colorEnd;
 	switch( score )
 	{
-	case TNS_PERFECT:	colorStart = g_colorPerfectStart2;	colorEnd = g_colorPerfectEnd2;	break;
-	case TNS_GREAT:		colorStart = g_colorGreatStart2;	colorEnd = g_colorGreatEnd2;	break;
-	case TNS_GOOD:		colorStart = g_colorGoodStart2;		colorEnd = g_colorGoodEnd2;		break;
-	case TNS_BOO:		colorStart = g_colorBooStart2;		colorEnd = g_colorBooEnd2;		break;
+	case TNS_MARVELOUS:	colorStart = g_colorMarvelousStart2;colorEnd = g_colorMarvelousEnd2;	break;
+	case TNS_PERFECT:	colorStart = g_colorPerfectStart2;	colorEnd = g_colorPerfectEnd2;		break;
+	case TNS_GREAT:		colorStart = g_colorGreatStart2;	colorEnd = g_colorGreatEnd2;		break;
+	case TNS_GOOD:		colorStart = g_colorGoodStart2;		colorEnd = g_colorGoodEnd2;			break;
+	case TNS_BOO:		colorStart = g_colorBooStart2;		colorEnd = g_colorBooEnd2;			break;
 	case TNS_MISS:		// miss should never be passed in here
 	default:
 		ASSERT(0);

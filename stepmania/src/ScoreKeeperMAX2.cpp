@@ -32,6 +32,7 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 	
 	switch( score )
 	{
+	case TNS_MARVELOUS:	p = 10;		break;
 	case TNS_PERFECT:	p = 10;		break;
 	case TNS_GREAT:		p = 5;		break;
 	default:			p = 0;		break;

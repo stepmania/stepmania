@@ -16,7 +16,9 @@
 class ActorFrame : public Actor
 {
 public:
-	virtual void AddChild( Actor* pActor);
+	virtual void AddChild( Actor* pActor );
+	virtual void MoveToBack( Actor* pActor );
+	virtual void MoveToFront( Actor* pActor );
 	virtual ~ActorFrame() { }
 
 	virtual void Update( float fDeltaTime );

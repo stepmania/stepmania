@@ -25,7 +25,7 @@ const float GRADES_TO_SCROLL = NUM_GRADE_FRAMES*4;
 
 SmallGradeDisplay::SmallGradeDisplay()
 {
-	Load( THEME->GetPathTo("Graphics","select music small grades 2x8") );
+	Load( THEME->GetPathTo("Graphics","select music small grades 2x9") );
 	StopAnimating();
 
 	SetGrade( PLAYER_1, GRADE_NO_DATA );
@@ -50,14 +50,15 @@ void SmallGradeDisplay::SetGrade( PlayerNumber pn, Grade g )
 	int iNumCols = 2;
 	switch( g )
 	{
-	case GRADE_AAA:		SetState( 0*iNumCols+pn );	break;
-	case GRADE_AA:		SetState( 1*iNumCols+pn );	break;
-	case GRADE_A:		SetState( 2*iNumCols+pn );	break;
-	case GRADE_B:		SetState( 3*iNumCols+pn );	break;
-	case GRADE_C:		SetState( 4*iNumCols+pn );	break;
-	case GRADE_D:		SetState( 5*iNumCols+pn );	break;
-	case GRADE_E:		SetState( 6*iNumCols+pn );	break;
-	case GRADE_NO_DATA:	SetState( 7*iNumCols+pn );	break;
+	case GRADE_AAAA:	SetState( 0*iNumCols+pn );	break;
+	case GRADE_AAA:		SetState( 1*iNumCols+pn );	break;
+	case GRADE_AA:		SetState( 2*iNumCols+pn );	break;
+	case GRADE_A:		SetState( 3*iNumCols+pn );	break;
+	case GRADE_B:		SetState( 4*iNumCols+pn );	break;
+	case GRADE_C:		SetState( 5*iNumCols+pn );	break;
+	case GRADE_D:		SetState( 6*iNumCols+pn );	break;
+	case GRADE_E:		SetState( 7*iNumCols+pn );	break;
+	case GRADE_NO_DATA:	SetState( 8*iNumCols+pn );	break;
 	default:			ASSERT(0);
 	}
 }

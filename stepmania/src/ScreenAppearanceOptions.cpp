@@ -30,7 +30,7 @@ enum {
 	AO_ANNOUNCER = 0,
 	AO_THEME,
 	AO_SKIN,
-	AO_HOWTOPLAY,
+	AO_INSTRUCTIONS,
 	AO_CAUTION,
 	AO_SELECT_GROUP,
 	AO_WHEEL_SECTIONS,
@@ -154,7 +154,7 @@ void ScreenAppearanceOptions::ImportOptions()
 	if( m_iSelectedOption[0][AO_SKIN] == -1 )
 		m_iSelectedOption[0][AO_SKIN] = 0;
 
-	m_iSelectedOption[0][AO_HOWTOPLAY]					= PREFSMAN->m_bHowToPlay? 1:0;
+	m_iSelectedOption[0][AO_INSTRUCTIONS]					= PREFSMAN->m_bInstructions? 1:0;
 	m_iSelectedOption[0][AO_CAUTION]					= PREFSMAN->m_bShowDontDie? 1:0;
 	m_iSelectedOption[0][AO_SELECT_GROUP]				= PREFSMAN->m_bShowSelectGroup? 1:0;
 	m_iSelectedOption[0][AO_WHEEL_SECTIONS]				= PREFSMAN->m_bMusicWheelUsesSections? 1:0;
@@ -179,7 +179,7 @@ void ScreenAppearanceOptions::ExportOptions()
 	CString sNewSkin = m_OptionRowData[AO_SKIN].szOptionsText[iSelectedSkin];
 	GAMEMAN->SwitchNoteSkin( sNewSkin );
 
-	PREFSMAN->m_bHowToPlay				= !!m_iSelectedOption[0][AO_HOWTOPLAY];
+	PREFSMAN->m_bInstructions			= !!m_iSelectedOption[0][AO_INSTRUCTIONS];
 	PREFSMAN->m_bShowDontDie			= !!m_iSelectedOption[0][AO_CAUTION];
 	PREFSMAN->m_bShowSelectGroup		= !!m_iSelectedOption[0][AO_SELECT_GROUP];
 	PREFSMAN->m_bMusicWheelUsesSections	= !!m_iSelectedOption[0][AO_WHEEL_SECTIONS];

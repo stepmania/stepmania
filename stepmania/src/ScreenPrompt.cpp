@@ -95,7 +95,7 @@ void ScreenPrompt::Input( const DeviceInput& DeviceI, const InputEventType type,
 	if( m_Fade.IsOpening() )
 		return;
 
-	if( DeviceI.device == DEVICE_KEYBOARD )
+	if( DeviceI.device==DEVICE_KEYBOARD && type==IET_FIRST_PRESS )
 	{
 		switch( DeviceI.button )
 		{
@@ -144,6 +144,7 @@ void ScreenPrompt::MenuRight( PlayerNumber pn )
 	m_bAnswer = !m_bAnswer;
 	m_textAnswer[m_bAnswer].SetEffectGlowing();
 
+	m_rectAnswerBox.StopTweening();
 	m_rectAnswerBox.BeginTweening( 0.2f );
 	m_rectAnswerBox.SetTweenXY( m_textAnswer[m_bAnswer].GetX(), m_textAnswer[m_bAnswer].GetY() );
 	m_rectAnswerBox.SetTweenZoomX( m_textAnswer[m_bAnswer].GetWidestLineWidthInSourcePixels()+10.0f );

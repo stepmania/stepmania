@@ -19,6 +19,7 @@
 #include "RandomSample.h"
 #include "BGAnimation.h"
 #include "RageTimer.h"
+#include "RageSound.h"
 
 
 class ScreenAttract : public Screen
@@ -40,6 +41,8 @@ protected:
 	BGAnimation			m_Background;
 	TransitionFade		m_Fade;
 	RandomSample		m_soundStart;
+
+	RageSound			m_soundMusic;
 };
 
 

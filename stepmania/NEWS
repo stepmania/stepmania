@@ -1,4 +1,10 @@
 ----------------------- Version 3.01 ---------------------------
+NEW FEATURE:  AutoSync status now shown during gameplay with icon
+NEW FEATURE:  added autogen icon to select music
+NEW FEATURE:  toggle for easter eggs in Machine Options
+NEW FEATURE:  marvelous step timing togglable in Machine Options
+NEW FEATURE:  Grade AAAA (all marvelous)
+CHANGE:  Only show ScreenHowToPlay if at least one player chose easy
 NEW FEATURE: New High Score screen
 NEW FEATURE: Full "attract" sequence
 NEW FEATURE: .SM files can now contain UTF-8 text.

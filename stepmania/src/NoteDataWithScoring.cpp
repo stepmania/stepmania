@@ -59,7 +59,7 @@ int NoteDataWithScoring::GetNumDoublesWithScore( TapNoteScore tns, const float f
 	for( unsigned i=iStartIndex; i<min(iEndIndex, m_TapNoteScores[0].size()); i++ )
 	{
 		int iNumNotesThisIndex = 0;
-		TapNoteScore	minTapNoteScore = TNS_PERFECT;
+		TapNoteScore	minTapNoteScore = TNS_MARVELOUS;
 		for( int t=0; t<m_iNumTracks; t++ )
 		{
 			if( GetTapNote(t, i) != TAP_EMPTY )
@@ -113,6 +113,7 @@ float NoteDataWithScoring::GetActualStreamRadarValue( float fSongSeconds )
 {
 	// density of steps
 	int iNumSuccessfulNotes = 
+		GetNumTapNotesWithScore(TNS_MARVELOUS) + 
 		GetNumTapNotesWithScore(TNS_PERFECT) + 
 		GetNumTapNotesWithScore(TNS_GREAT)/2 + 
 		GetNumHoldNotesWithScore(HNS_OK);
@@ -132,7 +133,10 @@ float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds )
 
 	for( int i=0; i<MAX_BEATS; i+=BEAT_WINDOW )
 	{
-		int iNumNotesThisWindow = GetNumTapNotesWithScore(TNS_PERFECT,(float)i,(float)i+BEAT_WINDOW) + GetNumHoldNotesWithScore(HNS_OK,(float)i,(float)i+BEAT_WINDOW);
+		int iNumNotesThisWindow = 0;
+		iNumNotesThisWindow += GetNumTapNotesWithScore(TNS_MARVELOUS,(float)i,(float)i+BEAT_WINDOW);
+		iNumNotesThisWindow += GetNumTapNotesWithScore(TNS_PERFECT,(float)i,(float)i+BEAT_WINDOW);
+		iNumNotesThisWindow += GetNumHoldNotesWithScore(HNS_OK,(float)i,(float)i+BEAT_WINDOW);
 		float fDensityThisWindow = iNumNotesThisWindow/(float)BEAT_WINDOW;
 		fMaxDensitySoFar = max( fMaxDensitySoFar, fDensityThisWindow );
 	}
@@ -145,6 +149,7 @@ float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds )
 {
 	// number of doubles
 	int iNumDoubles = 
+		GetNumDoublesWithScore(TNS_MARVELOUS) + 
 		GetNumDoublesWithScore(TNS_PERFECT) + 
 		GetNumDoublesWithScore(TNS_GREAT)/2;
 	float fReturn = iNumDoubles / fSongSeconds;

@@ -28,6 +28,8 @@
 #include "ThemeManager.h"
 #include "Combo.h"
 
+#define JUDGE_MARVELOUS_ZOOM_X		THEME->GetMetricF("Player","JudgeMarvelousZoomX")
+#define JUDGE_MARVELOUS_ZOOM_Y		THEME->GetMetricF("Player","JudgeMarvelousZoomY")
 #define JUDGE_PERFECT_ZOOM_X		THEME->GetMetricF("Player","JudgePerfectZoomX")
 #define JUDGE_PERFECT_ZOOM_Y		THEME->GetMetricF("Player","JudgePerfectZoomY")
 #define JUDGE_GREAT_ZOOM_X			THEME->GetMetricF("Player","JudgeGreatZoomX")
@@ -41,15 +43,18 @@
 
 
 // cache because reading from theme metrics is slow
-float g_fJudgePerfectZoomX,
-	  g_fJudgePerfectZoomY,
-	  g_fJudgeGreatZoomX,
-	  g_fJudgeGreatZoomY,
-	  g_fJudgeGoodZoomX,
-	  g_fJudgeGoodZoomY,
-	  g_fJudgeBooZoomX,
-      g_fJudgeBooZoomY,
-      g_fComboJudgeTweenSeconds;
+float 
+	g_fJudgeMarvelousZoomX,
+	g_fJudgeMarvelousZoomY,
+	g_fJudgePerfectZoomX,
+	g_fJudgePerfectZoomY,
+	g_fJudgeGreatZoomX,
+	g_fJudgeGreatZoomY,
+	g_fJudgeGoodZoomX,
+	g_fJudgeGoodZoomY,
+	g_fJudgeBooZoomX,
+	g_fJudgeBooZoomY,
+	g_fComboJudgeTweenSeconds;
 int	  g_iBrightGhostThreshold;
 
 // these two items are in the
@@ -68,6 +73,8 @@ const float HOLD_ARROW_NG_TIME	=	0.18f;
 Player::Player()
 {
 	// Update theme metrics cache
+	g_fJudgeMarvelousZoomX = JUDGE_MARVELOUS_ZOOM_X;
+	g_fJudgeMarvelousZoomY = JUDGE_MARVELOUS_ZOOM_Y;
 	g_fJudgePerfectZoomX = JUDGE_PERFECT_ZOOM_X;
 	g_fJudgePerfectZoomY = JUDGE_PERFECT_ZOOM_Y;
 	g_fJudgeGreatZoomX = JUDGE_GREAT_ZOOM_X;
@@ -393,21 +400,26 @@ void Player::Step( int col )
 		// compute the score for this hit
 		const float fStepBeat = NoteRowToBeat( (float)iIndexOverlappingNote );
 		const float fBeatsUntilStep = fStepBeat - fSongBeat;
-		const float fPercentFromPerfect = fabsf( fBeatsUntilStep / GetMaxBeatDifference() );
+		const float fSecondsFromPerfect = fabsf( fBeatsUntilStep / GAMESTATE->m_fCurBPS );
+//		const float fPercentFromPerfect = fabsf( fBeatsUntilStep / GetMaxBeatDifference() );
 		const float fNoteOffset = fBeatsUntilStep / GAMESTATE->m_fCurBPS; //the offset from the actual step in seconds
 
 
 		TapNoteScore score;
 
-		LOG->Trace("fPercentFromPerfect %f", fPercentFromPerfect);
-		if(		 fPercentFromPerfect < PREFSMAN->m_fJudgeWindowPerfectPercent )	score = TNS_PERFECT;
-		else if( fPercentFromPerfect < PREFSMAN->m_fJudgeWindowGreatPercent )	score = TNS_GREAT;
-		else if( fPercentFromPerfect < PREFSMAN->m_fJudgeWindowGoodPercent )	score = TNS_GOOD;
+		LOG->Trace("fSecondsFromPerfect = %f", fSecondsFromPerfect);
+		if(		 fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMarvelousSeconds )	score = TNS_MARVELOUS;
+		else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
+		else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_GREAT;
+		else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
 		//we have to mark boo's as better than MISS's now that the window is expanded
-		else if( fPercentFromPerfect < 1.0f )									score = TNS_BOO;
-		else																	score = TNS_NONE;
+		else if( fSecondsFromPerfect <= 1.0f )										score = TNS_BOO;
+		else																		score = TNS_NONE;
 
 		if( !GAMESTATE->m_bEditing && (GAMESTATE->m_bDemonstration  ||  PREFSMAN->m_bAutoPlay) )
+			score = TNS_MARVELOUS;
+
+		if( score==TNS_MARVELOUS  &&  !PREFSMAN->m_bMarvelousTiming )
 			score = TNS_PERFECT;
 
 		bDestroyedNote = (score >= TNS_GOOD);
@@ -415,7 +427,7 @@ void Player::Step( int col )
 		LOG->Trace("(%2d/%2d)Note offset: %f, Score: %i", m_iOffsetSample, SAMPLE_COUNT, fNoteOffset, score);
 		SetTapNoteScore(col, iIndexOverlappingNote, score);
 
-		if (GAMESTATE->m_SongOptions.m_AutoAdjust == SongOptions::ADJUST_ON) 
+		if (GAMESTATE->m_SongOptions.m_bAutoSync ) 
 		{
 			m_fOffset[m_iOffsetSample++] = fNoteOffset;
 			if (m_iOffsetSample >= SAMPLE_COUNT) 
@@ -460,7 +472,7 @@ void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
 	LOG->Trace( "Player::OnRowDestroyed" );
 	
 	// find the minimum score of the row
-	TapNoteScore score = TNS_PERFECT;
+	TapNoteScore score = TNS_MARVELOUS;
 	for( int t=0; t<m_iNumTracks; t++ )
 	{
 		TapNoteScore tns = GetTapNoteScore(t, iIndexThatWasSteppedOn);
@@ -482,8 +494,14 @@ void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
 
 	/* If the whole row was hit with perfects or greats, remove the row
 	 * from the NoteField, so it disappears. */
-	if ( score==TNS_PERFECT  ||  score == TNS_GREAT )
+	switch ( score )
+	{
+	case TNS_MARVELOUS:
+	case TNS_PERFECT:
+	case TNS_GREAT:
 		m_NoteField.RemoveTapNoteRow( iIndexThatWasSteppedOn );
+		break;
+	}
 
 	int iNumNotesInThisRow = 0;
 	for( int c=0; c<m_iNumTracks; c++ )	// for each column
@@ -511,10 +529,13 @@ void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
 	float fStartZoomX=0.f, fStartZoomY=0.f;
 	switch( score )
 	{
-	case TNS_PERFECT:	fStartZoomX = g_fJudgePerfectZoomX;	fStartZoomY = g_fJudgePerfectZoomY;	break;
-	case TNS_GREAT:		fStartZoomX = g_fJudgeGreatZoomX;	fStartZoomY = g_fJudgeGreatZoomY;	break;
-	case TNS_GOOD:		fStartZoomX = g_fJudgeGoodZoomX;	fStartZoomY = g_fJudgeGoodZoomY;	break;
-	case TNS_BOO:		fStartZoomX = g_fJudgeBooZoomX;		fStartZoomY = g_fJudgeBooZoomY;		break;
+	case TNS_MARVELOUS:	fStartZoomX = g_fJudgeMarvelousZoomX;	fStartZoomY = g_fJudgeMarvelousZoomY;	break;
+	case TNS_PERFECT:	fStartZoomX = g_fJudgePerfectZoomX;		fStartZoomY = g_fJudgePerfectZoomY;		break;
+	case TNS_GREAT:		fStartZoomX = g_fJudgeGreatZoomX;		fStartZoomY = g_fJudgeGreatZoomY;		break;
+	case TNS_GOOD:		fStartZoomX = g_fJudgeGoodZoomX;		fStartZoomY = g_fJudgeGoodZoomY;		break;
+	case TNS_BOO:		fStartZoomX = g_fJudgeBooZoomX;			fStartZoomY = g_fJudgeBooZoomY;			break;
+	default:
+		ASSERT(0);
 	}
 	m_frameJudgement.StopTweening();
 	m_frameJudgement.SetZoomX( fStartZoomX );
@@ -630,7 +651,7 @@ void Player::HandleHoldNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore
 
 float Player::GetMaxBeatDifference()
 {
-	return GAMESTATE->m_fCurBPS * PREFSMAN->m_fJudgeWindowSeconds * GAMESTATE->m_SongOptions.m_fMusicRate;
+	return GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate * PREFSMAN->m_fJudgeWindowBooSeconds * PREFSMAN->m_fJudgeWindowScale;
 }
 
 void Player::FadeToFail()

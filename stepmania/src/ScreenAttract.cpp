@@ -52,7 +52,7 @@ void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type
 
 	if(type != IET_FIRST_PRESS) return; // don't care
 
-	if( m_Fade.IsClosing() )
+	if( m_Fade.IsOpening() || m_Fade.IsClosing() )
 		return;
 
 	if( MenuI.IsValid() )
@@ -64,6 +64,7 @@ void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type
 			m_Fade.CloseWipingRight( SM_GoToNextScreen );
 			break;
 		case MENU_BUTTON_START:
+			m_soundMusic.Stop();
 			GAMESTATE->m_bSideIsJoined[MenuI.player] = true;
 			GAMESTATE->m_MasterPlayerNumber = MenuI.player;
 			GAMESTATE->m_bPlayersCanJoin = false;
@@ -96,7 +97,8 @@ void ScreenAttract::FirstUpdate()
 
 	m_soundStart.Load( THEME->GetPathTo("Sounds","menu start") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds",this->GetElementName() + " music") );
+	m_soundMusic.Load( THEME->GetPathTo("Sounds",this->GetElementName() + " music") );
+	m_soundMusic.Play();
 
 	this->SendScreenMessage( SM_BeginFadingOut, SECONDS_TO_SHOW );
 }

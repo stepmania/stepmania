@@ -120,6 +120,7 @@ ScreenDemonstration::ScreenDemonstration() : ScreenGameplay( false )
 ScreenDemonstration::~ScreenDemonstration()
 {
 	GAMESTATE->m_bDemonstration = false;
+	GAMESTATE->Reset();
 }
 
 void ScreenDemonstration::FirstUpdate()
@@ -151,7 +152,9 @@ void ScreenDemonstration::Update( float fDeltaTime )
 {
 	ScreenGameplay::Update( fDeltaTime );
 
-	m_textAutoPlay.SetDiffuse( RageColor(1,1,1,0) );	// hide autoplay
+	// hide status icons
+	for( int i=0; i<NUM_STATUS_ICONS; i++ )
+		m_sprStatusIcons[i].SetDiffuse( RageColor(1,1,1,0) );	
 }
 
 void ScreenDemonstration::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )

@@ -77,33 +77,36 @@ protected:
 		STATE_OUTRO,	// not allowed to press Back
 		NUM_DANCING_STATES
 	};
-	DancingState			m_DancingState;
-	bool					m_bChangedOffsetOrBPM;
+	DancingState		m_DancingState;
+	bool				m_bChangedOffsetOrBPM;
 
-	float					m_fTimeLeftBeforeDancingComment;	// this counter is only running while STATE_DANCING
+	float				m_fTimeLeftBeforeDancingComment;	// this counter is only running while STATE_DANCING
 
 
-	Background				m_Background;
+	Background			m_Background;
 
-	TransitionOniFade		m_OniFade;	// shows between songs in a course
+	TransitionOniFade	m_OniFade;	// shows between songs in a course
 
-	Sprite					m_sprLifeFrame;
-	LifeMeter*				m_pLifeMeter[NUM_PLAYERS];
-	BitmapText				m_textStageNumber;
-	BitmapText				m_textCourseSongNumber[NUM_PLAYERS];
+	Sprite				m_sprLifeFrame;
+	LifeMeter*			m_pLifeMeter[NUM_PLAYERS];
+	BitmapText			m_textStageNumber;
+	BitmapText			m_textCourseSongNumber[NUM_PLAYERS];
 
-	Sprite					m_sprMiddleFrame;
-	BPMDisplay				m_BPMDisplay;
+	Sprite				m_sprMiddleFrame;
+	BPMDisplay			m_BPMDisplay;
 
-	Sprite					m_sprScoreFrame;
-	ScoreDisplay*			m_pScoreDisplay[NUM_PLAYERS];
-	BitmapText				m_textPlayerOptions[NUM_PLAYERS];
-	BitmapText				m_textSongOptions;
+	Sprite				m_sprScoreFrame;
+	ScoreDisplay*		m_pScoreDisplay[NUM_PLAYERS];
+	BitmapText			m_textPlayerOptions[NUM_PLAYERS];
+	BitmapText			m_textSongOptions;
 
-	BitmapText				m_textDebug;
-	BitmapText				m_textAutoPlay;		// shows whether AutoPlay is on.
+	BitmapText			m_textDebug;
+
+#define NUM_STATUS_ICONS	2
+	Sprite				m_sprStatusIcons[NUM_STATUS_ICONS];	// shows whether these options are on.
+	void	PositionStatusIcons();	// reposition the three above when the value of one changes
 	
-	BitmapText				m_MaxCombo;
+	BitmapText			m_MaxCombo;
 
 	TransitionFadeWipe	m_Fade;
 	TransitionStarWipe	m_StarWipe;

@@ -16,21 +16,24 @@
 #include "ThemeManager.h"
 
 
-#define SHOW_SECONDS		THEME->GetMetricF("GhostArrow","ShowSeconds")
-#define ZOOM_START			THEME->GetMetricF("GhostArrow","ZoomStart")
-#define ZOOM_END			THEME->GetMetricF("GhostArrow","ZoomEnd")
-#define COLOR_PERFECT_START	THEME->GetMetricC("GhostArrow","ColorPerfectStart")
-#define COLOR_PERFECT_END	THEME->GetMetricC("GhostArrow","ColorPerfectEnd")
-#define COLOR_GREAT_START	THEME->GetMetricC("GhostArrow","ColorGreatStart")
-#define COLOR_GREAT_END		THEME->GetMetricC("GhostArrow","ColorGreatEnd")
-#define COLOR_GOOD_START	THEME->GetMetricC("GhostArrow","ColorGoodStart")
-#define COLOR_GOOD_END		THEME->GetMetricC("GhostArrow","ColorGoodEnd")
-#define COLOR_BOO_START		THEME->GetMetricC("GhostArrow","ColorBooStart")
-#define COLOR_BOO_END		THEME->GetMetricC("GhostArrow","ColorBooEnd")
+#define SHOW_SECONDS			THEME->GetMetricF("GhostArrow","ShowSeconds")
+#define ZOOM_START				THEME->GetMetricF("GhostArrow","ZoomStart")
+#define ZOOM_END				THEME->GetMetricF("GhostArrow","ZoomEnd")
+#define COLOR_MARVELOUS_START	THEME->GetMetricC("GhostArrow","ColorMarvelousStart")
+#define COLOR_MARVELOUS_END		THEME->GetMetricC("GhostArrow","ColorMarvelousEnd")
+#define COLOR_PERFECT_START		THEME->GetMetricC("GhostArrow","ColorPerfectStart")
+#define COLOR_PERFECT_END		THEME->GetMetricC("GhostArrow","ColorPerfectEnd")
+#define COLOR_GREAT_START		THEME->GetMetricC("GhostArrow","ColorGreatStart")
+#define COLOR_GREAT_END			THEME->GetMetricC("GhostArrow","ColorGreatEnd")
+#define COLOR_GOOD_START		THEME->GetMetricC("GhostArrow","ColorGoodStart")
+#define COLOR_GOOD_END			THEME->GetMetricC("GhostArrow","ColorGoodEnd")
+#define COLOR_BOO_START			THEME->GetMetricC("GhostArrow","ColorBooStart")
+#define COLOR_BOO_END			THEME->GetMetricC("GhostArrow","ColorBooEnd")
 
 float g_fShowSeconds;
 float g_fZoomStart, g_fZoomEnd;
 RageColor 
+	g_colorMarvelousStart, g_colorMarvelousEnd, 
 	g_colorPerfectStart, g_colorPerfectEnd, 
 	g_colorGreatStart, g_colorGreatEnd, 
 	g_colorGoodStart, g_colorGoodEnd, 
@@ -38,17 +41,19 @@ RageColor
 
 GhostArrow::GhostArrow()
 {
-	g_fShowSeconds		= SHOW_SECONDS;
-	g_fZoomStart		= ZOOM_START;
-	g_fZoomEnd			= ZOOM_END;
-	g_colorPerfectStart = COLOR_PERFECT_START;
-	g_colorPerfectEnd	= COLOR_PERFECT_END;
-	g_colorGreatStart	= COLOR_GREAT_START;
-	g_colorGreatEnd		= COLOR_GREAT_END;
-	g_colorGoodStart	= COLOR_GOOD_START;
-	g_colorGoodEnd		= COLOR_GOOD_END;
-	g_colorBooStart		= COLOR_BOO_START;
-	g_colorBooEnd		= COLOR_BOO_END;
+	g_fShowSeconds			= SHOW_SECONDS;
+	g_fZoomStart			= ZOOM_START;
+	g_fZoomEnd				= ZOOM_END;
+	g_colorMarvelousStart	= COLOR_MARVELOUS_START;
+	g_colorMarvelousEnd		= COLOR_MARVELOUS_END;
+	g_colorPerfectStart		= COLOR_PERFECT_START;
+	g_colorPerfectEnd		= COLOR_PERFECT_END;
+	g_colorGreatStart		= COLOR_GREAT_START;
+	g_colorGreatEnd			= COLOR_GREAT_END;
+	g_colorGoodStart		= COLOR_GOOD_START;
+	g_colorGoodEnd			= COLOR_GOOD_END;
+	g_colorBooStart			= COLOR_BOO_START;
+	g_colorBooEnd			= COLOR_BOO_END;
 
 
 	SetDiffuse( RageColor(1,1,1,0) );
@@ -69,6 +74,7 @@ void GhostArrow::Step( TapNoteScore score )
 	RageColor colorStart, colorEnd;
 	switch( score )
 	{
+	case TNS_MARVELOUS:	colorStart = g_colorMarvelousStart;	colorEnd = g_colorMarvelousEnd;	break;
 	case TNS_PERFECT:	colorStart = g_colorPerfectStart;	colorEnd = g_colorPerfectEnd;	break;
 	case TNS_GREAT:		colorStart = g_colorGreatStart;		colorEnd = g_colorGreatEnd;		break;
 	case TNS_GOOD:		colorStart = g_colorGoodStart;		colorEnd = g_colorGoodEnd;		break;

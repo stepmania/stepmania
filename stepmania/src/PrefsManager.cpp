@@ -52,15 +52,17 @@ PrefsManager::PrefsManager()
 	m_bEventMode = false;
 	m_iNumArcadeStages = 3;
 	m_bAutoPlay = false;
-	m_fJudgeWindowSeconds = 0.17f;
-	m_fJudgeWindowPerfectPercent = 0.25f;
-	m_fJudgeWindowGreatPercent = 0.50f;
-	m_fJudgeWindowGoodPercent = 0.75f;
+	m_fJudgeWindowScale = 1.0f;
+	m_fJudgeWindowMarvelousSeconds = 0.023f;
+	m_fJudgeWindowPerfectSeconds = 0.043f;
+	m_fJudgeWindowGreatSeconds = 0.086f;
+	m_fJudgeWindowGoodSeconds = 0.129f;
+	m_fJudgeWindowBooSeconds = 0.172f;
 	m_fLifeDifficultyScale = 1.0f;
 	m_iMovieDecodeMS = 2;
 	m_bUseBGIfNoBanner = false;
 	m_bDelayedEscape = true;
-	m_bHowToPlay = true;
+	m_bInstructions = true;
 	m_bShowDontDie = true;
 	m_bShowSelectGroup = true;
 	m_bArcadeOptionsNavigation = false;
@@ -68,6 +70,8 @@ PrefsManager::PrefsManager()
 	m_bCoinOpMode = false;
 	m_bMusicWheelUsesSections = true;
 	m_bChangeBannersWhenFast = false;
+	m_bEasterEggs = true;
+	m_bMarvelousTiming = true;
 
 	/* I'd rather get occasional people asking for support for this even though it's
 	 * already here than lots of people asking why songs aren't being displayed. */
@@ -107,17 +111,17 @@ PrefsManager::~PrefsManager()
 	ini.GetValueB( "Options", "EventMode",					m_bEventMode );
 	ini.GetValueI( "Options", "NumArcadeStages",			m_iNumArcadeStages );
 	ini.GetValueB( "Options", "AutoPlay",					m_bAutoPlay );
-	ini.GetValueF( "Options", "JudgeWindowSeconds",			m_fJudgeWindowSeconds );
-	ini.GetValueF( "Options", "JudgeWindowPerfectPercent",	m_fJudgeWindowPerfectPercent );
-	ini.GetValueF( "Options", "JudgeWindowGreatPercent",	m_fJudgeWindowGreatPercent );
-	ini.GetValueF( "Options", "JudgeWindowGoodPercent",		m_fJudgeWindowGoodPercent );
+	ini.GetValueF( "Options", "JudgeWindowScale",			m_fJudgeWindowScale );
+	ini.GetValueF( "Options", "JudgeWindowPerfectSeconds",	m_fJudgeWindowPerfectSeconds );
+	ini.GetValueF( "Options", "JudgeWindowGreatSeconds",	m_fJudgeWindowGreatSeconds );
+	ini.GetValueF( "Options", "JudgeWindowGoodSeconds",		m_fJudgeWindowGoodSeconds );
 	ini.GetValueF( "Options", "LifeDifficultyScale",		m_fLifeDifficultyScale );
 	ini.GetValueI( "Options", "MovieDecodeMS",				m_iMovieDecodeMS );
 	ini.GetValueB( "Options", "UseBGIfNoBanner",			m_bUseBGIfNoBanner );
 	ini.GetValueB( "Options", "DelayedEscape",				m_bDelayedEscape );
 	ini.GetValueB( "Options", "HiddenSongs",				m_bHiddenSongs );
 	ini.GetValueB( "Options", "Vsync",						m_bVsync );
-	ini.GetValueB( "Options", "HowToPlay",					m_bHowToPlay );
+	ini.GetValueB( "Options", "HowToPlay",					m_bInstructions );
 	ini.GetValueB( "Options", "Caution",					m_bShowDontDie );
 	ini.GetValueB( "Options", "SelectGroup",				m_bShowSelectGroup );
 	ini.GetValueB( "Options", "ArcadeOptionsNavigation",	m_bArcadeOptionsNavigation );
@@ -127,6 +131,8 @@ PrefsManager::~PrefsManager()
 	ini.GetValueB( "Options", "MusicWheelUsesSections",		m_bMusicWheelUsesSections );
 	ini.GetValueB( "Options", "ChangeBannersWhenFast",		m_bChangeBannersWhenFast );
 	ini.GetValue ( "Options", "SoundDrivers",				m_bSoundDrivers );
+	ini.GetValueB( "Options", "EasterEggs",					m_bEasterEggs );
+	ini.GetValueB( "Options", "MarvelousTiming",			m_bMarvelousTiming );
 	ini.GetValueF( "Options", "SoundVolume",				m_fSoundVolume );
 
 	m_asAdditionalSongFolders.clear();
@@ -164,17 +170,17 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "MenuTimer",					m_bMenuTimer );
 	ini.SetValueI( "Options", "NumArcadeStages",			m_iNumArcadeStages );
 	ini.SetValueB( "Options", "AutoPlay",					m_bAutoPlay );
-	ini.SetValueF( "Options", "JudgeWindowSeconds",			m_fJudgeWindowSeconds );
-	ini.SetValueF( "Options", "JudgeWindowPerfectPercent",	m_fJudgeWindowPerfectPercent );
-	ini.SetValueF( "Options", "JudgeWindowGreatPercent",	m_fJudgeWindowGreatPercent );
-	ini.SetValueF( "Options", "JudgeWindowGoodPercent",		m_fJudgeWindowGoodPercent );
+	ini.SetValueF( "Options", "JudgeWindowScale",			m_fJudgeWindowScale );
+	ini.SetValueF( "Options", "JudgeWindowPerfectSeconds",	m_fJudgeWindowPerfectSeconds );
+	ini.SetValueF( "Options", "JudgeWindowGreatSeconds",	m_fJudgeWindowGreatSeconds );
+	ini.SetValueF( "Options", "JudgeWindowGoodSeconds",		m_fJudgeWindowGoodSeconds );
 	ini.SetValueF( "Options", "LifeDifficultyScale",		m_fLifeDifficultyScale );
 	ini.SetValueI( "Options", "MovieDecodeMS",				m_iMovieDecodeMS );
 	ini.SetValueB( "Options", "UseBGIfNoBanner",			m_bUseBGIfNoBanner );
 	ini.SetValueB( "Options", "DelayedEscape",				m_bDelayedEscape );
 	ini.SetValueB( "Options", "HiddenSongs",				m_bHiddenSongs );
 	ini.SetValueB( "Options", "Vsync",						m_bVsync );
-	ini.SetValueB( "Options", "HowToPlay",					m_bHowToPlay );
+	ini.SetValueB( "Options", "HowToPlay",					m_bInstructions );
 	ini.SetValueB( "Options", "Caution",					m_bShowDontDie );
 	ini.SetValueB( "Options", "SelectGroup",				m_bShowSelectGroup );
 	ini.SetValueB( "Options", "ArcadeOptionsNavigation",	m_bArcadeOptionsNavigation );
@@ -182,7 +188,9 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueI( "Options", "UnloadTextureDelaySeconds",	m_iUnloadTextureDelaySeconds );
 	ini.SetValueB( "Options", "MusicWheelUsesSections",		m_bMusicWheelUsesSections );
 	ini.SetValueB( "Options", "ChangeBannersWhenFast",		m_bChangeBannersWhenFast );
-	ini.SetValueB( "Options", "CoinOpMode",					m_bCoinOpMode );
+	ini.SetValue ( "Options", "SoundDrivers",				m_bSoundDrivers );
+	ini.SetValueB( "Options", "EasterEggs",					m_bEasterEggs );
+	ini.SetValueB( "Options", "MarvelousTiming",			m_bMarvelousTiming );
 
 	/* Only write this if it's been changed.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who

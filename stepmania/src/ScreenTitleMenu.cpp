@@ -42,27 +42,22 @@ const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
 	"EXIT",
 };
 
+#define HELP_X							THEME->GetMetricF("ScreenTitleMenu","HelpX")
+#define HELP_Y							THEME->GetMetricF("ScreenTitleMenu","HelpY")
 #define CHOICES_X						THEME->GetMetricF("ScreenTitleMenu","ChoicesX")
 #define CHOICES_START_Y					THEME->GetMetricF("ScreenTitleMenu","ChoicesStartY")
 #define CHOICES_SPACING_Y				THEME->GetMetricF("ScreenTitleMenu","ChoicesSpacingY")
 #define CHOICES_SHADOW_LENGTH			THEME->GetMetricF("ScreenTitleMenu","ChoicesShadowLength")
-#define HELP_X							THEME->GetMetricF("ScreenTitleMenu","HelpX")
-#define HELP_Y							THEME->GetMetricF("ScreenTitleMenu","HelpY")
-#define LOGO_X							THEME->GetMetricF("ScreenTitleMenu","LogoX")
-#define LOGO_Y							THEME->GetMetricF("ScreenTitleMenu","LogoY")
-#define VERSION_X						THEME->GetMetricF("ScreenTitleMenu","VersionX")
-#define VERSION_Y						THEME->GetMetricF("ScreenTitleMenu","VersionY")
-#define SONGS_X							THEME->GetMetricF("ScreenTitleMenu","SongsX")
-#define SONGS_Y							THEME->GetMetricF("ScreenTitleMenu","SongsY")
 #define COLOR_NOT_SELECTED				THEME->GetMetricC("ScreenTitleMenu","ColorNotSelected")
 #define COLOR_SELECTED					THEME->GetMetricC("ScreenTitleMenu","ColorSelected")
 #define ZOOM_NOT_SELECTED				THEME->GetMetricF("ScreenTitleMenu","ZoomNotSelected")
 #define ZOOM_SELECTED					THEME->GetMetricF("ScreenTitleMenu","ZoomSelected")
-#define SECONDS_BETWEEN_ATTRACT			THEME->GetMetricF("ScreenTitleMenu","SecondsBetweenAttract")
+#define SECONDS_BETWEEN_COMMENTS		THEME->GetMetricF("ScreenTitleMenu","SecondsBetweenComments")
+#define SECONDS_BEFORE_ATTRACT			THEME->GetMetricF("ScreenTitleMenu","SecondsBeforeAttract")
 #define HELP_TEXT						THEME->GetMetric("ScreenTitleMenu","HelpText")
 #define NEXT_SCREEN						THEME->GetMetric("ScreenTitleMenu","NextScreen")
 
-const ScreenMessage SM_PlayAttract			=	ScreenMessage(SM_User+1);
+const ScreenMessage SM_PlayComment			=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+12);
 const ScreenMessage SM_GoToAttractLoop		=	ScreenMessage(SM_User+13);
 
@@ -70,21 +65,15 @@ const ScreenMessage SM_GoToAttractLoop		=	ScreenMessage(SM_User+13);
 ScreenTitleMenu::ScreenTitleMenu()
 {
 	LOG->Trace( "ScreenTitleMenu::ScreenTitleMenu()" );
+}
 
-	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","title menu") );
-	this->AddChild( &m_Background );
+void ScreenTitleMenu::FirstUpdate()
+{
+	LOG->Trace( "ScreenTitleMenu::FirstUpdate()" );
 
-	m_sprLogo.Load( THEME->GetPathTo("Graphics",ssprintf("title menu logo %s",GAMESTATE->GetCurrentGameDef()->m_szName)) );
-	m_sprLogo.SetXY( LOGO_X, LOGO_Y );
-	m_sprLogo.SetGlow( RageColor(1,1,1,1) );
-	m_sprLogo.SetZoomY( 0 );
-	m_sprLogo.StopTweening();
-	m_sprLogo.BeginTweening( 0.5f );	// sleep
-	m_sprLogo.BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
-	m_sprLogo.SetEffectGlowing(1, RageColor(1,1,1,0.1f), RageColor(1,1,1,0.3f) );
-	m_sprLogo.SetTweenZoom( 1 );
-	this->AddChild( &m_sprLogo );
+	ScreenLogo::FirstUpdate();
 
+	// we have to do init here because ScreenLogo does it's initialization in FirstUpdate()
 	m_textHelp.LoadFromFont( THEME->GetPathTo("Fonts","help") );
 	m_textHelp.SetText( HELP_TEXT );
 	m_textHelp.SetXY( HELP_X, HELP_Y );
@@ -92,24 +81,6 @@ ScreenTitleMenu::ScreenTitleMenu()
 	m_textHelp.SetEffectBlinking();
 	m_textHelp.SetShadowLength( 2 );
 	this->AddChild( &m_textHelp );
-
-	m_textVersion.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-	m_textVersion.SetText( "v3.0 final" );
-	m_textVersion.SetDiffuse( RageColor(0.6f,0.6f,0.6f,1) );	// light gray
-	m_textVersion.SetXY( VERSION_X, VERSION_Y );
-	m_textVersion.SetZoom( 0.5f );
-	m_textVersion.SetShadowLength( 2 );
-	this->AddChild( &m_textVersion );
-
-
-	m_textSongs.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-	m_textSongs.SetHorizAlign( Actor::align_left );
-	m_textSongs.SetText( ssprintf("Found %u Songs", SONGMAN->m_pSongs.size()) );
-	m_textSongs.SetDiffuse( RageColor(0.6f,0.6f,0.6f,1) );	// light gray
-	m_textSongs.SetXY( SONGS_X, SONGS_Y );
-	m_textSongs.SetZoom( 0.5f );
-	m_textSongs.SetShadowLength( 2 );
-	this->AddChild( &m_textSongs );
 
 	int i;
 	for( i=0; i< NUM_TITLE_MENU_CHOICES; i++ )
@@ -121,12 +92,6 @@ ScreenTitleMenu::ScreenTitleMenu()
 		m_textChoice[i].SetShadowLength( fShadowLength );
 		this->AddChild( &m_textChoice[i] );
 	}	
-
-	
-	m_Fade.SetClosed();
-	m_Fade.OpenWipingRight( SM_None );
-
-	this->AddChild( &m_Fade );
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("title menu game name") );
 
@@ -142,11 +107,14 @@ ScreenTitleMenu::ScreenTitleMenu()
 		LoseFocus( i );
 	GainFocus( m_TitleMenuChoice );
 	
+	m_soundMusic.Stop();
+
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","title menu music") );
 
-	this->SendScreenMessage( SM_PlayAttract, SECONDS_BETWEEN_ATTRACT );
-}
+	this->SendScreenMessage( SM_PlayComment, SECONDS_BETWEEN_COMMENTS);
 
+	this->MoveToBack( &(ScreenAttract::m_Fade) );	// put it in the back so it covers up the stuff we just added
+}
 
 ScreenTitleMenu::~ScreenTitleMenu()
 {
@@ -167,6 +135,12 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 
 void ScreenTitleMenu::Update( float fDelta )
 {
+	if(TimeToDemonstration.PeekDeltaTime() >= SECONDS_BEFORE_ATTRACT)
+	{
+		this->SendScreenMessage( SM_GoToAttractLoop, 0 );
+		TimeToDemonstration.GetDeltaTime();
+	}
+
 	Screen::Update(fDelta);
 }
 
@@ -175,9 +149,9 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
-	case SM_PlayAttract:
+	case SM_PlayComment:
 		m_soundAttract.PlayRandom();
-		this->SendScreenMessage( SM_PlayAttract, SECONDS_BETWEEN_ATTRACT );
+		this->SendScreenMessage( SM_PlayComment, SECONDS_BETWEEN_COMMENTS );
 		break;
 	case SM_GoToNextScreen:
 		switch( m_TitleMenuChoice )
@@ -246,6 +220,8 @@ void ScreenTitleMenu::GainFocus( int iChoiceIndex )
 
 void ScreenTitleMenu::MenuUp( PlayerNumber pn )
 {
+	TimeToDemonstration.GetDeltaTime();	/* Reset the demonstration timer when a key is pressed. */
+
 	LoseFocus( m_TitleMenuChoice );
 
 	if( m_TitleMenuChoice == 0 ) // wrap around
@@ -261,6 +237,8 @@ void ScreenTitleMenu::MenuUp( PlayerNumber pn )
 
 void ScreenTitleMenu::MenuDown( PlayerNumber pn )
 {
+	TimeToDemonstration.GetDeltaTime();	/* Reset the demonstration timer when a key is pressed. */
+
 	LoseFocus( m_TitleMenuChoice );
 
 	if( m_TitleMenuChoice == (int)ScreenTitleMenu::NUM_TITLE_MENU_CHOICES-1 ) 

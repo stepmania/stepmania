@@ -232,6 +232,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenEz2SelectPlayer.h">
 			</File>
 			<File
+				RelativePath="ScreenEz2Stage.cpp">
+			</File>
+			<File
+				RelativePath="ScreenEz2Stage.h">
+			</File>
+			<File
 				RelativePath="ScreenGameOver.cpp">
 			</File>
 			<File
@@ -250,10 +256,31 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenGraphicOptions.h">
 			</File>
 			<File
+				RelativePath="ScreenHighScores.cpp">
+			</File>
+			<File
+				RelativePath="ScreenHighScores.h">
+			</File>
+			<File
+				RelativePath="ScreenHowToPlay.h">
+			</File>
+			<File
 				RelativePath="ScreenInputOptions.cpp">
 			</File>
 			<File
 				RelativePath="ScreenInputOptions.h">
+			</File>
+			<File
+				RelativePath="ScreenInstructions.cpp">
+			</File>
+			<File
+				RelativePath="ScreenInstructions.h">
+			</File>
+			<File
+				RelativePath="ScreenLogo.cpp">
+			</File>
+			<File
+				RelativePath="ScreenLogo.h">
 			</File>
 			<File
 				RelativePath="ScreenMachineOptions.cpp">
@@ -272,6 +299,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenMapControllers.h">
+			</File>
+			<File
+				RelativePath="ScreenMemoryCard.h">
 			</File>
 			<File
 				RelativePath="ScreenMessage.h">
@@ -395,6 +425,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenTitleMenu.h">
+			</File>
+			<File
+				RelativePath="ScreenUnlock.h">
+			</File>
+			<File
+				RelativePath="ScreenWarning.h">
 			</File>
 		</Filter>
 		<Filter

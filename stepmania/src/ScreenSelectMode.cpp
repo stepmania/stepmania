@@ -300,7 +300,7 @@ void ScreenSelectMode::AfterChange()
 	{
 		for( unsigned i=0; i<m_apPossibleModeChoices.size(); i++ )
 		{
-			if(i == m_ScrollingList.GetSelection())
+			if(i == (unsigned)m_ScrollingList.GetSelection())
 			{
 				m_Infotext[i].SetDiffuse(RageColor(1,1,1,1));
 			}

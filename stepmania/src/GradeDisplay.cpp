@@ -26,7 +26,7 @@ const float GRADES_TO_SCROLL = NUM_GRADE_FRAMES*4;
 
 GradeDisplay::GradeDisplay()
 {
-	Load( THEME->GetPathTo("Graphics","evaluation grades 1x7") );
+	Load( THEME->GetPathTo("Graphics","evaluation grades 1x8") );
 	StopAnimating();
 
 	m_fTimeLeftInScroll = 0;
@@ -85,13 +85,14 @@ void GradeDisplay::SetGrade( PlayerNumber pn, Grade g )
 	int iNumCols = (this->GetNumStates()>8) ? 2 : 1;
 	switch( g )
 	{
-	case GRADE_AAA:		SetState( 0*iNumCols+pn );	break;
-	case GRADE_AA:		SetState( 1*iNumCols+pn );	break;
-	case GRADE_A:		SetState( 2*iNumCols+pn );	break;
-	case GRADE_B:		SetState( 3*iNumCols+pn );	break;
-	case GRADE_C:		SetState( 4*iNumCols+pn );	break;
-	case GRADE_D:		SetState( 5*iNumCols+pn );	break;
-	case GRADE_E:		SetState( 6*iNumCols+pn );	break;
+	case GRADE_AAAA:	SetState( 0*iNumCols+pn );	break;
+	case GRADE_AAA:		SetState( 1*iNumCols+pn );	break;
+	case GRADE_AA:		SetState( 2*iNumCols+pn );	break;
+	case GRADE_A:		SetState( 3*iNumCols+pn );	break;
+	case GRADE_B:		SetState( 4*iNumCols+pn );	break;
+	case GRADE_C:		SetState( 5*iNumCols+pn );	break;
+	case GRADE_D:		SetState( 6*iNumCols+pn );	break;
+	case GRADE_E:		SetState( 7*iNumCols+pn );	break;
 	case GRADE_NO_DATA:	SetDiffuse( RageColor(1,1,1,0) );	break;
 	default:			ASSERT(0);
 	}
@@ -110,13 +111,14 @@ void GradeDisplay::SpinAndSettleOn( Grade g )
 	int iFrameNo=0;
 	switch( g )
 	{
-	case GRADE_AAA:		iFrameNo = 0;	break;
-	case GRADE_AA:		iFrameNo = 1;	break;
-	case GRADE_A:		iFrameNo = 2;	break;
-	case GRADE_B:		iFrameNo = 3;	break;
-	case GRADE_C:		iFrameNo = 4;	break;
-	case GRADE_D:		iFrameNo = 5;	break;
-	case GRADE_E:		iFrameNo = 6;	break;
+	case GRADE_AAAA:	iFrameNo = 0;	break;
+	case GRADE_AAA:		iFrameNo = 1;	break;
+	case GRADE_AA:		iFrameNo = 2;	break;
+	case GRADE_A:		iFrameNo = 3;	break;
+	case GRADE_B:		iFrameNo = 4;	break;
+	case GRADE_C:		iFrameNo = 5;	break;
+	case GRADE_D:		iFrameNo = 6;	break;
+	case GRADE_E:		iFrameNo = 7;	break;
 	default:	ASSERT(0);
 	}
 

@@ -1,3 +1,5 @@
+#ifndef SCREENLOGO_H
+#define SCREENLOGO_H
 /*
 -----------------------------------------------------------------------------
  Class: ScreenLogo
@@ -15,12 +17,19 @@
 class ScreenLogo : public ScreenAttract
 {
 public:
+	ScreenLogo();
+
+	virtual void FirstUpdate();
 
 private:
 	virtual CString	GetMetricName() { return "Logo"; };	// used to look up theme metrics
 	virtual CString	GetElementName() { return "logo"; };	// used to look up theme elements 
 
+	Sprite				m_sprLogo;
+	BitmapText			m_textVersion;
+	BitmapText			m_textSongs;
 };
 
 
 
+#endif

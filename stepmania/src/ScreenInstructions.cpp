@@ -36,6 +36,7 @@ ScreenInstructions::ScreenInstructions()
 {
 	LOG->Trace( "ScreenInstructions::ScreenInstructions()" );
 
+
 	m_Menu.Load(
 		THEME->GetPathTo("BGAnimations","Instructions"), 
 		THEME->GetPathTo("Graphics","Instructions Top Edge"), 
@@ -43,12 +44,31 @@ ScreenInstructions::ScreenInstructions()
 		);
 	this->AddChild( &m_Menu );
 
-	if(!PREFSMAN->m_bHowToPlay)
+
+	if(!PREFSMAN->m_bInstructions)
 	{
+		this->SendScreenMessage( SM_GoToNextScreen, 0 );
 		m_Menu.ImmedOffScreenToMenu();
-		this->SendScreenMessage( SM_GoToNextScreen, 0.f );
 		return;
 	}
+
+	//
+	// Skip this screen unless someone chose easy
+	//
+	Difficulty easiestDiffuclty = DIFFICULTY_HARD;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsPlayerEnabled(p) )
+			continue;
+		easiestDiffuclty = min( easiestDiffuclty, GAMESTATE->m_PreferredDifficulty[p] );
+	}
+	if( easiestDiffuclty != DIFFICULTY_EASY )
+	{
+		this->SendScreenMessage( SM_GoToNextScreen, 0 );
+		m_Menu.ImmedOffScreenToMenu();
+		return;
+	}
+
 
 	m_Menu.TweenOnScreenFromMenu( SM_None, true );
 

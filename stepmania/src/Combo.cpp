@@ -57,6 +57,7 @@ void Combo::UpdateScore( TapNoteScore score, int iNumNotesInThisRow )
 
 	switch( score )
 	{
+	case TNS_MARVELOUS:
 	case TNS_PERFECT:
 	case TNS_GREAT:
 		{
@@ -64,10 +65,15 @@ void Combo::UpdateScore( TapNoteScore score, int iNumNotesInThisRow )
 
 			m_iCurCombo += iNumNotesInThisRow;			// continue combo
 
-			if( score == TNS_PERFECT )	m_iCurComboOfPerfects += iNumNotesInThisRow;
-			else						m_iCurComboOfPerfects = 0;
+			switch( score )
+			{
+			case TNS_MARVELOUS:
+			case TNS_PERFECT:
+				m_iCurComboOfPerfects += iNumNotesInThisRow;
+				break;
+			}
 
-			if( m_iCurComboOfPerfects>=150  &&  (m_iCurComboOfPerfects%150)==0  &&  RandomFloat(0,1) > 0.5  &&  !GAMESTATE->m_bDemonstration )
+			if( (m_iCurComboOfPerfects>=150)  &&  (m_iCurComboOfPerfects%150)==0  &&  !GAMESTATE->m_bDemonstration )
 				SCREENMAN->SendMessageToTopScreen( SM_BeginToasty, 0 );
 
 

@@ -124,6 +124,7 @@ enum TapNoteScore {
 	TNS_GOOD,
 	TNS_GREAT,
 	TNS_PERFECT,
+	TNS_MARVELOUS,
 	NUM_TAP_NOTE_SCORES
 };
 
@@ -131,6 +132,7 @@ inline int TapNoteScoreToDancePoints( TapNoteScore tns )
 {
 	switch( tns )
 	{
+	case TNS_MARVELOUS:	return +3;
 	case TNS_PERFECT:	return +2;
 	case TNS_GREAT:		return +1;
 	case TNS_GOOD:		return +0;

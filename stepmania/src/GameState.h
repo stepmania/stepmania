@@ -59,7 +59,7 @@ public:
 
 	CString			m_sLoadingMessage;
 	CString			m_sPreferredGroup;
-	Difficulty	m_PreferredDifficulty[NUM_PLAYERS];
+	Difficulty		m_PreferredDifficulty[NUM_PLAYERS];
 	SongSortOrder	m_SongSortOrder;			// used by MusicWheel
 	PlayMode		m_PlayMode;
 	bool			m_bEditing;			// NoteField does special stuff when this is true
