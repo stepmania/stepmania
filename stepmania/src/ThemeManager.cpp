@@ -312,9 +312,7 @@ CString ThemeManager::GetPathTo( ElementCategory category, CString sFileName, bo
 	}
 	
 	// TODO: Use HOOKS->MessageBox()
-#if defined(DEBUG) && defined(WIN32)
 try_element_again:
-#endif
 
 	CString ret = GetPathTo( m_sCurThemeName, category, sFileName);
 	if( !ret.empty() )	// we found something
