@@ -347,7 +347,7 @@ void Background::LoadFromSong( const Song* pSong )
 			
 			bool bIsAlreadyLoaded = m_BGAnimations.find(sBGName) != m_BGAnimations.end();
 
-			if( !bIsAlreadyLoaded )
+			if( sBGName.CompareNoCase("-random-") && !bIsAlreadyLoaded )
 			{
 				BGAnimation *pTempBGA = CreateSongBGA( sBGName );
 				if( pTempBGA )
