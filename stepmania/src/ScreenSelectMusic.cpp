@@ -54,6 +54,7 @@
 #define SCORE_FRAME_Y( p )		THEME->GetMetricF("ScreenSelectMusic",ssprintf("ScoreFrameP%dY",p+1))
 #define SCORE_X( p )			THEME->GetMetricF("ScreenSelectMusic",ssprintf("ScoreP%dX",p+1))
 #define SCORE_Y( p )			THEME->GetMetricF("ScreenSelectMusic",ssprintf("ScoreP%dY",p+1))
+#define SCORE_ZOOM				THEME->GetMetricF("ScreenSelectMusic","ScoreZoom")
 #define METER_FRAME_X( p )		THEME->GetMetricF("ScreenSelectMusic",ssprintf("MeterFrameP%dX",p+1))
 #define METER_FRAME_Y( p )		THEME->GetMetricF("ScreenSelectMusic",ssprintf("MeterFrameP%dY",p+1))
 #define METER_X( p )			THEME->GetMetricF("ScreenSelectMusic",ssprintf("MeterP%dX",p+1))
@@ -205,7 +206,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 		this->AddChild( &m_sprHighScoreFrame[p] );
 
 		m_HighScore[p].SetXY( SCORE_X(p), SCORE_Y(p) );
-		m_HighScore[p].SetZoom( 0.6f );
+		m_HighScore[p].SetZoom( SCORE_ZOOM );
 		m_HighScore[p].SetDiffuse( PlayerToColor(p) );
 		this->AddChild( &m_HighScore[p] );
 	}	
