@@ -714,12 +714,23 @@ void SongManager::SaveStepsMemCardDataToFile( CString fn, int mc )
 		Song* pSong = m_pSongs[s];
 		ASSERT(pSong);
 
-		vector<Steps*> vNotes = pSong->m_apNotes;
-		if( vNotes.size() == 0 )
-			continue;	// skip	
+		/* If the song has never been played, don't write anything.  This keeps
+		 * us from saving a dozen copies of each song for all autogen difficulties,
+		 * since most people only use a couple game modes. */
+		vector<Steps*> vNotes;
+		for( unsigned i=0; i<pSong->m_apNotes.size(); ++i )
+		{
+			Steps* pNotes = pSong->m_apNotes[i];
+			if( !pNotes->m_MemCardDatas[mc].iNumTimesPlayed )
+				continue;
+			vNotes.push_back( pNotes );
+		}
 
 		FileWrite( f, pSong->GetSongDir() );
 		FileWrite( f, vNotes.size() );
+
+		if( vNotes.size() == 0 )
+			continue;	// skip	
 
 		for( unsigned n=0; n<vNotes.size(); n++ )
 		{
