@@ -38,8 +38,10 @@ private:
 	
 	bool FinalFlush();
 
+	int m_iMode;
+
 public:
-	RageFileObjDirect( const CString &path, int fd_, RageFile &p );
+	RageFileObjDirect( const CString &path, int fd_, int mode_, RageFile &p );
 	virtual ~RageFileObjDirect();
 	virtual int Read(void *buffer, size_t bytes);
 	virtual int Write(const void *buffer, size_t bytes);
@@ -101,7 +103,7 @@ RageFileObj *MakeFileObjDirect( CString sPath, int mode, RageFile &p, int &err )
 		return NULL;
 	}
 
-	return new RageFileObjDirect( sPath, fd, p );
+	return new RageFileObjDirect( sPath, fd, mode, p );
 }
 
 RageFileObj *RageFileDriverDirect::Open( const CString &path, int mode, RageFile &p, int &err )
@@ -159,7 +161,7 @@ bool RageFileDriverDirect::Remove( const CString &path )
 RageFileObj *RageFileObjDirect::Copy( RageFile &p ) const
 {
 	int err;
-	RageFileObj *ret = MakeFileObjDirect( path, parent.GetOpenMode(), p, err );
+	RageFileObj *ret = MakeFileObjDirect( path, m_iMode, p, err );
 
 	if( ret == NULL )
 		RageException::Throw("Couldn't reopen \"%s\": %s", path.c_str(), strerror(err) );
@@ -175,20 +177,21 @@ bool RageFileDriverDirect::Ready()
 }
 
 static const unsigned int BUFSIZE = 1024*64;
-RageFileObjDirect::RageFileObjDirect( const CString &path_, int fd_, RageFile &p ):
+RageFileObjDirect::RageFileObjDirect( const CString &path_, int fd_, int mode_, RageFile &p ):
 	RageFileObj( p )
 {
 	path = path_;
 	fd = fd_;
+	m_iMode = mode_;
 	ASSERT( fd != -1 );
 
-	if( parent.GetOpenMode() & RageFile::WRITE )
+	if( m_iMode & RageFile::WRITE )
 		write_buf.reserve( BUFSIZE );
 }
 
 bool RageFileObjDirect::FinalFlush()
 {
-	if( !(parent.GetOpenMode() & RageFile::WRITE) )
+	if( !(m_iMode & RageFile::WRITE) )
 		return true;
 
 	/* Flush the output buffer. */
@@ -196,7 +199,7 @@ bool RageFileObjDirect::FinalFlush()
 		return false;
 
 	/* Only do the rest of the flushes if SLOW_FLUSH is enabled. */
-	if( !(parent.GetOpenMode() & RageFile::SLOW_FLUSH) )
+	if( !(m_iMode & RageFile::SLOW_FLUSH) )
 		return true;
 	
 	/* Force a kernel buffer flush. */
@@ -247,8 +250,8 @@ RageFileObjDirect::~RageFileObjDirect()
 
 	/* If we failed to flush the file properly, something's amiss--don't touch the original file! */
 	if( !failed &&
-		 (parent.GetOpenMode()&RageFile::WRITE) &&
-		!(parent.GetOpenMode() & RageFile::STREAMED) )
+		 (m_iMode & RageFile::WRITE) &&
+		!(m_iMode & RageFile::STREAMED) )
 	{
 		/*
 		 * We now have path written to MakeTempFilename(path).  Rename the temporary
