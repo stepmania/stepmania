@@ -134,7 +134,7 @@ const char *ThreadSlot::GetFormattedCheckpoint( int lineno )
 }
 
 static ThreadSlot g_ThreadSlots[MAX_THREADS];
-static RageMutex g_ThreadSlotsLock;
+static RageMutex g_ThreadSlotsLock("ThreadSlots");
 
 static int FindEmptyThreadSlot()
 {
@@ -737,7 +737,8 @@ void RageMutexImpl::Unlock()
 
 
 
-RageMutex::RageMutex()
+RageMutex::RageMutex( const CString name ):
+	m_sName( name )
 {
 	mut = new RageMutexImpl;
 }

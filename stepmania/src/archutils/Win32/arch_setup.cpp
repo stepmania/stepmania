@@ -5,7 +5,7 @@
 
 struct tm *my_localtime_r( const time_t *timep, struct tm *result )
 {
-	static RageMutex mut;
+	static RageMutex mut("my_localtime_r");
 	LockMut(mut);
 
 	*result = *localtime( timep );
@@ -14,7 +14,7 @@ struct tm *my_localtime_r( const time_t *timep, struct tm *result )
 
 struct tm *my_gmtime_r( const time_t *timep, struct tm *result )
 {
-	static RageMutex mut;
+	static RageMutex mut("my_gmtime_r");
 	LockMut(mut);
 
 	*result = *gmtime( timep );

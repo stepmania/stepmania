@@ -47,11 +47,12 @@ struct RageMutexImpl;
 class RageMutex
 {
 	RageMutexImpl *mut;
+	const CString m_sName;
 
 public:
 	void Lock();
 	void Unlock();
-	RageMutex();
+	RageMutex( CString name );
 	~RageMutex();
 };
 

@@ -281,7 +281,7 @@ RageSounds::RageSounds()
 	/* Init RageSoundMan first: */
 	ASSERT( SOUNDMAN );
 
-	g_Mutex = new RageMutex;
+	g_Mutex = new RageMutex("RageSounds");
 	g_Playing = new MusicPlaying( new RageSound );
 
 	g_UpdatingTimer = false;

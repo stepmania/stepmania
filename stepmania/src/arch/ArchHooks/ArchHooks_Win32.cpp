@@ -16,7 +16,7 @@
 ArchHooks_Win32::ArchHooks_Win32()
 {
 	SetUnhandledExceptionFilter(CrashHandler);
-	TimeCritMutex = new RageMutex;
+	TimeCritMutex = new RageMutex("TimeCritMutex");
 }
 
 ArchHooks_Win32::~ArchHooks_Win32()

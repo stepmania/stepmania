@@ -116,7 +116,7 @@ RageFileManager::RageFileManager( CString argv0 )
 {
 	ChangeToDirOfExecutable( argv0 );
 	
-	g_Mutex = new RageMutex;
+	g_Mutex = new RageMutex("RageFileManager");
 
 	g_Mountpoints = new RageFileDriverMountpoints;
 	LoadedDriver ld;

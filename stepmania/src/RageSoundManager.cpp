@@ -16,7 +16,8 @@
 
 RageSoundManager *SOUNDMAN = NULL;
 
-RageSoundManager::RageSoundManager(CString drivers)
+RageSoundManager::RageSoundManager(CString drivers):
+	lock("RageSoundManager")
 {
 	/* needs to be done first */
 	SOUNDMAN = this;

@@ -91,7 +91,7 @@ RageLog::RageLog()
 	g_fileLog = new RageFile;
 	g_fileInfo = new RageFile;
 	
-	g_Mutex = new RageMutex;
+	g_Mutex = new RageMutex("Log");
 
 	m_bLogToDisk = false;
 	m_bInfoToDisk = false;
