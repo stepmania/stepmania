@@ -19,6 +19,7 @@
 #include "RandomStream.h"
 #include "FocusingSprite.h"
 #include "RageMusic.h"
+#include "RageSound.h"
 #include "MotionBlurSprite.h"
 #include "Background.h"
 #include "LifeMeter.h"
