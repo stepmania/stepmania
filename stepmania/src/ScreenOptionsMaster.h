@@ -56,6 +56,8 @@ protected:
 
 	virtual void GoToNextState();
 	virtual void GoToPrevState();
+
+	virtual void RefreshIcons();
 };
 
 

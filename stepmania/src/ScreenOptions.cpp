@@ -336,7 +336,7 @@ void ScreenOptions::InitOptionsText()
 		BitmapText &title = m_textTitles[i];
 
 		title.LoadFromFont( THEME->GetPathToF("ScreenOptions title") );
-		CString sText = optline.name;
+		CString sText = optline.title;
 
 		title.SetText( sText );
 		title.SetXY( LABELS_X, fY );
@@ -422,41 +422,7 @@ void ScreenOptions::PositionIcons()
 
 void ScreenOptions::RefreshIcons()
 {
-	ASSERT( m_iNumOptionRows < (int) MAX_OPTION_LINES );
-
-	for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
-	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;
-
-		for( int i=0; i<m_iNumOptionRows; i++ )	// foreach options line
-		{
-			OptionRow &row = m_OptionRow[i];
-			OptionIcon &icon = m_OptionIcons[p][i];
-
-			int iSelection = m_iSelectedOption[p][i];
-			if( iSelection >= (int)m_OptionRow[i].choices.size() )
-			{
-				/* Invalid selection.  Send debug output, to aid debugging. */
-				CString error = ssprintf("Option row with name \"%s\" selects item %i, but there are only %i items:\n",
-					m_OptionRow[i].name.c_str(),
-					iSelection, m_OptionRow[i].choices.size() );
-
-				for( unsigned j = 0; j < m_OptionRow[i].choices.size(); ++j )
-					error += ssprintf("    %s\n", m_OptionRow[i].choices[j].c_str());
-
-				RageException::Throw( "%s", error.c_str() );
-			}
-
-			CString sSelection = row.choices[iSelection];
-			if( sSelection == "ON" )
-				sSelection = m_OptionRow[i].name;
-			if( row.bOneChoiceForAllPlayers )
-				icon.Load( (PlayerNumber)p, "", false );
-			else
-				icon.Load( (PlayerNumber)p, sSelection, false );
-		}
-	}
+	// handled by ScreenOptionsMaster
 }
 
 

@@ -282,6 +282,16 @@ void NoteDataUtil::RemoveHoldNotes(NoteData &in)
 }
 
 
+void NoteDataUtil::RemoveMines(NoteData &in)
+{
+	int max_row = in.GetLastRow();
+	for( int t=0; t<in.GetNumTracks(); t++ )
+		for( int r=0; r<=max_row; r++ ) 
+			if( in.GetTapNote(t,r)==TAP_MINE )
+				in.SetTapNote(t,r,TAP_EMPTY);
+}
+
+
 void NoteDataUtil::Turn( NoteData &in, StepsType st, TurnType tt )
 {
 	int iTakeFromTrack[MAX_NOTE_TRACKS];	// New track "t" will take from old track iTakeFromTrack[t]
@@ -1106,6 +1116,9 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, Ste
 {
 	if( !po.m_bHoldNotes )
 		RemoveHoldNotes( nd );
+
+	if( !po.m_bMines )
+		RemoveMines( nd );
 
 	switch( po.m_Turn )
 	{

@@ -101,6 +101,7 @@ struct PlayerOptions
 	Turn		m_Turn;
 	Transform	m_Transform;
 	bool		m_bHoldNotes;
+	bool		m_bMines;
 	bool		m_bTimingAssist;
 	bool		m_bProTiming;
 	CString		m_sPositioning;	/* The current positioning mode, or empty to use the normal positions. */

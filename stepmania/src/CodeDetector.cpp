@@ -42,6 +42,7 @@ const CString g_sCodeNames[CodeDetector::NUM_CODES] = {
 	"NextTurn",
 	"Reverse",
 	"HoldNotes",
+	"Mines",
 	"Dark",
 	"Hidden",
 	"RandomVanish",
@@ -183,6 +184,7 @@ bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
 			case CODE_NEXT_TURN:		GAMESTATE->m_PlayerOptions[pn].NextTurn();										break;
 			case CODE_REVERSE:			GAMESTATE->m_PlayerOptions[pn].NextScroll();									break;
 			case CODE_HOLDS:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_bHoldNotes, true, false );				break;
+			case CODE_MINES:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_bMines, true, false );					break;
 			case CODE_DARK:				FLOAT_TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_fDark );							break;
 			case CODE_CANCEL_ALL:		GAMESTATE->m_PlayerOptions[pn].Init();
 										GAMESTATE->m_PlayerOptions[pn].FromString( PREFSMAN->m_sDefaultModifiers );		break;

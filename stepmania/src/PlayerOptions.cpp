@@ -161,6 +161,7 @@ CString PlayerOptions::GetString() const
 	}
 
 	if( !m_bHoldNotes )		sReturn += "NoHolds, ";
+	if( !m_bMines )			sReturn += "NoMines, ";
 	if( m_bTimingAssist )	sReturn += "TimingAssist, ";
 	if( m_bProTiming )		sReturn += "ProTiming, ";
 
@@ -291,6 +292,7 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "alternate" )	SET_FLOAT( fScrolls[SCROLL_ALTERNATE] )
 		else if( sBit == "noholds" )	m_bHoldNotes = !on;
 		else if( sBit == "nofreeze" )	m_bHoldNotes = !on;
+		else if( sBit == "nomines" )	m_bMines = !on;
 		else if( sBit == "dark" )		SET_FLOAT( fDark )
 		else if( sBit == "blind" )		SET_FLOAT( fBlind )
 		else if( sBit == "passmark" )	SET_FLOAT( fPassmark )
@@ -478,6 +480,7 @@ bool ComparePlayerOptions( const PlayerOptions &po1, const PlayerOptions &po2 )
 	COMPARE(m_Turn);
 	COMPARE(m_Transform);
 	COMPARE(m_bHoldNotes);
+	COMPARE(m_bMines);
 	COMPARE(m_bTimingAssist);
 	COMPARE(m_bProTiming);
 	COMPARE(m_fPerspectiveTilt);
