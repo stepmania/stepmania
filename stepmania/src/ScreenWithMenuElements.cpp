@@ -42,6 +42,7 @@ ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( s
 		m_sprStyleIcon.SetName( "StyleIcon" );
 		m_sprStyleIcon.Load( THEME->GetPathToG(sIconFileName) );
 		m_sprStyleIcon.StopAnimating();
+		m_sprStyleIcon.SetState( GAMESTATE->m_MasterPlayerNumber );
 		UtilSetXY( m_sprStyleIcon, m_sName );
 		UtilOnCommand( m_sprStyleIcon, m_sName );
 		this->AddChild( &m_sprStyleIcon );
