@@ -608,6 +608,9 @@ void Player::HandleHoldNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore
 		m_ScoreKeeper->HandleHoldNoteScore(score, TapNoteScore);
 	}
 
+	if (m_pScore)
+		m_pScore->SetScore(GAMESTATE->m_fScore[m_PlayerNumber]);
+
 	if( m_pLifeMeter ) {
 		if( score == HNS_NG ) {
 			m_pLifeMeter->ChangeLife( score, TapNoteScore );
