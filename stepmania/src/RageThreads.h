@@ -22,6 +22,8 @@ public:
 	/* If HaltAllThreads was called (with Kill==false), resume. */
 	static void ResumeAllThreads();
 
+	static unsigned int GetCurrentThreadID();
+
 	static const char *GetCurThreadName();
 
 	int Wait();

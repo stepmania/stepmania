@@ -439,6 +439,11 @@ void RageThread::ResumeAllThreads()
 #endif
 }
 
+unsigned int RageThread::GetCurrentThreadID()
+{
+	return SDL_ThreadID();
+}
+
 /* Normally, checkpoints are only seen in crash logs.  It's occasionally useful
  * to see them in logs, but this outputs a huge amount of text. */
 static bool g_LogCheckpoints = false;
