@@ -4,13 +4,13 @@
 #define _WIN32_WINDOWS 0x0410 // include Win98 stuff
 #include "windows.h"
 #include "archutils/Win32/Crash.h"
+#else
+#include <unistd.h>
 #endif
 
 #if defined(CRASH_HANDLER) && (defined(LINUX) || defined(DARWIN))
 #include "archutils/Unix/CrashHandler.h"
 #endif
-
-#include <unistd.h>
 
 void NORETURN sm_crash( const char *reason )
 {
