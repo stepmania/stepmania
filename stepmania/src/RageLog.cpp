@@ -382,11 +382,16 @@ const char *RageLog::GetAdditionalLog()
 
 void RageLog::MapLog(const CString &key, const char *fmt, ...)
 {
-    va_list	va;
+	CString s;
+	if( m_bTimestamping )
+		s += SecondsToMMSSMsMs(RageTimer::GetTimeSinceStart()) + ": ";
+
+	va_list	va;
     va_start(va, fmt);
-	LogMaps[key] = vssprintf( fmt, va );
+	s += vssprintf( fmt, va );
     va_end(va);
 
+	LogMaps[key] = s;
 	UpdateMappedLog();
 }
 
