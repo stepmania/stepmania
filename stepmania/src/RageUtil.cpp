@@ -903,6 +903,8 @@ longchar utf8_get_char (const char *p)
   return result;
 }
 
+const longchar INVALID_CHAR = 0xFFFFFF;
+
 lstring CStringToLstring(const CString &str)
 {
 	const char *ptr = str.c_str(), *end = str.c_str()+str.size();
@@ -912,7 +914,10 @@ lstring CStringToLstring(const CString &str)
 	while(ptr && ptr != end)
 	{
 		longchar c = utf8_get_char (ptr);
-		ret.push_back(c);
+		if(c == -1)
+			ret.push_back(INVALID_CHAR);
+		else
+			ret.push_back(c);
 		ptr = utf8_find_next_char (ptr, end);
 	}
 

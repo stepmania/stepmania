@@ -415,6 +415,8 @@ Font* FontManager::LoadFont( const CString &sFontOrTextureFilePath, CString sCha
 		CharAliases["menuright"]	= 0x100007;
 		CharAliases["start"]		= 0x100008;
 
+		CharAliases["invalid"]		= INVALID_CHAR; /* 0xFFFFFF */
+
 		for(aliasmap::const_iterator i = CharAliases.begin(); i != CharAliases.end(); ++i)
 		{
 			CString from = ssprintf("&%s;", i->first.GetString());

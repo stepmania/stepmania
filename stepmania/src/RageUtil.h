@@ -153,6 +153,7 @@ void splitrelpath(
  * be 16-bit.  This is mostly used within the font and text system. */
 typedef int longchar;
 typedef basic_string<longchar> lstring;
+extern const longchar INVALID_CHAR;
 
 lstring CStringToLstring(const CString &str);
 CString LcharToUTF8( longchar c );
