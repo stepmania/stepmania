@@ -48,7 +48,11 @@ void Screen::Update( float fDeltaTime )
 
 void Screen::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	if( DeviceI.device == DEVICE_KEYBOARD  &&  DeviceI.button == DIK_ESCAPE )	// don't make user hold back button if they're pressing escape
+	/* Don't send release messages with the default handler. */
+	if(type == IET_RELEASE) return; // don't care
+
+	// don't make user hold back button if they're pressing escape
+	if( DeviceI.device == DEVICE_KEYBOARD  &&  DeviceI.button == DIK_ESCAPE )
 	{
 		this->MenuBack( MenuI.player );
 		return;

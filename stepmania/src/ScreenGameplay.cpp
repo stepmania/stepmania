@@ -692,7 +692,6 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 		m_Player[p].Load( (PlayerNumber)p, &newNoteData, m_pLifeMeter[p], m_pScoreDisplay[p] );
 	}
 
-	
 	m_Background.LoadFromSong( GAMESTATE->m_pCurSong );
 	m_Background.SetDiffuseColor( D3DXCOLOR(0.5f,0.5f,0.5f,1) );
 	m_Background.BeginTweeningQueued( 2 );
@@ -919,6 +918,7 @@ void ScreenGameplay::DrawPrimitives()
 void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	//LOG->Trace( "ScreenGameplay::Input()" );
+	if(type == IET_RELEASE) return; // don't care
 
 	if( GAMESTATE->m_bDemonstration )
 	{

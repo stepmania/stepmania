@@ -434,6 +434,7 @@ const int MENU_NEXT_SORT_PATTERN_SIZE = sizeof(MENU_NEXT_SORT_PATTERN) / sizeof(
 void ScreenSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	LOG->Trace( "ScreenSelectMusic::Input()" );
+	if(type == IET_RELEASE) return; // don't care
 
 	if( MenuI.player == PLAYER_INVALID )
 		return;

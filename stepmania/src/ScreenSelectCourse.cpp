@@ -143,6 +143,7 @@ void ScreenSelectCourse::TweenOffScreen()
 void ScreenSelectCourse::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	LOG->Trace( "ScreenSelectCourse::Input()" );
+	if(type == IET_RELEASE) return; // don't care
 
 	if( m_Menu.IsClosing() )
 		return;		// ignore
