@@ -22,7 +22,6 @@
 */
 
 #include "Notes.h"
-#include "NoteData.h"
 #include "StyleInput.h"
 #include "GameInput.h"
 #include "Game.h"
@@ -30,6 +29,7 @@
 
 const int MAX_COLS_PER_PLAYER = MAX_NOTE_TRACKS;
 
+class NoteData;
 
 class StyleDef
 {

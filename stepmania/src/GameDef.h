@@ -12,7 +12,6 @@
 */
 
 #include "Notes.h"
-#include "NoteData.h"
 #include "GameInput.h"
 #include "MenuInput.h"
 #include "GameConstantsAndTypes.h"
