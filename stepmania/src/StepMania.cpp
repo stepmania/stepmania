@@ -795,8 +795,6 @@ static void GameLoop()
 		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_TAB) ) ) {
 			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_BACKQUOTE) ) )
 				fDeltaTime = 0; /* both; stop time */
-			else if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_CAPSLOCK) ) )
-				fDeltaTime *= 16;
 			else
 				fDeltaTime *= 4;
 		}
