@@ -184,6 +184,7 @@ void ScreenGameplay::Init()
 	if( GAMESTATE->IsCourseMode() )
 	{
 		Course* pCourse = GAMESTATE->m_pCurCourse;
+		ASSERT( pCourse );
 		const StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 
 		/* Increment the play count. */

@@ -33,6 +33,8 @@ void TrailID::FromTrail( const Trail *p )
 
 Trail *TrailID::ToTrail( const Course *p, bool bAllowNull ) const
 {
+	ASSERT( p );
+
 	if( st == STEPS_TYPE_INVALID || cd == COURSE_DIFFICULTY_INVALID )
 		return NULL;
 

@@ -203,7 +203,8 @@ void BPMDisplay::SetBPM( const Course* pCourse )
 {
 	ASSERT( pCourse );
 
-	Trail *pTrail = pCourse->GetTrail( GAMESTATE->GetCurrentStyleDef()->m_StepsType, COURSE_DIFFICULTY_REGULAR );
+	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+	Trail *pTrail = pCourse->GetTrail( st, COURSE_DIFFICULTY_REGULAR );
 
 	ASSERT( pTrail->m_vEntries.size() );
 

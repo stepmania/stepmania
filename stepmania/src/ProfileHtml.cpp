@@ -733,7 +733,7 @@ bool PrintHighScoresForCourse( RageFile &f, const Profile *pProfile, Course* pCo
 {
 	bool bPrintedAny = false;
 
-	for( StepsType st=(StepsType)0; st<NUM_STEPS_TYPES; st=(StepsType)(st+1) )
+	FOREACH_StepsType( st )
 	{
 		FOREACH_ShownCourseDifficulty( cd )
 		{

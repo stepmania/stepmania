@@ -986,9 +986,9 @@ void ScreenEvaluation::CommitScores(
 			case course:
 				{
 					Course* pCourse = GAMESTATE->m_pCurCourse;
+					ASSERT( pCourse );
 					CourseDifficulty cd = GAMESTATE->m_PreferredCourseDifficulty[p];
 					Trail *pTrail = pCourse->GetTrail( st, cd );
-					ASSERT( pCourse );
 					ASSERT( pTrail );
 					pHSL = &pProfile->GetCourseHighScoreList( pCourse, pTrail );
 				}
