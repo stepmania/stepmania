@@ -78,6 +78,10 @@ static int TestTLSThread( void *p )
 
 static void TestTLS()
 {
+	/* TLS won't work on older threads libraries, and may crash. */
+	if( !UsingNPTL() )
+		return;
+
 	/* TLS won't work on older Linux kernels.  Do a simple check. */
 	g_iTestTLS = 1;
 
