@@ -110,6 +110,29 @@ void Steps::GetSMNoteData( CString &notes_comp_out, CString &attacks_comp_out ) 
 	attacks_comp_out = notes_comp->attacks;
 }
 
+float Steps::PredictMeter()
+{
+	//Define and Init Non-Radar Values
+	float SV;
+	float ChaosSquare;
+	float pMeter;
+	SV = this->GetRadarValues()[RADAR_STREAM] * this->GetRadarValues()[RADAR_VOLTAGE];
+	ChaosSquare = this->GetRadarValues()[RADAR_CHAOS] * this->GetRadarValues()[RADAR_CHAOS];
+
+	pMeter = BETA_ZERO;
+	pMeter += STREAM * this->GetRadarValues()[RADAR_STREAM];
+	pMeter += VOLTAGE * this->GetRadarValues()[RADAR_VOLTAGE];
+	pMeter += AIR * this->GetRadarValues()[RADAR_AIR];
+	pMeter += FREEZE * this->GetRadarValues()[RADAR_FREEZE];
+	pMeter += CHAOS * this->GetRadarValues()[RADAR_CHAOS];
+	pMeter += SXV * SV;
+	pMeter += CSQUARE * ChaosSquare;
+	if (this->GetDifficulty() == DIFFICULTY_HARD) pMeter += HEAVY;
+	if (this->GetDifficulty() == DIFFICULTY_EASY) pMeter += LIGHT;
+	return pMeter;
+}
+
+
 void Steps::TidyUpData()
 {
 	if( GetDifficulty() == DIFFICULTY_INVALID )

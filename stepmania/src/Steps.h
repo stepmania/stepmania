@@ -18,6 +18,18 @@
 #include "Grade.h"
 class NoteData;
 
+//Model Coefficients
+#define BETA_ZERO	(0.775f)
+#define STREAM		(10.1f)
+#define VOLTAGE		(5.27f)
+#define AIR			(-0.905f)
+#define FREEZE		(-1.10f)
+#define CHAOS		(2.86f)
+#define HEAVY		(0.722f)
+#define LIGHT		(-0.877f)
+#define SXV			(-6.35f) // Square/Voltage Interaction Varible
+#define CSQUARE		(-2.58f)
+
 class Steps
 {
 public:
@@ -43,8 +55,8 @@ public:
 	void SetMeter(int meter);
 	void SetRadarValue(int r, float val);
 	bool IsAutogen() const;	// Was created by autogen?
-
-
+	float PredictMeter();
+	
 	StepsType	m_StepsType;
 
 	void		GetNoteData( NoteData* pNoteDataOut ) const;
