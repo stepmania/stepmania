@@ -129,9 +129,11 @@ void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GainFocus:
 		if( !GAMESTATE->IsTimeToPlayAttractSounds() )
 			SOUNDMAN->SetPrefs( 0 );	// silent
+		break;
 
 	case SM_LoseFocus:
 		SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );	// turn volume back on
+		break;
 
 	case SM_GoToNextScreen:
 		SOUND->StopMusic();
