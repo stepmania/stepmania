@@ -32,13 +32,16 @@ ScreenGameOver::ScreenGameOver() : Screen("ScreenGameOver")
 	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenGameOver background") );
 	this->AddChild( &m_Background );
 
-	m_Fade.OpenWipingRight( SM_None );
-	this->AddChild( &m_Fade );
+	m_In.Load( THEME->GetPathToB("ScreenGameOver in") );
+	this->AddChild( &m_In );
+
+	m_Out.Load( THEME->GetPathToB("ScreenGameOver out") );
+	this->AddChild( &m_Out );
 
 	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenGameOver music") );
 
-	this->PostScreenMessage( SM_PlayAnnouncer, 0.5 );
-	this->PostScreenMessage( SM_StartFadingOut, 5 );
+	m_In.StartTransitioning( SM_PlayAnnouncer );
+	this->PostScreenMessage( SM_StartFadingOut, m_Background.GetLengthSeconds() );
 }
 
 
@@ -50,7 +53,7 @@ void ScreenGameOver::HandleScreenMessage( const ScreenMessage SM )
 		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("game over") );
 		break;
 	case SM_StartFadingOut:
-		m_Fade.CloseWipingRight( SM_GoToNextScreen );
+		m_Out.StartTransitioning( SM_GoToNextScreen );
 		break;
 	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
@@ -60,7 +63,7 @@ void ScreenGameOver::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenGameOver::MenuStart( PlayerNumber pn )
 {
-	if( m_Fade.IsClosing() )
+	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 		return;
 
 	this->ClearMessageQueue();

@@ -12,7 +12,7 @@
 
 #include "Screen.h"
 #include "BitmapText.h"
-#include "TransitionFade.h"
+#include "TransitionBGAnimation.h"
 #include "Quad.h"
 #include "RandomSample.h"
 
@@ -35,7 +35,7 @@ protected:
 	void MenuStart( PlayerNumber pn );
 
 
-	TransitionFade	m_Fade;
+	BGAnimation					m_Background;
 	BitmapText		m_textQuestion;
 	Quad			m_rectAnswerBox;
 	BitmapText		m_textAnswer[2];	// "YES" or "NO"
@@ -44,5 +44,7 @@ protected:
 	ScreenMessage	m_SMSendWhenDone;
 	void(*m_pOnYes)();
 	void(*m_pOnNo)();
+	TransitionBGAnimation		m_In;
+	TransitionBGAnimation		m_Out;
 };
 

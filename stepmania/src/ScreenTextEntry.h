@@ -12,7 +12,7 @@
 
 #include "Screen.h"
 #include "BitmapText.h"
-#include "TransitionFade.h"
+#include "TransitionBGAnimation.h"
 #include "Quad.h"
 #include "RandomSample.h"
 
@@ -37,7 +37,7 @@ protected:
 
 	void UpdateText();
 
-	TransitionFade	m_Fade;
+	BGAnimation					m_Background;
 	BitmapText		m_textQuestion;
 	Quad			m_rectAnswerBox;
 	wstring			m_sAnswer;
@@ -46,5 +46,7 @@ protected:
 	void(*m_pOnOK)( CString sAnswer );
 	void(*m_pOnCancel)();
 	bool			m_bCancelled;
+	TransitionBGAnimation		m_In;
+	TransitionBGAnimation		m_Out;
 };
 

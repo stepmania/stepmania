@@ -12,7 +12,7 @@
 
 #include "Screen.h"
 #include "BitmapText.h"
-#include "TransitionFade.h"
+#include "TransitionBGAnimation.h"
 #include "Quad.h"
 #include "RandomSample.h"
 
@@ -92,14 +92,16 @@ protected:
 	void AfterLineChanged();
 	void AfterAnswerChanged();
 
+	BGAnimation			m_Background;
 	Menu				m_Def;
-	TransitionFade		m_Fade;
 	BitmapText			m_textTitle;
 	BitmapText			m_textLabel[MAX_MENU_ROWS];
 	BitmapText			m_textAnswer[MAX_MENU_ROWS];
 	int					m_iCurLine;
 	int					m_iCurAnswers[MAX_MENU_ROWS];
 	ScreenMessage		m_SMSendOnOK, m_SMSendOnCancel;
+	TransitionBGAnimation		m_In;
+	TransitionBGAnimation		m_Out;
 
 public:
 	static int	s_iLastLine;

@@ -49,11 +49,8 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 	ASSERT( m_Def.rows.size() <= MAX_MENU_ROWS );
 
 
-	m_Fade.SetTransitionTime( 0.5f );
-	m_Fade.SetDiffuse( RageColor(0,0,0,0.7f) );
-	m_Fade.SetOpened();
-	m_Fade.CloseWipingRight();
-	this->AddChild( &m_Fade );
+	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenMiniMenu background") );
+	this->AddChild( &m_Background );
 
 	
 	float fHeightOfAll = (m_Def.rows.size()-1)*SPACING_Y;
@@ -125,7 +122,12 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 		m_textAnswer[k].SetX( fAnswerX );
 	}
 
-	SOUNDMAN->PlayOnce( THEME->GetPathToS("Common prompt") );
+	m_In.Load( THEME->GetPathToB("ScreenMiniMenu in") );
+	m_In.StartTransitioning();
+	this->AddChild( &m_In );
+
+	m_Out.Load( THEME->GetPathToB("ScreenMiniMenu out") );
+	this->AddChild( &m_Out );
 }
 
 void ScreenMiniMenu::Update( float fDeltaTime )
@@ -140,7 +142,7 @@ void ScreenMiniMenu::DrawPrimitives()
 
 void ScreenMiniMenu::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	if( m_Fade.IsOpening() )
+	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 		return;
 
 	if( DeviceI.device==DEVICE_KEYBOARD && type==IET_FIRST_PRESS )
@@ -212,7 +214,7 @@ void ScreenMiniMenu::MenuRight( PlayerNumber pn )
 
 void ScreenMiniMenu::MenuStart( PlayerNumber pn )
 {
-	m_Fade.OpenWipingRight( SM_GoToOK );
+	m_Out.StartTransitioning( SM_GoToOK );
 
 	SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
 
@@ -222,7 +224,7 @@ void ScreenMiniMenu::MenuStart( PlayerNumber pn )
 
 void ScreenMiniMenu::MenuBack( PlayerNumber pn )
 {
-	m_Fade.OpenWipingRight( SM_GoToCancel );
+	m_Out.StartTransitioning( SM_GoToCancel );
 }
 
 void ScreenMiniMenu::BeforeLineChanged()

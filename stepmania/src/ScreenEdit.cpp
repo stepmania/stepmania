@@ -272,7 +272,10 @@ ScreenEdit::ScreenEdit() : Screen("ScreenEdit")
 	GAMESTATE->m_PlayerController[PLAYER_1] = HUMAN;
 	m_Player.SetXY( PLAYER_X, PLAYER_Y );
 
-	m_Fade.SetClosed();
+	m_In.Load( THEME->GetPathToB("ScreenEdit in") );
+	m_In.StartTransitioning();
+
+	m_Out.Load( THEME->GetPathToB("ScreenEdit out") );
 
 	m_sprHelp.Load( THEME->GetPathToG("ScreenEdit help") );
 	m_sprHelp.SetHorizAlign( Actor::align_left );
@@ -284,6 +287,7 @@ ScreenEdit::ScreenEdit() : Screen("ScreenEdit")
 	m_textHelp.SetVertAlign( Actor::align_top );
 	m_textHelp.SetZoom( 0.5f );
 	m_textHelp.SetText( HELP_TEXT );
+	m_textHelp.EnableShadow( false );
 
 	m_sprInfo.Load( THEME->GetPathToG("ScreenEdit Info") );
 	m_sprInfo.SetHorizAlign( Actor::align_right );
@@ -294,6 +298,7 @@ ScreenEdit::ScreenEdit() : Screen("ScreenEdit")
 	m_textInfo.SetHorizAlign( Actor::align_left );
 	m_textInfo.SetVertAlign( Actor::align_top );
 	m_textInfo.SetZoom( 0.5f );
+	m_textInfo.EnableShadow( false );
 	//m_textInfo.SetText();	// set this below every frame
 
 	m_soundChangeLine.Load( THEME->GetPathToS("ScreenEdit line") );
@@ -306,8 +311,6 @@ ScreenEdit::ScreenEdit() : Screen("ScreenEdit")
 	m_soundMusic.SetStopMode(RageSound::M_CONTINUE);
 
 	m_soundAssistTick.Load(		THEME->GetPathToS("ScreenEdit assist tick") );
-
-	m_Fade.OpenWipingRight();
 }
 
 ScreenEdit::~ScreenEdit()
@@ -410,7 +413,8 @@ void ScreenEdit::Update( float fDeltaTime )
 	m_SnapDisplay.Update( fDeltaTime );
 	m_GrayArrowRowEdit.Update( fDeltaTime );
 	m_NoteFieldEdit.Update( fDeltaTime );
-	m_Fade.Update( fDeltaTime );
+	m_In.Update( fDeltaTime );
+	m_Out.Update( fDeltaTime );
 	m_sprHelp.Update( fDeltaTime );
 	m_textHelp.Update( fDeltaTime );
 	m_sprInfo.Update( fDeltaTime );
@@ -522,7 +526,8 @@ void ScreenEdit::DrawPrimitives()
 			m_textHelp.Draw();
 			m_sprInfo.Draw();
 			m_textInfo.Draw();
-			m_Fade.Draw();
+			m_In.Draw();
+			m_Out.Draw();
 		}
 		break;
 	case MODE_RECORDING:
@@ -544,6 +549,9 @@ void ScreenEdit::DrawPrimitives()
 void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 //	LOG->Trace( "ScreenEdit::Input()" );
+
+	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
+		return;
 
 	switch( m_EditMode )
 	{
@@ -1283,7 +1291,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 			PlayPreviewMusic();
 			break;
 		case exit:
-			SCREENMAN->SetNewScreen( "ScreenEditMenu" );
+			m_Out.StartTransitioning( SM_GoToNextScreen );
 			break;
 		default:
 			ASSERT(0);

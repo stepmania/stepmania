@@ -11,7 +11,7 @@
 
 #include "Screen.h"
 #include "Sprite.h"
-#include "TransitionFade.h"
+#include "TransitionBGAnimation.h"
 #include "BitmapText.h"
 #include "Player.h"
 #include "RandomSample.h"
@@ -79,7 +79,8 @@ protected:
 	RageSound			m_soundChangeSnap;
 	RageSound			m_soundMarker;
 
-	TransitionFade		m_Fade;
+	TransitionBGAnimation		m_In;
+	TransitionBGAnimation		m_Out;
 
 
 // for MODE_RECORD

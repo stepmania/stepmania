@@ -11,7 +11,7 @@
 
 #include "Screen.h"
 #include "BGAnimation.h"
-#include "TransitionFade.h"
+#include "TransitionBGAnimation.h"
 
 
 class ScreenGameOver : public Screen
@@ -25,8 +25,9 @@ public:
 
 private:
 
-	TransitionFade				m_Fade;
-	BGAnimation			m_Background;
+	TransitionBGAnimation	m_In;
+	TransitionBGAnimation	m_Out;
+	BGAnimation				m_Background;
 };
 
 

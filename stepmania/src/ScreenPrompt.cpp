@@ -38,11 +38,8 @@ ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool b
 	m_pOnNo = OnNo;
 
 
-	m_Fade.SetTransitionTime( 0.5f );
-	m_Fade.SetDiffuse( RageColor(0,0,0,0.7f) );
-	m_Fade.SetOpened();
-	m_Fade.CloseWipingRight();
-	this->AddChild( &m_Fade );
+	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenPrompt background") );
+	this->AddChild( &m_Background );
 
 	m_textQuestion.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textQuestion.SetText( sText );
@@ -80,7 +77,12 @@ ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool b
 
 	m_textAnswer[m_bAnswer].SetEffectGlowShift();
 
-	SOUNDMAN->PlayOnce( THEME->GetPathToS("Common prompt") );
+	m_In.Load( THEME->GetPathToB("ScreenPrompt in") );
+	m_In.StartTransitioning();
+	this->AddChild( &m_In );
+	
+	m_Out.Load( THEME->GetPathToB("ScreenPrompt out") );
+	this->AddChild( &m_Out );
 }
 
 void ScreenPrompt::Update( float fDeltaTime )
@@ -95,7 +97,7 @@ void ScreenPrompt::DrawPrimitives()
 
 void ScreenPrompt::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	if( m_Fade.IsOpening() )
+	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 		return;
 
 	if( DeviceI.device==DEVICE_KEYBOARD && type==IET_FIRST_PRESS )
@@ -157,7 +159,7 @@ void ScreenPrompt::MenuRight( PlayerNumber pn )
 
 void ScreenPrompt::MenuStart( PlayerNumber pn )
 {
-	m_Fade.OpenWipingRight( SM_DoneOpeningWipingRight );
+	m_Out.StartTransitioning( SM_DoneOpeningWipingRight );
 
 	m_textQuestion.BeginTweening( 0.2f );
 	m_textQuestion.SetDiffuse( RageColor(1,1,1,0) );
