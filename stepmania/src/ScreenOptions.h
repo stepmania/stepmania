@@ -42,7 +42,7 @@ class ScreenOptions : public ScreenWithMenuElements
 {
 public:
 	ScreenOptions( CString sClassName );
-	void Init( InputMode im, OptionRowData OptionRowData[], int iNumOptionLines );
+	void InitMenu( InputMode im, OptionRowData OptionRowData[], int iNumOptionLines );
 	virtual ~ScreenOptions();
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();

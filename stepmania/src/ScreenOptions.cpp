@@ -129,7 +129,7 @@ void ScreenOptions::LoadOptionIcon( PlayerNumber pn, int iRow, CString sText )
 	m_Rows[iRow]->m_OptionIcons[pn].Load( pn, sText, false );
 }
 
-void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOptionLines )
+void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNumOptionLines )
 {
 	LOG->Trace( "ScreenOptions::Set()" );
 

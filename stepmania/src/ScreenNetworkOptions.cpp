@@ -51,7 +51,7 @@ ScreenNetworkOptions::ScreenNetworkOptions( CString sClassName ) : ScreenOptions
 	g_NetworkOptionsLines[PO_SERVER].choices.push_back("Stop");
 	g_NetworkOptionsLines[PO_SERVER].choices.push_back("Start...");
 	
-	Init( 
+	InitMenu( 
 		INPUTMODE_SHARE_CURSOR, 
 		g_NetworkOptionsLines, 
 		NUM_NETWORK_OPTIONS_LINES );

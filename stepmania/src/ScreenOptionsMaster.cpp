@@ -296,7 +296,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 
 	ASSERT( OptionRowHandlers.size() == asLineNames.size() );
 
-	Init( im, m_OptionRowAlloc, asLineNames.size() );
+	InitMenu( im, m_OptionRowAlloc, asLineNames.size() );
 }
 
 ScreenOptionsMaster::~ScreenOptionsMaster()
