@@ -582,13 +582,51 @@ void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci ) const
 
 RageColor Course::GetColor() const
 {
-	// This could be made smarter
-	if( m_entries.size() >= 7 )
-		return RageColor(1,0,0,1);	// red
-	else if( m_entries.size() >= 4 )
-		return RageColor(1,0.5f,0,1);	// orange
-	else
-		return RageColor(0,1,0,1);	// green
+	switch (PREFSMAN->m_iCourseSortOrder)
+	{
+	case 0:	
+		if( m_entries.size() >= 7 )
+			return RageColor(1,0,0,1);	// red
+		else if( m_entries.size() >= 4 )
+			return RageColor(1,1,0,1);	// yellow
+		else
+			return RageColor(0,1,0,1);	// green
+		// never should get here
+		break;
+
+	case 1:
+		if (SortOrder_AvgDifficulty > 100)
+			return RageColor(0,0,1,1);  // blue
+		if (SortOrder_AvgDifficulty > 8.5)
+			return RageColor(1,0,0,1);  // red
+		if (SortOrder_AvgDifficulty >= 7)
+			return RageColor(1,0.5f,0,1); // orange
+		if (SortOrder_AvgDifficulty >= 5)
+			return RageColor(1,1,0,1);  // yellow
+		return RageColor(0,1,0,1); // green
+
+	case 2:
+		if (SortOrder_TotalDifficulty > 100000)
+			return RageColor(0,0,1,1);  // blue
+		if (SortOrder_TotalDifficulty >= 40)
+			return RageColor(1,0,0,1);  // red
+		if (SortOrder_TotalDifficulty >= 30)
+			return RageColor(1,0.5f,0,1); // orange
+		if (SortOrder_TotalDifficulty >= 20)
+			return RageColor(1,1,0,1);  // yellow
+		return RageColor(0,1,0,1); // green
+
+	case 3:
+		if (SortOrder_Ranking == 3)
+			return RageColor(0,0,1,1);  // blue
+		if (SortOrder_Ranking == 2)
+			return RageColor(1,0.5f,0,1); // orange
+		if (SortOrder_Ranking == 1)
+			return RageColor(0,1,0,1); // green
+		return RageColor(1,1,0,1); // yellow, never should get here
+	}
+
+	return RageColor(1,1,1,1);  // white, never should reach here
 }
 
 
@@ -853,6 +891,16 @@ void Course::UpdateCourseStats()
 
 	for(i = 0; i < m_entries.size(); i++)
 	{
+		// courses with random/players best-worst songs should go at the end
+		if (m_entries[i].type != Entry::fixed)
+		{
+			SortOrder_AvgDifficulty = 9999999; // large number
+			SortOrder_NumStages = ci.size();
+			SortOrder_Ranking = 3;
+			SortOrder_TotalDifficulty = 999999;     // large number
+			return;
+		}
+
 		SortOrder_NumStages++;
 		SortOrder_TotalDifficulty += ci[i].pNotes->GetMeter();
 	}
