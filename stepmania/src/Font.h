@@ -48,7 +48,8 @@ struct FontPageSettings
 		DefaultWidth,
 		AdvanceExtraPixels;
 	float ScaleAllWidthsBy;
-	
+	CString TextureHints;
+
 	map<longchar,int> CharToGlyphNo;
 	/* If a value is missing, the width of the texture frame is used. */
 	map<int,int> GlyphWidths;
@@ -61,7 +62,8 @@ struct FontPageSettings
 		Baseline(-1),
 		DefaultWidth(-1),
 		AdvanceExtraPixels(1),
-		ScaleAllWidthsBy(1)
+		ScaleAllWidthsBy(1),
+		TextureHints("default")
 	{ }
 
 	/* Map a range from a character map to glyphs.  If cnt is -1, map the

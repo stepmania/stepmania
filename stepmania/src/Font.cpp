@@ -39,7 +39,14 @@ void FontPage::Load( FontPageSettings cfg )
 
 	// load texture
 	RageTextureID ID(m_sTexturePath);
-	ID.iColorDepth = 16;
+	if( cfg.TextureHints != "default" )
+		ID.AdditionalTextureHints = cfg.TextureHints;
+	else
+	{
+		/* Using grayscale and 16bpp together means to use a 16bpp image if a grayscale 
+		 * image couldn't be loaded. */
+		ID.AdditionalTextureHints = "grayscale 16bpp";
+	}
 
 	m_pTexture = TEXTUREMAN->LoadTexture( ID );
 	ASSERT( m_pTexture != NULL );
@@ -484,6 +491,7 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 	ini.GetValue( PageName, "Baseline", cfg.Baseline );
 	ini.GetValue( PageName, "DefaultWidth", cfg.DefaultWidth );
 	ini.GetValue( PageName, "AdvanceExtraPixels", cfg.AdvanceExtraPixels );
+	ini.GetValue( PageName, "TextureHints", cfg.TextureHints );
 
 	/* Iterate over all keys. */
 	const IniFile::key *k = ini.GetKey(PageName);
