@@ -324,11 +324,14 @@ void ScreenTextEntry::End( bool bCancelled )
 	{
 		CString sAnswer = WStringToCString(m_sAnswer);
 		CString sError;
-		bool bValidAnswer = m_pValidate( sAnswer, sError );
-		if( !bValidAnswer )
+		if ( m_pValidate != NULL )
 		{
-			SCREENMAN->Prompt( SM_None, sError );
-			return;	// don't end this screen.
+			bool bValidAnswer = m_pValidate( sAnswer, sError );
+			if( !bValidAnswer )
+			{
+				SCREENMAN->Prompt( SM_None, sError );
+				return;	// don't end this screen.
+			}
 		}
 
 		if( m_pOnOK )
