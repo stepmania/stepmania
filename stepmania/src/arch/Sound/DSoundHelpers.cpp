@@ -465,6 +465,35 @@ bool DSoundBuf::get_output_buf( char **buffer, unsigned *bufsiz, int chunksize )
 	if( !playing )
 		cursorend = cursorstart;
 
+	/*
+	 * Some cards (Game Theater XP 7.1 hercwdm.sys 5.12.01.4101 [466688b, 01-10-2003])
+	 * have odd behavior when starting a sound: the start/end cursors go:
+	 *
+	 * 0,0             end cursor forced equal to start above (normal)
+	 * 4608, 1764      end cursor trailing the write cursor; except with old emulated
+	 *                   WaveOut devices, this shouldn't happen; it indicates that the
+	 *                   driver expects almost the whole buffer to be filled.  Also, the
+	 *                   play cursor is too far ahead from the last call for the amount
+	 *                   of actual time passed.
+	 * 704, XXX        start cursor moves back to where it should be.  I don't have an exact
+	 *                   end cursor position, but in general from now on it stays about 5kb
+	 *                   ahead of start (which is where it should be).
+	 *
+	 * The second call is completely wrong; both the start and end cursors are meaningless.
+	 * Detect this: if the end cursor is close behind the start cursor, don't do anything.
+	 * (We can't; we have no idea what the cursors actually are.)
+	 */
+	{
+		int prefetch = cursorend - cursorstart;
+		wrap( prefetch, buffersize );
+
+		if( buffersize-prefetch < 1024*4 )
+		{
+			LOG->Trace( "Strange DirectSound cursor ignored: %i..%i", cursorstart, cursorend );
+			return false;
+		}
+	}
+
 	/* Update buffer_bytes_filled. */
 	{
 		int first_byte_filled = write_cursor-buffer_bytes_filled;
