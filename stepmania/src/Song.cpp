@@ -698,8 +698,10 @@ void Song::SaveToSMFile( CString sPath, bool bSavingCache )
 	fprintf( fp, "#MUSIC:%s;\n", m_sMusicFile );
 	fprintf( fp, "#MUSICBYTES:%u;\n", m_iMusicBytes );
 	fprintf( fp, "#MUSICLENGTH:%.2f;\n", m_fMusicLengthSeconds );
-	fprintf( fp, "#FIRSTBEAT:%.2f;\n", m_fFirstBeat );
-	fprintf( fp, "#LASTBEAT:%.2f;\n", m_fLastBeat );
+	if(bSavingCache) {
+		fprintf( fp, "#FIRSTBEAT:%.2f;\n", m_fFirstBeat );
+		fprintf( fp, "#LASTBEAT:%.2f;\n", m_fLastBeat );
+	}
 	fprintf( fp, "#OFFSET:%.2f;\n", m_fBeat0OffsetInSeconds );
 	fprintf( fp, "#SAMPLESTART:%.2f;\n", m_fMusicSampleStartSeconds );
 	fprintf( fp, "#SAMPLELENGTH:%.2f;\n", m_fMusicSampleLengthSeconds );
