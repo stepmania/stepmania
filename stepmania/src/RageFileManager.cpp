@@ -226,7 +226,8 @@ void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 	RageFileDriver *driver = MakeFileDriver( Type, Root );
 	if( !driver )
 	{
-		LOG->Warn("Can't mount unknown VFS type \"%s\", root \"%s\"", Type.c_str(), Root.c_str() );
+		if( LOG )
+			LOG->Warn("Can't mount unknown VFS type \"%s\", root \"%s\"", Type.c_str(), Root.c_str() );
 		return;
 	}
 
