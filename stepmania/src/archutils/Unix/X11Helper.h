@@ -15,19 +15,19 @@ namespace X11Helper
 	// internal session-tracking stuff (so you should call this anyway).
 	bool Go();
 
-	// Get the current Display (connection). Behavior is undefined if you
-	// didn't call Go() with a successful result first.
-	Display *Dpy();
+	// The current Display (connection). Initialized by the first call to
+	// Go().
+	extern Display *Dpy;
 
-	// Get the current open window. Behavior is undefined if we didn't make
-	// a window yet.
-	Window& Win();
+	// Get the current open window. Initialized by the first call to
+	// MakeWindow().
+	extern Window Win;
 
 	// (Re)create the window on the screen of this number with this depth,
 	// this visual type, this width (optional -- you can resize the window
 	// in your callback later), and this height (optional).
 	bool MakeWindow(int screenNum, int depth, Visual *visual,
-					int width=64, int height=64);
+					int width=32, int height=32);
 
 	// Unmask one X event type mask thingy (XSelectInput() arg 3) on the
 	// current window. Masked/unmasked events will carry between windows.
