@@ -984,12 +984,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="TransitionOniFade.h">
 			</File>
 			<File
-				RelativePath=".\TransitionRectWipe.cpp">
-			</File>
-			<File
-				RelativePath=".\TransitionRectWipe.h">
-			</File>
-			<File
 				RelativePath=".\TransitionStarWipe.cpp">
 			</File>
 			<File
