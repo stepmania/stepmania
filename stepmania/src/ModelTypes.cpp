@@ -22,6 +22,11 @@ AnimatedTexture::AnimatedTexture()
 	fSecsIntoFrame = 0;
 }
 
+AnimatedTexture::~AnimatedTexture()
+{
+	Unload();
+}
+
 void AnimatedTexture::Load( CString sTexOrIniPath )
 {
 	ASSERT( vFrames.empty() );	// don't load more than once
@@ -106,4 +111,13 @@ void AnimatedTexture::SetState( int iState )
 int AnimatedTexture::GetNumStates()
 {
 	return vFrames.size();
+}
+
+void AnimatedTexture::Unload()
+{
+	for(unsigned i = 0; i < vFrames.size(); ++i)
+		TEXTUREMAN->UnloadTexture(vFrames[i].pTexture);
+	vFrames.clear();
+	iCurState = 0;
+	fSecsIntoFrame = 0;
 }

@@ -99,8 +99,10 @@ class RageTexture;
 struct AnimatedTexture
 {
 	AnimatedTexture();
+	~AnimatedTexture();
 	
 	void Load( CString sTexOrIniFile );
+	void Unload();
 	void Update( float fDelta );
 	
 	RageTexture* GetCurrentTexture();
