@@ -12,20 +12,24 @@
 -----------------------------------------------------------------------------
 */
 
-
 #include "Sprite.h"
 #include "GameConstantsAndTypes.h"
+#include "PlayerNumber.h"
 
 class GhostArrow : public Sprite
 {
 public:
 	GhostArrow();
 
+	virtual void Init( PlayerNumber pn );
+
 	virtual void Update( float fDeltaTime );
 
 	void  Step( TapNoteScore score );
 
 protected:
+	PlayerNumber m_PlayerNumber;
+	CString m_sScoreCommand[NUM_TAP_NOTE_SCORES];
 };
 
 

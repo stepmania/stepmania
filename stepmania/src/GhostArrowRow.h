@@ -13,7 +13,6 @@
 
 #include "ActorFrame.h"
 #include "GhostArrow.h"
-#include "GhostArrowBright.h"
 #include "HoldGhostArrow.h"
 #include "GameConstantsAndTypes.h"
 #include "StyleDef.h"
@@ -30,15 +29,17 @@ public:
 	void Load( PlayerNumber pn );
 	
 	void TapNote( int iCol, TapNoteScore score, bool bBright );
+	void TapMine( int iCol, TapNoteScore score );
 	void HoldNote( int iCol );
 	
 protected:
 	int m_iNumCols;
 	PlayerNumber m_PlayerNumber;
 
-	GhostArrow			m_GhostArrowRow[MAX_NOTE_TRACKS];
-	GhostArrowBright	m_GhostArrowRowBright[MAX_NOTE_TRACKS];
-	HoldGhostArrow		m_HoldGhostArrowRow[MAX_NOTE_TRACKS];
+	GhostArrow		m_GhostDim[MAX_NOTE_TRACKS];
+	GhostArrow		m_GhostBright[MAX_NOTE_TRACKS];
+	GhostArrow		m_GhostMine[MAX_NOTE_TRACKS];
+	HoldGhostArrow	m_HoldGhost[MAX_NOTE_TRACKS];
 };
 
 

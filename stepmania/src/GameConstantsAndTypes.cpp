@@ -141,3 +141,19 @@ SongSortOrder StringToSongSortOrder( CString str )
 
 	return SORT_INVALID;
 }
+
+
+CString TapNoteScoreToString( TapNoteScore tns )
+{
+	switch( tns )
+	{
+	case TNS_NONE:			return "none";
+	case TNS_MISS:			return "miss";
+	case TNS_BOO:			return "boo";
+	case TNS_GOOD:			return "good";
+	case TNS_GREAT:			return "great";
+	case TNS_PERFECT:		return "perfect";
+	case TNS_MARVELOUS:		return "marvelous";
+	default:	ASSERT(0);	return "";	// invalid Difficulty
+	}
+}

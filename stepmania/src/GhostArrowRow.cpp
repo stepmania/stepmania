@@ -41,13 +41,25 @@ void GhostArrowRow::Load( PlayerNumber pn )
 		if(Button == "")
 			Button = NoteSkinManager::ColToButtonName(c);
 
-		m_GhostArrowRow[c].Load( NOTESKIN->GetPathTo(pn, Button, "tap explosion dim") );
-		m_GhostArrowRowBright[c].Load( NOTESKIN->GetPathTo(pn, Button, "tap explosion bright") );
-		m_HoldGhostArrowRow[c].Load( NOTESKIN->GetPathTo(pn, Button, "hold explosion") );
+		m_GhostDim[c].SetName( "GhostArrowDim" );
+		m_GhostBright[c].SetName( "GhostArrowBright" );
+		m_GhostMine[c].SetName( "GhostArrowMine" );
+		m_HoldGhost[c].SetName( "HoldGhostArrow" );
+		
+		m_GhostDim[c].Init( pn );
+		m_GhostBright[c].Init( pn );
+		m_GhostMine[c].Init( pn );
+		//m_HoldGhost[c].Init( pn );
 
-		m_GhostArrowRow[c].SetX( pStyleDef->m_ColumnInfo[pn][c].fXOffset );
-		m_GhostArrowRowBright[c].SetX( pStyleDef->m_ColumnInfo[pn][c].fXOffset );
-		m_HoldGhostArrowRow[c].SetX( pStyleDef->m_ColumnInfo[pn][c].fXOffset );
+		m_GhostDim[c].Load( NOTESKIN->GetPathTo(pn, Button, "tap explosion dim") );
+		m_GhostBright[c].Load( NOTESKIN->GetPathTo(pn, Button, "tap explosion bright") );
+		m_GhostMine[c].Load( NOTESKIN->GetPathTo(pn, Button, "tap explosion mine") );
+		m_HoldGhost[c].Load( NOTESKIN->GetPathTo(pn, Button, "hold explosion") );
+
+		m_GhostDim[c].SetX( pStyleDef->m_ColumnInfo[pn][c].fXOffset );
+		m_GhostBright[c].SetX( pStyleDef->m_ColumnInfo[pn][c].fXOffset );
+		m_GhostMine[c].SetX( pStyleDef->m_ColumnInfo[pn][c].fXOffset );
+		m_HoldGhost[c].SetX( pStyleDef->m_ColumnInfo[pn][c].fXOffset );
 	}
 }
 
@@ -56,9 +68,10 @@ void GhostArrowRow::Update( float fDeltaTime )
 {
 	for( int c=0; c<m_iNumCols; c++ )
 	{
-		m_GhostArrowRow[c].Update( fDeltaTime );
-		m_GhostArrowRowBright[c].Update( fDeltaTime );
-		m_HoldGhostArrowRow[c].Update( fDeltaTime );
+		m_GhostDim[c].Update( fDeltaTime );
+		m_GhostBright[c].Update( fDeltaTime );
+		m_GhostMine[c].Update( fDeltaTime );
+		m_HoldGhost[c].Update( fDeltaTime );
 	}
 }
 
@@ -69,17 +82,21 @@ void GhostArrowRow::DrawPrimitives()
 		g_NoteFieldMode[m_PlayerNumber].BeginDrawTrack(c);
 
 		float fX = ArrowGetXPos( m_PlayerNumber, c, 0 );
-		m_GhostArrowRow[c].SetX( fX );
-		m_GhostArrowRowBright[c].SetX( fX );
-		m_HoldGhostArrowRow[c].SetX( fX );
-		float fZ = ArrowGetZPos( m_PlayerNumber, c, 0 );
-		m_GhostArrowRow[c].SetZ( fZ );
-		m_GhostArrowRowBright[c].SetZ( fZ );
-		m_HoldGhostArrowRow[c].SetZ( fZ );
+		m_GhostDim[c].SetX( fX );
+		m_GhostBright[c].SetX( fX );
+		m_GhostMine[c].SetX( fX );
+		m_HoldGhost[c].SetX( fX );
 
-		m_GhostArrowRow[c].Draw();
-		m_GhostArrowRowBright[c].Draw();
-		m_HoldGhostArrowRow[c].Draw();
+		float fZ = ArrowGetZPos( m_PlayerNumber, c, 0 );
+		m_GhostDim[c].SetZ( fZ );
+		m_GhostBright[c].SetZ( fZ );
+		m_GhostMine[c].SetZ( fZ );
+		m_HoldGhost[c].SetZ( fZ );
+
+		m_GhostDim[c].Draw();
+		m_GhostBright[c].Draw();
+		m_GhostMine[c].Draw();
+		m_HoldGhost[c].Draw();
 
 		g_NoteFieldMode[m_PlayerNumber].EndDrawTrack(c);
 	}
@@ -90,13 +107,18 @@ void GhostArrowRow::TapNote( int iCol, TapNoteScore score, bool bBright )
 {
 	ASSERT( iCol >= 0  &&  iCol < m_iNumCols );
 	if( bBright )
-		m_GhostArrowRowBright[iCol].Step( score );
+		m_GhostBright[iCol].Step( score );
 	else
-		m_GhostArrowRow[iCol].Step( score );
+		m_GhostDim[iCol].Step( score );
 }
 
 void GhostArrowRow::HoldNote( int iCol )
 {
 	ASSERT( iCol >= 0  &&  iCol < m_iNumCols );
-	m_HoldGhostArrowRow[iCol].Step();
+	m_HoldGhost[iCol].Step();
+}
+
+void GhostArrowRow::TapMine( int iCol, TapNoteScore score )
+{
+	m_GhostMine[iCol].Step( score );
 }

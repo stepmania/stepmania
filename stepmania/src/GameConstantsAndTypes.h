@@ -144,6 +144,7 @@ enum TapNoteScore {
 	NUM_TAP_NOTE_SCORES
 };
 
+CString TapNoteScoreToString( TapNoteScore tns );
 
 //enum TapNoteTiming { 
 //	TNT_NONE, 

@@ -16,10 +16,6 @@
 #include "Sprite.h"
 #include "BitmapText.h"
 
-#include "GrayArrow.h"
-#include "GhostArrow.h"
-#include "GhostArrowBright.h"
-#include "HoldGhostArrow.h"
 #include "ActorFrame.h"
 #include "RandomSample.h"
 #include "Judgment.h"
@@ -32,6 +28,7 @@
 #include "ArrowBackdrop.h"
 #include "RageTimer.h"
 #include "ProTimingDisplay.h"
+#include "RageSound.h"
 
 class ScoreDisplay;
 class LifeMeter;
@@ -97,6 +94,8 @@ protected:
 	CString			m_sLastSeenNoteSkin;
 	bool			m_bShowJudgment;
 	int				m_iRowLastCrossed;
+
+	RageSound		m_soundMineExplosion;
 };
 
 #endif

@@ -199,6 +199,8 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, Combine
 	}
 
 	m_sLastSeenNoteSkin = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_sNoteSkin;
+
+	m_soundMineExplosion.Load( THEME->GetPathToS("Player explosion") );
 }
 
 void Player::Update( float fDeltaTime )
@@ -458,6 +460,9 @@ void Player::Step( int col, RageTimer tm )
 
 		const float fSecondsFromPerfect = fabsf( fNoteOffset );
 
+
+		TapNote tn = GetTapNote(col,iIndexOverlappingNote);
+
 		// calculate TapNoteScore
 		TapNoteScore score;
 
@@ -472,6 +477,15 @@ void Player::Step( int col, RageTimer tm )
 			else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
 			else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_BOO;
 			else	score = TNS_NONE;
+
+			// Penalize for stepping on mines
+			if( tn == TAP_MINE  &&  score > TNS_NONE )
+			{
+				m_soundMineExplosion.Play();
+				score = TNS_MISS;
+				m_GhostArrowRow.TapMine( col, TNS_MISS );
+			}
+
 			break;
 		}
 		case PC_CPU:
@@ -483,9 +497,21 @@ void Player::Step( int col, RageTimer tm )
 			 * misses. */
 			if( score == TNS_MISS )
 				return;
+
+			// Unless the computer made a very good step, they were fooled by the mine
+			if( tn == TAP_MINE  &&  score <= TNS_GREAT )
+			{
+				m_soundMineExplosion.Play();
+				score = TNS_MISS;
+				m_GhostArrowRow.TapMine( col, TNS_MISS );
+			}
 			break;
 		case PC_AUTOPLAY:
 			score = TNS_MARVELOUS;
+
+			// Don't step on mines
+			if( tn == TAP_MINE )
+				return;
 			break;
 		default:
 			ASSERT(0);
@@ -493,9 +519,6 @@ void Player::Step( int col, RageTimer tm )
 			break;
 		}
 
-		// Stepping on a mine counts as a miss
-		if( GetTapNote(col,iIndexOverlappingNote) == TAP_MINE )
-			score = TNS_MISS;
 
 		if( score != TNS_NONE && score != TNS_MISS )
 		{
