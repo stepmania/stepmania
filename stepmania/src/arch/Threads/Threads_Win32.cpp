@@ -13,7 +13,7 @@ static void InitThreadIdMutex()
 	g_pThreadIdMutex = new MutexImpl_Win32(NULL);
 }
 
-static int g_ThreadIds[MAX_THREADS];
+static uint64_t g_ThreadIds[MAX_THREADS];
 static HANDLE g_ThreadHandles[MAX_THREADS];
 
 HANDLE Win32ThreadIdToHandle( uint64_t iID )
@@ -76,7 +76,7 @@ static DWORD WINAPI StartThread( LPVOID pData )
 	return ret;
 }
 
-static int GetOpenSlot( int iID )
+static int GetOpenSlot( uint64_t iID )
 {
 	InitThreadIdMutex();
 
