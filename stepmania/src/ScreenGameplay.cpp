@@ -1361,8 +1361,8 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			GAMESTATE->m_StoredSongOptions.m_bAssistTick = GAMESTATE->m_SongOptions.m_bAssistTick;
 			
 			m_textDebug.SetText( ssprintf("Assist Tick is %s", GAMESTATE->m_SongOptions.m_bAssistTick?"ON":"OFF") );
-			m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 			m_textDebug.StopTweening();
+			m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 			m_textDebug.BeginTweening( 3 );		// sleep
 			m_textDebug.BeginTweening( 0.5f );	// fade out
 			m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
@@ -1398,8 +1398,8 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				seg.m_fBPM += fOffsetDelta;
 
 				m_textDebug.SetText( ssprintf("Cur BPM = %.2f", seg.m_fBPM) );
-				m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 				m_textDebug.StopTweening();
+				m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 				m_textDebug.BeginTweening( 3 );		// sleep
 				m_textDebug.BeginTweening( 0.5f );	// fade out
 				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
@@ -1429,8 +1429,8 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds += fOffsetDelta;
 
 				m_textDebug.SetText( ssprintf("Offset = %.3f", GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds) );
-				m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 				m_textDebug.StopTweening();
+				m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 				m_textDebug.BeginTweening( 3 );		// sleep
 				m_textDebug.BeginTweening( 0.5f );	// fade out
 				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
