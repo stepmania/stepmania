@@ -774,7 +774,10 @@ float MovieTexture_FFMpeg::CheckFrameTime()
 {
 	ASSERT_M( m_ImageWaiting == FRAME_DECODED, ssprintf("%i", m_ImageWaiting) );
 
-	const float Offset = decoder->GetTimestamp() - m_Clock;
+	if( m_Rate == 0 )
+		return 1;	// "a long time until the next frame"
+
+	const float Offset = (decoder->GetTimestamp() - m_Clock) / m_Rate;
 
 	/* If we're ahead, we're decoding too fast; delay. */
 	if( Offset > 0 )
@@ -844,7 +847,9 @@ void MovieTexture_FFMpeg::DecoderThread()
 
 		if( m_State == PAUSE_DECODER )
 		{
-			/* We aren't feeding frames, so we aren't waiting; don't chew CPU. */
+			/* We aren't feeding frames, so we aren't waiting; don't chew CPU. 
+			 * This needs to be relatively short so that we wake up quickly 
+			 * from being paused or for changes in m_Rate. */
 			usleep( 10000 );
 			continue;
 		}
@@ -856,29 +861,33 @@ void MovieTexture_FFMpeg::DecoderThread()
 			continue;
 
 		const float fTime = CheckFrameTime();
-		if( fTime == -1 )
+		if( fTime == -1 )	// skip frame
 		{
 			DiscardFrame();
-			continue;
 		}
-
-		if( fTime > 0 )
-			usleep( int(1000000*fTime) );
-
+		else if( fTime > 0 )		// not time to decode a new frame yet
 		{
-			/* The only reason m_BufferFinished might be non-zero right now (before
-			 * ConvertFrame()) is if we're quitting. */
-			int n = m_BufferFinished.GetValue();
-			ASSERT_M( n == 0 || m_State == DECODER_QUIT, ssprintf("%i, %i", n, m_State) );
+			/* This needs to be relatively short so that we wake up quickly 
+			 * from being paused or for changes in m_Rate. */
+			usleep( 10000 );
 		}
-		ConvertFrame();
+		else // fTime == 0
+		{
+			{
+				/* The only reason m_BufferFinished might be non-zero right now (before
+				 * ConvertFrame()) is if we're quitting. */
+				int n = m_BufferFinished.GetValue();
+				ASSERT_M( n == 0 || m_State == DECODER_QUIT, ssprintf("%i, %i", n, m_State) );
+			}
+			ConvertFrame();
 
-		/* We just went into FRAME_WAITING.  Don't actually check; the main thread
-		 * will change us back to FRAME_NONE without locking, and poke m_BufferFinished. */
-		m_BufferFinished.Wait();
+			/* We just went into FRAME_WAITING.  Don't actually check; the main thread
+			 * will change us back to FRAME_NONE without locking, and poke m_BufferFinished. */
+			m_BufferFinished.Wait();
 
-		/* If the frame wasn't used, then we must be shutting down. */
-		ASSERT_M( m_ImageWaiting == FRAME_NONE || m_State == DECODER_QUIT, ssprintf("%i, %i", m_ImageWaiting, m_State) );
+			/* If the frame wasn't used, then we must be shutting down. */
+			ASSERT_M( m_ImageWaiting == FRAME_NONE || m_State == DECODER_QUIT, ssprintf("%i, %i", m_ImageWaiting, m_State) );
+		}
 	}
 	CHECKPOINT;
 }
