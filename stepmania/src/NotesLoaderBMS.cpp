@@ -924,10 +924,19 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 			//      however, filenames will be trickier, as stuffs at the beginning AND
 			//      end change per-file, so we'll need a fancier FindLargestInitialSubstring()
 
-			// Any of [L7] [L14] (LIGHT7) (LIGHT14) (LIGHT) [L] <LIGHT7> <L7>... you get the idea.
 			// XXX: This matches (double), but I haven't seen it used. Again, MORE EXAMPLES NEEDED
 			if( sTag.find('l') != sTag.npos )
+			    unsigned lPos = sTag.find('l')
+			    if( sTag.substr(lPos-2,4) == "solo" )
+			    {
+				// (solo) -- an edit, apparently (Thanks Glenn!)
+				pSteps->SetDifficulty( DIFFICULTY_EDIT );
+			    }
+			    else
+			    {
+				// Any of [L7] [L14] (LIGHT7) (LIGHT14) (LIGHT) [L] <LIGHT7> <L7>... you get the idea.
 				pSteps->SetDifficulty( DIFFICULTY_EASY );
+			    }
 			// [A] <A> (A) [ANOTHER] <ANOTHER> (ANOTHER) (ANOTHER7) Another (DP ANOTHER) (Another) -ANOTHER- [A7] [A14] etc etc etc
 			else if( sTag.find('a') != sTag.npos )
 				pSteps->SetDifficulty( DIFFICULTY_HARD );
