@@ -28,19 +28,23 @@ UnlockSystem*	UNLOCKSYS = NULL;	// global and accessable from anywhere in our pr
 
 #define MEMCARD_PATH "Data/MemCard.ini"
 
+static const char *g_UnlockNames[NUM_UNLOCK_TYPES] =
+{
+	"ArcadePointsAccumulated",
+	"DancePointsAccumulated",
+	"SongPointsAccumulated",
+	"ExtraStagesCleared",
+	"ExtraStagesFailed",
+	"TotalToastysSeen",
+	"TotalStagesCleared"
+};
+
 UnlockSystem::UnlockSystem()
 {
-	UNLOCKSYS = this;
-
 	LoadFromDATFile();
 
-	ArcadePoints = 0;
-	DancePoints = 0;
-	SongPoints = 0;
-	ExtraClearPoints = 0;
-	ExtraFailPoints = 0;
-	ToastyPoints = 0;
-	StagesCleared = 0;
+	memset( m_fScores, 0, sizeof(m_fScores) );
+
 	RouletteSeeds = "1";
 
 	ReadValues( MEMCARD_PATH ); // in case its ever accessed, 
@@ -134,13 +138,7 @@ UnlockEntry *UnlockSystem::FindCourse( const Course *pCourse )
 
 UnlockEntry::UnlockEntry()
 {
-	m_fDancePointsRequired = 0;
-	m_fArcadePointsRequired = 0;
-	m_fSongPointsRequired = 0;
-	m_fExtraStagesCleared = 0;
-	m_fExtraStagesFailed = 0;
-	m_fStagesCleared = 0;
-	m_fToastysSeen = 0;
+	memset( m_fRequired, 0, sizeof(m_fRequired) );
 	m_iRouletteSeed = 0;
 
 	m_pSong = NULL;
@@ -156,26 +154,9 @@ void UnlockEntry::UpdateLocked()
 		return;
 	
 	isLocked = true;
-	if( m_fArcadePointsRequired && UNLOCKSYS->ArcadePoints >= m_fArcadePointsRequired )
-		isLocked = false;
-
-	if( m_fDancePointsRequired && UNLOCKSYS->DancePoints >= m_fDancePointsRequired )
-		isLocked = false;
-
-	if( m_fSongPointsRequired && UNLOCKSYS->SongPoints >= m_fSongPointsRequired )
-		isLocked = false;
-
-	if( m_fExtraStagesCleared && UNLOCKSYS->ExtraClearPoints >= m_fExtraStagesCleared )
-		isLocked = false;
-
-	if( m_fExtraStagesFailed && UNLOCKSYS->ExtraFailPoints >= m_fExtraStagesFailed )
-		isLocked = false;
-
-	if( m_fStagesCleared && UNLOCKSYS->StagesCleared >= m_fStagesCleared )
-		isLocked = false;
-
-	if( m_fToastysSeen && UNLOCKSYS->ToastyPoints >= m_fToastysSeen )
-		isLocked = false;
+	for( int i = 0; i < NUM_UNLOCK_TYPES; ++i )
+		if( m_fRequired[i] && UNLOCKSYS->m_fScores[i] >= m_fRequired[i] )
+			isLocked = false;
 
 	if ( m_iRouletteSeed )
 	{
@@ -238,19 +219,19 @@ bool UnlockSystem::LoadFromDATFile()
 			LOG->Trace("Unlock info: %s %f", unlock_type.c_str(), datavalue);
 
 			if( unlock_type == "AP" )
-				current.m_fArcadePointsRequired = datavalue;
+				current.m_fRequired[UNLOCK_ARCADE_POINTS] = datavalue;
 			if( unlock_type == "DP" )
-				current.m_fDancePointsRequired = datavalue;
+				current.m_fRequired[UNLOCK_DANCE_POINTS] = datavalue;
 			if( unlock_type == "SP" )
-				current.m_fSongPointsRequired = datavalue;
+				current.m_fRequired[UNLOCK_SONG_POINTS] = datavalue;
 			if( unlock_type == "EC" )
-				current.m_fExtraStagesCleared = datavalue;
+				current.m_fRequired[UNLOCK_EXTRA_CLEARED] = datavalue;
 			if( unlock_type == "EF" )
-				current.m_fExtraStagesFailed = datavalue;
-			if( unlock_type == "CS" )
-				current.m_fStagesCleared = datavalue;
+				current.m_fRequired[UNLOCK_EXTRA_CLEARED] = datavalue;
 			if( unlock_type == "!!" )
-				current.m_fToastysSeen = datavalue;
+				current.m_fRequired[UNLOCK_TOASTY] = datavalue;
+			if( unlock_type == "CS" )
+				current.m_fRequired[UNLOCK_CLEARED] = datavalue;
 			if( unlock_type == "RO" )
 			{
 				current.m_iRouletteSeed = (int)datavalue;
@@ -274,10 +255,10 @@ bool UnlockSystem::LoadFromDATFile()
 		LOG->Trace( "UnlockSystem Entry %s", m_SongEntries[i].m_sSongName.c_str() );
 		if (m_SongEntries[i].m_pSong != NULL)
 			LOG->Trace( "          Translit %s", m_SongEntries[i].m_pSong->GetTranslitMainTitle().c_str() );
-		LOG->Trace( "                AP %f", m_SongEntries[i].m_fArcadePointsRequired );
-		LOG->Trace( "                DP %f", m_SongEntries[i].m_fDancePointsRequired );
-		LOG->Trace( "                SP %f", m_SongEntries[i].m_fSongPointsRequired );
-		LOG->Trace( "                CS %f", m_SongEntries[i].m_fStagesCleared );
+		LOG->Trace( "                AP %f", m_SongEntries[i].m_fRequired[UNLOCK_ARCADE_POINTS] );
+		LOG->Trace( "                DP %f", m_SongEntries[i].m_fRequired[UNLOCK_DANCE_POINTS] );
+		LOG->Trace( "                SP %f", m_SongEntries[i].m_fRequired[UNLOCK_SONG_POINTS] );
+		LOG->Trace( "                CS %f", m_SongEntries[i].m_fRequired[UNLOCK_CLEARED] );
 		LOG->Trace( "                RO %i", m_SongEntries[i].m_iRouletteSeed );
 		LOG->Trace( "            Status %slocked", tmp.c_str() );
 		if (m_SongEntries[i].m_pSong)
@@ -289,40 +270,16 @@ bool UnlockSystem::LoadFromDATFile()
 	return true;
 }
 
-float UnlockSystem::DancePointsUntilNextUnlock()
+float UnlockSystem::PointsUntilNextUnlock( UnlockType t ) const
 {
 	float fSmallestPoints = 400000000;   // or an arbitrarily large value
 	for( unsigned a=0; a<m_SongEntries.size(); a++ )
-		if( m_SongEntries[a].m_fDancePointsRequired > DancePoints)
-			fSmallestPoints = min(fSmallestPoints, m_SongEntries[a].m_fDancePointsRequired);
+		if( m_SongEntries[a].m_fRequired[t] > m_fScores[t] )
+			fSmallestPoints = min( fSmallestPoints, m_SongEntries[a].m_fRequired[t] );
 	
 	if( fSmallestPoints == 400000000 )
 		return 0;  // no match found
-	return fSmallestPoints - DancePoints;
-}
-
-float UnlockSystem::ArcadePointsUntilNextUnlock()
-{
-	float fSmallestPoints = 400000000;   // or an arbitrarily large value
-	for( unsigned a=0; a<m_SongEntries.size(); a++ )
-		if( m_SongEntries[a].m_fArcadePointsRequired > ArcadePoints)
-			fSmallestPoints = min(fSmallestPoints, m_SongEntries[a].m_fArcadePointsRequired);
-	
-	if( fSmallestPoints == 400000000 )
-		return 0;  // no match found
-	return fSmallestPoints - ArcadePoints;
-}
-
-float UnlockSystem::SongPointsUntilNextUnlock()
-{
-	float fSmallestPoints = 400000000;   // or an arbitrarily large value
-	for( unsigned a=0; a<m_SongEntries.size(); a++ )
-		if( m_SongEntries[a].m_fSongPointsRequired > SongPoints )
-			fSmallestPoints = min(fSmallestPoints, m_SongEntries[a].m_fSongPointsRequired);
-	
-	if( fSmallestPoints == 400000000 )
-		return 0;  // no match found
-	return fSmallestPoints - SongPoints;
+	return fSmallestPoints - m_fScores[t];
 }
 
 /* Update the song pointer.  Only call this when it's likely to have changed,
@@ -374,13 +331,8 @@ bool UnlockSystem::ReadValues( CString filename)
 	if( !data.ReadFile() )
 		return false;
 
-	data.GetValue ( "Unlock", "ArcadePointsAccumulated",	ArcadePoints );
-	data.GetValue ( "Unlock", "DancePointsAccumulated",		DancePoints );
-	data.GetValue ( "Unlock", "SongPointsAccumulated",		SongPoints );
-	data.GetValue ( "Unlock", "ExtraStagesCleared",			ExtraClearPoints );
-	data.GetValue ( "Unlock", "ExtraStagesFailed",			ExtraFailPoints );
-	data.GetValue ( "Unlock", "TotalStagesCleared",			StagesCleared );
-	data.GetValue ( "Unlock", "TotalToastysSeen",			ToastyPoints );
+	for( int i = 0; i < NUM_UNLOCK_TYPES; ++i )
+		data.GetValue( "Unlock", g_UnlockNames[i],		m_fScores[i] );
 	data.GetValue ( "Unlock", "RouletteSeeds",				RouletteSeeds );
 
 	return true;
@@ -393,13 +345,8 @@ bool UnlockSystem::WriteValues( CString filename)
 
 	data.SetPath( filename );
 
-	data.SetValue( "Unlock", "ArcadePointsAccumulated",		ArcadePoints );
-	data.SetValue( "Unlock", "DancePointsAccumulated",		DancePoints );
-	data.SetValue( "Unlock", "SongPointsAccumulated",		SongPoints );
-	data.SetValue( "Unlock", "ExtraStagesCleared",			ExtraClearPoints );
-	data.SetValue( "Unlock", "ExtraStagesFailed",			ExtraFailPoints );
-	data.SetValue( "Unlock", "TotalStagesCleared",			StagesCleared );
-	data.SetValue( "Unlock", "TotalToastysSeen",			ToastyPoints );
+	for( int i = 0; i < NUM_UNLOCK_TYPES; ++i )
+		data.SetValue( "Unlock", g_UnlockNames[i],		m_fScores[i] );
 	data.SetValue( "Unlock", "RouletteSeeds",				RouletteSeeds );
 
 	data.WriteFile();
@@ -407,16 +354,14 @@ bool UnlockSystem::WriteValues( CString filename)
 	return true;
 }
 
-float UnlockSystem::UnlockAddAP(float credit)
+void UnlockSystem::UnlockAddAP(float credit)
 {
 	ReadValues( MEMCARD_PATH );
-	ArcadePoints += credit;
+	m_fScores[UNLOCK_ARCADE_POINTS] += credit;
 	WriteValues( MEMCARD_PATH );
-
-	return ArcadePoints;
 }
 
-float UnlockSystem::UnlockAddAP(Grade grade)
+void UnlockSystem::UnlockAddAP(Grade grade)
 {
 	ReadValues( MEMCARD_PATH );
 	switch( grade )
@@ -426,96 +371,80 @@ float UnlockSystem::UnlockAddAP(Grade grade)
 		break;
 	case GRADE_TIER_1:
 	case GRADE_TIER_2:
-		ArcadePoints += 9;
+		m_fScores[UNLOCK_ARCADE_POINTS] += 9;
 		break;
 	case GRADE_NO_DATA:
 		ASSERT(0);
 		break;
 	default:
-		ArcadePoints += 1;
+		m_fScores[UNLOCK_ARCADE_POINTS] += 1;
 		break;
 	}
 	WriteValues( MEMCARD_PATH );
-
-	return ArcadePoints;
 }
 
-float UnlockSystem::UnlockAddDP(float credit)
+void UnlockSystem::UnlockAddDP(float credit)
 {
 	ReadValues( MEMCARD_PATH );
 
 	// we don't want to ever take away dance points
 	if( credit > 0 )
-		DancePoints += credit;
+		m_fScores[UNLOCK_DANCE_POINTS] += credit;
 	WriteValues( MEMCARD_PATH );
-
-	return DancePoints;
 }
 
-float UnlockSystem::UnlockAddSP(float credit)
+void UnlockSystem::UnlockAddSP(float credit)
 {
 	ReadValues( MEMCARD_PATH );
-	SongPoints += credit;
+	m_fScores[UNLOCK_SONG_POINTS] += credit;
 	WriteValues( MEMCARD_PATH );
-
-	return SongPoints;
 }
 
-float UnlockSystem::UnlockAddSP( Grade grade )
+void UnlockSystem::UnlockAddSP( Grade grade )
 {
 	ReadValues( MEMCARD_PATH );
 
 	// TODO: move these to PREFS
 	switch( grade )
 	{
-	case GRADE_TIER_1:/*AAAA*/	SongPoints += 20;	break;
-	case GRADE_TIER_2:/*AAA*/	SongPoints += 10;	break;
-	case GRADE_TIER_3:/*AA*/	SongPoints += 5;	break;
-	case GRADE_TIER_4:/*A*/		SongPoints += 4;	break;
-	case GRADE_TIER_5:/*B*/		SongPoints += 3;	break;
-	case GRADE_TIER_6:/*C*/		SongPoints += 2;	break;
-	case GRADE_TIER_7:/*D*/		SongPoints += 1;	break;
+	case GRADE_TIER_1:/*AAAA*/	m_fScores[UNLOCK_SONG_POINTS] += 20;	break;
+	case GRADE_TIER_2:/*AAA*/	m_fScores[UNLOCK_SONG_POINTS] += 10;	break;
+	case GRADE_TIER_3:/*AA*/	m_fScores[UNLOCK_SONG_POINTS] += 5;	break;
+	case GRADE_TIER_4:/*A*/		m_fScores[UNLOCK_SONG_POINTS] += 4;	break;
+	case GRADE_TIER_5:/*B*/		m_fScores[UNLOCK_SONG_POINTS] += 3;	break;
+	case GRADE_TIER_6:/*C*/		m_fScores[UNLOCK_SONG_POINTS] += 2;	break;
+	case GRADE_TIER_7:/*D*/		m_fScores[UNLOCK_SONG_POINTS] += 1;	break;
 	}
 
 	WriteValues( MEMCARD_PATH );
-
-	return SongPoints;
 }
 
-float UnlockSystem::UnlockClearExtraStage()
+void UnlockSystem::UnlockClearExtraStage()
 {
 	ReadValues( MEMCARD_PATH );
-	ExtraClearPoints++;
+	++m_fScores[UNLOCK_EXTRA_CLEARED];
 	WriteValues( MEMCARD_PATH );
-
-	return ExtraClearPoints;
 }
 
-float UnlockSystem::UnlockFailExtraStage()
+void UnlockSystem::UnlockFailExtraStage()
 {
 	ReadValues( MEMCARD_PATH );
-	ExtraFailPoints++;
+	++m_fScores[UNLOCK_EXTRA_FAILED];
 	WriteValues( MEMCARD_PATH );
-
-	return ExtraFailPoints;
 }
 
-float UnlockSystem::UnlockClearStage()
+void UnlockSystem::UnlockClearStage()
 {
 	ReadValues( MEMCARD_PATH );
-	StagesCleared++;
+	++m_fScores[UNLOCK_CLEARED];
 	WriteValues( MEMCARD_PATH );
-
-	return StagesCleared;
 }
 
-float UnlockSystem::UnlockToasty()
+void UnlockSystem::UnlockToasty()
 {
 	ReadValues( MEMCARD_PATH );
-	ToastyPoints++;
+	++m_fScores[UNLOCK_TOASTY];
 	WriteValues( MEMCARD_PATH );
-
-	return ToastyPoints;
 }
 
 int UnlockSystem::GetNumUnlocks() const

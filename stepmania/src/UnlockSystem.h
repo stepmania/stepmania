@@ -16,6 +16,18 @@
 
 class Song;
 
+enum UnlockType
+{
+	UNLOCK_ARCADE_POINTS,
+	UNLOCK_DANCE_POINTS,
+	UNLOCK_SONG_POINTS,
+	UNLOCK_EXTRA_CLEARED,
+	UNLOCK_EXTRA_FAILED,
+	UNLOCK_TOASTY,
+	UNLOCK_CLEARED,
+	NUM_UNLOCK_TYPES
+};
+
 struct UnlockEntry
 {
 	UnlockEntry();
@@ -27,13 +39,7 @@ struct UnlockEntry
 	Song	*m_pSong;
 	Course	*m_pCourse;
 
-	float	m_fDancePointsRequired;	// Ways to unlock/lock songs.
-	float	m_fArcadePointsRequired;
-	float	m_fSongPointsRequired;
-	float	m_fExtraStagesCleared;
-	float	m_fExtraStagesFailed;
-	float	m_fStagesCleared;
-	float	m_fToastysSeen;
+	float	m_fRequired[NUM_UNLOCK_TYPES];
 	int		m_iRouletteSeed;
 
 	bool	isLocked;    // cached locked tag
@@ -49,25 +55,13 @@ class UnlockSystem
 	friend struct UnlockEntry;
 
 public:
-	/* TODO:
-	enum UnlockType
-	{
-	UNLOCK_ARCADE_POINTS,
-	UNLOCK_DANCE_POINTS,
-	UNLOCK_SONG_POINTS,
-	UNLOCK_EXTRA_CLEARED,
-	UNLOCK_EXTRA_FAILED,
-	UNLOCK_TOASTY,
-	UNLOCK_CLEARED,
-	NUM_UNLOCK_TYPES
-	};
-	*/
 	UnlockSystem();
 
 	// returns # of points till next unlock - used for ScreenUnlock
-	float DancePointsUntilNextUnlock();
-	float ArcadePointsUntilNextUnlock();
-	float SongPointsUntilNextUnlock();
+	float PointsUntilNextUnlock( UnlockType t ) const;
+	float ArcadePointsUntilNextUnlock() const { return PointsUntilNextUnlock(UNLOCK_ARCADE_POINTS); }
+	float DancePointsUntilNextUnlock() const { return PointsUntilNextUnlock(UNLOCK_DANCE_POINTS); }
+	float SongPointsUntilNextUnlock() const { return PointsUntilNextUnlock(UNLOCK_SONG_POINTS); }
 
 	// Used on select screens:
 	bool SongIsLocked( const Song *song );
@@ -80,16 +74,18 @@ public:
 	// Gets number of unlocks for title screen
 	int GetNumUnlocks() const;
 
+	void UpdateSongs();
+
 	// functions that add to values
-	float UnlockAddAP(Grade credit);
-	float UnlockAddAP(float credit);
-	float UnlockAddDP(float credit);
-	float UnlockAddSP(Grade credit);
-	float UnlockAddSP(float credit);
-	float UnlockClearExtraStage();
-	float UnlockFailExtraStage();
-	float UnlockClearStage();
-	float UnlockToasty();
+	void UnlockAddAP(Grade credit);
+	void UnlockAddAP(float credit);
+	void UnlockAddDP(float credit);
+	void UnlockAddSP(Grade credit);
+	void UnlockAddSP(float credit);
+	void UnlockClearExtraStage();
+	void UnlockFailExtraStage();
+	void UnlockClearStage();
+	void UnlockToasty();
 
 	// unlocks given song in roulette
 	void RouletteUnlock( const Song *song );
@@ -98,8 +94,6 @@ public:
 	bool ReadValues( CString filename);
 	bool WriteValues( CString filename);
 	
-	void UpdateSongs();
-
 	UnlockEntry *FindLockEntry( CString lockname );
 
 	// All locked songs are stored here
@@ -109,19 +103,11 @@ private:
 	UnlockEntry *FindSong( const Song *pSong );
 	UnlockEntry *FindCourse( const Course *pCourse );
 
-	void InitRouletteSeeds(int MaxRouletteSlot);  
 	// makes RouletteSeeds more efficient
-
-//	float m_fScores[NUM_UNLOCK_TYPES];
+	void InitRouletteSeeds(int MaxRouletteSlot);  
 
 	// unlock values, cached
-	float ArcadePoints;
-	float DancePoints;
-	float SongPoints;
-	float ExtraClearPoints;
-	float ExtraFailPoints;
-	float ToastyPoints;
-	float StagesCleared;
+	float m_fScores[NUM_UNLOCK_TYPES];
 	CString RouletteSeeds;
 };
 
