@@ -54,7 +54,7 @@ XNode* HighScore::CreateNode() const
 	pNode->AppendChild( "PercentDP",		fPercentDP );
 	pNode->AppendChild( "SurviveSeconds",	fSurviveSeconds );
 	pNode->AppendChild( "Modifiers",		sModifiers );
-	pNode->AppendChild( "Time",				time );
+	pNode->AppendChild( "Time",				(int)time );
 	pNode->AppendChild( "MachineGuid",		sMachineGuid );
 
 	return pNode;
