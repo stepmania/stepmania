@@ -803,9 +803,12 @@ static void GameLoop()
 		 */
 		SCREENMAN->Draw();
 
+		/* This is unneeded in OS X. The OS handles all of this for us. */
+#if !defined(DARWIN)
 		if(g_bHasFocus)
 			SDL_Delay( 1 );	// give some time to other processes and threads
 		else
 			SDL_Delay( 10 );// give some time to other processes and threads
+#endif
 	}
 }
