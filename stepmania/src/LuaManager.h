@@ -30,7 +30,7 @@ public:
 
 	/* Convenience: run a script with one return value, displaying an error on failure.
 	 * The return value is left on the Lua stack. */
-	bool RunScript( const CString &sExpression, const CString &sName = "" );
+	bool RunScript( const CString &sExpression, const CString &sName = "", int iReturnValues = 0 );
 
 	/* Run an expression in the global environment, returning the given type. */
 	bool RunExpressionB( const CString &str );

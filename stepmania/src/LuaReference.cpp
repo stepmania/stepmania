@@ -119,7 +119,7 @@ void LuaExpression::SetFromExpression( const CString &sExpression )
 
 void LuaExpression::Register()
 {
-	if( !LUA->RunScript( m_sExpression ) )
+	if( !LUA->RunScript( m_sExpression, "expression", 1 ) )
 	{
 		this->SetFromNil();
 		return;

@@ -272,7 +272,7 @@ bool LuaManager::RunScriptFile( const CString &sFile )
 	}
 
 	CString sError;
-	if( !RunScript( sScript, sFile, sError ) )
+	if( !RunScript( sScript, sFile, sError, 0 ) )
 	{
 		sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
 		Dialog::OK( sError, "LUA_ERROR" );
@@ -313,10 +313,10 @@ bool LuaManager::RunScript( const CString &sScript, const CString &sName, CStrin
 }
 
 
-bool LuaManager::RunScript( const CString &sExpression, const CString &sName )
+bool LuaManager::RunScript( const CString &sExpression, const CString &sName, int iReturnValues )
 {
 	CString sError;
-	if( !RunScript( sExpression, sName.size()? sName:"in", sError, 1 ) )
+	if( !RunScript( sExpression, sName.size()? sName:"in", sError, iReturnValues ) )
 	{
 		sError = ssprintf( "Lua runtime error parsing \"%s\": %s", sName.size()? sName.c_str():sExpression.c_str(), sError.c_str() );
 		Dialog::OK( sError, "LUA_ERROR" );
@@ -328,7 +328,7 @@ bool LuaManager::RunScript( const CString &sExpression, const CString &sName )
 
 bool LuaManager::RunExpressionB( const CString &str )
 {
-	if( !RunScript( "return " + str ) )
+	if( !RunScript( "return " + str, "", 1 ) )
 		return false;
 
 	/* Don't accept a function as a return value. */
@@ -343,7 +343,7 @@ bool LuaManager::RunExpressionB( const CString &str )
 
 float LuaManager::RunExpressionF( const CString &str )
 {
-	if( !RunScript( "return " + str ) )
+	if( !RunScript( "return " + str, "", 1 ) )
 		return 0;
 
 	/* Don't accept a function as a return value. */
@@ -363,7 +363,7 @@ int LuaManager::RunExpressionI( const CString &str )
 
 bool LuaManager::RunExpressionS( const CString &str, CString &sOut )
 {
-	if( !RunScript( "return " + str ) )
+	if( !RunScript( "return " + str, "", 1 ) )
 		return false;
 
 	/* Don't accept a function as a return value. */
