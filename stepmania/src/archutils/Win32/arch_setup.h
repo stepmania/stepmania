@@ -104,8 +104,9 @@ inline uint32_t ArchSwap32( uint32_t n )
 		xchg al, ah
 		ror eax, 16
 		xchg al, ah
-		ret
+		mov n, eax
 	};
+	return n;
 }
 
 inline uint32_t ArchSwap24( uint32_t n )
@@ -117,19 +118,20 @@ inline uint32_t ArchSwap24( uint32_t n )
 		ror eax, 16
 		xchg al, ah
 		ror eax, 8
-		ret
+		mov n, eax
 	};
+	return n;
 }
 
 inline uint16_t ArchSwap16( uint16_t n )
 {
 	__asm
 	{
-		mov eax, 0 /* make sure high 16-bits are zero */
 		mov ax, n
 		xchg al, ah
-		ret
+		mov n, ax
 	};
+	return n;
 }
 
 #endif
