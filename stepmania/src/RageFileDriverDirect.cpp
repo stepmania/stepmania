@@ -180,6 +180,7 @@ public:
 	virtual int Seek( int offset );
 	virtual int GetFileSize();
 	virtual RageFileObj *Copy( RageFile &p ) const;
+	virtual CString GetDisplayPath() const { return path; }
 };
 
 
