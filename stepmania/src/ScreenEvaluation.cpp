@@ -697,10 +697,26 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	{
 		if( iMachineHighScoreIndex[p] != -1 )
 		{
-			m_sprMachineRecord[p].Load( THEME->GetPathToG("ScreenEvaluation machine record") );
+			switch( m_Type )
+			{
+			case stage:
+				m_sprMachineRecord[p].Load( THEME->GetPathToG("ScreenEvaluation machine record") );
+				m_sprMachineRecord[p].SetName( ssprintf("MachineRecordP%d",p+1) );
+				break;
+			case summary:
+				m_sprMachineRecord[p].Load( THEME->GetPathToG("ScreenEvaluation category record") );
+				m_sprMachineRecord[p].SetName( ssprintf("CategoryRecordP%d",p+1) );
+				break;
+			case course:
+				m_sprMachineRecord[p].Load( THEME->GetPathToG("ScreenEvaluation course record") );
+				m_sprMachineRecord[p].SetName( ssprintf("CourseRecordP%d",p+1) );
+				break;
+			default:
+				ASSERT(0);
+			}
+
 			m_sprMachineRecord[p].SetState( iMachineHighScoreIndex[p] );
 			m_sprMachineRecord[p].StopAnimating();
-			m_sprMachineRecord[p].SetName( ssprintf("MachineRecordP%d",p+1) );
 			UtilSetXYAndOnCommand( m_sprMachineRecord[p], "ScreenEvaluation" );
 			this->AddChild( &m_sprMachineRecord[p] );
 		}
