@@ -458,36 +458,21 @@ void RageSurfaceUtils::BlitTransform( const RageSurface *src, RageSurface *dst,
 static void blit_same_type( RageSurface *src_surf, const RageSurface *dst_surf, int width, int height )
 {
 	const char *src = (const char *) src_surf->pixels;
-	const char *dst = (const char *) dst_surf->pixels;
+	char *dst = (char *) dst_surf->pixels;
 
-	/* Bytes to skip at the end of a line. */
-	const int srcskip = src_surf->pitch - width*src_surf->format->BytesPerPixel;
-	const int dstskip = dst_surf->pitch - width*dst_surf->format->BytesPerPixel;
+	/* If possible, memcpy the whole thing. */
+	if( src_surf->w == width && dst_surf->w == width && src_surf->pitch == dst_surf->pitch )
+	{
+        memcpy( dst, src, height*src_surf->pitch );
+		return;
+	}
 
-	/* XXX: duff's this */
+	/* The rows don't line up, so memcpy row by row. */
 	while( height-- )
 	{
-		int x = 0;
-		while( x++ < width )
-		{
-			/* (Relatively) fast. */
-			switch( src_surf->format->BytesPerPixel )
-			{
-			case 1: *((uint8_t *)dst) = *((uint8_t *)src); break;
-			case 2: *((uint16_t *)dst) = *((uint16_t *)src); break;
-			case 3: ((uint8_t *)dst)[0] = ((uint8_t *)src)[0];
-					((uint8_t *)dst)[1] = ((uint8_t *)src)[1];
-					((uint8_t *)dst)[2] = ((uint8_t *)src)[2];
-					break;
-			case 4: *((uint32_t *)dst) = *((uint32_t *)src); break;
-			}
-
-			src += src_surf->format->BytesPerPixel;
-			dst += dst_surf->format->BytesPerPixel;
-		}
-
-		src += srcskip;
-		dst += dstskip;
+        memcpy( dst, src, width*src_surf->format->BytesPerPixel );
+        src += src_surf->pitch;
+        dst += dst_surf->pitch;
 	}
 }
 
