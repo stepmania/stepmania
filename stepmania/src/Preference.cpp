@@ -32,21 +32,6 @@ void IPreference::PushValue( lua_State *L ) const
 	lua_pushnil( L );
 }
 
-void Preference<CString>::PushValue( lua_State *L ) const
-{
-	LuaManager::PushStack( m_currentValue, L );
-}
-
-void Preference<CString>::FromString( const CString &s )
-{
-	m_currentValue = s;
-}
-
-CString Preference<CString>::ToString() const
-{
-	return m_currentValue;
-}
-
 #define READFROM_AND_WRITETO( type ) \
 	void Preference<type>::FromString( const CString &s ) \
 	{ \
@@ -64,6 +49,7 @@ CString Preference<CString>::ToString() const
 READFROM_AND_WRITETO( int )
 READFROM_AND_WRITETO( float )
 READFROM_AND_WRITETO( bool )
+READFROM_AND_WRITETO( CString )
 
 void IPreference::ReadFrom( const IniFile &ini )
 {
