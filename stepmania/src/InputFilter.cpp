@@ -21,9 +21,6 @@ InputFilter::InputFilter()
 	queuemutex = new RageMutex("InputFilter");
 	memset( m_BeingHeld, 0, sizeof(m_BeingHeld) );
 	memset( m_fSecsHeld, 0, sizeof(m_fSecsHeld) );
-	for( int d=0; d<NUM_INPUT_DEVICES; d++ )	// foreach InputDevice
-		for( int b=0; b < NUM_DEVICE_BUTTONS[d]; b++ )	// foreach button
-			m_fSecsToForce[d][b] = -1;	
 
 	Reset();
 	ResetRepeatRate();
