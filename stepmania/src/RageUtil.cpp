@@ -774,9 +774,11 @@ void TrimLeft(string &str, const char *s)
 
 void TrimRight(string &str, const char *s)
 {
-	int n = str.size()-1;
-	while(n >= 0 && strchr(s, str[n-1]))
+	int n = str.size();
+	while(n > 0 && strchr(s, str[n-1]))
 		n--;
 
+	/* Delete from n to the end.  If n == str.size(), nothing is deleted;
+	 * if n == 0, the whole string is erased. */
 	str.erase(str.begin()+n, str.end());
 }
