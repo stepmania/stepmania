@@ -342,21 +342,6 @@ RageInput::RageInput()
 	//
 	m_Pumps = new pump_t[NUM_PUMPS];
 
-//	{
-//		/* Nasty hack to work around a bug in DirectInput8: Pump pads
-//		 * crash EnumDevices.  Prevent this by opening the pad with
-//		 * exclusive access while we enumerate, then closing it when
-//		 * we finish.  We don't do anything with this; we open it
-//		 * for real down below, since we don't *really* want to open
-//		 * the pad with exclusive access.  (I also don't want to introduce
-//		 * dependencies, such as "pump must be initialized before joysticks",
-//		 * so this doesn't bite us again down the road.) */
-//		pump_t m_TempPumps[NUM_PUMPS];
-//		for(int pumpNo = 0; pumpNo < NUM_PUMPS; ++pumpNo)
-//			m_TempPumps[pumpNo].init(pumpNo, false);
-//
-//	}
-
 	for(int pumpNo = 0; pumpNo < NUM_PUMPS; ++pumpNo)
 	{
 		if(m_Pumps[pumpNo].init(pumpNo))
