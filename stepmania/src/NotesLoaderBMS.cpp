@@ -130,7 +130,7 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd )
 	{
 		for( int r=0; r<=iLastRow; r++ )
 		{
-			if( nd.GetTapNoteX(t, r).type != TapNote::empty )
+			if( nd.GetTapNote(t, r).type != TapNote::empty )
 			{
 				bTrackHasNote[t] = true;
 				break;				

@@ -142,7 +142,7 @@ int NoteDataWithScoring::GetSuccessfulHands( float fStartBeat, float fEndBeat ) 
 		bool Missed = false;
 		for( int t=0; t<GetNumTracks(); t++ )
 		{
-			TapNote tn = GetTapNoteX(t, i);
+			TapNote tn = GetTapNote(t, i);
 			if( tn.type == TapNote::empty )
 				continue;
 			if( tn.type == TapNote::mine ) // mines don't count
