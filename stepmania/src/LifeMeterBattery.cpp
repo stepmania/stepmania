@@ -64,7 +64,7 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 
 	if( bPlayerEnabled )
 	{
-		m_Percent.SetName( "LifeMeterBattery" );
+		m_Percent.SetName( "LifeMeterBattery Percent" );
 		m_Percent.Load( pn );
 		this->AddChild( &m_Percent );
 	}
