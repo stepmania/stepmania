@@ -38,7 +38,6 @@
 
 const int NUM_SCORE_DIGITS	=	9;
 
-#define DEFAULT_SORT						THEME->GetMetric ("ScreenSelectMusic","DefaultSort")
 #define FOV									THEME->GetMetricF("ScreenSelectMusic","FOV")
 #define BANNER_WIDTH						THEME->GetMetricF("ScreenSelectMusic","BannerWidth")
 #define BANNER_HEIGHT						THEME->GetMetricF("ScreenSelectMusic","BannerHeight")
@@ -87,7 +86,6 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 
 	if( GAMESTATE->m_PlayMode == PLAY_MODE_INVALID )
 		RageException::Throw( "The PlayMode has not been set.  A theme must set the PlayMode before loading ScreenSelectMusic." );
-
 
 	CodeDetector::RefreshCacheItems();
 
@@ -247,12 +245,6 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 	m_bGoToOptions = false;
 	m_fPlaySampleCountdown = 0;
 	m_bAllowOptionsMenu = m_bAllowOptionsMenuRepeat = false;
-
-	// If there is a default sort requested..use it.
-	SongSortOrder	so;
-	so = StringToSongSortOrder(DEFAULT_SORT);
-	if( so != SORT_INVALID )
-		GAMESTATE->m_SongSortOrder = so;
 
 	UpdateOptionsDisplays();
 

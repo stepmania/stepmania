@@ -54,6 +54,9 @@ CachedThemeMetricI  NUM_WHEEL_ITEMS_METRIC	("MusicWheel","NumWheelItems");
 #define MENU_NAMES					THEME->GetMetric ("MusicWheel","MenuNames")
 #define MENU_ACTIONS				THEME->GetMetric ("MusicWheel","MenuActions")
 
+// leaving this one under ScreenSelectMusic because that is the only place it takes effect anyway.
+#define DEFAULT_SORT				THEME->GetMetric ("ScreenSelectMusic","DefaultSort")
+
 			
 const int MAX_WHEEL_SOUND_SPEED = 15;
 
@@ -155,7 +158,15 @@ MusicWheel::MusicWheel()
 		case PLAY_MODE_ONI:		GAMESTATE->m_SongSortOrder = SORT_ONI_COURSES; break;
 		case PLAY_MODE_NONSTOP:	GAMESTATE->m_SongSortOrder = SORT_NONSTOP_COURSES; break;
 		case PLAY_MODE_ENDLESS:	GAMESTATE->m_SongSortOrder = SORT_ENDLESS_COURSES; break;
-		default:				GAMESTATE->m_SongSortOrder = SortOrder[0]; break;
+		default:
+			// If there is a default sort requested..use it.
+			SongSortOrder	so;
+			so = StringToSongSortOrder(DEFAULT_SORT);
+			if( so != SORT_INVALID )
+				GAMESTATE->m_SongSortOrder = so;
+			else
+				GAMESTATE->m_SongSortOrder = SortOrder[0];
+			break;
 		}
 	}
 
