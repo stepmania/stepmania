@@ -1,7 +1,7 @@
 #ifndef UNLOCK_SYSTEM_H
 #define UNLOCK_SYSTEM_H
 
-#include "grade.h"
+#include "Grade.h"
 /*
 -----------------------------------------------------------------------------
  Class: UnlockSystem
