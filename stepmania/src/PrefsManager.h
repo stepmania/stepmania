@@ -39,10 +39,10 @@ public:
 	bool			m_bInterlaced;
 #ifdef _XBOX
 	bool			m_bPAL;
-	float			m_fScreenPosX ;
-	float			m_fScreenPosY ;
-	float			m_fScreenWidth ;
-	float			m_fScreenHeight ;
+	float			m_fScreenPosX;
+	float			m_fScreenPosY;
+	float			m_fScreenWidth;
+	float			m_fScreenHeight;
 #endif
 	bool			m_bDelayedTextureDelete;
 	bool			m_bTexturePreload;
@@ -239,7 +239,7 @@ public:
 	CString			m_sCoursesToShowRanking;
 
 	/* Debug: */
-	bool			m_bLogging;
+	bool			m_bLogToDisk;
 	bool			m_bForceLogFlush;
 	bool			m_bShowLogOutput;
 	bool			m_bTimestamping;

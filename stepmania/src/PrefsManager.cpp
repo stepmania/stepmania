@@ -258,7 +258,7 @@ PrefsManager::PrefsManager()
 
 	m_sCoursesToShowRanking = "";
 
-	m_bLogging = true;
+	m_bLogToDisk = true;
 	m_bForceLogFlush = false;
 #ifdef DEBUG
 	m_bShowLogOutput = true;
@@ -502,7 +502,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	FixSlashesInPlace(m_sAdditionalSongFolders);
 	FixSlashesInPlace(m_sAdditionalFolders);
 
-	ini.GetValue( "Debug", "Logging",							m_bLogging );
+	ini.GetValue( "Debug", "LogToDisk",							m_bLogToDisk );
 	ini.GetValue( "Debug", "ForceLogFlush",						m_bForceLogFlush );
 	ini.GetValue( "Debug", "ShowLogOutput",						m_bShowLogOutput );
 	ini.GetValue( "Debug", "Timestamping",						m_bTimestamping );
@@ -726,7 +726,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "AdditionalSongFolders", 			m_sAdditionalSongFolders);
 	ini.SetValue( "Options", "AdditionalFolders", 				m_sAdditionalFolders);
 
-	ini.SetValue( "Debug", "Logging",							m_bLogging );
+	ini.SetValue( "Debug", "LogToDisk",							m_bLogToDisk );
 	ini.SetValue( "Debug", "ForceLogFlush",						m_bForceLogFlush );
 	ini.SetValue( "Debug", "ShowLogOutput",						m_bShowLogOutput );
 	ini.SetValue( "Debug", "Timestamping",						m_bTimestamping );

@@ -101,7 +101,7 @@ RageLog::RageLog()
 	
 	g_Mutex = new RageMutex;
 
-	m_bEnabled = true;
+	m_bLogToDisk = true;
 	m_bFlush = false;
 	m_bTimestamping = false;
 	m_bShowLogOutput = false;
@@ -147,7 +147,7 @@ RageLog::~RageLog()
 	}
 
 	Flush();
-	ShowLogOutput( false );
+	SetShowLogOutput( false );
 	g_fileLog->Close();
 	g_fileInfo->Close();
 
@@ -160,9 +160,9 @@ RageLog::~RageLog()
 	g_fileInfo = NULL;
 }
 
-void RageLog::SetLogging( bool b )
+void RageLog::SetLogToDisk( bool b )
 {
-	m_bEnabled = b;
+	m_bLogToDisk = b;
 }
 
 void RageLog::SetFlushing( bool b )
@@ -176,7 +176,7 @@ void RageLog::SetTimestamping( bool b )
 }
 
 /* Enable or disable display of output to stdout, or a console window in Windows. */
-void RageLog::ShowLogOutput( bool show )
+void RageLog::SetShowLogOutput( bool show )
 {
 	m_bShowLogOutput = show;
 
@@ -197,7 +197,7 @@ void RageLog::ShowLogOutput( bool show )
 
 void RageLog::Trace( const char *fmt, ...)
 {
-	if( !m_bEnabled )
+	if( !m_bLogToDisk )
 		return;
 
     va_list	va;
@@ -212,7 +212,7 @@ void RageLog::Trace( const char *fmt, ...)
  * in crash dumps. */
 void RageLog::Info( const char *fmt, ...)
 {
-	if( !m_bEnabled )
+	if( !m_bLogToDisk )
 		return;
 
     va_list	va;
@@ -225,7 +225,7 @@ void RageLog::Info( const char *fmt, ...)
 
 void RageLog::Warn( const char *fmt, ...)
 {
-	if( !m_bEnabled )
+	if( !m_bLogToDisk )
 		return;
 
     va_list	va;

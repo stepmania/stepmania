@@ -923,8 +923,8 @@ int main(int argc, char* argv[])
 	//
 	GAMESTATE	= new GameState;
 
-	LOG->ShowLogOutput( PREFSMAN->m_bShowLogOutput );
-	LOG->SetLogging( PREFSMAN->m_bLogging );
+	LOG->SetShowLogOutput( PREFSMAN->m_bShowLogOutput );
+	LOG->SetLogToDisk( PREFSMAN->m_bLogToDisk );
 	LOG->SetFlushing( PREFSMAN->m_bForceLogFlush );
 	LOG->SetTimestamping( PREFSMAN->m_bTimestamping );
 	Checkpoints::LogCheckpoints( PREFSMAN->m_bLogCheckpoints );
