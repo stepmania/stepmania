@@ -653,6 +653,35 @@ void LockMutex::Unlock()
 	}
 }
 
+RageEvent::RageEvent( CString name ):
+	RageMutex(name)
+{
+	m_pEvent = MakeEvent( m_pMutex );
+}
+
+RageEvent::~RageEvent()
+{
+	delete m_pEvent;
+}
+
+void RageEvent::Wait()
+{
+	ASSERT( IsLockedByThisThread() );
+	m_pEvent->Wait();
+}
+
+void RageEvent::Signal()
+{
+	ASSERT( IsLockedByThisThread() );
+	m_pEvent->Signal();
+}
+
+void RageEvent::Broadcast()
+{
+	ASSERT( IsLockedByThisThread() );
+	m_pEvent->Broadcast();
+}
+
 RageSemaphore::RageSemaphore( CString sName, int iInitialValue ):
 	m_sName( sName )
 {

@@ -68,7 +68,7 @@ public:
 	RageMutex( CString name );
 	virtual ~RageMutex();
 
-private:
+protected:
 	MutexImpl *m_pMutex;
 	CString m_sName;
 
@@ -129,6 +129,21 @@ public:
 #else
 #define LockMut(m) LockMutex LocalLock(m, __FUNCTION__, __LINE__)
 #endif
+
+class EventImpl;
+class RageEvent: public RageMutex
+{
+public:
+	RageEvent( CString name );
+	~RageEvent();
+
+	void Wait();
+	void Signal();
+	void Broadcast();
+
+private:
+	EventImpl *m_pEvent;
+};
 
 class SemaImpl;
 class RageSemaphore
