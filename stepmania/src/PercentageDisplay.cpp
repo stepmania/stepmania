@@ -18,11 +18,12 @@ PercentageDisplay::PercentageDisplay()
 	m_pSource = NULL;
 }
 
-void PercentageDisplay::Load( PlayerNumber pn, StageStats* pSource )
+void PercentageDisplay::Load( PlayerNumber pn, StageStats* pSource, bool bAutoRefresh )
 {
 	ASSERT( m_sName != "" ); // set this!
 	m_PlayerNumber = pn;
 	m_pSource = pSource;
+	m_bAutoRefresh = bAutoRefresh;
 	m_Last = -1;
 
 	if( PREFSMAN->m_bDancePointsForOni )
@@ -57,7 +58,8 @@ void PercentageDisplay::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
-	Refresh();
+	if( m_bAutoRefresh )
+		Refresh();
 }
 
 void PercentageDisplay::Refresh()

@@ -10,7 +10,7 @@ class PercentageDisplay: public ActorFrame
 {
 public:
 	PercentageDisplay();
-	void Load( PlayerNumber pn, StageStats *pSource );
+	void Load( PlayerNumber pn, StageStats *pSource, bool bAutoRefresh );
 	void Update( float fDeltaTime );
 	void TweenOffScreen();
 
@@ -18,6 +18,7 @@ private:
 	void Refresh();
 	PlayerNumber m_PlayerNumber;
 	StageStats *m_pSource;
+	bool m_bAutoRefresh;
 	int m_Last;
 	BitmapText	m_textPercent;
 	BitmapText	m_textPercentRemainder;

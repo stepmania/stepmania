@@ -15,5 +15,5 @@ ScoreDisplayPercentage::ScoreDisplayPercentage()
 
 void ScoreDisplayPercentage::Init( PlayerNumber pn ) 
 {
-	m_Percent.Load( pn, &g_CurStageStats );
+	m_Percent.Load( pn, &g_CurStageStats, true );
 }
