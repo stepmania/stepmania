@@ -33,7 +33,7 @@ enum {
 	NUM_INPUT_OPTIONS_LINES
 };
 
-/* Hmm.  Ignore JoyAxes and Back Delayed probably belong in "input options",
+/* Hmm.  Ignore JoyAxes and Back Delayed probably belong in "key/joy config",
  * preferably alongside button configuration. */
 OptionRowData g_InputOptionsLines[NUM_INPUT_OPTIONS_LINES] = {
 	{ "Ignore\nJoy Axes",	2, {"OFF","ON (for NTPad or DirectPad)"} },
