@@ -3,8 +3,8 @@
 #include "RageTimer.h"
 #include "RageLog.h"
 
-#include "SDL-1.2.5/include/SDL.h"
-#include "SDL-1.2.5/include/SDL_timer.h"
+#include "SDL.h"
+#include "SDL_timer.h"
  
 /* We only actually get 1000 using SDL. */
 #define TIMESTAMP_RESOLUTION 1000000
