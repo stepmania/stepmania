@@ -160,8 +160,8 @@ Grade StageStats::GetGrade( PlayerNumber pn ) const
 	int HoldScoreValues[NUM_HOLD_NOTE_SCORES] =
 	{
 		0,
-		PREFSMAN->m_iGradeWeightNG,
 		PREFSMAN->m_iGradeWeightOK,
+		PREFSMAN->m_iGradeWeightNG
 	};
 
 	float Possible = 0, Actual = 0;
