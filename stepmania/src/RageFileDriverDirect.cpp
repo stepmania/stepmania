@@ -274,7 +274,7 @@ RageFileObj *MakeFileObjDirect( CString sPath, RageFile::OpenMode mode, RageFile
 
 RageFileObj *RageFileDriverDirect::Open( const CString &path, RageFile::OpenMode mode, RageFile &p, int &err )
 {
-	CString sPath = root + path;
+	CString sPath = path;
 
 	/* This partially resolves.  For example, if "abc/def" exists, and we're opening
 	 * "ABC/DEF/GHI/jkl/mno", this will resolve it to "abc/def/GHI/jkl/mno"; we'll
@@ -288,7 +288,7 @@ RageFileObj *RageFileDriverDirect::Open( const CString &path, RageFile::OpenMode
 			CreateDirectories( dir );
 	}
 
-	return MakeFileObjDirect( sPath, mode, p, err );
+	return MakeFileObjDirect( root + sPath, mode, p, err );
 }
 
 RageFileObj *RageFileObjDirect::Copy( RageFile &p ) const
