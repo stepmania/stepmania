@@ -248,9 +248,9 @@ void Background::LoadFromSong( Song* pSong )
 			{
 				CStringArray arrayPossibleAnims;
 				GetDirListing( BG_ANIMS_DIR+"*.*", arrayPossibleAnims, true, true );
-				// strip out "cvs"
+				// strip out "cvs" and "danger
 				for( int i=arrayPossibleAnims.GetSize()-1; i>=0; i-- )
-					if( 0==stricmp(arrayPossibleAnims[i].Right(3),"cvs") )
+					if( 0==stricmp(arrayPossibleAnims[i].Right(3),"cvs") || 0==stricmp(arrayPossibleAnims[i].Right(3),"danger") )
 						arrayPossibleAnims.RemoveAt(i);
 				for( i=0; i<4 && arrayPossibleAnims.GetSize()>0; i++ )
 				{

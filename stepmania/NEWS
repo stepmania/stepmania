@@ -11,6 +11,7 @@ CHANGE:  Default setting for "Ignore Joy Axes" is now ON.
 BUG FIX:  Para demonstation no longer crashes.
 BUG FIX:  DWI reader now reads fractional BPM and FREEZE index values (e.g. 
 	Alya Part 2).
+BUG FIX:  Fixed ez2 real style spacing
 	
 ------------------------CVS after 3.00 beta 6----------------
 CHANGE:  Missing a jump with the Oni life meter now subtracts only 1 life.

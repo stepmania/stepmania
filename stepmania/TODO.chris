@@ -2,6 +2,23 @@
 Fix
 /////////////////////////
 
+- After getting an "A" or less on Extra Stage 1, SM should display the total results screen for all 4 songs instead of cutting to credits. Clearing both extra stages should display all 5 stages on results screen. This could/should apply to if 5 arcade songs is selected in Machine Options. 
+
+- Also, this may be more cosmetic but worth the shot. The ordering on final results is backwards, is it possible if you could display the songs FINAL, 2nd, 1st Stage, but in the reverse order? Like... SM has them being tiled wrong. Here's an example of what I mean right HERE (Taken from AaronInJapan.com) 
+
+new sort orders:  1.) (Default) All songs layed out in respective groups
+2.) Tabbed - All songs would be then "tabbed" under the folder name, as it currently is now.
+3.) ABC - Alphabetical Order of Song Title
+4.) Artist - Alphabetical Order of the Song Artist
+5.) BPM - Beats Per Minute of Songs 
+6.) BEST - Best records
+
+Is the grading harsher in couples mode? I did well on the 2nd player side while I let the 1 player side stay idle. But I somehow got a C when I only had perfects and greats. (player 1 got a D). IF the grading is shared, should we both get C's? Otherwise, why is it so strict? 
+
+scroll bar goofed in oni
+
+ugly wrapping on select group
+
 oni high scores
 
 download a bunch of DWIs to test for compatibility

@@ -483,16 +483,15 @@ void SongManager::InitCoursesFromDisk()
 	for( g=0; g<saGroupNames.GetSize(); g++ )	// foreach Group
 	{
 		CString sGroupName = saGroupNames[g];
-		CStringArray saCourseFiles;
-		GetDirListing( "Songs\\" + sGroupName + "\\*.crs", saCourseFiles );
-		for( int i=0; i<saCourseFiles.GetSize(); i++ )
+		CStringArray saCoursePaths;
+		GetDirListing( "Songs\\" + sGroupName + "\\*.crs", saCoursePaths, false, true );
+		for( int i=0; i<saCoursePaths.GetSize(); i++ )
 		{
 			Course course;
-			course.LoadFromCRSFile( "Songs\\" + sGroupName + "\\" + saCourseFiles[i], m_pSongs );
+			course.LoadFromCRSFile( saCoursePaths[i], m_pSongs );
 			if( course.m_iStages > 0 )
 				m_aExtraCourses.Add( course );
 		}
-
 	}
 
 
