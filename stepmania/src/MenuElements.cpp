@@ -119,8 +119,11 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	m_soundBack.Load( THEME->GetPathTo("Sounds","menu back") );
 }
 
-void MenuElements::TweenTopLayerOnScreen()
+void MenuElements::TweenTopLayerOnScreen(float tm)
 {
+	if(tm == -1)
+		tm = MENU_ELEMENTS_TWEEN_TIME;
+
 	CArray<Actor*,Actor*> apActorsInTopFrame;
 	apActorsInTopFrame.push_back( &m_sprTopEdge );
 	apActorsInTopFrame.push_back( &m_sprStyleIcon );
@@ -129,13 +132,13 @@ void MenuElements::TweenTopLayerOnScreen()
 	{
 		float fOriginalX = apActorsInTopFrame[i]->GetX();
 		apActorsInTopFrame[i]->SetX( fOriginalX+SCREEN_WIDTH );
-		apActorsInTopFrame[i]->BeginTweening( MENU_ELEMENTS_TWEEN_TIME, TWEEN_SPRING );
+		apActorsInTopFrame[i]->BeginTweening( tm, TWEEN_SPRING );
 		apActorsInTopFrame[i]->SetTweenX( fOriginalX );
 	}
 
 	float fOriginalZoom = m_textHelp.GetZoomY();
 	m_textHelp.SetZoomY( 0 );
-	m_textHelp.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
+	m_textHelp.BeginTweening( tm/2 );
 	m_textHelp.SetTweenZoomY( fOriginalZoom );
 }
 
@@ -200,6 +203,17 @@ void MenuElements::TweenOffScreenToMenu( ScreenMessage smSendWhenDone )
 	else
 		SCREENMAN->SendMessageToTopScreen( smSendWhenDone, m_KeepAlive.GetTransitionTime() );
 	m_soundSwoosh.Play();
+}
+
+void MenuElements::ImmedOnScreenFromMenu( bool bLeaveKeepAliveOn )
+{
+	TweenTopLayerOnScreen(0);
+	Update(0);
+
+	if( !bLeaveKeepAliveOn )
+		m_KeepAlive.SetOpened();
+	else
+		m_KeepAlive.SetClosed();
 }
 
 void MenuElements::ImmedOffScreenToMenu()

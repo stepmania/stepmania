@@ -48,6 +48,7 @@ public:
 
 	void TweenOnScreenFromMenu( ScreenMessage smSendWhenDone, bool bLeaveKeepAliveOn = false );
 	void TweenOffScreenToMenu( ScreenMessage smSendWhenDone );
+	void ImmedOnScreenFromMenu( bool bLeaveKeepAliveOn = false );
 	void ImmedOffScreenToMenu();
 
 	void TweenOnScreenFromBlack( ScreenMessage smSendWhenDone );
@@ -56,7 +57,7 @@ public:
 	bool IsClosing() { return m_Wipe.IsClosing() || m_KeepAlive.IsClosing(); };
 
 protected:
-	void TweenTopLayerOnScreen();
+	void TweenTopLayerOnScreen(float tm=-1);
 	void TweenTopLayerOffScreen(float tm=-1);
 
 	void TweenBottomLayerOnScreen();
