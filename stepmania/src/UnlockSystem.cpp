@@ -305,18 +305,18 @@ bool UnlockSystem::Load()
 
 			LOG->Trace("UnlockTypes line: %s", UnlockTypes[j].c_str() );
 
-			const float val = (float) atof( readparam[1] );
-			LOG->Trace("Unlock info: %s %f", unlock_type.c_str(), val);
+			const float fVal = (float) atof( readparam[1] );
+			const int iVal = atoi( readparam[1] );
 
 			const UnlockType ut = StringToUnlockType( unlock_type );
 			if( ut != UNLOCK_INVALID )
-				current.m_fRequired[ut] = val;
+				current.m_fRequired[ut] = fVal;
 			if( unlock_type == "CODE" )
-				current.m_iCode = (int) val;
+				current.m_iCode = iVal;
 			if( unlock_type == "RO" )
 			{
-				current.m_iCode = (int)val;
-				m_RouletteCodes.insert( (int)val );
+				current.m_iCode = iVal;
+				m_RouletteCodes.insert( iVal );
 			}
 		}
 
