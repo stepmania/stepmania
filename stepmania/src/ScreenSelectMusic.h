@@ -98,6 +98,7 @@ protected:
 	MusicWheel			m_MusicWheel;
 	AutoActor			m_MusicWheelUnder;
 	Sprite				m_sprBalloon;
+	AutoActor			m_sprCourseHasMods;
 	DifficultyDisplay   m_DifficultyDisplay;
 	DifficultyList		m_DifficultyList;
 	CourseContentsList	m_CourseContentsFrame;

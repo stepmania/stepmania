@@ -741,6 +741,17 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, CourseDiffic
 	m_InfoCache[params] = ci;
 }
 
+bool Course::HasMods() const
+{
+	for( int i=0; i<m_entries.size(); i++ )
+	{
+		if( !m_entries[i].modifiers.empty() )
+			return true;
+	}
+
+	return false;
+}
+
 void Course::ClearCache()
 {
 	m_InfoCache.clear();

@@ -297,6 +297,9 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	TEXTUREMAN->CacheTexture( THEME->GetPathToG("ScreenSelectMusic balloon marathon") );
 	this->AddChild( &m_sprBalloon );
 
+	m_sprCourseHasMods.LoadAndSetName( m_sName, "CourseHasMods" );
+	this->AddChild( m_sprCourseHasMods );
+
 	m_sprOptionsMessage.SetName( "OptionsMessage" );
 	m_sprOptionsMessage.Load( THEME->GetPathToG("ScreenSelectMusic options message 1x2") );
 	m_sprOptionsMessage.StopAnimating();
@@ -581,6 +584,7 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_MusicWheelUnder );
 	OFF_COMMAND( m_MusicWheel );
 	OFF_COMMAND( m_sprBalloon );
+	OFF_COMMAND( m_sprCourseHasMods );
 	OFF_COMMAND( m_Artist );
 	OFF_COMMAND( m_MachineRank );
 
@@ -1302,6 +1306,9 @@ void ScreenSelectMusic::AfterMusicChange()
 
 			m_sprBalloon.StopTweening();
 			OFF_COMMAND( m_sprBalloon );
+			
+			m_sprCourseHasMods->StopTweening();
+			OFF_COMMAND( m_sprCourseHasMods );
 		}
 		break;
 	case TYPE_SONG:
@@ -1366,6 +1373,9 @@ void ScreenSelectMusic::AfterMusicChange()
 				OFF_COMMAND( m_sprBalloon );
 			}
 
+			m_sprCourseHasMods->StopTweening();
+			OFF_COMMAND( m_sprCourseHasMods );
+
 			m_Artists.push_back( pSong->GetDisplayArtist() );
 			m_AltArtists.push_back( pSong->GetTranslitArtist() );
 		}
@@ -1400,6 +1410,10 @@ void ScreenSelectMusic::AfterMusicChange()
 
 		m_sprBalloon.StopTweening();
 		OFF_COMMAND( m_sprBalloon );
+		
+		m_sprCourseHasMods->StopTweening();
+		OFF_COMMAND( m_sprCourseHasMods );
+		
 		break;
 	case TYPE_COURSE:
 	{
@@ -1439,6 +1453,22 @@ void ScreenSelectMusic::AfterMusicChange()
 		const int index = FindCourseIndexOfSameMode( best.begin(), best.end(), pCourse );
 		if( index != -1 )
 			m_MachineRank.SetText( ssprintf("%i", index+1) );
+
+
+
+		m_sprBalloon.StopTweening();
+		OFF_COMMAND( m_sprBalloon );
+
+		if( pCourse->HasMods() )
+		{
+			m_sprCourseHasMods->StopTweening();
+			SET_XY_AND_ON_COMMAND( m_sprCourseHasMods );
+		}
+		else
+		{
+			m_sprCourseHasMods->StopTweening();
+			OFF_COMMAND( m_sprCourseHasMods );
+		}
 
 		break;
 	}
