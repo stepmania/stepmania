@@ -188,7 +188,7 @@ void Player::Update( float fDeltaTime )
 	// Update Y positions
 	//
 	float fPercentReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fReverseScroll;
-	float fHoldJudgeYPos = SCALE( fPercentReverse, 0.f, 1.f, HOLD_JUDGMENT_Y_STANDARD, HOLD_JUDGMENT_Y_REVERSE );
+//	float fHoldJudgeYPos = SCALE( fPercentReverse, 0.f, 1.f, HOLD_JUDGMENT_Y_STANDARD, HOLD_JUDGMENT_Y_REVERSE );
 	float fGrayYPos = SCALE( fPercentReverse, 0.f, 1.f, GRAY_ARROWS_Y_STANDARD, GRAY_ARROWS_Y_REVERSE );
 	int c;
 	for( c=0; c<GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer; c++ )
@@ -199,7 +199,7 @@ void Player::Update( float fDeltaTime )
 	m_GhostArrowRow.SetY( fGrayYPos );
 
 	float fMiniPercent = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fEffects[PlayerOptions::EFFECT_MINI];
-	float fZoom = 1 - fMiniPercent*0.5;
+	float fZoom = 1 - fMiniPercent*0.5f;
 	m_NoteField.SetZoom( fZoom );
 	m_GrayArrowRow.SetZoom( fZoom );
 	m_GhostArrowRow.SetZoom( fZoom );
