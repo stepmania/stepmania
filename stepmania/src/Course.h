@@ -111,6 +111,7 @@ public:
 	// Dereferences course_entries and returns only the playable Songs and Steps
 	Trail* GetTrail( StepsType st, CourseDifficulty cd=DIFFICULTY_MEDIUM ) const;
 	void GetTrails( vector<Trail*> &AddTo, StepsType st ) const;
+	void GetAllTrails( vector<Trail*> &AddTo ) const;
 	float GetMeter( StepsType st, CourseDifficulty cd=DIFFICULTY_MEDIUM ) const;
 	bool HasMods() const;
 	bool AllSongsAreFixed() const;

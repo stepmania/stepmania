@@ -1028,6 +1028,16 @@ void Course::GetTrails( vector<Trail*> &AddTo, StepsType st ) const
 	}
 }
 
+void Course::GetAllTrails( vector<Trail*> &AddTo ) const
+{
+	vector<StepsType> vStepsTypesToShow;
+	GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vStepsTypesToShow );
+	FOREACH( StepsType, vStepsTypesToShow, st )
+	{
+		GetTrails( AddTo, *st );
+	}
+}
+
 bool Course::HasMods() const
 {
 	FOREACH_CONST( CourseEntry, m_entries, e )
