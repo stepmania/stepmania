@@ -4,15 +4,14 @@
 struct TapNote
 {
 	enum Type { 
-		empty, 
+		empty, 		// no note here
 		tap, 
 		hold_head,	// graded like a TAP_TAP
 		hold_tail,	/* In 2sand3s mode, holds are deleted and TAP_HOLD_END is added: */
 		hold,		/* In 4s mode, holds and TAP_HOLD_HEAD are deleted and TAP_HOLD is added: */
 		mine,		// don't step!
 		attack,
-	};
-	unsigned type : 3;	// no unsigned enum support in VC++
+ 	} type;
 	enum Source {
 		original,	// part of the original NoteData
 		addition,	// additional note added by a transform
@@ -27,44 +26,42 @@ struct TapNote
 					//     then this is triggered automatically to keep the sound going
 					// 2 - if we're NOT [anything else], we ignore this.
 					// Equivalent to all 4s aside from the first one.
-	};
-	unsigned source : 2;	// only valid if type!=empty
+	} source;
 
-	bool bAttack : 1;	// true if this note causes an attack when hit
-	bool bKeysound : 1;	// true if this note plays a keysound when hit
-	
-	// CAREFUL: small fields grouped together for alignment.
+	// Only valid if type == attack.
+	CString sAttackModifiers;
+	float fAttackDurationSeconds;
 
-	uint8_t attackIndex;	// index into NoteData's vector of attacks
-							// Only valid if bAttack.
-	uint16_t keysoundIndex;	// index into Song's vector of keysound files.  
+	bool bKeysound;	// true if this note plays a keysound when hit
+
+	int iKeysoundIndex;	// index into Song's vector of keysound files.  
 							// Only valid if bKeysound.
-							// Some songs have > 256 keysounds.
 
-	void Set( 
+	TapNote() {}
+	TapNote( 
 		Type type_, 
 		Source source_, 
-		bool bAttack_,
-		uint8_t attackIndex_, 
+		CString sAttackModifiers_,
+		float fAttackDurationSeconds_,
 		bool bKeysound_,
-		uint16_t keysoundIndex_ )
+		int iKeysoundIndex_ )
 	{
 		type = type_;
 		source = source_;
-		bAttack = bAttack_;
-		attackIndex = attackIndex_;
+		sAttackModifiers = sAttackModifiers_;
+		fAttackDurationSeconds = fAttackDurationSeconds_;
 		bKeysound = bKeysound_;
-		keysoundIndex = keysoundIndex_;
+		iKeysoundIndex = iKeysoundIndex_;
 	}
 	bool operator==( const TapNote &other )
 	{
 #define COMPARE(x)	if(x!=other.x) return false;
 		COMPARE(type);
 		COMPARE(source);
-		COMPARE(bAttack);
+		COMPARE(sAttackModifiers);
+		COMPARE(fAttackDurationSeconds);
 		COMPARE(bKeysound);
-		COMPARE(attackIndex);
-		COMPARE(keysoundIndex);
+		COMPARE(iKeysoundIndex);
 #undef COMPARE
 		return true;
 	}
@@ -78,6 +75,7 @@ extern TapNote TAP_ORIGINAL_HOLD_HEAD;	// '2'
 extern TapNote TAP_ORIGINAL_HOLD_TAIL;	// '3'
 extern TapNote TAP_ORIGINAL_HOLD;		// '4'
 extern TapNote TAP_ORIGINAL_MINE;		// 'M'
+extern TapNote TAP_ORIGINAL_ATTACK;		// 'A'
 extern TapNote TAP_ADDITION_TAP;
 extern TapNote TAP_ADDITION_MINE;
 

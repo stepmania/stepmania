@@ -9,7 +9,7 @@ class Steps;
 
 class BMSLoader: public NotesLoader
 {
-	bool LoadFromBMSFile( const CString &sPath, Steps &out1, const map<CString,unsigned> &mapWavIdToKeysoundIndex );
+	bool LoadFromBMSFile( const CString &sPath, Steps &out1, const map<CString,int> &mapWavIdToKeysoundIndex );
 
 	void SlideDuplicateDifficulties( Song &p );
 

@@ -1207,18 +1207,20 @@ void GameState::SetNoteSkinForBeatRange( PlayerNumber pn, CString sNoteSkin, flo
 
 /* This is called to launch an attack, or to queue an attack if a.fStartSecond
  * is set.  This is also called by GameState::Update when activating a queued attack. */
-void GameState::LaunchAttack( PlayerNumber target, Attack a )
+void GameState::LaunchAttack( PlayerNumber target, const Attack& a )
 {
 	LOG->Trace( "Launch attack '%s' against P%d at %f", a.sModifier.c_str(), target+1, a.fStartSecond );
+
+	Attack attack = a;
 
 	/* If fStartSecond is -1, it means "launch as soon as possible".  For m_ActiveAttacks,
 	 * mark the real time it's starting (now), so Update() can know when the attack started
 	 * so it can be removed later.  For m_ModsToApply, leave the -1 in, so Player::Update
 	 * knows to apply attack transforms correctly.  (yuck) */
-	m_ModsToApply[target].push_back( a );
-	if( a.fStartSecond == -1 )
-		a.fStartSecond = this->m_fMusicSeconds;
-	m_ActiveAttacks[target].push_back( a );
+	m_ModsToApply[target].push_back( attack );
+	if( attack.fStartSecond == -1 )
+		attack.fStartSecond = this->m_fMusicSeconds;
+	m_ActiveAttacks[target].push_back( attack );
 
 	this->RebuildPlayerOptionsFromActiveAttacks( target );
 }

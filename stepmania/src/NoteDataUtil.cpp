@@ -45,248 +45,205 @@ NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &n, int iMe
 		return nt;
 }
 
-void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData, CString sSMAttackData )
+void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData )
 {
+	//
+	// Load note data
+	//
+
+	/* Clear notes, but keep the same number of tracks. */
+	int iNumTracks = out.GetNumTracks();
+	out.Init();
+	out.SetNumTracks( iNumTracks );
+
+	// strip comments out of sSMNoteData
+	while( sSMNoteData.Find("//") != -1 )
 	{
-		//
-		// Load note data
-		//
-
-		/* Clear notes, but keep the same number of tracks. */
-		int iNumTracks = out.GetNumTracks();
-		out.Init();
-		out.SetNumTracks( iNumTracks );
-
-		// strip comments out of sSMNoteData
-		while( sSMNoteData.Find("//") != -1 )
-		{
-			int iIndexCommentStart = sSMNoteData.Find("//");
-			int iIndexCommentEnd = sSMNoteData.Find("\n", iIndexCommentStart);
-			if( iIndexCommentEnd == -1 )	// comment doesn't have an end?
-				sSMNoteData.erase( iIndexCommentStart, 2 );
-			else
-				sSMNoteData.erase( iIndexCommentStart, iIndexCommentEnd-iIndexCommentStart );
-		}
-
-		CStringArray asMeasures;
-		split( sSMNoteData, ",", asMeasures, true );	// ignore empty is important
-		for( unsigned m=0; m<asMeasures.size(); m++ )	// foreach measure
-		{
-			CString &sMeasureString = asMeasures[m];
-			TrimLeft(sMeasureString);
-			TrimRight(sMeasureString);
-
-			CStringArray asMeasureLines;
-			split( sMeasureString, "\n", asMeasureLines, true );	// ignore empty is important
-
-			for( unsigned l=0; l<asMeasureLines.size(); l++ )
-			{
-				CString &sMeasureLine = asMeasureLines[l];
-				TrimLeft(sMeasureLine);
-				TrimRight(sMeasureLine);
-
-				const float fPercentIntoMeasure = l/(float)asMeasureLines.size();
-				const float fBeat = (m + fPercentIntoMeasure) * BEATS_PER_MEASURE;
-				const int iIndex = BeatToNoteRow( fBeat );
-
-	//			if( m_iNumTracks != sMeasureLine.GetLength() )
-	//				RageException::Throw( "Actual number of note columns (%d) is different from the StepsType (%d).", m_iNumTracks, sMeasureLine.GetLength() );
-
-				const char *p = sMeasureLine;
-				int iTrack = 0;
-				while( *p )
-				{
-					TapNote tn;
-					char ch = *p;
-					switch( ch )
-					{
-					case '0': tn = TAP_EMPTY;				break;
-					case '1': tn = TAP_ORIGINAL_TAP;		break;
-					case '2': tn = TAP_ORIGINAL_HOLD_HEAD;	break;
-					case '3': tn = TAP_ORIGINAL_HOLD_TAIL;	break;
-	//				case 'm':
-					// Don't be loose with the definition.  Use only 'M' since
-					// that's what we've been writing to disk.  -Chris
-					case 'M': tn = TAP_ORIGINAL_MINE;		break;
-					default: 
-						if( ch >= 'a' && ch <= 'z' )
-						{
-							tn.Set( 
-								TapNote::attack, 
-								TapNote::original, 
-								true,
-								ch - 'a', 
-								false,
-								0 );
-						}
-						else
-						{
-							/* Invalid data.  We don't want to assert, since there might
-							 * simply be invalid data in an .SM, and we don't want to die
-							 * due to invalid data.  We should probably check for this when
-							 * we load SM data for the first time ... */
-							// ASSERT(0); 
-							tn = TAP_EMPTY;
-						}
-						break;
-					}
-					
-					p++;
-					
-					// look for optional keysound index (e.g. "[123]")
-					if( *p == '[' )
-					{
-						p++;
-						unsigned uKeysoundIndex = 0;
-						if( 1 == sscanf( p, "%u]", &uKeysoundIndex ) )	// not fatal if this fails due to malformed data
-						{
-							tn.bKeysound = true;
-		 					tn.keysoundIndex = (uint16_t)uKeysoundIndex;
-						}
-
-						// skip past the ']'
-						while( *p )
-						{
-							if( *p == ']' )
-							{
-								p++;
-								break;
-							}
-							p++;
-						}
-					}
-
-					out.SetTapNote( iTrack, iIndex, tn );
-
-					iTrack++;
-				}
-			}
-		}
-		out.Convert2sAnd3sToHoldNotes();
+		int iIndexCommentStart = sSMNoteData.Find("//");
+		int iIndexCommentEnd = sSMNoteData.Find("\n", iIndexCommentStart);
+		if( iIndexCommentEnd == -1 )	// comment doesn't have an end?
+			sSMNoteData.erase( iIndexCommentStart, 2 );
+		else
+			sSMNoteData.erase( iIndexCommentStart, iIndexCommentEnd-iIndexCommentStart );
 	}
 
+	CStringArray asMeasures;
+	split( sSMNoteData, ",", asMeasures, true );	// ignore empty is important
+	for( unsigned m=0; m<asMeasures.size(); m++ )	// foreach measure
 	{
-		//
-		// Load attack data
-		//
-		CStringArray asLines;
-		split( sSMAttackData, ",", asLines, true );
+		CString &sMeasureString = asMeasures[m];
+		TrimLeft(sMeasureString);
+		TrimRight(sMeasureString);
 
-		for( unsigned i=0; i<asLines.size(); i++ )
+		CStringArray asMeasureLines;
+		split( sMeasureString, "\n", asMeasureLines, true );	// ignore empty is important
+
+		for( unsigned l=0; l<asMeasureLines.size(); l++ )
 		{
-			CString& sLine = asLines[i];
-			TrimLeft( sLine );
-			TrimRight( sLine );
+			CString &sMeasureLine = asMeasureLines[l];
+			TrimLeft(sMeasureLine);
+			TrimRight(sMeasureLine);
 
-			if( sLine.empty() )
-				continue;	// skip
+			const float fPercentIntoMeasure = l/(float)asMeasureLines.size();
+			const float fBeat = (m + fPercentIntoMeasure) * BEATS_PER_MEASURE;
+			const int iIndex = BeatToNoteRow( fBeat );
 
-			CStringArray asBits;
-			split( sLine, "=", asBits, true );
+//			if( m_iNumTracks != sMeasureLine.GetLength() )
+//				RageException::Throw( "Actual number of note columns (%d) is different from the StepsType (%d).", m_iNumTracks, sMeasureLine.GetLength() );
 
-			if( asBits.size() < 3 )
-				continue;
-
-			if( asBits[0].empty() )
-				continue;
-
-			int attack_index = asBits[0][0] - 'a';
-			
-			Attack attack;
-			attack.level = ATTACK_LEVEL_1;
-			attack.sModifier = asBits[1];
-			attack.sModifier.Replace( '.', ',' );	// we couldn't use comma here because the map item separator is a comma
-			attack.fSecsRemaining = strtof( asBits[2], NULL );
-			
-			out.GetAttackMap()[attack_index] = attack;
-		}
-	}
-}
-
-void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &notes_out, CString &attacks_out )
-{
-	{
-		//
-		// Get note data
-		//
-		NoteData in;
-		in.To2sAnd3s( in_ );
-
-		float fLastBeat = in.GetLastBeat();
-		int iLastMeasure = int( fLastBeat/BEATS_PER_MEASURE );
-
-		CString &sRet = notes_out;
-
-		sRet = "";
-		
-		for( int m=0; m<=iLastMeasure; m++ )	// foreach measure
-		{
-			if( m )
-				sRet.append( 1, ',' );
-
-			NoteType nt = GetSmallestNoteTypeForMeasure( in, m );
-			int iRowSpacing;
-			if( nt == NOTE_TYPE_INVALID )
-				iRowSpacing = 1;
-			else
-				iRowSpacing = int(roundf( NoteTypeToBeat(nt) * ROWS_PER_BEAT ));
-
-			sRet += ssprintf("  // measure %d\n", m+1);
-
-			const int iMeasureStartRow = m * ROWS_PER_MEASURE;
-			const int iMeasureLastRow = (m+1) * ROWS_PER_MEASURE - 1;
-
-			for( int r=iMeasureStartRow; r<=iMeasureLastRow; r+=iRowSpacing )
+			const char *p = sMeasureLine;
+			int iTrack = 0;
+			while( *p )
 			{
-				for( int t=0; t<in.GetNumTracks(); t++ )
+				TapNote tn;
+				char ch = *p;
+				switch( ch )
 				{
-					TapNote tn = in.GetTapNote(t, r);
-					char c;
-					switch( tn.type )
-					{
-					case TapNote::empty:		c = '0'; break;
-					case TapNote::tap:			c = '1'; break;
-					case TapNote::hold_head:	c = '2'; break;
-					case TapNote::hold_tail:	c = '3'; break;
-					case TapNote::mine:			c = 'M'; break;
-					case TapNote::attack:		c = 'a' + (char)tn.attackIndex ; break;
-					default: 
-						ASSERT(0);
-						c = '0'; 
-						break;
-					}
-					sRet.append(1, c);
-
-					if( tn.bKeysound )
-					{
-						sRet.append( ssprintf("[%u]",tn.keysoundIndex) );
-					}
+				case '0': tn = TAP_EMPTY;				break;
+				case '1': tn = TAP_ORIGINAL_TAP;		break;
+				case '2': tn = TAP_ORIGINAL_HOLD_HEAD;	break;
+				case '3': tn = TAP_ORIGINAL_HOLD_TAIL;	break;
+//				case 'm':
+				// Don't be loose with the definition.  Use only 'M' since
+				// that's what we've been writing to disk.  -Chris
+				case 'M': tn = TAP_ORIGINAL_MINE;		break;
+				case 'A': tn = TAP_ORIGINAL_ATTACK;		break;
+				default: 
+					/* Invalid data.  We don't want to assert, since there might
+					 * simply be invalid data in an .SM, and we don't want to die
+					 * due to invalid data.  We should probably check for this when
+					 * we load SM data for the first time ... */
+					// ASSERT(0); 
+					tn = TAP_EMPTY;
+					break;
 				}
 				
-				sRet.append(1, '\n');
+				p++;
+				
+				// look for optional attack info (e.g. "{tipsy,50% drunk:15.2}")
+				if( *p == '{' )
+				{
+					p++;
+
+					// TODO: this buffer could overflow
+					char szModifiers[256] = "";
+					float fDurationSeconds = 0;
+					if( 2 == sscanf( p, "%[^:]:%f}", szModifiers, &fDurationSeconds ) )	// not fatal if this fails due to malformed data
+					{
+						tn.type = TapNote::attack;
+						tn.sAttackModifiers = szModifiers;
+		 				tn.fAttackDurationSeconds = fDurationSeconds;
+					}
+
+					// skip past the '}'
+					while( *p )
+					{
+						if( *p == '}' )
+						{
+							p++;
+							break;
+						}
+						p++;
+					}
+				}
+
+				// look for optional keysound index (e.g. "[123]")
+				if( *p == '[' )
+				{
+					p++;
+					int iKeysoundIndex = 0;
+					if( 1 == sscanf( p, "%d]", &iKeysoundIndex ) )	// not fatal if this fails due to malformed data
+					{
+						tn.bKeysound = true;
+		 				tn.iKeysoundIndex = iKeysoundIndex;
+					}
+
+					// skip past the ']'
+					while( *p )
+					{
+						if( *p == ']' )
+						{
+							p++;
+							break;
+						}
+						p++;
+					}
+				}
+
+				out.SetTapNote( iTrack, iIndex, tn );
+
+				iTrack++;
 			}
 		}
 	}
+	out.Convert2sAnd3sToHoldNotes();
+}
 
+void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &notes_out )
+{
+	//
+	// Get note data
+	//
+	NoteData in;
+	in.To2sAnd3s( in_ );
+
+	float fLastBeat = in.GetLastBeat();
+	int iLastMeasure = int( fLastBeat/BEATS_PER_MEASURE );
+
+	CString &sRet = notes_out;
+
+	sRet = "";
+	
+	for( int m=0; m<=iLastMeasure; m++ )	// foreach measure
 	{
-		//
-		// Get attack data
-		// 
-		CStringArray asLines;
+		if( m )
+			sRet.append( 1, ',' );
 
-		for( map<unsigned,Attack>::const_iterator iter = in_.GetAttackMap().begin();
-			iter != in_.GetAttackMap().end();
-			iter++ )
+		NoteType nt = GetSmallestNoteTypeForMeasure( in, m );
+		int iRowSpacing;
+		if( nt == NOTE_TYPE_INVALID )
+			iRowSpacing = 1;
+		else
+			iRowSpacing = int(roundf( NoteTypeToBeat(nt) * ROWS_PER_BEAT ));
+
+		sRet += ssprintf("  // measure %d\n", m+1);
+
+		const int iMeasureStartRow = m * ROWS_PER_MEASURE;
+		const int iMeasureLastRow = (m+1) * ROWS_PER_MEASURE - 1;
+
+		for( int r=iMeasureStartRow; r<=iMeasureLastRow; r+=iRowSpacing )
 		{
-			int attackIndex = iter->first;
-			char ch = 'a' + (char)attackIndex;
-			Attack attack = iter->second;
-			attack.sModifier.Replace( ',', '.' );	// comma is the map item separator
+			for( int t=0; t<in.GetNumTracks(); t++ )
+			{
+				TapNote tn = in.GetTapNote(t, r);
+				char c;
+				switch( tn.type )
+				{
+				case TapNote::empty:		c = '0'; break;
+				case TapNote::tap:			c = '1'; break;
+				case TapNote::hold_head:	c = '2'; break;
+				case TapNote::hold_tail:	c = '3'; break;
+				case TapNote::mine:			c = 'M'; break;
+				case TapNote::attack:		c = 'A'; break;
+				default: 
+					ASSERT(0);
+					c = '0'; 
+					break;
+				}
+				sRet.append(1, c);
 
-			asLines.push_back( ssprintf("%c=%s=%f,\n", ch, attack.sModifier.c_str(), attack.fSecsRemaining) );
+				if( tn.type == TapNote::attack )
+				{
+					sRet.append( ssprintf("{%s:%.2f}",tn.sAttackModifiers.c_str(), tn.fAttackDurationSeconds) );
+				}
+				if( tn.bKeysound )
+				{
+					sRet.append( ssprintf("[%d]",tn.iKeysoundIndex) );
+				}
+			}
+			
+			sRet.append(1, '\n');
 		}
-
-		attacks_out = join( ",", asLines );
 	}
 }
 
@@ -354,8 +311,6 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 	}
 
 	out.Convert4sToHoldNotes();
-
-	out.GetAttackMap() = Original.GetAttackMap();
 }
 
 void NoteDataUtil::LoadOverlapped( const NoteData &input, NoteData &out, int iNewNumTracks )
@@ -1672,12 +1627,7 @@ void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
 		float fBeat = pSong->GetBeatFromElapsedTime( sec );
 		int iBeat = (int)fBeat;
 		int iTrack = iBeat % nd.GetNumTracks();	// deterministically calculates track
-		Attack attack;
-		attack.fStartSecond = -1;
-		attack.fSecsRemaining = 15;
-		attack.sModifier = szAttacks[rand()%ARRAYSIZE(szAttacks)];
-		attack.level = ATTACK_LEVEL_1;
-		nd.SetTapAttackNote( iTrack, BeatToNoteRow(fBeat), attack );
+		nd.SetTapAttackNote( iTrack, BeatToNoteRow(fBeat), szAttacks[rand()%ARRAYSIZE(szAttacks)], 15 );
 	}
 }
 

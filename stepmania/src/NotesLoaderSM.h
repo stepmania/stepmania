@@ -18,7 +18,6 @@ class SMLoader: public NotesLoader
 		CString sMeter,
 		CString sRadarValues,
 		CString sNoteData,		
-		CString sAttackData,		
 		Steps &out);
 
 	bool FromCache;

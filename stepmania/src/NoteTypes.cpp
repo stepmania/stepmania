@@ -1,14 +1,15 @@
 #include "global.h"
 #include "NoteTypes.h"
 
-TapNote TAP_EMPTY				= { TapNote::empty, TapNote::original, 0 };
-TapNote TAP_ORIGINAL_TAP		= { TapNote::tap, TapNote::original, 0 };
-TapNote TAP_ORIGINAL_HOLD_HEAD	= { TapNote::hold_head, TapNote::original, 0 };		// '2'
-TapNote TAP_ORIGINAL_HOLD_TAIL	= { TapNote::hold_tail, TapNote::original, 0 };		// '3'
-TapNote TAP_ORIGINAL_HOLD		= { TapNote::hold, TapNote::original, 0 };			// '4'
-TapNote TAP_ORIGINAL_MINE		= { TapNote::mine, TapNote::original, 0 };
-TapNote TAP_ADDITION_TAP		= { TapNote::tap, TapNote::addition, 0 };
-TapNote TAP_ADDITION_MINE		= { TapNote::mine, TapNote::addition, 0 };
+TapNote TAP_EMPTY				( TapNote::empty,		TapNote::original, "", 0, false, 0 );
+TapNote TAP_ORIGINAL_TAP		( TapNote::tap,			TapNote::original, "", 0, false, 0 );
+TapNote TAP_ORIGINAL_HOLD_HEAD	( TapNote::hold_head,	TapNote::original, "", 0, false, 0 );
+TapNote TAP_ORIGINAL_HOLD_TAIL	( TapNote::hold_tail,	TapNote::original, "", 0, false, 0 );
+TapNote TAP_ORIGINAL_HOLD		( TapNote::hold,		TapNote::original, "", 0, false, 0 );
+TapNote TAP_ORIGINAL_MINE		( TapNote::mine,		TapNote::original, "", 0, false, 0 );
+TapNote TAP_ORIGINAL_ATTACK		( TapNote::attack,		TapNote::original, "", 0, false, 0 );
+TapNote TAP_ADDITION_TAP		( TapNote::tap,			TapNote::addition, "", 0, false, 0 );
+TapNote TAP_ADDITION_MINE		( TapNote::mine,		TapNote::addition, "", 0, false, 0 );
 
 float NoteTypeToBeat( NoteType nt )
 {

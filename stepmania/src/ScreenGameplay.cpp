@@ -816,7 +816,16 @@ void ScreenGameplay::SetupSong( PlayerNumber p, int iSongIndex )
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 	NoteData newNoteData;
 	pStyle->GetTransformedNoteDataForStyle( p, originalNoteData, newNoteData );
-	m_Player[p].Load( p, newNoteData, m_pLifeMeter[p], m_pCombinedLifeMeter, m_pPrimaryScoreDisplay[p], m_pSecondaryScoreDisplay[p], m_pInventory[p], m_pPrimaryScoreKeeper[p], m_pSecondaryScoreKeeper[p] );
+	m_Player[p].Load( 
+		p, 
+		newNoteData, 
+		m_pLifeMeter[p], 
+		m_pCombinedLifeMeter, 
+		m_pPrimaryScoreDisplay[p], 
+		m_pSecondaryScoreDisplay[p], 
+		m_pInventory[p], 
+		m_pPrimaryScoreKeeper[p], 
+		m_pSecondaryScoreKeeper[p] );
 
 
 	// Put course options into effect.  Do this after Player::Load so

@@ -1399,14 +1399,9 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		{
 			PlayerOptions poChosen = GAMESTATE->m_PlayerOptions[PLAYER_1];
 			CString sMods = poChosen.GetString();
-			const int iSongIndex = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+			const int row = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 			
-			Attack attack;
-			attack.level = ATTACK_LEVEL_1;	// does this matter?
-			attack.fSecsRemaining = g_fLastInsertAttackDurationSeconds;
-			attack.sModifier = sMods;
-			
-			m_NoteFieldEdit.SetTapAttackNote( g_iLastInsertAttackTrack, iSongIndex, attack );
+			m_NoteFieldEdit.SetTapAttackNote( g_iLastInsertAttackTrack, row, sMods, g_fLastInsertAttackDurationSeconds );
 			GAMESTATE->RestoreSelectedOptions();	// restore the edit and playback options
 		}
 		break;

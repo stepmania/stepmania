@@ -157,26 +157,13 @@ void NotesWriterSM::WriteSMNotesTag( const Song &song, const Steps &in, RageFile
 	f.Write( ssprintf( "     %s:", join(",",asRadarValues).c_str() ) );
 
 	CString sNoteData;
-	CString sAttackData;
-	in.GetSMNoteData( sNoteData, sAttackData );
+	in.GetSMNoteData( sNoteData );
 
 	vector<CString> lines;
 
 	split( sNoteData, "\n", lines, false );
 	WriteLineList( f, lines, true, true );
-
-	if( sAttackData.empty() )
-		f.PutLine( ";" );
-	else
-	{
-		f.PutLine( ":" );
-
-		lines.clear();
-		split( sAttackData, "\n", lines, false );
-		WriteLineList( f, lines, true, true );
-
-		f.PutLine( ";" );
-	}
+	f.PutLine( ";" );
 }
 
 bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)

@@ -324,10 +324,10 @@ void Song::DeleteDuplicateSteps( vector<Steps*> &vSteps )
 			if( s1->GetMeter() != s2->GetMeter() )
 				continue;
 			/* Compare, ignoring whitespace. */
-			CString sSMNoteData1, sSMAttackData1;
-			s1->GetSMNoteData( sSMNoteData1, sSMAttackData1 );
-			CString sSMNoteData2, sSMAttackData2;
-			s2->GetSMNoteData( sSMNoteData2, sSMAttackData2 );
+			CString sSMNoteData1;
+			s1->GetSMNoteData( sSMNoteData1 );
+			CString sSMNoteData2;
+			s2->GetSMNoteData( sSMNoteData2 );
 			if( RemoveInitialWhitespace(sSMNoteData1) != RemoveInitialWhitespace(sSMNoteData2) )
 				continue;
 

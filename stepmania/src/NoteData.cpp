@@ -77,20 +77,11 @@ void NoteData::CopyRange( const NoteData& from, int iFromIndexBegin, int iFromIn
 	
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( From, t, from, iFromIndexBegin, iFromIndexEnd )
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( From, t, iFrom, iFromIndexBegin, iFromIndexEnd )
 		{
-			int to = iToIndexBegin + from - iFromIndexBegin;
-
-			TapNote tn = From.GetTapNote( t, from );
-			if( tn.type == TapNote::attack )
-			{
-				Attack attack = From.GetAttackAt( t, from );
-				To.SetTapAttackNote( t, to, attack );
-			}
-			else
-			{
-				To.SetTapNote( t, to, tn );
-			}
+			int iTo = iToIndexBegin + iFrom - iFromIndexBegin;
+			TapNote tn = From.GetTapNote( t, iFrom );
+			To.SetTapNote( t, iTo, tn );
 		}
 	}
 
@@ -110,7 +101,6 @@ void NoteData::CopyAll( const NoteData& from )
 	for( int c=0; c<GetNumTracks(); c++ )
 		m_TapNotes[c] = from.m_TapNotes[c];
 	m_HoldNotes = from.m_HoldNotes;
-	m_AttackMap = from.m_AttackMap;
 }
 
 bool NoteData::IsRowEmpty( int index ) const
@@ -264,71 +254,17 @@ int NoteData::GetMatchingHoldNote( const HoldNote &hn ) const
 }
 
 
-void NoteData::SetTapAttackNote( int track, int row, Attack attack )
+void NoteData::SetTapAttackNote( int track, int row, CString sModifiers, float fDurationSeconds )
 {
-	PruneUnusedAttacksFromMap();
-
-	// find first unused attack index
-	for( unsigned i=0; i<MAX_NUM_ATTACKS; i++ )
-	{
-		if( m_AttackMap.find(i) == m_AttackMap.end() )	// this index is free to use
-		{
-			m_AttackMap[i] = attack;
-			TapNote tn;
-			tn.Set( 
-				TapNote::attack, 
-				TapNote::original, 
-				true,
-				(uint8_t)i, 
-				false,
-				0 );
-			SetTapNote( track, row, tn );
-			return;
-		}
-	}
-	// TODO: need to increase MAX_NUM_ATTACKS or handle "no more room" case
-	ASSERT(0);
+	TapNote tn(
+		TapNote::attack, 
+		TapNote::original, 
+		sModifiers,
+		fDurationSeconds, 
+		false,
+		0 );
+	SetTapNote( track, row, tn );
 }
-
-void NoteData::PruneUnusedAttacksFromMap()
-{
-	// Add all used AttackNote index values to a map.
-	set<unsigned> setUsedIndices;
-
-	for( int t=0; t<GetNumTracks(); t++ )
-	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK( *this, t, r )
-		{
-			TapNote tn = GetTapNote(t, r);
-			if( tn.type == TapNote::attack )
-				setUsedIndices.insert( tn.attackIndex );
-		}
-	}
-
-	// Remove all items from m_AttackMap that don't have corresponding
-	// TapNotes in use.
-	for( unsigned i=0; i<MAX_NUM_ATTACKS; i++ )
-	{
-		bool bInAttackMap = m_AttackMap.find(i) != m_AttackMap.end();
-		bool bActuallyUsed = setUsedIndices.find(i) != setUsedIndices.end();
-
-		if( bActuallyUsed && !bInAttackMap )
-			ASSERT(0);	// something earlier than us didn't enforce consistency 
-
-		if( bInAttackMap && !bActuallyUsed )
-			m_AttackMap.erase( i );
-	}
-}
-
-const Attack& NoteData::GetAttackAt( int track, int row )
-{
-	TapNote tn = GetTapNote(track, row);
-	ASSERT( tn.type == TapNote::attack );	// don't call this if the TapNote here isn't an attack
-	map<unsigned,Attack>::iterator iter = m_AttackMap.find( tn.attackIndex );
-	ASSERT( iter != m_AttackMap.end() );
-	return iter->second;
-}
-
 
 int NoteData::GetFirstRow() const
 { 
@@ -718,8 +654,6 @@ void NoteData::LoadTransformed( const NoteData& original, int iNewNumTracks, con
 	}
 
 	Convert4sToHoldNotes();
-
-	m_AttackMap = Original.GetAttackMap();
 }
 
 void NoteData::PadTapNotes(int rows)

@@ -110,7 +110,6 @@ void PlayerMinus::Load(
 	NoteField* pNoteField )
 {
 	m_iDCState = AS2D_IDLE;
-	//LOG->Trace( "PlayerMinus::Load()", );
 
 	GAMESTATE->ResetNoteSkinsForPlayer( pn );
 	
@@ -251,6 +250,21 @@ void PlayerMinus::Load(
 	m_soundMine.SetParams( p );
 	m_soundAttackLaunch.SetParams( p );
 	m_soundAttackEnding.SetParams( p );
+
+	//
+	// Load keysounds
+	//
+	Song* pSong = GAMESTATE->m_pCurSong;
+	CString sSongDir = pSong->GetSongDir();
+	m_vKeysounds.clear();
+	m_vKeysounds.resize( pSong->m_vsKeysoundFile.size() );
+	for( unsigned i=0; i<m_vKeysounds.size(); i++ )
+	{
+		 CString sKeysoundFilePath = sSongDir + pSong->m_vsKeysoundFile[i];
+		 RageSound& sound = m_vKeysounds[i];
+		 sound.Load( sKeysoundFilePath );
+		 sound.SetParams( p );
+	}
 }
 
 void PlayerMinus::Update( float fDeltaTime )
@@ -684,7 +698,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 		const float fSecondsFromPerfect = fabsf( fNoteOffset );
 
 
-		TapNote tn = m_NoteData.GetTapNote(col,iIndexOverlappingNote);
+		TapNote tn = m_NoteData.GetTapNote( col, iIndexOverlappingNote );
 
 		switch( GAMESTATE->m_PlayerController[m_PlayerNumber] )
 		{
@@ -713,8 +727,16 @@ void PlayerMinus::Step( int col, RageTimer tm )
 				if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Attack) )
 				{
 					m_soundAttackLaunch.Play();
+
 					// put attack in effect
-					Attack attack = m_NoteData.GetAttackAt( col, iIndexOverlappingNote );
+					Attack attack(
+						ATTACK_LEVEL_1,
+						-1,	// now
+						tn.fAttackDurationSeconds,
+						tn.sAttackModifiers,
+						true,
+						false
+						);
 					GAMESTATE->LaunchAttack( OPPOSITE_PLAYER[m_PlayerNumber], attack );
 
 					// remove all TapAttacks on this row
@@ -801,7 +823,14 @@ void PlayerMinus::Step( int col, RageTimer tm )
 				score = TNS_NONE;	// don't score this as anything
 				
 				// put attack in effect
-				Attack attack = m_NoteData.GetAttackAt( col, iIndexOverlappingNote );
+				Attack attack(
+					ATTACK_LEVEL_1,
+					-1,	// now
+					tn.fAttackDurationSeconds,
+					tn.sAttackModifiers,
+					true,
+					false
+					);
 				GAMESTATE->LaunchAttack( OPPOSITE_PLAYER[m_PlayerNumber], attack );
 				
 				// remove all TapAttacks on this row
@@ -856,6 +885,11 @@ void PlayerMinus::Step( int col, RageTimer tm )
 
 		if( score != TNS_NONE )
 			m_NoteData.SetTapNoteOffset(col, iIndexOverlappingNote, -fNoteOffset);
+
+		if( score != TNS_NONE  &&  tn.bKeysound )
+		{
+			m_vKeysounds[tn.iKeysoundIndex].Play();
+		}
 
 		if( GAMESTATE->m_PlayerController[m_PlayerNumber] == PC_HUMAN  && 
 			score >= TNS_GREAT ) 

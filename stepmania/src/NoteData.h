@@ -26,8 +26,6 @@ class NoteData
 
 	vector<HoldNote>	m_HoldNotes;
 
-	map<unsigned,Attack>	m_AttackMap;
-
 	/* Pad m_TapNotes so it includes the row "rows". */
 	void PadTapNotes(int rows);
 
@@ -43,10 +41,6 @@ public:
 	
 	int GetNumTracks() const;
 	void SetNumTracks( int iNewNumTracks );
-
-	// TODO: Think of better accessors
-	const map<unsigned,Attack>& GetAttackMap() const { return m_AttackMap; }
-	map<unsigned,Attack>& GetAttackMap() { return m_AttackMap; }
 
 	/* Return the note at the given track and row.  Row may be out of
 	 * range; pretend the song goes on with TAP_EMPTYs indefinitely. */
@@ -74,8 +68,8 @@ public:
 	bool GetNextTapNoteRowForTrack( int track, int &rowInOut ) const;
 	bool GetNextTapNoteRowForAllTracks( int &rowInOut ) const;
 	
-	void MoveTapNoteTrack(int dest, int src);
-	void SetTapNote(int track, int row, TapNote t);
+	void MoveTapNoteTrack( int dest, int src );
+	void SetTapNote( int track, int row, TapNote tn );
 	
 	void ClearRange( int iNoteIndexBegin, int iNoteIndexEnd );
 	void ClearAll();
@@ -112,10 +106,8 @@ public:
 	const HoldNote &GetHoldNote( int index ) const { ASSERT( index < (int) m_HoldNotes.size() ); return m_HoldNotes[index]; }
 	int GetMatchingHoldNote( const HoldNote &hn ) const;
 
-	void SetTapAttackNote( int track, int row, Attack attack );
-	void PruneUnusedAttacksFromMap();	// slow
-	const Attack& GetAttackAt( int track, int row );
-	// remove Attacks with SetTapNote(TAP_EMPTY)
+	// remove me
+	void SetTapAttackNote( int track, int row, CString sModifiers, float fDurationSeconds );
 
 	//
 	// statistics

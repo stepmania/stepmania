@@ -17,16 +17,12 @@ void SMLoader::LoadFromSMTokens(
 	CString sMeter,
 	CString sRadarValues,
 	CString sNoteData,
-	CString sAttackData,
 	Steps &out
 )
 {
-	TrimLeft(sStepsType); 
-	TrimRight(sStepsType); 
-	TrimLeft(sDescription); 
-	TrimRight(sDescription); 
-	TrimLeft(sDifficulty); 
-	TrimRight(sDifficulty); 
+	TrimLeft(sStepsType); 	TrimRight(sStepsType); 
+	TrimLeft(sDescription);	TrimRight(sDescription); 
+	TrimLeft(sDifficulty); 	TrimRight(sDifficulty); 
 
 
 //	LOG->Trace( "Steps::LoadFromSMTokens()" );
@@ -55,7 +51,7 @@ void SMLoader::LoadFromSMTokens(
 		out.SetRadarValues( v ); 
 	}
     
-	out.SetSMNoteData(sNoteData, sAttackData);
+	out.SetSMNoteData(sNoteData);
 
 	out.TidyUpData();
 }
@@ -363,8 +359,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 				sParams[3], 
 				sParams[4], 
 				sParams[5], 
-				sParams[6], 
-				(iNumParams>=8)?sParams[7]:CString(""),
+				sParams[6],
 				*pNewNotes );
 
 			out.AddSteps( pNewNotes );
@@ -462,7 +457,7 @@ bool SMLoader::LoadEdit( CString sEditFilePath, ProfileSlot slot )
 			}
 
 			LoadFromSMTokens( 
-				sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6], (iNumParams>=8)?sParams[7]:CString(""),
+				sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6],
 				*pNewNotes);
 
 			pNewNotes->SetLoadedFromProfile( slot );

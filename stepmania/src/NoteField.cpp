@@ -621,9 +621,8 @@ void NoteField::DrawPrimitives()
 			NoteDisplayCols *nd = CurDisplay->second;
 			if( bIsAttack )
 			{
-				const Attack& attack = GetAttackAt( c, i );
 				Sprite sprite;
-				sprite.Load( THEME->GetPathToG("NoteField attack "+attack.sModifier) );
+				sprite.Load( THEME->GetPathToG("NoteField attack "+tn.sAttackModifiers) );
 				float fBeat = NoteRowToBeat(i);
 				SearchForBeat( CurDisplay, NextDisplay, fBeat );
 				NoteDisplayCols *nd = CurDisplay->second;

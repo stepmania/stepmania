@@ -9,20 +9,20 @@
 #include "RageFile.h"
 
 /* Output is an angle bracket expression without angle brackets, eg. "468". */
-CString NotesWriterDWI::NotesToDWIString( const TapNote cNoteCols[6] )
+CString NotesWriterDWI::NotesToDWIString( const TapNote tnCols[6] )
 {
 	const char dirs[] = { '4', 'C', '2', '8', 'D', '6' };
 	CString taps, holds, ret;
 	for( int col = 0; col < 6; ++col )
 	{
-		switch( cNoteCols[col].type )
+		switch( tnCols[col].type )
 		{
 		case TapNote::empty:
 		case TapNote::mine:
 			continue;
 		}
 
-		if( cNoteCols[col].type == TapNote::hold_head )
+		if( tnCols[col].type == TapNote::hold_head )
 			holds += dirs[col];
 		else
 			taps += dirs[col];
@@ -81,21 +81,21 @@ CString NotesWriterDWI::NotesToDWIString( const TapNote cNoteCols[6] )
 	return '0';*/
 }
 
-CString NotesWriterDWI::NotesToDWIString( TapNote cNoteCol1, TapNote cNoteCol2, TapNote cNoteCol3, TapNote cNoteCol4, TapNote cNoteCol5, TapNote cNoteCol6 )
+CString NotesWriterDWI::NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3, TapNote tnCol4, TapNote tnCol5, TapNote tnCol6 )
 {
-	TapNote cNoteCols[6];
-	cNoteCols[0] = cNoteCol1;
-	cNoteCols[1] = cNoteCol2;
-	cNoteCols[2] = cNoteCol3;
-	cNoteCols[3] = cNoteCol4;
-	cNoteCols[4] = cNoteCol5;
-	cNoteCols[5] = cNoteCol6;
-	return NotesToDWIString( cNoteCols );
+	TapNote tnCols[6];
+	tnCols[0] = tnCol1;
+	tnCols[1] = tnCol2;
+	tnCols[2] = tnCol3;
+	tnCols[3] = tnCol4;
+	tnCols[4] = tnCol5;
+	tnCols[5] = tnCol6;
+	return NotesToDWIString( tnCols );
 }
 
-CString NotesWriterDWI::NotesToDWIString( TapNote cNoteCol1, TapNote cNoteCol2, TapNote cNoteCol3, TapNote cNoteCol4 )
+CString NotesWriterDWI::NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3, TapNote tnCol4 )
 {
-	return NotesToDWIString( cNoteCol1, TAP_EMPTY, cNoteCol2, cNoteCol3, TAP_EMPTY, cNoteCol4 );
+	return NotesToDWIString( tnCol1, TAP_EMPTY, tnCol2, tnCol3, TAP_EMPTY, tnCol4 );
 }
 
 char NotesWriterDWI::OptimizeDWIPair( char c1, char c2 )

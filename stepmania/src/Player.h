@@ -107,6 +107,8 @@ protected:
 	RageSound		m_soundMine;
 	RageSound		m_soundAttackLaunch;
 	RageSound		m_soundAttackEnding;
+
+	vector<RageSound> m_vKeysounds;
 };
 
 class Player : public PlayerMinus

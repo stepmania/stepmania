@@ -42,14 +42,13 @@ Steps::Steps()
 	m_iMeter = 0;
 
 	notes = NULL;
-	notes_comp = NULL;
+	notes_comp = "";
 	parent = NULL;
 }
 
 Steps::~Steps()
 {
-	delete notes;
-	delete notes_comp;
+	SAFE_DELETE( notes );
 }
 
 void Steps::SetNoteData( const NoteData& noteDataNew )
@@ -58,13 +57,11 @@ void Steps::SetNoteData( const NoteData& noteDataNew )
 
 	DeAutogen();
 
-	delete notes;
+	SAFE_DELETE( notes );
 	notes = new NoteData( noteDataNew );
 	
-	delete notes_comp;
-	notes_comp = new CompressedNoteData;
-	NoteDataUtil::GetSMNoteDataString( *notes, notes_comp->notes, notes_comp->attacks );
-	m_uHash = GetHashForString( notes_comp->notes );
+	NoteDataUtil::GetSMNoteDataString( *notes, notes_comp );
+	m_uHash = GetHashForString( notes_comp );
 }
 
 void Steps::GetNoteData( NoteData& noteDataOut ) const
@@ -82,36 +79,29 @@ void Steps::GetNoteData( NoteData& noteDataOut ) const
 	}
 }
 
-void Steps::SetSMNoteData( const CString &notes_comp_, const CString &attacks_comp_ )
+void Steps::SetSMNoteData( const CString &notes_comp_ )
 {
-	delete notes;
-	notes = NULL;
+	SAFE_DELETE( notes );
 
-	if(!notes_comp)
-		notes_comp = new CompressedNoteData;
-
-	notes_comp->notes = notes_comp_;
-	notes_comp->attacks = attacks_comp_;
-	m_uHash = GetHashForString( notes_comp->notes );
+	notes_comp = notes_comp_;
+	m_uHash = GetHashForString( notes_comp );
 }
 
-void Steps::GetSMNoteData( CString &notes_comp_out, CString &attacks_comp_out ) const
+void Steps::GetSMNoteData( CString &notes_comp_out ) const
 {
-	if(!notes_comp)
+	if( !notes_comp.empty() )
 	{
-		if(!notes) 
+		if( !notes ) 
 		{
 			/* no data is no data */
-			notes_comp_out = attacks_comp_out = "";
+			notes_comp_out = "";
 			return;
 		}
 
-		notes_comp = new CompressedNoteData;
-		NoteDataUtil::GetSMNoteDataString( *notes, notes_comp->notes, notes_comp->attacks );
+		NoteDataUtil::GetSMNoteDataString( *notes, notes_comp );
 	}
 
-	notes_comp_out = notes_comp->notes;
-	attacks_comp_out = notes_comp->attacks;
+	notes_comp_out = notes_comp;
 }
 
 float Steps::PredictMeter() const
@@ -209,8 +199,7 @@ void Steps::Decompress() const
 			return;
 		}
 
-		notes_comp = new CompressedNoteData;
-		pSteps->GetSMNoteData( notes_comp->notes, notes_comp->attacks );
+		pSteps->GetSMNoteData( notes_comp );
 	}
 
 	if( notes_comp == NULL )
@@ -223,7 +212,7 @@ void Steps::Decompress() const
 		notes = new NoteData;
 		notes->SetNumTracks( GameManager::StepsTypeToNumTracks(m_StepsType) );
 
-		NoteDataUtil::LoadFromSMNoteDataString(*notes, notes_comp->notes, notes_comp->attacks );
+		NoteDataUtil::LoadFromSMNoteDataString( *notes, notes_comp );
 	}
 }
 
@@ -232,22 +221,16 @@ void Steps::Compress() const
 	if( !m_sFilename.empty() )
 	{
 		/* We have a file on disk; clear all data in memory. */
-		delete notes;
-		notes = NULL;
-		delete notes_comp;
-		notes_comp = NULL;
-		return;
+		SAFE_DELETE( notes );
 	}
 
-	if(!notes_comp)
+	if( notes_comp.empty() )
 	{
 		if(!notes) return; /* no data is no data */
-		notes_comp = new CompressedNoteData;
-		NoteDataUtil::GetSMNoteDataString( *notes, notes_comp->notes, notes_comp->attacks );
+		NoteDataUtil::GetSMNoteDataString( *notes, notes_comp );
 	}
 
-	delete notes;
-	notes = NULL;
+	SAFE_DELETE( notes );
 }
 
 /* Copy our parent's data.  This is done when we're being changed from autogen

@@ -65,6 +65,7 @@ enum BmsTrack
 	BMS_P2_TURN,
 	BMS_P2_KEY6,
 	BMS_P2_KEY7,
+	BMS_AUTO_KEYSOUND,
 	NUM_BMS_TRACKS,
 	BMS_TRACK_INVALID,
 };
@@ -83,22 +84,23 @@ static bool ConvertRawTrackToTapNote( int iRawTrack, BmsTrack &bmsTrackOut, bool
 
 	switch( iRawTrack )
 	{
-	case 11:	bmsTrackOut = BMS_P1_KEY1;				break;
-	case 12:	bmsTrackOut = BMS_P1_KEY2;				break;
-	case 13:	bmsTrackOut = BMS_P1_KEY3;				break;
-	case 14:	bmsTrackOut = BMS_P1_KEY4;				break;
-	case 15:	bmsTrackOut = BMS_P1_KEY5;				break;
-	case 16:	bmsTrackOut = BMS_P1_TURN;				break;
-	case 18:	bmsTrackOut = BMS_P1_KEY6;				break;
-	case 19:	bmsTrackOut = BMS_P1_KEY7;				break;
-	case 21:	bmsTrackOut = BMS_P2_KEY1;				break;
-	case 22:	bmsTrackOut = BMS_P2_KEY2;				break;
-	case 23:	bmsTrackOut = BMS_P2_KEY3;				break;
-	case 24:	bmsTrackOut = BMS_P2_KEY4;				break;
-	case 25:	bmsTrackOut = BMS_P2_KEY5;				break;
-	case 26:	bmsTrackOut = BMS_P2_TURN;				break;
-	case 28:	bmsTrackOut = BMS_P2_KEY6;				break;
-	case 29:	bmsTrackOut = BMS_P2_KEY7;				break;
+	case 1:  bmsTrackOut = BMS_AUTO_KEYSOUND;	break;
+	case 11:	bmsTrackOut = BMS_P1_KEY1;		break;
+	case 12:	bmsTrackOut = BMS_P1_KEY2;		break;
+	case 13:	bmsTrackOut = BMS_P1_KEY3;		break;
+	case 14:	bmsTrackOut = BMS_P1_KEY4;		break;
+	case 15:	bmsTrackOut = BMS_P1_KEY5;		break;
+	case 16:	bmsTrackOut = BMS_P1_TURN;		break;
+	case 18:	bmsTrackOut = BMS_P1_KEY6;		break;
+	case 19:	bmsTrackOut = BMS_P1_KEY7;		break;
+	case 21:	bmsTrackOut = BMS_P2_KEY1;		break;
+	case 22:	bmsTrackOut = BMS_P2_KEY2;		break;
+	case 23:	bmsTrackOut = BMS_P2_KEY3;		break;
+	case 24:	bmsTrackOut = BMS_P2_KEY4;		break;
+	case 25:	bmsTrackOut = BMS_P2_KEY5;		break;
+	case 26:	bmsTrackOut = BMS_P2_TURN;		break;
+	case 28:	bmsTrackOut = BMS_P2_KEY6;		break;
+	case 29:	bmsTrackOut = BMS_P2_KEY7;		break;
 	default:	// unknown track
 		return false;
 	}
@@ -176,7 +178,7 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd )
 	}
 }
 
-bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out, const map<CString,unsigned> &mapWavIdToKeysoundIndex )
+bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out, const map<CString,int> &mapWavIdToKeysoundIndex )
 {
 	LOG->Trace( "Steps::LoadFromBMSFile( '%s' )", sPath.c_str() );
 
@@ -185,19 +187,19 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out, const map<CSt
 	// BMS player code.  Fill in below and use to determine StepsType.
 	int iPlayer = -1;
 
-	NoteData* pNoteData = new NoteData;
-	pNoteData->SetNumTracks( NUM_BMS_TRACKS );
+	NoteData ndNotes;
+	ndNotes.SetNumTracks( NUM_BMS_TRACKS );
 
 	RageFile file;
 	if( !file.Open(sPath) )
 		RageException::Throw( "Failed to open \"%s\" for reading: %s", sPath.c_str(), file.GetError().c_str() );
+	
 	while( !file.AtEOF() )
 	{
 		CString line;
 		if( file.GetLine( line ) == -1 )
 		{
 			LOG->Warn( "Error reading \"%s\": %s", sPath.c_str(), file.GetError().c_str() );
-			delete pNoteData;
 			return false;
 		}
 
@@ -276,11 +278,11 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out, const map<CSt
 				if( sNoteId != "00" )
 				{
 					TapNote tn = TAP_ORIGINAL_TAP;
-					map<CString,unsigned>::const_iterator it = mapWavIdToKeysoundIndex.find(sNoteId);
+					map<CString,int>::const_iterator it = mapWavIdToKeysoundIndex.find(sNoteId);
 					if( it != mapWavIdToKeysoundIndex.end() )
 					{
 						tn.bKeysound = true;
-						tn.keysoundIndex = (uint16_t)it->second;
+						tn.iKeysoundIndex = it->second;
 					}
 					vTapNotes.push_back( tn );
 				}
@@ -304,22 +306,27 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out, const map<CSt
 					bool bIsHold;
 					if( ConvertRawTrackToTapNote(iRawTrackNum, bmsTrack, bIsHold) )
 					{
-						TapNote tn = vTapNotes[j];
-						tn.type = bIsHold ? TapNote::hold_head : TapNote::tap;
-						pNoteData->SetTapNote(bmsTrack, iNoteIndex, tn);
+						if( bmsTrack == BMS_AUTO_KEYSOUND )
+						{
+						}
+						else
+						{
+							TapNote tn = vTapNotes[j];
+							tn.type = bIsHold ? TapNote::hold_head : TapNote::tap;
+							ndNotes.SetTapNote( bmsTrack, iNoteIndex, tn );
+						}
 					}
 				}
 			}
 		}
 	}
 
-	out.m_StepsType = DetermineStepsType( iPlayer, *pNoteData );
+	out.m_StepsType = DetermineStepsType( iPlayer, ndNotes );
 
 	// we're done reading in all of the BMS values
 	if( out.m_StepsType == STEPS_TYPE_INVALID )
 	{
 		LOG->Warn( "Couldn't determine note type of file '%s'", sPath.c_str() );
-		delete pNoteData;
 		return false;
 	}
 
@@ -425,14 +432,11 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out, const map<CSt
 		ASSERT(0);
 	}
 
-	NoteData* pNoteData2 = new NoteData;
-	pNoteData2->SetNumTracks( iNumNewTracks );
-	pNoteData2->LoadTransformed( *pNoteData, iNumNewTracks, iTransformNewToOld );
+	NoteData noteData2;
+	noteData2.SetNumTracks( iNumNewTracks );
+	noteData2.LoadTransformed( ndNotes, iNumNewTracks, iTransformNewToOld );
 
-	out.SetNoteData(*pNoteData2);
-
-	delete pNoteData;
-	delete pNoteData2;
+	out.SetNoteData( noteData2 );
 
 	out.TidyUpData();
 
@@ -460,7 +464,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 	// This maps from a BMS wav ID (e.g. "1A") to an entry in the Song's 
 	// keysound vector.  Fill this in below while parsing the song data.
-	map<CString,unsigned> mapWavIdToKeysoundIndex;
+	map<CString,int> mapWavIdToKeysoundIndex;
 
 	CString sPath = out.GetSongDir() + arrayBMSFileNames[0];
 

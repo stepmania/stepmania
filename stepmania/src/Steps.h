@@ -49,8 +49,8 @@ public:
 
 	void		GetNoteData( NoteData& noteDataOut ) const;
 	void		SetNoteData( const NoteData& noteDataNew );
-	void		SetSMNoteData( const CString &notes_comp, const CString &attacks_comp );
-	void		GetSMNoteData( CString &notes_comp_out, CString &attacks_comp_out ) const;
+	void		SetSMNoteData( const CString &notes_comp );
+	void		GetSMNoteData( CString &notes_comp_out ) const;
 
 	void TidyUpData();
 
@@ -63,11 +63,7 @@ protected:
 	 * Call Compress() to force us to only have notes_comp; otherwise, creation of 
 	 * these is transparent. */
 	mutable NoteData *notes;
-	struct CompressedNoteData
-	{
-		CString notes, attacks;
-	};
-	mutable CompressedNoteData *notes_comp;
+	mutable CString notes_comp;
 
 	const Steps *Real() const;
 

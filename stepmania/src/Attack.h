@@ -14,10 +14,26 @@ struct Attack
 	bool bOn; // for GAMESTATE
 	bool bGlobal; // true for song-wide course mods
 
+	void MakeBlank() { sModifier=""; fStartSecond = -1; bOn = false; bGlobal = false; }
+	Attack() { MakeBlank(); }
+	Attack(
+		AttackLevel	level_,
+		float fStartSecond_,
+		float fSecsRemaining_,
+		CString sModifier_,
+		bool bOn_,
+		bool bGlobal_ )
+	{
+		level = level_;
+		fStartSecond = fStartSecond_;
+		fSecsRemaining = fSecsRemaining_;
+		sModifier = sModifier_;
+		bOn = bOn_;
+		bGlobal = bGlobal_;
+	}
+
 	void GetAttackBeats( const Song *song, PlayerNumber pn, float &fStartBeat, float &fEndBeat ) const;
 	bool IsBlank() { return sModifier.empty(); }
-	void MakeBlank() { sModifier=""; }
-	Attack() { fStartSecond = -1; bOn = false; bGlobal = false; }
 	bool operator== ( const Attack &rhs ) const;
 	bool ContainsTransformOrTurn() const;
 };
