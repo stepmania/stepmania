@@ -26,7 +26,7 @@
 #define BULLETS_START_X			THEME->GetMetricF("ScreenRanking","BulletsStartX")
 #define BULLETS_START_Y			THEME->GetMetricF("ScreenRanking","BulletsStartY")
 #define TEXT_ZOOM				THEME->GetMetricF("ScreenRanking","TextZoom")
-#define TEXT_COLOR				THEME->GetMetricC("ScreenRanking","TextColor")
+#define TEXT_COLOR( i )			THEME->GetMetricC("ScreenRanking",ssprintf("TextColor%d",i+1))
 #define NAMES_START_X			THEME->GetMetricF("ScreenRanking","NamesStartX")
 #define NAMES_START_Y			THEME->GetMetricF("ScreenRanking","NamesStartY")
 #define SCORES_START_X			THEME->GetMetricF("ScreenRanking","ScoresStartX")
@@ -38,7 +38,7 @@
 #define SECONDS_PER_PAGE		THEME->GetMetricF("ScreenRanking","SecondsPerPage")
 #define SHOW_CATEGORIES			THEME->GetMetricB("ScreenRanking","ShowCategories")
 #define COURSES_TO_SHOW			THEME->GetMetric("ScreenRanking","CoursesToShow")
-#define NOTES_TYPES_TO_HIDE		THEME->GetMetric("ScreenRanking","NotesTypesToHide")
+#define NOTES_TYPES_TO_HIDE		THEME->GetMetric ("ScreenRanking","NotesTypesToHide")
 
 
 const ScreenMessage SM_ShowNextPage		=	(ScreenMessage)(SM_User+67);
@@ -125,6 +125,7 @@ ScreenRanking::ScreenRanking() : ScreenAttract("ScreenRanking")
 			{
 				PageToShow pts;
 				pts.type = PageToShow::TYPE_CATEGORY;
+				pts.colorIndex = i;
 				pts.category = (RankingCategory)c;
 				pts.nt = aNotesTypesToShow[i];
 				m_vPagesToShow.push_back( pts );
@@ -141,6 +142,7 @@ ScreenRanking::ScreenRanking() : ScreenAttract("ScreenRanking")
 			{
 				PageToShow pts;
 				pts.type = PageToShow::TYPE_COURSE;
+				pts.colorIndex = i;
 				pts.nt = aNotesTypesToShow[i];
 				pts.pCourse = SONGMAN->GetCourseFromPath( asCoursePaths[c] );
 				if( pts.pCourse )
@@ -206,8 +208,8 @@ void ScreenRanking::SetPage( PageToShow pts )
 				m_textScores[l].SetText( ssprintf("%09.0f",fScore) );
 				m_textPoints[l].SetText( "" );
 				m_textTime[l].SetText( "" );
-				m_textNames[l].SetDiffuse( TEXT_COLOR );
-				m_textScores[l].SetDiffuse( TEXT_COLOR );
+				m_textNames[l].SetDiffuse( TEXT_COLOR(pts.colorIndex) );
+				m_textScores[l].SetDiffuse( TEXT_COLOR(pts.colorIndex) );
 
 				bool bRecentHighScore = false;
 				for( int p=0; p<NUM_PLAYERS; p++ )
@@ -247,9 +249,9 @@ void ScreenRanking::SetPage( PageToShow pts )
 				m_textScores[l].SetText( "" );
 				m_textPoints[l].SetText( ssprintf("%04d",iDancePoints) );
 				m_textTime[l].SetText( SecondsToTime(fSurviveTime) );
-				m_textNames[l].SetDiffuse( TEXT_COLOR );
-				m_textPoints[l].SetDiffuse( TEXT_COLOR );
-				m_textTime[l].SetDiffuse( TEXT_COLOR );
+				m_textNames[l].SetDiffuse( TEXT_COLOR(pts.colorIndex) );
+				m_textPoints[l].SetDiffuse( TEXT_COLOR(pts.colorIndex) );
+				m_textTime[l].SetDiffuse( TEXT_COLOR(pts.colorIndex) );
 				for( int p=0; p<NUM_PLAYERS; p++ )
 				{
 					if( pts.pCourse == GAMESTATE->m_pRankingCourse  &&

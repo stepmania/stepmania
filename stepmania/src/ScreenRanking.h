@@ -28,6 +28,7 @@ protected:
 	struct PageToShow
 	{
 		enum { TYPE_CATEGORY, TYPE_COURSE } type;
+		int				colorIndex;
 		NotesType		nt;		// used in category and course
 		RankingCategory	category;
 		Course*			pCourse;
