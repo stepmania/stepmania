@@ -1,17 +1,16 @@
 #include "global.h"
 
-/*
- * This header pulls in GL headers and defines things that require them.
- * This only needs to be included if you actually use these; most of the
- * time, RageDisplay.h is sufficient. 
- */
+/* ours may be more up-to-date */
+#define __glext_h_
 
-/* ours is more up-to-date */
-#define NO_SDL_GLEXT
-#define __glext_h_ /* try harder to stop glext.h from being forced on us by someone else */
-#include "SDL_opengl.h"
+#if defined(WIN32)
+#include <windows.h>
+#endif
+
+#include <GL/gl.h>
+#include <GL/glu.h>
+
 #undef __glext_h_
-
 #include "glext.h"
 
 #include "RageFile.h"
