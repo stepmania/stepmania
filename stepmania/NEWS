@@ -2,7 +2,7 @@
 NEW FEATURE:  If a song is missing Notes of a certain NotesType, Notes of 
 	the missing type will be generated from the existing types.  For 
 	example, this will allow any pump song to be played in the dance
-	game mode, and vica-versa.
+	game mode, and vice versa.
 NEW FEATURE:  Package Exporter now can export Announcers, BGAnimations,
 	Courses, NoteSkins, RandomMovies, Themes, and Visualizations.
 NEW FEATURE:  Package Exporter now has two options: "Export As One", and 
