@@ -9,6 +9,7 @@
 #include "GameState.h"
 #include "ProfileManager.h"
 #include "ThemeManager.h"
+#include "Foreach.h"
 
 UnlockManager*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -308,19 +309,19 @@ float UnlockManager::PointsUntilNextUnlock( UnlockType t ) const
  * such as on load, or when a song title changes in the editor. */
 void UnlockManager::UpdateSongs()
 {
-	for( unsigned i = 0; i < m_SongEntries.size(); ++i )
+	FOREACH( UnlockEntry, m_SongEntries, e )
 	{
-		m_SongEntries[i].m_pSong = NULL;
-		m_SongEntries[i].m_pCourse = NULL;
-		if( m_SongEntries[i].m_sSongName != "" )
-			m_SongEntries[i].m_pSong = SONGMAN->FindSong( m_SongEntries[i].m_sSongName );
-        if( m_SongEntries[i].m_pSong == NULL )
-                m_SongEntries[i].m_pCourse = SONGMAN->FindCourse( m_SongEntries[i].m_sSongName );
+		e->m_pSong = NULL;
+		e->m_pCourse = NULL;
+		if( e->m_sSongName != "" )
+			e->m_pSong = SONGMAN->FindSong( e->m_sSongName );
+		if( e->m_pSong == NULL )
+			e->m_pCourse = SONGMAN->FindCourse( e->m_sSongName );
 
 		// display warning on invalid song entry
-		if( m_SongEntries[i].m_pSong == NULL && m_SongEntries[i].m_pCourse == NULL )
+		if( e->m_pSong == NULL && e->m_pCourse == NULL )
 		{
-			LOG->Warn( "Unlock: Cannot find a matching entry for \"%s\"", m_SongEntries[i].m_sSongName.c_str() );
+			LOG->Warn( "Unlock: Cannot find a matching entry for \"%s\"", e->m_sSongName.c_str() );
 			m_SongEntries.erase( m_SongEntries.begin() + i );
 			--i;
 		}
