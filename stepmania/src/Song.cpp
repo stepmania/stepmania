@@ -1469,6 +1469,13 @@ CString GetSectionNameFromSongAndSort( const Song* pSong, SongSortOrder so )
 				return ssprintf("%02d", pNotes->GetMeter() );
 			return "N/A";
 		}
+	case SORT_CHALLENGE_METER:
+		{
+			Steps* pNotes = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyleDef()->m_StepsType,DIFFICULTY_CHALLENGE);
+			if( pNotes )	
+				return ssprintf("%02d", pNotes->GetMeter() );
+			return "N/A";
+		}
 	case SORT_SORT_MENU:
 	case SORT_MODE_MENU:
 		return "";

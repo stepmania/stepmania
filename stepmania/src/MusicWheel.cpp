@@ -437,6 +437,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 	case SORT_EASY_METER:
 	case SORT_MEDIUM_METER:
 	case SORT_HARD_METER:
+	case SORT_CHALLENGE_METER:
 	{
 		///////////////////////////////////
 		// Make an array of Song*, then sort them
@@ -500,6 +501,9 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			break;
 		case SORT_HARD_METER:
 			SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_HARD );
+			break;
+		case SORT_CHALLENGE_METER:
+			SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_CHALLENGE );
 			break;
 		default:
 			ASSERT(0);	// unhandled SortOrder
@@ -904,6 +908,7 @@ void MusicWheel::Update( float fDeltaTime )
 				case SORT_EASY_METER:
 				case SORT_MEDIUM_METER:
 				case SORT_HARD_METER:
+				case SORT_CHALLENGE_METER:
 				case SORT_ALL_COURSES:
 				case SORT_NONSTOP_COURSES:
 				case SORT_ONI_COURSES:
@@ -923,30 +928,18 @@ void MusicWheel::Update( float fDeltaTime )
 				}
 
 				// Change difficulty for sorts by meter
+				Difficulty dc = DIFFICULTY_INVALID;
 				switch( GAMESTATE->m_SongSortOrder )
 				{
-				case SORT_EASY_METER:
-					{
-						for( int p=0; p<NUM_PLAYERS; p++ )
-							if( GAMESTATE->IsPlayerEnabled(p) )
-								GAMESTATE->m_PreferredDifficulty[p] = DIFFICULTY_EASY;
-					}
-					break;
-				case SORT_MEDIUM_METER:
-					{
-						for( int p=0; p<NUM_PLAYERS; p++ )
-							if( GAMESTATE->IsPlayerEnabled(p) )
-								GAMESTATE->m_PreferredDifficulty[p] = DIFFICULTY_MEDIUM;
-					}
-					break;
-				case SORT_HARD_METER:
-					{
-						for( int p=0; p<NUM_PLAYERS; p++ )
-							if( GAMESTATE->IsPlayerEnabled(p) )
-								GAMESTATE->m_PreferredDifficulty[p] = DIFFICULTY_HARD;
-					}
-					break;
+				case SORT_EASY_METER:		dc = DIFFICULTY_EASY;		break;
+				case SORT_MEDIUM_METER:		dc = DIFFICULTY_MEDIUM;		break;
+				case SORT_HARD_METER:		dc = DIFFICULTY_HARD;		break;
+				case SORT_CHALLENGE_METER:	dc = DIFFICULTY_CHALLENGE;	break;
 				}
+				if( dc != DIFFICULTY_INVALID )
+					for( int p=0; p<NUM_PLAYERS; p++ )
+						if( GAMESTATE->IsPlayerEnabled(p) )
+							GAMESTATE->m_PreferredDifficulty[p] = dc;
 
 				SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 				RebuildMusicWheelItems();
