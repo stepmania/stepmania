@@ -97,7 +97,9 @@ static int PtraceDetach( int ThreadID )
 
 CString ThreadsVersion()
 {
-#if defined(LINUX)
+// Not all systems have a header that declares _CS_GNU_LIBPTHREAD_VERSION.
+// Deal with it.
+#if defined(LINUX) and defined(_CS_GNU_LIBPTHREAD_VERSION)
 	char buf[1024];
 	int ret = confstr( _CS_GNU_LIBPTHREAD_VERSION, buf, sizeof(buf) );
 	RAGE_ASSERT_M( ret != -1, ssprintf( "%i", ret) );
