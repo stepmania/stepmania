@@ -1313,6 +1313,12 @@ void SongManager::UpdateRankingCourses()
 	}
 }
 
+static CString HTMLQuoteDoubleQuotes( CString str )
+{
+	str.Replace( "\"", "&quot;" );
+	return str;
+}
+
 // TODO: Move this to a different file.  No need to clutter SongManager.
 void SongManager::WriteStatsWebPage()
 {
@@ -1350,7 +1356,7 @@ void SongManager::WriteStatsWebPage()
 		if( sImagePath.empty() )
 			fprintf( fp, "<td> </td>" );
 		else
-			fprintf( fp, "<td><img src='%s' width='120'></td>", sImagePath.c_str() );
+			fprintf( fp, "<td><img src=\"%s\" width='120'></td>", HTMLQuoteDoubleQuotes(sImagePath).c_str() );
 		
 		fprintf( fp, "<td>%s<br>", pSong->GetTranslitMainTitle().c_str() );
 		fprintf( fp, "<font size='-1'>%s</font><br>", pSong->GetTranslitSubTitle().c_str() );
