@@ -3,6 +3,7 @@
 
 void CrashSignalHandler(int signal);
 void CrashHandlerHandleArgs();
-
+void InitializeCrashHandler();
+	
 #endif
 

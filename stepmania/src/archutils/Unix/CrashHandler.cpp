@@ -271,6 +271,16 @@ static int find_address( void *p, const void **starts, const void **ends )
 	return -1;
 }
 
+static void *SavedStackPointer = NULL;
+
+static void initialize_do_backtrace()
+{
+	/* We might have a different stack in the signal handler.  Record a pointer
+	 * that lies in the real stack, so we can look it up later. */
+	register void *esp __asm__ ("esp");
+	SavedStackPointer = esp;
+}
+
 /* backtrace() for x86 Linux, tested with kernel 2.4.18, glibc 2.3.1. */
 static void do_backtrace( void **buf, size_t size, bool ignore_before_sig = true )
 {
@@ -278,9 +288,10 @@ static void do_backtrace( void **buf, size_t size, bool ignore_before_sig = true
     const void *readable_begin[1024], *readable_end[1024];
 	get_readable_ranges( readable_begin, readable_end, 1024 );
 		
-	/* Find the stack memory block. */
+	/* Find the stack memory blocks. */
 	register void *esp __asm__ ("esp");
-	int stack_block=find_address(esp, readable_begin, readable_end);
+	const int stack_block1 = find_address( esp, readable_begin, readable_end );
+	const int stack_block2 = find_address( SavedStackPointer, readable_begin, readable_end );
 
 	/* This matches the layout of the stack.  The frame pointer makes the
 	 * stack a linked list. */
@@ -303,7 +314,9 @@ static void do_backtrace( void **buf, size_t size, bool ignore_before_sig = true
 	{
 		/* Make sure that this frame address is readable, and is on the stack. */
 		int val = find_address(frame, readable_begin, readable_end);
-		if( val != stack_block )
+		if( val == -1 )
+			break;
+		if( val != stack_block1 && val != stack_block2 )
 			break;
 
 		if( frame->return_address == (void*) CrashSignalHandler )
@@ -365,6 +378,8 @@ static void do_backtrace( void **buf, size_t size, bool ignore_before_sig = true
 		do_backtrace( buf, size, false );
 }
 #elif defined(BACKTRACE_METHOD_BACKTRACE)
+static void initialize_do_backtrace() { }
+
 static void do_backtrace(void **buf, size_t size)
 {
 	int retsize = backtrace( buf, size-1 );
@@ -388,6 +403,8 @@ typedef struct Frame {
     void *linkReg;
 } *FramePtr;
 
+static void initialize_do_backtrace() { }
+
 static void do_backtrace(void **buf, size_t size)
 {
     FramePtr frame = FramePtr(GetCrashedFramePtr());
@@ -399,6 +416,8 @@ static void do_backtrace(void **buf, size_t size)
 }
 #else
 #warning Undefined BACKTRACE_METHOD_*
+static void initialize_do_backtrace() { }
+
 static void do_backtrace(void **buf, size_t size)
 {
     buf[0] = BACKTRACE_METHOD_NOT_AVAILABLE;
@@ -475,4 +494,8 @@ void CrashSignalHandler( int signal )
 	}
 }
 
+void InitializeCrashHandler()
+{
+	initialize_do_backtrace();
+}
 
