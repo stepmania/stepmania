@@ -1,4 +1,4 @@
-bin_PROGRAMS = stepmania
+bin_PROGRAMS = stepmania test_audio_readers
 
 AM_LDFLAGS =
 AM_CXXFLAGS = 
@@ -200,6 +200,23 @@ stepmania_LDADD = \
 		  $(USE_SDL_LIBS) -lSDL_image \
 		  $(AUDIO_LIBS) \
 		  $(srcdir)/libresample/libresample.a
+
+# A hack for now:
+test_audio_readers_SOURCES = tests/test_audio_readers.cpp \
+		RageUtil.cpp RageLog.cpp RageThreads.cpp RageException.cpp \
+		RageUtil_FileDB.cpp RageUtil_FileDB.h \
+		RageTimer.cpp RageTimer.h \
+		RageFile.cpp RageFile.h \
+		RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
+		PrefsManager.cpp PrefsManager.h \
+		arch/ArchHooks/ArchHooks.cpp arch/ArchHooks/ArchHooks.h \
+		IniFile.cpp IniFile.h \
+		$(RageSoundFileReaders) \
+		$(PCRE)
+
+test_audio_readers_LDADD = \
+	      $(USE_SDL_LIBS) \
+	      $(AUDIO_LIBS)
 
 INCLUDES = $(SDL_CFLAGS)
 
