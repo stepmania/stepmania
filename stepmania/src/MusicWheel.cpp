@@ -1581,7 +1581,7 @@ Song *MusicWheel::GetPreferredSelectionForRandomOrPortal()
 		/* Maintaining difficulties is higher priority than maintaining the current
 		 * group. */
 		if( i == NUM_PROBES/4 )
-			sPreferredGroup.clear();
+			sPreferredGroup = "";
 		if( i == NUM_PROBES/2 )
 			vDifficultiesToRequire.clear();
 
