@@ -24,7 +24,9 @@
 #define LPTSTR char*
 #define LPCTSTR const char*
 #define _tcschr strchr
-//#define FALSE false
+#ifndef FALSE
+#   define FALSE false
+#endif
 #define _istspace isspace
 #define _tcspbrk strpbrk
 #define IsEmpty empty
