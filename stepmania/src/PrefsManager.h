@@ -60,6 +60,9 @@ public:
 	bool			m_bEasterEggs;
 	bool			m_bMarvelousTiming;
 
+	/* 0 = no; 1 = yes; -1 = auto (do whatever is appropriate for the arch). */
+	int				m_iBoostAppPriority;
+
 	CStringArray m_asAdditionalSongFolders;
 	CString m_DWIPath;
 

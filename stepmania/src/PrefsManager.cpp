@@ -73,6 +73,7 @@ PrefsManager::PrefsManager()
 	m_bChangeBannersWhenFast = false;
 	m_bEasterEggs = true;
 	m_bMarvelousTiming = true;
+	m_iBoostAppPriority = -1;
 	
 	/* I'd rather get occasional people asking for support for this even though it's
 	 * already here than lots of people asking why songs aren't being displayed. */
@@ -136,6 +137,7 @@ PrefsManager::~PrefsManager()
 	ini.GetValueB( "Options", "EasterEggs",					m_bEasterEggs );
 	ini.GetValueB( "Options", "MarvelousTiming",			m_bMarvelousTiming );
 	ini.GetValueF( "Options", "SoundVolume",				m_fSoundVolume );
+	ini.GetValueI( "Options", "BoostAppPriority",			m_iBoostAppPriority );
 
 	m_asAdditionalSongFolders.clear();
 	CString sAdditionalSongFolders;
@@ -194,6 +196,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValue ( "Options", "SoundDrivers",				m_bSoundDrivers );
 	ini.SetValueB( "Options", "EasterEggs",					m_bEasterEggs );
 	ini.SetValueB( "Options", "MarvelousTiming",			m_bMarvelousTiming );
+	ini.SetValueI( "Options", "BoostAppPriority",			m_iBoostAppPriority );
 
 	/* Only write these if they aren't the default.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who
