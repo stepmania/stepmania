@@ -12,9 +12,16 @@
 */
 
 #include "RageTexture.h"
+#include "IniFile.h"
 
-const int MAX_FONT_CHARS = 256;		// only low ASCII chars are supported
+struct glyph {
+	int width;
+	/* X coordinates to be rendered for this character are X-left and X+right. */
+	int left, right;
 
+	/* Texture coordinate rect. */
+	RectF rect;
+};
 
 class Font
 {
@@ -30,24 +37,20 @@ public:
 
 	CString m_sTexturePath;
 
+	vector<glyph> glyphs;
+
 	RageTexture* m_pTexture;
 	bool m_bCapitalsOnly;
 	int m_iLineSpacing;
 
-	int m_iCharToFrameNo[MAX_FONT_CHARS];
-	int	m_iFrameNoToWidth[MAX_FONT_CHARS];	// in soure coordinate space
+	map<int,int> m_iCharToFrameNo;
 
-	const RectF &GetTextureCoordRect( int frameNo ) const { return m_TextureCoordRects[frameNo]; }
-
-	/* Source pixels to print to the left and right of each character. 
-	 * m_Left[] is usually 0. */
-	vector<int> m_Left, m_Right;
+	const glyph &GetGlyph( int frameNo ) const { return glyphs[frameNo]; }
 
 private:
-	vector<RectF>	m_TextureCoordRects;
 	void SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight);
-	void SetTextureCoords();
-
+	void SetTextureCoords(const vector<int> &widths);
+	void Load( const CString &sASCIITexturePath, IniFile &ini );
 };
 
 #endif

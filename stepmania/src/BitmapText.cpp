@@ -187,28 +187,29 @@ void BitmapText::DrawPrimitives()
 		for( unsigned j=0; j<szLine.size(); j++ )	// for each character in the line
 		{
 			const char c = szLine[j];
-			const int iFrameNo = m_pFont->m_iCharToFrameNo[ (unsigned char)c ];
-			if( iFrameNo == -1 )	// this font doesn't impelemnt this character
+			if(m_pFont->m_iCharToFrameNo.find(c) == m_pFont->m_iCharToFrameNo.end())
 				RageException::Throw( "The font '%s' does not implement the character '%c'", m_sFontFilePath.GetString(), c );
 
+			const int iFrameNo = m_pFont->m_iCharToFrameNo[ (unsigned char)c ];
+
+			const glyph &g = m_pFont->GetGlyph(iFrameNo);
+
 			/* set vertex positions */
-			v[iNumV++].p = RageVector3( (float)iX-m_pFont->m_Left[iFrameNo],	iY-iHeight/2.0f, 0 );	// top left
-			v[iNumV++].p = RageVector3( (float)iX-m_pFont->m_Left[iFrameNo],	iY+iHeight/2.0f, 0 );	// bottom left
-			v[iNumV++].p = RageVector3( (float)iX+m_pFont->m_Right[iFrameNo],	iY+iHeight/2.0f, 0 );	// bottom right
-			v[iNumV++].p = RageVector3( (float)iX+m_pFont->m_Right[iFrameNo],	iY-iHeight/2.0f, 0 );	// top right
+			v[iNumV++].p = RageVector3( (float)iX-g.left,	iY-iHeight/2.0f, 0 );	// top left
+			v[iNumV++].p = RageVector3( (float)iX-g.left,	iY+iHeight/2.0f, 0 );	// bottom left
+			v[iNumV++].p = RageVector3( (float)iX+g.right,	iY+iHeight/2.0f, 0 );	// bottom right
+			v[iNumV++].p = RageVector3( (float)iX+g.right,	iY-iHeight/2.0f, 0 );	// top right
 
 			/* Advance the cursor. */
-			iX += m_pFont->m_iFrameNoToWidth[iFrameNo];
+			iX += g.width;
 
 			/* set texture coordinates */
 			iNumV -= 4;
 
-			RectF frectTexCoords = m_pFont->GetTextureCoordRect( iFrameNo );
-
-			v[iNumV++].t = RageVector2( frectTexCoords.left,	frectTexCoords.top );		// top left
-			v[iNumV++].t = RageVector2( frectTexCoords.left,	frectTexCoords.bottom );	// bottom left
-			v[iNumV++].t = RageVector2( frectTexCoords.right,	frectTexCoords.bottom );	// bottom right
-			v[iNumV++].t = RageVector2( frectTexCoords.right,	frectTexCoords.top );		// top right
+			v[iNumV++].t = RageVector2( g.rect.left,	g.rect.top );		// top left
+			v[iNumV++].t = RageVector2( g.rect.left,	g.rect.bottom );	// bottom left
+			v[iNumV++].t = RageVector2( g.rect.right,	g.rect.bottom );	// bottom right
+			v[iNumV++].t = RageVector2( g.rect.right,	g.rect.top );		// top right
 		}
 
 		iY += iLineSpacing;
