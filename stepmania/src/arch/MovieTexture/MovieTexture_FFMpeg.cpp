@@ -666,7 +666,7 @@ void MovieTexture_FFMpeg::CreateTexture()
 	m_iTextureHeight = power_of_two(m_iImageHeight);
 
     RageDisplay::PixelFormat pixfmt;
-	bool PreferHighColor = (TEXTUREMAN->GetMovieColorDepth() == 32);
+	bool PreferHighColor = (TEXTUREMAN->GetPrefs().m_iMovieColorDepth == 32);
 	m_AVTexfmt = FindCompatibleAVFormat( pixfmt, PreferHighColor );
 
 	if( m_AVTexfmt == -1 )
@@ -681,7 +681,7 @@ void MovieTexture_FFMpeg::CreateTexture()
 				break;
 		ASSERT( AVPixelFormats[m_AVTexfmt].bpp );
 
-		switch( TEXTUREMAN->GetMovieColorDepth() )
+		switch( TEXTUREMAN->GetPrefs().m_iMovieColorDepth )
 		{
 		default:
 			ASSERT(0);
