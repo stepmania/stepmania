@@ -1,3 +1,5 @@
+/* StdString - std::string convenience wrapper. */
+
 // =============================================================================
 //  FILE:  StdString.h
 //  AUTHOR:	Joe O'Leary (with outside help noted in comments)
@@ -231,16 +233,6 @@
 //
 //	  1998-FEB-?? - Initial submission
 //
-// COPYRIGHT:
-//		1999 Joseph M. O'Leary.  This code is free.  Use it anywhere you want.
-//		Rewrite it, restructure it, whatever.  Please don't blame me if it makes
-//		your $30 billion dollar satellite explode in orbit.  If you redistribute
-//		it in any form, I'd appreciate it if you would leave this notice here.
-//
-//		If you find any bugs, please let me know:
-//
-//				jmoleary@earthlink.net
-//				http://home.earthlink.net/~jmoleary
 // =============================================================================
 
 // Turn off browser references
@@ -1313,3 +1305,16 @@ struct StdStringEqualsNoCaseA
 #define CStringArray vector<CString>
 
 #endif	// #ifndef STDSTRING_H
+
+/*
+ * COPYRIGHT:
+ *	1999 Joseph M. O'Leary.  This code is free.  Use it anywhere you want.
+ *	Rewrite it, restructure it, whatever.  Please don't blame me if it makes
+ *	your $30 billion dollar satellite explode in orbit.  If you redistribute
+ *	it in any form, I'd appreciate it if you would leave this notice here.
+ *
+ *	If you find any bugs, please let me know:
+ *
+ *			jmoleary@earthlink.net
+ *			http://home.earthlink.net/~jmoleary
+ */
