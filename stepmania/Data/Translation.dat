@@ -1,4 +1,4 @@
-﻿﻿# This file is UTF-8; to be readable, edit it in an editor capable
+﻿# This file is UTF-8; to be readable, edit it in an editor capable
 # of UTF-8, such as Notepad in Windows 2000 and later.
 #
 # Six keywords: TitleFrom, ArtistFrom, SubtitleFrom, TitleTo,
@@ -227,6 +227,15 @@ DontTransliterate
 TitleFrom: Chotto Kiitena
 TitleTo: ちょっときいてな
 *
+TitleFrom: THE STRONG JAEGER
+TitleTo: 合体せよ！ストロングイェーガー！！
+SubTitleTo: (THE STRONG JAEGER)
+*
+# TM3:
+TitleFrom: Tsugaru Kaikyou no Onna
+TitleTo: 津軽海峡の女
+ArtistTo: ソニン
+*
 # TM4:
 TitleFrom: Akumajo Dracula MEDLEY
 TitleTo: 悪魔城ドラキュラMEDLEY
@@ -314,6 +323,18 @@ ArtistTo: 篠原ともえ
 ArtistFrom: Maaya Sakamoto
 ArtistTo: 坂本真綾
 *
+TitleFrom: Black Cat
+TitleTo: 검은고양이
+*
+TitleFrom: Dream Possession
+TitleTo: 夢有
+TitleTransTo: Yume Ari
+ArtistTo: Des-ROW·組
+ArtistTransTo: Des-ROW and KUMI
+*
+ArtistFrom: Aaron Kwok
+ArtistTo: 郭富城
+*
 # TM4+:
 ArtistFrom: Gwashi
 ArtistTo: グワシ
@@ -355,6 +376,10 @@ TitleTo: 미쳐
 *
 TitleFrom: (Tell Me)|(Mal Hae)
 TitleTo: 마해
+*
+TitleFrom: Deluxe
+ArtistFrom: Key-a-Kiss
+TitleTo: デラックス
 *
 ArtistFrom: Melon Kinenbi
 ArtistTo: メロン記念日
@@ -704,7 +729,7 @@ ArtistFrom: Hans Band
 ArtistTo: 한스밴드
 *
 
-# Miscellaneous Unofficial
+# Misc:
 
 TitleFrom: Pokemon
 TitleTo: Pokémon
@@ -719,7 +744,13 @@ ArtistTo: DJ 鬼 Versus Ω
 ArtistFrom: NW 260, ZZ, and 290
 ArtistTo: NW 260, &doublezeta;, and 290
 *
-
+# http://bemanistyle.com/sims/viewsim.php?id=1161
+TitleFrom: Renai Revolution 21
+TitleTo: 恋愛レボリューション21
+*
+SubtitleFrom: ~Ai no Big Band~
+SubtitleTo: ~愛のビッグバンドｰ~
+*
 # Fanboy bonus:
 
 ArtistFrom: (Megumi Hayashibara)|(Hayashibara Megumi)
