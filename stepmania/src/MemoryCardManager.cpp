@@ -76,7 +76,7 @@ void MemoryCardManager::Update( float fDelta )
 			vector<UsbStorageDevice>::iterator iter = find( vDisconnects.begin(), vDisconnects.end(), assigned_device );
 			if( iter != vDisconnects.end() )
 			{
-				m_pDriver->Unmount(&assigned_device, MEM_CARD_MOUNT_POINT[p]);
+				UnmountCard( p );
 				
 				assigned_device.MakeBlank();
 				m_soundDisconnect.Play();
@@ -213,7 +213,7 @@ void MemoryCardManager::LockCards( bool bLock )
 			if( m_Device[p].IsBlank() )	// they don't have an assigned card
 				continue;
 			
-			m_pDriver->MountAndTestWrite(&m_Device[p], MEM_CARD_MOUNT_POINT[p]);
+			MountCard( p );
 		}
 	}
 
@@ -230,7 +230,7 @@ void MemoryCardManager::TryMountAllCards()
 		if( m_Device[p].IsBlank() )	// they don't have an assigned card
 			continue;
 		
-		m_pDriver->MountAndTestWrite(&m_Device[p], MEM_CARD_MOUNT_POINT[p]);
+		MountCard( p );
 	}
 }
 
@@ -244,7 +244,7 @@ void MemoryCardManager::MountAllUsedCards()
 		if( m_bTooLate[p] || !m_Device[p].bWriteTestSucceeded || !PROFILEMAN->ProfileWasLoadedFromMemoryCard(p) )
 			continue;
 
-		m_pDriver->MountAndTestWrite(&m_Device[p], MEM_CARD_MOUNT_POINT[p]);
+		MountCard( p );
 	}
 }
 
@@ -258,7 +258,7 @@ void MemoryCardManager::UnmountAllUsedCards()
 		if( m_bTooLate[p] || !m_Device[p].bWriteTestSucceeded || !PROFILEMAN->ProfileWasLoadedFromMemoryCard(p) )
 			continue;
 
-		m_pDriver->Unmount(&m_Device[p], MEM_CARD_MOUNT_POINT[p]);
+		UnmountCard( p );
 	}
 }
 
