@@ -114,7 +114,7 @@ int GetSuccessfulHands( const NoteData &in, int iStartIndex = 0, int iEndIndex =
 			int iHeadRow;
 			if( !in.IsHoldNoteAtBeat( t, i, &iHeadRow ) )
 				continue;
-			const TapNote &tn = in.GetTapNote(t, i);
+			const TapNote &tn = in.GetTapNote( t, iHeadRow );
 
 			/* If a hold is released *after* a hands containing it, the hands is
 			 * still good.  So, ignore the judgement and only examine iLastHeldRow
