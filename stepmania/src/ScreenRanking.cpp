@@ -116,18 +116,20 @@ ScreenRanking::ScreenRanking() : ScreenAttract("ScreenRanking","ranking")
 		}
 	}
 
-	vector<CString> asCoursePaths;
-	split( COURSES_TO_SHOW, ",", asCoursePaths, true );
-	for( unsigned i=0; i<aNotesTypesToShow.size(); i++ )
 	{
-		for( unsigned c=0; c<asCoursePaths.size(); c++ )
+		vector<CString> asCoursePaths;
+		split( COURSES_TO_SHOW, ",", asCoursePaths, true );
+		for( unsigned i=0; i<aNotesTypesToShow.size(); i++ )
 		{
-			PageToShow pts;
-			pts.type = PageToShow::TYPE_COURSE;
-			pts.nt = aNotesTypesToShow[i];
-			pts.pCourse = SONGMAN->GetCourseFromPath( asCoursePaths[c] );
-			if( pts.pCourse )
-				m_vPagesToShow.push_back( pts );
+			for( unsigned c=0; c<asCoursePaths.size(); c++ )
+			{
+				PageToShow pts;
+				pts.type = PageToShow::TYPE_COURSE;
+				pts.nt = aNotesTypesToShow[i];
+				pts.pCourse = SONGMAN->GetCourseFromPath( asCoursePaths[c] );
+				if( pts.pCourse )
+					m_vPagesToShow.push_back( pts );
+			}
 		}
 	}
 

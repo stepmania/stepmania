@@ -228,9 +228,9 @@ ScreenSelectMusic::ScreenSelectMusic()
 
 
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
-	m_soundChangeNotes.Load( THEME->GetPathTo("Sounds","select music change notes") );
-	m_soundOptionsChange.Load( THEME->GetPathTo("Sounds","select music change options") );
-	m_soundLocked.Load( THEME->GetPathTo("Sounds","select music wheel locked") );
+	m_soundChangeNotes.Load( THEME->GetPathTo("Sounds","select music notes") );
+	m_soundOptionsChange.Load( THEME->GetPathTo("Sounds","select music options") );
+	m_soundLocked.Load( THEME->GetPathTo("Sounds","select music locked") );
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music intro") );
 

@@ -76,8 +76,8 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 		);
 	this->AddChild( &m_Menu );
 
-	m_soundMusicChange.Load( THEME->GetPathTo("Sounds","select music change song"));
-	m_soundMusicCycle.Load( THEME->GetPathTo("Sounds","select music cycle songs"));
+	m_soundMusicChange.Load( THEME->GetPathTo("Sounds","select music change"));
+	m_soundMusicCycle.Load( THEME->GetPathTo("Sounds","select music cycle"));
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 
 	m_ChoiceListFrame.Load( THEME->GetPathTo("Graphics","select mode list frame"));
@@ -157,7 +157,7 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 		m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
 		this->AddChild( &m_sprOptionsMessage );
 
-		m_soundOptionsChange.Load( THEME->GetPathTo("Sounds","select music change options") );
+		m_soundOptionsChange.Load( THEME->GetPathTo("Sounds","select music options") );
 
 		m_bGoToOptions = false;
 		m_bMadeChoice = false;

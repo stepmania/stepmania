@@ -57,10 +57,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /pdb:none
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\Stepmania\stepmania
+TargetDir=\stepmania\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                  	cl                                                   /Zl                                                   /nologo                                                   /c                                                   verstub.cpp                                                   /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                   	cl                                                    /Zl                                                    /nologo                                                    /c                                                    verstub.cpp                                                    /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -92,10 +92,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\Stepmania\stepmania
+TargetDir=\stepmania\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                  	cl                                                   /Zl                                                   /nologo                                                   /c                                                   verstub.cpp                                                   /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                   	cl                                                    /Zl                                                    /nologo                                                    /c                                                    verstub.cpp                                                    /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -1473,14 +1473,6 @@ SOURCE=.\ScreenGraphicOptions.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScreenHighScores.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenHighScores.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\ScreenHowToPlay.h
 # End Source File
 # Begin Source File
@@ -1549,6 +1541,14 @@ SOURCE=.\ScreenMusicScroll.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenNameEntry.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenNameEntry.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenOptions.cpp
 # End Source File
 # Begin Source File
@@ -1570,6 +1570,14 @@ SOURCE=.\ScreenPrompt.cpp
 # Begin Source File
 
 SOURCE=.\ScreenPrompt.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenRanking.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenRanking.h
 # End Source File
 # Begin Source File
 

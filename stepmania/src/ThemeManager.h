@@ -39,7 +39,7 @@ public:
 
 protected:
 	void GetAllThemeNames( CStringArray& AddTo );
-
+	CString GetPathTo( CString sThemeName, CString sAssetCategory, CString sFileName );
 	static CString GetThemeDirFromName( const CString &sThemeName );
 	CString GetElementDir( CString sThemeName );
 	static CString GetMetricsPathFromName( CString sThemeName );

@@ -116,29 +116,21 @@ CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
 	return THEMES_DIR + sThemeName + "\\";
 }
 
-CString ThemeManager::GetPathToOptional( CString sAssetCategory, CString sFileName ) 
+CString ThemeManager::GetPathTo( CString sThemeName, CString sAssetCategory, CString sFileName ) 
 {
 try_element_again:
 	sAssetCategory.MakeLower();
 	sFileName.MakeLower();
 
-	const CString sCurrentThemeDir = GetThemeDirFromName( m_sCurThemeName );
-	const CString sDefaultThemeDir = GetThemeDirFromName( BASE_THEME_NAME );	
+	const CString sThemeDir = GetThemeDirFromName( sThemeName );
 
 	CStringArray asPossibleElementFilePaths;
 
-	///////////////////////////////////////
-	// Search both the current theme and the default theme dirs for this element
-	///////////////////////////////////////
-
 	/* First, look for redirs. */
-	GetDirListing( sCurrentThemeDir + sAssetCategory+"/"+sFileName + ".redir",
-					asPossibleElementFilePaths, false, true );
-	if(asPossibleElementFilePaths.empty())
-	GetDirListing( sDefaultThemeDir + sAssetCategory+"/"+sFileName + ".redir",
+	GetDirListing( sThemeDir + sAssetCategory+"/"+sFileName + ".redir",
 					asPossibleElementFilePaths, false, true );
 
-	if( !asPossibleElementFilePaths.empty() && asPossibleElementFilePaths[0].GetLength() > 5  &&  asPossibleElementFilePaths[0].Right(5) == "redir" )	// this is a redirect file
+	if( !asPossibleElementFilePaths.empty() )	// this is a redirect file
 	{
 		CString sNewFilePath = DerefRedir(asPossibleElementFilePaths[0]);
 		
@@ -200,32 +192,26 @@ try_element_again:
 	if( sAssetCategory == "bganimations" )
 		DirsOnly=true;
 
-	int i;
-	for(i = 0; asset_masks[i]; ++i)
-	{
-		GetDirListing( sCurrentThemeDir + sAssetCategory+"/" + sFileName + asset_masks[i],
+	for(int i = 0; asset_masks[i]; ++i)
+		GetDirListing( sThemeDir + sAssetCategory+"/" + sFileName + asset_masks[i],
 						asPossibleElementFilePaths, DirsOnly, true );
-	}
 
 	if( sAssetCategory == "fonts" )
 		Font::WeedFontNames(asPossibleElementFilePaths, sFileName);
 		
 	if(asPossibleElementFilePaths.empty())
-	{
-		for(i = 0; asset_masks[i]; ++i)
-		{
-			GetDirListing( sDefaultThemeDir + sAssetCategory+"/" + sFileName + asset_masks[i],
-							asPossibleElementFilePaths, DirsOnly, true );
-		}
-
-		if( sAssetCategory == "fonts" )
-			Font::WeedFontNames(asPossibleElementFilePaths, sFileName);
-	}
-
-	if(asPossibleElementFilePaths.empty())
 		return "";
+	else
+		return asPossibleElementFilePaths[0];
+}
 
-	return asPossibleElementFilePaths[0];
+CString ThemeManager::GetPathToOptional( CString sAssetCategory, CString sFileName ) 
+{
+	CString ret = GetPathTo( m_sCurThemeName, sAssetCategory, sFileName);
+	if( !ret.empty() )	// we found something
+		return ret;
+	ret = GetPathTo( BASE_THEME_NAME, sAssetCategory, sFileName);
+	return ret;
 }
 
 CString ThemeManager::GetPathTo( CString sAssetCategory, CString sFileName ) 
@@ -234,10 +220,8 @@ CString ThemeManager::GetPathTo( CString sAssetCategory, CString sFileName )
 try_element_again:
 #endif
 
-	CString ret = GetPathToOptional(sAssetCategory, sFileName);
-
-	/* If it's empty, we found nothing. */
-	if( !ret.empty() )
+	CString ret = GetPathToOptional( sAssetCategory, sFileName ) ;
+	if( !ret.empty() )	// we found something
 		return ret;
 
 #ifdef _DEBUG
