@@ -94,7 +94,8 @@ static void ChangeToDirOfExecutable(const char *argv0)
 	if( DirOfExecutable.size() == 0 || (DirOfExecutable[0] == '/' || DirOfExecutable[0] == '\\') )
 		IsAbsolutePath = true;
 #if defined(_WIN32)
-	if( DirOfExecutable.size() > 2 && DirOfExecutable[1] == ':' ) /* XXX: "c:foo" is relative */
+	if( DirOfExecutable.size() > 2 && DirOfExecutable[1] == ':' && 
+		(DirOfExecutable[2] == '/' || DirOfExecutable[2] == '\\') )
 		IsAbsolutePath = true;
 #endif
 
