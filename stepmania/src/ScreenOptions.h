@@ -74,8 +74,8 @@ protected:
 	virtual void RefreshIcons();
 	void PositionCursors();
 	void PositionItems();
-	void TweenCursor( PlayerNumber player_no );
-	void UpdateText( PlayerNumber player_no, int row );
+	void TweenCursor( PlayerNumber pn );
+	void UpdateText( int row );
 	void UpdateEnabledDisabled();
 	virtual void OnChange( PlayerNumber pn );
 

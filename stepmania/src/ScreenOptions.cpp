@@ -808,7 +808,13 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	}
 }
 
-void ScreenOptions::UpdateText( PlayerNumber pn, int iRow )
+/* For "long row-style" rows, update the text on screen to contain the currently-
+ * focused options. 
+ *
+ * This used to update a single player, but it's not always clear what that means
+ * when dealing with bOneChoiceForAllPlayers and disabled players, which was brittle.
+ * Update the whole row. */
+void ScreenOptions::UpdateText( int iRow )
 {
 	Row &row = *m_Rows[iRow];
 	const OptionRowData &data = row.m_RowDef;
@@ -816,14 +822,16 @@ void ScreenOptions::UpdateText( PlayerNumber pn, int iRow )
 	if( !row.m_bRowIsLong )
 		return;
 
-	int iChoiceWithFocus = row.m_iChoiceWithFocus[pn];
+	FOREACH_HumanPlayer( pn )
+	{
+		int iChoiceWithFocus = row.m_iChoiceWithFocus[pn];
+		unsigned item_no = data.bOneChoiceForAllPlayers ? 0 : pn;
 
-	unsigned item_no = data.bOneChoiceForAllPlayers ? 0 : pn;
+		/* If player_no is 2 and there is no player 1: */
+		item_no = min( item_no, row.m_textItems.size()-1 );
 
-	/* If player_no is 2 and there is no player 1: */
-	item_no = min( item_no, row.m_textItems.size()-1 );
-
-	row.m_textItems[item_no]->SetText( data.choices[iChoiceWithFocus] );
+		row.m_textItems[item_no]->SetText( data.choices[iChoiceWithFocus] );
+	}
 }
 
 void ScreenOptions::UpdateEnabledDisabled()
@@ -1316,11 +1324,25 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 	{
 		row.m_iChoiceWithFocus[pn] = iNewChoiceWithFocus;
 
+		m_InputMode == INPUTMODE_SHARE_CURSOR);
+
+		/* If this row is bOneChoiceForAllPlayers, then lock the cursors together
+		 * for this row.  Don't do this in NAV_FIRST_CHOICE_GOES_DOWN, since the
+		 * current selection and the current focus are detached in that mode. */
+		bool bForceFocusedChoiceTogether = false;
+		if( m_OptionsNavigation!=NAV_FIRST_CHOICE_GOES_DOWN &&
+			optrow.bOneChoiceForAllPlayers )
+			bForceFocusedChoiceTogether = true;
+
+		/* Also lock focus if the screen is explicitly set to share cursors. */
 		if( m_InputMode == INPUTMODE_SHARE_CURSOR )
+			bForceFocusedChoiceTogether = true;
+
+		if( bForceFocusedChoiceTogether )
 		{
 			// lock focus together
-			FOREACH_HumanPlayer( pn )
-				row.m_iChoiceWithFocus[pn] = iNewChoiceWithFocus;
+			FOREACH_HumanPlayer( p )
+				row.m_iChoiceWithFocus[p] = iNewChoiceWithFocus;
 		}
 
 		for( int p=0; p<NUM_PLAYERS; p++ )
@@ -1336,8 +1358,6 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 				else
 					row.SetOneSelection( (PlayerNumber)p, iNewChoiceWithFocus );			
 			}
-
-			UpdateText( (PlayerNumber)p, iCurRow );
 		}
 	}
 	else
@@ -1355,9 +1375,9 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 			else
 				row.SetOneSelection( pn, iNewChoiceWithFocus );
 		}
-
-		UpdateText( pn, iCurRow );
 	}
+
+	UpdateText( iCurRow );
 
 	OnChange( pn );
 
