@@ -43,18 +43,7 @@ enum Grade
 	GRADE_NO_DATA,	// ~GRADE_INVALID
 };
 
-inline CString GradeToString( Grade g )
-{
-        // string is meant to be human readable
-        switch( g )
-        {
-        case GRADE_NO_DATA:     return "NoData";
-        case GRADE_FAILED:      return "Failed";
-        default:
-                return ssprintf("%02d",g+1);
-        }
-}
-
+CString GradeToString( Grade g );
 CString GradeToOldString( Grade g );	// "AAA", "B", etc for backward compatibility
 CString GradeToThemedString( Grade g );
 Grade StringToGrade( const CString &s );

@@ -409,7 +409,7 @@ void ScreenEvaluation::Init()
 	//
 	if( SHOW_GRADE_AREA )
 	{
-		// ugly: Touch all possible grade files to make sure they're all present
+		// Touch all possible grade files to make sure they're all present
 		for( int g=GRADE_TIER_1; g<NUM_GRADES; g++ )
 			THEME->GetPathToG( "ScreenEvaluation grade "+ GradeToString((Grade)g) );
 

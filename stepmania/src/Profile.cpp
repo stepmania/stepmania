@@ -587,7 +587,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	{
 		XNode* pUnlockedSongs = pGeneralDataNode->AppendChild("UnlockedSongs");
 		for( set<int>::const_iterator it = m_UnlockedSongs.begin(); it != m_UnlockedSongs.end(); ++it )
-			pUnlockedSongs->AppendChild( ssprintf("%i", *it) );
+			pUnlockedSongs->AppendChild( ssprintf("Unlock%i", *it) );
 	}
 
 	{
@@ -726,7 +726,11 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 		if( pUnlockedSongs )
 		{
 			FOREACH_Node( pUnlockedSongs, song )
-				m_UnlockedSongs.insert( atoi(song->name) );
+			{
+				int iUnlock;
+				if( sscanf(song->name.c_str(),"Unlock%d",&iUnlock) == 1 )
+					m_UnlockedSongs.insert( iUnlock );
+			}
 		}
 	}
 

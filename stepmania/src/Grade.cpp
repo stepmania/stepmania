@@ -14,6 +14,18 @@
 #include "RageUtil.h"
 #include "ThemeManager.h"
 
+CString GradeToString( Grade g )
+{
+        // string is meant to be human readable
+        switch( g )
+        {
+        case GRADE_NO_DATA:     return "NoData";
+        case GRADE_FAILED:      return "Failed";
+        default:
+                return ssprintf("Tier%02d",g+1);
+        }
+}
+
 CString GradeToThemedString( Grade g )
 {
 	CString s = GradeToString(g);
@@ -61,10 +73,9 @@ Grade StringToGrade( const CString &sGrade )
 	if	   ( s == "FAILED" )	return GRADE_FAILED;
 	else if( s == "NODATA" )	return GRADE_NO_DATA;
 
-#define MY_IS_DIGIT( c ) (c>='0'&&c<='9')
-
-	if( s.length()==2 && MY_IS_DIGIT(s[0]) && MY_IS_DIGIT(s[1]) )	// if it's a two digit number...
-		return (Grade)(atoi(s)-1);
+	int iTier;
+	if( sscanf(sGrade.c_str(),"TIER%02d",&iTier) == 1 )	// if it's a two digit number...
+		return (Grade)(iTier-1);
 
 	ASSERT(0);
 	return GRADE_NO_DATA;
