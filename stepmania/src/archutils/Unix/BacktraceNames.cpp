@@ -164,7 +164,7 @@ void BacktraceNames::FromAddr( const void *p )
     int fds[2];
     int out = fileno(stdout);
     pid_t pid;
-    pid_t ppid = getppid(); /* Do this before fork()ing! */
+    pid_t ppid = getpid(); /* Do this before fork()ing! */
     
     Offset = 0;
     Address = long(p);
