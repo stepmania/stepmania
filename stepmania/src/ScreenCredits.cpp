@@ -21,7 +21,7 @@
 #include "AnnouncerManager.h"
 #include <math.h>
 #include "CroppedSprite.h"
-#include "Song.h"
+#include "song.h"
 #include "BitmapText.h"
 
 
