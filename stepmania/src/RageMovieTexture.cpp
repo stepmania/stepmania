@@ -151,7 +151,7 @@ HRESULT CTextureRenderer::SetRenderTarget( RageMovieTexture* pTexture )
 HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 {
     BYTE  *pBmpBuffer;		// Bitmap buffer
-    
+
     // Get the video bitmap buffer
     pSample->GetPointer( &pBmpBuffer );
 
@@ -352,10 +352,6 @@ void HandleDivXError()
 HRESULT RageMovieTexture::InitDShowTextureRenderer()
 {
     HRESULT hr = S_OK;
-    CComPtr<IBaseFilter>    pFTR;           // Texture Renderer Filter
-    CComPtr<IPin>           pFTRPinIn;      // Texture Renderer Input Pin
-    CComPtr<IBaseFilter>    pFSrc;          // Source Filter
-    CComPtr<IPin>           pFSrcPinOut;    // Source Filter Output Pin   
     
     // Create the filter graph
     if( FAILED( m_pGB.CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC) ) )
@@ -367,7 +363,7 @@ HRESULT RageMovieTexture::InitDShowTextureRenderer()
         throw RageException( hr, "Could not create texture renderer object!" );
     
     // Get a pointer to the IBaseFilter on the TextureRenderer, add it to graph
-    pFTR = m_pCTR;
+    CComPtr<IBaseFilter> pFTR = m_pCTR;
     if( FAILED( hr = m_pGB->AddFilter(pFTR, L"TEXTURERENDERER" ) ) )
         throw RageException( hr, "Could not add renderer filter to graph!" );
     
@@ -382,6 +378,7 @@ HRESULT RageMovieTexture::InitDShowTextureRenderer()
 
 
     // Add the source filter
+    CComPtr<IBaseFilter>    pFSrc;          // Source Filter
     if( FAILED( hr = m_pGB->AddSourceFilter( wFileName, L"SOURCE", &pFSrc ) ) )		// if this fails, it's probably because the user doesn't have DivX installed
 	{
 		HandleDivXError();
@@ -389,9 +386,11 @@ HRESULT RageMovieTexture::InitDShowTextureRenderer()
 	}
     
     // Find the source's output and the renderer's input
+    CComPtr<IPin>           pFTRPinIn;      // Texture Renderer Input Pin
     if( FAILED( hr = pFTR->FindPin( L"In", &pFTRPinIn ) ) )
         throw RageException( hr, "Could not find input pin!" );
 
+    CComPtr<IPin>           pFSrcPinOut;    // Source Filter Output Pin   
     if( FAILED( hr = pFSrc->FindPin( L"Output", &pFSrcPinOut ) ) )
         throw RageException( hr, "Could not find output pin!" );
     
