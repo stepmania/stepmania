@@ -25,11 +25,9 @@ struct ModeChoice		// used in SelectMode
 	void ApplyToAllPlayers();
 	void Apply( PlayerNumber pn );
 	bool DescribesCurrentMode() const;
+	bool IsPlayable( CString *why = NULL ) const;
 
 	bool		m_bInvalid;
-	/* If the reason this selection is invalid may not be obvious to the user, this
-	 * is set to a message. */
-	CString		m_sInvalidReason;
 	int			m_iIndex;
 	Game		m_game;
 	Style		m_style;

@@ -23,7 +23,6 @@ void ModeChoice::Init()
 	m_sName = "";
 	m_sScreen = "";
 	m_bInvalid = true;
-	m_sInvalidReason = "";
 }
 
 bool ModeChoice::DescribesCurrentMode() const
@@ -125,31 +124,62 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 		if( sName == "screen" )
 		{
 			m_sScreen = sValue;
-/* XXX: do this in GameState::IsPlayable, but move GameState::IsPlayable to ModeChoice::IsPlayable */
-/*			if( m_sScreen == "ScreenEditCoursesMenu" )
-			{
-				vector<Course*> vCourses;
-				SONGMAN->GetAllCourses( vCourses, false );
-
-				if( vCourses.size() == 0 )
-				{
-					m_bInvalid = true;
-					m_sInvalidReason = "No courses are installed";
-				}
-			}
-
-			if( m_sScreen == "ScreenJukeboxMenu" ||
-				m_sScreen == "ScreenEditMenu" ||
-				m_sScreen == "ScreenEditCoursesMenu" )
-			{
-				if( SONGMAN->GetNumSongs() == 0 )
-				{
-					m_bInvalid = true;
-					m_sInvalidReason = "No songs are installed";
-				}
-			}
-*/		}
+		}
 	}
+}
+
+bool ModeChoice::IsPlayable( CString *why ) const
+{
+	if( m_bInvalid )
+		return false;
+
+	if ( m_style != STYLE_INVALID )
+	{
+		const int SidesJoinedToPlay = GAMEMAN->GetStyleDefForStyle(m_style)->NumSidesJoinedToPlay();
+		if( SidesJoinedToPlay != GAMESTATE->GetNumSidesJoined() )
+			return false;
+	}
+
+	/* Don't allow a PlayMode that's incompatible with our current Style (if set),
+	 * and vice versa. */
+	const PlayMode &rPlayMode = (m_pm != PLAY_MODE_INVALID) ? m_pm : GAMESTATE->m_PlayMode;
+	if( rPlayMode == PLAY_MODE_RAVE || rPlayMode == PLAY_MODE_BATTLE )
+	{
+		// Can't play rave if there isn't enough room for two players.
+		// This is correct for dance (ie, no rave for solo and doubles),
+		// and should be okay for pump .. not sure about other game types.
+		const Style &rStyle = m_style != STYLE_INVALID? m_style: GAMESTATE->m_CurStyle;
+		if( rStyle != STYLE_INVALID &&
+			GAMEMAN->GetStyleDefForStyle(rStyle)->m_iColsPerPlayer >= 6 )
+			return false;
+	}
+
+	if( !m_sScreen.CompareNoCase("ScreenEditCoursesMenu") )
+	{
+		vector<Course*> vCourses;
+		SONGMAN->GetAllCourses( vCourses, false );
+
+		if( vCourses.size() == 0 )
+		{
+			if( why )
+				*why = "No courses are installed";
+			return false;
+		}
+	}
+
+	if( !m_sScreen.CompareNoCase("ScreenJukeboxMenu") ||
+		!m_sScreen.CompareNoCase("ScreenEditMenu") ||
+		!m_sScreen.CompareNoCase("ScreenEditCoursesMenu") )
+	{
+		if( SONGMAN->GetNumSongs() == 0 )
+		{
+			if( why )
+				*why = "No songs are installed";
+			return false;
+		}
+	}
+
+	return true;
 }
 
 void ModeChoice::ApplyToAllPlayers()
