@@ -1551,6 +1551,7 @@ Song *MusicWheel::GetPreferredSelectionForRandomOrPortal()
 		if( !sPreferredGroup.empty() && wid[iSelection].m_sSectionName != sPreferredGroup )
 			continue;
 
+		// There's an off possibility that somebody might have only one song with only beginner steps.
 		if( i < 900 && pSong->IsTutorial() )
 			continue;
 
