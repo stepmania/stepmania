@@ -50,16 +50,16 @@ ScreenInstructions::ScreenInstructions()
 	}
 
 	//
-	// Skip this screen unless someone chose easy
+	// Skip this screen unless someone chose easy or beginner
 	//
-	Difficulty easiestDiffuclty = DIFFICULTY_HARD;
+	Difficulty easiestDifficulty = DIFFICULTY_HARD;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
-		easiestDiffuclty = min( easiestDiffuclty, GAMESTATE->m_PreferredDifficulty[p] );
+		easiestDifficulty = min( easiestDifficulty, GAMESTATE->m_PreferredDifficulty[p] );
 	}
-	if( easiestDiffuclty != DIFFICULTY_EASY )
+	if( easiestDifficulty > DIFFICULTY_EASY )
 	{
 		this->SendScreenMessage( SM_GoToNextScreen, 0 );
 		m_Menu.ImmedOffScreenToMenu();
