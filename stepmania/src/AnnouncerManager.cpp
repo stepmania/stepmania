@@ -18,7 +18,6 @@
 AnnouncerManager*	ANNOUNCER = NULL;	// global object accessable from anywhere in the program
 
 
-const CString EZ2_ANNOUNCER_NAME = "ez2";
 const CString ANNOUNCER_BASE_DIR  = "Announcers\\";
 
 

@@ -287,7 +287,8 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
 	}
 
 	// figure out whether we should add a player into the fray or not
-	if(	GAMEMAN->m_sMasterPlayerNumber != PLAYER_2 && GAMEMAN->m_sMasterPlayerNumber != PLAYER_1 )
+//	if(	GAMEMAN->m_sMasterPlayerNumber != PLAYER_2 && GAMEMAN->m_sMasterPlayerNumber != PLAYER_1 )
+	if (m_iSelectedStyle == 3)
 	{
 		if (p == PLAYER_1)
 		{

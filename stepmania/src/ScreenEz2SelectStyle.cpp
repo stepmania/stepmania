@@ -284,7 +284,7 @@ void ScreenEz2SelectStyle::DrawPrimitives()
 	{
 		AnimateGraphics();
 	}
-
+	AnimateBackground();
 	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
 	m_Menu.DrawTopLayer();
@@ -844,14 +844,21 @@ void ScreenEz2SelectStyle::AnimateGraphics()
 			ez2p_direct = 0;
 		}
 	}
+}
 
-	if (m_iSelectedStyle == 0) // EASY background
+/************************************
+AnimateBackground
+Desc: Animates the Background
+************************************/
+void ScreenEz2SelectStyle::AnimateBackground()
+{
+	if ((m_iSelectedStyle == 0) || (m_iSelectedPlayer == 2 && m_iSelectedStyle == 3)) // EASY background
 	{
 		m_sprBackground[3].SetHeight(SCREEN_HEIGHT * 1.7f);
 		m_sprBackground[3].SetWidth(SCREEN_WIDTH * 1.7f);
 		m_sprBackground[3].SetEffectSpinning(1.0f);
 	}
-	else if (m_iSelectedStyle == 3) // CLUB background
+	else if (m_iSelectedStyle == 3 && m_iSelectedPlayer != 2) // CLUB background
 	{
 		m_sprBackground[3].SetHeight(0);
 		m_sprBackground[3].SetWidth(0);

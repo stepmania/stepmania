@@ -52,6 +52,7 @@ const float CHOICES_GAP_Y		= 52;
 const float HELP_X				= CENTER_X;
 const float HELP_Y				= SCREEN_HEIGHT-55;
 
+const CString EZ2_ANNOUNCER_NAME = "ez2";
 
 const ScreenMessage SM_PlayAttract			=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToCaution			=	ScreenMessage(SM_User+2);
@@ -153,11 +154,34 @@ ScreenTitleMenu::ScreenTitleMenu()
 	// Cheers
 	// -- dro kulix
 
+	// Dear dro kulix:
 	// Good call, actually, I made this change when announcer switching wasn't possible.
 	// or rather, announcer switching WASN'T possible from the title menu (it used to be
 	// in song options)
 	// but since it is now changed before we get here, 
 	// care needs to be taken to ensure the player can still switch.
+
+	// However, your commenting code is still not that brill either ;) Brings back the first bug 
+	// (if we last played ez2dancer and then came back into the game ez2dancer
+    // default announcer loads for DDR). However, here's a different approach for you.
+
+	// If we start the game and find that we're playing something other than ez2dancer AND
+	// the current announcer is ez2 then we change it to the default announcer and specify announcer
+	// check as 1. This'll stay like this for the rest of the program, meaning should they
+	// REALLY want to play ez2dancer sounds during a game of DDR, they're free to do so.
+	// It just really bugs me when I see "SMMAX" and the sound "EZ2DANCER!" blares through my speakers ;)
+
+	// When other gametypes are implemented, this may or may not have to be extended to ensure we 
+	// don't hear "YEAH! I KNOW YOU CAN!" for pump or "AVEX AND KONAMI UNITE IN YOUR DANCE" for para e.t.c.
+
+	static int announcercheck=0; 
+
+	if (GAMEMAN->m_CurGame != GAME_EZ2 && PREFSMAN->m_sAnnouncer == "ez2" && announcercheck == 0)
+	{
+		ANNOUNCER->SwitchAnnouncer( "default" );
+		announcercheck = 1;
+	}
+
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_TITLE_MENU_GAME_NAME) );
 

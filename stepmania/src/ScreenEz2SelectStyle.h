@@ -44,6 +44,7 @@ public:
 private:
 	/* Private Function Prototypes */
 	void AnimateGraphics();
+	void AnimateBackground();
 	//	void BeforeChange();
 	void SetFadedStyles();
 //	void AnimateGraphics();
