@@ -144,13 +144,12 @@ bool RageSound_DSound::stream::GetData(bool init)
 			memset( locked_buf, 0, iSilentBytesInThisBuffer );
 			bytes_read += iSilentBytesInThisBuffer;
 			bytes_left -= iSilentBytesInThisBuffer;
-			play_pos += iSilentFramesInThisBuffer;
 
 			if( !iSilentBytesInThisBuffer )
 				start_time.SetZero();
 		}
 
-		unsigned got = snd->GetPCM( locked_buf+bytes_read, len-bytes_read, play_pos );
+		unsigned got = snd->GetPCM( locked_buf+bytes_read, len-bytes_read, play_pos + (bytes_read/samplesize));
 		bytes_read += got;
 
 		if( bytes_read < len )
