@@ -32,12 +32,17 @@ FontManager::FontManager()
 
 FontManager::~FontManager()
 {
+	/* It's not safe to delete fonts that still have references left, because fonts
+	 * will also release other fonts when they're deleted (we'd have to make sure
+	 * to delete top-level fonts first).  Since this should never happen anyway,
+	 * and we only delete FontManager when we're shutting down, let's just warn
+	 * about font leaks and not actually free them. */
 	for( std::map<CString, Font*>::iterator i = m_mapPathToFont.begin();
 		i != m_mapPathToFont.end(); ++i)
 	{
 		Font* pFont = i->second;
 		LOG->Trace( "FONT LEAK: '%s', RefCount = %d.", i->first.GetString(), pFont->m_iRefCount );
-		delete pFont;
+//		delete pFont;
 	}
 }
 
