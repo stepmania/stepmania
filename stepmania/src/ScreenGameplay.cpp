@@ -1299,7 +1299,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		/* If FAIL_IMMEDIATE and everyone is failing, start SM_BeginFailed. */
 		if( GAMESTATE->AllAreDead() && GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_IMMEDIATE )
 		{
-			if( PREFSMAN->m_bMin1FullSongInCourses && GAMESTATE->GetCourseSongIndex()==0 )
+			if( PREFSMAN->m_bMinimum1FullSongInCourses && GAMESTATE->GetCourseSongIndex()==0 )
 				;	// do nothing
 			else
 				SCREENMAN->PostMessageToTopScreen( SM_BeginFailed, 0 );
