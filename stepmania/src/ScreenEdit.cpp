@@ -1927,13 +1927,13 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 		case paste_at_current_beat:
 			{
 				int iDestFirstRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
-				m_NoteDataEdit.CopyRange( m_Clipboard, 0, MAX_NOTE_ROW, iDestFirstRow );
+				m_NoteDataEdit.CopyRange( m_Clipboard, 0, m_Clipboard.GetLastRow()+1, iDestFirstRow );
 			}
 			break;
 		case paste_at_begin_marker:
 			{
 				ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 );
-				m_NoteDataEdit.CopyRange( m_Clipboard, 0, MAX_NOTE_ROW, m_NoteFieldEdit.m_iBeginMarker );
+				m_NoteDataEdit.CopyRange( m_Clipboard, 0, m_Clipboard.GetLastRow()+1, m_NoteFieldEdit.m_iBeginMarker );
 			}
 			break;
 		case clear:
