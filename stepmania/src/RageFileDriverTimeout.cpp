@@ -45,6 +45,7 @@
 #include "RageUtil.h"
 #include "RageUtil_FileDB.h"
 #include "RageLog.h"
+#include <errno.h>
 
 enum ThreadRequest
 {
