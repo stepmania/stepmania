@@ -281,6 +281,21 @@ void Notes::SetRadarValue(int r, float val)
 	m_fRadarValues[r] = val;
 }
 
+/* Make sure we treat AAAA as higher than AAA, even though the score
+ * is the same. 
+ *
+ * XXX: Isn't it possible to beat the grade but not beat the score, since
+ * grading and scores are on completely different systems?  Should we be
+ * checking for these completely separately? */
+bool Notes::MemCardScore::HigherScore( int vsScore, Grade vsGrade ) const
+{
+	if( vsScore > this->iScore )
+		return true;
+	if( vsScore < this->iScore )
+		return false;
+	return vsGrade > this->grade;
+}
+
 void Notes::AddScore( PlayerNumber pn, Grade grade, int iScore, bool& bNewRecordOut )
 {
 	bNewRecordOut = false;
@@ -288,14 +303,14 @@ void Notes::AddScore( PlayerNumber pn, Grade grade, int iScore, bool& bNewRecord
 	m_MemCardScores[MEMORY_CARD_MACHINE].iNumTimesPlayed++;
 	m_MemCardScores[pn].iNumTimesPlayed++;
 
-	if( iScore > m_MemCardScores[pn].iScore )
+	if( m_MemCardScores[pn].HigherScore(iScore, grade) )
 	{
 		m_MemCardScores[pn].iScore = iScore;
 		m_MemCardScores[pn].grade = grade;
 		bNewRecordOut = true;
 	}
 
-	if( iScore > m_MemCardScores[MEMORY_CARD_MACHINE].iScore )
+	if( m_MemCardScores[MEMORY_CARD_MACHINE].HigherScore(iScore, grade) )
 	{
 		m_MemCardScores[MEMORY_CARD_MACHINE].iScore = iScore;
 		m_MemCardScores[MEMORY_CARD_MACHINE].grade = grade;

@@ -58,6 +58,7 @@ public:
 		int iNumTimesPlayed;
 		Grade grade;
 		int iScore;
+		bool HigherScore( int iScore, Grade grade ) const;
 	} m_MemCardScores[NUM_MEMORY_CARDS];
 
 	void AddScore( PlayerNumber pn, Grade grade, int iScore, bool& bNewRecordOut );
