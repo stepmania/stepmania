@@ -142,7 +142,7 @@ void BGAnimationLayer::LoadFromMovie( CString sMoviePath )
 	Sprite* pSprite = new Sprite;
 	pSprite->LoadBG( sMoviePath );
 	pSprite->StretchTo( FullScreenRectF );
-	pSprite->GetTexture()->Pause();
+	pSprite->EnableAnimation( false );
 	m_SubActors.push_back( pSprite );
 }
 
@@ -991,10 +991,10 @@ void BGAnimationLayer::GainFocus( float fRate, bool bRewindMovie, bool bLoop )
 	// TODO: Don't special case subActor[0].  The movie layer should be set up with
 	// a LoseFocusCommand that pauses, and a GainFocusCommand that plays.
 	if( bRewindMovie )
-		m_SubActors[0]->Command( "position,0" );
-	m_SubActors[0]->Command( ssprintf("loop,%i",bLoop) );
-	m_SubActors[0]->Command( "play" );
-	m_SubActors[0]->Command( ssprintf("rate,%f",fRate) );
+		RunCommandOnChildren( "position,0" );
+	RunCommandOnChildren( ssprintf("loop,%i",bLoop) );
+	RunCommandOnChildren( "play" );
+	RunCommandOnChildren( ssprintf("rate,%f",fRate) );
 
 	if( m_fRepeatCommandEverySeconds == -1 )	// if not repeating
 	{
@@ -1008,6 +1008,8 @@ void BGAnimationLayer::GainFocus( float fRate, bool bRewindMovie, bool bLoop )
 	}
 
 	PlayCommand( "GainFocus" );
+
+	ActorFrame::GainFocus( fRate, bRewindMovie, bLoop );
 }
 
 void BGAnimationLayer::LoseFocus()
@@ -1015,7 +1017,7 @@ void BGAnimationLayer::LoseFocus()
 	if( !m_SubActors.size() )
 		return;
 
-	m_SubActors[0]->Command( "pause" );
+	RunCommandOnChildren( "pause" );
 
 	PlayCommand( "LoseFocus" );
 }
