@@ -445,13 +445,17 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, int iNewChoice )
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
+		/* Set the new m_iChoice even for disabled players, since a player might
+		 * join on a SHARED_PREVIEW_AND_CURSOR after the cursor has been moved. */
+		const int iOldChoice = m_iChoice[p];
+		m_iChoice[p] = iNewChoice;
+
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
 
 		if( !bMoveAll && p!=pn )
 			continue;	// skip
 
-		const int iOldChoice = m_iChoice[p];
 		if( SHARED_PREVIEW_AND_CURSOR )
 		{
 			for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
@@ -478,8 +482,6 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, int iNewChoice )
 				COMMAND( m_sprIcon[i][iNewChoice], "GainFocus" );
 			}
 		}
-
-		m_iChoice[p] = iNewChoice;
 
 		if( SHARED_PREVIEW_AND_CURSOR )
 		{
