@@ -112,10 +112,10 @@ RageLog::RageLog()
 
 	// Open log file and leave it open.
 	if( !g_fileLog->Open( LOG_PATH, RageFile::WRITE|RageFile::STREAMED ) )
-		fprintf( stderr, "Couldn't open %s: %s", LOG_PATH, g_fileLog->GetError().c_str() );
+		fprintf( stderr, "Couldn't open %s: %s\n", LOG_PATH, g_fileLog->GetError().c_str() );
 	
 	if( !g_fileInfo->Open( INFO_PATH, RageFile::WRITE|RageFile::STREAMED ) )
-		fprintf( stderr, "Couldn't open %s: %s", INFO_PATH, g_fileInfo->GetError().c_str() );
+		fprintf( stderr, "Couldn't open %s: %s\n", INFO_PATH, g_fileInfo->GetError().c_str() );
 
 	this->Info( PRODUCT_NAME_VER );
 
