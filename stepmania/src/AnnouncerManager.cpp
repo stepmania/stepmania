@@ -76,13 +76,14 @@ CString AnnouncerManager::GetPathTo( CString sFolderName )
 	{
 		LOG->Trace( "The current announcer is missing the folder '%s'.", sFolderName );
 		MessageBeep( MB_OK );
-		CreateDirectory( sPathToFolderCurrent, NULL );
+		CreateDirectories( sPathToFolderCurrent );
 	}
 	if( !DoesFileExist(sPathToFolderEmpty) )
 	{
 		LOG->Trace( "The empty announcer is missing the folder '%s'.", sFolderName );
 		MessageBeep( MB_OK );
-		CreateDirectory( sPathToFolderEmpty, NULL );
+		CreateDirectories( sPathToFolderEmpty );
+		CreateDirectories( sPathToFolderEmpty );
 	}
 #endif
 
