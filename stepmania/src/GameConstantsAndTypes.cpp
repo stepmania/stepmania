@@ -71,6 +71,27 @@ Difficulty StringToDifficulty( CString sDC )
 }
 
 
+CString CourseDifficultyToString( CourseDifficulty dc )
+{
+	switch( dc )
+	{
+	case COURSE_DIFFICULTY_REGULAR:		return "regular";
+	case COURSE_DIFFICULTY_DIFFICULT:	return "difficult";
+	default:	ASSERT(0);		return "";	// invalid Difficulty
+	}
+}
+
+/* We prefer the above names; recognize a number of others, too.  (They'l
+ * get normalized when written to SMs, etc.) */
+CourseDifficulty StringToCourseDifficulty( CString sDC )
+{
+	sDC.MakeLower();
+	if( sDC == "regular" )			return COURSE_DIFFICULTY_REGULAR;
+	else if( sDC == "difficult" )	return COURSE_DIFFICULTY_DIFFICULT;
+	else							return COURSE_DIFFICULTY_INVALID;
+}
+
+
 CString PlayModeToString( PlayMode pm )
 {
 	switch( pm )

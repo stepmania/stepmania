@@ -109,9 +109,19 @@ void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
 	else if( GAMESTATE->m_pCurCourse )   // playing a course
 	{
 		row.bOneChoiceForAllPlayers = true;
-		row.choices.push_back( ENTRY_NAME("RegularCourses") );
-		if( GAMESTATE->m_pCurCourse->HasDifficult( GAMESTATE->GetCurrentStyleDef()->m_StepsType ) )
-			row.choices.push_back( ENTRY_NAME("DifficultCourses") );
+
+		Course* pCourse = GAMESTATE->m_pCurCourse;
+		StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+		for( int d=0; d<NUM_COURSE_DIFFICULTIES; d++ )
+		{
+			CourseDifficulty cd = (CourseDifficulty)d;
+			if( pCourse->HasCourseDifficulty(st,cd) )
+			{
+				CString sDifficulty = CourseDifficultyToString( cd );
+				sDifficulty = Capitalize( sDifficulty );
+				row.choices.push_back( ENTRY_NAME(sDifficulty+"Courses") );
+			}
+		}
 	}
 	else if( GAMESTATE->m_pCurSong )	// playing a song
 	{
@@ -354,9 +364,10 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 
 		if( GAMESTATE->m_pCurCourse )   // playing a course
 		{
-			if( GAMESTATE->m_bDifficultCourses &&
-				GAMESTATE->m_pCurCourse->HasDifficult( GAMESTATE->GetCurrentStyleDef()->m_StepsType ) )
-				SelectExactlyOne( 1+(row.bMultiSelect?1:0), vbSelectedOut );
+			Course* pCourse = GAMESTATE->m_pCurCourse;
+			StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+			if( pCourse->HasCourseDifficulty( st, GAMESTATE->m_CourseDifficulty ) )
+				SelectExactlyOne( GAMESTATE->m_CourseDifficulty+(row.bMultiSelect?1:0), vbSelectedOut );
 			else
 				SelectExactlyOne( 0+(row.bMultiSelect?1:0), vbSelectedOut );
 			return;
@@ -516,17 +527,7 @@ int ScreenOptionsMaster::ExportOption( const OptionRowData &row, const OptionRow
 			}
 			else if( GAMESTATE->m_pCurCourse )   // playing a course
 			{
-				if( sel == 1 )
-				{
-					GAMESTATE->m_bDifficultCourses = true;
-					LOG->Trace("ScreenPlayerOptions: Using difficult course");
-				}
-				else
-				{
-					GAMESTATE->m_bDifficultCourses = false;
-					LOG->Trace("ScreenPlayerOptions: Using normal course");
-				}
-			
+				GAMESTATE->m_CourseDifficulty = (CourseDifficulty)sel;			
 			}
 			else if( GAMESTATE->m_pCurSong )   // playing a song
 			{

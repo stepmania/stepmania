@@ -56,7 +56,7 @@ public:
 	int				m_iCoins;			// not "credits"
 	PlayerNumber	m_MasterPlayerNumber;	// used in Styles where one player controls both sides
 	bool			m_bIsOnSystemMenu; // system screens will not be effected by the operator key -- Miryokuteki
-	bool			m_bDifficultCourses; // used in nonstop
+	CourseDifficulty	m_CourseDifficulty; // used in nonstop
 	time_t			m_timeGameStarted;	// from the moment the first player pressed Start
 
 	/* This is set to a random number per-game/round; it can be used for a random seed. */

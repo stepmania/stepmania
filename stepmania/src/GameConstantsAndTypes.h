@@ -74,6 +74,18 @@ CString DifficultyToString( Difficulty dc );
 Difficulty StringToDifficulty( CString sDC );
 
 
+enum CourseDifficulty 
+{
+	COURSE_DIFFICULTY_REGULAR,
+	COURSE_DIFFICULTY_DIFFICULT,
+	NUM_COURSE_DIFFICULTIES,
+	COURSE_DIFFICULTY_INVALID
+};
+
+CString CourseDifficultyToString( CourseDifficulty dc );
+CourseDifficulty StringToCourseDifficulty( CString sDC );
+
+
 enum StepsType
 {
 	STEPS_TYPE_DANCE_SINGLE = 0,

@@ -89,7 +89,7 @@ public:
 
 	bool		m_bRepeat;	// repeat after last song?  "Endless"
 	bool		m_bRandomize;	// play the songs in a random order
-	bool		m_bDifficult; // only make something difficult once
+//	bool		m_bDifficult; // only make something difficult once
 	int			m_iLives;	// -1 means use bar life meter
 	int			m_iMeter;	// -1 autogens
 
@@ -97,7 +97,7 @@ public:
 
 	struct Info
 	{
-		Info(): pSong(NULL), pNotes(NULL), Random(false), Difficult(false) { }
+		Info(): pSong(NULL), pNotes(NULL), Random(false), CourseDifficulty(COURSE_DIFFICULTY_INVALID) { }
 		void GetAttackArray( AttackArray &out ) const;
 
 		Song*	pSong;
@@ -106,16 +106,16 @@ public:
 		AttackArray Attacks;
 		bool	Random;
 		bool	Mystery;
-		bool	Difficult; /* set to true if this is the difficult version */
+		CourseDifficulty	CourseDifficulty;
 		/* Corresponding entry in m_entries: */
 		int		CourseIndex;
 	};
 
 	// Dereferences course_entries and returns only the playable Songs and Steps
-	void GetCourseInfo( StepsType nt, vector<Info> &ci, int Difficult = -1 ) const;
+	void GetCourseInfo( StepsType nt, vector<Info> &ci, CourseDifficulty cd = COURSE_DIFFICULTY_INVALID ) const;
 
 	int GetEstimatedNumStages() const { return m_entries.size(); }
-	bool HasDifficult( StepsType nt ) const;
+	bool HasCourseDifficulty( StepsType nt, CourseDifficulty cd ) const;
 	bool IsPlayableIn( StepsType nt ) const;
 	bool CourseHasBestOrWorst() const;
 	RageColor GetColor() const;
@@ -127,7 +127,7 @@ public:
 	bool IsOni() const { return GetPlayMode() == PLAY_MODE_ONI; }
 	bool IsEndless() const { return GetPlayMode() == PLAY_MODE_ENDLESS; }
 	PlayMode GetPlayMode() const;
-	float GetMeter( int Difficult = -1 ) const;
+	float GetMeter( CourseDifficulty cd = COURSE_DIFFICULTY_INVALID ) const;
 
 	bool IsFixed() const;
 
@@ -201,9 +201,9 @@ public:
 	void ClearCache();
 
 private:
-	void GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut, int Difficult = -1 ) const;
+	void GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut, CourseDifficulty cd = COURSE_DIFFICULTY_INVALID ) const;
 
-	typedef pair<StepsType,bool> InfoParams;
+	typedef pair<StepsType,CourseDifficulty> InfoParams;
 	typedef vector<Info> InfoData;
 	typedef map<InfoParams, InfoData> InfoCache;
 	mutable InfoCache m_InfoCache;

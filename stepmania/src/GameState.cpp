@@ -94,7 +94,7 @@ void GameState::Reset()
 	m_bJukeboxUsesModifiers = false;
 	m_iCurrentStageIndex = 0;
 	m_bAllow2ndExtraStage = true;
-	m_bDifficultCourses = false;
+	m_CourseDifficulty = COURSE_DIFFICULTY_REGULAR;
 	m_BeatToNoteSkinRev = 0;
 
 	NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_CurGame );

@@ -260,18 +260,18 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, InputEventType type,
 	}
 
 	if( CodeDetector::EnteredEasierDifficulty(GameI.controller) &&
-		GAMESTATE->m_bDifficultCourses)
+		GAMESTATE->m_CourseDifficulty > 0 )
 	{
 		m_soundChangeNotes.Play();
-		GAMESTATE->m_bDifficultCourses = false;
+		GAMESTATE->m_CourseDifficulty = (CourseDifficulty)(GAMESTATE->m_CourseDifficulty-1);
 		SCREENMAN->PostMessageToTopScreen(SM_SongChanged,0);
 	}
 
 	if( CodeDetector::EnteredHarderDifficulty(GameI.controller) &&
-		!GAMESTATE->m_bDifficultCourses)
+		GAMESTATE->m_CourseDifficulty < NUM_COURSE_DIFFICULTIES-1 )
 	{
 		m_soundChangeNotes.Play();
-		GAMESTATE->m_bDifficultCourses = true;
+		GAMESTATE->m_CourseDifficulty = (CourseDifficulty)(GAMESTATE->m_CourseDifficulty+1);
 		SCREENMAN->PostMessageToTopScreen(SM_SongChanged,0);
 	}
 
