@@ -119,8 +119,6 @@ RageFileManager::RageFileManager( CString argv0 )
 	ld.driver = g_Mountpoints;
 	ld.MountPoint = "";
 	g_Drivers.push_back( ld );
-
-	MountInitialFilesystems();
 }
 
 #ifndef HAVE_EXTRA // set for custom initial mount rules

@@ -12,6 +12,7 @@ class RageFileManager
 public:
 	RageFileManager( CString argv0 );
 	~RageFileManager();
+	void MountInitialFilesystems();
 
 	void GetDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
 	bool Remove( const CString &sPath );
@@ -39,7 +40,6 @@ public:
 
 private:
 	RageFileObj *OpenForWriting( const CString &sPath, int mode, RageFile &p, int &err );
-	void MountInitialFilesystems();
 };
 
 extern RageFileManager *FILEMAN;

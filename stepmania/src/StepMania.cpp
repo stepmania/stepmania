@@ -839,6 +839,7 @@ int main(int argc, char* argv[])
 
 	/* Almost everything uses this to read and write files.  Load this early. */
 	FILEMAN = new RageFileManager( argv[0] );
+	FILEMAN->MountInitialFilesystems();
 
 	/* Set this up next.  Do this early, since it's needed for RageException::Throw. */
 	LOG			= new RageLog();
