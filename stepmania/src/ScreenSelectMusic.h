@@ -93,8 +93,6 @@ protected:
 	CString m_sRandomMusicPath;
 	CString m_sCourseMusicPath;
 	CString m_sFallbackCDTitlePath;
-	CString m_sBalloonMarathonPath;
-	CString m_sBalloonLongPath;
 
 	Sprite				m_sprCharacterIcon[NUM_PLAYERS];
 	Sprite				m_sprBannerMask;
@@ -121,7 +119,8 @@ protected:
 	BitmapText			m_textHighScore[NUM_PLAYERS];
 	MusicWheel			m_MusicWheel;
 	AutoActor			m_MusicWheelUnder;
-	Sprite				m_sprBalloon;
+	AutoActor			m_sprLongBalloon;
+	AutoActor			m_sprMarathonBalloon;
 	AutoActor			m_sprCourseHasMods;
 	DifficultyDisplay   m_DifficultyDisplay;
 	DifficultyList		m_DifficultyList;

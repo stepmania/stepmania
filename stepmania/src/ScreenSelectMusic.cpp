@@ -92,8 +92,6 @@ void ScreenSelectMusic::Init()
 	m_sRandomMusicPath = THEME->GetPathS(m_sName,"random music");
 	m_sCourseMusicPath = THEME->GetPathS(m_sName,"course music");
 	m_sFallbackCDTitlePath = THEME->GetPathG(m_sName,"fallback cdtitle");
-	m_sBalloonMarathonPath = THEME->GetPathG(m_sName,"balloon marathon");
-	m_sBalloonLongPath = THEME->GetPathG(m_sName,"balloon long");
 
 
 	TEXTUREMAN->CacheTexture( m_sFallbackCDTitlePath );
@@ -244,6 +242,7 @@ void ScreenSelectMusic::Init()
 	if( SHOW_COURSE_CONTENTS )
 	{
 		m_CourseContents.SetName( "CourseContents" );
+		m_CourseContents.Load();
 		SET_XY( m_CourseContents );
 		this->AddChild( &m_CourseContents );
 	}
@@ -311,10 +310,15 @@ void ScreenSelectMusic::Init()
 	SET_XY( m_MusicSortDisplay );
 	this->AddChild( &m_MusicSortDisplay );
 
-	m_sprBalloon.SetName( "Balloon" );
-	TEXTUREMAN->CacheTexture( THEME->GetPathG(m_sName,"balloon long") );
-	TEXTUREMAN->CacheTexture( THEME->GetPathG(m_sName,"balloon marathon") );
-	this->AddChild( &m_sprBalloon );
+	m_sprLongBalloon.Load( THEME->GetPathG(m_sName,"balloon long") );
+	m_sprLongBalloon->SetName( "Balloon" );
+	m_sprLongBalloon->SetHidden( 1 );
+	this->AddChild( m_sprLongBalloon );
+
+	m_sprMarathonBalloon.Load( THEME->GetPathG(m_sName,"balloon marathon") );
+	m_sprMarathonBalloon->SetName( "Balloon" );
+	m_sprMarathonBalloon->SetHidden( 1 );
+	this->AddChild( m_sprMarathonBalloon );
 
 	m_sprCourseHasMods.LoadAndSetName( m_sName, "CourseHasMods" );
 	SET_XY( m_sprCourseHasMods );
@@ -536,7 +540,8 @@ void ScreenSelectMusic::TweenOnScreen()
 	ON_COMMAND( m_MusicSortDisplay );
 	ON_COMMAND( m_MusicWheelUnder );
 	m_MusicWheel.TweenOnScreen();
-	ON_COMMAND( m_sprBalloon );
+	ON_COMMAND( m_sprLongBalloon );
+	ON_COMMAND( m_sprMarathonBalloon );
 	ON_COMMAND( m_sprCourseHasMods );
 	ON_COMMAND( m_MusicWheel );
 	ON_COMMAND( m_Artist );
@@ -591,7 +596,8 @@ void ScreenSelectMusic::TweenOffScreen()
 	m_MusicWheel.TweenOffScreen();
 	OFF_COMMAND( m_MusicWheelUnder );
 	OFF_COMMAND( m_MusicWheel );
-	OFF_COMMAND( m_sprBalloon );
+	OFF_COMMAND( m_sprLongBalloon );
+	OFF_COMMAND( m_sprMarathonBalloon );
 	OFF_COMMAND( m_sprCourseHasMods );
 	OFF_COMMAND( m_Artist );
 	OFF_COMMAND( m_MachineRank );
@@ -1520,8 +1526,10 @@ void ScreenSelectMusic::AfterMusicChange()
 				ASSERT(0);
 			}
 
-			m_sprBalloon.StopTweening();
-			COMMAND( m_sprBalloon, "Hide" );
+			m_sprLongBalloon->StopTweening();
+			COMMAND( m_sprLongBalloon, "Hide" );
+			m_sprMarathonBalloon->StopTweening();
+			COMMAND( m_sprMarathonBalloon, "Hide" );
 			
 			m_sprCourseHasMods->StopTweening();
 			COMMAND( m_sprCourseHasMods, "Hide" );
@@ -1587,22 +1595,29 @@ void ScreenSelectMusic::AfterMusicChange()
 			 * like the effect with a lot of delay. */
 			if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds )
 			{
-				m_sprBalloon.StopTweening();
-				m_sprBalloon.Load( m_sBalloonMarathonPath );
-				SET_XY( m_sprBalloon );
-				COMMAND( m_sprBalloon, "Show" );
+				m_sprMarathonBalloon->StopTweening();
+				SET_XY( m_sprMarathonBalloon );
+				COMMAND( m_sprMarathonBalloon, "Show" );
+
+				m_sprLongBalloon->StopTweening();
+				COMMAND( m_sprLongBalloon, "Hide" );
 			}
 			else if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds )
 			{
-				m_sprBalloon.StopTweening();
-				m_sprBalloon.Load( m_sBalloonLongPath );
-				SET_XY( m_sprBalloon );
-				COMMAND( m_sprBalloon, "Show" );
+				m_sprLongBalloon->StopTweening();
+				SET_XY( m_sprLongBalloon );
+				COMMAND( m_sprLongBalloon, "Show" );
+				
+				m_sprMarathonBalloon->StopTweening();
+				COMMAND( m_sprMarathonBalloon, "Hide" );
 			}
 			else
 			{
-				m_sprBalloon.StopTweening();
-				COMMAND( m_sprBalloon, "Hide" );
+				m_sprLongBalloon->StopTweening();
+				COMMAND( m_sprLongBalloon, "Hide" );
+
+				m_sprMarathonBalloon->StopTweening();
+				COMMAND( m_sprMarathonBalloon, "Hide" );
 			}
 
 			m_sprCourseHasMods->StopTweening();
@@ -1645,8 +1660,10 @@ void ScreenSelectMusic::AfterMusicChange()
 			ASSERT(0);
 		}
 
-		m_sprBalloon.StopTweening();
-		COMMAND( m_sprBalloon, "Hide" );
+		m_sprLongBalloon->StopTweening();
+		COMMAND( m_sprLongBalloon, "Hide" );
+		m_sprMarathonBalloon->StopTweening();
+		COMMAND( m_sprMarathonBalloon, "Hide" );
 		
 		m_sprCourseHasMods->StopTweening();
 		COMMAND( m_sprCourseHasMods, "Hide" );
@@ -1706,8 +1723,10 @@ void ScreenSelectMusic::AfterMusicChange()
 
 
 
-		m_sprBalloon.StopTweening();
-		COMMAND( m_sprBalloon, "Hide" );
+		m_sprLongBalloon->StopTweening();
+		COMMAND( m_sprLongBalloon, "Hide" );
+		m_sprMarathonBalloon->StopTweening();
+		COMMAND( m_sprMarathonBalloon, "Hide" );
 
 		if( pCourse->HasMods() )
 		{
