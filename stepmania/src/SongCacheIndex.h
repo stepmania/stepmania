@@ -11,6 +11,7 @@ class SongCacheIndex
 public:
 	SongCacheIndex();
 	~SongCacheIndex();
+	static CString GetCacheFilePath( const CString &sGroup, const CString &sPath );
 
 	void ReadCacheIndex();
 	void AddCacheIndex( const CString &path, unsigned hash );

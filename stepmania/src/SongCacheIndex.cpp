@@ -29,6 +29,13 @@
 
 SongCacheIndex *SONGINDEX;
 
+CString SongCacheIndex::GetCacheFilePath( const CString &sGroup, const CString &sPath )
+{
+	/* Use GetHashForString, not ForFile, since we don't want to spend time
+	 * checking the file size and date. */
+	return ssprintf( "%s/%s/%u", CACHE_DIR, sGroup.c_str(), GetHashForString(sPath) );
+}
+
 SongCacheIndex::SongCacheIndex()
 {
 	ReadCacheIndex();

@@ -43,7 +43,10 @@ public:
 	Preference<bool>	m_bTexturePreload;
 	Preference<bool>	m_bDelayedScreenLoad;
 	Preference<bool>	m_bDelayedModelDelete;
-	enum { BNCACHE_OFF, BNCACHE_LOW_RES, BNCACHE_FULL };
+	enum { BNCACHE_OFF,
+		BNCACHE_LOW_RES_PRELOAD, // preload low-res on start
+		BNCACHE_LOW_RES_LOAD_ON_DEMAND, // preload low-res on screen load
+		BNCACHE_FULL };
 	Preference<int>		m_iBannerCache;
 	Preference<bool>	m_bPalettedBannerCache;
 	Preference<bool>	m_bFastLoad;

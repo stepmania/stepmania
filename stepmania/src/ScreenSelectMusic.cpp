@@ -27,6 +27,7 @@
 #include "PlayerState.h"
 #include "Command.h"
 #include "CommonMetrics.h"
+#include "BannerCache.h"
 
 const int NUM_SCORE_DIGITS	=	9;
 
@@ -88,6 +89,9 @@ void ScreenSelectMusic::Init()
 
 	if( GAMESTATE->m_PlayMode == PLAY_MODE_INVALID )
 		RageException::Throw( "The PlayMode has not been set.  A theme must set the PlayMode before loading ScreenSelectMusic." );
+
+	/* Load low-res banners, if needed. */
+	BANNERCACHE->Demand();
 
 	m_MusicWheel.Load();
 
@@ -341,6 +345,7 @@ void ScreenSelectMusic::Init()
 ScreenSelectMusic::~ScreenSelectMusic()
 {
 	LOG->Trace( "ScreenSelectMusic::~ScreenSelectMusic()" );
+	BANNERCACHE->Undemand();
 
 }
 
@@ -681,18 +686,25 @@ void ScreenSelectMusic::CheckBackgroundRequests()
 	if( g_bBannerWaiting )
 	{
 		float HighQualTime = m_Banner.GetFadeSeconds();
+		if( g_StartedLoadingAt.Ago() < HighQualTime )
+			return;
 
 		CString sPath;
-		if( g_StartedLoadingAt.Ago() >= HighQualTime && m_BackgroundLoader.IsCacheFileFinished(g_sBannerPath, sPath) )
+		if( TEXTUREMAN->IsTextureRegistered( Sprite::SongBannerTexture(g_sBannerPath) ) )
 		{
-			g_bBannerWaiting = false;
-			RageTimer foo;
-			m_Banner.Load( sPath );
-
-			m_BackgroundLoader.FinishedWithCachedFile( g_sBannerPath );
+			/* If the file is already loaded into a texture, it's finished,
+			 * and we only do this to honor the HighQualTime value. */
+			sPath = g_sBannerPath;
 		}
 		else
-			return;
+		{
+			if( !m_BackgroundLoader.IsCacheFileFinished( g_sBannerPath, sPath ) )
+				return;
+			m_BackgroundLoader.FinishedWithCachedFile( g_sBannerPath );
+		}
+
+		g_bBannerWaiting = false;
+		m_Banner.Load( sPath );
 	}
 
 	/* Nothing else is going.  Start the music, if we havn't yet. */
@@ -1679,7 +1691,12 @@ void ScreenSelectMusic::AfterMusicChange()
 		LOG->Trace("LoadFromCachedBanner(%s)",g_sBannerPath .c_str());
 		if( m_Banner.LoadFromCachedBanner( g_sBannerPath ) )
 		{
-			m_BackgroundLoader.CacheFile( g_sBannerPath );
+			/* If the high-res banner is already loaded, just
+			 * delay before loading it, so the low-res one has
+			 * time to fade in. */
+			if( !TEXTUREMAN->IsTextureRegistered( Sprite::SongBannerTexture(g_sBannerPath) ) )
+				m_BackgroundLoader.CacheFile( g_sBannerPath );
+
 			g_bBannerWaiting = true;
 		}
 	}

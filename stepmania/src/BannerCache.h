@@ -22,10 +22,12 @@ public:
 	~BannerCache();
 
 	RageTextureID LoadCachedBanner( CString BannerPath );
-
 	void CacheBanner( CString BannerPath );
-	void UncacheBanner( CString BannerPath );
 	void LoadBanner( CString BannerPath );
+
+	void Demand();
+	void Undemand();
+
 	void OutputStats() const;
 };
 

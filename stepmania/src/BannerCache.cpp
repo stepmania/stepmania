@@ -1,11 +1,13 @@
 #include "global.h"
 
 #include "arch/arch.h"
+#include "Foreach.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageSurface_Load.h"
 #include "BannerCache.h"
+#include "SongCacheIndex.h"
 #include "Sprite.h"
 #include "PrefsManager.h"
 #include "RageDisplay.h"
@@ -46,17 +48,66 @@ BannerCache *BANNERCACHE;
 
 
 static map<CString,RageSurface *> g_BannerPathToImage;
+static int g_iDemandRefcount = 0;
 
 CString BannerCache::GetBannerCachePath( CString BannerPath )
 {
-	/* Use GetHashForString, not ForFile, since we don't want to spend time
-	 * checking the file size and date. */
-	return ssprintf( CACHE_DIR "Banners/%u", GetHashForString(BannerPath) );
+	return SongCacheIndex::GetCacheFilePath( "Banners", BannerPath );
 }
 
+/* If in on-demand mode, load all cached banners.  This must be fast, so
+ * cache files will not be created if they don't exist; that should be done
+ * by CacheBanner or LoadBanner on startup. */
+void BannerCache::Demand()
+{
+	++g_iDemandRefcount;
+	if( g_iDemandRefcount > 1 )
+		return;
+	
+	if( PREFSMAN->m_iBannerCache != PrefsManager::BNCACHE_LOW_RES_LOAD_ON_DEMAND )
+		return;
+
+	FOREACH_Child( &BannerData, p )
+	{
+		CString sBannerPath = p->m_sName;
+
+		if( g_BannerPathToImage.find(sBannerPath) != g_BannerPathToImage.end() )
+			continue; /* already loaded */
+
+		const CString CachePath = GetBannerCachePath(sBannerPath);
+		RageSurface *img = RageSurfaceUtils::LoadSurface( CachePath );
+		if( img == NULL )
+		{
+			continue; /* doesn't exist */
+		}
+
+		g_BannerPathToImage[sBannerPath] = img;
+	}
+}
+
+/* Release banners loaded on demand. */
+void BannerCache::Undemand()
+{
+	--g_iDemandRefcount;
+	if( g_iDemandRefcount != 0 )
+		return;
+	
+	if( PREFSMAN->m_iBannerCache != PrefsManager::BNCACHE_LOW_RES_LOAD_ON_DEMAND )
+		return;
+
+	UnloadAllBanners();
+}
+
+/* If in a low-res banner mode, load a low-res banner into memory, creating
+ * the cache file if necessary.  Unlike CacheBanner(), the original file will
+ * not be examined unless the cached banner doesn't exist, so the banner will
+ * not be updated if the original file changes, for efficiency. */
 void BannerCache::LoadBanner( CString BannerPath )
 {
-	if( PREFSMAN->m_iBannerCache != PrefsManager::BNCACHE_LOW_RES || BannerPath == "" )
+	if( BannerPath == "" )
+		return; // nothing to do
+	if( PREFSMAN->m_iBannerCache != PrefsManager::BNCACHE_LOW_RES_PRELOAD &&
+	    PREFSMAN->m_iBannerCache != PrefsManager::BNCACHE_LOW_RES_LOAD_ON_DEMAND )
 		return;
 
 	/* Load it. */
@@ -205,6 +256,7 @@ struct BannerTexture: public RageTexture
 	}
 };
 
+/* If a banner is cached, get its ID for use. */
 RageTextureID BannerCache::LoadCachedBanner( CString BannerPath )
 {
 	RageTextureID ID( GetBannerCachePath(BannerPath) );
@@ -272,11 +324,12 @@ static inline int closest( int num, int n1, int n2 )
 	return n1;
 }
 
-/* We write the cache even if we won't use it, so we don't have to recache everything
- * if the memory or settings change. */
+/* Create or update the banner cache file as necessary.  If in preload mode,
+ * load the cache file, too.  (This is done at startup.) */
 void BannerCache::CacheBanner( CString BannerPath )
 {
-	if( PREFSMAN->m_iBannerCache != PrefsManager::BNCACHE_LOW_RES )
+	if( PREFSMAN->m_iBannerCache != PrefsManager::BNCACHE_LOW_RES_PRELOAD &&
+	    PREFSMAN->m_iBannerCache != PrefsManager::BNCACHE_LOW_RES_LOAD_ON_DEMAND )
 		return;
 
 	CHECKPOINT_M( BannerPath );
@@ -293,12 +346,16 @@ void BannerCache::CacheBanner( CString BannerPath )
 		if( BannerData.GetValue( BannerPath, "FullHash", CurFullHash ) &&
 			CurFullHash == FullHash )
 		{
-			/* It's identical.  Just load it. */
-			LoadBanner( BannerPath );
+			/* It's identical.  Just load it, if in preload. */
+			if( PREFSMAN->m_iBannerCache == PrefsManager::BNCACHE_LOW_RES_PRELOAD )
+				LoadBanner( BannerPath );
+
 			return;
 		}
 	}
 
+	/* The cache file doesn't exist, or is out of date.  Cache it.  This
+	 * will also load the cache into memory if in PRELOAD. */
 	CacheBannerInternal( BannerPath );
 }
 
@@ -412,16 +469,16 @@ void BannerCache::CacheBannerInternal( CString BannerPath )
 	const CString CachePath = GetBannerCachePath(BannerPath);
 	RageSurfaceUtils::SaveSurface( img, CachePath );
 
-	if( PREFSMAN->m_iBannerCache == PrefsManager::BNCACHE_LOW_RES )
+	/* If an old image is loaded, free it. */
+	if( g_BannerPathToImage.find(BannerPath) != g_BannerPathToImage.end() )
 	{
-		/* If an old image is loaded, free it. */
-		if( g_BannerPathToImage.find(BannerPath) != g_BannerPathToImage.end() )
-		{
-			RageSurface *oldimg = g_BannerPathToImage[BannerPath];
-			delete oldimg;
-			g_BannerPathToImage.erase(BannerPath);
-		}
+		RageSurface *oldimg = g_BannerPathToImage[BannerPath];
+		delete oldimg;
+		g_BannerPathToImage.erase(BannerPath);
+	}
 
+	if( PREFSMAN->m_iBannerCache == PrefsManager::BNCACHE_LOW_RES_PRELOAD )
+	{
 		/* Keep it; we're just going to load it anyway. */
 		g_BannerPathToImage[BannerPath] = img;
 	}

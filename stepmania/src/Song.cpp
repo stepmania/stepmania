@@ -147,7 +147,7 @@ CString Song::GetBackgroundAtBeat( float fBeat ) const
 
 CString Song::GetCacheFilePath() const
 {
-	return ssprintf( CACHE_DIR "Songs/%u", GetHashForString(m_sSongDir) );
+	return SongCacheIndex::GetCacheFilePath( "Songs", m_sSongDir );
 }
 
 /* Get a path to the SM containing data for this song.  It might

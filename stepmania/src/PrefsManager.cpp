@@ -88,7 +88,7 @@ PrefsManager::PrefsManager() :
 	m_bTexturePreload		( Options, "TexturePreload",			false ),
 	m_bDelayedScreenLoad	( Options, "DelayedScreenLoad",		false ),
 	m_bDelayedModelDelete	( Options, "DelayedModelDelete",		false ),
-	m_iBannerCache			( Options, "BannerCache",			BNCACHE_LOW_RES ),
+	m_iBannerCache			( Options, "BannerCache",			BNCACHE_LOW_RES_PRELOAD ),
 	m_bPalettedBannerCache	( Options, "PalettedBannerCache",	false ),
 	m_bFastLoad				( Options, "FastLoad",				true ),
 
