@@ -261,7 +261,7 @@ bool FilenameDB::ResolvePath(CString &path)
 	split(path, SLASH, p, true);
 
 	/* If we have "/foo", then add a blank entry to the beginning to line things up. */
-	if( path.Right( strlen(SLASH) ) == SLASH )
+	if( path.Left( strlen(SLASH) ) == SLASH )
 		p.insert( p.begin(), "" );
 
 	/* Resolve each component.  Assume the first component is correct. XXX
@@ -272,7 +272,7 @@ bool FilenameDB::ResolvePath(CString &path)
 		ret += SLASH;
 
 		vector<CString> lst;
-		FileSet &fs = GetFileSet(ret.c_str());
+		FileSet &fs = GetFileSet( ret );
 		fs.GetFilesEqualTo(p[i], lst, false);
 
 		/* If there were no matches, the path isn't found. */
