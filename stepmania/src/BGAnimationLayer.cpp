@@ -530,6 +530,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	}
 
 	ini.GetValueI( sLayer, "Type", (int&)m_Type );
+	CLAMP( m_Type, (Type)0, TYPE_INVALID );
 	ini.GetValue ( sLayer, "Command", m_sOnCommand );
 	ini.GetValue ( sLayer, "OffCommand", m_sOffCommand );
 	ini.GetValueF( sLayer, "FOV", m_fFOV );
@@ -547,8 +548,6 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	ini.GetValueF( sLayer, "OverrideSpeed", m_fOverrideSpeed );
 	ini.GetValueI( sLayer, "NumParticles", m_iNumParticles );
 	ini.GetValueB( sLayer, "ParticlesBounce", m_bParticlesBounce );
-//	ini.GetValueI( sLayer, "NumTilesWide", m_iNumTilesWide );	// infer from spacing (or else the Update logic breaks)
-//	ini.GetValueI( sLayer, "NumTilesHigh", m_iNumTilesHigh );	// infer from spacing (or else the Update logic breaks)
 	ini.GetValueF( sLayer, "TilesStartX", m_fTilesStartX );
 	ini.GetValueF( sLayer, "TilesStartY", m_fTilesStartY );
 	ini.GetValueF( sLayer, "TilesSpacingX", m_fTilesSpacingX );
