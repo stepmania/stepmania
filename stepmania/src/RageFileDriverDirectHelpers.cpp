@@ -208,3 +208,99 @@ bool CreateDirectories( CString Path )
 	return true;
 }
 
+DirectFilenameDB::DirectFilenameDB( CString root_ )
+{
+	ExpireSeconds = 30;
+	root = root_;
+	if( root.Right(1) != "/" )
+		root += '/';
+	if( root == "./" )
+		root = "";
+}
+
+
+void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
+{
+	CString sPath = path;
+
+	/* Resolve path cases (path/Path -> PATH/path). */
+	ResolvePath( sPath );
+
+	fs.age.GetDeltaTime(); /* reset */
+	fs.files.clear();
+
+#if defined(WIN32)
+	WIN32_FIND_DATA fd;
+
+	if ( sPath.size() > 0  && sPath.Right(1) == "/" )
+		sPath.erase( sPath.size() - 1 );
+
+	HANDLE hFind = DoFindFirstFile( root+sPath+"/*", &fd );
+
+	if( hFind == INVALID_HANDLE_VALUE )
+		return;
+
+	do {
+		if(!strcmp(fd.cFileName, ".") || !strcmp(fd.cFileName, ".."))
+			continue;
+
+		File f;
+		f.SetName( fd.cFileName );
+		f.dir = !!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
+		f.size = fd.nFileSizeLow;
+		f.hash = fd.ftLastWriteTime.dwLowDateTime;
+
+		fs.files.insert(f);
+	} while( FindNextFile( hFind, &fd ) );
+	FindClose(hFind);
+#else
+	int OldDir = DoOpen(".", O_RDONLY);
+	if( OldDir == -1 )
+		RageException::Throw( "Couldn't open(.): %s", strerror(errno) );
+
+	if( chdir(root+sPath) == -1 )
+	{
+		/* Only log once per dir. */
+		if( LOG && errno != ENOENT )
+			LOG->MapLog("chdir " + sPath, "Couldn't chdir(%s): %s", sPath.c_str(), strerror(errno) );
+		close( OldDir );
+		return;
+	}
+	DIR *d = opendir(".");
+
+	while(struct dirent *ent = readdir(d))
+	{
+		if(!strcmp(ent->d_name, ".")) continue;
+		if(!strcmp(ent->d_name, "..")) continue;
+		
+		File f;
+		f.SetName( ent->d_name );
+		
+		struct stat st;
+		if( DoStat(ent->d_name, &st) == -1 )
+		{
+			/* If it's a broken symlink, ignore it.  Otherwise, warn. */
+			if( lstat(ent->d_name, &st) == 0 )
+				continue;
+			
+			/* Huh? */
+			if(LOG)
+				LOG->Warn("Got file '%s' in '%s' from list, but can't stat? (%s)",
+					ent->d_name, sPath.c_str(), strerror(errno));
+			continue;
+		} else {
+			f.dir = (st.st_mode & S_IFDIR);
+			f.size = st.st_size;
+			f.hash = st.st_mtime;
+		}
+
+		fs.files.insert(f);
+	}
+	       
+	closedir(d);
+	if( fchdir( OldDir ) == -1 )
+		RageException::Throw( "Couldn't fchdir(): %s", strerror(errno) );
+	close( OldDir );
+#endif
+}
+

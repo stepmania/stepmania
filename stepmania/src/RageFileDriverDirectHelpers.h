@@ -30,4 +30,15 @@ int WinMoveFile( CString sOldPath, CString sNewPath );
 bool CreateDirectories( CString Path );
 bool PathReady( CString path );
 
+#include "RageUtil_FileDB.h"
+class DirectFilenameDB: public FilenameDB
+{
+protected:
+	virtual void PopulateFileSet( FileSet &fs, const CString &sPath );
+	CString root;
+
+public:
+	DirectFilenameDB( CString root_ );
+};
+
 #endif
