@@ -1398,6 +1398,10 @@ void ScreenEdit::TransitionToEdit()
 
 	/* Make sure we're snapped. */
 	GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetSnapMode()) );
+
+	/* Playing and recording have lead-ins, which may start before beat 0;
+	 * make sure we don't stay there if we escaped out early. */
+	GAMESTATE->m_fSongBeat = max( GAMESTATE->m_fSongBeat, 0 );
 }
 
 void ScreenEdit::TransitionFromRecordToEdit()
