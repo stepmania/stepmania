@@ -203,9 +203,18 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 		{
 			/* Apply here, not in SM_AllDoneChoosing, because applying can take a very
 			 * long time (200+ms), and at SM_AllDoneChoosing, we're still tweening stuff
-			 * off-screen. */
+			 * off-screen.
+			 *
+			 * Hack: only apply one Screen. */
+			CString sScreen;
 			FOREACH_HumanPlayer( p )
-				m_aGameCommands[this->GetSelectionIndex(p)].Apply( p );
+			{
+				GameCommand gc = m_aGameCommands[this->GetSelectionIndex(p)];
+				if( sScreen == "" )
+					sScreen = gc.m_sScreen;
+				gc.m_sScreen = "";
+				gc.Apply( p );
+			}
 
 			//
 			// Finalize players if we set a style on this screen.
@@ -220,11 +229,13 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 				}
 			}
 
-			const int iSelectionIndex = GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
-			if( m_aGameCommands[iSelectionIndex].m_sScreen != "" )
-				SCREENMAN->SetNewScreen( m_aGameCommands[iSelectionIndex].m_sScreen );
+			if( sScreen != "" )
+				SCREENMAN->SetNewScreen( sScreen );
 			else
+			{
+				const int iSelectionIndex = GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
 				SCREENMAN->SetNewScreen( NEXT_SCREEN(iSelectionIndex) );
+			}
 		}
 		return;
 	}
