@@ -63,7 +63,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 
 		// get pertaining songentry
 		LOG->Trace("UnlockScreen: Searching for %s", DISPLAYED_SONG(i).c_str());
-		SongEntry *pSong = GAMESTATE->m_pUnlockingSys->FindSong( DISPLAYED_SONG(i) );
+		SongEntry *pSong = GAMESTATE->m_pUnlockingSys->FindLockEntry( DISPLAYED_SONG(i) );
 
 		if( pSong == NULL)
 		{
@@ -107,15 +107,15 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 
 			CString DisplayedSong = DISPLAYED_SONG(i);
 			DisplayedSong.MakeUpper();
-			SongEntry *pSong = GAMESTATE->m_pUnlockingSys->FindSong(DisplayedSong);
+			SongEntry *pSong = GAMESTATE->m_pUnlockingSys->FindLockEntry(DisplayedSong);
 
 			/* Reset zoom before using SetTextMaxWidth. */
 			text->SetZoom(ScrollingTextZoom);
 
-			if (pSong != NULL && pSong->ActualSong != NULL)
+			if (pSong && pSong->m_pSong != NULL)
 			{
-				CString title = pSong->ActualSong->GetDisplayMainTitle();
-				CString subtitle = pSong->ActualSong->GetDisplayMainTitle();
+				CString title = pSong->m_pSong->GetDisplayMainTitle();
+				CString subtitle = pSong->m_pSong->GetDisplayMainTitle();
 				if( subtitle != "" )
 					title = title + "\n" + subtitle;
 				text->SetTextMaxWidth( MaxWidth, title );
@@ -142,7 +142,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 					text->SetText("???");
 					// text->SetZoom(ScrollingTextZoom * 1.99); 
 				} else {
-					RageColor color = SONGMAN->GetGroupColor(pSong->ActualSong->m_sGroupName);
+					RageColor color = SONGMAN->GetGroupColor(pSong->m_pSong->m_sGroupName);
 					text->SetGlobalDiffuseColor(color);
 				}
 			}

@@ -21,12 +21,12 @@ class Song;
 
 struct SongEntry
 {
-	CString m_sSongName;	/* Name of the song in the DWI/SM file itself.. This allows
-								for a lot easier compatibility since a lot of people's 
-								song folders are named differantly, song names tend to
-								be the same in the file.*/
+	CString m_sSongName;
 	
-	Song* ActualSong;        // pointer to actual song
+	/* A cached pointer to the song or course this entry refers to.  Only one of
+	 * these will be non-NULL. */
+	Song	*m_pSong;
+	Course	*m_pCourse;
 
 	float	m_fDancePointsRequired;	// Ways to unlock/lock songs.
 	float	m_fArcadePointsRequired;
@@ -38,16 +38,15 @@ struct SongEntry
 	int		m_iRouletteSeed;
 
 	bool	isLocked;    // cached locked tag
-	bool	isCourse;	// used for unlock screen
-
-	SongEntry();
+	bool	IsCourse() const { return m_pCourse != NULL; }
 
 	// if song is selectable vai two means
 	bool	SelectableWheel();
 	bool	SelectableRoulette();
 
-	bool	updateLocked();  //updates isLocked flag
-	Song	*GetSong() const;
+	void	UpdateLocked();  // updates isLocked
+
+	void	UpdateData();
 };
 
 class UnlockSystem
@@ -60,19 +59,16 @@ public:
 	float SongPointsUntilNextUnlock();
 	// returns # of points till next unlock - used for ScreenUnlock
 
-	SongEntry *FindSong( CString songname );
-	// retrieves a corresponding SongEntry, or NULL if none exists
-
+	// Used on select screens:
 	bool SongIsLocked( const Song *song );
 	bool SongIsRoulette( const Song *song );
 	bool CourseIsLocked( const Course *course );
-	// used on select screens
 
-	bool LoadFromDATFile( CString sPath );
 	// executed when program is first executed
+	bool LoadFromDATFile( CString sPath );
 
-	vector<SongEntry>	m_SongEntries;	
 	// All locked songs are stored here
+	vector<SongEntry>	m_SongEntries;	
 
 	// functions that add to values
 	float UnlockAddAP(Grade credit);
@@ -102,8 +98,11 @@ public:
 	float StagesCleared;
 	CString RouletteSeeds;
 
+	void UpdateSongs();
+
+	SongEntry *FindLockEntry( CString lockname );
+
 private:
-	void SortSongEntriesArray();  // sorts unlocks
 	SongEntry *FindSong( const Song *pSong );
 	SongEntry *FindCourse( const Course *pCourse );
 

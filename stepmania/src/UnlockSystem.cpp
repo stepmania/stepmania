@@ -61,18 +61,10 @@ bool UnlockSystem::CourseIsLocked( const Course *course )
 	// comparison, its the same thing.
 	SongEntry *p = FindCourse( course );
 
-	CString tmp;
-
 	if (p)
-	{
-		p->isCourse = true;  // updates flag here
-		p->updateLocked();
-
-		if (!p->isLocked) tmp = "un";
-	}
+		p->UpdateLocked();
 	
-	return (p != NULL) && (p->isLocked);
-
+	return p != NULL && p->isLocked;
 }
 
 bool UnlockSystem::SongIsLocked( const Song *song )
@@ -81,7 +73,7 @@ bool UnlockSystem::SongIsLocked( const Song *song )
 	if( p == NULL )
 		return false;
 
-	p->updateLocked();
+	p->UpdateLocked();
 
 	LOG->Trace( "current status: %slocked", p->isLocked? "":"un" );
 	
@@ -95,7 +87,7 @@ bool UnlockSystem::SongIsRoulette( const Song *song )
 	return p && (p->m_iRouletteSeed != 0) ;
 }
 
-SongEntry *UnlockSystem::FindSong( CString songname )
+SongEntry *UnlockSystem::FindLockEntry( CString songname )
 {
 	for(unsigned i = 0; i < m_SongEntries.size(); i++)
 		if (!songname.CompareNoCase(m_SongEntries[i].m_sSongName))
@@ -104,60 +96,20 @@ SongEntry *UnlockSystem::FindSong( CString songname )
 	return NULL;
 }
 
-SongEntry *UnlockSystem::FindCourse( const Course *pCourse )
+SongEntry *UnlockSystem::FindSong( const Song *pSong )
 {
-	CString CourseName = pCourse->m_sTranslitName;
-
 	for(unsigned i = 0; i < m_SongEntries.size(); i++)
-	{
-		if( !CourseName.CompareNoCase(m_SongEntries[i].m_sSongName) )
+		if (m_SongEntries[i].m_pSong == pSong )
 			return &m_SongEntries[i];
-	}
 
 	return NULL;
 }
 
-SongEntry *UnlockSystem::FindSong( const Song *pSong )
+SongEntry *UnlockSystem::FindCourse( const Course *pCourse )
 {
-	/* Manual binary searches are a bad idea; they're insanely easy to get
-	 * wrong.  This breaks the matching, anyway ... */
-	/*
-	int left = 0;
-	int right = m_SongEntries.size() - 1;
-	CString songtitle = pSong->GetFullTranslitTitle();
-
-	songtitle.MakeUpper();
-
-	while (left != right)
-	{
-		int mid = (left + right)/2;
-		
-		if (songtitle <= m_SongEntries[mid].m_sSongName )
-			right = mid;
-		else
-			left = mid + 1;
-	}
-
-
-	if (m_SongEntries[left].GetSong() == pSong)
-	{
-		LOG->Trace("UnlockSystem: Retrieved: %s", pSong->GetFullTranslitTitle().c_str());
-		return &m_SongEntries[left];
-	}
-		
-	LOG->Trace("UnlockSystem: Failed to find %s", pSong->GetFullTranslitTitle().c_str());
-	LOG->Trace("            (landed on %s)", m_SongEntries[left].m_sSongName.c_str() );
-*/
-
-	/* This should be good enough; it doesn't iterate over all installed songs.  (This
-	 * is probably called for all songs, so that was probably n^2.) */
 	for(unsigned i = 0; i < m_SongEntries.size(); i++)
-	{
-		if( pSong->Matches("", m_SongEntries[i].m_sSongName) )
+		if (m_SongEntries[i].m_pCourse== pCourse )
 			return &m_SongEntries[i];
-//		if (m_SongEntries[i].GetSong() == pSong )
-//			return &m_SongEntries[i];
-	}
 
 	return NULL;
 }
@@ -174,62 +126,50 @@ SongEntry::SongEntry()
 	m_fToastysSeen = 0;
 	m_iRouletteSeed = 0;
 
-	ActualSong = NULL;
+	m_pSong = NULL;
+	m_pCourse = NULL;
 
 	isLocked = true;
-	isCourse = false;
 }
 
 
-static bool CompareSongEntries(const SongEntry &se1, const SongEntry &se2)
+void SongEntry::UpdateLocked()
 {
-	return se1.m_sSongName < se2.m_sSongName;
-}
-
-bool SongEntry::updateLocked()
-{
-	if (!(isLocked)) return true;  // if its already true
+	if (!isLocked)
+		return;
 	
-	UnlockSystem *UNLOCKS = GAMESTATE->m_pUnlockingSys;
-	bool locked[8];
-	for(int i=0; i < 8; i++)
-		locked[i] = true;
-
-	if (m_fArcadePointsRequired != 0)
-		locked[0] = ( UNLOCKS->ArcadePoints < m_fArcadePointsRequired);
-
-	if (m_fDancePointsRequired != 0)
-		locked[1] = ( UNLOCKS->DancePoints < m_fDancePointsRequired);
-
-	if (m_fSongPointsRequired != 0)
-		locked[2] = ( UNLOCKS->SongPoints < m_fSongPointsRequired);
-
-	if (m_fExtraStagesCleared != 0)
-		locked[3] = ( UNLOCKS->ExtraClearPoints < m_fExtraStagesCleared);
-
-	if (m_fExtraStagesFailed != 0)
-		locked[4] = ( UNLOCKS->ExtraFailPoints < m_fExtraStagesFailed);
-
-	if (m_fStagesCleared != 0)
-		locked[5] = ( UNLOCKS->StagesCleared < m_fStagesCleared);
-
-	if (m_fToastysSeen != 0)
-		locked[6] = ( UNLOCKS->ToastyPoints < m_fToastysSeen);
-
-	if (m_iRouletteSeed != 0)
-	{
-		CString tmp = UNLOCKS->RouletteSeeds;
-
-		LOG->Trace("Seed in question: %d Roulette seeds: %s", 
-			m_iRouletteSeed, tmp.c_str() );
-		locked[7] = (tmp[m_iRouletteSeed] != '1');
-	}
+	const UnlockSystem *UNLOCKS = GAMESTATE->m_pUnlockingSys;
 
 	isLocked = true;
-	for(int j=0; j < 8; j++)
-		isLocked = isLocked && locked[j];
+	if ( m_fArcadePointsRequired && UNLOCKS->ArcadePoints < m_fArcadePointsRequired )
+		isLocked = false;
 
-	return !isLocked;
+	if ( m_fDancePointsRequired && UNLOCKS->DancePoints < m_fDancePointsRequired )
+		isLocked = false;
+
+	if ( m_fSongPointsRequired && UNLOCKS->SongPoints < m_fSongPointsRequired )
+		isLocked = false;
+
+	if ( m_fExtraStagesCleared && UNLOCKS->ExtraClearPoints < m_fExtraStagesCleared )
+		isLocked = false;
+
+	if ( m_fExtraStagesFailed && UNLOCKS->ExtraFailPoints < m_fExtraStagesFailed )
+		isLocked = false;
+
+	if ( m_fStagesCleared && UNLOCKS->StagesCleared < m_fStagesCleared )
+		isLocked = false;
+
+	if ( m_fToastysSeen && UNLOCKS->ToastyPoints < m_fToastysSeen )
+		isLocked = false;
+
+	if ( m_iRouletteSeed )
+	{
+		const CString &tmp = UNLOCKS->RouletteSeeds;
+
+		LOG->Trace("Seed in question: %d Roulette seeds: %s", m_iRouletteSeed, tmp.c_str() );
+		if( tmp[m_iRouletteSeed] != '1' )
+			isLocked = false;
+	}
 }
 
 bool UnlockSystem::LoadFromDATFile( CString sPath )
@@ -302,9 +242,7 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 				MaxRouletteSlot = max( MaxRouletteSlot, (int) datavalue );
 			}
 		}
-		current.updateLocked();
-
-		current.ActualSong = SONGMAN->FindSong( "", current.m_sSongName );
+		current.UpdateLocked();
 
 		m_SongEntries.push_back(current);
 	}
@@ -312,17 +250,16 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 	InitRouletteSeeds(MaxRouletteSlot); // resize roulette seeds
 	                  // for more efficient use of file
 
-	// sort list so we can make use of binary searching
-	sort( m_SongEntries.begin(), m_SongEntries.end(), CompareSongEntries );
-
+	UpdateSongs();
+	
 	for(i=0; i < m_SongEntries.size(); i++)
 	{
 		CString tmp = "  ";
 		if (!m_SongEntries[i].isLocked) tmp = "un";
 
 		LOG->Trace( "UnlockSystem Entry %s", m_SongEntries[i].m_sSongName.c_str() );
-		if (m_SongEntries[i].ActualSong != NULL)
-			LOG->Trace( "          Translit %s", m_SongEntries[i].ActualSong->GetDisplayMainTitle().c_str() );
+		if (m_SongEntries[i].m_pSong != NULL)
+			LOG->Trace( "          Translit %s", m_SongEntries[i].m_pSong->GetTranslitMainTitle().c_str() );
 		LOG->Trace( "                AP %f", m_SongEntries[i].m_fArcadePointsRequired );
 		LOG->Trace( "                DP %f", m_SongEntries[i].m_fDancePointsRequired );
 		LOG->Trace( "                SP %f", m_SongEntries[i].m_fSongPointsRequired );
@@ -381,9 +318,18 @@ float UnlockSystem::SongPointsUntilNextUnlock()
 	return fSmallestPoints - SongPoints;
 }
 
-Song *SongEntry::GetSong() const
+/* Update the song pointer.  Only call this when it's likely to have changed,
+ * such as on load, or when a song title changes in the editor. */
+void UnlockSystem::UpdateSongs()
 {
-	return SONGMAN->FindSong( "", m_sSongName );
+	for( unsigned i = 0; i < m_SongEntries.size(); ++i )
+	{
+		m_SongEntries[i].m_pSong = NULL;
+		m_SongEntries[i].m_pCourse = NULL;
+		m_SongEntries[i].m_pSong = SONGMAN->FindSong( "", m_SongEntries[i].m_sSongName );
+		if( m_SongEntries[i].m_pSong == NULL )
+			m_SongEntries[i].m_pCourse = SONGMAN->FindCourse( m_SongEntries[i].m_sSongName );
+	}
 }
 
 // This is mainly to streamline the INI for unnecessary values.
