@@ -136,4 +136,6 @@ void ScreenNetEvaluation::UpdateStats()
 		int iNumDigits = (j==max_combo) ? MAX_COMBO_NUM_DIGITS : 4;
 		m_textJudgeNumbers[j][m_pActivePlayer].SetText( ssprintf( "%*d", iNumDigits, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].tapScores[j] ) );
 	}
+
+	m_textPlayerOptions[NUM_PLAYERS].SetText( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].playerOptions );
 }

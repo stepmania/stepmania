@@ -20,6 +20,7 @@ struct EndOfGame_PlayerData
 	int grade;
 	Difficulty difficulty;
 	int tapScores[NETNUMTAPSCORES];	//This will be a const soon enough
+	CString playerOptions;
 };
 
 enum NSScoreBoardColumn

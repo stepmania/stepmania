@@ -202,6 +202,8 @@ NOTE: Server responces always add 128, thus a server responce for no operation
     2		marvelous (All players)
     2		ok (All players)
     2		max_combo (All players)
+    NT		Player's options
+	<Other player's options>
 
 
 005: 	Scoreboard update

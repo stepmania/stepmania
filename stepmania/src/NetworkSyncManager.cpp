@@ -537,6 +537,8 @@ void NetworkSyncManager::ProcessInput()
 				for (int j=0;j<NETNUMTAPSCORES;j++) 
 					for (int i=0;i<PlayersInPack; i++)
 						m_EvalPlayerData[i].tapScores[j] = m_packet.Read2();
+				for (int i=0;i<PlayersInPack;i++)
+					m_EvalPlayerData[i].playerOptions = m_packet.ReadNT();
 				SCREENMAN->SendMessageToTopScreen( SM_GotEval );
 			}
 			break;
