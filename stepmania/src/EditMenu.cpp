@@ -26,20 +26,10 @@ XToThemedString( EditMenuRow, NUM_EDIT_MENU_ROWS );
 
 
 #define ARROWS_X( i )			THEME->GetMetricF("EditMenu",ssprintf("Arrows%dX",i+1))
-#define SONG_BANNER_X			THEME->GetMetricF("EditMenu","SongBannerX")
-#define SONG_BANNER_Y			THEME->GetMetricF("EditMenu","SongBannerY")
 #define SONG_BANNER_WIDTH		THEME->GetMetricF("EditMenu","SongBannerWidth")
 #define SONG_BANNER_HEIGHT		THEME->GetMetricF("EditMenu","SongBannerHeight")
-#define SONG_TEXT_BANNER_X		THEME->GetMetricF("EditMenu","SongTextBannerX")
-#define SONG_TEXT_BANNER_Y		THEME->GetMetricF("EditMenu","SongTextBannerY")
-#define GROUP_BANNER_X			THEME->GetMetricF("EditMenu","GroupBannerX")
-#define GROUP_BANNER_Y			THEME->GetMetricF("EditMenu","GroupBannerY")
 #define GROUP_BANNER_WIDTH		THEME->GetMetricF("EditMenu","GroupBannerWidth")
 #define GROUP_BANNER_HEIGHT		THEME->GetMetricF("EditMenu","GroupBannerHeight")
-#define METER_X					THEME->GetMetricF("EditMenu","MeterX")
-#define METER_Y					THEME->GetMetricF("EditMenu","MeterY")
-#define SOURCE_METER_X			THEME->GetMetricF("EditMenu","SourceMeterX")
-#define SOURCE_METER_Y			THEME->GetMetricF("EditMenu","SourceMeterY")
 #define ROW_LABELS_X			THEME->GetMetricF("EditMenu","RowLabelsX")
 #define ROW_LABEL_ON_COMMAND	THEME->GetMetricA("EditMenu","RowLabelOnCommand")
 #define ROW_VALUE_X( i )		THEME->GetMetricF("EditMenu",ssprintf("RowValue%dX",i+1))
@@ -49,7 +39,9 @@ XToThemedString( EditMenuRow, NUM_EDIT_MENU_ROWS );
 
 EditMenu::EditMenu()
 {
-	LOG->Trace( "ScreenEditMenu::ScreenEditMenu()" );
+	LOG->Trace( "EditMenu::EditMenu()" );
+
+	SetName( "EditMenu" );
 
 	for( int i=0; i<2; i++ )
 	{
@@ -85,26 +77,39 @@ EditMenu::EditMenu()
 		this->AddChild( &m_textValue[r] );
 	}
 
-	m_GroupBanner.SetXY( GROUP_BANNER_X, GROUP_BANNER_Y );
+	m_GroupBanner.SetName( "GroupBanner" );
+	SET_XY( m_GroupBanner );
 	this->AddChild( &m_GroupBanner );
 
-	m_SongBanner.SetXY( SONG_BANNER_X, SONG_BANNER_Y );
+	m_SongBanner.SetName( "SongBanner" );
+	SET_XY( m_SongBanner );
 	this->AddChild( &m_SongBanner );
 
-	m_SongTextBanner.SetName( "TextBanner" );
-	m_SongTextBanner.SetXY( SONG_TEXT_BANNER_X, SONG_TEXT_BANNER_Y );
+	m_SongTextBanner.SetName( "SongTextBanner" );
+	m_SongTextBanner.Load( "TextBanner" );
+	SET_XY( m_SongTextBanner );
 	this->AddChild( &m_SongTextBanner );
 	
-	m_Meter.SetName( "DifficultyMeter" );
-	m_Meter.SetXY( METER_X, METER_Y );
+	m_Meter.SetName( "Meter" );
 	m_Meter.Load( "EditDifficultyMeter" );
+	SET_XY( m_Meter );
 	this->AddChild( &m_Meter );
 	
-	m_SourceMeter.SetName( "DifficultyMeter" );
-	m_SourceMeter.SetXY( SOURCE_METER_X, SOURCE_METER_Y );
+	m_SourceMeter.SetName( "SourceMeter" );
 	m_SourceMeter.Load( "EditDifficultyMeter" );
+	SET_XY( m_SourceMeter );
 	this->AddChild( &m_SourceMeter );
-	
+
+	m_textMeter.SetName( "MeterNumber" );
+	m_textMeter.LoadFromFont( THEME->GetPathF("EditMenu","meter") );
+	SET_XY_AND_ON_COMMAND( m_textMeter );
+	this->AddChild( &m_textMeter );
+
+	m_textSourceMeter.SetName( "SourceMeterNumber" );
+	m_textSourceMeter.LoadFromFont( THEME->GetPathF("EditMenu","meter") );
+	SET_XY_AND_ON_COMMAND( m_textSourceMeter );
+	this->AddChild( &m_textSourceMeter );
+
 
 	m_soundChangeRow.Load( THEME->GetPathS("EditMenu","row") );
 	m_soundChangeValue.Load( THEME->GetPathS("EditMenu","value") );
@@ -337,9 +342,17 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			m_textValue[ROW_STEPS].SetText( s );
 		}
 		if( GetSelectedSteps() )
+		{
 			m_Meter.SetFromSteps( GetSelectedSteps() );
+			m_textMeter.SetText( ssprintf("%d", GetSelectedSteps()->GetMeter()) );
+			m_textMeter.SetDiffuse( SONGMAN->GetDifficultyColor( GetSelectedSteps()->GetDifficulty() ) );
+		}
 		else
+		{
 			m_Meter.SetFromMeterAndDifficulty( 0, GetSelectedDifficulty() );
+			m_textMeter.SetText( ssprintf("%d", 0) );
+		}
+		m_textMeter.SetHidden( GetSelectedSteps()? false:true );
 		// fall through
 	case ROW_SOURCE_STEPS_TYPE:
 		m_textLabel[ROW_SOURCE_STEPS_TYPE].SetHidden( GetSelectedSteps() ? true : false );
@@ -382,10 +395,18 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			m_textValue[ROW_SOURCE_STEPS].SetText( s );
 		}
 		if( GetSelectedSourceSteps() )
+		{
 			m_SourceMeter.SetFromSteps( GetSelectedSourceSteps() );
+			m_textSourceMeter.SetText( ssprintf("%d", GetSelectedSourceSteps()->GetMeter()) );
+			m_textSourceMeter.SetDiffuse( SONGMAN->GetDifficultyColor( GetSelectedSourceSteps()->GetDifficulty() ) );
+		}
 		else
+		{
 			m_SourceMeter.SetFromMeterAndDifficulty( 0, GetSelectedSourceDifficulty() );
+			m_textSourceMeter.SetText( ssprintf("%d", 0) );
+		}
 		m_SourceMeter.SetHidden( GetSelectedSteps() ? true : false );
+		m_textSourceMeter.SetHidden( (GetSelectedSteps() == false && GetSelectedSourceSteps()) ? false : true );
 
 		m_Actions.clear();
 		if( GetSelectedSteps() )

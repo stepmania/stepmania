@@ -73,6 +73,8 @@ private:
 	TextBanner		m_SongTextBanner;
 	DifficultyMeter	m_Meter;
 	DifficultyMeter	m_SourceMeter;
+	BitmapText	m_textMeter;
+	BitmapText	m_textSourceMeter;
 
 
 	vector<Difficulty>			m_vDifficulties;
