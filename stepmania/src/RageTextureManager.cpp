@@ -187,7 +187,7 @@ void RageTextureManager::UnloadTexture( RageTexture *t )
 		bDeleteThis = true;
 
 	/* Delete volatile textures after they've been used at least once. */
-	if( t->m_bWasUsed )
+	if( t->m_Policy == RageTexture::TEX_VOLATILE && t->m_bWasUsed )
 		bDeleteThis = true;
 	
 	if( bDeleteThis )
