@@ -39,9 +39,9 @@
 #define TIME_START_Y			THEME->GetMetricF("ScreenRanking","TimeStartY")
 #define SECONDS_PER_PAGE		THEME->GetMetricF("ScreenRanking","SecondsPerPage")
 #define SHOW_CATEGORIES			THEME->GetMetricB("ScreenRanking","ShowCategories")
-#define COURSES_TO_SHOW			THEME->GetMetric("ScreenRanking","CoursesToShow")
 #define NOTES_TYPES_TO_HIDE		THEME->GetMetric ("ScreenRanking","NotesTypesToHide")
 
+#define COURSES_TO_SHOW			PREFSMAN->m_sCoursesToShowRanking
 
 const ScreenMessage SM_ShowNextPage		=	(ScreenMessage)(SM_User+67);
 const ScreenMessage SM_HidePage			=	(ScreenMessage)(SM_User+68);
@@ -96,6 +96,9 @@ ScreenRanking::ScreenRanking() : ScreenAttract("ScreenRanking")
 		m_textTime[i].SetZoom( TEXT_ZOOM );
 		m_textTime[i].SetHorizAlign( Actor::align_right );
 		this->AddChild( &m_textTime[i] );
+
+		if( PREFSMAN->m_sCoursesToShowRanking == "" )
+			m_sCoursesToShowRanking = THEME->GetMetric("ScreenRanking","CoursesToShow");
 	}
 
 

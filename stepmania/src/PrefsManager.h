@@ -127,6 +127,8 @@ public:
 
 	CString			m_sIgnoredMessageWindows;
 
+	CString			m_sCoursesToShowRanking;
+
 	/* Game-specific prefs: */
 	CString			m_sDefaultModifiers;
 
