@@ -19,6 +19,7 @@
 #include "GameDef.h"
 #include "StyleDef.h"
 #include "RageUtil.h"
+#include "PrefsManager.h"
 
 const CString g_sCodeNames[CodeDetector::NUM_CODES] = {
 	"Easier1",
@@ -170,7 +171,8 @@ bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
 			case CODE_REVERSE:			FLOAT_TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_fReverseScroll );				break;
 			case CODE_HOLDS:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_bHoldNotes, true, false );				break;
 			case CODE_DARK:				FLOAT_TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_fDark );							break;
-			case CODE_CANCEL_ALL:		GAMESTATE->m_PlayerOptions[pn].Init();								break;
+			case CODE_CANCEL_ALL:		GAMESTATE->m_PlayerOptions[pn].Init();
+										GAMESTATE->m_PlayerOptions[pn].FromString( PREFSMAN->m_sDefaultModifiers );		break;
 			case CODE_HIDDEN:			TOGGLE_HIDDEN; break;
 			case CODE_RANDOMVANISH:		TOGGLE_RANDOMVANISH; break;
 				
