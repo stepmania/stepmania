@@ -35,8 +35,6 @@ static const Content_t g_Contents[NUM_PANE_CONTENTS] =
 	{ "DifficultyFreeze",		NUM_PANES,					NEED_NOTES },
 	{ "DifficultyAir",			NUM_PANES,					NEED_NOTES },
 	{ "DifficultyVoltage",		NUM_PANES,					NEED_NOTES },
-	{ "DifficultyHands",		NUM_PANES,					NEED_NOTES },
-	{ "DifficultyMines",		NUM_PANES,					NEED_NOTES },
 	{ "MachineHighScore",		PANE_SONG_DIFFICULTY,		NEED_NOTES },
 	{ "MachineNumPlays",		PANE_SONG_MACHINE_SCORES,	NEED_NOTES },
 	{ "MachineRank",			PANE_SONG_MACHINE_SCORES,	NEED_NOTES },
