@@ -62,6 +62,7 @@ public:
 	float			m_fJudgeWindowBooSeconds;
 	float			m_fJudgeWindowOKSeconds;
 	float			m_fJudgeWindowMineSeconds;
+	float			m_fJudgeWindowAttackSeconds;
 	float			m_fLifeDeltaMarvelousPercentChange;
 	float			m_fLifeDeltaPerfectPercentChange;
 	float			m_fLifeDeltaGreatPercentChange;

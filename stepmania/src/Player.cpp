@@ -177,6 +177,7 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	// they change depending on PlayerOptions.
 
 	m_soundMine.Load( THEME->GetPathToS(ssprintf("Player mine p%d",pn+1)) );
+	m_soundAttack.Load( THEME->GetPathToS(ssprintf("Player attack p%d",pn+1)) );
 }
 
 void PlayerMinus::Update( float fDeltaTime )
@@ -535,6 +536,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 		{
 		case PC_HUMAN: {
 
+			// TODO: move the judgments into flags in PrefsManager so we don't need logic like this per-game.
 			if(GAMESTATE->m_CurGame == GAME_EZ2)
 			{
 				/* 1 is normal.  2 means scoring is half as hard; .5 means it's twice as hard. */
@@ -562,20 +564,6 @@ void PlayerMinus::Step( int col, RageTimer tm )
 
 			switch( tn )
 			{
-//			case TAP_ATTACK:
-//				// stepped too close to mine?
-//				if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowAttackSeconds )
-//				{
-//					m_soundAttack.Play();
-//					score = TNS_MISS;
-//					// put attack in effect
-//				}
-//				else
-//				{
-//					score = TNS_NONE;
-//				}
-//				break;
-
 			case TAP_MINE:
 				// stepped too close to mine?
 				if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMineSeconds )
@@ -588,6 +576,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 						m_pLifeMeter->ChangeLifeMine();
 					if( m_pCombinedLifeMeter )
 						m_pCombinedLifeMeter->ChangeLifeMine(m_PlayerNumber);
+					m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
 				}
 				else
 				{
@@ -596,26 +585,39 @@ void PlayerMinus::Step( int col, RageTimer tm )
 				break;
 
 			default:	// not a mine
-				if(GAMESTATE->m_CurGame == GAME_EZ2)
+				if( IsTapAttack(tn) )
 				{
-					/* 1 is normal.  2 means scoring is half as hard; .5 means it's twice as hard. */
-					/* Ez2 is only perfect / good / miss */
-					if(		 fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMarvelousSeconds )	score = TNS_PERFECT; 
-					else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
-					else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_PERFECT;
-					else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
-					else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_MISS;
-					else	score = TNS_NONE;
+					if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowAttackSeconds )
+					{
+						m_soundAttack.Play();
+						score = TNS_NONE;	// don't score this as anything
+						m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
+					}
 				}
-				else
+				else	// !IsTapAttack
 				{
-					/* 1 is normal.  2 means scoring is half as hard; .5 means it's twice as hard. */
-					if(		 fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMarvelousSeconds )	score = TNS_MARVELOUS;
-					else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
-					else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_GREAT;
-					else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
-					else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_BOO;
-					else	score = TNS_NONE;
+					// TODO: move the judgments into flags in PrefsManager so we don't need logic like this per-game.
+					if(GAMESTATE->m_CurGame == GAME_EZ2)
+					{
+						/* 1 is normal.  2 means scoring is half as hard; .5 means it's twice as hard. */
+						/* Ez2 is only perfect / good / miss */
+						if(		 fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMarvelousSeconds )	score = TNS_PERFECT; 
+						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
+						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_PERFECT;
+						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
+						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_MISS;
+						else	score = TNS_NONE;
+					}
+					else
+					{
+						/* 1 is normal.  2 means scoring is half as hard; .5 means it's twice as hard. */
+						if(		 fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMarvelousSeconds )	score = TNS_MARVELOUS;
+						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
+						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_GREAT;
+						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
+						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_BOO;
+						else	score = TNS_NONE;
+					}
 				}
 				break;
 			}
@@ -661,7 +663,15 @@ void PlayerMinus::Step( int col, RageTimer tm )
 					m_pLifeMeter->ChangeLifeMine();
 				if( m_pCombinedLifeMeter )
 					m_pCombinedLifeMeter->ChangeLifeMine(m_PlayerNumber);
+				m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
 			}
+			if( IsTapAttack(tn)  &&  score > TNS_GOOD )
+			{
+				m_soundAttack.Play();
+				score = TNS_NONE;	// don't score this as anything
+				m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
+			}
+
 			break;
 		case PC_AUTOPLAY:
 			if(GAMESTATE->m_CurGame == GAME_EZ2 || GAMESTATE->m_CurGame == GAME_PNM) // these gametypes never hit marvelous on autoplay
@@ -727,7 +737,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 		if( score == TNS_PERFECT || score == TNS_MARVELOUS )
 		{
 			m_iDCState = AS2D_GREAT;
-			if(m_pLifeMeter->GetLife() == 1.0f) // full life
+			if( m_pLifeMeter && m_pLifeMeter->GetLife() == 1.0f) // full life
 			{
 				m_iDCState = AS2D_FEVER; // super celebrate time :)
 			}
