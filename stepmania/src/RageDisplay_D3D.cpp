@@ -1229,11 +1229,6 @@ void RageDisplay_D3D::UpdateTexture(
 	IDirect3DTexture8* pTex = (IDirect3DTexture8*)uTexHandle;
 	ASSERT( pTex != NULL );
 	
-	/* Make sure that the pixel format of the image is legit.  We don't actually
-	 * care, but the OpenGL renderer does, so make sure people coding in the D3D
-	 * renderer don't accidentally break the OpenGL one. */
-	FindPixelFormat( img->format->BitsPerPixel, img->format->Rmask, img->format->Gmask, img->format->Bmask, img->format->Amask );
-
 	RECT rect; 
 	rect.left = xoffset;
 	rect.top = yoffset;
