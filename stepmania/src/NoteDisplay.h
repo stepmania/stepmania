@@ -57,7 +57,7 @@ protected:
 #define NOTE_COLOR_IMAGES 8
 
 	Actor*		m_pTapNote[NOTE_COLOR_IMAGES];
-	Actor*		m_pTapAddition;
+	Actor*		m_pTapAddition[NOTE_COLOR_IMAGES];
 	Actor*		m_pTapMine;
 	Actor*		m_pHoldHeadActive[NOTE_COLOR_IMAGES];
 	Actor*		m_pHoldHeadInactive[NOTE_COLOR_IMAGES];
