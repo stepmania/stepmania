@@ -104,7 +104,10 @@ void NotesWriterSM::WriteSMNotesTag( const Steps &in, FILE* fp )
 	CStringArray asRadarValues;
 	for( int r=0; r < NUM_RADAR_CATEGORIES; r++ )
 		asRadarValues.push_back( ssprintf("%.3f", in.GetRadarValues()[r]) );
-	fprintf( fp, "     %s:\n", join(",",asRadarValues).c_str() );
+	/* Don't append a newline here; it's added in NoteDataUtil::GetSMNoteDataString.
+	 * If we add it here, then every time we write unmodified data we'll add an extra
+	 * newline and they'll accumulate. */
+	fprintf( fp, "     %s:", join(",",asRadarValues).c_str() );
 
 	fprintf( fp, "%s;\n", in.GetSMNoteData().c_str() );
 }

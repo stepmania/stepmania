@@ -134,7 +134,7 @@ CString NoteDataUtil::GetSMNoteDataString(NoteData &in)
 	float fLastBeat = in.GetLastBeat();
 	int iLastMeasure = int( fLastBeat/BEATS_PER_MEASURE );
 
-	CString sRet;
+	CString sRet = "\n"; /* data begins on a new line when written to disk */
 
 	for( int m=0; m<=iLastMeasure; m++ )	// foreach measure
 	{
