@@ -388,10 +388,11 @@ void StepManiaLanServer::SendStatsToClients()
 
 	numPlayers = SortStats(playersPtr); //Return number of players
 
-	//If there was a chagne in the name data, send it to the clients.
+	//If there was a change in the name data, send it to the clients.
 	//Used to save bandwidth and some processing time.
-	if (StatsNameChange)
-	{
+	//Disabled this. FUTURE: Figure out why it dosn't work correctly and fix.
+//	if (StatsNameChange)
+//	{
 		/* Write and Send name packet */
 		Reply.ClearPacket();
 		Reply.Write1(NSCGSU + NSServerOffset);
@@ -404,7 +405,7 @@ void StepManiaLanServer::SendStatsToClients()
 			if (Client[x].InGame)
 				SendNetPacket(x, Reply);
 
-	}
+//	}
 
 	/* Write and send Combo packet */
 	Reply.ClearPacket();
