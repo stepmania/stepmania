@@ -262,7 +262,6 @@ RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
 		 * actually initialize the window.  Do this after as many error conditions
 		 * as possible, because if we have to shut it down again we'll flash a window
 		 * briefly. */
-//#if defined _WINDOWS
 		if(!SDL_WasInit(SDL_INIT_VIDEO))
 		{
 			if( SDL_InitSubSystem(SDL_INIT_VIDEO) == -1 )
@@ -276,8 +275,9 @@ RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
 		 * This needs to be done after we initialize video, since it's really part
 		 * of the SDL video system--it'll be reinitialized on us if we do this first. */
 		SDL_EventState(0xFF /*SDL_ALLEVENTS*/, SDL_IGNORE);
-		SDL_EventState(SDL_VIDEORESIZE, SDL_ENABLE);
-//#endif
+		SDL_EventState( SDL_VIDEORESIZE, SDL_ENABLE );
+		SDL_EventState( SDL_ACTIVEEVENT, SDL_ENABLE );
+		SDL_EventState( SDL_QUIT, SDL_ENABLE );
 
 		g_PaletteIndex.clear();
 		for( int i = 0; i < 256; ++i )
@@ -321,11 +321,12 @@ RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
 
 void RageDisplay_D3D::Update(float fDeltaTime)
 {
-	HandleSDLEvents();
+	/* This needs to be called before anything that handles SDL events. */
+	SDL_PumpEvents();
 
 #if defined _WINDOWS
 	SDL_Event event;
-	while(SDL_GetEvent(event, SDL_VIDEORESIZEMASK|SDL_ACTIVEEVENTMASK))
+	while(SDL_GetEvent(event, SDL_VIDEORESIZEMASK|SDL_ACTIVEEVENTMASK|SDL_QUITMASK))
 	{
 		switch(event.type)
 		{
@@ -346,6 +347,10 @@ void RageDisplay_D3D::Update(float fDeltaTime)
 				FocusChanged( i&SDL_APPINPUTFOCUS && i&SDL_APPACTIVE );
 			}
 			break;
+		case SDL_QUIT:
+			LOG->Trace("SDL_QUIT: shutting down");
+			ExitGame();
+			break;
 		}
 	}
 #endif
@@ -355,8 +360,10 @@ RageDisplay_D3D::~RageDisplay_D3D()
 {
 	LOG->Trace( "RageDisplay_D3D::~RageDisplay()" );
 
+	SDL_EventState( SDL_VIDEORESIZE, SDL_IGNORE );
+	SDL_EventState( SDL_ACTIVEEVENT, SDL_IGNORE );
+	SDL_EventState( SDL_QUIT, SDL_IGNORE );
 #if defined _WINDOWS
-	SDL_EventState(SDL_VIDEORESIZE, SDL_IGNORE);
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 #endif
 
