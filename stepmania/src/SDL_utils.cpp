@@ -604,8 +604,9 @@ SDL_Surface *mySDL_LoadSurface( CString file )
 
 	/* Create the surface. */
 	SDL_Surface *img = SDL_CreateRGBSurface(
-			h.width, h.height, h.bpp, h.pitch,
+			SDL_SWSURFACE, h.width, h.height, h.bpp,
 			h.Rmask, h.Gmask, h.Bmask, h.Amask);
+	ASSERT( h.pitch == img->pitch );
 
 	if( fread(img->pixels, h.height * h.pitch, 1, f) != 1 )
 	{
