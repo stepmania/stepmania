@@ -122,8 +122,6 @@ ScreenTitleMenu::ScreenTitleMenu()
 	for( int i=0; i<NUM_TITLE_MENU_CHOICES; i++ )
 		LoseFocus( i );
 	GainFocus( m_TitleMenuChoice );
-	
-	m_soundMusic.Stop();
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","title menu music") );
 

@@ -40,8 +40,6 @@ protected:
 	BGAnimation			m_Background;
 	TransitionFade		m_Fade;
 	RandomSample		m_soundStart;
-
-	RageSound			m_soundMusic;
 };
 
 

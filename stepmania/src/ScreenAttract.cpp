@@ -54,8 +54,7 @@ ScreenAttract::ScreenAttract( CString sMetricName, CString sElementName )
 
 	m_soundStart.Load( THEME->GetPathTo("Sounds","menu start") );
 
-	m_soundMusic.Load( THEME->GetPathTo("Sounds",m_sElementName + " music") );
-	m_soundMusic.Play();
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds",m_sElementName + " music"), false );
 
 	GAMESTATE->m_bPlayersCanJoin = true;
 
@@ -101,7 +100,7 @@ void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type
 			break;
 		case MENU_BUTTON_COIN:
 			Screen::MenuCoin( MenuI.player );	// increment coins, play sound
-			m_soundMusic.Stop();
+			SOUNDMAN->music->StopPlaying();
 			::Sleep( 200 );	// do a little pause, like the arcade does
 			SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 			break;
@@ -116,7 +115,7 @@ void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type
 				// fall through
 			case PrefsManager::COIN_FREE:
 			case PrefsManager::COIN_HOME:
-				m_soundMusic.Stop();
+				SOUNDMAN->music->StopPlaying();
 				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
 				::Sleep( 200 );	// do a little pause, like the arcade does
 				SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
@@ -145,6 +144,11 @@ void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
 			m_Fade.CloseWipingRight( SM_GoToNextScreen );
 		break;
 	case SM_GoToNextScreen:
+		/* XXX: Look at the def of the screen we're going to; if it has a 
+		 * music theme element and it's the same as the one we're playing
+		 * now, don't stop.  (However, if we're going to interrupt it 
+		 * when we fade in, it's cleaner to stop it before we fade out.) */
+		SOUNDMAN->PlayMusic( "" );
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	}
