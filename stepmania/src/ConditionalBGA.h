@@ -3,6 +3,8 @@
 
 #include "Style.h"
 #include "PlayerOptions.h"
+#include "GameConstantsAndTypes.h"
+#include "BGAnimation.h"
 //#include "StyleDef.h"
 
 enum CBGACLEAREDSTATES
