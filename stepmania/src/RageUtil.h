@@ -104,7 +104,11 @@ inline float randomf( const float low=-1.0f, const float high=1.0f )
 
 /* XXX: These are C99 functions (except for the roundf(double) overload); what's
  * the C99 define we can test for? */
+#if defined(WIN32)
 inline double trunc( double f )	{ return float(int(f)); };
+#else
+#include <math.h>
+#endif
 inline float truncf( float f )	{ return float(int(f)); };
 inline float roundf( float f )	{ if(f < 0) return truncf(f-0.5f); return truncf(f+0.5f); };
 inline double roundf( double f ){ if(f < 0) return trunc(f-0.5); return trunc(f+0.5);  };
