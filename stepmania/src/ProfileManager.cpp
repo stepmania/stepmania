@@ -80,7 +80,7 @@ CString Profile::GetDisplayCaloriesBurned()
 	if( m_fWeightPounds == 0 )	// weight not entered
 		return "N/A";
 	else 
-		return ssprintf("%f.3Cal",m_fCaloriesBurned);
+		return ssprintf("%iCal",m_fCaloriesBurned);
 }
 
 int Profile::GetTotalNumSongsPlayed()
