@@ -14,6 +14,7 @@
 */
 
 #include "RageInputDevice.h"
+#include "RageThreads.h"
 
 const float TIME_BEFORE_SLOW_REPEATS = 0.25f;
 const float TIME_BEFORE_FAST_REPEATS = 1.5f;
@@ -41,6 +42,7 @@ class InputFilter
 	float m_fSecsHeld[NUM_INPUT_DEVICES][NUM_DEVICE_BUTTONS];
 
 	InputEventArray queue;
+	RageMutex queuemutex;
 
 public:
 	void ButtonPressed( DeviceInput di, bool Down );

@@ -37,6 +37,8 @@ void InputFilter::ButtonPressed( DeviceInput di, bool Down )
 	m_fSecsHeld[di.device][di.button] = 0;
 
 	InputEventType iet = Down? IET_FIRST_PRESS:IET_RELEASE;
+
+	LockMut(queuemutex);
 	queue.push_back( InputEvent(di,iet) );
 }
 
@@ -50,6 +52,10 @@ void InputFilter::ResetDevice( InputDevice dev )
 void InputFilter::Update(float fDeltaTime)
 {
 	INPUTMAN->Update( fDeltaTime );
+
+	/* Make sure that nothing gets inserted while we do this, to prevent
+	 * things like "key pressed, key release, key repeat". */
+	LockMut(queuemutex);
 
 	for( int d=0; d<NUM_INPUT_DEVICES; d++ )	// foreach InputDevice
 	{
@@ -77,8 +83,11 @@ void InputFilter::Update(float fDeltaTime)
 					iet = IET_SLOW_REPEAT;
 				}
 				if( int(fOldHoldTime/fTimeBetweenRepeats) != int(fNewHoldTime/fTimeBetweenRepeats) )
-					queue.push_back( InputEvent(InputDevice(d),b,iet) );
-
+				{
+					RageTimer now;
+					DeviceInput di(InputDevice(d),b,now);
+					queue.push_back( InputEvent(di,iet) );
+				}
 			}
 		}
 	}
@@ -97,6 +106,7 @@ float InputFilter::GetSecsHeld( DeviceInput di )
 
 void InputFilter::GetInputEvents( InputEventArray &array )
 {
+	LockMut(queuemutex);
 	array = queue;
 	queue.clear();
 }
