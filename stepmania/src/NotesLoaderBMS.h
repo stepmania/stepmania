@@ -1,7 +1,7 @@
 #ifndef NOTES_LOADER_BMS_H
 #define NOTES_LOADER_BMS_H
 
-#include "Song.h"
+#include "song.h"
 #include "Notes.h"
 #include "NotesLoader.h"
 

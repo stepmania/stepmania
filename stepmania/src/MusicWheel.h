@@ -12,7 +12,7 @@
 */
 
 #include "Sprite.h"
-#include "Song.h"
+#include "song.h"
 #include "ActorFrame.h"
 #include "BitmapText.h"
 #include "Quad.h"

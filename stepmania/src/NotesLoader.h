@@ -1,7 +1,7 @@
 #ifndef NOTES_LOADER_H
 #define NOTES_LOADER_H
 
-#include "Song.h"
+#include "song.h"
 
 typedef int DanceNote;
 enum {

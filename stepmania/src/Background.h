@@ -16,7 +16,7 @@
 #include "Sprite.h"
 #include "Quad.h"
 #include "ActorFrame.h"
-#include "Song.h"
+#include "song.h"
 #include "BGAnimation.h"
 
 

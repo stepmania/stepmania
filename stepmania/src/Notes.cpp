@@ -12,7 +12,7 @@
 */
 
 #include "Notes.h"
-#include "Song.h"
+#include "song.h"
 #include "Notes.h"
 #include "IniFile.h"
 #include "math.h"	// for fabs()

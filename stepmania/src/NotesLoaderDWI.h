@@ -1,12 +1,12 @@
 #ifndef NOTES_LOADER_DWI_H
 #define NOTES_LOADER_DWI_H
 
-#include "Song.h"
+#include "song.h"
 #include "Notes.h"
 #include "GameInput.h"
 #include "NotesLoader.h"
 
-#include "Song.h"
+#include "song.h"
 #include "Notes.h"
 
 /* Return NA if no files in the directory can be loaded by

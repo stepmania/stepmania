@@ -15,7 +15,7 @@
 
 #include "Sprite.h"
 #include "ActorFrame.h"
-#include "Song.h"
+#include "song.h"
 #include "BitmapText.h"
 #include "PrefsManager.h"
 

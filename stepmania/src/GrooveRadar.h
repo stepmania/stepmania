@@ -13,7 +13,7 @@
 
 #include "ActorFrame.h"
 #include "Sprite.h"
-#include "Song.h"
+#include "song.h"
 
 
 class GrooveRadar : public ActorFrame

@@ -13,7 +13,7 @@
 
 
 #include "RageInput.h"
-#include "Song.h"
+#include "song.h"
 #include "Notes.h"
 #include "Screen.h"
 #include "BitmapText.h"

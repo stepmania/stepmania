@@ -12,7 +12,7 @@
 
 #include "Course.h"
 #include "PrefsManager.h"
-#include "Song.h"
+#include "song.h"
 #include "GameManager.h"
 #include "SongManager.h"
 #include "RageException.h"

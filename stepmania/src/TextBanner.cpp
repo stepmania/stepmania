@@ -12,7 +12,7 @@
 
 #include "TextBanner.h"
 #include "RageUtil.h"
-#include "Song.h"
+#include "song.h"
 #include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "SongManager.h"

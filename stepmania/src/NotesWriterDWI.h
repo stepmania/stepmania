@@ -1,7 +1,7 @@
 #ifndef NOTES_WRITER_DWI_H
 #define NOTES_WRITER_DWI_H
 
-#include "Song.h"
+#include "song.h"
 #include "Notes.h"
 #include "NoteTypes.h"
 

@@ -13,7 +13,7 @@
 #include "ActorFrame.h"
 #include "Actor.h"
 #include "TransitionFade.h"
-#include "Song.h"
+#include "song.h"
 
 class ScreenStage : public Screen
 {

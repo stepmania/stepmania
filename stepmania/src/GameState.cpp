@@ -16,7 +16,7 @@
 #include "GameManager.h"
 #include "PrefsManager.h"
 #include "InputMapper.h"
-#include "Song.h"
+#include "song.h"
 #include "RageLog.h"
 #include "ThemeManager.h"
 #include "RageUtil.h"

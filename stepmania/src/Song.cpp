@@ -16,7 +16,7 @@
 #include <math.h>	// for fmod
 #include "RageLog.h"
 #include "IniFile.h"
-#include "Song.h"
+#include "song.h"
 #include "NoteData.h"
 #include "MsdFile.h"
 #include "RageSound.h"

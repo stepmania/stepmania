@@ -6,7 +6,7 @@
 #include "SongCacheIndex.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "Song.h"
+#include "song.h"
 
 SongCacheIndex *SONGINDEX;
 

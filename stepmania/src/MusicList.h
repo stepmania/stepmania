@@ -3,7 +3,7 @@
 
 #include "ActorFrame.h"
 #include "BitmapText.h"
-#include "Song.h"
+#include "song.h"
 
 const int MAX_MLIST_COLUMNS = 5;
 
