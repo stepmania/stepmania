@@ -622,7 +622,7 @@ void ScreenPackages::HTTPUpdate()
 		i = m_sBUFFER.find("Content-Length:");
 		j = m_sBUFFER.find("\n", i+1 );
 
-		if( i > 0 )
+		if( i != string::npos )
 			m_iTotalBytes = atoi(m_sBUFFER.substr(i+16,j-i).c_str());
 		else
 			m_iTotalBytes = -1;	//We don't know, so go until disconnect
