@@ -104,8 +104,8 @@ XToThemedString( TapNoteScore );
 
 static const CString HoldNoteScoreNames[NUM_HOLD_NOTE_SCORES] = {
 	"None",
-	"OK",
 	"NG",
+	"OK",
 };
 XToString( HoldNoteScore );
 StringToX( HoldNoteScore );
