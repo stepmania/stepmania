@@ -69,7 +69,7 @@ ScreenAttract::~ScreenAttract()
 
 void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	LOG->Trace( "ScreenAttract::Input()" );
+//	LOG->Trace( "ScreenAttract::Input()" );
 
 	AttractInput( DeviceI, type, GameI, MenuI, StyleI, m_In.IsTransitioning() || m_Out.IsTransitioning() );
 }
