@@ -22,6 +22,8 @@
 #include <math.h>
 #include "RageMath.h"
 
+const float ARROW_SPACING	= ARROW_SIZE;// + 2;
+
 float		g_fExpandSeconds = 0;
 
 float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat )

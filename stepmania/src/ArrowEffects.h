@@ -16,9 +16,6 @@
 #include "GameConstantsAndTypes.h"
 #include "StyleDef.h"
 
-const int	ARROW_SIZE	= 64;
-const float ARROW_SPACING	= ARROW_SIZE;// + 2;
-
 
 //	fYOffset is a vertical position in pixels relative to the center.
 //	(positive if has not yet been stepped on, negative if has already passed).

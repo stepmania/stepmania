@@ -31,6 +31,8 @@
 #define	SCREEN_NEAR		(-1000)
 #define	SCREEN_FAR		(1000)
 
+#define	ARROW_SIZE		(64)
+
 //
 // Note definitions
 //
