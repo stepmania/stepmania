@@ -17,6 +17,7 @@
 */
 
 class Song;
+class Profile;
 
 enum UnlockType
 {
@@ -73,17 +74,6 @@ public:
 
 	void UpdateSongs();
 
-	// functions that add to values
-	void UnlockAddAP(Grade credit);
-	void UnlockAddAP(float credit);
-	void UnlockAddDP(float credit);
-	void UnlockAddSP(Grade credit);
-	void UnlockAddSP(float credit);
-	void UnlockClearExtraStage();
-	void UnlockFailExtraStage();
-	void UnlockClearStage();
-	void UnlockToasty();
-
 	void UnlockCode( int num );
 
 	// unlocks the song's code
@@ -94,18 +84,15 @@ public:
 	// All locked songs are stored here
 	vector<UnlockEntry>	m_SongEntries;
 
+	void GetPoints( const Profile *pProfile, float fScores[NUM_UNLOCK_TYPES] ) const;
+
 private:
-	// read and write unlocks
+	// read unlocks
 	bool Load();
-	bool ReadValues();
-	bool WriteValues() const;
 	
 	UnlockEntry *FindSong( const Song *pSong );
 	UnlockEntry *FindCourse( const Course *pCourse );
 
-	// unlock values, cached
-	float m_fScores[NUM_UNLOCK_TYPES];
-	set<int> m_UnlockedCodes;
 	set<int> m_RouletteCodes; // "codes" which are available in roulette and which unlock if rouletted
 };
 

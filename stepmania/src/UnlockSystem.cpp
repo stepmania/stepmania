@@ -21,6 +21,7 @@
 #include "GameState.h"
 #include "IniFile.h"
 #include "MsdFile.h"
+#include "ProfileManager.h"
 
 UnlockSystem*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -43,12 +44,6 @@ UnlockSystem::UnlockSystem()
 	UNLOCKMAN = this;
 
 	Load();
-
-	memset( m_fScores, 0, sizeof(m_fScores) );
-
-	ReadValues(); // in case its ever accessed, 
-									// we want the values to be available
-	WriteValues();  // create if it does not exist
 }
 
 void UnlockSystem::UnlockSong( const Song *song )
@@ -140,14 +135,97 @@ UnlockEntry::UnlockEntry()
 	m_pCourse = NULL;
 }
 
+static float GetArcadePoints( const Profile *pProfile )
+{
+	float fAP =	0;
+
+	FOREACH_Grade(g)
+	{
+		switch(g)
+		{
+		case GRADE_TIER_1:
+		case GRADE_TIER_2:	fAP += 9 * pProfile->m_iNumSongsPassedByGrade[g]; break;
+		default:			fAP += 1 * pProfile->m_iNumSongsPassedByGrade[g]; break;
+
+		case GRADE_FAILED:
+		case GRADE_NO_DATA:
+			;	// no points
+			break;
+		}
+	}
+
+	FOREACH_PlayMode(pm)
+	{
+		switch(pm)
+		{
+		case PLAY_MODE_NONSTOP:
+		case PLAY_MODE_ONI:
+		case PLAY_MODE_ENDLESS:
+			fAP += pProfile->m_iNumSongsPlayedByPlayMode[pm];
+			break;
+		}
+
+	}
+
+	return fAP;
+}
+
+static float GetSongPoints( const Profile *pProfile )
+{
+	float fSP =	0;
+
+	FOREACH_Grade(g)
+	{
+		switch( g )
+		{
+		case GRADE_TIER_1:/*AAAA*/	fSP += 20 * pProfile->m_iNumSongsPassedByGrade[g];	break;
+		case GRADE_TIER_2:/*AAA*/	fSP += 10* pProfile->m_iNumSongsPassedByGrade[g];	break;
+		case GRADE_TIER_3:/*AA*/	fSP += 5* pProfile->m_iNumSongsPassedByGrade[g];	break;
+		case GRADE_TIER_4:/*A*/		fSP += 4* pProfile->m_iNumSongsPassedByGrade[g];	break;
+		case GRADE_TIER_5:/*B*/		fSP += 3* pProfile->m_iNumSongsPassedByGrade[g];	break;
+		case GRADE_TIER_6:/*C*/		fSP += 2* pProfile->m_iNumSongsPassedByGrade[g];	break;
+		case GRADE_TIER_7:/*D*/		fSP += 1* pProfile->m_iNumSongsPassedByGrade[g];	break;
+		case GRADE_FAILED:
+		case GRADE_NO_DATA:
+			;	// no points
+			break;
+		}
+	}
+
+	FOREACH_PlayMode(pm)
+	{
+		switch(pm)
+		{
+		case PLAY_MODE_NONSTOP:
+		case PLAY_MODE_ONI:
+		case PLAY_MODE_ENDLESS:
+			fSP += pProfile->m_iNumSongsPlayedByPlayMode[pm];
+			break;
+		}
+
+	}
+
+	return fSP;
+}
+
+void UnlockSystem::GetPoints( const Profile *pProfile, float fScores[NUM_UNLOCK_TYPES] ) const
+{
+	fScores[UNLOCK_ARCADE_POINTS] = GetArcadePoints( pProfile );
+	fScores[UNLOCK_SONG_POINTS] = GetSongPoints( pProfile );
+	fScores[UNLOCK_DANCE_POINTS] = (float) pProfile->m_iTotalDancePoints;
+	fScores[UNLOCK_CLEARED] = (float) pProfile->GetTotalNumSongsPassed();
+}
 
 bool UnlockEntry::IsLocked() const
 {
+	float fScores[NUM_UNLOCK_TYPES];
+	UNLOCKMAN->GetPoints( PROFILEMAN->GetMachineProfile(), fScores );
+
 	for( int i = 0; i < NUM_UNLOCK_TYPES; ++i )
-		if( m_fRequired[i] && UNLOCKMAN->m_fScores[i] >= m_fRequired[i] )
+		if( m_fRequired[i] && fScores[i] >= m_fRequired[i] )
 			return false;
 
-	if( m_iCode != -1 && UNLOCKMAN->m_UnlockedCodes.find(m_iCode) != UNLOCKMAN->m_UnlockedCodes.end() )
+	if( m_iCode != -1 && PROFILEMAN->GetMachineProfile()->m_UnlockedSongs.find(m_iCode) != PROFILEMAN->GetMachineProfile()->m_UnlockedSongs.end() )
 		return false;
 
 	return true;
@@ -239,7 +317,7 @@ bool UnlockSystem::Load()
 				current.m_iCode = (int) val;
 			if( unlock_type == "RO" )
 			{
-				m_UnlockedCodes.insert( (int)val );
+				current.m_iCode = (int)val;
 				m_RouletteCodes.insert( (int)val );
 			}
 		}
@@ -271,14 +349,17 @@ bool UnlockSystem::Load()
 
 float UnlockSystem::PointsUntilNextUnlock( UnlockType t ) const
 {
+	float fScores[NUM_UNLOCK_TYPES];
+	UNLOCKMAN->GetPoints( PROFILEMAN->GetMachineProfile(), fScores );
+
 	float fSmallestPoints = 400000000;   // or an arbitrarily large value
 	for( unsigned a=0; a<m_SongEntries.size(); a++ )
-		if( m_SongEntries[a].m_fRequired[t] > m_fScores[t] )
+		if( m_SongEntries[a].m_fRequired[t] > fScores[t] )
 			fSmallestPoints = min( fSmallestPoints, m_SongEntries[a].m_fRequired[t] );
 	
 	if( fSmallestPoints == 400000000 )
 		return 0;  // no match found
-	return fSmallestPoints - m_fScores[t];
+	return fSmallestPoints - fScores[t];
 }
 
 /* Update the song pointer.  Only call this when it's likely to have changed,
@@ -304,154 +385,15 @@ void UnlockSystem::UpdateSongs()
 	}
 }
 
-bool UnlockSystem::ReadValues()
-{
-	IniFile data;
 
-	data.SetPath( MEMCARD_PATH );
-
-	if( !data.ReadFile() )
-		return false;
-
-	for( int i = 0; i < NUM_UNLOCK_TYPES; ++i )
-		data.GetValue( "Unlock", g_UnlockNames[i],		m_fScores[i] );
-
-	m_UnlockedCodes.clear();
-	CString s;
-	if( data.GetValue( "Unlock", "UnlockedCodes", s ) )
-	{
-		vector<CString> sCodes;
-		split( s, ",", sCodes, true );
-		for( unsigned c = 0; c < sCodes.size(); ++c )
-		{
-			const int n = atoi( sCodes[c] );
-			m_UnlockedCodes.insert( n );
-		}
-	}
-
-	return true;
-}
-
-
-bool UnlockSystem::WriteValues() const
-{
-	IniFile data;
-
-	data.SetPath( MEMCARD_PATH );
-
-	for( int i = 0; i < NUM_UNLOCK_TYPES; ++i )
-		data.SetValue( "Unlock", g_UnlockNames[i],		m_fScores[i] );
-
-	vector<CString> sCodes;
-	for( set<int>::const_iterator it = m_UnlockedCodes.begin(); it != m_UnlockedCodes.end(); ++it )
-		sCodes.push_back( ssprintf("%i", *it) );
-
-	const CString list = join( ",", sCodes );
-	data.SetValue( "Unlock", "UnlockedCodes", list );
-
-	data.WriteFile();
-
-	return true;
-}
-
-void UnlockSystem::UnlockAddAP(float credit)
-{
-	ReadValues();
-	m_fScores[UNLOCK_ARCADE_POINTS] += credit;
-	WriteValues();
-}
-
-void UnlockSystem::UnlockAddAP(Grade grade)
-{
-	ReadValues();
-	switch( grade )
-	{
-	case GRADE_FAILED:
-		;	// no points
-		break;
-	case GRADE_TIER_1:
-	case GRADE_TIER_2:
-		m_fScores[UNLOCK_ARCADE_POINTS] += 9;
-		break;
-	case GRADE_NO_DATA:
-		ASSERT(0);
-		break;
-	default:
-		m_fScores[UNLOCK_ARCADE_POINTS] += 1;
-		break;
-	}
-	WriteValues();
-}
-
-void UnlockSystem::UnlockAddDP(float credit)
-{
-	ReadValues();
-
-	// we don't want to ever take away dance points
-	if( credit > 0 )
-		m_fScores[UNLOCK_DANCE_POINTS] += credit;
-	WriteValues();
-}
-
-void UnlockSystem::UnlockAddSP(float credit)
-{
-	ReadValues();
-	m_fScores[UNLOCK_SONG_POINTS] += credit;
-	WriteValues();
-}
-
-void UnlockSystem::UnlockAddSP( Grade grade )
-{
-	ReadValues();
-
-	// TODO: move these to PREFS
-	switch( grade )
-	{
-	case GRADE_TIER_1:/*AAAA*/	m_fScores[UNLOCK_SONG_POINTS] += 20;	break;
-	case GRADE_TIER_2:/*AAA*/	m_fScores[UNLOCK_SONG_POINTS] += 10;	break;
-	case GRADE_TIER_3:/*AA*/	m_fScores[UNLOCK_SONG_POINTS] += 5;	break;
-	case GRADE_TIER_4:/*A*/		m_fScores[UNLOCK_SONG_POINTS] += 4;	break;
-	case GRADE_TIER_5:/*B*/		m_fScores[UNLOCK_SONG_POINTS] += 3;	break;
-	case GRADE_TIER_6:/*C*/		m_fScores[UNLOCK_SONG_POINTS] += 2;	break;
-	case GRADE_TIER_7:/*D*/		m_fScores[UNLOCK_SONG_POINTS] += 1;	break;
-	}
-
-	WriteValues();
-}
-
-void UnlockSystem::UnlockClearExtraStage()
-{
-	ReadValues();
-	++m_fScores[UNLOCK_EXTRA_CLEARED];
-	WriteValues();
-}
-
-void UnlockSystem::UnlockFailExtraStage()
-{
-	ReadValues();
-	++m_fScores[UNLOCK_EXTRA_FAILED];
-	WriteValues();
-}
-
-void UnlockSystem::UnlockClearStage()
-{
-	ReadValues();
-	++m_fScores[UNLOCK_CLEARED];
-	WriteValues();
-}
-
-void UnlockSystem::UnlockToasty()
-{
-	ReadValues();
-	++m_fScores[UNLOCK_TOASTY];
-	WriteValues();
-}
 
 void UnlockSystem::UnlockCode( int num )
 {
-	ReadValues();
-	m_UnlockedCodes.insert( num );
-	WriteValues();
+	FOREACH_PlayerNumber( pn )
+		if( PROFILEMAN->IsUsingProfile(pn) )
+			PROFILEMAN->GetProfile(pn)->m_UnlockedSongs.insert( num );
+
+	PROFILEMAN->GetMachineProfile()->m_UnlockedSongs.insert( num );
 }
 
 int UnlockSystem::GetNumUnlocks() const

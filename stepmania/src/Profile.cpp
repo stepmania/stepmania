@@ -72,6 +72,11 @@ void Profile::InitGeneralData()
 	m_iTotalGameplaySeconds = 0;
 	m_iCurrentCombo = 0;
 	m_fCaloriesBurned = 0;
+	m_iTotalDancePoints = 0;
+	m_iNumExtraStagesPassed = 0;
+	m_iNumExtraStagesFailed = 0;
+	m_iNumToasties = 0;
+	m_UnlockedSongs.clear();
 	m_sLastMachinePlayed = "";
 
 	int i;
@@ -83,6 +88,8 @@ void Profile::InitGeneralData()
 		m_iNumSongsPlayedByDifficulty[i] = 0;
 	for( i=0; i<MAX_METER+1; i++ )
 		m_iNumSongsPlayedByMeter[i] = 0;
+	ZERO( m_iNumSongsPassedByPlayMode );
+	ZERO( m_iNumSongsPassedByGrade );
 }
 
 void Profile::InitSongScores()
@@ -125,11 +132,19 @@ CString Profile::GetDisplayCaloriesBurned()
 		return ssprintf("%iCal",m_fCaloriesBurned);
 }
 
-int Profile::GetTotalNumSongsPlayed()
+int Profile::GetTotalNumSongsPlayed() const
 {
 	int iTotal = 0;
 	for( int i=0; i<NUM_PLAY_MODES; i++ )
 		iTotal += m_iNumSongsPlayedByPlayMode[i];
+	return iTotal;
+}
+
+int Profile::GetTotalNumSongsPassed() const
+{
+	int iTotal = 0;
+	for( int i=0; i<NUM_PLAY_MODES; i++ )
+		iTotal += m_iNumSongsPassedByPlayMode[i];
 	return iTotal;
 }
 
@@ -478,6 +493,16 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "CurrentCombo",					m_iCurrentCombo );
 	pGeneralDataNode->AppendChild( "CaloriesBurned",				m_fCaloriesBurned );
 	pGeneralDataNode->AppendChild( "LastMachinePlayed",				m_sLastMachinePlayed );
+	pGeneralDataNode->AppendChild( "TotalDancePoints",				m_iTotalDancePoints );
+	pGeneralDataNode->AppendChild( "NumExtraStagesPassed",			m_iNumExtraStagesPassed );
+	pGeneralDataNode->AppendChild( "NumExtraStagesFailed",			m_iNumExtraStagesFailed );
+	pGeneralDataNode->AppendChild( "NumToasties",					m_iNumToasties );
+
+	{
+		XNode* pUnlockedSongs = pGeneralDataNode->AppendChild("UnlockedSongs");
+		for( set<int>::const_iterator it = m_UnlockedSongs.begin(); it != m_UnlockedSongs.end(); ++it )
+			pUnlockedSongs->AppendChild( ssprintf("%i", *it) );
+	}
 
 	{
 		XNode* pNumSongsPlayedByPlayMode = pGeneralDataNode->AppendChild("NumSongsPlayedByPlayMode");
@@ -528,6 +553,26 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 		}
 	}
 
+	{
+		XNode* pNumSongsPassedByGrade = pGeneralDataNode->AppendChild("NumSongsPassedByGrade");
+		FOREACH_Grade( g )
+		{
+			if( !m_iNumSongsPassedByGrade[g] )
+				continue;
+			pNumSongsPassedByGrade->AppendChild( GradeToString(g), m_iNumSongsPassedByGrade[g] );
+		}
+	}
+
+	{
+		XNode* pNumSongsPassedByPlayMode = pGeneralDataNode->AppendChild("NumSongsPassedByPlayMode");
+		FOREACH_PlayMode( pm )
+		{
+			/* Don't save unplayed PlayModes. */
+			if( !m_iNumSongsPassedByPlayMode[pm] )
+				continue;
+			pNumSongsPassedByPlayMode->AppendChild( PlayModeToString(pm), m_iNumSongsPassedByPlayMode[pm] );
+		}
+	}
 	return pGeneralDataNode;
 }
 
@@ -575,6 +620,19 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "CurrentCombo",					m_iCurrentCombo );
 	pNode->GetChildValue( "CaloriesBurned",					m_fCaloriesBurned );
 	pNode->GetChildValue( "LastMachinePlayed",				m_sLastMachinePlayed );
+	pNode->GetChildValue( "TotalDancePoints",				m_iTotalDancePoints );
+	pNode->GetChildValue( "NumExtraStagesPassed",			m_iNumExtraStagesPassed );
+	pNode->GetChildValue( "NumExtraStagesFailed",			m_iNumExtraStagesFailed );
+	pNode->GetChildValue( "NumToasties",					m_iNumToasties );
+
+	{
+		XNode* pUnlockedSongs = pNode->GetChild("UnlockedSongs");
+		if( pUnlockedSongs )
+		{
+			FOREACH_Node( pUnlockedSongs, song )
+				m_UnlockedSongs.insert( atoi(song->name) );
+		}
+	}
 
 	{
 		XNode* pNumSongsPlayedByPlayMode = pNode->GetChild("NumSongsPlayedByPlayMode");
@@ -622,6 +680,21 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 		if( pNumSongsPlayedByMeter )
 			for( int i=0; i<MAX_METER+1; i++ )
 				pNumSongsPlayedByMeter->GetChildValue( ssprintf("Meter%d",i), m_iNumSongsPlayedByMeter[i] );
+	}
+
+	{
+		XNode* pNumSongsPassedByGrade = pNode->GetChild("NumSongsPassedByGrade");
+		if( pNumSongsPassedByGrade )
+			FOREACH_Grade( g )
+				pNumSongsPassedByGrade->GetChildValue( GradeToString(g), m_iNumSongsPassedByGrade[g] );
+	}
+
+	{
+		XNode* pNumSongsPassedByPlayMode = pNode->GetChild("NumSongsPassedByPlayMode");
+		if( pNumSongsPassedByPlayMode )
+			FOREACH_PlayMode( pm )
+				pNumSongsPassedByPlayMode->GetChildValue( PlayModeToString(pm), m_iNumSongsPassedByPlayMode[pm] );
+	
 	}
 }
 

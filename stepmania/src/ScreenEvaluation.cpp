@@ -219,34 +219,6 @@ void ScreenEvaluation::Init()
 	}
 
 
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-			continue;	// skip
-
-		switch( m_Type )
-		{
-		case stage:
-			// update unlock data
-			UNLOCKMAN->UnlockClearStage();
-			UNLOCKMAN->UnlockAddAP( grade[p] );
-			UNLOCKMAN->UnlockAddSP( grade[p] );
-			UNLOCKMAN->UnlockAddDP( (float)stageStats.iActualDancePoints[p] );
-
-			// if it's extra stage, update # passed stages
-			if ( (GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() ) &&
-				grade[p] > GRADE_FAILED )
-				UNLOCKMAN->UnlockClearExtraStage();
-			break;
-
-		case course:
-			UNLOCKMAN->UnlockAddDP( (float) stageStats.iActualDancePoints[p] );
-			UNLOCKMAN->UnlockAddAP( (float) stageStats.iSongsPassed[p] );
-			UNLOCKMAN->UnlockAddSP( (float) stageStats.iSongsPassed[p] );
-			break;
-		}
-	}
-
 	//
 	// update persistent statistics
 	//

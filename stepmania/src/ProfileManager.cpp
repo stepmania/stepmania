@@ -426,6 +426,15 @@ const Profile* ProfileManager::GetProfile( ProfileSlot slot ) const
 	}
 }
 
+//
+// General
+//
+void ProfileManager::IncrementToastiesCount( PlayerNumber pn )
+{
+	if( PROFILEMAN->IsUsingProfile(pn) )
+		++PROFILEMAN->GetProfile(pn)->m_iNumToasties;
+	++PROFILEMAN->GetMachineProfile()->m_iNumToasties;
+}
 
 //
 // Song stats

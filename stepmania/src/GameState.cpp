@@ -245,6 +245,19 @@ void GameState::EndGame()
 			pMachineProfile->m_iNumSongsPlayedByStyle[ss.style]++;
 			pMachineProfile->m_iNumSongsPlayedByDifficulty[ss.pSteps[p]->GetDifficulty()]++;
 			pMachineProfile->m_iNumSongsPlayedByMeter[iMeter]++;
+			pMachineProfile->m_iTotalDancePoints += ss.iActualDancePoints[p];
+			if( ss.StageType == StageStats::STAGE_EXTRA || ss.StageType == StageStats::STAGE_EXTRA2 )
+			{
+				if( ss.bFailed[p] )
+					++pMachineProfile->m_iNumExtraStagesFailed;
+				else
+					++pMachineProfile->m_iNumExtraStagesPassed;
+			}
+			if( !ss.bFailed[p] )
+			{
+				pMachineProfile->m_iNumSongsPassedByPlayMode[ss.playMode]++;
+				pMachineProfile->m_iNumSongsPassedByGrade[ss.GetGrade((PlayerNumber)p)]++;
+			}
 
 			if( pPlayerProfile )
 			{
@@ -252,6 +265,19 @@ void GameState::EndGame()
 				pPlayerProfile->m_iNumSongsPlayedByStyle[ss.style]++;
 				pPlayerProfile->m_iNumSongsPlayedByDifficulty[ss.pSteps[p]->GetDifficulty()]++;
 				pPlayerProfile->m_iNumSongsPlayedByMeter[iMeter]++;
+				pPlayerProfile->m_iTotalDancePoints += ss.iActualDancePoints[p];
+				if( ss.StageType == StageStats::STAGE_EXTRA || ss.StageType == StageStats::STAGE_EXTRA2 )
+				{
+					if( ss.bFailed[p] )
+						++pPlayerProfile->m_iNumExtraStagesFailed;
+					else
+						++pPlayerProfile->m_iNumExtraStagesPassed;
+				}
+				if( !ss.bFailed[p] )
+				{
+					pPlayerProfile->m_iNumSongsPassedByPlayMode[ss.playMode]++;
+					pPlayerProfile->m_iNumSongsPassedByGrade[ss.GetGrade((PlayerNumber)p)]++;
+				}
 			}
 		}
 

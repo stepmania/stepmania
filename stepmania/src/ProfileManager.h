@@ -37,6 +37,12 @@ public:
 	bool LoadProfileFromMemoryCard( PlayerNumber pn );
 	bool SaveProfile( PlayerNumber pn ) const;
 	void UnloadProfile( PlayerNumber pn );
+	
+	//
+	// General data
+	//
+	void IncrementToastiesCount( PlayerNumber pn );
+
 
 	//
 	// High scores

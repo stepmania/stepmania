@@ -18,12 +18,12 @@
 #include "ScreenGameplay.h"
 #include "GameState.h"
 #include "Course.h"
-#include "UnlockSystem.h"
 #include "SDL_utils.h"
 #include "SongManager.h"
 #include "NoteDataUtil.h"
 #include "RageLog.h"
 #include "StageStats.h"
+#include "ProfileManager.h"
 
 
 ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Steps*>& apNotes_, const vector<AttackArray> &asModifiers, PlayerNumber pn_ ):
@@ -391,7 +391,7 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 		if( m_iCurToastyCombo==250 && !GAMESTATE->m_bDemonstrationOrJukebox )
 		{
 			SCREENMAN->PostMessageToTopScreen( SM_PlayToasty, 0 );
-			UNLOCKMAN->UnlockToasty();
+			PROFILEMAN->IncrementToastiesCount( m_PlayerNumber );
 		}
 		break;
 	default:

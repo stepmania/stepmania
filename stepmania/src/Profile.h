@@ -16,6 +16,7 @@
 #include "Style.h"
 #include "Grade.h"
 #include <map>
+#include <set>
 #include "XmlFile.h"
 #include "HighScore.h"
 
@@ -66,7 +67,8 @@ public:
 	//
 	CString GetDisplayName() const;
 	CString GetDisplayCaloriesBurned();
-	int GetTotalNumSongsPlayed();
+	int GetTotalNumSongsPlayed() const;
+	int GetTotalNumSongsPassed() const;
 	static CString GetProfileDisplayNameFromDir( CString sDir );
 	int GetSongNumTimesPlayed( const Song* pSong ) const;
 
@@ -87,11 +89,18 @@ public:
 	int m_iTotalGameplaySeconds;
 	int m_iCurrentCombo;
 	int m_fCaloriesBurned;
+	int m_iTotalDancePoints;
+	int m_iNumExtraStagesPassed;
+	int m_iNumExtraStagesFailed;
+	int m_iNumToasties;
+	set<int> m_UnlockedSongs;
 	mutable CString m_sLastMachinePlayed;	// mutable because we overwrite this on save, and I don't want to remove const from the whole save chain. -Chris
 	int m_iNumSongsPlayedByPlayMode[NUM_PLAY_MODES];
 	int m_iNumSongsPlayedByStyle[NUM_STYLES];
 	int m_iNumSongsPlayedByDifficulty[NUM_DIFFICULTIES];
 	int m_iNumSongsPlayedByMeter[MAX_METER+1];
+	int m_iNumSongsPassedByPlayMode[NUM_PLAY_MODES];
+	int m_iNumSongsPassedByGrade[NUM_GRADES];
 
 
 	//
