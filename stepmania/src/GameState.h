@@ -94,6 +94,13 @@ public:
 				return true;
 		return false;
 	}
+	Character* GameState::GetRandomCharacter()
+	{
+		if( m_pCharacters.size() )
+			return m_pCharacters[rand()%m_pCharacters.size()];
+		else
+			return NULL;
+	}
 
 	PlayerController	m_PlayerController[NUM_PLAYERS];
 	

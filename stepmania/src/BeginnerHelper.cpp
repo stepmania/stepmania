@@ -99,6 +99,12 @@ void BeginnerHelper::Initialize( int iDancePadType )
 
 	for( int pl=0; pl<NUM_PLAYERS; pl++ )	// Load players
 	{
+		// if there is no character set, try loading a random one.
+		if( GAMESTATE->m_pCurCharacters[pl] == NULL )
+		{
+			GAMESTATE->m_pCurCharacters[pl] = GAMESTATE->GetRandomCharacter();
+		}
+
 		if( GAMESTATE->m_PreferredDifficulty[pl] == DIFFICULTY_BEGINNER && GAMESTATE->m_pCurCharacters[pl] != NULL )
 		{
 			// Load textures

@@ -55,21 +55,18 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	// Display random character+pad
 	if( GAMESTATE->m_pCharacters.size() )
 	{
-		int iRnd;
-		iRnd = rand() % ( GAMESTATE->m_pCharacters.size() );
-		if( iRnd != 0 )
-		{
-			m_mCharacter.LoadMilkshapeAscii( GAMESTATE->m_pCharacters[iRnd]->GetModelPath() );
-			m_mDancePad.LoadMilkshapeAscii("Characters" SLASH "DancePad-DDR.txt");
-			m_mCharacter.LoadMilkshapeAsciiBones("howtoplay", GAMESTATE->m_pCharacters[iRnd]->GetHowToPlayAnimationPath() );
-			
-			m_mCharacter.SetRotationX( 40 );
-			m_mDancePad.SetRotationX( 35 );
-			m_mCharacter.Command("X,120;Y,300;Zoom,15;RotationY,180;sleep,4.7;linear,1.0;RotationY,360;Zoom,20;X,120;Y,400");
-			m_mDancePad.Command("X,40;Y,310;Zoom,15;RotationY,180;sleep,4.7;linear,1.0;RotationY,360;Zoom,20;X,230;Y,390");
-			this->AddChild(&m_mCharacter);		
-			this->AddChild(&m_mDancePad);
-		}
+		Character* rndchar = GAMESTATE->GetRandomCharacter();
+
+		m_mCharacter.LoadMilkshapeAscii( rndchar->GetModelPath() );
+		m_mDancePad.LoadMilkshapeAscii("Characters" SLASH "DancePad-DDR.txt");
+		m_mCharacter.LoadMilkshapeAsciiBones("howtoplay", rndchar->GetHowToPlayAnimationPath() );
+		
+		m_mCharacter.SetRotationX( 40 );
+		m_mDancePad.SetRotationX( 35 );
+		m_mCharacter.Command("X,120;Y,300;Zoom,15;RotationY,180;sleep,4.7;linear,1.0;RotationY,360;Zoom,20;X,120;Y,400");
+		m_mDancePad.Command("X,40;Y,310;Zoom,15;RotationY,180;sleep,4.7;linear,1.0;RotationY,360;Zoom,20;X,230;Y,390");
+		this->AddChild(&m_mCharacter);		
+		this->AddChild(&m_mDancePad);
 	}
 	//
 

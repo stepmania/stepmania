@@ -107,8 +107,8 @@ void GameState::Reset()
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( PREFSMAN->m_bShowDancingCharacters && m_pCharacters.size() )
-			m_pCurCharacters[p] = m_pCharacters[rand()%m_pCharacters.size()];
+		if( PREFSMAN->m_bShowDancingCharacters )
+			m_pCurCharacters[p] = GetRandomCharacter();
 		else
 			m_pCurCharacters[p] = NULL;
 	}
