@@ -726,8 +726,9 @@ SoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( CString filename_ 
 	 * the stream. */
 	synth_output();
 
-	ret = FindOffsetFix();
-	ASSERT( ret != -1 );
+//	ret = FindOffsetFix();
+//	ASSERT( ret != -1 );
+	this->OffsetFix = 0;
 
     if(mad->length == -1)
     {
