@@ -413,6 +413,11 @@ void GraphicsWindow::Update()
 	}
 }
 
+HWND GraphicsWindow::GetHwnd()
+{
+	return g_hWndMain;
+}
+
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.

@@ -16,7 +16,7 @@ namespace GraphicsWindow
 	void SetVideoModeParams( const RageDisplay::VideoModeParams &p );
 	CString SetScreenMode( const RageDisplay::VideoModeParams &p );
 	void CreateGraphicsWindow( const RageDisplay::VideoModeParams &p );
-void RecreateGraphicsWindow( const RageDisplay::VideoModeParams &p );
+	void RecreateGraphicsWindow( const RageDisplay::VideoModeParams &p );
 	void DestroyGraphicsWindow();
 	void ConfigureGraphicsWindow( const RageDisplay::VideoModeParams &p );
 
@@ -25,6 +25,8 @@ void RecreateGraphicsWindow( const RageDisplay::VideoModeParams &p );
 	RageDisplay::VideoModeParams GetParams();
 	HDC GetHDC();
 	void Update();
+
+	HWND GetHwnd();
 };
 
 #endif
