@@ -906,10 +906,6 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	}
 	// Yay, we have our substring. (something like "LION SUKI")
 	
-	// This is used a LOT, so let's just declare it here and get it
-	// over with.
-	unsigned commonSubstrLen = commonSubstring.size();
-
 	/* Create a Steps for each. */
 	vector<Steps*> apSteps;
 	for( unsigned i=0; i<arrayBMSFileNames.size(); i++ )
@@ -922,9 +918,9 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		Steps *pSteps = apSteps[i];
 		pSteps->SetDifficulty( DIFFICULTY_MEDIUM );
 		CString sTag;
-		if( GetTagFromMap( aBMSData[i], "#title", sTag ) && sTag.size() != commonSubstrLen )
+		if( GetTagFromMap( aBMSData[i], "#title", sTag ) && sTag.size() != commonSubstring.size() )
 		{
-			sTag = sTag.substr( commonSubstrLen, sTag.size() - commonSubstrLen );
+			sTag = sTag.substr( commonSubstring.size(), sTag.size() - commonSubstring.size() );
 			sTag.ToLower();
 
 			// XXX: Someone find me some DDR BMS examples!
