@@ -23,6 +23,7 @@ void RageSoundResampler::reset()
 	at_eof = false;
 	memset(prev, 0, sizeof(prev));
 	memset(t, 0, sizeof(t));
+	outbuf.clear();
 	ipos = 0;
 }
 
