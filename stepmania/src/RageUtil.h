@@ -113,8 +113,13 @@ inline float randomf( const float low=-1.0f, const float high=1.0f )
 {
     return low + ( high - low ) * ( (FLOAT)rand() ) / RAND_MAX;
 }
-inline int roundf( const float f )	{ return (int)((f)+0.5f); };
-inline int roundf( const double f )	{ return (int)((f)+0.5);  };
+
+/* XXX: These are C99 functions (except for the roundf(double) overload); what's
+ * the C99 define we can test for? */
+inline double trunc( double f )	{ return float(int(f)); };
+inline float truncf( float f )	{ return float(int(f)); };
+inline float roundf( float f )	{ if(f < 0) return truncf(f-0.5f); return truncf(f+0.5f); };
+inline double roundf( double f ){ if(f < 0) return trunc(f-0.5); return trunc(f+0.5);  };
 inline float froundf( const float f, const float fRoundInterval )
 {
 	return int( (f + fRoundInterval/2)/fRoundInterval ) * fRoundInterval;
