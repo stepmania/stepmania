@@ -65,6 +65,9 @@ const float NAMING_MENU_ITEM_X			=	CENTER_X-200;
 const float NAMING_MENU_ITEM_START_Y	=	SCREEN_TOP + 24;
 const float NAMING_MENU_ITEM_SPACING_Y	=	18;
 
+#define TICK_EARLY_SECONDS				THEME->GetMetricF("ScreenGameplay","TickEarlySeconds")
+static float g_fTickEarlySecondsCache = 0;		// reading directly out of theme metrics is slow
+
 const CString HELP_TEXT = 
 	"Esc: show command menu\n"
 //	"Hold F1 to show more commands\n"
@@ -190,6 +193,7 @@ ScreenEdit::ScreenEdit()
 
 	m_pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
 	
+	g_fTickEarlySecondsCache = TICK_EARLY_SECONDS;
 
 	/* Make EditMenu responsible for creating new Notes */
 	//if( m_pNotes == NULL )
@@ -339,12 +343,10 @@ bool ScreenEdit::PlayTicks() const
 		return false;
 
 	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
-	float fSongBeat, fBPS;
-	bool bFreeze;	
 
 	// HACK:  Play the sound a little bit early to account for the fact that the middle of the tick sounds occurs 0.015 seconds into playing.
-	fPositionSeconds += (SOUNDMAN->GetPlayLatency()+0.018f) * m_soundMusic.GetPlaybackRate();	// HACK:  Add 0.015 seconds to account for the fact that the middle of the tick sounds occurs 0.015 seconds into playing.
-	GAMESTATE->m_pCurSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS, bFreeze );
+	fPositionSeconds += (SOUNDMAN->GetPlayLatency()+g_fTickEarlySecondsCache) * m_soundMusic.GetPlaybackRate();
+	float fSongBeat=GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
 
 	int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
 	iRowNow = max( 0, iRowNow );
