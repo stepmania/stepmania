@@ -32,6 +32,7 @@
 #include "crypto/CryptRand.h"
 #include "UnlockSystem.h"
 #include "CatalogXml.h"
+#include "XmlFile.h"
 
 //
 // Old file versions for backward compatibility

@@ -13,8 +13,8 @@
 */
 
 #include "Grade.h"
-#include "XmlFile.h"
 
+struct XNode;
 struct HighScore
 {
 	CString	sName;	// name that shows in the machine's ranking screen

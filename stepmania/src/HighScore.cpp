@@ -14,6 +14,7 @@
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
+#include "XmlFile.h"
 
 #define EMPTY_NAME			THEME->GetMetric ("HighScore","EmptyName")
 

@@ -17,12 +17,13 @@
 #include "Grade.h"
 #include <map>
 #include <set>
-#include "XmlFile.h"
 #include "HighScore.h"
 #include "TimeConstants.h"
 #include "SongUtil.h"	// for SongID
 #include "StepsUtil.h"	// for StepsID
 #include "CourseUtil.h"	// for CourseID
+
+struct XNode;
 
 //
 // Current file versions
