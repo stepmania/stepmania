@@ -218,7 +218,6 @@
 				29B9732BFDCFA39411CA2CEA,
 				29B9732DFDCFA39411CA2CEA,
 				AAE4444704B1394500D02EE9,
-				AAF4310104DCC5F800D02EE9,
 			);
 			buildSettings = {
 				DEBUGGING_SYMBOLS = NO;
@@ -227,7 +226,8 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				OTHER_CFLAGS = "-I../src -I/usr/local/include/SDL -DPBBUILD  -Wno-switch -Wno-missing-braces -fcoalesce-templates -fno-rtti -Wnewline-eof -DSOUND_SUPPORTS_MADLIB -DSOUND_SUPPORTS_WAV -DSOUND_SUPPORTS_OGG -Os";
+				OPTIMIZATION_CFLAGS = "-O2";
+				OTHER_CFLAGS = "-I../src -I/usr/local/include/SDL -DPBBUILD  -Wno-switch -Wno-missing-braces -fcoalesce-templates -fno-rtti -Wnewline-eof -DSOUND_SUPPORTS_MADLIB -DSOUND_SUPPORTS_WAV -DSOUND_SUPPORTS_OGG";
 				OTHER_LDFLAGS = "-lSDLmain -lpng -lmad -logg -lvorbisfile -lvorbis";
 				PRODUCT_NAME = StepMania;
 				SECTORDER_FLAGS = "";
@@ -251,7 +251,7 @@
 	<key>CFBundleExecutable</key>
 	<string>StepMania</string>
 	<key>CFBundleGetInfoString</key>
-	<string>StepMania 3.9 alpha 4b</string>
+	<string>StepMania 3.9 alpha 5</string>
 	<key>CFBundleIconFile</key>
 	<string>smicon.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -263,11 +263,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.9  alpha 4b</string>
+	<string>3.9  alpha 5</string>
 	<key>CFBundleSignature</key>
 	<string>Step</string>
 	<key>CFBundleVersion</key>
-	<string>3.9 alpha 4b</string>
+	<string>3.9 alpha 5</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>
@@ -10331,23 +10331,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				AAE4444804B1395900D02EE9,
-				AAE4444E04B1396400D02EE9,
 			);
 			isa = PBXCopyFilesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AAE4444804B1395900D02EE9 = {
-			fileRef = AAE443F804B1032300D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AAE4444E04B1396400D02EE9 = {
-			fileRef = AAE443F704B1032300D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		AAECB3730512794D001B792B = {
 			isa = PBXFrameworkReference;
@@ -10440,19 +10426,6 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
-		};
-		AAF4310104DCC5F800D02EE9 = {
-			buildActionMask = 8;
-			files = (
-			);
-			generatedFileNames = (
-			);
-			isa = PBXShellScriptBuildPhase;
-			neededFileNames = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = scripts/make_dist.sh;
 		};
 		AAF580A004B26FE200D02EE9 = {
 			fileRef = AA8B6C7904AFD87300D02EE9;
