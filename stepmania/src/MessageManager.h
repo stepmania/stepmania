@@ -49,7 +49,6 @@ template<class T, int N>
 class BroadcastOnChange1D
 {
 private:
-	Message mSendWhenChanged;
 	typedef BroadcastOnChange<T> MyType;
 	vector<MyType> val;
 public:
@@ -80,7 +79,6 @@ template<class T, int N>
 class BroadcastOnChangePtr1D
 {
 private:
-	Message mSendWhenChanged;
 	typedef BroadcastOnChangePtr<T> MyType;
 	vector<MyType> val;
 public:
