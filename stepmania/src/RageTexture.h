@@ -32,6 +32,8 @@ struct RageTextureID
 
 	/* Define an ordering so this can be used in a set<>. */
 	bool operator< (const RageTextureID &rhs) const	{ return filename < rhs.filename; }
+	bool equal(const RageTextureID &rhs) const;
+
 	void Init();
 
 	RageTextureID() { Init(); }

@@ -24,6 +24,19 @@ void RageTextureID::Init()
 	iColorDepth = TEXTUREMAN->GetTextureColorDepth();
 }
 
+bool RageTextureID::equal(const RageTextureID &rhs) const
+{
+	if(filename != rhs.filename) return false;
+	if(iMaxSize != rhs.iMaxSize) return false;
+	if(iMipMaps != rhs.iMipMaps) return false;
+	if(iAlphaBits != rhs.iAlphaBits) return false;
+	if(iColorDepth != rhs.iColorDepth) return false;
+	if(bDither != rhs.bDither) return false;
+	if(bStretch != rhs.bStretch) return false;
+	return true;
+}
+
+
 RageTexture::RageTexture( RageTextureID name )
 {
 //	LOG->Trace( "RageTexture::RageTexture()" );
