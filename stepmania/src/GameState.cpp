@@ -29,6 +29,7 @@
 #include "AnnouncerManager.h"
 #include "ProfileManager.h"
 #include "arch/arch.h"
+#include "ThemeManager.h"
 
 
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
@@ -57,6 +58,8 @@ GameState::~GameState()
 
 void GameState::Reset()
 {
+	ASSERT( THEME );
+
 	int p;
 
 	m_CurStyle = STYLE_INVALID;
@@ -106,7 +109,10 @@ void GameState::Reset()
 	m_SongOptions.Init();
 	
 	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		ApplyModifiers( (PlayerNumber)p, THEME->GetMetric( "Common","DefaultModifiers" ) );
 		ApplyModifiers( (PlayerNumber)p, PREFSMAN->m_sDefaultModifiers );
+	}
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
