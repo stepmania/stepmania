@@ -167,7 +167,7 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 #include "ScreenHowToPlay.h"
 #include "ScreenInputOptions.h"
 #include "ScreenMachineOptions.h"
-#include "ScreenMapInstruments.h"
+#include "ScreenMapControllers.h"
 #include "ScreenMusicScroll.h"
 #include "ScreenPlayerOptions.h"
 #include "ScreenSandbox.h"
@@ -204,7 +204,7 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenHowToPlay") )		return new ScreenHowToPlay;
 	else if( 0==stricmp(sClassName, "ScreenInputOptions") )		return new ScreenInputOptions;
 	else if( 0==stricmp(sClassName, "ScreenMachineOptions") )	return new ScreenMachineOptions;
-	else if( 0==stricmp(sClassName, "ScreenMapInstruments") )	return new ScreenMapInstruments;
+	else if( 0==stricmp(sClassName, "ScreenMapControllers") )	return new ScreenMapControllers;
 	else if( 0==stricmp(sClassName, "ScreenInputOptions") )		return new ScreenInputOptions;
 	else if( 0==stricmp(sClassName, "ScreenMusicScroll") )		return new ScreenMusicScroll;
 	else if( 0==stricmp(sClassName, "ScreenPlayerOptions") )	return new ScreenPlayerOptions;

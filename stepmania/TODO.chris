@@ -2,7 +2,13 @@
 Fix
 /////////////////////////
 
+anon CVS instructions
+
+MS phone bill
+
 In the arcade, it doesn't sort music by alphabetical order in its group, but rather, it sorts all the songs in a group according to light difficutly, from the easiest song on top, to the hardest light mode song on the bottom. When there are songs with the same light rating, THEN it sorts THOSE by alphabetical order.
+
+difficulty hiding for ez2
 
 get rid of lines between tiles
 

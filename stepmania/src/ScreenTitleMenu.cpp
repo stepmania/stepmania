@@ -210,7 +210,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 			SCREENMAN->SetNewScreen( "ScreenSelectGame" );
 			break;
 		case CHOICE_MAP_INSTRUMENTS:
-			SCREENMAN->SetNewScreen( "ScreenMapInstruments" );
+			SCREENMAN->SetNewScreen( "ScreenMapControllers" );
 			break;
 		case CHOICE_INPUT_OPTIONS:
 			SCREENMAN->SetNewScreen( "ScreenInputOptions" );
@@ -241,6 +241,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 			case GAME_DANCE:	GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;			break; 
 			case GAME_PUMP:		GAMESTATE->m_CurStyle = STYLE_PUMP_VERSUS;			break; 
 			case GAME_EZ2:		GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;	break; 
+			case GAME_PARA:		GAMESTATE->m_CurStyle = STYLE_PARA_SINGLE;			break; 
 			default:	ASSERT(0);
 			}
 

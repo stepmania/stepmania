@@ -45,7 +45,7 @@ ScreenEditMenu::ScreenEditMenu()
 	this->AddChild( &Selector );
 
 	m_Menu.Load( 
-		THEME->GetPathTo("Graphics","edit menu background"), 
+		THEME->GetPathTo("BGAnimations","edit menu"), 
 		THEME->GetPathTo("Graphics","edit menu top edge"),
 		HELP_TEXT, false, false, 99 
 		);

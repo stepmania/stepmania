@@ -10,7 +10,8 @@
 */
 
 #include "Screen.h"
-#include "Sprite.h"
+#include "BackgroundAnimation.h"
+#include "TransitionFade.h"
 
 
 class ScreenGameOver : public Screen
@@ -24,8 +25,8 @@ public:
 
 private:
 
-	bool m_bClosing;
-	Sprite			m_sprGameOver;
+	TransitionFade				m_Fade;
+	BackgroundAnimation			m_Background;
 };
 
 

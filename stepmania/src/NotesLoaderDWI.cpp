@@ -279,10 +279,10 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 			out.m_fBeat0OffsetInSeconds = -atoi( sParams[1] ) / 1000.0f;
 
 		else if( 0==stricmp(sValueName,"SAMPLESTART") )
-			out.m_fMusicSampleStartSeconds = TimeToSeconds( sParams[1] );
+			out.m_fMusicSampleStartSeconds = TimeToSeconds( sParams[1]+":"+sParams[2] );		// this value has a ':' in it.  Colon is supposed to be a parameter separator.  Stupid DWI!
 
 		else if( 0==stricmp(sValueName,"SAMPLELENGTH") )
-			out.m_fMusicSampleLengthSeconds = TimeToSeconds(  sParams[1] );
+			out.m_fMusicSampleLengthSeconds = TimeToSeconds( sParams[1]+":"+sParams[2] );
 
 		else if( 0==stricmp(sValueName,"FREEZE") )
 		{

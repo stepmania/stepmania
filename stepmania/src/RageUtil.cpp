@@ -49,8 +49,8 @@ CString SecondsToTime( float fSecs )
 {
 	int iMinsDisplay = (int)fSecs/60;
 	int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
-	int iLeftoverDisplay = int( (fSecs - iMinsDisplay*60 - iSecsDisplay) * 100 );
-	return ssprintf( "%02d:%02d:%02d", iMinsDisplay, iSecsDisplay, iLeftoverDisplay );
+	float fLeftoverDisplay = (fSecs - iMinsDisplay*60 - iSecsDisplay) * 100;
+	return ssprintf( "%02d:%02d:%02f", iMinsDisplay, iSecsDisplay, fLeftoverDisplay );
 }
 
 //-----------------------------------------------------------------------------

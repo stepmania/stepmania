@@ -56,10 +56,10 @@ LINK32=link.exe
 # ADD LINK32 $(intdir)\verstub.obj /nologo /subsystem:windows /map /debug /machine:I386
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\Stepmania\stepmania
+TargetDir=\stepmania\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc            	cl             /Zl             /nologo             /c             verstub.cpp             /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc             	cl              /Zl              /nologo              /c              verstub.cpp              /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -91,10 +91,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /profile /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\Stepmania\stepmania
+TargetDir=\stepmania\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc            	cl             /Zl             /nologo             /c             verstub.cpp             /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc             	cl              /Zl              /nologo              /c              verstub.cpp              /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -1192,11 +1192,11 @@ SOURCE=.\ScreenManager.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScreenMapInstruments.cpp
+SOURCE=.\ScreenMapControllers.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScreenMapInstruments.h
+SOURCE=.\ScreenMapControllers.h
 # End Source File
 # Begin Source File
 

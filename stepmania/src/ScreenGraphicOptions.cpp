@@ -56,7 +56,7 @@ static const int VertRes[] = {
 
 ScreenGraphicOptions::ScreenGraphicOptions() :
 	ScreenOptions(
-		THEME->GetPathTo("Graphics","graphic options background"),
+		THEME->GetPathTo("BGAnimations","graphic options"),
 		THEME->GetPathTo("Graphics","graphic options page"),
 		THEME->GetPathTo("Graphics","graphic options top edge")
 		)

@@ -32,7 +32,7 @@
 #include "NotesLoaderKSF.h"
 #include "NotesWriterDWI.h"
 
-const int FILE_CACHE_VERSION = 70;	// increment this when Song or Notes changes to invalidate cache
+const int FILE_CACHE_VERSION = 73;	// increment this when Song or Notes changes to invalidate cache
 
 
 int CompareBPMSegments(const void *arg1, const void *arg2)

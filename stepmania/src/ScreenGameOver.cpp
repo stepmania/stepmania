@@ -29,24 +29,11 @@ const ScreenMessage SM_PlayAnnouncer	=	ScreenMessage(SM_User + 3);
 
 ScreenGameOver::ScreenGameOver()
 {
-	m_bClosing = false;
+	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","game over") );
+	this->AddChild( &m_Background );
 
-	m_sprGameOver.Load( THEME->GetPathTo("Graphics","game over") );
-	m_sprGameOver.SetXY( CENTER_X, CENTER_Y );
-	this->AddChild( &m_sprGameOver );
-
-	// tween game over
-	m_sprGameOver.SetGlow( D3DXCOLOR(1,1,1,0) );
-	m_sprGameOver.SetDiffuse( D3DXCOLOR(1,1,1,0) );
-
-	m_sprGameOver.BeginTweening( 0.5f );		// fade to white
-	m_sprGameOver.SetTweenGlow( D3DXCOLOR(1,1,1,1) );
-
-	m_sprGameOver.BeginTweening( 0.01f );		// turn color on
-	m_sprGameOver.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
-
-	m_sprGameOver.BeginTweening( 0.5f );		// fade to color
-	m_sprGameOver.SetTweenGlow( D3DXCOLOR(1,1,1,0) );
+	m_Fade.OpenWipingRight( SM_None );
+	this->AddChild( &m_Fade );
 
 	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","game over music") );
 
@@ -63,10 +50,7 @@ void ScreenGameOver::HandleScreenMessage( const ScreenMessage SM )
 		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("game over") );
 		break;
 	case SM_StartFadingOut:
-		m_bClosing = true;
-		m_sprGameOver.BeginTweening( 0.8f );
-		m_sprGameOver.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
-		this->SendScreenMessage( SM_GoToNextScreen, 0.8f );
+		m_Fade.CloseWipingRight( SM_GoToNextScreen );
 		break;
 	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
@@ -76,7 +60,7 @@ void ScreenGameOver::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenGameOver::MenuStart( PlayerNumber pn )
 {
-	if( m_bClosing )
+	if( m_Fade.IsClosing() )
 		return;
 
 	this->ClearMessageQueue();

@@ -93,6 +93,16 @@ void Background::Unload()
 	m_iCurBGSegment = 0;
 }
 
+void Background::LoadFromAniDir( CString sAniDir )
+{
+	Unload();
+
+	BackgroundAnimation* pTempBGA;
+	pTempBGA = new BackgroundAnimation;
+	pTempBGA->LoadFromAniDir( sAniDir );
+	m_BackgroundAnimations.Add( pTempBGA );
+}
+
 void Background::LoadFromSong( Song* pSong )
 {
 	Unload();

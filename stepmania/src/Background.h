@@ -35,8 +35,9 @@ public:
 	Background();
 	~Background();
 
+	virtual void LoadFromAniDir( CString sAniDir );
 	virtual void LoadFromSong( Song *pSong );
-	virtual void Unload();	// call this on before calling load
+	virtual void Unload();
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();

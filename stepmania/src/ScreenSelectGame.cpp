@@ -71,6 +71,8 @@ ScreenSelectGame::ScreenSelectGame() :
 		g_SelectGameLines, 
 		NUM_SELECT_GAME_LINES,
 		false );
+	m_Menu.SetTimer( 99 );
+	m_Menu.StopTimer();
 
 	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select game music") );
 }

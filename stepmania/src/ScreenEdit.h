@@ -53,7 +53,7 @@ protected:
 	Song*			m_pSong;
 	Notes*			m_pNotes;
 
-	Sprite			m_sprBackground;
+	Background				m_Background;
 
 	NoteField				m_NoteFieldEdit;
 	SnapDisplay				m_SnapDisplay;

@@ -262,10 +262,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenManager.h">
 			</File>
 			<File
-				RelativePath="ScreenMapInstruments.cpp">
+				RelativePath="ScreenMapControllers.cpp">
 			</File>
 			<File
-				RelativePath="ScreenMapInstruments.h">
+				RelativePath="ScreenMapControllers.h">
 			</File>
 			<File
 				RelativePath="ScreenMessage.h">
