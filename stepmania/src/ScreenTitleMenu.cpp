@@ -23,7 +23,7 @@
 #include "GameManager.h"
 #include "InputMapper.h"
 #include "ThemeManager.h"
-#include "SDL_Utils.h"
+#include "SDL_utils.h"
 #include "RageSoundManager.h"
 
 
