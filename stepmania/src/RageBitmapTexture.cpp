@@ -14,6 +14,7 @@
 #include "SDL_rotozoom.h"
 #include "SDL_utils.h"
 #include "SDL_dither.h"
+#include "RageSurface_Load.h"
 
 static void GetResolutionFromFileName( CString sPath, int &Width, int &Height )
 {
@@ -70,7 +71,7 @@ void RageBitmapTexture::Create()
 
 	/* Create (and return) a surface ready to be loaded to OpenGL */
 	/* Load the image into an SDL surface. */
-	SDL_Surface *img = SDL_LoadImage( actualID.filename );
+	SDL_Surface *img = RageSurface::LoadFile( actualID.filename );
 
 	/* Tolerate corrupt/unknown images. */
 	if( img == NULL )

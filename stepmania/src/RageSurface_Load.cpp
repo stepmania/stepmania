@@ -4,7 +4,7 @@
 #include "RageUtil.h"
 #include "SDL_image.h"
 
-SDL_Surface *LoadSurface( const CString &sPath )
+SDL_Surface *RageSurface::LoadFile( const CString &sPath )
 {
 	const CString ext = GetExtension( sPath );
 	if( ext.CompareNoCase( "png" ) )

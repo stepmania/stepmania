@@ -18,6 +18,7 @@
 #include "IniFile.h"
 #include "NoteData.h"
 #include "RageSoundReader_FileReader.h"
+#include "RageSurface_Load.h"
 #include "RageException.h"
 #include "SongManager.h"
 #include "SongCacheIndex.h"
@@ -683,7 +684,7 @@ void Song::TidyUpData()
 			continue;	// skip
 
 		CString sPath = m_sSongDir + arrayImages[i];
-		SDL_Surface *img = SDL_LoadImage( sPath );
+		SDL_Surface *img = RageSurface::LoadFile( sPath );
 		if( !img )
 		{
 			LOG->Trace("Couldn't load '%s': %s", sPath.c_str(), SDL_GetError());

@@ -11,6 +11,7 @@
 #include "SDL_utils.h"
 #include "SDL_endian.h"
 #include "SDL_image.h"
+#include "SDL_rotozoom.h"	// for setting icon
 #include "RageSurface_Load.h"
 #include "RageFile.h"
 #include "RageLog.h"
@@ -491,8 +492,6 @@ Uint8 mySDL_EventState( Uint8 type, int state )
 	return ret;
 }
 
-#include "SDL_rotozoom.h"	// for setting icon
-
 void mySDL_WM_SetIcon( CString sIconFile )
 {
 #if !defined(DARWIN)
@@ -502,7 +501,7 @@ void mySDL_WM_SetIcon( CString sIconFile )
 		return;
 	}
 
-	SDL_Surface *srf = SDL_LoadImage(sIconFile);
+	SDL_Surface *srf = RageSurface::LoadFile(sIconFile);
 	if( srf == NULL )
 		return;
 
@@ -1091,11 +1090,6 @@ SDL_RWops *OpenRWops( const CString &sPath, bool Write )
 	rw->close = RWRageFile_Close;
 
 	return rw;
-}
-
-SDL_Surface *SDL_LoadImage( const CString &sPath )
-{
-	return LoadSurface( sPath );
 }
 
 struct RWString

@@ -162,7 +162,6 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		int num_palette;
 		png_color *palette;
 		int ret = png_get_PLTE( png, info_ptr, &palette, &num_palette );
-		/* XXX: test with a paletted image that has had its palette deleted */
 		ASSERT( ret == PNG_INFO_PLTE );
 
 		png_byte *trans = NULL;

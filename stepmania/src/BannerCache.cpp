@@ -10,6 +10,7 @@
 #include "RageDisplay.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageSurface_Load.h"
 #include "BannerCache.h"
 #include "Sprite.h"
 #include "PrefsManager.h"
@@ -303,7 +304,7 @@ void BannerCache::CacheBanner( CString BannerPath )
 
 void BannerCache::CacheBannerInternal( CString BannerPath )
 {
-	SDL_Surface *img = SDL_LoadImage( BannerPath );
+	SDL_Surface *img = RageSurface::LoadFile( BannerPath );
 	if( img == NULL )
 	{
 		LOG->Warn( "BannerCache::CacheBanner: Couldn't load %s: %s", BannerPath.c_str(), SDL_GetError() );

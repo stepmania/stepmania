@@ -1,9 +1,11 @@
 #ifndef RAGE_SURFACE_LOAD_H
 #define RAGE_SURFACE_LOAD_H
 
-#include "SDL_utils.h"
-
-SDL_Surface *LoadSurface( const CString &sPath );
+struct SDL_Surface;
+namespace RageSurface
+{
+	SDL_Surface *LoadFile( const CString &sPath );
+}
 
 #endif
 
