@@ -26,8 +26,8 @@ public:
 	/* The only difference between these is that Throw triggers debug behavior
 	 * and Nonfatal doesn't.  Nonfatal is used when the exception happens
 	 * normally and will be caught, such as when a driver fails to initialize. */
-	static Throw(const char *fmt, ...);
-	static ThrowNonfatal(const char *fmt, ...);
+	static NORETURN Throw(const char *fmt, ...);
+	static NORETURN ThrowNonfatal(const char *fmt, ...);
 
 protected:
 	CString m_sError;
