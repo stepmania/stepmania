@@ -2,10 +2,17 @@
 // Miryokuteki's Todo/Done Record //
 ////////////////////////////////////
 
-// Last Updated May 2nd, 2003
+// Last Updated May 9th, 2003
 
 Todo List:
   ** Find a way to get the length of a movie being played, so ScreenIntroMovie does not have to have a pre-determined length (I.e: exits when the movie is finished playing)
+
+Done as of 05/09/03:
+    ** Implemented a complete MAX2 style unlock system.
+
+
+
+
 
 Done as of 05/02/03:
     ** Added more scripting to SSDEX, now supporting icon bar/icons/text/pic/info scripting. Having small probs with the highlight bar for each player, scripting-wise. Will work on this later

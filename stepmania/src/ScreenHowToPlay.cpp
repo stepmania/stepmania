@@ -19,6 +19,7 @@
 #include "NoteFieldPositioning.h"
 
 #define BPMSPEED				THEME->GetMetricF("ScreenHowToPlay","ScrollBPM")
+#define SECONDS_TO_SHOW			THEME->GetMetricF("ScreenHowToPlay","SecondsToShow")
 
 ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 {
@@ -64,22 +65,26 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 
 	m_pSong = new Song;
 	m_pSong->AddBPMSegment( BPMSegment(0.0,BPMSPEED) );
-	m_pSong->AddStopSegment( StopSegment(12,2) );
+	m_pSong->AddStopSegment( StopSegment(15,2) );
 	m_pSong->AddStopSegment( StopSegment(16,2) );
 	m_pSong->AddStopSegment( StopSegment(20,2) );
 	m_pSong->AddStopSegment( StopSegment(24,2) );
 	m_pSong->AddStopSegment( StopSegment(28,2) );
+
 	GAMESTATE->m_pCurSong = m_pSong;
 	GAMESTATE->m_bPastHereWeGo = true;
-
-	m_Player.Load( PLAYER_1, pND, NULL, NULL, NULL, NULL );
 	GAMESTATE->m_PlayerController[PLAYER_1] = PC_AUTOPLAY;
+	m_Player.Load( PLAYER_1, pND, &m_LifeMeter, NULL, NULL, NULL );
+
 	m_Player.SetX( 480 );
+	m_Player.m_bShowJudgment = false;
 	this->AddChild( &m_Player );
 
 	delete pND;
 
 	m_fFakeSecondsIntoSong = 0;
+	this->ClearMessageQueue();
+	this->PostScreenMessage( SM_BeginFadingOut, SECONDS_TO_SHOW );
 }
 
 ScreenHowToPlay::~ScreenHowToPlay()
@@ -91,6 +96,6 @@ void ScreenHowToPlay::Update( float fDelta )
 {
 	m_fFakeSecondsIntoSong += fDelta;
 	GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong );
-	
+
 	ScreenAttract::Update( fDelta );
 }

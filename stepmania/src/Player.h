@@ -52,6 +52,7 @@ public:
 	void Step( int col );
 	void RandomiseNotes( int iNoteRow );
 	void FadeToFail();
+	bool	m_bShowJudgment;	// Used in ScreenHowToPlay
 	
 protected:
 	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );

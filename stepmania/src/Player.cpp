@@ -54,6 +54,7 @@ Player::Player()
 	BRIGHT_GHOST_COMBO_THRESHOLD.Refresh();
 
 	m_PlayerNumber = PLAYER_INVALID;
+	m_bShowJudgment = true;
 
 	m_pLifeMeter = NULL;
 	m_pScore = NULL;
@@ -105,7 +106,6 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	 * is reset and not tweening.  Perhaps ActorFrame should recurse to subactors;
 	 * then we could just this->StopTweening()? -glenn */
 	m_Judgment.StopTweening();
-//	m_Combo.Reset();		// don't reset combos between songs in a course!
 	m_Combo.Init( pn );
 	m_Judgment.Reset();
 
@@ -325,7 +325,7 @@ void Player::DrawPrimitives()
 	if( fTilt != 0 )
 		DISPLAY->ExitPerspective();
 
-	m_Judgment.Draw();
+	if (m_bShowJudgment) { m_Judgment.Draw(); }
 
 	for( int c=0; c<GetNumTracks(); c++ )
 		m_HoldJudgment[c].Draw();
