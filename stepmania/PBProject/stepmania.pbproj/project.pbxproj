@@ -897,7 +897,7 @@
 				GCC_USE_GCC3_PFE_SUPPORT = NO;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				HEADER_SEARCH_PATHS = "/usr/include $(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers ../src $(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL_image.framework/Headers $(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers $(BUILD_DIR)/StepMania.app/Contents/Frameworks/jpeg62.framework/Headers";
+				HEADER_SEARCH_PATHS = "/usr/include \"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers\" ../src \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL_image.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/jpeg62.framework/Headers\"";
 				INFOPLIST_FILE = "Info-StepMania.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = /usr/lib;
