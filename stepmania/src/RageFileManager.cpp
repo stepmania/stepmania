@@ -717,7 +717,7 @@ void FlushDirCache()
 
 unsigned int GetHashForFile( const CString &sPath )
 {
-	return GetHashForString( sPath ) + FILEMAN->GetFileHash( sPath );
+	return FILEMAN->GetFileHash( sPath );
 }
 
 unsigned int GetHashForDirectory( const CString &sDir )
