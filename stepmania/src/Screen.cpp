@@ -20,6 +20,9 @@
 #include "RageSounds.h"
 #include "ProfileManager.h"
 
+#define NEXT_SCREEN					THEME->GetMetric (m_sName,"NextScreen")
+#define PREV_SCREEN					THEME->GetMetric (m_sName,"PrevScreen")
+
 Screen::Screen( CString sName )
 {
 	SetName( sName );
@@ -142,6 +145,23 @@ void Screen::Input( const DeviceInput& DeviceI, const InputEventType type, const
 	case MENU_BUTTON_BACK:	this->MenuBack( MenuI.player, type );	return;
 	case MENU_BUTTON_START:	this->MenuStart( MenuI.player, type );	return;
 	case MENU_BUTTON_COIN:	this->MenuCoin( MenuI.player, type );	return;
+	}
+}
+
+void Screen::HandleScreenMessage( const ScreenMessage SM )
+{
+	switch( SM )
+	{
+	case SM_MenuTimer:
+		FOREACH_HumanPlayer(p)
+			MenuStart( p );
+		break;
+	case SM_GoToNextScreen:
+		SCREENMAN->SetNewScreen( NEXT_SCREEN );
+		break;
+	case SM_GoToPrevScreen:
+		SCREENMAN->SetNewScreen( PREV_SCREEN );
+		break;
 	}
 }
 

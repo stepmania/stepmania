@@ -27,7 +27,7 @@ public:
 
 	virtual void Update( float fDeltaTime );
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	virtual void HandleScreenMessage( const ScreenMessage SM ) {};
+	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	void PostScreenMessage( const ScreenMessage SM, const float fDelay );
 	void ClearMessageQueue();
