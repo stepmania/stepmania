@@ -64,8 +64,8 @@ RageLog* LOG;		// global and accessable from anywhere in the program
 map<CString, CString> LogMaps;
 
 // constants
-#define LOG_PATH BASE_PATH "log.txt"
-#define INFO_PATH BASE_PATH "info.txt"
+#define LOG_PATH	BASE_PATH "log.txt"
+#define INFO_PATH	BASE_PATH "info.txt"
 
 #if defined(HAVE_VERSION_INFO)
 extern unsigned long version_num;
