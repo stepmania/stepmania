@@ -103,7 +103,7 @@ void IniFile::WriteFile()
 		f.PutLine( ssprintf("[%s]", k->first.c_str()) );
 
 		for (key::const_iterator i = k->second.begin(); i != k->second.end(); ++i)
-			f.PutLine( ssprintf("%s=%s\n", i->first.c_str(), i->second.c_str()) );
+			f.PutLine( ssprintf("%s=%s", i->first.c_str(), i->second.c_str()) );
 
 		f.PutLine( "" );
 	}
