@@ -16,6 +16,8 @@
 #include "GameState.h"
 #include <math.h>
 #include "ThemeManager.h"
+#include "NoteFieldPositioning.h"
+#include "NoteSkinManager.h"
 
 #include "RageLog.h"
 
@@ -29,6 +31,23 @@ GrayArrow::GrayArrow()
 	GR_STEP_ZOOM.Refresh();
 
 	StopAnimating();
+}
+
+bool GrayArrow::Load( PlayerNumber pn, int iColNo )
+{
+	CString Button = g_NoteFieldMode[pn].GrayButtonNames[iColNo];
+	if( Button == "" )
+		Button = NoteSkinManager::ColToButtonName( iColNo );
+
+	CString sPath = NOTESKIN->GetPathTo( pn, Button, "receptor" );
+	bool ret = Sprite::Load( sPath );
+
+	// XXX
+	if( GetNumStates() != 2 &&
+		GetNumStates() != 3 )
+		RageException::Throw( "'%s' must have 2 or 3 frames", sPath.c_str() );
+
+	return ret;
 }
 
 void GrayArrow::Update( float fDeltaTime )

@@ -15,7 +15,6 @@
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "ArrowEffects.h"
-#include "NoteSkinManager.h"
 #include "GameState.h"
 #include "PrefsManager.h"
 #include "NoteFieldPositioning.h"
@@ -35,19 +34,7 @@ void GrayArrowRow::Load( PlayerNumber pn )
 	m_iNumCols = pStyleDef->m_iColsPerPlayer;
 
 	for( int c=0; c<m_iNumCols; c++ ) 
-	{
-		CString Button = g_NoteFieldMode[m_PlayerNumber].GrayButtonNames[c];
-		if(Button == "")
-			Button = NoteSkinManager::ColToButtonName(c);
-
-		CString sPath = NOTESKIN->GetPathTo(pn, Button, "receptor");
-		m_GrayArrow[c].Load( sPath );
-		// XXX
-		if( m_GrayArrow[c].GetNumStates() != 2 &&
-			m_GrayArrow[c].GetNumStates() != 3 )
-			RageException::Throw( "'%s' must have 2 or 3 frames", sPath.c_str() );
-		m_GrayArrow[c].SetX( pStyleDef->m_ColumnInfo[pn][c].fXOffset );
-	}	
+		m_GrayArrow[c].Load( m_PlayerNumber, c );
 }
 
 void GrayArrowRow::Update( float fDeltaTime )

@@ -1,5 +1,5 @@
-#ifndef _GrayArrow_H_
-#define _GrayArrow_H_
+#ifndef GRAY_ARROW_H
+#define GRAY_ARROW_H
 /*
 -----------------------------------------------------------------------------
  Class: GrayArrow
@@ -14,11 +14,13 @@
 
 
 #include "Sprite.h"
+#include "PlayerNumber.h"
 
 class GrayArrow : public Sprite
 {
 public:
 	GrayArrow();
+	bool Load( PlayerNumber pn, int iColNo );
 
 	virtual void  Update( float fDeltaTime );
 	void Step();

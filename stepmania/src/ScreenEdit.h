@@ -17,6 +17,7 @@
 #include "RageSound.h"
 #include "BGAnimation.h"
 #include "SnapDisplay.h"
+#include "GrayArrowRow.h"
 
 
 const int NUM_ACTION_MENU_ITEMS = 23;
