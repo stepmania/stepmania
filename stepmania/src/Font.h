@@ -20,6 +20,7 @@ class FontPage;
 struct glyph {
 	FontPage *fp;
 	RageTexture *Texture;
+	RageTexture *GetTexture() const { return const_cast<RageTexture *>(Texture); }
 
 	/* Number of pixels to advance horizontally after drawing this character. */
 	int hadvance;
