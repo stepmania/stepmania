@@ -100,6 +100,8 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 				m_textAnswer[i].GetUnzoomedWidth() * ZOOM_SELECTED );
 		}
 
+		RAGE_ASSERT_M( line.choices.empty() || line.defaultChoice < (int) line.choices.size(),
+			ssprintf("%i, %i", line.defaultChoice, (int) line.choices.size()) );
 		CString sText = line.choices.empty() ? "" : line.choices[line.defaultChoice];
  		m_textAnswer[i].SetText( sText );
 
