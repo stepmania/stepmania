@@ -784,8 +784,11 @@ static void MountTreeOfZips( const CString &dir )
 		CString path = dirs.back();
 		dirs.pop_back();
 
+#if !defined(XBOX)
+		// Xbox doesn't detect directories properly, so we'll ignore this
 		if( !IsADirectory(path) )
 			continue;
+#endif
 
 		vector<CString> zips;
 		GetDirListing( path + "/*.zip", zips, false, true );
