@@ -251,7 +251,7 @@ void NetworkSyncManager::StartRequest(short position)
 	Write1(m_packet,ctr);
 	
 	//Notify server if this is for sync or not.
-	ctr = position*16;
+	ctr = char(position*16);
 	Write1(m_packet,ctr);
 
 	if (GAMESTATE->m_pCurSong !=NULL) {
