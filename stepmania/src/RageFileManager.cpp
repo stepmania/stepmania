@@ -158,6 +158,7 @@ void RageFileManager::GetDirListing( CString sPath, CStringArray &AddTo, bool bO
 }
 
 #include "RageFileDriverDirect.h"
+#include "RageFileDriverZip.h"
 void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 {
 	if( MountPoint.size() && MountPoint.Right(1) != "/" )
@@ -168,6 +169,10 @@ void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 	if( !Type.CompareNoCase("DIR") )
 	{
 		driver = new RageFileDriverDirect( Root );
+	}
+	else if( !Type.CompareNoCase("ZIP") )
+	{
+		driver = new RageFileDriverZip( Root );
 	}
 
 	if( !driver )
