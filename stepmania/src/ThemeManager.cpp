@@ -339,8 +339,14 @@ CString ThemeManager::GetPathToAndFallback( const CString &sThemeName, ElementCa
 		sThemeName.c_str(), sClass.c_str() );
 }
 
-CString ThemeManager::GetPathToRaw( const CString &sThemeName, ElementCategory category, const CString &sClassName, const CString &sElement ) 
+CString ThemeManager::GetPathToRaw( const CString &sThemeName_, ElementCategory category, const CString &sClassName_, const CString &sElement_ ) 
 {
+	/* Ugly: the parameters to this function may be a reference into g_vThemes, or something
+	 * else that might suddenly go away when we call ReloadMetrics. */
+	const CString sThemeName = sThemeName_;
+	const CString sClassName = sClassName_;
+	const CString sElement = sElement_;
+
 try_element_again:
 
 	const CString sThemeDir = GetThemeDirFromName( sThemeName );
@@ -488,8 +494,13 @@ try_element_again:
 	}
 }
 
-CString ThemeManager::GetPath( ElementCategory category, const CString &sClassName, const CString &sElement, bool bOptional ) 
+CString ThemeManager::GetPath( ElementCategory category, const CString &sClassName_, const CString &sElement_, bool bOptional ) 
 {
+	/* Ugly: the parameters to this function may be a reference into g_vThemes, or something
+	 * else that might suddenly go away when we call ReloadMetrics. */
+	const CString sClassName = sClassName_;
+	const CString sElement = sElement_;
+
 	CString sFileName = ClassAndElementToFileName( sClassName, sElement );
 
 	map<CString, CString> &Cache = g_ThemePathCache[category];
@@ -620,8 +631,13 @@ bool ThemeManager::GetMetricRaw( const CString &sClassName, const CString &sValu
 	return false;
 }
 
-CString ThemeManager::GetMetricRaw( const CString &sClassName, const CString &sValueName )
+CString ThemeManager::GetMetricRaw( const CString &sClassName_, const CString &sValueName_ )
 {
+	/* Ugly: the parameters to this function may be a reference into g_vThemes, or something
+	 * else that might suddenly go away when we call ReloadMetrics. */
+	const CString sClassName = sClassName_;
+	const CString sValueName = sValueName_;
+
 try_metric_again:
 
 	CString ret;
