@@ -263,7 +263,8 @@ void Course::Init()
 	m_bRandomize = false;
 	m_iLives = -1;
 	m_bSortByMeter = false;
-	ZERO( m_iCustomMeter );
+	FOREACH_Difficulty(dc)
+		m_iCustomMeter[dc] = -1;
 	m_entries.clear();
 	m_sPath = m_sName = m_sNameTranslit = m_sBannerPath = m_sCDTitlePath = "";
 	ZERO( m_TrailCacheValid );
@@ -381,7 +382,8 @@ void Course::AutogenEndlessFromGroup( CString sGroupName, Difficulty diff )
 	m_bRepeat = true;
 	m_bRandomize = true;
 	m_iLives = -1;
-	m_iCustomMeter[0] = m_iCustomMeter[1] = -1;
+	FOREACH_Difficulty(dc)
+		m_iCustomMeter[dc] = -1;
 
 	if( sGroupName == "" )
 	{
@@ -434,7 +436,8 @@ void Course::AutogenOniFromArtist( CString sArtistName, CString sArtistNameTrans
 	m_bSortByMeter = true;
 
 	m_iLives = 4;
-	m_iCustomMeter[0] = m_iCustomMeter[1] = -1;
+	FOREACH_Difficulty(cd)
+		m_iCustomMeter[cd] = -1;
 
 	ASSERT( sArtistName != "" );
 	ASSERT( aSongs.size() > 0 );
@@ -823,7 +826,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 void Course::GetTrails( vector<Trail*> &AddTo, StepsType st ) const
 {
-	FOREACH_CourseDifficulty( cd )
+	FOREACH_ShownCourseDifficulty( cd )
 	{
 		Trail *pTrail = GetTrail( st, cd );
 		if( pTrail == NULL )
