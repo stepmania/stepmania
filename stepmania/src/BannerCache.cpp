@@ -24,7 +24,17 @@
  * TEXTUREMAN->IsTextureRegistered() on the ID; it might not be if the banner cache
  * is missing or disabled.
  */
- 
+
+/* TODO: A way to purge banners.  Right now, if you move songs around, their
+ * banners will be re-cached with their new hash, but the old cache will never
+ * be removed and will still be loaded.  I don't want loading to be dependent on
+ * songs, since I want to be able to put banners into an archive easily later.
+ * Instead, purge banners later, after we load songs.  We can do this fast, since
+ * the banner hash is based only on the banner filename.
+ *
+ * We don't need to embed the banner modification time into the hash: it's already
+ * in the main song cache, so if it changes, the whole song will be re-cached. */
+
 BannerCache *BANNERCACHE;
 
 
@@ -242,6 +252,27 @@ static inline int closest( int num, int n1, int n2 )
 	if( abs(num - n1) > abs(num - n2) )
 		return n2;
 	return n1;
+}
+
+/* Erase the cache for a path. UNTESTED */
+void BannerCache::UncacheSongBanner( CString BannerPath )
+{
+	const CString CachePath = GetBannerCachePath( BannerPath );
+
+	/* If the image is loaded, free it. */
+	if( m_BannerPathToImage.find(BannerPath) != m_BannerPathToImage.end() )
+	{
+		SDL_Surface *img = m_BannerPathToImage[BannerPath];
+		SDL_FreeSurface( img );
+		m_BannerPathToImage.erase(BannerPath);
+	}
+
+	/* Remove the image from the INI. */
+	BannerData.DeleteKey( BannerPath );
+	BannerData.WriteFile();
+
+	/* Erase the cache file. */
+	remove( CachePath.c_str() );
 }
 
 /* We write the cache even if we won't use it, so we don't have to recache everything

@@ -21,6 +21,7 @@ public:
 
 	RageTextureID LoadCachedSongBanner( CString BannerPath );
 	void CacheSongBanner( CString BannerPath );
+	void UncacheSongBanner( CString BannerPath );
 };
 
 extern BannerCache *BANNERCACHE; // global and accessable from anywhere in our program
