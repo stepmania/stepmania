@@ -42,26 +42,6 @@ CString JUDGMENT_X_NAME( size_t p, size_t both_sides )		{ return "JudgmentXOffse
 CString COMBO_X_NAME( size_t p, size_t both_sides )			{ return "ComboXOffset" + (both_sides ? CString("BothSides") : ssprintf("OneSideP%d",p+1) ); }
 CString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides ){ return "AttackDisplayXOffset" + (both_sides ? CString("BothSides") : ssprintf("OneSideP%d",p+1) ); }
 
-ThemeMetric<float>		GRAY_ARROWS_Y_STANDARD		("Player","ReceptorArrowsYStandard");
-ThemeMetric<float>		GRAY_ARROWS_Y_REVERSE		("Player","ReceptorArrowsYReverse");
-ThemeMetric2D<float>	JUDGMENT_X					("Player",JUDGMENT_X_NAME,NUM_PLAYERS,2);
-ThemeMetric<float>		JUDGMENT_Y					("Player","JudgmentY");
-ThemeMetric<float>		JUDGMENT_Y_REVERSE			("Player","JudgmentYReverse");
-ThemeMetric2D<float>	COMBO_X						("Player",COMBO_X_NAME,NUM_PLAYERS,2);
-ThemeMetric<float>		COMBO_Y						("Player","ComboY");
-ThemeMetric<float>		COMBO_Y_REVERSE				("Player","ComboYReverse");
-ThemeMetric2D<float>	ATTACK_DISPLAY_X			("Player",ATTACK_DISPLAY_X_NAME,NUM_PLAYERS,2);
-ThemeMetric<float>		ATTACK_DISPLAY_Y			("Player","AttackDisplayY");
-ThemeMetric<float>		ATTACK_DISPLAY_Y_REVERSE	("Player","AttackDisplayYReverse");
-ThemeMetric<float>		HOLD_JUDGMENT_Y_STANDARD	("Player","HoldJudgmentYStandard");
-ThemeMetric<float>		HOLD_JUDGMENT_Y_REVERSE		("Player","HoldJudgmentYReverse");
-ThemeMetric<int>		BRIGHT_GHOST_COMBO_THRESHOLD("Player","BrightGhostComboThreshold");
-ThemeMetric<bool>		TAP_JUDGMENTS_UNDER_FIELD	("Player","TapJudgmentsUnderField");
-ThemeMetric<bool>		HOLD_JUDGMENTS_UNDER_FIELD	("Player","HoldJudgmentsUnderField");
-ThemeMetric<int>		START_DRAWING_AT_PIXELS		("Player","StartDrawingAtPixels");
-ThemeMetric<int>		STOP_DRAWING_AT_PIXELS		("Player","StopDrawingAtPixels");
-ThemeMetric<int>		MAX_PRO_TIMING_ERROR		("Player","MaxProTimingError");
-
 /* Distance to search for a note in Step(), in seconds. */
 static const float StepSearchDistance = 1.0f;
 
@@ -102,6 +82,7 @@ Player::~Player()
 
 /* Init() does the expensive stuff: load sounds and note skins.  Load() just loads a NoteData. */
 void Player::Init(
+	const CString &sType,
 	PlayerState* pPlayerState, 
 	PlayerStageStats* pPlayerStageStats,
 	LifeMeter* pLM, 
@@ -112,6 +93,26 @@ void Player::Init(
 	ScoreKeeper* pPrimaryScoreKeeper, 
 	ScoreKeeper* pSecondaryScoreKeeper )
 {
+	GRAY_ARROWS_Y_STANDARD.Load(sType,"ReceptorArrowsYStandard");
+	GRAY_ARROWS_Y_REVERSE.Load(sType,"ReceptorArrowsYReverse");
+	JUDGMENT_X.Load(sType,JUDGMENT_X_NAME,NUM_PLAYERS,2);
+	JUDGMENT_Y.Load(sType,"JudgmentY");
+	JUDGMENT_Y_REVERSE.Load(sType,"JudgmentYReverse");
+	COMBO_X.Load(sType,COMBO_X_NAME,NUM_PLAYERS,2);
+	COMBO_Y.Load(sType,"ComboY");
+	COMBO_Y_REVERSE.Load(sType,"ComboYReverse");
+	ATTACK_DISPLAY_X.Load(sType,ATTACK_DISPLAY_X_NAME,NUM_PLAYERS,2);
+	ATTACK_DISPLAY_Y.Load(sType,"AttackDisplayY");
+	ATTACK_DISPLAY_Y_REVERSE.Load(sType,"AttackDisplayYReverse");
+	HOLD_JUDGMENT_Y_STANDARD.Load(sType,"HoldJudgmentYStandard");
+	HOLD_JUDGMENT_Y_REVERSE.Load(sType,"HoldJudgmentYReverse");
+	BRIGHT_GHOST_COMBO_THRESHOLD.Load(sType,"BrightGhostComboThreshold");
+	TAP_JUDGMENTS_UNDER_FIELD.Load(sType,"TapJudgmentsUnderField");
+	HOLD_JUDGMENTS_UNDER_FIELD.Load(sType,"HoldJudgmentsUnderField");
+	START_DRAWING_AT_PIXELS.Load(sType,"StartDrawingAtPixels");
+	STOP_DRAWING_AT_PIXELS.Load(sType,"StopDrawingAtPixels");
+	MAX_PRO_TIMING_ERROR.Load(sType,"MaxProTimingError");
+
 	m_pPlayerState = pPlayerState;
 	m_pPlayerStageStats = pPlayerStageStats;
 	m_pLifeMeter = pLM;
@@ -128,7 +129,7 @@ void Player::Init(
 	m_sMessageToSendOnStep = ssprintf("StepP%d",pn+1);
 
 
-	m_soundMine.Load( THEME->GetPathS("Player","mine"), true );
+	m_soundMine.Load( THEME->GetPathS(sType,"mine"), true );
 
 	/* Attacks can be launched in course modes and in battle modes.  They both come
 	 * here to play, but allow loading a different sound for different modes. */
@@ -136,12 +137,12 @@ void Player::Init(
 	{
 	case PLAY_MODE_RAVE:
 	case PLAY_MODE_BATTLE:
-		m_soundAttackLaunch.Load( THEME->GetPathS("Player","battle attack launch"), true );
-		m_soundAttackEnding.Load( THEME->GetPathS("Player","battle attack ending"), true );
+		m_soundAttackLaunch.Load( THEME->GetPathS(sType,"battle attack launch"), true );
+		m_soundAttackEnding.Load( THEME->GetPathS(sType,"battle attack ending"), true );
 		break;
 	default:
-		m_soundAttackLaunch.Load( THEME->GetPathS("Player","course attack launch"), true );
-		m_soundAttackEnding.Load( THEME->GetPathS("Player","course attack ending"), true );
+		m_soundAttackLaunch.Load( THEME->GetPathS(sType,"course attack launch"), true );
+		m_soundAttackEnding.Load( THEME->GetPathS(sType,"course attack ending"), true );
 		break;
 	}
 

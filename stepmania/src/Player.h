@@ -33,6 +33,7 @@ public:
 	virtual void DrawPrimitives();
 
 	void Init( 
+		const CString &sType,
 		PlayerState* pPlayerState, 
 		PlayerStageStats* pPlayerStageStats,
 		LifeMeter* pLM, 
@@ -106,6 +107,26 @@ protected:
 	vector<RageSound> m_vKeysounds;
 
 	CString m_sMessageToSendOnStep;
+
+	ThemeMetric<float>		GRAY_ARROWS_Y_STANDARD;
+	ThemeMetric<float>		GRAY_ARROWS_Y_REVERSE;
+	ThemeMetric2D<float>	JUDGMENT_X;
+	ThemeMetric<float>		JUDGMENT_Y;
+	ThemeMetric<float>		JUDGMENT_Y_REVERSE;
+	ThemeMetric2D<float>	COMBO_X;
+	ThemeMetric<float>		COMBO_Y;
+	ThemeMetric<float>		COMBO_Y_REVERSE;
+	ThemeMetric2D<float>	ATTACK_DISPLAY_X;
+	ThemeMetric<float>		ATTACK_DISPLAY_Y;
+	ThemeMetric<float>		ATTACK_DISPLAY_Y_REVERSE;
+	ThemeMetric<float>		HOLD_JUDGMENT_Y_STANDARD;
+	ThemeMetric<float>		HOLD_JUDGMENT_Y_REVERSE;
+	ThemeMetric<int>		BRIGHT_GHOST_COMBO_THRESHOLD;
+	ThemeMetric<bool>		TAP_JUDGMENTS_UNDER_FIELD;
+	ThemeMetric<bool>		HOLD_JUDGMENTS_UNDER_FIELD;
+	ThemeMetric<int>		START_DRAWING_AT_PIXELS;
+	ThemeMetric<int>		STOP_DRAWING_AT_PIXELS;
+	ThemeMetric<int>		MAX_PRO_TIMING_ERROR;
 };
 
 #endif

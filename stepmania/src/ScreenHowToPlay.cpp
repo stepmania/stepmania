@@ -160,6 +160,7 @@ void ScreenHowToPlay::Init()
 
 		m_pPlayer = new Player;
 		m_pPlayer->Init( 
+			"Player",
 			GAMESTATE->m_pPlayerState[PLAYER_1], 
 			NULL,
 			m_pLifeMeterBar, 

@@ -825,6 +825,7 @@ void ScreenGameplay::SetupSong( PlayerNumber p, int iSongIndex )
 		NoteData nd = ndTransformed;
 		NoteDataUtil::RemoveAllTapsOfType( nd, TapNote::autoKeysound );
 		m_Player[p].Init( 
+			"Player",
 			GAMESTATE->m_pPlayerState[p], 
 			&STATSMAN->m_CurStageStats.m_player[p],
 			m_pLifeMeter[p], 

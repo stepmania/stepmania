@@ -310,6 +310,7 @@ void ScreenGameplayMultiplayer::SetupSong( MultiPlayer p, int iSongIndex )
 		NoteData nd = ndTransformed;
 		NoteDataUtil::RemoveAllTapsOfType( nd, TapNote::autoKeysound );
 		m_AutoPlayer.Init( 
+			"Player",
 			GAMESTATE->m_pPlayerState[ GAMESTATE->m_MasterPlayerNumber ], 
 			NULL, 
 			NULL, 
@@ -322,6 +323,7 @@ void ScreenGameplayMultiplayer::SetupSong( MultiPlayer p, int iSongIndex )
 		m_AutoPlayer.Load( nd );
 		
 		m_HumanPlayer[p].Init( 
+			"Player",
 			&m_PlayerState[p], 
 			&m_PlayerStageStats[p],
 			NULL, 

@@ -561,7 +561,7 @@ void ScreenEdit::Init()
 
 	/* XXX: Do we actually have to send real note data here, and to m_NoteFieldRecord? 
 	 * (We load again on play/record.) */
-	m_Player.Init( GAMESTATE->m_pPlayerState[PLAYER_1], NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
+	m_Player.Init( "Player", GAMESTATE->m_pPlayerState[PLAYER_1], NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
 	m_Player.Load( noteData );
 	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_HUMAN;
 	m_Player.SetXY( PLAYER_X, PLAYER_Y );
