@@ -111,6 +111,7 @@ PrefsManager::PrefsManager()
 	 * already here than lots of people asking why songs aren't being displayed. */
 	m_bHiddenSongs = false;
 	m_bVsync = true;
+	m_sSoundDrivers = DEFAULT_SOUND_DRIVER_LIST;
 	
 	// StepMania.cpp sets these on first run:
 	m_sVideoRenderers = "";
