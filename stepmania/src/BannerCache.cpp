@@ -57,7 +57,7 @@ void BannerCache::LoadAllBanners()
 		SDL_Surface *img = mySDL_LoadSurface( CachePath );
 		if( img == NULL )
 		{
-			LOG->Warn( "Cached banner load of '%s' failed", CachePath.c_str() );
+			LOG->Trace( "Cached banner load of '%s' ('%s') failed", BannerPath.c_str(), CachePath.c_str() );
 			continue;
 		}
 
@@ -65,11 +65,11 @@ void BannerCache::LoadAllBanners()
 	}
 
 	
-	map<CString,SDL_Surface *>::iterator ban;
+	map<CString,SDL_Surface *>::const_iterator ban;
 	int total_size = 0;
 	for( ban = m_BannerPathToImage.begin(); ban != m_BannerPathToImage.end(); ++ban )
 	{
-		SDL_Surface *&img = ban->second;
+		SDL_Surface * const &img = ban->second;
 		const int size = img->pitch * img->h;
 		total_size += size;
 	}
