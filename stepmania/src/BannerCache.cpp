@@ -38,7 +38,7 @@
 BannerCache *BANNERCACHE;
 
 
-map<CString,SDL_Surface *> m_BannerPathToImage;
+static map<CString,SDL_Surface *> m_BannerPathToImage;
 
 CString BannerCache::GetBannerCachePath( CString BannerPath )
 {
@@ -48,7 +48,6 @@ CString BannerCache::GetBannerCachePath( CString BannerPath )
 /* Load all banners that havn't been loaded already. */
 void BannerCache::LoadAllBanners()
 {
-	LOG->Trace("guh %i", PREFSMAN->m_bBannerCache);
 	if( !PREFSMAN->m_bBannerCache )
 		return;
 
@@ -197,6 +196,8 @@ struct BannerTexture: public RageTexture
 
 RageTextureID BannerCache::LoadCachedSongBanner( CString BannerPath )
 {
+	/* XXX: unload first */
+
 	RageTextureID ID( GetBannerCachePath(BannerPath) );
 
 	LOG->Trace("BannerCache::LoadCachedSongBanner(%s): %s", BannerPath.c_str(), ID.filename.c_str() );
@@ -370,9 +371,9 @@ void BannerCache::CacheSongBanner( CString BannerPath )
 		img = dst;
 	}
 
-	CString Path = GetBannerCachePath(BannerPath);
+	CString CachePath = GetBannerCachePath(BannerPath);
 
-	mySDL_SaveSurface( img, Path );
+	mySDL_SaveSurface( img, CachePath );
 
 	if( PREFSMAN->m_bBannerCache )
 		m_BannerPathToImage[BannerPath] = img;
@@ -380,7 +381,7 @@ void BannerCache::CacheSongBanner( CString BannerPath )
 		SDL_FreeSurface(img);
 
 	/* Remember the original size. */
-	BannerData.SetValue ( BannerPath, "Path", Path );
+	BannerData.SetValue ( BannerPath, "Path", CachePath );
 	BannerData.SetValueI( BannerPath, "Width", src_width );
 	BannerData.SetValueI( BannerPath, "Height", src_height );
 	/* Remember this, so we can hint CroppedSprite. */
