@@ -265,7 +265,7 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 	}
 
 	NoteData Original;
-	Original.To4s( in );
+	Original.To2sAnd3s( in );
 
 	out.Config( in );
 	out.SetNumTracks( iNewNumTracks );
@@ -277,28 +277,22 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 	int bOffsetIncreasing = true;
 
 	int iLastMeasure = 0;
+	int iMeasuresSinceChange = 0;
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS( Original, r )
 	{
-		// copy notes in this measure
-		for( int t=0; t<Original.GetNumTracks(); t++ )
-		{
-			int iOldTrack = t;
-			int iNewTrack = (iOldTrack + iCurTrackOffset) % iNewNumTracks;
-			const TapNote &tn = Original.GetTapNote( iOldTrack, r );
-			out.SetTapNote( iNewTrack, r, tn );
-		}
+		const int iMeasure = r / ROWS_PER_MEASURE;
+		if( iMeasure != iLastMeasure )
+			++iMeasuresSinceChange;
 
-		const int iMeasure = (r+1) / ROWS_PER_MEASURE;
-		if( iMeasure / 4 != iLastMeasure / 4 ) // adjust sliding window every 4 measures
+		if( iMeasure != iLastMeasure && iMeasuresSinceChange >= 4 ) // adjust sliding window every 4 measures at most
 		{
 			// See if there is a hold crossing the beginning of this measure
 			bool bHoldCrossesThisMeasure = false;
 
-			if( r )
 			for( int t=0; t<Original.GetNumTracks(); t++ )
 			{
-				if( Original.GetTapNote(t,r).type == TapNote::hold &&
-					Original.GetTapNote(t,r-1).type == TapNote::hold )
+				if( Original.IsHoldNoteAtBeat( t, r-1 ) &&
+				    Original.IsHoldNoteAtBeat( t, r ) )
 				{
 					bHoldCrossesThisMeasure = true;
 					break;
@@ -308,6 +302,7 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 			// adjust offset
 			if( !bHoldCrossesThisMeasure )
 			{
+				iMeasuresSinceChange = 0;
 				iCurTrackOffset += bOffsetIncreasing ? 1 : -1;
 				if( iCurTrackOffset == iTrackOffsetMin  ||  iCurTrackOffset == iTrackOffsetMax )
 					bOffsetIncreasing ^= true;
@@ -316,9 +311,18 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 		}
 
 		iLastMeasure = iMeasure;
+
+		// copy notes in this measure
+		for( int t=0; t<Original.GetNumTracks(); t++ )
+		{
+			int iOldTrack = t;
+			int iNewTrack = (iOldTrack + iCurTrackOffset) % iNewNumTracks;
+			const TapNote &tn = Original.GetTapNote( iOldTrack, r );
+			out.SetTapNote( iNewTrack, r, tn );
+		}
 	}
 
-	out.Convert4sToHoldNotes();
+	out.Convert2sAnd3sToHoldNotes();
 }
 
 void NoteDataUtil::LoadOverlapped( const NoteData &input, NoteData &out, int iNewNumTracks )
