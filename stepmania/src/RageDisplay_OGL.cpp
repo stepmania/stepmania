@@ -27,6 +27,7 @@
 #include "glext.h"
 
 #include "RageFile.h"
+#include "PrefsManager.h" // XXX
 
 /* Windows's broken gl.h defines GL_EXT_paletted_texture incompletely: */
 #ifndef GL_TEXTURE_INDEX_SIZE_EXT
@@ -416,7 +417,7 @@ void RageDisplay_OGL::Update(float fDeltaTime)
 	{
 		/* Disable the screensaver. */
 		ASSERT( g_X11Display );
-		ForceScreenSaver( g_X11Display, ScreenSaverReset );
+		XForceScreenSaver( g_X11Display, ScreenSaverReset );
 	}
 #endif
 }
