@@ -31,7 +31,7 @@ PrefsManager::PrefsManager()
 	m_iDisplayResolution = 640;
 	m_iTextureResolution = 1024;
 	m_iRefreshRate = RageDisplay::REFRESH_DEFAULT;
-	m_bIgnoreJoyAxes = false;
+	m_bIgnoreJoyAxes = true;
 	m_bOnlyDedicatedMenuButtons = false;
 #ifdef _DEBUG
 	m_bShowStats = true;

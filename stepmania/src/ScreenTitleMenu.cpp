@@ -251,6 +251,8 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 
 			ASSERT( GAMESTATE->m_pCurSong );
 
+			GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+
 			// choose some cool options
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
