@@ -551,7 +551,7 @@ void GameState::ResetNoteSkins()
 }
 
 /* From NoteField: */
-extern float g_fNoteFieldLastBeatToDraw;
+extern float g_fNoteFieldLastBeatToDraw[NUM_PLAYERS];
 
 void GameState::LaunchAttack( PlayerNumber target, Attack a )
 {
@@ -576,7 +576,7 @@ void GameState::LaunchAttack( PlayerNumber target, Attack a )
 		 * on screen with this skin. */
 		const float CurBeat = this->m_fSongBeat;
 		/* If reasonable, push the attack forward so notes on screen don't change suddenly. */
-		const float AddBeat = min( CurBeat+16, g_fNoteFieldLastBeatToDraw );
+		const float AddBeat = min( CurBeat+16, g_fNoteFieldLastBeatToDraw[target] );
 
 		const float AddSecond = this->m_pCurSong->GetElapsedTimeFromBeat( CurBeat );
 		const float EndSecond = AddSecond + a.fSecsRemaining;

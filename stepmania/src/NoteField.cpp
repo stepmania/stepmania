@@ -346,7 +346,7 @@ float FindLastDisplayedBeat( PlayerNumber pn, int iLastPixelToDraw )
 	return fLastBeatToDraw;
 }
 
-float g_fNoteFieldLastBeatToDraw = -1;
+float g_fNoteFieldLastBeatToDraw[NUM_PLAYERS] = { -1, -1 };
 
 void NoteField::DrawPrimitives()
 {
@@ -377,7 +377,7 @@ void NoteField::DrawPrimitives()
 	float fLastBeatToDraw = FindLastDisplayedBeat( m_PlayerNumber, iLastPixelToDraw );
 
 	/* Hack: */
-	g_fNoteFieldLastBeatToDraw = fLastBeatToDraw;
+	g_fNoteFieldLastBeatToDraw[m_PlayerNumber] = fLastBeatToDraw;
 
 	const int iFirstIndexToDraw  = BeatToNoteRow(fFirstBeatToDraw);
 	const int iLastIndexToDraw   = BeatToNoteRow(fLastBeatToDraw);
