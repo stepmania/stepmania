@@ -281,7 +281,7 @@ static int ConvertScancodeToKey( int scancode )
 	case DIK_NUMPADENTER: return SDLK_KP_ENTER;
 	case DIK_RCONTROL: return SDLK_RCTRL;
 	case DIK_DIVIDE: return SDLK_KP_DIVIDE;
-	case DIK_SYSRQ: return SDLK_SYSREQ;
+	case DIK_SYSRQ: return SDLK_PRINT;
 	case DIK_RMENU: return SDLK_RALT;
 	case DIK_PAUSE: return SDLK_PAUSE;
 	case DIK_HOME: return SDLK_HOME;

@@ -89,6 +89,11 @@ void InputHandler_SDL::Update(float fDeltaTime)
 		case SDL_KEYUP:
 			{
 			DeviceInput di(DEVICE_KEYBOARD, event.key.keysym.sym);
+
+			/* SDL is inconsistent about this key: */
+			if( di.button == SDLK_SYSREQ )
+				di.button = SDLK_PRINT;
+
 			ButtonPressed(di, event.key.state == SDL_PRESSED);
 			}
 			continue;

@@ -754,7 +754,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 	 * Alt+PrntScrn.  Windows will do this whether or not we save a screenshot 
 	 * ourself by dumping the frame buffer.  */
 	// "if pressing PrintScreen and not pressing Alt"
-	if( DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_SYSREQ) &&
+	if( DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_PRINT) &&
 		!INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) &&
 		!INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
 #else
