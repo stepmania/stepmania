@@ -169,9 +169,9 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 					ASSERT(0);
 			}
 			pNewSteps->SetDifficulty( dc );	// override difficulty with the user's choice
-			CString sPreferredEditName = GetCopyDescription(pSourceSteps);
-			pSong->MakeUniqueEditDescription( st, sPreferredEditName ); 
-			pNewSteps->SetDescription( sPreferredEditName );
+			CString sEditName = GetCopyDescription(pSourceSteps);
+			pSong->MakeUniqueEditDescription( st, sEditName ); 
+			pNewSteps->SetDescription( sEditName );
 			pSong->AddSteps( pNewSteps );
 				
 			SCREENMAN->SystemMessage( "Steps created from AutoGen." );
@@ -193,13 +193,20 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			pNewSteps->CreateBlank( st );
 			pNewSteps->SetDifficulty( dc );
 			pNewSteps->SetMeter( 1 );
-			pNewSteps->SetDescription( "Blank" );
+			CString sEditName = "Blank";
+			pSong->MakeUniqueEditDescription( st, sEditName ); 
+			pNewSteps->SetDescription( sEditName );
 			pSong->AddSteps( pNewSteps );
 		
 			SCREENMAN->SystemMessage( "Blank Steps created." );
 			SOUND->PlayOnce( THEME->GetPathS(m_sName,"create") );
 			m_Selector.RefreshAll();
 			pSong->Save();
+
+			GAMESTATE->m_pCurSong.Set( pSong );
+			GAMESTATE->m_pCurSteps[0].Set( pNewSteps );
+
+			m_Selector.RefreshAll();
 		}
 		return;
 	default:
