@@ -32,7 +32,6 @@
 #define BANNER_WIDTH					THEME->GetMetricF("ScreenSelectGroup","BannerWidth")
 #define BANNER_HEIGHT					THEME->GetMetricF("ScreenSelectGroup","BannerHeight")
 #define SLEEP_AFTER_TWEEN_OFF_SECONDS	THEME->GetMetricF("ScreenSelectGroup","SleepAfterTweenOffSeconds")
-#define NEXT_SCREEN						THEME->GetMetric ("ScreenSelectGroup","NextScreen")
 
 
 ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : ScreenWithMenuElements( sClassName )
@@ -148,13 +147,6 @@ ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : ScreenWithMenuEleme
 }
 
 
-ScreenSelectGroup::~ScreenSelectGroup()
-{
-	LOG->Trace( "ScreenSelectGroup::~ScreenSelectGroup()" );
-
-}
-
-
 void ScreenSelectGroup::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	LOG->Trace( "ScreenSelectGroup::Input()" );
@@ -176,17 +168,9 @@ void ScreenSelectGroup::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_BeginFadingOut:
 		StartTransitioning( SM_GoToNextScreen );
-		break;
-	case SM_MenuTimer:
-		MenuStart(PLAYER_1);
-		break;
-	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
-		break;
-	case SM_GoToNextScreen:
-		SCREENMAN->SetNewScreen( NEXT_SCREEN );
-		break;
+		return;
 	}
+	Screen::HandleScreenMessage( SM );
 }
 
 void ScreenSelectGroup::AfterChange()
