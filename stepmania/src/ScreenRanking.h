@@ -47,6 +47,7 @@ protected:
 
 	Banner m_Banner;	// for course
 	Sprite m_sprBannerFrame;	// for course
+	BitmapText m_textCourseTitle; // for course
 	BitmapText m_textCategory;	// for category
 	BitmapText m_textStepsType;	// for category, course, all_steps
 

@@ -99,6 +99,12 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 		m_textCategory.SetHidden( true );
 		this->AddChild( &m_textCategory );
 
+		m_textCourseTitle.SetName( "CourseTitle" );
+		m_textCourseTitle.LoadFromFont( THEME->GetPathToF("ScreenRanking course title") );
+		m_textCourseTitle.EnableShadow( false );
+		m_textCourseTitle.SetHidden( true );
+		this->AddChild( &m_textCourseTitle );
+
 		m_textStepsType.SetName( "StepsType" );
 		m_textStepsType.LoadFromFont( THEME->GetPathToF("ScreenRanking steps type") );
 		m_textStepsType.EnableShadow( false );
@@ -318,6 +324,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 	bool bBanner = false; 
 	bool bBannerFrame = false;
 	bool bShowCategory = false; 
+	bool bShowCourseTitle = false; 
 	bool bShowStepsType = false; 
 	bool bShowBullets = false; 
 	bool bShowNames = false;
@@ -332,6 +339,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 		bBanner = false; 
 		bBannerFrame = false;
 		bShowCategory = true;
+		bShowCourseTitle = false;
 		bShowStepsType = true;
 		bShowBullets = true;
 		bShowNames = true;
@@ -345,6 +353,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 		bBanner = true; 
 		bBannerFrame = true;
 		bShowCategory = false;
+		bShowCourseTitle = true;
 		bShowStepsType = true;
 		bShowBullets = true;
 		bShowNames = true;
@@ -358,6 +367,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 		bBanner = false; 
 		bBannerFrame = false;
 		bShowCategory = false;
+		bShowCourseTitle = false;
 		bShowStepsType = true;
 		bShowBullets = false;
 		bShowNames = false;
@@ -392,6 +402,13 @@ float ScreenRanking::SetPage( PageToShow pts )
 	{
 		m_textCategory.Reset();
 		SET_XY_AND_ON_COMMAND( m_textCategory );
+	}
+
+	m_textCourseTitle.SetHidden( !bShowCourseTitle );
+	if( bShowCourseTitle )
+	{
+		m_textCourseTitle.Reset();
+		SET_XY_AND_ON_COMMAND( m_textCourseTitle );
 	}
 
 	m_textStepsType.SetHidden( !bShowStepsType );
@@ -553,6 +570,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 		return SECONDS_PER_PAGE;
 	case PageToShow::TYPE_COURSE:
 		{
+			m_textCourseTitle.SetText( pts.pCourse->m_sName );
 			m_Banner.LoadFromCourse( pts.pCourse );
 			m_textStepsType.SetText( GameManager::NotesTypeToString(pts.nt) );
 
@@ -659,6 +677,7 @@ void ScreenRanking::TweenPageOffScreen()
 {
 	OFF_COMMAND( m_Banner );
 	OFF_COMMAND( m_sprBannerFrame );
+	OFF_COMMAND( m_textCourseTitle );
 	OFF_COMMAND( m_textCategory );
 	OFF_COMMAND( m_textStepsType );
 
@@ -673,11 +692,13 @@ void ScreenRanking::TweenPageOffScreen()
 	const unsigned num_songs = SONGMAN->GetAllSongs().size();
 	for( vector<Difficulty>::iterator dc_iter=m_vDiffsToShow.begin(); dc_iter!=m_vDiffsToShow.end(); dc_iter++ )
 	{
-		OFF_COMMAND( m_sprDifficulty[*dc_iter] );
+		if( !m_sprDifficulty[*dc_iter].GetHidden() )
+			OFF_COMMAND( m_sprDifficulty[*dc_iter] );
 		for( unsigned s=0; s<num_songs; s++ )
 		{
 			// m_vpTextStepsScore[*dc_iter][s];			
 		}
 	}
-	OFF_COMMAND( m_ListScoreRowItems );
+	if( !m_ListScoreRowItems.GetHidden() )
+		OFF_COMMAND( m_ListScoreRowItems );
 }
