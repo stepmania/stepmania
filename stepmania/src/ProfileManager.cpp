@@ -500,7 +500,8 @@ HighScore ProfileManager::GetHighScoreForDifficulty( const Song *s, const StyleD
 //
 void ProfileManager::AddCourseScore( const Course* pCourse, StepsType st, CourseDifficulty cd, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
-	if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForHighScore )
+	// Don't use a minimum percentage for Course scores
+//	if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForHighScore )
 	{
 		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
 		if( PROFILEMAN->IsUsingProfile(pn) )
