@@ -16,11 +16,6 @@
 #include "Sprite.h"
 #include "GameConstantsAndTypes.h"
 
-#define MAX_TILES_WIDE (SCREEN_WIDTH/32+2)
-#define MAX_TILES_HIGH (SCREEN_HEIGHT/32+2)
-#define MAX_SPRITES  16
-// (MAX_TILES_WIDE*MAX_TILES_HIGH)
-
 class BGAnimationLayer
 {
 public:
@@ -48,7 +43,7 @@ public:
 
 protected:
 	vector<Actor*> m_pActors;
-	RageVector3 m_vParticleVelocity[MAX_SPRITES];
+	vector<RageVector3> m_vParticleVelocity;
 
 	enum Effect {
 		EFFECT_CENTER,
@@ -99,7 +94,9 @@ protected:
 	// common stuff
 	CString m_sOnCommand;
 	CString m_sOffCommand;
-	float m_fUpdateRate;	// get by GainingFocus
+	float m_fRepeatCommandEverySeconds;	// -1 = no repeat
+	float m_fSecondsUntilRepeatCommand;
+	float m_fUpdateRate;	// set by GainingFocus
 	float m_fFOV;	// -1 = no change
 	bool m_bLighting;
 

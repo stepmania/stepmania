@@ -36,6 +36,9 @@ const float PARTICLE_SPEED = 300;
 const float SPIRAL_MAX_ZOOM = 2;
 const float SPIRAL_MIN_ZOOM = 0.3f;
 
+#define MAX_TILES_WIDE (SCREEN_WIDTH/32+2)
+#define MAX_TILES_HIGH (SCREEN_HEIGHT/32+2)
+#define MAX_SPRITES (MAX_TILES_WIDE*MAX_TILES_HIGH)
 
 
 BGAnimationLayer::BGAnimationLayer()
@@ -59,6 +62,8 @@ void BGAnimationLayer::Init()
 {
 	Unload();
 
+	m_fRepeatCommandEverySeconds = -1;
+	m_fSecondsUntilRepeatCommand = 0;
 	m_fUpdateRate = 1;
 	m_fFOV = -1;	// no change
 	m_bLighting = false;
@@ -67,8 +72,7 @@ void BGAnimationLayer::Init()
 //	m_bCycleAlpha = false;
 //	m_Effect = EFFECT_STRETCH_STILL;
 
-	for( int i=0; i<MAX_SPRITES; i++ )
-		m_vParticleVelocity[i] = RageVector3( 0, 0, 0 );
+	m_vParticleVelocity.clear();
 
 	m_Type = TYPE_SPRITE;
 
@@ -530,6 +534,8 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	ini.GetValue( sLayer, "Type", (int&)m_Type );
 	CLAMP( m_Type, (Type)0, TYPE_INVALID );
 	ini.GetValue( sLayer, "Command", m_sOnCommand );
+	ini.GetValue( sLayer, "CommandRepeatSeconds", m_fRepeatCommandEverySeconds );
+	m_fSecondsUntilRepeatCommand = m_fRepeatCommandEverySeconds;
 	ini.GetValue( sLayer, "OffCommand", m_sOffCommand );
 	ini.GetValue( sLayer, "FOV", m_fFOV );
 	ini.GetValue( sLayer, "Lighting", m_bLighting );
@@ -586,10 +592,10 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 				m_pActors.push_back( pActor );
 				pActor->SetXY( randomf(SCREEN_LEFT,SCREEN_RIGHT), randomf(SCREEN_TOP,SCREEN_BOTTOM) );
 				pActor->SetZoom( randomf(m_fZoomMin,m_fZoomMax) );
-				m_vParticleVelocity[i] = RageVector3( 
+				m_vParticleVelocity.push_back( RageVector3( 
 					randomf(m_fVelocityXMin,m_fVelocityXMax),
 					randomf(m_fVelocityYMin,m_fVelocityYMax),
-					randomf(m_fVelocityZMin,m_fVelocityZMax) );
+					randomf(m_fVelocityZMin,m_fVelocityZMax) ) );
 				if( m_fOverrideSpeed != 0 )
 				{
 					RageVec3Normalize( &m_vParticleVelocity[i], &m_vParticleVelocity[i] );
@@ -720,42 +726,45 @@ void BGAnimationLayer::Update( float fDeltaTime )
 	case TYPE_PARTICLES:
 		for( i=0; i<m_pActors.size(); i++ )
 		{
-			m_pActors[i]->SetX( m_pActors[i]->GetX() + fDeltaTime*m_vParticleVelocity[i].x  );
-			m_pActors[i]->SetY( m_pActors[i]->GetY() + fDeltaTime*m_vParticleVelocity[i].y  );
-			m_pActors[i]->SetZ( m_pActors[i]->GetZ() + fDeltaTime*m_vParticleVelocity[i].z  );
+			Actor* pActor = m_pActors[i];
+			RageVector3 &vel = m_vParticleVelocity[i];
+
+			m_pActors[i]->SetX( pActor->GetX() + fDeltaTime*vel.x );
+			m_pActors[i]->SetY( pActor->GetY() + fDeltaTime*vel.y );
+			pActor->SetZ( pActor->GetZ() + fDeltaTime*vel.z  );
 			if( m_bParticlesBounce )
 			{
-				if( HitGuardRailLeft(m_pActors[i]) )	
+				if( HitGuardRailLeft(pActor) )	
 				{
-					m_vParticleVelocity[i].x *= -1;
-					m_pActors[i]->SetX( GetGuardRailLeft(m_pActors[i]) );
+					vel.x *= -1;
+					pActor->SetX( GetGuardRailLeft(pActor) );
 				}
-				if( HitGuardRailRight(m_pActors[i]) )	
+				if( HitGuardRailRight(pActor) )	
 				{
-					m_vParticleVelocity[i].x *= -1;
-					m_pActors[i]->SetX( GetGuardRailRight(m_pActors[i]) );
+					vel.x *= -1;
+					pActor->SetX( GetGuardRailRight(pActor) );
 				}
-				if( HitGuardRailTop(m_pActors[i]) )	
+				if( HitGuardRailTop(pActor) )	
 				{
-					m_vParticleVelocity[i].y *= -1;
-					m_pActors[i]->SetY( GetGuardRailTop(m_pActors[i]) );
+					vel.y *= -1;
+					pActor->SetY( GetGuardRailTop(pActor) );
 				}
-				if( HitGuardRailBottom(m_pActors[i]) )	
+				if( HitGuardRailBottom(pActor) )	
 				{
-					m_vParticleVelocity[i].y *= -1;
-					m_pActors[i]->SetY( GetGuardRailBottom(m_pActors[i]) );
+					vel.y *= -1;
+					pActor->SetY( GetGuardRailBottom(pActor) );
 				}
 			}
 			else // !m_bParticlesBounce 
 			{
-				if( m_vParticleVelocity[i].x<0  &&  IsOffScreenLeft(m_pActors[i]) )
-					m_pActors[i]->SetX( GetOffScreenRight(m_pActors[i]) );
-				if( m_vParticleVelocity[i].x>0  &&  IsOffScreenRight(m_pActors[i]) )
-					m_pActors[i]->SetX( GetOffScreenLeft(m_pActors[i]) );
-				if( m_vParticleVelocity[i].y<0  &&  IsOffScreenTop(m_pActors[i]) )
-					m_pActors[i]->SetY( GetOffScreenBottom(m_pActors[i]) );
-				if( m_vParticleVelocity[i].y>0  &&  IsOffScreenBottom(m_pActors[i]) )
-					m_pActors[i]->SetY( GetOffScreenTop(m_pActors[i]) );
+				if( vel.x<0  &&  IsOffScreenLeft(pActor) )
+					pActor->SetX( GetOffScreenRight(pActor) );
+				if( vel.x>0  &&  IsOffScreenRight(pActor) )
+					pActor->SetX( GetOffScreenLeft(pActor) );
+				if( vel.y<0  &&  IsOffScreenTop(pActor) )
+					pActor->SetY( GetOffScreenBottom(pActor) );
+				if( vel.y>0  &&  IsOffScreenBottom(pActor) )
+					pActor->SetY( GetOffScreenTop(pActor) );
 			}
 		}
 		break;
@@ -918,6 +927,17 @@ void BGAnimationLayer::Update( float fDeltaTime )
 		
 	}
 	*/
+
+	if( m_fRepeatCommandEverySeconds != -1 )	// if repeating
+	{
+		m_fSecondsUntilRepeatCommand -= fDeltaTime;
+		if( m_fSecondsUntilRepeatCommand <= 0 )
+		{
+			for( unsigned i=0; i<m_pActors.size(); i++ )
+				m_pActors[i]->Command( m_sOnCommand );
+			m_fSecondsUntilRepeatCommand += m_fRepeatCommandEverySeconds;
+		}
+	}
 }
 
 void BGAnimationLayer::Draw()
@@ -981,8 +1001,11 @@ void BGAnimationLayer::GainingFocus( float fRate, bool bRewindMovie, bool bLoop 
 	pSprite->GetTexture()->Play();
 	pSprite->GetTexture()->SetPlaybackRate(fRate);
 
-	for( unsigned i=0; i<m_pActors.size(); i++ )
-		m_pActors[i]->Command( m_sOnCommand );
+	if( m_fRepeatCommandEverySeconds == -1 )	// if not repeating
+	{
+		for( unsigned i=0; i<m_pActors.size(); i++ )
+			m_pActors[i]->Command( m_sOnCommand );
+	}
 }
 
 void BGAnimationLayer::LosingFocus()
