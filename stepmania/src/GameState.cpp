@@ -760,6 +760,14 @@ Character* GameState::GetDefaultCharacter()
 	return NULL;
 }
 
+struct SongAndSteps
+{
+	Song* pSong;
+	Steps* pSteps;
+	bool operator==( const SongAndSteps& other ) { return pSong==other.pSong && pSteps==other.pSteps; }
+	bool operator<( const SongAndSteps& other ) { return pSong<=other.pSong && pSteps<=other.pSteps; }
+};
+
 void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsOut )
 {
 	if( !IsHumanPlayer(pn) )
@@ -769,33 +777,79 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 	{
 	case PLAY_MODE_ARCADE:
 		{
-			int i;
+			unsigned i, j;
 
 			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+
+			//
+			// Find unique Song and Steps combinations that were played.
+			// We must keep only the unique combination or else we'll double-count
+			// high score markers.
+			//
+			vector<SongAndSteps> vSongAndSteps;
+
 			for( i=0; i<(int)m_vPlayedStageStats.size(); i++ )
 			{
-				Song* pSong = m_vPlayedStageStats[i].pSong;
-				ASSERT( pSong );
-				Steps* pSteps = m_vPlayedStageStats[i].pSteps[pn];
-				ASSERT( pSteps );
-				vector<Steps::MemCardData::HighScore> &vHighScores = pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores;
-				for( unsigned j=0; j<vHighScores.size(); j++ )
+				SongAndSteps sas;
+				sas.pSong = m_vPlayedStageStats[i].pSong;
+				ASSERT( sas.pSong );
+				sas.pSteps = m_vPlayedStageStats[i].pSteps[pn];
+				ASSERT( sas.pSteps );
+				vSongAndSteps.push_back( sas );
+			}
+
+			sort( vSongAndSteps.begin(), vSongAndSteps.end() );
+
+			vector<SongAndSteps>::iterator toDelete = unique( vSongAndSteps.begin(), vSongAndSteps.end() );
+			vSongAndSteps.erase(toDelete, vSongAndSteps.end());
+
+			for( i=0; i<(int)vSongAndSteps.size(); i++ )
+			{
+				Song* pSong = vSongAndSteps[i].pSong;
+				Steps* pSteps = vSongAndSteps[i].pSteps;
+
+				// Find Machine Records
+				vector<Steps::MemCardData::HighScore> &vMachineHighScores = pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores;
+				for( j=0; j<vMachineHighScores.size(); j++ )
 				{
-					if( vHighScores[j].sName != RANKING_TO_FILL_IN_MARKER[pn] )
+					if( vMachineHighScores[j].sName != RANKING_TO_FILL_IN_MARKER[pn] )
 						continue;
 
 					RankingFeats feat;
 					feat.Type = RankingFeats::SONG;
-					feat.Feat = ssprintf("No. %d in %s", j+1, pSong->GetFullTranslitTitle().c_str() );
-					feat.pStringToFill = &vHighScores[j].sName;
-					feat.g = vHighScores[j].grade;
-					feat.Score = vHighScores[j].fScore;
+					feat.Feat = ssprintf("MR #%d in %s %s", j+1, pSong->GetTranslitMainTitle().c_str(), DifficultyToString(pSteps->GetDifficulty()).c_str() );
+					feat.pStringToFill = &vMachineHighScores[j].sName;
+					feat.g = vMachineHighScores[j].grade;
+					feat.Score = vMachineHighScores[j].fScore;
 
 					// XXX: temporary hack
 					if( pSong->HasBackground() )
 						feat.Banner = pSong->GetBackgroundPath();
 //					if( pSong->HasBanner() )
 //						feat.Banner = pSong->GetBannerPath();
+
+					asFeatsOut.push_back( feat );
+				}
+		
+				// Find Personal Records
+				vector<Steps::MemCardData::HighScore> &vPersonalHighScores = pSteps->m_MemCardDatas[pn].vHighScores;
+				for( j=0; j<vPersonalHighScores.size(); j++ )
+				{
+					if( vPersonalHighScores[j].sName != RANKING_TO_FILL_IN_MARKER[pn] )
+						continue;
+
+					RankingFeats feat;
+					feat.Type = RankingFeats::SONG;
+					feat.Feat = ssprintf("PR #%d in %s %s", j+1, pSong->GetTranslitMainTitle().c_str(), DifficultyToString(pSteps->GetDifficulty()).c_str() );
+					feat.pStringToFill = &vPersonalHighScores[j].sName;
+					feat.g = vPersonalHighScores[j].grade;
+					feat.Score = vPersonalHighScores[j].fScore;
+
+					// XXX: temporary hack
+					if( pSong->HasBackground() )
+						feat.Banner = pSong->GetBackgroundPath();
+	//					if( pSong->HasBanner() )
+	//						feat.Banner = pSong->GetBannerPath();
 
 					asFeatsOut.push_back( feat );
 				}
@@ -816,7 +870,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 
 					RankingFeats feat;
 					feat.Type = RankingFeats::RANKING;
-					feat.Feat = ssprintf("No. %d in Type %c (%d)", j+1, 'A'+i, stats.iMeter[pn] );
+					feat.Feat = ssprintf("#%d in Type %c (%d)", j+1, 'A'+i, stats.iMeter[pn] );
 					feat.pStringToFill = &vHighScores[j].sName;
 					feat.g = GRADE_NO_DATA;
 					feat.Score = (float) vHighScores[j].iScore;

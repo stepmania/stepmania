@@ -654,19 +654,30 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	//
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( iPersonalHighScoreIndex[p] == 0 )
+		if( iMachineHighScoreIndex[p] != -1 )
 		{
-			m_sprNewRecord[p].Load( THEME->GetPathToG("ScreenEvaluation new record") );
-			m_sprNewRecord[p].SetName( ssprintf("NewRecordP%d",p+1) );
-			UtilSetXYAndOnCommand( m_sprNewRecord[p], "ScreenEvaluation" );
-			this->AddChild( &m_sprNewRecord[p] );
+			m_sprMachineRecord[p].Load( THEME->GetPathToG("ScreenEvaluation machine record") );
+			m_sprMachineRecord[p].SetState( iMachineHighScoreIndex[p] );
+			m_sprMachineRecord[p].StopAnimating();
+			m_sprMachineRecord[p].SetName( ssprintf("MachineRecordP%d",p+1) );
+			UtilSetXYAndOnCommand( m_sprMachineRecord[p], "ScreenEvaluation" );
+			this->AddChild( &m_sprMachineRecord[p] );
+		}
+		if( iPersonalHighScoreIndex[p] != -1 )
+		{
+			m_sprPersonalRecord[p].Load( THEME->GetPathToG("ScreenEvaluation personal record") );
+			m_sprPersonalRecord[p].SetState( iPersonalHighScoreIndex[p] );
+			m_sprPersonalRecord[p].StopAnimating();
+			m_sprPersonalRecord[p].SetName( ssprintf("PersonalRecordP%d",p+1) );
+			UtilSetXYAndOnCommand( m_sprPersonalRecord[p], "ScreenEvaluation" );
+			this->AddChild( &m_sprPersonalRecord[p] );
 		}
 	}
 
-	bool bOneHasNewRecord = false;
+	bool bOneHasNewTopRecord = false;
 	for( p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsPlayerEnabled(p) && iPersonalHighScoreIndex[p] == 0 )
-			bOneHasNewRecord = true;
+		if( GAMESTATE->IsPlayerEnabled(p) && iMachineHighScoreIndex[p] != 0 || iPersonalHighScoreIndex[p] != 0 )
+			bOneHasNewTopRecord = true;
 	
 	if( PREFSMAN->m_bAllowExtraStage && m_bTryExtraStage )
 	{
@@ -680,7 +691,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		else
 			SOUND->PlayOnce( THEME->GetPathToS("ScreenEvaluation try extra1") );
 	}
-	else if( bOneHasNewRecord  &&  ANNOUNCER->HasSoundsFor("evaluation new record") )
+	else if( bOneHasNewTopRecord  &&  ANNOUNCER->HasSoundsFor("evaluation new record") )
 	{
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation new record") );
 	}
@@ -861,7 +872,8 @@ void ScreenEvaluation::TweenOffScreen()
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
-		UtilOffCommand( m_sprNewRecord[p], "ScreenEvaluation" );
+		UtilOffCommand( m_sprMachineRecord[p], "ScreenEvaluation" );
+		UtilOffCommand( m_sprPersonalRecord[p], "ScreenEvaluation" );
 	}
 	UtilOffCommand( m_sprTryExtraStage, "ScreenEvaluation" );
 }

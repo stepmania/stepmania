@@ -74,7 +74,7 @@ public:
 				fScore = 0;
 			}
 
-			bool operator>( const HighScore& other ) const;
+			bool operator>=( const HighScore& other ) const;
 		};
 		vector<HighScore> vHighScores;
 

@@ -53,6 +53,8 @@ ScreenAttract::ScreenAttract( CString sClassName ) : Screen( sClassName )
 
 	if( PREFSMAN->m_bAttractSound )
 		SOUND->PlayMusic( THEME->GetPathToS(m_sName + " music") );
+	else
+		SOUND->PlayMusic( "" );	// stop music
 
 	GAMESTATE->m_bPlayersCanJoin = true;
 

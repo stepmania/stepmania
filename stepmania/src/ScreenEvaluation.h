@@ -100,7 +100,8 @@ protected:
 	BitmapText			m_textTime[NUM_PLAYERS];
 
 	// extra area
-	Sprite				m_sprNewRecord[NUM_PLAYERS];
+	Sprite				m_sprMachineRecord[NUM_PLAYERS];
+	Sprite				m_sprPersonalRecord[NUM_PLAYERS];
 	bool				m_bTryExtraStage;
 	Sprite				m_sprTryExtraStage;
 };

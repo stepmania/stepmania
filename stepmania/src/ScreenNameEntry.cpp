@@ -32,6 +32,7 @@
 #define TIMER_X						THEME->GetMetricF("ScreenNameEntry","TimerX")
 #define TIMER_Y						THEME->GetMetricF("ScreenNameEntry","TimerY")
 #define CATEGORY_Y					THEME->GetMetricF("ScreenNameEntry","CategoryY")
+#define CATEGORY_ZOOM				THEME->GetMetricF("ScreenNameEntry","CategoryZoom")
 #define CHARS_ZOOM_SMALL			THEME->GetMetricF("ScreenNameEntry","CharsZoomSmall")
 #define CHARS_ZOOM_LARGE			THEME->GetMetricF("ScreenNameEntry","CharsZoomLarge")
 #define CHARS_SPACING_Y				THEME->GetMetricF("ScreenNameEntry","CharsSpacingY")
@@ -208,6 +209,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 		m_textCategory[p].LoadFromFont( THEME->GetPathToF("ScreenNameEntry category") );
 		m_textCategory[p].SetX( (float)GAMESTATE->GetCurrentStyleDef()->m_iCenterX[p] );
 		m_textCategory[p].SetY( CATEGORY_Y );
+		m_textCategory[p].SetZoom( CATEGORY_ZOOM );
 		CString joined;
 		for( unsigned j = 0; j < aFeats[p].size(); ++j )
 		{
