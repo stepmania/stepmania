@@ -48,7 +48,7 @@
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
-				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib;libci.lib;libcpmtd.lib"
+				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\../StepMania-debug.pdb"
 				GenerateMapFile="TRUE"
