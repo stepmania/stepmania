@@ -10,27 +10,14 @@
 #include "RageThreads.h"	// Don't make me list everything...
 
 vector<long>		pMasks;				// Currently open masks
-bool			pHaveWin	= false;	// Do we have a window?
 unsigned short int	pCt		= 0;		// Number of subsystems
 							// using the X connection
 
 Display *X11Helper::Dpy = NULL;
 Window X11Helper::Win;
 
-int protoErrorCallback(Display *d, XErrorEvent *err)
-{
-	char errText[512];
-	XGetErrorText(d,  err->error_code, errText, 512);
-	LOG->Warn("X11 Protocol error %s (%d) has occurred, caused by request %d,%d, resource ID %d",
-		errText, err->error_code, err->request_code, err->minor_code, err->resourceid);
-
-	return 0; // Xlib ignores our return value
-}
-
-int protoFatalCallback(Display *d)
-{
-	RageException::Throw("Fatal I/O error communicating with X server.");
-}
+int protoErrorCallback(Display*, XErrorEvent*);
+int protoFatalCallback(Display*);
 
 bool X11Helper::Go()
 {
@@ -49,36 +36,24 @@ bool X11Helper::Go()
 	return true;
 }
 
-static bool pApplyMasks()
+void X11Helper::Stop()
 {
-	unsigned int i;
-	long finalMask = 0;
+	pCt--;
 
-	LOG->Trace("X11Helper: Reapplying event masks.");
-
-	i = 0;
-	while(i < pMasks.size() )
+	if(pCt == 0)
 	{
-		finalMask |= pMasks[i];
-		i++;
+		XCloseDisplay(Dpy);
+		Dpy = NULL;	// For sanity's sake
+		pMasks.clear();
 	}
-
-	if(XSelectInput(X11Helper::Dpy, X11Helper::Win, finalMask) == 0) { return false; }
-
-	return true;
 }
+
+static bool pApplyMasks();
 
 bool X11Helper::OpenMask(long mask)
 {
 	pMasks.push_back(mask);
-	if(pHaveWin)
-	{
-		return pApplyMasks();
-	}
-	else
-	{
-		return true;
-	}
+	return pApplyMasks();
 }
 
 bool X11Helper::CloseMask(long mask)
@@ -93,27 +68,45 @@ bool X11Helper::CloseMask(long mask)
 			pMasks.erase(i);
 			break;
 		}
-		if(i == pMasks.end() ) { return false; }
+		if(i == pMasks.end() ) { return true; }	// Never set in the
+							// first place...
 		i++;
 	}
 
-	if(pHaveWin)
+	return pApplyMasks();
+}
+
+static bool pApplyMasks()
+{
+	if(X11Helper::Dpy != NULL)
 	{
-		return pApplyMasks();
+		long finalMask = 0;
+
+		LOG->Trace("X11Helper: Reapplying event masks.");
+
+		unsigned int i = 0;
+		while(i < pMasks.size() )
+		{
+			finalMask |= pMasks[i];
+			i++;
+		}
+
+		if(XSelectInput(X11Helper::Dpy, X11Helper::Win, finalMask) == 0) { return false; }
 	}
-	else
-	{
-		return true;
-	}
+
+	return true;
 }
 
 bool X11Helper::MakeWindow(int screenNum, int depth, Visual *visual, int width, int height)
 {
+	static bool pHaveWin = false;
 	vector<long>::iterator i;
 	
 	if(pCt == 0) { return false; }
 
 	if(pHaveWin) { XDestroyWindow(Dpy, Win); pHaveWin = false; }
+		// pHaveWin will stay false if an error occurs once I do error
+		// checking here...
 
 	XSetWindowAttributes winAttribs;
 
@@ -140,15 +133,19 @@ bool X11Helper::MakeWindow(int screenNum, int depth, Visual *visual, int width, 
 	return true;
 }
 
-void X11Helper::Stop()
+int protoErrorCallback(Display *d, XErrorEvent *err)
 {
-	pCt--;
+	char errText[512];
+	XGetErrorText(d,  err->error_code, errText, 512);
+	LOG->Warn("X11 Protocol error %s (%d) has occurred, caused by request %d,%d, resource ID %d",
+		errText, err->error_code, err->request_code, err->minor_code, err->resourceid);
 
-	if(pCt == 0)
-	{
-		XCloseDisplay(Dpy);
-		pMasks.clear();
-	}
+	return 0; // Xlib ignores our return value
+}
+
+int protoFatalCallback(Display *d)
+{
+	RageException::Throw("Fatal I/O error communicating with X server.");
 }
 
 /*
