@@ -172,6 +172,15 @@ void MusicWheel::Load()
 		GAMESTATE->m_SongOptions = so;
 	}
 
+	/* Never start in the sort or mode menu.  We won't have a valid m_LastSortOrder
+	 * and some elements may not initialize correctly. */
+	switch( GAMESTATE->m_SortOrder )
+	{
+	case SORT_SORT_MENU:
+	case SORT_MODE_MENU:
+		GAMESTATE->m_SortOrder = SORT_INVALID;
+	}
+
 	switch( GAMESTATE->m_PlayMode )
 	{
 	// in course modes, force a particular sort
