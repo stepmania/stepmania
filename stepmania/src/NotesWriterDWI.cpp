@@ -180,32 +180,41 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 	if( fp == NULL )
 		throw RageException( "Error opening song file '%s' for writing.", sPath );
 
-	fprintf( fp, "#TITLE:%s;\n", out.GetFullTitle() );
-	fprintf( fp, "#ARTIST:%s;\n", out.m_sArtist );
+	if(out.GetFullTitle().GetLength() != 0)
+		fprintf( fp, "#TITLE:%s;\n", out.GetFullTitle() );
+	if(out.m_sArtist.GetLength() != 0)
+		fprintf( fp, "#ARTIST:%s;\n", out.m_sArtist );
 	ASSERT( out.m_BPMSegments[0].m_fStartBeat == 0 );
 	fprintf( fp, "#BPM:%.2f;\n", out.m_BPMSegments[0].m_fBPM );
 	fprintf( fp, "#GAP:%d;\n", -roundf( out.m_fBeat0OffsetInSeconds*1000 ) );
 
-	fprintf( fp, "#FREEZE:" );
-	for( int i=0; i<out.m_StopSegments.GetSize(); i++ )
+	if( out.m_StopSegments.GetSize() )
 	{
-		const StopSegment &fs = out.m_StopSegments[i];
-		fprintf( fp, "%.2f=%.2f", BeatToNoteRow( fs.m_fStartBeat ) / ROWS_PER_BEAT * 4.0f, roundf(fs.m_fStopSeconds*1000) );
-		if( i != out.m_StopSegments.GetSize()-1 )
-			fprintf( fp, "," );
-	}
-	fprintf( fp, ";\n" );
+		fprintf( fp, "#FREEZE:" );
 
-	fprintf( fp, "#CHANGEBPM:" );
-	for( i=1; i<out.m_BPMSegments.GetSize(); i++ )
-	{
-		const BPMSegment &bs = out.m_BPMSegments[i];
-		fprintf( fp, "%.2f=%.2f", BeatToNoteRow( bs.m_fStartBeat ) / ROWS_PER_BEAT * 4.0f, bs.m_fBPM );
-		if( i != out.m_BPMSegments.GetSize()-1 )
-			fprintf( fp, "," );
+		for( int i=0; i<out.m_StopSegments.GetSize(); i++ )
+		{
+			const StopSegment &fs = out.m_StopSegments[i];
+			fprintf( fp, "%.2f=%.2f", BeatToNoteRow( fs.m_fStartBeat ) / ROWS_PER_BEAT * 4.0f, roundf(fs.m_fStopSeconds*1000) );
+			if( i != out.m_StopSegments.GetSize()-1 )
+				fprintf( fp, "," );
+		}
+		fprintf( fp, ";\n" );
 	}
-	fprintf( fp, ";\n" );
-	
+
+	if( out.m_BPMSegments.GetSize() > 1)
+	{
+		fprintf( fp, "#CHANGEBPM:" );
+		for( int i=1; i<out.m_BPMSegments.GetSize(); i++ )
+		{
+			const BPMSegment &bs = out.m_BPMSegments[i];
+			fprintf( fp, "%.2f=%.2f", BeatToNoteRow( bs.m_fStartBeat ) / ROWS_PER_BEAT * 4.0f, bs.m_fBPM );
+			if( i != out.m_BPMSegments.GetSize()-1 )
+				fprintf( fp, "," );
+		}
+		fprintf( fp, ";\n" );
+	}
+
 	/* Save all Notes for this file.
 	 *
 	 * Hmm.  We can have any number of notes for any tag; this means we can
@@ -225,7 +234,7 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 	Notes *c[NUM_DIFFICULTY_CLASSES][2];
 	memset(c, 0, sizeof(c));
 
-	for( i=0; i<out.m_apNotes.GetSize(); i++ ) 
+	for( int i=0; i<out.m_apNotes.GetSize(); i++ ) 
 	{
 		if(out.m_apNotes[i]->m_NotesType == NOTES_TYPE_DANCE_COUPLE_1) {
 			c[out.m_apNotes[i]->m_DifficultyClass][0] = out.m_apNotes[i];
