@@ -52,10 +52,11 @@ public:
 
 
 	// Lookup
-	void GetAllSongs( vector<Song*> &AddTo );
+	void GetAllSongs( vector<Song*> &AddTo ) const;
+	const vector<Song*> &GetAllSongs() const { return m_pSongs; }
 	void GetSongsInGroup( const CString sGroupName, vector<Song*> &AddTo );
-	int GetNumSongs();
-	int GetNumGroups();
+	int GetNumSongs() const;
+	int GetNumGroups() const;
 	Song* GetRandomSong();
 
 	void GetNonstopCourses( vector<Course*> &AddTo );	// add to if life meter type is BAR.

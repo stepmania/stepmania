@@ -369,7 +369,7 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 }
 
 
-void SongManager::GetAllSongs( vector<Song*> &AddTo )
+void SongManager::GetAllSongs( vector<Song*> &AddTo ) const
 {
 	AddTo = m_pSongs;
 }
@@ -386,12 +386,12 @@ void SongManager::GetSongsInGroup( const CString sGroupName, vector<Song*> &AddT
 	}
 }
 
-int SongManager::GetNumSongs()
+int SongManager::GetNumSongs() const
 {
 	return m_pSongs.size();
 }
 
-int SongManager::GetNumGroups()
+int SongManager::GetNumGroups() const
 {
 	return m_arrayGroupNames.size();
 }
@@ -423,11 +423,11 @@ void SongManager::InitCoursesFromDisk()
 	// Load courses from CRS files
 	//
 	CStringArray saCourseFiles;
-	GetDirListing( "Courses\\*.crs", saCourseFiles );
+	GetDirListing( "Courses/*.crs", saCourseFiles, false, true );
 	for( unsigned i=0; i<saCourseFiles.size(); i++ )
 	{
 		Course* pCourse = new Course;
-		pCourse->LoadFromCRSFile( "Courses\\" + saCourseFiles[i], m_pSongs );
+		pCourse->LoadFromCRSFile( saCourseFiles[i], m_pSongs );
 		if( pCourse->GetNumStages() > 0 )
 			m_pCourses.push_back( pCourse );
 		else
