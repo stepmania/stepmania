@@ -12,15 +12,7 @@ BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, 
 
 LoadingWindow_Win32::LoadingWindow_Win32()
 {
-	handle = NULL;
-	hwnd = NULL;
-
-	/* Little trick to get an HINSTANCE of ourself without having access to the hwnd ... */
-	TCHAR szFullAppPath[MAX_PATH];
-	GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
-	handle = LoadLibrary(szFullAppPath);
-
-	hwnd = CreateDialog(handle,	MAKEINTRESOURCE(IDD_LOADING_DIALOG), NULL, WndProc);
+	hwnd = CreateDialog(handle.Get(), MAKEINTRESOURCE(IDD_LOADING_DIALOG), NULL, WndProc);
 
 	SetText("Initializing hardware...");
 	Paint();
@@ -30,8 +22,6 @@ LoadingWindow_Win32::~LoadingWindow_Win32()
 {
 	if(hwnd)
 		EndDialog(hwnd, 0);
-	if(handle)
-		FreeLibrary(handle);
 }
 
 void LoadingWindow_Win32::Paint()

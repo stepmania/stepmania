@@ -4,9 +4,10 @@
 /* Loading window using a Windows dialog. */
 #include "LoadingWindow.h"
 #include <windows.h>
+#include "../../archutils/Win32/AppInstance.h"
 
 class LoadingWindow_Win32: public LoadingWindow {
-	HINSTANCE handle;
+	AppInstance handle;
 	HWND hwnd;
 	CString text;
 
