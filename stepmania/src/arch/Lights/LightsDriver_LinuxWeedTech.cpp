@@ -22,7 +22,7 @@ inline void SerialOut(const char *str, int len)
 {
 	if(fd!=-1) {
 		write(fd,str,len);
-		usleep(4000);
+		usleep(2000);
 	}
 }
 
@@ -117,6 +117,28 @@ void LightsDriver_LinuxWeedTech::Set(const LightsState *ls)
 	bool	bOn = false;
 	
 	{
+		LightsMode	lm = LIGHTSMAN->GetLightsMode();
+		if(lm == LIGHTSMODE_GAMEPLAY) {
+			// Since all cabinet lights flash together during gameplay.. If 1 light is on, all are on.
+			// However, the player's menu buttons do NOT flash. This section allows us to turn
+			// on multiple lights without bogging down the system with delays. ((2ms between commands req.))
+			FOREACH_CabinetLight( cl ) {
+				bOn |= ls->m_bCabinetLights[cl];
+				CurLights.m_bCabinetLights[cl] = ls->m_bCabinetLights[cl];
+			}
+			
+			str[0]='A';
+			str[1]='W';
+			
+			if(bOn)	{str[2]='C'; str[3]='F';}
+			else 	{str[2]='0'; str[3]='0';}
+			
+			// Send command
+			printf("%s\n",str);
+			SerialOut(str, 6);
+			return;
+		}
+		
 		FOREACH_CabinetLight( cl )
 		{
 			// Only send the command if the light has changed states (on/off)
@@ -168,7 +190,7 @@ void LightsDriver_LinuxWeedTech::Set(const LightsState *ls)
 				else	{str[1]='H';}
 				
 				if(str[0]!=0x00) {
-					SerialOut(str, 6);
+					//SerialOut(str, 6);
 					str[0]=0x00;
 				}
 				CurLights.m_bGameButtonLights[gc][gb] = bOn;
