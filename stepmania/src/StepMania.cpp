@@ -237,16 +237,17 @@ static void CheckSettings()
 	 * Actually, Windows lops off a meg or two; cut off a little lower to treat
 	 * 192-meg systems as high-memory. */
 	const bool HighMemory = (Memory >= 190);
+	const bool LowMemory = (Memory < 100); /* 64 and 96-meg systems */
 
 	/* Two memory-consuming features that we can disable are texture caching and
 	 * preloaded banners.  Texture caching can use a lot of memory; disable it for
 	 * low-memory systems. */
 	PREFSMAN->m_bDelayedTextureDelete = HighMemory;
 
-	/* Preloaded banners takes about 9k per song. That adds up with a lot of songs,
-	 * though it's smaller than the actual song data that we preload anyway.  Maybe
-	 * we should disable it for 64-meg systems? */
-	// PREFSMAN->m_bPreloadBanners = !LowMemory;
+	/* Preloaded banners takes about 9k per song. Although it's smaller than the
+	 * actual song data, it still adds up with a lot of songs. Disable it for 64-meg
+	 * systems. */
+	PREFSMAN->m_bBannerCache = !LowMemory;
 
 	PREFSMAN->SaveGlobalPrefsToDisk();
 #endif
@@ -460,6 +461,8 @@ int main(int argc, char* argv[])
 	//
 	GAMESTATE	= new GameState;
 	PREFSMAN	= new PrefsManager;
+	CheckSettings();
+
 	GAMEMAN		= new GameManager;
 	THEME		= new ThemeManager;
 	NOTESKIN	= new NoteSkinManager;
@@ -482,8 +485,6 @@ int main(int argc, char* argv[])
 	/* XXX: Why do we reload global prefs?  PREFSMAN loads them in the ctor. -glenn */
 	PREFSMAN->ReadGlobalPrefsFromDisk( true );
 	PREFSMAN->ReadGamePrefsFromDisk();
-
-	CheckSettings();
 
 	DISPLAY = CreateDisplay();
 	TEXTUREMAN	= new RageTextureManager();

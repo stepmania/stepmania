@@ -4,6 +4,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "BannerCache.h"
+#include "PrefsManager.h"
 #include "SDL_utils.h"
 #include "SDL_dither.h"
 #include "SDL_image.h"
@@ -37,6 +38,10 @@ CString BannerCache::GetBannerCachePath( CString BannerPath )
 /* Load all banners that havn't been loaded already. */
 void BannerCache::LoadAllBanners()
 {
+	LOG->Trace("guh %i", PREFSMAN->m_bBannerCache);
+	if( !PREFSMAN->m_bBannerCache )
+		return;
+
 	/* Load all banners. */
 	IniFile::const_iterator it = BannerData.begin();
 	for( ; it != BannerData.end(); ++it )
@@ -58,6 +63,17 @@ void BannerCache::LoadAllBanners()
 
 		m_BannerPathToImage[BannerPath] = img;
 	}
+
+	
+	map<CString,SDL_Surface *>::iterator ban;
+	int total_size = 0;
+	for( ban = m_BannerPathToImage.begin(); ban != m_BannerPathToImage.end(); ++ban )
+	{
+		const SDL_Surface *&img = ban->second;
+		const int size = img->pitch * img->h;
+		total_size += size;
+	}
+	LOG->Info( "%i bytes of banners loaded", total_size );
 }
 
 void BannerCache::UnloadAllBanners()
@@ -228,6 +244,8 @@ static inline int closest( int num, int n1, int n2 )
 	return n1;
 }
 
+/* We write the cache even if we won't use it, so we don't have to recache everything
+ * if the memory or settings change. */
 void BannerCache::CacheSongBanner( CString BannerPath )
 {
 	SDL_Surface *img = IMG_Load( BannerPath );
@@ -325,7 +343,10 @@ void BannerCache::CacheSongBanner( CString BannerPath )
 
 	mySDL_SaveSurface( img, Path );
 
-	m_BannerPathToImage[BannerPath] = img;
+	if( PREFSMAN->m_bBannerCache )
+		m_BannerPathToImage[BannerPath] = img;
+	else
+		SDL_FreeSurface(img);
 
 	/* Remember the original size. */
 	BannerData.SetValue ( BannerPath, "Path", Path );

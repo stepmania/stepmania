@@ -36,6 +36,7 @@ public:
 	bool			m_bVsync;
 	bool			m_bDelayedTextureDelete;
 	bool			m_bDelayedScreenLoad;
+	bool			m_bBannerCache;
 
 	bool			m_bIgnoreJoyAxes;	
 	bool			m_bOnlyDedicatedMenuButtons;
