@@ -15,7 +15,6 @@ class RageSoundManager
 	/* Set of sounds that we've taken over (and are responsible for deleting
 	 * when they're finished playing): */
 	set<RageSound *> owned_sounds;
-	set<RageSound *> playing_sounds;
 
 	/* A list of all sounds that currently exist. */
 	set<RageSound *> all_sounds;
