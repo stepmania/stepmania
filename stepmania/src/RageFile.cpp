@@ -319,7 +319,7 @@ int RageFile::SeekCur( int offset )
 	return m_FilePos;
 }
 
-int RageFile::GetFileSize()
+int RageFile::GetFileSize() const
 {
 	if( !IsOpen() )
 		RageException::Throw("\"%s\" is not open.", GetPath().c_str());
@@ -327,7 +327,10 @@ int RageFile::GetFileSize()
 	if( !(m_Mode&READ) )
 		RageException::Throw("\"%s\" is not open for reading; can't GetFileSize", GetPath().c_str());
 
-	return m_File->GetFileSize();
+	/* GetFileSize() may need to do non-const-like things--the default implementation reads
+	 * until the end of file to emulate it.  However, it should always restore the state to
+	 * the way it was, so pretend it's const. */
+	return const_cast<RageFileObj*>(m_File)->GetFileSize();
 }
 
 void RageFile::Rewind()
