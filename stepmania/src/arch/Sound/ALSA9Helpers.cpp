@@ -79,6 +79,37 @@ bool Alsa9Buf::SetHWParams()
 	return true;
 }
 
+bool Alsa9Buf::SetSWParams()
+{
+	snd_pcm_sw_params_t *swparams;
+	dsnd_pcm_sw_params_alloca( &swparams );
+	dsnd_pcm_sw_params_current( pcm, swparams );
+
+	int err = dsnd_pcm_sw_params_get_xfer_align( swparams, &xfer_align );
+	ALSA_ASSERT("dsnd_pcm_sw_params_get_xfer_align");
+
+	/* If this fails, we might have bound dsnd_pcm_sw_params_get_xfer_align to
+	 * the old SW API. */
+	ASSERT( err <= 0 );
+	
+	/* Disable SND_PCM_STATE_XRUN. */
+	snd_pcm_uframes_t boundary = 0;
+	err = dsnd_pcm_sw_params_get_boundary( swparams, &boundary );
+	ALSA_ASSERT("dsnd_pcm_sw_params_get_boundary");
+	if( err == 0 )
+	{
+		err = dsnd_pcm_sw_params_set_stop_threshold( pcm, swparams, boundary );
+		ALSA_ASSERT("dsnd_pcm_sw_params_set_stop_threshold");
+		err = dsnd_pcm_sw_params(pcm, swparams);
+		ALSA_ASSERT("dsnd_pcm_sw_params");
+	}
+
+	err = dsnd_pcm_prepare(pcm);
+	ALSA_ASSERT("dsnd_pcm_prepare");
+
+	return true;
+}
+
 void Alsa9Buf::GetSoundCardDebugInfo()
 {
 	static bool done = false;	
@@ -177,31 +208,7 @@ Alsa9Buf::Alsa9Buf( hw hardware, int channels_ )
 		RageException::ThrowNonfatal( "SetHWParams failed" );
 	}
 
-	snd_pcm_sw_params_t *swparams;
-	dsnd_pcm_sw_params_alloca( &swparams );
-	dsnd_pcm_sw_params_current( pcm, swparams );
-
-	err = dsnd_pcm_sw_params_get_xfer_align( swparams, &xfer_align );
-	/* If this fails, we might have bound dsnd_pcm_sw_params_get_xfer_align to
-	 * the old SW API. */
-	ASSERT( err <= 0 );
-	ALSA_ASSERT("dsnd_pcm_sw_params_get_xfer_align");
-	
-	/* Disable SND_PCM_STATE_XRUN. */
-	snd_pcm_uframes_t boundary = 0;
-	err = dsnd_pcm_sw_params_get_boundary( swparams, &boundary );
-	ALSA_ASSERT("dsnd_pcm_sw_params_get_boundary");
-	if( err == 0 )
-	{
-		err = dsnd_pcm_sw_params_set_stop_threshold( pcm, swparams, boundary );
-		ALSA_ASSERT("dsnd_pcm_sw_params_set_stop_threshold");
-		err = dsnd_pcm_sw_params(pcm, swparams);
-		ALSA_ASSERT("dsnd_pcm_sw_params");
-	}
-
-	err = dsnd_pcm_prepare(pcm);
-	ALSA_ASSERT("dsnd_pcm_prepare");
-
+	SetSWParams();
 	total_frames = dsnd_pcm_avail_update(pcm);
 }
 
@@ -234,7 +241,7 @@ int Alsa9Buf::GetNumFramesToFill( int writeahead )
 		}
 	}
 	
-	if( avail_frames < 0 && Recover(avail_frames) )
+	if( avail_frames < 0 )
 		avail_frames = dsnd_pcm_avail_update(pcm);
 
 	if( avail_frames < 0 )
@@ -309,6 +316,7 @@ int Alsa9Buf::GetPosition() const
 	/* delay is returned in frames */
 	snd_pcm_sframes_t delay;
 	int err = dsnd_pcm_delay( pcm, &delay );
+	ALSA_ASSERT("dsnd_pcm_delay");
 
 	return last_cursor_pos - delay;
 }
@@ -337,7 +345,6 @@ void Alsa9Buf::SetSampleRate(int hz)
 	samplerate_set_explicitly = true;
 
 	SetHWParams();
-	
-	dsnd_pcm_prepare( pcm );
+	SetSWParams();
 }
 

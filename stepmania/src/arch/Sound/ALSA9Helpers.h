@@ -21,6 +21,7 @@ private:
 
 	bool Recover( int r );
 	bool SetHWParams();
+	bool SetSWParams();
 
 	static void ErrorHandler(const char *file, int line, const char *function, int err, const char *fmt, ...);
 		
