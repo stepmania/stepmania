@@ -22,7 +22,6 @@
 #include "GhostArrow.h"
 #include "GhostArrowBright.h"
 #include "HoldGhostArrow.h"
-#include "Player.h"
 #include "ActorFrame.h"
 #include "RandomSample.h"
 #include "ScoreDisplayRollingWithFrame.h"

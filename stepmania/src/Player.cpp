@@ -28,9 +28,7 @@ const float SCORE_Y				= SCREEN_HEIGHT - 40;
 const float HOLD_ARROW_NG_TIME	=	0.27f;
 
 
-Player::Player() :
-m_PlayerOptions(),
-m_LifeMeter(m_PlayerOptions)
+Player::Player()
 {
 
 	m_fSongBeat = 0;
@@ -104,7 +102,8 @@ void Player::Load( const StyleDef& StyleDef, PlayerNumber player_no, const Patte
 	m_GrayArrows.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - ARROWS_Y : ARROWS_Y );
 	m_GhostArrows.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - ARROWS_Y : ARROWS_Y );
 	
-
+	// Load options into Life Meter
+	m_LifeMeter.SetPlayerOptions(po);
 }
 
 void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference )
