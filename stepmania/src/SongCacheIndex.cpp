@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "SongCacheIndex.h"
 #include "RageLog.h"
 #include "RageUtil.h"
