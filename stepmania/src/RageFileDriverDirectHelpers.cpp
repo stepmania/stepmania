@@ -278,7 +278,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 	{
 		/* Only log once per dir. */
 		if( LOG && errno != ENOENT )
-			LOG->MapLog("chdir " + sPath, "Couldn't chdir(%s): %s", sPath.c_str(), strerror(errno) );
+			LOG->MapLog("chdir " + root+"/"+sPath, "Couldn't chdir(%s%s): %s", root.c_str(), sPath.c_str(), strerror(errno) );
 		close( OldDir );
 		return;
 	}
