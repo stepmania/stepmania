@@ -100,9 +100,11 @@ ScreenOptions::ScreenOptions( CString sClassName ) : Screen(sClassName)
 	// add everything to m_framePage so we can animate everything at once
 	this->AddChild( &m_framePage );
 
+	m_bMoreShown = false;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_iCurrentRow[p] = 0;
+		m_bWasOnExit[p] = false;
 
 		for( unsigned l=0; l<MAX_OPTION_LINES; l++ )
 			m_iSelectedOption[p][l] = 0;
@@ -305,6 +307,11 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 		m_framePage.AddChild( &m_ScrollBar );
 	}
 
+	m_sprMore.Load( THEME->GetPathToG( "ScreenOptions more") );
+	m_sprMore->SetName( "ScreenOptions", "More" );
+	UtilSetXYAndOnCommand( m_sprMore, "ScreenOptions" );
+	m_framePage.AddChild( m_sprMore );
+
 	switch( m_InputMode )
 	{
 	case INPUTMODE_INDIVIDUAL:
@@ -360,6 +367,7 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 			row.m_OptionIcons[p].FinishTweening();
 		}
 	}
+	m_sprMore->FinishTweening();
 }
 
 ScreenOptions::~ScreenOptions()
@@ -911,7 +919,27 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 
 	/* Update all players, since changing one player can move both cursors. */
 	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
 		TweenCursor( (PlayerNumber) p );
+
+		/* If the last row is EXIT, and is hidden, then show MORE. */
+		const bool ShowMore = m_Rows.back()->Type == Row::ROW_EXIT && m_Rows.back()->m_bHidden;
+		if( m_bMoreShown != ShowMore )
+		{
+			m_bMoreShown = ShowMore;
+			UtilCommand( m_sprMore, "ScreenOptions", ShowMore? "ShowMore":"HideMore" );
+		}
+
+		const bool ExitSelected = m_Rows[m_iCurrentRow[pn]]->Type == Row::ROW_EXIT;
+		if( p == pn || GAMESTATE->GetNumSidesJoined() == 1 )
+		{
+			if( m_bWasOnExit[p] != ExitSelected )
+			{
+				m_bWasOnExit[p] = ExitSelected;
+				UtilCommand( m_sprMore, "ScreenOptions", ssprintf("Exit%sP%i", ExitSelected? "Selected":"Unselected", p+1) );
+			}
+		}
+	}
 
 	const int iCurRow = m_iCurrentRow[pn];
 	const CString text = GetExplanationText( iCurRow );

@@ -144,6 +144,9 @@ private:
 	BitmapText		m_textExplanation[NUM_PLAYERS];
 	DualScrollBar	m_ScrollBar;
 
+	AutoActor		m_sprMore;
+	bool			m_bMoreShown, m_bWasOnExit[NUM_PLAYERS];
+
 	RageSound		m_SoundChangeCol;
 	RageSound		m_SoundNextRow;
 	RageSound		m_SoundPrevRow;
