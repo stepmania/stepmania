@@ -94,7 +94,7 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	 * the image.  Just return an empty surface with only the width and height set. */
 	if( bHeaderOnly )
 	{
-		img = SDL_CreateRGBSurfaceFrom( SDL_SWSURFACE, width, height, 32, 0, 0, 0, 0, NULL );
+		img = SDL_CreateRGBSurfaceFrom( NULL, width, height, 32, width*4, 0, 0, 0, 0 );
 		png_destroy_read_struct( &png, &info_ptr, NULL );
 		if( !img )
 		{
