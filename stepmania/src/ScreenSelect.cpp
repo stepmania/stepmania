@@ -144,7 +144,8 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 {
 //	LOG->Trace( "ScreenSelect::Input()" );
 
-	if( Screen::JoinInput(DeviceI, type, GameI, MenuI, StyleI) )
+	if( MenuI.button == MENU_BUTTON_COIN ||
+		Screen::JoinInput(DeviceI, type, GameI, MenuI, StyleI) )
 	{
 		this->UpdateSelectableChoices();
 		return;	// don't let the screen handle the MENU_START press

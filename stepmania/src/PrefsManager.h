@@ -147,6 +147,7 @@ public:
 	int				m_iCoinsPerCredit;
 	enum Premium { NO_PREMIUM, DOUBLES_PREMIUM, JOINT_PREMIUM };
 	Premium			m_Premium;
+	bool			m_bDelayedCreditsReconcile;
 	bool			m_bPickExtraStage;
 	bool			m_bComboContinuesBetweenSongs;
 	float			m_fLongVerSongSeconds;

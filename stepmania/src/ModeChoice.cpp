@@ -225,6 +225,21 @@ int GetSidesRequiredToPlayStyle( Style style )
 	case StyleDef::ONE_PLAYER_ONE_CREDIT:
 		return 1;
 	case StyleDef::TWO_PLAYERS_TWO_CREDITS:
+	case StyleDef::ONE_PLAYER_TWO_CREDITS:
+		return 2;
+	default:
+		ASSERT(0);
+		return 1;
+	}
+}
+
+int GetCreditsRequiredToPlayStyle( Style style )
+{
+	switch( GAMEMAN->GetStyleDefForStyle(style)->m_StyleType )
+	{
+	case StyleDef::ONE_PLAYER_ONE_CREDIT:
+		return 1;
+	case StyleDef::TWO_PLAYERS_TWO_CREDITS:
 		return 2;
 	case StyleDef::ONE_PLAYER_TWO_CREDITS:
 		return (PREFSMAN->m_Premium == PrefsManager::DOUBLES_PREMIUM) ? 1 : 2;
@@ -270,9 +285,20 @@ bool ModeChoice::IsPlayable( CString *why ) const
 	if ( m_style != STYLE_INVALID )
 	{
 		int iNumSidesJoined = GAMESTATE->GetNumSidesJoined();
+		int iCredits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
+		int iNumSidesPlusCredits = iNumSidesJoined + iCredits;
+		CLAMP( iNumSidesPlusCredits, 0, NUM_PLAYERS );
+		if( PREFSMAN->m_iCoinMode != COIN_PAY )
+			iNumSidesPlusCredits = NUM_PLAYERS;
+
 		int iNumSidesRequired = GetSidesRequiredToPlayStyle(m_style);
+		int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_style);
 		
-		if( iNumSidesRequired != iNumSidesJoined )
+		bool bPlayable = iNumSidesJoined == iNumSidesRequired;
+		if( PREFSMAN->m_bDelayedCreditsReconcile )
+			bPlayable |= iNumSidesJoined < iNumSidesRequired && iNumSidesPlusCredits >= iNumCreditsRequired;
+
+		if( !bPlayable )
 		{
 			if( why )
 				*why = ssprintf( "need %i sides, have %i", iNumSidesRequired, iNumSidesJoined );
@@ -349,6 +375,16 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 	{
 		GAMESTATE->m_CurStyle = m_style;
 
+		// It's possible to choose a style that didn't have enough 
+		// players joined.  If enough players aren't joined, then 
+		// we need to subtract credits for the sides that will be
+		// joined as a result of applying this option.
+		int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_style);
+		int iNumCreditsPaid = GAMESTATE->GetNumSidesJoined();
+		int iNumCreditsOwed = iNumCreditsRequired - iNumCreditsPaid;
+		GAMESTATE->m_iCoins -= iNumCreditsOwed * PREFSMAN->m_iCoinsPerCredit;
+
+
 		// If only one side is joined and we picked a style
 		// that requires both sides, join the other side.
 		switch( GAMEMAN->GetStyleDefForStyle(m_style)->m_StyleType )
@@ -357,9 +393,10 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 			break;
 		case StyleDef::TWO_PLAYERS_TWO_CREDITS:
 		case StyleDef::ONE_PLAYER_TWO_CREDITS:
-			int p;
-			for( p=0; p<NUM_PLAYERS; p++ )
-				GAMESTATE->m_bSideIsJoined[p] = true;
+			{
+				FOREACH_PlayerNumber( p )
+					GAMESTATE->m_bSideIsJoined[p] = true;
+			}
 			break;
 		default:
 			ASSERT(0);
