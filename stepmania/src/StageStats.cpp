@@ -181,7 +181,7 @@ Grade StageStats::GetGrade( PlayerNumber pn ) const
 	LOG->Trace( "GetGrade: Actual: %f, Possible: %f", Actual, Possible );
 
 #define ROUNDING_ERROR 0.00001f
-	Grade grade = GRADE_NO_DATA;
+	Grade grade = GRADE_FAILED;
 
 	float fPercent = (Possible == 0) ? 0 : Actual / Possible;
 
