@@ -12,6 +12,7 @@
 #include "Model.h"
 #include "ModelTypes.h"
 #include "mathlib.h"
+#include "RageMath.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"
 #include "RageTextureManager.h"
@@ -67,7 +68,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
     char szName[MS_MAX_NAME];
     int nFlags, nIndex, i, j;
 
-	ClearBounds (m_vMins, m_vMaxs);
+	RageVec3ClearBounds( m_vMins, m_vMaxs );
 
     while( f.GetLine( szLine ) > 0 && !bError )
     {
@@ -156,7 +157,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                     memcpy( vertex.Vertex, Vertex, sizeof(vertex.Vertex) );
                     memcpy( vertex.uv, uv, sizeof(vertex.uv) );
                     vertex.nBoneIndex = (byte)nIndex;
-					AddPointToBounds (Vertex, m_vMins, m_vMaxs);
+					RageVec3AddToBounds( RageVector3(Vertex), m_vMins, m_vMaxs );
                 }
 
 
@@ -749,6 +750,22 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 	}
 }
 
+void MakeMatrix( matrix_t out, const RageMatrix &in )
+{
+	out[0][0] = in.m[0][0];
+	out[1][0] = in.m[1][0];
+	out[2][0] = in.m[2][0];
+	out[3][0] = in.m[3][0];
+	out[0][1] = in.m[0][1];
+	out[1][1] = in.m[1][1];
+	out[2][1] = in.m[2][1];
+	out[3][1] = in.m[3][1];
+	out[0][2] = in.m[0][2];
+	out[1][2] = in.m[1][2];
+	out[2][2] = in.m[2][2];
+	out[3][2] = in.m[3][2];
+}
+
 float Model::GetCurFrame() { return m_fCurrFrame; };
 
 void Model::SetFrame( float fNewFrame )
@@ -792,7 +809,7 @@ Model::AdvanceFrame (float dt)
 			msVec3 vPos;
 			msVec4 vRot;
 			//
-			// search for the adjaced position keys
+			// search for the adjacent position keys
 			//
 			msPositionKey *pLastPositionKey = 0, *pThisPositionKey = 0;
 			for (j = 0; j < nPositionKeyCount; j++)
@@ -822,9 +839,10 @@ Model::AdvanceFrame (float dt)
 				VectorCopy (pLastPositionKey->Position, vPos);
 			}
 			//
-			// search for the adjaced rotation keys
+			// search for the adjacent rotation keys
 			//
 			matrix_t m;
+			memset( m, 0, sizeof(m) );
 			msRotationKey *pLastRotationKey = 0, *pThisRotationKey = 0;
 			for (j = 0; j < nRotationKeyCount; j++)
 			{
@@ -840,21 +858,18 @@ Model::AdvanceFrame (float dt)
 			{
 				float d = pThisRotationKey->fTime - pLastRotationKey->fTime;
 				float s = (m_fCurrFrame - pLastRotationKey->fTime) / d;
-#if 1
-				msVec4 q1, q2, q;
-				AngleQuaternion (pLastRotationKey->Rotation, q1);
-				AngleQuaternion (pThisRotationKey->Rotation, q2);
-				QuaternionSlerp (q1, q2, s, q);
-				QuaternionMatrix (q, m);
-#else
-				vRot[0] = pLastRotationKey->Rotation[0] + (pThisRotationKey->Rotation[0] - pLastRotationKey->Rotation[0]) * s;
-				vRot[1] = pLastRotationKey->Rotation[1] + (pThisRotationKey->Rotation[1] - pLastRotationKey->Rotation[1]) * s;
-				vRot[2] = pLastRotationKey->Rotation[2] + (pThisRotationKey->Rotation[2] - pLastRotationKey->Rotation[2]) * s;
-				vRot[0] *= 180 / (float) Q_PI;
-				vRot[1] *= 180 / (float) Q_PI;
-				vRot[2] *= 180 / (float) Q_PI;
-				AngleMatrix (vRot, m);
-#endif
+
+				RageVector4 q1a(0,0,0,1);
+				RageQuatFromHPR( &q1a, RageVector3(pLastRotationKey->Rotation) * (180 / PI) );
+				RageVector4 q2a(0,0,0,1);
+				RageQuatFromHPR( &q2a, RageVector3(pThisRotationKey->Rotation) * (180 / PI) );
+				RageVector4 qa;
+				RageQuatSlerp( &qa, q1a, q2a, s );
+
+				RageMatrix mm;
+				RageMatrixFromQuat( &mm, qa );
+
+				MakeMatrix( m, mm );
 			}
 			else if (pLastRotationKey == 0)
 			{
