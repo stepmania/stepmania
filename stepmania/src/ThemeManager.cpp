@@ -105,6 +105,8 @@ CString ClassAndElementToFileName( const CString &sClassName, const CString &sEl
 
 ThemeManager::ThemeManager()
 {
+	THEME = this;	// so that we can Register THEME on construction
+
 	/* We don't have any theme loaded until SwitchThemeAndLanguage is called. */
 	m_sCurThemeName = "";
 	
@@ -280,6 +282,8 @@ void ThemeManager::UpdateLuaGlobals()
 	LUA->SetGlobal( "SCREEN_BOTTOM", (int) SCREEN_BOTTOM );
 	LUA->SetGlobal( "SCREEN_CENTER_X", (int) SCREEN_CENTER_X );
 	LUA->SetGlobal( "SCREEN_CENTER_Y", (int) SCREEN_CENTER_Y );
+	FOREACH_PlayerNumber( pn )
+		LUA->SetGlobal( ssprintf("PLAYER_%d",pn+1), pn );
 
 	/* Run all script files in Lua for all themes.  Start from the deepest fallback
 	 * theme and work outwards. */
@@ -685,12 +689,13 @@ void ThemeManager::EvaluateString( CString &sText )
 
 int ThemeManager::GetMetricI( const CString &sClassName, const CString &sValueName )
 {
-	return atoi( GetMetricRaw(sClassName,sValueName) );
+	CString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
+	return atoi( sValue );
 }
 
 float ThemeManager::GetMetricF( const CString &sClassName, const CString &sValueName )
 {
-	CString sValue = GetMetricRaw( sClassName, sValueName );
+	CString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
 
 #if defined(DEBUG)
 	if( sValueName.Right(1) == "X" || sValueName.Right(1) == "Y" )	// an absolute X or Y position
@@ -710,7 +715,7 @@ float ThemeManager::GetMetricF( const CString &sClassName, const CString &sValue
 // #include "LuaManager.h"
 bool ThemeManager::GetMetricB( const CString &sClassName, const CString &sValueName )
 {
-	CString sValue = GetMetricRaw( sClassName,sValueName );
+	CString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
 
 	/* Watch out: "0" and "1" are not false and true in Lua (all string values are
 	 * true).  Make sure that we catch all values that are supposed to be simple
@@ -729,8 +734,10 @@ bool ThemeManager::GetMetricB( const CString &sClassName, const CString &sValueN
 
 RageColor ThemeManager::GetMetricC( const CString &sClassName, const CString &sValueName )
 {
+	CString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
+
 	RageColor ret(1,1,1,1);
-	if( !ret.FromString( GetMetricRaw(sClassName,sValueName) ) )
+	if( !ret.FromString(sValue) )
 		LOG->Warn( "The color value '%s' for metric '%s : %s' is invalid.", GetMetricRaw(sClassName,sValueName).c_str(), sClassName.c_str(), sValueName.c_str() );
 	return ret;
 }
@@ -743,7 +750,8 @@ Commands ThemeManager::GetMetricM( const CString &sClassName, const CString &sVa
 
 apActorCommands ThemeManager::GetMetricA( const CString &sClassName, const CString &sValueName )
 {
-	return apActorCommands( new ActorCommands( ParseCommands( GetMetricRaw(sClassName,sValueName) ) ) );
+	CString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
+	return apActorCommands( new ActorCommands( ParseCommands( sValue ) ) );
 }
 
 void ThemeManager::NextTheme()
@@ -807,6 +815,35 @@ void ThemeManager::GetMetric( const CString &sClassName, const CString &sValueNa
 {
 	valueOut = GetMetricA( sClassName, sValueName ); 
 }
+
+
+// lua start
+#include "LuaBinding.h"
+
+template<class T>
+class LunaThemeManager : public Luna<T>
+{
+public:
+	LunaThemeManager() { LUA->Register( Register ); }
+
+	static int GetMetric( T* p, lua_State *L )		{ lua_pushstring(L, p->GetMetric(SArg(1),SArg(2)) ); return 1; }
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( GetMetric )
+		Luna<T>::Register( L );
+
+		// add global singleton
+		ASSERT( THEME );
+		lua_pushstring(L, "THEME");
+		THEME->PushSelf( LUA->L );
+		lua_settable(L, LUA_GLOBALSINDEX);
+	}
+};
+
+LUA_REGISTER_CLASS( ThemeManager )
+// lua end
+
 
 /*
  * (c) 2001-2004 Chris Danford

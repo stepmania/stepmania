@@ -12,6 +12,7 @@
 
 class IThemeMetric;
 class IniFile;
+struct lua_State;
 
 enum ElementCategory { BGAnimations, Fonts, Graphics, Numbers, Sounds, Other, NUM_ELEMENT_CATEGORIES };
 
@@ -81,6 +82,8 @@ public:
 	static void Subscribe( IThemeMetric *p );
 	static void Unsubscribe( IThemeMetric *p );
 
+	// Lua
+	virtual void PushSelf( lua_State *L );
 
 protected:
 	void LoadThemeRecursive( deque<Theme> &theme, const CString &sThemeName );
