@@ -497,3 +497,8 @@ float UnlockSystem::UnlockToasty()
 
 	return ToastyPoints;
 }
+
+int UnlockSystem::GetNumUnlocks() const
+{
+	return m_SongEntries.size();
+}

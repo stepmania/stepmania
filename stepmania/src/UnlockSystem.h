@@ -72,6 +72,9 @@ public:
 	// All locked songs are stored here
 	vector<SongEntry>	m_SongEntries;	
 
+	// Gets number of unlocks for title screen
+	int GetNumUnlocks() const;
+
 	// functions that add to values
 	float UnlockAddAP(Grade credit);
 	float UnlockAddAP(float credit);
