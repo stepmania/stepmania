@@ -5,6 +5,7 @@
 #include "archutils/Xbox/VirtualMemory.h"
 
 #include <xtl.h> // for XNetStartup
+#include <new.h> // for _set_new_handler and _set_new_mode
 
 typedef struct _UNICODE_STRING {unsigned short Length; unsigned short MaximumLength; PSTR Buffer;} UNICODE_STRING,*PUNICODE_STRING;
 extern "C" XBOXAPI DWORD WINAPI IoCreateSymbolicLink(IN PUNICODE_STRING SymbolicLinkName,IN PUNICODE_STRING DeviceName);
