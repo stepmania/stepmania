@@ -27,7 +27,7 @@ const float SPIRAL_MIN_ZOOM = 0.3f;
 #define MAX_TILES_HIGH int(SCREEN_HEIGHT/32+2)
 #define MAX_SPRITES (MAX_TILES_WIDE*MAX_TILES_HIGH)
 
-#define FullScreenRectI RectI((int)SCREEN_LEFT,(int)SCREEN_TOP,(int)SCREEN_RIGHT,(int)SCREEN_BOTTOM)
+#define FullScreenRectF RectF(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM)
 
 
 BGAnimationLayer::BGAnimationLayer( bool Generic )
@@ -132,7 +132,7 @@ void BGAnimationLayer::LoadFromStaticGraphic( CString sPath )
 	Init();
 	Sprite* pSprite = new Sprite;
 	pSprite->LoadBG( sPath );
-	pSprite->StretchTo( FullScreenRectI );
+	pSprite->StretchTo( FullScreenRectF );
 	m_SubActors.push_back( pSprite );
 }
 
@@ -141,7 +141,7 @@ void BGAnimationLayer::LoadFromMovie( CString sMoviePath )
 	Init();
 	Sprite* pSprite = new Sprite;
 	pSprite->LoadBG( sMoviePath );
-	pSprite->StretchTo( FullScreenRectI );
+	pSprite->StretchTo( FullScreenRectF );
 	pSprite->GetTexture()->Pause();
 	m_SubActors.push_back( pSprite );
 }
@@ -152,7 +152,7 @@ void BGAnimationLayer::LoadFromVisualization( CString sMoviePath )
 	Sprite* pSprite = new Sprite;
 	m_SubActors.push_back( pSprite );
 	pSprite->LoadBG( sMoviePath );
-	pSprite->StretchTo( FullScreenRectI );
+	pSprite->StretchTo( FullScreenRectF );
 	pSprite->SetBlendMode( BLEND_ADD );
 }
 
@@ -239,7 +239,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 			RageTextureID ID(sPath);
 			ID.bStretch = true;
 			pSprite->LoadBG( ID );
-			pSprite->StretchTo( FullScreenRectI );
+			pSprite->StretchTo( FullScreenRectF );
 			pSprite->SetCustomTextureRect( RectF(0,0,1,1) );
 
 			switch( effect )
@@ -258,13 +258,13 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 			Sprite* pSprite = new Sprite;
 			m_SubActors.push_back( pSprite );
 			pSprite->LoadBG( sPath );
-			const RectI StretchedFullScreenRectI(
-				FullScreenRectI.left-200,
-				FullScreenRectI.top-200,
-				FullScreenRectI.right+200,
-				FullScreenRectI.bottom+200 );
+			const RectF StretchedFullScreenRectF(
+				FullScreenRectF.left-200,
+				FullScreenRectF.top-200,
+				FullScreenRectF.right+200,
+				FullScreenRectF.bottom+200 );
 
-			pSprite->ScaleToCover( StretchedFullScreenRectI );
+			pSprite->ScaleToCover( StretchedFullScreenRectF );
 			pSprite->SetEffectSpin( RageVector3(0,0,60) );
 		}
 		break;
@@ -453,7 +453,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 		CString expr;
 		if( ini.GetValue(sLayer,"Cond",expr) || ini.GetValue(sLayer,"Condition",expr) )
 		{
-			if( !Lua::RunExpression( expr ) )
+			if( !Lua::RunExpressionB( expr ) )
 				return;
 		}
 	}
@@ -570,7 +570,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 			if( !m_bGeneric )
 			{
 				if( Stretch )
-					pActor->StretchTo( FullScreenRectI );
+					pActor->StretchTo( FullScreenRectF );
 				else
 					pActor->SetXY( CENTER_X, CENTER_Y );
 			}
@@ -591,8 +591,8 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 			{
 				Actor* pActor = MakeActor( sPath );
 				m_SubActors.push_back( pActor );
-				pActor->SetXY( randomf(float(FullScreenRectI.left),float(FullScreenRectI.right)),
-							   randomf(float(FullScreenRectI.top),float(FullScreenRectI.bottom)) );
+				pActor->SetXY( randomf(float(FullScreenRectF.left),float(FullScreenRectF.right)),
+							   randomf(float(FullScreenRectF.top),float(FullScreenRectF.bottom)) );
 				pActor->SetZoom( randomf(m_fZoomMin,m_fZoomMax) );
 				m_vParticleVelocity.push_back( RageVector3( 
 					randomf(m_fVelocityXMin,m_fVelocityXMax),
@@ -936,7 +936,7 @@ bool BGAnimationLayer::EarlyAbortDraw()
 	if( m_sDrawCond.empty() )
 		return false;
 
-	if( !Lua::RunExpression( m_sDrawCond ) )
+	if( !Lua::RunExpressionB( m_sDrawCond ) )
 		return true;
 
 	return false;
