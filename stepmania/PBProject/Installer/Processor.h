@@ -19,8 +19,8 @@ using namespace std;
 class Processor
 {
 private:
-    typedef void (*handleFileFunc)(const CString& file, const CString& dir, const CString& archivePath,
-                                   bool overwrite);
+    typedef void (*handleFileFunc)(const CString& file, const CString& dir,
+								   const CString& archivePath);
     typedef const CString (*getPathFunc)(const CString& ID);
     typedef void (*errorFunc)(const char *fmt, ...);
     typedef bool (*askFunc)(const CString& question);

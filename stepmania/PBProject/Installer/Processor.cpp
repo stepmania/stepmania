@@ -40,34 +40,7 @@ mError(Processor::DefaultError), mInstalling(i)
     getwd(cwd);
     mCWD = cwd;
     mConditionals["INSTALLING"] = i;
-
-    if (mInstalling)
-    {
-        if (!DoesFileExist(path))
-            throw CString("Archive file not present.");
-        
-        char archivePath[] = "/tmp/installerXXXXXX.tar";
-        int fd = mkstemps(archivePath, 4);
-
-        if (fd == -1)
-            throw CString("Couldn't create temporary file");
-
-        mPath = archivePath;
-
-        char toolPath[] = "/usr/bin/gunzip";
-        
-        try {
-            if(CallTool2(true, -1, fd, -1, toolPath, "-c", path.c_str(), NULL))
-                throw CString("Archive file not handled correctly.");
-        } catch (CString& e) {
-            close(fd);
-            unlink(mPath);
-            throw;
-        }
-        close(fd);
-    }
-    else
-        mPath = path;
+	mPath = path;
 }
 
 Processor::~Processor()
@@ -124,7 +97,11 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
 			}
         
 			if (mInstalling)
-				(*mHandleFile)(file, dir, mPath, ResolveConditional(parts[2]));
+			{
+				if (ResolveConditional(parts[2]))
+					rm_rf(dir + '/' + file);
+				(*mHandleFile)(file, dir, mPath);
+			}
 			else
 			{				
 				if (IsADirectory((dir == "/" ? dir : dir + "/" ) + file))
@@ -138,12 +115,12 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
 					fchdir(fd);
 					close(fd);
 					if (list.size() == 0) //empty dir or ignored dir
-						(*mHandleFile)(file, dir, mPath, true);
+						(*mHandleFile)(file, dir, mPath);
 					for (unsigned i=0; i<list.size(); ++i)
-						(*mHandleFile)(list[i], dir, mPath, true);
+						(*mHandleFile)(list[i], dir, mPath);
 				}
 				else
-					(*mHandleFile)(file, dir, mPath, true);
+					(*mHandleFile)(file, dir, mPath);
 			}
 		}
 		else if (parts.size() == 4)
@@ -171,17 +148,19 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
 				fDir = mCWD;
 			}
 			if (mInstalling)
-				(*mHandleFile)(fFile, fDir, mPath,
-							   ResolveConditional(parts[3]));
+			{
+				if (ResolveConditional(parts[3]))
+					rm_rf(fDir + '/' + fFile);
+				(*mHandleFile)(fFile, fDir, mPath);
+			}
 			else
 			{
 				// Now the fun part
 				char temp[] = "/tmp/tmpXXXXXX";
 				CString dir;
 				size_t pos = fFile.find_last_of('/');
-				char arg1[] = "-r";
-				char tool1[] = "/bin/cp";
-				char tool2[] = "/bin/rm";
+				char arg[] = "-R";
+				char tool[] = "/bin/cp";
 				
 				mkdtemp(temp);
 				dir.Format("%s/%s/%s", temp, fDir == mCWD ? "." : fDir.c_str(),
@@ -193,7 +172,7 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
 							dir.c_str());
 					exit(-1);
 				}
-				if (CallTool(tool1, arg1, (iDir + "/" + iFile).c_str(),
+				if (CallTool(tool, arg, (iDir + "/" + iFile).c_str(),
 							 dir.c_str(), NULL))
 				{
 					fprintf(stderr, "Couldn't copy file(s).\n");
@@ -211,15 +190,13 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
 					fchdir(fd);
 					close(fd);
 					if (list.size() == 0)
-						(*mHandleFile)(fFile, temp, mPath, true);
+						(*mHandleFile)(fFile, temp, mPath);
 					for (unsigned i=0; i<list.size(); ++i)
-						(*mHandleFile)(list[i], temp, mPath, true);
+						(*mHandleFile)(list[i], temp, mPath);
 				}
 				else
-					(*mHandleFile)(fFile, temp, mPath, true);
-				char arg[] = "-rf";
-				
-				CallTool(tool2, arg, temp, NULL);
+					(*mHandleFile)(fFile, temp, mPath);
+				rm_rf(temp);
 			}
 		}
 		else
@@ -357,29 +334,8 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
         
         if (path[0] != '/')
             path = mCWD + "/" + path;
-
-        if (IsADirectory(path))
-        {
-            CStringArray files, dirs;
-            FileListingForDirectoryWithIgnore(path, files, dirs, set<CString>(), false);
-            for (unsigned i=0; i<files.size(); ++i)
-            {
-                if (unlink(files[i]))
-                    (*mError)("%s", strerror(errno));
-            }
-
-            while (!dirs.empty())
-            {
-                if (rmdir(dirs.back()))
-                    (*mError)("%s", strerror(errno));
-                dirs.pop_back();
-            }
-        }
-        else if (DoesFileExist(path))
-        {
-            if (unlink(path))
-                (*mError)("%s", strerror(errno));
-        }
+		
+		rm_rf(path);
         
         return;
     }

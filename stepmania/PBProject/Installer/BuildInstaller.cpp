@@ -25,34 +25,20 @@ using namespace std;
 #include "Util.h"
 
 void HandleFile(const CString& file, const CString& dir,
-				const CString& archivePath, bool overwrite)
+				const CString& archivePath)
 {
-    static bool archiveMade = false;
-    char path[] = "/usr/bin/tar";
-    char arg1[] = "-rf";
-    char arg2[archivePath.length() + 1];
-    char arg3[] = "-C";
-    char arg4[dir.length() + 1];
-    char arg5[file.length() + 1];
-
-    if (!archiveMade)
-    {
-        arg1[1] = 'c';
-        archiveMade = true;
-    }
-
-    strcpy(arg2, archivePath);
-    strcpy(arg4, dir);
-    strcpy(arg5, file);
-
-    int r;
-    if ((r = CallTool2(true, -1, -1, -1, path, arg1, arg2, arg3, arg4,
-                       arg5, NULL)) != 0)
-    {
-        fprintf(stderr, "%s %s %s %s %s %s returned %d\n",
-                path, arg1, arg2, arg3, arg4, arg5, r);
-        exit(-10);
-    }
+	CString from = dir + '/' + file;
+	CString to = archivePath + '/' + file;
+	char copy[] = "/bin/cp";
+	char arg[] = "-R";
+	
+	MakeAllButLast(to);
+	if (CallTool(copy, arg, from.c_str(), to.c_str(), NULL))
+	{
+		fprintf(stderr, "Couldn't copy file from \"%s\" to \"%s\".",
+				from.c_str(), to.c_str());
+		exit(-10);
+	}
 }
 
 const CString GetPath(const CString& ID)
@@ -139,21 +125,12 @@ int main(int argc, char *argv[])
         return 4;
     }
 
-    CString archivePath = outDir + "/archive.tar";
+	CString archivePath = outDir;
 
     Processor p(archivePath, HandleFile, GetPath, NULL, false);
 
     while (nextLine < config.GetNumLines())
         p.ProcessLine(config.GetLine(nextLine), nextLine);
-
-    printf("Compressing the archive.\n");
-    
-    char toolPath[] = "/usr/bin/gzip";
-    if (CallTool(toolPath, archivePath.c_str(), NULL))
-    {
-        printf("Gzip failed.\n");
-        return 6;
-    }
 
     if (!config.WriteFile(outDir + "/config"))
     {

@@ -19,6 +19,8 @@ CString LastPathComponent(const CString& path);
 void FileListingForDirectoryWithIgnore(const CString& path, CStringArray& list, CStringArray& dirs,
                                        const set<CString>& ignore, bool ignoreDot = true);
 int mkdir_p(const CString& path);
+int MakeAllButLast(const CString& path);
+void rm_rf(const CString& path);
 int CallTool3(bool blocking, int fd_in, int fd_out, int fd_err, const char *path, char *const *arguments);
 inline int CallTool(char *path, ...) { return CallTool3(true, -1, -1, -1, path, &path); }
 inline int CallTool2(bool blocking, int fd_in, int fd_out, int fd_err, char *path, ...)

@@ -120,6 +120,47 @@ err:
     return ret;
 }
 
+int MakeAllButLast(const CString& path)
+{
+	size_t i = path.find_last_of("/");
+	
+	if (i == path.npos)
+		return 0;
+	CString dir = path.substr(0, i);
+	printf("%s -> %s\n", path.c_str(), dir.c_str());
+	return mkdir_p(dir);
+}
+
+void rm_rf(const CString& path)
+{
+	printf("deleting %s\n", path.c_str());
+	if (IsADirectory(path))
+	{
+		CStringArray files, dirs;
+		FileListingForDirectoryWithIgnore(path, files, dirs, set<CString>(), false);
+		for (unsigned i=0; i<files.size(); ++i)
+		{
+			if (unlink(files[i]))
+				fputs(strerror(errno), stderr);
+		}
+		
+		while (!dirs.empty())
+		{
+			if (rmdir(dirs.back()))
+				fputs(strerror(errno), stderr);
+			dirs.pop_back();
+		}
+		if (rmdir(path))
+			fputs(strerror(errno), stderr);
+	}
+	else if (DoesFileExist(path))
+	{
+		if (unlink(path))
+			fputs(strerror(errno), stderr);
+	}
+	assert(!DoesFileExist(path));
+}
+
 int CallTool3(bool blocking, int fd_in, int fd_out, int fd_err, const char *path, char *const *arguments)
 {
     if (!DoesFileExist(path))

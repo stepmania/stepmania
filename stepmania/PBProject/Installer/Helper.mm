@@ -22,28 +22,26 @@ void Error(const char *fmt, ...);
 static id c;
 
 void HandleFile(const CString& file, const CString& dir,
-				const CString& archivePath, bool overwrite)
+				const CString& archivePath)
 {
     NSString *filePath = [NSString stringWithCString:dir];
 
     filePath = [filePath stringByAppendingFormat:@"%s%s",
 						 (dir == "/" ? "" : "/"), file.c_str()];
-    if (!overwrite && DoesFileExist([filePath cString]))
-        return;
     [c postMessage:filePath];
     /* This is rediculus */
-    char f[file.length() + 1];
-    char d[dir.length() + 1];
-    char p[archivePath.length() + 1];
-    char path[] = "/usr/bin/tar";
-    char arg1[] = "-xPf";
-    char arg3[] = "-C";
-    char *const arguments[] = {path, arg1, p, arg3, d, f, NULL};
-
-    strcpy(p, archivePath);
-    strcpy(d, dir);
-    strcpy(f, file);
-
+	char path[] = "/bin/cp";
+	char arg[] = "-RP";
+	CString fromString = archivePath + '/' + file;
+	char from[fromString.length() + 1];
+	CString toString = dir + '/' + file;
+	char to[toString.length() + 1];
+	char *const arguments[] = {path, arg, from, to, NULL};
+	
+	strcpy(from, fromString);
+	strcpy(to, toString);
+	MakeAllButLast(to);
+	
 	int fd_dev_null = open("/dev/null", O_RDWR, 0);
 
     if (CallTool3(true, -1, fd_dev_null, fileno(stderr), path, arguments))
@@ -131,7 +129,8 @@ void Echo(const CString& message, bool loud)
     c = caller;
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     CString configPath = [mPath cString];
-    CString archivePath = configPath + "/archive.tar.gz";
+    //CString archivePath = configPath + "/archive.tar.gz";
+	CString archivePath = configPath;
     BOOL success = NO;
 
     configPath += "/config";
