@@ -69,7 +69,7 @@ void ScreenRaveOptions::ImportOptions()
 		}
 		else if( GAMESTATE->IsCpuPlayer(p) )
 		{
-			PlayerNumber pnHuman = OPPOSITE_PLAYER[pnHuman];
+			PlayerNumber pnHuman = OPPOSITE_PLAYER[p];
 
 			m_iSelectedOption[pnHuman][RO_CPU_SKILL]		= GAMESTATE->m_iCpuSkill[p];
 			CLAMP( m_iSelectedOption[pnHuman][RO_CPU_SKILL], 0, 10 );
