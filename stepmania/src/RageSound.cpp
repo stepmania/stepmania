@@ -569,11 +569,11 @@ int RageSound::GetPositionSecondsInternal() const
 	}
 
 	/* If we don't yet have any position data, GetPCM hasn't yet been called at all,
-	 * so report the static position. */
+	 * so guess what we think the real time is. */
 	if(pos_map.empty())
 	{
 		LOG->Trace("no data yet; %i", position);
-		return position;
+		return position - int(samplerate()*SOUNDMAN->GetPlayLatency());
 	}
 
 	/* Get our current hardware position. */
@@ -605,7 +605,7 @@ int RageSound::GetPositionSecondsInternal() const
 		dist = abs(pos_map[i].sampleno + pos_map[i].samples - cur_sample);
 		if(dist < closest_position_dist)
 		{
-			closest_position_dist = dist + pos_map[i].samples;
+			closest_position_dist = dist;
 			closest_position = pos_map[i].position + pos_map[i].samples + dist;
 		}
 	}
