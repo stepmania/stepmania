@@ -13,6 +13,7 @@
 #define TIMER_STEALTH			THEME->GetMetricB(m_sName,"TimerStealth")
 #define STYLE_ICON				THEME->GetMetricB(m_sName,"StyleIcon")
 #define MEMORY_CARD_ICONS		THEME->GetMetricB(m_sName,"MemoryCardIcons")
+#define FORCE_TIMER			THEME->GetMetricB(m_sName,"ForceTimer")
 
 //REGISTER_SCREEN_CLASS( ScreenWithMenuElements );
 ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( sClassName )
@@ -110,7 +111,7 @@ ScreenWithMenuElements::~ScreenWithMenuElements()
 
 void ScreenWithMenuElements::ResetTimer()
 {
-	if( TIMER_SECONDS > 0.0f  &&  PREFSMAN->m_bMenuTimer  &&  !GAMESTATE->m_bEditing )
+	if( TIMER_SECONDS > 0.0f  &&  (PREFSMAN->m_bMenuTimer || FORCE_TIMER)  &&  !GAMESTATE->m_bEditing )
 	{
 		m_MenuTimer->SetSeconds( TIMER_SECONDS );
 		m_MenuTimer->Start();
