@@ -277,9 +277,10 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, int iNumAdditions )
 {
 	ASSERT( iNumTapsInRow >= 1 );
-	int iNumTapsToScore = iNumTapsInRow-iNumAdditions;
+	int iNumTapsToScore = iNumTapsInRow; //-iNumAdditions;
 
 	// Update dance points.  Additions don't count.
+	// (yes they do)
 	if( iNumTapsToScore > 0 )
 	{
 		GAMESTATE->m_CurStageStats.iActualDancePoints[m_PlayerNumber] += TapNoteScoreToDancePoints( scoreOfLastTap );
