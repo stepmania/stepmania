@@ -4,10 +4,6 @@
 #include "RageSoundReader_FileReader.h"
 #include "SDL_utils.h"
 
-struct fmt_t;
-struct ADPCMCOEFSET;
-struct ADPCMBLOCKHEADER;
-
 class RageSoundReader_WAV: public SoundReader_FileReader
 {
     FILE *rw;
@@ -31,8 +27,7 @@ class RageSoundReader_WAV: public SoundReader_FileReader
 	{
 		Uint16 cbSize;
 		Uint16 wSamplesPerBlock;
-		Uint16 wNumCoef;
-		ADPCMCOEFSET *aCoef;
+		vector<Sint16> Coef1, Coef2;
 
 		ADPCMBLOCKHEADER blockheaders[2]; /* 2 channels */
 		Uint32 samples_left_in_block;
@@ -40,12 +35,8 @@ class RageSoundReader_WAV: public SoundReader_FileReader
 		Sint8 nibble;
 
 		adpcm_t();
-		~adpcm_t() { Dealloc(); }
-		adpcm_t( const adpcm_t &cpy );
-		void Alloc();
-		void Dealloc();
 	};
-	struct adpcm_t adpcm;
+	adpcm_t adpcm;
 	CString filename;
 
 	enum DataType_t { FORMAT_PCM=0, FORMAT_ADPCM=1 } DataType;

@@ -46,11 +46,6 @@ enum
 	FMT_ADPCM =2    /* ADPCM compressed waveform data. */
 };
 
-struct ADPCMCOEFSET
-{
-	Sint16 iCoef1, iCoef2;
-};
-
 /* Call this to convert milliseconds to an actual byte position, based on audio data characteristics. */
 Uint32 RageSoundReader_WAV::ConvertMsToBytePos(int BytesPerSample, int channels, Uint32 ms) const
 {
@@ -132,37 +127,14 @@ bool RageSoundReader_WAV::read_uint8(FILE *rw, Uint8 *ui8) const
 
 RageSoundReader_WAV::adpcm_t::adpcm_t()
 {
-	memset( this, 0, sizeof(*this) );
+	cbSize = 0;
+	memset( blockheaders, 0, sizeof(blockheaders) );
+	wSamplesPerBlock = 0;
+	samples_left_in_block = 0;
+	nibble_state = 0;
+	nibble = 0;
 }
 
-RageSoundReader_WAV::adpcm_t::adpcm_t( const adpcm_t &cpy )
-{
-	memset( this, 0, sizeof(*this) );
-
-	this->cbSize = cpy.cbSize;
-	memcpy( this->blockheaders, cpy.blockheaders, sizeof(this->blockheaders) );
-	this->wSamplesPerBlock = cpy.wSamplesPerBlock;
-	this->wNumCoef = cpy.wNumCoef;
-	this->samples_left_in_block = cpy.samples_left_in_block;
-	this->nibble_state = cpy.nibble_state;
-	this->nibble = cpy.nibble;
-	Alloc();
-}
-
-void RageSoundReader_WAV::adpcm_t::Alloc()
-{
-	Dealloc();
-
-	ASSERT( wNumCoef != 0 );
-
-	aCoef = new ADPCMCOEFSET[wNumCoef];
-}
-
-void RageSoundReader_WAV::adpcm_t::Dealloc()
-{
-	delete [] aCoef;
-	aCoef = NULL;
-}
 
 bool RageSoundReader_WAV::read_fmt_chunk()
 {
@@ -177,14 +149,17 @@ bool RageSoundReader_WAV::read_fmt_chunk()
     {
 		RETURN_IF_MACRO(!read_le16(rw, &adpcm.cbSize), false);
 		RETURN_IF_MACRO(!read_le16(rw, &adpcm.wSamplesPerBlock), false);
-		RETURN_IF_MACRO(!read_le16(rw, &adpcm.wNumCoef), false);
+		Uint16 NumCoef;
+		RETURN_IF_MACRO(!read_le16(rw, &NumCoef), false);
 
-		adpcm.Alloc();
-
-		for (int i = 0; i < adpcm.wNumCoef; i++)
+		for ( int i = 0; i < NumCoef; i++ )
 		{
-			RETURN_IF_MACRO(!read_le16(rw, &adpcm.aCoef[i].iCoef1), false);
-			RETURN_IF_MACRO(!read_le16(rw, &adpcm.aCoef[i].iCoef2), false);
+			Sint16 c1, c2;
+			RETURN_IF_MACRO(!read_le16(rw, &c1), false);
+			RETURN_IF_MACRO(!read_le16(rw, &c2), false);
+
+			adpcm.Coef1.push_back( c1 );
+			adpcm.Coef2.push_back( c2 );
 		}
 	}
 
@@ -319,8 +294,8 @@ bool RageSoundReader_WAV::decode_adpcm_sample_frame()
 	Uint8 nib = adpcm.nibble;
 	for (int i = 0; i < this->fmt.wChannels; i++)
 	{
-		const Sint16 iCoef1 = adpcm.aCoef[headers[i].bPredictor].iCoef1;
-		const Sint16 iCoef2 = adpcm.aCoef[headers[i].bPredictor].iCoef2;
+		const Sint16 iCoef1 = adpcm.Coef1[headers[i].bPredictor];
+		const Sint16 iCoef2 = adpcm.Coef2[headers[i].bPredictor];
 		const Sint32 lPredSamp = ((headers[i].iSamp[0] * iCoef1) +
 			(headers[i].iSamp[1] * iCoef2)) / FIXED_POINT_COEF_BASE;
 
