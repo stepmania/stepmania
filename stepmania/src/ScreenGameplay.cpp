@@ -1096,6 +1096,7 @@ void ScreenGameplay::LoadNextSong()
 	//
 	// Load cabinet lights data
 	//
+	if( LIGHTSMAN->IsEnabled() )
 	{
 		m_CabinetLightsNoteData.Init();
 		ASSERT( GAMESTATE->m_pCurSong );
