@@ -1069,12 +1069,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="CroppedSprite.h">
 			</File>
 			<File
-				RelativePath="DifficultyDisplay.cpp">
-			</File>
-			<File
-				RelativePath="DifficultyDisplay.h">
-			</File>
-			<File
 				RelativePath="DifficultyIcon.cpp">
 			</File>
 			<File
@@ -1119,6 +1113,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="CourseEntryDisplay.h">
+			</File>
+			<File
+				RelativePath="DifficultyDisplay.cpp">
+			</File>
+			<File
+				RelativePath="DifficultyDisplay.h">
 			</File>
 			<File
 				RelativePath="DifficultyMeter.cpp">
