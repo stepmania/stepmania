@@ -9,6 +9,9 @@ Fixed OpenGL crashes in X11R6.7.0.
 Fixed toasties not always showing.
 Fixed cursor not moving if p2 is on beginner when p1 moves to page 2 during difficulty selection.
 Fixed statistics for the current game not being saved if Alt-F4 is pressed mid-game.
+Fixed difficulty icon placement in reverse course songs.
+Fixed "Exception: CryptAcquireContext" error.
+Stats.html is no longer written by default.
 Editor: Fixed assertion failure playing long songs.
 Steps and calories still count after failing a stage.
 ScreenSelectCourse is now based on ScreenSelectMusic.
