@@ -7,7 +7,7 @@ H denotes task on hold.
 
 TODO As of: 07:47:PM 12/09/02
 
-* Get internet connection back (evil BT!! Changed their TOS and didn't tell me!)
+X Get internet connection back (evil BT!! Changed their TOS and didn't tell me!)
 X Put the graphics artists work onto the project
 X Add credits for the ez2 graphics team :)
 X Add PARA Gametype
@@ -20,7 +20,7 @@ TODO As of: 11:42:PM 05/09/02
 TODO As of: 01:29:AM 04/09/02
 
 X Fix Ez2dancer SelectPlayer Theme Metrics
-- Try to fix ez2dancer select style.
+X Try to fix ez2dancer select style.
 * Create Ez2dancer style Gameover by making some Gameover Metrics.
 * Create Ez2dancer style End Scroll, possibly new class, possibly just metric changes.
 * Create Ez2dancer style song select.
@@ -31,7 +31,7 @@ X Fix Ez2dancer type stage screens
 * Modify Gameplay Screen Metrics so that Ez2dancer style screen is more arcade-accurate
 * Modify DEMO Play Screen so that Ez2dancer shows each style (double, real, e.t.c.) in the way it should.
 * Create Ez2dancer HowToPlay screens.
-* Modify Pump Style Select So it is more arcade accurate.
-* Update the rather tacky graphics.
+- Modify Pump Style Select So it is more arcade accurate.
+- Update the rather tacky graphics.
 
 * Keep my sanity.
