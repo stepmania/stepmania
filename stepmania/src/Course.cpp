@@ -441,7 +441,7 @@ void Course::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS], int iDan
 //
 // Sorting stuff
 //
-static int CompareCoursePointersByDifficulty(const Course* pCourse1, const Course* pCourse2)
+static bool CompareCoursePointersByDifficulty(const Course* pCourse1, const Course* pCourse2)
 {
 	return pCourse1->GetEstimatedNumStages() < pCourse2->GetEstimatedNumStages();
 }
