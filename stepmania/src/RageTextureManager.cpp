@@ -229,8 +229,26 @@ void RageTextureManager::ReloadAll()
  * associated with a different texture).  Ack. */
 void RageTextureManager::InvalidateTextures()
 {
-	for( std::map<RageTextureID, RageTexture*>::iterator i = m_mapPathToTexture.begin();
-		i != m_mapPathToTexture.end(); ++i)
+	/* We're going to have to reload all loaded textures.  Let's get rid
+	 * of all unreferenced textures, so we don't reload a ton of cached
+	 * data that we're not necessarily going to use. */
+	std::map<RageTextureID, RageTexture*>::iterator i;
+	for( i = m_mapPathToTexture.begin();
+		i != m_mapPathToTexture.end(); )
+	{
+		std::map<RageTextureID, RageTexture*>::iterator j = i;
+		i++;
+
+		CString sPath = j->first.filename;
+		RageTexture* pTexture = j->second;
+		if( pTexture->m_iRefCount==0 )
+		{
+			SAFE_DELETE( pTexture );		// free the texture
+			m_mapPathToTexture.erase(j);	// and remove the key in the map
+		}
+	}
+
+	for( i = m_mapPathToTexture.begin(); i != m_mapPathToTexture.end(); ++i)
 	{
 		RageTexture* pTexture = i->second;
 		pTexture->Invalidate();
