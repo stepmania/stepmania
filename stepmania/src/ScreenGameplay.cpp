@@ -537,7 +537,7 @@ bool ScreenGameplay::IsLastSong()
 			if( pCourse->m_bRepeat )
 				return false;
 			else
-                return GAMESTATE->GetCourseSongIndex() == (int)m_apCourseSongs.size();
+                return GAMESTATE->GetCourseSongIndex()+1 == (int)m_apCourseSongs.size(); // GetCourseSongIndex() is 0-based but size() is not
 		}
 		break;
 	default:
