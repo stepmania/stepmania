@@ -97,10 +97,6 @@ static void ChangeToDirOfExecutable(const char *argv0)
 	}
 }
 
-//-----------------------------------------------------------------------------
-// Name: ApplyGraphicOptions()
-// Desc:
-//-----------------------------------------------------------------------------
 void ApplyGraphicOptions()
 { 
 	bool ReloadTextures = DISPLAY->SetVideoMode( 
@@ -142,10 +138,6 @@ void SetIcon()
 	SDL_FreeSurface(srf);
 }
 
-//-----------------------------------------------------------------------------
-// Name: WinMain()
-// Desc: Application entry point
-//-----------------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
 	ChangeToDirOfExecutable(argv[0]);
