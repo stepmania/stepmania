@@ -291,7 +291,8 @@ OSStatus RageSound_CA::OverloadListener(AudioDeviceID inDevice,
 		Output += ssprintf( "%.3f ", g_fLastMixTimes[pos] );
 	}
 
-	LOG->Warn( "Audio overload.  Last IOProc time: %f IOProc calls: %i (%s)",
+	if( g_iNumIOProcCalls >= 100 )
+		LOG->Warn( "Audio overload.  Last IOProc time: %f IOProc calls: %i (%s)",
 			   g_fLastIOProcTime, g_iNumIOProcCalls, Output.c_str() );
 	g_iNumIOProcCalls = 0;
 	return noErr;
