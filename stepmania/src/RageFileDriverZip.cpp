@@ -69,22 +69,23 @@ struct end_central_dir_record
 class RageFileObjZipDeflated: public RageFileObj
 {
 private:
-	const FileInfo &info;
+	int m_iUncompressedSize;
 	RageFileBasic *m_pFile;
-	int CFilePos, UFilePos;
+	int m_iFilePos;
 
 	z_stream dstrm;
 	char decomp_buf[INBUFSIZE], *decomp_buf_ptr;
 	int decomp_buf_avail;
 
 public:
-	RageFileObjZipDeflated( RageFileBasic *pFile, const FileInfo &info );
+	/* pFile will be freed. */
+	RageFileObjZipDeflated( RageFileBasic *pFile, int iUncompressedSize );
 	RageFileObjZipDeflated( const RageFileObjZipDeflated &cpy );
 	~RageFileObjZipDeflated();
 	int ReadInternal( void *pBuffer, size_t iBytes );
 	int WriteInternal( const void *pBuffer, size_t iBytes ) { SetError( "Not implemented" ); return -1; }
 	int SeekInternal( int iOffset );
-	int GetFileSize() const { return info.uncompr_size; }
+	int GetFileSize() const { return m_iUncompressedSize; }
 	RageFileBasic *Copy() const
 	{
 		RageException::Throw( "Loading ZIPs from deflated ZIPs is currently disabled; see RageFileObjZipDeflated" );
@@ -101,6 +102,7 @@ private:
 	int m_iOffset, m_iFileSize;
 
 public:
+	/* pFile will be freed. */
 	RageFileObjZipStored( RageFileBasic *pFile, int iOffset, int iFileSize );
 	~RageFileObjZipStored();
 
@@ -432,12 +434,13 @@ RageFileBasic *RageFileDriverZip::Open( const CString &path, int mode, int &err 
 
 	zip.Seek( info->data_offset );
 
+	RageFileBasic *pFile = new RageFileObjZipStored( zip.Copy(), info->data_offset, info->compr_size );
 	switch( info->compression_method )
 	{
 	case STORED:
-		return new RageFileObjZipStored( zip.Copy(), info->data_offset, info->uncompr_size );
+		return pFile;
 	case DEFLATED:
-		return new RageFileObjZipDeflated( zip.Copy(), *info );
+		return new RageFileObjZipDeflated( pFile, info->uncompr_size );
 	default:
 		/* unknown compression method */
 		ASSERT( 0 );
@@ -452,13 +455,11 @@ void RageFileDriverZip::FlushDirCache( const CString &sPath )
 
 }
 
-/* We make a copy of the RageFile: multiple files may read from the same ZIP at once;
- * this way, we don't have to keep seeking around. */
-RageFileObjZipDeflated::RageFileObjZipDeflated( RageFileBasic *pFile, const FileInfo &info_ ):
-	info(info_)
+RageFileObjZipDeflated::RageFileObjZipDeflated( RageFileBasic *pFile, int iUncompressedSize )
 {
 	m_pFile = pFile;
 	decomp_buf_avail = 0;
+	m_iUncompressedSize = iUncompressedSize;
 
 	dstrm.zalloc = Z_NULL;
 	dstrm.zfree = Z_NULL;
@@ -470,12 +471,11 @@ RageFileObjZipDeflated::RageFileObjZipDeflated( RageFileBasic *pFile, const File
 		LOG->Trace( "Huh? inflateInit2() err = %i", err );
 
 	decomp_buf_ptr = decomp_buf;
-	CFilePos = UFilePos = 0;
+	m_iFilePos = 0;
 }
 
 RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFileObjZipDeflated &cpy ):
-	RageFileObj( cpy ),
-	info( cpy.info )
+	RageFileObj( cpy )
 {
 	/* XXX completely untested */
 	/* Copy the entire decode state. */
@@ -487,8 +487,7 @@ RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFileObjZipDeflated &cp
 
 	decomp_buf_ptr = decomp_buf + (cpy.decomp_buf_ptr - cpy.decomp_buf);
 	decomp_buf_avail = cpy.decomp_buf_avail;
-	CFilePos = cpy.CFilePos;
-	UFilePos = cpy.UFilePos;
+	m_iFilePos = cpy.m_iFilePos;
 	*/
 }
 
@@ -506,7 +505,7 @@ int RageFileObjZipDeflated::ReadInternal( void *buf, size_t bytes )
 {
 	bool done=false;
 	int ret = 0;
-	while( bytes && CFilePos < (int) info.compr_size && !done )
+	while( bytes && !done )
 	{
 		if ( !decomp_buf_avail )
 		{
@@ -549,12 +548,11 @@ int RageFileObjZipDeflated::ReadInternal( void *buf, size_t bytes )
 		}
 
 		const int used = (char *)dstrm.next_in - decomp_buf_ptr;
-		CFilePos += used;
 		decomp_buf_ptr += used;
 		decomp_buf_avail -= used;
 
 		const int got = (char *)dstrm.next_out - (char *)buf;
-		UFilePos += got;
+		m_iFilePos += got;
 		ret += got;
 		buf = (char *)buf + got;
 		bytes -= got;
@@ -567,29 +565,27 @@ int RageFileObjZipDeflated::SeekInternal( int iPos )
 {
 	/* Optimization: if offset is the end of the file, it's a lseek(0,SEEK_END).  Don't
 	 * decode anything. */
-	if( iPos >= (int) info.uncompr_size )
+	if( iPos >= m_iUncompressedSize )
 	{
-		UFilePos = info.uncompr_size;
-		CFilePos = info.compr_size;
-		m_pFile->Seek( info.data_offset + info.compr_size );
+		m_iFilePos = m_iUncompressedSize;
+		m_pFile->Seek( m_pFile->GetFileSize() );
 		decomp_buf_ptr = decomp_buf;
 		decomp_buf_avail = 0;
 		inflateReset( &dstrm );
-		return info.uncompr_size;
+		return m_iUncompressedSize;
 	}
 
-	if( iPos < UFilePos )
+	if( iPos < m_iFilePos )
 	{
 		inflateReset( &dstrm );
 		decomp_buf_ptr = decomp_buf;
 		decomp_buf_avail = 0;
 
-		m_pFile->Seek( info.data_offset );
-		CFilePos = 0;
-		UFilePos = 0;
+		m_pFile->Seek( 0 );
+		m_iFilePos = 0;
 	}
 
-	int iOffset = iPos - UFilePos;
+	int iOffset = iPos - m_iFilePos;
 
 	/* Can this be optimized? */
 	char buf[1024*4];
@@ -604,7 +600,7 @@ int RageFileObjZipDeflated::SeekInternal( int iPos )
 		iOffset -= got;
 	}
 
-	return UFilePos;
+	return m_iFilePos;
 }
 
 RageFileObjZipStored::RageFileObjZipStored( RageFileBasic *pFile, int iOffset, int iFileSize )
