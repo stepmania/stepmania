@@ -401,12 +401,18 @@ static void child_process()
         /* keep going */
     }
 
-    FILE *CrashDump = fopen("/tmp/crashinfo.txt", "w+");
-    if(CrashDump == NULL)
-    {
-        fprintf(stderr, "Couldn't open /tmp/crashinfo.txt: %s\n", strerror(errno));
-        exit(1);
-    }
+	const char *home = getenv( "HOME" );
+	CString sCrashInfoPath = "/tmp";
+	if( home )
+		sCrashInfoPath = home;
+	sCrashInfoPath += "/crashinfo.txt";
+
+	FILE *CrashDump = fopen( sCrashInfoPath, "w+" );
+	if(CrashDump == NULL)
+	{
+		fprintf( stderr, "Couldn't open " + sCrashInfoPath + ": %s\n", strerror(errno) );
+		exit(1);
+	}
 
     fprintf(CrashDump, "%s crash report", PRODUCT_NAME_VER );
 #if defined(HAVE_VERSION_INFO)
@@ -481,13 +487,13 @@ static void child_process()
     fclose(CrashDump);
 
 #if defined(DARWIN)
-    InformUserOfCrash();
+    InformUserOfCrash( sCrashInfoPath );
 #else
     fprintf(stderr,
             "\n"
             PRODUCT_NAME " has crashed.  Debug information has been output to\n"
             "\n"
-            "    /tmp/crashinfo.txt\n"
+            "    " + sCrashInfoPath + "\n"
             "\n"
             "Please report a bug at:\n"
             "\n"
