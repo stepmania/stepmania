@@ -729,6 +729,5 @@ Character* GameState::GetDefaultCharacter()
 			return m_pCharacters[i];
 	}
 
-	ASSERT(0);
 	return NULL;
 }
