@@ -200,12 +200,21 @@ void CourseID::FromCourse( const Course *p )
 
 Course *CourseID::ToCourse() const
 {
-	Course* pCourse = NULL;
-	pCourse = SONGMAN->GetCourseFromPath( sPath );
-	if( pCourse ) 
-		return pCourse;
-	pCourse = SONGMAN->GetCourseFromName( sFullTitle );
-		return pCourse;
+	if( !sPath.empty() )
+	{
+		Course *pCourse = SONGMAN->GetCourseFromPath( sPath );
+		if( pCourse ) 
+			return pCourse;
+	}
+
+	if( !sFullTitle.empty() )
+	{
+		Course *pCourse = SONGMAN->GetCourseFromName( sFullTitle );
+		if( pCourse ) 
+			return pCourse;
+	}
+
+	return NULL;
 }
 
 XNode* CourseID::CreateNode() const
