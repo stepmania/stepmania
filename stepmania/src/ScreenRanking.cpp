@@ -74,6 +74,7 @@ static int g_iLastSongShown = 0;
 #define NUM_SONGS_TO_SHOW			THEME->GetMetricI("ScreenRanking","NumSongsToShow")
 #define NOTES_TYPES_TO_HIDE			THEME->GetMetric ("ScreenRanking","NotesTypesToHide")
 #define EMPTY_SCORE_NAME			THEME->GetMetric ("ScreenRanking","EmptyScoreName")
+#define NO_SCORE_NAME				THEME->GetMetric ("ScreenRanking","NoScoreName")
 #define DIFFICULTIES_TO_SHOW		THEME->GetMetric ("ScreenRanking","DifficultiesToShow")
 
 #define COURSES_TO_SHOW			PREFSMAN->m_sCoursesToShowRanking
