@@ -825,6 +825,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="PlayerOptions.h">
 			</File>
 			<File
+				RelativePath="PlayerStageStats.cpp">
+			</File>
+			<File
+				RelativePath="PlayerStageStats.h">
+			</File>
+			<File
 				RelativePath="PlayerState.cpp">
 			</File>
 			<File

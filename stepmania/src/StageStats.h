@@ -1,98 +1,13 @@
 /* StageStats - Contains statistics for one stage of play - either one song, or a whole course. */
 
-#ifndef STAGE_STATS_H
-#define STAGE_STATS_H
+#ifndef StageStats_H
+#define StageStats_H
 
 #include "PlayerNumber.h"
-#include "GameConstantsAndTypes.h"
-#include "Grade.h"
-#include "RadarValues.h"
-#include <map>
+#include "PlayerStageStats.h"
 class Song;
-class Steps;
 class Style;
 
-struct PlayerStageStats
-{
-	PlayerStageStats() { Init(); }
-	void Init();
-
-	void AddStats( const PlayerStageStats& other );		// accumulate
-
-	Grade GetGrade() const;
-	float GetPercentDancePoints() const;
-	vector<Steps*>  vpSteps;
-	float	fAliveSeconds;		// how far into the music did they last before failing?  Updated by Gameplay, scaled by music rate.
-
-	/* Set if the player actually failed at any point during the song.  This is always
-	 * false in FAIL_OFF.  If recovery is enabled and two players are playing,
-	 * this is only set if both players were failing at the same time. */
-	bool	bFailed;
-
-	/* This indicates whether the player bottomed out his bar/ran out of lives at some
-	 * point during the song.  It's set in all fail modes. */
-	bool	bFailedEarlier;
-	int		iPossibleDancePoints;
-	int		iActualDancePoints;
-	int		iTapNoteScores[NUM_TAP_NOTE_SCORES];
-	int		iHoldNoteScores[NUM_HOLD_NOTE_SCORES];
-	int		iCurCombo;
-	int		iMaxCombo;
-	int		iCurMissCombo;
-	int		iScore;
-	int		iCurMaxScore;
-	int		iMaxScore;
-	int		iBonus;  // bonus to be added on screeneval
-	RadarValues	radarPossible;	// filled in by ScreenGameplay on start of notes
-	RadarValues radarActual;
-	float	fSecondsBeforeFail;				// -1 means didn't/hasn't failed
-	/* The number of songs played and passed, respectively. */
-	int		iSongsPassed;
-	int		iSongsPlayed;
-	int		iTotalError;
-
-	// workout
-	float	fCaloriesBurned;
-
-	map<float,float>	fLifeRecord;
-	void	SetLifeRecordAt( float fLife, float fSecond );
-	void	GetLifeRecord( float *fLifeOut, int iNumSamples ) const;
-	float	GetLifeRecordAt( float fSecond ) const;
-	float	GetLifeRecordLerpAt( float fSecond ) const;
-
-	struct Combo_t
-	{
-		/* Start and size of this combo, in the same scale as the combo list mapping and
-		 * the life record. */
-		float fStartSecond, fSizeSeconds;
-
-		/* Combo size, in steps. */
-		int cnt;
-
-		/* Size of the combo that didn't come from this stage (rollover from the last song). 
-		 * (This is a subset of cnt.) */
-		int rollover;
-
-		/* Get the size of the combo that came from this song. */
-		int GetStageCnt() const { return cnt - rollover; }
-
-		Combo_t(): fStartSecond(0), fSizeSeconds(0), cnt(0), rollover(0) { }
-		bool IsZero() const { return fStartSecond < 0; }
-	};
-	vector<Combo_t> ComboList;
-	float fFirstSecond;
-	float fLastSecond;
-
-	int		GetComboAtStartOfStage() const;
-	bool	FullComboOfScore( TapNoteScore tnsAllGreaterOrEqual ) const;
-	bool	FullCombo() const { return FullComboOfScore(TNS_GREAT); }
-	bool	SingleDigitsOfScore( TapNoteScore tnsAllGreaterOrEqual ) const;
-	bool	OneOfScore( TapNoteScore tnsAllGreaterOrEqual ) const;
-	int		GetTotalTaps() const;
-	float	GetPercentageOfTaps( TapNoteScore tns ) const;
-	void	UpdateComboList( float fSecond, bool rollover );
-	Combo_t GetMaxCombo() const;
-};
 
 struct StageStats
 {
