@@ -176,8 +176,8 @@ BEGIN
                     LBS_NOINTEGRALHEIGHT | LBS_NOSEL | WS_VSCROLL | 
                     WS_HSCROLL | WS_TABSTOP
     LTEXT           "Program disassembly",IDC_STATIC,7,46,66,8
-    LTEXT           "CPU registers",IDC_STATIC,287,46,44,8
-    LTEXT           "StepMania has crashed due to a program error.  Please hit Save to dump diagnostic information to a file called 'crashinfo.txt' in the StepMania program directory, and then OK to bring up the normal crash box.",
+    LTEXT           "CPU registers",IDC_STATIC,292,46,44,8
+    LTEXT           "StepMania has crashed due to a program error.  Please hit Save to dump diagnostic information to a file called 'crashinfo.txt' in the StepMania program directory, and then OK to bring up the normal crash box.  Please include this file in all bug reports.",
                     IDC_STATIC,7,238,319,25
     PUSHBUTTON      "Save",IDC_CRASH_SAVE,76,270,70,15
     LISTBOX         IDC_CALL_STACK,7,178,279,38,LBS_NOINTEGRALHEIGHT | 
