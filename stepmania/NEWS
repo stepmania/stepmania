@@ -1,4 +1,5 @@
 ------------------------CVS after 3.00 beta 6----------------
+NEW FEATURE:  Delayed escape/back key is now optional.
 CHANGE:  Slow-motion is now on ~ instead of shift, since we use shift
 	elsewhere now.
 BUG FIX:  Fix pump doubles offset.

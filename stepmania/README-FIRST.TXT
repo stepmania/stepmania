@@ -117,7 +117,7 @@ Anywhere:
   * F4 = toggle fullscreen
   * F5 = toggle detail
   * Hold Tab = increase game speed 4x (useful for moving through menus quickly)
-  * Hold LShift = decrease game speed to 1/4x
+  * Hold Tilde (~) = decrease game speed to 1/4x
 
 In menus:
   * Arrow keys navigate menus
