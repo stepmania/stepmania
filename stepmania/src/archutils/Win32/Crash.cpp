@@ -670,16 +670,21 @@ void do_backtrace( const void **buf, size_t size,
 			break;
 
 		bool fValid = true;
-		MEMORY_BASIC_INFORMATION meminfo;
 
-		VirtualQuery((void *)data, &meminfo, sizeof meminfo);
-		
-		if (!IsExecutableProtection(meminfo.Protect) || meminfo.State!=MEM_COMMIT)
-			fValid = false;
+		/* The first entry is EIP, which is always interesting, even if it's not valid. */
+		if( i != 0 )
+		{
+			MEMORY_BASIC_INFORMATION meminfo;
 
-		if ( data != (void *) pContext->Eip && !PointsToValidCall((unsigned long)data) )
-			fValid = false;
-		
+			VirtualQuery((void *)data, &meminfo, sizeof meminfo);
+			
+			if (!IsExecutableProtection(meminfo.Protect) || meminfo.State!=MEM_COMMIT)
+				fValid = false;
+
+			if ( data != (void *) pContext->Eip && !PointsToValidCall((unsigned long)data) )
+				fValid = false;
+		}
+
 		if( fValid )
 			buf[i++] = data;
 
