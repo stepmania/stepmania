@@ -148,6 +148,7 @@ static const char *SongSortOrderNames[NUM_SORT_ORDERS] = {
 	"MEDIUM METER",
 	"HARD METER",
 	"SORT",
+	"MODE",
 	"COURSES",
 	"NONSTOP",
 	"ONI",
