@@ -101,6 +101,7 @@ public:
 
 
 	bool IsCourseMode() const;
+	bool IsBattleMode() const; /* not Rave */
 
 	CString			m_sLoadingMessage;	// used in loading screen
 	CString			m_sPreferredGroup;	// GROUP_ALL_MUSIC denotes no preferred group

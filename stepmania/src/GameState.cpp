@@ -358,6 +358,18 @@ bool GameState::IsCourseMode() const
 	}
 }
 
+bool GameState::IsBattleMode() const
+{
+	switch( GAMESTATE->m_PlayMode )
+	{
+	case PLAY_MODE_HUMAN_BATTLE:
+	case PLAY_MODE_CPU_BATTLE:
+		return true;
+	default:
+		return false;
+	}
+}
+
 bool GameState::HasEarnedExtraStage()
 {
 	if( PREFSMAN->m_bEventMode )
