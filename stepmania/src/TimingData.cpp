@@ -54,17 +54,21 @@ void TimingData::AddStopSegment( const StopSegment &seg )
 	SortStopSegmentsArray( m_StopSegments );
 }
 
+/* Change an existing BPM segment, merge identical segments together or insert a new one. */
 void TimingData::SetBPMAtBeat( float fBeat, float fBPM )
 {
 	unsigned i;
 	for( i=0; i<m_BPMSegments.size(); i++ )
-		if( m_BPMSegments[i].m_fStartBeat == fBeat )
+		if( m_BPMSegments[i].m_fStartBeat >= fBeat )
 			break;
 
-	if( i == m_BPMSegments.size() )	// there is no BPMSegment at the current beat
+	if( i == m_BPMSegments.size() || 
+		fabsf(m_BPMSegments[i].m_fStartBeat-fBeat) > 0.001f )
 	{
-		// create a new BPMSegment
-		AddBPMSegment( BPMSegment(fBeat, fBPM) );
+		// There is no BPMSegment at the specified beat.  If the BPM being set differs
+		// from the last BPMSegment's BPM, create a new BPMSegment.
+		if( i == 0 || fabsf(m_BPMSegments[i-1].m_fBPM - fBPM) > 0.009f )
+			AddBPMSegment( BPMSegment(fBeat, fBPM) );
 	}
 	else	// BPMSegment being modified is m_BPMSegments[i]
 	{
