@@ -11,7 +11,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "arch/Lights/LightsDriver.h"
+#include "LightsDriver.h"
 
 class LightsDriver_SystemMessage : public LightsDriver
 {
