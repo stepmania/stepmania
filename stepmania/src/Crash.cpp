@@ -244,9 +244,29 @@ long CrashSymLookup(VDDisassemblyContext *pctx, unsigned long virtAddr, char *bu
 	return VDDebugInfoLookupRVA(&g_debugInfo, virtAddr, buf, buf_len);
 }
 
+static char szEmergencyDumpName[MAX_PATH];
+static void DoSaveEmergencyDump(const char *buf, int siz) {
+	HANDLE hFile;
+
+	SpliceProgramPath(szEmergencyDumpName, sizeof szEmergencyDumpName, "crashdump.dat");
+	hFile = CreateFile(szEmergencyDumpName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (INVALID_HANDLE_VALUE == hFile)
+		return;
+
+	DWORD dwActual;
+	WriteFile(hFile, buf, siz, &dwActual, NULL);
+	FlushFileBuffers(hFile);
+	
+	CloseHandle(hFile);
+}
+
+static void DoEraseEmergencyDump()
+{
+	DeleteFile(szEmergencyDumpName);
+}
+
 #include "bass/bass.h"
 long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc) {
-	SetUnhandledExceptionFilter(NULL);
 	/////////////////////////
 	//
 	// QUICKLY: SUSPEND ALL THREADS THAT AREN'T US.
@@ -268,6 +288,28 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc) {
 
 	LeaveCriticalSection(&g_csPerThreadState);
 
+	static bool InHere = false;
+	if(InHere)
+	{
+		/* If we get here, then we've been called recursively, which means
+		 * we (the disassembler or related code) crashed.  If this happens,
+		 * we're not in very good shape.  We've left the emergency dump;
+		 * that's all we have to go by.  Tell this to the user, and then die.
+		 * 
+		 * We've already blown up twice, and this is our last line of defense.
+		 * If this dies, we have nothing, so keep it simple. */
+		SetUnhandledExceptionFilter(NULL);
+		MessageBox( NULL,
+			"The error reporting interface has crashed.\n"
+			"Please report a bug and attach the file \"crashdump.dat\"\n"
+			"to the report.", "Fatal Error", MB_OK );
+#ifdef _DEBUG
+		DebugBreak();
+#endif
+
+		return EXCEPTION_EXECUTE_HANDLER;
+	}
+	InHere=true;
 	/////////////////////////
 
 	static char buf[CODE_WINDOW+16];
@@ -290,6 +332,8 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc) {
 				memset(buf+i, 0, 32);
 	}
 
+	DoSaveEmergencyDump(buf, CODE_WINDOW);
+		 
 	CodeDisassemblyWindow cdw(buf, CODE_WINDOW, (char *)(buf-lpAddr), lpAddr);
 
 	g_pcdw = &cdw;
@@ -329,6 +373,11 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc) {
 	BASS_Stop();
 	BASS_Free();
 
+	/* We've made it.  Delete the emergency dump. */
+	DoEraseEmergencyDump();
+	InHere = false;
+
+	SetUnhandledExceptionFilter(NULL);
 	if(ret)
 		UnhandledExceptionFilter(pExc);
 
@@ -1236,7 +1285,7 @@ static bool ReportCrashCallStack(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTE
 	return true;
 }
 
-void DoSave(const EXCEPTION_POINTERS *pExc) {
+static void DoSave(const EXCEPTION_POINTERS *pExc) {
 	HANDLE hFile;
 	char szModName2[MAX_PATH];
 	char tbuf[2048];
