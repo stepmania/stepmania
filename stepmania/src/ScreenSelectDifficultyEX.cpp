@@ -29,15 +29,23 @@
 #define ANIMATE_MODE_SWITCH_PICTURE_ON_COMMAND	THEME->GetMetric("ScreenSelectDifficultyEX","AnimateModeSwitchPictureONCommand")
 #define CURSOR_OFFSET_X_FROM_PICTURE( p )		THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("CursorP%dOffsetXFromPicture",p+1))
 #define CURSOR_OFFSET_Y_FROM_PICTURE( p )		THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("CursorP%dOffsetYFromPicture",p+1))
+#define DIFFICULTYICON_OFF_COMMAND( p )			THEME->GetMetric("ScreenSelectDifficultyEX",ssprintf("DifficultyIcon%dOFFCommand",p+1))
+#define DIFFICULTYICON_ON_COMMAND( p )			THEME->GetMetric("ScreenSelectDifficultyEX",ssprintf("DifficultyIcon%dONCommand",p+1))
 #define DIFFICULTYICON_X( p )					THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("DifficultyIcon%dX",p+1))
 #define DIFFICULTYICON_Y( p )					THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("DifficultyIcon%dY",p+1))
-#define DIFFICULTYICON_COLOR( p )				THEME->GetMetricC("ScreenSelectDifficultyEX",ssprintf("DifficultyIcon%dCOLOR",p+1))
+#define DIFFICULTYTEXT_COLOR( p )				THEME->GetMetricC("ScreenSelectDifficultyEX",ssprintf("DifficultyText%dCOLOR",p+1))
+#define DIFFICULTYTEXT_OFF_COMMAND( p )			THEME->GetMetric("ScreenSelectDifficultyEX",ssprintf("DifficultyText%dOFFCommand",p+1))
+#define DIFFICULTYTEXT_ON_COMMAND( p )			THEME->GetMetric("ScreenSelectDifficultyEX",ssprintf("DifficultyText%dONCommand",p+1))
 #define DISABLED_COLOR							THEME->GetMetricC("ScreenSelectDifficultyEX","DisabledColor")
-#define ICONBAR_X								THEME->GetMetricF("ScreenSelectDifficultyEX","IconBarX")
-#define ICONBAR_Y								THEME->GetMetricF("ScreenSelectDifficultyEX","IconBarY")
+#define ICONBAR_OFF_COMMAND						THEME->GetMetric("ScreenSelectDifficultyEX","IconBarOFFCommand")
+#define ICONBAR_ON_COMMAND						THEME->GetMetric("ScreenSelectDifficultyEX","IconBarONCommand")
+#define INFO_OFF_COMMAND( p )					THEME->GetMetric("ScreenSelectDifficultyEX",ssprintf("InfoP%dOFFCommand",p+1))
+#define INFO_ON_COMMAND( p )					THEME->GetMetric("ScreenSelectDifficultyEX",ssprintf("InfoP%dONCommand",p+1))
 #define INFO_X( p )								THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("InfoXP%d",p+1))
 #define INFO_Y( p )								THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("InfoYP%d",p+1))
 #define LOCK_INPUT_SECONDS						THEME->GetMetricF("ScreenSelectDifficultyEX","LockInputSeconds")
+#define PICTURE_OFF_COMMAND( p )				THEME->GetMetric("ScreenSelectDifficultyEX",ssprintf("PictureP%dOFFCommand",p+1))
+#define PICTURE_ON_COMMAND( p )					THEME->GetMetric("ScreenSelectDifficultyEX",ssprintf("PictureP%dONCommand",p+1))
 #define PICTURE_X( p )							THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("PictureXP%d",p+1))
 #define PICTURE_Y( p )							THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("PictureYP%d",p+1))
 #define SLEEP_AFTER_CHOICE_SECONDS				THEME->GetMetricF("ScreenSelectDifficultyEX","SleepAfterChoiceSeconds")
@@ -62,7 +70,6 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX() : ScreenSelect( "ScreenSele
 	}
 	
 	m_sprIconBar.Load( THEME->GetPathToG("ScreenSelectDifficultyEX icon bar.png") );
-	m_sprIconBar.SetXY( ICONBAR_X, ICONBAR_Y );
 	this->AddChild( &m_sprIconBar );
 
 	for( unsigned k=0; k < NUM_MODES || k <= 7 ; k++ )
@@ -82,8 +89,8 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX() : ScreenSelect( "ScreenSele
 			m_textDifficultyText[k].SetX( DIFFICULTYICON_X(k) + 20 );
 			m_textDifficultyText[k].SetY( DIFFICULTYICON_Y(k) );
 			m_textDifficultyText[k].SetZoom( .5 );
-			m_textDifficultyText[k].SetShadowLength( 1 );
-			m_textDifficultyText[k].SetDiffuse( DIFFICULTYICON_COLOR(k) );
+			m_textDifficultyText[k].SetShadowLength( 1 );	//No shadow, jus outline
+			m_textDifficultyText[k].SetDiffuse( DIFFICULTYTEXT_COLOR(k) );
 			this->AddChild( &m_textDifficultyText[k] );
 		}
 	}
@@ -95,8 +102,6 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX() : ScreenSelect( "ScreenSele
 		{
 			m_sprHighlight[p].SetHorizAlign( Actor::align_left );
 			m_sprHighlight[p].Load( (PlayerNumber)p, false );
-			m_sprHighlight[p].SetX( DIFFICULTYICON_X(0) );
-			m_sprHighlight[p].SetY( DIFFICULTYICON_Y(0) );
 			this->AddChild( &m_sprHighlight[p] );
 			this->MoveToHead( &m_sprHighlight[p] );
 		}
@@ -112,42 +117,36 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX() : ScreenSelect( "ScreenSele
 		CString sPictureFile = ssprintf( "ScreenSelectDifficultyEX picture %s", m_ModeChoices[0].name );
 		
 		m_sprPicture[p].Load( THEME->GetPathToG(sPictureFile) );
-		m_sprPicture[p].SetX( PICTURE_X(p) );
-
-		m_sprPicture[p].SetY( PICTURE_Y(p) );
+		m_sprPicture[p].SetXY( PICTURE_X(p), PICTURE_Y(p) );
 		m_framePages.AddChild( &m_sprPicture[p] );
 		
 		m_sprInfo[p].Load( THEME->GetPathToG(sInfoFile) );
-		m_sprInfo[p].SetX( INFO_X(p) );
-		m_sprInfo[p].SetY( INFO_Y(p) );
+		m_sprInfo[p].SetXY( INFO_X(p), INFO_Y(p) );
 		m_framePages.AddChild( &m_sprInfo[p] );	
 
 		m_sprCursor[p].Load( THEME->GetPathToG( "ScreenSelectDifficultyEX cursor 2x1") );
 		m_sprCursor[p].SetZoom( 0 );
 		m_sprCursor[p].StopAnimating();
 		m_sprCursor[p].SetState( p );
-		m_sprCursor[p].SetX( fCursorX );
-		m_sprCursor[p].SetY( fCursorY );
+		m_sprCursor[p].SetXY( fCursorX, fCursorY );
 		m_framePages.AddChild( &m_sprCursor[p] );
 
 		m_sprOK[p].Load( THEME->GetPathToG( "ScreenSelectDifficultyEX ok 2x1") );
 		m_sprOK[p].SetState( p );
 		m_sprOK[p].StopAnimating();
 		m_sprOK[p].SetDiffuse( RageColor(1,1,1,1) );
-		m_sprOK[p].SetX( fCursorX );
-		m_sprOK[p].SetY( fCursorY );
+		m_sprOK[p].SetXY( fCursorX, fCursorY );
 		m_framePages.AddChild( &m_sprOK[p] );
 	}
 
 	this->AddChild( &m_framePages );
-	
 	m_soundChange.Load( THEME->GetPathToS( "ScreenSelectDifficulty change") );
 	m_soundSelect.Load( THEME->GetPathToS( "Common start") );
 	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
-
 	m_fLockInputTime = LOCK_INPUT_SECONDS;
-
 	TweenOnScreen();
+
+	SetAllPlayersSelection( 0, false );
 }
 
 void ScreenSelectDifficultyEX::Update( float fDelta )
@@ -354,7 +353,7 @@ void ScreenSelectDifficultyEX::SetDifficultyIconText( bool bDisplayCourseItems )
 		MMNAME.Replace( "rave", "Rave");
 
 		m_textDifficultyText[k].SetText( MMNAME.c_str() );
-		m_textDifficultyText[k].SetDiffuse( DIFFICULTYICON_COLOR(k) );
+		m_textDifficultyText[k].SetDiffuse( DIFFICULTYTEXT_COLOR(k) );
 	}
 }
 
@@ -429,7 +428,18 @@ void ScreenSelectDifficultyEX::TweenOnScreen()
 		float fCursorX = GetCursorX( (PlayerNumber)p );
 		float fCursorY = GetCursorY( (PlayerNumber)p );
 
-		m_sprCursor[p].SetXY( fCursorX, fCursorY );
+		m_sprInfo[p].Command( INFO_ON_COMMAND(p) );
+		m_sprPicture[p].Command( PICTURE_ON_COMMAND(p) );
+		
+		m_sprHighlight[p].SetXY( DIFFICULTYICON_X(1) + 30, DIFFICULTYICON_Y(1) );
+		m_sprHighlight[p].Command( "diffusealpha,0;linear,0.3;diffusealpha,1" );
+	}
+
+	m_sprIconBar.Command( ICONBAR_ON_COMMAND );
+	for( unsigned di=0; di < m_aModeChoices.size(); di++ )
+	{
+		m_sprDifficultyIcon[di].Command( DIFFICULTYICON_ON_COMMAND(di) );
+		m_textDifficultyText[di].Command( DIFFICULTYTEXT_ON_COMMAND(di) );
 	}
 }
 
@@ -438,12 +448,18 @@ void ScreenSelectDifficultyEX::TweenOffScreen()
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) ) { continue; }
-		
-		m_sprPicture[p].FadeOff( 0.0, "fade", 0.5f );
-		m_sprInfo[p].FadeOff( 0.0, "fade", 0.5f );
 
-		m_sprCursor[p].FadeOff( 0.0, "fade", 0.5f );
-		m_sprOK[p].FadeOff( 0.0, "fade", 0.5f );
+		m_sprInfo[p].Command( INFO_OFF_COMMAND(p) );
+		m_sprPicture[p].Command( PICTURE_OFF_COMMAND(p) );
+		m_sprHighlight[p].SetXY( -600,-600 );
+		m_sprOK[p].Command( "linear,0.3;diffusealpha,0" );
+	}
+	
+	m_sprIconBar.Command( ICONBAR_OFF_COMMAND );
+	for( unsigned di=0; di < m_aModeChoices.size(); di++ )
+	{
+		m_sprDifficultyIcon[di].Command( DIFFICULTYICON_OFF_COMMAND(di) );
+		m_textDifficultyText[di].Command( DIFFICULTYTEXT_OFF_COMMAND(di) );
 	}
 }
 
