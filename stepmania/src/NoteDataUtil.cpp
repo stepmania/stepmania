@@ -795,12 +795,6 @@ void NoteDataUtil::Turn( NoteData &inout, StepsType st, TrackMapping tt, float f
 	iStartIndex = max( iStartIndex, 0 );
 	iEndIndex = min( iEndIndex, inout.GetLastRow() );
 
-	/* XXX: We could do this without an extra temporary NoteData: calculate
-	 * a list of "swaps".  For example, the 4-track mapping 1 0 2 3 is swaps
-	 * 1, -1, -1, -1: track 0 swaps with track 1, track 1 doesn't swap (it's
-	 * already in place--due to the first swap), and track 2 and 3 don't swap
-	 * (they were already in place to begin with). */
-
 	NoteData tempNoteData;
 	tempNoteData.To4s( inout );
 	NoteData tempNoteDataOut;	// write into here as we tranform
@@ -823,6 +817,7 @@ void NoteDataUtil::Backwards( NoteData &inout )
 	int max_row = inout.GetLastRow();
 	for( int t=0; t<inout.GetNumTracks(); t++ )
 	{
+		/* XXX: This is wrong.  Is it worth fixing?  (When is "Backwards" useful?) */
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( inout, t, r, 0, max_row/2 )
 		{
 			int iRowEarlier = r;
