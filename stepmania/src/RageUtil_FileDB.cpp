@@ -109,6 +109,8 @@ static void SplitPath( CString Path, CString &Dir, CString &Name )
 
 RageFileManager::FileType FilenameDB::GetFileType( const CString &sPath )
 {
+	ASSERT( !m_Mutex.IsLockedByThisThread() );
+
 	CString Dir, Name;
 	SplitPath( sPath, Dir, Name );
 
@@ -116,24 +118,36 @@ RageFileManager::FileType FilenameDB::GetFileType( const CString &sPath )
 		return RageFileManager::TYPE_DIR;
 
 	const FileSet *fs = GetFileSet( Dir );
-	return fs->GetFileType( Name );
+	RageFileManager::FileType ret = fs->GetFileType( Name );
+	m_Mutex.Unlock(); /* locked by GetFileSet */
+	return ret;
 }
 
 
 int FilenameDB::GetFileSize( const CString &sPath )
 {
+	ASSERT( !m_Mutex.IsLockedByThisThread() );
+
 	CString Dir, Name;
 	SplitPath(sPath, Dir, Name);
+
 	const FileSet *fs = GetFileSet( Dir );
-	return fs->GetFileSize(Name);
+	int ret = fs->GetFileSize(Name);
+	m_Mutex.Unlock(); /* locked by GetFileSet */
+	return ret;
 }
 
 int FilenameDB::GetFileHash( const CString &sPath )
 {
+	ASSERT( !m_Mutex.IsLockedByThisThread() );
+
 	CString Dir, Name;
 	SplitPath(sPath, Dir, Name);
+
 	const FileSet *fs = GetFileSet( Dir );
-	return fs->GetFileHash(Name);
+	int ret = fs->GetFileHash(Name);
+	m_Mutex.Unlock(); /* locked by GetFileSet */
+	return ret;
 }
 
 /* path should be fully collapsed, so we can operate in-place: no . or .. */
@@ -148,7 +162,7 @@ bool FilenameDB::ResolvePath(CString &path)
 	/* Resolve each component. */
 	CString ret = "";
 	const FileSet *fs = NULL;
-	File *prev_file = NULL;
+
 	static const CString slash("/");
 	while( 1 )
 	{
@@ -158,6 +172,8 @@ bool FilenameDB::ResolvePath(CString &path)
 
 		if( fs == NULL )
 			fs = GetFileSet( ret );
+		else
+			m_Mutex.Lock(); /* for access to fs */
 
 		CString p = path.substr( begin, size );
 		ASSERT_M( p.size() != 1 || p[0] != '.', path ); // no .
@@ -166,17 +182,18 @@ bool FilenameDB::ResolvePath(CString &path)
 
 		/* If there were no matches, the path isn't found. */
 		if( it == fs->files.end() )
+		{
+			m_Mutex.Unlock(); /* locked by GetFileSet */
 			return false;
-
-		if( prev_file )
-			prev_file->dirp = fs;
-		prev_file = (File*) &*it;
+		}
 
 		if( ret.size() != 0 )
 			ret += "/";
 		ret += it->name;
 
 		fs = it->dirp;
+
+		m_Mutex.Unlock(); /* locked by GetFileSet */
 	}
 	
 	if( path.size() && path[path.size()-1] == '/' )
@@ -188,14 +205,20 @@ bool FilenameDB::ResolvePath(CString &path)
 
 void FilenameDB::GetFilesMatching(const CString &dir, const CString &beginning, const CString &containing, const CString &ending, vector<CString> &out, bool bOnlyDirs)
 {
+	ASSERT( !m_Mutex.IsLockedByThisThread() );
+
 	const FileSet *fs = GetFileSet( dir );
 	fs->GetFilesMatching(beginning, containing, ending, out, bOnlyDirs);
+	m_Mutex.Unlock(); /* locked by GetFileSet */
 }
 
 void FilenameDB::GetFilesEqualTo(const CString &dir, const CString &fn, vector<CString> &out, bool bOnlyDirs)
 {
+	ASSERT( !m_Mutex.IsLockedByThisThread() );
+
 	const FileSet *fs = GetFileSet( dir );
 	fs->GetFilesEqualTo(fn, out, bOnlyDirs);
+	m_Mutex.Unlock(); /* locked by GetFileSet */
 }
 
 
@@ -224,8 +247,19 @@ void FilenameDB::GetFilesSimpleMatch(const CString &dir, const CString &fn, vect
 	}
 }
 
+/*
+ * Get the FileSet for dir; if create is true, create the FileSet if necessary.
+ *
+ * We want to unlock the object while we populate FileSets, so m_Mutex should not
+ * be locked when this is called.  It will be locked on return; the caller must
+ * unlock it.
+ */
 FileSet *FilenameDB::GetFileSet( CString dir, bool create )
 {
+	/* Creating can take a long time; don't hold the lock if we might do that. */
+	if( create && m_Mutex.IsLockedByThisThread() && LOG )
+		LOG->Warn( "FilenameDB::GetFileSet: m_Mutex was locked" );
+
 	/* Normalize the path. */
 	dir.Replace("\\", "/"); /* foo\bar -> foo/bar */
 	dir.Replace("//", "/"); /* foo//bar -> foo/bar */
@@ -235,6 +269,8 @@ FileSet *FilenameDB::GetFileSet( CString dir, bool create )
 
 	CString lower = dir;
 	lower.MakeLower();
+
+	m_Mutex.Lock();
 
 	map<CString, FileSet *>::iterator i = dirs.find( lower );
 	if( !create )
@@ -247,28 +283,68 @@ FileSet *FilenameDB::GetFileSet( CString dir, bool create )
 	FileSet *ret;
 	if( i != dirs.end() )
 	{
-		if( ExpireSeconds != -1 && i->second->age.PeekDeltaTime() >= ExpireSeconds )
+		/* This directory already exists.  If it's still being filled in by another
+		 * thread, wait for it. */
+		FileSet *pFileSet = i->second;
+		while( !pFileSet->m_bFilled )
+			m_Mutex.Wait();
+
+		if( ExpireSeconds == -1 || pFileSet->age.PeekDeltaTime() < ExpireSeconds )
 		{
-			/* The data has expired.  Clear it, but don't delete it, so w
-			 * don't break dirp pointers. */
-			ret = i->second;
-			ret->age.Touch();
-			ret->files.clear();
-		} else
-			return i->second;
+			/* Found it, and it hasn't expired. */
+			return pFileSet;
+		}
+
+		/* It's expired.  Delete the old entry. */
+		this->DelFileSet( i );
+	}
+
+	/* Create the FileSet and insert it.  Since it's marked !m_bFilled, if other
+	 * threads happen to try to use this directory before we finish filling it,
+	 * they'll wait. */
+	ret = new FileSet;
+	dirs[lower] = ret;
+
+	/* Unlock while we populate the directory.  This way, reads to other directories
+	 * won't block if this takes a while. */
+	m_Mutex.Unlock();
+	ASSERT( !m_Mutex.IsLockedByThisThread() );
+	PopulateFileSet( *ret, dir );
+
+	/* If this isn't the root directory, we want to set the dirp pointer of our parent
+	 * to the newly-created directory.  Find the pointer we need to set.  Be careful of
+	 * order of operations, here: since we just unlocked, any this->dirs searches we did
+	 * previously are no longer valid. */
+	FileSet **parent_dirp = NULL;
+	if( dir != "." && dir != "/" )
+	{
+		CString sParent = Dirname( dir );
+		if( sParent == "./" )
+			sParent = "";
+
+		/* This also re-locks m_Mutex for us. */
+		FileSet *pParent = GetFileSet( sParent );
+		if( pParent != NULL )
+		{
+			set<File>::iterator it = pParent->files.find( File(Basename(dir)) );
+			if( it != pParent->files.end() )
+				parent_dirp = const_cast<FileSet **>(&it->dirp);
+		}
 	}
 	else
-	{
-		ret = new FileSet;
+		m_Mutex.Lock();
 
-		map<CString, FileSet *>::iterator it = dirs.find( lower );
-		if( it != dirs.end() )
-			delete it->second;
+	if( parent_dirp != NULL )
+		*parent_dirp = ret;
 
-		dirs[lower] = ret;
-	}
+	ret->age.Touch();
+	ret->m_bFilled = true;
 
-	PopulateFileSet( *ret, dir );
+	/* Signal the event, to wake up any other threads that might be waiting for this
+	 * directory.  Leave the mutex locked; those threads will wake up when the current
+	 * operation completes. */
+	m_Mutex.Broadcast();
+
 	return ret;
 }
 
@@ -299,6 +375,7 @@ void FilenameDB::AddFile( const CString &sPath, int size, int hash, void *priv )
 			dir += "/";
 		const CString &fn = *(end-1);
 		FileSet *fs = GetFileSet( dir );
+		ASSERT( m_Mutex.IsLockedByThisThread() );
 
 		File f;
 		f.SetName( fn );
@@ -313,6 +390,7 @@ void FilenameDB::AddFile( const CString &sPath, int size, int hash, void *priv )
 			}
 			fs->files.insert( f );
 		}
+		m_Mutex.Unlock(); /* locked by GetFileSet */
 		IsDir = true;
 
 		--end;
@@ -324,6 +402,9 @@ void FilenameDB::AddFile( const CString &sPath, int size, int hash, void *priv )
  * from the parent. */
 void FilenameDB::DelFileSet( map<CString, FileSet *>::iterator dir )
 {
+	/* If this isn't locked, dir may not be valid. */
+	ASSERT( m_Mutex.IsLockedByThisThread() );
+
 	if( dir == dirs.end() )
 		return;
 
@@ -347,6 +428,7 @@ void FilenameDB::DelFileSet( map<CString, FileSet *>::iterator dir )
 
 void FilenameDB::DelFile( const CString &sPath )
 {
+	LockMut(m_Mutex);
 	CString lower = sPath;
 	lower.MakeLower();
 
@@ -365,10 +447,12 @@ void FilenameDB::DelFile( const CString &sPath )
 			Parent->files.erase( i );
 		}
 	}
+	m_Mutex.Unlock(); /* locked by GetFileSet */
 }
 
 void FilenameDB::FlushDirCache()
 {
+	LockMut(m_Mutex);
 	for( map<CString, FileSet *>::iterator i = dirs.begin(); i != dirs.end(); ++i )
 		delete i->second;
 	dirs.clear();
@@ -376,6 +460,9 @@ void FilenameDB::FlushDirCache()
 
 const File *FilenameDB::GetFile( const CString &sPath )
 {
+	if( m_Mutex.IsLockedByThisThread() && LOG )
+		LOG->Warn( "FilenameDB::GetFile: m_Mutex was locked" );
+
 	CString Dir, Name;
 	SplitPath(sPath, Dir, Name);
 	FileSet *fs = GetFileSet( Dir );
@@ -394,11 +481,14 @@ const File *FilenameDB::GetFile( const CString &sPath )
 
 const void *FilenameDB::GetFilePriv( const CString &path )
 {
+	ASSERT( !m_Mutex.IsLockedByThisThread() );
+
 	const File *pFile = GetFile( path );
 	void *pRet = NULL;
 	if( pFile != NULL )
 		pRet = pFile->priv;
 
+	m_Mutex.Unlock(); /* locked by GetFileSet */
 	return pRet;
 }
 

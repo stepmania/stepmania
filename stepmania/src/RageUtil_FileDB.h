@@ -4,6 +4,7 @@
 #include <set>
 #include <map>
 #include "RageTimer.h"
+#include "RageThreads.h"
 #include "RageFileManager.h"
 
 struct FileSet;
@@ -56,6 +57,16 @@ struct FileSet
 {
 	set<File> files;
 	RageTimer age;
+
+	/*
+	 * If m_bFilled is false, this FileSet hasn't completed being filled in yet; it's
+	 * owned by the thread filling it in.  Wait on FilenameDB::m_Mutex and retry until
+	 * it becomes true.
+	 */
+	bool m_bFilled;
+
+	FileSet() { m_bFilled = true; }
+
 	void GetFilesMatching(
 		const CString &beginning, const CString &containing, const CString &ending,
 		vector<CString> &out, bool bOnlyDirs) const;
@@ -69,6 +80,8 @@ struct FileSet
 class FilenameDB
 {
 protected:
+	RageEvent m_Mutex;
+
 	FileSet *GetFileSet( CString dir, bool create=true );
 
 	/* Directories we have cached: */
@@ -87,7 +100,7 @@ protected:
 
 public:
 	FilenameDB::FilenameDB():
-		ExpireSeconds( -1 ) { }
+		m_Mutex("FilenameDB"), ExpireSeconds( -1 ) { }
 	virtual FilenameDB::~FilenameDB() { FlushDirCache(); }
 
 	void AddFile( const CString &sPath, int size, int hash, void *priv=NULL );
