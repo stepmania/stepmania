@@ -14,6 +14,7 @@ ThemeMetric<CString>	COURSE_DIFFICULTIES_TO_SHOW	("Common","CourseDifficultiesTo
 ThemeMetric1D<RageColor> PLAYER_COLOR				("Common",PLAYER_COLOR_NAME,NUM_PLAYERS);
 ThemeMetric<float>		JOIN_PAUSE_SECONDS			("Common","JoinPauseSeconds");
 ThemeMetric<CString>	WINDOW_TITLE				("Common","WindowTitle");
+ThemeMetric<bool>		HOME_EDIT_MODE				("Common","HomeEditMode");
 
 
 /*

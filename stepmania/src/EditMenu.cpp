@@ -9,8 +9,8 @@
 #include "song.h"
 #include "StepsUtil.h"
 #include "Foreach.h"
+#include "CommonMetrics.h"
 
-#define ONLY_ALLOW_EDITS		THEME->GetMetricF("EditMenu","OnlyAllowEdits")
 #define ARROWS_X( i )			THEME->GetMetricF("EditMenu",ssprintf("Arrows%dX",i+1))
 #define SONG_BANNER_X			THEME->GetMetricF("EditMenu","SongBannerX")
 #define SONG_BANNER_Y			THEME->GetMetricF("EditMenu","SongBannerY")
@@ -97,7 +97,7 @@ EditMenu::EditMenu()
 	// fill in data structures
 	SONGMAN->GetGroupNames( m_sGroups );
 	GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, m_StepsTypes );
-	if( ONLY_ALLOW_EDITS )
+	if( HOME_EDIT_MODE )
 	{
 		m_vDifficulties.push_back( DIFFICULTY_EDIT );
 	}
@@ -315,7 +315,7 @@ void EditMenu::OnRowValueChanged( Row row )
 				s = DifficultyToThemedString(GetSelectedDifficulty());
 
 				// UGLY.  "Edit" -> "New Edit"
-				if( ONLY_ALLOW_EDITS )
+				if( HOME_EDIT_MODE )
 					s = "New " + s;
 			}
 			m_textValue[ROW_STEPS].SetText( s );

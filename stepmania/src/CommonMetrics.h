@@ -15,6 +15,7 @@ extern ThemeMetric<CString>		COURSE_DIFFICULTIES_TO_SHOW;
 extern ThemeMetric1D<RageColor> PLAYER_COLOR;
 extern ThemeMetric<float>		JOIN_PAUSE_SECONDS;
 extern ThemeMetric<CString>		WINDOW_TITLE;
+extern ThemeMetric<bool>		HOME_EDIT_MODE;
 
 #endif
 
