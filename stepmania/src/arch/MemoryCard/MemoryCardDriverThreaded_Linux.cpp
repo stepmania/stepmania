@@ -334,41 +334,45 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 	CHECKPOINT;
 }
 
-static const int g_iAllowedVendorIds[] = 
+struct WhiteListEntry
+{
+  int idVendor;   // -1 = "always match"
+  int idProduct;  // -1 = "always match"
+  const char *szVendorRegex;    // empty string matches all
+  const char *szProductRegex;   // empty string matches all
+};
+static const WhiteListEntry g_AllowedEntries[] = 
   {
-    0x0781, // SanDisk Corp.
-    //0x045a, // Diamond Multimedia Systems (Rio)  
+    { 0x0781, -1, "", "" },   // all SanDisk Cruizer drives
     // Disallow the Rio Carbon.  After several mounts, usb-storage gets into a state where mounting will fail.
-    0x04e8, // Samsung Electronics Co., Ltd. (Kingston)
-    0x05dc, // Lexar Media, Inc.
+    // { 0x045a, -1, "", "" },  // Diamond Multimedia Systems (Rio)  
+    { 0x04e8, -1, "Kingston|KINGSTON", "" },  // Kingston pen drives manufactured by Samsung
+    { 0x05dc, -1, "", "" },  // All Lexar flash drives
+    { 0x041e, -1, "", "^NOMAD MuVo$|^NOMAD MuVo .X" },  // Creative Labs Nomad MuVo flash drives (hard drive players excluded)
   };
-static const CString g_sAllowedVendorRegex[] =
-  {
-    "Kingston",
-    "KINGSTON",
-  };
-bool IsDeviceAllowed( int idVendor, CString sVendor, CString sProduct )
+bool IsDeviceAllowed( int idVendor, int idProduct, CString sVendor, CString sProduct )
 {
   bool bAllowed = false;
 
-  vector<int> vAllowedVendorIds( &g_iAllowedVendorIds[0], &g_iAllowedVendorIds[ARRAYSIZE(g_iAllowedVendorIds)-1] );
-  vector<int>::const_iterator iter = find( vAllowedVendorIds.begin(), vAllowedVendorIds.end(), idVendor );
-  bAllowed = iter != vAllowedVendorIds.end();
-
-  if( !bAllowed )
+  for( unsigned i=0; i<ARRAYSIZE(g_AllowedEntries); i++ )
     {
-      for( int i=0; i<ARRAYSIZE(g_sAllowedVendorRegex); i++ )
-	{
-	  Regex regex( g_sAllowedVendorRegex[i] );
-	  if( regex.Compare(sVendor) )
-	    {
-	      bAllowed = true;
-	      break;
-	    }
-	}
-    }  
+      const WhiteListEntry &entry = g_AllowedEntries[i];
+      if( entry.idVendor != -1 && entry.idVendor != idVendor )
+	continue;
+      if( entry.idProduct != -1 && entry.idProduct != idProduct )
+	continue;
+      Regex regexVendor( entry.szVendorRegex );
+      if( !regexVendor.Compare(sVendor) )
+	continue;
+      Regex regexProduct( entry.szProductRegex );
+      if( !regexProduct.Compare(sProduct) )
+	continue;
+      
+      bAllowed = true;
+      break;
+    }
 
-  LOG->Trace( "Device '%X':'%s':'%s' is %sallowed.", idVendor, sVendor.c_str(), sProduct.c_str(), bAllowed?"":"not " );
+  LOG->Trace( "idVendor 0x%04X, idDevice 0x%04X, Vendor '%s', Product '%s' is %sallowed.", idVendor, idProduct, sVendor.c_str(), sProduct.c_str(), bAllowed?"":"not " );
   return bAllowed;
 }
 
@@ -416,7 +420,7 @@ bool ReadUsbStorageDescriptor( CString fn, int iScsiIndex, vector<UsbStorageDevi
 			{
 				UsbStorageDevice& usbd = vDevicesOut[j];
 				
-				if( usbd.sSerial == szSerial  &&  IsDeviceAllowed( usbd.idVendor, sVendor, sProduct ) )
+				if( usbd.sSerial == szSerial  &&  IsDeviceAllowed( usbd.idVendor, usbd.idProduct, sVendor, sProduct ) )
 				  {
 					usbd.iScsiIndex = iScsiIndex;
 					usbd.sVendor = sVendor;
@@ -553,6 +557,15 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 			    usbd.idVendor = idVendor;
 			    continue;       // stop processing this line
 			  }
+
+                        //   idProduct          0x4106 
+                        int idProduct;
+                        iRet = sscanf( sLine.c_str(), "  idProduct 0x%x", &idProduct );
+                        if( iRet == 1 )
+                          {
+                            usbd.idProduct = idProduct;
+                            continue;       // stop processing this line
+                          }
 			
 			//   iSerial                 3 1125198948886
 			char szSerial[1024];

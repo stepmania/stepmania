@@ -19,6 +19,7 @@ struct UsbStorageDevice
 		bWriteTestSucceeded = false;
 		sName = "";
 		idVendor = 0;
+		idProduct = 0;
 		sVendor = "";
 		sProduct = "";
 	};
@@ -33,6 +34,7 @@ struct UsbStorageDevice
   bool bWriteTestSucceeded;  // only valid if bNeedsWriteTest == false
   CString sName;  // Name in the profile on the memory card.
   int idVendor;
+  int idProduct;
   CString sVendor;
   CString sProduct;
 
