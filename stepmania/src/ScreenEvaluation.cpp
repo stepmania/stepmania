@@ -1082,7 +1082,7 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 		MenuStart( PLAYER_INVALID );
 		break;
 	case SM_GoToNextScreen:
-		if(m_bFailed && !PREFSMAN->m_bEventMode) // if failed and not in event mode go to gameover screen
+		if(m_bFailed && !PREFSMAN->m_bEventMode && !(GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2()) && GAMESTATE->m_PlayMode == PLAY_MODE_ARCADE) // if failed and not in event mode go to gameover screen
 			SCREENMAN->SetNewScreen( FAILED_SCREEN );
 		else
 			SCREENMAN->SetNewScreen( NEXT_SCREEN );
@@ -1091,7 +1091,7 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
 		break;
 	case SM_GoToEndScreen:
-		if(m_bFailed && !PREFSMAN->m_bEventMode) // if failed and not in event mode go to gameover screen
+		if(m_bFailed && !PREFSMAN->m_bEventMode && !(GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2()) && GAMESTATE->m_PlayMode == PLAY_MODE_ARCADE) // if failed and not in event mode go to gameover screen
 			SCREENMAN->SetNewScreen( FAILED_SCREEN );
 		else
 			SCREENMAN->SetNewScreen( END_SCREEN );
