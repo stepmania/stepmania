@@ -1567,6 +1567,13 @@ void ScreenGameplay::TweenOffScreen()
 		OFF_COMMAND( m_textPlayerOptions[p] );
 		OFF_COMMAND( m_DifficultyIcon[p] );
 	}
+
+	if(m_textDebug.GetTweenTimeLeft() > 1/8.f)
+	{
+		m_textDebug.StopTweening();
+		m_textDebug.BeginTweening( 1/8.f );
+		m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
+	}
 }
 
 void ScreenGameplay::ShowOniGameOver( PlayerNumber pn )
