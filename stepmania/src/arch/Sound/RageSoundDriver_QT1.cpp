@@ -97,15 +97,6 @@ void RageSound_QT1::GetData(SndChannel *chan, SndCommand *cmd_passed) {
 	while (!SOUNDMAN)
 		SDL_Delay(10);
 	LockMutex L(SOUNDMAN->lock);
-	static bool gettingData=false;
-	static int recursiveCalls = 0;
-	if (gettingData) {
-		LOG->Warn( "GetData() called recursively %D times.", ++recursiveCalls);
-		if (recursiveCalls >=10)
-            RageException::Throw("GetData() called recursively too many times.");
-	} else
-		recursiveCalls = 0;
-	gettingData = true;
 	static SoundMixBuffer mix;
 	RageSound_QT1 *P = reinterpret_cast<RageSound_QT1 *>(chan->userInfo);
 
@@ -152,7 +143,6 @@ void RageSound_QT1::GetData(SndChannel *chan, SndCommand *cmd_passed) {
 	cmd.cmd = callBackCmd;
 	cmd.param2 = play_me;
 	SndDoCommand(chan, &cmd, 0);
-	gettingData=false;
 }
 
 void RageSound_QT1::StartMixing(RageSound *snd) {
