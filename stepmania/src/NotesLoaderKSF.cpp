@@ -172,7 +172,7 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 	for( i=0; i<arrayKSFFileNames.size(); i++ ) 
 	{
 		Notes* pNewNotes = new Notes;
-		if(LoadFromKSFFile( out.GetSongDir() + arrayKSFFileNames[i], *pNewNotes ))
+		if(!LoadFromKSFFile( out.GetSongDir() + arrayKSFFileNames[i], *pNewNotes ))
 		{
 			delete pNewNotes;
 			continue;
@@ -221,7 +221,7 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 			}
 			else
 			{
-				out.m_sMainTitle = asBits[0];
+				out.m_sMainTitle = sParams[1];
 			}
 
 			for( int j=0; j<out.m_sMainTitle.GetLength(); j++ )
