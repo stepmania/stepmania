@@ -8,6 +8,7 @@
 #include "SDL_utils.h"
 #include "RageFile.h"
 #include "SDL_SaveJPEG.h"
+#include "SDL_rotozoom.h"
 
 //
 // Statistics stuff
@@ -635,6 +636,12 @@ bool RageDisplay::SaveScreenshot( CString sPath, GraphicsFileFormat format )
 
 	SDL_RWops rw;
 	OpenRWops( &rw, &buf );
+
+	/* Unless we're in lossless, resize the image to 640x480.  If we're saving lossy,
+	 * there's no sense in saving 1280x960 screenshots, and if we're in a custom
+	 * resolution (eg. 640x240), we don't want to output in that resolution. */
+	if( format != SAVE_LOSSLESS && (surface->h != 640 || surface->w != 480) )
+		zoomSurface( surface, 640, 480 );
 
 	switch( format )
 	{
