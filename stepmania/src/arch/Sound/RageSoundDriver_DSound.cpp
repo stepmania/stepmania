@@ -22,11 +22,10 @@ RageSoundManager *SOUNDMAN = NULL;
 const int channels = 2;
 const int samplesize = 2 * channels; /* 16-bit */
 const int samplerate = 44100;
-const int buffersize_frames = 4096;	/* in frames */
+const int buffersize_frames = 1024*8;	/* in frames */
 const int buffersize = buffersize_frames * samplesize; /* in bytes */
 
 const int num_chunks = 8;
-const int chunksize_frames = buffersize_frames / num_chunks;
 const int chunksize = buffersize / num_chunks;
 
 int RageSound_DSound::MixerThread_start(void *p)
@@ -49,7 +48,11 @@ void RageSound_DSound::MixerThread()
 
 	while(!shutdown) {
 		VDCHECKPOINT;
-		Sleep(10);
+
+		/* Sleep for half of a buffer size.  (GetPCM() can take a bit
+		 * of CPU if we call it too much and we're playing a lot of sounds.) */
+		float sleep_secs = (float(buffersize_frames/2) / samplerate);
+		Sleep(int(1000 * sleep_secs));
 
 		VDCHECKPOINT;
 		LockMutex L(SOUNDMAN->lock);
