@@ -51,8 +51,6 @@ class NoteDataWithScoring : public NoteData
 	 * only meaningful for graded taps (m_TapNoteScores >= TNS_BOO). */
 	vector<float> m_TapNoteOffset[MAX_NOTE_TRACKS];
 
-	map<RowTrack, float> m_fHoldNoteLife;
-
 public:
 	NoteDataWithScoring();
 	void Init();
