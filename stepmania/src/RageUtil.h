@@ -174,6 +174,13 @@ void splitrelpath(
 	CString& Ext 
 );
 
+inline CString GetExtension( CString sPath )
+{
+	CString Dir, FName, Ext;
+	splitrelpath( sPath, Dir, FName, Ext );
+	return Ext;
+};
+
 typedef int longchar;
 extern const wchar_t INVALID_CHAR;
 

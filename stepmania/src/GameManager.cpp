@@ -26,32 +26,36 @@ GameManager*	GAMEMAN = NULL;	// global and accessable from anywhere in our progr
 
 
 const int DANCE_COL_SPACING = 64;
-const int DANCE_6PANEL_VERSUS_COL_SPACING = 54;
 const int PUMP_COL_SPACING = 50;
 const int EZ2_COL_SPACING = 46; 
 const int EZ2_REAL_COL_SPACING = 40;
 const int PARA_COL_SPACING = 54;
 const int DS3DDX_COL_SPACING = 46;
 const int BM_COL_SPACING=34;
+const int MANIAX_COL_SPACING = 36;
+const int TECHNO_COL_SPACING = 64;
 
 struct {
 	char *name;
 	int NumTracks;
 } const NotesTypes[NUM_STEPS_TYPES] = {
-	{ "dance-single", 4 },
-	{ "dance-double", 8 },
-	{ "dance-couple", 8 },
-	{ "dance-solo", 6 },
-	{ "pump-single", 5 },
-	{ "pump-halfdouble", 6 },
-	{ "pump-double", 10 },
-	{ "pump-couple", 10 },
-	{ "ez2-single", 5 },		// Single: TL,LHH,D,RHH,TR
-	{ "ez2-double", 10 },		// Double: Single x2
-	{ "ez2-real", 7 },			// Real: TL,LHH,LHL,D,RHL,RHH,TR
-	{ "para-single", 5 },
-	{ "ds3ddx-single", 8 },
-	{ "bm-single", 6 }
+	{ "dance-single",	4 },
+	{ "dance-double",	8 },
+	{ "dance-couple",	8 },
+	{ "dance-solo",		6 },
+	{ "pump-single",	5 },
+	{ "pump-halfdouble",6 },
+	{ "pump-double",	10 },
+	{ "pump-couple",	10 },
+	{ "ez2-single",		5 },	// Single: TL,LHH,D,RHH,TR
+	{ "ez2-double",		10 },	// Double: Single x2
+	{ "ez2-real",		7 },	// Real: TL,LHH,LHL,D,RHL,RHH,TR
+	{ "para-single",	5 },
+	{ "ds3ddx-single",	8 },
+	{ "bm-single",		6 },
+	{ "maniax-single",	4 },
+	{ "maniax-double",	8 },
+	{ "techno-single8", 8 },
 };
 
 //
@@ -628,6 +632,192 @@ GameDef g_GameDefs[NUM_GAMES] =
 			},
 		}
 	},
+	{	// GAME_MANIAX
+		"maniax",					// m_szName
+		"Dance Maniax",				// m_szDescription
+		2,							// m_iNumControllers
+		NUM_MANIAX_BUTTONS,			// m_iButtonsPerController
+		{	// m_szButtonNames
+			"HandUpLeft",
+			"HandUpRight",
+			"HandLrLeft",
+			"HandLrRight",
+			"Start",
+			"Back",
+			"MenuLeft",
+			"MenuRight",
+			"MenuUp",
+			"MenuDown",
+			"Insert Coin",
+			"Operator",
+		},
+		{	// m_szSecondaryFunction
+			"(MenuLeft)",
+			"(MenuRight)",
+			"(MenuDown)",
+			"(MenuUp)",
+			"",
+			"",
+			"(dedicated)",
+			"(dedicated)",
+			"(dedicated)",
+			"(dedicated)",
+			"",
+			"",
+		},
+		{	// m_DedicatedMenuButton
+			MANIAX_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
+			MANIAX_BUTTON_MENURIGHT,	// MENU_BUTTON_RIGHT
+			MANIAX_BUTTON_MENUUP,		// MENU_BUTTON_UP
+			MANIAX_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
+			MANIAX_BUTTON_START,		// MENU_BUTTON_START
+			MANIAX_BUTTON_BACK,			// MENU_BUTTON_BACK
+			MANIAX_BUTTON_COIN,			// MENU_BUTTON_COIN
+			MANIAX_BUTTON_OPERATOR		// MENU_BUTTON_OPERATOR
+		},
+		{	// m_SecondaryMenuButton
+			MANIAX_BUTTON_HANDUPLEFT,	// MENU_BUTTON_LEFT
+			MANIAX_BUTTON_HANDUPRIGHT,	// MENU_BUTTON_RIGHT
+			MANIAX_BUTTON_HANDLRRIGHT,	// MENU_BUTTON_UP
+			MANIAX_BUTTON_HANDLRLEFT,	// MENU_BUTTON_DOWN
+			MANIAX_BUTTON_START,		// MENU_BUTTON_START
+			MANIAX_BUTTON_BACK,			// MENU_BUTTON_BACK
+			MANIAX_BUTTON_COIN,			// MENU_BUTTON_COIN
+			MANIAX_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
+		},
+		{	// m_iDefaultKeyboardKey
+			{	// PLAYER_1
+				SDLK_a,				// MANIAX_BUTTON_HANDUPLEFT,
+				SDLK_s,				// MANIAX_BUTTON_HANDUPRIGHT,
+				SDLK_z,				// MANIAX_BUTTON_HANDLRLEFT,
+				SDLK_x,				// MANIAX_BUTTON_HANDLRRIGHT,
+				SDLK_RETURN,		// MANIAX_BUTTON_START,
+				SDLK_ESCAPE,		// MANIAX_BUTTON_BACK
+				SDLK_LEFT,			// MANIAX_BUTTON_MENULEFT
+				SDLK_RIGHT,			// MANIAX_BUTTON_MENURIGHT
+				SDLK_UP,			// MANIAX_BUTTON_MENUUP
+				SDLK_DOWN,			// MANIAX_BUTTON_MENUDOWN
+				SDLK_F1,			// MANIAX_BUTTON_COIN
+				SDLK_SCROLLOCK		// MANIAX_BUTTON_OPERATOR
+			},
+			{	// PLAYER_2
+				SDLK_KP4,			// MANIAX_BUTTON_HANDUPLEFT,
+				SDLK_KP5,			// MANIAX_BUTTON_HANDUPRIGHT,
+				SDLK_KP1,			// MANIAX_BUTTON_HANDLRLEFT,
+				SDLK_KP2,			// MANIAX_BUTTON_HANDLRRIGHT,
+				SDLK_KP_ENTER,		// MANIAX_BUTTON_START,
+				SDLK_KP0,			// MANIAX_BUTTON_BACK
+				SDLK_KP_DIVIDE,		// MANIAX_BUTTON_MENULEFT
+				SDLK_KP_MULTIPLY,	// MANIAX_BUTTON_MENURIGHT
+				SDLK_KP_MINUS,		// MANIAX_BUTTON_MENUUP
+				SDLK_KP_PLUS,		// MANIAX_BUTTON_MENUDOWN
+				SDLK_F2,			// MANIAX_BUTTON_COIN
+				-1					// MANIAX_BUTTON_OPERATOR
+			},
+		}
+	},
+	{	// GAME_MANIAX
+		"techno",					// m_szName
+		"TechnoMotion",				// m_szDescription
+		2,							// m_iNumControllers
+		NUM_TECHNO_BUTTONS,			// m_iButtonsPerController
+		{	// m_szButtonNames
+			"Left",
+			"Right",
+			"Up",
+			"Down",
+			"UpLeft",
+			"UpRight",
+			"Center",
+			"DownLeft",
+			"DownRight",
+			"Start",
+			"Back",
+			"MenuLeft",
+			"MenuRight",
+			"MenuUp",
+			"MenuDown",
+			"Insert Coin",
+			"Operator",
+		},
+		{	// m_szSecondaryFunction
+			"(MenuLeft)",
+			"(MenuRight)",
+			"(MenuDown)",
+			"(MenuUp)",
+			"",
+			"",
+			"",
+			"",
+			"",
+			"(dedicated)",
+			"(dedicated)",
+			"(dedicated)",
+			"(dedicated)",
+			"",
+			"",
+		},
+		{	// m_DedicatedMenuButton
+			TECHNO_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
+			TECHNO_BUTTON_MENURIGHT,	// MENU_BUTTON_RIGHT
+			TECHNO_BUTTON_MENUUP,		// MENU_BUTTON_UP
+			TECHNO_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
+			TECHNO_BUTTON_START,		// MENU_BUTTON_START
+			TECHNO_BUTTON_BACK,			// MENU_BUTTON_BACK
+			TECHNO_BUTTON_COIN,			// MENU_BUTTON_COIN
+			TECHNO_BUTTON_OPERATOR		// MENU_BUTTON_OPERATOR
+		},
+		{	// m_SecondaryMenuButton
+			TECHNO_BUTTON_LEFT,			// MENU_BUTTON_LEFT
+			TECHNO_BUTTON_RIGHT,		// MENU_BUTTON_RIGHT
+			TECHNO_BUTTON_UP,			// MENU_BUTTON_UP
+			TECHNO_BUTTON_DOWN,			// MENU_BUTTON_DOWN
+			TECHNO_BUTTON_START,		// MENU_BUTTON_START
+			TECHNO_BUTTON_BACK,			// MENU_BUTTON_BACK
+			TECHNO_BUTTON_COIN,			// MENU_BUTTON_COIN
+			TECHNO_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
+		},
+		{	// m_iDefaultKeyboardKey
+			{	// PLAYER_1
+				SDLK_a,				// TECHNO_BUTTON_LEFT,
+				SDLK_d,				// TECHNO_BUTTON_RIGHT,
+				SDLK_w,				// TECHNO_BUTTON_UP,
+				SDLK_x,				// TECHNO_BUTTON_DOWN,
+				SDLK_q,				// TECHNO_BUTTON_UPLEFT,
+				SDLK_e,				// TECHNO_BUTTON_UPRIGHT,
+				SDLK_s,				// TECHNO_BUTTON_CENTER,
+				SDLK_z,				// TECHNO_BUTTON_DOWNLEFT,
+				SDLK_c,				// TECHNO_BUTTON_DOWNRIGHT,
+				SDLK_RETURN,		// TECHNO_BUTTON_START,
+				SDLK_ESCAPE,		// TECHNO_BUTTON_BACK
+				SDLK_LEFT,			// TECHNO_BUTTON_MENULEFT
+				SDLK_RIGHT,			// TECHNO_BUTTON_MENURIGHT
+				SDLK_UP,			// TECHNO_BUTTON_MENUUP
+				SDLK_DOWN,			// TECHNO_BUTTON_MENUDOWN
+				SDLK_F1,			// TECHNO_BUTTON_COIN
+				SDLK_SCROLLOCK		// TECHNO_BUTTON_OPERATOR
+			},
+			{	// PLAYER_2
+				SDLK_KP4,			// TECHNO_BUTTON_LEFT,
+				SDLK_KP6,			// TECHNO_BUTTON_RIGHT,
+				SDLK_KP8,			// TECHNO_BUTTON_UP,
+				SDLK_KP2,			// TECHNO_BUTTON_DOWN,
+				SDLK_KP7,			// TECHNO_BUTTON_UPLEFT,
+				SDLK_KP9,			// TECHNO_BUTTON_UPRIGHT,
+				SDLK_KP5,			// TECHNO_BUTTON_CENTER,
+				SDLK_KP1,			// TECHNO_BUTTON_DOWNLEFT,
+				SDLK_KP3,			// TECHNO_BUTTON_DOWNRIGHT,
+				SDLK_KP_ENTER,		// TECHNO_BUTTON_START,
+				SDLK_KP0,			// TECHNO_BUTTON_BACK
+				SDLK_KP_DIVIDE,		// TECHNO_BUTTON_MENULEFT
+				SDLK_KP_MULTIPLY,	// TECHNO_BUTTON_MENURIGHT
+				SDLK_KP_MINUS,		// TECHNO_BUTTON_MENUUP
+				SDLK_KP_PLUS,		// TECHNO_BUTTON_MENUDOWN
+				SDLK_F2,			// TECHNO_BUTTON_COIN
+				-1					// TECHNO_BUTTON_OPERATOR
+			},
+		}
+	},
 };
 
 StyleDef g_StyleDefs[NUM_STYLES] = 
@@ -721,7 +911,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			0,1,2,3,4,5,6,7
 		},
 	},
-	{	// StyleDef
+	{	// STYLE_DANCE_COUPLE
 		GAME_DANCE,							// m_Game
 		true,								// m_bUsedForGameplay
 		false,								// m_bUsedForEdit
@@ -1260,7 +1450,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			0,1,2,3,4,5,6,7
 		},
 	},
-	{
+	{	// STYLE_BM_SINGLE
 		GAME_BM,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
@@ -1290,272 +1480,134 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			0,1,2,3,4,5
 		},
-	}
+	},
+	{	// STYLE_MANIAX_SINGLE
+		GAME_MANIAX,								// m_Game
+		true,									// m_bUsedForGameplay
+		true,									// m_bUsedForEdit
+		"single",								// m_szName
+		STEPS_TYPE_MANIAX_SINGLE,				// m_StepsType
+		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		{ 160, 480 },							// m_iCenterX
+		4,										// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	GAME_CONTROLLER_1,	MANIAX_BUTTON_HANDLRLEFT,	-MANIAX_COL_SPACING*1.5f },
+				{ TRACK_2,	GAME_CONTROLLER_1,	MANIAX_BUTTON_HANDUPLEFT,	-MANIAX_COL_SPACING*0.5f },
+				{ TRACK_3,	GAME_CONTROLLER_1,	MANIAX_BUTTON_HANDUPRIGHT,	+MANIAX_COL_SPACING*0.5f },
+				{ TRACK_4,	GAME_CONTROLLER_1,	MANIAX_BUTTON_HANDLRRIGHT,	+MANIAX_COL_SPACING*1.5f },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	GAME_CONTROLLER_2,	MANIAX_BUTTON_HANDLRLEFT,	-MANIAX_COL_SPACING*1.5f },
+				{ TRACK_2,	GAME_CONTROLLER_2,	MANIAX_BUTTON_HANDUPLEFT,	-MANIAX_COL_SPACING*0.5f },
+				{ TRACK_3,	GAME_CONTROLLER_2,	MANIAX_BUTTON_HANDUPRIGHT,	+MANIAX_COL_SPACING*0.5f },
+				{ TRACK_4,	GAME_CONTROLLER_2,	MANIAX_BUTTON_HANDLRRIGHT,	+MANIAX_COL_SPACING*1.5f },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			0, 1, 2, 3
+		},
+	},
+	{	// STYLE_MANIAX_VERSUS
+		GAME_MANIAX,							// m_Game
+		true,									// m_bUsedForGameplay
+		false,									// m_bUsedForEdit
+		"versus",								// m_szName
+		STEPS_TYPE_MANIAX_SINGLE,				// m_StepsType
+		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
+		{ 160, 480 },							// m_iCenterX
+		4,										// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	GAME_CONTROLLER_1,	MANIAX_BUTTON_HANDLRLEFT,	-MANIAX_COL_SPACING*1.5f },
+				{ TRACK_2,	GAME_CONTROLLER_1,	MANIAX_BUTTON_HANDUPLEFT,	-MANIAX_COL_SPACING*0.5f },
+				{ TRACK_3,	GAME_CONTROLLER_1,	MANIAX_BUTTON_HANDUPRIGHT,	+MANIAX_COL_SPACING*0.5f },
+				{ TRACK_4,	GAME_CONTROLLER_1,	MANIAX_BUTTON_HANDLRRIGHT,	+MANIAX_COL_SPACING*1.5f },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	GAME_CONTROLLER_2,	MANIAX_BUTTON_HANDLRLEFT,	-MANIAX_COL_SPACING*1.5f },
+				{ TRACK_2,	GAME_CONTROLLER_2,	MANIAX_BUTTON_HANDUPLEFT,	-MANIAX_COL_SPACING*0.5f },
+				{ TRACK_3,	GAME_CONTROLLER_2,	MANIAX_BUTTON_HANDUPRIGHT,	+MANIAX_COL_SPACING*0.5f },
+				{ TRACK_4,	GAME_CONTROLLER_2,	MANIAX_BUTTON_HANDLRRIGHT,	+MANIAX_COL_SPACING*1.5f },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			0, 1, 2, 3
+		},
+	},
+	{	// STYLE_MANIAX_DOUBLE
+		GAME_MANIAX,							// m_Game
+		true,									// m_bUsedForGameplay
+		true,									// m_bUsedForEdit
+		"double",								// m_szName
+		STEPS_TYPE_MANIAX_DOUBLE,				// m_StepsType
+		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
+		{ 320, 320 },							// m_iCenterX
+		8,										// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	GAME_CONTROLLER_1,	MANIAX_BUTTON_HANDLRLEFT,	-MANIAX_COL_SPACING*3.5f },
+				{ TRACK_2,	GAME_CONTROLLER_1,	MANIAX_BUTTON_HANDUPLEFT,	-MANIAX_COL_SPACING*2.5f },
+				{ TRACK_3,	GAME_CONTROLLER_1,	MANIAX_BUTTON_HANDUPRIGHT,	-MANIAX_COL_SPACING*1.5f },
+				{ TRACK_4,	GAME_CONTROLLER_1,	MANIAX_BUTTON_HANDLRRIGHT,	-MANIAX_COL_SPACING*0.5f },
+				{ TRACK_5,	GAME_CONTROLLER_2,	MANIAX_BUTTON_HANDLRLEFT,	+MANIAX_COL_SPACING*0.5f },
+				{ TRACK_6,	GAME_CONTROLLER_2,	MANIAX_BUTTON_HANDUPLEFT,	+MANIAX_COL_SPACING*1.5f },
+				{ TRACK_7,	GAME_CONTROLLER_2,	MANIAX_BUTTON_HANDUPRIGHT,	+MANIAX_COL_SPACING*2.5f },
+				{ TRACK_8,	GAME_CONTROLLER_2,	MANIAX_BUTTON_HANDLRRIGHT,	+MANIAX_COL_SPACING*3.5f },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	GAME_CONTROLLER_1,	MANIAX_BUTTON_HANDLRLEFT,	-MANIAX_COL_SPACING*3.5f },
+				{ TRACK_2,	GAME_CONTROLLER_1,	MANIAX_BUTTON_HANDUPLEFT,	-MANIAX_COL_SPACING*2.5f },
+				{ TRACK_3,	GAME_CONTROLLER_1,	MANIAX_BUTTON_HANDUPRIGHT,	-MANIAX_COL_SPACING*1.5f },
+				{ TRACK_4,	GAME_CONTROLLER_1,	MANIAX_BUTTON_HANDLRRIGHT,	-MANIAX_COL_SPACING*0.5f },
+				{ TRACK_5,	GAME_CONTROLLER_2,	MANIAX_BUTTON_HANDLRLEFT,	+MANIAX_COL_SPACING*0.5f },
+				{ TRACK_6,	GAME_CONTROLLER_2,	MANIAX_BUTTON_HANDUPLEFT,	+MANIAX_COL_SPACING*1.5f },
+				{ TRACK_7,	GAME_CONTROLLER_2,	MANIAX_BUTTON_HANDUPRIGHT,	+MANIAX_COL_SPACING*2.5f },
+				{ TRACK_8,	GAME_CONTROLLER_2,	MANIAX_BUTTON_HANDLRRIGHT,	+MANIAX_COL_SPACING*3.5f },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			0,1,2,3,4,5,6,7
+		},
+	},
+	{	// STYLE_TECHNO_SINGLE8
+		GAME_TECHNO,							// m_Game
+		true,									// m_bUsedForGameplay
+		true,									// m_bUsedForEdit
+		"single8",								// m_szName
+		STEPS_TYPE_TECHNO_SINGLE8,				// m_StepsType
+		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		{ 320, 320 },							// m_iCenterX
+		8,										// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	GAME_CONTROLLER_1,	TECHNO_BUTTON_DOWNLEFT,	-TECHNO_COL_SPACING*3.5f },
+				{ TRACK_2,	GAME_CONTROLLER_1,	TECHNO_BUTTON_LEFT,		-TECHNO_COL_SPACING*2.5f },
+				{ TRACK_3,	GAME_CONTROLLER_1,	TECHNO_BUTTON_UPLEFT,	-TECHNO_COL_SPACING*1.5f },
+				{ TRACK_4,	GAME_CONTROLLER_1,	TECHNO_BUTTON_DOWN,		-TECHNO_COL_SPACING*0.5f },
+				{ TRACK_5,	GAME_CONTROLLER_1,	TECHNO_BUTTON_UP,		+TECHNO_COL_SPACING*0.5f },
+				{ TRACK_6,	GAME_CONTROLLER_1,	TECHNO_BUTTON_UPRIGHT,	+TECHNO_COL_SPACING*1.5f },
+				{ TRACK_7,	GAME_CONTROLLER_1,	TECHNO_BUTTON_RIGHT,	+TECHNO_COL_SPACING*2.5f },
+				{ TRACK_8,	GAME_CONTROLLER_1,	TECHNO_BUTTON_DOWNRIGHT,+TECHNO_COL_SPACING*3.5f },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	GAME_CONTROLLER_2,	TECHNO_BUTTON_DOWNLEFT,	-TECHNO_COL_SPACING*3.5f },
+				{ TRACK_2,	GAME_CONTROLLER_2,	TECHNO_BUTTON_LEFT,		-TECHNO_COL_SPACING*2.5f },
+				{ TRACK_3,	GAME_CONTROLLER_2,	TECHNO_BUTTON_UPLEFT,	-TECHNO_COL_SPACING*1.5f },
+				{ TRACK_4,	GAME_CONTROLLER_2,	TECHNO_BUTTON_DOWN,		-TECHNO_COL_SPACING*0.5f },
+				{ TRACK_5,	GAME_CONTROLLER_2,	TECHNO_BUTTON_UP,		+TECHNO_COL_SPACING*0.5f },
+				{ TRACK_6,	GAME_CONTROLLER_2,	TECHNO_BUTTON_UPRIGHT,	+TECHNO_COL_SPACING*1.5f },
+				{ TRACK_7,	GAME_CONTROLLER_2,	TECHNO_BUTTON_RIGHT,	+TECHNO_COL_SPACING*2.5f },
+				{ TRACK_8,	GAME_CONTROLLER_2,	TECHNO_BUTTON_DOWNRIGHT,+TECHNO_COL_SPACING*3.5f },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			0,1,2,3,4,5,6,7
+		},
+	},
 };
 
 
-/*
-ModeChoice g_ModeChoices[] = 
-{
-	{
-		GAME_DANCE,
-		PLAY_MODE_ARCADE,
-		STYLE_DANCE_SINGLE,
-		DIFFICULTY_MEDIUM,
-		"single",
-		1
-	},
-	{
-		GAME_DANCE,
-		PLAY_MODE_ARCADE,
-		STYLE_DANCE_VERSUS,
-		DIFFICULTY_MEDIUM,
-		"versus",
-		2
-	},
-	{
-		GAME_DANCE,
-		PLAY_MODE_ARCADE,
-		STYLE_DANCE_DOUBLE,
-		DIFFICULTY_MEDIUM,
-		"double",
-		2
-	},
-	{
-		GAME_DANCE,
-		PLAY_MODE_ARCADE,
-		STYLE_DANCE_COUPLE,
-		DIFFICULTY_MEDIUM,
-		"couple",
-		2
-	},
-	{
-		GAME_DANCE,
-		PLAY_MODE_ARCADE,
-		STYLE_DANCE_SOLO,
-		DIFFICULTY_MEDIUM,
-		"solo",
-		1
-	},
-	{
-		GAME_PUMP,
-		PLAY_MODE_ARCADE,
-		STYLE_PUMP_SINGLE,
-		DIFFICULTY_EASY,
-		"normal",
-		1
-	},
-	{
-		GAME_PUMP,
-		PLAY_MODE_ARCADE,
-		STYLE_PUMP_SINGLE,
-		DIFFICULTY_MEDIUM,
-		"hard",
-		1
-	},
-	{
-		GAME_PUMP,
-		PLAY_MODE_ARCADE,
-		STYLE_PUMP_SINGLE,
-		DIFFICULTY_HARD,
-		"crazy",
-		1
-	},
-	{
-		GAME_PUMP,
-		PLAY_MODE_ARCADE,
-		STYLE_PUMP_VERSUS,
-		DIFFICULTY_EASY,
-		"normal",
-		2
-	},
-	{
-		GAME_PUMP,
-		PLAY_MODE_ARCADE,
-		STYLE_PUMP_VERSUS,
-		DIFFICULTY_MEDIUM,
-		"hard",
-		2
-	},
-	{
-		GAME_PUMP,
-		PLAY_MODE_ARCADE,
-		STYLE_PUMP_VERSUS,
-		DIFFICULTY_HARD,
-		"crazy",
-		2
-	},
-	{
-		GAME_PUMP,
-		PLAY_MODE_ARCADE,
-		STYLE_PUMP_COUPLE,
-		DIFFICULTY_MEDIUM,
-		"battle",
-		2
-	},
-	{
-		GAME_PUMP,
-		PLAY_MODE_ARCADE,
-		STYLE_PUMP_DOUBLE,
-		DIFFICULTY_MEDIUM,
-		"double",
-		1
-	},
-	{
-		GAME_PUMP,
-		PLAY_MODE_ONI,
-		STYLE_PUMP_SINGLE,
-		DIFFICULTY_MEDIUM,
-		"nonstop",
-		1
-	},
-	{
-		GAME_PUMP,
-		PLAY_MODE_ONI,
-		STYLE_PUMP_VERSUS,
-		DIFFICULTY_MEDIUM,
-		"nonstop",
-		2
-	},
-	{
-		GAME_EZ2,
-		PLAY_MODE_ARCADE,
-		STYLE_EZ2_SINGLE,
-		DIFFICULTY_EASY,
-		"easy",
-		1
-	},
-	{
-		GAME_EZ2,
-		PLAY_MODE_ARCADE,
-		STYLE_EZ2_SINGLE,
-		DIFFICULTY_HARD,
-		"hard",
-		1
-	},
-	{
-		GAME_EZ2,
-		PLAY_MODE_ARCADE,
-		STYLE_EZ2_REAL,
-		DIFFICULTY_MEDIUM,
-		"real",
-		1
-	},
-	{
-		GAME_EZ2,
-		PLAY_MODE_ARCADE,
-		STYLE_EZ2_DOUBLE,
-		DIFFICULTY_MEDIUM,
-		"club",
-		1
-	},
-	{
-		GAME_EZ2,
-		PLAY_MODE_ARCADE,
-		STYLE_EZ2_SINGLE_VERSUS,
-		DIFFICULTY_EASY,
-		"easy",
-		2
-	},
-	{
-		GAME_EZ2,
-		PLAY_MODE_ARCADE,
-		STYLE_EZ2_SINGLE_VERSUS,
-		DIFFICULTY_HARD,
-		"hard",
-		2
-	},
-	{
-		GAME_EZ2,
-		PLAY_MODE_ARCADE,
-		STYLE_EZ2_REAL_VERSUS,
-		DIFFICULTY_MEDIUM,
-		"real",
-		2
-	},
-	{
-		GAME_PARA,
-		PLAY_MODE_ARCADE,
-		STYLE_PARA_SINGLE,
-		DIFFICULTY_EASY,
-		"para",
-		1
-	},
-	{
-		GAME_PARA,
-		PLAY_MODE_ARCADE,
-		STYLE_PARA_SINGLE,
-		DIFFICULTY_EASY,
-		"easy",
-		1
-	},
-	{
-		GAME_PARA,
-		PLAY_MODE_ARCADE,
-		STYLE_PARA_SINGLE,
-		DIFFICULTY_MEDIUM,
-		"hard",
-		1
-	},
-	{
-		GAME_PARA,
-		PLAY_MODE_ARCADE,
-		STYLE_PARA_SINGLE,
-		DIFFICULTY_HARD,
-		"expert",
-		1
-	},
-	{
-		GAME_DS3DDX,
-		PLAY_MODE_ARCADE,
-		STYLE_DS3DDX_SINGLE,
-		DIFFICULTY_EASY,
-		"pretty",
-		1
-	},
-	{
-		GAME_DS3DDX,
-		PLAY_MODE_ARCADE,
-		STYLE_DS3DDX_SINGLE,
-		DIFFICULTY_MEDIUM,
-		"power",
-		1
-	},
-	{
-		GAME_DS3DDX,
-		PLAY_MODE_ARCADE,
-		STYLE_DS3DDX_SINGLE,
-		DIFFICULTY_HARD,
-		"power2",
-		1
-	},
-	{
-		GAME_BM,
-		PLAY_MODE_ARCADE,
-		STYLE_BM_SINGLE,
-		DIFFICULTY_EASY,
-		"beginner",
-		1
-	},
-	{
-		GAME_BM,
-		PLAY_MODE_ARCADE,
-		STYLE_BM_SINGLE,
-		DIFFICULTY_MEDIUM,
-		"normal",
-		1
-	},
-	{
-		GAME_BM,
-		PLAY_MODE_ARCADE,
-		STYLE_BM_SINGLE,
-		DIFFICULTY_HARD,
-		"expert",
-		1
-	},
-};
-const int NUM_MODE_CHOICES = sizeof(g_ModeChoices) / sizeof(g_ModeChoices[0]);
-*/
 
 GameManager::GameManager()
 {
@@ -1601,14 +1653,6 @@ Style GameManager::GetEditorStyleForNotesType( StepsType nt )
 	return STYLE_INVALID;
 }
 
-/*
-void GameManager::GetModesChoicesForGame( Game game, vector<ModeChoice*>& apChoicesAddTo )
-{
-	for( int s=0; s<NUM_MODE_CHOICES; s++ )
-		if( g_ModeChoices[s].game == game)
-			apChoicesAddTo.push_back( &g_ModeChoices[s] );
-}
-*/
 
 void GameManager::GetNotesTypesForGame( Game game, vector<StepsType>& aNotesTypeAddTo )
 {

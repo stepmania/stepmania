@@ -315,6 +315,7 @@ void FilenameDB::GetFilesSimpleMatch(const CString &dir, const CString &fn, vect
 		if(second_pos == fn.npos)
 		{
 			/* Only one *: "A*B". */
+			/* XXX: "_blank.png*.png" shouldn't match the file "_blank.png". */
 			GetFilesMatching(dir, fn.substr(0, first_pos), "", fn.substr(first_pos+1), out, bOnlyDirs);
 		} else {
 			/* Two *s: "A*B*C". */

@@ -230,7 +230,7 @@ try_element_again:
 		ASSERT( asElementPaths.size() == 1 );
 
 		CString sPath = asElementPaths[0];
-		bool bIsARedirect = sPath.length()>6  &&  sPath.Right(6).CompareNoCase(".redir")==0;
+		bool bIsARedirect = GetExtension(sPath).CompareNoCase("redir")==0;
 
 		if( !bIsARedirect )
 		{

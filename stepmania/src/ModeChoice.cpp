@@ -85,13 +85,15 @@ bool ModeChoice::FromString( CString sChoice, bool bIgnoreUnknown )
 			continue;
 		}
 
-		if( !bIgnoreUnknown )
-		{
-			CString sError = ssprintf( "The choice token '%s' is not recognized as a Game, Style, PlayMode, or Difficulty.  The choice containing this token will be ignored.", sBit.c_str() );
-			LOG->Warn( sError );
-			if( DISPLAY->IsWindowed() )
-				HOOKS->MessageBoxOK( sError );
-		}
+		// Never show this error to the user.  It occurs all the time in 
+		// non-dance gametypes.
+//		if( !bIgnoreUnknown )
+//		{
+//			CString sError = ssprintf( "The choice token '%s' is not recognized as a Game, Style, PlayMode, or Difficulty.  The choice containing this token will be ignored.", sBit.c_str() );
+//			LOG->Warn( sError );
+//			if( DISPLAY->IsWindowed() )
+//				HOOKS->MessageBoxOK( sError );
+//		}
 		bChoiceIsInvalid |= true;
 	}
 

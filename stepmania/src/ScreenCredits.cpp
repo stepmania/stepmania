@@ -74,6 +74,7 @@ const CreditLine CREDIT_LINES[] =
 	{0,"Dj 'AeON ExOdus' Washington"},
 	{0,"Xelf"},
 	{0,"SPDS (James Sanders)"},
+	{0,"k0ldx"},
 	{0,""},
 	{0,""},
 	{0,""},

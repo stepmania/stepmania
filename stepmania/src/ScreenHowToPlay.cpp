@@ -44,12 +44,13 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 
 	switch(GAMESTATE->m_CurGame) // which style should we use to demonstrate?
 	{
-		case GAME_DANCE:	GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE; break;
-		case GAME_PUMP:		GAMESTATE->m_CurStyle = STYLE_PUMP_SINGLE;	break;
-		case GAME_EZ2:		GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE;	break;
-		case GAME_PARA:		GAMESTATE->m_CurStyle = STYLE_PARA_SINGLE;	break;
-		case GAME_DS3DDX:	GAMESTATE->m_CurStyle = STYLE_DS3DDX_SINGLE; break;
-		case GAME_BM:		GAMESTATE->m_CurStyle = STYLE_BM_SINGLE;	break;
+		case GAME_DANCE:	GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;		break;
+		case GAME_PUMP:		GAMESTATE->m_CurStyle = STYLE_PUMP_SINGLE;		break;
+		case GAME_EZ2:		GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE;		break;
+		case GAME_PARA:		GAMESTATE->m_CurStyle = STYLE_PARA_SINGLE;		break;
+		case GAME_DS3DDX:	GAMESTATE->m_CurStyle = STYLE_DS3DDX_SINGLE;	break;
+		case GAME_BM:		GAMESTATE->m_CurStyle = STYLE_BM_SINGLE;		break;
+		case GAME_MANIAX:	GAMESTATE->m_CurStyle = STYLE_MANIAX_SINGLE;	break;
 		default: ASSERT(0); // we should cover all gametypes....
 	}
 

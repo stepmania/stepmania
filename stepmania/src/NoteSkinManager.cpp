@@ -20,6 +20,8 @@
 #include "RageUtil.h"
 #include "GameManager.h"
 #include "arch/arch.h"
+#include "RageDisplay.h"
+#include "arch/ArchHooks/ArchHooks.h"
 
 
 NoteSkinManager*	NOTESKIN = NULL;	// global object accessable from anywhere in the program
@@ -199,17 +201,17 @@ CString NoteSkinManager::GetPathTo( PlayerNumber pn, CString sButtonName, CStrin
 	CString sNoteSkinName = GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin;
 	sNoteSkinName.MakeLower();
 
-	CString ret = GetPathTo( sNoteSkinName, sButtonName, sFileName );
+	CString ret = GetPathTo( GetNoteSkinDir(sNoteSkinName), sButtonName+" "+sFileName );
 	if( !ret.empty() )	// we found something
 		return ret;
 
 	// Search game default NoteSkin
-	ret = GetPathTo( GAME_BASE_NOTESKIN_NAME, sButtonName, sFileName);
+	ret = GetPathTo( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME), sButtonName+" "+sFileName);
 	if( !ret.empty() )	// we found something
 		return ret;
 
 	// Search global default NoteSkin
-	ret = GetPathTo( GAME_BASE_NOTESKIN_NAME, "Fallback", sFileName, true );
+	ret = GetPathTo( GLOBAL_BASE_NOTESKIN_DIR, "Fallback "+sFileName );
 	if( !ret.empty() )	// we found something
 		return ret;
 
@@ -220,22 +222,51 @@ CString NoteSkinManager::GetPathTo( PlayerNumber pn, CString sButtonName, CStrin
 		GAME_BASE_NOTESKIN_NAME.c_str() );
 }
 
-CString NoteSkinManager::GetPathTo( CString sSkinName, CString sButtonName, CString sElementName, bool bGlobalDefault )	// looks in GAMESTATE for the current Style
+CString NoteSkinManager::GetPathTo( CString sDir, CString sFileName )
 {
-	const CString sDir = bGlobalDefault ? GLOBAL_BASE_NOTESKIN_DIR : GetNoteSkinDir( sSkinName );
+	CStringArray matches;		// fill this with the possible files
 
-	CStringArray arrayPossibleFileNames;		// fill this with the possible files
+	GetDirListing( sDir+sFileName+"*.redir",	matches, false, true );
+	GetDirListing( sDir+sFileName+"*.txt",		matches, false, true );
+	GetDirListing( sDir+sFileName+"*.sprite",	matches, false, true );
+	GetDirListing( sDir+sFileName+"*.png",		matches, false, true );
+	GetDirListing( sDir+sFileName+"*.jpg",		matches, false, true );
+	GetDirListing( sDir+sFileName+"*.bmp",		matches, false, true );
+	GetDirListing( sDir+sFileName+"*.gif",		matches, false, true );
 
-	GetDirListing( ssprintf("%s%s %s*.txt",	   sDir.c_str(), sButtonName.c_str(), sElementName.c_str()), arrayPossibleFileNames, false, true );
-	GetDirListing( ssprintf("%s%s %s*.sprite", sDir.c_str(), sButtonName.c_str(), sElementName.c_str()), arrayPossibleFileNames, false, true );
-	GetDirListing( ssprintf("%s%s %s*.png",    sDir.c_str(), sButtonName.c_str(), sElementName.c_str()), arrayPossibleFileNames, false, true );
-	GetDirListing( ssprintf("%s%s %s*.jpg",    sDir.c_str(), sButtonName.c_str(), sElementName.c_str()), arrayPossibleFileNames, false, true );
-	GetDirListing( ssprintf("%s%s %s*.bmp",    sDir.c_str(), sButtonName.c_str(), sElementName.c_str()), arrayPossibleFileNames, false, true );
-	GetDirListing( ssprintf("%s%s %s*.gif",    sDir.c_str(), sButtonName.c_str(), sElementName.c_str()), arrayPossibleFileNames, false, true );
-	GetDirListing( ssprintf("%s%s %s*",        sDir.c_str(), sButtonName.c_str(), sElementName.c_str()), arrayPossibleFileNames, false, true );
-
-	if( arrayPossibleFileNames.empty() )
+	if( matches.empty() )
 		return "";
-	else
-		return DerefRedir(arrayPossibleFileNames[0]);
+
+	if( matches.size() > 1 )
+	{
+		CString sError = "Multiple files match '"+sDir+sFileName+"'.  Please remove all but one of these files.";
+		if( DISPLAY->IsWindowed() )
+			HOOKS->MessageBoxOK( sError );
+	}
+	
+	CString sPath = matches[0];
+
+	bool bIsARedirect = GetExtension(sPath).CompareNoCase("redir")==0;
+	if( !bIsARedirect )
+	{
+		return sPath;
+	}
+	else	// bIsARedirect
+	{
+		CString sNewFileName = GetRedirContents(sPath);
+		
+		CString sNewPath = GetPathTo(sDir, sNewFileName);
+
+		if( !sNewPath.empty() )
+			return sNewPath;
+		else
+		{
+			CString message = ssprintf(
+					"ThemeManager:  The redirect '%s' points to the file '%s', which does not exist. "
+					"Verify that this redirect is correct.",
+					sPath.c_str(), sNewFileName.c_str());
+
+			RageException::Throw( "%s", message.c_str() ); 
+		}
+	}
 }

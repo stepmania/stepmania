@@ -13,13 +13,15 @@
 
 enum Game
 {
-	GAME_DANCE, // Dance Dance Revolution
-	GAME_PUMP, // Pump It Up
-	GAME_EZ2, // Ez2dancer
-	GAME_PARA, // ParaPAraParadise
-	GAME_DS3DDX, // Dance Station 3DDX.
-	GAME_BM,	// Beatmania
-	NUM_GAMES,	// leave this at the end
+	GAME_DANCE,		// Dance Dance Revolution
+	GAME_PUMP,		// Pump It Up
+	GAME_EZ2,		// Ez2dancer
+	GAME_PARA,		// ParaPAraParadise
+	GAME_DS3DDX,	// Dance Station 3DDX.
+	GAME_BM,		// Beatmania
+	GAME_MANIAX,	// DanceManiax
+	GAME_TECHNO,	// TechnoMotion
+	NUM_GAMES,		// leave this at the end
 	GAME_INVALID,
 };
 
