@@ -519,6 +519,9 @@ static void HandleInputEvents(float fDeltaTime)
 
 static void GameLoop()
 {
+	for(int hack = 0; hack < 1024; ++hack)
+		SDL_PumpEvents();
+
 	RageTimer timer;
 	while(1)
 	{
