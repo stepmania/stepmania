@@ -628,6 +628,21 @@ void GameState::FinishStage()
 	m_iCurrentStageIndex += m_iNumStagesOfThisSong;
 
 	m_iNumStagesOfThisSong = 0;
+
+	//
+	// Add step totals.  Use fRadarActual, since the player might have failed partway
+	// through the song, in which case we don't want to give credit for the rest of the
+	// song.
+	//
+	FOREACH_HumanPlayer( pn )
+	{
+		int iNumTapsAndHolds	= (int) g_CurStageStats.fRadarActual[pn][RADAR_NUM_TAPS_AND_HOLDS];
+		int iNumJumps			= (int) g_CurStageStats.fRadarActual[pn][RADAR_NUM_JUMPS];
+		int iNumHolds			= (int) g_CurStageStats.fRadarActual[pn][RADAR_NUM_HOLDS];
+		int iNumMines			= (int) g_CurStageStats.fRadarActual[pn][RADAR_NUM_MINES];
+		int iNumHands			= (int) g_CurStageStats.fRadarActual[pn][RADAR_NUM_HANDS];
+		PROFILEMAN->AddStepTotals( pn, iNumTapsAndHolds, iNumJumps, iNumHolds, iNumMines, iNumHands );
+	}
 }
 
 int GameState::GetStageIndex() const

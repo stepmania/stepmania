@@ -884,20 +884,6 @@ void ScreenEvaluation::CommitScores(
 			Song* pSong = GAMESTATE->m_pCurSong;
 			Steps* pSteps = GAMESTATE->m_pCurNotes[p];
 
-			//
-			// Add step totals.  (In Summary evaluations, we've already done this.)
-			//
-			if( m_Type != summary )
-			{
-				int iNumTapsAndHolds	= (int) stageStats.fRadarPossible[p][RADAR_NUM_TAPS_AND_HOLDS];
-				int iNumJumps			= (int) stageStats.fRadarPossible[p][RADAR_NUM_JUMPS];
-				int iNumHolds			= (int) stageStats.fRadarPossible[p][RADAR_NUM_HOLDS];
-				int iNumMines			= (int) stageStats.fRadarPossible[p][RADAR_NUM_MINES];
-				int iNumHands			= (int) stageStats.fRadarPossible[p][RADAR_NUM_HANDS];
-
-				PROFILEMAN->AddStepTotals( p, iNumTapsAndHolds, iNumJumps, iNumHolds, iNumMines, iNumHands );
-			}
-
 			// whether or not to save scores when the stage was failed
 			// depends on if this is a course or not ... it's handled
 			// below in the switch
