@@ -12,17 +12,6 @@
 #include "Style.h"
 
 
-#define NUM_FEET_IN_METER						THEME->GetMetricI(m_sName,"NumFeetInMeter")
-#define MAX_FEET_IN_METER						THEME->GetMetricI(m_sName,"MaxFeetInMeter")
-#define GLOW_IF_METER_GREATER_THAN				THEME->GetMetricI(m_sName,"GlowIfMeterGreaterThan")
-#define SHOW_FEET								THEME->GetMetricB(m_sName,"ShowFeet")
-/* "easy", "hard" */
-#define SHOW_DIFFICULTY							THEME->GetMetricB(m_sName,"ShowDifficulty")
-/* 3, 9 */
-#define SHOW_METER								THEME->GetMetricB(m_sName,"ShowMeter")
-#define FEET_IS_DIFFICULTY_COLOR				THEME->GetMetricB(m_sName,"FeetIsDifficultyColor")
-#define FEET_PER_DIFFICULTY						THEME->GetMetricB(m_sName,"FeetPerDifficulty")
-
 DifficultyMeter::DifficultyMeter()
 {
 }
@@ -51,11 +40,24 @@ DifficultyMeter::DifficultyMeter()
 
 void DifficultyMeter::Load()
 {
-	if( SHOW_FEET )
+		/* We can't use global CachedThemeMetrics, because we can have multiple
+		 * DifficultyMeters on screen at once, with different names. */
+		m_iNumFeetInMeter = THEME->GetMetricI(m_sName,"NumFeetInMeter");
+		m_iMaxFeetInMeter = THEME->GetMetricI(m_sName,"MaxFeetInMeter");
+		m_iGlowIfMeterGreaterThan = THEME->GetMetricI(m_sName,"GlowIfMeterGreaterThan");
+		m_bShowFeet = THEME->GetMetricB(m_sName,"ShowFeet");
+		/* "easy", "hard" */
+		m_bShowDifficulty = THEME->GetMetricB(m_sName,"ShowDifficulty");
+		/* 3, 9 */
+		m_bShowMeter = THEME->GetMetricB(m_sName,"ShowMeter");
+		m_bFeetIsDifficultyColor = THEME->GetMetricB(m_sName,"FeetIsDifficultyColor");
+		m_bFeetPerDifficulty = THEME->GetMetricB(m_sName,"FeetPerDifficulty");
+
+	if( m_bShowFeet )
 	{
 		m_textFeet.SetName( "Feet" );
 		CString Feet;
-		if( FEET_PER_DIFFICULTY )
+		if( m_bFeetPerDifficulty )
 		{
 			for( unsigned i = 0; i < NUM_DIFFICULTIES; ++i )
 				Feet += char(i + '0'); // 01234
@@ -68,7 +70,7 @@ void DifficultyMeter::Load()
 		this->AddChild( &m_textFeet );
 	}
 
-	if( SHOW_DIFFICULTY )
+	if( m_bShowDifficulty )
 	{
 		m_Difficulty.Load( THEME->GetPathG(m_sName,"difficulty") );
 		m_Difficulty->SetName( "Difficulty" );
@@ -76,7 +78,7 @@ void DifficultyMeter::Load()
 		this->AddChild( m_Difficulty );
 	}
 
-	if( SHOW_METER )
+	if( m_bShowMeter )
 	{
 		m_textMeter.SetName( "Meter" );
 		m_textMeter.LoadFromFont( THEME->GetPathF(m_sName,"meter") );
@@ -151,32 +153,31 @@ void DifficultyMeter::SetFromCourseDifficulty( CourseDifficulty cd )
 
 void DifficultyMeter::SetFromMeterAndDifficulty( int iMeter, Difficulty dc )
 {
-	if( SHOW_FEET )
+	if( m_bShowFeet )
 	{
-		CString on = "0";
-		CString off = "X";
-		if( FEET_PER_DIFFICULTY )
+		char on = '0';
+		char off = 'X';
+		if( m_bFeetPerDifficulty )
 			on = char(dc + '0');
 
 		CString sNewText;
-		int f;
-		for( f=0; f<NUM_FEET_IN_METER; f++ )
-			sNewText += (f<iMeter) ? on : off;
-		for( f=NUM_FEET_IN_METER; f<MAX_FEET_IN_METER && f<iMeter; f++ )
-			sNewText += on;
+		int iNumOn = min( m_iMaxFeetInMeter, iMeter );
+		sNewText.insert( sNewText.end(), iNumOn, on );
+		int iNumOff = max( 0, m_iNumFeetInMeter-iNumOn );
+		sNewText.insert( sNewText.end(), iNumOff, off );
 
 		m_textFeet.SetText( sNewText );
 
-		if( iMeter > GLOW_IF_METER_GREATER_THAN )
+		if( iMeter > m_iGlowIfMeterGreaterThan )
 			m_textFeet.SetEffectGlowShift();
 		else
 			m_textFeet.SetEffectNone();
 
-		if( FEET_IS_DIFFICULTY_COLOR )
+		if( m_bFeetIsDifficultyColor )
 			m_textFeet.SetDiffuse( SONGMAN->GetDifficultyColor( dc ) );
 	}
 
-	if( SHOW_METER )
+	if( m_bShowMeter )
 	{
 		if( iMeter == 0 )	// Unset calls with this
 		{
@@ -196,9 +197,9 @@ void DifficultyMeter::SetDifficulty( CString diff )
 		return;
 	m_CurDifficulty = diff;
 
-	if( SHOW_DIFFICULTY )
+	if( m_bShowDifficulty )
 		COMMAND( m_Difficulty, "Set" + Capitalize(diff) );
-	if( SHOW_METER )
+	if( m_bShowMeter )
 		COMMAND( m_textMeter, "Set" + Capitalize(diff) );
 }
 

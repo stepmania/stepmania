@@ -36,6 +36,9 @@ private:
 	AutoActor		m_Difficulty;
 
 	BitmapText		m_textMeter;
+
+	int m_iNumFeetInMeter, m_iMaxFeetInMeter, m_iGlowIfMeterGreaterThan;
+	bool m_bShowFeet, m_bShowDifficulty, m_bShowMeter, m_bFeetIsDifficultyColor, m_bFeetPerDifficulty;
 };
 
 #endif
