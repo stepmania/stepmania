@@ -39,9 +39,9 @@ const CString STYLE_CSS		= "Style.css";
 #define VERIFICATION_TEXT		THEME->GetMetric("ProfileHtml","VerificationText")
 #define SHOW_PLAY_MODE(pm)		THEME->GetMetricB("ProfileHtml","ShowPlayMode"+PlayModeToString(pm))
 #define SHOW_RADAR_CATEGORY(rc)	THEME->GetMetricB("ProfileHtml","ShowRadarCategory"+RadarCategoryToString(rc))
-#define SHOW_STYLE(s)			THEME->GetMetricB("ProfileHtml","ShowStyle"+Capitalize(GAMEMAN->GetStyleDefForStyle(s)->m_szName))
 #define SHOW_DIFFICULTY(dc)		THEME->GetMetricB("ProfileHtml","ShowDifficulty"+DifficultyToString(dc))
-#define SHOW_STEPS_TYPE(st)		THEME->GetMetricB("ProfileHtml","ShowStepsType"+Capitalize(GAMEMAN->NotesTypeToString(st)))
+#define STYLES_TO_SHOW			THEME->GetMetric ("ProfileHtml","StylesToShow")
+#define STEPS_TYPES_TO_SHOW		THEME->GetMetric ("ProfileHtml","StepsTypesToShow")
 #define SHOW_HIGH_SCORE_SCORE	THEME->GetMetricB("ProfileHtml","ShowHighScoreScore")
 #define SHOW_HIGH_SCORE_GRADE	THEME->GetMetricB("ProfileHtml","ShowHighScoreGrade")
 #define SHOW_HIGH_SCORE_PERCENT	THEME->GetMetricB("ProfileHtml","ShowHighScorePercent")
@@ -311,6 +311,20 @@ void PrintInstructions( RageFile &f, const Profile *pProfile, CString sTitle )
 
 void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vector<Song*> &vpSongs, vector<Steps*> &vpAllSteps, vector<StepsType> &vStepsTypesToShow, map<Steps*,Song*> mapStepsToSong, vector<Course*> vpCourses )
 {
+	/* We don't convert these to Style, because Style is game-specific and these strings
+	 * affect all styles with the same name. */
+	set<CString> StylesToShow;
+	{
+		CString sStyles = STYLES_TO_SHOW;
+		vector<CString> vStyles;
+		split( sStyles, ",", vStyles, true );
+		for( unsigned i = 0; i < vStyles.size(); ++i )
+		{
+			vStyles[i].MakeLower();
+			StylesToShow.insert(vStyles[i]);
+		}
+	}
+
 	PRINT_OPEN(f,sTitle,true);
 	{
 		PRINT_OPEN(f,"General Info",true);
@@ -365,7 +379,7 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 				// only show if this style plays a StepsType that we're showing
 				if( find(vStepsTypesToShow.begin(),vStepsTypesToShow.end(),st) == vStepsTypesToShow.end() )
 					continue;	// skip
-				if( !SHOW_STYLE(style) )
+				if( StylesToShow.find(pStyleDef->m_szName) == StylesToShow.end() )
 					continue;
 				CString s = GAMEMAN->StyleToThemedString(style);
 				TABLE_LINE2( s, pProfile->m_iNumSongsPlayedByStyle[style] );
@@ -1330,13 +1344,32 @@ void SaveStatsWebPage(
 	// Calculate which StepTypes to show
 	//
 	vector<StepsType> vStepsTypesToShow;
-	for( StepsType st=(StepsType)0; st<NUM_STEPS_TYPES; st=(StepsType)(st+1) )
 	{
+		CString sShow = STEPS_TYPES_TO_SHOW;
+		vector<CString> vTypes;
+		split( sShow, ",", vTypes, true );
+		for( unsigned i = 0; i < vTypes.size(); ++i )
+		{
+			StepsType st = GAMEMAN->StringToNotesType( vTypes[i] );
+			if( st == STEPS_TYPE_INVALID )
+			{
+				LOG->Warn( "ProfileHtml::StepsTypesToShow: unknown steps type \"%s\"", vTypes[i].c_str() );
+				continue;
+			}
+
+			vStepsTypesToShow.push_back( st );
+		}
+	}
+
+	for( unsigned i = 0; i < vStepsTypesToShow.size(); ++i )
+	{
+		StepsType st = vStepsTypesToShow[i];
+
 		// don't show if there are no Steps of this StepsType 
 		bool bOneSongHasStepsForThisStepsType = false;
-		for( unsigned i=0; i<vpSongs.size(); i++ )
+		for( unsigned j=0; j<vpSongs.size(); j++ )
 		{
-			Song* pSong = vpSongs[i];
+			Song* pSong = vpSongs[j];
 			vector<Steps*> vpSteps;
 			pSong->GetSteps( vpSteps, st, DIFFICULTY_INVALID, -1, -1, "", false );
 			if( !vpSteps.empty() )
@@ -1346,10 +1379,11 @@ void SaveStatsWebPage(
 			}
 		}
 		if( !bOneSongHasStepsForThisStepsType )
+		{
+			vStepsTypesToShow.erase( vStepsTypesToShow.begin()+i );
+			--i;
 			continue;
-		if( !SHOW_STEPS_TYPE(st) )
-			continue;
-		vStepsTypesToShow.push_back( st );
+		}
 	}
 
 	//
