@@ -515,7 +515,8 @@ void StepManiaLanServer::SendStatsToClients()
 
 void StepManiaLanServer::SendNetPacket(const unsigned int client, PacketFunctions& Packet)
 {
-	Client[client]->clientSocket.SendPack((char*)Packet.Data, Packet.Position);
+	if ( client < Client.size() )
+		Client[client]->clientSocket.SendPack((char*)Packet.Data, Packet.Position);
 }
 
 void StepManiaLanServer::StatsNameColumn(PacketFunctions &data, vector<LanPlayer*> &playresPtr)
@@ -592,7 +593,8 @@ void StepManiaLanServer::NewClientCheck()
 
 void StepManiaLanServer::SendValue(uint8_t value, const unsigned int clientNum)
 {
-	Client[clientNum]->clientSocket.SendPack((char*)&value, sizeof(uint8_t));
+	if ( clientNum < Client.size() )
+		Client[clientNum]->clientSocket.SendPack((char*)&value, sizeof(uint8_t));
 }
 
 void StepManiaLanServer::AnalizeChat(PacketFunctions &Packet, const unsigned int clientNum)
@@ -814,11 +816,12 @@ void StepManiaLanServer::ServerChat(const CString& message)
 bool StepManiaLanServer::CheckConnection(const unsigned int clientNum)
 {
 	//If there is an error close the socket.
-	if (Client[clientNum]->clientSocket.IsError())
-	{
-		Disconnect(clientNum);
-		return false;
-	}
+	if ( clientNum < Client.size() )
+		if (Client[clientNum]->clientSocket.IsError())
+		{
+			Disconnect(clientNum);
+			return false;
+		}
 	return true;
 }
 
