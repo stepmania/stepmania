@@ -72,6 +72,7 @@ const ScreenMessage	SM_PlayGo				= ScreenMessage(SM_User+1);
 
 // received while STATE_DANCING
 const ScreenMessage	SM_LoadNextSong			= ScreenMessage(SM_User+11);
+const ScreenMessage	SM_StartLoadingNextSong	= ScreenMessage(SM_User+12);
 
 // received while STATE_OUTRO
 const ScreenMessage	SM_SaveChangedBeforeGoingBack	= ScreenMessage(SM_User+20);
@@ -91,6 +92,7 @@ ScreenGameplay::ScreenGameplay( CString sName ) : Screen(sName)
 	PLAYER_TYPE.Load( sName, "PlayerType" );
 	GIVE_UP_TEXT.Load( sName, "GiveUpText" );
 	GIVE_UP_ABORTED_TEXT.Load( sName, "GiveUpAbortedText" );
+	MUSIC_FADE_OUT_SECONDS.Load( sName, "MusicFadeOutSeconds" );
 	START_GIVES_UP.Load( sName, "StartGivesUp" );
 	BACK_GIVES_UP.Load( sName, "BackGivesUp" );
 	GIVING_UP_FAILS.Load( sName, "GivingUpFails" );
@@ -2141,34 +2143,17 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 			if( !bAllReallyFailed && !IsLastSong() )
 			{
-				/* Next song. */
-				FOREACH_EnabledPlayer(p)
-                {
-                    if( !STATSMAN->m_CurStageStats.m_player[p].bFailed )
-                    {
-                        // give a little life back between stages
-                        if( m_pLifeMeter[p] )
-                            m_pLifeMeter[p]->OnSongEnded();	
-                        if( m_pCombinedLifeMeter )
-                            m_pCombinedLifeMeter->OnSongEnded();	
-                    }
-                }
+				/* Load the next course song.  First, fade out and stop the music. */
+				float fFadeLengthSeconds = MUSIC_FADE_OUT_SECONDS;
+				RageSoundParams p = m_pSoundMusic->GetParams();
+				p.m_FadeLength = fFadeLengthSeconds;
+				p.m_LengthSeconds = GAMESTATE->m_fMusicSeconds + fFadeLengthSeconds;
+				m_pSoundMusic->SetParams(p);
 
-				int iPlaySongIndex = GAMESTATE->GetCourseSongIndex()+1;
-				iPlaySongIndex %= m_apSongsQueue.size();
-				m_apSongsQueue[iPlaySongIndex]->PushSelf( LUA->L );
-				GAMESTATE->m_Environment->Set( "NextSong" );
-				MESSAGEMAN->Broadcast( "NextCourseSong" );
-				GAMESTATE->m_Environment->Unset( "NextSong" );
-
-				m_NextSong.PlayCommand( "Start" );
-				m_NextSong.Reset();
-				m_NextSong.StartTransitioning( SM_LoadNextSong );
-				LoadCourseSongNumber( GAMESTATE->GetCourseSongIndex()+1 );
-				COMMAND( m_sprCourseSongNumber, "ChangeIn" );
+				SCREENMAN->PostMessageToTopScreen( SM_StartLoadingNextSong, fFadeLengthSeconds );
 				return;
 			}
-			
+
 			// update dancing characters for win / lose
 			DancingCharacters *Dancers = m_SongBackground.GetDancingCharacters();
 			if( Dancers )
@@ -2239,6 +2224,37 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			}
 		}
 
+		break;
+	case SM_StartLoadingNextSong:
+		{
+			m_pSoundMusic->Stop();
+
+			/* Next song. */
+			FOREACH_EnabledPlayer(p)
+			{
+				if( !STATSMAN->m_CurStageStats.m_player[p].bFailed )
+				{
+					// give a little life back between stages
+					if( m_pLifeMeter[p] )
+						m_pLifeMeter[p]->OnSongEnded();	
+					if( m_pCombinedLifeMeter )
+						m_pCombinedLifeMeter->OnSongEnded();	
+				}
+			}
+
+			int iPlaySongIndex = GAMESTATE->GetCourseSongIndex()+1;
+			iPlaySongIndex %= m_apSongsQueue.size();
+			m_apSongsQueue[iPlaySongIndex]->PushSelf( LUA->L );
+			GAMESTATE->m_Environment->Set( "NextSong" );
+			MESSAGEMAN->Broadcast( "NextCourseSong" );
+			GAMESTATE->m_Environment->Unset( "NextSong" );
+
+			m_NextSong.PlayCommand( "Start" );
+			m_NextSong.Reset();
+			m_NextSong.StartTransitioning( SM_LoadNextSong );
+			LoadCourseSongNumber( GAMESTATE->GetCourseSongIndex()+1 );
+			COMMAND( m_sprCourseSongNumber, "ChangeIn" );
+		}
 		break;
 
 	case SM_LoadNextSong:
