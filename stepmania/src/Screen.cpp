@@ -295,39 +295,6 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 
 Screen* Screen::Create( CString sClassName )
 {
-	/* These are just compatibility aliases. */
-	if( !sClassName.CompareNoCase("ScreenCompany") )
-		sClassName = "ScreenCompany@ScreenAttract";
-	if( !sClassName.CompareNoCase("ScreenIntroMovie") )
-		sClassName = "ScreenIntroMovie@ScreenAttract";
-	if( !sClassName.CompareNoCase("ScreenAlbums") )
-		sClassName = "ScreenAlbums@ScreenAttract";
-	if( !sClassName.CompareNoCase("ScreenWarning") )
-		sClassName = "ScreenWarning@ScreenAttract";
-	if( !sClassName.CompareNoCase("ScreenMemoryCard") )
-		sClassName = "ScreenMemoryCard@ScreenAttract";
-
-	if( !sClassName.CompareNoCase("ScreenEvaluationStage") )
-		sClassName = "ScreenEvaluationStage@ScreenEvaluation";
-	if( !sClassName.CompareNoCase("ScreenEvaluationSummary") )
-		sClassName = "ScreenEvaluationSummary@ScreenEvaluation";
-	if( !sClassName.CompareNoCase("ScreenEvaluationNonstop") )
-		sClassName = "ScreenEvaluationNonstop@ScreenEvaluation";
-	if( !sClassName.CompareNoCase("ScreenEvaluationOni") )
-		sClassName = "ScreenEvaluationOni@ScreenEvaluation";
-	if( !sClassName.CompareNoCase("ScreenEvaluationEndless") )
-		sClassName = "ScreenEvaluationEndless@ScreenEvaluation";
-	if( !sClassName.CompareNoCase("ScreenEvaluationEndless") )
-		sClassName = "ScreenEvaluationEndless@ScreenEvaluation";
-	if( !sClassName.CompareNoCase("ScreenEvaluationBattle") )
-		sClassName = "ScreenEvaluationBattle@ScreenEvaluation";
-	if( !sClassName.CompareNoCase("ScreenEvaluationRave") )
-		sClassName = "ScreenEvaluationRave@ScreenEvaluation";
-
-	/* This one will go away when all options menus are converted. */
-	if( !sClassName.CompareNoCase("ScreenOptionsMenu") )
-		sClassName = "ScreenOptionsMenu@ScreenOptionsMaster";
-
 	/* "ScreenCompany@ScreenAttract" loads ScreenAttract with the asset name
 	 * "ScreenCompany", so (if it supports it) it'll use metric, graphic, etc.
 	 * names starting with "ScreenCompany". */
