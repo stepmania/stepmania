@@ -282,8 +282,10 @@ void PlayerMinus::Update( float fDeltaTime )
 //	m_pNoteField->SetY( fGrayYPos );
 
 	float fMiniPercent = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fEffects[PlayerOptions::EFFECT_MINI];
-	float fZoom = 1 - fMiniPercent*0.5f;
-	m_pNoteField->SetZoom( fZoom );
+	float fNoteFieldZoom = 1 - fMiniPercent*0.5f;
+	float fJudgmentZoom = 1 - fMiniPercent*0.25f;
+	m_pNoteField->SetZoom( fNoteFieldZoom );
+	m_Judgment.SetZoom( fJudgmentZoom );
 
 	//
 	// Check for TapNote misses
