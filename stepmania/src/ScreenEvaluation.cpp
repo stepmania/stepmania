@@ -1520,8 +1520,6 @@ void ScreenEvaluation::EndScreen()
 	FOREACH_PlayerNumber( p )
 		m_Grades[p].SettleImmediately();
 
-	GAMESTATE->m_iRoundSeed = rand();
-
 	if( !PREFSMAN->m_bEventMode )
 	{
 		switch( m_Type )

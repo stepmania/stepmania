@@ -68,8 +68,6 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 
-	SONGMAN->RegenRandomTrailEntries();
-
 	m_DisplayMode = GAMESTATE->IsCourseMode() ? DISPLAY_COURSES : DISPLAY_SONGS;
 
 	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. 

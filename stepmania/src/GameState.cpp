@@ -636,6 +636,12 @@ void GameState::FinishStage()
 
 	m_iNumStagesOfThisSong = 0;
 
+	// The round has ended; change the seed.
+	GAMESTATE->m_iRoundSeed = rand();
+
+	// We have a new seed; courses change.
+	SONGMAN->RegenRandomTrailEntries();
+
 	//
 	// Add step totals.  Use fRadarActual, since the player might have failed partway
 	// through the song, in which case we don't want to give credit for the rest of the
