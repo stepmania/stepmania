@@ -33,7 +33,6 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 
 #define SONGS_DIR				"Songs/"
 #define COURSES_DIR				"Courses/"
-#define DATA_DIR				"Data/"
 
 #define MAX_EDITS_PER_PROFILE	200
 
@@ -93,7 +92,7 @@ void SongManager::InitAll( LoadingWindow *ld )
 	 * even visible, we should be fixing it, not showing a progress display. */
 	if( ld )
 		ld->SetText( "Saving Catalog.xml ..." );
-	SaveCatalogXml( DATA_DIR );
+	SaveCatalogXml();
 }
 
 void SongManager::Reload( LoadingWindow *ld )

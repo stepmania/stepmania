@@ -13,6 +13,7 @@
 
 #include <map>
 #include <deque>
+#include <set>
 
 class Song;
 class Steps;
@@ -288,6 +289,12 @@ public:
 	//
 	int m_iNumTimesThroughAttract;	// negative means play regardless of m_iAttractSoundFrequency setting
 	bool IsTimeToPlayAttractSounds();
+
+	//
+	// DifficultiesToShow stuff
+	//
+	void GetDifficultiesToShow( set<Difficulty> &AddTo );
+	void GetCourseDifficultiesToShow( set<CourseDifficulty> &AddTo );
 };
 
 

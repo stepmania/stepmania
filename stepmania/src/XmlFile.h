@@ -91,6 +91,7 @@ struct DISP_OPT
 	bool newline;			// newline when new tag
 	bool reference_value;	// do convert from entity to reference ( < -> &lt; )
 	LPXENTITYS	entitys;	// entity table for entity encode
+	CString stylesheet;		// empty string = none
 
 	int tab_base;			// internal usage
 	DISP_OPT() { newline = true; reference_value = true; entitys = &entityDefault; tab_base = 0; }

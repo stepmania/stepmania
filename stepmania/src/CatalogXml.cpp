@@ -10,12 +10,14 @@
 #include "StepsUtil.h"
 #include "CourseUtil.h"
 #include "TrailUtil.h"
+#include "GameState.h"
+#include <set>
+#include "Foreach.h"
 
-const CString CATALOG_XML	= "Catalog.xml";
 
-void SaveCatalogXml( CString sDir )
+void SaveCatalogXml()
 {
-	CString fn = sDir + CATALOG_XML;
+	CString fn = CATALOG_XML_FILE;
 
 	LOG->Trace( "Writing %s ...", fn.c_str() );
 
@@ -86,6 +88,29 @@ void SaveCatalogXml( CString sDir )
 			}
 		}
 	}
+
+	{
+		XNode* pNode = xml.AppendChild( "DifficultiesToShow" );
+
+		set<Difficulty> vDiffs;
+		GAMESTATE->GetDifficultiesToShow( vDiffs );
+		for( set<Difficulty>::const_iterator iter = vDiffs.begin(); iter != vDiffs.end(); iter++ )
+		{
+			pNode->AppendChild( "Difficulty", DifficultyToString(*iter) );
+		}
+	}
+
+	{
+		XNode* pNode = xml.AppendChild( "CourseDifficultiesToShow" );
+
+		set<CourseDifficulty> vDiffs;
+		GAMESTATE->GetCourseDifficultiesToShow( vDiffs );
+		for( set<CourseDifficulty>::const_iterator iter = vDiffs.begin(); iter != vDiffs.end(); iter++ )
+		{
+			pNode->AppendChild( "CourseDifficulty", DifficultyToString(*iter) );
+		}
+	}
+
 
 	xml.SaveToFile(fn);
 

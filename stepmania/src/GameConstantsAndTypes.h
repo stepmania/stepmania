@@ -297,7 +297,7 @@ const int ITEM_NONE = -1;
 #define BG_ANIMS_DIR		CString("BGAnimations/")
 #define VISUALIZATIONS_DIR	CString("Visualizations/")
 #define RANDOMMOVIES_DIR	CString("RandomMovies/")
-
+#define DATA_DIR			CString("Data/")
 
 
 //

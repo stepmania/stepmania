@@ -1674,34 +1674,52 @@ bool GameState::ChangePreferredDifficulty( PlayerNumber pn, Difficulty dc )
 	return true;
 }
 
-bool GameState::ChangePreferredDifficulty( PlayerNumber pn, int dir )
+void GameState::GetDifficultiesToShow( set<Difficulty> &ret )
 {
-	// FIXME: This clamps to between the min and the max difficulty, but
-	// it really should round to the nearest difficulty that's in 
-	// DIFFICULTIES_TO_SHOW.
-	CStringArray asDiff;
-	split( DIFFICULTIES_TO_SHOW, ",", asDiff );
-	Difficulty mind = (Difficulty)(NUM_DIFFICULTIES-1);
-	Difficulty maxd = (Difficulty)0;
-	for( unsigned i=0; i<asDiff.size(); i++ )
+	static float fExpiration = -999;
+	static set<Difficulty> cache;
+	if( RageTimer::GetTimeSinceStart() < fExpiration )
 	{
-		Difficulty d = StringToDifficulty( asDiff[i] );
-		if( d == DIFFICULTY_INVALID )
-			continue;
-
-		mind = min( mind, d );
-		maxd = max( maxd, d );
+		ret = cache;
+		return;
 	}
 
-	Difficulty diff = (Difficulty)(m_PreferredDifficulty[pn]+dir);
+	CStringArray asDiff;
+	split( DIFFICULTIES_TO_SHOW, ",", asDiff );
+	ASSERT( asDiff.size() > 0 );
 
-	if( diff < mind || diff > maxd )
-		return false;
+	cache.clear();
+	for( unsigned i = 0; i < asDiff.size(); ++i )
+	{
+		Difficulty d = StringToDifficulty(asDiff[i]);
+		if( d == DIFFICULTY_INVALID )
+			RageException::Throw( "Unknown difficulty \"%s\" in CourseDifficultiesToShow", asDiff[i].c_str() );
+		cache.insert( d );
+	}
 
-	return ChangePreferredDifficulty( pn, diff );
+	fExpiration = RageTimer::GetTimeSinceStart()+1;
+	ret = cache;
 }
 
-static void GetCourseDifficultiesToShow( set<CourseDifficulty> &ret )
+bool GameState::ChangePreferredDifficulty( PlayerNumber pn, int dir )
+{
+	set<Difficulty> asDiff;
+	GetDifficultiesToShow( asDiff );
+
+	Difficulty d = m_PreferredDifficulty[pn];
+	while( 1 )
+	{
+		d = (Difficulty)(d+dir);
+		if( d < 0 || d >= NUM_DIFFICULTIES )
+			return false;
+		if( asDiff.find(d) == asDiff.end() )
+			continue; /* not available */
+	}
+
+	return ChangePreferredDifficulty( pn, d );
+}
+
+void GameState::GetCourseDifficultiesToShow( set<CourseDifficulty> &ret )
 {
 	static float fExpiration = -999;
 	static set<CourseDifficulty> cache;
@@ -1719,7 +1737,7 @@ static void GetCourseDifficultiesToShow( set<CourseDifficulty> &ret )
 	for( unsigned i = 0; i < asDiff.size(); ++i )
 	{
 		CourseDifficulty cd = StringToCourseDifficulty(asDiff[i]);
-		if( cd == NUM_DIFFICULTIES )
+		if( cd == DIFFICULTY_INVALID )
 			RageException::Throw( "Unknown difficulty \"%s\" in CourseDifficultiesToShow", asDiff[i].c_str() );
 		cache.insert( cd );
 	}

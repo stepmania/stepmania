@@ -3,7 +3,12 @@
 #ifndef CATALOG_XML_H
 #define CATALOG_XML_H
 
-void SaveCatalogXml( CString sDir );
+#include "GameConstantsAndTypes.h"
+
+const CString CATALOG_XML	= "Catalog.xml";
+const CString CATALOG_XML_FILE	= DATA_DIR + "Catalog.xml";
+
+void SaveCatalogXml();
 
 #endif
 

@@ -64,7 +64,7 @@ NoteFieldPositioning.cpp NoteFieldPositioning.h NoteTypes.cpp NoteTypes.h NotesL
 NotesLoaderBMS.cpp NotesLoaderBMS.h NotesLoaderDWI.cpp NotesLoaderDWI.h NotesLoaderKSF.cpp NotesLoaderKSF.h \
 NotesLoaderSM.cpp NotesLoaderSM.h NotesWriterDWI.cpp NotesWriterDWI.h NotesWriterSM.cpp NotesWriterSM.h \
 PlayerAI.cpp PlayerAI.h PlayerNumber.cpp PlayerNumber.h PlayerOptions.cpp PlayerOptions.h Profile.cpp Profile.h \
-ProfileHtml.cpp ProfileHtml.h RandomSample.cpp RandomSample.h ScoreKeeper.h ScoreKeeperMAX2.cpp ScoreKeeperMAX2.h \
+RandomSample.cpp RandomSample.h ScoreKeeper.h ScoreKeeperMAX2.cpp ScoreKeeperMAX2.h \
 ScoreKeeperRave.cpp ScoreKeeperRave.h Song.cpp song.h SongCacheIndex.cpp SongCacheIndex.h \
 SongOptions.cpp SongOptions.h SongUtil.cpp SongUtil.h StageStats.cpp StageStats.h Steps.cpp Steps.h \
 StepsUtil.cpp StepsUtil.h Style.cpp Style.h \

@@ -1230,6 +1230,9 @@ bool XNode::SaveToFile( CString sFile, LPDISP_OPT opt )
 		LOG->Warn("Couldn't open %s for writing: %s", sFile.c_str(), f.GetError().c_str() );
 		return false;
 	}
+	f.PutLine( "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" );
+	if( !opt->stylesheet.empty() )
+		f.PutLine( "<?xml-stylesheet type=\"text/xsl\" href=\"" + opt->stylesheet + "\"?>" );
 	if( !this->GetXML(f, opt) )
 		return false;
 	if( f.Flush() == -1 )

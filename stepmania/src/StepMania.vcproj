@@ -795,12 +795,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="Profile.h">
 			</File>
 			<File
-				RelativePath="ProfileHtml.cpp">
-			</File>
-			<File
-				RelativePath="ProfileHtml.h">
-			</File>
-			<File
 				RelativePath=".\RandomSample.cpp">
 			</File>
 			<File

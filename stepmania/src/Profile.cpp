@@ -14,7 +14,6 @@
 #include <ctime>
 #include "ThemeManager.h"
 #include "CryptManager.h"
-#include "ProfileHtml.h"
 #include "ProfileManager.h"
 #include "RageFileManager.h"
 #include "ScoreKeeperMAX2.h"
@@ -22,11 +21,13 @@
 #include "UnlockSystem.h"
 #include "XmlFile.h"
 #include "Foreach.h"
+#include "CatalogXml.h"
 
 //
 // Old file versions for backward compatibility
 //
-#define SM_300_STATISTICS_INI	"statistics.ini"
+const CString STYLE_XSL		= "Style.xsl";
+const CString STYLE_CSS		= "Style.css";
 
 #define GUID_SIZE_BYTES 8
 
@@ -678,7 +679,10 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 		xml.AppendChild( SaveAwardsCreateNode() );
 		xml.AppendChild( SaveRecentSongScoresCreateNode() );
 		xml.AppendChild( SaveRecentCourseScoresCreateNode() );
-		bool bSaved = xml.SaveToFile(fn);
+
+		DISP_OPT opts = optDefault;
+		opts.stylesheet = STYLE_XSL;
+		bool bSaved = xml.SaveToFile(fn, &opts);
 		
 		// Update file cache, or else IsAFile in CryptManager won't see this new file.
 		FILEMAN->FlushDirCache( sDir );
@@ -1257,12 +1261,9 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 {
 	ASSERT( PROFILEMAN );
 
-	SaveStatsWebPage( 
-		sDir,
-		this,
-		PROFILEMAN->GetMachineProfile(),
-		IsMachine() ? HTML_TYPE_MACHINE : HTML_TYPE_PLAYER
-		);
+	FileCopy( THEME->GetPathO("Profile",STYLE_XSL), sDir+STYLE_XSL );
+	FileCopy( THEME->GetPathO("Profile",STYLE_CSS), sDir+STYLE_CSS );
+	FileCopy( CATALOG_XML_FILE, sDir+CATALOG_XML );
 }
 
 void Profile::SaveMachinePublicKeyToDir( CString sDir ) const
