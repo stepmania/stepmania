@@ -75,7 +75,8 @@ CString ClassAndElementToFileName( const CString &sClassName, const CString &sEl
 
 ThemeManager::ThemeManager()
 {
-	m_sCurThemeName = BASE_THEME_NAME;	// Use the base theme for now.  It's up to PrefsManager to change this.
+	/* We don't have any theme loaded until SwitchThemeAndLanguage is called. */
+	m_sCurThemeName = "";
 	
 	CStringArray arrayThemeNames;
 	GetThemeNames( arrayThemeNames );
@@ -178,14 +179,17 @@ void ThemeManager::LoadThemeRecursive( deque<Theme> &theme, CString sThemeName )
 void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage )
 {
 	if( !DoesThemeExist(sThemeName) )
-		m_sCurThemeName = BASE_THEME_NAME;
-	else
-		m_sCurThemeName = sThemeName;
-
+		sThemeName = BASE_THEME_NAME;
 	if( !DoesLanguageExist(sLanguage) )
-		m_sCurLanguage = BASE_LANGUAGE;
-	else
-		m_sCurLanguage = sLanguage;
+		sLanguage = BASE_LANGUAGE;
+	LOG->Trace("ThemeManager::SwitchThemeAndLanguage: \"%s\", \"%s\"",
+		sThemeName.c_str(), m_sCurThemeName.c_str() );
+
+	if( sThemeName == m_sCurThemeName && sLanguage == m_sCurLanguage )
+		return;
+
+	m_sCurThemeName = sThemeName;
+	m_sCurLanguage = sLanguage;
 
 	// clear theme path cache
 	int i;
@@ -196,10 +200,6 @@ void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage
 
 	// load current theme
 	LoadThemeRecursive( g_vThemes, m_sCurThemeName );
-
-	// reload common sounds
-	if ( SCREENMAN != NULL )
-		SCREENMAN->ReloadCommonSounds();
 
 	CString sMetric;
 	for( i = 0; GetCommandlineArgument( "metric", &sMetric, i ); ++i )
@@ -217,6 +217,10 @@ void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage
 	
 	LOG->MapLog("theme", "Theme: %s", sThemeName.c_str());
 	LOG->MapLog("language", "Language: %s", sLanguage.c_str());
+
+	// reload common sounds
+	if ( SCREENMAN != NULL )
+		SCREENMAN->ThemeChanged();
 }
 
 CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
@@ -484,7 +488,12 @@ bool ThemeManager::HasMetric( CString sClassName, CString sValueName )
 
 void ThemeManager::ReloadMetrics()
 {
-	SwitchThemeAndLanguage(m_sCurThemeName, m_sCurLanguage);	// force a reload of the metrics cache
+	// force a reload of the metrics cache
+	const CString sThemeName = m_sCurThemeName, sCurLanguage = m_sCurLanguage;
+	m_sCurThemeName = "";
+	m_sCurLanguage = "";
+
+	SwitchThemeAndLanguage( sThemeName, sCurLanguage );
 	if( SCREENMAN )
 		SCREENMAN->SystemMessage( "Reloaded metrics" );
 

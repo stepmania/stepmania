@@ -341,7 +341,14 @@ void ScreenSystemLayer::Update( float fDeltaTime )
 
 ScreenManager::ScreenManager()
 {
-	m_SystemLayer = new ScreenSystemLayer;
+	m_SystemLayer = NULL;
+
+	/* By the time this is constructed, THEME has already been set up and set to
+	 * the current theme.  Call ThemeChanged(), to handle the starting theme
+	 * and set up m_SystemLayer. */
+	ASSERT( THEME );
+	ASSERT( !THEME->GetCurThemeName().empty() );
+	this->ThemeChanged();
 
 	m_ScreenBuffered = NULL;
 
@@ -362,14 +369,23 @@ ScreenManager::~ScreenManager()
 	delete m_SystemLayer;
 }
 
-void ScreenManager::ReloadCommonSounds()
+/* This is called when we start up, and when the theme changes or is reloaded. */
+void ScreenManager::ThemeChanged()
 {
+	LOG->Trace( "ScreenManager::ThemeChanged" );
+
 	// reload common sounds
 	m_soundStart.Load( THEME->GetPathS("Common","start") );
 	m_soundCoin.Load( THEME->GetPathS("Common","coin") );
 	m_soundInvalid.Load( THEME->GetPathS("Common","invalid") );
 	m_soundScreenshot.Load( THEME->GetPathS("Common","screenshot") );
 	m_soundBack.Load( THEME->GetPathS("Common","back") );
+
+	// reload system layer
+	delete m_SystemLayer;
+	m_SystemLayer = NULL; // new ScreenSystemLayer may throw
+	m_SystemLayer = new ScreenSystemLayer;
+	m_SystemLayer->RefreshCreditsMessages();
 }
 
 void ScreenManager::EmptyDeleteQueue()
