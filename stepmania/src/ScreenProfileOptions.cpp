@@ -20,16 +20,16 @@
 #include "ScreenManager.h"
 
 
-enum {
+static enum {
 	PO_PLAYER1,
 	PO_PLAYER2,
 	PO_CREATE_NEW,
 	PO_DELETE_,
 	PO_RENAME_,
-	NUM_GAMEPLAY_OPTIONS_LINES
+	NUM_PROFILE_OPTIONS_LINES
 };
 
-OptionRow g_ProfileOptionsLines[NUM_GAMEPLAY_OPTIONS_LINES] = {
+OptionRow g_ProfileOptionsLines[NUM_PROFILE_OPTIONS_LINES] = {
 	OptionRow( "Player1\nProfile",	true ),
 	OptionRow( "Player2\nProfile",	true ),
 	OptionRow( "Create\nNew",		true, "PRESS START" ),
@@ -60,7 +60,7 @@ ScreenProfileOptions::ScreenProfileOptions( CString sClassName ) : ScreenOptions
 	Init( 
 		INPUTMODE_TOGETHER, 
 		g_ProfileOptionsLines, 
-		NUM_GAMEPLAY_OPTIONS_LINES,
+		NUM_PROFILE_OPTIONS_LINES,
 		true );
 	m_Menu.m_MenuTimer.Disable();
 
