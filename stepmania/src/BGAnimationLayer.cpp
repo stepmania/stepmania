@@ -1038,7 +1038,8 @@ void BGAnimationLayer::GainingFocus( float fRate, bool bRewindMovie, bool bLoop 
 {
 	m_fUpdateRate = fRate;
 
-	ASSERT( m_pActors.size() );
+	if( !m_pActors.size() )
+		return;
 
 	//
 	// The order of these actions is important.
@@ -1058,6 +1059,9 @@ void BGAnimationLayer::GainingFocus( float fRate, bool bRewindMovie, bool bLoop 
 
 void BGAnimationLayer::LosingFocus()
 {
+	if( !m_pActors.size() )
+		return;
+
 	m_pActors[0]->Command( "pause" );
 }
 
