@@ -162,13 +162,30 @@ bool ProfileManager::LoadDefaultProfileFromMachine( PlayerNumber pn )
 bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 {
 	CString sDir = MEM_CARD_DIR[pn];
-	if( !FILEMAN->IsMounted(sDir) )
-		return false;
+
+	DEBUG_ASSERT( FILEMAN->IsMounted(sDir) );	// should be called only if we've already mounted
 	
+	// tack on a subdirectory so that we don't write everything to the root
+	sDir += PREFSMAN->m_sMemoryCardProfileSubdir;
+	sDir += '/'; 
+
 	m_bUsingMemoryCard[pn] = true;
 	bool bResult;
 	bResult = LoadProfile( pn, sDir, false );
 	return bResult;
+}
+			
+bool ProfileManager::CreateMemoryCardProfile( PlayerNumber pn )
+{
+	CString sDir = MEM_CARD_DIR[pn];
+	
+	DEBUG_ASSERT( FILEMAN->IsMounted(sDir) );	// should be called only if we've already mounted
+
+	// tack on a subdirectory so that we don't write everything to the root
+	sDir += PREFSMAN->m_sMemoryCardProfileSubdir;
+	sDir += '/'; 
+
+	return CreateProfile( sDir, NEW_MEM_CARD_NAME );
 }
 			
 bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn )
@@ -182,8 +199,7 @@ bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn )
 		if( LoadProfileFromMemoryCard(pn) )
 			return true;
 	
-		CString sDir = MEM_CARD_DIR[pn];
-		CreateProfile( sDir, NEW_MEM_CARD_NAME );
+		CreateMemoryCardProfile( pn );
 		if( LoadProfileFromMemoryCard(pn) )
 			return true;
 	}

@@ -19,6 +19,7 @@
 #include "arch/arch.h" /* for default driver specs */
 #include "RageSoundReader_Resample.h" /* for ResampleQuality */
 #include "RageFile.h"
+#include "ProductInfo.h"
 
 #define STEPMANIA_INI_PATH "Data/StepMania.ini"
 #define STATIC_INI_PATH "Data/Static.ini"
@@ -215,6 +216,8 @@ PrefsManager::PrefsManager()
 		m_iMemoryCardUsbPort[p] = -1;
 	}
 
+	m_sMemoryCardProfileSubdir = PRODUCT_NAME;
+
 	ReadGlobalPrefsFromDisk();
 }
 
@@ -361,11 +364,12 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "EndlessStagesUntilBreak",			m_iEndlessNumStagesUntilBreak );
 	ini.GetValue( "Options", "EndlessBreakLength",				m_iEndlessBreakLength );
 
+	ini.GetValue( "Options", "MemoryCardProfileSubdir",			m_sMemoryCardProfileSubdir );
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		ini.GetValue( "Options", ssprintf("DefaultLocalProfileIDP%d",p+1),	m_sDefaultLocalProfileID[p] );
-		ini.GetValue( "Options", ssprintf("MemoryCardDirP%d",p+1),				m_sMemoryCardDir[p] );
-		FixSlashesInPlace( m_sMemoryCardDir[p] );
+		ini.GetValue( "Options", ssprintf("MemoryCardOsMountPointP%d",p+1),	m_sMemoryCardOsMountPoint[p] );
+		FixSlashesInPlace( m_sMemoryCardOsMountPoint[p] );
 		ini.GetValue( "Options", ssprintf("MemoryCardUsbBusP%d",p+1),		m_iMemoryCardUsbBus[p] );
 		ini.GetValue( "Options", ssprintf("MemoryCardUsbPortP%d",p+1),		m_iMemoryCardUsbPort[p] );
 	}
@@ -520,10 +524,11 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "EndlessStagesUntilBreak",			m_iEndlessNumStagesUntilBreak );
 	ini.SetValue( "Options", "EndlessBreakLength",				m_iEndlessBreakLength );
 
+	ini.SetValue( "Options", "MemoryCardProfileSubdir",			m_sMemoryCardProfileSubdir );
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		ini.SetValue( "Options", ssprintf("DefaultLocalProfileIDP%d",p+1),	m_sDefaultLocalProfileID[p] );
-		ini.SetValue( "Options", ssprintf("MemoryCardDirP%d",p+1),				m_sMemoryCardDir[p] );
+		ini.SetValue( "Options", ssprintf("MemoryCardOsMountPointP%d",p+1),				m_sMemoryCardOsMountPoint[p] );
 		ini.SetValue( "Options", ssprintf("MemoryCardUsbBusP%d",p+1),		m_iMemoryCardUsbBus[p] );
 		ini.SetValue( "Options", ssprintf("MemoryCardUsbPortP%d",p+1),		m_iMemoryCardUsbPort[p] );
 	}

@@ -133,6 +133,7 @@ public:
 
 private:
 	bool LoadDefaultProfileFromMachine( PlayerNumber pn );
+	bool CreateMemoryCardProfile( PlayerNumber pn );
 	bool LoadProfileFromMemoryCard( PlayerNumber pn );
 	bool LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard );
 	bool CreateProfile( CString sProfileDir, CString sName );

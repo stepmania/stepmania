@@ -159,12 +159,12 @@ void MemoryCardManager::AssignUnassignedCards()
 			unsigned i;
 
 			// search for card dir match
-			if( !PREFSMAN->m_sMemoryCardDir[p].empty() )
+			if( !PREFSMAN->m_sMemoryCardOsMountPoint[p].empty() )
 			{
 				for( i=0; i<vUnassignedDevices.size(); i++ )
 				{
 					UsbStorageDevice &usd = vUnassignedDevices[i];
-					if( usd.sOsMountDir.CompareNoCase(PREFSMAN->m_sMemoryCardDir[p]) == 0 )	// match
+					if( usd.sOsMountDir.CompareNoCase(PREFSMAN->m_sMemoryCardOsMountPoint[p]) == 0 )	// match
 						goto match;
 				}
 			}

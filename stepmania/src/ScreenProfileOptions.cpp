@@ -28,8 +28,8 @@ enum {
 	PO_CREATE_NEW,
 	PO_DELETE_,
 	PO_RENAME_,
-	PO_CARD_DIR_1,
-	PO_CARD_DIR_2,
+	PO_OS_MOUNT_1,
+	PO_OS_MOUNT_2,
 	NUM_PROFILE_OPTIONS_LINES
 };
 
@@ -39,8 +39,8 @@ OptionRow g_ProfileOptionsLines[NUM_PROFILE_OPTIONS_LINES] = {
 	OptionRow( "Create\nNew",		true, "PRESS START" ),
 	OptionRow( "Delete",			true ),
 	OptionRow( "Rename",			true ),
-	OptionRow( "Card Dir\nPlayer1",	true, "" ),
-	OptionRow( "Card Dir\nPlayer2",	true, "" ),
+	OptionRow( "OS Mount\nPlayer1",	true, "" ),
+	OptionRow( "OS Mount\nPlayer2",	true, "" ),
 };
 
 const ScreenMessage	SM_DoneCreating		= ScreenMessage(SM_User+1);
@@ -67,15 +67,15 @@ ScreenProfileOptions::ScreenProfileOptions( CString sClassName ) : ScreenOptions
 	g_ProfileOptionsLines[PO_RENAME_].choices.push_back( "-NONE-" );
 	PROFILEMAN->GetLocalProfileNames( g_ProfileOptionsLines[PO_RENAME_].choices );
 
-	if( PREFSMAN->m_sMemoryCardDir[PLAYER_1].empty() )
-		g_ProfileOptionsLines[PO_CARD_DIR_1].choices[0] = "-NOT SET IN INI-";
+	if( PREFSMAN->m_sMemoryCardOsMountPoint[PLAYER_1].empty() )
+		g_ProfileOptionsLines[PO_OS_MOUNT_1].choices[0] = "-NOT SET IN INI-";
 	else
-		g_ProfileOptionsLines[PO_CARD_DIR_1].choices[0] = PREFSMAN->m_sMemoryCardDir[PLAYER_1];
+		g_ProfileOptionsLines[PO_OS_MOUNT_1].choices[0] = PREFSMAN->m_sMemoryCardOsMountPoint[PLAYER_1];
 
-	if( PREFSMAN->m_sMemoryCardDir[PLAYER_2].empty() )
-		g_ProfileOptionsLines[PO_CARD_DIR_2].choices[0] = "-NOT SET IN INI-";
+	if( PREFSMAN->m_sMemoryCardOsMountPoint[PLAYER_2].empty() )
+		g_ProfileOptionsLines[PO_OS_MOUNT_2].choices[0] = "-NOT SET IN INI-";
 	else
-		g_ProfileOptionsLines[PO_CARD_DIR_2].choices[0] = PREFSMAN->m_sMemoryCardDir[PLAYER_2];
+		g_ProfileOptionsLines[PO_OS_MOUNT_2].choices[0] = PREFSMAN->m_sMemoryCardOsMountPoint[PLAYER_2];
 
 	Init( 
 		INPUTMODE_TOGETHER, 
