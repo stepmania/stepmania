@@ -283,10 +283,10 @@ void SongSelector::OnNotesChange()
 		m_textNotes.SetText( "(NEW)" );
 	else
 	{
-		CString sDescription = GetSelectedNotes()->m_sDescription;
+		CString sDescription = GetSelectedNotes()->GetDescription();
 		if( sDescription == "" )
 			sDescription = "[no name]";
-		if( GetSelectedNotes()->m_bAutoGen )
+		if( GetSelectedNotes()->IsAutogen() )
 			sDescription += " (autogen)";
 		m_textNotes.SetText( sDescription );
 	}

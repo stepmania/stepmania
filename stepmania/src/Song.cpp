@@ -279,7 +279,7 @@ bool Song::LoadWithoutCache( CString sDir )
 		return false;
 
 	TidyUpData();
-	
+
 	// save a cache file so we don't have to parse it all over again next time
 	SaveToCacheFile();
 	return true;
@@ -359,6 +359,9 @@ bool Song::LoadFromSongDir( CString sDir )
 		}
 	}
 
+	/* Add AutoGen pointers.  (These aren't cached.) */
+	AddAutoGenNotes();
+
 	return true;
 }
 
@@ -403,8 +406,6 @@ void Song::TidyUpData()
 	/* Generate these before we autogen notes, so the new notes can inherit
 	 * their source's values. */
 	ReCalulateRadarValuesAndLastBeat();
-
-	AddAutoGenNotes();
 
 	TrimRight(m_sMainTitle);
 	if( m_sMainTitle == "" )	m_sMainTitle = "Untitled song";
@@ -554,10 +555,10 @@ void Song::TidyUpData()
 		GetNotesThatMatch( nt, apNotes );
 		if( apNotes.size() == 1 )
 		{
-			if( 0 == apNotes[0]->m_sDescription.CompareNoCase("smaniac") )
+			if( 0 == apNotes[0]->GetDescription().CompareNoCase("smaniac") )
 			{
-				apNotes[0]->m_sDescription = "Challenge";
-				apNotes[0]->m_Difficulty = DIFFICULTY_HARD;
+				apNotes[0]->SetDescription("Challenge");
+				apNotes[0]->SetDifficulty(DIFFICULTY_HARD);
 			}
 		}
 	}
@@ -579,12 +580,11 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 
 		for( int r=0; r<NUM_RADAR_VALUES; r++ )
 		{
-			/* If it's autogen, and we already have radar values, leave them alone.
-			 * If it's not autogen, regen them, since the radar calculation might
-			 * have changed. */
-			if(pNotes->m_bAutoGen && pNotes->m_fRadarValues[r] != -1)
+			/* If it's autogen, radar vals come from the parent. */
+			if(pNotes->IsAutogen())
 				continue;
-			pNotes->m_fRadarValues[r] = NoteDataUtil::GetRadarValue( tempNoteData, (RadarCategory)r, m_fMusicLengthSeconds );
+
+			pNotes->SetRadarValue(r, NoteDataUtil::GetRadarValue( tempNoteData, (RadarCategory)r, m_fMusicLengthSeconds ));
 		}
 
 		float fFirstBeat = tempNoteData.GetFirstBeat();
@@ -629,7 +629,7 @@ bool Song::SongHasNotesType( NotesType nt ) const
 bool Song::SongHasNotesTypeAndDifficulty( NotesType nt, Difficulty dc ) const
 {
 	for( unsigned i=0; i < m_apNotes.size(); i++ ) // foreach Notes
-		if( m_apNotes[i]->m_NotesType == nt  &&  m_apNotes[i]->m_Difficulty == dc )
+		if( m_apNotes[i]->m_NotesType == nt  &&  m_apNotes[i]->GetDifficulty() == dc )
 			return true;
 	return false;
 }
@@ -699,8 +699,6 @@ void Song::AddAutoGenNotes()
 {
 	for( NotesType ntMissing=(NotesType)0; ntMissing<NUM_NOTES_TYPES; ntMissing=(NotesType)(ntMissing+1) )
 	{
-next_notes_type:
-
 		if( SongHasNotesType(ntMissing) )
 			continue;
 
@@ -708,36 +706,21 @@ next_notes_type:
 		// missing Notes of this type
 		int iNumTracksOfMissing = GAMEMAN->NotesTypeToNumTracks(ntMissing);
 
-		unsigned j;
-
-		// look for previously autogen'd data with the same number of tracks
-		// XXX Why do this?  Notes with the same number of tracks will be preferred
-		// below anyway; why prefer autogen'd data? -glenn
-		for( j=0; j<m_apNotes.size(); j++ )
-		{
-			Notes* pOriginalNotes = m_apNotes[j];
-			NotesType ntOriginal = pOriginalNotes->m_NotesType;
-			int iNumOriginalNotesTracks = GAMEMAN->NotesTypeToNumTracks(ntOriginal);
-			
-			if( pOriginalNotes->m_bAutoGen  &&  iNumTracksOfMissing == iNumOriginalNotesTracks )
-			{
-				AutoGen( ntMissing, ntOriginal );
-				goto next_notes_type;	// done searching
-			}
-		}
-
-
 		// look for closest match
 		NotesType	ntBestMatch = (NotesType)-1;
 		int			iBestTrackDifference = 10000;	// inf
 
 		for( NotesType nt=(NotesType)0; nt<NUM_NOTES_TYPES; nt=(NotesType)(nt+1) )
 		{
-			int iNumTracks = GAMEMAN->NotesTypeToNumTracks(nt);
-			int iTrackDifference = abs(iNumTracks-iNumTracksOfMissing);
 			CArray<Notes*,Notes*> apNotes;
 			this->GetNotesThatMatch( nt, apNotes );
-			if( iTrackDifference < iBestTrackDifference && !apNotes.empty() && !apNotes[0]->m_bAutoGen )
+
+			if(apNotes.empty() || apNotes[0]->IsAutogen())
+				continue; /* can't autogen from other autogen */
+
+			int iNumTracks = GAMEMAN->NotesTypeToNumTracks(nt);
+			int iTrackDifference = abs(iNumTracks-iNumTracksOfMissing);
+			if( iTrackDifference < iBestTrackDifference )
 			{
 				ntBestMatch = nt;
 				iBestTrackDifference = iTrackDifference;
@@ -751,7 +734,7 @@ next_notes_type:
 
 void Song::AutoGen( NotesType ntTo, NotesType ntFrom )
 {
-	int iNumTracksOfTo = GAMEMAN->NotesTypeToNumTracks(ntTo);
+//	int iNumTracksOfTo = GAMEMAN->NotesTypeToNumTracks(ntTo);
 
 	for( unsigned int j=0; j<m_apNotes.size(); j++ )
 	{
@@ -759,25 +742,7 @@ void Song::AutoGen( NotesType ntTo, NotesType ntFrom )
 		if( pOriginalNotes->m_NotesType == ntFrom )
 		{
 			Notes* pNewNotes = new Notes;
-			pNewNotes->m_Difficulty		= pOriginalNotes->m_Difficulty;
-			pNewNotes->m_iMeter			= pOriginalNotes->m_iMeter;
-			pNewNotes->m_sDescription	= pOriginalNotes->m_sDescription;
-			pNewNotes->m_bAutoGen		= true;
-			pNewNotes->m_NotesType		= ntTo;
-			/* Assume the radar values are the same, so we don't spend a long
-			 * time recomputing them. */
-			for(int i = 0; i < NUM_RADAR_VALUES; ++i)
-				pNewNotes->m_fRadarValues[i] = pOriginalNotes->m_fRadarValues[i];
-
-			NoteData originalNoteData;
-			NoteData newNoteData;
-			pOriginalNotes->GetNoteData( &originalNoteData );
-			newNoteData.m_iNumTracks = iNumTracksOfTo;
-			if(originalNoteData.m_iNumTracks == iNumTracksOfTo)
-				newNoteData.CopyRange( &originalNoteData, 0, originalNoteData.GetLastRow(), 0 );
-			else
-				newNoteData.LoadTransformedSlidingWindow( &originalNoteData, iNumTracksOfTo );
-			pNewNotes->SetNoteData( &newNoteData );
+			pNewNotes->AutogenFrom(pOriginalNotes, ntTo);
 			this->m_apNotes.push_back( pNewNotes );
 		}
 	}
@@ -795,7 +760,7 @@ Grade Song::GetGradeForDifficulty( const StyleDef *st, int p, Difficulty dc ) co
 	for( unsigned i=0; i<aNotes.size(); i++ )
 	{
 		const Notes* pNotes = aNotes[i];
-		if( pNotes->m_Difficulty == dc )
+		if( pNotes->GetDifficulty() == dc )
 			grade = max( grade, pNotes->m_TopGrade );
 	}
 	return grade;
@@ -814,7 +779,7 @@ bool Song::IsEasy( NotesType nt ) const
 		Notes* pNotes = m_apNotes[i];
 		if( pNotes->m_NotesType != nt )
 			continue;
-		if( pNotes->m_iMeter <= 2 )
+		if( pNotes->GetMeter() <= 2 )
 			return true;
 	}
 	return false;
@@ -857,9 +822,9 @@ int CompareSongPointersByDifficulty(const Song *pSong1, const Song *pSong2)
 
 	unsigned i;
 	for( i=0; i<aNotes1.size(); i++ )
-		iEasiestMeter1 = min( iEasiestMeter1, aNotes1[i]->m_iMeter );
+		iEasiestMeter1 = min( iEasiestMeter1, aNotes1[i]->GetMeter() );
 	for( i=0; i<aNotes2.size(); i++ )
-		iEasiestMeter2 = min( iEasiestMeter2, aNotes2[i]->m_iMeter );
+		iEasiestMeter2 = min( iEasiestMeter2, aNotes2[i]->GetMeter() );
 
 	if( iEasiestMeter1 < iEasiestMeter2 )
 		return true;

@@ -192,7 +192,7 @@ Notes* Course::GetNotesForStage( int iStage )
 	for( i=0; i<pSong->m_apNotes.size(); i++ )
 	{
 		Notes* pNotes = pSong->m_apNotes[i];
-		if( 0==stricmp(pNotes->m_sDescription, sDescription)  &&
+		if( 0==stricmp(pNotes->GetDescription(), sDescription)  &&
 			GAMESTATE->GetCurrentStyleDef()->MatchesNotesType(pNotes->m_NotesType) )
 			return pNotes;
 	}
@@ -204,7 +204,7 @@ Notes* Course::GetNotesForStage( int iStage )
 	for( i=0; i<pSong->m_apNotes.size(); i++ )
 	{
 		Notes* pNotes = pSong->m_apNotes[i];
-		if( pNotes->m_Difficulty == dc  &&
+		if( pNotes->GetDifficulty() == dc  &&
 			GAMESTATE->GetCurrentStyleDef()->MatchesNotesType(pNotes->m_NotesType) )
 			return pNotes;
 	}

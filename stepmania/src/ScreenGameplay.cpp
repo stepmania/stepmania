@@ -156,7 +156,6 @@ ScreenGameplay::ScreenGameplay()
 			}
 			break;
 		}
-
 	}
 
 	m_bChangedOffsetOrBPM = (GAMESTATE->m_SongOptions.m_AutoAdjust == SongOptions::ADJUST_ON);
@@ -1212,7 +1211,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 							if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 								continue;	// skip
 
-							if( GAMESTATE->m_pCurNotes[p]->m_Difficulty == DIFFICULTY_HARD  &&  GAMESTATE->GetCurrentGrade((PlayerNumber)p) >= GRADE_AA )
+							if( GAMESTATE->m_pCurNotes[p]->GetDifficulty() == DIFFICULTY_HARD  &&  GAMESTATE->GetCurrentGrade((PlayerNumber)p) >= GRADE_AA )
 								bTryExtraStage = true;
 						}
 					}

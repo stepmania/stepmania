@@ -303,7 +303,7 @@ MusicWheel::MusicWheel()
 	m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT ); 
 	this->AddChild( &m_ScrollBar );
 	
-	m_soundChangeMusic.Load(	THEME->GetPathTo("Sounds","select music change music"), 16 );
+	m_soundChangeMusic.Load(	THEME->GetPathTo("Sounds","select music change music") );
 	m_soundChangeSort.Load(		THEME->GetPathTo("Sounds","select music change sort") );
 	m_soundExpand.Load(			THEME->GetPathTo("Sounds","select music section expand") );
 	m_soundStart.Load(			THEME->GetPathTo("Sounds","menu start") );

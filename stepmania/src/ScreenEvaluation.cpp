@@ -358,7 +358,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 				continue;	// skip
 
-			if( GAMESTATE->m_pCurNotes[p]->m_Difficulty == DIFFICULTY_HARD  &&  grade[p] >= GRADE_AA )
+			if( GAMESTATE->m_pCurNotes[p]->GetDifficulty() == DIFFICULTY_HARD  &&  grade[p] >= GRADE_AA )
 				m_bTryExtraStage = true;
 		}
 	}

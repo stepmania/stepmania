@@ -199,13 +199,13 @@ bool NotesWriterDWI::WriteDWINotesTag( FILE* fp, const Notes &out )
 	default:	return false;	// not a type supported by DWI
 	}
 
-	if( 0==out.m_sDescription.CompareNoCase("challenge") )
+	if( 0==out.GetDescription().CompareNoCase("challenge") )
 		fprintf( fp, "SMANIAC:" );
-	else if( 0==out.m_sDescription.CompareNoCase("smaniac") )
+	else if( 0==out.GetDescription().CompareNoCase("smaniac") )
 		fprintf( fp, "SMANIAC:" );
 	else
 	{
-		switch( out.m_Difficulty )
+		switch( out.GetDifficulty() )
 		{
 		case DIFFICULTY_EASY:	fprintf( fp, "BASIC:" );	break;
 		case DIFFICULTY_MEDIUM:	fprintf( fp, "ANOTHER:" );	break;
@@ -214,7 +214,7 @@ bool NotesWriterDWI::WriteDWINotesTag( FILE* fp, const Notes &out )
 		}
 	}
 
-	fprintf( fp, "%d:\n", out.m_iMeter );
+	fprintf( fp, "%d:\n", out.GetMeter() );
 	return true;
 }
 
@@ -264,7 +264,7 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 
 	for( unsigned i=0; i<out.m_apNotes.size(); i++ ) 
 	{
-		if( -1 != out.m_apNotes[i]->m_sDescription.Find("autogen") )
+		if( -1 != out.m_apNotes[i]->GetDescription().Find("autogen") )
 			continue;	// don't save autogen notes
 
 		if(!WriteDWINotesTag( fp, *out.m_apNotes[i] ))

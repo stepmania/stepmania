@@ -307,7 +307,7 @@ void SongManager::ReadStatisticsFromDisk()
 			for( i=0; i<pSong->m_apNotes.size(); i++ )
 			{
 				if( pSong->m_apNotes[i]->m_NotesType == notesType  &&
-					pSong->m_apNotes[i]->m_sDescription == szNotesDescription )	// match!
+					pSong->m_apNotes[i]->GetDescription() == szNotesDescription )	// match!
 				{
 					pNotes = pSong->m_apNotes[i];
 					break;
@@ -355,7 +355,7 @@ void SongManager::SaveStatisticsToDisk()
 
 			// Each value has the format "SongName::NotesName=TimesPlayed::TopGrade::TopScore::MaxCombo".
 
-			CString sName = ssprintf( "%s::%s::%s", pSong->GetSongDir().GetString(), GameManager::NotesTypeToString(pNotes->m_NotesType).GetString(), pNotes->m_sDescription.GetString() );
+			CString sName = ssprintf( "%s::%s::%s", pSong->GetSongDir().GetString(), GameManager::NotesTypeToString(pNotes->m_NotesType).GetString(), pNotes->GetDescription().GetString() );
 			CString sValue = ssprintf( 
 				"%d::%s::%d::%d",
 				pNotes->m_iNumTimesPlayed,
@@ -409,7 +409,7 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 	for( unsigned i=0; i<pSong->m_apNotes.size(); i++ )
 	{
 		const Notes* pNotes = pSong->m_apNotes[i];
-		if( pNotes->m_iMeter == 10 )
+		if( pNotes->GetMeter() == 10 )
 			return EXTRA_COLOR;
 	}
 
@@ -578,7 +578,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, cons
 			}
 
 			// for extra 2, we don't want to choose the hardest notes possible.  So, we'll disgard Notes with meter > 8
-			if(	bExtra2  &&  pNotes->m_iMeter > 8 )	
+			if(	bExtra2  &&  pNotes->GetMeter() > 8 )	
 				continue;	// skip
 			if( pExtra2Notes == NULL  ||  CompareNotesPointersByDifficulty(pExtra2Notes,pNotes) )	// pNotes is harder than pHardestNotes
 			{

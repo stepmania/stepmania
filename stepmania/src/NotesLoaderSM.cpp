@@ -28,14 +28,14 @@ void SMLoader::LoadFromSMTokens(
 //	LOG->Trace( "Notes::LoadFromSMTokens()" );
 
 	out.m_NotesType = GameManager::StringToNotesType(sNotesType);
-	out.m_sDescription = sDescription;
-	out.m_Difficulty = StringToDifficulty( sDifficulty );
-	out.m_iMeter = atoi(sMeter);
+	out.SetDescription(sDescription);
+	out.SetDifficulty(StringToDifficulty( sDifficulty ));
+	out.SetMeter(atoi(sMeter));
 	CStringArray saValues;
 	split( sRadarValues, ",", saValues, true );
 	if( saValues.size() == NUM_RADAR_VALUES )
 		for( int r=0; r<NUM_RADAR_VALUES; r++ )
-			out.m_fRadarValues[r] = (float)atof(saValues[r]);
+			out.SetRadarValue(r, (float)atof(saValues[r]));
     
 	out.SetSMNoteData(sNoteData);
 

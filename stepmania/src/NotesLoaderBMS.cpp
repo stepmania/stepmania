@@ -121,29 +121,29 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 		}
 		if( -1 != value_name.Find("#title") )
 		{
-			out.m_sDescription = value_data;
+			value_data.MakeLower();
 			
 			// extract the Notes description (looks like 'Music <BASIC>')
-			int iPosOpenBracket = out.m_sDescription.Find( "<" );
+			int iPosOpenBracket = value_data.Find( "<" );
 			if( iPosOpenBracket == -1 )
-				iPosOpenBracket = out.m_sDescription.Find( "(" );
-			int iPosCloseBracket = out.m_sDescription.Find( ">" );
+				iPosOpenBracket = value_data.Find( "(" );
+			int iPosCloseBracket = value_data.Find( ">" );
 			if( iPosCloseBracket == -1 )
-				iPosCloseBracket = out.m_sDescription.Find( ")" );
+				iPosCloseBracket = value_data.Find( ")" );
 
 			if( iPosOpenBracket != -1  &&  iPosCloseBracket != -1 )
-				out.m_sDescription = out.m_sDescription.Mid( iPosOpenBracket+1, iPosCloseBracket-iPosOpenBracket-1 );
-			out.m_sDescription.MakeLower();
-			LOG->Trace( "Notes description found to be '%s'", out.m_sDescription.GetString() );
+				value_data = value_data.Mid( iPosOpenBracket+1, iPosCloseBracket-iPosOpenBracket-1 );
+			LOG->Trace( "Notes description found to be '%s'", value_data.GetString() );
+
+			out.SetDescription(value_data);
 
 			// if there's a 6 in the description, it's probably part of "6panel" or "6-panel"
-			if( out.m_sDescription.Find("6") != -1 )
+			if( value_data.Find("6") != -1 )
 				out.m_NotesType = NOTES_TYPE_DANCE_SOLO;
-			
 		}
 		if( -1 != value_name.Find("#playlevel") ) 
 		{
-			out.m_iMeter = atoi( value_data );
+			out.SetMeter(atoi(value_data));
 		}
 		else if( value_name.Left(1) == "#"  
 			 && IsAnInt( value_name.Mid(1,3) )

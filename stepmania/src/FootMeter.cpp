@@ -34,8 +34,8 @@ void FootMeter::SetFromNotes( Notes* pNotes )
 	if( pNotes != NULL )
 	{
 		SetDiffuse( RageColor(1,1,1,1) );
-		SetNumFeet( pNotes->m_iMeter );
-		if( pNotes->m_iMeter > GLOW_IF_METER_GREATER_THAN )
+		SetNumFeet( pNotes->GetMeter() );
+		if( pNotes->GetMeter() > GLOW_IF_METER_GREATER_THAN )
 			this->SetEffectGlowing();
 		else
 			this->SetEffectNone();

@@ -7,6 +7,7 @@
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
+	Glenn Maynard
 -----------------------------------------------------------------------------
 */
 
@@ -39,7 +40,6 @@ Notes::Notes()
 	 * it'd trip obscure asserts all over the place, so I'll wait
 	 * until after b6 to do this. -glenn */
 	m_NotesType = NOTES_TYPE_DANCE_SINGLE;
-	m_bAutoGen = false;
 	m_Difficulty = CLASS_INVALID;
 	m_iMeter = 0;
 	for(int i = 0; i < NUM_RADAR_VALUES; ++i)
@@ -51,6 +51,7 @@ Notes::Notes()
 	m_TopGrade = GRADE_NO_DATA;
 	notes = NULL;
 	notes_comp = NULL;
+	parent = NULL;
 }
 
 Notes::~Notes()
@@ -62,6 +63,8 @@ Notes::~Notes()
 void Notes::SetNoteData( NoteData* pNewNoteData )
 {
 	ASSERT( pNewNoteData->m_iNumTracks == GameManager::NotesTypeToNumTracks(m_NotesType) );
+
+	DeAutogen();
 
 	delete notes_comp;
 	notes_comp = NULL;
@@ -102,7 +105,7 @@ CString Notes::GetSMNoteData() const
 // Color is a function of Difficulty and Intended Style
 NotesDisplayType Notes::GetNotesDisplayType() const
 {
-	CString sDescription = m_sDescription;
+	CString sDescription = GetDescription();
 	sDescription.MakeLower();
 
 	if( -1 != sDescription.Find("battle") )			return NOTES_DISPLAY_BATTLE;
@@ -110,7 +113,7 @@ NotesDisplayType Notes::GetNotesDisplayType() const
 	else if( -1 != sDescription.Find("smaniac") )	return NOTES_DISPLAY_S_HARD;
 	else if( -1 != sDescription.Find("challenge") )	return NOTES_DISPLAY_CHALLENGE;
 
-	switch( m_Difficulty )
+	switch( GetDifficulty() )
 	{
 	case DIFFICULTY_EASY:	return NOTES_DISPLAY_EASY;
 	case DIFFICULTY_MEDIUM:	return NOTES_DISPLAY_MEDIUM;
@@ -135,16 +138,16 @@ RageColor Notes::GetColor() const
 
 void Notes::TidyUpData()
 {
-	if( m_Difficulty == CLASS_INVALID )
-		m_Difficulty = DifficultyFromDescriptionAndMeter( m_sDescription, m_iMeter );
+	if( GetDifficulty() == CLASS_INVALID )
+		SetDifficulty(DifficultyFromDescriptionAndMeter( GetDescription(), GetMeter() ));
 
-	if( m_iMeter < 1 || m_iMeter > 10 ) 
+	if( GetMeter() < 1 || GetMeter() > 10 ) 
 	{
-		switch( m_Difficulty )
+		switch( GetDifficulty() )
 		{
-		case DIFFICULTY_EASY:	m_iMeter = 3;	break;
-		case DIFFICULTY_MEDIUM:	m_iMeter = 5;	break;
-		case DIFFICULTY_HARD:	m_iMeter = 8;	break;
+		case DIFFICULTY_EASY:	SetMeter(3);	break;
+		case DIFFICULTY_MEDIUM:	SetMeter(5);	break;
+		case DIFFICULTY_HARD:	SetMeter(8);	break;
 		default:	ASSERT(0);
 		}
 	}
@@ -199,8 +202,8 @@ bool CompareNotesPointersByRadarValues(const Notes* pNotes1, const Notes* pNotes
 	
 	for( int r=0; r<NUM_RADAR_VALUES; r++ )
 	{
-		fScore1 += pNotes1->m_fRadarValues[r];
-		fScore2 += pNotes2->m_fRadarValues[r];
+		fScore1 += pNotes1->GetRadarValues()[r];
+		fScore2 += pNotes2->GetRadarValues()[r];
 	}
 
 	return fScore1 < fScore2;
@@ -208,18 +211,18 @@ bool CompareNotesPointersByRadarValues(const Notes* pNotes1, const Notes* pNotes
 
 bool CompareNotesPointersByMeter(const Notes *pNotes1, const Notes* pNotes2)
 {
-	if( pNotes1->m_iMeter < pNotes2->m_iMeter )
+	if( pNotes1->GetMeter() < pNotes2->GetMeter() )
 		return true;
-	if( pNotes1->m_iMeter > pNotes2->m_iMeter )
+	if( pNotes1->GetMeter() > pNotes2->GetMeter() )
 		return false;
 	return CompareNotesPointersByRadarValues( pNotes1, pNotes2 );
 }
 
 bool CompareNotesPointersByDifficulty(const Notes *pNotes1, const Notes *pNotes2)
 {
-	if( pNotes1->m_Difficulty < pNotes2->m_Difficulty )
+	if( pNotes1->GetDifficulty() < pNotes2->GetDifficulty() )
 		return true;
-	if( pNotes1->m_Difficulty > pNotes2->m_Difficulty )
+	if( pNotes1->GetDifficulty() > pNotes2->GetDifficulty() )
 		return false;
 	return CompareNotesPointersByMeter( pNotes1, pNotes2 );
 }
@@ -231,8 +234,24 @@ void SortNotesArrayByDifficulty( CArray<Notes*,Notes*> &arraySteps )
 
 void Notes::Decompress() const
 {
-	if(!notes_comp) return; /* no data is no data */
 	if(notes) return;
+
+	if(parent)
+	{
+		NoteData pdata;
+		parent->GetNoteData(&pdata);
+
+		notes = new NoteData;
+		notes->m_iNumTracks = GameManager::NotesTypeToNumTracks(m_NotesType);
+		if(pdata.m_iNumTracks == notes->m_iNumTracks)
+			notes->CopyRange( &pdata, 0, pdata.GetLastRow(), 0 );
+		else
+			notes->LoadTransformedSlidingWindow( &pdata, notes->m_iNumTracks );
+
+		return;
+	}
+
+	if(!notes_comp) return; /* no data is no data */
 
 	notes = new NoteData;
 	notes->m_iNumTracks = GameManager::NotesTypeToNumTracks(m_NotesType);
@@ -250,5 +269,71 @@ void Notes::Compress() const
 
 	delete notes;
 	notes = NULL;
+}
+
+/* Copy our parent's data.  This is done when we're being changed from autogen
+ * to normal. (needed?) */
+void Notes::DeAutogen()
+{
+	if(!parent)
+		return; /* OK */
+
+	m_iMeter		= Real()->m_iMeter;
+	m_sDescription	= Real()->m_sDescription;
+	m_Difficulty	= Real()->m_Difficulty;
+	for(int i = 0; i < NUM_RADAR_VALUES; ++i)
+		m_fRadarValues[i] = Real()->m_fRadarValues[i];
+	
+	delete notes;
+	notes = NULL;
+
+	if(!notes_comp)
+		notes_comp = new CString;
+
+	*notes_comp = parent->GetSMNoteData();
+
+	parent = NULL;
+}
+
+void Notes::AutogenFrom( Notes *parent_, NotesType ntTo )
+{
+	parent = parent_;
+	m_NotesType = ntTo;
+}
+
+const Notes *Notes::Real() const
+{
+	if(parent) return parent;
+	return this;
+}
+
+bool Notes::IsAutogen() const
+{
+	return parent != NULL;
+}
+
+void Notes::SetDescription(CString desc)
+{
+	DeAutogen();
+	m_sDescription = desc;
+}
+
+void Notes::SetDifficulty(Difficulty d)
+{
+	DeAutogen();
+	m_Difficulty = d;
+}
+
+void Notes::SetMeter(int meter)
+{
+	DeAutogen();
+	m_iMeter = meter;
+}
+
+void Notes::SetRadarValue(int r, float val)
+{
+	DeAutogen();
+	ASSERT(r < NUM_RADAR_VALUES);
+	m_fRadarValues[r] = val;
 }
 

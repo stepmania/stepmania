@@ -78,7 +78,7 @@ void CourseContentDisplay::Load( int iNum, Song* pSong, Notes* pNotes )
 	m_textFoot.SetText( "1" );
 	m_textFoot.SetDiffuse( colorNotes );
 
-	m_textDifficultyNumber.SetText( ssprintf("%d", pNotes->m_iMeter) );
+	m_textDifficultyNumber.SetText( ssprintf("%d", pNotes->GetMeter()) );
 	m_textDifficultyNumber.SetDiffuse( colorNotes );
 }
 

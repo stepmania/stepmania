@@ -120,11 +120,11 @@ bool DWILoader::LoadFromDWITokens(
 		ASSERT(0);
 	}
 
-	out.m_sDescription = sDescription;
+	out.SetDescription(sDescription);
 
-	out.m_iMeter = atoi( sNumFeet );
+	out.SetMeter(atoi(sNumFeet));
 
-	//m_Difficulty = DifficultyFromDescriptionAndMeter( m_sDescription, m_iMeter );
+	//SetDifficulty(DifficultyFromDescriptionAndMeter( GetDescription(), GetMeter() ));
 
 	NoteData* pNoteData = new NoteData;
 	ASSERT( pNoteData );

@@ -262,7 +262,7 @@ void ScreenEz2SelectMusic::EasierDifficulty( PlayerNumber pn )
 
 	m_iSelection[pn]--;
 	// the user explicity switched difficulties.  Update the preferred difficulty
-	GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[pn][ m_iSelection[pn] ]->m_Difficulty;
+	GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[pn][ m_iSelection[pn] ]->GetDifficulty();
 
 //	m_soundChangeNotes.Play();
 
@@ -282,7 +282,7 @@ void ScreenEz2SelectMusic::HarderDifficulty( PlayerNumber pn )
 
 	m_iSelection[pn]++;
 	// the user explicity switched difficulties.  Update the preferred difficulty
-	GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[pn][ m_iSelection[pn] ]->m_Difficulty;
+	GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[pn][ m_iSelection[pn] ]->GetDifficulty();
 
 //	m_soundChangeNotes.Play();
 
@@ -320,7 +320,7 @@ void ScreenEz2SelectMusic::AfterNotesChange( PlayerNumber pn )
 	Notes* pNotes = m_arrayNotes[pn].empty()? NULL: m_arrayNotes[pn][m_iSelection[pn]];
 
 	if( pNotes != NULL )
-		m_PumpDifficultyRating.SetText(ssprintf("Lv.%d",pNotes->m_iMeter));
+		m_PumpDifficultyRating.SetText(ssprintf("Lv.%d",pNotes->GetMeter()));
 
 	GAMESTATE->m_pCurNotes[pn] = pNotes;
 

@@ -494,7 +494,7 @@ void ScreenSelectMusic::EasierDifficulty( PlayerNumber pn )
 
 	m_iSelection[pn]--;
 	// the user explicity switched difficulties.  Update the preferred difficulty
-	GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[pn][ m_iSelection[pn] ]->m_Difficulty;
+	GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[pn][ m_iSelection[pn] ]->GetDifficulty();
 
 	m_soundChangeNotes.Play();
 
@@ -514,7 +514,7 @@ void ScreenSelectMusic::HarderDifficulty( PlayerNumber pn )
 
 	m_iSelection[pn]++;
 	// the user explicity switched difficulties.  Update the preferred difficulty
-	GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[pn][ m_iSelection[pn] ]->m_Difficulty;
+	GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[pn][ m_iSelection[pn] ]->GetDifficulty();
 
 	m_soundChangeNotes.Play();
 
@@ -620,7 +620,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		{
 			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 				continue;	// skip
-			if( GAMESTATE->m_pCurNotes[p]  &&  GAMESTATE->m_pCurNotes[p]->m_iMeter >= 10 )
+			if( GAMESTATE->m_pCurNotes[p]  &&  GAMESTATE->m_pCurNotes[p]->GetMeter() >= 10 )
 				bIsHard = true;
 		}
 
@@ -765,7 +765,7 @@ void ScreenSelectMusic::AfterMusicChange()
 					continue;
 				for( unsigned i=0; i<m_arrayNotes[p].size(); i++ )
 				{
-					if( m_arrayNotes[p][i]->m_Difficulty == GAMESTATE->m_PreferredDifficulty[p] )
+					if( m_arrayNotes[p][i]->GetDifficulty() == GAMESTATE->m_PreferredDifficulty[p] )
 					{
 						m_iSelection[p] = i;
 						break;

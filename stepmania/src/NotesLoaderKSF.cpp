@@ -33,7 +33,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 		else if( 0==stricmp(sValueName,"STEP") )
 			iStep = sParams[1];
 		else if( 0==stricmp(sValueName,"DIFFICULTY") )
-			out.m_iMeter = atoi(sParams[1]);
+			out.SetMeter(atoi(sParams[1]));
 	}
 
 	if( iTickCount == -1 )
@@ -53,26 +53,26 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 		splitrelpath( sPath, sDir, sFName, sExt );
 		sFName.MakeLower();
 
-		out.m_sDescription = sFName;
+		out.SetDescription(sFName);
 		if( sFName.Find("crazy")!=-1 )
 		{
-			out.m_Difficulty = DIFFICULTY_HARD;
-			if(!out.m_iMeter) out.m_iMeter = 8;
+			out.SetDifficulty(DIFFICULTY_HARD);
+			if(!out.GetMeter()) out.SetMeter(8);
 		}
 		else if( sFName.Find("hard")!=-1 )
 		{
-			out.m_Difficulty = DIFFICULTY_MEDIUM;
-			if(!out.m_iMeter) out.m_iMeter = 5;
+			out.SetDifficulty(DIFFICULTY_MEDIUM);
+			if(!out.GetMeter()) out.SetMeter(5);
 		}
 		else if( sFName.Find("easy")!=-1 )
 		{
-			out.m_Difficulty = DIFFICULTY_EASY;
-			if(!out.m_iMeter) out.m_iMeter = 2;
+			out.SetDifficulty(DIFFICULTY_EASY);
+			if(!out.GetMeter()) out.SetMeter(2);
 		}
 		else
 		{
-			out.m_Difficulty = DIFFICULTY_MEDIUM;
-			if(!out.m_iMeter) out.m_iMeter = 5;
+			out.SetDifficulty(DIFFICULTY_MEDIUM);
+			if(!out.GetMeter()) out.SetMeter(5);
 		}
 
 		notedata.m_iNumTracks = 5;

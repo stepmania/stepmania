@@ -191,12 +191,13 @@ ScreenEdit::ScreenEdit()
 	m_pSong = GAMESTATE->m_pCurSong;
 
 	m_pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
+	
 	if( m_pNotes == NULL )
 	{
 		m_pNotes = new Notes;
-		m_pNotes->m_Difficulty = DIFFICULTY_MEDIUM;
+		m_pNotes->SetDifficulty(DIFFICULTY_MEDIUM);
 		m_pNotes->m_NotesType = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
-		m_pNotes->m_sDescription = "Untitled";
+		m_pNotes->SetDescription("Untitled");
 
 		// In ScreenEditMenu, the screen preceding this one,
 		// GAMEMAN->m_CurStyle is set to the target game style
@@ -523,8 +524,8 @@ void ScreenEdit::Update( float fDeltaTime )
 		GAMESTATE->m_fSongBeat,
 		m_NoteFieldEdit.m_fBeginMarker,	m_NoteFieldEdit.m_fEndMarker,
 		GAMESTATE->m_SongOptions.m_fMusicRate,
-		DifficultyToString( m_pNotes->m_Difficulty ).GetString(),
-		GAMESTATE->m_pCurNotes[PLAYER_1] ? GAMESTATE->m_pCurNotes[PLAYER_1]->m_sDescription.GetString() : "no description",
+		DifficultyToString( m_pNotes->GetDifficulty() ).GetString(),
+		GAMESTATE->m_pCurNotes[PLAYER_1] ? GAMESTATE->m_pCurNotes[PLAYER_1]->GetDescription().GetString() : "no description",
 		m_pSong->m_sMainTitle.GetString(),
 		m_pSong->m_sSubTitle.GetString(),
 		iNumTapNotes, iNumHoldNotes,
@@ -639,7 +640,7 @@ void AddBGChange( CString sBGName )
 void ChangeDescription( CString sNew )
 {
 	Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
-	pNotes->m_sDescription = sNew;
+	pNotes->SetDescription(sNew);
 }
 
 void ChangeMainTitle( CString sNew )
@@ -752,7 +753,6 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			// copy edit into current Notes
 			Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
 			ASSERT( pNotes );
-			pNotes->m_bAutoGen = false;		// set not autogen so these Notes will be saved to disk.
 
 			pNotes->SetNoteData( &m_NoteFieldEdit );
 			GAMESTATE->m_pCurSong->Save();
@@ -1033,13 +1033,13 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 	case SDLK_d:
 		{
-			Difficulty &dc = m_pNotes->m_Difficulty;
-			dc = Difficulty( (dc+1)%NUM_DIFFICULTIES );
+			Difficulty dc = Difficulty( (m_pNotes->GetDifficulty()+1)%NUM_DIFFICULTIES );
+			m_pNotes->SetDifficulty(dc);
 		}
 		break;
 
 	case SDLK_e:
-		SCREENMAN->TextEntry( SM_None, "Edit notes description.\nPress Enter to confirm,\nEscape to cancel.", m_pNotes->m_sDescription, ChangeDescription, NULL );
+		SCREENMAN->TextEntry( SM_None, "Edit notes description.\nPress Enter to confirm,\nEscape to cancel.", m_pNotes->GetDescription(), ChangeDescription, NULL );
 		break;
 
 	case SDLK_b:

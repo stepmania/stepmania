@@ -108,7 +108,7 @@ void GrooveRadar::GrooveRadarValueMap::SetFromNotes( PlayerNumber pn, Notes* pNo
 		{
 			const float fValueCurrent = m_fValuesOld[pn][c] * (1-m_PercentTowardNew[pn]) + m_fValuesNew[pn][c] * m_PercentTowardNew[pn];
 			m_fValuesOld[pn][c] = fValueCurrent;
-			m_fValuesNew[pn][c] = pNotes->m_fRadarValues[c];
+			m_fValuesNew[pn][c] = pNotes->GetRadarValues()[c];
 		}
 
 		if( m_bValuesVisible[pn] == false )	// the values WERE invisible

@@ -7,7 +7,7 @@ ScoreKeeperMAX2::ScoreKeeperMAX2(Notes *notes, NoteDataWithScoring &data, Player
 {
 //	Stats_DoublesCount = true;
 
-	int Meter = notes? notes->m_iMeter : 5;
+	int Meter = notes? notes->GetMeter() : 5;
 
 	/* Hold notes count as two tap notes.  However, hold notes already count
 	 * as 1 in GetNumTapNotes(), so only add 1*GetNumHoldNotes, not 2. */
