@@ -73,7 +73,7 @@ const ScreenMessage SM_PlayToastySound		= ScreenMessage(SM_User+105);
 
 // received while STATE_OUTRO
 const ScreenMessage	SM_ShowCleared			= ScreenMessage(SM_User+111);
-const ScreenMessage	SM_HideCleared			= ScreenMessage(SM_User+112);
+const ScreenMessage	SM_ShowTryExtraStage	= ScreenMessage(SM_User+112);
 const ScreenMessage	SM_SaveChangedBeforeGoingBack	= ScreenMessage(SM_User+113);
 const ScreenMessage	SM_GoToScreenAfterBack	= ScreenMessage(SM_User+114);
 const ScreenMessage	SM_GoToStateAfterCleared= ScreenMessage(SM_User+115);
@@ -81,7 +81,6 @@ const ScreenMessage	SM_GoToStateAfterCleared= ScreenMessage(SM_User+115);
 const ScreenMessage	SM_BeginFailed			= ScreenMessage(SM_User+121);
 const ScreenMessage	SM_ShowFailed			= ScreenMessage(SM_User+122);
 const ScreenMessage	SM_PlayFailComment		= ScreenMessage(SM_User+123);
-const ScreenMessage	SM_HideFailed			= ScreenMessage(SM_User+124);
 const ScreenMessage	SM_GoToScreenAfterFail	= ScreenMessage(SM_User+125);
 const ScreenMessage	SM_GoToTitleMenu			= ScreenMessage(SM_User+126);
 
@@ -333,6 +332,14 @@ ScreenGameplay::ScreenGameplay()
 	m_sprFailed.SetDiffuse( D3DXCOLOR(1,1,1,0) );
 	this->AddChild( &m_sprFailed );
 
+	if( GAMESTATE->IsFinalStage() )
+		m_sprTryExtraStage.Load( THEME->GetPathTo("Graphics","gameplay try extra stage1") );
+	else if( GAMESTATE->IsExtraStage() )
+		m_sprTryExtraStage.Load( THEME->GetPathTo("Graphics","gameplay try extra stage2") );
+	m_sprTryExtraStage.SetXY( CENTER_X, CENTER_Y );
+	m_sprTryExtraStage.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+	this->AddChild( &m_sprTryExtraStage );
+
 	if( GAMESTATE->m_bDemonstration )
 	{
 		m_quadDemonstrationBox.SetDiffuse( D3DXCOLOR(0,0,0,0.7f) );
@@ -369,6 +376,7 @@ ScreenGameplay::ScreenGameplay()
 	if( !GAMESTATE->m_bDemonstration )	// don't load sounds if just playing demonstration
 	{
 		m_soundFail.Load(				THEME->GetPathTo("Sounds","gameplay failed") );
+		m_soundTryExtraStage.Load(		THEME->GetPathTo("Sounds","gameplay try extra stage") );
 		m_soundOniDie.Load(				THEME->GetPathTo("Sounds","gameplay oni die") );
 		m_announcerReady.Load(			ANNOUNCER->GetPathTo("gameplay ready") );
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
@@ -1081,8 +1089,34 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				else
 				{
 					m_StarWipe.CloseWipingRight( SM_None );
-					this->SendScreenMessage( SM_ShowCleared, 1 );
-					SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("gameplay cleared") );
+
+					// do they deserve an extra stage?
+
+					bool bTryExtraStage = false;
+					if( (GAMESTATE->IsFinalStage() || GAMESTATE->IsExtraStage()) )
+					{
+						for( p=0; p<NUM_PLAYERS; p++ )
+						{
+							if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
+								continue;	// skip
+
+							if( GAMESTATE->m_pCurNotes[p]->m_DifficultyClass == CLASS_HARD  &&  GAMESTATE->GetCurrentGrade((PlayerNumber)p) >= GRADE_AA )
+								bTryExtraStage = true;
+						}
+					}
+					if( PREFSMAN->m_bEventMode )
+						bTryExtraStage = false;
+
+
+					if( bTryExtraStage )
+					{
+						this->SendScreenMessage( SM_ShowTryExtraStage, 1 );
+					}
+					else
+					{
+						this->SendScreenMessage( SM_ShowCleared, 1 );
+						SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("gameplay cleared") );
+					}
 				}
 			}
 		}
@@ -1200,13 +1234,42 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	case SM_ShowCleared:
 		m_sprCleared.BeginTweening(1.0f);
 		m_sprCleared.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
-		SCREENMAN->SendMessageToTopScreen( SM_HideCleared, 1.5 );
-		break;
-	case SM_HideCleared:
+		m_sprCleared.BeginTweening(1.5f); // sleep
 		m_sprCleared.BeginTweening(0.7f);
 		m_sprCleared.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
-		SCREENMAN->SendMessageToTopScreen( SM_GoToStateAfterCleared, 1 );
+		SCREENMAN->SendMessageToTopScreen( SM_GoToStateAfterCleared, 3 );
 		break;
+
+	case SM_ShowTryExtraStage:
+		{
+			m_soundTryExtraStage.PlayRandom();
+
+			// make the background invisible so we don't waste mem bandwidth drawing it
+			m_Background.BeginTweening( 1 );
+			m_Background.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+
+			D3DXCOLOR colorStage = GAMESTATE->GetStageColor();
+			colorStage.a *= 0.7f;
+
+			m_sprTryExtraStage.SetZoom( 4 );
+			m_sprTryExtraStage.BeginBlurredTweening( 0.8f, TWEEN_BIAS_END );
+			m_sprTryExtraStage.SetTweenZoom( 0.5f );			// zoom out
+			m_sprTryExtraStage.SetTweenDiffuse( colorStage );	// and fade in
+			m_sprTryExtraStage.BeginTweening( 0.3f );
+			m_sprTryExtraStage.SetTweenZoom( 1.1f );			// bounce
+			m_sprTryExtraStage.SetTweenDiffuse( colorStage );	// and fade in
+			m_sprTryExtraStage.BeginTweening( 0.2f );
+			m_sprTryExtraStage.SetTweenZoom( 1.0f );			// come to rest
+			m_sprTryExtraStage.SetTweenDiffuse( colorStage );	// and fade in
+
+			colorStage.a = 0;
+
+			m_sprTryExtraStage.BeginTweening( 3 );	// sleep
+			m_sprTryExtraStage.SetTweenDiffuse( colorStage );
+			SCREENMAN->SendMessageToTopScreen( SM_GoToStateAfterCleared, 5 );
+		}
+		break;
+
 	case SM_SaveChangedBeforeGoingBack:
 		if( m_bChangedOffsetOrBPM )
 		{
@@ -1270,6 +1333,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_sprFailed.BeginTweening( 0.2f );
 		m_sprFailed.SetTweenZoom( 1.0f );			// come to rest
 		m_sprFailed.SetTweenDiffuse( D3DXCOLOR(1,1,1,0.7f) );	// and fade in
+		m_sprFailed.BeginTweening( 2 );		// sleep
+		m_sprFailed.BeginTweening( 1 );
+		m_sprFailed.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
 
 		// show the survive time if extra stage
 		if( GAMESTATE->IsExtraStage()  ||  GAMESTATE->IsExtraStage2() )
@@ -1283,25 +1349,18 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_textSurviveTime.BeginTweening( 0.3f );	// sleep
 			m_textSurviveTime.BeginTweening( 0.3f );	// fade in
 			m_textSurviveTime.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
+			m_textSurviveTime.BeginTweening( 3.5f );	// sleep
+			m_textSurviveTime.BeginTweening( 0.5f );	// fade out
+			m_textSurviveTime.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
 		}
 
 		SCREENMAN->SendMessageToTopScreen( SM_PlayFailComment, 1.0f );
-		SCREENMAN->SendMessageToTopScreen( SM_HideFailed, 2.0f );
+		SCREENMAN->SendMessageToTopScreen( SM_GoToScreenAfterFail, 5.0f );
 		break;
 	case SM_PlayFailComment:
 		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("gameplay failed") );
 		break;
-	case SM_HideFailed:
-		m_sprFailed.StopTweening();
-		m_sprFailed.BeginTweening(1.0f);
-		m_sprFailed.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
 
-		m_textSurviveTime.BeginTweening( 0.5f );	// sleep
-		m_textSurviveTime.BeginTweening( 0.5f );	// fade out
-		m_textSurviveTime.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
-
-		SCREENMAN->SendMessageToTopScreen( SM_GoToScreenAfterFail, 1.5f );
-		break;
 	case SM_GoToScreenAfterFail:
 		if( m_bChangedOffsetOrBPM )
 		{

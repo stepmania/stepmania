@@ -16,6 +16,7 @@
 #include "PrefsManager.h"
 #include "InputMapper.h"
 #include "Song.h"
+#include "RageLog.h"
 
 
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
@@ -314,4 +315,34 @@ float GameState::GetPlayerSurviveTime( PlayerNumber pn )
 		return GetElapsedSeconds();
 	else
 		return m_fSecondsBeforeFail[pn];
+}
+
+Grade GameState::GetCurrentGrade( PlayerNumber pn )
+{
+	if( !GAMESTATE->IsPlayerEnabled(pn)  ||  GAMESTATE->m_fSecondsBeforeFail[pn] != -1 )
+		return GRADE_E;
+
+	/* Based on the percentage of your total "Dance Points" to the maximum
+	 * possible number, the following rank is assigned: 
+	 *
+	 * 100% - AAA
+	 *  93% - AA
+	 *  80% - A
+	 *  65% - B
+	 *  45% - C
+	 * Less - D
+	 * Fail - E
+	 */
+	float fPercentDancePoints = m_iActualDancePoints[pn] / (float)m_iPossibleDancePoints[pn];
+	fPercentDancePoints = max( fPercentDancePoints, 0 );
+	LOG->Trace( "iActualDancePoints: %i", m_iActualDancePoints[pn] );
+	LOG->Trace( "iPossibleDancePoints: %i", m_iPossibleDancePoints[pn] );
+	LOG->Trace( "fPercentDancePoints: %f", fPercentDancePoints  );
+
+	if     ( fPercentDancePoints >= 1.00 )	return GRADE_AAA;
+	else if( fPercentDancePoints >= 0.93 )	return GRADE_AA;
+	else if( fPercentDancePoints >= 0.80 )	return GRADE_A;
+	else if( fPercentDancePoints >= 0.65 )	return GRADE_B;
+	else if( fPercentDancePoints >= 0.45 )	return GRADE_C;
+	else									return GRADE_D;
 }

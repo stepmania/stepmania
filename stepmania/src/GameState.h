@@ -15,6 +15,7 @@
 #include "SongOptions.h"
 #include "Game.h"
 #include "Style.h"
+#include "Grade.h"
 
 
 class Song;
@@ -95,6 +96,8 @@ public:
 	float	m_fRadarActual[NUM_PLAYERS][NUM_RADAR_VALUES];		// filled in by ScreenGameplay on end of notes
 	
 	float	GetElapsedSeconds();			// Arcade: time into current song.  Oni/Endless: time into current course
+
+	Grade	GetCurrentGrade( PlayerNumber pn );
 
 	int	m_iSongsIntoCourse;					// In Arcade, this value is meaningless.
 											// In Oni and Endless, this is the number of songs played in the current course.

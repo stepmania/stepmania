@@ -106,6 +106,7 @@ private:
 	FocusingSprite		m_sprHereWeGo;
 	MotionBlurSprite	m_sprCleared;
 	MotionBlurSprite	m_sprFailed;
+	MotionBlurSprite	m_sprTryExtraStage;
 
 	BitmapText			m_textSurviveTime;	// only shown in extra stage
 
@@ -124,6 +125,7 @@ private:
 
 	RandomSample	m_soundFail;
 	RandomSample	m_soundOniDie;
+	RandomSample	m_soundTryExtraStage;
 	RandomSample	m_announcerReady;
 	RandomSample	m_announcerHereWeGo;
 	RandomSample	m_announcerDanger;

@@ -1053,10 +1053,11 @@ options is sufficient.
 
 * Step 2: Install the Direct X 8.1 SDK
 
-The DirectX 8.1 SDK is a free (but large) download from Microsoft (link here).  
-Install it using all the default settings.  The SDK installer will configure 
-Visual C++ with the correct paths needed to find the DirectX 8.1 libraries and 
-headers.
+The DirectX 8.1 SDK is a free (but large) download from Microsoft: 
+http://msdn.microsoft.com/downloads/?url=/downloads/sample.asp?url=/MSDN-FILES/
+027/001/771/msdncompositedoc.xml&frame=true.  Install it using all the default 
+settings.  The SDK installer will configure Visual C++ with the correct paths 
+needed to find the DirectX 8.1 libraries and headers.
 
 * Step 3: Create a SourceForge account
 
