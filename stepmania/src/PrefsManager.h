@@ -239,6 +239,7 @@ public:
 	bool			m_bTimestamping;
 	bool			m_bLogSkips;
 	bool			m_bLogCheckpoints;
+	bool			m_bShowLoadingWindow;
 
 	/* Game-specific prefs: */
 	CString			m_sDefaultModifiers;

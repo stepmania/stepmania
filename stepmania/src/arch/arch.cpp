@@ -25,6 +25,9 @@
 
 LoadingWindow *MakeLoadingWindow()
 {
+	if( !PREFSMAN->m_bShowLoadingWindow )
+		return new LoadingWindow_Null;
+
 	/* Don't load NULL by default.  On most systems, if we can't load the SDL
 	 * loading window, we won't be able to init OpenGL, either, so don't bother. */
 	CString drivers = "win32,cocoa,gtk,sdl";

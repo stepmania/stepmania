@@ -897,17 +897,6 @@ int main(int argc, char* argv[])
 	 * We use our own error handlers. */
 	SDL_Init( SDL_INIT_NOPARACHUTE );
 
-	LoadingWindow *loading_window = MakeLoadingWindow();
-	if( loading_window == NULL )
-	{
-		LOG->Trace("Couldn't open any loading windows.");
-		exit(1);
-	}
-
-	loading_window->Paint();
-
-	srand( time(NULL) );	// seed number generator	
-	
 	//
 	// Create game objects
 	//
@@ -920,6 +909,19 @@ int main(int argc, char* argv[])
 	LOG->SetTimestamping( PREFSMAN->m_bTimestamping );
 	Checkpoints::LogCheckpoints( PREFSMAN->m_bLogCheckpoints );
 
+
+	/* This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow. */
+	LoadingWindow *loading_window = MakeLoadingWindow();
+	if( loading_window == NULL )
+	{
+		LOG->Trace("Couldn't open any loading windows.");
+		exit(1);
+	}
+
+	loading_window->Paint();
+
+	srand( time(NULL) );	// seed number generator	
+	
 	CheckSDLVersion( 1,2,6 );
 	
 	if( PREFSMAN->m_bFirstRun )
