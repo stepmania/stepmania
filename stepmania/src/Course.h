@@ -97,7 +97,7 @@ public:
 
 	struct Info
 	{
-		Info(): pSong(NULL), pNotes(NULL), Random(false), CourseDifficulty(COURSE_DIFFICULTY_INVALID) { }
+		Info(): pSong(NULL), pNotes(NULL), Random(false), Difficulty(COURSE_DIFFICULTY_INVALID) { }
 		void GetAttackArray( AttackArray &out ) const;
 
 		Song*	pSong;
@@ -106,7 +106,7 @@ public:
 		AttackArray Attacks;
 		bool	Random;
 		bool	Mystery;
-		CourseDifficulty	CourseDifficulty;
+		CourseDifficulty	Difficulty;
 		/* Corresponding entry in m_entries: */
 		int		CourseIndex;
 	};

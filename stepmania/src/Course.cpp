@@ -712,7 +712,7 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, CourseDiffic
 		cinfo.Random = ( e.type == COURSE_ENTRY_RANDOM || e.type == COURSE_ENTRY_RANDOM_WITHIN_GROUP );
 		cinfo.Mystery = e.mystery;
 		cinfo.CourseIndex = i;
-		cinfo.CourseDifficulty = DerefDifficulty(cd);
+		cinfo.Difficulty = DerefDifficulty(cd);
 		ci.push_back( cinfo ); 
 	}
 
@@ -791,7 +791,7 @@ bool Course::IsFixed() const
 Difficulty Course::GetDifficulty( const Info &stage ) const
 {
 	Difficulty dc = m_entries[stage.CourseIndex].difficulty;
-	Difficulty new_dc = Difficulty( dc + stage.CourseDifficulty );
+	Difficulty new_dc = Difficulty( dc + stage.Difficulty );
 	return (new_dc < NUM_DIFFICULTIES) ? new_dc : dc;
 }
 
@@ -811,7 +811,7 @@ void Course::GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut, Co
 
 void Course::GetMeterRange( const Info &stage, int& iMeterLowOut, int& iMeterHighOut ) const
 {
-	GetMeterRange( stage.CourseIndex, iMeterLowOut, iMeterHighOut, stage.CourseDifficulty );
+	GetMeterRange( stage.CourseIndex, iMeterLowOut, iMeterHighOut, stage.Difficulty );
 }
 
 bool Course::GetTotalSeconds( float& fSecondsOut ) const
