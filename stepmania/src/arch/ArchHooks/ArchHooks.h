@@ -42,6 +42,12 @@ public:
 	/* Re-exec the game.  If this is implemented, it doesn't return. */
 	virtual void RestartProgram() { }
 
+	/* Call this to temporarily enter a high-priority or realtime scheduling (depending
+	 * on the implementation) mode.  This is used to improve timestamp accuracy.  Do as
+	 * little as possible in this mode; hanging in it might hang the system entirely. */
+	virtual void EnterTimeCriticalSection() { }
+	virtual void ExitTimeCriticalSection() { }
+
 protected:
 	virtual void MessageBoxErrorPrivate( CString sMessage, CString ID ) { printf("Error: %s\n", sMessage.c_str()); }
 	virtual void MessageBoxOKPrivate( CString sMessage, CString ID ) {}

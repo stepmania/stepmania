@@ -12,9 +12,16 @@
 #include "archutils/win32/RestartProgram.h"
 #include "ProductInfo.h"
 
+#include "RageThreads.h"
 ArchHooks_Win32::ArchHooks_Win32()
 {
 	SetUnhandledExceptionFilter(CrashHandler);
+	TimeCritMutex = new RageMutex;
+}
+
+ArchHooks_Win32::~ArchHooks_Win32()
+{
+	delete TimeCritMutex;
 }
 
 void ArchHooks_Win32::DumpDebugInfo()
@@ -180,9 +187,24 @@ void ArchHooks_Win32::RestartProgram()
 	Win32RestartProgram();
 }
 
+void ArchHooks_Win32::EnterTimeCriticalSection()
+{
+	TimeCritMutex->Lock();
+
+	OldThreadPriority = GetThreadPriority( GetCurrentThread() );
+	SetThreadPriority( GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL );
+}
+
+void ArchHooks_Win32::ExitTimeCriticalSection()
+{
+	SetThreadPriority( GetCurrentThread(), OldThreadPriority );
+	OldThreadPriority = 0;
+	TimeCritMutex->Unlock();
+}
+
 
 /*
- * Copyright (c) 2002-2003 by the person(s) listed below.  All rights reserved.
+ * Copyright (c) 2002-2004 by the person(s) listed below.  All rights reserved.
  *
  * Glenn Maynard
  * Chris Danford
