@@ -14,6 +14,7 @@
 #include "GameState.h"
 #include "song.h"
 #include "Steps.h"
+#include "SongManager.h"
 
 SongCreditDisplay::SongCreditDisplay()
 {
@@ -36,7 +37,13 @@ SongCreditDisplay::SongCreditDisplay()
 	for( unsigned i=0; i<vpStepsToShow.size(); i++ )
 	{
 		Steps* pSteps = vpStepsToShow[i];
-		s += Capitalize( DifficultyToString(pSteps->GetDifficulty()) ) + " steps by " + pSteps->GetDescription();
+		CString sDifficulty = SONGMAN->GetDifficultyThemeName( pSteps->GetDifficulty() );
+		
+		// HACK: reset capitalization
+		sDifficulty.MakeLower();
+		sDifficulty = Capitalize( sDifficulty );
+		
+		s += sDifficulty + " steps: " + pSteps->GetDescription();
 		s += "\n";
 	}
 
