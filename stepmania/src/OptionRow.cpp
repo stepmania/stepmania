@@ -757,7 +757,7 @@ void OptionRow::ImportOptions( PlayerNumber pn )
 	ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[pn] );
 	m_pHand->ImportOption( m_RowDef, pn, m_vbSelected[pn] );
 	INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[pn] );
-	VerifySelected( m_RowDef.selectType, m_vbSelected[pn] );
+	//VerifySelected( m_RowDef.selectType, m_vbSelected[pn] );
 }
 
 void OptionRow::ImportOptions()
