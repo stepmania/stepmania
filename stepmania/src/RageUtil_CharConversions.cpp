@@ -15,7 +15,7 @@ static bool CodePageConvert(CString &txt, int cp)
 		return true;
 
 	int size = MultiByteToWideChar(cp, MB_ERR_INVALID_CHARS, txt.data(), txt.size(), NULL, 0);
-	if( size == 0 );
+	if( size == 0 )
 	{
 		LOG->Trace("%s\n", werr_ssprintf(GetLastError(), "err: ").c_str());
 		return false; /* error */
