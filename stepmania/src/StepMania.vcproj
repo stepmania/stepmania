@@ -1352,6 +1352,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="EditCoursesMenu.h">
 			</File>
 			<File
+				RelativePath="EditCoursesSongMenu.cpp">
+			</File>
+			<File
+				RelativePath="EditCoursesSongMenu.h">
+			</File>
+			<File
 				RelativePath="EditMenu.cpp">
 			</File>
 			<File
