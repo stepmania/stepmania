@@ -238,6 +238,24 @@ public:
 	bool HasPeakComboAward( PeakComboAward pca );
 
 	//
+	// LastScores
+	//
+	struct HighScoreForASongAndSteps
+	{
+		StepsID stepsID;
+		SongID songID;
+		HighScore hs;
+
+		HighScoreForASongAndSteps() { Unset(); }
+		void Unset() { stepsID.Unset(); songID.Unset(); hs.Unset(); }
+
+		XNode* CreateNode() const;
+		void LoadFromNode( const XNode* pNode );
+	};
+	vector<HighScoreForASongAndSteps> m_vLastScores;
+	void AddLastScore( Song* pSong, Steps* pSteps, HighScore hs );
+
+	//
 	// Init'ing
 	//
 	void InitAll()
@@ -250,6 +268,7 @@ public:
 		InitScreenshotData(); 
 		InitCalorieData(); 
 		InitAwards(); 
+		InitLastScores(); 
 	}
 	void InitEditableData(); 
 	void InitGeneralData(); 
@@ -259,6 +278,7 @@ public:
 	void InitScreenshotData(); 
 	void InitCalorieData(); 
 	void InitAwards(); 
+	void InitLastScores(); 
 
 	//
 	// Loading and saving
@@ -279,6 +299,7 @@ public:
 	void LoadScreenshotDataFromNode( const XNode* pNode );
 	void LoadCalorieDataFromNode( const XNode* pNode );
 	void LoadAwardsFromNode( const XNode* pNode );
+	void LoadLastScoresFromNode( const XNode* pNode );
 
 	void SaveEditableDataToDir( CString sDir ) const;
 	XNode* SaveGeneralDataCreateNode() const;
@@ -288,6 +309,7 @@ public:
 	XNode* SaveScreenshotDataCreateNode() const;
 	XNode* SaveCalorieDataCreateNode() const;
 	XNode* SaveAwardsCreateNode() const;
+	XNode* SaveLastScoresCreateNode() const;
 
 	void DeleteProfileDataFromDirSM390a12( CString sDir ) const;
 	void DeleteSongScoresFromDirSM390a12( CString sDir ) const;

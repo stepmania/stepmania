@@ -39,7 +39,8 @@ class StepsID
 	CString sDescription;
 
 public:
-	StepsID() { FromSteps(NULL); }
+	StepsID() { Unset(); }
+	void Unset() { FromSteps(NULL); }
 	void FromSteps( const Steps *p );
 	Steps *ToSteps( const Song *p, bool bAllowNull ) const;
 	bool operator<( const StepsID &other ) const

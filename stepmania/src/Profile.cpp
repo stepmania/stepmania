@@ -46,6 +46,8 @@ const int SM_390A12_COURSE_SCORES_VERSION = 8;
 
 #define GUID_SIZE_BYTES 8
 
+#define MAX_LAST_SCORES_TO_SAVE 100
+
 #if defined(WIN32)
 #pragma warning (disable : 4706) // assignment within conditional expression
 #endif
@@ -153,6 +155,11 @@ void Profile::InitAwards()
 	{
 		m_PeakComboAwards[pca].Unset();
 	}
+}
+
+void Profile::InitLastScores()
+{
+	m_vLastScores.clear();
 }
 
 CString Profile::GetDisplayName() const
@@ -521,6 +528,7 @@ bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 		LOAD_NODE( ScreenshotData );
 		LOAD_NODE( CalorieData );
 		LOAD_NODE( Awards );
+		LOAD_NODE( LastScores );
 	}
 		
 	return true;	// FIXME?  Investigate what happens if we always return true.
@@ -546,6 +554,7 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 		xml.AppendChild( SaveScreenshotDataCreateNode() );
 		xml.AppendChild( SaveCalorieDataCreateNode() );
 		xml.AppendChild( SaveAwardsCreateNode() );
+		xml.AppendChild( SaveLastScoresCreateNode() );
 		bool bSaved = xml.SaveToFile(fn);
 		if( bSaved && bSignData )
 		{
@@ -1790,3 +1799,105 @@ bool Profile::HasPeakComboAward( PeakComboAward pca )
 {
 	return m_PeakComboAwards[pca].IsSet();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+XNode* Profile::HighScoreForASongAndSteps::CreateNode() const
+{
+	XNode* pNode = new XNode;
+	pNode->name = "HighScoreForASongAndSteps";
+
+	pNode->AppendChild( songID.CreateNode() );
+	pNode->AppendChild( stepsID.CreateNode() );
+	pNode->AppendChild( hs.CreateNode() );
+
+	return pNode;
+}
+
+void Profile::HighScoreForASongAndSteps::LoadFromNode( const XNode* pNode )
+{
+	Unset();
+
+	ASSERT( pNode->name == "HighScoreForASongAndSteps" );
+	XNode* p;
+	if( p = pNode->GetChild("Song") )
+		songID.LoadFromNode( p );
+	if( p = pNode->GetChild("Steps") )
+		stepsID.LoadFromNode( p );
+	if( p = pNode->GetChild("HighScore") )
+		hs.LoadFromNode( p );
+}
+
+void Profile::LoadLastScoresFromNode( const XNode* pNode )
+{
+	CHECKPOINT;
+
+	ASSERT( pNode->name == "LastScores" );
+	for( XNodes::const_iterator p = pNode->childs.begin(); 
+		p != pNode->childs.end(); 
+		p++ )
+	{
+		if( (*p)->name == "HighScoreForASongAndSteps" )
+		{
+			HighScoreForASongAndSteps h;
+			h.LoadFromNode( *p );
+
+			m_vLastScores.push_back( h );
+		}
+		else
+			WARN_AND_CONTINUE;
+	}	
+}
+
+XNode* Profile::SaveLastScoresCreateNode() const
+{
+	CHECKPOINT;
+
+	const Profile* pProfile = this;
+	ASSERT( pProfile );
+
+	XNode* pNode = new XNode;
+	pNode->name = "LastScores";
+
+	unsigned uNumToSave = min( m_vLastScores.size(), (unsigned)MAX_LAST_SCORES_TO_SAVE );
+
+	for( unsigned i=0; i<uNumToSave; i++ )
+	{
+		pNode->AppendChild( m_vLastScores[i].CreateNode() );
+	}
+
+	return pNode;
+}
+
+void Profile::AddLastScore( Song* pSong, Steps* pSteps, HighScore hs )
+{
+	HighScoreForASongAndSteps h;
+	h.songID.FromSong( pSong );
+	h.stepsID.FromSteps( pSteps );
+	h.hs = hs;
+	m_vLastScores.push_back( h );
+}
+

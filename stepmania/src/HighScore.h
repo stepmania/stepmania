@@ -27,7 +27,8 @@ struct HighScore
 	CString sMachineGuid;	// where this screenshot was taken
 
 
-	HighScore()
+	HighScore() { Unset(); }
+	void Unset()
 	{
 		grade = GRADE_NO_DATA;
 		iScore = 0;

@@ -39,7 +39,8 @@ class SongID
 	CString sDir;
 
 public:
-	SongID() { FromSong(NULL); }
+	SongID() { Unset(); }
+	void Unset() { FromSong(NULL); }
 	void FromSong( const Song *p );
 	Song *ToSong() const;
 	bool operator<( const SongID &other ) const
