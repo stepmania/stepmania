@@ -162,14 +162,14 @@ void BacktraceNames::FromAddr( void *p )
     if (pipe(fds) != 0)
     {
         fprintf(stderr, "FromAddr pipe() failed: %s\n", strerror(errno));
-        exit(1);
+        return;
     }
 
     pid = fork();
     if (pid == -1)
     {
         fprintf(stderr, "FromAddr fork() failed: %s\n", strerror(errno));
-        exit(1);
+        return;
     }
 
     if (pid == 0)
@@ -183,72 +183,82 @@ void BacktraceNames::FromAddr( void *p )
 
         char *addy;
         asprintf(&addy, "0x%x", long(p));
-        const char *p = ssprintf("%d", ppid);
+        char *p;
+        asprintf(&p, "%d", ppid);
+
+        execl("/usr/bin/atos", "/usr/bin/atos", "-p", p, addy, NULL);
         
-        fprintf(stderr, "%s\n", p);
-        if (execl("/usr/bin/atos", "/usr/bin/atos", "-p", p, addy, NULL))
-            fprintf(stderr, "atos failed: %s\n", strerror(errno));
+        fprintf(stderr, "execl(atos) failed: %s\n", strerror(errno));
         free(addy);
+        free(p);
         close(out);
-        exit(0);
+        _exit(0);
     }
     
     close(fds[1]);
-    char f[BACKTRACE_MAX_SIZE];
-    bzero(f, BACKTRACE_MAX_SIZE);
-    int len = read(fds[0], f, BACKTRACE_MAX_SIZE);
+    char f[1024];
+    bzero(f, 1024);
+    int len = read(fds[0], f, 1024);
+
+    Symbol = "";
+    File = "";
+
     if (len == -1)
     {
         fprintf(stderr, "FromAddr read() failed: %s\n", strerror(errno));
-        Symbol = "";
-        File = "";
+        return;
     }
-    else
-    {
-        CStringArray mangledAndFile;
+    CStringArray mangledAndFile;
 
-        split(f, " ", mangledAndFile, true);
-        if (mangledAndFile.size() > 0)
+    split(f, " ", mangledAndFile, true);
+    if (mangledAndFile.size() == 0)
+        return;
+    Symbol = mangledAndFile[0];
+    /* eg
+     * -[NSApplication run]
+     * +[SomeClass initialize]
+     */
+    if (Symbol[0] == '-' || Symbol[0] == '+')
+    {
+        Symbol = mangledAndFile[0] + " " + mangledAndFile[1];
+        /* eg
+         * (crt.c:300)
+         * (AppKit)
+         */
+        if (mangledAndFile.size() == 3)
         {
-            Symbol = mangledAndFile[0];
-            if (Symbol[0] != '-' && Symbol[0] != '+')
-            {
-                if (Symbol[0] == '_')
-                    Symbol = Symbol.substr(1);
-                if (mangledAndFile.size() > 3)
-                {
-                    File = mangledAndFile[3];
-                    unsigned pos = File.find('(');
-                    unsigned start = (pos == File.npos ? 0 : pos+1);
-                    pos = File.rfind(')') - 1;
-                    File = File.substr(start, pos);
-                }
-                else if (mangledAndFile.size() == 3)
-                    File = mangledAndFile[2].substr(0, mangledAndFile[2].rfind(')'));
-                else
-                    File = "";
-            }
-            else
-            {
-                Symbol = mangledAndFile[0] + " " + mangledAndFile[1];
-                if (mangledAndFile.size() == 3)
-                {
-                    File = mangledAndFile[2];
-                    unsigned pos = File.find('(');
-                    unsigned start = (pos == File.npos ? 0 : pos+1);
-                    pos = File.rfind(')') - 1;
-                    File = File.substr(start, pos);
-                }
-                 else
-                     File = "";
-            }
+            File = mangledAndFile[2];
+            unsigned pos = File.find('(');
+            unsigned start = (pos == File.npos ? 0 : pos+1);
+            pos = File.rfind(')') - 1;
+            File = File.substr(start, pos);
         }
-        else
-        {
-            Symbol = "";
-            File = "";
-        }
+        return;
     }
+    /* eg
+     * __start   -> _start
+     * _SDL_main -> SDL_main
+     */
+    if (Symbol[0] == '_')
+        Symbol = Symbol.substr(1);
+    /* eg, the full line:
+     * __Z1Ci (in a.out) (asmtest.cc:33)
+     * _main (in a.out) (asmtest.cc:52)
+     */
+    if (mangledAndFile.size() > 3)
+    {
+        File = mangledAndFile[3];
+        unsigned pos = File.find('(');
+        unsigned start = (pos == File.npos ? 0 : pos+1);
+        pos = File.rfind(')') - 1;
+        File = File.substr(start, pos);
+    }
+    /* eg, the full line:
+     * _main (SDLMain.m:308)
+     * __Z8GameLoopv (crt.c:300)
+     */
+    else if (mangledAndFile.size() == 3)
+        File = mangledAndFile[2].substr(0, mangledAndFile[2].rfind(')'));
 }
 #else
 #warning Undefined BACKTRACE_LOOKUP_METHOD_*
