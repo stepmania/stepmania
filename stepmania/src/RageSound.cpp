@@ -162,12 +162,16 @@ public:
 };
 
 
-bool RageSound::Load( CString sSoundFilePath, int precache )
+bool RageSound::Load( CString sSoundFilePath )
 {
-	LOG->Trace( "RageSound::LoadSound( '%s' )", sSoundFilePath.c_str() );
+	/* Automatically determine whether to precache */
+	/* TODO: Hook this up to a pref? */
+	return Load( sSoundFilePath, false );
+}
 
-	if(precache == 2)
-		precache = false;
+bool RageSound::Load( CString sSoundFilePath, bool precache )
+{
+	LOG->Trace( "RageSound::LoadSound( '%s', %d )", sSoundFilePath.c_str(), precache );
 
 	CString error;
 	SoundReader *pSound = SoundReader_FileReader::OpenFile( sSoundFilePath, error );

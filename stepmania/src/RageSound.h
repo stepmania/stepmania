@@ -75,23 +75,25 @@ public:
 	RageSound(const RageSound &cpy);
 	RageSound &operator=( const RageSound &cpy );
 
-	/* If cache == true (1), we'll preload the entire file into memory if
+	/* If cache == true, we'll preload the entire file into memory if
 	 * it's small enough.  If this is done, a large number of copies of the
 	 * sound can be played without much performance penalty.  This is useful
 	 * for BM (keyed sounds), and for rapidly-repeating sound effects, such
 	 * as the music wheel.
 	 *
-	 * If cache == false (0), we'll never preload the file (always stream
+	 * If cache == false, we'll never preload the file (always stream
 	 * it).  This makes loads much faster.
-	 * 
-	 * If cache is 2 (the default), it means "don't care".  Currently, this
-	 * means false; this may become a preference.
 	 * 
 	 * If the file failed to load, false is returned, Error() is set
 	 * and a null sample will be loaded.  (This makes failed loads nonfatal;
 	 * they can be ignored most of the time, so we continue to work if a file
 	 * is broken or missing.) */
-	bool Load(CString fn, int precache = 2);
+	bool Load( CString fn, bool bPrecache );
+	/* 
+	 * Using this version means the "don't care" about caching.  Currently, 
+	 * this always will not cache the sound; this may become a preference.
+	 */
+	bool Load( CString fn );
 
 	/* Load a SoundReader that you've set up yourself.  Sample rate conversion will
 	 * be set up only if needed.  Doesn't fail. */
