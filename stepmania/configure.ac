@@ -212,6 +212,9 @@ case $host in
 	AC_DEFINE(UNIX, 1, [Unix])
 	linux=yes
 	unix=yes
+	if test $host = powerpc-unknown-linux-gnu; then
+		AC_DEFINE(LINUX_PPC, 1, [Linux PPC])
+	fi
 	;;
 
 *)
