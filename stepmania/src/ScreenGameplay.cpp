@@ -737,6 +737,40 @@ bool ScreenGameplay::IsLastSong()
 	return GAMESTATE->GetCourseSongIndex()+1 == (int)m_apSongsQueue.size(); // GetCourseSongIndex() is 0-based but size() is not
 }
 
+void ScreenGameplay::SetupSong( int p, int iSongIndex )
+{
+	/* This is the first beat that can be changed without it being visible.  Until
+	 * we draw for the first time, any beat can be changed. */
+	GAMESTATE->m_fLastDrawnBeat[p] = -100;
+	GAMESTATE->m_pCurNotes[p] = m_apNotesQueue[p][iSongIndex];
+
+	// Put course options into effect.
+	GAMESTATE->m_ModsToApply[p].clear();
+	for( unsigned i=0; i<m_asModifiersQueue[p][iSongIndex].size(); ++i )
+	{
+		GAMESTATE->LaunchAttack( (PlayerNumber)p, m_asModifiersQueue[p][iSongIndex][i] );
+		GAMESTATE->m_SongOptions.FromString( m_asModifiersQueue[p][iSongIndex][i].sModifier );
+	}
+
+	/* Hack: Course modifiers that are set to start immediately shouldn't tween on. */
+	for( unsigned s=0; s<GAMESTATE->m_ActiveAttacks[p].size(); s++ )
+	{
+		if( GAMESTATE->m_ActiveAttacks[p][s].fStartSecond == 0 )
+			GAMESTATE->m_ActiveAttacks[p][s].fStartSecond = -1;
+	}
+	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( (PlayerNumber)p );
+
+	GAMESTATE->m_CurrentPlayerOptions[p] = GAMESTATE->m_PlayerOptions[p];
+
+	NoteData pOriginalNoteData;
+	GAMESTATE->m_pCurNotes[p]->GetNoteData( &pOriginalNoteData );
+	
+	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+	NoteData pNewNoteData;
+	pStyleDef->GetTransformedNoteDataForStyle( (PlayerNumber)p, &pOriginalNoteData, &pNewNoteData );
+	m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pCombinedLifeMeter, m_pPrimaryScoreDisplay[p], m_pSecondaryScoreDisplay[p], m_pInventory[p], m_pPrimaryScoreKeeper[p], m_pSecondaryScoreKeeper[p] );
+}
+
 void ScreenGameplay::LoadNextSong()
 {
 	GAMESTATE->ResetMusicStatistics();
@@ -778,11 +812,7 @@ void ScreenGameplay::LoadNextSong()
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 
-		/* This is the first beat that can be changed without it being visible.  Until
-		 * we draw for the first time, any beat can be changed. */
-		GAMESTATE->m_fLastDrawnBeat[p] = -100;
-
-		GAMESTATE->m_pCurNotes[p] = m_apNotesQueue[p][iPlaySongIndex];
+		SetupSong( p, iPlaySongIndex );
 
 		/* Increment the play count even if the player fails.  (It's still popular,
 		 * even if the people playing it aren't good at it.) */
@@ -792,21 +822,6 @@ void ScreenGameplay::LoadNextSong()
 				++GAMESTATE->m_pCurNotes[p]->m_MemCardDatas[mc].iNumTimesPlayed;
 		}
 
-		// Put course options into effect.
-		for( unsigned i=0; i<m_asModifiersQueue[p][iPlaySongIndex].size(); ++i )
-		{
-			GAMESTATE->LaunchAttack( (PlayerNumber)p, m_asModifiersQueue[p][iPlaySongIndex][i] );
-			GAMESTATE->m_SongOptions.FromString( m_asModifiersQueue[p][iPlaySongIndex][i].sModifier );
-		}
-
-		/* Hack: Course modifiers that are set to start immediately shouldn't tween on. */
-		for( unsigned s=0; s<GAMESTATE->m_ActiveAttacks[p].size(); s++ )
-		{
-			if( GAMESTATE->m_ActiveAttacks[p][s].fStartSecond == 0 )
-				GAMESTATE->m_ActiveAttacks[p][s].fStartSecond = -1;
-		}
-		GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( (PlayerNumber)p );
-		GAMESTATE->m_CurrentPlayerOptions[p] = GAMESTATE->m_PlayerOptions[p];
 
 		m_textPlayerOptions[p].SetText( GAMESTATE->m_PlayerOptions[p].GetString() );
 
@@ -833,15 +848,6 @@ void ScreenGameplay::LoadNextSong()
 		}
 
 		m_DifficultyIcon[p].SetFromNotes( PlayerNumber(p), GAMESTATE->m_pCurNotes[p] );
-
-
-		NoteData pOriginalNoteData;
-		GAMESTATE->m_pCurNotes[p]->GetNoteData( &pOriginalNoteData );
-		
-		const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
-		NoteData pNewNoteData;
-		pStyleDef->GetTransformedNoteDataForStyle( (PlayerNumber)p, &pOriginalNoteData, &pNewNoteData );
-		m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pCombinedLifeMeter, m_pPrimaryScoreDisplay[p], m_pSecondaryScoreDisplay[p], m_pInventory[p], m_pPrimaryScoreKeeper[p], m_pSecondaryScoreKeeper[p] );
 
 		/* The actual note data for scoring is the base class of Player.  This includes
 		 * transforms, like Wide.  Otherwise, the scoring will operate on the wrong data. */
@@ -1671,8 +1677,29 @@ void ScreenGameplay::ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 	SCREENMAN->Prompt( SM_SendWhenDone, sMessage, true, false, SaveChanges, RevertChanges, &m_apSongsQueue );
 }
 
+/*
+ * Saving StageStats that are affected by the note pattern is a little tricky:
+ *
+ * Stats are cumulative for course play.
+ *
+ * For regular songs, it doesn't matter how we do it; the pattern doesn't change
+ * during play.
+ *
+ * The pattern changes during play in battle and course mode.  We want to include these
+ * changes, so run stats for a song after the song finishes.
+ *
+ * If we fail, be sure to include the current song in stats, with the current modifier set.
+ *
+ * So:
+ * 
+ * 1. At the end of a song in any mode, pass or fail, add stats for that song (from m_Player).
+ * 2. At the end of gameplay in course mode, add stats for any songs that weren't played,
+ *    applying the modifiers the song would have been played with.  This doesn't include songs
+ *    that were played but failed; that was done in #1.
+ */
 void ScreenGameplay::SongFinished()
 {
+	LOG->Trace("SongFinished");
 	// save any statistics
 	int p;
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -1681,12 +1708,36 @@ void ScreenGameplay::SongFinished()
 			continue;
 		for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
 		{
+			/* Note that adding stats is only meaningful for the counters (eg. RADAR_NUM_JUMPS),
+			 * not for the percentages (RADAR_AIR). */
 			RadarCategory rc = (RadarCategory)r;
-			g_CurStageStats.fRadarPossible[p][r] = NoteDataUtil::GetRadarValue( m_Player[p], rc, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
-			g_CurStageStats.fRadarActual[p][r] = m_Player[p].GetActualRadarValue( rc, (PlayerNumber)p, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
+			g_CurStageStats.fRadarPossible[p][r] += NoteDataUtil::GetRadarValue( m_Player[p], rc, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
+			g_CurStageStats.fRadarActual[p][r] += m_Player[p].GetActualRadarValue( rc, (PlayerNumber)p, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
 		}
 	}
+}
 
+void ScreenGameplay::StageFinished()
+{
+	if( GAMESTATE->IsCourseMode() && GAMESTATE->m_PlayMode != PLAY_MODE_ENDLESS )
+	{
+		LOG->Trace("Stage finished at index %i/%i", GAMESTATE->GetCourseSongIndex(), m_apSongsQueue.size() );
+		/* +1 to skip the current song; that's done already. */
+		for( unsigned iPlaySongIndex = GAMESTATE->GetCourseSongIndex()+1;
+			 iPlaySongIndex < m_apSongsQueue.size(); ++iPlaySongIndex )
+		{
+			LOG->Trace("Running stats for %i", iPlaySongIndex );
+			for( int p=0; p<NUM_PLAYERS; p++ )
+			{
+				if( !GAMESTATE->IsPlayerEnabled(p) )
+					continue;
+
+				SetupSong( p, iPlaySongIndex );
+				m_Player[p].ApplyWaitingTransforms();
+				SongFinished();
+			}
+		}
+	}
 
 	// save current stage stats
 	g_vPlayedStageStats.push_back( g_CurStageStats );
@@ -2008,6 +2059,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 	case SM_GoToScreenAfterBack:
 		SongFinished();
+		StageFinished();
 
 		/* Reset options.  (Should this be done in ScreenSelect*?) */
 		GAMESTATE->RestoreSelectedOptions();
@@ -2016,6 +2068,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 	case SM_GoToStateAfterCleared:
 		SongFinished();
+		StageFinished();
 
 		/* Reset options.  (Should this be done in ScreenSelect*?) */
 		GAMESTATE->RestoreSelectedOptions();
@@ -2069,7 +2122,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 	case SM_GoToScreenAfterFail:
 		SongFinished();
-
+		StageFinished();
+		
 		/* Reset options.  (Should this be done in ScreenSelect*?) */
 		GAMESTATE->RestoreSelectedOptions();
 

@@ -72,6 +72,7 @@ protected:
 	void TweenOffScreen();
 
 	bool IsLastSong();
+	void SetupSong( int p, int iSongIndex );
 	void LoadNextSong();
 	float StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic);
 	void ShowSavePrompt( ScreenMessage SM_SendWhenDone );
@@ -81,6 +82,7 @@ protected:
 	void UpdateLyrics( float fDeltaTime );
 	void UpdateCheckFail();
 	void SongFinished();
+	void StageFinished();
 
 	enum DancingState { 
 		STATE_INTRO = 0, // not allowed to press Back
