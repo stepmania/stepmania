@@ -126,7 +126,7 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 #ifndef DEBUG
 	if( PREFSMAN->m_bAutoPlay && !GAMESTATE->m_bDemonstrationOrJukebox )	// cheaters never prosper
 	{
-		m_iCurComboOfPerfects = 0;
+		m_iCurToastyCombo = 0;
 		return;
 	}
 #endif //DEBUG
@@ -166,7 +166,7 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 					iCurCombo += iNumTapsInRow;
 					break;
 				case TNS_GREAT:
-					int aosid = 4;
+//					int aosid = 4;
 					break;
 				}
 			}
