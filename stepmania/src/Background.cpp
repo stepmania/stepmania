@@ -283,7 +283,6 @@ CString Background::CreateRandomBGA()
 	case PrefsManager::BGMODE_RANDOMMOVIES: ret = MakeMovie( file ); break;
 	default: FAIL_M( ssprintf("%i", PREFSMAN->m_iBackgroundMode) );
 	}
-	ret->PlayCommand( "On" );
 
 	m_BGAnimations[file] = ret;
 	m_RandomBGAnimations.push_back( file );
@@ -361,7 +360,6 @@ void Background::LoadFromSong( const Song* pSong )
 				Actor *pTempBGA = CreateSongBGA( sBGName );
 				if( pTempBGA )
 				{
-					pTempBGA->PlayCommand( "On" );
 					m_BGAnimations[sBGName] = pTempBGA;
 				}
 				else // the background was not found.  Use a random one instead
@@ -537,7 +535,10 @@ void Background::UpdateCurBGChange( float fCurrentTime )
 		if( pOld )
 			pOld->LoseFocus();
 		if( m_pCurrentBGA )
+		{
 			m_pCurrentBGA->GainFocus( change.m_fRate, change.m_bRewindMovie, change.m_bLoop );
+			m_pCurrentBGA->PlayCommand( "On" );
+		}
 
 		m_fSecsLeftInFade = m_pFadingBGA!=NULL ? FADE_SECONDS : 0;
 
