@@ -901,10 +901,10 @@ Steps* Song::GetStepsByMeter( StepsType nt, int iMeterLow, int iMeterHigh, bool 
 		return vNotes[0];
 }
 
-Steps* Song::GetStepsByDescription( StepsType nt, CString sDescription, bool bIncludeAutoGen ) const
+Steps* Song::GetStepsByDescription( StepsType nt, CString sDescription ) const
 {
 	vector<Steps*> vNotes;
-	GetSteps( vNotes, nt, DIFFICULTY_INVALID, -1, -1, sDescription, bIncludeAutoGen );
+	GetSteps( vNotes, nt, DIFFICULTY_INVALID, -1, -1, sDescription );
 	if( vNotes.size() == 0 )
 		return NULL;
 	else 
@@ -912,35 +912,35 @@ Steps* Song::GetStepsByDescription( StepsType nt, CString sDescription, bool bIn
 }
 
 
-Steps* Song::GetClosestNotes( StepsType nt, Difficulty dc, bool bIncludeAutoGen ) const
+Steps* Song::GetClosestNotes( StepsType nt, Difficulty dc ) const
 {
 	Difficulty newDC = dc;
 	Steps* pNotes;
-	pNotes = GetStepsByDifficulty( nt, newDC, bIncludeAutoGen );
+	pNotes = GetStepsByDifficulty( nt, newDC );
 	if( pNotes )
 		return pNotes;
 	newDC = (Difficulty)(dc-1);
 	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
-	pNotes = GetStepsByDifficulty( nt, newDC, bIncludeAutoGen );
+	pNotes = GetStepsByDifficulty( nt, newDC );
 	if( pNotes )
 		return pNotes;
 	newDC = (Difficulty)(dc+1);
 	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
-	pNotes = GetStepsByDifficulty( nt, newDC, bIncludeAutoGen );
+	pNotes = GetStepsByDifficulty( nt, newDC );
 	if( pNotes )
 		return pNotes;
 	newDC = (Difficulty)(dc-2);
 	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
-	pNotes = GetStepsByDifficulty( nt, newDC, bIncludeAutoGen );
+	pNotes = GetStepsByDifficulty( nt, newDC );
 	if( pNotes )
 		return pNotes;
 	newDC = (Difficulty)(dc+2);
 	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
-	pNotes = GetStepsByDifficulty( nt, newDC, bIncludeAutoGen );
+	pNotes = GetStepsByDifficulty( nt, newDC );
 	return pNotes;
 }
 
-void Song::GetEdits( vector<Steps*>& arrayAddTo, StepsType nt, bool bIncludeAutoGen ) const
+void Song::GetEdits( vector<Steps*>& arrayAddTo, StepsType nt ) const
 {
 }
 
