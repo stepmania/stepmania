@@ -27,24 +27,10 @@ GameButton Game::ButtonNameToIndex( const CString &sButtonName ) const
 
 MenuInput Game::GameInputToMenuInput( GameInput GameI ) const
 {
-	PlayerNumber pn;
-
-	StyleType type = TWO_PLAYERS_TWO_SIDES;
+	PlayerNumber pn = (PlayerNumber) GameI.controller;
 	if( GAMESTATE->GetCurrentStyle() )
-		type = GAMESTATE->GetCurrentStyle()->m_StyleType;
-	switch( type )
-	{
-	case ONE_PLAYER_ONE_SIDE:
-	case TWO_PLAYERS_TWO_SIDES:
-		pn = (PlayerNumber)GameI.controller;
-		break;
-	case ONE_PLAYER_TWO_SIDES:
-		pn = GAMESTATE->m_MasterPlayerNumber;
-		break;
-	default:
-		ASSERT(0);	return MenuInput(); // invalid m_StyleType
-	};
-	
+		pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber(GameI.controller);
+
 	FOREACH_MenuButton(i)
 		if( m_DedicatedMenuButton[i] == GameI.button )
 			return MenuInput( pn, i );
