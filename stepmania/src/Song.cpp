@@ -1355,9 +1355,11 @@ float Song::GetDominantBPM()
 			fLength = m_fLastBeat - m_BPMSegments[i].m_fStartBeat;
 		else
 			fLength = m_BPMSegments[i+1].m_fStartBeat - m_BPMSegments[i].m_fStartBeat;
-		ASSERT( fLength > 0 );
-		fSumBPM += fBPM * fLength;
-		fSumWeights += fLength;
+		if(fLength > 0)
+		{
+			fSumBPM += fBPM * fLength;
+			fSumWeights += fLength;
+		}
 	}
 	return fSumBPM / fSumWeights;
 }
