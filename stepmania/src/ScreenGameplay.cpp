@@ -1463,7 +1463,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 			{
 				for( int t=0; t<m_Player[pn].GetNumTracks(); t++ )
 				{
-					bool bBlink = (m_Player[pn].GetTapNote(t,r) != TAP_EMPTY);
+					TapNote tn = m_Player[pn].GetTapNote(t,r);
+					bool bBlink = (tn != TAP_EMPTY && tn != TAP_MINE);
 					if( bBlink )
 					{
 						StyleInput si( pn, t );
