@@ -335,7 +335,6 @@ void PrefsManager::Init()
 		m_iMemoryCardUsbPort[p] = -1;
 		m_iMemoryCardUsbLevel[p] = -1;
 	}
-	m_bMemoryCardsMountOnlyWhenNecessary = false;
 	
 	m_sMemoryCardProfileSubdir = PRODUCT_NAME;
 	m_iProductID = 1;
@@ -536,7 +535,6 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 		ini.GetValue( "Options", ssprintf("MemoryCardUsbPortP%d",p+1),		m_iMemoryCardUsbPort[p] );
 		ini.GetValue( "Options", ssprintf("MemoryCardUsbLevelP%d",p+1),		m_iMemoryCardUsbLevel[p] );
 	}
-	ini.GetValue( "Options", "MemoryCardsMountOnlyWhenNecessary",			m_bMemoryCardsMountOnlyWhenNecessary );
 
 	ini.GetValue( "Options", "CenterImageTranslateX",			m_iCenterImageTranslateX );
 	ini.GetValue( "Options", "CenterImageTranslateY",			m_iCenterImageTranslateY );
@@ -766,7 +764,6 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 		ini.SetValue( "Options", ssprintf("MemoryCardUsbPortP%d",p+1),		m_iMemoryCardUsbPort[p] );
 		ini.SetValue( "Options", ssprintf("MemoryCardUsbLevelP%d",p+1),		m_iMemoryCardUsbLevel[p] );
 	}
-	ini.SetValue( "Options", "MemoryCardsMountOnlyWhenNecessary",			m_bMemoryCardsMountOnlyWhenNecessary );
 
 	ini.SetValue( "Options", "CenterImageTranslateX",			m_iCenterImageTranslateX );
 	ini.SetValue( "Options", "CenterImageTranslateY",			m_iCenterImageTranslateY );

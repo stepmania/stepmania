@@ -1358,7 +1358,7 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 				PROFILEMAN->IsUsingProfile(pn) )
 			{
 				MEMCARDMAN->PauseMountingThread();
-				if( PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn) && PREFSMAN->m_bMemoryCardsMountOnlyWhenNecessary )
+				if( PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn) )
 					MEMCARDMAN->MountCard( pn );
 			
 				Profile* pProfile = PROFILEMAN->GetProfile(pn);
@@ -1367,7 +1367,7 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 				CString sFileName = SaveScreenshot( sDir, true, true, iScreenshotIndex );
 				CString sPath = sDir+sFileName;
 				
-				if( PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn) && PREFSMAN->m_bMemoryCardsMountOnlyWhenNecessary )
+				if( PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn) )
 					MEMCARDMAN->UnmountCard( pn );
 				MEMCARDMAN->UnPauseMountingThread();
 

@@ -109,8 +109,9 @@ void GameState::Reset()
 	EndGame();
 	
 	/* Don't do the OS mount for cards during the attract screens.  Only do OS mounts in
-	 * the time between BeginGame and PlayersFinalized.  XXX: I think we do that anyway,
-	 * when m_bMemoryCardsMountOnlyWhenNecessary is true.  Can we remove this? */
+	 * the time between BeginGame and PlayersFinalized.  I think we do that anyway (except
+	 * for background write tests, which happen anyway unless the memory card thread is
+	 * paused).  Can we remove this? */
 	MEMCARDMAN->LockCards();
 	
 	ASSERT( THEME );
@@ -274,8 +275,7 @@ void GameState::PlayersFinalized()
 			ApplyModifiers( pn, DEFAULT_CPU_MODIFIERS );
 	}
 
-	if( PREFSMAN->m_bMemoryCardsMountOnlyWhenNecessary )
-		MEMCARDMAN->UnmountAllUsedCards();
+	MEMCARDMAN->UnmountAllUsedCards();
 	MEMCARDMAN->UnPauseMountingThread();
 }
 
@@ -351,8 +351,7 @@ void GameState::EndGame()
 	}
 
 	MEMCARDMAN->PauseMountingThread();
-	if( PREFSMAN->m_bMemoryCardsMountOnlyWhenNecessary )
-		MEMCARDMAN->MountAllUsedCards();
+	MEMCARDMAN->MountAllUsedCards();
 
 	BOOKKEEPER->WriteToDisk();
 	PROFILEMAN->SaveAllProfiles();
@@ -365,8 +364,7 @@ void GameState::EndGame()
 		PROFILEMAN->UnloadProfile( pn );
 	}
 
-	if( PREFSMAN->m_bMemoryCardsMountOnlyWhenNecessary )
-		MEMCARDMAN->UnmountAllUsedCards();
+	MEMCARDMAN->UnmountAllUsedCards();
 	
 	// Reset the USB storage device numbers -after- saving
 	CHECKPOINT;

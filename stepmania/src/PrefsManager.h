@@ -192,7 +192,6 @@ public:
 	int				m_iMemoryCardUsbBus[NUM_PLAYERS];	// look for this bus when assigning cards.  -1 = match any
 	int				m_iMemoryCardUsbPort[NUM_PLAYERS];	// look for this port when assigning cards.  -1 = match any
 	int				m_iMemoryCardUsbLevel[NUM_PLAYERS];	// look for this level when assigning cards.  -1 = match any
-	bool				m_bMemoryCardsMountOnlyWhenNecessary;
 	int				m_iCenterImageTranslateX;
 	int				m_iCenterImageTranslateY;
 	int				m_fCenterImageAddWidth;

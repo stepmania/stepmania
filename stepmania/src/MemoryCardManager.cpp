@@ -246,8 +246,7 @@ void MemoryCardManager::TryMountAllCards()
 	}
 }
 
-/* When m_bMemoryCardsMountOnlyWhenNecessary, called in EndGame just before writing the
- * profile.  Should block. */
+/* Called in EndGame just before writing the profile.  Should block. */
 void MemoryCardManager::MountAllUsedCards()
 {
 	FOREACH_EnabledPlayer( p )
