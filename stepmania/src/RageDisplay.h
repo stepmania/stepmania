@@ -38,9 +38,7 @@ public:
 	int GetBPP() const;
 	
 	void SetViewTransform( const RageMatrix* pMatrix );
-	void SetProjectionTransform( const RageMatrix* pMatrix );
 	void GetViewTransform( RageMatrix* pMatrixOut );
-	void GetProjectionTransform( RageMatrix* pMatrixOut );
 
 	void ResetMatrixStack();
 	void PushMatrix();

@@ -430,19 +430,10 @@ void RageDisplay::SetViewTransform( const RageMatrix* pMatrix )
 	// OpenGL doesn't have a separate view matrix.  We need to save it and muliply in later
 	g_matView = *pMatrix;
 }
-void RageDisplay::SetProjectionTransform( const RageMatrix* pMatrix )
-{
-	FlushQueue();
-	glMatrixMode( GL_PROJECTION );
-	glLoadMatrixf( (float*)pMatrix );
-}
+
 void RageDisplay::GetViewTransform( RageMatrix* pMatrixOut )
 {
 	*pMatrixOut = g_matView;
-}
-void RageDisplay::GetProjectionTransform( RageMatrix* pMatrixOut )
-{
-	glGetFloatv( GL_PROJECTION_MATRIX, (float*)pMatrixOut );
 }
 
 void RageDisplay::ResetMatrixStack() 
