@@ -320,8 +320,6 @@ int MusicThread_start( void *p )
 		StartQueuedSounds();
 	}
 
-	SOUNDMAN->StopPlayingSoundsForThisThread();
-
 	return 0;
 }
 
