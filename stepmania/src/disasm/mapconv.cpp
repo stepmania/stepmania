@@ -84,13 +84,13 @@ bool findline(const char *searchstr) {
 
 void parsename(long rva, char *buf) {
 	char *func_name = NULL;
-	char *class_name = NULL;
-	char c;
-	int special_func = 0;
+//	char *class_name = NULL;
+//	char c;
+//	int special_func = 0;
 
-	if (*buf++ != '?') {
+//	if (*buf++ != '?') {
 		func_name = buf;
-	} else {
+/*	} else {
 
 		if (*buf == '?') {
 			// ??0
@@ -145,7 +145,6 @@ void parsename(long rva, char *buf) {
 			*buf++ = 0;
 		}
 	}
-
 	// write out to buffers
 
 	if (class_name) {
@@ -172,6 +171,7 @@ void parsename(long rva, char *buf) {
 		if (special_func)
 			*fnamptr++ = special_func;
 	}
+*/
 
 	fnamptr = strtack(fnamptr, func_name? func_name:"", fnambuf+MAX_FNAMBUF);
 	if(!fnamptr)
