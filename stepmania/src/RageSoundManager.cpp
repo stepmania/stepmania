@@ -227,6 +227,10 @@ SoundMixBuffer::~SoundMixBuffer()
 void SoundMixBuffer::SetVolume( float f )
 {
 	vol = int(256*f);
+
+	/* Optimize full volume. */
+	if( f > 0.99f )
+		vol = 256;
 }
 
 void SoundMixBuffer::write(const Sint16 *buf, unsigned size)
@@ -243,21 +247,46 @@ void SoundMixBuffer::write(const Sint16 *buf, unsigned size)
 		used = size;
 	}
 
-	for(unsigned pos = 0; pos < size; ++pos)
+	if( vol != 256 )
 	{
 		/* Scale volume and add. */
-		mixbuf[pos] += buf[pos] * vol;
+		for(unsigned pos = 0; pos < size; ++pos)
+			mixbuf[pos] += buf[pos] * vol;
+	} else {
+		/* Just add. */
+		for(unsigned pos = 0; pos < size; ++pos)
+			mixbuf[pos] += buf[pos];
 	}
 }
 
 void SoundMixBuffer::read(Sint16 *buf)
 {
-	for(unsigned pos = 0; pos < used; ++pos)
+	if( vol != 256 )
 	{
-		Sint32 out = (mixbuf[pos]) / 256;
-		out = clamp(out, -32768, 32767);
-		buf[pos] = Sint16(out);
+		for( unsigned pos = 0; pos < used; ++pos )
+		{
+			Sint32 out = (mixbuf[pos]) / 256;
+			buf[pos] = (Sint16) clamp( out, -32768, 32767 );
+		}
+	} else {
+		for( unsigned pos = 0; pos < used; ++pos )
+			buf[pos] = (Sint16) clamp( mixbuf[pos], -32768, 32767 );
 	}
+	used = 0;
+}
+
+void SoundMixBuffer::read( float *buf )
+{
+	int Minimum = -32768;
+	int Maximum = 32767;
+	if( vol != 256 )
+	{
+		Minimum *= 256;
+		Maximum *= 256;
+	}
+
+	for( unsigned pos = 0; pos < used; ++pos )
+		buf[pos] = SCALE( float(mixbuf[pos]), Minimum, Maximum, -1.0f, 1.0f );
 
 	used = 0;
 }
