@@ -155,25 +155,35 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 
 	this->ImportOptions();
 
-	// Make all selections the same if bOneChoiceForAllPlayers
 	{
 		for( int r=0; r<iNumOptionLines; r++ )		// foreach row
 		{
 			Row &Row = *m_Rows[r];
 
+			// Make all selections the same if bOneChoiceForAllPlayers
 			if( Row.m_RowDef.bOneChoiceForAllPlayers )
-			{
-			// set the selection to be the same for all players
 				for( int p=1; p<NUM_PLAYERS; p++ )
 					Row.m_vbSelected[p] = m_Rows[r]->m_vbSelected[0];
-			}
 
 			CHECKPOINT_M( ssprintf("row %i: %s", r, Row.m_RowDef.name.c_str()) );
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				if( m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN )
 					Row.m_iChoiceWithFocus[p] = 0;	// focus on the first row, which is "go down"
 				else
+				{
+					/* Make sure the row actually has a selection. */
+					bool bHasSelection = false;
+					for( unsigned i=0; i<Row.m_vbSelected[p].size(); i++ )
+						if( Row.m_vbSelected[p][i] )
+							bHasSelection = true;
+					if( !bHasSelection )
+					{
+						LOG->Warn( "Options menu \"%s\" row %i has no selection", m_sName.c_str(), i );
+						Row.m_vbSelected[p][0] = true;
+					}
+
 					Row.m_iChoiceWithFocus[p] = Row.GetOneSelection( (PlayerNumber)p);	// focus on the only selected choice
+				}
 		}
 	}
 
