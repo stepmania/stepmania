@@ -268,6 +268,7 @@ void Course::Init()
 	m_entries.clear();
 	m_sPath = m_sName = m_sNameTranslit = m_sBannerPath = m_sCDTitlePath = "";
 	ZERO( m_TrailCacheValid );
+	m_iTrailCacheSeed = 0;
 }
 
 void Course::Save()
@@ -539,6 +540,25 @@ CString Course::GetDisplayName() const
 Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 {
 	ASSERT( cd != DIFFICULTY_INVALID );
+
+	//
+	// Check to see if the Trail cache is out of date
+	//
+	if( m_iTrailCacheSeed != GAMESTATE->m_iRoundSeed )
+	{
+		/* If we have any random entries (so that the seed matters), invalidate the cache. */
+		bool bHaveRandom = false;
+		for( unsigned i=0; !bHaveRandom && i<m_entries.size(); i++ )
+			if( m_entries[i].type == COURSE_ENTRY_RANDOM ||
+				m_entries[i].type == COURSE_ENTRY_RANDOM_WITHIN_GROUP )
+				bHaveRandom = true;
+		
+		LOG->Trace("trail seed changed; regen? %i", bHaveRandom);
+		if( bHaveRandom )
+			ZERO( m_TrailCacheValid );
+
+		m_iTrailCacheSeed = GAMESTATE->m_iRoundSeed;
+	}
 
 	//
 	// Look in the Trail cache

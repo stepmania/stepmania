@@ -138,6 +138,7 @@ private:
 	mutable Trail m_TrailCache[NUM_STEPS_TYPES][NUM_DIFFICULTIES];
 	mutable bool m_TrailCacheValid[NUM_STEPS_TYPES][NUM_DIFFICULTIES];
 	mutable bool m_TrailCacheNull[NUM_STEPS_TYPES][NUM_DIFFICULTIES];
+	mutable int m_iTrailCacheSeed;
 };
 
 #endif
