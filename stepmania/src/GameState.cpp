@@ -317,6 +317,8 @@ void GameState::EndGame()
 {
 	LOG->Trace( "GameState::EndGame" );
 
+	if( m_bDemonstrationOrJukebox )
+		return;
 	if( m_timeGameStarted.IsZero() || !g_vPlayedStageStats.size() )	// we were in the middle of a game and played at least one song
 		return;
 
@@ -368,6 +370,8 @@ void GameState::EndGame()
 void GameState::SaveCurrentSettingsToProfile( PlayerNumber pn )
 {
 	if( !PROFILEMAN->IsUsingProfile(pn) )
+		return;
+	if( m_bDemonstrationOrJukebox )
 		return;
 
 	Profile* pProfile = PROFILEMAN->GetProfile(pn);
@@ -616,6 +620,9 @@ void GameState::FinishStage()
 
 	// The round has ended; change the seed.
 	GAMESTATE->m_iRoundSeed = rand();
+
+	if( m_bDemonstrationOrJukebox )
+		return;
 
 	//
 	// Add step totals.  Use radarActual, since the player might have failed part way
