@@ -790,6 +790,11 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 		if( pSteps->IsAutogen() )
 			continue;
 
+		/* Don't calculate with edits.  Otherwise, edits installed on the machine could 
+		 * extend the length of the song. */
+		if( pSteps->IsAnEdit() )
+			continue;
+		
 
 		//
 		// calculate radar values
