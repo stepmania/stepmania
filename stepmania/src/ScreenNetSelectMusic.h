@@ -16,7 +16,7 @@
 class ScreenNetSelectMusic : public ScreenWithMenuElements
 {
 public:
-	ScreenNetSelectMusic( CString sName );
+	ScreenNetSelectMusic( const CString& sName );
 	virtual void DrawPrimitives();
 
 	virtual void Update( float fDeltaTime );
@@ -30,6 +30,7 @@ public:
 
 	void StartSelectedSong();
 
+private:
 	int	m_iSongNum;
 	int	m_iShowSongs;	//The number of songs to display to each side
 	int	m_iGroupNum;
@@ -57,6 +58,7 @@ protected:
 
 	void TweenOffScreen();
 
+private:
 	//Chatting
 	BitmapText		m_textChatInput;
 	BitmapText		m_textChatOutput;

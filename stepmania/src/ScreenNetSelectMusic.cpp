@@ -57,7 +57,7 @@ const ScreenMessage SM_ChangeSong	= ScreenMessage(SM_User+5);
 
 const CString AllGroups			= "[ALL MUSIC]";
 
-ScreenNetSelectMusic::ScreenNetSelectMusic( CString sName ) : ScreenWithMenuElements( sName )
+ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenWithMenuElements( sName )
 {
 	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. */
 	GAMESTATE->FinishStage();
