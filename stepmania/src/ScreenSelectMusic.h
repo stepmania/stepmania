@@ -84,6 +84,7 @@ protected:
 	bool				m_bGoToOptions;
 	Sprite				m_sprOptionsMessage;
 	float				m_fPlaySampleCountdown;
+	bool				m_bAllowOptionsMenu, m_bAllowOptionsMenuRepeat;
 
 	RageSound			m_soundSelect;
 	RageSound			m_soundChangeNotes;

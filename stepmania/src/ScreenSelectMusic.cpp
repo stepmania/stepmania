@@ -77,13 +77,13 @@
 
 const float TWEEN_TIME		= 0.5f;
 
+const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
 
 
 
 ScreenSelectMusic::ScreenSelectMusic()
 {
 	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );
-
 
 	CodeDetector::RefreshCacheItems();
 
@@ -234,6 +234,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_bMadeChoice = false;
 	m_bGoToOptions = false;
 	m_fPlaySampleCountdown = 0;
+	m_bAllowOptionsMenu = m_bAllowOptionsMenuRepeat = false;
 
 	UpdateOptionsDisplays();
 
@@ -432,8 +433,15 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 
 	if( !GameI.IsValid() )		return;		// don't care
 
-	if( m_bMadeChoice  &&  !m_bGoToOptions  &&  MenuI.IsValid()  &&  MenuI.button == MENU_BUTTON_START  &&  !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
+	if( m_bMadeChoice  &&  MenuI.IsValid()  &&  MenuI.button == MENU_BUTTON_START  &&  !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
 	{
+		if(m_bGoToOptions) return; /* got it already */
+		if(!m_bAllowOptionsMenu) return; /* not allowed */
+
+		if( !m_bAllowOptionsMenuRepeat &&
+			(type == IET_SLOW_REPEAT || type == IET_FAST_REPEAT ))
+			return; /* not allowed yet */
+		
 		m_bGoToOptions = true;
 		m_sprOptionsMessage.SetState( 1 );
 		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
@@ -566,6 +574,9 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 
 	switch( SM )
 	{
+	case SM_AllowOptionsMenuRepeat:
+		m_bAllowOptionsMenuRepeat = true;
+		break;
 	case SM_MenuTimer:
 		if( m_MusicWheel.IsRouletting() )
 		{
@@ -687,6 +698,13 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 			m_sprOptionsMessage.BeginTweening( 0.25f );	// fade out
 			m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,0) );
 			m_sprOptionsMessage.SetTweenZoomY( 0 );
+
+			m_bAllowOptionsMenu = true;
+			/* Don't accept a held START for a little while, so it's not
+			 * hit accidentally.  Accept an initial START right away, though,
+			 * so we don't ignore deliberate fast presses (which would be
+			 * annoying). */
+			this->SendScreenMessage( SM_AllowOptionsMenuRepeat, 0.75f );
 		}
 
 		m_Menu.TweenOffScreenToBlack( SM_None, false );
