@@ -409,7 +409,7 @@ int RageSoundReader_MP3::do_mad_frame_decode( bool headers_only )
 			continue;
 		}
 
-		if(mad->Stream.error == MAD_ERROR_LOSTSYNC)
+		if( ret == -1 && mad->Stream.error == MAD_ERROR_LOSTSYNC )
 		{
 			/* This might be an ID3V2 tag. */
 			const int tagsize = id3_tag_query(mad->Stream.this_frame,
@@ -426,7 +426,7 @@ int RageSoundReader_MP3::do_mad_frame_decode( bool headers_only )
 			}
 		}
 
-		if( mad->Stream.error == MAD_ERROR_BADDATAPTR || mad->Stream.error == MAD_ERROR_LOSTSYNC )
+		if( ret == -1 && mad->Stream.error == MAD_ERROR_BADDATAPTR )
 		{
 			/*
 			 * Something's corrupt.  One cause of this is cutting an MP3 in the middle
