@@ -72,11 +72,6 @@ void MsdFile::ReadBuf( char *buf, int len )
 			continue;
 		}
 
-		if(!ReadingValue) {
-			// fast forward until the next '#' (optimization)
-			while(i < len && buf[i] != '#') i++;
-		}
-
 		if(ReadingValue && buf[i] == '#') {
 			/* Unfortunately, many of these files are missing ;'s.
 			 * If we get a # when we thought we were inside a value, assume we
