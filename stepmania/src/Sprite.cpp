@@ -190,7 +190,7 @@ bool Sprite::LoadFromTexture( RageTextureID ID )
 	Sprite::m_size.x = (float)m_pTexture->GetSourceFrameWidth();
 	Sprite::m_size.y = (float)m_pTexture->GetSourceFrameHeight();		
 
-	// Assume the frames of this animation play in sequential order with 0.2 second delay.
+	// Assume the frames of this animation play in sequential order with 0.1 second delay.
 	m_States.clear();
 	for( int i=0; i<m_pTexture->GetNumFrames(); i++ )
 	{
