@@ -46,6 +46,7 @@
 #include "NoteDataUtil.h"
 #include "UnlockSystem.h"
 #include "LightsManager.h"
+#include "ProfileManager.h"
 
 //
 // Defines
@@ -475,6 +476,15 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		SET_XY( m_textCourseSongNumber[p] );
 		m_textCourseSongNumber[p].SetText( "" );
 		m_textCourseSongNumber[p].SetDiffuse( RageColor(0,0.5f,1,1) );	// light blue
+
+		if( GAMESTATE->m_PlayMode == PLAY_MODE_RAVE )
+		{
+			m_textPlayerName[p].LoadFromFont( THEME->GetPathToF("ScreenGameplay player") );
+			m_textPlayerName[p].SetName( ssprintf("PlayerNameP%i",p+1) );
+			m_textPlayerName[p].SetText( PROFILEMAN->GetPlayerName((PlayerNumber)p) );
+			SET_XY( m_textPlayerName[p] );
+			this->AddChild( &m_textPlayerName[p] );
+		}
 	}
 
 	switch( GAMESTATE->m_PlayMode )
@@ -2112,6 +2122,8 @@ void ScreenGameplay::TweenOnScreen()
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 		ON_COMMAND( m_textCourseSongNumber[p] );
+		if( GAMESTATE->m_PlayMode == PLAY_MODE_RAVE )
+			ON_COMMAND( m_textPlayerName[p] );
 		if( m_pPrimaryScoreDisplay[p] )
 			ON_COMMAND( *m_pPrimaryScoreDisplay[p] );
 		if( m_pSecondaryScoreDisplay[p] )
@@ -2137,6 +2149,8 @@ void ScreenGameplay::TweenOffScreen()
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 		OFF_COMMAND( m_textCourseSongNumber[p] );
+		if( GAMESTATE->m_PlayMode == PLAY_MODE_RAVE )
+			OFF_COMMAND( m_textPlayerName[p] );
 		if( m_pPrimaryScoreDisplay[p] )
 			OFF_COMMAND( *m_pPrimaryScoreDisplay[p] );
 		if( m_pSecondaryScoreDisplay[p] )

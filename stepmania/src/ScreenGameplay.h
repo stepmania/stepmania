@@ -110,6 +110,7 @@ protected:
 	CombinedLifeMeter*	m_pCombinedLifeMeter;
 	Sprite				m_sprStage;
 	BitmapText			m_textCourseSongNumber[NUM_PLAYERS];
+	BitmapText			m_textPlayerName[NUM_PLAYERS];
 
 	BPMDisplay			m_BPMDisplay;
 
