@@ -322,7 +322,6 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			Song* pSong = ss.pSong;
 			Steps* pSteps = ss.pSteps[p];
 			Course* pCourse = GAMESTATE->m_pCurCourse;
-			StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 			Trail* pTrail = GAMESTATE->m_pCurTrail[p];
 
 			int iHighScoreIndex = -1;	// -1 means "out of ranking"
