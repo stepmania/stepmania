@@ -16,79 +16,33 @@
 #include "Style.h"
 #include "Grade.h"
 #include <map>
+#include "XmlFile.h"
+#include "HighScore.h"
 
+class Song;
 class Steps;
 class Course;
 
-struct HighScore
+class Profile
 {
-	CString	sName;
-	Grade grade;
-	int iScore;
-	float fPercentDP;
-	float fSurviveTime;
-
-	HighScore()
+public:
+	Profile()
 	{
-		grade = GRADE_NO_DATA;
-		iScore = 0;
-		fPercentDP = 0;
-		fSurviveTime = 0;
+		InitAll();
 	}
 
-	bool operator>=( const HighScore& other ) const;
-};
-
-struct HighScoreList
-{
-	int iNumTimesPlayed;
-	vector<HighScore> vHighScores;
-
-	
-	HighScoreList()
-	{
-		iNumTimesPlayed = 0;
-	}
-
-	void AddHighScore( HighScore hs, int &iIndexOut );
-
-	const HighScore& GetTopScore() const;
-};
-
-
-struct Profile
-{
-	Profile() { Init(); }
-	void Init()
-	{
-		m_sName = "";
-		m_sLastUsedHighScoreName = "";
-		m_bUsingProfileDefaultModifiers = false;
-		m_sDefaultModifiers = "";
-		m_iTotalPlays = 0;
-		m_iTotalPlaySeconds = 0;
-		m_iTotalGameplaySeconds = 0;
-		m_iCurrentCombo = 0;
-		m_fWeightPounds = 0;
-		m_fCaloriesBurned = 0;
-
-		int i;
-		for( i=0; i<NUM_PLAY_MODES; i++ )
-			m_iNumSongsPlayedByPlayMode[i] = 0;
-		for( i=0; i<NUM_STYLES; i++ )
-			m_iNumSongsPlayedByStyle[i] = 0;
-		for( i=0; i<NUM_DIFFICULTIES; i++ )
-			m_iNumSongsPlayedByDifficulty[i] = 0;
-		for( i=0; i<MAX_METER+1; i++ )
-			m_iNumSongsPlayedByMeter[i] = 0;
-	}
-
+	//
+	// smart accessors
+	//
 	CString GetDisplayName();
 	CString GetDisplayCaloriesBurned();
 	int GetTotalNumSongsPlayed();
+	static CString GetProfileDisplayNameFromDir( CString sDir );
+	int GetSongNumTimesPlayed( Song* pSong );
 
-	bool LoadFromIni( CString sIniPath );
-	bool SaveToIni( CString sIniPath );
+	//
+	// General data
+	//
 	CString m_sName;
 	CString m_sLastUsedHighScoreName;
 	bool m_bUsingProfileDefaultModifiers;
@@ -144,8 +98,75 @@ struct Profile
 
 	void AddCategoryHighScore( StepsType st, RankingCategory rc, HighScore hs, int &iIndexOut );
 	HighScoreList& GetCategoryHighScoreList( StepsType st, RankingCategory rc );
-	int GetCategoryNumTimesPlayed( RankingCategory rc ) const;
+	int GetCategoryNumTimesPlayed( StepsType st ) const;
 	void IncrementCategoryPlayCount( StepsType st, RankingCategory rc );
+
+
+	//
+	// Init'ing
+	//
+	void InitAll()
+	{
+		InitGeneralData(); 
+		InitSongScores(); 
+		InitCourseScores(); 
+		InitCategoryScores(); 
+	}
+	void InitGeneralData(); 
+	void InitSongScores(); 
+	void InitCourseScores(); 
+	void InitCategoryScores(); 
+
+	//
+	// Loading and saving
+	//
+	bool LoadAllFromDir( CString sDir )
+	{
+		InitAll();
+		bool bResult = LoadGeneralDataFromDir( sDir );
+		LoadSongScoresFromDirSM390a12( sDir );
+		LoadSongScoresFromDir( sDir );
+		LoadCourseScoresFromDirSM390a12( sDir );
+		LoadCourseScoresFromDir( sDir );
+		LoadCategoryScoresFromDirSM390a12( sDir );
+		LoadCategoryScoresFromDir( sDir );
+		return bResult;
+	}
+	bool SaveAllToDir( CString sDir )
+	{
+		// Delete old files after saving new ones so we don't try to load old
+		// and make duplicate records. 
+		// If the save fails, the delete will fail too... probably :-)
+		bool bResult = SaveGeneralDataToDir( sDir );
+		SaveSongScoresToDir( sDir );
+		DeleteSongScoresFromDirSM390a12( sDir );
+		SaveCourseScoresToDir( sDir );
+		DeleteCourseScoresFromDirSM390a12( sDir );
+		SaveCategoryScoresToDir( sDir );
+		DeleteCategoryScoresFromDirSM390a12( sDir );
+		SaveStatsWebPageToDir( sDir );
+		return bResult;
+	}
+
+	bool LoadGeneralDataFromDir( CString sDir );
+	bool SaveGeneralDataToDir( CString sDir );
+
+	void LoadSongScoresFromDirSM390a12( CString sDir );
+	void LoadSongScoresFromDir( CString sDir );
+	void SaveSongScoresToDir( CString sDir );
+	void DeleteSongScoresFromDirSM390a12( CString sDir );
+	
+	void LoadCourseScoresFromDirSM390a12( CString sDir );
+	void LoadCourseScoresFromDir( CString sDir );
+	void SaveCourseScoresToDir( CString sDir );
+	void DeleteCourseScoresFromDirSM390a12( CString sDir );
+	
+	void LoadCategoryScoresFromDirSM390a12( CString sDir );
+	void LoadCategoryScoresFromDir( CString sDir );
+	void SaveCategoryScoresToDir( CString sDir );
+	void DeleteCategoryScoresFromDirSM390a12( CString sDir );
+
+	void SaveStatsWebPageToDir( CString sDir );
 };
 
 

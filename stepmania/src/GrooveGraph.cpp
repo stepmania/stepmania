@@ -28,8 +28,8 @@ const float GRAPH_EDGE_WIDTH	= 2;
 
 #define EDGE_WIDTH				THEME->GetMetricF("GrooveGraph","EdgeWidth")
 #define DIFFICULTY_COLORS(dc)	THEME->GetMetricC("GrooveGraph",Capitalize(DifficultyToString(dc))+"Color")
-#define SHOW_CATEGORY(cat)		THEME->GetMetricB("GrooveGraph","Show"+Capitalize(CategoryToString(cat)))
-#define CATEGORY_X(cat)			THEME->GetMetricF("GrooveGraph",Capitalize(CategoryToString(cat))+"X")
+#define SHOW_CATEGORY(cat)		THEME->GetMetricB("GrooveGraph","Show"+Capitalize(RadarCategoryToString(cat)))
+#define CATEGORY_X(cat)			THEME->GetMetricF("GrooveGraph",Capitalize(RadarCategoryToString(cat))+"X")
 #define MOUNTAINS_BASE_Y		THEME->GetMetricF("GrooveGraph","MountainsBaseY")
 CachedThemeMetricF MOUNTAIN_WIDTH	("GrooveGraph","MountainWidth");
 CachedThemeMetricF MOUNTAIN_HEIGHT	("GrooveGraph","MountainHeight");

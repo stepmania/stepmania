@@ -20,6 +20,7 @@ struct PlayerOptions;
 struct SongOptions;
 class Song;
 class Steps;
+class Profile;
 
 enum CourseEntryType
 {
@@ -165,6 +166,7 @@ void SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCourses );
 void SortCoursePointerArrayByTotalDifficulty( vector<Course*> &apCourses );
 void SortCoursePointerArrayByRanking( vector<Course*> &apCourses );
 void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, ProfileSlot slot );
+void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, Profile* pProfile );
 
 void MoveRandomToEnd( vector<Course*> &apCourses );
 

@@ -1,8 +1,10 @@
+#ifndef XmlFile_H
+#define XmlFile_H
 // XmlFile.h: interface for the XmlFile class.
 //
-// Adapted from http://www.codeproject.com/cpp/xmlite.asp
-// by Chris.  The CodeProject FAQ says "all developers may freely 
-// use the code in their own applications".
+// Adapted from http://www.codeproject.com/cpp/xmlite.asp.
+// On 2004-02-09 Cho,Kyung Min gave us permission to use and modify this 
+// library.
 //
 // XmlFile : XML Lite Parser Library
 // by bro ( Cho,Kyung Min: bro@shinbiro.com ) 2002-10-30
@@ -121,6 +123,9 @@ typedef struct _tagXMLNode
 	// name and value
 	CString name;
 	CString	value;
+	void GetValue(CString &out)	{ out = value; }
+	void GetValue(int &out)		{ out = atoi(value); }
+	void GetValue(float &out)	{ out = atof(value); }
 
 	// internal variables
 	LPXNode	parent;		// parent node
@@ -132,6 +137,9 @@ typedef struct _tagXMLNode
 	LPTSTR	LoadAttributes( LPCTSTR pszAttrs, LPPARSEINFO pi = &piDefault );
 	CString GetXML( LPDISP_OPT opt = &optDefault );
 
+	bool LoadFromFile( CString sFile, LPPARSEINFO pi = &piDefault );
+	bool SaveToFile( CString sFile, LPDISP_OPT opt = &optDefault );
+
 	// in own attribute list
 	LPXAttr	GetAttr( LPCTSTR attrname ); 
 	LPCTSTR	GetAttrValue( LPCTSTR attrname ); 
@@ -140,6 +148,9 @@ typedef struct _tagXMLNode
 	// in one level child nodes
 	LPXNode	GetChild( LPCTSTR name ); 
 	LPCTSTR	GetChildValue( LPCTSTR name ); 
+	bool GetChildValue(LPCTSTR name,CString &out)	{ XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
+	bool GetChildValue(LPCTSTR name,int &out)		{ XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
+	bool GetChildValue(LPCTSTR name,float &out)		{ XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
 	XNodes	GetChilds( LPCTSTR name ); 
 	XNodes	GetChilds(); 
 
@@ -191,3 +202,4 @@ inline bool XIsEmptyString( LPCTSTR str )
 	return ( s.empty() || s == "" );
 }
 
+#endif

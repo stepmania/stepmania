@@ -432,8 +432,8 @@ void ScreenSelectCourse::AfterCourseChange()
 				if ( pCourse->IsOni() || pCourse->IsEndless() )
 				{
 					/* use survive time */
-					float fSurviveTime = hsl.GetTopScore().fSurviveTime;
-					CString s = SecondsToTime(fSurviveTime);
+					float fSurviveSeconds = hsl.GetTopScore().fSurviveSeconds;
+					CString s = SecondsToTime(fSurviveSeconds);
 
 					/* dim the inital unsignificant digits */
 					/*XXX we'd like to have a dimmed ':' and '.', but 

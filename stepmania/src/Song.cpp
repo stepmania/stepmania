@@ -1369,8 +1369,17 @@ bool CompareSongPointersBySortValueDescending(const Song *pSong1, const Song *pS
 
 void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers, ProfileSlot slot )
 {
+	Profile* pProfile = PROFILEMAN->GetProfile(slot);
+	if( pProfile == NULL )
+		return;	// nothing to do since we don't have data
+	SortSongPointerArrayByMostPlayed( arraySongPointers, pProfile );
+}
+
+void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers, Profile* pProfile )
+{
+	ASSERT( pProfile );
 	for(unsigned i = 0; i < arraySongPointers.size(); ++i)
-		song_sort_val[arraySongPointers[i]] = ssprintf("%9i", PROFILEMAN->GetSongNumTimesPlayed(arraySongPointers[i],slot));
+		song_sort_val[arraySongPointers[i]] = ssprintf("%9i", pProfile->GetSongNumTimesPlayed(arraySongPointers[i]));
 	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortValueDescending );
 	song_sort_val.clear();
 }

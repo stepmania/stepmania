@@ -864,7 +864,8 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 		hs.grade = stageStats.GetGrade( (PlayerNumber)p );
 		hs.iScore = stageStats.iScore[p];
 		hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
-		hs.fSurviveTime = stageStats.fAliveSeconds[p];
+		hs.fSurviveSeconds = stageStats.fAliveSeconds[p];
+		hs.sModifiers = GAMESTATE->m_PlayerOptions[p].GetString();
 
 		StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 
@@ -894,6 +895,9 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 
 				if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
 					PROFILEMAN->AddCategoryHighScore( nt, rc[p], (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
+				
+				// TRICKY:  Increment play count here, and not on ScreenGameplay like the others.
+				PROFILEMAN->IncrementCategoryPlayCount( nt, rc[p], (PlayerNumber)p );
 			}
 			break;
 

@@ -17,6 +17,7 @@
 #include "PlayerNumber.h"
 #include "Grade.h"
 class NoteData;
+class Profile;
 
 class Steps
 {
@@ -90,5 +91,6 @@ void SortNotesArrayByDifficulty( vector<Steps*> &arrayNotess );
 bool CompareStepsPointersByTypeAndDifficulty(const Steps *pStep1, const Steps *pStep2);
 void SortStepsByTypeAndDifficulty( vector<Steps*> &arraySongPointers );
 void SortStepsPointerArrayByMostPlayed( vector<Steps*> &vStepsPointers, ProfileSlot slot );
+void SortStepsPointerArrayByMostPlayed( vector<Steps*> &vStepsPointers, Profile* pProfile );
 
 #endif

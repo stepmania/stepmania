@@ -34,6 +34,10 @@
 
 #define	ARROW_SIZE		(64)
 
+
+#define FOREACH_ENUM( e, max, var )	for( e var=(e)0; var<max; ((int&)var)++ )
+
+
 //
 // Note definitions
 //
@@ -56,8 +60,10 @@ enum RadarCategory
 	RADAR_NUM_HANDS,
 	NUM_RADAR_CATEGORIES	// leave this at the end
 };
+#define FOREACH_RadarCategory( rc ) FOREACH_ENUM( RadarCategory, NUM_RADAR_CATEGORIES, rc )
 
-CString CategoryToString( RadarCategory cat );
+CString RadarCategoryToString( RadarCategory cat );
+
 
 enum Difficulty 
 {
@@ -70,6 +76,7 @@ enum Difficulty
 	NUM_DIFFICULTIES,
 	DIFFICULTY_INVALID
 };
+#define FOREACH_Difficulty( dc ) FOREACH_ENUM( Difficulty, NUM_DIFFICULTIES, dc )
 
 CString DifficultyToString( Difficulty dc );
 Difficulty StringToDifficulty( CString sDC );
@@ -82,6 +89,7 @@ enum CourseDifficulty
 	NUM_COURSE_DIFFICULTIES,
 	COURSE_DIFFICULTY_INVALID
 };
+#define FOREACH_CourseDifficulty( cd ) FOREACH_ENUM( CourseDifficulty, NUM_COURSE_DIFFICULTIES, cd )
 
 CString CourseDifficultyToString( CourseDifficulty dc );
 CourseDifficulty StringToCourseDifficulty( CString sDC );
@@ -116,6 +124,7 @@ enum StepsType
 	NUM_STEPS_TYPES,		// leave this at the end
 	STEPS_TYPE_INVALID,
 };
+#define FOREACH_StepsType( st ) FOREACH_ENUM( StepsType, NUM_STEPS_TYPES, st )
 
 //
 // Play mode stuff
@@ -131,6 +140,7 @@ enum PlayMode
 	NUM_PLAY_MODES,
 	PLAY_MODE_INVALID
 };
+#define FOREACH_PlayMode( pm ) FOREACH_ENUM( PlayMode, NUM_PLAY_MODES, pm )
 
 CString PlayModeToString( PlayMode pm );
 PlayMode StringToPlayMode( CString s );
@@ -162,6 +172,8 @@ enum SongSortOrder {
 };
 const SongSortOrder MAX_SELECTABLE_SORT = (SongSortOrder)(SORT_ROULETTE-1);
 
+#define FOREACH_SongSortOrder( so ) FOREACH_ENUM( SongSortOrder, NUM_SORT_ORDERS, so )
+
 CString SongSortOrderToString( SongSortOrder so );
 SongSortOrder StringToSongSortOrder( CString str );
 
@@ -181,6 +193,7 @@ enum TapNoteScore {
 	TNS_MARVELOUS,
 	NUM_TAP_NOTE_SCORES
 };
+#define FOREACH_TapNoteScore( tns ) FOREACH_ENUM( TapNoteScore, NUM_TAP_NOTE_SCORES, tns )
 
 CString TapNoteScoreToString( TapNoteScore tns );
 
@@ -198,6 +211,7 @@ enum HoldNoteScore
 	HNS_NG,		// the HoldNote has passed and they missed it
 	NUM_HOLD_NOTE_SCORES
 };
+#define FOREACH_HoldNoteScore( hns ) FOREACH_ENUM( HoldNoteScore, NUM_HOLD_NOTE_SCORES, hns )
 
 
 //
@@ -211,6 +225,8 @@ enum ProfileSlot
 	NUM_PROFILE_SLOTS,
 	PROFILE_SLOT_INVALID
 };
+#define FOREACH_ProfileSlot( slot ) FOREACH_ENUM( ProfileSlot, NUM_PROFILE_SLOTS, slot )
+
 
 enum MemoryCardState
 { 
@@ -236,6 +252,7 @@ enum RankingCategory
 	RANKING_D,	// 10+ meter per song avg.	// doesn't count extra stage!
 	NUM_RANKING_CATEGORIES
 };
+#define FOREACH_RankingCategory( rc ) FOREACH_ENUM( RankingCategory, NUM_RANKING_CATEGORIES, rc )
 
 #define DEFAULT_RANKING_NAME CString("")
 const CString RANKING_TO_FILL_IN_MARKER[NUM_PLAYERS] = {"#P1#","#P2#"};

@@ -7,6 +7,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include "RageFile.h"
 
 
 static const TCHAR chXMLTagOpen		= '<';
@@ -1184,4 +1185,24 @@ CString XRef2Entity( LPCTSTR estr )
 CString XEntity2Ref( LPCTSTR str )
 {
 	return entityDefault.Entity2Ref( str );
+}
+
+bool _tagXMLNode::LoadFromFile( CString sFile, LPPARSEINFO pi )
+{
+	RageFile f;
+	if( !f.Open(sFile, RageFile::READ) )
+		return false;
+	CString s;
+	f.Read( s );
+	this->Load( s, pi );
+	return true;
+}
+
+bool _tagXMLNode::SaveToFile( CString sFile, LPDISP_OPT opt )
+{
+	RageFile f;
+	if( !f.Open(sFile, RageFile::WRITE) )
+		return false;
+	f.Write( this->GetXML(opt) );
+	return true;
 }

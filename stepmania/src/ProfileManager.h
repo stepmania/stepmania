@@ -34,7 +34,7 @@ public:
 	void GetLocalProfileNames( vector<CString> &asNamesOut );
 
 	bool LoadProfileFromMemoryCard( PlayerNumber pn );
-	bool LoadFirstAvailableProfile( PlayerNumber pn );	// memory card or local profile
+//	bool LoadFirstAvailableProfile( PlayerNumber pn );	// memory card or local profile
 	bool SaveProfile( PlayerNumber pn );
 	void UnloadProfile( PlayerNumber pn );
 
@@ -74,8 +74,8 @@ public:
 	//
 	// Song stats
 	//
-	int GetSongNumTimesPlayed( Song* pSong, ProfileSlot card ) const;
-	bool IsSongNew( Song* pSong ) const { return GetSongNumTimesPlayed(pSong,PROFILE_SLOT_MACHINE)==0; }
+	int GetSongNumTimesPlayed( Song* pSong, ProfileSlot card );
+	bool IsSongNew( Song* pSong ) { return GetSongNumTimesPlayed(pSong,PROFILE_SLOT_MACHINE)==0; }
 	void AddStepsHighScore( const Steps* pSteps, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 	void IncrementStepsPlayCount( const Steps* pSteps, PlayerNumber pn );
 	HighScore GetHighScoreForDifficulty( const Song *s, const StyleDef *st, ProfileSlot slot, Difficulty dc );
@@ -94,15 +94,6 @@ public:
 
 
 //	void ReadSM300NoteScores();
-	void ReadSongScoresFromDir( CString sDir, ProfileSlot slot );
-	void ReadCourseScoresFromDir( CString sDir, ProfileSlot slot );
-	void ReadCategoryScoresFromDir( CString sDir, ProfileSlot slot );
-
-	void SaveSongScoresToDirXml( CString sDir, ProfileSlot slot );
-	void SaveSongScoresToDir( CString sDir, ProfileSlot slot );
-	void SaveCourseScoresToDir( CString sDir, ProfileSlot slot );
-	void SaveCategoryScoresToDir( CString sDir, ProfileSlot slot );
-	void SaveStatsWebPageToDir( CString sDir, ProfileSlot slot );
 
 private:
 	bool LoadDefaultProfileFromMachine( PlayerNumber pn );

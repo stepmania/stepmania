@@ -14,7 +14,7 @@
 #include "GameState.h"
 
 
-CString CategoryToString( RadarCategory cat )
+CString RadarCategoryToString( RadarCategory cat )
 {
 	switch( cat )
 	{

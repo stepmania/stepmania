@@ -20,6 +20,7 @@ class Steps;
 class StyleDef;
 class NotesLoader;
 class LyricsLoader;
+class Profile;
 
 
 extern const int FILE_CACHE_VERSION;
@@ -210,6 +211,7 @@ void SortSongPointerArrayByArtist( vector<Song*> &arraySongPointers );
 void SortSongPointerArrayByGroupAndDifficulty( vector<Song*> &arraySongPointers );
 void SortSongPointerArrayByGroupAndTitle( vector<Song*> &arraySongPointers );
 void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers, ProfileSlot slot );
+void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers, Profile* pProfile );
 void SortSongPointerArrayByMeter( vector<Song*> &arraySongPointers, Difficulty dc );
 CString GetSectionNameFromSongAndSort( const Song* pSong, SongSortOrder so );
 void SortSongPointerArrayBySectionName( vector<Song*> &arraySongPointers, SongSortOrder so );

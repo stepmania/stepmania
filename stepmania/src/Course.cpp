@@ -1047,7 +1047,12 @@ void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, P
 	Profile* pProfile = PROFILEMAN->GetProfile(slot);
 	if( pProfile == NULL )
 		return;	// nothing to do since we don't have data
+	SortCoursePointerArrayByMostPlayed( arrayCoursePointers, pProfile );
+}
 
+void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, Profile* pProfile )
+{
+	ASSERT( pProfile );
 	for(unsigned i = 0; i < arrayCoursePointers.size(); ++i)
 		course_sort_val[arrayCoursePointers[i]] = (float) pProfile->GetCourseNumTimesPlayed(arrayCoursePointers[i]);
 	stable_sort( arrayCoursePointers.begin(), arrayCoursePointers.end(), CompareCoursePointersBySortValueDescending );

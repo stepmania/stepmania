@@ -56,7 +56,7 @@ public:
 	bool ReadFile();
 
 	//writes data stored in class to ini file
-	void WriteFile(); 
+	bool WriteFile(); 
 
 	//deletes all stored ini data
 	void Reset();

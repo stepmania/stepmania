@@ -85,14 +85,14 @@ bool IniFile::ReadFile()
 }
 
 // writes data stored in class to ini file
-void IniFile::WriteFile()
+bool IniFile::WriteFile()
 {
 	RageFile f;
 	if( !f.Open( path, RageFile::WRITE ) )
 	{
 		LOG->Trace( "Writing '%s' failed: %s", path.c_str(), f.GetError().c_str() );
 		error = f.GetError();
-		return;
+		return false;
 	}
 
 	for (keymap::const_iterator k = keys.begin(); k != keys.end(); ++k)
@@ -107,6 +107,7 @@ void IniFile::WriteFile()
 
 		f.PutLine( "" );
 	}
+	return true;
 }
 
 // deletes all stored ini data

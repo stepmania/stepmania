@@ -15,6 +15,7 @@
 
 #include "RageTypes.h"	// for RageColor
 
+#define FOREACH_ENUM( e, max, var )	for( e var=(e)0; var<max; ((int&)var)++ )
 
 
 //
@@ -26,6 +27,7 @@ enum PlayerNumber {
 	NUM_PLAYERS,	// leave this at the end
 	PLAYER_INVALID
 };
+#define FOREACH_PlayerNumber( pn ) FOREACH_ENUM( PlayerNumber, NUM_PLAYERS, pn )
 
 const PlayerNumber	OPPOSITE_PLAYER[NUM_PLAYERS] = { PLAYER_2, PLAYER_1 };
 
