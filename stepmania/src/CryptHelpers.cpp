@@ -50,6 +50,8 @@ unsigned int RageFileStore::TransferTo2(BufferedTransformation &target, unsigned
 			m_space = HelpCreatePutSpace(target, channel, 1, (unsigned int)STDMIN(size, (unsigned long)UINT_MAX), spaceSize);
 			
 			m_len = m_file.Read( (char *)m_space, STDMIN(size, (unsigned long)spaceSize));
+			if( m_len == -1 )
+				throw ReadErr();
 		}
 		unsigned int blockedBytes;
 output:
