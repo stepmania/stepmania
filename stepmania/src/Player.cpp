@@ -199,9 +199,9 @@ void Player::Update( float fDeltaTime )
 	//
 	// update HoldNotes logic
 	//
-	for( int i=0; i<m_iNumHoldNotes; i++ )		// for each HoldNote
+	for( int i=0; i < GetNumHoldNotes(); i++ )		// for each HoldNote
 	{
-		HoldNote &hn = m_HoldNotes[i];
+		const HoldNote &hn = GetHoldNote(i);
 		HoldNoteScore &hns = m_HoldNoteScores[i];
 		float &fLife = m_fHoldNoteLife[i];
 		int iHoldStartIndex = BeatToNoteRow(hn.m_fStartBeat);
@@ -229,7 +229,7 @@ void Player::Update( float fDeltaTime )
 
 			if( bSteppedOnTapNote )		// this note is not judged and we stepped on its head
 			{
-				m_NoteField.m_HoldNotes[i].m_fStartBeat = fSongBeat;	// move the start of this Hold
+				m_NoteField.GetHoldNote(i).m_fStartBeat = fSongBeat;	// move the start of this Hold
 			}
 
 			if( bSteppedOnTapNote && bIsHoldingButton )
@@ -462,7 +462,7 @@ void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
 //	bool bHoldNoteOnThisBeat = false;
 //	for( int j=0; j<m_iNumHoldNotes; j++ )
 //	{
-//		if( m_HoldNotes[j].m_iStartIndex == iIndexThatWasSteppedOn )
+//		if( GetHoldNote(j).m_iStartIndex == iIndexThatWasSteppedOn )
 //		{
 //			bHoldNoteOnThisBeat = true;
 //			break;

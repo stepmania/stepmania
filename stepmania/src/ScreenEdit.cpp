@@ -719,9 +719,9 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			/* XXX: easier to do with 4s */
 			// check for to see if the user intended to remove a HoldNote
 			bool bRemovedAHoldNote = false;
-			for( int i=0; i<m_NoteFieldEdit.m_iNumHoldNotes; i++ )	// for each HoldNote
+			for( int i=0; i<m_NoteFieldEdit.GetNumHoldNotes(); i++ )	// for each HoldNote
 			{
-				HoldNote &hn = m_NoteFieldEdit.m_HoldNotes[i];
+				const HoldNote &hn = m_NoteFieldEdit.GetHoldNote(i);
 				if( iCol == hn.m_iTrack  &&		// the notes correspond
 					fSongBeat >= hn.m_fStartBeat  &&  fSongBeat <= hn.m_fEndBeat )	// the cursor lies within this HoldNote
 				{

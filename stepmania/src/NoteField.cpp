@@ -221,7 +221,7 @@ void NoteField::DrawPrimitives()
 		/////////////////////////////////
 		for( int i=0; i<m_iNumHoldNotes; i++ )
 		{
-			HoldNote &hn = m_HoldNotes[i];
+			const HoldNote &hn = GetHoldNote(i);
 			HoldNoteScore &hns = m_HoldNoteScores[i];
 			const float fLife = m_fHoldNoteLife[i];
 			const bool bIsHoldingNote = m_bIsHoldingHoldNote[i];	// hack: added -1 because hn.m_iStartIndex changes as note is held

@@ -89,7 +89,7 @@ int NoteDataWithScoring::GetNumHoldNotesWithScore( HoldNoteScore hns, const floa
 
 	for( int i=0; i<m_iNumHoldNotes; i++ )
 	{
-		HoldNote &hn = m_HoldNotes[i];
+		const HoldNote &hn = GetHoldNote(i);
 		if( fStartBeat <= hn.m_fStartBeat  &&  hn.m_fEndBeat <= fEndBeat  &&  m_HoldNoteScores[i] == hns )
 			iNumSuccessfulHolds++;
 	}
