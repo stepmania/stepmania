@@ -66,6 +66,7 @@ protected:
 	void PositionIcons();
 	void RefreshIcons();
 	void PositionCursors();
+	void PositionItems();
 	void TweenCursor( PlayerNumber player_no );
 	void UpdateText( PlayerNumber player_no );
 	void UpdateEnabledDisabled();
@@ -106,6 +107,10 @@ private:
 	BitmapText		m_textItems[MAX_OPTION_LINES][MAX_OPTIONS_PER_LINE];	// this array has to be big enough to hold all of the options
 
 	bool m_bRowIsLong[MAX_OPTION_LINES];	// goes off edge of screen
+
+	/* True if the item is off of the screen. */
+	bool m_bRowIsHidden[MAX_OPTION_LINES];
+	float m_fRowY[MAX_OPTION_LINES];
 
 	int m_iCurrentRow[NUM_PLAYERS];
 

@@ -40,6 +40,8 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 #define COLOR_SELECTED		THEME->GetMetricC("ScreenOptions","ColorSelected")
 #define COLOR_NOT_SELECTED	THEME->GetMetricC("ScreenOptions","ColorNotSelected")
 
+const int total = 10;
+const int halfsize = total / 2;
 
 ScreenOptions::ScreenOptions( CString sClassName, bool bEnableTimer ) : Screen("ScreenOptions")
 {
@@ -139,6 +141,7 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLin
 
 
 	InitOptionsText();
+	PositionItems();
 	PositionUnderlines();
 	PositionIcons();
 	RefreshIcons();
@@ -162,21 +165,23 @@ void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int &iWidthOut, int &
 	BitmapText &text = m_textItems[iRow][iOptionInRow];
 
 	iWidthOut = int(roundf( text.GetWidestLineWidthInSourcePixels() * text.GetZoomX() ));
-	iXOut = int(roundf( text.GetX() ));
-	iYOut = int(roundf( text.GetY() ));
+	iXOut = int(roundf( text.GetDestX() ));
+	/* We update m_fRowY, change colors and tween items, and then tween rows to
+	 * their final positions.  (This is so we don't tween colors, too.)  m_fRowY
+	 * is the actual destination position, even though we may not have set up the
+	 * tween yet. */
+	iYOut = int(roundf( m_fRowY[iRow] ));
 }
 
 void ScreenOptions::InitOptionsText()
 {
-	const float fLineGap = ITEMS_SPACING_Y - max(0, (m_iNumOptionRows-10)*2);
-
 	// init m_textItems from optionLines
 	int i;
 	for( i=0; i<m_iNumOptionRows; i++ )	// foreach options line
 	{
 		OptionRow &optline = m_OptionRow[i];
 
-		float fY = ITEMS_START_Y + fLineGap*i;
+		const float fY = ITEMS_START_Y + ITEMS_SPACING_Y*i;
 
 		BitmapText &title = m_textTitles[i];
 
@@ -253,7 +258,7 @@ void ScreenOptions::InitOptionsText()
 	option.SetText( "EXIT" );
 	option.SetZoom( ITEMS_ZOOM );
 	option.SetShadowLength( 0 );
-	float fY = ITEMS_START_Y + fLineGap*i;
+	float fY = ITEMS_START_Y + ITEMS_SPACING_Y*i;
 	option.SetXY( CENTER_X, fY );
 }
 
@@ -266,19 +271,26 @@ void ScreenOptions::PositionUnderlines()
 		{
 			OptionsCursor &underline = m_Underline[p][i];
 
+			underline.StopTweening();
+
+			/* Don't tween X movement. */
+			int iWidth, iX, iY;
+			GetWidthXY( (PlayerNumber)p, i, iWidth, iX, iY );
+			underline.SetX( (float)iX );
+
 			// If there's only one choice (ScreenOptionsMenu), don't show underlines.  
 			// It looks silly.
 			bool bOnlyOneChoice = m_OptionRow[i].choices.size() == 1;
-			underline.SetDiffuse( bOnlyOneChoice ? RageColor(1,1,1,0) : RageColor(1,1,1,1) );
+			bool hidden = bOnlyOneChoice || m_bRowIsHidden[i];
 
-			int iWidth, iX, iY;
-			GetWidthXY( (PlayerNumber)p, i, iWidth, iX, iY );
+			/* XXX: this doesn't work since underline is an ActorFrame */
+			underline.BeginTweening( 0.3f );
+			underline.SetDiffuse( RageColor(1,1,1,hidden? 0.0f:1.0f) );
 			underline.SetBarWidth( iWidth );
-			underline.SetXY( (float)iX, (float)iY );
+			underline.SetY( (float)iY );
 		}
 	}
 }
-
 
 void ScreenOptions::PositionIcons()
 {
@@ -290,7 +302,12 @@ void ScreenOptions::PositionIcons()
 
 			int iWidth, iX, iY;			// We only use iY
 			GetWidthXY( (PlayerNumber)p, i, iWidth, iX, iY );
-			icon.SetXY( ICONS_X(p), (float)iY );
+			icon.SetX( ICONS_X(p) );
+			icon.StopTweening();
+			/* XXX: this doesn't work since icon is an ActorFrame */
+			icon.BeginTweening( 0.3f );
+			icon.SetY( (float)iY );
+			icon.SetDiffuse( RageColor(1,1,1, m_bRowIsHidden[i]? 0.0f:1.0f) );
 		}
 	}
 }
@@ -373,29 +390,59 @@ void ScreenOptions::UpdateEnabledDisabled()
 			if( GAMESTATE->IsHumanPlayer(p)  &&  m_iCurrentRow[p] == i )
 				bThisRowIsSelected = true;
 
-		m_sprBullets[i].SetDiffuse( bThisRowIsSelected ? colorSelected : colorNotSelected );
+		m_sprBullets[i].StopTweening();
+		m_textTitles[i].StopTweening();
+		m_sprBullets[i].BeginTweening( 0.3f );
+		m_textTitles[i].BeginTweening( 0.3f );
+		for( unsigned j=0; j<m_OptionRow[i].choices.size(); j++ )
+		{
+			m_textItems[i][j].StopTweening();
+			m_textItems[i][j].BeginTweening( 0.3f );
+		}
 
-		m_textTitles[i].SetDiffuse( bThisRowIsSelected ? colorSelected : colorNotSelected );
+		RageColor color = bThisRowIsSelected ? colorSelected : colorNotSelected;
+		if( m_bRowIsHidden[i] )
+			color.a = 0.0f;
+		m_sprBullets[i].SetDiffuse( color );
+		m_textTitles[i].SetDiffuse( color );
+
+		m_sprBullets[i].SetY( m_fRowY[i] );
+		m_textTitles[i].SetY( m_fRowY[i] );
 
 		if( m_bRowIsLong[i] )
 			for( unsigned j=0; j<NUM_PLAYERS; j++ )
 			{
-				m_textItems[i][j].SetDiffuse( bThisRowIsSelected ? colorSelected : colorNotSelected );
+				m_textItems[i][j].SetDiffuse( color );
+				m_textItems[i][j].SetY( m_fRowY[i] );
 
 				/* Hide the text of all but the first player, so we don't overdraw. */
 				if( m_InputMode == INPUTMODE_BOTH && j != 0 )
+				{
+					m_textItems[i][j].StopTweening();
 					m_textItems[i][j].SetDiffuse( RageColor(1,1,1,0) );
+				}
 			}
 		else
 			for( unsigned j=0; j<m_OptionRow[i].choices.size(); j++ )
-				m_textItems[i][j].SetDiffuse( bThisRowIsSelected ? colorSelected : colorNotSelected );
+			{
+				m_textItems[i][j].SetDiffuse( color );
+				m_textItems[i][j].SetY( m_fRowY[i] );
+			}
 	}
 
 	bool bExitRowIsSelectedByBoth = true;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		if( GAMESTATE->IsHumanPlayer(p)  &&  m_iCurrentRow[p] != m_iNumOptionRows )
 			bExitRowIsSelectedByBoth = false;
-	m_textItems[m_iNumOptionRows][0].SetDiffuse( bExitRowIsSelectedByBoth ? colorNotSelected : colorSelected );
+
+	m_textItems[m_iNumOptionRows][0].StopTweening();
+	m_textItems[m_iNumOptionRows][0].BeginTweening( 0.3f );
+
+	RageColor color = bExitRowIsSelectedByBoth ? colorSelected : colorNotSelected;
+	if( m_bRowIsHidden[i] )
+		color.a = 0.0f;
+	m_textItems[m_iNumOptionRows][0].SetDiffuse( color );
+	m_textItems[m_iNumOptionRows][0].SetY( m_fRowY[m_iNumOptionRows] );
 	if( bExitRowIsSelectedByBoth )
 		m_textItems[m_iNumOptionRows][0].SetEffectDiffuseShift( 1.0f, colorSelected, colorNotSelected );
 	else
@@ -456,11 +503,82 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 }
 
 
+void ScreenOptions::PositionItems()
+{
+	int NumRows = m_iNumOptionRows + 1;
+
+	/* First half: */
+	const int earliest = min( m_iCurrentRow[PLAYER_1], m_iCurrentRow[PLAYER_2] );
+	int first_start = max( earliest - halfsize+1, 0 );
+	int first_end = first_start + halfsize - 1;
+
+	/* Second half: */
+	int latest = max( m_iCurrentRow[PLAYER_1], m_iCurrentRow[PLAYER_2] );
+
+	int second_start = max( latest - halfsize + 1, 0 );
+	/* Never overlap: */
+	second_start = max( second_start, first_end + 1 );
+	int second_end = second_start + halfsize - 1;
+
+	if( second_end >= NumRows )
+	{
+		first_start = NumRows - total;
+		first_end = NumRows;
+		second_start = 9999;
+		second_end = 9999;
+	}
+
+	bool is_split = false;
+	if(first_end+1 < second_start)
+		is_split = true;
+
+	for( int i=0; i<NumRows; i++ )		// foreach line
+	{
+		float ItemPosition;
+		if( i < first_start )
+			ItemPosition = -0.5f;
+		else if( i <= first_end )
+			ItemPosition = float(i - first_start);
+		else if( i < second_start )
+			ItemPosition = first_end + 0.5f;
+		else if( i <= second_end )
+			ItemPosition = float(halfsize + i - second_start);
+		else
+			ItemPosition = (float) total - 0.5f;
+			
+		float fY = ITEMS_START_Y + ITEMS_SPACING_Y*ItemPosition;
+		m_fRowY[i] = fY;
+		m_bRowIsHidden[i] = i < first_start ||
+							(i > first_end && i < second_start) ||
+							i > second_end;
+	}
+}
+
+
 void ScreenOptions::OnChange()
 {
+	/* Update m_fRowY[] and m_bRowIsHidden[]. */
+	PositionItems();
+
+	/* Do positioning. */
 	PositionUnderlines();
 	RefreshIcons();
+	PositionIcons();
 	UpdateEnabledDisabled();
+
+	for( int i=0; i<m_iNumOptionRows; i++ )		// foreach line
+	{
+		m_sprBullets[i].StopTweening();
+		m_sprBullets[i].BeginTweening( 0.3f );
+		m_sprBullets[i].SetY( m_fRowY[i] );
+
+		RageColor color = m_sprBullets[i].GetDiffuse();
+		color.a = m_bRowIsHidden[i]? 0.0f:1.0f;
+		m_sprBullets[i].SetDiffuse( color );
+	}
+
+	for( int pn=0; pn<NUM_PLAYERS; pn++ )
+		TweenCursor( (PlayerNumber)pn );
 
 	int iCurRow = m_iCurrentRow[PLAYER_1];
 
@@ -534,7 +652,6 @@ void ScreenOptions::MenuLeft( PlayerNumber pn )
 		m_iSelectedOption[p][iCurRow] = (m_iSelectedOption[p][iCurRow]-1+iNumOptions) % iNumOptions;
 		
 		UpdateText( (PlayerNumber)p );
-		TweenCursor( (PlayerNumber)p );
 	}
 	m_SoundChangeCol.Play();
 	OnChange();
@@ -559,7 +676,6 @@ void ScreenOptions::MenuRight( PlayerNumber pn )
 		m_iSelectedOption[p][iCurRow] = (m_iSelectedOption[p][iCurRow]+1) % iNumOptions;
 		
 		UpdateText( (PlayerNumber)p );
-		TweenCursor( (PlayerNumber)p );
 	}
 	m_SoundChangeCol.Play();
 	OnChange();
@@ -576,8 +692,6 @@ void ScreenOptions::MenuUp( PlayerNumber pn )
 			return;	// can't go up any more
 
 		m_iCurrentRow[p]--;
-
-		TweenCursor( (PlayerNumber)p );
 	}
 	m_SoundPrevRow.Play();
 	OnChange();
@@ -595,8 +709,6 @@ void ScreenOptions::MenuDown( PlayerNumber pn )
 			return;	// can't go down any more
 
 		m_iCurrentRow[p]++;
-
-		TweenCursor( (PlayerNumber)p );
 	}
 	m_SoundNextRow.Play();
 	OnChange();
