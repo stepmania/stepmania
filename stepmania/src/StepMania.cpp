@@ -867,6 +867,7 @@ void Update()
 
 	NETWORK->Update( fDeltaTime );
 
+	/*
 	// handle network input
 	Packet packet;
 	while( NETWORK->Recv(&packet) )
@@ -911,6 +912,7 @@ void Update()
 			ASSERT(0);	// corrupt packet?  Not a type we recognize
 		}
 	}
+	*/
 
 	static InputEventArray ieArray;
 	ieArray.clear();	// empty the array
@@ -936,6 +938,8 @@ void Update()
 
 		SCREENMAN->Input( DeviceI, type, GameI, MenuI, StyleI );
 
+		/*
+		// Replicate input over network
 		if( GameI.IsValid()  &&  type == IET_FIRST_PRESS )
 		{
 			Packet packet;
@@ -946,6 +950,7 @@ void Update()
 
 			SCREENMAN->SystemMessage( "Packet Sent" );
 		}
+		*/
 	}
 }
 

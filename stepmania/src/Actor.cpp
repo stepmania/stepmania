@@ -308,18 +308,18 @@ void Actor::SetTweenDiffuseLeftEdge( RageColor c )		{ LatestTween().diffuse[0] =
 void Actor::SetTweenGlow( RageColor c )					{ LatestTween().glow = c; };
 
 
-void Actor::ScaleTo( const RectI &Rect, StretchType st )
+void Actor::ScaleTo( const RectI &rect, StretchType st )
 {
 	// width and height of rectangle
-	float rect_width = (float)RECTWIDTH(Rect);
-	float rect_height = (float)RECTHEIGHT(Rect);
+	float rect_width = (float)RECTWIDTH(rect);
+	float rect_height = (float)RECTHEIGHT(rect);
 
 	if( rect_width < 0 )	SetRotationY( PI );
 	if( rect_height < 0 )	SetRotationX( PI );
 
 	// center of the rectangle
-	float rect_cx = Rect.left + rect_width/2;
-	float rect_cy = Rect.top  + rect_height/2;
+	float rect_cx = rect.left + rect_width/2;
+	float rect_cy = rect.top  + rect_height/2;
 
 	// zoom fActor needed to scale the Actor to fill the rectangle
 	float fNewZoomX = fabsf(rect_width  / m_size.x);
@@ -341,15 +341,15 @@ void Actor::ScaleTo( const RectI &Rect, StretchType st )
 }
 
 
-void Actor::StretchTo( const RectI &Rect )
+void Actor::StretchTo( const RectI &rect )
 {
 	// width and height of rectangle
-	int rect_width = RECTWIDTH(Rect);
-	int rect_height = RECTHEIGHT(Rect);
+	int rect_width = RECTWIDTH(rect);
+	int rect_height = RECTHEIGHT(rect);
 
 	// center of the rectangle
-	float rect_cx = Rect.left + rect_width/2.0f;
-	float rect_cy = Rect.top  + rect_height/2.0f;
+	float rect_cx = rect.left + rect_width/2.0f;
+	float rect_cy = rect.top  + rect_height/2.0f;
 
 	// zoom fActor needed to scale the Actor to fill the rectangle
 	float fNewZoomX = rect_width  / m_size.x;

@@ -774,7 +774,7 @@ void TrimLeft(string &str, const char *s)
 
 void TrimRight(string &str, const char *s)
 {
-	int n = str.size();
+	int n = str.size()-1;
 	while(n >= 0 && strchr(s, str[n-1]))
 		n--;
 
