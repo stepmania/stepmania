@@ -315,6 +315,7 @@ void PrefsManager::ResetToFactoryDefaults()
 	Init();
 	m_bFirstRun = false;
 	ReadPrefsFromFile( DEFAULTS_INI_PATH );
+	ReadPrefsFromFile( STATIC_INI_PATH );
 	
 	SaveGlobalPrefsToDisk();
 }
