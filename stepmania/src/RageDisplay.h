@@ -96,6 +96,7 @@ protected:
 	oglspecs_t *m_oglspecs;
 	/* Don't use this to check extensions; use GetSpecs. */
 	bool HasExtension(CString ext) const;
+	void RageDisplay::DumpOpenGLDebugInfo();
 };
 
 

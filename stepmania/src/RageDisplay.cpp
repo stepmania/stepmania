@@ -148,6 +148,8 @@ bool RageDisplay::HasExtension(CString ext) const
 	return m_oglspecs->glExts.find(ext) != m_oglspecs->glExts.end();
 }
 
+extern HWND g_hWndMain;
+
 void RageDisplay::SetupExtensions()
 {
 	double fGLVersion = atof( (const char *) glGetString(GL_VERSION) );
@@ -246,6 +248,8 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 		SDL_WM_SetCaption("StepMania", "StepMania");
 	}
 
+	DumpOpenGLDebugInfo();
+
 	/* Now that we've initialized, we can search for extensions (some of which
 	 * we may need to set up the video mode). */
 	SetupExtensions();
@@ -282,6 +286,70 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 	Flip();
 
 	return NewOpenGLContext;
+}
+
+void RageDisplay::DumpOpenGLDebugInfo()
+{
+#if defined(WIN32)
+	/* Dump Windows pixel format data. */
+	int Actual = GetPixelFormat(wglGetCurrentDC());
+
+	PIXELFORMATDESCRIPTOR pfd;
+	memset(&pfd, 0, sizeof(pfd));
+	pfd.nSize=sizeof(pfd);
+	pfd.nVersion=1;
+  
+	int pfcnt = DescribePixelFormat(GetDC(g_hWndMain),1,sizeof(pfd),&pfd);
+	for (int i=1; i <= pfcnt; i++)
+	{
+		memset(&pfd, 0, sizeof(pfd));
+		pfd.nSize=sizeof(pfd);
+		pfd.nVersion=1;
+		DescribePixelFormat(GetDC(g_hWndMain),i,sizeof(pfd),&pfd);
+
+		bool skip = false;
+
+		bool rgba = (pfd.iPixelType==PFD_TYPE_RGBA);
+
+		bool mcd = ((pfd.dwFlags & PFD_GENERIC_FORMAT) && (pfd.dwFlags & PFD_GENERIC_ACCELERATED));
+		bool soft = ((pfd.dwFlags & PFD_GENERIC_FORMAT) && !(pfd.dwFlags & PFD_GENERIC_ACCELERATED));
+		bool icd = !(pfd.dwFlags & PFD_GENERIC_FORMAT) && !(pfd.dwFlags & PFD_GENERIC_ACCELERATED);
+		bool opengl = !!(pfd.dwFlags & PFD_SUPPORT_OPENGL);
+		bool window = !!(pfd.dwFlags & PFD_DRAW_TO_WINDOW);
+		bool dbuff = !!(pfd.dwFlags & PFD_DOUBLEBUFFER);
+
+		if(!rgba || soft || !opengl || !window || !dbuff)
+			skip = true;
+
+		/* Skip the above, unless it happens to be the one we chose. */
+		if(skip && i != Actual)
+			continue;
+
+		CString str = ssprintf("Mode %i: ", i);
+		if(i == Actual) str += "*** ";
+		if(skip) str += "(BOGUS) ";
+		if(soft) str += "software ";
+		if(icd) str += "ICD ";
+		if(mcd) str += "MCD ";
+		if(!rgba) str += "indexed ";
+		if(!opengl) str += "!OPENGL ";
+		if(!window) str += "!window ";
+		if(!dbuff) str += "!dbuff ";
+
+		str += ssprintf("%i (%i%i%i) ", pfd.cColorBits, pfd.cRedBits, pfd.cGreenBits, pfd.cBlueBits);
+		if(pfd.cAlphaBits) str += ssprintf("%i alpha ", pfd.cAlphaBits);
+		if(pfd.cDepthBits) str += ssprintf("%i depth ", pfd.cDepthBits);
+		if(pfd.cStencilBits) str += ssprintf("%i stencil ", pfd.cStencilBits);
+		if(pfd.cAccumBits) str += ssprintf("%i accum ", pfd.cAccumBits);
+
+		if(i == Actual && skip)
+		{
+			/* We chose a bogus format. */
+			LOG->Warn("%s", str.GetString());
+		} else
+			LOG->Trace("%s", str.GetString());
+	}
+#endif
 }
 
 void RageDisplay::ResolutionChanged(int width, int height)
