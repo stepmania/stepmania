@@ -55,7 +55,6 @@ public:
 
 	// movie texture/animated texture stuff
 	virtual void Play() {}
-	virtual void Stop() {}
 	virtual void Pause() {}
 	virtual void SetPosition( float fSeconds ) {}
 	virtual void SetPlaybackRate( float fRate ) {}
