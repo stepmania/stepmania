@@ -126,7 +126,7 @@ protected:
 
 		// Only one will true at a time if m_RowDef.bMultiSelect
 		vector<bool> m_vbSelected[NUM_PLAYERS];	// size = m_RowDef.choices.size().
-		int GetOneSelection( PlayerNumber pn )
+		int GetOneSelection( PlayerNumber pn ) const
 		{
 			for( unsigned i=0; i<(unsigned)m_vbSelected[pn].size(); i++ )
 				if( m_vbSelected[pn][i] )
@@ -134,7 +134,7 @@ protected:
 			ASSERT(0);	// shouldn't call this if not expecting one to be selected
 			return -1;
 		}
-		int GetOneSharedSelection()
+		int GetOneSharedSelection() const
 		{
 			return GetOneSelection( (PlayerNumber)0 );
 		}
