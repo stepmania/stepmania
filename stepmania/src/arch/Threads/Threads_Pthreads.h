@@ -32,6 +32,8 @@ public:
 
 class MutexImpl_Pthreads: public MutexImpl
 {
+	friend class EventImpl_Pthreads;
+
 public:
 	MutexImpl_Pthreads( RageMutex *parent );
 	~MutexImpl_Pthreads();
@@ -40,8 +42,23 @@ public:
 	bool TryLock();
 	void Unlock();
 
-private:
+protected:
 	pthread_mutex_t mutex;
+};
+
+class EventImpl_Pthreads: public EventImpl
+{
+public:
+	EventImpl_Pthreads( MutexImpl_Pthreads *pParent );
+	~EventImpl_Pthreads();
+
+	void Wait();
+	void Signal();
+	void Broadcast();
+
+private:
+	MutexImpl_Pthreads *m_pParent;
+	pthread_cond_t m_Cond;
 };
 
 #if 0

@@ -204,6 +204,39 @@ MutexImpl *MakeMutex( RageMutex *pParent )
 	return new MutexImpl_Pthreads( pParent );
 }
 
+EventImpl_Pthreads::EventImpl_Pthreads( MutexImpl_Pthreads *pParent )
+{
+	m_pParent = pParent;
+	pthread_cond_init( &m_Cond, NULL );
+}
+
+EventImpl_Pthreads::~EventImpl_Pthreads()
+{
+	pthread_cond_destroy( &m_Cond );
+}
+
+void EventImpl_Pthreads::Wait()
+{
+	pthread_cond_wait( &m_Cond, &m_pParent->mutex );
+}
+
+void EventImpl_Pthreads::Signal()
+{
+	pthread_cond_signal( &m_Cond );
+}
+
+void EventImpl_Pthreads::Broadcast()
+{
+	pthread_cond_broadcast( &m_Cond );
+}
+
+EventImpl *MakeEvent( MutexImpl *pMutex )
+{
+	MutexImpl_Pthreads *pPthreadsMutex = (MutexImpl_Pthreads *) pMutex;
+
+	return new EventImpl_Pthreads( pPthreadsMutex );
+}
+
 #if 0
 SemaImpl_Pthreads::SemaImpl_Pthreads( int iInitialValue )
 {
