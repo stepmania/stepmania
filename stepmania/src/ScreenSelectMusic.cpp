@@ -1208,7 +1208,7 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, 0) );
 	}
 
-	m_DifficultyIcon[pn].SetFromNotes( pn, pSteps );
+	m_DifficultyIcon[pn].SetFromSteps( pn, pSteps );
 	if( pSteps && pSteps->IsAutogen() )
 	{
 		m_AutoGenIcon[pn].SetEffectDiffuseShift();
@@ -1221,7 +1221,7 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 	m_DifficultyMeter[pn].SetFromGameState( pn );
 	if( SHOW_DIFFICULTY_LIST )
 		m_DifficultyList.SetFromGameState();
-	m_GrooveRadar.SetFromNotes( pn, pSteps );
+	m_GrooveRadar.SetFromSteps( pn, pSteps );
 	m_MusicWheel.NotesChanged( pn );
 	if( SHOW_PANES )
 		m_PaneDisplay[pn].SetFromGameState();

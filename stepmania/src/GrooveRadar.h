@@ -23,9 +23,9 @@ class GrooveRadar : public ActorFrame
 public:
 	GrooveRadar();
 
-	void SetFromNotes( PlayerNumber pn, Steps* pSteps )	// NULL means no Song
+	void SetFromSteps( PlayerNumber pn, Steps* pSteps )	// NULL means no Song
 	{
-		m_GrooveRadarValueMap.SetFromNotes( pn, pSteps );
+		m_GrooveRadarValueMap.SetFromSteps( pn, pSteps );
 	}
 
 	void TweenOnScreen();
@@ -42,7 +42,7 @@ protected:
 		virtual void Update( float fDeltaTime );
 		virtual void DrawPrimitives();
 
-		void SetFromNotes( PlayerNumber pn, Steps* pSteps );	// NULL means no Song
+		void SetFromSteps( PlayerNumber pn, Steps* pSteps );	// NULL means no Song
 
 		void TweenOnScreen();
 		void TweenOffScreen();

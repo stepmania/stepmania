@@ -98,7 +98,7 @@ void DifficultyMeter::Load()
 	Unset();
 }
 
-void DifficultyMeter::SetFromNotes( const Steps* pSteps )
+void DifficultyMeter::SetFromSteps( const Steps* pSteps )
 {
 	if( pSteps == NULL )
 	{
@@ -180,7 +180,7 @@ void DifficultyMeter::SetFromGameState( PlayerNumber pn )
 	{
 		Steps* pSteps = GAMESTATE->m_pCurSteps[pn];
 		if( pSteps )
-			SetFromNotes( pSteps );
+			SetFromSteps( pSteps );
 		else
 			SetFromDifficulty( GAMESTATE->m_PreferredDifficulty[pn] );
 	}

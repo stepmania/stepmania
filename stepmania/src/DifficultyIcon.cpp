@@ -49,7 +49,7 @@ bool DifficultyIcon::Load( CString sPath )
 	return true;
 }
 
-void DifficultyIcon::SetFromNotes( PlayerNumber pn, Steps* pSteps )
+void DifficultyIcon::SetFromSteps( PlayerNumber pn, Steps* pSteps )
 {
 	if( pSteps == NULL )
 		m_bBlank = true;

@@ -363,7 +363,7 @@ void ScreenEvaluation::Init()
 					switch( m_Type )
 					{
 					case stage:
-						m_DifficultyIcon[p].SetFromNotes( p, GAMESTATE->m_pCurSteps[p] );
+						m_DifficultyIcon[p].SetFromSteps( p, GAMESTATE->m_pCurSteps[p] );
 						break;
 					case course:
 						m_DifficultyIcon[p].SetFromCourseDifficulty( p, GAMESTATE->m_PreferredCourseDifficulty[p] );

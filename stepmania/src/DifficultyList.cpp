@@ -319,7 +319,7 @@ void DifficultyList::SetFromGameState()
 
 				row.m_Steps = CurSteps[i];
 
-				m_Lines[i].m_Meter.SetFromNotes( m_Rows[i].m_Steps );
+				m_Lines[i].m_Meter.SetFromSteps( m_Rows[i].m_Steps );
 
 				row.m_dc = row.m_Steps->GetDifficulty();
 				

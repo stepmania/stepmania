@@ -388,7 +388,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			if( GAMESTATE->IsCourseMode() )
 				display.m_Difficulty.SetFromCourseDifficulty( (PlayerNumber)p, GAMESTATE->m_PreferredCourseDifficulty[p] );
 			else
-				display.m_Difficulty.SetFromNotes( (PlayerNumber)p, pSteps );
+				display.m_Difficulty.SetFromSteps( (PlayerNumber)p, pSteps );
 			SET_ON( display.m_Difficulty );
 			this->AddChild( &display.m_Difficulty );
 

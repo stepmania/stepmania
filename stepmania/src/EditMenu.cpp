@@ -279,7 +279,7 @@ void EditMenu::OnRowValueChanged( Row row )
 		// fall through
 	case ROW_DIFFICULTY:
 		m_textValue[ROW_DIFFICULTY].SetText( DifficultyToString(GetSelectedDifficulty()) );
-		m_Meter.SetFromNotes( GetSelectedNotes() );
+		m_Meter.SetFromSteps( GetSelectedNotes() );
 		// fall through
 	case ROW_SOURCE_NOTES_TYPE:
 		m_textLabel[ROW_SOURCE_NOTES_TYPE].SetDiffuse( GetSelectedNotes()?RageColor(1,1,1,0):RageColor(1,1,1,1) );
@@ -290,7 +290,7 @@ void EditMenu::OnRowValueChanged( Row row )
 		m_textLabel[ROW_SOURCE_DIFFICULTY].SetDiffuse( GetSelectedNotes()?RageColor(1,1,1,0):RageColor(1,1,1,1) );
 		m_textValue[ROW_SOURCE_DIFFICULTY].SetDiffuse( GetSelectedNotes()?RageColor(1,1,1,0):RageColor(1,1,1,1) );
 		m_textValue[ROW_SOURCE_DIFFICULTY].SetText( DifficultyToString(GetSelectedSourceDifficulty()) );
-		m_SourceMeter.SetFromNotes( GetSelectedSourceNotes() );
+		m_SourceMeter.SetFromSteps( GetSelectedSourceNotes() );
 		m_SourceMeter.SetZoomY( GetSelectedNotes()?0.f:1.f );
 
 		m_Actions.clear();

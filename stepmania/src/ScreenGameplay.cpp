@@ -912,7 +912,7 @@ void ScreenGameplay::LoadNextSong()
 					PREFSMAN->m_iProgressiveNonstopLifebar);
 			}
 
-			m_DifficultyIcon[p].SetFromNotes( PlayerNumber(p), GAMESTATE->m_pCurSteps[p] );
+			m_DifficultyIcon[p].SetFromSteps( PlayerNumber(p), GAMESTATE->m_pCurSteps[p] );
 
 			/* The actual note data for scoring is the base class of Player.  This includes
 			 * transforms, like Wide.  Otherwise, the scoring will operate on the wrong data. */

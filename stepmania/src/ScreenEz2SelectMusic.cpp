@@ -696,6 +696,6 @@ void ScreenEz2SelectMusic::AfterNotesChange( PlayerNumber pn )
 
 //	Steps* m_pSteps = GAMESTATE->m_pCurSteps[pn];
 
-//	m_FootMeter[pn].SetFromNotes( pSteps );
+//	m_FootMeter[pn].SetFromSteps( pSteps );
 }
 

@@ -91,7 +91,7 @@ GrooveRadar::GrooveRadarValueMap::GrooveRadarValueMap()
 	}
 }
 
-void GrooveRadar::GrooveRadarValueMap::SetFromNotes( PlayerNumber pn, Steps* pSteps )		// NULL means no song
+void GrooveRadar::GrooveRadarValueMap::SetFromSteps( PlayerNumber pn, Steps* pSteps )		// NULL means no song
 {
 	if(DISABLE_RADAR == 1) // if the theme says not to disable it
 		return;
