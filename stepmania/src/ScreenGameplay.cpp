@@ -768,6 +768,14 @@ void ScreenGameplay::Init()
 
 ScreenGameplay::~ScreenGameplay()
 {
+	if( this->IsFirstUpdate() )
+	{
+		/* We never received any updates.  That means we were deleted without being
+		 * used, and never actually played.  (This can happen when backing out of
+		 * ScreenStage.)  Cancel the stage. */
+		GAMESTATE->CancelStage();
+	}
+
 	LOG->Trace( "ScreenGameplay::~ScreenGameplay()" );
 	
 	for( int p=0; p<NUM_PLAYERS; p++ )
