@@ -125,6 +125,8 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 	int r;
 	for( r=0; r<m_iNumOptionRows; r++ )		// foreach line
 	{
+		unsigned c;
+
 		m_framePage.AddChild( &m_sprBullets[r] );
 
 		m_framePage.AddChild( &m_textTitles[r] );		
@@ -132,7 +134,7 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 		const OptionRow &optline = m_OptionRow[r];
 
 		float fX = ITEMS_START_X;	// indent 70 pixels
-		for( unsigned c=0; c<optline.choices.size(); c++ )
+		for( c=0; c<optline.choices.size(); c++ )
 		{
 			BitmapText *bt = new BitmapText;
 			m_textItems[r].push_back( bt );
@@ -184,7 +186,7 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 			}
 		}
 
-		for( unsigned c=0; c<m_textItems[r].size(); c++ )
+		for( c=0; c<m_textItems[r].size(); c++ )
 			m_framePage.AddChild( m_textItems[r][c] );
 	}
 
