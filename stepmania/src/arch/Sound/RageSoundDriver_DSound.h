@@ -49,7 +49,6 @@ class RageSound_DSound: public RageSoundDriver
 	void StopMixing( RageSoundBase *snd );		/* used by RageSound */
 	int64_t GetPosition( const RageSoundBase *snd ) const;
 	void Update(float delta);
-	void VolumeChanged();
 
 	int GetSampleRate( int rate ) const { return rate; }
 

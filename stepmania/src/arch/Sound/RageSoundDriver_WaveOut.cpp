@@ -78,7 +78,6 @@ bool RageSound_WaveOut::GetData()
 	memset(buf, 0, bufsize*sizeof(Uint16));
 	memset(buffers[b].lpData, 0, bufsize*sizeof(Uint16));
 	static SoundMixBuffer mix;
-	mix.SetVolume( SOUNDMAN->GetMixVolume() );
 
 	const int64_t play_pos = last_cursor_pos;
     const int64_t cur_play_pos = GetPosition( NULL );
@@ -113,7 +112,7 @@ bool RageSound_WaveOut::GetData()
         bytes_read += got;
         bytes_left -= got;
 
-		mix.write( (Sint16 *) buf, bytes_read / sizeof(Sint16) );
+		mix.write( (Sint16 *) buf, bytes_read / sizeof(Sint16), sounds[i]->snd->GetVolume() );
 
 		if( bytes_left > 0 )
 		{

@@ -123,6 +123,8 @@ bool RageSound_DSound::stream::GetData(bool init)
 	 * fill anything in STOPPING; in that case, we just clear the audio buffer. */
 	if(state != STOPPING)
 	{
+		pcm->SetVolume( snd->GetVolume() );
+
 		int bytes_read = 0;
 		int bytes_left = len;
 
@@ -234,14 +236,6 @@ RageSound_DSound::~RageSound_DSound()
 
 	for(unsigned i = 0; i < stream_pool.size(); ++i)
 		delete stream_pool[i];
-}
-
-void RageSound_DSound::VolumeChanged()
-{
-	for(unsigned i = 0; i < stream_pool.size(); ++i)
-	{
-		stream_pool[i]->pcm->SetVolume(SOUNDMAN->GetMixVolume());
-	}
 }
 
 void RageSound_DSound::StartMixing( RageSoundBase *snd )

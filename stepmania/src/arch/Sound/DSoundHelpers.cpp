@@ -135,6 +135,7 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 	samplerate = samplerate_;
 	samplebits = samplebits_;
 	writeahead = writeahead_;
+	volume = 0;
 	buffer_locked = false;
 	last_cursor_pos = write_cursor = buffer_bytes_filled = 0;
 	LastPosition = 0;
@@ -254,9 +255,14 @@ void DSoundBuf::SetVolume(float vol)
 		vol = 0.001f;		// fix log10f(0) == -INF
 	float vl2 = log10f(vol) / log10f(2); /* vol log 2 */
 
-	/* Volume is a multiplier; SetVolume wants attenuation in thousands of a
-	 * decibel. */
-	buf->SetVolume(max(int(1000 * vl2), DSBVOLUME_MIN));
+	/* Volume is a multiplier; SetVolume wants attenuation in thousands of a decibel. */
+	const int new_volume = max( int(1000 * vl2), DSBVOLUME_MIN );
+
+	if( volume == new_volume )
+		return;
+	volume = new_volume;
+
+	buf->SetVolume( volume );
 }
 
 /* Determine if "pos" is between "start" and "end", for a circular buffer. */

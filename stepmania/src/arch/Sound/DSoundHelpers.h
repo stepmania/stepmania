@@ -30,6 +30,7 @@ class DSoundBuf
 	IDirectSoundBuffer *buf;
 
 	int channels, samplerate, samplebits, writeahead;
+	int volume;
 
 	int buffersize;
 	

@@ -14,7 +14,7 @@
 const int channels = 2;
 const int bytes_per_frame = channels*2; /* 16-bit */
 const int samplerate = 44100;
-const int buffersize_frames = 1024*4;	/* in frames */
+const int buffersize_frames = 1024*16;	/* in frames */
 const int buffersize = buffersize_frames * bytes_per_frame; /* in bytes */
 
 /* We'll fill the buffer in chunks this big.  This should evenly divide the
@@ -80,7 +80,6 @@ bool RageSound_DSound_Software::GetData()
 	memset(buf, 0, bufsize*sizeof(Uint16));
 
 	static SoundMixBuffer mix;
-	mix.SetVolume( SOUNDMAN->GetMixVolume() );
 
 	for(unsigned i = 0; i < sounds.size(); ++i)
 	{
@@ -114,7 +113,7 @@ bool RageSound_DSound_Software::GetData()
         bytes_read += got;
         bytes_left -= got;
 
-		mix.write( (Sint16 *) buf, bytes_read / sizeof(Sint16) );
+		mix.write( (Sint16 *) buf, bytes_read / sizeof(Sint16), sounds[i]->snd->GetVolume() );
 
 		if( bytes_left > 0 )
 		{
