@@ -305,11 +305,20 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 
 void ScreenTitleMenu::Update( float fDelta )
 {
+	// time out on this screen and go to the attract sequence
 	if( !m_Menu.IsTransitioning() && TimeToDemonstration.PeekDeltaTime() >= SECONDS_BEFORE_ATTRACT)
 	{
-		this->PostScreenMessage( SM_GoToAttractLoop, 0 );
-		TimeToDemonstration.GetDeltaTime();
+		// don't time out on this screen is coin mode is pay.  
+		// If we're here, then there's a credit in the machine.
+		if( PREFSMAN->m_iCoinMode == COIN_PAY )
+			;	// do nothing
+		else
+		{
+			this->PostScreenMessage( SM_GoToAttractLoop, 0 );
+			TimeToDemonstration.GetDeltaTime();
+		}
 	}
+
 	Screen::Update(fDelta);
 }
 
