@@ -157,6 +157,28 @@ static PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
 	}
 };
 
+static map<GLenum, CString> g_Strings;
+static void InitStringMap()
+{
+	static bool Initialized = false;
+	if(Initialized) return;
+	Initialized = true;
+	#define X(a) g_Strings[a] = #a;
+	X(GL_RGBA8);	X(GL_RGBA4);	X(GL_RGB5_A1);	X(GL_RGB5);	X(GL_RGBA);	X(GL_RGB);
+	X(GL_BGR);	X(GL_BGRA);
+	X(GL_COLOR_INDEX8_EXT);	X(GL_COLOR_INDEX);
+	X(GL_UNSIGNED_BYTE);	X(GL_UNSIGNED_SHORT_4_4_4_4); X(GL_UNSIGNED_SHORT_5_5_5_1);
+	X(GL_UNSIGNED_SHORT_1_5_5_5_REV);
+}
+
+static CString GLToString( GLenum e )
+{
+	if( g_Strings.find(e) != g_Strings.end() )
+		return g_Strings[e];
+
+	return ssprintf( "%i", e );
+}
+
 struct GLPixFmtInfo_t {
 	GLenum internalfmt; /* target format */
 	GLenum format; /* target format */
@@ -265,6 +287,7 @@ RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p, bool bAllowUnacceleratedRen
 	LOG->MapLog("renderer", "Current renderer: OpenGL");
 
 	FixLilEndian();
+	InitStringMap();
 
 	wind = MakeLowLevelWindow();
 
@@ -964,7 +987,7 @@ PixelFormat RageDisplay_OGL::GetImgPixelFormat( SDL_Surface* &img, bool &FreeImg
 
 	return pixfmt;
 }
-
+#include <sstream>
 
 unsigned RageDisplay_OGL::CreateTexture( 
 	PixelFormat pixfmt,
@@ -1029,7 +1052,18 @@ unsigned RageDisplay_OGL::CreateTexture(
 			glImageFormat, glImageType, img->pixels);
 
 	GLenum error = glGetError();
-	ASSERT( error == GL_NO_ERROR );
+	if( error != GL_NO_ERROR )
+	{
+		ostringstream s;
+		s << "glTexImage2D(format " << GLToString(glTexFormat) <<
+			 ", w " << img->w << ", h " <<  img->h <<
+			 ", format " << GLToString(glImageFormat) <<
+			 ", type " << GLToString(glImageType) <<
+			 "): " << GLToString(error);
+		LOG->Trace( s.str().c_str() );
+
+		ASSERT(0);
+	}
 
 	/* Sanity check: */
 	if( pixfmt == FMT_PAL )
