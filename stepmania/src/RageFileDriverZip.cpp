@@ -8,27 +8,11 @@
 #include "global.h"
 #include "RageFileDriverZip.h"
 #include "RageFileDriverSlice.h"
+#include "RageFileDriverDeflate.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageUtil_FileDB.h"
-
 #include <cerrno>
-
-#if defined(_WINDOWS) || defined(_XBOX)
-	#include "zlib/zlib.h"
-	#pragma comment(lib, "zlib/zdll.lib")
-#elif defined(DARWIN)
-    /* Since crypto++ was added to the repository, <zlib.h> includes the zlib.h
-     * in there rather than the correct system one. I don't know why it would do
-     * this since crypto51 is not being listed as one of the include directories.
-     * I've never run into this problem before and looking at the command line
-     * used to compile RageFileDriverZip.o, I have no idea how it's happening.
-     * --Steve
-     */
-    #include "/usr/include/zlib.h"
-#else
-	#include <zlib.h>
-#endif
 
 #define INBUFSIZE 1024*4
 
@@ -66,34 +50,6 @@ struct end_central_dir_record
 
 #define STORED		0
 #define DEFLATED	8
-
-class RageFileObjZipDeflated: public RageFileObj
-{
-private:
-	int m_iUncompressedSize;
-	RageFileBasic *m_pFile;
-	int m_iFilePos;
-
-	z_stream dstrm;
-	char decomp_buf[INBUFSIZE], *decomp_buf_ptr;
-	int decomp_buf_avail;
-
-public:
-	/* pFile will be freed. */
-	RageFileObjZipDeflated( RageFileBasic *pFile, int iUncompressedSize );
-	RageFileObjZipDeflated( const RageFileObjZipDeflated &cpy );
-	~RageFileObjZipDeflated();
-	int ReadInternal( void *pBuffer, size_t iBytes );
-	int WriteInternal( const void *pBuffer, size_t iBytes ) { SetError( "Not implemented" ); return -1; }
-	int SeekInternal( int iOffset );
-	int GetFileSize() const { return m_iUncompressedSize; }
-	RageFileBasic *Copy() const
-	{
-		RageException::Throw( "Loading ZIPs from deflated ZIPs is currently disabled; see RageFileObjZipDeflated" );
-
-		// return new RageFileObjZipDeflated( *this, p );
-	}
-};
 
 RageFileDriverZip::RageFileDriverZip( CString path ):
 	RageFileDriver( new NullFilenameDB )
@@ -416,7 +372,7 @@ RageFileBasic *RageFileDriverZip::Open( const CString &path, int mode, int &err 
 	case STORED:
 		return pFile;
 	case DEFLATED:
-		return new RageFileObjZipDeflated( pFile, info->uncompr_size );
+		return new RageFileObjInflate( pFile, info->uncompr_size );
 	default:
 		/* unknown compression method */
 		ASSERT( 0 );
@@ -429,155 +385,6 @@ RageFileBasic *RageFileDriverZip::Open( const CString &path, int mode, int &err 
 void RageFileDriverZip::FlushDirCache( const CString &sPath )
 {
 
-}
-
-RageFileObjZipDeflated::RageFileObjZipDeflated( RageFileBasic *pFile, int iUncompressedSize )
-{
-	m_pFile = pFile;
-	decomp_buf_avail = 0;
-	m_iUncompressedSize = iUncompressedSize;
-
-	dstrm.zalloc = Z_NULL;
-	dstrm.zfree = Z_NULL;
-
-	int err = inflateInit2( &dstrm, -MAX_WBITS );
-	if( err == Z_MEM_ERROR )
-		RageException::Throw( "inflateInit2( %i ): out of memory", -MAX_WBITS );
-	if( err != Z_OK )
-		LOG->Trace( "Huh? inflateInit2() err = %i", err );
-
-	decomp_buf_ptr = decomp_buf;
-	m_iFilePos = 0;
-}
-
-RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFileObjZipDeflated &cpy ):
-	RageFileObj( cpy )
-{
-	/* XXX completely untested */
-	/* Copy the entire decode state. */
-	/* inflateInit2 isn't widespread yet */
-	ASSERT( 0 );
-/*
-	m_pFile = cpy.m_pFile->Copy();
-	inflateCopy( &dstrm, const_cast<z_streamp>(&cpy.dstrm) );
-
-	// memcpy decomp_buf?
-	decomp_buf_ptr = decomp_buf + (cpy.decomp_buf_ptr - cpy.decomp_buf);
-	decomp_buf_avail = cpy.decomp_buf_avail;
-	m_iFilePos = cpy.m_iFilePos;
-	*/
-}
-
-
-RageFileObjZipDeflated::~RageFileObjZipDeflated()
-{
-	delete m_pFile;
-
-	int err = inflateEnd( &dstrm );
-	if( err != Z_OK )
-		LOG->Trace( "Huh? inflateEnd() err = %i", err );
-}
-
-int RageFileObjZipDeflated::ReadInternal( void *buf, size_t bytes )
-{
-	bool done=false;
-	int ret = 0;
-	while( bytes && !done )
-	{
-		if ( !decomp_buf_avail )
-		{
-			decomp_buf_ptr = decomp_buf;
-			decomp_buf_avail = 0;
-			int got = m_pFile->Read( decomp_buf, sizeof(decomp_buf) );
-			if( got == -1 )
-			{
-				SetError( m_pFile->GetError() );
-				return -1;
-			}
-			if( got == 0 )
-				break;
-
-			decomp_buf_avail = got;
-		}
-
-		dstrm.next_in = (Bytef *) decomp_buf_ptr;
-		dstrm.avail_in = decomp_buf_avail;
-		dstrm.next_out = (Bytef *) buf;
-		dstrm.avail_out = bytes;
-
-
-		int err = inflate(&dstrm, Z_PARTIAL_FLUSH);
-		switch( err )
-		{
-		case Z_DATA_ERROR:
-			SetError( "Data error" );
-			return -1;
-		case Z_MEM_ERROR:
-			SetError( "out of memory" );
-			return -1;
-		case Z_STREAM_END:
-			done = true;
-			break;
-		case Z_OK:
-			break;
-		default:
-			LOG->Trace( "Huh? inflate err %i", err );
-		}
-
-		const int used = (char *)dstrm.next_in - decomp_buf_ptr;
-		decomp_buf_ptr += used;
-		decomp_buf_avail -= used;
-
-		const int got = (char *)dstrm.next_out - (char *)buf;
-		m_iFilePos += got;
-		ret += got;
-		buf = (char *)buf + got;
-		bytes -= got;
-	}
-
-	return ret;
-}
-
-int RageFileObjZipDeflated::SeekInternal( int iPos )
-{
-	/* Optimization: if offset is the end of the file, it's a lseek(0,SEEK_END).  Don't
-	 * decode anything. */
-	if( iPos >= m_iUncompressedSize )
-	{
-		m_iFilePos = m_iUncompressedSize;
-		m_pFile->Seek( m_pFile->GetFileSize() );
-		decomp_buf_ptr = decomp_buf;
-		decomp_buf_avail = 0;
-		inflateReset( &dstrm );
-		return m_iUncompressedSize;
-	}
-
-	if( iPos < m_iFilePos )
-	{
-		inflateReset( &dstrm );
-		decomp_buf_ptr = decomp_buf;
-		decomp_buf_avail = 0;
-
-		m_pFile->Seek( 0 );
-		m_iFilePos = 0;
-	}
-
-	int iOffset = iPos - m_iFilePos;
-
-	/* Can this be optimized? */
-	char buf[1024*4];
-	while( iOffset )
-	{
-		int got = ReadInternal( buf, min( (int) sizeof(buf), iOffset ) );
-		if( got == -1 )
-			return -1;
-
-		if( got == 0 )
-			break;
-		iOffset -= got;
-	}
-
-	return m_iFilePos;
 }
 
 /*
