@@ -359,7 +359,6 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 		{
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				this->MenuStart( (PlayerNumber)p );
-			m_Out.StartTransitioning( SM_GoToNextScreen );
 		}
 		break;
 	case SM_GoToNextScreen:
