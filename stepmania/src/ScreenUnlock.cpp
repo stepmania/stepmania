@@ -145,7 +145,6 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 				if( pSong->isLocked)
 				{
 					text->SetText("???");
-					// text->SetZoom(ScrollingTextZoom * 1.99); 
 				} else {
 					RageColor color = SONGMAN->GetGroupColor(pSong->m_pSong->m_sGroupName);
 					text->SetGlobalDiffuseColor(color);
@@ -166,7 +165,6 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 			}
 			else
 				text->Command( ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY) );
-//			text->Command( ssprintf("diffusealpha,0;sleep,%f;linear,0.5;diffusealpha,1;linear,%f;y,%f;linear,0.5;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY) );
 
 			item.push_back(text);
 
@@ -195,7 +193,6 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 				}
 				else
 					IconCount->Command( ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY) );
-	//				IconCount->Command( ssprintf("diffusealpha,0;sleep,%f;linear,0.5;diffusealpha,1;linear,%f;y,%f;linear,0.5;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY) );
 
 				ItemIcons.push_back(IconCount);
 
@@ -253,8 +250,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 			NewText->SetGlobalDiffuseColor(color);
 
 			NewText->SetXY(ScrollingTextX, ScrollingTextStartY);
-			NewText->Command( ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumberUnlocks + 2 * i - 2), SECS_PER_CYCLE * 2 * (ScrollingTextRows + 1 - i), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows )) );
-//			NewText->Command( ssprintf("diffusealpha,0;sleep,%f;linear,0.5;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumberUnlocks + 2 * i - 2), SECS_PER_CYCLE * 2 * (ScrollingTextRows + 1 - i), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows )) );
+			NewText->Command( ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumberUnlocks + 2 * i - 2), SECS_PER_CYCLE * ((ScrollingTextRows - i) * 2 + 1 ), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows )) );
 
 			// new unlock graphic
 			NewIcon->Load( THEME->GetPathToG(ssprintf("ScreenUnlock %d icon", NextIcon)) );
@@ -265,8 +261,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 			NewIcon->SetHeight(UNLOCK_TEXT_SCROLL_ICON_SIZE);
 			NewIcon->SetWidth(UNLOCK_TEXT_SCROLL_ICON_SIZE);
 
-			NewIcon->Command( ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumberUnlocks + 2 * i - 2), SECS_PER_CYCLE * 2 * (ScrollingTextRows + 1 - i), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows )) );
-//			NewIcon->Command( ssprintf("diffusealpha,0;sleep,%f;linear,0.5;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumberUnlocks + 2 * i - 2), SECS_PER_CYCLE * 2 * (ScrollingTextRows + 1 - i), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows )) );
+			NewIcon->Command( ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumberUnlocks + 2 * i - 2), SECS_PER_CYCLE * ((ScrollingTextRows - i) * 2 + 1 ), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows )) );
 
 			ItemIcons.push_back(NewIcon);
 			item.push_back(NewText);
