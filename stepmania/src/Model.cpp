@@ -672,8 +672,7 @@ void Model::SetFrame( float fNewFrame )
 	m_fCurrFrame = fNewFrame;
 }
 
-void
-Model::AdvanceFrame (float dt)
+void Model::AdvanceFrame (float dt)
 {
 	if( m_pGeometry == NULL || 
 		m_pGeometry->m_Meshes.empty() || 
@@ -714,13 +713,14 @@ Model::AdvanceFrame (float dt)
 		{
 			RageVector3 vPos;
 			RageVector3 vRot;
+
 			//
 			// search for the adjacent position keys
 			//
-			msPositionKey *pLastPositionKey = 0, *pThisPositionKey = 0;
+			const msPositionKey *pLastPositionKey = NULL, *pThisPositionKey = NULL;
 			for (j = 0; j < nPositionKeyCount; j++)
 			{
-				msPositionKey *pPositionKey = &pBone->PositionKeys[j];
+				const msPositionKey *pPositionKey = &pBone->PositionKeys[j];
 				if (pPositionKey->fTime >= m_fCurrFrame)
 				{
 					pThisPositionKey = pPositionKey;
@@ -728,7 +728,7 @@ Model::AdvanceFrame (float dt)
 				}
 				pLastPositionKey = pPositionKey;
 			}
-			if (pLastPositionKey != 0 && pThisPositionKey != 0)
+			if( pLastPositionKey != NULL && pThisPositionKey != NULL )
 			{
 				float d = pThisPositionKey->fTime - pLastPositionKey->fTime;
 				float s = (m_fCurrFrame - pLastPositionKey->fTime) / d;
@@ -736,11 +736,11 @@ Model::AdvanceFrame (float dt)
 				vPos[1] = pLastPositionKey->Position[1] + (pThisPositionKey->Position[1] - pLastPositionKey->Position[1]) * s;
 				vPos[2] = pLastPositionKey->Position[2] + (pThisPositionKey->Position[2] - pLastPositionKey->Position[2]) * s;
 			}
-			else if (pLastPositionKey == 0)
+			else if( pLastPositionKey == NULL )
 			{
 				vPos = pThisPositionKey->Position;
 			}
-			else if (pThisPositionKey == 0)
+			else if( pThisPositionKey == NULL )
 			{
 				vPos = pLastPositionKey->Position;
 			}
@@ -749,10 +749,10 @@ Model::AdvanceFrame (float dt)
 			//
 			RageMatrix m;
 			RageMatrixIdentity( &m );
-			msRotationKey *pLastRotationKey = 0, *pThisRotationKey = 0;
+			const msRotationKey *pLastRotationKey = NULL, *pThisRotationKey = NULL;
 			for (j = 0; j < nRotationKeyCount; j++)
 			{
-				msRotationKey *pRotationKey = &pBone->RotationKeys[j];
+				const msRotationKey *pRotationKey = &pBone->RotationKeys[j];
 				if (pRotationKey->fTime >= m_fCurrFrame)
 				{
 					pThisRotationKey = pRotationKey;
@@ -792,7 +792,7 @@ Model::AdvanceFrame (float dt)
 			RageMatrixMultiply( &m_vpBones[i].mRelativeFinal, &m_vpBones[i].mRelative, &m );
 
 			int nParentBone = m_pCurAnimation->FindBoneByName( pBone->szParentName );
-			if (nParentBone == -1)
+			if( nParentBone == -1 )
 			{
 				m_vpBones[i].mFinal = m_vpBones[i].mRelativeFinal;
 			}
