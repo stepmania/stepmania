@@ -18,7 +18,10 @@ public:
 	void SetBlendMode( BlendMode mode );
 	bool SupportsTextureFormat( PixelFormat pixfmt, bool realtime=false );
 	bool Supports4BitPalettes();
-	unsigned CreateTexture( PixelFormat pixfmt, SDL_Surface* img );
+	unsigned CreateTexture( 
+		PixelFormat pixfmt, 
+		SDL_Surface* img,
+		bool bGenerateMipMaps );
 	void UpdateTexture( 
 		unsigned uTexHandle, 
 		SDL_Surface* img,

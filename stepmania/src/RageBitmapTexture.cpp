@@ -306,7 +306,7 @@ apply_color_key:
 	ConvertSDLSurface(img, m_iTextureWidth, m_iTextureHeight,
 		pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);
 	
-	m_uTexHandle = DISPLAY->CreateTexture( pixfmt, img );
+	m_uTexHandle = DISPLAY->CreateTexture( pixfmt, img, actualID.bMipMaps );
 
 	CreateFrameRects();
 

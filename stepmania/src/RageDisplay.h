@@ -151,7 +151,8 @@ public:
 	 * (unsigned in OpenGL, texture pointer in D3D) */
 	virtual unsigned CreateTexture( 
 		PixelFormat pixfmt,			// format of img and of texture in video mem
-		SDL_Surface* img 		// must be in pixfmt
+		SDL_Surface* img, 		// must be in pixfmt
+		bool bGenerateMipMaps
 		) = 0;
 	virtual void UpdateTexture( 
 		unsigned uTexHandle, 

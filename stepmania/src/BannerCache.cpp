@@ -184,7 +184,7 @@ struct BannerTexture: public RageTexture
 		ASSERT( DISPLAY->SupportsTextureFormat(pf) );
 
 		ASSERT(img);
-		m_uTexHandle = DISPLAY->CreateTexture( pf, img );
+		m_uTexHandle = DISPLAY->CreateTexture( pf, img, false );
 
 		CreateFrameRects();
 	}

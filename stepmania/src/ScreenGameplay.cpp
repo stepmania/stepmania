@@ -521,6 +521,20 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		}
 	}
 
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsPlayerEnabled(p) )
+			continue;	// skip
+
+		m_textStepsDescription[p].LoadFromFont( THEME->GetPathToF("ScreenGameplay StepsDescription") );
+		m_textStepsDescription[p].SetName( ssprintf("StepsDescriptionP%i",p+1) );
+		Steps* pSteps = GAMESTATE->m_pCurNotes[p];
+		ASSERT( pSteps );
+		m_textStepsDescription[p].SetText( pSteps->GetDescription() );
+		SET_XY( m_textStepsDescription[p] );
+		this->AddChild( &m_textStepsDescription[p] );
+	}
+
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
@@ -2254,6 +2268,7 @@ void ScreenGameplay::TweenOnScreen()
 		ON_COMMAND( m_textCourseSongNumber[p] );
 		if( GAMESTATE->m_PlayMode == PLAY_MODE_RAVE )
 			ON_COMMAND( m_textPlayerName[p] );
+		ON_COMMAND( m_textStepsDescription[p] );
 		if( m_pPrimaryScoreDisplay[p] )
 			ON_COMMAND( *m_pPrimaryScoreDisplay[p] );
 		if( m_pSecondaryScoreDisplay[p] )
@@ -2283,6 +2298,7 @@ void ScreenGameplay::TweenOffScreen()
 		OFF_COMMAND( m_textCourseSongNumber[p] );
 		if( GAMESTATE->m_PlayMode == PLAY_MODE_RAVE )
 			OFF_COMMAND( m_textPlayerName[p] );
+		OFF_COMMAND( m_textStepsDescription[p] );
 		if( m_pPrimaryScoreDisplay[p] )
 			OFF_COMMAND( *m_pPrimaryScoreDisplay[p] );
 		if( m_pSecondaryScoreDisplay[p] )

@@ -73,6 +73,7 @@ namespace GLExt {
 
 #ifdef WIN32
 #pragma comment(lib, "opengl32.lib")
+#pragma comment(lib, "glu32.lib")
 #endif
 
 //
@@ -1238,7 +1239,8 @@ RageDisplay::PixelFormat RageDisplay_OGL::GetImgPixelFormat( SDL_Surface* &img, 
 
 unsigned RageDisplay_OGL::CreateTexture( 
 	PixelFormat pixfmt,
-	SDL_Surface* img )
+	SDL_Surface* img,
+	bool bGenerateMipMaps )
 {
 	ASSERT( pixfmt < NUM_PIX_FORMATS );
 
@@ -1248,7 +1250,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 	
 	glBindTexture( GL_TEXTURE_2D, uTexHandle );
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, bGenerateMipMaps ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR);
 	SetTextureWrapping( false );
 
 	// texture must be power of two
@@ -1304,9 +1306,24 @@ unsigned RageDisplay_OGL::CreateTexture(
 
 	FlushGLErrors();
 
-	glTexImage2D(GL_TEXTURE_2D, 0, glTexFormat, 
+	// YUCK!  There's no way to tell gluBuild2DMipmaps how many mip-map levels
+	// to make.  It's all or nothing, so we have to call either glTexImage2D
+	// or gluBuild2DMipmaps
+	if( bGenerateMipMaps )
+	{
+		gluBuild2DMipmaps(
+			GL_TEXTURE_2D, glTexFormat, 
+			img->w, img->h,
+			glImageFormat, glImageType, img->pixels );
+	}
+	else
+	{
+		glTexImage2D(
+			GL_TEXTURE_2D, 0, glTexFormat, 
 			img->w, img->h, 0,
 			glImageFormat, glImageType, img->pixels);
+	}
+
 
 	GLenum error = glGetError();
 	if( error != GL_NO_ERROR )

@@ -49,7 +49,8 @@ Sprite::~Sprite()
 
 bool Sprite::LoadBG( RageTextureID ID )
 {
-	ID.iMipMaps = 1;
+	ID.bMipMaps = true;
+	// Don't we want to dither 16 bit textures at least?
 //	ID.bDither = true;
 	return Load(ID);
 }

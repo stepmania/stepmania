@@ -116,6 +116,7 @@ protected:
 	Sprite				m_sprCourseSongNumber;
 	BitmapText			m_textCourseSongNumber[NUM_PLAYERS];
 	BitmapText			m_textPlayerName[NUM_PLAYERS];
+	BitmapText			m_textStepsDescription[NUM_PLAYERS];
 
 	BPMDisplay			m_BPMDisplay;
 

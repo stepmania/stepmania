@@ -1009,7 +1009,7 @@ void BGAnimationLayer::Draw()
 			0, 
 			RageColor(0.6f,0.6f,0.6f,1), 
 			RageColor(0.9f,0.9f,0.9f,1),
-			RageColor(0,0,0,1),
+			RageColor(0.1f,0.1f,0.1f,1),
 			RageVector3(0, 0, 1) );
 	}
 

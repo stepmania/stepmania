@@ -55,6 +55,7 @@ void AnimatedTexture::Load( CString sTexOrIniPath )
 				ID.filename = Dirname(sTexOrIniPath) + sFileName;
 				ID.bStretch = true;
 				ID.bHotPinkColorKey = true;
+				ID.bMipMaps = true;	// use mipmaps in Models
 				AnimatedTextureState state = { 
 					TEXTUREMAN->LoadTexture( ID ),
 					fDelay
@@ -71,6 +72,7 @@ void AnimatedTexture::Load( CString sTexOrIniPath )
 		ID.filename = sTexOrIniPath;
 		ID.bHotPinkColorKey = true;
 		ID.bStretch = true;
+		ID.bMipMaps = true;	// use mipmaps in Models
 		AnimatedTextureState state = { 
 			TEXTUREMAN->LoadTexture( ID ),
 			10
