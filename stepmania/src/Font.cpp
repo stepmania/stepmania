@@ -37,23 +37,6 @@ void FontPage::Load( const CString &TexturePath, const FontPageSettings &cfg )
 	m_pTexture = TEXTUREMAN->LoadTexture( m_sTexturePath );
 	ASSERT( m_pTexture != NULL );
 
-	/* All characters on a page have the same vertical spacing, baseline
-	 * and center. */
-	baseline = cfg.Baseline;
-	if(baseline == -1)
-	{
-		/* The default baseline is 75% down the frame; this is where it
-		 * tends to be. */
-		baseline = int(m_pTexture->GetTextureFrameHeight() * .75f);
-	}
-
-	center = cfg.Center;
-	if(center == -1)
-	{
-		/* We don't know the center, so assume it's the center of the frame. */
-		center = m_pTexture->GetSourceFrameHeight()/2;
-	}
-
 	kanji = cfg.Kanji;
 
 	// load character widths
@@ -85,15 +68,45 @@ void FontPage::Load( const CString &TexturePath, const FontPageSettings &cfg )
 
 	m_iCharToGlyphNo = cfg.CharToGlyphNo;
 
-	int LineSpacing = cfg.LineSpacing;
+	LineSpacing = cfg.LineSpacing;
 	if(LineSpacing == -1)
 		LineSpacing = m_pTexture->GetSourceFrameHeight();
 
-	SetTextureCoords(FrameWidths, LineSpacing);
+	/* All characters on a page have the same vertical spacing, baseline
+	 * and ascender. */
+	if(cfg.Baseline != -1 && cfg.Top == -1)
+		RageException::Throw("Font %s has Baseline but no Top; must have both or neither",
+			TexturePath.GetString());
+	if(cfg.Baseline == -1 && cfg.Top != -1)
+		RageException::Throw("Font %s has Baseline but no Top; must have both or neither",
+			TexturePath.GetString());
+
+	int baseline=0;
+	if(cfg.Baseline == -1 && cfg.Top == -1)
+	{
+		/* We don't have a top and baseline.  Assume we're centered in the
+		 * frame, and that LineSpacing is the total height. */
+		float center = m_pTexture->GetSourceFrameHeight()/2.0f;
+		height = LineSpacing;
+		baseline = int(center + LineSpacing/2);
+	}
+	else if(cfg.Baseline != -1 && cfg.Top != -1)
+	{
+		baseline = cfg.Baseline;
+		height = baseline-cfg.Top;
+	}
+
+	/* Shift the character up so the top will be rendered at the baseline. */
+	vshift = -baseline;
+
+	SetTextureCoords(FrameWidths);
 	SetExtraPixels(cfg.DrawExtraPixelsLeft, cfg.DrawExtraPixelsRight);
+
+	LOG->Trace("Font %s: height %i, baseline %i ( == top %i)",
+		   TexturePath.GetString(), height, baseline, baseline-height);
 }
 
-void FontPage::SetTextureCoords(const vector<int> &widths, int LineSpacing)
+void FontPage::SetTextureCoords(const vector<int> &widths)
 {
 	for(int i = 0; i < m_pTexture->GetNumFrames(); ++i)
 	{
@@ -112,11 +125,6 @@ void FontPage::SetTextureCoords(const vector<int> &widths, int LineSpacing)
 		/* By default, advance one pixel more than the width.  (This could be
 		 * an option.) */
 		g.hadvance = int(g.width + 1);
-		g.vadvance = LineSpacing;
-
-		/* Shift the character up so the top of the rendered quad is at the top
-		 * of the character. */
-		g.vshift = -(m_pTexture->GetSourceFrameHeight() - g.vadvance)/2.0f;
 
 		/* Do the same thing with X.  Do this by changing the actual rendered
 		 * rect, instead of shifting it, so we don't render more than we need to. */
@@ -190,12 +198,25 @@ int Font::GetLineWidthInSourcePixels( const lstring &szLine ) const
 
 int Font::GetLineHeightInSourcePixels( const lstring &szLine ) const
 {
+	int iLineHeight = 0;
+
+	/* The spacing of a line is the spacing of its tallest used font page. XXX */
+	for( unsigned i=0; i<szLine.size(); i++ )
+		iLineHeight = max(iLineHeight, GetGlyph(szLine[i]).fp->height);
+//		iLineSpacing = max(iLineSpacing, def->LineSpacing);
+// ?
+	return iLineHeight;
+}
+
+int Font::GetLineSpacingInSourcePixels( const lstring &szLine ) const
+{
 	int iLineSpacing = 0;
 
-	/* The spacing of a line is the spacing of its tallest used font page. */
+	/* The spacing of a line is the spacing of its tallest used font page. XXX */
 	for( unsigned i=0; i<szLine.size(); i++ )
-		iLineSpacing = max(iLineSpacing, GetGlyph(szLine[i]).vadvance);
-
+		iLineSpacing = max(iLineSpacing, GetGlyph(szLine[i]).fp->LineSpacing);
+//		iLineSpacing = max(iLineSpacing, def->LineSpacing);
+// ?
 	return iLineSpacing;
 }
 

@@ -22,13 +22,13 @@ struct glyph {
 	RageTexture *Texture;
 
 	/* Number of pixels to advance horizontally after drawing this character. */
-	int hadvance, vadvance;
+	int hadvance;
 
 	/* Size of the actual rendered character. */
 	float width, height;
 
 	/* Number of pixels to offset this character when rendering. */
-	float hshift, vshift;
+	float hshift; // , vshift;
 
 	/* Texture coordinate rect. */
 	RectF rect;
@@ -39,8 +39,8 @@ struct FontPageSettings {
 		DrawExtraPixelsRight,
 		AddToAllWidths,
 		LineSpacing,
-		Baseline,
-		Center;
+		Top,
+		Baseline;
 	float ScaleAllWidthsBy;
 	bool Kanji;
 	
@@ -53,8 +53,8 @@ struct FontPageSettings {
 		AddToAllWidths(0), 
 		LineSpacing(-1),
 		ScaleAllWidthsBy(1),
+		Top(-1),
 		Baseline(-1),
-		Center(-1),
 		Kanji(false)
 	{ }
 };
@@ -77,12 +77,14 @@ public:
 	void Load( const CString &sASCIITexturePath, const FontPageSettings &cfg );
 
 	/* Page-global properties. */
-	int baseline, center;
+	int height;
 	bool kanji;
+	int LineSpacing, vshift;
+	int GetCenter() const { return height/2; }
 
 private:
 	void SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight);
-	void SetTextureCoords(const vector<int> &widths, int LineSpacing);
+	void SetTextureCoords(const vector<int> &widths);
 };
 
 class Font
@@ -100,6 +102,7 @@ public:
 
 	int GetLineWidthInSourcePixels( const lstring &szLine ) const;
 	int GetLineHeightInSourcePixels( const lstring &szLine ) const;
+	int GetLineSpacingInSourcePixels( const lstring &szLine ) const;
 
 	/* Add a FontPage to this font. */
 	void AddPage(FontPage *fp);
@@ -110,9 +113,12 @@ public:
 	/* Load font-wide settings. */
 	void CapsOnly();
 
-	int GetBaseline() const { return def->baseline; }
+//	int GetBaseline() const { return def->baseline; }
+	int GetHeight() const { return def->height; }
 	bool IsKanjiFont() const { return def->kanji; }
-	int GetCenter() const { return def->center; }
+	int GetCenter() const { return def->GetCenter(); }
+	int GetVshift() const { return def->vshift; }
+	int GetLineSpacing() const { return def->LineSpacing; }
 
 	void SetDefaultGlyph(FontPage *fp);
 

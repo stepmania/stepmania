@@ -119,10 +119,17 @@ void BitmapText::BuildChars()
 	verts.clear();
 	tex.clear();
 	
-	int TotalHeight = 0;
+	if(m_szTextLines.empty()) return;
+
+	int TotalHeight = m_pFont->GetHeight() * m_szTextLines.size();
 	unsigned i;
-	for(i = 0; i < m_szTextLines.size(); ++i)
-		TotalHeight += m_iLineHeights[i];
+	int MinSpacing = 0;
+
+	/* The height (from the origin to the baseline): */
+	int Padding = max(m_pFont->GetLineSpacing(), MinSpacing) - m_pFont->GetHeight();
+
+	/* There's padding between every line: */
+	TotalHeight += Padding * (m_szTextLines.size()-1);
 
 	int iY;	//	 the top position of the first row of characters
 	switch( m_VertAlign )
@@ -135,6 +142,7 @@ void BitmapText::BuildChars()
 
 	for( i=0; i<m_szTextLines.size(); i++ )		// foreach line
 	{
+		iY += m_pFont->GetHeight();
 		const lstring &szLine = m_szTextLines[i];
 		const int iLineWidth = m_iLineWidths[i];
 		
@@ -153,14 +161,12 @@ void BitmapText::BuildChars()
 			const glyph &g = m_pFont->GetGlyph(szLine[j]);
 
 			/* set vertex positions */
-			float vshift = g.vshift;
+			float vshift = float(g.fp->vshift);
 
-			/* Align the glyph with the font.  If either the font or the glyph is
-			 * kanji, align the centers; otherwise align the baselines. */
+			/* If either the font or the glyph is kanji, align the character
+			 * centers.  (Otherwise, leave it aligned at the baseline.) */
 			if(m_pFont->IsKanjiFont() || g.fp->kanji)
-				vshift += m_pFont->GetCenter() - g.fp->center;
-			else
-				vshift += m_pFont->GetBaseline() - g.fp->baseline;
+				vshift += g.fp->GetCenter() - m_pFont->GetCenter();
 
 			v[0].p = RageVector3( iX+g.hshift,			iY+vshift,		  0 );	// top left
 			v[1].p = RageVector3( iX+g.hshift,			iY+vshift+g.height, 0 );// bottom left
@@ -180,7 +186,8 @@ void BitmapText::BuildChars()
 			tex.push_back(m_pFont->GetGlyphTexture(szLine[j]));
 		}
 
-		iY += m_iLineHeights[i];
+		/* The amount of padding a line needs: */
+		iY += Padding;
 	}
 }
 

@@ -83,8 +83,8 @@ void FontManager::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, cons
 	ini.GetValueI( PageName, "AddToAllWidths", cfg.AddToAllWidths );
 	ini.GetValueF( PageName, "ScaleAllWidthsBy", cfg.ScaleAllWidthsBy );
 	ini.GetValueI( PageName, "LineSpacing", cfg.LineSpacing );
+	ini.GetValueI( PageName, "Top", cfg.Top );
 	ini.GetValueI( PageName, "Baseline", cfg.Baseline );
-	ini.GetValueI( PageName, "Center", cfg.Center );
 	ini.GetValueB( PageName, "Kanji", cfg.Kanji );
 
 	/* Iterate over all keys. */
