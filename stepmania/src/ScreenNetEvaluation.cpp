@@ -40,8 +40,8 @@ ScreenNetEvaluation::ScreenNetEvaluation (const CString & sClassName) : ScreenEv
 
 	this->AddChild( &m_rectUsersBG );
 
-	int cx = THEME->GetMetricF("ScreenNetEvaluation",ssprintf("User%dX",ShowSide));
-	int cy = THEME->GetMetricF("ScreenNetEvaluation",ssprintf("User%dY",ShowSide));
+	float cx = THEME->GetMetricF("ScreenNetEvaluation",ssprintf("User%dX",ShowSide));
+	float cy = THEME->GetMetricF("ScreenNetEvaluation",ssprintf("User%dY",ShowSide));
 	
 	m_iActivePlayers = NSMAN->m_ActivePlayers;
 	m_iCurrentPlayer = 0;
