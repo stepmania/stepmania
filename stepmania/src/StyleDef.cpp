@@ -16,6 +16,7 @@
 #include "GameDef.h"
 #include "IniFile.h"
 #include "GameState.h"
+#include "NoteData.h"
 
 
 void StyleDef::GetTransformedNoteDataForStyle( PlayerNumber pn, NoteData* pOriginal, NoteData* pNoteDataOut ) const

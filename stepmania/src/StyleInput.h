@@ -10,7 +10,7 @@
 	Chris Danford
 -----------------------------------------------------------------------------
 */
-#include "NoteData.h"
+#include "GameConstantsAndTypes.h"
 
 struct StyleInput
 {
