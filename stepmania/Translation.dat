@@ -24,11 +24,11 @@
 
 TitleFrom: Candy
 ArtistFrom: Luv.*
-TitleTo: CANDY ☆
+TitleTo: CANDY☆
 *
 TitleFrom: Candy
 ArtistFrom: .*Riyu.*
-TitleTo: CANDY ♡
+TitleTo: CANDY♡
 *
 # Make sure this appears after the above "Riyu" match, so it doesn't
 # break it.  I've seen both "Kosaku" and "Kosaka"; I think Kosaka is
@@ -54,10 +54,10 @@ TitleFrom: Bre=kdown
 TitleTo: BRE∀K DOWN!
 *
 TitleFrom: Candy #
-TitleTo: Candy ☆
+TitleTo: Candy☆
 *
 TitleFrom: Candy \$
-TitleTo: Candy ♡
+TitleTo: Candy♡
 *
 TitleFrom: } JAPAN
 TitleTo: 祭 JAPAN
@@ -107,7 +107,7 @@ TitleTo: 17才
 *
 # Handle "Mobo Moga:Mobo * Moga"; spaces optional.
 TitleFrom: Mobo ?\*? ?Moga
-TitleTo: MOBO☆MOGA
+TitleTo: MOBO★MOGA
 *
 TitleFrom: Love (Love )?Shine
 TitleTo: LOVE ♡ SHINE
@@ -119,7 +119,7 @@ TitleFrom: Dancing Pompokolin
 TitleTo: おどるポンポコリン
 *
 TitleFrom: Aoi Shoudou
-TitleTo: 青い振動
+TitleTo: 青い衝動
 *
 TitleFrom: Blue Impulse
 TitleTo: 青い衝動
@@ -143,7 +143,7 @@ TitleTo: 桜
 # Handle Door and Doors
 TitleFrom: (Doors? of Magic)|(Mahou no Tobira)
 TitleTo: 魔法の扉
-ArtistTo: スペース☆マコのテーマ
+SubtitleTo: スペース☆マコのテーマ
 * 
 # No need to write transliterations for these.
 TitleFrom: Senorita
@@ -152,7 +152,7 @@ DontTransliterate
 * 
 TitleFrom: Senorita\(Speedy Mix\)
 TitleTo: Señorita
-ArtistTo: Speedy Mix
+SubtitleTo: Speedy Mix
 DontTransliterate
 *
 TitleFrom: La Senorita
@@ -162,6 +162,9 @@ DontTransliterate
 TitleFrom: La Senorita Virtual
 TitleTo: La Señorita Virtual
 DontTransliterate
+*
+TitleFrom: L'amour et la liberte
+TitleTo: L'amour et la liberté
 *
 TitleFrom: Chotto Kiitena
 TitleTo: ちょっときいてな
