@@ -12,6 +12,7 @@
 #include "../../RageUtil.h"
 #include "../../RageSound.h"
 #include "../../RageLog.h"
+#include "../../PrefsManager.h"
 #include "../../tls.h"
 #include "SDL.h"
 
@@ -162,7 +163,7 @@ RageSound_DSound::RageSound_DSound()
 			newbuf = new DSoundBuf(ds, 
 				DSoundBuf::HW_HARDWARE,
 				channels, samplerate, 16, buffersize,
-				0.50f);
+				PREFSMAN->m_fSoundVolume);
 		} catch(const RageException &e) {
 			/* If we didn't get at least 8, fail. */
 			if(i >= 8) break; /* OK */

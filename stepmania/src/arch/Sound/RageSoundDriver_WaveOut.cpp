@@ -76,11 +76,10 @@ bool RageSound_WaveOut::GetData()
 	static Sint16 *buf = NULL;
 	int bufsize = chunksize_frames * channels;
 	if(!buf)
-	{
 		buf = new Sint16[bufsize];
-	}
 	memset(buf, 0, bufsize*sizeof(Uint16));
 	memset(buffers[b].lpData, 0, bufsize*sizeof(Uint16));
+	SoundMixBuffer mix;
 
 	for(unsigned i = 0; i < sounds.size(); ++i)
 	{
@@ -90,8 +89,7 @@ bool RageSound_WaveOut::GetData()
 		/* Call the callback. */
 		unsigned got = sounds[i]->snd->GetPCM((char *) buf, chunksize, last_cursor_pos);
 
-		SOUNDMAN->MixAudio(
-			(Sint16 *) buffers[b].lpData, buf, got, .5);
+		mix.write((Sint16 *) buf, got/2);
 
 		if(got < chunksize)
 		{
@@ -101,6 +99,7 @@ bool RageSound_WaveOut::GetData()
 		}
 	}
 
+	mix.read((Sint16 *) buffers[b].lpData);
 	MMRESULT ret = waveOutWrite(wo, &buffers[b], sizeof(buffers[b]));
   	if(ret != MMSYSERR_NOERROR)
 		RageException::Throw(wo_ssprintf(ret, "waveOutWrite failed"));

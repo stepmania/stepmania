@@ -81,7 +81,7 @@ bool RageSound_DSound_Software::GetData()
 		/* Call the callback. */
 		unsigned got = sounds[i]->snd->GetPCM((char *) buf, len, play_pos);
 
-		mix.write((Sint16 *) buf, got);
+		mix.write((Sint16 *) buf, got/2);
 
 		if(got < len)
 		{

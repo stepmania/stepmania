@@ -9,6 +9,7 @@
 #include "RageSound.h"
 #include "RageLog.h"
 #include "RageTimer.h"
+#include "PrefsManager.h"
 
 #include "arch/arch.h"
 #include "arch/Sound/RageSoundDriver.h"
@@ -267,13 +268,11 @@ void RageSoundManager::PlayMusic(CString file, bool loop, float start_sec, float
 
 SoundMixBuffer::SoundMixBuffer()
 {
-	vol = .5;
+	vol = PREFSMAN->m_fSoundVolume;
 }
 
 void SoundMixBuffer::write(const Sint16 *buf, unsigned size)
 {
-	size /= 2;
-
 	if(mixbuf.size() < size)
 	{
 		basic_string<Sint32> empty(size-mixbuf.size(), 0);
