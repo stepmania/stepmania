@@ -1576,10 +1576,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageSoundManager.h">
 			</File>
 			<File
-				RelativePath="RageSoundReader.cpp">
+				RelativePath="RageSoundReader.h">
 			</File>
 			<File
-				RelativePath="RageSoundReader.h">
+				RelativePath="RageSoundReader_FileReader.cpp">
 			</File>
 			<File
 				RelativePath="RageSoundReader_FileReader.h">
