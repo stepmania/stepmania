@@ -15,6 +15,7 @@
 #include "Transition.h"
 #include "Quad.h"
 #include "Banner.h"
+#include "BitmapText.h"
 
 
 class TransitionOniFade : public Transition
