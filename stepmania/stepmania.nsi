@@ -219,12 +219,18 @@ File "smpackage.exe"
 ; track down problems with INI upgrades (and then possibly restore it
 ; for the release if we're not confident we've fixed most problems) -glenn
 ; Added message box to ask user. -Chris
+; This is a silly check, because we force an uninstall and the installer 
+; removes stepmania.ini.  -Chris
 
-IfFileExists "$INSTDIR\stepmania.ini" stepmania_ini_present stepmania_ini_not_present
-stepmania_ini_present:
-MessageBox MB_YESNO|MB_ICONQUESTION "Your settings from the previous installation of StepMania were found.$\nWould you like to keep these settings?" IDNO stepmania_ini_not_present
-Delete "$INSTDIR\stepmania.ini"
-stepmania_ini_not_present:
+;IfFileExists "$INSTDIR\stepmania.ini" stepmania_ini_present 
+;IfFileExists "$INSTDIR\Data\stepmania.ini" stepmania_ini_present 
+;Goto stepmania_ini_not_present
+;stepmania_ini_present:
+;MessageBox MB_YESNO|MB_ICONQUESTION "Your settings from the previous installation of StepMania were found.$\nWould you like to keep these settings?" IDNO stepmania_ini_not_present
+;Delete "$INSTDIR\Data\stepmania.ini"
+;stepmania_ini_not_present:
+;; Move ini into Data\
+;Rename "$INSTDIR\Data\stepmania.ini" "$INSTDIR\stepmania.ini"
 
 ; Create Start Menu icons
 SetShellVarContext all	; install in "All Users" if NT
