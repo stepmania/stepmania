@@ -411,7 +411,8 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 
 	/* The body and caps should have no overlap, so their order doesn't matter.
 	 * Draw the head last, so it appears on top. */
-	static RageVertex queue[4096];
+	const int size = 4096;
+	static RageVertex queue[size];
 
 	//
 	// Draw the bottom cap (always wavy)
@@ -476,6 +477,8 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 			v[2].p = RageVector3(fXBottomRight,fYBottom,0);	v[2].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom; 	v[2].t = RageVector2(fTexCoordRight, fTexCoordBottom);
 			v[3].p = RageVector3(fXBottomLeft, fYBottom,0);	v[3].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom; 	v[3].t = RageVector2(fTexCoordLeft,  fTexCoordBottom);
 			v+=4;
+			if( v-queue >= size )
+				break;
 		}
 		DISPLAY->DrawQuads( queue, v-queue );
 	}
@@ -556,6 +559,8 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 			v[2].p = RageVector3(fXBottomRight,fYBottom,0);	v[2].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom;	v[2].t = RageVector2(fTexCoordRight, fTexCoordBottom);
 			v[3].p = RageVector3(fXBottomLeft, fYBottom,0);	v[3].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom;	v[3].t = RageVector2(fTexCoordLeft,  fTexCoordBottom);
 			v+=4;
+			if( v-queue >= size )
+				break;
 		}	
 		DISPLAY->DrawQuads( queue, v-queue );
 	}
@@ -622,6 +627,8 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 			v[2].p = RageVector3(fXBottomRight,fYBottom,0);	v[2].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom; 	v[2].t = RageVector2(fTexCoordRight, fTexCoordBottom);
 			v[3].p = RageVector3(fXBottomLeft, fYBottom,0);	v[3].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom; 	v[3].t = RageVector2(fTexCoordLeft,  fTexCoordBottom);
 			v+=4;
+			if( v-queue >= size )
+				break;
 		}
 		DISPLAY->DrawQuads( queue, v-queue );
 	}
