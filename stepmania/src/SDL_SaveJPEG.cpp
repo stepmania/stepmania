@@ -110,7 +110,7 @@ static void jpeg_SDL_RW_dest(jpeg::j_compress_ptr cinfo, SDL_RWops *ctx)
 }
 
 /* Save a JPEG to a file.  cjpeg.c and example.c from jpeglib were helpful in writing this. */
-void IMG_SaveJPG_RW( SDL_Surface *surface, SDL_RWops *dest )
+void IMG_SaveJPG_RW( SDL_Surface *surface, SDL_RWops *dest, bool bHighQual )
 {
 	SDL_Surface *dst_surface;
 	if( ConvertSDLSurface( surface, dst_surface,
@@ -157,7 +157,12 @@ void IMG_SaveJPG_RW( SDL_Surface *surface, SDL_RWops *dest )
    * since the defaults depend on the source color space.)
    */
   jpeg::jpeg_set_defaults(&cinfo);
-  jpeg::jpeg_set_quality( &cinfo, 150, TRUE );
+  if( bHighQual )
+  {
+	jpeg::jpeg_set_quality( &cinfo, 150, TRUE );
+  } else {
+	jpeg::jpeg_set_quality( &cinfo, 50, TRUE );
+  }
 
   /* Step 4: Start compressor */
 
