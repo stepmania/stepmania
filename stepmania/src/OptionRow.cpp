@@ -353,6 +353,7 @@ void OptionRow::LoadExit()
 		ITEMS_ZOOM
 */
 	m_RowType = OptionRow::ROW_EXIT;
+	m_RowDef.name = "Exit";
 	m_RowDef.choices.push_back( "" );
 
 	BitmapText *bt = new BitmapText;
