@@ -16,11 +16,10 @@
 #if defined(LINUX)
 #include "arch_linux.h"
 #elif defined(DARWIN)
-// #include "arch_darwin.h"
+#include "arch_darwin.h"
 #elif defined(WIN32)
 #include "arch_Win32.h"
 #endif
-
 
 LoadingWindow *MakeLoadingWindow() { return new ARCH_LOADING_WINDOW; }
 ErrorDialog *MakeErrorDialog() { return new ARCH_ERROR_DIALOG; }
@@ -69,7 +68,13 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 #endif		
 #ifdef HAVE_OSS
 			if(!DriversToTry[i].CompareNoCase("OSS")) ret = new RageSound_OSS;
-#endif		
+#endif
+            if(!DriversToTry[i].CompareNoCase("SDL"))
+              try {
+                ret = new RageSound_SDL;
+              } catch (RageException e) {
+                ret = NULL;
+              }
 			if(!DriversToTry[i].CompareNoCase("Null")) ret = new RageSound_Null;
 			if( !ret )
 				LOG->Warn("Unknown sound driver name: %s", DriversToTry[i].c_str());
