@@ -2,9 +2,6 @@
 #include "Crash.h"
 #include "archutils/Unix/CrashHandler.h"
 #include <Carbon/Carbon.h>
-#include <sys/types.h>
-#include <sys/uio.h>
-#include <unistd.h>
 
 void InformUserOfCrash( const CString &sPath )
 {

@@ -1,13 +1,9 @@
 #include "global.h"
 #include "DialogDriver_Cocoa.h"
-#include "RageLog.h"
 #include "RageThreads.h"
-#include "RageUtil.h"
 #define Random Random_ // work around namespace pollution
 #include <Carbon/Carbon.h>
 #undef Random_
-#include <sys/types.h>
-#include <sys/sysctl.h>
 
 static SInt16 ShowAlert( int type, CFStringRef message, CFStringRef OK, CFStringRef cancel = NULL )
 {
