@@ -19,6 +19,7 @@
 #include "RageUtil.h"
 #include "song.h"
 #include "ThemeManager.h"
+#include "RageFile.h"
 
 const int MAX_LAYERS = 100;
 
@@ -48,11 +49,56 @@ void BGAnimation::LoadFromStaticGraphic( CString sPath )
 	m_Layers.push_back( pLayer );
 }
 
+void AddLayersFromAniDir( CString sAniDir, vector<BGAnimationLayer*> &layersAddTo )
+{
+	if( sAniDir.empty() )
+		 return;
+
+	if( sAniDir.Right(1) != SLASH )
+		sAniDir += SLASH;
+
+	RAGE_ASSERT_M( IsADirectory(sAniDir), sAniDir + " isn't a directory" );
+
+	CString sPathToIni = sAniDir + "BGAnimation.ini";
+
+	IniFile ini(sPathToIni);
+	ini.ReadFile();
+
+	int i;
+	for( i=0; i<MAX_LAYERS; i++ )
+	{
+		CString sLayer = ssprintf("Layer%d",i+1);
+		const IniFile::key* pKey = ini.GetKey( sLayer );
+		if( pKey == NULL )
+			continue;	// skip
+
+		CString sImportDir;
+		if( ini.GetValue(sLayer, "Import", sImportDir) )
+		{
+			// import a whole BGAnimation
+			sImportDir = sAniDir + sImportDir;
+			CollapsePath( sImportDir );
+			AddLayersFromAniDir( sImportDir, layersAddTo );
+		}
+		else
+		{
+			// import a single layer
+			BGAnimationLayer* pLayer = new BGAnimationLayer;
+			pLayer->LoadFromIni( sAniDir, sLayer );
+			layersAddTo.push_back( pLayer );
+		}
+	}
+
+}
+
 void BGAnimation::LoadFromAniDir( CString sAniDir )
 {
 	Unload();
 
-	if( !sAniDir.empty() && sAniDir.Right(1) != SLASH )
+	if( sAniDir.empty() )
+		 return;
+
+	if( sAniDir.Right(1) != SLASH )
 		sAniDir += SLASH;
 
 	RAGE_ASSERT_M( IsADirectory(sAniDir), sAniDir + " isn't a directory" );
@@ -62,25 +108,14 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 	if( DoesFileExist(sPathToIni) )
 	{
 		// This is a new style BGAnimation (using .ini)
+		AddLayersFromAniDir( sAniDir, m_Layers );	// TODO: Check for circular load
+
 		IniFile ini(sPathToIni);
 		ini.ReadFile();
-
-		int i;
-		for( i=0; i<MAX_LAYERS; i++ )
-		{
-			CString sLayer = ssprintf("Layer%d",i+1);
-			const IniFile::key* pKey = ini.GetKey( sLayer );
-			if( pKey == NULL )
-				continue;	// skip
-			BGAnimationLayer* pLayer = new BGAnimationLayer;
-			pLayer->LoadFromIni( sAniDir, sLayer );
-			m_Layers.push_back( pLayer );
-		}
-
 		if( !ini.GetValue( "BGAnimation", "LengthSeconds", m_fLengthSeconds ) )
 		{
 			m_fLengthSeconds = 0;
-			for( i=0; (unsigned)i < m_Layers.size(); i++ )
+			for( int i=0; (unsigned)i < m_Layers.size(); i++ )
 				m_fLengthSeconds = max(m_fLengthSeconds, m_Layers[i]->GetMaxTweenTimeLeft());
 		}
 	}
