@@ -32,8 +32,8 @@ void ScreenExit::Update( float fDelta )
 	if( !DoQuit && m_ShutdownTimer.PeekDeltaTime() > 3 )
 	{
 		DoQuit = true;
-		CString warn = ssprintf("ScreenExit: %lu sound%s failed to finish playing quickly: ",
-			PlayingSounds.size(), (PlayingSounds.size()==1?"":"s") );
+		CString warn = ssprintf("ScreenExit: %i sound%s failed to finish playing quickly: ",
+			(int) PlayingSounds.size(), (PlayingSounds.size()==1?"":"s") );
 		for( set<RageSound *>::const_iterator i = PlayingSounds.begin();
 			i != PlayingSounds.end(); ++i )
 		{
