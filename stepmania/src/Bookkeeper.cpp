@@ -24,8 +24,8 @@
 
 Bookkeeper*	BOOKKEEPER = NULL;	// global and accessable from anywhere in our program
 
-const CString BOOKKEEPING_INI = BASE_PATH "Data\\Bookkeeping.ini";
-const CString COINS_DAT = BASE_PATH "Data\\Coins.dat";
+static const CString BOOKKEEPING_INI = BASE_PATH "Data" SLASH "Bookkeeping.ini";
+static const CString COINS_DAT = BASE_PATH "Data" SLASH "Coins.dat";
 
 
 
