@@ -471,11 +471,20 @@ void ScreenOptions::UpdateEnabledDisabled()
 				}
 		}
 
-		/* Hide the text of all but the first player, so we don't overdraw. */
+		/* Hide the text of all but the first active player, so we don't overdraw. */
 		if( m_InputMode == INPUTMODE_BOTH && m_bRowIsLong[i] )
 		{
-			for( unsigned j=1; j<NUM_PLAYERS; j++ )
+			bool one = false;
+			for( unsigned j=0; j<NUM_PLAYERS; j++ )
 			{
+				if( GAMESTATE->IsHumanPlayer(j) )
+				{
+					if(!one)
+					{
+						one=true;
+						continue;
+					}
+				}
 				m_textItems[i][j].StopTweening();
 				m_textItems[i][j].SetDiffuse( RageColor(1,1,1,0) );
 			}
