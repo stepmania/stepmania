@@ -1,4 +1,6 @@
 ----------------------- Version 3.01 ---------------------------
+CHANGE:  Faster music wheel sort changing and scrolling.
+CHANGE:  Ignore invalid KSFs.
 NEW FEATURE: DWI SAMPLESTART and SAMPLELENGTH in milliseconds is now
          supported.
 CHANGE:  Courses are no longer limited to 300 songs.
