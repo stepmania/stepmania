@@ -15,6 +15,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include <fstream>
+#include <time.h>
 
 RageLog* LOG;		// global and accessable from anywhere in the program
 
@@ -63,10 +64,12 @@ RageLog::RageLog()
 	this->Trace( "Last compiled on %s.", __TIMESTAMP__ );
 #endif
 
-	SYSTEMTIME st;
-    GetLocalTime( &st );
+	time_t cur_time;
+	time(&cur_time);
+	const struct tm *now = localtime(&cur_time);
+
 	this->Trace( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
-					 st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
+		1900+now->tm_year, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec );
 	this->Trace( "" );
 }
 
