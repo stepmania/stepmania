@@ -16,6 +16,7 @@
 #include "song.h"
 
 #define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
+#define PREV_SCREEN				THEME->GetMetric (m_sName,"PrevScreen")
 #define MINIMUM_DELAY			THEME->GetMetricF(m_sName,"MinimumDelay")
 #define SHOW_BANNER				THEME->GetMetricB(m_sName,"ShowBanner")
 
@@ -131,7 +132,7 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToPrevScreen:
 		SCREENMAN->DeletePreppedScreen();
-		SCREENMAN->SetNewScreen( "ScreenSelectMusic" );
+		SCREENMAN->SetNewScreen( PREV_SCREEN );
 		break;
 	}
 }
