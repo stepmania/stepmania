@@ -7,7 +7,6 @@
 #include "RageLog.h"
 #include "RageTextureManager.h"
 #include "GameState.h"
-#include "ThemeManager.h"
 #include "PrefsManager.h"
 #include "NoteTypes.h"
 #include "Steps.h"
@@ -22,14 +21,14 @@
 
 const float FADE_SECONDS = 1.0f;
 
-#define LEFT_EDGE			THEME->GetMetricF("Background","LeftEdge")
-#define TOP_EDGE			THEME->GetMetricF("Background","TopEdge")
-#define RIGHT_EDGE			THEME->GetMetricF("Background","RightEdge")
-#define BOTTOM_EDGE			THEME->GetMetricF("Background","BottomEdge")
-ThemeMetric<bool> BLINK_DANGER_ALL("Background","BlinkDangerAll");
-ThemeMetric<bool> DANGER_ALL_IS_OPAQUE("Background","DangerAllIsOpaque");
-#define BRIGHTNESS_FADE_COMMAND THEME->GetMetric("Background","BrightnessFadeCommand")
-#define RECT_BACKGROUND RectF(LEFT_EDGE,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE)
+ThemeMetric<float> LEFT_EDGE						("Background","LeftEdge");
+ThemeMetric<float> TOP_EDGE							("Background","TopEdge");
+ThemeMetric<float> RIGHT_EDGE						("Background","RightEdge");
+ThemeMetric<float> BOTTOM_EDGE						("Background","BottomEdge");
+#define RECT_BACKGROUND RectF						(LEFT_EDGE,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE)
+ThemeMetric<bool> BLINK_DANGER_ALL					("Background","BlinkDangerAll");
+ThemeMetric<bool> DANGER_ALL_IS_OPAQUE				("Background","DangerAllIsOpaque");
+ThemeMetric<ActorCommands> BRIGHTNESS_FADE_COMMAND	("Background","BrightnessFadeCommand");
 
 static float g_fBackgroundCenterWidth = 40;
 const CString STATIC_BACKGROUND = "static background";
@@ -436,9 +435,9 @@ void Background::LoadFromSong( const Song* pSong )
 		 * may look something like "BGAnimation, BGAnimationLayer, Sprite" or it
 		 * may be deeper, like "BGAnimation, BGAnimationLayer, BGAnimation,
 		 * BGAnimationLayer, Sprite". */
-		pBGA->Command( "propagate,1" );
-		pBGA->Command( "effectclock,music" );
-		pBGA->Command( "propagate,0" );
+		pBGA->Command( ParseActorCommands("propagate,1") );
+		pBGA->Command( ParseActorCommands("effectclock,music") );
+		pBGA->Command( ParseActorCommands("propagate,0") );
 	}
 }
 

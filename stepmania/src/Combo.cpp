@@ -21,10 +21,10 @@ ThemeMetric<float>	NUMBER_MAX_ZOOM		("Combo","NumberMaxZoom");
 ThemeMetric<float>	NUMBER_MAX_ZOOM_AT	("Combo","NumberMaxZoomAt");
 ThemeMetric<float>	PULSE_ZOOM			("Combo","PulseZoom");
 ThemeMetric<float>	C_TWEEN_SECONDS		("Combo","TweenSeconds");
-ThemeMetric<CString>	FULL_COMBO_GREATS_COMMAND		("Combo","FullComboGreatsCommand");
-ThemeMetric<CString>	FULL_COMBO_PERFECTS_COMMAND		("Combo","FullComboPerfectsCommand");
-ThemeMetric<CString>	FULL_COMBO_MARVELOUSES_COMMAND	("Combo","FullComboMarvelousesCommand");
-ThemeMetric<CString>	FULL_COMBO_BROKEN_COMMAND		("Combo","FullComboBrokenCommand");
+ThemeMetric<ActorCommands>	FULL_COMBO_GREATS_COMMAND		("Combo","FullComboGreatsCommand");
+ThemeMetric<ActorCommands>	FULL_COMBO_PERFECTS_COMMAND		("Combo","FullComboPerfectsCommand");
+ThemeMetric<ActorCommands>	FULL_COMBO_MARVELOUSES_COMMAND	("Combo","FullComboMarvelousesCommand");
+ThemeMetric<ActorCommands>	FULL_COMBO_BROKEN_COMMAND		("Combo","FullComboBrokenCommand");
 ThemeMetric<bool>	SHOW_MISS_COMBO		("Combo","ShowMissCombo");
 
 

@@ -288,7 +288,9 @@ void UtilCommand( Actor& actor, const CString &sClassName, const CString &sComma
 //	if( actor.GetHidden() )
 //		return 0;
 
-	actor.Command( "playcommand," + sCommandName );
+	ActorCommand ac;
+	ac.Set("playcommand,"+sCommandName);
+	actor.HandleCommand( ac );
 
 	// HACK:  It's very often that we command things to TweenOffScreen 
 	// that we aren't drawing.  We know that an Actor is not being
@@ -305,7 +307,7 @@ void UtilCommand( Actor& actor, const CString &sClassName, const CString &sComma
 												   sClassName.c_str(), sCommandName.c_str()) );
 	}
 
-	actor.Command( THEME->GetMetric(sClassName,actor.GetID()+sCommandName+"Command") );
+	actor.Command( THEME->GetMetricA(sClassName,actor.GetID()+sCommandName+"Command") );
 }
 
 void AutoActor::Load( const CString &sPath )

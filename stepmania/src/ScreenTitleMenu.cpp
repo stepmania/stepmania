@@ -25,13 +25,13 @@
 #include "ScreenOptionsMasterPrefs.h"
 
 
-#define LOGO_ON_COMMAND				THEME->GetMetric("ScreenTitleMenu","LogoOnCommand")
-#define LOGO_HOME_ON_COMMAND		THEME->GetMetric("ScreenTitleMenu","LogoHomeOnCommand")
-#define VERSION_ON_COMMAND			THEME->GetMetric("ScreenTitleMenu","VersionOnCommand")
-#define SONGS_ON_COMMAND			THEME->GetMetric("ScreenTitleMenu","SongsOnCommand")
-#define MAX_STAGES_ON_COMMAND		THEME->GetMetric("ScreenTitleMenu","MaxStagesOnCommand")
-#define MAX_STAGES_TEXT				THEME->GetMetric("ScreenTitleMenu","MaxStagesText")
-#define LIFE_DIFFICULTY_ON_COMMAND	THEME->GetMetric("ScreenTitleMenu","LifeDifficultyOnCommand")
+#define LOGO_ON_COMMAND				THEME->GetMetricA("ScreenTitleMenu","LogoOnCommand")
+#define LOGO_HOME_ON_COMMAND		THEME->GetMetricA("ScreenTitleMenu","LogoHomeOnCommand")
+#define VERSION_ON_COMMAND			THEME->GetMetricA("ScreenTitleMenu","VersionOnCommand")
+#define SONGS_ON_COMMAND			THEME->GetMetricA("ScreenTitleMenu","SongsOnCommand")
+#define MAX_STAGES_ON_COMMAND		THEME->GetMetricA("ScreenTitleMenu","MaxStagesOnCommand")
+#define MAX_STAGES_TEXT				THEME->GetMetric ("ScreenTitleMenu","MaxStagesText")
+#define LIFE_DIFFICULTY_ON_COMMAND	THEME->GetMetricA("ScreenTitleMenu","LifeDifficultyOnCommand")
 #define HELP_X						THEME->GetMetricF("ScreenTitleMenu","HelpX")
 #define HELP_Y						THEME->GetMetricF("ScreenTitleMenu","HelpY")
 #define CHOICES_X					THEME->GetMetricF("ScreenTitleMenu","ChoicesX")
@@ -45,8 +45,8 @@
 #define MENU_TEXT_ALIGN				THEME->GetMetricI("ScreenTitleMenu","MenuTextAlign")
 #define SECONDS_BETWEEN_COMMENTS	THEME->GetMetricF("ScreenTitleMenu","SecondsBetweenComments")
 #define SECONDS_BEFORE_ATTRACT		THEME->GetMetricF("ScreenTitleMenu","SecondsBeforeAttract")
-#define HELP_TEXT( coin_mode )		THEME->GetMetric("ScreenTitleMenu","HelpText"+Capitalize(CoinModeToString(coin_mode)))
-#define MENU_ITEM_CREATE			THEME->GetMetric("ScreenTitleMenu","MenuCommandOnCreate")
+#define HELP_TEXT( coin_mode )		THEME->GetMetric ("ScreenTitleMenu","HelpText"+Capitalize(CoinModeToString(coin_mode)))
+#define MENU_ITEM_CREATE			THEME->GetMetricA("ScreenTitleMenu","MenuCommandOnCreate")
 #define MENU_ITEM_SELECT_DELAY		THEME->GetMetricF("ScreenTitleMenu","MenuCommandSelectDelay")
 
 #define NAME( sChoiceName )			THEME->GetMetric (m_sName,ssprintf("Name%s",sChoiceName.c_str()))

@@ -83,10 +83,10 @@ void HighScoreWheelItem::LoadBlank( int iRankIndex )
 
 void HighScoreWheelItem::ShowFocus()
 {
-	CString sCommand = "diffuseshift;EffectColor1,1,1,0,1;EffectColor2,0,1,1,1";
-	m_textRank.Command( sCommand );
-	m_textName.Command( sCommand );
-	m_textScore.Command( sCommand );
+	ActorCommands cmds = ParseActorCommands("diffuseshift;EffectColor1,1,1,0,1;EffectColor2,0,1,1,1");
+	m_textRank.Command( cmds );
+	m_textName.Command( cmds );
+	m_textScore.Command( cmds );
 }
 
 void HighScoreWheel::Load( const HighScoreList& hsl, int iIndexToFocus )
@@ -219,7 +219,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 				Letter->SetText( ssprintf("%lc", Chars[ch]) );
 				m_textAlphabet[p].push_back( Letter );
 				m_Keyboard[p].AddChild( Letter );
-				Letter->Command( THEME->GetMetric("ScreenNameEntryTraditional","AlphabetInitCommand") );
+				Letter->Command( THEME->GetMetricA("ScreenNameEntryTraditional","AlphabetInitCommand") );
 
 				m_AlphabetLetter[p].push_back( Chars[ch] );
 			}
@@ -236,7 +236,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 				m_Keyboard[p].AddChild( Letter );
 
 				m_AlphabetLetter[p].push_back( CHAR_BACK );
-				Letter->Command( THEME->GetMetric("ScreenNameEntryTraditional","OKInitCommand") );
+				Letter->Command( THEME->GetMetricA("ScreenNameEntryTraditional","OKInitCommand") );
 			}
 
 			/* Add "OK". */
@@ -251,7 +251,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 				m_Keyboard[p].AddChild( Letter );
 
 				m_AlphabetLetter[p].push_back( CHAR_OK );
-				Letter->Command( THEME->GetMetric("ScreenNameEntryTraditional","OKInitCommand") );
+				Letter->Command( THEME->GetMetricA("ScreenNameEntryTraditional","OKInitCommand") );
 			}
 
 			m_sprCursor[p].SetName( ssprintf("CursorP%i",p+1) );
@@ -441,7 +441,7 @@ void ScreenNameEntryTraditional::PositionCharsAndCursor( int pn )
 		const bool hidden = ( Pos < First || Pos > Last );
 		const int ActualPos = clamp( Pos, First-1, Last+1 );
 
-		bt->Command("stoptweening;decelerate,.12");
+		bt->Command( ParseActorCommands("stoptweening;decelerate,.12") );
 		bt->SetX( ActualPos * ALPHABET_GAP_X );
 		bt->SetDiffuseAlpha( hidden? 0.0f:1.0f );
 	}

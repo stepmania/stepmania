@@ -233,10 +233,10 @@ void DifficultyList::PositionItems()
 		if( m_bShown && m < (int)m_Rows.size() )
 			bHidden = m_Rows[m].m_bHidden;
 
-		const CString cmd = ssprintf( "diffusealpha,%f", bHidden? 0.0f:1.0f );
-		m_Lines[m].m_Description.Command( cmd );
-		m_Lines[m].m_Meter.RunCommandOnChildren( cmd );
-		m_Lines[m].m_Number.Command( cmd );
+		const ActorCommands cmds = ParseActorCommands( ssprintf("diffusealpha,%f",bHidden?0.0f:1.0f) );
+		m_Lines[m].m_Description.Command( cmds );
+		m_Lines[m].m_Meter.RunCommandOnChildren( cmds );
+		m_Lines[m].m_Number.Command( cmds );
 	}
 
 
@@ -356,9 +356,10 @@ void DifficultyList::HideRows()
 {
 	for( unsigned m = 0; m < m_Rows.size(); ++m )
 	{
-		m_Lines[m].m_Description.Command( "finishtweening;diffusealpha,0" );
-		m_Lines[m].m_Meter.RunCommandOnChildren( "finishtweening;diffusealpha,0" );
-		m_Lines[m].m_Number.Command( "finishtweening;diffusealpha,0" );
+		static const ActorCommands cmds = ParseActorCommands( "finishtweening;diffusealpha,0" );
+		m_Lines[m].m_Description.Command( cmds );
+		m_Lines[m].m_Meter.RunCommandOnChildren( cmds );
+		m_Lines[m].m_Number.Command( cmds );
 	}
 }
 
@@ -368,9 +369,10 @@ void DifficultyList::TweenOnScreen()
 	m_bShown = true;
 	for( unsigned m = 0; m < m_Rows.size(); ++m )
 	{
-		m_Lines[m].m_Description.Command( "finishtweening" );
-		m_Lines[m].m_Meter.RunCommandOnChildren( "finishtweening" );
-		m_Lines[m].m_Number.Command( "finishtweening" );
+		static const ActorCommands cmds = ParseActorCommands( "finishtweening" );
+		m_Lines[m].m_Description.Command( cmds );
+		m_Lines[m].m_Meter.RunCommandOnChildren( cmds );
+		m_Lines[m].m_Number.Command( cmds );
 	}
 
 //	PositionItems();

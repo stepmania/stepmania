@@ -246,8 +246,8 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 		
 		CString sRowCommands = LINE(sLineName);
 		
-		vector<ActorCommand> vCommands;
-		ParseCommands( sRowCommands, vCommands );
+		ActorCommands vCommands;
+		ParseActorCommands( sRowCommands, vCommands );
 		
 		if( vCommands.size() < 1 )
 			RageException::Throw( "Parse error in %s::Line%i", m_sName.c_str(), i+1 );

@@ -4,10 +4,9 @@
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "GameState.h"
-#include "ThemeManager.h"
 #include "Course.h"
 #include "Style.h"
-
+#include "ThemeManager.h"
 
 #define NORMAL_COLOR		THEME->GetMetricC(m_sName,"NormalColor")
 #define CHANGE_COLOR		THEME->GetMetricC(m_sName,"ChangeColor")

@@ -191,20 +191,16 @@ bool NoteSkinManager::GetMetricB( const CString &sNoteSkinName, const CString &s
 
 RageColor NoteSkinManager::GetMetricC( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName )
 {
-	float r=1,b=1,g=1,a=1;	// initialize in case sscanf fails
-	CString sValue = GetMetric(sNoteSkinName,sButtonName,sValueName);
-	char szValue[40];
-	strncpy( szValue, sValue, 39 );
-	int result = sscanf( szValue, "%f,%f,%f,%f", &r, &g, &b, &a );
-	if( result != 4 )
-	{
-		LOG->Warn( "The color value '%s' for theme metric '%s : %s' is invalid.", szValue, sButtonName.c_str(), sValueName.c_str() );
-		ASSERT(0);
-	}
-
-	return RageColor(r,g,b,a);
+	RageColor c;
+	if( !c.FromString( GetMetric(sNoteSkinName,sButtonName,sValueName) ) )
+		LOG->Warn( "The color value for NoteSkin metric '%s : %s : %s' is invalid.", sNoteSkinName.c_str(), sButtonName.c_str(), sValueName.c_str() );
+	return c;
 }
 
+ActorCommands NoteSkinManager::GetMetricA( const CString &sNoteSkinName, const CString &sButtonName, const CString &sValueName )
+{
+	return ParseActorCommands( GetMetric(sNoteSkinName,sButtonName,sValueName) );
+}
 
 CString NoteSkinManager::GetPathToFromNoteSkinAndButton( const CString &NoteSkin, const CString &sButtonName, const CString &sElement, bool bOptional )
 {

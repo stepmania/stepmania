@@ -13,12 +13,12 @@
 #include "Game.h"
 #include "HelpDisplay.h"
 #include "ScreenDimensions.h"
+#include "ThemeMetric.h"
 
-
-#define EVEN_LINE_IN		THEME->GetMetric("ScreenMapControllers","EvenLineIn")
-#define EVEN_LINE_OUT		THEME->GetMetric("ScreenMapControllers","EvenLineOut")
-#define ODD_LINE_IN			THEME->GetMetric("ScreenMapControllers","OddLineIn")
-#define ODD_LINE_OUT		THEME->GetMetric("ScreenMapControllers","OddLineOut")
+static const ThemeMetric<ActorCommands> EVEN_LINE_IN	("ScreenMapControllers","EvenLineIn");
+static const ThemeMetric<ActorCommands> EVEN_LINE_OUT	("ScreenMapControllers","EvenLineOut");
+static const ThemeMetric<ActorCommands> ODD_LINE_IN		("ScreenMapControllers","OddLineIn");
+static const ThemeMetric<ActorCommands> ODD_LINE_OUT	("ScreenMapControllers","OddLineOut");
 
 const int FramesToWaitForInput = 2;
 
@@ -78,7 +78,7 @@ ScreenMapControllers::ScreenMapControllers( CString sClassName ) : ScreenWithMen
 		m_Line[b].SetY( LINE_START_Y + b*LINE_GAP_Y );
 		this->AddChild( &m_Line[b] );
 
-		m_Line[b].Command( (b%2)? ODD_LINE_IN:EVEN_LINE_IN );
+		m_Line[b].Command( (b%2)? ODD_LINE_IN : EVEN_LINE_IN );
 	}	
 
 	m_textError.LoadFromFont( THEME->GetPathToF("Common normal") );

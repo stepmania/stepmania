@@ -6,7 +6,6 @@
 #include "PrefsManager.h"
 #include "RageLog.h"
 #include "RageDisplay.h"
-#include "ThemeManager.h"
 #include "Steps.h"
 #include "Style.h"
 #include "Model.h"

@@ -7,7 +7,6 @@
 #include "RageTimer.h"
 #include "RageLog.h"
 #include "song.h"
-#include "ThemeManager.h"
 #include "ActorCollision.h"
 #include "Sprite.h"
 #include "RageDisplay.h"
@@ -669,13 +668,14 @@ void BGAnimationLayer::Update( float fDeltaTime )
 	switch( m_Type )
 	{
 	case TYPE_SPRITE:
-		for( unsigned i=0; i<m_SubActors.size(); i++ )
+		if( m_fTexCoordVelocityX || m_fTexCoordVelocityY )
 		{
-			if( m_fTexCoordVelocityX || m_fTexCoordVelocityY )
+			for( unsigned i=0; i<m_SubActors.size(); i++ )
 			{
-				m_SubActors[i]->Command( ssprintf("StretchTexCoords,%f,%f",
+				Sprite *pSprite = (Sprite*)m_SubActors[i];
+				pSprite->StretchTexCoords(
 					fDeltaTime*m_fTexCoordVelocityX,
-					fDeltaTime*m_fTexCoordVelocityY) );
+					fDeltaTime*m_fTexCoordVelocityY );
 			}
 		}
 		break;
@@ -991,10 +991,10 @@ void BGAnimationLayer::GainFocus( float fRate, bool bRewindMovie, bool bLoop )
 	// TODO: Don't special case subActor[0].  The movie layer should be set up with
 	// a LoseFocusCommand that pauses, and a GainFocusCommand that plays.
 	if( bRewindMovie )
-		RunCommandOnChildren( "position,0" );
-	RunCommandOnChildren( ssprintf("loop,%i",bLoop) );
-	RunCommandOnChildren( "play" );
-	RunCommandOnChildren( ssprintf("rate,%f",fRate) );
+		RunCommandOnChildren( ParseActorCommands("position,0") );
+	RunCommandOnChildren( ParseActorCommands(ssprintf("loop,%i",bLoop)) );
+	RunCommandOnChildren( ParseActorCommands("play") );
+	RunCommandOnChildren( ParseActorCommands(ssprintf("rate,%f",fRate)) );
 
 	if( m_fRepeatCommandEverySeconds == -1 )	// if not repeating
 	{
@@ -1003,7 +1003,7 @@ void BGAnimationLayer::GainFocus( float fRate, bool bRewindMovie, bool bLoop )
 		 * should run OnCommand when they're actually displayed, when GainFocus
 		 * gets called.  We've already run OnCommand; abort it so we don't run tweens
 		 * twice. */
-		RunCommandOnChildren( "stoptweening" );
+		RunCommandOnChildren( ParseActorCommands("stoptweening") );
 		PlayCommand( "On" );
 	}
 
@@ -1017,7 +1017,7 @@ void BGAnimationLayer::LoseFocus()
 	if( !m_SubActors.size() )
 		return;
 
-	RunCommandOnChildren( "pause" );
+	RunCommandOnChildren( ParseActorCommands("pause") );
 
 	PlayCommand( "LoseFocus" );
 }
@@ -1025,7 +1025,7 @@ void BGAnimationLayer::LoseFocus()
 void BGAnimationLayer::PlayCommand( const CString &sCommandName )
 {
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->Command( ssprintf("playcommand,%s", sCommandName.c_str()) );
+		m_SubActors[i]->Command( ParseActorCommands("playcommand,"+sCommandName) );
 
 	CString sKey = sCommandName;
 	sKey.MakeLower();
@@ -1035,7 +1035,7 @@ void BGAnimationLayer::PlayCommand( const CString &sCommandName )
 		return;
 
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->Command( it->second );
+		m_SubActors[i]->Command( ParseActorCommands(it->second) );
 }
 
 /*

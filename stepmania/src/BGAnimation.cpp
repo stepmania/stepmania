@@ -172,13 +172,13 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 			ActorScroller::SetDestinationItem( int(m_SubActors.size()-1+fItemPaddingEnd) );
 		}
 
-		CString InitCommand;
-		if( ini.GetValue( "BGAnimation", "InitCommand", InitCommand ) )
+		CString sInitCommand;
+		if( ini.GetValue( "BGAnimation", "InitCommand", sInitCommand ) )
 		{
 			/* There's an InitCommand.  Run it now.  This can be used to eg. change Z to
 			 * modify draw order between BGAs in a Foreground.  Most things should be done
 			 * in metrics.ini commands, not here. */
-			this->Command( InitCommand );
+			this->Command( ParseActorCommands(sInitCommand) );
 		}
 	}
 	else

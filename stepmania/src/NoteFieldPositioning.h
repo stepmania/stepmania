@@ -3,6 +3,7 @@
 
 #include "PlayerNumber.h"
 #include "Style.h"
+#include "ActorCommands.h"
 
 class IniFile;
 
@@ -32,8 +33,8 @@ struct NoteFieldMode
 	float m_fFirstPixelToDrawScale, m_fLastPixelToDrawScale;
 	CString m_Backdrop;
 
-	CString m_JudgmentCmd, m_ComboCmd, m_AttackDisplayCmd;
-	CString m_HoldJudgmentCmd[MAX_NOTE_TRACKS];
+	ActorCommands m_JudgmentCmd, m_ComboCmd, m_AttackDisplayCmd;
+	ActorCommands m_HoldJudgmentCmd[MAX_NOTE_TRACKS];
 };
 
 class NoteFieldPositioning

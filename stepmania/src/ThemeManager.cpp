@@ -694,8 +694,13 @@ RageColor ThemeManager::GetMetricC( const CString &sClassName, const CString &sV
 {
 	RageColor ret(1,1,1,1);
 	if( !ret.FromString( GetMetricRaw(sClassName,sValueName) ) )
-		LOG->Warn( "The color value '%s' for NoteSkin metric '%s : %s' is invalid.", GetMetricRaw(sClassName,sValueName).c_str(), sClassName.c_str(), sValueName.c_str() );
+		LOG->Warn( "The color value '%s' for metric '%s : %s' is invalid.", GetMetricRaw(sClassName,sValueName).c_str(), sClassName.c_str(), sValueName.c_str() );
 	return ret;
+}
+
+ActorCommands ThemeManager::GetMetricA( const CString &sClassName, const CString &sValueName )
+{
+	return ParseActorCommands( GetMetricRaw(sClassName,sValueName) );
 }
 
 void ThemeManager::NextTheme()

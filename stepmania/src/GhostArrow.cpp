@@ -31,7 +31,7 @@ void GhostArrow::Load( CString sNoteSkin, CString sButton, CString sElement )
 	{
 		CString sJudge = TapNoteScoreToString( i );
 		CString sCommand = Capitalize(sJudge)+"Command";
-		m_sScoreCommand[i] = NOTESKIN->GetMetric( sNoteSkin, m_sName, sCommand );
+		m_acScoreCommand[i] = NOTESKIN->GetMetricA( sNoteSkin, m_sName, sCommand );
 	}
 }
 
@@ -53,7 +53,7 @@ void GhostArrow::Step( TapNoteScore score )
 
 	m_spr[score].SetHidden( false );
 	m_spr[score].StopTweening();
-	m_spr[score].Command( m_sScoreCommand[score] );
+	m_spr[score].Command( m_acScoreCommand[score] );
 }
 
 /*

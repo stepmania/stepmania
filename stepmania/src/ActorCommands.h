@@ -32,9 +32,15 @@ struct ActorCommand
 	CString GetOriginalCommandString() const;	// for when reporting an error in number of params
 };
 
+typedef vector<ActorCommand> ActorCommands;
+
 // Take a command list string and return pointers to each of the tokens in the 
 // string.  sCommand list is a list of commands separated by ';'.
-void ParseCommands( const CString &sCommands, vector<ActorCommand> &vCommandsOut );
+// TODO: This is expensive to do during the game.  Eventually, 
+// move all calls to ParseActorCommands to happen during load, then execute
+// from the parsed ActorCommand structures.
+void ParseActorCommands( const CString &sCommands, ActorCommands &vCommandsOut );
+ActorCommands ParseActorCommands( const CString &sCommands );
 
 
 #define BeginHandleParams int iMaxIndexAccessed = 0;

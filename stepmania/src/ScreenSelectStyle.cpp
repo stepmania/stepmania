@@ -13,8 +13,8 @@
 #include "CommonMetrics.h"
 
 
-#define ICON_GAIN_FOCUS_COMMAND		THEME->GetMetric (m_sName,"IconGainFocusCommand")
-#define ICON_LOSE_FOCUS_COMMAND		THEME->GetMetric (m_sName,"IconLoseFocusCommand")
+#define ICON_GAIN_FOCUS_COMMAND		THEME->GetMetricA(m_sName,"IconGainFocusCommand")
+#define ICON_LOSE_FOCUS_COMMAND		THEME->GetMetricA(m_sName,"IconLoseFocusCommand")
 #define DISABLED_COLOR				THEME->GetMetricC(m_sName,"DisabledColor")
 
 

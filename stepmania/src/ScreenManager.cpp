@@ -155,7 +155,8 @@ void ScreenSystemLayer::ReloadCreditsText()
 void ScreenSystemLayer::SystemMessage( CString sMessage )
 {
 	m_textMessage.SetText( sMessage );
-	m_textMessage.Command( "finishtweening;diffusealpha,1;addx,-640;linear,0.5;addx,+640;sleep,5;linear,0.5;diffusealpha,0" );
+	static const ActorCommands cmds = ParseActorCommands("finishtweening;diffusealpha,1;addx,-640;linear,0.5;addx,+640;sleep,5;linear,0.5;diffusealpha,0");
+	m_textMessage.Command( cmds );
 }
 
 void ScreenSystemLayer::SystemMessageNoAnimate( CString sMessage )

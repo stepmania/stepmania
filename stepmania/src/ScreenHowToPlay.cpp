@@ -12,23 +12,24 @@
 #include "NotesLoaderSM.h"
 #include "GameSoundManager.h"
 #include "Model.h"
+#include "ThemeMetric.h"
 
-#define SECONDS_TO_SHOW						THEME->GetMetricF("ScreenHowToPlay","SecondsToShow")
-#define STEPFILE							THEME->GetMetric ("ScreenHowToPlay","Stepfile")
-#define NUM_PERFECTS						THEME->GetMetricI("ScreenHowToPlay","NumPerfects")
-#define NUM_MISSES							THEME->GetMetricI("ScreenHowToPlay","NumMisses")
+static const ThemeMetric<float>			SECONDS_TO_SHOW		("ScreenHowToPlay","SecondsToShow");
+static const ThemeMetric<CString>		STEPFILE			("ScreenHowToPlay","Stepfile");
+static const ThemeMetric<int>			NUM_PERFECTS		("ScreenHowToPlay","NumPerfects");
+static const ThemeMetric<int>			NUM_MISSES			("ScreenHowToPlay","NumMisses");
 //
-#define USELIFEBAR							THEME->GetMetricB("ScreenHowToPlay","UseLifeMeterBar")
-#define LIFEBARONCOMMAND					THEME->GetMetric ("ScreenHowToPlay","LifeMeterBarOnCommand")
+static const ThemeMetric<bool>			USELIFEBAR			("ScreenHowToPlay","UseLifeMeterBar");
+static const ThemeMetric<ActorCommands>	LIFEBARONCOMMAND	("ScreenHowToPlay","LifeMeterBarOnCommand");
 //
-#define USECHARACTER						THEME->GetMetricB("ScreenHowToPlay","UseCharacter")
-#define CHARACTERONCOMMAND					THEME->GetMetric ("ScreenHowToPlay","CharacterOnCommand")
+static const ThemeMetric<bool>			USECHARACTER		("ScreenHowToPlay","UseCharacter");
+static const ThemeMetric<ActorCommands>	CHARACTERONCOMMAND	("ScreenHowToPlay","CharacterOnCommand");
 //
-#define USEPAD								THEME->GetMetricB("ScreenHowToPlay","UsePad")
-#define PADONCOMMAND						THEME->GetMetric ("ScreenHowToPlay","PadOnCommand")
+static const ThemeMetric<bool>			USEPAD				("ScreenHowToPlay","UsePad");
+static const ThemeMetric<ActorCommands>	PADONCOMMAND		("ScreenHowToPlay","PadOnCommand");
 //
-#define USEPLAYER							THEME->GetMetricB("ScreenHowToPlay","UseNotefield")
-#define PLAYERX								THEME->GetMetricF("ScreenHowToPlay","PlayerX")
+static const ThemeMetric<bool>			USEPLAYER			("ScreenHowToPlay","UseNotefield");
+static const ThemeMetric<float>			PLAYERX				("ScreenHowToPlay","PlayerX");
 
 enum Animation
 {
@@ -42,7 +43,7 @@ enum Animation
 	NUM_ANIMATIONS
 };
 
-static const char *anims[NUM_ANIMATIONS] =
+static const CString anims[NUM_ANIMATIONS] =
 {
 	"DancePad-DDR.txt",
 	"DancePads-DDR.txt",
@@ -86,7 +87,7 @@ ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 	m_Overlay.LoadFromAniDir( THEME->GetPathToB("ScreenHowToPlay overlay") );
 	this->AddChild( &m_Overlay );
 
-	if( USEPAD && DoesFileExist( GetAnimPath(ANIM_DANCE_PAD) ) )
+	if( (bool)USEPAD && DoesFileExist( GetAnimPath(ANIM_DANCE_PAD) ) )
 	{
 		m_pmDancePad = new Model;
 		m_pmDancePad->LoadMilkshapeAscii( GetAnimPath(ANIM_DANCE_PAD) );
@@ -97,7 +98,7 @@ ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 	// Display random character
 	vector<Character*> apCharacters;
 	GAMESTATE->GetCharacters( apCharacters );
-	if( USECHARACTER && apCharacters.size() && HaveAllCharAnimations() )
+	if( (bool)USECHARACTER && apCharacters.size() && HaveAllCharAnimations() )
 	{
 		Character* rndchar = GAMESTATE->GetRandomCharacter();
 

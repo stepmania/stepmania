@@ -3,21 +3,22 @@
 #include "ThemeManager.h"
 #include "SongManager.h"
 #include "RageLog.h"
+#include "ThemeMetric.h"
 
 /* If this actor is used anywhere other than SelectGroup, we
  * can add a setting that changes which metric group we pull
  * settings out of, so it can be configured separately. */
-#define START_X				THEME->GetMetricF("GroupList","StartX")
-#define START_Y				THEME->GetMetricF("GroupList","StartY")
-#define SPACING_X			THEME->GetMetricF("GroupList","SpacingX")
-#define SPACING_Y			THEME->GetMetricF("GroupList","SpacingY")
-#define SCROLL_TWEEN_COMMAND THEME->GetMetric ("GroupList","ScrollTweenCommand")
-#define GAIN_FOCUS_ITEM_COMMAND		THEME->GetMetric ("GroupList","GainFocusItemCommand")
-#define LOSE_FOCUS_ITEM_COMMAND		THEME->GetMetric ("GroupList","LoseFocusItemCommand")
-#define GAIN_FOCUS_GROUP_COMMAND	THEME->GetMetric ("GroupList","GainFocusGroupCommand")
-#define LOSE_FOCUS_GROUP_COMMAND	THEME->GetMetric ("GroupList","LoseFocusGroupCommand")
-#define HIDE_ITEM_COMMAND	THEME->GetMetric ("GroupList","HideItemCommand")
-#define SHOW_ITEM_COMMAND	THEME->GetMetric ("GroupList","ShowItemCommand")
+static const ThemeMetric<float>			START_X						("GroupList","StartX");
+static const ThemeMetric<float>			START_Y						("GroupList","StartY");
+static const ThemeMetric<float>			SPACING_X					("GroupList","SpacingX");
+static const ThemeMetric<float>			SPACING_Y					("GroupList","SpacingY");
+static const ThemeMetric<ActorCommands>	SCROLL_TWEEN_COMMAND		("GroupList","ScrollTweenCommand");
+static const ThemeMetric<ActorCommands>	GAIN_FOCUS_ITEM_COMMAND		("GroupList","GainFocusItemCommand");
+static const ThemeMetric<ActorCommands>	LOSE_FOCUS_ITEM_COMMAND		("GroupList","LoseFocusItemCommand");
+static const ThemeMetric<ActorCommands>	GAIN_FOCUS_GROUP_COMMAND	("GroupList","GainFocusGroupCommand");
+static const ThemeMetric<ActorCommands>	LOSE_FOCUS_GROUP_COMMAND	("GroupList","LoseFocusGroupCommand");
+static const ThemeMetric<ActorCommands>	HIDE_ITEM_COMMAND			("GroupList","HideItemCommand");
+static const ThemeMetric<ActorCommands>	SHOW_ITEM_COMMAND			("GroupList","ShowItemCommand");
 
 const int MAX_GROUPS_ONSCREEN = 7;
 

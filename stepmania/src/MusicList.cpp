@@ -1,17 +1,18 @@
 #include "global.h"
 #include "MusicList.h"
 #include "ThemeManager.h"
+#include "ThemeMetric.h"
 
 /* If this actor is used anywhere other than SelectGroup, we
  * can add a setting that changes which metric group we pull
  * settings out of, so it can be configured separately. */
-#define NUM_COLUMNS		THEME->GetMetricI("MusicList","NumColumns")
-#define NUM_ROWS		THEME->GetMetricI("MusicList","NumRows")
-#define START_X			THEME->GetMetricF("MusicList","StartX")
-#define START_Y			THEME->GetMetricF("MusicList","StartY")
-#define SPACING_X		THEME->GetMetricF("MusicList","SpacingX")
-#define CROP_WIDTH		THEME->GetMetricF("MusicList","CropWidth")
-#define INIT_COMMAND	THEME->GetMetric ("MusicList","InitCommand")
+static const ThemeMetric<int>			NUM_COLUMNS		("MusicList","NumColumns");
+static const ThemeMetric<int>			NUM_ROWS		("MusicList","NumRows");
+static const ThemeMetric<float>			START_X			("MusicList","StartX");
+static const ThemeMetric<float>			START_Y			("MusicList","StartY");
+static const ThemeMetric<float>			SPACING_X		("MusicList","SpacingX");
+static const ThemeMetric<float>			CROP_WIDTH		("MusicList","CropWidth");
+static const ThemeMetric<ActorCommands> INIT_COMMAND	("MusicList","InitCommand");
 
 MusicList::MusicList()
 {

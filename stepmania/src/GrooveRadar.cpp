@@ -7,13 +7,14 @@
 #include "Steps.h"
 #include "RageDisplay.h"
 #include "RageMath.h"
+#include "ThemeMetric.h"
 
-#define LABEL_OFFSET_X( i )			THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetX",i+1))
-#define LABEL_OFFSET_Y( i )			THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetY",i+1))
-#define LABEL_ON_COMMAND			THEME->GetMetric ("GrooveRadar","LabelOnCommand")
-#define LABEL_ON_DELAY				THEME->GetMetricF("GrooveRadar","LabelOnDelay")
-#define LABEL_ON_COMMAND_POST_DELAY THEME->GetMetric ("GrooveRadar","LabelOnCommandPostDelay")
-#define DISABLE_RADAR				THEME->GetMetricI("GrooveRadar","DisableRadar")
+#define		LABEL_OFFSET_X( i )		THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetX",i+1))
+#define 	LABEL_OFFSET_Y( i )		THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetY",i+1))
+static const ThemeMetric<ActorCommands>	LABEL_ON_COMMAND			("GrooveRadar","LabelOnCommand");
+static const ThemeMetric<float>			LABEL_ON_DELAY				("GrooveRadar","LabelOnDelay");
+static const ThemeMetric<ActorCommands>	LABEL_ON_COMMAND_POST_DELAY ("GrooveRadar","LabelOnCommandPostDelay");
+static const ThemeMetric<bool>			DISABLE_RADAR				("GrooveRadar","DisableRadar");
 
 float RADAR_VALUE_ROTATION( int iValueIndex ) {	return PI/2 + PI*2 / 5.0f * iValueIndex; }
 
@@ -81,7 +82,7 @@ GrooveRadar::GrooveRadarValueMap::GrooveRadarValueMap()
 
 void GrooveRadar::GrooveRadarValueMap::SetFromSteps( PlayerNumber pn, Steps* pSteps )		// NULL means no song
 {
-	if(DISABLE_RADAR == 1) // if the theme says not to disable it
+	if( (bool)DISABLE_RADAR ) // if the theme says not to disable it
 		return;
 	if( pSteps != NULL )
 	{

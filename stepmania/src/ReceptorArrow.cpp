@@ -33,14 +33,14 @@ bool ReceptorArrow::Load( CString NoteSkin, PlayerNumber pn, int iColNo )
 	{
 		CString sJudge = TapNoteScoreToString( i );
 		CString sCommand = Capitalize(sJudge)+"Command";
-		m_sScoreCommand[i] = NOTESKIN->GetMetric( NoteSkin, m_sName, sCommand );
+		m_sScoreCommand[i] = NOTESKIN->GetMetricA( NoteSkin, m_sName, sCommand );
 	}
 
 	m_pPressBlock.Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin,sButton,"KeypressBlock") );
 
-	m_pReceptorWaiting->Command( "effectclock,beat" );
-	m_pReceptorGo->Command( "effectclock,beat" );
-	m_pPressBlock->Command( "effectclock,beat" );
+	m_pReceptorWaiting->Command(	ParseActorCommands("effectclock,beat") );
+	m_pReceptorGo->Command(			ParseActorCommands("effectclock,beat") );
+	m_pPressBlock->Command(			ParseActorCommands("effectclock,beat") );
 
 	// draw pressblock before receptors
 	this->AddChild( m_pPressBlock );

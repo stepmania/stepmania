@@ -8,11 +8,12 @@
 #include "ThemeManager.h"
 #include "Font.h"
 #include "GameSoundManager.h"
+#include "ThemeMetric.h"
 
-#define WARNING_START				THEME->GetMetricI("MenuTimer","WarningStart")
-#define WARNING_BEEP_START			THEME->GetMetricI("MenuTimer","WarningBeepStart")
-#define WARNING_COMMAND(i)			THEME->GetMetric ("MenuTimer", ssprintf("WarningCommand%i",i))
-#define ON_COMMAND					THEME->GetMetric ("MenuTimer","OnCommand")
+static const ThemeMetric<int>	WARNING_START		("MenuTimer","WarningStart");
+static const ThemeMetric<int>	WARNING_BEEP_START	("MenuTimer","WarningBeepStart");
+#define		WARNING_COMMAND(i)	THEME->GetMetricA	("MenuTimer", ssprintf("WarningCommand%i",i))
+static const ThemeMetric<ActorCommands> ON_COMMAND	("MenuTimer","OnCommand");
 
 static const int TIMER_SECONDS = 99;
 static const int MAX_STALL_SECONDS = 30;

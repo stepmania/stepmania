@@ -7,26 +7,26 @@
 #include "ThemeManager.h"
 #include "ThemeMetric.h"
 
-static ThemeMetric<CString>	MARVELOUS_COMMAND		("Judgment","MarvelousCommand");
-static ThemeMetric<CString>	PERFECT_COMMAND			("Judgment","PerfectCommand");
-static ThemeMetric<CString>	GREAT_COMMAND			("Judgment","GreatCommand");
-static ThemeMetric<CString>	GOOD_COMMAND			("Judgment","GoodCommand");
-static ThemeMetric<CString>	BOO_COMMAND				("Judgment","BooCommand");
-static ThemeMetric<CString>	MISS_COMMAND			("Judgment","MissCommand");
+static ThemeMetric<ActorCommands>	MARVELOUS_COMMAND		("Judgment","MarvelousCommand");
+static ThemeMetric<ActorCommands>	PERFECT_COMMAND			("Judgment","PerfectCommand");
+static ThemeMetric<ActorCommands>	GREAT_COMMAND			("Judgment","GreatCommand");
+static ThemeMetric<ActorCommands>	GOOD_COMMAND			("Judgment","GoodCommand");
+static ThemeMetric<ActorCommands>	BOO_COMMAND				("Judgment","BooCommand");
+static ThemeMetric<ActorCommands>	MISS_COMMAND			("Judgment","MissCommand");
 
-static ThemeMetric<CString>	MARVELOUS_ODD_COMMAND	("Judgment","MarvelousOddCommand");
-static ThemeMetric<CString>	PERFECT_ODD_COMMAND		("Judgment","PerfectOddCommand");
-static ThemeMetric<CString>	GREAT_ODD_COMMAND		("Judgment","GreatOddCommand");
-static ThemeMetric<CString>	GOOD_ODD_COMMAND		("Judgment","GoodOddCommand");
-static ThemeMetric<CString>	BOO_ODD_COMMAND			("Judgment","BooOddCommand");
-static ThemeMetric<CString>	MISS_ODD_COMMAND		("Judgment","MissOddCommand");
+static ThemeMetric<ActorCommands>	MARVELOUS_ODD_COMMAND	("Judgment","MarvelousOddCommand");
+static ThemeMetric<ActorCommands>	PERFECT_ODD_COMMAND		("Judgment","PerfectOddCommand");
+static ThemeMetric<ActorCommands>	GREAT_ODD_COMMAND		("Judgment","GreatOddCommand");
+static ThemeMetric<ActorCommands>	GOOD_ODD_COMMAND		("Judgment","GoodOddCommand");
+static ThemeMetric<ActorCommands>	BOO_ODD_COMMAND			("Judgment","BooOddCommand");
+static ThemeMetric<ActorCommands>	MISS_ODD_COMMAND		("Judgment","MissOddCommand");
 
-static ThemeMetric<CString>	MARVELOUS_EVEN_COMMAND	("Judgment","MarvelousEvenCommand");
-static ThemeMetric<CString>	PERFECT_EVEN_COMMAND	("Judgment","PerfectEvenCommand");
-static ThemeMetric<CString>	GREAT_EVEN_COMMAND		("Judgment","GreatEvenCommand");
-static ThemeMetric<CString>	GOOD_EVEN_COMMAND		("Judgment","GoodEvenCommand");
-static ThemeMetric<CString>	BOO_EVEN_COMMAND		("Judgment","BooEvenCommand");
-static ThemeMetric<CString>	MISS_EVEN_COMMAND		("Judgment","MissEvenCommand");
+static ThemeMetric<ActorCommands>	MARVELOUS_EVEN_COMMAND	("Judgment","MarvelousEvenCommand");
+static ThemeMetric<ActorCommands>	PERFECT_EVEN_COMMAND	("Judgment","PerfectEvenCommand");
+static ThemeMetric<ActorCommands>	GREAT_EVEN_COMMAND		("Judgment","GreatEvenCommand");
+static ThemeMetric<ActorCommands>	GOOD_EVEN_COMMAND		("Judgment","GoodEvenCommand");
+static ThemeMetric<ActorCommands>	BOO_EVEN_COMMAND		("Judgment","BooEvenCommand");
+static ThemeMetric<ActorCommands>	MISS_EVEN_COMMAND		("Judgment","MissEvenCommand");
 
 
 Judgment::Judgment()

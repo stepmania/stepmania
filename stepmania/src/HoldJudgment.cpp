@@ -6,12 +6,12 @@
 #include "ThemeManager.h"
 #include "ThemeMetric.h"
 
-ThemeMetric<CString>	OK_COMMAND	("HoldJudgment","OKCommand");
-ThemeMetric<CString>	NG_COMMAND	("HoldJudgment","NGCommand");
-ThemeMetric<CString>	OK_ODD_COMMAND	("HoldJudgment","OKOddCommand");
-ThemeMetric<CString>	NG_ODD_COMMAND	("HoldJudgment","NGOddCommand");
-ThemeMetric<CString>	OK_EVEN_COMMAND	("HoldJudgment","OKEvenCommand");
-ThemeMetric<CString>	NG_EVEN_COMMAND	("HoldJudgment","NGEvenCommand");
+ThemeMetric<ActorCommands>	OK_COMMAND	("HoldJudgment","OKCommand");
+ThemeMetric<ActorCommands>	NG_COMMAND	("HoldJudgment","NGCommand");
+ThemeMetric<ActorCommands>	OK_ODD_COMMAND	("HoldJudgment","OKOddCommand");
+ThemeMetric<ActorCommands>	NG_ODD_COMMAND	("HoldJudgment","NGOddCommand");
+ThemeMetric<ActorCommands>	OK_EVEN_COMMAND	("HoldJudgment","OKEvenCommand");
+ThemeMetric<ActorCommands>	NG_EVEN_COMMAND	("HoldJudgment","NGEvenCommand");
 
 
 HoldJudgment::HoldJudgment()

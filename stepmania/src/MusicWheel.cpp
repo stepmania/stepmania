@@ -1364,13 +1364,13 @@ void MusicWheel::TweenOnScreen(bool changing_sort)
 	}
 
 	m_ScrollBar.SetX( SCROLL_BAR_X );
-	m_ScrollBar.Command( "addx,+30" );
+	m_ScrollBar.AddX( 30 );
 	if(changing_sort)
 		m_ScrollBar.BeginTweening( 0.2f );	// sleep
 	else
 		m_ScrollBar.BeginTweening( 0.7f );	// sleep
 	m_ScrollBar.BeginTweening( 0.2f , Actor::TWEEN_ACCELERATE );
-	m_ScrollBar.Command( "addx,-30" );
+	m_ScrollBar.AddX( -30 );
 
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{

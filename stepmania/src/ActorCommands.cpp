@@ -52,7 +52,7 @@ CString ActorCommand::GetOriginalCommandString() const
 	return join( ",", asTokens );
 }
 
-void ParseCommands( const CString &sCommands, vector<ActorCommand> &vCommandsOut )
+void ParseActorCommands( const CString &sCommands, ActorCommands &vCommandsOut )
 {
 	vCommandsOut.clear();
 	CStringArray vsCommands;
@@ -66,6 +66,13 @@ void ParseCommands( const CString &sCommands, vector<ActorCommand> &vCommandsOut
 		ActorCommand &pc = vCommandsOut[i];
 		pc.Set( sCommand );
 	}
+}
+
+ActorCommands ParseActorCommands( const CString &sCommands )
+{
+	ActorCommands vCommands;
+	ParseActorCommands( sCommands, vCommands );
+	return vCommands;
 }
 
 /*

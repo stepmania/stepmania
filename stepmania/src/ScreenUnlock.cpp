@@ -10,22 +10,22 @@
 #include "song.h"
 #include "Course.h"
 
-#define NUM_UNLOCKS					THEME->GetMetricI("ScreenUnlock", "NumUnlocks")
-#define UNLOCK_TEXT_SCROLL_X		THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollX");
-#define UNLOCK_TEXT_SCROLL_START_Y	THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollStartY")
-#define UNLOCK_TEXT_SCROLL_END_Y	THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollEndY")
-#define UNLOCK_TEXT_SCROLL_ZOOM		THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollZoom")
-#define UNLOCK_TEXT_SCROLL_ROWS		THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollRows")
-#define UNLOCK_TEXT_SCROLL_MAX_WIDTH THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollMaxWidth")
+#define NUM_UNLOCKS						THEME->GetMetricI("ScreenUnlock", "NumUnlocks")
+#define UNLOCK_TEXT_SCROLL_X			THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollX");
+#define UNLOCK_TEXT_SCROLL_START_Y		THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollStartY")
+#define UNLOCK_TEXT_SCROLL_END_Y		THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollEndY")
+#define UNLOCK_TEXT_SCROLL_ZOOM			THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollZoom")
+#define UNLOCK_TEXT_SCROLL_ROWS			THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollRows")
+#define UNLOCK_TEXT_SCROLL_MAX_WIDTH	THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollMaxWidth")
 #define UNLOCK_TEXT_SCROLL_ICON_X		THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollIconX")
 #define UNLOCK_TEXT_SCROLL_ICON_SIZE	THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollIconSize")
-#define DISPLAYED_SONG(i)			THEME->GetMetric ("ScreenUnlock", ssprintf("Unlock%dSong", i))
-#define UNLOCK_TEXT_SCROLL			THEME->GetMetricI("ScreenUnlock", "UnlockTextScroll")
-#define TYPE_TO_DISPLAY				THEME->GetMetric("ScreenUnlock", "TypeOfPointsToDisplay")
-#define ICON_COMMAND				THEME->GetMetric ("ScreenUnlock", "UnlockIconCommand")
-#define TIME_TO_DISPLAY		THEME->GetMetricF("ScreenUnlock", "TimeToDisplay")
-#define POINTS_ZOOM			THEME->GetMetricF("ScreenUnlock","PointsZoom")
-#define USE_UNLOCKS_DAT		THEME->GetMetricI("ScreenUnlock","UseUnlocksDat")
+#define DISPLAYED_SONG(i)				THEME->GetMetric ("ScreenUnlock", ssprintf("Unlock%dSong", i))
+#define UNLOCK_TEXT_SCROLL				THEME->GetMetricI("ScreenUnlock", "UnlockTextScroll")
+#define TYPE_TO_DISPLAY					THEME->GetMetric ("ScreenUnlock", "TypeOfPointsToDisplay")
+#define ICON_COMMAND					THEME->GetMetricA("ScreenUnlock", "UnlockIconCommand")
+#define TIME_TO_DISPLAY					THEME->GetMetricF("ScreenUnlock", "TimeToDisplay")
+#define POINTS_ZOOM						THEME->GetMetricF("ScreenUnlock","PointsZoom")
+#define USE_UNLOCKS_DAT					THEME->GetMetricI("ScreenUnlock","UseUnlocksDat")
 
 ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 {
@@ -44,7 +44,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 	PointsUntilNextUnlock.LoadFromFont( THEME->GetPathToF("Common normal") );
 	PointsUntilNextUnlock.SetHorizAlign( Actor::align_left );
 
-	CString IconCommand = ICON_COMMAND;
+	const ActorCommands IconCommand = ICON_COMMAND;
 	for( unsigned i=1; i <= NumUnlocks; i++ )
 	{
 		// get pertaining UnlockEntry
@@ -133,12 +133,12 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 				{
 					text->SetMaxWidth( MaxWidth );
 					text->SetText( crs->GetFullDisplayTitle() );
-					text->Command("Diffuse,0,1,0,1");
+					text->SetDiffuse( RageColor(0,1,0,1) );
 				}
 				else   // entry isn't a song or course
 				{
 					text->SetText( "" );
-					text->Command("Diffuse,0.5,0,0,1");
+					text->SetDiffuse( RageColor(0.5,0,0,1) );
 				}
 			}
 
@@ -164,10 +164,14 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 				float SecondCycleTime = (6 + TargetRow) * SECS_PER_CYCLE - FirstCycleTime;
 				LOG->Trace("Target Row: %f", TargetRow);
 				LOG->Trace("command for icon %d: %s", i, ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), FirstCycleTime, StopOffPoint, SecondCycleTime * 2, ScrollingTextEndY).c_str() );
-				text->Command( ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), FirstCycleTime, StopOffPoint, SecondCycleTime, ScrollingTextEndY) );
+				CString sCommand = ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), FirstCycleTime, StopOffPoint, SecondCycleTime, ScrollingTextEndY);
+				text->Command( ParseActorCommands(sCommand) );
 			}
 			else
-				text->Command( ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY) );
+			{
+				CString sCommand = ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY);
+				text->Command( ParseActorCommands(sCommand) );
+			}
 
 			item.push_back(text);
 
@@ -192,10 +196,14 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 					float SecondCycleTime = (6 + TargetRow) * SECS_PER_CYCLE - FirstCycleTime;
 					LOG->Trace("Target Row: %f", TargetRow);
 					LOG->Trace("command for icon %d: %s", i, ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), FirstCycleTime, StopOffPoint, SecondCycleTime * 2, ScrollingTextEndY).c_str() );
-					IconCount->Command( ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), FirstCycleTime, StopOffPoint, SecondCycleTime, ScrollingTextEndY) );
+					CString sCommand = ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), FirstCycleTime, StopOffPoint, SecondCycleTime, ScrollingTextEndY);
+					IconCount->Command( ParseActorCommands(sCommand) );
 				}
 				else
-					IconCount->Command( ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY) );
+				{
+					CString sCommand = ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;linear,0.1;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY);
+					IconCount->Command( ParseActorCommands(sCommand) );
+				}
 
 				ItemIcons.push_back(IconCount);
 
@@ -258,19 +266,21 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 			NewText->SetGlobalDiffuseColor(color);
 
 			NewText->SetXY(ScrollingTextX, ScrollingTextStartY);
-			NewText->Command( ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumUnlocks + 2 * i - 2), SECS_PER_CYCLE * ((ScrollingTextRows - i) * 2 + 1 ), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows )) );
+			{
+				CString sCommand = ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumUnlocks + 2 * i - 2), SECS_PER_CYCLE * ((ScrollingTextRows - i) * 2 + 1 ), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows ));
+				NewText->Command( ParseActorCommands(sCommand) );
+			}
 
 			// new unlock graphic
 			Sprite* NewIcon = new Sprite;
 			NewIcon->Load( THEME->GetPathToG(ssprintf("ScreenUnlock %d icon", NextIcon)) );
-
-			// set graphic location
 			NewIcon->SetXY( UNLOCK_TEXT_SCROLL_ICON_X, ScrollingTextStartY);
-
 			NewIcon->SetHeight(UNLOCK_TEXT_SCROLL_ICON_SIZE);
 			NewIcon->SetWidth(UNLOCK_TEXT_SCROLL_ICON_SIZE);
-
-			NewIcon->Command( ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumUnlocks + 2 * i - 2), SECS_PER_CYCLE * ((ScrollingTextRows - i) * 2 + 1 ), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows )) );
+			{
+				CString sCommand = ssprintf("diffusealpha,0;sleep,%f;diffusealpha,1;linear,%f;y,%f;", SECS_PER_CYCLE * (NumUnlocks + 2 * i - 2), SECS_PER_CYCLE * ((ScrollingTextRows - i) * 2 + 1 ), (ScrollingTextStartY + (ScrollingTextEndY - ScrollingTextStartY) * (ScrollingTextRows - i + 0.5) / ScrollingTextRows ));
+				NewIcon->Command( ParseActorCommands(sCommand) );
+			}
 
 			ItemIcons.push_back(NewIcon);
 			item.push_back(NewText);

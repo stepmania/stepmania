@@ -3,13 +3,13 @@
 #include "ScreenDimensions.h"
 
 #include "GameState.h"
-#include "ThemeManager.h"
+#include "ThemeMetric.h"
 
-#define IN_COMMAND		THEME->GetMetric("LyricDisplay","InCommand")
-#define OUT_COMMAND		THEME->GetMetric("LyricDisplay","OutCommand")
-#define WIPE_DIM_FACTOR	THEME->GetMetricC("LyricDisplay","WipeDimFactor")
+static ThemeMetric<ActorCommands>	IN_COMMAND		("LyricDisplay","InCommand");
+static ThemeMetric<ActorCommands>	OUT_COMMAND		("LyricDisplay","OutCommand");
+static ThemeMetric<RageColor>		WIPE_DIM_FACTOR	("LyricDisplay","WipeDimFactor");
 
-float g_TweenInTime, g_TweenOutTime;
+static float g_TweenInTime, g_TweenOutTime;
 
 LyricDisplay::LyricDisplay()
 {
@@ -30,8 +30,8 @@ void LyricDisplay::Init()
 	m_iCurLyricNumber = 0;
 
 	/* Update global cache: */
-	g_TweenInTime = Actor::GetCommandLengthSeconds(IN_COMMAND);
-	g_TweenOutTime = Actor::GetCommandLengthSeconds(OUT_COMMAND);
+	g_TweenInTime = Actor::GetCommandsLengthSeconds(IN_COMMAND);
+	g_TweenOutTime = Actor::GetCommandsLengthSeconds(OUT_COMMAND);
 	m_fLastSecond = -500;
 }
 

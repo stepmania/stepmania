@@ -7,6 +7,7 @@
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
 #include "arch/Dialog/Dialog.h"
+#include "Foreach.h"
 
 float Actor::g_fCurrentBGMTime = 0, Actor::g_fCurrentBGMBeat;
 
@@ -616,13 +617,10 @@ void Actor::AddRotationR( float rot )
 	RageQuatMultiply( &DestTweenState().quat, DestTweenState().quat, RageQuatFromR(rot) );
 }
 
-void Actor::Command( const CString &sCommands )
+void Actor::Command( const ActorCommands &vCommands )
 {
-	vector<ActorCommand> vCommands;
- 	ParseCommands( sCommands, vCommands );
-
-	for( unsigned i=0; i<vCommands.size(); i++ )
-		this->HandleCommand( vCommands[i] );
+	FOREACH_CONST( ActorCommand, vCommands, c )
+		this->HandleCommand( *c );
 }
 
 void Actor::HandleCommand( const ActorCommand &command )
@@ -655,9 +653,9 @@ void Actor::HandleCommand( const ActorCommand &command )
 	else if( sName=="x" )				SetX( fParam(1) );
 	else if( sName=="y" )				SetY( fParam(1) );
 	else if( sName=="z" )				SetZ( fParam(1) );
-	else if( sName=="addx" )			SetX( GetDestX()+fParam(1) );
-	else if( sName=="addy" )			SetY( GetDestY()+fParam(1) );
-	else if( sName=="addz" )			SetZ( GetDestZ()+fParam(1) );
+	else if( sName=="addx" )			AddX( fParam(1) );
+	else if( sName=="addy" )			AddY( fParam(1) );
+	else if( sName=="addz" )			AddZ( fParam(1) );
 	else if( sName=="zoom" )			SetZoom( fParam(1) );
 	else if( sName=="zoomx" )			SetZoomX( fParam(1) );
 	else if( sName=="zoomy" )			SetZoomY( fParam(1) );
@@ -765,10 +763,10 @@ void Actor::HandleCommand( const ActorCommand &command )
 	EndHandleParams;
 }
 
-float Actor::GetCommandLengthSeconds( const CString &sCommands )
+float Actor::GetCommandsLengthSeconds( const ActorCommands &vCommands )
 {
 	Actor temp;
-	temp.Command(sCommands);
+	temp.Command(vCommands);
 
 	return temp.GetTweenTimeLeft();
 }

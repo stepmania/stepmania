@@ -67,7 +67,7 @@ void ActorFrame::DrawPrimitives()
 		m_SubActors[i]->Draw();
 }
 
-void ActorFrame::RunCommandOnChildren( const CString &cmd )
+void ActorFrame::RunCommandOnChildren( const ActorCommands &cmd )
 {
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->Command( cmd );

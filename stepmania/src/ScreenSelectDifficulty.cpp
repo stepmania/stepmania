@@ -15,16 +15,16 @@
 #define LOCK_INPUT_SECONDS					THEME->GetMetricF(m_sName,"LockInputSeconds")
 #define SLEEP_AFTER_CHOICE_SECONDS			THEME->GetMetricF(m_sName,"SleepAfterChoiceSeconds")
 #define SLEEP_AFTER_TWEEN_OFF_SECONDS		THEME->GetMetricF(m_sName,"SleepAfterTweenOffSeconds")
-#define CURSOR_CHOOSE_COMMAND				THEME->GetMetric (m_sName,"CursorChooseCommand")
+#define CURSOR_CHOOSE_COMMAND				THEME->GetMetricA(m_sName,"CursorChooseCommand")
 #define CURSOR_OFFSET_X_FROM_PICTURE( p )	THEME->GetMetricF(m_sName,ssprintf("CursorP%dOffsetXFromPicture",p+1))
 #define CURSOR_OFFSET_Y_FROM_PICTURE( p )	THEME->GetMetricF(m_sName,ssprintf("CursorP%dOffsetYFromPicture",p+1))
-#define SHADOW_CHOOSE_COMMAND				THEME->GetMetric (m_sName,"ShadowChooseCommand")
+#define SHADOW_CHOOSE_COMMAND				THEME->GetMetricA(m_sName,"ShadowChooseCommand")
 #define SHADOW_LENGTH_X						THEME->GetMetricF(m_sName,"ShadowLengthX")
 #define SHADOW_LENGTH_Y						THEME->GetMetricF(m_sName,"ShadowLengthY")
-#define OK_CHOOSE_COMMAND					THEME->GetMetric (m_sName,"OKChooseCommand")
+#define OK_CHOOSE_COMMAND					THEME->GetMetricA(m_sName,"OKChooseCommand")
 #define DISABLED_COLOR						THEME->GetMetricC(m_sName,"DisabledColor")
 
-#define IGNORED_ELEMENT_COMMAND				THEME->GetMetric (m_sName,"IgnoredElementOnCommand")
+#define IGNORED_ELEMENT_COMMAND				THEME->GetMetricA(m_sName,"IgnoredElementOnCommand")
 
 ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSelect( sClassName )
 {

@@ -19,7 +19,7 @@ public:
 	
 	void DeleteAllChildren();
 
-	virtual void RunCommandOnChildren( const CString &cmd ); /* but not on self */
+	virtual void RunCommandOnChildren( const ActorCommands &cmds ); /* but not on self */
 	virtual void RunCommandOnChildren( const ActorCommand &cmd ); /* but not on self */
 	virtual void HandleCommand( const ActorCommand &command );	// derivable
 

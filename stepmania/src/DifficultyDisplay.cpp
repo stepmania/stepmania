@@ -3,8 +3,8 @@
 #include "song.h"
 #include "ThemeMetric.h"
 
-ThemeMetric<CString>  ICONONCOMMAND	("DifficultyDisplay","IconOnCommand");
-ThemeMetric<CString>  ICONOFFCOMMAND	("DifficultyDisplay","IconOffCommand");
+ThemeMetric<ActorCommands>  ICONONCOMMAND	("DifficultyDisplay","IconOnCommand");
+ThemeMetric<ActorCommands>  ICONOFFCOMMAND	("DifficultyDisplay","IconOffCommand");
 
 DifficultyDisplay::DifficultyDisplay()
 {

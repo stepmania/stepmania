@@ -9,13 +9,13 @@
 #include "ActorUtil.h"
 #include "ThemeMetric.h"
 
-ThemeMetric<CString> ARTIST_PREPEND_STRING			("TextBanner","ArtistPrependString");
-ThemeMetric<CString> TWO_LINES_TITLE_COMMAND		("TextBanner","TwoLinesTitleCommand");
-ThemeMetric<CString> TWO_LINES_SUBTITLE_COMMAND	("TextBanner","TwoLinesSubtitleCommand");
-ThemeMetric<CString> TWO_LINES_ARTIST_COMMAND		("TextBanner","TwoLinesArtistCommand");
-ThemeMetric<CString> THREE_LINES_TITLE_COMMAND		("TextBanner","ThreeLinesTitleCommand");
-ThemeMetric<CString> THREE_LINES_SUBTITLE_COMMAND	("TextBanner","ThreeLinesSubtitleCommand");
-ThemeMetric<CString> THREE_LINES_ARTIST_COMMAND	("TextBanner","ThreeLinesArtistCommand");
+ThemeMetric<CString>		ARTIST_PREPEND_STRING		("TextBanner","ArtistPrependString");
+ThemeMetric<ActorCommands> TWO_LINES_TITLE_COMMAND		("TextBanner","TwoLinesTitleCommand");
+ThemeMetric<ActorCommands> TWO_LINES_SUBTITLE_COMMAND	("TextBanner","TwoLinesSubtitleCommand");
+ThemeMetric<ActorCommands> TWO_LINES_ARTIST_COMMAND		("TextBanner","TwoLinesArtistCommand");
+ThemeMetric<ActorCommands> THREE_LINES_TITLE_COMMAND	("TextBanner","ThreeLinesTitleCommand");
+ThemeMetric<ActorCommands> THREE_LINES_SUBTITLE_COMMAND	("TextBanner","ThreeLinesSubtitleCommand");
+ThemeMetric<ActorCommands> THREE_LINES_ARTIST_COMMAND	("TextBanner","ThreeLinesArtistCommand");
 
 void TextBanner::Init()
 {

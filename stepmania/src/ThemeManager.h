@@ -5,6 +5,7 @@
 
 #include "RageTypes.h"
 #include "RageTimer.h"
+#include "ActorCommands.h"
 #include <set>
 #include <deque>
 
@@ -58,11 +59,13 @@ public:
 	float		GetMetricF( const CString &sClassName, const CString &sValueName );
 	bool		GetMetricB( const CString &sClassName, const CString &sValueName );
 	RageColor	GetMetricC( const CString &sClassName, const CString &sValueName );
-	void	GetMetric( const CString &sClassName, const CString &sValueName, CString &valueOut )	{ valueOut = GetMetric( sClassName, sValueName ); }
-	void	GetMetric( const CString &sClassName, const CString &sValueName, int &valueOut )		{ valueOut = GetMetricI( sClassName, sValueName ); }
-	void	GetMetric( const CString &sClassName, const CString &sValueName, float &valueOut )	{ valueOut = GetMetricF( sClassName, sValueName ); }
-	void	GetMetric( const CString &sClassName, const CString &sValueName, bool &valueOut )		{ valueOut = GetMetricB( sClassName, sValueName ); }
-	void	GetMetric( const CString &sClassName, const CString &sValueName, RageColor &valueOut ){ valueOut = GetMetricC( sClassName, sValueName ); }
+	ActorCommands	GetMetricA( const CString &sClassName, const CString &sValueName );
+	void	GetMetric( const CString &sClassName, const CString &sValueName, CString &valueOut )			{ valueOut = GetMetric( sClassName, sValueName ); }
+	void	GetMetric( const CString &sClassName, const CString &sValueName, int &valueOut )				{ valueOut = GetMetricI( sClassName, sValueName ); }
+	void	GetMetric( const CString &sClassName, const CString &sValueName, float &valueOut )				{ valueOut = GetMetricF( sClassName, sValueName ); }
+	void	GetMetric( const CString &sClassName, const CString &sValueName, bool &valueOut )				{ valueOut = GetMetricB( sClassName, sValueName ); }
+	void	GetMetric( const CString &sClassName, const CString &sValueName, RageColor &valueOut )			{ valueOut = GetMetricC( sClassName, sValueName ); }
+	void	GetMetric( const CString &sClassName, const CString &sValueName, ActorCommands &valueOut ){ valueOut = GetMetricA( sClassName, sValueName ); }
 
 	//
 	// For self-registering metrics

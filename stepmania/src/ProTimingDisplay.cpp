@@ -4,14 +4,25 @@
 #include "RageUtil.h"
 #include "ThemeMetric.h"
 
-static ThemeMetric<CString>	MARVELOUS_COMMAND	("ProTimingDisplay","MarvelousCommand");
-static ThemeMetric<CString>	PERFECT_COMMAND		("ProTimingDisplay","PerfectCommand");
-static ThemeMetric<CString>	GREAT_COMMAND		("ProTimingDisplay","GreatCommand");
-static ThemeMetric<CString>	GOOD_COMMAND		("ProTimingDisplay","GoodCommand");
-static ThemeMetric<CString>	BOO_COMMAND			("ProTimingDisplay","BooCommand");
-static ThemeMetric<CString>	MISS_COMMAND		("ProTimingDisplay","MissCommand");
-static ThemeMetric<CString>	HIT_MINE_COMMAND	("ProTimingDisplay","HitMineCommand");
+static const ThemeMetric<ActorCommands>	MARVELOUS_COMMAND	("ProTimingDisplay","MarvelousCommand");
+static const ThemeMetric<ActorCommands>	PERFECT_COMMAND		("ProTimingDisplay","PerfectCommand");
+static const ThemeMetric<ActorCommands>	GREAT_COMMAND		("ProTimingDisplay","GreatCommand");
+static const ThemeMetric<ActorCommands>	GOOD_COMMAND		("ProTimingDisplay","GoodCommand");
+static const ThemeMetric<ActorCommands>	BOO_COMMAND			("ProTimingDisplay","BooCommand");
+static const ThemeMetric<ActorCommands>	MISS_COMMAND		("ProTimingDisplay","MissCommand");
+static const ThemeMetric<ActorCommands>	HIT_MINE_COMMAND	("ProTimingDisplay","HitMineCommand");
 
+static const ThemeMetric<ActorCommands> *g_Commands[NUM_TAP_NOTE_SCORES] =
+{
+	NULL, /* no TNS_NONE */
+	&HIT_MINE_COMMAND, 
+	&MISS_COMMAND, 
+	&BOO_COMMAND, 
+	&GOOD_COMMAND, 
+	&GREAT_COMMAND, 
+	&PERFECT_COMMAND, 
+	&MARVELOUS_COMMAND
+};
 
 ProTimingDisplay::ProTimingDisplay()
 {
@@ -36,21 +47,10 @@ void ProTimingDisplay::SetJudgment( int ms, TapNoteScore score )
 
 	m_Judgment.SetText( ssprintf("%i", ms) );
 
-	const ThemeMetric<CString> *Commands[NUM_TAP_NOTE_SCORES] =
-	{
-		NULL, /* no TNS_NONE */
-		&HIT_MINE_COMMAND, 
-		&MISS_COMMAND, 
-		&BOO_COMMAND, 
-		&GOOD_COMMAND, 
-		&GREAT_COMMAND, 
-		&PERFECT_COMMAND, 
-		&MARVELOUS_COMMAND
-	};
 	ASSERT( score != TNS_NONE );
 	ASSERT( score < NUM_TAP_NOTE_SCORES );
 
-	m_Judgment.Command( *Commands[score] );
+	m_Judgment.Command( *g_Commands[score] );
 }
 
 /*

@@ -2,7 +2,6 @@
 #include "ActiveAttackList.h"
 #include "RageUtil.h"
 #include "GameState.h"
-#include "ThemeManager.h"
 #include "Inventory.h"
 #include "RageTimer.h"
 

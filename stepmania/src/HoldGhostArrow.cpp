@@ -10,7 +10,7 @@ HoldGhostArrow::HoldGhostArrow()
 void HoldGhostArrow::Load( CString sNoteSkin, CString sButton, CString sElement )
 {
 	Sprite::Load( NOTESKIN->GetPathToFromNoteSkinAndButton(sNoteSkin, sButton, sElement) );	// not optional
-	this->Command( NOTESKIN->GetMetric(sNoteSkin,"HoldGhostArrow","OnCommand") );
+	this->Command( NOTESKIN->GetMetricA(sNoteSkin,"HoldGhostArrow","OnCommand") );
 }
 
 void HoldGhostArrow::Update( float fDeltaTime )

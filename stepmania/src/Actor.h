@@ -103,6 +103,9 @@ public:
 	void  SetY( float y )			{ DestTweenState().pos.y = y; };
 	void  SetZ( float z )			{ DestTweenState().pos.z = z; };
 	void  SetXY( float x, float y )	{ DestTweenState().pos.x = x; DestTweenState().pos.y = y; };
+	void  AddX( float x )			{ SetX( GetDestX()+x ); }
+	void  AddY( float y )			{ SetY( GetDestY()+y ); }
+	void  AddZ( float z )			{ SetZ( GetDestZ()+z ); }
 
 	// height and width vary depending on zoom
 	float GetUnzoomedWidth()		{ return m_size.x; }
@@ -302,9 +305,9 @@ public:
 	//
 	// Commands
 	//
-	void Command( const CString &sCommands );
+	void Command( const ActorCommands &vCommands );
 	virtual void HandleCommand( const ActorCommand &command );	// derivable
-	static float GetCommandLengthSeconds( const CString &sCommands );
+	static float GetCommandsLengthSeconds( const ActorCommands &vCommands );
 
 	//
 	// Animation

@@ -46,7 +46,7 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 
 #define SPIN_GRADES							THEME->GetMetricB(m_sName,"SpinGrades")
 #define CHEER_DELAY_SECONDS					THEME->GetMetricF(m_sName,"CheerDelaySeconds")
-#define BAR_ACTUAL_MAX_COMMAND				THEME->GetMetric (m_sName,"BarActualMaxCommand")
+#define BAR_ACTUAL_MAX_COMMAND				THEME->GetMetricA(m_sName,"BarActualMaxCommand")
 
 // metrics that are specific to classes derived from ScreenEvaluation
 #define FAILED_SCREEN						THEME->GetMetric (m_sName, "FailedScreen")
@@ -514,7 +514,7 @@ void ScreenEvaluation::Init()
 			m_Percent[p].Load( p, &g_CurStageStats, true );
 			m_Percent[p].SetXY( THEME->GetMetricF(m_sName, ssprintf("PercentP%dX",p+1)),
 				THEME->GetMetricF(m_sName,ssprintf("PercentP%dY",p+1)) );
-			m_Percent[p].Command( THEME->GetMetric(m_sName,ssprintf("PercentP%dOnCommand",p+1)) );
+			m_Percent[p].Command( THEME->GetMetricA(m_sName,ssprintf("PercentP%dOnCommand",p+1)) );
 			this->AddChild( &m_Percent[p] );
 		}
 	}
@@ -1175,7 +1175,7 @@ void ScreenEvaluation::TweenOffScreen()
 		FOREACH_EnabledPlayer( p ) 
 		{
 			OFF_COMMAND( m_sprPercentFrame[p] );
-			m_Percent[p].Command( THEME->GetMetric(m_sName,ssprintf("PercentP%dOffCommand",p+1)) );
+			m_Percent[p].Command( THEME->GetMetricA(m_sName,ssprintf("PercentP%dOffCommand",p+1)) );
 			m_Percent[p].TweenOffScreen();
 		}
 	}
