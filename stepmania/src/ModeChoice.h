@@ -18,6 +18,7 @@
 
 class Song;
 class Steps;
+class Course;
 class Character;
 
 struct ModeChoice		// used in SelectMode
@@ -35,6 +36,7 @@ struct ModeChoice		// used in SelectMode
 
 	CString		m_sName;	// display name
 	bool		m_bInvalid;
+	CString		m_sInvalidReason;
 	int			m_iIndex;
 	Game		m_game;
 	Style		m_style;
@@ -45,6 +47,7 @@ struct ModeChoice		// used in SelectMode
 	CString		m_sScreen;
 	Song*		m_pSong;
 	Steps*		m_pSteps;
+	Course*		m_pCourse;
 	Character*	m_pCharacter;
 	CourseDifficulty	m_CourseDifficulty;
 };

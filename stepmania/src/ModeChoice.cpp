@@ -29,6 +29,7 @@ void ModeChoice::Init()
 	m_sScreen = "";
 	m_pSong = NULL;
 	m_pSteps = NULL;
+	m_pCourse = NULL;
 	m_pCharacter = NULL;
 	m_CourseDifficulty = COURSE_DIFFICULTY_INVALID;
 }
@@ -170,7 +171,10 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 		{
 			m_pSong = SONGMAN->FindSong( sValue );
 			if( m_pSong == NULL )
+			{
+				m_sInvalidReason = ssprintf( "Song \"%s\" not found", sValue.c_str() );
 				m_bInvalid |= true;
+			}
 		}
 
 		if( sName == "steps" )
@@ -180,18 +184,37 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 			sSteps = sValue;
 		}
 
+		if( sName == "course" )
+		{
+			m_pCourse = SONGMAN->FindCourse( sValue );
+			if( m_pCourse == NULL )
+			{
+				m_sInvalidReason = ssprintf( "Course \"%s\" not found", sValue.c_str() );
+				m_bInvalid |= true;
+			}
+		}
+		
 		if( sName == "screen" )
 			m_sScreen = sValue;
 	}
 
 	if( !m_bInvalid && sSteps != "" )
 	{
-		if( m_pSong == NULL || m_style == STYLE_INVALID )
+		Song *pSong = (m_pSong != NULL)? m_pSong:GAMESTATE->m_pCurSong;
+		Style style = (m_style != STYLE_INVALID)? m_style:GAMESTATE->m_CurStyle;
+		if( pSong == NULL || style == STYLE_INVALID )
 			RageException::Throw( "Must set Song and Style to set Steps" );
 
-		m_pSteps = m_pSong->GetStepsByDescription( GAMEMAN->GetStyleDefForStyle(m_style)->m_StepsType, sSteps );
+		Difficulty dc = StringToDifficulty( sSteps );
+		if( dc != DIFFICULTY_EDIT )
+			m_pSteps = pSong->GetStepsByDifficulty( GAMEMAN->GetStyleDefForStyle(style)->m_StepsType, dc );
+		else
+			m_pSteps = pSong->GetStepsByDescription( GAMEMAN->GetStyleDefForStyle(style)->m_StepsType, sSteps );
 		if( m_pSteps == NULL )
+		{
+			m_sInvalidReason = "steps not found";
 			m_bInvalid |= true;
+		}
 	}
 }
 
@@ -238,7 +261,11 @@ static bool AreStyleAndPlayModeCompatible( Style style, PlayMode pm )
 bool ModeChoice::IsPlayable( CString *why ) const
 {
 	if( m_bInvalid )
+	{
+		if( *why )
+			*why = m_sInvalidReason;
 		return false;
+	}
 
 	if ( m_style != STYLE_INVALID )
 	{
@@ -348,6 +375,8 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 		GAMESTATE->m_pCurSong = m_pSong;
 	if( m_pSteps )
 		GAMESTATE->m_pCurNotes[pn] = m_pSteps;
+	if( m_pCourse )
+		GAMESTATE->m_pCurCourse = m_pCourse;
 	if( m_pCharacter )
 		GAMESTATE->m_pCurCharacters[pn] = m_pCharacter;
 	if( m_CourseDifficulty != COURSE_DIFFICULTY_INVALID )
