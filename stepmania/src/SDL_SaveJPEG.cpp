@@ -90,7 +90,9 @@ static void jpeg_SDL_RW_dest(jpeg::j_compress_ptr cinfo, SDL_RWops *ctx)
    * This makes it unsafe to use this manager and a different source
    * manager serially with the same JPEG object.  Caveat programmer.
    */
-  if (cinfo->dest == NULL) {	/* first time for this JPEG object? */
+  if( cinfo->dest == NULL )
+  {
+	  /* first time for this JPEG object? */
     cinfo->dest = (struct jpeg::jpeg_destination_mgr *)
       (*cinfo->mem->alloc_small) ((jpeg::j_common_ptr) cinfo, JPOOL_PERMANENT,
 				  sizeof(my_destination_mgr));
@@ -107,7 +109,7 @@ static void jpeg_SDL_RW_dest(jpeg::j_compress_ptr cinfo, SDL_RWops *ctx)
 }
 
 /* Save a JPEG to a file.  cjpeg.c and example.c from jpeglib were helpful in writing this. */
-void IMG_SaveJPG_RW(SDL_Surface *surface, SDL_RWops *dest)
+void IMG_SaveJPG_RW( const SDL_Surface *surface, SDL_RWops *dest )
 {
 #define filename		file
 
@@ -130,7 +132,6 @@ void IMG_SaveJPG_RW(SDL_Surface *surface, SDL_RWops *dest)
   struct jpeg::jpeg_error_mgr jerr;
   /* More stuff */
   jpeg::JSAMPROW row_pointer[1];	/* pointer to JSAMPLE row[s] */
-  int row_stride;		/* physical row width in image buffer */
 
   /* Step 1: allocate and initialize JPEG compression object */
 
@@ -184,9 +185,10 @@ void IMG_SaveJPG_RW(SDL_Surface *surface, SDL_RWops *dest)
    * To keep things simple, we pass one scanline per call; you can pass
    * more if you wish, though.
    */
-  row_stride = surface->pitch;	/* JSAMPLEs per row in image_buffer */
+  int row_stride = surface->pitch;	/* JSAMPLEs per row in image_buffer */
 
-  while (cinfo.next_scanline < cinfo.image_height) {
+  while( cinfo.next_scanline < cinfo.image_height )
+  {
     /* jpeg_write_scanlines expects an array of pointers to scanlines.
      * Here the array is only one element long, but you could pass
      * more than one scanline at a time if that's more convenient.
