@@ -98,6 +98,7 @@ CString join(
 
 void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
 int GetHashForString( CString s );
+unsigned int GetCrc32ForString( CString s );
 int GetHashForFile( CString sPath );
 int GetHashForDirectory( CString sDir );	// a hash value that remains the same as long as nothing in the directory has changed
 

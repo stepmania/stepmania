@@ -287,6 +287,16 @@ void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bRe
 }
 
 //-----------------------------------------------------------------------------
+// Name: GetCrc32ForString( CString s)
+// Desc: Coerces CString into an unsigned char array and runs CRC-32 on it.
+//-----------------------------------------------------------------------------
+unsigned int GetCrc32ForString( CString s )
+{
+	// A CString has built in length data! Isn't that great?
+	return GetCrc32((unsigned char*)s.GetBuffer(s.GetLength()), s.GetLength());
+}
+
+//-----------------------------------------------------------------------------
 // Name: GetHashForString( CString s )
 // Desc: This new version of GetHashForString uses a stronger hashing algorithm
 //       than the former, assuring to a greater degree that two distinct
