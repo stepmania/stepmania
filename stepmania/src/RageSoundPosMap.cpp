@@ -83,7 +83,7 @@ int64_t pos_map_queue::Search( int64_t frame, bool *approximate ) const
 		{
 			closest_position_dist = dist;
 			closest_block = i;
-			closest_position = m_Queue[i].position - dist;
+			closest_position = m_Queue[i].position;
 		}
 
 		/* See if the current position is close to the end of this block. */
@@ -91,7 +91,7 @@ int64_t pos_map_queue::Search( int64_t frame, bool *approximate ) const
 		if( dist < closest_position_dist )
 		{
 			closest_position_dist = dist;
-			closest_position = m_Queue[i].position + m_Queue[i].frames + dist;
+			closest_position = m_Queue[i].position + m_Queue[i].frames;
 		}
 	}
 
@@ -104,8 +104,12 @@ int64_t pos_map_queue::Search( int64_t frame, bool *approximate ) const
 	 *    SoundStopped has been called.
 	 * 3. Underflow; we'll be given a larger frame number than we know about.
 	 */
-	/* XXX: %lli normally, %I64i in Windows */
-	LOG->Trace( "Approximate sound time: driver frame %lli, m_Queue frame %lli..%lli (dist %lli), closest position is %lli",
+#if defined(WIN32)
+#define LI "%I64i"
+#else
+#define LI "%lli"
+#endif
+	LOG->Trace( "Approximate sound time: driver frame " LI ", m_Queue frame " LI ".." LI " (dist " LI "), closest position is " LI,
 		frame, m_Queue[closest_block].frameno, m_Queue[closest_block].frameno+m_Queue[closest_block].frames,
 		closest_position_dist, closest_position );
 
