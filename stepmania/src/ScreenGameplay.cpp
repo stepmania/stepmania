@@ -1092,7 +1092,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 			}
 			break;
 		case SongOptions::FAIL_END_OF_SONG:
-		case SongOptions::FAIL_OFF:
 			// we still need to check for fail for scoring purposes
 			for ( pn=0; pn<NUM_PLAYERS; pn++ )
 			{
@@ -1103,6 +1102,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 					GAMESTATE->m_CurStageStats.bFailed[pn] = true;	// fail
 				}
 			}
+			break;
+		case SongOptions::FAIL_OFF:
 			break;
 		default:
 			ASSERT(0);
