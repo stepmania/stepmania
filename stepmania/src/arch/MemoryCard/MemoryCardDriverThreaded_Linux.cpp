@@ -361,7 +361,8 @@ static const WhiteListEntry g_AllowedEntries[] =
     // { 0x045a, -1, "", "" },  // Diamond Multimedia Systems (Rio)  
     { 0x04e8, -1, "Kingston|KINGSTON", "" },  // Kingston pen drives manufactured by Samsung
     { 0x041e, -1, "", "^NOMAD MuVo$|^NOMAD MuVo .X" },  // Creative Labs Nomad MuVo flash drives (hard drive players excluded)
-    { 0x08ec, -1, "", "Mini" },  // Iomega Mini drive and Micro Mini drive
+    // Some Iomega Micro Mini drives cause mount to hang
+    // { 0x4146, -1, "", "Flash" },  // Iomega Micro Mini drive
     { 0x05dc, -1, "", "JUMP|Jump" },  // All Lexar Jump*  drives
     { 0x1915, 0x2220, "", "" },  // Linksys USB 2.0 Disk 128MB
     { 0x0d7d, -1, "", "USB DISK" },  // PNY Attache pen drives
