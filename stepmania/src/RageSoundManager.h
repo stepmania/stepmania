@@ -54,7 +54,7 @@ public:
 	void PlayOnce( CString sPath );
 
 	RageSound *PlaySound( RageSound &snd, const RageSoundParams *params );
-	void StopPlayingSound(RageSound &snd);
+	void StopPlayingAllCopiesOfSound(RageSound &snd);
 
 	/* A list of all sounds that currently exist.  RageSound adds and removes
 	 * itself to this. */

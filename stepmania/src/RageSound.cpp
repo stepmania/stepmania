@@ -82,7 +82,7 @@ RageSound::~RageSound()
 	/* If we're a "master" sound (not a copy), tell RageSoundManager to
 	 * stop mixing us and everything that's copied from us. */
 	if(original == this)
-		SOUNDMAN->StopPlayingSound(*this);
+		SOUNDMAN->StopPlayingAllCopiesOfSound(*this);
 
 	Unload();
 
@@ -590,7 +590,7 @@ void RageSound::StopPlaying()
 
 	stopped_position = (int) GetPositionSecondsInternal();
 
-	/* Tell the sound manager to stop mixing this sound. */
+	/* Tell the sound driver to stop mixing this sound. */
 	SOUNDMAN->StopMixing(this);
 
 	SOUNDMAN->lock.Lock();
@@ -609,7 +609,7 @@ RageSound *RageSound::Play( const RageSoundParams *params )
 
 void RageSound::Stop()
 {
-	SOUNDMAN->StopPlayingSound(*this);
+	SOUNDMAN->StopPlayingAllCopiesOfSound(*this);
 }
 
 

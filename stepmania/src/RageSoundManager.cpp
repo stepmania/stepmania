@@ -181,7 +181,7 @@ RageSound *RageSoundManager::PlaySound( RageSound &snd, const RageSoundParams *p
 	return sound_to_play;
 }
 
-void RageSoundManager::StopPlayingSound(RageSound &snd)
+void RageSoundManager::StopPlayingAllCopiesOfSound(RageSound &snd)
 {
 	LockMut(lock);
 
