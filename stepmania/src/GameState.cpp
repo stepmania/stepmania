@@ -480,8 +480,7 @@ bool GameState::IsFinalStage() const
 	int iPredictedStageForCurSong = 1;
 	if( m_pCurSong != NULL )
 		iPredictedStageForCurSong = SongManager::GetNumStagesForSong( m_pCurSong );
-	
-	return m_iCurrentStageIndex + m_iCurrentStageIndex == PREFSMAN->m_iNumArcadeStages;
+	return m_iCurrentStageIndex + iPredictedStageForCurSong == PREFSMAN->m_iNumArcadeStages;
 }
 
 bool GameState::IsExtraStage() const
