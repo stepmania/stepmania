@@ -64,7 +64,8 @@ void CourseContentsList::SetFromCourse( const Course* pCourse )
 
 	// FIXME: Is there a better way to handle when players don't have 
 	// the same number of TrailEntries?
-
+	// They have to have the same number, and of the same songs, or gameplay
+	// isn't going to line up.
 	m_iNumContents = 0;
 	
 	for( int i=0; i<min((int)pTrail[0]->m_vEntries.size(), MAX_TOTAL_CONTENTS); i++ )
