@@ -337,6 +337,7 @@ void ForceCrashHandler( const char *reason )
 	RunCrashHandler( &crash );
 }
 
+#if !defined(DARWIN)
 void CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 {
 	CrashData crash;
@@ -347,6 +348,7 @@ void CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 	GetSignalBacktraceContext( &crash.ctx, uc );
 	RunCrashHandler( &crash );
 }
+#endif
 
 #if defined(DARWIN)
 OSStatus CrashExceptionHandler( ExceptionInformation *e )

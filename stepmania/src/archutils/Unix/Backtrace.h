@@ -34,8 +34,10 @@ void GetCurrentBacktraceContext( BacktraceContext *ctx );
 
 /* Set up a BacktraceContext to get a backtrace after receiving a signal, given
  * a ucontext_t (see sigaction(2)).  (This interface is UNIX-specific.) */
+#if !defined(DARWIN)
 #include <ucontext.h>
 void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc );
+#endif
 
 #if defined(DARWIN)
 #include <MachineExceptions.h>
