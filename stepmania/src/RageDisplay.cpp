@@ -47,6 +47,8 @@ static int			g_iFramesRenderedSinceLastCheck,
 
 PWSWAPINTERVALEXTPROC GLExt::wglSwapIntervalEXT;
 
+const GLenum RageVertexFormat = GL_T2F_C4F_N3F_V3F;
+
 void GetGLExtensions(set<string> &ext)
 {
     const char *buf = (const char *)glGetString(GL_EXTENSIONS);
@@ -314,7 +316,6 @@ void RageDisplay::DrawQuad( const RageVertex v[4] )	// upper-left, upper-right, 
 	DrawQuads( v, 4 );
 }
 
-const GLenum RageVertexFormat = GL_T2F_C4UB_V3F;
 void RageDisplay::DrawQuads( const RageVertex v[], int iNumVerts )
 {
 	ASSERT( (iNumVerts%4) == 0 );
@@ -445,44 +446,47 @@ void RageDisplay::EnterPerspective(float fov, bool preserve_loc)
 	/* Flip the Y coordinate, so positive numbers go down. */
 	glScalef(1, -1, 1);
 
-	if(preserve_loc) {
-		RageMatrix matTop;
-		glGetFloatv( GL_MODELVIEW_MATRIX, (float*)matTop );
-
-		{
-			/* Pull out the 2d translation. */
-			float x = matTop.m[3][0], y = matTop.m[3][1];
-
-			/* These values are where the viewpoint should be.  By default, it's in the
-			* center of the screen, and these values are from the top-left, so subtract
-			* the difference. */
-			x -= SCREEN_WIDTH/2;
-			y -= SCREEN_HEIGHT/2;
-			DISPLAY->SetViewport(int(x), int(y));
-		}
-
-		/* Pull out the 2d rotations and scales. */
-		{
-			RageMatrix mat;
-			RageMatrixIdentity(&mat);
-			mat.m[0][0] = matTop.m[0][0];
-			mat.m[0][1] = matTop.m[0][1];
-			mat.m[1][0] = matTop.m[1][0];
-			mat.m[1][1] = matTop.m[1][1];
-			glMultMatrixf((float *) mat);
-		}
-
-		/* We can't cope with perspective matrices or things that touch Z.  (We shouldn't
-		* have touched those while in 2d, anyway.) */
-		ASSERT(matTop.m[0][2] == 0.f &&	matTop.m[0][3] == 0.f && matTop.m[1][2] == 0.f &&
-			matTop.m[1][3] == 0.f && matTop.m[2][0] == 0.f && matTop.m[2][1] == 0.f &&
-			matTop.m[2][2] == 1.f && matTop.m[3][2] == 0.f && matTop.m[3][3] == 1.f);
-
-		/* Reset the matrix back to identity. */
-		glLoadIdentity();
+	if(!preserve_loc)
+	{
+		glMatrixMode( GL_MODELVIEW );
+		return;
 	}
 
+	RageMatrix matTop;
+	glGetFloatv( GL_MODELVIEW_MATRIX, (float*)matTop );
+
+	{
+		/* Pull out the 2d translation. */
+		float x = matTop.m[3][0], y = matTop.m[3][1];
+
+		/* These values are where the viewpoint should be.  By default, it's in the
+		* center of the screen, and these values are from the top-left, so subtract
+		* the difference. */
+		x -= SCREEN_WIDTH/2;
+		y -= SCREEN_HEIGHT/2;
+		DISPLAY->SetViewport(int(x), int(y));
+	}
+
+	/* Pull out the 2d rotations and scales. */
+	{
+		RageMatrix mat;
+		RageMatrixIdentity(&mat);
+		mat.m[0][0] = matTop.m[0][0];
+		mat.m[0][1] = matTop.m[0][1];
+		mat.m[1][0] = matTop.m[1][0];
+		mat.m[1][1] = matTop.m[1][1];
+		glMultMatrixf((float *) mat);
+	}
+
+	/* We can't cope with perspective matrices or things that touch Z.  (We shouldn't
+	* have touched those while in 2d, anyway.) */
+	ASSERT(matTop.m[0][2] == 0.f &&	matTop.m[0][3] == 0.f && matTop.m[1][2] == 0.f &&
+		matTop.m[1][3] == 0.f && matTop.m[2][0] == 0.f && matTop.m[2][1] == 0.f &&
+		matTop.m[2][2] == 1.f && matTop.m[3][2] == 0.f && matTop.m[3][3] == 1.f);
+
+	/* Reset the matrix back to identity. */
 	glMatrixMode( GL_MODELVIEW );
+	glLoadIdentity();
 }
 
 void RageDisplay::ExitPerspective()
