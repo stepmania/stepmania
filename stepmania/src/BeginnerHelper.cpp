@@ -99,7 +99,7 @@ void BeginnerHelper::Initialize( int iDancePadType )
 
 	for( int pl=0; pl<NUM_PLAYERS; pl++ )	// Load players
 	{
-		if( GAMESTATE->m_PreferredDifficulty[pl] == DIFFICULTY_BEGINNER )
+		if( GAMESTATE->m_PreferredDifficulty[pl] == DIFFICULTY_BEGINNER && GAMESTATE->m_pCurCharacters[0] != NULL )
 		{
 			// Load textures
 			m_mDancer[pl].SetHorizAlign( align_left );
@@ -175,7 +175,7 @@ void BeginnerHelper::Step( int CSTEP )
 			{
 			case ST_LEFT:	m_mDancer[p].PlayAnimation( "Step-LEFT" ); break;
 			case ST_RIGHT:	m_mDancer[p].PlayAnimation( "Step-RIGHT" ); break;
-			case ST_UP:		m_mDancer[p].PlayAnimation( "Step-UP" ); break;
+			case ST_UP:	m_mDancer[p].PlayAnimation( "Step-UP" ); break;
 			case ST_DOWN:	m_mDancer[p].PlayAnimation( "Step-DOWN" ); break;
 			case ST_JUMPLR: m_mDancer[p].PlayAnimation( "Step-JUMPLR" ); break;
 			case ST_JUMPUD:
