@@ -200,7 +200,7 @@ float ArrowGetPercentVisible( PlayerNumber pn, float fYPos )
 
 float ArrowGetAlpha( PlayerNumber pn, float fYPos, float fPercentFadeToFail )
 {
-	fYPos /= GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
+//	fYPos /= GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
 	float fPercentVisible = ArrowGetPercentVisible(pn,fYPos);
 
 	if( fPercentFadeToFail != -1 )
@@ -211,7 +211,7 @@ float ArrowGetAlpha( PlayerNumber pn, float fYPos, float fPercentFadeToFail )
 
 float ArrowGetGlow( PlayerNumber pn, float fYPos, float fPercentFadeToFail )
 {
-	fYPos /= GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
+//	fYPos /= GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
 	float fPercentVisible = ArrowGetPercentVisible(pn,fYPos);
 
 	if( fPercentFadeToFail != -1 )
