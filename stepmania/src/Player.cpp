@@ -835,12 +835,9 @@ void PlayerMinus::CrossedRow( int iNoteRow )
 
 void PlayerMinus::RandomiseNotes( int iNoteRow )
 {
-	int NewNoteRow = (int)(iNoteRow + 50 / GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fScrollSpeed); // change the row to look ahead from based upon their speed mod
-	// check to see if they're at the crossed row
-//	int EmptyNoteCol = -1;
-//	int WaitingForEmptyColumn = -1;
+	const int NewNoteRow = (int)(iNoteRow + 50 / GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fScrollSpeed); // change the row to look ahead from based upon their speed mod
 
-	bool b_updatenotedata = false;
+	bool bUpdateNoteData = false;
 	int iNumOfTracks = GetNumTracks();
 	for(int t=0; t<iNumOfTracks; t++)
 	{
@@ -853,14 +850,12 @@ void PlayerMinus::RandomiseNotes( int iNoteRow )
 			{
 				SetTapNote(t, NewNoteRow, t2);
 				SetTapNote(iRandomTrackToSwapWith, NewNoteRow, t1);
-				b_updatenotedata = true;
+				bUpdateNoteData = true;
 			}
 		}
 	}
-	if(b_updatenotedata)
-	{
-		m_pNoteField->CopyAll((NoteData*)this);
-	}
+	if( bUpdateNoteData )
+		m_pNoteField->CopyAll( this );
 }
 
 void PlayerMinus::HandleTapRowScore( unsigned row )
