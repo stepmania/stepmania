@@ -340,7 +340,7 @@ void OptionRow::AfterImportOptions( float fY )
 				{
 					OptionsCursor *ul = new OptionsCursor;
 					m_Underline[p].push_back( ul );
-					ul->Load( m_sType, OptionsCursor::cursor );
+					ul->Load( m_sType, OptionsCursor::underline );
 					ul->Set( p );
 					ul->SetX( fX );
 					ul->SetWidth( truncf(fItemWidth) );
