@@ -24,6 +24,16 @@ public:
 	{
 		ADD_METHOD( GetCurStageStats )
 		Luna<T>::Register( L );
+
+		// Add global singleton if constructed already.  If it's not constructed yet,
+		// then we'll register it later when we reinit Lua just before 
+		// initializing the display.
+		if( STATSMAN )
+		{
+			lua_pushstring(L, "STATSMAN");
+			STATSMAN->PushSelf( LUA->L );
+			lua_settable(L, LUA_GLOBALSINDEX);
+		}
 	}
 };
 
