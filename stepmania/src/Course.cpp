@@ -306,9 +306,12 @@ void Course::Save()
 	}
 
 	fprintf( fp, "#COURSE:%s;\n", m_sName.c_str() );
-	fprintf( fp, "#REPEAT:%s;\n", m_bRepeat ? "YES" : "NO" );
-	fprintf( fp, "#LIVES:%i;\n", m_iLives );
-	fprintf( fp, "#METER:%i;\n", m_iMeter );
+	if( m_bRepeat )
+		fprintf( fp, "#REPEAT:YES;\n" );
+	if( m_iLives != -1 )
+		fprintf( fp, "#LIVES:%i;\n", m_iLives );
+	if( m_iMeter != -1 )
+		fprintf( fp, "#METER:%i;\n", m_iMeter );
 
 	for( unsigned i=0; i<m_entries.size(); i++ )
 	{
@@ -346,13 +349,11 @@ void Course::Save()
 		fprintf( fp, ":" );
 		if( entry.difficulty != DIFFICULTY_INVALID )
 			fprintf( fp, "%s", DifficultyToString(entry.difficulty).c_str() );
-	
-		fprintf( fp, ":" );
-		if( entry.low_meter != -1  &&  entry.high_meter != -1 )
+		else if( entry.low_meter != -1  &&  entry.high_meter != -1 )
 			fprintf( fp, "%d..%d", entry.low_meter, entry.high_meter );
 		fprintf( fp, ":%s", entry.modifiers.c_str() );
 
-		bool default_mystery = !(entry.type == COURSE_ENTRY_RANDOM || entry.type == COURSE_ENTRY_RANDOM_WITHIN_GROUP);
+		bool default_mystery = (entry.type == COURSE_ENTRY_RANDOM || entry.type == COURSE_ENTRY_RANDOM_WITHIN_GROUP);
 		if( default_mystery != entry.mystery )
 		{
 			if( entry.modifiers != "" )
