@@ -441,7 +441,7 @@ void NoteField::DrawPrimitives()
 		//
 		// BPM text
 		//
-		vector<BPMSegment> &aBPMSegments = GAMESTATE->m_pCurSong->m_BPMSegments;
+		vector<BPMSegment> &aBPMSegments = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments;
 		for( i=0; i<aBPMSegments.size(); i++ )
 		{
 			if(aBPMSegments[i].m_fStartBeat >= fFirstBeatToDraw &&
@@ -451,7 +451,7 @@ void NoteField::DrawPrimitives()
 		//
 		// Freeze text
 		//
-		vector<StopSegment> &aStopSegments = GAMESTATE->m_pCurSong->m_StopSegments;
+		vector<StopSegment> &aStopSegments = GAMESTATE->m_pCurSong->m_Timing.m_StopSegments;
 		for( i=0; i<aStopSegments.size(); i++ )
 		{
 			if(aStopSegments[i].m_fStartBeat >= fFirstBeatToDraw &&

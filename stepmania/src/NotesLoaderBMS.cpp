@@ -541,8 +541,8 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 					if( fBeatOffset > 10 )	// some BPMs's play the music again at the end.  Why?  Who knows...
 						break;
 					float fBPS;
-					fBPS = out.m_BPMSegments[0].m_fBPM/60.0f;
-					out.m_fBeat0OffsetInSeconds = fBeatOffset / fBPS;
+					fBPS = out.m_Timing.m_BPMSegments[0].m_fBPM/60.0f;
+					out.m_Timing.m_fBeat0OffsetInSeconds = fBeatOffset / fBPS;
 					break;
 				}
 				case 3:	{ // bpm change
@@ -659,18 +659,18 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 						{
 							// find the BPM at the time of this freeze
 							float fBPM = -1;
-							for( unsigned i=0; i<out.m_BPMSegments.size()-1; i++ )
+							for( unsigned i=0; i<out.m_Timing.m_BPMSegments.size()-1; i++ )
 							{
-								if( out.m_BPMSegments[i].m_fStartBeat <= fFreezeStartBeat &&
-									out.m_BPMSegments[i+1].m_fStartBeat > fFreezeStartBeat )
+								if( out.m_Timing.m_BPMSegments[i].m_fStartBeat <= fFreezeStartBeat &&
+									out.m_Timing.m_BPMSegments[i+1].m_fStartBeat > fFreezeStartBeat )
 								{
-									fBPM = out.m_BPMSegments[i].m_fBPM;
+									fBPM = out.m_Timing.m_BPMSegments[i].m_fBPM;
 									break;
 								}
 							}
 							// the BPM segment of this beat is the last BPM segment
 							if( fBPM == -1 )
-								fBPM = out.m_BPMSegments[out.m_BPMSegments.size()-1].m_fBPM;
+								fBPM = out.m_Timing.m_BPMSegments[out.m_Timing.m_BPMSegments.size()-1].m_fBPM;
 
 							fFreezeSecs = (float)atof(value_data)/(fBPM*0.81f);	// I have no idea what units these are in, so I experimented until finding this factor.
 							break;
@@ -695,9 +695,9 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		}
 	}
 
-	for( i=0; i<out.m_BPMSegments.size(); i++ )
+	for( i=0; i<out.m_Timing.m_BPMSegments.size(); i++ )
 		LOG->Trace( "There is a BPM change at beat %f, BPM %f, index %d",
-					out.m_BPMSegments[i].m_fStartBeat, out.m_BPMSegments[i].m_fBPM, i );
+					out.m_Timing.m_BPMSegments[i].m_fStartBeat, out.m_Timing.m_BPMSegments[i].m_fBPM, i );
 
 	return true;
 }

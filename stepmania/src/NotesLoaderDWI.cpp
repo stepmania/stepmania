@@ -390,7 +390,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 
 		else if( 0==stricmp(sValueName,"GAP") )
 			// the units of GAP is 1/1000 second
-			out.m_fBeat0OffsetInSeconds = -atoi( sParams[1] ) / 1000.0f;
+			out.m_Timing.m_fBeat0OffsetInSeconds = -atoi( sParams[1] ) / 1000.0f;
 
 		else if( 0==stricmp(sValueName,"SAMPLESTART") )
 			out.m_fMusicSampleStartSeconds = ParseBrokenDWITimestamp(sParams[1], sParams[2], sParams[3]);

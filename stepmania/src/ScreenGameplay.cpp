@@ -257,7 +257,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	if( GAMESTATE->IsCourseMode() )
 		g_fOldOffset = -1000;
 	else
-		g_fOldOffset = GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds;
+		g_fOldOffset = GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds;
 
 
 
@@ -1512,9 +1512,9 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
 				}
 
-				GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds += fOffsetDelta;
+				GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds += fOffsetDelta;
 
-				m_textDebug.SetText( ssprintf("Offset = %.3f", GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds) );
+				m_textDebug.SetText( ssprintf("Offset = %.3f", GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds) );
 				m_textDebug.StopTweening();
 				m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 				m_textDebug.BeginTweening( 3 );		// sleep
@@ -1614,14 +1614,14 @@ void ScreenGameplay::ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 			"%s\n", 
 			GAMESTATE->m_pCurSong->GetFullDisplayTitle().c_str() );
 
-		if( fabs(GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds - g_fOldOffset) > 0.001 )
+		if( fabs(GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds - g_fOldOffset) > 0.001 )
 		{
 			sMessage += ssprintf( 
 				"\n"
 				"Offset was changed from %.3f to %.3f (%.3f).\n",
 				g_fOldOffset, 
-				GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds,
-				GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds - g_fOldOffset );
+				GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds,
+				GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds - g_fOldOffset );
 		}
 
 		sMessage +=

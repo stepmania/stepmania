@@ -62,8 +62,8 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 {
 	LOG->Trace( "Song::LoadFromSMFile(%s)", sPath.c_str() );
 
-	out.m_BPMSegments.clear();
-	out.m_StopSegments.clear();
+	out.m_Timing.m_BPMSegments.clear();
+	out.m_Timing.m_StopSegments.clear();
 
 	MsdFile msd;
 	bool bResult = msd.ReadFile( sPath );
@@ -165,7 +165,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 		}
 
 		else if( 0==stricmp(sValueName,"OFFSET") )
-			out.m_fBeat0OffsetInSeconds = (float)atof( sParams[1] );
+			out.m_Timing.m_fBeat0OffsetInSeconds = (float)atof( sParams[1] );
 
 		else if( 0==stricmp(sValueName,"SELECTABLE") )
 		{

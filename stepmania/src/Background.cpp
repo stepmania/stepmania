@@ -343,9 +343,9 @@ void Background::LoadFromSong( Song* pSong )
 		}
 
 		// change BG every BPM change that is at the beginning of a measure
-		for( unsigned i=0; i<pSong->m_BPMSegments.size(); i++ )
+		for( unsigned i=0; i<pSong->m_Timing.m_BPMSegments.size(); i++ )
 		{
-			const BPMSegment& bpmseg = pSong->m_BPMSegments[i];
+			const BPMSegment& bpmseg = pSong->m_Timing.m_BPMSegments[i];
 
 			if( fmodf(bpmseg.m_fStartBeat, (float)BEATS_PER_MEASURE) != 0 )
 				continue;	// skip

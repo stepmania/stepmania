@@ -874,7 +874,7 @@ void PlayerMinus::HandleAutosync(float fNoteOffset)
 	const float stddev = calc_stddev(m_fOffset, m_fOffset+SAMPLE_COUNT);
 
 	if (stddev < .03 && stddev < fabsf(mean)) { //If they stepped with less than .03 error
-		GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds += mean;
+		GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds += mean;
 		LOG->Trace("Offset corrected by %f. Error in steps: %f seconds.", mean, stddev);
 	} else
 		LOG->Trace("Offset NOT corrected. Average offset: %f seconds. Error: %f seconds.", mean, stddev);

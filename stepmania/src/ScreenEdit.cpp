@@ -535,7 +535,7 @@ void ScreenEdit::UpdateTextInfo()
 	sText += ssprintf( "Sub title:\n     %s\n",				m_pSong->m_sSubTitle.c_str() );
 	sText += ssprintf( "Tap Steps:\n     %d\n",				iNumTapNotes );
 	sText += ssprintf( "Hold Steps:\n     %d\n",			iNumHoldNotes );
-	sText += ssprintf( "Beat 0 Offset:\n     %.3f secs\n",	m_pSong->m_fBeat0OffsetInSeconds );
+	sText += ssprintf( "Beat 0 Offset:\n     %.3f secs\n",	m_pSong->m_Timing.m_fBeat0OffsetInSeconds );
 	sText += ssprintf( "Preview Start:\n     %.2f secs\n",	m_pSong->m_fMusicSampleStartSeconds );
 	sText += ssprintf( "Preview Length:\n     %.2f secs\n",m_pSong->m_fMusicSampleLengthSeconds );
 
@@ -973,24 +973,24 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 
 			unsigned i;
-			for( i=0; i<m_pSong->m_StopSegments.size(); i++ )
+			for( i=0; i<m_pSong->m_Timing.m_StopSegments.size(); i++ )
 			{
-				if( m_pSong->m_StopSegments[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
+				if( m_pSong->m_Timing.m_StopSegments[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
 					break;
 			}
 
-			if( i == m_pSong->m_StopSegments.size() )	// there is no BPMSegment at the current beat
+			if( i == m_pSong->m_Timing.m_StopSegments.size() )	// there is no BPMSegment at the current beat
 			{
 				// create a new StopSegment
 				if( fStopDelta > 0 )
 					m_pSong->AddStopSegment( StopSegment(GAMESTATE->m_fSongBeat, fStopDelta) );
 			}
-			else	// StopSegment being modified is m_StopSegments[i]
+			else	// StopSegment being modified is m_Timing.m_StopSegments[i]
 			{
-				m_pSong->m_StopSegments[i].m_fStopSeconds += fStopDelta;
-				if( m_pSong->m_StopSegments[i].m_fStopSeconds <= 0 )
-					m_pSong->m_StopSegments.erase( m_pSong->m_StopSegments.begin()+i,
-													  m_pSong->m_StopSegments.begin()+i+1);
+				m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds += fStopDelta;
+				if( m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds <= 0 )
+					m_pSong->m_Timing.m_StopSegments.erase( m_pSong->m_Timing.m_StopSegments.begin()+i,
+													  m_pSong->m_Timing.m_StopSegments.begin()+i+1);
 			}
 		}
 		break;
@@ -1015,7 +1015,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
 			}
 
-			m_pSong->m_fBeat0OffsetInSeconds += fOffsetDelta;
+			m_pSong->m_Timing.m_fBeat0OffsetInSeconds += fOffsetDelta;
 		}
 		break;
 	case SDLK_LEFTBRACKET:
@@ -1169,7 +1169,7 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 				case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
 				}
 
-				m_pSong->m_fBeat0OffsetInSeconds += fOffsetDelta;
+				m_pSong->m_Timing.m_fBeat0OffsetInSeconds += fOffsetDelta;
 			}
 		break;
 		}
@@ -1724,19 +1724,19 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 										 (m_NoteFieldEdit.m_fEndMarker-m_NoteFieldEdit.m_fBeginMarker)
 									   );
 				unsigned i;
-				for( i=0; i<m_pSong->m_StopSegments.size(); i++ )
+				for( i=0; i<m_pSong->m_Timing.m_StopSegments.size(); i++ )
 				{
-					if( m_pSong->m_StopSegments[i].m_fStartBeat == m_NoteFieldEdit.m_fBeginMarker )
+					if( m_pSong->m_Timing.m_StopSegments[i].m_fStartBeat == m_NoteFieldEdit.m_fBeginMarker )
 						break;
 				}
 
-				if( i == m_pSong->m_StopSegments.size() )	// there is no BPMSegment at the current beat
+				if( i == m_pSong->m_Timing.m_StopSegments.size() )	// there is no BPMSegment at the current beat
 				{
 					m_pSong->AddStopSegment( StopSegment(GAMESTATE->m_fSongBeat, fStopLength) );
 				}
-				else	// StopSegment being extended is m_StopSegments[i]
+				else	// StopSegment being extended is m_Timing.m_StopSegments[i]
 				{
-					m_pSong->m_StopSegments[i].m_fStopSeconds += fStopLength;
+					m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds += fStopLength;
 				}
 				m_NoteFieldEdit.m_fEndMarker = -1;
 				break;
@@ -1750,19 +1750,19 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 			{
 				float fBPMatPause = m_pSong->GetBPMAtBeat( GAMESTATE->m_fSongBeat );
 				unsigned i;
-				for( i=0; i<m_pSong->m_StopSegments.size(); i++ )
+				for( i=0; i<m_pSong->m_Timing.m_StopSegments.size(); i++ )
 				{
-					if( m_pSong->m_StopSegments[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
+					if( m_pSong->m_Timing.m_StopSegments[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
 						break;
 				}
 
-				if( i == m_pSong->m_StopSegments.size() )	// there is no BPMSegment at the current beat
+				if( i == m_pSong->m_Timing.m_StopSegments.size() )	// there is no BPMSegment at the current beat
 					break;
-				else	// StopSegment being modified is m_StopSegments[i]
+				else	// StopSegment being modified is m_Timing.m_StopSegments[i]
 				{
-					float fStopLength = m_pSong->m_StopSegments[i].m_fStopSeconds;
-					m_pSong->m_StopSegments.erase( m_pSong->m_StopSegments.begin()+i,
-												   m_pSong->m_StopSegments.begin()+i+1);
+					float fStopLength = m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds;
+					m_pSong->m_Timing.m_StopSegments.erase( m_pSong->m_Timing.m_StopSegments.begin()+i,
+												   m_pSong->m_Timing.m_StopSegments.begin()+i+1);
 					fStopLength /= fBPMatPause;
 					fStopLength *= 60;
 					// don't move the step from where it is, just move everything later

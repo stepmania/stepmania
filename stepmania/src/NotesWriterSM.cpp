@@ -23,7 +23,7 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 	f.PutLine( ssprintf( "#CDTITLE:%s;", out.m_sCDTitleFile.c_str() ) );
 	f.PutLine( ssprintf( "#MUSIC:%s;", out.m_sMusicFile.c_str() ) );
 	f.PutLine( ssprintf( "#MUSICLENGTH:%.3f;", out.m_fMusicLengthSeconds ) );
-	f.PutLine( ssprintf( "#OFFSET:%.3f;", out.m_fBeat0OffsetInSeconds ) );
+	f.PutLine( ssprintf( "#OFFSET:%.3f;", out.m_Timing.m_fBeat0OffsetInSeconds ) );
 	f.PutLine( ssprintf( "#SAMPLESTART:%.3f;", out.m_fMusicSampleStartSeconds ) );
 	f.PutLine( ssprintf( "#SAMPLELENGTH:%.3f;", out.m_fMusicSampleLengthSeconds ) );
 
@@ -58,23 +58,23 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 
 	f.Write( "#BPMS:" );
 	unsigned i;
-	for( i=0; i<out.m_BPMSegments.size(); i++ )
+	for( i=0; i<out.m_Timing.m_BPMSegments.size(); i++ )
 	{
-		const BPMSegment &bs = out.m_BPMSegments[i];
+		const BPMSegment &bs = out.m_Timing.m_BPMSegments[i];
 
 		f.Write( ssprintf( "%.3f=%.3f", bs.m_fStartBeat, bs.m_fBPM ) );
-		if( i != out.m_BPMSegments.size()-1 )
+		if( i != out.m_Timing.m_BPMSegments.size()-1 )
 			f.Write( "," );
 	}
 	f.PutLine( ";" );
 
 	f.Write( "#STOPS:" );
-	for( i=0; i<out.m_StopSegments.size(); i++ )
+	for( i=0; i<out.m_Timing.m_StopSegments.size(); i++ )
 	{
-		const StopSegment &fs = out.m_StopSegments[i];
+		const StopSegment &fs = out.m_Timing.m_StopSegments[i];
 
 		f.PutLine( ssprintf( "%.3f=%.3f", fs.m_fStartBeat, fs.m_fStopSeconds ) );
-		if( i != out.m_StopSegments.size()-1 )
+		if( i != out.m_Timing.m_StopSegments.size()-1 )
 			f.Write( "," );
 	}
 	f.PutLine( ";" );

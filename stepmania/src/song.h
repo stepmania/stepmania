@@ -14,6 +14,8 @@
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 #include "Grade.h"
+#include "TimingData.h"
+
 class Steps;
 class StyleDef;
 class NotesLoader;
@@ -22,22 +24,6 @@ class LyricsLoader;
 
 extern const int FILE_CACHE_VERSION;
 
-
-struct BPMSegment 
-{
-	BPMSegment() { m_fStartBeat = m_fBPM = -1; };
-	BPMSegment( float s, float b ) { m_fStartBeat = s; m_fBPM = b; };
-	float m_fStartBeat;
-	float m_fBPM;
-};
-
-struct StopSegment 
-{
-	StopSegment() { m_fStartBeat = m_fStopSeconds = -1; };
-	StopSegment( float s, float f ) { m_fStartBeat = s; m_fStopSeconds = f; };
-	float m_fStartBeat;
-	float m_fStopSeconds;
-};
 
 struct BackgroundChange 
 {
@@ -134,7 +120,6 @@ public:
 	CString	m_sCredit;
 
 	CString	m_sMusicFile;
-	float	m_fBeat0OffsetInSeconds;
 	float	m_fMusicLengthSeconds;
 	float	m_fFirstBeat;
 	float	m_fLastBeat;
@@ -143,8 +128,6 @@ public:
 	enum { DISPLAY_ACTUAL, DISPLAY_SPECIFIED, DISPLAY_RANDOM } m_DisplayBPMType;
 	float		m_fSpecifiedBPMMin;
 	float		m_fSpecifiedBPMMax;	// if a range, then Min != Max
-
-	float GetMusicStartBeat() const;
 
 	CString	m_sBannerFile;
 	CString m_sLyricsFile;
@@ -168,73 +151,24 @@ public:
 
 	bool Matches(CString sGroup, CString sSong) const;
 
-	vector<BPMSegment>			m_BPMSegments;	// this must be sorted before gameplay
-	vector<StopSegment>			m_StopSegments;	// this must be sorted before gameplay
+	TimingData					m_Timing;
 	vector<BackgroundChange>	m_BackgroundChanges;	// this must be sorted before gameplay
 	vector<LyricSegment>		m_LyricSegments;	// same
 
-	void AddBPMSegment( BPMSegment seg );
-	void AddStopSegment( StopSegment seg );
+	void AddBPMSegment( const BPMSegment &seg ) { m_Timing.AddBPMSegment( seg ); }
+	void AddStopSegment( const StopSegment &seg ) { m_Timing.AddStopSegment( seg ); }
 	void AddBackgroundChange( BackgroundChange seg );
 	void AddLyricSegment( LyricSegment seg );
 
-	void GetDisplayBPM( float &fMinBPMOut, float &fMaxBPMOut ) const
-	{
-		if( m_DisplayBPMType == DISPLAY_SPECIFIED )
-		{
-			fMinBPMOut = m_fSpecifiedBPMMin;
-			fMaxBPMOut = m_fSpecifiedBPMMax;
-		}
-		else
-		{
-			GetActualBPM( fMinBPMOut, fMaxBPMOut );
-		}
-	}
-	void GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut ) const
-	{
-		fMaxBPMOut = 0;
-		fMinBPMOut = 100000;	// inf
-		for( unsigned i=0; i<m_BPMSegments.size(); i++ ) 
-		{
-			const BPMSegment &seg = m_BPMSegments[i];
-			fMaxBPMOut = max( seg.m_fBPM, fMaxBPMOut );
-			fMinBPMOut = min( seg.m_fBPM, fMinBPMOut );
-		}
-	}
-	float GetBPMAtBeat( float fBeat ) const
-	{
-		unsigned i;
-		for( i=0; i<m_BPMSegments.size()-1; i++ )
-			if( m_BPMSegments[i+1].m_fStartBeat > fBeat )
-				break;
-		return m_BPMSegments[i].m_fBPM;
-	}
-	void SetBPMAtBeat( float fBeat, float fBPM );
-	BPMSegment& GetBPMSegmentAtBeat( float fBeat )
-	{
-		unsigned i;
-		for( i=0; i<m_BPMSegments.size()-1; i++ )
-			if( m_BPMSegments[i+1].m_fStartBeat > fBeat )
-				break;
-		return m_BPMSegments[i];
-	};
-	CString GetBackgroundAtBeat( float fBeat )
-	{
-		unsigned i;
-		for( i=0; i<m_BackgroundChanges.size()-1; i++ )
-			if( m_BackgroundChanges[i+1].m_fStartBeat > fBeat )
-				break;
-		return m_BackgroundChanges[i].m_sBGName;
-	}
-	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut ) const;
-	float GetBeatFromElapsedTime( float fElapsedTime ) const	// shortcut for places that care only about the beat
-	{
-		float fBeat, fThrowAway;
-		bool bThrowAway;
-		GetBeatAndBPSFromElapsedTime( fElapsedTime, fBeat, fThrowAway, bThrowAway );
-		return fBeat;
-	}
-	float GetElapsedTimeFromBeat( float fBeat ) const;
+	void GetDisplayBPM( float &fMinBPMOut, float &fMaxBPMOut ) const;
+	CString GetBackgroundAtBeat( float fBeat ) const;
+
+	float GetBPMAtBeat( float fBeat ) const { return m_Timing.GetBPMAtBeat( fBeat ); }
+	void SetBPMAtBeat( float fBeat, float fBPM ) { m_Timing.SetBPMAtBeat( fBeat, fBPM ); }
+	BPMSegment& GetBPMSegmentAtBeat( float fBeat ) { return m_Timing.GetBPMSegmentAtBeat( fBeat ); }
+	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut ) const { m_Timing.GetBeatAndBPSFromElapsedTime( fElapsedTime, fBeatOut, fBPSOut, bFreezeOut ); }
+	float GetBeatFromElapsedTime( float fElapsedTime ) const { return m_Timing.GetBeatFromElapsedTime( fElapsedTime ); }
+	float GetElapsedTimeFromBeat( float fBeat ) const { return m_Timing.GetElapsedTimeFromBeat( fBeat ); }
 	
 	
 	
