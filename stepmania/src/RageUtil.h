@@ -174,6 +174,7 @@ void splitrelpath(
 	CString& Ext 
 );
 
+CString SetExtension( const CString &path, const CString &ext );
 CString GetExtension( CString sPath );
 
 typedef int longchar;
