@@ -158,7 +158,7 @@ void RageBitmapTexture::Create()
 
 	if( actualID.iGrayscaleBits != -1 && DISPLAY->SupportsTextureFormat(RageDisplay::FMT_PAL) )
 	{
-		RageSurface *dst = RageSurfaceUtils::Palettize( img, actualID.iGrayscaleBits, actualID.iAlphaBits );
+		RageSurface *dst = RageSurfaceUtils::PalettizeToGrayscale( img, actualID.iGrayscaleBits, actualID.iAlphaBits );
 
 		delete img;
 		img = dst;

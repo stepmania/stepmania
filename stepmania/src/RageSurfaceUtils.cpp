@@ -755,7 +755,7 @@ RageSurface *RageSurfaceUtils::LoadSurface( CString file )
  *
  * This gives us a generic way to handle arbitrary 8-bit texture formats.
  */
-RageSurface *RageSurfaceUtils::Palettize( const RageSurface *src_surf, int GrayBits, int AlphaBits )
+RageSurface *RageSurfaceUtils::PalettizeToGrayscale( const RageSurface *src_surf, int GrayBits, int AlphaBits )
 {
 	AlphaBits = min( AlphaBits, 8-src_surf->format->Aloss );
 	

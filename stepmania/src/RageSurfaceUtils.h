@@ -52,7 +52,8 @@ namespace RageSurfaceUtils
 	bool SaveSurface( const RageSurface *img, CString file );
 	RageSurface *LoadSurface( CString file );
 
-	RageSurface *Palettize( const RageSurface *src_surf, int GrayBits, int AlphaBits );
+	/* Quickly palettize to an gray/alpha texture. */
+	RageSurface *PalettizeToGrayscale( const RageSurface *src_surf, int GrayBits, int AlphaBits );
 
 	RageSurface *MakeDummySurface( int height, int width );
 
