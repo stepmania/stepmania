@@ -880,8 +880,8 @@ void Player::Step( int col, const RageTimer &tm )
 		// TODO: Remove use of PlayerNumber.
 		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
-		//Keep this here so we get the same data as Autosync
-		NSMAN->ReportTiming(fNoteOffset,pn);
+		// Keep this here so we get the same data as Autosync
+		NSMAN->ReportTiming( fNoteOffset,pn );
 		
 		if( m_pPrimaryScoreKeeper )
 			m_pPrimaryScoreKeeper->HandleTapScore( score );
