@@ -15,14 +15,6 @@
 using namespace CryptoPP;
 using namespace std;
 
-#ifdef WIN32
-//	#ifdef DEBUG
-//		#pragma comment(lib, "crypto51/Debug/cryptlib.lib")
-//	#else
-		#pragma comment(lib, "crypto51/Release/cryptlib.lib")
-//	#endif
-#endif
-
 static const CString PRIVATE_KEY_PATH = "Data/private.key.rsa";
 static const CString PUBLIC_KEY_PATH = "Data/public.key.rsa";
 static const int KEY_LENGTH = 1024;
