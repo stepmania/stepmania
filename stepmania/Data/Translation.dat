@@ -240,48 +240,68 @@ TitleTo: ゾナパラ
 SubtitleTo: WHY! パラパラ・リミックス
 ArtistTo: ゾベッカ
 *
-#TOKIMEKI MEMORIAL DANCING SUMMER VACATION
-TitleFrom: Anata
-ArtistFrom: Unknown
+# Tokimeki Memorial Dancing Summer Vacation
+TitleFrom: Anata ni Aete
 TitleTo: あなたに会えて
-SubtitleTo: ~Dancing Summer Mix~
+*
+ArtistFrom: Junko Noda
 ArtistTo: 野田 順子
 *
-TitleFrom: Futari
-ArtistFrom: Unknown
+TitleFrom: Futari no Toki
 TitleTo: 二人の時
-SubtitleTo: ~Dancing Summer Mix~
+*
+TitleFrom: Haru-iro no Kaze no Naka de
+TitleTo: 春色の風の中で
+*
+ArtistFrom: Mami Kingetsu
 ArtistTo: 金月 真美
+*
+TitleFrom: Motto! Motto! Tokimeki
+TitleTo: もっと ! モット ! TOKIMEKI
+*
+TitleFrom: Tokimeki no Organ
+TitleTo: ときめきのオルゴーレ
+*
+TitleFrom: Yuuki no Kamisama
+TitleTo: 勇気の神様
+*
+ArtistFrom: Yuuko Asahina
+ArtistTo: 朝比奈 夕子
+*
+# Handle some broken data.
+TitleFrom: Kamisama
+ArtistFrom: Unknown
+TitleTo: 勇気の神様
+ArtistTo: 野田 順子
 *
 TitleFrom: Haru
 ArtistFrom: Unknown
 TitleTo: 春色の風の中で
-SubtitleTo: ~Dancing Summer Mix~
-ArtistTo: 金月 真美
-*
-TitleFrom: Kamisama
-ArtistFrom: Unknown
-TitleTo: 勇気の神様
-SubtitleTo: ~Dancing Summer Mix~
-ArtistTo: 野田 順子
-*
-TitleFrom: Mot! Mot! Tokimeki
-ArtistFrom: Unknown
-TitleTo: もっと ! モット ! TOKIMEKI
-SubtitleTo: ~Dancing Summer Mix~
-ArtistTo: 金月 真美
-*
-TitleFrom: Olgore
-ArtistFrom: Unkown
-TitleTo: ときめきのオルゴーレ
-SubtitleTo: ~Dancing Summer Mix~
 ArtistTo: 金月 真美
 *
 TitleFrom: Hero Club-MIX
 ArtistFrom: Unknown
 ArtistTo: 朝比奈 夕子
-
-
+*
+TitleFrom: Olgore
+ArtistFrom: Unkown
+TitleTo: ときめきのオルゴーレ
+ArtistTo: 金月 真美
+*
+TitleFrom: Anata
+ArtistFrom: Unknown
+TitleTo: あなたに会えて
+ArtistTo: 野田 順子
+*
+TitleFrom: Futari
+ArtistFrom: Unknown
+TitleTo: 二人の時
+ArtistTo: 金月 真美
+*
+TitleFrom: Mot! Mot! Tokimeki
+ArtistFrom: Unknown
+TitleTo: もっと ! モット ! TOKIMEKI
+ArtistTo: 金月 真美
 *
 TitleFrom: Pokemon
 TitleTo: Pokémon
