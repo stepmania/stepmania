@@ -20,6 +20,7 @@
 #include "song.h"
 #include "ThemeManager.h"
 #include "RageFile.h"
+#include "ActorUtil.h"
 
 const int MAX_LAYERS = 1000;
 
@@ -208,8 +209,35 @@ void BGAnimation::SetDiffuse( const RageColor &c )
 		m_Layers[i]->SetDiffuse(c);
 }
 
-void BGAnimation::PlayOffCommand()
+float BGAnimation::GetTweenTimeLeft() const
+{
+	float tot = 0;
+
+	for( unsigned i=0; i<m_TweenInfo.size(); ++i )
+		tot += m_Layers[i]->GetMaxTweenTimeLeft();
+
+	return tot;
+}
+
+void BGAnimation::PlayCommand( const CString &cmd )
 {
 	for( unsigned i=0; i<m_Layers.size(); i++ ) 
-		m_Layers[i]->PlayOffCommand();
+		m_Layers[i]->PlayCommand( cmd );
 }
+
+void BGAnimation::HandleCommand( const CStringArray &asTokens )
+{
+	HandleParams;
+
+	const CString& sName = asTokens[0];
+
+	if( sName=="playcommand" )	PlayCommand( sParam(1) );
+	else
+	{
+		Actor::HandleCommand( asTokens );
+		return;
+	}
+
+	CheckHandledParams;
+}
+

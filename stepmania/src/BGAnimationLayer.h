@@ -39,7 +39,8 @@ public:
 	void GainingFocus( float fRate, bool bRewindMovie, bool bLoop );
 	void LosingFocus();
 
-	void PlayOffCommand();
+	void PlayCommand( CString cmd );
+	void PlayOffCommand() { PlayCommand( "Off" ); }
 
 protected:
 	vector<Actor*> m_pActors;
@@ -90,8 +91,7 @@ protected:
 	//
 	
 	// common stuff
-	CString m_sOnCommand;
-	CString m_sOffCommand;
+	map<CString, CString> m_asCommands;
 	float m_fRepeatCommandEverySeconds;	// -1 = no repeat
 	float m_fSecondsUntilNextCommand;
 	float m_fUpdateRate;	// set by GainingFocus

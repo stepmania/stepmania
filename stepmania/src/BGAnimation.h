@@ -41,7 +41,11 @@ public:
 
 	float GetLengthSeconds() { return m_fLengthSeconds; }
 
-	void PlayOffCommand();
+	virtual void HandleCommand( const CStringArray &asTokens );
+	void PlayOffCommand() { PlayCommand("Off"); }
+	void PlayCommand( const CString &cmd );
+
+	float GetTweenTimeLeft() const;
 
 protected:
 	vector<BGAnimationLayer*> m_Layers;

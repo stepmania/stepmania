@@ -41,7 +41,6 @@ const float SPIRAL_MIN_ZOOM = 0.3f;
 #define MAX_SPRITES (MAX_TILES_WIDE*MAX_TILES_HIGH)
 
 static const RectI FullScreenRectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM);
-// static const RectI FullScreenRectI(-SCREEN_WIDTH/2,-SCREEN_HEIGHT/2,+SCREEN_WIDTH/2,+SCREEN_HEIGHT/2);
 
 
 BGAnimationLayer::BGAnimationLayer()
@@ -496,10 +495,31 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 				sLayer.c_str(), sAniDir.c_str(), type.c_str() );
 	}
 
-	ini.GetValue( sLayer, "Command", m_sOnCommand );
+	{
+		const IniFile::key *key = ini.GetKey( sLayer );
+		for( IniFile::key::const_iterator i = key->begin();
+			 i != key->end(); ++i)
+		{
+			CString KeyName = i->first; /* "OnCommand" */
+			KeyName.MakeLower();
+
+			if( KeyName.Right(7) != "command" )
+				continue; /* not a command */
+
+			const CString &Data = i->second;
+			CString CmdName;
+			/* Special case: "Command=foo" -> "OnCommand=foo" */
+			if( KeyName.size() == 7 )
+				CmdName="on";
+			else
+				CmdName = KeyName.Left( KeyName.size()-7 );
+			m_asCommands[CmdName] = Data;
+		}
+	}
+		
+
 	ini.GetValue( sLayer, "CommandRepeatSeconds", m_fRepeatCommandEverySeconds );
 	m_fSecondsUntilNextCommand = m_fRepeatCommandEverySeconds;
-	ini.GetValue( sLayer, "OffCommand", m_sOffCommand );
 	ini.GetValue( sLayer, "FOV", m_fFOV );
 	ini.GetValue( sLayer, "Lighting", m_bLighting );
 	ini.GetValue( sLayer, "TexCoordVelocityX", m_fTexCoordVelocityX );
@@ -607,11 +627,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 			m_pActors[i]->SetState( rand()%m_pActors[i]->GetNumStates() );
 	}
 
-	if( m_sOnCommand != "" )
-	{
-		for( unsigned i=0; i<m_pActors.size(); i++ )
-			m_pActors[i]->Command( m_sOnCommand );
-	}
+	PlayCommand( "On" );
 }
 
 float BGAnimationLayer::GetMaxTweenTimeLeft() const
@@ -891,10 +907,7 @@ void BGAnimationLayer::Update( float fDeltaTime )
 		m_fSecondsUntilNextCommand -= fDeltaTime;
 		if( m_fSecondsUntilNextCommand <= 0 )
 		{
-			for( unsigned i=0; i<m_pActors.size(); i++ )
-			{
-				m_pActors[i]->Command( m_sOnCommand );			
-			}
+			PlayCommand( "On" );
 			m_fSecondsUntilNextCommand += m_fRepeatCommandEverySeconds;
 		}
 	}
@@ -959,10 +972,7 @@ void BGAnimationLayer::GainingFocus( float fRate, bool bRewindMovie, bool bLoop 
 	m_pActors[0]->Command( ssprintf("rate,%f",fRate) );
 
 	if( m_fRepeatCommandEverySeconds == -1 )	// if not repeating
-	{
-		for( unsigned i=0; i<m_pActors.size(); i++ )
-			m_pActors[i]->Command( m_sOnCommand );
-	}
+		PlayCommand( "On" );
 }
 
 void BGAnimationLayer::LosingFocus()
@@ -970,12 +980,14 @@ void BGAnimationLayer::LosingFocus()
 	m_pActors[0]->Command( "pause" );
 }
 
-
-void BGAnimationLayer::PlayOffCommand()
+void BGAnimationLayer::PlayCommand( CString cmd )
 {
-	if( m_sOffCommand != "" )
-	{
-		for( unsigned i=0; i<m_pActors.size(); i++ )
-			m_pActors[i]->Command( m_sOffCommand );
-	}
+	cmd.MakeLower();
+	map<CString, CString>::const_iterator it = m_asCommands.find( cmd );
+
+	if( it == m_asCommands.end() )
+		return;
+
+	for( unsigned i=0; i<m_pActors.size(); i++ )
+		m_pActors[i]->Command( it->second );
 }
