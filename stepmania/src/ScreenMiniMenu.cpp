@@ -82,10 +82,10 @@ void ScreenMiniMenu::Init( const Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMe
 
 void ScreenMiniMenu::ImportOptions( int r, PlayerNumber pn )
 {
-	OptionRow &or = *m_Rows[r];
+	OptionRow &optrow = *m_Rows[r];
 	MenuRow &mr = m_vMenuRows[r];
 	if( !mr.choices.empty() )
-		or.SetOneSharedSelection( mr.iDefaultChoice );
+		optrow.SetOneSharedSelection( mr.iDefaultChoice );
 }
 
 void ScreenMiniMenu::ExportOptions( int r, PlayerNumber pn )
