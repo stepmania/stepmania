@@ -216,13 +216,6 @@ void BGAnimation::LoadFromNode( const CString &sDir, const XNode& node )
 	DEBUG_ASSERT( node.m_sName == "BGAnimation" );
 
 
-	if( !node.GetAttrValue( "LengthSeconds", m_fLengthSeconds ) )
-	{
-		/* XXX: if m_bGeneric, simply constructing the BG layer won't run "On",
-		 * so at this point GetMaxTweenTimeLeft is probably 0 */
-		m_fLengthSeconds = this->GetTweenTimeLeft();
-	}
-
 	CString sInitCommand;
 	if( node.GetAttrValue( "InitCommand", sInitCommand ) )
 	{
@@ -249,6 +242,14 @@ void BGAnimation::LoadFromNode( const CString &sDir, const XNode& node )
 
 	if( !m_bGeneric )
 		PlayCommand( "On" );
+
+
+	if( !node.GetAttrValue( "LengthSeconds", m_fLengthSeconds ) )
+	{
+		/* XXX: if m_bGeneric, simply constructing the BG layer won't run "On",
+		 * so at this point GetMaxTweenTimeLeft is probably 0 */
+		m_fLengthSeconds = this->GetTweenTimeLeft();
+	}
 }
 
 /*
