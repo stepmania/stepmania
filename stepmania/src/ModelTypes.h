@@ -81,6 +81,7 @@ typedef struct msMesh
 /* msMaterial */
 class RageTexture;
 
+// merge this into Sprite?
 struct AnimatedTexture
 {
 	AnimatedTexture();
@@ -118,8 +119,28 @@ typedef struct msMaterial
     char        szDiffuseTexture[MS_MAX_PATH];
     char        szAlphaTexture[MS_MAX_PATH];	// not used in SM.  Use alpha in diffuse texture instead
     int         nName;	// not used in SM.  What is this for anyway?
-	AnimatedTexture aniTexture;
-	bool		bSphereMapped;	// true of "sphere" appears in the material name
+
+	struct Texture
+	{
+		Texture()
+		{
+			bSphereMapped = false;
+			blendMode = BLEND_NORMAL;
+		}
+
+		void Load( CString sFile )
+		{
+			ani.Load( sFile );
+			bSphereMapped = sFile.Find("sphere") != -1;
+			if( sFile.Find("add") != -1 )
+				blendMode = BLEND_ADD;
+			else
+				blendMode = BLEND_NORMAL;
+		};
+		AnimatedTexture ani;
+		bool		bSphereMapped;	// true of "sphere" appears in the material name
+		BlendMode	blendMode;
+	} diffuse, alpha;
 } msMaterial;
 
 /* msPositionKey */

@@ -122,3 +122,4 @@ void AnimatedTexture::Unload()
 	iCurState = 0;
 	fSecsIntoFrame = 0;
 }
+

@@ -16,7 +16,7 @@
  * depend on RageDisplay (since that'd boost RDisplay.h a lot), so let's just
  * put this here. */
 enum GlowMode { GLOW_BRIGHTEN, GLOW_WHITEN };
-enum BlendMode { BLEND_NORMAL, BLEND_ADD, BLEND_NO_EFFECT };
+enum BlendMode { BLEND_NORMAL, BLEND_ADD, BLEND_NO_EFFECT, BLEND_INVALID };
 
 
 struct RageVector2

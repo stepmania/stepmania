@@ -244,8 +244,6 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 					THROW
                 strcpy( Material.szName, szName );
 
-				Material.bSphereMapped = ((CString)Material.szName).Find("sphere") != -1;
-
                 // ambient
 			    if( f.GetLine( sLine ) <= 0 )
 					THROW
@@ -307,7 +305,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 					FixSlashesInPlace( sTexturePath );
 					CollapsePath( sTexturePath );
 					if( IsAFile(sTexturePath) )
-						Material.aniTexture.Load( sTexturePath );
+						Material.diffuse.Load( sTexturePath );
 					else
 					{
 						CString sError = ssprintf( "'%s' references a texture '%s' that does not exist", sPath.c_str(), sTexturePath.c_str() );
@@ -321,6 +319,20 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                 strcpy (szName, "");
                 sscanf (sLine, "\"%[^\"]\"", szName);
                 strcpy( Material.szAlphaTexture, szName );
+
+				if( strcmp(Material.szAlphaTexture, "")!=0 )
+				{
+					CString sTexturePath = sDir + Material.szAlphaTexture;
+					FixSlashesInPlace( sTexturePath );
+					CollapsePath( sTexturePath );
+					if( IsAFile(sTexturePath) )
+						Material.alpha.Load( sTexturePath );
+					else
+					{
+						CString sError = ssprintf( "'%s' references a texture '%s' that does not exist", sPath.c_str(), sTexturePath.c_str() );
+						RageException::Throw( sError );
+					}
+				}
             }
         }
     }
@@ -536,9 +548,9 @@ void Model::DrawPrimitives()
 			msMesh *pMesh = &m_Meshes[i];
 			RageModelVertexVector& TempVertices = m_vTempVerticesByBone[i];
 
-			// apply material
-			if( pMesh->nMaterialIndex != -1 )
+			if( pMesh->nMaterialIndex != -1 )	// has a material
 			{
+			// apply material
 				msMaterial& mat = m_Materials[ pMesh->nMaterialIndex ];
 
 				RageColor Emissive = mat.Emissive;
@@ -555,16 +567,33 @@ void Model::DrawPrimitives()
 					Diffuse,
 					mat.Specular,
 					mat.fShininess );
-				DISPLAY->SetTexture( mat.aniTexture.GetCurrentTexture() );
-				DISPLAY->SetSphereEnironmentMapping( mat.bSphereMapped );
+
+				// render the first pass with texture 1
+				DISPLAY->SetTexture( mat.diffuse.ani.GetCurrentTexture() );
+				DISPLAY->SetSphereEnironmentMapping( mat.diffuse.bSphereMapped );
+				// UGLY:  This overrides the Actor's BlendMode
+				DISPLAY->SetBlendMode( mat.diffuse.blendMode );
+				DISPLAY->DrawIndexedTriangles( &TempVertices[0], pMesh->Vertices.size(), (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );
+
+				// render the second pass with texture 2
+				if( mat.alpha.ani.GetCurrentTexture() )
+				{
+					DISPLAY->SetTexture( mat.alpha.ani.GetCurrentTexture() );
+					DISPLAY->SetSphereEnironmentMapping( mat.alpha.bSphereMapped );
+					// UGLY:  This overrides the Actor's BlendMode
+					DISPLAY->SetBlendMode( mat.alpha.blendMode );
+					DISPLAY->DrawIndexedTriangles( &TempVertices[0], pMesh->Vertices.size(), (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );
+				}
+
+				DISPLAY->SetSphereEnironmentMapping( false );
 			}
 			else
 			{
-				RageColor emissive( 0,0,0,0 );
-				RageColor ambient( 0.2f,0.2f,0.2f,1 );
-				RageColor diffuse( 0.7f,0.7f,0.7f,1 );
-				RageColor specular( 0.2f,0.2f,0.2f,1 );
-				float shininess = 1;
+				const static RageColor emissive( 0,0,0,0 );
+				const static RageColor ambient( 0.2f,0.2f,0.2f,1 );
+				const static RageColor diffuse( 0.7f,0.7f,0.7f,1 );
+				const static RageColor specular( 0.2f,0.2f,0.2f,1 );
+				const static float shininess = 1;
 				DISPLAY->SetMaterial(
 					emissive,
 					ambient,
@@ -573,10 +602,8 @@ void Model::DrawPrimitives()
 					shininess );
 				DISPLAY->SetTexture( NULL );
 				DISPLAY->SetSphereEnironmentMapping( false );
+				DISPLAY->DrawIndexedTriangles( &TempVertices[0], pMesh->Vertices.size(), (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );
 			}
-
-			DISPLAY->DrawIndexedTriangles( &TempVertices[0], pMesh->Vertices.size(), (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );
-			DISPLAY->SetSphereEnironmentMapping( false );
 		}
 	}
 
@@ -611,7 +638,7 @@ void Model::DrawPrimitives()
 					Diffuse,
 					mat.Specular,
 					mat.fShininess );
-				DISPLAY->SetTexture( mat.aniTexture.GetCurrentTexture() );
+				DISPLAY->SetTexture( mat.diffuse.ani.GetCurrentTexture() );
 			}
 			else
 			{
@@ -854,20 +881,26 @@ void Model::Update( float fDelta )
 	AdvanceFrame( fDelta );
 
 	for( int i=0; i<(int)m_Materials.size(); i++ )
-		m_Materials[i].aniTexture.Update( fDelta );
+	{
+		m_Materials[i].diffuse.ani.Update( fDelta );
+		m_Materials[i].alpha.ani.Update( fDelta );
+	}
 }
 
 void Model::SetState( int iNewState )
 {
 	for( int i=0; i<(int)m_Materials.size(); i++ )
-		m_Materials[i].aniTexture.SetState( iNewState );
+	{
+		m_Materials[i].diffuse.ani.SetState( iNewState );
+		m_Materials[i].alpha.ani.SetState( iNewState );
+	}
 }
 
 int Model::GetNumStates()
 {
 	int iMaxStates = 0;
 	for( int i=0; i<(int)m_Materials.size(); i++ )
-		iMaxStates = max( iMaxStates, m_Materials[i].aniTexture.GetNumStates() );
+		iMaxStates = max( iMaxStates, m_Materials[i].diffuse.ani.GetNumStates() );
 	return iMaxStates;
 }
 
