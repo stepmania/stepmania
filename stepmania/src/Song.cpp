@@ -282,9 +282,12 @@ bool Song::LoadFromSongDir( CString sDir )
 	AddAutoGenNotes();
 
 	if( !m_bHasMusic )
+	{
+		LOG->Trace( "Song \"%s\" ignored (no music)", sDir.c_str() );
 		return false;	// don't load this song
-	else
-		return true;	// do load this song
+	}
+
+	return true;	// do load this song
 }
 
 static void GetImageDirListing( CString sPath, CStringArray &AddTo, bool bReturnPathToo=false )
