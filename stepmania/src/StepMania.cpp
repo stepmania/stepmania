@@ -388,7 +388,7 @@ struct VideoCardDefaults
 		true	// accelerated
 	},
 	{
-		"Voodoo", /* all other Voodoos: some drivers don't identify which one */
+		"Voodoo|3dfx", /* all other Voodoos: some drivers don't identify which one */
 		"d3d,opengl",
 		640,480,
 		16,16,16,
