@@ -570,46 +570,58 @@ int ScreenOptionsMaster::ExportOption( const OptionRowDefinition &row, const Opt
 	return 0;
 }
 
+int ScreenOptionsMaster::ExportOptionForAllPlayers( int iRow )
+{
+	int iChangeMask = 0;
+	const OptionRowHandler &hand = OptionRowHandlers[iRow];
+	const OptionRowDefinition &data = m_OptionRowAlloc[iRow];
+	OptionRow &row = *m_Rows[iRow];
+	FOREACH_HumanPlayer( pn )
+	{
+		vector<bool> &vbSelected = row.m_vbSelected[pn];
+
+		iChangeMask |= ExportOption( data, hand, pn, vbSelected );
+	}
+	return iChangeMask;
+}
+
 void ScreenOptionsMaster::ExportOptions()
 {
 	int ChangeMask = 0;
 
 	CHECKPOINT;
-	for( unsigned i = 0; i < OptionRowHandlers.size(); ++i )
-	{
-		CHECKPOINT_M( ssprintf("%i/%i", i, int(OptionRowHandlers.size())) );
-		
-		const OptionRowHandler &hand = OptionRowHandlers[i];
-		const OptionRowDefinition &data = m_OptionRowAlloc[i];
-		OptionRow &row = *m_Rows[i];
-
-		FOREACH_HumanPlayer( p )
-		{
-			vector<bool> &vbSelected = row.m_vbSelected[p];
-
-			ChangeMask |= ExportOption( data, hand, p, vbSelected );
-		}
-	}
-
-	CHECKPOINT;
+	const unsigned row = this->GetCurrentRow();
 	/* If the selection is on a LIST, and the selected LIST option sets the screen,
 	 * honor it. */
 	m_sNextScreen = "";
 
-	const int row = this->GetCurrentRow();
-	if( row != -1 )
+	for( unsigned i = 0; i < OptionRowHandlers.size(); ++i )
 	{
-		const OptionRowHandler &hand = OptionRowHandlers[row];
+		CHECKPOINT_M( ssprintf("%i/%i", i, int(OptionRowHandlers.size())) );
+		
+		/* If SELECT_NONE, only apply it if it's the selected option. */
+		const OptionRowDefinition &data = m_OptionRowAlloc[i];
+		if( data.selectType == SELECT_NONE && i != row )
+			continue;
+
+		OptionRowHandler &hand = OptionRowHandlers[i];
+
 		if( hand.type == ROW_LIST )
 		{
-			const int choice = m_Rows[row]->m_iChoiceInRowWithFocus[GAMESTATE->m_MasterPlayerNumber];
-			const GameCommand &mc = hand.ListEntries[choice];
+			const int choice = m_Rows[i]->m_iChoiceInRowWithFocus[GAMESTATE->m_MasterPlayerNumber];
+			GameCommand &mc = hand.ListEntries[choice];
 			if( mc.m_sScreen != "" )
+			{
+				/* Hack: instead of applying screen commands here, store them in
+				 * m_sNextScreen and apply them after we tween out.  If we don't set
+				 * m_sScreen to "", we'll load it twice (once for each player) and
+				 * then again for m_sNextScreen. */
 				m_sNextScreen = mc.m_sScreen;
-			// Why were we re-applying his here?  ExportOption() is where options
-			// are applied.
-			// mc.Apply( GAMESTATE->m_MasterPlayerNumber );
+				mc.m_sScreen = "";
+			}
 		}
+
+		ExportOptionForAllPlayers( i );
 	}
 	CHECKPOINT;
 

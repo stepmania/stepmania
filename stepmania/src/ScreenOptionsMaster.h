@@ -43,6 +43,7 @@ private:
 
 	int ExportOption( const OptionRowDefinition &row, const OptionRowHandler &hand, PlayerNumber pn, const vector<bool> &vbSelected );
 	void ImportOption( const OptionRowDefinition &row, const OptionRowHandler &hand, PlayerNumber pn, int rowno, vector<bool> &vbSelectedOut );
+	int ExportOptionForAllPlayers( int iRow );
 	
 	static void SetList( OptionRowDefinition &row, OptionRowHandler &hand, CString param );
 	static void SetSteps( OptionRowDefinition &row, OptionRowHandler &hand );
