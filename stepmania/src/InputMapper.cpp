@@ -86,7 +86,7 @@ struct AutoJoyMapping
 		 *
 		 * This isn't well-tested; I only have one Pump pad. */
 		bool SecondController;
-	} map[32];
+	} maps[32];
 };
 const AutoJoyMapping g_AutoJoyMappings[] = 
 {
@@ -239,7 +239,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 	{
 		InputDevice device = vDevices[i];
 		CString sDescription = vDescriptions[i];
-		for( int j=0; j<ARRAYSIZE(g_AutoJoyMappings); j++ )
+		for( unsigned j=0; j<ARRAYSIZE(g_AutoJoyMappings); j++ )
 		{
 			const AutoJoyMapping& mapping = g_AutoJoyMappings[j];
 
@@ -257,14 +257,14 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 
 				PREFSMAN->m_bIgnoreJoyAxes |= mapping.bIgnoreAxes;
 
-				for( int k=0; mapping.map[k].iSlotIndex != -1; k++ )
+				for( int k=0; mapping.maps[k].iSlotIndex != -1; k++ )
 				{
-					if( mapping.map[k].SecondController )
+					if( mapping.maps[k].SecondController )
 						gc = GAME_CONTROLLER_2;
 
-					DeviceInput di( device, mapping.map[k].deviceButton );
-					GameInput gi( gc, mapping.map[k].gb );
-					SetInputMap( di, gi, mapping.map[k].iSlotIndex );
+					DeviceInput di( device, mapping.maps[k].deviceButton );
+					GameInput gi( gc, mapping.maps[k].gb );
+					SetInputMap( di, gi, mapping.maps[k].iSlotIndex );
 				}
 
 				iNumJoysticksMapped++;
