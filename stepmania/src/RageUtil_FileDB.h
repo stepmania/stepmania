@@ -111,6 +111,16 @@ public:
 	void FlushDirCache();
 };
 
+/* This FilenameDB must be populated in advance. */
+class NullFilenameDB: public FilenameDB
+{
+public:
+	NullFilenameDB() { ExpireSeconds = -1; }
+
+protected:
+	void PopulateFileSet( FileSet &fs, const CString &sPath ) { }
+};
+
 #endif
 
 /*
