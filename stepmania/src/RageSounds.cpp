@@ -262,7 +262,7 @@ int MusicThread_start( void *p )
 {
 	while( !g_Shutdown )
 	{
-		SDL_Delay( 10 );
+        usleep(10000);
 
 		StartQueuedSounds();
 	}
