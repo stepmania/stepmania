@@ -14,7 +14,7 @@
 #include "Steps.h"
 
 
-const int MAX_NUM_COLUMNS = 8;
+const int MAX_NUM_COLUMNS = 12;
 
 
 struct Style
@@ -26,7 +26,10 @@ struct Style
 
 	int TapStepToColumnNumber( TapStep tap_step )
 	{
-		for( int i=0; i<m_iNumColumns; i++ )
+		//for (int i=0; i<m_iNumColumns; i++)
+		for( int i=0; i<MAX_NUM_COLUMNS; i++ ) 
+		// Switched to MAX_NUM_COLUMNS so up-left and up-right don't cause ASSERT(false)
+		// Player.HandelPlayerStep will ignore up-left and up-right if it needs.
 		{
 			if( m_ColumnToTapStep[i] == tap_step )
 				return i;

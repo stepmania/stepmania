@@ -270,6 +270,10 @@ void Player::HandlePlayerStep( float fSongBeat, TapStep player_step, float fMaxB
 
 	// update gray arrows
 	int iColumnNum = m_Style.TapStepToColumnNumber( player_step );
+	// For single player and two player, iColumnNum will be 4/5 or 8/9/10/11 for
+	// up-left and up-right hits. Seemed this was the simplest way to ignore them in game.
+	if (iColumnNum >= m_Style.m_iNumColumns)
+		return;
 	
 	m_GrayArrows.Step( iColumnNum );
 
