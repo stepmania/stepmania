@@ -23,10 +23,6 @@
 #include "SDL_rotozoom.h"
 #include "SDL_utils.h"
 #include "SDL_dither.h"
-#define NO_SDL_GLEXT
-#define __glext_h_ /* try harder to stop glext.h from being forced on us by someone else */
-#include "SDL_opengl.h"
-#include "glext.h"
 
 #include "RageTimer.h"
 
@@ -35,10 +31,6 @@
  * this may or may not need adjustment for OpenGL. */
 const static unsigned int PixFmtMasks[][5] =
 {
-	/* Err.  D3D's texture formats are little-endian, so the order of
-	 * colors (bytewise) is BGRA; D3DFMT_A8R8G8B8 is really BGRA (bytewise).
-	 * D3DFMT_A4R4G4B4 is 0xGBAR; flip the bytes and it's sane (0xARGB).
-	 */
 	{	0x00FF0000,				/* B8G8R8A8 */
 		0x0000FF00,
 		0x000000FF,
@@ -47,14 +39,10 @@ const static unsigned int PixFmtMasks[][5] =
 		0x00F0,
 		0x000F,
 		0xF000, 16 },
-	{	0x7C00,					/* B5G5R5A1 */
-		0x03E0,
-		0x001F,
-		0x8000, 16 },
-//	{	0xF800,					/* B5G6R5 */	/* this format doesn't seem to be supported in OGL 1.0 */
-//		0x07E0,
-//		0x001F,
-//		0x0000, 16 }
+	{	0xF800,					/* B5G5R5A1 */
+		0x07C0,
+		0x003E,
+		0x0001, 16 },
 };
 
 int PixFmtMaskNo(GLenum fmt)
@@ -63,7 +51,6 @@ int PixFmtMaskNo(GLenum fmt)
 	case GL_RGBA8: return 0;
 	case GL_RGBA4: return 1;
 	case GL_RGB5_A1: return 2;
-//	case D3DFMT_R5G6B5:   return 3;
 	default: ASSERT(0);	  return 0;
 	}
 }
@@ -101,18 +88,15 @@ void RageBitmapTexture::Reload( RageTextureID ID )
 	Create();
 }
 
-/*
- * Each dwMaxSize, dwTextureColorDepth and iAlphaBits are maximums; we may
- * use less.  iAlphaBits must be 0, 1 or 4.
- *
- * XXX: change iAlphaBits == 4 to iAlphaBits == 8 to indicate "as much alpha
- * as needed", since that's what it really is; still only use 4 in 16-bit textures.
- *
- * Dither forces dithering when loading 16-bit textures.
- * Stretch forces the loaded image to fill the texture completely.
+/* 1. Create (and return) a surface ready to be loaded to OpenGL, 
+ * 2. Set up m_ActualID, and
+ * 3. Set these texture parameters:
+ *    m_iSourceWidth, m_iSourceHeight
+ *    m_iTextureWidth, m_iTextureHeight
+ *    m_iImageWidth, m_iImageHeight
+ *    m_iFramesWide, m_iFramesHigh
  */
-
-void RageBitmapTexture::Create()
+SDL_Surface *RageBitmapTexture::CreateImg()
 {
 	// look in the file name for a format hints
 	CString HintString = GetFilePath();
@@ -125,7 +109,6 @@ void RageBitmapTexture::Create()
 	if( HintString.Find("dither") != -1 )		m_ActualID.bDither = true;
 
 	/* Load the image into an SDL surface. */
-	/* XXX we were lowercasing this before */
 	SDL_Surface *img = IMG_Load(GetFilePath());
 	/* XXX: Wait, we don't want to throw for all images; in particular, we
 	 * want to tolerate corrupt/unknown background images. */
@@ -133,8 +116,6 @@ void RageBitmapTexture::Create()
 		RageException::Throw( "Couldn't load %s: %s", GetFilePath(), SDL_GetError() );
 
 	/* Figure out which texture format to use. */
-	GLenum fmtTexture;
-
 	if( m_ActualID.iColorDepth == 16 )	
 	{
 		/* Bits of alpha in the source: */
@@ -236,8 +217,26 @@ void RageBitmapTexture::Create()
 	 */
 	/* We could check to see if we happen to simply be in a reversed
 	 * pixel order, and tell OpenGL to do the switch for us. */
-	ConvertSDLSurface(img, m_iTextureWidth, m_iTextureHeight, 32,
+	ConvertSDLSurface(img, m_iTextureWidth, m_iTextureHeight, 16,
 		0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000 );
+
+	return img;
+}
+
+/*
+ * Each dwMaxSize, dwTextureColorDepth and iAlphaBits are maximums; we may
+ * use less.  iAlphaBits must be 0, 1 or 4.
+ *
+ * XXX: change iAlphaBits == 4 to iAlphaBits == 8 to indicate "as much alpha
+ * as needed", since that's what it really is; still only use 4 in 16-bit textures.
+ *
+ * Dither forces dithering when loading 16-bit textures.
+ * Stretch forces the loaded image to fill the texture completely.
+ */
+
+void RageBitmapTexture::Create()
+{
+	SDL_Surface *img = CreateImg();
 
 	if(!m_uGLTextureID)
 		glGenTextures(1, &m_uGLTextureID);

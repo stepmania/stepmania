@@ -13,8 +13,9 @@
 */
 
 #include "RageTexture.h"
+#include "RageDisplayInternal.h"
 
-
+struct SDL_Surface;
 class RageBitmapTexture : public RageTexture
 {
 public:
@@ -24,12 +25,13 @@ public:
 	virtual void Invalidate() { m_uGLTextureID = 0; }
 	virtual void Reload( RageTextureID name );
 
-protected:
+private:
 	void Create();	// called by constructor and Reload
-
-	virtual unsigned int GetGLTextureID() { return m_uGLTextureID; }
-
+	unsigned int GetGLTextureID() { return m_uGLTextureID; }
 	unsigned int	m_uGLTextureID;
+
+	SDL_Surface *CreateImg();
+	GLenum fmtTexture;
 };
 
 #endif
