@@ -364,7 +364,7 @@ void Player::Update( float fDeltaTime )
 		// Instead, only check 1 beat back.  Even 1 is overkill.
 		const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
 		NoteData::iterator begin, end;
-		m_NoteData.GetTapNoteRangeInclusive( iTrack, iStartCheckingAt, iSongRow, begin, end );
+		m_NoteData.GetTapNoteRangeInclusive( iTrack, iStartCheckingAt, iSongRow+1, begin, end );
 		for( ; begin != end; ++begin )
 		{
 			TapNote &tn = begin->second;
