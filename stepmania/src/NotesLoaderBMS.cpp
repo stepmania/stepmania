@@ -68,7 +68,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 	pNoteData->SetNumTracks( MAX_NOTE_TRACKS );
 
 	ifstream file(sPath);
-	if( file.bad() )
+	if( !file.good() )
 		RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
 
 	CString line;
@@ -117,7 +117,9 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 				out.m_NotesType = NOTES_TYPE_DANCE_DOUBLE;
 				break;
 			default:
-				RageException::Throw( "Invalid value '%d' for '#player'", atoi(value_data) );
+				LOG->Warn( "Invalid value '%d' for '#player'", atoi(value_data) );
+				delete pNoteData;
+				return false;
 			}
 		}
 		if( -1 != value_name.Find("#title") )
@@ -192,6 +194,13 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 	}
 
 	// we're done reading in all of the BMS values
+	if( out.m_NotesType )
+	{
+		LOG->Warn("Couldn't determine note types of file '%s'", sPath.c_str() );
+		delete pNoteData;
+		return false;
+	}
+
 	int iNumNewTracks = GameManager::NotesTypeToNumTracks( out.m_NotesType );
 	int iTransformNewToOld[MAX_NOTE_TRACKS];
 
@@ -227,7 +236,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 		iTransformNewToOld[5] = DANCE_NOTE_PAD1_RIGHT;
 		break;
 	default:
-		RageException::Throw( "Invalid NotesType." );
+		ASSERT(0);
 	}
 
 	NoteData* pNoteData2 = new NoteData;
@@ -256,8 +265,9 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	CStringArray arrayBMSFileNames;
 	GetApplicableFiles( sDir, arrayBMSFileNames );
 
-	if( arrayBMSFileNames.empty() )
-		RageException::Throw( "Couldn't find any BMS files in '%s'", sDir.c_str() );
+	/* We should have at least one; if we had none, we shouldn't have been
+	 * called to begin with. */
+	ASSERT( arrayBMSFileNames.size() );
 
 	// load the Notes from the rest of the BMS files
 	unsigned i;
@@ -276,7 +286,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	CString sPath = out.GetSongDir() + arrayBMSFileNames[0];
 
 	ifstream file(sPath);
-	if( file.bad() )
+	if( !file.good() )
 		RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
 
 	CString line;
@@ -415,7 +425,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 					// open the song file again and and look for this tag's value
 					ifstream file(sPath);
-					if( file.bad() )
+					if( !file.good() )
 						RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
 
 					CString line;
@@ -477,7 +487,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 					// open the song file again and and look for this tag's value
 					ifstream file(sPath);
-					if( file.bad() )
+					if( !file.good() )
 						RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
 
 					CString line;
