@@ -16,7 +16,10 @@
 MusicList::MusicList()
 {
 	CurGroup = 0;
+}
 
+void MusicList::Load()
+{
 	for( int i=0; i<NUM_COLUMNS; i++ )
 	{
 		m_textTitles[i].LoadFromFont( THEME->GetPathToF("MusicList titles") );

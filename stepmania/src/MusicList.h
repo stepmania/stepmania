@@ -7,7 +7,8 @@
 
 const int MAX_MLIST_COLUMNS = 5;
 
-class MusicList : public ActorFrame {
+class MusicList : public ActorFrame
+{
 	BitmapText		m_textTitles[MAX_MLIST_COLUMNS];
 	
 	struct group {
@@ -21,6 +22,7 @@ class MusicList : public ActorFrame {
 	
 public:
 	MusicList();
+	void Load();
 
 	/* Add a new group. */
 	void AddGroup();

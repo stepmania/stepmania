@@ -99,6 +99,7 @@ ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : Screen( sClassName 
 		asGroupNames.push_back( iter->first );
 
 	// Add songs to the MusicList.
+	m_MusicList.Load();
 	for( unsigned g=0; g < asGroupNames.size(); g++ ) /* for each group */
 	{
 		vector<Song*> aSongsInGroup;
