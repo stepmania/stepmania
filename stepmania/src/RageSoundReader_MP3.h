@@ -22,6 +22,7 @@ public:
 	int SetPosition_toc( int ms, bool Xing );
 	int SetPosition_hard( int ms );
 	int SetPosition_estimate( int ms );
+	int FindOffsetFix();
 
 	int fill_buffer();
 	int do_mad_frame_decode();

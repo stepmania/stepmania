@@ -160,6 +160,14 @@ int xing_parse( struct xing *xing, struct mad_bitptr ptr, unsigned int bitlen );
 /* end XING header */
 
 
+/* a -= b */
+static void mad_timer_sub(mad_timer_t *a, mad_timer_t b)
+{
+	/* a = a - b -> a = a + -b */
+	mad_timer_negate(&b);
+	mad_timer_add(a, b);
+}
+
 
 
 
@@ -426,6 +434,105 @@ int RageSoundReader_MP3::do_mad_frame_decode()
 	}
 }
 
+/* Previously, there was a bug in MADLIB_rewind: it didn't clear synth.  This
+ * resulted in some files having a few frames of silence at the beginning, throwing
+ * off sync.  Figure out how far ahead the file was offset under those conditions,
+ * so we can emulate that sync offset. */
+int RageSoundReader_MP3::FindOffsetFix()
+{
+	/* Do a fake rewind. */
+	if( fseek(this->rw, 0, SEEK_SET) == -1 )
+	{
+		SetError( strerror(errno) );
+		return 0;
+	}
+
+	mad_frame_mute(&mad->Frame);
+	mad_synth_mute(&mad->Synth);
+	mad_timer_reset(&mad->Timer);
+	mad->outpos = mad->outleft = 0;
+
+//	mad_stream_finish(&mad->Stream); // fake
+//	mad_stream_init(&mad->Stream);   // fake
+	mad_stream_buffer(&mad->Stream, NULL, 0);
+	mad->inbuf_filepos = 0;
+	mad->header_bytes = 0;
+	mad->finished_header = false;
+
+	/* Read a couple frames, to make sure we're synced. */
+	for( int i = 0; i < 5; ++i )
+	{
+		int ret = do_mad_frame_decode();
+		if( ret == 0 )
+		{
+			SetError("Unexpected EOF");
+			return false;
+		}
+		if( ret == -1 )
+			return false; /* it set the error */
+
+		mad->outleft = 0;
+		synth_output();
+	}
+
+	/* Clear the TOC cache.  We might have cached bogus values. */
+	for(int i = 0; i < 200; ++i)
+		mad->toc[i] = -1;
+
+	/* Save the current timestamp.  This is the time we thought we were at when
+	 * we decoded the last frame. */
+	mad_timer_t Apparent = mad->Timer;
+
+	/* Save the last frame's PCM data. */
+	unsigned size = mad->outleft;
+	char *cpy = new char[size];
+	memcpy( cpy, mad->outbuf, size );
+
+	/* Do a real rewind. */
+	MADLIB_rewind();
+
+	/* Search for the frame we just saved. */
+	mad_timer_t Actual;
+	bool found = false;
+	for( int i = 0; i < 10; ++i )
+	{
+		int ret = do_mad_frame_decode();
+		if( ret == 0 )
+		{
+			SetError("Unexpected EOF");
+			return false;
+		}
+		if( ret == -1 )
+			return false; /* it set the error */
+
+		mad->outleft = 0;
+		synth_output();
+		if( mad->outleft == size && !memcmp( cpy, mad->outbuf, mad->outleft ) )
+		{
+			/* Found it.  Record that frame's real timestamp. */
+			Actual = mad->Timer;
+			found = true;
+			break;
+
+		}
+	}
+
+	if( found )
+	{
+		/* Save the offset, so timestamps can be corrected. */
+		mad_timer_t Offset = Apparent;
+		mad_timer_sub( &Offset, Actual );
+		this->OffsetFix = mad_timer_count( Offset, (mad_units) 1000) / 1000.0f;
+	}
+	else
+		this->OffsetFix = 0;
+
+
+	delete [] cpy;
+	MADLIB_rewind();
+	return true;
+}
+
 void RageSoundReader_MP3::synth_output()
 {
 	if(this->Channels != 0 &&
@@ -473,14 +580,6 @@ int RageSoundReader_MP3::seek_stream_to_byte( int byte )
 
 	mad->inbuf_filepos = byte;
 	return 1;
-}
-
-/* a -= b */
-static void mad_timer_sub(mad_timer_t *a, mad_timer_t b)
-{
-	/* a = a - b -> a = a + -b */
-	mad_timer_negate(&b);
-	mad_timer_add(a, b);
 }
 
 
@@ -613,7 +712,8 @@ SoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( CString filename_ 
 	 * the stream. */
 	synth_output();
 
-	this->OffsetFix = 0;
+	ret = FindOffsetFix();
+	ASSERT( ret != -1 );
 
     if(mad->length == -1)
     {
@@ -696,12 +796,8 @@ bool RageSoundReader_MP3::MADLIB_rewind()
 	mad_timer_reset(&mad->Timer);
 	mad->outpos = mad->outleft = 0;
 
-	/* Gar.  We should do this, to completely reset the stream.  However, doing so
-	 * will change the output if there's unexpected stuff at the beginning of the
-	 * stream; I'm not familiar enough with MAD and MP3 to know exactly how.  That
-	 * results in sync changes. XXX */
-	// mad_stream_finish(&mad->Stream);
-	// mad_stream_init(&mad->Stream);
+	mad_stream_finish(&mad->Stream);
+	mad_stream_init(&mad->Stream);
 	mad_stream_buffer(&mad->Stream, NULL, 0);
 	mad->inbuf_filepos = 0;
 	mad->header_bytes = 0;
