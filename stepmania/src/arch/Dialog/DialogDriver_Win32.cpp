@@ -13,6 +13,11 @@ static bool g_Hush;
 static CString g_sMessage;
 static bool g_AllowHush;
 
+#if defined(HAVE_SDL)
+/* For some reason, dialogs aren't always showing up unless we SDL_PumpEvents first. */
+#include "SDL_utils.h"
+#endif
+
 static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
 	switch( msg )
@@ -60,6 +65,10 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 
 void DialogDriver_Win32::OK( CString sMessage, CString ID )
 {
+#if defined(HAVE_SDL)
+	SDL_PumpEvents();
+#endif
+
 	g_AllowHush = ID != "";
 	g_sMessage = sMessage;
 	AppInstance handle;
@@ -142,6 +151,10 @@ void DialogDriver_Win32::Error( CString error, CString ID )
 
 Dialog::Result DialogDriver_Win32::AbortRetryIgnore( CString sMessage, CString ID )
 {
+#if defined(HAVE_SDL)
+	SDL_PumpEvents();
+#endif
+
 	switch( MessageBox(NULL, sMessage, PRODUCT_NAME, MB_ABORTRETRYIGNORE|MB_DEFBUTTON2 ) )
 	{
 	case IDABORT:	return Dialog::abort;
@@ -153,6 +166,10 @@ Dialog::Result DialogDriver_Win32::AbortRetryIgnore( CString sMessage, CString I
 
 Dialog::Result DialogDriver_Win32::RetryCancel( CString sMessage, CString ID )
 {
+#if defined(HAVE_SDL)
+	SDL_PumpEvents();
+#endif
+
 	switch( MessageBox(NULL, sMessage, PRODUCT_NAME, MB_RETRYCANCEL ) )
 	{
 	case IDRETRY:	return Dialog::retry;
