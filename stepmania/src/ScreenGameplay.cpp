@@ -53,6 +53,8 @@
 #define PREV_SCREEN( play_mode )				THEME->GetMetric ("ScreenGameplay","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
 #define NEXT_SCREEN( play_mode )				THEME->GetMetric ("ScreenGameplay","NextScreen"+Capitalize(PlayModeToString(play_mode)))
 #define SHOW_LIFE_METER_FOR_DISABLED_PLAYERS	THEME->GetMetricB("ScreenGameplay","ShowLifeMeterForDisabledPlayers")
+#define STATICBG_X THEME->GetMetricI ("ScreenGameplay","StaticBGX")
+#define STATICBG_Y THEME->GetMetricI ("ScreenGameplay","StaticBGY")
 
 CachedThemeMetricF SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
 CachedThemeMetricF G_TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
@@ -243,6 +245,10 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 
 	m_Background.SetDiffuse( RageColor(0.4f,0.4f,0.4f,1) );
 	this->AddChild( &m_Background );
+	
+	m_sprStaticBackground.Load( THEME->GetPathToG("ScreenGameplay Static Background"));
+	m_sprStaticBackground.SetXY( STATICBG_X, STATICBG_Y );
+	this->AddChild(&m_sprStaticBackground);
 
 	if( !bDemonstration )	// only load if we're going to use it
 	{

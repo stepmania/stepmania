@@ -105,6 +105,7 @@ protected:
 	Transition	m_NextSongIn;	// shows between songs in a course
 	Transition	m_NextSongOut;	// shows between songs in a course
 
+	Sprite				m_sprStaticBackground;
 	Sprite				m_sprLifeFrame;
 	LifeMeter*			m_pLifeMeter[NUM_PLAYERS];
 	CombinedLifeMeter*	m_pCombinedLifeMeter;

@@ -34,8 +34,8 @@ const int DS3DDX_COL_SPACING = 46;
 const int BM_COL_SPACING=34;
 const int MANIAX_COL_SPACING = 36;
 const int TECHNO_COL_SPACING = 64;
-const int PNM5_COL_SPACING = 46; 
-const int PNM9_COL_SPACING = 39; 
+const int PNM5_COL_SPACING = 32; 
+const int PNM9_COL_SPACING = 32; 
 
 struct {
 	char *name;
