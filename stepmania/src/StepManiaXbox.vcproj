@@ -1949,6 +1949,13 @@ cl                                                                              
 				RelativePath="RageSurfaceUtils.h">
 			</File>
 			<File
+				RelativePath="RageSurfaceUtils_Palettize.cpp">
+			</File>
+			<File
+				RelativePath="RageSurfaceUtils_Palettize.h">
+			</File>
+
+			<File
 				RelativePath="RageSurface_Load.cpp">
 			</File>
 			<File
