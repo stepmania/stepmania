@@ -140,7 +140,6 @@ protected:
 	ThemeMetric<bool>				SHOW_EXIT_ROW;
 	ThemeMetric<bool>				SEPARATE_EXIT_ROW;
 	ThemeMetric<float>				SEPARATE_EXIT_ROW_Y;
-	ThemeMetric<CString>			OPTION_ROW_TYPE;
 	ThemeMetric<bool>				SHOW_EXPLANATIONS;
 	ThemeMetric<bool>				THEME_TITLES;
 

@@ -103,7 +103,6 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	SHOW_EXIT_ROW					(m_sName,"ShowExitRow"),
 	SEPARATE_EXIT_ROW				(m_sName,"SeparateExitRow"),
 	SEPARATE_EXIT_ROW_Y				(m_sName,"SeparateExitRowY"),
-	OPTION_ROW_TYPE					(m_sName,"OptionRowType"),
 	SHOW_EXPLANATIONS				(m_sName,"ShowExplanations"),
 	THEME_TITLES					(m_sName,"ThemeTitles")
 {
@@ -214,7 +213,7 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 		// TRICKY:  Add "EXIT" item
 		m_Rows.push_back( new OptionRow() );
 		OptionRow &row = *m_Rows.back();
-		row.LoadMetrics( OPTION_ROW_TYPE );
+		row.LoadMetrics( m_sName );
 		row.LoadExit();
 		m_framePage.AddChild( &row );
 	}
