@@ -7,11 +7,12 @@
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
+	Peter S. May (GetHashForString implementation)
 -----------------------------------------------------------------------------
 */
 
 #include "RageUtil.h"
-
+#include "RageCRC32.h"	// Backend for GetHashForString
 
 
 bool IsAnInt( LPCTSTR s )
@@ -285,15 +286,18 @@ void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bRe
 	::FindClose( hFind );
 }
 
-int GetHashForString( CString s )
+//-----------------------------------------------------------------------------
+// Name: GetHashForString( CString s )
+// Desc: This new version of GetHashForString uses a stronger hashing algorithm
+//       than the former, assuring to a greater degree that two distinct
+//       strings do not produce the same result.
+//       The hashing algorithm is a modified CRC-32 (modified in that the
+//       characters in the CString are recast as unsigned char and that the
+//       unsigned int result from the hash is recast as a signed int).
+//-----------------------------------------------------------------------------
+int GetHashForString ( CString s )
 {
-	int hash = 0;
-	for( int i=0; i<s.GetLength(); i++ )
-	{
-		hash *= 10;
-		hash += (DWORD)s[i];
-	}
-	return abs(hash);
+	return (int)abs(GetCrc32((unsigned char*)s.GetBuffer(s.GetLength()), s.GetLength()));
 }
 
 int GetHashForFile( CString sPath )

@@ -100,6 +100,14 @@ SOURCE=.\RageBitmapTexture.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\RageCRC32.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageCRC32.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\RageDisplay.cpp
 # End Source File
 # Begin Source File
