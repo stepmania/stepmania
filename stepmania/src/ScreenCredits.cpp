@@ -61,18 +61,19 @@ const CreditLine CREDIT_LINES[] =
 	{0,""},
 	{0,""},
 	{2,"☆☆GRAPHICS☆☆"},
-	{0,"Lucas “v1ral” Tang"},
-	{0,"SPiGuMuS"}, // who?
-	{0,"Visage"}, // who?
+	{0,"Lucas “v1ral” Tang"}, 
+	{0,"SPiGuMuS"}, // who? get real, you dont know who spig is? he makes half the freaking DDR themes! - Friez
+	{0,"Visage"}, // who? makes para para theme graphics for me, wants to do BM and IIDX graphics too. - Friez
 	{0,"Ryan “DJ McFox” McKanna"},
-	{0,"Lamden “Cloud34” Travis"},
-	{0,"Michael “Redcrusher” Curry"},
+	{0,"Lamden “Cloud34” Travis"}, // ddrmaniax admin / did a graphic or two for me - friez
+	{0,"Michael “Redcrusher” Curry"}, // ez2 graphics - friez
 	{0,"Steve “healing_vision” Klise"},
 	{0,"Mauro Panichella"},
+	{0,"Popnko"}, // makes popnmusic graphics for me - Friez
 	{0,"Griever (Julian)"}, // who?
 	{0,"Miguel Moore"},
 	{0,"Dj “AeON ExOdus” Washington"},
-	{0,"Xelf"}, // who?
+	{0,"Xelf"}, // who? / ddrmaniax forums makes a cab with SM on it, dont know what hes directly done for the software - friez
 	{0,"James “SPDS” Sanders"},
 	{0,"k0ldx"}, // who?
 	{0,""},
@@ -103,6 +104,8 @@ const CreditLine CREDIT_LINES[] =
 	{0,"Chris “Parasyte” Gomez"},
 	{0,"Michael “dirkthedaring” Patterson"},
 	{0,"Sauleil “angedelamort” Lamarre"},
+
+	
 	{0,"Edwin Evans"},
 	{0,"Brian “Bork” Bugh"},
 	{0,"Joel “Elvis314” Maher"},
@@ -113,7 +116,7 @@ const CreditLine CREDIT_LINES[] =
 	{0,"Ben “Shabach” Andersen"},
 	{0,"Will “SlinkyWizard” Valladao"},
 	{0,"TheChip"}, // who?
-	{0,"David “WarriorBob” H"}, // who?
+	{0,"David “WarriorBob” H"}, // who? // He does documentation on Stepmania when a release comes out. Thats who - Frieza
 	{0,"Mike Waltson"},
 	{0,"Kevin “Miryokuteki” Slaughter"},
 	{0,"Thad “Coderjoe” Ward"},
@@ -123,16 +126,16 @@ const CreditLine CREDIT_LINES[] =
 	{0,""},
 	{0,""},
 	{2,"☆☆SPECIAL THANKS TO☆☆"},
-	{0,"SimWolf"},
-	{0,"DJ DraftHorse"},
-	{0,"Dance With Intensity"},
+	{0,"SimWolf"}, // dwi
+	{0,"DJ DraftHorse"}, // also dwi
+	{0,"Dance With Intensity"}, // DWI! 
 	{0,"BeMaNiRuler"},
 	{0,"DDRLlama"},
-	{0,"DDRManiaX"},
+	{0,"DDRManiaX"}, // boards and all round support
 	{0,"NMR"},
-	{0,"Random Hajile"},
-	{0,"Chocobo Ghost"},
-	{0,"Tyma"},
+	{0,"Random Hajile"}, // sent me 3DDX stuff - friez
+	{0,"Chocobo Ghost"}, // sent me ez2 stuff - friez
+	{0,"Tyma"}, // sent me popnmusic stuff - friez
 	{0,"Lagged"},
 	{0,"The Melting Pot"},
 	{0,"DDRJamz Global BBS"},
@@ -143,14 +146,14 @@ const CreditLine CREDIT_LINES[] =
 	{0,"Anne Kiel"},
 	{0,"BeMaNiFiNiNaTiC (Jeremy Hine)"},
 	{0,"Garett Sakamoto"},
-	{0,"SailorBob"},
+	{0,"SailorBob"}, // isnt this the same as warrior bob?
 	{0,"Kenny “AngelTK” Lai"},
 	{0,"curewater"},
 	{0,"Bill “DMAshura” Shillito"},
 	{0,"Illusionz - Issaquah, WA"},
 	{0,"Quarters - Kirkland, WA"},
-	{0,"Pier Amusements - Bournemouth, UK"},
-	{0,"Westcliff Amusements - Bournemouth, UK"},
+	{0,"Pier Amusements - Bournemouth, UK"}, // Pump inspiration
+	{0,"Westcliff Amusements - Bournemouth, UK"}, // Ez2dancer inspiriation
 	{0,"Naoki"},
 	{0,"Konami Computer Entertainment Japan"},
 	{0,""},
