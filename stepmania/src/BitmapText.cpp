@@ -21,6 +21,7 @@
 #include "ThemeManager.h"
 #include "GameConstantsAndTypes.h"
 #include "Font.h"
+#include "ActorUtil.h"	// for HandleParams
 
 /* XXX:
  * We need some kind of font modifier string for metrics.  For example,
@@ -77,6 +78,8 @@ BitmapText::BitmapText()
 	m_bShadow = true;
 
 	m_bRainbow = false;
+
+	m_iWrapWidthPixels = -1;
 }
 
 BitmapText::~BitmapText()
@@ -130,9 +133,9 @@ void BitmapText::BuildChars()
 	m_iWidestLineWidth = 0;
 
 	m_iLineWidths.clear();
-	for( unsigned l=0; l<m_szTextLines.size(); l++ )	// for each line
+	for( unsigned l=0; l<m_wTextLines.size(); l++ )	// for each line
 	{
-		m_iLineWidths.push_back(m_pFont->GetLineWidthInSourcePixels( m_szTextLines[l] ));
+		m_iLineWidths.push_back(m_pFont->GetLineWidthInSourcePixels( m_wTextLines[l] ));
 		m_iWidestLineWidth = max(m_iWidestLineWidth, m_iLineWidths.back());
 	}
 
@@ -140,9 +143,9 @@ void BitmapText::BuildChars()
 	verts.clear();
 	tex.clear();
 	
-	if(m_szTextLines.empty()) return;
+	if(m_wTextLines.empty()) return;
 
-	int TotalHeight = m_pFont->GetHeight() * m_szTextLines.size();
+	int TotalHeight = m_pFont->GetHeight() * m_wTextLines.size();
 	unsigned i;
 	int MinSpacing = 0;
 
@@ -150,7 +153,7 @@ void BitmapText::BuildChars()
 	int Padding = max(m_pFont->GetLineSpacing(), MinSpacing) - m_pFont->GetHeight();
 
 	/* There's padding between every line: */
-	TotalHeight += Padding * (m_szTextLines.size()-1);
+	TotalHeight += Padding * (m_wTextLines.size()-1);
 
 	int iY;	//	 the top position of the first row of characters
 	switch( m_VertAlign )
@@ -161,10 +164,10 @@ void BitmapText::BuildChars()
 	default:			ASSERT( false );		return;
 	}
 
-	for( i=0; i<m_szTextLines.size(); i++ )		// foreach line
+	for( i=0; i<m_wTextLines.size(); i++ )		// foreach line
 	{
 		iY += m_pFont->GetHeight();
-		const wstring &szLine = m_szTextLines[i];
+		const wstring &szLine = m_wTextLines[i];
 		const int iLineWidth = m_iLineWidths[i];
 		
 		int iX;
@@ -237,18 +240,22 @@ void BitmapText::SetText( CString sText, CString sAlternateText, int iWrapWidthP
 	if(StringWillUseAlternate(sText, sAlternateText))
 		sText = sAlternateText;
 
-	if(m_szText == sText)
+	if( iWrapWidthPixels == -1 )	// wrap not specified
+		iWrapWidthPixels = m_iWrapWidthPixels;
+
+	if(m_sText == sText && iWrapWidthPixels==m_iWrapWidthPixels)
 		return;
-	m_szText = sText;
+	m_sText = sText;
+	m_iWrapWidthPixels = iWrapWidthPixels;
 
 
 	// Break the string into lines.
 	//
-	m_szTextLines.clear();
+	m_wTextLines.clear();
 
 	if( iWrapWidthPixels == -1 )
 	{
-		split( CStringToWstring(sText), L"\n", m_szTextLines, false );
+		split( CStringToWstring(sText), L"\n", m_wTextLines, false );
 	}
 	else
 	{
@@ -285,13 +292,13 @@ void BitmapText::SetText( CString sText, CString sAlternateText, int iWrapWidthP
 				}
 				else
 				{
-					m_szTextLines.push_back( CStringToWstring(sCurLine) );
+					m_wTextLines.push_back( CStringToWstring(sCurLine) );
 					sCurLine = sWord;
 					iCurLineWidth = iWidthWord;
 				}
 			}
 		}
-		m_szTextLines.push_back( CStringToWstring(sCurLine) );
+		m_wTextLines.push_back( CStringToWstring(sCurLine) );
 	}
 
 	BuildChars();
@@ -330,12 +337,12 @@ void BitmapText::CropToWidth( int iMaxWidthInSourcePixels )
 {
 	iMaxWidthInSourcePixels = max( 0, iMaxWidthInSourcePixels );
 
-	for( unsigned l=0; l<m_szTextLines.size(); l++ )	// for each line
+	for( unsigned l=0; l<m_wTextLines.size(); l++ )	// for each line
 	{
 		while( m_iLineWidths[l] > iMaxWidthInSourcePixels )
 		{
-			m_szTextLines[l].erase(m_szTextLines[l].end()-1, m_szTextLines[l].end());
-			m_iLineWidths[l] = m_pFont->GetLineWidthInSourcePixels( m_szTextLines[l] );
+			m_wTextLines[l].erase(m_wTextLines[l].end()-1, m_wTextLines[l].end());
+			m_iLineWidths[l] = m_pFont->GetLineWidthInSourcePixels( m_wTextLines[l] );
 		}
 	}
 
@@ -345,7 +352,7 @@ void BitmapText::CropToWidth( int iMaxWidthInSourcePixels )
 // draw text at x, y using colorTop blended down to colorBottom, with size multiplied by scale
 void BitmapText::DrawPrimitives()
 {
-	if( m_szTextLines.empty() )
+	if( m_wTextLines.empty() )
 		return;
 
 	Actor::SetRenderStates();	// set Actor-specified render states
@@ -424,4 +431,29 @@ void BitmapText::SetVertAlign( VertAlign va )
 	if(va == m_VertAlign) return;
 	Actor::SetVertAlign(va);
 	BuildChars();
+}
+
+void BitmapText::HandleCommand( const CStringArray &asTokens )
+{
+	HandleParams;
+
+	const CString& sName = asTokens[0];
+
+	// Commands that go in the tweening queue:
+	// Commands that take effect immediately (ignoring the tweening queue):
+	if( sName=="wrapwidthpixels" )		SetWrapWidthPixels( iParam(1) );
+	else
+	{
+		Actor::HandleCommand( asTokens );
+		return;
+	}
+
+	CheckHandledParams;
+}
+
+void BitmapText::SetWrapWidthPixels( int iWrapWidthPixels )
+{
+	if( m_iWrapWidthPixels == iWrapWidthPixels )
+		return;
+	SetText( m_sText, "", iWrapWidthPixels );
 }

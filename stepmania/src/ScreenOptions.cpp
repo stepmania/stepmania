@@ -23,25 +23,27 @@
 
 const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 
-#define ICONS_X( p )			THEME->GetMetricF("ScreenOptions",ssprintf("IconsP%dX",p+1))
-#define ARROWS_X				THEME->GetMetricF("ScreenOptions","ArrowsX")
-#define LABELS_X				THEME->GetMetricF("ScreenOptions","LabelsX")
-#define LABELS_ZOOM				THEME->GetMetricF("ScreenOptions","LabelsZoom")
-#define LABELS_H_ALIGN			THEME->GetMetricI("ScreenOptions","LabelsHAlign")
-#define ITEMS_ZOOM				THEME->GetMetricF("ScreenOptions","ItemsZoom")
-#define ITEMS_START_X			THEME->GetMetricF("ScreenOptions","ItemsStartX")
-#define ITEMS_GAP_X				THEME->GetMetricF("ScreenOptions","ItemsGapX")
-#define ITEMS_START_Y			THEME->GetMetricF("ScreenOptions","ItemsStartY")
-#define ITEMS_SPACING_Y			THEME->GetMetricF("ScreenOptions","ItemsSpacingY")
-#define EXPLANATION_X(p)		THEME->GetMetricF("ScreenOptions",ssprintf("ExplanationP%dX",p+1))
-#define EXPLANATION_Y(p)		THEME->GetMetricF("ScreenOptions",ssprintf("ExplanationP%dY",p+1))
-#define EXPLANATION_TOGETHER_X	THEME->GetMetricF("ScreenOptions","ExplanationTogetherX")
-#define EXPLANATION_TOGETHER_Y	THEME->GetMetricF("ScreenOptions","ExplanationTogetherY")
-#define ITEMS_SPACING_Y			THEME->GetMetricF("ScreenOptions","ItemsSpacingY")
-#define EXPLANATION_ZOOM		THEME->GetMetricF("ScreenOptions","ExplanationZoom")
-#define COLOR_SELECTED			THEME->GetMetricC("ScreenOptions","ColorSelected")
-#define COLOR_NOT_SELECTED		THEME->GetMetricC("ScreenOptions","ColorNotSelected")
-#define NUM_SHOWN_ITEMS			THEME->GetMetricI("ScreenOptions","NumShownItems")
+#define ICONS_X( p )					THEME->GetMetricF("ScreenOptions",ssprintf("IconsP%dX",p+1))
+#define ARROWS_X						THEME->GetMetricF("ScreenOptions","ArrowsX")
+#define LABELS_X						THEME->GetMetricF("ScreenOptions","LabelsX")
+#define LABELS_ZOOM						THEME->GetMetricF("ScreenOptions","LabelsZoom")
+#define LABELS_H_ALIGN					THEME->GetMetricI("ScreenOptions","LabelsHAlign")
+#define ITEMS_ZOOM						THEME->GetMetricF("ScreenOptions","ItemsZoom")
+#define ITEMS_START_X					THEME->GetMetricF("ScreenOptions","ItemsStartX")
+#define ITEMS_GAP_X						THEME->GetMetricF("ScreenOptions","ItemsGapX")
+#define ITEMS_START_Y					THEME->GetMetricF("ScreenOptions","ItemsStartY")
+#define ITEMS_SPACING_Y					THEME->GetMetricF("ScreenOptions","ItemsSpacingY")
+#define EXPLANATION_X(p)				THEME->GetMetricF("ScreenOptions",ssprintf("ExplanationP%dX",p+1))
+#define EXPLANATION_Y(p)				THEME->GetMetricF("ScreenOptions",ssprintf("ExplanationP%dY",p+1))
+#define EXPLANATION_ON_COMMAND(p)		THEME->GetMetric ("ScreenOptions",ssprintf("ExplanationOnCommandP%dY",p+1))
+#define EXPLANATION_TOGETHER_X			THEME->GetMetricF("ScreenOptions","ExplanationTogetherX")
+#define EXPLANATION_TOGETHER_Y			THEME->GetMetricF("ScreenOptions","ExplanationTogetherY")
+#define EXPLANATION_TOGETHER_ON_COMMAND	THEME->GetMetric ("ScreenOptions","ExplanationTogetherOnCommand")
+#define ITEMS_SPACING_Y					THEME->GetMetricF("ScreenOptions","ItemsSpacingY")
+#define EXPLANATION_ZOOM				THEME->GetMetricF("ScreenOptions","ExplanationZoom")
+#define COLOR_SELECTED					THEME->GetMetricC("ScreenOptions","ColorSelected")
+#define COLOR_NOT_SELECTED				THEME->GetMetricC("ScreenOptions","ColorNotSelected")
+#define NUM_SHOWN_ITEMS					THEME->GetMetricI("ScreenOptions","NumShownItems")
 
 ScreenOptions::ScreenOptions( CString sClassName ) : Screen(sClassName)
 {
@@ -773,9 +775,13 @@ void ScreenOptions::OnChange()
 		{
 		case INPUTMODE_INDIVIDUAL:
 			pText = &m_textExplanation[p];
+			pText->FinishTweening();
+			pText->Command( EXPLANATION_ON_COMMAND(p) );
 			break;
 		case INPUTMODE_TOGETHER:
 			pText = &m_textExplanation[0];
+			pText->FinishTweening();
+			pText->Command( EXPLANATION_TOGETHER_ON_COMMAND );
 			break;
 		}
 
@@ -791,7 +797,7 @@ void ScreenOptions::OnChange()
 			sLineName.Replace("\n-","");
 			sLineName.Replace("\n","");
 			sLineName.Replace(" ","");
-			pText->SetText( THEME->GetMetric(m_sName,sLineName), "", 800 );
+			pText->SetText( THEME->GetMetric(m_sName,sLineName) );
 		}
 	}
 }
