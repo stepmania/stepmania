@@ -59,10 +59,7 @@ ScreenTestSound::ScreenTestSound( CString sClassName ) : Screen( sClassName )
 
 void ScreenTestSound::UpdateText(int n)
 {
-
-	CString fn = s[n].s.GetLoadedFilePath();
-	size_t x = fn.find_last_of("/\\");
-	if(x != fn.npos) fn.erase(0, x+1);
+	CString fn = Basename( s[n].s.GetLoadedFilePath() );
 
 	vector<RageSound *> snds;
 	SOUNDMAN->GetCopies(s[n].s, snds);
