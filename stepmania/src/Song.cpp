@@ -458,6 +458,11 @@ void FixupPath( CString &path, const CString &sSongPath )
 
 	CollapsePath( path );
 
+	/* If the path still begins with "../", then there were an unreasonable number
+	 * of them at the beginning of the path.  Clear the path entirely. */
+	if( path.Left(3) == "../" )
+		path = "";
+		
 	/* Many imported files contain erroneous whitespace before or after
 	 * filenames.  Paths usually don't actually start or end with spaces,
 	 * so let's just remove it. */
