@@ -5,12 +5,19 @@
 
 #include "PlayerNumber.h"
 
-
 class LoadingWindow;
 
 #define NETMAXPLAYERS 32
 const int NETPROTOCOLVERSION=1;
 const int NETMAXBUFFERSIZE=1020; //1024 - 4 bytes for EzSockets
+const int NETNUMTAPSCORES=8;
+
+struct EndOfGame_PlayerData
+{
+	int score;
+	int grade;
+	int tapScores[NETNUMTAPSCORES];	//This will be a const soon enough
+};
 
 enum NSScoreBoardColumn
 {
@@ -74,6 +81,9 @@ public:
 	int m_ActivePlayers;
 	vector <int> m_ActivePlayer;
 	vector <CString> m_PlayerNames;
+
+	//Used for ScreenNetEvaluation
+	EndOfGame_PlayerData m_EvalPlayerData[NETMAXPLAYERS];
 
 	//Used togeather for 
 	bool ChangedScoreboard(int Column);	//If scoreboard changed since this function last called, then true.

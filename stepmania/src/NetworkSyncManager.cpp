@@ -379,6 +379,14 @@ void NetworkSyncManager::StartRequest(short position)
 	for (int i=0;i<2-players;i++)
 		m_packet.WriteNT("");	//Write a NULL if no player
 
+	//This needs to be reset before ScreenEvaluation could possibly be called
+	for (int i=0; i< NETMAXPLAYERS; i++)
+	{
+		m_EvalPlayerData[i].grade=0;
+		m_EvalPlayerData[i].score=0;
+		for (int j=0;j<NETNUMTAPSCORES;j++)
+			m_EvalPlayerData[i].tapScores[j] = 0;
+	}
 
 
 	//Block until go is recieved.
@@ -494,7 +502,14 @@ void NetworkSyncManager::ProcessInput()
 			break;
 		case 4: 
 			{
-
+				int PlayersInPack = m_packet.Read1();
+				for (int i=0;i<PlayersInPack;i++)
+					m_EvalPlayerData[i].score = m_packet.Read4();
+				for (int i=0;i<PlayersInPack;i++)
+					m_EvalPlayerData[i].grade = m_packet.Read1();
+				for (int j=0;j<NETNUMTAPSCORES;j++)
+					for (int i=0;i<PlayersInPack;i++)
+						m_EvalPlayerData[i].tapScores[j] = m_packet.Read2();
 			}
 			break;
 		case 5: //Scoreboard Update
