@@ -124,11 +124,6 @@ inline const T& min(const T &a, const T &b, P Pr)
 #endif
 
 
-/* Fix HRESULT probs on Linux */
-#ifdef LINUX
-typedef long HRESULT
-#endif
-
 /* Don't include our own headers here, since they tend to change
  * often. */
 

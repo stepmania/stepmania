@@ -23,11 +23,6 @@
 
 #endif
 
-/* Fix HRESULT under Linux and other non-windows OSses*/
-#if !defined(HRESULT)
-typedef long HRESULT
-#endif
-
 #include "RageMovieTextureHelper.h"
  
 #include "RageMovieTexture.h"
