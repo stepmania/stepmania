@@ -74,6 +74,9 @@ public:
 	bool GetValueI(const CString &key, const CString &valuename, int& value);
 	bool GetValueF(const CString &key, const CString &valuename, float& value);
 	bool GetValueB(const CString &key, const CString &valuename, bool& value);
+	bool GetValue(const CString &key, const CString &valuename, int& value) { return GetValueI(key, valuename, value); }
+	bool GetValue(const CString &key, const CString &valuename, float& value) { return GetValueF(key, valuename, value); }
+	bool GetValue(const CString &key, const CString &valuename, bool& value) { return GetValueB(key, valuename, value); }
 
 	//sets value of [keyname] valuename =.
 	//specify the optional paramter as false (0) if you do not want it to create
@@ -83,6 +86,7 @@ public:
 	bool SetValueI(const CString &key, const CString &valuename, int value, bool create = 1);
 	bool SetValueF(const CString &key, const CString &valuename, float value, bool create = 1);
 	bool SetValueB(const CString &key, const CString &valuename, bool value, bool create = 1);
+	bool SetValue(const CString &key, const CString &valuename, int value, bool create = 1) { return SetValue(key, valuename, value, create); }
 
 	//deletes specified value
 	//returns true if value existed and deleted, false otherwise
