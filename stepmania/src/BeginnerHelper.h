@@ -33,6 +33,7 @@ protected:
 	void Step( int pn, int CSTEP );
 
 	NoteData m_NoteData[NUM_PLAYERS];
+	bool m_bPlayerEnabled[NUM_PLAYERS];
 	Model m_mDancer[NUM_PLAYERS];
 	Model m_mDancePad;
 	Sprite	m_sFlash;

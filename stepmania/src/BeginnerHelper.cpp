@@ -63,12 +63,13 @@ static CString GetAnimPath( Animation a )
 
 BeginnerHelper::BeginnerHelper()
 {
-	LOG->Trace("BeginnerHelper::BeginnerHelper()");
 	m_bFlashEnabled = false;
 	m_bShowBackground = true;
 	m_bInitialized = false;
 	m_iLastRowChecked = 0;
 	this->AddChild(&m_sBackground);
+	for( int pn=0; pn < NUM_PLAYERS; pn++ )
+		m_bPlayerEnabled[pn] = false;
 }
 
 BeginnerHelper::~BeginnerHelper()
@@ -109,9 +110,18 @@ void BeginnerHelper::AddPlayer( int pn, NoteData *pNotes )
 {
 	ASSERT( !m_bInitialized );
 	ASSERT( pNotes != NULL );
-	ASSERT( pn >= 0 && pn < NUM_PLAYERS);
+	ASSERT( pn >= 0 && pn < NUM_PLAYERS );
+	ASSERT( GAMESTATE->IsHumanPlayer(pn) );
+
+	if( !CanUse() )
+		return;
+	const Character *Character = GAMESTATE->m_pCurCharacters[pn];
+	ASSERT( Character != NULL );
+	if( !DoesFileExist( Character->GetModelPath() ) )
+		return;
 
 	m_NoteData[pn].CopyAll( pNotes );
+	m_bPlayerEnabled[pn] = true;
 }
 
 bool BeginnerHelper::CanUse()
@@ -135,7 +145,17 @@ bool BeginnerHelper::Initialize( int iDancePadType )
 {
 	ASSERT( !m_bInitialized );
 
-	if (!CanUse())		// if we can't be used, bail now.
+	/* If no players were successfully added, bail. */
+	{
+		bool bAnyLoaded = false;
+		for( int pn=0; pn < NUM_PLAYERS; pn++ )
+			if( m_bPlayerEnabled[pn] )
+				bAnyLoaded = true;
+		if( !bAnyLoaded )
+			return false;
+	}
+
+	if( !CanUse() )		// if we can't be used, bail now.
 		return false;
 
 	// Load the StepCircle, Background, and flash animation
@@ -171,11 +191,8 @@ bool BeginnerHelper::Initialize( int iDancePadType )
 
 	for( int pl=0; pl<NUM_PLAYERS; pl++ )	// Load players
 	{
-		if( !GAMESTATE->IsHumanPlayer(pl))
-			continue;
-
-		if( GAMESTATE->m_pCurNotes[pl]->GetDifficulty() != DIFFICULTY_BEGINNER )
-			continue;
+		if( !m_bPlayerEnabled[pl] )
+			continue;	// skip
 
 		const Character *Character = GAMESTATE->m_pCurCharacters[pl];
 		ASSERT( Character != NULL );
@@ -281,22 +298,22 @@ void BeginnerHelper::Update( float fDeltaTime )
 
 	for(int pn = 0; pn < NUM_PLAYERS; pn++ )
 	{
-		if( !( GAMESTATE->IsHumanPlayer(pn) && GAMESTATE->m_pCurNotes[pn]->GetDifficulty() == DIFFICULTY_BEGINNER) )
+		if( !m_bPlayerEnabled[pn] )
 			continue;	// skip
 
 		if( (m_NoteData[pn].IsThereATapAtRow( BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.01f)) ) ) )
 			FlashOnce();
 		for(int iRow=m_iLastRowChecked; iRow<iCurRow; iRow++)
 		{
-			if((m_NoteData[pn].IsThereATapAtRow( iRow )))
-			{
-				int iStep = 0;
-				const int iNumTracks = m_NoteData[pn].GetNumTracks(); 
-				for( int k=0; k<iNumTracks; k++ )
-					if( m_NoteData[pn].GetTapNote(k, iRow ) == TAP_TAP )
-						iStep |= 1 << k;
-				Step( pn, iStep );
-			}
+			if( !m_NoteData[pn].IsThereATapAtRow( iRow ) )
+				continue;
+
+			int iStep = 0;
+			const int iNumTracks = m_NoteData[pn].GetNumTracks(); 
+			for( int k=0; k<iNumTracks; k++ )
+				if( m_NoteData[pn].GetTapNote(k, iRow ) == TAP_TAP )
+					iStep |= 1 << k;
+			Step( pn, iStep );
 		}
 	}
 	m_iLastRowChecked = iCurRow;

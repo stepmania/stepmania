@@ -161,8 +161,11 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	{
 		const StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 		/* Increment the play count. */
-		for( int mc = 0; mc < NUM_MEMORY_CARDS; ++mc )
-			++GAMESTATE->m_pCurCourse->m_MemCardDatas[st][mc].iNumTimesPlayed;
+		if( !m_bDemonstration )
+		{
+			for( int mc = 0; mc < NUM_MEMORY_CARDS; ++mc )
+				++GAMESTATE->m_pCurCourse->m_MemCardDatas[st][mc].iNumTimesPlayed;
+		}
 
 		vector<Course::Info> ci;
 		GAMESTATE->m_pCurCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci );
@@ -749,8 +752,11 @@ void ScreenGameplay::LoadNextSong()
 
 		/* Increment the play count even if the player fails.  (It's still popular,
 		 * even if the people playing it aren't good at it.) */
-		for( int mc = 0; mc < NUM_MEMORY_CARDS; ++mc )
-			++GAMESTATE->m_pCurNotes[p]->m_MemCardDatas[mc].iNumTimesPlayed;
+		if( !m_bDemonstration )
+		{
+			for( int mc = 0; mc < NUM_MEMORY_CARDS; ++mc )
+				++GAMESTATE->m_pCurNotes[p]->m_MemCardDatas[mc].iNumTimesPlayed;
+		}
 
 		// Put course options into effect.
 		for( unsigned i=0; i<m_asModifiersQueue[p][iPlaySongIndex].size(); ++i )
@@ -895,31 +901,23 @@ void ScreenGameplay::LoadNextSong()
 	
 	// Check to see if any players are in beginner mode.
 	// Note: steps can be different if turn modifiers are used.
-	if( PREFSMAN->m_bShowBeginnerHelper && BeginnerHelper::CanUse())
+	if( PREFSMAN->m_bShowBeginnerHelper )
 	{
-		bool anybeginners = false;
+		for( p=0; p<NUM_PLAYERS; p++ )
+			if( GAMESTATE->IsHumanPlayer(p) && GAMESTATE->m_pCurNotes[p]->GetDifficulty() == DIFFICULTY_BEGINNER )
+				m_BeginnerHelper.AddPlayer( p, &m_Player[p] );
+	}
 
-		for( int pb=0; pb<NUM_PLAYERS; pb++ )
-			if( GAMESTATE->IsHumanPlayer(pb) && GAMESTATE->m_pCurNotes[pb]->GetDifficulty() == DIFFICULTY_BEGINNER )
-			{
-				anybeginners = true;
-				m_BeginnerHelper.AddPlayer( pb, &m_Player[pb] );
-			}
-
-		if(anybeginners && m_BeginnerHelper.Initialize( 2 ))	// Init for doubles
-		{
-				m_Background.Unload();	// BeginnerHelper has its own BG control.
-				m_Background.StopAnimating();
-				m_BeginnerHelper.SetX( CENTER_X );
-				m_BeginnerHelper.SetY( CENTER_Y );
-		}
-		else
-		{
-			m_Background.LoadFromSong( GAMESTATE->m_pCurSong );
-		}
+	if( m_BeginnerHelper.Initialize( 2 ) )	// Init for doubles
+	{
+		m_Background.Unload();	// BeginnerHelper has its own BG control.
+		m_Background.StopAnimating();
+		m_BeginnerHelper.SetX( CENTER_X );
+		m_BeginnerHelper.SetY( CENTER_Y );
 	}
 	else
 	{
+		/* BeginnerHelper disabled/failed to load. */
 		m_Background.LoadFromSong( GAMESTATE->m_pCurSong );
 	}
 
