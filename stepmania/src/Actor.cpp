@@ -360,22 +360,27 @@ void Actor::ScaleTo( const RectI &rect, StretchType st )
 	SetZoom( fNewZoom );
 }
 
+void Actor::StretchTo( const RectI &r )
+{
+	RectF r2( (float)r.left, (float)r.top, (float)r.right, (float)r.bottom );
+	StretchTo( r2 );
+}
 
-void Actor::StretchTo( const RectI &rect )
+void Actor::StretchTo( const RectF &r )
 {
 	// width and height of rectangle
-	int rect_width = rect.GetWidth();
-	int rect_height = rect.GetHeight();
+	float width = r.GetWidth();
+	float height = r.GetHeight();
 
 	// center of the rectangle
-	float rect_cx = rect.left + rect_width/2.0f;
-	float rect_cy = rect.top  + rect_height/2.0f;
+	float cx = r.left + width/2.0f;
+	float cy = r.top  + height/2.0f;
 
 	// zoom fActor needed to scale the Actor to fill the rectangle
-	float fNewZoomX = rect_width  / m_size.x;
-	float fNewZoomY = rect_height / m_size.y;
+	float fNewZoomX = width  / m_size.x;
+	float fNewZoomY = height / m_size.y;
 
-	SetXY( (float)rect_cx, (float)rect_cy );
+	SetXY( cx, cy );
 	SetZoomX( fNewZoomX );
 	SetZoomY( fNewZoomY );
 }

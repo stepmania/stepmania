@@ -231,7 +231,7 @@ ScreenEdit::ScreenEdit()
 
 	m_NoteFieldEdit.SetXY( EDIT_X, EDIT_GRAY_Y );
 	m_NoteFieldEdit.SetZoom( 0.5f );
-	m_NoteFieldEdit.Load( &noteData, PLAYER_1, -220, 800 );
+	m_NoteFieldEdit.Load( &noteData, PLAYER_1, -240, 800 );
 
 	m_rectRecordBack.StretchTo( RectI(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 	m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0) );
@@ -493,34 +493,40 @@ void ScreenEdit::Update( float fDeltaTime )
 
 void ScreenEdit::DrawPrimitives()
 {
-	m_BGAnimation.Draw();
-	m_SnapDisplay.Draw();
-	m_GrayArrowRowEdit.Draw();
+//	m_rectRecordBack.Draw();
 
-	// HACK:  Make NoteFieldEdit draw using the trailing beat
-	float fSongBeat = GAMESTATE->m_fSongBeat;	// save song beat
-	GAMESTATE->m_fSongBeat = m_fTrailingBeat;	// put trailing beat in effect
-	m_NoteFieldEdit.Draw();
-	GAMESTATE->m_fSongBeat = fSongBeat;	// restore real song beat
-
-	m_sprHelp.Draw();
-	m_textHelp.Draw();
-	m_sprInfo.Draw();
-	m_textInfo.Draw();
-	m_Fade.Draw();
-
-
-	m_rectRecordBack.Draw();
-
-	if( m_EditMode == MODE_RECORDING )
+	switch( m_EditMode )
 	{
+	case MODE_EDITING:
+		{
+			m_BGAnimation.Draw();
+			m_SnapDisplay.Draw();
+			m_GrayArrowRowEdit.Draw();
+
+			// HACK:  Make NoteFieldEdit draw using the trailing beat
+			float fSongBeat = GAMESTATE->m_fSongBeat;	// save song beat
+			GAMESTATE->m_fSongBeat = m_fTrailingBeat;	// put trailing beat in effect
+			m_NoteFieldEdit.Draw();
+			GAMESTATE->m_fSongBeat = fSongBeat;	// restore real song beat
+
+			m_sprHelp.Draw();
+			m_textHelp.Draw();
+			m_sprInfo.Draw();
+			m_textInfo.Draw();
+			m_Fade.Draw();
+		}
+		break;
+	case MODE_RECORDING:
+		m_BGAnimation.Draw();
 		m_GrayArrowRowRecord.Draw();
 		m_NoteFieldRecord.Draw();
-	}
-
-	if( m_EditMode == MODE_PLAYING )
-	{
+		break;
+	case MODE_PLAYING:
+		m_BGAnimation.Draw();
 		m_Player.Draw();
+		break;
+	default:
+		ASSERT(0);
 	}
 
 	Screen::DrawPrimitives();

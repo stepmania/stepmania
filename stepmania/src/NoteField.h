@@ -48,7 +48,7 @@ protected:
 	void DrawBPMText( const float fBeat, const float fBPM );
 	void DrawFreezeText( const float fBeat, const float fBPM );
 	void DrawBGChangeText( const float fBeat, const CString sNewBGName );
-	int GetWidth();
+	float GetWidth();
 
 	float	m_fPercentFadeToFail;	// -1 of not fading to fail
 

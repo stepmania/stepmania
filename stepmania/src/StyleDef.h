@@ -75,6 +75,8 @@ public:
 	void GetTransformedNoteDataForStyle( PlayerNumber pn, NoteData* pOriginal, NoteData* pNoteDataOut ) const;
 
 	bool MatchesNotesType( NotesType type ) const;
+
+	void GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut ) const;
 };
 
 

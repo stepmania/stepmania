@@ -166,10 +166,10 @@ public:
 	Rect()						{};
 	Rect(T l, T t, T r, T b)	{ left = l, top = t, right = r, bottom = b; };
 
-	int GetWidth() const		{ return right-left; };
-	int GetHeight() const		{ return bottom-top;  };
-	int GetCenterX() const		{ return (left+right)/2; };
-	int GetCenterY() const		{ return (top+bottom)/2; };
+	T GetWidth() const		{ return right-left; };
+	T GetHeight() const		{ return bottom-top;  };
+	T GetCenterX() const	{ return (left+right)/2; };
+	T GetCenterY() const	{ return (top+bottom)/2; };
 
     T    left, top, right, bottom;
 };

@@ -75,9 +75,13 @@ void NoteField::Update( float fDeltaTime )
 		m_fPercentFadeToFail = min( m_fPercentFadeToFail + fDeltaTime/1.5f, 1 );	// take 1.5 seconds to totally fade
 }
 
-int NoteField::GetWidth()
+float NoteField::GetWidth()
 {
-	return (GetNumTracks()+1) * ARROW_SIZE;
+	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+	float fMinX, fMaxX;
+	pStyleDef->GetMinAndMaxColX( m_PlayerNumber, fMinX, fMaxX );
+
+	return fMaxX - fMinX + ARROW_SIZE;
 }
 
 void NoteField::DrawBeatBar( const float fBeat )
@@ -105,16 +109,16 @@ void NoteField::DrawBeatBar( const float fBeat )
 	}
 	CLAMP( fBrightness, 0, 1 );
 
-	int iWidth = GetWidth();
-	for( int i=-iWidth/2; i<+iWidth/2; )
+	float fWidth = GetWidth();
+	for( float f=-fWidth/2; f<+fWidth/2; )
 	{
-		m_rectMeasureBar.StretchTo( RectI(i,0,i+iSegWidth,0) );
+		m_rectMeasureBar.StretchTo( RectF(f,0,f+iSegWidth,0) );
 		m_rectMeasureBar.SetY( fYPos );
 		m_rectMeasureBar.SetZoomY( bIsMeasure ? 6.f : 3.f );
 		m_rectMeasureBar.SetDiffuse( RageColor(1,1,1,0.5f*fBrightness) );
 		m_rectMeasureBar.Draw();
 
-		i += iSegWidth + iSpaceWidth;
+		f += iSegWidth + iSpaceWidth;
 	}
 
 	if( bIsMeasure )
@@ -122,19 +126,18 @@ void NoteField::DrawBeatBar( const float fBeat )
 		m_textMeasureNumber.SetDiffuse( RageColor(1,1,1,1) );
 		m_textMeasureNumber.SetGlow( RageColor(1,1,1,0) );
 		m_textMeasureNumber.SetText( ssprintf("%d", iMeasureNoDisplay) );
-		m_textMeasureNumber.SetXY( -iWidth/2.f + 10, fYPos );
+		m_textMeasureNumber.SetXY( -fWidth/2.f + 10, fYPos );
 		m_textMeasureNumber.Draw();
 	}
 }
 
 void NoteField::DrawMarkerBar( const float fBeat )
 {
-	const float fYOffset	= ArrowGetYOffset(			m_PlayerNumber, fBeat );
+	const float fYOffset	= ArrowGetYOffset( m_PlayerNumber, fBeat );
 	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, fYOffset );
 
-	m_rectMarkerBar.SetXY( 0, fYPos );
-	m_rectMarkerBar.SetZoomX( (float)(GetNumTracks()+1) * ARROW_SIZE );
-	m_rectMarkerBar.SetZoomY( (float)ARROW_SIZE );
+
+	m_rectMarkerBar.StretchTo( RectF(-GetWidth()/2, fYPos-ARROW_SIZE/2, GetWidth()/2, fYPos+ARROW_SIZE/2) );
 	m_rectMarkerBar.Draw();
 }
 
@@ -149,8 +152,7 @@ void NoteField::DrawAreaHighlight( const float fStartBeat, const float fEndBeat 
 	fYStartPos = max( fYStartPos, -1000 );	
 	fYEndPos = min( fYEndPos, +5000 );	
 
-	m_rectAreaHighlight.StretchTo( RectI(0, (int)fYStartPos-ARROW_SIZE/2, 1, (int)fYEndPos+ARROW_SIZE/2) );
-	m_rectAreaHighlight.SetZoomX( (float)(GetNumTracks()+1) * ARROW_SIZE );
+	m_rectAreaHighlight.StretchTo( RectF(-GetWidth()/2, fYStartPos-ARROW_SIZE/2, GetWidth()/2, fYEndPos+ARROW_SIZE/2) );
 	m_rectAreaHighlight.SetDiffuse( RageColor(1,0,0,0.3f) );
 	m_rectAreaHighlight.Draw();
 }
@@ -159,7 +161,7 @@ void NoteField::DrawAreaHighlight( const float fStartBeat, const float fEndBeat 
 
 void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 {
-	const float fYOffset	= ArrowGetYOffset(			m_PlayerNumber, fBeat );
+	const float fYOffset	= ArrowGetYOffset( m_PlayerNumber, fBeat );
 	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, fYOffset );
 
 	m_textMeasureNumber.SetDiffuse( RageColor(1,0,0,1) );
@@ -203,7 +205,7 @@ void NoteField::DrawPrimitives()
 	// change this probing to binary search
 
 	// probe for first note on the screen
-	float fFirstBeatToDraw = fSongBeat-2;	// Adjust to balance of performance and showing enough notes.
+	float fFirstBeatToDraw = fSongBeat-4;	// Adjust to balance of performance and showing enough notes.
 	while( fFirstBeatToDraw<fSongBeat )
 	{
 		float fYOffset = ArrowGetYOffset(m_PlayerNumber, fFirstBeatToDraw);

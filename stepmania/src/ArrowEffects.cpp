@@ -81,12 +81,8 @@ float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYPos )
 	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_TORNADO] )
 	{
 		const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
-		float fMaxX = -100000, fMinX = +100000;
-		for( int i=0; i<pStyleDef->m_iColsPerPlayer; i++ )
-		{
-			fMaxX = max( fMaxX, pStyleDef->m_ColumnInfo[pn][i].fXOffset );
-			fMinX = min( fMinX, pStyleDef->m_ColumnInfo[pn][i].fXOffset );
-		}
+		float fMinX, fMaxX;
+		pStyleDef->GetMinAndMaxColX( pn, fMinX, fMaxX );
 
 		float fPositionBetween = SCALE( fPixelOffsetFromCenter, fMinX, fMaxX, -1, 1 );
 		float fRads = acosf( fPositionBetween );

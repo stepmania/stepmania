@@ -1023,14 +1023,14 @@ void NoteDataUtil::Big( NoteData &in )
 			// add a note determinitsitcally
 			int iBeat = (int)roundf( NoteRowToBeat(i) );
 			int iTrackOfNote = in.GetFirstNonEmptyTrack(i);
-			int iTrackToAdd = iTrackOfNote + (iBeat%4)-2;
-			CLAMP( iTrackToAdd, 0, in.GetNumTracks() );
+			int iTrackToAdd = iTrackOfNote + (iBeat%5)-2;	// won't be more than 2 tracks away from the existing note
+			CLAMP( iTrackToAdd, 0, in.GetNumTracks()-1 );
 			if( iTrackToAdd == iTrackOfNote )
 				iTrackToAdd++;
-			CLAMP( iTrackToAdd, 0, in.GetNumTracks() );
+			CLAMP( iTrackToAdd, 0, in.GetNumTracks()-1 );
 			if( iTrackToAdd == iTrackOfNote )
 				iTrackToAdd--;
-			CLAMP( iTrackToAdd, 0, in.GetNumTracks() );
+			CLAMP( iTrackToAdd, 0, in.GetNumTracks()-1 );
 
 			if( in.GetTapNote(iTrackToAdd, i) != TAP_EMPTY )
 			{

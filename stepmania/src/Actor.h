@@ -139,6 +139,7 @@ public:
 	void ScaleTo( const RectI &rect, StretchType st );
 
 	void StretchTo( const RectI &rect );
+	void StretchTo( const RectF &rect );
 
 
 
