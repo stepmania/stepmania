@@ -156,7 +156,7 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 			}
 		}
 
-		if( c != '\0' )
+		if( c >= ' ' )
 		{
 			m_sAnswer += c;
 			UpdateText();
