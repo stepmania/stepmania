@@ -21,16 +21,12 @@ MsdFile::MsdFile()
 
 MsdFile::~MsdFile()
 {
-	if( m_szFileString )
-		delete m_szFileString;
+	delete [] m_szFileString;
 }
 
 //returns true if successful, false otherwise
 bool MsdFile::ReadFile( CString sNewPath )
 {
-	if( m_szFileString )
-		delete m_szFileString;
-
 	// Get file size in bytes
 	HANDLE hFile = CreateFile(
 	  sNewPath,          // pointer to name of the file
@@ -46,8 +42,7 @@ bool MsdFile::ReadFile( CString sNewPath )
 	CloseHandle( hFile );
 
 	// allocate a string to hold the file
-	if( m_szFileString )
-		delete m_szFileString;
+	delete [] m_szFileString;
 	m_szFileString = new char[iBufferSize];
 
 	FILE* fp = fopen(sNewPath, "r");
@@ -59,8 +54,9 @@ bool MsdFile::ReadFile( CString sNewPath )
 	ASSERT( iBufferSize > iBytesRead );
 
 	m_iNumValues = 0;
-	
-	for( int i=0; i<iBytesRead; i++ )
+
+	int i;
+	for( i=0; i<iBytesRead; i++ )
 	{
 		switch( m_szFileString[i] )
 		{
@@ -108,9 +104,6 @@ bool MsdFile::ReadFile( CString sNewPath )
 	}
 
 	m_szFileString[i] = '\0';
-
-	int iCurValueIndex = m_iNumValues-1;
-	int iCurParamIndex = m_iNumParams[iCurValueIndex]-1;
 
 	for( i=0; i<m_iNumValues; i++ )
 	{
