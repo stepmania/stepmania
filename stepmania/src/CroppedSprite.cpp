@@ -15,10 +15,12 @@
 #include "PrefsManager.h"
 #include "RageBitmapTexture.h"
 
+#include <math.h>
 
 CroppedSprite::CroppedSprite()
 {
-	m_fCropWidth = m_fCropHeight = 100;
+	/* By default, crop to the size of the image. */
+	m_fCropWidth = m_fCropHeight = -1;
 }
 
 bool CroppedSprite::Load( RageTextureID ID )
@@ -57,12 +59,21 @@ void CroppedSprite::CropToSize( float fWidth, float fHeight )
 			0.78f,	0.02f,	// top right
 		};
 		Sprite::SetCustomImageCoords( fCustomImageCoords );
-		
-		m_size = RageVector2( m_fCropWidth, m_fCropHeight );
+
+		if( m_fCropWidth != -1 && m_fCropHeight != -1)
+			m_size = RageVector2( m_fCropWidth, m_fCropHeight );
+		else
+		{
+			/* If no crop size is set, then we're only being used to crop diagonal
+			 * banners so they look like regular ones. We don't actually care about
+			 * the size of the image, only that it has an aspect ratio of 4:1.  */
+			m_size = RageVector2(256, 64);
+		}
 		SetZoom( 1 );
 	}
-	else	// this is probably a background graphic or something not intended to be a CroppedSprite
+	else if( m_fCropWidth != -1 && m_fCropHeight != -1)
 	{
+		// this is probably a background graphic or something not intended to be a CroppedSprite
 		Sprite::StopUsingCustomCoords();
 
 		// first find the correct zoom
