@@ -134,6 +134,9 @@ protected:
 
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 
+	BGAnimation			m_bgaBH;
+	Sprite				m_sprBH;
+
 	Sprite				m_sprOniGameOver[NUM_PLAYERS];
 	void				ShowOniGameOver( PlayerNumber pn );
 

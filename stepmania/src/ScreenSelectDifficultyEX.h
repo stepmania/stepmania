@@ -17,11 +17,13 @@
 #include "Quad.h"
 #include "MenuElements.h"
 #include "RandomSample.h"
+#include "ModeChoice.h"
 
 
 class ScreenSelectDifficultyEX : public Screen
 {
 public:
+
 	enum ChoiceEx
 	{
 		CHOICE_EX_BEGINNER = 0,
@@ -31,8 +33,10 @@ public:
 		CHOICE_EX_NONSTOP,
 		CHOICE_EX_ONI,	
 		CHOICE_EX_ENDLESS,
+		CHOICE_EX_BATTLE,
 		NUM_CHOICES_EX
 	};
+
 
 	ScreenSelectDifficultyEX();
 	virtual ~ScreenSelectDifficultyEX();
@@ -47,9 +51,6 @@ private:
 
 	Sprite	m_sprHeader[NUM_PLAYERS];
 	Sprite	m_sprPicture[NUM_PLAYERS];
-	Sprite	m_sprExplanation;
-	Sprite	m_sprMoreArrows;
-
 
 	Sprite	m_sprCursor[NUM_PLAYERS];
 	Sprite	m_sprJoinMessageShadow[NUM_PLAYERS];
@@ -76,6 +77,7 @@ private:
 	void MenuRight( PlayerNumber pn );
 	void MenuStart( PlayerNumber pn );
 	void MenuBack( PlayerNumber pn );
+
 
 	void TweenOffScreen();
 	void TweenOnScreen();

@@ -69,6 +69,7 @@ public:
 	float			m_fLongVerSongSeconds;
 	float			m_fMarathonVerSongSeconds;
 	bool			m_bShowSongOptions;
+	bool			m_bSoloSingle;
 	SongOptions::FailType m_DefaultFailType;
 	bool			m_bDancePointsForOni;
 

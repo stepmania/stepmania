@@ -3,7 +3,7 @@
 -----------------------------------------------------------------------------
  Class: ScreenSelectDifficultyEX
 
- Desc: Difficulty select style from Extreme
+ Desc: Difficulty select style from DDR Extreme
 
  Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -27,18 +27,15 @@ const float LOCK_INPUT_TIME = 0.30f;	// lock input while waiting for tweening to
 
 #define DIFFICULTY_X( d )			THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("DifficultyP%dX",d+1))
 #define DIFFICULTY_Y( e )			THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("DifficultyP%dY",e+1))
-//#define DIFFICULTY_SINGLE_PLAYER_X	THEME->GetMetricF("ScreenSelectDifficultyEX","DifficultySinglePlayerX")
-//#define DIFFICULTY_SINGLE_PLAYER_Y	THEME->GetMetricF("ScreenSelectDifficultyEX","DifficultySinglePlayerY")
 #define CURSOR_OFFSET_EX_X( p )		THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("CursorOffsetP%dX",p+1))
 #define CURSOR_OFFSET_EX_Y( i )		THEME->GetMetricF("ScreenSelectDifficultyEX",ssprintf("CursorOffsetP%dY",i+1))
-#define CURSOR_SHADOW_LENGTH_X		THEME->GetMetricF("ScreenSelectDifficultyEX","CursorShadowLengthX")
-#define CURSOR_SHADOW_LENGTH_Y		THEME->GetMetricF("ScreenSelectDifficultyEX","CursorShadowLengthY")
 #define INITIAL_CHOICE				THEME->GetMetricI("ScreenSelectDifficultyEX","InitialChoice")
 #define HELP_TEXT					THEME->GetMetric("ScreenSelectDifficultyEX","HelpText")
 #define TIMER_SECONDS				THEME->GetMetricI("ScreenSelectDifficultyEX","TimerSeconds")
 #define NEXT_SCREEN_ARCADE			THEME->GetMetric("ScreenSelectDifficultyEX","NextScreenArcade")
 #define NEXT_SCREEN_ONI				THEME->GetMetric("ScreenSelectDifficultyEX","NextScreenOni")
-//int NUM_ENABLED_PLAYERS = 0;
+#define NEXT_SCREEN_BATTLE			THEME->GetMetric("ScreenSelectDifficultyEX","NextScreenBattle")
+
 
 const CString CHOICE_TEXT[ScreenSelectDifficultyEX::NUM_CHOICES_EX] = 
 {
@@ -48,15 +45,13 @@ const CString CHOICE_TEXT[ScreenSelectDifficultyEX::NUM_CHOICES_EX] =
 	"hard",
 	"nonstop",
 	"oni",
-	"endless"
+	"endless",
+	"battle"
 };
+
 
 float CURSOR_EX_X( int p ) { return DIFFICULTY_X(p) + CURSOR_OFFSET_EX_X(p); }
 float CURSOR_EX_Y( int p ) { return DIFFICULTY_Y(p) + CURSOR_OFFSET_EX_Y(p); }
-/*
-float CURSOR_EX_SINGLE_X( int p ) { return DIFFICULTY_SINGLE_PLAYER_X + CURSOR_OFFSET_EX_X(p); }
-float CURSOR_EX_SINGLE_Y( int p ) { return DIFFICULTY_SINGLE_PLAYER_Y + CURSOR_OFFSET_EX_Y(p); }
-*/
 
 
 const ScreenMessage SM_StartTweeningOffScreen	= ScreenMessage(SM_User + 3);
@@ -77,17 +72,7 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX()
 		HELP_TEXT, true, true, TIMER_SECONDS
 		);
 	this->AddChild( &m_Menu );
-
-/*	for( unsigned n=0; n<NUM_PLAYERS; n++ )
-	{
-		if( GAMESTATE->IsPlayerEnabled(n) == true )
-		{
-			NUM_ENABLED_PLAYERS++;
-		}
-
-	}
-*/
-
+	
 	for( unsigned c=0; c<NUM_PLAYERS; c++ )
 	{
 		if( GAMESTATE->IsPlayerEnabled(c) == true )
@@ -96,27 +81,12 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX()
 			CString sPictureFile = ssprintf( "select difficulty ex picture %s", CHOICE_TEXT[INITIAL_CHOICE].c_str() );
 
 			m_sprPicture[c].Load( THEME->GetPathTo("Graphics",sPictureFile) );
-/*			if( NUM_ENABLED_PLAYERS == 1 )
-			{
-				m_sprPicture[c].SetXY( DIFFICULTY_SINGLE_PLAYER_X, DIFFICULTY_SINGLE_PLAYER_Y );
-			}
-			else
-			{
-*/				m_sprPicture[c].SetXY( DIFFICULTY_X(c), DIFFICULTY_Y(c) );				
-//			}
 			m_sprPicture[c].SetVertAlign( align_top );
 			m_framePages.AddChild( &m_sprPicture[c] );
 
 
 			m_sprHeader[c].Load( THEME->GetPathTo("Graphics",sHeaderFile) );
-/*			if( NUM_ENABLED_PLAYERS == 1 )
-			{
-				m_sprHeader[c].SetXY( DIFFICULTY_SINGLE_PLAYER_X, DIFFICULTY_SINGLE_PLAYER_Y );
-			}
-			else 
-			{
-*/				m_sprHeader[c].SetXY( DIFFICULTY_X(c), DIFFICULTY_Y(c) );
-//			}
+			m_sprHeader[c].SetXY( DIFFICULTY_X(c), DIFFICULTY_Y(c) );
 			m_sprHeader[c].SetVertAlign( align_bottom );
 			m_framePages.AddChild( &m_sprHeader[c] );
 		}
@@ -131,18 +101,11 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX()
 		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
 			continue;
 
-		m_sprJoinMessageShadow[p].Load( THEME->GetPathTo("Graphics", "select difficulty ex cursor 2x1") );
-		m_sprJoinMessageShadow[p].StopAnimating();
-		m_sprJoinMessageShadow[p].SetState( p );
-		m_sprJoinMessageShadow[p].TurnShadowOff();
-		m_sprJoinMessageShadow[p].SetDiffuse( RageColor(0,0,0,0.6f) );
-		m_framePages.AddChild( &m_sprJoinMessageShadow[p] );
-
 		m_sprCursor[p].Load( THEME->GetPathTo("Graphics", "select difficulty ex cursor 2x1") );
+		m_sprCursor[p].SetXY( -1600, -1600 );
 		m_sprCursor[p].StopAnimating();
 		m_sprCursor[p].SetState( p );
 		m_sprCursor[p].TurnShadowOff();
-		m_sprCursor[p].SetEffectGlowShift();
 		m_framePages.AddChild( &m_sprCursor[p] );
 
 		m_sprOK[p].Load( THEME->GetPathTo("Graphics", "select difficulty ex ok 2x1") );
@@ -223,6 +186,7 @@ void ScreenSelectDifficultyEX::HandleScreenMessage( const ScreenMessage SM )
 			case CHOICE_EX_BEGINNER:	GAMESTATE->m_PreferredDifficulty[p] = DIFFICULTY_BEGINNER;	break;
 			case CHOICE_EX_EASY:		GAMESTATE->m_PreferredDifficulty[p] = DIFFICULTY_EASY;		break;
 			case CHOICE_EX_NONSTOP:	// need to set preferred difficulty even for courses
+			case CHOICE_EX_BATTLE:
 			case CHOICE_EX_ONI:
 			case CHOICE_EX_ENDLESS:
 			case CHOICE_EX_MEDIUM:		GAMESTATE->m_PreferredDifficulty[p] = DIFFICULTY_MEDIUM;	break;
@@ -240,6 +204,7 @@ void ScreenSelectDifficultyEX::HandleScreenMessage( const ScreenMessage SM )
 		case CHOICE_EX_NONSTOP:		GAMESTATE->m_PlayMode = PLAY_MODE_NONSTOP;	break;
 		case CHOICE_EX_ONI:			GAMESTATE->m_PlayMode = PLAY_MODE_ONI;		break;
 		case CHOICE_EX_ENDLESS:		GAMESTATE->m_PlayMode = PLAY_MODE_ENDLESS;	break;
+		case CHOICE_EX_BATTLE:		GAMESTATE->m_PlayMode = PLAY_MODE_BATTLE;	break;
 		default:	ASSERT(0);	// bad selection
 		}
 
@@ -249,8 +214,10 @@ void ScreenSelectDifficultyEX::HandleScreenMessage( const ScreenMessage SM )
 		case PLAY_MODE_NONSTOP:
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:	SCREENMAN->SetNewScreen( NEXT_SCREEN_ONI );		break;
+		case PLAY_MODE_BATTLE:	SCREENMAN->SetNewScreen( NEXT_SCREEN_BATTLE);	break;
 		default:	ASSERT(0);
 		}
+
 		break;
 	case SM_StartTweeningOffScreen:
 		TweenOffScreen();
@@ -292,6 +259,7 @@ bool ScreenSelectDifficultyEX::AnyPlayerIsOnCourse()
 		{
 			case CHOICE_EX_NONSTOP:
 			case CHOICE_EX_ONI:
+			case CHOICE_EX_BATTLE:
 			case CHOICE_EX_ENDLESS: return true; break;
 		}
 	}
@@ -305,6 +273,7 @@ bool ScreenSelectDifficultyEX::PlayerIsOnCourse( PlayerNumber pl )
 	{
 		case CHOICE_EX_NONSTOP:
 		case CHOICE_EX_ONI:
+		case CHOICE_EX_BATTLE:
 		case CHOICE_EX_ENDLESS: return true; break;
 	}
 	return false;
@@ -390,20 +359,6 @@ void ScreenSelectDifficultyEX::ChangeTo( PlayerNumber pn, int iOldChoice, int iN
 				m_sprHeader[p].SetTweenZoomY( 1 );
 			}
 		}
-
-
-		m_sprJoinMessageShadow[p].StopTweening();
-		m_sprJoinMessageShadow[p].BeginTweening( 0.2f, TWEEN_LINEAR );
-/*		if( NUM_ENABLED_PLAYERS == 1 )
-		{
-			m_sprJoinMessageShadow[p].SetTweenX( CURSOR_EX_SINGLE_X((PlayerNumber)p) );
-			m_sprJoinMessageShadow[p].SetTweenY( CURSOR_EX_SINGLE_Y((PlayerNumber)p) );
-		}
-		else
-		{
-*/			m_sprJoinMessageShadow[p].SetTweenX( CURSOR_EX_X((PlayerNumber)p) );
-			m_sprJoinMessageShadow[p].SetTweenY( CURSOR_EX_Y((PlayerNumber)p) );			
-//		}
 	}
 
 	m_soundChange.Play();
@@ -466,37 +421,17 @@ void ScreenSelectDifficultyEX::MenuStart( PlayerNumber pn )
 
 void ScreenSelectDifficultyEX::ShowSelected( PlayerNumber pv )
 {
-
+	//Roll up in pic corner
+	m_sprCursor[pv].SetXY( CURSOR_EX_X(pv), CURSOR_EX_Y(pv) );
 	m_sprCursor[pv].BeginTweening( 0.2f );
 	m_sprCursor[pv].BeginTweening( 0.2f );
 	
-	
-/*	if( NUM_ENABLED_PLAYERS == 1 )
-	{
-		m_sprCursor[pv].SetTweenX( CURSOR_EX_SINGLE_X(pv) );
-		m_sprCursor[pv].SetTweenY( CURSOR_EX_SINGLE_Y(pv) );
-		m_sprOK[pv].SetX( CURSOR_EX_SINGLE_X(pv) );
-		m_sprOK[pv].SetY( CURSOR_EX_SINGLE_Y(pv) );
-	}
-	else
-	{
-*/		m_sprCursor[pv].SetTweenX( CURSOR_EX_X(pv) );
-		m_sprCursor[pv].SetTweenY( CURSOR_EX_Y(pv) );
-		m_sprOK[pv].SetX( CURSOR_EX_X(pv) );
-		m_sprOK[pv].SetY( CURSOR_EX_Y(pv) );
-//	}
+	m_sprOK[pv].SetXY( CURSOR_EX_X(pv), CURSOR_EX_Y(pv) );
+	m_sprCursor[pv].FadeOn( 0, "foldy bounce", 0.3f );
 
-
-	m_sprOK[pv].SetDiffuse( RageColor(1,1,1,0) );
-	m_sprOK[pv].SetZoom( 2 );
-
-	m_sprOK[pv].BeginTweening( 0.2f );
-	m_sprOK[pv].SetTweenZoom( 1 );
-	m_sprOK[pv].SetTweenDiffuse( RageColor(1,1,1,1) );
-
-	m_sprJoinMessageShadow[pv].BeginTweening( 0.2f );
-	m_sprJoinMessageShadow[pv].BeginTweening( 0.2f );
-	m_sprJoinMessageShadow[pv].SetDiffuse( RageColor(0,0,0,0) );
+	m_sprOK[pv].SetDiffuse( RageColor(1,1,1,1) );
+	m_sprOK[pv].SetZoom( 1 );
+	m_sprOK[pv].FadeOn( 0, "foldy bounce", 0.3f );
 }
 
 void ScreenSelectDifficultyEX::MenuBack( PlayerNumber pn )
@@ -516,71 +451,25 @@ void ScreenSelectDifficultyEX::TweenOffScreen()
 		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
 			continue;
 
-		m_sprCursor[p].BeginTweening( 0.3f );
-		m_sprCursor[p].SetTweenZoom( 0 );
-
-		m_sprOK[p].BeginTweening( 0.3f );
-		m_sprOK[p].SetTweenZoom( 0 );
-
-		m_sprJoinMessageShadow[p].BeginTweening( 0.3f );
-		m_sprJoinMessageShadow[p].SetTweenDiffuse( RageColor(0,0,0,0) );
+		m_sprCursor[p].FadeOff( 0, "fade", 0.3f );
+		m_sprOK[p].FadeOff( 0, "fade", 0.3f );
 	}
 
 	for( unsigned c=0; c<NUM_PLAYERS; c++ )
 	{
-		m_sprHeader[c].FadeOff( 0, "fadeout", 0.3f );
-		m_sprPicture[c].FadeOff( 0, "fadeout", 0.3f );
+		m_sprHeader[c].FadeOff( 0, "fade", 0.3f );
+		m_sprPicture[c].FadeOff( 0, "fade", 0.3f );
 	}
 }
 
 void ScreenSelectDifficultyEX::TweenOnScreen() 
 {
-	unsigned p;
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
-			continue;
-
-//		int iSelection = m_Choice[p];
-/*		if( NUM_ENABLED_PLAYERS == 1 )
-		{
-			m_sprCursor[p].SetXY( CURSOR_EX_SINGLE_X((PlayerNumber)p), CURSOR_EX_SINGLE_Y((PlayerNumber)p) );
-		}
-		else
-		{
-*/			m_sprCursor[p].SetXY( CURSOR_EX_X((PlayerNumber)p), CURSOR_EX_Y((PlayerNumber)p) );
-//		}
-
-
-		m_sprCursor[p].FadeOn( 0, "SpinZ ZoomX ZoomY Fade", 0.3f );
-/*		if( NUM_ENABLED_PLAYERS == 1 )
-		{
-			m_sprJoinMessageShadow[p].SetXY( CURSOR_EX_SINGLE_X((PlayerNumber)p), CURSOR_EX_SINGLE_Y((PlayerNumber)p) );
-		}
-		else
-		{
-*/			m_sprJoinMessageShadow[p].SetXY( CURSOR_EX_X((PlayerNumber)p), CURSOR_EX_Y((PlayerNumber)p) );
-//		}
-		RageColor colorOriginal = m_sprJoinMessageShadow[p].GetDiffuse();
-		m_sprJoinMessageShadow[p].SetDiffuse( RageColor(0,0,0,0) );
-		m_sprJoinMessageShadow[p].BeginTweening( 0.3f );
-		m_sprJoinMessageShadow[p].SetTweenDiffuse( colorOriginal );
-	}
-
 	for( unsigned d=0; d<NUM_PLAYERS; d++ )
 	{
-		// fade in and bring onscreen
-/*		if( NUM_ENABLED_PLAYERS == 1 )
-		{
-			m_sprHeader[d].SetXY( DIFFICULTY_SINGLE_PLAYER_X, DIFFICULTY_SINGLE_PLAYER_Y );
-			m_sprPicture[d].SetXY( DIFFICULTY_SINGLE_PLAYER_X, DIFFICULTY_SINGLE_PLAYER_Y );
-		}
-		else
-		{
-*/			m_sprHeader[d].SetXY( DIFFICULTY_X(d), DIFFICULTY_Y(d) );
-			m_sprPicture[d].SetXY( DIFFICULTY_X(d), DIFFICULTY_Y(d) );			
-//		}
-		m_sprHeader[d].FadeOn( 0, "fadeon",0.3f );
-		m_sprPicture[d].FadeOn( 0, "fadeon",0.3f );
+		m_sprHeader[d].SetXY( DIFFICULTY_X(d), DIFFICULTY_Y(d) );
+		m_sprPicture[d].SetXY( DIFFICULTY_X(d), DIFFICULTY_Y(d) );			
+
+		m_sprHeader[d].FadeOn( 0, "fade",0.3f );
+		m_sprPicture[d].FadeOn( 0, "fade",0.3f );
 	}
 }

@@ -189,6 +189,22 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	m_DancingState = STATE_INTRO;
 	m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 
+	
+
+	// If this is beginner mode, show the helper
+	/* !! Working on this.. having probs loading the BG sequences -- Miryokuteki
+	
+		m_sprBH.Load( THEME->GetPathTo("BGAnimations","beginner helper up") );
+		this->AddChild( &m_sprBH );
+		m_sprBH.SetXY( 100,100 );
+		m_sprBH.StartAnimating();
+		this->AddChild( &m_bgaBeginnerHelper );
+		m_bgaBH.SetXY( 100,100 );
+		m_Background.AddChild(&m_bgaBH);
+
+	*/
+
+
 
 	m_Background.SetDiffuse( RageColor(0.4f,0.4f,0.4f,1) );
 	this->AddChild( &m_Background );
@@ -1018,7 +1034,9 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		!PREFSMAN->m_bAutoPlay && 
 		StyleI.IsValid() &&
 		GAMESTATE->IsPlayerEnabled( StyleI.player ) )
+	{
 		m_Player[StyleI.player].Step( StyleI.col ); 
+	}
 	else if( type==IET_FIRST_PRESS && 
 		!PREFSMAN->m_bAutoPlay && 
 		MenuI.IsValid() &&
@@ -1036,7 +1054,6 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		if( iItemSlot != -1 )
 			m_Inventory.UseItem( MenuI.player, iItemSlot );
 	}
-
 }
 
 void ScreenGameplay::PositionStatusIcons()

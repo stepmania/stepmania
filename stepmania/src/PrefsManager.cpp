@@ -71,6 +71,8 @@ PrefsManager::PrefsManager()
 	m_bShowSelectGroup = true;
 	m_bShowTranslations = true;
 	m_bArcadeOptionsNavigation = false;
+	m_bDDRExtremeDifficultySelect = false;
+	m_bSoloSingle = true;
 	m_iUnloadTextureDelaySeconds = 0; // disabled 60*30;	// 30 mins
 	m_bCoinOpMode = false;
 	m_MusicWheelUsesSections = ALWAYS;
@@ -179,6 +181,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueI( "Options", "DefaultFailType",			(int&)m_DefaultFailType );
 	ini.GetValueB( "Options", "bAllowSoftwareRenderer",		m_bAllowSoftwareRenderer );
 	ini.GetValueB( "Options", "DDRExtremeDifficultySelect",	m_bDDRExtremeDifficultySelect );
+	ini.GetValueB( "Options", "SoloSingle",					m_bSoloSingle );
 	ini.GetValueB( "Options", "DancePointsForOni",			m_bDancePointsForOni );
 
 
@@ -255,6 +258,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueI( "Options", "DefaultFailType",			(int&)m_DefaultFailType );
 	ini.SetValueB( "Options", "bAllowSoftwareRenderer",		m_bAllowSoftwareRenderer );
 	ini.SetValueB( "Options", "DDRExtremeDifficultySelect",	m_bDDRExtremeDifficultySelect );
+	ini.SetValueB( "Options", "SoloSingle",					m_bSoloSingle );
 	ini.SetValueB( "Options", "DancePointsForOni",			m_bDancePointsForOni );
 
 

@@ -161,6 +161,33 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 
 	m_NoteField.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
 	m_GrayArrowRow.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
+
+
+	// If solo-single is enabled..
+	if( PREFSMAN->m_bSoloSingle == true && GAMESTATE->GetCurrentStyleDef()->m_NotesType == STYLE_DANCE_SINGLE && GAMESTATE->GetNumSidesJoined() == 1 )
+	{
+		int iJoinedSide;
+		for( unsigned u=0;u<NUM_PLAYERS;u++)
+			if( GAMESTATE->IsPlayerEnabled(u) == true )
+				iJoinedSide = u;
+		
+		
+		
+		if( iJoinedSide == 0 )
+		{
+			m_GhostArrowRow.SetX( 165 );
+			m_GrayArrowRow.SetX( 165 );
+			m_NoteField.SetX( 165 );
+			m_Combo.SetX( 165 );
+			for( c=0; c<pStyleDef->m_iColsPerPlayer; c++ )
+			{
+				m_HoldJudgment[c].SetX( (float)pStyleDef->m_ColumnInfo[pn][c].fXOffset + m_GhostArrowRow.GetX());
+			}
+			m_Judgment.SetX( 165 );
+		}
+	}
+
+
 	m_GhostArrowRow.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
 
 	if( GAMESTATE->m_PlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_MINI] == 1 )
@@ -557,6 +584,7 @@ void Player::CrossedRow( int iNoteRow )
 		{
 			if( GetTapNote(t, iNoteRow) != TAP_EMPTY )
 				this->Step( t );
+				
 		}
 	}
 }

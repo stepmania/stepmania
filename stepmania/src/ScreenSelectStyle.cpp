@@ -344,7 +344,7 @@ void ScreenSelectStyle::TweenOnScreen()
 		m_sprIcon[i]->FadeOn( (m_aPossibleStyles.size()-i)*0.05f, "Left Accelerate", MENU_ELEMENTS_TWEEN_TIME );
 
 	m_sprExplanation.FadeOn( 0, "Right Accelerate", MENU_ELEMENTS_TWEEN_TIME );
-	m_sprJointPremium.FadeOn( 0, "FadeIn", MENU_ELEMENTS_TWEEN_TIME );
+	m_sprJointPremium.FadeOn( 0, "fade", MENU_ELEMENTS_TWEEN_TIME );
 
 	// let AfterChange tween Preview and Info
 }
@@ -360,7 +360,7 @@ void ScreenSelectStyle::TweenOffScreen()
 
 	m_sprInfo.FadeOff( 0, "FoldY", MENU_ELEMENTS_TWEEN_TIME );
 
-	m_sprJointPremium.FadeOff( 0, "FadeOut", MENU_ELEMENTS_TWEEN_TIME );
+	m_sprJointPremium.FadeOff( 0, "fade", MENU_ELEMENTS_TWEEN_TIME );
 }
 
 
