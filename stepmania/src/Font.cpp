@@ -792,7 +792,7 @@ void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
 		split(imports, ",", ImportList, true);
 		for(unsigned i = 0; i < ImportList.size(); ++i)
 		{
-			CString path = THEME->GetPathToF( ImportList[i], true );
+			CString path = THEME->GetPathF( "", ImportList[i], true );
 			if( path == "" )
 			{
 				LOG->Warn("Font \"%s\" imports a font \"%s\" that doesn't exist", sFontOrTextureFilePath.c_str(), ImportList[i].c_str());
