@@ -162,6 +162,7 @@ void ScreenOptionsMaster::SetConf( OptionRow &row, OptionRowHandler &hand, CStri
 /* Add a list of available characters to the given row/handler. */
 void ScreenOptionsMaster::SetCharacter( OptionRow &row, OptionRowHandler &hand )
 {
+	hand.type = ROW_CHARACTER;
 	row.bOneChoiceForAllPlayers = false;
 	row.choices.push_back( "OFF" );
 	vector<Character*> apCharacters;
@@ -370,6 +371,7 @@ void ScreenOptionsMaster::ImportOptions()
 		{
 			int col = ImportOption( row, hand, 0 );
 			m_iSelectedOption[0][i] = col;
+			ASSERT( m_iSelectedOption[0][i] < (int)row.choices.size() );
 		}
 		else
 			for( int pn=0; pn<NUM_PLAYERS; pn++ )
@@ -379,6 +381,7 @@ void ScreenOptionsMaster::ImportOptions()
 
 				int col = ImportOption( row, hand, pn );
 				m_iSelectedOption[pn][i] = col;
+				ASSERT( m_iSelectedOption[pn][i] < (int)row.choices.size() );
 			}
 	}
 }
@@ -407,10 +410,8 @@ int ScreenOptionsMaster::ExportOption( const OptionRow &row, const OptionRowHand
 		int New = hand.opt->Get( row.choices );
 
 		/* If it didn't change, don't return any side-effects. */
-		LOG->Trace("origin %i, %i  %s", Original, New, hand.opt->name.c_str());
 		if( Original == New )
 			return 0;
-		LOG->Trace("foo %i", hand.opt->GetEffects());
 
 		return hand.opt->GetEffects();
 	}
@@ -422,6 +423,7 @@ int ScreenOptionsMaster::ExportOption( const OptionRow &row, const OptionRowHand
 		{
 			vector<Character*> apCharacters;
 			GAMESTATE->GetCharacters( apCharacters );
+			ASSERT( sel - 1 < (int)apCharacters.size() );
 			GAMESTATE->m_pCurCharacters[pn] = apCharacters[sel - 1];
 		}
 		break;
