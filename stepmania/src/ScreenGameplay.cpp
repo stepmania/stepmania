@@ -1143,6 +1143,10 @@ void ScreenGameplay::PauseGame( bool bPause )
 
 	m_bPaused = bPause;
 	m_pSoundMusic->Pause( bPause );
+	if( bPause )
+		this->PlayCommand( "Pause" );
+	else
+		this->PlayCommand( "Unpause" );
 }
 
 // play assist ticks
@@ -2420,13 +2424,11 @@ void ScreenGameplay::TweenOnScreen()
 		ON_COMMAND( m_DifficultyIcon[p] );
 		ON_COMMAND( m_DifficultyMeter[p] );
 	}
+	m_Overlay->PlayCommand("On");
 
 	if (m_ShowScoreboard)
 		FOREACH_NSScoreBoardColumn( sc )
 			ON_COMMAND( m_Scoreboard[sc] );
-
-	if( m_Overlay.IsLoaded() )
-		m_Overlay->PlayCommand("On");
 }
 
 void ScreenGameplay::TweenOffScreen()
