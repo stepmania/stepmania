@@ -3,6 +3,7 @@
 #include "RageLog.h"
 #include "RageThreads.h"
 #include "RageTimer.h"
+#include "RageUtil.h"
 #include "archutils/Darwin/Crash.h"
 #include "archutils/Unix/CrashHandler.h"
 #include "archutils/Unix/SignalHandler.h"
@@ -87,7 +88,6 @@ void ArchHooks_darwin::DumpDebugInfo()
     CString processor;
     long numProcessors;
     CString machine;
-    char *temp;
 
     OSErr err = noErr;
     long code;
@@ -98,23 +98,15 @@ void ArchHooks_darwin::DumpDebugInfo()
     {
         systemVersion = "Mac OS X ";
         if (code >= kMacOSX_10_2 && code < kMacOSX_10_3)
-        {
-            systemVersion += "10.2.";
-            asprintf(&temp, "%d", code - kMacOSX_10_2);
-            systemVersion += temp;
-            free(temp);
-        }
+            systemVersion += ssprintf("10.2.%ld", code - kMacOSX_10_2);
         else
         {
-            systemVersion += "10.3";
             int ssv = code - kMacOSX_10_3;
+			
             if (ssv > 9)
-                systemVersion += "+";
-            else {
-                asprintf(&temp, ".%d", ssv);
-                systemVersion += temp;
-                free(temp);
-            }
+                systemVersion += "10.3+";
+            else
+				systemVersion += ssprintf("10.3.%d", ssv);
         }
     }
     else
@@ -139,7 +131,7 @@ void ArchHooks_darwin::DumpDebugInfo()
         vRam = 0;
     }
     
-    /* XXX update this information for G5s */
+    /* XXX Do this in some manner other than using Gestalt */
     /* Get processor */
     numProcessors = MPProcessorsScheduled();
     err = Gestalt(gestaltNativeCPUtype, &code);
@@ -159,10 +151,9 @@ void ArchHooks_darwin::DumpDebugInfo()
             CASE_GESTALT_M(processor, CPUG47450, "G4");
             CASE_GESTALT_M(processor, CPUApollo, "G4 (Apollo)");
             CASE_GESTALT_M(processor, CPU750FX, "G3 (Sahara)");
+			case 313: processor = "G5"; break; 
             default:
-                asprintf(&temp, "%d", code);
-                processor = temp;
-                free(temp);
+                processor = ssprintf("%ld", code);
         }
     }
     else
@@ -221,13 +212,12 @@ void ArchHooks_darwin::DumpDebugInfo()
             CASE_GESTALT(machine, PowerMacNewWorld);
             CASE_GESTALT(machine, PowerMacG3);
             default:
-                asprintf(&temp, "%d", code);
-                machine = temp;
-                free(temp);
+                machine = ssprintf("%ld", code);
         }
     }
-    else if (err == gestaltUndefSelectorErr ) {
-        machine = "PowerMac";
+    else if (err == gestaltUndefSelectorErr )
+	{
+        machine = "PowerMac ";
         machine += processor;
     }
     else
