@@ -455,14 +455,30 @@ int ProfileManager::GetSongNumTimesPlayed( const Song* pSong, ProfileSlot slot )
 
 void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
-	hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
+	iPersonalIndexOut = -1;
+	iMachineIndexOut = -1;
+
+	// In event mode, set the score's name immediately to the Profile's last
+	// used name.  If no profile last used name exists, then don't save the 
+	// score to the player or machine profile.
+	if( PREFSMAN->m_bEventMode )
+	{
+		Profile* pProfile = PROFILEMAN->GetProfile(pn);
+		if( pProfile && !pProfile->m_sLastUsedHighScoreName.empty() )
+			hs.sName = pProfile->m_sLastUsedHighScoreName;
+		else
+			return;	// don't save anything
+	}
+	else
+	{
+		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
+	}
+
 	
 	if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForMachineSongHighScore )
 	{
 		if( PROFILEMAN->IsUsingProfile(pn) )
 			PROFILEMAN->GetProfile(pn)->AddStepsHighScore( pSong, pSteps, hs, iPersonalIndexOut );
-		else
-			iPersonalIndexOut = -1;
 
 		// don't leave machine high scores for edits
 		if( pSteps->GetDifficulty() != DIFFICULTY_EDIT )
@@ -502,13 +518,30 @@ HighScore ProfileManager::GetHighScoreForDifficulty( const Song *s, const StyleD
 //
 void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
-	if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForMachineCourseHighScore )
+	iPersonalIndexOut = -1;
+	iMachineIndexOut = -1;
+
+	// In event mode, set the score's name immediately to the Profile's last
+	// used name.  If no profile last used name exists, then don't save the 
+	// score to the player or machine profile.
+	if( PREFSMAN->m_bEventMode )
+	{
+		Profile* pProfile = PROFILEMAN->GetProfile(pn);
+		if( pProfile && !pProfile->m_sLastUsedHighScoreName.empty() )
+			hs.sName = pProfile->m_sLastUsedHighScoreName;
+		else
+			return;	// don't save anything
+	}
+	else
 	{
 		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
+	}
+
+
+	if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForMachineCourseHighScore )
+	{
 		if( PROFILEMAN->IsUsingProfile(pn) )
 			PROFILEMAN->GetProfile(pn)->AddCourseHighScore( pCourse, pTrail, hs, iPersonalIndexOut );
-		else
-			iPersonalIndexOut = -1;
 		PROFILEMAN->GetMachineProfile()->AddCourseHighScore( pCourse, pTrail, hs, iMachineIndexOut );
 	}
 
