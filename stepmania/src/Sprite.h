@@ -14,8 +14,9 @@
 
 #include "Actor.h"
 #include "RageUtil.h"
-#include "RageTexture.h"
+#include "RageTextureID.h"
 
+class RageTexture;
 
 class Sprite: public Actor
 {
@@ -38,7 +39,7 @@ public:
 	virtual void SetState( int iNewState );
 	
 	virtual int GetNumStates()		{ return m_States.size(); };
-	CString	GetTexturePath()	{ return m_pTexture==NULL ? "" : m_pTexture->GetID().filename; };
+	CString	GetTexturePath() const;
 
 	void SetCustomTextureRect( const RectF &new_texcoord_frect );
 	void SetCustomTextureCoords( float fTexCoords[8] );

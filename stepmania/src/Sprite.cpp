@@ -20,6 +20,7 @@
 #include "RageException.h"
 #include "PrefsManager.h"
 #include "RageDisplay.h"
+#include "RageTexture.h"
 #include "GameConstantsAndTypes.h"
 #include "SDL_utils.h"
 #include "ActorUtil.h"
@@ -410,6 +411,14 @@ void Sprite::SetState( int iNewState )
 	CLAMP(iNewState, 0, (int)m_States.size()-1);
 	m_iCurState = iNewState;
 	m_fSecsIntoState = 0.0; 
+}
+
+CString	Sprite::GetTexturePath() const
+{
+	if( m_pTexture==NULL )
+		return "";
+
+	return m_pTexture->GetID().filename;
 }
 
 void Sprite::SetCustomTextureRect( const RectF &new_texcoord_frect ) 
