@@ -142,14 +142,14 @@ void RageSound_Generic_Software::DecodeThread()
 	/* SOUNDMAN will be set once RageSoundManager's ctor returns and
 	 * assigns it; we might get here before that happens, though. */
 	while( !SOUNDMAN && !shutdown_decode_thread )
-		SDL_Delay( 10 );
+		usleep( 10000 );
 
 	SetupDecodingThread();
 
 	while( !shutdown_decode_thread )
 	{
 		/* Fill each playing sound, round-robin. */
-		SDL_Delay( 1000*chunksize() / GetSampleRate(0) );
+		usleep( 1000000*chunksize() / GetSampleRate(0) );
 
 		LockMut( m_Mutex );
 //		LOG->Trace("begin mix");

@@ -27,14 +27,15 @@ void RageSound_ALSA9::MixerThread()
 {
 	/* SOUNDMAN will be set once RageSoundManager's ctor returns and
 	 * assigns it; we might get here before that happens, though. */
-	while(!SOUNDMAN && !shutdown) SDL_Delay(10);
+	while( !SOUNDMAN && !shutdown )
+		usleep( 10000 );
 
 	while(!shutdown)
 	{
 		/* Sleep for the size of one chunk. */
 		const int chunksize_frames = max_writeahead / num_chunks;
 		float sleep_secs = (float(chunksize_frames) / samplerate);
-		SDL_Delay( 20 ); // int(1000 * sleep_secs));
+		usleep( 20000 ); // int(1000 * sleep_secs));
 
 		LockMut( m_Mutex );
 
