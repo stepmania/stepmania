@@ -49,6 +49,7 @@ public:
 	void AddFakeSound(RageSound *snd);		/* used by drivers */
 	float GetPlayLatency() const;
 	int GetDriverSampleRate() const;
+	const set<RageSound *> &GetPlayingSounds() const { return playing_sounds; }
 
 	void PlayOnce( CString sPath );
 	static void PlayOnceFromDir( CString sDir );
