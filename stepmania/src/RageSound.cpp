@@ -43,6 +43,7 @@
 
 #include "RageSoundReader_Preload.h"
 #include "RageSoundReader_Resample.h"
+#include "RageSoundReader_FileReader.h"
 
 const int channels = 2;
 const int samplesize = 2 * channels; /* 16-bit */
@@ -167,7 +168,7 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 		SetStopMode( M_STOP );
 
 	CString error;
-	Sample = SoundReader::OpenFile( sSoundFilePath, error );
+	Sample = SoundReader_FileReader::OpenFile( sSoundFilePath, error );
 	if( Sample == NULL )
 		RageException::Throw( "RageSoundManager::RageSoundManager: error opening sound '%s': '%s'",
 			sSoundFilePath.c_str(), error.c_str());
