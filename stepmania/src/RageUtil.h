@@ -237,6 +237,7 @@ CString join( const CString &Delimitor, CStringArray::const_iterator begin, CStr
 
 CString GetCwd();
 
+void CRC32( unsigned int &iCRC, const char *pBuffer, size_t iSize );
 unsigned int GetHashForString( const CString &s );
 unsigned int GetHashForFile( const CString &sPath );
 unsigned int GetHashForDirectory( const CString &sDir );	// a hash value that remains the same as long as nothing in the directory has changed

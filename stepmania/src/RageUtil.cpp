@@ -493,33 +493,46 @@ CString GetCwd()
 #endif
 }
 
-/* Reference: http://www.theorem.com/java/CRC32.java, rewritten by Glenn Maynard.
- * Public domain. */
-unsigned int GetHashForString ( const CString &s )
+/*
+ * Calculate a standard CRC32.  iCRC should be initialized to 0.
+ * References:
+ *   http://www.theorem.com/java/CRC32.java,
+ *   http://www.faqs.org/rfcs/rfc1952.html
+ */
+void CRC32( unsigned int &iCRC, const char *pBuffer, size_t iSize )
 {
 	static unsigned tab[256];
 	static bool initted = false;
-	if(!initted)
+	if( !initted )
 	{
 		initted = true;
 		const unsigned POLY = 0xEDB88320;
 
-		for(int i = 0; i < 256; ++i)
+		for( int i = 0; i < 256; ++i )
 		{
 			tab[i] = i;
-			for(int j = 0; j < 8; ++j)
+			for( int j = 0; j < 8; ++j )
 			{
-				if(tab[i] & 1) tab[i] = (tab[i] >> 1) ^ POLY;
-				else tab[i] >>= 1;
+				if( tab[i] & 1 )
+					tab[i] = (tab[i] >> 1) ^ POLY;
+				else
+					tab[i] >>= 1;
 			}
 		}
 	}
 
 	unsigned crc = 0;
-	for(unsigned i = 0; i < s.size(); ++i)
-        crc = (crc >> 8) ^ tab[(crc ^ s[i]) & 0xFF];
+	for( unsigned i = 0; i < iSize; ++i )
+		iCRC = (iCRC >> 8) ^ tab[(iCRC ^ pBuffer[i]) & 0xFF];
+}
+
+unsigned int GetHashForString ( const CString &s )
+{
+	unsigned crc = 0;
+	CRC32( crc, s.data(), s.size() );
 	return crc;
 }
+
 
 /* Return true if "dir" is empty or does not exist. */
 bool DirectoryIsEmpty( const CString &dir )
