@@ -11,8 +11,7 @@
 
 float RageTimer::GetTimeSinceStart()
 {
-	static RageTimer g_Start;
-	return g_Start.Ago();
+	return SDL_GetTicks() / 1000.0f;
 }
 
 void RageTimer::Touch()

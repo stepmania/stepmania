@@ -30,7 +30,6 @@ public:
 
 	/* Time ago this RageTimer represents. */
 	float Ago() const;
-//	inline void Touch();
 	void Touch();
 	inline bool IsZero() const { return m_secs == 0 && m_us == 0; }
 	inline void SetZero() { m_secs = m_us = 0; }
@@ -49,15 +48,16 @@ public:
 	/* Find the amount of time between two timestamps.  The result is a duration. */
 	float operator-(const RageTimer &rhs) const;
 
-private:
-	static RageTimer Sum(const RageTimer &lhs, float tm);
-	static float Difference(const RageTimer &lhs, const RageTimer &rhs);
-
 	/* "float" is bad for a "time since start" RageTimer.  If the game is running for
 	 * several days, we'll lose a lot of resolution.  I don't want to use double
 	 * everywhere, since it's slow.  I'd rather not use double just for RageTimers, since
 	 * it's too easy to get a type wrong and end up with obscure resolution problems. */
 	unsigned m_secs, m_us;
+
+private:
+	static RageTimer Sum(const RageTimer &lhs, float tm);
+	static float Difference(const RageTimer &lhs, const RageTimer &rhs);
+
 };
 
 #endif
