@@ -108,6 +108,7 @@ GameClient::GameClient()
 	isStarting = false;  //Used for after ScreenNetMusicSelect but before InGame
 	wasIngame = false;
 	lowerJudge = false;
+	NetScreenInfo = NS_NOWHERE;
 }
 
 void StepManiaLanServer::Disconnect(const unsigned int clientNum)
@@ -131,6 +132,7 @@ void StepManiaLanServer::Disconnect(const unsigned int clientNum)
 			++Iterator;
 		}
 	}
+	SendUserList ();
 }
 
 int GameClient::GetData(PacketFunctions& Packet)
@@ -825,7 +827,7 @@ void StepManiaLanServer::SendUserList()
 			if (Client[x]->Player[y].name.length() == 0)
 				Reply.Write1(0);
 			else
-				Reply.Write1(1);
+				Reply.Write1( (int)Client[x]->NetScreenInfo + 1);
 			Reply.WriteNT(Client[x]->Player[y].name);
 		}
 
@@ -847,6 +849,8 @@ void StepManiaLanServer::ScreenNetMusicSelectStatus(PacketFunctions& Packet, uns
 	else
 		Client[clientNum]->inNetMusicSelect = false;
 
+	GameClient::LastNetScreen LastScreenInfo = GameClient::NS_NOWHERE;
+
 	switch (EntExitCode)
 	{
 	case 0:
@@ -854,15 +858,26 @@ void StepManiaLanServer::ScreenNetMusicSelectStatus(PacketFunctions& Packet, uns
 		break;
 	case 1:
 		message += " entered the song selection.";
+		LastScreenInfo = GameClient::NS_SELECTSCREEN;
 		break;
 	case 2:
-		message += " went into options.";
+		message += " exited options.";
 		break;
 	case 3:
-		message += " came back from options.";
+		message += " went into options.";
+		LastScreenInfo = GameClient::NS_OPTIONS;
+		break;
+	case 4:
+		//no need to mention exiting of options
+		break;
+	case 5:
+		message += " finished the game.";
+		LastScreenInfo = GameClient::NS_EVALUATION;
 		break;
 	}
 	ServerChat(message);
+	Client[clientNum]->NetScreenInfo = LastScreenInfo;
+	SendUserList ();
 }
 
 CString StepManiaLanServer::ListPlayers()

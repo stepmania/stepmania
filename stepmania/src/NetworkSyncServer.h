@@ -58,6 +58,14 @@ public:
 	bool isStarting;
 	bool wasIngame;
 	bool lowerJudge;
+
+	enum LastNetScreen
+	{
+		NS_NOWHERE = 0,
+		NS_SELECTSCREEN,
+		NS_OPTIONS,
+		NS_EVALUATION
+	} NetScreenInfo;
 	
 private:
 	string build;

@@ -26,7 +26,6 @@
 #define CHATOUTPUT_COLOR			THEME->GetMetricC("ScreenNetSelectMusic","ChatOutputBoxColor")
 #define SHOW_CHAT_LINES				THEME->GetMetricI("ScreenNetSelectMusic","ChatOutputLines")
 
-
 #define GROUPSBG_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","GroupsBGWidth")
 #define GROUPSBG_HEIGHT				THEME->GetMetricF("ScreenNetSelectMusic","GroupsBGHeight")
 #define GROUPSBG_COLOR				THEME->GetMetricC("ScreenNetSelectMusic","GroupsBGColor")
@@ -460,7 +459,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_BackFromOpts:
 		//XXX: HACK: This will causes ScreenSelectOptions to go back here.
-		NSMAN->ReportNSSOnOff(3);
+		NSMAN->ReportNSSOnOff(1);
 		GAMESTATE->m_bEditing = false;
 		NSMAN->ReportPlayerOptions();
 		break;
@@ -518,7 +517,7 @@ void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type 
 		break;
 	case SelectOptions:
 		//XXX: HACK: This will causes ScreenSelectOptions to go back here.
-		NSMAN->ReportNSSOnOff(2);
+		NSMAN->ReportNSSOnOff(3);
 		GAMESTATE->m_bEditing = true;
 		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromOpts );
 		break;
@@ -576,7 +575,7 @@ void ScreenNetSelectMusic::MenuRight( PlayerNumber pn, const InputEventType type
 		break;
 	case SelectOptions:
 		//XXX: HACK: This will causes ScreenSelectOptions to go back here.
-		NSMAN->ReportNSSOnOff(2);
+		NSMAN->ReportNSSOnOff(3);
 		GAMESTATE->m_bEditing = true;
 		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromOpts );
 		break;
