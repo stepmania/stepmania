@@ -28,6 +28,7 @@
 #include "ProTimingDisplay.h"
 #include "RageSound.h"
 #include "DancingCharacters.h"
+#include "AttackDisplay.h"
 
 class ScoreDisplay;
 class LifeMeter;
@@ -82,6 +83,8 @@ protected:
 	ProTimingDisplay m_ProTimingDisplay;
 	
 	Combo			m_Combo;
+
+	AttackDisplay	m_AttackDisplay;
 
 	int m_iDCState;
 //	DancingCharacters* m_pDancingCharacters; // used to adjust the 2D anims dancing states

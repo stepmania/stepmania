@@ -43,6 +43,9 @@ CachedThemeMetricF GRAY_ARROWS_Y_REVERSE		("Player","GrayArrowsYReverse");
 #define COMBO_X( p, both_sides )	THEME->GetMetricF("Player",both_sides ? "ComboXOffsetBothSides" : ssprintf("ComboXOffsetOneSideP%d",p+1))
 #define COMBO_Y						THEME->GetMetricF("Player","ComboY")
 #define COMBO_Y_REVERSE				THEME->GetMetricF("Player","ComboYReverse")
+#define ATTACK_DISPLAY_X( p, both_sides )	THEME->GetMetricF("Player",both_sides ? "AttackDisplayXOffsetBothSides" : ssprintf("AttackDisplayXOffsetOneSideP%d",p+1))
+#define ATTACK_DISPLAY_Y					THEME->GetMetricF("Player","AttackDisplayY")
+#define ATTACK_DISPLAY_Y_REVERSE			THEME->GetMetricF("Player","AttackDisplayYReverse")
 CachedThemeMetricF HOLD_JUDGMENT_Y_STANDARD		("Player","HoldJudgmentYStandard");
 CachedThemeMetricF HOLD_JUDGMENT_Y_REVERSE		("Player","HoldJudgmentYReverse");
 CachedThemeMetricI	BRIGHT_GHOST_COMBO_THRESHOLD("Player","BrightGhostComboThreshold");
@@ -85,6 +88,7 @@ PlayerMinus::PlayerMinus()
 	this->AddChild( &m_Judgment );
 	this->AddChild( &m_ProTimingDisplay );
 	this->AddChild( &m_Combo );
+	this->AddChild( &m_AttackDisplay );
 	for( int c=0; c<MAX_NOTE_TRACKS; c++ )
 		this->AddChild( &m_HoldJudgment[c] );
 
@@ -134,6 +138,7 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	m_Judgment.StopTweening();
 //	m_Combo.Reset();				// don't reset combos between songs in a course!
 	m_Combo.Init( pn );
+	m_AttackDisplay.Init( pn );
 	m_Judgment.Reset();
 
 	/* Don't re-init this; that'll reload graphics.  Add a separate Reset() call
@@ -192,6 +197,8 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyleDef()->m_StyleType==StyleDef::ONE_PLAYER_TWO_CREDITS;
 	m_Combo.SetX( COMBO_X(m_PlayerNumber,bPlayerUsingBothSides) );
 	m_Combo.SetY( bReverse ? COMBO_Y_REVERSE : COMBO_Y );
+	m_AttackDisplay.SetX( ATTACK_DISPLAY_X(m_PlayerNumber,bPlayerUsingBothSides) );
+	m_AttackDisplay.SetY( bReverse ? ATTACK_DISPLAY_Y_REVERSE : ATTACK_DISPLAY_Y );
 	m_Judgment.SetX( JUDGMENT_X(m_PlayerNumber,bPlayerUsingBothSides) );
 	m_Judgment.SetY( bReverse ? JUDGMENT_Y_REVERSE : JUDGMENT_Y );
 	m_ProTimingDisplay.SetX( JUDGMENT_X(m_PlayerNumber,bPlayerUsingBothSides) );
@@ -201,6 +208,7 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	m_Judgment.Command( g_NoteFieldMode[pn].m_JudgmentCmd );
 	m_ProTimingDisplay.Command( g_NoteFieldMode[pn].m_JudgmentCmd );
 	m_Combo.Command( g_NoteFieldMode[pn].m_ComboCmd );
+	m_AttackDisplay.Command( g_NoteFieldMode[pn].m_AttackDisplayCmd );
 
 	int c;
 	for( c=0; c<pStyleDef->m_iColsPerPlayer; c++ )
@@ -433,6 +441,8 @@ void PlayerMinus::DrawPrimitives()
 	m_ArrowBackdrop.Draw();
 	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind == 0 )
 		m_Combo.Draw();
+
+	m_AttackDisplay.Draw();
 
 	if( TAP_JUDGMENTS_UNDER_FIELD )
 		DrawTapJudgments();

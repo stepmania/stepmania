@@ -44,7 +44,7 @@ struct NoteFieldMode
 	float m_fFirstPixelToDrawScale, m_fLastPixelToDrawScale;
 	CString m_Backdrop;
 
-	CString m_JudgmentCmd, m_ComboCmd;
+	CString m_JudgmentCmd, m_ComboCmd, m_AttackDisplayCmd;
 	CString m_HoldJudgmentCmd[MAX_NOTE_TRACKS];
 };
 

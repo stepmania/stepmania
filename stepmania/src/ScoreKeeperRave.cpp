@@ -102,7 +102,7 @@ void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 	// apply new attack
 	GAMESTATE->LaunchAttack( pnToAttack, a );
 
-	SCREENMAN->SystemMessage( ssprintf( "attacking %d with %s", pnToAttack, sAttackToGive.c_str() ) );
+//	SCREENMAN->SystemMessage( ssprintf( "attacking %d with %s", pnToAttack, sAttackToGive.c_str() ) );
 
 	m_soundLaunchAttack.Play();
 }

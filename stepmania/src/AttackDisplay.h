@@ -1,10 +1,10 @@
-#ifndef COMBO_H
-#define COMBO_H
+#ifndef AttackDisplay_H
+#define AttackDisplay_H
 /*
 -----------------------------------------------------------------------------
- Class: Combo
+ Class: AttackDisplay
 
- Desc: Text that displays the size of the current combo.
+ Desc: 
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -18,20 +18,19 @@
 #include "GameConstantsAndTypes.h"	// for TapNoteScore
 
 
-class Combo : public ActorFrame
+class AttackDisplay : public ActorFrame
 {
 public:
-	Combo();
+	AttackDisplay();
 
 	void Init( PlayerNumber pn ) { m_PlayerNumber = pn; }
 
-	void SetCombo( int iCombo );
+	virtual void Update( float fDelta );
 
 protected:
 	PlayerNumber m_PlayerNumber;
 
-	Sprite		m_sprCombo;
-	BitmapText	m_textComboNumber;
+	BitmapText	m_textAttack;
 };
 
 #endif
