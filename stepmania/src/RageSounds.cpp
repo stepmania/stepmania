@@ -237,7 +237,8 @@ void StartMusic( MusicToPlay &ToPlay )
 
 		const float fCurBeatToStartOn = truncf(fCurBeat) + fStartBeatFraction;
 		const float fSecondToStartOn = g_Playing->m_Timing.GetElapsedTimeFromBeat( fCurBeatToStartOn );
-		const float fDistance = fSecondToStartOn - fCurSecond;
+		const float fMaximumDistance = 2;
+		const float fDistance = min( fSecondToStartOn - fCurSecond, fMaximumDistance );
 
 		when = GAMESTATE->m_LastBeatUpdate + PresumedLatency + fDistance;
 	}
