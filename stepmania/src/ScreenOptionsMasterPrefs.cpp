@@ -127,6 +127,7 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const CStringArray &choices )
 	}
 }
 
+/* Appearance options */
 MOVE( Instructions,		PREFSMAN->m_bInstructions );
 MOVE( Caution,			PREFSMAN->m_bShowDontDie );
 MOVE( OniScoreDisplay,	PREFSMAN->m_bDancePointsForOni );
@@ -138,6 +139,33 @@ MOVE( RandomAtEnd,		PREFSMAN->m_bMoveRandomToEnd );
 MOVE( Translations,		PREFSMAN->m_bShowNative );
 MOVE( Lyrics,			PREFSMAN->m_bShowLyrics );
 
+/* Autogen options */
+MOVE( AutogenMissingTypes,	PREFSMAN->m_bAutogenMissingTypes );
+MOVE( AutogenGroupCourses,	PREFSMAN->m_bAutogenGroupCourses );
+
+/* Background options */
+MOVE( BackgroundMode,		PREFSMAN->m_BackgroundMode );
+MOVE( ShowDanger,			PREFSMAN->m_bShowDanger );
+MOVE( DancingCharacters,	PREFSMAN->m_ShowDancingCharacters );
+MOVE( BeginnerHelper,		PREFSMAN->m_bShowBeginnerHelper );
+
+static void BGBrightness( int &sel, bool ToSel, const CStringArray &choices )
+{
+	if( ToSel )
+		sel = clamp( (int)( PREFSMAN->m_fBGBrightness*10+0.5f ), 0, 10 );
+	else
+		PREFSMAN->m_fBGBrightness = sel / 10.0f;
+}
+
+static void NumBackgrounds( int &sel, bool ToSel, const CStringArray &choices )
+{
+	if( ToSel )
+		sel = clamp((PREFSMAN->m_iNumBackgrounds/5)-1, 0, 3);
+	else
+		PREFSMAN->m_iNumBackgrounds = (sel+1) * 5;
+}
+
+/* Sound options */
 MOVE( PreloadSounds,	PREFSMAN->m_bSoundPreloadAll );
 MOVE( ResamplingQuality,PREFSMAN->m_iSoundResampleQuality );
 
@@ -149,7 +177,6 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Theme",				Theme, ThemeChoices ),
 	ConfOption( "Announcer",			Announcer, AnnouncerChoices ),
 	ConfOption( "Default\nNoteSkin",	DefaultNoteSkin, DefaultNoteSkinChoices ),
-
 	ConfOption( "Instructions",			Instructions,		"SKIP","SHOW"),
 	ConfOption( "Caution",				Caution,			"SKIP","SHOW"),
 	ConfOption( "Oni Score\nDisplay",	OniScoreDisplay,	"PERCENT","DANCE POINTS"),
@@ -160,6 +187,18 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Random\nAt End",		RandomAtEnd,		"NO","YES"),
 	ConfOption( "Translations",			Translations,		"ROMANIZATION","NATIVE LANGUAGE"),
 	ConfOption( "Lyrics",				Lyrics,				"HIDE","SHOW"),
+
+	/* Autogen options */
+	ConfOption( "Autogen\nMissing Types", AutogenMissingTypes, "OFF","ON" ),
+	ConfOption( "Autogen\nGroup Courses", AutogenGroupCourses, "OFF","ON" ),
+
+	/* Background options */
+	ConfOption( "Background\nMode",		BackgroundMode,		"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES" ),
+	ConfOption( "Brightness",			BGBrightness,		"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%" ),
+	ConfOption( "Danger",				ShowDanger,			"HIDE","SHOW" ),
+	ConfOption( "Dancing\nCharacters",	DancingCharacters,	"DEFAULT TO OFF","DEFAULT TO RANDOM","SELECT" ),
+	ConfOption( "Beginner\nHelper",		BeginnerHelper,		"OFF","ON" ),
+	ConfOption( "Random\nBackgrounds",	NumBackgrounds,		"5","10","15","20" ),
 
 	/* Sound options */
 	ConfOption( "Preload\nSounds",		PreloadSounds, "NO","YES" ),
