@@ -30,6 +30,8 @@ public:
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
+	virtual void SetZTest( bool b );
+	virtual void SetZWrite( bool b );
 	
 	void LoadFromWheelItemData( WheelItemData* pWID );
 	void RefreshGrades();
@@ -55,6 +57,7 @@ public:
 
 	// for TYPE_SORT
 	BitmapText			m_textSort;
+	ActorFrame m_All;
 };
 
 enum WheelItemType { TYPE_SECTION, TYPE_SONG, TYPE_ROULETTE, TYPE_RANDOM, TYPE_COURSE, TYPE_SORT };

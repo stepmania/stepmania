@@ -65,18 +65,22 @@ MusicWheelItem::MusicWheelItem()
 	
 	m_TextBanner.SetHorizAlign( align_left );
 	m_TextBanner.SetXY( SONG_NAME_X, 0 );
+	m_All.AddChild( &m_TextBanner );
 
 	m_sprSongBar.Load( THEME->GetPathToG("MusicWheelItem song") );
 	m_sprSongBar.SetXY( 0, 0 );
+	m_All.AddChild( &m_sprSongBar );
 
 	m_sprSectionBar.Load( THEME->GetPathToG("MusicWheelItem section") );
 	m_sprSectionBar.SetXY( 0, 0 );
+	m_All.AddChild( &m_sprSectionBar );
 
 	m_textSectionName.LoadFromFont( THEME->GetPathToF("MusicWheelItem section") );
 	m_textSectionName.EnableShadow( false );
 	m_textSectionName.SetVertAlign( align_middle );
 	m_textSectionName.SetXY( SECTION_NAME_X, 0 );
 	m_textSectionName.SetZoom( SECTION_ZOOM );
+	m_All.AddChild( &m_textSectionName );
 
 
 	m_textRoulette.LoadFromFont( THEME->GetPathToF("MusicWheelItem roulette") );
@@ -84,21 +88,25 @@ MusicWheelItem::MusicWheelItem()
 	m_textRoulette.TurnRainbowOn();
 	m_textRoulette.SetZoom( ROULETTE_ZOOM );
 	m_textRoulette.SetXY( ROULETTE_X, 0 );
+	m_All.AddChild( &m_textRoulette );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_GradeDisplay[p].Load( THEME->GetPathToG("MusicWheelItem grades") );
 		m_GradeDisplay[p].SetZoom( 1.0f );
 		m_GradeDisplay[p].SetXY( GRADE_X(p), 0 );
+		m_All.AddChild( &m_GradeDisplay[p] );
 	}
 
 	m_textCourse.SetName( "CourseName" );
 	m_textCourse.LoadFromFont( THEME->GetPathToF("MusicWheelItem course") );
 	SET_XY_AND_ON_COMMAND( &m_textCourse );
+	m_All.AddChild( &m_textCourse );
 
 	m_textSort.SetName( "Sort" );
 	m_textSort.LoadFromFont( THEME->GetPathToF("MusicWheelItem sort") );
 	SET_XY_AND_ON_COMMAND( &m_textSort );
+	m_All.AddChild( &m_textSort );
 }
 
 
@@ -298,6 +306,23 @@ void MusicWheelItem::DrawPrimitives()
 		bar->SetDiffuse( RageColor(0,0,0,1) );
 		bar->SetGlow( RageColor(0,0,0,0) );
 	}
+}
+
+
+void MusicWheelItem::SetZTest( bool b )
+{
+	ActorFrame::SetZTest( b );
+
+	// set all sub-Actors
+	m_All.SetZTest( b );
+}
+
+void MusicWheelItem::SetZWrite( bool b )
+{
+	ActorFrame::SetZWrite( b );
+
+	// set all sub-Actors
+	m_All.SetZWrite( b );
 }
 
 bool WheelItemData::HasBanner() const
