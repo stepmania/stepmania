@@ -871,7 +871,7 @@ Course *SongManager::FindCourse( CString sName )
 	return NULL;
 }
 
-void SongManager::UpdateBestAndShuffled()
+void SongManager::UpdateBest()
 {
 	// update players best
 	for( int i = 0; i < NUM_PROFILE_SLOTS; ++i )
@@ -882,13 +882,21 @@ void SongManager::UpdateBestAndShuffled()
 		m_pBestCourses[i] = m_pCourses;
 		SortCoursePointerArrayByNumPlays( m_pBestCourses[i], (ProfileSlot) i, true );
 	}
+}
 
+void SongManager::UpdateShuffled()
+{
 	// update shuffled
 	m_pShuffledSongs = m_pSongs;
 	random_shuffle( m_pShuffledSongs.begin(), m_pShuffledSongs.end() );
 
 	m_pShuffledCourses = m_pCourses;
 	random_shuffle( m_pShuffledCourses.begin(), m_pShuffledCourses.end() );
+}
+
+void SongManager::SortSongs()
+{
+	SortSongPointerArrayByTitle( m_pSongs );
 }
 
 void SongManager::UpdateRankingCourses()

@@ -91,7 +91,9 @@ public:
 	Course* GetCourseFromName( CString sName );
 
 
-	void UpdateBestAndShuffled();	// update Players Best
+	void UpdateBest();				// update Players Best
+	void UpdateShuffled();			// re-shuffle songs and courses
+	void SortSongs();				// sort m_pSongs
 
 	void UpdateRankingCourses();	// courses shown on the ranking screen
 
