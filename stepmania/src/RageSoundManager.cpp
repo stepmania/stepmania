@@ -306,13 +306,32 @@ void SoundMixBuffer::write(const Sint16 *buf, unsigned size)
 	}
 
 	for(unsigned pos = 0; pos < size; ++pos)
-		mixbuf[pos] += buf[pos];
+	{
+		Sint32 samp = buf[pos] * 32768;
+
+		/* Scale volume: */
+		samp = Sint32(samp * vol);
+
+		/* Add and clip.  Can't use clamp() here--we're clamping to
+		* the min and max of Sint32. */
+		if(samp > 0 && mixbuf[pos] + samp < mixbuf[pos])
+			mixbuf[pos] = INT_MAX;
+		else if(samp < 0 && mixbuf[pos] + samp > mixbuf[pos])
+			mixbuf[pos] = INT_MIN;
+		else
+			mixbuf[pos] = mixbuf[pos] + samp;
+	}
 }
 
 void SoundMixBuffer::read(Sint16 *buf)
 {
 	for(unsigned pos = 0; pos < mixbuf.size(); ++pos)
-		buf[pos] = (Sint16) clamp(mixbuf[pos], -32768, 32767);
+	{
+		/* XXX: dither */
+		Sint32 out = (mixbuf[pos]) / 32768;
+		out = clamp(out, -32768, 32767);
+		buf[pos] = Sint16(out);
+	}
 
 	mixbuf.erase();
 }
