@@ -54,7 +54,7 @@ public:
 
 	static float GetMaxStepDistanceSeconds();
 
-	void CacheAllUsedNoteSkins() { m_pNoteField->CacheAllUsedNoteSkins(); }
+	void CacheAllUsedNoteSkins( bool bDeleteUnused ) { m_pNoteField->CacheAllUsedNoteSkins(bDeleteUnused); }
 
 	NoteDataWithScoring	m_NoteData;
 

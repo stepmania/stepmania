@@ -36,7 +36,7 @@ public:
 	float	m_fBeginMarker, m_fEndMarker;	// only used with MODE_EDIT
 
 	void FadeToFail();
-	void CacheAllUsedNoteSkins();
+	void CacheAllUsedNoteSkins( bool bDeleteUnused );
 	void CacheNoteSkin( CString skin );
 
 	void Step( int iCol, TapNoteScore score );
