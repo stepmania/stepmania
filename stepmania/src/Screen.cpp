@@ -297,6 +297,7 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenExit.h"
 #include "ScreenAttract.h"
 #include "ScreenReloadSongs.h"
+#include "ScreenOptionsMaster.h"
 
 Screen* Screen::Create( CString sClassName )
 {
@@ -400,6 +401,7 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenProfileOptions );
 	IF_RETURN( ScreenExit );
 	IF_RETURN( ScreenReloadSongs );
+	IF_RETURN( ScreenOptionsMaster );
 
 	RageException::Throw( "Invalid Screen class name '%s'", sClassName.c_str() );
 }
