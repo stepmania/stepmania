@@ -169,6 +169,15 @@ int RageSound_OSS::GetPosition(const RageSound *snd) const
 
 RageSound_OSS::RageSound_OSS()
 {
+	/* If /proc/asound exists, then we're running ALSA.  If we got here, we
+	 * probably failed to init ALSA.  The only case I've seen of this so far
+	 * was not having access to /dev/snd devices.
+	 *
+	 * Don't run OSS under ALSA; we'll get emulation, and ALSA's OSS emulation
+	 * is buggy. */
+	if( IsADirectory("/proc/asound") )
+		RageException::ThrowNonfatal( "RageSound_OSS: ALSA detected.  ALSA OSS emulation is buggy; use ALSA natively.");
+
 	shutdown = false;
 	last_cursor_pos = 0;
 
