@@ -575,6 +575,8 @@ void ScreenEdit::Init()
 	m_soundChangeLine.Load( THEME->GetPathS("ScreenEdit","line"), true );
 	m_soundChangeSnap.Load( THEME->GetPathS("ScreenEdit","snap"), true );
 	m_soundMarker.Load(		THEME->GetPathS("ScreenEdit","marker"), true );
+	m_soundSwitch.Load(		THEME->GetPathS("ScreenEdit","switch") );
+	m_soundSave.Load(		THEME->GetPathS("ScreenEdit","save") );
 
 
 	m_soundMusic.Load( m_pSong->GetMusicPath() );
@@ -1087,7 +1089,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				GAMEMAN->StepsTypeToString( pSteps->m_StepsType ).c_str(),
 				DifficultyToString( pSteps->GetDifficulty() ).c_str(),
 				pSteps->GetDescription().c_str() ) );
-			SOUND->PlayOnce( THEME->GetPathS("ScreenEdit","switch") );
+			m_soundSwitch.Play();
 		}
 		break;
 	case EDIT_BUTTON_BPM_UP:
@@ -1764,7 +1766,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 					HandleScreenMessage( SM_Success );
 				}
 
-				SOUND->PlayOnce( THEME->GetPathS("ScreenEdit","save") );
+				m_soundSave.Play();
 			}
 			break;
 		case revert_to_last_save:
