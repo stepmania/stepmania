@@ -139,8 +139,8 @@ void IncorrectActorParametersWarning( const CStringArray &asTokens, int iMaxInde
 
 void UtilSetXY( Actor& actor, CString sClassName )
 {
-	ASSERT( !actor.GetName().empty() );
-	actor.SetXY( THEME->GetMetricF(sClassName,actor.GetName()+"X"), THEME->GetMetricF(sClassName,actor.GetName()+"Y") );
+	ASSERT( !actor.GetID().empty() );
+	actor.SetXY( THEME->GetMetricF(sClassName,actor.GetID()+"X"), THEME->GetMetricF(sClassName,actor.GetID()+"Y") );
 }
 
 float UtilCommand( Actor& actor, CString sClassName, CString sCommandName )
@@ -153,11 +153,11 @@ float UtilCommand( Actor& actor, CString sClassName, CString sCommandName )
 	// (Do "playcommand" anyway; BGAs often have no name.)
 	if( sCommandName=="Off" )
 	{
-		if( actor.GetName().empty() )
+		if( actor.GetID().empty() )
 			return ret;
 	} else {
-		ASSERT( !actor.GetName().empty() );
+		ASSERT( !actor.GetID().empty() );
 	}
 
-	return max( ret, actor.Command( THEME->GetMetric(sClassName,actor.GetName()+sCommandName+"Command") ) );
+	return max( ret, actor.Command( THEME->GetMetric(sClassName,actor.GetID()+sCommandName+"Command") ) );
 }

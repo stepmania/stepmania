@@ -66,10 +66,15 @@ public:
 
 
 
-	CString m_sName;
+	CString m_sName, m_sID;
 
-	CString GetName()			{ return m_sName; };
-	void SetName( CString n )	{ m_sName = n; };
+	CString GetName() const		{ return m_sName; };
+	CString GetID() const		{ return m_sID; };
+	/* m_sName is the name actors use to look up internal metrics for themselves, and for
+	 * filenames.  m_sID is the name parents use to look up their own metrics for an actor
+	 * (usually via ActorUtil).  (This is experimental; see DifficultyMeter.cpp for more
+	 * information.) */
+	void SetName( const CString &sName, const CString &sID = "" ) { m_sName = sName; m_sID = (sID.size()? sID:sName);  };
 
 
 
