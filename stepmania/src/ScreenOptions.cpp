@@ -749,25 +749,32 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 
 	bool bIsExitRow = iCurRow == m_iNumOptionRows;
 
+	CString text = "";
+	if( !bIsExitRow )
+		text = GetExplanationText( iCurRow );
+
 	BitmapText *pText = NULL;
 	switch( m_InputMode )
 	{
 	case INPUTMODE_INDIVIDUAL:
 		pText = &m_textExplanation[pn];
-		pText->FinishTweening();
-		pText->Command( EXPLANATION_ON_COMMAND(pn) );
+		if( pText->GetText() != text )
+		{
+			pText->FinishTweening();
+			pText->Command( EXPLANATION_ON_COMMAND(pn) );
+			pText->SetText( text );
+		}
 		break;
 	case INPUTMODE_TOGETHER:
 		pText = &m_textExplanation[0];
-		pText->FinishTweening();
-		pText->Command( EXPLANATION_TOGETHER_ON_COMMAND );
+		if( pText->GetText() != text )
+		{
+			pText->FinishTweening();
+			pText->Command( EXPLANATION_TOGETHER_ON_COMMAND );
+			pText->SetText( text );
+		}
 		break;
 	}
-
-	if( bIsExitRow )
-		pText->SetText( "" );
-	else
-		pText->SetText( GetExplanationText(iCurRow) );
 }
 
 
