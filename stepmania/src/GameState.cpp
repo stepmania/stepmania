@@ -103,6 +103,7 @@ void GameState::Reset()
 	m_iCurrentStageIndex = 0;
 	m_bAllow2ndExtraStage = true;
 	m_BeatToNoteSkinRev = 0;
+	m_iNumStagesOfThisSong = 0;
 
 	NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_CurGame );
 
@@ -163,7 +164,6 @@ void GameState::Reset()
 	MEMCARDMAN->LockCards( false );
 
 	LIGHTSMAN->SetLightMode( LIGHTMODE_ATTRACT );
-
 }
 
 void GameState::BeginGame()
@@ -430,6 +430,8 @@ void GameState::BeginStage()
 	else
 		FAIL_M("fail"); /* what are we playing? */
 
+	ASSERT( m_iNumStagesOfThisSong >= 1 && m_iNumStagesOfThisSong <= 3 );
+
 	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 	{
 		/* If it's an extra stage, always increment by one.  This is because in some
@@ -457,6 +459,7 @@ void GameState::FinishStage()
 		return;
 
 	// Increment the stage counter.
+	ASSERT( m_iNumStagesOfThisSong >= 1 && m_iNumStagesOfThisSong <= 3 );
 	m_iCurrentStageIndex += m_iNumStagesOfThisSong;
 
 	m_iNumStagesOfThisSong = 0;
