@@ -97,7 +97,6 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX() : ScreenSelect( "ScreenSele
 			m_sprHighlight[p].Load( (PlayerNumber)p, false );
 			m_sprHighlight[p].SetX( DIFFICULTYICON_X(0) );
 			m_sprHighlight[p].SetY( DIFFICULTYICON_Y(0) );
-			m_sprHighlight[p].SetBarWidth( m_sprDifficultyIcon[0].GetZoomedWidth() + 20 + m_textDifficultyText[0].GetZoomedWidth() * 3 );
 			this->AddChild( &m_sprHighlight[p] );
 			this->MoveToHead( &m_sprHighlight[p] );
 		}
@@ -261,7 +260,10 @@ void ScreenSelectDifficultyEX::SetAllPlayersSelection( int iChoice, bool bSwitch
 		CString sPictureFile = ssprintf( "ScreenSelectDifficultyEX picture %s", m_ModeChoices[m_iChoice[p]].name );
 		m_sprInfo[p].Load( THEME->GetPathToG(sInfoFile) );
 		m_sprPicture[p].Load( THEME->GetPathToG(sPictureFile) );
-		m_sprHighlight[p].SetXY( DIFFICULTYICON_X( iChoice ), DIFFICULTYICON_Y( iChoice ) );
+		
+		int iDiffIndex = GetSelectionIndex((PlayerNumber)p);
+		m_sprHighlight[p].SetBarWidth( 20 + m_sprDifficultyIcon[iDiffIndex].GetZoomedWidth() + (m_textDifficultyText[iDiffIndex].GetWidestLineWidthInSourcePixels() /2) );
+		m_sprHighlight[p].SetXY( DIFFICULTYICON_X(m_iChoice[p]) + 35, DIFFICULTYICON_Y(m_iChoice[p]) );
 	}
 	
 	m_soundChange.Play();
@@ -300,8 +302,10 @@ void ScreenSelectDifficultyEX::Change( PlayerNumber pn, int iNewChoice )
 		CString sPictureFile = ssprintf( "ScreenSelectDifficultyEX picture %s", m_ModeChoices[m_iChoice[p]].name );
 		m_sprInfo[p].Load( THEME->GetPathToG(sInfoFile) );
 		m_sprPicture[p].Load( THEME->GetPathToG(sPictureFile) );
-		m_sprHighlight[p].SetXY( DIFFICULTYICON_X(m_iChoice[p]), DIFFICULTYICON_Y(m_iChoice[p]) );
-
+		
+		int iDiffIndex = GetSelectionIndex((PlayerNumber)p);
+		m_sprHighlight[p].SetBarWidth( 20 + m_sprDifficultyIcon[iDiffIndex].GetZoomedWidth() + (m_textDifficultyText[iDiffIndex].GetWidestLineWidthInSourcePixels() /2) );
+		m_sprHighlight[p].SetXY( DIFFICULTYICON_X(m_iChoice[p]) + 30, DIFFICULTYICON_Y(m_iChoice[p]) );
 	}
 	
 	m_soundChange.Play();
