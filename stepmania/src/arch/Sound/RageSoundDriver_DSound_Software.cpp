@@ -103,9 +103,8 @@ void RageSound_DSound_Software::StartMixing(RageSound *snd)
 	sound *s = new sound;
 	s->snd = snd;
 
-	SDL_LockAudio();
+	LockMut(SOUNDMAN->lock);
 	sounds.push_back(s);
-	SDL_UnlockAudio();
 }
 
 void RageSound_DSound_Software::Update(float delta)

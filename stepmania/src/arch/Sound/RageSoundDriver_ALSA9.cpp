@@ -163,9 +163,8 @@ void RageSound_ALSA9::StartMixing(RageSound *snd)
 	sound *s = new sound;
 	s->snd = snd;
 
-	SDL_LockAudio();
+	LockMutex L(SOUNDMAN->lock);
 	sounds.push_back(s);
-	SDL_UnlockAudio();
 }
 
 void RageSound_ALSA9::Update(float delta)
