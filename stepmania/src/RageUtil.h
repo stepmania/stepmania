@@ -243,7 +243,11 @@ public:
 	/* Search for "path" case-insensitively and replace it with the correct
 	 * case.  If "path" doesn't exist at all, return false and don't change it. */
 	bool ResolvePath(CString &path);
-	
+
+	bool DoesFileExist(const CString &path);
+	bool IsAFile(const CString &path);
+	bool IsADirectory(const CString &path);
+
 	void FlushDirCache();
 };
 extern FilenameDB FDB;

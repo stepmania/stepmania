@@ -428,28 +428,6 @@ unsigned GetFileSizeInBytes( const CString &sFilePath )
 	return st.st_size;
 }
 
-bool DoesFileExist( const CString &sPath )
-{
-	if(sPath.empty()) return false;
-	struct stat st;
-    return DoStat(sPath, &st);
-}
-
-bool IsAFile( const CString &sPath )
-{
-    return DoesFileExist(sPath)  &&  ! IsADirectory(sPath);
-}
-
-bool IsADirectory( const CString &sPath )
-{
-	if(sPath.empty()) return false;
-	struct stat st;
-    if (!DoStat(sPath, &st))
-		return false;
-
-	return !!(st.st_mode & S_IFDIR);
-}
-
 bool CompareCStringsAsc(const CString &str1, const CString &str2)
 {
 	return str1.CompareNoCase( str2 ) < 0;
@@ -924,6 +902,9 @@ struct FileSet
 		const CString &beginning, const CString &containing, const CString &ending,
 		vector<CString> &out, bool bOnlyDirs) const;
 	void GetFilesEqualTo(const CString &pat, vector<CString> &out, bool bOnlyDirs) const;
+	bool DoesFileExist(const CString &path) const;
+	bool IsADirectory(const CString &path) const;
+	bool IsAFile(const CString &path) const;
 };
 
 void FileSet::LoadFromDir(const CString &dir)
@@ -1020,6 +1001,95 @@ void FileSet::GetFilesEqualTo(const CString &str, vector<CString> &out, bool bOn
 
 	out.push_back(i->name.c_str());
 }
+
+bool FileSet::DoesFileExist(const CString &path) const
+{
+	return files.find(File(path.c_str())) != files.end();
+}
+
+bool FileSet::IsADirectory(const CString &path) const
+{
+	set<File>::const_iterator i = files.find(File(path.c_str()));
+	if(i == files.end())
+		return false;
+	return i->dir;
+}
+
+bool FileSet::IsAFile(const CString &path) const
+{
+	set<File>::const_iterator i = files.find(File(path.c_str()));
+	if(i == files.end())
+		return false;
+	return !i->dir;
+}
+
+/* Given "foo/bar/baz/" or "foo/bar/baz", return "foo/bar/" and "baz". */
+static void SplitPath( CString Path, CString &Dir, CString &Name )
+{
+	/* Must always have at least one slash. */
+	static Regex split("(.*/)([^/]+)");
+	CStringArray match;
+	if(split.Compare(Path, match)) {
+		Dir = match[0];
+		Name = match[1];
+	} else {
+		/* No slash. */
+		Dir = "./";
+		Name = Path;
+	}
+}
+
+bool FilenameDB::DoesFileExist( const CString &sPath )
+{
+	CString Dir, Name;
+	SplitPath(sPath, Dir, Name);
+	FileSet &fs = GetFileSet(Dir);
+	return fs.DoesFileExist(Name);
+}
+
+bool FilenameDB::IsAFile( const CString &sPath )
+{
+	CString Dir, Name;
+	SplitPath(sPath, Dir, Name);
+	FileSet &fs = GetFileSet(Dir);
+	return fs.IsAFile(Name);
+}
+
+bool FilenameDB::IsADirectory( const CString &sPath )
+{
+	CString Dir, Name;
+	SplitPath(sPath, Dir, Name);
+	FileSet &fs = GetFileSet(Dir);
+	return fs.IsADirectory(Name);
+}
+
+bool DoesFileExist( const CString &sPath ) { return FDB.DoesFileExist(sPath); }
+bool IsAFile( const CString &sPath ) { return FDB.IsAFile(sPath); }
+bool IsADirectory( const CString &sPath ) { return FDB.IsADirectory(sPath); }
+
+#if 0
+bool DoesFileExist( const CString &sPath )
+{
+	if(sPath.empty()) return false;
+	struct stat st;
+    return DoStat(sPath, &st);
+}
+
+bool IsAFile( const CString &sPath )
+{
+    return DoesFileExist(sPath)  &&  ! IsADirectory(sPath);
+}
+
+bool IsADirectory( const CString &sPath )
+{
+	if(sPath.empty()) return false;
+	struct stat st;
+    if (!DoStat(sPath, &st))
+		return false;
+
+	return !!(st.st_mode & S_IFDIR);
+}
+#endif
 
 /* XXX: this won't work right for URIs, eg \\foo\bar */
 bool FilenameDB::ResolvePath(CString &path)
