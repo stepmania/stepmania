@@ -81,7 +81,7 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	m_sprTopEdge.Load( sTopEdgePath );
 	m_sprTopEdge.SetXY( TOP_EDGE_X, TOP_EDGE_Y );
 	
-	m_sprStyleIcon.Load( THEME->GetPathTo("Graphics",ssprintf("menu style icons game %d",GAMESTATE->m_CurGame)) );
+	m_sprStyleIcon.Load( THEME->GetPathTo("Graphics",ssprintf("menu style icons %s",GAMESTATE->GetCurrentGameDef()->m_szName)) );
 	m_sprStyleIcon.StopAnimating();
 	m_sprStyleIcon.SetXY( STYLE_ICON_X, STYLE_ICON_Y );
 	if( GAMESTATE->m_CurStyle == STYLE_NONE  ||  !bShowStyleIcon )

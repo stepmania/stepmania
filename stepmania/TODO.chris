@@ -2,6 +2,8 @@
 Fix
 /////////////////////////
 
+the CDTitles DWI style arent being read anymore.
+
 faster IniFile (with std::map?)
 
 fix movie texture crash

@@ -101,7 +101,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	m_sprBG.StretchTo( CRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT) );
 	this->AddChild( &m_sprBG );
 
-	m_sprLogo.Load( THEME->GetPathTo("Graphics",ssprintf("title menu logo game %d",GAMESTATE->m_CurGame)) );
+	m_sprLogo.Load( THEME->GetPathTo("Graphics",ssprintf("title menu logo %s",GAMESTATE->GetCurrentGameDef()->m_szName)) );
 	m_sprLogo.SetXY( LOGO_X, LOGO_Y );
 	m_sprLogo.SetGlow( D3DXCOLOR(1,1,1,1) );
 	m_sprLogo.SetZoomY( 0 );

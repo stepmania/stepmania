@@ -56,7 +56,7 @@ ScreenSelectStyle::ScreenSelectStyle()
 
 	for( int i=0; i<m_aPossibleStyles.GetSize(); i++ )
 	{
-		m_sprIcon[i].Load( THEME->GetPathTo("Graphics",ssprintf("select style icons game %d",GAMESTATE->m_CurGame) ) );
+		m_sprIcon[i].Load( THEME->GetPathTo("Graphics",ssprintf("select style icons %s",GAMESTATE->GetCurrentGameDef()->m_szName) ) );
 		m_sprIcon[i].StopAnimating();
 		m_sprIcon[i].SetState( i );
 		m_sprIcon[i].SetXY( ICONS_START_X + i*ICONS_SPACING_X, ICONS_START_Y + i*ICONS_SPACING_Y );
@@ -76,11 +76,14 @@ ScreenSelectStyle::ScreenSelectStyle()
 	this->AddChild( &m_sprInfo );
 	
 
+	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+	const StyleDef* pStyleDef = GAMEMAN->GetStyleDefForStyle( m_aPossibleStyles[m_iSelection] );
+
 	// Load dummy Sprites
 	for( i=0; i<m_aPossibleStyles.GetSize(); i++ )
 	{
-		m_sprDummyPreview[i].Load( THEME->GetPathTo("Graphics",ssprintf("select style preview game %d style %d",GAMESTATE->m_CurGame,i)) );
-		m_sprDummyInfo[i].Load(    THEME->GetPathTo("Graphics",ssprintf("select style info game %d style %d",GAMESTATE->m_CurGame,i)) );
+		m_sprDummyPreview[i].Load( THEME->GetPathTo("Graphics",ssprintf("select style preview %s %s",pGameDef->m_szName,pStyleDef->m_szName)) );
+		m_sprDummyInfo[i].Load(    THEME->GetPathTo("Graphics",ssprintf("select style info %s %s",pGameDef->m_szName,pStyleDef->m_szName)) );
 	}
 
 
@@ -155,8 +158,11 @@ void ScreenSelectStyle::AfterChange()
 {
 	m_sprIcon[m_iSelection].SetEffectGlowing();
 
+	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+	const StyleDef* pStyleDef = GAMEMAN->GetStyleDefForStyle( m_aPossibleStyles[m_iSelection] );
+
 	// Tween Preview
-	m_sprPreview.Load( THEME->GetPathTo("Graphics",ssprintf("select style preview game %d style %d",GAMESTATE->m_CurGame,m_iSelection)) );
+	m_sprPreview.Load( THEME->GetPathTo("Graphics",ssprintf("select style preview %s %s",pGameDef->m_szName,pStyleDef->m_szName)) );
 
 	m_sprPreview.StopTweening();
 	m_sprPreview.SetGlow( D3DXCOLOR(1,1,1,0) );
@@ -177,7 +183,7 @@ void ScreenSelectStyle::AfterChange()
 
 
 	// Tween Info
-	m_sprInfo.Load( THEME->GetPathTo("Graphics",ssprintf("select style info game %d style %d",GAMESTATE->m_CurGame,m_iSelection)) );
+	m_sprInfo.Load( THEME->GetPathTo("Graphics",ssprintf("select style info %s %s",pGameDef->m_szName,pStyleDef->m_szName)) );
 	m_sprInfo.StopTweening();
 	m_sprInfo.SetZoomY( 0 );
 	m_sprInfo.BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );

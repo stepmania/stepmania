@@ -117,9 +117,11 @@ public:
 			DrawMask( m_fPercent );
 			
 			const float fChamberWidthInPercent = 1.0f/g_iNumChambers;
-			const float fPercentBetweenStrips = froundf( 1.0f/g_iNumStrips, fChamberWidthInPercent );
+			float fPercentBetweenStrips = 1.0f/g_iNumStrips;
+			if( g_iNumChambers > 10 )
+				fPercentBetweenStrips = froundf( fPercentBetweenStrips, fChamberWidthInPercent );
 
-			const float fPercentOffset = fmodf( GAMESTATE->m_fSongBeat/4+1000, fPercentBetweenStrips );
+			float fPercentOffset = fmodf( GAMESTATE->m_fSongBeat/4+1000, fPercentBetweenStrips );
 			ASSERT( fPercentOffset >= 0  &&  fPercentOffset <= fPercentBetweenStrips );
 
 			for( float f=fPercentOffset+1; f>=fPercentOffset; f-=fPercentBetweenStrips )
@@ -149,7 +151,7 @@ public:
 
 
 		// set size of streams
-		rect.left	= LONG(-g_iMeterWidth/2 + g_iMeterWidth*fCorrectedLeftEdgePercent);
+		rect.left	= LONG(-g_iMeterWidth/2 + g_iMeterWidth*max(0,fCorrectedLeftEdgePercent));
 		rect.top	= LONG(-g_iMeterHeight/2);
 		rect.right	= LONG(-g_iMeterWidth/2 + g_iMeterWidth*min(1,fCorrectedRightEdgePercent));
 		rect.bottom	= LONG(+g_iMeterHeight/2);
