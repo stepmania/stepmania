@@ -47,6 +47,7 @@ CombinedLifeMeterTug::CombinedLifeMeterTug()
 		Character* pCharacter = GAMESTATE->m_pCurCharacters[p];
 		ASSERT( pCharacter );
 
+		m_Head[p].SetName( "CharacterHead" );
 		m_Head[p].LoadFromCharacter( pCharacter );
 		m_Head[p].SetXY( FACE_X[p], FACE_Y[p] );
 		this->AddChild( &m_Head[p] );
