@@ -494,7 +494,12 @@ void Background::UpdateCurBGChange( float fCurrentTime )
 		if( pOld )
 			pOld->LosingFocus();
 		if( m_pCurrentBGA )
+		{
+			/* We might have faded this background out in the past.  Make sure its diffuse
+			 * color is reset. */
+			m_pCurrentBGA->SetDiffuse( RageColor(1,1,1,1) );
 			m_pCurrentBGA->GainingFocus( change.m_fRate, change.m_bRewindMovie, change.m_bLoop );
+		}
 
 		m_fSecsLeftInFade = m_pFadingBGA!=NULL ? FADE_SECONDS : 0;
 
