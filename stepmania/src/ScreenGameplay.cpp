@@ -728,7 +728,12 @@ void ScreenGameplay::Update( float fDeltaTime )
 		return;
 
 	// update the global music statistics for other classes to access
-	GAMESTATE->UpdateSongPosition(m_soundMusic.GetPositionSeconds());
+	/* If ScreenJukebox is changing screens, it'll stop m_soundMusic to tell
+	 * us not to update the time here.  (In that case, we've already created
+	 * a new ScreenJukebox and reset music statistics, and if we do this then
+	 * we'll un-reset them.) */
+	if(m_soundMusic.IsPlaying())
+		GAMESTATE->UpdateSongPosition(m_soundMusic.GetPositionSeconds());
 
 	m_MaxCombo.SetText( ssprintf("%d", m_Player[GAMESTATE->m_MasterPlayerNumber].GetPlayersMaxCombo()) ); /* MAKE THIS WORK FOR BOTH PLAYERS! */
 	//LOG->Trace( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );

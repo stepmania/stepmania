@@ -240,6 +240,10 @@ void ScreenJukebox::HandleScreenMessage( const ScreenMessage SM )
 		m_Fade.CloseWipingRight( SM_GoToNextScreen );
 		return;
 	case SM_GoToNextScreen:
+		/* We're actually under Update(), so make sure ScreenGameplay doesn't
+		 * continue grading for this call. */
+		m_soundMusic.StopPlaying();
+
 		SCREENMAN->SetNewScreen( "ScreenJukebox" );
 		return;
 	}
