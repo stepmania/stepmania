@@ -279,10 +279,27 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 			out.m_fBeat0OffsetInSeconds = -atoi( sParams[1] ) / 1000.0f;
 
 		else if( 0==stricmp(sValueName,"SAMPLESTART") )
-			out.m_fMusicSampleStartSeconds = TimeToSeconds( sParams[1]+":"+sParams[2] );		// this value has a ':' in it.  Colon is supposed to be a parameter separator.  Stupid DWI!
+		{
+			// STUPID ALERT!
+			// This value can be in either "HH:MM:SS.sssss", "MM:SS.sssss", or "SSS.sssss".
+			// What's even more dumb is that the value can contain a ':'.  Colon is supposed to be a parameter separator!
+			if( iNumParams == 4 )
+				out.m_fMusicSampleStartSeconds = TimeToSeconds( sParams[1]+":"+sParams[2]+":"+sParams[3] );
+			else if( iNumParams == 3 )
+				out.m_fMusicSampleStartSeconds = TimeToSeconds( sParams[1]+":"+sParams[2] );
+			else // if( iNumParams == 2 )
+				out.m_fMusicSampleStartSeconds = TimeToSeconds( sParams[1] );
+		}
 
 		else if( 0==stricmp(sValueName,"SAMPLELENGTH") )
-			out.m_fMusicSampleLengthSeconds = TimeToSeconds( sParams[1]+":"+sParams[2] );
+		{
+			if( iNumParams == 4 )
+				out.m_fMusicSampleLengthSeconds = TimeToSeconds( sParams[1]+":"+sParams[2]+":"+sParams[3] );
+			else if( iNumParams == 3 )
+				out.m_fMusicSampleLengthSeconds = TimeToSeconds( sParams[1]+":"+sParams[2] );
+			else // if( iNumParams == 2 )
+				out.m_fMusicSampleLengthSeconds = TimeToSeconds( sParams[1] );
+		}
 
 		else if( 0==stricmp(sValueName,"FREEZE") )
 		{
