@@ -83,6 +83,7 @@ protected:
 	void PlayAnnouncer( CString type, float fSeconds );
 
 	void PlayTicks();
+	void UpdateSongPosition( float fDeltaTime );
 	void UpdateLyrics( float fDeltaTime );
 	void UpdateCheckFail();
 	void SongFinished();
@@ -176,7 +177,7 @@ protected:
 	bool			m_bDemonstration;
 
 	RageSound		m_soundAssistTick;
-	RageSound		*m_soundMusic;
+	RageSound		m_soundMusic;
 
 	BeginnerHelper	m_BeginnerHelper;
 

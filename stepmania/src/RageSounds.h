@@ -19,15 +19,13 @@ public:
 	void StopMusic() { PlayMusic(""); }
 	CString GetMusicPath() const;
 
-	/* Take ownership of snd; handle timing, free it, etc. */
-	void TakeOverSound( RageSound *snd, const TimingData *Timing );
-
 	void PlayOnce( CString sPath );
 	void PlayOnceFromDir( CString sDir );
 	void PlayOnceFromAnnouncer( CString sFolderName );
 
 	float GetPlayLatency() const;
 	void HandleSongTimer( bool on=true );
+	float GetFrameTimingAdjustment( float fDeltaTime );
 };
 
 extern RageSounds *SOUND;

@@ -99,7 +99,7 @@ void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 		break;
 
 	case SM_GoToNextScreen:
-		SOUND->StopMusic();
+		m_soundMusic.Stop();
 		GAMESTATE->Reset();
 		SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );	// turn volume back on
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );

@@ -103,7 +103,8 @@ void ScreenGameplay::Init()
 	else
 		LIGHTSMAN->SetLightsMode( LIGHTSMODE_GAMEPLAY );
 
-	m_soundMusic = NULL;
+	/* We do this ourself. */
+	SOUND->HandleSongTimer( false );
 
 	SECONDS_BETWEEN_COMMENTS.Refresh();
 	TICK_EARLY_SECONDS.Refresh();
@@ -768,6 +769,7 @@ ScreenGameplay::~ScreenGameplay()
 		SAFE_DELETE( m_pInventory[p] );
 	}
 	SAFE_DELETE( m_pCombinedLifeMeter );
+	m_soundMusic.StopPlaying();
 
 	m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 
@@ -985,8 +987,7 @@ void ScreenGameplay::LoadNextSong()
 		LL.LoadFromLRCFile(GAMESTATE->m_pCurSong->GetLyricsPath(), *GAMESTATE->m_pCurSong);
 
 	
-	m_soundMusic = new RageSound;
-	m_soundMusic->Load( GAMESTATE->m_pCurSong->GetMusicPath() );
+	m_soundMusic.Load( GAMESTATE->m_pCurSong->GetMusicPath() );
 	
 	/* Set up song-specific graphics. */
 	
@@ -1065,8 +1066,6 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 
 	fStartSecond = min(fStartSecond, -MinTimeToMusic);
 	
-	ASSERT( m_soundMusic );
-
 	RageSoundParams p;
 	p.AccurateSync = true;
 	p.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
@@ -1077,14 +1076,12 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 	//used for syncing up songs.
 	NSMAN->StartRequest(); 
 
-	m_soundMusic->Play( &p );
-
-	SOUND->TakeOverSound( m_soundMusic, &GAMESTATE->m_pCurSong->m_Timing );
-	m_soundMusic = NULL; // SOUND owns it now
+	m_soundMusic.Play( &p );
 
 	/* Make sure GAMESTATE->m_fMusicSeconds is set up. */
 	GAMESTATE->m_fMusicSeconds = -5000;
-	SOUND->Update(0);
+	UpdateSongPosition(0);
+
 	ASSERT( GAMESTATE->m_fMusicSeconds > -4000 ); /* make sure the "fake timer" code doesn't trigger */
 
 	/* Return the amount of time until the first beat. */
@@ -1158,6 +1155,17 @@ void ScreenGameplay::PlayAnnouncer( CString type, float fSeconds )
 		m_pCombinedLifeMeter->OnTaunt();
 }
 
+void ScreenGameplay::UpdateSongPosition( float fDeltaTime )
+{
+	if( !m_soundMusic.IsPlaying() )
+		return;
+
+	RageTimer tm;
+	const float fSeconds = m_soundMusic.GetPositionSeconds( NULL, &tm );
+	const float fAdjust = SOUND->GetFrameTimingAdjustment( fDeltaTime );
+	GAMESTATE->UpdateSongPosition( fSeconds+fAdjust, GAMESTATE->m_pCurSong->m_Timing, tm+fAdjust );
+}
+
 void ScreenGameplay::Update( float fDeltaTime )
 {
 	if( GAMESTATE->m_pCurSong == NULL  )
@@ -1201,6 +1209,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 		}
 	}
 
+
+	UpdateSongPosition( fDeltaTime );
 
 	if( m_bZeroDeltaOnNextUpdate )
 	{
@@ -1607,8 +1617,8 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			 *
 			 * We're doing #3.  I'm not sure which is best.
 			 */
-			SOUND->StopMusic();
-			SOUND->HandleSongTimer( false );
+			
+			m_soundMusic.StopPlaying();
 			m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 
 			this->ClearMessageQueue();
@@ -2196,8 +2206,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 	case SM_BeginFailed:
 		m_DancingState = STATE_OUTRO;
-		SOUND->StopMusic();
-		SOUND->HandleSongTimer( false );
+		m_soundMusic.StopPlaying();
 		m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 		TweenOffScreen();
 		m_Failed.StartTransitioning( SM_GoToScreenAfterFail );

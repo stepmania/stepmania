@@ -216,7 +216,7 @@ void ScreenJukebox::HandleScreenMessage( const ScreenMessage SM )
 		m_Out.StartTransitioning( SM_GoToNextScreen );
 		return;
 	case SM_GoToNextScreen:
-		SOUND->StopMusic();
+		m_soundMusic.Stop();
 		SCREENMAN->SetNewScreen( "ScreenJukebox" );
 		return;
 	}

@@ -263,7 +263,7 @@ int MusicThread_start( void *p )
 {
 	while( !g_Shutdown )
 	{
-		SDL_Delay( 10 );
+		usleep( 10000 );
 
 		StartQueuedSounds();
 	}
@@ -325,7 +325,7 @@ RageSounds::~RageSounds()
 		delete pMusic;
 }
 
-static float GetFrameTimingAdjustment( float fDeltaTime )
+float RageSounds::GetFrameTimingAdjustment( float fDeltaTime )
 {
 	/*
 	 * We get one update per frame, and we're updated early, almost immediately after vsync,
@@ -499,28 +499,6 @@ void RageSounds::PlayOnceFromAnnouncer( CString sFolderName )
 float RageSounds::GetPlayLatency() const
 {
 	return SOUNDMAN->GetPlayLatency();
-}
-
-void RageSounds::TakeOverSound( RageSound *snd, const TimingData *Timing )
-{
-	MusicPlaying *NewMusic = new MusicPlaying( snd );
-
-	NewMusic->m_TimingDelayed = false;
-	NewMusic->m_HasTiming = false;
-	if( Timing )
-	{
-		NewMusic->m_HasTiming = true;
-		NewMusic->m_Timing = *Timing;
-	}
-
-	LockMut( *g_Mutex );
-	delete g_Playing;
-	g_Playing = NewMusic;
-
-	Update( 0 );
-
-	const float fSeconds = g_Playing->m_Music->GetPositionSeconds();
-	LOG->Trace("Updated: %f sec, %f beat", fSeconds, GAMESTATE->m_fSongBeat );
 }
 
 /*
