@@ -713,6 +713,7 @@ void ScreenGameplay::Init()
 			m_textSurviveTime.SetShadowLength( 0 );
 			m_textSurviveTime.SetName( "SurviveTime" );
 			SET_XY( m_textSurviveTime );
+			m_textSurviveTime.SetZ( -3 ); // on top of everything else
 			m_textSurviveTime.SetDiffuse( RageColor(1,1,1,0) );
 			this->AddChild( &m_textSurviveTime );
 		}
