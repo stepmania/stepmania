@@ -32,6 +32,7 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	static PromptAnswer s_LastAnswer;
+	static bool s_bCancelledLast;
 
 protected:
 	bool CanGoLeft() { return m_Answer > 0; }
@@ -56,10 +57,13 @@ protected:
 	void MenuBack( PlayerNumber pn );
 	void MenuStart( PlayerNumber pn );
 
+	void End( bool bCancelled );
+	void PositionCursor();
+
 	CString			m_sText;
 	BGAnimation		m_Background;
 	BitmapText		m_textQuestion;
-	Quad			m_rectAnswerBox;
+	AutoActor		m_sprCursor;
 	BitmapText		m_textAnswer[NUM_PROMPT_ANSWERS];
 	PromptType		m_PromptType;
 	PromptAnswer	m_Answer;
@@ -67,8 +71,10 @@ protected:
 	void(*m_pOnYes)(void*);
 	void(*m_pOnNo)(void*);
 	void* m_pCallbackData;
+
 	Transition		m_In;
 	Transition		m_Out;
+	Transition		m_Cancel;
 
 	RageSound		m_sndChange;
 };

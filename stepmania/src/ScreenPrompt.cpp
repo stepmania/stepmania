@@ -8,14 +8,12 @@
 #include "Style.h"
 #include "ThemeManager.h"
 #include "ScreenDimensions.h"
-
-#define QUESTION_X	(SCREEN_CENTER_X)
-#define QUESTION_Y	(SCREEN_CENTER_Y - 60)
-
-#define PROMPT_X	(SCREEN_CENTER_X)
-#define PROMPT_Y	(SCREEN_CENTER_Y + 120)
+#include "ActorUtil.h"
 
 PromptAnswer ScreenPrompt::s_LastAnswer = ANSWER_YES;
+bool ScreenPrompt::s_bCancelledLast = false;
+
+#define ANSWER_TEXT( elem )		THEME->GetMetric(m_sName,elem+"Text")
 
 //REGISTER_SCREEN_CLASS( ScreenPrompt );
 ScreenPrompt::ScreenPrompt( 
@@ -26,12 +24,13 @@ ScreenPrompt::ScreenPrompt(
 	void(*OnNo)(void*), 
 	void* pCallbackData 
 	) :
-  Screen("ScreenPrompt")
+	Screen("ScreenPrompt")
 {
 	m_bIsTransparent = true;	// draw screens below us
 
 	m_PromptType = type;
 	m_Answer = defaultAnswer;
+	CLAMP( (int&)m_Answer, 0, m_PromptType );
 	m_pOnYes = OnYes;
 	m_pOnNo = OnNo;
 	m_pCallbackData = pCallbackData;
@@ -42,61 +41,44 @@ void ScreenPrompt::Init()
 {
 	Screen::Init();
 
-	m_Background.LoadFromAniDir( THEME->GetPathB("ScreenPrompt","background") );
+	m_Background.LoadFromAniDir( THEME->GetPathB(m_sName,"background") );
 	m_Background.PlayCommand("On");
 	this->AddChild( &m_Background );
 
-	m_textQuestion.LoadFromFont( THEME->GetPathF("ScreenPrompt","question") );
+	m_textQuestion.LoadFromFont( THEME->GetPathF(m_sName,"question") );
+	m_textQuestion.SetName( "Question" );
 	m_textQuestion.SetText( m_sText );
-	m_textQuestion.SetXY( QUESTION_X, QUESTION_Y );
+	SET_XY_AND_ON_COMMAND( m_textQuestion );
 	this->AddChild( &m_textQuestion );
 
-	m_rectAnswerBox.SetDiffuse( RageColor(0.5f,0.5f,1.0f,0.7f) );
-	this->AddChild( &m_rectAnswerBox );
+	m_sprCursor.Load( THEME->GetPathG(m_sName,"cursor") );
+	m_sprCursor->SetName( "Cursor" );
+	ON_COMMAND( m_sprCursor );
+	this->AddChild( m_sprCursor );
 
-	for( int i=0; i<NUM_PROMPT_ANSWERS; i++ )
+	for( int i=0; i<=m_PromptType; i++ )
 	{
-		m_textAnswer[i].LoadFromFont( THEME->GetPathF("ScreenPrompt","answer") );
-		m_textAnswer[i].SetY( PROMPT_Y );
+		m_textAnswer[i].LoadFromFont( THEME->GetPathF(m_sName,"answer") );
+		CString sElem = ssprintf("Answer%dOf%d", i+1, m_PromptType+1);
+		m_textAnswer[i].SetName( sElem );
+		m_textAnswer[i].SetText( ANSWER_TEXT(sElem) );
 		this->AddChild( &m_textAnswer[i] );
-	}
-	
-	switch( m_PromptType )
-	{
-	case PROMPT_OK:
-		m_textAnswer[ANSWER_YES].	SetText( "OK" );
-		m_textAnswer[ANSWER_YES].	SetX( PROMPT_X );
-		break;
-	case PROMPT_YES_NO:
-		m_textAnswer[ANSWER_YES].	SetText( "YES" );
-		m_textAnswer[ANSWER_NO].	SetText( "NO" );
-		m_textAnswer[ANSWER_YES].	SetX( PROMPT_X-50 );
-		m_textAnswer[ANSWER_NO].	SetX( PROMPT_X+50 );
-		break;
-	case PROMPT_YES_NO_CANCEL:
-		m_textAnswer[ANSWER_YES].	SetText( "YES" );
-		m_textAnswer[ANSWER_NO].	SetText( "NO" );
-		m_textAnswer[ANSWER_CANCEL].SetText( "CANCEL" );
-		m_textAnswer[ANSWER_YES].	SetX( PROMPT_X-120 );
-		m_textAnswer[ANSWER_NO].	SetX( PROMPT_X-20 );
-		m_textAnswer[ANSWER_CANCEL].SetX( PROMPT_X+150 );
-		break;
+		SET_XY_AND_ON_COMMAND( m_textAnswer[i] );
 	}
 
-	m_rectAnswerBox.SetXY( m_textAnswer[m_Answer].GetX(), m_textAnswer[m_Answer].GetY() );
-	m_rectAnswerBox.SetZoomX( m_textAnswer[m_Answer].GetUnzoomedWidth()+10.0f );
-	m_rectAnswerBox.SetZoomY( 30 );
+	PositionCursor();
 
-	m_textAnswer[m_Answer].SetEffectGlowShift();
-
-	m_In.Load( THEME->GetPathB("ScreenPrompt","in") );
+	m_In.Load( THEME->GetPathB(m_sName,"in") );
 	m_In.StartTransitioning();
 	this->AddChild( &m_In );
 	
-	m_Out.Load( THEME->GetPathB("ScreenPrompt","out") );
+	m_Out.Load( THEME->GetPathB(m_sName,"out") );
 	this->AddChild( &m_Out );
+	
+	m_Cancel.Load( THEME->GetPathB(m_sName,"cancel") );
+	this->AddChild( &m_Cancel );
 
-	m_sndChange.Load( THEME->GetPathS("ScreenPrompt","change"), true );
+	m_sndChange.Load( THEME->GetPathS(m_sName,"change"), true );
 }
 
 void ScreenPrompt::Update( float fDeltaTime )
@@ -156,12 +138,8 @@ void ScreenPrompt::Change( int dir )
 	m_textAnswer[m_Answer].SetEffectNone();
 	m_Answer = (PromptAnswer)(m_Answer+dir);
 	ASSERT( m_Answer >= 0  &&  m_Answer < NUM_PROMPT_ANSWERS );  
-	m_textAnswer[m_Answer].SetEffectGlowShift();
 
-	m_rectAnswerBox.StopTweening();
-	m_rectAnswerBox.BeginTweening( 0.2f );
-	m_rectAnswerBox.SetXY( m_textAnswer[m_Answer].GetX(), m_textAnswer[m_Answer].GetY() );
-	m_rectAnswerBox.SetZoomX( m_textAnswer[m_Answer].GetUnzoomedWidth()+10.0f );
+	PositionCursor();
 
 	m_sndChange.Play();
 }
@@ -180,23 +158,39 @@ void ScreenPrompt::MenuRight( PlayerNumber pn )
 
 void ScreenPrompt::MenuStart( PlayerNumber pn )
 {
-	m_Out.StartTransitioning( SM_DoneOpeningWipingRight );
+	End( false );
+}
 
-	m_textQuestion.BeginTweening( 0.2f );
-	m_textQuestion.SetDiffuse( RageColor(1,1,1,0) );
-
-	m_rectAnswerBox.BeginTweening( 0.2f );
-	m_rectAnswerBox.SetDiffuse( RageColor(1,1,1,0) );
-
-	m_textAnswer[m_Answer].SetEffectNone();
-
-	for( int i=0; i<NUM_PROMPT_ANSWERS; i++ )
+void ScreenPrompt::MenuBack( PlayerNumber pn )
+{
+	switch( m_PromptType )
 	{
-		m_textAnswer[i].BeginTweening( 0.2f );
-		m_textAnswer[i].SetDiffuse( RageColor(1,1,1,0) );
+	case PROMPT_OK:
+	case PROMPT_YES_NO:
+		// don't allow cancel
+		break;
+	case PROMPT_YES_NO_CANCEL:
+		End( true );
+		break;
+	}
+}
+
+void ScreenPrompt::End( bool bCancelled )
+{
+	if( bCancelled )
+	{
+		m_Cancel.StartTransitioning( SM_DoneOpeningWipingRight );
+	}
+	else
+	{
+		SCREENMAN->PlayStartSound();
+		m_Out.StartTransitioning( SM_DoneOpeningWipingRight );
 	}
 
-	SCREENMAN->PlayStartSound();
+	OFF_COMMAND( m_textQuestion );
+	OFF_COMMAND( m_sprCursor );
+	for( int i=0; i<=m_PromptType; i++ )
+		OFF_COMMAND( m_textAnswer[i] );
 
 	switch( m_Answer )
 	{
@@ -210,13 +204,16 @@ void ScreenPrompt::MenuStart( PlayerNumber pn )
 		break;
 	}
 
-	s_LastAnswer = m_Answer;
+	s_LastAnswer = bCancelled ? ANSWER_CANCEL : m_Answer;
+	s_bCancelledLast = bCancelled;
 }
 
-void ScreenPrompt::MenuBack( PlayerNumber pn )
+void ScreenPrompt::PositionCursor()
 {
-
+	BitmapText &bt = m_textAnswer[m_Answer];
+	m_sprCursor->SetXY( bt.GetX(), bt.GetY() );
 }
+
 
 /*
  * (c) 2001-2004 Chris Danford

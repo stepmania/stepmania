@@ -153,7 +153,7 @@ static bool ValidateCurrentStepsDescription( CString s, CString &sErrorOut )
 	{
 		if( !GAMESTATE->m_pCurSong->IsEditDescriptionUnique(GAMESTATE->m_pCurSteps[0]->m_StepsType, s, GAMESTATE->m_pCurSteps[0]) )
 		{
-			sErrorOut = "The supplied name supplied conflicts with another edit.  Please use a different name.";
+			sErrorOut = "The supplied name supplied conflicts with another edit.\n\nPlease use a different name.";
 			return false;
 		}
 	}
