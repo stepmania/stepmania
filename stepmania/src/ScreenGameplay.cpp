@@ -204,7 +204,7 @@ ScreenGameplay::ScreenGameplay()
 	m_textStageNumber.SetText( GAMESTATE->GetStageText() );
 	m_textStageNumber.SetDiffuseColor( GAMESTATE->GetStageColor() );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_textCourseSongNumber[p].Load( THEME->GetPathTo(FONT_HEADER2) );
 		m_textCourseSongNumber[p].TurnShadowOff();
@@ -231,7 +231,7 @@ ScreenGameplay::ScreenGameplay()
 		break;
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		for( p=0; p<NUM_PLAYERS; p++ )
 			if( GAMESTATE->IsPlayerEnabled(p) )
 				m_frameTop.AddSubActor( &m_textCourseSongNumber[p] );
 		break;
@@ -294,9 +294,9 @@ ScreenGameplay::ScreenGameplay()
 			m_pScoreDisplay[p]->SetZoom( 0.8f );
 			m_pScoreDisplay[p]->SetDiffuseColor( PlayerToColor(p) );
 			m_frameBottom.AddSubActor( m_pScoreDisplay[p] );
-		}
+	//	}
 		
-		m_textPlayerOptions[p].Load( THEME->GetPathTo(FONT_NORMAL) );
+	//	m_textPlayerOptions[p].Load( THEME->GetPathTo(FONT_NORMAL) );
 
 		m_textPlayerOptions[p].TurnShadowOff();
 		m_textPlayerOptions[p].SetXY( PLAYER_OPTIONS_LOCAL_X[p], PLAYER_OPTIONS_LOCAL_Y[p] );
@@ -304,6 +304,7 @@ ScreenGameplay::ScreenGameplay()
 		m_textPlayerOptions[p].SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 		m_textPlayerOptions[p].SetText( GAMESTATE->m_PlayerOptions[p].GetString() );
 		m_frameBottom.AddSubActor( &m_textPlayerOptions[p] );
+		}
 	}
 
 
@@ -316,17 +317,35 @@ ScreenGameplay::ScreenGameplay()
 		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
 
+// CONFLICT RESOLUTION:
+// BY ANDY
+// <<<<<<< ScreenGameplay.cpp
+// =======
+// YOURS:
+/*
 		float fDifficultyY = DIFFICULTY_Y[p];
 		if( GAMESTATE->m_PlayerOptions[p].m_bReverseScroll )
 			fDifficultyY = SCREEN_HEIGHT - DIFFICULTY_Y[p] -10;	// HACK: move difficulty banner up 10 if reverse
 		m_DifficultyBanner[p].SetXY( DIFFICULTY_X[p], fDifficultyY );
 		this->AddSubActor( &m_DifficultyBanner[p] );
-
+*/
+//>>>>>>> 1.32 MINE
+		/*
 		if( GAMESTATE->m_CurGame != GAME_EZ2 )
-		{
+		{	
 			float fDifficultyY = DIFFICULTY_Y[p];
 			if( GAMESTATE->m_PlayerOptions[p].m_bReverseScroll )
 				fDifficultyY = SCREEN_HEIGHT - DIFFICULTY_Y[p];
+			m_DifficultyBanner[p].SetXY( DIFFICULTY_X[p], fDifficultyY );
+			this->AddSubActor( &m_DifficultyBanner[p] );
+		}
+*/
+// HOW I THINK IT SHOULD BE FIXED:
+		if( GAMESTATE->m_CurGame != GAME_EZ2 )
+		{	
+			float fDifficultyY = DIFFICULTY_Y[p];
+			if( GAMESTATE->m_PlayerOptions[p].m_bReverseScroll )
+				fDifficultyY = SCREEN_HEIGHT - DIFFICULTY_Y[p] -10;	// HACK: move difficulty banner up 10 if reverse
 			m_DifficultyBanner[p].SetXY( DIFFICULTY_X[p], fDifficultyY );
 			this->AddSubActor( &m_DifficultyBanner[p] );
 		}
@@ -482,7 +501,7 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 				iPlaySongIndex = GAMESTATE->m_iSongsIntoCourse;
 
 			GAMESTATE->m_pCurSong = apSongs[iPlaySongIndex];
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			for( p=0; p<NUM_PLAYERS; p++ )
 			{
 				GAMESTATE->m_pCurNotes[p] = apNotes[iPlaySongIndex];
 				if( asModifiers[iPlaySongIndex] != "" )		// some modifiers specified
@@ -967,7 +986,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 			GAMESTATE->m_apSongsPlayed.Add( GAMESTATE->m_pCurSong );
 			GAMESTATE->m_iSongsIntoCourse++;
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			for( p=0; p<NUM_PLAYERS; p++ )
 				if( GAMESTATE->IsPlayerEnabled(p) )
 					if( !m_pLifeMeter[p]->FailedEarlier() )
 						GAMESTATE->m_iSongsBeforeFail[p]++;

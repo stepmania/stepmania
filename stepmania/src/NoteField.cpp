@@ -67,7 +67,7 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iPixelsToDrawBeh
 	}
 
 
-	for( int i=0; i<MAX_HOLD_NOTES; i++ )
+	for( i=0; i<MAX_HOLD_NOTES; i++ )
 		m_fHoldNoteLife[i] = 1;		// start with full life
 
 

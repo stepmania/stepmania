@@ -423,7 +423,7 @@ void SongManager::InitCoursesFromDisk()
 	//
 	// Load extra stages
 	//
-	for( int g=0; g<saGroupNames.GetSize(); g++ )	// foreach Group
+	for( g=0; g<saGroupNames.GetSize(); g++ )	// foreach Group
 	{
 		CString sGroupName = saGroupNames[g];
 		CStringArray saCourseFiles;

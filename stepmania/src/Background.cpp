@@ -219,7 +219,7 @@ bool Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 				break;
 
 			// Generate a plan.
-			for( int i=0; i<pSong->m_fLastBeat; i+=16 )
+			for( i=0; i<pSong->m_fLastBeat; i+=16 )
 				m_aAnimSegs.Add( AnimSeg((float)i,rand()%m_BackgroundAnimations.GetSize()) );	// change BG every 4 bars
 
 			for( i=0; i<pSong->m_BPMSegments.GetSize(); i++ )

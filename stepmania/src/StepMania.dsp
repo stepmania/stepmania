@@ -960,6 +960,14 @@ SOURCE=.\ScreenEz2SelectStyle.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenEz2Stage.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenEz2Stage.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenGameOptions.cpp
 # End Source File
 # Begin Source File
