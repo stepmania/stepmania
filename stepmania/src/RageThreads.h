@@ -57,6 +57,18 @@ namespace Checkpoints
 class MutexImpl;
 class RageMutex
 {
+public:
+	CString GetName() const { return m_sName; }
+	void SetName( const CString &s ) { m_sName = s; }
+	virtual void Lock();
+	virtual bool TryLock();
+	virtual void Unlock();
+	virtual bool IsLockedByThisThread() const;
+
+	RageMutex( CString name );
+	virtual ~RageMutex();
+
+private:
 	MutexImpl *m_pMutex;
 	CString m_sName;
 
@@ -66,17 +78,6 @@ class RageMutex
 	int m_LockCnt;
 
 	void MarkLockedMutex();
-
-public:
-	CString GetName() const { return m_sName; }
-	void SetName( const CString &s ) { m_sName = s; }
-	void Lock();
-	bool TryLock();
-	void Unlock();
-	bool IsLockedByThisThread() const;
-
-	RageMutex( CString name );
-	~RageMutex();
 };
 
 /* Lock a mutex on construction, unlock it on destruction.  Helps for functions
