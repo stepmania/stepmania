@@ -16,7 +16,7 @@
 #pragma comment(lib, "dinput8.lib") 
 #pragma comment(lib, "dxguid.lib") 
 
-#define HAVE_DDK
+//#define HAVE_DDK
 #ifdef HAVE_DDK
 #pragma comment(lib, "setupapi.lib") 
 #pragma comment(lib, "hid.lib") 

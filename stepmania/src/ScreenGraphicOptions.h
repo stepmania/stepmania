@@ -8,10 +8,15 @@
 	Chris Danford
 -----------------------------------------------------------------------------
 */
-#ifndef SCREEN_GRAPHIC_OPTIONS_H
-#define SCREEN_GRAPHIC_OPTIONS_H
 
+#include "Screen.h"
 #include "ScreenOptions.h"
+#include "Sprite.h"
+#include "BitmapText.h"
+#include "RandomSample.h"
+#include "TransitionFade.h"
+#include "Quad.h"
+
 
 class ScreenGraphicOptions : public ScreenOptions
 {
@@ -27,7 +32,4 @@ private:
 
 	void GoToNextState();
 	void GoToPrevState();
-	int CurrentRefresh() const;
 };
-
-#endif

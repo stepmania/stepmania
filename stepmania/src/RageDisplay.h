@@ -41,6 +41,7 @@ const int MAX_NUM_VERTICIES = MAX_NUM_QUADS*4;	// 4 verticies per quad
 // verticies and not indexing.  In fact, drawing indexed primitives is about 30% slower.
 // 
 
+
 class RageDisplay
 {
 	friend class RageTexture;

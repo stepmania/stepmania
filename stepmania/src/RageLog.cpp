@@ -102,7 +102,6 @@ void RageLog::Warn( const char *fmt, ...)
 			"WARNING:  %s\n"
 			"/////////////////////////////////////////",
 			sBuff ); 
-	warnings.Add( sBuff );
 }
 
 void RageLog::Flush()

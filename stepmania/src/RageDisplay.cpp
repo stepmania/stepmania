@@ -59,7 +59,7 @@ RageDisplay::RageDisplay( HWND hWnd )
 	HRESULT  hr;
 	if( FAILED( hr = m_pd3d->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &m_DeviceCaps) ) )
 	{
-		throw RageException(
+		throw RageException( 
 			"There was an error while initializing your video card.\n\n"
 			"Your system is reporting that Direct3D8 hardware acceleration\n"
 			"is not available.  In most cases, you can download an updated\n"

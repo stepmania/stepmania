@@ -83,58 +83,19 @@ ScreenGraphicOptions::ScreenGraphicOptions() :
 	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","graphic options music") );
 }
 
-int ScreenGraphicOptions::CurrentRefresh() const
-{
-	int RefreshOption = m_iSelectedOption[0][GO_REFRESH_RATE];
-	switch( RefreshOption )
-	{
-	case 0:	return RageDisplay::REFRESH_DEFAULT;break;
-	case 1:	return RageDisplay::REFRESH_MAX;	break;
-	default:
-		return atoi( g_GraphicOptionsLines[GO_REFRESH_RATE].szOptionsText[RefreshOption] );
-	}
-}
-
 void ScreenGraphicOptions::UpdateRefreshRates()
 {
-#if 0
 	CArray<int,int> hz;
-
-	int OldSetting = CurrentRefresh();
 
 	/* XXX: We're hardcoded to 16bpp in StepMania.cpp; if we add a bpp option
 	 * this needs to be changed. */
 	DISPLAY->GetHzAtResolution(HorizRes[m_iSelectedOption[0][GO_DISPLAY_RESOLUTION]],
 		VertRes[m_iSelectedOption[0][GO_DISPLAY_RESOLUTION]], 16 /* XXX */, hz);
 
-	/* Set the refresh to default.  If we can find the old selection in the
-	 * new data, we'll set it to that later. */
-
-	int i;
-	OptionRowData &opt = g_GraphicOptionsLines[GO_REFRESH_RATE];
-	opt.iNumOptions = 2;
-	int OldSettingNo = RageDisplay::REFRESH_DEFAULT;
-
-	for(i = 2; i < MAX_OPTIONS_PER_LINE; ++i)
-		opt.szOptionsText[i][0] = 0;
-
-	for(i = 0; i < hz.GetSize(); ++i)
-	{
-		if(hz[i] < 60) continue;
-		sprintf(opt.szOptionsText[opt.iNumOptions], "%i", hz[i]);
-		opt.iNumOptions++;
-		if( hz[i] == OldSetting )
-			OldSettingNo = i;
-	}
-
-	m_iSelectedOption[0][GO_REFRESH_RATE] = 
-	m_iSelectedOption[1][GO_REFRESH_RATE] = OldSettingNo;
-
-	InitOptionsText();
-#endif
 	/* Disable all refresh rates (except DEFAULT/MAX). */
-//	for(i = 0; i < g_GraphicOptionsLines[GO_REFRESH_RATE].iNumOptions; ++i)
-//		DimOption(GO_REFRESH_RATE, i, true);
+	int i;
+	for(i = 0; i < g_GraphicOptionsLines[GO_REFRESH_RATE].iNumOptions; ++i)
+		DimOption(GO_REFRESH_RATE, i, true);
 
 	/* If we're windowed, leave all refresh rates dimmed, but don't
 	 * change the actual selection. */
@@ -142,29 +103,29 @@ void ScreenGraphicOptions::UpdateRefreshRates()
 		return;
 
 	/* Enable MAX and DEFAULT. */
-//	DimOption(GO_REFRESH_RATE, 0, false);
-//	DimOption(GO_REFRESH_RATE, 1, false);
+	DimOption(GO_REFRESH_RATE, 0, false);
+	DimOption(GO_REFRESH_RATE, 1, false);
 
 	/* Enable refresh rates.  As we go, remember the highest
 	 * refresh found. */
-/*	for(i = 0; i < hz.GetSize(); ++i)
+	for(i = 0; i < hz.GetSize(); ++i)
 	{
 		for(int j = 1; j < g_GraphicOptionsLines[GO_REFRESH_RATE].iNumOptions; ++j)
 		{
 			if(atoi(g_GraphicOptionsLines[GO_REFRESH_RATE].szOptionsText[j]) != hz[i])
 				continue;
-*/
+
 			/* This refresh is available. */
-/*			DimOption(GO_REFRESH_RATE, j, false);
+			DimOption(GO_REFRESH_RATE, j, false);
 
 			break;
 		}
 	}
-*/	/* If current refresh is no longer valid, set it to default. */
-//	int CurSel = m_iSelectedOption[0][GO_REFRESH_RATE];
-//	if(m_OptionDim[GO_REFRESH_RATE][CurSel])
-//		m_iSelectedOption[0][GO_REFRESH_RATE] = 
-//		m_iSelectedOption[1][GO_REFRESH_RATE] = RageDisplay::REFRESH_DEFAULT;
+	/* If current refresh is no longer valid, set it to default. */
+	int CurSel = m_iSelectedOption[0][GO_REFRESH_RATE];
+	if(m_OptionDim[GO_REFRESH_RATE][CurSel])
+		m_iSelectedOption[0][GO_REFRESH_RATE] = 
+		m_iSelectedOption[1][GO_REFRESH_RATE] = RageDisplay::REFRESH_DEFAULT;
 	PositionUnderlines();
 }
 
@@ -215,7 +176,7 @@ void ScreenGraphicOptions::ImportOptions()
 	}
 
 	m_iSelectedOption[0][GO_BGMODE]					= PREFSMAN->m_BackgroundMode;
-	m_iSelectedOption[0][GO_BGBRIGHTNESS]			= int(roundf( PREFSMAN->m_fBGBrightness*10 )); 
+	m_iSelectedOption[0][GO_BGBRIGHTNESS]			= (int)( PREFSMAN->m_fBGBrightness*10+0.5f ); 
 	m_iSelectedOption[0][GO_MOVIEDECODEMS]			= PREFSMAN->m_iMovieDecodeMS-1;
 	m_iSelectedOption[0][GO_BGIFNOBANNER]			= PREFSMAN->m_bUseBGIfNoBanner ? 1:0;
 	m_iSelectedOption[0][GO_VSYNC]					= PREFSMAN->m_bVsync ? 1:0;
@@ -239,15 +200,21 @@ void ScreenGraphicOptions::ExportOptions()
 	case 2:	PREFSMAN->m_iTextureResolution = 1024;	break;
 	default:	ASSERT(0);	PREFSMAN->m_iTextureResolution = 512;	break;
 	}
-	
-	int RefreshOption = m_iSelectedOption[0][GO_REFRESH_RATE];
-	
-	switch( RefreshOption )
+		
+	switch( m_iSelectedOption[0][GO_REFRESH_RATE] )
 	{
 	case 0:	PREFSMAN->m_iRefreshRate = RageDisplay::REFRESH_DEFAULT;break;
 	case 1:	PREFSMAN->m_iRefreshRate = RageDisplay::REFRESH_MAX;	break;
-	default:
-		PREFSMAN->m_iRefreshRate = atoi( g_GraphicOptionsLines[GO_REFRESH_RATE].szOptionsText[RefreshOption] );
+	case 2:	PREFSMAN->m_iRefreshRate = 60;	break;
+	case 3:	PREFSMAN->m_iRefreshRate = 70;	break;
+	case 4:	PREFSMAN->m_iRefreshRate = 72;	break;
+	case 5:	PREFSMAN->m_iRefreshRate = 75;	break;
+	case 6:	PREFSMAN->m_iRefreshRate = 80;	break;
+	case 7:	PREFSMAN->m_iRefreshRate = 85;	break;
+	case 8:	PREFSMAN->m_iRefreshRate = 90;	break;
+	case 9:	PREFSMAN->m_iRefreshRate = 100;	break;
+	case 10:PREFSMAN->m_iRefreshRate = 120;	break;
+	default:	ASSERT(0);	PREFSMAN->m_iRefreshRate = 0;	break;
 	}
 
 	PREFSMAN->m_BackgroundMode			= PrefsManager::BackgroundMode( m_iSelectedOption[0][GO_BGMODE] );

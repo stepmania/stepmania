@@ -17,19 +17,11 @@
 #include "RageException.h"
 
 
-RageSound*		SOUND	= NULL;
-
-#if 0
-RageSound::RageSound( HWND hWnd ) { }
-RageSound::~RageSound() { }
-void RageSound::PlayOnceStreamed( CString sPath ) { }
-void RageSound::PlayOnceStreamedFromDir( CString sDir ) { }
-#else
-
-#pragma comment(lib, "bass/bass.lib") 
-
 #include "bass/bass.h"
+#pragma comment(lib, "bass/bass.lib") 
+ 
 
+RageSound*		SOUND	= NULL;
 
 
 RageSound::RageSound( HWND hWnd )
@@ -121,4 +113,3 @@ void RageSound::PlayOnceStreamedFromDir( CString sDir )
 		PlayOnceStreamed( sDir + arraySoundFiles[index] );
 	}
 }
-#endif
