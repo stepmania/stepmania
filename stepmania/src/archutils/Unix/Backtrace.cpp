@@ -394,7 +394,10 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 	if( ctx == NULL )
 	{
 		ctx = &CurrentCtx;
-		CurrentCtx.FramePtr = (void *) __builtin_frame_address(0);
+
+		/* __builtin_frame_address is broken on OS X; it sometimes returns bogus results. */
+		register void *r1 __asm__ ("r1");
+		CurrentCtx.FramePtr = (void *) r1;
 	}
 	
 	const Frame *frame = (Frame *) ctx->FramePtr;
