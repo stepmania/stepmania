@@ -28,29 +28,6 @@ static const CString COINS_DAT = "Data/Coins.dat";
 
 const int COINS_DAT_VERSION = 1;
 
-#if defined(WIN32) // XXX: move to arch_setup.h
-#include "RageThreads.h"
-struct tm *my_localtime_r( const time_t *timep, struct tm *result )
-{
-	static RageMutex mut;
-	LockMut(mut);
-
-	*result = *localtime( timep );
-	return result;
-}
-
-struct tm *my_gmtime_r( const time_t *timep, struct tm *result )
-{
-	static RageMutex mut;
-	LockMut(mut);
-
-	*result = *gmtime( timep );
-	return result;
-}
-#define localtime_r my_localtime_r
-#define gmtime_r my_gmtime_r
-#endif
-
 tm AddDays( tm start, int iDaysToMove )
 {
 	start.tm_mday += iDaysToMove;
