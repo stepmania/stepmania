@@ -17,6 +17,7 @@
 
 #include "arch/arch.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
+#include "arch/Dialog/Dialog.h"
 #include <ctime>
 
 #include "ProductInfo.h"
@@ -136,6 +137,8 @@ static void StoreActualGraphicOptions( bool initial )
 		LOG->Info( "%s", log.c_str() );
 	else
 		SCREENMAN->SystemMessage( log );
+
+	Dialog::SetWindowed( DISPLAY->GetVideoModeParams().windowed );
 }
 
 void ApplyGraphicOptions()
@@ -1011,6 +1014,8 @@ int main(int argc, char* argv[])
 	
 	atexit(SDL_Quit);   /* Clean up on exit */
 
+	Dialog::Init();
+
 	/* Fire up the SDL, but don't actually start any subsystems.
 	 * We use our own error handlers. */
 	SDL_Init( SDL_INIT_NOPARACHUTE );
@@ -1184,6 +1189,7 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( FONT );
 	SAFE_DELETE( TEXTUREMAN );
 	SAFE_DELETE( DISPLAY );
+	Dialog::Shutdown();
 	SAFE_DELETE( LOG );
 	SAFE_DELETE( FILEMAN );
 
