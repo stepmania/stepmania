@@ -67,7 +67,7 @@ int GetUnusedPaletteIndex()
 		bool bFreeToUse = true;
 		for( map<unsigned,int>::const_iterator iter=g_TexResourceToPaletteIndex.begin();
 			iter!=g_TexResourceToPaletteIndex.end();
-			iter++ )
+			++iter )
 		{
 			if( iter->second == i )
 			{
