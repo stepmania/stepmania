@@ -540,6 +540,7 @@ static void CheckPalettedTextures( bool LowColor )
 
 		GLuint ifmt = 0;
 		glGetTexLevelParameteriv( GL_PROXY_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INTERNAL_FORMAT), (GLint *)&ifmt );
+		GL_CHECK_ERROR( "glGetTexLevelParameteriv(GL_TEXTURE_INTERNAL_FORMAT)" );
 		if( ifmt != glTexFormat )
 		{
 			error = ssprintf( "Expected format %s, got %s instead",
@@ -640,7 +641,8 @@ void SetupExtensions()
 	g_bEXT_texture_env_combine = HasExtension("GL_EXT_texture_env_combine");
 	g_bGL_EXT_bgra = HasExtension("GL_EXT_bgra");
 	CheckPalettedTextures( false );
-	CheckPalettedTextures( true );
+	if( g_b4BitPalettesWork ) // don't bother if the last one failed
+		CheckPalettedTextures( true );
 	CheckReversePackedPixels();
 
 	// Checks for known bad drivers
