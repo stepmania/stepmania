@@ -956,7 +956,7 @@ void SaveChanges()
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
-		GAMESTATE->m_pCurSong->SaveToSongFile();
+		GAMESTATE->m_pCurSong->Save();
 		break;
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
@@ -964,7 +964,7 @@ void SaveChanges()
 			for( int i=0; i<GAMESTATE->m_pCurCourse->m_iStages; i++ )
 			{
 				Song* pSong = GAMESTATE->m_pCurCourse->m_apSongs[i];
-				pSong->SaveToSongFile();
+				pSong->Save();
 			}
 		}
 		break;

@@ -55,6 +55,8 @@ enum NoteType
 	NOTE_TYPE_8TH,	// eighth note
 	NOTE_TYPE_12TH,	// triplet
 	NOTE_TYPE_16TH,	// sixteenth note
+	NOTE_TYPE_24TH,	// twenty-forth note
+	NOTE_TYPE_32ND,	// thirty-second note
 	NUM_NOTE_TYPES,
 	NOTE_TYPE_INVALID
 };

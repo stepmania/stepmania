@@ -86,6 +86,7 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Notes &out, int start )
 			fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
 			break;
 		case NOTE_TYPE_12TH:
+		case NOTE_TYPE_24TH:
 			fprintf( fp, "[" );
 			fCurrentIncrementer = 1.0/24 * BEATS_PER_MEASURE;
 			break;
@@ -96,16 +97,17 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Notes &out, int start )
 		default:
 			ASSERT(0);
 			// fall though
+		case NOTE_TYPE_32ND:
 		case NOTE_TYPE_INVALID:
-			fprintf( fp, "<" );
-			fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
+			fprintf( fp, "{" );
+			fCurrentIncrementer = 1.0/64 * BEATS_PER_MEASURE;
 			break;
 		}
 
 		double fFirstBeatInMeasure = m * BEATS_PER_MEASURE;
 		double fLastBeatInMeasure = (m+1) * BEATS_PER_MEASURE;
 
-		for( double b=fFirstBeatInMeasure; b<fLastBeatInMeasure; b+=fCurrentIncrementer )
+		for( double b=fFirstBeatInMeasure; b<=fLastBeatInMeasure-1/64.0f; b+=fCurrentIncrementer )	// need the -0.0001 to account for rounding errors
 		{
 			int row = BeatToNoteRow( (float)b );
 
@@ -115,15 +117,37 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Notes &out, int start )
 			case NOTES_TYPE_DANCE_COUPLE_1:
 			case NOTES_TYPE_DANCE_COUPLE_2:
 			case NOTES_TYPE_DANCE_DOUBLE:
-				fprintf( fp, NotesToDWIString( notedata.m_TapNotes[start+0][row], 
-												notedata.m_TapNotes[start+1][row],
-												notedata.m_TapNotes[start+2][row],
-												notedata.m_TapNotes[start+3][row] ) );
+				fprintf( fp, NotesToDWIString( 
+					notedata.m_TapNotes[start+0][row], 
+					notedata.m_TapNotes[start+1][row],
+					notedata.m_TapNotes[start+2][row],
+					notedata.m_TapNotes[start+3][row] ) );
+
+				// Blank out the notes so we don't write them again if the incrementer is small
+				notedata.m_TapNotes[start+0][row] = '0';
+				notedata.m_TapNotes[start+1][row] = '0';
+				notedata.m_TapNotes[start+2][row] = '0';
+				notedata.m_TapNotes[start+3][row] = '0';
 				break;
 			case NOTES_TYPE_DANCE_SOLO:
-				fprintf( fp, NotesToDWIString( notedata.m_TapNotes[0][row], notedata.m_TapNotes[1][row], notedata.m_TapNotes[2][row], notedata.m_TapNotes[3][row], notedata.m_TapNotes[4][row], notedata.m_TapNotes[5][row] ) );
+				fprintf( fp, NotesToDWIString( 
+					notedata.m_TapNotes[0][row], 
+					notedata.m_TapNotes[1][row],
+					notedata.m_TapNotes[2][row],
+					notedata.m_TapNotes[3][row],
+					notedata.m_TapNotes[4][row],
+					notedata.m_TapNotes[5][row] ) );
+
+				// Blank out the notes so we don't write them again if the incrementer is small
+				notedata.m_TapNotes[start+0][row] = '0';
+				notedata.m_TapNotes[start+1][row] = '0';
+				notedata.m_TapNotes[start+2][row] = '0';
+				notedata.m_TapNotes[start+3][row] = '0';
+				notedata.m_TapNotes[start+4][row] = '0';
+				notedata.m_TapNotes[start+5][row] = '0';
 				break;
-			default:	return;	// not a type supported by DWI
+			default:
+				ASSERT(0);	// not a type supported by DWI.  We shouldn't have called in here if that's the case
 			}
 		}
 
@@ -133,6 +157,7 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Notes &out, int start )
 		case NOTE_TYPE_8TH:	
 			break;
 		case NOTE_TYPE_12TH:
+		case NOTE_TYPE_24TH:
 			fprintf( fp, "]" );
 			break;
 		case NOTE_TYPE_16TH:
@@ -141,8 +166,9 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Notes &out, int start )
 		default:
 			ASSERT(0);
 			// fall though
+		case NOTE_TYPE_32ND:
 		case NOTE_TYPE_INVALID:
-			fprintf( fp, ">" );
+			fprintf( fp, "}" );
 			break;
 		}
 		fprintf( fp, "\n" );
@@ -195,7 +221,7 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 		for( int i=0; i<out.m_StopSegments.GetSize(); i++ )
 		{
 			const StopSegment &fs = out.m_StopSegments[i];
-			fprintf( fp, "%.2f=%.2f", BeatToNoteRow( fs.m_fStartBeat ) / ROWS_PER_BEAT * 4.0f,
+			fprintf( fp, "%.2f=%.2f", BeatToNoteRow( fs.m_fStartBeat ) * 4.0f / ROWS_PER_BEAT,
 				roundf(fs.m_fStopSeconds*1000) );
 			if( i != out.m_StopSegments.GetSize()-1 )
 				fprintf( fp, "," );
@@ -209,7 +235,7 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 		for( int i=1; i<out.m_BPMSegments.GetSize(); i++ )
 		{
 			const BPMSegment &bs = out.m_BPMSegments[i];
-			fprintf( fp, "%.2f=%.2f", BeatToNoteRow( bs.m_fStartBeat ) / ROWS_PER_BEAT * 4.0f, bs.m_fBPM );
+			fprintf( fp, "%.2f=%.2f", BeatToNoteRow( bs.m_fStartBeat ) * 4.0f / ROWS_PER_BEAT, bs.m_fBPM );
 			if( i != out.m_BPMSegments.GetSize()-1 )
 				fprintf( fp, "," );
 		}

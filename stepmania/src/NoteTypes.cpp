@@ -20,7 +20,11 @@ D3DXCOLOR NoteTypeToColor( NoteType nt )
 	case NOTE_TYPE_8TH:		return D3DXCOLOR(0,0,1,1);	// blue
 	case NOTE_TYPE_12TH:	return D3DXCOLOR(1,0,1,1);	// purple
 	case NOTE_TYPE_16TH:	return D3DXCOLOR(1,1,0,1);	// yellow
-	default:	ASSERT(0);	return D3DXCOLOR(0.5f,0.5f,0.5f,1);
+	case NOTE_TYPE_24TH:	return D3DXCOLOR(0,1,1,1);	// light blue
+	case NOTE_TYPE_32ND:	// fall through
+	default:
+		ASSERT(0);
+		return D3DXCOLOR(0.5f,0.5f,0.5f,1);	// gray
 	}		
 };
 
@@ -32,6 +36,8 @@ float NoteTypeToBeat( NoteType nt )
 	case NOTE_TYPE_8TH:		return 1.0f/2;	// eighth notes
 	case NOTE_TYPE_12TH:	return 1.0f/3;	// triplets
 	case NOTE_TYPE_16TH:	return 1.0f/4;	// sixteenth notes
+	case NOTE_TYPE_24TH:	return 1.0f/6;	// twenty-forth notes
+	case NOTE_TYPE_32ND:	return 1.0f/8;	// thirty-second notes
 	default:	ASSERT(0);	return 0;
 	}
 }
@@ -42,6 +48,8 @@ NoteType GetNoteType( int iNoteIndex )
 	else if( iNoteIndex % (ROWS_PER_MEASURE/8) == 0)	return NOTE_TYPE_8TH;
 	else if( iNoteIndex % (ROWS_PER_MEASURE/12) == 0)	return NOTE_TYPE_12TH;
 	else if( iNoteIndex % (ROWS_PER_MEASURE/16) == 0)	return NOTE_TYPE_16TH;
+	else if( iNoteIndex % (ROWS_PER_MEASURE/24) == 0)	return NOTE_TYPE_24TH;
+	else if( iNoteIndex % (ROWS_PER_MEASURE/32) == 0)	return NOTE_TYPE_32ND;
 	else												return NOTE_TYPE_INVALID;
 };
 
@@ -52,12 +60,7 @@ bool IsNoteOfType( int iNoteIndex, NoteType t )
 
 D3DXCOLOR GetNoteColorFromIndex( int iIndex )
 { 
-	for( int t=0; t<NUM_NOTE_TYPES; t++ )
-	{
-		if( IsNoteOfType( iIndex, (NoteType)t ) )
-			return NoteTypeToColor( (NoteType)t );
-	}
-	return D3DXCOLOR(0.5f,0.5f,0.5f,1);
+	return NoteTypeToColor( GetNoteType(iIndex) );
 }
 
 D3DXCOLOR GetNoteColorFromBeat( float fBeat )

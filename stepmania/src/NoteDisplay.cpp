@@ -229,7 +229,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		const float	fAlphaBottom	= ArrowGetAlpha( m_PlayerNumber, fYBottom, fPercentFadeToFail );
 		const float	fGlowTop		= ArrowGetGlow( m_PlayerNumber, fYTop, fPercentFadeToFail );
 		const float	fGlowBottom		= ArrowGetGlow( m_PlayerNumber, fYBottom, fPercentFadeToFail );
-		const float fColorScale		= SCALE(fLife,0,1,0.5f,1);
+		const float fColorScale		= SCALE(fLife,0,1,0.2f,1);
 		const D3DXCOLOR colorDiffuseTop		= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaTop);
 		const D3DXCOLOR colorDiffuseBottom	= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaBottom);
 		const D3DXCOLOR colorGlowTop		= D3DXCOLOR(1,1,1,fGlowTop);
@@ -272,7 +272,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		const float	fAlphaBottom	= ArrowGetAlpha( m_PlayerNumber, fYBottom, fPercentFadeToFail );
 		const float	fGlowTop		= ArrowGetGlow( m_PlayerNumber, fYTop, fPercentFadeToFail );
 		const float	fGlowBottom		= ArrowGetGlow( m_PlayerNumber, fYBottom, fPercentFadeToFail );
-		const float fColorScale		= SCALE(fLife,0,1,0.5f,1);
+		const float fColorScale		= SCALE(fLife,0,1,0.2f,1);
 		const D3DXCOLOR colorDiffuseTop		= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaTop);
 		const D3DXCOLOR colorDiffuseBottom	= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaBottom);
 		const D3DXCOLOR colorGlowTop		= D3DXCOLOR(1,1,1,fGlowTop);
@@ -301,7 +301,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		const float fX				= ArrowGetXPos( m_PlayerNumber, iCol, fY );
 		const float	fAlpha			= ArrowGetAlpha( m_PlayerNumber, fY, fPercentFadeToFail );
 		const float	fGlow			= ArrowGetGlow( m_PlayerNumber, fY, fPercentFadeToFail );
-		const float fColorScale		= SCALE(fLife,0,1,0.5f,1);
+		const float fColorScale		= SCALE(fLife,0,1,0.2f,1);
 		const D3DXCOLOR colorDiffuse= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlpha);
 		const D3DXCOLOR colorGlow	= D3DXCOLOR(1,1,1,fGlow);
 

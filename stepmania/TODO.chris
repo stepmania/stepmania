@@ -2,9 +2,21 @@
 Fix
 /////////////////////////
 
+test DWI writer
+
+Make Save both SM and DWI
+
+The "groove bar" reports at the results screen is broken. 
+Getting a nearly full voltage bar on a 
+song when I barely maitain combo (it should be max combo/max possible combo), 
+and chaos is always 
+empty unless you AAA a song.
+
 Ready, here we go closer to start of notes
 
-correct songs played show on eval
+ready, here we go between each stage of a course
+
+all songs played passed show on eval
 
 make sure supports music in "Music" folder
 
@@ -18,11 +30,7 @@ about us page
 
 new phpwebhosting account
 
-call BrainStorm guy
-
-RMA phone
-
-RMA Kiko USB
+call BrainStorm guy (Jodi 509-270-6112)
 
 kitsappt photos
 
@@ -33,8 +41,6 @@ add turns to editor
 sample pop
 
 fix screwed up scroll bar
-
-ready, here we go between each stage of a course
 
 send disc to Penny Arcade
 
@@ -173,12 +179,6 @@ note shader
 This doesn't quite qualify as a "bug," but--tiled scrolling background 
 animations have very visible seams where the tiles meet; it'd look much much 
 better if it was seamless. 
-
-The "groove bar" reports at the results screen is broken. 
-Getting a nearly full voltage bar on a 
-song when I barely maitain combo (it should be max combo/max possible combo), 
-and chaos is always 
-empty unless you AAA a song.
 
 #LYRICS:
 e.g.   120=Hey Ho Captian Jack,

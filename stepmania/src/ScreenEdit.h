@@ -22,7 +22,7 @@
 #include "SnapDisplay.h"
 
 
-const int NUM_MENU_ITEMS = 25;
+const int NUM_MENU_ITEMS = 24;
 
 
 class ScreenEdit : public Screen

@@ -58,7 +58,7 @@ bool SnapDisplay::PrevSnapMode()
 
 bool SnapDisplay::NextSnapMode()
 {
-	if( m_NoteType == NUM_NOTE_TYPES-1 )
+	if( m_NoteType == NOTE_TYPE_16TH )	// this is the smallest snap we should allow
 		return false;
 	m_NoteType = NoteType(m_NoteType+1);
 
@@ -73,6 +73,7 @@ void SnapDisplay::SnapModeChanged()
 	
 	for( int i=0; i<2; i++ )
 	{
+		m_sprIndicators[i].StopTweening();
 		m_sprIndicators[i].BeginTweening( 0.3f );
 		m_sprIndicators[i].SetTweenDiffuse( color );
 	}

@@ -637,7 +637,7 @@ void Song::SaveToCacheFile()
 	SaveToSMFile( GetCacheFilePath(), true );
 }
 
-void Song::SaveToSongFile()
+void Song::Save()
 {
 	LOG->Trace( "Song::SaveToSongFile()" );
 
@@ -657,6 +657,7 @@ void Song::SaveToSongFile()
 	}
 
 	SaveToSMFile( GetSongFilePath(), false );
+	SaveToDWIFile();
 }
 
 
@@ -744,11 +745,9 @@ void Song::SaveToSMFile( CString sPath, bool bSavingCache )
 	fclose( fp );
 }
 
-void Song::SaveToSongFileAndDWI()
+void Song::SaveToDWIFile()
 {
 	LOG->Trace( "Song::SaveToSongFileAndDWI()" );
-
-	SaveToSongFile();
 
 	CString sPath = GetSongFilePath();
 	sPath.Replace( ".sm", ".dwi" );

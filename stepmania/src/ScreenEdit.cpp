@@ -115,8 +115,7 @@ const CString MENU_ITEM_TEXT[NUM_MENU_ITEMS] = {
 	"K:      Snap selection to nearest sixteenth note",
 	"L:      Snap selection to nearest triplet or sixteenth note",
 	"M:      Play sample music",
-	"S:      Save changes",
-	"W:      Save as DWI (lossy)",
+	"S:      Save changes as SM and DWI",
 	"Q:      Quit"
 };
 int MENU_ITEM_KEY[NUM_MENU_ITEMS] = {
@@ -143,7 +142,6 @@ int MENU_ITEM_KEY[NUM_MENU_ITEMS] = {
 	DIK_L,
 	DIK_M,
 	DIK_S,
-	DIK_W,
 	DIK_Q,
 };
 
@@ -417,10 +415,12 @@ void ScreenEdit::Update( float fDeltaTime )
 	CString sNoteType;
 	switch( m_SnapDisplay.GetSnapMode() )
 	{
-	case NOTE_TYPE_4TH:		sNoteType = "quarter notes";	break;
-	case NOTE_TYPE_8TH:		sNoteType = "eighth notes";		break;
-	case NOTE_TYPE_12TH:	sNoteType = "triplets";			break;
-	case NOTE_TYPE_16TH:	sNoteType = "sixteenth notes";	break;
+	case NOTE_TYPE_4TH:		sNoteType = "quarter notes";		break;
+	case NOTE_TYPE_8TH:		sNoteType = "eighth notes";			break;
+	case NOTE_TYPE_12TH:	sNoteType = "triplets";				break;
+	case NOTE_TYPE_16TH:	sNoteType = "sixteenth notes";		break;
+	case NOTE_TYPE_24TH:	sNoteType = "twentyforth notes";	break;
+	case NOTE_TYPE_32ND:	sNoteType = "thirtysecond notes";	break;
 	default:  ASSERT(0);
 	}
 
@@ -644,7 +644,6 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		SCREENMAN->SetNewScreen( "ScreenEditMenu" );
 		break;
 	case DIK_S:
-	case DIK_W:
 		{
 			// copy edit into current Notes
 //			Song* pSong = GAMESTATE->m_pCurSong;
@@ -666,19 +665,9 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 */
 			pNotes->SetNoteData( (NoteData*)&m_NoteFieldEdit );
-			switch( DeviceI.button )
-			{
-			case DIK_S:
-				GAMESTATE->m_pCurSong->SaveToSongFile();
-				SCREENMAN->SystemMessage( "Saved as SM." );
-				break;
-			case DIK_W:
-				GAMESTATE->m_pCurSong->SaveToSongFileAndDWI();
-				SCREENMAN->SystemMessage( "Saved as SM and DWI." );
-				break;
-			default:
-				ASSERT(0);
-			}
+			GAMESTATE->m_pCurSong->Save();
+			SCREENMAN->SystemMessage( "Saved as SM and DWI." );
+
 			SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","edit save") );
 		}
 		break;
@@ -1226,6 +1215,25 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 
 			GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetSnapMode()) );
 			break;
+		case DIK_F11:
+		case DIK_F12:
+			{
+				float fOffsetDelta;
+				switch( DeviceI.button )
+				{
+				case DIK_F11:	fOffsetDelta = -0.020f;		break;
+				case DIK_F12:	fOffsetDelta = +0.020f;		break;
+				default:	ASSERT(0);						return;
+				}
+				switch( type )
+				{
+				case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
+				case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
+				}
+
+				m_pSong->m_fBeat0OffsetInSeconds += fOffsetDelta;
+			}
+		break;
 		}
 	}
 

@@ -160,7 +160,7 @@ void NoteField::DrawPrimitives()
 	const int iFirstIndexToDraw  = BeatToNoteRow(fFirstBeatToDraw);
 	const int iLastIndexToDraw   = BeatToNoteRow(fLastBeatToDraw);
 
-	LOG->Trace( "Drawing elements %d through %d", iFirstIndexToDraw, iLastIndexToDraw );
+//	LOG->Trace( "Drawing elements %d through %d", iFirstIndexToDraw, iLastIndexToDraw );
 
 	if( GAMESTATE->m_bEditing )
 	{
