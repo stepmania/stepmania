@@ -69,7 +69,7 @@ PlayerAI.cpp PlayerAI.h PlayerNumber.cpp PlayerNumber.h PlayerOptions.cpp Player
 ScoreKeeper.h ScoreKeeperMAX2.cpp ScoreKeeperMAX2.h ScoreKeeperRave.cpp ScoreKeeperRave.h \
 Song.cpp song.h SongCacheIndex.cpp SongCacheIndex.h SongOptions.cpp SongOptions.h StageStats.cpp StageStats.h Steps.cpp Steps.h \
 Style.h StyleDef.cpp StyleDef.h StyleInput.h TimingData.cpp TimingData.h TitleSubstitution.cpp TitleSubstitution.h \
-CryptHelpers.cpp CryptHelpers.h LuaHelpers.cpp LuaHelpers.h LuaFunctions.h
+LuaHelpers.cpp LuaHelpers.h LuaFunctions.h
 
 FileTypes = IniFile.cpp IniFile.h MsdFile.cpp MsdFile.h XmlFile.cpp XmlFile.h
 
@@ -218,7 +218,9 @@ crypto51/algparam.cpp crypto51/asn.cpp crypto51/basecode.cpp crypto51/channels.c
 
 stepmania_SOURCES = $(Screens) $(DataStructures) $(FileTypes) $(StepMania) $(Arch) \
 					$(ActorsInGameplayAndMenus) $(ActorsInMenus) $(ActorsInGameplay) \
-					$(Rage) $(Actors) $(GlobalSingletons) $(cryptlib)
+					$(Rage) $(Actors) $(GlobalSingletons)
+# Disabled for a13
+#stepmania_SOURCES += CryptHelpers.cpp CryptHelpers.h $(cryptlib)
 
 stepmania_LDADD = \
 		  $(GL_LIBS) \
