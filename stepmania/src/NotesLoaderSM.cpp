@@ -435,7 +435,6 @@ bool SMLoader::LoadEdit( CString sEditFilePath, ProfileSlot slot )
 
 			Steps* pNewNotes = new Steps;
 			ASSERT( pNewNotes );
-			pSong->m_apNotes.push_back( pNewNotes );
 
 			if( iNumParams < 7 )
 			{
@@ -450,6 +449,15 @@ bool SMLoader::LoadEdit( CString sEditFilePath, ProfileSlot slot )
 			pNewNotes->SetLoadedFromProfile( slot );
 			pNewNotes->SetDifficulty( DIFFICULTY_EDIT );
 
+
+			if( pSong->IsEditAlreadyLoaded(pNewNotes) )
+			{
+				LOG->Warn( "The edit file '%s' is a duplicate of another edit that was already loaded.", sEditFilePath.c_str() );
+				SAFE_DELETE( pNewNotes );
+				return false;
+			}
+
+			pSong->m_apNotes.push_back( pNewNotes );
 			return true;	// Only allow one Steps per edit file!
 		}
 		else

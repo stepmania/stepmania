@@ -948,11 +948,6 @@ Steps* Song::GetClosestNotes( StepsType nt, Difficulty dc ) const
 	return pNotes;
 }
 
-void Song::GetEdits( vector<Steps*>& arrayAddTo, StepsType nt ) const
-{
-}
-
-
 /* Return whether the song is playable in the given style. */
 bool Song::SongCompleteForStyle( const StyleDef *st ) const
 {
@@ -1135,9 +1130,17 @@ bool Song::IsEasy( StepsType nt ) const
 
 bool Song::HasEdits( StepsType nt ) const
 {
-	vector<Steps*> vpNotes;
-	this->GetEdits( vpNotes, nt );
-	return vpNotes.size() > 0;
+	for( unsigned i=0; i<m_apNotes.size(); i++ )
+	{
+		Steps* pSteps = m_apNotes[i];
+		if( pSteps->m_StepsType == nt &&
+			pSteps->GetDifficulty() == DIFFICULTY_EDIT )
+		{
+			return true;
+		}
+	}
+	
+	return false;
 }
 
 Song::SelectionDisplay Song::GetDisplayed() const
@@ -1327,6 +1330,24 @@ int Song::GetNumStepsLoadedFromProfile( ProfileSlot slot ) const
 			iCount++;
 	}
 	return iCount;
+}
+
+bool Song::IsEditAlreadyLoaded( Steps* pSteps ) const
+{
+	ASSERT( pSteps->GetDifficulty() == DIFFICULTY_EDIT );
+
+	for( unsigned i=0; i<m_apNotes.size(); i++ )
+	{
+		Steps* pOther = m_apNotes[i];
+		if( pOther->GetDifficulty() == DIFFICULTY_EDIT &&
+			pOther->m_StepsType == pSteps->m_StepsType &&
+			pOther->GetHash() == pSteps->GetHash() )
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 bool Song::HasSignificantBpmChangesOrStops() const

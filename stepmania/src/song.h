@@ -191,7 +191,6 @@ public:
 	Steps* GetStepsByMeter( StepsType nt, int iMeterLow, int iMeterHigh ) const;
 	Steps* GetStepsByDescription( StepsType nt, CString sDescription ) const;
 	Steps* GetClosestNotes( StepsType nt, Difficulty dc ) const;
-	void GetEdits( vector<Steps*>& arrayAddTo, StepsType nt ) const;
 	bool IsEasy( StepsType nt ) const;
 	bool HasEdits( StepsType nt ) const;
 	SelectionDisplay GetDisplayed() const;
@@ -206,6 +205,7 @@ public:
 	void FreeAllLoadedFromProfiles();
 	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != PROFILE_SLOT_INVALID; }
 	int GetNumStepsLoadedFromProfile( ProfileSlot slot ) const;
+	bool IsEditAlreadyLoaded( Steps* pSteps ) const;
 
 private:
 	void AdjustDuplicateSteps(); // part of TidyUpData
