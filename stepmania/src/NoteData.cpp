@@ -481,7 +481,7 @@ int NoteData::GetNumRowsWithTapOrHoldHead( int iStartIndex, int iEndIndex ) cons
 	return iNumNotes;
 }
 
-int NoteData::RowNeedsHands( const int row ) const
+bool NoteData::RowNeedsAtLeastSimultaneousPresses( int iMinSimultaneousPresses, const int row ) const
 {
 	int iNumNotesThisIndex = 0;
 	for( int t=0; t<GetNumTracks(); t++ )
@@ -501,7 +501,7 @@ int NoteData::RowNeedsHands( const int row ) const
 	if( !iNumNotesThisIndex )
 		return false;
 
-	if( iNumNotesThisIndex < 3 )
+	if( iNumNotesThisIndex < iMinSimultaneousPresses )
 	{
 		/* We have at least one, but not enough.  Count holds.  Do count adjacent holds. */
 		for( int t=0; t<GetNumTracks(); ++t )
@@ -511,10 +511,10 @@ int NoteData::RowNeedsHands( const int row ) const
 		}
 	}
 
-	return iNumNotesThisIndex >= 3;
+	return iNumNotesThisIndex >= iMinSimultaneousPresses;
 }
 
-int NoteData::GetNumHands( int iStartIndex, int iEndIndex ) const
+int NoteData::GetNumRowsWithSimultaneousPresses( int iMinSimultaneousPresses, int iStartIndex, int iEndIndex ) const
 {
 	/* Count the number of times you have to use your hands.  This includes
 	 * three taps at the same time, a tap while two hold notes are being held,
@@ -524,7 +524,7 @@ int NoteData::GetNumHands( int iStartIndex, int iEndIndex ) const
 	int iNum = 0;
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
 	{
-		if( !RowNeedsHands(r) )
+		if( !RowNeedsAtLeastSimultaneousPresses(iMinSimultaneousPresses,r) )
 			continue;
 
 		iNum++;
@@ -533,7 +533,7 @@ int NoteData::GetNumHands( int iStartIndex, int iEndIndex ) const
 	return iNum;
 }
 
-int NoteData::GetNumN( int iMinTaps, int iStartIndex, int iEndIndex ) const
+int NoteData::GetNumRowsWithSimultaneousTaps( int iMinTaps, int iStartIndex, int iEndIndex ) const
 {
 	int iNum = 0;
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )

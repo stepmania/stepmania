@@ -519,7 +519,7 @@ void NoteDataUtil::GetRadarValues( const NoteData &in, float fSongSeconds, Radar
 		case RADAR_FREEZE:				out[rc] = GetFreezeRadarValue( in, fSongSeconds );	break;
 		case RADAR_CHAOS:				out[rc] = GetChaosRadarValue( in, fSongSeconds );	break;
 		case RADAR_NUM_TAPS_AND_HOLDS:	out[rc] = (float) in.GetNumRowsWithTapOrHoldHead();	break;
-		case RADAR_NUM_JUMPS:			out[rc] = (float) in.GetNumDoubles();				break;
+		case RADAR_NUM_JUMPS:			out[rc] = (float) in.GetNumJumps();					break;
 		case RADAR_NUM_HOLDS:			out[rc] = (float) in.GetNumHoldNotes();				break;
 		case RADAR_NUM_MINES:			out[rc] = (float) in.GetNumMines();					break;
 		case RADAR_NUM_HANDS:			out[rc] = (float) in.GetNumHands();					break;
@@ -569,7 +569,7 @@ float NoteDataUtil::GetAirRadarValue( const NoteData &in, float fSongSeconds )
 	if( !fSongSeconds )
 		return 0.0f;
 	// number of doubles
-	int iNumDoubles = in.GetNumDoubles();
+	int iNumDoubles = in.GetNumJumps();
 	float fReturn = iNumDoubles / fSongSeconds;
 	return min( fReturn, 1.0f );
 }

@@ -129,15 +129,23 @@ public:
 	float GetLastBeat() const { return NoteRowToBeat( GetLastRow() ); }
 	int GetNumTapNotes( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 	int GetNumMines( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
-	int GetNumHands( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 	int GetNumRowsWithTap( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 	int GetNumRowsWithTapOrHoldHead( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
-	int GetNumN( int iMinTaps, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
-	// should hands also count as a jump?
-	int GetNumDoubles( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const { return GetNumN( 2, iStartIndex, iEndIndex ); }
 	/* optimization: for the default of start to end, use the second (faster) */
 	int GetNumHoldNotes( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
-	int RowNeedsHands( int row ) const;
+
+	// Count rows that contain iMinTaps or more taps.
+	int GetNumRowsWithSimultaneousTaps( int iMinTaps, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
+	int GetNumJumps( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const { return GetNumRowsWithSimultaneousTaps(2,iStartIndex,iEndIndex); }
+
+	// This row needs at least iMinSimultaneousPresses either tapped or held.
+	bool RowNeedsAtLeastSimultaneousPresses( int iMinSimultaneousPresses, int row ) const;
+	bool RowNeedsHands( int row ) const { return RowNeedsAtLeastSimultaneousPresses(2,row); }
+
+	// Count rows that need iMinSimultaneousPresses either tapped or held.
+	int GetNumRowsWithSimultaneousPresses( int iMinSimultaneousPresses, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
+	int GetNumHands( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const { return GetNumRowsWithSimultaneousPresses(3,iStartIndex,iEndIndex); }
+	int GetNumQuads( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const { return GetNumRowsWithSimultaneousPresses(4,iStartIndex,iEndIndex); }
 
 	// Transformations
 	void LoadTransformed( const NoteData& original, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] );	// -1 for iOriginalTracksToTakeFrom means no track

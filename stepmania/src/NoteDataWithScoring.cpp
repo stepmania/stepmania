@@ -234,7 +234,7 @@ float GetActualVoltageRadarValue( const NoteData &in, float fSongSeconds, Player
 
 float GetActualAirRadarValue( const NoteData &in, float fSongSeconds, PlayerNumber pn )
 {
-	const int iTotalDoubles = in.GetNumDoubles();
+	const int iTotalDoubles = in.GetNumJumps();
 	if( iTotalDoubles == 0 )
 		return 1.0f;  // no jumps in song
 
