@@ -46,7 +46,7 @@ const CString COMMON_XSL	= "Common.xsl";
 #endif
 
 #define FOREACH_Node( Node, Var ) \
-	XNodes::const_iterator Var##Iter; \
+	vector<XNode*>::const_iterator Var##Iter; \
 	const XNode *Var = NULL; \
 	for( Var##Iter = Node->childs.begin(); \
 		(Var##Iter != Node->childs.end() && (Var = *Var##Iter) ),  Var##Iter != Node->childs.end(); \
@@ -231,7 +231,7 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 	float fTotalPercents = 0;
 	
 	// add steps high scores
-	for( std::map<SongID,HighScoresForASong>::const_iterator i = m_SongHighScores.begin();
+	for( map<SongID,HighScoresForASong>::const_iterator i = m_SongHighScores.begin();
 		i != m_SongHighScores.end();
 		++i )
 	{
@@ -251,7 +251,7 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 		CHECKPOINT_M( ssprintf("Profile::GetSongsActual: song %s", pSong->GetSongDir().c_str()) );
 		const HighScoresForASong &hsfas = i->second;
 		
-		for( std::map<StepsID,HighScoresForASteps>::const_iterator j = hsfas.m_StepsHighScores.begin();
+		for( map<StepsID,HighScoresForASteps>::const_iterator j = hsfas.m_StepsHighScores.begin();
 			j != hsfas.m_StepsHighScores.end();
 			++j )
 		{
@@ -318,7 +318,7 @@ float Profile::GetCoursesActual( StepsType st, CourseDifficulty cd ) const
 	float fTotalPercents = 0;
 	
 	// add course high scores
-	for( std::map<CourseID,HighScoresForACourse>::const_iterator i = m_CourseHighScores.begin();
+	for( map<CourseID,HighScoresForACourse>::const_iterator i = m_CourseHighScores.begin();
 		i != m_CourseHighScores.end();
 		i++ )
 	{
@@ -336,7 +336,7 @@ float Profile::GetCoursesActual( StepsType st, CourseDifficulty cd ) const
 
 		const HighScoresForACourse &hsfac = i->second;
 
-		for( std::map<TrailID,HighScoresForATrail>::const_iterator j = hsfac.m_TrailHighScores.begin();
+		for( map<TrailID,HighScoresForATrail>::const_iterator j = hsfac.m_TrailHighScores.begin();
 			j != hsfac.m_TrailHighScores.end();
 			++j )
 		{
@@ -390,7 +390,7 @@ int Profile::GetSongNumTimesPlayed( const SongID& songID ) const
 		return 0;
 
 	int iTotalNumTimesPlayed = 0;
-	for( std::map<StepsID,HighScoresForASteps>::const_iterator j = hsSong->m_StepsHighScores.begin();
+	for( map<StepsID,HighScoresForASteps>::const_iterator j = hsSong->m_StepsHighScores.begin();
 		j != hsSong->m_StepsHighScores.end();
 		j++ )
 	{
@@ -478,7 +478,7 @@ void Profile::GetGrades( const Song* pSong, StepsType st, int iCounts[NUM_GRADES
 
 	FOREACH_Grade(g)
 	{
-		std::map<StepsID,HighScoresForASteps>::const_iterator it;
+		map<StepsID,HighScoresForASteps>::const_iterator it;
 		for( it = hsSong->m_StepsHighScores.begin(); it != hsSong->m_StepsHighScores.end(); ++it )
 		{
 			const StepsID &id = it->first;
@@ -534,7 +534,7 @@ int Profile::GetCourseNumTimesPlayed( const CourseID &courseID ) const
 		return 0;
 
 	int iTotalNumTimesPlayed = 0;
-	for( std::map<TrailID,HighScoresForATrail>::const_iterator j = hsCourse->m_TrailHighScores.begin();
+	for( map<TrailID,HighScoresForATrail>::const_iterator j = hsCourse->m_TrailHighScores.begin();
 		j != hsCourse->m_TrailHighScores.end();
 		j++ )
 	{
@@ -1064,7 +1064,7 @@ XNode* Profile::SaveSongScoresCreateNode() const
 	XNode* pNode = new XNode;
 	pNode->name = "SongScores";
 
-	for( std::map<SongID,HighScoresForASong>::const_iterator i = m_SongHighScores.begin();
+	for( map<SongID,HighScoresForASong>::const_iterator i = m_SongHighScores.begin();
 		i != m_SongHighScores.end();
 		i++ )
 	{	
@@ -1077,7 +1077,7 @@ XNode* Profile::SaveSongScoresCreateNode() const
 
 		XNode* pSongNode = pNode->AppendChild( songID.CreateNode() );
 
-		for( std::map<StepsID,HighScoresForASteps>::const_iterator j = hsSong.m_StepsHighScores.begin();
+		for( map<StepsID,HighScoresForASteps>::const_iterator j = hsSong.m_StepsHighScores.begin();
 			j != hsSong.m_StepsHighScores.end();
 			j++ )
 		{	
@@ -1147,7 +1147,7 @@ XNode* Profile::SaveCourseScoresCreateNode() const
 	pNode->name = "CourseScores";
 
 	
-	for( std::map<CourseID,HighScoresForACourse>::const_iterator i = m_CourseHighScores.begin();
+	for( map<CourseID,HighScoresForACourse>::const_iterator i = m_CourseHighScores.begin();
 		i != m_CourseHighScores.end();
 		i++ )
 	{
@@ -1160,7 +1160,7 @@ XNode* Profile::SaveCourseScoresCreateNode() const
 
 		XNode* pCourseNode = pNode->AppendChild( courseID.CreateNode() );
 
-		for( std::map<TrailID,HighScoresForATrail>::const_iterator j = hsCourse.m_TrailHighScores.begin();
+		for( map<TrailID,HighScoresForATrail>::const_iterator j = hsCourse.m_TrailHighScores.begin();
 			j != hsCourse.m_TrailHighScores.end();
 			j++ )
 		{
@@ -1261,7 +1261,7 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pNode )
 
 	ASSERT( pNode->name == "CategoryScores" );
 
-	for( XNodes::const_iterator stepsType = pNode->childs.begin(); 
+	for( vector<XNode*>::const_iterator stepsType = pNode->childs.begin(); 
 		stepsType != pNode->childs.end(); 
 		stepsType++ )
 	{
@@ -1275,7 +1275,7 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pNode )
 		if( st == STEPS_TYPE_INVALID )
 			WARN_AND_CONTINUE_M( str );
 
-		for( XNodes::iterator radarCategory = (*stepsType)->childs.begin(); 
+		for( vector<XNode*>::iterator radarCategory = (*stepsType)->childs.begin(); 
 			radarCategory != (*stepsType)->childs.end(); 
 			radarCategory++ )
 		{
@@ -1442,7 +1442,7 @@ void Profile::LoadRecentSongScoresFromNode( const XNode* pNode )
 	CHECKPOINT;
 
 	ASSERT( pNode->name == "RecentSongScores" );
-	for( XNodes::const_iterator p = pNode->childs.begin(); 
+	for( vector<XNode*>::const_iterator p = pNode->childs.begin(); 
 		p != pNode->childs.end(); 
 		p++ )
 	{
@@ -1519,7 +1519,7 @@ void Profile::LoadRecentCourseScoresFromNode( const XNode* pNode )
 	CHECKPOINT;
 
 	ASSERT( pNode->name == "RecentCourseScores" );
-	for( XNodes::const_iterator p = pNode->childs.begin(); 
+	for( vector<XNode*>::const_iterator p = pNode->childs.begin(); 
 		p != pNode->childs.end(); 
 		p++ )
 	{
@@ -1566,7 +1566,7 @@ void Profile::AddCourseRecentScore( const Course* pCourse, const Trail* pTrail, 
 
 const Profile::HighScoresForASong *Profile::GetHighScoresForASong( const SongID& songID ) const
 {
-	std::map<SongID,HighScoresForASong>::const_iterator it;
+	map<SongID,HighScoresForASong>::const_iterator it;
 	it = m_SongHighScores.find( songID );
 	if( it == m_SongHighScores.end() )
 		return NULL;
@@ -1575,7 +1575,7 @@ const Profile::HighScoresForASong *Profile::GetHighScoresForASong( const SongID&
 
 const Profile::HighScoresForACourse *Profile::GetHighScoresForACourse( const CourseID& courseID ) const
 {
-	std::map<CourseID,HighScoresForACourse>::const_iterator it;
+	map<CourseID,HighScoresForACourse>::const_iterator it;
 	it = m_CourseHighScores.find( courseID );
 	if( it == m_CourseHighScores.end() )
 		return NULL;

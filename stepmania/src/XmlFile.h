@@ -24,9 +24,7 @@ struct DateTime;
 class RageFileBasic;
 
 struct XAttr;
-typedef std::vector<XAttr*> XAttrs;
 struct XNode;
-typedef std::vector<XNode*> XNodes;
 
 // Entity Encode/Decode Support
 struct XENTITY
@@ -36,7 +34,7 @@ struct XENTITY
 	int ref_len;					// entity reference length
 };
 
-struct XENTITYS : public std::vector<XENTITY>
+struct XENTITYS : public vector<XENTITY>
 {
 	XENTITY *GetEntity( int entity );
 	XENTITY *GetEntity( char* entity );	
@@ -140,16 +138,16 @@ struct XNode
 
 	// internal variables
 	XNode	*parent;		// parent node
-	XNodes	childs;		// child node
-	XAttrs	attrs;		// attributes
+	vector<XNode*>	childs;		// child node
+	vector<XAttr*>	attrs;		// attributes
 
 	// Load/Save XML
 	char*	Load( const char* pszXml, PARSEINFO *pi = &piDefault );
 	char*	LoadAttributes( const char* pszAttrs, PARSEINFO *pi = &piDefault );
 	bool GetXML( RageFileBasic &f, DISP_OPT *opt = &optDefault );
 
-	bool LoadFromFile( CString sFile, PARSEINFO *pi = &piDefault );
-	bool SaveToFile( CString sFile, DISP_OPT *opt = &optDefault );
+	bool LoadFromFile( const CString &sFile, PARSEINFO *pi = &piDefault );
+	bool SaveToFile( const CString &sFile, DISP_OPT *opt = &optDefault );
 	bool SaveToFile( RageFileBasic &f, DISP_OPT *opt = &optDefault );
 
 	// in own attribute list
@@ -162,7 +160,7 @@ struct XNode
 	bool GetAttrValue(const char* name,bool &out) const		{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
 	bool GetAttrValue(const char* name,unsigned &out) const	{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
 	bool GetAttrValue(const char* name,DateTime &out) const	{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
-	XAttrs	GetAttrs( const char* name ); 
+	vector<XAttr*>	GetAttrs( const char* name ); 
 
 	// in one level child nodes
 	const XNode *GetChild( const char* name ) const; 
@@ -174,8 +172,8 @@ struct XNode
 	bool GetChildValue(const char* name,bool &out) const	{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
 	bool GetChildValue(const char* name,unsigned &out) const{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
 	bool GetChildValue(const char* name,DateTime &out) const{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
-	XNodes	GetChilds( const char* name ); 
-	XNodes	GetChilds(); 
+	vector<XNode*>	GetChilds( const char* name ); 
+	vector<XNode*>	GetChilds(); 
 
 	XAttr *GetChildAttr( const char* name, const char* attrname );
 	const char* GetChildAttrValue( const char* name, const char* attrname );
@@ -183,7 +181,7 @@ struct XNode
 	// modify DOM 
 	int		GetChildCount();
 	XNode *GetChild( int i );
-	XNodes::iterator GetChildIterator( XNode *node );
+	vector<XNode*>::iterator GetChildIterator( XNode *node );
 	XNode *CreateNode( const char* name = NULL, const char* value = NULL );
 	XNode	*AppendChild( const char* name = NULL, const char* value = NULL );
 	XNode	*AppendChild( const char* name, float value );
@@ -196,7 +194,7 @@ struct XNode
 
 
 	XAttr *GetAttr( int i );
-	XAttrs::iterator GetAttrIterator( XAttr *node );
+	vector<XAttr*>::iterator GetAttrIterator( XAttr *node );
 	XAttr *CreateAttr( const char* anem = NULL, const char* value = NULL );
 	XAttr *AppendAttr( const char* name = NULL, const char* value = NULL );
 	XAttr *AppendAttr( const char* name, float value );
@@ -206,9 +204,6 @@ struct XNode
 	XAttr	*AppendAttr( XAttr *attr );
 	bool	RemoveAttr( XAttr *attr );
 	XAttr *DetachAttr( XAttr *attr );
-
-	// operator overloads
-	XNode* operator [] ( int i ) { return GetChild(i); }
 
 	XNode() { parent = NULL; }
 	~XNode();

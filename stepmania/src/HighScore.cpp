@@ -168,7 +168,7 @@ void HighScoreList::LoadFromNode( const XNode* pNode )
 	Init();
 
 	ASSERT( pNode->name == "HighScoreList" );
-	for( XNodes::const_iterator child = pNode->childs.begin();
+	for( vector<XNode*>::const_iterator child = pNode->childs.begin();
 		child != pNode->childs.end();
 		child++)
 	{
