@@ -248,7 +248,7 @@ static queue<soundInfoHdl> freeSounds;
 
 RageSound_QT::RageSound_QT()
 {
-#if 0
+#if 1
     RageException::ThrowNonfatal("Class not finished!");
 #endif
 
