@@ -632,7 +632,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		//
 		// Check for end of song
 		//
-		if( fSongBeat > GAMESTATE->m_pCurSong->m_fLastBeat+2  &&  !m_soundMusic.IsPlaying() )
+		if( fSongBeat > GAMESTATE->m_pCurSong->m_fLastBeat+1  &&  !m_soundMusic.IsPlaying() )
 		{
 			GAMESTATE->m_fSongBeat = 0;
 			m_soundMusic.Stop();
@@ -1237,7 +1237,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_sprCleared.BeginTweening(1.5f); // sleep
 		m_sprCleared.BeginTweening(0.7f);
 		m_sprCleared.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
-		SCREENMAN->SendMessageToTopScreen( SM_GoToStateAfterCleared, 3 );
+		SCREENMAN->SendMessageToTopScreen( SM_GoToStateAfterCleared, 4 );
 		break;
 
 	case SM_ShowTryExtraStage:
@@ -1253,10 +1253,10 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 			m_sprTryExtraStage.SetZoom( 4 );
 			m_sprTryExtraStage.BeginBlurredTweening( 0.8f, TWEEN_BIAS_END );
-			m_sprTryExtraStage.SetTweenZoom( 0.5f );			// zoom out
+			m_sprTryExtraStage.SetTweenZoom( 0.4f );			// zoom out
 			m_sprTryExtraStage.SetTweenDiffuse( colorStage );	// and fade in
-			m_sprTryExtraStage.BeginTweening( 0.3f );
-			m_sprTryExtraStage.SetTweenZoom( 1.1f );			// bounce
+			m_sprTryExtraStage.BeginTweening( 0.2f );
+			m_sprTryExtraStage.SetTweenZoom( 0.8f );			// bounce
 			m_sprTryExtraStage.SetTweenDiffuse( colorStage );	// and fade in
 			m_sprTryExtraStage.BeginTweening( 0.2f );
 			m_sprTryExtraStage.SetTweenZoom( 1.0f );			// come to rest
@@ -1264,7 +1264,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 			colorStage.a = 0;
 
-			m_sprTryExtraStage.BeginTweening( 3 );	// sleep
+			m_sprTryExtraStage.BeginTweening( 2 );	// sleep
+			m_sprTryExtraStage.BeginTweening( 1 );	// fade out
 			m_sprTryExtraStage.SetTweenDiffuse( colorStage );
 			SCREENMAN->SendMessageToTopScreen( SM_GoToStateAfterCleared, 5 );
 		}

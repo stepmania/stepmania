@@ -835,11 +835,10 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		break;
 	case DIK_P:
 		{
-			if( m_NoteFieldEdit.m_fBeginMarker == -1  ||  m_NoteFieldEdit.m_fEndMarker == -1 )
-			{
-				m_soundInvalid.Play();
-				break;
-			}
+			if( m_NoteFieldEdit.m_fBeginMarker == -1 )
+				m_NoteFieldEdit.m_fBeginMarker = m_pSong->m_fFirstBeat;
+			if( m_NoteFieldEdit.m_fEndMarker == -1 )
+				m_NoteFieldEdit.m_fEndMarker = m_pSong->m_fLastBeat;
 
 			m_EditMode = MODE_PLAYING;
 
@@ -857,11 +856,11 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		break;
 	case DIK_R:
 		{
-			if( m_NoteFieldEdit.m_fBeginMarker == -1  ||  m_NoteFieldEdit.m_fEndMarker == -1 )
-			{
-				m_soundInvalid.Play();
-				break;
-			}
+			if( m_NoteFieldEdit.m_fBeginMarker == -1 )
+				m_NoteFieldEdit.m_fBeginMarker = m_pSong->m_fFirstBeat;
+			if( m_NoteFieldEdit.m_fEndMarker == -1 )
+				m_NoteFieldEdit.m_fEndMarker = m_pSong->m_fLastBeat;
+
 
 			// initialize m_NoteFieldRecord
 			m_NoteFieldRecord.ClearAll();
