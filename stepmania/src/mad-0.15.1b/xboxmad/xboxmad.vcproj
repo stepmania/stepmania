@@ -20,6 +20,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				OptimizeForProcessor="2"
+				AdditionalIncludeDirectories="."
 				PreprocessorDefinitions="_DEBUG;_XBOX;_LIB;FPM_DEFAULT;HAVE_CONFIG_H;ASO_ZEROCHECK;WIN32;DEBUG"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
