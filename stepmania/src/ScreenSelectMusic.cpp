@@ -271,6 +271,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	this->AddChild( &m_sprBalloon );
 
 	m_sprCourseHasMods.LoadAndSetName( m_sName, "CourseHasMods" );
+	SET_XY( m_sprCourseHasMods );
 	this->AddChild( m_sprCourseHasMods );
 
 	m_sprOptionsMessage.SetName( "OptionsMessage" );
@@ -492,16 +493,14 @@ void ScreenSelectMusic::TweenOnScreen()
 	ON_COMMAND( m_MusicWheelUnder );
 	m_MusicWheel.TweenOnScreen();
 	ON_COMMAND( m_sprBalloon );
+	ON_COMMAND( m_sprCourseHasMods );
 	ON_COMMAND( m_MusicWheel );
 	ON_COMMAND( m_Artist );
 	ON_COMMAND( m_MachineRank );
 	ON_COMMAND( m_Overlay );
 
-	FOREACH_PlayerNumber( p )
+	FOREACH_HumanPlayer( p )
 	{		
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;	// skip
-
 		ON_COMMAND( m_sprCharacterIcon[p] );
 		ON_COMMAND( m_OptionIconRow[p] );
 		ON_COMMAND( m_sprHighScoreFrame[p] );
@@ -554,11 +553,8 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_MachineRank );
 	OFF_COMMAND( m_Overlay );
 
-	FOREACH_PlayerNumber( p )
+	FOREACH_HumanPlayer( p )
 	{		
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;	// skip
-
 		OFF_COMMAND(m_sprCharacterIcon[p]);
 		OFF_COMMAND( m_OptionIconRow[p] );
 		OFF_COMMAND( m_sprHighScoreFrame[p] );
@@ -1398,7 +1394,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			COMMAND( m_sprBalloon, "Hide" );
 			
 			m_sprCourseHasMods->StopTweening();
-			OFF_COMMAND( m_sprCourseHasMods );
+			COMMAND( m_sprCourseHasMods, "Hide" );
 		}
 		break;
 	case TYPE_SONG:
@@ -1469,7 +1465,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			}
 
 			m_sprCourseHasMods->StopTweening();
-			OFF_COMMAND( m_sprCourseHasMods );
+			COMMAND( m_sprCourseHasMods, "Hide" );
 
 			m_Artists.push_back( pSong->GetDisplayArtist() );
 			m_AltArtists.push_back( pSong->GetTranslitArtist() );
@@ -1566,12 +1562,12 @@ void ScreenSelectMusic::AfterMusicChange()
 		if( pCourse->HasMods() )
 		{
 			m_sprCourseHasMods->StopTweening();
-			SET_XY_AND_ON_COMMAND( m_sprCourseHasMods );
+			COMMAND( m_sprCourseHasMods, "Show" );
 		}
 		else
 		{
 			m_sprCourseHasMods->StopTweening();
-			OFF_COMMAND( m_sprCourseHasMods );
+			COMMAND( m_sprCourseHasMods, "Hide" );
 		}
 
 		break;
