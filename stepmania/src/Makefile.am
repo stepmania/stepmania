@@ -82,8 +82,8 @@ Sprite.cpp Sprite.h ActorScroller.cpp ActorScroller.h ActorUtil.cpp ActorUtil.h 
 
 ActorsInMenus = \
 Banner.cpp Banner.h BannerCache.cpp BannerCache.h BPMDisplay.cpp BPMDisplay.h CourseContentsList.cpp \
-CourseContentsList.h CourseEntryDisplay.cpp CourseEntryDisplay.h \
-DifficultyIcon.cpp DifficultyIcon.h DifficultyRating.cpp DifficultyRating.h EditMenu.cpp EditMenu.h \
+CourseContentsList.h CourseEntryDisplay.cpp CourseEntryDisplay.h DifficultyIcon.cpp DifficultyIcon.h \
+DifficultyRating.cpp DifficultyRating.h EditCoursesMenu.cpp EditCoursesMenu.h EditMenu.cpp EditMenu.h \
 FadingBanner.cpp FadingBanner.h DifficultyMeter.cpp DifficultyMeter.h GradeDisplay.cpp GradeDisplay.h GrooveRadar.cpp \
 GrooveRadar.h GroupList.cpp GroupList.h JukeboxMenu.cpp JukeboxMenu.h MenuElements.cpp MenuElements.h \
 MenuTimer.cpp MenuTimer.h MusicBannerWheel.cpp MusicBannerWheel.h MusicList.cpp MusicList.h MusicSortDisplay.cpp \
@@ -96,7 +96,7 @@ MeterDisplay.cpp MeterDisplay.h
 ActorsInGameplay = \
 ArrowEffects.cpp ArrowEffects.h Background.cpp Background.h BGAnimation.cpp BGAnimation.h BGAnimationLayer.cpp \
 BGAnimationLayer.h Combo.cpp Combo.h GhostArrow.cpp GhostArrow.h \
-GhostArrowBright.cpp GhostArrowBright.h GhostArrowRow.cpp GhostArrowRow.h GrayArrow.cpp GrayArrow.h \
+GhostArrowRow.cpp GhostArrowRow.h GrayArrow.cpp GrayArrow.h \
 GrayArrowRow.cpp GrayArrowRow.h HoldGhostArrow.cpp HoldGhostArrow.h HoldJudgment.cpp HoldJudgment.h \
 Judgment.cpp Judgment.h LifeMeter.h LifeMeterBar.cpp LifeMeterBar.h LifeMeterBattery.cpp \
 LifeMeterBattery.h CombinedLifeMeterTug.h CombinedLifeMeterTug.cpp \
@@ -110,8 +110,8 @@ ProTimingDisplay.cpp ProTimingDisplay.h
 Screens = \
 Screen.cpp Screen.h ScreenAlbums.cpp ScreenAlbums.h ScreenAppearanceOptions.cpp ScreenAppearanceOptions.h \
 ScreenAttract.cpp ScreenAttract.h ScreenCaution.cpp ScreenCaution.h ScreenCompany.h \
-ScreenDemonstration.cpp ScreenDemonstration.h ScreenEdit.cpp ScreenEdit.h ScreenEditMenu.cpp \
-ScreenEditMenu.h ScreenEvaluation.cpp ScreenEvaluation.h ScreenEz2SelectMusic.cpp ScreenEz2SelectMusic.h \
+ScreenDemonstration.cpp ScreenDemonstration.h ScreenEdit.cpp ScreenEdit.h ScreenEditCoursesMenu.cpp ScreenEditCoursesMenu.h \
+ScreenEditMenu.cpp ScreenEditMenu.h ScreenEvaluation.cpp ScreenEvaluation.h ScreenEz2SelectMusic.cpp ScreenEz2SelectMusic.h \
 ScreenEz2SelectPlayer.cpp ScreenEz2SelectPlayer.h ScreenGameOver.cpp ScreenGameOver.h ScreenGameplay.cpp \
 ScreenGameplay.h ScreenGameplayOptions.cpp ScreenGameplayOptions.h ScreenGraphicOptions.cpp \
 ScreenGraphicOptions.h ScreenHowToPlay.cpp ScreenHowToPlay.h ScreenInputOptions.cpp ScreenInputOptions.h ScreenInstructions.cpp \
