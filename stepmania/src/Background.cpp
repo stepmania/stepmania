@@ -63,7 +63,7 @@ Background::Background()
 
 	m_BackgroundMode = MODE_STATIC_BG;
 
-	m_BGADanger.LoadFromAniDir( THEME->GetPathTo("BGAnimations","danger") );
+	m_BGADanger.LoadFromAniDir( THEME->GetPathTo("BGAnimations","gameplay danger") );
 
 	m_quadBGBrightness.StretchTo( RECT_BACKGROUND );
 	m_quadBGBrightness.SetDiffuse( D3DXCOLOR(0,0,0,1-PREFSMAN->m_fBGBrightness) );

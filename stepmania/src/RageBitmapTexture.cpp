@@ -112,7 +112,7 @@ void RageBitmapTexture::Create(
 
 	
 	/////////////////////
-	// Figure out whether the texture can fit into texture memory unscaled
+	// Get info about the bitmap
 	/////////////////////
 	D3DXIMAGE_INFO ddii;
 	if( FAILED( hr = D3DXGetImageInfoFromFile(m_sFilePath,&ddii) ) )

@@ -81,10 +81,15 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath, bool bForceReload, int iMi
 
 	CString sTextureFile;
 	ini.GetValue( "Sprite", "Texture", sTextureFile );
-	if( sTextureFile == "" )
+	if( sTextureFile == ""  )
 		throw RageException( "Error reading value 'Texture' from %s.", m_sSpritePath );
 
 	CString sTexturePath = sFontDir + sTextureFile;	// save the path of the new texture
+
+	if( !DoesFileExist(sTexturePath) )
+		throw RageException( "The sprite file '%s' points to a texture '%s' which doesn't exist.", m_sSpritePath, sTexturePath );
+
+
 
 	// Load the texture
 	if( !LoadTexture( sTexturePath ) )
