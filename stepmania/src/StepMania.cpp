@@ -1446,8 +1446,8 @@ static void HandleInputEvents(float fDeltaTime)
 		// Filter out all NumLock repeat messages
 		/* XXX: Is this still needed?  If so, it should probably be done in the
 		 * affected input driver. */
-		if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == KEY_NUMLOCK && type != IET_FIRST_PRESS )
-			continue;	// skip
+//		if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == KEY_NUMLOCK && type != IET_FIRST_PRESS )
+//			continue;	// skip
 
 		if( HandleGlobalInputs(DeviceI, type, GameI, MenuI, StyleI ) )
 			continue;	// skip
