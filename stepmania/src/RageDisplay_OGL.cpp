@@ -909,7 +909,7 @@ void RageDisplay_OGL::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, 
 {
 	ASSERT( iNumVerts >= 2 );
 
-	if( !GetVideoModeParams().bAntiAliasing )
+	if( !GetVideoModeParams().bSmoothLines )
 	{
 		RageDisplay::DrawLineStrip(v, iNumVerts, LineWidth );
 		return;

@@ -153,7 +153,7 @@ public:
 	int				m_iLastSeenMemory;
 #endif
 	CString			m_sVideoRenderers;
-	bool			m_bAntiAliasing;
+	bool			m_bSmoothLines;
 	CString			m_sSoundDrivers;
 	int			m_iSoundWriteAhead;
 	CString			m_sMovieDrivers;

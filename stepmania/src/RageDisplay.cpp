@@ -131,7 +131,7 @@ void RageDisplay::ResetStats()
 
 void RageDisplay::StatsAddVerts( int iNumVertsRendered ) { g_iVertsRenderedSinceLastCheck += iNumVertsRendered; }
 
-/* Draw a line as a quad.  GL_LINES with antialiasing off can draw line
+/* Draw a line as a quad.  GL_LINES with SmoothLines off can draw line
  * ends at odd angles--they're forced to axis-alignment regardless of the
  * angle of the line. */
 void RageDisplay::DrawPolyLine(const RageSpriteVertex &p1, const RageSpriteVertex &p2, float LineWidth )

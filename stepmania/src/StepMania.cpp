@@ -142,7 +142,7 @@ static RageDisplay::VideoModeParams GetCurVideoModeParams()
 			PREFSMAN->m_iRefreshRate,
 			PREFSMAN->m_bVsync,
 			PREFSMAN->m_bInterlaced,
-			PREFSMAN->m_bAntiAliasing,
+			PREFSMAN->m_bSmoothLines,
 			THEME->GetMetric("Common","WindowTitle"),
 			THEME->GetPathToG("Common window icon")
 #ifdef _XBOX
@@ -169,7 +169,7 @@ static void StoreActualGraphicOptions( bool initial )
 		PREFSMAN->m_iTextureColorDepth, 
 		PREFSMAN->m_iRefreshRate,
 		PREFSMAN->m_bVsync ? "Vsync" : "NoVsync",
-		PREFSMAN->m_bAntiAliasing? "AA" : "NoAA" );
+		PREFSMAN->m_bSmoothLines? "AA" : "NoAA" );
 	if( initial )
 		LOG->Info( "%s", log.c_str() );
 	else
@@ -392,7 +392,7 @@ struct VideoCardDefaults
 	int iTextureColor;
 	int iMovieColor;
 	int iTextureSize;
-	bool bAntiAliasing;
+	bool bSmoothLines;
 } const g_VideoCardDefaults[] = 
 {
 	{
@@ -582,7 +582,7 @@ static void CheckVideoDefaultSettings()
 		PREFSMAN->m_iTextureColorDepth = pDefaults->iTextureColor;
 		PREFSMAN->m_iMovieColorDepth = pDefaults->iMovieColor;
 		PREFSMAN->m_iMaxTextureResolution = pDefaults->iTextureSize;
-		PREFSMAN->m_bAntiAliasing = pDefaults->bAntiAliasing;
+		PREFSMAN->m_bSmoothLines = pDefaults->bSmoothLines;
 
 		// Update last seen video card
 		PREFSMAN->m_sLastSeenVideoDriver = GetVideoDriverName();

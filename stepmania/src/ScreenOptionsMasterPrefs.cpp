@@ -349,7 +349,7 @@ MOVE( WaitForVsync,			PREFSMAN->m_bVsync );
 MOVE( ShowStats,			PREFSMAN->m_bShowStats );
 MOVE( ShowBanners,			PREFSMAN->m_bShowBanners );
 MOVE( KeepTexturesInMemory,	PREFSMAN->m_bDelayedTextureDelete );
-MOVE( AntiAliasing,			PREFSMAN->m_bAntiAliasing );
+MOVE( SmoothLines,			PREFSMAN->m_bSmoothLines );
 
 static void DisplayResolution( int &sel, bool ToSel, const CStringArray &choices )
 {
@@ -476,8 +476,8 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Texture\nResolution",	TextureResolution,	"256","512","1024","2048" ),
 	ConfOption( "Texture\nColor",		TextureColor,		"16BIT","32BIT" ),
 	ConfOption( "Movie\nColor",			MovieColor,			"16BIT","32BIT" ),
-	ConfOption( "Keep Textures\nIn Memory", KeepTexturesInMemory,	"NO","YES" ),
-	ConfOption( "AntiAliasing",			AntiAliasing,		"OFF","YES" ),
+	ConfOption( "Keep Textures\nIn Memory", KeepTexturesInMemory,	"NO","OFF" ),
+	ConfOption( "SmoothLines",			SmoothLines,		"OFF","YES" ),
 	ConfOption( "Refresh\nRate",		RefreshRate,		"DEFAULT","60","70","72","75","80","85","90","100","120","150" ),
 	ConfOption( "Wait For\nVsync",		WaitForVsync,		"NO", "YES" ),
 	ConfOption( "Show\nStats",			ShowStats,			"OFF","ON" ),
@@ -506,7 +506,7 @@ int ConfOption::GetEffects() const
 		{ DisplayColor,			OPT_APPLY_GRAPHICS },
 		{ TextureResolution,	OPT_APPLY_GRAPHICS },
 		{ KeepTexturesInMemory,	OPT_APPLY_GRAPHICS },
-		{ AntiAliasing,			OPT_APPLY_GRAPHICS },
+		{ SmoothLines,			OPT_APPLY_GRAPHICS },
 		{ RefreshRate,			OPT_APPLY_GRAPHICS },
 		{ WaitForVsync,			OPT_APPLY_GRAPHICS },
 		{ GameSel,				OPT_RESET_GAME },

@@ -103,7 +103,7 @@ PrefsManager::PrefsManager()
 	m_iCoinsPerCredit = 1;
 	m_Premium = NO_PREMIUM;
 	m_iBoostAppPriority = -1;
-	m_bAntiAliasing = false;
+	m_bSmoothLines = false;
 	m_ShowSongOptions = YES;
 	m_bDancePointsForOni = false;
 	m_bPercentageScoring = false;
@@ -356,7 +356,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 #endif
 	ini.GetValue( "Options", "CoursesToShowRanking",			m_sCoursesToShowRanking );
 	ini.GetValue( "Options", "GetRankingName",					(int&)m_iGetRankingName);
-	ini.GetValue( "Options", "AntiAliasing",					m_bAntiAliasing );
+	ini.GetValue( "Options", "SmoothLines",					m_bSmoothLines );
 	ini.GetValue( "Options", "GlobalOffsetSeconds",				m_fGlobalOffsetSeconds );
 	ini.GetValue( "Options", "ShowBeginnerHelper",				m_bShowBeginnerHelper );
 	ini.GetValue( "Options", "Language",						m_sLanguage );
@@ -506,7 +506,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 #endif
 	ini.SetValue( "Options", "CoursesToShowRanking",			m_sCoursesToShowRanking );
 	ini.SetValue( "Options", "GetRankingName",					m_iGetRankingName);
-	ini.SetValue( "Options", "AntiAliasing",					m_bAntiAliasing );
+	ini.SetValue( "Options", "SmoothLines",					m_bSmoothLines );
 	ini.SetValue( "Options", "GlobalOffsetSeconds",				m_fGlobalOffsetSeconds );
 
 	ini.SetValue( "Options", "TenFooterInRed",					m_bTenFooterInRed );
