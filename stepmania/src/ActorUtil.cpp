@@ -86,7 +86,7 @@ Actor* MakeActor( CString sPath )
 		return pModel;
 	}
 
-	ASSERT(0);
-	return NULL;
+	RageException::Throw("File \"%s\" has unknown type, \"%s\"",
+		sPath.c_str(), sExt.c_str() );
 }
 
