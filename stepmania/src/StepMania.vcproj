@@ -1678,6 +1678,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageDisplay_D3D.h">
 			</File>
 			<File
+				RelativePath="RageDisplay_Null.cpp">
+			</File>
+			<File
+				RelativePath="RageDisplay_Null.h">
+			</File>
+			<File
 				RelativePath="RageDisplay_OGL.cpp">
 			</File>
 			<File
