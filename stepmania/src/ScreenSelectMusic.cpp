@@ -301,9 +301,8 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );	// invisible
 	//this->AddChild( &m_sprOptionsMessage );	// we have to draw this manually over the top of transitions
 
-	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsPlayerEnabled( p ))
+		FOREACH_PlayerNumber( p )
 		{
 			m_sprNonPresence[p].SetName( ssprintf("NonPresenceP%d",p+1) );
 			m_sprNonPresence[p].Load( THEME->GetPathToG(ssprintf("ScreenSelectMusic nonpresence p%d",p+1)) );
@@ -378,24 +377,21 @@ void ScreenSelectMusic::TweenSongPartsOnScreen( bool Initial )
 //			m_DifficultyList.Show();
 	}
 
-	int p;
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{		
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;	// skip
-
-		ON_COMMAND( m_sprDifficultyFrame[p] );
-		ON_COMMAND( m_sprMeterFrame[p] );
-		ON_COMMAND( m_DifficultyIcon[p] );
-		ON_COMMAND( m_AutoGenIcon[p] );
+	{
+		FOREACH_HumanPlayer( p )
+		{
+			ON_COMMAND( m_sprDifficultyFrame[p] );
+			ON_COMMAND( m_sprMeterFrame[p] );
+			ON_COMMAND( m_DifficultyIcon[p] );
+			ON_COMMAND( m_AutoGenIcon[p] );
+		}
 	}
 
-	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( GAMESTATE->IsPlayerEnabled(p) )
-			continue;	// skip
-
-		ON_COMMAND( m_sprNonPresence[p] );
+		FOREACH_PlayerNumber( p )
+		{
+			ON_COMMAND( m_sprNonPresence[p] );
+		}
 	}
 }
 
@@ -414,24 +410,21 @@ void ScreenSelectMusic::TweenSongPartsOffScreen( bool Final )
 			m_DifficultyList.Hide();
 	}
 
-	int p;
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{		
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;	// skip
-
-		OFF_COMMAND( m_sprDifficultyFrame[p] );
-		OFF_COMMAND( m_sprMeterFrame[p] );
-		OFF_COMMAND( m_DifficultyIcon[p] );
-		OFF_COMMAND( m_AutoGenIcon[p] );
+	{
+		FOREACH_HumanPlayer( p )
+		{
+			OFF_COMMAND( m_sprDifficultyFrame[p] );
+			OFF_COMMAND( m_sprMeterFrame[p] );
+			OFF_COMMAND( m_DifficultyIcon[p] );
+			OFF_COMMAND( m_AutoGenIcon[p] );
+		}
 	}
 
-	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( GAMESTATE->IsPlayerEnabled( p ))
-			continue;	// skip
-
-		OFF_COMMAND( m_sprNonPresence[p] );
+		FOREACH_PlayerNumber( p )
+		{
+			OFF_COMMAND( m_sprNonPresence[p] );
+		}
 	}
 }
 
