@@ -43,10 +43,11 @@ public:
 	bool BeingPressed( DeviceInput di, bool Prev = false);
 	bool WasBeingPressed( DeviceInput di );
 	bool IsBeingPressed( DeviceInput di );
+	float GetSecsHeld( DeviceInput di );
 	
 	void GetInputEvents( InputEventArray &array, float fDeltaTime );
 
-	float m_fTimeHeld[NUM_INPUT_DEVICES][NUM_DEVICE_BUTTONS];
+	float m_fSecsHeld[NUM_INPUT_DEVICES][NUM_DEVICE_BUTTONS];
 };
 
 

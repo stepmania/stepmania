@@ -29,7 +29,7 @@ public:
 	bool PrevSnapMode();
 	bool NextSnapMode();
 
-	NoteType GetSnapMode() { return m_NoteType; };
+	NoteType GetNoteType() { return m_NoteType; };
 
 protected:
 	int m_iNumCols;

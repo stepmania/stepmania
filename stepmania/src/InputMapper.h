@@ -52,10 +52,13 @@ public:
 	void GameToMenu( GameInput GameI, MenuInput &MenuI );
 	void MenuToGame( MenuInput MenuI, GameInput GameIout[4] );
 
+	float GetSecsHeld( GameInput GameI );
+	float GetSecsHeld( MenuInput MenuI );
+	float GetSecsHeld( StyleInput StyleI );
+
 	bool IsButtonDown( GameInput GameI );
 	bool IsButtonDown( MenuInput MenuI );
 	bool IsButtonDown( StyleInput StyleI );
-
 
 protected:
 	// all the DeviceInputs that map to a GameInput

@@ -333,7 +333,7 @@ void Background::LoadFromSong( Song* pSong )
 					index = 1;	// force the first random background to play first
 				else
 					index = 1 + rand()%(m_BGAnimations.GetSize()-1);
-				m_aBGSegments.Add( BGSegment(f,index,bFade || f==fFirstBeat) );
+				m_aBGSegments.Add( BGSegment(f,index,bFade) );
 			}
 
 			// change BG every BPM change

@@ -227,13 +227,15 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	else
 		DISPLAY->SetColorTextureMultDiffuse();
 	DISPLAY->SetAlphaTextureMultDiffuse();
+	DISPLAY->EnableTextureWrapping();
 	DISPLAY->SetTexture( m_sprHoldParts.GetTexture() );
 
 	//
 	// Draw the tail
 	//
 	float fY;
-	for( fY=max(fYTailTop,fYHead); fY<fYTailBottom; fY+=fYStep )	// don't draw the part of the tail that is before the middle of the head
+	// HACK:  +0.05 below to try and get rid of ugly border at top of tail
+	for( fY=max(fYTailTop-0.05f,fYHead); fY<fYTailBottom; fY+=fYStep )	// don't draw the part of the tail that is before the middle of the head
 	{
 		const float fYTop			= fY;
 		const float fYBottom		= fY+min(fYStep, fYTailBottom-fY);
@@ -277,7 +279,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	//
 	// Draw the body
 	//
-	for( fY=fYBodyTop; fY<=fYBodyBottom; fY+=fYStep )	// top to bottom
+	for( fY=fYBodyTop; fY<=fYBodyBottom+1; fY+=fYStep )	// top to bottom
 	{
 		const float fYTop			= fY;
 		const float fYBottom		= min( fY+fYStep, fYTailTop+1 );
@@ -333,8 +335,8 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 			const float fXBottomRight	= fXBottom + fFrameWidth/2;
 			const float fTopDistFromHeadTop		= fYTop - fYHeadTop;
 			const float fBottomDistFromHeadTop	= fYBottom - fYHeadTop;
-			const float fTexCoordTop	= SCALE( fTopDistFromHeadTop,    0, fFrameHeight, 0.0f, 0.5f );
-			const float fTexCoordBottom = SCALE( fBottomDistFromHeadTop, 0, fFrameHeight, 0.0f, 0.5f );
+			const float fTexCoordTop	= SCALE( fTopDistFromHeadTop,    0, fFrameHeight, 0.0f, 0.499f );
+			const float fTexCoordBottom = SCALE( fBottomDistFromHeadTop, 0, fFrameHeight, 0.0f, 0.499f );
 			ASSERT( fBottomDistFromHeadTop-0.0001 <= fFrameHeight );
 			const float fTexCoordLeft	= bActive ? 0.25f : 0.00f;
 			const float fTexCoordRight	= bActive ? 0.50f : 0.25f;
@@ -378,7 +380,9 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 			const D3DXCOLOR colorDiffuse= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlpha);
 			const D3DXCOLOR colorGlow	= D3DXCOLOR(1,1,1,fGlow);
 
-			m_sprHoldParts.SetState( bActive?1:0 );
+//			m_sprHoldParts.SetState( bActive?1:0 );
+			// HACK:  the border around the edge of on this sprite is super-obvious.  
+			m_sprHoldParts.SetCustomTextureRect( bActive ? FRECT(0.251f,0.002f,0.499f,0.498f) : FRECT(0.001f,0.002f,0.249f,0.498f) );
 			m_sprHoldParts.SetXY( fX, fY );
 			if( bDrawGlowOnly )
 			{

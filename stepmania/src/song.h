@@ -177,6 +177,13 @@ public:
 		return m_BackgroundChanges[i].m_sBGName;
 	};
 	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut ) const;
+	float GetBeatFromElapsedTime( float fElapsedTime ) const	// shortcut for places that care only about the beat
+	{
+		float fBeat, fThrowAway;
+		bool bThrowAway;
+		GetBeatAndBPSFromElapsedTime( fElapsedTime, fBeat, fThrowAway, bThrowAway );
+		return fBeat;
+	}
 	float GetElapsedTimeFromBeat( float fBeat ) const;
 	
 	

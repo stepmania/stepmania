@@ -266,10 +266,8 @@ bool InputMapper::IsButtonDown( GameInput GameI )
 		DeviceInput DeviceI;
 
 		if( GameToDevice( GameI, i, DeviceI ) )
-		{
 			if( INPUTFILTER->IsBeingPressed( DeviceI ) )
 				return true;
-		}
 	}
 
 	return false;
@@ -286,10 +284,45 @@ bool InputMapper::IsButtonDown( MenuInput MenuI )
 	return false;
 }
 
-
 bool InputMapper::IsButtonDown( StyleInput StyleI )
 {
 	GameInput GameI;
 	StyleToGame( StyleI, GameI );
 	return IsButtonDown( GameI );
+}
+
+
+float InputMapper::GetSecsHeld( GameInput GameI )
+{
+	float fMaxSecsHeld = 0;
+
+	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
+	{
+		DeviceInput DeviceI;
+
+		if( GameToDevice( GameI, i, DeviceI ) )
+			fMaxSecsHeld = max( fMaxSecsHeld, INPUTFILTER->GetSecsHeld(DeviceI) );
+	}
+
+	return fMaxSecsHeld;
+}
+
+float InputMapper::GetSecsHeld( MenuInput MenuI )
+{
+	float fMaxSecsHeld = 0;
+
+	GameInput GameI[4];
+	MenuToGame( MenuI, GameI );
+	for( int i=0; i<4; i++ )
+		if( GameI[i].IsValid() )
+			fMaxSecsHeld = max( fMaxSecsHeld, GetSecsHeld(GameI[i]) );
+
+	return fMaxSecsHeld;
+}
+
+float InputMapper::GetSecsHeld( StyleInput StyleI )
+{
+	GameInput GameI;
+	StyleToGame( StyleI, GameI );
+	return GetSecsHeld( GameI );
 }

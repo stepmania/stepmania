@@ -380,8 +380,9 @@ HRESULT RageDisplay::BeginFrame()
 
 
 	// Don't tile texture coords.  This creates ugly wrapping artifacts on textures that have to be rescaled.
-    //m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ADDRESSU, D3DTADDRESS_BORDER );
-    //m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ADDRESSV, D3DTADDRESS_BORDER );
+    m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ADDRESSU, D3DTADDRESS_BORDER );
+    m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ADDRESSV, D3DTADDRESS_BORDER );
+    m_pd3dDevice->SetTextureStageState( 0, D3DTSS_BORDERCOLOR, D3DCOLOR_ARGB(0,0,0,0) );
 
 
 	m_pd3dDevice->SetVertexShader( D3DFVF_RAGEVERTEX );
@@ -783,4 +784,28 @@ void RageDisplay::DisableZBuffer()
 
 	m_pd3dDevice->SetRenderState( D3DRS_ZENABLE,      FALSE );
 	m_pd3dDevice->SetRenderState( D3DRS_ZWRITEENABLE, FALSE );
+}
+void RageDisplay::EnableTextureWrapping()
+{
+	DWORD dw0, dw1;
+	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_ADDRESSU, &dw0 );
+	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_ADDRESSV, &dw1 );
+
+	if( dw0!=D3DTADDRESS_WRAP || dw1!=D3DTADDRESS_WRAP )
+		FlushQueue();
+
+    m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP );
+    m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP );
+}
+void RageDisplay::DisableTextureWrapping()
+{
+	DWORD dw0, dw1;
+	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_ADDRESSU, &dw0 );
+	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_ADDRESSV, &dw1 );
+
+	if( dw0!=D3DTADDRESS_BORDER || dw1!=D3DTADDRESS_BORDER )
+		FlushQueue();
+
+    m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ADDRESSU, D3DTADDRESS_BORDER );
+    m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ADDRESSV, D3DTADDRESS_BORDER );
 }

@@ -905,7 +905,7 @@ void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTra
 	for( int r=0; r<=iLastRow; r++ )
 	{
 		// copy notes in this measure
-		for( int t=0; t<=pOriginal->m_iNumTracks; t++ )
+		for( int t=0; t<pOriginal->m_iNumTracks; t++ )
 		{
 			int iOldTrack = t;
 			int iNewTrack = (iOldTrack + iCurTrackOffset) % iNewNumTracks;

@@ -101,6 +101,7 @@ const ScreenMessage SM_GoToSelectMusic		=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToSelectCourse		=	ScreenMessage(SM_User+2);
 const ScreenMessage SM_GoToFinalEvaluation	=	ScreenMessage(SM_User+3);
 const ScreenMessage SM_GoToMusicScroll		=	ScreenMessage(SM_User+4);
+const ScreenMessage SM_PlayCheer			=	ScreenMessage(SM_User+5);
 
 
 ScreenEvaluation::ScreenEvaluation( bool bSummary )
@@ -592,11 +593,11 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		case RM_ARCADE_SUMMARY:
 			switch( max_grade )
 			{
-			case GRADE_E:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final e") );		break;
-			case GRADE_D:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final d") );		break;
-			case GRADE_C:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final c") );		break;
-			case GRADE_B:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final b") );		break;
-			case GRADE_A:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final a") );		break;
+			case GRADE_E:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final e") );	break;
+			case GRADE_D:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final d") );	break;
+			case GRADE_C:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final c") );	break;
+			case GRADE_B:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final b") );	break;
+			case GRADE_A:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final a") );	break;
 			case GRADE_AA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final aa") );	break;
 			case GRADE_AAA:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation final aaa") );	break;
 			case GRADE_NO_DATA:
@@ -607,6 +608,14 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		default:
 			ASSERT(0);
 		}
+	}
+
+	switch( max_grade )
+	{
+	case GRADE_AA:
+	case GRADE_AAA:	
+		this->SendScreenMessage( SM_PlayCheer, 3 );	
+		break;
 	}
 
 	m_Menu.TweenOnScreenFromBlack( SM_None );
@@ -816,6 +825,9 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToFinalEvaluation:
 		SCREENMAN->SetNewScreen( "ScreenFinalEvaluation" );
+		break;
+	case SM_PlayCheer:
+		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("evaluation cheer") );
 		break;
 	}
 }

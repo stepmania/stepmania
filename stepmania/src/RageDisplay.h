@@ -159,6 +159,8 @@ public:
 	void SetBlendModeAdd();
 	void EnableZBuffer();
 	void DisableZBuffer();
+	void EnableTextureWrapping();
+	void DisableTextureWrapping();
 };
 
 

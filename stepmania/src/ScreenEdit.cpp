@@ -20,9 +20,12 @@
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
 #include "GameState.h"
-#include "InputFilter.h"
+#include "InputMapper.h"
 
 #include <utility>
+
+
+const float RECORD_HOLD_THRESHOLD = 0.3f;
 
 //
 // Defines specific to GameScreenTitleMenu
@@ -366,6 +369,34 @@ void ScreenEdit::Update( float fDeltaTime )
 	GAMESTATE->m_bFreeze = bFreeze;
 
 
+	if( m_EditMode == MODE_RECORDING  )	
+	{
+		// add or extend holds
+
+		for( int t=0; t<GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer; t++ )	// for each track
+		{
+			StyleInput StyleI( PLAYER_1, t );
+			float fSecsHeld = INPUTMAPPER->GetSecsHeld( StyleI );
+
+			if( fSecsHeld > RECORD_HOLD_THRESHOLD )
+			{
+				// add or extend hold
+				const float fHoldStartSeconds = m_soundMusic.GetPositionSeconds() - fSecsHeld;
+
+				float fStartBeat = m_pSong->GetBeatFromElapsedTime( fHoldStartSeconds );
+				float fEndBeat = GAMESTATE->m_fSongBeat;
+
+				// Round hold start and end to the nearest snap interval
+				fStartBeat = froundf( fStartBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
+				fEndBeat = froundf( fEndBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
+
+				// create a new hold note
+				HoldNote newHN = { t, fStartBeat, fEndBeat };
+				m_NoteFieldRecord.AddHoldNote( newHN );
+			}
+		}
+	}
+
 	if( m_EditMode == MODE_RECORDING  ||  m_EditMode == MODE_PLAYING )
 	{
 		GAMESTATE->m_fSongBeat = fSongBeat;
@@ -450,14 +481,14 @@ void ScreenEdit::Update( float fDeltaTime )
 
 
 	CString sNoteType;
-	switch( m_SnapDisplay.GetSnapMode() )
+	switch( m_SnapDisplay.GetNoteType() )
 	{
-	case NOTE_TYPE_4TH:		sNoteType = "quarter notes";		break;
-	case NOTE_TYPE_8TH:		sNoteType = "eighth notes";			break;
-	case NOTE_TYPE_12TH:	sNoteType = "triplets";				break;
-	case NOTE_TYPE_16TH:	sNoteType = "sixteenth notes";		break;
-	case NOTE_TYPE_24TH:	sNoteType = "twentyforth notes";	break;
-	case NOTE_TYPE_32ND:	sNoteType = "thirtysecond notes";	break;
+	case NOTE_TYPE_4TH:		sNoteType = "4th notes";	break;
+	case NOTE_TYPE_8TH:		sNoteType = "8th notes";	break;
+	case NOTE_TYPE_12TH:	sNoteType = "12th notes";	break;
+	case NOTE_TYPE_16TH:	sNoteType = "16th notes";	break;
+	case NOTE_TYPE_24TH:	sNoteType = "24th notes";	break;
+	case NOTE_TYPE_32ND:	sNoteType = "32nd notes";	break;
 	default:  ASSERT(0);
 	}
 
@@ -738,7 +769,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			{
 			case DIK_UP:
 			case DIK_DOWN:
-				fBeatsToMove = NoteTypeToBeat( m_SnapDisplay.GetSnapMode() );
+				fBeatsToMove = NoteTypeToBeat( m_SnapDisplay.GetNoteType() );
 				if( DeviceI.button == DIK_UP )	
 					fBeatsToMove *= -1;
 			break;
@@ -799,7 +830,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 			GAMESTATE->m_fSongBeat += fBeatsToMove;
 			GAMESTATE->m_fSongBeat = clamp( GAMESTATE->m_fSongBeat, 0, MAX_BEATS-1 );
-			GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetSnapMode()) );
+			GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 			m_soundChangeLine.Play();
 		}
 		break;
@@ -1158,53 +1189,39 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	if(type == IET_RELEASE) return; // don't care
-	if( DeviceI.device == DEVICE_KEYBOARD )
+	if( DeviceI.device == DEVICE_KEYBOARD  &&  DeviceI.button == DIK_ESCAPE )
 	{
-		switch( DeviceI.button )
+		TransitionFromRecordToEdit();
+		return;
+	}	
+
+	if( StyleI.player != PLAYER_1 )
+		return;		// ignore
+
+	const int iCol = StyleI.col;
+
+	switch( type )
+	{
+	case IET_FIRST_PRESS:
 		{
-		case DIK_ESCAPE:
-			TransitionFromRecordToEdit();
-			return;
-		}
-	}
-	switch( StyleI.player )
-	{
-		case PLAYER_1:
-			int iCol;
-			iCol = StyleI.col;
-		
-			int iNoteIndex;
-			iNoteIndex = BeatToNoteRow( GAMESTATE->m_fSongBeat );
-			if(iNoteIndex < 0) 
+			// Add a tap
+
+			float fBeat = GAMESTATE->m_fSongBeat;
+			fBeat = froundf( fBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
+			
+			const int iRow = BeatToNoteRow( fBeat );
+			if( iRow < 0 )
 				break;
 
-			if( type == IET_FIRST_PRESS )
-			{
-				m_NoteFieldRecord.m_TapNotes[iCol][iNoteIndex] = '1';
-				m_NoteFieldRecord.SnapToNearestNoteType( NOTE_TYPE_12TH, NOTE_TYPE_16TH, max(0,GAMESTATE->m_fSongBeat-1), GAMESTATE->m_fSongBeat+1);
-				m_GrayArrowRowRecord.Step( iCol );
-			}
-			else
-			{
-				const float fHoldEndSeconds = m_soundMusic.GetPositionSeconds();
-				const float fHoldStartSeconds = m_soundMusic.GetPositionSeconds() - TIME_BEFORE_SLOW_REPEATS * m_soundMusic.GetPlaybackRate() * 1.2f;	// 1.2 is a fudge.  This doesn't compensate enough for the repeat delay and leaves a tap note near the head of the hold.
-
-				float fStartBeat, fEndBeat, fThrowAway;
-				bool bFreeze;
-				m_pSong->GetBeatAndBPSFromElapsedTime( fHoldStartSeconds, fStartBeat, fThrowAway, bFreeze );
-				m_pSong->GetBeatAndBPSFromElapsedTime( fHoldEndSeconds, fEndBeat, fThrowAway, bFreeze );
-
-				// create a new hold note
-				HoldNote newHN;
-				newHN.m_iTrack = iCol;
-				newHN.m_fStartBeat = fStartBeat;
-				newHN.m_fEndBeat = fEndBeat;
-
-				m_NoteFieldRecord.AddHoldNote( newHN );
-				m_NoteFieldRecord.SnapToNearestNoteType( NOTE_TYPE_12TH, NOTE_TYPE_16TH, max(0,GAMESTATE->m_fSongBeat-2), GAMESTATE->m_fSongBeat+2);
-			}
-			break;
+			m_NoteFieldRecord.m_TapNotes[iCol][iRow] = '1';
+			m_GrayArrowRowRecord.Step( iCol );
+		}
+		break;
+	case IET_SLOW_REPEAT:
+	case IET_FAST_REPEAT:
+	case IET_RELEASE:
+		// don't add or extend holds here
+		break;
 	}
 }
 
@@ -1375,7 +1392,7 @@ void ScreenEdit::TransitionToEdit()
 	m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
 
 	/* Make sure we're snapped. */
-	GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetSnapMode()) );
+	GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 
 	/* Playing and recording have lead-ins, which may start before beat 0;
 	 * make sure we don't stay there if we escaped out early. */
@@ -1415,7 +1432,7 @@ void ScreenEdit::OnSnapModeChange()
 {
 	m_soundChangeSnap.Play();
 			
-	NoteType nt = m_SnapDisplay.GetSnapMode();
+	NoteType nt = m_SnapDisplay.GetNoteType();
 	int iStepIndex = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 	int iElementsPerNoteType = BeatToNoteRow( NoteTypeToBeat(nt) );
 	int iStepIndexHangover = iStepIndex % iElementsPerNoteType;

@@ -183,6 +183,18 @@ ScreenGameplay::ScreenGameplay()
 	m_sprMiddleFrame.SetXY( MIDDLE_FRAME_X, MIDDLE_FRAME_Y );
 
 
+	// LifeFrame goes below LifeMeter
+	CString sLifeFrameName;
+	if( bExtra )
+		sLifeFrameName = "gameplay extra life frame";
+	else if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY )
+		sLifeFrameName = "gameplay oni life frame";
+	else 
+		sLifeFrameName = "gameplay life frame";
+	m_sprLifeFrame.Load( THEME->GetPathTo("Graphics",sLifeFrameName) );
+	m_sprLifeFrame.SetXY( LIFE_FRAME_X, LIFE_FRAME_Y(bExtra) );
+	this->AddChild( &m_sprLifeFrame );
+
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		switch( GAMESTATE->m_SongOptions.m_LifeType )
@@ -201,18 +213,6 @@ ScreenGameplay::ScreenGameplay()
 		m_pLifeMeter[p]->SetXY( LIFE_X(p), LIFE_Y(p,bExtra) );
 		this->AddChild( m_pLifeMeter[p] );		
 	}
-
-	// LifeFrame goes above LifeMeter
-	CString sLifeFrameName;
-	if( bExtra )
-		sLifeFrameName = "gameplay extra life frame";
-	else if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY )
-		sLifeFrameName = "gameplay oni life frame";
-	else 
-		sLifeFrameName = "gameplay life frame";
-	m_sprLifeFrame.Load( THEME->GetPathTo("Graphics",sLifeFrameName) );
-	m_sprLifeFrame.SetXY( LIFE_FRAME_X, LIFE_FRAME_Y(bExtra) );
-	this->AddChild( &m_sprLifeFrame );
 
 
 	m_textStageNumber.LoadFromFont( THEME->GetPathTo("Fonts","gameplay stage") );

@@ -23,7 +23,7 @@ InputFilter::InputFilter()
 	for( int i=0; i<NUM_INPUT_DEVICES; i++ )
 	{
 		for( int j=0; j<NUM_DEVICE_BUTTONS; j++ )
-			m_fTimeHeld[i][j] = 0;
+			m_fSecsHeld[i][j] = 0;
 	}
 }
 
@@ -51,6 +51,11 @@ bool InputFilter::IsBeingPressed( DeviceInput di )
 	return BeingPressed(di, false);
 }
 
+float InputFilter::GetSecsHeld( DeviceInput di )
+{
+	return m_fSecsHeld[di.device][di.button];
+}
+
 void InputFilter::GetInputEvents( InputEventArray &array, float fDeltaTime )
 {
 	INPUTMAN->Update();
@@ -67,9 +72,9 @@ void InputFilter::GetInputEvents( InputEventArray &array, float fDeltaTime )
 			{
 				if( IsBeingPressed(di) )
 				{
-					const float fOldHoldTime = m_fTimeHeld[d][b];
-					m_fTimeHeld[d][b] += fDeltaTime;
-					const float fNewHoldTime = m_fTimeHeld[d][b];
+					const float fOldHoldTime = m_fSecsHeld[d][b];
+					m_fSecsHeld[d][b] += fDeltaTime;
+					const float fNewHoldTime = m_fSecsHeld[d][b];
 
 					float fTimeBetweenRepeats;
 					InputEventType iet;
@@ -90,7 +95,7 @@ void InputFilter::GetInputEvents( InputEventArray &array, float fDeltaTime )
 					}
 				}
 				else {	// !IsBeingPressed(di)
-					m_fTimeHeld[d][b] = 0;
+					m_fSecsHeld[d][b] = 0;
 					array.Add( InputEvent(di,IET_RELEASE) );
 				}
 			}

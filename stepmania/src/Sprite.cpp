@@ -194,12 +194,13 @@ void Sprite::DrawPrimitives()
 		::Sleep( PREFSMAN->m_iMovieDecodeMS );	// let the movie decode a frame
 
 
-	// offset so that pixels are aligned to texels
-	if( PREFSMAN->m_iDisplayResolution == 320 )
-		DISPLAY->TranslateLocal( -1, -1, 0 );
-	else
-		DISPLAY->TranslateLocal( -0.5f, -0.5f, 0 );
-
+	// Offset so that pixels are aligned to texels
+	// Offset by -0.5, -0.5 if 640x480
+	// Offset by -1.0, -1.0 if 320x240
+	DISPLAY->TranslateLocal( 
+		-0.5f*SCREEN_WIDTH/(float)PREFSMAN->m_iDisplayResolution, 
+		-0.5f*SCREEN_WIDTH/(float)PREFSMAN->GetDisplayHeight(), 
+		0 );
 	
 	// use m_temp_* variables to draw the object
 	FRECT quadVerticies;
@@ -235,6 +236,8 @@ void Sprite::DrawPrimitives()
 		v[1].t = D3DXVECTOR2( m_CustomTexCoords[2],	m_CustomTexCoords[3] );	// top left
 		v[2].t = D3DXVECTOR2( m_CustomTexCoords[4],	m_CustomTexCoords[5] );	// bottom right
 		v[3].t = D3DXVECTOR2( m_CustomTexCoords[6],	m_CustomTexCoords[7] );	// top right
+
+		DISPLAY->EnableTextureWrapping();
 	} 
 	else 
 	{
@@ -245,6 +248,11 @@ void Sprite::DrawPrimitives()
 		v[1].t = D3DXVECTOR2( pTexCoordRect->left,	pTexCoordRect->top );		// top left
 		v[2].t = D3DXVECTOR2( pTexCoordRect->right,	pTexCoordRect->bottom );	// bottom right
 		v[3].t = D3DXVECTOR2( pTexCoordRect->right,	pTexCoordRect->top );		// top right
+
+		// if the texture has more than one frame, we're going to get border mess from the 
+		// neighboring frame, so don't bother turning wrapping off.
+		if( m_pTexture->GetNumFrames() == 1 )	
+			DISPLAY->DisableTextureWrapping();
 	}
 
 

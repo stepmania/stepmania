@@ -112,6 +112,7 @@ public:
 	void Turn( PlayerOptions::TurnType tt );
 	void MakeLittle();
 
+	void SnapToNearestNoteType( NoteType nt, float fBeginBeat, float fEndBeat ) { SnapToNearestNoteType( nt, (NoteType)-1, fBeginBeat, fEndBeat ); }
 	void SnapToNearestNoteType( NoteType nt1, NoteType nt2, float fBeginBeat, float fEndBeat );
 
 	NoteType GetSmallestNoteTypeForMeasure( int iMeasureIndex );
