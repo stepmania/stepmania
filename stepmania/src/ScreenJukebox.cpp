@@ -215,7 +215,7 @@ void ScreenJukebox::Input( const DeviceInput& DeviceI, const InputEventType type
 		}
 	}
 
-	ScreenAttract::AttractInput( DeviceI, type, GameI, MenuI, StyleI, m_Out.IsTransitioning() );
+	ScreenAttract::AttractInput( DeviceI, type, GameI, MenuI, StyleI, m_Out.IsTransitioning(), m_sName );
 }
 
 void ScreenJukebox::HandleScreenMessage( const ScreenMessage SM )

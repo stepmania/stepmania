@@ -14,7 +14,7 @@ public:
 	virtual ~ScreenAttract();
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	static void AttractInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, bool bTransitioning );
+	static void AttractInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, bool bTransitioning, CString sScreenName );
 	virtual void Update( float fDelta );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 

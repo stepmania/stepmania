@@ -17,7 +17,7 @@
 #include "BGAnimation.h"
 
 #define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
-#define START_SCREEN			THEME->GetMetric ("ScreenAttract","StartScreen")
+#define START_SCREEN(sScreenName)	THEME->GetMetric (sScreenName,"StartScreen")
 
 
 REGISTER_SCREEN_CLASS( ScreenAttract );
@@ -49,10 +49,10 @@ void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type
 {
 //	LOG->Trace( "ScreenAttract::Input()" );
 
-	AttractInput( DeviceI, type, GameI, MenuI, StyleI, m_In.IsTransitioning() || m_Out.IsTransitioning() );
+	AttractInput( DeviceI, type, GameI, MenuI, StyleI, m_In.IsTransitioning() || m_Out.IsTransitioning(), m_sName );
 }
 
-void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, bool bTransitioning )
+void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, bool bTransitioning, CString sScreenName )
 {
 	if(type != IET_FIRST_PRESS) 
 		return; // don't care
@@ -82,7 +82,7 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 				SCREENMAN->SendMessageToTopScreen( SM_StopMusic );
 				usleep( (int)(JOIN_PAUSE_SECONDS*1000*1000) );	// do a little pause, like the arcade does
 				LOG->Trace("ScreenAttract::AttractInput: go to START_SCREEN" );
-				SCREENMAN->SetNewScreen( START_SCREEN );
+				SCREENMAN->SetNewScreen( START_SCREEN(sScreenName) );
 				break;
 			default:
 				ASSERT(0);
