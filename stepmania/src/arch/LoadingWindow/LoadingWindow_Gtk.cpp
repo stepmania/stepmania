@@ -18,13 +18,13 @@ void CreateGtkLoadingWindow() {
   vbox = gtk_vbox_new(FALSE,0);
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_container_add(GTK_CONTAINER(window),vbox);
-  gtk_box_pack_start(GTK_BOX(vbox),loadimage,FALSE,FALSE,10);
-  gtk_box_pack_start(GTK_BOX(vbox),label,TRUE,TRUE,20);
+  gtk_box_pack_start(GTK_BOX(vbox),loadimage,FALSE,FALSE,0);
+  gtk_box_pack_end(GTK_BOX(vbox),label,TRUE,TRUE,0);
   gtk_widget_show(loadimage);
   gtk_widget_show(label);
   gtk_widget_show(vbox);
   gtk_widget_show(window);
-  gtk_main();
+  gtk_main_iteration_do(FALSE);
 }
 
 void DestroyGtkLoadingWindow() {
@@ -34,4 +34,5 @@ void DestroyGtkLoadingWindow() {
 void SetGtkLoadingWindowText(const char *s) {
   gtk_label_set_text(GTK_LABEL(label),s);
   gtk_widget_show(label);
+  gtk_main_iteration_do(FALSE);
 }
