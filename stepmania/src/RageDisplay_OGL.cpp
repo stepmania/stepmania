@@ -672,9 +672,6 @@ void SetupExtensions()
 	if( g_b4BitPalettesWork ) // don't bother if the last one failed
 		CheckPalettedTextures( true );
 	CheckReversePackedPixels();
-
-	// Checks for known bad drivers
-	CString sRenderer = (const char*)glGetString(GL_RENDERER);
 }
 
 void DumpOpenGLDebugInfo()
