@@ -22,7 +22,7 @@ void ArchHooks_Win32::Log(CString str, bool important)
 	CrashLog(str);
 }
 
-void ArchHooks_Win32::PreDisplayInit()
+void ArchHooks_Win32::DumpDebugInfo()
 {
 	/* This is a good time to do the debug search: before we actually
 	 * start OpenGL (in case something goes wrong). */
