@@ -47,6 +47,7 @@
 #include "InputMapper.h"
 #include "InputQueue.h"
 #include "SongCacheIndex.h"
+#include "BannerCache.h"
 
 /* This is also a global class; we own it. */
 ArchHooks *HOOKS = NULL;
@@ -435,6 +436,7 @@ int main(int argc, char* argv[])
 	INPUTMAPPER	= new InputMapper;
 	INPUTQUEUE	= new InputQueue;
 	SONGINDEX	= new SongCacheIndex;
+	BANNERCACHE = new BannerCache;
 	/* depends on SONGINDEX: */
 	SONGMAN		= new SongManager( loading_window );		// this takes a long time to load
 	delete loading_window;		// destroy this before init'ing Display
@@ -500,6 +502,7 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( INPUTMAPPER );
 	SAFE_DELETE( INPUTFILTER );
 	SAFE_DELETE( SONGMAN );
+	SAFE_DELETE( BANNERCACHE );
 	SAFE_DELETE( SONGINDEX );
 	SAFE_DELETE( PREFSMAN );
 	SAFE_DELETE( GAMESTATE );
