@@ -369,8 +369,8 @@ int EzSockets::pReadData(char* data) {
   if((state == skCONNECTED)||(state == skLISTENING))
     return recv(sock,data,1024,0);
   else {
-	fromAddr_len = sizeof(SOCKADDR_IN);
-	return recvfrom(sock,data,1024,0,(SOCKADDR*)&fromAddr,(int*)&fromAddr_len);
+	fromAddr_len = sizeof(sockaddr_in);
+	return recvfrom(sock,data,1024,0,(sockaddr*)&fromAddr,(socklen_t*)&fromAddr_len);
   }
 }
 

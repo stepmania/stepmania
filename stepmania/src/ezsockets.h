@@ -97,7 +97,7 @@ public:
 		skCONNECTED, 
 		skERROR 
 	};
-    SOCKADDR_IN fromAddr;
+    struct sockaddr_in fromAddr;
 	unsigned long fromAddr_len;
 
 	//The following possibly should be private.
