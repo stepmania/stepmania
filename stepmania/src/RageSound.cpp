@@ -756,12 +756,14 @@ float RageSound::GetPositionSeconds( bool *approximate, RageTimer *Timestamp ) c
 
 bool RageSound::SetPositionSeconds( float fSeconds )
 {
+	ASSERT( Sample );
 	return SetPositionFrames( int(fSeconds * samplerate()) );
 }
 
 /* This is always the desired sample rate of the current driver. */
 int RageSound::GetSampleRate() const
 {
+	ASSERT( Sample );
 	return Sample->GetSampleRate();
 }
 
