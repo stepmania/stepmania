@@ -17,7 +17,7 @@ LowLevelWindow *MakeLowLevelWindow();
 void MakeInputHandlers(vector<InputHandler *> &Add);
 RageSoundDriver *MakeRageSoundDriver(CString drivers);
 
-/* These definitions are in here, instead of i	n arch_*.h, because they
+/* These definitions are in here, instead of in arch_*.h, because they
  * need to be available to other modules.  It'd be overkill to create separate
  * "config" and "driver" headers for each arch. */
 
@@ -34,6 +34,8 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers);
 #else
 	#define DEFAULT_SOUND_DRIVER_LIST "Null"
 #endif
+
+#define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,DShow,Null"
 
 /* Choose your renderers. */
 #if defined(_WINDOWS)
