@@ -269,7 +269,7 @@ void PaneDisplay::SetContent( PaneContents c )
 		const CString metric = ITEM_COLOR(g_Contents[c].name, p);
 		CStringArray spec;
 		split( metric, ";", spec );
-	LOG->Trace("%i/%i, '%s', %i, max '%s'", p, num, metric.c_str(), spec.size(), spec[0].c_str() );
+	LOG->Trace("%i/%i, '%s', %zu, max '%s'", p, num, metric.c_str(), spec.size(), spec[0].c_str() );
 		if( spec.size() < 2 )
 			RageException::Throw( "Metric '%s' malformed", metric.c_str() );
 		const float n = (float) atof( spec[0] );

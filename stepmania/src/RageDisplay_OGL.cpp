@@ -1042,7 +1042,7 @@ bool RageDisplay_OGL::IsZWriteEnabled() const
 bool RageDisplay_OGL::IsZTestEnabled() const
 {
 	GLenum a;
-	glGetIntegerv( GL_DEPTH_FUNC, (int*)&a );
+	glGetIntegerv( GL_DEPTH_FUNC, (GLint*)&a );
 	return a != GL_ALWAYS;
 }
 
