@@ -858,48 +858,40 @@ bool regex(CString pattern, CString str)
 /* UTF-8 decoding code from glib. */
 char *utf8_find_next_char (const char *p, const char *end)
 {
-  if (*p) {
-      if (end)
-        for (++p; p < end && (*p & 0xc0) == 0x80; ++p)
-          ;
-      else
-        for (++p; (*p & 0xc0) == 0x80; ++p)
-          ;
-  }
-  return (p == end) ? NULL : (char *)p;
+	if (end)
+		for (++p; p < end && (*p & 0xc0) == 0x80; ++p)
+			;
+	else if (*p) {
+		for (++p; (*p & 0xc0) == 0x80; ++p)
+			;
+	}
+	return (p == end) ? NULL : (char *)p;
 }
 
-#define UTF8_GET                             \
+int masks[7] = { 0, 0x7f, 0x1f, 0x0f, 0x07, 0x03, 0x01 };
+
+int utf8_get_char_len (const char *pp)
+{
+  const unsigned char *p = (const unsigned char *) pp;
+  if (*p < 128)					 return 1;
+  else if ((*p & 0xe0) == 0xc0)  return 2;
+  else if ((*p & 0xf0) == 0xe0)  return 3;
+  else if ((*p & 0xf8) == 0xf0)  return 4;
+  else if ((*p & 0xfc) == 0xf8)  return 5;
+  else if ((*p & 0xfe) == 0xfc)  return 6;
+  return -1;
+}
 
 longchar utf8_get_char (const char *p)
 {
-  int i, mask = 0, len;
-  longchar result;
-  unsigned char c = (unsigned char) *p;
+  int len = utf8_get_char_len(p);
+  if(len == -1)
+	  return 0xFFFF;
 
-  if (c < 128) {
-      len = 1;
-      mask = 0x7f;
-  } else if ((c & 0xe0) == 0xc0) {
-      len = 2;
-      mask = 0x1f;
-  } else if ((c & 0xf0) == 0xe0) {
-      len = 3;
-      mask = 0x0f;
-  } else if ((c & 0xf8) == 0xf0) {
-      len = 4;
-      mask = 0x07;
-  } else if ((c & 0xfc) == 0xf8) {
-      len = 5;
-      mask = 0x03;
-  } else if ((c & 0xfe) == 0xfc) {
-      len = 6;
-      mask = 0x01;
-  } else
-    return (longchar)-1;
+  int mask = masks[len];
 
-  result = longchar(p[0] & mask);
-  for (i = 1; i < len; ++i) {
+  longchar result = longchar(p[0] & mask);
+  for (int i = 1; i < len; ++i) {
       if ((p[i] & 0xc0) != 0x80)
           return (longchar) -1;
 
@@ -916,12 +908,10 @@ lstring CStringToLstring(const CString &str)
 
 	lstring ret;
 
-	while(ptr)
+	while(ptr && ptr != end)
 	{
 		longchar c = utf8_get_char (ptr);
-		if(c != longchar(-1))
-			ret.push_back(c);
-
+		ret.push_back(c);
 		ptr = utf8_find_next_char (ptr, end);
 	}
 
