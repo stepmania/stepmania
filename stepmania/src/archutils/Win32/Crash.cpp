@@ -187,8 +187,6 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 		return EXCEPTION_CONTINUE_EXECUTION;
 	}
 
-	RageThread::HaltAllThreads( false );
-
 	static int InHere = 0;
 	if( InHere > 0 )
 	{
@@ -210,6 +208,8 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 	}
 	++InHere;
 	/////////////////////////
+
+	RageThread::HaltAllThreads( false );
 
 	hFontMono = CreateFont(
 			10,				// nHeight
