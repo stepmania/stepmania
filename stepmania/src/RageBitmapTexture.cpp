@@ -132,9 +132,7 @@ apply_color_key:
 	}
 
 	{
-		/* This should eventually obsolete 8alphaonly, 0alpha and 1alpha,
-		 * and remove the need to special case background loads.  Do this
-		 * after setting the color key for paletted images; it'll also return
+		/* Do this after setting the color key for paletted images; it'll also return
 		 * TRAIT_NO_TRANSPARENCY if the color key is never used. */
 		int traits = FindSurfaceTraits(img);
 		if(traits & TRAIT_NO_TRANSPARENCY) 
@@ -144,13 +142,18 @@ apply_color_key:
 	}
 
 	// look in the file name for a format hints
-	CString HintString = GetID().filename;
+	CString HintString = GetID().filename + actualID.AdditionalTextureHints;
 	HintString.MakeLower();
 
 	if( HintString.Find("32bpp") != -1 )			actualID.iColorDepth = 32;
 	else if( HintString.Find("16bpp") != -1 )		actualID.iColorDepth = 16;
 	if( HintString.Find("dither") != -1 )			actualID.bDither = true;
 	if( HintString.Find("stretch") != -1 )			actualID.bStretch = true;
+
+	/* If the image is marked grayscale, then use all bits not used for alpha
+	 * for the intensity.  This way, if an image has no alpha, you get an 8-bit
+	 * grayscale; if it only has boolean transparency, you get a 7-bit grayscale. */
+	if( HintString.Find("grayscale") != -1 )		actualID.iGrayscaleBits = 8-actualID.iAlphaBits;
 
 	/* No iGrayscaleBits for images that are already paletted.  We don't support
 	 * that; and that hint is intended for use on images that are already grayscale,
