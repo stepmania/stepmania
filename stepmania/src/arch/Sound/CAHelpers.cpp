@@ -40,7 +40,8 @@ OSStatus AudioConverter::FormatConverterInputProc(UInt32& ioNumberDataPackets,
     }
     buf.mData = mBuffer;
 
-	mDriver->FillConverter( buf.mData, buf.mDataByteSize );
+	const int frames = buf.mDataByteSize / kBytesPerPacket;
+	mDriver->FillConverter( buf.mData, frames );
     return noErr;
 }
 

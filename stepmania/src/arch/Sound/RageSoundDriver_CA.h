@@ -35,7 +35,7 @@ private:
                                      void *inData);
                               
 public:
-    void FillConverter(void *data, UInt32 dataByteSize);
+    void FillConverter( void *data, UInt32 frames );
     RageSound_CA();
     ~RageSound_CA();
     float GetPlayLatency() const { return mLatency; }

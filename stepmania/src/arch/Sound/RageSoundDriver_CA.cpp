@@ -239,10 +239,9 @@ int64_t RageSound_CA::GetPosition(const RageSoundBase *sound) const
 	return int64_t(time.mSampleTime);
 }
 
-void RageSound_CA::FillConverter(void *data, UInt32 dataByteSize)
+void RageSound_CA::FillConverter( void *data, UInt32 frames )
 {
-	int frames = dataByteSize / gConverter->GetInputFormat().mBytesPerPacket;
-	this->Mix((int16_t *)data, frames, mDecodePos, int64_t(mNow->mSampleTime));
+	this->Mix( (int16_t *)data, frames, mDecodePos, int64_t(mNow->mSampleTime) );
 }
 
 OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
