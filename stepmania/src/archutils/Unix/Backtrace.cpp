@@ -290,11 +290,21 @@ typedef struct Frame
     void *linkReg;
 } *FramePtr;
 
+void GetExceptionBacktraceContext( BacktraceContext *ctx, ExceptionInformation *exception )
+{
+	ctx->FramePtr = (void *) theException->registerImage->R1.lo;
+}
+
+void GetCurrentBacktraceContext( BacktraceContext *ctx )
+{
+	ctx->FramePtr = __builtin_return_address(2);
+}
+
 void InitializeBacktrace() { }
 
 void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 {
-	Frame *frame = (Frame *) GetCrashedFramePtr();
+	Frame *frame = (Frame *) ctx->FramePtr;
 
 	unsigned i = 0;
 	while( frame && i < size-1 ) // -1 for NULL

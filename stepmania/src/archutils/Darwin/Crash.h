@@ -9,10 +9,6 @@
  *
  */
 
-#include <MachineExceptions.h>
-
-OSStatus HandleException(ExceptionInformation *theException);
-void *GetCrashedFramePtr();
 void InformUserOfCrash( const CString &sPath );
 
 #endif /* DARWIN_CRASH_H */

@@ -57,7 +57,7 @@ ArchHooks_darwin::ArchHooks_darwin()
         MessageBoxOK(error, "");
         exit(0);
     }
-    InstallExceptionHandler(HandleException);
+    InstallExceptionHandler( CrashExceptionHandler );
 }
 
 #define CASE_GESTALT_M(str,code,result) case gestalt##code: str = result; break

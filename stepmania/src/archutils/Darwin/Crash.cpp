@@ -15,21 +15,6 @@
 #include <sys/uio.h>
 #include <unistd.h>
 
-static void *crashedFramePtr = NULL;
-
-OSStatus HandleException(ExceptionInformation *theException)
-{
-    crashedFramePtr = (void *)theException->registerImage->R1.lo;
-    CrashSignalHandler(theException->theKind);
-    return -1;
-}
-
-
-void *GetCrashedFramePtr()
-{
-    return (crashedFramePtr ? crashedFramePtr : __builtin_return_address(2));
-}
-
 void InformUserOfCrash( const CString &sPath )
 {
     CFStringRef error = CFStringCreateWithCString(NULL,

@@ -169,35 +169,9 @@ static const char *itoa(unsigned n)
 	return p;
 }
 
-const char *SignalName( int signo )
+#if defined(DARWIN)
+const char *ExceptionName( int signo )
 {
-#if !defined(DARWIN)
-#define X(a) case a: return #a;
-	switch( signo )
-	{
-	case SIGALRM: return "Alarm";
-	case SIGBUS: return "Bus error";
-	case SIGFPE: return "Floating point exception";
-	X(SIGHUP)
-	case SIGILL: return "Illegal instruction";
-	X(SIGINT)
-	case SIGPIPE: return "Broken pipe";
-	case SIGABRT: return "Aborted";
-	X(SIGQUIT)
-	case SIGSEGV: return "Segmentation fault";
-	X(SIGTRAP) X(SIGTERM) X(SIGVTALRM) X(SIGXCPU) X(SIGXFSZ)
-#if defined(HAVE_DECL_SIGPWR) && HAVE_DECL_SIGPWR
-	X(SIGPWR)
-#endif
-	default:
-	{
-		static char buf[128];
-		strcpy( buf, "Unknown signal " );
-		strcat( buf, itoa(signo) );
-		return buf;
-	}
-	}
-#else
 #define X(code) case k##code: return #code;
 	switch( signo )
 	{
@@ -223,7 +197,38 @@ const char *SignalName( int signo )
 		return buf;
 	}
 	}
+#undef X
+}
 #endif
+
+const char *SignalName( int signo )
+{
+#define X(a) case a: return #a;
+	switch( signo )
+	{
+	case SIGALRM: return "Alarm";
+	case SIGBUS: return "Bus error";
+	case SIGFPE: return "Floating point exception";
+	X(SIGHUP)
+	case SIGILL: return "Illegal instruction";
+	X(SIGINT)
+	case SIGPIPE: return "Broken pipe";
+	case SIGABRT: return "Aborted";
+	X(SIGQUIT)
+	case SIGSEGV: return "Segmentation fault";
+	X(SIGTRAP) X(SIGTERM) X(SIGVTALRM) X(SIGXCPU) X(SIGXFSZ)
+#if defined(HAVE_DECL_SIGPWR) && HAVE_DECL_SIGPWR
+	X(SIGPWR)
+#endif
+	default:
+	{
+		static char buf[128];
+		strcpy( buf, "Unknown signal " );
+		strcat( buf, itoa(signo) );
+		return buf;
+	}
+	}
+#undef X
 }
 
 const char *SignalCodeName( int signo, int code )
@@ -423,6 +428,18 @@ void CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 	RunCrashHandler( &crash );
 }
 
+#if defined(DARWIN)
+OSStatus CrashExceptionHandler( ExceptionInformation *e )
+{
+	CrashData crash;
+	crash.type = CrashData::OSX_EXCEPTION;
+	crash.kind = theException->theKind;
+
+	GetExceptionBacktraceContext( &crash.ctx, e );
+	RunCrashHandler( &crash );
+	return -1;
+}
+#endif
 
 void InitializeCrashHandler()
 {

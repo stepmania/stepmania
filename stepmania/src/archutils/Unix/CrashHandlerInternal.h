@@ -11,7 +11,7 @@ struct CrashData
 		SIGNAL,
 
 #if defined(DARWIN)
-		/* We received a fatal exception.  si and uc are valid. */
+		/* We received a fatal exception. */
 		OSX_EXCEPTION,
 #endif
 
@@ -31,6 +31,9 @@ struct CrashData
 	int signal;
 	siginfo_t si;
 
+	/* OSX_EXCEPTION only: */
+	int kind;
+	
 	/* FORCE_CRASH_THIS_THREAD only: */
 	char reason[256];
 };
@@ -40,6 +43,10 @@ struct CrashData
 
 const char *SignalName( int signo );
 const char *SignalCodeName( int signo, int code );
+
+#if defined(DARWIN)
+const char *ExceptionName( int signo );
+#endif
 
 #endif
 
