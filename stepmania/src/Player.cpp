@@ -850,8 +850,10 @@ void Player::Step( int col, const RageTimer &tm )
 		if( m_pPlayerState->m_PlayerController == PC_HUMAN && score >= TNS_GREAT ) 
 			HandleAutosync( fNoteOffset );
 
-		// Do game-specific score mapping.
+		// Do game-specific and mode-specific score mapping.
 		score = GAMESTATE->GetCurrentGame()->MapTapNoteScore( score );
+		if( score == TNS_MARVELOUS && !GAMESTATE->ShowMarvelous() )
+			score = TNS_PERFECT;
 
 		if( score != TNS_NONE && score != TNS_MISS )
 		{
@@ -861,9 +863,6 @@ void Player::Step( int col, const RageTimer &tm )
 			if( m_pPlayerStageStats )
 				m_pPlayerStageStats->iTotalError += ms_error;
 		}
-
-		if( score == TNS_MARVELOUS && !GAMESTATE->ShowMarvelous() )
-			score = TNS_PERFECT;
 
 		//LOG->Trace("XXX: %i col %i, at %f, music at %f, step was at %f, off by %f",
 		//	score, col, fStepSeconds, fCurrentMusicSeconds, fMusicSeconds, fNoteOffset );
