@@ -58,6 +58,7 @@ private:
 	// If any vertex has a bone weight, then then render from m_pTempGeometry.  
 	// Otherwise, render directly from m_pGeometry.
 	RageCompiledGeometry* m_pTempGeometry;
+	void UpdateTempGeometry();
 	
 	/* Keep a copy of the mesh data only if m_pTempGeometry is in use.  The normal and
 	 * position data will be changed; the rest is static and kept only to prevent making
