@@ -548,49 +548,21 @@ void LifeMeterBar::UpdateNonstopLifebar(const int cleared,
 	// the lifebar is pretty harsh at 0.4 already (you lose
 	// about 20% of your lifebar); at 0.2 it would be 40%, which
 	// is too harsh at one difficulty level higher.  Override.
-	if (m_fLifeDifficulty >= 0.2) // judge 8
+
+	int m_iLifeDifficulty = ((1.8 - m_fLifeDifficulty)/0.2);
+	
+	// first eight values don't matter
+	float DifficultyValues[16] = {0,0,0,0,0,0,0,0, 
+		0.3f, 0.25f, 0.2f, 0.16f, 0.14f, 0.12f, 0.10f, 0.08f};
+
+	if (m_iLifeDifficulty >= 16)
 	{
-		m_fLifeDifficulty = 0.3f;
-		return;
-	}
-	if (m_fLifeDifficulty >= 0)   // judge 9
-	{
-		m_fLifeDifficulty = 0.25f;
-		return;
-	}
-	if (m_fLifeDifficulty >= -0.2) // judge 10
-	{
-		m_fLifeDifficulty = 0.2f;
-		return;
-	}
-	if (m_fLifeDifficulty >= -0.4) // judge 11
-	{
-		m_fLifeDifficulty = 0.16f;
-		return;
-	}
-	if (m_fLifeDifficulty >= -0.6) // judge 12
-	{
-		m_fLifeDifficulty = 0.14f;
-		return;
-	}
-	if (m_fLifeDifficulty >= -0.8) // judge 13
-	{
-		m_fLifeDifficulty = 0.12f;
-		return;
-	}
-	if (m_fLifeDifficulty >= -1.0) // judge 14
-	{
-		m_fLifeDifficulty = 0.10f;
-		return;
-	}
-	if (m_fLifeDifficulty >= -1.2) // judge 15
-	{
-		m_fLifeDifficulty = 0.08f;
+		// judge 16 or higher
+		m_fLifeDifficulty = 0.04f;
 		return;
 	}
 
-	// judge 16 or higher
-	m_fLifeDifficulty = 0.04f;
+	m_fLifeDifficulty = DifficultyValues[m_iLifeDifficulty];
 	return;
 }
 
