@@ -91,7 +91,8 @@ public:
 	CStringArray	m_asAdditionalSongFolders;
 	CString			m_DWIPath;
 
-	CString			m_sRenderer;
+	CString			m_sVideoRenderers;
+	CString			m_sLastSeenVideoDriver;
 	CString			m_sSoundDrivers;
 	float			m_fSoundVolume;
 	bool			m_bSoundPreloadAll;

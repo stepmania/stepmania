@@ -293,80 +293,88 @@ RageDisplay *CreateDisplay()
 	 * #2 is the only case that's actually a bug.
 	 *
 	 * Actually, right now we're falling back.  I'm not sure which behavior is better.
-	 *
-	 * This should probably be exported into an INI.
 	 */
-	bool NeedsD3D = false;
-	if( PREFSMAN->m_sRenderer != "" )
+
+	// Video card changed since last run
+	CString sVideoDriver = GetPrimaryVideoDriverName();
+	if( PREFSMAN->m_sLastSeenVideoDriver != sVideoDriver )
 	{
-		LOG->Warn("Forcing renderer: %s", PREFSMAN->m_sRenderer.c_str() );
-		if( !PREFSMAN->m_sRenderer.CompareNoCase("opengl") )
-			NeedsD3D = false;
-		else if( !PREFSMAN->m_sRenderer.CompareNoCase("d3d") )
-			NeedsD3D = true;
-		else 
-			RageException::Throw("Unknown Renderer value: %s", PREFSMAN->m_sRenderer.c_str() );
+		// Apply default graphic settings for this card
+		IniFile ini;
+		ini.SetPath( "Data/VideoCards.ini" );
+		ini.ReadFile();
+
+		int iNumEntries = 0;
+		ini.GetValueI( "VideoCards", "NumEntries", iNumEntries );
+		for( int i=0; i<iNumEntries; i++ )
+		{
+			CString sKey = ssprintf("%04d",i);
+
+			CString sDriverRegex;
+			ini.GetValue( sKey, "DriverRegex", sDriverRegex );
+			Regex regex( sDriverRegex );
+			if( !regex.Compare(sVideoDriver) )
+				continue;	// skip
+
+			LOG->Trace( "Using default graphics settings for '%s'.", sDriverRegex.c_str() );
+
+			ini.GetValue( sKey, "Renderers", PREFSMAN->m_sVideoRenderers );
+			ini.GetValueI( sKey, "Width", PREFSMAN->m_iDisplayWidth );
+			ini.GetValueI( sKey, "Height", PREFSMAN->m_iDisplayHeight );
+			ini.GetValueI( sKey, "DisplayColor", PREFSMAN->m_iDisplayColorDepth );
+			ini.GetValueI( sKey, "TextureColor", PREFSMAN->m_iTextureColorDepth );
+
+			// Update last seen video card
+			PREFSMAN->m_sLastSeenVideoDriver = GetPrimaryVideoDriverName();
+
+			break; // stop looking
+		}
 	}
 
-	if( CardRequiresD3D() )
-		NeedsD3D = true;
+	CString error = "There was an error while initializing your video card.\n\n"
+		"   PLEASE DO NOT FILE THIS ERROR AS A BUG!\n\n"
+		"Video Driver: "+sVideoDriver+"\n\n";
 
-	CString error = "There was an error while initializing your video card.\n\n";
-	if( PREFSMAN->m_sRenderer != "" )
-		error = "(WARNING: Renderer was forced)\n\n";
-	
-	error += "   PLEASE DO NOT FILE THIS ERROR AS A BUG!\n\n";
-	
-	if( NeedsD3D )
+	CStringArray asRenderers;
+	split( PREFSMAN->m_sVideoRenderers, ",", asRenderers, true );
+	for( int i=0; i<asRenderers.size(); i++ )
 	{
-		/* We require D3D.  Try to start it.  */
-		error += "Your display adapter, \"" + GetPrimaryVideoDriverName() + "\", requires Direct3D 8 (or "
-			"higher), but ";
+		CString sRenderer = asRenderers[i];
 
-		try {
-			return CreateDisplay_D3D();
-		} catch(RageException_D3DNotInstalled e) {
-			error += 
-				"it is not installed.  You can download it from:\n" +
-				D3DURL;
-		} catch(RageException_D3DNoAcceleration e) {
-			error += 
-				"your system is reporting that hardware acceleration is not available.  "
-				"You can download an updated driver from your card's manufacturer.";
-		};
+		if( sRenderer.CompareNoCase("opengl")==0 )
+		{
+			/* Try to create an OpenGL renderer.  This should always succeed.  (Actually,
+			 * SDL may throw, but that only happens with broken driver installations, and
+			 * we probably don't want to fall back on D3D in that case anyway.) */
+			error += "Initializing OpenGL...\n";
 
-
-		/* This card is listed as having problems in OpenGL, so don't try it; it'll
-		 * just generate bug reports. */
-		RageException::Throw( error );
+			RageDisplay *ret = CreateDisplay_OGL();
+			
+			if( PREFSMAN->m_bAllowUnacceleratedRenderer || !ret->IsSoftwareRenderer() )
+				return ret;
+			else
+			{
+				error += "Your system is reporting that OpenGL hardware acceleration is not available.  "
+					"Please obtain an updated driver from your video card manufacturer.";
+				delete ret;
+			}
+		}
+		else if( sRenderer.CompareNoCase("d3d")==0 )
+		{
+			error += "Initializing Direct3D...\n";
+			try {
+				return CreateDisplay_D3D();
+			} catch(RageException_D3DNotInstalled e) {
+				error += "DirectX 8.1 or greater is not installed.  You can download it from:\n"+D3DURL;
+			} catch(RageException_D3DNoAcceleration e) {
+				error += "Your system is reporting that Direct3D hardware acceleration is not available.  "
+					"Please obtain an updated driver from your video card manufacturer.";
+			};
+		}
+		else
+			RageException::Throw("Unknown video renderer value: %s", sRenderer.c_str() );
 	}
 
-	/* Try to create an OpenGL renderer.  This should always succeed.  (Actually,
-	 * SDL may throw, but that only happens with broken driver installations, and
-	 * we probably don't want to fall back on D3D in that case anyway.) */
-	RageDisplay *ret = CreateDisplay_OGL();
-	
-	if( PREFSMAN->m_bAllowUnacceleratedRenderer || !ret->IsSoftwareRenderer() )
-		return ret;
-
-	/* OpenGL is unaccelerated.  Try D3D. */
-	delete ret;
-
-	try {
-		return CreateDisplay_D3D();
-	} catch(RageException_D3DNotInstalled e) {
-		/* Eek.  We don't know if we need newer drivers, D3D8 or both. */
-		error += 
-			"OpenGL hardware acceleration is not available on your system, and "
-			"Direct3D 8 (or higher) is not installed.  You can download it from:\n" +
-			D3DURL + "\n\n"
-			"You may also need updated drivers from your card's manufacturer.";
-	} catch(RageException_D3DNoAcceleration e) {
-		error += 
-			"Neither OpenGL nor Direct3D hardware acceleration is available on your "
-			"system.  Please install the latest video drivers from your graphics "
-			"card vendor.";
-	};
 	RageException::Throw( error );
 }
 

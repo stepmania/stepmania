@@ -63,7 +63,7 @@ PrefsManager::PrefsManager()
 	m_fJudgeWindowGreatSeconds = 0.090f;
 	m_fJudgeWindowGoodSeconds = 0.135f;
 	m_fJudgeWindowBooSeconds = 0.180f;
-	m_fJudgeWindowOKSeconds = 0.140f;
+	m_fJudgeWindowOKSeconds = 0.250f;	// allow enough time to take foot off and put back on
 	m_fLifeDifficultyScale = 1.0f;
 	m_iMovieDecodeMS = 2;
 	m_bUseBGIfNoBanner = false;
@@ -112,7 +112,7 @@ PrefsManager::PrefsManager()
 	m_bHiddenSongs = false;
 	m_bVsync = true;
 	
-	m_sRenderer = "";
+	m_sVideoRenderers = "";
 	m_sSoundDrivers = DEFAULT_SOUND_DRIVER_LIST;
 	m_fSoundVolume = DEFAULT_SOUND_VOLUME;
 	/* This is experimental: let's see if preloading helps people's skipping.
@@ -178,7 +178,8 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "DelayedScreenLoad",			m_bDelayedScreenLoad );
 	ini.GetValueI( "Options", "MusicWheelUsesSections",		(int&)m_MusicWheelUsesSections );
 	ini.GetValueI( "Options", "MusicWheelSwitchSpeed",		m_iMusicWheelSwitchSpeed );
-	ini.GetValue ( "Options", "Renderer",					m_sRenderer );
+	ini.GetValue ( "Options", "VideoRenderers",				m_sVideoRenderers );
+	ini.GetValue ( "Options", "LastSeenVideoDriver",		m_sLastSeenVideoDriver );
 	ini.GetValue ( "Options", "SoundDrivers",				m_sSoundDrivers );
 	ini.GetValueB( "Options", "EasterEggs",					m_bEasterEggs );
 	ini.GetValueB( "Options", "MarvelousTiming",			m_bMarvelousTiming );
@@ -306,8 +307,8 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 		ini.SetValue ( "Options", "SoundDrivers",				m_sSoundDrivers );
 	if(m_fSoundVolume != DEFAULT_SOUND_VOLUME)
 		ini.SetValueF( "Options", "SoundVolume",			m_fSoundVolume );
-	if(m_sRenderer != "")
-		ini.SetValue ( "Options", "Renderer",				m_sRenderer );
+	if(m_sVideoRenderers != "")
+		ini.SetValue ( "Options", "Renderer",				m_sVideoRenderers );
 
 
 	ini.SetValue( "Options", "AdditionalSongFolders", join(",", m_asAdditionalSongFolders) );
