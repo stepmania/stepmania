@@ -267,8 +267,21 @@ static void StartQueuedSounds()
 	while( g_MusicsToPlay.read( &pMusic, 1 ) )
 	{
 		/* Don't bother starting this music if there's another one in the queue after it. */
+		/* Actually, it's a little trickier: the editor gives us a stop and then a sound in
+		 * quick succession; if we ignore the stop, we won't rewind the sound if it was
+		 * already playing.  We don't want to waste time loading a sound if it's going
+		 * to be replaced immediately, though.  So, if we have more music in the queue,
+		 * then forcibly stop the current sound. */
 		if( !g_MusicsToPlay.num_readable() )
 			StartMusic( *pMusic );
+		else
+		{
+			CHECKPOINT;
+			LockMutex L( *g_Mutex );
+			if( g_Playing->m_Music->IsPlaying() )
+				g_Playing->m_Music->StopPlaying();
+			g_Playing->m_Music->Unload();
+		}
 		delete pMusic;
 	}
 }
