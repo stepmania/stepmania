@@ -22,7 +22,7 @@ Banner::Banner()
 	m_bScrolling = false;
 	m_fPercentScrolling = 0;
 
-	LoadFallback();
+//	LoadFallback();
 }
 
 bool Banner::Load( RageTextureID ID )

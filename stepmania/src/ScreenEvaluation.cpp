@@ -166,18 +166,15 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			m_BannerWithFrame[0].SetXY( BANNER_X, BANNER_Y );
 			this->AddChild( &m_BannerWithFrame[0] );
 
-			m_textStage.LoadFromFont( THEME->GetPathTo("Fonts","evaluation stage") );
-			m_textStage.EnableShadow( false );
-			m_textStage.SetXY( STAGE_X, STAGE_Y );
-			m_textStage.SetZoom( 0.5f );
-			m_textStage.SetText( GAMESTATE->GetStageText() + " Stage" );
-			this->AddChild( &m_textStage );
+			m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenEvaluation "+GAMESTATE->GetStageText()) );
+			m_sprStage.SetXY( STAGE_X, STAGE_Y );
+			this->AddChild( &m_sprStage );
 
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
 				if( !GAMESTATE->IsPlayerEnabled(p) )
 					continue;	// skip
-				m_DifficultyIcon[p].Load( THEME->GetPathTo("graphics","evaluation difficulty icons 1x5") );
+				m_DifficultyIcon[p].Load( THEME->GetPathTo("graphics","ScreenEvaluation difficulty icons 1x5") );
 				m_DifficultyIcon[p].SetFromNotes( (PlayerNumber)p, GAMESTATE->m_pCurNotes[p] );
 				m_DifficultyIcon[p].SetXY( DIFFICULTY_ICON_X(p), DIFFICULTY_ICON_Y(p) );
 				this->AddChild( &m_DifficultyIcon[p] );
@@ -580,9 +577,9 @@ void ScreenEvaluation::TweenOnScreen()
 		m_BannerWithFrame[i].SetTweenY( fOriginalY );
 	}
 	
-	fOriginalY = m_textStage.GetY();
-	m_textStage.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_ACCELERATE );
-	m_textStage.SetTweenY( fOriginalY );
+	fOriginalY = m_sprStage.GetY();
+	m_sprStage.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_ACCELERATE );
+	m_sprStage.SetTweenY( fOriginalY );
 
 	for( p=0; p<NUM_PLAYERS; p++ ) 
 		m_DifficultyIcon[p].FadeOn( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
@@ -675,7 +672,7 @@ void ScreenEvaluation::TweenOffScreen()
 	for( i=0; i<MAX_SONGS_TO_SHOW; i++ )
 		m_BannerWithFrame[i].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
 
-	m_textStage.FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
+	m_sprStage.FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
 
 	for( p=0; p<NUM_PLAYERS; p++ ) 
 		m_DifficultyIcon[p].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );

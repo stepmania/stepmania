@@ -6,35 +6,36 @@
 /* If this actor is used anywhere other than SelectGroup, we
  * can add a setting that changes which metric group we pull
  * settings out of, so it can be configured separately. */
-#define BUTTON_X			THEME->GetMetricF("ScreenSelectGroup","ButtonX")
-#define BUTTON_START_Y		THEME->GetMetricF("ScreenSelectGroup","ButtonStartY")
-#define BUTTON_SPACING_Y	THEME->GetMetricF("ScreenSelectGroup","ButtonSpacingY")
-#define BUTTON_SELECTED_X	THEME->GetMetricF("ScreenSelectGroup","ButtonSelectedX")
+#define START_X				THEME->GetMetricF("GroupList","StartX")
+#define START_Y				THEME->GetMetricF("GroupList","StartY")
+#define SPACING_X			THEME->GetMetricF("GroupList","SpacingX")
+#define SPACING_Y			THEME->GetMetricF("GroupList","SpacingY")
+#define GAIN_FOCUS_COMMAND	THEME->GetMetric ("GroupList","GainFocusCommand")
+#define LOSE_FOCUS_COMMAND	THEME->GetMetric ("GroupList","LoseFocusCommand")
+
 
 GroupList::GroupList()
 {
 	m_iSelection = m_iTop = 0;
 }
 
-void GroupList::DoneAddingGroups()
+void GroupList::Load( const CStringArray& asGroupNames )
 {
-	unsigned i;
+	m_asLabels = asGroupNames;
 
-	for( i=0; i<min(m_textLabels.size(), MAX_GROUPS_ONSCREEN); i++ )
+	for( unsigned i=0; i<min(m_asLabels.size(), MAX_GROUPS_ONSCREEN); i++ )
 	{
-		m_sprButton[i].Load( THEME->GetPathTo("Graphics","GroupList button") );
-		m_sprButton[i].SetXY( BUTTON_X, BUTTON_START_Y + i*BUTTON_SPACING_Y );
+		float fX = START_X + i*SPACING_X;
+		float fY = START_Y + i*SPACING_Y;
+
+		m_sprButton[i].Load( THEME->GetPathTo("Graphics","GroupList bar") );
+		m_sprButton[i].SetXY( fX, fY );
 		this->AddChild( &m_sprButton[i] );
-		this->AddChild( &m_screenLabels[i] );
-	}
 
-	for( i=0; i<min(m_textLabels.size(), MAX_GROUPS_ONSCREEN); i++ )
-	{
 		m_screenLabels[i].LoadFromFont( THEME->GetPathTo("Fonts","GroupList label") );
-		m_screenLabels[i].SetXY( BUTTON_X, BUTTON_START_Y + i*BUTTON_SPACING_Y );
+		m_screenLabels[i].SetXY( fX, fY );
 		m_screenLabels[i].SetShadowLength( 2 );
-
-		CString sGroupName = m_textLabels[i];
+		this->AddChild( &m_screenLabels[i] );
 	}
 
 	SetLabels();
@@ -43,9 +44,9 @@ void GroupList::DoneAddingGroups()
 
 void GroupList::SetLabels()
 {
-	for( unsigned i=0; i<min(m_textLabels.size(), MAX_GROUPS_ONSCREEN); i++ )
+	for( unsigned i=0; i<min(m_asLabels.size(), MAX_GROUPS_ONSCREEN); i++ )
 	{
-		CString &label = m_textLabels[m_iTop+i];
+		CString &label = m_asLabels[m_iTop+i];
 		m_screenLabels[i].SetText( SONGMAN->ShortenGroupName( label ) );
 		float fTextWidth = (float)m_screenLabels[i].GetWidestLineWidthInSourcePixels();
 		float fButtonWidth = m_sprButton[i].GetZoomedWidth();
@@ -67,13 +68,8 @@ void GroupList::BeforeChange()
 {
 	int iSel = m_iSelection-m_iTop;
 
-	m_sprButton[iSel].BeginTweening( 0.2f );
-	m_sprButton[iSel].SetTweenX( BUTTON_X );
-	m_sprButton[iSel].SetEffectNone();
-
-	m_screenLabels[iSel].BeginTweening( 0.2f );
-	m_screenLabels[iSel].SetTweenX( BUTTON_X );
-	m_screenLabels[iSel].SetEffectNone();
+	m_sprButton[iSel].Command( LOSE_FOCUS_COMMAND );
+	m_screenLabels[iSel].Command( LOSE_FOCUS_COMMAND );
 }
 
 
@@ -81,15 +77,8 @@ void GroupList::AfterChange()
 {
 	int iSel = m_iSelection-m_iTop;
 
-	m_sprButton[iSel].StopTweening();
-	m_sprButton[iSel].BeginTweening( 0.2f );
-	m_sprButton[iSel].SetTweenX( BUTTON_SELECTED_X );
-	m_sprButton[iSel].SetEffectGlowShift();
-
-	m_screenLabels[iSel].StopTweening();
-	m_screenLabels[iSel].BeginTweening( 0.2f );
-	m_screenLabels[iSel].SetTweenX( BUTTON_SELECTED_X );
-	m_screenLabels[iSel].SetEffectGlowShift();
+	m_sprButton[iSel].Command( GAIN_FOCUS_COMMAND );
+	m_screenLabels[iSel].Command( GAIN_FOCUS_COMMAND );
 }
 
 void GroupList::Up()
@@ -97,7 +86,7 @@ void GroupList::Up()
 	BeforeChange();
 
 	if( m_iSelection == 0 )
-		SetSelection(m_textLabels.size()-1);
+		SetSelection(m_asLabels.size()-1);
 	else
 		SetSelection(m_iSelection-1);
 
@@ -108,14 +97,9 @@ void GroupList::Down()
 {
 	BeforeChange();
 
-	SetSelection((m_iSelection+1) % m_textLabels.size());
+	SetSelection((m_iSelection+1) % m_asLabels.size());
 	
 	AfterChange();
-}
-
-void GroupList::AddGroup(CString name)
-{
-	m_textLabels.push_back(name);
 }
 
 void GroupList::SetSelection( unsigned sel )
@@ -124,11 +108,11 @@ void GroupList::SetSelection( unsigned sel )
 
 	m_iSelection=sel;
 
-	if( m_textLabels.size() <= MAX_GROUPS_ONSCREEN ||
+	if( m_asLabels.size() <= MAX_GROUPS_ONSCREEN ||
 		  sel <= MAX_GROUPS_ONSCREEN/2 )
 		m_iTop = 0;
-	else if ( sel >= m_textLabels.size() - MAX_GROUPS_ONSCREEN/2 )
-		m_iTop = m_textLabels.size() - MAX_GROUPS_ONSCREEN;
+	else if ( sel >= m_asLabels.size() - MAX_GROUPS_ONSCREEN/2 )
+		m_iTop = m_asLabels.size() - MAX_GROUPS_ONSCREEN;
 	else
 		m_iTop = sel - MAX_GROUPS_ONSCREEN/2;
 
@@ -143,37 +127,37 @@ void GroupList::SetSelection( unsigned sel )
 
 void GroupList::TweenOnScreen()
 {
-	for( unsigned i=0; i<min(m_textLabels.size(), MAX_GROUPS_ONSCREEN); i++ )
+	for( unsigned i=0; i<min(m_asLabels.size(), MAX_GROUPS_ONSCREEN); i++ )
 	{
-		m_sprButton[i].SetX( BUTTON_X+400 );
+		m_sprButton[i].SetX( 400 );
 		m_sprButton[i].BeginTweening( 0.1f*i, TWEEN_BOUNCE_END );
 		m_sprButton[i].BeginTweening( 0.2f, TWEEN_BOUNCE_END );
-		m_sprButton[i].SetTweenX( BUTTON_X );
+		m_sprButton[i].SetTweenX( 0 );
 
-		m_screenLabels[i].SetX( BUTTON_X+400 );
+		m_screenLabels[i].SetX( 400 );
 		m_screenLabels[i].BeginTweening( 0.1f*i, TWEEN_BOUNCE_END );
 		m_screenLabels[i].BeginTweening( 0.2f, TWEEN_BOUNCE_END );
-		m_screenLabels[i].SetTweenX( BUTTON_X );
+		m_screenLabels[i].SetTweenX( 0 );
 	}
 }
 
 void GroupList::TweenOffScreen()
 {
-	for( unsigned i=0; i<min(m_textLabels.size(), MAX_GROUPS_ONSCREEN); i++ )
+	for( unsigned i=0; i<min(m_asLabels.size(), MAX_GROUPS_ONSCREEN); i++ )
 	{
 		if( i == m_iSelection )
 			m_sprButton[i].BeginTweening( 1.0f, TWEEN_BOUNCE_BEGIN );
 		else
 			m_sprButton[i].BeginTweening( 0.1f*i, TWEEN_BOUNCE_BEGIN );
 		m_sprButton[i].BeginTweening( 0.2f, TWEEN_BOUNCE_BEGIN );
-		m_sprButton[i].SetTweenX( BUTTON_X+400 );
+		m_sprButton[i].SetTweenX( 400 );
 
 		if( i == m_iSelection )
 			m_screenLabels[i].BeginTweening( 1.0f, TWEEN_BOUNCE_BEGIN );
 		else
 			m_screenLabels[i].BeginTweening( 0.1f*i, TWEEN_BOUNCE_BEGIN );
 		m_screenLabels[i].BeginTweening( 0.2f, TWEEN_BOUNCE_BEGIN );
-		m_screenLabels[i].SetTweenX( BUTTON_X+400 );
+		m_screenLabels[i].SetTweenX( 400 );
 	}
 
 }

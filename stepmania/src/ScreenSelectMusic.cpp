@@ -110,10 +110,9 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_BPMDisplay.SetZoom( BPM_ZOOM );
 	this->AddChild( &m_BPMDisplay );
 
-	m_StageDisplay.SetZoom( STAGE_ZOOM );
-	m_StageDisplay.SetXY( STAGE_X, STAGE_Y );
-	m_StageDisplay.Refresh();
-	this->AddChild( &m_StageDisplay );
+	m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenSelectMusic stage "+GAMESTATE->GetStageText()) );
+	m_sprStage.SetXY( STAGE_X, STAGE_Y );
+	this->AddChild( &m_sprStage );
 
 	m_sprCDTitle.Load( THEME->GetPathTo("Graphics","ScreenSelectMusic fallback cdtitle") );
 	m_sprCDTitle.EnableShadow( false );
@@ -262,7 +261,7 @@ void ScreenSelectMusic::TweenOnScreen()
 	m_sprBannerFrame.FadeOn( 0, "bounce left", TWEEN_TIME );
 	m_Banner.FadeOn( 0, "bounce left", TWEEN_TIME );
 	m_BPMDisplay.FadeOn( 0, "bounce left", TWEEN_TIME );
-	m_StageDisplay.FadeOn( 0, "bounce left", TWEEN_TIME );
+	m_sprStage.FadeOn( 0, "bounce left", TWEEN_TIME );
 	m_sprCDTitle.FadeOn( 0, "bounce left", TWEEN_TIME );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -305,7 +304,7 @@ void ScreenSelectMusic::TweenOffScreen()
 	m_sprBannerFrame.FadeOff( 0, "bounce left", TWEEN_TIME );
 	m_Banner.FadeOff( 0, "bounce left", TWEEN_TIME );
 	m_BPMDisplay.FadeOff( 0, "bounce left", TWEEN_TIME );
-	m_StageDisplay.FadeOff( 0, "bounce left", TWEEN_TIME );
+	m_sprStage.FadeOff( 0, "bounce left", TWEEN_TIME );
 	m_sprCDTitle.FadeOff( 0, "bounce left", TWEEN_TIME );
 
 	int p;
@@ -812,7 +811,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	Song* pSong = m_MusicWheel.GetSelectedSong();
 	GAMESTATE->m_pCurSong = pSong;
 
-	m_StageDisplay.Refresh();
+	m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenSelectMusic stage "+GAMESTATE->GetStageText()) );
 
 	int pn;
 	for( pn = 0; pn < NUM_PLAYERS; ++pn)

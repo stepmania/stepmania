@@ -10,7 +10,7 @@ const unsigned MAX_GROUPS_ONSCREEN = 8;
 class GroupList: public ActorFrame {
 	Sprite			m_sprButton[MAX_GROUPS_ONSCREEN];
 	BitmapText		m_screenLabels[MAX_GROUPS_ONSCREEN];
-	vector<CString> m_textLabels;
+	vector<CString> m_asLabels;
 
 	/* Currently selected label. */
 	unsigned m_iSelection;
@@ -26,11 +26,10 @@ public:
 
 	void SetSelection(unsigned sel);
 	int GetSelection() const { return m_iSelection; }
-	CString GetSelectionName() const { return m_textLabels[m_iSelection]; }
+	CString GetSelectionName() const { return m_asLabels[m_iSelection]; }
 	void Up();
 	void Down();
-	void AddGroup(CString name);
-	void DoneAddingGroups();
+	void Load( const CStringArray& asGroupNames );
 	void TweenOffScreen();
 	void TweenOnScreen();
 };

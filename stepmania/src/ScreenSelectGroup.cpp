@@ -25,21 +25,25 @@
 #include <map>
 
 
-#define FRAME_X				THEME->GetMetricF("ScreenSelectGroup","FrameX")
-#define FRAME_Y				THEME->GetMetricF("ScreenSelectGroup","FrameY")
-#define BANNER_X			THEME->GetMetricF("ScreenSelectGroup","BannerX")
-#define BANNER_Y			THEME->GetMetricF("ScreenSelectGroup","BannerY")
-#define BANNER_WIDTH		THEME->GetMetricF("ScreenSelectGroup","BannerWidth")
-#define BANNER_HEIGHT		THEME->GetMetricF("ScreenSelectGroup","BannerHeight")
-#define NUMBER_X			THEME->GetMetricF("ScreenSelectGroup","NumberX")
-#define NUMBER_Y			THEME->GetMetricF("ScreenSelectGroup","NumberY")
-#define EXPLANATION_X		THEME->GetMetricF("ScreenSelectGroup","ExplanationX")
-#define EXPLANATION_Y		THEME->GetMetricF("ScreenSelectGroup","ExplanationY")
-#define CONTENTS_X			THEME->GetMetricF("ScreenSelectGroup","ContentsX")
-#define CONTENTS_Y			THEME->GetMetricF("ScreenSelectGroup","ContentsY")
-#define HELP_TEXT			THEME->GetMetric("ScreenSelectGroup","HelpText")
-#define TIMER_SECONDS		THEME->GetMetricI("ScreenSelectGroup","TimerSeconds")
-#define NEXT_SCREEN			THEME->GetMetric("ScreenSelectGroup","NextScreen")
+#define FRAME_ON_COMMAND			THEME->GetMetric ("ScreenSelectGroup","FrameOnCommand")
+#define FRAME_OFF_COMMAND			THEME->GetMetric ("ScreenSelectGroup","FrameOffCommand")
+#define BANNER_ON_COMMAND			THEME->GetMetric ("ScreenSelectGroup","BannerOnCommand")
+#define BANNER_OFF_COMMAND			THEME->GetMetric ("ScreenSelectGroup","BannerOffCommand")
+#define BANNER_WIDTH				THEME->GetMetricF("ScreenSelectGroup","BannerWidth")
+#define BANNER_HEIGHT				THEME->GetMetricF("ScreenSelectGroup","BannerHeight")
+#define NUMBER_ON_COMMAND			THEME->GetMetric ("ScreenSelectGroup","NumberOnCommand")
+#define NUMBER_OFF_COMMAND			THEME->GetMetric ("ScreenSelectGroup","NumberOffCommand")
+#define EXPLANATION_ON_COMMAND		THEME->GetMetric ("ScreenSelectGroup","ExplanationOnCommand")
+#define EXPLANATION_OFF_COMMAND		THEME->GetMetric ("ScreenSelectGroup","ExplanationOffCommand")
+#define CONTENTS_ON_COMMAND			THEME->GetMetric ("ScreenSelectGroup","ContentsOnCommand")
+#define CONTENTS_OFF_COMMAND		THEME->GetMetric ("ScreenSelectGroup","ContentsOffCommand")
+#define MUSIC_LIST_ON_COMMAND		THEME->GetMetric ("ScreenSelectGroup","MusicListOnCommand")
+#define MUSIC_LIST_OFF_COMMAND		THEME->GetMetric ("ScreenSelectGroup","MusicListOffCommand")
+#define GROUP_LIST_ON_COMMAND		THEME->GetMetric ("ScreenSelectGroup","GroupListOnCommand")
+#define GROUP_LIST_OFF_COMMAND		THEME->GetMetric ("ScreenSelectGroup","GroupListOnCommand")
+#define HELP_TEXT					THEME->GetMetric ("ScreenSelectGroup","HelpText")
+#define TIMER_SECONDS				THEME->GetMetricI("ScreenSelectGroup","TimerSeconds")
+#define NEXT_SCREEN					THEME->GetMetric ("ScreenSelectGroup","NextScreen")
 
 
 ScreenSelectGroup::ScreenSelectGroup()
@@ -68,11 +72,6 @@ ScreenSelectGroup::ScreenSelectGroup()
 	// style (such as solo) are omitted. Bear with me!
 	// -- dro kulix
 
-	// Chris:
-	// This is excellent!  I'm going to move the filtering of songs 
-	// that can't be played by current style to be the first action.
-	// This will simply the code a bit, and fix a weird case that 
-	// causes a crash when there are duplicate song names.
 	
 	vector<Song*> aAllSongs;
 	SONGMAN->GetSongs( aAllSongs );
@@ -124,33 +123,31 @@ ScreenSelectGroup::ScreenSelectGroup()
 	m_bChosen = false;
 
 	m_sprExplanation.Load( THEME->GetPathTo("Graphics","ScreenSelectGroup explanation") );
-	m_sprExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
+	m_sprExplanation.Command( EXPLANATION_ON_COMMAND );
 	this->AddChild( &m_sprExplanation );
 
 	// these guys get loaded SetSong and TweenToSong
-	m_Banner.SetXY( BANNER_X, BANNER_Y );
+	m_Banner.SetXY( 640, 240 );
 	m_Banner.SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
 	this->AddChild( &m_Banner );
 
 	m_sprFrame.Load( THEME->GetPathTo("Graphics","ScreenSelectGroup frame") );
-	m_sprFrame.SetXY( FRAME_X, FRAME_Y );
+	m_sprFrame.Command( FRAME_ON_COMMAND );
 	this->AddChild( &m_sprFrame );
 
 	m_textNumber.LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenSelectGroup numbers") );
-	m_textNumber.SetXY( NUMBER_X, NUMBER_Y );
-	m_textNumber.SetHorizAlign( Actor::align_right );
-	m_textNumber.EnableShadow( false );
+	m_textNumber.Command( NUMBER_ON_COMMAND );
 	this->AddChild( &m_textNumber );
 	
 	m_sprContents.Load( THEME->GetPathTo("Graphics","ScreenSelectGroup contents") );
-	m_sprContents.SetXY( CONTENTS_X, CONTENTS_Y );
+	m_sprContents.Command( CONTENTS_ON_COMMAND );
 	this->AddChild( &m_sprContents );
 
+	m_MusicList.Command( MUSIC_LIST_ON_COMMAND );
 	this->AddChild( &m_MusicList );
 	
-	for( i=0; i < asGroupNames.size(); ++i )
-		m_GroupList.AddGroup( asGroupNames[i] );
-	m_GroupList.DoneAddingGroups();
+	m_GroupList.Load( asGroupNames );
+	m_GroupList.Command( GROUP_LIST_ON_COMMAND );
 	this->AddChild( &m_GroupList );
 
 
@@ -285,48 +282,26 @@ void ScreenSelectGroup::MenuBack( PlayerNumber pn )
 
 void ScreenSelectGroup::TweenOffScreen()
 {
-	m_sprExplanation.BeginTweening( 0.8f );
-	m_sprExplanation.BeginTweening( 0.5f, TWEEN_BOUNCE_BEGIN );
-	m_sprExplanation.SetTweenX( EXPLANATION_X-400 );
-
-	Actor* pActorsInGroupInfoFrame[] = { &m_sprFrame, &m_Banner, &m_textNumber };
-	const int iNumActorsInGroupInfoFrame = sizeof(pActorsInGroupInfoFrame) / sizeof(Actor*);
-	for( int i=0; i<iNumActorsInGroupInfoFrame; i++ )
-	{
-		pActorsInGroupInfoFrame[i]->BeginTweening( 0.9f );
-		pActorsInGroupInfoFrame[i]->BeginTweening( 0.5f, TWEEN_BOUNCE_BEGIN );
-		pActorsInGroupInfoFrame[i]->SetTweenX( pActorsInGroupInfoFrame[i]->GetX()-400 );
-	}
-
-	m_sprContents.BeginTweening( 0.7f );
-	m_sprContents.BeginTweening( 0.5f, TWEEN_DECELERATE );
-	m_sprContents.SetTweenY( CONTENTS_Y+400 );
-	
+	m_sprExplanation.Command( EXPLANATION_OFF_COMMAND );
+	m_sprFrame.Command( FRAME_OFF_COMMAND );
+	m_Banner.Command( BANNER_OFF_COMMAND );
+	m_textNumber.Command( NUMBER_OFF_COMMAND );
+	m_sprContents.Command( CONTENTS_OFF_COMMAND );
+	m_MusicList.Command( MUSIC_LIST_OFF_COMMAND );
+	m_GroupList.Command( GROUP_LIST_OFF_COMMAND );
 	m_MusicList.TweenOffScreen();
 	m_GroupList.TweenOffScreen();
 }
 
 void ScreenSelectGroup::TweenOnScreen() 
 {
-	m_sprExplanation.SetX( EXPLANATION_X-400 );
-	m_sprExplanation.BeginTweening( 0.5f, TWEEN_BOUNCE_END );
-	m_sprExplanation.SetTweenX( EXPLANATION_X );
-
-	Actor* pActorsInGroupInfoFrame[] = { &m_sprFrame, &m_Banner, &m_textNumber };
-	const int iNumActorsInGroupInfoFrame = sizeof(pActorsInGroupInfoFrame) / sizeof(Actor*);
-	for( int i=0; i<iNumActorsInGroupInfoFrame; i++ )
-	{
-		float fOriginalX = pActorsInGroupInfoFrame[i]->GetX();
-		pActorsInGroupInfoFrame[i]->SetX( fOriginalX-400 );
-		pActorsInGroupInfoFrame[i]->BeginTweening( 0.5f, TWEEN_BOUNCE_END );
-		pActorsInGroupInfoFrame[i]->SetTweenX( fOriginalX );
-	}
-
-	m_sprContents.SetY( CONTENTS_Y+400 );
-	m_sprContents.BeginTweening( 0.5f, TWEEN_DECELERATE );	// sleep
-	m_sprContents.BeginTweening( 0.5f, TWEEN_DECELERATE );
-	m_sprContents.SetTweenY( CONTENTS_Y );
-
+	m_sprExplanation.Command( EXPLANATION_ON_COMMAND );
+	m_sprFrame.Command( FRAME_ON_COMMAND );
+	m_Banner.Command( BANNER_ON_COMMAND );
+	m_textNumber.Command( NUMBER_ON_COMMAND );
+	m_sprContents.Command( CONTENTS_ON_COMMAND );
+	m_MusicList.Command( MUSIC_LIST_ON_COMMAND );
+	m_GroupList.Command( GROUP_LIST_ON_COMMAND );
 	m_MusicList.TweenOnScreen();
 	m_GroupList.TweenOnScreen();
 }

@@ -5,26 +5,23 @@
 /* If this actor is used anywhere other than SelectGroup, we
  * can add a setting that changes which metric group we pull
  * settings out of, so it can be configured separately. */
-#define TITLES_START_X		THEME->GetMetricF("ScreenSelectGroup","TitlesStartX")
-#define TITLES_WIDTH		THEME->GetMetricF("ScreenSelectGroup","TitlesWidth")
-#define TITLES_SPACING_X	THEME->GetMetricF("ScreenSelectGroup","TitlesSpacingX")
-#define TITLES_START_Y		THEME->GetMetricF("ScreenSelectGroup","TitlesStartY")
-#define TITLES_COLUMNS		THEME->GetMetricI("ScreenSelectGroup","TitlesColumns")
-#define TITLES_ROWS			THEME->GetMetricI("ScreenSelectGroup","TitlesRows")
-#define TITLES_ZOOM			THEME->GetMetricF("ScreenSelectGroup","TitlesZoom")
+#define NUM_COLUMNS		THEME->GetMetricI("MusicList","NumColumns")
+#define NUM_ROWS		THEME->GetMetricI("MusicList","NumRows")
+#define START_X			THEME->GetMetricF("MusicList","StartX")
+#define START_Y			THEME->GetMetricF("MusicList","StartY")
+#define SPACING_X		THEME->GetMetricF("MusicList","SpacingX")
+#define CROP_WIDTH		THEME->GetMetricF("MusicList","CropWidth")
+#define INIT_COMMAND	THEME->GetMetric ("MusicList","InitCommand")
 
 MusicList::MusicList()
 {
 	CurGroup = 0;
 
-	for( int i=0; i<TITLES_COLUMNS; i++ )
+	for( int i=0; i<NUM_COLUMNS; i++ )
 	{
-		m_textTitles[i].LoadFromFont( THEME->GetPathTo("Fonts","small titles") );
-		m_textTitles[i].SetXY( TITLES_START_X + i*TITLES_SPACING_X, TITLES_START_Y );
-		m_textTitles[i].SetHorizAlign( Actor::align_left );
-		m_textTitles[i].SetVertAlign( Actor::align_top );
-		m_textTitles[i].SetShadowLength( 2 );
-		m_textTitles[i].SetZoom( TITLES_ZOOM );
+		m_textTitles[i].LoadFromFont( THEME->GetPathTo("Fonts","MusicList titles") );
+		m_textTitles[i].SetXY( START_X + i*SPACING_X, START_Y );
+		m_textTitles[i].Command( INIT_COMMAND );
 		this->AddChild( &m_textTitles[i] );
 	}
 }
@@ -41,18 +38,18 @@ void MusicList::AddSongsToGroup(const vector<Song*> &Songs)
 
 	m_ContentsText[group].m_iNumSongsInGroup = Songs.size();
 
-	for( int c=0; c<TITLES_COLUMNS; c++ )	// foreach col
+	for( int c=0; c<NUM_COLUMNS; c++ )	// foreach col
 	{
 		CString sText;
-		for( int r=0; r<TITLES_ROWS; r++ )	// foreach row
+		for( int r=0; r<NUM_ROWS; r++ )	// foreach row
 		{
-			unsigned iIndex = c*TITLES_ROWS + r;
+			unsigned iIndex = c*NUM_ROWS + r;
 			if( iIndex >= Songs.size() )
 				continue;
 
-			if( c == TITLES_COLUMNS-1 && r == TITLES_ROWS-1 && Songs.size() != unsigned(TITLES_COLUMNS*TITLES_ROWS) )
+			if( c == NUM_COLUMNS-1 && r == NUM_ROWS-1 && Songs.size() != unsigned(NUM_COLUMNS*NUM_ROWS) )
 			{
-				sText += ssprintf( "%d more.....", Songs.size() - TITLES_COLUMNS * TITLES_ROWS + 1 );
+				sText += ssprintf( "%d more.....", Songs.size() - NUM_COLUMNS * NUM_ROWS + 1 );
 				continue;
 			}
 
@@ -83,16 +80,16 @@ void MusicList::SetGroupNo(int group)
 {
 	CurGroup = group;
 
-	for( int c=0; c<TITLES_COLUMNS; c++ )
+	for( int c=0; c<NUM_COLUMNS; c++ )
 	{
 		m_textTitles[c].SetText( m_ContentsText[CurGroup].ContentsText[c] );
-		m_textTitles[c].CropToWidth( int(TITLES_WIDTH/m_textTitles[c].GetZoom()) );
+		m_textTitles[c].CropToWidth( int(CROP_WIDTH/m_textTitles[c].GetZoom()) );
 	}
 }
 
 void MusicList::TweenOnScreen()
 {
-	for( int i=0; i<TITLES_COLUMNS; i++ )
+	for( int i=0; i<NUM_COLUMNS; i++ )
 	{
 		m_textTitles[i].SetDiffuse( RageColor(1,1,1,0) );
 		m_textTitles[i].BeginTweening( 0.5f );
@@ -103,7 +100,7 @@ void MusicList::TweenOnScreen()
 
 void MusicList::TweenOffScreen()
 {
-	for( int i=0; i<TITLES_COLUMNS; i++ )
+	for( int i=0; i<NUM_COLUMNS; i++ )
 	{
 		m_textTitles[i].BeginTweening( 0.7f );
 		m_textTitles[i].BeginTweening( 0.5f );

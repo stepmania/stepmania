@@ -48,7 +48,7 @@ protected:
 	MenuElements		m_Menu;
 
 	BannerWithFrame		m_BannerWithFrame[MAX_SONGS_TO_SHOW];
-	BitmapText			m_textStage;
+	Sprite				m_sprStage;
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 
 	// used in arcade

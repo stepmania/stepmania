@@ -32,6 +32,7 @@ struct RageTextureID
 	bool bHotPinkColorKey; /* #FF00FF */
 
 	bool operator< (const RageTextureID &rhs) const;
+	bool operator== (const RageTextureID &rhs) const;
 
 	void Init();
 

@@ -18,7 +18,6 @@
 #include "InputMapper.h"
 #include "song.h"
 #include "RageLog.h"
-#include "ThemeManager.h"
 #include "RageUtil.h"
 #include "SongManager.h"
 #include "Notes.h"
@@ -27,20 +26,6 @@
 
 
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
-
-
-#define STAGE_COLOR_DEMO		THEME->GetMetricC("GameState","StageColorDemo")
-#define STAGE_COLOR( i )		THEME->GetMetricC("GameState",ssprintf("StageColor%d",i+1))
-#define STAGE_COLOR_FINAL		THEME->GetMetricC("GameState","StageColorFinal")
-#define STAGE_COLOR_EXTRA1		THEME->GetMetricC("GameState","StageColorExtra1")
-#define STAGE_COLOR_EXTRA2		THEME->GetMetricC("GameState","StageColorExtra2")
-#define STAGE_COLOR_NONSTOP		THEME->GetMetricC("GameState","StageColorNonstop")
-#define STAGE_COLOR_ONI			THEME->GetMetricC("GameState","StageColorOni")
-#define STAGE_COLOR_ENDLESS		THEME->GetMetricC("GameState","StageColorEndless")
-#define STAGE_TEXT_DEMO			THEME->GetMetric("GameState","StageTextDemo")
-#define STAGE_TEXT_FINAL		THEME->GetMetric("GameState","StageTextFinal")
-#define STAGE_TEXT_EXTRA1		THEME->GetMetric("GameState","StageTextExtra1")
-#define STAGE_TEXT_EXTRA2		THEME->GetMetric("GameState","StageTextExtra2")
 
 
 GameState::GameState()
@@ -181,43 +166,12 @@ bool GameState::IsExtraStage2()
 
 CString GameState::GetStageText()
 {
-	if( m_bDemonstrationOrJukebox )	return STAGE_TEXT_DEMO;
-	else if( IsFinalStage() )		return STAGE_TEXT_FINAL;
-	else if( IsExtraStage() )		return STAGE_TEXT_EXTRA1;
-	else if( IsExtraStage2() )		return STAGE_TEXT_EXTRA2;
-
-
-	int iStageNo = m_iCurrentStageIndex+1;
-
-	CString sNumberSuffix;
-	if( ( (iStageNo/10) % 10 ) == 1 )	// in the teens (e.g. 19, 213)
-	{
-		sNumberSuffix = "th";
-	}
-	else	// not in the teens
-	{
-		const int iLastDigit = iStageNo%10;
-		switch( iLastDigit )
-		{
-		case 1:	sNumberSuffix = "st";	break;
-		case 2:	sNumberSuffix = "nd";	break;
-		case 3:	sNumberSuffix = "rd";	break;
-		default:sNumberSuffix = "th";	break;
-		}
-	}
-	return ssprintf( "%d%s", iStageNo, sNumberSuffix.GetString() );
-}
-
-RageColor GameState::GetStageColor()
-{
-	if( m_bDemonstrationOrJukebox )				return STAGE_COLOR_DEMO;
-	else if( m_PlayMode==PLAY_MODE_NONSTOP )	return STAGE_COLOR_NONSTOP;
-	else if( m_PlayMode==PLAY_MODE_ONI )		return STAGE_COLOR_ONI;
-	else if( m_PlayMode==PLAY_MODE_ENDLESS )	return STAGE_COLOR_ENDLESS;
-	else if( IsFinalStage() )					return STAGE_COLOR_FINAL;
-	else if( IsExtraStage() )					return STAGE_COLOR_EXTRA1;
-	else if( IsExtraStage2() )					return STAGE_COLOR_EXTRA2;
-	else										return STAGE_COLOR( min(m_iCurrentStageIndex,4) );
+	if( m_bDemonstrationOrJukebox )		return "demo";
+	else if( PREFSMAN->m_bEventMode )	return "event";
+	else if( IsFinalStage() )			return "final";
+	else if( IsExtraStage() )			return "extra1";
+	else if( IsExtraStage2() )			return "extra2";
+	else								return ssprintf("%d",m_iCurrentStageIndex+1);
 }
 
 int GameState::GetCourseSongIndex()

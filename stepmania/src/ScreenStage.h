@@ -10,10 +10,7 @@
 */
 
 #include "Screen.h"
-#include "ActorFrame.h"
-#include "Actor.h"
-#include "TransitionFade.h"
-#include "song.h"
+#include "TransitionBGAnimation.h"
 
 class ScreenStage : public Screen
 {
@@ -26,12 +23,15 @@ public:
 
 private:
 
-	// Common Elements
 
+	// Ez2 and Pump Stage screens should be re-implemented as BGAnimations
+
+/*
+	// Common Elements
 	Sprite			m_sprNumbers[4];	// up to 3 numbers and suffix
 	Sprite			m_sprStage;			// "Stage", "Final Stage", etc.
-	/* A frame for m_sprNumbers and m_sprStage, so they can be
-	 * manipulated as a unit. */
+	// A frame for m_sprNumbers and m_sprStage, so they can be
+	// manipulated as a unit.
 	ActorFrame		m_frameStage;
 
 	// Ez2 Elements
@@ -48,8 +48,9 @@ private:
 	Sprite m_sprSongBackground;
 
 	Quad			m_quadMask;		// write this into ZBuffer as a mask
-
-	TransitionFade	m_Fade;
+*/
+	TransitionBGAnimation	m_In, m_Out;
+	BGAnimation				m_Background;
 
 protected:
 

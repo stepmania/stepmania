@@ -141,6 +141,9 @@ void Sprite::UnloadTexture()
 
 bool Sprite::LoadFromTexture( RageTextureID ID )
 {
+	if( m_pTexture  &&  m_pTexture->GetID()==ID )		// don't do anything if this texture is already loaded
+		return true;
+
 	UnloadTexture();
 
 	m_pTexture = TEXTUREMAN->LoadTexture( ID );

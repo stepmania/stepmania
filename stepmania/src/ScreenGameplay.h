@@ -99,7 +99,7 @@ protected:
 
 	Sprite				m_sprLifeFrame;
 	LifeMeter*			m_pLifeMeter[NUM_PLAYERS];
-	BitmapText			m_textStageNumber;
+	Sprite				m_sprStage;
 	BitmapText			m_textCourseSongNumber[NUM_PLAYERS];
 
 	BPMDisplay			m_BPMDisplay;
@@ -167,7 +167,6 @@ protected:
 	int				m_iRowLastCrossed;
 
 	RageSound		m_soundAssistTick;
-	RageSound		m_soundToasty;
 	RageSound		m_soundMusic;
 };
 

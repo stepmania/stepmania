@@ -46,6 +46,19 @@ bool RageTextureID::operator<(const RageTextureID &rhs) const
 	return false;
 }
 
+bool RageTextureID::operator==(const RageTextureID &rhs) const
+{
+	return 
+		filename == rhs.filename &&
+		iMaxSize == rhs.iMaxSize &&
+		iMipMaps == rhs.iMipMaps &&
+		iAlphaBits == rhs.iAlphaBits &&
+		iColorDepth == rhs.iColorDepth &&
+		bDither == rhs.bDither &&
+		bStretch == rhs.bStretch &&
+		bHotPinkColorKey == rhs.bHotPinkColorKey;
+}
+
 
 RageTexture::RageTexture( RageTextureID name ):
 	m_ID(name)

@@ -53,7 +53,7 @@ Background::Background()
 	m_pFadingBGA = NULL;
 	m_fSecsLeftInFade = 0;
 
-	m_BGADanger.LoadFromAniDir( THEME->GetPathTo("BGAnimations","gameplay danger") );
+	m_BGADanger.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenGameplay danger") );
 
 	m_quadBGBrightness.StretchTo( RECT_BACKGROUND );
 	m_quadBGBrightness.SetDiffuse( RageColor(0,0,0,1-PREFSMAN->m_fBGBrightness) );

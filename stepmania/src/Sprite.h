@@ -60,7 +60,7 @@ public:
 	virtual void SetState( int iNewState );
 	
 	int		GetNumStates()		{ return m_iNumStates; };
-	CString	GetTexturePath()	{ ASSERT(m_pTexture); return m_pTexture->GetID().filename; };
+	CString	GetTexturePath()	{ return m_pTexture==NULL ? "" : m_pTexture->GetID().filename; };
 
 	void SetCustomTextureRect( const RectF &new_texcoord_frect );
 	void SetCustomTextureCoords( float fTexCoords[8] );

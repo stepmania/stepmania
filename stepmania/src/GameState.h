@@ -83,7 +83,6 @@ public:
 	bool			IsExtraStage();
 	bool			IsExtraStage2();
 	CString			GetStageText();
-	RageColor		GetStageColor();
 	int				GetCourseSongIndex();
 
 

@@ -282,11 +282,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	}
 
 
-	m_textStageNumber.LoadFromFont( THEME->GetPathTo("Fonts","gameplay stage") );
-	m_textStageNumber.EnableShadow( false );
-	m_textStageNumber.SetXY( STAGE_X, STAGE_Y(bExtra) );
-	m_textStageNumber.SetText( GAMESTATE->GetStageText() );
-	m_textStageNumber.SetDiffuse( GAMESTATE->GetStageColor() );
+	m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenGameplay stage "+GAMESTATE->GetStageText()) );
+	m_sprStage.SetXY( STAGE_X, STAGE_Y(bExtra) );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -294,14 +291,14 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		m_textCourseSongNumber[p].EnableShadow( false );
 		m_textCourseSongNumber[p].SetXY( SONG_NUMBER_X(p), SONG_NUMBER_Y(p,bExtra) );
 		m_textCourseSongNumber[p].SetText( "" );
-		m_textCourseSongNumber[p].SetDiffuse( GAMESTATE->GetStageColor() );	// light blue
+		m_textCourseSongNumber[p].SetDiffuse( RageColor(0,0.5f,1,1) );	// light blue
 	}
 
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
 	case PLAY_MODE_BATTLE:
-		this->AddChild( &m_textStageNumber );
+		this->AddChild( &m_sprStage );
 		break;
 	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ONI:
@@ -495,7 +492,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		m_announcer1000Combo.Load(		ANNOUNCER->GetPathTo("ScreenGameplay 1000 combo") );
 		m_announcerComboStopped.Load(	ANNOUNCER->GetPathTo("ScreenGameplay combo stopped") );
 		m_soundAssistTick.Load(			THEME->GetPathTo("Sounds","ScreenGameplay assist tick") );
-		m_soundToasty.Load(				THEME->GetPathTo("Sounds","ScreenGameplay toasty") );
 	}
 
 	//
@@ -606,8 +602,6 @@ void ScreenGameplay::LoadNextSong()
 		ASSERT(0);
 		break;
 	}
-
-	m_textStageNumber.SetText( GAMESTATE->GetStageText() );
 
 	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );
 
@@ -1296,7 +1290,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		if( PREFSMAN->m_bEasterEggs )
 		{
 			m_Toasty.StartTransitioning();
-			m_soundToasty.Play();
 		}
 		break;
 
@@ -1548,10 +1541,10 @@ void ScreenGameplay::TweenOnScreen()
 	unsigned i, p;
 
 	vector<Actor*> apActorsInLifeFrame;
-	apActorsInLifeFrame.push_back(	&m_sprLifeFrame );
+	apActorsInLifeFrame.push_back( &m_sprLifeFrame );
 	for( p=0; p<NUM_PLAYERS; p++ )
 		apActorsInLifeFrame.push_back(	m_pLifeMeter[p] );
-	apActorsInLifeFrame.push_back(	&m_textStageNumber );
+	apActorsInLifeFrame.push_back( &m_sprStage );
 	for( p=0; p<NUM_PLAYERS; p++ )
 		apActorsInLifeFrame.push_back(	&m_textCourseSongNumber[p] );
 	for( i=0; i<apActorsInLifeFrame.size(); i++ )
