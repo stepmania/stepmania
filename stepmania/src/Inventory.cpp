@@ -160,7 +160,7 @@ void Inventory::AwardItem( int iItemIndex )
 	// search for the first open slot
 	int iOpenSlot = -1;
 
-	GameState::Attack* asInventory = GAMESTATE->m_Inventory[m_PlayerNumber]; //[NUM_INVENTORY_SLOTS]
+	Attack* asInventory = GAMESTATE->m_Inventory[m_PlayerNumber]; //[NUM_INVENTORY_SLOTS]
 
 	if( asInventory[NUM_INVENTORY_SLOTS/2].IsBlank() )
 		iOpenSlot = NUM_INVENTORY_SLOTS/2;
@@ -176,7 +176,7 @@ void Inventory::AwardItem( int iItemIndex )
 
 	if( iOpenSlot != -1 )
 	{
-		GameState::Attack a;
+		Attack a;
 		a.sModifier = g_Items[iItemIndex].sModifier;
 		a.fSecsRemaining = ITEM_DURATION_SECONDS;
 		a.level = g_Items[iItemIndex].level;
@@ -188,13 +188,13 @@ void Inventory::AwardItem( int iItemIndex )
 
 void Inventory::UseItem( int iSlot )
 {
-	GameState::Attack* asInventory = GAMESTATE->m_Inventory[m_PlayerNumber]; //[NUM_INVENTORY_SLOTS]
+	Attack* asInventory = GAMESTATE->m_Inventory[m_PlayerNumber]; //[NUM_INVENTORY_SLOTS]
 
 	if( asInventory[iSlot].IsBlank() )
 		return;
 
     PlayerNumber pnToAttack = OPPOSITE_PLAYER[m_PlayerNumber];
-	GameState::Attack a = asInventory[iSlot];
+	Attack a = asInventory[iSlot];
 
 	// remove the item
 	asInventory[iSlot].MakeBlank();

@@ -141,7 +141,7 @@ void CombinedLifeMeterEnemy::Update( float fDelta )
 
 		if( CROSSED_SONG_SECONDS(20) || CROSSED_SONG_SECONDS(40) )
 		{
-			GameState::Attack a;
+			Attack a;
 			a.fSecsRemaining = 10;
 			a.level = ATTACK_LEVEL_1;
 			a.sModifier = sPossibleModifiers[a.level][rand()%3];
@@ -153,7 +153,7 @@ void CombinedLifeMeterEnemy::Update( float fDelta )
 		}
 		if( CROSSED_SONG_SECONDS(60) || CROSSED_SONG_SECONDS(80) )
 		{
-			GameState::Attack a;
+			Attack a;
 			a.fSecsRemaining = 10;
 			a.level = ATTACK_LEVEL_2;
 			a.sModifier = sPossibleModifiers[a.level][rand()%3];
@@ -165,7 +165,7 @@ void CombinedLifeMeterEnemy::Update( float fDelta )
 		}
 		if( CROSSED_SONG_SECONDS(100) )
 		{
-			GameState::Attack a;
+			Attack a;
 			a.fSecsRemaining = 10;
 			a.level = ATTACK_LEVEL_3;
 			a.sModifier = sPossibleModifiers[a.level][rand()%3];

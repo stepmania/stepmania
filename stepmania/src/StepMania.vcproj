@@ -513,6 +513,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			Name="Data Structures"
 			Filter="">
 			<File
+				RelativePath="Attack.cpp">
+			</File>
+			<File
+				RelativePath="Attack.h">
+			</File>
+			<File
 				RelativePath="BannerCache.cpp">
 			</File>
 			<File

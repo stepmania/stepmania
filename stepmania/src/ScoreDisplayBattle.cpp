@@ -53,7 +53,7 @@ void ScoreDisplayBattle::Update( float fDelta )
 
 	for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
 	{
-		GameState::Attack attack = GAMESTATE->m_Inventory[m_PlayerNumber][s];
+		Attack attack = GAMESTATE->m_Inventory[m_PlayerNumber][s];
 		CString sNewModifier = attack.sModifier;
 
 		if( sNewModifier != m_iLastSeenInventory[s] )

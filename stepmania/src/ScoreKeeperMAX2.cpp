@@ -25,7 +25,7 @@
 #include "RageLog.h"
 
 
-ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Steps*>& apNotes_, const vector<GameState::AttackArray> &asModifiers, PlayerNumber pn_ ):
+ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Steps*>& apNotes_, const vector<AttackArray> &asModifiers, PlayerNumber pn_ ):
 	ScoreKeeper(pn_), apNotes(apNotes_)
 {
 	//
@@ -57,7 +57,7 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Ste
 
 		for( unsigned j=0; j < asModifiers[i].size(); j++ )
 		{
-			const GameState::Attack &mod = asModifiers[i][j];
+			const Attack &mod = asModifiers[i][j];
 			PlayerOptions po;
 			po.FromString( mod.sModifier );
 

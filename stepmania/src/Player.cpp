@@ -334,7 +334,7 @@ void PlayerMinus::Update( float fDeltaTime )
 	// process transforms that are waiting to be applied
 	for( unsigned j=0; j<GAMESTATE->m_ModsToApply[m_PlayerNumber].size(); j++ )
 	{
-		const GameState::Attack &mod = GAMESTATE->m_ModsToApply[m_PlayerNumber][j];
+		const Attack &mod = GAMESTATE->m_ModsToApply[m_PlayerNumber][j];
 		PlayerOptions po;
 		/* Should this default to "" always? need it blank so we know if mod.sModifier
 		 * changes the note skin. */

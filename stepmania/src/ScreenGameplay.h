@@ -28,7 +28,7 @@ class Inventory;
 #include "LyricDisplay.h"
 #include "TimingAssist.h"
 #include "Character.h"
-#include "GameState.h"
+#include "Attack.h"
 
 // messages sent by Combo
 const ScreenMessage SM_PlayToasty			= ScreenMessage(SM_User+104);
@@ -92,7 +92,7 @@ protected:
 	} m_DancingState;
 	vector<Song*>		m_apSongsQueue;					// size may be >1 if playing a course
 	vector<Steps*>		m_apNotesQueue[NUM_PLAYERS];	// size may be >1 if playing a course
-	vector<GameState::AttackArray>	m_asModifiersQueue[NUM_PLAYERS];// size may be >1 if playing a course
+	vector<AttackArray>	m_asModifiersQueue[NUM_PLAYERS];// size may be >1 if playing a course
 
 	bool				m_bChangedOffsetOrBPM;
 	float				m_fTimeLeftBeforeDancingComment;	// this counter is only running while STATE_DANCING

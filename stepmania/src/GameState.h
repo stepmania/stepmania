@@ -18,6 +18,7 @@
 #include "Style.h"
 #include "Grade.h"
 #include "StageStats.h"
+#include "Attack.h"
 
 #include <map>
 
@@ -168,19 +169,6 @@ public:
 	StageStats	m_CurStageStats;				// current stage (not necessarily passed if Extra Stage)
 
 	// used in PLAY_MODE_BATTLE and PLAY_MODE_RAVE
-	struct Attack
-	{
-		AttackLevel	level;
-		float fStartSecond; // -1 = now
-		float fSecsRemaining;
-		CString sModifier;
-
-		void GetAttackBeats( const Song *song, PlayerNumber pn, float &fStartBeat, float &fEndBeat ) const;
-		bool IsBlank() { return sModifier.empty(); }
-		void MakeBlank() { sModifier=""; }
-		Attack() { fStartSecond = -1; }
-	};
-	typedef vector<GameState::Attack> AttackArray;
 	enum { MAX_SIMULTANEOUS_ATTACKS=16 };
 	Attack	m_ActiveAttacks[NUM_PLAYERS][MAX_SIMULTANEOUS_ATTACKS];
 

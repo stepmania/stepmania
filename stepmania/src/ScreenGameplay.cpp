@@ -81,9 +81,9 @@ const ScreenMessage	SM_GoToScreenAfterFail	= ScreenMessage(SM_User+31);
 const ScreenMessage	SM_StartHereWeGo		= ScreenMessage(SM_User+40);
 const ScreenMessage	SM_StopHereWeGo			= ScreenMessage(SM_User+41);
 
-void GetCourseAttackArray( const Course::Info &ci, GameState::AttackArray &out )
+void GetCourseAttackArray( const Course::Info &ci, AttackArray &out )
 {
-	GameState::Attack a;
+	Attack a;
 	a.fStartSecond = 0;
 	a.fSecsRemaining = 10000; /* whole song */
 	a.level = ATTACK_LEVEL_1;
@@ -169,7 +169,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 			for( unsigned c=0; c<ci.size(); ++c )
 			{
 				m_apNotesQueue[p].push_back( ci[c].pNotes );
-				GameState::AttackArray a;
+				AttackArray a;
 				GetCourseAttackArray( ci[c], a );
 				m_asModifiersQueue[p].push_back( a );
 			}
@@ -184,7 +184,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
 			m_apNotesQueue[p].push_back( GAMESTATE->m_pCurNotes[p] );
-			m_asModifiersQueue[p].push_back( GameState::AttackArray() );
+			m_asModifiersQueue[p].push_back( AttackArray() );
 		}
 	}
 

@@ -93,7 +93,7 @@ void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 
   	PlayerNumber pnToAttack = OPPOSITE_PLAYER[m_PlayerNumber];
 
-	GameState::Attack a;
+	Attack a;
 	a.level = al;
 	a.fSecsRemaining = ATTACK_DURATION_SECONDS;
 	a.sModifier = sAttackToGive;

@@ -39,7 +39,7 @@ class ScoreKeeperMAX2: public ScoreKeeper
 	int				m_ComboBonusFactor[NUM_TAP_NOTE_SCORES];
 
 public:
-	ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Steps*>& apNotes, const vector<GameState::AttackArray> &asModifiers, PlayerNumber pn);
+	ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Steps*>& apNotes, const vector<AttackArray> &asModifiers, PlayerNumber pn);
 
 	// before a song plays (called multiple times if course)
 	void OnNextSong( int iSongInCourseIndex, const Steps* pNotes, const NoteData* pNoteData );
