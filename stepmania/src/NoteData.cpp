@@ -717,7 +717,8 @@ CString NoteDataUtil::GetSMNoteDataString(NoteData &in)
 	float fLastBeat = in.GetLastBeat();
 	int iLastMeasure = int( fLastBeat/BEATS_PER_MEASURE );
 
-	CStringArray asMeasureStrings;
+	CString sRet;
+
 	for( int m=0; m<=iLastMeasure; m++ )	// foreach measure
 	{
 		NoteType nt = GetSmallestNoteTypeForMeasure( in, m );
@@ -727,15 +728,12 @@ CString NoteDataUtil::GetSMNoteDataString(NoteData &in)
 		else
 			iRowSpacing = int(roundf( NoteTypeToBeat(nt) * ROWS_PER_BEAT ));
 
-		CStringArray asMeasureLines;
-		asMeasureLines.push_back( ssprintf("  // measure %d", m+1) );
+		sRet += ssprintf("  // measure %d\n", m+1);
 
 		const int iMeasureStartRow = m * ROWS_PER_MEASURE;
 		const int iMeasureLastRow = (m+1) * ROWS_PER_MEASURE - 1;
-
 		for( int r=iMeasureStartRow; r<=iMeasureLastRow; r+=iRowSpacing )
 		{
-			CString szLineString;
 			for( int t=0; t<in.m_iNumTracks; t++ ) {
 				char c;
 				switch(in.GetTapNote(t, r)) {
@@ -745,20 +743,18 @@ CString NoteDataUtil::GetSMNoteDataString(NoteData &in)
 				case TAP_HOLD_TAIL: c = '3'; break;
 				default: ASSERT(0); c = '0'; break;
 				}
-				szLineString.append(1, c);
+				sRet.append(1, c);
 			}
 			
-			asMeasureLines.push_back( szLineString );
+			sRet.append(1, '\n');
 		}
 
-		CString sMeasureString = join( "\n", asMeasureLines );
-
-		asMeasureStrings.push_back( sMeasureString );
+		sRet.append(1, ',');
 	}
 
 	in.Convert2sAnd3sToHoldNotes();
 
-	return join( "\n,", asMeasureStrings );
+	return sRet;
 }
 
 float NoteDataUtil::GetRadarValue( const NoteData &in, RadarCategory rv, float fSongSeconds )
