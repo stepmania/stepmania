@@ -55,7 +55,6 @@ const float OPT_Y[NUM_EZ2_GRAPHICS] = {
 
 float ez2_lasttimercheck[2];
 int ez2_bounce=0; // used for the bouncing of the '1p' and '2p' images
-int ez2_direct=0; // direction of the bouncing of the '1p' and '2p' images
 
 /************************************
 ScreenEz2SelectPlayer (Constructor)
@@ -136,34 +135,16 @@ Desc: Animates the 1p/2p selection
 ************************************/
 void ScreenEz2SelectPlayer::AnimateGraphics()
 {
-
-//if (bounce < 10 && direct == 0 && wait == 2) // Bounce 1p/2p up
-if (TIMER->GetTimeSinceStart() > ez2_lasttimercheck[0] + 0.01f && ez2_direct == 0)
+	if (TIMER->GetTimeSinceStart() > ez2_lasttimercheck[0] + 0.01f)
 	{
 		ez2_lasttimercheck[0] = TIMER->GetTimeSinceStart();
-		ez2_bounce+=1;
-	
-		m_sprOpt[2].SetXY( OPT_X[2], OPT_Y[2] - ez2_bounce);
-		m_sprOpt[3].SetXY( OPT_X[3], OPT_Y[3] - ez2_bounce);
 
-
-		if (ez2_bounce == 10)
-		{
-			ez2_direct = 1;
-		}
-	}
-	else if (TIMER->GetTimeSinceStart() > ez2_lasttimercheck[0] + 0.01f && ez2_direct == 1) // bounce 1p/2p down
-	{
-		ez2_lasttimercheck[0] = TIMER->GetTimeSinceStart();
-		ez2_bounce-=1;
-	
-		m_sprOpt[2].SetXY( OPT_X[2], OPT_Y[2] - ez2_bounce);
-		m_sprOpt[3].SetXY( OPT_X[3], OPT_Y[3] - ez2_bounce);
-
-		if (ez2_bounce == 0)
-		{
-			ez2_direct = 0;
-		}
+		ez2_bounce = (ez2_bounce+1) % 20;
+		
+		/* 0..10..19 -> 10..0..9 */
+		int offset = abs(10-ez2_bounce);
+		m_sprOpt[2].SetXY( OPT_X[2], OPT_Y[2] - offset);
+		m_sprOpt[3].SetXY( OPT_X[3], OPT_Y[3] - offset);
 	}
 }
 
