@@ -5,31 +5,35 @@
 #include <stdint.h>
 #endif
 
-#if defined(LINUX)
-
-/* __KERNEL__ needs to be defined on PPC for asm/byteorder.h to work. */
-#if defined(CPU_PPC) && !defined(__KERNEL__)
-#define __KERNEL__
-#endif
-
-extern "C"
-{
-#include <asm/byteorder.h>
-};
+#if defined(CPU_X86)
 
 inline uint32_t ArchSwap32( uint32_t n )
 {
-	return ___arch__swab32( n );
+	asm(
+		"xchg %b0, %h0\n"
+		"rorl $16, %0\n"
+		"xchg %b0, %h0":
+		"=q" (n): "0" (n) );
+	return n;
 }
 
 inline uint32_t ArchSwap24( uint32_t n )
 {
-	return ArchSwap32(n) >> 8; // xx223344 -> 443322xx -> 00443322
+	asm(
+		"xchg %b0, %h0\n"
+		"rorl $16, %0\n"
+		"xchg %b0, %h0\n"
+		"shrl $8, %0\n":
+		"=q" (n): "0" (n) );
+	return n;
 }
 
 inline uint16_t ArchSwap16( uint16_t n )
 {
-	return ___arch__swab16( n );
+	asm(
+		"xchg %b0, %h0\n":
+		"=q" (n): "0" (n) );
+	return n;
 }
 
 #define HAVE_BYTE_SWAPS
