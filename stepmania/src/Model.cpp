@@ -267,139 +267,16 @@ void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
 
 bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 {
-	FixSlashesInPlace(sPath);
-	const CString sDir = Dirname( sPath );
+	m_mapNameToAnimation[sAniName] = msAnimation();
+	msAnimation &Animation = m_mapNameToAnimation[sAniName];
 
-	RageFile f;
-	if ( !f.Open(sPath) )
-		RageException::Throw( "Model:: Could not open \"%s\": %s", sPath.c_str(), f.GetError().c_str() );
-
-	CString sLine;
-	int iLineNum = 0;
-
-	bool bLoaded = false;
-    while( f.GetLine( sLine ) > 0 )
-    {
-		iLineNum++;
-
-        if (!strncmp (sLine, "//", 2))
-            continue;
-
-        //
-        // bones
-        //
-        int nNumBones = 0;
-        if( sscanf (sLine, "Bones: %d", &nNumBones) != 1 )
-			continue;
-
-		m_mapNameToAnimation[sAniName] = msAnimation();
-		msAnimation &Animation = m_mapNameToAnimation[sAniName];
-
-        char szName[MS_MAX_NAME];
-
-        Animation.Bones.resize( nNumBones );
-
-        for( int i = 0; i < nNumBones; i++ )
-        {
-			msBone& Bone = Animation.Bones[i];
-
-            // name
-			if( f.GetLine( sLine ) <= 0 )
-				THROW;
-            if (sscanf (sLine, "\"%[^\"]\"", szName) != 1)
-				THROW;
-            strcpy( Bone.szName, szName );
-
-            // parent
-			if( f.GetLine( sLine ) <= 0 )
-				THROW;
-            strcpy (szName, "");
-            sscanf (sLine, "\"%[^\"]\"", szName);
-
-            strcpy( Bone.szParentName, szName );
-
-            // flags, position, rotation
-            RageVector3 Position, Rotation;
-			if( f.GetLine( sLine ) <= 0 )
-				THROW;
-
-			int nFlags;
-            if (sscanf (sLine, "%d %f %f %f %f %f %f",
-                &nFlags,
-                &Position[0], &Position[1], &Position[2],
-                &Rotation[0], &Rotation[1], &Rotation[2]) != 7)
-            {
-				THROW;
-            }
-			Rotation = RadianToDegree(Rotation);
-
-			Bone.nFlags = nFlags;
-            memcpy( &Bone.Position, &Position, sizeof(Bone.Position) );
-            memcpy( &Bone.Rotation, &Rotation, sizeof(Bone.Rotation) );
-
-            // position key count
-			if( f.GetLine( sLine ) <= 0 )
-				THROW;
-            int nNumPositionKeys = 0;
-            if (sscanf (sLine, "%d", &nNumPositionKeys) != 1)
-				THROW;
-
-            Bone.PositionKeys.resize( nNumPositionKeys );
-
-            for( int j = 0; j < nNumPositionKeys; ++j )
-            {
-				if( f.GetLine( sLine ) <= 0 )
-					THROW;
-
-				float fTime;
-                if (sscanf (sLine, "%f %f %f %f", &fTime, &Position[0], &Position[1], &Position[2]) != 4)
-					THROW;
-
-				msPositionKey key;
-				key.fTime = fTime;
-				key.Position = RageVector3( Position[0], Position[1], Position[2] );
-				Bone.PositionKeys[j] = key;
-            }
-
-            // rotation key count
-			if( f.GetLine( sLine ) <= 0 )
-				THROW;
-            int nNumRotationKeys = 0;
-            if (sscanf (sLine, "%d", &nNumRotationKeys) != 1)
-				THROW;
-
-            Bone.RotationKeys.resize( nNumRotationKeys );
-
-            for( int j = 0; j < nNumRotationKeys; ++j )
-            {
-				if( f.GetLine( sLine ) <= 0 )
-					THROW;
-
-				float fTime;
-                if (sscanf (sLine, "%f %f %f %f", &fTime, &Rotation[0], &Rotation[1], &Rotation[2]) != 4)
-					THROW;
-				Rotation = RadianToDegree(Rotation);
-
-				msRotationKey key;
-				key.fTime = fTime;
-				key.Rotation = RageVector3( Rotation[0], Rotation[1], Rotation[2] );
-                Bone.RotationKeys[j] = key;
-            }
-        }
-
-		// Ignore "Frames:" in file.  Calculate it ourself
-		Animation.nTotalFrames = 0;
-		for( int i = 0; i < (int)Animation.Bones.size(); i++ )
-		{
-			msBone& Bone = Animation.Bones[i];
-			for( unsigned j = 0; j < Bone.PositionKeys.size(); ++j )
-				Animation.nTotalFrames = max( Animation.nTotalFrames, (int)Bone.PositionKeys[j].fTime );
-			for( unsigned j = 0; j < Bone.RotationKeys.size(); ++j )
-				Animation.nTotalFrames = max( Animation.nTotalFrames, (int)Bone.RotationKeys[j].fTime );
-		}
+	if( Animation.LoadMilkshapeAsciiBones( sAniName, sPath ) )
+	{
+		m_mapNameToAnimation.erase( sAniName );
+		return false;
 	}
 
-	return bLoaded;
+	return true;
 }
 
 bool Model::EarlyAbortDraw()

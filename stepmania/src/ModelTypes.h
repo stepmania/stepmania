@@ -124,6 +124,8 @@ struct msAnimation
 		return -1;
 	}
 
+	bool LoadMilkshapeAsciiBones( CString sAniName, CString sPath );
+
     int         nTotalFrames;
 
     RageVector3      Position;
