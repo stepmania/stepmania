@@ -8,6 +8,7 @@
 #include "BitmapText.h"
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"	// for TapNoteScore
+#include "ThemeMetric.h"
 
 
 class Combo : public ActorFrame
@@ -15,11 +16,30 @@ class Combo : public ActorFrame
 public:
 	Combo();
 
-	void Init( PlayerNumber pn ) { m_PlayerNumber = pn; }
+	void Load( PlayerNumber pn );
 
 	void SetCombo( int iCombo, int iMisses );
 
 protected:
+	ThemeMetric<float>	LABEL_X;
+	ThemeMetric<float>	LABEL_Y;
+	ThemeMetric<int>	LABEL_HORIZ_ALIGN;
+	ThemeMetric<int>	LABEL_VERT_ALIGN;
+	ThemeMetric<float>	NUMBER_X;
+	ThemeMetric<float>	NUMBER_Y;
+	ThemeMetric<int>	NUMBER_HORIZ_ALIGN;
+	ThemeMetric<int>	NUMBER_VERT_ALIGN;
+	ThemeMetric<int>	SHOW_COMBO_AT;
+	ThemeMetric<float>	NUMBER_MIN_ZOOM;
+	ThemeMetric<float>	NUMBER_MAX_ZOOM;
+	ThemeMetric<float>	NUMBER_MAX_ZOOM_AT;
+	ThemeMetric<float>	PULSE_ZOOM;
+	ThemeMetric<float>	C_TWEEN_SECONDS;
+	ThemeMetric<apActorCommands>	FULL_COMBO_GREATS_COMMAND;
+	ThemeMetric<apActorCommands>	FULL_COMBO_PERFECTS_COMMAND;
+	ThemeMetric<apActorCommands>	FULL_COMBO_MARVELOUSES_COMMAND;
+	ThemeMetric<apActorCommands>	FULL_COMBO_BROKEN_COMMAND;
+	ThemeMetric<bool>	SHOW_MISS_COMBO;
 
 	PlayerNumber m_PlayerNumber;
 

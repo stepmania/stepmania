@@ -4,58 +4,61 @@
 #include "StatsManager.h"
 #include "GameState.h"
 #include "song.h"
-#include "ThemeMetric.h"
 #include "Command.h"
-
-
-ThemeMetric<float>	LABEL_X				("Combo","LabelX");
-ThemeMetric<float>	LABEL_Y				("Combo","LabelY");
-ThemeMetric<int>	LABEL_HORIZ_ALIGN	("Combo","LabelHorizAlign");
-ThemeMetric<int>	LABEL_VERT_ALIGN	("Combo","LabelVertAlign");
-ThemeMetric<float>	NUMBER_X			("Combo","NumberX");
-ThemeMetric<float>	NUMBER_Y			("Combo","NumberY");
-ThemeMetric<int>	NUMBER_HORIZ_ALIGN	("Combo","NumberHorizAlign");
-ThemeMetric<int>	NUMBER_VERT_ALIGN	("Combo","NumberVertAlign");
-ThemeMetric<int>	SHOW_COMBO_AT		("Combo","ShowComboAt");
-ThemeMetric<float>	NUMBER_MIN_ZOOM		("Combo","NumberMinZoom");
-ThemeMetric<float>	NUMBER_MAX_ZOOM		("Combo","NumberMaxZoom");
-ThemeMetric<float>	NUMBER_MAX_ZOOM_AT	("Combo","NumberMaxZoomAt");
-ThemeMetric<float>	PULSE_ZOOM			("Combo","PulseZoom");
-ThemeMetric<float>	C_TWEEN_SECONDS		("Combo","TweenSeconds");
-ThemeMetric<apActorCommands>	FULL_COMBO_GREATS_COMMAND		("Combo","FullComboGreatsCommand");
-ThemeMetric<apActorCommands>	FULL_COMBO_PERFECTS_COMMAND		("Combo","FullComboPerfectsCommand");
-ThemeMetric<apActorCommands>	FULL_COMBO_MARVELOUSES_COMMAND	("Combo","FullComboMarvelousesCommand");
-ThemeMetric<apActorCommands>	FULL_COMBO_BROKEN_COMMAND		("Combo","FullComboBrokenCommand");
-ThemeMetric<bool>	SHOW_MISS_COMBO		("Combo","ShowMissCombo");
-
 
 Combo::Combo()
 {
-	m_sprComboLabel.Load( THEME->GetPathG("Combo","label") );
+	this->AddChild( &m_sprComboLabel );
+	this->AddChild( &m_sprMissesLabel );
+	this->AddChild( &m_textNumber );
+}
+
+void Combo::Load( PlayerNumber pn )
+{
+	m_PlayerNumber = pn;
+
+	LABEL_X.Load(m_sName,"LabelX");
+	LABEL_Y.Load(m_sName,"LabelY");
+	LABEL_HORIZ_ALIGN.Load(m_sName,"LabelHorizAlign");
+	LABEL_VERT_ALIGN.Load(m_sName,"LabelVertAlign");
+	NUMBER_X.Load(m_sName,"NumberX");
+	NUMBER_Y.Load(m_sName,"NumberY");
+	NUMBER_HORIZ_ALIGN.Load(m_sName,"NumberHorizAlign");
+	NUMBER_VERT_ALIGN.Load(m_sName,"NumberVertAlign");
+	SHOW_COMBO_AT.Load(m_sName,"ShowComboAt");
+	NUMBER_MIN_ZOOM.Load(m_sName,"NumberMinZoom");
+	NUMBER_MAX_ZOOM.Load(m_sName,"NumberMaxZoom");
+	NUMBER_MAX_ZOOM_AT.Load(m_sName,"NumberMaxZoomAt");
+	PULSE_ZOOM.Load(m_sName,"PulseZoom");
+	C_TWEEN_SECONDS.Load(m_sName,"TweenSeconds");
+	FULL_COMBO_GREATS_COMMAND.Load(m_sName,"FullComboGreatsCommand");
+	FULL_COMBO_PERFECTS_COMMAND.Load(m_sName,"FullComboPerfectsCommand");
+	FULL_COMBO_MARVELOUSES_COMMAND.Load(m_sName,"FullComboMarvelousesCommand");
+	FULL_COMBO_BROKEN_COMMAND.Load(m_sName,"FullComboBrokenCommand");
+	SHOW_MISS_COMBO.Load(m_sName,"ShowMissCombo");
+
+	m_sprComboLabel.Load( THEME->GetPathG(m_sName,"label") );
 	m_sprComboLabel.SetShadowLength( 4 );
 	m_sprComboLabel.StopAnimating();
 	m_sprComboLabel.SetXY( LABEL_X, LABEL_Y );
 	m_sprComboLabel.SetHorizAlign( (Actor::HorizAlign)(int)LABEL_HORIZ_ALIGN );
 	m_sprComboLabel.SetVertAlign( (Actor::VertAlign)(int)LABEL_VERT_ALIGN );
 	m_sprComboLabel.SetHidden( true );
-	this->AddChild( &m_sprComboLabel );
 
-	m_sprMissesLabel.Load( THEME->GetPathG("Combo","misses") );
+	m_sprMissesLabel.Load( THEME->GetPathG(m_sName,"misses") );
 	m_sprMissesLabel.SetShadowLength( 4 );
 	m_sprMissesLabel.StopAnimating();
 	m_sprMissesLabel.SetXY( LABEL_X, LABEL_Y );
 	m_sprMissesLabel.SetHorizAlign( (Actor::HorizAlign)(int)LABEL_HORIZ_ALIGN );
 	m_sprMissesLabel.SetVertAlign( (Actor::VertAlign)(int)LABEL_VERT_ALIGN );
 	m_sprMissesLabel.SetHidden( true );
-	this->AddChild( &m_sprMissesLabel );
 
-	m_textNumber.LoadFromFont( THEME->GetPathF("Combo","numbers") );
+	m_textNumber.LoadFromFont( THEME->GetPathF(m_sName,"numbers") );
 	m_textNumber.SetShadowLength( 4 );
 	m_textNumber.SetXY( NUMBER_X, NUMBER_Y );
 	m_textNumber.SetHorizAlign( (Actor::HorizAlign)(int)NUMBER_HORIZ_ALIGN );
 	m_textNumber.SetVertAlign( (Actor::VertAlign)(int)NUMBER_VERT_ALIGN );
 	m_textNumber.SetHidden( true );
-	this->AddChild( &m_textNumber );
 }
 
 void Combo::SetCombo( int iCombo, int iMisses )
