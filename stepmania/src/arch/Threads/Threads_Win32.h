@@ -27,6 +27,7 @@ HANDLE Win32ThreadIdToHandle( uint64_t iID );
 
 class MutexImpl_Win32: public MutexImpl
 {
+	friend class EventImpl_Win32;
 public:
 	MutexImpl_Win32( RageMutex *parent );
 	~MutexImpl_Win32();
@@ -37,6 +38,26 @@ public:
 
 private:
 	HANDLE mutex;
+};
+
+class EventImpl_Win32: public EventImpl
+{
+public:
+	EventImpl_Win32( MutexImpl_Win32 *pParent );
+	~EventImpl_Win32();
+
+	void Wait();
+	void Signal();
+	void Broadcast();
+
+private:
+	MutexImpl_Win32 *m_pParent;
+
+	int m_iNumWaiting;
+	CRITICAL_SECTION m_iNumWaitingLock;
+	HANDLE m_WakeupSema;
+	HANDLE m_WaitersDone;
+	bool m_bNeedSignal;
 };
 
 class SemaImpl_Win32: public SemaImpl

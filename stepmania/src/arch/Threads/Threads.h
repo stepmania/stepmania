@@ -42,6 +42,15 @@ public:
 	virtual void Unlock() = 0;
 };
 
+class EventImpl
+{
+public:
+	virtual ~EventImpl() { }
+	virtual void Wait() = 0;
+	virtual void Signal() = 0;
+	virtual void Broadcast() = 0;
+};
+
 class SemaImpl
 {
 public:
@@ -56,6 +65,7 @@ public:
 ThreadImpl *MakeThread( int (*fn)(void *), void *data, uint64_t *piThreadID );
 ThreadImpl *MakeThisThread();
 MutexImpl *MakeMutex( RageMutex *pParent );
+EventImpl *MakeEvent( MutexImpl *pMutex );
 SemaImpl *MakeSemaphore( int iInitialValue );
 uint64_t GetThisThreadId();
 

@@ -255,6 +255,137 @@ MutexImpl *MakeMutex( RageMutex *pParent )
 	return new MutexImpl_Win32( pParent );
 }
 
+EventImpl_Win32::EventImpl_Win32( MutexImpl_Win32 *pParent )
+{
+	m_pParent = pParent;
+	m_iNumWaiting = 0;
+	m_bNeedSignal = false;
+	m_WakeupSema = CreateSemaphore( NULL, 0, 0x7fffffff, NULL );
+	InitializeCriticalSection( &m_iNumWaitingLock );
+	m_WaitersDone = CreateEvent( NULL, FALSE, FALSE, NULL );
+}
+
+EventImpl_Win32::~EventImpl_Win32()
+{
+	ASSERT_M( m_iNumWaiting == 0, ssprintf("event destroyed while still in use (%i)", m_iNumWaiting) );
+
+	/* We don't own m_pParent; don't free it. */
+	CloseHandle( m_WakeupSema );
+	DeleteCriticalSection( &m_iNumWaitingLock );
+	CloseHandle( m_WaitersDone );
+}
+
+/* SignalObjectAndWait is atomic, which leads to more fair event handling.  However,
+ * we don't guarantee or depend upon fair events, and SignalObjectAndWait is only
+ * available in NT.  I also can't find a single function to signal an object like
+ * SignalObjectAndWait, so we need to know if the object is a mutex or an event. */
+static void PortableSignalObjectAndWait( HANDLE hObjectToSignal, HANDLE hObjectToWaitOn, bool bFirstParamIsMutex )
+{
+	static bool bSignalObjectAndWaitUnavailable = false;
+	if( !bSignalObjectAndWaitUnavailable )
+	{
+		DWORD ret = SignalObjectAndWait( hObjectToSignal, hObjectToWaitOn, INFINITE, false );
+		switch( ret )
+		{
+		case WAIT_OBJECT_0:
+			return;
+
+		case WAIT_ABANDONED:
+			/* The docs aren't particular about what this does, but it should never happen. */
+			FAIL_M( "WAIT_ABANDONED" );
+
+		case WAIT_FAILED:
+			if( GetLastError() == ERROR_CALL_NOT_IMPLEMENTED )
+			{
+				/* We're probably on 9x. */
+				bSignalObjectAndWaitUnavailable = true;
+				break;
+			}
+
+			FAIL_M( werr_ssprintf(GetLastError(), "SignalObjectAndWait") );
+
+		default:
+			FAIL_M( "unknown" );
+		}
+	}
+
+	if( bFirstParamIsMutex )
+	{
+		const bool bRet = !!ReleaseMutex( hObjectToSignal );
+		if( !bRet )
+			sm_crash( werr_ssprintf( GetLastError(), "ReleaseMutex failed" ) );
+	}
+	else
+		SetEvent( hObjectToSignal );
+
+	WaitForSingleObject( hObjectToWaitOn, INFINITE );
+}
+
+/* Event logic from http://www.cs.wustl.edu/~schmidt/win32-cv-1.html. */
+void EventImpl_Win32::Wait()
+{
+	EnterCriticalSection( &m_iNumWaitingLock );
+	++m_iNumWaiting;
+	LeaveCriticalSection( &m_iNumWaitingLock );
+
+	/* Unlock the mutex and wait for a signal. */
+	PortableSignalObjectAndWait( m_pParent->mutex, m_WakeupSema, true );
+
+	EnterCriticalSection( &m_iNumWaitingLock );
+	--m_iNumWaiting;
+	bool bLastWaiting = m_bNeedSignal && m_iNumWaiting == 0;
+	LeaveCriticalSection( &m_iNumWaitingLock );
+
+	/* If m_bNeedSignal is set, and we're the last waiter to wake up, signal the
+	 * broadcaster. */
+	if( bLastWaiting )
+		PortableSignalObjectAndWait( m_WaitersDone, m_pParent->mutex, false );
+	else
+		WaitForSingleObject( m_pParent->mutex, INFINITE );
+}
+
+void EventImpl_Win32::Signal()
+{
+	EnterCriticalSection( &m_iNumWaitingLock );
+	bool bHaveWaiters = (m_iNumWaiting > 0);
+	LeaveCriticalSection( &m_iNumWaitingLock );
+
+	if( bHaveWaiters )
+		ReleaseSemaphore( m_WakeupSema, 1, 0 );
+}
+
+void EventImpl_Win32::Broadcast()
+{
+	EnterCriticalSection( &m_iNumWaitingLock );
+
+	if( m_iNumWaiting == 0 )
+	{
+		LeaveCriticalSection( &m_iNumWaitingLock );
+		return;
+	}
+
+	/* Since we're broadcasting, we need to wait for all waiters to wake up and
+	 * start waiting for the mutex before returning. */
+	m_bNeedSignal = true;
+
+	ReleaseSemaphore( m_WakeupSema, m_iNumWaiting, 0 );
+
+	LeaveCriticalSection( &m_iNumWaitingLock );
+
+	/* We set m_bNeedSignal; the last waiter will touch m_WaitersDone.  Note that
+	 * we still hold the parent mutex, so no other thread is currently broadcasting;
+	 * we don't have to worry about m_bNeedSignal being set to false on us. */
+	WaitForSingleObject( m_WaitersDone, INFINITE );
+	m_bNeedSignal = false;
+}
+
+EventImpl *MakeEvent( MutexImpl *pMutex )
+{
+	MutexImpl_Win32 *pWin32Mutex = (MutexImpl_Win32 *) pMutex;
+
+	return new EventImpl_Win32( pWin32Mutex );
+}
+
 SemaImpl_Win32::SemaImpl_Win32( int iInitialValue )
 {
 	sem = CreateSemaphore( NULL, iInitialValue, 999999999, NULL );
