@@ -118,9 +118,13 @@ RageLog::RageLog()
 	time(&cur_time);
 	const struct tm *now = localtime(&cur_time);
 
-	this->Trace( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
-		1900+now->tm_year, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec );
-	this->Trace( " " );
+	if ( now )
+	{
+		this->Trace( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
+			1900+now->tm_year, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec );
+		this->Trace( " " );
+	}
+
 #if defined(HAVE_VERSION_INFO)
 	this->Info("Compiled %s (build %lu)", version_time, version_num);
 #endif
