@@ -77,8 +77,10 @@ Grade StageStats::GetGrade( PlayerNumber pn )
 	LOG->Trace( "iPossibleDancePoints: %i", iPossibleDancePoints[pn] );
 	LOG->Trace( "fPercentDancePoints: %f", fPercentDancePoints  );
 
-	// check for "AAAA"
-	if( iTapNoteScores[pn][TNS_MARVELOUS] > 0 &&
+	/* check for "AAAA".  Check DP == 100%: if we're using eg. "LITTLE", we might have all
+	 * marvelouses but still not qualify for a AAAA. */
+	if( fPercentDancePoints > .9999 &&
+		iTapNoteScores[pn][TNS_MARVELOUS] > 0 &&
 		iTapNoteScores[pn][TNS_PERFECT] == 0 &&
 		iTapNoteScores[pn][TNS_GREAT] == 0 &&
 		iTapNoteScores[pn][TNS_GOOD] == 0 &&
