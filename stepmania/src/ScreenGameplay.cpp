@@ -1402,7 +1402,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 	//
 	bool bBlink[NUM_CABINET_LIGHTS];
 	ZERO( bBlink );
-	bool bBlinkBassLights = false;
 	bool bCrossedABeat = false;
 	{
 		float fPositionSeconds = GAMESTATE->m_fMusicSeconds - LIGHTS_FALLOFF_SECONDS/2;	// trigger the light a tiny bit early

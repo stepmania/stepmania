@@ -149,8 +149,6 @@ void LightsManager::Update( float fDeltaTime )
 			FOREACH_CabinetLight( cl )
 				m_LightsState.m_bCabinetLights[cl] = false;
 
-			bool bAllMarqueeLightsOn = !GAMESTATE->m_bPastHereWeGo;
-
 			{
 				FOREACH_CabinetLight( cl )
 					m_LightsState.m_bCabinetLights[cl] = m_fSecsLeftInBlink[cl] > 0 ;
