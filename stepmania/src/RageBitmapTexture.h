@@ -30,8 +30,7 @@ private:
 	unsigned int GetGLTextureID() { return m_uGLTextureID; }
 	unsigned int	m_uGLTextureID;
 
-	SDL_Surface *CreateImg();
-	GLenum fmtTexture;
+	SDL_Surface *CreateImg(int &pixfmt, GLenum &fmtTexture);
 };
 
 #endif

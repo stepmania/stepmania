@@ -29,20 +29,39 @@
 /* Definitions for various texture formats.  We'll probably want RGBA
  * in OpenGL, not ARGB ... All of these are in local (little) endian;
  * this may or may not need adjustment for OpenGL. */
-const static unsigned int PixFmtMasks[][5] =
-{
-	{	0x00FF0000,				/* B8G8R8A8 */
-		0x0000FF00,
-		0x000000FF,
-		0xFF000000, 32 },
-	{	0x0F00,					/* B4G4R4A4 */
-		0x00F0,
-		0x000F,
-		0xF000, 16 },
-	{	0xF800,					/* B5G5R5A1 */
-		0x07C0,
-		0x003E,
-		0x0001, 16 },
+struct PixFmt_t {
+	int bpp;
+	GLenum type;
+	unsigned int masks[4];
+} PixFmtMasks[] = {
+	/* XXX: GL_UNSIGNED_SHORT_4_4_4_4 is affected by endianness; GL_UNSIGNED_BYTE
+	 * is not, but all SDL masks are affected by endianness, so GL_UNSIGNED_BYTE
+	 * is reversed.  This isn't endian-safe. */
+	{
+		/* B8G8R8A8 */
+		32,
+		GL_UNSIGNED_BYTE,
+		{ 0x000000FF,
+		  0x0000FF00,
+		  0x00FF0000,
+		  0xFF000000 }
+	}, {
+		/* B4G4R4A4 */
+		16,
+		GL_UNSIGNED_SHORT_4_4_4_4,
+		{ 0xF000,
+		  0x0F00,
+		  0x00F0,
+		  0x000F },
+	}, {
+		/* B5G5R5A1 */
+		16,
+		GL_UNSIGNED_SHORT_5_5_5_1,
+		{ 0xF800,
+		  0x07C0,
+		  0x003E,
+		  0x0001 },
+	}
 };
 
 int PixFmtMaskNo(GLenum fmt)
@@ -96,7 +115,7 @@ void RageBitmapTexture::Reload( RageTextureID ID )
  *    m_iImageWidth, m_iImageHeight
  *    m_iFramesWide, m_iFramesHigh
  */
-SDL_Surface *RageBitmapTexture::CreateImg()
+SDL_Surface *RageBitmapTexture::CreateImg(int &pixfmt, GLenum &fmtTexture)
 {
 	// look in the file name for a format hints
 	CString HintString = GetFilePath();
@@ -181,26 +200,28 @@ SDL_Surface *RageBitmapTexture::CreateImg()
 	if(m_iSourceWidth != m_iImageWidth || m_iSourceHeight > m_iImageHeight)
 		m_ActualID.bStretch = true;
 
-	int target = PixFmtMaskNo(fmtTexture);
+	pixfmt = PixFmtMaskNo(fmtTexture);
 
 	/* Dither only when the target is 16bpp, not when it's 32bpp. */
-	if( PixFmtMasks[target][4] /* XXX magic 4 */ == 32)
+	if( PixFmtMasks[pixfmt].bpp == 32)
 		m_ActualID.bDither = false;
 
 	if( m_ActualID.bStretch ) 
 	{
 		/* resize currently only does RGBA8888 */
 		int mask = 0;
-		ConvertSDLSurface(img, img->w, img->h, PixFmtMasks[mask][4],
-			PixFmtMasks[mask][0], PixFmtMasks[mask][1], PixFmtMasks[mask][2], PixFmtMasks[mask][3]);
+		ConvertSDLSurface(img, img->w, img->h, PixFmtMasks[mask].bpp,
+			PixFmtMasks[mask].masks[0], PixFmtMasks[mask].masks[1],
+			PixFmtMasks[mask].masks[2], PixFmtMasks[mask].masks[3]);
 		zoomSurface(img, m_iImageWidth, m_iImageHeight );
 	}
 
 	if( m_ActualID.bDither )
 	{
 		/* Dither down to the destination format. */
-		SDL_Surface *dst = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, img->w, img->h, PixFmtMasks[target][4],
-			PixFmtMasks[target][0], PixFmtMasks[target][1], PixFmtMasks[target][2], PixFmtMasks[target][3]);
+		SDL_Surface *dst = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, img->w, img->h, PixFmtMasks[pixfmt].bpp,
+			PixFmtMasks[pixfmt].masks[0], PixFmtMasks[pixfmt].masks[1],
+			PixFmtMasks[pixfmt].masks[2], PixFmtMasks[pixfmt].masks[3]);
 
 		SM_SDL_OrderedDither(img, dst);
 		SDL_FreeSurface(img);
@@ -217,8 +238,9 @@ SDL_Surface *RageBitmapTexture::CreateImg()
 	 */
 	/* We could check to see if we happen to simply be in a reversed
 	 * pixel order, and tell OpenGL to do the switch for us. */
-	ConvertSDLSurface(img, m_iTextureWidth, m_iTextureHeight, 16,
-		0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000 );
+	ConvertSDLSurface(img, m_iTextureWidth, m_iTextureHeight, PixFmtMasks[pixfmt].bpp,
+			PixFmtMasks[pixfmt].masks[0], PixFmtMasks[pixfmt].masks[1],
+			PixFmtMasks[pixfmt].masks[2], PixFmtMasks[pixfmt].masks[3]);
 
 	return img;
 }
@@ -236,17 +258,19 @@ SDL_Surface *RageBitmapTexture::CreateImg()
 
 void RageBitmapTexture::Create()
 {
-	SDL_Surface *img = CreateImg();
+	int pixfmt;
+	GLenum fmtTexture;
+	SDL_Surface *img = CreateImg(pixfmt, fmtTexture);
 
-	if(!m_uGLTextureID)
+		if(!m_uGLTextureID)
 		glGenTextures(1, &m_uGLTextureID);
 
 	DISPLAY->SetTexture(this);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, fmtTexture, img->w, img->h, 0, GL_RGBA,
-			GL_UNSIGNED_BYTE, img->pixels);
+	glTexImage2D(GL_TEXTURE_2D, 0, fmtTexture, img->w, img->h, 0,
+			GL_RGBA, PixFmtMasks[pixfmt].type, img->pixels);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	glFlush();
 
