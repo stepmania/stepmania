@@ -162,3 +162,4 @@ bool Character::Has2DElems()
 		return true;
 	return false;
 }
+
