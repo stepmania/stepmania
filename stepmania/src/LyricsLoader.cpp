@@ -45,7 +45,8 @@ bool LyricsLoader::LoadFromLRCFile( CString sPath, Song &out )
 		vector<CString> matches;
 		if(!x.Compare(line, matches))
 			continue;
-		
+		ASSERT( matches.size() == 2 );
+
 		CString &sValueName = matches[0];
 		CString &sValueData = matches[1];
 		StripCrnl(sValueData);
@@ -75,12 +76,6 @@ bool LyricsLoader::LoadFromLRCFile( CString sPath, Song &out )
 			seg.m_Color = CurrentColor;
 			seg.m_fStartTime = TimeToSeconds(sValueName);
 			seg.m_sLyric = sValueData;
-			
-			/* Er, huh?  This won't do anything (replace \ with \). What's wrong
-			 * with using \ in lyrics? */
-			seg.m_sLyric.Replace( "\\", "\\" ); // to avoid possible screw-ups 
-							    						// if someone uses a \ for whatever
-												        // reason in their lyrics -- Miryokuteki
 			
 			seg.m_sLyric.Replace( "|","\n" ); // Pipe symbols denote a new line in LRC files
 			out.AddLyricSegment( seg );
