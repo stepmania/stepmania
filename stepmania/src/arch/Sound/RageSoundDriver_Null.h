@@ -30,7 +30,7 @@ private:
     vector<sound *> sounds;
 
 	bool shutdown;
-    SDL_Thread *MixerThreadPtr;
+    RageThread MixingThread;
 
     static int MixerThread_start(void *p);
     void MixerThread();

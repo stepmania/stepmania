@@ -140,7 +140,8 @@ RageSound_Null::RageSound_Null()
 {
 	shutdown = false;
 
-	MixerThreadPtr = SDL_CreateThread(MixerThread_start, this);
+	MixingThread.SetName( "RageSound_Null" );
+	MixingThread.Create( MixerThread_start, this );
 }
 
 RageSound_Null::~RageSound_Null()
@@ -148,7 +149,7 @@ RageSound_Null::~RageSound_Null()
 	/* Signal the mixing thread to quit. */
 	shutdown = true;
 	LOG->Trace("Shutting down mixer thread ...");
-	SDL_WaitThread(MixerThreadPtr, NULL);
+	MixingThread.Wait();
 	LOG->Trace("Mixer thread shut down.");
 }
 
