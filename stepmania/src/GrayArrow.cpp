@@ -64,8 +64,8 @@ void GrayArrow::CalculateColor( const float fBeatsTilStep )
 	}
 
 	// shift the level a little so we never have entirely black or white.
-	fOutline *= 0.5f;
-	fOutline += 0.25f;
+	fOutline *= 0.45f;
+	fOutline += 0.3f;
 	fMidSection *= 0.4f;
 	fMidSection += 0.4f;
 
