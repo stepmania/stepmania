@@ -93,13 +93,11 @@ void ScreenManager::Update( float fDeltaTime )
 		m_textCreditInfo[p].Update( fDeltaTime );
 
 	// delete all ScreensToDelete
-	for( int i=0; i<m_ScreensToDelete.GetSize(); i++ ) {
+	int i;
+	for( i=0; i<m_ScreensToDelete.GetSize(); i++ )
 		SAFE_DELETE( m_ScreensToDelete[i] );
-		m_ScreensToDelete.RemoveAt(i);
-	}
 
-	// HACK!  If we deleted at least one state, then skip this update!
-	if( i>0 ) return;
+	m_ScreensToDelete.RemoveAll();
 
 	// Update all windows in the stack
 	for( i=0; i<m_ScreenStack.GetSize(); i++ )
