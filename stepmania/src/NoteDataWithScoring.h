@@ -39,18 +39,22 @@ public:
 
 	const TapNoteScore &GetTapNoteScore(int track, int row) const
 	{
+		ASSERT(row < int(m_TapNoteScores[track].size()));
 		return m_TapNoteScores[track][row];
 	}
 	TapNoteScore &GetTapNoteScore(int track, int row)
 	{
+		ASSERT(row < int(m_TapNoteScores[track].size()));
 		return m_TapNoteScores[track][row];
 	}
 	const HoldNoteScore &GetHoldNoteScore(int h) const
 	{
+		ASSERT(h < int(m_HoldNoteScores.size()));
 		return m_HoldNoteScores[h];
 	}
 	HoldNoteScore &GetHoldNoteScore(int h)
 	{
+		ASSERT(h < int(m_HoldNoteScores.size()));
 		return m_HoldNoteScores[h];
 	}
 	float &GetHoldNoteLife(int h)
