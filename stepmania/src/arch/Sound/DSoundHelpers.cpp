@@ -95,6 +95,19 @@ DSound::DSound()
 	{
 		bShownInfo = true;
 		DirectSoundEnumerate(EnumCallback, 0);
+
+		DSCAPS Caps;
+		Caps.dwSize = sizeof(Caps);
+		HRESULT hr;
+		if( FAILED(hr = ds->GetCaps(&Caps)) )
+		{
+			LOG->Warn( hr_ssprintf(hr, "ds->GetCaps failed") );
+		}
+		else
+		{
+			LOG->Info( "DirectSound sample rates: %i..%i %s", Caps.dwMinSecondarySampleRate, Caps.dwMaxSecondarySampleRate,
+				(Caps.dwFlags & DSCAPS_CONTINUOUSRATE)?"(continuous)":"" );
+		}
 	}
 
 	/* Try to set primary mixing privileges */
