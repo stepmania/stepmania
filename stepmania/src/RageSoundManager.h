@@ -11,7 +11,7 @@ class RageSoundDriver;
 struct RageSoundParams;
 
 /* This is a temporary hack, to try to track down an obscure crash. */
-#if defined(WIN32)
+#if defined(_MSC_VER) && _MSC_VER >= 1300 
 #include <windows.h>
 
 extern set<void *> g_ProtectedPages;

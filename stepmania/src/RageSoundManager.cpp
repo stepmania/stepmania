@@ -12,7 +12,7 @@
 #include "arch/arch.h"
 #include "arch/Sound/RageSoundDriver.h"
 
-#if defined(WIN32)
+#if defined(_MSC_VER) && _MSC_VER >= 1300 
 set<void *> g_ProtectedPages;
 void EnableWrites()
 {
@@ -335,7 +335,8 @@ void RageSoundManager::GetCopies( RageSound &snd, vector<RageSound *> &snds, boo
 
 	g_SoundManMutex.Lock(); /* lock for access to all_sounds */
 	set<RageSound *> sounds;
-	sounds.insert( all_sounds.begin(), all_sounds.end() );
+	for( all_sounds_type::iterator iter = all_sounds.begin(); iter != all_sounds.end(); ++iter )
+		sounds.insert( *iter );
 	g_SoundManMutex.Unlock(); /* finished with all_sounds */
 	
 	RageSound *parent = snd.GetOriginal();
