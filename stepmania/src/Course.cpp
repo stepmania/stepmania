@@ -502,7 +502,7 @@ bool Course::HasCourseDifficulty( StepsType st, CourseDifficulty cd ) const
 	Trail *Regular = GetTrail( st, COURSE_DIFFICULTY_REGULAR ); 
 	Trail *Other = GetTrail( st, cd ); 
 
-	return Regular != Other;
+	return Regular->m_vEntries != Other->m_vEntries;
 }
 
 bool Course::IsPlayableIn( StepsType st ) const
