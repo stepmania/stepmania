@@ -356,7 +356,7 @@ void ScreenOptions::RefreshIcons()
 				for( unsigned j = 0; j < m_OptionRow[i].choices.size(); ++j )
 					error += ssprintf("    %s\n", m_OptionRow[i].choices[j].c_str());
 
-				RageException::Throw(error);
+				RageException::Throw( "%s", error.c_str() );
 			}
 
 			CString sSelection = m_OptionRow[i].choices[iSelection];
