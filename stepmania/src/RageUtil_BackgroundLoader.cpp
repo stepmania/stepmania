@@ -198,7 +198,10 @@ bool BackgroundLoader::IsCacheFileFinished( const CString &sFile, CString &sActu
 		return false;
 
 	LOG->Trace("XXX: %s finished (%i)", sFile.c_str(), it->second);
-	sActualPath = GetCachePath( sFile );
+	if( g_bWriteToCache )
+		sActualPath = GetCachePath( sFile );
+	else
+		sActualPath = sFile;
 
 	return true;
 }
