@@ -257,6 +257,16 @@ bool Profile::LoadFromIni( CString sIniPath )
 	ini.GetValue( "Profile", "TotalPlaySeconds",				m_iTotalPlaySeconds );
 	ini.GetValue( "Profile", "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
 	ini.GetValue( "Profile", "CurrentCombo",					m_iCurrentCombo );
+
+	unsigned i;
+	for( i=0; i<NUM_PLAY_MODES; i++ )
+		ini.GetValue( "Profile", "NumSongsPlayedByPlayMode"+Capitalize(PlayModeToString((PlayMode)i)), m_iNumSongsPlayedByPlayMode[i] );
+	for( i=0; i<NUM_STYLES; i++ )
+		ini.GetValue( "Profile", "NumSongsPlayedByStyle"+Capitalize(GAMEMAN->GetStyleDefForStyle((Style)i)->m_szName), m_iNumSongsPlayedByStyle[i] );
+	for( i=0; i<NUM_DIFFICULTIES; i++ )
+		ini.GetValue( "Profile", "NumSongsPlayedByDifficulty"+Capitalize(GAMEMAN->GetStyleDefForStyle((Style)i)->m_szName), m_iNumSongsPlayedByDifficulty[i] );
+	for( i=0; i<MAX_METER+1; i++ )
+		ini.GetValue( "Profile", "NumSongsPlayedByMeter"+Capitalize(GAMEMAN->GetStyleDefForStyle((Style)i)->m_szName), m_iNumSongsPlayedByMeter[i] );
 	return true;
 }
 
@@ -271,6 +281,17 @@ bool Profile::SaveToIni( CString sIniPath )
 	ini.SetValue( "Profile", "TotalPlaySeconds",				m_iTotalPlaySeconds );
 	ini.SetValue( "Profile", "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
 	ini.SetValue( "Profile", "CurrentCombo",					m_iCurrentCombo );
+
+	unsigned i;
+	for( i=0; i<NUM_PLAY_MODES; i++ )
+		ini.SetValue( "Profile", "NumSongsPlayedByPlayMode"+Capitalize(PlayModeToString((PlayMode)i)), m_iNumSongsPlayedByPlayMode[i] );
+	for( i=0; i<NUM_STYLES; i++ )
+		ini.SetValue( "Profile", "NumSongsPlayedByStyle"+Capitalize(GAMEMAN->GetStyleDefForStyle((Style)i)->m_szName), m_iNumSongsPlayedByStyle[i] );
+	for( i=0; i<NUM_DIFFICULTIES; i++ )
+		ini.SetValue( "Profile", "NumSongsPlayedByDifficulty"+Capitalize(GAMEMAN->GetStyleDefForStyle((Style)i)->m_szName), m_iNumSongsPlayedByDifficulty[i] );
+	for( i=0; i<MAX_METER+1; i++ )
+		ini.SetValue( "Profile", "NumSongsPlayedByMeter"+Capitalize(GAMEMAN->GetStyleDefForStyle((Style)i)->m_szName), m_iNumSongsPlayedByMeter[i] );
+	
 	ini.WriteFile();
 	return true;
 }
@@ -933,7 +954,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 		f.PutLine( "<body>" );
 	}
 
-#define PRINT_SECTION_START(szName)				f.Write( ssprintf("<h2><a name='%s'>"szName"</a> <a href='#Table of Contents'>(top)</a></h2>\n", szName) )
+#define PRINT_SECTION_START(szName)				f.Write( ssprintf("<h2><a name='%s'>"szName"</a> <a href='#top'>(top)</a></h2>\n", szName) )
 #define PRINT_SECTION_END						f.Write( "\n" )
 #define PRINT_DIV_START(szName)					f.Write( ssprintf("<div class='section1'>\n" "<h3>%s</h3>\n", szName) )
 #define PRINT_DIV_START_ANCHOR(uAnchor,szName)	f.Write( ssprintf("<div class='section1'>\n" "<h3><a name='%u'>%s</a></h3>\n", uAnchor, szName) )
@@ -951,33 +972,78 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 	// Print table of contents
 	//
 	{
+		f.Write( "<h1><a name='top'>" PRODUCT_NAME_VER "</a></h1>\n" );
 		PRINT_SECTION_START( "Table of Contents" );
-		PRINT_DIV_START("Sections");
-		PRINT_LINK( "My Statistics", "#My Statistics" );
+		PRINT_DIV_START("Table of Contents");
+		PRINT_LINK( "Statistics", "#Statistics" );
 		PRINT_LINK( "Popularity Lists", "#Popularity Lists" );
 		PRINT_LINK( "Difficulty Table", "#Difficulty Table" );
 		PRINT_LINK( "Song/Steps List", "#Song/Steps List" );
 		PRINT_DIV_END;
-		PRINT_SECTION_END;
 	}
 
 	//
-	// Print My Statistics
+	// Print Statistics
 	//
 	{
-		PRINT_SECTION_START( "My Statistics" );
-		CString sName = pProfile->m_sLastUsedHighScoreName.empty() ?
-			pProfile->m_sName :
-			pProfile->m_sLastUsedHighScoreName;
-		PRINT_DIV_START( sName.c_str() );
-		PRINT_LINE_S( "LastUsedHighScoreName", pProfile->m_sLastUsedHighScoreName );
-		PRINT_LINE_B( "UsingProfileDefaultModifiers", pProfile->m_bUsingProfileDefaultModifiers );
-		PRINT_LINE_S( "DefaultModifiers", pProfile->m_sDefaultModifiers );
-		PRINT_LINE_I( "TotalPlays", pProfile->m_iTotalPlays );
-		PRINT_LINE_I( "TotalPlaySeconds", pProfile->m_iTotalPlaySeconds );
-		PRINT_LINE_I( "TotalGameplaySeconds", pProfile->m_iTotalGameplaySeconds );
-		PRINT_LINE_I( "CurrentCombo", pProfile->m_iCurrentCombo );
-		PRINT_DIV_END;
+		PRINT_SECTION_START( "Statistics" );
+
+		// Memory card stats
+		{
+			PRINT_DIV_START( "Memory Card" );
+			PRINT_LINE_S( "Name", pProfile->m_sName );
+			PRINT_LINE_S( "LastUsedHighScoreName", pProfile->m_sLastUsedHighScoreName );
+			PRINT_LINE_B( "UsingProfileDefaultModifiers", pProfile->m_bUsingProfileDefaultModifiers );
+			PRINT_LINE_S( "DefaultModifiers", pProfile->m_sDefaultModifiers );
+			PRINT_LINE_I( "TotalPlays", pProfile->m_iTotalPlays );
+			PRINT_LINE_I( "TotalPlaySeconds", pProfile->m_iTotalPlaySeconds );
+			PRINT_LINE_I( "TotalGameplaySeconds", pProfile->m_iTotalGameplaySeconds );
+			PRINT_LINE_I( "CurrentCombo", pProfile->m_iCurrentCombo );
+			PRINT_DIV_END;
+		}
+		
+		// Num Songs Played by PlayMode
+		{
+			PRINT_DIV_START( "Num Songs Played by PlayMode" );
+			for( int i=0; i<NUM_PLAY_MODES; i++ )
+				PRINT_LINE_I( PlayModeToString((PlayMode)i).c_str(), pProfile->m_iNumSongsPlayedByPlayMode[i] );
+			PRINT_DIV_END;
+		}
+
+		// Num Songs Played by Style
+		{
+			PRINT_DIV_START( "Num Songs Played by Style" );
+			for( int i=0; i<NUM_STYLES; i++ )
+			{
+				Style style = (Style)i;
+				const StyleDef* pStyleDef = GAMEMAN->GetStyleDefForStyle(style);
+				StepsType st = pStyleDef->m_StepsType;
+				if( !pStyleDef->m_bUsedForGameplay )
+					continue;	// skip
+				// only show if this style plays a StepsType that we're showing
+				if( find(vStepsTypesToShow.begin(),vStepsTypesToShow.end(),st) == vStepsTypesToShow.end() )
+					continue;	// skip
+				PRINT_LINE_I( pStyleDef->m_szName, pProfile->m_iNumSongsPlayedByStyle[i] );
+			}
+			PRINT_DIV_END;
+		}
+
+		// Num Songs Played by Difficulty
+		{
+			PRINT_DIV_START( "Num Songs Played by Difficulty" );
+			for( int i=0; i<NUM_DIFFICULTIES; i++ )
+				PRINT_LINE_I( DifficultyToString((Difficulty)i).c_str(), pProfile->m_iNumSongsPlayedByDifficulty[i] );
+			PRINT_DIV_END;
+		}
+
+		// Num Songs Played by Meter
+		{
+			PRINT_DIV_START( "Num Songs Played by Meter" );
+			for( int i=MAX_METER; i>=MIN_METER; i-- )
+				PRINT_LINE_I( ssprintf("%d",i).c_str(), pProfile->m_iNumSongsPlayedByMeter[i] );
+			PRINT_DIV_END;
+		}
+
 		PRINT_SECTION_END;
 	}
 
@@ -1035,6 +1101,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 			}
 			PRINT_DIV_END;
 		}
+
 		PRINT_SECTION_END;
 	}
 

@@ -15,6 +15,7 @@
 
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
+#include "Style.h"
 
 struct Profile
 {
@@ -29,6 +30,16 @@ struct Profile
 		m_iTotalPlaySeconds = 0;
 		m_iTotalGameplaySeconds = 0;
 		m_iCurrentCombo = 0;
+
+		int i;
+		for( i=0; i<NUM_PLAY_MODES; i++ )
+			m_iNumSongsPlayedByPlayMode[i] = 0;
+		for( i=0; i<NUM_STYLES; i++ )
+			m_iNumSongsPlayedByStyle[i] = 0;
+		for( i=0; i<NUM_DIFFICULTIES; i++ )
+			m_iNumSongsPlayedByDifficulty[i] = 0;
+		for( i=0; i<MAX_METER+1; i++ )
+			m_iNumSongsPlayedByMeter[i] = 0;
 	}
 
 	bool LoadFromIni( CString sIniPath );
@@ -41,6 +52,10 @@ struct Profile
 	int m_iTotalPlaySeconds;
 	int m_iTotalGameplaySeconds;
 	int m_iCurrentCombo;
+	int m_iNumSongsPlayedByPlayMode[NUM_PLAY_MODES];
+	int m_iNumSongsPlayedByStyle[NUM_STYLES];
+	int m_iNumSongsPlayedByDifficulty[NUM_DIFFICULTIES];
+	int m_iNumSongsPlayedByMeter[MAX_METER+1];
 };
 
 class ProfileManager

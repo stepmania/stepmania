@@ -38,6 +38,7 @@
 // Note definitions
 //
 const int MAX_METER = 12;
+const int MIN_METER = 1;
 
 /* This is just cached song data.  Not all of it may actually be displayed
  * in the radar. */

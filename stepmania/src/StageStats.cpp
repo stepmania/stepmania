@@ -33,11 +33,13 @@ void StageStats::AddStats( const StageStats& other )
 {
 	pSong = NULL;		// meaningless
 	StageType = STAGE_INVALID; // meaningless
-	memset( fAliveSeconds, 0, sizeof(fAliveSeconds) );
+	memset( fAliveSeconds, 0, sizeof(fAliveSeconds) );	// why? -Chris
 	
 	// weight long and marathon songs
 	ASSERT( other.pSong );
 	const int iLengthMultiplier = SongManager::GetNumStagesForSong( other.pSong );
+
+	fGameplaySeconds += other.fGameplaySeconds;
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{

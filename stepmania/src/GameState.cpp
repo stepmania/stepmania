@@ -169,34 +169,50 @@ void GameState::EndGame()
 
 	Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		int iGameplaySeconds = 0;
-		for( int i=0; i<m_vPlayedStageStats.size(); i++ )
-			iGameplaySeconds += m_vPlayedStageStats[i].fAliveSeconds[p];
+	int iGameplaySeconds = 0;
+	for( int i=0; i<m_vPlayedStageStats.size(); i++ )
+		iGameplaySeconds += m_vPlayedStageStats[i].fGameplaySeconds;
 
-
-		Profile* pPlayerProfile = PROFILEMAN->GetProfile( (PlayerNumber)p );
-
-		pMachineProfile->m_iTotalPlaySeconds += iPlaySeconds;
-		pMachineProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
-
-		if( pPlayerProfile )
-			pPlayerProfile->m_iTotalPlaySeconds += iPlaySeconds;
-		if( pPlayerProfile )
-			pPlayerProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
-		if( pPlayerProfile )
-			pPlayerProfile->m_iTotalPlays++;
-		if( pPlayerProfile )
-			pPlayerProfile->m_iCurrentCombo = 
-			PREFSMAN->m_bComboContinuesBetweenSongs ? 
-			GAMESTATE->m_CurStageStats.iCurCombo[p] : 
-			0;
-	}
-
+	pMachineProfile->m_iTotalPlaySeconds += iPlaySeconds;
+	pMachineProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
 	pMachineProfile->m_iTotalPlays++;
 	pMachineProfile->m_iCurrentCombo = 0;
 
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !IsHumanPlayer(p) )
+			continue;
+
+		for( int i=0; i<m_vPlayedStageStats.size(); i++ )
+		{
+			const StageStats& ss = m_vPlayedStageStats[i];
+			pMachineProfile->m_iNumSongsPlayedByPlayMode[ss.playMode]++;
+			pMachineProfile->m_iNumSongsPlayedByStyle[ss.style]++;
+			pMachineProfile->m_iNumSongsPlayedByDifficulty[ss.pSteps[p]->GetDifficulty()]++;
+			pMachineProfile->m_iNumSongsPlayedByMeter[ss.iMeter[p]]++;
+		}
+
+		Profile* pPlayerProfile = PROFILEMAN->GetProfile( (PlayerNumber)p );
+		if( pPlayerProfile )
+		{
+			pPlayerProfile->m_iTotalPlaySeconds += iPlaySeconds;
+			pPlayerProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
+			pPlayerProfile->m_iTotalPlays++;
+			pPlayerProfile->m_iCurrentCombo = 
+				PREFSMAN->m_bComboContinuesBetweenSongs ? 
+				GAMESTATE->m_CurStageStats.iCurCombo[p] : 
+				0;
+		
+			for( int i=0; i<m_vPlayedStageStats.size(); i++ )
+			{
+				const StageStats& ss = m_vPlayedStageStats[i];
+				pPlayerProfile->m_iNumSongsPlayedByPlayMode[ss.playMode]++;
+				pPlayerProfile->m_iNumSongsPlayedByStyle[ss.style]++;
+				pPlayerProfile->m_iNumSongsPlayedByDifficulty[ss.pSteps[p]->GetDifficulty()]++;
+				pPlayerProfile->m_iNumSongsPlayedByMeter[ss.iMeter[p]]++;
+			}
+		}
+	}
 
 	BOOKKEEPER->WriteToDisk();
 	PROFILEMAN->SaveMachineScoresToDisk();

@@ -15,6 +15,7 @@
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 #include "Grade.h"
+#include "Style.h"
 class Song;
 class Steps;
 
@@ -28,11 +29,14 @@ struct StageStats
 	bool AllFailed() const;
 	float GetPercentDancePoints( PlayerNumber pn ) const;
 
+	PlayMode	playMode;
+	Style		style;
 	Song*	pSong;
 	enum { STAGE_INVALID, STAGE_NORMAL, STAGE_EXTRA, STAGE_EXTRA2 } StageType;
 	Steps*  pSteps[NUM_PLAYERS];
 	int		iMeter[NUM_PLAYERS];
-	float	fAliveSeconds[NUM_PLAYERS];				// how far into the music did they last before failing?  Updated by Gameplay.
+	float	fAliveSeconds[NUM_PLAYERS];		// how far into the music did they last before failing?  Updated by Gameplay, scaled by music rate.
+	float	fGameplaySeconds;				// how many seconds before gameplay ended.  Updated by Gameplay, not scaled by music rate.
 
 	/* Set if the player actually failed at any point during the song.  This is always
 	 * false in FAIL_OFF.  If recovery is enabled and two players are playing,

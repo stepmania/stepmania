@@ -200,6 +200,8 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		GAMESTATE->m_CurStageStats.pSong = GAMESTATE->m_pCurSong;
 	else
 		GAMESTATE->m_CurStageStats.pSong = NULL;
+	GAMESTATE->m_CurStageStats.playMode = GAMESTATE->m_PlayMode;
+	GAMESTATE->m_CurStageStats.style = GAMESTATE->m_CurStyle;
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -1118,6 +1120,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 		for( pn=0; pn<NUM_PLAYERS; pn++ )
 			if( GAMESTATE->IsPlayerEnabled(pn) && !GAMESTATE->m_CurStageStats.bFailed[pn])
 				GAMESTATE->m_CurStageStats.fAliveSeconds [pn] += fDeltaTime * GAMESTATE->m_SongOptions.m_fMusicRate;
+
+		// update fGameplaySeconds
+		GAMESTATE->m_CurStageStats.fGameplaySeconds += fDeltaTime;
 
 		//
 		// Check for end of song
