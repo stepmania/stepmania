@@ -192,12 +192,12 @@ float calc_mean(const float *start, const float *end);
 float calc_stddev(const float *start, const float *end);
 
 template<class T1, class T2>
-int FindIndex( const T1 &array, const T2 *p )
+int FindIndex( T1 begin, T1 end, const T2 *p )
 {
-	T1::const_iterator it = find( array.begin(), array.end(), p );
-	if( it == array.end() )
+	T1 iter = find( begin, end, p );
+	if( iter == end )
 		return -1;
-	return it - array.begin();
+	return it - begin;
 }
 
 void TrimLeft(CString &str, const char *s = "\r\n\t ");
