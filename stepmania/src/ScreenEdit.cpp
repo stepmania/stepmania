@@ -1427,7 +1427,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 
 		// Don't allow an autogen match.  This can't be what they chose to 
 		// edit originally because autogen steps are hidden.
-		if( pSteps->IsAutogen() )
+		if( pSteps && pSteps->IsAutogen() )
 			pSteps = NULL;
 
 		/* If we couldn't find the steps we were on before, warn and use the first available. */
