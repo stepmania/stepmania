@@ -28,7 +28,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 	for(int i=1; i <= THEME->GetMetricI("ScreenUnlock", "NumUnlocks"); i++)
 	{
 		// new unlock graphic
-		Unlocks[i].Load( THEME->GetPathToG(ssprintf("UnlockGraphic%d", i)) );
+		Unlocks[i].Load( THEME->GetPathToG(ssprintf("ScreenUnlock icon %d", i)) );
 
 		Unlocks[i].SetName( ssprintf("Unlock%d",i) );
 		SET_XY( Unlocks[i] );
