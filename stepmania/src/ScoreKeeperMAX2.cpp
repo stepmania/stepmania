@@ -29,51 +29,28 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Steps*>& apNotes_, PlayerNumber p
 	//
 	// Fill in m_CurStageStats, calculate multiplier
 	//
-	switch( GAMESTATE->m_PlayMode )
+	int iTotalPossibleDancePoints = 0;
+	for( unsigned i=0; i<apNotes.size(); i++ )
 	{
-	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_HUMAN_BATTLE:
-	case PLAY_MODE_CPU_BATTLE:
-	case PLAY_MODE_RAVE:
-		{
-			NoteData notedata;
-			ASSERT( !apNotes.empty() );
-			Steps* pNotes = apNotes[0];
-			GAMESTATE->m_CurStageStats.pSong = GAMESTATE->m_pCurSong;
-			GAMESTATE->m_CurStageStats.iMeter[pn_] = pNotes->GetMeter();
+		Steps* pSteps = apNotes[0];
+		NoteData notedata;
+		pSteps->GetNoteData( &notedata );
 
-			pNotes->GetNoteData( &notedata );
-			const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
-			NoteData playerNoteData;
-			pStyleDef->GetTransformedNoteDataForStyle( pn_, &notedata, &playerNoteData );
+		const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+		NoteData playerNoteData;
+		pStyleDef->GetTransformedNoteDataForStyle( pn_, &notedata, &playerNoteData );
 
-			GAMESTATE->m_CurStageStats.iPossibleDancePoints[pn_] = this->GetPossibleDancePoints( &playerNoteData );
-		}
-		break;
-	case PLAY_MODE_NONSTOP:
-	case PLAY_MODE_ONI:
-	case PLAY_MODE_ENDLESS:
-		{
-			int iTotalPossibleDancePoints = 0;
-			for( unsigned i=0; i<apNotes.size(); i++ )
-			{
-				NoteData notedata;
-				apNotes[i]->GetNoteData( &notedata );
+		iTotalPossibleDancePoints += this->GetPossibleDancePoints( &notedata );
+	}
+	GAMESTATE->m_CurStageStats.iPossibleDancePoints[pn_] = iTotalPossibleDancePoints;
 
-				const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
-				NoteData playerNoteData;
-				pStyleDef->GetTransformedNoteDataForStyle( pn_, &notedata, &playerNoteData );
-
-				apNotes[i]->GetNoteData( &playerNoteData );
-				iTotalPossibleDancePoints += this->GetPossibleDancePoints( &notedata );
-			}
-
-			GAMESTATE->m_CurStageStats.pSong = NULL;
-			GAMESTATE->m_CurStageStats.iPossibleDancePoints[pn_] = iTotalPossibleDancePoints;
-		}
-		break;
-	default:
-		ASSERT(0);
+	if( !GAMESTATE->IsCourseMode() )
+	{
+		ASSERT( !apNotes.empty() );
+		GAMESTATE->m_CurStageStats.pSong = GAMESTATE->m_pCurSong;
+		GAMESTATE->m_CurStageStats.iMeter[pn_] = apNotes[0]->GetMeter();
+	} else {
+		GAMESTATE->m_CurStageStats.pSong = NULL;
 	}
 
 
