@@ -1,4 +1,9 @@
 bin_PROGRAMS = stepmania
+
+AM_LDFLAGS =
+AM_CXXFLAGS =
+AM_CFLAGS =
+
 if DARWIN
 AM_LDFLAGS = -framework Cocoa -framework Quicktime -framework Carbon -framework OpenGL -framework IOKit
 CXXFLAGS_EXTRA =
