@@ -548,6 +548,9 @@ bool GameState::IsFinalStage() const
 	if( PREFSMAN->m_bEventMode )
 		return false;
 
+	if( this->IsCourseMode() )
+		return true;
+
 	/* This changes dynamically on ScreenSelectMusic as the wheel turns. */
 	int iPredictedStageForCurSong = 1;
 	if( m_pCurSong != NULL )
