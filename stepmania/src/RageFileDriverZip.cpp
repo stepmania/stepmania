@@ -502,11 +502,6 @@ RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFileObjZipDeflated &cp
 
 RageFileObjZipDeflated::~RageFileObjZipDeflated()
 {
-	//We MUST use inflateEnd() here insted of inflateReset().  Use
-	//of inflateReset() will cause large quantities of globally 
-	//allocated ram to be leaked, making it impervious to most leak 
-	//detection. See zlib.h documentation on inflateReset() for 
-	//more information.
 	int err = inflateEnd( &dstrm );
 	if( err != Z_OK )
 		LOG->Trace( "Huh? inflateEnd() err = %i", err );
