@@ -208,9 +208,10 @@ void MemoryCardDriver_Linux::GetStorageDevices( vector<UsbStorageDevice>& vDevic
 
 bool MemoryCardDriver_Linux::MountAndTestWrite( UsbStorageDevice* pDevice )
 {
-	if( !pDevice->sOsMountDir.empty() )
+	if( pDevice->sOsMountDir.empty() )
 		return false;
 	CString sCommand = "mount " + pDevice->sOsMountDir;
+	LOG->Trace( "executing '%s'", sCommand.c_str() );
 	system( sCommand );
 
 	// Try to write a file.
@@ -233,6 +234,7 @@ void MemoryCardDriver_Linux::Unmount( UsbStorageDevice* pDevice )
 	if( !pDevice->sOsMountDir.empty() )
 		return;
 	CString sCommand = "umount " + pDevice->sOsMountDir;
+	LOG->Trace( "executing '%s'", sCommand.c_str() );
 	system( sCommand );
 }
 
