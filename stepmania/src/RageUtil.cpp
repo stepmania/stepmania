@@ -229,7 +229,8 @@ void splitpath( CString Path, CString& Dir, CString& Filename, CString& Ext )
 	 * This is really:
 	 * ^(.*[\\/])?(.*)$    */
 	static Regex sep("^(.*[\\\\/])?(.*)$");
-	ASSERT(sep.Compare(Path, mat));
+	bool check = sep.Compare(Path, mat);
+	ASSERT(check);
 
 	Dir = mat[0];
 	Path = mat[1];
