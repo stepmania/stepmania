@@ -95,8 +95,11 @@ ScreenHowToPlay::~ScreenHowToPlay()
 
 void ScreenHowToPlay::Update( float fDelta )
 {
-	m_fFakeSecondsIntoSong += fDelta;
-	GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong );
+	if(GAMESTATE->m_pCurSong != NULL)
+	{
+		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong );
+		m_fFakeSecondsIntoSong += fDelta;
+	}
 
 	ScreenAttract::Update( fDelta );
 }
@@ -106,6 +109,8 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_BeginFadingOut:
+		/* We can't do this in ScreenHowToPlay::~ScreenHowToPlay, since that happens
+		 * after the ctor of the next screen; we don't want to mess with its state. */
 		GAMESTATE->m_pCurSong = NULL;
 		break;
 	}
