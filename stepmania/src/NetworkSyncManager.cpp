@@ -294,8 +294,6 @@ void ArgStartCourse(CString CourseName)
 		return ;
 	}
 
-	LOG->Info("desCourse->GetPlayMode(); = %d",desCourse->GetPlayMode());
-
 	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 		//Need to add more functionality eventually
 	
