@@ -13,10 +13,9 @@
 #include "RageLog.h"
 #include "archutils/Darwin/Crash.h"
 #include "archutils/Unix/CrashHandler.h"
+#include "archutils/Unix/SignalHandler.h"
 #include <Carbon/Carbon.h>
-#if 1
 #include <QuickTime/QuickTime.h>
-#endif
 
 /* You would think that these would be defined somewhere. */
 enum {
@@ -25,10 +24,6 @@ enum {
 };
 
 OSStatus HandleException(ExceptionInformation *theException);
-#if 0
-static int TaskMovies(void *data);
-static bool shutdown;
-#endif
 
 ArchHooks_darwin::ArchHooks_darwin()
 {
@@ -49,16 +44,6 @@ ArchHooks_darwin::ArchHooks_darwin()
         exit(0);
     }
     InstallExceptionHandler(HandleException);
-#if 0
-    thread = SDL_CreateThread(TaskMovies, NULL);
-#endif
-}
-
-ArchHooks_darwin::~ArchHooks_darwin() {
-#if 0
-    shutdown = true;
-    SDL_WaitThread(thread, NULL);
-#endif
 }
 
 #define CASE_GESTALT_M(str,code,result) case gestalt##code: str = result; break
@@ -299,19 +284,6 @@ ArchHooks::MessageBoxResult ArchHooks_darwin::MessageBoxAbortRetryIgnore(CString
     return result;
 }
 
-#if 0
-int TaskMovies(void *data) {
-#pragma unused(data)
-    while (!shutdown) {
-        MoviesTask(NULL, 0); /* Task all movies one frame */
-        OSErr err = GetMoviesError();
-        if (err != noErr)
-            RageException::Throw("MoviesTask failed with error: %d", err);
-    }
-    return 0;
-}
-#endif
-#if 0
 inline void ArchHooks_darwin::Update(float delta) {
 #pragma unused(delta)
     MoviesTask(NULL, 0);
@@ -319,4 +291,3 @@ inline void ArchHooks_darwin::Update(float delta) {
     if (__builtin_expect(err, noErr))
         RageException::Throw("MoviesTask failed with error: %d", err);
 }
-#endif

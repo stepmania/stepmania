@@ -15,16 +15,13 @@
 #include <queue>
 
 class ArchHooks_darwin : public ArchHooks {
-private:
-#if 0
-    SDL_Thread *thread;
-#endif
 public:
     ArchHooks_darwin();
-    ~ArchHooks_darwin();
+    ~ArchHooks_darwin() { }
     void DumpDebugInfo();
     void MessageBoxOK(CString sMessage, CString ID = "");
     MessageBoxResult MessageBoxAbortRetryIgnore(CString sMessage, CString ID = "");
+    void Update(float delta);
 };
 
 #undef ARCH_HOOKS
