@@ -73,14 +73,25 @@ void ScreenSelect::Update( float fDelta )
 	}
 
 	Screen::Update( fDelta );
-	int iSelection = this->GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
-	m_BGAnimations[iSelection].Update( fDelta );
+	
+	// GAMESTATE->m_MasterPlayerNumber is set to PLAYER_INVALID when going Back to 
+	// the title screen and this screen is updated after.  TODO: find out why
+	if( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID )	
+	{
+		int iSelection = this->GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
+		m_BGAnimations[iSelection].Update( fDelta );
+	}
 }
 
 void ScreenSelect::DrawPrimitives()
 {
-	int iSelection = this->GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
-	m_BGAnimations[iSelection].Draw();
+	// GAMESTATE->m_MasterPlayerNumber is set to PLAYER_INVALID when going Back to 
+	// the title screen and this screen is updated after.  TODO: find out why
+	if( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID )	
+	{
+		int iSelection = this->GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
+		m_BGAnimations[iSelection].Draw();
+	}
 	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
 	m_Menu.DrawTopLayer();
