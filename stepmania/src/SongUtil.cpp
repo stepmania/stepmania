@@ -369,7 +369,6 @@ Song *SongID::ToSong() const
 	return SONGMAN->GetSongFromDir( sDir );
 }
 
-
 XNode* SongID::CreateNode() const
 {
 	XNode* pNode = new XNode;

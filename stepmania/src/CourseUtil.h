@@ -15,6 +15,7 @@
 
 class Course;
 class Profile;
+struct XNode;
 
 namespace CourseUtil
 {
@@ -38,6 +39,14 @@ public:
 	CourseID() { FromCourse(NULL); }
 	void FromCourse( const Course *p );
 	Course *ToCourse() const;
+	bool operator<( const CourseID &other ) const
+	{
+		return sPath < other.sPath || sName < other.sName;
+	}
+
+	XNode* CreateNode() const;
+	void LoadFromNode( const XNode* pNode );
+	bool IsValid() const;
 };
 
 #endif

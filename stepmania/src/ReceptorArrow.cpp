@@ -80,6 +80,8 @@ void ReceptorArrow::DrawPrimitives()
 
 void ReceptorArrow::Step()
 {
+	m_pReceptorGo->FinishTweening();
+	m_pReceptorWaiting->FinishTweening();
 	m_pReceptorGo->Command( m_sStepCommand );
 	m_pReceptorWaiting->Command( m_sStepCommand );
 }

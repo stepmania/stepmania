@@ -235,18 +235,23 @@ int Profile::GetTotalHighScoreDancePointsForStepsType( StepsType st ) const
 
 	// add course high scores
 	{
-		for( std::map<const Course*,HighScoresForACourse>::const_iterator iter = m_CourseHighScores.begin();
-			iter != m_CourseHighScores.end();
-			iter++ )
+		for( std::map<CourseID,HighScoresForACourse>::const_iterator i = m_CourseHighScores.begin();
+			i != m_CourseHighScores.end();
+			i++ )
 		{
-			const Course* pCourse = iter->first;
-			ASSERT( pCourse );
+			CourseID id = i->first;
+			const Course* pCourse = id.ToCourse();
+			
+			// If the Course isn't loaded on the current machine, then we can't 
+			// get radar values to compute dance points.
+			if( pCourse == NULL )
+				continue;
 			
 			// Don't count any course that has any entries that change over time.
 			if( !pCourse->AllSongsAreFixed() )
 				continue;
 
-			const HighScoresForACourse& h = iter->second;
+			const HighScoresForACourse& h = i->second;
 			FOREACH_CourseDifficulty( cd )
 			{
 				const HighScoreList& hs = h.hs[st][cd];
@@ -336,30 +341,44 @@ void Profile::IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps )
 //
 void Profile::AddCourseHighScore( const Course* pCourse, StepsType st, CourseDifficulty cd, HighScore hs, int &iIndexOut )
 {
-	std::map<const Course*,HighScoresForACourse>::iterator iter = m_CourseHighScores.find( pCourse );
+	CourseID courseID;
+	courseID.FromCourse( pCourse );
+
+	std::map<CourseID,HighScoresForACourse>::iterator iter = m_CourseHighScores.find( courseID );
 	if( iter == m_CourseHighScores.end() )
-		m_CourseHighScores[pCourse].hs[st][cd].AddHighScore( hs, iIndexOut );	// operator[] inserts into map
+		m_CourseHighScores[courseID].hs[st][cd].AddHighScore( hs, iIndexOut );	// operator[] inserts into map
 	else
 		iter->second.hs[st][cd].AddHighScore( hs, iIndexOut );
 }
 
 const HighScoreList& Profile::GetCourseHighScoreList( const Course* pCourse, StepsType st, CourseDifficulty cd ) const
 {
-	return ((Profile *)this)->m_CourseHighScores[pCourse].hs[st][cd];
+	return ((Profile *)this)->GetCourseHighScoreList( pCourse, st, cd );
 }
 
 HighScoreList& Profile::GetCourseHighScoreList( const Course* pCourse, StepsType st, CourseDifficulty cd )
 {
-	std::map<const Course*,HighScoresForACourse>::iterator iter = m_CourseHighScores.find( pCourse );
+	CourseID courseID;
+	courseID.FromCourse( pCourse );
+
+	std::map<CourseID,HighScoresForACourse>::iterator iter = m_CourseHighScores.find( courseID );
 	if( iter == m_CourseHighScores.end() )
-		return m_CourseHighScores[pCourse].hs[st][cd];	// operator[] inserts into map
+		return m_CourseHighScores[courseID].hs[st][cd];	// operator[] inserts into map
 	else
 		return iter->second.hs[st][cd];
 }
 
 int Profile::GetCourseNumTimesPlayed( const Course* pCourse ) const
 {
-	std::map<const Course*,HighScoresForACourse>::const_iterator iter = m_CourseHighScores.find( pCourse );
+	CourseID courseID;
+	courseID.FromCourse( pCourse );
+
+	return GetCourseNumTimesPlayed( courseID );
+}
+
+int Profile::GetCourseNumTimesPlayed( const CourseID &courseID ) const
+{
+	std::map<CourseID,HighScoresForACourse>::const_iterator iter = m_CourseHighScores.find( courseID );
 	if( iter == m_CourseHighScores.end() )
 	{
 		return 0;
@@ -1275,19 +1294,19 @@ XNode* Profile::SaveCourseScoresCreateNode() const
 	XNode* pNode = new XNode;
 	pNode->name = "CourseScores";
 
-	vector<Course*> vpCourses;
-	SONGMAN->GetAllCourses( vpCourses, true );
 	
-	for( unsigned c=0; c<vpCourses.size(); c++ )	// foreach course
+	for( std::map<CourseID,HighScoresForACourse>::const_iterator i = m_CourseHighScores.begin();
+		i != m_CourseHighScores.end();
+		i++ )
 	{
-		Course *pCourse = vpCourses[c];
+		const CourseID &id = i->first;
+		const HighScoresForACourse &hsCourse = i->second;
 
 		// skip courses that have never been played
-		if( pProfile->GetCourseNumTimesPlayed(pCourse) == 0 )
+		if( pProfile->GetCourseNumTimesPlayed(id) == 0 )
 			continue;
 
-		XNode* pCourseNode = pNode->AppendChild( "Course" );
-		pCourseNode->AppendAttr( "Name", pCourse->m_bIsAutogen ? pCourse->m_sName : pCourse->m_sPath );
+		XNode* pCourseNode = pNode->AppendChild( id.CreateNode() );
 
 		for( StepsType st=(StepsType)0; st<NUM_STEPS_TYPES; ((int&)st)++ )
 		{
@@ -1299,15 +1318,15 @@ XNode* Profile::SaveCourseScoresCreateNode() const
 			
 			FOREACH_CourseDifficulty( cd )
 			{
+				const HighScoreList &hsl = hsCourse.hs[st][cd];
+
 				// skip course/steps types that have never been played
-				if( pProfile->GetCourseHighScoreList(pCourse, st, cd).iNumTimesPlayed == 0 )
+				if( hsl.iNumTimesPlayed == 0 )
 					continue;
 
 				LPXNode pCourseDifficultyNode = pStepsTypeNode->AppendChild( "CourseDifficulty" );
 				pCourseDifficultyNode->AppendAttr( "Type", CourseDifficultyToString(cd) );
-
-				const HighScoreList &hsl = pProfile->GetCourseHighScoreList( pCourse, st, cd );
-				
+			
 				pCourseDifficultyNode->AppendChild( hsl.CreateNode() );
 			}
 
@@ -1332,18 +1351,10 @@ void Profile::LoadCourseScoresFromNode( const XNode* pNode )
 		if( (*course)->name != "Course" )
 			continue;
 
-		CString sCourse;
-		if( !(*course)->GetAttrValue( "Name", sCourse ) )
+		CourseID id;
+		id.LoadFromNode( *course );
+		if( !id.IsValid() )
 			WARN_AND_CONTINUE;
-
-		Course* pCourse = SONGMAN->GetCourseFromPath( sCourse );
-		if( pCourse == NULL )
-			pCourse = SONGMAN->GetCourseFromName( sCourse );
-		if( pCourse == NULL )
-		{
-			LOG->Trace("Couldn't find course \"%s\"; scoring data will be lost", sCourse.c_str() );
-			continue;
-		}
 
 		for( XNodes::iterator stepsType = (*course)->childs.begin(); 
 			stepsType != (*course)->childs.end(); 
@@ -1375,7 +1386,7 @@ void Profile::LoadCourseScoresFromNode( const XNode* pNode )
 				if( pHighScoreListNode == NULL )
 					WARN_AND_CONTINUE;
 				
-				HighScoreList &hsl = this->GetCourseHighScoreList( pCourse, st, cd );
+				HighScoreList &hsl = m_CourseHighScores[id].hs[st][cd];
 				hsl.LoadFromNode( pHighScoreListNode );
 			}
 		}

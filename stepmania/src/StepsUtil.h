@@ -49,7 +49,6 @@ public:
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
-
 	bool IsValid() const;
 };
 

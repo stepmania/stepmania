@@ -185,8 +185,16 @@ void CourseID::FromCourse( const Course *p )
 {
 	if( p )
 	{
-		sPath = p->m_sPath;
-		sName = p->m_sName;
+		if( p->m_bIsAutogen )
+		{
+			sPath = "";
+			sName = p->m_sName;
+		}
+		else
+		{
+			sPath = p->m_sPath;
+			sName = "";
+		}
 	}
 	else
 	{
@@ -205,3 +213,27 @@ Course *CourseID::ToCourse() const
 		return pCourse;
 }
 
+XNode* CourseID::CreateNode() const
+{
+	XNode* pNode = new XNode;
+	pNode->name = "Course";
+
+	if( !sPath.empty() )
+		pNode->AppendAttr( "Path", sPath );
+	if( !sName.empty() )
+		pNode->AppendAttr( "Name", sName );
+
+	return pNode;
+}
+
+void CourseID::LoadFromNode( const XNode* pNode ) 
+{
+	ASSERT( pNode->name == "Course" );
+	pNode->GetAttrValue("Path", sPath);
+	pNode->GetAttrValue("Name", sName);
+}
+
+bool CourseID::IsValid() const
+{
+	return !sPath.empty() || !sName.empty();
+}

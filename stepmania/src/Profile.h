@@ -22,7 +22,7 @@
 #include "TimeConstants.h"
 #include "SongUtil.h"	// for SongID
 #include "StepsUtil.h"	// for StepsID
-
+#include "CourseUtil.h"	// for CourseID
 
 //
 // Current file versions
@@ -148,12 +148,13 @@ public:
 	{
 		HighScoreList hs[NUM_STEPS_TYPES][NUM_COURSE_DIFFICULTIES];
 	};
-	std::map<const Course*,HighScoresForACourse>	m_CourseHighScores;
+	std::map<CourseID,HighScoresForACourse>	m_CourseHighScores;
 
 	void AddCourseHighScore( const Course* pCourse, StepsType st, CourseDifficulty cd, HighScore hs, int &iIndexOut );
 	HighScoreList& GetCourseHighScoreList( const Course* pCourse, StepsType st, CourseDifficulty cd );
 	const HighScoreList& GetCourseHighScoreList( const Course* pCourse, StepsType st, CourseDifficulty cd ) const;
 	int GetCourseNumTimesPlayed( const Course* pCourse ) const;
+	int GetCourseNumTimesPlayed( const CourseID& courseID ) const;
 	void IncrementCoursePlayCount( const Course* pCourse, StepsType st, CourseDifficulty cd );
 
 
