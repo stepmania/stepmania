@@ -31,12 +31,17 @@ public:
 	void MapLog(const CString &key, const char *fmt, ...);
 	void UnmapLog(const CString &key);
 
-	static void GetAdditionalLog( const char* &p, int &size );
+	static const char *GetAdditionalLog();
+	static const char *GetInfo();
+	/* Returns NULL if past the last recent log. */
+	static const char *GetRecentLog( int n );
 
 private:
 	FILE *m_fileLog, *m_fileInfo;
 	void Write( int, CString );
 	void UpdateMappedLog();
+	void AddToInfo( CString buf );
+	void AddToRecentLogs( CString buf );
 };
 
 /* Mapped log entry that's deleted on dtor.  Note that this isn't extremely

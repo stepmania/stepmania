@@ -111,11 +111,8 @@ RageLog::RageLog()
 RageLog::~RageLog()
 {
 	/* Add the mapped log data to info.txt. */
-	const char* p;
-	int size;
-	GetAdditionalLog( p, size );
-	fprintf( m_fileInfo, "%s", p );
-	fprintf( m_fileLog, "\nStatics:\n%s", p );
+	fprintf( m_fileInfo, "%s", GetAdditionalLog() );
+	fprintf( m_fileLog, "\nStatics:\n%s", GetAdditionalLog() );
 
 	Flush();
 	HideConsole();
@@ -172,7 +169,78 @@ void RageLog::Warn( const char *fmt, ...)
 	Write(WRITE_TO_INFO | WRITE_LOUD, ssprintf("WARNING: %s", sBuff.c_str()));
 }
 
-/* When */
+static const int STATICLOG_SIZE = 1024*32;
+static char staticlog[STATICLOG_SIZE]="";
+static char *staticlog_ptr=staticlog, *staticlog_end=staticlog+STATICLOG_SIZE;
+void RageLog::AddToInfo( CString str )
+{
+	int len = str.size()+3; /* +\r +\n +null */
+	if(staticlog_ptr+len >= staticlog_end)
+	{
+		const char *txt = "\nStaticlog limit reached\n";
+		char *max_ptr = staticlog_end-strlen(txt)-1;
+		if(staticlog_ptr > max_ptr)
+			staticlog_ptr = max_ptr;
+
+		strcpy(staticlog_ptr, txt);
+		staticlog_ptr=NULL; /* stop */
+		return;
+	}
+
+	strcpy(staticlog_ptr, str);
+
+	staticlog_ptr[len-3] = '\r';
+	staticlog_ptr[len-2] = '\n';
+	staticlog_ptr[len-1] = 0;
+	/* Advance to sit on the NULL, so the terminator will be overwritten
+	 * on the next log. */
+	staticlog_ptr += len-1;
+}
+
+const char *RageLog::GetInfo()
+{
+	if( staticlog == NULL )
+		staticlog[ sizeof(staticlog)-1 ] = 0;
+	else
+	{
+		int len = min( staticlog_ptr-staticlog, (int) sizeof(staticlog)-1 );
+		staticlog[ len ] = 0;
+	}
+	return staticlog;
+}
+
+/* Since this is a static, preallocated region, even if it gets trampled by
+ * a crash we'll just print garbage, not crash due to an invalid pointer. */
+static const int BACKLOG_LINES = 10;
+static char backlog[BACKLOG_LINES][1024];
+static int backlog_start=0, backlog_cnt=0;
+void RageLog::AddToRecentLogs( CString str )
+{
+	int len = str.size();
+	if(len > sizeof(backlog[backlog_start])-1)
+		len = sizeof(backlog[backlog_start])-1;
+
+	strncpy(backlog[backlog_start], str, len);
+	backlog[backlog_start] [ len ] = 0;
+
+	backlog_start++;
+	if(backlog_start > backlog_cnt)
+		backlog_cnt=backlog_start;
+	backlog_start %= BACKLOG_LINES;
+}
+
+const char *RageLog::GetRecentLog( int n )
+{
+	if( n >= BACKLOG_LINES || n >= backlog_cnt )
+		return false;
+	n += backlog_start;
+	n %= BACKLOG_LINES;
+	/* Make sure it's terminated: */
+	backlog[n][ sizeof(backlog[n])-1 ] = 0;
+
+	return backlog[n];
+}
+
 void RageLog::Write( int where, CString str)
 {
 	if( PREFSMAN && PREFSMAN->m_bTimestamping )
@@ -183,6 +251,10 @@ void RageLog::Write( int where, CString str)
 
 	HOOKS->Log(str, where & WRITE_TO_INFO);
 
+	if( where & WRITE_TO_INFO )
+		AddToInfo( str );
+	AddToRecentLogs( str );
+	
 	/* Only do this for log.txt and stdout.  The other outputs are
 	 * fairly quiet anyway, so the prepended "WARNING" makes them stand
 	 * out well enough and this is just clutter. */
@@ -203,6 +275,7 @@ void RageLog::Write( int where, CString str)
 	if( (PREFSMAN && PREFSMAN->m_bDebugMode) || (where & WRITE_TO_INFO) )
 		Flush();
 }
+
 
 void RageLog::Flush()
 {
@@ -228,12 +301,11 @@ void RageLog::UpdateMappedLog()
 	HOOKS->AdditionalLog(str);
 }
 
-/* Under normal conditions, p will always be null-terminated.  "size" is provided
- * for crash handlers--under crash conditions, it may not be. */
-void RageLog::GetAdditionalLog( const char* &p, int &size )
+const char *RageLog::GetAdditionalLog()
 {
-	p = g_AdditionalLogStr;
-	size = g_AdditionalLogSize;
+	int size = min( g_AdditionalLogSize, (int) sizeof(g_AdditionalLogStr)-1 );
+	g_AdditionalLogStr[size] = 0;
+	return g_AdditionalLogStr;
 }
 
 void RageLog::MapLog(const CString &key, const char *fmt, ...)
