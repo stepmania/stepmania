@@ -100,11 +100,9 @@ DSound::DSound()
 {
 	HRESULT hr;
 
-#ifndef _XBOX
     // Initialize COM
     if( FAILED( hr = CoInitialize( NULL ) ) )
 		RageException::ThrowNonfatal(hr_ssprintf(hr, "CoInitialize"));
-#endif
 
     // Create IDirectSound using the primary sound device
     if( FAILED( hr = DirectSoundCreate( NULL, &ds, NULL ) ) )
@@ -141,9 +139,7 @@ DSound::DSound()
 DSound::~DSound()
 {
 	ds->Release();
-#ifndef _XBOX
     CoUninitialize();
-#endif
 }
 
 bool DSound::IsEmulated() const
