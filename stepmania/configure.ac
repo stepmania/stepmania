@@ -111,6 +111,15 @@ AC_CHECK_HEADER(linux/soundcard.h, [AC_DEFINE(HAVE_OSS, 1, [OSS support availabl
 AC_CHECK_HEADER(stdint.h, , [AC_DEFINE(MISSING_STDINT_H, 1, [stdint.h is missing])])
 AC_CHECK_HEADERS([inttypes.h])
 
+AC_MSG_CHECKING(if cstdlib breaks llabs)
+AC_TRY_COMPILE(	[#include <stdlib.h>
+		 #include <cstdlib> ],
+		[int foo() { return llabs(1); }],
+		[AC_MSG_RESULT(no)],
+		[AC_MSG_RESULT(yes)
+		 AC_DEFINE([NEED_CSTDLIB_WORKAROUND], 1, [cstdlib breaks llabs])]
+	      )
+
 AM_CONDITIONAL(HAVE_ALSA, test x$alsa != xfalse )
 AM_CONDITIONAL(HAVE_GTK, test "$enable_gtk2" != "no" )
 AM_CONDITIONAL(HAVE_OSS, test x$ac_cv_header_linux_soundcard_h = xyes )
