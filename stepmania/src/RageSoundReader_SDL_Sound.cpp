@@ -6,7 +6,7 @@
  * something wrong with my SDL_sound MAD wrapper ...
  */
 
-#ifdef _DEBUG
+#ifdef DEBUG
 #pragma comment(lib, "SDL_sound-1.0.0/lib/sdl_sound_static_d.lib")
 #else
 #pragma comment(lib, "SDL_sound-1.0.0/lib/sdl_sound_static.lib")
@@ -21,8 +21,9 @@ const int samplerate = 44100;
 /* The amount of data to read from SDL_sound at once. */
 const int read_block_size = 1024;
 
-bool SoundReader_SDL_Sound::Open(CString filename)
+bool SoundReader_SDL_Sound::Open(CString filename_)
 {
+	filename=filename_;
 	static bool initialized = false;
 	if(!initialized)
 	{
@@ -150,3 +151,11 @@ SoundReader_SDL_Sound::~SoundReader_SDL_Sound()
 {
 	Sound_FreeSample(Sample);
 }
+
+SoundReader *SoundReader_SDL_Sound::Copy() const
+{
+	SoundReader_SDL_Sound *ret = new SoundReader_SDL_Sound;
+	ret->Open(filename);
+	return ret;
+}
+

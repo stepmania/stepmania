@@ -16,6 +16,7 @@ public:
 	virtual int SetPosition_Fast(int ms) { return SetPosition_Accurate(ms); }
 	virtual int Read(char *buf, unsigned len) = 0;
 	virtual ~SoundReader() { }
+	virtual SoundReader *Copy() const = 0;
 
 	bool Error() const { return !error.empty(); }
 	string GetError() const { return error; }

@@ -9,6 +9,7 @@ class SoundReader_SDL_Sound: public SoundReader {
 	const char *inbuf;
 	unsigned avail;
 	int SetPosition(int ms, bool accurate);
+	CString filename;
 
 public:
 	bool Open(CString filename);
@@ -18,6 +19,7 @@ public:
 	int SetPosition_Fast(int ms) { return SetPosition(ms, false); }
 	int Read(char *buf, unsigned len);
 	~SoundReader_SDL_Sound();
+	SoundReader *Copy() const;
 };
 
 #endif
