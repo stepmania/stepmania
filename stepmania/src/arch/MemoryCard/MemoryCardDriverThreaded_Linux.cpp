@@ -522,8 +522,6 @@ void MemoryCardDriverThreaded_Linux::Mount( UsbStorageDevice* pDevice, CString s
 {
 	ASSERT( !pDevice->sOsMountDir.empty() );
 	
-	UnmountMountPoint( sMountPoint );
-	
 	FILEMAN->Mount( "dir", pDevice->sOsMountDir, sMountPoint.c_str() );
 	LOG->Trace( "FILEMAN->Mount %s %s", pDevice->sOsMountDir.c_str(), sMountPoint.c_str() );
 

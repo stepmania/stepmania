@@ -40,9 +40,6 @@ protected:
 	vector<UsbStorageDevice> m_vStorageDevices;
 	bool m_bStorageDevicesChanged;
 	RageMutex m_mutexStorageDevices;	// protects the above two
-
-	// placed here for use by derivitives to eliminate duplicate code
-	void UnmountMountPoint( const CString &sMountPoint );
 };
 
 #endif

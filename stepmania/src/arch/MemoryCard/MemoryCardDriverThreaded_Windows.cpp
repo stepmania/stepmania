@@ -8,7 +8,8 @@
 #include "Profile.h"
 #include "PrefsManager.h"
 
-const CString TEMP_MOUNT_POINT = "@mctemp/";
+const CString TEMP_MOUNT_POINT_INTERNAL = "@mctemp/";
+const CString TEMP_MOUNT_POINT = "@mctemptimeout/";
 
 
 MemoryCardDriverThreaded_Windows::MemoryCardDriverThreaded_Windows()
@@ -104,15 +105,20 @@ void MemoryCardDriverThreaded_Windows::MountThreadDoOneUpdate()
 				UsbStorageDevice usbd;
 				usbd.SetOsMountDir( sDrive );
 				usbd.bWriteTestSucceeded = TestWrite( sDrive );
+
 				// read name
 				this->Mount( &usbd, TEMP_MOUNT_POINT );
-				FILEMAN->FlushDirCache( TEMP_MOUNT_POINT );
+				FILEMAN->Mount( "dir", usbd.sOsMountDir, TEMP_MOUNT_POINT_INTERNAL );
+				FILEMAN->Mount( "timeout", TEMP_MOUNT_POINT_INTERNAL, TEMP_MOUNT_POINT );
+
 				Profile profile;
 				CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
 				profile.LoadEditableDataFromDir( sProfileDir );
 				usbd.bIsNameAvailable = true;
 				usbd.sName = profile.GetDisplayName();
-				UnmountMountPoint( TEMP_MOUNT_POINT );
+
+				FILEMAN->Unmount( "timeout", TEMP_MOUNT_POINT_INTERNAL, TEMP_MOUNT_POINT );
+				FILEMAN->Unmount( "dir", usbd.sOsMountDir, TEMP_MOUNT_POINT_INTERNAL );
 
 				vNewStorageDevices.push_back( usbd );
 			}
@@ -134,10 +140,9 @@ void MemoryCardDriverThreaded_Windows::Mount( UsbStorageDevice* pDevice, CString
 {
 	ASSERT( !pDevice->sOsMountDir.empty() );
 
-	UnmountMountPoint( sMountPoint );
-
-	FILEMAN->Mount( "dir", pDevice->sOsMountDir, sMountPoint.c_str() );
 	LOG->Trace( "FILEMAN->Mount %s %s", pDevice->sOsMountDir.c_str(), sMountPoint.c_str() );
+
+	// nothing to do here...
 }
 
 void MemoryCardDriverThreaded_Windows::Unmount( UsbStorageDevice* pDevice, CString sMountPoint )

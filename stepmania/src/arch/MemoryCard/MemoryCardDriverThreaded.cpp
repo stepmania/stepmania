@@ -132,23 +132,12 @@ bool MemoryCardDriverThreaded::MountAndTestWrite( UsbStorageDevice* pDevice, CSt
 	if( !iter->bWriteTestSucceeded )
 		return false;
 
+	/* Move the VFS mount to the destination.  This is safe to do in the main thread. */
+	FILEMAN->Remount( sMountPoint, pDevice->sOsMountDir );
+
 	this->Mount( pDevice, sMountPoint );
+
 	return pDevice->bWriteTestSucceeded;
-}
-
-
-void MemoryCardDriverThreaded::UnmountMountPoint( const CString &sMountPoint )
-{
-	vector<RageFileManager::DriverLocation> Mounts;
-	FILEMAN->GetLoadedDrivers( Mounts );
-	for( unsigned i = 0; i < Mounts.size(); ++i )
-	{
-		if( Mounts[i].Type.CompareNoCase( "dir" ) )
-				continue; // wrong type
-		if( Mounts[i].MountPoint.CompareNoCase( sMountPoint ) )
-				continue; // wrong mount point
-		FILEMAN->Unmount( Mounts[i].Type, Mounts[i].Root, Mounts[i].MountPoint );
-	}
 }
 
 /*
