@@ -35,8 +35,13 @@ struct RageSoundParams
 	float m_StartSecond;
 	float m_LengthSeconds;
 
-	/* Amount of time to fade out at the end. */
+	/* Number of seconds to spend fading out. */
 	float m_FadeLength;
+
+	/* If set, the sound will be completely faded out at this position; otherwise,
+	 * m_LengthSeconds is used. */
+	float m_FadedOutAt;
+
 	void SetNoFade() { m_FadeLength = 0; }
 
 	float m_Volume;

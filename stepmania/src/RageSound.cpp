@@ -49,6 +49,7 @@ RageSoundParams::RageSoundParams():
 	m_StartSecond = 0;
 	m_LengthSeconds = -1;
 	m_FadeLength = 0;
+	m_FadedOutAt = -1;
 	m_Volume = -1.0f; // use SOUNDMAN->GetMixVolume()
 	m_Balance = 0; // center
 	speed_input_samples = speed_output_samples = 1;
@@ -428,6 +429,10 @@ void PanSound( int16_t *buffer, int frames, float fPos )
 
 void FadeSound( int16_t *buffer, int frames, float fStartVolume, float fEndVolume  )
 {
+	/* If the whole buffer is full volume, skip. */
+	if( fStartVolume > .9999f && fEndVolume > .9999f )
+		return;
+
 	for( int samp = 0; samp < frames; ++samp )
 	{
 		float fVolPercent = SCALE( samp, 0, frames, fStartVolume, fEndVolume );
@@ -478,6 +483,22 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 
 		/* Get a block of data. */
 		int got_frames = GetData( (char *) buffer, size );
+
+		/* If we didn't get any data, see if we need to pad the end of the file with
+		 * silence for m_LengthSeconds. */
+		if( !got_frames && m_Param.m_LengthSeconds != -1 )
+		{
+			const float LastSecond = m_Param.m_StartSecond + m_Param.m_LengthSeconds;
+			int LastFrame = int(LastSecond*samplerate());
+			int FramesOfSilence = LastFrame - decode_position;
+			FramesOfSilence = clamp( FramesOfSilence, 0, size );
+			if( FramesOfSilence > 0 )
+			{
+				memset( buffer, 0, FramesOfSilence * framesize );
+				got_frames = FramesOfSilence;
+			}
+		}
+
 		if( !got_frames )
 		{
 			/* EOF. */
@@ -533,15 +554,18 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 
 		/* This block goes from decode_position to decode_position+got_frames. */
 
-		/* We want to fade when there's FADE_TIME seconds left, but if
+		/* We want to fade when there's m_FadeLength seconds left, but if
 		 * m_LengthFrames is -1, we don't know the length we're playing.
 		 * (m_LengthFrames is the length to play, not the length of the
 		 * source.)  If we don't know the length, don't fade. */
-		if( m_Param.m_FadeLength != 0 && m_Param.m_LengthSeconds != -1 )
+		if( m_Param.m_FadeLength != 0 && (m_Param.m_LengthSeconds != -1 || m_Param.m_FadedOutAt != -1) )
 		{
-			const float fLastSecond = m_Param.m_StartSecond+m_Param.m_LengthSeconds;
-			const float fStartVolume = fLastSecond - float(decode_position) / samplerate();
-			const float fEndVolume = fLastSecond - float(decode_position+got_frames) / samplerate();
+			const float fFinishFadingOutAt = m_Param.m_FadedOutAt != -1? m_Param.m_FadedOutAt:m_Param.m_LengthSeconds;
+			const float fStartFadingOutAt = fFinishFadingOutAt - m_Param.m_FadeLength;
+			const float fStartSecond = float(decode_position) / samplerate();
+			const float fEndSecond = float(decode_position+got_frames) / samplerate();
+			const float fStartVolume = SCALE( fStartSecond, fStartFadingOutAt, fFinishFadingOutAt, 1.0f, 0.0f );
+			const float fEndVolume = SCALE( fEndSecond, fStartFadingOutAt, fFinishFadingOutAt, 1.0f, 0.0f );
 			FadeSound( buffer, got_frames, fStartVolume, fEndVolume );
 		}
 
