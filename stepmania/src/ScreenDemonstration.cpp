@@ -208,7 +208,7 @@ void ScreenDemonstration::Input( const DeviceInput& DeviceI, const InputEventTyp
 		case MENU_BUTTON_COIN:
 			Screen::MenuCoin( MenuI.player );	// increment coins, play sound
 			m_soundMusic.Stop();
-			::Sleep( 200 );	// do a little pause, like the arcade does
+			::Sleep( 800 );	// do a little pause, like the arcade does
 			SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 			break;
 		case MENU_BUTTON_START:
@@ -224,7 +224,7 @@ void ScreenDemonstration::Input( const DeviceInput& DeviceI, const InputEventTyp
 			case PrefsManager::COIN_HOME:
 				m_soundMusic.Stop();
 				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
-				::Sleep( 200 );	// do a little pause, like the arcade does
+				::Sleep( 800 );	// do a little pause, like the arcade does
 				SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 				break;
 			default:

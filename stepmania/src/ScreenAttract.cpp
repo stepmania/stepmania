@@ -99,7 +99,7 @@ void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type
 		case MENU_BUTTON_COIN:
 			Screen::MenuCoin( MenuI.player );	// increment coins, play sound
 			SOUNDMAN->StopMusic();
-			::Sleep( 200 );	// do a little pause, like the arcade does
+			::Sleep( 800 );	// do a little pause, like the arcade does
 			SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 			break;
 		case MENU_BUTTON_START:
@@ -115,7 +115,7 @@ void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type
 			case PrefsManager::COIN_HOME:
 				SOUNDMAN->StopMusic();
 				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
-				::Sleep( 200 );	// do a little pause, like the arcade does
+				::Sleep( 800 );	// do a little pause, like the arcade does
 				SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 				break;
 			default:

@@ -806,15 +806,18 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 	}
 	else	// not event mode
 	{
-		if( m_bTryExtraStage )
-			m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
-		else if( m_ResultMode == RM_ARCADE_STAGE )
+		switch( m_ResultMode )
 		{
-			if( GAMESTATE->IsFinalStage()  )
+		case RM_ARCADE_STAGE:
+			if( m_bTryExtraStage )
+			{
+				m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
+			}
+			else if( GAMESTATE->IsFinalStage() || GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 			{
 				/* Tween the screen out, but leave the MenuElements where they are.
-				 * Play the "swoosh" sound manually (would normally be played by the ME
-				 * tween out). */
+					* Play the "swoosh" sound manually (would normally be played by the ME
+					* tween out). */
 				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu swoosh") );
 				TweenOffScreen();
 				SCREENMAN->SendMessageToTopScreen( SM_GoToFinalEvaluation, MENU_ELEMENTS_TWEEN_TIME );
@@ -823,9 +826,14 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 			{
 				m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
 			}
-		}
-		else
+			break;
+		case RM_ARCADE_SUMMARY:
 			m_Menu.TweenOffScreenToBlack( SM_GoToGameFinished, false );
+			break;
+		case RM_COURSE:
+			m_Menu.TweenOffScreenToBlack( SM_GoToGameFinished, false );
+			break;
+		}
 	}
 
 	switch( m_ResultMode )

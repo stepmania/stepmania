@@ -63,11 +63,12 @@ const char NAME_CHARS[] =
 #define HEIGHT_OF_ALL_CHARS		(NUM_NAME_CHARS * g_fCharsSpacingY)
 
 
-
 int GetClosestCharIndex( float fFakeBeat )
 {
-	return ((int)roundf(fFakeBeat)) % NUM_NAME_CHARS;
-};
+	int iCharIndex = (int)roundf(fFakeBeat) % NUM_NAME_CHARS;
+	ASSERT( iCharIndex >= 0 );
+	return iCharIndex;
+}
 
 // return value is relative to gray arrows
 float GetClosestCharYOffset( float fFakeBeat )
