@@ -65,8 +65,8 @@ Alsa9Buf::Alsa9Buf( hw hardware, int channels_, int samplerate_ )
 	
 	/* Open the device. */
 	int err;
-	err = snd_pcm_open( &pcm, "dmix", SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
-//	err = snd_pcm_open( &pcm, "default", SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
+//	err = snd_pcm_open( &pcm, "dmix", SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
+	err = snd_pcm_open( &pcm, "default", SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
 	if (err < 0)
 		RageException::ThrowNonfatal("snd_pcm_open: %s", snd_strerror(err));
 
