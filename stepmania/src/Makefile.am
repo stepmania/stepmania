@@ -198,7 +198,7 @@ stepmania_LDADD = \
 		  $(GL_LIBS) \
 		  $(srcdir)/SDL-1.2.5/src/.libs/libSDL.a \
 		  $(srcdir)/SDL_sound-1.0.0/.libs/libSDL_sound.a \
-		  $(SDL_LIBS) \
+		  $(SDL_LIBS) -lSDL_image \
 		  $(GTK_LIBS)
 
 INCLUDES = $(SDL_CFLAGS)
