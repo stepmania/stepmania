@@ -3,9 +3,25 @@
 #include "ScreenTestFonts.h"
 #include "FontManager.h"
 #include "RageTextureManager.h"
+#include "ScreenManager.h"
 
 static const float LineWidth = 400;
 static const float LineHeight = 50;
+
+
+CString CustomText;
+
+void ChangeText(CString txt)
+{
+	CustomText = txt;
+}
+const ScreenMessage SM_ChangeText		=	ScreenMessage(SM_User+1);
+
+void ScreenTestFonts::HandleScreenMessage( const ScreenMessage SM )
+{
+	if(SM == ScreenMessage(SM_ChangeText))
+		SetText(CustomText);
+}
 
 ScreenTestFonts::ScreenTestFonts()
 {
@@ -19,10 +35,10 @@ ScreenTestFonts::ScreenTestFonts()
 	Vline.SetDiffuse( RageColor(0, 1, 0, .8f) );
 	this->AddChild(&Vline);
 	
-	curfont.SetXY( CENTER_X, CENTER_Y+100 );
-	curfont.LoadFromFont( "Themes/default/Fonts/header1" );
-	curfont.SetZoom(.5);
-	this->AddChild(&curfont);
+	font.SetXY( CENTER_X, CENTER_Y+100 );
+	font.LoadFromFont( "Themes/default/Fonts/header1" );
+	font.SetZoom(.5);
+	this->AddChild(&font);
 
 	txt.SetXY( CENTER_X, CENTER_Y );
 	SetFont( "Themes/default/Fonts/header1" );
@@ -31,14 +47,17 @@ ScreenTestFonts::ScreenTestFonts()
 
 void ScreenTestFonts::SetText(CString text)
 {
+	txt.TurnShadowOff();
 	txt.SetText(""); /* force it */
 	txt.SetText(text);
 	curtext = text;
 }
-void ScreenTestFonts::SetFont(CString font)
+void ScreenTestFonts::SetFont(CString font_)
 {
-	txt.LoadFromFont( font );
-	curfont.SetText(font);
+	curfont = font_;
+
+	txt.LoadFromFont(curfont);
+	font.SetText(curfont);
 	/* The font changed, so we need to reset the text or it'll be
 	 * misaligned. */
 	SetText(curtext);
@@ -66,9 +85,12 @@ void ScreenTestFonts::Input( const DeviceInput& DeviceI, const InputEventType ty
 	case '.': txt.SetHorizAlign(align_center); break;
 	case '/': txt.SetHorizAlign(align_right); break;
 
+	case '`': if(curtext != CustomText)
+				  SetText(CustomText);
+			  else
+				  SCREENMAN->TextEntry( SM_ChangeText, "Edit text.", CustomText, ChangeText, NULL);
+			  break;
 	case '1': SetText("Waaai"); break;
-		/* These two kanji are currently two different sizes (20 and 32 pix),
-		 * and they should be vertically centered with the other text: */
 	case '2': SetText("WAAI &kakumei1;"); break;
 	case '3': SetText("WAAI &oni;"); break;
 
@@ -83,6 +105,7 @@ void ScreenTestFonts::Input( const DeviceInput& DeviceI, const InputEventType ty
 	case 'z': FONT->ReloadFonts();
 			  TEXTUREMAN->ReloadAll();
 			  SetText(curtext);
+			  SetFont(curfont);
 			  break;
 	}
 }

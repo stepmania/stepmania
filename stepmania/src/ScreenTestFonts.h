@@ -10,14 +10,16 @@ class ScreenTestFonts: public Screen
 public:
 	ScreenTestFonts();
 
-	BitmapText txt;
-	BitmapText curfont;
-	Quad Vline, Hline;
 	void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	void Draw();
-	CString			curtext;
+	void HandleScreenMessage( const ScreenMessage SM );
+
 	void SetText(CString txt);
 	void SetFont(CString font);
+
+	CString			curtext, curfont;
+	BitmapText txt, font;
+	Quad Vline, Hline;
 };
 
 #endif
