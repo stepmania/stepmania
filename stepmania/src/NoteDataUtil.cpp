@@ -263,7 +263,7 @@ float NoteDataUtil::GetChaosRadarValue( const NoteData &in, float fSongSeconds )
 void NoteDataUtil::RemoveHoldNotes(NoteData &in, float fStartBeat, float fEndBeat)
 {
 	// turn all the HoldNotes into TapNotes
-	for( int i=in.GetNumHoldNotes()-1; i>=0; i++ )	// iterate backwards so we can delete
+	for( int i=in.GetNumHoldNotes()-1; i>=0; i-- )	// iterate backwards so we can delete
 	{
 		const HoldNote hn = in.GetHoldNote(i);
 		
