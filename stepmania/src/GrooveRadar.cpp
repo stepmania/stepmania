@@ -8,6 +8,7 @@
 #include "RageDisplay.h"
 #include "RageMath.h"
 #include "ThemeMetric.h"
+#include "CommonMetrics.h"
 
 #define		LABEL_OFFSET_X( i )		THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetX",i+1))
 #define 	LABEL_OFFSET_Y( i )		THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetY",i+1))
@@ -132,7 +133,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		//
 		// use a fan to draw the volume
 		//
-		RageColor color = PlayerToColor( p );
+		RageColor color = PLAYER_COLOR.GetValue(p);
 		color.a = 0.5f;
 		v[0].p = RageVector3( 0, 0, 0 );
 		v[0].c = color;
@@ -165,7 +166,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 			const float fY = -sinf(fRotation) * fDistFromCenter;
 
 			v[i].p = RageVector3( fX, fY, 0 );
-			v[i].c = PlayerToColor( p );
+			v[i].c = PLAYER_COLOR.GetValue( p );
 		}
 
 		// TODO: Add this back in.  -Chris

@@ -8,6 +8,7 @@
 #include "ThemeManager.h"
 #include "StageStats.h"
 #include "PlayerState.h"
+#include "CommonMetrics.h"
 
 
 ScoreDisplayOni::ScoreDisplayOni()
@@ -30,7 +31,7 @@ void ScoreDisplayOni::Init( const PlayerState* pPlayerState )
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;
 
-	m_text.SetDiffuse( PlayerToColor(pn) );
+	m_text.SetDiffuse( PLAYER_COLOR.GetValue(pn) );
 }
 
 

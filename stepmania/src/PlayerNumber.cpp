@@ -5,16 +5,6 @@
 #include "CommonMetrics.h"
 
 
-RageColor PlayerToColor( PlayerNumber pn ) 
-{
-	switch( pn )
-	{
-		case PLAYER_1:	return COLOR_P1;
-		case PLAYER_2:	return COLOR_P2;
-		default: ASSERT(0); return RageColor(0.5f,0.5f,0.5f,1);
-	}
-};
-
 PlayerNumber GetNextHumanPlayer( PlayerNumber pn )
 {
 	for( PlayerNumber p=(PlayerNumber)(pn+1); p<NUM_PLAYERS; ((int&)p)++ )

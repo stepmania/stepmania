@@ -284,7 +284,7 @@ void DifficultyList::SetFromGameState()
 			// it really should round to the nearest difficulty that's in 
 			// DIFFICULTIES_TO_SHOW.
 			CStringArray asDiff;
-			split( DIFFICULTIES_TO_SHOW, ",", asDiff );
+			split( DIFFICULTIES_TO_SHOW.GetValue(), ",", asDiff );
 			for( unsigned i=0; i<asDiff.size(); i++ )
 			{
 				Difficulty d = StringToDifficulty( asDiff[i] );

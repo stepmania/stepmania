@@ -612,6 +612,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="Command.h">
 			</File>
 			<File
+				RelativePath="CommonMetrics.cpp">
+			</File>
+			<File
+				RelativePath="CommonMetrics.h">
+			</File>
+			<File
 				RelativePath="Course.cpp">
 			</File>
 			<File

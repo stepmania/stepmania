@@ -7,6 +7,7 @@
 #include "ThemeManager.h"
 #include "PlayerState.h"
 #include "StageStats.h"
+#include "CommonMetrics.h"
 
 
 const float SCORE_TWEEN_TIME = 0.2f;
@@ -43,7 +44,7 @@ void ScoreDisplayNormal::Init( const PlayerState* pPlayerState )
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;
 	
-	m_text.SetDiffuse( PlayerToColor(pn) );
+	m_text.SetDiffuse( PLAYER_COLOR.GetValue(pn) );
 }
 
 void ScoreDisplayNormal::SetScore( int iNewScore ) 

@@ -1,25 +1,23 @@
-/* Definitions of metrics that are in the "Common" group */
+#include "global.h"
+#include "CommonMetrics.h"
+#include "RageUtil.h"
 
-#ifndef COMMON_METRICS_H
-#define COMMON_METRICS_H
 
-#include "ThemeMetric.h"
-#include "PlayerNumber.h"
+CString PLAYER_COLOR_NAME( size_t p ) { return ssprintf("ColorP%d",p+1); }
 
-extern ThemeMetric<CString>		DIFFICULTIES_TO_SHOW;
-extern ThemeMetric<CString>		INITIAL_SCREEN;
-extern ThemeMetric<CString>		FIRST_RUN_INITIAL_SCREEN;
-extern ThemeMetric<CString>		DEFAULT_MODIFIERS;
-extern ThemeMetric<CString>		DEFAULT_CPU_MODIFIERS;
-extern ThemeMetric<CString>		COURSE_DIFFICULTIES_TO_SHOW;
-extern ThemeMetric1D<RageColor,NUM_PLAYERS> PLAYER_COLOR;
-extern ThemeMetric<float>		JOIN_PAUSE_SECONDS;
-extern ThemeMetric<CString>		WINDOW_TITLE;
+ThemeMetric<CString>	DIFFICULTIES_TO_SHOW		("Common","DifficultiesToShow");
+ThemeMetric<CString>	INITIAL_SCREEN				("Common","InitialScreen");
+ThemeMetric<CString>	FIRST_RUN_INITIAL_SCREEN	("Common","FirstRunInitialScreen");
+ThemeMetric<CString>	DEFAULT_MODIFIERS			("Common","DefaultModifiers" );
+ThemeMetric<CString>	DEFAULT_CPU_MODIFIERS		("Common","DefaultCpuModifiers" );
+ThemeMetric<CString>	COURSE_DIFFICULTIES_TO_SHOW	("Common","CourseDifficultiesToShow");
+ThemeMetric1D<RageColor,NUM_PLAYERS> PLAYER_COLOR	("Common",PLAYER_COLOR_NAME,NUM_PLAYERS);
+ThemeMetric<float>		JOIN_PAUSE_SECONDS			("Common","JoinPauseSeconds");
+ThemeMetric<CString>	WINDOW_TITLE				("Common","WindowTitle");
 
-#endif
 
 /*
- * (c) 2003-2004 Chris Danford
+ * (c) 2001-2004 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -29,8 +29,6 @@ PlayerNumber GetNextPotentialCpuPlayer( PlayerNumber pn );
 
 const PlayerNumber	OPPOSITE_PLAYER[NUM_PLAYERS] = { PLAYER_2, PLAYER_1 };
 
-RageColor PlayerToColor( PlayerNumber pn );
-
 #endif
 
 /*
