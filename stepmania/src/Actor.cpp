@@ -717,7 +717,7 @@ void Actor::Command( CString sCommandString )
 		else if( sName=="diffusetopedge" )		SetDiffuseTopEdge( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
 		else if( sName=="diffusebottomedge" )	SetDiffuseBottomEdge( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
 		/* Add left/right/top/bottom for alpha if needed. */
-		else if( sName=="diffusealpha" )	{ for(int i = 0; i < 4; ++i) { RageColor c = GetDiffuses( i ); c.a = fParam(1); SetDiffuses( i, c ); } }
+		else if( sName=="diffusealpha" )	SetDiffuseAlpha( fParam(1) );
 		else if( sName=="glow" )			SetGlow( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
 		else if( sName=="glowmode" ) {
 			if(!sParam(1).CompareNoCase("whiten"))
@@ -796,6 +796,40 @@ float Actor::GetTweenTimeLeft() const
 
 	return tot;
 }
+
+/* This is a hack to change all tween states while leaving existing tweens alone.
+ *
+ * Perhaps the regular Set methods should also take an optional parameter, eg.
+ * "SET_TWEEN" (normal behavior) or "SET_GLOBAL" to set regardless of tweens.
+ * That might be ugly, too.
+ */
+void Actor::SetGlobalDiffuseColor( RageColor c )
+{
+	for(int i=0; i<4; i++) /* color, not alpha */
+	{
+		for( unsigned ts = 0; ts < m_TweenStates.size(); ++ts )
+		{
+			m_TweenStates[ts].diffuse[i].r = c.r; 
+			m_TweenStates[ts].diffuse[i].g = c.g; 
+			m_TweenStates[ts].diffuse[i].b = c.b; 
+		}
+		m_current.diffuse[i].r = c.r;
+		m_current.diffuse[i].g = c.g;
+		m_current.diffuse[i].b = c.b;
+		m_start.diffuse[i].r = c.r;
+		m_start.diffuse[i].g = c.g;
+		m_start.diffuse[i].b = c.b;
+	}
+}
+
+void Actor::SetGlobalX( float x )
+{
+	for( unsigned ts = 0; ts < m_TweenStates.size(); ++ts )
+		m_TweenStates[ts].pos.x = x; 
+	m_current.pos.x = x;
+	m_start.pos.x = x;
+}
+
 
 void Actor::TweenState::Init()
 {

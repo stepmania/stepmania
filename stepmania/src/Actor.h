@@ -119,7 +119,11 @@ public:
 	virtual void  AddRotationP( float rot );
 	virtual void  AddRotationR( float rot );
 
+	virtual void SetGlobalDiffuseColor( RageColor c );
+	virtual void SetGlobalX( float x );
+
 	virtual void SetDiffuse( RageColor c ) { for(int i=0; i<4; i++) DestTweenState().diffuse[i] = c; };
+	virtual void SetDiffuseAlpha( float f ) { for(int i = 0; i < 4; ++i) { RageColor c = GetDiffuses( i ); c.a = f; SetDiffuses( i, c ); } }
 	virtual void SetDiffuses( int i, RageColor c )		{ DestTweenState().diffuse[i] = c; };
 	virtual void SetDiffuseUpperLeft( RageColor c )		{ DestTweenState().diffuse[0] = c; };
 	virtual void SetDiffuseUpperRight( RageColor c )	{ DestTweenState().diffuse[1] = c; };
