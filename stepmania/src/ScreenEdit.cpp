@@ -895,13 +895,11 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				m_NoteFieldEdit.SetTapNote( iCol, iSongIndex, TAP_EMPTY );
 				return;
 			}
-
-			// Hold LShift to lay mine, hold RShift to lay an attack
-			if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE) )
+			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE) )
 			{
 				m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, TAP_ORIGINAL_MINE );
 			}
-			if( EditIsBeingPressed(EDIT_BUTTON_LAY_ATTACK) )
+			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_ATTACK) )
 			{
 				g_iLastInsertAttackTrack = iCol;
 				SCREENMAN->MiniMenu( &g_InsertAttack, SM_BackFromInsertAttack );
