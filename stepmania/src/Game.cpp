@@ -102,6 +102,19 @@ CString Game::ColToButtonName( int col ) const
 	return m_szButtonNames[GI.button];
 }
 
+TapNoteScore Game::MapTapNoteScore( TapNoteScore tns ) const
+{
+	switch( tns )
+	{
+	case TNS_MARVELOUS: return	m_mapMarvelousTo;
+	case TNS_PERFECT: return m_mapPerfectTo;
+	case TNS_GREAT: return m_mapGreatTo;
+	case TNS_GOOD: return m_mapGoodTo;
+	case TNS_BOO: return m_mapBooTo;
+	default: return tns;
+	}
+}
+
 /*
  * (c) 2001-2002 Chris Danford
  * All rights reserved.

@@ -847,16 +847,8 @@ void Player::Step( int col, const RageTimer &tm )
 				m_pNoteField->DidTapNote( col, score, false );
 		}
 
-
 		// Do game-specific score mapping.
-		const Game* pGame = GAMESTATE->GetCurrentGame();
-		if( score == TNS_MARVELOUS )		score = pGame->m_mapMarvelousTo;
-		else if( score == TNS_PERFECT )		score = pGame->m_mapPerfectTo;
-		else if( score == TNS_GREAT )		score = pGame->m_mapGreatTo;
-		else if( score == TNS_GOOD )		score = pGame->m_mapGoodTo;
-		else if( score == TNS_BOO )			score = pGame->m_mapBooTo;
-
-
+		score = GAMESTATE->GetCurrentGame()->MapTapNoteScore( score );
 
 		if( score != TNS_NONE && score != TNS_MISS )
 		{

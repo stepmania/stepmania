@@ -54,6 +54,7 @@ public:
 	void MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] ) const;
 	CString ColToButtonName( int col ) const;
 
+	TapNoteScore MapTapNoteScore( TapNoteScore tns ) const;
 	TapNoteScore m_mapMarvelousTo;
 	TapNoteScore m_mapPerfectTo;
 	TapNoteScore m_mapGreatTo;
