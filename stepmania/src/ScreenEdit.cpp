@@ -1190,7 +1190,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			unsigned i;
 			for( i=0; i<m_pSong->m_Timing.m_StopSegments.size(); i++ )
 			{
-				if( m_pSong->m_Timing.m_StopSegments[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
+				if( m_pSong->m_Timing.m_StopSegments[i].m_iStartRow == BeatToNoteRow(GAMESTATE->m_fSongBeat) )
 					break;
 			}
 
@@ -1198,7 +1198,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			{
 				// create a new StopSegment
 				if( fStopDelta > 0 )
-					m_pSong->AddStopSegment( StopSegment(GAMESTATE->m_fSongBeat, fStopDelta) );
+					m_pSong->AddStopSegment( StopSegment(BeatToNoteRow(GAMESTATE->m_fSongBeat), fStopDelta) );
 			}
 			else	// StopSegment being modified is m_Timing.m_StopSegments[i]
 			{
@@ -1801,7 +1801,8 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				unsigned i;
 				for( i=0; i<m_pSong->m_Timing.m_StopSegments.size(); i++ )
 				{
-					if( m_pSong->m_Timing.m_StopSegments[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
+					// XXX
+					if( m_pSong->m_Timing.m_StopSegments[i].m_iStartRow == BeatToNoteRow(GAMESTATE->m_fSongBeat) )
 						break;
 				}
 				if ( i == m_pSong->m_Timing.m_StopSegments.size() )
@@ -2071,7 +2072,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				float fDeltaBeats = fNewClipboardBeats - fOldClipboardBeats;
 				float fNewClipboardEndBeat = m_NoteFieldEdit.m_fBeginMarker + fNewClipboardBeats;
 				NoteDataUtil::ShiftRows( m_NoteDataEdit, BeatToNoteRow(m_NoteFieldEdit.m_fBeginMarker), BeatToNoteRow(fDeltaBeats) );
-				m_pSong->m_Timing.ScaleRegion( fScale, m_NoteFieldEdit.m_fBeginMarker, m_NoteFieldEdit.m_fEndMarker );
+				m_pSong->m_Timing.ScaleRegion( fScale, BeatToNoteRow(m_NoteFieldEdit.m_fBeginMarker), BeatToNoteRow(m_NoteFieldEdit.m_fEndMarker) );
 
 				HandleAreaMenuChoice( paste_at_begin_marker, NULL );
 
@@ -2199,10 +2200,10 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 			NoteDataUtil::ShiftRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_fSongBeat), BeatToNoteRow(-1) );
 			break;
 		case shift_pauses_forward:
-			m_pSong->m_Timing.ShiftRows( GAMESTATE->m_fSongBeat, 1 );
+			m_pSong->m_Timing.ShiftRows( BeatToNoteRow(GAMESTATE->m_fSongBeat), BeatToNoteRow(+1) );
 			break;
 		case shift_pauses_backward:
-			m_pSong->m_Timing.ShiftRows( GAMESTATE->m_fSongBeat, -1 );
+			m_pSong->m_Timing.ShiftRows( BeatToNoteRow(GAMESTATE->m_fSongBeat), BeatToNoteRow(-1) );
 			break;
 		// MD 11/02/03 - Converting selected region to a pause of the same length.
 		case convert_beat_to_pause:
@@ -2218,26 +2219,26 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 										 BeatToNoteRow(m_NoteFieldEdit.m_fBeginMarker) + 1,
 										 BeatToNoteRow(-m_NoteFieldEdit.m_fEndMarker+m_NoteFieldEdit.m_fBeginMarker)
 									   );
-				m_pSong->m_Timing.ShiftRows( m_NoteFieldEdit.m_fBeginMarker + 0.003f,
-										     (-m_NoteFieldEdit.m_fEndMarker+m_NoteFieldEdit.m_fBeginMarker)
+				m_pSong->m_Timing.ShiftRows( BeatToNoteRow(m_NoteFieldEdit.m_fBeginMarker) + 1,
+										     BeatToNoteRow(-m_NoteFieldEdit.m_fEndMarker+m_NoteFieldEdit.m_fBeginMarker)
 										   );
 				unsigned i;
 				for( i=0; i<m_pSong->m_Timing.m_StopSegments.size(); i++ )
 				{
-					float fStart = m_pSong->m_Timing.GetElapsedTimeFromBeat(m_pSong->m_Timing.m_StopSegments[i].m_fStartBeat);
+					float fStart = m_pSong->m_Timing.GetElapsedTimeFromBeat(NoteRowToBeat(m_pSong->m_Timing.m_StopSegments[i].m_iStartRow));
 					float fEnd = fStart + m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds;
 					if( fStart > fMarkerEnd || fEnd < fMarkerStart )
 						continue;
 					else {
-						if (fStart > fMarkerStart)
-							m_pSong->m_Timing.m_StopSegments[i].m_fStartBeat = m_NoteFieldEdit.m_fBeginMarker;
+						if( fStart > fMarkerStart )
+							m_pSong->m_Timing.m_StopSegments[i].m_iStartRow = BeatToNoteRow(m_NoteFieldEdit.m_fBeginMarker);
 						m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds = fStopLength;
 						break;
 					}
 				}
 
 				if( i == m_pSong->m_Timing.m_StopSegments.size() )	// there is no BPMSegment at the current beat
-					m_pSong->AddStopSegment( StopSegment(m_NoteFieldEdit.m_fBeginMarker, fStopLength) );
+					m_pSong->AddStopSegment( StopSegment(BeatToNoteRow(m_NoteFieldEdit.m_fBeginMarker), fStopLength) );
 				m_NoteFieldEdit.m_fEndMarker = -1;
 				break;
 			}
@@ -2255,7 +2256,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				unsigned i;
 				for( i=0; i<m_pSong->m_Timing.m_StopSegments.size(); i++ )
 				{
-					if( m_pSong->m_Timing.m_StopSegments[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
+					if( m_pSong->m_Timing.m_StopSegments[i].m_iStartRow == BeatToNoteRow(GAMESTATE->m_fSongBeat) )
 						break;
 				}
 
@@ -2271,7 +2272,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 					// don't move the step from where it is, just move everything later
 					m_NoteDataEdit.ConvertHoldNotesTo2sAnd3s();
 					NoteDataUtil::ShiftRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_fSongBeat) + 1, BeatToNoteRow(fStopLength) );
-					m_pSong->m_Timing.ShiftRows( GAMESTATE->m_fSongBeat + 0.003f, fStopLength );
+					m_pSong->m_Timing.ShiftRows( BeatToNoteRow(GAMESTATE->m_fSongBeat) + 1, BeatToNoteRow(fStopLength) );
 					m_NoteDataEdit.Convert2sAnd3sToHoldNotes();
 
 				}

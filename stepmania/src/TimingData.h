@@ -3,19 +3,24 @@
 #ifndef TIMING_DATA_H
 #define TIMING_DATA_H
 
+#include "NoteTypes.h"
+
 struct BPMSegment 
 {
-	BPMSegment() { m_fStartBeat = m_fBPM = -1; };
-	BPMSegment( float s, float b ) { m_fStartBeat = s; m_fBPM = b; };
-	float m_fStartBeat;
-	float m_fBPM;
+	BPMSegment() { m_iStartIndex = -1; m_iBPS = -1; }
+	BPMSegment( int s, int b ) { m_iStartIndex = s; m_iBPS = b; }
+	int m_iStartIndex;
+	int m_iBPS; /* rows per second */
+
+	void SetBPM( float f );
+	float GetBPM() const;
 };
 
 struct StopSegment 
 {
-	StopSegment() { m_fStartBeat = m_fStopSeconds = -1; };
-	StopSegment( float s, float f ) { m_fStartBeat = s; m_fStopSeconds = f; };
-	float m_fStartBeat;
+	StopSegment() { m_fStopSeconds = -1; m_iStartRow = -1; }
+	StopSegment( int s, float f ) { m_iStartRow = s; m_fStopSeconds = f; }
+	int m_iStartRow;
 	float m_fStopSeconds;
 };
 
@@ -28,7 +33,7 @@ public:
 	float GetBPMAtBeat( float fBeat ) const;
 	void SetBPMAtBeat( float fBeat, float fBPM );
 	void SetStopAtBeat( float fBeat, float fSeconds );
-	void MultiplyBPMInBeatRange( float fStartBeat, float fEndBeat, float fFactor );
+	void MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor );
 	void AddBPMSegment( const BPMSegment &seg );
 	void AddStopSegment( const StopSegment &seg );
 	BPMSegment& GetBPMSegmentAtBeat( float fBeat );
@@ -54,8 +59,8 @@ public:
 	// of the range that was deleted (say if rows 1680-1728 are deleted, and
 	// a BPM change or a stop occurs at row 1704, we'll move it to row
 	// 1680).
-	void ScaleRegion( float fScale = 1, float fStartBeat = 0, float fEndBeat = 99999 );
-	void ShiftRows( float fStartBeat, float fBeatsToShift );
+	void ScaleRegion( float fScale = 1, int iStartRow = 0, int iEndRow = MAX_NOTE_ROW );
+	void ShiftRows( int iStartRow, int iRowsToShift );
 
 	CString						m_sFile;		// informational only
 	vector<BPMSegment>			m_BPMSegments;	// this must be sorted before gameplay

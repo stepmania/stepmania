@@ -10,6 +10,7 @@
 #include "song.h"
 #include "Steps.h"
 #include "RageUtil_CharConversions.h"
+#include "NoteTypes.h"
 
 /*	BMS encoding:     tap-hold
 	4&8panel:   Player1     Player2
@@ -602,10 +603,10 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 
 	if( GetTagFromMap( mapNameToData, "#bpm", sData ) )
 	{
-		BPMSegment newSeg( 0, strtof(sData, NULL) );
+		BPMSegment newSeg( 0, BeatToNoteRow(strtof(sData, NULL)) );
 		out.AddBPMSegment( newSeg );
 
-		LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", newSeg.m_fStartBeat, newSeg.m_fBPM );
+		LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartIndex), newSeg.GetBPM() );
 	}
 
 	NameToData_t::const_iterator it;
@@ -691,9 +692,11 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 				{
 					float fBPM = strtof( sBPM, NULL );
 
-					BPMSegment newSeg( fBeat, fBPM );
+					BPMSegment newSeg;
+					newSeg.m_iStartIndex = BeatToNoteRow(fBeat);
+					newSeg.SetBPM( fBPM );
 					out.AddBPMSegment( newSeg );
-					LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", newSeg.m_fStartBeat, newSeg.m_fBPM );
+					LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", fBeat, newSeg.GetBPM() );
 				}
 				else
 					LOG->Warn( "Couldn't find tag '%s' in '%s'.", sTagToLookFor.c_str(), m_sDir.c_str() );
@@ -710,9 +713,9 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 					float fBeats = strtof(sBeats,NULL) / 48.0f;
 					float fFreezeSecs = fBeats / fBPS;
 
-					StopSegment newSeg( fBeat, fFreezeSecs );
+					StopSegment newSeg( BeatToNoteRow(fBeat), fFreezeSecs );
 					out.AddStopSegment( newSeg );
-					LOG->Trace( "Inserting new Freeze at beat %f, secs %f", newSeg.m_fStartBeat, newSeg.m_fStopSeconds );
+					LOG->Trace( "Inserting new Freeze at beat %f, secs %f", fBeat, newSeg.m_fStopSeconds );
 				}
 				else
 					LOG->Warn( "Couldn't find tag '%s' in '%s'.", sTagToLookFor.c_str(), m_sDir.c_str() );
@@ -735,9 +738,11 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 			{
 				float fBPM = strtof( sBPM, NULL );
 
-				BPMSegment newSeg( NoteRowToBeat(iStepIndex), fBPM );
+				BPMSegment newSeg;
+				newSeg.m_iStartIndex = iStepIndex;
+				newSeg.SetBPM( fBPM );
 				out.AddBPMSegment( newSeg );
-				LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", newSeg.m_fStartBeat, newSeg.m_fBPM );
+				LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartIndex), newSeg.GetBPM() );
 			}
 			else
 				LOG->Warn( "Couldn't find tag '%s' in '%s'.", sTagToLookFor.c_str(), m_sDir.c_str() );
@@ -834,9 +839,9 @@ void BMSLoader::SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song *pOu
 		 * adjustment and the BPM adjustment together, everything remains consistent.
 		 * Adjust m_TimeSigAdjustments first, or fAdjustmentEndBeat will be wrong. */
 		m_TimeSigAdjustments[iMeasure] = 1.0f / fFactor;
-		float fAdjustmentStartBeat = NoteRowToBeat( GetMeasureStartRow( sigs, iMeasure ) );
-		float fAdjustmentEndBeat = NoteRowToBeat( GetMeasureStartRow( sigs, iMeasure+1 ) );
-		pOut->m_Timing.MultiplyBPMInBeatRange( fAdjustmentStartBeat, fAdjustmentEndBeat, 1.0f / fFactor );
+		int iAdjustmentStartRow = GetMeasureStartRow( sigs, iMeasure );
+		int iAdjustmentEndRow = GetMeasureStartRow( sigs, iMeasure+1 );
+		pOut->m_Timing.MultiplyBPMInBeatRange( iAdjustmentStartRow, iAdjustmentEndRow, 1.0f / fFactor );
 	}
 }
 

@@ -7,6 +7,7 @@
 #include "RageFile.h"
 #include "RageFileManager.h"
 #include "song.h"
+#include "NoteTypes.h"
 #include <cstring>
 #include <cerrno>
 
@@ -62,7 +63,7 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 	{
 		const BPMSegment &bs = out.m_Timing.m_BPMSegments[i];
 
-		f.Write( ssprintf( "%.3f=%.3f", bs.m_fStartBeat, bs.m_fBPM ) );
+		f.Write( ssprintf( "%.3f=%.3f", NoteRowToBeat(bs.m_iStartIndex), bs.GetBPM() ) );
 		if( i != out.m_Timing.m_BPMSegments.size()-1 )
 			f.Write( "," );
 	}
@@ -73,7 +74,7 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 	{
 		const StopSegment &fs = out.m_Timing.m_StopSegments[i];
 
-		f.PutLine( ssprintf( "%.3f=%.3f", fs.m_fStartBeat, fs.m_fStopSeconds ) );
+		f.PutLine( ssprintf( "%.3f=%.3f", NoteRowToBeat(fs.m_iStartRow), fs.m_fStopSeconds ) );
 		if( i != out.m_Timing.m_StopSegments.size()-1 )
 			f.Write( "," );
 	}

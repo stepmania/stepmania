@@ -524,8 +524,8 @@ void Song::TidyUpData()
 	}
 	
 	/* Make sure the first BPM segment starts at beat 0. */
-	if( m_Timing.m_BPMSegments[0].m_fStartBeat != 0 )
-		m_Timing.m_BPMSegments[0].m_fStartBeat = 0;
+	if( m_Timing.m_BPMSegments[0].m_iStartIndex != 0 )
+		m_Timing.m_BPMSegments[0].m_iStartIndex = 0;
 
 
 	if( m_fMusicSampleStartSeconds == -1 ||

@@ -7,6 +7,7 @@
 #include "RageUtil.h"
 #include "SongManager.h"
 #include "RageFileManager.h"
+#include "NoteTypes.h"
 
 #define MAX_EDIT_SIZE_BYTES  20*1024	// 20 KB
 
@@ -110,7 +111,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				const float fFreezeSeconds = strtof( arrayFreezeValues[1], NULL );
 				
 				StopSegment new_seg;
-				new_seg.m_fStartBeat = fFreezeBeat;
+				new_seg.m_iStartRow = BeatToNoteRow(fFreezeBeat);
 				new_seg.m_fStopSeconds = fFreezeSeconds;
 
 //				LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
@@ -141,8 +142,8 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				const float fNewBPM = strtof( arrayBPMChangeValues[1], NULL );
 				
 				BPMSegment new_seg;
-				new_seg.m_fStartBeat = fBeat;
-				new_seg.m_fBPM = fNewBPM;
+				new_seg.m_iStartIndex = BeatToNoteRow(fBeat);
+				new_seg.SetBPM( fNewBPM );
 				
 				out.AddBPMSegment( new_seg );
 			}

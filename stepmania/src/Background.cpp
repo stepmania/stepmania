@@ -308,19 +308,21 @@ void Background::LoadFromRandom( float fFirstBeat, float fLastBeat, const Timing
 	}
 
 	// change BG every BPM change that is at the beginning of a measure
+	int iStartIndex = BeatToNoteRow(fFirstBeat);
+	int iEndIndex = BeatToNoteRow(fLastBeat);
 	for( unsigned i=0; i<timing.m_BPMSegments.size(); i++ )
 	{
 		const BPMSegment& bpmseg = timing.m_BPMSegments[i];
 
-		if( fmodf(bpmseg.m_fStartBeat, (float)BEATS_PER_MEASURE) != 0 )
+		if( bpmseg.m_iStartIndex % BeatToNoteRow((float) BEATS_PER_MEASURE) != 0 )
 			continue;	// skip
 
-		if( bpmseg.m_fStartBeat < fFirstBeat  || bpmseg.m_fStartBeat > fLastBeat )
+		if( bpmseg.m_iStartIndex < iStartIndex  || bpmseg.m_iStartIndex > iEndIndex )
 			continue;	// skip
 
 		CString sBGName = CreateRandomBGA();
 		if( sBGName != "" )
-			m_aBGChanges.push_back( BackgroundChange(bpmseg.m_fStartBeat,sBGName) );
+			m_aBGChanges.push_back( BackgroundChange(NoteRowToBeat(bpmseg.m_iStartIndex),sBGName) );
 	}
 }
 

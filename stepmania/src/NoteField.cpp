@@ -485,9 +485,9 @@ void NoteField::DrawPrimitives()
 		vector<BPMSegment> &aBPMSegments = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments;
 		for( unsigned i=0; i<aBPMSegments.size(); i++ )
 		{
-			if(aBPMSegments[i].m_fStartBeat >= fFirstBeatToDraw &&
-			   aBPMSegments[i].m_fStartBeat <= fLastBeatToDraw)
-				DrawBPMText( aBPMSegments[i].m_fStartBeat, aBPMSegments[i].m_fBPM );
+			if(aBPMSegments[i].m_iStartIndex >= iFirstIndexToDraw &&
+			   aBPMSegments[i].m_iStartIndex <= iLastIndexToDraw)
+			   DrawBPMText( NoteRowToBeat(aBPMSegments[i].m_iStartIndex), aBPMSegments[i].GetBPM() );
 		}
 		//
 		// Freeze text
@@ -495,9 +495,9 @@ void NoteField::DrawPrimitives()
 		vector<StopSegment> &aStopSegments = GAMESTATE->m_pCurSong->m_Timing.m_StopSegments;
 		for( unsigned i=0; i<aStopSegments.size(); i++ )
 		{
-			if(aStopSegments[i].m_fStartBeat >= fFirstBeatToDraw &&
-			   aStopSegments[i].m_fStartBeat <= fLastBeatToDraw)
-			DrawFreezeText( aStopSegments[i].m_fStartBeat, aStopSegments[i].m_fStopSeconds );
+			if(aStopSegments[i].m_iStartRow >= iFirstIndexToDraw &&
+			   aStopSegments[i].m_iStartRow <= iLastIndexToDraw)
+			DrawFreezeText( NoteRowToBeat(aStopSegments[i].m_iStartRow), NoteRowToBeat(aStopSegments[i].m_iStartRow) );
 		}
 
 		//
