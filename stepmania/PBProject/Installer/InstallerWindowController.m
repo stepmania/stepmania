@@ -44,4 +44,16 @@
         [button setEnabled:YES];
 }
 
+- (BOOL)askQuestion:(NSString *)question
+{
+    [questionField setStringValue:question];
+    return [NSApp runModalForWindow:questionPanel];
+}
+
+- (IBAction)pushedQuestionButton:(id)sender
+{
+    [questionPanel orderOut:sender];
+    [NSApp stopModalWithCode:[sender tag]];
+}
+
 @end

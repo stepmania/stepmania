@@ -8,6 +8,7 @@
     IBOutlet NSButton *button;
     IBOutlet NSTextView *textView;
     IBOutlet NSTextField *questionField;
+    IBOutlet NSPanel *questionPanel;
     BOOL installing;
     Helper *helper;
     BOOL finished;
@@ -17,6 +18,6 @@
 - (IBAction)pushedButton:(id)sender;
 - (void)postMessage:(NSString *)message;
 - (void)finishedInstalling:(BOOL)success;
-- (BOOL)AskQuestion:(NSString *)question;
+- (BOOL)askQuestion:(NSString *)question;
 - (IBAction)pushedQuestionButton:(id)sender;
 @end

@@ -6,32 +6,66 @@
 //  Copyright (c) 2003 Steve Checkoway. All rights reserved.
 //
 
+#import <string.h>
 #import "Helper.h"
 #import "InstallerWindowController.h"
 #include "InstallerFile.h"
 #include "Processor.h"
 
+void Error(const char *fmt, ...);
+
 static id c;
 
-void HandleFile(const CString& file, const CString& archivePath, bool overwrite)
+void HandleFile(const CString& file, const CString& dir, const CString& archivePath, bool overwrite)
 {
     [c postMessage:[NSString stringWithCString:file]];
+    
+    CString command = "tar zxfPC '" + archivePath + "' '" + dir + "' '" + file + "'";
+    if (system(command))
+        Error(strerror(errno));
 }
 
 const CString GetPath(const CString& ID)
 {
-    [c postMessage:[NSString stringWithFormat:@"Get path for id: %s", ID.c_str()]];
-    return "";
+    NSOpenPanel *panel = [NSOpenPanel openPanel];
+
+    [panel setCanChooseFiles:NO];
+    [panel setCanChooseDirectories:YES];
+    [panel setResolvesAliases:YES];
+    [panel setAllowsMultipleSelection:NO];
+    int result = [panel runModalForTypes:[NSArray array]]; // No extensions
+
+    if (result != NSOKButton)
+    {
+        [c postMessage:@"Canceled install."];
+        [c finishedInstalling:NO];
+        [NSThread exit];
+    }
+
+    NSString *path = [panel filename]; //No need for NSOpenPanel's filenames method
+
+    [c postMessage:[NSString stringWithFormat:@"Choose file \"%@\".", path]];
+    
+    return [path cString];
 }
 
 void Error(const char *fmt, ...)
 {
-    [c postMessage:@"error of some sort"];
+    va_list ap;
+    va_start(ap, fmt);
+    NSString *message = [[NSString alloc] initWithFormat:[NSString stringWithCString:fmt] arguments:ap];
+    va_end(ap);
+    [c postMessage:[message autorelease]];
 }
 
 bool AskFunc(const CString& question)
 {
-    return YES;
+    NSString *q = [NSString stringWithCString:question.c_str()];
+    BOOL answer = [c askQuestion:q];
+
+    [c postMessage:q];
+    [c postMessage:(answer ? @"YES" : @"NO")];
+    return answer;
 }
 
 @implementation Helper
@@ -61,9 +95,13 @@ bool AskFunc(const CString& question)
 
     p.SetErrorFunc(Error);
 
+    [c postMessage:@"Reading from the config file."];
+
     if(!file.ReadFile())
     {
         [c postMessage:@"Couldn't read the config file"];
+        [c finishedInstalling:NO];
+        [pool release];
         return;
     }
 
@@ -72,6 +110,7 @@ bool AskFunc(const CString& question)
         p.ProcessLine(file.GetLine(nextLine), nextLine);
 
     [c postMessage:@"Installation complete"];
+    [c finishedInstalling:YES];
     [pool release];
 }
     
