@@ -696,9 +696,15 @@ void Player::HandleTapRowScore( unsigned row )
 	TapNoteScore scoreOfLastTap = LastTapNoteScore(row);
 
 	int iNumTapsInRow = 0;
-	for( int c=0; c<GetNumTracks(); c++ )	// for each column
-		if( GetTapNote(c, row) != TAP_EMPTY )
+	int iNumAdditions = 0;
+	for( int t=0; t<GetNumTracks(); t++ )	// for each column
+	{
+		TapNote tn = GetTapNote(t, row);
+		if( tn != TAP_EMPTY )
 			iNumTapsInRow++;
+		if( tn == TAP_ADDITION )
+			iNumAdditions++;
+	}
 
 	ASSERT(iNumTapsInRow > 0);
 
@@ -714,10 +720,10 @@ void Player::HandleTapRowScore( unsigned row )
 		return;
 
 	if(m_pPrimaryScoreKeeper)
-		m_pPrimaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow );
+		m_pPrimaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow, iNumAdditions );
 
 	if(m_pSecondaryScoreKeeper)
-		m_pSecondaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow );
+		m_pSecondaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow, iNumAdditions );
 
 	if (m_pScore)
 		m_pScore->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);

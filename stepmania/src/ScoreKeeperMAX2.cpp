@@ -229,12 +229,18 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 	GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber] = m_iScore;
 }
 
-void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow )
+void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, int iNumAdditions )
 {
 	ASSERT( iNumTapsInRow >= 1 );
+	int iNumTapsToScore = iNumTapsInRow-iNumAdditions;
 
-	// update dance points
-	GAMESTATE->m_CurStageStats.iActualDancePoints[m_PlayerNumber] += TapNoteScoreToDancePoints( scoreOfLastTap );
+	// Update dance points.  Additions don't count.
+	if( iNumTapsToScore > 0 )
+	{
+		GAMESTATE->m_CurStageStats.iActualDancePoints[m_PlayerNumber] += TapNoteScoreToDancePoints( scoreOfLastTap );
+	}
+
+	// Do count additions in judge totals.
 	GAMESTATE->m_CurStageStats.iTapNoteScores[m_PlayerNumber][scoreOfLastTap] += 1;
 
 /*
