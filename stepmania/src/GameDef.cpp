@@ -124,7 +124,7 @@ void GameDef::GetHoldTweenColors( const CString sSkinName, const CString sButton
 	return;
 }
 
-void GameDef::GetSkinNames( CStringArray &AddTo )
+void GameDef::GetSkinNames( CStringArray &AddTo ) const
 {
 	CString sBaseSkinFolder = "Skins\\" + CString(m_szName) + "\\";
 	GetDirListing( sBaseSkinFolder + "*.*", AddTo, true );
@@ -138,7 +138,7 @@ void GameDef::GetSkinNames( CStringArray &AddTo )
 		throw RageException( "The folder '%s' must contain at least one skin.", sBaseSkinFolder );
 }
 
-bool GameDef::HasASkinNamed( CString sSkin )
+bool GameDef::HasASkinNamed( CString sSkin ) const
 {
 	CStringArray asSkinNames;
 	GetSkinNames( asSkinNames );
@@ -150,7 +150,7 @@ bool GameDef::HasASkinNamed( CString sSkin )
 	return false;
 }
 
-void GameDef::AssertSkinsAreComplete()
+void GameDef::AssertSkinsAreComplete() const
 {
 	CStringArray asSkinNames;
 	GetSkinNames( asSkinNames );
@@ -159,7 +159,7 @@ void GameDef::AssertSkinsAreComplete()
 		AssertSkinIsComplete( asSkinNames[i] );
 }
 
-void GameDef::AssertSkinIsComplete( CString sSkin )
+void GameDef::AssertSkinIsComplete( CString sSkin ) const
 {
 	CString sGameSkinFolder = "Skins\\" + sSkin + "\\";
 
@@ -173,7 +173,7 @@ void GameDef::AssertSkinIsComplete( CString sSkin )
 	}		
 }
 
-MenuInput GameDef::GameInputToMenuInput( GameInput GameI )
+MenuInput GameDef::GameInputToMenuInput( GameInput GameI ) const
 {
 	PlayerNumber pn;
 
@@ -207,7 +207,7 @@ MenuInput GameDef::GameInputToMenuInput( GameInput GameI )
 	return MenuInput();	// invalid GameInput
 }
 
-void GameDef::MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] )
+void GameDef::MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] ) const
 {
 	ASSERT( MenuI.IsValid() );
 

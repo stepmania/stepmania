@@ -234,19 +234,19 @@ void InputMapper::GameToStyle( GameInput GameI, StyleInput &StyleI )
 		return;
 	}
 
-	StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 	StyleI = pStyleDef->GameInputToStyleInput( GameI );
 }
 
 void InputMapper::GameToMenu( GameInput GameI, MenuInput &MenuI )
 {
-	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
 	MenuI = pGameDef->GameInputToMenuInput( GameI );
 }
 
 void InputMapper::StyleToGame( StyleInput StyleI, GameInput &GameI )
 {
-	StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 	GameI = pStyleDef->StyleInputToGameInput( StyleI );
 }
 

@@ -73,14 +73,14 @@ public:
 		return GAME_BUTTON_INVALID;
 	}
 
-	MenuInput GameInputToMenuInput( GameInput GameI );
-	void MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] );
+	MenuInput GameInputToMenuInput( GameInput GameI ) const;
+	void MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] ) const;
 
 	// note skin stuff
-	void GetSkinNames( CStringArray &asSkinNames );
-	bool HasASkinNamed( CString sSkin );
-	void AssertSkinsAreComplete();
-	void AssertSkinIsComplete( CString sSkin );
+	void GetSkinNames( CStringArray &asSkinNames ) const;
+	bool HasASkinNamed( CString sSkin ) const;
+	void AssertSkinsAreComplete() const;
+	void AssertSkinIsComplete( CString sSkin ) const;
 
 	CString GetPathToGraphic( const CString sSkinName, const CString sButtonName, const SkinElement gbg ) const;
 	void	GetTapTweenColors( const CString sSkinName, const CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &aTapTweenColorsAddTo ) const;
