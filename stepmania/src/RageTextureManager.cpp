@@ -10,17 +10,38 @@
 -----------------------------------------------------------------------------
 */
 
-
-//-----------------------------------------------------------------------------
-// Includes
-//-----------------------------------------------------------------------------
+/* Texture policies:
+ *
+ * Default: When DelayedDelete is off, delete unused textures immediately.
+ *          When on, only delete textures when we change themes, on DoDelayedDelete().
+ *			This is what you get if you call LoadTexture() on a texture that isn't
+ *			loaded.
+ *
+ * Cached:  When DelayedDelete is off, delete unused textures when we change screens.
+ *			When on, treat as Default.  This is used to precache textures that aren't
+ *			loaded immediately; use CacheTexture.
+ *	
+ * Volatile: Delete unused textures once they've been used at least once.  Ignore
+ *			 DelayedDelete.
+ *
+ *			 This is for banners.  We don't want to load all low-quality banners in
+ *			 memory at once, since it might be ten megs of textures, and we don't
+ *			 *have* to, since we can reload them very quickly.  We don't want to keep
+ *			 high quality textures in memory, either, although it's unlikely that a
+ *			 player could actually view all banners long enough to transition to them
+ *			 all in the course of one song select screen.
+ *
+ * If a texture is already loaded with a different policy, loading it again with
+ * Default is normal; keep the original policy.  Other cases generally shouldn't
+ * happen, so warn and keep the original policy.
+ */
+		
 #include "RageTextureManager.h"
 #include "RageBitmapTexture.h"
 #include "arch/MovieTexture/MovieTexture.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
-#include <time.h>
 
 RageTextureManager*		TEXTUREMAN		= NULL;
 
@@ -34,9 +55,6 @@ static CString GetExtension(const CString &fn)
 }
 
 
-//-----------------------------------------------------------------------------
-// constructor/destructor
-//-----------------------------------------------------------------------------
 RageTextureManager::RageTextureManager()
 {
 }
@@ -94,7 +112,7 @@ void RageTextureManager::RegisterTexture( RageTextureID ID, RageTexture *pTextur
 }
 
 // Load and unload textures from disk.
-RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
+RageTexture* RageTextureManager::LoadTextureInternal( RageTextureID ID )
 {
 	Checkpoint( ssprintf( "RageTextureManager::LoadTexture(%s).", ID.filename.c_str() ) );
 
@@ -127,10 +145,32 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 	return pTexture;
 }
 
+/* Load a normal texture.  Use this call to actually use a texture. */
+RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
+{
+	RageTexture* pTexture = LoadTextureInternal( ID );
+	if( pTexture )
+		pTexture->m_bWasUsed = true;
+	return pTexture;
+}
+
 void RageTextureManager::CacheTexture( RageTextureID ID )
 {
-	RageTexture* pTexture = LoadTexture( ID );
-	pTexture->m_bCacheThis |= true;
+	RageTexture* pTexture = LoadTextureInternal( ID );
+	if( pTexture->m_Policy == RageTexture::TEX_DEFAULT )
+		pTexture->m_Policy = RageTexture::TEX_CACHED;
+	else if( pTexture->m_Policy != RageTexture::TEX_CACHED )
+		LOG->Warn( "RageTextureManager::CacheTexture(%s): texture is %i, which?", ID.filename.c_str());
+	UnloadTexture( pTexture );
+}
+
+void RageTextureManager::VolatileTexture( RageTextureID ID )
+{
+	RageTexture* pTexture = LoadTextureInternal( ID );
+	if( pTexture->m_Policy == RageTexture::TEX_DEFAULT )
+		pTexture->m_Policy = RageTexture::TEX_VOLATILE;
+	else if( pTexture->m_Policy != RageTexture::TEX_VOLATILE )
+		LOG->Warn( "RageTextureManager::VolatileTexture(%s): texture is %i, which?", ID.filename.c_str());
 	UnloadTexture( pTexture );
 }
 
@@ -153,10 +193,12 @@ void RageTextureManager::UnloadTexture( RageTexture *t )
 	if( t->IsAMovie() )
 		bDeleteThis = true;
 
-	/* If m_bDelayedDelete, keep all textures around until we GC.  If m_bCacheThis,
-	 * keep this individual texture, even if m_bDelayedDelete is off.  (Would
-	 * "m_bDelayedDelete" be clearer as "m_bCacheAll"?) */
-	if( !m_bDelayedDelete && !t->m_bCacheThis )
+	/* Delete normal textures immediately unless m_bDelayedDelete is is on. */
+	if( t->m_Policy == RageTexture::TEX_DEFAULT && !m_bDelayedDelete )
+		bDeleteThis = true;
+
+	/* Delete volatile textures after they've been used at least once. */
+	if( t->m_bWasUsed )
 		bDeleteThis = true;
 	
 	if( bDeleteThis )
@@ -200,8 +242,29 @@ void RageTextureManager::GarbageCollect( GCType type )
 			continue; /* Can't unload textures that are still referenced. */
 
 		bool bDeleteThis = false;
-		if( type==cached_textures && !m_bDelayedDelete )
-			bDeleteThis = true;
+		if( type==screen_changed )
+		{
+			switch( t->m_Policy )
+			{
+			case RageTexture::TEX_DEFAULT: 
+				/* If m_bDelayedDelete, wait until delayed_delete.  If !m_bDelayedDelete,
+				 * it should have been deleted when it reached no references, but we
+				 * might have just changed the preference. */
+				if( !m_bDelayedDelete )
+					bDeleteThis = true;
+				break;
+			case RageTexture::TEX_CACHED:
+				if( !m_bDelayedDelete )
+					bDeleteThis = true;
+				break;
+			case RageTexture::TEX_VOLATILE:
+				bDeleteThis = true;
+				break;
+			default: ASSERT(0);
+			}
+		}
+
+		/* This happens when we change themes; free all textures. */
 		if( type==delayed_delete )
 			bDeleteThis = true;
 			

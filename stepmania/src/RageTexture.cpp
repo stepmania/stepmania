@@ -83,6 +83,8 @@ RageTexture::RageTexture( RageTextureID name ):
 //	LOG->Trace( "RageTexture::RageTexture()" );
 
 	m_iRefCount = 1;
+	m_Policy = TEX_DEFAULT;
+	m_bWasUsed = false;
 
 //	SetActualID();
 	m_iSourceWidth = m_iSourceHeight = 0;

@@ -44,6 +44,7 @@ bool Banner::Load( RageTextureID ID )
 	m_fPercentScrolling = 0;
 	m_bScrolling = false;
 
+	TEXTUREMAN->VolatileTexture( ID );
 	return CroppedSprite::Load( ID );
 };
 

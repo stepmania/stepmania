@@ -15,9 +15,6 @@
 
 #include <map>
 
-//-----------------------------------------------------------------------------
-// RageTextureManager Class Declarations
-//-----------------------------------------------------------------------------
 class RageTextureManager
 {
 public:
@@ -29,6 +26,7 @@ public:
 	bool IsTextureRegistered( RageTextureID ID ) const;
 	void RegisterTexture( RageTextureID ID, RageTexture *p );
 	void CacheTexture( RageTextureID ID );
+	void VolatileTexture( RageTextureID ID );
 	void UnloadTexture( RageTexture *t );
 	void ReloadAll();
 
@@ -38,7 +36,7 @@ public:
 	int GetMaxTextureResolution() { return m_iMaxTextureResolution; };
 
 	// call this between Screens
-	void DeleteCachedTextures()	{ GarbageCollect(cached_textures); }
+	void DeleteCachedTextures()	{ GarbageCollect(screen_changed); }
 	
 	// call this on switch theme
 	void DoDelayedDelete()	{ GarbageCollect(delayed_delete); }
@@ -50,12 +48,14 @@ public:
 
 protected:
 	void DeleteTexture( RageTexture *t );
-	enum GCType { cached_textures, delayed_delete };
+	enum GCType { screen_changed, delayed_delete };
 	void GarbageCollect( GCType type );
 
 	int m_iTextureColorDepth;
 	bool m_bDelayedDelete;
 	int m_iMaxTextureResolution;
+
+	RageTexture* LoadTextureInternal( RageTextureID ID );
 
 	std::map<RageTextureID, RageTexture*> m_mapPathToTexture;
 };
