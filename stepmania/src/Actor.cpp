@@ -466,7 +466,15 @@ void Actor::BeginTweening( float time, TweenType tt )
 
 	time = max( time, 0 );
 
-	DEBUG_ASSERT( m_Tweens.size() < 50 );	// there's no reason for the number of tweens to ever go this large
+	// If the number of tweens to ever gets this large, there's probably an infinitely 
+	// recursing ActorCommand.
+	if( m_Tweens.size() > 50 )
+	{
+		CString sError = ssprintf( "Tween overflow: size = %u.  infinitely recursing ActorCommand?", m_Tweens.size() );
+		LOG->Warn( sError );
+		Dialog::OK( sError );
+		FinishTweening();
+	}
 
 	// add a new TweenState to the tail, and initialize it
 	m_Tweens.resize( m_Tweens.size()+1 );
