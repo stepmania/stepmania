@@ -1173,15 +1173,14 @@ void ScreenGameplay::UpdateCheckFail()
 		{
 			if( !GAMESTATE->IsPlayerEnabled(pn) )
 				continue;
+			if( (m_pLifeMeter[pn] && !m_pLifeMeter[pn]->IsFailing()) || 
+				(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsFailing((PlayerNumber)pn)) )
+				continue; /* isn't failing */
 			if( GAMESTATE->m_CurStageStats.bFailed[pn] )
 				continue; /* already failed */
 
-			if( (m_pLifeMeter[pn] && m_pLifeMeter[pn]->IsFailing())  ||
-				(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsFailing((PlayerNumber)pn)) )
-			{
-				LOG->Trace("Player %d failed", (int)pn);
-				GAMESTATE->m_CurStageStats.bFailed[pn] = true;	// fail
-			}
+			LOG->Trace("Player %d failed", (int)pn);
+			GAMESTATE->m_CurStageStats.bFailed[pn] = true;	// fail
 		}
 		break;
 	case SongOptions::LIFE_BATTERY:
