@@ -1,11 +1,11 @@
 #ifndef NOTEFIELD_POSITIONING_H
 #define NOTEFIELD_POSITIONING_H
 
-#include "RageMath.h"
 #include "PlayerNumber.h"
 #include "StyleDef.h"
 #include "PlayerNumber.h"
 #include "Style.h"
+#include "Actor.h"
 
 #include <set>
 
@@ -16,16 +16,22 @@ class NoteFieldPositioning
 		Mode();
 		bool MatchesCurrentGame() const;
 
-		void BeginDrawTrack(int tn) const;
-		void EndDrawTrack(int tn) const;
+		void BeginDrawTrack(int tn);
+		void EndDrawTrack(int tn);
 
 		CString name;
 		set<Style> Styles;
 
-		RageMatrix m_Position[MAX_NOTE_TRACKS];
+		Actor m_Center;
+		Actor m_CenterTrack[MAX_NOTE_TRACKS];
+
 		/* 0 = no perspective */
-		float m_fFov[MAX_NOTE_TRACKS];
-		RageMatrix m_PerspPosition[MAX_NOTE_TRACKS];
+		float m_fFov;
+		Actor m_Position;
+		Actor m_PositionTrack[MAX_NOTE_TRACKS];
+
+		CString Backdrop;
+		Actor m_PositionBackdrop;
 	};
 
 	vector<Mode> Modes;
@@ -38,8 +44,12 @@ public:
 	int GetID(const CString &name) const;
 	int GetID(PlayerNumber pn) const;
 
-	void BeginDrawTrack(PlayerNumber pn, int tn) const;
-	void EndDrawTrack(PlayerNumber pn, int tn) const;
+	void BeginDrawTrack(PlayerNumber pn, int tn);
+	void EndDrawTrack(PlayerNumber pn, int tn);
+
+	CString GetBackdropBGA(PlayerNumber pn) const;
+	void BeginDrawBackdrop(PlayerNumber pn);
+	void EndDrawBackdrop(PlayerNumber pn);
 
 	void GetNamesForCurrentGame(vector<CString> &IDs);
 };
