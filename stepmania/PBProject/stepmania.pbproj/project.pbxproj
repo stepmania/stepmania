@@ -227,7 +227,7 @@
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OPTIMIZATION_CFLAGS = "-O2";
-				OTHER_CFLAGS = "-I../src -I/usr/local/include/SDL -DPBBUILD  -Wno-switch -Wno-missing-braces -fcoalesce-templates -fno-rtti -Wnewline-eof -DSOUND_SUPPORTS_MADLIB -DSOUND_SUPPORTS_WAV -DSOUND_SUPPORTS_OGG";
+				OTHER_CFLAGS = "-I../src -I/usr/local/include/SDL -DPBBUILD  -Wno-switch -Wno-missing-braces -fcoalesce-templates -fno-rtti -Wnewline-eof";
 				PRODUCT_NAME = StepMania;
 				SECTORDER_FLAGS = "";
 				USE_GCC3_PFE_SUPPORT = NO;
@@ -519,9 +519,6 @@
 				AAB3B39304C5921800D02EE9,
 				AA272C3304CD757100D02EE9,
 				AA272C3404CD7F8600D02EE9,
-				AA272D1C04CEC06300D02EE9,
-				AA272D1F04CEC06300D02EE9,
-				AA272D2404CEC23700D02EE9,
 				AADB4E7D04D4FE5D00D02EE9,
 				AADB4E7F04D4FE5D00D02EE9,
 				AADB4E9004D5263200D02EE9,
@@ -792,7 +789,6 @@
 				AAB3B39204C5921800D02EE9,
 				AA272BFC04CB779F00D02EE9,
 				AA272C3204CD757100D02EE9,
-				AA272D2504CEC23700D02EE9,
 				AADB4E7E04D4FE5D00D02EE9,
 				AADB4F5804D8F16D00D02EE9,
 				AA0CA12B04D9BA6200D02EE9,
@@ -1731,74 +1727,6 @@
 		};
 		AA272C3404CD7F8600D02EE9 = {
 			fileRef = AA6EFD7704770A7C005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA272D1804CEC06300D02EE9 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = ErrorDialog_null.h;
-			path = ErrorDialog/ErrorDialog_null.h;
-			refType = 4;
-		};
-		AA272D1B04CEC06300D02EE9 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = ErrorDialog.h;
-			path = ErrorDialog/ErrorDialog.h;
-			refType = 4;
-		};
-		AA272D1C04CEC06300D02EE9 = {
-			fileRef = AA272D1804CEC06300D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA272D1F04CEC06300D02EE9 = {
-			fileRef = AA272D1B04CEC06300D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA272D2004CEC07200D02EE9 = {
-			children = (
-				AA272D1804CEC06300D02EE9,
-				AA272D1B04CEC06300D02EE9,
-				AA272D2204CEC23700D02EE9,
-				AA272D2304CEC23700D02EE9,
-			);
-			isa = PBXGroup;
-			name = ErrorDialog;
-			refType = 4;
-		};
-		AA272D2204CEC23700D02EE9 = {
-			fileEncoding = 4;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ErrorDialog_darwin.h;
-			path = ErrorDialog/ErrorDialog_darwin.h;
-			refType = 4;
-			tabWidth = 4;
-		};
-		AA272D2304CEC23700D02EE9 = {
-			fileEncoding = 4;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ErrorDialog_darwin.cpp;
-			path = ErrorDialog/ErrorDialog_darwin.cpp;
-			refType = 4;
-			tabWidth = 4;
-			usesTabs = 0;
-		};
-		AA272D2404CEC23700D02EE9 = {
-			fileRef = AA272D2204CEC23700D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA272D2504CEC23700D02EE9 = {
-			fileRef = AA272D2304CEC23700D02EE9;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -4595,7 +4523,6 @@
 		AA6E01400477136A005F316C = {
 			children = (
 				AABE36FE0497CE67005F316C,
-				AA272D2004CEC07200D02EE9,
 				AA6E01540477136A005F316C,
 				AA6E015A0477136A005F316C,
 				AA6E01620477136A005F316C,
@@ -4630,6 +4557,8 @@
 				AA272BF804C7B37A00D02EE9,
 				AA272BF904C7B37A00D02EE9,
 				AA272BFA04C7B37A00D02EE9,
+				AABEB521051F163A00D02EE9,
+				AABEB522051F163A00D02EE9,
 			);
 			isa = PBXGroup;
 			path = InputHandler;
@@ -9983,6 +9912,18 @@
 			settings = {
 			};
 		};
+		AABEB521051F163A00D02EE9 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = InputHandler_Carbon.h;
+			refType = 4;
+		};
+		AABEB522051F163A00D02EE9 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = InputHandler_Carbon.cpp;
+			refType = 4;
+		};
 		AAC23F7C0485E68D005F316C = {
 			fileEncoding = 30;
 			indentWidth = 4;
@@ -10205,11 +10146,11 @@
 		};
 		AADB4E8E04D5263200D02EE9 = {
 			children = (
-				AADB4F5904D9220700D02EE9,
 				AADB4F5A04D9220700D02EE9,
-				AADB4E8F04D5263200D02EE9,
-				AABE7D3E051F07E900D02EE9,
+				AADB4F5904D9220700D02EE9,
 				AABE7D3F051F07E900D02EE9,
+				AABE7D3E051F07E900D02EE9,
+				AADB4E8F04D5263200D02EE9,
 			);
 			isa = PBXGroup;
 			path = Darwin;
