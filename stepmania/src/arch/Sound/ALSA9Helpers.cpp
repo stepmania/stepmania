@@ -342,7 +342,24 @@ void Alsa9Buf::SetSampleRate(int hz)
 	samplerate = hz;
 	samplerate_set_explicitly = true;
 
-	SetHWParams();
+	if( !SetHWParams() )
+	{
+		/*
+		 * If this fails, we're no longer set up; if we call SW param calls,
+		 * ALSA will assert out on us (instead of gracefully returning an error).
+		 *
+		 * If we fail here, it means we set up the initial stream, but can't
+		 * configure it to the sample rate we want.  This happened on a CS46xx
+		 * with an old ALSA version, at least: snd_pcm_hw_params failed
+		 * with ENOMEM.  It set up only 10 44.1khz streams; it may have been
+		 * trying to increase one to 48khz and, for some reason, that needed
+		 * more card memory.  (I've tried to work around that by setting up
+		 * streams as 48khz to begin with, so we set it up as the maximum
+		 * to begin with.)
+		 */
+		FAIL_M( ssprintf("SetHWParams(%i) failed", hz) );
+	}
+
 	SetSWParams();
 }
 
