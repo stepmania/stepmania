@@ -479,7 +479,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-bool XAttr::GetXML( RageFile &f, DISP_OPT *opt /*= &optDefault*/ )
+bool XAttr::GetXML( RageFileBasic &f, DISP_OPT *opt /*= &optDefault*/ )
 {
 	return f.Write(name + "='" + (opt->reference_value&&opt->entitys?opt->entitys->Entity2Ref(value):value) + "' ") != -1;
 }
@@ -493,7 +493,7 @@ bool XAttr::GetXML( RageFile &f, DISP_OPT *opt /*= &optDefault*/ )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-bool XNode::GetXML( RageFile &f, DISP_OPT *opt /*= &optDefault*/ )
+bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt /*= &optDefault*/ )
 {
 	// tab
 	if( opt && opt->newline )
@@ -1211,14 +1211,8 @@ bool XNode::LoadFromFile( CString sFile, PARSEINFO *pi )
 	return true;
 }
 
-bool XNode::SaveToFile( CString sFile, DISP_OPT *opt )
+bool XNode::SaveToFile( RageFileBasic &f, DISP_OPT *opt )
 {
-	RageFile f;
-	if( !f.Open(sFile, RageFile::WRITE) )
-	{
-		LOG->Warn("Couldn't open %s for writing: %s", sFile.c_str(), f.GetError().c_str() );
-		return false;
-	}
 	f.PutLine( "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" );
 	if( !opt->stylesheet.empty() )
 		f.PutLine( "<?xml-stylesheet type=\"text/xsl\" href=\"" + opt->stylesheet + "\"?>" );
@@ -1227,6 +1221,18 @@ bool XNode::SaveToFile( CString sFile, DISP_OPT *opt )
 	if( f.Flush() == -1 )
 		return false;
 	return true;
+}
+
+bool XNode::SaveToFile( CString sFile, DISP_OPT *opt )
+{
+	RageFile f;
+	if( !f.Open(sFile, RageFile::WRITE) )
+	{
+		LOG->Warn("Couldn't open %s for writing: %s", sFile.c_str(), f.GetError().c_str() );
+		return false;
+	}
+
+	return SaveToFile( f, opt );
 }
 
 bool XIsEmptyString( const char* str )

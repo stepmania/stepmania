@@ -21,7 +21,7 @@
 
 #include <vector>
 struct DateTime;
-class RageFile;
+class RageFileBasic;
 
 struct XAttr;
 typedef std::vector<XAttr*> XAttrs;
@@ -117,7 +117,7 @@ struct XAttr
 	
 	XNode*	parent;
 
-	bool GetXML( RageFile &f, DISP_OPT *opt = &optDefault );
+	bool GetXML( RageFileBasic &f, DISP_OPT *opt = &optDefault );
 };
 
 // XMLNode structure
@@ -146,10 +146,11 @@ struct XNode
 	// Load/Save XML
 	char*	Load( const char* pszXml, PARSEINFO *pi = &piDefault );
 	char*	LoadAttributes( const char* pszAttrs, PARSEINFO *pi = &piDefault );
-	bool GetXML( RageFile &f, DISP_OPT *opt = &optDefault );
+	bool GetXML( RageFileBasic &f, DISP_OPT *opt = &optDefault );
 
 	bool LoadFromFile( CString sFile, PARSEINFO *pi = &piDefault );
 	bool SaveToFile( CString sFile, DISP_OPT *opt = &optDefault );
+	bool SaveToFile( RageFileBasic &f, DISP_OPT *opt = &optDefault );
 
 	// in own attribute list
 	const XAttr *GetAttr( const char* attrname ) const; 
