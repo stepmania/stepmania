@@ -176,9 +176,10 @@ static Menu g_AreaMenu( "Area Menu", g_AreaMenuItems );
 
 static const MenuRow g_EditNotesStatisticsItems[] =
 {
-	{ "Difficulty",					true, 0, { "BEGINNER","EASY","MEDIUM","HARD","CHALLENGE" } },
-	{ "Meter",						true, 0, { "1","2","3","4","5","6","7","8","9","10","11","12","13","14","15" } },
-	{ "Description",				true, 0, { NULL } },
+	{ "Difficulty",					true,  0, { "BEGINNER","EASY","MEDIUM","HARD","CHALLENGE" } },
+	{ "Meter",						true,  0, { "1","2","3","4","5","6","7","8","9","10","11","12","13","14","15" } },
+	{ "Predicted Meter",			true,  0, { NULL } },
+	{ "Description",				true,  0, { NULL } },
 	{ "Tap Steps",					false, 0, { NULL } },
 	{ "Hold Steps",					false, 0, { NULL } },
 	{ "Stream",						false, 0, { NULL } },
@@ -296,7 +297,7 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 
 
 	GAMESTATE->m_PlayerOptions[PLAYER_1].Init();	// don't allow weird options in editor.  It doesn't handle reverse well.
-	GAMESTATE->m_PlayerOptions[PLAYER_1].m_sNoteSkin = "default";	// change noteskin back to default before loading player
+	GAMESTATE->m_PlayerOptions[PLAYER_1].m_sNoteSkin = "note";	// change noteskin back to default before loading player
 	GAMESTATE->ResetNoteSkins();
 
 	m_Player.Load( PLAYER_1, &noteData, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
@@ -1275,10 +1276,6 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			GAMESTATE->RestoreSelectedOptions();	// restore the edit and playback options
 		}
 		break;
-	case SM_GainFocus:
-		/* We do this ourself. */
-		SOUND->HandleSongTimer( false );
-		break;
 	}
 }
 
@@ -1348,9 +1345,8 @@ void ChangeArtistTranslit( CString sNew )
 	pSong->m_sArtistTranslit = sNew;
 }
 
+
 // End helper functions
-
-
 
 
 void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
@@ -1364,11 +1360,13 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 
 				g_EditNotesStatistics.rows[difficulty].defaultChoice = pNotes->GetDifficulty();
 				g_EditNotesStatistics.rows[meter].defaultChoice = pNotes->GetMeter()-1;
+				g_EditNotesStatistics.rows[predict_meter].choices.resize(1);g_EditNotesStatistics.rows[predict_meter].choices[0] = ssprintf("%f",pNotes->PredictMeter());
 				g_EditNotesStatistics.rows[description].choices.resize(1);	g_EditNotesStatistics.rows[description].choices[0] = pNotes->GetDescription();
 				g_EditNotesStatistics.rows[tap_notes].choices.resize(1);	g_EditNotesStatistics.rows[tap_notes].choices[0] = ssprintf("%d", m_NoteFieldEdit.GetNumTapNotes());
 				g_EditNotesStatistics.rows[hold_notes].choices.resize(1);	g_EditNotesStatistics.rows[hold_notes].choices[0] = ssprintf("%d", m_NoteFieldEdit.GetNumHoldNotes());
 				g_EditNotesStatistics.rows[stream].choices.resize(1);		g_EditNotesStatistics.rows[stream].choices[0] = ssprintf("%f", NoteDataUtil::GetStreamRadarValue(m_NoteFieldEdit,fMusicSeconds));
 				g_EditNotesStatistics.rows[voltage].choices.resize(1);		g_EditNotesStatistics.rows[voltage].choices[0] = ssprintf("%f", NoteDataUtil::GetVoltageRadarValue(m_NoteFieldEdit,fMusicSeconds));
+
 				g_EditNotesStatistics.rows[air].choices.resize(1);			g_EditNotesStatistics.rows[air].choices[0] = ssprintf("%f", NoteDataUtil::GetAirRadarValue(m_NoteFieldEdit,fMusicSeconds));
 				g_EditNotesStatistics.rows[freeze].choices.resize(1);		g_EditNotesStatistics.rows[freeze].choices[0] = ssprintf("%f", NoteDataUtil::GetFreezeRadarValue(m_NoteFieldEdit,fMusicSeconds));
 				g_EditNotesStatistics.rows[chaos].choices.resize(1);		g_EditNotesStatistics.rows[chaos].choices[0] = ssprintf("%f", NoteDataUtil::GetChaosRadarValue(m_NoteFieldEdit,fMusicSeconds));
@@ -1791,9 +1789,11 @@ void ScreenEdit::HandleEditNotesStatisticsChoice( EditNotesStatisticsChoice c, i
 	pNotes->SetDifficulty( dc );
 	int iMeter = iAnswers[meter]+1;
 	pNotes->SetMeter( iMeter );
-
+	
 	switch( c )
 	{
+	case predict_meter:	
+		break;
 	case description:
 		SCREENMAN->TextEntry( SM_None, "Edit notes description.\nPress Enter to confirm,\nEscape to cancel.", m_pNotes->GetDescription(), ChangeDescription, NULL );
 		break;
