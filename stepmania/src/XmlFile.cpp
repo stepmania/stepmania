@@ -1,8 +1,4 @@
 #include "global.h"
-// XmlFile.cpp: implementation of the XmlFile class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #include "XmlFile.h"
 #include <iostream>
 #include <sstream>
@@ -28,40 +24,8 @@ static const XENTITY x_EntityTable[] = {
 PARSEINFO piDefault;
 DISP_OPT optDefault;
 XENTITYS entityDefault((LPXENTITY)x_EntityTable, sizeof(x_EntityTable)/sizeof(x_EntityTable[0]) );
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
-
-//========================================================
-// Name   : _tcschrs
-// Desc   : same with strpbrk 
-// Param  :
-// Return :
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
-char* _tcschrs( const char* psz, const char* pszchs )
-{
-	while( psz && *psz )
-	{
-		if( strchr( pszchs, *psz ) )
-			return (char*)psz;
-		psz++;
-	}
-	return NULL;
-}
-
-//========================================================
-// Name   : _tcsskip
-// Desc   : skip space
-// Param  : 
-// Return : skiped string
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
+// skip spaces
 char* _tcsskip( const char* psz )
 {
 	while( psz && *psz == ' ' ) psz++;

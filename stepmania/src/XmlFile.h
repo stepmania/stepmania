@@ -3,7 +3,7 @@
 // XmlFile.h: interface for the XmlFile class.
 //
 // Adapted from http://www.codeproject.com/cpp/xmlite.asp.
-// On 2004-02-09 Cho,Kyung Min gave us permission to use and modify this 
+// On 2004-02-09 Cho, Kyung-Min gave us permission to use and modify this 
 // library.
 //
 // XmlFile : XML Lite Parser Library
