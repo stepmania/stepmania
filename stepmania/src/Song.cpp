@@ -279,23 +279,51 @@ bool Song::LoadFromSongDir( CString sDir )
 		return true;	// do load this song
 }
 
-void Song::RevertFromDisk()
+struct SongID
 {
-	// Ugly:  When we re-load the song, the Steps* will change.
-	// Fix the GAMESTATE->m_CurNotes after reloading.
-	StepsType st[NUM_PLAYERS];
-	Difficulty dc[NUM_PLAYERS];
-	for( int p = 0; p < NUM_PLAYERS; ++p )
+	StepsType st;
+	Difficulty dc;
+	SongID() { SetFrom(NULL); }
+	void SetFrom( const Steps *p )
 	{
-		if( GAMESTATE->m_pCurNotes[p] == NULL )
+		if( p == NULL )
 		{
-			st[p] = STEPS_TYPE_INVALID;
-			dc[p] = DIFFICULTY_INVALID;
+			st = STEPS_TYPE_INVALID;
+			dc = DIFFICULTY_INVALID;
 		}
 		else
 		{
-			st[p] = GAMESTATE->m_pCurNotes[p]->m_StepsType;
-			dc[p] = GAMESTATE->m_pCurNotes[p]->GetDifficulty();
+			st = p->m_StepsType;
+			dc = p->GetDifficulty();
+		}
+	}
+	Steps *GetSteps( const Song *p ) const
+	{
+		if( st == STEPS_TYPE_INVALID || dc == DIFFICULTY_INVALID )
+			return NULL;
+		Steps *ret = p->GetStepsByDifficulty( st, dc, false );
+		RAGE_ASSERT_M( ret, ssprintf("%i, %i", st, dc) );	// we had something selected before reloading, so it better still be there after!
+		return ret;
+	}
+};
+#include "StageStats.h"
+void Song::RevertFromDisk()
+{
+	// Ugly:  When we re-load the song, the Steps* will change.
+	// Fix GAMESTATE->m_CurNotes, g_CurStageStats, g_vPlayedStageStats[] after reloading.
+	/* XXX: This is very brittle.  However, we must know about all globals uses of Steps*,
+	 * so we can check to make sure we didn't lose any steps which are referenced ... */
+	SongID OldCurNotes[NUM_PLAYERS];
+	SongID OldCurStageStats[NUM_PLAYERS];
+	vector<SongID> OldPlayedStageStats[NUM_PLAYERS];
+	for( int p = 0; p < NUM_PLAYERS; ++p )
+	{
+		OldCurNotes[p].SetFrom( GAMESTATE->m_pCurNotes[p] );
+		OldCurStageStats[p].SetFrom( g_CurStageStats.pSteps[p] );
+		for( unsigned i = 0; i < g_vPlayedStageStats.size(); ++i )
+		{
+			OldPlayedStageStats[p].push_back( SongID() );
+			OldPlayedStageStats[p][i].SetFrom( g_vPlayedStageStats[i].pSteps[p] );
 		}
 	}
 
@@ -313,14 +341,20 @@ void Song::RevertFromDisk()
 
 	PREFSMAN->m_bFastLoad = OldVal;
 
-	if( GAMESTATE->m_pCurSong == this )
+	for( int p = 0; p < NUM_PLAYERS; ++p )
 	{
-		for( int p = 0; p < NUM_PLAYERS; ++p )
+		CHECKPOINT;
+		if( GAMESTATE->m_pCurSong == this )
+			GAMESTATE->m_pCurNotes[p] = OldCurNotes[p].GetSteps( this );
+		CHECKPOINT;
+		if( g_CurStageStats.pSong == this )
+			g_CurStageStats.pSteps[p] = OldCurStageStats[p].GetSteps( this );
+		CHECKPOINT;
+		for( unsigned i = 0; i < g_vPlayedStageStats.size(); ++i )
 		{
-			if( st[p] == STEPS_TYPE_INVALID || dc[p] == DIFFICULTY_INVALID )
-				continue;	// skip
-			GAMESTATE->m_pCurNotes[p] = this->GetStepsByDifficulty( st[p], dc[p], false );
-			ASSERT( GAMESTATE->m_pCurNotes[p] );	// we had something selected before reloading, so it better still be there after!
+		CHECKPOINT_M(ssprintf("%i", i));
+			if( g_vPlayedStageStats[i].pSong == this )
+				g_vPlayedStageStats[i].pSteps[p] = OldPlayedStageStats[p][i].GetSteps( this );
 		}
 	}
 }
