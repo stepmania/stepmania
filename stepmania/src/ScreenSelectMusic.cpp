@@ -804,11 +804,13 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		{
 			MenuStart(PLAYER_INVALID);
 			m_Menu.m_MenuTimer->SetSeconds( 15 );
+			m_Menu.m_MenuTimer->Start();
 		}
 		else if( m_MusicWheel.GetSelectedType() != TYPE_SONG )
 		{
 			m_MusicWheel.StartRoulette();
 			m_Menu.m_MenuTimer->SetSeconds( 15 );
+			m_Menu.m_MenuTimer->Start();
 		}
 		else
 		{
