@@ -136,6 +136,11 @@ void Song::AddAnimationSegment( AnimationSegment seg )
 	SortAnimationSegmentsArray( m_AnimationSegments );
 }
 
+float Song::GetMusicStartBeat()
+{
+	float fBPS = m_BPMSegments[0].m_fBPM / 60.0f; 
+	return -m_fBeat0OffsetInSeconds*fBPS; 
+};
 
 void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut )
 {

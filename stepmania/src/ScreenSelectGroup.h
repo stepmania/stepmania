@@ -64,7 +64,7 @@ private:
 	RandomSample m_soundSelect;
 	RandomSample m_soundFlyOff;
 
-	CStringArray m_arrayGroupNames;
+	CStringArray m_asGroupNames;
 	int m_iSelection;
 	bool m_bChosen;
 };

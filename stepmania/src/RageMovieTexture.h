@@ -51,7 +51,6 @@ public:
 	LONG GetVidWidth() {return m_lVidWidth;};
 	LONG GetVidHeight(){return m_lVidHeight;};
 	HRESULT SetRenderTarget( RageMovieTexture* pTexture );
-	BOOL IsLocked(int iIndex) { return m_bLocked[iIndex]; };
 
 protected:
 	LONG m_lVidWidth;	// Video width
@@ -60,8 +59,7 @@ protected:
 
 	RageMovieTexture*	m_pTexture;	// the video surface we will copy new frames to
 	D3DFORMAT			m_TextureFormat; // Texture format
-	BOOL				m_bLocked[2];	// Is the texture currently locked while we 
-									// copy the movie frame to it?
+	BOOL				m_bBackBufferLocked;
 };
 
 
@@ -94,12 +92,15 @@ public:
 
 	LPDIRECT3DTEXTURE8 GetD3DTexture();
 	virtual void Play();
-	virtual void SetPosition( float fSeconds );
 	virtual void Pause();
+	virtual void Stop();
+	virtual void SetPosition( float fSeconds );
 	virtual bool IsAMovie() { return true; };
+	virtual void TurnLoopOn();
+	virtual void TurnLoopOff();
 
 	LPDIRECT3DTEXTURE8  m_pd3dTexture[2];	// double buffered
-	int m_iIndexActiveTexture;	// either 0 or 1
+	int m_iIndexFrontBuffer;	// index of the buffer that should be rendered from - either 0 or 1
 
 protected:
 	virtual VOID Create();
@@ -118,5 +119,5 @@ protected:
 	CComPtr<IMediaPosition> m_pMP;          // Media Postion
 	CComPtr<IMediaEvent>    m_pME;          // Media Event
     CTextureRenderer        *m_pCTR;        // DShow Texture renderer
-
+	bool					m_bLoop;
 };

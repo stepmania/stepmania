@@ -67,128 +67,75 @@ ScreenSelectGroup::ScreenSelectGroup()
 	// and groups that do not contain any steps for the current
 	// style (such as solo) are omitted. Bear with me!
 	// -- dro kulix
+
+	// Chris:
+	// This is excellent!  I'm going to move the filtering of songs 
+	// that can't be played by current style to be the first action.
+	// This will simply the code a bit, and fix a weird case that 
+	// causes a crash when there are duplicate song names.
 	
-	// m_arrayGroupNames will contain all relevant group names
-	CMap<int, int, CArray<Song*, Song*>*, CArray<Song*, Song*>*>
-		mapGroupToSongArray; // Will contain all relevant songs
+	CArray<Song*, Song*> aAllSongs;
+	aAllSongs.Copy( SONGMAN->m_pSongs );
 
-	{	// Let's get local!
-		// (There are some variables we want deallocated before continuing.)
+	// Filter out Songs that can't be played by the current Style
+	NotesType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
 
-		// Retrieve list of ALL song groups and ALL songs
+	for( i=aAllSongs.GetSize()-1; i>=0; i-- )		// foreach Song, back to front
+	{
+		Song* pSong = aAllSongs[i];
 
-		SONGMAN->GetGroupNames( m_arrayGroupNames );
-
-		CArray<Song*, Song*> arrayAllSongs;
-		arrayAllSongs.Copy( SONGMAN->m_pSongs );
-
-		// Retrieve the identities (Song*) of all songs under these groups
-
-		for( i=0; i<min(m_arrayGroupNames.GetSize(), MAX_GROUPS); i++ )
+		bool bSongCanBePlayedByCurrentStyle = false;
+		for( int j=0; j<pSong->m_apNotes.GetSize(); j++ )	// foreach Notes
 		{
-			CArray<Song*, Song*> *p_arrayGroupSongs = new CArray<Song*, Song*>;
-			// WARNING! We are creating new objects that must be destroyed.
-			const CString &sCurGroupName = m_arrayGroupNames[i];
-			
-			SONGMAN->GetSongsInGroup( sCurGroupName, *p_arrayGroupSongs );
-			mapGroupToSongArray.SetAt(GetHashForString(sCurGroupName), p_arrayGroupSongs);
-		}
+			Notes* pNotes = pSong->m_apNotes[j];
 
-		{
-			// Add "ALL MUSIC" group
-			CArray<Song*, Song*> *p_arrayGroupSongs = new CArray<Song*, Song*>;
-			// WARNING! (Same as last.)
-			m_arrayGroupNames.InsertAt(0, "ALL MUSIC");
-			
-			p_arrayGroupSongs->Copy( arrayAllSongs );
-			mapGroupToSongArray.SetAt(GetHashForString("ALL MUSIC"), p_arrayGroupSongs);
-		}
-
-		// Now, create a map of all songs to their support for the current style.
-		// (Song *) -> (Support current style?)
-		CMap<Song*, Song*, bool, bool> mapStyleSupport;
-		mapStyleSupport.InitHashTable(arrayAllSongs.GetSize());
-
-		// The following loop is functionally identical to one used in MusicWheel
-		NotesType curNotesType = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
-		for( i=0; i<arrayAllSongs.GetSize(); i++ )
-		{
-			CArray<Notes*, Notes*> arraySteps;
-
-			arrayAllSongs.GetAt(i)->GetNotesThatMatch( curNotesType, arraySteps );
-
-				if( arraySteps.GetSize() > 0 )
-					mapStyleSupport.SetAt(arrayAllSongs.GetAt(i), true);
-				else
-					mapStyleSupport.SetAt(arrayAllSongs.GetAt(i), false);
-		}
-
-		// Here's the fun part!
-
-		// Recurse each group of songs, removing the ones unsupported by this style.
-		// If a group ends up empty, remove it from the list.
-
-		{
-			int gi = 0;
-
-			// Group iteration
-			while (gi < m_arrayGroupNames.GetSize())
+			if( pNotes->m_NotesType == nt )
 			{
-
-				int si = 0;
-
-				int curKey = GetHashForString(m_arrayGroupNames.GetAt(gi));
-				CArray <Song*, Song*>* p_arrayGroupSongs = 0;
-				mapGroupToSongArray.Lookup(curKey, p_arrayGroupSongs);
-
-				// Song iteration
-				while (si < p_arrayGroupSongs->GetSize())
-				{
-					Song* curSong = p_arrayGroupSongs->GetAt(si);
-					bool bSongSupported = false;
-
-					mapStyleSupport.Lookup(curSong, bSongSupported);
-
-					if (bSongSupported)
-					{
-						// Increment only if no remove
-						si++;
-					}
-					else
-					{
-						// Remove
-						p_arrayGroupSongs->RemoveAt(si);
-					}
-				}
-
-
-				// Do we remove group?
-				// Never remove "ALL MUSIC".
-				if ( (gi > 0) && (p_arrayGroupSongs->GetSize() <= 0) )
-				{
-					// Yes, remove group, since it is empty and is not "ALL MUSIC".
-					// Deallocate empty song array
-					delete p_arrayGroupSongs;
-					// Remove from groups array and map
-					mapGroupToSongArray.RemoveKey(curKey);
-					m_arrayGroupNames.RemoveAt(gi);
-				}
-				else
-				{
-					// Keep this group; move on.
-					gi++;
-				}
-
+				bSongCanBePlayedByCurrentStyle = true;
+				break;
 			}
-		}	// End recurse
-	}	// Ends local song-paring block.
+		}
+		if( !bSongCanBePlayedByCurrentStyle )
+			aAllSongs.RemoveAt( i );
+	}
 
+	// Get group names by thowing them into a hash
+	CMapStringToString mapGroupToNothing;
+	for( i=0; i<aAllSongs.GetSize(); i++ )		// foreach Song
+		mapGroupToNothing[ aAllSongs[i]->m_sGroupName ] = "";			
 
-	// Retrieve list of song groups
-	//SONGMAN->GetGroupNames( m_arrayGroupNames );
-	//m_arrayGroupNames.InsertAt( 0, "ALL MUSIC" );
+	// Read group names back out into an m_asGroupNames
+	m_asGroupNames.Add( "ALL MUSIC" );
+	for( POSITION pos = mapGroupToNothing.GetStartPosition(); pos != NULL; )
+	{
+		CString sGroupName, sValue;
+		mapGroupToNothing.GetNextAssoc( pos, sGroupName, sValue );
+		m_asGroupNames.Add( sGroupName );
 
+		if( m_asGroupNames.GetSize() == MAX_GROUPS-1 )
+			break;	// stop adding
+	}
+	SortCStringArray( m_asGroupNames, true );
+
+	// Add songs to groups (this isn't very efficient, but oh well...
+	CArray<Song*,Song*> aSongsInGroup[MAX_GROUPS];
+	aSongsInGroup[0].Copy( aAllSongs );		// add to ALL MUSIC
+	for( i=0; i<aAllSongs.GetSize(); i++ )		// foreach Song
+	{
+		Song* pSong = aAllSongs[i];
+		// find the corresponding group
+		for( int j=1; j<m_asGroupNames.GetSize(); j++ )
+		{
+			if( pSong->m_sGroupName == m_asGroupNames[j] )
+			{
+				aSongsInGroup[j].Add( pSong );
+				break;
+			}
+		}
+	}
 	
+
+
 
 	m_iSelection = 0;
 	m_bChosen = false;
@@ -236,10 +183,9 @@ ScreenSelectGroup::ScreenSelectGroup()
 	}
 	
 
-	// This part is still compatible with the new pare routine.
-	for( i=0; i<min(m_arrayGroupNames.GetSize(), MAX_GROUPS); i++ )
+	for( i=0; i<min(m_asGroupNames.GetSize(), MAX_GROUPS); i++ )
 	{
-		CString sGroupName = m_arrayGroupNames[i];
+		CString sGroupName = m_asGroupNames[i];
 
 		m_sprButton[i].Load( THEME->GetPathTo("Graphics","select group button") );
 		m_sprButton[i].SetXY( BUTTON_X, BUTTON_START_Y + i*BUTTON_SPACING_Y );
@@ -262,29 +208,35 @@ ScreenSelectGroup::ScreenSelectGroup()
 	//
 	// Generate what text will show in the contents for each group
 	//
-	// This block is modified for the new paring routine
-	for( i=0; i<min(m_arrayGroupNames.GetSize(), MAX_GROUPS); i++ )
+	for( i=0; i<min(m_asGroupNames.GetSize(), MAX_GROUPS); i++ )
 	{
-		CArray<Song*, Song*>* p_arraySongs;
-		const CString &sCurGroupName = m_arrayGroupNames[i];
-		
-		mapGroupToSongArray.Lookup( GetHashForString(sCurGroupName), p_arraySongs);
+		CArray<Song*,Song*>& aSongs = aSongsInGroup[i];
+		m_iNumSongsInGroup[i] = aSongs.GetSize();
+		SortSongPointerArrayByTitle( aSongs );
 
-		m_iNumSongsInGroup[i] = p_arraySongs->GetSize();
-
-		SortSongPointerArrayByTitle( *p_arraySongs );
-
-		for( int c=0; c<TITLES_COLUMNS; c++ )
+		for( int c=0; c<TITLES_COLUMNS; c++ )	// foreach col
 		{
 			CString sText;
-			for( int j=c*TITLES_ROWS; j<(c+1)*TITLES_ROWS; j++ )
+			for( int r=0; r<TITLES_ROWS; r++ )	// foreach row
 			{
-				if( j < p_arraySongs->GetSize() )
+				int iIndex = c*TITLES_ROWS + r;
+				if( iIndex < aSongs.GetSize() )
 				{
-					if( j == TITLES_COLUMNS * TITLES_ROWS - 1 )
-						sText += ssprintf( "%d more.....", p_arraySongs->GetSize() - TITLES_COLUMNS * TITLES_ROWS - 1 );
+					if( c == TITLES_COLUMNS-1  &&  r == TITLES_ROWS-1 )
+					{
+						sText += ssprintf( "%d more.....", aSongs.GetSize() - TITLES_COLUMNS * TITLES_ROWS - 1 );
+					}
 					else
-						sText += (*p_arraySongs)[j]->GetFullTitle() + "\n";
+					{
+						CString sTitle = aSongs[iIndex]->GetFullTitle();
+						// TODO:  Move this crop threshold into a theme metric or make automatic based on column width
+						if( sTitle.GetLength() > 40 )
+						{
+							sTitle = sTitle.Left( 37 );
+							sTitle += "...";
+						}
+						sText += sTitle + "\n";
+					}
 				}
 			}
 			m_sContentsText[i][c] = sText;
@@ -306,23 +258,6 @@ ScreenSelectGroup::ScreenSelectGroup()
 	m_Menu.TweenOnScreenFromMenu( SM_None );
 	TweenOnScreen();
 	AfterChange();
-
-
-	// Deallocate remaining song arrays in map
-	{
-		int csKey;
-		CArray<Song*, Song*>* pSongArray;
-
-		POSITION Pos;
-		Pos = mapGroupToSongArray.GetStartPosition();
-
-
-		while (Pos)
-		{
-			mapGroupToSongArray.GetNextAssoc(Pos, csKey, pSongArray);
-			delete pSongArray;
-		}
-	}
 }
 
 
@@ -397,7 +332,7 @@ void ScreenSelectGroup::AfterChange()
 	for( int c=0; c<TITLES_COLUMNS; c++ )
 		m_textTitles[c].SetText( m_sContentsText[m_iSelection][c] );
 
-	CString sSelectedGroupName = m_arrayGroupNames[m_iSelection];
+	CString sSelectedGroupName = m_asGroupNames[m_iSelection];
 
 	CString sGroupBannerPath;
 	if( 0 == stricmp(sSelectedGroupName, "ALL MUSIC") )
@@ -431,9 +366,9 @@ void ScreenSelectGroup::MenuUp( const PlayerNumber p )
 
 	BeforeChange();
 
-	m_iSelection = m_iSelection-1 % m_arrayGroupNames.GetSize();
+	m_iSelection = m_iSelection-1 % m_asGroupNames.GetSize();
 	if( m_iSelection < 0 )
-		m_iSelection += min( m_arrayGroupNames.GetSize(), MAX_GROUPS );
+		m_iSelection += min( m_asGroupNames.GetSize(), MAX_GROUPS );
 
 	AfterChange();
 
@@ -448,7 +383,7 @@ void ScreenSelectGroup::MenuDown( const PlayerNumber p )
 
 	BeforeChange();
 
-	m_iSelection = (m_iSelection+1) % min( m_arrayGroupNames.GetSize(), MAX_GROUPS );
+	m_iSelection = (m_iSelection+1) % min( m_asGroupNames.GetSize(), MAX_GROUPS );
 	
 	AfterChange();
 
@@ -461,7 +396,7 @@ void ScreenSelectGroup::MenuStart( const PlayerNumber p )
 	m_bChosen = true;
 
 	GAMESTATE->m_pCurSong = NULL;
-	GAMESTATE->m_sPreferredGroup = m_arrayGroupNames[m_iSelection];
+	GAMESTATE->m_sPreferredGroup = m_asGroupNames[m_iSelection];
 
 	if( 0 == stricmp(GAMESTATE->m_sPreferredGroup, "All Music") )
         SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_GROUP_COMMENT_ALL_MUSIC) );
@@ -505,7 +440,7 @@ void ScreenSelectGroup::TweenOffScreen()
 	}
 	
 
-	for( i=0; i<min(m_arrayGroupNames.GetSize(), MAX_GROUPS); i++ )
+	for( i=0; i<min(m_asGroupNames.GetSize(), MAX_GROUPS); i++ )
 	{
 		if( i == m_iSelection )
 			m_sprButton[i].BeginTweeningQueued( 1.0f, TWEEN_BOUNCE_BEGIN );
@@ -553,7 +488,7 @@ void ScreenSelectGroup::TweenOnScreen()
 	}
 	
 
-	for( i=0; i<min(m_arrayGroupNames.GetSize(), MAX_GROUPS); i++ )
+	for( i=0; i<min(m_asGroupNames.GetSize(), MAX_GROUPS); i++ )
 	{
 		m_sprButton[i].SetX( BUTTON_X+400 );
 		m_sprButton[i].BeginTweeningQueued( 0.1f*i, TWEEN_BOUNCE_END );

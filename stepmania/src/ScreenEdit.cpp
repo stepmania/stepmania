@@ -228,7 +228,7 @@ ScreenEdit::ScreenEdit()
 	m_textInfo.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textInfo.SetXY( INFO_X, INFO_Y );
 	m_textInfo.SetHorizAlign( Actor::align_right );
-	m_textInfo.SetVertAlign( Actor::align_top );
+	m_textInfo.SetVertAlign( Actor::align_bottom );
 	m_textInfo.SetZoom( 0.5f );
 	m_textInfo.SetShadowLength( 2 );
 	//m_textInfo.SetText();	// set this below every frame
@@ -302,10 +302,10 @@ void ScreenEdit::Update( float fDeltaTime )
 		{
 			if( m_EditMode == MODE_RECORDING )
 			{
-				TransitionToEditFromRecord();
+				TransitionFromRecordToEdit();
 				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fEndMarker;
 				m_rectRecordBack.BeginTweening( 0.5f );
-				m_rectRecordBack.SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
+				m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0) );
 			}
 			else if( m_EditMode == MODE_PLAYING )
 			{
@@ -313,7 +313,7 @@ void ScreenEdit::Update( float fDeltaTime )
 				m_EditMode = MODE_EDITING;
 				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fEndMarker;
 				m_rectRecordBack.BeginTweening( 0.5f );
-				m_rectRecordBack.SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
+				m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0) );
 			}
 		}
 	}
@@ -965,7 +965,11 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 		switch( DeviceI.button )
 		{
 		case DIK_ESCAPE:
-			TransitionToEditFromRecord();
+			TransitionFromRecordToEdit();
+			
+			m_rectRecordBack.BeginTweening( 0.5f );
+			m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0) );
+
 			break;
 		}
 	}
@@ -1054,6 +1058,8 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 		case DIK_ESCAPE:
 			m_EditMode = MODE_EDITING;
 			m_soundMusic.Stop();
+			m_rectRecordBack.BeginTweening( 0.5f );
+			m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0) );
 
 			GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetSnapMode()) );
 			break;
@@ -1070,7 +1076,7 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 }
 
 
-void ScreenEdit::TransitionToEditFromRecord()
+void ScreenEdit::TransitionFromRecordToEdit()
 {
 	m_EditMode = MODE_EDITING;
 	m_soundMusic.Stop();

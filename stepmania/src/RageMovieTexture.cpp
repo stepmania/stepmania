@@ -51,7 +51,7 @@ CTextureRenderer::CTextureRenderer( LPUNKNOWN pUnk, HRESULT *phr )
 {
     // Store and ARageef the texture for our use.
 	m_pTexture = NULL;
-	m_bLocked[0] = m_bLocked[1] = FALSE;
+	m_bBackBufferLocked = FALSE;
     *phr = S_OK;
 }
 
@@ -157,23 +157,23 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
     pSample->GetPointer( &pBmpBuffer );
 
 
-	// Find which texture we should render to.
-	LPDIRECT3DTEXTURE8 pD3DTexture;
-
-	switch( m_pTexture->m_iIndexActiveTexture )
+	// Find which texture we should render to.  We want to copy to the "back buffer"
+	LPDIRECT3DTEXTURE8 pD3DTextureCopyTo;
+	switch( m_pTexture->m_iIndexFrontBuffer )
 	{
-	case 0:	pD3DTexture = m_pTexture->m_pd3dTexture[1];	break;		// 0 is active, so render to 1
-	case 1:	pD3DTexture = m_pTexture->m_pd3dTexture[0];	break;		// 1 is active, so render to 0
+	case 0:	pD3DTextureCopyTo = m_pTexture->m_pd3dTexture[1];	break;		// 0 is front, so copy to 1
+	case 1:	pD3DTextureCopyTo = m_pTexture->m_pd3dTexture[0];	break;		// 1 is front, so copy to 0
 	}
 
     // Lock the Texture
     D3DLOCKED_RECT d3dlr;
-    if (FAILED(pD3DTexture->LockRect(0, &d3dlr, 0, 0))) {
-        DXTRACE_ERR_NOMSGBOX(TEXT("Failed to lock the texture!"), E_FAIL);
-        return E_FAIL;
+    while( FAILED( pD3DTextureCopyTo->LockRect(0, &d3dlr, 0, 0) ) )
+	{
+        LOG->Warn( "Failed to lock the texture for rendering movie!" );
+		// keep trying until we get the lock
 	}
     
-	m_bLocked[m_pTexture->m_iIndexActiveTexture] = TRUE;
+	m_bBackBufferLocked = TRUE;
 
     // Get the texture buffer & pitch
     pTxtBuffer = static_cast<byte *>(d3dlr.pBits);
@@ -183,56 +183,65 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
     // Copy the bits    
     // OPTIMIZATION OPPORTUNITY: Use a video and texture
     // format that allows a simpler copy than this one.
-    if (m_TextureFormat == D3DFMT_A8R8G8B8) {
-        for(int y = 0; y < m_lVidHeight; y++ ) {
-            BYTE *pBmpBufferOld = pBmpBuffer;
-            BYTE *pTxtBufferOld = pTxtBuffer;   
-            for (int x = 0; x < m_lVidWidth; x++) {
-                pTxtBuffer[0] = pBmpBuffer[0];
-                pTxtBuffer[1] = pBmpBuffer[1];
-                pTxtBuffer[2] = pBmpBuffer[2];
-                pTxtBuffer[3] = 0xff;
-                pTxtBuffer += 4;
-                pBmpBuffer += 3;
-            }
-            pBmpBuffer = pBmpBufferOld + m_lVidPitch;
-            pTxtBuffer = pTxtBufferOld + lTxtPitch;
-        }
-    }
-
-    if (m_TextureFormat == D3DFMT_A1R5G5B5) {
-        for(int y = 0; y < m_lVidHeight; y++ ) {
-            BYTE *pBmpBufferOld = pBmpBuffer;
-            BYTE *pTxtBufferOld = pTxtBuffer;   
-            for (int x = 0; x < m_lVidWidth; x++) {
-                *(WORD *)pTxtBuffer =
-                    0x8000 +
-                    ((pBmpBuffer[2] & 0xF8) << 7) +
-                    ((pBmpBuffer[1] & 0xF8) << 2) +
-                    (pBmpBuffer[0] >> 3);
-				pTxtBuffer += 2;
-                pBmpBuffer += 3;
-            }
-            pBmpBuffer = pBmpBufferOld + m_lVidPitch;
-            pTxtBuffer = pTxtBufferOld + lTxtPitch;
-        }
-    }
+    switch( m_TextureFormat )
+	{
+	case D3DFMT_A8R8G8B8:
+		{
+			for(int y = 0; y < m_lVidHeight; y++ ) {
+				BYTE *pBmpBufferOld = pBmpBuffer;
+				BYTE *pTxtBufferOld = pTxtBuffer;   
+				for (int x = 0; x < m_lVidWidth; x++) {
+					pTxtBuffer[0] = pBmpBuffer[0];
+					pTxtBuffer[1] = pBmpBuffer[1];
+					pTxtBuffer[2] = pBmpBuffer[2];
+					pTxtBuffer[3] = 0xff;
+					pTxtBuffer += 4;
+					pBmpBuffer += 3;
+				}
+				pBmpBuffer = pBmpBufferOld + m_lVidPitch;
+				pTxtBuffer = pTxtBufferOld + lTxtPitch;
+			}
+		}
+		break;
+	case D3DFMT_A1R5G5B5:
+		{
+			for(int y = 0; y < m_lVidHeight; y++ ) {
+				BYTE *pBmpBufferOld = pBmpBuffer;
+				BYTE *pTxtBufferOld = pTxtBuffer;   
+				for (int x = 0; x < m_lVidWidth; x++) {
+					*(WORD *)pTxtBuffer =
+						0x8000 +
+						((pBmpBuffer[2] & 0xF8) << 7) +
+						((pBmpBuffer[1] & 0xF8) << 2) +
+						(pBmpBuffer[0] >> 3);
+					pTxtBuffer += 2;
+					pBmpBuffer += 3;
+				}
+				pBmpBuffer = pBmpBufferOld + m_lVidPitch;
+				pTxtBuffer = pTxtBufferOld + lTxtPitch;
+			}
+		}
+		break;
+	default:
+		ASSERT(0);
+	}
 
         
     // Unlock the Texture
-    if (FAILED(pD3DTexture->UnlockRect(0))) {
-        DXTRACE_ERR_NOMSGBOX(TEXT("Failed to unlock the texture!"), E_FAIL);
+    if( FAILED( pD3DTextureCopyTo->UnlockRect(0) ) ) 
+	{
+        LOG->Warn( "Failed to unlock the texture!" );
         return E_FAIL;
 	}
 
-	m_bLocked[m_pTexture->m_iIndexActiveTexture] = FALSE;
+	m_bBackBufferLocked = FALSE;
     
 
 	// flip active texture
-	switch( m_pTexture->m_iIndexActiveTexture )
+	switch( m_pTexture->m_iIndexFrontBuffer )
 	{
-	case 0:	m_pTexture->m_iIndexActiveTexture = 1;	break;
-	case 1:	m_pTexture->m_iIndexActiveTexture = 0;	break;
+	case 0:	m_pTexture->m_iIndexFrontBuffer = 1;	break;
+	case 1:	m_pTexture->m_iIndexFrontBuffer = 0;	break;
 	}
 
 
@@ -257,7 +266,7 @@ RageMovieTexture::RageMovieTexture(
 	LOG->Trace( "RageBitmapTexture::RageBitmapTexture()" );
 
 	m_pd3dTexture[0] = m_pd3dTexture[1] = NULL;
-	m_iIndexActiveTexture = 0;
+	m_iIndexFrontBuffer = 0;
 
 	Create();
 
@@ -269,6 +278,8 @@ RageMovieTexture::RageMovieTexture(
 		m_TextureCoordRects[i].top = m_TextureCoordRects[i].bottom;
 		m_TextureCoordRects[i].bottom = fTemp;
 	}
+
+	m_bLoop = true;
 }
 
 RageMovieTexture::~RageMovieTexture()
@@ -296,23 +307,11 @@ void RageMovieTexture::Reload(
 //-----------------------------------------------------------------------------
 LPDIRECT3DTEXTURE8 RageMovieTexture::GetD3DTexture()
 {
-	// Wait until the TextureRenderer is not copying to our texture.
-	// If we try to draw using the texture while it is locked, the primitive
-	// will appear without a texture.
-	// Most of the time, the TextureRenderer is not busy copying (copying
-	// a frame of video is very quick).  If it is busy, it's usually becase
-	// the video fell behind and is trying to copy several frames in a row
-	// to catch up.  So, if the TextureRenderer is busy, give it a 1ms slice of 
-	// time for it to catch up and copy all the frames it fell behind on.
-//	while( m_pCTR->IsLocked() ) {
-//		::Sleep(1);
-//		LOG->Trace( "Sleeping waiting for unlock..." );
-//	}
+	CheckMovieStatus();		// restart the movie if we reach the end
 
-	// restart the movie if we reach the end
-	CheckMovieStatus();
-	
-	return m_pd3dTexture[m_iIndexActiveTexture]; 
+	// Return the front buffer because it's guaranteed that CTextureRenderer
+	// doesn't have it locked.	
+	return m_pd3dTexture[m_iIndexFrontBuffer]; 
 }
 
 
@@ -436,13 +435,13 @@ HRESULT RageMovieTexture::CreateD3DTexture()
     if( FAILED( hr = D3DXCreateTexture(m_pd3dDevice,
                     m_iSourceWidth, m_iSourceHeight,
                     1, 0, 
-                    D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &m_pd3dTexture[0] ) ) )
+                    D3DFMT_A1R5G5B5, D3DPOOL_MANAGED, &m_pd3dTexture[0] ) ) )
         throw RageException( hr, "Could not create the D3DX texture!" );
 
     if( FAILED( hr = D3DXCreateTexture(m_pd3dDevice,
                     m_iSourceWidth, m_iSourceHeight,
                     1, 0, 
-                    D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &m_pd3dTexture[1] ) ) )
+                    D3DFMT_A1R5G5B5, D3DPOOL_MANAGED, &m_pd3dTexture[1] ) ) )
         throw RageException( hr, "Could not create the D3DX texture!" );
 
     // D3DXCreateTexture can silently change the parameters on us
@@ -484,7 +483,7 @@ void RageMovieTexture::CheckMovieStatus()
 
     // Check for completion events
     m_pME->GetEvent( &lEventCode, &lParam1, &lParam2, 0 );
-    if( EC_COMPLETE == lEventCode )
+    if( EC_COMPLETE == lEventCode  &&  m_bLoop )
         m_pMP->put_CurrentPosition(0);
 }
 
@@ -504,11 +503,6 @@ void RageMovieTexture::Play()
 	PlayMovie();
 }
 
-void RageMovieTexture::SetPosition( float fSeconds )
-{
-     m_pMP->put_CurrentPosition(0);
-}
-
 void RageMovieTexture::Pause()
 {
 	HRESULT hr;
@@ -516,3 +510,26 @@ void RageMovieTexture::Pause()
         throw RageException( hr, "Could not pause the DirectShow graph." );
 
 }
+
+void RageMovieTexture::Stop()
+{
+	HRESULT hr;
+	if( FAILED( hr = m_pMC->Stop() ) )
+        throw RageException( hr, "Could not stop the DirectShow graph." );
+}
+
+void RageMovieTexture::TurnLoopOn()
+{
+	m_bLoop = true;
+}
+
+void RageMovieTexture::TurnLoopOff()
+{
+	m_bLoop = false;
+}
+
+void RageMovieTexture::SetPosition( float fSeconds )
+{
+     m_pMP->put_CurrentPosition(0);
+}
+

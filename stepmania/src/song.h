@@ -87,6 +87,9 @@ public:
 	float	m_fLastBeat;
 	float	m_fMusicSampleStartSeconds;
 	float	m_fMusicSampleLengthSeconds;
+
+	float GetMusicStartBeat();
+
 	CString	m_sBannerFile;
 	CString	m_sBackgroundFile;
 	CString	m_sCDTitleFile;

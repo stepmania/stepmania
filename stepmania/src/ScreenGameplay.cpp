@@ -781,7 +781,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		if( fSongBeat > GAMESTATE->m_pCurSong->m_fLastBeat+4 )
 		{
 			GAMESTATE->m_fSongBeat = 0;
-			m_soundMusic.Stop();
+			m_soundMusic.Pause();
 			this->SendScreenMessage( SM_NotesEnded, 0 );
 		}
 

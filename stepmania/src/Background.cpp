@@ -134,7 +134,7 @@ void Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 	case MODE_MOVIE_BG:
 		{
 			pTempBGA = new BackgroundAnimation;
-			pTempBGA->LoadFromMovie( pSong->GetMovieBackgroundPath() );
+			pTempBGA->LoadFromMovieBG( pSong->GetMovieBackgroundPath() );
 			m_BackgroundAnimations.Add( pTempBGA );
 		}
 		break;
@@ -178,7 +178,7 @@ void Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 			{
 				int index = rand() % arrayPossibleMovies.GetSize();
 				pTempBGA = new BackgroundAnimation;
-				pTempBGA->LoadFromMovie( arrayPossibleMovies[index] );
+				pTempBGA->LoadFromRandomMovie( arrayPossibleMovies[index] );
 				m_BackgroundAnimations.Add( pTempBGA );
 				arrayPossibleMovies.RemoveAt( index );
 			}	
@@ -221,13 +221,13 @@ void Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 		const BPMSegment& bpmseg = pSong->m_BPMSegments[i];
 
 		if( bpmseg.m_fStartBeat < fFirstBeat  || bpmseg.m_fStartBeat > fLastBeat )
-			continue;	// skip
+			continue;	// skip]
 
 		int index;
 		if( m_BackgroundAnimations.GetSize()==1 )
 			index = 0;
 		else
-			int index = 1 + int(bpmseg.m_fBPM)%(m_BackgroundAnimations.GetSize()-1);
+			index = 1 + int(bpmseg.m_fBPM)%(m_BackgroundAnimations.GetSize()-1);
 		m_aAnimSegs.Add( AnimSeg(bpmseg.m_fStartBeat,index) );
 	}
 

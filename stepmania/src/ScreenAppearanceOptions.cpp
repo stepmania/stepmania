@@ -93,7 +93,7 @@ void ScreenAppearanceOptions::ImportOptions()
 	CStringArray arrayThemeNames;
 	THEME->GetThemeNamesForCurGame( arrayThemeNames );
 
-	m_OptionLineData[AO_THEME].iNumOptions	=	arrayThemeNames.GetSize() + 1; 
+	m_OptionLineData[AO_THEME].iNumOptions	=	arrayThemeNames.GetSize(); 
 	
 	for( i=0; i<arrayThemeNames.GetSize(); i++ )
 		strcpy( m_OptionLineData[AO_THEME].szOptionsText[i], arrayThemeNames[i] ); 

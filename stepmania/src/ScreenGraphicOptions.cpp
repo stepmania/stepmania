@@ -45,7 +45,7 @@ OptionLineData g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
 	{ "Show Stats",		2,  {"OFF","ON"} },
 	{ "BG Mode",		4,  {"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES"} },
 	{ "BG Brightness",	5,  {"20%","40%","60%","80%","100%"} },
-	{ "Movie Decode",	5,  {"1ms","2ms","3ms","4ms","5ms"} },
+	{ "Movie Decode",	4,  {"1ms","2ms","3ms","4ms"} },
 };
 
 ScreenGraphicOptions::ScreenGraphicOptions() :

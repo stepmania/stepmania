@@ -61,9 +61,12 @@ public:
 
 	virtual LPDIRECT3DTEXTURE8 GetD3DTexture() = 0;
 	virtual void Play() {};
-	virtual void SetPosition( float fSeconds ) {};
+	virtual void Stop() {};
 	virtual void Pause() {};
+	virtual void SetPosition( float fSeconds ) {};
 	virtual bool IsAMovie() { return false; };
+	virtual void TurnLoopOn();
+	virtual void TurnLoopOff();
 
 	int GetSourceWidth()	{return m_iSourceWidth;};
 	int GetSourceHeight()	{return m_iSourceHeight;};

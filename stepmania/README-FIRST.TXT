@@ -114,15 +114,16 @@ keyboad, dance pad, or other game controller.
 
 The following is a list of special keys.
 
-Any time:
+Anywhere:
   * F4 = toggle fullscreen
   * F5 = toggle detail
-  * Tab = increase game speed 4x (useful for moving through menus quickly)
-  * LShift = decrease game speed to 1/4x
+  * Hold Tab = increase game speed 4x (useful for moving through menus quickly)
+  * Hold LShift = decrease game speed to 1/4x
 
 In menus:
   * Arrow keys navigate menus
-  * Enter = Start, Escape = Back
+  * Enter = Start
+  * Escape = Back
 
 In gameplay:
   * F8  = toggle AutoPlay
@@ -1141,8 +1142,10 @@ CHANGE:  KSF title discovery will use song foler name if KSF file contains
 BUG FIX:  Stepping before start of a note at beat 0 no longer results in a BAD.
 BUG FIX:  Editor now works with dance-couple note patterns
 BUG FIX:  Lead-in/lead-out time added to Play and Record in editor.
-CHANGE:  Song specific Background Animations removed in favor of a more powerful
-	system.
+CHANGE:  Song specific Background Animations removed.  It will be replaced with
+	a more powerful system soon.
+CHANGE:  BGAnimations are now chose randomly from all animations rather than 
+	from a specific group ("trance", "techno", etc).
 NEW FEATURE:  "Show Danger" toggle in game options to enable/disable
 	flashing danger message.
 CHANGE:  "Event Mode" option renamed to "Unlimited Arcade Stages".
@@ -1153,9 +1156,13 @@ NEW FEATURE:  Graphic Option "MovieDecodeMS".  Controls how many milliseconds
 CHANGE:  "SongFolders" renamed to "AdditionalSongFolders".
 BUG FIX:  AdditionalSongFolers no longer creates duplicate entries on program
 	load.
-CHANGE:  RandomMovies do not start playing until the first beat
+CHANGE:  RandomMovies now start playing on the note and stop playing on the 
+	last note.
+CHANGE:  Background Movies now start playing at beat 0, and the movie should
+	synchronize with the notes (BMR's Colors, etc).
 OPTIMIZATION:  New deferred rendering architecture uses more CPU in order to
 	create more efficient operations for the graphics card.
+BUG FIX:  Select Group no longer crashes with > 15 groups.
 
 ------------------------CVS after 3.00 beta 5----------------
 OPTIMIZATION:  Much faster song loading.
