@@ -3,8 +3,7 @@
 #include "SDL_utils.h"
 #include "RageLog.h"
 #include "RageDisplay.h" // for REFRESH_DEFAULT
-
-#include "SDL_utils.h"
+#include "StepMania.h"
 
 LowLevelWindow_SDL::LowLevelWindow_SDL()
 {
@@ -195,6 +194,8 @@ void LowLevelWindow_SDL::SwapBuffers()
 
 void LowLevelWindow_SDL::Update(float fDeltaTime)
 {
+	HandleSDLEvents();
+
 	SDL_Event event;
 	while(SDL_GetEvent(event, SDL_VIDEORESIZEMASK|SDL_ACTIVEEVENTMASK))
 	{
@@ -208,11 +209,25 @@ void LowLevelWindow_SDL::Update(float fDeltaTime)
 			DISPLAY->ResolutionChanged();
 			break;
 		case SDL_ACTIVEEVENT:
+			/* We don't care about mouse focus. */
+			if(event.active.state == SDL_APPMOUSEFOCUS)
+				break;
+
 			if( event.active.gain  &&		// app regaining focus
 				!DISPLAY->GetVideoModeParams().windowed )	// full screen
 			{
 				// need to reacquire an OGL context
-				DISPLAY->SetVideoMode( DISPLAY->GetVideoModeParams() );
+				/* This hasn't been done in a long time, since HandleSDLEvents was
+				 * handling this event before we got it.  I tried reenablng it, and
+				 * it resulted in input not being regained and textures being erased,
+				 * so I left it disabled; but this might be needed on some cards (with
+				 * the above fixed) ... */
+				// DISPLAY->SetVideoMode( DISPLAY->GetVideoModeParams() );
+			}
+
+			{
+				uint8_t i = SDL_GetAppState();
+				FocusChanged( i&SDL_APPINPUTFOCUS && i&SDL_APPACTIVE );
 			}
 			break;
 		}
