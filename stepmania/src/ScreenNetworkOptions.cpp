@@ -107,7 +107,7 @@ void ScreenNetworkOptions::MenuStart( PlayerNumber pn, const InputEventType type
 		switch (m_Rows[GetCurrentRow()]->GetOneSharedSelection())
 		{
 		case NO_CONNECT:
-			SCREENMAN->TextEntry( SM_DoneConnecting, "Enter a Network Address", "", NULL );
+			SCREENMAN->TextEntry( SM_DoneConnecting, "Enter a Network Address\n127.0.0.1 to connect to yourself", "", NULL );
 			break;
 		case NO_DISCONNECT:
 			NSMAN->CloseConnection();
