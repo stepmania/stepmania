@@ -163,7 +163,7 @@ void BGAnimation::LoadFromVisualization( CString sVisPath )
 	Unload();
 	BGAnimationLayer* pLayer;
 	
-	Song* pSong = GAMESTATE->m_pCurSong;
+	const Song* pSong = GAMESTATE->m_pCurSong;
 	CString sSongBGPath = pSong && pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathToG("Common fallback background");
 
 	pLayer = new BGAnimationLayer;
