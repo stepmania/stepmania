@@ -13,7 +13,7 @@ class RageSoundReader_Vorbisfile: public SoundReader_FileReader {
 	CString filename;
 
 public:
-	bool Open(CString filename);
+	OpenResult Open(CString filename);
 	int GetLength() const;
 	int GetLength_Fast() const;
 	int SetPosition_Accurate(int ms)  { return SetPosition(ms, true); }

@@ -558,7 +558,7 @@ RageSoundReader_MP3::~RageSoundReader_MP3()
 	delete mad;
 }
 
-bool RageSoundReader_MP3::Open( CString filename_ )
+SoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( CString filename_ )
 {
 	filename = filename_;
     rw = fopen(filename, "rb");
@@ -589,13 +589,13 @@ bool RageSoundReader_MP3::Open( CString filename_ )
 	if( ret == 0 )
 	{
 		SetError( "Failed to read any data at all" );
-		return false;
+		return OPEN_NO_MATCH;
 	}
 	if( ret == -1 )
 	{
 		/* XXX: an error is already set */
 		SetError( "Not an MP3 stream?" );
-		return false;
+		return OPEN_NO_MATCH;
 	}
 
 	LOG->Trace("Accepting MP3 stream.");
@@ -620,7 +620,7 @@ bool RageSoundReader_MP3::Open( CString filename_ )
 
 	SampleRate = mad->Frame.header.samplerate;
 	this->Channels = mad->Frame.header.mode == MAD_MODE_SINGLE_CHANNEL? 1:2;
-	return 1;
+	return OPEN_OK;
 }
 
 /* dst and src are buffers of 16-bit samples.  len is the number of bytes

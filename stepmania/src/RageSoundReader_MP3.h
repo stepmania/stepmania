@@ -31,7 +31,7 @@ public:
 	int GetLengthInternal( bool fast );
 
 public:
-	bool Open(CString filename);
+	OpenResult Open(CString filename);
 	void Close();
 	int GetLength() const { return ((RageSoundReader_MP3*)this)->GetLengthInternal(false); }
 	int GetLength_Fast() const { return ((RageSoundReader_MP3*)this)->GetLengthInternal(true); }

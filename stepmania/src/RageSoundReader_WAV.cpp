@@ -439,13 +439,13 @@ int RageSoundReader_WAV::find_chunk( Uint32 id, Sint32 &size )
 }
 
 
-bool RageSoundReader_WAV::WAV_open_internal()
+SoundReader_FileReader::OpenResult RageSoundReader_WAV::WAV_open_internal()
 {
 	Uint32 magic1;
 	if( !read_le32(rw, &magic1) || magic1 != riffID )
 	{
 		SetError( "WAV: Not a RIFF file." );
-		return false;
+		return OPEN_NO_MATCH;
 	}
 
 	Uint32 ignore;
@@ -455,17 +455,28 @@ bool RageSoundReader_WAV::WAV_open_internal()
 	if( !read_le32( rw, &magic2 ) || magic2 != waveID )
 	{
 		SetError( "Not a WAVE file." );
-		return false;
+		return OPEN_NO_MATCH;
 	}
 
 	Sint32 NextChunk;
-    BAIL_IF_MACRO(!find_chunk(fmtID, NextChunk), "No format chunk.", false);
+    BAIL_IF_MACRO(!find_chunk(fmtID, NextChunk), "No format chunk.", OPEN_MATCH_BUT_FAIL);
 	NextChunk += ftell(rw);
-    BAIL_IF_MACRO(!read_fmt_chunk(), "Can't read format chunk.", false);
+    BAIL_IF_MACRO(!read_fmt_chunk(), "Can't read format chunk.", OPEN_MATCH_BUT_FAIL);
 
 	/* I think multi-channel WAVs are possible, but I've never even seen one. */
     Channels = (Uint8) fmt.wChannels;
 	ASSERT( Channels <= 2 );
+
+	if( fmt.wFormatTag != FMT_NORMAL &&
+		fmt.wFormatTag != FMT_ADPCM )
+	{
+		SetError( ssprintf("Unsupported WAV format %i", fmt.wFormatTag) );
+
+		/* It might be MP3 data in a WAV.  (Why do people *do* that?)  It's possible
+		 * that the MAD decoder will figure that out, so let's return OPEN_NO_MATCH
+		 * and keep searching for a decoder. */
+		return OPEN_NO_MATCH;
+	}
 
     if ( fmt.wBitsPerSample == 4 && this->fmt.wFormatTag == FMT_ADPCM )
 	{
@@ -485,7 +496,7 @@ bool RageSoundReader_WAV::WAV_open_internal()
     else
     {
 		SetError( ssprintf("Unsupported sample size %i", fmt.wBitsPerSample) );
-		return false;
+		return OPEN_MATCH_BUT_FAIL;
     }
 
 	if( Conversion == CONV_8BIT_TO_16BIT )
@@ -496,16 +507,16 @@ bool RageSoundReader_WAV::WAV_open_internal()
 	fseek(rw, NextChunk, SEEK_SET );
 
 	Sint32 DataSize;
-    BAIL_IF_MACRO(!find_chunk(dataID, DataSize), "No data chunk.", false);
+    BAIL_IF_MACRO(!find_chunk(dataID, DataSize), "No data chunk.", OPEN_MATCH_BUT_FAIL);
 
     fmt.data_starting_offset = ftell(rw);
     fmt.adpcm_sample_frame_size = BytesPerSample * Channels;
 
-    return true;
+    return OPEN_OK;
 }
 
 
-bool RageSoundReader_WAV::Open( CString filename_ )
+SoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( CString filename_ )
 {
 	Close();
 	Input_Buffer_Ratio = 1;
@@ -514,8 +525,8 @@ bool RageSoundReader_WAV::Open( CString filename_ )
 
     memset(&fmt, 0, sizeof(fmt));
 
-    bool rc = WAV_open_internal();
-    if (!rc)
+    SoundReader_FileReader::OpenResult rc = WAV_open_internal();
+    if ( rc != OPEN_OK )
 		Close();
 
     return rc;

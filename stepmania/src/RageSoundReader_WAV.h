@@ -69,7 +69,7 @@ class RageSoundReader_WAV: public SoundReader_FileReader
 	int seek_sample_fmt_normal( Uint32 ms );
 	int get_length_fmt_normal() const;
 
-	bool WAV_open_internal();
+	OpenResult WAV_open_internal();
 
 	int SetPosition(int ms);
 
@@ -79,7 +79,7 @@ class RageSoundReader_WAV: public SoundReader_FileReader
 	Uint32 ConvertBytePosToMs(int BytesPerSample, int channels, Uint32 pos) const;
 
 public:
-	bool Open(CString filename);
+	OpenResult Open(CString filename);
 	void Close();
 	int GetLength() const;
 	int GetLength_Fast() const { return GetLength(); }

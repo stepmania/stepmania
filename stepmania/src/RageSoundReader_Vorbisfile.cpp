@@ -42,6 +42,7 @@ static CString ov_ssprintf( int err, const char *fmt, ...)
 	CString errstr;
 	switch( err )
 	{
+	/* XXX: In the case of OV_EREAD, can we snoop at errno? */
 	case OV_EREAD:		errstr = "Read error"; break;
 	case OV_EFAULT:		errstr = "Internal error"; break;
 	case OV_EIMPL:		errstr = "Feature not implemented"; break;
@@ -59,7 +60,7 @@ static CString ov_ssprintf( int err, const char *fmt, ...)
 	return s + ssprintf( " (%s)", errstr.c_str() );
 }
 
-bool RageSoundReader_Vorbisfile::Open(CString filename_)
+SoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open(CString filename_)
 {
 	filename=filename_;
 
@@ -68,7 +69,7 @@ bool RageSoundReader_Vorbisfile::Open(CString filename_)
 	if(f == NULL)
 	{
 		SetError(ssprintf("ogg fopen(%s) failed: %s", filename.c_str(), strerror(errno)));
-		return false;
+		return OPEN_MATCH_BUT_FAIL;
 	}
 
 	int ret = ov_open(f, vf, NULL, 0);
@@ -76,12 +77,19 @@ bool RageSoundReader_Vorbisfile::Open(CString filename_)
 	{
 		SetError( ov_ssprintf(ret, "ov_open failed") );
 		fclose(f);
-		return false;
+		switch( ret )
+		{
+		case OV_EREAD:
+		case OV_ENOTVORBIS:
+			return OPEN_MATCH_BUT_FAIL;
+		default:
+			return OPEN_NO_MATCH;
+		}
 	}
 
 	avail = 0;
 
-    return true;
+    return OPEN_OK;
 }
 
 int RageSoundReader_Vorbisfile::GetLength() const
