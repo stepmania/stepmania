@@ -28,8 +28,6 @@
 #define ITEM_LEVEL( i )			THEME->GetMetricI("Inventory",ssprintf("Item%dLevel",i+1))
 CachedThemeMetricF ITEM_USE_RATE_SECONDS("Inventory","ItemUseRateSeconds");
 
-const PlayerNumber	OPPOSITE_PLAYER[NUM_PLAYERS] = { PLAYER_2, PLAYER_1 };
-
 #define ITEM_USE_PROBABILITY (1.f/ITEM_USE_RATE_SECONDS)
 
 struct Item

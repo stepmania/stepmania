@@ -591,7 +591,20 @@ void PlayerMinus::Step( int col, RageTimer tm )
 					{
 						m_soundAttack.Play();
 						score = TNS_NONE;	// don't score this as anything
-						m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
+						// put attack in effect
+						Attack attack = this->GetAttackAt( col, iIndexOverlappingNote );
+						GAMESTATE->LaunchAttack( OPPOSITE_PLAYER[m_PlayerNumber], attack );
+
+						// remove all TapAttacks on this row
+						for( int t=0; t<this->GetNumTracks(); t++ )
+						{
+							TapNote tn = this->GetTapNote(t, iIndexOverlappingNote);
+							if( IsTapAttack(tn) )
+							{
+								this->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
+								m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
+							}
+						}
 					}
 				}
 				else	// !IsTapAttack
@@ -669,7 +682,21 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			{
 				m_soundAttack.Play();
 				score = TNS_NONE;	// don't score this as anything
-				m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
+				
+				// put attack in effect
+				Attack attack = this->GetAttackAt( col, iIndexOverlappingNote );
+				GAMESTATE->LaunchAttack( OPPOSITE_PLAYER[m_PlayerNumber], attack );
+				
+				// remove all TapAttacks on this row
+				for( int t=0; t<this->GetNumTracks(); t++ )
+				{
+					TapNote tn = this->GetTapNote(t, iIndexOverlappingNote);
+					if( IsTapAttack(tn) )
+					{
+						this->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
+						m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
+					}
+				}
 			}
 
 			break;
@@ -685,6 +712,27 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			// Don't step on mines
 			if( tn == TAP_MINE )
 				return;
+
+			if( IsTapAttack(tn) )
+			{
+				m_soundAttack.Play();
+				score = TNS_NONE;	// don't score this as anything
+				
+				// put attack in effect
+				Attack attack = this->GetAttackAt( col, iIndexOverlappingNote );
+				GAMESTATE->LaunchAttack( OPPOSITE_PLAYER[m_PlayerNumber], attack );
+				
+				// remove all TapAttacks on this row
+				for( int t=0; t<this->GetNumTracks(); t++ )
+				{
+					TapNote tn = this->GetTapNote(t, iIndexOverlappingNote);
+					if( IsTapAttack(tn) )
+					{
+						this->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
+						m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
+					}
+				}
+			}
 			break;
 		default:
 			ASSERT(0);

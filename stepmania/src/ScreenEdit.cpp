@@ -223,7 +223,7 @@ static Menu g_BGChange( "Background Change", g_BGChangeItems );
 
 static const MenuRow g_InsertAttackItems[] =
 {
-	{ "Duration seconds",					true, 2, { "10","20","30","40","50","60","70","80","90" } },
+	{ "Duration seconds",					true, 3, { "5","10","15","20","25","30","35","40","45" } },
 	{ "Set modifiers",						true, 0, { "PRESS START" } },
 	{ NULL, true, 0, { NULL } }
 };
