@@ -1480,13 +1480,16 @@ void RageDisplay_OGL::SetZWrite( bool b )
 	glDepthMask( b );
 }
 
-void RageDisplay_OGL::SetZTest( bool b )
+void RageDisplay_OGL::SetZTestMode( ZTestMode mode )
 {
 	glEnable( GL_DEPTH_TEST );
-	if( b )
-		glDepthFunc( GL_LEQUAL );
-	else
-		glDepthFunc( GL_ALWAYS );
+	switch( mode )
+	{
+	case ZTEST_OFF:				glDepthFunc( GL_ALWAYS );	break;
+	case ZTEST_WRITE_ON_PASS:	glDepthFunc( GL_LEQUAL );	break;
+	case ZTEST_WRITE_ON_FAIL:	glDepthFunc( GL_GREATER );	break;
+	default:	ASSERT( 0 );
+	}
 }
 
 void RageDisplay_OGL::SetTextureWrapping( bool b )

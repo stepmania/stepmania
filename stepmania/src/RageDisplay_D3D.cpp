@@ -1045,10 +1045,17 @@ void RageDisplay_D3D::SetZWrite( bool b )
 	g_pd3dDevice->SetRenderState( D3DRS_ZWRITEENABLE, b );
 }
 
-void RageDisplay_D3D::SetZTest( bool b )
+void RageDisplay_D3D::SetZTestMode( ZTestMode mode )
 {
 	g_pd3dDevice->SetRenderState( D3DRS_ZENABLE,      D3DZB_TRUE );
-	g_pd3dDevice->SetRenderState( D3DRS_ZFUNC,		  b ? D3DCMP_LESSEQUAL : D3DCMP_ALWAYS );
+	DWORD dw;
+	switch( mode )
+	{
+	case ZTEST_OFF:				dw = D3DCMP_ALWAYS;		break;
+	case ZTEST_WRITE_ON_PASS:	dw = D3DCMP_LESSEQUAL;	break;
+	case ZTEST_WRITE_ON_FAIL:	dw = D3DCMP_GREATER;	break;
+	default:	ASSERT( 0 );
+	}
 }
 
 void RageDisplay_D3D::ClearZBuffer()

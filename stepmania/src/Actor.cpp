@@ -59,7 +59,7 @@ void Actor::Reset()
 	m_bTextureWrapping = false;
 	m_BlendMode = BLEND_NORMAL;
 	m_bClearZBuffer = false;
-	m_bZTest = false;
+	m_ZTestMode = ZTEST_OFF;
 	m_bZWrite = false;
 	m_CullMode = CULL_NONE;
 }
@@ -228,7 +228,7 @@ void Actor::SetRenderStates()
 	DISPLAY->SetTextureWrapping( m_bTextureWrapping );
 	DISPLAY->SetBlendMode( m_BlendMode );
 	DISPLAY->SetZWrite( m_bZWrite );
-	DISPLAY->SetZTest( m_bZTest );
+	DISPLAY->SetZTestMode( m_ZTestMode );
 	if( m_bClearZBuffer )
 		DISPLAY->ClearZBuffer();
 	DISPLAY->SetCullMode( m_CullMode );
@@ -730,6 +730,7 @@ void Actor::HandleCommand( const ParsedCommand &command )
 	else if( sName=="blend" )			SetBlendMode( sParam(1) );
 	else if( sName=="zbuffer" )			SetUseZBuffer( bParam(1) );
 	else if( sName=="ztest" )			SetZTest( bParam(1) );
+	else if( sName=="ztestmode" )		SetZTestMode( sParam(1) );
 	else if( sName=="zwrite" )			SetZWrite( bParam(1) );
 	else if( sName=="clearzbuffer" )	SetClearZBuffer( bParam(1) );
 	else if( sName=="backfacecull" )	SetCullMode( bParam(1) ? CULL_BACK : CULL_NONE );
@@ -881,6 +882,20 @@ void Actor::SetCullMode( CString s )
 	if     (s=="back")	SetCullMode( CULL_BACK );
 	else if(s=="front")	SetCullMode( CULL_FRONT );
 	else if(s=="none")	SetCullMode( CULL_NONE );
+	else	ASSERT(0);
+}
+
+void Actor::SetZTestMode( CString s )
+{
+	s.MakeLower();
+	
+	// for metrics backward compatibility
+	if     (s=="1")				SetZTestMode( ZTEST_WRITE_ON_PASS );
+	else if(s=="0")				SetZTestMode( ZTEST_OFF );
+	
+	else if(s=="off")			SetZTestMode( ZTEST_OFF );
+	else if(s=="writeonpass")	SetZTestMode( ZTEST_WRITE_ON_PASS );
+	else if(s=="writeonfail")	SetZTestMode( ZTEST_WRITE_ON_FAIL );
 	else	ASSERT(0);
 }
 

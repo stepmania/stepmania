@@ -41,7 +41,7 @@ public:
 	bool IsZWriteEnabled() const { return false; }
 	bool IsZTestEnabled() const { return false; }
 	void SetZWrite( bool b ) { }
-	void SetZTest( bool b ) { }
+	void SetZTestMode( ZTestMode mode ) { }
 	void ClearZBuffer() { }
 	void SetCullMode( CullMode mode ) { }
 	void SetAlphaTest( bool b ) { }

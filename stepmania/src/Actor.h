@@ -297,8 +297,10 @@ public:
 	void SetBlendMode( CString );
 	void SetTextureWrapping( bool b ) 	{ m_bTextureWrapping = b; } 
 	void SetClearZBuffer( bool b ) 		{ m_bClearZBuffer = b; } 
-	void SetUseZBuffer( bool b ) 		{ SetZTest(b); SetZWrite(b); } 
-	virtual void SetZTest( bool b ) 			{ m_bZTest = b; } 
+	void SetUseZBuffer( bool b ) 		{ SetZTestMode(b?ZTEST_WRITE_ON_PASS:ZTEST_OFF); SetZWrite(b); } 
+	virtual void SetZTestMode( ZTestMode mode ) { m_ZTestMode = mode; } 
+	virtual void SetZTestMode( CString );
+	void SetZTest( bool b ) { SetZTestMode(b?ZTEST_WRITE_ON_PASS:ZTEST_OFF); }
 	virtual void SetZWrite( bool b ) 			{ m_bZWrite = b; } 
 	virtual void SetCullMode( CullMode mode ) 	{ m_CullMode = mode; } 
 	virtual void SetCullMode( CString );
@@ -387,10 +389,11 @@ protected:
 	//
 	// render states
 	//
-	bool	m_bTextureWrapping;
+	bool		m_bTextureWrapping;
 	BlendMode	m_BlendMode;
-	bool	m_bClearZBuffer;
-	bool	m_bZTest, m_bZWrite;
+	bool		m_bClearZBuffer;
+	ZTestMode	m_ZTestMode;
+	bool		m_bZWrite;
 	CullMode	m_CullMode;
 };
 

@@ -103,7 +103,7 @@ void ActorFrame::Update( float fDeltaTime )
 	}
 
 PropagateActorFrameCommand( SetDiffuse,			RageColor )
-PropagateActorFrameCommand( SetZTest,			bool )
+PropagateActorFrameCommand( SetZTestMode,		ZTestMode )
 PropagateActorFrameCommand( SetZWrite,			bool )
 PropagateActorFrameCommand( HurryTweening,		float )
 

@@ -35,7 +35,7 @@ public:
 	virtual void SetDiffuse( RageColor c );
 	virtual void SetDiffuseAlpha( float f );
 	
-	virtual void SetZTest( bool b );
+	virtual void SetZTestMode( ZTestMode mode );
 	virtual void SetZWrite( bool b );
 	virtual void FinishTweening();
 	virtual void HurryTweening( float factor );
