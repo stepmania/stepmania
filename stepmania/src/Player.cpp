@@ -323,7 +323,7 @@ void PlayerMinus::Update( float fDeltaTime )
 				// Increase life
 				fLife = 1;
 
-				m_pNoteField->HoldNote( hn.iTrack );		// update the "electric ghost" effect
+				m_pNoteField->DidHoldNote( hn.iTrack );		// update the "electric ghost" effect
 			}
 			else
 			{
@@ -350,7 +350,7 @@ void PlayerMinus::Update( float fDeltaTime )
 		{
 			fLife = 1;
 			hns = HNS_OK;
-			m_pNoteField->TapNote( StyleI.col, TNS_PERFECT, true );	// bright ghost flash
+			m_pNoteField->DidTapNote( StyleI.col, TNS_PERFECT, true );	// bright ghost flash
 		}
 
 		if( hns != HNS_NONE )
@@ -641,7 +641,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 				{
 					m_soundMine.Play();
 					score = TNS_MISS;
-					m_pNoteField->TapMine( col, score );
+					m_pNoteField->DidTapMine( col, score );
 
 					if( m_pLifeMeter )
 						m_pLifeMeter->ChangeLifeMine();
@@ -742,7 +742,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			{
 				m_soundMine.Play();
 				score = TNS_MISS;
-				m_pNoteField->TapMine( col, score );
+				m_pNoteField->DidTapMine( col, score );
 				if( m_pLifeMeter )
 					m_pLifeMeter->ChangeLifeMine();
 				if( m_pCombinedLifeMeter )
@@ -923,7 +923,7 @@ void PlayerMinus::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 
 		// show the ghost arrow for this column
 		if (GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind)
-			m_pNoteField->TapNote( c, TNS_MARVELOUS, false );
+			m_pNoteField->DidTapNote( c, TNS_MARVELOUS, false );
 		else
 		{
 			switch( score )
@@ -933,7 +933,7 @@ void PlayerMinus::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 			case TNS_MARVELOUS:
 				{
 					bool bBright = GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber]>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
-					m_pNoteField->TapNote( c, score, bBright );
+					m_pNoteField->DidTapNote( c, score, bBright );
 				}
 				break;
 			}

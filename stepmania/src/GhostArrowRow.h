@@ -28,9 +28,9 @@ public:
 
 	void Load( PlayerNumber pn, float fYReverseOffset );
 	
-	void TapNote( int iCol, TapNoteScore score, bool bBright );
-	void TapMine( int iCol, TapNoteScore score );
-	void HoldNote( int iCol );
+	void DidTapNote( int iCol, TapNoteScore score, bool bBright );
+	void DidTapMine( int iCol, TapNoteScore score );
+	void DidHoldNote( int iCol );
 	
 protected:
 	int m_iNumCols;

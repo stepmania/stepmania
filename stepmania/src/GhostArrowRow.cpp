@@ -106,7 +106,7 @@ void GhostArrowRow::DrawPrimitives()
 }
 
 
-void GhostArrowRow::TapNote( int iCol, TapNoteScore score, bool bBright )
+void GhostArrowRow::DidTapNote( int iCol, TapNoteScore score, bool bBright )
 {
 	ASSERT( iCol >= 0  &&  iCol < m_iNumCols );
 	if( bBright )
@@ -115,13 +115,13 @@ void GhostArrowRow::TapNote( int iCol, TapNoteScore score, bool bBright )
 		m_GhostDim[iCol].Step( score );
 }
 
-void GhostArrowRow::HoldNote( int iCol )
+void GhostArrowRow::DidHoldNote( int iCol )
 {
 	ASSERT( iCol >= 0  &&  iCol < m_iNumCols );
 	m_HoldGhost[iCol].Step();
 }
 
-void GhostArrowRow::TapMine( int iCol, TapNoteScore score )
+void GhostArrowRow::DidTapMine( int iCol, TapNoteScore score )
 {
 	m_GhostMine[iCol].Step( score );
 }

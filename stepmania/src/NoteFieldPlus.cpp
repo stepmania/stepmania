@@ -56,17 +56,17 @@ void NoteFieldPlus::UpdateBars( int iCol )
 	m_GrayArrowRow.UpdateBars( iCol );
 }
 
-void NoteFieldPlus::TapNote( int iCol, TapNoteScore score, bool bBright )
+void NoteFieldPlus::DidTapNote( int iCol, TapNoteScore score, bool bBright )
 {
-	m_GhostArrowRow.TapNote( iCol, score, bBright );
+	m_GhostArrowRow.DidTapNote( iCol, score, bBright );
 }
 
-void NoteFieldPlus::HoldNote( int iCol )
+void NoteFieldPlus::DidHoldNote( int iCol )
 {
-	m_GhostArrowRow.HoldNote( iCol );
+	m_GhostArrowRow.DidHoldNote( iCol );
 }
 
-void NoteFieldPlus::TapMine( int iCol, TapNoteScore score )
+void NoteFieldPlus::DidTapMine( int iCol, TapNoteScore score )
 {
-	m_GhostArrowRow.TapMine( iCol, score );
+	m_GhostArrowRow.DidTapMine( iCol, score );
 }
