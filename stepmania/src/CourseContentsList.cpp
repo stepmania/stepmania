@@ -58,17 +58,13 @@ void CourseContentsList::SetFromGameState()
 		return;
 	}
 
-	Trail* pTrail[NUM_PLAYERS];
-	FOREACH_PlayerNumber(pn)
-	{
-		pTrail[pn] = GAMESTATE->m_pCurTrail[pn];
-	}
-
 	// FIXME: Is there a better way to handle when players don't have 
 	// the same number of TrailEntries?
 	// They have to have the same number, and of the same songs, or gameplay
 	// isn't going to line up.
-	Trail* pMasterTrail = pTrail[GAMESTATE->m_MasterPlayerNumber];
+	Trail* pMasterTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
+	if( pMasterTrail == NULL )
+		return;
 	int iNumEntriesToShow = min((int)pMasterTrail->m_vEntries.size(), MAX_TOTAL_CONTENTS);
 
 	m_iNumContents = 0;
@@ -76,10 +72,13 @@ void CourseContentsList::SetFromGameState()
 	for( int i=0; i<iNumEntriesToShow; i++ )
 	{
 		CourseEntryDisplay& display = m_CourseContentDisplays[m_iNumContents];
-	
+
 		const TrailEntry* pte[NUM_PLAYERS];
 		FOREACH_EnabledPlayer(pn)
-			pte[pn] = &pTrail[pn]->m_vEntries[i];
+		{
+			Trail* pTrail = GAMESTATE->m_pCurTrail[pn];		
+			pte[pn] = &pTrail->m_vEntries[i];
+		}
 		display.LoadFromTrailEntry( m_iNumContents+1, pte );
 		
 		m_iNumContents++;
