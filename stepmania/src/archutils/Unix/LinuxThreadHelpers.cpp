@@ -140,20 +140,20 @@ int GetCurrentThreadId()
 	return getpid();
 }
 
-int SuspendThread( int ThreadID )
+int SuspendThread( uint64_t ThreadID )
 {
 	/*
 	 * Linux: We can't simply kill(SIGSTOP) (or tkill), since that will stop all processes
 	 * (grr).  We can ptrace(PTRACE_ATTACH) the process to stop it, and PTRACE_DETACH
 	 * to restart it.
 	 */
-	return PtraceAttach( ThreadID );
+	return PtraceAttach( int(ThreadID) );
 	// kill( ThreadID, SIGSTOP );
 }
 
-int ResumeThread( int ThreadID )
+int ResumeThread( uint64_t ThreadID )
 {
-	return PtraceDetach( ThreadID );
+	return PtraceDetach( int(ThreadID) );
 	// kill( ThreadID, SIGSTOP );
 }
 
@@ -167,7 +167,7 @@ int ResumeThread( int ThreadID )
  * This call leaves the given thread suspended, so the returned context doesn't become invalid.
  * ResumeThread() can be used to resume a thread after this call. */
 #if defined(CRASH_HANDLER)
-bool GetThreadBacktraceContext( int ThreadID, BacktraceContext *ctx )
+bool GetThreadBacktraceContext( uint64_t ThreadID, BacktraceContext *ctx )
 {
 	/* Can't GetThreadBacktraceContext the current thread. */
 	ASSERT( ThreadID != GetCurrentThreadId() );
@@ -178,20 +178,21 @@ bool GetThreadBacktraceContext( int ThreadID, BacktraceContext *ctx )
 	 *
 	 * If it's in a debugger, we won't be able to ptrace(PTRACE_GETREGS). If
 	 * it's us that attached, we will. */
-	if( PtraceAttach( ThreadID ) == -1 )
+	if( PtraceAttach( int(ThreadID) ) == -1 )
 	{
 		if( errno != EPERM )
 		{
-			CHECKPOINT_M( ssprintf( "%s (pid %i tid %i locking tid %i)", strerror(errno), getpid(), GetCurrentThreadId(), ThreadID ) );
+			CHECKPOINT_M( ssprintf( "%s (pid %i tid %i locking tid %i)",
+									strerror(errno), getpid(), GetCurrentThreadId(), int(ThreadID) ) );
 			return false;
 		}
 	}
 
 	user_regs_struct regs;
-	if( ptrace( PTRACE_GETREGS, ThreadID, NULL, &regs ) == -1 )
+	if( ptrace( PTRACE_GETREGS, pid_t(ThreadID), NULL, &regs ) == -1 )
 		return false;
 
-	ctx->pid = ThreadID;
+	ctx->pid = pid_t(ThreadID);
 #if defined(CPU_X86_64)
 	ctx->eip = (void *) regs.rip;
 	ctx->ebp = (void *) regs.rbp;

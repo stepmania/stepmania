@@ -18,7 +18,7 @@ uint64_t GetCurrentThreadId()
 	return mach_thread_self();
 }
 
-bool GetThreadBacktraceContext(int iCrashHandle, BacktraceContext *ctx)
+bool GetThreadBacktraceContext(uint64_t iCrashHandle, BacktraceContext *ctx)
 {
 	thread_act_t thread = thread_act_t(iCrashHandle);
 	ppc_thread_state state;
