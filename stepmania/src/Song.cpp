@@ -660,7 +660,7 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 		/* Special stuff is done.  Titles: */
 		ttab.push_back(TitleTrans("^Matsuri Japan$", "", "", "&matsuri; Japan", "", "") );
 		ttab.push_back(TitleTrans("^Kakumei$", "", "", "&kakumei1;&kakumei2;", "", "") );
-		ttab.push_back(TitleTrans("^Sweet Sweet Love Magic$", "", "", "Sweet Sweet &whiteheart; Magic", "", "") );
+		ttab.push_back(TitleTrans("^Sweet Sweet (Love )?Magic$", "", "", "Sweet Sweet &whiteheart; Magic", "", "") );
 		ttab.push_back(TitleTrans("^Breakdown$", "", "", "Bre&flipped-a;kdown", "", "") );
 		/* サナ・モレッテ・ネ・エンテ 
 		 * People can't decide how they want to spell this, so cope with
