@@ -2,16 +2,31 @@
 #include "AutoKeysounds.h"
 #include "GameState.h"
 #include "song.h"
+#include "RageSoundReader_Chain.h"
+#include "RageSoundManager.h"
+#include "RageLog.h"
 
 void AutoKeysounds::Load( PlayerNumber pn, const NoteData& ndAutoKeysoundsOnly )
 {
 	m_ndAutoKeysoundsOnly[pn] = ndAutoKeysoundsOnly;
-	
+}
+
+void AutoKeysounds::FinishLoading()
+{
+	m_sSound.Unload();
+
+	/* Load the BGM. */
+	RageSoundReader_Chain *pChain = new RageSoundReader_Chain;
+
+	Song* pSong = GAMESTATE->m_pCurSong;
+	pChain->SetPreferredSampleRate( SOUNDMAN->GetDriverSampleRate(44100) );
+	pChain->AddSound( pSong->GetMusicPath(), 0, 0 );
+
 	//
 	// Load sounds.
 	//
-	Song* pSong = GAMESTATE->m_pCurSong;
 	CString sSongDir = pSong->GetSongDir();
+/*
 	m_vKeysounds.clear();
 	m_vKeysounds.resize( pSong->m_vsKeysoundFile.size() );
 	for( unsigned i=0; i<m_vKeysounds.size(); i++ )
@@ -19,7 +34,76 @@ void AutoKeysounds::Load( PlayerNumber pn, const NoteData& ndAutoKeysoundsOnly )
 		 CString sKeysoundFilePath = sSongDir + pSong->m_vsKeysoundFile[i];
 		 RageSound& sound = m_vKeysounds[i];
 		 sound.Load( sKeysoundFilePath );
+
+
 	}
+*/
+
+	/*
+	 * Add all current autoplay sounds in both players to the chain.  If a sound is
+	 * common to both players, don't pan it; otherwise pan it to that player's side.
+	 */
+	int iNumTracks = m_ndAutoKeysoundsOnly[GAMESTATE->m_MasterPlayerNumber].GetNumTracks();
+	for( int t = 0; t < iNumTracks; t++ )
+	{
+		int iRow = 0;
+		while(1)
+		{
+			/* Find the next row that either player has a note on. */
+			int iNextRow = 999999999;
+			FOREACH_EnabledPlayer(pn)
+			{
+				int iNextRowForPlayer = iRow;
+				if( m_ndAutoKeysoundsOnly[pn].GetNextTapNoteRowForTrack( t, iNextRowForPlayer ) )
+					iNextRow = min( iNextRow, iNextRowForPlayer );
+			}
+
+			if( iNextRow == 999999999 )
+				break;
+			iRow = iNextRow;
+
+			TapNote tn[NUM_PLAYERS];
+			FOREACH_EnabledPlayer(pn)
+				tn[pn] = m_ndAutoKeysoundsOnly[pn].GetTapNote( t, iRow );
+
+			/* Do all enabled players have the same note here?  (Having no note at all
+			 * counts as having a different note.) */
+			bool bSoundIsGlobal = true;
+			{
+				PlayerNumber pn = GetNextEnabledPlayer((PlayerNumber)-1);
+				const TapNote t = tn[pn];
+				pn = GetNextEnabledPlayer(pn);
+				while( pn != PLAYER_INVALID )
+				{
+					if( tn[pn].type != TapNote::autoKeysound || tn[pn].bKeysound != t.bKeysound )
+						bSoundIsGlobal = false;
+					pn = GetNextEnabledPlayer(pn);
+				}
+			}
+
+			FOREACH_EnabledPlayer(pn)
+			{
+				if( tn[pn] == TAP_EMPTY )
+					continue;
+
+				ASSERT( tn[pn].type == TapNote::autoKeysound );
+				if( tn[pn].bKeysound )
+				{
+					CString sKeysoundFilePath = sSongDir + pSong->m_vsKeysoundFile[tn[pn].iKeysoundIndex];
+					float fSeconds = pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(iRow) );
+
+					float fPan = 0;
+					if( !bSoundIsGlobal )
+						fPan = (pn == PLAYER_1)? -1.0f:+1.0f;
+					pChain->AddSound( sKeysoundFilePath, fSeconds, fPan );
+				}
+			}
+		}		
+	}
+
+	pChain->Finish();
+
+	m_sSound.LoadSoundReader( pChain );
 }
 
 void AutoKeysounds::Update( float fDelta )
@@ -27,6 +111,7 @@ void AutoKeysounds::Update( float fDelta )
 	//
 	// Play keysounds for crossed rows.
 	//
+/*
 	bool bCrossedABeat = false;
 	{
 		float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
@@ -59,6 +144,7 @@ void AutoKeysounds::Update( float fDelta )
 
 		iRowLastCrossed = iRowNow;
 	}
+*/
 }
 
 /*

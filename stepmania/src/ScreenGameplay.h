@@ -177,7 +177,7 @@ protected:
 	bool			m_bDemonstration;
 
 	RageSound		m_soundAssistTick;
-	RageSound		m_soundMusic;
+	RageSound		*m_pSoundMusic;
 
 	BeginnerHelper	m_BeginnerHelper;
 

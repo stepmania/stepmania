@@ -12,10 +12,13 @@ class AutoKeysounds
 public:
 	void Load( PlayerNumber pn, const NoteData& ndAutoKeysoundsOnly );
 	void Update( float fDelta );
-	
+	void FinishLoading();
+	RageSound *GetSound() { return &m_sSound; }
+
 protected:	
 	NoteData	m_ndAutoKeysoundsOnly[NUM_PLAYERS];
 	vector<RageSound> m_vKeysounds;
+	RageSound m_sSound;
 };
 
 #endif

@@ -95,6 +95,8 @@ void ScreenGameplay::Init()
 	else
 		LIGHTSMAN->SetLightsMode( LIGHTSMODE_GAMEPLAY );
 
+	m_pSoundMusic = NULL;
+
 	/* We do this ourself. */
 	SOUND->HandleSongTimer( false );
 
@@ -782,7 +784,7 @@ ScreenGameplay::~ScreenGameplay()
 		SAFE_DELETE( m_pInventory[p] );
 	}
 	SAFE_DELETE( m_pCombinedLifeMeter );
-	m_soundMusic.StopPlaying();
+	m_pSoundMusic->StopPlaying();
 
 	m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 
@@ -984,6 +986,9 @@ void ScreenGameplay::LoadNextSong()
 			GAMESTATE->m_PlayerController[p] = PC_HUMAN;
 	}
 
+	m_AutoKeysounds.FinishLoading();
+	m_pSoundMusic = m_AutoKeysounds.GetSound();
+
 	m_textSongTitle.SetText( GAMESTATE->m_pCurSong->m_sMainTitle );
 
 	/* XXX: set it to the current BPM, not the range */
@@ -1035,8 +1040,6 @@ void ScreenGameplay::LoadNextSong()
 	if( GAMESTATE->m_pCurSong->HasLyrics()  )
 		LL.LoadFromLRCFile(GAMESTATE->m_pCurSong->GetLyricsPath(), *GAMESTATE->m_pCurSong);
 
-	
-	m_soundMusic.Load( GAMESTATE->m_pCurSong->GetMusicPath() );
 	
 	/* Set up song-specific graphics. */
 	
@@ -1143,7 +1146,7 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 	//used for syncing up songs.
 	NSMAN->StartRequest(1); 
 
-	m_soundMusic.Play( &p );
+	m_pSoundMusic->Play( &p );
 
 	/* Make sure GAMESTATE->m_fMusicSeconds is set up. */
 	GAMESTATE->m_fMusicSeconds = -5000;
@@ -1224,11 +1227,11 @@ void ScreenGameplay::PlayAnnouncer( CString type, float fSeconds )
 
 void ScreenGameplay::UpdateSongPosition( float fDeltaTime )
 {
-	if( !m_soundMusic.IsPlaying() )
+	if( !m_pSoundMusic->IsPlaying() )
 		return;
 
 	RageTimer tm;
-	const float fSeconds = m_soundMusic.GetPositionSeconds( NULL, &tm );
+	const float fSeconds = m_pSoundMusic->GetPositionSeconds( NULL, &tm );
 	const float fAdjust = SOUND->GetFrameTimingAdjustment( fDeltaTime );
 	GAMESTATE->UpdateSongPosition( fSeconds+fAdjust, GAMESTATE->m_pCurSong->m_Timing, tm+fAdjust );
 }
@@ -1717,7 +1720,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			 * We're doing #3.  I'm not sure which is best.
 			 */
 			
-			m_soundMusic.StopPlaying();
+			m_pSoundMusic->StopPlaying();
 			m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 
 			this->ClearMessageQueue();
@@ -2312,7 +2315,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 	case SM_BeginFailed:
 		m_DancingState = STATE_OUTRO;
-		m_soundMusic.StopPlaying();
+		m_pSoundMusic->StopPlaying();
 		m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 		TweenOffScreen();
 		m_Failed.StartTransitioning( SM_GoToScreenAfterFail );
@@ -2385,7 +2388,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		}
 		break;
 	case SM_StopMusic:
-		m_soundMusic.Stop();
+		m_pSoundMusic->Stop();
 		break;
 	}
 }
