@@ -795,6 +795,20 @@ void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, c
 	UpdateTextInfo();
 }
 
+static void ShiftToRightSide( int &iCol, int iNumTracks )
+{
+	switch( GAMESTATE->GetCurrentStyle()->m_StyleType )
+	{
+	case ONE_PLAYER_ONE_SIDE:
+		break;
+	case TWO_PLAYERS_TWO_SIDES:
+	case ONE_PLAYER_TWO_SIDES:
+		iCol += iNumTracks/2;
+		break;
+	default:
+		ASSERT(0);
+	}
+}
 
 void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, EditButton EditB )
 {
@@ -830,7 +844,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 			// Alt + number = input to right half
 			if( EditIsBeingPressed(EDIT_BUTTON_RIGHT_SIDE) )
-				iCol += m_NoteDataEdit.GetNumTracks()/2;
+				ShiftToRightSide( iCol, m_NoteDataEdit.GetNumTracks() );
 
 
 			const float fSongBeat = GAMESTATE->m_fSongBeat;
@@ -949,7 +963,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 				// Ctrl + number = input to right half
 				if( EditIsBeingPressed(EDIT_BUTTON_RIGHT_SIDE) )
-					iCol += m_NoteDataEdit.GetNumTracks()/2;
+					ShiftToRightSide( iCol, m_NoteDataEdit.GetNumTracks() );
 
 				if( iCol >= m_NoteDataEdit.GetNumTracks() )
 					continue;	// skip
