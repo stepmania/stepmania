@@ -166,12 +166,11 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 				{
 				case 0:
 				case 3:
-					// do shuffle
-					NoteDataUtil::Turn( *this, STEPS_TYPE_DANCE_SINGLE, NoteDataUtil::mirror);
+					NoteDataUtil::Turn( *this, STEPS_TYPE_DANCE_SINGLE, NoteDataUtil::left);
 					break;
 				case 1:
 				case 2:
-					// don't shuffle
+					NoteDataUtil::Turn( *this, STEPS_TYPE_DANCE_SINGLE, NoteDataUtil::right);
 					break;
 				default:
 					ASSERT(0);

@@ -131,6 +131,7 @@ public:
 	CString			GetStageText() const;
 	void			GetAllStageTexts( CStringArray &out ) const;
 	int				GetCourseSongIndex() const;
+	CString			GetPlayerDisplayName( PlayerNumber pn ) const;
 
 
 	//

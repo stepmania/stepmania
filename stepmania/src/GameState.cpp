@@ -42,6 +42,7 @@
 #include <ctime>
 
 #define DEFAULT_MODIFIERS		THEME->GetMetric( "Common","DefaultModifiers" )
+#define DEFAULT_CPU_MODIFIERS	THEME->GetMetric( "Common","DefaultCpuModifiers" )
 #define DIFFICULTIES_TO_SHOW	THEME->GetMetric( "Common","DifficultiesToShow" )
 
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
@@ -168,7 +169,7 @@ void GameState::Reset()
 	}
 	m_SongOptions.Init();
 	
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber(p)
 	{
 		// I can't think of a good reason to have both game-specific
 		// default mods and theme specific default mods.  We should choose 
@@ -177,11 +178,11 @@ void GameState::Reset()
 		// The theme setting is for eg. BM being reverse by default.  (This
 		// could be done in the title menu ModeChoice, but then it wouldn't
 		// affect demo, and other non-gameplay things ...) -glenn
-		ApplyModifiers( (PlayerNumber)p, DEFAULT_MODIFIERS );
-		ApplyModifiers( (PlayerNumber)p, PREFSMAN->m_sDefaultModifiers );
+		ApplyModifiers( p, DEFAULT_MODIFIERS );
+		ApplyModifiers( p, PREFSMAN->m_sDefaultModifiers );
 	}
 
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber(p)
 	{
 		if( PREFSMAN->m_ShowDancingCharacters == PrefsManager::CO_RANDOM)
 			m_pCurCharacters[p] = GetRandomCharacter();
@@ -190,7 +191,7 @@ void GameState::Reset()
 		ASSERT( m_pCurCharacters[p] );
 	}
 
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber(p)
 	{
 		m_fSuperMeterGrowthScale[p] = 1;
 		m_iCpuSkill[p] = 5;
@@ -275,7 +276,10 @@ void GameState::PlayersFinalized()
 			m_pCurSong = pProfile->m_pLastSong;
 	}
 
-
+	FOREACH_CpuPlayer( pn )
+	{
+		ApplyModifiers( pn, DEFAULT_CPU_MODIFIERS );
+	}
 }
 
 /* This data is added to each player profile, and to the machine profile per-player. */
@@ -691,6 +695,23 @@ int GameState::GetCourseSongIndex() const
 		if( IsPlayerEnabled(p) )
 			iSongIndex = max( iSongIndex, g_CurStageStats.iSongsPlayed[p]-1 );
 	return iSongIndex;
+}
+
+CString GameState::GetPlayerDisplayName( PlayerNumber pn ) const
+{
+	ASSERT( IsPlayerEnabled(pn) );
+	const CString defaultnames[NUM_PLAYERS] = { "PLAYER 1", "PLAYER 2" };
+	if( IsHumanPlayer(pn) )
+	{
+		if( !PROFILEMAN->GetPlayerName(pn).empty() )
+			return PROFILEMAN->GetPlayerName(pn);
+		else
+			return defaultnames[pn];
+	}
+	else
+	{
+		return "CPU";
+	}
 }
 
 bool GameState::PlayersCanJoin() const

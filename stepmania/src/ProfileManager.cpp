@@ -224,11 +224,7 @@ const Profile* ProfileManager::GetProfile( PlayerNumber pn ) const
 CString ProfileManager::GetPlayerName( PlayerNumber pn ) const
 {
 	const Profile *prof = GetProfile( pn );
-	if( prof )
-		return prof->GetDisplayName();
-
-	const char *names[NUM_PLAYERS] = { "PLAYER 1", "PLAYER 2" };
-	return names[pn];
+	return prof ? prof->GetDisplayName() : "";
 }
 
 

@@ -529,7 +529,7 @@ void ScreenGameplay::Init()
 	m_sprCourseSongNumber.SetName( "CourseSongNumber" );
 	SET_XY( m_sprCourseSongNumber );
 	
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_EnabledPlayer(p)
 	{
 		m_textCourseSongNumber[p].LoadFromNumbers( THEME->GetPathToN("ScreenGameplay song num") );
 		m_textCourseSongNumber[p].SetShadowLength( 0 );
@@ -542,17 +542,14 @@ void ScreenGameplay::Init()
 		{
 			m_textPlayerName[p].LoadFromFont( THEME->GetPathToF("ScreenGameplay player") );
 			m_textPlayerName[p].SetName( ssprintf("PlayerNameP%i",p+1) );
-			m_textPlayerName[p].SetText( PROFILEMAN->GetPlayerName((PlayerNumber)p) );
+			m_textPlayerName[p].SetText( GAMESTATE->GetPlayerDisplayName((PlayerNumber)p) );
 			SET_XY( m_textPlayerName[p] );
 			this->AddChild( &m_textPlayerName[p] );
 		}
 	}
 
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_EnabledPlayer(p)
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
-			continue;	// skip
-
 		m_textStepsDescription[p].LoadFromFont( THEME->GetPathToF("ScreenGameplay StepsDescription") );
 		m_textStepsDescription[p].SetName( ssprintf("StepsDescriptionP%i",p+1) );
 		SET_XY( m_textStepsDescription[p] );
