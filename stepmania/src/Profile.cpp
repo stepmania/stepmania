@@ -556,6 +556,10 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 		xml.AppendChild( SaveAwardsCreateNode() );
 		xml.AppendChild( SaveLastScoresCreateNode() );
 		bool bSaved = xml.SaveToFile(fn);
+		
+		// Update file cache, or else IsAFile in CryptManager won't see this new file.
+		FILEMAN->FlushDirCache( sDir );
+		
 		if( bSaved && bSignData )
 		{
 			CString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
