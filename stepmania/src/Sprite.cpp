@@ -46,9 +46,6 @@ RageTextureID Sprite::SongBGTexture( RageTextureID ID )
 	 * ScreenEditMenu) one at a time, and we don't want to have hundreds of banners loaded at once. */
 	ID.Policy = RageTextureID::TEX_VOLATILE;
 
-	// Don't we want to dither 16 bit textures at least?
-	/* This was changed with the commit message "runs on Xbox", so I don't know
-	 * why it was changed; it should definitely be on. */
 	ID.bDither = true;
 
 	return ID;
@@ -58,7 +55,17 @@ RageTextureID Sprite::SongBannerTexture( RageTextureID ID )
 {
 	/* Song banners often have HOT PINK color keys. */
 	ID.bHotPinkColorKey = true;
-	ID.bDither = true;
+
+	/* Ignore the texture color depth preference and always use 32-bit textures
+	 * if possible.  Banners are loaded while moving the wheel, so we want it to
+	 * be as fast as possible. */
+	ID.iColorDepth = 32;
+
+	/* If we don't support RGBA8 (and will probably fall back on RGBA4), we're probably
+	 * on something very old and slow, so let's opt for banding instead of slowing things
+	 * down further by dithering. */
+	// ID.bDither = true;
+
 	ID.Policy = RageTextureID::TEX_VOLATILE;
 
 	return ID;
