@@ -585,9 +585,15 @@ void Actor::Command( CString sCommandString )
 		else if( sName=="xoffset" )			SetX( GetX()+fParam(0) );
 		else if( sName=="yoffset" )			SetY( GetY()+fParam(0) );
 		else if( sName=="zoom" )			SetZoom( fParam(0) );
-		else if( sName=="zoomx" )			SetZoomY( fParam(0) );
+		else if( sName=="zoomx" )			SetZoomX( fParam(0) );
 		else if( sName=="zoomy" )			SetZoomY( fParam(0) );
+		else if( sName=="zoomtowidth" )		ZoomToWidth( fParam(0) );
+		else if( sName=="zoomtoheight" )	ZoomToHeight( fParam(0) );
 		else if( sName=="diffuse" )			SetDiffuse( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );
+		else if( sName=="diffuseleftedge" )		SetDiffuseLeftEdge( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );
+		else if( sName=="diffuserightedge" )	SetDiffuseRightEdge( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );
+		else if( sName=="diffusetopedge" )		SetDiffuseTopEdge( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );
+		else if( sName=="diffusebottomedge" )	SetDiffuseBottomEdge( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );
 		else if( sName=="glow" )			SetGlow( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );
 		else if( sName=="rotationx" )		SetRotationX( fParam(0) );
 		else if( sName=="rotationy" )		SetRotationY( fParam(0) );

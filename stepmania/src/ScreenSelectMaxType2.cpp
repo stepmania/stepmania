@@ -328,7 +328,7 @@ void ScreenSelectMaxType2::MenuStart( PlayerNumber pn )
 
 
 	// check to see if everyone has chosen
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( GAMESTATE->IsPlayerEnabled((PlayerNumber)p)  &&  m_bChosen[p] == false )
 			return;

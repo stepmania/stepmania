@@ -947,6 +947,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\Transition.h">
 			</File>
 			<File
+				RelativePath="TransitionBGAnimation.cpp">
+			</File>
+			<File
+				RelativePath="TransitionBGAnimation.h">
+			</File>
+			<File
 				RelativePath="TransitionBackWipe.cpp">
 			</File>
 			<File

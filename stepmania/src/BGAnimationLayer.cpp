@@ -673,7 +673,6 @@ void BGAnimationLayer::Update( float fDeltaTime )
 
 			for( int x=0; x<m_iNumTilesWide; x++ )
 			{
-				printf( "fY: " );
 				for( int y=0; y<m_iNumTilesHigh; y++ )
 				{
 					int i = y*m_iNumTilesWide + x;
@@ -693,12 +692,9 @@ void BGAnimationLayer::Update( float fDeltaTime )
 					fX -= m_fTilesSpacingX/2;
 					fY -= m_fTilesSpacingY/2;
 					
-					printf( "%f, ", fY );
-
 					m_Sprites[i].SetX( fX );
 					m_Sprites[i].SetY( fY );
 				}
-				printf( "\n" );
 			}
 /*			
 		for( i=0; i<m_iNumSprites; i++ )

@@ -37,9 +37,10 @@ public:
 
 	virtual void SetDiffuse( const RageColor &c );
 
-
 	void GainingFocus();
 	void LosingFocus();
+
+	float GetLengthSeconds() { return m_fLengthSeconds; }
 
 protected:
 	vector<BGAnimationLayer*> m_Layers;
