@@ -714,7 +714,7 @@ void SymLookup( const void *ptr, char *buf )
 	char tmp[512];
 	if( VDDebugInfoLookupRVA(&g_debugInfo, (unsigned int)ptr, tmp, sizeof(tmp)) >= 0 )
 	{
-		wsprintf( buf, "%08p: %s", ptr, Demangle(tmp) );
+		wsprintf( buf, "%08x: %s", ptr, Demangle(tmp) );
 		return;
 	}
 
