@@ -46,7 +46,10 @@ ScreenSelectGroup.cpp ScreenSelectGroup.h ScreenSelectMaster.cpp ScreenSelectMas
 ScreenSelectMusic.cpp ScreenSelectMusic.h ScreenSelectStyle.cpp ScreenSelectStyle.h ScreenSongOptions.cpp ScreenSongOptions.h \
 ScreenSoundOptions.cpp ScreenSoundOptions.h ScreenStage.cpp ScreenStage.h ScreenStyleSplash.cpp ScreenStyleSplash.h \
 ScreenTest.cpp ScreenTest.h ScreenTestFonts.cpp ScreenTestFonts.h ScreenTestSound.cpp ScreenTestSound.h \
-ScreenTextEntry.cpp ScreenTextEntry.h ScreenTitleMenu.cpp ScreenTitleMenu.h ScreenUnlock.cpp ScreenUnlock.h
+ScreenTextEntry.cpp ScreenTextEntry.h ScreenTitleMenu.cpp ScreenTitleMenu.h ScreenUnlock.cpp ScreenUnlock.h \
+ScreenOptionsMaster.cpp ScreenOptionsMaster.h ScreenOptionsMasterPrefs.cpp ScreenOptionsMasterPrefs.h \
+ScreenReloadSongs.cpp ScreenReloadSongs.h
+
 
 DataStructures = \
 BannerCache.cpp BannerCache.h Character.cpp Character.h CodeDetector.cpp CodeDetector.h Course.cpp Course.h \

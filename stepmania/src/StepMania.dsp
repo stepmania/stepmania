@@ -4571,6 +4571,44 @@ SOURCE=.\ScreenOptions.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenOptionsMaster.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenOptionsMaster.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenOptionsMasterPrefs.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenOptionsMasterPrefs.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenOptionsMenu.cpp
 
 !IF  "$(CFG)" == "StepMania - Win32 Debug"
@@ -4682,6 +4720,25 @@ SOURCE=.\ScreenRaveOptions.cpp
 # Begin Source File
 
 SOURCE=.\ScreenRaveOptions.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenReloadSongs.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenReloadSongs.h
 # End Source File
 # Begin Source File
 
