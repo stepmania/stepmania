@@ -265,6 +265,7 @@ RageTextureID BannerCache::LoadCachedBanner( CString BannerPath )
 	RageTexture *pTexture = new BannerTexture( ID, img, src_width, src_height );
 
 	TEXTUREMAN->RegisterTexture( ID, pTexture );
+	pTexture->m_Policy = RageTexture::TEX_VOLATILE;
 	TEXTUREMAN->UnloadTexture( pTexture );
 
 	return ID;
