@@ -53,10 +53,7 @@ protected:
 	map<CString,BGAnimation*> m_BGAnimations;
 	vector<BackgroundChange> m_aBGChanges;
 	int m_iCurBGChange;	// starts at 0 and increases to m_aBGSegments.size()-1
-	BGAnimation* GetCurrentBGA()
-	{
-		return m_BGAnimations[ m_aBGChanges[m_iCurBGChange].m_sBGName ];
-	}
+	BGAnimation* GetCurrentBGA();
 	BGAnimation* m_pFadingBGA;
 	float m_fSecsLeftInFade;
 

@@ -229,11 +229,17 @@ void Background::LoadFromSong( Song* pSong )
 
 
 	// Load random backgrounds
+	bool bLoadedAnyRandomBackgrounds = false;
 	{
 		for( int i=0; i<MAX_RANDOM_BACKGROUNDS; i++ )
 		{
 			CString sBGName = RANDOM_BACKGROUND[ i ];
-			m_BGAnimations[sBGName] = CreateRandomBGA();
+			BGAnimation *pTempBGA = CreateRandomBGA();
+			if( pTempBGA )
+			{
+				m_BGAnimations[sBGName] = pTempBGA;
+				bLoadedAnyRandomBackgrounds = true;
+			}
 		}
 	}
 
@@ -257,7 +263,10 @@ void Background::LoadFromSong( Song* pSong )
 				if( pTempBGA )
 					m_BGAnimations[sBGName] = pTempBGA;
 				else // the background was not found.  Use a random one instead
-					sBGName = RANDOM_BACKGROUND[ rand()%MAX_RANDOM_BACKGROUNDS ];
+					if( bLoadedAnyRandomBackgrounds )
+						sBGName = RANDOM_BACKGROUND[ rand()%MAX_RANDOM_BACKGROUNDS ];
+					else
+						sBGName = STATIC_BACKGROUND;
 			}
 			
 			m_aBGChanges.push_back( BackgroundChange(fStartBeat, sBGName) );
@@ -271,8 +280,11 @@ void Background::LoadFromSong( Song* pSong )
 		// change BG every 4 bars
 		for( float f=fFirstBeat; f<fLastBeat; f+=BEATS_PER_MEASURE*4 )
 		{
-			CString sBGName = RANDOM_BACKGROUND[ rand()%MAX_RANDOM_BACKGROUNDS ];
-			m_aBGChanges.push_back( BackgroundChange(f,sBGName) );
+			if( bLoadedAnyRandomBackgrounds )
+			{
+				CString sBGName = RANDOM_BACKGROUND[ rand()%MAX_RANDOM_BACKGROUNDS ];
+				m_aBGChanges.push_back( BackgroundChange(f,sBGName) );
+			}
 		}
 
 		// change BG every BPM change that is at the beginning of a measure
@@ -286,8 +298,11 @@ void Background::LoadFromSong( Song* pSong )
 			if( bpmseg.m_fStartBeat < fFirstBeat  || bpmseg.m_fStartBeat > fLastBeat )
 				continue;	// skip
 
-			CString sBGName = RANDOM_BACKGROUND[ rand()%MAX_RANDOM_BACKGROUNDS ];
-			m_aBGChanges.push_back( BackgroundChange(bpmseg.m_fStartBeat,sBGName) );
+			if( bLoadedAnyRandomBackgrounds )
+			{
+				CString sBGName = RANDOM_BACKGROUND[ rand()%MAX_RANDOM_BACKGROUNDS ];
+				m_aBGChanges.push_back( BackgroundChange(bpmseg.m_fStartBeat,sBGName) );
+			}
 		}
 	}
 
@@ -410,4 +425,11 @@ void Background::FadeOut()
 	m_quadBGBrightness.BeginTweening( 0.5f );
 	m_quadBGBrightness.SetTweenDiffuse( RageColor(0,0,0,1-0.5f) );
 
+}
+
+BGAnimation* Background::GetCurrentBGA()
+{
+	CString sBGName = m_aBGChanges[m_iCurBGChange].m_sBGName;
+	ASSERT( m_BGAnimations[ sBGName ] );
+	return m_BGAnimations[ sBGName ];
 }
