@@ -13,7 +13,7 @@
 
 
 #include "NoteField.h"
-#include "GrayArrow.h"
+#include "GrayArrowRow.h"
 #include "GhostArrowRow.h"
 
 
@@ -32,17 +32,9 @@ public:
 	void TapMine( int iCol, TapNoteScore score );
 	void HoldNote( int iCol );
 	void UpdateBars( int iCol );
-	int GetNumCols() { return m_iNumCols; };
 protected:
-	int m_iNumCols;
-
-	GrayArrow		m_GrayArrow[MAX_NOTE_TRACKS];
-
-	GhostArrow		m_GhostDim[MAX_NOTE_TRACKS];
-	GhostArrow		m_GhostBright[MAX_NOTE_TRACKS];
-	GhostArrow		m_GhostMine[MAX_NOTE_TRACKS];
-	HoldGhostArrow	m_HoldGhost[MAX_NOTE_TRACKS];
-
+	GrayArrowRow	m_GrayArrowRow;
+	GhostArrowRow	m_GhostArrowRow;
 };
 
 #endif
