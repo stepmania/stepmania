@@ -420,7 +420,7 @@ struct VideoCardDefaults
 			// drivers come with an ICD.  Also, the WinXP driver performance 
 			// is terrible and supports only 640.  The ATI driver is usable.
 			// -Chris
-		400,300,	// lower resolution for 60fps
+		320,240,	// lower resolution for 60fps.  In-box WinXP driver doesn't support 400x300.
 		16,16,16,
 		256,
 		0
