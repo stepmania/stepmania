@@ -50,7 +50,7 @@ public:
 	Course*			m_pCourse;
 	Song*			m_pSong;
 	RageColor		m_color;	// either text color or section background color
-	MusicStatusDisplay::IconType  m_IconType;
+	MusicStatusDisplay::Type  m_Type;
 };
 
 

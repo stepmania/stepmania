@@ -66,7 +66,7 @@ WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, const CString &sSe
 	m_sSectionName = sSectionName;
 	m_pCourse = pCourse;
 	m_color = color;
-	m_IconType = MusicStatusDisplay::none;
+	m_Type = MusicStatusDisplay::none;
 }
 
 
@@ -127,7 +127,7 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 	this->m_pCourse			= pWID->m_pCourse;
 	this->m_pSong			= pWID->m_pSong;
 	this->m_color			= pWID->m_color;
-	this->m_IconType		= pWID->m_IconType; */
+	this->m_Type		= pWID->m_Type; */
 
 
 	// init type specific stuff
@@ -163,7 +163,7 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 		{
 			m_TextBanner.LoadFromSong( data->m_pSong );
 			m_TextBanner.SetDiffuse( data->m_color );
-			m_MusicStatusDisplay.SetType( data->m_IconType );
+			m_MusicStatusDisplay.SetType( data->m_Type );
 			RefreshGrades();
 		}
 		break;
@@ -671,7 +671,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 
 		bool bIsEasy = pSong->IsEasy( GAMESTATE->GetCurrentStyleDef()->m_NotesType ); 
 		WheelItemData& WID = arrayWheelItemDatas[i];
-		WID.m_IconType = bIsEasy ? MusicStatusDisplay::easy : MusicStatusDisplay::none;
+		WID.m_Type = bIsEasy ? MusicStatusDisplay::easy : MusicStatusDisplay::none;
 	}
 
 	if( so == SORT_MOST_PLAYED )
@@ -680,7 +680,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		for( i=0; i< min(3u,arrayWheelItemDatas.size()); i++ )
 		{
 			WheelItemData& WID = arrayWheelItemDatas[i];
-			WID.m_IconType = MusicStatusDisplay::IconType(MusicStatusDisplay::crown1 + i);
+			WID.m_Type = MusicStatusDisplay::Type(MusicStatusDisplay::crown1 + i);
 		}
 	}
 
