@@ -277,17 +277,13 @@ void ScreenSelectMode::SetCharacters()
 			GAMESTATE->GetCharacters( apCharactersToUse );
 		}
 	}
-	for(int pn=0; pn<NUM_PLAYERS; pn++)
+	FOREACH_EnabledPlayer( pn )
 	{
-		if(GAMESTATE->IsPlayerEnabled(pn))
+		if(ENABLE_CHAR_SELECT && m_iCurrentChar[pn] != -1)
 		{
-			if(ENABLE_CHAR_SELECT && m_iCurrentChar[pn] != -1)
-			{
-				Character* pChar = apCharactersToUse[m_iCurrentChar[pn]];
-				GAMESTATE->m_pCurCharacters[pn] = pChar;
-			}
+			Character* pChar = apCharactersToUse[m_iCurrentChar[pn]];
+			GAMESTATE->m_pCurCharacters[pn] = pChar;
 		}
-
 	}
 }
 
@@ -345,14 +341,11 @@ void ScreenSelectMode::Update( float fDelta )
 void ScreenSelectMode::DrawPrimitives()
 {
 	ScreenSelect::DrawPrimitives();
-	for(int pn=0; pn<NUM_PLAYERS; pn++)
+	FOREACH_EnabledPlayer( pn )
 	{
-		if(GAMESTATE->IsPlayerEnabled(pn))
+		if(ENABLE_CHAR_SELECT)
 		{
-			if(ENABLE_CHAR_SELECT)
-			{
-				m_CurChar[pn].Draw();
-			}
+			m_CurChar[pn].Draw();
 		}
 	}
 }

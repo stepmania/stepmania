@@ -75,16 +75,13 @@ public:
 
 	void GetPlayerInfo( PlayerNumber pn, bool& bIsEnabledOut, bool& bIsHumanOut );
 	bool IsPlayerEnabled( PlayerNumber pn ) const;
-	bool IsPlayerEnabled( int p ) const { return IsPlayerEnabled( (PlayerNumber)p ); };
 	int	GetNumPlayersEnabled() const;
 	bool PlayerUsingBothSides() const;
 
 	bool IsHumanPlayer( PlayerNumber pn ) const;
-	bool IsHumanPlayer( int p ) const { return IsHumanPlayer( (PlayerNumber)p ); };
 	int GetNumHumanPlayers() const;
 	PlayerNumber GetFirstHumanPlayer() const;
 	bool IsCpuPlayer( PlayerNumber pn ) const;
-	bool IsCpuPlayer( int p ) const { return IsCpuPlayer( (PlayerNumber)p ); };
 	bool AnyPlayersAreCpu() const;
 
 	void GetCharacters( vector<Character*> &apCharactersOut );

@@ -22,18 +22,17 @@ ScreenEndlessBreak::ScreenEndlessBreak( CString sName ) : Screen( sName )
 				m_sprBreakPicture.Load( THEME->GetPathToG("Common fallback takingabreak") );
 		else if( GAMESTATE->GetNumPlayersEnabled() > 1 ) // More than 1 player is present.
 		{
-			int PlayerToUse = 999;	/* If this was 0 by default, the first player would
-										always be selected. Make it an insane number so
-										we always generate a random player. */
-			while (!GAMESTATE->IsPlayerEnabled(PlayerToUse))
+			PlayerNumber pn;
+			do
 			{
-				PlayerToUse = (int)(rand()*NUM_PLAYERS);	// Is there a danger of this becoming an endless loop??
-				if( (GAMESTATE->IsPlayerEnabled(PlayerToUse)) && (GAMESTATE->m_pCurCharacters[PlayerToUse] != NULL) )
+				pn = (PlayerNumber)(rand()%NUM_PLAYERS);
+				if( GAMESTATE->IsPlayerEnabled(pn) && (GAMESTATE->m_pCurCharacters[pn] != NULL) )
 				{
-					m_sprBreakPicture.LoadTABreakFromCharacter( GAMESTATE->m_pCurCharacters[PlayerToUse] );
+					m_sprBreakPicture.LoadTABreakFromCharacter( GAMESTATE->m_pCurCharacters[pn] );
 					break;
 				}
 			}
+			while( !GAMESTATE->IsPlayerEnabled(pn) );
 		}
 	}
 	else	// Characters not enabled.

@@ -248,7 +248,7 @@ bool StageStats::OnePassed() const
 bool StageStats::AllFailed() const
 {
 	FOREACH_PlayerNumber( pn )
-		if( GAMESTATE->IsPlayerEnabled(PlayerNumber(pn)) )
+		if( GAMESTATE->IsPlayerEnabled(pn) )
 			if( !bFailed[pn] )
 				return false;
 	return true;
@@ -462,24 +462,16 @@ float StageStats::GetPercentageOfTaps( PlayerNumber pn, TapNoteScore tns ) const
 static Grade GetBestGrade()
 {
 	Grade g = NUM_GRADES;
-	for( unsigned pn=0; pn<NUM_PLAYERS; ++pn )
-	{
-		if( !GAMESTATE->IsPlayerEnabled(pn) )
-			continue;
-		g = min( g, g_CurStageStats.GetGrade( (PlayerNumber)pn ) );
-	}
+	FOREACH_EnabledPlayer( pn )
+		g = min( g, g_CurStageStats.GetGrade( pn ) );
 	return g;
 }
 
 static Grade GetWorstGrade()
 {
 	Grade g = GRADE_TIER_1;
-	for( unsigned pn=0; pn<NUM_PLAYERS; ++pn )
-	{
-		if( !GAMESTATE->IsPlayerEnabled(pn) )
-			continue;
-		g = max( g, g_CurStageStats.GetGrade( (PlayerNumber)pn ) );
-	}
+	FOREACH_EnabledPlayer( pn )
+		g = max( g, g_CurStageStats.GetGrade( pn ) );
 	return g;
 }
 
@@ -516,7 +508,7 @@ Grade GetGrade( int n, PlayerNumber pn )
 bool OneGotGrade( int n, Grade g )
 {
 	FOREACH_HumanPlayer( pn )
-		if( GetGrade( n, (PlayerNumber)pn ) == g )
+		if( GetGrade( n, pn ) == g )
 			return true;
 
 	return false;

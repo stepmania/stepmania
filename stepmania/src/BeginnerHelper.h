@@ -17,15 +17,15 @@ public:
 	bool Initialize( int iDancePadType );
 	bool IsInitialized() { return m_bInitialized; }
 	static bool CanUse();
-	void AddPlayer( int pn, NoteData *pSteps );
-	void ShowStepCircle( int pn, int CSTEP );
+	void AddPlayer( PlayerNumber pn, NoteData *pSteps );
+	void ShowStepCircle( PlayerNumber pn, int CSTEP );
 	bool	m_bShowBackground;
 
 	void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
 protected:
-	void Step( int pn, int CSTEP );
+	void Step( PlayerNumber pn, int CSTEP );
 
 	NoteData m_NoteData[NUM_PLAYERS];
 	bool m_bPlayerEnabled[NUM_PLAYERS];

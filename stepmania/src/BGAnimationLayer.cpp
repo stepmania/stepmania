@@ -436,13 +436,16 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 		int player;
 		if( ini.GetValue( sLayer, "Player", player ) )
 		{
-			if( player > 0 && player <= NUM_PLAYERS )
+			PlayerNumber pn = (PlayerNumber)(player-1);
+			if( pn>=0 && pn<NUM_PLAYERS )
 			{
-				if( !GAMESTATE->IsPlayerEnabled(player-1) )
+				if( !GAMESTATE->IsPlayerEnabled(pn) )
 					return;
-			} else
-				LOG->Warn("BGA \"%s\" %s has an invalid Player field",
-					sAniDir.c_str(), sLayer.c_str() );
+			}
+			else
+			{
+				LOG->Warn("BGA \"%s\" %s has an invalid Player field", sAniDir.c_str(), sLayer.c_str() );
+			}
 		}
 	}
 

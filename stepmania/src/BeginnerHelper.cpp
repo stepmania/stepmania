@@ -71,7 +71,7 @@ BeginnerHelper::~BeginnerHelper()
 {
 }
 
-void BeginnerHelper::ShowStepCircle( int pn, int CSTEP )
+void BeginnerHelper::ShowStepCircle( PlayerNumber pn, int CSTEP )
 {
 	int	isc=0;	// Save OR issues within array boundries.. it's worth the extra few bytes of memory.
 	switch(CSTEP)
@@ -89,7 +89,7 @@ void BeginnerHelper::ShowStepCircle( int pn, int CSTEP )
 	m_sStepCircle[pn][isc].SetZoom(0);
 }
 
-void BeginnerHelper::AddPlayer( int pn, NoteData *pSteps )
+void BeginnerHelper::AddPlayer( PlayerNumber pn, NoteData *pSteps )
 {
 	ASSERT(!m_bInitialized);
 	ASSERT(pSteps != NULL);
@@ -268,7 +268,7 @@ void BeginnerHelper::DrawPrimitives()
 	}
 }
 
-void BeginnerHelper::Step( int pn, int CSTEP )
+void BeginnerHelper::Step( PlayerNumber pn, int CSTEP )
 {
 	m_pDancer[pn]->StopTweening();
 	m_pDancer[pn]->SetRotationY(0);	// Make sure we're not still inside of a JUMPUD tween.
@@ -324,12 +324,8 @@ void BeginnerHelper::Update( float fDeltaTime )
 
 	// the row we want to check on this update
 	int iCurRow = BeatToNoteRowNotRounded(GAMESTATE->m_fSongBeat + 0.4f);
-	for(int pn=0; pn<NUM_PLAYERS; pn++)
+	FOREACH_EnabledPlayer( pn )
 	{
-		// Skip if not enabled
-		if(!m_bPlayerEnabled[pn])
-			continue;
-		
 		for(int iRow=m_iLastRowChecked; iRow<iCurRow; iRow++)
 		{
 			// Check if there are any notes at all on this row.. If not, save scanning.
@@ -357,12 +353,9 @@ void BeginnerHelper::Update( float fDeltaTime )
 	m_sFlash.Update(fDeltaTime);
 
 	float beat = (fDeltaTime*GAMESTATE->m_fCurBPS);
-	for(int pu=0; pu<NUM_PLAYERS; pu++)
+	// If this is not a human player, the dancer is not shown
+	FOREACH_HumanPlayer( pu )
 	{
-		// If this is not a human player, the dancer is not shown
-		if(!GAMESTATE->IsHumanPlayer(pu))
-			continue;
-		
 		// Update dancer's animation and StepCircles
 		m_pDancer[pu]->Update( beat );
 		for(int scu=0; scu<NUM_PLAYERS; scu++)

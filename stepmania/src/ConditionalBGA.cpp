@@ -372,18 +372,15 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 		bool foundmatchingdiff=false;
 		for(unsigned d=0;d<info.difficulties.size();d++)
 		{
-			for(unsigned pn=0; pn<NUM_PLAYERS;pn++)
+			FOREACH_EnabledPlayer( pn )
 			{
-				if(GAMESTATE->IsPlayerEnabled(pn))
+				if(GAMESTATE->m_pCurSteps[pn] != NULL)
 				{
-					if(GAMESTATE->m_pCurSteps[pn] != NULL)
+					if(GAMESTATE->m_pCurSteps[pn]->GetDifficulty() == info.difficulties[d])
 					{
-						if(GAMESTATE->m_pCurSteps[pn]->GetDifficulty() == info.difficulties[d])
-						{
-							foundmatchingdiff = true;
-							LOG->Info("Found Valid Difficulty");
-					
-						}
+						foundmatchingdiff = true;
+						LOG->Info("Found Valid Difficulty");
+				
 					}
 				}
 			}
@@ -395,53 +392,48 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 	{
 		PlayerOptions po = info.disallowedpo;
 		bool bModsValid = true;
-		for(unsigned pn=0;pn<NUM_PLAYERS;pn++)
+		FOREACH_EnabledPlayer( pn )
 		{	
-			if(GAMESTATE->IsPlayerEnabled(pn))
+			unsigned md;
+			for(md=0;md<PlayerOptions::NUM_ACCELS;md++)
 			{
-				unsigned md;
-				for(md=0;md<PlayerOptions::NUM_ACCELS;md++)
+				if(po.m_fAccels[md] != 0.0f && GAMESTATE->m_PlayerOptions[pn].m_fAccels[md] != 0.0f)
 				{
-					if(po.m_fAccels[md] != 0.0f && GAMESTATE->m_PlayerOptions[pn].m_fAccels[md] != 0.0f)
-					{
-						bModsValid=false;
-						LOG->Info("Found Invalid Accel Mod");
-					}
+					bModsValid=false;
+					LOG->Info("Found Invalid Accel Mod");
 				}
-				for(md=0;md<PlayerOptions::NUM_EFFECTS;md++)
+			}
+			for(md=0;md<PlayerOptions::NUM_EFFECTS;md++)
+			{
+				if(po.m_fEffects[md] != 0.0f && GAMESTATE->m_PlayerOptions[pn].m_fEffects[md] != 0.0f)
 				{
-					if(po.m_fEffects[md] != 0.0f && GAMESTATE->m_PlayerOptions[pn].m_fEffects[md] != 0.0f)
-					{
-						bModsValid=false;
-						LOG->Info("Found Invalid Effect Mod");
-					}
+					bModsValid=false;
+					LOG->Info("Found Invalid Effect Mod");
 				}
-				for(md=0;md<PlayerOptions::NUM_APPEARANCES;md++)
+			}
+			for(md=0;md<PlayerOptions::NUM_APPEARANCES;md++)
+			{
+				if(po.m_fAppearances[md] != 0.0f && GAMESTATE->m_PlayerOptions[pn].m_fAppearances[md] != 0.0f)
 				{
-					if(po.m_fAppearances[md] != 0.0f && GAMESTATE->m_PlayerOptions[pn].m_fAppearances[md] != 0.0f)
-					{
-						bModsValid=false;
-						LOG->Info("Found Invalid Appearance Mod");
-					}
+					bModsValid=false;
+					LOG->Info("Found Invalid Appearance Mod");
 				}
-				for(md=0;md<PlayerOptions::NUM_TURNS;md++)
+			}
+			for(md=0;md<PlayerOptions::NUM_TURNS;md++)
+			{
+				if(po.m_bTurns[md] != 0.0f && GAMESTATE->m_PlayerOptions[pn].m_bTurns[md] != 0.0f)
 				{
-					if(po.m_bTurns[md] != 0.0f && GAMESTATE->m_PlayerOptions[pn].m_bTurns[md] != 0.0f)
-					{
-						bModsValid=false;
-						LOG->Info("Found Invalid Turn Mod");
-					}
+					bModsValid=false;
+					LOG->Info("Found Invalid Turn Mod");
 				}
-				for(md=0;md<PlayerOptions::NUM_TRANSFORMS;md++)
+			}
+			for(md=0;md<PlayerOptions::NUM_TRANSFORMS;md++)
+			{
+				if(po.m_bTransforms[md] != 0.0f && GAMESTATE->m_PlayerOptions[pn].m_bTransforms[md] != 0.0f)
 				{
-					if(po.m_bTransforms[md] != 0.0f && GAMESTATE->m_PlayerOptions[pn].m_bTransforms[md] != 0.0f)
-					{
-						bModsValid=false;
-						LOG->Info("Found Invalid Transform Mod");
-					}
+					bModsValid=false;
+					LOG->Info("Found Invalid Transform Mod");
 				}
-
-
 			}
 		}
 		valid = bModsValid;
@@ -454,27 +446,24 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 		for(unsigned d=0;d<info.songmeters.size();d++)
 		{
 			LOG->Info("MeterRating: %d",info.songmeters[d]);
-			for(int pn=0;pn<NUM_PLAYERS;pn++)
+			FOREACH_EnabledPlayer( pn )
 			{
-				if(GAMESTATE->IsPlayerEnabled(pn))
-				{
-					if(GAMESTATE->m_pCurSteps[pn] != NULL)
-					{			
-						if(info.songmeters[d] < 0) // negative values stored mean we want to check a value greaterthan or equal to its negative
-						{
-							// first make it positive then check to see if the footrating is >= to it
-							int tmp = 0 - info.songmeters[d];
-							if(GAMESTATE->m_pCurSteps[pn]->GetMeter() >= tmp)
-							{
-								LOG->Info("Found Valid MeterRating");
-								foundmatchingmeter = true;
-							}
-						}
-						else if(GAMESTATE->m_pCurSteps[pn]->GetMeter() == info.songmeters[d])
+				if(GAMESTATE->m_pCurSteps[pn] != NULL)
+				{			
+					if(info.songmeters[d] < 0) // negative values stored mean we want to check a value greaterthan or equal to its negative
+					{
+						// first make it positive then check to see if the footrating is >= to it
+						int tmp = 0 - info.songmeters[d];
+						if(GAMESTATE->m_pCurSteps[pn]->GetMeter() >= tmp)
 						{
 							LOG->Info("Found Valid MeterRating");
 							foundmatchingmeter = true;
 						}
+					}
+					else if(GAMESTATE->m_pCurSteps[pn]->GetMeter() == info.songmeters[d])
+					{
+						LOG->Info("Found Valid MeterRating");
+						foundmatchingmeter = true;
 					}
 				}
 			}
@@ -509,15 +498,12 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 			{
 				LOG->Info("Checking Single Grade");
 				bool foundaplayerwithgrade = false;
-				for(unsigned pn=0; pn<NUM_PLAYERS;pn++)
+				FOREACH_EnabledPlayer( pn )
 				{
-					if(GAMESTATE->IsPlayerEnabled(pn))
+					if(g_CurStageStats.GetGrade(pn) == info.grades[0])
 					{
-						if(g_CurStageStats.GetGrade((PlayerNumber)pn) == info.grades[0])
-						{
-							LOG->Info("Found Valid Grade");
-							foundaplayerwithgrade = true;
-						}
+						LOG->Info("Found Valid Grade");
+						foundaplayerwithgrade = true;
 					}
 				}
 				foundmatchinggrades = foundaplayerwithgrade;
@@ -622,23 +608,21 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 		}
 		else if(info.cleared == CBGA_CSMAXCOMBO)
 		{
-			for(unsigned pn=0;pn<NUM_PLAYERS;pn++)
-				if(GAMESTATE->IsPlayerEnabled(pn))
-					if(g_CurStageStats.FullCombo((PlayerNumber)pn))
-					{
-						foundclearcond = true;
-						LOG->Info("MaxCombo Condition");
-					}
+			FOREACH_EnabledPlayer( pn )
+				if(g_CurStageStats.FullCombo((PlayerNumber)pn))
+				{
+					foundclearcond = true;
+					LOG->Info("MaxCombo Condition");
+				}
 		}
 		else if(info.cleared == CBGA_CSBROKECOMBO)
 		{
-			for(unsigned pn=0;pn<NUM_PLAYERS;pn++)
-				if(GAMESTATE->IsPlayerEnabled(pn))
-					if(!g_CurStageStats.FullCombo((PlayerNumber)pn))
-					{
-						LOG->Info("BrokenCombo Condition");
-						foundclearcond = true;
-					}
+			FOREACH_EnabledPlayer( pn )
+				if(!g_CurStageStats.FullCombo((PlayerNumber)pn))
+				{
+					LOG->Info("BrokenCombo Condition");
+					foundclearcond = true;
+				}
 		}
 
 		valid = foundclearcond;

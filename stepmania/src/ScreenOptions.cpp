@@ -307,11 +307,8 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 		if( row.m_bRowIsLong )
 		{
 			// init text
-			for( unsigned p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_HumanPlayer( p )
 			{
-				if( !GAMESTATE->IsHumanPlayer(p) )
-					continue;	// skip
-
 				BitmapText *bt = new BitmapText;
 				textItems.push_back( bt );
 
@@ -334,20 +331,15 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 			}
 
 			// init underlines
+			FOREACH_HumanPlayer( p )
 			{
-				for( unsigned p=0; p<NUM_PLAYERS; p++ )
-				{
-					if( !GAMESTATE->IsHumanPlayer(p) )
-						continue;	// skip
-
-					OptionsCursor *ul = new OptionsCursor;
-					row.m_Underline[p].push_back( ul );
-					ul->Load( (PlayerNumber)p, true );
-					int iWidth, iX, iY;
-					GetWidthXY( (PlayerNumber) p, r, c, iWidth, iX, iY );
-					ul->SetX( float(iX) );
-					ul->SetWidth( float(iWidth) );
-				}
+				OptionsCursor *ul = new OptionsCursor;
+				row.m_Underline[p].push_back( ul );
+				ul->Load( (PlayerNumber)p, true );
+				int iWidth, iX, iY;
+				GetWidthXY( (PlayerNumber) p, r, c, iWidth, iX, iY );
+				ul->SetX( float(iX) );
+				ul->SetWidth( float(iWidth) );
 			}
 		}
 
