@@ -19,6 +19,7 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 	f.PutLine( ssprintf( "#TITLETRANSLIT:%s;", out.m_sMainTitleTranslit.c_str() ) );
 	f.PutLine( ssprintf( "#SUBTITLETRANSLIT:%s;", out.m_sSubTitleTranslit.c_str() ) );
 	f.PutLine( ssprintf( "#ARTISTTRANSLIT:%s;", out.m_sArtistTranslit.c_str() ) );
+	f.PutLine( ssprintf( "#GENRE:%s;", out.m_sGenre.c_str() ) );
 	f.PutLine( ssprintf( "#CREDIT:%s;", out.m_sCredit.c_str() ) );
 	f.PutLine( ssprintf( "#BANNER:%s;", out.m_sBannerFile.c_str() ) );
 	f.PutLine( ssprintf( "#BACKGROUND:%s;", out.m_sBackgroundFile.c_str() ) );

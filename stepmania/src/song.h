@@ -111,6 +111,8 @@ public:
 	CString GetFullDisplayTitle() const;
 	CString GetFullTranslitTitle() const;
 
+	CString m_sGenre;
+
 	/* This is read and saved, but never actually used. */
 	CString	m_sCredit;
 
