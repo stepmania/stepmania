@@ -316,7 +316,7 @@ static void FlushGLErrors()
 		;
 }
 
-static AssertNoGLError()
+static void AssertNoGLError()
 {
 	GLenum error = glGetError();
 	if( error != GL_NO_ERROR )
@@ -1041,8 +1041,8 @@ public:
 		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
 		AssertNoGLError();
 
-		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, NULL );
-		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, NULL );
+		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
+		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, 0 );
 	}
 
 	~RageModelVertexArrayHWOGL()
@@ -1081,8 +1081,8 @@ public:
 		GLExt::glBufferDataARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_sizeTriangles*sizeof(msTriangle), m_pTriangles, GL_STATIC_DRAW_ARB );
 		AssertNoGLError();
 
-		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, NULL );
-		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, NULL );
+		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
+		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, 0 );
 	}
 	void Draw() const
 	{
@@ -1117,8 +1117,8 @@ public:
 		glDrawElements( GL_TRIANGLES, m_sizeTriangles*3, GL_UNSIGNED_SHORT, 0 );  //last 0 is offset in element-array
 		AssertNoGLError();
 
-		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, NULL );
-		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, NULL );
+		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
+		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, 0 );
 	}
 };
 
