@@ -151,46 +151,34 @@ int ResumeThread( int ThreadID )
  *
  * tid() is a PID (from getpid) or a TID (from gettid).  Note that this may have kernel compatibility
  * problems, because NPTL is new and its interactions with ptrace() aren't well-defined.
- * If we're on a non-NPTL system, tid is a regular PID. */
+ * If we're on a non-NPTL system, tid is a regular PID.
+ *
+ * This call leaves the given thread suspended, so the returned context doesn't become invalid.
+ * ResumeThread() can be used to resume a thread after this call. */
 bool GetThreadBacktraceContext( int ThreadID, BacktraceContext *ctx )
 {
 	/* Can't GetThreadBacktraceContext the current thread. */
 	ASSERT( ThreadID != GetCurrentThreadId() );
 
-	/* Attach to the thread. */
-	int ret = PtraceAttach( ThreadID );
-
-	/* This may fail with EPERM.  This can happen for at least two common
-	 * reasons: the process might be in a debugger already, or *we* might
+	/* Attach to the thread.  This may fail with EPERM.  This can happen for at least
+	 * two common reasons: the process might be in a debugger already, or *we* might
 	 * already have attached to it via SuspendThread.
 	 *
 	 * If it's in a debugger, we won't be able to ptrace(PTRACE_GETREGS). If
-	 * it's us that attached, we will.  Be careful: if SuspendThread was
-	 * called to stop the thread (causing this attach to fail), we must not
-	 * restart the thread when we're finished. */
-	bool bAttachFailed = (ret == -1); 
-	if( bAttachFailed )
+	 * it's us that attached, we will. */
+	if( PtraceAttach( ThreadID ) == -1 )
 	{
 		RAGE_ASSERT_M( errno == EPERM, ssprintf( "%s", strerror(errno) ) );
 	}
 
 	user_regs_struct regs;
-	ret = ptrace( PTRACE_GETREGS, ThreadID, NULL, &regs );
-	if( ret != 0 )
-		ret = -1;
-	ASSERT( ret == 0 );
-
-	if( !bAttachFailed )
-	{
-		/* We attached to it, so we need to detach. */
-		ret = ptrace( PTRACE_DETACH, ThreadID, NULL, NULL );
-		ASSERT( ret == 0 );
-	}
+	if( ptrace( PTRACE_GETREGS, ThreadID, NULL, &regs ) == -1 )
+		return false;
 
 	ctx->pid = ThreadID;
 	ctx->eip = regs.eip;
 	ctx->esp = regs.esp;
 	ctx->ebp = regs.ebp;
 
-	return ret;
+	return true;
 }
