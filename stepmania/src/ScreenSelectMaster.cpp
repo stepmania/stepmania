@@ -353,9 +353,10 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 
 bool ScreenSelectMaster::AnyOptionsArePlayable() const
 {
-	FOREACH_HumanPlayer( p )
-		if( m_aGameCommands[m_iChoice[p]].IsPlayable() )
+	for( unsigned i = 0; i < m_aGameCommands.size(); ++i )
+		if( m_aGameCommands[i].IsPlayable() )
 			return true;
+
 	return false;
 }
 
