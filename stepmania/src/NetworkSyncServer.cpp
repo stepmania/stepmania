@@ -119,46 +119,46 @@ void StepManiaLanServer::ParseData(PacketFunctions& Packet, int clientNum)
 	int command = Packet.Read1();
 	switch (command)
 	{
-	case 0:
+	case NSCPing:
 		// No Operation
-		SendValue(129, clientNum);
+		SendValue(NSServerOffset + NSCPingR, clientNum);
 		break;
-	case 1:
+	case NSCPingR:
 		// No Operation response
 		break;
-	case 2:
+	case NSCHello:
 		// Hello
 		Hello(Packet, clientNum);
 		break;
-	case 3:
+	case NSCGSR:
 		// Start Request
 		Client[clientNum].StartRequest(Packet);
 		CheckReady();
 		break;
-	case 4:
+	case NSCGON:
 		// GameOver 
 		GameOver(Packet, clientNum);
 		break;
-	case 5:
+	case NSCGSU:
 		// StatsUpdate
 		Client[clientNum].UpdateStats(Packet);
 		break;
-	case 6:
+	case NSCSU:
 		// Style Update
 		Client[clientNum].StyleUpdate(Packet);
 		SendUserList();
 		break;
-	case 7:
+	case NSCCM:
 		// Chat message
 		RelayChat(Packet, clientNum);
 		break;
-	case 8:
+	case NSCRSG:
 		SelectSong(Packet, clientNum);
 		break;
-	case 10:
+	case NSCSMS:
 		ScreenNetMusicSelectStatus(Packet, clientNum);
 		break;
-	case 11:
+	case NSCUPOpts:
 		Client[clientNum].Player[0].options = Packet.ReadNT();		
 		Client[clientNum].Player[1].options = Packet.ReadNT();		
 		break;
@@ -175,7 +175,7 @@ void StepManiaLanServer::Hello(PacketFunctions& Packet, int clientNum)
 	Client[clientNum].SetClientVersion(ClientVersion, build);
 
 	Reply.ClearPacket();
-	Reply.Write1(130);
+	Reply.Write1( NSCHello + NSServerOffset );
 	Reply.Write1(1);
 	Reply.WriteNT(servername);
 
