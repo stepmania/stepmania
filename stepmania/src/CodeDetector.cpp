@@ -31,7 +31,7 @@ enum Code {
 	CODE_RIGHT,
 	CODE_SHUFFLE,
 	CODE_SUPER_SHUFFLE,
-	CODE_LITTLE,
+	CODE_NEXT_TRANSFORM,
 	CODE_NEXT_SCROLL_SPEED,
 	CODE_PREVIOUS_SCROLL_SPEED,
 	CODE_NEXT_ACCEL,
@@ -58,7 +58,7 @@ const CString g_sCodeNames[NUM_CODES] = {
 	"Right",
 	"Shuffle",
 	"SuperShuffle",
-	"Little",
+	"NextTransform",
 	"NextScrollSpeed",
 	"PreviousScrollSpeed",
 	"NextAccel",
@@ -174,7 +174,7 @@ bool CodeDetector::DetectAndAdjustOptions( GameController controller )
 			case CODE_RIGHT:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_TurnType, PlayerOptions::TURN_RIGHT,			PlayerOptions::TURN_NONE );	break;
 			case CODE_SHUFFLE:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_TurnType, PlayerOptions::TURN_SHUFFLE,			PlayerOptions::TURN_NONE );	break;
 			case CODE_SUPER_SHUFFLE:	TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_TurnType, PlayerOptions::TURN_SUPER_SHUFFLE,	PlayerOptions::TURN_NONE );	break;
-			case CODE_LITTLE:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_bLittle, true, false );				break;
+			case CODE_NEXT_TRANSFORM:	GAMESTATE->m_PlayerOptions[pn].NextTransform();									break;
 			case CODE_NEXT_SCROLL_SPEED:INCREMENT_SCROLL_SPEED( GAMESTATE->m_PlayerOptions[pn].m_fScrollSpeed );	break;
 			case CODE_PREVIOUS_SCROLL_SPEED:DECREMENT_SCROLL_SPEED( GAMESTATE->m_PlayerOptions[pn].m_fScrollSpeed );	break;
 			case CODE_NEXT_ACCEL:		GAMESTATE->m_PlayerOptions[pn].NextAccel();									break;

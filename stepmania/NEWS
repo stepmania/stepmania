@@ -18,6 +18,7 @@ NEW FEATURE: Option for user-selectable extra stage 1
 CHANGE:  Documentation now in HTML format.
 CHANGE:  Overhauled NoteSkin format.  See README-FIRST.htm for details.
 BUG FIX:  Super-shuffle fixed (now doesn't add extra notes)
+NEW FEATURE: Added BIG transform (changes notes on beats to jumps)
 
 ----------------------- Version 3.01 ---------------------------
 CHANGE:  Simplified NoteSkin tap graphic format.  Old NoteSkins will need to 

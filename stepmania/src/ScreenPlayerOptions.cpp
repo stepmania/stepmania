@@ -26,7 +26,7 @@ enum {
 	PO_EFFECT,
 	PO_APPEAR,
 	PO_TURN,
-	PO_LITTLE,
+	PO_TRANSFORM,
 	PO_SCROLL,
 	PO_COLOR,
 	PO_HOLD_NOTES,
@@ -39,7 +39,7 @@ OptionRowData g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 	{ "Effect",			7, {"OFF","DRUNK","DIZZY","SPACE","MINI","FLIP","TORNADO"} },	
 	{ "Appear\n-ance",	5, {"VISIBLE","HIDDEN","SUDDEN","STEALTH","BLINK"} },	
 	{ "Turn",			6, {"OFF","MIRROR","LEFT","RIGHT","SHUFFLE","SUPER SHUFFLE"} },	
-	{ "Little",			2, {"OFF","ON"} },	
+	{ "Trans\n-form",	3, {"OFF","LITTLE","BIG"} },	
 	{ "Scroll",			2, {"STANDARD","REVERSE"} },	
 	{ "Color",			3, {"VIVID","NOTE","FLAT"} },	
 	{ "Holds",			2, {"OFF","ON"} },	
@@ -95,7 +95,7 @@ void ScreenPlayerOptions::ImportOptions()
 
 		m_iSelectedOption[p][PO_APPEAR]		= po.m_AppearanceType;
 		m_iSelectedOption[p][PO_TURN]		= po.m_TurnType;
-		m_iSelectedOption[p][PO_LITTLE]		= po.m_bLittle ? 1 : 0;
+		m_iSelectedOption[p][PO_TRANSFORM]	= po.m_Transform;
 		m_iSelectedOption[p][PO_SCROLL]		= po.m_bReverseScroll ? 1 : 0 ;
 		m_iSelectedOption[p][PO_COLOR]		= po.m_ColorType;
 		m_iSelectedOption[p][PO_HOLD_NOTES]	= po.m_bHoldNotes ? 1 : 0;
@@ -132,7 +132,7 @@ void ScreenPlayerOptions::ExportOptions()
 
 		po.m_AppearanceType	= (PlayerOptions::AppearanceType)m_iSelectedOption[p][PO_APPEAR];
 		po.m_TurnType		= (PlayerOptions::TurnType)m_iSelectedOption[p][PO_TURN];
-		po.m_bLittle		= m_iSelectedOption[p][PO_LITTLE] == 1;
+		po.m_Transform		= (PlayerOptions::Transform)m_iSelectedOption[p][PO_TRANSFORM];
 		po.m_bReverseScroll	= (m_iSelectedOption[p][PO_SCROLL] == 1);
 		po.m_ColorType		= (PlayerOptions::ColorType)m_iSelectedOption[p][PO_COLOR];
 		po.m_bHoldNotes		= (m_iSelectedOption[p][PO_HOLD_NOTES] == 1);

@@ -729,8 +729,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			for( int i=0; i<m_NoteFieldEdit.GetNumHoldNotes(); i++ )	// for each HoldNote
 			{
 				const HoldNote &hn = m_NoteFieldEdit.GetHoldNote(i);
-				if( iCol == hn.m_iTrack  &&		// the notes correspond
-					fSongBeat >= hn.m_fStartBeat  &&  fSongBeat <= hn.m_fEndBeat )	// the cursor lies within this HoldNote
+				if( iCol == hn.iTrack  &&		// the notes correspond
+					fSongBeat >= hn.fStartBeat  &&  fSongBeat <= hn.fEndBeat )	// the cursor lies within this HoldNote
 				{
 					m_NoteFieldEdit.RemoveHoldNote( i );
 					bRemovedAHoldNote = true;
@@ -798,12 +798,12 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 				// create a new hold note
 				HoldNote newHN;
-				newHN.m_iTrack = col;
-				newHN.m_fStartBeat = min(fStartBeat, fEndBeat);
-				newHN.m_fEndBeat = max(fStartBeat, fEndBeat);
+				newHN.iTrack = col;
+				newHN.fStartBeat = min(fStartBeat, fEndBeat);
+				newHN.fEndBeat = max(fStartBeat, fEndBeat);
 
-				newHN.m_fStartBeat = max(newHN.m_fStartBeat, 0);
-				newHN.m_fEndBeat = max(newHN.m_fEndBeat, 0);
+				newHN.fStartBeat = max(newHN.fStartBeat, 0);
+				newHN.fEndBeat = max(newHN.fEndBeat, 0);
 
 				m_NoteFieldEdit.AddHoldNote( newHN );
 			}

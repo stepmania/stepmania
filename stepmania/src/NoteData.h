@@ -68,6 +68,14 @@ public:
 				return false;
 		return true;
 	}
+	inline int GetNumTapNonEmptyTracksInRow( int index ) const
+	{
+		int iNum = 0;
+		for( int t=0; t<m_iNumTracks; t++ )
+			if( GetTapNote(t, index) != TAP_EMPTY )
+				iNum++;
+		return iNum;
+	}
 
 	// used in edit/record
 	void AddHoldNote( HoldNote newNote );	// add note hold note merging overlapping HoldNotes and destroying TapNotes underneath
@@ -124,6 +132,7 @@ namespace NoteDataUtil
 	void RemoveHoldNotes(NoteData &in);
 	void Turn( NoteData &in, PlayerOptions::TurnType tt );
 	void MakeLittle(NoteData &in);
+	void MakeBig(NoteData &in);
 
 	void SnapToNearestNoteType( NoteData &in, NoteType nt1, NoteType nt2, float fBeginBeat, float fEndBeat );
 	inline void SnapToNearestNoteType( NoteData &in, NoteType nt, float fBeginBeat, float fEndBeat ) { SnapToNearestNoteType( in, nt, (NoteType)-1, fBeginBeat, fEndBeat ); }

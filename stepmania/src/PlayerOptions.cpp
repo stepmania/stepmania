@@ -21,7 +21,7 @@ void PlayerOptions::Init()
 	ZERO( m_bEffects );
 	m_AppearanceType = APPEARANCE_VISIBLE;
 	m_TurnType = TURN_NONE;
-	m_bLittle = false;
+	m_Transform = TRANSFORM_NONE;
 	m_bReverseScroll = false;
 	m_ColorType = COLOR_VIVID;
 	m_bHoldNotes = true;
@@ -73,7 +73,7 @@ CString PlayerOptions::GetString()
 	case APPEARANCE_SUDDEN:		sReturn += "Sudden, ";	break;
 	case APPEARANCE_STEALTH:	sReturn += "Stealth, ";	break;
 	case APPEARANCE_BLINK:		sReturn += "Blink, ";	break;
-	default:	ASSERT(0);	// invalid EFFECT
+	default:	ASSERT(0);	// invalid
 	}
 
 	switch( m_TurnType )
@@ -84,11 +84,16 @@ CString PlayerOptions::GetString()
 	case TURN_RIGHT:		sReturn += "Right, ";		break;
 	case TURN_SHUFFLE:		sReturn += "Shuffle, ";		break;
 	case TURN_SUPER_SHUFFLE:sReturn += "SuperShuffle, ";break;
-	default:	ASSERT(0);	// invalid EFFECT
+	default:	ASSERT(0);	// invalid
 	}
 
-	if( m_bLittle )
-		sReturn += "Little, ";
+	switch( m_Transform )
+	{
+	case TRANSFORM_NONE:								break;
+	case TRANSFORM_LITTLE:	sReturn += "Little, ";		break;
+	case TRANSFORM_BIG:		sReturn += "Big, ";			break;
+	default:	ASSERT(0);	// invalid
+	}
 
 	if( m_bReverseScroll )
 		sReturn += "Reverse, ";
@@ -154,7 +159,8 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "right" )		m_TurnType = TURN_RIGHT;
 		else if( sBit == "shuffle" )	m_TurnType = TURN_SHUFFLE;
 		else if( sBit == "supershuffle" )m_TurnType = TURN_SUPER_SHUFFLE;
-		else if( sBit == "little" )		m_bLittle = true;
+		else if( sBit == "little" )		m_Transform = TRANSFORM_LITTLE;
+		else if( sBit == "big" )		m_Transform = TRANSFORM_BIG;
 		else if( sBit == "reverse" )	m_bReverseScroll = true;
 		else if( sBit == "note" )		m_ColorType = COLOR_NOTE;
 		else if( sBit == "flat" )		m_ColorType = COLOR_FLAT;
@@ -205,6 +211,11 @@ void PlayerOptions::NextAppearance()
 void PlayerOptions::NextTurn()
 {
 	m_TurnType = (TurnType) ((m_TurnType+1)%NUM_TURN_TYPES);
+}
+
+void PlayerOptions::NextTransform()
+{
+	m_Transform = (Transform) ((m_Transform+1)%NUM_TRANSFORMS);
 }
 
 void PlayerOptions::ChooseRandomMofifiers()

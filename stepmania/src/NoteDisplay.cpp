@@ -353,10 +353,10 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 
 	const bool bReverse = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bReverseScroll;
 
-	const int	iCol			= hn.m_iTrack;
-	const float fStartYOffset	= ArrowGetYOffset( m_PlayerNumber, hn.m_fStartBeat );
+	const int	iCol			= hn.iTrack;
+	const float fStartYOffset	= ArrowGetYOffset( m_PlayerNumber, hn.fStartBeat );
 	const float fStartYPos		= ArrowGetYPos(	   m_PlayerNumber, fStartYOffset );
-	const float fEndYOffset		= ArrowGetYOffset( m_PlayerNumber, hn.m_fEndBeat );
+	const float fEndYOffset		= ArrowGetYOffset( m_PlayerNumber, hn.fEndBeat );
 	const float fEndYPos		= ArrowGetYPos(	   m_PlayerNumber, fEndYOffset );
 
 	const float fYHead = bReverse ? fEndYPos : fStartYPos;		// the center of the head
@@ -379,7 +379,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	// Draw the bottom cap (always wavy)
 	//
 	{
-		Sprite* pBottomCap = GetHoldBottomCapSprite( hn.m_fStartBeat, bActive );
+		Sprite* pBottomCap = GetHoldBottomCapSprite( hn.fStartBeat, bActive );
 
 		// draw manually in small segments
 		RageVertex *v = &queue[0];
@@ -444,7 +444,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	// Draw the body (always wavy)
 	//
 	{
-		Sprite* pSprBody = GetHoldBodySprite( hn.m_fStartBeat, bActive );
+		Sprite* pSprBody = GetHoldBodySprite( hn.fStartBeat, bActive );
 
 		// draw manually in small segments
 		RageVertex *v = &queue[0];
@@ -522,7 +522,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	// Draw the top cap (always wavy)
 	//
 	{
-		Sprite* pSprTopCap = GetHoldTopCapSprite( hn.m_fStartBeat, bActive );
+		Sprite* pSprTopCap = GetHoldTopCapSprite( hn.fStartBeat, bActive );
 
 		// draw manually in small segments
 		RageVertex *v = &queue[0];
@@ -586,7 +586,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	// Draw the tail
 	//
 	{
-		Sprite* pSprTail = GetHoldTailSprite( hn.m_fStartBeat, bActive );
+		Sprite* pSprTail = GetHoldTailSprite( hn.fStartBeat, bActive );
 
 		const float fY				= fYTail;
 		const float fX				= ArrowGetXPos( m_PlayerNumber, iCol, fY );
@@ -613,7 +613,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	// Draw the head
 	//
 	{
-		Sprite* pSprHead = GetHoldHeadSprite( hn.m_fStartBeat, bActive );
+		Sprite* pSprHead = GetHoldHeadSprite( hn.fStartBeat, bActive );
 
 		// draw with normal Sprite
 		const float fY				= fYHead;

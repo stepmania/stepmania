@@ -266,13 +266,13 @@ void NoteField::DrawPrimitives()
 			if( hns == HNS_OK )	// if this HoldNote was completed
 				continue;	// don't draw anything
 
-			if( hn.m_iTrack != c )	// this HoldNote doesn't belong to this column
+			if( hn.iTrack != c )	// this HoldNote doesn't belong to this column
 				continue;
 
 			// If no part of this HoldNote is on the screen, skip it
-			if( !( fFirstBeatToDraw <= hn.m_fEndBeat && hn.m_fEndBeat <= fLastBeatToDraw  ||
-				fFirstBeatToDraw <= hn.m_fStartBeat  && hn.m_fStartBeat <= fLastBeatToDraw  ||
-				hn.m_fStartBeat < fFirstBeatToDraw   && hn.m_fEndBeat > fLastBeatToDraw ) )
+			if( !( fFirstBeatToDraw <= hn.fEndBeat && hn.fEndBeat <= fLastBeatToDraw  ||
+				fFirstBeatToDraw <= hn.fStartBeat  && hn.fStartBeat <= fLastBeatToDraw  ||
+				hn.fStartBeat < fFirstBeatToDraw   && hn.fEndBeat > fLastBeatToDraw ) )
 			{
 				continue;	// skip
 			}

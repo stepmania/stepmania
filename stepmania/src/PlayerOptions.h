@@ -54,7 +54,13 @@ struct PlayerOptions
 		NUM_TURN_TYPES 
 	} m_TurnType;
 	void NextTurn();
-	bool m_bLittle;
+	enum Transform {
+		TRANSFORM_NONE=0,
+		TRANSFORM_LITTLE,
+		TRANSFORM_BIG,
+		NUM_TRANSFORMS
+	} m_Transform;
+	void NextTransform();
 	bool m_bReverseScroll;
 	enum ColorType {
 		COLOR_VIVID=0,

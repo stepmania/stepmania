@@ -157,8 +157,20 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 
 	NoteDataUtil::Turn( *this, GAMESTATE->m_PlayerOptions[pn].m_TurnType );
 
-	if( GAMESTATE->m_PlayerOptions[pn].m_bLittle )
+	switch( GAMESTATE->m_PlayerOptions[pn].m_Transform )
+	{
+	case PlayerOptions::TRANSFORM_NONE:
+		break;
+	case PlayerOptions::TRANSFORM_LITTLE:
 		NoteDataUtil::MakeLittle(*this);
+		break;
+	case PlayerOptions::TRANSFORM_BIG:
+		NoteDataUtil::MakeBig(*this);
+		break;
+	default:
+		ASSERT(0);	// invalid value
+		break;
+	}
 
 	int iPixelsToDrawBefore = -60;
 	int iPixelsToDrawAfter = 350;
@@ -223,21 +235,21 @@ void Player::Update( float fDeltaTime )
 		const HoldNote &hn = GetHoldNote(i);
 		HoldNoteScore hns = GetHoldNoteScore(i);
 		float fLife = GetHoldNoteLife(i);
-		int iHoldStartIndex = BeatToNoteRow(hn.m_fStartBeat);
+		int iHoldStartIndex = BeatToNoteRow(hn.fStartBeat);
 
 		m_NoteField.m_bIsHoldingHoldNote[i] = false;	// set host flag so NoteField can do intelligent drawing
 
 
 		if( hns != HNS_NONE )	// if this HoldNote already has a result
 			continue;	// we don't need to update the logic for this one
-		const StyleInput StyleI( m_PlayerNumber, hn.m_iTrack );
+		const StyleInput StyleI( m_PlayerNumber, hn.iTrack );
 		const GameInput GameI = GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
 
 		// if they got a bad score or haven't stepped on the corresponding tap yet
-		const TapNoteScore tns = GetTapNoteScore(hn.m_iTrack, iHoldStartIndex);
+		const TapNoteScore tns = GetTapNoteScore(hn.iTrack, iHoldStartIndex);
 		const bool bSteppedOnTapNote = tns != TNS_NONE  &&  tns != TNS_MISS;	// did they step on the start of this hold?
 
-		if( hn.m_fStartBeat < fSongBeat && fSongBeat < hn.m_fEndBeat )	// if the song beat is in the range of this hold
+		if( hn.fStartBeat < fSongBeat && fSongBeat < hn.fEndBeat )	// if the song beat is in the range of this hold
 		{
 			bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
 			if( !GAMESTATE->m_bEditing  &&  (PREFSMAN->m_bAutoPlay  ||  GAMESTATE->m_bDemonstration) )
@@ -247,7 +259,7 @@ void Player::Update( float fDeltaTime )
 
 			if( bSteppedOnTapNote )		// this note is not judged and we stepped on its head
 			{
-				m_NoteField.GetHoldNote(i).m_fStartBeat = fSongBeat;	// move the start of this Hold
+				m_NoteField.GetHoldNote(i).fStartBeat = fSongBeat;	// move the start of this Hold
 			}
 
 			if( bSteppedOnTapNote && bIsHoldingButton )
@@ -256,11 +268,11 @@ void Player::Update( float fDeltaTime )
 				fLife += fDeltaTime/HOLD_ARROW_NG_TIME;
 				fLife = min( fLife, 1 );	// clamp
 
-				m_GhostArrowRow.HoldNote( hn.m_iTrack );		// update the "electric ghost" effect
+				m_GhostArrowRow.HoldNote( hn.iTrack );		// update the "electric ghost" effect
 			}
 			else
 			{
-				if( fSongBeat-hn.m_fStartBeat > GAMESTATE->m_fCurBPS * GetMaxStepDistanceSeconds() )
+				if( fSongBeat-hn.fStartBeat > GAMESTATE->m_fCurBPS * GetMaxStepDistanceSeconds() )
 				{
 					// Decrease life
 					fLife -= fDeltaTime/HOLD_ARROW_NG_TIME;
@@ -275,7 +287,7 @@ void Player::Update( float fDeltaTime )
 			hns = HNS_NG;
 
 		// check for OK
-		if( fSongBeat >= hn.m_fEndBeat && bSteppedOnTapNote && fLife > 0 )	// if this HoldNote is in the past
+		if( fSongBeat >= hn.fEndBeat && bSteppedOnTapNote && fLife > 0 )	// if this HoldNote is in the past
 		{
 			fLife = 1;
 			hns = HNS_OK;
@@ -286,7 +298,7 @@ void Player::Update( float fDeltaTime )
 		{
 			/* this note's been judged */
 			HandleHoldNoteScore( hns, tns );
-			m_HoldJudgement[hn.m_iTrack].SetHoldJudgement( hns );
+			m_HoldJudgement[hn.iTrack].SetHoldJudgement( hns );
 		}
 
 		m_NoteField.SetHoldNoteLife(i, fLife);	// update the NoteField display
