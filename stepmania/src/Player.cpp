@@ -530,8 +530,7 @@ void PlayerMinus::DrawPrimitives()
 	DISPLAY->CameraPushMatrix();
 	DISPLAY->PushMatrix();
 
-	float fCenterY = (GRAY_ARROWS_Y_STANDARD+GRAY_ARROWS_Y_REVERSE)/2;
-//	float fHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
+	float fCenterY = this->GetY()+(GRAY_ARROWS_Y_STANDARD+GRAY_ARROWS_Y_REVERSE)/2;
 
 	DISPLAY->LoadMenuPerspective( 45, SCALE(fSkew,0.f,1.f,this->GetX(),SCREEN_CENTER_X), fCenterY );
 

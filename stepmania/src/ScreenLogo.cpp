@@ -9,7 +9,7 @@ ScreenLogo::ScreenLogo( CString sName ) : ScreenAttract( sName )
 {
 	m_sprLogo.SetName( "Logo" );
 	m_sprLogo.Load( THEME->GetPathG("ScreenLogo",GAMESTATE->GetCurrentGame()->m_szName) );
-	ON_COMMAND( m_sprLogo );
+	SET_XY_AND_ON_COMMAND( m_sprLogo );
 	this->AddChild( &m_sprLogo );
 
 	this->SortByDrawOrder();

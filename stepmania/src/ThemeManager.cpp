@@ -201,6 +201,8 @@ void ThemeManager::LoadThemeRecursive( deque<Theme> &theme, const CString &sThem
 				continue;
 			if( sName.Right(8) == "SpacingX" || sName.Right(8) == "SpacingY" )
 				continue;
+			if( sName.Right(7) == "OffsetX" || sName.Right(7) == "OffsetY" )
+				continue;
 
 			int i = atoi( sValue );
 			if( sName.Right(1) == "X" )
