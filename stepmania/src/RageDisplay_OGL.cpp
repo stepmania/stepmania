@@ -681,7 +681,7 @@ void SetupExtensions()
 			/* The minimum GL_MAX_PIXEL_MAP_TABLE is 32; if it's not at least 256,
 			 * we can't fit a palette in it, so we can't send paletted data as input
 			 * for a non-paletted texture. */
-			LOG->Info( "GL_MAX_PIXEL_MAP_TABLE is only %i", iMaxTableSize );
+			LOG->Info( "GL_MAX_PIXEL_MAP_TABLE is only %d", int(iMaxTableSize) );
 			g_bColorIndexTableWorks = false;
 		}
 		else

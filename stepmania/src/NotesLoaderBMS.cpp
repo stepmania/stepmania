@@ -549,7 +549,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 			sWavID.MakeUpper();		// HACK: undo the MakeLower()
 			out.m_vsKeysoundFile.push_back( value_data );
 			mapWavIdToKeysoundIndex[ sWavID ] = out.m_vsKeysoundFile.size()-1;
-			LOG->Trace( "Inserting keysound index %u '%s'", out.m_vsKeysoundFile.size()-1, sWavID.c_str() );
+			LOG->Trace( "Inserting keysound index %lu '%s'", out.m_vsKeysoundFile.size()-1, sWavID.c_str() );
 		}
 		else if( value_name.size() == 6 && value_name[0] == '#'
 			 && IsAnInt( value_name.substr(1,3) )
