@@ -421,6 +421,11 @@ void Song::TidyUpData()
 	if( m_fMusicSampleStartSeconds == 0 )
 		m_fMusicSampleStartSeconds = this->GetElapsedTimeFromBeat( 100 );
 
+	/* Some DWIs have lengths in ms when they meant seconds, eg. #SAMPLELENGTH:10;.
+	 * If the sample length is way too short, change it. */
+	if( m_fMusicSampleLengthSeconds < 3 )
+		m_fMusicSampleLengthSeconds = 10;
+
 	//
 	// Here's the problem:  We have a directory full of images.  We want to determine which 
 	// image is the banner, which is the background, and which is the CDTitle.
