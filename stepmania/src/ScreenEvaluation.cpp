@@ -277,24 +277,23 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		}
 //	}
 	
-	CString bgpath = m_sName;
 	m_bPassFailTriggered = false; // the sound hasn't been triggered yet
-	if(m_bFailed && (m_Type==stage||m_Type==course))
+	switch( m_Type )
 	{
-		bgpath += " Failed Background";
-		m_bgFailedBack.LoadFromAniDir( THEME->GetPathToB(bgpath) );
-		bgpath = m_sName;
-		bgpath += " Failed Overlay";
-		m_bgFailedOverlay.LoadFromAniDir( THEME->GetPathToB(bgpath) );
-		m_sndPassFail.Load(THEME->GetPathToS("ScreenEvaluationStage Failed",false));
-		m_sndPassFail.Play(); // why was this commented out? the BGA's wont play sound so its a NEEDED element - Frieza
-	}
-	else if(m_Type==stage||m_Type==course)
-	{
-		bgpath += " Passed Overlay";
-		// the themer can use the regular background for passed background
-		m_bgPassedOverlay.LoadFromAniDir( THEME->GetPathToB(bgpath) );
-		m_sndPassFail.Load(THEME->GetPathToS("ScreenEvaluationStage Passed",false));
+	case stage:
+	case course:
+		if( m_bFailed )
+		{
+			m_bgFailedBack.LoadFromAniDir( THEME->GetPathB(m_sName, "failed background") );
+			m_bgFailedOverlay.LoadFromAniDir( THEME->GetPathB(m_sName, "failed overlay") );
+			m_sndPassFail.Load( THEME->GetPathS(m_sName, "failed") );
+		}
+		else
+		{
+			// the theme can use the regular background for passed background
+			m_bgPassedOverlay.LoadFromAniDir( THEME->GetPathB(m_sName, "passed overlay") );
+			m_sndPassFail.Load( THEME->GetPathS(m_sName, "passed") );
+		}
 		m_sndPassFail.Play();
 	}
 
