@@ -197,66 +197,93 @@ void mySDL_SetPalette(SDL_Surface *dst, SDL_Color *colors, int start, int cnt)
 				cnt * sizeof(SDL_Color) );
 }
 
-void ConvertSDLSurface(SDL_Surface *&image,
-		int width, int height, int bpp,
-		Uint32 R, Uint32 G, Uint32 B, Uint32 A)
+void CopySDLSurface( SDL_Surface *src, SDL_Surface *dest )
 {
-    SDL_Surface *ret_image = SDL_CreateRGBSurfaceSane(
-            SDL_SWSURFACE, width, height, bpp, R, G, B, A);
-	ASSERT(ret_image != NULL);
-
-	/* If the formats are the same, no conversion is needed. */
-	if(width == image->w && height == image->h && bpp == image->format->BitsPerPixel &&
-	   image->format->Rmask == ret_image->format->Rmask &&
-	   image->format->Gmask == ret_image->format->Gmask &&
-	   image->format->Bmask == ret_image->format->Bmask &&
-	   image->format->Amask == ret_image->format->Amask)
-	{
-		/* One exception: if we have a color key and we're not paletted (8-bit). 
-		 * In this case, we need to do the blit to get rid of the color key. */
-		if(!( image->flags & SDL_SRCCOLORKEY && image->format->BitsPerPixel != 8) )
-		{
-			SDL_FreeSurface(ret_image);
-			return;
-		}
-	}
-
 	/* We don't want to actually blend the alpha channel over the destination converted
 	 * surface; we want to simply blit it, so make sure SDL_SRCALPHA is not on. */
-	SDL_SetAlpha( image, 0, SDL_ALPHA_OPAQUE );
+	const Uint8 OldAlpha = src->format->alpha;
+	const Uint32 OldFlags = src->flags;
+	SDL_SetAlpha( src, 0, SDL_ALPHA_OPAQUE );
 
 	/* Copy the palette, if we have one. */
-	if( image->format->BitsPerPixel == 8 && ret_image->format->BitsPerPixel == 8 )
+	if( src->format->BitsPerPixel == 8 && dest->format->BitsPerPixel == 8 )
 	{
-		ASSERT( ret_image->format->palette );
-		mySDL_SetPalette(ret_image, image->format->palette->colors,
-			0, image->format->palette->ncolors);
+		ASSERT( dest->format->palette );
+		mySDL_SetPalette( dest, src->format->palette->colors,
+			0, src->format->palette->ncolors);
 	}
 
-	if(image->format->BitsPerPixel == 8 && ret_image->format->BitsPerPixel == 8 &&
-	   image->flags & SDL_SRCCOLORKEY)
+	if(src->format->BitsPerPixel == 8 && dest->format->BitsPerPixel == 8 &&
+	   src->flags & SDL_SRCCOLORKEY)
 	{
 		/* The source and dest are both paletted, and we have a color key. 
 		 * First, make sure that the image we're blitting to has a default
 		 * color of the color key, so any places we don't blit to will
 		 * be transparent.  (The default color in the image is 0, so we're
 		 * all set if the color key is 0.) */
-		if(image->format->colorkey != 0)
-			SDL_FillRect(ret_image, NULL, image->format->colorkey);
+		if( src->format->colorkey != 0 )
+			SDL_FillRect( dest, NULL, src->format->colorkey );
 
 		/* Copy over the color key mode, and then turn off color keying in the
 		 * source so the color key index gets copied like any other color. */
-		SDL_SetColorKey( ret_image, SDL_SRCCOLORKEY, image->format->colorkey);
-		SDL_SetColorKey( image, 0, 0 );
+		SDL_SetColorKey( dest, SDL_SRCCOLORKEY, src->format->colorkey);
+		SDL_SetColorKey( src, 0, 0 );
 	}
 
 	SDL_Rect area;
 	area.x = area.y = 0;
-	area.w = short(image->w);
-	area.h = short(image->h);
+	area.w = short(src->w);
+	area.h = short(src->h);
 
-	SDL_BlitSurface(image, &area, ret_image, &area);
-	SDL_FreeSurface(image);
+	SDL_BlitSurface( src, &area, dest, &area );
+
+	/* Restore alpha flags. */
+	SDL_SetAlpha( src, OldFlags, OldAlpha );
+}
+
+bool CompareSDLFormats( const SDL_PixelFormat *pf1, const SDL_PixelFormat *pf2 )
+{
+	if( pf1->BitsPerPixel != pf2->BitsPerPixel ) return false;
+	if( pf1->Rmask == pf2->Rmask ) return false;
+	if( pf1->Gmask == pf2->Gmask ) return false;
+	if( pf1->Bmask == pf2->Bmask ) return false;
+	if( pf1->Amask == pf2->Amask ) return false;
+	return true;
+}
+
+bool ConvertSDLSurface( SDL_Surface *src, SDL_Surface *&dst,
+		int width, int height, int bpp,
+		Uint32 R, Uint32 G, Uint32 B, Uint32 A )
+{
+    dst = SDL_CreateRGBSurfaceSane( SDL_SWSURFACE, width, height, bpp, R, G, B, A );
+	ASSERT( dst != NULL );
+
+	/* If the formats are the same, no conversion is needed. */
+	if( width == src->w && height == src->h && CompareSDLFormats( src->format, dst->format ) )
+	{
+		/* One exception: if we have a color key and we're not paletted (8-bit). 
+		 * In this case, we need to do the blit to get rid of the color key. */
+		if(!( src->flags & SDL_SRCCOLORKEY && src->format->BitsPerPixel != 8) )
+		{
+			SDL_FreeSurface( dst );
+			dst = NULL;
+			return false;
+		}
+	}
+
+	CopySDLSurface( src, dst );
+	return true;
+}
+
+void ConvertSDLSurface(SDL_Surface *&image,
+		int width, int height, int bpp,
+		Uint32 R, Uint32 G, Uint32 B, Uint32 A)
+{
+    SDL_Surface *ret_image;
+	if( !ConvertSDLSurface( image, ret_image, width, height, bpp, R, G, B, A ) )
+		return;
+
+	SDL_FreeSurface( image );
 	image = ret_image;
 }
 

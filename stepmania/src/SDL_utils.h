@@ -26,6 +26,10 @@ void mySDL_SetRGBAV(Uint8 *p, const SDL_Surface *src, const Uint8 *v);
 
 void mySDL_GetBitsPerChannel(const SDL_PixelFormat *fmt, Uint32 bits[4]);
 void mySDL_SetPalette(SDL_Surface *dst, SDL_Color *colors, int start, int cnt);
+void CopySDLSurface( SDL_Surface *src, SDL_Surface *dest );
+bool ConvertSDLSurface( SDL_Surface *src, SDL_Surface *&dst,
+		int width, int height, int bpp,
+		Uint32 R, Uint32 G, Uint32 B, Uint32 A );
 void ConvertSDLSurface(SDL_Surface *&image,
 		int width, int height, int bpp,
 		Uint32 R, Uint32 G, Uint32 B, Uint32 A);
