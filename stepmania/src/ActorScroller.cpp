@@ -12,7 +12,7 @@ ActorScroller::ActorScroller()
 	m_fCurrentItem = 0;
 	m_fDestinationItem = 0;
 	m_fSecondsPerItem = 1;
-	m_iNumItemsToDraw = 7;
+	m_fNumItemsToDraw = 7;
 
 	m_vRotationDegrees = RageVector3(0,0,0);
 	m_vTranslateTerm0 = RageVector3(0,0,0);
@@ -22,7 +22,7 @@ ActorScroller::ActorScroller()
 
 void ActorScroller::Load( 
 	float fSecondsPerItem, 
-	int iNumItemsToDraw, 
+	float fNumItemsToDraw, 
 	const RageVector3	&vRotationDegrees,
 	const RageVector3	&vTranslateTerm0,
 	const RageVector3	&vTranslateTerm1,
@@ -30,7 +30,7 @@ void ActorScroller::Load(
 	)
 {
 	m_fSecondsPerItem = fSecondsPerItem;
-	m_iNumItemsToDraw = iNumItemsToDraw;
+	m_fNumItemsToDraw = fNumItemsToDraw;
 	m_vRotationDegrees = vRotationDegrees;
 	m_vTranslateTerm0 = vTranslateTerm0;
 	m_vTranslateTerm1 = vTranslateTerm1;
@@ -103,13 +103,13 @@ void ActorScroller::DrawPrimitives()
 	}
 	else
 	{
-		int iFirstItemToDraw = (int)roundf( m_fCurrentItem - m_iNumItemsToDraw/2.f );
-		for( int i=iFirstItemToDraw; i<iFirstItemToDraw+m_iNumItemsToDraw; i++ )
+		int iFirstItemToDraw = (int)roundf( m_fCurrentItem - m_fNumItemsToDraw/2.f );
+		for( int i=0; i<m_SubActors.size(); i++ )
 		{
-			if( i < 0  ||  i >= (int)m_SubActors.size() )
-				continue;	// skip
-
 			float fItemOffset = i - m_fCurrentItem;
+
+			if( fabsf(fItemOffset) > m_fNumItemsToDraw / 2 )
+				continue;
 
 			DISPLAY->PushMatrix();
 
