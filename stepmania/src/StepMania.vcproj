@@ -47,6 +47,9 @@
 				IgnoreAllDefaultLibraries="FALSE"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\../StepMania-debug.pdb"
+				GenerateMapFile="TRUE"
+				MapFileName="$(IntDir)\$(TargetName).map"
+				MapExports="TRUE"
 				SubSystem="2"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -56,9 +59,11 @@
 				TargetEnvironment="1"
 				TypeLibraryName=".\../StepMania.tlb"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="verinc"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -114,6 +119,9 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				ProgramDatabaseFile=".\../StepMania.pdb"
+				GenerateMapFile="TRUE"
+				MapFileName="$(IntDir)\$(TargetName).map"
+				MapExports="TRUE"
 				SubSystem="2"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -123,9 +131,11 @@
 				TargetEnvironment="1"
 				TypeLibraryName=".\../StepMania.tlb"/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCPostBuildEventTool"
+				CommandLine="mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi"/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCPreBuildEventTool"
+				CommandLine="verinc"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -1047,6 +1057,34 @@
 			</File>
 			<File
 				RelativePath=".\ThemeManager.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="Disasm"
+			Filter="">
+			<File
+				RelativePath="Crash.cpp">
+			</File>
+			<File
+				RelativePath="Crash.h">
+			</File>
+			<File
+				RelativePath="CrashList.h">
+			</File>
+			<File
+				RelativePath="Disasm.cpp">
+			</File>
+			<File
+				RelativePath="Disasm.h">
+			</File>
+			<File
+				RelativePath="Tls.cpp">
+			</File>
+			<File
+				RelativePath="Tls.h">
+			</File>
+			<File
+				RelativePath="verstub.cpp">
 			</File>
 		</Filter>
 		<File

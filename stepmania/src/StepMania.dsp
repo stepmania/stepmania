@@ -53,7 +53,15 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo /o"../StepMania-StackTrace.bsc"
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 /nologo /subsystem:windows /debug /machine:I386
+# ADD LINK32 $(intdir)\verstub.obj /nologo /subsystem:windows /map /debug /machine:I386
+# Begin Special Build Tool
+IntDir=.\../Release
+TargetDir=\temp\stepmania
+TargetName=StepMania
+SOURCE="$(InputPath)"
+PreLink_Cmds=verinc  	cl   /Zl   /nologo   /c   verstub.cpp   /Fo$(IntDir)\ 
+PostBuild_Cmds=mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
+# End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "StepMania - Win32 Debug"
 
@@ -69,7 +77,8 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "DEBUG" /FR /YX /FD /GZ /c
+# ADD CPP /nologo /MTd /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "DEBUG" /YX"stdafx.h" /FD /GZ /c
+# SUBTRACT CPP /Fr
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -79,7 +88,16 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 /nologo /subsystem:windows /profile /debug /machine:I386 /out:"../StepMania-debug.exe"
+# ADD LINK32 $(intdir)\verstub.obj /nologo /subsystem:windows /map /debug /machine:I386 /out:"../StepMania-debug.exe"
+# SUBTRACT LINK32 /profile /incremental:no /nodefaultlib
+# Begin Special Build Tool
+IntDir=.\../Debug
+TargetDir=\temp\stepmania
+TargetName=StepMania-debug
+SOURCE="$(InputPath)"
+PreLink_Cmds=verinc  	cl   /Zl   /nologo   /c   verstub.cpp   /Fo$(IntDir)\ 
+PostBuild_Cmds=mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
+# End Special Build Tool
 
 !ENDIF 
 
@@ -93,6 +111,15 @@ LINK32=link.exe
 # Begin Source File
 
 SOURCE=.\RageBitmapTexture.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug"
+
+# ADD CPP /YX
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -405,6 +432,15 @@ SOURCE=.\ScreenDimensions.h
 # Begin Source File
 
 SOURCE=.\StdAfx.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug"
+
+# ADD CPP /Yc"stdafx.h"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -969,6 +1005,15 @@ SOURCE=.\ScreenEdit.h
 # Begin Source File
 
 SOURCE=.\ScreenEditMenu.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug"
+
+# ADD CPP /YX"stdafx.h"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -1279,9 +1324,57 @@ SOURCE=.\ThemeManager.cpp
 SOURCE=.\ThemeManager.h
 # End Source File
 # End Group
+# Begin Group "Disasm"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\Crash.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Crash.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CrashList.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Disasm.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Disasm.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Tls.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Tls.h
+# End Source File
+# End Group
+# Begin Group "Utils"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\fnmatch.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\fnmatch.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\error.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\error2.bmp
 # End Source File
 # Begin Source File
 
