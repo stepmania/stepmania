@@ -1,6 +1,7 @@
-ï"¿------------------------CVS after 3.00 beta 6----------------
+------------------------CVS after 3.00 beta 6----------------
 NEW FEATURE: Ez2SelectStyle ScrollingList Contents now Metric Configurable.
-NEW FEATURE: PPP and PUMP use Ez2SelectStyle Menus to become more arcade-accurate.
+NEW FEATURE: PPP and PUMP use Ez2SelectStyle Menus to become more
+	arcade-accurate.
 NEW FEATURE: Ez2SelectStyle Menu Background Animations Metric Configurable
 NEW FEATURE: ParaParaParadise Support
 NEW FEATURE:  #TRANSLITERATION tag-- this is used in sorting
@@ -106,8 +107,9 @@ NEW FEATURE:  "Show Danger" toggle in game options to enable/disable
 CHANGE:  "Event Mode" option renamed to "Unlimited Arcade Stages".
 NEW FEATURE:  Graphic Option "MovieDecodeMS".  Controls how many milliseconds
 	the program will sleep each frame to allow the movie background movie
-	decoding thread to catch up.  Increase this number if movies are dropping
-	frames.  Decrease this number to decrease the priority of movie decoding.
+	decoding thread to catch up.  Increase this number if movies are
+	dropping frames.  Decrease this number to decrease the priority of
+	movie decoding.
 CHANGE:  "SongFolders" renamed to "AdditionalSongFolders".
 BUG FIX:  AdditionalSongFolers no longer creates duplicate entries on program
 	load.
@@ -123,8 +125,8 @@ BUG FIX:  "Indirect BPM changes" (track 08) work again.  This was causing
 	"0 BPM" segments to be added to songs like MAX300.
 BUG FIX:  Fixed life meter stream alignment (I hope!)
 NEW FEATURE:  Graphic option "UseBGIfNoBanner" causes the song background to be 
-	used if the banner is missing.  Turning this option ON may results in short
-	freezes when switching music on the SelectMusic screen.
+	used if the banner is missing.  Turning this option ON may results in
+	short freezes when switching music on the SelectMusic screen.
 BUG FIX:  Music no longer cuts off if notes end before music.
 BUG FIX:  "100 Combo" no longer repeats if combo breaks on 100.
 BUG FIX:  "Japanese driver in training sign" next to song title now only shown
@@ -508,7 +510,7 @@ Bug fix: Little now works correctly.  It is accessible from the PlayerOptions me
 Optimization: Lower priority for movie decoding, which is a major speed boost on 
      slower computers.
 Change: Freeze arrow scoring now matches DDR MAX.  The start of a freeze arrow is judged 
-     as other steps are (perfect, great, good, etc). Â Missing the start of a freeze will 
+     as other steps are (perfect, great, good, etc).  Missing the start of a freeze will 
      should break your combo, but NG'ing the freeze arrow will not. 
 New feature: Basic song statistics tracking.  Times played, top score, top combo, and 
      top grade are shown on SelectSong screen.
