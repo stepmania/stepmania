@@ -60,6 +60,8 @@
 #define INFOFRAME_X		THEME->GetMetricF("ScreenEz2SelectMusic","InfoFrameX")
 #define INFOFRAME_Y		THEME->GetMetricF("ScreenEz2SelectMusic","InfoFrameY")
 
+#define USE_MODE_SWITCHER THEME->GetMetricI("ScreenEz2SelectMusic","UseModeSwitcher")
+
 const float TWEEN_TIME		= 0.5f;
 
 const ScreenMessage SM_NoSongs	= ScreenMessage(SM_User+3);
@@ -177,6 +179,12 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic() : Screen("ScreenEz2SelectMusic")
 		m_sprOptionsMessage.SetZoom( 1 );
 		m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
 		this->AddChild( &m_sprOptionsMessage );
+
+		if(USE_MODE_SWITCHER == 1)
+		{
+			m_ModeSwitcher.SetXY(CENTER_X,CENTER_Y);
+			this->AddChild( &m_ModeSwitcher );
+		}
 
 		m_sprBalloon.SetName( "Balloon" );
 		TEXTUREMAN->CacheTexture( THEME->GetPathToG("ScreenSelectMusic balloon long") );
@@ -376,6 +384,15 @@ void ScreenEz2SelectMusic::TweenOffScreen()
 	m_Guide.FadeOff( 0, "fade", TWEEN_TIME*2 );
 	m_ChoiceListFrame.FadeOff( 0, "fade", TWEEN_TIME*2 );
 	m_ChoiceListHighlight.FadeOff( 0, "fade", TWEEN_TIME*2 );
+	m_CurrentGroup.FadeOff( 0, "fade", TWEEN_TIME*2 );
+	for(int i=0; i<NUM_PLAYERS; i++)
+	{
+		m_SpeedIcon[i].FadeOff( 0, "fade", TWEEN_TIME*2 );
+		m_MirrorIcon[i].FadeOff( 0, "fade", TWEEN_TIME*2 );
+		m_ShuffleIcon[i].FadeOff( 0, "fade", TWEEN_TIME*2 );
+		m_HiddenIcon[i].FadeOff( 0, "fade", TWEEN_TIME*2 );
+		m_VanishIcon[i].FadeOff( 0, "fade", TWEEN_TIME*2 );
+	}
 }
 
 
@@ -450,6 +467,15 @@ void ScreenEz2SelectMusic::DrawPrimitives()
 
 void ScreenEz2SelectMusic::EasierDifficulty( PlayerNumber pn )
 {
+	if(USE_MODE_SWITCHER == 1)
+	{
+		m_ModeSwitcher.PrevMode(pn);
+		MusicChanged();
+		m_MusicBannerWheel.StopBouncing();
+		SOUNDMAN->StopMusic();
+		return;
+	}
+
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;
 	if( m_arrayNotes[pn].empty() )
@@ -477,6 +503,15 @@ void ScreenEz2SelectMusic::EasierDifficulty( PlayerNumber pn )
 
 void ScreenEz2SelectMusic::HarderDifficulty( PlayerNumber pn )
 {
+	if(USE_MODE_SWITCHER == 1)
+	{
+		m_ModeSwitcher.NextMode(pn);
+		MusicChanged();
+		m_MusicBannerWheel.StopBouncing();
+		SOUNDMAN->StopMusic();
+		return;
+	}
+
 	if( !GAMESTATE->IsHumanPlayer(pn
 		) )
 		return;

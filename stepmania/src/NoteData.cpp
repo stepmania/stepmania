@@ -429,6 +429,7 @@ void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, const in
 	{
 		const int iOriginalTrack = iOriginalTrackToTakeFrom[t];
 
+	
 		ASSERT( iOriginalTrack < pOriginal->m_iNumTracks );
 
 

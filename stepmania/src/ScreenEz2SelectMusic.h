@@ -21,6 +21,7 @@
 #include "DifficultyMeter.h"
 #include "DifficultyRating.h"
 #include "RageTimer.h"
+#include "ModeSwitcher.h"
 
 class ScreenEz2SelectMusic : public Screen
 {
@@ -50,7 +51,7 @@ protected:
 
 	void TweenOffScreen();
 
-
+	ModeSwitcher m_ModeSwitcher;
 	Sprite  m_ChoiceListFrame;
 	Sprite  m_ChoiceListHighlight;
 	Sprite  m_Guide;
