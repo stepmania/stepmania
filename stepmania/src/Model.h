@@ -75,8 +75,9 @@ private:
 	myBone_t			*m_pBones;
 	typedef vector<RageModelVertex>	RageModelVertexVector;
 	vector<RageModelVertexVector>	m_vTempVerticesByBone;
-	float				m_fCurrFrame;
-	CString				m_sDefaultAnimation;
+	float		m_fCurrFrame;
+	CString		m_sDefaultAnimation;
+	CString		m_sMostRecentAnimation;
 };
 
 

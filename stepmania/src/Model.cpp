@@ -598,6 +598,7 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 			}
 
 			PlayAnimation( sAniName );
+			m_sMostRecentAnimation = sAniName;
 		}
 	}
 
@@ -685,6 +686,9 @@ void Model::DrawPrimitives()
 void Model::SetDefaultAnimation( CString sAnimation )
 {
 	m_sDefaultAnimation = sAnimation;
+	m_sMostRecentAnimation = "";	// Clear this out so if we set a different default
+									// while the current default is playing, it will
+									// change to the new one when the current ends.
 }
 
 void Model::PlayAnimation( CString sAniName )
@@ -696,6 +700,7 @@ void Model::PlayAnimation( CString sAniName )
 		pNewAnimation = &m_mapNameToAnimation[sAniName];
 
 	m_fCurrFrame = 0;
+	m_sMostRecentAnimation = sAniName;
 
 	if ( m_pCurAnimation == pNewAnimation )
 		return;
@@ -768,9 +773,9 @@ Model::AdvanceFrame (float dt)
 		return;	// bail early
 
 	m_fCurrFrame += FRAMES_PER_SECOND * dt;
-	if (m_fCurrFrame >= (float) m_pCurAnimation->nTotalFrames)
+	if (m_fCurrFrame >= (float)m_pCurAnimation->nTotalFrames)
 	{
-		if( (m_bRevertToDefaultAnimation) && (m_sDefaultAnimation != "") )
+		if( (m_bRevertToDefaultAnimation) && (m_sDefaultAnimation != "") && (m_sDefaultAnimation != m_sMostRecentAnimation) )
 		{
 			this->PlayAnimation( m_sDefaultAnimation );
 			m_fCurrFrame = 0.0f;
