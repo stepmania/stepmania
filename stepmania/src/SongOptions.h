@@ -30,8 +30,8 @@ struct SongOptions
 	CString GetString() const;
 	void FromString( CString sOptions );
 
-	bool operator==( const SongOptions &other );
-	bool operator!=( const SongOptions &other ) { return !operator==(other); }
+	bool operator==( const SongOptions &other ) const;
+	bool operator!=( const SongOptions &other ) const { return !operator==(other); }
 };
 
 #endif

@@ -469,7 +469,7 @@ float PlayerOptions::GetReversePercentForColumn( int iCol )
 	return f;
 }
 
-bool PlayerOptions::operator==( const PlayerOptions &other )
+bool PlayerOptions::operator==( const PlayerOptions &other ) const
 {
 #define COMPARE(x) { if( x != other.x ) return false; }
 	COMPARE(m_bTimeSpacing);

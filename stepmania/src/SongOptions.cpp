@@ -126,7 +126,7 @@ void SongOptions::FromString( CString sOptions )
 	}
 }
 
-bool SongOptions::operator==( const SongOptions &other )
+bool SongOptions::operator==( const SongOptions &other ) const
 {
 #define COMPARE(x) { if( x != other.x ) return false; }
 	COMPARE( m_LifeType );
