@@ -619,25 +619,35 @@ int ThemeManager::GetMetricI( const CString &sClassName, const CString &sValueNa
 
 float ThemeManager::GetMetricF( const CString &sClassName, const CString &sValueName )
 {
-	CString str = GetMetricRaw( sClassName,sValueName );
+	CString sValue = GetMetricRaw( sClassName, sValueName );
 
-	Lua::PrepareExpression( str );
+#if defined(DEBUG)
+	if( sValueName.Right(1) == "X" || sValueName.Right(1) == "Y" )	// an absolute X or Y position
+	{
+		if( sValue.Find('-') == -1 && sValue.Find('+') == -1 )
+		{
+			LOG->Warn( "Absolute position metric '%s'-'%s' should contain a SCREEN_* constant", sClassName.c_str(), sValueName.c_str() );
+		}
+	}
+#endif
 
-	return Lua::RunExpressionF( str );
+	Lua::PrepareExpression( sValue );
+
+	return Lua::RunExpressionF( sValue );
 }
 
 // #include "LuaHelpers.h"
 bool ThemeManager::GetMetricB( const CString &sClassName, const CString &sValueName )
 {
-	CString str = GetMetricRaw( sClassName,sValueName );
-	if( str == "0" )
+	CString sValue = GetMetricRaw( sClassName,sValueName );
+	if( sValue == "0" )
 		return false; /* optimization */
-	if( str == "1" )
+	if( sValue == "1" )
 		return true; /* optimization */
 
-	Lua::PrepareExpression( str );
+	Lua::PrepareExpression( sValue );
 	
-	return Lua::RunExpressionB( str );
+	return Lua::RunExpressionB( sValue );
 }
 
 RageColor ThemeManager::GetMetricC( const CString &sClassName, const CString &sValueName )

@@ -631,6 +631,16 @@ void Actor::HandleCommand( const ParsedCommand &command )
 
 	const CString& sName = sParam(0);
 
+#if defined(DEBUG)
+	if( sName == "x" || sName == "y" )	// an absolute X or Y position
+	{
+		if( sParam(1).Find('-') == -1 && sParam(1).Find('+') == -1 )
+		{
+			LOG->Warn( "Command '%s' should contain a SCREEN_* constant", command.GetOriginalCommandString().c_str() );
+		}
+	}
+#endif
+
 	// Commands that go in the tweening queue:
 	if     ( sName=="sleep" )			Sleep( fParam(1) );
 	else if( sName=="linear" )			BeginTweening( fParam(1), TWEEN_LINEAR );
