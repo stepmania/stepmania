@@ -214,7 +214,14 @@ ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, fa
 		SET_XY_AND_ON_COMMAND( m_textPlayerName[p] );
 		this->AddChild( &m_textPlayerName[p] );
 
-		m_bWaitingForRemoveCard[p] = MEMCARDMAN->GetCardState(p)!=MEMORY_CARD_STATE_NO_CARD;
+		m_bWaitingForRemoveCard[p] = true;
+		switch( MEMCARDMAN->GetCardState(p) )
+		{
+		case MEMORY_CARD_STATE_REMOVED:
+		case MEMORY_CARD_STATE_NO_CARD:
+			m_bWaitingForRemoveCard[p] = false;
+			break;
+		}
 
 		if( pProfile == NULL )
 			continue;	// don't show the stats lines
@@ -265,7 +272,14 @@ void ScreenEnding::Update( float fDeltaTime )
 	{
 		if( m_bWaitingForRemoveCard[p] )
 		{
-			m_bWaitingForRemoveCard[p] = MEMCARDMAN->GetCardState(p)!=MEMORY_CARD_STATE_NO_CARD;
+			m_bWaitingForRemoveCard[p] = true;
+			switch( MEMCARDMAN->GetCardState(p) )
+			{
+			case MEMORY_CARD_STATE_REMOVED:
+			case MEMORY_CARD_STATE_NO_CARD:
+				m_bWaitingForRemoveCard[p] = false;
+				break;
+			}
 			if( !m_bWaitingForRemoveCard[p] )
 				m_sprRemoveMemoryCard[p].SetHidden( true );
 		}
