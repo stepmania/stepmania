@@ -8,6 +8,7 @@
 #include "RageFile.h"
 #include "SDL_utils.h"
 #include "SDL_endian.h"
+#include "PrefsManager.h"
 
 #include <errno.h>
 
@@ -422,6 +423,7 @@ try {
 	m_bWantRewind = false;
 	m_Clock = 0;
 	m_FrameSkipMode = false;
+	m_bThreaded = PREFSMAN->m_bThreadedMovieDecode;
 
 	m_BufferFinished = SDL_CreateSemaphore(0);
 
@@ -874,6 +876,9 @@ void MovieTexture_FFMpeg::DecoderThread()
 
 void MovieTexture_FFMpeg::Update(float fDeltaTime)
 {
+	if( !m_bThreaded )
+		RunDecode();
+
 	/* Note that if there's an image waiting, we *must* signal m_BufferFinished, or
 	 * the decoder thread may sit around waiting for it, even though Pause and Play
 	 * calls, causing the clock to keep running. */
@@ -884,7 +889,8 @@ void MovieTexture_FFMpeg::Update(float fDeltaTime)
 
 	UpdateFrame();
 	m_ImageWaiting = false;
-	SDL_SemPost(m_BufferFinished);
+	if( m_bThreaded )
+		SDL_SemPost(m_BufferFinished);
 }
 
 void MovieTexture_FFMpeg::UpdateFrame()
@@ -910,7 +916,9 @@ void MovieTexture_FFMpeg::StartThread()
 	ASSERT( m_State == DECODER_QUIT );
 	m_State = PAUSE_DECODER;
 	m_DecoderThread.SetName( ssprintf("MovieTexture_FFMpeg(%s)", GetID().filename.c_str()) );
-	m_DecoderThread.Create( DecoderThread_start, this );
+	
+	if( m_bThreaded )
+		m_DecoderThread.Create( DecoderThread_start, this );
 }
 
 void MovieTexture_FFMpeg::StopThread()

@@ -44,6 +44,7 @@ private:
 	bool m_ImageWaiting;
 	bool m_bLoop;
 	bool m_bWantRewind;
+	bool m_bThreaded;
 
 	/*
 	 * Only the main thread can change m_State.
