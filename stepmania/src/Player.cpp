@@ -604,7 +604,8 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			ms_error = min( ms_error, MAX_PRO_TIMING_ERROR );
 
 			GAMESTATE->m_CurStageStats.iTotalError[m_PlayerNumber] += ms_error;
-			m_ProTimingDisplay.SetJudgment( ms_error, score );
+			if (!GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind)
+				m_ProTimingDisplay.SetJudgment( ms_error, score );
 		}
 
 		if( score==TNS_MARVELOUS  &&  !GAMESTATE->ShowMarvelous())
@@ -676,28 +677,36 @@ void PlayerMinus::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 		if( tn == TAP_MINE )	continue; /* don't flash on mines b/c they're supposed to be missed */
 
 		// If the score is great or better, remove the note from the screen to 
-		// indicate success.
-		if( score >= TNS_GREAT )
+		// indicate success.  (Or always if blind is on.)
+	if( score >= TNS_GREAT || GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind)
 			m_pNoteField->SetTapNote(c, iIndexThatWasSteppedOn, TAP_EMPTY);
 
 		// show the ghost arrow for this column
-		switch( score )
+		if (GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind)
+			m_pNoteField->TapNote( c, TNS_MARVELOUS, false );
+		else
 		{
-		case TNS_GREAT:
-		case TNS_PERFECT:
-		case TNS_MARVELOUS:
+			switch( score )
 			{
-				bool bBright = GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber]>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
-				m_pNoteField->TapNote( c, score, bBright );
+			case TNS_GREAT:
+			case TNS_PERFECT:
+			case TNS_MARVELOUS:
+				{
+					bool bBright = GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber]>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+					m_pNoteField->TapNote( c, score, bBright );
+				}
+				break;
 			}
-			break;
 		}
 	}
 		
 	HandleTapRowScore( iIndexThatWasSteppedOn );	// update score
-	m_Combo.SetCombo( GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] );
+	if (!GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind)
+	{
+		m_Combo.SetCombo( GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] );
 
-	m_Judgment.SetJudgment( score );
+		m_Judgment.SetJudgment( score );
+	}
 }
 
 
