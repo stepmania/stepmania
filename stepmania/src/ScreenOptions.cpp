@@ -66,10 +66,6 @@ ScreenOptions::ScreenOptions( CString sClassName ) : Screen(sClassName)
 	// add everything to m_framePage so we can animate everything at once
 	this->AddChild( &m_framePage );
 
-	m_sprPage.Load( THEME->GetPathToG(sClassName+" page") );
-	m_sprPage.SetXY( CENTER_X, CENTER_Y );
-	m_framePage.AddChild( &m_sprPage );
-
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_iCurrentRow[p] = 0;
@@ -102,11 +98,22 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 
 	int p;
 
+	m_sprPage.Load( THEME->GetPathToG(m_sName+" page") );
+	m_sprPage->SetName( "Page" );
+	UtilSetXYAndOnCommand( m_sprPage, "ScreenOptions" );
+	m_framePage.AddChild( m_sprPage );
+
 	// init highlights
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
+
+		m_sprLineHighlight[p].Load( THEME->GetPathToG("ScreenOptions line highlight") );
+		m_sprLineHighlight[p].SetName( "LineHighlight" );
+		m_sprLineHighlight[p].SetX( CENTER_X );
+		m_framePage.AddChild( &m_sprLineHighlight[p] );
+		UtilOnCommand( m_sprLineHighlight[p], "ScreenOptions" );
 
 		m_Highlight[p].Load( (PlayerNumber)p, false );
 		m_framePage.AddChild( &m_Highlight[p] );
@@ -257,6 +264,10 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 	default:
 		ASSERT(0);
 	}
+
+	m_sprFrame.Load( THEME->GetPathToG( "ScreenOptions frame") );
+	m_sprFrame->SetXY( CENTER_X, CENTER_Y );
+	m_framePage.AddChild( m_sprFrame );
 
 	// poke once at all the explanation metrics so that we catch missing ones early
 	for( r=0; r<m_iNumOptionRows; r++ )		// foreach line
@@ -498,6 +509,8 @@ void ScreenOptions::TweenCursor( PlayerNumber player_no )
 	highlight.BeginTweening( 0.2f );
 	highlight.TweenBarWidth( iWidth );
 	highlight.SetXY( (float)iX, (float)iY );
+
+	m_sprLineHighlight[player_no].SetY( (float)iY );
 }
 
 void ScreenOptions::UpdateText( PlayerNumber player_no, int iRow )

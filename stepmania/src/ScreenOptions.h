@@ -108,7 +108,8 @@ protected:	// derived classes need access to these
 	int				m_iNumOptionRows;
 
 	ActorFrame		m_framePage;
-	Sprite			m_sprPage;
+	AutoActor		m_sprPage;
+	AutoActor		m_sprFrame;
 	Sprite			m_sprBullets[MAX_OPTION_LINES];
 	BitmapText		m_textTitles[MAX_OPTION_LINES];
 	vector<BitmapText *>	m_textItems[MAX_OPTION_LINES];
@@ -123,6 +124,7 @@ protected:	// derived classes need access to these
 	OptionsCursor	m_Underline[NUM_PLAYERS][MAX_OPTION_LINES];
 	OptionIcon		m_OptionIcons[NUM_PLAYERS][MAX_OPTION_LINES];
 	OptionsCursor	m_Highlight[NUM_PLAYERS];
+	Sprite			m_sprLineHighlight[NUM_PLAYERS];
 
 	BitmapText		m_textPlayerName[NUM_PLAYERS];
 	BitmapText		m_textExplanation[NUM_PLAYERS];
