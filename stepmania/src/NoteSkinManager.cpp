@@ -153,7 +153,7 @@ bool NoteSkinManager::DoesNoteSkinExist( CString sSkinName )
 
 CString NoteSkinManager::GetNoteSkinDir( const CString &sSkinName )
 {
-	CString sGame = GAMESTATE->GetCurrentGame()->m_szName;
+	CString sGame = m_pCurGame->m_szName;
 
 	return NOTESKINS_DIR + sGame + "/" + sSkinName + "/";
 }
