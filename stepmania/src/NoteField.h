@@ -47,11 +47,11 @@ public:
 	void CacheAllUsedNoteSkins();
 	void CacheNoteSkin( CString skin );
 
-	void Step( int iCol ) { m_GrayArrowRow.Step( iCol ); }
-	void UpdateBars( int iCol ) { m_GrayArrowRow.UpdateBars( iCol ); }
-	void DidTapNote( int iCol, TapNoteScore score, bool bBright ) { m_GhostArrowRow.DidTapNote( iCol, score, bBright ); }
-	void DidHoldNote( int iCol ) { m_GhostArrowRow.DidHoldNote( iCol ); }
-	void DidTapMine( int iCol, TapNoteScore score ) { m_GhostArrowRow.DidTapMine( iCol, score ); }
+	void Step( int iCol );
+	void UpdateBars( int iCol );
+	void DidTapNote( int iCol, TapNoteScore score, bool bBright );
+	void DidHoldNote( int iCol );
+	void DidTapMine( int iCol, TapNoteScore score );
 
 
 protected:
@@ -76,7 +76,10 @@ protected:
 	struct NoteDisplayCols
 	{
 		NoteDisplay		display[MAX_NOTE_TRACKS];
+		GrayArrowRow	m_GrayArrowRow;
+		GhostArrowRow	m_GhostArrowRow;
 	};
+
 	/* All loaded note displays, mapped by their name. */
 	map<CString, NoteDisplayCols *> m_NoteDisplays;
 
@@ -85,10 +88,10 @@ protected:
 	/* Map of beat->NoteDisplayCols.  This is updated whenever GAMESTATE-> changes. */
 	typedef map<float, NoteDisplayCols *> NDMap;
 	void SearchForBeat( NDMap::iterator &cur, NDMap::iterator &next, float Beat );
-	NDMap m_BeatToNoteDisplays;
+	NoteDisplayCols *SearchForBeat( float Beat );
+	NoteDisplayCols *SearchForSongBeat();
 
-	GrayArrowRow	m_GrayArrowRow;
-	GhostArrowRow	m_GhostArrowRow;
+	NDMap m_BeatToNoteDisplays;
 
 	// used in MODE_EDIT
 	Sprite			m_sprBars;	// 4 frames: Measure, 4th, 8th, 16th

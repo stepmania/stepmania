@@ -65,6 +65,9 @@ void NoteField::CacheNoteSkin( CString skin )
 	NoteDisplayCols *nd = new NoteDisplayCols;
 	for( int c=0; c<GetNumTracks(); c++ ) 
 		nd->display[c].Load( c, m_PlayerNumber, skin, m_fYReverseOffsetPixels );
+	nd->m_GrayArrowRow.Load( m_PlayerNumber, skin, m_fYReverseOffsetPixels );
+	nd->m_GhostArrowRow.Load( m_PlayerNumber, skin, m_fYReverseOffsetPixels );
+
 	m_NoteDisplays[ skin ] = nd;
 }
 
@@ -97,11 +100,10 @@ void NoteField::Load( const NoteData* pNoteData, PlayerNumber pn, int iFirstPixe
 	this->CopyAll( pNoteData );
 	ASSERT( GetNumTracks() == GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer );
 
-	m_GrayArrowRow.Load( pn, GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin, m_fYReverseOffsetPixels );
-	m_GhostArrowRow.Load( pn, GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin, m_fYReverseOffsetPixels );
-
 	CacheAllUsedNoteSkins();
 	RefreshBeatToNoteSkin();
+
+	/* if last != SearchForSongBeat ... copy */
 }
 
 
@@ -145,8 +147,10 @@ void NoteField::Update( float fDeltaTime )
 	ActorFrame::Update( fDeltaTime );
 
 	m_rectMarkerBar.Update( fDeltaTime );
-	m_GrayArrowRow.Update( fDeltaTime );
-	m_GhostArrowRow.Update( fDeltaTime );
+
+	NoteDisplayCols *cur = SearchForSongBeat();
+	cur->m_GrayArrowRow.Update( fDeltaTime );
+	cur->m_GhostArrowRow.Update( fDeltaTime );
 
 	if( m_fPercentFadeToFail >= 0 )
 		m_fPercentFadeToFail = min( m_fPercentFadeToFail + fDeltaTime/1.5f, 1 );	// take 1.5 seconds to totally fade
@@ -305,6 +309,21 @@ void NoteField::SearchForBeat( NDMap::iterator &cur, NDMap::iterator &next, floa
 	}
 }
 
+NoteField::NoteDisplayCols *NoteField::SearchForSongBeat()
+{
+	return SearchForBeat( GAMESTATE->m_fSongBeat );
+}
+
+NoteField::NoteDisplayCols *NoteField::SearchForBeat( float Beat )
+{
+	NDMap::iterator it = m_BeatToNoteDisplays.lower_bound( Beat );
+	/* The first entry should always be lower than any Beat we might receive. */
+	ASSERT( it != m_BeatToNoteDisplays.begin() );
+	--it;
+	ASSERT( it != m_BeatToNoteDisplays.end() );
+
+	return it->second;
+}
 
 // CPU OPTIMIZATION OPPORTUNITY:
 // change this probing to binary search
@@ -359,7 +378,8 @@ void NoteField::DrawPrimitives()
 	/* This should be filled in on the first update. */
 	ASSERT( !m_BeatToNoteDisplays.empty() );
 
-	m_GrayArrowRow.Draw();
+	NoteDisplayCols *cur = SearchForSongBeat();
+	cur->m_GrayArrowRow.Draw();
 
 	//
 	// Adjust draw range depending on some effects
@@ -574,7 +594,7 @@ void NoteField::DrawPrimitives()
 		g_NoteFieldMode[m_PlayerNumber].EndDrawTrack(c);
 	}
 
-	m_GhostArrowRow.Draw();
+	cur->m_GhostArrowRow.Draw();
 }
 
 void NoteField::RemoveTapNoteRow( int iIndex )
@@ -588,3 +608,9 @@ void NoteField::FadeToFail()
 	m_fPercentFadeToFail = max( 0.0f, m_fPercentFadeToFail );	// this will slowly increase every Update()
 		// don't fade all over again if this is called twice
 }
+
+void NoteField::Step( int iCol ) { SearchForSongBeat()->m_GrayArrowRow.Step( iCol ); }
+void NoteField::UpdateBars( int iCol ) { SearchForSongBeat()->m_GrayArrowRow.UpdateBars( iCol ); }
+void NoteField::DidTapNote( int iCol, TapNoteScore score, bool bBright ) { SearchForSongBeat()->m_GhostArrowRow.DidTapNote( iCol, score, bBright ); }
+void NoteField::DidHoldNote( int iCol ) { SearchForSongBeat()->m_GhostArrowRow.DidHoldNote( iCol ); }
+void NoteField::DidTapMine( int iCol, TapNoteScore score ) { SearchForSongBeat()->m_GhostArrowRow.DidTapMine( iCol, score ); }
