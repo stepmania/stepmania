@@ -415,18 +415,14 @@ int ScoreKeeperMAX2::GetPossibleDancePoints( const NoteData* pNoteData )
 {
 	/* Note that, if Marvelous timing is disabled or not active (not course mode),
 	 * PERFECT will be used instead. */
-
-	TapNoteScore maxPossibleTapScore = 
-		(GAMESTATE->ShowMarvelous() ) ? TNS_MARVELOUS : TNS_PERFECT;
-
-	return pNoteData->GetNumRowsWithTaps()*TapNoteScoreToDancePoints(maxPossibleTapScore)+
+	return pNoteData->GetNumRowsWithTaps()*TapNoteScoreToDancePoints(TNS_MARVELOUS)+
 	   pNoteData->GetNumHoldNotes()*HoldNoteScoreToDancePoints(HNS_OK);
 }
 
 
 int ScoreKeeperMAX2::TapNoteScoreToDancePoints( TapNoteScore tns )
 {
-	if(!GAMESTATE->ShowMarvelous() && tns == TNS_MARVELOUS)
+	if( !GAMESTATE->ShowMarvelous() && tns == TNS_MARVELOUS )
 		tns = TNS_PERFECT;
 
 /*
