@@ -1229,3 +1229,17 @@ SDL_RWops *OpenRWops( CString &sBuf )
 	rw->close = RWString_Close;
 	return rw;
 }
+
+SDL_Surface *mySDL_MakeDummySurface( int height, int width )
+{
+    SDL_Surface *ret_image = SDL_CreateRGBSurfaceSane(
+            SDL_SWSURFACE, width, height, 8, 0,0,0,0);
+	ASSERT( ret_image != NULL );
+
+	SDL_Color pink = { 0xFF, 0x10, 0xFF, 0xFF };
+	SDL_SetPalette( ret_image, SDL_LOGPAL, &pink, 0, 1 );
+
+	memset( ret_image->pixels, 0, ret_image->h*ret_image->pitch );
+
+	return ret_image;
+}

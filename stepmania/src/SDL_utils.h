@@ -75,6 +75,7 @@ SDL_Surface *SDL_LoadImage( const CString &sPath );
 
 SDL_RWops *OpenRWops( const CString &sPath, bool Write=false );
 SDL_RWops *OpenRWops( CString &sBuf );
+SDL_Surface *mySDL_MakeDummySurface( int height, int width );
 
 #endif
 
