@@ -266,76 +266,36 @@
 
 // If they want us to use only standard C++ stuff (no Win32 stuff)
 
+typedef const char*		PCSTR;
+typedef char*			PSTR;
+typedef char			TCHAR;
 #ifdef SS_ANSI
-
-	// On non-Win32 platforms, there is no TCHAR.H so define what we need
-
-	#if !defined(_WIN32) || defined(_XBOX)
-
-		typedef const char*		PCSTR;
-		typedef char*			PSTR;
-		typedef char			TCHAR;
-	#else
-
-		#include <TCHAR.H>
-		#include <WTYPES.H>
-		#ifndef STRICT
-			#define STRICT
-		#endif
-
-	#endif	// #ifndef _WIN32
-
-
 	// Make sure ASSERT is defined in an ANSI fashion
-
 	#ifndef ASSERT
 		#include <assert.h>
 		#define ASSERT(f) assert((f))
 	#endif
-
-#else // #ifdef SS_ANSI
-
-	#include <TCHAR.H>
-	#include <WTYPES.H>
-	#ifndef STRICT
-		#define STRICT
-	#endif
-
+#else
 	// Make sure ASSERT is defined
-
 	#ifndef ASSERT
 		#include <crtdbg.h>
 		#define ASSERT(f) _ASSERTE((f))
 	#endif
-
 #endif // #ifdef SS_ANSI
 
 // Standard headers needed
-
 #include <string>			// basic_string
 #include <algorithm>		// for_each, etc.
 #include <functional>		// for StdStringLessNoCase, et al
 
-// If this is a recent enough version of VC include comdef.h, so we can write
-// member functions to deal with COM types & compiler support classes e.g. _bstr_t
-
-#if 0 && defined (_MSC_VER) && (_MSC_VER >= 1100)
-	#include <comdef.h>
-	#define SS_NOTHROW __declspec(nothrow)
-#else
-	#define SS_NOTHROW
-#endif
-
 #ifndef SS_ANSI
-#include <malloc.h>
+#include <malloc.h>			// _alloca
 #endif
 
 // First define the conversion helper functions.  We define these regardless of
 // any preprocessor macro settings since their names won't collide. 
 
 #ifdef SS_ANSI // Are we doing things the standard, non-Win32 way?...
-
-
 	// Not sure if we need all these headers.   I believe ANSI says we do.
 
 	#include <stdio.h>
@@ -347,24 +307,6 @@
 	#endif
 #endif // #ifndef SS_ANSI
 
-// StdCodeCvt when there's no conversion to be done
-inline PSTR StdCodeCvt(PSTR pDst, PCSTR pSrc, int nChars)
-{
-	if ( nChars > 0 )
-	{
-		pDst[0]				= '\0';
-		std::basic_string<char>::traits_type::copy(pDst, pSrc, nChars);
-//		std::char_traits<char>::copy(pDst, pSrc, nChars);
-		if ( nChars > 0 )
-			pDst[nChars]	= '\0';
-	}
-
-	return pDst;
-}
-inline PSTR StdCodeCvt(PSTR pDst, const unsigned char *pSrc, int nChars)
-{
-	return StdCodeCvt(pDst, (PCSTR)pSrc, nChars);
-}
 
 // a very shorthand way of applying the fix for KB problem Q172398
 // (basic_string assignment bug)
@@ -406,7 +348,7 @@ template<typename CT> inline int sslen(const CT* pT)
 {
 	return 0 == pT ? 0 : std::basic_string<CT>::traits_type::length(pT);
 }
-inline SS_NOTHROW int sslen(const std::string& s)
+inline int sslen(const std::string& s)
 {
 	return s.length();
 }
@@ -522,25 +464,14 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 		return (int)(f - l);
 	}
 #else
-	#ifdef _MBCS
-		inline long sscmp(PCSTR pA1, PCSTR pA2)
-		{
-			return _mbscmp((const unsigned char *)pA1, (const unsigned char *)pA2);
-		}
-		inline long ssicmp(PCSTR pA1, PCSTR pA2)
-		{
-			return _mbsicmp((const unsigned char *)pA1, (const unsigned char *)pA2);
-		}
-	#else
-		inline long sscmp(PCSTR pA1, PCSTR pA2)
-		{
-			return strcmp(pA1, pA2);
-		}
-		inline long ssicmp(PCSTR pA1, PCSTR pA2)
-		{
-			return _stricmp(pA1, pA2);
-		}
-	#endif
+	inline long sscmp(PCSTR pA1, PCSTR pA2)
+	{
+		return strcmp(pA1, pA2);
+	}
+	inline long ssicmp(PCSTR pA1, PCSTR pA2)
+	{
+		return _stricmp(pA1, pA2);
+	}
 #endif
 
 // -----------------------------------------------------------------------------
@@ -1341,15 +1272,6 @@ CStdStr<char> operator+(PCSTR pA, const  CStdStr<char>& str)
 
 typedef CStdStr<char>		CStdStringA;	// a better std::string
 
-
-#ifndef SS_ANSI
-	// SSResourceHandle: our MFC-like resource handle
-	inline HMODULE& SSResourceHandle()
-	{
-		static HMODULE hModuleSS	= GetModuleHandle(0);
-		return hModuleSS;
-	}
-#endif
 
 
 // -----------------------------------------------------------------------------
