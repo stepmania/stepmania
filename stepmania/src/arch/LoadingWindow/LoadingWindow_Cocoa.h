@@ -15,7 +15,7 @@ public:
 	~LoadingWindow_Cocoa() { DisposeOfCocoaWindow(); }
 
 	void Paint() {} /* Not needed */
-	void SetText(CString str) { SetCocoaWindowText(str.c_str()); }
+	void SetText( CString str ) { SetCocoaWindowText( str ); }
 };
 
 #define HAVE_LOADING_WINDOW_COCOA
