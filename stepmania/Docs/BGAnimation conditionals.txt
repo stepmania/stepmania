@@ -1,0 +1,90 @@
+[this is an alternate, separate system from "ConditionalBGA"]
+
+Conditionals allow enabling BGAs or portions of BGAs based on a boolean
+expression.
+
+*  Quick start
+
+To only show a BGA on Wednesday:
+
+[BGAnimation]
+Condition=Weekday() == 3
+
+[Layer1]
+File=star
+Command=x,100;y,200
+...
+
+
+To only between 10pm and 3am, use this Condition= line:
+   Condition=Hour() > 22 or Hour() < 3
+
+Only if there are at least 2 stages left:
+   Condition=NumStagesLeft() >= 2
+
+Don't show in demo or jukebox mode:
+   Condition=not IsDemonstration()
+
+Only show if the current song is "Happy Birthday":
+   Condition=CurSong() == Song("Happy Birthday")
+
+Only display the layer on even days:
+   math.mod(DayOfMonth(), 2) == 0
+
+Only display the layer on odd days:
+   math.mod(DayOfMonth(), 2) == 0
+
+Only display on April Fools:
+   Condition=MonthOfYear() == 4 and DayOfMonth() == 1
+
+Only display on the final stage:
+   Condition=IsFinalStage()
+
+Only if the "reverse" modifier is in use by player 1:
+   Condition=UsingModifier(1, "reverse")
+
+Only if the "reverse" modifier is in use by player 1 or 2:
+   Condition=UsingModifier(1, "reverse") or UsingModifier(2, "reverse")
+
+Only if either player got an AAA or better:
+   GetBestGrade() <= Grade("AAA") 
+
+* Advanced use
+
+This can be applied to a single layer of a BGAnimation, by putting
+the conditional in the appropriate [Layer] section.
+
+[Layer1]
+File=stage1
+Condition=StageIndex() == 0
+
+[Layer2]
+File=stage2
+Condition=StageIndex() == 1
+
+[Layer3]
+File=extra_stage
+Condition=IsExtraStage()
+
+ * Complete function list:
+
+MonthOfYear()    month of year (1..12)
+DayOfMonth()     day of the month (1..31)
+Hour()           hours past midnight (0..23)
+Minute()         minutes after the hour (0..59)
+Second()         seconds after the minute (0..59)
+Year()           year (eg. 2004)
+Weekday()        days since Sunday (0..6)
+DayOfYear()      the number of days since January 1 (0..365)
+
+StageStats info:
+
+GetBestGrade()   best grade of any active player (AAAA is 0, AAA is 1, etc)
+GetWorstGrade()  worst grade of any active player
+OnePassed()      returns true if either player passed
+FullCombo(pn)    returns true if player "pn" (0 or 1) got a full combo
+MaxCombo(pn)     returns the given player's max combo
+GetGrade(pn)     returns the given player's grade
+Grade(grade)     returns the grade number for a given string
+OneGotGrade(pn,n)
+
