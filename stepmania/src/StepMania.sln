@@ -4,19 +4,13 @@ EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		ConfigName.0 = Debug
-		ConfigName.1 = FIPS 140 Debug
-		ConfigName.2 = FIPS 140 Release
-		ConfigName.3 = Release
+		ConfigName.1 = Release
 	EndGlobalSection
 	GlobalSection(ProjectDependencies) = postSolution
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{670745A6-106B-420D-A2A9-D4F89A23986E}.Debug.ActiveCfg = Debug|Win32
 		{670745A6-106B-420D-A2A9-D4F89A23986E}.Debug.Build.0 = Debug|Win32
-		{670745A6-106B-420D-A2A9-D4F89A23986E}.FIPS 140 Debug.ActiveCfg = Debug|Win32
-		{670745A6-106B-420D-A2A9-D4F89A23986E}.FIPS 140 Debug.Build.0 = Debug|Win32
-		{670745A6-106B-420D-A2A9-D4F89A23986E}.FIPS 140 Release.ActiveCfg = Release|Win32
-		{670745A6-106B-420D-A2A9-D4F89A23986E}.FIPS 140 Release.Build.0 = Release|Win32
 		{670745A6-106B-420D-A2A9-D4F89A23986E}.Release.ActiveCfg = Release|Win32
 		{670745A6-106B-420D-A2A9-D4F89A23986E}.Release.Build.0 = Release|Win32
 	EndGlobalSection
