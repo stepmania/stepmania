@@ -496,7 +496,8 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 	case PLAY_MODE_ENDLESS:
 		{
 			// We only use SORT_PREFERRED when selecting a course
-			if( so != SongSortOrder(SORT_PREFERRED) )
+			// Err, SORT_PREFERRED is skipped right now ...
+			if( so != SongSortOrder(SORT_GROUP /*SORT_PREFERRED*/) )
 				break;
 			
 			vector<Course*> apCourses;
