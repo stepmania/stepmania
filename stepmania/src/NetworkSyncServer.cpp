@@ -216,11 +216,22 @@ void StepManiaLanServer::CheckReady() {
 
 	// If All clients were ready, send the start command
 	if (Start == true) {
+		//(Test this) 
+		//For whatever reason we need to pause in a way
+		//that will not use a lot of CPU.
+		//When you try playing the music as soon as it's loaded
+		//it will not always play ... immediately
+		for (x = 0; x < NUMBERCLIENTS; x++)
+			Client[x].clientSocket.blocking = true;
+		usleep ( 2000000 );
 		for (x = 0; x < NUMBERCLIENTS; x++)
 			if (Client[x].Used == true) {
 				SendValue(131, x);
 				Client[x].Ready = false;
 			}
+		for (x = 0; x < NUMBERCLIENTS; x++)
+			Client[x].clientSocket.blocking = false;
+
 		//After we start the clients, clear each client's hasSong.
 		ClearHasSong();
 	}
