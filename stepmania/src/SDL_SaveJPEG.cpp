@@ -49,7 +49,7 @@ static void init_destination( jpeg::j_compress_ptr cinfo )
 static jpeg::boolean empty_output_buffer( jpeg::j_compress_ptr cinfo )
 {
 	my_destination_mgr * dest = (my_destination_mgr *) cinfo->dest;
-	int nbytes = dest->f->Write( dest->buffer, OUTPUT_BUFFER_SIZE );
+	dest->f->Write( dest->buffer, OUTPUT_BUFFER_SIZE );
 	// XXX err
 	dest->pub.next_output_byte = dest->buffer;
 	dest->pub.free_in_buffer = OUTPUT_BUFFER_SIZE;
@@ -66,7 +66,7 @@ static void term_destination (jpeg::j_compress_ptr cinfo)
 {
 	/* Write data remaining in the buffer */
 	my_destination_mgr *dest = (my_destination_mgr *) cinfo->dest;
-	int wrote = dest->f->Write( dest->buffer, OUTPUT_BUFFER_SIZE - dest->pub.free_in_buffer );
+	dest->f->Write( dest->buffer, OUTPUT_BUFFER_SIZE - dest->pub.free_in_buffer );
 	// XXX err
 	dest->pub.next_output_byte = dest->buffer;
 	dest->pub.free_in_buffer = OUTPUT_BUFFER_SIZE;
