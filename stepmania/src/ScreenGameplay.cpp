@@ -691,12 +691,10 @@ bool ScreenGameplay::IsTimeToPlayTicks() const
 		return false;
 
 	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
-	float fSongBeat, fBPS;
-	bool bFreeze;	
 
 	// HACK:  Play the sound a little bit early to account for the fact that the middle of the tick sounds occurs 0.015 seconds into playing.
 	fPositionSeconds += (SOUNDMAN->GetPlayLatency()+g_fTickEarlySecondsCache) * m_soundMusic.GetPlaybackRate();
-	GAMESTATE->m_pCurSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS, bFreeze );
+	float fSongBeat=GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
 
 	int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
 	iRowNow = max( 0, iRowNow );
