@@ -209,6 +209,7 @@ class Regex {
 public:
 	Regex(const CString &pat = "");
 	Regex(const Regex &rhs);
+	Regex &operator=(const Regex &rhs);
 	~Regex();
 	void Set(const CString &str);
 	bool Compare(const CString &str);

@@ -678,6 +678,7 @@ void Regex::Release()
 {
     delete (regex_t *)reg;
 	reg = NULL;
+	pattern = "";
 }
 
 Regex::Regex(const CString &str)
@@ -689,8 +690,13 @@ Regex::Regex(const CString &str)
 Regex::Regex(const Regex &rhs)
 {
 	reg = NULL;
-    pattern=rhs.pattern;
-	Compile();
+    Set(rhs.pattern);
+}
+
+Regex &Regex::operator=(const Regex &rhs)
+{
+	if(this != &rhs) Set(rhs.pattern);
+	return *this;
 }
 
 Regex::~Regex()
