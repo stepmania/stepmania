@@ -1,6 +1,4 @@
-/*
- * RageSounds - Sound utilities
- */
+/* RageSounds - High-level sound utilities. */
 
 #ifndef RAGE_SOUNDS_H
 #define RAGE_SOUNDS_H
