@@ -958,37 +958,6 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 	return fFirstSecond - fStartSecond;
 }
 
-bool ScreenGameplay::OneIsHot() const
-{
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
-			if( (m_pLifeMeter[p] && m_pLifeMeter[p]->IsHot()) || 
-				(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsHot((PlayerNumber)p)) )
-				return true;
-	return false;
-}
-
-bool ScreenGameplay::AllAreInDanger() const
-{
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
-			if( (m_pLifeMeter[p] && !m_pLifeMeter[p]->IsInDanger()) || 
-				(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsInDanger((PlayerNumber)p)) )
-				return false;
-	return true;
-}
-
-bool ScreenGameplay::AllAreFailing() const
-{
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
-			if( (m_pLifeMeter[p] && !m_pLifeMeter[p]->IsFailing()) || 
-				(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsFailing((PlayerNumber)p)) )
-				return false;
-	
-	return true;
-}
-
 bool ScreenGameplay::AllFailedEarlier() const
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
@@ -1107,6 +1076,39 @@ void ScreenGameplay::Update( float fDeltaTime )
 	int pn;
 	m_BeginnerHelper.Update(fDeltaTime);
 	
+	//
+	// update GameState HealthState
+	//
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( GAMESTATE->IsPlayerEnabled(p) )
+		{
+			if( 
+				(m_pLifeMeter[p] && m_pLifeMeter[p]->IsHot()) || 
+				(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsHot((PlayerNumber)p)) )
+			{
+				GAMESTATE->m_HealthState[p] = GameState::HOT;
+			}
+			else if( 
+				(m_pLifeMeter[p] && m_pLifeMeter[p]->IsFailing()) || 
+				(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsFailing((PlayerNumber)p)) )
+			{
+				GAMESTATE->m_HealthState[p] = GameState::DEAD;
+			}
+			else if( 
+				(m_pLifeMeter[p] && m_pLifeMeter[p]->IsInDanger()) || 
+				(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsInDanger((PlayerNumber)p)) )
+			{
+				GAMESTATE->m_HealthState[p] = GameState::DANGER;
+			}
+			else
+			{
+				GAMESTATE->m_HealthState[p] = GameState::ALIVE;
+			}
+		}
+	}
+
+
 	switch( m_DancingState )
 	{
 	case STATE_DANCING:
@@ -1123,19 +1125,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 		float fSecondsToStop = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( GAMESTATE->m_pCurSong->m_fLastBeat ) + 1;
 		if( GAMESTATE->m_fMusicSeconds > fSecondsToStop  &&  !m_NextSongOut.IsTransitioning() )
 			this->PostScreenMessage( SM_NotesEnded, 0 );
-
-		//
-		// Handle the background danger graphic.  Never show it in FAIL_OFF.  Don't
-		// show it if everyone is already failing: it's already too late and it's
-		// annoying for it to show for the entire duration of a song.
-		//
-		if( GAMESTATE->m_SongOptions.m_FailType != SongOptions::FAIL_OFF )
-		{
-			if( AllAreInDanger() && !AllAreFailing() )
-				m_Background.TurnDangerOn();
-			else
-				m_Background.TurnDangerOff();
-		}
 
 		//
 		// check for fail
@@ -1221,9 +1210,12 @@ void ScreenGameplay::Update( float fDeltaTime )
 			case PLAY_MODE_ARCADE:
 			case PLAY_MODE_BATTLE:
 			case PLAY_MODE_RAVE:
-				if( OneIsHot() )			m_announcerHot.PlayRandom();
-				else if( AllAreInDanger() )	m_announcerDanger.PlayRandom();
-				else						m_announcerGood.PlayRandom();
+				if( GAMESTATE->OneIsHot() )			
+					m_announcerHot.PlayRandom();
+				else if( GAMESTATE->AllAreInDangerOrWorse() )	
+					m_announcerDanger.PlayRandom();
+				else
+					m_announcerGood.PlayRandom();
 				if( m_pCombinedLifeMeter )
 					m_pCombinedLifeMeter->OnTaunt();
 				break;
@@ -1301,7 +1293,7 @@ void ScreenGameplay::UpdateCheckFail()
 		/* If recovery is enabled, only set fail if both are failing.
 		 * There's no way to recover mid-song in battery mode. */
 		if( GAMESTATE->m_SongOptions.m_LifeType != SongOptions::LIFE_BATTERY &&
-			PREFSMAN->m_bTwoPlayerRecovery && !AllAreFailing() )
+			PREFSMAN->m_bTwoPlayerRecovery && !GAMESTATE->AllAreDead() )
 			continue;
 
 		LOG->Trace("Player %d failed", (int)pn);
@@ -1323,7 +1315,7 @@ void ScreenGameplay::UpdateCheckFail()
 
 	/* If FAIL_ARCADE and everyone is failing, start SM_BeginFailed. */
 	if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_ARCADE &&
-		AllAreFailing() )
+		GAMESTATE->AllAreDead() )
 		SCREENMAN->PostMessageToTopScreen( SM_BeginFailed, 0 );
 }
 

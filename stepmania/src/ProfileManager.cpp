@@ -425,7 +425,10 @@ void ProfileManager::ReadSongScoresFromFile( CString fn, MemoryCard mc )
 {
 	RageFile f;
 	if( !f.Open(fn, RageFile::READ) )
+	{
+		LOG->Warn( "Couldn't open file '%s'", fn.c_str() );
 		return;
+	}
 
 	int version;
 	if( !FileRead(f, version) )
@@ -520,7 +523,10 @@ void ProfileManager::ReadCategoryScoresFromFile( CString fn, MemoryCard mc )
 {
 	RageFile f;
 	if( !f.Open(fn, RageFile::READ) )
+	{
+		LOG->Warn( "Couldn't open file '%s'", fn.c_str() );
 		return;
+	}
 	
 	int version;
 	if( !FileRead(f, version) )
@@ -552,7 +558,10 @@ void ProfileManager::ReadCourseScoresFromFile( CString fn, MemoryCard mc )
 {
 	RageFile f;
 	if( !f.Open(fn, RageFile::READ) )
+	{
+		LOG->Warn( "Couldn't open file '%s'", fn.c_str() );
 		return;
+	}
 	
 	int version;
 	if( !FileRead(f, version) )
@@ -633,12 +642,11 @@ void ProfileManager::InitMachineScoresFromDisk()
 
 void ProfileManager::ReadSM300NoteScores()
 {
+	if( !DoesFileExist(SM_300_STATISTICS_FILE) )
+		return;
+
 	IniFile ini;
 	ini.SetPath( SM_300_STATISTICS_FILE );
-	if( !ini.ReadFile() ) {
-		LOG->Trace( "WARNING: Could not read SM 3.0 final statistics '%s'.", SM_300_STATISTICS_FILE );
-		return;		// load nothing
-	}
 
 	// load song statistics
 	const IniFile::key* pKey = ini.GetKey( "Statistics" );
@@ -707,7 +715,10 @@ void ProfileManager::SaveCategoryScoresToFile( CString fn, MemoryCard mc )
 
 	RageFile f;
 	if( !f.Open(fn, RageFile::WRITE) )
+	{
+		LOG->Warn( "Couldn't open file '%s'", fn.c_str() );
 		return;
+	}
 
 	FileWrite( f, CATEGORY_RANKING_VERSION );
 
@@ -735,7 +746,10 @@ void ProfileManager::SaveCourseScoresToFile( CString fn, MemoryCard mc )
 
 	RageFile f;
 	if( !f.Open(fn, RageFile::WRITE) )
+	{
+		LOG->Warn( "Couldn't open file '%s'", fn.c_str() );
 		return;
+	}
 	
 	FileWrite( f, COURSE_SCORES_VERSION );
 
@@ -791,7 +805,10 @@ void ProfileManager::SaveSongScoresToFile( CString fn, MemoryCard mc )
 
 	RageFile f;
 	if( !f.Open(fn, RageFile::WRITE) )
+	{
+		LOG->Warn( "Couldn't open file '%s'", fn.c_str() );
 		return;
+	}
 	
 	FileWrite( f, STEPS_SCORES_VERSION );
 
@@ -892,7 +909,10 @@ void ProfileManager::SaveStatsWebPageToFile( CString fn, MemoryCard mc )
 {
 	RageFile f;
 	if( !f.Open( fn, RageFile::WRITE ) )
+	{
+		LOG->Warn( "Couldn't open file '%s'", fn.c_str() );
 		return;
+	}
 
 	f.PutLine( "<html>" );
 	f.PutLine( "<head>" );

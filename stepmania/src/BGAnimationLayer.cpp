@@ -507,7 +507,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 
 	bool Stretch = false;
 	{
-		CString type;
+		CString type = "sprite";
 		ini.GetValue( sLayer, "Type", type );
 		type.MakeLower();
 
@@ -515,13 +515,38 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 		 * and "stretch=1".  "type=1" is for backwards-compatibility. */
 		ini.GetValue( sLayer, "Stretch", Stretch );
 
-			 if( atoi(type) == 0 || type == "sprite" ) m_Type = TYPE_SPRITE;
-		else if( atoi(type) == 1 ) { m_Type = TYPE_SPRITE; Stretch = true; }
-		else if( atoi(type) == 2 || type == "particles" ) m_Type = TYPE_PARTICLES;
-		else if( atoi(type) == 3 || type == "tiles" ) m_Type = TYPE_TILES;
+		// Check for string match first, then do integer match.
+		// "if(atoi(type)==0)" was matching against all string matches.
+		// -Chris
+		if( stricmp(type,"sprite")==0 )
+		{
+			m_Type = TYPE_SPRITE;
+		}
+		else if( stricmp(type,"particles")==0 )
+		{
+			m_Type = TYPE_PARTICLES;
+		}
+		else if( stricmp(type,"tiles")==0 )
+		{
+			m_Type = TYPE_TILES;
+		}
+		else if( atoi(type) == 1 )
+		{
+			m_Type = TYPE_SPRITE; 
+			Stretch = true; 
+		}
+		else if( atoi(type) == 2 )
+		{
+			m_Type = TYPE_PARTICLES; 
+		}
+		else if( atoi(type) == 3 )
+		{
+			m_Type = TYPE_TILES; 
+		}
 		else
-			RageException::Throw("Unknown %s::type in %s: \"%s\"",
-				sLayer.c_str(), sAniDir.c_str(), type.c_str() );
+		{
+			m_Type = TYPE_SPRITE;
+		}
 	}
 
 	{

@@ -36,20 +36,20 @@ public:
 	void FadeIn();
 	void FadeOut();
 	
-	virtual void TurnDangerOn()		{ m_bInDanger = true; };
-	virtual void TurnDangerOff()	{ m_bInDanger = false; };
-
-	virtual bool IsInDanger()		{ return m_bInDanger; };
-
 	DancingCharacters* GetDancingCharacters() { return m_pDancingCharacters; };
 
 protected:
-	bool IsDangerVisible();
+	bool IsDangerPlayerVisible( PlayerNumber pn );
+	bool IsDangerAllVisible();
+	bool IsDeadPlayerVisible( PlayerNumber pn );
 	void UpdateCurBGChange();
 		
 	DancingCharacters*	m_pDancingCharacters;
 
-	BGAnimation		m_BGADanger;
+	BGAnimation		m_DangerPlayer[NUM_PLAYERS];
+	BGAnimation		m_DangerAll;
+
+	BGAnimation		m_DeadPlayer[NUM_PLAYERS];
 
 	BGAnimation* CreateSongBGA(const Song *pSong, CString sBGName) const;
 	BGAnimation* CreateRandomBGA() const;
@@ -63,8 +63,6 @@ protected:
 
 	Quad m_quadBGBrightness;
 	Quad m_quadBorder[4];	// l, t, r, b - cover up the edge of animations that might hang outside of the background rectangle
-
-	bool m_bInDanger;
 };
 
 

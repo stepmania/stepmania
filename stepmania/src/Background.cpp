@@ -35,6 +35,7 @@ const float FADE_SECONDS = 1.0f;
 #define TOP_EDGE			THEME->GetMetricI("Background","TopEdge")
 #define RIGHT_EDGE			THEME->GetMetricI("Background","RightEdge")
 #define BOTTOM_EDGE			THEME->GetMetricI("Background","BottomEdge")
+CachedThemeMetricB BLINK_DANGER_ALL("Background","BlinkDangerAll");
 
 #define RECT_BACKGROUND RectI(LEFT_EDGE,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE)
 
@@ -45,14 +46,20 @@ CString RandomBackground(int num) { return ssprintf("__random%i", num); }
 
 Background::Background()
 {
-	m_bInDanger = false;
+	BLINK_DANGER_ALL.Refresh();
+
+	int p;
 
 	m_iCurBGChangeIndex = -1;
 	m_pCurrentBGA = NULL;
 	m_pFadingBGA = NULL;
 	m_fSecsLeftInFade = 0;
 
-	m_BGADanger.LoadFromAniDir( THEME->GetPathToB("ScreenGameplay danger") );
+	m_DangerAll.LoadFromAniDir( THEME->GetPathToB("ScreenGameplay danger all") );
+	for( p=0; p<NUM_PLAYERS; p++ )
+		m_DangerPlayer[p].LoadFromAniDir( THEME->GetPathToB(ssprintf("ScreenGameplay danger p%d",p+1)) );
+	for( p=0; p<NUM_PLAYERS; p++ )
+		m_DeadPlayer[p].LoadFromAniDir( THEME->GetPathToB(ssprintf("ScreenGameplay dead p%d",p+1)) );
 
 	m_quadBGBrightness.StretchTo( RECT_BACKGROUND );
 	m_quadBGBrightness.SetDiffuse( RageColor(0,0,0,1-PREFSMAN->m_fBGBrightness) );
@@ -68,7 +75,7 @@ Background::Background()
 
 	bool bOneOrMoreChars = false;
 	bool bShowingBeginnerHelper = false;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;
@@ -374,9 +381,20 @@ void Background::LoadFromSong( Song* pSong )
 		iter->second->SetZoomY( fYZoom );
 	}
 		
-	m_BGADanger.SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
-	m_BGADanger.SetZoomX( fXZoom );
-	m_BGADanger.SetZoomY( fYZoom );	
+	m_DangerAll.SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
+	m_DangerAll.SetZoomX( fXZoom );
+	m_DangerAll.SetZoomY( fYZoom );	
+
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_DangerPlayer[p].SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
+		m_DangerPlayer[p].SetZoomX( fXZoom );
+		m_DangerPlayer[p].SetZoomY( fYZoom );	
+	
+		m_DeadPlayer[p].SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
+		m_DeadPlayer[p].SetZoomX( fXZoom );
+		m_DeadPlayer[p].SetZoomY( fYZoom );	
+	}
 
 	TEXTUREMAN->EnableOddDimensionWarning();
 
@@ -433,12 +451,21 @@ void Background::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
-	if( IsDangerVisible() )
+	if( IsDangerAllVisible() )
 	{
-		m_BGADanger.Update( fDeltaTime );
+		m_DangerAll.Update( fDeltaTime );
 	}
 
-	/* Always update the current background, even when m_BGADanger is being displayed.
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( IsDangerPlayerVisible((PlayerNumber)p) )
+			m_DangerPlayer[p].Update( fDeltaTime );
+			
+		if( IsDeadPlayerVisible((PlayerNumber)p) )
+			m_DeadPlayer[p].Update( fDeltaTime );
+	}
+
+	/* Always update the current background, even when m_DangerAll is being displayed.
 	 * Otherwise, we'll stop updating movies during danger (which may stop them from
 	 * playing), and we won't start clips at the right time, which will throw backgrounds
 	 * off sync. */
@@ -469,12 +496,12 @@ void Background::DrawPrimitives()
 
 	ActorFrame::DrawPrimitives();
 	
-	if( IsDangerVisible() )
+	if( IsDangerAllVisible() )
 	{
 		// Since this only shows when DANGER is visible, it will flash red on it's own accord :)
 		if( m_pDancingCharacters )
 			m_pDancingCharacters->m_bDrawDangerLight = true;
-		m_BGADanger.Draw();
+		m_DangerAll.Draw();
 	}
 	else
 	{	
@@ -484,6 +511,14 @@ void Background::DrawPrimitives()
 			m_pCurrentBGA->Draw();
 		if( m_pFadingBGA )
 			m_pFadingBGA->Draw();
+
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( IsDangerPlayerVisible((PlayerNumber)p) )
+				m_DangerPlayer[p].Draw();
+			if( IsDeadPlayerVisible((PlayerNumber)p) )
+				m_DeadPlayer[p].Draw();
+		}
 	}
 
 	if( m_pDancingCharacters )
@@ -494,9 +529,38 @@ void Background::DrawPrimitives()
 		m_quadBorder[i].Draw();
 }
 
-bool Background::IsDangerVisible()
+bool Background::IsDangerAllVisible()
 {
-	return m_bInDanger  &&  PREFSMAN->m_bShowDanger  &&  (RageTimer::GetTimeSinceStart() - (int)RageTimer::GetTimeSinceStart()) < 0.5f;
+	if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_OFF )
+		return false;
+	if( !PREFSMAN->m_bShowDanger )
+		return false;
+
+	if( GAMESTATE->AllAreInDangerOrWorse() )
+	{
+		if( BLINK_DANGER_ALL )
+			return (RageTimer::GetTimeSinceStart() - (int)RageTimer::GetTimeSinceStart()) < 0.5f;
+		else
+			return true;
+	}
+	else
+		return false;
+}
+
+bool Background::IsDangerPlayerVisible( PlayerNumber pn )
+{
+	if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_OFF )
+		return false;
+	if( !PREFSMAN->m_bShowDanger )
+		return false;
+	return GAMESTATE->m_HealthState[pn] == GameState::DANGER;
+}
+
+bool Background::IsDeadPlayerVisible( PlayerNumber pn )
+{
+	if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_OFF )
+		return false;
+	return GAMESTATE->m_HealthState[pn] == GameState::DEAD;
 }
 
 

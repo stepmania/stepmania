@@ -33,6 +33,7 @@
 #include "ThemeManager.h"
 #include "LightsManager.h"
 #include "RageFile.h"
+#include "Bookkeeper.h"
 
 #define DEFAULT_MODIFIERS THEME->GetMetric( "Common","DefaultModifiers" )
 
@@ -143,6 +144,10 @@ void GameState::Reset()
 	}
 
 	LIGHTSMAN->SetLightMode( LIGHTMODE_ATTRACT );
+
+	// HACK: save stats intermitently in case of crash
+	BOOKKEEPER->WriteToDisk();
+	PROFILEMAN->SaveMachineScoresToDisk();
 }
 
 void GameState::Update( float fDelta )
@@ -259,7 +264,10 @@ void GameState::ResetStageStatistics()
 	m_fOpponentHealthPercent = 1;
 	m_fTugLifePercentP1 = 0.5f;
 	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
 		m_fSuperMeter[p] = 0;
+		m_HealthState[p] = ALIVE;
+	}
 }
 
 void GameState::UpdateSongPosition(float fPositionSeconds)
@@ -951,24 +959,41 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 			GetFinalEvalStatsAndSongs( stats, vSongs );
 
 
-			for( int mc=0; mc<NUM_MEMORY_CARDS; mc++ )
+			// Find Machine Records
+			for( i=0; i<NUM_RANKING_CATEGORIES; i++ )
 			{
-				for( i=0; i<NUM_RANKING_CATEGORIES; i++ )
+				vector<ProfileManager::CategoryData::HighScore> &vHighScores = PROFILEMAN->m_CategoryDatas[MEMORY_CARD_MACHINE][nt][i].vHighScores;
+				for( unsigned j=0; j<vHighScores.size(); j++ )
 				{
-					vector<ProfileManager::CategoryData::HighScore> &vHighScores = PROFILEMAN->m_CategoryDatas[mc][nt][i].vHighScores;
-					for( unsigned j=0; j<vHighScores.size(); j++ )
-					{
-						if( vHighScores[j].sName != RANKING_TO_FILL_IN_MARKER[pn] )
-							continue;
+					if( vHighScores[j].sName != RANKING_TO_FILL_IN_MARKER[pn] )
+						continue;
 
-						RankingFeats feat;
-						feat.Type = RankingFeats::RANKING;
-						feat.Feat = ssprintf("#%d in Type %c (%d)", j+1, 'A'+i, stats.iMeter[pn] );
-						feat.pStringToFill = &vHighScores[j].sName;
-						feat.g = GRADE_NO_DATA;
-						feat.Score = (float) vHighScores[j].iScore;
-						asFeatsOut.push_back( feat );
-					}
+					RankingFeats feat;
+					feat.Type = RankingFeats::RANKING;
+					feat.Feat = ssprintf("MR #%d in Type %c (%d)", j+1, 'A'+i, stats.iMeter[pn] );
+					feat.pStringToFill = &vHighScores[j].sName;
+					feat.g = GRADE_NO_DATA;
+					feat.Score = (float) vHighScores[j].iScore;
+					asFeatsOut.push_back( feat );
+				}
+			}
+
+			// Find Personal Records
+			for( i=0; i<NUM_RANKING_CATEGORIES; i++ )
+			{
+				vector<ProfileManager::CategoryData::HighScore> &vHighScores = PROFILEMAN->m_CategoryDatas[pn][nt][i].vHighScores;
+				for( unsigned j=0; j<vHighScores.size(); j++ )
+				{
+					if( vHighScores[j].sName != RANKING_TO_FILL_IN_MARKER[pn] )
+						continue;
+
+					RankingFeats feat;
+					feat.Type = RankingFeats::RANKING;
+					feat.Feat = ssprintf("PR #%d in Type %c (%d)", j+1, 'A'+i, stats.iMeter[pn] );
+					feat.pStringToFill = &vHighScores[j].sName;
+					feat.g = GRADE_NO_DATA;
+					feat.Score = (float) vHighScores[j].iScore;
+					asFeatsOut.push_back( feat );
 				}
 			}
 		}
@@ -1035,4 +1060,31 @@ void GameState::StoreRankingName( PlayerNumber pn, CString name )
 	{
 		*aFeats[i].pStringToFill = name;
 	}
+}
+
+bool GameState::AllAreInDangerOrWorse() const
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		if( GAMESTATE->IsPlayerEnabled(p) )
+			if( m_HealthState[p] < DANGER )
+				return false;
+	return true;
+}
+
+bool GameState::AllAreDead() const
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		if( GAMESTATE->IsPlayerEnabled(p) )
+			if( m_HealthState[p] < DEAD )
+				return false;
+	return true;
+}
+
+bool GameState::OneIsHot() const
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		if( GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
+			if( m_HealthState[p] == HOT )
+				return true;
+	return false;
 }

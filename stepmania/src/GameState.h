@@ -161,6 +161,11 @@ public:
 	// Nonstop/Oni/Endless:	 for current course (which usually contains multiple songs)
 	//
 	StageStats	m_CurStageStats;				// current stage (not necessarily passed if Extra Stage)
+	enum HealthState { HOT, ALIVE, DANGER, DEAD };
+	HealthState	m_HealthState[NUM_PLAYERS];
+	bool AllAreInDangerOrWorse() const;
+	bool AllAreDead() const;
+	bool OneIsHot() const;
 
 	// used in PLAY_MODE_BATTLE and PLAY_MODE_RAVE
 	AttackArray	m_ActiveAttacks[NUM_PLAYERS];
