@@ -114,6 +114,8 @@ inline uint32_t ArchSwap24( uint32_t n )
 	{
 		mov eax, n
 		xchg al, ah
+		ror eax, 16
+		xchg al, ah
 		ror eax, 8
 		mov n, eax
 	};
