@@ -616,12 +616,17 @@ void ScreenNetSelectMusic::StartSelectedSong()
 
 void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 {
-	m_DifficultyIcon[pn].SetFromDifficulty( pn, m_DC[pn] );
+	if ( ( m_DC[pn] < DIFFICULTY_EDIT ) && ( m_DC[pn] >= DIFFICULTY_BEGINNER ) )
+		m_DifficultyIcon[pn].SetFromDifficulty( pn, m_DC[pn] );
+	else
+		m_DifficultyIcon[pn].SetFromSteps( pn, NULL );	//It will blank it out 
+
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-	if ( m_DC[pn] != NUM_DIFFICULTIES )
+
+	if ( ( m_DC[pn] < NUM_DIFFICULTIES ) && ( m_DC[pn] >= DIFFICULTY_BEGINNER ) )
 		m_DifficultyMeters[pn].SetFromSteps( GAMESTATE->m_pCurSong->GetStepsByDifficulty( st, m_DC[pn] ) );
 	else
-		m_DifficultyMeters[pn].SetFromMeterAndDifficulty( 0, m_DC[pn] ); 
+		m_DifficultyMeters[pn].SetFromMeterAndDifficulty( 0, DIFFICULTY_BEGINNER ); 
 }
 
 void ScreenNetSelectMusic::UpdateSongsListPos()
