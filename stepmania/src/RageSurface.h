@@ -26,6 +26,9 @@ struct RageSurfacePalette
 
 struct RageSurfaceFormat
 {
+	RageSurfaceFormat();
+	~RageSurfaceFormat();
+
 	int32_t BytesPerPixel;
 	int32_t BitsPerPixel;
 	uint32_t Rmask, Gmask, Bmask, Amask;

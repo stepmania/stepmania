@@ -38,6 +38,16 @@ int32_t RageSurfacePalette::FindClosestColor( const RageSurfaceColor &color ) co
 	return iBest;
 }
 
+RageSurfaceFormat::RageSurfaceFormat()
+{
+	palette = NULL;	
+}
+
+RageSurfaceFormat::~RageSurfaceFormat()
+{
+	delete palette;
+}
+
 void RageSurfaceFormat::GetRGB( uint32_t val, uint8_t *r, uint8_t *g, uint8_t *b ) const
 {
 	if( BytesPerPixel == 1 )
