@@ -97,7 +97,7 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic() : Screen("ScreenEz2SelectMusic")
 	}
 
 
-	m_Menu.Load("ScreenEz2SelectMusic", true, false);
+	m_Menu.Load("ScreenEz2SelectMusic", true);
 	this->AddChild( &m_Menu );
 
 	m_soundButtonPress.Load( THEME->GetPathToS("ScreenEz2SelectMusic buttonpress"));
