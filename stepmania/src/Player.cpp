@@ -746,6 +746,20 @@ void PlayerMinus::CrossedRow( int iNoteRow )
 				if( GetTapNoteScore(t, iNoteRow) == TNS_NONE )
 					Step( t, now );
 	}
+
+	// Hold the panel while crossing a mine will cause the mine to explode
+	for( int t=0; t<GetNumTracks(); t++ )
+	{
+		if( GetTapNote(t, iNoteRow) == TAP_MINE )
+		{
+			const StyleInput StyleI( m_PlayerNumber, t );
+			const GameInput GameI = GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
+			bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
+
+			if( bIsHoldingButton )
+				Step( t, now );
+		}
+	}
 }
 
 void PlayerMinus::RandomiseNotes( int iNoteRow )
