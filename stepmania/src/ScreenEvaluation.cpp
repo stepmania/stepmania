@@ -84,6 +84,7 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 
 const ScreenMessage SM_PlayCheer				=	ScreenMessage(SM_User+6);
+const ScreenMessage SM_AddBonus			= ScreenMessage(SM_User+7);
 
 
 REGISTER_SCREEN_CLASS( ScreenEvaluation );
@@ -859,8 +860,9 @@ void ScreenEvaluation::Init()
 	SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
 	m_timerSoundSequences.SetZero(); // zero the sound sequence timer
 	m_timerSoundSequences.Touch(); // set the timer going :]
-	m_fScreenCreateTime = RageTimer::GetTimeSinceStart();
-}
+
+	this->PostScreenMessage( SM_AddBonus, 1.5f );
+ }
 
 
 void ScreenEvaluation::CommitScores(
@@ -1290,30 +1292,6 @@ void ScreenEvaluation::Update( float fDeltaTime )
 			}
 		}
 	}
-	
-	FOREACH_EnabledPlayer( p ) 
-	{
-		if( STATSMAN->m_CurStageStats.m_player[p].iBonus == 0 )
-			continue;
-
-		if( GAMESTATE->IsCourseMode() )
-			continue;
-
-		// wait a few seconds before adding bonus
-		if( RageTimer::GetTimeSinceStart() - m_fScreenCreateTime  < 1.5f )
-			continue;
-
-		int increment = STATSMAN->m_CurStageStats.m_player[p].iBonus/10;
-		/* XXX: What's this supposed to do?  If i < 1, then min(i, 1024) is i ... */
-		if( increment < 1 )
-			increment = min( 1024, STATSMAN->m_CurStageStats.m_player[p].iBonus );
-
-		STATSMAN->m_CurStageStats.m_player[p].iBonus -= increment;
-		STATSMAN->m_CurStageStats.m_player[p].iScore += increment;
-
-		if( SHOW_SCORE_AREA )
-			m_textScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, STATSMAN->m_CurStageStats.m_player[p].iScore) );
-	}
 }
 
 void ScreenEvaluation::DrawPrimitives()
@@ -1423,6 +1401,27 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	case SM_PlayCheer:
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation cheer") );
 		break;
+	case SM_AddBonus:
+		FOREACH_EnabledPlayer( p ) 
+		{
+			if( STATSMAN->m_CurStageStats.m_player[p].iBonus == 0 )
+				continue;
+
+			if( GAMESTATE->IsCourseMode() )
+				continue;
+
+			int increment = STATSMAN->m_CurStageStats.m_player[p].iBonus/10;
+			/* XXX: What's this supposed to do?  If i < 1, then min(i, 1024) is i ... */
+			if( increment < 1 )
+				increment = min( 1024, STATSMAN->m_CurStageStats.m_player[p].iBonus );
+
+			STATSMAN->m_CurStageStats.m_player[p].iBonus -= increment;
+			STATSMAN->m_CurStageStats.m_player[p].iScore += increment;
+
+			if( SHOW_SCORE_AREA )
+				m_textScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, STATSMAN->m_CurStageStats.m_player[p].iScore) );
+		}
+		break;		
 	}
 }
 

@@ -60,8 +60,6 @@ protected:
 
 	Type				m_Type;
 
-	float m_fScreenCreateTime;
-
 	// banner area
 	Banner				m_LargeBanner;
 	AutoActor			m_sprLargeBannerFrame;
