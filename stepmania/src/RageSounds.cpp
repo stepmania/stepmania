@@ -316,7 +316,8 @@ void RageSounds::Update( float fDeltaTime )
 	 * data until we get a non-approximate time, indicating that the sound has actually
 	 * started playing. */
 	bool approximate;
-	const float fSeconds = g_Playing->m_Music.GetPositionSeconds( &approximate );
+	RageTimer tm;
+	const float fSeconds = g_Playing->m_Music.GetPositionSeconds( &approximate, &tm );
 
 	if( g_Playing->m_TimingDelayed && !approximate )
 	{
@@ -334,7 +335,7 @@ void RageSounds::Update( float fDeltaTime )
 		return;
 	}
 
-	GAMESTATE->UpdateSongPosition( fSeconds, g_Playing->m_Timing );
+	GAMESTATE->UpdateSongPosition( fSeconds, g_Playing->m_Timing, tm );
 }
 
 
