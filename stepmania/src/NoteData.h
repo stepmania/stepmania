@@ -107,14 +107,19 @@ public:
 	// statistics
 	bool IsThereANoteAtRow( int iRow ) const;
 
+	/* Return the highest beat/row that might contain notes.  (Use GetLastBeat if you need
+	 * accuracy.) */
+	float GetMaxBeat() const { return NoteRowToBeat(GetMaxRow()); }
+	int GetMaxRow() const { return int(m_TapNotes[0].size()); }
+
 	float GetFirstBeat() const;	// return the beat number of the first note
 	int GetFirstRow() const;
 	float GetLastBeat() const;	// return the beat number of the last note
 	int GetLastRow() const;
-	int GetNumTapNotes( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS ) const;
-	int GetNumDoubles( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS ) const;
+	int GetNumTapNotes( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
+	int GetNumDoubles( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
 	/* optimization: for the default of start to end, use the second (faster) */
-	int GetNumHoldNotes( const float fStartBeat, const float fEndBeat = MAX_BEATS ) const;
+	int GetNumHoldNotes( const float fStartBeat, const float fEndBeat = -1 ) const;
 	int GetNumHoldNotes() const { return m_HoldNotes.size(); }
 
 	int GetPossibleDancePoints();

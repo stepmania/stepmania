@@ -255,10 +255,11 @@ float NoteData::GetLastBeat() const
 	return fOldestBeatFoundSoFar;
 }
 
-int NoteData::GetNumTapNotes( const float fStartBeat, const float fEndBeat ) const
+int NoteData::GetNumTapNotes( float fStartBeat, float fEndBeat ) const
 {
 	int iNumNotes = 0;
 
+	if(fEndBeat == -1) fEndBeat = GetMaxBeat();
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 	
@@ -274,10 +275,11 @@ int NoteData::GetNumTapNotes( const float fStartBeat, const float fEndBeat ) con
 	return iNumNotes;
 }
 
-int NoteData::GetNumDoubles( const float fStartBeat, const float fEndBeat ) const
+int NoteData::GetNumDoubles( float fStartBeat, float fEndBeat ) const
 {
 	int iNumDoubles = 0;
 
+	if(fEndBeat == -1) fEndBeat = GetMaxBeat();
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
@@ -296,10 +298,11 @@ int NoteData::GetNumDoubles( const float fStartBeat, const float fEndBeat ) cons
 	return iNumDoubles;
 }
 
-int NoteData::GetNumHoldNotes( const float fStartBeat, const float fEndBeat ) const
+int NoteData::GetNumHoldNotes( float fStartBeat, float fEndBeat ) const
 {
 	int iNumHolds = 0;
 
+	if(fEndBeat == -1) fEndBeat = GetMaxBeat();
 	for( int i=0; i<GetNumHoldNotes(); i++ )
 	{
 		const HoldNote &hn = GetHoldNote(i);
