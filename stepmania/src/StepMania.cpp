@@ -90,7 +90,15 @@ static void ChangeToDirOfExecutable(const char *argv0)
 	else
 		DirOfExecutable.erase();
 
-	if( DirOfExecutable.size() == 0 || (DirOfExecutable[0] != '/' && DirOfExecutable[0] != '\\') )
+	bool IsAbsolutePath = false;
+	if( DirOfExecutable.size() == 0 || (DirOfExecutable[0] == '/' || DirOfExecutable[0] == '\\') )
+		IsAbsolutePath = true;
+#if defined(_WIN32)
+	if( DirOfExecutable.size() > 2 && DirOfExecutable[1] == ':' ) /* XXX: "c:foo" is relative */
+		IsAbsolutePath = true;
+#endif
+
+	if( !IsAbsolutePath )
 		DirOfExecutable = GetCwd() + "/" + DirOfExecutable;
 
 #ifndef _XBOX
