@@ -211,7 +211,7 @@ void ArchHooks_darwin::DumpDebugInfo() {
     /* TODO */
 
     /* Send all of the information to the log */
-    LOG->Info("Complied %s", date.c_str());
+    LOG->Info("Compiled %s", date.c_str());
     LOG->Info(machine.c_str());
     LOG->Info("Processor: %s (%d)", processor.c_str(), numProcessors);
     LOG->Info("%s", systemVersion.c_str());
