@@ -12,6 +12,7 @@
 #include "LuaBinding.h"
 #include "Command.h"
 #include "ActorCommands.h"
+#include "ThemeManager.h"
 
 
 // lua start
@@ -98,8 +99,9 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 		if( sKeyName.Right(7) != "command" )
 			continue; /* not a command */
 
-		const CString &sCommands = a->m_sValue;
-		Commands cmds = ParseCommands( sCommands );
+		CString sValue = a->m_sValue;
+		THEME->EvaluateString( sValue );
+		Commands cmds = ParseCommands( sValue );
 		apActorCommands apac( new ActorCommands( cmds ) );
 
 		CString sCmdName;
