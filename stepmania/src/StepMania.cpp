@@ -104,7 +104,16 @@ void ApplyGraphicOptions()
 		PREFSMAN->m_iMaxTextureResolution );
 
 	if( bNeedReload )
-		TEXTUREMAN->ReloadAll(); 
+		TEXTUREMAN->ReloadAll();
+
+	SCREENMAN->SystemMessage( ssprintf("%s %dx%d %d color %d texture %dHz %s",
+		PREFSMAN->m_bWindowed ? "Windowed" : "Fullscreen",
+		PREFSMAN->m_iDisplayWidth, 
+		PREFSMAN->m_iDisplayHeight, 
+		PREFSMAN->m_iDisplayColorDepth, 
+		PREFSMAN->m_iTextureColorDepth, 
+		PREFSMAN->m_iRefreshRate,
+		PREFSMAN->m_bVsync ? "Vsync" : "NoSync" ) );
 }
 
 void ExitGame()
@@ -142,7 +151,11 @@ void ResetGame()
 	}
 	PREFSMAN->SaveGamePrefsToDisk();
 
-	SCREENMAN->SetNewScreen( THEME->GetMetric("Common","InitialScreen") );
+	if( PREFSMAN->m_bFirstRun )
+		SCREENMAN->SetNewScreen( "ScreenAutoGraphicDetail" );
+	else
+		SCREENMAN->SetNewScreen( THEME->GetMetric("Common","InitialScreen") );
+	PREFSMAN->m_bFirstRun = false;
 }
 
 static void GameLoop();
@@ -492,22 +505,22 @@ static void HandleSDLEvents()
 			break;
 
 		case SDL_ACTIVEEVENT:
-		{
-			/* We don't care about mouse focus. */
-			if(event.active.state == SDL_APPMOUSEFOCUS)
-				break;
+			{
+				/* We don't care about mouse focus. */
+				if(event.active.state == SDL_APPMOUSEFOCUS)
+					break;
 
-			Uint8 i = SDL_GetAppState();
-			
-			g_bHasFocus = i&SDL_APPINPUTFOCUS && i&SDL_APPACTIVE;
-			LOG->Trace("App %s focus (%i%i)", g_bHasFocus? "has":"doesn't have",
-				i&SDL_APPINPUTFOCUS, i&SDL_APPACTIVE);
+				Uint8 i = SDL_GetAppState();
+				
+				g_bHasFocus = i&SDL_APPINPUTFOCUS && i&SDL_APPACTIVE;
+				LOG->Trace("App %s focus (%i%i)", g_bHasFocus? "has":"doesn't have",
+					i&SDL_APPINPUTFOCUS, i&SDL_APPACTIVE);
 
-			if(g_bHasFocus)
-				BoostAppPri();
-			else
-				RestoreAppPri();
-		}
+				if(g_bHasFocus)
+					BoostAppPri();
+				else
+					RestoreAppPri();
+			}
 		}
 	}
 }

@@ -95,6 +95,7 @@ PrefsManager::PrefsManager()
 	m_BannerCacheType = preload_none;
 	m_fDancePointsAccumulated = 0;
 	m_bUseUnlockSystem = false;
+	m_bFirstRun = true;
 	
 	/* DDR Extreme-style extra stage support.
 	 * Default off so people used to the current behavior (or those with extra
@@ -201,6 +202,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	/* XXX: This belongs in the memcard code, not prefs. */
 	ini.GetValueF( "Options", "DancePointsAccumulated",		m_fDancePointsAccumulated );
 	ini.GetValueB( "Options", "UseUnlockSystem",			m_bUseUnlockSystem );
+	ini.GetValueB( "Options", "FirstRun",					m_bFirstRun );
 
 	m_asAdditionalSongFolders.clear();
 	CString sAdditionalSongFolders;
@@ -286,6 +288,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueI( "Options", "BannerCacheType",			m_BannerCacheType );
 	ini.SetValueF( "Options", "DancePointsAccumulated",		m_fDancePointsAccumulated );
 	ini.SetValueB( "Options", "UseUnlockSystem",			m_bUseUnlockSystem );
+	ini.SetValueB( "Options", "FirstRun",					m_bFirstRun );
 
 
 	/* Only write these if they aren't the default.  This ensures that we can change

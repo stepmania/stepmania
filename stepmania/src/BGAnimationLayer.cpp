@@ -139,7 +139,11 @@ void BGAnimationLayer::LoadFromVisualization( CString sMoviePath )
 void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
-	CString sSongBGPath = pSong && pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathToG("Common fallback background");
+	CString sSongBGPath;
+	if( pSong && pSong->HasBackground() )
+		sSongBGPath = pSong->GetBackgroundPath();
+	else
+		sSongBGPath = THEME->GetPathToG("Common fallback background");
 
 	Init();
 	CString lcPath = sPath;

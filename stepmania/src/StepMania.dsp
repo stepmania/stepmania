@@ -63,10 +63,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\Win32_Debug_OGL_VC6
-TargetDir=\projects\stepmania\stepmania
+TargetDir=\stepmania\stepmania
 TargetName=StepMania-debug-ogl
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                             	cl                                                                                                                              /Zl                                                                                                                              /nologo                                                                                                                              /c                                                                                                                              verstub.cpp                                                                                                                              /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                               	cl                                                                                                                                /Zl                                                                                                                                /nologo                                                                                                                                /c                                                                                                                                verstub.cpp                                                                                                                                /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -103,10 +103,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\Win32_Debug_D3D_VC6
-TargetDir=\projects\stepmania\stepmania
+TargetDir=\stepmania\stepmania
 TargetName=StepMania-debug-d3d
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                             	cl                                                                                                                              /Zl                                                                                                                              /nologo                                                                                                                              /c                                                                                                                              verstub.cpp                                                                                                                              /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                               	cl                                                                                                                                /Zl                                                                                                                                /nologo                                                                                                                                /c                                                                                                                                verstub.cpp                                                                                                                                /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -142,7 +142,7 @@ CPP=cl.exe
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "_XBOX" /D "_DEBUG" /Fr /YX"global.h" /FD /c
 # ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "_XBOX" /D "_DEBUG" /Fr /YX"global.h" /FD /c
 # Begin Special Build Tool
-PreLink_Cmds=disasm\verinc                                                                                                                             	cl                                                                                                                              /Zl                                                                                                                              /nologo                                                                                                                              /c                                                                                                                              verstub.cpp                                                                                                                              /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                               	cl                                                                                                                                /Zl                                                                                                                                /nologo                                                                                                                                /c                                                                                                                                verstub.cpp                                                                                                                                /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -175,14 +175,14 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 $(intdir)\verstub.obj kernel32.lib gdi32.lib shell32.lib user32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /pdb:"../release6/StepMania.pdb" /map /debug /machine:I386
 # SUBTRACT BASE LINK32 /verbose /pdb:none
-# ADD LINK32 $(intdir)\verstub.obj kernel32.lib gdi32.lib shell32.lib user32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /pdb:"Win32_Release_D3D_VC6/StepMania.pdb" /map /debug /machine:I386 /out:"../StepMania-d3d.exe"
+# ADD LINK32 $(intdir)\verstub.obj kernel32.lib gdi32.lib shell32.lib user32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /map /debug /machine:I386 /out:"../StepMania-d3d.exe"
 # SUBTRACT LINK32 /verbose /pdb:none
 # Begin Special Build Tool
 IntDir=.\Win32_Release_D3D_VC6
-TargetDir=\projects\stepmania\stepmania
+TargetDir=\stepmania\stepmania
 TargetName=StepMania-d3d
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                             	cl                                                                                                                              /Zl                                                                                                                              /nologo                                                                                                                              /c                                                                                                                              verstub.cpp                                                                                                                              /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                               	cl                                                                                                                                /Zl                                                                                                                                /nologo                                                                                                                                /c                                                                                                                                verstub.cpp                                                                                                                                /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -215,14 +215,14 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 $(intdir)\verstub.obj kernel32.lib gdi32.lib shell32.lib user32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /pdb:"../release6/StepMania.pdb" /map /debug /machine:I386
 # SUBTRACT BASE LINK32 /verbose /pdb:none
-# ADD LINK32 $(intdir)\verstub.obj kernel32.lib gdi32.lib shell32.lib user32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /pdb:"Win32_Release_OGL_VC6/StepMania.pdb" /map /debug /machine:I386 /out:"../StepMania-ogl.exe"
+# ADD LINK32 $(intdir)\verstub.obj kernel32.lib gdi32.lib shell32.lib user32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /map /debug /machine:I386 /out:"../StepMania-ogl.exe"
 # SUBTRACT LINK32 /verbose /pdb:none
 # Begin Special Build Tool
 IntDir=.\Win32_Release_OGL_VC6
-TargetDir=\projects\stepmania\stepmania
+TargetDir=\stepmania\stepmania
 TargetName=StepMania-ogl
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                             	cl                                                                                                                              /Zl                                                                                                                              /nologo                                                                                                                              /c                                                                                                                              verstub.cpp                                                                                                                              /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                               	cl                                                                                                                                /Zl                                                                                                                                /nologo                                                                                                                                /c                                                                                                                                verstub.cpp                                                                                                                                /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -3940,6 +3940,27 @@ SOURCE=.\ScreenAutogenOptions.cpp
 # Begin Source File
 
 SOURCE=.\ScreenAutogenOptions.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenAutoGraphicDetail.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug OGL"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Debug D3D"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release D3D"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release OGL"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenAutoGraphicDetail.h
 # End Source File
 # Begin Source File
 

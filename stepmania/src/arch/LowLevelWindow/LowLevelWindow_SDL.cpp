@@ -67,7 +67,7 @@ bool LowLevelWindow_SDL::SetVideoMode( bool windowed, int width, int height, int
 	SDL_InitSubSystem(SDL_INIT_VIDEO);
 
 	/* Put them back. */
-	for( int i = 0; i < SDL_NUMEVENTS; ++i)
+	for( i = 0; i < SDL_NUMEVENTS; ++i)
 		mySDL_EventState((Uint8) i, EventEnabled[i]);
 	mySDL_PushEvents(events);
 

@@ -21,6 +21,7 @@ public:
 	~ScreenHowToPlay();
 	
 	virtual void Update( float fDelta );
+	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
 	LifeMeterBar	m_LifeMeter;

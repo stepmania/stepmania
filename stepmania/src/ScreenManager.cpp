@@ -137,10 +137,10 @@ void ScreenSystemLayer::SystemMessage( CString sMessage )
 	m_textSystemMessage.SetText( sMessage );
 	m_textSystemMessage.SetDiffuse( RageColor(1,1,1,1) );
 	m_textSystemMessage.SetX( -640 );
-	m_textSystemMessage.BeginTweening( 0.3f );
+	m_textSystemMessage.BeginTweening( 0.5f );
 	m_textSystemMessage.SetX( 4 );
 	m_textSystemMessage.BeginTweening( 5 );
-	m_textSystemMessage.BeginTweening( 0.3f );
+	m_textSystemMessage.BeginTweening( 0.5f );
 	m_textSystemMessage.SetDiffuse( RageColor(1,1,1,0) );
 }
 
