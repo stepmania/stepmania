@@ -115,9 +115,7 @@ void Course::LoadFromCRSFile( CString sPath )
 	if( !msd.ReadFile(sPath) )
 		RageException::Throw( "Error opening CRS file '%s'.", sPath.c_str() );
 
-	CString sDir, sFName, sExt;
-	splitrelpath( sPath, sDir, sFName, sExt );
-	sFName = sDir + sFName;
+	const CString sFName = SetExtension( sPath, "" );
 
 	CStringArray arrayPossibleBanners;
 	GetDirListing( sFName + ".png", arrayPossibleBanners, false, true );

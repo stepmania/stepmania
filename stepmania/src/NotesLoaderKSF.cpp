@@ -101,7 +101,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 
 	{
 		CString sDir, sFName, sExt;
-		splitrelpath( sPath, sDir, sFName, sExt );
+		splitpath( sPath, sDir, sFName, sExt );
 		sFName.MakeLower();
 
 		out.SetDescription(sFName);
