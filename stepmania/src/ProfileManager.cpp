@@ -68,7 +68,7 @@ void ProfileManager::GetLocalProfileNames( vector<CString> &asNamesOut ) const
 
 bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard )
 {
-  LOG->Trace( "LoadingProfile P%d, %s, %d, %d", pn+1, sProfileDir.c_str(), bIsMemCard );
+  LOG->Trace( "LoadingProfile P%d, %s, %d", pn+1, sProfileDir.c_str(), bIsMemCard );
 
 	ASSERT( !sProfileDir.empty() );
 	ASSERT( sProfileDir.Right(1) == "/" );
