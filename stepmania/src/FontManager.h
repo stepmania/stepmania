@@ -33,7 +33,7 @@ public:
 
 	static bool MatchesFont(CString FontName, CString FileName);
 
-	static longchar MakeGameGlyph(int c, Game g);
+	static longchar MakeGameGlyph(longchar c, Game g);
 	static bool ExtractGameGlyph(longchar ch, int &c, Game &g);
 
 	typedef map<CString, longchar, StdStringLessNoCase> aliasmap;

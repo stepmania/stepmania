@@ -45,8 +45,8 @@ FontManager::~FontManager()
  * character; game 0 is 0x01nnnnnn, game 1 is 0x02nnnnnn, and so on. */
 longchar FontManager::MakeGameGlyph(longchar c, Game g)
 {
-	ASSERT(g >= 0 && g <= 0xFF && c >= 0 && c <= 0xFFFFFF);
-	return ((g+1) << 24) + c;
+	ASSERT(g >= 0 && g <= 0xFF && c >= 0 && c <= 0xFFFF);
+	return longchar (((g+1) << 24) + c);
 }
 
 bool FontManager::ExtractGameGlyph(longchar ch, int &c, Game &g)
