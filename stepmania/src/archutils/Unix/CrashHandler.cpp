@@ -397,7 +397,7 @@ void CrashSignalHandler( int signal )
 {
 #if !defined(BACKTRACE_METHOD_POWERPC_DARWIN)
 	/* Don't dump a debug file if the user just hit ^C. */
-	if( signal == SIGINT || signal == SIGTERM )
+	if( signal == SIGINT || signal == SIGTERM || signal == SIGHUP )
 		return;
 #endif
 
