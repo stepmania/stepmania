@@ -39,27 +39,6 @@ void ArchHooks_Win32::DumpDebugInfo()
 	SearchForDebugInfo();
 }
 
-bool ArchHooks_Win32::MessageIsIgnored( CString ID )
-{
-	vector<CString> list;
-	split( PREFSMAN->m_sIgnoredMessageWindows, ",", list );
-	for( unsigned i = 0; i < list.size(); ++i )
-		if( !ID.CompareNoCase(list[i]) )
-			return true;
-	return false;
-}
-
-void ArchHooks_Win32::IgnoreMessage( CString ID )
-{
-	if( MessageIsIgnored(ID) )
-		return;
-	vector<CString> list;
-	split( PREFSMAN->m_sIgnoredMessageWindows, ",", list );
-	list.push_back( ID );
-	PREFSMAN->m_sIgnoredMessageWindows = join( ",", list );
-	PREFSMAN->SaveGlobalPrefsToDisk();
-}
-
 static CString g_sMessage;
 static bool g_AllowHush;
 static bool g_Hush;
