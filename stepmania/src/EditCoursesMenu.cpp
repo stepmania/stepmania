@@ -478,14 +478,6 @@ void EditCoursesMenu::OnRowValueChanged( Row row )
 	Course* pCourse = GetSelectedCourse();
 	CourseEntry* pEntry = GetSelectedEntry();
 
-	// HACK:  I can't decide how to handle Courses with 0 entries.  For now,
-	// just add one entry to it.
-	if( pEntry == NULL )
-	{
-		pCourse->m_entries.push_back( CourseEntry() );
-		pEntry = GetSelectedEntry();
-	}
-
 	switch( row )
 	{
 	case ROW_COURSE:
@@ -494,6 +486,12 @@ void EditCoursesMenu::OnRowValueChanged( Row row )
 		m_CourseBanner.LoadFromCourse( pCourse );
 		m_CourseBanner.ScaleToClipped( COURSE_BANNER_WIDTH, COURSE_BANNER_HEIGHT );
 		m_iSelection[ROW_ENTRY] = 0;
+		pEntry = GetSelectedEntry();
+		if( pEntry == NULL )
+		{
+			pCourse->m_entries.push_back( CourseEntry() );
+			pEntry = GetSelectedEntry();
+		}
 		// fall through
 	case ROW_COURSE_OPTIONS:
 		CHECKPOINT;
