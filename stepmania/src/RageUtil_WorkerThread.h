@@ -16,6 +16,7 @@ public:
 	 * per-request timeout; you have 10 seconds to do your work, at which point all
 	 * requests time out until SetTimeout is called again. */
 	void SetTimeout( float fSeconds );
+	bool TimeoutEnabled() const { return !m_Timeout.IsZero(); }
 
 protected:
 	/* Call this in the derived class to start and stop the thread. */
