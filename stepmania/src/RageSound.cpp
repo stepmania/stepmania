@@ -181,7 +181,7 @@ bool RageSound::Load( CString sSoundFilePath, int precache )
 	Sample = SoundReader_FileReader::OpenFile( m_sFilePath, error );
 	if( Sample == NULL )
 	{
-		LOG->Warn( "RageSoundManager::RageSoundManager: error opening sound \"%s\": %s",
+		LOG->Warn( "RageSound::Load: error opening sound \"%s\": %s",
 			m_sFilePath.c_str(), error.c_str() );
 
 		Sample = new RageSoundReader_Silence;
