@@ -185,31 +185,31 @@ void Player::Load( const NoteData& noteData )
 	
 	switch( GAMESTATE->m_PlayMode )
 	{
-		case PLAY_MODE_RAVE:
-		case PLAY_MODE_BATTLE:
+	case PLAY_MODE_RAVE:
+	case PLAY_MODE_BATTLE:
+		{
+			// ugly, ugly, ugly.  Works only w/ dance.
+			NoteDataUtil::TransformNoteData( m_NoteData, GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, GAMESTATE->GetCurrentStyle()->m_StepsType );
+			
+			// shuffle either p1 or p2
+			static int count = 0;
+			switch( count )
 			{
-				// ugly, ugly, ugly.  Works only w/ dance.
-				NoteDataUtil::TransformNoteData( m_NoteData, GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, GAMESTATE->GetCurrentStyle()->m_StepsType );
-				
-				// shuffle either p1 or p2
-				static int count = 0;
-				switch( count )
-				{
-				case 0:
-				case 3:
-					NoteDataUtil::Turn( m_NoteData, STEPS_TYPE_DANCE_SINGLE, NoteDataUtil::left);
-					break;
-				case 1:
-				case 2:
-					NoteDataUtil::Turn( m_NoteData, STEPS_TYPE_DANCE_SINGLE, NoteDataUtil::right);
-					break;
-				default:
-					ASSERT(0);
-				}
-				count++;
-				count %= 4;
+			case 0:
+			case 3:
+				NoteDataUtil::Turn( m_NoteData, STEPS_TYPE_DANCE_SINGLE, NoteDataUtil::left);
+				break;
+			case 1:
+			case 2:
+				NoteDataUtil::Turn( m_NoteData, STEPS_TYPE_DANCE_SINGLE, NoteDataUtil::right);
+				break;
+			default:
+				ASSERT(0);
 			}
-			break;
+			count++;
+			count %= 4;
+		}
+		break;
 	}
 
 	int iStartDrawingAtPixels = GAMESTATE->m_bEditing ? -100 : START_DRAWING_AT_PIXELS;
@@ -238,11 +238,15 @@ void Player::Load( const NoteData& noteData )
 	// they change depending on PlayerOptions.
 
 	//
-	// Load keysounds
+	// Load keysounds.  If sounds are already loaded (as in the editor), don't reload them.
+	// XXX: the editor will load several duplicate copies (in each NoteField), and each
+	// player will load duplicate sounds.  Does this belong somewhere else (perhaps in
+	// a separate object, used alongside ScreenGameplay::m_pSoundMusic and ScreenEdit::m_pSoundMusic?)
+	// We don't have to load separate copies to set player fade: always make a copy, and set the
+	// fade on the copy.
 	//
 	const Song* pSong = GAMESTATE->m_pCurSong;
 	CString sSongDir = pSong->GetSongDir();
-	m_vKeysounds.clear();
 	m_vKeysounds.resize( pSong->m_vsKeysoundFile.size() );
 
 	RageSoundParams p;
@@ -251,7 +255,8 @@ void Player::Load( const NoteData& noteData )
 	{
 		 CString sKeysoundFilePath = sSongDir + pSong->m_vsKeysoundFile[i];
 		 RageSound& sound = m_vKeysounds[i];
-		 sound.Load( sKeysoundFilePath, true );
+		 if( sound.GetLoadedFilePath() != sKeysoundFilePath )
+			sound.Load( sKeysoundFilePath, true );
 		 sound.SetParams( p );
 	}
 }
