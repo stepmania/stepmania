@@ -229,7 +229,7 @@ unsigned RageSoundReader_Chain::ActivateSound( const sound &s )
 
 void RageSoundReader_Chain::ReleaseSound( unsigned n )
 {
-	ASSERT_M( n < m_apActiveSounds.size(), ssprintf("%i, %i", n, m_apActiveSounds.size()) );
+	ASSERT_M( n < m_apActiveSounds.size(), ssprintf("%u, %u", n, unsigned(m_apActiveSounds.size())) );
 	SoundReader *pSound = m_apActiveSounds[n].pSound;
 
 	/* If pSoundToFree is in m_apLoadedSounds, just set it unused. */

@@ -315,7 +315,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out, const map<CSt
 
 					// some BMS files seem to have funky alignment, causing us to write gigantic cache files.
 					// Try to correct for this by quantizing.
-					row = Quantize( row, ROWS_PER_MEASURE/64 );
+					row = int(Quantize( float(row), ROWS_PER_MEASURE/64 ));
 						
 					BmsTrack bmsTrack;
 					bool bIsHold;
