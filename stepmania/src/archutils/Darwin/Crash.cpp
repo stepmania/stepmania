@@ -10,19 +10,15 @@
 #include "Crash.h"
 #include "archutils/Unix/CrashHandler.h"
 #include <Carbon/Carbon.h>
+#include <sys/types.h>
+#include <sys/uio.h>
+#include <unistd.h>
 
 static void *crashedFramePtr = NULL;
 
 OSStatus HandleException(ExceptionInformation *theException)
 {
     crashedFramePtr = (void *)theException->registerImage->R1.lo;
-    if (!crashedFramePtr) {
-        write(fileno(stderr),
-              "***********************\n"
-              "It uses the high bytes!\n"
-              "***********************\n", 24*3);
-        crashedFramePtr = (void *)theException->registerImage->R1.hi;
-    }
     CrashSignalHandler(theException->theKind);
     return -1;
 }
