@@ -98,9 +98,17 @@ ScreenPackages::ScreenPackages( CString sClassName ) : ScreenWithMenuElements( s
 
 	UpdateProgress();
 
-	//Workaround:  For some reason, the first download always
+	//Workaround:  For some reason, the first download sometimes
 	//corrupts; by opening and closing the rage file, this 
 	//problem does not occour.  Go figure?
+	
+	//XXX:  This is a really dirty work around!
+	//Why does RageFile do this?
+
+	//It's always some strange number of bytes at the end of the
+	//file when it corrupts.
+	m_fOutputFile.Open( "Packages/dummy.txt", 0x02 );
+	m_fOutputFile.Flush( );
 	m_fOutputFile.Close();
 }
 
@@ -631,6 +639,7 @@ void ScreenPackages::HTTPUpdate()
 					else
 						if ( m_bIsPackage && ( m_iResponceCode < 300 ) )
 						{
+							m_fOutputFile.Flush( );
 							m_fOutputFile.Close( );
 							FlushDirCache( );
 							RefreshPackages( );
