@@ -21,8 +21,8 @@
 #endif
 
 #include "MovieTexture_DShowHelper.h"
-
 #include "MovieTexture_DShow.h"
+
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
