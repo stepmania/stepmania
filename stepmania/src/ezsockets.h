@@ -122,6 +122,8 @@ public:
 	int pReadData(char * data);
 	int pWriteData(const char * data, int dataSize);
 
+	in_addr GetIn_addr();
+
 	SockState state;
 
 	int lastCode;	//Used for debugging purposes

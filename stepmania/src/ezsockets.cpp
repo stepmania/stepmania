@@ -462,6 +462,11 @@ int EzSockets::pWriteData(const char* data, int dataSize)
 	return send(sock, data, dataSize, 0);
 }
 
+in_addr EzSockets::GetIn_addr()
+{
+	return addr.sin_addr;
+}
+
 /* 
  * (c) 2003-2004 Josh Allen, Charles Lohr, and Adam Lowman
  * All rights reserved.
