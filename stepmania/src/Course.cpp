@@ -274,6 +274,15 @@ void Course::LoadFromCRSFile( CString sPath )
 			rv.FromString( sParams[3] );
 			m_RadarCache[CacheEntry(st, cd)] = rv;
 		}
+		else if( !stricmp(sValueName, "DIFFICULTIESTOHIDE") )
+		{
+			m_vDifficultiesToHide.clear();
+			for( unsigned i=1; i<sParams.params.size(); i++ )
+			{
+				CourseDifficulty cd = StringToCourseDifficulty( sParams[i] );
+				m_vDifficultiesToHide.insert( cd );
+			}
+		}
 		else
 		{
 			LOG->Trace( "Unexpected value named '%s'", sValueName.c_str() );
@@ -353,6 +362,7 @@ void Course::Init()
 	m_sBannerPath = "";
 	m_sCDTitlePath = "";
 	m_iTrailCacheSeed = 0;
+	m_vDifficultiesToHide.clear();
 }
 
 void Course::Save( CString sPath, bool bSavingCache )
@@ -377,6 +387,15 @@ void Course::Save( CString sPath, bool bSavingCache )
 		f.PutLine( "#REPEAT:YES;" );
 	if( m_iLives != -1 )
 		f.PutLine( ssprintf("#LIVES:%i;", m_iLives) );
+
+	{
+		CString s;
+		FOREACHS_CONST( CourseDifficulty, m_vDifficultiesToHide, cd )
+			s += CourseDifficultyToString( *cd ) + ',';
+		s.erase( s.end()-1 );	// erase last ','
+		f.PutLine( "#DIFFICULTIESTOHIDE:" + s + ";" );
+	}
+
 	FOREACH_CourseDifficulty( cd )
 	{
 		if( m_iCustomMeter[cd] == -1 )
@@ -787,6 +806,10 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	case DIFFICULTY_BEGINNER:
 	case DIFFICULTY_CHALLENGE:
 		return false;
+	default:
+		if( m_vDifficultiesToHide.find(cd) != m_vDifficultiesToHide.end() )	// found a match
+			return false;
+		break;
 	}
 
 	//
