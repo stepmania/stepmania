@@ -20,11 +20,25 @@
 CachedThemeMetric	OK_COMMAND	("HoldJudgment","OKCommand");
 CachedThemeMetric	NG_COMMAND	("HoldJudgment","NGCommand");
 
+CachedThemeMetric	OK_ODD_COMMAND	("HoldJudgment","OKOddCommand");
+CachedThemeMetric	NG_ODD_COMMAND	("HoldJudgment","NGOddCommand");
+
+CachedThemeMetric	OK_EVEN_COMMAND	("HoldJudgment","OKEvenCommand");
+CachedThemeMetric	NG_EVEN_COMMAND	("HoldJudgment","NGEvenCommand");
+
 
 HoldJudgment::HoldJudgment()
 {
 	OK_COMMAND.Refresh();
 	NG_COMMAND.Refresh();
+
+	OK_ODD_COMMAND.Refresh();
+	NG_ODD_COMMAND.Refresh();
+
+	OK_EVEN_COMMAND.Refresh();
+	NG_EVEN_COMMAND.Refresh();
+
+	m_iCount = 0;
 
 	m_sprJudgment.Load( THEME->GetPathToG("HoldJudgment 1x2") );
 	m_sprJudgment.StopAnimating();
@@ -62,13 +76,17 @@ void HoldJudgment::SetHoldJudgment( HoldNoteScore hns )
 		ASSERT(0);
 	case HNS_OK:
 		m_sprJudgment.SetState( 0 );
+		m_sprJudgment.Command( (m_iCount%2) ? OK_ODD_COMMAND : OK_EVEN_COMMAND );
 		m_sprJudgment.Command( OK_COMMAND );
 		break;
 	case HNS_NG:
 		m_sprJudgment.SetState( 1 );
+		m_sprJudgment.Command( (m_iCount%2) ? NG_ODD_COMMAND : NG_EVEN_COMMAND );
 		m_sprJudgment.Command( NG_COMMAND );
 		break;
 	default:
 		ASSERT(0);
 	}
+
+	m_iCount++;
 }
