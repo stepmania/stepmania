@@ -26,46 +26,9 @@
 #include "NoteFieldPositioning.h"
 #include "ActorUtil.h"
 
-
-
-#define DRAW_HOLD_HEAD_FOR_TAPS_ON_SAME_ROW			NOTESKIN->GetMetricB(skin,name,"DrawHoldHeadForTapsOnSameRow")
-#define TAP_NOTE_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF(skin,name,"TapNoteAnimationLengthInBeats")
-#define TAP_ADDITION_ANIMATION_LENGTH_IN_BEATS		NOTESKIN->GetMetricF(skin,name,"TapAdditionAnimationLengthInBeats")
-#define TAP_MINE_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF(skin,name,"TapMineAnimationLengthInBeats")
-#define HOLD_HEAD_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF(skin,name,"HoldHeadAnimationLengthInBeats")
-#define HOLD_TOPCAP_ANIMATION_LENGTH_IN_BEATS		NOTESKIN->GetMetricF(skin,name,"HoldTopCapAnimationLengthInBeats")
-#define HOLD_BODY_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF(skin,name,"HoldBodyAnimationLengthInBeats")
-#define HOLD_BOTTOMCAP_ANIMATION_LENGTH_IN_BEATS	NOTESKIN->GetMetricF(skin,name,"HoldBottomCapAnimationLengthInBeats")
-#define HOLD_TAIL_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF(skin,name,"HoldTailAnimationLengthInBeats")
-#define TAP_NOTE_ANIMATION_IS_VIVID					NOTESKIN->GetMetricB(skin,name,"TapNoteAnimationIsVivid")
-#define TAP_ADDITION_ANIMATION_IS_VIVID				NOTESKIN->GetMetricB(skin,name,"TapAdditionAnimationIsVivid")
-#define TAP_MINE_ANIMATION_IS_VIVID					NOTESKIN->GetMetricB(skin,name,"TapMineAnimationIsVivid")
-#define HOLD_HEAD_ANIMATION_IS_VIVID				NOTESKIN->GetMetricB(skin,name,"HoldHeadAnimationIsVivid")
-#define HOLD_TOPCAP_ANIMATION_IS_VIVID				NOTESKIN->GetMetricB(skin,name,"HoldTopCapAnimationIsVivid")
-#define HOLD_BODY_ANIMATION_IS_VIVID				NOTESKIN->GetMetricB(skin,name,"HoldBodyAnimationIsVivid")
-#define HOLD_BOTTOMCAP_ANIMATION_IS_VIVID			NOTESKIN->GetMetricB(skin,name,"HoldBottomCapAnimationIsVivid")
-#define HOLD_TAIL_ANIMATION_IS_VIVID				NOTESKIN->GetMetricB(skin,name,"HoldTailAnimationIsVivid")
-#define TAP_NOTE_ANIMATION_IS_NOTE_COLOR			NOTESKIN->GetMetricB(skin,name,"TapNoteAnimationIsNoteColor")
-#define TAP_ADDITION_ANIMATION_IS_NOTE_COLOR		NOTESKIN->GetMetricB(skin,name,"TapAdditionAnimationIsNoteColor")
-#define HOLD_HEAD_ANIMATION_IS_NOTE_COLOR			NOTESKIN->GetMetricB(skin,name,"HoldHeadAnimationIsNoteColor")
-#define HOLD_TOPCAP_ANIMATION_IS_NOTE_COLOR			NOTESKIN->GetMetricB(skin,name,"HoldTopCapAnimationIsNoteColor")
-#define HOLD_BODY_ANIMATION_IS_NOTE_COLOR			NOTESKIN->GetMetricB(skin,name,"HoldBodyAnimationIsNoteColor")
-#define HOLD_BOTTOMCAP_ANIMATION_IS_NOTE_COLOR		NOTESKIN->GetMetricB(skin,name,"HoldBottomCapAnimationIsNoteColor")
-#define HOLD_TAIL_ANIMATION_IS_NOTE_COLOR			NOTESKIN->GetMetricB(skin,name,"HoldTailAnimationIsNoteColor")
-#define HOLD_HEAD_IS_ABOVE_WAVY_PARTS				NOTESKIN->GetMetricB(skin,name,"HoldHeadIsAboveWavyParts")
-#define HOLD_TAIL_IS_ABOVE_WAVY_PARTS				NOTESKIN->GetMetricB(skin,name,"HoldTailIsAboveWavyParts")
-#define START_DRAWING_HOLD_BODY_OFFSET_FROM_HEAD	NOTESKIN->GetMetricI(skin,name,"StartDrawingHoldBodyOffsetFromHead")
-#define STOP_DRAWING_HOLD_BODY_OFFSET_FROM_TAIL		NOTESKIN->GetMetricI(skin,name,"StopDrawingHoldBodyOffsetFromTail")
-#define HOLD_NG_GRAY_PERCENT						NOTESKIN->GetMetricF(skin,name,"HoldNGGrayPercent")
-#define TAP_NOTE_USE_LIGHTING						NOTESKIN->GetMetricB(skin,name,"TapNoteUseLighting")
-#define TAP_ADDITION_USE_LIGHTING					NOTESKIN->GetMetricB(skin,name,"TapAdditionUseLighting")
-#define TAP_MINE_USE_LIGHTING						NOTESKIN->GetMetricB(skin,name,"TapMineUseLighting")
-#define HOLD_HEAD_USE_LIGHTING						NOTESKIN->GetMetricB(skin,name,"HoldHeadUseLighting")
-#define HOLD_TAIL_USE_LIGHTING						NOTESKIN->GetMetricB(skin,name,"HoldTailUseLighting")
-#define FLIP_HEAD_AND_TAIL_WHEN_REVERSE				NOTESKIN->GetMetricB(skin,name,"FlipHeadAndTailWhenReverse")
-
 // cache
-struct NoteMetricCache_t {
+struct NoteMetricCache_t
+{
 	bool m_bDrawHoldHeadForTapsOnSameRow;
 	float m_fTapNoteAnimationLengthInBeats;
 	float m_fTapAdditionAnimationLengthInBeats;
@@ -107,41 +70,41 @@ struct NoteMetricCache_t {
 
 void NoteMetricCache_t::Load(CString skin, const CString &name)
 {
-	m_bDrawHoldHeadForTapsOnSameRow = DRAW_HOLD_HEAD_FOR_TAPS_ON_SAME_ROW;
-	m_fTapNoteAnimationLengthInBeats = TAP_NOTE_ANIMATION_LENGTH_IN_BEATS;
-	m_fTapAdditionAnimationLengthInBeats = TAP_ADDITION_ANIMATION_LENGTH_IN_BEATS;
-	m_fTapMineAnimationLengthInBeats = TAP_MINE_ANIMATION_LENGTH_IN_BEATS;
-	m_fHoldHeadAnimationLengthInBeats = HOLD_HEAD_ANIMATION_LENGTH_IN_BEATS;
-	m_fHoldTopCapAnimationLengthInBeats = HOLD_TOPCAP_ANIMATION_LENGTH_IN_BEATS;
-	m_fHoldBodyAnimationLengthInBeats = HOLD_BODY_ANIMATION_LENGTH_IN_BEATS;
-	m_fHoldBottomCapAnimationLengthInBeats = HOLD_BOTTOMCAP_ANIMATION_LENGTH_IN_BEATS;
-	m_fHoldTailAnimationLengthInBeats = HOLD_TAIL_ANIMATION_LENGTH_IN_BEATS;
-	m_bTapNoteAnimationIsVivid = TAP_NOTE_ANIMATION_IS_VIVID;
-	m_bTapAdditionAnimationIsVivid = TAP_ADDITION_ANIMATION_IS_VIVID;
-	m_bTapMineAnimationIsVivid = TAP_MINE_ANIMATION_IS_VIVID;
-	m_bHoldHeadAnimationIsVivid = HOLD_HEAD_ANIMATION_IS_VIVID;
-	m_bHoldTopCapAnimationIsVivid = HOLD_TOPCAP_ANIMATION_IS_VIVID;
-	m_bHoldBodyAnimationIsVivid = HOLD_BODY_ANIMATION_IS_VIVID;
-	m_bHoldBottomCapAnimationIsVivid = HOLD_BOTTOMCAP_ANIMATION_IS_VIVID;
-	m_bHoldTailAnimationIsVivid = HOLD_TAIL_ANIMATION_IS_VIVID;
-	m_bTapNoteAnimationIsNoteColor = TAP_NOTE_ANIMATION_IS_NOTE_COLOR;
-	m_bTapAdditionAnimationIsNoteColor = TAP_ADDITION_ANIMATION_IS_NOTE_COLOR;
-	m_bHoldHeadAnimationIsNoteColor = HOLD_HEAD_ANIMATION_IS_NOTE_COLOR;
-	m_bHoldTopCapAnimationIsNoteColor = HOLD_TOPCAP_ANIMATION_IS_NOTE_COLOR;
-	m_bHoldBodyAnimationIsNoteColor = HOLD_BODY_ANIMATION_IS_NOTE_COLOR;
-	m_bHoldBottomCapAnimationIsNoteColor = HOLD_BOTTOMCAP_ANIMATION_IS_NOTE_COLOR;
-	m_bHoldTailAnimationIsNoteColor = HOLD_TAIL_ANIMATION_IS_NOTE_COLOR;
-	m_bHoldHeadIsAboveWavyParts = HOLD_HEAD_IS_ABOVE_WAVY_PARTS;
-	m_bHoldTailIsAboveWavyParts = HOLD_TAIL_IS_ABOVE_WAVY_PARTS;
-	m_iStartDrawingHoldBodyOffsetFromHead = START_DRAWING_HOLD_BODY_OFFSET_FROM_HEAD;
-	m_iStopDrawingHoldBodyOffsetFromTail = STOP_DRAWING_HOLD_BODY_OFFSET_FROM_TAIL;
-	m_fHoldNGGrayPercent = HOLD_NG_GRAY_PERCENT;
-	m_bTapNoteUseLighting = TAP_NOTE_USE_LIGHTING;
-	m_bTapAdditionUseLighting = TAP_ADDITION_USE_LIGHTING;
-	m_bTapMineUseLighting = TAP_MINE_USE_LIGHTING;
-	m_bHoldHeadUseLighting = HOLD_HEAD_USE_LIGHTING;
-	m_bHoldTailUseLighting = HOLD_TAIL_USE_LIGHTING;
-	m_bFlipHeadAndTailWhenReverse = FLIP_HEAD_AND_TAIL_WHEN_REVERSE;
+	m_bDrawHoldHeadForTapsOnSameRow =			NOTESKIN->GetMetricB(skin,name,"DrawHoldHeadForTapsOnSameRow");
+	m_fTapNoteAnimationLengthInBeats =			NOTESKIN->GetMetricF(skin,name,"TapNoteAnimationLengthInBeats");
+	m_fTapAdditionAnimationLengthInBeats =		NOTESKIN->GetMetricF(skin,name,"TapAdditionAnimationLengthInBeats");
+	m_fTapMineAnimationLengthInBeats =			NOTESKIN->GetMetricF(skin,name,"TapMineAnimationLengthInBeats");
+	m_fHoldHeadAnimationLengthInBeats =			NOTESKIN->GetMetricF(skin,name,"HoldHeadAnimationLengthInBeats");
+	m_fHoldTopCapAnimationLengthInBeats =		NOTESKIN->GetMetricF(skin,name,"HoldTopCapAnimationLengthInBeats");
+	m_fHoldBodyAnimationLengthInBeats =			NOTESKIN->GetMetricF(skin,name,"HoldBodyAnimationLengthInBeats");
+	m_fHoldBottomCapAnimationLengthInBeats =	NOTESKIN->GetMetricF(skin,name,"HoldBottomCapAnimationLengthInBeats");
+	m_fHoldTailAnimationLengthInBeats =			NOTESKIN->GetMetricF(skin,name,"HoldTailAnimationLengthInBeats");
+	m_bTapNoteAnimationIsVivid =				NOTESKIN->GetMetricB(skin,name,"TapNoteAnimationIsVivid");
+	m_bTapAdditionAnimationIsVivid =			NOTESKIN->GetMetricB(skin,name,"TapAdditionAnimationIsVivid");
+	m_bTapMineAnimationIsVivid =				NOTESKIN->GetMetricB(skin,name,"TapMineAnimationIsVivid");
+	m_bHoldHeadAnimationIsVivid =				NOTESKIN->GetMetricB(skin,name,"HoldHeadAnimationIsVivid");
+	m_bHoldTopCapAnimationIsVivid =				NOTESKIN->GetMetricB(skin,name,"HoldTopCapAnimationIsVivid");
+	m_bHoldBodyAnimationIsVivid =				NOTESKIN->GetMetricB(skin,name,"HoldBodyAnimationIsVivid");
+	m_bHoldBottomCapAnimationIsVivid =			NOTESKIN->GetMetricB(skin,name,"HoldBottomCapAnimationIsVivid");
+	m_bHoldTailAnimationIsVivid =				NOTESKIN->GetMetricB(skin,name,"HoldTailAnimationIsVivid");
+	m_bTapNoteAnimationIsNoteColor =			NOTESKIN->GetMetricB(skin,name,"TapNoteAnimationIsNoteColor");
+	m_bTapAdditionAnimationIsNoteColor =		NOTESKIN->GetMetricB(skin,name,"TapAdditionAnimationIsNoteColor");
+	m_bHoldHeadAnimationIsNoteColor =			NOTESKIN->GetMetricB(skin,name,"HoldHeadAnimationIsNoteColor");
+	m_bHoldTopCapAnimationIsNoteColor =			NOTESKIN->GetMetricB(skin,name,"HoldTopCapAnimationIsNoteColor");
+	m_bHoldBodyAnimationIsNoteColor =			NOTESKIN->GetMetricB(skin,name,"HoldBodyAnimationIsNoteColor");
+	m_bHoldBottomCapAnimationIsNoteColor =		NOTESKIN->GetMetricB(skin,name,"HoldBottomCapAnimationIsNoteColor");
+	m_bHoldTailAnimationIsNoteColor =			NOTESKIN->GetMetricB(skin,name,"HoldTailAnimationIsNoteColor");
+	m_bHoldHeadIsAboveWavyParts =				NOTESKIN->GetMetricB(skin,name,"HoldHeadIsAboveWavyParts");
+	m_bHoldTailIsAboveWavyParts =				NOTESKIN->GetMetricB(skin,name,"HoldTailIsAboveWavyParts");
+	m_iStartDrawingHoldBodyOffsetFromHead =		NOTESKIN->GetMetricI(skin,name,"StartDrawingHoldBodyOffsetFromHead");
+	m_iStopDrawingHoldBodyOffsetFromTail =		NOTESKIN->GetMetricI(skin,name,"StopDrawingHoldBodyOffsetFromTail");
+	m_fHoldNGGrayPercent =						NOTESKIN->GetMetricF(skin,name,"HoldNGGrayPercent");
+	m_bTapNoteUseLighting =						NOTESKIN->GetMetricB(skin,name,"TapNoteUseLighting");
+	m_bTapAdditionUseLighting =					NOTESKIN->GetMetricB(skin,name,"TapAdditionUseLighting");
+	m_bTapMineUseLighting =						NOTESKIN->GetMetricB(skin,name,"TapMineUseLighting");
+	m_bHoldHeadUseLighting =					NOTESKIN->GetMetricB(skin,name,"HoldHeadUseLighting");
+	m_bHoldTailUseLighting =					NOTESKIN->GetMetricB(skin,name,"HoldTailUseLighting");
+	m_bFlipHeadAndTailWhenReverse =				NOTESKIN->GetMetricB(skin,name,"FlipHeadAndTailWhenReverse");
 }
 
 NoteDisplay::NoteDisplay()
