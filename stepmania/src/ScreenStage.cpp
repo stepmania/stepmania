@@ -22,6 +22,7 @@
 #include "GameState.h"
 #include "RageSounds.h"
 #include "ThemeManager.h"
+#include "LightsManager.h"
 
 
 #define NEXT_SCREEN				THEME->GetMetric ("ScreenStage","NextScreen")
@@ -55,6 +56,9 @@ enum StageMode
 ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 {
 	SOUND->StopMusic();
+
+	LIGHTSMAN->SetLightMode( LIGHTMODE_ALL_ON );
+
 
 	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenStage "+GAMESTATE->GetStageText()) );
 	this->AddChild( &m_Background );

@@ -33,6 +33,7 @@
 #include "ThemeManager.h"
 #include "fstream"
 #include "Bookkeeper.h"
+#include "LightsManager.h"
 
 #define DEFAULT_MODIFIERS THEME->GetMetric( "Common","DefaultModifiers" )
 
@@ -142,6 +143,8 @@ void GameState::Reset()
 	// save stats info intermitently in case of crash
 	BOOKKEEPER->WriteToDisk();
 	SONGMAN->SaveMachineScoresToDisk();
+
+	LIGHTSMAN->SetLightMode( LIGHTMODE_ATTRACT );
 }
 
 void GameState::Update( float fDelta )

@@ -36,6 +36,7 @@
 #include "Course.h"
 #include "ProfileManager.h"
 #include "MenuTimer.h"
+#include "LightsManager.h"
 
 
 const int NUM_SCORE_DIGITS	=	9;
@@ -77,6 +78,8 @@ static void FlipSpriteHorizontally(Sprite &s)
 ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName )
 {
 	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );
+
+	LIGHTSMAN->SetLightMode( LIGHTMODE_MENU );
 
 	m_bInCourseDisplayMode = GAMESTATE->IsCourseMode();
 

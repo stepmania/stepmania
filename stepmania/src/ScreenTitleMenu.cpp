@@ -29,7 +29,7 @@
 #include "RageTextureManager.h"
 #include "UnlockSystem.h"
 #include "ProductInfo.h"
-//#include "NetworkManager.h"
+#include "LightsManager.h"
 
 
 #define LOGO_ON_COMMAND				THEME->GetMetric("ScreenTitleMenu","LogoOnCommand")
@@ -62,7 +62,6 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 {
 	LOG->Trace( "ScreenTitleMenu::ScreenTitleMenu()" );
 
-
 	// Don't show screen title menu (says "Press Start") 
 	// if there are 0 credits and inserted and CoinMode is pay.
 	if( PREFSMAN->m_iCoinMode == COIN_PAY  &&
@@ -77,6 +76,9 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 	 * options.  Having special cases in attract screens and the title menu to reset
 	 * things stinks ... */
 	GAMESTATE->Reset();
+
+	LIGHTSMAN->SetLightMode( LIGHTMODE_JOINING );	// do this after Reset!
+
 
 	CodeDetector::RefreshCacheItems();
 

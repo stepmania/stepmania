@@ -155,6 +155,7 @@ public:
 	bool			m_bAntiAliasing;
 	CString			m_sSoundDrivers;
 	CString			m_sMovieDrivers;
+	CString			m_sLightsDriver;
 	float			m_fSoundVolume;
 	bool			m_bSoundPreloadAll;
 	int				m_iSoundResampleQuality;

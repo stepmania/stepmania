@@ -45,6 +45,7 @@
 #include "Course.h"
 #include "NoteDataUtil.h"
 #include "UnlockSystem.h"
+#include "LightsManager.h"
 
 //
 // Defines
@@ -91,6 +92,11 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	int p;
 
 	m_bDemonstration = bDemonstration;
+
+	if( m_bDemonstration )
+		LIGHTSMAN->SetLightMode( LIGHTMODE_DEMONSTRATION );
+	else
+		LIGHTSMAN->SetLightMode( LIGHTMODE_GAMEPLAY );
 
 	SECONDS_BETWEEN_COMMENTS.Refresh();
 	G_TICK_EARLY_SECONDS.Refresh();
@@ -1708,6 +1714,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_DancingState = STATE_OUTRO;
 
 			GAMESTATE->RemoveAllActiveAttacks();
+
+			LIGHTSMAN->SetLightMode( LIGHTMODE_ALL_OFF );
+
 
 			if( bAllReallyFailed )
 			{

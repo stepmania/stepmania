@@ -28,6 +28,7 @@
 #include "RageTimer.h"
 #include "UnlockSystem.h"
 #include "Course.h"
+#include "LightsManager.h"
 
 const int NUM_SCORE_DIGITS	=	9;
 
@@ -91,6 +92,8 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 */
 
 	LOG->Trace( "ScreenEvaluation::ScreenEvaluation()" );
+
+	LIGHTSMAN->SetLightMode( LIGHTMODE_MENU );
 
 	m_bFailed = false; // the evaluation is not showing failed results by default
 

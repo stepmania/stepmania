@@ -142,6 +142,26 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 	return ret;
 }
 
+/* Err, this is ugly--breaks arch encapsulation. Hmm. */
+LightsDriver *MakeLightsDriver(CString driver)
+{
+	LOG->Trace("Initializing lights driver: %s", driver.c_str());
+
+	LightsDriver *ret = NULL;
+
+#ifdef _WINDOWS
+	if(!driver.CompareNoCase("Parallel")) ret = new LightsDriver_Win32Parallel;
+#endif
+	if(!driver.CompareNoCase("Null")) ret = new LightsDriver_Null;
+	if( !ret )
+	{
+		LOG->Warn("Unknown lights driver name: %s", driver.c_str());
+		ret = new LightsDriver_Null;
+	}
+	
+	return ret;
+}
+
 /*
  * Copyright (c) 2002 by the person(s) listed below.  All rights reserved.
  *

@@ -7,6 +7,7 @@ class RageSoundDriver;
 class ArchHooks;
 class InputHandler;
 class LowLevelWindow;
+class LightsDriver;
 
 LoadingWindow *MakeLoadingWindow();
 ArchHooks *MakeArchHooks();
@@ -14,6 +15,7 @@ LowLevelWindow *MakeLowLevelWindow();
 
 void MakeInputHandlers(vector<InputHandler *> &Add);
 RageSoundDriver *MakeRageSoundDriver(CString drivers);
+LightsDriver *MakeLightsDriver(CString driver);
 
 /* These definitions are in here, instead of in arch_*.h, because they
  * need to be available to other modules.  It'd be overkill to create separate

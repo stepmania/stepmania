@@ -53,6 +53,7 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "RageFile.h"
 #include "Bookkeeper.h"
+#include "LightsManager.h"
 
 
 #if defined(_XBOX)
@@ -837,6 +838,7 @@ int main(int argc, char* argv[])
 	SOUND		= new RageSounds;
 	PROFILEMAN	= new ProfileManager;
 	BOOKKEEPER	= new Bookkeeper;
+	LIGHTSMAN	= new LightsManager(PREFSMAN->m_sLightsDriver);
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;
 	INPUTQUEUE	= new InputQueue;
@@ -946,6 +948,7 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( ANNOUNCER );
 	SAFE_DELETE( PROFILEMAN );
 	SAFE_DELETE( BOOKKEEPER );
+	SAFE_DELETE( LIGHTSMAN );
 	SAFE_DELETE( SOUND );
 	SAFE_DELETE( SOUNDMAN );
 	SAFE_DELETE( FONT );
@@ -1081,6 +1084,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 static void HandleInputEvents(float fDeltaTime)
 {
 	INPUTFILTER->Update( fDeltaTime );
+	LIGHTSMAN->Update( fDeltaTime );
 	
 	static InputEventArray ieArray;
 	ieArray.clear();	// empty the array

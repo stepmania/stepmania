@@ -26,6 +26,7 @@
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
 
 const float DEFAULT_SOUND_VOLUME = 1.00f;
+const CString DEFAULT_LIGHTS_DRIVER = "Null";
 
 bool g_bAutoRestart = false;
 
@@ -186,6 +187,7 @@ PrefsManager::PrefsManager()
 #endif
 
 	m_fSoundVolume = DEFAULT_SOUND_VOLUME;
+	m_sLightsDriver = DEFAULT_LIGHTS_DRIVER;
 	/* This is experimental: let's see if preloading helps people's skipping.
 	 * If it doesn't do anything useful, it'll be removed. */
 	m_bSoundPreloadAll = false;
@@ -285,6 +287,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "EasterEggs",						m_bEasterEggs );
 	ini.GetValue( "Options", "MarvelousTiming",					(int&)m_iMarvelousTiming );
 	ini.GetValue( "Options", "SoundVolume",						m_fSoundVolume );
+	ini.GetValue( "Options", "LightsDriver",					m_sLightsDriver );
 	ini.GetValue( "Options", "SoundPreloadAll",					m_bSoundPreloadAll );
 	ini.GetValue( "Options", "SoundResampleQuality",			m_iSoundResampleQuality );
 	ini.GetValue( "Options", "CoinMode",						m_iCoinMode );
@@ -518,6 +521,8 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 		ini.SetValue ( "Options", "SoundDrivers",				m_sSoundDrivers );
 	if(m_fSoundVolume != DEFAULT_SOUND_VOLUME)
 		ini.SetValue( "Options", "SoundVolume",					m_fSoundVolume );
+	if(m_sLightsDriver != DEFAULT_LIGHTS_DRIVER)
+		ini.SetValue( "Options", "LightsDriver",				m_sLightsDriver );
 	if(m_sMovieDrivers != DEFAULT_MOVIE_DRIVER_LIST)
 		ini.SetValue ( "Options", "MovieDrivers",				m_sMovieDrivers );
 	

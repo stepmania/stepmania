@@ -19,6 +19,7 @@
 #include "GameState.h"
 #include "AnnouncerManager.h"
 #include "ActorUtil.h"
+#include "LightsManager.h"
 
 
 #define ICON_GAIN_FOCUS_COMMAND		THEME->GetMetric (m_sName,"IconGainFocusCommand")
@@ -29,6 +30,8 @@
 ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClassName )
 {
 	m_iSelection = 0;
+
+	LIGHTSMAN->SetLightMode( LIGHTMODE_MENU );
 
 	unsigned i;
 	for( i=0; i<m_aModeChoices.size(); i++ )

@@ -13,6 +13,8 @@
 #include "Sound/RageSoundDriver_DSound_Software.h"
 #include "Sound/RageSoundDriver_WaveOut.h"
 
+#include "Lights/LightsDriver_Win32Parallel.h"
+
 #undef SUPPORT_SDL_INPUT
 
 #endif
