@@ -133,9 +133,15 @@ RageLog::RageLog()
 RageLog::~RageLog()
 {
 	/* Add the mapped log data to info.txt. */
-	/* XXX: We shouldn't do this, because we shouldn't send newlines of any kind to Info();
-	 * it results in oddly delimited output ... */
-	this->Info( "%s", GetAdditionalLog() );
+	const CString AdditionalLog = GetAdditionalLog();
+	vector<CString> AdditionalLogLines;
+	split( AdditionalLog, "\n", AdditionalLogLines );
+	for( unsigned i = 0; i < AdditionalLogLines.size(); ++i )
+	{
+		TrimLeft( AdditionalLogLines[i] );
+		TrimRight( AdditionalLogLines[i] );
+		this->Info( "%s", AdditionalLogLines[i].c_str() );
+	}
 
 	Flush();
 	ShowLogOutput( false );
