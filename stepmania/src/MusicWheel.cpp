@@ -258,11 +258,7 @@ bool MusicWheel::SelectSongOrCourse()
 {
 	if( GAMESTATE->m_pCurSong && SelectSong( GAMESTATE->m_pCurSong ) )
 		return true;
-	if( GAMESTATE->m_pPreferredSong && SelectSong( GAMESTATE->m_pPreferredSong ) )
-		return true;
 	if( GAMESTATE->m_pCurCourse && SelectCourse( GAMESTATE->m_pCurCourse ) )
-		return true;
-	if( GAMESTATE->m_pPreferredCourse && SelectCourse( GAMESTATE->m_pPreferredCourse ) )
 		return true;
 
 	// Select the first selectable song based on the sort order...
