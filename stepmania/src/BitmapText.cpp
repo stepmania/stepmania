@@ -135,7 +135,7 @@ void BitmapText::BuildChars()
 	switch( m_VertAlign )
 	{
 	case align_top:		iY = 0;					break;
-	case align_middle:	iY = -TotalHeight/2;	break;
+	case align_middle:	iY = -roundf(TotalHeight/2.0f);	break;
 	case align_bottom:	iY = -TotalHeight;		break;
 	default:			ASSERT( false );		return;
 	}
@@ -150,7 +150,7 @@ void BitmapText::BuildChars()
 		switch( m_HorizAlign )
 		{
 		case align_left:	iX = 0;				break;
-		case align_center:	iX = -iLineWidth/2;	break;
+		case align_center:	iX = -roundf(iLineWidth/2.0f);	break;
 		case align_right:	iX = -iLineWidth;	break;
 		default:			ASSERT( false );	return;
 		}
