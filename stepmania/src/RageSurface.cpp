@@ -43,6 +43,13 @@ RageSurfaceFormat::RageSurfaceFormat()
 	palette = NULL;	
 }
 
+RageSurfaceFormat::RageSurfaceFormat( const RageSurfaceFormat &cpy )
+{
+	memcpy( this, &cpy, sizeof(RageSurfaceFormat) );
+	if( palette )
+		palette = new RageSurfacePalette( *palette );
+}
+
 RageSurfaceFormat::~RageSurfaceFormat()
 {
 	delete palette;
@@ -100,6 +107,18 @@ RageSurface::RageSurface()
 {
 	format = &fmt;
 	pixels = NULL;
+}
+
+RageSurface::RageSurface( const RageSurface &cpy )
+{
+	format = &fmt;
+
+	w = cpy.w;
+	h = cpy.h;
+	pitch = cpy.pitch;
+	flags = cpy.flags;
+	pixels = new uint8_t[ pitch*h ];
+	memcpy( pixels, cpy.pixels, pitch*h );
 }
 
 RageSurface::~RageSurface()

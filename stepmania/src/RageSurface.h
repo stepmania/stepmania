@@ -27,6 +27,7 @@ struct RageSurfacePalette
 struct RageSurfaceFormat
 {
 	RageSurfaceFormat();
+	RageSurfaceFormat( const RageSurfaceFormat &cpy );
 	~RageSurfaceFormat();
 
 	int32_t BytesPerPixel;
@@ -59,6 +60,7 @@ struct RageSurface
 	int32_t flags;
 
 	RageSurface();
+	RageSurface( const RageSurface &cpy );
 	~RageSurface();
 };
 
