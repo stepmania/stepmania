@@ -1,3 +1,9 @@
+/*
+ * Most of these prototypes match up with the D3DX math functions.  Take a
+ * function name, replace "Rage" with "D3DX" and look it up in the D3D SDK
+ * docs for details.
+ */
+
 #include "global.h"
 #include "RageMath.h"
 #include "RageTypes.h"

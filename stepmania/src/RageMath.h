@@ -1,10 +1,4 @@
-/*
- * RageMath - vector/matrix math utilities
- *
- * Most of these prototypes match up with the D3DX math functions.  Take a
- * function name, replace "Rage" with "D3DX" and look it up in the D3D SDK
- * docs for details.
- */
+/* RageMath - vector/matrix math utilities. */
 
 #ifndef RAGE_MATH_H
 #define RAGE_MATH_H
