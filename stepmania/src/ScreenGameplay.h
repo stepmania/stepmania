@@ -162,10 +162,6 @@ protected:
 	BeginnerHelper	m_BeginnerHelper;
 
 	NoteData		m_CabinetLightsNoteData;
-
-private:
-	float			m_fSongPosMeterEnd;
-	float			m_fSongPosMeterOffset;
 };
 
 
