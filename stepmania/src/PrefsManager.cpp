@@ -122,6 +122,7 @@ void PrefsManager::Init()
 	m_fGradePercent[GRADE_TIER_4] = 0.80f;	// A
 	m_fGradePercent[GRADE_TIER_5] = 0.65f;	// B
 	m_fGradePercent[GRADE_TIER_6] = 0.45f;	// C
+	m_fGradePercent[GRADE_TIER_7] = -99999;	// D
 	m_bGradeTier02IsAllPerfects = true;
 	
 	m_fSuperMeterPercentChangeMarvelous =	+0.05f;
