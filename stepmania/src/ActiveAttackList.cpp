@@ -31,9 +31,9 @@ void ActiveAttackList::Update( float fDelta )
 { 
 	BitmapText::Update( fDelta ); 
 
-	// refresh text only once every second
-	float fNowSeconds = RageTimer::GetTimeSinceStart();
-	float fLastSeconds = RageTimer::GetTimeSinceStart() - fDelta;
+	// refresh text only once every 1/2 second
+	float fNowSeconds = RageTimer::GetTimeSinceStart()*2;
+	float fLastSeconds = RageTimer::GetTimeSinceStart()*2 - fDelta;
 
 	if( (int)fNowSeconds != (int)fLastSeconds )
 	{
@@ -58,6 +58,13 @@ void ActiveAttackList::Update( float fDelta )
 				if( iPos != -1 )
 					sDisplayText.erase( sDisplayText.begin(), sDisplayText.begin()+iPos+1 );
 			}
+
+			// Capitalize all tokens
+			CStringArray asTokens;
+			split( sDisplayText, " ", asTokens );
+			sDisplayText.erase( sDisplayText.begin(), sDisplayText.end() );
+			for( int i=0; i<asTokens.size(); i++ )
+				sDisplayText += Capitalize( asTokens[i] );
 			
 			if( s.empty() )
 				s = sDisplayText;
