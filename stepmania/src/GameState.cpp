@@ -221,19 +221,6 @@ void GameState::EndGame()
 			continue;
 
 		CHECKPOINT;
-		unsigned i;
-		for( i=0; i<g_vPlayedStageStats.size(); i++ )
-		{
-			const StageStats& ss = g_vPlayedStageStats[i];
-			CheckStageStats( ss, p );
-			CHECKPOINT;
-
-			pMachineProfile->m_iNumSongsPlayedByPlayMode[ss.playMode]++;
-			pMachineProfile->m_iNumSongsPlayedByStyle[ss.style]++;
-			pMachineProfile->m_iNumSongsPlayedByDifficulty[ss.pSteps[p]->GetDifficulty()]++;
-			int iMeter = clamp( ss.iMeter[p], 0, MAX_METER );
-			pMachineProfile->m_iNumSongsPlayedByMeter[ iMeter ]++;
-		}
 
 		Profile* pPlayerProfile = PROFILEMAN->GetProfile( (PlayerNumber)p );
 		if( pPlayerProfile )
@@ -245,24 +232,33 @@ void GameState::EndGame()
 				PREFSMAN->m_bComboContinuesBetweenSongs ? 
 				g_CurStageStats.iCurCombo[p] : 
 				0;
-		
-			for( i=0; i<g_vPlayedStageStats.size(); i++ )
-			{
-				const StageStats& ss = g_vPlayedStageStats[i];
-				CheckStageStats( ss, p );
-				CHECKPOINT;
+		}
 
+		for( unsigned i=0; i<g_vPlayedStageStats.size(); i++ )
+		{
+			const StageStats& ss = g_vPlayedStageStats[i];
+			CheckStageStats( ss, p );
+			CHECKPOINT;
+			const int iMeter = clamp( ss.iMeter[p], 0, MAX_METER );
+
+			pMachineProfile->m_iNumSongsPlayedByPlayMode[ss.playMode]++;
+			pMachineProfile->m_iNumSongsPlayedByStyle[ss.style]++;
+			pMachineProfile->m_iNumSongsPlayedByDifficulty[ss.pSteps[p]->GetDifficulty()]++;
+			pMachineProfile->m_iNumSongsPlayedByMeter[iMeter]++;
+
+			if( pPlayerProfile )
+			{
 				pPlayerProfile->m_iNumSongsPlayedByPlayMode[ss.playMode]++;
 				pPlayerProfile->m_iNumSongsPlayedByStyle[ss.style]++;
 				pPlayerProfile->m_iNumSongsPlayedByDifficulty[ss.pSteps[p]->GetDifficulty()]++;
-				int iMeter = clamp( ss.iMeter[p], 0, MAX_METER );
 				pPlayerProfile->m_iNumSongsPlayedByMeter[iMeter]++;
 			}
 		}
 
 		CHECKPOINT;
-		MEMCARDMAN->FlushAllDisks();
 	}
+	CHECKPOINT;
+	MEMCARDMAN->FlushAllDisks();
 	CHECKPOINT;
 
 	BOOKKEEPER->WriteToDisk();
