@@ -61,10 +61,7 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 		m_mDancePad.SetRotationX( 35 );
 		m_mCharacter.Command("X,120;Y,300;Zoom,15;RotationY,180;sleep,4.7;linear,1.0;RotationY,360;Zoom,20;X,120;Y,400");
 		m_mDancePad.Command("X,40;Y,310;Zoom,15;RotationY,180;sleep,4.7;linear,1.0;RotationY,360;Zoom,20;X,230;Y,390");
-		this->AddChild(&m_mCharacter);		
-		this->AddChild(&m_mDancePad);
 	}
-	//
 
 	NoteData* pND = new NoteData;
 	pND->SetNumTracks( iNumOfTracks );
@@ -200,6 +197,8 @@ void ScreenHowToPlay::Update( float fDelta )
 
 	}
 
+	m_mDancePad.Update(fDelta);
+	m_mCharacter.Update(fDelta);
 	ScreenAttract::Update( fDelta );
 }
 
