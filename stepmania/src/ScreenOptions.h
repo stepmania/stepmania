@@ -114,7 +114,7 @@ private:
 	{
 		Row();
 		~Row();
-		const enum { ROW_NORMAL, ROW_EXIT } Type;
+		enum { ROW_NORMAL, ROW_EXIT } Type;
 		vector<BitmapText *>	m_textItems;
 		Sprite					m_sprBullet;
 		BitmapText				m_textTitle;
