@@ -12,7 +12,7 @@ struct XNode;
 class BGAnimation : public ActorScroller
 {
 public:
-	BGAnimation( bool Generic=false );
+	BGAnimation( bool Generic=true );
 	virtual ~BGAnimation();
 
 	void Unload();

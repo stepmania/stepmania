@@ -158,7 +158,7 @@ Actor *Background::CreateSongBGA( CString sBGName ) const
 	GetDirListing( m_pSong->GetSongDir()+sBGName, asFiles, true, true );
 	if( !asFiles.empty() )
 	{
-		pTempBGA = new BGAnimation;
+		pTempBGA = new BGAnimation( false );
 		pTempBGA->LoadFromAniDir( asFiles[0] );
 		return pTempBGA;
 	}

@@ -74,7 +74,6 @@ void BGAnimationLayer::LoadFromAniLayerFile( const CString& sPath )
 {
 	/* Generic BGAs are new.  Animation directories with no INI are old and obsolete. 
 	 * Don't combine them. */
-	ASSERT( !m_bGeneric );
 	Init();
 	CString lcPath = sPath;
 	lcPath.MakeLower();
@@ -472,11 +471,6 @@ void BGAnimationLayer::LoadFromNode( const CString& sAniDir_, const XNode& layer
 	layer.GetAttrValue( "TileVelocityY", m_fTileVelocityY );
 
 
-	bool NeedTextureStretch = false;
-	if( m_fTexCoordVelocityX != 0 ||
-		m_fTexCoordVelocityY != 0 )
-		NeedTextureStretch = true;
-
 	switch( m_Type )
 	{
 	case TYPE_SPRITE:
@@ -504,7 +498,6 @@ void BGAnimationLayer::LoadFromNode( const CString& sAniDir_, const XNode& layer
 			CollapsePath( sPath );
 
 
-			ASSERT( !m_bGeneric );
 			for( int i=0; i<iNumParticles; i++ )
 			{
 				Actor* pActor = MakeActor( sPath );
@@ -533,7 +526,6 @@ void BGAnimationLayer::LoadFromNode( const CString& sAniDir_, const XNode& layer
 			CString sPath = sAniDir+sFile;
 			CollapsePath( sPath );
 
-			ASSERT( !m_bGeneric );
 			Sprite s;
 			RageTextureID ID(sPath);
 			ID.bStretch = true;
