@@ -71,19 +71,18 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 		SET_XY( *entry );
 
 		// get pertaining songentry
-		LOG->Trace("UnlockScreen: Searching for %s", DISPLAYED_SONG(i).c_str());
 		CString SongTitle = DISPLAYED_SONG(i);
 		if (USE_UNLOCKS_DAT == 1)
-		{
 			if ((unsigned)i <= GAMESTATE->m_pUnlockingSys->m_SongEntries.size() )
 				SongTitle = GAMESTATE->m_pUnlockingSys->m_SongEntries[i-1].m_sSongName;
-		}
+		LOG->Trace("UnlockScreen: Searching for %s", SongTitle.c_str());
 		
 		SongEntry *pSong = GAMESTATE->m_pUnlockingSys->FindLockEntry( SongTitle );
 
 		if( pSong == NULL)
 		{
 			LOG->Trace("Can't find song %s", SongTitle.c_str());
+			delete entry;   // oops, memory leak
 			continue;
 		}
 
