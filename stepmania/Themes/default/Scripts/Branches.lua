@@ -3,10 +3,16 @@ function SongSelectionScreen()
 	if PlayModeName() == "Oni" then return "ScreenSelectCourseOni" end
 	if PlayModeName() == "Endless" then return "ScreenSelectCourseEndless" end
 	if IsNetConnected() then ReportStyle() end
-	if IsNetSMOnline() then return "ScreenSMOnlineLogin" end
+	if IsNetSMOnline() then return SMOnlineScreen() end
 	if IsNetConnected() then return "ScreenNetSelectMusic" end
 	return "ScreenSelectMusic"
 end
+
+function SMOnlineScreen()
+	if ( not IsSMOnlineLoggedIn(1) ) and IsPlayerEnabled(1) then return "ScreenSMOnlineLogin" end
+	if ( not IsSMOnlineLoggedIn(2) ) and IsPlayerEnabled(2) then return "ScreenSMOnlineLogin" end
+	return "ScreenNetRoom"
+end	
 
 function SelectGameplayScreen()
 	if IsExtraStage() or IsExtraStage2() then return "ScreenGameplay" end
