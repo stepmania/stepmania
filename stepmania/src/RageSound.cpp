@@ -1,6 +1,6 @@
 /*
- * Handle loading and decoding of sounds through SDL_sound.  This file
- * is portable; actual playing is handled in RageSoundManager.
+ * Handle loading and decoding of sounds.
+ *
  * For small files, pre-decode the entire file into a regular buffer.  We
  * might want to play many samples at once, and we don't want to have to decode
  * 5-10 mp3s simultaneously during play.
