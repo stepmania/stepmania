@@ -11,6 +11,7 @@
 #include "global.h"
 #include "InputHandler_SDL.h"
 #include "SDL_utils.h"
+#include "RageUtil.h"
 #include "RageLog.h"
 #include "RageDisplay.h"
 
