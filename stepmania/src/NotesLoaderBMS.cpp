@@ -174,8 +174,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 
 	RageFile file;
 	if( !file.Open(sPath) )
-		RageException::Throw( "Failed to open \"%s\": %s", sPath.c_str(), file.GetError().c_str() );
-
+		RageException::Throw( "Failed to open \"%s\" for reading: %s", sPath.c_str(), file.GetError().c_str() );
 	while( !file.AtEOF() )
 	{
 		CString line;
@@ -472,8 +471,8 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 	RageFile file;
 	if( !file.Open(sPath) )
-		RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
-	while (!file.AtEOF())
+		RageException::Throw( "Failed to open \"%s\" for reading: %s", sPath.c_str(), file.GetError().c_str() );
+	while( !file.AtEOF() )
 	{
 		CString line;
 		if( file.GetLine( line ) == -1 )
