@@ -1,27 +1,31 @@
-/* LightsDriver - Controls lights */
+#include "global.h"
+#include "LightsDriver.h"
+#include "RageLog.h"
+#include "arch/arch.h"
+#include "arch/arch_platform.h"
 
-#ifndef LightsDriver_H
-#define LightsDriver_H
-
-#include "LightsManager.h"
-
-struct LightsState;
-
-class LightsDriver
+LightsDriver *MakeLightsDriver(CString driver)
 {
-public:
-	LightsDriver() {};
-	virtual ~LightsDriver() {};
-	
-	virtual void Set( const LightsState *ls ) = 0;
-};
+	LOG->Trace("Initializing lights driver: %s", driver.c_str());
 
-LightsDriver *MakeLightsDriver( CString driver );
+	LightsDriver *ret = NULL;
 
+#ifdef _WINDOWS
+	if(!driver.CompareNoCase("Parallel")) ret = new LightsDriver_Win32Parallel;
 #endif
+	if(!driver.CompareNoCase("SystemMessage")) ret = new LightsDriver_SystemMessage;
+	if(!driver.CompareNoCase("Null") || !ret )
+	{
+		if( driver.CompareNoCase("Null") )
+			LOG->Warn("Unknown lights driver name: %s", driver.c_str());
+		ret = new LightsDriver_Null;
+	}
+	
+	return ret;
+}
 
 /*
- * (c) 2003-2004 Chris Danford
+ * (c) 2002-2004 Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

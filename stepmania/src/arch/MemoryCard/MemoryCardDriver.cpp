@@ -1,27 +1,29 @@
-/* LightsDriver - Controls lights */
+#include "global.h"
+#include "MemoryCardDriver.h"
+#include "PrefsManager.h"
 
-#ifndef LightsDriver_H
-#define LightsDriver_H
+#include "arch/arch_platform.h"
 
-#include "LightsManager.h"
-
-struct LightsState;
-
-class LightsDriver
+MemoryCardDriver *MakeMemoryCardDriver()
 {
-public:
-	LightsDriver() {};
-	virtual ~LightsDriver() {};
-	
-	virtual void Set( const LightsState *ls ) = 0;
-};
+	if( !PREFSMAN->m_bMemoryCards )
+		return new MemoryCardDriver_Null;
 
-LightsDriver *MakeLightsDriver( CString driver );
+	MemoryCardDriver *ret = NULL;
 
+#ifdef LINUX
+	ret = new MemoryCardDriverThreaded_Linux;
+#elif _WINDOWS
+	ret = new MemoryCardDriverThreaded_Windows;
 #endif
+	if( !ret )
+		ret = new MemoryCardDriver_Null;
+	
+	return ret;
+}
 
 /*
- * (c) 2003-2004 Chris Danford
+ * (c) 2002-2004 Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

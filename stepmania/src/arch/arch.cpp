@@ -127,44 +127,6 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 	return ret;
 }
 
-LightsDriver *MakeLightsDriver(CString driver)
-{
-	LOG->Trace("Initializing lights driver: %s", driver.c_str());
-
-	LightsDriver *ret = NULL;
-
-#ifdef _WINDOWS
-	if(!driver.CompareNoCase("Parallel")) ret = new LightsDriver_Win32Parallel;
-#endif
-	if(!driver.CompareNoCase("SystemMessage")) ret = new LightsDriver_SystemMessage;
-	if(!driver.CompareNoCase("Null") || !ret )
-	{
-		if( driver.CompareNoCase("Null") )
-			LOG->Warn("Unknown lights driver name: %s", driver.c_str());
-		ret = new LightsDriver_Null;
-	}
-	
-	return ret;
-}
-
-MemoryCardDriver *MakeMemoryCardDriver()
-{
-	if( !PREFSMAN->m_bMemoryCards )
-		return new MemoryCardDriver_Null;
-
-	MemoryCardDriver *ret = NULL;
-
-#ifdef LINUX
-	ret = new MemoryCardDriverThreaded_Linux;
-#elif _WINDOWS
-	ret = new MemoryCardDriverThreaded_Windows;
-#endif
-	if( !ret )
-		ret = new MemoryCardDriver_Null;
-	
-	return ret;
-}
-
 /*
  * (c) 2002-2004 Glenn Maynard
  * All rights reserved.

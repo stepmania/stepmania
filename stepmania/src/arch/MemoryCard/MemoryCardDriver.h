@@ -61,6 +61,8 @@ public:
 	virtual void UnPauseMountingThread() = 0;
 };
 
+MemoryCardDriver *MakeMemoryCardDriver();
+
 #endif
 
 /*
