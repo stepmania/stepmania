@@ -480,7 +480,11 @@ RageMutexImpl::~RageMutexImpl()
 }
 
 
-void CrashDeadlocked() { *(char*)0=0; }
+void CrashDeadlocked()
+{
+	sm_crash();
+}
+
 void RageMutexImpl::Lock()
 {
 	if( LockedBy == GetCurrentThreadId() )
@@ -536,9 +540,9 @@ void RageMutexImpl::Unlock()
 	const bool ret = !!ReleaseMutex( mutex );
 
 	/* We can't ASSERT here, since this is called from checkpoints, which is
-	* called from ASSERT. */
+	 * called from ASSERT. */
 	if( !ret )
-		*(char*)0=0;
+		sm_crash();
 }
 
 #else
