@@ -6,13 +6,14 @@
 #include "resource.h"
 #include <windows.h>
 #include "SDL_utils.h"
+#include "RageSurface_Load.h"
 
 static HBITMAP g_hBitmap = NULL;
 
 /* Load a file into a GDI surface. */
 HBITMAP LoadWin32Surface( CString fn )
 {
-	SDL_Surface *s = SDL_LoadImage( fn );
+	SDL_Surface *s = RageSurface::LoadFile( fn );
 	if( s == NULL )
 		return NULL;
 
