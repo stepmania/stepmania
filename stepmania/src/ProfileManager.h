@@ -71,7 +71,8 @@ public:
 	void GetLocalProfileIDs( vector<CString> &asProfileIDsOut );
 	void GetLocalProfileNames( vector<CString> &asNamesOut );
 
-	bool LoadFirstAvailableProfile( PlayerNumber pn );
+	bool LoadProfileFromMemoryCard( PlayerNumber pn );
+	bool LoadFirstAvailableProfile( PlayerNumber pn );	// memory card or local profile
 	bool SaveProfile( PlayerNumber pn );
 	void UnloadProfile( PlayerNumber pn );
 
@@ -83,7 +84,7 @@ public:
 	Profile* GetMachineProfile() { return &m_MachineProfile; }
 
 	CString GetPlayerName( PlayerNumber pn );
-	bool IsUsingMemoryCard( PlayerNumber pn ) { return m_bUsingMemoryCard[pn]; }
+	bool ProfileWasLoadedFromMemoryCard( PlayerNumber pn );
 
 
 	//
@@ -134,7 +135,6 @@ public:
 private:
 	bool LoadDefaultProfileFromMachine( PlayerNumber pn );
 	bool CreateMemoryCardProfile( PlayerNumber pn );
-	bool LoadProfileFromMemoryCard( PlayerNumber pn );
 	bool LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard );
 	bool CreateProfile( CString sProfileDir, CString sName );
 
@@ -142,7 +142,7 @@ private:
 	// on a memory card.
 	CString m_sProfileDir[NUM_PLAYERS];
 
-	bool m_bUsingMemoryCard[NUM_PLAYERS];
+	bool m_bWasLoadedFromMemoryCard[NUM_PLAYERS];
 	
 	// actual loaded profile data
 	Profile	m_Profile[NUM_PLAYERS];	

@@ -31,34 +31,31 @@
 #include "RageTextureManager.h"
 #include "ProfileManager.h"
 #include "ThemeManager.h"
+#include "MemoryCardManager.h"
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
 
 
-#define STATS_X							THEME->GetMetricF("ScreenSystemLayer","StatsX")
-#define STATS_Y							THEME->GetMetricF("ScreenSystemLayer","StatsY")
-#define PLAYER_INFO_PRESS_START			THEME->GetMetric ("ScreenSystemLayer","PlayerInfoPressStart")
-#define PLAYER_INFO_INSERT_CARD			THEME->GetMetric ("ScreenSystemLayer","PlayerInfoInsertCard")
-#define PLAYER_INFO_NO_CARD				THEME->GetMetric ("ScreenSystemLayer","PlayerInfoNoCard")
-#define PLAYER_INFO_NOT_PRESENT			THEME->GetMetric ("ScreenSystemLayer","PlayerInfoNotPresent")
-#define PLAYER_INFO_INSERT_MORE			THEME->GetMetric ("ScreenSystemLayer","PlayerInfoInsertMore")
-#define CREDITS_TEXT_HOME				THEME->GetMetric ("ScreenSystemLayer","CreditsTextHome")
-#define CREDITS_TEXT_FREE_PLAY			THEME->GetMetric ("ScreenSystemLayer","CreditsTextFreePlay")
-#define CREDITS_TEXT_CREDITS			THEME->GetMetric ("ScreenSystemLayer","CreditsTextCredits")
-#define CREDITS_JOIN_ONLY				THEME->GetMetric ("ScreenSystemLayer","CreditsJoinOnly")
+#define CREDITS_PRESS_START		THEME->GetMetric ("ScreenSystemLayer","CreditsPressStart")
+#define CREDITS_INSERT_CARD		THEME->GetMetric ("ScreenSystemLayer","CreditsInsertCard")
+#define CREDITS_CARD_ERROR		THEME->GetMetric ("ScreenSystemLayer","CreditsCardError")
+#define CREDITS_CARD_TOO_LATE	THEME->GetMetric ("ScreenSystemLayer","CreditsCardTooLate")
+#define CREDITS_TEXT_HOME		THEME->GetMetric ("ScreenSystemLayer","CreditsTextHome")
+#define CREDITS_TEXT_FREE_PLAY	THEME->GetMetric ("ScreenSystemLayer","CreditsTextFreePlay")
+#define CREDITS_TEXT_CREDITS	THEME->GetMetric ("ScreenSystemLayer","CreditsTextCredits")
+#define CREDITS_JOIN_ONLY		THEME->GetMetricB("ScreenSystemLayer","CreditsJoinOnly")
 
-const int NUM_SKIPS = 5;
+const int NUM_SKIPS_TO_SHOW = 5;
 
 /* This screen is drawn on top of everything else, and receives updates,
  * but not input. */
 class ScreenSystemLayer: public Screen
 {
 	BitmapText m_textStats;
-	BitmapText m_textSystemMessage;
-	BitmapText m_textPlayerInfo[NUM_PLAYERS];
-	BitmapText m_textCredits;
-	BitmapText m_textSysTime;
-	BitmapText m_Skips[NUM_SKIPS];
+	BitmapText m_textMessage;
+	BitmapText m_textCredits[NUM_PLAYERS];
+	BitmapText m_textTime;
+	BitmapText m_textSkips[NUM_SKIPS_TO_SHOW];
 	int m_LastSkip;
 	Quad m_SkipBackground;
 
@@ -75,38 +72,29 @@ public:
 
 ScreenSystemLayer::ScreenSystemLayer() : Screen("ScreenSystemLayer")
 {
-	m_textSystemMessage.LoadFromFont( THEME->GetPathToF("Common normal") );
-	m_textSystemMessage.SetHorizAlign( Actor::align_left );
-	m_textSystemMessage.SetVertAlign( Actor::align_top );
-	m_textSystemMessage.SetXY( 4.0f, 4.0f );
-	m_textSystemMessage.SetZoom( 0.8f );
-	m_textSystemMessage.SetShadowLength( 2 );
-	m_textSystemMessage.SetDiffuse( RageColor(1,1,1,0) );
-	this->AddChild(&m_textSystemMessage);
+	m_textMessage.LoadFromFont( THEME->GetPathToF("ScreenSystemLayer message") );
+	m_textMessage.SetName( "Message" );
+	SET_XY_AND_ON_COMMAND( m_textMessage ); 
+	this->AddChild(&m_textMessage);
 
-	m_textStats.LoadFromFont( THEME->GetPathToF("Common normal") );
-	m_textStats.SetXY( STATS_X, STATS_Y );
-	m_textStats.SetHorizAlign( Actor::align_right );
-	m_textStats.SetVertAlign( Actor::align_top );
-	m_textStats.SetZoom( 0.5f );
-	m_textStats.SetShadowLength( 2 );
+	m_textStats.LoadFromFont( THEME->GetPathToF("ScreenSystemLayer stats") );
+	m_textStats.SetName( "Stats" );
+	SET_XY_AND_ON_COMMAND( m_textStats ); 
 	this->AddChild(&m_textStats);
 
-	m_textSysTime.LoadFromFont( THEME->GetPathToF("Common normal") );
-	m_textSysTime.SetXY( 4.0f, 40.0f );
-	m_textSysTime.SetHorizAlign( Actor::align_left );
-	m_textSysTime.SetVertAlign( Actor::align_top );
-	m_textSysTime.SetZoom( 0.5f );
-	m_textSysTime.SetDiffuse( RageColor(1,0,1,1) );
-	m_textSysTime.EnableShadow(false);
-	this->AddChild(&m_textSysTime);
+	m_textTime.LoadFromFont( THEME->GetPathToF("ScreenSystemLayer time") );
+	m_textTime.SetName( "Time" );
+	SET_XY_AND_ON_COMMAND( m_textTime ); 
+	this->AddChild(&m_textTime);
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		this->AddChild(&m_textPlayerInfo[p]);
+		m_textCredits[p].LoadFromFont( THEME->GetPathToF("ScreenManager credits") );
+		m_textCredits[p].SetName( ssprintf("CreditsP%d",p+1) );
+		SET_XY_AND_ON_COMMAND( &m_textCredits[p] );
+		this->AddChild(&m_textCredits[p]);
 	}
 
-	this->AddChild(&m_textCredits);
 
 	/* "Was that a skip?"  This displays a message when an update takes
 	 * abnormally long, to quantify skips more precisely, verify them
@@ -118,124 +106,138 @@ ScreenSystemLayer::ScreenSystemLayer() : Screen("ScreenSystemLayer")
 		SKIP_WIDTH = 160.0f, SKIP_Y_DIST = 16.0f;
 
 	m_SkipBackground.StretchTo(RectF(SKIP_LEFT-8, SKIP_TOP-8,
-						SKIP_LEFT+SKIP_WIDTH, SKIP_TOP+SKIP_Y_DIST*NUM_SKIPS));
+						SKIP_LEFT+SKIP_WIDTH, SKIP_TOP+SKIP_Y_DIST*NUM_SKIPS_TO_SHOW));
 	m_SkipBackground.SetDiffuse( RageColor(0,0,0,0) );
 	this->AddChild(&m_SkipBackground);
 
-	for( int i=0; i<NUM_SKIPS; i++ )
+	for( int i=0; i<NUM_SKIPS_TO_SHOW; i++ )
 	{
 		/* This is somewhat big.  Let's put it on the right side, where it'll
 		 * obscure the 2P side during gameplay; there's nowhere to put it that
 		 * doesn't obscure something, and it's just a diagnostic. */
-		m_Skips[i].LoadFromFont( THEME->GetPathToF("Common normal") );
-		m_Skips[i].SetXY( SKIP_LEFT, SKIP_TOP + SKIP_Y_DIST*i );
-		m_Skips[i].SetHorizAlign( Actor::align_left );
-		m_Skips[i].SetVertAlign( Actor::align_top );
-		m_Skips[i].SetZoom( 0.5f );
-		m_Skips[i].SetDiffuse( RageColor(1,1,1,0) );
-		m_Skips[i].EnableShadow(false);
-		this->AddChild(&m_Skips[i]);
+		m_textSkips[i].LoadFromFont( THEME->GetPathToF("Common normal") );
+		m_textSkips[i].SetXY( SKIP_LEFT, SKIP_TOP + SKIP_Y_DIST*i );
+		m_textSkips[i].SetHorizAlign( Actor::align_left );
+		m_textSkips[i].SetVertAlign( Actor::align_top );
+		m_textSkips[i].SetZoom( 0.5f );
+		m_textSkips[i].SetDiffuse( RageColor(1,1,1,0) );
+		m_textSkips[i].EnableShadow(false);
+		this->AddChild(&m_textSkips[i]);
 	}
+
+	RefreshCreditsMessages();
 }
 
 void ScreenSystemLayer::SystemMessage( CString sMessage )
 {
-	m_textSystemMessage.FinishTweening();
-	m_textSystemMessage.SetText( sMessage );
-	m_textSystemMessage.SetDiffuseAlpha( 1 );
-	m_textSystemMessage.SetX( -640 );
-	m_textSystemMessage.BeginTweening( 0.5f );
-	m_textSystemMessage.SetX( 4 );
-	m_textSystemMessage.BeginTweening( 5 );
-	m_textSystemMessage.BeginTweening( 0.5f );
-	m_textSystemMessage.SetDiffuse( RageColor(1,1,1,0) );
+	m_textMessage.FinishTweening();
+	m_textMessage.SetText( sMessage );
+	m_textMessage.SetDiffuseAlpha( 1 );
+	m_textMessage.SetX( -640 );
+	m_textMessage.BeginTweening( 0.5f );
+	m_textMessage.SetX( 4 );
+	m_textMessage.BeginTweening( 5 );
+	m_textMessage.BeginTweening( 0.5f );
+	m_textMessage.SetDiffuse( RageColor(1,1,1,0) );
 }
 
 void ScreenSystemLayer::SystemMessageNoAnimate( CString sMessage )
 {
-	m_textSystemMessage.FinishTweening();
-	m_textSystemMessage.SetText( sMessage );
-	m_textSystemMessage.SetX( 4 );
-	m_textSystemMessage.SetDiffuseAlpha( 1 );
-	m_textSystemMessage.BeginTweening( 5 );
-	m_textSystemMessage.BeginTweening( 0.5f );
-	m_textSystemMessage.SetDiffuse( RageColor(1,1,1,0) );
+	m_textMessage.FinishTweening();
+	m_textMessage.SetText( sMessage );
+	m_textMessage.SetX( 4 );
+	m_textMessage.SetDiffuseAlpha( 1 );
+	m_textMessage.BeginTweening( 5 );
+	m_textMessage.BeginTweening( 0.5f );
+	m_textMessage.SetDiffuse( RageColor(1,1,1,0) );
 }
 
 void ScreenSystemLayer::RefreshCreditsMessages()
 {
-	m_textCredits.LoadFromFont( THEME->GetPathToF("ScreenManager credits") );
-	m_textCredits.SetName( "Credits" );
-	SET_XY_AND_ON_COMMAND( &m_textCredits );
-
-	CString sCredits;
-	switch( PREFSMAN->m_iCoinMode )
-	{
-	case COIN_HOME:
-		sCredits = CREDITS_TEXT_HOME;
-		break;
-	case COIN_PAY:
-		{
-			int Coins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
-			sCredits = ssprintf("%s %d", CREDITS_TEXT_CREDITS.c_str(), GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit);
-			if (Coins)
-				sCredits += ssprintf("  %d/%d", Coins, PREFSMAN->m_iCoinsPerCredit );
-		}
-		break;
-	case COIN_FREE:
-		sCredits = CREDITS_TEXT_FREE_PLAY;
-		break;
-	default:
-		ASSERT(0);
-	}
-	if( CREDITS_JOIN_ONLY && !GAMESTATE->PlayersCanJoin() )
-		sCredits = "";
-	m_textCredits.SetText( sCredits );
-
-
 	// update joined
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_textPlayerInfo[p].LoadFromFont( THEME->GetPathToF("ScreenManager credits") );
-		m_textPlayerInfo[p].SetName( ssprintf("PlayerInfoP%d",p+1 ) );
-		SET_XY_AND_ON_COMMAND( &m_textPlayerInfo[p] );
+		CString sCredits;
 
-		CString sPlayerInfo;
-		if( GAMESTATE->m_bSideIsJoined[p] )
+		if( GAMESTATE->m_bIsOnSystemMenu ) // no mem card
 		{
+			sCredits = "";
+		}
+		else if( GAMESTATE->m_bSideIsJoined[p] )
+		{
+			MemoryCardState mcs = MEMCARDMAN->GetCardState( (PlayerNumber)p );
 			Profile* pProfile = PROFILEMAN->GetProfile( (PlayerNumber)p );
 			if( pProfile )
 			{
 				if( !pProfile->m_sLastUsedHighScoreName.empty() )
-					sPlayerInfo = pProfile->m_sLastUsedHighScoreName;
+					sCredits = pProfile->m_sLastUsedHighScoreName;
 				else
-					sPlayerInfo = pProfile->m_sName;
+					sCredits = pProfile->m_sName;
 			}
-			else if( GAMESTATE->m_bIsOnSystemMenu ) // no mem card
-				sPlayerInfo = "";
 			else 
 			{
-				if( GAMESTATE->PlayersCanJoin() )
-					sPlayerInfo = PLAYER_INFO_INSERT_CARD;
-				else
-					sPlayerInfo = PLAYER_INFO_NO_CARD;
+				switch( mcs )
+				{
+				case MEMORY_CARD_STATE_NO_CARD:
+					if( GAMESTATE->PlayersCanJoin() )
+						sCredits = CREDITS_INSERT_CARD;
+					else
+						sCredits = "";
+					break;
+				case MEMORY_CARD_STATE_WRITE_ERROR:
+					sCredits = CREDITS_CARD_ERROR;
+					break;
+				case MEMORY_CARD_STATE_TOO_LATE:
+					sCredits = CREDITS_CARD_TOO_LATE;
+					break;
+				case MEMORY_CARD_STATE_READY:
+					sCredits = "";
+					break;
+				default:
+					ASSERT(0);
+				}
 			}
 		}
 		else if( GAMESTATE->PlayersCanJoin() )
 		{
+			sCredits = CREDITS_PRESS_START;
+
 			if( PREFSMAN->m_iCoinMode==COIN_PAY  && 
 				PREFSMAN->m_Premium!=PrefsManager::JOINT_PREMIUM  &&
 				GAMESTATE->m_iCoins<PREFSMAN->m_iCoinsPerCredit )
-				sPlayerInfo = PLAYER_INFO_INSERT_MORE;
-			else
-				sPlayerInfo = PLAYER_INFO_PRESS_START;
+			{
+				int Coins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
+				sCredits = ssprintf("%s %d", CREDITS_TEXT_CREDITS.c_str(), GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit);
+				if (Coins)
+					sCredits += ssprintf("  %d/%d", Coins, PREFSMAN->m_iCoinsPerCredit );
+			}
 		}
 		else
 		{
-			sPlayerInfo = PLAYER_INFO_NOT_PRESENT;
+			switch( PREFSMAN->m_iCoinMode )
+			{
+			case COIN_HOME:
+				sCredits = CREDITS_TEXT_HOME;
+				break;
+			case COIN_PAY:
+				{
+					int Coins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
+					sCredits = ssprintf("%s %d", CREDITS_TEXT_CREDITS.c_str(), GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit);
+					if (Coins)
+						sCredits += ssprintf("  %d/%d", Coins, PREFSMAN->m_iCoinsPerCredit );
+				}
+				break;
+			case COIN_FREE:
+				sCredits = CREDITS_TEXT_FREE_PLAY;
+				break;
+			default:
+				ASSERT(0);
+			}
 		}
 
-		m_textPlayerInfo[p].SetText( sPlayerInfo );
+		if( CREDITS_JOIN_ONLY && !GAMESTATE->PlayersCanJoin() )
+			sCredits = "";
+		m_textCredits[p].SetText( sCredits );
 	}
 }
 
@@ -244,7 +246,7 @@ void ScreenSystemLayer::UpdateTimestampAndSkips()
 	if(!PREFSMAN->m_bTimestamping)
 	{
 		/* Hide: */
-		m_textSysTime.SetDiffuse( RageColor(1,1,1,0) );
+		m_textTime.SetDiffuse( RageColor(1,1,1,0) );
 		m_SkipBackground.SetDiffuse( RageColor(0,0,0,0) );
 		return;
 	}
@@ -282,23 +284,23 @@ void ScreenSystemLayer::UpdateTimestampAndSkips()
 				RageColor(1,1,0,1),		  /* yellow */
 				RageColor(1,0.2f,0.2f,1)  /* light red */
 			};
-			m_Skips[m_LastSkip].SetText(ssprintf("%s: %.0fms (%.0f)",
+			m_textSkips[m_LastSkip].SetText(ssprintf("%s: %.0fms (%.0f)",
 				time.c_str(), 1000*UpdateTime, UpdateTime/ExpectedUpdate));
-			m_Skips[m_LastSkip].StopTweening();
-			m_Skips[m_LastSkip].SetDiffuse(RageColor(1,1,1,1));
-			m_Skips[m_LastSkip].BeginTweening(0.2f);
-			m_Skips[m_LastSkip].SetDiffuse(colors[skip]);
-			m_Skips[m_LastSkip].BeginTweening(3.0f);
-			m_Skips[m_LastSkip].BeginTweening(0.2f);
-			m_Skips[m_LastSkip].SetDiffuse(RageColor(1,1,1,0));
+			m_textSkips[m_LastSkip].StopTweening();
+			m_textSkips[m_LastSkip].SetDiffuse(RageColor(1,1,1,1));
+			m_textSkips[m_LastSkip].BeginTweening(0.2f);
+			m_textSkips[m_LastSkip].SetDiffuse(colors[skip]);
+			m_textSkips[m_LastSkip].BeginTweening(3.0f);
+			m_textSkips[m_LastSkip].BeginTweening(0.2f);
+			m_textSkips[m_LastSkip].SetDiffuse(RageColor(1,1,1,0));
 
 			m_LastSkip++;
-			m_LastSkip %= NUM_SKIPS;
+			m_LastSkip %= NUM_SKIPS_TO_SHOW;
 		}
 	}
 
-	m_textSysTime.SetText( time );
-	m_textSysTime.SetDiffuse( RageColor(1,0,1,1) );
+	m_textTime.SetText( time );
+	m_textTime.SetDiffuse( RageColor(1,0,1,1) );
 }
 
 void ScreenSystemLayer::Update( float fDeltaTime )

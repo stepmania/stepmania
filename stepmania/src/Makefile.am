@@ -42,7 +42,7 @@ ScreenMusicScroll.cpp ScreenMusicScroll.h ScreenNameEntry.cpp ScreenNameEntry.h 
 ScreenOptionsMaster.cpp ScreenOptionsMaster.h ScreenOptionsMasterPrefs.cpp ScreenOptionsMasterPrefs.h \
 ScreenPlayerOptions.cpp ScreenPlayerOptions.h ScreenPrompt.cpp ScreenPrompt.h \
 ScreenProfileOptions.cpp ScreenProfileOptions.h ScreenRanking.cpp ScreenRanking.h ScreenRaveOptions.cpp ScreenRaveOptions.h \
-ScreenReloadSongs.cpp ScreenReloadSongs.h ScreenRemoveMemoryCard.cpp ScreenRemoveMemoryCard.h ScreenSandbox.cpp ScreenSandbox.h ScreenSelect.cpp ScreenSelect.h \
+ScreenReloadSongs.cpp ScreenReloadSongs.h ScreenSandbox.cpp ScreenSandbox.h ScreenSelect.cpp ScreenSelect.h \
 ScreenSelectCharacter.cpp ScreenSelectCharacter.h ScreenSelectCourse.cpp ScreenSelectCourse.h \
 ScreenSelectDifficulty.cpp ScreenSelectDifficulty.h ScreenSelectDifficultyEX.cpp ScreenSelectDifficultyEX.h \
 ScreenSelectGroup.cpp ScreenSelectGroup.h ScreenSelectMaster.cpp ScreenSelectMaster.h \

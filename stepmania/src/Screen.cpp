@@ -18,6 +18,7 @@
 #include "ThemeManager.h"
 #include "ScreenManager.h"
 #include "RageSounds.h"
+#include "ProfileManager.h"
 
 Screen::Screen( CString sName )
 {
@@ -194,6 +195,8 @@ bool Screen::JoinInput( const DeviceInput& DeviceI, const InputEventType type, c
 		if( GAMESTATE->m_MasterPlayerNumber == PLAYER_INVALID )
 			GAMESTATE->m_MasterPlayerNumber = MenuI.player;
 
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			PROFILEMAN->LoadProfileFromMemoryCard( (PlayerNumber)p );
 		SCREENMAN->RefreshCreditsMessages();
 
 		SOUND->PlayOnce( THEME->GetPathToS("Common start") );
@@ -287,7 +290,6 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenCenterImage.h"
 #include "ScreenTestInput.h"
 #include "ScreenBookkeeping.h"
-#include "ScreenRemoveMemoryCard.h"
 #include "ScreenBranch.h"
 
 Screen* Screen::Create( CString sClassName )
@@ -392,7 +394,6 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenCenterImage );
 	IF_RETURN( ScreenTestInput );
 	IF_RETURN( ScreenBookkeeping );
-	IF_RETURN( ScreenRemoveMemoryCard );
 	IF_RETURN( ScreenBranch );
 
 	RageException::Throw( "Invalid Screen class name '%s'", sClassName.c_str() );

@@ -67,9 +67,7 @@ static const char *MEM_CARD_DIR[NUM_PLAYERS] =
 ProfileManager::ProfileManager()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		m_bUsingMemoryCard[p] = false;
-	}
+		m_bWasLoadedFromMemoryCard[p] = false;
 
 	InitMachineScoresFromDisk();
 }
@@ -105,7 +103,7 @@ bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIs
 	ASSERT( sProfileDir.Right(1) == "/" );
 
 	m_sProfileDir[pn] = sProfileDir;
-	m_bUsingMemoryCard[pn] = bIsMemCard;
+	m_bWasLoadedFromMemoryCard[pn] = bIsMemCard;
 
 	bool bResult = m_Profile[pn].LoadFromIni( m_sProfileDir[pn]+PROFILE_FILE );
 	if( !bResult )
@@ -161,18 +159,33 @@ bool ProfileManager::LoadDefaultProfileFromMachine( PlayerNumber pn )
 
 bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 {
-	CString sDir = MEM_CARD_DIR[pn];
+	UnloadProfile( pn );
+#ifndef _XBOX
+	// mount card
+	if( MEMCARDMAN->GetCardState(pn) == MEMORY_CARD_STATE_READY )
+	{
+		FILEMAN->Mount( "dir", MEMCARDMAN->GetOsMountDir(pn), MEM_CARD_DIR[pn] );
 
-	DEBUG_ASSERT( FILEMAN->IsMounted(sDir) );	// should be called only if we've already mounted
+		CString sDir = MEM_CARD_DIR[pn];
+
+		DEBUG_ASSERT( FILEMAN->IsMounted(sDir) );	// should be called only if we've already mounted
+		
+		// tack on a subdirectory so that we don't write everything to the root
+		sDir += PREFSMAN->m_sMemoryCardProfileSubdir;
+		sDir += '/'; 
+
+		bool bResult;
+		bResult = LoadProfile( pn, sDir, true );
+		if( bResult )
+			return true;
 	
-	// tack on a subdirectory so that we don't write everything to the root
-	sDir += PREFSMAN->m_sMemoryCardProfileSubdir;
-	sDir += '/'; 
-
-	m_bUsingMemoryCard[pn] = true;
-	bool bResult;
-	bResult = LoadProfile( pn, sDir, false );
-	return bResult;
+		CreateMemoryCardProfile( pn );
+		
+		bResult = LoadProfile( pn, sDir, true );
+		return bResult;
+	}
+#endif
+	return false;
 }
 			
 bool ProfileManager::CreateMemoryCardProfile( PlayerNumber pn )
@@ -190,20 +203,8 @@ bool ProfileManager::CreateMemoryCardProfile( PlayerNumber pn )
 			
 bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn )
 {
-#ifndef _XBOX
-	// mount card
-	if( MEMCARDMAN->GetCardState(pn) == MEMORY_CARD_STATE_READY )
-	{
-		FILEMAN->Mount( "dir", MEMCARDMAN->GetOsMountDir(pn), MEM_CARD_DIR[pn] );
-
-		if( LoadProfileFromMemoryCard(pn) )
-			return true;
-	
-		CreateMemoryCardProfile( pn );
-		if( LoadProfileFromMemoryCard(pn) )
-			return true;
-	}
-#endif
+	if( LoadProfileFromMemoryCard(pn) )
+		return true;
 
 	if( LoadDefaultProfileFromMachine(pn) )
 		return true;
@@ -229,7 +230,7 @@ bool ProfileManager::SaveProfile( PlayerNumber pn )
 void ProfileManager::UnloadProfile( PlayerNumber pn )
 {
 	m_sProfileDir[pn] = "";
-	m_bUsingMemoryCard[pn] = false;
+	m_bWasLoadedFromMemoryCard[pn] = false;
 	m_Profile[pn].Init();
 }
 
@@ -1445,4 +1446,9 @@ bool ProfileManager::CategoryData::HighScore::operator>=( const HighScore& other
 		return fPercentDP >= other.fPercentDP;
 	else
 		return iScore >= other.iScore;
+}
+
+bool ProfileManager::ProfileWasLoadedFromMemoryCard( PlayerNumber pn )
+{
+	return GetProfile(pn) && m_bWasLoadedFromMemoryCard[pn];
 }

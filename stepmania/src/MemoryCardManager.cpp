@@ -18,6 +18,8 @@
 #include "ThemeManager.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
+#include "ScreenManager.h"
+#include "ProfileManager.h"
 
 MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -56,44 +58,59 @@ void MemoryCardManager::Update( float fDelta )
 		vector<UsbStorageDevice> vConnects;	// fill these in below
 		vector<UsbStorageDevice> vDisconnects;	// fill these in below
 
-		unsigned i;
 
 		// check for disconnects
-		for( i=0; i<vOld.size(); i++ )
 		{
-			const UsbStorageDevice old = vOld[i];
-			if( find(vNew.begin(),vNew.end(),old) == vNew.end() )	// didn't find
+			for( int i=0; i<vOld.size(); i++ )
 			{
-				LOG->Trace( ssprintf("Disconnected bus %d port %d device %d path %s", old.iBus, old.iPortOnHub, old.iDeviceOnBus, old.sOsMountDir.c_str()) );
-				vDisconnects.push_back( old );
+				const UsbStorageDevice old = vOld[i];
+				if( find(vNew.begin(),vNew.end(),old) == vNew.end() )	// didn't find
+				{
+					LOG->Trace( ssprintf("Disconnected bus %d port %d device %d path %s", old.iBus, old.iPortOnHub, old.iDeviceOnBus, old.sOsMountDir.c_str()) );
+					vDisconnects.push_back( old );
+				}
 			}
 		}
 
 		// check for connects
-		for( i=0; i<vNew.size(); i++ )
 		{
-			const UsbStorageDevice newd = vNew[i];
-			if( find(vOld.begin(),vOld.end(),newd) == vOld.end() )	// didn't find
+			for( int i=0; i<vNew.size(); i++ )
 			{
-				LOG->Trace( ssprintf("Connected bus %d port %d device %d path %s", newd.iBus, newd.iPortOnHub, newd.iDeviceOnBus, newd.sOsMountDir.c_str()) );
-				vConnects.push_back( newd );
+				const UsbStorageDevice newd = vNew[i];
+				if( find(vOld.begin(),vOld.end(),newd) == vOld.end() )	// didn't find
+				{
+					LOG->Trace( ssprintf("Connected bus %d port %d device %d path %s", newd.iBus, newd.iPortOnHub, newd.iDeviceOnBus, newd.sOsMountDir.c_str()) );
+					vConnects.push_back( newd );
+				}
 			}
 		}
 
 		// unassign cards that were disconnected
-		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			if( m_Device[p].IsBlank() )	// not assigned a card
-				continue;
-			
-			if( find(vDisconnects.begin(),vDisconnects.end(),m_Device[p]) != vDisconnects.end() )	// assigned card was disconnected
+			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
-				m_Device[p].MakeBlank();
-				m_soundDisconnect.Play();
+				if( m_Device[p].IsBlank() )	// not assigned a card
+					continue;
+				
+				if( find(vDisconnects.begin(),vDisconnects.end(),m_Device[p]) != vDisconnects.end() )	// assigned card was disconnected
+				{
+					m_Device[p].MakeBlank();
+					m_soundDisconnect.Play();
+
+					if( PROFILEMAN->ProfileWasLoadedFromMemoryCard((PlayerNumber)p) )
+						PROFILEMAN->UnloadProfile( (PlayerNumber)p );
+				}
 			}
 		}
 
 		AssignUnassignedCards();
+
+		if( !m_bCardsLocked )
+		{
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				PROFILEMAN->LoadProfileFromMemoryCard( (PlayerNumber)p );
+		}
+		SCREENMAN->RefreshCreditsMessages();
 	}
 }
 
