@@ -1,3 +1,6 @@
+#ifndef SCREENCAUTION_H
+#define SCREENCAUTION_H 1
+
 /*
 -----------------------------------------------------------------------------
  Class: ScreenCaution
@@ -23,11 +26,10 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	Sprite m_sprCaution;
-
-	TransitionFade	m_Wipe;
-
 protected:
 	void MenuStart( const PlayerNumber p );
+	Sprite m_sprCaution;
+	TransitionFade	m_Wipe;
 };
 
+#endif
