@@ -17,12 +17,17 @@ unsigned short int	pCt		= 0;		// Number of subsystems
 
 int protoErrorCallback(Display *d, XErrorEvent *err)
 {
-	char errText[32];
-	XGetErrorText(d,  err->error_code, errText, 32);
+	char errText[1024];
+	XGetErrorText(d,  err->error_code, errText, 1024);
 	LOG->Warn("X11 Protocol error %s (%d) has occurred, caused by request %d,%d, resource ID %d",
 		errText, err->error_code, err->request_code, err->minor_code, err->resourceid);
 
 	return 0; // Xlib ignores our return value
+}
+
+int protoFatalCallback(Display *d)
+{
+	RageException::Throw("Fatal I/O error communicating with X server.");
 }
 
 bool X11Helper::Go()
