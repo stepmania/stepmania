@@ -48,7 +48,7 @@ RageHelpers = SDL_dither.cpp SDL_dither.h SDL_rotozoom.cpp SDL_rotozoom.h SDL_ut
 
 Rage = $(RageHelpers) \
 RageBitmapTexture.cpp RageBitmapTexture.h RageDisplay.cpp RageDisplay.h RageDisplay_OGL.cpp RageDisplay_OGL.h RageDisplayInternal.h \
-RageException.cpp RageException.h RageInput.cpp RageInputDevice.cpp RageInputDevice.h \
+RageException.cpp RageException.h RageFile.cpp RageFile.h RageInput.cpp RageInput.h RageInputDevice.cpp RageInputDevice.h \
 RageLog.cpp RageLog.h RageMath.cpp RageMath.h RageSound.cpp RageSound.h \
 RageSoundManager.cpp RageSoundManager.h RageSoundReader.h RageSoundReader_SDL_Sound.cpp RageSoundReader_SDL_Sound.h \
 RageTexture.cpp RageTexture.h RageTextureManager.cpp RageTextureManager.h RageThreads.cpp RageThreads.h  \
