@@ -68,6 +68,15 @@ void NoteField::CacheNoteSkin( CString skin )
 	m_NoteDisplays[ skin ] = nd;
 }
 
+void NoteField::CacheAllUsedNoteSkins()
+{
+	/* Cache note skins. */
+	vector<CString> skins;
+	GAMESTATE->GetAllUsedNoteSkins( skins );
+	for( unsigned i=0; i < skins.size(); ++i )
+		CacheNoteSkin( skins[i] );
+}
+
 void NoteField::Load( const NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDraw, int iLastPixelToDraw, float fYReverseOffsetPixels )
 {
 	Unload();
@@ -88,12 +97,7 @@ void NoteField::Load( const NoteData* pNoteData, PlayerNumber pn, int iFirstPixe
 	this->CopyAll( pNoteData );
 	ASSERT( GetNumTracks() == GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer );
 
-	/* Cache note skins. */
-	vector<CString> skins;
-	GAMESTATE->GetAllUsedNoteSkins( skins );
-	for( unsigned i=0; i < skins.size(); ++i )
-		CacheNoteSkin( skins[i] );
-
+	CacheAllUsedNoteSkins();
 	RefreshBeatToNoteSkin();
 }
 

@@ -42,6 +42,7 @@ public:
 	float	m_fBeginMarker, m_fEndMarker;	// only used with MODE_EDIT
 
 	void FadeToFail();
+	void CacheAllUsedNoteSkins();
 	void CacheNoteSkin( CString skin );
 
 
