@@ -726,8 +726,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
 
-	int pn;
-		
 	if( GAMESTATE->m_pCurSong == NULL )
 		return;
 
@@ -737,7 +735,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	m_MaxCombo.SetText( ssprintf("%d", m_Player[GAMESTATE->m_MasterPlayerNumber].GetPlayersMaxCombo()) ); /* MAKE THIS WORK FOR BOTH PLAYERS! */
 	//LOG->Trace( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
 
-
+	int pn;
 	switch( m_DancingState )
 	{
 	case STATE_DANCING:
@@ -745,9 +743,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 		//
 		// Update players' alive time
 		//
-		for( int p=0; p<NUM_PLAYERS; p++ )
-			if( GAMESTATE->IsPlayerEnabled(p) )
-				GAMESTATE->m_CurStageStats.fAliveSeconds[p] += fDeltaTime;
+		for( pn=0; pn<NUM_PLAYERS; pn++ )
+			if( GAMESTATE->IsPlayerEnabled(pn) )
+				GAMESTATE->m_CurStageStats.fAliveSeconds[pn] += fDeltaTime;
 
 		//
 		// Check for end of song
@@ -851,10 +849,10 @@ void ScreenGameplay::Update( float fDeltaTime )
 	{
 		for( int r=m_iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
 		{
-			for( int p=0; p<NUM_PLAYERS; p++ )
+			for( pn=0; pn<NUM_PLAYERS; pn++ )
 			{
-				if( GAMESTATE->IsPlayerEnabled(p) )
-					m_Player[p].CrossedRow( r );
+				if( GAMESTATE->IsPlayerEnabled(pn) )
+					m_Player[pn].CrossedRow( r );
 			}
 		}
 
