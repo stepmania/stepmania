@@ -889,7 +889,7 @@ static void WriteLogHeader()
 	localtime_r( &cur_time, &now );
 
 	LOG->Info( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
-		1900+now.tm_year, now.tm_mon+1, now.tm_mday, now.tm_hour+1, now.tm_min, now.tm_sec );
+		1900+now.tm_year, now.tm_mon+1, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec );
 	LOG->Trace( " " );
 
 	if( g_argc > 1 )
