@@ -266,73 +266,75 @@ LPTSTR _tagXMLNode::LoadAttributes( LPCTSTR pszAttrs , LPPARSEINFO pi /*= &piDef
 
 	while( xml && *xml )
 	{
-		if( xml = _tcsskip( xml ) )
+		xml = _tcsskip( xml );
+		if( !xml )
+			continue;
+
+		// close tag
+		if( *xml == chXMLTagClose || *xml == chXMLTagPre )
+			// wel-formed tag
+			return xml;
+
+		// XML Attr Name
+		TCHAR* pEnd = _tcspbrk( xml, " =" );
+		if( pEnd == NULL ) 
 		{
-			// close tag
-			if( *xml == chXMLTagClose || *xml == chXMLTagPre )
-				// wel-formed tag
-				return xml;
-
-			// XML Attr Name
-			TCHAR* pEnd = _tcspbrk( xml, " =" );
-			if( pEnd == NULL ) 
+			// error
+			if( pi->erorr_occur == false ) 
 			{
-				// error
-				if( pi->erorr_occur == false ) 
-				{
-					pi->erorr_occur = true;
-					pi->error_pointer = xml;
-					pi->error_code = PIE_ATTR_NO_VALUE;
-					pi->error_string.Format( ("<%s> attribute has error "), name );
-				}
-				return NULL;
+				pi->erorr_occur = true;
+				pi->error_pointer = xml;
+				pi->error_code = PIE_ATTR_NO_VALUE;
+				pi->error_string.Format( ("<%s> attribute has error "), name );
 			}
-			
-			LPXAttr attr = new XAttr;
-			attr->parent = this;
+			return NULL;
+		}
+		
+		LPXAttr attr = new XAttr;
+		attr->parent = this;
 
-			// XML Attr Name
-			_SetString( xml, pEnd, &attr->name );
-			
-			// add new attribute
-			attrs.push_back( attr );
+		// XML Attr Name
+		_SetString( xml, pEnd, &attr->name );
+		
+		// add new attribute
+		attrs.push_back( attr );
+		xml = pEnd;
+		
+		// XML Attr Value
+		xml = _tcsskip( xml );
+		if( !xml )
+			continue;
+
+		//if( xml = _tcschr( xml, '=' ) )
+		if( *xml == '=' )
+		{
+			xml = _tcsskip( ++xml );
+			if( !xml )
+				continue;
+			// if " or '
+			// or none quote
+			int quote = *xml;
+			if( quote == '"' || quote == '\'' )
+				pEnd = _tcsechr( ++xml, quote, chXMLEscape );
+			else
+			{
+				//attr= value> 
+				// none quote mode
+				//pEnd = _tcsechr( xml, ' ', '\\' );
+				pEnd = _tcsepbrk( xml, (" >"), chXMLEscape );
+			}
+
+			bool trim = pi->trim_value;
+			TCHAR escape = pi->escape_value;
+			//_SetString( xml, pEnd, &attr->value, trim, chXMLEscape );	
+			_SetString( xml, pEnd, &attr->value, trim, escape );
 			xml = pEnd;
-			
-			// XML Attr Value
-			if( xml = _tcsskip( xml ) )
-			{
-				//if( xml = _tcschr( xml, '=' ) )
-				if( *xml == '=' )
-				{
-					if( xml = _tcsskip( ++xml ) )
-					{
-						// if " or '
-						// or none quote
-						int quote = *xml;
-						if( quote == '"' || quote == '\'' )
-							pEnd = _tcsechr( ++xml, quote, chXMLEscape );
-						else
-						{
-							//attr= value> 
-							// none quote mode
-							//pEnd = _tcsechr( xml, ' ', '\\' );
-							pEnd = _tcsepbrk( xml, (" >"), chXMLEscape );
-						}
+			// ATTRVALUE 
+			if( pi->entity_value && pi->entitys )
+				attr->value = pi->entitys->Ref2Entity(attr->value);
 
-						bool trim = pi->trim_value;
-						TCHAR escape = pi->escape_value;
-						//_SetString( xml, pEnd, &attr->value, trim, chXMLEscape );	
-						_SetString( xml, pEnd, &attr->value, trim, escape );
-						xml = pEnd;
-						// ATTRVALUE 
-						if( pi->entity_value && pi->entitys )
-							attr->value = pi->entitys->Ref2Entity(attr->value);
-
-						if( quote == '"' || quote == '\'' )
-							xml++;
-					}
-				}
-			}
+			if( quote == '"' || quote == '\'' )
+				xml++;
 		}
 	}
 
@@ -376,39 +378,95 @@ LPTSTR _tagXMLNode::Load( LPCTSTR pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 	_SetString( xml, pTagEnd, &name );
 	xml = pTagEnd;
 	// Generate XML Attributte List
-	if( xml = LoadAttributes( xml, pi ) )
+	xml = LoadAttributes( xml, pi );
+	if( xml == NULL )
+		return NULL;
+
+	// alone tag <TAG ... />
+	if( *xml == chXMLTagPre )
 	{
-		// alone tag <TAG ... />
-		if( *xml == chXMLTagPre )
+		xml++;
+		if( *xml == chXMLTagClose )
+			// wel-formed tag
+			return ++xml;
+		else
 		{
-			xml++;
-			if( *xml == chXMLTagClose )
-				// wel-formed tag
-				return ++xml;
-			else
+			// error: <TAG ... / >
+			if( pi->erorr_occur == false ) 
 			{
-				// error: <TAG ... / >
+				pi->erorr_occur = true;
+				pi->error_pointer = xml;
+				pi->error_code = PIE_ALONE_NOT_CLOSED;
+				pi->error_string = ("Element must be closed.");
+			}
+			// not wel-formed tag
+			return NULL;
+		}
+	}
+	else
+	// open/close tag <TAG ..> ... </TAG>
+	//                        ^- current pointer
+	{
+		// text value가 없으툈E넣도록한다.
+		//if( this->value.IsEmpty() || this->value == ("") )
+		if( XIsEmptyString( value ) )
+		{
+			// Text Value 
+			TCHAR* pEnd = _tcsechr( ++xml, chXMLTagOpen, chXMLEscape );
+			if( pEnd == NULL ) 
+			{
 				if( pi->erorr_occur == false ) 
 				{
 					pi->erorr_occur = true;
 					pi->error_pointer = xml;
-					pi->error_code = PIE_ALONE_NOT_CLOSED;
-					pi->error_string = ("Element must be closed.");
+					pi->error_code = PIE_NOT_CLOSED;
+					pi->error_string.Format(("%s must be closed with </%s>"), name );
 				}
-				// not wel-formed tag
+				// error cos not exist CloseTag </TAG>
 				return NULL;
 			}
+			
+			bool trim = pi->trim_value;
+			TCHAR escape = pi->escape_value;
+			//_SetString( xml, pEnd, &value, trim, chXMLEscape );
+			_SetString( xml, pEnd, &value, trim, escape );
+
+			xml = pEnd;
+			// TEXTVALUE reference
+			if( pi->entity_value && pi->entitys )
+				value = pi->entitys->Ref2Entity(value);
 		}
-		else
-		// open/close tag <TAG ..> ... </TAG>
-		//                        ^- current pointer
+
+		// generate child nodes
+		while( xml && *xml )
 		{
-			// text value가 없으면 넣도록한다.
-			//if( this->value.IsEmpty() || this->value == ("") )
-			if( XIsEmptyString( value ) )
+			LPXNode node = new XNode;
+			node->parent = this;
+			
+			xml = node->Load( xml,pi );
+			if( node->name.IsEmpty() == FALSE )
 			{
-				// Text Value 
-				TCHAR* pEnd = _tcsechr( ++xml, chXMLTagOpen, chXMLEscape );
+				childs.push_back( node );
+			}
+			else
+			{
+				delete node;
+			}
+
+			// open/close tag <TAG ..> ... </TAG>
+			//                             ^- current pointer
+			// CloseTag case
+			if( xml && *xml && *(xml+1) && *xml == chXMLTagOpen && *(xml+1) == chXMLTagPre )
+			{
+				// </Close>
+				xml+=2; // C
+				
+				xml = _tcsskip( xml );
+				if( xml == NULL )
+					return NULL;
+
+				CString closename;
+				TCHAR* pEnd = _tcspbrk( xml, " >" );
 				if( pEnd == NULL ) 
 				{
 					if( pi->erorr_occur == false ) 
@@ -416,119 +474,65 @@ LPTSTR _tagXMLNode::Load( LPCTSTR pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 						pi->erorr_occur = true;
 						pi->error_pointer = xml;
 						pi->error_code = PIE_NOT_CLOSED;
-						pi->error_string.Format(("%s must be closed with </%s>"), name );
+						pi->error_string.Format(("it must be closed with </%s>"), name );
 					}
-					// error cos not exist CloseTag </TAG>
+					// error
 					return NULL;
 				}
-				
-				bool trim = pi->trim_value;
-				TCHAR escape = pi->escape_value;
-				//_SetString( xml, pEnd, &value, trim, chXMLEscape );
-				_SetString( xml, pEnd, &value, trim, escape );
-
-				xml = pEnd;
-				// TEXTVALUE reference
-				if( pi->entity_value && pi->entitys )
-					value = pi->entitys->Ref2Entity(value);
-			}
-
-			// generate child nodes
-			while( xml && *xml )
-			{
-				LPXNode node = new XNode;
-				node->parent = this;
-				
-				xml = node->Load( xml,pi );
-				if( node->name.IsEmpty() == FALSE )
+				_SetString( xml, pEnd, &closename );
+				if( closename == this->name )
 				{
-					childs.push_back( node );
+					// wel-formed open/close
+					xml = pEnd+1;
+					// return '>' or ' ' after pointer
+					return xml;
 				}
 				else
 				{
-					delete node;
-				}
-
-				// open/close tag <TAG ..> ... </TAG>
-				//                             ^- current pointer
-				// CloseTag case
-				if( xml && *xml && *(xml+1) && *xml == chXMLTagOpen && *(xml+1) == chXMLTagPre )
-				{
-					// </Close>
-					xml+=2; // C
-					
-					if( xml = _tcsskip( xml ) )
+					xml = pEnd+1;
+					// not welformed open/close
+					if( pi->erorr_occur == false ) 
 					{
-						CString closename;
-						TCHAR* pEnd = _tcspbrk( xml, " >" );
-						if( pEnd == NULL ) 
-						{
-							if( pi->erorr_occur == false ) 
-							{
-								pi->erorr_occur = true;
-								pi->error_pointer = xml;
-								pi->error_code = PIE_NOT_CLOSED;
-								pi->error_string.Format(("it must be closed with </%s>"), name );
-							}
-							// error
-							return NULL;
-						}
-						_SetString( xml, pEnd, &closename );
-						if( closename == this->name )
-						{
-							// wel-formed open/close
-							xml = pEnd+1;
-							// return '>' or ' ' after pointer
-							return xml;
-						}
-						else
-						{
-							xml = pEnd+1;
-							// not welformed open/close
-							if( pi->erorr_occur == false ) 
-							{
-								pi->erorr_occur = true;
-								pi->error_pointer = xml;
-								pi->error_code = PIE_NOT_NESTED;
-								pi->error_string.Format(("'<%s> ... </%s>' is not wel-formed."), name, closename );
+						pi->erorr_occur = true;
+						pi->error_pointer = xml;
+						pi->error_code = PIE_NOT_NESTED;
+						pi->error_string.Format(("'<%s> ... </%s>' is not wel-formed."), name, closename );
 
-							}
-							return NULL;
-						}
 					}
+					return NULL;
 				}
-				else	// Alone child Tag Loaded
-						// else 해야하는지 말아야하는지 의심간다.
+			}
+			else	// Alone child Tag Loaded
+					// else 해야하는햨E말아야하는햨E의심간다.
+			{
+				
+				//if( xml && this->value.IsEmpty() && *xml !=chXMLTagOpen )
+				if( xml && XIsEmptyString( value ) && *xml !=chXMLTagOpen )
 				{
-					
-					//if( xml && this->value.IsEmpty() && *xml !=chXMLTagOpen )
-					if( xml && XIsEmptyString( value ) && *xml !=chXMLTagOpen )
+					// Text Value 
+					TCHAR* pEnd = _tcsechr( xml, chXMLTagOpen, chXMLEscape );
+					if( pEnd == NULL ) 
 					{
-						// Text Value 
-						TCHAR* pEnd = _tcsechr( xml, chXMLTagOpen, chXMLEscape );
-						if( pEnd == NULL ) 
+						// error cos not exist CloseTag </TAG>
+						if( pi->erorr_occur == false )  
 						{
-							// error cos not exist CloseTag </TAG>
-							if( pi->erorr_occur == false )  
-							{
-								pi->erorr_occur = true;
-								pi->error_pointer = xml;
-								pi->error_code = PIE_NOT_CLOSED;
-								pi->error_string.Format(("it must be closed with </%s>"), name );
-							}
-							return NULL;
+							pi->erorr_occur = true;
+							pi->error_pointer = xml;
+							pi->error_code = PIE_NOT_CLOSED;
+							pi->error_string.Format(("it must be closed with </%s>"), name );
 						}
-						
-						bool trim = pi->trim_value;
-						TCHAR escape = pi->escape_value;
-						//_SetString( xml, pEnd, &value, trim, chXMLEscape );
-						_SetString( xml, pEnd, &value, trim, escape );
-
-						xml = pEnd;
-						//TEXTVALUE
-						if( pi->entity_value && pi->entitys )
-							value = pi->entitys->Ref2Entity(value);
+						return NULL;
 					}
+					
+					bool trim = pi->trim_value;
+					TCHAR escape = pi->escape_value;
+					//_SetString( xml, pEnd, &value, trim, chXMLEscape );
+					_SetString( xml, pEnd, &value, trim, escape );
+
+					xml = pEnd;
+					//TEXTVALUE
+					if( pi->entity_value && pi->entitys )
+						value = pi->entitys->Ref2Entity(value);
 				}
 			}
 		}
