@@ -50,11 +50,32 @@ SInt16 ShowAlert(int type, CFStringRef message, CFStringRef OK, CFStringRef canc
     return result;
 }
 
-/* The signal handler is only used to trap SIGABRT; for other signals, just return
- * and the exceptoin handler will take care of it. */
+static bool IsFatalSignal( int signal )
+{
+	switch( signal )
+	{
+	case SIGINT:
+	case SIGTERM:
+	case SIGHUP:
+		return false;
+	default:
+		return true;
+	}
+}
+
+static void DoCleanShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
+{
+	if( IsFatalSignal(signal) )
+		return;
+
+	/* ^C. */
+	ExitGame();
+}
+
 static void DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 {
-	if( signal != SIGABRT )
+	/* Don't dump a debug file if the user just hit ^C. */
+	if( !IsFatalSignal(signal) )
 		return;
 
 	CrashSignalHandler( signal, si, uc );
@@ -64,7 +85,10 @@ static void DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *u
 ArchHooks_darwin::ArchHooks_darwin()
 {
     CrashHandlerHandleArgs(g_argc, g_argv);
-    InstallExceptionHandler(CrashExceptionHandler);
+
+    /* First, handle non-fatal termination signals. */
+    SignalHandler::OnClose( DoCleanShutdown );
+
     SignalHandler::OnClose( DoCrashSignalHandler );
     TimeCritMutex = new RageMutex("TimeCritMutex");
 }
