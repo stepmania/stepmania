@@ -777,6 +777,33 @@ void Song::TidyUpData()
 			this->AddBackgroundChange( BackgroundChange(0,arrayPossibleMovies[0],1.f,true,true,false) );
 	}
 
+
+	/* Don't allow multiple Steps of the same StepsType and Diffiuclty.
+	 * This happens a lot reading BMS files because they we have to guess
+	 * the Difficulty from the meter. */
+	for( i=0; i<NUM_STEPS_TYPES; i++ )
+	{
+		StepsType st = (StepsType)i;
+
+		for( unsigned j=0; j<DIFFICULTY_INVALID-1; j++ )
+		{
+			Difficulty dc = (Difficulty)j;
+
+			vector<Steps*> vSteps;
+			this->GetSteps( vSteps, st, dc );
+			SortNotesArrayByDifficulty( vSteps );
+			for( unsigned k=1; k<vSteps.size(); k++ )
+			{
+				Steps* pSteps = vSteps[k];
+			
+				Difficulty dc2 = (Difficulty)(dc+1);
+				pSteps->SetDifficulty( dc2 );
+			}
+		}
+	}
+
+
+	// Compress all Steps
 	for( i=0; i<m_apNotes.size(); i++ )
 	{
 		m_apNotes[i]->Compress();
