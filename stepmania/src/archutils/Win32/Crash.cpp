@@ -70,7 +70,7 @@ static void ReportStaticLog(HWND hwnd, HANDLE hFile);
 
 ///////////////////////////////////////////////////////////////////////////
 
-#ifdef _DEBUG
+#ifdef DEBUG
 /*
 void checkfpustack(const char *file, const int line) throw() {
 	static const char szFPUProblemCaption[]="FPU/MMX internal problem";
@@ -315,7 +315,7 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc) {
 			"The error reporting interface has crashed.\n"
 			"Please report a bug and attach the file \"crashdump.dat\"\n"
 			"to the report.", "Fatal Error", MB_OK );
-#ifdef _DEBUG
+#ifdef DEBUG
 		DebugBreak();
 #endif
 
@@ -1337,22 +1337,6 @@ static void DoSave(const EXCEPTION_POINTERS *pExc) {
 
 	OSVERSIONINFO ovi;
 	ovi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-
-	/* XXX: rewrite this mess */
-	if (GetVersionEx(&ovi)) {
-		Report(NULL, hFile, "Windows %d.%d (Win%s build %d) [%s]",
-			ovi.dwMajorVersion,
-			ovi.dwMinorVersion,
-			ovi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS?
-				(ovi.dwMinorVersion>0? "98" : "95"):
-			ovi.dwPlatformId == VER_PLATFORM_WIN32_NT?
-				(ovi.dwMajorVersion >= 5? 
-				    (ovi.dwMinorVersion>0? "XP":"2000"): "NT")
-					: "?",
-			ovi.dwBuildNumber & 0xffff,
-			ovi.szCSDVersion);
-	}
-	Report(NULL, hFile, "");
 
 	ReportReason(NULL, NULL, hFile, pExc);
 	Report(NULL, hFile, "");
