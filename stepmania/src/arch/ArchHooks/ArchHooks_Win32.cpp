@@ -13,8 +13,6 @@
 ArchHooks_Win32::ArchHooks_Win32()
 {
 	SetUnhandledExceptionFilter(CrashHandler);
-	InitThreadData("Main thread");
-	VDCHECKPOINT;
 }
 
 void ArchHooks_Win32::DumpDebugInfo()
