@@ -35,8 +35,6 @@ public:
 		CODE_NEXT_SORT2,
 		CODE_NEXT_SORT3,
 		CODE_NEXT_SORT4,
-		CODE_SORT_MENU1,
-		CODE_SORT_MENU2,
 		CODE_MODE_MENU1,
 		CODE_MODE_MENU2,
 		CODE_MIRROR,
@@ -76,7 +74,6 @@ public:
 	static bool EnteredEasierDifficulty( GameController controller );
 	static bool EnteredHarderDifficulty( GameController controller );
 	static bool EnteredNextSort( GameController controller );
-	static bool EnteredSortMenu( GameController controller );
 	static bool EnteredModeMenu( GameController controller );
 	static bool DetectAndAdjustMusicOptions( GameController controller );
 	static bool EnteredCode( GameController controller, Code code );

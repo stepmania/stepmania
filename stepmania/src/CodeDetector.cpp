@@ -21,8 +21,6 @@ const CString g_sCodeNames[CodeDetector::NUM_CODES] = {
 	"NextSort2",
 	"NextSort3",
 	"NextSort4",
-	"SortMenu1",
-	"SortMenu2",
 	"ModeMenu1",
 	"ModeMenu2",
 	"Mirror",
@@ -202,11 +200,6 @@ bool CodeDetector::EnteredNextSort( GameController controller )
 		   EnteredCode(controller,CODE_NEXT_SORT2) ||
 		   EnteredCode(controller,CODE_NEXT_SORT3) ||
 		   EnteredCode(controller,CODE_NEXT_SORT4);
-}
-
-bool CodeDetector::EnteredSortMenu( GameController controller )
-{
-	return EnteredCode(controller,CODE_SORT_MENU1) || EnteredCode(controller,CODE_SORT_MENU2);
 }
 
 bool CodeDetector::EnteredModeMenu( GameController controller )
