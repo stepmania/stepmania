@@ -39,7 +39,8 @@ void FontPage::Load( FontPageSettings cfg )
 
 	// load texture
 	RageTextureID ID(m_sTexturePath);
-	ID.bStretch = true;
+	// Don't stretch because it causes funky pixel/texel alignment.
+//	ID.bStretch = true;
 
 	m_pTexture = TEXTUREMAN->LoadTexture( ID );
 	ASSERT( m_pTexture != NULL );
