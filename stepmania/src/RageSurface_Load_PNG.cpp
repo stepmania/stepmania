@@ -25,13 +25,34 @@
 #define png_jmpbuf(png) ((png)->jmpbuf)
 #endif
 
-static void RageFile_png_read( png_struct *png, png_byte *p, png_size_t size )
+/*
+ * I prefer static over anonymous namespaces for functions; it's clearer and seems
+ * to have no language drawbacks over anonymous namespaces, which are only really
+ * needed when declaring things more complicated than functions.
+ *
+ * There's an implementation advantage, though: functions declared in anonymous
+ * namespaces are still exported by gcc -rdynamic, which means the crash handler can
+ * still resolve them.  static functions aren't, so we end up getting a wrong match.
+ */
+
+namespace
 {
+void RageFile_png_read( png_struct *png, png_byte *p, png_size_t size )
+{
+	CHECKPOINT;
 	RageFile *f = (RageFile *) png->io_ptr;
 
 	int got = f->Read( p, size );
 	if( got == -1 )
-		png_error( png, f->GetError() );
+	{
+		/* png_error will call PNG_Error, which will longjmp.  If we just pass
+		 * GetError().c_str() to it, a temporary may be created; since control
+		 * never returns here, it may never be destructed and we could leak. */
+		static char error[256];
+		strncpy( error, f->GetError(), sizeof(error) );
+		error[sizeof(error)-1] = 0;
+		png_error( png, error );
+	}
 	else if( got != (int) size )
 		png_error( png, "Unexpected EOF" );
 }
@@ -42,8 +63,9 @@ struct error_info
 	const char *fn;
 };
 
-static void PNG_Error( png_struct *png, const char *error )
+void PNG_Error( png_struct *png, const char *error )
 {
+	CHECKPOINT;
 	error_info *info = (error_info *) png->error_ptr;
 	strncpy( info->err, error, 1024 );
 	info->err[1023] = 0;
@@ -51,8 +73,9 @@ static void PNG_Error( png_struct *png, const char *error )
 	longjmp( png_jmpbuf(png), 1 );
 }
 
-static void PNG_Warning( png_struct *png, const char *warning )
+void PNG_Warning( png_struct *png, const char *warning )
 {
+	CHECKPOINT;
 	error_info *info = (error_info *) png->error_ptr;
 	LOG->Trace( "loading \"%s\": warning: %s", info->fn, warning );
 }
@@ -81,12 +104,14 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	}
 
 	RageSurface *volatile img = NULL;
+	CHECKPOINT;
 	if( setjmp(png_jmpbuf(png)) )
 	{
 		png_destroy_read_struct( &png, &info_ptr, NULL );
 		delete img;
 		return NULL;
 	}
+	CHECKPOINT;
 
 	png_set_read_fn( png, f, RageFile_png_read );
 
@@ -100,6 +125,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	 * the image.  Just return an empty surface with only the width and height set. */
 	if( bHeaderOnly )
 	{
+		CHECKPOINT;
 		img = CreateSurfaceFrom( width, height, 32, 0, 0, 0, 0, NULL, width*4 );
 		png_destroy_read_struct( &png, &info_ptr, NULL );
 
@@ -107,6 +133,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	}
 
 
+	CHECKPOINT;
 	png_set_strip_16(png); /* 16bit->8bit */
 	png_set_packing( png ); /* 1,2,4 bit->8 bit */
 
@@ -156,6 +183,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		FAIL_M(ssprintf( "%i", color_type) );
 	}
 
+	CHECKPOINT;
 	if( color_type == PNG_COLOR_TYPE_GRAY )
 	{
 		png_color_16 *trans;
@@ -199,6 +227,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 
 	png_set_interlace_handling( png );
 
+	CHECKPOINT;
 	png_read_update_info( png, info_ptr );
 
 	switch( type )
@@ -226,6 +255,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 
 	/* alloca to prevent memleaks if libpng longjmps us */
 	png_byte **row_pointers = (png_byte **) alloca( sizeof(png_byte*) * height );
+	CHECKPOINT_M( ssprintf("%p",row_pointers) );
 
 	for( unsigned y = 0; y < height; ++y )
 	{
@@ -233,14 +263,17 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		row_pointers[y] = p + img->pitch*y;
 	}
 
+	CHECKPOINT;
 	png_read_image( png, row_pointers );
 
+	CHECKPOINT;
 	png_read_end( png, info_ptr );
 	png_destroy_read_struct( &png, &info_ptr, NULL );
 
 	return img;
 }
 
+};
 
 RageSurfaceUtils::OpenResult RageSurface_Load_PNG( const CString &sPath, RageSurface *&ret, bool bHeaderOnly, CString &error )
 {
