@@ -108,9 +108,9 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 		if( GAMEMAN->m_CurStyle == STYLE_NONE )
 			m_textCreditInfo[p].SetText( "PRESS START" );
 		else if( GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) )
-			m_textCreditInfo[p].SetText( "PRESENT" );
+			m_textCreditInfo[p].SetText( "" );
 		else	// not enabled
-			m_textCreditInfo[p].SetText( "CREDIT(S):  0 / 0" );
+			m_textCreditInfo[p].SetText( "NOT PRESENT" );
 
 
 		m_textCreditInfo[p].SetZoom( 0.5f );

@@ -237,8 +237,7 @@ void NoteField::DrawPrimitives()
 
 			const int iCol = hn.m_iTrack;
 			const float fHoldNoteLife = m_HoldNoteLife[i];
-			const bool bActive = NoteRowToBeat(hn.m_iStartIndex) > m_fSongBeat  &&  m_fSongBeat < NoteRowToBeat(hn.m_iEndIndex);
-
+			const bool bActive = NoteRowToBeat(hn.m_iStartIndex-1) <= m_fSongBeat  &&  m_fSongBeat <= NoteRowToBeat(hn.m_iEndIndex);	// hack: added -1 because hn.m_iStartIndex changes as note is held
 
 			// parts of the hold
 			const float fStartDrawingAtBeat = froundf( (float)hn.m_iStartIndex, ROWS_BETWEEN_HOLD_BITS );

@@ -97,7 +97,7 @@ ScreenEdit::ScreenEdit()
 	m_NoteFieldRecord.SetZoom( 1.0f );
 	m_NoteFieldRecord.Load( &noteData, PLAYER_1, GAMEMAN->GetCurrentStyleDef(), m_PlayerOptions, 2, 5, NoteField::MODE_EDITING );
 
-	m_Player.Load( PLAYER_1, GAMEMAN->GetCurrentStyleDef(), &noteData, PlayerOptions(), NULL, NULL );
+	m_Player.Load( PLAYER_1, GAMEMAN->GetCurrentStyleDef(), &noteData, 1, PlayerOptions(), NULL, NULL );
 	m_Player.SetXY( EDIT_CENTER_X, EDIT_GRAY_Y );
 
 	m_Fade.SetClosed();
@@ -234,7 +234,7 @@ void ScreenEdit::Update( float fDeltaTime )
 
 	m_NoteFieldEdit.Update( fDeltaTime, m_fTrailingBeat );
 
-	int iIndexNow = BeatToNoteIndexNotRounded( m_fBeat );	
+	int iIndexNow = BeatToNoteRowNotRounded( m_fBeat );	
 
 
 	CString sNoteType;
@@ -499,7 +499,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 			m_Mode = MODE_PLAY;
 
-			m_Player.Load( PLAYER_1, GAMEMAN->GetCurrentStyleDef(), (NoteData*)&m_NoteFieldEdit, PlayerOptions(), NULL, NULL );
+			m_Player.Load( PLAYER_1, GAMEMAN->GetCurrentStyleDef(), (NoteData*)&m_NoteFieldEdit, 1, PlayerOptions(), NULL, NULL );
 
 			m_rectRecordBack.BeginTweening( 0.5f );
 			m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0.5f) );

@@ -14,12 +14,10 @@
 
 #include "Song.h"
 #include "Course.h"
-#include "GamePlayStatistics.h"
+#include "GameplayStatistics.h"
 //#include <d3dxmath.h>	// for D3DXCOLOR
 
 const int MAX_SONG_QUEUE_SIZE = 400;	// this has to be gigantic to fit an "endless" number of songs
-const int MAX_NUM_STAGES = 10;			// the max number of stages that can be played in arcade mode
-
 
 class SongManager
 {
@@ -32,7 +30,7 @@ public:
 	Course*		m_pCurCourse;
 	CString		m_sPreferredGroup;
 
-	GameplayStatistics	m_GameplayStatistics[MAX_NUM_STAGES][NUM_PLAYERS];	// for passing from Dancing to Results
+	CArray<GameplayStatistics,GameplayStatistics>	m_aGameplayStatistics[NUM_PLAYERS];	// for passing from Dancing to Results
 
 
 	CArray<Song*, Song*>	m_pSongs;	// all songs that can be played

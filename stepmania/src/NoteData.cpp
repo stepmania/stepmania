@@ -22,6 +22,11 @@
 
 NoteData::NoteData()
 {
+	Init();
+}
+
+void NoteData::Init()
+{
 	memset( m_TapNotes, '0', MAX_NOTE_TRACKS*MAX_TAP_NOTE_ROWS );
 	m_iNumTracks = 0;
 	m_iNumHoldNotes = 0;
@@ -176,6 +181,24 @@ void NoteData::RemoveHoldNote( int index )
 	m_iNumHoldNotes--;
 }
 
+bool NoteData::IsThereANoteAtRow( int iRow )
+{
+	for( int t=0; t<m_iNumTracks; t++ )
+	{
+		if( m_TapNotes[t][iRow] != '0' )
+			return true;
+	}
+
+	for( int i=0; i<m_iNumHoldNotes; i++ )	// for each HoldNote
+	{
+		if( m_HoldNotes[i].m_iStartIndex == iRow )
+			return true;
+	}
+
+	return false;
+}
+
+
 int NoteData::GetLastRow()			
 { 
 	int iOldestIndexFoundSoFar = 0;
@@ -212,7 +235,7 @@ float NoteData::GetLastBeat()
 
 int NoteData::GetNumTapNotes( const float fStartBeat, const float fEndBeat )			
 { 
-	int iNumSteps = 0;
+	int iNumNotes = 0;
 
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
@@ -222,11 +245,11 @@ int NoteData::GetNumTapNotes( const float fStartBeat, const float fEndBeat )
 		for( int t=0; t<m_iNumTracks; t++ )
 		{
 			if( m_TapNotes[t][i] != '0' )
-				iNumSteps++;
+				iNumNotes++;
 		}
 	}
 	
-	return iNumSteps;
+	return iNumNotes;
 }
 
 int NoteData::GetNumDoubles( const float fStartBeat, const float fEndBeat )			
@@ -253,19 +276,18 @@ int NoteData::GetNumDoubles( const float fStartBeat, const float fEndBeat )
 
 int NoteData::GetNumHoldNotes( const float fStartBeat, const float fEndBeat )			
 {
-	int iNumSteps = 0;
+	int iNumHolds = 0;
 
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
 	for( int i=0; i<m_iNumHoldNotes; i++ )
 	{
-		float fHoldStartBeat = NoteRowToBeat( m_HoldNotes[i].m_iStartIndex );
-		if( fStartBeat >= fHoldStartBeat  &&  fStartBeat < fEndBeat )
-			iNumSteps++;
-
+		HoldNote &hn = m_HoldNotes[i];
+		if( iStartIndex <= hn.m_iStartIndex  &&  hn.m_iEndIndex <= iEndIndex )
+			iNumHolds++;
 	}
-	return iNumSteps;
+	return iNumHolds;
 }
 
 int NoteData::GetPossibleDancePoints()
@@ -708,8 +730,9 @@ float NoteData::GetStreamRadarValue( float fSongSeconds )
 {
 	// density of steps
 	int iNumNotes = GetNumTapNotes() + GetNumHoldNotes();
-	float fBeatsPerSecond = iNumNotes/fSongSeconds;
-	return fBeatsPerSecond / 5;
+	float fNotesPerSecond = iNumNotes/fSongSeconds;
+	float fReturn = fNotesPerSecond / 5;
+	return min( fReturn, 1.2f );
 }
 
 float NoteData::GetVoltageRadarValue( float fSongSeconds )
@@ -729,26 +752,30 @@ float NoteData::GetVoltageRadarValue( float fSongSeconds )
 			fMaxDensityPerSecSoFar = fDensityPerSecThisMeasure;
 	}
 
-	return fMaxDensityPerSecSoFar;
+	float fReturn = fMaxDensityPerSecSoFar*10;
+	return min( fReturn, 1.2f );
 }
 
 float NoteData::GetAirRadarValue( float fSongSeconds )
 {
 	// number of doubles
 	int iNumDoubles = GetNumDoubles();
-	return iNumDoubles / fSongSeconds * 2;
+	float fReturn = iNumDoubles / fSongSeconds * 2;
+	return min( fReturn, 1.2f );
 }
 
 float NoteData::GetChaosRadarValue( float fSongSeconds )
 {
 	// irregularity of steps
-	return fabsf( GetStreamRadarValue(fSongSeconds) - GetVoltageRadarValue(fSongSeconds) );
+	float fReturn = fabsf( GetStreamRadarValue(fSongSeconds) - GetVoltageRadarValue(fSongSeconds) ) * 2.5f;
+	return min( fReturn, 1.2f );
 }
 
 float NoteData::GetFreezeRadarValue( float fSongSeconds )
 {
 	// number of hold steps
-	return GetNumHoldNotes() / fSongSeconds * 10;
+	float fReturn = GetNumHoldNotes() / fSongSeconds * 3;
+	return min( fReturn, 1.2f );
 }
 
 

@@ -134,7 +134,7 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, const InputEventType
 	if( m_Menu.IsClosing() )
 		return;		// ignore
 
-	if( MenuI.player == PLAYER_NONE )
+	if( MenuI.player == PLAYER_INVALID )
 		return;
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
@@ -174,7 +174,7 @@ void ScreenSelectCourse::HandleScreenMessage( const ScreenMessage SM )
 		{
 			MUSIC->Stop();
 
-			SCREENMAN->SetNewScreen( new ScreenStage(false) );
+			SCREENMAN->SetNewScreen( new ScreenStage );
 		}
 		break;
 	}
@@ -198,32 +198,38 @@ void ScreenSelectCourse::MenuRight( const PlayerNumber p, const InputEventType t
 void ScreenSelectCourse::MenuStart( const PlayerNumber p )
 {
 	// this needs to check whether valid Notes are selected!
-	m_MusicWheel.Select();
+	bool bChoseACourse = m_MusicWheel.Select();
 
-	switch( m_MusicWheel.GetSelectedType() )
+
+	if( bChoseACourse )
 	{
-	case TYPE_COURSE:
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_MUSIC_COMMENT_GENERAL) );
-	
-		TweenOffScreen();
+		switch( m_MusicWheel.GetSelectedType() )
+		{
+		case TYPE_COURSE:
+			SONGMAN->m_pCurCourse = m_MusicWheel.GetSelectedCourse();
 
-		m_soundSelect.PlayRandom();
+			SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_MUSIC_COMMENT_GENERAL) );
 
-		// show "hold START for options"
-		m_textHoldForOptions.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-		m_textHoldForOptions.BeginTweeningQueued( 0.25f );	// fade in
-		m_textHoldForOptions.SetTweenZoomY( 1 );
-		m_textHoldForOptions.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
-		m_textHoldForOptions.BeginTweeningQueued( 2.0f );	// sleep
-		m_textHoldForOptions.BeginTweeningQueued( 0.25f );	// fade out
-		m_textHoldForOptions.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
-		m_textHoldForOptions.SetTweenZoomY( 0 );
+			TweenOffScreen();
 
-		m_Menu.TweenOffScreenToBlack( SM_None, false );
+			m_soundSelect.PlayRandom();
 
-		this->SendScreenMessage( SM_GoToNextState, 2.5f );
-		
-		break;
+			// show "hold START for options"
+			m_textHoldForOptions.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+			m_textHoldForOptions.BeginTweeningQueued( 0.25f );	// fade in
+			m_textHoldForOptions.SetTweenZoomY( 1 );
+			m_textHoldForOptions.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+			m_textHoldForOptions.BeginTweeningQueued( 2.0f );	// sleep
+			m_textHoldForOptions.BeginTweeningQueued( 0.25f );	// fade out
+			m_textHoldForOptions.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+			m_textHoldForOptions.SetTweenZoomY( 0 );
+
+			m_Menu.TweenOffScreenToBlack( SM_None, false );
+
+			this->SendScreenMessage( SM_GoToNextState, 2.5f );
+			
+			break;
+		}
 	}
 }
 

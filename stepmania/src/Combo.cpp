@@ -57,7 +57,7 @@ void Combo::ContinueCombo( const int iNumNotesHit )
 		m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	// visible
 
 		m_textComboNumber.SetText( ssprintf("%d", m_iCurCombo) );
-		float fNewZoom = 0.5f + m_iCurCombo/800.0f;
+		float fNewZoom = min( 2, 0.5f + m_iCurCombo/800.0f );
 		m_textComboNumber.SetZoom( fNewZoom ); 
 		
 		//this->SetZoom( 1.2f );

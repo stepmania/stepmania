@@ -33,7 +33,8 @@ public:
 	bool	m_bAnnouncer;
 	bool	m_bEventMode;
 	int		m_iNumArcadeStages;
-	int		m_iDifficulty;
+	bool	m_bAutoPlay;
+	float	m_fJudgeWindow;
 
 	void ReadPrefsFromDisk();
 	void SavePrefsToDisk();
@@ -46,9 +47,11 @@ public:
 	int				m_iCurrentStageIndex;		// starts at 0, and is incremented with each Stage Clear
 
 	int				GetStageIndex();
-	int				GetStageNumber();
 	bool			IsFinalStage();
+	bool			IsExtraStage();
+	bool			IsExtraStage2();
 	CString			GetStageText();
+	D3DXCOLOR		GetStageColor();
 
 
 	PlayerOptions	m_PlayerOptions[NUM_PLAYERS];

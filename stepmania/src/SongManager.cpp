@@ -77,7 +77,8 @@ void SongManager::SetCurrentNotes( PlayerNumber p, Notes* pNotes )
 
 GameplayStatistics SongManager::GetLatestGameplayStatistics( PlayerNumber p )
 {
-	return m_GameplayStatistics[ PREFSMAN->GetStageIndex() ][p];
+	ASSERT( m_aGameplayStatistics[p].GetSize() > 0 );
+	return m_aGameplayStatistics[p][ m_aGameplayStatistics[p].GetSize()-1 ];
 }
 
 

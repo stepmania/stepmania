@@ -360,6 +360,12 @@
 				RelativePath="NoteData.h">
 			</File>
 			<File
+				RelativePath="NoteDataWithScoring.cpp">
+			</File>
+			<File
+				RelativePath="NoteDataWithScoring.h">
+			</File>
+			<File
 				RelativePath="Notes.cpp">
 			</File>
 			<File

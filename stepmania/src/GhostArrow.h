@@ -1,23 +1,19 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
- File: GhostArrow.h
+ Class: GhostArrow
 
- Desc: Class used to represent a color arrow on the screen.
+ Desc: The trail a note leaves when it is destroyed.
 
- Copyright (c) 2001 Ben Norstrom.  All rights reserved.
+ Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Ben Nordstrom
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
 
-class GhostArrow;
-
-#ifndef _GhostArrow_H_
-#define _GhostArrow_H_
-
-
 #include "Sprite.h"
-#include "Notes.h"
-
+#include "GameConstantsAndTypes.h"
 
 class GhostArrow : public Sprite
 {
@@ -31,5 +27,3 @@ public:
 
 	float m_fVisibilityCountdown;
 };
-
-#endif 

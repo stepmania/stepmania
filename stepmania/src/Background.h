@@ -16,6 +16,9 @@
 #include "ActorFrame.h"
 #include "Song.h"
 
+#include "ParticleSystem.h"
+
+
 
 class Background : public ActorFrame
 {
@@ -40,7 +43,25 @@ public:
 
 	virtual bool IsDangerOn()		{ return m_bShowDanger; };
 
+	virtual void nextEffect() {};
+
 protected:
+
+	virtual void LoadParticleSprites( CString path );
+
+
+	enum ParticleEffect 
+	{
+		PE_DROPPING = 0,
+		PE_SPIRAL_OUT,
+		PE_NUM
+	};
+
+	//CArray<Sprite*,Sprite*> m_backgroundTiles;
+	CArray<Sprite*,Sprite*> m_particleSprites;
+
+	ParticleSystem* m_pPS;
+
 	Sprite m_sprVisualizationOverlay;
 	Sprite m_sprSongBackground;
 	

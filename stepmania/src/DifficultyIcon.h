@@ -22,7 +22,7 @@ class DifficultyIcon : public Sprite
 public:
 	DifficultyIcon()
 	{
-		Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_DIFFICULTY_BANNER_ICONS) );
+		Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_DIFFICULTY_ICONS) );
 		StopAnimating();
 
 		SetFromNotes( NULL );

@@ -23,7 +23,11 @@
 
 const float FADE_TIME	=	1.0f;
 
-const float SWITCH_MUSIC_TIME	=	0.3f;
+const float SWITCH_MUSIC_TIME	=	0.15f;
+const float ROULETTE_SWITCH_MUSIC_TIME	=	SWITCH_MUSIC_TIME/2;
+const int ROULETTE_SWITCHES_IN_SLOWING_DOWN = 5;
+
+const float LOCKED_WHEEL_INITIAL_VELOCITY = 10;
 
 const float SORT_ICON_ON_SCREEN_X	=	-140;
 const float SORT_ICON_ON_SCREEN_Y	=	-180;
@@ -51,14 +55,14 @@ D3DXCOLOR SECTION_COLORS[] = {
 };
 const int NUM_SECTION_COLORS = sizeof(SECTION_COLORS)/sizeof(D3DXCOLOR);
 
+
+
 inline D3DXCOLOR GetNextSectionColor()
 {
 	static int i=0;
 	i = i % NUM_SECTION_COLORS;
 	return SECTION_COLORS[i++];
 }
-
-
 
 WheelItemData::WheelItemData()
 {
@@ -325,11 +329,14 @@ MusicWheel::MusicWheel()
 	this->AddActor( &m_ScrollBar );
 	
 
-	m_soundChangeMusic.Load( THEME->GetPathTo(SOUND_SELECT_MUSIC_CHANGE_MUSIC), 10 );
+	m_soundChangeMusic.Load( THEME->GetPathTo(SOUND_SELECT_MUSIC_CHANGE_MUSIC), 16 );
 	m_soundChangeSort.Load( THEME->GetPathTo(SOUND_SELECT_MUSIC_CHANGE_SORT) );
 	m_soundExpand.Load( THEME->GetPathTo(SOUND_SELECT_MUSIC_SECTION_EXPAND) );
-	m_soundExpand.Load( THEME->GetPathTo(SOUND_MENU_START) );
+	m_soundStart.Load( THEME->GetPathTo(SOUND_MENU_START) );
+	m_soundLocked.Load( THEME->GetPathTo(SOUND_SELECT_MUSIC_WHEEL_LOCKED) );
 
+
+	m_fTimeLeftBeforePlayMusicSample = 0;
 
 	// init m_mapGroupNameToBannerColor
 
@@ -349,10 +356,11 @@ MusicWheel::MusicWheel()
 	m_iSelection = 0;
 
 	
-	m_WheelState = STATE_IDLE;
-	m_fTimeLeftInState = FADE_TIME;
+	m_WheelState = STATE_SELECTING_MUSIC;
+	m_fTimeLeftInState = 0;
 	m_fPositionOffsetFromSelection = 0;
 
+	m_iSwitchesLeftInSpinDown = 0;
 
 	// build all of the wheel item datas
 	for( int so=0; so<NUM_SORT_ORDERS; so++ )
@@ -670,8 +678,10 @@ void MusicWheel::DrawPrimitives()
 
 		switch( m_WheelState )
 		{
-		case STATE_IDLE:
-		case STATE_SWITCHING_MUSIC:
+		case STATE_SELECTING_MUSIC:
+		case STATE_ROULETTE_SPINNING:
+		case STATE_ROULETTE_SLOWING_DOWN:
+		case STATE_LOCKED:
 			{
 				float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS_TO_DRAW/2 + m_fPositionOffsetFromSelection;
 
@@ -709,10 +719,14 @@ void MusicWheel::Update( float fDeltaTime )
 
 	if( m_WheelState == STATE_ROULETTE_SPINNING )
 	{
-		float fOldMod = fmodf( TIMER->GetTimeSinceStart()-fDeltaTime, SWITCH_MUSIC_TIME );
-		float fNewMod = fmodf( TIMER->GetTimeSinceStart(), SWITCH_MUSIC_TIME );
-		if( fNewMod < fOldMod )	// wrapped
-			NextMusic();
+		NextMusic();	// spin as fast as possible
+	}
+
+	if( m_fTimeLeftBeforePlayMusicSample > 0 )
+	{
+		m_fTimeLeftBeforePlayMusicSample -= fDeltaTime;
+		if( m_fTimeLeftBeforePlayMusicSample < 0 )
+			SCREENMAN->SendMessageToTopScreen( SM_PlaySongSample, 0 );
 	}
 
 	// update wheel state
@@ -721,10 +735,6 @@ void MusicWheel::Update( float fDeltaTime )
 	{
 		switch( m_WheelState )
 		{
-		case STATE_SWITCHING_MUSIC:
-			m_WheelState = STATE_IDLE;	// now, wait for input
-			SCREENMAN->SendMessageToTopScreen( SM_PlaySongSample, 0 );
-			break;
 		case STATE_FLYING_OFF_BEFORE_NEXT_SORT:
 			{
 				m_WheelState = STATE_FLYING_ON_AFTER_NEXT_SORT;
@@ -779,46 +789,112 @@ void MusicWheel::Update( float fDeltaTime )
 			break;
 		case STATE_FLYING_ON_AFTER_NEXT_SORT:
 			SCREENMAN->SendMessageToTopScreen( SM_PlaySongSample, 0 );
-			m_WheelState = STATE_IDLE;	// now, wait for input
+			m_WheelState = STATE_SELECTING_MUSIC;	// now, wait for input
 			break;
 		case STATE_TWEENING_ON_SCREEN:
 			SCREENMAN->SendMessageToTopScreen( SM_PlaySongSample, 0 );
-			m_WheelState = STATE_IDLE;
+			m_WheelState = STATE_SELECTING_MUSIC;
 			m_fTimeLeftInState = 0;
 			break;
 		case STATE_TWEENING_OFF_SCREEN:
 			m_WheelState = STATE_WAITING_OFF_SCREEN;
 			m_fTimeLeftInState = 0;
 			break;
-		case STATE_IDLE:
+		case STATE_SELECTING_MUSIC:
 			m_fTimeLeftInState = 0;
 			break;
+		case STATE_ROULETTE_SPINNING:
+			break;
+		case STATE_WAITING_OFF_SCREEN:
+			break;
+		case STATE_LOCKED:
+			break;
 		case STATE_ROULETTE_SLOWING_DOWN:
-			m_WheelState = STATE_IDLE;
-			m_fTimeLeftInState = 0;
+			if( m_iSwitchesLeftInSpinDown == 0 )
+			{
+				m_WheelState = STATE_LOCKED;
+				m_fTimeLeftInState = 0;
+				m_soundStart.Play();
+				m_fLockedWheelVelocity = 0;
+			}
+			else
+			{
+				m_iSwitchesLeftInSpinDown--;
+				switch( m_iSwitchesLeftInSpinDown )
+				{
+				case 4:		m_fTimeLeftInState = 0.2f;	break;
+				case 3:		m_fTimeLeftInState = 0.4f;	break;
+				case 2:		m_fTimeLeftInState = 0.8f;	break;
+				case 1:		m_fTimeLeftInState = 1.3f;	break;
+				case 0:		m_fTimeLeftInState = 0.5f;	break;
+				default:	ASSERT(0);
+				}
+				
+				LOG->WriteLine( "m_iSwitchesLeftInSpinDown id %d, m_fTimeLeftInState is %f", m_iSwitchesLeftInSpinDown, m_fTimeLeftInState );
+
+				if( m_iSwitchesLeftInSpinDown < 2 )
+					randomf(0,1) >= 0.5f ? NextMusic() : PrevMusic();
+				else
+					NextMusic();
+			}
+			break;
+		default:
+			ASSERT(0);	// all state changes should be handled explitily
 			break;
 		}
 	}
 
-	// "rotate" wheel toward selected song
 
-	if( fabsf(m_fPositionOffsetFromSelection) < 0.02f )
-		m_fPositionOffsetFromSelection = 0;
+	if( m_WheelState == STATE_LOCKED )
+	{
+		m_fPositionOffsetFromSelection = clamp( m_fPositionOffsetFromSelection, -0.3f, +0.3f );
+		
+		float fSpringForce = - m_fPositionOffsetFromSelection*LOCKED_WHEEL_INITIAL_VELOCITY;
+		m_fLockedWheelVelocity += fSpringForce;
+
+		float fDrag = -m_fLockedWheelVelocity * fDeltaTime*4;
+		m_fLockedWheelVelocity += fDrag;
+
+		m_fPositionOffsetFromSelection  += m_fLockedWheelVelocity*fDeltaTime;
+
+		if( fabsf(m_fPositionOffsetFromSelection) < 0.01f  &&  fabsf(m_fLockedWheelVelocity) < 0.01f )
+		{
+			m_fPositionOffsetFromSelection = 0;
+			m_fLockedWheelVelocity = 0;
+		}
+	}
 	else
 	{
-		m_fPositionOffsetFromSelection -= fDeltaTime * m_fPositionOffsetFromSelection*4;	// linear
-		float fSign = m_fPositionOffsetFromSelection / fabsf(m_fPositionOffsetFromSelection);
-		m_fPositionOffsetFromSelection -= fDeltaTime * fSign;	// constant
+		// "rotate" wheel toward selected song
+		float fSpinSpeed;
+		if( m_WheelState == STATE_ROULETTE_SPINNING )
+			fSpinSpeed = 1.0f/ROULETTE_SWITCH_MUSIC_TIME;
+		else
+			fSpinSpeed = 0.6f + fabsf(m_fPositionOffsetFromSelection)/SWITCH_MUSIC_TIME;
+
+		if( m_fPositionOffsetFromSelection > 0 )
+			m_fPositionOffsetFromSelection = max( 0, m_fPositionOffsetFromSelection - fSpinSpeed*fDeltaTime );
+		else if( m_fPositionOffsetFromSelection < 0 )
+			m_fPositionOffsetFromSelection = min( 0, m_fPositionOffsetFromSelection + fSpinSpeed*fDeltaTime );
 	}
 }
 
 
 void MusicWheel::PrevMusic()
 {
+	if( m_WheelState == STATE_LOCKED )
+	{
+		m_fLockedWheelVelocity = LOCKED_WHEEL_INITIAL_VELOCITY;
+		m_soundLocked.Play();
+		return;
+	}
+
+	if( fabsf(m_fPositionOffsetFromSelection) > 0.5f )	// wheel is busy spinning
+		return;
+	
 	switch( m_WheelState )
 	{
-	case STATE_IDLE:
-	case STATE_SWITCHING_MUSIC:
+	case STATE_SELECTING_MUSIC:
 	case STATE_ROULETTE_SPINNING:
 	case STATE_ROULETTE_SLOWING_DOWN:
 		break;	// fall through
@@ -843,21 +919,29 @@ void MusicWheel::PrevMusic()
 
 	m_fPositionOffsetFromSelection -= 1;
 
-	m_WheelState = STATE_SWITCHING_MUSIC;
-	m_fTimeLeftInState = SWITCH_MUSIC_TIME;
 	m_soundChangeMusic.Play();
 }
 
 void MusicWheel::NextMusic()
 {
+	if( m_WheelState == STATE_LOCKED )
+	{
+		m_fLockedWheelVelocity = -LOCKED_WHEEL_INITIAL_VELOCITY;
+		m_soundLocked.Play();
+		return;
+	}
+
+	if( fabsf(m_fPositionOffsetFromSelection) > 0.5 )	// wheel is very busy spinning
+		return;
+	
 	switch( m_WheelState )
 	{
-	case STATE_IDLE:
-	case STATE_SWITCHING_MUSIC:
+	case STATE_SELECTING_MUSIC:
 	case STATE_ROULETTE_SPINNING:
 	case STATE_ROULETTE_SLOWING_DOWN:
 		break;	// fall through
 	default:
+		LOG->WriteLine( "NextMusic() ignored" );
 		return;	// don't continue
 	}
 
@@ -878,8 +962,6 @@ void MusicWheel::NextMusic()
 
 	m_fPositionOffsetFromSelection += 1;
 
-	m_WheelState = STATE_SWITCHING_MUSIC;
-	m_fTimeLeftInState = SWITCH_MUSIC_TIME;
 	m_soundChangeMusic.Play();
 }
 
@@ -892,8 +974,7 @@ void MusicWheel::NextSort()
 {
 	switch( m_WheelState )
 	{
-	case STATE_IDLE:
-	case STATE_SWITCHING_MUSIC:
+	case STATE_SELECTING_MUSIC:
 	case STATE_FLYING_ON_AFTER_NEXT_SORT:
 		break;	// fall through
 	default:
@@ -914,10 +995,13 @@ void MusicWheel::NextSort()
 
 bool MusicWheel::Select()	// return true of a playable item was chosen
 {
+	LOG->WriteLine( "MusicWheel::Select()" );
+
 	if( m_WheelState == STATE_ROULETTE_SPINNING )
 	{
 		m_WheelState = STATE_ROULETTE_SLOWING_DOWN;
-		m_fTimeLeftInState = 20;
+		m_iSwitchesLeftInSpinDown = ROULETTE_SWITCHES_IN_SLOWING_DOWN;
+		m_fTimeLeftInState = 0.1f;
 		return false;
 	}
 

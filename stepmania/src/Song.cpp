@@ -890,8 +890,8 @@ void Song::TidyUpData()
 		pNM->m_fRadarValues[RADAR_STREAM]	= pNM->GetNoteData()->GetStreamRadarValue( fMusicLength );
 		pNM->m_fRadarValues[RADAR_VOLTAGE]	= pNM->GetNoteData()->GetVoltageRadarValue( fMusicLength );
 		pNM->m_fRadarValues[RADAR_AIR]		= pNM->GetNoteData()->GetAirRadarValue( fMusicLength );
-		pNM->m_fRadarValues[RADAR_CHAOS]	= pNM->GetNoteData()->GetChaosRadarValue( fMusicLength );
 		pNM->m_fRadarValues[RADAR_FREEZE]	= pNM->GetNoteData()->GetFreezeRadarValue( fMusicLength );
+		pNM->m_fRadarValues[RADAR_CHAOS]	= pNM->GetNoteData()->GetChaosRadarValue( fMusicLength );
 	}
 }
 

@@ -34,11 +34,6 @@ void FootMeter::SetFromNotes( Notes* pNotes )
 			this->SetEffectGlowing();
 		else
 			this->SetEffectNone();
-
-		this->StopTweening();
-		this->SetZoom( 1.1f );
-		this->BeginTweening( 0.3f, TWEEN_BOUNCE_BEGIN );
-		this->SetTweenZoom( 1 );
 	}
 	else
 	{

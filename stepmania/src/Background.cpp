@@ -18,6 +18,7 @@
 
 
 const CString VIS_DIR = "Visualizations\\";
+const CString PARTICLE_DIR = "BGEffects\\particles\\";
 
 
 Background::Background()
@@ -31,6 +32,30 @@ Background::Background()
 
 	m_sprDangerBackground.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_DANGER_BACKGROUND) );
 	m_sprDangerBackground.StretchTo( CRect((int)SCREEN_LEFT, (int)SCREEN_TOP, (int)SCREEN_RIGHT, (int)SCREEN_BOTTOM) );
+
+
+	LoadParticleSprites( PARTICLE_DIR );
+}
+
+
+void Background::LoadParticleSprites( CString path )
+{
+	CArray<Sprite*,Sprite*> m_particleSprites;
+
+	CStringArray filenames;
+
+	// get full path filenames for particleSprites
+	GetDirListing( path+"*.sprite", filenames, false, true );
+
+	// load sprites
+	for( int i=0; i < filenames.GetSize(); i++ )
+	{
+		Sprite * temp = new Sprite();
+
+		temp->Load( filenames.GetAt(i) );
+		
+		m_particleSprites.Add( temp );
+	}
 }
 
 bool Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )

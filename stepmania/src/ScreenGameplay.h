@@ -47,14 +47,16 @@ public:
 private:
 	void TweenOnScreen();
 	void TweenOffScreen();
+	void SaveSummary();
 	void LoadNextSong();
 
 
 	DancingState			m_DancingState;
 
-	Song*					m_pCurSong;	// nearest songs are on back of queue
-	CArray<Song*,Song*>		m_apSongQueue;	// nearest songs are on back of queue
-	CArray<Notes*,Notes*>	m_apNotesQueue[NUM_PLAYERS];	// nearest notes are on back of queue
+	Song*					m_pCurSong;
+	Notes*					m_pCurNotes[NUM_PLAYERS];
+	CArray<Song*,Song*>		m_apSongQueue;	// nearest songs are on front of queue
+	CArray<Notes*,Notes*>	m_apNotesQueue[NUM_PLAYERS];	// nearest notes are on front of queue
 	bool					m_bBothHaveFailed;
 
 	float					m_fTimeLeftBeforeDancingComment;	// this counter is only running while STATE_DANCING
@@ -62,18 +64,18 @@ private:
 
 	Background				m_Background;
 
-
 	ActorFrame				m_frameTop;
 	Sprite					m_sprTopFrame;
 	Quad					m_quadLifeMeterBG[NUM_PLAYERS];	// just a black quad to fill in hole for the life meter
 	LifeMeterBar			m_LifeMeter[NUM_PLAYERS];
 	BitmapText				m_textStageNumber;
 
-
 	ActorFrame				m_frameBottom;
 	Sprite					m_sprBottomFrame;
 	ScoreDisplayRolling		m_ScoreDisplay[NUM_PLAYERS];
 	BitmapText				m_textPlayerOptions[NUM_PLAYERS];
+
+	BitmapText				m_textDebug;
 
 
 	TransitionStarWipe	m_StarWipe;
