@@ -7,6 +7,23 @@
 #include "RageThreads.h"
 
 struct RageFileObjMemFile;
+class RageFileObjMem: public RageFileObj
+{
+public:
+	RageFileObjMem( RageFileObjMemFile *pFile = NULL );
+	~RageFileObjMem();
+
+	int ReadInternal( void *buffer, size_t bytes );
+	int WriteInternal( const void *buffer, size_t bytes );
+	int SeekInternal( int offset );
+	int GetFileSize() const;
+	RageFileObj *Copy() const;
+
+private:
+	RageFileObjMemFile *m_pFile;
+	int m_iFilePos;
+};
+
 class RageFileDriverMem: public RageFileDriver
 {
 public:
