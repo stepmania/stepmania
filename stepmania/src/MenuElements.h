@@ -27,7 +27,7 @@ public:
 
 	virtual void DrawPrimitives();
 
-	void Load( CString sClassName, bool bEnableTimer = true, bool bLoadStyleIcon = true );
+	void Load( CString sClassName, bool bEnableTimer = true );
 
 	void DrawTopLayer();
 	void DrawBottomLayer();

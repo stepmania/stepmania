@@ -40,7 +40,7 @@ MenuElements::MenuElements()
 {
 }
 
-void MenuElements::Load( CString sClassName, bool bEnableTimer, bool bLoadStyleIcon )
+void MenuElements::Load( CString sClassName, bool bEnableTimer )
 {
 	LOG->Trace( "MenuElements::MenuElements()" );
 
