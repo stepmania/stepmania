@@ -394,7 +394,8 @@ void PlayerMinus::DrawPrimitives()
 
 	// Draw these below everything else.
 	m_ArrowBackdrop.Draw();
-	m_Combo.Draw();
+	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind == 0 )
+		m_Combo.Draw();
 
 	float fTilt = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fPerspectiveTilt;
 	bool bReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].GetReversePercentForColumn(0)>0.5;
@@ -701,12 +702,9 @@ void PlayerMinus::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 	}
 		
 	HandleTapRowScore( iIndexThatWasSteppedOn );	// update score
-	if (!GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind)
-	{
-		m_Combo.SetCombo( GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] );
+	m_Combo.SetCombo( GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] );
 
-		m_Judgment.SetJudgment( score );
-	}
+	m_Judgment.SetJudgment( score );
 }
 
 
