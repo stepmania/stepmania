@@ -45,6 +45,13 @@ AH_VERBATIM([VA_ZZZ_NEEDED_FUNCS],
 #endif
 ])
 
+case $host in
+	*-*-darwin*)
+		AC_DEFINE(DARWIN, 1, [Use different sound drivers than linux])
+		darwin=true;;
+esac
+AM_CONDITIONAL(DARWIN, test x$darwin = xtrue)
+
 # sdl-config puts -L/usr/lib in the library search path, which reorders things
 # in a way that breaks some configurations.
 SDL_LIBS="`echo $SDL_LIBS | sed 's_-L/usr/lib/\?[[ $]]__'`"
