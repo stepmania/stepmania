@@ -83,6 +83,7 @@ PrefsManager::PrefsManager()
 	m_bAntiAliasing = false;
 	m_ShowSongOptions = YES;
 	m_bDancePointsForOni = false;
+	m_bPercentageScoring = false;
 	m_bTimestamping = false;
 	m_bShowLyrics = true;
 	m_bAutogenMissingTypes = true;
@@ -241,6 +242,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValue( "Options", "IgnoredMessageWindows",			m_sIgnoredMessageWindows );
 	ini.GetValue( "Options", "SoloSingle",						m_bSoloSingle );
 	ini.GetValue( "Options", "DancePointsForOni",				m_bDancePointsForOni );
+	ini.GetValue( "Options", "PercentageScoring",				m_bPercentageScoring );
 	ini.GetValue( "Options", "ShowLyrics",						m_bShowLyrics );
 	ini.GetValue( "Options", "AutogenMissingTypes",				m_bAutogenMissingTypes );
 	ini.GetValue( "Options", "AutogenGroupCourses",				m_bAutogenGroupCourses );
@@ -291,7 +293,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 }
 
 
-void PrefsManager::SaveGlobalPrefsToDisk()
+void PrefsManager::SaveGlobalPrefsToDisk() const
 {
 	IniFile ini;
 	ini.SetPath( STEPMANIA_INI_PATH );
@@ -359,6 +361,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValue( "Options", "IgnoredMessageWindows",			m_sIgnoredMessageWindows );
 	ini.SetValue( "Options", "SoloSingle",						m_bSoloSingle );
 	ini.SetValue( "Options", "DancePointsForOni",				m_bDancePointsForOni );
+	ini.SetValue( "Options", "PercentageScoring",				m_bPercentageScoring );
 	ini.SetValue( "Options", "ShowLyrics",						m_bShowLyrics );
 	ini.SetValue( "Options", "AutogenMissingTypes",				m_bAutogenMissingTypes );
 	ini.SetValue( "Options", "AutogenGroupCourses",				m_bAutogenGroupCourses );

@@ -76,6 +76,7 @@ public:
 	Maybe			m_ShowSongOptions;
 	bool			m_bSoloSingle;
 	bool			m_bDancePointsForOni;	//DDR-Extreme style dance points instead of max2 percent
+	bool			m_bPercentageScoring;
 	bool			m_bTimestamping;
 	bool			m_bShowLyrics;
 	bool			m_bAutogenMissingTypes;
@@ -137,7 +138,7 @@ public:
 	CString			m_sDefaultModifiers;
 
 	void ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame );
-	void SaveGlobalPrefsToDisk();
+	void SaveGlobalPrefsToDisk() const;
 
 
 	void ReadGamePrefsFromDisk();
