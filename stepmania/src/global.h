@@ -43,6 +43,10 @@
 #include <stdint.h>
 #endif
 
+#if defined(NEED_CSTDLIB_WORKAROUND)
+#define llabs ::llabs
+#endif
+
 #if defined(NEED_MINMAX_TEMPLATES)
 /* Some old <algorithm>s don't actually define min and max. */
 template<class T>
