@@ -35,12 +35,11 @@ public:
 	Background();
 	~Background();
 
-	virtual bool LoadFromSong( Song *pSong, bool bDisableVisualizations = false );
+	virtual void LoadFromSong( Song *pSong, bool bDisableVisualizations = false );
+	virtual void Unload();	// call this on before calling load
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
-
-	void SetSongBeat( const float fSongBeat, const bool bFreeze, const float fMusicSeconds );
 
 	void FadeIn();
 	void FadeOut();
@@ -53,36 +52,23 @@ public:
 protected:
 	bool DangerVisible();
 
-	Song* m_pSong;
-
 	enum BackgroundMode { MODE_STATIC_BG, MODE_MOVIE_BG, MODE_ANIMATIONS, MODE_MOVIE_VIS, MODE_RANDOMMOVIES };
 	BackgroundMode	m_BackgroundMode;
-	
-	Sprite m_sprSongBackground;
-	
+		
 	Sprite m_sprDanger;
 	Sprite m_sprDangerBackground;
 
-	// for movie BG
-	Sprite m_sprMovieBackground;
 
-	// for animations
+	// used in all BackgroundModes except OFF
 	CArray<BackgroundAnimation*,BackgroundAnimation*> m_BackgroundAnimations;
 	CArray<AnimSeg,AnimSeg&> m_aAnimSegs;
-	BackgroundAnimation* m_pCurBGA;
 	int m_iCurAnimSegment;	// this increases as we move into new segments
+	BackgroundAnimation* GetCurBGA() { int index = m_aAnimSegs[m_iCurAnimSegment].m_iAnimationIndex; return m_BackgroundAnimations[index]; };
 
-
-	// for movie vis
-	Sprite m_sprMovieVis;
 
 	Quad m_quadBGBrightness;
+	Quad m_quadBorder[4];	// l, t, r, b - cover up the edge of animations that might hang outside of the background rectangle
 
 	bool m_bInDanger;
-
-	float m_fSongBeat;
-	bool m_bFreeze;
-	float m_fMusicSeconds;
-	bool m_bStartedBGMovie;
 };
 

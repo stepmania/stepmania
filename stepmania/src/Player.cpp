@@ -232,9 +232,8 @@ void Player::DrawPrimitives()
 	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_EffectType == PlayerOptions::EFFECT_SPACE )
 	{
 		// save old view and projection
-		DISPLAY->GetDevice()->GetTransform( D3DTS_VIEW, &matOldView );
-		DISPLAY->GetDevice()->GetTransform( D3DTS_PROJECTION, &matOldProj );
-
+		DISPLAY->GetViewTransform( &matOldView );
+		DISPLAY->GetProjectionTransform( &matOldProj );
 
 		// construct view and project matrix
 		D3DXMATRIX matNewView;
@@ -253,11 +252,11 @@ void Player::DrawPrimitives()
 				&D3DXVECTOR3( 0.0f,     -1.0f,           0.0f ) 
 				);
 
-		DISPLAY->GetDevice()->SetTransform( D3DTS_VIEW, &matNewView );
+		DISPLAY->SetViewTransform( &matNewView );
 
 		D3DXMATRIX matNewProj;
 		D3DXMatrixPerspectiveFovLH( &matNewProj, D3DX_PI/4.0f, SCREEN_WIDTH/(float)SCREEN_HEIGHT, 0.0f, 1000.0f );
-		DISPLAY->GetDevice()->SetTransform( D3DTS_PROJECTION, &matNewProj );
+		DISPLAY->SetProjectionTransform( &matNewProj );
 	}
 
 	m_GrayArrowRow.Draw();
@@ -267,8 +266,8 @@ void Player::DrawPrimitives()
 	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_EffectType == PlayerOptions::EFFECT_SPACE )
 	{
 		// restire old view and projection
-		DISPLAY->GetDevice()->SetTransform( D3DTS_VIEW, &matOldView );
-		DISPLAY->GetDevice()->SetTransform( D3DTS_PROJECTION, &matOldProj );
+		DISPLAY->SetViewTransform( &matOldView );
+		DISPLAY->SetProjectionTransform( &matOldProj );
 	}
 
 	m_frameJudgement.Draw();

@@ -87,8 +87,8 @@ public:
 	virtual void SetDiffuseColorLeftEdge( D3DXCOLOR colorDiffuse ) { m_colorDiffuse[0] = m_colorDiffuse[2] = colorDiffuse; };
 	virtual D3DXCOLOR GetDiffuseColor()				{ return m_colorDiffuse[0]; };
 	virtual D3DXCOLOR GetDiffuseColors( int i )		{ return m_colorDiffuse[i]; };
-	virtual void SetAddColor( D3DXCOLOR colorAdd ) { m_colorAdd = colorAdd; };
-	virtual D3DXCOLOR GetAddColor()				{ return m_colorAdd; };
+	virtual void SetGlowColor( D3DXCOLOR colorGlow ) { m_colorGlow = colorGlow; };
+	virtual D3DXCOLOR GetGlowColor()				{ return m_colorGlow; };
 
 
 
@@ -174,7 +174,7 @@ protected:
 	D3DXVECTOR3 m_rotation;	// X, Y, and Z m_rotation
 	D3DXVECTOR2 m_scale;	// X and Y zooming
 	D3DXCOLOR   m_colorDiffuse[4];	// 4 corner colors - left to right, top to bottom
-	D3DXCOLOR   m_colorAdd;
+	D3DXCOLOR   m_colorGlow;
 
 	//
 	// Stuff for tweening
@@ -183,7 +183,7 @@ protected:
 	D3DXVECTOR3 m_start_rotation;
 	D3DXVECTOR2 m_start_scale;
 	D3DXCOLOR   m_start_colorDiffuse[4];
-	D3DXCOLOR   m_start_colorAdd;
+	D3DXCOLOR   m_start_colorGlow;
 
 	struct TweenState
 	{
@@ -192,7 +192,7 @@ protected:
 		D3DXVECTOR3 m_end_rotation;
 		D3DXVECTOR2 m_end_scale;
 		D3DXCOLOR   m_end_colorDiffuse[4];
-		D3DXCOLOR   m_end_colorAdd;
+		D3DXCOLOR   m_end_colorGlow;
 
 		// counters for tweening
 		TweenType	m_TweenType;
@@ -205,7 +205,7 @@ protected:
 			m_end_rotation	= D3DXVECTOR3( 0, 0, 0 );
 			m_end_scale		= D3DXVECTOR2( 1, 1 );
 			for(int i=0; i<4; i++) m_end_colorDiffuse[i]= D3DXCOLOR( 1, 1, 1, 1 );
-			m_end_colorAdd	= D3DXCOLOR( 0, 0, 0, 0 );
+			m_end_colorGlow	= D3DXCOLOR( 0, 0, 0, 0 );
 		};
 	};
 
@@ -222,7 +222,7 @@ protected:
 	D3DXVECTOR3 m_temp_rotation;
 	D3DXVECTOR2 m_temp_scale;
 	D3DXCOLOR   m_temp_colorDiffuse[4];
-	D3DXCOLOR   m_temp_colorAdd;
+	D3DXCOLOR   m_temp_colorGlow;
 
 
 	//
@@ -241,8 +241,8 @@ protected:
 	// Counting variables for camelion and glowing:
 	D3DXCOLOR   m_effect_colorDiffuse1;
 	D3DXCOLOR   m_effect_colorDiffuse2;
-	D3DXCOLOR   m_effect_colorAdd1;
-	D3DXCOLOR   m_effect_colorAdd2;
+	D3DXCOLOR   m_effect_colorGlow1;
+	D3DXCOLOR   m_effect_colorGlow2;
 	float m_fPercentBetweenColors;
 	bool  m_bTweeningTowardEndColor;	// TRUE is fading toward end_color, FALSE if fading toward start_color
 	float m_fDeltaPercentPerSecond;	// percentage change in tweening per second

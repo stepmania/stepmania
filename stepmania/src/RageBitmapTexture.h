@@ -44,8 +44,6 @@ public:
 		);
 	virtual LPDIRECT3DTEXTURE8 GetD3DTexture();
 
-	virtual bool IsAMovie() { return true; };
-
 protected:
 
 	virtual void Create( 

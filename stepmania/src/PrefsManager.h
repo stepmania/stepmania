@@ -35,6 +35,7 @@ public:
 	bool	m_bOnlyDedicatedMenuButtons;
 	bool	m_bShowFPS;
 	BackgroundMode	m_BackgroundMode;
+	bool	m_bShowDanger;
 	float	m_fBGBrightness;
 	bool	m_bMenuTimer;
 	bool	m_bEventMode;
@@ -42,8 +43,9 @@ public:
 	bool	m_bAutoPlay;
 	float	m_fJudgeWindow;
 	float	m_fLifeDifficultyScale;
+	int 	m_iMovieDecodeMS;
 
-	CStringArray m_asSongFolders;
+	CStringArray m_asAdditionalSongFolders;
 
 	int GetDisplayHeight();
 

@@ -34,6 +34,7 @@ enum {
 	GO_SHOWFPS,
 	GO_BGMODE,
 	GO_BGBRIGHTNESS,
+	GO_MOVIEDECODEMS,
 	NUM_GRAPHIC_OPTIONS_LINES
 };
 OptionLineData g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
@@ -44,6 +45,7 @@ OptionLineData g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
 	{ "Show FPS",			2,  {"OFF","ON"} },
 	{ "BG Mode",			4,  {"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES"} },
 	{ "BG Brightness",		5,  {"20%","40%","60%","80%","100%"} },
+	{ "Movie Decode MS",	5,  {"1ms","2ms","3ms","4ms","5ms"} },
 };
 
 ScreenGraphicOptions::ScreenGraphicOptions() :
@@ -111,6 +113,8 @@ void ScreenGraphicOptions::ImportOptions()
 	else if( PREFSMAN->m_fBGBrightness == 0.8f )	m_iSelectedOption[0][GO_BGBRIGHTNESS] = 3;
 	else if( PREFSMAN->m_fBGBrightness == 1.0f )	m_iSelectedOption[0][GO_BGBRIGHTNESS] = 4;
 	else											m_iSelectedOption[0][GO_BGBRIGHTNESS] = 2;
+	
+	m_iSelectedOption[0][GO_MOVIEDECODEMS]			= PREFSMAN->m_iMovieDecodeMS-1;
 }
 
 void ScreenGraphicOptions::ExportOptions()
@@ -164,6 +168,8 @@ void ScreenGraphicOptions::ExportOptions()
 	case 4:	PREFSMAN->m_fBGBrightness = 1.0f;	break;
 	default:	ASSERT(0);
 	}
+
+	PREFSMAN->m_iMovieDecodeMS			= m_iSelectedOption[0][GO_MOVIEDECODEMS]+1;
 }
 
 void ScreenGraphicOptions::GoToPrevState()

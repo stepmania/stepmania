@@ -171,7 +171,7 @@ void ScreenSelectStyle::AfterChange()
 	m_sprPreview.Load( THEME->GetPathTo("Graphics",ssprintf("select style preview game %d style %d",GAMESTATE->m_CurGame,m_iSelection)) );
 
 	m_sprPreview.StopTweening();
-	m_sprPreview.SetAddColor( D3DXCOLOR(1,1,1,0) );
+	m_sprPreview.SetGlowColor( D3DXCOLOR(1,1,1,0) );
 	m_sprPreview.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 
 	m_sprPreview.BeginTweeningQueued( 0.25f );			// sleep

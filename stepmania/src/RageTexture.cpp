@@ -34,7 +34,7 @@ RageTexture::RageTexture(
 //	LOG->Trace( "RageTexture::RageTexture()" );
 
 	// save a pointer to the D3D device
-	m_pd3dDevice = pScreen->GetDevice();
+	m_pd3dDevice = pScreen->m_pd3dDevice;
 	assert( m_pd3dDevice != NULL );
 
 	// save the file path

@@ -25,7 +25,7 @@ Actor::Actor()
 	m_rotation		= m_start_rotation		= D3DXVECTOR3( 0, 0, 0 );
 	m_scale			= m_start_scale			= D3DXVECTOR2( 1, 1 );
 	for(int i=0; i<4; i++) m_colorDiffuse[i]	= m_start_colorDiffuse[i] = D3DXCOLOR( 1, 1, 1, 1 );
-	m_colorAdd		= m_start_colorAdd		= D3DXCOLOR( 0, 0, 0, 0 );
+	m_colorGlow		= m_start_colorGlow		= D3DXCOLOR( 0, 0, 0, 0 );
 
 	m_HorizAlign = align_center;
 	m_VertAlign = align_middle;
@@ -61,7 +61,7 @@ void Actor::Draw()		// set the world matrix and calculate actor properties, the 
 	m_temp_colorDiffuse[4];
 	for(i=0; i<4; i++)	
 		m_temp_colorDiffuse[i] = m_colorDiffuse[i];
-	m_temp_colorAdd		= m_colorAdd;
+	m_temp_colorGlow		= m_colorGlow;
 
 
 	//
@@ -82,7 +82,7 @@ void Actor::Draw()		// set the world matrix and calculate actor properties, the 
 	case glowing:
 		float fCurvedPercent;
 		fCurvedPercent = sinf( m_fPercentBetweenColors * D3DX_PI );
-		m_temp_colorAdd = m_effect_colorAdd1*fCurvedPercent + m_effect_colorAdd2*(1.0f-fCurvedPercent);
+		m_temp_colorGlow = m_effect_colorGlow1*fCurvedPercent + m_effect_colorGlow2*(1.0f-fCurvedPercent);
 		break;
 	case wagging:
 		m_temp_rotation.z = m_fWagRadians * sinf( 
@@ -220,7 +220,7 @@ void Actor::Update( float fDeltaTime )
 			m_start_rotation		= m_rotation;
 			m_start_scale			= m_scale;
 			for( int i=0; i<4; i++) m_start_colorDiffuse[i] = m_colorDiffuse[i];
-			m_start_colorAdd		= m_colorAdd;
+			m_start_colorGlow		= m_colorGlow;
 		}
 		
 		TS.m_fTimeLeftInTween -= fDeltaTime;
@@ -233,7 +233,7 @@ void Actor::Update( float fDeltaTime )
 			m_scale			= TS.m_end_scale;
 			m_rotation		= TS.m_end_rotation;
 			for(i=0; i<4; i++) m_colorDiffuse[i] = TS.m_end_colorDiffuse[i];
-			m_colorAdd		= TS.m_end_colorAdd;
+			m_colorGlow		= TS.m_end_colorGlow;
 			
 			// delete the head tween
 			for( i=0; i<m_iNumTweenStates-1; i++ )
@@ -278,7 +278,7 @@ void Actor::Update( float fDeltaTime )
 			m_scale			= m_start_scale	  + (TS.m_end_scale		- m_start_scale	  )*fPercentAlongPath;
 			m_rotation		= m_start_rotation+ (TS.m_end_rotation	- m_start_rotation)*fPercentAlongPath;
 			for(int i=0; i<4; i++) m_colorDiffuse[i]	= m_start_colorDiffuse[i]*(1.0f-fPercentAlongPath) + TS.m_end_colorDiffuse[i]*(fPercentAlongPath);
-			m_colorAdd		= m_start_colorAdd    *(1.0f-fPercentAlongPath) + TS.m_end_colorAdd    *(fPercentAlongPath);
+			m_colorGlow		= m_start_colorGlow    *(1.0f-fPercentAlongPath) + TS.m_end_colorGlow    *(fPercentAlongPath);
 		}
 		
 
@@ -314,7 +314,7 @@ void Actor::BeginTweeningQueued( float time, TweenType tt )
 		TS.m_end_scale			= m_scale;
 		TS.m_end_rotation		= m_rotation;
 		for(int i=0; i<4; i++)	TS.m_end_colorDiffuse[i]	= m_colorDiffuse[i];
-		TS.m_end_colorAdd		= m_colorAdd;
+		TS.m_end_colorGlow		= m_colorGlow;
 	}
 
 	TS.m_TweenType = tt;
@@ -347,7 +347,7 @@ void Actor::SetTweenDiffuseColorTopEdge( D3DXCOLOR colorDiffuse )		{ GetLatestTw
 void Actor::SetTweenDiffuseColorRightEdge( D3DXCOLOR colorDiffuse )		{ GetLatestTween().m_end_colorDiffuse[1] = GetLatestTween().m_end_colorDiffuse[3] = colorDiffuse; };
 void Actor::SetTweenDiffuseColorBottomEdge( D3DXCOLOR colorDiffuse )	{ GetLatestTween().m_end_colorDiffuse[2] = GetLatestTween().m_end_colorDiffuse[3] = colorDiffuse; };
 void Actor::SetTweenDiffuseColorLeftEdge( D3DXCOLOR colorDiffuse )		{ GetLatestTween().m_end_colorDiffuse[0] = GetLatestTween().m_end_colorDiffuse[2] = colorDiffuse; };
-void Actor::SetTweenAddColor( D3DXCOLOR c )			{ GetLatestTween().m_end_colorAdd = c; };
+void Actor::SetTweenAddColor( D3DXCOLOR c )			{ GetLatestTween().m_end_colorGlow = c; };
 
 
 void Actor::ScaleTo( LPRECT pRect, StretchType st )
@@ -434,8 +434,8 @@ void Actor::SetEffectCamelion( float fDeltaPercentPerSecond, D3DXCOLOR Color, D3
 void Actor::SetEffectGlowing( float fDeltaPercentPerSecond, D3DXCOLOR Color, D3DXCOLOR Color2 )
 {
 	m_Effect = glowing;
-	m_effect_colorAdd1 = Color;
-	m_effect_colorAdd2 = Color2;
+	m_effect_colorGlow1 = Color;
+	m_effect_colorGlow2 = Color2;
 
 	m_fDeltaPercentPerSecond = fDeltaPercentPerSecond;
 }

@@ -1,9 +1,9 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: Sprite.cpp
+ Class: Sprite
 
- Desc: A bitmap actor that animates and moves around.
+ Desc: See header.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -190,22 +190,21 @@ void Sprite::Update( float fDeltaTime )
 
 void Sprite::DrawPrimitives()
 {
+	if( m_pTexture == NULL )
+		return;
+
+	if( m_pTexture->IsAMovie() )
+		::Sleep( PREFSMAN->m_iMovieDecodeMS );	// let the movie decode a frame
+
+
 	// offset so that pixels are aligned to texels
 	if( PREFSMAN->m_iDisplayResolution == 320 )
 		DISPLAY->TranslateLocal( -1, -1, 0 );
 	else
 		DISPLAY->TranslateLocal( -0.5f, -0.5f, 0 );
 
-	if( m_pTexture == NULL )
-		return;
 	
 	// use m_temp_* variables to draw the object
-
-
-	// make the object in logical units centered at the origin
-
-
-	
 	FRECT quadVerticies;
 
 	switch( m_HorizAlign )
@@ -225,9 +224,7 @@ void Sprite::DrawPrimitives()
 	}
 
 
-	LPDIRECT3DVERTEXBUFFER8 pVB = DISPLAY->GetVertexBuffer();
-	RAGEVERTEX* v;
-	pVB->Lock( 0, 0, (BYTE**)&v, 0 );
+	static RAGEVERTEX v[4];
 
 	v[0].p = D3DXVECTOR3( quadVerticies.left,	quadVerticies.bottom,	0 );	// bottom left
 	v[1].p = D3DXVECTOR3( quadVerticies.left,	quadVerticies.top,		0 );	// top left
@@ -254,18 +251,16 @@ void Sprite::DrawPrimitives()
 	}
 
 
-	pVB->Unlock();
+	DISPLAY->SetTexture( m_pTexture );
 
+	DISPLAY->SetColorTextureMultDiffuse();
+	DISPLAY->SetAlphaTextureMultDiffuse();
 
-	// Set the stage...
-	LPDIRECT3DDEVICE8 pd3dDevice = DISPLAY->GetDevice();
-	pd3dDevice->SetTexture( 0, m_pTexture->GetD3DTexture() );
+	if( m_bBlendAdd )
+		DISPLAY->SetBlendModeAdd();
+	else
+		DISPLAY->SetBlendModeNormal();
 
-	pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  m_bBlendAdd ? D3DBLEND_ONE : D3DBLEND_SRCALPHA );
-	pd3dDevice->SetRenderState( D3DRS_DESTBLEND, m_bBlendAdd ? D3DBLEND_ONE : D3DBLEND_INVSRCALPHA );
-
-	pd3dDevice->SetVertexShader( D3DFVF_RAGEVERTEX );
-	pd3dDevice->SetStreamSource( 0, pVB, sizeof(RAGEVERTEX) );
 
 
 
@@ -278,71 +273,29 @@ void Sprite::DrawPrimitives()
 		{
 			DISPLAY->PushMatrix();
 			DISPLAY->TranslateLocal( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
-
-			pVB->Lock( 0, 0, (BYTE**)&v, 0 );
-
 			v[0].color = v[1].color = v[2].color = v[3].color = D3DXCOLOR(0,0,0,0.5f*m_temp_colorDiffuse[0].a);	// semi-transparent black
-			
-			pVB->Unlock();
-
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
-			pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
-			
-			pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 2 );
-
+			DISPLAY->AddQuad( v );
 			DISPLAY->PopMatrix();
 		}
-
 
 		//////////////////////
 		// render the diffuse pass
 		//////////////////////
-		pVB->Lock( 0, 0, (BYTE**)&v, 0 );
-
 		v[0].color = m_temp_colorDiffuse[2];	// bottom left
 		v[1].color = m_temp_colorDiffuse[0];	// top left
 		v[2].color = m_temp_colorDiffuse[3];	// bottom right
 		v[3].color = m_temp_colorDiffuse[1];	// top right
-		
-		pVB->Unlock();
-
-		
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE );//bBlendAdd ? D3DTOP_ADD : D3DTOP_MODULATE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );//bBlendAdd ? D3DTOP_ADD : D3DTOP_MODULATE );
-
-
-		// finally!  Pump those triangles!	
-		pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 2 );
+		DISPLAY->AddQuad( v );
 	}
 
-
 	//////////////////////
-	// render the add pass
+	// render the glow pass
 	//////////////////////
-	if( m_temp_colorAdd.a != 0 )
+	if( m_temp_colorGlow.a != 0 )
 	{
-		pVB->Lock( 0, 0, (BYTE**)&v, 0 );
-
-		v[0].color = v[1].color = v[2].color = v[3].color = m_temp_colorAdd;
-		
-		pVB->Unlock();
-
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
-		
-		pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 2 );
+		DISPLAY->SetColorDiffuse();
+		v[0].color = v[1].color = v[2].color = v[3].color = m_temp_colorGlow;
+		DISPLAY->AddQuad( v );
 	}
 }
 

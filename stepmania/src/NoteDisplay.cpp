@@ -331,17 +331,17 @@ void NoteDisplay::DrawList( int iCount, NoteDisplayInstance cni[], bool bDrawAdd
 		{
 			NoteDisplayInstance* pCNI = &cni[i];
 
-			const D3DXCOLOR colorAdd = D3DXCOLOR(1,1,1,pCNI->fAddAlpha);
+			const D3DXCOLOR colorGlow = D3DXCOLOR(1,1,1,pCNI->fAddAlpha);
 
 			//
 			// set vertex colors
 			//
-			v[iNumV++].color = colorAdd;	// top left
-			v[iNumV++].color = colorAdd;	// bottom left
-			v[iNumV++].color = colorAdd;	// top right
-			v[iNumV++].color = colorAdd;	// top right
-			v[iNumV++].color = colorAdd;	// bottom left
-			v[iNumV++].color = colorAdd;	// bottom right
+			v[iNumV++].color = colorGlow;	// top left
+			v[iNumV++].color = colorGlow;	// bottom left
+			v[iNumV++].color = colorGlow;	// top right
+			v[iNumV++].color = colorGlow;	// top right
+			v[iNumV++].color = colorGlow;	// bottom left
+			v[iNumV++].color = colorGlow;	// bottom right
 
 		}
 		ASSERT( iNumV == iCount*6 );	// two triangles for each note
@@ -472,17 +472,17 @@ void NoteDisplay::DrawList( int iCount, NoteDisplayInstance cni[], bool bDrawAdd
 		{
 			NoteDisplayInstance* pCNI = &cni[i];
 
-			const D3DXCOLOR colorAdd = D3DXCOLOR(1,1,1,pCNI->fAddAlpha);
+			const D3DXCOLOR colorGlow = D3DXCOLOR(1,1,1,pCNI->fAddAlpha);
 
 			//
 			// set vertex colors
 			//
-			v[iNumV++].color = colorAdd;	// top left
-			v[iNumV++].color = colorAdd;	// bottom left
-			v[iNumV++].color = colorAdd;	// top right
-			v[iNumV++].color = colorAdd;	// top right
-			v[iNumV++].color = colorAdd;	// bottom left
-			v[iNumV++].color = colorAdd;	// bottom right
+			v[iNumV++].color = colorGlow;	// top left
+			v[iNumV++].color = colorGlow;	// bottom left
+			v[iNumV++].color = colorGlow;	// top right
+			v[iNumV++].color = colorGlow;	// top right
+			v[iNumV++].color = colorGlow;	// bottom left
+			v[iNumV++].color = colorGlow;	// bottom right
 
 		}
 		ASSERT( iNumV == iCount*6 );	// two triangles for each note
@@ -551,16 +551,16 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		const float fColorScale		= SCALE(fLife,0,1,0.5f,1);
 		const D3DXCOLOR colorDiffuseTop		= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaTop);
 		const D3DXCOLOR colorDiffuseBottom	= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaBottom);
-		const D3DXCOLOR colorAddTop			= D3DXCOLOR(1,1,1,fAddAlphaTop);
-		const D3DXCOLOR colorAddBottom		= D3DXCOLOR(1,1,1,fAddAlphaBottom);
+		const D3DXCOLOR colorGlowTop			= D3DXCOLOR(1,1,1,fAddAlphaTop);
+		const D3DXCOLOR colorGlowBottom		= D3DXCOLOR(1,1,1,fAddAlphaBottom);
 
 		// the shift by -0.5 is to align texels to pixels
 
 		DISPLAY->AddQuad( 
-			D3DXVECTOR3(fXTopLeft-0.5f,    fYTop-0.5f,   0), colorDiffuseTop,    D3DXVECTOR2(fTexCoordLeft,  fTexCoordTop),    colorAddTop,			// top-left
-			D3DXVECTOR3(fXTopRight-0.5f,   fYTop-0.5f,   0), colorDiffuseTop,    D3DXVECTOR2(fTexCoordRight, fTexCoordTop),    colorAddTop,			// top-right
-			D3DXVECTOR3(fXBottomLeft-0.5f, fYBottom-0.5f,0), colorDiffuseBottom, D3DXVECTOR2(fTexCoordLeft,  fTexCoordBottom), colorAddBottom,		// bottom-left
-			D3DXVECTOR3(fXBottomRight-0.5f,fYBottom-0.5f,0), colorDiffuseBottom, D3DXVECTOR2(fTexCoordRight, fTexCoordBottom), colorAddBottom );	// bottom-right
+			D3DXVECTOR3(fXTopLeft-0.5f,    fYTop-0.5f,   0), colorDiffuseTop,    D3DXVECTOR2(fTexCoordLeft,  fTexCoordTop),   // colorGlowTop,			// top-left
+			D3DXVECTOR3(fXTopRight-0.5f,   fYTop-0.5f,   0), colorDiffuseTop,    D3DXVECTOR2(fTexCoordRight, fTexCoordTop),   // colorGlowTop,			// top-right
+			D3DXVECTOR3(fXBottomLeft-0.5f, fYBottom-0.5f,0), colorDiffuseBottom, D3DXVECTOR2(fTexCoordLeft,  fTexCoordBottom),// colorGlowBottom,		// bottom-left
+			D3DXVECTOR3(fXBottomRight-0.5f,fYBottom-0.5f,0), colorDiffuseBottom, D3DXVECTOR2(fTexCoordRight, fTexCoordBottom) );//, colorGlowBottom );	// bottom-right
 	}
 
 	//
@@ -589,14 +589,14 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		const float fColorScale		= SCALE(fLife,0,1,0.5f,1);
 		const D3DXCOLOR colorDiffuseTop		= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaTop);
 		const D3DXCOLOR colorDiffuseBottom	= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaBottom);
-		const D3DXCOLOR colorAddTop			= D3DXCOLOR(1,1,1,fAddAlphaTop);
-		const D3DXCOLOR colorAddBottom		= D3DXCOLOR(1,1,1,fAddAlphaBottom);
+		const D3DXCOLOR colorGlowTop			= D3DXCOLOR(1,1,1,fAddAlphaTop);
+		const D3DXCOLOR colorGlowBottom		= D3DXCOLOR(1,1,1,fAddAlphaBottom);
 
 		DISPLAY->AddQuad( 
-			D3DXVECTOR3(fXTopLeft-0.5f,    fYTop-0.5f,   0), colorDiffuseTop,    D3DXVECTOR2(fTexCoordLeft,  fTexCoordTop),    colorAddTop,			// top-left
-			D3DXVECTOR3(fXTopRight-0.5f,   fYTop-0.5f,   0), colorDiffuseTop,    D3DXVECTOR2(fTexCoordRight, fTexCoordTop),    colorAddTop,			// top-right
-			D3DXVECTOR3(fXBottomLeft-0.5f, fYBottom-0.5f,0), colorDiffuseBottom, D3DXVECTOR2(fTexCoordLeft,  fTexCoordBottom), colorAddBottom,		// bottom-left
-			D3DXVECTOR3(fXBottomRight-0.5f,fYBottom-0.5f,0), colorDiffuseBottom, D3DXVECTOR2(fTexCoordRight, fTexCoordBottom), colorAddBottom );	// bottom-right
+			D3DXVECTOR3(fXTopLeft-0.5f,    fYTop-0.5f,   0), colorDiffuseTop,    D3DXVECTOR2(fTexCoordLeft,  fTexCoordTop),    //colorGlowTop,			// top-left
+			D3DXVECTOR3(fXTopRight-0.5f,   fYTop-0.5f,   0), colorDiffuseTop,    D3DXVECTOR2(fTexCoordRight, fTexCoordTop),    //colorGlowTop,			// top-right
+			D3DXVECTOR3(fXBottomLeft-0.5f, fYBottom-0.5f,0), colorDiffuseBottom, D3DXVECTOR2(fTexCoordLeft,  fTexCoordBottom), //colorGlowBottom,		// bottom-left
+			D3DXVECTOR3(fXBottomRight-0.5f,fYBottom-0.5f,0), colorDiffuseBottom, D3DXVECTOR2(fTexCoordRight, fTexCoordBottom) );//, colorGlowBottom );	// bottom-right
 	}	
 
 	DISPLAY->FlushQueue();
@@ -612,12 +612,12 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		const float	fAddAlpha		= GetAddAlpha( fAlpha, fPercentFadeToFail );
 		const float fColorScale		= SCALE(fLife,0,1,0.5f,1);
 		const D3DXCOLOR colorDiffuse= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlpha);
-		const D3DXCOLOR colorAdd	= D3DXCOLOR(1,1,1,fAddAlpha);
+		const D3DXCOLOR colorGlow	= D3DXCOLOR(1,1,1,fAddAlpha);
 
 		m_sprHoldParts.SetState( bActive?1:0 );
 		m_sprHoldParts.SetXY( fX, fY );
 		m_sprHoldParts.SetDiffuseColor( colorDiffuse );
-		m_sprHoldParts.SetAddColor( colorAdd );
+		m_sprHoldParts.SetGlowColor( colorGlow );
 		m_sprHoldParts.Draw();
 	}
 }
@@ -646,7 +646,7 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bUseHol
 
 	m_sprTapParts.SetXY( fXPos, fYPos );
 	m_sprTapParts.SetRotation( fRotation );
-	m_sprTapParts.SetAddColor( D3DXCOLOR(1,1,1,fAddAlpha) );
+	m_sprTapParts.SetGlowColor( D3DXCOLOR(1,1,1,fAddAlpha) );
 
 	//
 	// draw gray part

@@ -111,7 +111,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 	m_sprLogo.Load( THEME->GetPathTo("Graphics",ssprintf("title menu logo game %d",GAMESTATE->m_CurGame)) );
 	m_sprLogo.SetXY( LOGO_X, LOGO_Y );
-	m_sprLogo.SetAddColor( D3DXCOLOR(1,1,1,1) );
+	m_sprLogo.SetGlowColor( D3DXCOLOR(1,1,1,1) );
 	m_sprLogo.SetZoomY( 0 );
 	m_sprLogo.BeginTweeningQueued( 0.5f );	// sleep
 	m_sprLogo.BeginTweeningQueued( 0.5f, Actor::TWEEN_BOUNCE_END );

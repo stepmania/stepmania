@@ -135,10 +135,7 @@ void CourseContentsFrame::Update( float fDeltaTime )
 void CourseContentsFrame::DrawPrimitives()
 {
 	// turn on Z buffer to clip items
-	LPDIRECT3DDEVICE8 pd3dDevice = DISPLAY->GetDevice();
-	pd3dDevice->SetRenderState( D3DRS_ZENABLE,      TRUE );
-	pd3dDevice->SetRenderState( D3DRS_ZWRITEENABLE, TRUE );
-
+	DISPLAY->EnableZBuffer();
 
 	// write to z buffer so that top and bottom are clipped
 	m_quad.SetZ( -1 );
@@ -166,8 +163,6 @@ void CourseContentsFrame::DrawPrimitives()
 		fY += CONTENTS_BAR_HEIGHT;
 	}
 
-
 	// turn off Z buffer
-	pd3dDevice->SetRenderState( D3DRS_ZENABLE,      FALSE );
-	pd3dDevice->SetRenderState( D3DRS_ZWRITEENABLE, FALSE );
+	DISPLAY->DisableZBuffer();
 }

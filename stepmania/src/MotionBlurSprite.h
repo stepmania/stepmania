@@ -58,8 +58,8 @@ public:
 
 	virtual void SetDiffuseColor( D3DXCOLOR c )	{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetDiffuseColor(c); };
 	virtual D3DXCOLOR GetDiffuseColor()			{ return m_sprites[0].GetDiffuseColor(); };
-	virtual void SetAddColor( D3DXCOLOR c )		{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetAddColor(c); };
-	virtual D3DXCOLOR GetAddColor()				{ return m_sprites[0].GetAddColor(); };
+	virtual void SetGlowColor( D3DXCOLOR c )		{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].SetGlowColor(c); };
+	virtual D3DXCOLOR GetGlowColor()				{ return m_sprites[0].GetGlowColor(); };
 
 
 	// THE BLUR IS MADE BY DELAYING THE TWEENS

@@ -768,8 +768,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 //	LOG->Trace( "GAMESTATE->m_fMusicSeconds = %f", GAMESTATE->m_fMusicSeconds );
 	
 
-	m_Background.SetSongBeat( fSongBeat, bFreeze, fPositionSeconds );
-
 	//LOG->Trace( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
 
 

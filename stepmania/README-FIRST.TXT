@@ -1029,7 +1029,9 @@ CVS is the repository that manages the StepMania source code.  Our CVS server is
 graciously provided by SourceForge.  You can get the absolute-latest bleeding 
 edge updates to StepMania by taking the source from CVS.  Below are instructions 
 on how to configure your computer to download source code from CVS and complile 
-the source into a working executable.
+the source into a working executable.  If you do not have a basic understanding
+of how to build a program using Visual C++, then you probably should not attempt
+to build StepMania.
 
 * Step 1: Install and configure Visual C++
 
@@ -1044,7 +1046,13 @@ Install it using all the default settings.  The SDK installer will configure
 Visual C++ with the correct paths needed to find the DirectX 8.1 libraries and 
 headers.
 
-* Step 3: Install WinCVS
+* Step 3: Create a SourceForge account
+
+In order to commit changes to CVS, you'll have to have a SourceForge account.
+Create an account at www.sourceforge.net, then e-mail Chris 
+(chris@videogamers.com) with your username so he can add you to the project.
+
+* Step 4: Install WinCVS
 
 A CVS client is required to "checkout" the course from the CVS server.  Download 
 version 1.2 of WinCVS here - http://www.cvsgui.org 
@@ -1053,7 +1061,7 @@ version 1.2 of WinCVS here - http://www.cvsgui.org
 IMPORTANT: Now, open and close WinCVS once.  This will cause WinCVS to create 
 registry entries, which is required for the next step...
 
-* Step 4: Use SourceForge Setup to install SSH and configure WinCVS
+* Step 5: Use SourceForge Setup to install SSH and configure WinCVS
 
 A small utility called SourceForge Setup will greatly simplify the steps needed 
 to configure SSH and WinCVS.  Download SourceForge Setup from 
@@ -1079,19 +1087,33 @@ SET HOME=c:\ssh
 IMPORTANT: You must restart after running SF Setup so that the new environment 
 variables take effect.
 
-* Step 5: Enable SSH access to the cvs machine
+* Step 6: Enable SSH access to the cvs machine
 
-Before you can use your account, you must type the following (substituting your 
+Before you can use your account, you must run the following (substituting your 
 username and projectname as appropriate) before attempting to use CVS from a new 
-user account:
+user account.  Open a command prompt, and type:
 
-ssh -l username cvs.projectname.sf.net
+ssh -l username cvs.stepmania.sourceforge.net
 
 Enter your password, and you'll get a message about how you're not supposed to 
 be there and the connection will drop. What they don't tell you is that this 
 creates your home directory and is required for things to start working.
 
-* DONE! Enjoy staying on the bleeding edge of StepMania releases! 
+* Step 7: "Checkout" the source code
+
+- Open up WinCVS again.  
+- In the right pane, you should see the folder "stepmania".
+- Right click on that folder and choose "Checkout module...".  For the module name
+	enter "stepmania".  
+- Click OK.  
+- If a "chose your home directory" window appears, select "c:\stepmania".
+- A minimized console window should appear.  Unminimize it, type in your 
+	SourceForge password, and press Enter.
+- The source code should begin downloading.  This can take a long time depending 
+	on your connection speed.
+
+* Done!  Enjoy staying on the bleeding edge of StepMania releases! 
+
 
 ************************************************************
 22. Version History
@@ -1114,11 +1136,26 @@ NEW FEATURE:  Most graphical elements can be positioned per theme using
 	more info.
 BUG FIX:  Autoplay no longer misses the first step if it lies on beat 0.
 NEW FEATURE:  Support for holds notes in KSF.
-CHANGE:  KSF title discovery will use song foler name if KSF file contains foreign
-	characters.
+CHANGE:  KSF title discovery will use song foler name if KSF file contains 
+	foreign characters.
 BUG FIX:  Stepping before start of a note at beat 0 no longer results in a BAD.
 BUG FIX:  Editor now works with dance-couple note patterns
 BUG FIX:  Lead-in/lead-out time added to Play and Record in editor.
+CHANGE:  Song specific Background Animations removed in favor of a more powerful
+	system.
+NEW FEATURE:  "Show Danger" toggle in game options to enable/disable
+	flashing danger message.
+CHANGE:  "Event Mode" option renamed to "Unlimited Arcade Stages".
+NEW FEATURE:  Graphic Option "MovieDecodeMS".  Controls how many milliseconds
+	the program will sleep each frame to allow the movie background movie
+	decoding thread to catch up.  Increase this number if movies are dropping
+	frames.  Decrease this number to decrease the priority of movie decoding.
+CHANGE:  "SongFolders" renamed to "AdditionalSongFolders".
+BUG FIX:  AdditionalSongFolers no longer creates duplicate entries on program
+	load.
+CHANGE:  RandomMovies do not start playing until the first beat
+OPTIMIZATION:  New deferred rendering architecture uses more CPU in order to
+	create more efficient operations for the graphics card.
 
 ------------------------CVS after 3.00 beta 5----------------
 OPTIMIZATION:  Much faster song loading.

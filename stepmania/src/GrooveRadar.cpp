@@ -146,14 +146,11 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 
 	// draw radar filling
 	const float fRadius = m_sprRadarBase.GetZoomedHeight()/2.0f*1.1f;
-	LPDIRECT3DVERTEXBUFFER8 pVB = DISPLAY->GetVertexBuffer();
-	LPDIRECT3DDEVICE8 pd3dDevice = DISPLAY->GetDevice();
-	pd3dDevice->SetTexture( 0, NULL );
-	pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-	pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
-	pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
-	pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_SELECTARG2 );
-	RAGEVERTEX* v;
+
+	DISPLAY->SetTexture( NULL );
+	DISPLAY->SetColorTextureMultDiffuse();
+	DISPLAY->SetAlphaTextureMultDiffuse();
+	RAGEVERTEX v[12];	// needed to draw 5 fan primitives and 10 strip primitives
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -163,8 +160,6 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		//
 		// use a fan to draw the volume
 		//
-		pVB->Lock( 0, 0, (BYTE**)&v, 0 );
-
 		D3DXCOLOR color = PlayerToColor( (PlayerNumber)p );
 		color.a = 0.5f;
 		v[0].p = D3DXVECTOR3( 0, 0, 0 );
@@ -182,19 +177,15 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 			const float fY = -sinf(fRotation) * fDistFromCenter;
 
 			v[1+i].p = D3DXVECTOR3( fX, fY,	0 );
-			v[1+i].color = color;
+			v[1+i].color = v[0].color;
 		}
 
-		pVB->Unlock();
-
-		pd3dDevice->DrawPrimitive( D3DPT_TRIANGLEFAN, 0, 5 );
+		DISPLAY->AddFan( v, 5 );
 
 
 		//
 		// use a strip to draw the thick line
 		//
-		pVB->Lock( 0, 0, (BYTE**)&v, 0 );
-
 		for( i=0; i<NUM_RADAR_CATEGORIES+1; i++ )	// do one extra to close the fan
 		{
 			const int c = i%NUM_RADAR_CATEGORIES;
@@ -211,15 +202,11 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 			v[i*2+0].p = D3DXVECTOR3( fXInner, fYInner, 0 );
 			v[i*2+1].p = D3DXVECTOR3( fXOutter, fYOutter,	0 );
 			v[i*2+0].color = PlayerToColor( (PlayerNumber)p );
-			v[i*2+1].color = PlayerToColor( (PlayerNumber)p );
+			v[i*2+1].color = v[i*2+0].color;
 		}
 
-		pVB->Unlock();
-
-		pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 10 );
+		DISPLAY->AddStrip( v, 10 );
 	}
-
-
 }
 
 void GrooveRadar::GrooveRadarValueMap::TweenOnScreen()

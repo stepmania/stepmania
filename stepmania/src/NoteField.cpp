@@ -130,7 +130,7 @@ void NoteField::DrawMeasureBar( int iMeasureIndex )
 	m_rectMeasureBar.Draw();
 
 	m_textMeasureNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-	m_textMeasureNumber.SetAddColor( D3DXCOLOR(1,1,1,0) );
+	m_textMeasureNumber.SetGlowColor( D3DXCOLOR(1,1,1,0) );
 	m_textMeasureNumber.SetText( ssprintf("%d", iMeasureNoDisplay) );
 	m_textMeasureNumber.SetXY( -m_rectMeasureBar.GetZoomedWidth()/2 + 10, fYPos );
 	m_textMeasureNumber.Draw();
@@ -154,7 +154,7 @@ void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 
 	m_textMeasureNumber.SetDiffuseColor( D3DXCOLOR(1,0,0,1) );
-	m_textMeasureNumber.SetAddColor( D3DXCOLOR(1,1,1,cosf(TIMER->GetTimeSinceStart()*2)/2+0.5f) );
+	m_textMeasureNumber.SetGlowColor( D3DXCOLOR(1,1,1,cosf(TIMER->GetTimeSinceStart()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.2f", fBPM) );
 	m_textMeasureNumber.SetXY( -m_rectMeasureBar.GetZoomedWidth()/2 - 60, fYPos );
 	m_textMeasureNumber.Draw();
@@ -166,7 +166,7 @@ void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 	const float fYPos		= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 
 	m_textMeasureNumber.SetDiffuseColor( D3DXCOLOR(0.8f,0.8f,0,1) );
-	m_textMeasureNumber.SetAddColor( D3DXCOLOR(1,1,1,cosf(TIMER->GetTimeSinceStart()*2)/2+0.5f) );
+	m_textMeasureNumber.SetGlowColor( D3DXCOLOR(1,1,1,cosf(TIMER->GetTimeSinceStart()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.2f", fSecs) );
 	m_textMeasureNumber.SetXY( -m_rectMeasureBar.GetZoomedWidth()/2 - 10, fYPos );
 	m_textMeasureNumber.Draw();

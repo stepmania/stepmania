@@ -13,17 +13,25 @@
 #include "Background.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
-#include "PrefsManager.h"
-#include "PrefsManager.h"
 #include "RageBitmapTexture.h"
 #include "RageException.h"
 #include "RageTimer.h"
+#include "GameState.h"
+#include "ThemeManager.h"
+#include "PrefsManager.h"
 
 
 const CString BG_ANIMS_DIR = "BGAnimations\\";
 const CString VISUALIZATIONS_DIR = "Visualizations\\";
 const CString RANDOMMOVIES_DIR = "RandomMovies\\";
 
+// TODO: Move these into theme metrics
+const int BACKGROUND_LEFT	= 0;
+const int BACKGROUND_TOP	= 0;
+const int BACKGROUND_RIGHT	= 640;
+const int BACKGROUND_BOTTOM	= 480;
+
+#define RECT_BACKGROUND CRect(BACKGROUND_LEFT,BACKGROUND_TOP,BACKGROUND_RIGHT,BACKGROUND_BOTTOM)
 
 int CompareAnimSegs(const void *arg1, const void *arg2)
 {
@@ -50,9 +58,7 @@ void SortAnimSegArray( CArray<AnimSeg,AnimSeg&> &arrayAnimSegs )
 
 Background::Background()
 {
-	m_fSongBeat = 0;
-	m_bFreeze = false;
-
+	m_iCurAnimSegment = 0;
 	m_bInDanger = false;
 
 	m_BackgroundMode = MODE_STATIC_BG;
@@ -60,31 +66,39 @@ Background::Background()
 	m_sprDanger.SetZoom( 2 );
 	m_sprDanger.SetEffectWagging();
 	m_sprDanger.Load( THEME->GetPathTo("Graphics","gameplay danger text") );
-	m_sprDanger.SetXY( CENTER_X, CENTER_Y );
+	m_sprDanger.SetX( (float)RECTCENTERX(RECT_BACKGROUND) );
+	m_sprDanger.SetY( (float)RECTCENTERY(RECT_BACKGROUND) );
 
 	m_sprDangerBackground.Load( THEME->GetPathTo("Graphics","gameplay danger background") );
-	m_sprDangerBackground.StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+	m_sprDangerBackground.StretchTo( RECT_BACKGROUND );
 
-	m_quadBGBrightness.StretchTo( CRect(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
+	m_quadBGBrightness.StretchTo( RECT_BACKGROUND );
 	m_quadBGBrightness.SetDiffuseColor( D3DXCOLOR(0,0,0,1-0.5f) );
 
-	m_pCurBGA = NULL;
-	m_iCurAnimSegment = -1;
+	m_quadBorder[0].StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,BACKGROUND_LEFT,SCREEN_BOTTOM) );
+	m_quadBorder[0].SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
+	m_quadBorder[1].StretchTo( CRect(BACKGROUND_LEFT,SCREEN_TOP,BACKGROUND_RIGHT,BACKGROUND_TOP) );
+	m_quadBorder[1].SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
+	m_quadBorder[2].StretchTo( CRect(BACKGROUND_RIGHT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+	m_quadBorder[2].SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
+	m_quadBorder[3].StretchTo( CRect(BACKGROUND_LEFT,SCREEN_TOP,BACKGROUND_RIGHT,BACKGROUND_TOP) );
+	m_quadBorder[3].SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
 }
 
 Background::~Background()
+{
+	Unload();
+}
+
+void Background::Unload()
 {
     for( int i=0; i<m_BackgroundAnimations.GetSize(); i++ )
 		delete m_BackgroundAnimations[i];
 }
 
-bool Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
+void Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 {
-	m_fMusicSeconds = 0;
-	m_bStartedBGMovie = false;
-
-
-	m_pSong = pSong;
+	ASSERT( m_BackgroundAnimations.GetSize() == 0 );	// forgot to call Unload() after song end
 
 	//
 	// figure out what BackgroundMode to use
@@ -100,70 +114,135 @@ bool Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 	else
 		m_BackgroundMode = MODE_ANIMATIONS;
 
-	m_sprSongBackground.Load( pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","fallback background"), true, 4, 0, true );
-	
-	m_sprSongBackground.StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 
+	//
+	// Load the static background that will before notes start and after notes end
+	//
+	BackgroundAnimation* pTempBGA;
+	pTempBGA = new BackgroundAnimation;
+	pTempBGA->LoadFromStaticGraphic( pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","fallback background") );
+	m_BackgroundAnimations.Add( pTempBGA );
+
+
+	//
+	// Load animations that will play while notes are active
+	//
 	switch( m_BackgroundMode )
 	{
 	case MODE_STATIC_BG:
-		// do nothing
 		break;
 	case MODE_MOVIE_BG:
-		m_sprMovieBackground.Load( pSong->GetMovieBackgroundPath() );
-		m_sprMovieBackground.StretchTo( CRect(SCREEN_LEFT+10,SCREEN_TOP+16,SCREEN_RIGHT-10,SCREEN_BOTTOM-16) );
-		m_sprMovieBackground.SetZoomY( m_sprMovieBackground.GetZoomY() );
-		m_sprMovieBackground.StopAnimating( );
+		{
+			pTempBGA = new BackgroundAnimation;
+			pTempBGA->LoadFromMovie( pSong->GetMovieBackgroundPath() );
+			m_BackgroundAnimations.Add( pTempBGA );
+		}
 		break;
 	case MODE_MOVIE_VIS:
 		{
 			CStringArray arrayPossibleMovies;
-			GetDirListing( VISUALIZATIONS_DIR + CString("*.avi"), arrayPossibleMovies );
-			GetDirListing( VISUALIZATIONS_DIR + CString("*.mpg"), arrayPossibleMovies );
-			GetDirListing( VISUALIZATIONS_DIR + CString("*.mpeg"), arrayPossibleMovies );
-			if( arrayPossibleMovies.GetSize() > 0 )
+			GetDirListing( VISUALIZATIONS_DIR + "*.avi", arrayPossibleMovies, false, true );
+			GetDirListing( VISUALIZATIONS_DIR + "*.mpg", arrayPossibleMovies, false, true );
+			GetDirListing( VISUALIZATIONS_DIR + "*.mpeg", arrayPossibleMovies, false, true );
+			while( arrayPossibleMovies.GetSize() > 0  &&  m_BackgroundAnimations.GetSize() < 2 )
 			{
 				int index = rand() % arrayPossibleMovies.GetSize();
-				m_sprMovieVis.Load( VISUALIZATIONS_DIR + arrayPossibleMovies[index] );
-				m_sprMovieVis.StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-				m_sprMovieVis.SetZoomY( m_sprMovieVis.GetZoomY()*-1 );
-				m_sprMovieVis.SetBlendModeAdd();
-			}		
+				pTempBGA = new BackgroundAnimation;
+				pTempBGA->LoadFromVisualization( arrayPossibleMovies[index], pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","fallback background") );
+				m_BackgroundAnimations.Add( pTempBGA );
+				arrayPossibleMovies.RemoveAt( index );
+			}	
 		}
 		break;
 	case MODE_ANIMATIONS:
 		{
-			//
-			// Load background animations
-			//
-			CStringArray asBGAnimNames;
-
-			// First look in the song folder for animations
-			GetDirListing( pSong->m_sSongDir+"BGAnimations\\*.*", asBGAnimNames, true );
-			
-			if( asBGAnimNames.GetSize() > 0 )
+			CStringArray arrayPossibleAnims;
+			GetDirListing( BG_ANIMS_DIR+"*.*", arrayPossibleAnims, true, true );
+			while( arrayPossibleAnims.GetSize() > 0  &&  m_BackgroundAnimations.GetSize() < 5 )
 			{
-				for( int i=0; i<asBGAnimNames.GetSize(); i++ )
-					m_BackgroundAnimations.Add( new BackgroundAnimation(pSong->m_sSongDir+"BGAnimations\\"+asBGAnimNames[i], pSong) );
-
+				int index = rand() % arrayPossibleAnims.GetSize();
+				pTempBGA = new BackgroundAnimation;
+				pTempBGA->LoadFromAniDir( arrayPossibleAnims[index], pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","fallback background") );
+				m_BackgroundAnimations.Add( pTempBGA );
+				arrayPossibleAnims.RemoveAt( index );
 			}
-			else
+		}
+		break;
+	case MODE_RANDOMMOVIES:
+		{
+			CStringArray arrayPossibleMovies;
+			GetDirListing( RANDOMMOVIES_DIR + "*.avi", arrayPossibleMovies, false, true );
+			GetDirListing( RANDOMMOVIES_DIR + "*.mpg", arrayPossibleMovies, false, true );
+			GetDirListing( RANDOMMOVIES_DIR + "*.mpeg", arrayPossibleMovies, false, true );
+			while( arrayPossibleMovies.GetSize() > 0  &&  m_BackgroundAnimations.GetSize() < 5 )
 			{
-				// We're going to try to classify songs as trance, pop, or techno based on some data about the song
-				if( pSong->m_BPMSegments.GetSize() + pSong->m_StopSegments.GetSize() >= 3 )
-					GetDirListing( BG_ANIMS_DIR+"techno*.*", asBGAnimNames, true );
-				else if( pSong->m_BPMSegments[0].m_fBPM > 160 )
-					GetDirListing( BG_ANIMS_DIR+"trance*.*", asBGAnimNames, true );
-				else
-					GetDirListing( BG_ANIMS_DIR+"pop*.*", asBGAnimNames, true );
-				
-				// load different animations 
-				for( int i=0; i<asBGAnimNames.GetSize(); i++ )
-					m_BackgroundAnimations.Add( new BackgroundAnimation(BG_ANIMS_DIR + asBGAnimNames[i], pSong) );
-			}
+				int index = rand() % arrayPossibleMovies.GetSize();
+				pTempBGA = new BackgroundAnimation;
+				pTempBGA->LoadFromMovie( arrayPossibleMovies[index] );
+				m_BackgroundAnimations.Add( pTempBGA );
+				arrayPossibleMovies.RemoveAt( index );
+			}	
+		}
+		break;
+	default:
+		ASSERT(0);
+	}
 
-			if( m_BackgroundAnimations.GetSize() == 0 ) 
-				break;
+	// At this point, m_BackgroundAnimations[0] is the song background, and everything else
+	// in m_BackgroundAnimations should be cycled through randomly while notes are playing.	
+	//
+	// Generate an animation plan
+	//
+	if( m_BackgroundMode == MODE_MOVIE_VIS )
+	{
+		m_aAnimSegs.Add( AnimSeg(-10000,1) );
+		return;
+	}
+
+	// start off showing the static song background
+	m_aAnimSegs.Add( AnimSeg(-10000,0) );
+
+	// change BG every 4 bars
+	const float fFirstBeat = m_BackgroundMode==MODE_MOVIE_BG ? 0 : pSong->m_fFirstBeat;
+	const float fLastBeat = pSong->m_fLastBeat;
+	for( float f=fFirstBeat; f<fLastBeat; f+=16 )
+	{
+		int index;
+		if( m_BackgroundAnimations.GetSize()==1 )
+			index = 0;
+		else
+			index = 1 + rand()%(m_BackgroundAnimations.GetSize()-1);
+		m_aAnimSegs.Add( AnimSeg(f,index) );
+	}
+
+	// change BG every BPM change
+	for( int i=0; i<pSong->m_BPMSegments.GetSize(); i++ )
+	{
+		const BPMSegment& bpmseg = pSong->m_BPMSegments[i];
+
+		if( bpmseg.m_fStartBeat < fFirstBeat  || bpmseg.m_fStartBeat > fLastBeat )
+			continue;	// skip
+
+		int index;
+		if( m_BackgroundAnimations.GetSize()==1 )
+			index = 0;
+		else
+			int index = 1 + int(bpmseg.m_fBPM)%(m_BackgroundAnimations.GetSize()-1);
+		m_aAnimSegs.Add( AnimSeg(bpmseg.m_fStartBeat,index) );
+	}
+
+	// end showing the static song background
+	m_aAnimSegs.Add( AnimSeg(pSong->m_fLastBeat,0) );
+
+	// sort segments
+	SortAnimSegArray( m_aAnimSegs );
+//	for( int i=0; i<m_aAnimSegs.GetSize(); i++ )
+//		printf("AnimSeg %d: %f, %i\n", i, m_aAnimSegs[i].m_fStartBeat, m_aAnimSegs[i].m_iAnimationIndex);
+
+
+/*
+// Load the song's pre-defined animation plan.
+// TODO:  Fix this
 
 			// Load a background animation plan into m_aAnimSegs
 			if( pSong->m_AnimationSegments.GetSize() > 0 )
@@ -188,55 +267,7 @@ bool Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 					m_aAnimSegs.Add( AnimSeg(aniseg.m_fStartBeat, iIndex) );
 				}
 				SortAnimSegArray( m_aAnimSegs );	// this should already be sorted
-			}
-			else
-			{
-				// Generate a plan.
-				for( int i=0; i<pSong->m_fLastBeat; i+=16 )
-					m_aAnimSegs.Add( AnimSeg((float)i,rand()%m_BackgroundAnimations.GetSize()) );	// change BG every 4 bars
-
-				for( i=0; i<pSong->m_BPMSegments.GetSize(); i++ )
-				{
-					const BPMSegment& bpmseg = pSong->m_BPMSegments[i];
-					m_aAnimSegs.Add( AnimSeg(bpmseg.m_fStartBeat,int(bpmseg.m_fBPM)%m_BackgroundAnimations.GetSize()) );	// change BG every BPM change
-				}
-				SortAnimSegArray( m_aAnimSegs );
-			}
-		}
-		break;
-	case MODE_RANDOMMOVIES:
-		{
-			CStringArray asMovieNames;
-			GetDirListing( RANDOMMOVIES_DIR + "*.avi", asMovieNames );
-			GetDirListing( RANDOMMOVIES_DIR + "*.mpg", asMovieNames );
-			GetDirListing( RANDOMMOVIES_DIR + "*.mpeg", asMovieNames );
-			for( int i=0; i<min(asMovieNames.GetSize(),5); i++ )	// only load up to 5 background because they are slow to load
-			{
-				CString sMovieName = asMovieNames[rand()%asMovieNames.GetSize()];
-				m_BackgroundAnimations.Add( new BackgroundAnimation(RANDOMMOVIES_DIR+sMovieName, NULL) );
-			}
-
-			if( m_BackgroundAnimations.GetSize() == 0 ) 
-				break;
-
-			// Generate a plan.
-			for( i=0; i<pSong->m_fLastBeat; i+=16 )
-				m_aAnimSegs.Add( AnimSeg((float)i,rand()%m_BackgroundAnimations.GetSize()) );	// change BG every 4 bars
-
-			for( i=0; i<pSong->m_BPMSegments.GetSize(); i++ )
-			{
-				const BPMSegment& bpmseg = pSong->m_BPMSegments[i];
-				m_aAnimSegs.Add( AnimSeg(bpmseg.m_fStartBeat,int(bpmseg.m_fBPM)%m_BackgroundAnimations.GetSize()) );	// change BG every BPM change
-			}
-			SortAnimSegArray( m_aAnimSegs );
-		}
-		break;
-	default:
-		ASSERT(0);
-	}
-	
-
-	return true;
+*/
 }
 
 
@@ -251,77 +282,35 @@ void Background::Update( float fDeltaTime )
 	}
 	else
 	{			
-		if( m_bFreeze )
+		if( GAMESTATE->m_bFreeze )
 			return;
 
-		m_sprSongBackground.Update( fDeltaTime );
+		// Find the AnimSeg we're in
+		for( int i=0; i<m_aAnimSegs.GetSize()-1; i++ )
+			if( GAMESTATE->m_fSongBeat < m_aAnimSegs[i+1].m_fStartBeat )
+				break;
+		ASSERT( i >= 0  &&  i<m_aAnimSegs.GetSize() );
 
-		switch( m_BackgroundMode )
+		if( i > m_iCurAnimSegment )
 		{
-		case MODE_STATIC_BG:
-			// do nothing
-			break;
-		case MODE_MOVIE_BG:
-			m_sprMovieBackground.Update( fDeltaTime );
-			break;
-		case MODE_MOVIE_VIS:
-			m_sprMovieVis.Update( fDeltaTime );
-			break;
-		case MODE_ANIMATIONS:
-		case MODE_RANDOMMOVIES:
-			{
-				// Find the AnimSeg we're in
-				for( int i=0; i<m_aAnimSegs.GetSize()-1; i++ )
-					if( m_aAnimSegs[i+1].m_fStartBeat > m_fSongBeat )
-						break;
-				if( i == m_aAnimSegs.GetSize() )
-				{
-					m_pCurBGA = NULL;
-					break;	// no animations
-				}
-				int iNewAnimationSegment = i;
-				if( iNewAnimationSegment > m_iCurAnimSegment )
-				{
-					m_iCurAnimSegment = iNewAnimationSegment;
-					if( m_pCurBGA )
-						m_pCurBGA->LosingFocus();
-					if( i > m_aAnimSegs.GetSize() )
-					{
-						m_pCurBGA = NULL;
-					}
-					else
-					{
-						int iNewAnimIndex = m_aAnimSegs[i].m_iAnimationIndex;
-						m_pCurBGA = m_BackgroundAnimations[iNewAnimIndex];
-						m_pCurBGA->GainingFocus();
-					}
-				}
+//			printf( "%d, %d, %f, %f\n", m_iCurAnimSegment, i, m_aAnimSegs[i].m_fStartBeat, GAMESTATE->m_fSongBeat );
+			GetCurBGA()->LosingFocus();
+			m_iCurAnimSegment = i;
+			GetCurBGA()->GainingFocus();
 
-				if( m_pCurBGA )
-					m_pCurBGA->Update( fDeltaTime, m_fSongBeat );
-			}
-			break;
-		default:
-			ASSERT(0);
 		}
 
-		m_quadBGBrightness.Update( fDeltaTime );
-	}
-}
+		GetCurBGA()->Update( fDeltaTime );
 
-void Background::SetSongBeat( const float fSongBeat, const bool bFreeze, const float fMusicSeconds )
-{
-	m_fSongBeat = fSongBeat;
-	m_bFreeze = bFreeze;
-	m_fMusicSeconds = fMusicSeconds;
-	if( m_BackgroundMode == MODE_MOVIE_BG  &&  !m_bStartedBGMovie  &&  m_fMusicSeconds > 0 )
-		m_sprMovieBackground.StartAnimating();
+	}
+	
+	m_quadBGBrightness.Update( fDeltaTime );
 }
 
 void Background::DrawPrimitives()
 {
 	ActorFrame::DrawPrimitives();
-
+	
 	if( DangerVisible() )
 	{
 		m_sprDangerBackground.Draw();
@@ -329,45 +318,17 @@ void Background::DrawPrimitives()
 	}
 	else
 	{			
-
-		switch( m_BackgroundMode )
-		{
-		case MODE_STATIC_BG:
-			m_sprSongBackground.Draw();
-			break;
-		case MODE_MOVIE_BG:
-			::Sleep(2);	// let the movie decode a frame
-			m_sprMovieBackground.Draw();
-			break;
-		case MODE_MOVIE_VIS:
-			m_sprSongBackground.Draw();
-			::Sleep(2);	// let the movie decode a frame
-			m_sprMovieVis.Draw();
-			break;
-		case MODE_ANIMATIONS:
-		case MODE_RANDOMMOVIES:
-			if( m_pCurBGA )
-			{
-				if( m_pCurBGA->IsAMovie() )
-					::Sleep(2);	// let the movie decode a frame
-				m_pCurBGA->Draw();
-			}
-			else
-			{
-				m_sprSongBackground.Draw();
-			}
-			break;
-		default:
-			ASSERT(0);
-		}
-
-		m_quadBGBrightness.Draw();
+		GetCurBGA()->Draw();
 	}
+
+	m_quadBGBrightness.Draw();
+	for( int i=0; i<4; i++ )
+		m_quadBorder[i].Draw();
 }
 
 bool Background::DangerVisible()
 {
-	return m_bInDanger && (TIMER->GetTimeSinceStart() - (int)TIMER->GetTimeSinceStart()) < 0.5f;
+	return m_bInDanger  &&  PREFSMAN->m_bShowDanger  &&  (TIMER->GetTimeSinceStart() - (int)TIMER->GetTimeSinceStart()) < 0.5f;
 }
 
 

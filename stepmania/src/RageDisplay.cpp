@@ -360,6 +360,10 @@ HRESULT RageDisplay::BeginFrame()
     //m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ADDRESSV, D3DTADDRESS_BORDER );
 
 
+	m_pd3dDevice->SetVertexShader( D3DFVF_RAGEVERTEX );
+	m_pd3dDevice->SetStreamSource( 0, m_pVB, sizeof(RAGEVERTEX) );
+
+
 
 	return S_OK;
 }
@@ -367,6 +371,9 @@ HRESULT RageDisplay::BeginFrame()
 
 HRESULT RageDisplay::EndFrame()
 {
+	FlushQueue();
+
+
 	m_pd3dDevice->EndScene();
 
 
@@ -396,8 +403,6 @@ HRESULT RageDisplay::ShowFrame()
 }
 
 
-
-
 HRESULT RageDisplay::Invalidate()
 {
 	return S_OK;
@@ -406,17 +411,15 @@ HRESULT RageDisplay::Invalidate()
 
 HRESULT RageDisplay::Restore()
 {
-
 	return S_OK;
 }
-
 
 
 
 void RageDisplay::CreateVertexBuffer()
 {
 	HRESULT hr;
-	if( FAILED( hr = GetDevice()->CreateVertexBuffer( 
+	if( FAILED( hr = m_pd3dDevice->CreateVertexBuffer( 
 									MAX_NUM_VERTICIES * sizeof(RAGEVERTEX),
 									D3DUSAGE_WRITEONLY, D3DFVF_RAGEVERTEX,
 									D3DPOOL_MANAGED, &m_pVB ) ) )
@@ -429,26 +432,67 @@ void RageDisplay::ReleaseVertexBuffer()
 	SAFE_RELEASE( m_pVB );
 }
 
+/*
+void RageDisplay::AddTriangle( const RAGEVERTEX& v[3] )
+{
+	COPY( &m_vertQueue[m_iNumVerts], v );		// do a big mem copy
+	for( int i=0; i<3; i++ )
+		D3DXVec3TransformCoord( &m_vertQueue[m_iNumVerts+i].p, v[i].p, &GetTopMatrix() ); 
+	m_iNumVerts+=3; 
+}
+*/
+
+void RageDisplay::AddQuad( const RAGEVERTEX v[4] )	// upper-left, upper-right, lower-left, lower-right
+{
+	AddQuad( 
+		v[0].p, v[0].color, v[0].t,
+		v[1].p, v[1].color, v[1].t, 
+		v[2].p, v[2].color, v[2].t, 
+		v[3].p, v[3].color, v[3].t ); 
+}
+void RageDisplay::AddFan( const RAGEVERTEX v[], int iNumPrimitives )
+{
+	// HACK: This function does not take winding order into account.  It will goof if you turn on culling.
+	for( int i=0; i<iNumPrimitives; i++ )
+	{
+		AddTriangle( 
+			v[0+0].p, v[0+0].color, v[0+0].t,
+			v[i+1].p, v[i+1].color, v[i+1].t,
+			v[i+2].p, v[i+2].color, v[i+2].t
+			);
+	}
+}
+void RageDisplay::AddStrip( const RAGEVERTEX v[], int iNumPrimitives )
+{
+	// HACK: This function does not take winding order into account.  It will goof if you turn on culling.
+	for( int i=0; i<iNumPrimitives; i++ )
+	{
+		AddTriangle( 
+			v[i+0].p, v[i+0].color, v[i+0].t,
+			v[i+1].p, v[i+1].color, v[i+1].t,
+			v[i+2].p, v[i+2].color, v[i+2].t
+			);
+	}
+}
 void RageDisplay::AddTriangle(
-	const D3DXVECTOR3& p0, const D3DCOLOR& c0, const D3DXVECTOR2& t0, const D3DCOLOR& a0,
-	const D3DXVECTOR3& p1, const D3DCOLOR& c1, const D3DXVECTOR2& t1, const D3DCOLOR& a1,
-	const D3DXVECTOR3& p2, const D3DCOLOR& c2, const D3DXVECTOR2& t2, const D3DCOLOR& a2 )
+	const D3DXVECTOR3& p0, const D3DCOLOR& c0, const D3DXVECTOR2& t0,
+	const D3DXVECTOR3& p1, const D3DCOLOR& c1, const D3DXVECTOR2& t1,
+	const D3DXVECTOR3& p2, const D3DCOLOR& c2, const D3DXVECTOR2& t2 )
 {
 	ASSERT( m_iNumVerts < MAX_NUM_VERTICIES-3 );
-	m_vertQueue[m_iNumVerts].p = p0;
+
+	// transform the verticies as we copy
+	D3DXVec3TransformCoord( &m_vertQueue[m_iNumVerts].p, &p0, &GetTopMatrix() ); 
 	m_vertQueue[m_iNumVerts].color = c0;
 	m_vertQueue[m_iNumVerts].t = t0;
-	m_addColors[m_iNumVerts] = a0;
 	m_iNumVerts++; 
-	m_vertQueue[m_iNumVerts].p = p1;
+	D3DXVec3TransformCoord( &m_vertQueue[m_iNumVerts].p, &p1, &GetTopMatrix() ); 
 	m_vertQueue[m_iNumVerts].color = c1;
 	m_vertQueue[m_iNumVerts].t = t1;
-	m_addColors[m_iNumVerts] = a1;
 	m_iNumVerts++; 
-	m_vertQueue[m_iNumVerts].p = p2;
+	D3DXVec3TransformCoord( &m_vertQueue[m_iNumVerts].p, &p2, &GetTopMatrix() ); 
 	m_vertQueue[m_iNumVerts].color = c2;
 	m_vertQueue[m_iNumVerts].t = t2;
-	m_addColors[m_iNumVerts] = a2;
 	m_iNumVerts++; 
 
 	if( m_iNumVerts > MAX_NUM_VERTICIES-4 )
@@ -456,21 +500,20 @@ void RageDisplay::AddTriangle(
 }
 
 void RageDisplay::AddQuad(
-	const D3DXVECTOR3 &p0, const D3DCOLOR& c0, const D3DXVECTOR2& t0, const D3DCOLOR& a0,	// upper-left
-	const D3DXVECTOR3 &p1, const D3DCOLOR& c1, const D3DXVECTOR2& t1, const D3DCOLOR& a1, 	// upper-right
-	const D3DXVECTOR3 &p2, const D3DCOLOR& c2, const D3DXVECTOR2& t2, const D3DCOLOR& a2, 	// lower-left
-	const D3DXVECTOR3 &p3, const D3DCOLOR& c3, const D3DXVECTOR2& t3, const D3DCOLOR& a3  )	// lower-right
+	const D3DXVECTOR3 &p0, const D3DCOLOR& c0, const D3DXVECTOR2& t0,	// upper-left
+	const D3DXVECTOR3 &p1, const D3DCOLOR& c1, const D3DXVECTOR2& t1, 	// upper-right
+	const D3DXVECTOR3 &p2, const D3DCOLOR& c2, const D3DXVECTOR2& t2, 	// lower-left
+	const D3DXVECTOR3 &p3, const D3DCOLOR& c3, const D3DXVECTOR2& t3 )	// lower-right
 {
-	// trangles must be in clockwise order
+	// trangles must be in clockwise order in case we ever turn on clipping
 	AddTriangle( 
-		p0, c0, t0, a0,		// upper-left
-		p2, c2, t2, a1,		// lower-left
-		p3, c3, t3, a2 );	// lower-right
-				
+		p0, c0, t0,		// upper-left
+		p2, c2, t2,		// lower-left
+		p3, c3, t3 );	// lower-right
 	AddTriangle(  
-		p0, c0, t0, a0,		// upper-left
-		p3, c3, t3, a1,		// lower-right
-		p1, c1, t1, a2 );	// upper-right
+		p0, c0, t0,		// upper-left
+		p3, c3, t3,		// lower-right
+		p1, c1, t1 );	// upper-right
 }
 
 void RageDisplay::FlushQueue()
@@ -478,77 +521,210 @@ void RageDisplay::FlushQueue()
 	if( m_iNumVerts == 0 )
 		return;
 	ASSERT( (m_iNumVerts % 3) == 0 );
-	RAGEVERTEX* v;
 	
-	//
-	// draw diffuse pass
-	//
+	RAGEVERTEX* v;
 	m_pVB->Lock( 0, 0, (BYTE**)&v, 0 );
 	memcpy( v, m_vertQueue, sizeof(RAGEVERTEX)*m_iNumVerts );
 	m_pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, m_iNumVerts/3 );
 	m_pVB->Unlock();
 
-	//
-	// draw add pass
-	//
-	bool bAnyVertsHaveAdd = false;
-	for( int i=0; i<m_iNumVerts; i++ )
-		if( m_addColors[i]>>24 != 0 )	// if there is any alpha
-			bAnyVertsHaveAdd = true;
-		
-	if( bAnyVertsHaveAdd )
-	{
-		SetColorTextureMultDiffuse();
-		SetColorDiffuse();
-		m_pVB->Lock( 0, 0, (BYTE**)&v, 0 );
-		for( int i=0; i<m_iNumVerts; i++ )
-			m_vertQueue[i].color = m_addColors[i];
-		m_pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, m_iNumVerts/3 );
-		m_pVB->Unlock();
-	}
-
 	m_iNumVerts = 0;
 }
 
+void RageDisplay::SetViewTransform( D3DXMATRIX* pMatrix )
+{
+	FlushQueue();
+	m_pd3dDevice->SetTransform( D3DTS_VIEW, pMatrix );
+}
+void RageDisplay::SetProjectionTransform( D3DXMATRIX* pMatrix )
+{
+	FlushQueue();
+	m_pd3dDevice->SetTransform( D3DTS_PROJECTION, pMatrix );
+}
+void RageDisplay::GetViewTransform( D3DXMATRIX* pMatrixOut )
+{
+	m_pd3dDevice->GetTransform( D3DTS_VIEW, pMatrixOut );
+}
+void RageDisplay::GetProjectionTransform( D3DXMATRIX* pMatrixOut )
+{
+	m_pd3dDevice->GetTransform( D3DTS_PROJECTION, pMatrixOut );
+}
+
+
+void RageDisplay::ResetMatrixStack() 
+{ 
+	m_MatrixStack.SetSize( 1, 20 );
+	D3DXMatrixIdentity( &GetTopMatrix() );
+}
+
+void RageDisplay::PushMatrix() 
+{ 
+	m_MatrixStack.Add( GetTopMatrix() );	
+	ASSERT(m_MatrixStack.GetSize()<20);		// check for infinite loop
+}
+
+void RageDisplay::PopMatrix() 
+{ 
+	m_MatrixStack.RemoveAt( m_MatrixStack.GetSize()-1 ); 
+}
+
+void RageDisplay::Translate( const float x, const float y, const float z )
+{
+	D3DXMATRIX matTemp;
+	D3DXMatrixTranslation( &matTemp, x, y, z );
+	D3DXMATRIX& matTop = GetTopMatrix();
+	matTop = matTemp * matTop;
+}
+
+void RageDisplay::TranslateLocal( const float x, const float y, const float z )
+{
+	D3DXMATRIX matTemp;
+	D3DXMatrixTranslation( &matTemp, x, y, z );
+	D3DXMATRIX& matTop = GetTopMatrix();
+	matTop = matTop * matTemp;
+}
+
+void RageDisplay::Scale( const float x, const float y, const float z )
+{
+	D3DXMATRIX matTemp;
+	D3DXMatrixScaling( &matTemp, x, y, z );
+	D3DXMATRIX& matTop = GetTopMatrix();
+	matTop = matTemp * matTop;
+}
+
+void RageDisplay::RotateX( const float r )
+{
+	D3DXMATRIX matTemp;
+	D3DXMatrixRotationX( &matTemp, r );
+	D3DXMATRIX& matTop = GetTopMatrix();
+	matTop = matTemp * matTop;
+}
+
+void RageDisplay::RotateY( const float r )
+{
+	D3DXMATRIX matTemp;
+	D3DXMatrixRotationY( &matTemp, r );
+	D3DXMATRIX& matTop = GetTopMatrix();
+	matTop = matTemp * matTop;
+}
+
+void RageDisplay::RotateZ( const float r )
+{
+	D3DXMATRIX matTemp;
+	D3DXMatrixRotationZ( &matTemp, r );
+	D3DXMATRIX& matTop = GetTopMatrix();
+	matTop = matTemp * matTop;
+}
+
+/*
+void RageDisplay::RotateYawPitchRoll( const float x, const float y, const float z )
+{
+	D3DXMATRIX matTemp;
+	D3DXMatrixRotationYawPitchRoll( &matTemp, x, y, z );
+	D3DXMATRIX& matTop = GetTopMatrix();
+	matTop = matTemp * matTop;
+}
+*/
+
 void RageDisplay::SetTexture( RageTexture* pTexture )
 {
-	m_pd3dDevice->SetTexture( 0, pTexture->GetD3DTexture() );
+	LPDIRECT3DBASETEXTURE8 pNewD3DTexture = pTexture ? pTexture->GetD3DTexture() : NULL;
+
+	LPDIRECT3DBASETEXTURE8 pOldD3DTexture;
+	m_pd3dDevice->GetTexture( 0, &pOldD3DTexture );
+
+	if( pOldD3DTexture != pNewD3DTexture )
+		FlushQueue();
+
+	m_pd3dDevice->SetTexture( 0, pNewD3DTexture );
 }
 void RageDisplay::SetColorTextureMultDiffuse()
 {
+	DWORD dw0, dw1, dw2;
+	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_COLORARG1, &dw0 );
+	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_COLORARG2, &dw1 );
+	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_COLOROP,   &dw2 );
+
+	if( dw0!=D3DTA_TEXTURE || dw1!=D3DTA_DIFFUSE || dw2!=D3DTOP_MODULATE )
+		FlushQueue();
+
 	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
 	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
 	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE );
 }
 void RageDisplay::SetColorDiffuse()
 {
+	DWORD dw0, dw1, dw2;
+	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_COLORARG1, &dw0 );
+	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_COLORARG2, &dw1 );
+	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_COLOROP,   &dw2 );
+
+	if( dw0!=D3DTA_TEXTURE || dw1!=D3DTA_DIFFUSE || dw2!=D3DTOP_SELECTARG2 )
+		FlushQueue();
+
 	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
 	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
 	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
 }
 void RageDisplay::SetAlphaTextureMultDiffuse()
 {
+	DWORD dw0, dw1, dw2;
+	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_ALPHAARG1, &dw0 );
+	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_ALPHAARG2, &dw1 );
+	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_ALPHAOP,   &dw2 );
+
+	if( dw0!=D3DTA_TEXTURE || dw1!=D3DTA_DIFFUSE || dw2!=D3DTOP_MODULATE )
+		FlushQueue();
+
 	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
 	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
 	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
 }
 void RageDisplay::SetBlendModeNormal()
 {
+	DWORD dw0, dw1;
+	m_pd3dDevice->GetRenderState( D3DRS_SRCBLEND, &dw0 );
+	m_pd3dDevice->GetRenderState( D3DRS_DESTBLEND, &dw1 );
+
+	if( dw0!=D3DBLEND_SRCALPHA || dw1!=D3DBLEND_INVSRCALPHA )
+		FlushQueue();
+
 	m_pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA );
 	m_pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
 }
 void RageDisplay::SetBlendModeAdd()
 {
+	DWORD dw0, dw1;
+	m_pd3dDevice->GetRenderState( D3DRS_SRCBLEND, &dw0 );
+	m_pd3dDevice->GetRenderState( D3DRS_DESTBLEND, &dw1 );
+
+	if( dw0!=D3DBLEND_ONE || dw1!=D3DBLEND_ONE )
+		FlushQueue();
+
 	m_pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_ONE );
 	m_pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ONE );
 }
 void RageDisplay::EnableZBuffer()
 {
+	DWORD dw0, dw1;
+	m_pd3dDevice->GetRenderState( D3DRS_ZENABLE, &dw0 );
+	m_pd3dDevice->GetRenderState( D3DRS_ZWRITEENABLE, &dw1 );
+
+	if( dw0!=TRUE || dw1!=TRUE )
+		FlushQueue();
+
 	m_pd3dDevice->SetRenderState( D3DRS_ZENABLE,      TRUE );
 	m_pd3dDevice->SetRenderState( D3DRS_ZWRITEENABLE, TRUE );
 }
 void RageDisplay::DisableZBuffer()
 {
+	DWORD dw0, dw1;
+	m_pd3dDevice->GetRenderState( D3DRS_ZENABLE, &dw0 );
+	m_pd3dDevice->GetRenderState( D3DRS_ZWRITEENABLE, &dw1 );
+
+	if( dw0!=FALSE || dw1!=FALSE )
+		FlushQueue();
+
 	m_pd3dDevice->SetRenderState( D3DRS_ZENABLE,      FALSE );
 	m_pd3dDevice->SetRenderState( D3DRS_ZWRITEENABLE, FALSE );
 }

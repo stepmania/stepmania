@@ -270,10 +270,10 @@ void WheelItemDisplay::DrawPrimitives()
 			if( m_fPercentGray > 0 )
 			{
 				m_sprSongBar.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-				m_sprSongBar.SetAddColor( D3DXCOLOR(0,0,0,m_fPercentGray) );
+				m_sprSongBar.SetGlowColor( D3DXCOLOR(0,0,0,m_fPercentGray) );
 				m_sprSongBar.Draw();
 				m_sprSongBar.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-				m_sprSongBar.SetAddColor( D3DXCOLOR(0,0,0,0) );
+				m_sprSongBar.SetGlowColor( D3DXCOLOR(0,0,0,0) );
 			}
 		}
 		break;

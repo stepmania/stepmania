@@ -36,7 +36,7 @@ ScreenGameOver::ScreenGameOver()
 	this->AddSubActor( &m_sprGameOver );
 
 	// tween game over
-	m_sprGameOver.SetAddColor( D3DXCOLOR(1,1,1,0) );
+	m_sprGameOver.SetGlowColor( D3DXCOLOR(1,1,1,0) );
 	m_sprGameOver.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 
 	m_sprGameOver.BeginTweeningQueued( 0.5f );		// fade to white

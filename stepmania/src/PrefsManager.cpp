@@ -34,6 +34,7 @@ PrefsManager::PrefsManager()
 	m_bOnlyDedicatedMenuButtons = false;
 	m_bShowFPS = false;
 	m_BackgroundMode = BGMODE_ANIMATIONS;
+	m_bShowDanger = true;
 	m_fBGBrightness = 0.8f;
 	m_bMenuTimer = true;
 	m_bEventMode = false;
@@ -41,6 +42,7 @@ PrefsManager::PrefsManager()
 	m_bAutoPlay = false;
 	m_fJudgeWindow = 0.18f;
 	m_fLifeDifficultyScale = 1.0f;
+	m_iMovieDecodeMS = 2;
 
 	ReadGlobalPrefsFromDisk( true );
 }
@@ -66,6 +68,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "UseDedicatedMenuButtons",m_bOnlyDedicatedMenuButtons );
 	ini.GetValueB( "Options", "ShowFPS",				m_bShowFPS );
 	ini.GetValueI( "Options", "BackgroundMode",			(int&)m_BackgroundMode );
+	ini.GetValueB( "Options", "ShowDanger",				m_bShowDanger );
 	ini.GetValueF( "Options", "BGBrightness",			m_fBGBrightness );
 	ini.GetValueB( "Options", "MenuTimer",				m_bMenuTimer );
 	ini.GetValueB( "Options", "EventMode",				m_bEventMode );
@@ -73,10 +76,12 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "AutoPlay",				m_bAutoPlay );
 	ini.GetValueF( "Options", "JudgeWindow",			m_fJudgeWindow );
 	ini.GetValueF( "Options", "LifeDifficultyScale",	m_fLifeDifficultyScale );
+	ini.GetValueI( "Options", "MovieDecodeMS",			m_iMovieDecodeMS );
 
+	m_asAdditionalSongFolders.RemoveAll();
 	CString sAdditionalSongFolders;
-	ini.GetValue( "Options", "SongFolders", sAdditionalSongFolders );
-	split( sAdditionalSongFolders, ",", m_asSongFolders, true );
+	ini.GetValue( "Options", "AdditionalSongFolders", sAdditionalSongFolders );
+	split( sAdditionalSongFolders, ",", m_asAdditionalSongFolders, true );
 
 	if( bSwitchToLastPlayedGame )
 	{
@@ -100,15 +105,17 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.GetValueB( "Options", "UseDedicatedMenuButtons",m_bOnlyDedicatedMenuButtons );
 	ini.SetValueB( "Options", "ShowFPS",				m_bShowFPS );
 	ini.SetValueI( "Options", "BackgroundMode",			m_BackgroundMode);
+	ini.SetValueB( "Options", "ShowDanger",				m_bShowDanger );
 	ini.SetValueF( "Options", "BGBrightness",			m_fBGBrightness );
 	ini.SetValueB( "Options", "EventMode",				m_bEventMode );
 	ini.SetValueB( "Options", "MenuTimer",				m_bMenuTimer );
 	ini.SetValueI( "Options", "NumArcadeStages",		m_iNumArcadeStages );
 	ini.SetValueB( "Options", "AutoPlay",				m_bAutoPlay );
 	ini.SetValueF( "Options", "JudgeWindow",			m_fJudgeWindow );
-	ini.GetValueF( "Options", "LifeDifficultyScale",	m_fLifeDifficultyScale );
+	ini.SetValueF( "Options", "LifeDifficultyScale",	m_fLifeDifficultyScale );
+	ini.SetValueI( "Options", "MovieDecodeMS",			m_iMovieDecodeMS );
 
-	ini.SetValue( "Options", "SongFolders", join(",", m_asSongFolders) );
+	ini.SetValue( "Options", "AdditionalSongFolders", join(",", m_asAdditionalSongFolders) );
 
 	ini.SetValueI( "Options", "Game",	GAMESTATE->m_CurGame );
 

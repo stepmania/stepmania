@@ -874,24 +874,19 @@ void Render()
 			break;
 		case S_OK:
 			{
-				// set texture and alpha properties
-				LPDIRECT3DDEVICE8 pd3dDevice = DISPLAY->GetDevice();
-
 				// calculate view and projection transforms
-				D3DXMATRIX matProj;
-				D3DXMatrixOrthoOffCenterLH( &matProj, 0, 640, 480, 0, -1000, 1000 );
-				pd3dDevice->SetTransform( D3DTS_PROJECTION, &matProj );
+				D3DXMATRIX mat;
+			
+				D3DXMatrixOrthoOffCenterLH( &mat, 0, 640, 480, 0, -1000, 1000 );
+				DISPLAY->SetProjectionTransform( &mat );
 
-				D3DXMATRIX matView;
-				D3DXMatrixIdentity( &matView );
-				pd3dDevice->SetTransform( D3DTS_VIEW, &matView );
+				D3DXMatrixIdentity( &mat );
+				DISPLAY->SetViewTransform( &mat );
 
 				DISPLAY->ResetMatrixStack();
 
-
 				// draw the game
 				SCREENMAN->Draw();
-
 
 				DISPLAY->EndFrame();
 			}

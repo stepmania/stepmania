@@ -58,8 +58,8 @@ void SongManager::InitSongArrayFromDisk( void(*callback)() )
 {
 	LoadStepManiaSongDir( "Songs", callback );
 
-	for( int i=0; i<PREFSMAN->m_asSongFolders.GetSize(); i++ )
-        LoadStepManiaSongDir( PREFSMAN->m_asSongFolders[i], callback );
+	for( int i=0; i<PREFSMAN->m_asAdditionalSongFolders.GetSize(); i++ )
+        LoadStepManiaSongDir( PREFSMAN->m_asAdditionalSongFolders[i], callback );
 	
 	// compute group names
 	CArray<Song*, Song*> arraySongs;

@@ -37,14 +37,16 @@ const int MAX_NUM_VERTICIES = MAX_NUM_QUADS*4;	// 4 verticies per quad
 
 class RageDisplay
 {
+	friend class RageTexture;
+
 public:
 	RageDisplay( HWND hWnd );
 	~RageDisplay();
 	bool SwitchDisplayMode( 
 		const bool bWindowed, const int iWidth, const int iHeight, const int iBPP, const int iFullScreenHz );
 
-	LPDIRECT3D8 GetD3D()					{ return m_pd3d; };
-	inline LPDIRECT3DDEVICE8 GetDevice()	{ return m_pd3dDevice; };
+//	LPDIRECT3D8 GetD3D()					{ return m_pd3d; };
+//	inline LPDIRECT3DDEVICE8 GetDevice()	{ return m_pd3dDevice; };
 	const D3DCAPS8& GetDeviceCaps()			{ return m_DeviceCaps; };
 
 	HRESULT Reset();
@@ -78,82 +80,22 @@ public:
 	}
 
 	
-	LPDIRECT3DVERTEXBUFFER8 GetVertexBuffer() { return m_pVB; };
+//	LPDIRECT3DVERTEXBUFFER8 GetVertexBuffer() { return m_pVB; };
+	void SetViewTransform( D3DXMATRIX* pMatrix );
+	void SetProjectionTransform( D3DXMATRIX* pMatrix );
+	void GetViewTransform( D3DXMATRIX* pMatrixOut );
+	void GetProjectionTransform( D3DXMATRIX* pMatrixOut );
 
-	inline void ResetMatrixStack() 
-	{ 
-		m_MatrixStack.SetSize( 1, 20 );
-		D3DXMatrixIdentity( &GetTopMatrix() );
-		
-		m_pd3dDevice->SetTransform( D3DTS_WORLD, &m_MatrixStack[m_MatrixStack.GetSize()-1] );
-	};
-	inline void PushMatrix() 
-	{ 
-		m_MatrixStack.Add( GetTopMatrix() );	
-		ASSERT(m_MatrixStack.GetSize()<30);		// check for infinite loop
-		m_pd3dDevice->SetTransform( D3DTS_WORLD, &m_MatrixStack[m_MatrixStack.GetSize()-1] );
-	};
-	inline void PopMatrix() 
-	{ 
-		m_MatrixStack.RemoveAt( m_MatrixStack.GetSize()-1 ); 
-		m_pd3dDevice->SetTransform( D3DTS_WORLD, &m_MatrixStack[m_MatrixStack.GetSize()-1] );
-	};
-	inline void Translate( const float x, const float y, const float z )
-	{
-		D3DXMATRIX matTemp;
-		D3DXMatrixTranslation( &matTemp, x, y, z );
-		D3DXMATRIX& matTop = GetTopMatrix();
-		matTop = matTemp * matTop;
-		m_pd3dDevice->SetTransform( D3DTS_WORLD, &matTop ); 
-	};
-	inline void TranslateLocal( const float x, const float y, const float z )
-	{
-		D3DXMATRIX matTemp;
-		D3DXMatrixTranslation( &matTemp, x, y, z );
-		D3DXMATRIX& matTop = GetTopMatrix();
-		matTop = matTop * matTemp;
-		m_pd3dDevice->SetTransform( D3DTS_WORLD, &matTop ); 
-	};
-	inline void Scale( const float x, const float y, const float z )
-	{
-		D3DXMATRIX matTemp;
-		D3DXMatrixScaling( &matTemp, x, y, z );
-		D3DXMATRIX& matTop = GetTopMatrix();
-		matTop = matTemp * matTop;
-		m_pd3dDevice->SetTransform( D3DTS_WORLD, &matTop ); 
-	};
-	inline void RotateX( const float r )
-	{
-		D3DXMATRIX matTemp;
-		D3DXMatrixRotationX( &matTemp, r );
-		D3DXMATRIX& matTop = GetTopMatrix();
-		matTop = matTemp * matTop;
-		m_pd3dDevice->SetTransform( D3DTS_WORLD, &matTop ); 
-	};
-	inline void RotateY( const float r )
-	{
-		D3DXMATRIX matTemp;
-		D3DXMatrixRotationY( &matTemp, r );
-		D3DXMATRIX& matTop = GetTopMatrix();
-		matTop = matTemp * matTop;
-		m_pd3dDevice->SetTransform( D3DTS_WORLD, &matTop ); 
-	};
-	inline void RotateZ( const float r )
-	{
-		D3DXMATRIX matTemp;
-		D3DXMatrixRotationZ( &matTemp, r );
-		D3DXMATRIX& matTop = GetTopMatrix();
-		matTop = matTemp * matTop;
-		m_pd3dDevice->SetTransform( D3DTS_WORLD, &matTop ); 
-	};
-	inline void RotateYawPitchRoll( const float x, const float y, const float z )
-	{
-		D3DXMATRIX matTemp;
-		D3DXMatrixRotationYawPitchRoll( &matTemp, x, y, z );
-		D3DXMATRIX& matTop = GetTopMatrix();
-		matTop = matTemp * matTop;
-		m_pd3dDevice->SetTransform( D3DTS_WORLD, &matTop ); 
-	};
+	void ResetMatrixStack();
+	void PushMatrix();
+	void PopMatrix();
+	void Translate( const float x, const float y, const float z );
+	void TranslateLocal( const float x, const float y, const float z );
+	void Scale( const float x, const float y, const float z );
+	void RotateX( const float r );
+	void RotateY( const float r );
+	void RotateZ( const float r );
+//	void RotateYawPitchRoll( const float x, const float y, const float z );
 
 	float GetFPS() { return m_fFPS; };
 
@@ -194,15 +136,20 @@ protected:
 	int			m_iNumVerts;
 
 public:
+	// TODO:  Elminiate vertex duplication using an index buffer.  Would this work with OpenGL though?
+//	void AddTriangle( const RAGEVERTEX v[3] );
+	void AddQuad( const RAGEVERTEX v[4] );	// upper-left, upper-right, lower-left, lower-right
+	void AddFan( const RAGEVERTEX v[], int iNumPrimitives );
+	void AddStrip( const RAGEVERTEX v[], int iNumPrimitives );
 	void AddTriangle(
-		const D3DXVECTOR3& p0, const D3DCOLOR& c0, const D3DXVECTOR2& t0, const D3DCOLOR& a0,
-		const D3DXVECTOR3& p1, const D3DCOLOR& c1, const D3DXVECTOR2& t1, const D3DCOLOR& a1,
-		const D3DXVECTOR3& p2, const D3DCOLOR& c2, const D3DXVECTOR2& t2, const D3DCOLOR& a2 );
+		const D3DXVECTOR3& p0, const D3DCOLOR& c0, const D3DXVECTOR2& t0,
+		const D3DXVECTOR3& p1, const D3DCOLOR& c1, const D3DXVECTOR2& t1,
+		const D3DXVECTOR3& p2, const D3DCOLOR& c2, const D3DXVECTOR2& t2 );
 	void AddQuad(
-		const D3DXVECTOR3 &p0, const D3DCOLOR& c0, const D3DXVECTOR2& t0, const D3DCOLOR& a0,	// upper-left
-		const D3DXVECTOR3 &p1, const D3DCOLOR& c1, const D3DXVECTOR2& t1, const D3DCOLOR& a1, 	// upper-right
-		const D3DXVECTOR3 &p2, const D3DCOLOR& c2, const D3DXVECTOR2& t2, const D3DCOLOR& a2, 	// lower-left
-		const D3DXVECTOR3 &p3, const D3DCOLOR& c3, const D3DXVECTOR2& t3, const D3DCOLOR& a3  );// lower-right
+		const D3DXVECTOR3 &p0, const D3DCOLOR& c0, const D3DXVECTOR2& t0,	// upper-left
+		const D3DXVECTOR3 &p1, const D3DCOLOR& c1, const D3DXVECTOR2& t1, 	// upper-right
+		const D3DXVECTOR3 &p2, const D3DCOLOR& c2, const D3DXVECTOR2& t2, 	// lower-left
+		const D3DXVECTOR3 &p3, const D3DCOLOR& c3, const D3DXVECTOR2& t3 );	// lower-right
 	void FlushQueue();
 	void SetTexture( RageTexture* pTexture );
 	void SetColorTextureMultDiffuse();
