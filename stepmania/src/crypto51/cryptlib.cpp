@@ -657,22 +657,4 @@ DecodingResult PK_Verifier::RecoverMessage(byte *recoveredMessage,
 	return RecoverAndRestart(recoveredMessage, *m);
 }
 
-void SimpleKeyAgreementDomain::GenerateKeyPair(RandomNumberGenerator &rng, byte *privateKey, byte *publicKey) const
-{
-	GeneratePrivateKey(rng, privateKey);
-	GeneratePublicKey(rng, privateKey, publicKey);
-}
-
-void AuthenticatedKeyAgreementDomain::GenerateStaticKeyPair(RandomNumberGenerator &rng, byte *privateKey, byte *publicKey) const
-{
-	GenerateStaticPrivateKey(rng, privateKey);
-	GenerateStaticPublicKey(rng, privateKey, publicKey);
-}
-
-void AuthenticatedKeyAgreementDomain::GenerateEphemeralKeyPair(RandomNumberGenerator &rng, byte *privateKey, byte *publicKey) const
-{
-	GenerateEphemeralPrivateKey(rng, privateKey);
-	GenerateEphemeralPublicKey(rng, privateKey, publicKey);
-}
-
 NAMESPACE_END
