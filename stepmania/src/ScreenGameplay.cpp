@@ -23,6 +23,7 @@
 #include "LifeMeterBattery.h"
 #include "GameState.h"
 #include "ScoreDisplayNormal.h"
+#include "ScoreDisplayPercentage.h"
 #include "ScoreDisplayOni.h"
 #include "ScoreDisplayBattle.h"
 #include "ScoreDisplayRave.h"
@@ -422,7 +423,10 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		{
 		case PLAY_MODE_ARCADE:
 		case PLAY_MODE_NONSTOP:
-			m_pScoreDisplay[p] = new ScoreDisplayNormal;
+			if( PREFSMAN->m_bPercentageScoring )
+				m_pScoreDisplay[p] = new ScoreDisplayPercentage;
+			else
+				m_pScoreDisplay[p] = new ScoreDisplayNormal;
 			break;
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
