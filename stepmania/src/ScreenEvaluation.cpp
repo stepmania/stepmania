@@ -227,21 +227,21 @@ void ScreenEvaluation::Init()
 		{
 		case stage:
 			// update unlock data
-			UNLOCKSYS->UnlockClearStage();
-			UNLOCKSYS->UnlockAddAP( grade[p] );
-			UNLOCKSYS->UnlockAddSP( grade[p] );
-			UNLOCKSYS->UnlockAddDP( (float)stageStats.iActualDancePoints[p] );
+			UNLOCKMAN->UnlockClearStage();
+			UNLOCKMAN->UnlockAddAP( grade[p] );
+			UNLOCKMAN->UnlockAddSP( grade[p] );
+			UNLOCKMAN->UnlockAddDP( (float)stageStats.iActualDancePoints[p] );
 
 			// if it's extra stage, update # passed stages
 			if ( (GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() ) &&
 				grade[p] > GRADE_FAILED )
-				UNLOCKSYS->UnlockClearExtraStage();
+				UNLOCKMAN->UnlockClearExtraStage();
 			break;
 
 		case course:
-			UNLOCKSYS->UnlockAddDP( (float) stageStats.iActualDancePoints[p] );
-			UNLOCKSYS->UnlockAddAP( (float) stageStats.iSongsPassed[p] );
-			UNLOCKSYS->UnlockAddSP( (float) stageStats.iSongsPassed[p] );
+			UNLOCKMAN->UnlockAddDP( (float) stageStats.iActualDancePoints[p] );
+			UNLOCKMAN->UnlockAddAP( (float) stageStats.iSongsPassed[p] );
+			UNLOCKMAN->UnlockAddSP( (float) stageStats.iSongsPassed[p] );
 			break;
 		}
 	}

@@ -110,6 +110,6 @@ private:
 	set<int> m_RouletteCodes; // "codes" which are available in roulette and which unlock if rouletted
 };
 
-extern UnlockSystem*	UNLOCKSYS;  // global and accessable from anywhere in program
+extern UnlockSystem*	UNLOCKMAN;  // global and accessable from anywhere in program
 
 #endif

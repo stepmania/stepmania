@@ -165,7 +165,7 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 			vector<CString> asBits;
 			split( parts[j], ",", asBits, true );
 			if( !asBits[0].CompareNoCase("unlock") )
-				UNLOCKSYS->UnlockCode( atoi(asBits[1]) );
+				UNLOCKMAN->UnlockCode( atoi(asBits[1]) );
 			if( !asBits[0].CompareNoCase("sound") )
 				SOUND->PlayOnce( THEME->GetPathToS( asBits[1] ) );
 		}

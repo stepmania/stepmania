@@ -391,7 +391,7 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 		if( m_iCurToastyCombo==250 && !GAMESTATE->m_bDemonstrationOrJukebox )
 		{
 			SCREENMAN->PostMessageToTopScreen( SM_PlayToasty, 0 );
-			UNLOCKSYS->UnlockToasty();
+			UNLOCKMAN->UnlockToasty();
 		}
 		break;
 	default:

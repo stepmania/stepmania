@@ -22,7 +22,7 @@
 #include "IniFile.h"
 #include "MsdFile.h"
 
-UnlockSystem*	UNLOCKSYS = NULL;	// global and accessable from anywhere in our program
+UnlockSystem*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our program
 
 #define UNLOCKS_PATH "Data/Unlocks.dat"
 #define MEMCARD_PATH "Data/MemCard.ini"
@@ -40,7 +40,7 @@ static const char *g_UnlockNames[NUM_UNLOCK_TYPES] =
 
 UnlockSystem::UnlockSystem()
 {
-	UNLOCKSYS = this;
+	UNLOCKMAN = this;
 
 	LoadFromDATFile();
 
@@ -144,10 +144,10 @@ UnlockEntry::UnlockEntry()
 bool UnlockEntry::IsLocked() const
 {
 	for( int i = 0; i < NUM_UNLOCK_TYPES; ++i )
-		if( m_fRequired[i] && UNLOCKSYS->m_fScores[i] >= m_fRequired[i] )
+		if( m_fRequired[i] && UNLOCKMAN->m_fScores[i] >= m_fRequired[i] )
 			return false;
 
-	if( m_iCode != -1 && UNLOCKSYS->m_UnlockedCodes.find(m_iCode) != UNLOCKSYS->m_UnlockedCodes.end() )
+	if( m_iCode != -1 && UNLOCKMAN->m_UnlockedCodes.find(m_iCode) != UNLOCKMAN->m_UnlockedCodes.end() )
 		return false;
 
 	return true;

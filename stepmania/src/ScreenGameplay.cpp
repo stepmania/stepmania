@@ -2134,9 +2134,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_textSurviveTime.SetText( "TIME: " + SecondsToTime(fMaxSurviveSeconds) );
 			SET_XY_AND_ON_COMMAND( m_textSurviveTime );
 			
-			// if unlocks are on, update fail extra stage count
-			if (PREFSMAN->m_bUseUnlockSystem)
-				UNLOCKSYS->UnlockFailExtraStage();
+			// Increment update failed extra stage count.
+			if( PREFSMAN->m_bUseUnlockSystem )
+				UNLOCKMAN->UnlockFailExtraStage();
 		}
 		
 		// Feels hackish. Feel free to make cleaner.

@@ -109,7 +109,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 	m_textSongs.Command( SONGS_ON_COMMAND );
 	CString text = ssprintf("%d songs in %d groups, %d courses", SONGMAN->GetNumSongs(), SONGMAN->GetNumGroups(), SONGMAN->GetNumCourses() );
 	if( PREFSMAN->m_bUseUnlockSystem )
-		text += ssprintf(", %d unlocks", UNLOCKSYS->GetNumUnlocks() );
+		text += ssprintf(", %d unlocks", UNLOCKMAN->GetNumUnlocks() );
 	m_textSongs.SetText( text );
 	this->AddChild( &m_textSongs );
 

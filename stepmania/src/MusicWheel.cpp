@@ -365,12 +365,12 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CStrin
 			/* Don't show in roulette if #SELECTABLE:NO unless some other song in the same
 			 * roulette class has previously been unlocked. */
 			if( so==SORT_ROULETTE && !(pSong->RouletteDisplayed()
-				|| UNLOCKSYS->SongIsRoulette( pSong )) )
+				|| UNLOCKMAN->SongIsRoulette( pSong )) )
 				continue;
 		}
 
 		// If we're using unlocks, check it here to prevent from being shown
-		if( so!=SORT_ROULETTE && UNLOCKSYS->SongIsLocked(pSong) )
+		if( so!=SORT_ROULETTE && UNLOCKMAN->SongIsLocked(pSong) )
 			continue;
 
 		vector<Steps*> arraySteps;
@@ -489,7 +489,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				Song *pSong = arrayAllSongs[i];
 				if( SONGMAN->GetNumStagesForSong(pSong) > GAMESTATE->GetNumStagesLeft() )
 					continue;
-				if( UNLOCKSYS->SongIsLocked(pSong) )
+				if( UNLOCKMAN->SongIsLocked(pSong) )
 					continue;
 
 				arraySongs.push_back( pSong );
@@ -648,7 +648,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			Course* pCourse = apCourses[c];
 
 			// if unlocks are on, make sure it is unlocked
-			if ( UNLOCKSYS->CourseIsLocked(pCourse) )
+			if ( UNLOCKMAN->CourseIsLocked(pCourse) )
 				continue;
 
 			CString sThisSection = "";
@@ -1241,7 +1241,7 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 		return false;
 	case TYPE_SONG:
 		if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() )
-			UNLOCKSYS->UnlockSong( m_CurWheelItemData[m_iSelection]->m_pSong );
+			UNLOCKMAN->UnlockSong( m_CurWheelItemData[m_iSelection]->m_pSong );
 		return true;
 	case TYPE_COURSE:
 		return true;

@@ -62,7 +62,7 @@ ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : Screen( sClassName 
 	{
 		bool DisplaySong = aAllSongs[j]->NormallyDisplayed();
 		
-		if( UNLOCKSYS->SongIsLocked( aAllSongs[j] ) )
+		if( UNLOCKMAN->SongIsLocked( aAllSongs[j] ) )
 			DisplaySong = false;
 		
 		if( aAllSongs[j]->SongCompleteForStyle(GAMESTATE->GetCurrentStyleDef()) && 

@@ -186,7 +186,7 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 		for( unsigned s=0; s<num_songs; s++ )
 		{
 			Song *pSong = SONGMAN->GetAllSongs()[s];
-			if( UNLOCKSYS->SongIsLocked(pSong) )
+			if( UNLOCKMAN->SongIsLocked(pSong) )
 				continue;
 
 			StepsScoreRowItem* pStepsScoreRowItem = new StepsScoreRowItem;
@@ -233,7 +233,7 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 		LOG->Trace("rankings: adding %u courses", unsigned(courses.size()));
 		for( unsigned s=0; s<courses.size(); s++ )
 		{
-			if( UNLOCKSYS->CourseIsLocked(courses[s]) )
+			if( UNLOCKMAN->CourseIsLocked(courses[s]) )
 				continue;
 
 			CourseScoreRowItem* pCourseScoreRowItem = new CourseScoreRowItem;

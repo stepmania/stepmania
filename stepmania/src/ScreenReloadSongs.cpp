@@ -21,7 +21,7 @@ void ScreenReloadSongs::Update( float fDeltaTime )
 
 	m_FirstUpdate = false;
 	SONGMAN->Reload();
-	UNLOCKSYS->UpdateSongs();
+	UNLOCKMAN->UpdateSongs();
 	SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 }
 

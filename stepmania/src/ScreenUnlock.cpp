@@ -43,8 +43,8 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 	LOG->Trace("ScreenUnlock::ScreenUnlock()");
 
 	unsigned NumUnlocks = NUM_UNLOCKS;
-	if (UNLOCKSYS->m_SongEntries.size() < NumUnlocks)
-		NumUnlocks = UNLOCKSYS->m_SongEntries.size();
+	if (UNLOCKMAN->m_SongEntries.size() < NumUnlocks)
+		NumUnlocks = UNLOCKMAN->m_SongEntries.size();
 
 	if (!PREFSMAN->m_bUseUnlockSystem || NumUnlocks == 0)
 	{
@@ -62,11 +62,11 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 		// get pertaining UnlockEntry
 		CString SongTitle = DISPLAYED_SONG(i);
 		if (USE_UNLOCKS_DAT == 1)
-			if ((unsigned)i <= UNLOCKSYS->m_SongEntries.size() )
-				SongTitle = UNLOCKSYS->m_SongEntries[i-1].m_sSongName;
+			if ((unsigned)i <= UNLOCKMAN->m_SongEntries.size() )
+				SongTitle = UNLOCKMAN->m_SongEntries[i-1].m_sSongName;
 		LOG->Trace("UnlockScreen: Searching for %s", SongTitle.c_str());
 		
-		const UnlockEntry *pSong = UNLOCKSYS->FindLockEntry( SongTitle );
+		const UnlockEntry *pSong = UNLOCKMAN->FindLockEntry( SongTitle );
 
 		if( pSong == NULL)
 		{
@@ -115,11 +115,11 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 		{
 			CString DisplayedSong = DISPLAYED_SONG(i);
 			if (USE_UNLOCKS_DAT == 1)
-				if ((unsigned)i <= UNLOCKSYS->m_SongEntries.size() )
-					DisplayedSong = UNLOCKSYS->m_SongEntries[i-1].m_sSongName;
+				if ((unsigned)i <= UNLOCKMAN->m_SongEntries.size() )
+					DisplayedSong = UNLOCKMAN->m_SongEntries[i-1].m_sSongName;
 			
 			DisplayedSong.MakeUpper();
-			UnlockEntry *pSong = UNLOCKSYS->FindLockEntry(DisplayedSong);
+			UnlockEntry *pSong = UNLOCKMAN->FindLockEntry(DisplayedSong);
 			if ( pSong == NULL )  // no such song
 				continue;
 
@@ -242,12 +242,12 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 			CString DisplayedSong = DISPLAYED_SONG(NextIcon);
 			if (USE_UNLOCKS_DAT == 1)
 			{
-				if (NextIcon <= UNLOCKSYS->m_SongEntries.size() )
-					DisplayedSong = UNLOCKSYS->m_SongEntries[NextIcon-1].m_sSongName;
+				if (NextIcon <= UNLOCKMAN->m_SongEntries.size() )
+					DisplayedSong = UNLOCKMAN->m_SongEntries[NextIcon-1].m_sSongName;
 			}
 
 			DisplayedSong.MakeUpper();
-			UnlockEntry *pSong = UNLOCKSYS->FindLockEntry(DisplayedSong);
+			UnlockEntry *pSong = UNLOCKMAN->FindLockEntry(DisplayedSong);
 
 			if (pSong->m_pSong == NULL)
 				continue;
@@ -306,13 +306,13 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 	CString PointDisplay = TYPE_TO_DISPLAY;
 	if (PointDisplay == "DP" || PointDisplay == "Dance")
 	{
-		CString sDP = ssprintf( "%d", (int)UNLOCKSYS->DancePointsUntilNextUnlock() );
+		CString sDP = ssprintf( "%d", (int)UNLOCKMAN->DancePointsUntilNextUnlock() );
 		PointsUntilNextUnlock.SetText( sDP );
 	} else if (PointDisplay == "AP" || PointDisplay == "Arcade") {
-		CString sAP = ssprintf( "%d", (int)UNLOCKSYS->ArcadePointsUntilNextUnlock() );
+		CString sAP = ssprintf( "%d", (int)UNLOCKMAN->ArcadePointsUntilNextUnlock() );
 		PointsUntilNextUnlock.SetText( sAP );
 	} else if (PointDisplay == "SP" || PointDisplay == "Song") {
-		CString sSP = ssprintf( "%d", (int)UNLOCKSYS->SongPointsUntilNextUnlock() );
+		CString sSP = ssprintf( "%d", (int)UNLOCKMAN->SongPointsUntilNextUnlock() );
 		PointsUntilNextUnlock.SetText( sSP );
 	}
 
