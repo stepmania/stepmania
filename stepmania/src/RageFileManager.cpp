@@ -506,7 +506,7 @@ unsigned int GetHashForDirectory( const CString &sDir )
 {
 	unsigned int hash = 0;
 
-	hash += GetHashForFile( sDir );
+	hash += GetHashForString( sDir );
 
 	CStringArray arrayFiles;
 	GetDirListing( sDir+"*", arrayFiles, false );
