@@ -105,8 +105,8 @@ static RageKeySym SDLSymToKeySym( SDLKey key )
 	case SDLK_LCTRL:		return KEY_LCTRL;
 	case SDLK_RALT:			return KEY_RALT;
 	case SDLK_LALT:			return KEY_LALT;
-	case SDLK_RMETA:		return KEY_LMETA;
-	case SDLK_LMETA:		return KEY_RMETA;
+	case SDLK_RMETA:		return KEY_RMETA;
+	case SDLK_LMETA:		return KEY_LMETA;
 	case SDLK_LSUPER:		return KEY_LSUPER;
 	case SDLK_RSUPER:		return KEY_RSUPER;
 	case SDLK_MENU:			return KEY_MENU;
