@@ -96,13 +96,9 @@ public:
 				return true;
 		return false;
 	}
-	Character* GameState::GetRandomCharacter()
-	{
-		if( m_pCharacters.size() )
-			return m_pCharacters[rand()%m_pCharacters.size()];
-		else
-			return NULL;
-	}
+	void GetCharacters( vector<Character*> apCharactersOut );
+	Character* GameState::GetRandomCharacter();
+	Character* GameState::GetDefaultCharacter();
 
 	PlayerController	m_PlayerController[NUM_PLAYERS];
 	
@@ -234,7 +230,9 @@ public:
 	void AdjustFailType();
 
 	// character stuff
-	vector<Character*> m_pCharacters;
+	private:
+		vector<Character*> m_pCharacters;
+	public:
 	Character* m_pCurCharacters[NUM_PLAYERS];
 
 	void ReloadCharacters();

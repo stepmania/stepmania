@@ -154,6 +154,7 @@ void PlayerMinus::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, Co
 		for( int al=0; al<NUM_ATTACK_LEVELS; al++ )
 		{
 			Character *ch = GAMESTATE->m_pCurCharacters[m_PlayerNumber];
+			ASSERT( ch );
 			CString* asAttacks = ch->m_sAttacks[al];
 			for( int att = 0; att < NUM_ATTACKS_PER_LEVEL; ++att )
 			{

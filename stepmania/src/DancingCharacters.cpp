@@ -53,6 +53,9 @@ DancingCharacters::DancingCharacters()
 		if( !pChar )
 			continue;
 		
+		if( pChar->GetModelPath().empty() )
+			continue;
+		
 		if( GAMESTATE->GetNumPlayersEnabled()==2 )
 			m_Character[p].SetX( MODEL_X_TWO_PLAYERS[p] );
 		else

@@ -52,7 +52,15 @@ CString GetRandomFileInDir( CString sDir )
 }
 
 
-CString Character::GetModelPath()				{ return m_sCharDir + "model.txt"; }
+CString Character::GetModelPath()
+{
+	CString s = m_sCharDir + "model.txt";
+	if( DoesFileExist(s) )
+		return s; 
+	else 
+		return "";
+}
+
 CString Character::GetRestAnimationPath()		{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Rest" SLASH)); }
 CString Character::GetWarmUpAnimationPath()		{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "WarmUp" SLASH)); }
 CString Character::GetDanceAnimationPath()		{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Dance" SLASH)); }

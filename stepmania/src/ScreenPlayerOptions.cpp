@@ -176,9 +176,11 @@ void ScreenPlayerOptions::ImportOptions()
 	//
 	m_OptionRow[PO_CHARACTER].choices.clear();
 	m_OptionRow[PO_CHARACTER].choices.push_back( "OFF" );
-	for( i=0; i<GAMESTATE->m_pCharacters.size(); i++ )
+	vector<Character*> apCharacters;
+	GAMESTATE->GetCharacters( apCharacters );
+	for( i=0; i<apCharacters.size(); i++ )
 	{
-		CString s = GAMESTATE->m_pCharacters[i]->m_sName;
+		CString s = apCharacters[i]->m_sName;
 		s.MakeUpper();
 		m_OptionRow[PO_CHARACTER].choices.push_back( s ); 
 	}
@@ -293,8 +295,10 @@ void ScreenPlayerOptions::ImportOptions()
 					m_iSelectedOption[p][PO_PERSPECTIVE] = n;
 		}
 
-		for( i=0; i<GAMESTATE->m_pCharacters.size(); i++ )
-			if( GAMESTATE->m_pCurCharacters[p] == GAMESTATE->m_pCharacters[i] )
+		vector<Character*> apCharacters;
+		GAMESTATE->GetCharacters( apCharacters );
+		for( i=0; i<apCharacters.size(); i++ )
+			if( GAMESTATE->m_pCurCharacters[p] == apCharacters[i] )
 				m_iSelectedOption[p][PO_CHARACTER] = i+1;
 
 		/* Why do this?  We don't want to erase if we back out. */
@@ -430,7 +434,9 @@ void ScreenPlayerOptions::ExportOptions()
 		else
 		{
 			int choice = m_iSelectedOption[p][PO_CHARACTER] - 1;
-			GAMESTATE->m_pCurCharacters[p] = GAMESTATE->m_pCharacters[choice];
+			vector<Character*> apCharacters;
+			GAMESTATE->GetCharacters( apCharacters );
+			GAMESTATE->m_pCurCharacters[p] = apCharacters[choice];
 		}
 	}
 }

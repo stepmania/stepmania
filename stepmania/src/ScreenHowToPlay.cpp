@@ -104,7 +104,9 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	}
 	
 	// Display random character
-	if( USECHARACTER && GAMESTATE->m_pCharacters.size() && HaveAllCharAnimations() )
+	vector<Character*> apCharacters;
+	GAMESTATE->GetCharacters( apCharacters );
+	if( USECHARACTER && apCharacters.size() && HaveAllCharAnimations() )
 	{
 		Character* rndchar = GAMESTATE->GetRandomCharacter();
 

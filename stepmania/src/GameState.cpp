@@ -113,7 +113,7 @@ void GameState::Reset()
 		if( PREFSMAN->m_ShowDancingCharacters == PrefsManager::CO_RANDOM)
 			m_pCurCharacters[p] = GetRandomCharacter();
 		else
-			m_pCurCharacters[p] = NULL;
+			m_pCurCharacters[p] = GetDefaultCharacter();
 	}
 
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -726,4 +726,32 @@ bool GameState::ShowMarvelous() const
 			return true;
 
 	return false;
+}
+
+void GameState::GetCharacters( vector<Character*> apCharactersOut )
+{
+	for( unsigned i=0; i<m_pCharacters.size(); i++ )
+		if( m_pCharacters[i]->m_sName.CompareNoCase("default")!=0 )
+			apCharactersOut.push_back( m_pCharacters[i] );
+}
+
+Character* GameState::GetRandomCharacter()
+{
+	vector<Character*> apCharacters;
+	GetCharacters( apCharacters );
+	if( apCharacters.size() )
+		return m_pCharacters[rand()%apCharacters.size()];
+	else
+		return NULL;
+}
+
+Character* GameState::GetDefaultCharacter()
+{
+	for( unsigned i=0; i<m_pCharacters.size(); i++ )
+	{
+		if( m_pCharacters[i]->m_sName.CompareNoCase("default")==0 )
+			return m_pCharacters[i];
+	}
+
+	return NULL;
 }

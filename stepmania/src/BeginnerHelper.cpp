@@ -122,7 +122,10 @@ bool BeginnerHelper::CanUse()
 
 	if( GAMESTATE->m_CurGame != GAME_DANCE )
 		return false;
-	if( GAMESTATE->m_pCharacters.size() == 0 )
+
+	vector<Character*> apCharacters;
+	GAMESTATE->GetCharacters( apCharacters );
+	if( apCharacters.size() == 0 )
 		return false;
 
 	switch (GAMESTATE->m_CurStyle)

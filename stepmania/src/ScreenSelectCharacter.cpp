@@ -71,17 +71,6 @@ ScreenSelectCharacter::ScreenSelectCharacter() : Screen("ScreenSelectCharacter")
 	//
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
-		//
-		// The case of disallowing the playing of Rave/Battle mode when there
-		// are no characters should be handled by ScreenSelectXxx consulting
-		// GAMESTATE->IsPlayable(), and not here.
-		//
-		// if(	GAMESTATE->m_pCharacters.empty() )
-		// {
-		//	SCREENMAN->Prompt( SM_GoToPrevScreen, "No characters are installed.\n\nAt least one character must be installed\nto play this mode." );
-		//	return;
-		//}
-		ASSERT( !GAMESTATE->m_pCharacters.empty() );
 		break;
 
 	//
@@ -89,8 +78,9 @@ ScreenSelectCharacter::ScreenSelectCharacter() : Screen("ScreenSelectCharacter")
 	// characters or if this screen should be hidden
 	//
 	default:
-		if(	GAMESTATE->m_pCharacters.empty() || 
-			PREFSMAN->m_ShowDancingCharacters != PrefsManager::CO_SELECT )
+		vector<Character*> apCharacters;
+		GAMESTATE->GetCharacters( apCharacters );
+		if(	apCharacters.empty() || PREFSMAN->m_ShowDancingCharacters != PrefsManager::CO_SELECT )
 		{
 			HandleScreenMessage( SM_GoToNextScreen );
 			return;
@@ -278,7 +268,9 @@ void ScreenSelectCharacter::AfterValueChange( PlayerNumber pn )
 	case CHOOSING_CPU_CHARACTER:
 	case CHOOSING_HUMAN_CHARACTER:
 		{
-			Character* pChar = GAMESTATE->m_pCharacters[ m_iSelectedCharacter[pnAffected] ];
+			vector<Character*> apCharacters;
+			GAMESTATE->GetCharacters( apCharacters );
+			Character* pChar = apCharacters[ m_iSelectedCharacter[pnAffected] ];
 			m_sprCard[pnAffected].UnloadTexture();
 			m_sprCard[pnAffected].Load( pChar->GetCardPath() );
 
@@ -288,13 +280,13 @@ void ScreenSelectCharacter::AfterValueChange( PlayerNumber pn )
 						m_AttackIcons[pnAffected][i][j].Load( pnAffected, pChar->m_sAttacks[i][j] );
 
 			int c = m_iSelectedCharacter[pnAffected] - MAX_CHAR_ICONS_TO_SHOW/2;
-			wrap( c, GAMESTATE->m_pCharacters.size() );
+			wrap( c, apCharacters.size() );
 
 			for( unsigned i=0; i<MAX_CHAR_ICONS_TO_SHOW; i++ )
 			{
 				c++;
-				wrap( c, GAMESTATE->m_pCharacters.size() );
-				Character* pCharacter = GAMESTATE->m_pCharacters[c];
+				wrap( c, apCharacters.size() );
+				Character* pCharacter = apCharacters[c];
 				Banner &banner = m_sprIcons[pnAffected][i];
 				banner.LoadIconFromCharacter( pCharacter );
 				float fX = (pnAffected==PLAYER_1) ? 320-ICON_WIDTH : 320+ICON_WIDTH;
@@ -340,8 +332,10 @@ void ScreenSelectCharacter::Move( PlayerNumber pn, int deltaValue )
 	{
 	case CHOOSING_CPU_CHARACTER:
 	case CHOOSING_HUMAN_CHARACTER:
-		m_iSelectedCharacter[pnAffected] = (m_iSelectedCharacter[pnAffected]+deltaValue)+GAMESTATE->m_pCharacters.size();
-		m_iSelectedCharacter[pnAffected] %= GAMESTATE->m_pCharacters.size();
+		vector<Character*> apCharacters;
+		GAMESTATE->GetCharacters( apCharacters );
+		m_iSelectedCharacter[pnAffected] += deltaValue;
+		wrap( m_iSelectedCharacter[pnAffected], apCharacters.size() );
 		AfterValueChange(pn);
 		m_soundChange.PlayRandom();
 		break;
@@ -378,7 +372,9 @@ void ScreenSelectCharacter::MenuStart( PlayerNumber pn )
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			Character* pChar = GAMESTATE->m_pCharacters[ m_iSelectedCharacter[p] ];
+			vector<Character*> apCharacters;
+			GAMESTATE->GetCharacters( apCharacters );
+			Character* pChar = apCharacters[ m_iSelectedCharacter[p] ];
 			GAMESTATE->m_pCurCharacters[p] = pChar;
 		}
 
