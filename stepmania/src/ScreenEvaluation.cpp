@@ -372,6 +372,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 				for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )	// foreach line
 				{
 					m_sprPossibleBar[p][r].Load( THEME->GetPathTo("Graphics","evaluation bars possible 1x2") );
+					m_sprPossibleBar[p][r].StopAnimating();
 					m_sprPossibleBar[p][r].SetState( p );
 					m_sprPossibleBar[p][r].SetHorizAlign( Actor::align_left );
 					m_sprPossibleBar[p][r].SetX( BAR_BASE_X(p) );
@@ -385,8 +386,8 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 					this->AddChild( &m_sprPossibleBar[p][r] );
 
 					m_sprActualBar[p][r].Load( THEME->GetPathTo("Graphics","evaluation bars actual 1x2") );
-					m_sprActualBar[p][r].SetState( p );
 					m_sprActualBar[p][r].StopAnimating();
+					m_sprActualBar[p][r].SetState( p );
 					m_sprActualBar[p][r].SetHorizAlign( Actor::align_left );
 					m_sprActualBar[p][r].SetX( BAR_BASE_X(p) );
 					m_sprActualBar[p][r].SetY( BAR_START_Y + BAR_SPACING_Y*r );

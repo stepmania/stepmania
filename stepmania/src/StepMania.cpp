@@ -27,6 +27,7 @@
 #include "arch/arch.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
 #include "arch/ErrorDialog/ErrorDialog.h"
+#include "time.h"
 
 #include "SDL.h"
 #include "SDL_syswm.h"		// for SDL_SysWMinfo
@@ -261,7 +262,8 @@ int main(int argc, char* argv[])
 	SDL_WM_SetCaption("StepMania", "StepMania");
 	loading_window->Paint();
 
-	srand( (unsigned)RageTimer::GetTimeSinceStart() );	// seed number generator
+	// changed to use time.  GetTimeSinceStart is silly because it always return 0! -Chris
+	srand( time(NULL) );	// seed number generator	
 	
 	//
 	// Create game objects
