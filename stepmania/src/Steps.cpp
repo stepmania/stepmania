@@ -158,7 +158,7 @@ void Steps::TidyUpData()
 	if( GetMeter() < 1) // meter is invalid
 		SetMeter( int(PredictMeter()) );
 
-	if( m_sDescription.size() > MAX_DESCRIPTION_LENGTH )
+	if( int(m_sDescription.size()) > MAX_DESCRIPTION_LENGTH )
 		m_sDescription = m_sDescription.Left( MAX_DESCRIPTION_LENGTH );
 }
 
