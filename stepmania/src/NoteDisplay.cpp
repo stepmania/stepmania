@@ -812,6 +812,7 @@ void NoteDisplay::DrawHoldHead( const HoldNote& hn, bool bIsBeingHeld, float fYH
 	const RageColor colorDiffuse= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	const RageColor colorGlow	= RageColor(1,1,1,fGlow);
 
+	pActor->SetRotationZ( 0 );
 	pActor->SetXY( fX, fY );
 	pActor->SetZ( fZ );
 
