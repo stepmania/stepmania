@@ -627,27 +627,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 	
 //	printf( "m_fSongBeat = %f\n", GAMESTATE->m_fSongBeat );
 
-/*
-	 * Before the music starts, we have no song position, so set it toto
-	 * -1; if we leave it alone we'll get 0, which will cause movies to start
-	 * playing before the music starts.
-	 *
-	 * We really should be setting the beat to negative numbers before the song
-	 * starts, leading up to 0, but we need a separate time source to do that.
-	 * XXX: do this once we have a new sound infrastructure. 
-	if(!m_soundMusic.IsPlaying())
-		GAMESTATE->m_fSongBeat = -1;
-
-
-	Chris:  Actually, RageSoundStream has a "fake" second counter built into
-	it.  If you set its position to a negative second and call Update() on it,
-	it will count up as if was playing music.
-	
-*/
-
-//	LOG->Trace( "GAMESTATE->m_fMusicSeconds = %f", GAMESTATE->m_fMusicSeconds );
-	
-
 	//LOG->Trace( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
 
 
