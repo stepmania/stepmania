@@ -18,7 +18,7 @@ class ScreenSystemLayer;
 class BGAnimation;
 
 
-typedef Screen* (*CreateScreenFn)(const CString&);
+typedef Screen* (*CreateScreenFn)(const CString& sClassName);
 
 class ScreenManager
 {

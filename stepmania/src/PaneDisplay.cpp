@@ -10,6 +10,7 @@
 #include "Course.h"
 #include "Style.h"
 #include "Command.h"
+#include "ActorUtil.h"
 
 #define SHIFT_X(p)			THEME->GetMetricF(m_sName, ssprintf("ShiftP%iX", p+1))
 #define SHIFT_Y(p)			THEME->GetMetricF(m_sName, ssprintf("ShiftP%iY", p+1))

@@ -32,6 +32,7 @@ public:
 	BitmapText();
 	virtual ~BitmapText();
 
+	void LoadFromNode( const CString& sDir, const XNode* pNode );
 
 	bool LoadFromFont( const CString& sFontName );
 	bool LoadFromTextureAndChars( const CString& sTexturePath, const CString& sChars );

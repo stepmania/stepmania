@@ -6,7 +6,7 @@
 #include "Sprite.h"
 #include "PlayerNumber.h"
 #include "BitmapText.h"
-#include "ActorUtil.h"
+#include "AutoActor.h"
 #include "GameConstantsAndTypes.h"
 
 enum PaneTypes

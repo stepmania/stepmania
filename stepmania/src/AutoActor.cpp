@@ -1,52 +1,29 @@
-/* Transition - Transition that draws a BGAnimation. */
-
-#ifndef TRANSITION_H
-#define TRANSITION_H
-
-#include "Actor.h"
+#include "global.h"
 #include "AutoActor.h"
-#include "ScreenMessage.h"
-#include "RandomSample.h"
+#include "ThemeManager.h"
+#include "Actor.h"
+#include "ActorUtil.h"
 
-
-class Transition : public Actor
+void AutoActor::Unload()
 {
-public:
-	Transition();
+	delete m_pActor;
+	m_pActor=NULL;
+}
 
-	void Load( CString sBGAniDir );
+void AutoActor::Load( const CString &sPath )
+{
+	Unload();
+	m_pActor = ActorUtil::MakeActor( sPath );
+}
 
-	virtual void Update( float fDeltaTime );
-	virtual void DrawPrimitives();
-
-	virtual void StartTransitioning( ScreenMessage send_when_done = SM_None );
-	virtual bool EarlyAbortDraw();
-	virtual float GetTweenTimeLeft() const;
-
-	bool IsTransitioning() const	{ return m_State == transitioning; };
-	bool IsFinished() const	{ return m_State == finished; };
-	float GetLengthSeconds() const;
-
-protected:
-
-	enum State { 
-		waiting,	
-		transitioning, 
-		finished 
-	} m_State;
-
-	AutoActor m_sprTransition;
-	float	m_fLengthSeconds;
-	RandomSample	m_sound;
-
-	ScreenMessage	m_MessageToSendWhenDone;
-};
-
-
-#endif
+void AutoActor::LoadAndSetName( const CString &sScreenName, const CString &sActorName )
+{
+	Load( THEME->GetPathG(sScreenName,sActorName) );
+	m_pActor->SetName( sActorName );
+}
 
 /*
- * (c) 2001-2004 Chris Danford
+ * (c) 2003-2004 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

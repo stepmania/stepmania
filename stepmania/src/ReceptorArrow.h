@@ -4,7 +4,7 @@
 #define RECEPTOR_ARROW_H
 
 #include "ActorFrame.h"
-#include "ActorUtil.h"
+#include "AutoActor.h"
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 

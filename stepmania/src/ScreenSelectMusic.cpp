@@ -1526,6 +1526,8 @@ void ScreenSelectMusic::AfterMusicChange()
 
 			m_Artists.push_back( pSong->GetDisplayArtist() );
 			m_AltArtists.push_back( pSong->GetTranslitArtist() );
+
+			MESSAGEMAN->Broadcast( "OnSongChanged" );
 		}
 		break;
 	case TYPE_ROULETTE:
@@ -1628,6 +1630,8 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_sprCourseHasMods->StopTweening();
 			COMMAND( m_sprCourseHasMods, "Hide" );
 		}
+
+		MESSAGEMAN->Broadcast( "OnCourseChanged" );
 
 		break;
 	}

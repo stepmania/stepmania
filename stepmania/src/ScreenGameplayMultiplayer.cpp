@@ -19,6 +19,7 @@
 #include "Style.h"
 #include "PlayerState.h"
 #include "InputMapper.h"
+#include "ActorUtil.h"
 
 //
 // Defines

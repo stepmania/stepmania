@@ -6,6 +6,7 @@
 #include "GameState.h"
 #include "Course.h"
 #include "Style.h"
+#include "ActorUtil.h"
 
 BPMDisplay::BPMDisplay()
 {

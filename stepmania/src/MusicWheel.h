@@ -3,7 +3,7 @@
 #ifndef MUSICWHEEL_H
 #define MUSICWHEEL_H
 
-#include "ActorUtil.h"
+#include "AutoActor.h"
 #include "ActorFrame.h"
 #include "RageSound.h"
 #include "RandomSample.h"

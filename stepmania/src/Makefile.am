@@ -266,7 +266,9 @@ RageUtil_WorkerThread.cpp RageUtil_WorkerThread.h
 
 Actors = \
 Actor.cpp Actor.h ActorCollision.h ActorFrame.cpp ActorFrame.h \
-ActorScroller.cpp ActorScroller.h ActorUtil.cpp ActorUtil.h BitmapText.cpp BitmapText.h Model.cpp Model.h \
+ActorScroller.cpp ActorScroller.h ActorUtil.cpp ActorUtil.h \
+AutoActor.cpp AutoActor.h \
+BitmapText.cpp BitmapText.h Model.cpp Model.h \
 ModelManager.cpp ModelManager.h ModelTypes.cpp ModelTypes.h Quad.h Sprite.cpp Sprite.h
 
 GlobalSingletons = \

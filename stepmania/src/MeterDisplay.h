@@ -3,7 +3,7 @@
 
 #include "ActorFrame.h"
 #include "Sprite.h"
-#include "ActorUtil.h"
+#include "AutoActor.h"
 
 
 class MeterDisplay : public ActorFrame

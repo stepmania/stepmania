@@ -8,7 +8,7 @@
 #include "ActorFrame.h"
 #include "BitmapText.h"
 #include "Quad.h"
-#include "ActorUtil.h"
+#include "AutoActor.h"
 #include "ThemeMetric.h"
 class Song;
 class Course;

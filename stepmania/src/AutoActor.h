@@ -1,52 +1,34 @@
-/* Transition - Transition that draws a BGAnimation. */
+/* ActorScroller - ActorFrame that moves its children. */
 
-#ifndef TRANSITION_H
-#define TRANSITION_H
+#ifndef AutoActor_H
+#define AutoActor_H
 
-#include "Actor.h"
-#include "AutoActor.h"
-#include "ScreenMessage.h"
-#include "RandomSample.h"
+class Actor;
 
-
-class Transition : public Actor
+// creates the appropriate Actor derivitive on load and
+// automatically deletes Actor on deconstruction.
+class AutoActor
 {
 public:
-	Transition();
-
-	void Load( CString sBGAniDir );
-
-	virtual void Update( float fDeltaTime );
-	virtual void DrawPrimitives();
-
-	virtual void StartTransitioning( ScreenMessage send_when_done = SM_None );
-	virtual bool EarlyAbortDraw();
-	virtual float GetTweenTimeLeft() const;
-
-	bool IsTransitioning() const	{ return m_State == transitioning; };
-	bool IsFinished() const	{ return m_State == finished; };
-	float GetLengthSeconds() const;
+	AutoActor()						{ m_pActor = NULL; }
+	~AutoActor()					{ Unload(); }
+	operator const Actor* () const	{ return m_pActor; }
+	operator Actor* ()				{ return m_pActor; }
+	const Actor *operator->() const { return m_pActor; }
+	Actor *operator->()				{ return m_pActor; }
+	void Unload();
+	bool IsLoaded() const			{ return m_pActor != NULL; }
+	void Load( const CString &sPath );
+	void LoadAndSetName( const CString &sScreenName, const CString &sActorName );
 
 protected:
-
-	enum State { 
-		waiting,	
-		transitioning, 
-		finished 
-	} m_State;
-
-	AutoActor m_sprTransition;
-	float	m_fLengthSeconds;
-	RandomSample	m_sound;
-
-	ScreenMessage	m_MessageToSendWhenDone;
+	Actor* m_pActor;
 };
-
 
 #endif
 
 /*
- * (c) 2001-2004 Chris Danford
+ * (c) 2003-2004 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

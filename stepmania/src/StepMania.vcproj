@@ -2232,6 +2232,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ActorUtil.h">
 			</File>
 			<File
+				RelativePath="AutoActor.cpp">
+			</File>
+			<File
+				RelativePath="AutoActor.h">
+			</File>
+			<File
 				RelativePath=".\BitmapText.cpp">
 			</File>
 			<File

@@ -363,18 +363,6 @@ void ActorUtil::RunCommand( Actor& actor, const CString &sScreenName, const CStr
 	actor.RunCommands( THEME->GetMetricA(sScreenName,actor.GetID()+sCommandName+"Command") );
 }
 
-void AutoActor::Load( const CString &sPath )
-{
-	Unload();
-	m_pActor = ActorUtil::MakeActor( sPath );
-}
-
-void AutoActor::LoadAndSetName( const CString &sScreenName, const CString &sActorName )
-{
-	Load( THEME->GetPathG(sScreenName,sActorName) );
-	m_pActor->SetName( sActorName );
-}
-
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.

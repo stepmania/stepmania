@@ -83,6 +83,33 @@ BitmapText::~BitmapText()
 		FONT->UnloadFont( m_pFont );
 }
 
+
+void BitmapText::LoadFromNode( const CString& sDir, const XNode* pNode )
+{
+	CString sText;
+	pNode->GetAttrValue("Text", sText );
+	CString sAltText;
+	pNode->GetAttrValue("AltText", sAltText );
+
+	ThemeManager::EvaluateString( sText );
+	ThemeManager::EvaluateString( sAltText );
+
+
+	/* Be careful: if sFile is "", and we don't check it, then we can end up recursively
+	 * loading the BGAnimationLayer that we're in. */
+	CString sFont;
+	pNode->GetAttrValue("Font", sFont );
+	if( sFont == "" )
+		RageException::Throw( "An object '%s' in '%s' is missing the Font attribute",
+			pNode->m_sName.c_str(), sDir.c_str() );
+
+	LoadFromFont( THEME->GetPathToF( sFont ) );
+	SetText( sText, sAltText );
+
+	Actor::LoadFromNode( sDir, pNode );
+}
+
+
 bool BitmapText::LoadFromFont( const CString& sFontFilePath )
 {
 	CHECKPOINT_M( ssprintf("BitmapText::LoadFromFont(%s)", sFontFilePath.c_str()) );

@@ -1,3 +1,5 @@
+/* ActorScroller - ActorFrame that moves its children. */
+
 #ifndef ActorUtil_H
 #define ActorUtil_H
 
@@ -6,11 +8,6 @@
 
 struct XNode;
 
-#define SET_XY( actor )			ActorUtil::SetXY( actor, m_sName )
-#define ON_COMMAND( actor )		ActorUtil::OnCommand( actor, m_sName )
-#define OFF_COMMAND( actor )	ActorUtil::OffCommand( actor, m_sName )
-#define SET_XY_AND_ON_COMMAND( actor )		ActorUtil::SetXYAndOnCommand( actor, m_sName )
-#define COMMAND( actor, command_name )		ActorUtil::RunCommand( actor, m_sName, command_name )
 
 namespace ActorUtil
 {
@@ -38,25 +35,12 @@ namespace ActorUtil
 	Actor* MakeActor( const RageTextureID &ID );
 };
 
-// creates the appropriate Actor derivitive on load and
-// automatically deletes Actor on deconstruction.
-class AutoActor
-{
-public:
-	AutoActor()						{ m_pActor = NULL; }
-	~AutoActor()					{ Unload(); }
-	operator const Actor* () const	{ return m_pActor; }
-	operator Actor* ()				{ return m_pActor; }
-	const Actor *operator->() const { return m_pActor; }
-	Actor *operator->()				{ return m_pActor; }
-	void Unload()					{ if(m_pActor) { delete m_pActor; m_pActor=NULL; } }
-	bool IsLoaded() const			{ return m_pActor != NULL; }
-	void Load( const CString &sPath );
-	void LoadAndSetName( const CString &sScreenName, const CString &sActorName );
+#define SET_XY( actor )			ActorUtil::SetXY( actor, m_sName )
+#define ON_COMMAND( actor )		ActorUtil::OnCommand( actor, m_sName )
+#define OFF_COMMAND( actor )	ActorUtil::OffCommand( actor, m_sName )
+#define SET_XY_AND_ON_COMMAND( actor )		ActorUtil::SetXYAndOnCommand( actor, m_sName )
+#define COMMAND( actor, command_name )		ActorUtil::RunCommand( actor, m_sName, command_name )
 
-protected:
-	Actor* m_pActor;
-};
 
 #endif
 
