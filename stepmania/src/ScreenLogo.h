@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
- Class: ScreenHowToPlay
+ Class: ScreenLogo
 
  Desc: Base class for all attraction screens.
 
@@ -12,13 +12,13 @@
 #include "ScreenAttract.h"
 
 
-class ScreenHowToPlay : public ScreenAttract
+class ScreenLogo : public ScreenAttract
 {
 public:
 
 private:
-	virtual CString	GetMetricName() { return "HowToPlay"; };	// used to look up theme metrics
-	virtual CString	GetElementName() { return "how to play"; };	// used to look up theme elements 
+	virtual CString	GetMetricName() { return "Logo"; };	// used to look up theme metrics
+	virtual CString	GetElementName() { return "logo"; };	// used to look up theme elements 
 
 };
 

@@ -176,7 +176,6 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 #include "ScreenMachineOptions.h"
 #include "ScreenMapControllers.h"
 #include "ScreenMusicScroll.h"
-#include "ScreenNetworkWaiting.h"
 #include "ScreenPlayerOptions.h"
 #include "ScreenSandbox.h"
 #include "ScreenSelectCourse.h"
@@ -190,7 +189,14 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 #include "ScreenStage.h"
 #include "ScreenTitleMenu.h"
 #include "ScreenEz2SelectMusic.h"
-
+#include "ScreenWarning.h"
+#include "ScreenHighScores.h"
+#include "ScreenMemoryCard.h"
+#include "ScreenCompany.h"
+#include "ScreenAlbums.h"
+#include "ScreenLogo.h"
+#include "ScreenUnlock.h"
+#include "ScreenDemonstration.h"
 #include "ScreenPrompt.h"
 #include "ScreenTextEntry.h"
 
@@ -216,7 +222,6 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenMapControllers") )	ret = new ScreenMapControllers;
 	else if( 0==stricmp(sClassName, "ScreenInputOptions") )		ret = new ScreenInputOptions;
 	else if( 0==stricmp(sClassName, "ScreenMusicScroll") )		ret = new ScreenMusicScroll;
-	else if( 0==stricmp(sClassName, "ScreenNetworkWaiting") )	ret = new ScreenNetworkWaiting;
 	else if( 0==stricmp(sClassName, "ScreenPlayerOptions") )	ret = new ScreenPlayerOptions;
 	else if( 0==stricmp(sClassName, "ScreenSandbox") )			ret = new ScreenSandbox;
 	else if( 0==stricmp(sClassName, "ScreenSelectCourse") )		ret = new ScreenSelectCourse;
@@ -230,6 +235,14 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenStage") )			ret = new ScreenStage;
 	else if( 0==stricmp(sClassName, "ScreenTitleMenu") )		ret = new ScreenTitleMenu;
 	else if( 0==stricmp(sClassName, "ScreenEz2SelectMusic") )	ret = new ScreenEz2SelectMusic;
+	else if( 0==stricmp(sClassName, "ScreenWarning") )			ret = new ScreenWarning;
+	else if( 0==stricmp(sClassName, "ScreenHighScores") )		ret = new ScreenHighScores;
+	else if( 0==stricmp(sClassName, "ScreenMemoryCard") )		ret = new ScreenMemoryCard;
+	else if( 0==stricmp(sClassName, "ScreenCompany") )			ret = new ScreenCompany;
+	else if( 0==stricmp(sClassName, "ScreenAlbums") )			ret = new ScreenAlbums;
+	else if( 0==stricmp(sClassName, "ScreenLogo") )				ret = new ScreenLogo;
+	else if( 0==stricmp(sClassName, "ScreenUnlock") )			ret = new ScreenUnlock;
+	else if( 0==stricmp(sClassName, "ScreenDemonstration") )	ret = new ScreenDemonstration;
 	else
 		RageException::Throw( "Invalid Screen class name '%s'", sClassName.GetString() );
 

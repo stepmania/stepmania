@@ -1,7 +1,7 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- Class: ScreenHowToPlay
+ Class: ScreenInstructions
 
  Desc: See header.
 
@@ -10,7 +10,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "ScreenHowToPlay.h"
+#include "ScreenInstructions.h"
 #include "RageTextureManager.h"
 #include "RageUtil.h"
 #include "RageSoundManager.h"
@@ -22,19 +22,19 @@
 #include "PrefsManager.h"
 
 
-#define HELP_TEXT				THEME->GetMetric("ScreenHowToPlay","HelpText")
-#define TIMER_SECONDS			THEME->GetMetricI("ScreenHowToPlay","TimerSeconds")
-#define NEXT_SCREEN_ARCADE		THEME->GetMetric("ScreenHowToPlay","NextScreenArcade")
-#define NEXT_SCREEN_ONI			THEME->GetMetric("ScreenHowToPlay","NextScreenOni")
+#define HELP_TEXT				THEME->GetMetric("ScreenInstructions","HelpText")
+#define TIMER_SECONDS			THEME->GetMetricI("ScreenInstructions","TimerSeconds")
+#define NEXT_SCREEN_ARCADE		THEME->GetMetric("ScreenInstructions","NextScreenArcade")
+#define NEXT_SCREEN_ONI			THEME->GetMetric("ScreenInstructions","NextScreenOni")
 
 
 const ScreenMessage SM_GoToPrevScreen	=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToNextScreen	=	ScreenMessage(SM_User+2);
 
 
-ScreenHowToPlay::ScreenHowToPlay()
+ScreenInstructions::ScreenInstructions()
 {
-	LOG->Trace( "ScreenHowToPlay::ScreenHowToPlay()" );
+	LOG->Trace( "ScreenInstructions::ScreenInstructions()" );
 
 	m_Menu.Load(
 		THEME->GetPathTo("BGAnimations","How To Play"), 
@@ -80,26 +80,26 @@ ScreenHowToPlay::ScreenHowToPlay()
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","how to play music") );
 }
 
-ScreenHowToPlay::~ScreenHowToPlay()
+ScreenInstructions::~ScreenInstructions()
 {
-	LOG->Trace( "ScreenHowToPlay::~ScreenHowToPlay()" );
+	LOG->Trace( "ScreenInstructions::~ScreenInstructions()" );
 }
 
-void ScreenHowToPlay::Update( float fDeltaTime )
+void ScreenInstructions::Update( float fDeltaTime )
 {
-	//LOG->Trace( "ScreenHowToPlay::Update(%f)", fDeltaTime );
+	//LOG->Trace( "ScreenInstructions::Update(%f)", fDeltaTime );
 
 	Screen::Update( fDeltaTime );
 }
 
-void ScreenHowToPlay::DrawPrimitives()
+void ScreenInstructions::DrawPrimitives()
 {
 	m_Menu.DrawBottomLayer();
 	m_Menu.DrawTopLayer();
 	Screen::DrawPrimitives();	// draw How To Play graphic on top of all the others!
 }
 
-void ScreenHowToPlay::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenInstructions::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	if( m_Menu.IsClosing() )
 		return;
@@ -108,7 +108,7 @@ void ScreenHowToPlay::Input( const DeviceInput& DeviceI, const InputEventType ty
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
-void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
+void ScreenInstructions::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
@@ -135,12 +135,12 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-void ScreenHowToPlay::MenuBack( PlayerNumber pn )
+void ScreenInstructions::MenuBack( PlayerNumber pn )
 {
 	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
 }
 
-void ScreenHowToPlay::MenuStart( PlayerNumber pn )
+void ScreenInstructions::MenuStart( PlayerNumber pn )
 {
 	m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
 

@@ -1,8 +1,8 @@
 /*
 -----------------------------------------------------------------------------
- Class: ScreenHowToPlay
+ Class: ScreenMemoryCard
 
- Desc: Base class for all attraction screens.
+ Desc: .
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -12,13 +12,13 @@
 #include "ScreenAttract.h"
 
 
-class ScreenHowToPlay : public ScreenAttract
+class ScreenMemoryCard : public ScreenAttract
 {
 public:
 
 private:
-	virtual CString	GetMetricName() { return "HowToPlay"; };	// used to look up theme metrics
-	virtual CString	GetElementName() { return "how to play"; };	// used to look up theme elements 
+	virtual CString	GetMetricName() { return "MemoryCard"; };	// used to look up theme metrics
+	virtual CString	GetElementName() { return "memory card"; };	// used to look up theme elements
 
 };
 

@@ -20,7 +20,6 @@
 #include "RageInput.h"
 #include "RageTimer.h"
 #include "RageException.h"
-#include "RageNetworkClient.h"
 #include "RageMath.h"
 
 #include "arch/arch.h"
@@ -74,11 +73,6 @@ HWND g_hWndMain = NULL;
 
 #include <time.h>
 
-// command line arguments
-CString		g_sSongPath = "";
-CString		g_sServerIP = "";
-
-const int SM_PORT = 573;	// "Ko" + "na" + "mitsu"
 
 static void ChangeToDirOfExecutable(const char *argv0)
 {
@@ -144,16 +138,6 @@ int main(int argc, char* argv[])
 
     atexit(SDL_Quit);   /* Clean up on exit */
 
-	/*
-	 * Handle command line args.
-	 * Only allow one command line arg so we can validate the number of 
-	 * parameters easier.
-	 */
-	if( argc > 1 )
-		g_sSongPath = argv[1];
-	if( argc > 2 )
-		g_sServerIP = argv[2];
-
 	SetUnhandledExceptionFilter(CrashHandler);
 	InitThreadData("Main thread");
 	VDCHECKPOINT;
@@ -202,7 +186,6 @@ int main(int argc, char* argv[])
 	ANNOUNCER	= new AnnouncerManager;
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;
-	CLIENT		= new RageNetworkClient;
 	INPUTQUEUE	= new InputQueue;
 	SONGINDEX	= new SongCacheIndex;
 	/* depends on SONGINDEX: */
@@ -237,23 +220,9 @@ int main(int argc, char* argv[])
 	FONT		= new FontManager;
 	SCREENMAN	= new ScreenManager;
 
-	/*
-	 * Load initial screen depending on network mode
-	 */
-	if( g_sServerIP != "" )
-	{
-		// immediately try to connect to server
-		GAMESTATE->m_pCurSong = SONGMAN->GetSongFromDir( g_sSongPath );
-		if( GAMESTATE->m_pCurSong == NULL )
-			RageException::Throw( "The song '%s' is required to play this network game.", g_sSongPath.GetString() );
-		CLIENT->Connect( (const char*)g_sServerIP, SM_PORT );
-		SCREENMAN->SetNewScreen( "ScreenNetworkWaiting" );
-	}
-	else
-	{
-		// normal game
-		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
-	}
+
+	// normal game
+	SCREENMAN->SetNewScreen( "ScreenWarning" );
 
 	/* Run the main loop. */
 	GameLoop();
@@ -281,7 +250,6 @@ int main(int argc, char* argv[])
 #endif
 
 	SAFE_DELETE( SCREENMAN );
-	SAFE_DELETE( CLIENT );
 	SAFE_DELETE( INPUTQUEUE );
 	SAFE_DELETE( INPUTMAPPER );
 	SAFE_DELETE( INPUTFILTER );
@@ -428,7 +396,6 @@ static void GameLoop()
 
 		TEXTUREMAN->Update( fDeltaTime );
 		SCREENMAN->Update( fDeltaTime );
-		CLIENT->Update( fDeltaTime );
 		SOUNDMAN->Update( fDeltaTime );
 		HandleInputEvents( fDeltaTime );
 

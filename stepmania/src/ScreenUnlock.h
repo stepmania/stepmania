@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
- Class: ScreenHowToPlay
+ Class: ScreenUnlock
 
  Desc: Base class for all attraction screens.
 
@@ -12,13 +12,13 @@
 #include "ScreenAttract.h"
 
 
-class ScreenHowToPlay : public ScreenAttract
+class ScreenUnlock : public ScreenAttract
 {
 public:
 
 private:
-	virtual CString	GetMetricName() { return "HowToPlay"; };	// used to look up theme metrics
-	virtual CString	GetElementName() { return "how to play"; };	// used to look up theme elements 
+	virtual CString	GetMetricName() { return "Unlock"; };	// used to look up theme metrics
+	virtual CString	GetElementName() { return "unlock"; };	// used to look up theme elements
 
 };
 
