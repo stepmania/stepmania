@@ -162,19 +162,6 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		if( png_get_tRNS( png, info_ptr, NULL, NULL, &trans ) == PNG_INFO_tRNS )
 			iColorKey = trans->gray;
 	}
-	else if( color_type != PNG_COLOR_TYPE_PALETTE )
-	{
-		/* If we have RGB image and tRNS, it's a color key.  Just convert it to RGBA. */
-		if( png_get_valid(png, info_ptr, PNG_INFO_tRNS) )
-		{
-			/* We don't care about RGB color keys; just convert them to alpha. */
-			png_set_tRNS_to_alpha( png );
-			type = RGBA;
-		}
-
-		/* RGB->RGBX */
-		png_set_filler( png, 0xff, PNG_FILLER_AFTER );
-	}
 	else if( color_type == PNG_COLOR_TYPE_PALETTE )
 	{
 		int num_palette;
@@ -195,6 +182,19 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 			if( i < num_trans )
 				colors[i].a = trans[i];
 		}
+	}
+	else
+	{
+		/* If we have RGB image and tRNS, it's a color key.  Just convert it to RGBA. */
+		if( png_get_valid(png, info_ptr, PNG_INFO_tRNS) )
+		{
+			/* We don't care about RGB color keys; just convert them to alpha. */
+			png_set_tRNS_to_alpha( png );
+			type = RGBA;
+		}
+
+		/* RGB->RGBX */
+		png_set_filler( png, 0xff, PNG_FILLER_AFTER );
 	}
 
 	png_set_interlace_handling( png );
