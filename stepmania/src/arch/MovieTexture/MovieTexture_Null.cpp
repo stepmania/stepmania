@@ -28,6 +28,9 @@ MovieTexture_Null::MovieTexture_Null(RageTextureID ID) : RageMovieTexture(ID)
     CreateFrameRects();
 
     RageDisplay::PixelFormat pixfmt = RageDisplay::FMT_RGBA4;
+    if( !DISPLAY->SupportsTextureFormat(pixfmt) )
+	    pixfmt = RageDisplay::FMT_RGBA8;
+    ASSERT( DISPLAY->SupportsTextureFormat(pixfmt) );
 
     const RageDisplay::PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc( pixfmt );
     RageSurface *img = CreateSurface( size, size, pfd->bpp,
