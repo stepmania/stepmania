@@ -82,7 +82,7 @@ PrefsManager::PrefsManager()
 	m_MusicWheelUsesSections = ALWAYS;
 	m_iMusicWheelSwitchSpeed = 10;
 	m_bEasterEggs = true;
-	m_bMarvelousTiming = true;
+	m_iMarvelousTiming = 2;
 	m_iCoinMode = COIN_HOME;
 	m_iCoinsPerCredit = 1;
 	m_bJointPremium = false;
@@ -191,7 +191,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueI( "Options", "MusicWheelSwitchSpeed",		m_iMusicWheelSwitchSpeed );
 	ini.GetValue ( "Options", "SoundDrivers",				m_sSoundDrivers );
 	ini.GetValueB( "Options", "EasterEggs",					m_bEasterEggs );
-	ini.GetValueB( "Options", "MarvelousTiming",			m_bMarvelousTiming );
+	ini.GetValueI( "Options", "MarvelousTiming",			(int&)m_iMarvelousTiming );
 	ini.GetValueF( "Options", "SoundVolume",				m_fSoundVolume );
 	ini.GetValueB( "Options", "SoundPreloadAll",			m_bSoundPreloadAll );
 	ini.GetValueI( "Options", "CoinMode",					m_iCoinMode );
@@ -291,7 +291,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueI( "Options", "MusicWheelUsesSections",		m_MusicWheelUsesSections );
 	ini.SetValueI( "Options", "MusicWheelSwitchSpeed",		m_iMusicWheelSwitchSpeed );
 	ini.SetValueB( "Options", "EasterEggs",					m_bEasterEggs );
-	ini.SetValueB( "Options", "MarvelousTiming",			m_bMarvelousTiming );
+	ini.SetValueI( "Options", "MarvelousTiming",			m_iMarvelousTiming );
 	ini.SetValueB( "Options", "SoundPreloadAll",			m_bSoundPreloadAll );
 	ini.SetValueI( "Options", "CoinMode",					m_iCoinMode );
 	ini.SetValueI( "Options", "CoinsPerCredit",				m_iCoinsPerCredit );

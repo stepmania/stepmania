@@ -37,7 +37,7 @@ OptionRow g_GameplayOptionsLines[NUM_GAMEPLAY_OPTIONS_LINES] = {
 	OptionRow( "Solo\nSingles",			"OFF","ON" ),
 	OptionRow( "Hidden\nSongs",			"OFF","ON" ),
 	OptionRow( "Easter\nEggs",			"OFF","ON" ),
-	OptionRow( "Marvelous\nTiming",		"OFF","ON" ),
+	OptionRow( "Marvelous\nTiming",		"NEVER","COURSES ONLY","ALWAYS" ),
 	OptionRow( "Pick Extra\nStage",		"OFF","ON" ),
 	OptionRow( "Unlock\nSystem",		"OFF","ON" )
 };
@@ -62,7 +62,7 @@ void ScreenGameplayOptions::ImportOptions()
 	m_iSelectedOption[0][GO_SOLO_SINGLE]			= PREFSMAN->m_bSoloSingle ? 1:0;
 	m_iSelectedOption[0][GO_HIDDEN_SONGS]			= PREFSMAN->m_bHiddenSongs ? 1:0;
 	m_iSelectedOption[0][GO_EASTER_EGGS]			= PREFSMAN->m_bEasterEggs ? 1:0;
-	m_iSelectedOption[0][GO_MARVELOUS]				= PREFSMAN->m_bMarvelousTiming ? 1:0;
+	m_iSelectedOption[0][GO_MARVELOUS]				= PREFSMAN->m_iMarvelousTiming;
 	m_iSelectedOption[0][GO_PICK_EXTRA_STAGE]		= PREFSMAN->m_bPickExtraStage? 1:0;
 	m_iSelectedOption[0][GO_UNLOCK_SYSTEM]			= PREFSMAN->m_bUseUnlockSystem? 1:0;
 }
@@ -72,7 +72,7 @@ void ScreenGameplayOptions::ExportOptions()
 	PREFSMAN->m_bSoloSingle				= m_iSelectedOption[0][GO_SOLO_SINGLE] == 1;
 	PREFSMAN->m_bHiddenSongs			= m_iSelectedOption[0][GO_HIDDEN_SONGS]	== 1;
 	PREFSMAN->m_bEasterEggs			= m_iSelectedOption[0][GO_EASTER_EGGS] == 1;
-	PREFSMAN->m_bMarvelousTiming	= m_iSelectedOption[0][GO_MARVELOUS] == 1;
+	PREFSMAN->m_iMarvelousTiming	= m_iSelectedOption[0][GO_MARVELOUS];
 	PREFSMAN->m_bPickExtraStage		= m_iSelectedOption[0][GO_PICK_EXTRA_STAGE] == 1;
 	PREFSMAN->m_bUseUnlockSystem	= m_iSelectedOption[0][GO_UNLOCK_SYSTEM]	== 1;
 }

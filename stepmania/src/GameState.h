@@ -102,6 +102,8 @@ public:
 	bool IsCourseMode() const;
 	bool IsBattleMode() const; /* not Rave */
 
+	bool ShowMarvelous() const;
+
 	CString			m_sLoadingMessage;	// used in loading screen
 	CString			m_sPreferredGroup;	// GROUP_ALL_MUSIC denotes no preferred group
 	bool			m_bChangedFailType;	// true if FailType was changed in the song options screen

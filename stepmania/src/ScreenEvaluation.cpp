@@ -554,7 +554,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 	for( l=0; l<NUM_JUDGE_LINES; l++ ) 
 	{
 //		m_TimeToPlayJudgeSound[l] = -1;
-		if( l == 0  &&  !PREFSMAN->m_bMarvelousTiming )
+		if( l == 0  && !GAMESTATE->ShowMarvelous() )
 			continue;	// skip
 
 		if( SHOW_JUDGMENT(l) )

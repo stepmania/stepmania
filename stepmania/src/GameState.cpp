@@ -590,3 +590,15 @@ void GameState::AdjustFailType()
 		GAMESTATE->m_iCurrentStageIndex == 0)
 		setmax(GAMESTATE->m_SongOptions.m_FailType, SongOptions::FAIL_OFF);
 }
+
+bool GameState::ShowMarvelous() const
+{
+	if (PREFSMAN->m_iMarvelousTiming == 2)
+		return true;
+
+	if (PREFSMAN->m_iMarvelousTiming == 1)
+		if (IsCourseMode())
+			return true;
+
+	return false;
+}

@@ -178,7 +178,7 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 
 */
 	int p = 0;	// score multiplier 
-	const bool MarvelousEnabled = GAMESTATE->IsCourseMode() && PREFSMAN->m_bMarvelousTiming;
+	const bool MarvelousEnabled = GAMESTATE->IsCourseMode() && (PREFSMAN->m_iMarvelousTiming > 0);
 
 	switch( score )
 	{
@@ -416,7 +416,8 @@ int ScoreKeeperMAX2::GetPossibleDancePoints( const NoteData* pNoteData )
 	/* Note that, if Marvelous timing is disabled or not active (not course mode),
 	 * PERFECT will be used instead. */
 
-	TapNoteScore maxPossibleTapScore = PREFSMAN->m_bMarvelousTiming ? TNS_MARVELOUS : TNS_PERFECT;
+	TapNoteScore maxPossibleTapScore = 
+		(GAMESTATE->ShowMarvelous() ) ? TNS_MARVELOUS : TNS_PERFECT;
 
 	return pNoteData->GetNumRowsWithTaps()*TapNoteScoreToDancePoints(maxPossibleTapScore)+
 	   pNoteData->GetNumHoldNotes()*HoldNoteScoreToDancePoints(HNS_OK);
@@ -425,7 +426,7 @@ int ScoreKeeperMAX2::GetPossibleDancePoints( const NoteData* pNoteData )
 
 int ScoreKeeperMAX2::TapNoteScoreToDancePoints( TapNoteScore tns )
 {
-	if(!PREFSMAN->m_bMarvelousTiming && tns == TNS_MARVELOUS)
+	if(GAMESTATE->ShowMarvelous() && tns == TNS_MARVELOUS)
 		tns = TNS_PERFECT;
 
 /*
@@ -514,7 +515,7 @@ int ScoreKeeperMAX2::HoldNoteScoreToDancePoints( HoldNoteScore hns )
 	case PLAY_MODE_ONI:
 		switch( hns )
 		{
-		case HNS_OK:	return PREFSMAN->m_bMarvelousTiming? +3:+2;
+		case HNS_OK:	return (PREFSMAN->m_iMarvelousTiming != 0)? +3:+2;
 		case HNS_NG:	return +0;
 		}
 		break;

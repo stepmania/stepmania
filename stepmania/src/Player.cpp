@@ -464,7 +464,7 @@ void Player::Step( int col, RageTimer tm )
 			break;
 		}
 
-		if( score==TNS_MARVELOUS  &&  !PREFSMAN->m_bMarvelousTiming )
+		if( score==TNS_MARVELOUS  &&  !GAMESTATE->ShowMarvelous())
 			score = TNS_PERFECT;
 
 		bGrayArrowStep = score < TNS_GOOD;
