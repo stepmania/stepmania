@@ -31,7 +31,9 @@ RageFile::RageFile( const RageFile &cpy )
 	m_Error = cpy.m_Error;
 	m_EOF = cpy.m_EOF;
 	m_FilePos = cpy.m_FilePos;
-	memcpy( this->m_Buffer, cpy.m_Buffer, cpy.m_BufAvail );
+	memcpy( this->m_Buffer, cpy.m_Buffer, sizeof(m_Buffer) );
+	m_pBuf = m_Buffer + (cpy.m_pBuf-cpy.m_Buffer);
+
 	m_BufAvail = cpy.m_BufAvail;
 }
 
@@ -242,6 +244,8 @@ int RageFile::Read( void *buffer, size_t bytes )
 	
 		if( !bytes )
 			break;
+
+		ASSERT( !m_BufAvail );
 
 		/* We need more; either fill the buffer and keep going, or just read directly
 		 * into the destination buffer. */
