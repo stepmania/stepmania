@@ -461,7 +461,7 @@ void PrefsManager::SaveGamePrefsToDisk()
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 	IniFile ini;
 	ini.SetPath( GAMEPREFS_INI_PATH );
-	ini.ReadFile();	// it's OK if this fails
+//	ini.ReadFile();	// it's OK if this fails
 
 	ini.SetValue( sGameName, "Announcer",		ANNOUNCER->GetCurAnnouncerName() );
 	ini.SetValue( sGameName, "Theme",		THEME->GetCurThemeName() );
