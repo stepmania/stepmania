@@ -1446,7 +1446,7 @@ CString GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so )
 				if( iCount > 0 )
 					return ssprintf( "%4s x %d", GradeToThemedString(g).c_str(), iCount );
 			}
-			return "NO DATA";
+			return GradeToThemedString( GRADE_NO_DATA );
 		}
 	case SORT_EASY_METER:
 		{
