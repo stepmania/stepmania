@@ -194,50 +194,39 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		break;
 	case EDIT_MENU_ACTION_COPY:
 	case EDIT_MENU_ACTION_AUTOGEN:
-		ASSERT( !pSteps );
-		ASSERT( pSourceSteps );
-		{
-			// Yuck.  Doing the memory allocation doesn't seem right since
-			// Song allocates all of the other Steps.
-			pSteps = new Steps;
-			switch( action )
-			{
-				case EDIT_MENU_ACTION_COPY:
-					pSteps->CopyFrom( pSourceSteps, st );
-					break;
-				case EDIT_MENU_ACTION_AUTOGEN:
-					pSteps->AutogenFrom( pSourceSteps, st );
-					pSteps->DeAutogen();
-					break;
-				default:
-					ASSERT(0);
-			}
-			pSteps->SetDifficulty( dc );	// override difficulty with the user's choice
-			CString sEditName = GetCopyDescription(pSourceSteps);
-			pSong->MakeUniqueEditDescription( st, sEditName ); 
-			pSteps->SetDescription( sEditName );
-			pSong->AddSteps( pSteps );
-				
-			SCREENMAN->PlayStartSound();
-
-			GAMESTATE->m_pCurSong.Set( pSong );
-			GAMESTATE->m_pCurSteps[0].Set( pSteps );
-		}
-		break;
 	case EDIT_MENU_ACTION_BLANK:
 		ASSERT( !pSteps );
 		{
 			// Yuck.  Doing the memory allocation doesn't seem right since
 			// Song allocates all of the other Steps.
 			pSteps = new Steps;
-			pSteps->CreateBlank( st );
-			pSteps->SetDifficulty( dc );
-			pSteps->SetMeter( 1 );
-			CString sEditName = "Blank";
+			CString sEditName;
+			switch( action )
+			{
+				case EDIT_MENU_ACTION_COPY:
+					ASSERT( pSourceSteps );
+					pSteps->CopyFrom( pSourceSteps, st );
+					sEditName = GetCopyDescription(pSourceSteps);
+					break;
+				case EDIT_MENU_ACTION_AUTOGEN:
+					ASSERT( pSourceSteps );
+					pSteps->AutogenFrom( pSourceSteps, st );
+					pSteps->DeAutogen();
+					sEditName = GetCopyDescription(pSourceSteps);
+					break;
+				case EDIT_MENU_ACTION_BLANK:
+					pSteps->CreateBlank( st );
+					pSteps->SetMeter( 1 );
+					sEditName = "Blank";
+					break;
+				default:
+					ASSERT(0);
+			}
+			pSteps->SetDifficulty( dc );	// override difficulty with the user's choice
 			pSong->MakeUniqueEditDescription( st, sEditName ); 
 			pSteps->SetDescription( sEditName );
 			pSong->AddSteps( pSteps );
-		
+				
 			SCREENMAN->PlayStartSound();
 
 			GAMESTATE->m_pCurSong.Set( pSong );
@@ -262,7 +251,8 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		ASSERT( pSteps );
 		SOUND->StopMusic();
 		SCREENMAN->PlayStartSound();
-		StartTransitioning( SM_GoToNextScreen );
+		//StartTransitioning( SM_GoToNextScreen );
+		SCREENMAN->TextEntry( SM_None, "Testing", "");
 		break;
 	case EDIT_MENU_ACTION_DELETE:
 		break;

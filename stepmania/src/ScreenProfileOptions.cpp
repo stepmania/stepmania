@@ -8,7 +8,6 @@
 #include "ScreenManager.h"
 #include "ScreenTextEntry.h"
 #include "ScreenPrompt.h"
-#include "VirtualKeyboard.h"
 #include "GameState.h"
 
 
@@ -197,9 +196,6 @@ void ScreenProfileOptions::MenuStart( PlayerNumber pn, const InputEventType type
 	switch( GetCurrentRow() )
 	{
 	case PO_CREATE_NEW:
-
-		VIRTUALKB.Reset(VKMODE_PROFILE); // set the xbox virtual keyboard to profile mode
-
 		SCREENMAN->TextEntry( SM_DoneCreating, "Enter a profile name", "", NULL );
 		break;
 	case PO_DELETE_:

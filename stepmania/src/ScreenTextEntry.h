@@ -9,11 +9,35 @@
 #include "Quad.h"
 #include "RandomSample.h"
 #include "BGAnimation.h"
+#include "EnumHelper.h"
+
+enum KeyboardRow
+{
+	KEYBOARD_ROW_1,
+	KEYBOARD_ROW_2,
+	KEYBOARD_ROW_3,
+	KEYBOARD_ROW_4,
+	KEYBOARD_ROW_SPECIAL,
+	NUM_KEYBOARD_ROWS
+};
+#define FOREACH_KeyboardRow( i ) FOREACH_ENUM( KeyboardRow, NUM_KEYBOARD_ROWS, i )
+enum KeyboardRowSpecialKey
+{
+	CAPS, SPACEBAR, BACKSPACE, DONE
+};
+enum KeyboardCase
+{
+	LOWERCASE,
+	UPPERCASE,
+	NUM_KEYBOARD_CASES
+};
+#define FOREACH_KeyboardCase( i ) FOREACH_ENUM( KeyboardCase, NUM_KEYBOARD_CASES, i )
 
 class ScreenTextEntry : public Screen
 {
 public:
 	ScreenTextEntry( CString sName, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer) = NULL, void(*OnCanel)() = NULL, bool bPassword = false );
+	~ScreenTextEntry();
 	virtual void Init();
 
 	virtual void Update( float fDeltaTime );
@@ -25,26 +49,46 @@ public:
 	static bool s_bCancelledLast;
 
 protected:
-	virtual void MenuLeft( PlayerNumber pn );
-	virtual void MenuRight( PlayerNumber pn );
+	void MoveX( int iDir );
+	void MoveY( int iDir );
+	
+	void End();
+
+	virtual void MenuLeft( PlayerNumber pn )	{ MoveX(-1); }
+	virtual void MenuRight( PlayerNumber pn )	{ MoveX(+1); }
+	virtual void MenuUp( PlayerNumber pn )		{ MoveY(-1); }
+	virtual void MenuDown( PlayerNumber pn )	{ MoveY(+1); }
 	virtual void MenuStart( PlayerNumber pn );
 	virtual void MenuBack( PlayerNumber pn );
 
-	void UpdateText();
+	void UpdateKeyboardText();
+	void UpdateAnswerText();
 
 	CString			m_sQuestion;
 	bool            m_bPassword;
-	BGAnimation		m_Background;
+	AutoActor		m_Background;
 	BitmapText		m_textQuestion;
-	Quad			m_rectAnswerBox;
+	AutoActor		m_sprAnswerBox;
 	wstring			m_sAnswer;
 	BitmapText		m_textAnswer;
 	void(*m_pOnOK)( CString sAnswer );
 	void(*m_pOnCancel)();
 	bool			m_bCancelled;
+
+	AutoActor		m_sprCursor;
+
+	int				m_iFocusX;
+	KeyboardRow		m_iFocusY;
+
+	void PositionCursor();
+
+	vector<CString>			m_Keys[NUM_KEYBOARD_CASES][NUM_KEYBOARD_ROWS];
+	vector<BitmapText*>		m_textKeyboardChars[NUM_KEYBOARD_ROWS];
+
 	Transition		m_In;
 	Transition		m_Out;
 };
+
 
 #endif
 

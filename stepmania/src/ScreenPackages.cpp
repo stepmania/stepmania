@@ -11,7 +11,6 @@
 #include "RageFile.h"
 #include "ScreenTextEntry.h"
 #include "ScreenManager.h"
-#include "VirtualKeyboard.h"
 #include <cstdlib>
 
 #define EXISTINGBG_WIDTH			THEME->GetMetricF(m_sName,"PackagesBGWidth")
@@ -165,14 +164,9 @@ void ScreenPackages::MenuStart( PlayerNumber pn )
 	if ( m_iDLorLST == 1 )
 	{
 		if ( m_iLinksPos == 0 )
-		{
-			VIRTUALKB.Reset(VKMODE_PROFILE); // allow all characters
 			SCREENMAN->TextEntry( SM_BackFromURL, "Enter URL:", "http://" );
-		}
 		else
-		{
 			EnterURL( m_Links[m_iLinksPos] );
-		}
 	}
 	ScreenWithMenuElements::MenuStart( pn );
 }

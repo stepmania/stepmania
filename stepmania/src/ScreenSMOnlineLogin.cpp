@@ -9,7 +9,6 @@
 #include "ScreenManager.h"
 #include "ScreenTextEntry.h"
 #include "ScreenPrompt.h"
-#include "VirtualKeyboard.h"
 #include "GameState.h"
 #include "NetworkSyncManager.h"
 #include "ScreenTextEntry.h"

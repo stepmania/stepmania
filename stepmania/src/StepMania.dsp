@@ -3178,14 +3178,6 @@ SOURCE=.\UnlockManager.cpp
 
 SOURCE=.\UnlockManager.h
 # End Source File
-# Begin Source File
-
-SOURCE=.\VirtualKeyboard.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\VirtualKeyboard.h
-# End Source File
 # End Group
 # Begin Group "Crypto"
 

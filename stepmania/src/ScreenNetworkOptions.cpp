@@ -11,7 +11,6 @@
 #include "ScreenTextEntry.h"
 #include "ScreenPrompt.h"
 #include "NetworkSyncServer.h"
-#include "VirtualKeyboard.h"
 
 enum {
 	PO_CONNECTION,
@@ -123,10 +122,10 @@ void ScreenNetworkOptions::MenuStart( PlayerNumber pn, const InputEventType type
 	case PO_CONNECTION:
 		if ( !NSMAN->useSMserver )
 		{
-			VIRTUALKB.Reset(VKMODE_IP);
 			SCREENMAN->TextEntry( SM_DoneConnecting, "Enter a Network Address\n127.0.0.1 to connect to yourself", g_sLastServer );
 		}
-		else {
+		else
+		{
 			NSMAN->CloseConnection();
 			SCREENMAN->SystemMessage("Disconnected from server.");
 			UpdateConnectStatus( );
@@ -138,7 +137,6 @@ void ScreenNetworkOptions::MenuStart( PlayerNumber pn, const InputEventType type
 		case NO_START_SERVER:
 			if (!NSMAN->isLanServer)
 			{
-				VIRTUALKB.Reset(VKMODE_PROFILE);
 				SCREENMAN->TextEntry( SM_ServerNameEnter, "Enter a server name...", "", NULL );
 			}
 			break;

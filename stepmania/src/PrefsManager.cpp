@@ -319,10 +319,7 @@ void PrefsManager::Init()
 	m_sMemoryCardProfileSubdir = PRODUCT_NAME;
 	m_iProductID = 1;
 
-	m_bEnableVirtualKeyboard = false;
-
 #if defined(XBOX)
-	m_bEnableVirtualKeyboard = true;
 	m_bEnableVirtualMemory = true;
 	m_iPageFileSize = 384;
 	m_iPageSize = 16;
@@ -531,8 +528,6 @@ void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
 	ini.GetValue( "Options", "AdditionalFolders",				m_sAdditionalFolders );
 	FixSlashesInPlace(m_sAdditionalSongFolders);
 	FixSlashesInPlace(m_sAdditionalFolders);
-
-	ini.GetValue( "Options", "EnableVirtualKeyboard",			m_bEnableVirtualKeyboard );
 
 #if defined(XBOX)
 	ini.GetValue( "Options", "EnableVirtualMemory",				m_bEnableVirtualMemory );
@@ -765,8 +760,6 @@ void PrefsManager::SaveGlobalPrefsToIni( IniFile &ini ) const
 
 	ini.SetValue( "Options", "AdditionalSongFolders", 			m_sAdditionalSongFolders);
 	ini.SetValue( "Options", "AdditionalFolders", 				m_sAdditionalFolders);
-
-	ini.SetValue( "Options", "EnableVirtualKeyboard",			m_bEnableVirtualKeyboard );
 
 #if defined(XBOX)
 	ini.SetValue( "Options", "EnableVirtualMemory",				m_bEnableVirtualMemory );

@@ -90,8 +90,6 @@ StyleInput.h TimingData.cpp TimingData.h \
 ThemeMetric.h \
 Trail.cpp Trail.h TrailUtil.cpp TrailUtil.h TitleSubstitution.cpp TitleSubstitution.h
 
-VirtualKeyboard = VirtualKeyboard.cpp VirtualKeyboard.h
-
 FileTypes = IniFile.cpp IniFile.h \
 		MsdFile.cpp MsdFile.h \
 		XmlFile.cpp XmlFile.h
@@ -338,7 +336,6 @@ CryptHelpers.cpp CryptHelpers.h
 
 main_SOURCES = $(Screens) \
 		$(DataStructures) \
-		$(VirtualKeyboard) \
 		$(FileTypes) \
 		$(StepMania) \
 		$(Arch) \

@@ -8,7 +8,6 @@
 #include "ThemeManager.h"
 #include "ScreenTextEntry.h"
 #include "ScreenManager.h"
-#include "VirtualKeyboard.h"
 #include "Command.h"
 
 #define TITLEBG_WIDTH				THEME->GetMetricF(m_sName,"TitleBGWidth")
@@ -144,14 +143,15 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 			}
 		break;
 	case SM_BackFromRoomName:
-		if ( !ScreenTextEntry::s_bCancelledLast ) {
+		if ( !ScreenTextEntry::s_bCancelledLast )
+		{
 			m_newRoomName = ScreenTextEntry::s_sLastAnswer;
-			VIRTUALKB.Reset(VKMODE_PROFILE); // allow all characters
 			SCREENMAN->TextEntry( SM_BackFromRoomDesc, "Enter Room Description:", "");
 		}
 		break;
 	case SM_BackFromRoomDesc:
-		if ( !ScreenTextEntry::s_bCancelledLast ) {
+		if ( !ScreenTextEntry::s_bCancelledLast )
+		{
 			m_newRoomDesc = ScreenTextEntry::s_sLastAnswer;
 			CreateNewRoom( m_newRoomName, m_newRoomDesc);
 		}
@@ -192,7 +192,6 @@ void ScreenNetRoom::MenuStart( PlayerNumber pn )
 		}
 		break;
 	case SelectMakeRoom:
-		VIRTUALKB.Reset(VKMODE_PROFILE); // allow all characters
 		SCREENMAN->TextEntry( SM_BackFromRoomName, "Enter Room Name:", "");
 		break;
 	};
