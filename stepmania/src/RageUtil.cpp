@@ -19,6 +19,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fstream>
+#include "regex.h"
 
 unsigned long randseed = time(NULL);
 
@@ -688,6 +689,7 @@ unsigned GetFileSizeInBytes( const CString &sFilePath )
 
 bool DoesFileExist( const CString &sPath )
 {
+	if(sPath.empty()) return false;
 	struct stat st;
     return DoStat(sPath, &st);
 }
@@ -699,6 +701,7 @@ bool IsAFile( const CString &sPath )
 
 bool IsADirectory( const CString &sPath )
 {
+	if(sPath.empty()) return false;
 	struct stat st;
     if (!DoStat(sPath, &st))
 		return false;
@@ -781,4 +784,61 @@ CString DerefRedir(const CString &path)
 		return "";
 
 	return sDir+sNewFileName;
+}
+
+/* Call this if you need flags other than the default.  They'll be
+ * reset after the next regex() call. */
+static const int re_flags_default = REG_EXTENDED|REG_ICASE;
+static int re_flags = re_flags_default;
+void regex_flags(int flags)
+{
+    re_flags = flags;
+}
+
+void regex_reset()
+{
+    re_flags = re_flags_default;
+}
+
+bool regex(CString pattern, CString str, vector<CString> &matches)
+{
+    matches.clear();
+
+    regex_t reg;
+
+    /* Count the number of backreferences. */
+    int backref_count = 0;
+    int i;
+    for(i = 0; i < int(pattern.size()); ++i)
+        if(pattern[i] == '(') backref_count++;
+    ASSERT(backref_count+1 < 128);
+
+    int ret = regcomp(&reg, pattern.c_str(), re_flags);
+    regex_reset();
+    if(ret != 0)
+		RageException::Throw("Invalid regex: '%s'", pattern.c_str());
+
+    regmatch_t mat[128];
+    ret = regexec(&reg, str.c_str(), 128, mat, 0);
+
+    regfree(&reg);
+
+    if(ret == REG_NOMATCH)
+        return false;
+
+    for(i = 1; i < backref_count+1; ++i)
+    {
+        if(mat[i].rm_so == -1)
+            matches.push_back(""); /* no match */
+        else
+            matches.push_back(str.substr(mat[i].rm_so, mat[i].rm_eo - mat[i].rm_so));
+    }
+
+    return true;
+}
+
+bool regex(CString pattern, CString str)
+{
+    vector<CString> matches;
+    return regex(pattern, str, matches);
 }

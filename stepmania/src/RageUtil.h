@@ -192,6 +192,10 @@ void TrimRight(CString &str, const char *s = "\r\n\t ");
 
 CString DerefRedir(const CString &path);
 
+bool regex(CString str, CString pattern, vector<CString> &matches);
+bool regex(CString str, CString pattern);
+void regex_flags(int flags);
+
 #ifndef WIN32
 #include <unistd.h> /* correct place with correct definitions */
 #endif
