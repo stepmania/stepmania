@@ -14,6 +14,9 @@
 #include "ScreenDimensions.h"
 #include "ThemeManager.h"
 #include "RageMusic.h"
+#include "WindowManager.h"	// for sending SM_PlayMusicSample
+
+
 
 
 const float SWITCH_MUSIC_TIME	=	0.3f;
@@ -188,9 +191,9 @@ MusicWheel::MusicWheel()
 	m_iSelection = 0;
 
 	
-	// fade the wheel in
 	m_WheelState = STATE_IDLE;
 	m_fTimeLeftInState = FADE_TIME;
+	m_fPositionOffsetFromSelection = 0;
 
 
 	RageLog( "end of MusicWheel::MusicWheel()" );
@@ -381,24 +384,18 @@ void MusicWheel::RenderPrimitives()
 	}
 
 	// iIndex is now the index of the lowest WheelItem to draw
-	for( i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
+	for( i=-NUM_WHEEL_ITEMS_TO_DRAW/2; i<NUM_WHEEL_ITEMS_TO_DRAW/2; i++ )
 	{
 		WheelItem& WI = m_WheelItems[iIndex];
 
-		float fPositionOffsetsFromMiddle = i - NUM_WHEEL_ITEMS_TO_DRAW/2;
-		// adjust fPosOffsetsFromMiddle if we're in the middle of switching songs
-		if( m_WheelState == STATE_SWITCHING_TO_PREV_MUSIC )
-			fPositionOffsetsFromMiddle -= m_fTimeLeftInState / SWITCH_MUSIC_TIME;
-		else if( m_WheelState == STATE_SWITCHING_TO_NEXT_MUSIC )
-			fPositionOffsetsFromMiddle += m_fTimeLeftInState / SWITCH_MUSIC_TIME;
+		float fThisBannerPositionOffsetFromSelection = m_fPositionOffsetFromSelection + i;
 
-
-		float fY = GetBannerY( fPositionOffsetsFromMiddle );
-		float fX = GetBannerX( fPositionOffsetsFromMiddle );
+		float fY = GetBannerY( fThisBannerPositionOffsetFromSelection );
+		float fX = GetBannerX( fThisBannerPositionOffsetFromSelection );
 		WI.SetXY( fX, fY );
 
-		float fBrightness = GetBannerBrightness( fPositionOffsetsFromMiddle );
-		float fAlpha = GetBannerAlpha( fPositionOffsetsFromMiddle );
+		float fBrightness = GetBannerBrightness( m_fPositionOffsetFromSelection );
+		float fAlpha = GetBannerAlpha( m_fPositionOffsetFromSelection );
 
 		WI.SetDiffuseColor( D3DXCOLOR(fBrightness, fBrightness, fBrightness, fAlpha) );
 		WI.Draw();
@@ -436,10 +433,9 @@ void MusicWheel::Update( float fDeltaTime )
 	{
 		switch( m_WheelState )
 		{
-		case STATE_SWITCHING_TO_PREV_MUSIC:
-		case STATE_SWITCHING_TO_NEXT_MUSIC:
+		case STATE_SWITCHING_MUSIC:
 			m_WheelState = STATE_IDLE;	// now, wait for input
-			PlayMusicSample();
+			WM->SendMessageToTopWindow( SM_PlayMusicSample, 0 );
 			break;
 		case STATE_FLYING_OFF_BEFORE_NEXT_SORT:
 			{
@@ -469,11 +465,11 @@ void MusicWheel::Update( float fDeltaTime )
 			}
 			break;
 		case STATE_FLYING_ON_AFTER_NEXT_SORT:
-			PlayMusicSample();
+			WM->SendMessageToTopWindow( SM_PlayMusicSample, 0 );
 			m_WheelState = STATE_IDLE;	// now, wait for input
 			break;
 		case STATE_TWEENING_ON_SCREEN:
-			PlayMusicSample();
+			WM->SendMessageToTopWindow( SM_PlayMusicSample, 0 );
 			m_WheelState = STATE_IDLE;
 			m_fTimeLeftInState = 0;
 			break;
@@ -487,6 +483,15 @@ void MusicWheel::Update( float fDeltaTime )
 		}
 	}
 
+	// "rotate" wheel toward selected song
+
+	if( fabs(m_fPositionOffsetFromSelection) < 0.05f )
+		m_fPositionOffsetFromSelection = 0;
+	else
+	{
+		m_fPositionOffsetFromSelection -= fDeltaTime * m_fPositionOffsetFromSelection*4;	// linear
+		//m_fPositionOffsetFromSelection += fDeltaTime * m_fPositionOffsetFromSelection/fabs(m_fPositionOffsetFromSelection);	// constant
+	}
 }
 
 
@@ -494,9 +499,8 @@ void MusicWheel::PrevMusic()
 {
 	switch( m_WheelState )
 	{
-	//case STATE_SWITCHING_TO_PREV_MUSIC:
-
 	case STATE_IDLE:
+	case STATE_SWITCHING_MUSIC:
 		break;	// fall through
 	default:
 		return;	// don't fall through
@@ -508,7 +512,9 @@ void MusicWheel::PrevMusic()
 	if( m_iSelection < 0 )
 		m_iSelection = m_WheelItems.GetSize()-1;
 
-	m_WheelState = STATE_SWITCHING_TO_PREV_MUSIC;
+	m_fPositionOffsetFromSelection -= 1;
+
+	m_WheelState = STATE_SWITCHING_MUSIC;
 	m_fTimeLeftInState = SWITCH_MUSIC_TIME;
 	m_soundChangeMusic.PlayRandom();
 }
@@ -518,8 +524,7 @@ void MusicWheel::NextMusic()
 	switch( m_WheelState )
 	{
 	case STATE_IDLE:
-	case STATE_SWITCHING_TO_NEXT_MUSIC:
-	case STATE_SWITCHING_TO_PREV_MUSIC:
+	case STATE_SWITCHING_MUSIC:
 		break;	// fall through
 	default:
 		return;	// don't continue
@@ -531,7 +536,9 @@ void MusicWheel::NextMusic()
 	if( m_iSelection > m_WheelItems.GetSize()-1 )
 		m_iSelection = 0;
 
-	m_WheelState = STATE_SWITCHING_TO_NEXT_MUSIC;
+	m_fPositionOffsetFromSelection += 1;
+
+	m_WheelState = STATE_SWITCHING_MUSIC;
 	m_fTimeLeftInState = SWITCH_MUSIC_TIME;
 	m_soundChangeMusic.PlayRandom();
 }
@@ -541,8 +548,7 @@ void MusicWheel::NextSort()
 	switch( m_WheelState )
 	{
 	case STATE_IDLE:
-	case STATE_SWITCHING_TO_NEXT_MUSIC:
-	case STATE_SWITCHING_TO_PREV_MUSIC:
+	case STATE_SWITCHING_MUSIC:
 		break;	// fall through
 	default:
 		return;	// don't continue
@@ -598,21 +604,3 @@ bool MusicWheel::Select()
 	}
 }
 
-void MusicWheel::PlayMusicSample()
-{
-	//RageLog( "WindowSelectSong::PlaySongSample()" );
-
-	MUSIC->Stop();
-
-	Song* pSong = GetSelectedSong();
-	if( pSong == NULL )
-		return;
-
-	CString sSongToPlay = pSong->GetMusicPath();
- 
-	if( pSong->HasMusic() )
-	{
-		MUSIC->Load( sSongToPlay );
-		MUSIC->Play();
-	}
-}

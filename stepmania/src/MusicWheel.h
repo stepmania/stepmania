@@ -24,11 +24,14 @@
 #include "RageSoundStream.h"
 #include "MusicSortDisplay.h"
 #include "MusicStatusDisplay.h"
-
+#include "Window.h"	// for WindowMessage
 
 const int NUM_WHEEL_ITEMS_TO_DRAW	=	13;
 
 const float FADE_TIME			=	0.5f;
+
+
+const WindowMessage SM_PlayMusicSample	=	WindowMessage(SM_User+47);	// this should be unique!
 
 
 
@@ -100,8 +103,6 @@ public:
 protected:
 	void RebuildWheelItems();
 
-	void PlayMusicSample();
-
 
 	Sprite		m_sprSelectionBackground;
 	Sprite		m_sprSelectionOverlay;
@@ -119,8 +120,7 @@ protected:
 
 	enum WheelState { 
 		STATE_IDLE, 
-		STATE_SWITCHING_TO_PREV_MUSIC, 
-		STATE_SWITCHING_TO_NEXT_MUSIC, 
+		STATE_SWITCHING_MUSIC, 
 		STATE_FLYING_OFF_BEFORE_NEXT_SORT, 
 		STATE_FLYING_ON_AFTER_NEXT_SORT, 
 		STATE_TWEENING_ON_SCREEN, 
@@ -129,6 +129,7 @@ protected:
 	};
 	WheelState m_WheelState;
 	float m_fTimeLeftInState;
+	float m_fPositionOffsetFromSelection;
 
 
 	// having sounds here causes a crash in Bass.  What the heck!?!?!
