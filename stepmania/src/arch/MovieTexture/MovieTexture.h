@@ -21,6 +21,8 @@ public:
 	virtual void SetLooping(bool looping=true) { }
 
 	bool IsAMovie() const { return true; }
+
+	static bool GetFourCC( CString fn, CString &handler, CString &type );
 };
 
 RageMovieTexture *MakeRageMovieTexture(RageTextureID ID);
