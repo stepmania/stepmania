@@ -560,6 +560,7 @@ SoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( CString filename_ 
 {
 	filename = filename_;
     rw = fopen(filename, "rb");
+	ASSERT( rw );
 
 	mad_frame_mute( &mad->Frame );
 	mad_timer_reset( &mad->Timer );
