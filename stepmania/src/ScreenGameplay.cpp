@@ -792,7 +792,7 @@ void ScreenGameplay::LoadNextSong()
 
 		if(anybeginners && m_BeginnerHelper.Initialize( 2 ))	// Init for doubles
 		{
-				m_Background.Unload();	// BeginnerHelper has it's own BG control.
+				m_Background.Unload();	// BeginnerHelper has its own BG control.
 				m_Background.StopAnimating();
 				m_BeginnerHelper.SetX( CENTER_X );
 				m_BeginnerHelper.SetY( CENTER_Y );
