@@ -276,6 +276,12 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 		}
 	}
 
+	// Hide highlight if no rows are enabled.
+	FOREACH_HumanPlayer( p )
+		if( m_iCurrentRow[p] == -1 )
+			m_sprLineHighlight[p].SetHidden( true );
+
+
 	CHECKPOINT;
 
 	PositionItems();
