@@ -651,13 +651,6 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 		PlayCommand( "On" );
 }
 
-
-void BGAnimationLayer::FinishTweening()
-{
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->FinishTweening();
-}
-
 void BGAnimationLayer::Update( float fDeltaTime )
 {
 	fDeltaTime *= m_fUpdateRate;
@@ -964,12 +957,6 @@ void BGAnimationLayer::DrawPrimitives()
 	}
 }
 
-void BGAnimationLayer::SetDiffuse( RageColor c )
-{
-	for(unsigned i=0; i<m_SubActors.size(); i++) 
-		m_SubActors[i]->SetDiffuse(c);
-}
-
 void BGAnimationLayer::GainingFocus( float fRate, bool bRewindMovie, bool bLoop )
 {
 	m_fUpdateRate = fRate;
@@ -1001,15 +988,16 @@ void BGAnimationLayer::LosingFocus()
 	m_SubActors[0]->Command( "pause" );
 }
 
-void BGAnimationLayer::PlayCommand( CString cmd )
+void BGAnimationLayer::PlayCommand( const CString &sCommandName )
 {
 	unsigned i;
 
 	for( i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->Command( ssprintf("playcommand,%s", cmd.c_str()) );
+		m_SubActors[i]->Command( ssprintf("playcommand,%s", sCommandName.c_str()) );
 
-	cmd.MakeLower();
-	map<CString, CString>::const_iterator it = m_asCommands.find( cmd );
+	CString sKey = sCommandName;
+	sKey.MakeLower();
+	map<CString, CString>::const_iterator it = m_asCommands.find( sKey );
 
 	if( it == m_asCommands.end() )
 		return;

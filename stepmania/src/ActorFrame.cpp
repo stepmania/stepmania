@@ -93,10 +93,19 @@ void ActorFrame::Update( float fDeltaTime )
 	}
 
 PropagateActorFrameCommand( SetDiffuse,			RageColor )
-PropagateActorFrameCommand( SetDiffuseAlpha,	float )
 PropagateActorFrameCommand( SetZTest,			bool )
 PropagateActorFrameCommand( SetZWrite,			bool )
 PropagateActorFrameCommand( HurryTweening,		float )
+
+void ActorFrame::SetDiffuseAlpha( float f )	
+{
+	Actor::SetDiffuseAlpha( f );
+								
+	/* set all sub-Actors */
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
+		m_SubActors[i]->SetDiffuseAlpha( f );
+}
+
 
 void ActorFrame::FinishTweening()
 {
@@ -138,15 +147,6 @@ void ActorFrame::DeleteAllChildren()
 
 void ActorFrame::HandleCommand( const ParsedCommand &command )
 {
-	// pass "PlayCommand" on to children
-	if( command.vTokens[0].s=="playcommand" )
-	{
-		for( unsigned i=0; i<m_SubActors.size(); i++ )
-			m_SubActors[i]->HandleCommand( command );
-		return;	// handled
-	}
-
-	// base class handles the rest...
 	Actor::HandleCommand( command );
 }
 

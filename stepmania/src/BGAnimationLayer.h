@@ -33,14 +33,11 @@ public:
 	void Update( float fDeltaTime );
 	void DrawPrimitives();
 
-	void SetDiffuse( RageColor c );
-
 	float GetMaxTweenTimeLeft() const;
-	void FinishTweening();
 	void GainingFocus( float fRate, bool bRewindMovie, bool bLoop );
 	void LosingFocus();
 
-	void PlayCommand( CString cmd );
+	void PlayCommand( const CString &sCommandName );
 	void PlayOffCommand() { PlayCommand( "Off" ); }
 
 protected:
