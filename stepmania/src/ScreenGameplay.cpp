@@ -29,12 +29,12 @@
 #include "NotesLoaderSM.h"
 #include "ThemeManager.h"
 
+#include "RageTimer.h"
+
 //
 // Defines
 //
-
 #define SONGSEL_SCREEN				THEME->GetMetric("ScreenGameplay","SongSelectScreen")
-
 #define MAXCOMBO_X					THEME->GetMetricF("ScreenGameplay","MAXCOMBOX")
 #define MAXCOMBO_Y					THEME->GetMetricF("ScreenGameplay","MAXCOMBOY")
 #define MAXCOMBO_ZOOM				THEME->GetMetricF("ScreenGameplay","MAXCOMBOZoom")
@@ -94,6 +94,9 @@ const ScreenMessage	SM_ShowFailed			= ScreenMessage(SM_User+122);
 const ScreenMessage	SM_PlayFailComment		= ScreenMessage(SM_User+123);
 const ScreenMessage	SM_GoToScreenAfterFail	= ScreenMessage(SM_User+125);
 
+// received while STATE_INTRO
+const ScreenMessage	SM_StartHereWeGo		= ScreenMessage(SM_User+130);
+const ScreenMessage	SM_StopHereWeGo			= ScreenMessage(SM_User+131);
 
 
 ScreenGameplay::ScreenGameplay( bool bDemonstration )
@@ -430,14 +433,11 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 
 	for( int i=0; i<30; i++ )
 		this->SendScreenMessage( ScreenMessage(SM_User+i), i/2.0f );	// Send messages to we can get the introduction rolling
-
-	LoadNextSong( true );
-
-	
+	LoadNextSong();
 	m_soundToasty.Load( THEME->GetPathTo("Sounds","gameplay toasty") );
 
 
-	if( bDemonstration )	// don't load sounds if just playing demonstration
+	if( !bDemonstration )	// don't load sounds if just playing demonstration
 	{
 		m_soundFail.Load(				THEME->GetPathTo("Sounds","gameplay failed") );
 		m_soundTryExtraStage.Load(		THEME->GetPathTo("Sounds","gameplay try extra stage") );
@@ -466,6 +466,11 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		m_announcer1000Combo.Load(		ANNOUNCER->GetPathTo("gameplay 1000 combo") );
 		m_announcerComboStopped.Load(	ANNOUNCER->GetPathTo("gameplay combo stopped") );
 	}
+	else
+	{
+		StartPlayingSong( 0 );
+	}
+
 
 	m_iRowLastCrossed = -1;
 
@@ -514,7 +519,7 @@ bool ScreenGameplay::IsLastSong()
 	}
 }
 
-void ScreenGameplay::LoadNextSong( bool bFirstLoad )
+void ScreenGameplay::LoadNextSong()
 {
 	GAMESTATE->ResetMusicStatistics();
 
@@ -604,22 +609,17 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 	m_Background.SetTweenDiffuse( RageColor(1,1,1,1) );
 
 	m_soundMusic.Load( GAMESTATE->m_pCurSong->GetMusicPath() );
+}
+
+float ScreenGameplay::StartPlayingSong(float MinTimeToStart)
+{
+	/* XXX: We want the first beat *in use*, so we don't delay needlessly. */
 	const float fFirstBeat = GAMESTATE->m_pCurSong->m_fFirstBeat;
 	const float fFirstSecond = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( fFirstBeat );
-	/* Make sure there's at least four seconds of delay between the music
-	 * starting and notes.  (On the first start, this lines up with SM_User+8.) */
-	float fStartSecond = fFirstSecond-4;
+	float fStartSecond = fFirstSecond - MinTimeToStart;
 
 	/* Don't skip any of the song. */
 	fStartSecond = min( 0, fStartSecond );
-
-	/* The first start is delayed 2.5 seconds, which lines up with SM_User+5. 
-	 * Demonstration music starts immediately. 
-	 *
-	 * XXX: Make demonstration skip to the beginning of the notes? Need to be
-	 * able to fade in, first. */
-	if( bFirstLoad && !GAMESTATE->m_bDemonstration )
-		 fStartSecond -= 2.5f;
 
 	m_soundMusic.SetPositionSeconds( fStartSecond );
 	m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
@@ -627,6 +627,9 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 	/* Keep the music playing after it's finished; we'll stop it. */
 	m_soundMusic.SetStopMode(RageSound::M_CONTINUE);
 	m_soundMusic.StartPlaying();
+
+	/* Return the amount of time until the first beat. */
+	return fFirstSecond + fStartSecond;
 }
 
 bool ScreenGameplay::OneIsHot()
@@ -1157,9 +1160,15 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_User+5:
 		{
-			m_sprHereWeGo.StartFocusing();
-			m_announcerHereWeGo.PlayRandom();
 			m_Background.FadeIn();
+
+			/* Start the song with a minimum delay, so we have time for the
+			 * "Here We Go" sequence. */
+			float delay = StartPlayingSong( 2.5f );
+
+			/* Start the Here We Go sequence 2.5 seconds before notes, so we
+			 * have time to fade in and fade out. */
+			this->SendScreenMessage( SM_StartHereWeGo, delay - 2.5f );
 		}
 		break;
 	case SM_User+6:
@@ -1167,10 +1176,22 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	case SM_User+7:
 		break;
 	case SM_User+8:
-		m_sprHereWeGo.StartBlurring();
-		m_DancingState = STATE_DANCING;		// STATE CHANGE!  Now the user is allowed to press Back
 		break;
 	case SM_User+9:
+		break;
+
+	case SM_StartHereWeGo:
+		/* We have 2.5 seconds until the notes start. */
+		m_sprHereWeGo.StartFocusing();
+		m_announcerHereWeGo.PlayRandom();
+		/* This gives the HWG about a second of screen time. */
+		this->SendScreenMessage( SM_StopHereWeGo, 1.5f );
+		break;
+
+	case SM_StopHereWeGo:
+		/* We have one second until the notes start. */
+		m_sprHereWeGo.StartBlurring();
+		m_DancingState = STATE_DANCING;		// STATE CHANGE!  Now the user is allowed to press Back
 		break;
 
 	// received while STATE_DANCING
@@ -1236,7 +1257,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 
 	case SM_BeginLoadingNextSong:
-		LoadNextSong( false );
+		LoadNextSong();
+		StartPlayingSong( 0 );
 		m_OniFade.OpenWipingRight( SM_None );
 		break;
 

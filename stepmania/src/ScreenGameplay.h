@@ -49,7 +49,7 @@ const ScreenMessage	SM_ComboStopped				= ScreenMessage(SM_User+210);
 class ScreenGameplay : public Screen
 {
 public:
-	ScreenGameplay( bool bDemonstration = true );
+	ScreenGameplay( bool bDemonstration = false );
 	virtual ~ScreenGameplay();
 
 	virtual void Update( float fDeltaTime );
@@ -63,7 +63,8 @@ protected:
 	void TweenOffScreen();
 
 	bool IsLastSong();
-	void LoadNextSong( bool bFirstLoad );
+	void LoadNextSong();
+	float StartPlayingSong(float MinTimeToStart);
 
 	bool OneIsHot();
 	bool AllAreInDanger();
