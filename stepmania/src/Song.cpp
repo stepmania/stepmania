@@ -339,6 +339,8 @@ void Song::RevertFromDisk( bool bAllowNotesLoss )
 			}
 		}
 	}
+
+	StepsID::FlushCache();
 }
 
 

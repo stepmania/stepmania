@@ -51,6 +51,7 @@ public:
 	void LoadFromNode( const XNode* pNode );
 	CString ToString() const;
 	bool IsValid() const;
+	static void FlushCache();
 };
 
 #endif

@@ -154,21 +154,31 @@ void StepsID::FromSteps( const Steps *p )
  * them back out (which we don't do except in the editor), it won't be permanent. 
  * We could do this during the actual Steps::GetID() call, instead, but then it'd have
  * to have access to Song::m_LoadedFromProfile. */
+
+static map<StepsID,Steps *> g_StepsIDCache;
 Steps *StepsID::ToSteps( const Song *p, bool bAllowNull ) const
 {
 	if( st == STEPS_TYPE_INVALID || dc == DIFFICULTY_INVALID )
 		return NULL;
 
+	map<StepsID,Steps *>::iterator it = g_StepsIDCache.find( *this );
+	if( it != g_StepsIDCache.end() )
+		return it->second;
+
 	vector<Steps*> vNotes;
 	if( dc == DIFFICULTY_EDIT )
-		p->GetSteps( vNotes, st, dc, -1, -1, sDescription, true );
+		p->GetSteps( vNotes, st, dc, -1, -1, sDescription, true, 1 );
 	else
-		p->GetSteps( vNotes, st, dc, -1, -1, "", true );
+		p->GetSteps( vNotes, st, dc, -1, -1, "", true, 1 );
+
+	Steps *ret = NULL;
 	if( !vNotes.empty() )
-		return vNotes[0];
-	if( bAllowNull )
-		return NULL;
-	RageException::Throw( "%i, %i, \"%s\"", st, dc, sDescription.c_str() );	
+		ret = vNotes[0];
+	else if( !bAllowNull )
+		RageException::Throw( "%i, %i, \"%s\"", st, dc, sDescription.c_str() );	
+
+	g_StepsIDCache[*this] = ret;
+	return ret;
 }
 
 XNode* StepsID::CreateNode() const
@@ -185,6 +195,12 @@ XNode* StepsID::CreateNode() const
 	}
 
 	return pNode;
+}
+
+
+void StepsID::FlushCache()
+{
+	g_StepsIDCache.clear();
 }
 
 void StepsID::LoadFromNode( const XNode* pNode ) 
