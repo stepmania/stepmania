@@ -1775,9 +1775,14 @@ public:
 	static int GetSaved( T* p, lua_State *L )				{ p->m_SavedLuaData.PushSelf(L); return 1; }
 	static int GetTotalNumSongsPlayed( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_iNumTotalSongsPlayed ); return 1; }
 	static int IsCodeUnlocked( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsCodeUnlocked(IArg(1)) ); return 1; }
+	static int GetSongsActual( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetSongsActual((StepsType)IArg(1),(Difficulty)IArg(2)) ); return 1; }
+	static int GetCoursesActual( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCoursesActual((StepsType)IArg(1),(CourseDifficulty)IArg(2)) ); return 1; }
+	static int GetSongsPossible( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetSongsPossible((StepsType)IArg(1),(Difficulty)IArg(2)) ); return 1; }
+	static int GetCoursesPossible( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCoursesPossible((StepsType)IArg(1),(CourseDifficulty)IArg(2)) ); return 1; }
+	static int GetSongsPercentComplete( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetSongsPercentComplete((StepsType)IArg(1),(Difficulty)IArg(2)) ); return 1; }
+	static int GetCoursesPercentComplete( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetCoursesPercentComplete((StepsType)IArg(1),(CourseDifficulty)IArg(2)) ); return 1; }
 	static int GetTotalStepsWithTopGrade( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetTotalStepsWithTopGrade((StepsType)IArg(1),(Difficulty)IArg(2),(Grade)IArg(3)) ); return 1; }
 	static int GetTotalTrailsWithTopGrade( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetTotalTrailsWithTopGrade((StepsType)IArg(1),(CourseDifficulty)IArg(2),(Grade)IArg(3)) ); return 1; }
-	static int GetSongsAndCoursesPercentCompleteAllDifficulties( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetSongsAndCoursesPercentCompleteAllDifficulties((StepsType)IArg(1)) ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -1793,9 +1798,14 @@ public:
 		ADD_METHOD( GetSaved )
 		ADD_METHOD( GetTotalNumSongsPlayed )
 		ADD_METHOD( IsCodeUnlocked )
+		ADD_METHOD( GetSongsActual )
+		ADD_METHOD( GetCoursesActual )
+		ADD_METHOD( GetSongsPossible )
+		ADD_METHOD( GetCoursesPossible )
+		ADD_METHOD( GetSongsPercentComplete )
+		ADD_METHOD( GetCoursesPercentComplete )
 		ADD_METHOD( GetTotalStepsWithTopGrade )
 		ADD_METHOD( GetTotalTrailsWithTopGrade )
-		ADD_METHOD( GetSongsAndCoursesPercentCompleteAllDifficulties )
 		Luna<T>::Register( L );
 	}
 };
