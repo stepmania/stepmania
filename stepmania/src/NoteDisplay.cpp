@@ -729,7 +729,7 @@ void NoteDisplay::DrawHoldTail( const HoldNote& hn, bool bActive, float fYTail, 
 		DISPLAY->SetLighting( true );
 		DISPLAY->SetLightDirectional( 
 			0, 
-			RageColor(0.1f,0.1f,0.1f,1), 
+			RageColor(1,1,1,1), 
 			RageColor(1,1,1,1),
 			RageColor(1,1,1,1),
 			RageVector3(1, 0, +1) );
@@ -780,7 +780,7 @@ void NoteDisplay::DrawHoldHead( const HoldNote& hn, bool bActive, float fYHead, 
 		DISPLAY->SetLighting( true );
 		DISPLAY->SetLightDirectional( 
 			0, 
-			RageColor(0.1f,0.1f,0.1f,1), 
+			RageColor(1,1,1,1), 
 			RageColor(1,1,1,1),
 			RageColor(1,1,1,1),
 			RageVector3(1, 0, +1) );
@@ -869,7 +869,7 @@ void NoteDisplay::DrawActor( Actor* pActor, int iCol, float fBeat, float fPercen
 		DISPLAY->SetLighting( true );
 		DISPLAY->SetLightDirectional( 
 			0, 
-			RageColor(0.1f,0.1f,0.1f,1), 
+			RageColor(1,1,1,1), 
 			RageColor(1,1,1,1),
 			RageColor(1,1,1,1),
 			RageVector3(1, 0, +1) );
