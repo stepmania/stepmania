@@ -42,12 +42,17 @@ extern "C" {
 #endif
 
 #ifdef _IMAGEHLP_SOURCE_
-#define IMAGEAPI __stdcall
-#define DBHLP_DEPRECIATED
+ #define IMAGEAPI __stdcall
+ #define DBHLP_DEPRECIATED
 #else
-#define IMAGEAPI DECLSPEC_IMPORT __stdcall
-#define DBHLP_DEPRECIATED DECLSPEC_DEPRECATED
+ #define IMAGEAPI DECLSPEC_IMPORT __stdcall
+ #if (_MSC_VER >= 1300) && !defined(MIDL_PASS)
+  #define DBHLP_DEPRECIATED   __declspec(deprecated)
+ #else
+  #define DBHLP_DEPRECIATED
+ #endif
 #endif
+
 #define DBHLPAPI IMAGEAPI
 
 #define IMAGE_SEPARATION (64*1024)
@@ -71,6 +76,7 @@ typedef struct _LOADED_IMAGE {
     ULONG                 SizeOfImage;
 } LOADED_IMAGE, *PLOADED_IMAGE;
 
+#define MAX_SYM_NAME            2000
 
 
 HANDLE
@@ -114,7 +120,7 @@ SymFindFileInPath(
     DWORD  two,
     DWORD  three,
     DWORD  flags,
-    LPSTR  FilePath,
+    LPSTR  FoundFile,
     PFINDFILEINPATHCALLBACK callback,
     PVOID  context
     );
@@ -188,19 +194,25 @@ ImageRvaToVa(
 
 // Symbol server exports
 
-typedef BOOL (*PSYMBOLSERVERPROC)(LPCSTR, LPCSTR, PVOID, DWORD, DWORD, LPSTR);
-typedef BOOL (*PSYMBOLSERVEROPENPROC)(VOID);
-typedef BOOL (*PSYMBOLSERVERCLOSEPROC)(VOID);
-typedef BOOL (*PSYMBOLSERVERSETOPTIONSPROC)(UINT_PTR, ULONG64);
-typedef BOOL (CALLBACK *PSYMBOLSERVERCALLBACKPROC)(UINT_PTR action, ULONG64 data, ULONG64 context);
-typedef UINT_PTR (*PSYMBOLSERVERGETOPTIONSPROC)();
+typedef BOOL (WINAPI *PSYMBOLSERVERPROC)(LPCSTR, LPCSTR, PVOID, DWORD, DWORD, LPSTR);
+typedef BOOL (WINAPI *PSYMBOLSERVEROPENPROC)(VOID);
+typedef BOOL (WINAPI *PSYMBOLSERVERCLOSEPROC)(VOID);
+typedef BOOL (WINAPI *PSYMBOLSERVERSETOPTIONSPROC)(UINT_PTR, ULONG64);
+typedef BOOL (CALLBACK WINAPI *PSYMBOLSERVERCALLBACKPROC)(UINT_PTR action, ULONG64 data, ULONG64 context);
+typedef UINT_PTR (WINAPI *PSYMBOLSERVERGETOPTIONSPROC)();
+typedef BOOL (WINAPI *PSYMBOLSERVERPINGPROC)(LPCSTR);
 
-#define SSRVOPT_CALLBACK    0x01
-#define SSRVOPT_DWORD       0x02
-#define SSRVOPT_DWORDPTR    0x04
-#define SSRVOPT_GUIDPTR     0x08
-#define SSRVOPT_OLDGUIDPTR  0x10
-#define SSRVOPT_UNATTENDED  0x20
+#define SSRVOPT_CALLBACK    0x001
+#define SSRVOPT_DWORD       0x002
+#define SSRVOPT_DWORDPTR    0x004
+#define SSRVOPT_GUIDPTR     0x008
+#define SSRVOPT_OLDGUIDPTR  0x010
+#define SSRVOPT_UNATTENDED  0x020
+#define SSRVOPT_NOCOPY      0x040
+#define SSRVOPT_PARENTWIN   0x080
+#define SSRVOPT_PARAMTYPE   0x100
+#define SSRVOPT_SECURE      0x200
+#define SSRVOPT_TRACE       0x400
 #define SSRVOPT_RESET    ((ULONG_PTR)-1)
 
 #define SSRVACTION_TRACE 1
@@ -281,6 +293,23 @@ SearchTreeForFile(
     PSTR OutputPathBuffer
     );
 
+typedef BOOL
+(CALLBACK *PENUMDIRTREE_CALLBACK)(
+    LPCSTR FilePath,
+    PVOID  CallerData
+    );
+
+BOOL
+IMAGEAPI
+EnumDirTree(
+    HANDLE hProcess,
+    PSTR   RootPath,
+    PSTR   InputPathName,
+    PSTR   OutputPathBuffer,
+    PENUMDIRTREE_CALLBACK Callback,
+    PVOID  CallbackData
+    );
+
 BOOL
 IMAGEAPI
 MakeSureDirectoryPathExists(
@@ -329,7 +358,7 @@ UnDecorateSymbolName(
 
 #define DBHHEADER_DEBUGDIRS     0x1
 
-typedef struct _DBGHELP_MODLOAD_DATA {
+typedef struct _MODLOAD_DATA {
     DWORD   ssize;                  // size of this struct
     DWORD   ssig;                   // signature identifying the passed data
     PVOID   data;                   // pointer to passed data
@@ -797,23 +826,23 @@ typedef BOOL
 
 
 //
-// symbol flags
+// flags found in SYMBOL_INFO.Flags
 //
 
-#define SYMF_OMAP_GENERATED   0x00000001
-#define SYMF_OMAP_MODIFIED    0x00000002
-#ifndef _DBGHELP_USER_GENERATED_SYMBOLS_NOTSUPPORTED
- #define SYMF_USER_GENERATED   0x00000004
-#endif // !_DBGHELP_USER_GENERATED_SYMBOLS_NOTSUPPORTED
-#define SYMF_REGISTER         0x00000008
-#define SYMF_REGREL           0x00000010
-#define SYMF_FRAMEREL         0x00000020
-#define SYMF_PARAMETER        0x00000040
-#define SYMF_LOCAL            0x00000080
-#define SYMF_CONSTANT         0x00000100
-#define SYMF_EXPORT           0x00000200
-#define SYMF_FORWARDER        0x00000400
-#define SYMF_FUNCTION         0x00000800
+#define SYMFLAG_VALUEPRESENT     0x00000001
+#define SYMFLAG_REGISTER         0x00000008
+#define SYMFLAG_REGREL           0x00000010
+#define SYMFLAG_FRAMEREL         0x00000020
+#define SYMFLAG_PARAMETER        0x00000040
+#define SYMFLAG_LOCAL            0x00000080
+#define SYMFLAG_CONSTANT         0x00000100
+#define SYMFLAG_EXPORT           0x00000200
+#define SYMFLAG_FORWARDER        0x00000400
+#define SYMFLAG_FUNCTION         0x00000800
+#define SYMFLAG_VIRTUAL          0x00001000
+#define SYMFLAG_THUNK            0x00002000
+#define SYMFLAG_TLSREL           0x00004000
+
 //
 // symbol type enumeration
 //
@@ -826,6 +855,7 @@ typedef enum {
     SymDeferred,
     SymSym,       // .sym file
     SymDia,
+    SymVirtual,
     NumSymTypes
 } SYM_TYPE;
 
@@ -842,18 +872,34 @@ typedef struct _IMAGEHLP_SYMBOL64 {
     CHAR                        Name[1];                // symbol name (null terminated string)
 } IMAGEHLP_SYMBOL64, *PIMAGEHLP_SYMBOL64;
 
+typedef struct _IMAGEHLP_SYMBOL64_PACKAGE {
+    IMAGEHLP_SYMBOL64 sym;
+    CHAR              name[MAX_SYM_NAME + 1];
+} IMAGEHLP_SYMBOL64_PACKAGE, *PIMAGEHLP_SYMBOL64_PACKAGE;
+
 #if !defined(_IMAGEHLP_SOURCE_) && defined(_IMAGEHLP64)
-#define IMAGEHLP_SYMBOL IMAGEHLP_SYMBOL64
-#define PIMAGEHLP_SYMBOL PIMAGEHLP_SYMBOL64
+
+ #define IMAGEHLP_SYMBOL IMAGEHLP_SYMBOL64
+ #define PIMAGEHLP_SYMBOL PIMAGEHLP_SYMBOL64
+ #define IMAGEHLP_SYMBOL_PACKAGE IMAGEHLP_SYMBOL64_PACKAGE
+ #define PIMAGEHLP_SYMBOL_PACKAGE PIMAGEHLP_SYMBOL64_PACKAGE
+
 #else
-typedef struct _IMAGEHLP_SYMBOL {
-    DWORD                       SizeOfStruct;           // set to sizeof(IMAGEHLP_SYMBOL)
-    DWORD                       Address;                // virtual address including dll base address
-    DWORD                       Size;                   // estimated size of symbol, can be zero
-    DWORD                       Flags;                  // info about the symbols, see the SYMF defines
-    DWORD                       MaxNameLength;          // maximum size of symbol name in 'Name'
-    CHAR                        Name[1];                // symbol name (null terminated string)
-} IMAGEHLP_SYMBOL, *PIMAGEHLP_SYMBOL;
+
+ typedef struct _IMAGEHLP_SYMBOL {
+     DWORD                       SizeOfStruct;           // set to sizeof(IMAGEHLP_SYMBOL)
+     DWORD                       Address;                // virtual address including dll base address
+     DWORD                       Size;                   // estimated size of symbol, can be zero
+     DWORD                       Flags;                  // info about the symbols, see the SYMF defines
+     DWORD                       MaxNameLength;          // maximum size of symbol name in 'Name'
+     CHAR                        Name[1];                // symbol name (null terminated string)
+ } IMAGEHLP_SYMBOL, *PIMAGEHLP_SYMBOL;
+
+ typedef struct _IMAGEHLP_SYMBOL_PACKAGE {
+     IMAGEHLP_SYMBOL sym;
+     CHAR            name[MAX_SYM_NAME + 1];
+ } IMAGEHLP_SYMBOL_PACKAGE, *PIMAGEHLP_SYMBOL_PACKAGE;
+
 #endif
 
 //
@@ -966,6 +1012,7 @@ typedef struct _SOURCEFILE {
 #define CBA_DEFERRED_SYMBOL_LOAD_CANCEL         0x00000007
 #define CBA_SET_OPTIONS                         0x00000008
 #define CBA_EVENT                               0x00000010
+#define CBA_DEFERRED_SYMBOL_LOAD_PARTIAL        0x00000020
 #define CBA_DEBUG_INFO                          0x10000000
 
 typedef struct _IMAGEHLP_CBA_READ_MEMORY {
@@ -997,7 +1044,12 @@ typedef struct _IMAGEHLP_DEFERRED_SYMBOL_LOAD64 {
     DWORD                       TimeDateStamp;          // date/time stamp from pe header
     CHAR                        FileName[MAX_PATH];     // symbols file or image name
     BOOLEAN                     Reparse;                // load failure reparse
+    HANDLE                      hFile;                  // file handle, if passed
+    DWORD                       Flags;			//
 } IMAGEHLP_DEFERRED_SYMBOL_LOAD64, *PIMAGEHLP_DEFERRED_SYMBOL_LOAD64;
+
+#define DSLFLAG_MISMATCHED_PDB	0x1
+#define DSLFLAG_MISMATCHED_DBG  0x2
 
 #if !defined(_IMAGEHLP_SOURCE_) && defined(_IMAGEHLP64)
 #define IMAGEHLP_DEFERRED_SYMBOL_LOAD IMAGEHLP_DEFERRED_SYMBOL_LOAD64
@@ -1010,6 +1062,7 @@ typedef struct _IMAGEHLP_DEFERRED_SYMBOL_LOAD {
     DWORD                       TimeDateStamp;          // date/time stamp from pe header
     CHAR                        FileName[MAX_PATH];     // symbols file or image name
     BOOLEAN                     Reparse;                // load failure reparse
+    HANDLE                      hFile;                  // file handle, if passed
 } IMAGEHLP_DEFERRED_SYMBOL_LOAD, *PIMAGEHLP_DEFERRED_SYMBOL_LOAD;
 #endif
 
@@ -1032,6 +1085,12 @@ typedef struct _IMAGEHLP_DUPLICATE_SYMBOL {
 } IMAGEHLP_DUPLICATE_SYMBOL, *PIMAGEHLP_DUPLICATE_SYMBOL;
 #endif
 
+// If dbghelp ever needs to display graphical UI, it will use this as the parent window.
+
+BOOL
+SymSetParentWindow(
+    HWND hwnd
+    );
 
 //
 // options that are set/returned by SymSetOptions() & SymGetOptions()
@@ -1048,9 +1107,14 @@ typedef struct _IMAGEHLP_DUPLICATE_SYMBOL {
 #define SYMOPT_NO_UNQUALIFIED_LOADS     0x00000100
 #define SYMOPT_FAIL_CRITICAL_ERRORS     0x00000200
 #define SYMOPT_EXACT_SYMBOLS            0x00000400
-#define SYMOPT_WILD_UNDERSCORE          0x00000800
-#define SYMOPT_USE_DEFAULTS             0x00001000
+#define SYMOPT_ALLOW_ABSOLUTE_SYMBOLS   0x00000800
+#define SYMOPT_IGNORE_NT_SYMPATH        0x00001000
 #define SYMOPT_INCLUDE_32BIT_MODULES    0x00002000
+#define SYMOPT_PUBLICS_ONLY             0x00004000
+#define SYMOPT_NO_PUBLICS               0x00008000
+#define SYMOPT_AUTO_PUBLICS             0x00010000
+#define SYMOPT_NO_IMAGE_SEARCH          0x00020000
+#define SYMOPT_SECURE                   0x00040000
 
 #define SYMOPT_DEBUG                    0x80000000
 
@@ -1292,7 +1356,7 @@ SymGetLineFromAddr64(
     IN  HANDLE                  hProcess,
     IN  DWORD64                 qwAddr,
     OUT PDWORD                  pdwDisplacement,
-    OUT PIMAGEHLP_LINE64        Line
+    OUT PIMAGEHLP_LINE64        Line64
     );
 
 #if !defined(_IMAGEHLP_SOURCE_) && defined(_IMAGEHLP64)
@@ -1413,6 +1477,8 @@ SymLoadModule64(
     IN  DWORD           SizeOfDll
     );
 
+#define SLMFLAG_VIRTUAL 0x1
+
 DWORD64
 IMAGEAPI
 SymLoadModuleEx(
@@ -1529,20 +1595,11 @@ typedef struct _MODULE_TYPE_INFO { // AKA TYPTYP
     BYTE        data[1];
 } MODULE_TYPE_INFO, *PMODULE_TYPE_INFO;
 
-#define IMAGEHLP_SYMBOL_INFO_VALUEPRESENT          1
-#define IMAGEHLP_SYMBOL_INFO_REGISTER              SYMF_REGISTER        //  0x08
-#define IMAGEHLP_SYMBOL_INFO_REGRELATIVE           SYMF_REGREL          //  0x10
-#define IMAGEHLP_SYMBOL_INFO_FRAMERELATIVE         SYMF_FRAMEREL        //  0x20
-#define IMAGEHLP_SYMBOL_INFO_PARAMETER             SYMF_PARAMETER       //  0x40
-#define IMAGEHLP_SYMBOL_INFO_LOCAL                 SYMF_LOCAL           //  0x80
-#define IMAGEHLP_SYMBOL_INFO_CONSTANT              SYMF_CONSTANT        // 0x100
-#define IMAGEHLP_SYMBOL_FUNCTION                   SYMF_FUNCTION        // 0x800
-
 typedef struct _SYMBOL_INFO {
     ULONG       SizeOfStruct;
     ULONG       TypeIndex;        // Type Index of symbol
     ULONG64     Reserved[2];
-    ULONG       Reserved2;
+    ULONG       info;
     ULONG       Size;
     ULONG64     ModBase;          // Base Address of module comtaining this symbol
     ULONG       Flags;
@@ -1555,6 +1612,11 @@ typedef struct _SYMBOL_INFO {
     ULONG       MaxNameLen;
     CHAR        Name[1];          // Name of symbol
 } SYMBOL_INFO, *PSYMBOL_INFO;
+
+typedef struct _SYMBOL_INFO_PACKAGE {
+    SYMBOL_INFO si;
+    CHAR        name[MAX_SYM_NAME + 1];
+} SYMBOL_INFO_PACKAGE, *PSYMBOL_INFO_PACKAGE;
 
 typedef struct _IMAGEHLP_STACK_FRAME
 {
@@ -1573,7 +1635,7 @@ typedef struct _IMAGEHLP_STACK_FRAME
 typedef VOID IMAGEHLP_CONTEXT, *PIMAGEHLP_CONTEXT;
 
 
-ULONG
+BOOL
 IMAGEAPI
 SymSetContext(
     HANDLE hProcess,
@@ -1621,6 +1683,15 @@ SymEnumSymbols(
     IN PVOID                        UserContext
     );
 
+BOOL
+IMAGEAPI
+SymEnumSymbolsForAddr(
+    IN HANDLE                       hProcess,
+    IN DWORD64                      Address,
+    IN PSYM_ENUMERATESYMBOLS_CALLBACK    EnumSymbolsCallback,
+    IN PVOID                        UserContext
+    );
+
 typedef enum _IMAGEHLP_SYMBOL_TYPE_INFO {
     TI_GET_SYMTAG,
     TI_GET_SYMNAME,
@@ -1646,6 +1717,9 @@ typedef enum _IMAGEHLP_SYMBOL_TYPE_INFO {
     TI_GET_LEXICALPARENT,
     TI_GET_ADDRESS,
     TI_GET_THISADJUST,
+    TI_GET_UDTKIND,
+    TI_IS_EQUIV_TO,
+    TI_GET_CALLING_CONVENTION,
 } IMAGEHLP_SYMBOL_TYPE_INFO;
 
 typedef struct _TI_FINDCHILDREN_PARAMS {
@@ -1680,6 +1754,27 @@ SymGetTypeFromName(
     IN  ULONG64             BaseOfDll,
     IN  LPSTR               Name,
     OUT PSYMBOL_INFO        Symbol
+    );
+
+BOOL
+IMAGEAPI
+SymAddSymbol(
+    IN HANDLE                       hProcess,
+    IN ULONG64                      BaseOfDll,
+    IN PCSTR                        Name,
+    IN DWORD64                      Address,
+    IN DWORD                        Size,
+    IN DWORD                        Flags
+    );
+
+BOOL
+IMAGEAPI
+SymDeleteSymbol(
+    IN HANDLE                       hProcess,
+    IN ULONG64                      BaseOfDll,
+    IN PCSTR                        Name,
+    IN DWORD64                      Address,
+    IN DWORD                        Flags
     );
 
 //
@@ -1810,6 +1905,39 @@ SymEnumSym(
     IN PVOID                        UserContext
     );
 
+// These values should not be used.
+// They have been replaced by SYMFLAG_ values.
+
+#define SYMF_OMAP_GENERATED   0x00000001
+#define SYMF_OMAP_MODIFIED    0x00000002
+#define SYMF_REGISTER         0x00000008
+#define SYMF_REGREL           0x00000010
+#define SYMF_FRAMEREL         0x00000020
+#define SYMF_PARAMETER        0x00000040
+#define SYMF_LOCAL            0x00000080
+#define SYMF_CONSTANT         0x00000100
+#define SYMF_EXPORT           0x00000200
+#define SYMF_FORWARDER        0x00000400
+#define SYMF_FUNCTION         0x00000800
+#define SYMF_VIRTUAL          0x00001000
+#define SYMF_THUNK            0x00002000
+#define SYMF_TLSREL           0x00004000
+
+// These values should also not be used.
+// They have been replaced by SYMFLAG_ values.
+
+#define IMAGEHLP_SYMBOL_INFO_VALUEPRESENT          1
+#define IMAGEHLP_SYMBOL_INFO_REGISTER              SYMF_REGISTER        // 0x0008
+#define IMAGEHLP_SYMBOL_INFO_REGRELATIVE           SYMF_REGREL          // 0x0010
+#define IMAGEHLP_SYMBOL_INFO_FRAMERELATIVE         SYMF_FRAMEREL        // 0x0020
+#define IMAGEHLP_SYMBOL_INFO_PARAMETER             SYMF_PARAMETER       // 0x0040
+#define IMAGEHLP_SYMBOL_INFO_LOCAL                 SYMF_LOCAL           // 0x0080
+#define IMAGEHLP_SYMBOL_INFO_CONSTANT              SYMF_CONSTANT        // 0x0100
+#define IMAGEHLP_SYMBOL_FUNCTION                   SYMF_FUNCTION        // 0x0800
+#define IMAGEHLP_SYMBOL_VIRTUAL                    SYMF_VIRTUAL         // 0x1000
+#define IMAGEHLP_SYMBOL_THUNK                      SYMF_THUNK           // 0x2000
+#define IMAGEHLP_SYMBOL_INFO_TLSRELATIVE           SYMF_TLSREL          // 0x4000
+
 
 #include <pshpack4.h>
 
@@ -1903,6 +2031,8 @@ typedef enum _MINIDUMP_STREAM_TYPE {
     CommentStreamW              = 11,
     HandleDataStream            = 12,
     FunctionTableStream         = 13,
+    UnloadedModuleListStream    = 14,
+    MiscInfoStream              = 15,
 
     LastReservedStream          = 0xffff
 
@@ -1913,7 +2043,16 @@ typedef enum _MINIDUMP_STREAM_TYPE {
 // The minidump system information contains processor and
 // Operating System specific information.
 // 
-    
+
+#if defined(_MSC_VER)
+#if _MSC_VER >= 800
+#if _MSC_VER >= 1200
+#pragma warning(push)
+#endif
+#pragma warning(disable:4201)    /* Nameless struct/union */
+#endif
+#endif
+
 typedef struct _MINIDUMP_SYSTEM_INFO {
 
     //
@@ -1925,7 +2064,13 @@ typedef struct _MINIDUMP_SYSTEM_INFO {
     USHORT ProcessorLevel;
     USHORT ProcessorRevision;
 
-    USHORT Reserved0;              // Reserved for future use. Must be zero.
+    union {
+        USHORT Reserved0;
+        struct {
+            UCHAR NumberOfProcessors;
+            UCHAR ProductType;
+        };
+    };
 
     //
     // MajorVersion, MinorVersion, BuildNumber, PlatformId and
@@ -1944,7 +2089,13 @@ typedef struct _MINIDUMP_SYSTEM_INFO {
     
     RVA CSDVersionRva;
 
-    ULONG32 Reserved1;             // Reserved for future use.
+    union {
+        ULONG32 Reserved1;
+        struct {
+            USHORT SuiteMask;
+            USHORT Reserved2;
+        };
+    };
 
     //
     // CPU information is obtained from one of two places.
@@ -2010,6 +2161,15 @@ typedef struct _MINIDUMP_SYSTEM_INFO {
 
 typedef union _CPU_INFORMATION CPU_INFORMATION, *PCPU_INFORMATION;
 
+#if defined(_MSC_VER)
+#if _MSC_VER >= 800
+#if _MSC_VER >= 1200
+#pragma warning(pop)
+#else
+#pragma warning(disable:4201)    /* Nameless struct/union */
+#endif
+#endif
+#endif
 
 //
 // The minidump thread contains standard thread
@@ -2199,6 +2359,53 @@ typedef struct _MINIDUMP_FUNCTION_TABLE_STREAM {
 
 
 //
+// The MINIDUMP_UNLOADED_MODULE contains information about a
+// a specific module that was previously loaded but no
+// longer is.  This can help with diagnosing problems where
+// callers attempt to call code that is no longer loaded.
+//
+
+typedef struct _MINIDUMP_UNLOADED_MODULE {
+    ULONG64 BaseOfImage;
+    ULONG32 SizeOfImage;
+    ULONG32 CheckSum;
+    ULONG32 TimeDateStamp;
+    RVA ModuleNameRva;
+} MINIDUMP_UNLOADED_MODULE, *PMINIDUMP_UNLOADED_MODULE;
+
+
+//
+// The minidump unloaded module list is a container for unloaded modules.
+//
+
+typedef struct _MINIDUMP_UNLOADED_MODULE_LIST {
+    ULONG32 SizeOfHeader;
+    ULONG32 SizeOfEntry;
+    ULONG32 NumberOfEntries;
+} MINIDUMP_UNLOADED_MODULE_LIST, *PMINIDUMP_UNLOADED_MODULE_LIST;
+
+
+//
+// The miscellaneous information stream contains a variety
+// of small pieces of information.  A member is valid if
+// it's within the available size and its corresponding
+// bit is set.
+//
+
+#define MINIDUMP_MISC1_PROCESS_ID    0x00000001
+#define MINIDUMP_MISC1_PROCESS_TIMES 0x00000002
+
+typedef struct _MINIDUMP_MISC_INFO {
+    ULONG32 SizeOfInfo;
+    ULONG32 Flags1;
+    ULONG32 ProcessId;
+    ULONG32 ProcessCreateTime;
+    ULONG32 ProcessUserTime;
+    ULONG32 ProcessKernelTime;
+} MINIDUMP_MISC_INFO, *PMINIDUMP_MISC_INFO;
+
+
+//
 // Support for arbitrary user-defined information.
 //
 
@@ -2266,7 +2473,8 @@ typedef enum _THREAD_WRITE_FLAGS {
     ThreadWriteStack             = 0x0002,
     ThreadWriteContext           = 0x0004,
     ThreadWriteBackingStore      = 0x0008,
-    ThreadWriteInstructionWindow = 0x0010
+    ThreadWriteInstructionWindow = 0x0010,
+    ThreadWriteThreadData        = 0x0020,
 } THREAD_WRITE_FLAGS;
 
 typedef struct _MINIDUMP_MODULE_CALLBACK {
@@ -2346,14 +2554,39 @@ typedef struct _MINIDUMP_CALLBACK_OUTPUT {
 // is set for all modules referenced before the base
 // module callbacks occur.
 //
+// On some operating systems a list of modules that were
+// recently unloaded is kept in addition to the currently
+// loaded module list.  This information can be saved in
+// the dump if desired.
+//
+// Stack and backing store memory can be scanned for referenced
+// pages in order to pick up data referenced by locals or other
+// stack memory.  This can increase the size of a dump significantly.
+//
+// Module paths may contain undesired information such as user names
+// or other important directory names so they can be stripped.  This
+// option reduces the ability to locate the proper image later
+// and should only be used in certain situations.
+//
+// Complete operating system per-process and per-thread information can
+// be gathered and stored in the dump.
+//
+// The virtual address space can be scanned for various types
+// of memory to be included in the dump.
+//
 
 typedef enum _MINIDUMP_TYPE {
-    MiniDumpNormal         = 0x0000,
-    MiniDumpWithDataSegs   = 0x0001,
-    MiniDumpWithFullMemory = 0x0002,
-    MiniDumpWithHandleData = 0x0004,
-    MiniDumpFilterMemory   = 0x0008,
-    MiniDumpScanMemory     = 0x0010,
+    MiniDumpNormal                         = 0x0000,
+    MiniDumpWithDataSegs                   = 0x0001,
+    MiniDumpWithFullMemory                 = 0x0002,
+    MiniDumpWithHandleData                 = 0x0004,
+    MiniDumpFilterMemory                   = 0x0008,
+    MiniDumpScanMemory                     = 0x0010,
+    MiniDumpWithUnloadedModules            = 0x0020,
+    MiniDumpWithIndirectlyReferencedMemory = 0x0040,
+    MiniDumpFilterModulePaths              = 0x0080,
+    MiniDumpWithProcessThreadData          = 0x0100,
+    MiniDumpWithPrivateReadWriteMemory     = 0x0200,
 } MINIDUMP_TYPE;
 
 
