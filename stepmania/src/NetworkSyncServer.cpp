@@ -10,7 +10,6 @@ void StepManiaLanServer::ServerStop() { }
 void StepManiaLanServer::ServerUpdate() { }
 StepManiaLanServer::StepManiaLanServer() { }
 StepManiaLanServer::~StepManiaLanServer() { }
-bool StepManiaLanServer::IsBanned(in_addr &ip) {}
 #else
 
 LanPlayer::LanPlayer()
