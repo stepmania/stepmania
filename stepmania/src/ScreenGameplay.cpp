@@ -808,8 +808,10 @@ void ScreenGameplay::SetupSong( int p, int iSongIndex )
 		if( GAMESTATE->m_ActiveAttacks[p][s].fStartSecond == 0 )
 			GAMESTATE->m_ActiveAttacks[p][s].fStartSecond = -1;
 	}
+	/* Update attack bOn flags. */
+	GAMESTATE->Update(0);
 	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( (PlayerNumber)p );
-
+	/* Snap. */
 	GAMESTATE->m_CurrentPlayerOptions[p] = GAMESTATE->m_PlayerOptions[p];
 
 	NoteData pOriginalNoteData;

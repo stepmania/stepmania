@@ -281,13 +281,14 @@ void GameState::Update( float fDelta )
 		{
 			Attack &attack = m_ActiveAttacks[p][s];
 			const bool bCurrentlyEnabled =
+				attack.fStartSecond == -1 ||
 				(attack.fStartSecond < this->m_fMusicSeconds &&
-				m_fMusicSeconds < attack.fStartSecond+attack.fSecsRemaining);
+				 m_fMusicSeconds < attack.fStartSecond+attack.fSecsRemaining);
 
 			if( m_ActiveAttacks[p][s].bOn == bCurrentlyEnabled )
 				continue; /* OK */
 
-			if( !m_ActiveAttacks[p][s].bOn && bCurrentlyEnabled )
+			if( m_ActiveAttacks[p][s].bOn && !bCurrentlyEnabled )
 				m_bAttackEndedThisUpdate[p] = true;
 
 			bRebuildPlayerOptions = true;
