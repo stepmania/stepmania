@@ -25,22 +25,6 @@ public:
 
 	// Loading
 	bool LoadFromNotesFile( const CString &sPath );
-	bool LoadFromBMSFile( const CString &sPath );
-	bool LoadFromKSFFile( const CString &sPath );
-	bool LoadFromDWITokens( 
-		CString sMode,
-		CString sDescription,
-		CString sNumFeet,
-		CString sStepData1, CString sStepData2 
-		);
-	void LoadFromSMTokens( 
-		CString sNotesType, 
-		CString sDescription,
-		CString sDifficultyClass,
-		CString sMeter,
-		CString sRadarValues,
-		CString sNoteDataOut
-		);
 	void WriteSMNotesTag( FILE* fp );
 	void WriteDWINotesTag( FILE* fp );
 
@@ -79,8 +63,9 @@ public:
 
 	static DifficultyClass DifficultyClassFromDescriptionAndMeter( CString sDescription, int iMeter );
 
-protected:
 	void TidyUpData();
+
+protected:
 
 };
 

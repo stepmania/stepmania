@@ -45,23 +45,19 @@ struct BackgroundChange
 
 class Song
 {
+public:
 	/* Set when this song should be displayed in the music wheel: */
 	enum { SHOW_ALWAYS,		/* all the time */
 		   SHOW_ROULETTE,	/* only when rouletting */
 		   SHOW_NEVER }		/* never (unless song hiding is turned off) */
 		m_SelectionDisplay;
-public:
+
 	Song();
 	~Song();
 	
 	bool LoadWithoutCache( CString sDir );
 
-	bool LoadFromSongDir( CString sDir );	// calls one of the loads below
-
-	bool LoadFromDWIFile( CString sPath );
-	bool LoadFromBMSDir( CString sDir );
-	bool LoadFromSMFile( CString sPath );
-	bool LoadFromKSFDir( CString sDir );
+	bool LoadFromSongDir( CString sDir );
 
 	void TidyUpData();	// call after loading to clean up invalid data
 

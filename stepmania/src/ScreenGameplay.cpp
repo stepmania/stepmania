@@ -26,6 +26,7 @@
 #include "ScoreDisplayOni.h"
 #include "ScreenPrompt.h"
 #include "GrooveRadar.h"
+#include "NotesLoaderSM.h"
 
 //
 // Defines
@@ -924,10 +925,12 @@ void SaveChanges()
 
 void DontSaveChanges()
 {
+	SMLoader ld;
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
-		GAMESTATE->m_pCurSong->LoadFromSMFile( GAMESTATE->m_pCurSong->GetCacheFilePath() );
+		ld.LoadFromSMFile(GAMESTATE->m_pCurSong->GetCacheFilePath(),
+			*GAMESTATE->m_pCurSong);
 		break;
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
@@ -935,7 +938,7 @@ void DontSaveChanges()
 			for( int i=0; i<GAMESTATE->m_pCurCourse->m_iStages; i++ )
 			{
 				Song* pSong = GAMESTATE->m_pCurCourse->m_apSongs[i];
-				pSong->LoadFromSMFile( GAMESTATE->m_pCurSong->GetCacheFilePath() );
+				ld.LoadFromSMFile( GAMESTATE->m_pCurSong->GetCacheFilePath(), *pSong );
 			}
 		}
 		break;
