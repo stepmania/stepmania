@@ -30,9 +30,9 @@ static const char *itoa(unsigned n)
 	return p;
 }
 
-static int xtoi( const char *hex )
+static intptr_t xtoi( const char *hex )
 {
-	int ret = 0;
+	intptr_t ret = 0;
 	while( 1 )
 	{
 		int val = -1;
