@@ -49,6 +49,7 @@ public:
 	float GetHoldNoteLife(unsigned h) const;
 	void SetHoldNoteLife(unsigned h, float f);
 
+	bool IsRowCompletelyJudged(unsigned row) const;
 	TapNoteScore MinTapNoteScore(unsigned row) const;
 	int LastTapNoteScoreTrack(unsigned row) const;
 	TapNoteScore LastTapNoteScore(unsigned row) const;

@@ -943,16 +943,10 @@ void ScreenGameplay::Update( float fDeltaTime )
 	int iRowNow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 	if( iRowNow >= 0 )
 	{
-		for( int r=m_iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
-		{
+		for( ; m_iRowLastCrossed <= iRowNow; m_iRowLastCrossed++ )  // for each index we crossed since the last update
 			for( pn=0; pn<NUM_PLAYERS; pn++ )
-			{
 				if( GAMESTATE->IsPlayerEnabled(pn) )
-					m_Player[pn].CrossedRow( r );
-			}
-		}
-
-		m_iRowLastCrossed = iRowNow;
+					m_Player[pn].CrossedRow( m_iRowLastCrossed );
 	}
 
 	if( GAMESTATE->m_SongOptions.m_bAssistTick && IsTimeToPlayTicks())

@@ -54,7 +54,7 @@ public:
 	
 protected:
 	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
-	void OnRowDestroyed( int iStepIndex );
+	void OnRowCompletelyJudged( int iStepIndex );
 	void HandleTapRowScore( unsigned row );
 	void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );
 	void HandleAutosync(float fNoteOffset);

@@ -110,8 +110,9 @@ void Inventory::Update( float fDelta )
 		if( iLastSecond != iThisSecond )
 		{
 			int iSlotToConsider = rand()%NUM_INVENTORY_SLOTS;
+			bool bTimeToUse = (rand()%10)==0;
 			if( GAMESTATE->m_sInventory[m_PlayerNumber][iSlotToConsider] != ""  &&
-				rand()%5 == 0 )
+				bTimeToUse )
 			{
 				UseItem( iSlotToConsider );
 			}

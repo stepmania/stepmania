@@ -102,12 +102,18 @@ TapNoteScore NoteDataWithScoring::MinTapNoteScore(unsigned row) const
 	TapNoteScore score = TNS_MARVELOUS;
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
-		/* If there's no tap note on this row, skip it; the score will always be TNS_NONE. */
-		if(GetTapNote(t, row) == TAP_EMPTY) continue;
+		/* If there's no tap note on this row, skip it, or else the score will always be TNS_NONE. */
+		if(GetTapNote(t, row) == TAP_EMPTY) 
+			continue;
 		score = min( score, GetTapNoteScore(t, row) );
 	}
 
 	return score;
+}
+
+bool NoteDataWithScoring::IsRowCompletelyJudged(unsigned row) const
+{
+	return MinTapNoteScore(row) >= TNS_MISS;
 }
 
 /* Return the last tap score of a row: the grade of the tap that completed

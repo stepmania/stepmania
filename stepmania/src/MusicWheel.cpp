@@ -135,7 +135,7 @@ MusicWheel::MusicWheel()
 		GAMESTATE->m_pCurSong = pSong;
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			if( GAMESTATE->IsPlayerEnabled(p) )
+			if( GAMESTATE->IsHumanPlayer(p) )
 			{
 				GAMESTATE->m_pCurNotes[p] = pNotes;
 				GAMESTATE->m_PlayerOptions[p] = po;

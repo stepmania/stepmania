@@ -23,7 +23,7 @@ struct TapScoreDistribution
 		float fRand = randomf(0,1);
 		ASSERT( iDifficultyExponent >= 1 );
 		fRand = powf(fRand, iDifficultyExponent);
-		for( int i=0; i<NUM_TAP_NOTE_SCORES; i++ )
+		for( int i=TNS_MISS; i<=TNS_MARVELOUS; i++ )
 			if( fRand <= fCumulativeProbability[i] )
 				return (TapNoteScore)i;
 		ASSERT(0);	// the last probability must be 1.0, so we should never get here!
@@ -67,10 +67,10 @@ TapScoreDistribution TAP_SCORE_DISTRIBUTIONS[NUM_PLAYER_CONTROLLERS] =
 	{
 		0.00f,	// TNS_NONE 
 		0.005f,	// TNS_MISS
-		0.010f,	// TNS_BOO 
-		0.03f,	// TNS_GOOD 
+		0.007f,	// TNS_BOO 
+		0.01f,	// TNS_GOOD 
 		0.10f,	// TNS_GREAT 
-		0.50f,	// TNS_PERFECT 
+		0.60f,	// TNS_PERFECT 
 		1.00f,	// TNS_MARVELOUS 
 	},
 	// CPU_AUTOPLAY
@@ -88,5 +88,7 @@ TapScoreDistribution TAP_SCORE_DISTRIBUTIONS[NUM_PLAYER_CONTROLLERS] =
 
 TapNoteScore PlayerAI::GetTapNoteScore( PlayerController pc, int iSumOfAttackLevels )
 {
-	return TAP_SCORE_DISTRIBUTIONS[pc].GetTapNoteScore( iSumOfAttackLevels+1 );
+	TapNoteScore tns = TAP_SCORE_DISTRIBUTIONS[pc].GetTapNoteScore( iSumOfAttackLevels+1 );
+	ASSERT( tns != TNS_NONE );	// sanity check on PlayerAI's result
+	return tns;
 }

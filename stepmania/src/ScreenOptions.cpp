@@ -100,7 +100,7 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLin
 	// init highlights and underlines
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
+		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
 
 		for( int l=0; l<m_iNumOptionRows; l++ )
@@ -226,7 +226,7 @@ void ScreenOptions::InitOptionsText()
 
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
-				if( GAMESTATE->IsPlayerEnabled(p) )
+				if( GAMESTATE->IsHumanPlayer(p) )
 				{
 					BitmapText &option = m_textItems[i][p];
 
@@ -386,7 +386,7 @@ void ScreenOptions::UpdateEnabledDisabled()
 	{
 		bool bThisRowIsSelected = false;
 		for( int p=0; p<NUM_PLAYERS; p++ )
-			if( GAMESTATE->IsPlayerEnabled(p)  &&  m_iCurrentRow[p] == i )
+			if( GAMESTATE->IsHumanPlayer(p)  &&  m_iCurrentRow[p] == i )
 				bThisRowIsSelected = true;
 
 		m_sprBullets[i].SetDiffuse( bThisRowIsSelected ? colorSelected : colorNotSelected );
@@ -403,7 +403,7 @@ void ScreenOptions::UpdateEnabledDisabled()
 
 	bool bThisRowIsSelectedByBoth = true;
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsPlayerEnabled(p)  &&  m_iCurrentRow[p] != i )
+		if( GAMESTATE->IsHumanPlayer(p)  &&  m_iCurrentRow[p] != i )
 			bThisRowIsSelectedByBoth = false;
 		m_textItems[i][0].SetDiffuse( bThisRowIsSelectedByBoth ? colorNotSelected : colorSelected );
 	if( bThisRowIsSelectedByBoth )
@@ -511,7 +511,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn )
 	{
 		bool bAllOnExit = true;
 		for( int p=0; p<NUM_PLAYERS; p++ )
-			if( GAMESTATE->IsPlayerEnabled(p)  &&  m_iCurrentRow[p] != m_iNumOptionRows )
+			if( GAMESTATE->IsHumanPlayer(p)  &&  m_iCurrentRow[p] != m_iNumOptionRows )
 				bAllOnExit = false;
 
 		if( m_iCurrentRow[pn] != m_iNumOptionRows )	// not on exit

@@ -114,7 +114,7 @@ void Screen::Input( const DeviceInput& DeviceI, const InputEventType type, const
 	if( !MenuI.IsValid() )
 		return;
 
-	if( !GAMESTATE->IsPlayerEnabled(MenuI.player) )
+	if( !GAMESTATE->IsHumanPlayer(MenuI.player) )
 		return;
 
 	switch( MenuI.button )

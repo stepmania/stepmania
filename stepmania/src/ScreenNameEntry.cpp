@@ -144,7 +144,7 @@ ScreenNameEntry::ScreenNameEntry()
 		// remove modifiers that may have been on the last song
 		GAMESTATE->m_PlayerOptions[p] = PlayerOptions();
 
-		ASSERT( GAMESTATE->IsPlayerEnabled(p) );	// they better be enabled if they made a high score!
+		ASSERT( GAMESTATE->IsHumanPlayer(p) );	// they better be enabled if they made a high score!
 
 		m_GrayArrowRow[p].Load( (PlayerNumber)p );
 		m_GrayArrowRow[p].SetX( (float)GAMESTATE->GetCurrentStyleDef()->m_iCenterX[p] );
@@ -363,7 +363,7 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 			StageStats stats;
 			GAMESTATE->GetFinalEvalStatsAndSongs( stats, vSongs );
 			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsPlayerEnabled(p) )
+				if( GAMESTATE->IsHumanPlayer(p) )
 					max_grade = max( max_grade, stats.GetGrade((PlayerNumber)p) );
 			if( max_grade >= GRADE_AA )
 				SCREENMAN->SetNewScreen( "ScreenCredits" );

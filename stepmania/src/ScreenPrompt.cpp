@@ -51,8 +51,8 @@ ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool b
 	m_rectAnswerBox.SetDiffuse( RageColor(0.5f,0.5f,1.0f,0.7f) );
 	this->AddChild( &m_rectAnswerBox );
 
-	m_textAnswer[0].LoadFromFont( THEME->GetPathTo("Fonts","header1") );
-	m_textAnswer[1].LoadFromFont( THEME->GetPathTo("Fonts","header1") );
+	m_textAnswer[0].LoadFromFont( THEME->GetPathTo("Fonts","_shared1") );
+	m_textAnswer[1].LoadFromFont( THEME->GetPathTo("Fonts","_shared1") );
 	m_textAnswer[0].SetY( PROMPT_Y );
 	m_textAnswer[1].SetY( PROMPT_Y );
 	this->AddChild( &m_textAnswer[0] );

@@ -379,7 +379,7 @@ void ScreenEz2SelectMusic::DrawPrimitives()
 
 void ScreenEz2SelectMusic::EasierDifficulty( PlayerNumber pn )
 {
-	if( !GAMESTATE->IsPlayerEnabled(pn) )
+	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;
 	if( m_arrayNotes[pn].empty() )
 		return;
@@ -406,7 +406,7 @@ void ScreenEz2SelectMusic::EasierDifficulty( PlayerNumber pn )
 
 void ScreenEz2SelectMusic::HarderDifficulty( PlayerNumber pn )
 {
-	if( !GAMESTATE->IsPlayerEnabled(pn
+	if( !GAMESTATE->IsHumanPlayer(pn
 		) )
 		return;
 	if( m_arrayNotes[pn].empty() )
@@ -464,7 +464,7 @@ void ScreenEz2SelectMusic::MusicChanged()
 
 	for( pn=0; pn<NUM_PLAYERS; pn++ )
 	{
-		if( !GAMESTATE->IsPlayerEnabled( PlayerNumber(pn) ) )
+		if( !GAMESTATE->IsHumanPlayer( PlayerNumber(pn) ) )
 			continue;
 		for( unsigned i=0; i<m_arrayNotes[pn].size(); i++ )
 		{

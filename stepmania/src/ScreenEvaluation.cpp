@@ -189,16 +189,16 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
 	case stage:
 		{
 			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsPlayerEnabled(p) )
+				if( GAMESTATE->IsHumanPlayer(p) )
 					GAMESTATE->m_pCurNotes[p]->AddScore( (PlayerNumber)p, grade[p], stageStats.fScore[p], bNewRecord[p] );
 		}
 		break;
 	case summary:
 		{
 			NotesType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
-			bool bIsPlayerEnabled[NUM_PLAYERS];
+			bool bIsHumanPlayer[NUM_PLAYERS];
 			for( p=0; p<NUM_PLAYERS; p++ )
-				bIsPlayerEnabled[p] = GAMESTATE->IsPlayerEnabled(p);
+				bIsHumanPlayer[p] = GAMESTATE->IsHumanPlayer(p);
 
 			RankingCategory cat[NUM_PLAYERS];
 			int iRankingIndex[NUM_PLAYERS];
@@ -208,7 +208,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
 				cat[p] = AverageMeterToRankingCategory( fAverageMeter );
 			}
 
-			SONGMAN->AddScores( nt, bIsPlayerEnabled, cat, stageStats.fScore, iRankingIndex );
+			SONGMAN->AddScores( nt, bIsHumanPlayer, cat, stageStats.fScore, iRankingIndex );
 
 			COPY( GAMESTATE->m_RankingCategory, cat );
 			COPY( GAMESTATE->m_iRankingIndex, iRankingIndex );
@@ -218,14 +218,14 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
 	case course:
 		{
 			NotesType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
-			bool bIsPlayerEnabled[NUM_PLAYERS];
+			bool bIsHumanPlayer[NUM_PLAYERS];
 			for( p=0; p<NUM_PLAYERS; p++ )
-				bIsPlayerEnabled[p] = GAMESTATE->IsPlayerEnabled(p);
+				bIsHumanPlayer[p] = GAMESTATE->IsHumanPlayer(p);
 
 			int iRankingIndex[NUM_PLAYERS];
 
 			Course* pCourse = GAMESTATE->m_pCurCourse;
-			pCourse->AddScores( nt, bIsPlayerEnabled, stageStats.iActualDancePoints, stageStats.fAliveSeconds, iRankingIndex, bNewRecord );
+			pCourse->AddScores( nt, bIsHumanPlayer, stageStats.iActualDancePoints, stageStats.fAliveSeconds, iRankingIndex, bNewRecord );
 			COPY( GAMESTATE->m_iRankingIndex, iRankingIndex );
 			GAMESTATE->m_pRankingCourse = pCourse;
 			GAMESTATE->m_RankingNotesType = nt;
@@ -483,7 +483,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
 				case 3:	iValue = stageStats.iTapNoteScores[p][TNS_GOOD];		break;
 				case 4:	iValue = stageStats.iTapNoteScores[p][TNS_BOO];			break;
 				case 5:	iValue = stageStats.iTapNoteScores[p][TNS_MISS];		break;
-				case 6:	iValue = stageStats.iTapNoteScores[p][HNS_OK];			break;
+				case 6:	iValue = stageStats.iHoldNoteScores[p][HNS_OK];			break;
 				case 7:	iValue = stageStats.iMaxCombo[p];						break;
 				default:	iValue = 0;	ASSERT(0);
 				}
@@ -829,7 +829,7 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 		{
 			bool bOnePassed = false;
 			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsPlayerEnabled(p) )
+				if( GAMESTATE->IsHumanPlayer(p) )
 					bOnePassed |= !GAMESTATE->m_CurStageStats.bFailed[p];
 
 			if( bOnePassed )

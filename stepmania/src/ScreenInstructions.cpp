@@ -47,7 +47,7 @@ ScreenInstructions::ScreenInstructions()
 		Difficulty easiestDifficulty = (Difficulty)(NUM_DIFFICULTIES-1);
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			if( !GAMESTATE->IsPlayerEnabled(p) )
+			if( !GAMESTATE->IsHumanPlayer(p) )
 				continue;
 			easiestDifficulty = min( easiestDifficulty, GAMESTATE->m_PreferredDifficulty[p] );
 		}

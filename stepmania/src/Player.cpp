@@ -10,9 +10,9 @@
 -----------------------------------------------------------------------------
 */
 
+#include "Player.h"
 #include "GameConstantsAndTypes.h"
 #include <math.h> // for fabs()
-#include "Player.h"
 #include "RageUtil.h"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
@@ -195,21 +195,19 @@ void Player::Update( float fDeltaTime )
 		if( hn.fStartBeat < fSongBeat && fSongBeat < hn.fEndBeat )	// if the song beat is in the range of this hold
 		{
 			bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
-			if( GAMESTATE->m_PlayerController[m_PlayerNumber] != HUMAN )	// TODO: Make the CPU miss sometimes.
+			
+			// TODO: Make the CPU miss sometimes.
+			if( GAMESTATE->m_PlayerController[m_PlayerNumber] != HUMAN )
 				bIsHoldingButton = true;
 
 			m_NoteField.m_bIsHoldingHoldNote[i] = bIsHoldingButton && bSteppedOnTapNote;	// set host flag so NoteField can do intelligent drawing
 
 			if( bSteppedOnTapNote )		// this note is not judged and we stepped on its head
-			{
 				m_NoteField.GetHoldNote(i).fStartBeat = fSongBeat;	// move the start of this Hold
-			}
 
 			if( bSteppedOnTapNote && bIsHoldingButton )
 			{
 				// Increase life
-//				fLife += fDeltaTime/PREFSMAN->m_fJudgeWindowOKSeconds;
-//				fLife = min( fLife, 1 );	// clamp
 				fLife = 1;
 
 				m_GhostArrowRow.HoldNote( hn.iTrack );		// update the "electric ghost" effect
@@ -240,7 +238,7 @@ void Player::Update( float fDeltaTime )
 
 		if( hns != HNS_NONE )
 		{
-			/* this note's been judged */
+			/* this note has been judged */
 			HandleHoldScore( hns, tns );
 			m_HoldJudgment[hn.iTrack].SetHoldJudgment( hns );
 		}
@@ -371,11 +369,23 @@ void Player::Step( int col )
 			else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_GREAT;
 			else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
 			else if( fSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_BOO;
-			else																		score = TNS_NONE;
+			else	
+			{
+				// if this step is worse than Boo, we shouldn't be here in the first place.
+				ASSERT(0);	
+				return;	
+			}
 		}
 		else
 		{
 			score = PlayerAI::GetTapNoteScore( GAMESTATE->m_PlayerController[m_PlayerNumber], GAMESTATE->GetSumOfActiveAttackLevels(m_PlayerNumber) );
+			
+			/* AI will generate misses here.  Don't handle a miss like a regular note because
+			 * we want the judgment animation to appear delayed.  Instead, return early if
+			 * AI generated a miss, and let UpdateMissedTapNotesOlderThan() detect and handle the 
+			 * misses. */
+			if( score == TNS_MISS )
+				return;
 		}
 
 		if( score==TNS_MARVELOUS  &&  !PREFSMAN->m_bMarvelousTiming )
@@ -387,11 +397,14 @@ void Player::Step( int col )
 		SetTapNoteScore(col, iIndexOverlappingNote, score);
 		SetTapNoteOffset(col, iIndexOverlappingNote, -fNoteOffset);
 
-		if ( score >= TNS_GREAT ) 
+		if( GAMESTATE->m_PlayerController[m_PlayerNumber] == HUMAN  && 
+			score >= TNS_GREAT ) 
 			HandleAutosync(fNoteOffset);
 
-		if (score > TNS_NONE && MinTapNoteScore(iIndexOverlappingNote) >= TNS_BOO )
-			OnRowDestroyed( iIndexOverlappingNote );
+		ASSERT( score != TNS_NONE );
+
+		if( IsRowCompletelyJudged(iIndexOverlappingNote) )
+			OnRowCompletelyJudged( iIndexOverlappingNote );
 	}
 
 	if( !bDestroyedNote )
@@ -420,9 +433,9 @@ void Player::HandleAutosync(float fNoteOffset)
 }
 
 
-void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
+void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 {
-	LOG->Trace( "Player::OnRowDestroyed" );
+	LOG->Trace( "Player::OnRowCompletelyJudged" );
 	
 	/* Find the minimum score of the row.  This will never be TNS_NONE, since this
 	 * function is only called when a row is completed. */
@@ -515,14 +528,9 @@ void Player::CrossedRow( int iNoteRow )
 {
 	// check to see if there's at the crossed row
 	for( int t=0; t<GetNumTracks(); t++ )
-	{
 		if( GetTapNote(t, iNoteRow) != TAP_EMPTY )
-		{
-			TapNoteScore tns  = PlayerAI::GetTapNoteScore( GAMESTATE->m_PlayerController[m_PlayerNumber], GAMESTATE->GetSumOfActiveAttackLevels(m_PlayerNumber) );
-			if( tns!=TNS_MISS )
-				this->Step( t );
-		}
-	}
+			if( GAMESTATE->m_PlayerController[m_PlayerNumber] != HUMAN )
+				 Step( t );
 }
 
 
@@ -572,8 +580,6 @@ void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 
 	if( m_pLifeMeter ) {
 		m_pLifeMeter->ChangeLife( holdScore, tapScore );
-	
-		// refresh Oni life meter
 		m_pLifeMeter->OnDancePointsChange();
 	}
 }

@@ -81,7 +81,8 @@ Grade StageStats::GetGrade( PlayerNumber pn )
 		iTapNoteScores[pn][TNS_GREAT] == 0 &&
 		iTapNoteScores[pn][TNS_GOOD] == 0 &&
 		iTapNoteScores[pn][TNS_BOO] == 0 &&
-		iTapNoteScores[pn][TNS_MISS] == 0 )
+		iTapNoteScores[pn][TNS_MISS] == 0 &&
+		iHoldNoteScores[pn][HNS_NG] == 0 )
 		return GRADE_AAAA;
 
 	if     ( fPercentDancePoints == 1.00 )		return GRADE_AAA;

@@ -101,7 +101,7 @@ ScreenSelectCourse::ScreenSelectCourse()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
+		if( !GAMESTATE->IsHumanPlayer((PlayerNumber)p) )
 			continue;	// skip
 
 		m_sprHighScoreFrame[p].Load( THEME->GetPathTo("Graphics","ScreenSelectCourse score frame") );
@@ -211,7 +211,7 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, InputEventType type,
 	if( MenuI.button == MENU_BUTTON_RIGHT || MenuI.button == MENU_BUTTON_LEFT )
 	{
 		if( !MenuI.IsValid() ) return;
-		if( !GAMESTATE->IsPlayerEnabled(MenuI.player) ) return;
+		if( !GAMESTATE->IsHumanPlayer(MenuI.player) ) return;
 
 		int dir = 0;
 		if(INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) ) )
@@ -432,7 +432,7 @@ void ScreenSelectCourse::UpdateOptionsDisplays()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( GAMESTATE->IsPlayerEnabled(p) )
+		if( GAMESTATE->IsHumanPlayer(p) )
 		{
 			CString s = GAMESTATE->m_PlayerOptions[p].GetString();
 			s.Replace( ", ", "\n" );

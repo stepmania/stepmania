@@ -232,7 +232,7 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 	case SM_MenuTimer:
 		{
 			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsPlayerEnabled(p) )
+				if( GAMESTATE->IsHumanPlayer(p) )
 					MenuStart( (PlayerNumber)p );
 		}
 		break;

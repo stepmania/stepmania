@@ -183,7 +183,7 @@ void ScreenSelectDifficulty::UpdateSelectableChoices()
 	}
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsPlayerEnabled(p) )
+		if( GAMESTATE->IsHumanPlayer(p) )
 		{
 			MenuRight( (PlayerNumber)p );
 			MenuLeft( (PlayerNumber)p );
@@ -227,7 +227,7 @@ void ScreenSelectDifficulty::ChangePage( Page newPage )
 
 	// If anyone has already chosen, don't allow changing of pages
 	for( p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsPlayerEnabled(p) && m_bChosen[p] )
+		if( GAMESTATE->IsHumanPlayer(p) && m_bChosen[p] )
 			return;
 
 	bool bPageIncreasing = newPage > m_CurrentPage;
@@ -257,7 +257,7 @@ void ScreenSelectDifficulty::ChangeWithinPage( PlayerNumber pn, int iNewChoice, 
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
+		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
 
 		if( p!=pn && m_CurrentPage==PAGE_1 )
@@ -333,7 +333,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	// check to see if everyone has chosen
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( GAMESTATE->IsPlayerEnabled((PlayerNumber)p)  &&  m_bChosen[p] == false )
+		if( GAMESTATE->IsHumanPlayer((PlayerNumber)p)  &&  m_bChosen[p] == false )
 			return;
 	}
 	this->PostScreenMessage( SM_BeginFadingOut, SLEEP_AFTER_CHOICE_SECONDS );	// tell our owner it's time to move on
@@ -357,7 +357,7 @@ void ScreenSelectDifficulty::TweenOnScreen()
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
+		if( !GAMESTATE->IsHumanPlayer((PlayerNumber)p) )
 			continue;
 
 		float fCursorX = GetCursorX( (PlayerNumber)p );
@@ -380,7 +380,7 @@ void ScreenSelectDifficulty::TweenOffScreen()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
+		if( !GAMESTATE->IsHumanPlayer((PlayerNumber)p) )
 			continue;
 
 		m_sprCursor[p].Command( CURSOR_OFF_COMMAND );

@@ -29,6 +29,7 @@
 #include "NoteSkinManager.h"
 #include "Notes.h"
 #include <utility>
+#include "NoteFieldPositioning.h"
 
 
 const float RECORD_HOLD_SECONDS = 0.3f;
@@ -270,6 +271,8 @@ ScreenEdit::ScreenEdit()
 	m_Player.Load( PLAYER_1, &noteData, NULL, NULL, NULL, NULL );
 	GAMESTATE->m_PlayerController[PLAYER_1] = HUMAN;
 	m_Player.SetXY( PLAYER_X, PLAYER_Y );
+
+	GAMESTATE->m_Position[PLAYER_1]->LoadFromStyleDef(GAMESTATE->GetCurrentStyleDef(), PLAYER_1);
 
 	m_Fade.SetClosed();
 
