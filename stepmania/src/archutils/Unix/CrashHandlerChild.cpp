@@ -415,6 +415,11 @@ static void child_process()
     
     fprintf( CrashDump, "Crash reason: %s\n\n", Signal.c_str() );
 
+    fprintf(CrashDump, "Checkpoints:\n");
+    for (unsigned i=0; i<Checkpoints.size(); ++i)
+        fprintf(CrashDump, Checkpoints[i]);
+    fprintf(CrashDump, "\n");
+
     output_stack_trace( CrashDump, BacktracePointers );
     fprintf(CrashDump, "\n");
 
@@ -424,9 +429,6 @@ static void child_process()
     fprintf(CrashDump, "\nPartial log:\n");
     for( int i = 0; i < cnt; ++i )
         fprintf(CrashDump, "%s\n", Recent[i] );
-    fprintf(CrashDump, "\nCheckpoints:\n");
-    for (unsigned i=0; i<Checkpoints.size(); ++i)
-        fprintf(CrashDump, Checkpoints[i]);
     fprintf(CrashDump, "\n");
     fprintf(CrashDump, "-- End of report\n");
     fclose(CrashDump);
