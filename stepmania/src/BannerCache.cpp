@@ -8,14 +8,14 @@
 #include "BannerCache.h"
 #include "Sprite.h"
 #include "PrefsManager.h"
-#include "SDL_dither.h"
-#include "RageSurfaceUtils_Zoom.h"
 #include "RageDisplay.h"
 #include "RageTexture.h"
 #include "RageTextureManager.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 #include "RageSurfaceUtils_Palettize.h"
+#include "RageSurfaceUtils_Dither.h"
+#include "RageSurfaceUtils_Zoom.h"
 
 #include "Banner.h"
 
@@ -350,7 +350,6 @@ void BannerCache::CacheBannerInternal( CString BannerPath )
 
 		RageSurfaceUtils::BlitTransform( img, dst, fCustomImageCoords );
 
-//		SDL_SaveBMP( dst, BannerPath + "-test.bmp" );
 		delete img;
 		img = dst;
 
