@@ -121,7 +121,9 @@ Menu g_KeyboardShortcuts
 	MenuRow( "[ and ]: Decrease/increase sample music start",	false ),
 	MenuRow( "{ and }: Decrease/increase sample music length",	false ),
 	MenuRow( "M: Play sample music",							false ),
-	MenuRow( "B: Add/Edit Background Change",					false )
+	MenuRow( "B: Add/Edit Background Change",					false ),
+	MenuRow( "Insert: Insert beat and shift down",				false ),
+	MenuRow( "Delete: Delete beat and shift up",				false )
 );
 
 Menu g_MainMenu
@@ -931,6 +933,12 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				if( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 )
 					HandleAreaMenuChoice( play, NULL );
 		}
+		break;
+	case SDLK_INSERT:
+		HandleAreaMenuChoice( insert_and_shift, NULL );
+		break;
+	case SDLK_DELETE:
+		HandleAreaMenuChoice( delete_and_shift, NULL );
 		break;
 	}
 }
