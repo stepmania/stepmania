@@ -123,6 +123,8 @@ public:
 		ScoreKeeper* pPrimaryScoreKeeper, 
 		ScoreKeeper* pSecondaryScoreKeeper );
 
+	void CacheAllUsedNoteSkins() { m_NoteField.CacheAllUsedNoteSkins(); }
+
 protected:
 	NoteField		m_NoteField;
 

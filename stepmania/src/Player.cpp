@@ -508,12 +508,6 @@ void PlayerMinus::Update( float fDeltaTime )
 	// process transforms that are waiting to be applied
 	ApplyWaitingTransforms();
 
-	/* Cache any newly-used note skins.  Normally, the only new skins cached now are
-	 * when we're adding course modifiers at the start of a song.  If this is spending
-	 * time loading skins in the middle of a song, something is wrong. */
-	if( m_pNoteField )
-		m_pNoteField->CacheAllUsedNoteSkins();
-
 	ActorFrame::Update( fDeltaTime );
 }
 

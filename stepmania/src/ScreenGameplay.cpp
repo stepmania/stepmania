@@ -858,6 +858,9 @@ void ScreenGameplay::SetupSong( PlayerNumber p, int iSongIndex )
 		GAMESTATE->m_SongOptions.FromString( a.sModifier );
 	}
 
+	/* Now that course options are applied, load any needed note skins.  */
+	m_Player[p].CacheAllUsedNoteSkins();
+
 	/* Update attack bOn flags. */
 	GAMESTATE->Update(0);
 	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( p );
