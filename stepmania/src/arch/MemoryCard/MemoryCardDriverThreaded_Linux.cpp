@@ -313,8 +313,16 @@ void GetNewStorageDevices( vector<UsbStorageDeviceEx>& vDevicesOut )
 		}
 
 		CString sLine;
-		while( f.GetLine(sLine) )
+		while( !f.AtEOF() )
 		{
+			switch( f.GetLine(sLine) )
+			{
+			case 0: continue; /* eof */
+			case -1:
+				LOG->Warn( "error reading '%s': %s", fn.c_str(), f.GetError().c_str() );
+				return;
+			}
+
 			// /dev/sda1               /mnt/flash1             auto    noauto,owner 0 0
 			char cScsiDev;
 			char szMountPoint[1024];
