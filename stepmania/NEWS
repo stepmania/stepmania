@@ -1,4 +1,7 @@
 ----------------------- Version 3.01 ---------------------------
+CHANGE:  Courses are no longer limited to 300 songs.
+CHANGE:  The radar display is improved.
+NEW FEATURE: The Caution and Select Group screens can now be disabled.
 CHANGE:  OKs now count as a step in score calculation.
 CHANGE:  Maximum number of hold steps removed.
 BUG FIX:  Fixed "autogen doesn't generate patterns for all difficulties for some songs"

@@ -39,18 +39,12 @@ hints.  Probably never an issue.
 
 ********
 
-Make class Notes store a NoteData instead of SMNoteData, so we'd
-only have to convert on initial load and when saving; faster and simpler.
-
-Hmm, no good; SMData is still compressed more than NoteData.  Unless
-we can also load NoteData for songs on-demand ... 
-
-Even better: do away with m_HoldNotes completely, and change the default
-storage scheme to 4s.  Make every place that accesses holds either use
-them in 4s, or specifically request a hold list, when needed (such as
-when rendering).  If we can do this, we can do away with most of the
-2sand3s and 4s conversions, which will aid const-correctness a *lot*
-(which has been bothering me), and simplify the code further.
+D away with m_HoldNotes completely, and change the default storage scheme
+to 4s.  Make every place that accesses holds either use them in 4s, or 
+specifically request a hold list, when needed (such as when rendering).
+If we can do this, we can do away with most of the 2sand3s and 4s
+conversions, which will aid const-correctness a *lot* (which has been
+bothering me), and simplify the code further.
 
 One problem: The renderer (NoteField::DrawPrimitives) wants HoldNotes.
 That's not a problem (we can still create an array of HoldNotes when
@@ -265,10 +259,7 @@ Don't put the game toggle here; it's used too much.
 ********
 
 Debug options.  Options that most users don't need, but I don't want
-to edit .INIs manually.  I'll be adding a vsync toggle soon; most
-users should never want to disable it (most people who think they
-want to really don't :) so it's just clutter the main graphics menu.
-Show FPS can go here, too.
+to edit .INIs manually.  Show FPS can go here.
 
 ********
 
@@ -295,10 +286,6 @@ need the toggle axis workaround.
 This is probably difficult to implement reliably without having
 access to all of the distinct adapter types, since this is very
 special-cased.
-
-********
-
-Option to skip the music select screen and always pick all music.
 
 ********
 
