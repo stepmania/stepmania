@@ -73,8 +73,6 @@ PrefsManager::PrefsManager()
 
 PrefsManager::~PrefsManager()
 {
-	SaveGlobalPrefsToDisk();
-	SaveGamePrefsToDisk();
 }
 
  void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )

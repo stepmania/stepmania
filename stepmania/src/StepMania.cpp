@@ -375,6 +375,9 @@ int main(int argc, char* argv[])
 	/* Run the main loop. */
 	GameLoop();
 
+	PREFSMAN->SaveGlobalPrefsToDisk();
+	PREFSMAN->SaveGamePrefsToDisk();
+
 #ifndef _DEBUG
 	}
 	catch( RageException e )
