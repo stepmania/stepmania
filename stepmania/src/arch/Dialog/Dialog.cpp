@@ -17,7 +17,7 @@
 #endif
 
 static DialogDriver *g_pImpl = NULL;
-static DialogDriver_Null g_pNullDriver;
+static DialogDriver_Null g_NullDriver;
 static bool g_bWindowed = false;
 static bool g_bIsShowingDialog = false;
 
@@ -132,7 +132,7 @@ void Dialog::OK( CString sMessage, CString ID )
 	
 	// only show Dialog if windowed
 	if( !g_bWindowed )
-		g_pNullDriver.OK( sMessage, ID );
+		g_NullDriver.OK( sMessage, ID );
 	else
 		g_pImpl->OK( sMessage, ID );	// call derived version
 	
@@ -144,14 +144,14 @@ Dialog::Result Dialog::AbortRetryIgnore( CString sMessage, CString ID )
 	Dialog::Init();
 
 	if( ID != "" && MessageIsIgnored( ID ) )
-		return g_pNullDriver.AbortRetryIgnore( sMessage, ID );
+		return g_NullDriver.AbortRetryIgnore( sMessage, ID );
 
 	g_bIsShowingDialog = true;
 	
 	// only show Dialog if windowed
 	Dialog::Result ret;
 	if( !g_bWindowed )
-		ret = g_pNullDriver.AbortRetryIgnore( sMessage, ID );
+		ret = g_NullDriver.AbortRetryIgnore( sMessage, ID );
 	else
 		ret = g_pImpl->AbortRetryIgnore( sMessage, ID );	// call derived version
 	
@@ -165,14 +165,14 @@ Dialog::Result Dialog::RetryCancel( CString sMessage, CString ID )
 	Dialog::Init();
 
 	if( ID != "" && MessageIsIgnored( ID ) )
-		return g_pNullDriver.RetryCancel( sMessage, ID );
+		return g_NullDriver.RetryCancel( sMessage, ID );
 
 	g_bIsShowingDialog = true;
 
 	// only show Dialog if windowed
 	Dialog::Result ret;
 	if( !g_bWindowed )
-		ret = g_pNullDriver.RetryCancel( sMessage, ID );
+		ret = g_NullDriver.RetryCancel( sMessage, ID );
 	else
 		ret = g_pImpl->RetryCancel( sMessage, ID );	// call derived version
 	
