@@ -85,15 +85,6 @@ void RageModelGeometry::LoadMilkshapeAscii( const CString& _sPath, bool bNeedsNo
 
 	RageVec3ClearBounds( m_vMins, m_vMaxs );
 
-	float fXScale = 1, fYScale = 1, fZScale = 1;
-	IniFile ini;
-	if( ini.ReadFile( sDir+"character.ini" ) )
-	{
-		ini.GetValue( "Attributes", "ScaleX", fXScale );
-		ini.GetValue( "Attributes", "ScaleY", fYScale );
-		ini.GetValue( "Attributes", "ScaleZ", fZScale );
-	}
-
     while( f.GetLine( sLine ) > 0 )
     {
 		iLineNum++;
@@ -166,11 +157,6 @@ void RageModelGeometry::LoadMilkshapeAscii( const CString& _sPath, bool bNeedsNo
                     {
 						THROW
                     }
-
-					// Scale vectors:
-					v.p[0] = v.p[0]*fXScale;
-					v.p[1] = v.p[1]*fYScale;
-					v.p[2] = v.p[2]*fZScale;
 
 //                  vertex.nFlags = nFlags;
 					if( nFlags & 1 )
