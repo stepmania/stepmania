@@ -205,6 +205,7 @@
 				29B9732BFDCFA39411CA2CEA,
 				29B9732DFDCFA39411CA2CEA,
 				AAE4444704B1394500D02EE9,
+				AAF4310104DCC5F800D02EE9,
 			);
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "\"$(HOME)/Library/Frameworks\"";
@@ -521,6 +522,7 @@
 				AADB4F5B04D9220700D02EE9,
 				AA0E393604DA8EE700D02EE9,
 				AAF4310004DC98BC00D02EE9,
+				AAF4310204DD288800D02EE9,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -774,6 +776,7 @@
 				AA0E393504DA8EE700D02EE9,
 				AA52E9BE04DBBCF400D02EE9,
 				AAF430FF04DC98BC00D02EE9,
+				AAF4310304DD288800D02EE9,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3838,8 +3841,9 @@
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
-			path = arch.cpp;
-			refType = 4;
+			name = arch.cpp;
+			path = ../src/arch/arch.cpp;
+			refType = 2;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -8660,8 +8664,9 @@
 			fileEncoding = 4;
 			indentWidth = 4;
 			isa = PBXFileReference;
-			path = RageSoundDriver_QT.cpp;
-			refType = 4;
+			name = RageSoundDriver_QT.cpp;
+			path = ../src/arch/Sound/RageSoundDriver_QT.cpp;
+			refType = 2;
 			tabWidth = 4;
 			usesTabs = 0;
 		};
@@ -9009,8 +9014,9 @@
 				AADB4E9204D5288400D02EE9,
 			);
 			isa = PBXGroup;
-			name = ArchHooks;
-			refType = 4;
+			name = arch;
+			path = ../src/arch;
+			refType = 2;
 		};
 		AABE36FF0497CE83005F316C = {
 			fileEncoding = 30;
@@ -9533,6 +9539,31 @@
 		};
 		AAF4310004DC98BC00D02EE9 = {
 			fileRef = AAF430FE04DC98BC00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF4310104DCC5F800D02EE9 = {
+			buildActionMask = 8;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = scripts/make_dist.sh;
+		};
+		AAF4310204DD288800D02EE9 = {
+			fileRef = AADB4E8C04D50FB900D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF4310304DD288800D02EE9 = {
+			fileRef = AADB4E8B04D50FB900D02EE9;
 			isa = PBXBuildFile;
 			settings = {
 			};
