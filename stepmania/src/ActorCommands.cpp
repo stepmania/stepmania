@@ -71,7 +71,13 @@ void ActorCommands::Register()
 
 
 	CString s2 = s.str();
-	LUA->RunScript( s2, "in", 1 );
+	CString sError;
+	if( !LUA->RunScript( s2, "in", sError, 1 ) )
+	{
+		/* We're compiling a generated script, so it should never fail. */
+		FAIL_M( ssprintf("Compiling \"%s\": %s", s2.c_str(), sError.c_str()) );
+	}
+
 
 	/* The function is now on the stack. */
 	this->SetFromStack();
