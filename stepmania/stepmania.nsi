@@ -48,6 +48,7 @@ Exec "$INSTDIR\uninst.exe"
 old_nsis_not_installed:
 
 ; Check for DirextX 8.1 (to be moved to the right section later)
+; XXX: we seem to run fine on 8.0 (4.08.00.0400)
 ReadRegStr $0 HKEY_LOCAL_MACHINE "Software\Microsoft\DirectX" "Version"
 StrCpy $1 $0 2 2 ;  8.1 is "4.08.01.0810"
 IntCmpU $1 8 check_subversion old_dx ok
@@ -142,7 +143,19 @@ SetOutPath "$INSTDIR\Visualizations"
 File "Visualizations\instructions.txt"
 
 SetOutPath "$INSTDIR"
+; File "msvcr70.dll"
+; File "msvcp70.dll"
 File "bass.dll"
+File "jpeg.dll"
+File "libpng13a.dll"
+File "ogg.dll"
+File "vorbis.dll"
+File "vorbisfile.dll"
+File "zliba.dll"
+File "SDL.dll"
+File "SDL_image.dll"
+File "SDL_net.dll"
+
 File "COPYING.txt"
 File "README-FIRST.TXT"
 File "NEWS"
@@ -150,6 +163,11 @@ File "stepmania.exe"
 ; What to do here?  Better to just delete an existing INI than to
 ; drop the local one in ... -glenn
 ; Agreed. - Chris
+; But we shouldn't delete, either, since that'll wipe peoples' prefs.
+; Better to address upgrade problems than to make people nuke INI's.
+; Maybe we should remove this for snapshot releases; that way we can
+; track down problems with INI upgrades (and then possibly restore it
+; for the release if we're not confident we've fixed most problems) -glenn
 Delete "$INSTDIR\stepmania.ini"
 File "stepmania.vdi"
 File "smpackage.exe"
