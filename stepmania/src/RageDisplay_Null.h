@@ -20,7 +20,6 @@ public:
 	VideoModeParams GetVideoModeParams() const { return m_Params; }
 	void SetBlendMode( BlendMode mode ) { }
 	bool SupportsTextureFormat( PixelFormat pixfmt, bool realtime=false ) { return true; }
-	bool Supports4BitPalettes() { return true; }
 	unsigned CreateTexture( 
 		PixelFormat pixfmt, 
 		SDL_Surface* img,
