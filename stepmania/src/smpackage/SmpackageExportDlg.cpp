@@ -177,9 +177,21 @@ bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExp
 			if( sFilePath.Find("Thumbs.db")!=-1 )
 				continue;	// skip
 
+			CString sDir, sFName, sExt;
+			splitrelpath( sFilePath, sDir, sFName, sExt );
+			bool bUseCompression = true;
+			if( sExt.CompareNoCase("avi")==0 ||
+				sExt.CompareNoCase("mpeg")==0 ||
+				sExt.CompareNoCase("mpg")==0 ||
+				sExt.CompareNoCase("ogg")==0 ||
+				sExt.CompareNoCase("gif")==0 ||
+				sExt.CompareNoCase("jpg")==0 ||
+				sExt.CompareNoCase("png")==0 )
+				bUseCompression = false;
+
 			try
 			{
-				zip.AddNewFile( sFilePath, Z_NO_COMPRESSION, true );
+				zip.AddNewFile( sFilePath, bUseCompression?Z_BEST_COMPRESSION:Z_NO_COMPRESSION, true );
 			}
 			catch (CException* e)
 			{
@@ -402,6 +414,15 @@ void CSmpackageExportDlg::RefreshTree()
 		CStringArray as1;
 		HTREEITEM item1 = m_tree.InsertItem( "Announcers" );
 		GetDirListing( "Announcers\\*.*", as1, true, false );
+		for( int i=0; i<as1.GetSize(); i++ )
+			m_tree.InsertItem( as1[i], item1 );
+	}
+
+	// Add characters
+	{
+		CStringArray as1;
+		HTREEITEM item1 = m_tree.InsertItem( "Characters" );
+		GetDirListing( "Characters\\*.*", as1, true, false );
 		for( int i=0; i<as1.GetSize(); i++ )
 			m_tree.InsertItem( as1[i], item1 );
 	}
