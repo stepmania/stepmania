@@ -231,8 +231,8 @@ void Replace_Unicode_Markers( CString &Text );
 void ReplaceText( CString &Text, const map<CString,CString> &m );
 CString WcharDisplayText(wchar_t c);
 
-CString Basename(CString dir);
-
+CString Basename( const CString &dir );
+CString Dirname( const CString &dir );
 CString Capitalize( CString s );
 
 #ifndef WIN32

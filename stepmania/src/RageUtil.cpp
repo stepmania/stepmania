@@ -957,15 +957,47 @@ CString WcharDisplayText(wchar_t c)
  * a/b/c -> c
  * a/b/c/ -> c
  */
-CString Basename(CString dir)
+CString Basename( const CString &dir )
 {
-	TrimRight(dir, "/\\");
+	unsigned end = dir.find_last_not_of( "/\\" );
+	if( end == dir.npos )
+		return "";
 
-	unsigned pos = dir.find_last_of("/\\");
-	if(pos != dir.npos)
-		return dir.substr(pos+1);
+	unsigned start = dir.find_last_of( "/\\", end );
+	if( start == dir.npos )
+		start = 0;
+	else
+		++start;
 
-	return dir;
+	return dir.substr( start, end-start+1 );
+}
+
+/* Return all but the last named component of dir:
+ * a/b/c -> a/b/
+ * a/b/c/ -> a/b/
+ * c/ -> ./
+ * /foo -> /
+ * / -> /
+ */
+CString Dirname( const CString &dir )
+{
+        /* Special case: "/" -> "/". */
+        if( dir.size() == 1 && dir[0] == SLASH[0] )
+                return SLASH;
+
+        int pos = dir.size()-1;
+        /* Skip trailing slashes. */
+        while( pos >= 0 && dir[pos] == SLASH[0] )
+                --pos;
+
+        /* Skip the last component. */
+        while( pos >= 0 && dir[pos] != SLASH[0] )
+                --pos;
+
+        if( pos < 0 )
+                return "." SLASH;
+
+        return dir.substr(0, pos+1);
 }
 
 CString Capitalize( CString s )	
