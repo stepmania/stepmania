@@ -43,7 +43,20 @@ enum Grade
 	GRADE_NO_DATA,	// ~GRADE_INVALID
 };
 
-CString GradeToString( Grade g );
+/* This is in the header so the test sets don't require Grade.cpp (through PrefsManager),
+ * since that pulls in ThemeManager. */
+static inline CString GradeToString( Grade g )
+{
+        // string is meant to be human readable
+        switch( g )
+        {
+        case GRADE_NO_DATA:     return "NoData";
+        case GRADE_FAILED:      return "Failed";
+        default:
+                return ssprintf("Tier%02d",g+1);
+        }
+}
+
 CString GradeToOldString( Grade g );	// "AAA", "B", etc for backward compatibility
 CString GradeToThemedString( Grade g );
 Grade StringToGrade( const CString &s );
