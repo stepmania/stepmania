@@ -666,7 +666,6 @@ void ThemeManager::EvaluateString( CString &sText )
 
 		CString sOut;
 		Lua::RunExpressionS( sText, sOut );
-		LOG->Trace("ran '%s', got '%s'", sText.c_str(), sOut.c_str());
 		sText = sOut;
 		return;
 	}
