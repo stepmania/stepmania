@@ -126,6 +126,10 @@ void InputHandler_DInput::WindowReset()
 			continue;
 
 		Devices[i].Close();
+
+		/* We lose buffered inputs here, so we need to clear all pressed keys. */
+		INPUTFILTER->ResetDevice( Devices[i].dev );
+
 		bool ret = Devices[i].Open();
 
 		/* Reopening it should succeed. */
