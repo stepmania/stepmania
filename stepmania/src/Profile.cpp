@@ -1060,7 +1060,8 @@ XNode* Profile::SaveCategoryScoresCreateNode() const
 		if( pProfile->GetCategoryNumTimesPlayed( st ) == 0 )
 			continue;
 
-		XNode* pStepsTypeNode = pNode->AppendChild( "StepsType", st );
+		XNode* pStepsTypeNode = pNode->AppendChild( "StepsType" );
+		pStepsTypeNode->AppendAttr( "Type", GameManager::NotesTypeToString(st) );
 
 		FOREACH_RankingCategory( rc )
 		{
@@ -1092,8 +1093,12 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pNode )
 		if( (*stepsType)->name != "StepsType" )
 			continue;
 
-		StepsType st;
-		(*stepsType)->GetValue((int&)st);
+		LPXAttr TypeAttr = (*stepsType)->GetAttr( "Type" );
+		if( TypeAttr == NULL )
+			WARN_AND_CONTINUE;
+		StepsType st = GameManager::StringToNotesType( TypeAttr->value );
+		if( st == STEPS_TYPE_INVALID )
+			WARN_AND_CONTINUE;
 
 		for( XNodes::iterator radarCategory = (*stepsType)->childs.begin(); 
 			radarCategory != (*stepsType)->childs.end(); 
