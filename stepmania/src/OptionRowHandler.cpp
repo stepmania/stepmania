@@ -190,6 +190,12 @@ public:
 			}
 		}
 
+		if( UseFallbackOption && FallbackOption == -1 )
+		{
+			LOG->Warn( "No options in row \"%s\" were selected, and no fallback row found; selected entry 0", m_sName.c_str() );
+			FallbackOption = 0;
+		}
+
 		if( def.selectType == SELECT_ONE && 
 			UseFallbackOption && 
 			FallbackOption != -1 )
