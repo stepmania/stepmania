@@ -74,8 +74,12 @@ void GameDef::MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] ) con
 	GameIout[3].MakeInvalid();	
 
 	GameController controller[2];
+	StyleDef::StyleType type = StyleDef::TWO_PLAYERS_TWO_CREDITS;
+	if( GAMESTATE->m_CurStyle != STYLE_INVALID )
+		type = GAMESTATE->GetCurrentStyleDef()->m_StyleType;
+
 	int iNumSidesUsing = 1;
-	switch( GAMESTATE->GetCurrentStyleDef()->m_StyleType )
+	switch( type )
 	{
 	case StyleDef::ONE_PLAYER_ONE_CREDIT:
 	case StyleDef::TWO_PLAYERS_TWO_CREDITS:
