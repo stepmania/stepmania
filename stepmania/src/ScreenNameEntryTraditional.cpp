@@ -100,8 +100,8 @@ void HighScoreWheelItem::ShowFocus()
 
 void HighScoreWheel::Load( const HighScoreList& hsl, int iIndexToFocus )
 {
-	m_Items.resize( PREFSMAN->m_iMaxHighScoresPerList );
-	for( int i=0; i<PREFSMAN->m_iMaxHighScoresPerList; i++ )
+	m_Items.resize( PREFSMAN->m_iMaxHighScoresPerListForMachine );
+	for( int i=0; i<PREFSMAN->m_iMaxHighScoresPerListForMachine; i++ )
 	{
 		if( unsigned(i) < hsl.vHighScores.size() )
 			m_Items[i].Load( i, hsl.vHighScores[i] );

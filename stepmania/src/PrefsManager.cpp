@@ -224,7 +224,8 @@ void PrefsManager::Init()
 	m_iAttractSoundFrequency = 1;
 	m_bAllowExtraStage = true;
 	m_bHideDefaultNoteSkin = false;
-	m_iMaxHighScoresPerList = 10;
+	m_iMaxHighScoresPerListForMachine = 10;
+	m_iMaxHighScoresPerListForPlayer = 3;
 	m_fPadStickSeconds = 0;
 	m_bForceMipMaps = false;
 	m_bTrilinearFiltering = false;
@@ -533,7 +534,8 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Options", "AttractSoundFrequency",			m_iAttractSoundFrequency );
 	ini.GetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
 	ini.GetValue( "Options", "HideDefaultNoteSkin",				m_bHideDefaultNoteSkin );
-	ini.GetValue( "Options", "MaxHighScoresPerList",			m_iMaxHighScoresPerList );
+	ini.GetValue( "Options", "MaxHighScoresPerListForMachine",	m_iMaxHighScoresPerListForMachine );
+	ini.GetValue( "Options", "MaxHighScoresPerListForPlayer",	m_iMaxHighScoresPerListForPlayer );
 	ini.GetValue( "Options", "PadStickSeconds",					m_fPadStickSeconds );
 	ini.GetValue( "Options", "ForceMipMaps",					m_bForceMipMaps );
 	ini.GetValue( "Options", "TrilinearFiltering",				m_bTrilinearFiltering );
@@ -760,7 +762,8 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "AttractSoundFrequency",			m_iAttractSoundFrequency );
 	ini.SetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
 	ini.SetValue( "Options", "HideDefaultNoteSkin",				m_bHideDefaultNoteSkin );
-	ini.SetValue( "Options", "MaxHighScoresPerList",			m_iMaxHighScoresPerList );
+	ini.SetValue( "Options", "MaxHighScoresPerListForMachine",	m_iMaxHighScoresPerListForMachine );
+	ini.SetValue( "Options", "MaxHighScoresPerListForPlayer",	m_iMaxHighScoresPerListForPlayer );
 	ini.SetValue( "Options", "PadStickSeconds",					m_fPadStickSeconds );
 	ini.SetValue( "Options", "ForceMipMaps",					m_bForceMipMaps );
 	ini.SetValue( "Options", "TrilinearFiltering",				m_bTrilinearFiltering );

@@ -88,6 +88,8 @@ public:
 	
 	void AddStepTotals( int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumMines, int iNumHands );
 
+	bool IsMachine() const;
+
 	//
 	// Editable data
 	//

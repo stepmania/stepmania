@@ -419,7 +419,7 @@ int Profile::GetSongNumTimesPlayed( const SongID& songID ) const
 //
 void Profile::AddStepsHighScore( const Song* pSong, const Steps* pSteps, HighScore hs, int &iIndexOut )
 {
-	GetStepsHighScoreList(pSong,pSteps).AddHighScore( hs, iIndexOut );
+	GetStepsHighScoreList(pSong,pSteps).AddHighScore( hs, iIndexOut, IsMachine() );
 }
 
 const HighScoreList& Profile::GetStepsHighScoreList( const Song* pSong, const Steps* pSteps ) const
@@ -483,7 +483,7 @@ void Profile::GetGrades( const Song* pSong, StepsType st, int iCounts[NUM_GRADES
 //
 void Profile::AddCourseHighScore( const Course* pCourse, const Trail* pTrail, HighScore hs, int &iIndexOut )
 {
-	GetCourseHighScoreList(pCourse,pTrail).AddHighScore( hs, iIndexOut );
+	GetCourseHighScoreList(pCourse,pTrail).AddHighScore( hs, iIndexOut, IsMachine() );
 }
 
 const HighScoreList& Profile::GetCourseHighScoreList( const Course* pCourse, const Trail* pTrail ) const
@@ -541,7 +541,7 @@ void Profile::IncrementCoursePlayCount( const Course* pCourse, const Trail* pTra
 //
 void Profile::AddCategoryHighScore( StepsType st, RankingCategory rc, HighScore hs, int &iIndexOut )
 {
-	m_CategoryHighScores[st][rc].AddHighScore( hs, iIndexOut );
+	m_CategoryHighScores[st][rc].AddHighScore( hs, iIndexOut, IsMachine() );
 }
 
 const HighScoreList& Profile::GetCategoryHighScoreList( StepsType st, RankingCategory rc ) const
@@ -604,13 +604,14 @@ bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 		//
 		// Don't unreasonably large stats.xml files.
 		//
-		const bool bThisIsMachineProfile = (this == PROFILEMAN->GetMachineProfile()); // XXX
-
-		int iBytes = FILEMAN->GetFileSizeInBytes( fn );
-		if( !bThisIsMachineProfile && iBytes > MAX_PLAYER_STATS_XML_SIZE_BYTES )
+		if( !IsMachine() )	// only check stats coming from the player
 		{
-			LOG->Warn( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
-			break;
+			int iBytes = FILEMAN->GetFileSizeInBytes( fn );
+			if( iBytes > MAX_PLAYER_STATS_XML_SIZE_BYTES )
+			{
+				LOG->Warn( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
+				break;
+			}
 		}
 
 		if( bRequireSignature )
@@ -696,9 +697,8 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 		}
 	}
 
-	const bool bThisIsMachineProfile = (this == PROFILEMAN->GetMachineProfile()); // XXX
-	if( (bThisIsMachineProfile && PREFSMAN->m_bWriteMachineStatsHtml) ||
-		(!bThisIsMachineProfile && PREFSMAN->m_bWritePlayerStatsHtml) )
+	if( (IsMachine() && PREFSMAN->m_bWriteMachineStatsHtml) ||
+		(!IsMachine() && PREFSMAN->m_bWritePlayerStatsHtml) )
 		SaveStatsWebPageToDir( sDir );
 
 	//
@@ -1253,13 +1253,11 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 {
 	ASSERT( PROFILEMAN );
 
-	bool bThisIsMachineProfile = (this == PROFILEMAN->GetMachineProfile());	// UGLY
-
 	SaveStatsWebPage( 
 		sDir,
 		this,
 		PROFILEMAN->GetMachineProfile(),
-		bThisIsMachineProfile ? HTML_TYPE_MACHINE : HTML_TYPE_PLAYER
+		IsMachine() ? HTML_TYPE_MACHINE : HTML_TYPE_PLAYER
 		);
 }
 
@@ -1710,4 +1708,10 @@ const Profile::HighScoresForACourse *Profile::GetHighScoresForACourse( const Cou
 	if( it == m_CourseHighScores.end() )
 		return NULL;
 	return &it->second;
+}
+
+bool Profile::IsMachine() const
+{
+	// TODO: Think of a better way to handle this
+	return this == PROFILEMAN->GetMachineProfile();
 }

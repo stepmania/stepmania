@@ -93,7 +93,7 @@ struct HighScoreList
 	
 	void Init();
 
-	void AddHighScore( HighScore hs, int &iIndexOut );
+	void AddHighScore( HighScore hs, int &iIndexOut, bool bIsMachine );
 
 	const HighScore& GetTopScore() const;
 

@@ -196,7 +196,8 @@ public:
 	int				m_iAttractSoundFrequency;	// 0 = never, 1 = every time
 	bool			m_bAllowExtraStage;
 	bool			m_bHideDefaultNoteSkin;
-	int				m_iMaxHighScoresPerList;
+	int				m_iMaxHighScoresPerListForMachine;
+	int				m_iMaxHighScoresPerListForPlayer;
 	bool			m_bCelShadeDancers;
 
 	// Number of seconds it takes for a button on the controller to release

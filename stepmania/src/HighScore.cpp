@@ -125,7 +125,7 @@ void HighScoreList::Init()
 	vHighScores.clear();
 }
 
-void HighScoreList::AddHighScore( HighScore hs, int &iIndexOut )
+void HighScoreList::AddHighScore( HighScore hs, int &iIndexOut, bool bIsMachine )
 {
 	int i;
 	for( i=0; i<(int)vHighScores.size(); i++ )
@@ -133,7 +133,9 @@ void HighScoreList::AddHighScore( HighScore hs, int &iIndexOut )
 		if( hs >= vHighScores[i] )
 			break;
 	}
-	const int iMaxScores = PREFSMAN->m_iMaxHighScoresPerList;
+	const int iMaxScores = bIsMachine ? 
+		PREFSMAN->m_iMaxHighScoresPerListForMachine : 
+		PREFSMAN->m_iMaxHighScoresPerListForPlayer;
 	if( i < iMaxScores )
 	{
 		vHighScores.insert( vHighScores.begin()+i, hs );
