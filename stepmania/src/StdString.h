@@ -906,8 +906,12 @@ public:
 
 		if( bExactSizeSupported )
 		{
+			va_list tmp;
+			va_copy( tmp, argList );
 			char ignore;
-			int iNeeded = ssvsprintf( &ignore, 0, szFormat, argList );
+			int iNeeded = ssvsprintf( &ignore, 0, szFormat, tmp );
+			va_end(tmp);
+
 			char *buf = GetBuffer( iNeeded+1 );
 			ssvsprintf( buf, iNeeded+1, szFormat, argList );
 			ReleaseBuffer( iNeeded );
