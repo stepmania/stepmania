@@ -396,7 +396,7 @@ void GameState::SaveCurrentSettingsToProfile( PlayerNumber pn )
 	Profile* pProfile = PROFILEMAN->GetProfile(pn);
 
 	pProfile->m_bUsingProfileDefaultModifiers = true;
-	pProfile->m_sDefaultModifiers = m_PlayerOptions[pn].GetString();
+	pProfile->m_sDefaultModifiers = m_PlayerOptions[pn].GetSavedPrefsString();
 	if( IsSongSort(m_SortOrder) )
 		pProfile->m_SortOrder = m_SortOrder;
 	if( m_PreferredDifficulty[pn] != DIFFICULTY_INVALID )

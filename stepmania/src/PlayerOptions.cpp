@@ -636,6 +636,20 @@ bool PlayerOptions::ContainsTransformOrTurn() const
 	return false;
 }
 
+CString PlayerOptions::GetSavedPrefsString() const
+{
+	PlayerOptions po_prefs;
+#define SAVE(x) po_prefs.x = this->x;
+	SAVE( m_fTimeSpacing );
+	SAVE( m_fScrollSpeed );
+	SAVE( m_fScrollBPM );
+	SAVE( m_fScrolls[SCROLL_REVERSE] );
+	SAVE( m_fPerspectiveTilt );
+	SAVE( m_sNoteSkin );
+#undef SAVE
+	return po_prefs.GetString();
+}
+
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
