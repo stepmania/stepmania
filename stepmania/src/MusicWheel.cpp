@@ -188,15 +188,7 @@ MusicWheel::MusicWheel()
 		}
 	
 		if( GAMESTATE->m_pCurSong == NULL )
-		{
-			//XXX What to do here?
-			//No selectable songs from the wheel data... 
-			//Cursor will be on Random/Roulette, but GAMESTATE->m_pCurSong will be NULL
-			//Should we error out? The user won't have an enjoyable game experience at this point... 
-			//Should we find the pointer to the roulette entry? (the old way did that - maybe not intentional though)
-			//For now, write out to the debug log...
-			LOG->Trace("MusicWheel::MusicWheel() - No selectable songs found in WheelData!");
-		}
+			LOG->Trace("MusicWheel::MusicWheel() - No selectable songs found in WheelData");
 	}
 
 
