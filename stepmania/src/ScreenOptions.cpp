@@ -1120,15 +1120,6 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 	Row &row = *m_Rows[m_iCurrentRow[pn]];
 	OptionRowData &data = row.m_RowDef;
 	
-	if( m_OptionsNavigation == NAV_FIRST_CHOICE_GOES_DOWN )
-	{
-		int iChoiceInRow = row.m_iChoiceWithFocus[pn];
-		if( iChoiceInRow == 0 )
-		{
-			MenuDown( pn, type );
-			return;
-		}
-	}
 	// If this is a bFirstChoiceGoesDown, then  if this is a multiselect row.
 	// Is this the right thing to do for five key navigation?
 	if( data.bMultiSelect )
@@ -1160,7 +1151,15 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 				if( row.Type == Row::ROW_EXIT  &&  bAllOnExit  &&  type == IET_FIRST_PRESS )
 					StartGoToNextState();
 				else if( m_OptionsNavigation == NAV_FIRST_CHOICE_GOES_DOWN )
+				{
 					ChangeValueInRow( pn, -row.m_iChoiceWithFocus[pn], type != IET_FIRST_PRESS );	// move to the first choice
+					int iChoiceInRow = row.m_iChoiceWithFocus[pn];
+					if( iChoiceInRow == 0 )
+					{
+						MenuDown( pn, type );
+						return;
+					}
+				}
 				else
 					MenuDown( pn, type );
 			}
