@@ -2,15 +2,23 @@
 // Miryokuteki's Todo/Done Record //
 ////////////////////////////////////
 
-// Last Updated February 12th, 2003
+// Last Updated February 17th, 2003
 
 Todo List:
   ** Find a way to get the length of a movie being played, so ScreenIntroMovie does not have to have a pre-determined length (I.e: exits when the movie is finished playing)
+  ** Finish RANDOM course for Non-Stop mode
 
 
 
-      
+Done as of 02/17/03:
+ FEATURE UPDATE** All-original Intro Movie is now available as an add-on. Not on CVS server due to complaints of size
+
+
+
+
 Done as of 02/12/03:
+    NEW FEATURE** Added 12x speed mod for the hell of it ^_^
+    NEW FEATURE** Song Options menu (2nd screen after entering options on song selection), can be enabled or disabled. This is in MACHINE OPTIONS
          CHANGE** Game no longer resets when coin mode is changed.
          CHANGE** Coin mode can be changed instantly, without a reset, at any screen with F3.
   FEATURE FIXED** Operator & InsertCoin keys are no longer static, and are now configurable AND global. Also, Operator key -only- works outside of the edit system & options screens.. This saves hassles of "oops, hit the operator key, my edit is gone!"
