@@ -13,7 +13,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "RageInput.h"
+#include "RageInputDevice.h"
 
 const float TIME_BEFORE_SLOW_REPEATS = 0.25f;
 const float TIME_BEFORE_FAST_REPEATS = 1.5f;
