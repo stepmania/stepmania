@@ -19,7 +19,7 @@
 
 #include "ArchHooks/ArchHooks_Unix.h"
 
-#include "MemoryCard/MemoryCardDriver_Linux.h"
+#include "MemoryCard/MemoryCardDriverThreaded_Linux.h"
 
 #endif
 /*

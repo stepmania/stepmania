@@ -139,9 +139,6 @@ LightsDriver *MakeLightsDriver(CString driver)
 #ifdef _WINDOWS
 	if(!driver.CompareNoCase("Parallel")) ret = new LightsDriver_Win32Parallel;
 #endif
-#ifdef LINUX
-
-#endif
 	if(!driver.CompareNoCase("SystemMessage")) ret = new LightsDriver_SystemMessage;
 	if(!driver.CompareNoCase("Null") || !ret )
 	{
@@ -159,7 +156,7 @@ MemoryCardDriver *MakeMemoryCardDriver()
 	MemoryCardDriver *ret = NULL;
 
 #ifdef LINUX
-	ret = new MemoryCardDriver_Linux;
+	ret = new MemoryCardDriverThreaded_Linux;
 #elif _WINDOWS
 	ret = new MemoryCardDriverThreaded_Windows;
 #endif

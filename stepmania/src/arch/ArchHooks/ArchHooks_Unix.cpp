@@ -6,6 +6,7 @@
 #include "archutils/Unix/SignalHandler.h"
 #include "archutils/Unix/GetSysInfo.h"
 #include "archutils/Unix/LinuxThreadHelpers.h"
+#include <unistd.h>
 
 #if defined(CRASH_HANDLER)
 #include "archutils/Unix/CrashHandler.h"
