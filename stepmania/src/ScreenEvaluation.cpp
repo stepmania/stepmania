@@ -969,7 +969,6 @@ void ScreenEvaluation::CommitScores(
 				{
 					Course* pCourse = GAMESTATE->m_pCurCourse;
 					ASSERT( pCourse );
-					StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 					Trail* pTrail = GAMESTATE->m_pCurTrail[p];
 
 					// don't save scores for a failed Nonstop
