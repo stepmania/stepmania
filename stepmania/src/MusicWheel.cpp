@@ -1551,7 +1551,7 @@ Song *MusicWheel::GetPreferredSelectionForRandomOrPortal()
 		if( !sPreferredGroup.empty() && wid[iSelection].m_sSectionName != sPreferredGroup )
 			continue;
 
-		if( pSong->IsTutorial() )
+		if( i < 900 && pSong->IsTutorial() )
 			continue;
 
 		FOREACH( Difficulty, vDifficultiesToRequire, d )
