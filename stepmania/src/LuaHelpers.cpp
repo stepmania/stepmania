@@ -226,7 +226,7 @@ bool RunExpression( const CString &str )
 		/* Don't accept a function as a return value; if you really want to use a function
 		 * as a boolean, convert it before returning. */
 		if( lua_isfunction( L, -1 ) )
-			throw CString( "result is a function; did you forget \"()\"?" );
+			RageException::Throw( "result is a function; did you forget \"()\"?" );
 	}
 
 	return true;
