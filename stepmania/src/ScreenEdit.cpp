@@ -1932,28 +1932,33 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 		case convert_beat_to_pause:
 			{
 				ASSERT( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 );
-				float fStopLength = m_NoteFieldEdit.m_fEndMarker - m_NoteFieldEdit.m_fBeginMarker;
+				// This was written horribly, using beats and not converting to time at all.
+				float fMarkerStart = m_pSong->m_Timing.GetElapsedTimeFromBeat(m_NoteFieldEdit.m_fBeginMarker);
+				float fMarkerEnd = m_pSong->m_Timing.GetElapsedTimeFromBeat(m_NoteFieldEdit.m_fEndMarker);
+				float fStopLength = fMarkerEnd - fMarkerStart;
 				// be sure not to clobber the row at the start - a row at the end
 				// can be dropped safely, though
 				NoteDataUtil::ShiftRows( m_NoteFieldEdit, 
 										 m_NoteFieldEdit.m_fBeginMarker + 0.003f,
-										 (m_NoteFieldEdit.m_fEndMarker-m_NoteFieldEdit.m_fBeginMarker)
+										 (-m_NoteFieldEdit.m_fEndMarker+m_NoteFieldEdit.m_fBeginMarker)
 									   );
 				unsigned i;
 				for( i=0; i<m_pSong->m_Timing.m_StopSegments.size(); i++ )
 				{
-					if( m_pSong->m_Timing.m_StopSegments[i].m_fStartBeat == m_NoteFieldEdit.m_fBeginMarker )
+					float fStart = m_pSong->m_Timing.GetElapsedTimeFromBeat(m_pSong->m_Timing.m_StopSegments[i].m_fStartBeat);
+					float fEnd = fStart + m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds;
+					if( fStart > fMarkerEnd || fEnd < fMarkerStart )
+						continue;
+					else {
+						if (fStart > fMarkerStart)
+							m_pSong->m_Timing.m_StopSegments[i].m_fStartBeat = m_NoteFieldEdit.m_fBeginMarker;
+						m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds = fStopLength;
 						break;
+					}
 				}
 
 				if( i == m_pSong->m_Timing.m_StopSegments.size() )	// there is no BPMSegment at the current beat
-				{
-					m_pSong->AddStopSegment( StopSegment(GAMESTATE->m_fSongBeat, fStopLength) );
-				}
-				else	// StopSegment being extended is m_Timing.m_StopSegments[i]
-				{
-					m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds += fStopLength;
-				}
+					m_pSong->AddStopSegment( StopSegment(m_NoteFieldEdit.m_fBeginMarker, fStopLength) );
 				m_NoteFieldEdit.m_fEndMarker = -1;
 				break;
 			}
@@ -1979,8 +1984,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 					float fStopLength = m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds;
 					m_pSong->m_Timing.m_StopSegments.erase( m_pSong->m_Timing.m_StopSegments.begin()+i,
 												   m_pSong->m_Timing.m_StopSegments.begin()+i+1);
-					fStopLength /= fBPMatPause;
-					fStopLength *= 60;
+					fStopLength *= fBPMatPause;
+					fStopLength /= 60;
 					// don't move the step from where it is, just move everything later
 					NoteDataUtil::ShiftRows( m_NoteFieldEdit, GAMESTATE->m_fSongBeat + 0.003f, fStopLength );
 				}
