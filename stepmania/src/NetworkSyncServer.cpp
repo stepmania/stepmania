@@ -816,12 +816,15 @@ void StepManiaLanServer::ServerChat(const CString& message)
 bool StepManiaLanServer::CheckConnection(const unsigned int clientNum)
 {
 	//If there is an error close the socket.
-	if ( clientNum < Client.size() )
-		if (Client[clientNum]->clientSocket.IsError())
-		{
-			Disconnect(clientNum);
-			return false;
-		}
+	
+	if ( clientNum >= Client.size() )
+		return false;
+
+	if (Client[clientNum]->clientSocket.IsError())
+	{
+		Disconnect(clientNum);
+		return false;
+	}
 	return true;
 }
 
