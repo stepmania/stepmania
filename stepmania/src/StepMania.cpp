@@ -1160,6 +1160,12 @@ int main(int argc, char* argv[])
 	}
 #endif
 
+	/* First, tell SOUND that we're shutting down.  This signals sound drivers to
+	 * stop sounds, which we want to do before any threads that may have started sounds
+	 * are closed; this prevents annoying DirectSound glitches and delays. */
+	if( SOUNDMAN )
+		SOUNDMAN->Shutdown();
+
 	SAFE_DELETE( SCREENMAN );
     SAFE_DELETE( NSMAN );
 	/* Delete INPUTMAN before the other INPUTFILTER handlers, or an input
