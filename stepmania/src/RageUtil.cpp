@@ -1031,6 +1031,14 @@ bool utf8_is_valid( const CString &s )
 	return true;
 }
 
+/* Windows tends to drop garbage BOM characters at the start of UTF-8 text files.
+ * Remove them. */
+void utf8_remove_bom( CString &sLine )
+{
+	if( !sLine.compare(0, 3, "\xef\xbb\xbf") )
+		sLine.erase(0, 3);
+}
+
 const wchar_t INVALID_CHAR = 0xFFFD; /* U+FFFD REPLACEMENT CHARACTER */
 
 wstring CStringToWstring( const CString &s )

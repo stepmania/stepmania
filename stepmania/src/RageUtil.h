@@ -214,6 +214,7 @@ bool utf8_to_wchar_ec( const CString &s, unsigned &start, wchar_t &ch );
 void wchar_to_utf8( wchar_t ch, CString &out );
 wchar_t utf8_get_char( const CString &s );
 bool utf8_is_valid( const CString &s );
+void utf8_remove_bom( CString &s );
 
 CString WStringToCString(const wstring &str);
 CString WcharToUTF8( wchar_t c );
