@@ -64,9 +64,11 @@ protected:
 	// color arrows
 	struct NoteDisplayCols
 	{
-		NoteDisplay		display[MAX_NOTE_TRACKS];
+		NoteDisplay		*display;
 		ReceptorArrowRow	m_ReceptorArrowRow;
 		GhostArrowRow	m_GhostArrowRow;
+		NoteDisplayCols( int iNumCols ) { display = new NoteDisplay[iNumCols]; }
+		~NoteDisplayCols() { delete [] display; }
 	};
 
 	/* All loaded note displays, mapped by their name. */

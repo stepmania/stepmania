@@ -52,7 +52,7 @@ void NoteField::CacheNoteSkin( CString skin )
 		return;
 
 	LOG->Trace("NoteField::CacheNoteSkin: cache %s", skin.c_str() );
-	NoteDisplayCols *nd = new NoteDisplayCols;
+	NoteDisplayCols *nd = new NoteDisplayCols( GetNumTracks() );
 	for( int c=0; c<GetNumTracks(); c++ ) 
 		nd->display[c].Load( c, m_PlayerNumber, skin, m_fYReverseOffsetPixels );
 	nd->m_ReceptorArrowRow.Load( m_PlayerNumber, skin, m_fYReverseOffsetPixels );
