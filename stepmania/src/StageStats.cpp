@@ -169,17 +169,17 @@ Grade StageStats::GetGrade( PlayerNumber pn ) const
 		switch( tns )
 		{
 		case TNS_NONE:		iTapScoreValue = 0;											break;
-		case TNS_HIT_MINE:	iTapScoreValue = PREFSMAN->m_iPercentScoreWeightHitMine;	break;
-		case TNS_MISS:		iTapScoreValue = PREFSMAN->m_iPercentScoreWeightMiss;		break;
-		case TNS_BOO:		iTapScoreValue = PREFSMAN->m_iPercentScoreWeightBoo;		break;
-		case TNS_GOOD:		iTapScoreValue = PREFSMAN->m_iPercentScoreWeightGood;		break;
-		case TNS_GREAT:		iTapScoreValue = PREFSMAN->m_iPercentScoreWeightGreat;		break;
-		case TNS_PERFECT:	iTapScoreValue = PREFSMAN->m_iPercentScoreWeightPerfect;	break;
-		case TNS_MARVELOUS:	iTapScoreValue = PREFSMAN->m_iPercentScoreWeightMarvelous;	break;
+		case TNS_HIT_MINE:	iTapScoreValue = PREFSMAN->m_iGradeWeightHitMine;	break;
+		case TNS_MISS:		iTapScoreValue = PREFSMAN->m_iGradeWeightMiss;		break;
+		case TNS_BOO:		iTapScoreValue = PREFSMAN->m_iGradeWeightBoo;		break;
+		case TNS_GOOD:		iTapScoreValue = PREFSMAN->m_iGradeWeightGood;		break;
+		case TNS_GREAT:		iTapScoreValue = PREFSMAN->m_iGradeWeightGreat;		break;
+		case TNS_PERFECT:	iTapScoreValue = PREFSMAN->m_iGradeWeightPerfect;	break;
+		case TNS_MARVELOUS:	iTapScoreValue = PREFSMAN->m_iGradeWeightMarvelous;	break;
 		default: FAIL_M( ssprintf("%i", tns) );											break;
 		}
 		Actual += iTapNoteScores[pn][tns] * iTapScoreValue;
-		Possible += iTapNoteScores[pn][tns] * PREFSMAN->m_iPercentScoreWeightMarvelous;
+		Possible += iTapNoteScores[pn][tns] * PREFSMAN->m_iGradeWeightMarvelous;
 	}
 
 	FOREACH_HoldNoteScore( hns )
@@ -188,8 +188,8 @@ Grade StageStats::GetGrade( PlayerNumber pn ) const
 		switch( hns )
 		{
 		case HNS_NONE:	iHoldScoreValue = 0;									break;
-		case HNS_NG:	iHoldScoreValue = PREFSMAN->m_iPercentScoreWeightNG;	break;
-		case HNS_OK:	iHoldScoreValue = PREFSMAN->m_iPercentScoreWeightOK;	break;
+		case HNS_NG:	iHoldScoreValue = PREFSMAN->m_iGradeWeightNG;	break;
+		case HNS_OK:	iHoldScoreValue = PREFSMAN->m_iGradeWeightOK;	break;
 		default: FAIL_M( ssprintf("%i", hns) );									break;
 		}
 		Actual += iHoldNoteScores[pn][hns] * iHoldScoreValue;
