@@ -17,8 +17,6 @@ private:
 	enum OptionRowType
 	{
 		ROW_LIST, /* list of custom settings */
-		ROW_STEP, /* list of steps for the current song or course */
-		ROW_CHARACTER, /* list of characters */
 		ROW_CONFIG,	/* global pref */
 		NUM_OPTION_ROW_TYPES
 	};
@@ -44,10 +42,14 @@ private:
 
 	int ExportOption( const OptionRowData &row, const OptionRowHandler &hand, PlayerNumber pn, const vector<bool> &vbSelected );
 	void ImportOption( const OptionRowData &row, const OptionRowHandler &hand, PlayerNumber pn, int rowno, vector<bool> &vbSelectedOut );
-	void SetList( OptionRowData &row, OptionRowHandler &hand, CString param );
-	void SetStep( OptionRowData &row, OptionRowHandler &hand );
-	void SetConf( OptionRowData &row, OptionRowHandler &hand, CString param );
-	void SetCharacter( OptionRowData &row, OptionRowHandler &hand );
+	
+	static void SetList( OptionRowData &row, OptionRowHandler &hand, CString param );
+	static void SetSteps( OptionRowData &row, OptionRowHandler &hand );
+	static void SetConf( OptionRowData &row, OptionRowHandler &hand, CString param );
+	static void SetCharacters( OptionRowData &row, OptionRowHandler &hand );
+	static void SetStyles( OptionRowData &row, OptionRowHandler &hand );
+	static void SetGroups( OptionRowData &row, OptionRowHandler &hand );
+	static void SetDifficulties( OptionRowData &row, OptionRowHandler &hand );
 
 protected:
 	virtual void ImportOptions();

@@ -84,8 +84,8 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 	if( m_pSteps == NULL  &&  m_dc != DIFFICULTY_INVALID )
 	{
 		// Why is this checking for all players?
-		FOREACH_PlayerNumber( pn )
-			if( GAMESTATE->IsHumanPlayer(pn) && GAMESTATE->m_PreferredDifficulty[pn] != m_dc )
+		FOREACH_HumanPlayer( pn )
+			if( GAMESTATE->m_PreferredDifficulty[pn] != m_dc )
 				return false;
 	}
 		
@@ -113,6 +113,8 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 	if( m_pCharacter && GAMESTATE->m_pCurCharacters[pn] != m_pCharacter )
 		return false;
 	if( m_pTrail && GAMESTATE->m_pCurTrail[pn] != m_pTrail )
+		return false;
+	if( !m_sSongGroup.empty() && GAMESTATE->m_sPreferredSongGroup != m_sSongGroup )
 		return false;
 	if( m_SortOrder != SORT_INVALID && GAMESTATE->m_PreferredSortOrder != m_SortOrder )
 		return false;
@@ -736,6 +738,7 @@ bool GameCommand::IsZero() const
 		m_pTrail != NULL || 
 		m_pCharacter != NULL || 
 		m_CourseDifficulty != DIFFICULTY_INVALID ||
+		!m_sSongGroup.empty() ||
 		m_SortOrder != SORT_INVALID
 		)
 		return false;

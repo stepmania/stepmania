@@ -297,18 +297,13 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "space" )		{ m_fSkew = level; m_fPerspectiveTilt = +level;		m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
 		else if( sBit == "hallway" )	{ m_fSkew = 0; m_fPerspectiveTilt = -level;			m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
 		else if( sBit == "distant" )	{ m_fSkew = 0; m_fPerspectiveTilt = +level;			m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
-		else if( NOTESKIN && NOTESKIN->DoesNoteSkinExist(sBit) )
-			m_sNoteSkin = sBit;
-		else if( sBit == "noteskin" && !on ) /* "no noteskin" */
-			m_sNoteSkin = "default";
-		else if ( sBit == "randomspeed" ) 
-			SET_FLOAT( fRandomSpeed )
-		else if ( sBit == "addscore" )
-			m_ScoreDisplay = SCORING_ADD;
-		else if ( sBit == "subtractscore" )
-			m_ScoreDisplay = SCORING_SUBTRACT;
-		else if ( sBit == "averagescore" )
-			m_ScoreDisplay = SCORING_AVERAGE;
+		else if( NOTESKIN && NOTESKIN->DoesNoteSkinExist(sBit) )	m_sNoteSkin = sBit;
+		else if( sBit == "noteskin" && !on ) /* "no noteskin" */	m_sNoteSkin = "default";
+		else if( sBit == "randomspeed" ) 		SET_FLOAT( fRandomSpeed )
+		else if( sBit == "addscore" )			m_ScoreDisplay = SCORING_ADD;
+		else if( sBit == "subtractscore" )		m_ScoreDisplay = SCORING_SUBTRACT;
+		else if( sBit == "averagescore" )		m_ScoreDisplay = SCORING_AVERAGE;
+		else if( sBit == "random" )				ChooseRandomMofifiers();
 	}
 }
 

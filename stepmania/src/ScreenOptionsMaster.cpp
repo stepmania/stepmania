@@ -22,6 +22,8 @@
 #include "ProfileManager.h"
 #include "StepsUtil.h"
 #include "LuaManager.h"
+#include "GameManager.h"
+#include "Foreach.h"
 
 #define LINE_NAMES				THEME->GetMetric (m_sName,"LineNames")
 #define OPTION_MENU_FLAGS		THEME->GetMetric (m_sName,"OptionMenuFlags")
@@ -98,9 +100,9 @@ void ScreenOptionsMaster::SetList( OptionRowData &row, OptionRowHandler &hand, C
 }
 
 /* Add a list of difficulties/edits to the given row/handler. */
-void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
+void ScreenOptionsMaster::SetSteps( OptionRowData &row, OptionRowHandler &hand )
 {
-	hand.type = ROW_STEP;
+	hand.type = ROW_LIST;
 	row.name = "Steps";
 	row.bOneChoiceForAllPlayers = false;
 
@@ -173,9 +175,9 @@ void ScreenOptionsMaster::SetConf( OptionRowData &row, OptionRowHandler &hand, C
 }
 
 /* Add a list of available characters to the given row/handler. */
-void ScreenOptionsMaster::SetCharacter( OptionRowData &row, OptionRowHandler &hand )
+void ScreenOptionsMaster::SetCharacters( OptionRowData &row, OptionRowHandler &hand )
 {
-	hand.type = ROW_CHARACTER;
+	hand.type = ROW_LIST;
 	row.bOneChoiceForAllPlayers = false;
 	row.name = "Characters";
 	hand.Default.m_pCharacter = GAMESTATE->GetDefaultCharacter();
@@ -183,7 +185,7 @@ void ScreenOptionsMaster::SetCharacter( OptionRowData &row, OptionRowHandler &ha
 	{
 		row.choices.push_back( ENTRY_NAME("Off") );
 		GameCommand mc;
-		mc.m_pCharacter = GAMESTATE->GetDefaultCharacter();
+		mc.m_pCharacter = NULL;
 		hand.ListEntries.push_back( mc );
 	}
 
@@ -198,6 +200,84 @@ void ScreenOptionsMaster::SetCharacter( OptionRowData &row, OptionRowHandler &ha
 		row.choices.push_back( s ); 
 		GameCommand mc;
 		mc.m_pCharacter = pCharacter;
+		hand.ListEntries.push_back( mc );
+	}
+}
+
+/* Add a list of available styles to the given row/handler. */
+void ScreenOptionsMaster::SetStyles( OptionRowData &row, OptionRowHandler &hand )
+{
+	hand.type = ROW_LIST;
+	row.bOneChoiceForAllPlayers = true;
+	row.name = "Style";
+
+	vector<const Style*> vStyles;
+	GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vStyles );
+	ASSERT( vStyles.size() );
+	FOREACH_CONST( const Style*, vStyles, s )
+	{
+		row.choices.push_back( GAMEMAN->StyleToThemedString(*s) ); 
+		GameCommand mc;
+		mc.m_pStyle = *s;
+		hand.ListEntries.push_back( mc );
+	}
+
+	hand.Default.m_pStyle = vStyles[0];
+}
+
+/* Add a list of available song groups to the given row/handler. */
+void ScreenOptionsMaster::SetGroups( OptionRowData &row, OptionRowHandler &hand )
+{
+	hand.type = ROW_LIST;
+	row.bOneChoiceForAllPlayers = true;
+	row.name = "Group";
+	hand.Default.m_sSongGroup = GROUP_ALL_MUSIC;
+
+	vector<CString> vGroups;
+	SONGMAN->GetGroupNames( vGroups );
+	ASSERT( vGroups.size() );
+
+	{
+		row.choices.push_back( ENTRY_NAME("AllGroups") );
+		GameCommand mc;
+		mc.m_sSongGroup = GROUP_ALL_MUSIC;
+		hand.ListEntries.push_back( mc );
+	}
+
+	FOREACH_CONST( CString, vGroups, g )
+	{
+		row.choices.push_back( *g ); 
+		GameCommand mc;
+		mc.m_sSongGroup = *g;
+		hand.ListEntries.push_back( mc );
+	}
+}
+
+/* Add a list of available difficulties to the given row/handler. */
+void ScreenOptionsMaster::SetDifficulties( OptionRowData &row, OptionRowHandler &hand )
+{
+	set<Difficulty> vDifficulties;
+	GAMESTATE->GetDifficultiesToShow( vDifficulties );
+
+	hand.type = ROW_LIST;
+	row.bOneChoiceForAllPlayers = true;
+	row.name = "Difficulty";
+	hand.Default.m_dc = DIFFICULTY_INVALID;
+
+	{
+		row.choices.push_back( ENTRY_NAME("AllDifficulties") );
+		GameCommand mc;
+		mc.m_dc = DIFFICULTY_INVALID;
+		hand.ListEntries.push_back( mc );
+	}
+
+	FOREACHS_CONST( Difficulty, vDifficulties, d )
+	{
+		CString s = DifficultyToThemedString( *d );
+
+		row.choices.push_back( s ); 
+		GameCommand mc;
+		mc.m_dc = *d;
 		hand.ListEntries.push_back( mc );
 	}
 }
@@ -270,14 +350,13 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 
 			const CString &name = command.GetName();
 
-			if( !name.CompareNoCase("list") )
-				SetList( row, hand, sArg(1) );
-			else if( !name.CompareNoCase("steps") )
-				SetStep( row, hand );
-			else if( !name.CompareNoCase("conf") )
-				SetConf( row, hand, sArg(1) );
-			else if( !name.CompareNoCase("characters") )
-				SetCharacter( row, hand );
+			if( !name.CompareNoCase("list") )				SetList( row, hand, sArg(1) );
+			else if( !name.CompareNoCase("steps") )			SetSteps( row, hand );
+			else if( !name.CompareNoCase("conf") )			SetConf( row, hand, sArg(1) );
+			else if( !name.CompareNoCase("characters") )	SetCharacters( row, hand );
+			else if( !name.CompareNoCase("styles") )		SetStyles( row, hand );
+			else if( !name.CompareNoCase("groups") )		SetGroups( row, hand );
+			else if( !name.CompareNoCase("difficulties") )	SetDifficulties( row, hand );
 			else
 				RageException::Throw( "Unexpected type '%s' in %s::Line%i", name.c_str(), m_sName.c_str(), i );
 
@@ -316,8 +395,6 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 	switch( hand.type )
 	{
 	case ROW_LIST:
-	case ROW_STEP:
-	case ROW_CHARACTER:
 		{
 			int FallbackOption = -1;
 			bool UseFallbackOption = true;
@@ -453,8 +530,6 @@ int ScreenOptionsMaster::ExportOption( const OptionRowData &row, const OptionRow
 	switch( hand.type )
 	{
 	case ROW_LIST:
-	case ROW_CHARACTER:
-	case ROW_STEP:
 		{
 			hand.Default.Apply( pn );
 			for( unsigned i=0; i<vbSelected.size(); i++ )
@@ -641,10 +716,6 @@ void ScreenOptionsMaster::RefreshIcons()
 				switch( handler.type )
 				{
 				case ROW_LIST:
-					sIcon = handler.ListEntries[iFirstSelection].m_sModifiers;
-					break;
-				case ROW_STEP:
-				case ROW_CHARACTER:
 					sIcon = data.choices[iFirstSelection];
 					break;
 				case ROW_CONFIG:

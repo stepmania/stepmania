@@ -293,12 +293,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenJukebox.h">
 			</File>
 			<File
-				RelativePath="ScreenJukeboxMenu.cpp">
-			</File>
-			<File
-				RelativePath="ScreenJukeboxMenu.h">
-			</File>
-			<File
 				RelativePath="ScreenLogo.cpp">
 			</File>
 			<File
@@ -1493,12 +1487,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="HelpDisplay.h">
-			</File>
-			<File
-				RelativePath="JukeboxMenu.cpp">
-			</File>
-			<File
-				RelativePath="JukeboxMenu.h">
 			</File>
 			<File
 				RelativePath="ListDisplay.cpp">
