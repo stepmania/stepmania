@@ -336,7 +336,7 @@ try_element_again:
 	CString sCategory = ELEMENT_CATEGORY_STRING[category];
 
 	CString sMessage = "The theme element '" + sCategory + SLASH + sFileName +"' is missing.";
-	switch( HOOKS->MessageBoxRetryCancel(sMessage) )
+	switch( HOOKS->MessageBoxAbortRetryIgnore(sMessage, "MissingThemeElement") )
 	{
 	case ArchHooks::retry:
 		FlushDirCache();
@@ -348,6 +348,8 @@ try_element_again:
 			sFileName.c_str(), 
 			GetThemeDirFromName(m_sCurThemeName).c_str(), 
 			GetThemeDirFromName(BASE_THEME_NAME).c_str() );
+		break;
+	case ArchHooks::ignore:
 		break;
 	default:
 		ASSERT(0);
