@@ -34,7 +34,7 @@ OptionRow g_AutogenOptionsLines[NUM_AUTOGEN_OPTIONS_LINES] = {
 };
 
 ScreenAutogenOptions::ScreenAutogenOptions() :
-	ScreenOptions("ScreenAutogenOptions",false)
+	ScreenOptions("ScreenAutogenOptions")
 {
 	LOG->Trace( "ScreenAutogenOptions::ScreenAutogenOptions()" );
 

@@ -43,7 +43,7 @@ OptionRow g_GameplayOptionsLines[NUM_GAMEPLAY_OPTIONS_LINES] = {
 };
 
 ScreenGameplayOptions::ScreenGameplayOptions() :
-	ScreenOptions("ScreenGameplayOptions",false)
+	ScreenOptions("ScreenGameplayOptions")
 {
 	LOG->Trace( "ScreenGameplayOptions::ScreenGameplayOptions()" );
 

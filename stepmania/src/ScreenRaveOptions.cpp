@@ -41,7 +41,7 @@ OptionRow g_RaveOptionsLines[NUM_RAVE_OPTIONS_LINES] = {
 PlayerNumber OPPOSITE_PLAYER[NUM_PLAYERS] = { PLAYER_2, PLAYER_1 };
 
 ScreenRaveOptions::ScreenRaveOptions() :
-	ScreenOptions("ScreenRaveOptions",true)
+	ScreenOptions("ScreenRaveOptions")
 {
 	LOG->Trace( "ScreenRaveOptions::ScreenRaveOptions()" );
 

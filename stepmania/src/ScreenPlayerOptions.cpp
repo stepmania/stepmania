@@ -79,7 +79,7 @@ static const PlayerOptions::Effect ChoosableEffects[] =
 };
 
 ScreenPlayerOptions::ScreenPlayerOptions() :
-	ScreenOptions("ScreenPlayerOptions",true)
+	ScreenOptions("ScreenPlayerOptions")
 {
 	LOG->Trace( "ScreenPlayerOptions::ScreenPlayerOptions()" );
 	

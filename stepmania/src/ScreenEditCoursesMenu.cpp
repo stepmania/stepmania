@@ -44,7 +44,7 @@ ScreenEditCoursesMenu::ScreenEditCoursesMenu() : Screen("ScreenEditCoursesMenu")
 //	m_Selector.AllowNewNotes();
 	this->AddChild( &m_Selector );
 
-	m_Menu.Load( "ScreenEditCoursesMenu", false );	// disable timer
+	m_Menu.Load( "ScreenEditCoursesMenu" );
 	this->AddChild( &m_Menu );
 
 

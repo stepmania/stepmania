@@ -100,7 +100,7 @@ ScreenMapControllers::ScreenMapControllers() : Screen("ScreenMapControllers")
 
 	m_iWaitingForPress = 0;
 
-	m_Menu.Load( "ScreenMapControllers", false );	// no timer
+	m_Menu.Load( "ScreenMapControllers" );
 	this->AddChild( &m_Menu );
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenMapControllers music") );

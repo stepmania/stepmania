@@ -59,7 +59,7 @@ static const int TextureRes[] = {
 };
 
 ScreenGraphicOptions::ScreenGraphicOptions() :
-	ScreenOptions("ScreenGraphicOptions",false)
+	ScreenOptions("ScreenGraphicOptions")
 {
 	LOG->Trace( "ScreenGraphicOptions::ScreenGraphicOptions()" );
 

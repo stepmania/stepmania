@@ -38,7 +38,7 @@ OptionRow g_ProfileOptionsLines[NUM_GAMEPLAY_OPTIONS_LINES] = {
 };
 
 ScreenProfileOptions::ScreenProfileOptions() :
-	ScreenOptions("ScreenProfileOptions",false)
+	ScreenOptions("ScreenProfileOptions")
 {
 	LOG->Trace( "ScreenProfileOptions::ScreenProfileOptions()" );
 

@@ -64,7 +64,7 @@ OptionRow g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
 };
 
 ScreenAppearanceOptions::ScreenAppearanceOptions() :
-	ScreenOptions("ScreenAppearanceOptions",false)
+	ScreenOptions("ScreenAppearanceOptions")
 {
 	LOG->Trace( "ScreenAppearanceOptions::ScreenAppearanceOptions()" );
 

@@ -53,7 +53,7 @@ CString ScreenSongOptions::GetNextScreen()
 
 
 ScreenSongOptions::ScreenSongOptions() :
-	ScreenOptions("ScreenSongOptions",true)
+	ScreenOptions("ScreenSongOptions")
 {
 	LOG->Trace( "ScreenSongOptions::ScreenSongOptions()" );
 

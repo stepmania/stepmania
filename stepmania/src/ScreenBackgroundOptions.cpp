@@ -43,7 +43,7 @@ OptionRow g_BackgroundOptionsLines[NUM_BACKGROUND_OPTIONS_LINES] = {
 };
 
 ScreenBackgroundOptions::ScreenBackgroundOptions() :
-	ScreenOptions("ScreenBackgroundOptions",false)
+	ScreenOptions("ScreenBackgroundOptions")
 {
 	LOG->Trace( "ScreenBackgroundOptions::ScreenBackgroundOptions()" );
 

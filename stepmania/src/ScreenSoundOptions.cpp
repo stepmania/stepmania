@@ -42,7 +42,7 @@ OptionRow g_SoundOptionsLines[NUM_SOUND_OPTIONS_LINES] = {
 };
 
 ScreenSoundOptions::ScreenSoundOptions() :
-	ScreenOptions("ScreenSoundOptions",false)
+	ScreenOptions("ScreenSoundOptions")
 {
 	LOG->Trace( "ScreenSoundOptions::ScreenSoundOptions()" );
 

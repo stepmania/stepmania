@@ -57,7 +57,7 @@ OptionRow g_OptionsMenuLines[NUM_OPTIONS_MENU_LINES] = {
 };
 
 ScreenOptionsMenu::ScreenOptionsMenu() :
-	ScreenOptions("ScreenOptionsMenu",false)
+	ScreenOptions("ScreenOptionsMenu")
 {
 	LOG->Trace( "ScreenOptionsMenu::ScreenOptionsMenu()" );
 

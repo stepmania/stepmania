@@ -58,7 +58,7 @@ OptionRow g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
 };
 
 ScreenMachineOptions::ScreenMachineOptions() :
-	ScreenOptions("ScreenMachineOptions",false)
+	ScreenOptions("ScreenMachineOptions")
 {
 	LOG->Trace( "ScreenMachineOptions::ScreenMachineOptions()" );
 

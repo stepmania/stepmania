@@ -44,7 +44,7 @@ OptionRow g_InputOptionsLines[NUM_INPUT_OPTIONS_LINES] = {
 };
 
 ScreenInputOptions::ScreenInputOptions() :
-	ScreenOptions("ScreenInputOptions",false)
+	ScreenOptions("ScreenInputOptions")
 {
 	LOG->Trace( "ScreenInputOptions::ScreenInputOptions()" );
 
