@@ -199,7 +199,7 @@ void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage
 
 	// reload common sounds
 	if ( SCREENMAN != NULL )
-		SCREENMAN->ReloadCommonSounds();
+		SCREENMAN->ThemeChanged();
 
 	CString sMetric;
 	for( i = 0; GetCommandlineArgument( "metric", &sMetric, i ); ++i )

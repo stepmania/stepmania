@@ -362,7 +362,7 @@ ScreenManager::~ScreenManager()
 	delete m_SystemLayer;
 }
 
-void ScreenManager::ReloadCommonSounds()
+void ScreenManager::ThemeChanged()
 {
 	// reload common sounds
 	m_soundStart.Load( THEME->GetPathS("Common","start") );
