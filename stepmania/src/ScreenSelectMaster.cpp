@@ -12,6 +12,7 @@
 #include "RageLog.h"
 #include <set>
 #include "Foreach.h"
+#include "RageSoundManager.h"
 
 #define NUM_ICON_PARTS							THEME->GetMetricI(m_sName,"NumIconParts")
 #define NUM_PREVIEW_PARTS						THEME->GetMetricI(m_sName,"NumPreviewParts")
@@ -596,8 +597,9 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 	GameCommand &mc = m_aGameCommands[m_iChoice[pn]];
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("%s comment %s",m_sName.c_str(), mc.m_sName.c_str())) );
 	
+	/* Play a copy of the sound, so it'll finish playing even if we leave the screen immediately. */
 	if( mc.m_sSoundPath.empty() )
-		m_soundStart.Play();
+		SOUNDMAN->PlayCopyOfSound( m_soundStart );
 
 	if( mc.m_sScreen.empty() )
 	{
