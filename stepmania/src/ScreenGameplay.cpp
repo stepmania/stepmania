@@ -423,6 +423,8 @@ void ScreenGameplay::Init()
 		break;
 	}
 
+	m_ShowScoreboard = false;
+
 	//the following is only used in SMLAN/SMOnline
 	if (NSMAN->useSMserver) 
 	{
