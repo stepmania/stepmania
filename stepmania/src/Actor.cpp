@@ -737,6 +737,7 @@ void Actor::HandleCommand( const CStringArray &asTokens )
 //		else if( sName=="zoomz" )			SetZoomZ( fParam(1) );
 	else if( sName=="zoomtowidth" )		ZoomToWidth( fParam(1) );
 	else if( sName=="zoomtoheight" )	ZoomToHeight( fParam(1) );
+	else if( sName=="stretchto" )		StretchTo( RectF( fParam(1), fParam(2), fParam(3), fParam(4) ) );
 	else if( sName=="cropleft" )		SetCropLeft( fParam(1) );
 	else if( sName=="croptop" )			SetCropTop( fParam(1) );
 	else if( sName=="cropright" )		SetCropRight( fParam(1) );
