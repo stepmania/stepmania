@@ -476,7 +476,7 @@ void Background::UpdateCurBGChange( float fCurrentTime )
 
 	if( i != -1  &&  i != m_iCurBGChangeIndex )	// we're changing backgrounds
 	{
-		LOG->Trace( "old bga %d -> new bga %d, %f, %f", i, m_iCurBGChangeIndex, m_aBGChanges[i].m_fStartBeat, fBeat );
+		LOG->Trace( "old bga %d -> new bga %d, %f, %f", m_iCurBGChangeIndex, i, m_aBGChanges[i].m_fStartBeat, fBeat );
 
 		m_iCurBGChangeIndex = i;
 
