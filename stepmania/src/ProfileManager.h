@@ -30,12 +30,12 @@ public:
 	bool RenameLocalProfile( CString sProfileID, CString sNewName );
 	bool DeleteLocalProfile( CString sProfileID );
 
-	void GetLocalProfileIDs( vector<CString> &asProfileIDsOut );
-	void GetLocalProfileNames( vector<CString> &asNamesOut );
+	void GetLocalProfileIDs( vector<CString> &asProfileIDsOut ) const;
+	void GetLocalProfileNames( vector<CString> &asNamesOut ) const;
 
 	bool LoadProfileFromMemoryCard( PlayerNumber pn );
 //	bool LoadFirstAvailableProfile( PlayerNumber pn );	// memory card or local profile
-	bool SaveProfile( PlayerNumber pn );
+	bool SaveProfile( PlayerNumber pn ) const;
 	void UnloadProfile( PlayerNumber pn );
 
 	//
@@ -44,8 +44,8 @@ public:
 	void LoadMachineProfile();
 	void SaveMachineProfile();
 
-	bool IsUsingProfile( PlayerNumber pn ) { return !m_sProfileDir[pn].empty(); }
-	bool IsUsingProfile( ProfileSlot slot )
+	bool IsUsingProfile( PlayerNumber pn ) const { return !m_sProfileDir[pn].empty(); }
+	bool IsUsingProfile( ProfileSlot slot ) const
 	{
 		switch( slot )
 		{
@@ -63,12 +63,12 @@ public:
 	Profile* GetProfile( PlayerNumber pn ) { return (Profile*) ((const ProfileManager *) this)->GetProfile(pn); }
 	const Profile* GetProfile( ProfileSlot slot ) const;
 	Profile* GetProfile( ProfileSlot slot ) { return (Profile*) ((const ProfileManager *) this)->GetProfile(slot); }
-	CString GetProfileDir( ProfileSlot slot );
+	CString GetProfileDir( ProfileSlot slot ) const;
 
 	Profile* GetMachineProfile() { return &m_MachineProfile; }
 
-	CString GetPlayerName( PlayerNumber pn );
-	bool ProfileWasLoadedFromMemoryCard( PlayerNumber pn );
+	CString GetPlayerName( PlayerNumber pn ) const;
+	bool ProfileWasLoadedFromMemoryCard( PlayerNumber pn ) const;
 
 
 
@@ -79,7 +79,7 @@ public:
 	bool IsSongNew( const Song* pSong ) const { return GetSongNumTimesPlayed(pSong,PROFILE_SLOT_MACHINE)==0; }
 	void AddStepsHighScore( const Steps* pSteps, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 	void IncrementStepsPlayCount( const Steps* pSteps, PlayerNumber pn );
-	HighScore GetHighScoreForDifficulty( const Song *s, const StyleDef *st, ProfileSlot slot, Difficulty dc );
+	HighScore GetHighScoreForDifficulty( const Song *s, const StyleDef *st, ProfileSlot slot, Difficulty dc ) const;
 
 	//
 	// Course stats

@@ -72,20 +72,22 @@ ProfileManager::~ProfileManager()
 	SaveMachineProfile();
 }
 
-void ProfileManager::GetLocalProfileIDs( vector<CString> &asProfileIDsOut )
+void ProfileManager::GetLocalProfileIDs( vector<CString> &asProfileIDsOut ) const
 {
 	GetDirListing( USER_PROFILES_DIR "*", asProfileIDsOut, true, false );
 }
 
-void ProfileManager::GetLocalProfileNames( vector<CString> &asNamesOut )
+void ProfileManager::GetLocalProfileNames( vector<CString> &asNamesOut ) const
 {
 	CStringArray vsProfileIDs;
 	GetLocalProfileIDs( vsProfileIDs );
+	LOG->Trace("GetLocalProfileNames: %i", vsProfileIDs.size());
 	for( unsigned i=0; i<vsProfileIDs.size(); i++ )
 	{
 		CString sProfileID = vsProfileIDs[i];
 		CString sProfileDir = USER_PROFILES_DIR + sProfileID + "/";
 		CString sDisplayName = Profile::GetProfileDisplayNameFromDir( sProfileDir );
+	LOG->Trace(" '%s'", sDisplayName.c_str());
 		asNamesOut.push_back( sDisplayName );
 	}
 }
@@ -200,7 +202,7 @@ bool ProfileManager::CreateMemoryCardProfile( PlayerNumber pn )
 //	return false;
 //}
 
-bool ProfileManager::SaveProfile( PlayerNumber pn )
+bool ProfileManager::SaveProfile( PlayerNumber pn ) const
 {
 	if( m_sProfileDir[pn].empty() )
 		return false;
@@ -223,9 +225,9 @@ const Profile* ProfileManager::GetProfile( PlayerNumber pn ) const
 		return &m_Profile[pn];
 }
 
-CString ProfileManager::GetPlayerName( PlayerNumber pn )
+CString ProfileManager::GetPlayerName( PlayerNumber pn ) const
 {
-	Profile *prof = GetProfile( pn );
+	const Profile *prof = GetProfile( pn );
 	if( prof )
 		return prof->m_sLastUsedHighScoreName;
 
@@ -388,12 +390,12 @@ void ProfileManager::ReadSM300NoteScores()
 }
 */
 
-bool ProfileManager::ProfileWasLoadedFromMemoryCard( PlayerNumber pn )
+bool ProfileManager::ProfileWasLoadedFromMemoryCard( PlayerNumber pn ) const
 {
 	return GetProfile(pn) && m_bWasLoadedFromMemoryCard[pn];
 }
 
-CString ProfileManager::GetProfileDir( ProfileSlot slot )
+CString ProfileManager::GetProfileDir( ProfileSlot slot ) const
 {
 	switch( slot )
 	{
@@ -450,14 +452,14 @@ void ProfileManager::IncrementStepsPlayCount( const Steps* pSteps, PlayerNumber 
 	PROFILEMAN->GetMachineProfile()->IncrementStepsPlayCount( pSteps );
 }
 
-HighScore ProfileManager::GetHighScoreForDifficulty( const Song *s, const StyleDef *st, ProfileSlot slot, Difficulty dc )
+HighScore ProfileManager::GetHighScoreForDifficulty( const Song *s, const StyleDef *st, ProfileSlot slot, Difficulty dc ) const
 {
 	// return max grade of notes in difficulty class
 	vector<Steps*> aNotes;
 	s->GetSteps( aNotes, st->m_StepsType );
 	SortNotesArrayByDifficulty( aNotes );
 
-	Steps* pSteps = s->GetStepsByDifficulty( st->m_StepsType, dc );
+	const Steps* pSteps = s->GetStepsByDifficulty( st->m_StepsType, dc );
 
 	if( PROFILEMAN->IsUsingProfile(slot) )
 		return PROFILEMAN->GetProfile(slot)->GetStepsHighScoreList(pSteps).GetTopScore();
