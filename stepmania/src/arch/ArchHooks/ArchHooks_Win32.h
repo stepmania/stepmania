@@ -8,7 +8,7 @@ public:
     ArchHooks_Win32();
     void DumpDebugInfo();
     void MessageBoxOKPrivate( CString sMessage, CString ID );
-	void MessageBoxErrorPrivate( CString error );
+	void MessageBoxErrorPrivate( CString error, CString ID );
     MessageBoxResult MessageBoxAbortRetryIgnorePrivate( CString sMessage, CString ID );
     MessageBoxResult MessageBoxRetryCancelPrivate( CString sMessage, CString ID );
 	void RestartProgram();

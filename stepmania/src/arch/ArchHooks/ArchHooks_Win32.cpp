@@ -145,7 +145,7 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 	return FALSE;
 }
 
-void ArchHooks_Win32::MessageBoxErrorPrivate( CString error )
+void ArchHooks_Win32::MessageBoxErrorPrivate( CString error, CString ID )
 {
 	g_sErrorString = error;
  	// throw up a pretty error dialog

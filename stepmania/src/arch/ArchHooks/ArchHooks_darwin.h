@@ -21,9 +21,9 @@ public:
     ~ArchHooks_darwin() { }
     void DumpDebugInfo();
 protected:
-    void MessageBoxErrorPrivate(CString sError);
-	void MessageBoxOKPrivate(CString sMessage, CString ID = "");
-    MessageBoxResult MessageBoxAbortRetryIgnorePrivate(CString sMessage, CString ID = "");
+    void MessageBoxErrorPrivate(CString sError, CString ID);
+	void MessageBoxOKPrivate(CString sMessage, CString ID);
+    MessageBoxResult MessageBoxAbortRetryIgnorePrivate(CString sMessage, CString ID);
 };
 
 #undef ARCH_HOOKS

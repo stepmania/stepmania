@@ -26,10 +26,13 @@ void ArchHooks::IgnoreMessage( CString ID )
   PREFSMAN->m_sIgnoredMessageWindows = join( ",", list );
   PREFSMAN->SaveGlobalPrefsToDisk();
 }
-#include "RageLog.h"
-void ArchHooks::MessageBoxError( CString sMessage )
+
+void ArchHooks::MessageBoxError( CString sMessage, CString ID )
 {
-	MessageBoxErrorPrivate( sMessage );
+	if( ID != "" && MessageIsIgnored( ID ) )
+		return;
+
+	MessageBoxErrorPrivate( sMessage, ID );
 }
 
 void ArchHooks::MessageBoxOK( CString sMessage, CString ID )
@@ -38,7 +41,6 @@ void ArchHooks::MessageBoxOK( CString sMessage, CString ID )
 		return;
 
 	// don't show MessageBox if windowed
-	if(LOG)LOG->Trace("wind %i", DISPLAY->IsWindowed());
 	if( !DISPLAY->IsWindowed() )
 		ArchHooks::MessageBoxOKPrivate( sMessage, ID );
 	else
