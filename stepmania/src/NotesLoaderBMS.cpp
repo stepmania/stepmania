@@ -792,21 +792,9 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 						if( 0==stricmp(value_name, sTagToLookFor) )
 						{
 							// find the BPM at the time of this freeze
-							float fBPM = -1;
-							for( unsigned i=0; i<out.m_Timing.m_BPMSegments.size()-1; i++ )
-							{
-								if( out.m_Timing.m_BPMSegments[i].m_fStartBeat <= fFreezeStartBeat &&
-									out.m_Timing.m_BPMSegments[i+1].m_fStartBeat > fFreezeStartBeat )
-								{
-									fBPM = out.m_Timing.m_BPMSegments[i].m_fBPM;
-									break;
-								}
-							}
-							// the BPM segment of this beat is the last BPM segment
-							if( fBPM == -1 )
-								fBPM = out.m_Timing.m_BPMSegments[out.m_Timing.m_BPMSegments.size()-1].m_fBPM;
-
-							fFreezeSecs = strtof(value_data,NULL)/(fBPM*0.81f);	// I have no idea what units these are in, so I experimented until finding this factor.
+							float fBPS = out.m_Timing.GetBPMAtBeat(fFreezeStartBeat) / 60.0f;
+							float fBeats = strtof(value_data,NULL) / 48.0f;
+							fFreezeSecs = fBeats / fBPS;
 							break;
 						}
 					}
