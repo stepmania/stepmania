@@ -118,7 +118,9 @@ CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
 
 CString ThemeManager::GetPathTo( CString sThemeName, CString sAssetCategory, CString sFileName ) 
 {
-// try_element_again:
+#if defined(DEBUG) && defined(WIN32) // XXX arch?
+try_element_again:
+#endif
 	sAssetCategory.MakeLower();
 	sFileName.MakeLower();
 
