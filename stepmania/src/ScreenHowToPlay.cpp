@@ -21,13 +21,26 @@
 #include "NoteFieldPositioning.h"
 #include "GameManager.h"
 
-#define SONG_BPM			THEME->GetMetricF("ScreenHowToPlay","SongBPM")
-#define SECONDS_TO_SHOW			THEME->GetMetricF("ScreenHowToPlay","SecondsToShow")
-#define NUM_PERFECTS			4
-#define NUM_MISSES			6
+#define SONG_BPM							THEME->GetMetricF("ScreenHowToPlay","SongBPM")
+#define SECONDS_TO_SHOW						THEME->GetMetricF("ScreenHowToPlay","SecondsToShow")
+#define NUM_PERFECTS						THEME->GetMetricI("ScreenHowToPlay","NumPerfects")
+#define NUM_MISSES							THEME->GetMetricI("ScreenHowToPlay","NumMisses")
+#define LIFEBARONCOMMAND					THEME->GetMetric ("ScreenHowToPlay","LifeMeterBarOnCommand")
+#define USECHARACTER						THEME->GetMetricB("ScreenHowToPlay","UseCharacter")
+#define CHARACTERONCOMMAND					THEME->GetMetric ("ScreenHowToPlay","CharacterOnCommand")
+#define PADONCOMMAND						THEME->GetMetric ("ScreenHowToPlay","PadOnCommand")
+#define PLAYERONCOMMAND						THEME->GetMetric ("ScreenHowToPlay","PlayerOnCommand")
 
 ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 {
+	m_In.Load( THEME->GetPathToB("ScreenHowToPlay in") );
+	m_In.StartTransitioning();
+
+	m_Out.Load( THEME->GetPathToB("ScreenHowToPlay out") );
+
+	m_Overlay.LoadFromAniDir( THEME->GetPathToB("ScreenHowToPlay overlay") );
+	this->AddChild( &m_Overlay );
+
 	switch(GAMESTATE->m_CurGame) // which style should we use to demonstrate?
 	{
 		case GAME_DANCE:	GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE; break;
@@ -45,22 +58,23 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	ASSERT(iNumOfTracks > 0); // crazy to have less than 1 track....
 
 	m_LifeMeterBar.Load( PLAYER_1 );
-	m_LifeMeterBar.SetXY( 480, 40 );
+	m_LifeMeterBar.Command( LIFEBARONCOMMAND );
 	m_LifeMeterBar.FillForHowToPlay( NUM_PERFECTS, NUM_MISSES );
 
+	m_mDancePad.LoadMilkshapeAscii("Characters" SLASH "DancePad-DDR.txt");
+	m_mDancePad.SetRotationX( 35 );
+	m_mDancePad.Command( PADONCOMMAND );
+
 	// Display random character+pad
-	if( GAMESTATE->m_pCharacters.size() )
+	if( USECHARACTER && GAMESTATE->m_pCharacters.size() )
 	{
 		Character* rndchar = GAMESTATE->GetRandomCharacter();
 
 		m_mCharacter.LoadMilkshapeAscii( rndchar->GetModelPath() );
-		m_mDancePad.LoadMilkshapeAscii("Characters" SLASH "DancePad-DDR.txt");
 		m_mCharacter.LoadMilkshapeAsciiBones("howtoplay", rndchar->GetHowToPlayAnimationPath() );
 		
 		m_mCharacter.SetRotationX( 40 );
-		m_mDancePad.SetRotationX( 35 );
-		m_mCharacter.Command("X,120;Y,300;Zoom,15;RotationY,180;sleep,4.7;linear,1.0;RotationY,360;Zoom,20;X,120;Y,400");
-		m_mDancePad.Command("X,40;Y,310;Zoom,15;RotationY,180;sleep,4.7;linear,1.0;RotationY,360;Zoom,20;X,230;Y,390");
+		m_mCharacter.Command( CHARACTERONCOMMAND );
 	}
 
 	NoteData* pND = new NoteData;
@@ -115,9 +129,10 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	GAMESTATE->m_pCurSong = m_pSong;
 	GAMESTATE->m_bPastHereWeGo = true;
 	GAMESTATE->m_PlayerController[PLAYER_1] = PC_AUTOPLAY;
+
 	m_Player.Load( PLAYER_1, pND, &m_LifeMeterBar, NULL, NULL, NULL, NULL, NULL );
-	
-	m_Player.SetX( 480 );
+	m_Player.Command( PLAYERONCOMMAND );
+
 	// Don't show judgement
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_fBlind = 1;
 	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
@@ -129,6 +144,10 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	m_fFakeSecondsIntoSong = 0;
 	this->ClearMessageQueue();
 	this->PostScreenMessage( SM_BeginFadingOut, SECONDS_TO_SHOW );
+
+	this->MoveToTail( &m_Overlay );
+	this->MoveToTail( &m_In );
+	this->MoveToTail( &m_Out );
 }
 
 ScreenHowToPlay::~ScreenHowToPlay()
@@ -196,12 +215,11 @@ void ScreenHowToPlay::Update( float fDelta )
 				// if we update at normal speed during a step animation, it is too slow and
 				// doesn't finish in time.
 				rate = 1.8f;
-		};	
-
+		}
 	}
 
-	m_mCharacter.Update(fDelta * rate);
-	m_mDancePad.Update(fDelta);
+	m_mCharacter.Update( fDelta * rate );
+	m_mDancePad.Update( fDelta );
 	ScreenAttract::Update( fDelta );
 }
 
@@ -219,6 +237,7 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 void ScreenHowToPlay::DrawPrimitives()
 {
 	Screen::DrawPrimitives();
+
 	DISPLAY->SetLighting( true );
 	DISPLAY->SetLightDirectional( 
 		0, 
@@ -232,4 +251,8 @@ void ScreenHowToPlay::DrawPrimitives()
 
 	DISPLAY->SetLightOff( 0 );
 	DISPLAY->SetLighting( false );
+
+	m_Overlay.DrawPrimitives();
+	m_In.DrawPrimitives();
+	m_Out.DrawPrimitives();
 }

@@ -28,6 +28,7 @@ public:
 
 protected:
 	LifeMeterBar	m_LifeMeterBar;
+	BGAnimation		m_Overlay;
 	Player			m_Player;
 	Model			m_mCharacter;
 	Model			m_mDancePad;
