@@ -84,6 +84,8 @@ PlayerMinus::PlayerMinus()
 	m_pSecondaryScoreKeeper = NULL;
 	m_pInventory = NULL;
 	
+	m_iOffsetSample = 0;
+
 	this->AddChild( &m_ArrowBackdrop );
 	this->AddChild( &m_Judgment );
 	this->AddChild( &m_ProTimingDisplay );
@@ -901,6 +903,10 @@ void PlayerMinus::Step( int col, RageTimer tm )
 		if( score != TNS_NONE )
 			SetTapNoteOffset(col, iIndexOverlappingNote, -fNoteOffset);
 
+		if( GAMESTATE->m_PlayerController[m_PlayerNumber] == PC_HUMAN  && 
+			score >= TNS_GREAT ) 
+			HandleAutosync(fNoteOffset);
+
 		if( m_pPrimaryScoreKeeper )
 			m_pPrimaryScoreKeeper->HandleTapScore( score );
 		if( m_pSecondaryScoreKeeper )
@@ -937,6 +943,27 @@ void PlayerMinus::Step( int col, RageTimer tm )
 
 
 	m_pNoteField->Step( col );
+}
+
+void PlayerMinus::HandleAutosync(float fNoteOffset)
+{
+	if( !GAMESTATE->m_SongOptions.m_bAutoSync )
+		return;
+
+	m_fOffset[m_iOffsetSample++] = fNoteOffset;
+	if (m_iOffsetSample < SAMPLE_COUNT) 
+		return; /* need more */
+
+	const float mean = calc_mean(m_fOffset, m_fOffset+SAMPLE_COUNT);
+	const float stddev = calc_stddev(m_fOffset, m_fOffset+SAMPLE_COUNT);
+
+	if (stddev < .03 && stddev < fabsf(mean)) { //If they stepped with less than .03 error
+		GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds += mean;
+		LOG->Trace("Offset corrected by %f. Error in steps: %f seconds.", mean, stddev);
+	} else
+		LOG->Trace("Offset NOT corrected. Average offset: %f seconds. Error: %f seconds.", mean, stddev);
+
+	m_iOffsetSample = 0;
 }
 
 

@@ -36,6 +36,8 @@ class CombinedLifeMeter;
 class ScoreKeeper;
 class Inventory;
 
+#define	SAMPLE_COUNT	16
+
 
 class PlayerMinus : public NoteDataWithScoring, public ActorFrame
 {
@@ -63,6 +65,7 @@ protected:
 	void OnRowCompletelyJudged( int iStepIndex );
 	void HandleTapRowScore( unsigned row );
 	void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );
+	void HandleAutosync(float fNoteOffset);
 	void DrawTapJudgments();
 	void DrawHoldJudgments();
 
@@ -71,6 +74,9 @@ protected:
 
 	PlayerNumber	m_PlayerNumber;
 	float			m_fNoteFieldHeight;
+
+	float			m_fOffset[SAMPLE_COUNT]; // for AutoSync
+	int				m_iOffsetSample;
 
 	ArrowBackdrop	m_ArrowBackdrop;
 	NoteField*		m_pNoteField;
