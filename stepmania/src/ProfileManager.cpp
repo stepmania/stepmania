@@ -540,9 +540,9 @@ class LunaProfileManager : public Luna<T>
 public:
 	LunaProfileManager() { LUA->Register( Register ); }
 
-	static int IsUsingProfile( T* p, lua_State *L )	{ lua_pushboolean(L, p->IsUsingProfile((PlayerNumber)IArg(1)) ); return 1; }
-	static int GetProfile( T* p, lua_State *L )		{ p->GetProfile((PlayerNumber)IArg(1))->PushSelf(L); return 1; }
-	static int GetMachineProfile( T* p, lua_State *L )		{ p->GetMachineProfile()->PushSelf(L); return 1; }
+	static int IsUsingProfile( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsUsingProfile((PlayerNumber)IArg(1)) ); return 1; }
+	static int GetProfile( T* p, lua_State *L )			{ Profile* pP = p->GetProfile((PlayerNumber)IArg(1)); ASSERT(pP); pP->PushSelf(L); return 1; }
+	static int GetMachineProfile( T* p, lua_State *L )	{ p->GetMachineProfile()->PushSelf(L); return 1; }
 
 	static void Register(lua_State *L)
 	{
