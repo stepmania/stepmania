@@ -60,8 +60,6 @@ void RageSound_WaveOut::MixerThread()
 
 bool RageSound_WaveOut::GetData()
 {
-	LockMutex L(SOUNDMAN->lock);
-
 	/* Look for a free buffer. */
 	int b;
 	for( b = 0; b < num_chunks; ++b )
@@ -90,8 +88,6 @@ void RageSound_WaveOut::SetupDecodingThread()
 
 int64_t RageSound_WaveOut::GetPosition( const RageSoundBase *snd ) const
 {
-	LockMutex L(SOUNDMAN->lock);
-
 	MMTIME tm;
 	tm.wType = TIME_SAMPLES;
 	MMRESULT ret = waveOutGetPosition(wo, &tm, sizeof(tm));
