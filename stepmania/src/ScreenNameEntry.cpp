@@ -406,15 +406,8 @@ void ScreenNameEntry::MenuStart( PlayerNumber pn )
 
 	if( m_sSelectedName[pn] == "" )
 		m_sSelectedName[pn] = DEFAULT_RANKING_NAME;
-	
-	if( GAMESTATE->IsCourseMode() )
-	{
-		GAMESTATE->m_pRankingCourse->m_RankingScores[GAMESTATE->m_RankingNotesType][GAMESTATE->m_iRankingIndex[pn]].sName = m_sSelectedName[pn];
-	}
-	else
-	{
-		SONGMAN->m_MachineScores[GAMESTATE->m_RankingNotesType][GAMESTATE->m_RankingCategory[pn]][GAMESTATE->m_iRankingIndex[pn]].sName = m_sSelectedName[pn];
-	}
+
+	GAMESTATE->StoreRankingName( pn, m_sSelectedName[pn] );
 
 	if( !AnyStillEntering() && !m_Out.IsTransitioning() )
 		m_Out.StartTransitioning( SM_GoToNextScreen );
