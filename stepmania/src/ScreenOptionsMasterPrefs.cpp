@@ -263,7 +263,8 @@ static void CoinsPerCredit( int &sel, bool ToSel, const CStringArray &choices )
 	MoveMap( sel, PREFSMAN->m_iCoinsPerCredit, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-MOVE( JointPremium,			PREFSMAN->m_bJointPremium );
+MOVE( VersusPremium,			PREFSMAN->m_bVersusForOneCredit );
+MOVE( DoublePremium,			PREFSMAN->m_bDoubleForOneCredit );
 
 static void SongsPerPlay( int &sel, bool ToSel, const CStringArray &choices )
 {
@@ -452,7 +453,8 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Progressive\nNonstop Lifebar",ProgressiveNonstopLifebar,"OFF","1","2","3","4","5","6","7","8","INSANITY"),
 	ConfOption( "Default\nFail Type",	DefaultFailType,	"ARCADE","END OF SONG","OFF" ),	
 	ConfOption( "Coins Per\nCredit",	CoinsPerCredit,		"1","2","3","4","5","6","7","8" ),
-	ConfOption( "Joint\nPremium",		JointPremium,		"OFF","ON" ),
+	ConfOption( "Versus\nPremium",		VersusPremium,	"OFF (2 credits)","ON (1 credit)" ),
+	ConfOption( "Double\nPremium",		DoublePremium,	"OFF (2 credits)","ON (1 credit)" ),
 	ConfOption( "Show Song\nOptions",	ShowSongOptions,	"HIDE","SHOW","ASK" ),
 	ConfOption( "Show Name\nEntry",     ShowNameEntry,		"OFF", "ON", "RANKING SONGS" ),
 
@@ -462,7 +464,7 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Display\nColor",		DisplayColor,		"16BIT","32BIT" ),
 	ConfOption( "Texture\nResolution",	TextureResolution,	"256","512","1024","2048" ),
 	ConfOption( "Texture\nColor",		TextureColor,		"16BIT","32BIT" ),
-	ConfOption( "Movie\nColor",			MovieColor,		"16BIT","32BIT" ),
+	ConfOption( "Movie\nColor",			MovieColor,			"16BIT","32BIT" ),
 	ConfOption( "Keep Textures\nIn Memory", KeepTexturesInMemory,	"NO","YES" ),
 	ConfOption( "Refresh\nRate",		RefreshRate,		"DEFAULT","60","70","72","75","80","85","90","100","120","150" ),
 	ConfOption( "Wait For\nVsync",		WaitForVsync,		"NO", "YES" ),

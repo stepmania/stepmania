@@ -87,7 +87,8 @@ PrefsManager::PrefsManager()
 	m_iMarvelousTiming = 2;
 	m_iCoinMode = COIN_HOME;
 	m_iCoinsPerCredit = 1;
-	m_bJointPremium = false;
+	m_bVersusForOneCredit = false;
+	m_bDoubleForOneCredit = false;
 	m_iBoostAppPriority = -1;
 	m_bAntiAliasing = false;
 	m_ShowSongOptions = YES;
@@ -259,7 +260,8 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "SoundResampleQuality",			m_iSoundResampleQuality );
 	ini.GetValue( "Options", "CoinMode",						m_iCoinMode );
 	ini.GetValue( "Options", "CoinsPerCredit",					m_iCoinsPerCredit );
-	ini.GetValue( "Options", "JointPremium",					m_bJointPremium );
+	ini.GetValue( "Options", "VersusForOneCredit",				m_bVersusForOneCredit );
+	ini.GetValue( "Options", "DoubleForOneCredit",				m_bDoubleForOneCredit );
 	ini.GetValue( "Options", "BoostAppPriority",				m_iBoostAppPriority );
 	ini.GetValue( "Options", "PickExtraStage",					m_bPickExtraStage );
 	ini.GetValue( "Options", "ComboContinuesBetweenSongs",		m_bComboContinuesBetweenSongs );
@@ -398,7 +400,8 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "SoundResampleQuality",			m_iSoundResampleQuality );
 	ini.SetValue( "Options", "CoinMode",						m_iCoinMode );
 	ini.SetValue( "Options", "CoinsPerCredit",					m_iCoinsPerCredit );
-	ini.SetValue( "Options", "JointPremium",					m_bJointPremium );
+	ini.SetValue( "Options", "VersusForOneCredit",				m_bVersusForOneCredit );
+	ini.SetValue( "Options", "DoubleForOneCredit",				m_bDoubleForOneCredit );
 	ini.SetValue( "Options", "BoostAppPriority",				m_iBoostAppPriority );
 	ini.SetValue( "Options", "PickExtraStage",					m_bPickExtraStage );
 	ini.SetValue( "Options", "ComboContinuesBetweenSongs",		m_bComboContinuesBetweenSongs );

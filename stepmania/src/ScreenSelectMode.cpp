@@ -163,24 +163,14 @@ void ScreenSelectMode::UpdateSelectableChoices()
 		modename.MakeUpper();
 
 
-		// if its joint premium and inclusive of double consider double and versus as needing another coin
-		// if its joint premium and non-inclusive of double consider double as appearing only when one player is available.
-		// if its joint premium, everythings available for play
-/*		if( (PREFSMAN->m_bJointPremium && INCLUDE_DOUBLE_IN_JP == 1 && (GAMESTATE->GetNumSidesJoined() == mc.numSidesJoinedToPlay) ) ||
-			(PREFSMAN->m_bJointPremium && INCLUDE_DOUBLE_IN_JP == 0 && 
-			modename.substr(0, 6) == "DOUBLE" || modename.substr(0, 13) == "ARCADE-DOUBLE" ||
-			modename.substr(0, 10) == "HALFDOUBLE" || modename.substr(0, 17) == "ARCADE-HALFDOUBLE" ||
-			(GAMESTATE->GetNumSidesJoined() != mc.numSidesJoinedToPlay)) ||
-			(!PREFSMAN->m_bJointPremium)
-		)*/
-
+		// FIXME for new premium prefs
 		const int SidesJoinedToPlay = 
 			(mc.m_style == STYLE_INVALID) ?
 			1 :
-			GAMEMAN->GetStyleDefForStyle(mc.m_style)->NumSidesJoinedToPlay();
-		if( (!PREFSMAN->m_bJointPremium ) ||
+			1;
+		if( !(PREFSMAN->m_bVersusForOneCredit||PREFSMAN->m_bDoubleForOneCredit ) ||
 			(
-				PREFSMAN->m_bJointPremium && 
+				(PREFSMAN->m_bVersusForOneCredit||PREFSMAN->m_bDoubleForOneCredit) && 
 				( 
 					(INCLUDE_DOUBLE_IN_JP == 1 && (GAMESTATE->GetNumSidesJoined() == SidesJoinedToPlay)) || 
 					(

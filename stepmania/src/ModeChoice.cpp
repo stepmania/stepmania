@@ -10,6 +10,7 @@
 #include "StepMania.h"
 #include "ScreenManager.h"
 #include "SongManager.h"
+#include "PrefsManager.h"
 #include "arch/ArchHooks/ArchHooks.h"
 
 void ModeChoice::Init()
@@ -160,6 +161,22 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 	}
 }
 
+int GetCreditsToPlayStyle( Style style )
+{
+	switch( GAMEMAN->GetStyleDefForStyle(style)->m_StyleType )
+	{
+	case StyleDef::ONE_PLAYER_ONE_CREDIT:
+		return 1;
+	case StyleDef::TWO_PLAYERS_TWO_CREDITS:
+		return PREFSMAN->m_bVersusForOneCredit ? 1 : 2;
+	case StyleDef::ONE_PLAYER_TWO_CREDITS:
+		return PREFSMAN->m_bDoubleForOneCredit ? 1 : 2;
+	default:
+		ASSERT(0);
+		return 1;
+	}
+}
+
 bool ModeChoice::IsPlayable( CString *why ) const
 {
 	if( m_bInvalid )
@@ -167,9 +184,21 @@ bool ModeChoice::IsPlayable( CString *why ) const
 
 	if ( m_style != STYLE_INVALID )
 	{
-		const int SidesJoinedToPlay = GAMEMAN->GetStyleDefForStyle(m_style)->NumSidesJoinedToPlay();
-		if( SidesJoinedToPlay != GAMESTATE->GetNumSidesJoined() )
-			return false;
+		bool bUsingPremium = PREFSMAN->m_bVersusForOneCredit || PREFSMAN->m_bDoubleForOneCredit;
+		int iNumCreditsInserted = GAMESTATE->m_iCoins/PREFSMAN->m_iCoinsPerCredit;
+		int iNumCreditsRequired = GetCreditsToPlayStyle(m_style);
+		int iNumSidesJoined = GAMESTATE->GetNumSidesJoined();
+		
+		if( bUsingPremium )
+		{
+			if( iNumCreditsInserted < iNumCreditsRequired )
+				return false;
+		}
+		else
+		{
+			if( iNumCreditsRequired != iNumSidesJoined )
+				return false;
+		}
 	}
 
 	/* Don't allow a PlayMode that's incompatible with our current Style (if set),
@@ -232,7 +261,35 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 	if( m_pm != PLAY_MODE_INVALID )
 		GAMESTATE->m_PlayMode = m_pm;
 	if( m_style != STYLE_INVALID )
+	{
 		GAMESTATE->m_CurStyle = m_style;
+
+		// If only one side is joined and we picked a style
+		// that requires both sides, join the other side.
+		switch( GAMEMAN->GetStyleDefForStyle(m_style)->m_StyleType )
+		{
+		case StyleDef::ONE_PLAYER_ONE_CREDIT:
+			break;
+		case StyleDef::TWO_PLAYERS_TWO_CREDITS:
+		case StyleDef::ONE_PLAYER_TWO_CREDITS:
+			int p;
+			for( p=0; p<NUM_PLAYERS; p++ )
+				GAMESTATE->m_bSideIsJoined[p] = true;
+			break;
+		default:
+			ASSERT(0);
+		}
+
+		// If using a premium setting, subtract coins only after choosing a style.
+		bool bUsingPremium = PREFSMAN->m_bVersusForOneCredit || PREFSMAN->m_bDoubleForOneCredit;
+		int iNumCoinsInserted = GAMESTATE->m_iCoins;
+		int iNumCoinsRequired = PREFSMAN->m_iCoinsPerCredit*GetCreditsToPlayStyle(m_style);
+		if( bUsingPremium )
+		{
+			ASSERT( iNumCoinsInserted >= iNumCoinsRequired );
+			GAMESTATE->m_iCoins -= iNumCoinsRequired;
+		}
+	}
 	if( m_dc != DIFFICULTY_INVALID  &&  pn != PLAYER_INVALID )
 		GAMESTATE->m_PreferredDifficulty[pn] = m_dc;
 	if( m_sAnnouncer != "" )

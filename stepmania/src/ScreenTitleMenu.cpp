@@ -71,7 +71,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 
 	CodeDetector::RefreshCacheItems();
 
-	if( PREFSMAN->m_iCoinMode!=COIN_HOME  &&  PREFSMAN->m_bJointPremium )
+	if( PREFSMAN->m_iCoinMode!=COIN_HOME  &&  (PREFSMAN->m_bVersusForOneCredit||PREFSMAN->m_bDoubleForOneCredit) )
 	{		
 		m_JointPremium.LoadFromAniDir( THEME->GetPathToB("ScreenTitleMenu joint premium") );
 		this->AddChild( &m_JointPremium );

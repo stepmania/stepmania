@@ -78,8 +78,6 @@ public:
 	bool MatchesNotesType( StepsType type ) const;
 
 	void GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut ) const;
-
-	int NumSidesJoinedToPlay() const;
 };
 
 

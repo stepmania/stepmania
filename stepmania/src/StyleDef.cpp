@@ -100,18 +100,3 @@ void StyleDef::GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXO
 	}
 }
 
-int StyleDef::NumSidesJoinedToPlay() const
-{
-	switch( m_StyleType )
-	{
-	case StyleDef::ONE_PLAYER_ONE_CREDIT:
-		return 1;
-	case StyleDef::TWO_PLAYERS_TWO_CREDITS:
-	case StyleDef::ONE_PLAYER_TWO_CREDITS:
-		return 2;
-	default:
-		ASSERT(0);
-		return 1;
-	}
-}
-
