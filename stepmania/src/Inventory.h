@@ -35,7 +35,7 @@ public:
 		int comboLevel;
 		CString effect;
 
-		bool operator<( const ItemDef& other ) { return comboLevel < other.comboLevel; }
+		bool operator<( const ItemDef& other ) const { return comboLevel < other.comboLevel; }
 		void Sort( vector<ItemDef>& items ) { sort( items.begin(), items.end() ); }
 	};
 	vector<ItemDef>	m_ItemDefs;

@@ -81,7 +81,8 @@ bool Inventory::OnComboBroken( PlayerNumber pn, int iCombo )
 	int* iItems = GAMESTATE->m_iItems[pn];
 
 	// search for the item acquired
-	for( int item=0; item<(int)m_ItemDefs.size(); item++ )
+	int item;
+	for( item=0; item<(int)m_ItemDefs.size(); item++ )
 		if( m_ItemDefs[item].comboLevel > iCombo )
 			break;
 
