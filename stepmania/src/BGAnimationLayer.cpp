@@ -496,10 +496,26 @@ void BGAnimationLayer::Update( float fDeltaTime  )
 		{
 			m_Sprites[i].SetX( m_Sprites[i].GetX() + fDeltaTime * PARTICLE_VELOCITY * m_vHeadings[i].x );
 			m_Sprites[i].SetY( m_Sprites[i].GetY() + fDeltaTime * PARTICLE_VELOCITY * m_vHeadings[i].y );
-			if( HitGuardRailLeft(&m_Sprites[i]) )	m_vHeadings[i].x *= -1;
-			if( HitGuardRailRight(&m_Sprites[i]) )	m_vHeadings[i].x *= -1;
-			if( HitGuardRailTop(&m_Sprites[i]) )	m_vHeadings[i].y *= -1;
-			if( HitGuardRailBottom(&m_Sprites[i]) )	m_vHeadings[i].y *= -1;
+			if( HitGuardRailLeft(&m_Sprites[i]) )	
+			{
+				m_vHeadings[i].x *= -1;
+				m_Sprites[i].SetX( GetGuardRailLeft(&m_Sprites[i]) );
+			}
+			if( HitGuardRailRight(&m_Sprites[i]) )	
+			{
+				m_vHeadings[i].x *= -1;
+				m_Sprites[i].SetX( GetGuardRailRight(&m_Sprites[i]) );
+			}
+			if( HitGuardRailTop(&m_Sprites[i]) )	
+			{
+				m_vHeadings[i].y *= -1;
+				m_Sprites[i].SetY( GetGuardRailTop(&m_Sprites[i]) );
+			}
+			if( HitGuardRailBottom(&m_Sprites[i]) )	
+			{
+				m_vHeadings[i].y *= -1;
+				m_Sprites[i].SetY( GetGuardRailBottom(&m_Sprites[i]) );
+			}
 		}
 		break;
 	case EFFECT_TILE_STILL:

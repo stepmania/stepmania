@@ -55,6 +55,22 @@ void Combo::UpdateScore( TapNoteScore score, int iNumNotesInThisRow )
 		return;
 	}
 
+	// combo of marvelous/perfect
+	switch( score )
+	{
+	case TNS_MARVELOUS:
+	case TNS_PERFECT:
+		m_iCurComboOfPerfects += iNumNotesInThisRow;
+
+		if( (m_iCurComboOfPerfects>=150)  &&  (m_iCurComboOfPerfects%150)==0  &&  !GAMESTATE->m_bDemonstration )
+			SCREENMAN->SendMessageToTopScreen( SM_BeginToasty, 0 );
+		break;
+	default:
+		m_iCurComboOfPerfects = 0;
+		break;
+	}
+
+	// combo of marvelous/perfect/great
 	switch( score )
 	{
 	case TNS_MARVELOUS:
@@ -64,18 +80,6 @@ void Combo::UpdateScore( TapNoteScore score, int iNumNotesInThisRow )
 			int iOldCombo = m_iCurCombo;
 
 			m_iCurCombo += iNumNotesInThisRow;			// continue combo
-
-			switch( score )
-			{
-			case TNS_MARVELOUS:
-			case TNS_PERFECT:
-				m_iCurComboOfPerfects += iNumNotesInThisRow;
-				break;
-			}
-
-			if( (m_iCurComboOfPerfects>=150)  &&  (m_iCurComboOfPerfects%150)==0  &&  !GAMESTATE->m_bDemonstration )
-				SCREENMAN->SendMessageToTopScreen( SM_BeginToasty, 0 );
-
 
 	#define CROSSED( i ) (iOldCombo<i && i<=m_iCurCombo)
 

@@ -25,17 +25,18 @@
 #include "RageDisplay.h"
 
 
-bool g_bDrawHoldHeadForTapsOnSameRow, g_bDrawTapOnTopOfHoldHead, g_bDrawTapOnTopOfHoldTail;	// cache
+// cache
+bool g_bDrawHoldHeadForTapsOnSameRow, g_bDrawTapOnTopOfHoldHead, g_bDrawTapOnTopOfHoldTail;
+float	g_fTapAnimationLengthInBeats;
+float	g_bAllowVivid;
 
 NoteDisplay::NoteDisplay()
 {
 	g_bDrawHoldHeadForTapsOnSameRow  = GAMEMAN->GetMetricB( "NoteDisplay", "DrawHoldHeadForTapsOnSameRow" );
 	g_bDrawTapOnTopOfHoldHead  = GAMEMAN->GetMetricB( "NoteDisplay", "DrawTapOnTopOfHoldHead" );
 	g_bDrawTapOnTopOfHoldTail  = GAMEMAN->GetMetricB( "NoteDisplay", "DrawTapOnTopOfHoldTail" );
-
-	// the owner of the NoteDisplay must call load on the gray and color parts
-//	m_sprHoldParts.Load( THEME->GetPathTo(GRAPHIC_COLOR_ARROW_GRAY_PART) );	
-//	m_sprTapParts.Load( THEME->GetPathTo(GRAPHIC_COLOR_ARROW_COLOR_PART) );
+	g_fTapAnimationLengthInBeats = GAMEMAN->GetMetricF( "NoteDisplay", "TapAnimationLengthInBeats" );
+	g_bAllowVivid = GAMEMAN->GetMetricB( "NoteDisplay", "AllowVivid" );
 }
 
 
@@ -43,154 +44,65 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn )
 {
 	m_PlayerNumber = pn;
 
-	CString sTapPartsPath = GAMEMAN->GetPathTo(iColNum, "tap parts");
-	m_sprTapParts.Load( sTapPartsPath );
-	if( m_sprTapParts.GetNumStates() % 2 != 0 )
-		RageException::Throw( "Tap Parts '%s' must have an even number of frames.", sTapPartsPath.GetString() );
-	m_sprTapParts.StopAnimating();
-	m_sprTapParts.TurnShadowOff();
+	CString sTapPath = GAMEMAN->GetPathTo(iColNum, "tap");
+	m_sprTap.Load( sTapPath );
+	m_sprTap.StopAnimating();
+	m_sprTap.TurnShadowOff();
 
-	CString sHoldPartsPath = GAMEMAN->GetPathTo(iColNum, "hold parts");
+	CString sHoldPartsPath = GAMEMAN->GetPathTo(iColNum, "hold parts 4x2");
 	m_sprHoldParts.Load( sHoldPartsPath );
 	if( m_sprHoldParts.GetTexture()->GetFramesWide() != 4  ||  m_sprHoldParts.GetTexture()->GetFramesHigh() != 2 )
 		RageException::Throw( "Hold Parts '%s' must have 4x2 frames.", sHoldPartsPath.GetString() );
 	m_sprHoldParts.StopAnimating();
 	m_sprHoldParts.TurnShadowOff();
 
-
-	m_colorTapTweens.clear();
-	const CString sColorsFilePath = GAMEMAN->GetPathTo( iColNum, "Tap.colors" );
-	FILE* fp = fopen( sColorsFilePath, "r" );
-	if( fp == NULL )
-		RageException::Throw( "Couldn't open .colors file '%s'", sColorsFilePath.GetString() );
-
-	bool bSuccess;
-	do
-	{
-		RageColor color;
-		int retval = fscanf( fp, "%f,%f,%f,%f\n", &color.r, &color.g, &color.b, &color.a );
-		bSuccess = (retval == 4);
-		if( bSuccess )
-			m_colorTapTweens.push_back( color );
-	} while( bSuccess );
-
-	if( m_colorTapTweens.empty() )
-		m_colorTapTweens.push_back( RageColor(1,1,1,1) );
-
-	fclose( fp );
 	return;
 }
 
 
-int NoteDisplay::GetTapGrayFrameNo( const float fNoteBeat )
+int NoteDisplay::GetTapFrameNo( const float fNoteBeat )
 {
-	const int iNumGrayPartFrames = m_sprTapParts.GetNumStates()/2;
+	const int iNumFrames = m_sprTap.GetNumStates();
 	
-	const float fSongBeat = GAMESTATE->m_fSongBeat;
-	const float fPercentIntoBeat = fSongBeat - (int)fSongBeat;
-	int iFrameNo = int(fPercentIntoBeat * iNumGrayPartFrames) % iNumGrayPartFrames;
+	float fSongBeat = GAMESTATE->m_fSongBeat;
+	float fPercentIntoMeasure = fmodf( fSongBeat, g_fTapAnimationLengthInBeats ) / g_fTapAnimationLengthInBeats;
+	fPercentIntoMeasure += 1/(iNumFrames*2.f);	// fudge factor so that the "full white" frame shows when the arrow overlaps the receptors
+	int iSongBeatFrameContrib = fPercentIntoMeasure * iNumFrames;
+
+	float fBeatFraction = fmodf( fNoteBeat, 1.0f );
+	fBeatFraction = froundf( fBeatFraction, 0.25f );
+	int iBeatFractionContrib = fBeatFraction * iNumFrames;
+
+	g_bAllowVivid = GAMEMAN->GetMetricB( "NoteDisplay", "AllowVivid" );
+
+	int iFrameNo;
+	if( g_bAllowVivid  &&  GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_ColorType == PlayerOptions::COLOR_VIVID )
+		iFrameNo = (iSongBeatFrameContrib + iBeatFractionContrib) % iNumFrames;
+	else
+		iFrameNo = (iSongBeatFrameContrib) % iNumFrames;
+	
 	if( iFrameNo < 0 )
-		iFrameNo += iNumGrayPartFrames;
+		iFrameNo += iNumFrames;
 
-	return iFrameNo * 2;
+	return iFrameNo;
 }
 
-int NoteDisplay::GetTapColorFrameNo( const float fNoteBeat )
-{
-	return GetTapGrayFrameNo(fNoteBeat) + 1;
-}
-
-void NoteDisplay::GetTapEdgeColors( const float fNoteBeat, RageColor &colorLeadingOut, RageColor &colorTrailingOut )
-{
-// Chris: If EZ2 doesn't use a color part, leave that part of the NoteSkin graphic empty
-//
-// Andy:
-//	if (GAMESTATE->m_CurGame == GAME_EZ2)
+//	if( ct == PlayerOptions::COLOR_NOTE )
 //	{
-//		return; // Get out of this, as it breaks EZ2, and besides, Ez2 doesn't use COLOR ARROWS
+//		RageColor color = GetNoteColorFromBeat( fNoteBeat );
+//		colorLeadingOut = color;
+//		colorTrailingOut = color;
+//
+//		// add a little bit of white so the note doesn't look so plain
+//		colorLeadingOut.r += 0.3f * fabsf( fPercentThroughColorsLeading - 0.5f );
+//		colorLeadingOut.g += 0.3f * fabsf( fPercentThroughColorsLeading - 0.5f );
+//		colorLeadingOut.b += 0.3f * fabsf( fPercentThroughColorsLeading - 0.5f );
+//		colorTrailingOut.r += 0.3f * fabsf( fPercentThroughColorsTrailing - 0.5f );
+//		colorTrailingOut.g += 0.3f * fabsf( fPercentThroughColorsTrailing - 0.5f );
+//		colorTrailingOut.b += 0.3f * fabsf( fPercentThroughColorsTrailing - 0.5f );
+//		return;
 //	}
 
-	////////////////////////////////////////////////////////////
-	// ADDED 2-14-2002 - BrianB 
-	//
-	// This section has been added for the different arrow
-	// display types:
-	//
-	// Note: Each note has a different color, but does not tween
-	// Flat: Each note has the same color, and does tween
-	// Plain: Each note has the same color, but does not tween
-	//
-	////////////////////////////////////////////////////////////
-
-	const PlayerOptions::ColorType ct = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_ColorType;
-	const float fNotePercentIntoBeat = fNoteBeat - (int)fNoteBeat;
-	const float fSongBeat = GAMESTATE->m_fSongBeat;
-	float fPercentThroughColors = fmodf( fSongBeat, (float)BEATS_PER_MEASURE ) / BEATS_PER_MEASURE;
-
-	switch( ct )
-	{
-	case PlayerOptions::COLOR_VIVID:
-	case PlayerOptions::COLOR_NOTE:
-		fPercentThroughColors += fNotePercentIntoBeat;	
-		break;
-	}
-	if( fPercentThroughColors < 0 )
-		fPercentThroughColors += 1;
-	else
-		fPercentThroughColors -= (int)fPercentThroughColors;
-
-
-
-	float fPercentThroughColorsLeading=0.f;		// fill these in below
-	float fPercentThroughColorsTrailing=0.f;
-	switch( ct )
-	{
-	case PlayerOptions::COLOR_VIVID:
-	case PlayerOptions::COLOR_NOTE:
-	case PlayerOptions::COLOR_FLAT:
-		// use different edge colors so that the arrows look more colorful
-		fPercentThroughColorsLeading = fPercentThroughColors;	
-		fPercentThroughColorsTrailing = fmodf( fPercentThroughColors + 0.20f, 1 );
-		break;
-	case PlayerOptions::COLOR_PLAIN:
-		// use same colors for both edges, making it look "plain"
-		fPercentThroughColorsLeading = fPercentThroughColors;	
-		fPercentThroughColorsTrailing = fPercentThroughColors;
-		break;
-	default:
-		ASSERT(0);
-	}
-	
-
-	if( ct == PlayerOptions::COLOR_NOTE )
-	{
-		RageColor color = GetNoteColorFromBeat( fNoteBeat );
-		colorLeadingOut = color;
-		colorTrailingOut = color;
-
-		// add a little bit of white so the note doesn't look so plain
-		colorLeadingOut.r += 0.3f * fabsf( fPercentThroughColorsLeading - 0.5f );
-		colorLeadingOut.g += 0.3f * fabsf( fPercentThroughColorsLeading - 0.5f );
-		colorLeadingOut.b += 0.3f * fabsf( fPercentThroughColorsLeading - 0.5f );
-		colorTrailingOut.r += 0.3f * fabsf( fPercentThroughColorsTrailing - 0.5f );
-		colorTrailingOut.g += 0.3f * fabsf( fPercentThroughColorsTrailing - 0.5f );
-		colorTrailingOut.b += 0.3f * fabsf( fPercentThroughColorsTrailing - 0.5f );
-		return;
-	}
-
-	float fLeadingColorIndex  = fPercentThroughColorsLeading * m_colorTapTweens.size();
-	float fTrailingColorIndex = fPercentThroughColorsTrailing* m_colorTapTweens.size();
-
-	float fLeadingColorWeightOf2 = fLeadingColorIndex - int(fLeadingColorIndex);
-	int iLeadingColor1 = int(fLeadingColorIndex);
-	int iLeadingColor2 = (iLeadingColor1 + 1) % m_colorTapTweens.size();
-	colorLeadingOut = m_colorTapTweens[iLeadingColor1] * (1-fLeadingColorWeightOf2) + m_colorTapTweens[iLeadingColor2] * fLeadingColorWeightOf2;
-
-	float fTrailingColorWeightOf2 = fTrailingColorIndex - int(fTrailingColorIndex);
-	int iTrailingColor1 = int(fTrailingColorIndex);
-	int iTrailingColor2 = (iTrailingColor1 + 1) % m_colorTapTweens.size();
-	colorTrailingOut = m_colorTapTweens[iTrailingColor1] * (1-fTrailingColorWeightOf2) + m_colorTapTweens[iTrailingColor2] * fTrailingColorWeightOf2;
-}
 
 void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float fLife, const float fPercentFadeToFail, bool bDrawGlowOnly )
 {
@@ -221,7 +133,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	const float fYBodyTop = g_bDrawTapOnTopOfHoldHead ? fYHeadBottom : fYHead;			// middle of head		
 	const float fYBodyBottom = fYTailTop;	// top of tail
 
-	const int	fYStep = 8;		// draw a segment every 8 pixels	// this requires that the texture dimensions be a multiple of 8
+	const int	fYStep = fFrameHeight/4.f;	// 4 segments per frame
 
 	DISPLAY->SetTexture( m_sprHoldParts.GetTexture() );
 	DISPLAY->SetBlendModeNormal();
@@ -428,24 +340,9 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 	const float fXPos			= ArrowGetXPos(		m_PlayerNumber, iCol, fYPos );
 	const float fAlpha			= ArrowGetAlpha(	m_PlayerNumber, fYPos, fPercentFadeToFail );
 	const float fGlow			= ArrowGetGlow(		m_PlayerNumber, fYPos, fPercentFadeToFail );
-	const int iGrayPartFrameNo	= GetTapGrayFrameNo( fBeat );
-	const int iColorPartFrameNo	= GetTapColorFrameNo( fBeat );
+	const int iTapFrameNo		= GetTapFrameNo( fBeat );
 	const float fColorScale		= SCALE(fLife,0,1,0.2f,1);
-
-	RageColor colorGrayPart = RageColor(fColorScale,fColorScale,fColorScale,1);
-	RageColor colorLeadingEdge;
-	RageColor colorTrailingEdge;
-	GetTapEdgeColors( fBeat, colorLeadingEdge, colorTrailingEdge );
-	colorGrayPart.a		*= fAlpha;
-	colorLeadingEdge.a	*= fAlpha;
-	colorTrailingEdge.a *= fAlpha;
-
-	colorLeadingEdge.r *= fColorScale;
-	colorLeadingEdge.g *= fColorScale;
-	colorLeadingEdge.b *= fColorScale;
-	colorTrailingEdge.r *= fColorScale;
-	colorTrailingEdge.g *= fColorScale;
-	colorTrailingEdge.b *= fColorScale;
+	RageColor color = RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 
 	if( bOnSameRowAsHoldStart  &&  g_bDrawHoldHeadForTapsOnSameRow )
 	{
@@ -453,7 +350,7 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 		// draw hold head
 		//
 		m_sprHoldParts.SetXY( fXPos, fYPos );
-		m_sprHoldParts.SetDiffuse( colorGrayPart );
+		m_sprHoldParts.SetDiffuse( color );
 		m_sprHoldParts.SetGlow( RageColor(1,1,1,fGlow) );
 		m_sprHoldParts.StopUsingCustomCoords();
 		m_sprHoldParts.SetState( 0 );
@@ -461,23 +358,11 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 	}
 	else	
 	{
-		m_sprTapParts.SetXY( fXPos, fYPos );
-		m_sprTapParts.SetRotation( fRotation );
-		m_sprTapParts.SetGlow( RageColor(1,1,1,fGlow) );
-
-		//
-		// draw gray part
-		//
-		m_sprTapParts.SetState( iGrayPartFrameNo );
-		m_sprTapParts.SetDiffuse( colorGrayPart );
-		m_sprTapParts.Draw();
-
-		//
-		// draw color part
-		//
-		m_sprTapParts.SetState( iColorPartFrameNo );
-		m_sprTapParts.SetDiffuseTopEdge( colorLeadingEdge );
-		m_sprTapParts.SetDiffuseBottomEdge( colorTrailingEdge );
-		m_sprTapParts.Draw();
+		m_sprTap.SetXY( fXPos, fYPos );
+		m_sprTap.SetRotation( fRotation );
+		m_sprTap.SetGlow( RageColor(1,1,1,fGlow) );
+		m_sprTap.SetDiffuse( color );
+		m_sprTap.SetState( iTapFrameNo );
+		m_sprTap.Draw();
 	}
 }

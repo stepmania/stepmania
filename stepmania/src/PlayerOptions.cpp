@@ -111,7 +111,6 @@ CString PlayerOptions::GetString()
 	case COLOR_VIVID:							break;
 	case COLOR_NOTE:	sReturn += "Note, ";	break;
 	case COLOR_FLAT:	sReturn += "Flat, ";	break;
-	case COLOR_PLAIN:	sReturn += "Plain, ";	break;
 	default:	ASSERT(0);	// invalid COLOR
 	};
 
@@ -168,7 +167,6 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "reverse" )	m_bReverseScroll = true;
 		else if( sBit == "note" )		m_ColorType = COLOR_NOTE;
 		else if( sBit == "flat" )		m_ColorType = COLOR_FLAT;
-		else if( sBit == "plain" )		m_ColorType = COLOR_PLAIN;
 		else if( sBit == "noholds" )	m_bHoldNotes = false;
 		else if( sBit == "nofreeze" )	m_bHoldNotes = false;
 		else if( sBit == "dark" )		m_bDark = true;

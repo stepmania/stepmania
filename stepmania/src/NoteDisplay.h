@@ -28,16 +28,12 @@ public:
 	void DrawHold( const HoldNote& hn, const bool bActive, const float fLife, const float fPercentFadeToFail, bool bDrawGlowOnly = false );
 
 protected:
-	int			GetTapGrayFrameNo( const float fNoteBeat );
-	int			GetTapColorFrameNo( const float fNoteBeat );
-	void		GetTapEdgeColors( const float fNoteBeat, RageColor &colorLeadingOut, RageColor &colorTrailingOut );
+	int			GetTapFrameNo( const float fNoteBeat );
 
 	PlayerNumber m_PlayerNumber;	// to look up PlayerOptions
 
-	Sprite		m_sprTapParts;		// for now, must be an even number of frames
-	Sprite		m_sprHoldParts;		// for now, must be 8 frames
-
-	vector<RageColor> m_colorTapTweens;
+	Sprite		m_sprTap;
+	Sprite		m_sprHoldParts;
 };
 
 #endif

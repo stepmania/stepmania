@@ -23,7 +23,7 @@ const float JUDGEMENT_DISPLAY_TIME	=	0.8f;
 Judgement::Judgement()
 {
 	m_fDisplayCountdown = 0;
-	m_sprJudgement.Load( THEME->GetPathTo("Graphics","gameplay judgement") );
+	m_sprJudgement.Load( THEME->GetPathTo("Graphics","gameplay judgement 1x6") );
 	m_sprJudgement.StopAnimating();
 	m_sprJudgement.TurnShadowOn();
 	this->AddChild( &m_sprJudgement );

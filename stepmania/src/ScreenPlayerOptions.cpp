@@ -41,7 +41,7 @@ OptionRowData g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 	{ "Turn",			6, {"OFF","MIRROR","LEFT","RIGHT","SHUFFLE","SUPER SHUFFLE"} },	
 	{ "Little",			2, {"OFF","ON"} },	
 	{ "Scroll",			2, {"STANDARD","REVERSE"} },	
-	{ "Color",			4, {"VIVID","NOTE","FLAT","PLAIN"} },	
+	{ "Color",			3, {"VIVID","NOTE","FLAT"} },	
 	{ "Holds",			2, {"OFF","ON"} },	
 	{ "Dark",			2, {"OFF","ON"} },	
 };

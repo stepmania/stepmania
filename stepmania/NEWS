@@ -1,4 +1,5 @@
 ----------------------- Version 3.01 ---------------------------
+CHANGE:  Simplified NoteSkin format.  Old NoteSkins will need to be updated.
 NEW FEATURE:  AutoSync status now shown during gameplay with icon
 NEW FEATURE:  added autogen icon to select music
 NEW FEATURE:  toggle for easter eggs in Machine Options
