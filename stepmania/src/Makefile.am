@@ -168,7 +168,7 @@ Sound_Null = \
 	arch/Sound/RageSoundDriver_Null.h
 
 Sound = $(Sound_Null)
-if ALSA
+if HAVE_ALSA
 Sound += $(Sound_ALSA9)
 endif
 if HAVE_OSS
@@ -204,4 +204,3 @@ stepmania_LDADD = \
 
 INCLUDES = $(SDL_CFLAGS)
 # -O0 -g
-

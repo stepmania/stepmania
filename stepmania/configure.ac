@@ -32,11 +32,8 @@ AC_SEARCH_LIBS(mad_synth_init, [mad], have_mad=yes,  have_mad=no)
 AM_PATH_SDL
 
 AM_PATH_ALSA(0.9.0, alsa=true ,alsa=0 )
-if test x$alsa = xtrue; then
-  AC_DEFINE(HAVE_ALSA, 1, [ALSA support available])
-fi
 AC_CHECK_HEADER(linux/soundcard.h, [AC_DEFINE(HAVE_OSS, 1, [OSS support available])])
-AM_CONDITIONAL(ALSA, test x$alsa = xtrue )
+AM_CONDITIONAL(HAVE_ALSA, test x$alsa = xtrue )
 AM_CONDITIONAL(HAVE_OSS, test x$ac_cv_header_linux_soundcard_h = xyes )
 
 # We could do this more cleanly with an AC_CHECK_FUNCS wrapper.
@@ -83,4 +80,3 @@ AM_CONDITIONAL(DARWIN, test x$darwin = xtrue)
 SDL_LIBS="`echo $SDL_LIBS | sed 's_-L/usr/lib/\?[[ $]]__'`"
 
 AC_OUTPUT([Makefile src/Makefile])
-
