@@ -83,7 +83,7 @@ void BitmapText::Draw()
 	int iOriginalCenterX = (int)this->GetX();
 	FLOAT fOriginalWidth = m_size.x;
 
-	int iFrameWidth = (int)( m_pTexture->GetFrameWidth() * this->GetZoom() );
+	int iFrameWidth = (int)( m_pTexture->GetImageFrameWidth() * this->GetZoom() );
 	m_size.x = (FLOAT)iFrameWidth;
 	
 	// draw each character in the string
@@ -108,6 +108,6 @@ void BitmapText::Draw()
 
 void BitmapText::ResetWidthAndHeight()
 {
-	m_size.x = (FLOAT)m_pTexture->GetFrameWidth() * m_sText.GetLength();
-	m_size.y = (FLOAT)m_pTexture->GetFrameHeight();
+	m_size.x = (FLOAT)m_pTexture->GetImageFrameWidth() * m_sText.GetLength();
+	m_size.y = (FLOAT)m_pTexture->GetImageFrameHeight();
 }

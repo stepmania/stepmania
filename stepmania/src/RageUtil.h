@@ -96,7 +96,7 @@ void RageLog( LPCTSTR fmt, ...);
 // Error helpers
 //-----------------------------------------------------------------------------
 #include "dxerr8.h"
-#pragma comment(lib, "dxerr8.lib")
+#pragma comment(lib, "DxErr8.lib")
 
 
 VOID DisplayErrorAndDie( CString sError );

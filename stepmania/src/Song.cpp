@@ -324,6 +324,7 @@ void Song::FillEmptyValuesWithDefaults()
 				// couldn't find a true banner, so search for any bmp in the same dir
 				CStringArray arrayBMPFiles;
 				GetDirListing( m_sSongDir + CString("*.bmp"), arrayBMPFiles );
+				GetDirListing( m_sSongDir + CString("*.png"), arrayBMPFiles );
 
 				if( arrayBMPFiles.GetSize() != 0 )		// we found a .bmp file!
 					m_sBanner = arrayBMPFiles.GetAt( 0 );

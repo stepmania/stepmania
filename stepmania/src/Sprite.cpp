@@ -130,8 +130,8 @@ BOOL Sprite::LoadTexture( CString sTexturePath )
 
 	m_pTexture = TM->LoadTexture( m_sTexturePath );
 	assert( m_pTexture != NULL );
-	SetWidth( (FLOAT)m_pTexture->GetFrameWidth() );
-	SetHeight( (FLOAT)m_pTexture->GetFrameHeight() );
+	SetWidth( (FLOAT)m_pTexture->GetImageFrameWidth() );
+	SetHeight( (FLOAT)m_pTexture->GetImageFrameHeight() );
 
 	// Assume the frames of this animation play in sequential order with 0.2 second delay.
 	for( UINT i=0; i<m_pTexture->GetNumFrames(); i++ )
@@ -240,8 +240,8 @@ void Sprite::Draw()
 	//::SetRect( &rectSrc, 0, 0, m_pTexture->GetImageWidth(), m_pTexture->GetImageHeight() );
 
 	D3DXVECTOR2 scaling;
-	scaling.x = GetZoom();
-	scaling.y = GetZoom();
+	scaling.x = GetZoom() * m_pTexture->GetWidthCorrectionRatio();
+	scaling.y = GetZoom() * m_pTexture->GetHeightCorrectionRatio();
 	
 	D3DXVECTOR2 translation;
 	translation.x = (float)GetLeftEdge();

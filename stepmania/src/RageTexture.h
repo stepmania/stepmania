@@ -40,8 +40,12 @@ public:
 
 	UINT   GetFramesWide()  {return m_uFramesWide;};
 	UINT   GetFramesHigh()  {return m_uFramesHigh;};
-	UINT   GetFrameWidth()  {return m_uFrameWidth;};
-	UINT   GetFrameHeight() {return m_uFrameHeight;};
+	UINT   GetImageFrameWidth()  {return m_uImageFrameWidth;};
+	UINT   GetImageFrameHeight() {return m_uImageFrameHeight;};
+	UINT   GetTextureFrameWidth()  {return m_uTextureFrameWidth;};
+	UINT   GetTextureFrameHeight() {return m_uTextureFrameHeight;};
+	float  GetWidthCorrectionRatio()  {return m_fWidthCorrectionRatio;};
+	float  GetHeightCorrectionRatio() {return m_fHeightCorrectionRatio;};
 	LPRECT GetFrameRect( UINT uFrameNo ) {return &m_FrameRects[uFrameNo];};
 	UINT   GetNumFrames()	{return m_FrameRects.GetSize();};
 	CString GetFilePath()	{return m_sFilePath;};
@@ -62,7 +66,11 @@ protected:
 
 	// The number of frames of animation in each row and column of this texture.
 	UINT				m_uFramesWide, m_uFramesHigh;
-	UINT				m_uFrameWidth, m_uFrameHeight;
+	UINT				m_uImageFrameWidth, m_uImageFrameHeight;
+	UINT				m_uTextureFrameWidth, m_uTextureFrameHeight;
+
+	float				m_fWidthCorrectionRatio;
+	float				m_fHeightCorrectionRatio;
 
 	// RECTs that hold the bounds of each frame in the bitmap.
 	// e.g., if the texture has 4 frames of animation, the SrcRect for each frame would

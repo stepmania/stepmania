@@ -18,9 +18,9 @@
  
 // Link with the DirectShow base class libraries
 #if defined(DEBUG) | defined(_DEBUG)
-	#pragma comment(lib, "C:\\Program Files\\DX8aSDK\\samples\\Multimedia\\DirectShow\\BaseClasses\\Debug\\strmbasd.lib") 
+	#pragma comment(lib, "strmbasd.lib") 
 #else
-	#pragma comment(lib, "C:\\Program Files\\DX8aSDK\\samples\\Multimedia\\DirectShow\\BaseClasses\\Release\\strmbase.lib") 
+	#pragma comment(lib, "strmbase.lib") 
 #endif
  
 //-----------------------------------------------------------------------------

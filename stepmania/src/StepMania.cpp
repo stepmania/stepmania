@@ -157,7 +157,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 			Render();
 			ShowFrame();
 			//if( !g_bFullscreen )
-			::Sleep(5);	// give some time for the movie
+			::Sleep(16);	// give some time for the movie
 		}
 	}	// end  while( WM_QUIT != msg.message  )
 

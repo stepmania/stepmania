@@ -61,6 +61,26 @@ VOID RageBitmapTexture::Create()
 
 	D3DXIMAGE_INFO ddii;
 
+	// get image information
+	D3DXIMAGE_INFO info;
+	if( FAILED( hr = D3DXGetImageInfoFromFile(m_sFilePath,&info) ) ) {
+        RageErrorHr( ssprintf("D3DXGetImageInfoFromFile() failed for file '%s'.", m_sFilePath), hr );
+	}
+
+	D3DCAPS8 devCaps;
+	m_pd3dDevice->GetDeviceCaps( &devCaps );
+
+	// check to see if the image will fit or if it needs to be scaled to 256
+	DWORD filterType = D3DX_FILTER_NONE;
+	RageLog( "info.Width = %d, info.Height = %d, devCaps.MaxTextureWidth = %d, devCaps.MaxTextureHeight = %d",
+		info.Width, info.Height, devCaps.MaxTextureWidth, devCaps.MaxTextureHeight );
+
+	if( info.Width > devCaps.MaxTextureWidth ||
+		info.Height > devCaps.MaxTextureHeight )
+	{
+		filterType = D3DX_DEFAULT;
+	}
+
 	// load texture
 	if (FAILED (hr = D3DXCreateTextureFromFileEx( 
 						m_pd3dDevice,
@@ -70,8 +90,8 @@ VOID RageBitmapTexture::Create()
 						0, 
 						D3DFMT_A4R4G4B4, //D3DFMT_UNKNOWN, // get format from source
 						D3DPOOL_MANAGED, 
-						D3DX_FILTER_NONE, // don't blow up the image to the texure size
-						D3DX_FILTER_NONE,
+						filterType, // don't blow up the image to the texure size
+						filterType,
 						0,		// no color key
 						&ddii, 
 						NULL, // no palette

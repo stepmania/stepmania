@@ -27,8 +27,12 @@ RageTexture::RageTexture( LPRageScreen pScreen, CString sFilePath ) :
   m_uTextureHeight( 0 ),
   m_uFramesWide( 1 ),
   m_uFramesHigh( 1 ),
-  m_uFrameWidth( 0 ),
-  m_uFrameHeight( 0 )
+  m_uImageFrameWidth( 0 ),
+  m_uImageFrameHeight( 0 ),
+  m_uTextureFrameWidth( 0 ),
+  m_uTextureFrameHeight( 0 ),
+  m_fWidthCorrectionRatio( 1 ),
+  m_fHeightCorrectionRatio( 1 )
 {
 //	RageLog( "RageTexture::RageTexture()" );
 
@@ -58,20 +62,36 @@ VOID RageTexture::CreateFrameRects()
 	// Fill in the m_FrameRects with the bounds of each frame in the animation.
 	///////////////////////////////////
 
+	bool bTextureWasScaled = GetImageWidth() > GetTextureWidth() ||
+							 GetImageHeight() > GetTextureHeight();
+
 	// calculate the width and height of the frames
-	m_uFrameWidth = GetImageWidth() / m_uFramesWide;
-	m_uFrameHeight= GetImageHeight() / m_uFramesHigh;
+	if( bTextureWasScaled ) {
+		m_uTextureFrameWidth = GetTextureWidth() / m_uFramesWide;
+		m_uTextureFrameHeight= GetTextureHeight() / m_uFramesHigh;
+		m_fWidthCorrectionRatio = GetImageWidth()/(float)GetTextureWidth();
+		m_fHeightCorrectionRatio = GetImageHeight()/(float)GetTextureHeight();
+	} else {
+		m_uTextureFrameWidth = GetImageWidth() / m_uFramesWide;
+		m_uTextureFrameHeight= GetImageHeight() / m_uFramesHigh;
+		m_fWidthCorrectionRatio = 1;
+		m_fHeightCorrectionRatio = 1;
+	}
+
+	m_uImageFrameWidth = GetImageWidth() / m_uFramesWide;
+	m_uImageFrameHeight= GetImageHeight() / m_uFramesHigh;
+
 
 	for( UINT j=0; j<m_uFramesHigh; j++ )
 	{
 		for( UINT i=0; i<m_uFramesWide; i++ )
 		{
 			RECT rectCurFrame;
-			::SetRect( &rectCurFrame, (i+0)*m_uFrameWidth, (j+0)*m_uFrameHeight, 
-								      (i+1)*m_uFrameWidth, (j+1)*m_uFrameHeight );
+			::SetRect( &rectCurFrame, (i+0)*m_uTextureFrameWidth, (j+0)*m_uTextureFrameHeight, 
+									  (i+1)*m_uTextureFrameWidth, (j+1)*m_uTextureFrameHeight );
 			m_FrameRects.Add( rectCurFrame );	// the index of this array element will be (i + j*m_uFramesWide)
 			
-//			RageLog( "Adding frame#%d: %d %d %d %d", (i + j*m_uFramesWide), rectCurFrame.left, rectCurFrame.top, rectCurFrame.right, rectCurFrame.bottom );
+			RageLog( "!!!! Adding frame#%d: %d %d %d %d", (i + j*m_uFramesWide), rectCurFrame.left, rectCurFrame.top, rectCurFrame.right, rectCurFrame.bottom );
 		}
 	}
 }
