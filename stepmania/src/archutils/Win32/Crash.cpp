@@ -1166,6 +1166,12 @@ static bool ReportCrashCallStack(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTE
 	return true;
 }
 
+void WriteBuf( HANDLE hFile, const char *buf )
+{
+	DWORD dwActual;
+	WriteFile(hFile, buf, strlen(buf), &dwActual, NULL);
+}
+
 static void DoSave(const EXCEPTION_POINTERS *pExc)
 {
 	char szModName2[MAX_PATH];
@@ -1193,9 +1199,8 @@ static void DoSave(const EXCEPTION_POINTERS *pExc)
 	Report(NULL, hFile, "");
 
 	Report(NULL, hFile, "Static log:");
-	Report(NULL, hFile, "%s", RageLog::GetInfo());
-
-	Report(NULL, hFile, "%s", RageLog::GetAdditionalLog() );
+	WriteBuf( hFile, RageLog::GetInfo() );
+	WriteBuf( hFile, RageLog::GetAdditionalLog() );
 	Report(NULL, hFile, "");
 
 	Report(NULL, hFile, "Partial log:");
