@@ -70,7 +70,7 @@ void InputMapper::ReadMappingsFromDisk()
 	ClearAllMappings();
 
 	IniFile ini;
-	ini.SetPath( "data/Keymaps.ini" );
+	ini.SetPath( "Data/Keymaps.ini" );
 	if( !ini.ReadFile() )
 		LOG->Warn( "could not input mapping file \"Keymaps.ini\"." );
 
@@ -107,7 +107,7 @@ void InputMapper::ReadMappingsFromDisk()
 void InputMapper::SaveMappingsToDisk()
 {
 	IniFile ini;
-	ini.SetPath( "data/Keymaps.ini" );
+	ini.SetPath( "Data/Keymaps.ini" );
 	ini.ReadFile();
 	
 	// erase the key so that we overwrite everything for this game

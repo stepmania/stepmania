@@ -125,7 +125,7 @@ PrefsManager::~PrefsManager()
 void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 {
 	IniFile ini;
-	ini.SetPath( "data/StepMania.ini" );
+	ini.SetPath( "Data/StepMania.ini" );
 	if( !ini.ReadFile() )
 		return;		// could not read config file, load nothing
 
@@ -210,7 +210,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 void PrefsManager::SaveGlobalPrefsToDisk()
 {
 	IniFile ini;
-	ini.SetPath( "data/StepMania.ini" );
+	ini.SetPath( "Data/StepMania.ini" );
 
 	ini.SetValueB( "Options", "Windowed",					m_bWindowed );
 	ini.SetValueI( "Options", "DisplayWidth",				m_iDisplayWidth );
@@ -298,7 +298,7 @@ void PrefsManager::ReadGamePrefsFromDisk()
 
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 	IniFile ini;
-	ini.SetPath( "data/GamePrefs.ini" );
+	ini.SetPath( "Data/GamePrefs.ini" );
 	ini.ReadFile();	// it's OK if this fails
 
 	CString sAnnouncer = sGameName, sTheme = sGameName, sNoteSkin = sGameName;
@@ -327,7 +327,7 @@ void PrefsManager::SaveGamePrefsToDisk()
 
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 	IniFile ini;
-	ini.SetPath( "data/GamePrefs.ini" );
+	ini.SetPath( "Data/GamePrefs.ini" );
 	ini.ReadFile();	// it's OK if this fails
 
 	ini.SetValue( sGameName, "Announcer",		ANNOUNCER->GetCurAnnouncerName() );
