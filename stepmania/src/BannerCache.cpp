@@ -301,10 +301,11 @@ void BannerCache::CacheBanner( CString BannerPath )
 
 void BannerCache::CacheBannerInternal( CString BannerPath )
 {
-	RageSurface *img = RageSurfaceUtils::LoadFile( BannerPath );
+	CString error;
+	RageSurface *img = RageSurfaceUtils::LoadFile( BannerPath, error );
 	if( img == NULL )
 	{
-		LOG->Warn( "BannerCache::CacheBanner: Couldn't load %s: %s", BannerPath.c_str(), SDL_GetError() );
+		LOG->Warn( "BannerCache::CacheBanner: Couldn't load %s: %s", BannerPath.c_str(), error.c_str() );
 		return;
 	}
 

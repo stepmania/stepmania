@@ -11,9 +11,7 @@
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 
-#include "SDL.h"
 #include "SDL_rotozoom.h"
-#include "SDL_utils.h"
 #include "SDL_dither.h"
 #include "RageSurface_Load.h"
 
@@ -69,12 +67,13 @@ void RageBitmapTexture::Create()
 
 	/* Create (and return) a surface ready to be loaded to OpenGL */
 	/* Load the image into an SDL surface. */
-	RageSurface *img = RageSurfaceUtils::LoadFile( actualID.filename );
+	CString error;
+	RageSurface *img = RageSurfaceUtils::LoadFile( actualID.filename, error );
 
 	/* Tolerate corrupt/unknown images. */
 	if( img == NULL )
 	{
-		LOG->Warn( "RageBitmapTexture: Couldn't load %s: %s", actualID.filename.c_str(), SDL_GetError() );
+		LOG->Warn( "RageBitmapTexture: Couldn't load %s: %s", actualID.filename.c_str(), error.c_str() );
 		img = RageSurfaceUtils::MakeDummySurface( 64, 64 );
 		ASSERT( img != NULL );
 	}

@@ -697,11 +697,13 @@ void Song::TidyUpData()
 			continue;	// skip
 
 		CString sPath = m_sSongDir + arrayImages[i];
+
 		/* We only care about the dimensions. */
-		RageSurface *img = RageSurfaceUtils::LoadFile( sPath, true );
+		CString error;
+		RageSurface *img = RageSurfaceUtils::LoadFile( sPath, error, true );
 		if( !img )
 		{
-			LOG->Trace("Couldn't load '%s': %s", sPath.c_str(), SDL_GetError());
+			LOG->Trace( "Couldn't load '%s': %s", sPath.c_str(), error.c_str() );
 			continue;
 		}
 

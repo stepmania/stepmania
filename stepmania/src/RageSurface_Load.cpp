@@ -97,13 +97,13 @@ static RageSurface *TryOpenFile( CString sPath, bool bHeaderOnly, CString &error
 	return NULL;
 }
 
-RageSurface *RageSurfaceUtils::LoadFile( const CString &sPath, bool bHeaderOnly )
+RageSurface *RageSurfaceUtils::LoadFile( const CString &sPath, CString &error, bool bHeaderOnly )
 {
 	{
 		RageFile TestOpen;
 		if( !TestOpen.Open( sPath ) )
 		{
-			SDL_SetError( "%s", TestOpen.GetError().c_str() );
+			error = TestOpen.GetError();
 			return NULL;
 		}
 	}
@@ -116,8 +116,6 @@ RageSurface *RageSurfaceUtils::LoadFile( const CString &sPath, bool bHeaderOnly 
 
 	CString format = GetExtension(sPath);
 	format.MakeLower();
-
-	CString error = "";
 
 	bool bKeepTrying = true;
 
@@ -140,7 +138,6 @@ RageSurface *RageSurfaceUtils::LoadFile( const CString &sPath, bool bHeaderOnly 
 		}
 	}
 
-	SDL_SetError( "%s", error.c_str() );
 	return NULL;
 }
 

@@ -14,7 +14,8 @@ static HBITMAP g_hBitmap = NULL;
 /* Load a file into a GDI surface. */
 HBITMAP LoadWin32Surface( CString fn )
 {
-	RageSurface *s = RageSurfaceUtils::LoadFile( fn );
+	CString error;
+	RageSurface *s = RageSurfaceUtils::LoadFile( fn, error );
 	if( s == NULL )
 		return NULL;
 
