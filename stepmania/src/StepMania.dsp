@@ -2854,25 +2854,6 @@ SOURCE=.\DifficultyIcon.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\DifficultyList.cpp
-
-!IF  "$(CFG)" == "StepMania - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
-
-!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\DifficultyList.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\FadingBanner.cpp
 
 !IF  "$(CFG)" == "StepMania - Win32 Debug"
@@ -3607,6 +3588,25 @@ SOURCE=.\DifficultyDisplay.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\DifficultyList.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\DifficultyList.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\DifficultyMeter.cpp
 
 !IF  "$(CFG)" == "StepMania - Win32 Debug"
@@ -4022,6 +4022,25 @@ SOURCE=.\OptionsCursor.cpp
 # Begin Source File
 
 SOURCE=.\OptionsCursor.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\PaneDisplay.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\PaneDisplay.h
 # End Source File
 # Begin Source File
 

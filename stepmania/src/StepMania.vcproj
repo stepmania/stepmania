@@ -1264,6 +1264,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="OptionsCursor.h">
 			</File>
 			<File
+				RelativePath="PaneDisplay.cpp">
+			</File>
+			<File
+				RelativePath="PaneDisplay.h">
+			</File>
+			<File
 				RelativePath="ScrollBar.cpp">
 			</File>
 			<File
