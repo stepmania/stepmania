@@ -22,19 +22,6 @@
 #include <vector>
 #include <RageUtil.h>
 
-// TCHAR defines
-#define LPTSTR char*
-#define LPCTSTR const char*
-#define _tcschr strchr
-#ifndef FALSE
-#   define FALSE false
-#endif
-#define _istspace isspace
-#define _tcspbrk strpbrk
-#define IsEmpty empty
-#define _tcslen strlen
-#define _tcsecpy strlen
-
 struct _tagXMLAttr;
 typedef _tagXMLAttr XAttr, *LPXAttr;
 typedef std::vector<LPXAttr> XAttrs;
@@ -53,19 +40,19 @@ typedef struct _tagXmlEntity
 typedef struct _tagXMLEntitys : public std::vector<XENTITY>
 {
 	LPXENTITY GetEntity( int entity );
-	LPXENTITY GetEntity( LPTSTR entity );	
-	int GetEntityCount( LPCTSTR str );
-	int Ref2Entity( LPCTSTR estr, LPTSTR str, int strlen );
-	int Entity2Ref( LPCTSTR str, LPTSTR estr, int estrlen );
-	CString Ref2Entity( LPCTSTR estr );
-	CString Entity2Ref( LPCTSTR str );	
+	LPXENTITY GetEntity( char* entity );	
+	int GetEntityCount( const char* str );
+	int Ref2Entity( const char* estr, char* str, int strlen );
+	int Entity2Ref( const char* str, char* estr, int estrlen );
+	CString Ref2Entity( const char* estr );
+	CString Entity2Ref( const char* str );	
 
 	_tagXMLEntitys(){};
 	_tagXMLEntitys( LPXENTITY entities, int count );
 }XENTITYS,*LPXENTITYS;
 extern XENTITYS entityDefault;
-CString XRef2Entity( LPCTSTR estr );
-CString XEntity2Ref( LPCTSTR str );	
+CString XRef2Entity( const char* estr );
+CString XEntity2Ref( const char* str );	
 
 typedef enum 
 {
@@ -84,9 +71,9 @@ typedef struct _tagParseInfo
 	LPXENTITYS	entitys;			// [set] entity table for entity decode
 	TCHAR		escape_value;		// [set] escape value (default '\\')
 
-	LPTSTR		xml;				// [get] xml source
+	char*		xml;				// [get] xml source
 	bool		erorr_occur;		// [get] is occurance of error?
-	LPTSTR		error_pointer;		// [get] error position of xml source
+	char*		error_pointer;		// [get] error position of xml source
 	PCODE		error_code;			// [get] error code
 	CString		error_string;		// [get] error string
 
@@ -138,45 +125,45 @@ typedef struct _tagXMLNode
 	XAttrs	attrs;		// attributes
 
 	// Load/Save XML
-	LPTSTR	Load( LPCTSTR pszXml, LPPARSEINFO pi = &piDefault );
-	LPTSTR	LoadAttributes( LPCTSTR pszAttrs, LPPARSEINFO pi = &piDefault );
+	char*	Load( const char* pszXml, LPPARSEINFO pi = &piDefault );
+	char*	LoadAttributes( const char* pszAttrs, LPPARSEINFO pi = &piDefault );
 	CString GetXML( LPDISP_OPT opt = &optDefault );
 
 	bool LoadFromFile( CString sFile, LPPARSEINFO pi = &piDefault );
 	bool SaveToFile( CString sFile, LPDISP_OPT opt = &optDefault );
 
 	// in own attribute list
-	const LPXAttr	GetAttr( LPCTSTR attrname ) const; 
-	LPXAttr	GetAttr( LPCTSTR attrname ); 
-	LPCTSTR	GetAttrValue( LPCTSTR attrname ); 
-	bool GetAttrValue(LPCTSTR name,CString &out) const	{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
-	bool GetAttrValue(LPCTSTR name,int &out) const		{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
-	bool GetAttrValue(LPCTSTR name,float &out) const	{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
-	bool GetAttrValue(LPCTSTR name,bool &out) const		{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
-	XAttrs	GetAttrs( LPCTSTR name ); 
+	const LPXAttr	GetAttr( const char* attrname ) const; 
+	LPXAttr	GetAttr( const char* attrname ); 
+	const char*	GetAttrValue( const char* attrname ); 
+	bool GetAttrValue(const char* name,CString &out) const	{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
+	bool GetAttrValue(const char* name,int &out) const		{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
+	bool GetAttrValue(const char* name,float &out) const	{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
+	bool GetAttrValue(const char* name,bool &out) const		{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
+	XAttrs	GetAttrs( const char* name ); 
 
 	// in one level child nodes
-	const LPXNode	GetChild( LPCTSTR name ) const; 
-	LPXNode	GetChild( LPCTSTR name ); 
-	LPCTSTR	GetChildValue( LPCTSTR name ); 
-	bool GetChildValue(LPCTSTR name,CString &out) const	{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
-	bool GetChildValue(LPCTSTR name,int &out) const		{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
-	bool GetChildValue(LPCTSTR name,float &out) const	{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
-	bool GetChildValue(LPCTSTR name,bool &out) const	{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
-	XNodes	GetChilds( LPCTSTR name ); 
+	const LPXNode	GetChild( const char* name ) const; 
+	LPXNode	GetChild( const char* name ); 
+	const char*	GetChildValue( const char* name ); 
+	bool GetChildValue(const char* name,CString &out) const	{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
+	bool GetChildValue(const char* name,int &out) const		{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
+	bool GetChildValue(const char* name,float &out) const	{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
+	bool GetChildValue(const char* name,bool &out) const	{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
+	XNodes	GetChilds( const char* name ); 
 	XNodes	GetChilds(); 
 
-	LPXAttr GetChildAttr( LPCTSTR name, LPCTSTR attrname );
-	LPCTSTR GetChildAttrValue( LPCTSTR name, LPCTSTR attrname );
+	LPXAttr GetChildAttr( const char* name, const char* attrname );
+	const char* GetChildAttrValue( const char* name, const char* attrname );
 	
 	// modify DOM 
 	int		GetChildCount();
 	LPXNode GetChild( int i );
 	XNodes::iterator GetChildIterator( LPXNode node );
-	LPXNode CreateNode( LPCTSTR name = NULL, LPCTSTR value = NULL );
-	LPXNode	AppendChild( LPCTSTR name = NULL, LPCTSTR value = NULL );
-	LPXNode	AppendChild( LPCTSTR name, float value );
-	LPXNode	AppendChild( LPCTSTR name, int value );
+	LPXNode CreateNode( const char* name = NULL, const char* value = NULL );
+	LPXNode	AppendChild( const char* name = NULL, const char* value = NULL );
+	LPXNode	AppendChild( const char* name, float value );
+	LPXNode	AppendChild( const char* name, int value );
 	LPXNode	AppendChild( LPXNode node );
 	bool	RemoveChild( LPXNode node );
 	LPXNode DetachChild( LPXNode node );
@@ -184,10 +171,10 @@ typedef struct _tagXMLNode
 
 	LPXAttr GetAttr( int i );
 	XAttrs::iterator GetAttrIterator( LPXAttr node );
-	LPXAttr CreateAttr( LPCTSTR anem = NULL, LPCTSTR value = NULL );
-	LPXAttr AppendAttr( LPCTSTR name = NULL, LPCTSTR value = NULL );
-	LPXAttr AppendAttr( LPCTSTR name, float value );
-	LPXAttr AppendAttr( LPCTSTR name, int value );
+	LPXAttr CreateAttr( const char* anem = NULL, const char* value = NULL );
+	LPXAttr AppendAttr( const char* name = NULL, const char* value = NULL );
+	LPXAttr AppendAttr( const char* name, float value );
+	LPXAttr AppendAttr( const char* name, int value );
 	LPXAttr	AppendAttr( LPXAttr attr );
 	bool	RemoveAttr( LPXAttr attr );
 	LPXAttr DetachAttr( LPXAttr attr );
@@ -202,12 +189,12 @@ typedef struct _tagXMLNode
 }XNode, *LPXNode;
 
 // Helper Funtion
-inline long XStr2Int( LPCTSTR str, long default_value = 0 )
+inline long XStr2Int( const char* str, long default_value = 0 )
 {
 	return str ? atol(str) : default_value;
 }
 
-inline bool XIsEmptyString( LPCTSTR str )
+inline bool XIsEmptyString( const char* str )
 {
 	CString s(str);
 	TrimLeft( s );

@@ -34,19 +34,19 @@ XENTITYS entityDefault((LPXENTITY)x_EntityTable, sizeof(x_EntityTable)/sizeof(x_
 
 //========================================================
 // Name   : _tcschrs
-// Desc   : same with _tcspbrk 
+// Desc   : same with strpbrk 
 // Param  :
 // Return :
 //--------------------------------------------------------
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPTSTR _tcschrs( LPCTSTR psz, LPCTSTR pszchs )
+char* _tcschrs( const char* psz, const char* pszchs )
 {
 	while( psz && *psz )
 	{
 		if( strchr( pszchs, *psz ) )
-			return (LPTSTR)psz;
+			return (char*)psz;
 		psz++;
 	}
 	return NULL;
@@ -61,26 +61,26 @@ LPTSTR _tcschrs( LPCTSTR psz, LPCTSTR pszchs )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPTSTR _tcsskip( LPCTSTR psz )
+char* _tcsskip( const char* psz )
 {
 	while( psz && *psz == ' ' ) psz++;
 		
-	return (LPTSTR)psz;
+	return (char*)psz;
 }
 
 //========================================================
 // Name   : _tcsechr
-// Desc   : similar with _tcschr with escape process
+// Desc   : similar with strchr with escape process
 // Param  : escape - will be escape character
 // Return : 
 //--------------------------------------------------------
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPTSTR _tcsechr( LPCTSTR psz, int ch, int escape )
+char* _tcsechr( const char* psz, int ch, int escape )
 {
-	LPTSTR pch = (LPTSTR)psz;
-	LPTSTR prev_escape = NULL;
+	char* pch = (char*)psz;
+	char* prev_escape = NULL;
 	while( pch && *pch )
 	{
 		if( *pch == escape && prev_escape == NULL )
@@ -88,7 +88,7 @@ LPTSTR _tcsechr( LPCTSTR psz, int ch, int escape )
 		else
 		{
 			prev_escape = NULL;
-			if( *pch == ch ) return (LPTSTR)pch;
+			if( *pch == ch ) return (char*)pch;
 		}
 		pch++;
 	}
@@ -97,19 +97,19 @@ LPTSTR _tcsechr( LPCTSTR psz, int ch, int escape )
 
 //========================================================
 // Name   : _tcselen
-// Desc   : similar with _tcslen with escape process
+// Desc   : similar with strlen with escape process
 // Param  : escape - will be escape character
 // Return : 
 //--------------------------------------------------------
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-int _tcselen( int escape, LPTSTR srt, LPTSTR end = NULL ) 
+int _tcselen( int escape, char* srt, char* end = NULL ) 
 {
 	int len = 0;
-	LPTSTR pch = srt;
-	if( end==NULL ) end = (LPTSTR)sizeof(long);
-	LPTSTR prev_escape = NULL;
+	char* pch = srt;
+	if( end==NULL ) end = (char*)sizeof(long);
+	char* prev_escape = NULL;
 	while( pch && *pch && pch<end )
 	{
 		if( *pch == escape && prev_escape == NULL )
@@ -125,7 +125,7 @@ int _tcselen( int escape, LPTSTR srt, LPTSTR end = NULL )
 }
 
 //========================================================
-// Name   : _tcsecpy
+// Name   : strlen
 // Desc   : similar with _tcscpy with escape process
 // Param  : escape - will be escape character
 // Return : 
@@ -133,11 +133,11 @@ int _tcselen( int escape, LPTSTR srt, LPTSTR end = NULL )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-void _tcsecpy( LPTSTR psz, int escape, LPTSTR srt, LPTSTR end = NULL )
+void strlen( char* psz, int escape, char* srt, char* end = NULL )
 {
-	LPTSTR pch = srt;
-	if( end==NULL ) end = (LPTSTR)sizeof(long);
-	LPTSTR prev_escape = NULL;
+	char* pch = srt;
+	if( end==NULL ) end = (char*)sizeof(long);
+	char* prev_escape = NULL;
 	while( pch && *pch && pch<end )
 	{
 		if( *pch == escape && prev_escape == NULL )
@@ -156,17 +156,17 @@ void _tcsecpy( LPTSTR psz, int escape, LPTSTR srt, LPTSTR end = NULL )
 
 //========================================================
 // Name   : _tcsepbrk
-// Desc   : similar with _tcspbrk with escape process
+// Desc   : similar with strpbrk with escape process
 // Param  : escape - will be escape character
 // Return : 
 //--------------------------------------------------------
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPTSTR _tcsepbrk( LPCTSTR psz, LPCTSTR chset, int escape )
+char* _tcsepbrk( const char* psz, const char* chset, int escape )
 {
-	LPTSTR pch = (LPTSTR)psz;
-	LPTSTR prev_escape = NULL;
+	char* pch = (char*)psz;
+	char* prev_escape = NULL;
 	while( pch && *pch )
 	{
 		if( *pch == escape && prev_escape == NULL )
@@ -174,8 +174,8 @@ LPTSTR _tcsepbrk( LPCTSTR psz, LPCTSTR chset, int escape )
 		else
 		{
 			prev_escape = NULL;
-			if( _tcschr( chset, *pch ) )
-				return (LPTSTR)pch;		
+			if( strchr( chset, *pch ) )
+				return (char*)pch;		
 		}
 		pch++;
 	}
@@ -191,27 +191,27 @@ LPTSTR _tcsepbrk( LPCTSTR psz, LPCTSTR chset, int escape )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-void _SetString( LPTSTR psz, LPTSTR end, CString* ps, bool trim = FALSE, int escape = 0 )
+void _SetString( char* psz, char* end, CString* ps, bool trim = false, int escape = 0 )
 {
 	//trim
 	if( trim )
 	{
-		while( psz && psz < end && _istspace(*psz) ) psz++;
-		while( (end-1) && psz < (end-1) && _istspace(*(end-1)) ) end--;
+		while( psz && psz < end && isspace(*psz) ) psz++;
+		while( (end-1) && psz < (end-1) && isspace(*(end-1)) ) end--;
 	}
 	int len = end - psz;
 	if( len <= 0 ) return;
 	if( escape )
 	{
 		len = _tcselen( escape, psz, end );
-//		LPTSTR pss = ps->GetBufferSetLength( len );
+//		char* pss = ps->GetBufferSetLength( len );
 		char* szTemp = new char[len];
-		_tcsecpy( szTemp, escape, psz, end );
+		strlen( szTemp, escape, psz, end );
 		*ps = szTemp;
 	}
 	else
 	{
-//		LPTSTR pss = ps->GetBufferSetLength(len + 1 );
+//		char* pss = ps->GetBufferSetLength(len + 1 );
 		char* szTemp = new char[len+1];
 		memcpy( szTemp, psz, len );
 		szTemp[len] = '\0';
@@ -261,9 +261,9 @@ void _tagXMLNode::Close()
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPTSTR _tagXMLNode::LoadAttributes( LPCTSTR pszAttrs , LPPARSEINFO pi /*= &piDefault*/)
+char* _tagXMLNode::LoadAttributes( const char* pszAttrs , LPPARSEINFO pi /*= &piDefault*/)
 {
-	LPTSTR xml = (LPTSTR)pszAttrs;
+	char* xml = (char*)pszAttrs;
 
 	while( xml && *xml )
 	{
@@ -277,7 +277,7 @@ LPTSTR _tagXMLNode::LoadAttributes( LPCTSTR pszAttrs , LPPARSEINFO pi /*= &piDef
 			return xml;
 
 		// XML Attr Name
-		TCHAR* pEnd = _tcspbrk( xml, " =" );
+		TCHAR* pEnd = strpbrk( xml, " =" );
 		if( pEnd == NULL ) 
 		{
 			// error
@@ -306,7 +306,7 @@ LPTSTR _tagXMLNode::LoadAttributes( LPCTSTR pszAttrs , LPPARSEINFO pi /*= &piDef
 		if( !xml )
 			continue;
 
-		//if( xml = _tcschr( xml, '=' ) )
+		//if( xml = strchr( xml, '=' ) )
 		if( *xml == '=' )
 		{
 			xml = _tcsskip( ++xml );
@@ -358,14 +358,14 @@ LPTSTR _tagXMLNode::LoadAttributes( LPCTSTR pszAttrs , LPPARSEINFO pi /*= &piDef
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPTSTR _tagXMLNode::Load( LPCTSTR pszXml, LPPARSEINFO pi /*= &piDefault*/ )
+char* _tagXMLNode::Load( const char* pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 {
 	// Close it
 	Close();
 
-	LPTSTR xml = (LPTSTR)pszXml;
+	char* xml = (char*)pszXml;
 
-	xml = _tcschr( xml, chXMLTagOpen );
+	xml = strchr( xml, chXMLTagOpen );
 	if( xml == NULL )
 		return NULL;
 
@@ -375,7 +375,7 @@ LPTSTR _tagXMLNode::Load( LPCTSTR pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 
 	// XML Node Tag Name Open
 	xml++;
-	TCHAR* pTagEnd = _tcspbrk( xml, " />" );
+	TCHAR* pTagEnd = strpbrk( xml, " />" );
 	_SetString( xml, pTagEnd, &name );
 	xml = pTagEnd;
 	// Generate XML Attributte List
@@ -409,7 +409,7 @@ LPTSTR _tagXMLNode::Load( LPCTSTR pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 	//                        ^- current pointer
 	{
 		// text value가 없으툈E넣도록한다.
-		//if( this->value.IsEmpty() || this->value == ("") )
+		//if( this->value.empty() || this->value == ("") )
 		if( XIsEmptyString( value ) )
 		{
 			// Text Value 
@@ -445,7 +445,7 @@ LPTSTR _tagXMLNode::Load( LPCTSTR pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 			node->parent = this;
 			
 			xml = node->Load( xml,pi );
-			if( node->name.IsEmpty() == FALSE )
+			if( node->name.empty() == false )
 			{
 				childs.push_back( node );
 			}
@@ -467,7 +467,7 @@ LPTSTR _tagXMLNode::Load( LPCTSTR pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 					return NULL;
 
 				CString closename;
-				TCHAR* pEnd = _tcspbrk( xml, " >" );
+				TCHAR* pEnd = strpbrk( xml, " >" );
 				if( pEnd == NULL ) 
 				{
 					if( pi->erorr_occur == false ) 
@@ -507,7 +507,7 @@ LPTSTR _tagXMLNode::Load( LPCTSTR pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 					// else 해야하는햨E말아야하는햨E의심간다.
 			{
 				
-				//if( xml && this->value.IsEmpty() && *xml !=chXMLTagOpen )
+				//if( xml && this->value.empty() && *xml !=chXMLTagOpen )
 				if( xml && XIsEmptyString( value ) && *xml !=chXMLTagOpen )
 				{
 					// Text Value 
@@ -554,9 +554,9 @@ LPTSTR _tagXMLNode::Load( LPCTSTR pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 CString _tagXMLAttr::GetXML( LPDISP_OPT opt /*= &optDefault*/ )
 {
 	std::ostringstream os;
-	//os << (LPCTSTR)name << "='" << (LPCTSTR)value << "' ";
-	os << (LPCTSTR)name << "='"
-		<< (LPCTSTR)(opt->reference_value&&opt->entitys?opt->entitys->Entity2Ref(value):value) << "' ";
+	//os << (const char*)name << "='" << (const char*)value << "' ";
+	os << (const char*)name << "='"
+		<< (const char*)(opt->reference_value&&opt->entitys?opt->entitys->Entity2Ref(value):value) << "' ";
 	return os.str().c_str();
 }
 
@@ -583,16 +583,16 @@ CString _tagXMLNode::GetXML( LPDISP_OPT opt /*= &optDefault*/ )
 	}
 
 	// <TAG
-	os << '<' << (LPCTSTR)name;
+	os << '<' << (const char*)name;
 
 	// <TAG Attr1="Val1" 
 	if( attrs.empty() == false ) os << ' ';
 	for( unsigned i = 0 ; i < attrs.size(); i++ )
 	{
-		os << (LPCTSTR)attrs[i]->GetXML(opt);
+		os << (const char*)attrs[i]->GetXML(opt);
 	}
 	
-	if( childs.empty() && value.IsEmpty() )
+	if( childs.empty() && value.empty() )
 	{
 		// <TAG Attr1="Val1"/> alone tag 
 		os << "/>";	
@@ -607,7 +607,7 @@ CString _tagXMLNode::GetXML( LPDISP_OPT opt /*= &optDefault*/ )
 		}
 
 		for( unsigned i = 0 ; i < childs.size(); i++ )
-			os << (LPCTSTR)childs[i]->GetXML( opt );
+			os << (const char*)childs[i]->GetXML( opt );
 		
 		// Text Value
 		if( value != ("") )
@@ -619,7 +619,7 @@ CString _tagXMLNode::GetXML( LPDISP_OPT opt /*= &optDefault*/ )
 				for( int i = 0 ; i < opt->tab_base ; i++)
 					os << '\t';
 			}
-			os << (LPCTSTR)(opt->reference_value&&opt->entitys?opt->entitys->Entity2Ref(value):value);
+			os << (const char*)(opt->reference_value&&opt->entitys?opt->entitys->Entity2Ref(value):value);
 		}
 
 		// </TAG> CloseTag
@@ -629,7 +629,7 @@ CString _tagXMLNode::GetXML( LPDISP_OPT opt /*= &optDefault*/ )
 			for( int i = 0 ; i < opt->tab_base-1 ; i++)
 				os << '\t';
 		}
-		os << "</" << (LPCTSTR)name << '>';
+		os << "</" << (const char*)name << '>';
 
 		if( opt && opt->newline )
 		{
@@ -650,7 +650,7 @@ CString _tagXMLNode::GetXML( LPDISP_OPT opt /*= &optDefault*/ )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-const LPXAttr	_tagXMLNode::GetAttr( LPCTSTR attrname ) const
+const LPXAttr	_tagXMLNode::GetAttr( const char* attrname ) const
 {
 	for( unsigned i = 0 ; i < attrs.size(); i++ )
 	{
@@ -664,7 +664,7 @@ const LPXAttr	_tagXMLNode::GetAttr( LPCTSTR attrname ) const
 	return NULL;
 }
 
-LPXAttr	_tagXMLNode::GetAttr( LPCTSTR attrname )
+LPXAttr	_tagXMLNode::GetAttr( const char* attrname )
 {
 	for( unsigned i = 0 ; i < attrs.size(); i++ )
 	{
@@ -687,7 +687,7 @@ LPXAttr	_tagXMLNode::GetAttr( LPCTSTR attrname )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-XAttrs _tagXMLNode::GetAttrs( LPCTSTR name )
+XAttrs _tagXMLNode::GetAttrs( const char* name )
 {
 	XAttrs attrs;
 	for( unsigned i = 0 ; i < attrs.size(); i++ )
@@ -711,10 +711,10 @@ XAttrs _tagXMLNode::GetAttrs( LPCTSTR name )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPCTSTR	_tagXMLNode::GetAttrValue( LPCTSTR attrname )
+const char*	_tagXMLNode::GetAttrValue( const char* attrname )
 {
 	LPXAttr attr = GetAttr( attrname );
-	return attr ? (LPCTSTR)attr->value : NULL;
+	return attr ? (const char*)attr->value : NULL;
 }
 
 XNodes _tagXMLNode::GetChilds()
@@ -731,7 +731,7 @@ XNodes _tagXMLNode::GetChilds()
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-XNodes _tagXMLNode::GetChilds( LPCTSTR name )
+XNodes _tagXMLNode::GetChilds( const char* name )
 {
 	XNodes nodes;
 	for( unsigned i = 0 ; i < childs.size(); i++ )
@@ -785,7 +785,7 @@ int	_tagXMLNode::GetChildCount()
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPXNode	_tagXMLNode::GetChild( LPCTSTR name )
+LPXNode	_tagXMLNode::GetChild( const char* name )
 {
 	for( unsigned i = 0 ; i < childs.size(); i++ )
 	{
@@ -799,7 +799,7 @@ LPXNode	_tagXMLNode::GetChild( LPCTSTR name )
 	return NULL;
 }
 
-const LPXNode	_tagXMLNode::GetChild( LPCTSTR name ) const
+const LPXNode	_tagXMLNode::GetChild( const char* name ) const
 {
 	for( unsigned i = 0 ; i < childs.size(); i++ )
 	{
@@ -822,22 +822,22 @@ const LPXNode	_tagXMLNode::GetChild( LPCTSTR name ) const
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPCTSTR	_tagXMLNode::GetChildValue( LPCTSTR name )
+const char*	_tagXMLNode::GetChildValue( const char* name )
 {
 	LPXNode node = GetChild( name );
-	return (node != NULL)? (LPCTSTR)node->value : NULL;
+	return (node != NULL)? (const char*)node->value : NULL;
 }
 
-LPXAttr _tagXMLNode::GetChildAttr( LPCTSTR name, LPCTSTR attrname )
+LPXAttr _tagXMLNode::GetChildAttr( const char* name, const char* attrname )
 {
 	LPXNode node = GetChild(name);
 	return node ? node->GetAttr(attrname) : NULL;
 }
 
-LPCTSTR _tagXMLNode::GetChildAttrValue( LPCTSTR name, LPCTSTR attrname )
+const char* _tagXMLNode::GetChildAttrValue( const char* name, const char* attrname )
 {
 	LPXAttr attr = GetChildAttr( name, attrname );
-	return attr ? (LPCTSTR)attr->value : NULL;
+	return attr ? (const char*)attr->value : NULL;
 }
 
 
@@ -870,17 +870,17 @@ XNodes::iterator _tagXMLNode::GetChildIterator( LPXNode node )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPXNode	_tagXMLNode::AppendChild( LPCTSTR name /*= NULL*/, LPCTSTR value /*= NULL*/ )
+LPXNode	_tagXMLNode::AppendChild( const char* name /*= NULL*/, const char* value /*= NULL*/ )
 {
 	return AppendChild( CreateNode( name, value ) );
 }
 
-LPXNode	_tagXMLNode::AppendChild( LPCTSTR name /*= NULL*/, float value /*= NULL*/ )
+LPXNode	_tagXMLNode::AppendChild( const char* name /*= NULL*/, float value /*= NULL*/ )
 {
 	return AppendChild( name, ssprintf("%f",value) );
 }
 
-LPXNode	_tagXMLNode::AppendChild( LPCTSTR name /*= NULL*/, int value /*= NULL*/ )
+LPXNode	_tagXMLNode::AppendChild( const char* name /*= NULL*/, int value /*= NULL*/ )
 {
 	return AppendChild( name, ssprintf("%d",value) );
 }
@@ -1004,7 +1004,7 @@ bool _tagXMLNode::RemoveAttr( LPXAttr attr )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPXNode _tagXMLNode::CreateNode( LPCTSTR name /*= NULL*/, LPCTSTR value /*= NULL*/ )
+LPXNode _tagXMLNode::CreateNode( const char* name /*= NULL*/, const char* value /*= NULL*/ )
 {
 	LPXNode node = new XNode;
 	node->name = name;
@@ -1021,7 +1021,7 @@ LPXNode _tagXMLNode::CreateNode( LPCTSTR name /*= NULL*/, LPCTSTR value /*= NULL
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPXAttr _tagXMLNode::CreateAttr( LPCTSTR name /*= NULL*/, LPCTSTR value /*= NULL*/ )
+LPXAttr _tagXMLNode::CreateAttr( const char* name /*= NULL*/, const char* value /*= NULL*/ )
 {
 	LPXAttr attr = new XAttr;
 	attr->name = name;
@@ -1038,13 +1038,13 @@ LPXAttr _tagXMLNode::CreateAttr( LPCTSTR name /*= NULL*/, LPCTSTR value /*= NULL
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-LPXAttr _tagXMLNode::AppendAttr( LPCTSTR name /*= NULL*/, LPCTSTR value /*= NULL*/ )
+LPXAttr _tagXMLNode::AppendAttr( const char* name /*= NULL*/, const char* value /*= NULL*/ )
 {
 	return AppendAttr( CreateAttr( name, value ) );
 }
 
-LPXAttr _tagXMLNode::AppendAttr( LPCTSTR name, float value ){ return AppendAttr(name,ssprintf("%f",value)); }
-LPXAttr _tagXMLNode::AppendAttr( LPCTSTR name, int value )	{ return AppendAttr(name,ssprintf("%d",value)); }
+LPXAttr _tagXMLNode::AppendAttr( const char* name, float value ){ return AppendAttr(name,ssprintf("%f",value)); }
+LPXAttr _tagXMLNode::AppendAttr( const char* name, int value )	{ return AppendAttr(name,ssprintf("%d",value)); }
 
 //========================================================
 // Name   : DetachChild
@@ -1102,12 +1102,12 @@ LPXENTITY _tagXMLEntitys::GetEntity( int entity )
 	return NULL;
 }
 
-LPXENTITY _tagXMLEntitys::GetEntity( LPTSTR entity )
+LPXENTITY _tagXMLEntitys::GetEntity( char* entity )
 {
 	for( unsigned i = 0 ; i < size(); i ++ )
 	{
-		LPTSTR ref = (LPTSTR)at(i).ref;
-		LPTSTR ps = entity;
+		char* ref = (char*)at(i).ref;
+		char* ps = entity;
 		while( ref && *ref )
 			if( *ref++ != *ps++ )
 				break;
@@ -1117,20 +1117,20 @@ LPXENTITY _tagXMLEntitys::GetEntity( LPTSTR entity )
 	return NULL;
 }
 
-int _tagXMLEntitys::GetEntityCount( LPCTSTR str )
+int _tagXMLEntitys::GetEntityCount( const char* str )
 {
 	int nCount = 0;
-	LPTSTR ps = (LPTSTR)str;
+	char* ps = (char*)str;
 	while( ps && *ps )
 		if( GetEntity( *ps++ ) ) nCount ++;
 	return nCount;
 }
 
-int _tagXMLEntitys::Ref2Entity( LPCTSTR estr, LPTSTR str, int strlen )
+int _tagXMLEntitys::Ref2Entity( const char* estr, char* str, int strlen )
 {
-	LPTSTR pes = (LPTSTR)estr;
-	LPTSTR ps = str;
-	LPTSTR ps_end = ps+strlen;
+	char* pes = (char*)estr;
+	char* ps = str;
+	char* ps_end = ps+strlen;
 	while( pes && *pes && ps < ps_end )
 	{
 		LPXENTITY ent = GetEntity( pes );
@@ -1150,18 +1150,18 @@ int _tagXMLEntitys::Ref2Entity( LPCTSTR estr, LPTSTR str, int strlen )
 	return ps-str;	
 }
 
-int _tagXMLEntitys::Entity2Ref( LPCTSTR str, LPTSTR estr, int estrlen )
+int _tagXMLEntitys::Entity2Ref( const char* str, char* estr, int estrlen )
 {
-	LPTSTR ps = (LPTSTR)str;
-	LPTSTR pes = (LPTSTR)estr;
-	LPTSTR pes_end = pes+estrlen;
+	char* ps = (char*)str;
+	char* pes = (char*)estr;
+	char* pes_end = pes+estrlen;
 	while( ps && *ps && pes < pes_end )
 	{
 		LPXENTITY ent = GetEntity( *ps );
 		if( ent )
 		{
 			// copy entity string
-			LPTSTR ref = (LPTSTR)ent->ref;
+			char* ref = (char*)ent->ref;
 			while( ref && *ref )
 				*pes++ = *ref++;
 		}
@@ -1175,13 +1175,13 @@ int _tagXMLEntitys::Entity2Ref( LPCTSTR str, LPTSTR estr, int estrlen )
 	return pes-estr;
 }
 
-CString _tagXMLEntitys::Ref2Entity( LPCTSTR estr )
+CString _tagXMLEntitys::Ref2Entity( const char* estr )
 {
 	CString es;
 	if( estr )
 	{
-		int len = _tcslen(estr);
-//		LPTSTR esbuf = es.GetBufferSetLength( len+1 );
+		int len = strlen(estr);
+//		char* esbuf = es.GetBufferSetLength( len+1 );
 		char* szTemp = new char[len+1];
 		if( szTemp )
 			Ref2Entity( estr, szTemp, len );
@@ -1190,7 +1190,7 @@ CString _tagXMLEntitys::Ref2Entity( LPCTSTR estr )
 	return es;
 }
 
-CString _tagXMLEntitys::Entity2Ref( LPCTSTR str )
+CString _tagXMLEntitys::Entity2Ref( const char* str )
 {
 	CString s;
 	if( str )
@@ -1198,8 +1198,8 @@ CString _tagXMLEntitys::Entity2Ref( LPCTSTR str )
 		int nEntityCount = GetEntityCount(str);
 		if( nEntityCount == 0 )
 			return CString(str);
-		int len = _tcslen(str) + nEntityCount*10 ;
-		//LPTSTR sbuf = s.GetBufferSetLength( len+1 );
+		int len = strlen(str) + nEntityCount*10 ;
+		//char* sbuf = s.GetBufferSetLength( len+1 );
 		char* szTemp = new char[len+1];
 		if( szTemp )
 			Entity2Ref( str, szTemp, len );
@@ -1208,12 +1208,12 @@ CString _tagXMLEntitys::Entity2Ref( LPCTSTR str )
 	return s;
 }
 
-CString XRef2Entity( LPCTSTR estr )
+CString XRef2Entity( const char* estr )
 {
 	return entityDefault.Ref2Entity( estr );
 }
 
-CString XEntity2Ref( LPCTSTR str )
+CString XEntity2Ref( const char* str )
 {
 	return entityDefault.Entity2Ref( str );
 }
