@@ -5,6 +5,7 @@
 #include "RageLog.h"
 #include "RageFile.h"
 #include "arch/Dialog/Dialog.h"
+#include "Foreach.h"
 
 #include <csetjmp>
 #include <cassert>
@@ -121,8 +122,27 @@ static int LuaPanic( lua_State *L )
 	longjmp( jbuf, 1 );
 }
 
+
+
+// Actor registration
+static vector<RegisterActorFn>	*g_vRegisterActors = NULL;
+
+void LuaManager::Register( RegisterActorFn pfn )
+{
+	if( g_vRegisterActors == NULL )
+		g_vRegisterActors = new vector<RegisterActorFn>;
+
+	g_vRegisterActors->push_back( pfn );
+}
+
+
+
+
+
 LuaManager::LuaManager()
 {
+	LUA = this;	// so that LUA is available when we call the Register functions
+
 	if( setjmp(jbuf) )
 		RageException::Throw("%s", jbuf_error.c_str());
 	L = NULL;
@@ -152,6 +172,12 @@ void LuaManager::Init()
 
 	for( const LuaFunctionList *p = g_LuaFunctions; p; p=p->next )
 		lua_register( L, p->name, p->func );
+
+	if( g_vRegisterActors )
+	{
+		FOREACH( RegisterActorFn, *g_vRegisterActors, fn )
+			(*fn)( L );
+	}
 }
 
 void LuaManager::PrepareExpression( CString &sInOut )
@@ -321,6 +347,7 @@ void LuaManager::Fail( const CString &err )
 	lua_pushstring( L, err );
 	lua_error( L );
 }
+
 
 LuaFunctionList::LuaFunctionList( CString name_, lua_CFunction func_ )
 {
