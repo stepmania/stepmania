@@ -366,6 +366,7 @@ static void do_backtrace( const void **buf, size_t size, const BacktraceContext 
 	buf[i] = NULL;
 }
 
+#if defined(CPU_X86)
 void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
 {
 	ctx->ip = (void *) uc->uc_mcontext.gregs[REG_EIP];
@@ -373,6 +374,17 @@ void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
 	ctx->sp = (void *) uc->uc_mcontext.gregs[REG_ESP];
 	ctx->pid = GetCurrentThreadId();
 }
+#elif defined(CPU_X86_64)
+void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
+{
+	ctx->ip = (void *) uc->uc_mcontext.gregs[REG_RIP];
+	ctx->bp = (void *) uc->uc_mcontext.gregs[REG_RBP];
+	ctx->sp = (void *) uc->uc_mcontext.gregs[REG_RSP];
+	ctx->pid = GetCurrentThreadId();
+}
+#else
+#error
+#endif
 
 void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 {
