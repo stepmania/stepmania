@@ -328,7 +328,7 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 		apActorsInScore[i]->StopTweening();
 
 		float fOriginalX = apActorsInScore[i]->GetX();
-		apActorsInScore[i]->BeginTweening( factor*0.5, TWEEN_DECELERATE );		// tween off screen
+		apActorsInScore[i]->BeginTweening( factor*0.5f, TWEEN_DECELERATE );		// tween off screen
 		apActorsInScore[i]->SetTweenX( fOriginalX+400 );
 		
 		apActorsInScore[i]->BeginTweening( factor*0.5f );		// sleep
@@ -668,7 +668,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 
 		if( !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
 		{
-			float fShowSeconds = m_Menu.m_Out.GetLengthSeconds();
+//			float fShowSeconds = m_Menu.m_Out.GetLengthSeconds();
 
 			// show "hold START for options"
 			m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,1) );	// visible

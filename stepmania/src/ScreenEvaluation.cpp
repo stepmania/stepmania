@@ -34,8 +34,8 @@
 #define ENDGAME_SCREEN						GET_THEME_METRIC_FALLBACK("EndGameScreen")
 #define BANNER_ON_COMMAND( i )				GET_THEME_METRIC_FALLBACK(ssprintf("Banner%dOnCommand",i+1))
 #define BANNER_OFF_COMMAND( i )				GET_THEME_METRIC_FALLBACK(ssprintf("Banner%dOffCommand",i+1))
-#define BANNER_WIDTH						atof(GET_THEME_METRIC_FALLBACK("BannerWidth"))
-#define BANNER_HEIGHT						atof(GET_THEME_METRIC_FALLBACK("BannerHeight"))
+#define BANNER_WIDTH						float(atof(GET_THEME_METRIC_FALLBACK("BannerWidth")))
+#define BANNER_HEIGHT						float(atof(GET_THEME_METRIC_FALLBACK("BannerHeight")))
 #define STAGE_ON_COMMAND					GET_THEME_METRIC_FALLBACK("StageOnCommand")
 #define STAGE_OFF_COMMAND					GET_THEME_METRIC_FALLBACK("StageOffCommand")
 #define DIFFICULTY_ICON_ON_COMMAND( p )		GET_THEME_METRIC_FALLBACK(ssprintf("DifficultyIconP%dOnCommand",p+1))
@@ -335,8 +335,8 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
 		stageStats.iPossibleDancePoints[p] = max( 1, stageStats.iPossibleDancePoints[p] );
 		float fPercentDancePoints =  stageStats.iActualDancePoints[p] / (float)stageStats.iPossibleDancePoints[p] + 0.0001f;	// correct for rounding errors
 		fPercentDancePoints = max( fPercentDancePoints, 0 );
-		int iPercentWhole = int(fPercentDancePoints*100);
-		int iPercentRemainder = int( (fPercentDancePoints*100 - int(fPercentDancePoints*100)) * 10 );
+//		int iPercentWhole = int(fPercentDancePoints*100);
+//		int iPercentRemainder = int( (fPercentDancePoints*100 - int(fPercentDancePoints*100)) * 10 );
 //		m_textPercentWhole[p].SetText( ssprintf("%02d", iPercentWhole) );
 //		m_textPercentRemainder[p].SetText( ssprintf(".%01d%%", iPercentRemainder) );
 		m_textPercentWhole[p].SetText( "00" );
