@@ -15,7 +15,7 @@ if NHAVE_SDL
 # XXX Both of these should really be linked dynamically.
 # XXX honor vpath
 SDL-1.2.6/src/.libs/libSDL.a:
-	cd SDL-1.2.6 && ./configure \
+	cd SDL-1.2.6 && sh ./configure \
 		--disable-nasm --disable-arts --disable-esd --enable-static --disable-shared \
 		--disable-debug --disable-alsa --disable-oss --disable-video-directfb
 	make -C SDL-1.2.6
