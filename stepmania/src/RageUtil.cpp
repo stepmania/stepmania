@@ -162,8 +162,6 @@ CString hr_ssprintf( int hr, const char *fmt, ...)
     va_end(va);
 
 #ifdef _XBOX
-	/* XXX: This doesn't work for DirectInput or DirectSound; why is it needed? 
-	 * XBox uses DI and DS, too, right? -glenn */
 	char szError[1024] = "";
 	D3DXGetErrorString( hr, szError, sizeof(szError) );
 #else	

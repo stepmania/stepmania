@@ -212,7 +212,7 @@ bool RageSoundReader_Vorbisfile::FillBuf()
 		ret *= 2;
 	}
 	else
-		memcpy( buffer, tmpbuf, ret ); /* XXX optimize */
+		memcpy( buffer, tmpbuf, ret );
 
 	avail = ret;
 	return true;
