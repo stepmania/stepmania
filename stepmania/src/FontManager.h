@@ -12,6 +12,7 @@
 
 #include "Font.h"
 
+#include <map>
 
 //-----------------------------------------------------------------------------
 // FontManager Class Declarations
@@ -28,7 +29,7 @@ public:
 
 protected:
 	// map from file name to a texture holder
-	CTypedPtrMap<CMapStringToPtr, CString, Font*> m_mapPathToFont;
+	std::map<CString, Font*> m_mapPathToFont;
 };
 
 extern FontManager*	FONT;	// global and accessable from anywhere in our program

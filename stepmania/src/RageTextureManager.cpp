@@ -21,7 +21,6 @@
 #include "RageLog.h"
 #include "RageException.h"
 
-
 RageTextureManager*		TEXTUREMAN		= NULL;
 
 //-----------------------------------------------------------------------------
@@ -37,20 +36,13 @@ RageTextureManager::RageTextureManager( RageDisplay* pScreen )
 
 RageTextureManager::~RageTextureManager()
 {
-	// delete all textures
-	POSITION pos = m_mapPathToTexture.GetStartPosition();
-
-	while( pos != NULL )  // iterate over all k/v pairs in map
+	for( std::map<CString, RageTexture*>::iterator i = m_mapPathToTexture.begin();
+		i != m_mapPathToTexture.end(); ++i)
 	{
-		RageTexture* pTexture;
-		CString sPath;
-
-		m_mapPathToTexture.GetNextAssoc( pos, sPath, pTexture );
-		LOG->Trace( "TEXTUREMAN LEAK: '%s', RefCount = %d.", sPath, pTexture->m_iRefCount );
+		RageTexture* pTexture = i->second;
+		LOG->Trace( "TEXTUREMAN LEAK: '%s', RefCount = %d.", i->first, pTexture->m_iRefCount );
 		SAFE_DELETE( pTexture );
 	}
-
-	m_mapPathToTexture.RemoveAll();
 }
 
 
@@ -71,8 +63,10 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, bool bForceR
 	// of the same bitmap if there are equivalent but different paths
 	// (e.g. "Bitmaps\me.bmp" and "..\Rage PC Edition\Bitmaps\me.bmp" ).
 
-	if( m_mapPathToTexture.Lookup( sTexturePath, pTexture ) )	// if the texture already exists in the map
-	{
+	std::map<CString, RageTexture*>::iterator p = m_mapPathToTexture.find(sTexturePath);
+	if(p != m_mapPathToTexture.end()) {
+		pTexture = p->second;
+
 		pTexture->m_iRefCount++;
 		if( bForceReload )
 			pTexture->Reload( m_iMaxTextureSize, m_iTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch );
@@ -93,7 +87,7 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, bool bForceR
 		LOG->Trace( "RageTextureManager: Finished loading '%s'.", sTexturePath );
 
 
-		m_mapPathToTexture.SetAt( sTexturePath, pTexture );
+		m_mapPathToTexture[sTexturePath] = pTexture;
 	}
 
 //	LOG->Trace( "Display: %.2f KB video memory left",	DISPLAY->GetDevice()->GetAvailableTextureMem()/1000000.0f );
@@ -106,12 +100,7 @@ bool RageTextureManager::IsTextureLoaded( CString sTexturePath )
 {
 	sTexturePath.MakeLower();
 
-	RageTexture* pTexture;
-
-	if( m_mapPathToTexture.Lookup( sTexturePath, pTexture ) )	// if the texture exists in the map
-		return true;
-	else
-		return false;
+	return m_mapPathToTexture.find(sTexturePath) != m_mapPathToTexture.end();
 }	
 
 void RageTextureManager::UnloadTexture( CString sTexturePath )
@@ -128,36 +117,32 @@ void RageTextureManager::UnloadTexture( CString sTexturePath )
 	
 	RageTexture* pTexture;
 
-	if( m_mapPathToTexture.Lookup( sTexturePath, pTexture ) )	// if the texture exists in the map
-	{
-		pTexture->m_iRefCount--;
-		if( pTexture->m_iRefCount == 0 )		// there are no more references to this texture
-		{
-//			LOG->Trace( "RageTextureManager: '%s' will be deleted.  It has %d references.", sTexturePath, pTexture->m_iRefCount );
-			SAFE_DELETE( pTexture );		// free the texture
-			m_mapPathToTexture.RemoveKey( sTexturePath );	// and remove the key in the map
-		}
-		else
-		{
-//			LOG->Trace( "RageTextureManager: '%s' will not be deleted.  It still has %d references.", sTexturePath, pTexture->m_iRefCount );
-		}
-	}
-	else // texture not found
-	{
+	std::map<CString, RageTexture*>::iterator p = m_mapPathToTexture.find(sTexturePath);
+	if(p == m_mapPathToTexture.end())
 		throw RageException( "Tried to Unload texture '%s' that wasn't loaded.", sTexturePath );
-	}
 	
+	pTexture = p->second;
+	pTexture->m_iRefCount--;
+	if( pTexture->m_iRefCount != 0 )
+	{
+//		LOG->Trace( "RageTextureManager: '%s' will not be deleted.  It still has %d references.", sTexturePath, pTexture->m_iRefCount );
+		return;
+	}
+
+	// There are no more references to this texture.
+//	LOG->Trace( "RageTextureManager: '%s' will be deleted.  It has %d references.", sTexturePath, pTexture->m_iRefCount );
+	SAFE_DELETE( pTexture );		// free the texture
+	m_mapPathToTexture.erase(p);	// and remove the key in the map
 }
 
 void RageTextureManager::ReloadAll()
 {
-	for( POSITION pos = m_mapPathToTexture.GetStartPosition(); pos != NULL;  )
+	for( std::map<CString, RageTexture*>::iterator i = m_mapPathToTexture.begin();
+		i != m_mapPathToTexture.end(); ++i)
 	{
-		CString sPath;
-		RageTexture* pTexture;
+		RageTexture* pTexture = i->second;
 
-		m_mapPathToTexture.GetNextAssoc( pos, sPath, pTexture );
-		
-		pTexture->Reload( m_iMaxTextureSize, m_iTextureColorDepth, 0 );	// this not entirely correct.  Hints are lost!
+		// this is not entirely correct.  Hints are lost!
+		pTexture->Reload( m_iMaxTextureSize, m_iTextureColorDepth, 0 );
 	}
 }

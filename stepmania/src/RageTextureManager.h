@@ -11,6 +11,7 @@
 */
 #include "RageTexture.h"
 
+#include <map>
 
 //-----------------------------------------------------------------------------
 // RageTextureManager Class Declarations
@@ -45,7 +46,7 @@ protected:
 	DWORD m_iTextureColorDepth;
 
 	// map from file name to a texture holder
-	CTypedPtrMap<CMapStringToPtr, CString, RageTexture*> m_mapPathToTexture;
+	std::map<CString, RageTexture*> m_mapPathToTexture;
 };
 
 extern RageTextureManager*	TEXTUREMAN;	// global and accessable from anywhere in our program
