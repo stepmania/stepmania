@@ -53,6 +53,7 @@ GameState::GameState()
 	 * use PREFSMAN. */
 //	Reset();
 	m_pPosition = NULL;
+	m_bIsOnSystemMenu = false;
 
 	m_pUnlockingSys = new UnlockSystem;
 	ReloadCharacters();
