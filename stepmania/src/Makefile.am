@@ -327,6 +327,14 @@ test_file_readers_SOURCES = \
 		$(all_test_SOURCES) \
 		tests/test_file_readers.cpp
 
+TESTS += test_file_errors
+test_file_errors_SOURCES = \
+		$(all_test_SOURCES) \
+		tests/test_file_errors.cpp \
+		MsdFile.cpp MsdFile.h \
+		XmlFile.cpp XmlFile.h \
+		CryptManager.cpp CryptManager.h CryptHelpers.cpp CryptHelpers.h $(cryptopp) $(crypto)
+
 TESTS += test_timing_data
 test_timing_data_SOURCES = \
 		$(all_test_SOURCES) \
