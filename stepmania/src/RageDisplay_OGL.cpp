@@ -16,6 +16,8 @@
 #include "glext.h"
 
 #include "RageFile.h"
+#include "RageSurface.h"
+#include "RageSurfaceUtils.h"
 #include "PrefsManager.h" // XXX
 
 /* Windows's broken gl.h defines GL_EXT_paletted_texture incompletely: */
@@ -831,15 +833,14 @@ void RageDisplay_OGL::EndFrame()
 	ProcessStatsOnFlip();
 }
 
-SDL_Surface* RageDisplay_OGL::CreateScreenshot()
+RageSurface* RageDisplay_OGL::CreateScreenshot()
 {
 	int width = wind->GetVideoModeParams().width;
 	int height = wind->GetVideoModeParams().height;
 
 	const PixelFormatDesc &desc = PIXEL_FORMAT_DESC[FMT_RGBA8];
-	SDL_Surface *image = SDL_CreateRGBSurfaceSane(
-		SDL_SWSURFACE, width, height,
-        desc.bpp, desc.masks[0], desc.masks[1], desc.masks[2], 0 );
+	RageSurface *image = CreateSurface( width, height, desc.bpp,
+		desc.masks[0], desc.masks[1], desc.masks[2], 0 );
 
 	glReadPixels(0, 0, wind->GetVideoModeParams().width, wind->GetVideoModeParams().height, GL_RGBA,
 	             GL_UNSIGNED_BYTE, image->pixels);
@@ -1612,7 +1613,7 @@ void RageDisplay_OGL::DeleteTexture( unsigned uTexHandle )
 }
 
 
-RageDisplay::PixelFormat RageDisplay_OGL::GetImgPixelFormat( SDL_Surface* &img, bool &FreeImg, int width, int height )
+RageDisplay::PixelFormat RageDisplay_OGL::GetImgPixelFormat( RageSurface* &img, bool &FreeImg, int width, int height )
 {
 	PixelFormat pixfmt = FindPixelFormat( img->format->BitsPerPixel, img->format->Rmask, img->format->Gmask, img->format->Bmask, img->format->Amask );
 	
@@ -1627,16 +1628,9 @@ RageDisplay::PixelFormat RageDisplay_OGL::GetImgPixelFormat( SDL_Surface* &img, 
 
 		const PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
 
-		SDL_SetAlpha( img, 0, SDL_ALPHA_OPAQUE );
-
-		SDL_Rect area;
-		area.x = area.y = 0;
-		area.w = short(width);
-		area.h = short(height);
-
-		SDL_Surface *imgconv = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, width, height,
-			pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);
-		SDL_BlitSurface(img, &area, imgconv, &area);
+		RageSurface *imgconv = CreateSurface( width, height,
+			pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
+		RageSurfaceUtils::Blit( img, imgconv, width, height, false );
 		img = imgconv;
 		FreeImg = true;
 	}
@@ -1648,7 +1642,7 @@ RageDisplay::PixelFormat RageDisplay_OGL::GetImgPixelFormat( SDL_Surface* &img, 
 
 unsigned RageDisplay_OGL::CreateTexture( 
 	PixelFormat pixfmt,
-	SDL_Surface* img,
+	RageSurface* img,
 	bool bGenerateMipMaps )
 {
 	ASSERT( pixfmt < NUM_PIX_FORMATS );
@@ -1731,7 +1725,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 			palette[p++] = img->format->palette->colors[i].r;
 			palette[p++] = img->format->palette->colors[i].g;
 			palette[p++] = img->format->palette->colors[i].b;
-			palette[p++] = img->format->palette->colors[i].unused;
+			palette[p++] = img->format->palette->colors[i].a;
 		}
 
 		/* Set the palette. */
@@ -1803,14 +1797,14 @@ unsigned RageDisplay_OGL::CreateTexture(
 	glFlush();
 
 	if( FreeImg )
-		SDL_FreeSurface( img );
+		delete img;
 	return uTexHandle;
 }
 
 
 void RageDisplay_OGL::UpdateTexture( 
 	unsigned uTexHandle, 
-	SDL_Surface* img,
+	RageSurface* img,
 	int xoffset, int yoffset, int width, int height )
 {
 	glBindTexture( GL_TEXTURE_2D, uTexHandle );
@@ -1834,7 +1828,7 @@ void RageDisplay_OGL::UpdateTexture(
 	glFlush();
 
 	if( FreeImg )
-		SDL_FreeSurface( img );
+		delete img;
 }
 
 CString RageDisplay_OGL::GetTextureDiagnostics( unsigned id ) const

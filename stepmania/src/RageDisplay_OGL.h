@@ -1,6 +1,4 @@
-/*
- * RageDisplay_OGL: OpenGL display implementation
- */
+/* RageDisplay_OGL: OpenGL display implementation */
 
 #ifndef RAGEDISPLAY_OGL_H
 #define RAGEDISPLAY_OGL_H
@@ -23,11 +21,11 @@ public:
 	bool SupportsTextureFormat( PixelFormat pixfmt, bool realtime=false );
 	unsigned CreateTexture( 
 		PixelFormat pixfmt, 
-		SDL_Surface* img,
+		RageSurface* img,
 		bool bGenerateMipMaps );
 	void UpdateTexture( 
 		unsigned uTexHandle, 
-		SDL_Surface* img,
+		RageSurface* img,
 		int xoffset, int yoffset, int width, int height 
 		);
 	void DeleteTexture( unsigned uTexHandle );
@@ -79,10 +77,10 @@ protected:
 	void DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
 
 	CString TryVideoMode( VideoModeParams params, bool &bNewDeviceOut );
-	SDL_Surface* CreateScreenshot();
+	RageSurface* CreateScreenshot();
 	void SetViewport(int shift_left, int shift_down);
 	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
-	PixelFormat GetImgPixelFormat( SDL_Surface* &img, bool &FreeImg, int width, int height );
+	PixelFormat GetImgPixelFormat( RageSurface* &img, bool &FreeImg, int width, int height );
 	bool SupportsSurfaceFormat( PixelFormat pixfmt );
 	void SendCurrentMatrices();
 };

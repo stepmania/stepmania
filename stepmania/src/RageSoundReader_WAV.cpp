@@ -42,7 +42,6 @@ uint32_t RageSoundReader_WAV::ConvertBytePosToMs(int BytesPerSample, int channel
     return (uint32_t) ((frame_no / frames_per_ms) + 0.5f);
 }
 
-/* Better than SDL_ReadLE16, since you can detect i/o errors... */
 bool RageSoundReader_WAV::read_le16( RageFile &f, int16_t *si16 ) const
 {
     const int ret = f.Read( si16, sizeof(int16_t) );
@@ -68,7 +67,6 @@ bool RageSoundReader_WAV::read_le16( RageFile &f, uint16_t *ui16 ) const
 }
 
 
-/* Better than SDL_ReadLE32, since you can detect i/o errors... */
 bool RageSoundReader_WAV::read_le32( RageFile &f, int32_t *si32 ) const
 {
     const int ret = f.Read( si32, sizeof(int32_t) );

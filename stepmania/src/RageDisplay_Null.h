@@ -1,6 +1,4 @@
-/*
- * RageDisplay_Null: diagnostic display device
- */
+/* RageDisplay_Null: diagnostic display device */
 
 #ifndef RAGEDISPLAY_NULL_H
 #define RAGEDISPLAY_NULL_H
@@ -21,11 +19,11 @@ public:
 	bool SupportsTextureFormat( PixelFormat pixfmt, bool realtime=false ) { return true; }
 	unsigned CreateTexture( 
 		PixelFormat pixfmt, 
-		SDL_Surface* img,
+		RageSurface* img,
 		bool bGenerateMipMaps ) { return 1; }
 	void UpdateTexture( 
 		unsigned uTexHandle, 
-		SDL_Surface* img,
+		RageSurface* img,
 		int xoffset, int yoffset, int width, int height 
 		) { }
 	void DeleteTexture( unsigned uTexHandle ) { }
@@ -76,7 +74,7 @@ protected:
 
 	VideoModeParams m_Params;
 	CString TryVideoMode( VideoModeParams params, bool &bNewDeviceOut ) { m_Params = params; return ""; }
-	SDL_Surface* CreateScreenshot();
+	RageSurface* CreateScreenshot();
 	void SetViewport(int shift_left, int shift_down) { }
 	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
 	bool SupportsSurfaceFormat( PixelFormat pixfmt ) { return true; }

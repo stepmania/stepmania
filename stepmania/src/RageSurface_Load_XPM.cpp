@@ -6,6 +6,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "SDL_utils.h"
+#include "RageSurface.h"
 
 #define CheckLine() \
 	if( xpm[line] == NULL ) { \
@@ -13,7 +14,7 @@
 		return NULL; \
 	}
 
-SDL_Surface *RageSurface_Load_XPM( char * const *xpm, CString &error )
+RageSurface *RageSurface_Load_XPM( char * const *xpm, CString &error )
 {
 	int line = 0;
 
@@ -32,7 +33,7 @@ SDL_Surface *RageSurface_Load_XPM( char * const *xpm, CString &error )
 		return NULL;
 	}
 
-	vector<SDL_Color> colors;
+	vector<RageSurfaceColor> colors;
 
 	map<CString,int> name_to_color;
 	for( int i = 0; i < num_colors; ++i )
@@ -55,24 +56,24 @@ SDL_Surface *RageSurface_Load_XPM( char * const *xpm, CString &error )
 		int r, g, b;
 		if( sscanf( clr, "%2x%2x%2x", &r, &g, &b ) != 3 )
 			continue;
-		SDL_Color colorval;
+		RageSurfaceColor colorval;
 		colorval.r = (uint8_t) r;
 		colorval.g = (uint8_t) g;
 		colorval.b = (uint8_t) b;
-		colorval.unused = 0xFF;
+		colorval.a = 0xFF;
 
 		colors.push_back( colorval );
 
 		name_to_color[name] = colors.size()-1;
 	}
 
-	SDL_Surface *img;
+	RageSurface *img;
 	if( colors.size() <= 256 )
 	{
-		img = SDL_CreateRGBSurfaceSane( SDL_SWSURFACE, width, height, 8, 0, 0, 0, 0 );
-		mySDL_SetPalette( img, &colors[0], 0, colors.size() );
+		img = CreateSurface( width, height, 8, 0, 0, 0, 0 );
+		memcpy( img->fmt.palette->colors, &colors[0], colors.size()*sizeof(RageSurfaceColor) );
 	} else {
-		img = SDL_CreateRGBSurfaceSane( SDL_SWSURFACE, width, height, 32,
+		img = CreateSurface( width, height, 32,
 			0xFF000000, 0x00FF0000, 0x0000FF00, 0 );
 	}
 
@@ -83,7 +84,7 @@ SDL_Surface *RageSurface_Load_XPM( char * const *xpm, CString &error )
 		if( (int) row.size() != width*color_length )
 		{
 			error = ssprintf( "row %i is not expected length (%i != %i)", y, int(row.size()), width*color_length );
-			SDL_FreeSurface( img );
+			delete img;
 		    return NULL;
 		}
 
@@ -98,7 +99,7 @@ SDL_Surface *RageSurface_Load_XPM( char * const *xpm, CString &error )
 			if( it == name_to_color.end() )
 			{
 				error = ssprintf( "%ix%i is unknown color \"%s\"", x, y, color_name.c_str() );
-				SDL_FreeSurface( img );
+				delete img;
 				return NULL;
 			}
 
@@ -106,7 +107,7 @@ SDL_Surface *RageSurface_Load_XPM( char * const *xpm, CString &error )
 			{
 				p[x] = (int8_t) it->second;
 			} else {
-				const SDL_Color &color = colors[it->second];
+				const RageSurfaceColor &color = colors[it->second];
 				p32[x] = (color.r << 24) + (color.g << 16) + (color.b << 8);
 			}
 		}

@@ -1,9 +1,9 @@
 #ifndef SM_SDL_DITHER_H
 #define SM_SDL_DITHER_H
 
-struct SDL_Surface;
-void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst);
-void SM_SDL_ErrorDiffusionDither(const SDL_Surface *src, SDL_Surface *dst);
+struct RageSurface;
+void SM_SDL_OrderedDither(const RageSurface *src, RageSurface *dst);
+void SM_SDL_ErrorDiffusionDither(const RageSurface *src, RageSurface *dst);
 
 #endif
 

@@ -4,6 +4,7 @@
 #include "RageLog.h"
 #include "SDL_utils.h"
 #include "RageFile.h"
+#include "RageSurface.h"
 
 #include <setjmp.h>
 
@@ -105,7 +106,7 @@ void RageFile_JPEG_term_source( j_decompress_ptr cinfo )
 {
 }
 
-static SDL_Surface *RageSurface_Load_JPEG( RageFile *f, const char *fn, char errorbuf[JMSG_LENGTH_MAX] )
+static RageSurface *RageSurface_Load_JPEG( RageFile *f, const char *fn, char errorbuf[JMSG_LENGTH_MAX] )
 {
 	struct jpeg_decompress_struct cinfo;
 
@@ -114,7 +115,7 @@ static SDL_Surface *RageSurface_Load_JPEG( RageFile *f, const char *fn, char err
 	jerr.pub.error_exit = my_error_exit;
 	jerr.pub.output_message = my_output_message;
 	
-	SDL_Surface *volatile img = NULL; /* volatile to prevent possible problems with setjmp */
+	RageSurface *volatile img = NULL; /* volatile to prevent possible problems with setjmp */
 
 	if( setjmp(jerr.setjmp_buffer) )
 	{
@@ -122,8 +123,7 @@ static SDL_Surface *RageSurface_Load_JPEG( RageFile *f, const char *fn, char err
 		memcpy( errorbuf, myerr->errorbuf, JMSG_LENGTH_MAX );
 		
 		jpeg_destroy_decompress( &cinfo );
-		if( img )
-			SDL_FreeSurface( img );
+		delete img;
 		return NULL;
 	}
 
@@ -164,17 +164,17 @@ static SDL_Surface *RageSurface_Load_JPEG( RageFile *f, const char *fn, char err
 
 	if( cinfo.out_color_space == JCS_GRAYSCALE )
 	{
-		img = SDL_CreateRGBSurfaceSane( SDL_SWSURFACE, cinfo.output_width, cinfo.output_height, 8, 0, 0, 0, 0 );
+		img = CreateSurface( cinfo.output_width, cinfo.output_height, 8, 0, 0, 0, 0 );
 
 		for( int i = 0; i < 256; ++i )
 		{
-			SDL_Color color;
+			RageSurfaceColor color;
 			color.r = color.g = color.b = (int8_t) i;
-			color.unused = 0xFF;
-			mySDL_SetPalette( img, &color, i, 1 );
+			color.a = 0xFF;
+			img->fmt.palette->colors[i] = color;
 		}
 	} else {
-		img = SDL_CreateRGBSurfaceSane( SDL_SWSURFACE, cinfo.output_width, cinfo.output_height, 24,
+		img = CreateSurface( cinfo.output_width, cinfo.output_height, 24,
 				Swap24BE( 0xFF0000 ),
 				Swap24BE( 0x00FF00 ),
 				Swap24BE( 0x0000FF ),
@@ -195,7 +195,7 @@ static SDL_Surface *RageSurface_Load_JPEG( RageFile *f, const char *fn, char err
 }
 
 
-RageSurfaceUtils::OpenResult RageSurface_Load_JPEG( const CString &sPath, SDL_Surface *&ret, bool bHeaderOnly, CString &error )
+RageSurfaceUtils::OpenResult RageSurface_Load_JPEG( const CString &sPath, RageSurface *&ret, bool bHeaderOnly, CString &error )
 {
 	RageFile f;
 	if( !f.Open( sPath ) )

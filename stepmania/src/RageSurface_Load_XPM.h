@@ -1,8 +1,8 @@
 #ifndef RAGE_SURFACE_LOAD_XPM_H
 #define RAGE_SURFACE_LOAD_XPM_H
 
-struct SDL_Surface;
-SDL_Surface *RageSurface_Load_XPM( char * const *xpm, CString &error );
+struct RageSurface;
+RageSurface *RageSurface_Load_XPM( char * const *xpm, CString &error );
 
 #endif
 

@@ -13,6 +13,7 @@
 #include "RageTypes.h"
 #include "StepMania.h"
 #include "RageUtil.h"
+#include "RageSurface.h"
 
 static RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[RageDisplay::NUM_PIX_FORMATS] = {
 	{
@@ -78,12 +79,12 @@ RageDisplay_Null::RageDisplay_Null( VideoModeParams p )
 	SetVideoMode( p );
 }
 
-SDL_Surface* RageDisplay_Null::CreateScreenshot()
+RageSurface* RageDisplay_Null::CreateScreenshot()
 {
 	const PixelFormatDesc &desc = PIXEL_FORMAT_DESC[FMT_RGB8];
-	SDL_Surface *image = SDL_CreateRGBSurfaceSane(
-		SDL_SWSURFACE, 640, 480,
-		desc.bpp, desc.masks[0], desc.masks[1], desc.masks[2], desc.masks[3] );
+	RageSurface *image = CreateSurface(
+		640, 480, desc.bpp,
+		desc.masks[0], desc.masks[1], desc.masks[2], desc.masks[3] );
 
 	memset( image->pixels, 0, 480*image->pitch );
 

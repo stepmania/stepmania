@@ -15,10 +15,12 @@
 #include "StepMania.h"
 #include "RageUtil.h"
 #include "D3dx8math.h"
-#include "SDL_video.h"	// for SDL_Surface
+#include "SDL_video.h"	// for RageSurface
 #include "SDL_utils.h"
 #include "D3DX8Core.h"
 #include "PrefsManager.h"
+#include "RageSurface.h"
+#include "RageSurfaceUtils.h"
 
 #include "arch/arch.h"
 
@@ -654,7 +656,7 @@ bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
     return SUCCEEDED( hr );
 }
 
-SDL_Surface* RageDisplay_D3D::CreateScreenshot()
+RageSurface* RageDisplay_D3D::CreateScreenshot()
 {
 #ifndef _XBOX
 	/* Get the back buffer. */
@@ -687,17 +689,17 @@ SDL_Surface* RageDisplay_D3D::CreateScreenshot()
 		pCopy->LockRect( &lr, &rect, D3DLOCK_READONLY );
 	}
 
-	SDL_Surface *surface = CreateSurfaceFromPixfmt( FMT_RGBA8, lr.pBits, desc.Width, desc.Height, lr.Pitch);
+	RageSurface *surface = CreateSurfaceFromPixfmt( FMT_RGBA8, lr.pBits, desc.Width, desc.Height, lr.Pitch);
 	ASSERT( surface );
 
 	/* We need to make a copy, since lr.pBits will go away when we call UnlockRect(). */
-	SDL_Surface *SurfaceCopy = 
-		SDL_CreateRGBSurfaceSane( SDL_SWSURFACE, surface->w, surface->h,
+	RageSurface *SurfaceCopy = 
+		CreateSurface( surface->w, surface->h,
 			surface->format->BitsPerPixel,
 			surface->format->Rmask, surface->format->Gmask,
 			surface->format->Bmask, surface->format->Amask );
-	CopySDLSurface( surface, SurfaceCopy );
-	SDL_FreeSurface( surface );
+	RageSurfaceUtils::CopySurface( surface, SurfaceCopy );
+	delete surface;
 
 	pCopy->UnlockRect();
 	pCopy->Release();
@@ -1164,7 +1166,7 @@ void RageDisplay_D3D::DeleteTexture( unsigned uTexHandle )
 
 unsigned RageDisplay_D3D::CreateTexture( 
 	PixelFormat pixfmt,
-	SDL_Surface* img,
+	RageSurface* img,
 	bool bGenerateMipMaps )
 {
 	// texture must be power of two
@@ -1188,11 +1190,11 @@ unsigned RageDisplay_D3D::CreateTexture(
 		memset( pal.p, 0, sizeof(pal.p) );
 		for( int i=0; i<img->format->palette->ncolors; i++ )
 		{
-			SDL_Color c = img->format->palette->colors[i];
+			RageSurfaceColor &c = img->format->palette->colors[i];
 			pal.p[i].peRed = c.r;
 			pal.p[i].peGreen = c.g;
 			pal.p[i].peBlue = c.b;
-			pal.p[i].peFlags = c.unused;
+			pal.p[i].peFlags = c.a;
 		}
 
 		ASSERT( g_TexResourceToTexturePalette.find(uTexHandle) == g_TexResourceToTexturePalette.end() );
@@ -1206,7 +1208,7 @@ unsigned RageDisplay_D3D::CreateTexture(
 
 void RageDisplay_D3D::UpdateTexture( 
 	unsigned uTexHandle, 
-	SDL_Surface* img,
+	RageSurface* img,
 	int xoffset, int yoffset, int width, int height )
 {
 	IDirect3DTexture8* pTex = (IDirect3DTexture8*)uTexHandle;
@@ -1251,18 +1253,15 @@ void RageDisplay_D3D::UpdateTexture(
 		if(D3DFORMATS[texpixfmt] == desc.Format) break;
 	ASSERT( texpixfmt != NUM_PIX_FORMATS );
 
-	SDL_Surface *Texture = CreateSurfaceFromPixfmt(PixelFormat(texpixfmt), lr.pBits, width, height, lr.Pitch);
+	RageSurface *Texture = CreateSurfaceFromPixfmt(PixelFormat(texpixfmt), lr.pBits, width, height, lr.Pitch);
 	ASSERT( Texture );
 	SDL_Rect area;
 	area.x = area.y = 0;
 	area.w = (uint16_t) width;
 	area.h = (uint16_t) height;
-	SDL_SetAlpha( img, 0, SDL_ALPHA_OPAQUE );
-//	SDL_SetColorKey( img, 0, 0 );
-//	SDL_BlitSurface( img, &area, Texture, &area );
-	mySDL_BlitSurface( img, Texture, width, height, false );
+	RageSurfaceUtils::Blit( img, Texture, width, height, false );
 
-	SDL_FreeSurface( Texture );
+	delete Texture;
 #endif
 
 	pTex->UnlockRect( 0 );

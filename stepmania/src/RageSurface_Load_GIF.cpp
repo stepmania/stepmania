@@ -4,6 +4,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "SDL_utils.h"
+#include "RageSurface.h"
 
 #define	MAXCOLORMAPSIZE		256
 
@@ -18,11 +19,11 @@
 #define LM_to_uint(a,b)			(((b)<<8)|(a))
 
 
-static SDL_Surface *ReadImage( RageFile &f, int len, int height,
-			const SDL_Color localColorMap[MAXCOLORMAPSIZE],
+static RageSurface *ReadImage( RageFile &f, int len, int height,
+			const RageSurfaceColor localColorMap[MAXCOLORMAPSIZE],
 			int interlace, int ignore );
 
-static bool ReadPalette( RageFile &f, int number, SDL_Color buffer[MAXCOLORMAPSIZE] )
+static bool ReadPalette( RageFile &f, int number, RageSurfaceColor buffer[MAXCOLORMAPSIZE] )
 {
 	for( int i = 0; i < number; ++i )
 	{
@@ -32,7 +33,7 @@ static bool ReadPalette( RageFile &f, int number, SDL_Color buffer[MAXCOLORMAPSI
 			return false;
 		if( !ReadOK(f, &buffer[i].b, sizeof(buffer[i].b)) )
 			return false;
-		buffer[i].unused = 0xFF;
+		buffer[i].a = 0xFF;
 	}
 
     return true;
@@ -58,7 +59,7 @@ static int GetDataBlock( RageFile &f, unsigned char *buf )
 }
 
 
-RageSurfaceUtils::OpenResult RageSurface_Load_GIF( const CString &sPath, SDL_Surface *&ret, bool bHeaderOnly, CString &error )
+RageSurfaceUtils::OpenResult RageSurface_Load_GIF( const CString &sPath, RageSurface *&ret, bool bHeaderOnly, CString &error )
 {
 	unsigned char buf[256];
 	int imageCount = 0;
@@ -100,7 +101,7 @@ RageSurfaceUtils::OpenResult RageSurface_Load_GIF( const CString &sPath, SDL_Sur
 		return RageSurfaceUtils::OPEN_FATAL_ERROR;
 	}
 
-	SDL_Color GlobalColorMap[MAXCOLORMAPSIZE];
+	RageSurfaceColor GlobalColorMap[MAXCOLORMAPSIZE];
 	unsigned int GlobalBitPixel = 0;
 
 	GlobalBitPixel = 2 << (buf[4] & 0x07);
@@ -172,7 +173,7 @@ RageSurfaceUtils::OpenResult RageSurface_Load_GIF( const CString &sPath, SDL_Sur
 			}
 
 			int bitPixel = 1 << ((buf[8] & 0x07) + 1);
-			SDL_Color LocalColorMap[MAXCOLORMAPSIZE];
+			RageSurfaceColor LocalColorMap[MAXCOLORMAPSIZE];
 
 			if( BitSet(buf[8], LOCALCOLORMAP) )
 			{
@@ -194,7 +195,7 @@ RageSurfaceUtils::OpenResult RageSurface_Load_GIF( const CString &sPath, SDL_Sur
 				continue;
 
 			if( transparency != -1 )
-				mySDL_AddColorKey( ret, transparency );
+				ret->format->palette->colors[ transparency ].a = 0;
 
 			return RageSurfaceUtils::OPEN_OK;
 		}
@@ -388,8 +389,8 @@ int LWZState::ReadByte( RageFile &f )
     return code;
 }
 
-static SDL_Surface *ReadImage( RageFile &f, int len, int height,
-		const SDL_Color localColorMap[MAXCOLORMAPSIZE],
+static RageSurface *ReadImage( RageFile &f, int len, int height,
+		const RageSurfaceColor localColorMap[MAXCOLORMAPSIZE],
 		int interlace, int ignore )
 {
     int xpos = 0, ypos = 0, pass = 0;
@@ -409,8 +410,8 @@ static SDL_Surface *ReadImage( RageFile &f, int len, int height,
 		return NULL;
 	}
 
-    SDL_Surface *image = SDL_CreateRGBSurfaceSane( SDL_SWSURFACE, len, height, 8, 0, 0, 0, 0 );
-	mySDL_SetPalette( image, localColorMap, 0, 256 );
+    RageSurface *image = CreateSurface( len, height, 8, 0, 0, 0, 0 );
+	memcpy( image->fmt.palette->colors, localColorMap, 256*sizeof(RageSurfaceColor) );
 
 	int v;
 	while( (v = state.ReadByte(f)) >= 0 )

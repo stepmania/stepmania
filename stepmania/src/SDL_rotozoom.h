@@ -1,8 +1,8 @@
 #ifndef SDL_ROTOZOOM_H
 #define SDL_ROTOZOOM_H
 
-struct SDL_Surface;
-void zoomSurface( SDL_Surface *&src, int dstwidth, int dstheight );
+struct RageSurface;
+void zoomSurface( RageSurface *&src, int dstwidth, int dstheight );
 
 #endif
 

@@ -9,6 +9,7 @@
 #include "RageFile.h"
 #include "SDL_SaveJPEG.h"
 #include "SDL_rotozoom.h"
+#include "RageSurface.h"
 
 //
 // Statistics stuff
@@ -572,14 +573,15 @@ RageMatrix RageDisplay::GetPerspectiveMatrix(float fovy, float aspect, float zNe
    return GetFrustumMatrix(xmin, xmax, ymin, ymax, zNear, zFar);
 }
 
-SDL_Surface *RageDisplay::CreateSurfaceFromPixfmt( PixelFormat pixfmt,
+RageSurface *RageDisplay::CreateSurfaceFromPixfmt( PixelFormat pixfmt,
 						void *pixels, int width, int height, int pitch )
 {
 	const PixelFormatDesc *tpf = GetPixelFormatDesc(pixfmt);
 
-	SDL_Surface *surf = SDL_CreateRGBSurfaceFrom(
-		pixels, width, height, tpf->bpp, pitch,
-		tpf->masks[0], tpf->masks[1], tpf->masks[2], tpf->masks[3]);
+	RageSurface *surf = CreateSurfaceFrom(
+		width, height, tpf->bpp, 
+		tpf->masks[0], tpf->masks[1], tpf->masks[2], tpf->masks[3],
+		(uint8_t *) pixels, pitch );
 
 	return surf;
 }
@@ -629,7 +631,7 @@ void RageDisplay::ChangeCentering( int trans_x, int trans_y, float scale_x, floa
 
 bool RageDisplay::SaveScreenshot( CString sPath, GraphicsFileFormat format )
 {
-	SDL_Surface* surface = this->CreateScreenshot();
+	RageSurface* surface = this->CreateScreenshot();
 
 	CString buf;
 	buf.reserve( 1024*1024 );
@@ -646,8 +648,12 @@ bool RageDisplay::SaveScreenshot( CString sPath, GraphicsFileFormat format )
 	switch( format )
 	{
 	case SAVE_LOSSLESS:
-		SDL_SaveBMP_RW( surface, &rw, false );
+	{
+		SDL_Surface *pSDLSurf = SDLSurfaceFromRageSurface( surface );
+		SDL_SaveBMP_RW( pSDLSurf, &rw, false );
+		delete pSDLSurf;
 		break;
+	}
 	case SAVE_LOSSY_LOW_QUAL:
 		IMG_SaveJPG_RW( surface, &rw, false );
 	case SAVE_LOSSY_HIGH_QUAL:
@@ -660,7 +666,7 @@ bool RageDisplay::SaveScreenshot( CString sPath, GraphicsFileFormat format )
 
 	SDL_RWclose( &rw );
 
-	SDL_FreeSurface( surface );
+	delete surface;
 	surface = NULL;
 
 	RageFile out;

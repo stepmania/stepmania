@@ -1,7 +1,7 @@
 #ifndef RAGE_SURFACE_LOAD_H
 #define RAGE_SURFACE_LOAD_H
 
-struct SDL_Surface;
+struct RageSurface;
 namespace RageSurfaceUtils
 {
 	enum OpenResult
@@ -13,7 +13,7 @@ namespace RageSurfaceUtils
 
 	/* If bHeaderOnly is true, the loader is only required to return a surface
 	 * with the width and height set (but may return a complete surface). */
-	SDL_Surface *LoadFile( const CString &sPath, bool bHeaderOnly=false );
+	RageSurface *LoadFile( const CString &sPath, bool bHeaderOnly=false );
 }
 
 #endif

@@ -9,7 +9,7 @@
 #include "SDL_utils.h"
 #include <set>
 
-static RageSurfaceUtils::OpenResult RageSurface_Load_BMP( const CString &sPath, SDL_Surface *&ret, bool bHeaderOnly, CString &error )
+static RageSurfaceUtils::OpenResult RageSurface_Load_BMP( const CString &sPath, RageSurface *&ret, bool bHeaderOnly, CString &error )
 {
 	RageFile f;
 	if( !f.Open(sPath) )
@@ -20,23 +20,24 @@ static RageSurfaceUtils::OpenResult RageSurface_Load_BMP( const CString &sPath, 
 
 	SDL_RWops rw;
 	OpenRWops( &rw, &f );
-	ret = SDL_LoadBMP_RW( &rw, false );
+	SDL_Surface *pSDLSurface = SDL_LoadBMP_RW( &rw, false );
 	SDL_RWclose( &rw );
 
-	if( ret == NULL )
+	if( pSDLSurface == NULL )
 	{
 		error = SDL_GetError();
 		return RageSurfaceUtils::OPEN_UNKNOWN_FILE_FORMAT;
 	}
 
-	mySDL_FixupPalettedAlpha( ret );
+	ret = RageSurfaceFromSDLSurface( pSDLSurface );
+
 	return RageSurfaceUtils::OPEN_OK;
 }
 
 
-static SDL_Surface *TryOpenFile( CString sPath, bool bHeaderOnly, CString &error, CString format, bool &bKeepTrying )
+static RageSurface *TryOpenFile( CString sPath, bool bHeaderOnly, CString &error, CString format, bool &bKeepTrying )
 {
-	SDL_Surface *ret = NULL;
+	RageSurface *ret = NULL;
 	RageSurfaceUtils::OpenResult result;
 	if( !format.CompareNoCase("png") )
 		result = RageSurface_Load_PNG( sPath, ret, bHeaderOnly, error );
@@ -96,7 +97,7 @@ static SDL_Surface *TryOpenFile( CString sPath, bool bHeaderOnly, CString &error
 	return NULL;
 }
 
-SDL_Surface *RageSurfaceUtils::LoadFile( const CString &sPath, bool bHeaderOnly )
+RageSurface *RageSurfaceUtils::LoadFile( const CString &sPath, bool bHeaderOnly )
 {
 	{
 		RageFile TestOpen;
@@ -123,7 +124,7 @@ SDL_Surface *RageSurfaceUtils::LoadFile( const CString &sPath, bool bHeaderOnly 
 	/* If the extension matches a format, try that first. */
 	if( FileTypes.find(format) != FileTypes.end() )
 	{
-	    SDL_Surface *ret = TryOpenFile( sPath, bHeaderOnly, error, format, bKeepTrying );
+	    RageSurface *ret = TryOpenFile( sPath, bHeaderOnly, error, format, bKeepTrying );
 		if( ret )
 			return ret;
 		FileTypes.erase( format );
@@ -131,7 +132,7 @@ SDL_Surface *RageSurfaceUtils::LoadFile( const CString &sPath, bool bHeaderOnly 
 
 	for( set<CString>::iterator it = FileTypes.begin(); bKeepTrying && it != FileTypes.end(); ++it )
 	{
-	    SDL_Surface *ret = TryOpenFile( sPath, bHeaderOnly, error, *it, bKeepTrying );
+	    RageSurface *ret = TryOpenFile( sPath, bHeaderOnly, error, *it, bKeepTrying );
 		if( ret )
 		{
 			LOG->Warn("File \"%s\" is really %s", sPath.c_str(), it->c_str());

@@ -21,6 +21,7 @@
 #include "arch/arch.h"
 #include "RageFile.h"
 #include "RageFileManager.h"
+#include "RageSurface.h"
 #include "NoteDataUtil.h"
 #include "SDL_utils.h"
 #include "ProfileManager.h"
@@ -697,7 +698,7 @@ void Song::TidyUpData()
 
 		CString sPath = m_sSongDir + arrayImages[i];
 		/* We only care about the dimensions. */
-		SDL_Surface *img = RageSurfaceUtils::LoadFile( sPath, true );
+		RageSurface *img = RageSurfaceUtils::LoadFile( sPath, true );
 		if( !img )
 		{
 			LOG->Trace("Couldn't load '%s': %s", sPath.c_str(), SDL_GetError());
@@ -706,7 +707,7 @@ void Song::TidyUpData()
 
 		const int width = img->w;
 		const int height = img->h;
-		SDL_FreeSurface( img );
+		delete img;
 
 		if( !HasBackground()  &&  width >= 320  &&  height >= 240 )
 		{

@@ -1,5 +1,6 @@
 #include "global.h"
-#include "SDL.h"
+#include "RageSurface.h"
+#include "RageSurfaceUtils.h"
 #include "SDL_utils.h"
 #include "RageUtil.h"
 
@@ -95,10 +96,10 @@ static void jpeg_SDL_RW_dest( jpeg::j_compress_ptr cinfo, SDL_RWops *ctx )
 }
 
 /* Save a JPEG to a file.  cjpeg.c and example.c from jpeglib were helpful in writing this. */
-void IMG_SaveJPG_RW( SDL_Surface *surface, SDL_RWops *dest, bool bHighQual )
+void IMG_SaveJPG_RW( RageSurface *surface, SDL_RWops *dest, bool bHighQual )
 {
-	SDL_Surface *dst_surface;
-	if( ConvertSDLSurface( surface, dst_surface,
+	RageSurface *dst_surface;
+	if( RageSurfaceUtils::ConvertSurface( surface, dst_surface,
 		surface->w, surface->h, 24, Swap24BE(0xFF0000), Swap24BE(0x00FF00), Swap24BE(0x0000FF), 0 ) )
 		surface = dst_surface;
 
@@ -150,8 +151,7 @@ void IMG_SaveJPG_RW( SDL_Surface *surface, SDL_RWops *dest, bool bHighQual )
 	jpeg::jpeg_finish_compress( &cinfo );
 	jpeg::jpeg_destroy_compress( &cinfo );
 
-	if( dst_surface )
-		SDL_FreeSurface( dst_surface );
+	delete dst_surface;
 }
 
 /*

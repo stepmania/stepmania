@@ -4,6 +4,7 @@
 #include "RageLog.h"
 #include "SDL_utils.h"
 #include "RageFile.h"
+#include "RageSurface.h"
 
 #if defined(WIN32)
 #include "libpng/include/png.h"
@@ -51,7 +52,7 @@ static void PNG_Warning( png_struct *png, const char *warning )
 
 /* Since libpng forces us to use longjmp (gross!), this function shouldn't create any C++
  * objects, and needs to watch out for memleaks. */
-static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char errorbuf[1024], bool bHeaderOnly )
+static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char errorbuf[1024], bool bHeaderOnly )
 {
 	error_info error;
 	error.err = errorbuf;
@@ -72,12 +73,11 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		return NULL;
 	}
 
-	SDL_Surface *volatile img = NULL;
+	RageSurface *volatile img = NULL;
 	if( setjmp(png_jmpbuf(png)) )
 	{
 		png_destroy_read_struct( &png, &info_ptr, NULL );
-		if( img )
-			SDL_FreeSurface( img );
+		delete img;
 		return NULL;
 	}
 
@@ -93,7 +93,7 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	 * the image.  Just return an empty surface with only the width and height set. */
 	if( bHeaderOnly )
 	{
-		img = SDL_CreateRGBSurfaceFrom( NULL, width, height, 32, width*4, 0, 0, 0, 0 );
+		img = CreateSurfaceFrom( width, height, 32, 0, 0, 0, 0, NULL, width*4 );
 		png_destroy_read_struct( &png, &info_ptr, NULL );
 		if( !img )
 		{
@@ -113,7 +113,7 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		png_set_gray_1_2_4_to_8( png );
 
 	/* These are set for type == PALETTE. */
-	SDL_Color colors[256];
+	RageSurfaceColor colors[256];
 	int iColorKey = -1;
 
 	/* We import three types of files: paletted, RGBX and RGBA.  The only difference
@@ -127,7 +127,7 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		for( int i = 0; i < 256; ++i )
 		{
 			colors[i].r = colors[i].g = colors[i].b = (int8_t) i;
-			colors[i].unused = 0xFF;
+			colors[i].a = 0xFF;
 		}
 
 		type = PALETTE;
@@ -185,9 +185,9 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 			colors[i].r = palette[i].red;
 			colors[i].g = palette[i].green;
 			colors[i].b = palette[i].blue;
-			colors[i].unused = 0xFF;
+			colors[i].a = 0xFF;
 			if( i < num_trans )
-				colors[i].unused = trans[i];
+				colors[i].a = trans[i];
 		}
 	}
 
@@ -198,16 +198,16 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	switch( type )
 	{
 	case PALETTE:
-		img = SDL_CreateRGBSurfaceSane( SDL_SWSURFACE, width, height, 8, 0, 0, 0, 0 );
-		mySDL_SetPalette( img, colors, 0, 256 );
+		img = CreateSurface( width, height, 8, 0, 0, 0, 0 );
+		memcpy( img->fmt.palette->colors, colors, 256*sizeof(RageSurfaceColor) );
 
 		if( iColorKey != -1 )
-			mySDL_AddColorKey( img, iColorKey );
+			img->format->palette->colors[ iColorKey ].a = 0;
 
 		break;
 	case RGBX:
 	case RGBA:
-		img = SDL_CreateRGBSurfaceSane( SDL_SWSURFACE, width, height, 32,
+		img = CreateSurface( width, height, 32,
 				Swap32BE( 0xFF000000 ),
 				Swap32BE( 0x00FF0000 ),
 				Swap32BE( 0x0000FF00 ),
@@ -236,7 +236,7 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 }
 
 
-RageSurfaceUtils::OpenResult RageSurface_Load_PNG( const CString &sPath, SDL_Surface *&ret, bool bHeaderOnly, CString &error )
+RageSurfaceUtils::OpenResult RageSurface_Load_PNG( const CString &sPath, RageSurface *&ret, bool bHeaderOnly, CString &error )
 {
 	RageFile f;
 	if( !f.Open( sPath ) )

@@ -1,6 +1,6 @@
 #include "global.h"
 #include "SDL_rotozoom.h"
-#include "SDL.h"
+#include "RageSurface.h"
 
 #include <vector>
 using namespace std;
@@ -13,7 +13,7 @@ using namespace std;
  * lines.)
  */
 
-static void ZoomSurface( SDL_Surface * src, SDL_Surface * dst )
+static void ZoomSurface( RageSurface * src, RageSurface * dst )
 {
     /* Ratio from source to dest. */
     const float sx = float(src->w) / dst->w;
@@ -121,7 +121,7 @@ static void ZoomSurface( SDL_Surface * src, SDL_Surface * dst )
 }
 
 
-void zoomSurface( SDL_Surface *&src, int dstwidth, int dstheight )
+void zoomSurface( RageSurface *&src, int dstwidth, int dstheight )
 {
     if( src == NULL )
 		return;
@@ -140,14 +140,14 @@ void zoomSurface( SDL_Surface *&src, int dstwidth, int dstheight )
 		int target_width = int(src->w*xscale + .5);
 		int target_height = int(src->h*yscale + .5);
 
-		SDL_Surface *dst =
-			SDL_CreateRGBSurface(SDL_SWSURFACE, target_width, target_height, 32,
+		RageSurface *dst =
+			CreateSurface(target_width, target_height, 32,
 					src->format->Rmask, src->format->Gmask,
 					src->format->Bmask, src->format->Amask);
 
 	    ZoomSurface( src, dst );
 
-		SDL_FreeSurface(src);
+		delete src;
 
 		src = dst;
 	}

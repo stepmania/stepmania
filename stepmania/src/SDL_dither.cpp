@@ -1,9 +1,9 @@
 #include "global.h"
 
 #include "RageUtil.h"
-#include "SDL.h"
 #include "SDL_dither.h"
-#include "SDL_utils.h"
+#include "RageSurface.h"
+#include "RageSurfaceUtils.h"
 
 #define DitherMatDim 4
 
@@ -52,7 +52,7 @@ static uint8_t DitherPixel(int x, int y, int intensity,  int conv)
 	return uint8_t((out_intensity + 1) >> 16);
 }
 
-void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
+void SM_SDL_OrderedDither(const RageSurface *src, RageSurface *dst)
 {
 	static bool DitherMatCalc_initted = false;
 	if( !DitherMatCalc_initted )
@@ -75,8 +75,8 @@ void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
 	ASSERT( dst->format->BytesPerPixel > 1 );
 
 	uint32_t src_cbits[4], dst_cbits[4];
-	mySDL_GetBitsPerChannel( src->format, src_cbits );
-	mySDL_GetBitsPerChannel( dst->format, dst_cbits );
+	RageSurfaceUtils::GetBitsPerChannel( src->format, src_cbits );
+	RageSurfaceUtils::GetBitsPerChannel( dst->format, dst_cbits );
 
 	/* Calculate the ratio from the old bit depth to the new for each color channel. */
 	int conv[4];
@@ -104,7 +104,7 @@ void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
 		for( int col = 0; col < src->w; ++col )
 		{
 			uint8_t colors[4];
-			mySDL_GetRawRGBAV( srcp, src, colors );
+			RageSurfaceUtils::GetRawRGBAV( srcp, src->fmt, colors );
 
 			/* Note that we don't dither the alpha channel. */
 			for( int c = 0; c < 3; ++c )
@@ -135,7 +135,7 @@ void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
 			}
 
 			/* Raw value -> int -> pixel */
-			mySDL_SetRawRGBAV(dstp, dst, colors);
+			RageSurfaceUtils::SetRawRGBAV(dstp, dst, colors);
 
 			srcp += src->format->BytesPerPixel;
 			dstp += dst->format->BytesPerPixel;
@@ -167,14 +167,14 @@ void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
 /* This is very similar to SM_SDL_OrderedDither, except instead of using a matrix
  * containing rounding values, we truncate and then add the resulting error for
  * each pixel to the next pixel on the same line.  (Maybe we could do both?) */
-void SM_SDL_ErrorDiffusionDither(const SDL_Surface *src, SDL_Surface *dst)
+void SM_SDL_ErrorDiffusionDither(const RageSurface *src, RageSurface *dst)
 {
 	/* We can't dither to paletted surfaces. */
 	ASSERT( dst->format->BytesPerPixel > 1 );
 
 	uint32_t src_cbits[4], dst_cbits[4];
-	mySDL_GetBitsPerChannel( src->format, src_cbits );
-	mySDL_GetBitsPerChannel( dst->format, dst_cbits );
+	RageSurfaceUtils::GetBitsPerChannel( src->format, src_cbits );
+	RageSurfaceUtils::GetBitsPerChannel( dst->format, dst_cbits );
 
 	/* Calculate the ratio from the old bit depth to the new for each color channel. */
 	int conv[4];
@@ -204,7 +204,7 @@ void SM_SDL_ErrorDiffusionDither(const SDL_Surface *src, SDL_Surface *dst)
 		for( int col = 0; col < src->w; ++col )
 		{
 			uint8_t colors[4];
-			mySDL_GetRawRGBAV( srcp, src, colors );
+			RageSurfaceUtils::GetRawRGBAV( srcp, src->fmt, colors );
 
 			for( int c = 0; c < 3; ++c )
 			{
@@ -264,7 +264,7 @@ void SM_SDL_ErrorDiffusionDither(const SDL_Surface *src, SDL_Surface *dst)
 				colors[3] = uint8_t((out_intensity + 32767) >> 16);
 			}
 
-			mySDL_SetRawRGBAV( dstp, dst, colors );
+			RageSurfaceUtils::SetRawRGBAV( dstp, dst, colors );
 
 			srcp += src->format->BytesPerPixel;
 			dstp += dst->format->BytesPerPixel;

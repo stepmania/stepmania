@@ -33,11 +33,11 @@ public:
 	bool SupportsTextureFormat( PixelFormat pixfmt, bool realtime=false );
 	unsigned CreateTexture( 
 		PixelFormat pixfmt, 
-		SDL_Surface* img, 
+		RageSurface* img, 
 		bool bGenerateMipMaps );
 	void UpdateTexture( 
 		unsigned uTexHandle, 
-		SDL_Surface* img,
+		RageSurface* img,
 		int xoffset, int yoffset, int width, int height 
 		);
 	void DeleteTexture( unsigned uTexHandle );
@@ -86,7 +86,7 @@ protected:
 	void DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex );
 
 	CString TryVideoMode( VideoModeParams params, bool &bNewDeviceOut );
-	SDL_Surface* CreateScreenshot();
+	RageSurface* CreateScreenshot();
 	void SetViewport(int shift_left, int shift_down);
 	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
 };

@@ -10,7 +10,7 @@
 #include "ModelTypes.h"
 
 const int REFRESH_DEFAULT = 0;
-struct SDL_Surface;
+struct RageSurface;
 const int MAX_TEXTURE_UNITS = 2;
 
 // RageCompiledGeometry holds vertex data in a format that is most efficient 
@@ -172,12 +172,12 @@ public:
 	 * (unsigned in OpenGL, texture pointer in D3D) */
 	virtual unsigned CreateTexture( 
 		PixelFormat pixfmt,			// format of img and of texture in video mem
-		SDL_Surface* img, 		// must be in pixfmt
+		RageSurface* img, 		// must be in pixfmt
 		bool bGenerateMipMaps
 		) = 0;
 	virtual void UpdateTexture( 
 		unsigned uTexHandle, 
-		SDL_Surface* img,
+		RageSurface* img,
 		int xoffset, int yoffset, int width, int height 
 		) = 0;
 	virtual void DeleteTexture( unsigned uTexHandle ) = 0;
@@ -257,7 +257,7 @@ protected:
 	// bNewDeviceOut is set true if a new device was created and textures
 	// need to be reloaded.
 	virtual CString TryVideoMode( VideoModeParams params, bool &bNewDeviceOut ) = 0;
-	virtual SDL_Surface* CreateScreenshot() = 0;	// allocates a surface.  Caller must SDL_FreeSurface it.
+	virtual RageSurface* CreateScreenshot() = 0;	// allocates a surface.  Caller must SDL_FreeSurface it.
 
 	virtual void SetViewport(int shift_left, int shift_down) = 0;
 
@@ -299,7 +299,7 @@ public:
 	/* Centering matrix */
 	void ChangeCentering( int trans_x, int trans_y, float scale_x, float scale_y );
 
-	SDL_Surface *CreateSurfaceFromPixfmt( PixelFormat pixfmt, void *pixels, int width, int height, int pitch );
+	RageSurface *CreateSurfaceFromPixfmt( PixelFormat pixfmt, void *pixels, int width, int height, int pitch );
 	PixelFormat FindPixelFormat( int bpp, int Rmask, int Gmask, int Bmask, int Amask, bool realtime=false );
 
 protected:

@@ -8,6 +8,8 @@
 #include "RageTypes.h"
 #include "arch/Dialog/Dialog.h"
 #include "PrefsManager.h"
+#include "RageSurface.h"
+#include "RageSurfaceUtils.h"
 
 #include "SDL.h"
 #include "SDL_rotozoom.h"
@@ -67,26 +69,26 @@ void RageBitmapTexture::Create()
 
 	/* Create (and return) a surface ready to be loaded to OpenGL */
 	/* Load the image into an SDL surface. */
-	SDL_Surface *img = RageSurfaceUtils::LoadFile( actualID.filename );
+	RageSurface *img = RageSurfaceUtils::LoadFile( actualID.filename );
 
 	/* Tolerate corrupt/unknown images. */
 	if( img == NULL )
 	{
 		LOG->Warn( "RageBitmapTexture: Couldn't load %s: %s", actualID.filename.c_str(), SDL_GetError() );
-		img = mySDL_MakeDummySurface( 64, 64 );
+		img = RageSurfaceUtils::MakeDummySurface( 64, 64 );
 		ASSERT( img != NULL );
 	}
 
-	if(actualID.bHotPinkColorKey)
-		ApplyHotPinkColorKey( img );
+	if( actualID.bHotPinkColorKey )
+		RageSurfaceUtils::ApplyHotPinkColorKey( img );
 
 	{
 		/* Do this after setting the color key for paletted images; it'll also return
 		 * TRAIT_NO_TRANSPARENCY if the color key is never used. */
-		int traits = FindSurfaceTraits(img);
-		if(traits & TRAIT_NO_TRANSPARENCY) 
+		int traits = RageSurfaceUtils::FindSurfaceTraits(img);
+		if( traits & RageSurfaceUtils::TRAIT_NO_TRANSPARENCY )
 			actualID.iAlphaBits = 0;
-		else if(traits & TRAIT_BOOL_TRANSPARENCY) 
+		else if( traits & RageSurfaceUtils::TRAIT_BOOL_TRANSPARENCY )
 			actualID.iAlphaBits = 1;
 	}
 
@@ -155,7 +157,7 @@ void RageBitmapTexture::Create()
 	if( img->w != m_iImageWidth || img->h != m_iImageHeight ) 
 	{
 		/* resize currently only does RGBA8888 */
-		ConvertSDLSurface(img, img->w, img->h, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
+		RageSurfaceUtils::ConvertSurface(img, img->w, img->h, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
 		zoomSurface(img, m_iImageWidth, m_iImageHeight );
 	}
 
@@ -164,9 +166,9 @@ void RageBitmapTexture::Create()
 
 	if( actualID.iGrayscaleBits != -1 && DISPLAY->SupportsTextureFormat(RageDisplay::FMT_PAL) )
 	{
-		SDL_Surface *dst = mySDL_Palettize( img, actualID.iGrayscaleBits, actualID.iAlphaBits );
+		RageSurface *dst = RageSurfaceUtils::Palettize( img, actualID.iGrayscaleBits, actualID.iAlphaBits );
 
-		SDL_FreeSurface(img);
+		delete img;
 		img = dst;
 	}
 
@@ -218,11 +220,11 @@ void RageBitmapTexture::Create()
 		{
 			/* Dither down to the destination format. */
 			const RageDisplay::PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
-			SDL_Surface *dst = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, img->w, img->h,
-				pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);
+			RageSurface *dst = CreateSurface( img->w, img->h, pfd->bpp,
+				pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
 
 			SM_SDL_ErrorDiffusionDither(img, dst);
-			SDL_FreeSurface(img);
+			delete img;
 			img = dst;
 		}
 	}
@@ -230,7 +232,7 @@ void RageBitmapTexture::Create()
 	/* This needs to be done *after* the final resize, since that resize
 	 * may introduce new alpha bits that need to be set.  It needs to be
 	 * done *before* we set up the palette, since it might change it. */
-	FixHiddenAlpha(img);
+	RageSurfaceUtils::FixHiddenAlpha(img);
 
 	/* Make we're using a supported format. 
 	 * Every card supports either RGBA8 or RGBA4. */
@@ -245,8 +247,8 @@ void RageBitmapTexture::Create()
 	/* Convert the data to the destination format and dimensions 
 	 * required by OpenGL if it's not in it already.  */
 	const RageDisplay::PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
-	ConvertSDLSurface(img, m_iTextureWidth, m_iTextureHeight,
-		pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);
+	RageSurfaceUtils::ConvertSurface( img, m_iTextureWidth, m_iTextureHeight,
+		pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
 	
 	m_uTexHandle = DISPLAY->CreateTexture( pixfmt, img, actualID.bMipMaps );
 
@@ -293,7 +295,7 @@ void RageBitmapTexture::Create()
 
 
 
-	SDL_FreeSurface( img );
+	delete img;
 
 	/* See if the apparent "size" is being overridden. */
 	GetResolutionFromFileName(actualID.filename, m_iSourceWidth, m_iSourceHeight);
