@@ -23,6 +23,7 @@ static const char* g_szKeys[NUM_KEYBOARD_ROWS][KEYS_PER_ROW] =
 	{"","","Space","","","Backsp","","","Cancel","","","Done",""},
 };
 
+static Preference<bool> g_bAllowOldKeyboardInput( Options, "AllowOldKeyboardInput",	true );
 
 float GetButtonX( int x )
 {
@@ -187,6 +188,26 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 {
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() || m_Cancel.IsTransitioning() )
 		return;
+
+	//The user wants to input text traditionally
+	if ( g_bAllowOldKeyboardInput.Value() && ( type == IET_FIRST_PRESS ) )
+	{
+		if ( DeviceI.button == KEY_BACK )
+		{
+			BackspaceInAnswer();
+		}
+		else if ( DeviceI.ToChar() >= ' ' ) 
+		{
+			AppendToAnswer( ssprintf( "%c", DeviceI.ToChar() ) );
+
+			//If the user wishes to select text in traditional way, start should finish text entry
+			m_iFocusY = KEYBOARD_ROW_SPECIAL;
+			m_iFocusX = DONE;
+
+			UpdateKeyboardText();
+			PositionCursor();
+		}
+	}
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
