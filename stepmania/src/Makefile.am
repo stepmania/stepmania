@@ -149,10 +149,10 @@ GrooveGraph.cpp GrooveGraph.h GrooveRadar.cpp GrooveRadar.h GroupList.cpp GroupL
 JukeboxMenu.cpp JukeboxMenu.h MenuElements.cpp MenuElements.h MenuTimer.cpp MenuTimer.h ModeSwitcher.cpp ModeSwitcher.h \
 MusicBannerWheel.cpp MusicBannerWheel.h MusicList.cpp MusicList.h MusicSortDisplay.cpp MusicSortDisplay.h \
 MusicWheel.cpp MusicWheel.h MusicWheelItem.cpp MusicWheelItem.h OptionIcon.cpp OptionIcon.h \
-OptionIconRow.cpp OptionIconRow.h OptionsCursor.cpp OptionsCursor.h ScrollBar.cpp ScrollBar.h \
+OptionIconRow.cpp OptionIconRow.h OptionsCursor.cpp OptionsCursor.h PaneDisplay.cpp PaneDisplay.h ScrollBar.cpp ScrollBar.h \
 ScrollingList.cpp ScrollingList.h SnapDisplay.cpp SnapDisplay.h TextBanner.cpp TextBanner.h \
 WheelNotifyIcon.cpp WheelNotifyIcon.h GraphDisplay.cpp GraphDisplay.h ComboGraph.cpp ComboGraph.h \
-DifficultyList.cpp DifficultyList.h
+DifficultyList.cpp DifficultyList.h 
 
 ActorsInGameplay = \
 ArrowBackdrop.cpp ArrowBackdrop.h ArrowEffects.cpp ArrowEffects.h Background.cpp Background.h \
@@ -207,6 +207,8 @@ stepmania_LDADD = \
 
 # A hack for now:
 test_audio_readers_SOURCES = tests/test_audio_readers.cpp \
+		RageDisplay.cpp RageDisplay.h \
+		RageMath.cpp RageMath.h \
 		RageUtil.cpp RageLog.cpp RageThreads.cpp RageException.cpp \
 		RageUtil_FileDB.cpp RageUtil_FileDB.h \
 		RageTimer.cpp RageTimer.h \
