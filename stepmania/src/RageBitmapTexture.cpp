@@ -14,6 +14,7 @@
 #include "RageBitmapTexture.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageTextureManager.h"
 #include "RageException.h"
 #include "RageDisplay.h"
 #include "RageTypes.h"
@@ -311,12 +312,10 @@ apply_color_key:
 		 bRunCheck = false;
 	
 	// HACK: Don't check song graphics.  Many of them are weird dimensions.
-	if( (actualID.filename.length()>=6 && actualID.filename.Left(6)=="Songs/") )
-		 bRunCheck = false;
-	if( (actualID.filename.length()>=6 && actualID.filename.Left(9)=="CDTitles/") )
+	if( !TEXTUREMAN->GetOddDimensionWarning() )
 		 bRunCheck = false;
 
-	if( bRunCheck )
+	if( bRunCheck  )
 	{
 		float fFrameWidth = this->GetSourceWidth() / (float)this->GetFramesWide();
 		float fFrameHeight = this->GetSourceHeight() / (float)this->GetFramesHigh();
