@@ -86,6 +86,15 @@ struct TapNote
 	int iKeysoundIndex;	// index into Song's vector of keysound files.  
 							// Only valid if bKeysound.
 
+	/* hold_head only: */
+	int iDuration;
+
+	TapNoteResult result;
+
+	/* hold_head only: */
+	HoldNoteResult HoldResult;
+
+	
 	TapNote() {}
 	TapNote( 
 		Type type_, 
@@ -101,6 +110,7 @@ struct TapNote
 		fAttackDurationSeconds = fAttackDurationSeconds_;
 		bKeysound = bKeysound_;
 		iKeysoundIndex = iKeysoundIndex_;
+		iDuration = 0;
 	}
 	bool operator==( const TapNote &other ) const
 	{
@@ -115,14 +125,6 @@ struct TapNote
 #undef COMPARE
 		return true;
 	}
-
-	/* hold_head only: */
-	int iDuration;
-
-	TapNoteResult result;
-
-	/* hold_head only: */
-	HoldNoteResult HoldResult;
 };
 
 extern TapNote TAP_EMPTY;					// '0'
