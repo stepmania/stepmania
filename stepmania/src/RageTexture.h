@@ -79,7 +79,12 @@ public:
 	int GetTextureFrameHeight() const	{return GetTextureHeight()	/	GetFramesHigh();}
 	int GetImageFrameWidth() const		{return GetImageWidth()		/	GetFramesWide();}
 	int GetImageFrameHeight() const		{return GetImageHeight()	/	GetFramesHigh();}
-	
+
+	/* Use these to convert between the different coordinate systems: */
+	float GetSourceToImageCoordsRatio() const { return float(GetImageWidth()) / GetSourceWidth(); }
+	float GetImageToTexCoordsRatio() const { return 1.0f / GetTextureWidth(); }
+	float GetSourceToTexCoordsRatio() const { return GetSourceToImageCoordsRatio() * GetImageToTexCoordsRatio(); }
+
 	const RectF *GetTextureCoordRect( int frameNo ) const;
 	int   GetNumFrames() const { return m_iFramesWide*m_iFramesHigh; }
 
