@@ -323,6 +323,14 @@ CString GetExtension( CString sPath )
 	return Ext;
 }
 
+CString GetCwd()
+{
+	char buf[PATH_MAX];
+	bool ret = getcwd(buf, PATH_MAX) != NULL;
+	ASSERT(ret);
+	return buf;
+}
+
 /* mkdir -p.  Doesn't fail if Path already exists and is a directory. */
 bool CreateDirectories( CString Path )
 {

@@ -199,6 +199,7 @@ void split( const wstring &Source, const wstring &Deliminator, vector<wstring> &
 // Joins a CStringArray to create a CString according the Deliminator.
 CString join(const CString &Deliminator, const CStringArray& Source);
 
+CString GetCwd();
 bool CreateDirectories( CString Path );
 void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
 
