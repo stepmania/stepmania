@@ -262,4 +262,6 @@ public:
 	float m[4][4];
 };
 
+RageColor scale( float x, float l1, float h1, const RageColor &a, const RageColor &b );
+
 #endif

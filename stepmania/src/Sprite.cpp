@@ -426,7 +426,8 @@ void Sprite::DrawTexture( const TweenState *state )
 	}
 }
 
-static RageColor scale( float x, float l1, float h1, const RageColor &a, const RageColor &b )
+/* XXX: move to RageTypes.cpp */
+RageColor scale( float x, float l1, float h1, const RageColor &a, const RageColor &b )
 {
 	return RageColor(
 		SCALE( x, l1, h1, a.r, b.r ),
