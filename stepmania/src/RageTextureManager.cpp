@@ -113,7 +113,11 @@ void RageTextureManager::UnloadTexture( RageTexture *t )
 	 */
 	if( t->IsAMovie() )
 		bDeleteThis = true;
-	if( !m_bDelayedDelete || !t->m_bCacheThis )
+
+	/* If m_bDelayedDelete, keep all textures around until we GC.  If m_bCacheThis,
+	 * keep this individual texture, even if m_bDelayedDelete is off.  (Would
+	 * "m_bDelayedDelete" be clearer as "m_bCacheAll"?) */
+	if( !m_bDelayedDelete && !t->m_bCacheThis )
 		bDeleteThis = true;
 	
 	if( bDeleteThis )
