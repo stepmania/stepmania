@@ -260,8 +260,8 @@ void ScreenGameplay::Init()
 
 
 
-	m_Background.SetDrawOrder( DRAW_ORDER_BEFORE_EVERYTHING );
-	this->AddChild( &m_Background );
+	m_SongBackground.SetDrawOrder( DRAW_ORDER_BEFORE_EVERYTHING );
+	this->AddChild( &m_SongBackground );
 
 	m_Foreground.SetDrawOrder( DRAW_ORDER_OVERLAY+1 );	// on top of the overlay, but under transitions
 	this->AddChild( &m_Foreground );
@@ -1037,14 +1037,14 @@ void ScreenGameplay::LoadNextSong()
 		}
 	}
 
-	m_Background.Unload();
+	m_SongBackground.Unload();
 
 	if( !PREFSMAN->m_bShowBeginnerHelper || !m_BeginnerHelper.Initialize(2) )
 	{
 		m_BeginnerHelper.SetHidden( true );
 
 		/* BeginnerHelper disabled, or failed to load. */
-		m_Background.LoadFromSong( GAMESTATE->m_pCurSong );
+		m_SongBackground.LoadFromSong( GAMESTATE->m_pCurSong );
 
 		if( !GAMESTATE->m_bDemonstrationOrJukebox )
 		{
@@ -1053,8 +1053,8 @@ void ScreenGameplay::LoadNextSong()
 			 * black), or it might be 1, if the stage screen has the song BG and we're
 			 * coming from it (like Pump).  This used to be done in SM_PlayReady, but
 			 * that means it's impossible to snap to the new brightness immediately. */
-			m_Background.SetBrightness( INITIAL_BACKGROUND_BRIGHTNESS );
-			m_Background.FadeToActualBrightness();
+			m_SongBackground.SetBrightness( INITIAL_BACKGROUND_BRIGHTNESS );
+			m_SongBackground.FadeToActualBrightness();
 		}
 	}
 	else
@@ -1065,7 +1065,7 @@ void ScreenGameplay::LoadNextSong()
 	m_fTimeSinceLastDancingComment = 0;
 
 
-	/* m_soundMusic and m_Background take a very long time to load,
+	/* m_soundMusic and m_SongBackground take a very long time to load,
 	 * so cap fDelta at 0 so m_NextSongIn will show up on screen.
 	 * -Chris */
 	m_bZeroDeltaOnNextUpdate = true;
@@ -1429,7 +1429,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		//
         FOREACH_EnabledPlayer(p)
 		{
-			DancingCharacters *pCharacter = m_Background.GetDancingCharacters();
+			DancingCharacters *pCharacter = m_SongBackground.GetDancingCharacters();
 			if( pCharacter != NULL )
 			{
 				TapNoteScore tns = m_Player[p].GetLastTapNoteScore();
@@ -2149,7 +2149,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			}
 			
 			// update dancing characters for win / lose
-			DancingCharacters *Dancers = m_Background.GetDancingCharacters();
+			DancingCharacters *Dancers = m_SongBackground.GetDancingCharacters();
 			if( Dancers )
                 FOREACH_EnabledPlayer(p)
 				{

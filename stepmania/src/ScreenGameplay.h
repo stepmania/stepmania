@@ -82,7 +82,7 @@ protected:
 
 	LyricDisplay		m_LyricDisplay;
 
-	Background			m_Background;
+	Background			m_SongBackground;
 	Foreground			m_Foreground;
 
 	Transition	m_NextSongIn;	// shows between songs in a course
