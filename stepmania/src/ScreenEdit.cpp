@@ -1414,7 +1414,7 @@ void ScreenEdit::TransitionFromRecordToEdit()
 	// delete old TapNotes in the range
 	m_NoteFieldEdit.ClearRange( iNoteIndexBegin, iNoteIndexEnd );
 
-	m_NoteFieldEdit.CopyRange( (NoteData*)&m_NoteFieldRecord, iNoteIndexBegin, iNoteIndexEnd, iNoteIndexBegin );
+	m_NoteFieldEdit.CopyRange( &m_NoteFieldRecord, iNoteIndexBegin, iNoteIndexEnd, iNoteIndexBegin );
 }
 
 
