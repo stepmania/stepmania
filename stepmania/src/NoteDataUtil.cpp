@@ -916,34 +916,52 @@ const ValidRow g_ValidRows[] =
 
 void NoteDataUtil::FixImpossibleRows( NoteData &in, StepsType st )
 {
-	for( unsigned i=0; i<ARRAYSIZE(g_ValidRows); i++ )
+	vector<const ValidRow*> vpValidRowsToCheck;
+	for( int i=0; i<ARRAYSIZE(g_ValidRows); i++ )
 	{
-		const ValidRow vr = g_ValidRows[i];
-		if( vr.st != st )
-			continue;	// skip
+		if( g_ValidRows[i].st == st )
+			vpValidRowsToCheck.push_back( &g_ValidRows[i] );
+	}
 
-		for( int r=0; r<=in.GetLastRow(); r++ )
-			if( !NoteDataUtil::RowPassesValidMask(in,r,vr.bValidMask) )	// failed mask
-				NoteDataUtil::EliminateNonPassingTaps(in,r,vr.bValidMask);
+	// bail early if there's nothing to validate against
+	if( vpValidRowsToCheck.empty() )
+		return;
+
+	// each row must pass at least one valid mask
+	for( int r=0; r<=in.GetLastRow(); r++ )
+	{
+		// only check rows with jumps
+		if( in.GetNumTapNonEmptyTracks(r) < 2 )
+			continue;
+
+		bool bPassedOneMask = false;
+		for( unsigned i=0; i<vpValidRowsToCheck.size(); i++ )
+		{
+			const ValidRow &vr = *vpValidRowsToCheck[i];
+			if( NoteDataUtil::RowPassesValidMask(in,r,vr.bValidMask) )
+			{
+				bPassedOneMask = true;
+				break;
+			}
+			else
+				int skjdksjd = 0;
+		}
+
+		if( !bPassedOneMask )
+			in.EliminateAllButOneTap(r);
 	}
 }
 
 bool NoteDataUtil::RowPassesValidMask( NoteData &in, int row, const bool bValidMask[] )
 {
 	for( int t=0; t<in.GetNumTracks(); t++ )
+	{
 		if( !bValidMask[t] && in.GetTapNote(t,row) != TAP_EMPTY )
 			return false;
+	}
 
 	return true;
 }
-
-void NoteDataUtil::EliminateNonPassingTaps( NoteData &in, int row, const bool bValidMask[] )
-{
-	for( int t=0; t<in.GetNumTracks(); t++ )
-		if( !bValidMask[t] && in.GetTapNote(t,row) != TAP_EMPTY )
-			in.SetTapNote(t,row,TAP_EMPTY);
-}
-
 
 void NoteDataUtil::ConvertAdditionsToRegular( NoteData &in )
 {

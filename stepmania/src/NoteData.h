@@ -137,8 +137,7 @@ public:
 	// True if no notes in row that aren't true in the mask
 	bool RowPassesValidMask( int row, bool bValidMask[] );
 
-	// Remove all tap notes that fail this mask
-	void EliminateNonPassingTaps( int row, bool bValidMask[] ); 
+	void EliminateAllButOneTap( int row ); 
 };
 
 

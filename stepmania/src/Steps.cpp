@@ -173,7 +173,7 @@ void Steps::Decompress() const
 		else
 		{
 			notes->LoadTransformedSlidingWindow( &pdata, notes->GetNumTracks() );
-			NoteDataUtil::FixImpossibleRows( pdata, m_StepsType );
+			NoteDataUtil::FixImpossibleRows( *notes, m_StepsType );
 		}
 	}
 	else if(!notes_comp)

@@ -42,41 +42,42 @@ const float RECORD_HOLD_SECONDS = 0.3f;
 // Defines specific to GameScreenTitleMenu
 //
 
-const float MAX_SECONDS_CAN_BE_OFF_BY	=	0.20f;
-const float GRAY_ARROW_Y				= ARROW_SIZE * 1.5;
+#define DEBUG_X			(SCREEN_LEFT + 10)
+#define DEBUG_Y			(CENTER_Y-100)
 
-const float DEBUG_X			= SCREEN_LEFT + 10;
-const float DEBUG_Y			= CENTER_Y-100;
+#define SHORTCUTS_X		(CENTER_X - 150)
+#define SHORTCUTS_Y		(CENTER_Y)
 
-const float SHORTCUTS_X		= CENTER_X - 150;
-const float SHORTCUTS_Y		= CENTER_Y;
+#define HELP_X			(SCREEN_LEFT)
+#define HELP_Y			(CENTER_Y)
 
-const float HELP_X			= SCREEN_LEFT;
-const float HELP_Y			= CENTER_Y;
+#define HELP_TEXT_X		(SCREEN_LEFT + 4)
+#define HELP_TEXT_Y		(40)
 
-const float HELP_TEXT_X		= SCREEN_LEFT + 4;
-const float HELP_TEXT_Y		= 40;
+#define INFO_X			(SCREEN_RIGHT)
+#define INFO_Y			(CENTER_Y)
 
-const float INFO_X			= SCREEN_RIGHT;
-const float INFO_Y			= CENTER_Y;
+#define INFO_TEXT_X		(SCREEN_RIGHT - 114)
+#define INFO_TEXT_Y		(40)
 
-const float INFO_TEXT_X		= SCREEN_RIGHT - 114;
-const float INFO_TEXT_Y		= 40;
+#define MENU_WIDTH		(110)
+#define EDIT_X			(CENTER_X)
+#define EDIT_GRAY_Y_STANDARD	(SCREEN_TOP+60)
+#define EDIT_GRAY_Y_REVERSE		(SCREEN_BOTTOM-60)
 
-const float MENU_WIDTH		=	110;
-const float EDIT_X			=	CENTER_X;
-const float EDIT_GRAY_Y		=	GRAY_ARROW_Y;
+#define PLAYER_X			(CENTER_X)
+#define PLAYER_Y			(CENTER_Y)
+#define PLAYER_HEIGHT		(360)
+#define PLAYER_Y_STANDARD	(PLAYER_Y-PLAYER_HEIGHT/2)
+#define PLAYER_Y_REVERSE	(PLAYER_Y+PLAYER_HEIGHT/2)
 
-const float PLAYER_X		=	CENTER_X;
-const float PLAYER_Y		=	SCREEN_TOP;
+#define ACTION_MENU_ITEM_X			(CENTER_X-200)
+#define ACTION_MENU_ITEM_START_Y	(SCREEN_TOP + 24)
+#define ACTION_MENU_ITEM_SPACING_Y	(18)
 
-const float ACTION_MENU_ITEM_X			=	CENTER_X-200;
-const float ACTION_MENU_ITEM_START_Y	=	SCREEN_TOP + 24;
-const float ACTION_MENU_ITEM_SPACING_Y	=	18;
-
-const float NAMING_MENU_ITEM_X			=	CENTER_X-200;
-const float NAMING_MENU_ITEM_START_Y	=	SCREEN_TOP + 24;
-const float NAMING_MENU_ITEM_SPACING_Y	=	18;
+#define NAMING_MENU_ITEM_X			(CENTER_X-200)
+#define NAMING_MENU_ITEM_START_Y	(SCREEN_TOP + 24)
+#define NAMING_MENU_ITEM_SPACING_Y	(18)
 
 CachedThemeMetricF	 TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
 
@@ -248,26 +249,28 @@ ScreenEdit::ScreenEdit() : Screen("ScreenEdit")
 	m_BGAnimation.LoadFromAniDir( THEME->GetPathToB("ScreenEdit background") );
 
 	shiftAnchor = -1;
-	m_SnapDisplay.SetXY( EDIT_X, EDIT_GRAY_Y );
+
+
+	m_SnapDisplay.SetXY( EDIT_X, PLAYER_Y_STANDARD );
 	m_SnapDisplay.Load( PLAYER_1 );
 	m_SnapDisplay.SetZoom( 0.5f );
 
-	m_GrayArrowRowEdit.SetXY( EDIT_X, EDIT_GRAY_Y );
+	m_GrayArrowRowEdit.SetXY( EDIT_X, PLAYER_Y_STANDARD );
 	m_GrayArrowRowEdit.Load( PLAYER_1 );
 	m_GrayArrowRowEdit.SetZoom( 0.5f );
 
-	m_NoteFieldEdit.SetXY( EDIT_X, EDIT_GRAY_Y );
+	m_NoteFieldEdit.SetXY( EDIT_X, PLAYER_Y );
 	m_NoteFieldEdit.SetZoom( 0.5f );
-	m_NoteFieldEdit.Load( &noteData, PLAYER_1, -240, 800, 800 );
+	m_NoteFieldEdit.Load( &noteData, PLAYER_1, -240, 800, PLAYER_HEIGHT*2 );
 
 	m_rectRecordBack.StretchTo( RectI(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 	m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0) );
 
-	m_GrayArrowRowRecord.SetXY( EDIT_X, EDIT_GRAY_Y );
+	m_GrayArrowRowRecord.SetXY( EDIT_X, PLAYER_Y );
 	m_GrayArrowRowRecord.Load( PLAYER_1 );
 	m_GrayArrowRowRecord.SetZoom( 1.0f );
 
-	m_NoteFieldRecord.SetXY( EDIT_X, EDIT_GRAY_Y );
+	m_NoteFieldRecord.SetXY( EDIT_X, PLAYER_Y );
 	m_NoteFieldRecord.SetZoom( 1.0f );
 	m_NoteFieldRecord.Load( &noteData, PLAYER_1, -150, 350, 350 );
 

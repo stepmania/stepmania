@@ -900,27 +900,31 @@ void Song::TranslateTitles()
 
 void Song::ReCalculateRadarValuesAndLastBeat()
 {
-	//
-	// calculate radar values and first/last beat
-	//
 	for( unsigned i=0; i<m_apNotes.size(); i++ )
 	{
 		Steps* pNotes = m_apNotes[i];
+
+		/* If it's autogen, radar vals and first/last beat will come from the parent. */
 		if( pNotes->IsAutogen() )
 			continue;
 
+
+		//
+		// calculate radar values
+		//
 		NoteData tempNoteData;
 		pNotes->GetNoteData( &tempNoteData );
 
 		for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
 		{
-			/* If it's autogen, radar vals come from the parent. */
-			if(pNotes->IsAutogen())
-				continue;
-
-			pNotes->SetRadarValue(r, NoteDataUtil::GetRadarValue( tempNoteData, (RadarCategory)r, m_fMusicLengthSeconds ));
+			float fVal = NoteDataUtil::GetRadarValue( tempNoteData, (RadarCategory)r, m_fMusicLengthSeconds );
+			pNotes->SetRadarValue(r, fVal);
 		}
 
+
+		//
+		// calculate first/last beat
+		//
 		/* Many songs have stray, empty song patterns.  Ignore them, so
 		 * they don't force the first beat of the whole song to 0.  XXX Should
 		 * we just delete them, now that new patterns can be created quickly

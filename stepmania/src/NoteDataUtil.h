@@ -73,9 +73,6 @@ namespace NoteDataUtil
 	// True if no notes in row that aren't true in the mask
 	bool RowPassesValidMask( NoteData &in, int row, const bool bValidMask[] );
 
-	// Remove all tap notes that fail this mask
-	void EliminateNonPassingTaps( NoteData &in, int row, const bool bValidMask[] ); 
-
 	void TransformNoteData( NoteData &nd, PlayerOptions &po, StepsType st );
 
 	void Scale( NoteData &nd, float fScale );

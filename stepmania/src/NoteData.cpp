@@ -521,3 +521,25 @@ void NoteData::SetTapNote(int track, int row, TapNote t)
 	PadTapNotes(row);
 	m_TapNotes[track][row]=t;
 }
+
+void NoteData::EliminateAllButOneTap(int row)
+{
+	if(row < 0) return;
+
+	PadTapNotes(row);
+
+	for(int track = 0; track < m_iNumTracks; ++track)
+	{
+		if( m_TapNotes[track][row] == TAP_TAP )
+			break;
+	}
+
+	track++;
+
+	for( ; track < m_iNumTracks; ++track)
+	{
+		if( m_TapNotes[track][row] == TAP_TAP )
+			m_TapNotes[track][row] = TAP_EMPTY;
+	}
+}
+
