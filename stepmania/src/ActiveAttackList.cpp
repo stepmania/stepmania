@@ -40,10 +40,12 @@ void ActiveAttackList::Update( float fDelta )
 
 			CString sMods = attack.sModifier;
 			CStringArray asMods;
-			split( sMods, ", ", asMods );
+			split( sMods, ",", asMods );
 			for( unsigned j=0; j<asMods.size(); j++ )
 			{
 				CString& sMod = asMods[j];
+				TrimLeft( sMod );
+				TrimRight( sMod );
 
 				sMod = PlayerOptions::ThemeMod( sMod );
 
