@@ -825,22 +825,20 @@ void ScreenOptions::UpdateEnabledDisabled()
 
 		const float DiffuseAlpha = row.m_bHidden? 0.0f:1.0f;
 
-		bool bNeedsUpdate = 
-			row.m_sprBullet.GetDestY() != row.m_fY  ||
-			row.m_sprBullet.DestTweenState().diffuse[0].a != DiffuseAlpha ||
-			IsFirstUpdate();
-
-		if( !bNeedsUpdate )
-			continue;
-
 		/* Don't tween selection colors at all. */
 		const RageColor color = bThisRowIsSelected? colorSelected:colorNotSelected;
 		row.m_sprBullet.SetGlobalDiffuseColor( color );
 		row.m_textTitle.SetGlobalDiffuseColor( color );
 
+		for( unsigned j=0; j<row.m_textItems.size(); j++ ) 	 
+			row.m_textItems[j]->SetGlobalDiffuseColor( color ); 	 
+
 		for( unsigned j=0; j<row.m_textItems.size(); j++ )
 		{
-			row.m_textItems[j]->SetGlobalDiffuseColor( color );
+			if( row.m_textItems[j]->GetDestY() == row.m_fY && 	 
+				row.m_textItems[j]->DestTweenState().diffuse[0][3] == DiffuseAlpha ) 	 
+				continue;
+
 			row.m_textItems[j]->StopTweening();
 			row.m_textItems[j]->BeginTweening( TWEEN_SECONDS );
 			row.m_textItems[j]->SetDiffuseAlpha( DiffuseAlpha );
@@ -860,14 +858,17 @@ void ScreenOptions::UpdateEnabledDisabled()
 				row.m_textItems[0]->SetEffectNone();
 		}
 
-		row.m_sprBullet.StopTweening();
-		row.m_textTitle.StopTweening();
-		row.m_sprBullet.BeginTweening( TWEEN_SECONDS );
-		row.m_textTitle.BeginTweening( TWEEN_SECONDS );
-		row.m_sprBullet.SetDiffuseAlpha( row.m_bHidden? 0.0f:1.0f );
-		row.m_textTitle.SetDiffuseAlpha( row.m_bHidden? 0.0f:1.0f );
-		row.m_sprBullet.SetY( row.m_fY );
-		row.m_textTitle.SetY( row.m_fY );
+		if( row.m_sprBullet.GetDestY() != row.m_fY ) 	 
+		{
+			row.m_sprBullet.StopTweening();
+			row.m_textTitle.StopTweening();
+			row.m_sprBullet.BeginTweening( TWEEN_SECONDS );
+			row.m_textTitle.BeginTweening( TWEEN_SECONDS );
+			row.m_sprBullet.SetDiffuseAlpha( row.m_bHidden? 0.0f:1.0f );
+			row.m_textTitle.SetDiffuseAlpha( row.m_bHidden? 0.0f:1.0f );
+			row.m_sprBullet.SetY( row.m_fY );
+			row.m_textTitle.SetY( row.m_fY );
+		}
 	}
 }
 
