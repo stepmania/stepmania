@@ -413,6 +413,12 @@ void GetExceptionBacktraceContext( BacktraceContext *ctx, const ExceptionInforma
 	ctx->FramePtr = (void *) exception->registerImage->R1.lo;
 }
 
+void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
+{
+	ctx->PC = (void *) uc->uc_mcontext->ss.srr0;
+	ctx->FramePtr = (void *) uc->uc_mcontext->ss.r1;
+}
+
 void InitializeBacktrace() { }
 
 void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
