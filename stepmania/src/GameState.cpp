@@ -585,6 +585,9 @@ static int GetNumStagesForCurrentSong()
 /* Called by ScreenGameplay.  Set the length of the current song. */
 void GameState::BeginStage()
 {
+	if( m_bDemonstrationOrJukebox )
+		return;
+
 	/* This should only be called once per stage. */
 	if( m_iNumStagesOfThisSong != 0 )
 		LOG->Warn( "XXX: m_iNumStagesOfThisSong == %i?", m_iNumStagesOfThisSong );
