@@ -177,8 +177,8 @@ void ScreenNetRoom::UpdateRoomsList()
 
 /*
  * (c) 2004 Charles Lohr
+ * (c) 2001-2004 Chris Danford
  * All rights reserved.
- *      Elements from ScreenTextEntry
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
