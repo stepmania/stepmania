@@ -83,8 +83,7 @@ public:
 
 	bool		m_bIsAutogen;		// was this created by AutoGen?
 	CString		m_sPath;
-	CString		m_sName;
-	CString		m_sTranslitName;	// used for unlocks
+	CString		m_sName, m_sNameTranslit;
 
 	bool HasBanner() const;
 

@@ -88,7 +88,7 @@ void Course::LoadFromCRSFile( CString sPath )
 		if( 0 == stricmp(sValueName, "COURSE") )
 		{
 			m_sName = sParams[1];
-			m_sTranslitName = m_sName;
+			m_sNameTranslit = m_sName;
 		}
 		else if( 0 == stricmp(sValueName, "REPEAT") )
 		{
@@ -275,7 +275,7 @@ void Course::Init()
 	m_bSortByMeter = false;
 	ZERO( m_iCustomMeter );
 	m_entries.clear();
-	m_sPath = m_sName = m_sTranslitName = m_sBannerPath = m_sCDTitlePath = "";
+	m_sPath = m_sName = m_sNameTranslit = m_sBannerPath = m_sCDTitlePath = "";
 }
 
 void Course::Save()
