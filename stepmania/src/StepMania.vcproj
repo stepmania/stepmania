@@ -584,9 +584,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\StepMania.h">
 			</File>
 			<File
-				RelativePath="mycarray.h">
-			</File>
-			<File
 				RelativePath=".\resource.h">
 			</File>
 		</Filter>
