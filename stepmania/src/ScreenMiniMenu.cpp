@@ -10,6 +10,7 @@
 #include "ScreenDimensions.h"
 #include "CommonMetrics.h"
 #include "GameState.h"
+#include "FontCharAliases.h"
 
 const AutoScreenMessage SM_GoToOK;
 const AutoScreenMessage SM_GoToCancel;
@@ -55,6 +56,8 @@ void ScreenMiniMenu::Init( const Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMe
 		OptionRowDefinition &ord = vDefs[r];
 
 		ord.name = mr.sName;
+		FontCharAliases::ReplaceMarkers( ord.name );	// Allow special characters
+		
 		if( mr.bEnabled )
 		{
 			ord.m_vEnabledForPlayers.clear();
@@ -72,6 +75,9 @@ void ScreenMiniMenu::Init( const Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMe
 		ord.m_bExportOnChange = false;
 			
 		ord.choices = mr.choices;
+
+		FOREACH( CString, ord.choices, c )
+			FontCharAliases::ReplaceMarkers( *c );	// Allow special characters
 	}
 
 	vector<OptionRowHandler*> vHands;
