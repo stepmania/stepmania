@@ -518,6 +518,10 @@ void ScreenEdit::DrawPrimitives()
 	case MODE_EDITING:
 		{
 			m_BGAnimation.Draw();
+			m_sprHelp.Draw();
+			m_textHelp.Draw();
+			m_sprInfo.Draw();
+			m_textInfo.Draw();
 			m_SnapDisplay.Draw();
 			m_GrayArrowRowEdit.Draw();
 
@@ -527,10 +531,6 @@ void ScreenEdit::DrawPrimitives()
 			m_NoteFieldEdit.Draw();
 			GAMESTATE->m_fSongBeat = fSongBeat;	// restore real song beat
 
-			m_sprHelp.Draw();
-			m_textHelp.Draw();
-			m_sprInfo.Draw();
-			m_textInfo.Draw();
 			m_In.Draw();
 			m_Out.Draw();
 		}
