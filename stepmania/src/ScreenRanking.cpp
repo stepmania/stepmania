@@ -811,7 +811,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 
 						CString s;
 						s = hs.GetDisplayName() + "\n";
-						s += ssprintf( "%0*.*f%%", PERCENT_TOTAL_SIZE, PERCENT_DECIMAL_PLACES, hs.fPercentDP*100 );
+						s += ssprintf( "%0*.*f%%", PERCENT_TOTAL_SIZE.GetValue(), PERCENT_DECIMAL_PLACES.GetValue(), hs.fPercentDP*100 );
 						pTextStepsScore->SetText( s );
 					}
 				}
@@ -854,7 +854,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 
 					CString s;
 					s = hs.GetDisplayName() + "\n";
-					s += ssprintf( "%0*.*f%%", PERCENT_TOTAL_SIZE, PERCENT_DECIMAL_PLACES, hs.fPercentDP*100 );
+					s += ssprintf( "%0*.*f%%", PERCENT_TOTAL_SIZE.GetValue(), PERCENT_DECIMAL_PLACES.GetValue(), hs.fPercentDP*100 );
 					pTextStepsScore->SetText( s );
 				}
 			}
