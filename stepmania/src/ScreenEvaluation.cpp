@@ -898,6 +898,7 @@ void ScreenEvaluation::CommitScores(
 			hs.time = time(NULL);
 			hs.sPlayerGuid = PROFILEMAN->IsUsingProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : "";
 			hs.sMachineGuid = PROFILEMAN->GetMachineProfile()->m_sGuid;
+			hs.iProductID = PREFSMAN->m_iProductID;
 
 			StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 

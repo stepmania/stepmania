@@ -58,6 +58,7 @@ XNode* HighScore::CreateNode() const
 	pNode->AppendChild( "Time",				(int)time );
 	pNode->AppendChild( "PlayerGuid",		sPlayerGuid );
 	pNode->AppendChild( "MachineGuid",		sMachineGuid );
+	pNode->AppendChild( "ProductID",		iProductID );
 
 	return pNode;
 }
@@ -87,6 +88,7 @@ void HighScore::LoadFromNode( const XNode* pNode )
 		else if( (*child)->name == "Time" )				(*child)->GetValue( (int&)time );
 		else if( (*child)->name == "PlayerGuid" )		(*child)->GetValue( sPlayerGuid );
 		else if( (*child)->name == "MachineGuid" )		(*child)->GetValue( sMachineGuid );
+		else if( (*child)->name == "ProductID" )		(*child)->GetValue( iProductID );
 	}
 
 	/* Validate input. */

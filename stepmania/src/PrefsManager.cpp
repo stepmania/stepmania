@@ -298,6 +298,7 @@ void PrefsManager::Init()
 	}
 
 	m_sMemoryCardProfileSubdir = PRODUCT_NAME;
+	m_iProductID = 1;
 }
 
 PrefsManager::~PrefsManager()
@@ -507,6 +508,7 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Options", "DisableScreenSaver",				m_bDisableScreenSaver );
 
 	ini.GetValue( "Options", "MemoryCardProfileSubdir",			m_sMemoryCardProfileSubdir );
+	ini.GetValue( "Options", "ProductID",						m_iProductID );
 	FOREACH_PlayerNumber( p )
 	{
 		ini.GetValue( "Options", ssprintf("DefaultLocalProfileIDP%d",p+1),	m_sDefaultLocalProfileID[p] );
@@ -733,6 +735,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "DisableScreenSaver",				m_bDisableScreenSaver );
 
 	ini.SetValue( "Options", "MemoryCardProfileSubdir",			m_sMemoryCardProfileSubdir );
+	ini.SetValue( "Options", "ProductID",						m_iProductID );
 	FOREACH_PlayerNumber( p )
 	{
 		ini.SetValue( "Options", ssprintf("DefaultLocalProfileIDP%d",p+1),	m_sDefaultLocalProfileID[p] );
@@ -796,4 +799,3 @@ void PrefsManager::ResetToFactoryDefaults()
 	SaveGlobalPrefsToDisk();
 	m_bFirstRun = false;
 }
-

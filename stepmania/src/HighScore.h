@@ -26,7 +26,7 @@ struct HighScore
 	time_t time;		// return value of time() when screenshot was taken
 	CString sPlayerGuid;	// who made this high score
 	CString sMachineGuid;	// where this high score was made
-
+	int	iProductID;
 
 	HighScore() { Unset(); }
 	void Unset()
@@ -40,6 +40,7 @@ struct HighScore
 		time = 0;
 		sPlayerGuid = "";
 		sMachineGuid = "";
+		iProductID = 0;
 	}
 
 	bool operator>=( const HighScore& other ) const;
@@ -55,6 +56,7 @@ struct HighScore
 		COMPARE( time );
 		COMPARE( sPlayerGuid );
 		COMPARE( sMachineGuid );
+		COMPARE( iProductID );
 #undef COMPARE
 		return true;
 	}
