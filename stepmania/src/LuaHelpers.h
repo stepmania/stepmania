@@ -4,7 +4,8 @@
 struct lua_State;
 namespace Lua
 {
-	bool RunExpression( const CString &str );
+	bool RunExpressionB( const CString &str );
+	float RunExpressionF( const CString &str );
 
 	void Fail( lua_State *L, const CString &err );
 
@@ -17,6 +18,7 @@ namespace Lua
 	void PushStack( lua_State *L, const CString &out );
 	void PopStack( lua_State *L, CString &out );
 	bool GetStack( lua_State *L, int pos, int &out );
+	void UpdateGlobals(); // call this when the theme changes
 };
 
 #endif

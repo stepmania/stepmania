@@ -3,6 +3,7 @@
 #include "LuaFunctions.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "ScreenDimensions.h"
 
 #include <csetjmp>
 #include <cassert>
@@ -129,12 +130,15 @@ static int LuaPanic( lua_State *L )
 	longjmp( jbuf, 1 );
 }
 
-bool Lua::RunExpression( const CString &str )
+lua_State *L = NULL;
+
+void OpenLua()
 {
-try {
+	ASSERT( L == NULL );
+
 	if( setjmp(jbuf) )
 		RageException::Throw("%s", jbuf_error.c_str());
-	lua_State *L = lua_open();
+	L = lua_open();
 	ASSERT( L );
 
 	lua_atpanic( L, LuaPanic );
@@ -145,7 +149,43 @@ try {
 	lua_settop(L, 0); // luaopen_* pushes stuff onto the stack that we don't need
 
 	Lua::RegisterFunctions( L );
+}
 
+void CloseLua()
+{
+	ASSERT( L );
+
+	lua_close( L );
+	L = NULL;
+}
+
+void Lua::UpdateGlobals()
+{
+	if( L == NULL )
+		OpenLua();
+
+	ASSERT( L );
+
+	lua_pushnumber( L, SCREEN_WIDTH );
+	lua_setglobal( L, "SCREEN_WIDTH" );
+	lua_pushnumber( L, SCREEN_HEIGHT );
+	lua_setglobal( L, "SCREEN_HEIGHT" );
+	lua_pushnumber( L, SCREEN_LEFT );
+	lua_setglobal( L, "SCREEN_LEFT" );
+	lua_pushnumber( L, SCREEN_RIGHT );
+	lua_setglobal( L, "SCREEN_RIGHT" );
+	lua_pushnumber( L, SCREEN_TOP );
+	lua_setglobal( L, "SCREEN_TOP" );
+	lua_pushnumber( L, SCREEN_BOTTOM );
+	lua_setglobal( L, "SCREEN_BOTTOM" );
+	lua_pushnumber( L, CENTER_X );
+	lua_setglobal( L, "SCREEN_CENTER_X" );
+	lua_pushnumber( L, CENTER_Y );
+	lua_setglobal( L, "SCREEN_CENTER_Y" );
+}
+
+void RunExpression( const CString &str )
+{
 	LoadFromString( L, "return " + str );
 	ASSERT_M( lua_gettop(L) == 1, ssprintf("%i", lua_gettop(L)) );
 
@@ -163,16 +203,40 @@ try {
 	 * as a boolean, convert it before returning. */
 	if( lua_isfunction( L, -1 ) )
 		throw CString( "result is a function; did you forget \"()\"?" );
-
-	bool result = !!lua_toboolean( L, -1 );
-	lua_pop( L, -1 );
-
-	lua_close( L );
-
-	return result;
-} catch( const CString &err ) {
-	RageException::Throw( "Error running \"%s\": %s", str.c_str(), err.c_str() );
 }
+
+bool Lua::RunExpressionB( const CString &str )
+{
+	try {
+		if( L == NULL )
+			OpenLua();
+
+		RunExpression( str );
+
+		bool result = !!lua_toboolean( L, -1 );
+		lua_pop( L, -1 );
+
+		return result;
+	} catch( const CString &err ) {
+		RageException::Throw( "Error running \"%s\": %s", str.c_str(), err.c_str() );
+	}
+}
+
+float Lua::RunExpressionF( const CString &str )
+{
+	try {
+		if( L == NULL )
+			OpenLua();
+
+		RunExpression( str );
+
+		float result = lua_tonumber( L, -1 );
+		lua_pop( L, -1 );
+
+		return result;
+	} catch( const CString &err ) {
+		RageException::Throw( "Error running \"%s\": %s", str.c_str(), err.c_str() );
+	}
 }
 
 void Lua::Fail( lua_State *L, const CString &err )

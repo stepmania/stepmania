@@ -17,6 +17,7 @@
 #include "StepMania.h"
 #include "Foreach.h"
 #include "ThemeMetric.h"
+#include "LuaHelpers.h"
 
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
@@ -247,6 +248,8 @@ void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage
 
 	// reload subscribers
 	FOREACH( IThemeMetric*, *g_pvpSubscribers, p ) (*p)->Read();
+
+	Lua::UpdateGlobals();
 }
 
 CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
@@ -611,19 +614,19 @@ int ThemeManager::GetMetricI( CString sClassName, CString sValueName )
 
 float ThemeManager::GetMetricF( CString sClassName, CString sValueName )
 {
-	return strtof( GetMetricRaw(sClassName,sValueName), NULL );
+	const CString str = GetMetricRaw( sClassName,sValueName );
+	return Lua::RunExpressionF( str );
 }
 
 // #include "LuaHelpers.h"
 bool ThemeManager::GetMetricB( CString sClassName, CString sValueName )
 {
-//	const CString str = GetMetricRaw( sClassName,sValueName );
-//	if( str == "0" )
-//		return false; /* optimization */
-//	if( str == "1" )
-//		return true; /* optimization */
-//	return Lua::RunExpression( str );
-	return atoi( GetMetricRaw(sClassName,sValueName) ) != 0;
+	const CString str = GetMetricRaw( sClassName,sValueName );
+	if( str == "0" )
+		return false; /* optimization */
+	if( str == "1" )
+		return true; /* optimization */
+	return Lua::RunExpressionB( str );
 }
 
 RageColor ThemeManager::GetMetricC( CString sClassName, CString sValueName )
