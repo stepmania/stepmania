@@ -202,6 +202,11 @@ float RageSound_DSound_Software::GetPlayLatency() const
 	return (1.0f / samplerate) * buffersize_frames;
 }
 
+int RageSound_DSound_Software::GetSampleRate( int rate ) const
+{
+	return samplerate;
+}
+
 /*
  * Copyright (c) 2002 by the person(s) listed below.  All rights reserved.
  *

@@ -40,6 +40,7 @@ class RageSound_DSound_Software: public RageSoundDriver
 	void StopMixing(RageSound *snd);		/* used by RageSound */
 	int GetPosition(const RageSound *snd) const;
 	float GetPlayLatency() const;
+	int GetSampleRate( int rate ) const;
 
 public:
 	RageSound_DSound_Software();
