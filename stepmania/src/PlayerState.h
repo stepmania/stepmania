@@ -10,6 +10,41 @@
 
 struct PlayerState
 {
+	PlayerState()
+	{
+		m_PlayerNumber = PLAYER_INVALID;
+		Reset();
+	}
+	void Reset()
+	{
+		m_CurrentPlayerOptions.Init();
+		m_PlayerOptions.Init();
+		m_StoredPlayerOptions.Init();
+
+		m_BeatToNoteSkin.clear();
+		m_fLastDrawnBeat = -100;
+
+		m_HealthState = ALIVE;
+
+		m_PlayerController = PC_HUMAN;
+		
+		m_iCpuSkill = 5;
+
+		m_iLastPositiveSumOfAttackLevels = 0;
+		m_fSecondsUntilAttacksPhasedOut = 0;
+		m_bAttackBeganThisUpdate = false;
+		m_bAttackEndedThisUpdate = false;
+		m_ActiveAttacks.clear();
+		m_ModsToApply.clear();
+
+		m_fSuperMeter = 0;	// between 0 and NUM_ATTACK_LEVELS
+		m_fSuperMeterGrowthScale = 1;
+
+		for( int i=0; i<NUM_INVENTORY_SLOTS; i++ )
+			m_Inventory[i].MakeBlank();
+	}
+
+
 	// TODO: Remove use of PlayerNumber.  All data about the player should live 
 	// in PlayerState and callers should not use PlayerNumber to index into 
 	// GameState.

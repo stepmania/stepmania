@@ -140,24 +140,24 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		for( int z = 0; z < 3; ++z )
 		{
 			ss.vpSongs.push_back( SONGMAN->GetRandomSong() );
-			ss.iPossibleDancePoints[PLAYER_1] = 100;
-			ss.iActualDancePoints[PLAYER_1] = 100;
-			ss.iScore[PLAYER_1] = 100;
-			ss.iPossibleDancePoints[PLAYER_2] = 100;
-			ss.iActualDancePoints[PLAYER_2] = 100;
-			ss.iScore[PLAYER_2] = 100;
+			ss.m_player[PLAYER_1].iPossibleDancePoints = 100;
+			ss.m_player[PLAYER_1].iActualDancePoints = 100;
+			ss.m_player[PLAYER_1].iScore = 100;
+			ss.m_player[PLAYER_2].iPossibleDancePoints = 100;
+			ss.m_player[PLAYER_2].iActualDancePoints = 100;
+			ss.m_player[PLAYER_2].iScore = 100;
 			ASSERT( ss.vpSongs[0]->GetAllSteps().size() );
 			FOREACH_PlayerNumber( p )
 			{
-				ss.vpSteps[p].push_back( ss.vpSongs[0]->GetAllSteps()[0] );
-				GAMESTATE->m_pCurSteps[p] = ss.vpSteps[p][0];
-				ss.iPossibleDancePoints[p] = 1000;
-				ss.iActualDancePoints[p] = 985;
+				ss.m_player[p].vpSteps.push_back( ss.vpSongs[0]->GetAllSteps()[0] );
+				GAMESTATE->m_pCurSteps[p] = ss.m_player[p].vpSteps[0];
+				ss.m_player[p].iPossibleDancePoints = 1000;
+				ss.m_player[p].iActualDancePoints = 985;
 
 				HighScore hs;
 				hs.grade = GRADE_TIER_3;
-				hs.fPercentDP = ss.GetPercentDancePoints(p);
-				hs.iScore = ss.iScore[p];
+				hs.fPercentDP = ss.m_player[p].GetPercentDancePoints();
+				hs.iScore = ss.m_player[p].iScore;
 				StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 				int a, b;
 				PROFILEMAN->AddStepsScore( ss.vpSongs[0], GAMESTATE->m_pCurSteps[p], p, hs, a, b );
@@ -311,14 +311,14 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		{
 			StageStats &ss = g_vPlayedStageStats[i];
 			Song* pSong = ss.vpSongs[0];
-			Steps* pSteps = ss.vpSteps[p][0];
+			Steps* pSteps = ss.m_player[p].vpSteps[0];
 			Course* pCourse = GAMESTATE->m_pCurCourse;
 			Trail* pTrail = GAMESTATE->m_pCurTrail[p];
 
 			int iHighScoreIndex = -1;	// -1 means "out of ranking"
-			Grade grade = ss.GetGrade( p );
-			int iScore = ss.iScore[p];
-			float fPercentDP = ss.GetPercentDancePoints( p );
+			Grade grade = ss.m_player[p].GetGrade();
+			int iScore = ss.m_player[p].iScore;
+			float fPercentDP = ss.m_player[p].GetPercentDancePoints();
 
 			// If this is a SHOW_NEVER song, then it's probably a training.
 			// Don't show a high score

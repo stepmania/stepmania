@@ -4,7 +4,8 @@
 #include "PlayerOptions.h"
 #include "GameConstantsAndTypes.h"
 #include "BGAnimation.h"
-//#include "Style.h"
+
+class Style;
 
 enum CBGACLEAREDSTATES
 {

@@ -1,13 +1,14 @@
+// TODO: Remove this class in favor and merge its functionality into the Lua 
+// conditions already present in BGA.
 #include "global.h"
+#include "ConditionalBGA.h"
 #include <ctime>
-
 #include "GameState.h"
 #include "GameManager.h"
 #include "song.h"
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
 #include "BGAnimation.h"
-#include "ConditionalBGA.h"
 #include "ThemeManager.h"
 #include "RageUtil.h"
 #include "RageFile.h"
@@ -501,7 +502,7 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 				bool foundaplayerwithgrade = false;
 				FOREACH_EnabledPlayer( pn )
 				{
-					if(g_CurStageStats.GetGrade(pn) == info.grades[0])
+					if(g_CurStageStats.m_player[pn].GetGrade() == info.grades[0])
 					{
 						LOG->Info("Found Valid Grade");
 						foundaplayerwithgrade = true;
@@ -524,16 +525,13 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 				{
 					if(d>g) ASSERT(0); // this should never happen.
 
-					for(unsigned pn=0; pn<NUM_PLAYERS;pn++)
+					FOREACH_EnabledPlayer( pn )
 					{
-						if(GAMESTATE->IsPlayerEnabled((PlayerNumber)pn))
+						LOG->Info("Player%d Grade: %d :: Expected Grade: %d",pn,g_vPlayedStageStats[g].m_player[pn].GetGrade(),info.grades[d]);
+						if(g_vPlayedStageStats[g].m_player[pn].GetGrade() == info.grades[d])
 						{
-							LOG->Info("Player%d Grade: %d :: Expected Grade: %d",pn,g_vPlayedStageStats[g].GetGrade((PlayerNumber)pn),info.grades[d]);
-							if(g_vPlayedStageStats[g].GetGrade((PlayerNumber)pn) == info.grades[d])
-							{
-								LOG->Info("One Valid Grade");
-								foundavalidgradeforstage = true;
-							}
+							LOG->Info("One Valid Grade");
+							foundavalidgradeforstage = true;
 						}
 					}
 				}
@@ -610,20 +608,24 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 		else if(info.cleared == CBGA_CSMAXCOMBO)
 		{
 			FOREACH_EnabledPlayer( pn )
-				if(g_CurStageStats.FullCombo((PlayerNumber)pn))
+			{
+				if(g_CurStageStats.m_player[pn].FullCombo())
 				{
 					foundclearcond = true;
 					LOG->Info("MaxCombo Condition");
 				}
+			}
 		}
 		else if(info.cleared == CBGA_CSBROKECOMBO)
 		{
 			FOREACH_EnabledPlayer( pn )
-				if(!g_CurStageStats.FullCombo((PlayerNumber)pn))
+			{
+				if(!g_CurStageStats.m_player[pn].FullCombo())
 				{
 					LOG->Info("BrokenCombo Condition");
 					foundclearcond = true;
 				}
+			}
 		}
 
 		valid = foundclearcond;

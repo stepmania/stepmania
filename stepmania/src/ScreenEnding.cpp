@@ -151,8 +151,8 @@ ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, fa
 		GAMESTATE->m_pCurCourse = SONGMAN->GetRandomCourse();
 		GAMESTATE->m_pCurSteps[PLAYER_1] = GAMESTATE->m_pCurSong->GetAllSteps()[0];
 		GAMESTATE->m_pCurSteps[PLAYER_2] = GAMESTATE->m_pCurSong->GetAllSteps()[0];
-		g_CurStageStats.vpSteps[PLAYER_1].push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
-		g_CurStageStats.vpSteps[PLAYER_2].push_back( GAMESTATE->m_pCurSteps[PLAYER_2] );
+		g_CurStageStats.m_player[PLAYER_1].vpSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
+		g_CurStageStats.m_player[PLAYER_2].vpSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_2] );
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fScrollSpeed = 2;
 		GAMESTATE->m_pPlayerState[PLAYER_2]->m_PlayerOptions.m_fScrollSpeed = 2;
 		GAMESTATE->m_iCurrentStageIndex = 0;
@@ -162,29 +162,29 @@ ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, fa
 		for( float f = 0; f < 100.0f; f += 1.0f )
 		{
 			float fP1 = fmodf(f/100*4+.3f,1);
-			g_CurStageStats.SetLifeRecordAt( PLAYER_1, fP1, f );
-			g_CurStageStats.SetLifeRecordAt( PLAYER_2, 1-fP1, f );
+			g_CurStageStats.m_player[PLAYER_1].SetLifeRecordAt( fP1, f );
+			g_CurStageStats.m_player[PLAYER_2].SetLifeRecordAt( 1-fP1, f );
 		}
 	
-		g_CurStageStats.iActualDancePoints[PLAYER_1] = rand()%3;
-		g_CurStageStats.iPossibleDancePoints[PLAYER_1] = 2;
-		g_CurStageStats.iActualDancePoints[PLAYER_2] = rand()%2;
-		g_CurStageStats.iPossibleDancePoints[PLAYER_2] = 1;
-		g_CurStageStats.iCurCombo[PLAYER_1] = 0;
-		g_CurStageStats.UpdateComboList( PLAYER_1, 0, false );
-		g_CurStageStats.iCurCombo[PLAYER_1] = 1;
-		g_CurStageStats.UpdateComboList( PLAYER_1, 1, false );
-		g_CurStageStats.iCurCombo[PLAYER_1] = 50;
-		g_CurStageStats.UpdateComboList( PLAYER_1, 25, false );
-		g_CurStageStats.iCurCombo[PLAYER_1] = 250;
-		g_CurStageStats.UpdateComboList( PLAYER_1, 100, false );
+		g_CurStageStats.m_player[PLAYER_1].iActualDancePoints = rand()%3;
+		g_CurStageStats.m_player[PLAYER_1].iPossibleDancePoints = 2;
+		g_CurStageStats.m_player[PLAYER_2].iActualDancePoints = rand()%2;
+		g_CurStageStats.m_player[PLAYER_2].iPossibleDancePoints = 1;
+		g_CurStageStats.m_player[PLAYER_1].iCurCombo = 0;
+		g_CurStageStats.m_player[PLAYER_1].UpdateComboList( 0, false );
+		g_CurStageStats.m_player[PLAYER_1].iCurCombo = 1;
+		g_CurStageStats.m_player[PLAYER_1].UpdateComboList( 1, false );
+		g_CurStageStats.m_player[PLAYER_1].iCurCombo = 50;
+		g_CurStageStats.m_player[PLAYER_1].UpdateComboList( 25, false );
+		g_CurStageStats.m_player[PLAYER_1].iCurCombo = 250;
+		g_CurStageStats.m_player[PLAYER_1].UpdateComboList( 100, false );
 
-		g_CurStageStats.iTapNoteScores[PLAYER_1][TNS_MARVELOUS] = rand()%2;
-		g_CurStageStats.iTapNoteScores[PLAYER_1][TNS_PERFECT] = rand()%2;
-		g_CurStageStats.iTapNoteScores[PLAYER_1][TNS_GREAT] = rand()%2;
-		g_CurStageStats.iTapNoteScores[PLAYER_2][TNS_MARVELOUS] = rand()%2;
-		g_CurStageStats.iTapNoteScores[PLAYER_2][TNS_PERFECT] = rand()%2;
-		g_CurStageStats.iTapNoteScores[PLAYER_2][TNS_GREAT] = rand()%2;
+		g_CurStageStats.m_player[PLAYER_1].iTapNoteScores[TNS_MARVELOUS] = rand()%2;
+		g_CurStageStats.m_player[PLAYER_1].iTapNoteScores[TNS_PERFECT] = rand()%2;
+		g_CurStageStats.m_player[PLAYER_1].iTapNoteScores[TNS_GREAT] = rand()%2;
+		g_CurStageStats.m_player[PLAYER_2].iTapNoteScores[TNS_MARVELOUS] = rand()%2;
+		g_CurStageStats.m_player[PLAYER_2].iTapNoteScores[TNS_PERFECT] = rand()%2;
+		g_CurStageStats.m_player[PLAYER_2].iTapNoteScores[TNS_GREAT] = rand()%2;
 
 		g_vPlayedStageStats.clear();
 	}

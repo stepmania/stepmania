@@ -342,7 +342,7 @@ void DancingCharacters::DrawPrimitives()
 			continue;
 		}
 
-		bool bFailed = g_CurStageStats.bFailed[p];
+		bool bFailed = g_CurStageStats.m_player[p].bFailed;
 		bool bDanger = m_bDrawDangerLight;
 
 		DISPLAY->SetLighting( true );

@@ -290,8 +290,8 @@ float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds, Playe
 	 * might be on, and the way combo is counted varies depending on the mode and score
 	 * keeper.  Instead, let's use the length of the longest recorded combo.  This is
 	 * only subtly different: it's the percent of the song the longest combo took to get. */
-	const StageStats::Combo_t MaxCombo = g_CurStageStats.GetMaxCombo( pn );
-	float fComboPercent = SCALE( MaxCombo.fSizeSeconds, 0, g_CurStageStats.fLastSecond[pn]-g_CurStageStats.fFirstSecond[pn], 0.0f, 1.0f );
+	const PlayerStageStats::Combo_t MaxCombo = g_CurStageStats.m_player[pn].GetMaxCombo();
+	float fComboPercent = SCALE( MaxCombo.fSizeSeconds, 0, g_CurStageStats.m_player[pn].fLastSecond-g_CurStageStats.m_player[pn].fFirstSecond, 0.0f, 1.0f );
 	return clamp( fComboPercent, 0.0f, 1.0f );
 }
 
@@ -308,11 +308,11 @@ float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds, PlayerNum
 
 float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds, PlayerNumber pn ) const
 {
-	const int PossibleDP = g_CurStageStats.iPossibleDancePoints[pn];
+	const int PossibleDP = g_CurStageStats.m_player[pn].iPossibleDancePoints;
 	if ( PossibleDP == 0 )
 		return 1;
 
-	const int ActualDP = g_CurStageStats.iActualDancePoints[pn];
+	const int ActualDP = g_CurStageStats.m_player[pn].iActualDancePoints;
 	return clamp( float(ActualDP)/PossibleDP, 0.0f, 1.0f );
 }
 

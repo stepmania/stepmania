@@ -64,7 +64,7 @@ void PercentageDisplay::Update( float fDeltaTime )
 
 void PercentageDisplay::Refresh()
 {
-	const int iActualDancePoints = m_pSource->iActualDancePoints[m_PlayerNumber];
+	const int iActualDancePoints = m_pSource->m_player[m_PlayerNumber].iActualDancePoints;
 	if( iActualDancePoints == m_Last )
 		return;
 
@@ -77,7 +77,7 @@ void PercentageDisplay::Refresh()
 	}
 	else
 	{
-		float fPercentDancePoints = m_pSource->GetPercentDancePoints( m_PlayerNumber );
+		float fPercentDancePoints = m_pSource->m_player[m_PlayerNumber].GetPercentDancePoints();
 
 		// clamp percentage - feedback is that negative numbers look weird here.
 		CLAMP( fPercentDancePoints, 0.f, 1.f );

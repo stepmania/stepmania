@@ -403,7 +403,7 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 	}
 
 	/* If we've already failed, there's no point in letting them fill up the bar again.  */
-	if( g_CurStageStats.bFailed[m_PlayerNumber] )
+	if( g_CurStageStats.m_player[m_PlayerNumber].bFailed )
 		fDeltaLife = 0;
 
 	switch( GAMESTATE->m_SongOptions.m_DrainType )
@@ -432,7 +432,7 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 	CLAMP( m_fLifePercentage, 0, 1 );
 
 	if( m_fLifePercentage <= FAIL_THRESHOLD )
-		g_CurStageStats.bFailedEarlier[m_PlayerNumber] = true;
+		g_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier = true;
 
 	m_fLifeVelocity += fDeltaLife;
 }

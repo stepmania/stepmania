@@ -14,13 +14,13 @@ void ComboGraph::Load( CString Path, const StageStats &s, PlayerNumber pn )
 
 	/* Find the largest combo. */
 	int MaxComboSize = 0;
-	for( unsigned i = 0; i < s.ComboList[pn].size(); ++i )
-		MaxComboSize = max( MaxComboSize, s.ComboList[pn][i].GetStageCnt() );
+	for( unsigned i = 0; i < s.m_player[pn].ComboList.size(); ++i )
+		MaxComboSize = max( MaxComboSize, s.m_player[pn].ComboList[i].GetStageCnt() );
 
 	float width = -1;
-	for( unsigned i = 0; i < s.ComboList[pn].size(); ++i )
+	for( unsigned i = 0; i < s.m_player[pn].ComboList.size(); ++i )
 	{
-		const StageStats::Combo_t &combo = s.ComboList[pn][i];
+		const PlayerStageStats::Combo_t &combo = s.m_player[pn].ComboList[i];
 		if( combo.GetStageCnt() < MinComboSizeToShow )
 			continue; /* too small */
 
@@ -32,8 +32,8 @@ void ComboGraph::Load( CString Path, const StageStats &s, PlayerNumber pn )
 		const CString path = ssprintf( "%s %s", Path.c_str(), IsMax? "max":"normal" );
 		sprite->Load( THEME->GetPathToG(path) );
 
-		const float start = SCALE( combo.fStartSecond, s.fFirstSecond[pn], s.fLastSecond[pn], 0.0f, 1.0f );
-		const float size = SCALE( combo.fSizeSeconds, 0, s.fLastSecond[pn]-s.fFirstSecond[pn], 0.0f, 1.0f );
+		const float start = SCALE( combo.fStartSecond, s.m_player[pn].fFirstSecond, s.m_player[pn].fLastSecond, 0.0f, 1.0f );
+		const float size = SCALE( combo.fSizeSeconds, 0, s.m_player[pn].fLastSecond-s.m_player[pn].fFirstSecond, 0.0f, 1.0f );
 		sprite->SetCropLeft ( SCALE( size, 0.0f, 1.0f, 0.5f, 0.0f ) );
 		sprite->SetCropRight( SCALE( size, 0.0f, 1.0f, 0.5f, 0.0f ) );
 
@@ -48,9 +48,9 @@ void ComboGraph::Load( CString Path, const StageStats &s, PlayerNumber pn )
 		this->AddChild( sprite );
 	}
 
-	for( unsigned i = 0; i < s.ComboList[pn].size(); ++i )
+	for( unsigned i = 0; i < s.m_player[pn].ComboList.size(); ++i )
 	{
-		const StageStats::Combo_t &combo = s.ComboList[pn][i];
+		const PlayerStageStats::Combo_t &combo = s.m_player[pn].ComboList[i];
 		if( combo.GetStageCnt() < MinComboSizeToShow )
 			continue; /* too small */
 	
@@ -65,8 +65,8 @@ void ComboGraph::Load( CString Path, const StageStats &s, PlayerNumber pn )
 		text->SetName( "ComboMaxNumber" );
 		text->LoadFromFont( THEME->GetPathToF(Path) );
 
-		const float start = SCALE( combo.fStartSecond, s.fFirstSecond[pn], s.fLastSecond[pn], 0.0f, 1.0f );
-		const float size = SCALE( combo.fSizeSeconds, 0, s.fLastSecond[pn]-s.fFirstSecond[pn], 0.0f, 1.0f );
+		const float start = SCALE( combo.fStartSecond, s.m_player[pn].fFirstSecond, s.m_player[pn].fLastSecond, 0.0f, 1.0f );
+		const float size = SCALE( combo.fSizeSeconds, 0, s.m_player[pn].fLastSecond-s.m_player[pn].fFirstSecond, 0.0f, 1.0f );
 
 		const float CenterPercent = start + size/2;
 		const float CenterXPos = SCALE( CenterPercent, 0.0f, 1.0f, -width/2.0f, width/2.0f );
