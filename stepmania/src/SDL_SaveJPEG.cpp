@@ -6,6 +6,8 @@
 
 #include "libjpeg/jpeglib.h"
 
+// Why aren't we including the header to this?
+#include "SDL_SaveJPEG.h"
 
 /* Pull in JPEG library here. */
 #ifdef _XBOX

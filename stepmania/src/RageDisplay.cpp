@@ -21,6 +21,9 @@
 #include "SDL_image.h"
 #include "RageFile.h"
 
+// needs to be added to avoid an error
+#include "SDL_SaveJPEG.h"
+
 //
 // Statistics stuff
 //
