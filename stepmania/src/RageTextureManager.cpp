@@ -229,10 +229,20 @@ void RageTextureManager::ReloadAll()
  * associated with a different texture).  Ack. */
 void RageTextureManager::InvalidateTextures()
 {
+	std::map<RageTextureID, RageTexture*>::iterator i;
+	for( i = m_mapPathToTexture.begin(); i != m_mapPathToTexture.end(); ++i)
+	{
+		RageTexture* pTexture = i->second;
+		pTexture->Invalidate();
+	}
+
 	/* We're going to have to reload all loaded textures.  Let's get rid
 	 * of all unreferenced textures, so we don't reload a ton of cached
-	 * data that we're not necessarily going to use. */
-	std::map<RageTextureID, RageTexture*>::iterator i;
+	 * data that we're not necessarily going to use. 
+	 *
+	 * This must be done *after* we Invalidate above, to let the texture
+	 * know its OpenGL texture number is invalid.  If we don't do that,
+	 * it'll try to free it. */
 	for( i = m_mapPathToTexture.begin();
 		i != m_mapPathToTexture.end(); )
 	{
@@ -246,12 +256,6 @@ void RageTextureManager::InvalidateTextures()
 			SAFE_DELETE( pTexture );		// free the texture
 			m_mapPathToTexture.erase(j);	// and remove the key in the map
 		}
-	}
-
-	for( i = m_mapPathToTexture.begin(); i != m_mapPathToTexture.end(); ++i)
-	{
-		RageTexture* pTexture = i->second;
-		pTexture->Invalidate();
 	}
 }
 
