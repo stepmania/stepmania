@@ -13,6 +13,7 @@
 #include "RageLog.h"
 #include "archutils/Unix/SignalHandler.h"
 #include <Carbon/Carbon.h>
+#include <sys/param.h>
 
 /* You would think that these would be defined somewhere. */
 enum {
@@ -324,7 +325,11 @@ OSStatus HandleException(ExceptionInformation *theException) {
             "StepMania crash report -- build unknown\n"
             "---------------------------------------\n\n"
             "Crash reason: %s\n\n"
-            "All stack trace information in ~/Library/Logs/CrashReporter/stepmania.crash.log\n\n"
+            "************************\n"
+            "All stack trace information in ~/Library/Logs/CrashReporter/stepmania.crash.log\n"
+            "Please enable crash reporting (if you haven't done so already) in Console.app. "
+            "Preferences->Crashes->Enable crash reporting.\n"
+            "************************\n\n"
             "Static log:\n", code);
     unsigned size = staticLog.size();
     for (unsigned i=0; i<size; ++i)
@@ -337,5 +342,20 @@ OSStatus HandleException(ExceptionInformation *theException) {
     }
     fprintf(fp, "\nAdditionalLog:\n%s\n\n-- End of report\n", additionalLog.c_str());
     fclose(fp);
+
+    /* Check for sh */
+    if (system(NULL)) {
+        char path[MAXPATHLEN];
+        if (getcwd(path, MAXPATHLEN)) {
+            int pos = strlen(path);
+            strcpy(&path[pos], "/crashinfo.txt");
+        } else
+            path[0] = '\0';
+        char *cmd;
+        asprintf(&cmd, "touch ~/Library/Logs/CrashReporter/stepmania.crash.log;"
+                 "open ~/Library/Logs/CrashReporter/stepmania.crash.log %s", path);
+        system(cmd);
+        free(cmd);
+    }
     return -1;
 }    
