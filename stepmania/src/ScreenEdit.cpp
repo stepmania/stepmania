@@ -1741,9 +1741,9 @@ void ChangeArtistTranslit( CString sNew )
 }
 
 ScreenEdit *g_pScreenEdit = NULL;
-static void DoSave( void* )
+static void DoSaveOnExit( void* )
 {
-	g_pScreenEdit->HandleMainMenuChoice( ScreenEdit::save, NULL );
+	g_pScreenEdit->HandleMainMenuChoice( ScreenEdit::save_on_exit, NULL );
 }
 
 // End helper functions
@@ -1789,6 +1789,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 			}
 			break;
 		case save:
+		case save_on_exit:
 			{
 				// copy edit into current Steps
 				Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
@@ -1799,7 +1800,14 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 
 				if( HOME_EDIT_MODE )
 				{
-					SCREENMAN->AddNewScreenToTop( "ScreenMemcardSaveEditsInEditor", SM_None );
+					CString s;
+					switch( c )
+					{
+					case save:			s = "ScreenMemcardSaveEditsAfterSave";	break;
+					case save_on_exit:	s = "ScreenMemcardSaveEditsAfterExit";	break;
+					default:		ASSERT(0);
+					}
+					SCREENMAN->AddNewScreenToTop( s, SM_None );
 				}
 				else
 				{
@@ -1950,7 +1958,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 			SCREENMAN->Prompt(
 				SM_DoExit,
 				"Do you want to save changes before exiting?",
-				PROMPT_YES_NO_CANCEL, ANSWER_NO, DoSave );
+				PROMPT_YES_NO_CANCEL, ANSWER_NO, DoSaveOnExit );
 			break;
 		default:
 			ASSERT(0);

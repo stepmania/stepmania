@@ -211,6 +211,7 @@ public:
 		play_preview_music,
 		preferences,
 		exit,
+		save_on_exit,
 		NUM_MAIN_MENU_CHOICES
 	};
 	void HandleMainMenuChoice( MainMenuChoice c, int* iAnswers );
