@@ -381,7 +381,7 @@ void OptionRow::UpdateEnabledDisabled(
 	FOREACH_HumanPlayer( p )
 		bThisRowHasFocusByAll &= bThisRowHasFocus[p];
 	
-	const float DiffuseAlpha = m_bHidden? 0.0f:1.0f;
+	const float fDiffuseAlpha = m_bHidden? 0.0f:1.0f;
 
 	/* Don't tween selection colors at all. */
 	RageColor color = bThisRowHasFocusByAny ? colorFocus:colorNoFocus;
@@ -396,12 +396,12 @@ void OptionRow::UpdateEnabledDisabled(
 		for( unsigned j=0; j<m_textItems.size(); j++ )
 		{
 			if( m_textItems[j]->GetDestY() == m_fY && 	 
-				m_textItems[j]->DestTweenState().diffuse[0][3] == DiffuseAlpha ) 	 
+				m_textItems[j]->DestTweenState().diffuse[0][3] == fDiffuseAlpha ) 	 
 				continue;
 
 			m_textItems[j]->StopTweening();
 			m_textItems[j]->BeginTweening( fTweenSeconds );
-			m_textItems[j]->SetDiffuseAlpha( DiffuseAlpha );
+			m_textItems[j]->SetDiffuseAlpha( fDiffuseAlpha );
 			m_textItems[j]->SetY( m_fY );
 		}
 		break;
@@ -430,6 +430,14 @@ void OptionRow::UpdateEnabledDisabled(
 				bt.BeginTweening( fTweenSeconds );
 				bt.SetDiffuse( color );
 				bt.SetY( m_fY );
+				FOREACH_HumanPlayer( p )
+				{
+					OptionsCursor &ul = *m_Underline[p][item_no];
+					ul.StopTweening();
+					ul.BeginTweening( fTweenSeconds );
+					ul.SetDiffuseAlpha( fDiffuseAlpha );
+					ul.SetY( m_fY );
+				}
 			}
 		}
 		break;
