@@ -154,16 +154,17 @@ Steps *StepsID::ToSteps( const Song *p, bool bAllowNull, bool bUseCache ) const
 			return it->second;
 	}
 
-	vector<Steps*> vNotes;
-	if( dc == DIFFICULTY_EDIT )
-		p->GetSteps( vNotes, st, dc, -1, -1, sDescription, true, 1 );
-	else
-		p->GetSteps( vNotes, st, dc, -1, -1, "", true, 1 );
-
 	Steps *ret = NULL;
-	if( !vNotes.empty() )
-		ret = vNotes[0];
-	else if( !bAllowNull )
+	if( dc == DIFFICULTY_EDIT )
+	{
+		ret = p->GetSteps( st, dc, -1, -1, sDescription, true );
+	}
+	else
+	{
+		ret = p->GetSteps( st, dc, -1, -1, "", true );
+	}
+	
+	if( !bAllowNull )
 		RageException::Throw( "%i, %i, \"%s\"", st, dc, sDescription.c_str() );	
 
 	if( bUseCache )

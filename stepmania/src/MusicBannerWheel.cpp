@@ -64,14 +64,12 @@ MusicBannerWheel::MusicBannerWheel()
 	if ( !PREFSMAN->m_bAutogenSteps )
 	{
 		LOG->Trace( "Removing all autogen songs from wheel." );
-		vector <Steps *> songSteps;
 		vector <Song *> pNotAutogen;
 		for ( unsigned i = 0; i < arraySongs.size(); i++)
 		{
 			//ONLY get non-autogenned steps
-			songSteps.clear();
-			arraySongs[i]->GetSteps( songSteps, GAMESTATE->GetCurrentStyle()->m_StepsType, DIFFICULTY_INVALID, -1, -1, "", false);
-			if ( !songSteps.empty() )
+			Steps* pSteps = arraySongs[i]->GetStepsByDifficulty( GAMESTATE->GetCurrentStyle()->m_StepsType, DIFFICULTY_INVALID, false );
+			if ( pSteps != NULL )
 				pNotAutogen.push_back( arraySongs[i] );
 		}
 		arraySongs.clear();

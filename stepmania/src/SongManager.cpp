@@ -1206,7 +1206,7 @@ void SongManager::LoadAllFromProfiles()
 					continue;
 				}
 
-				SMLoader::LoadEdit( fn, (ProfileSlot) s );
+				SMLoader::LoadEdit( fn, s );
 			}
 		}
 

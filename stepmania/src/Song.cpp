@@ -372,13 +372,12 @@ void Song::DeleteDuplicateSteps( vector<Steps*> &vSteps )
  * on this; see BMSLoader::SlideDuplicateDifficulties.) */
 void Song::AdjustDuplicateSteps()
 {
-	for( int i=0; i<NUM_STEPS_TYPES; i++ )
+	FOREACH_StepsType( st )
 	{
-		StepsType st = (StepsType)i;
-
-		for( unsigned j=0; j<=DIFFICULTY_CHALLENGE; j++ ) // not DIFFICULTY_EDIT
+		FOREACH_Difficulty( dc )
 		{
-			Difficulty dc = (Difficulty)j;
+			if( dc == DIFFICULTY_EDIT )
+				continue;
 
 			vector<Steps*> vSteps;
 			this->GetSteps( vSteps, st, dc );
@@ -826,9 +825,18 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 	}
 }
 
-void Song::GetSteps( vector<Steps*>& arrayAddTo, StepsType st, Difficulty dc, int iMeterLow, int iMeterHigh, const CString &sDescription, bool bIncludeAutoGen, int Max ) const
+void Song::GetSteps( 
+	vector<Steps*>& arrayAddTo, 
+	StepsType st, 
+	Difficulty dc, 
+	int iMeterLow, 
+	int iMeterHigh, 
+	const CString &sDescription, 
+	bool bIncludeAutoGen, 
+	int iMaxToGet 
+	) const
 {
-	if( !Max )
+	if( !iMaxToGet )
 		return;
 
 	const vector<Steps*>& vpSteps = GetAllSteps(st);
@@ -849,13 +857,30 @@ void Song::GetSteps( vector<Steps*>& arrayAddTo, StepsType st, Difficulty dc, in
 
 		arrayAddTo.push_back( pSteps );
 
-		if( Max != -1 )
+		if( iMaxToGet != -1 )
 		{
-			--Max;
-			if( !Max )
+			--iMaxToGet;
+			if( !iMaxToGet )
 				break;
 		}
 	}
+}
+
+Steps* Song::GetSteps( 
+	StepsType st, 
+	Difficulty dc, 
+	int iMeterLow, 
+	int iMeterHigh, 
+	const CString &sDescription, 
+	bool bIncludeAutoGen
+	) const
+{
+	vector<Steps*> vpSteps;
+	GetSteps( vpSteps, st, dc, iMeterLow, iMeterHigh, sDescription, bIncludeAutoGen, 1 );	// get max 1
+	if( vpSteps.empty() )
+		return NULL;
+	else
+		return vpSteps[0];
 }
 
 Steps* Song::GetStepsByDifficulty( StepsType st, Difficulty dc, bool bIncludeAutoGen ) const
@@ -941,16 +966,12 @@ bool Song::SongCompleteForStyle( const Style *st ) const
 
 bool Song::HasStepsType( StepsType st ) const
 {
-	vector<Steps*> add;
-	GetSteps( add, st, DIFFICULTY_INVALID, -1, -1, "", true, 1 );
-	return !add.empty();
+	return GetSteps( st ) != NULL;
 }
 
 bool Song::HasStepsTypeAndDifficulty( StepsType st, Difficulty dc ) const
 {
-	vector<Steps*> add;
-	GetSteps( add, st, dc, -1, -1, "", true, 1 );
-	return !add.empty();
+	return GetSteps( st, dc ) != NULL;
 }
 
 void Song::Save()

@@ -381,10 +381,8 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SortOrder so, CString sP
 		if( so!=SORT_ROULETTE && UNLOCKMAN->SongIsLocked(pSong) )
 			continue;
 
-		vector<Steps*> arraySteps;
-		pSong->GetSteps( arraySteps, GAMESTATE->GetCurrentStyle()->m_StepsType, DIFFICULTY_INVALID, -1, -1, "", 1 );
-
-		if( !arraySteps.empty() )
+		// If the song has at least one steps, add it.
+		if( pSong->HasStepsType(GAMESTATE->GetCurrentStyle()->m_StepsType) )
 			arraySongs.push_back( pSong );
 	}
 

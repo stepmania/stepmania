@@ -173,7 +173,24 @@ public:
 	bool HasStepsType( StepsType st ) const;
 	bool HasStepsTypeAndDifficulty( StepsType st, Difficulty dc ) const;
 	const vector<Steps*>& GetAllSteps( StepsType st=STEPS_TYPE_INVALID ) const { return st==STEPS_TYPE_INVALID? m_vpSteps:m_vpStepsByType[st]; }
-	void GetSteps( vector<Steps*>& arrayAddTo, StepsType st = STEPS_TYPE_INVALID, Difficulty dc = DIFFICULTY_INVALID, int iMeterLow = -1, int iMeterHigh = -1, const CString &sDescription = "", bool bIncludeAutoGen = true, int Max = -1 ) const;
+	void GetSteps( 
+		vector<Steps*>& arrayAddTo, 
+		StepsType st = STEPS_TYPE_INVALID, 
+		Difficulty dc = DIFFICULTY_INVALID, 
+		int iMeterLow = -1, 
+		int iMeterHigh = -1, 
+		const CString &sDescription = "", 
+		bool bIncludeAutoGen = true, 
+		int iMaxToGet = -1 
+		) const;
+	Steps* GetSteps( 
+		StepsType st = STEPS_TYPE_INVALID, 
+		Difficulty dc = DIFFICULTY_INVALID, 
+		int iMeterLow = -1, 
+		int iMeterHigh = -1, 
+		const CString &sDescription = "", 
+		bool bIncludeAutoGen = true
+		) const;
 	Steps* GetStepsByDifficulty( StepsType st, Difficulty dc, bool bIncludeAutoGen = true ) const;
 	Steps* GetStepsByMeter( StepsType st, int iMeterLow, int iMeterHigh ) const;
 	Steps* GetStepsByDescription( StepsType st, CString sDescription ) const;

@@ -983,13 +983,12 @@ void BMSLoader::SlideDuplicateDifficulties( Song &p )
 	 * difficulties slid upwards due to (for example) having two beginner steps.
 	 * We do a second pass in Song::TidyUpData to eliminate any remaining duplicates
 	 * after this. */
-	for( int i=0; i<NUM_STEPS_TYPES; i++ )
+	FOREACH_StepsType( st )
 	{
-		StepsType st = (StepsType)i;
-
-		for( unsigned j=0; j<=DIFFICULTY_CHALLENGE; j++ ) // not DIFFICULTY_EDIT
+		FOREACH_Difficulty( dc )
 		{
-			Difficulty dc = (Difficulty)j;
+			if( dc == DIFFICULTY_EDIT )
+				continue;
 
 			vector<Steps*> vSteps;
 			p.GetSteps( vSteps, st, dc );
