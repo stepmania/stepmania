@@ -841,15 +841,22 @@ static bool CompareCoursePointersByDifficulty(const Course* pCourse1, const Cour
 
 static bool CompareCoursePointersByAvgDifficulty(const Course* pCourse1, const Course* pCourse2)
 {
-	int iNum1 = pCourse1->GetMeter( false ); // SortOrder_AvgDifficulty;
-	int iNum2 = pCourse2->GetMeter( false ); // SortOrder_AvgDifficulty;
+	// GLENN: we must use the member variable because getmeter
+	// returns an int, and a loss of precision occurs when that
+	// happens.  Anyways, we already have this variable
+	// from updatecoursestats.
+	// Plus players best/courses with randomo courses should
+	// go at the end.
 
-	if( iNum1 < iNum2 )
+	float fNum1 = pCourse1->SortOrder_AvgDifficulty;
+	float fNum2 = pCourse2->SortOrder_AvgDifficulty;
+
+	if( fNum1 < fNum2 )
 		return true;
-	else if( iNum1 > iNum2 )
+	else if( fNum1 > fNum2 )
 		return false;
-	else // iNum1 == iNum2
-		return CompareCoursePointersByAutogen( pCourse1, pCourse2 );
+	else // fNum1 == fNum2
+		return ( pCourse1->m_sName < pCourse2->m_sName );
 }
 
 static bool CompareCoursePointersByTotalDifficulty(const Course* pCourse1, const Course* pCourse2)
@@ -920,10 +927,7 @@ bool Course::HasBanner() const
 
 void Course::UpdateCourseStats()
 {
-	LOG->Trace("Updating course stats for %s", this->m_sName.c_str() );
-
 	SortOrder_AvgDifficulty = 0;
-//	SortOrder_Ranking = 2;      // handled in SongManager::UpdateRankingCourses
 	SortOrder_TotalDifficulty = 0;
 
 	unsigned i;
@@ -952,5 +956,9 @@ void Course::UpdateCourseStats()
 	// OPTIMIZATION: Ranking info isn't dependant on style, so
 	// call it sparingly.  Its handled on startup and when
 	// themes change..
-
+	
+	LOG->Trace("%s: Total feet: %d, Average Difficulty: %f",
+		this->m_sName.c_str(),
+		SortOrder_TotalDifficulty,
+		SortOrder_AvgDifficulty);
 }
