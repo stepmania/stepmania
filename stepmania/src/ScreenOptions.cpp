@@ -16,8 +16,8 @@
 #include "ScreenDimensions.h"
 #include "Command.h"
 
-const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
-
+#define ITEMS_LONG_ROW_SHARED_X			THEME->GetMetricF(m_sName,"ItemsLongRowSharedX")
+#define ITEMS_LONG_ROW_X( p )			THEME->GetMetricF(m_sName,ssprintf("ItemsLongRowP%dX",p+1))
 #define ICONS_X( p )					THEME->GetMetricF(m_sName,ssprintf("IconsP%dX",p+1))
 #define EXPLANATION_X(p)				THEME->GetMetricF(m_sName,ssprintf("ExplanationP%dX",p+1))
 #define EXPLANATION_Y(p)				THEME->GetMetricF(m_sName,ssprintf("ExplanationP%dY",p+1))
@@ -324,12 +324,12 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 
 				if( optline.bOneChoiceForAllPlayers )
 				{
-					bt->SetX( truncf((ITEM_X[0]+ITEM_X[1])/2) );	// center the item
+					bt->SetX( ITEMS_LONG_ROW_SHARED_X );
 					break;	// only initialize one item since it's shared
 				}
 				else
 				{
-					bt->SetX( ITEM_X[p] );
+					bt->SetX( ITEMS_LONG_ROW_X(p) );
 				}
 			}
 
@@ -369,7 +369,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 	bt->SetText( THEME->GetMetric("OptionNames","Exit") );
 	bt->SetZoom( ITEMS_ZOOM );
 	bt->SetShadowLength( 0 );
-	bt->SetX( SCREEN_CENTER_X );
+	bt->SetX( ITEMS_LONG_ROW_SHARED_X );
 
 	m_framePage.AddChild( bt );
 
