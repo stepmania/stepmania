@@ -11,6 +11,12 @@
 #include "Font.h"
 #include "ActorUtil.h"	// for BeginHandleArgs
 
+/*
+ * XXX: Changing a whole array of diffuse colors every frame (several times) is a waste,
+ * when we're usually setting them all to the same value.  Rainbow and fading are annoying
+ * to optimize, but rarely used.  Iterating over every character in Draw() is dumb.
+ */
+
 /* XXX:
  * We need some kind of font modifier string for metrics.  For example,
  * "valign=top;spacing = x+5,y+2"
@@ -76,7 +82,8 @@ bool BitmapText::LoadFromFont( const CString& sFontFilePath )
 {
 	CHECKPOINT_M( ssprintf("BitmapText::LoadFromFont(%s)", sFontFilePath.c_str()) );
 
-	if( m_pFont ) {
+	if( m_pFont )
+	{
 		FONT->UnloadFont( m_pFont );
 		m_pFont = NULL;
 	}
@@ -93,7 +100,8 @@ bool BitmapText::LoadFromTextureAndChars( const CString& sTexturePath, const CSt
 {
 	CHECKPOINT_M( ssprintf("BitmapText::LoadFromTextureAndChars(\"%s\",\"%s\")", sTexturePath.c_str(), sChars.c_str()) );
 
-	if( m_pFont ) {
+	if( m_pFont )
+	{
 		FONT->UnloadFont( m_pFont );
 		m_pFont = NULL;
 	}
@@ -108,7 +116,7 @@ bool BitmapText::LoadFromTextureAndChars( const CString& sTexturePath, const CSt
 void BitmapText::BuildChars()
 {
 	/* If we don't have a font yet, we'll do this when it loads. */
-	if(m_pFont == NULL)
+	if( m_pFont == NULL )
 		return;
 
 	/* calculate line lengths and widths */
@@ -124,7 +132,8 @@ void BitmapText::BuildChars()
 	verts.clear();
 	tex.clear();
 	
-	if(m_wTextLines.empty()) return;
+	if( m_wTextLines.empty() )
+		return;
 
 	m_size.y = float(m_pFont->GetHeight() * m_wTextLines.size());
 	int MinSpacing = 0;
@@ -289,7 +298,7 @@ void BitmapText::SetText( const CString& _sText, const CString& _sAlternateText,
 	if( iWrapWidthPixels == -1 )	// wrap not specified
 		iWrapWidthPixels = m_iWrapWidthPixels;
 
-	if(m_sText == sNewText && iWrapWidthPixels==m_iWrapWidthPixels)
+	if( m_sText == sNewText && iWrapWidthPixels==m_iWrapWidthPixels )
 		return;
 	m_sText = sNewText;
 	m_iWrapWidthPixels = iWrapWidthPixels;
@@ -385,18 +394,21 @@ void BitmapText::UpdateBaseZoom()
 	this->SetBaseZoomX( Zoom );
 }
 
-bool BitmapText::StringWillUseAlternate(const CString& sText, const CString& sAlternateText) const
+bool BitmapText::StringWillUseAlternate( const CString& sText, const CString& sAlternateText ) const
 {
 	ASSERT( m_pFont );
 
 	/* Can't use the alternate if there isn't one. */
-	if(!sAlternateText.size()) return false;
+	if( !sAlternateText.size() )
+		return false;
 
 	/* False if the alternate isn't needed. */
-	if(m_pFont->FontCompleteForString(CStringToWstring(sText))) return false;
+	if( m_pFont->FontCompleteForString(CStringToWstring(sText)) )
+		return false;
 
 	/* False if the alternate is also incomplete. */
-	if(!m_pFont->FontCompleteForString(CStringToWstring(sAlternateText))) return false;
+	if( !m_pFont->FontCompleteForString(CStringToWstring(sAlternateText)) )
+		return false;
 
 	return true;
 }
@@ -425,7 +437,6 @@ bool BitmapText::EarlyAbortDraw()
 // draw text at x, y using colorTop blended down to colorBottom, with size multiplied by scale
 void BitmapText::DrawPrimitives()
 {
-
 	Actor::SetRenderStates();	// set Actor-specified render states
 	DISPLAY->SetTextureModeModulate();
 
@@ -492,14 +503,16 @@ void BitmapText::DrawPrimitives()
 /* Rebuild when these change. */
 void BitmapText::SetHorizAlign( HorizAlign ha )
 {
-	if(ha == m_HorizAlign) return;
+	if( ha == m_HorizAlign )
+		return;
 	Actor::SetHorizAlign(ha);
 	BuildChars();
 }
 
 void BitmapText::SetVertAlign( VertAlign va )
 {
-	if(va == m_VertAlign) return;
+	if( va == m_VertAlign )
+		return;
 	Actor::SetVertAlign(va);
 	BuildChars();
 }
