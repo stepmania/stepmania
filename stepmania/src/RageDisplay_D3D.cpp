@@ -100,14 +100,6 @@ static void SetPalette( unsigned TexResource )
 		/* Load it. */
 #ifndef _XBOX
 		TexturePalette& pal = g_TexResourceToTexturePalette[TexResource];
-
-		// Cards that don't support palettes with alpha will crash unless
-		// all entires have full alpha.
-		// XXX: Since we disable FMT_PAL in SupportsTextureFormat, can we remove this? -glenn
-		if( ! (g_DeviceCaps.TextureCaps & D3DPTEXTURECAPS_ALPHAPALETTE) )
-			for(int j=0; j<256; j++)
-				pal.p[j].peFlags = 255;
-
 		g_pd3dDevice->SetPaletteEntries( iPalIndex, pal.p );
 #else
 		ASSERT(0);
