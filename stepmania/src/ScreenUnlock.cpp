@@ -10,7 +10,6 @@
 #include "song.h"
 #include "Course.h"
 
-#define NUM_UNLOCKS						THEME->GetMetricI("ScreenUnlock", "NumUnlocks")
 #define UNLOCK_TEXT_SCROLL_X			THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollX");
 #define UNLOCK_TEXT_SCROLL_START_Y		THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollStartY")
 #define UNLOCK_TEXT_SCROLL_END_Y		THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollEndY")
@@ -19,20 +18,18 @@
 #define UNLOCK_TEXT_SCROLL_MAX_WIDTH	THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollMaxWidth")
 #define UNLOCK_TEXT_SCROLL_ICON_X		THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollIconX")
 #define UNLOCK_TEXT_SCROLL_ICON_SIZE	THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollIconSize")
-#define DISPLAYED_SONG(i)				THEME->GetMetric ("ScreenUnlock", ssprintf("Unlock%dSong", i))
 #define UNLOCK_TEXT_SCROLL				THEME->GetMetricI("ScreenUnlock", "UnlockTextScroll")
 #define TYPE_TO_DISPLAY					THEME->GetMetric ("ScreenUnlock", "TypeOfPointsToDisplay")
 #define ICON_COMMAND					THEME->GetMetricA("ScreenUnlock", "UnlockIconCommand")
 #define TIME_TO_DISPLAY					THEME->GetMetricF("ScreenUnlock", "TimeToDisplay")
 #define POINTS_ZOOM						THEME->GetMetricF("ScreenUnlock","PointsZoom")
-#define USE_UNLOCKS_DAT					THEME->GetMetricI("ScreenUnlock","UseUnlocksDat")
 
 REGISTER_SCREEN_CLASS( ScreenUnlock );
 ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 {
 	LOG->Trace("ScreenUnlock::ScreenUnlock()");
 
-	unsigned NumUnlocks = min( (unsigned) NUM_UNLOCKS, UNLOCKMAN->m_SongEntries.size() );
+	unsigned NumUnlocks = UNLOCKMAN->m_SongEntries.size();
 
 	if (!PREFSMAN->m_bUseUnlockSystem || NumUnlocks == 0)
 	{
@@ -45,7 +42,7 @@ void ScreenUnlock::Init()
 {
 	ScreenAttract::Init();
 
-	unsigned NumUnlocks = min( (unsigned) NUM_UNLOCKS, UNLOCKMAN->m_SongEntries.size() );
+	unsigned NumUnlocks = UNLOCKMAN->m_SongEntries.size();
 
 	PointsUntilNextUnlock.LoadFromFont( THEME->GetPathF("Common","normal") );
 	PointsUntilNextUnlock.SetHorizAlign( Actor::align_left );
@@ -54,10 +51,8 @@ void ScreenUnlock::Init()
 	for( unsigned i=1; i <= NumUnlocks; i++ )
 	{
 		// get pertaining UnlockEntry
-		CString SongTitle = DISPLAYED_SONG(i);
-		if (USE_UNLOCKS_DAT == 1)
-			if ((unsigned)i <= UNLOCKMAN->m_SongEntries.size() )
-				SongTitle = UNLOCKMAN->m_SongEntries[i-1].m_sSongName;
+		if ((unsigned)i <= UNLOCKMAN->m_SongEntries.size() )
+			SongTitle = UNLOCKMAN->m_SongEntries[i-1].m_sSongName;
 		LOG->Trace("UnlockScreen: Searching for %s", SongTitle.c_str());
 		
 		const UnlockEntry *pSong = UNLOCKMAN->FindLockEntry( SongTitle );
@@ -107,10 +102,8 @@ void ScreenUnlock::Init()
 
 		for(unsigned i = 1; i <= NumUnlocks; i++)
 		{
-			CString DisplayedSong = DISPLAYED_SONG(i);
-			if (USE_UNLOCKS_DAT == 1)
-				if ((unsigned)i <= UNLOCKMAN->m_SongEntries.size() )
-					DisplayedSong = UNLOCKMAN->m_SongEntries[i-1].m_sSongName;
+			if ((unsigned)i <= UNLOCKMAN->m_SongEntries.size() )
+				DisplayedSong = UNLOCKMAN->m_SongEntries[i-1].m_sSongName;
 			
 			DisplayedSong.MakeUpper();
 			const UnlockEntry *pSong = UNLOCKMAN->FindLockEntry(DisplayedSong);
@@ -241,12 +234,8 @@ void ScreenUnlock::Init()
 
 			unsigned NextIcon = LastUnlocks[LastUnlocks.size() - i];
 
-			CString DisplayedSong = DISPLAYED_SONG(NextIcon);
-			if (USE_UNLOCKS_DAT == 1)
-			{
-				if (NextIcon <= UNLOCKMAN->m_SongEntries.size() )
-					DisplayedSong = UNLOCKMAN->m_SongEntries[NextIcon-1].m_sSongName;
-			}
+			if (NextIcon <= UNLOCKMAN->m_SongEntries.size() )
+				DisplayedSong = UNLOCKMAN->m_SongEntries[NextIcon-1].m_sSongName;
 
 			DisplayedSong.MakeUpper();
 			const UnlockEntry *pSong = UNLOCKMAN->FindLockEntry(DisplayedSong);
