@@ -115,6 +115,7 @@ GameClient::GameClient()
 void StepManiaLanServer::Disconnect(const unsigned int clientNum)
 {
 	vector<GameClient*>::iterator Iterator;
+	Iterator = Client.begin();
 	Client[clientNum]->clientSocket.close();
 	if (clientNum == (Client.size()-1))
 	{
