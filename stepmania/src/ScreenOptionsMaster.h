@@ -42,7 +42,6 @@ private:
 	vector<OptionRowHandler> OptionRowHandlers;
 	OptionRow *m_OptionRowAlloc;
 
-	CString ConvertParamToThemeDifficulty( const CString &in ) const;
 	int ExportOption( const OptionRow &row, const OptionRowHandler &hand, int pn, int sel );
 	int ImportOption( const OptionRow &row, const OptionRowHandler &hand, int pn, int rowno );
 	void SetList( OptionRow &row, OptionRowHandler &hand, CString param, CString &TitleOut );

@@ -34,26 +34,6 @@
 #define PREV_SCREEN				THEME->GetMetric (m_sName,"PrevScreen")
 // #define PREV_SCREEN( play_mode )		THEME->GetMetric (m_sName,"PrevScreen"+Capitalize(PlayModeToString(play_mode)))
 
-#define BEGINNER_DESCRIPTION	THEME->GetMetric ("ScreenOptionsMaster","Beginner")
-#define EASY_DESCRIPTION		THEME->GetMetric ("ScreenOptionsMaster","Easy")
-#define MEDIUM_DESCRIPTION		THEME->GetMetric ("ScreenOptionsMaster","Medium")
-#define HARD_DESCRIPTION		THEME->GetMetric ("ScreenOptionsMaster","Hard")
-#define CHALLENGE_DESCRIPTION	THEME->GetMetric ("ScreenOptionsMaster","Challenge")
-
-
-CString ScreenOptionsMaster::ConvertParamToThemeDifficulty( const CString &in ) const
-{
-	switch( StringToDifficulty(in) )
-	{
-	case DIFFICULTY_BEGINNER:	return BEGINNER_DESCRIPTION;
-	case DIFFICULTY_EASY:		return EASY_DESCRIPTION;
-	case DIFFICULTY_MEDIUM:		return MEDIUM_DESCRIPTION;
-	case DIFFICULTY_HARD:		return HARD_DESCRIPTION;
-	case DIFFICULTY_CHALLENGE:	return CHALLENGE_DESCRIPTION;
-	default:					return in;  // something else
-	}
-}
-
 /* Add the list named "ListName" to the given row/handler. */
 void ScreenOptionsMaster::SetList( OptionRow &row, OptionRowHandler &hand, CString ListName, CString &TitleOut )
 {
@@ -134,7 +114,7 @@ void ScreenOptionsMaster::SetStep( OptionRow &row, OptionRowHandler &hand )
 			s.MakeUpper();
 
 			// convert to theme-defined values
-			s = ConvertParamToThemeDifficulty(s);
+			s = SONGMAN->GetDifficultyThemeName(s);
 
 			row.choices.push_back( s );
 		}

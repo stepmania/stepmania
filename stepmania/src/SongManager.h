@@ -50,7 +50,8 @@ public:
 
 	RageColor GetGroupColor( const CString &sGroupName );
 	RageColor GetSongColor( const Song* pSong );
-	RageColor GetDifficultyColor( Difficulty dc );
+	RageColor GetDifficultyColor( Difficulty dc ) const;
+	CString GetDifficultyThemeName( const CString &in ) const;
 
 	static CString ShortenGroupName( CString sLongGroupName );
 	static int     GetNumStagesForSong( const Song* pSong );	// LongVer songs take 2 stages, MarathonVer take 3
