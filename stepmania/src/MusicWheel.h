@@ -3,7 +3,7 @@
 #ifndef MUSICWHEEL_H
 #define MUSICWHEEL_H
 
-#include "Sprite.h"
+#include "ActorUtil.h"
 #include "ActorFrame.h"
 #include "RageSound.h"
 #include "RandomSample.h"
@@ -82,7 +82,7 @@ protected:
 	void ChangeMusic(int dist); /* +1 or -1 */
 
 	ScrollBar			m_ScrollBar;
-	Sprite				m_sprSelectionOverlay;
+	AutoActor			m_sprHighlight;
 
 	vector<WheelItemData> m_WheelItemDatas[NUM_SORT_ORDERS];
 	vector<WheelItemData *> m_CurWheelItemData;

@@ -96,10 +96,10 @@ void MusicWheel::Load()
 		GAMESTATE->m_CurStyle = GAMEMAN->STYLE_DANCE_SINGLE;
 	*/
 
-	m_sprSelectionOverlay.SetName( "Highlight" );
-	m_sprSelectionOverlay.Load( THEME->GetPathToG("MusicWheel highlight") );
-	this->AddChild( &m_sprSelectionOverlay );
-	UtilOnCommand( &m_sprSelectionOverlay, "MusicWheel" );
+	m_sprHighlight.Load( THEME->GetPathToG("MusicWheel highlight") );
+	m_sprHighlight->SetName( "Highlight" );
+	this->AddChild( m_sprHighlight );
+	UtilOnCommand( m_sprHighlight, "MusicWheel" );
 
 	m_ScrollBar.SetX( SCROLL_BAR_X ); 
 	m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT ); 
@@ -1335,16 +1335,16 @@ void MusicWheel::TweenOnScreen(bool changing_sort)
 {
 	m_WheelState = STATE_TWEENING_ON_SCREEN;
 
-	SetItemPosition( m_sprSelectionOverlay, 0 );
+	SetItemPosition( *m_sprHighlight, 0 );
 
-	COMMAND( m_sprSelectionOverlay, "StartOn");
+	COMMAND( m_sprHighlight, "StartOn");
 	if( changing_sort )
 	{
 		const float delay = fabsf(NUM_WHEEL_ITEMS/2-WHEEL_ITEM_ON_DELAY_CENTER) * WHEEL_ITEM_ON_DELAY_OFFSET;
-		m_sprSelectionOverlay.BeginTweening( delay ); // sleep
-		COMMAND( m_sprSelectionOverlay, "FinishOnSort");
+		m_sprHighlight->BeginTweening( delay ); // sleep
+		COMMAND( m_sprHighlight, "FinishOnSort");
 	} else {
-		COMMAND( m_sprSelectionOverlay, "FinishOn");
+		COMMAND( m_sprHighlight, "FinishOn");
 	}
 
 	m_ScrollBar.SetX( SCROLL_BAR_X );
@@ -1380,20 +1380,20 @@ void MusicWheel::TweenOffScreen(bool changing_sort)
 {
 	m_WheelState = STATE_TWEENING_OFF_SCREEN;
 
-	SetItemPosition( m_sprSelectionOverlay, 0 );
+	SetItemPosition( *m_sprHighlight, 0 );
 
-	COMMAND( m_sprSelectionOverlay, "StartOff");
+	COMMAND( m_sprHighlight, "StartOff");
 	if(changing_sort)
 	{
 		/* When changing sort, tween the overlay with the item in the center;
 		 * having it separate looks messy when we're moving fast. */
 		const float delay = fabsf(NUM_WHEEL_ITEMS/2-WHEEL_ITEM_ON_DELAY_CENTER) * WHEEL_ITEM_ON_DELAY_OFFSET;
-		m_sprSelectionOverlay.BeginTweening( delay ); // sleep
-		COMMAND( m_sprSelectionOverlay, "FinishOffSort");
+		m_sprHighlight->BeginTweening( delay ); // sleep
+		COMMAND( m_sprHighlight, "FinishOffSort");
 	} else {
-		COMMAND( m_sprSelectionOverlay, "FinishOff");
+		COMMAND( m_sprHighlight, "FinishOff");
 	}
-	COMMAND( m_sprSelectionOverlay, "FinishOff");
+	COMMAND( m_sprHighlight, "FinishOff");
 
 	m_ScrollBar.BeginTweening( 0 );
 	m_ScrollBar.BeginTweening( 0.2f, Actor::TWEEN_ACCELERATE );
