@@ -45,7 +45,8 @@ ScreenSelectMode::ScreenSelectMode( CString sClassName ) : ScreenSelect( sClassN
 {
 	m_b2DAvailable = m_bCharsAvailable = false;
 
-	for(int pn=0;pn<NUM_PLAYERS;pn++)
+	int pn;
+	for(pn=0;pn<NUM_PLAYERS;pn++)
 	{
 		m_iCurrentChar[pn]= -1; // minus 1 indicates no character.
 		m_CurChar[pn].SetName(ssprintf("CharacterIconP%d",pn+1));
@@ -89,7 +90,7 @@ ScreenSelectMode::ScreenSelectMode( CString sClassName ) : ScreenSelect( sClassN
 	{
 		GAMESTATE->GetCharacters( apCharacters );
 
-		for(int i=0; i<apCharacters.size(); i++)
+		for(unsigned i=0; i<apCharacters.size(); i++)
 		{
 			if(apCharacters[i] != NULL) // check its not null
 			{
@@ -270,7 +271,7 @@ void ScreenSelectMode::SetCharacters()
 		{
 			vector<Character*> apCharacters;
 			GAMESTATE->GetCharacters( apCharacters );
-			for(int i=0; i<apCharacters.size(); i++)
+			for(unsigned i=0; i<apCharacters.size(); i++)
 			{
 				if(apCharacters[i] != NULL) // check its not null
 				{
@@ -377,7 +378,7 @@ void ScreenSelectMode::MenuUp(PlayerNumber pn)
 		{
 			vector<Character*> apCharacters;
 			GAMESTATE->GetCharacters( apCharacters );
-			for(int i=0; i<apCharacters.size(); i++)
+			for(unsigned i=0; i<apCharacters.size(); i++)
 			{
 				if(apCharacters[i] != NULL) // check its not null
 				{
@@ -423,7 +424,7 @@ void ScreenSelectMode::MenuDown(PlayerNumber pn)
 		{
 			vector<Character*> apCharacters;
 			GAMESTATE->GetCharacters( apCharacters );
-			for(int i=0; i<apCharacters.size(); i++)
+			for(unsigned i=0; i<apCharacters.size(); i++)
 			{
 				if(apCharacters[i] != NULL) // check its not null
 				{
@@ -443,7 +444,7 @@ void ScreenSelectMode::MenuDown(PlayerNumber pn)
 	m_CurChar[pn].UnloadTexture();
 	if(ENABLE_CHAR_SELECT && m_bCharsAvailable)
 	{
-		if(m_iCurrentChar[pn] < apCharactersToUse.size() - 1 || m_iCurrentChar[pn] == -1)
+		if(m_iCurrentChar[pn] < (int)apCharactersToUse.size() - 1 || m_iCurrentChar[pn] == -1)
 			m_iCurrentChar[pn]++;
 		else
 			m_iCurrentChar[pn] = -1; // set to no character
