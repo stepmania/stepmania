@@ -334,6 +334,167 @@ DSoundBuf::~DSoundBuf()
 	buf->Release();
 }
 
+/* Figure out if we've underrun, and act if appropriate. */
+void DSoundBuf::CheckUnderrun( int cursorstart, int cursorend, int chunksize )
+{
+	/* XXX We can figure out if we've underrun, and increase the write-ahead
+	 * when it happens.  Two problems:
+	 * 1. It's ugly to wait until we actually underrun. (We could store the
+	 *    write-ahead, though.)
+	 * 2. We don't want a random underrun (eg. virus scanner starts) to
+	 *    permanently increase our write-ahead.  We want the smallest possible
+	 *    that will give us reliable audio in normal conditions.  I'm not sure
+	 *    of a robust way to do this.
+	 *
+	 * Also, writeahead should be a static (all buffers write ahead the same
+	 * amount); writeahead in the ctor should be a hint only (initial value),
+	 * and the sound driver should query a sound to get the current writeahead
+	 * in GetLatencySeconds().
+	 */
+
+	/* If the buffer is full, we can't be underrunning. */
+	if( buffer_bytes_filled >= buffersize )
+		return;
+
+	/* If there's no data in the buffer at all, then we've completely underrun.  Our
+	 * write cursor is irrelevant; we might be unrelated to the play position completely.
+	 * Realign. */
+	if( buffer_bytes_filled == 0 )
+	{
+		/* There's no data filled at all.  We've completely underrun. */
+		/* XXX */
+
+		int missed_by = cursorend - write_cursor;
+		wrap( missed_by, buffersize );
+		int first_byte_filled = write_cursor-buffer_bytes_filled;
+		wrap( first_byte_filled, buffersize );
+
+		LOG->Trace("major underrun: %i..%i filled but cursor at %i..%i (missed it by %i) %i/%i",
+			first_byte_filled, write_cursor, cursorstart, cursorend,
+			missed_by, buffer_bytes_filled, buffersize);
+
+		write_cursor = cursorstart;
+	}
+
+	/*
+	 * Invariant: the filled region now starts at the beginning of the play region.
+	 * The "Update buffer_bytes_filled" logic, combined with the above empty buffer
+	 * check, guarantees this.
+	 *
+	 * This is important, so let's consider all cases as of the start of get_output_buf:
+	 *
+	 * 1: ....ffff....pppp... (no overlap)
+	 *   invalid: buffer_bytes_filled should have been set to 0.
+	 *
+	 * 2: ....ffff.... (overlap, filled is earlier)
+	 *    ..pppp......
+	 *   invalid: buffer_bytes_filled should have been set to 2, resulting in:
+	 *    ......ff....
+	 *    ...pppp.....
+	 *
+	 * 3: ......ffff.. (overlap, filled is later)
+	 *    ....pppp....
+	 *   invalid: This case can only happen if the play cursor has wrapped all the
+	 *   way around, in which case buffer_bytes_filled should have been set to 0.
+	 *
+	 * 4: ....ffff.... valid
+	 *    ....pppp....
+	 * 5: ....ff...... valid
+	 *    ....pppp....
+	 * 6: ............ valid (no data filled)
+	 *    ....pppp....
+	 */
+	int first_byte_filled = write_cursor-buffer_bytes_filled;
+	wrap( first_byte_filled, buffersize );
+	if( first_byte_filled != cursorstart )
+	{
+		LOG->Trace("%i..%i filled but cursor at %i..%i (%i max)",
+			first_byte_filled, write_cursor, cursorstart, cursorend, buffer_bytes_filled );
+		FAIL_M( "DSoundBuf::CheckUnderrun internal error" );
+	}
+
+	if( contained(first_byte_filled, write_cursor, cursorend) )
+	{
+		/* The end of the play cursor has data.  We haven't underrun (case #4). */
+		return;
+	}
+
+	/* We've underrun.  Let's figure out whether, if we continue filling, we'll fill
+	 * the buffer enough to stop underrunning.  This is a little ugly, since we need
+	 * to simulate. */
+	int fake_buffer_bytes_filled = buffer_bytes_filled;
+	int fake_write_cursor = write_cursor;
+	while(1)
+	{
+		if( fake_buffer_bytes_filled > writeahead )
+			break;
+
+		int num_bytes_empty = writeahead-fake_buffer_bytes_filled;
+		if( num_bytes_empty < chunksize )
+			break;
+
+		num_bytes_empty = min(num_bytes_empty, buffersize - fake_write_cursor);
+//		num_bytes_empty = min(num_bytes_empty, chunksize);
+
+		fake_buffer_bytes_filled += num_bytes_empty;
+		fake_write_cursor += num_bytes_empty;
+		wrap( fake_write_cursor, buffersize );
+	}
+
+	LOG->Trace("write_cursor %i, fake_write_cursor %i, fake_buffer_bytes_filled %i",
+		write_cursor, fake_write_cursor, fake_buffer_bytes_filled );
+
+	bool bCanCatchUp = contained(first_byte_filled, fake_write_cursor, cursorend);
+	/*
+	 * If bCanCatchUp is false, then based on our writeahead and the chunksize, we'll
+	 * never fill the buffer.  This isn't fuzzy; we simply aren't filling enough, and
+	 * we need to increase the writeahead.
+	 *
+	 * If bCanCatchUp is true, we simply fell behind and we can catch up.  If this
+	 * happens repeatedly, then while the writeahead is sufficient for the prefetch,
+	 * the scheduler isn't keeping up, and we probably need to increase the writeahead.
+	 *
+	 * This is a tricky support issue.  We don't want to have to adjust the writeahead
+	 * dynamically if we can help it, since that means we've already underrun.  It's
+	 * much better to have a properly tuned writeahead for all systems to begin with.
+	 * I'd much prefer to receive bug reports when the writeahead wasn't enough, so we
+	 * can figure out the correct writeahead and use it by default.
+	 *
+	 * Also, unless we write the writeahead to a preference to keep it long-term (which
+	 * I'm wary of doing), we'll go through this every game.
+	 */
+	if( bCanCatchUp )
+	{
+		/* If we simply continue, we'll catch up.  We'll probably have an audible
+		 * glitch, but we can't prevent that.  However, we can probably avoid an
+		 * arrow skip. */
+		/* XXX: if this happens repeatedly over a period of time, increase writeahead */
+		int missed_by = cursorend - write_cursor;
+		wrap( missed_by, buffersize );
+		LOG->Trace("minor underrun: %i..%i filled but cursor at %i..%i (missed it by %i) %i/%i",
+			first_byte_filled, write_cursor, cursorstart, cursorend,
+			missed_by, buffer_bytes_filled, buffersize);
+		return;
+	}
+
+	/*
+	 * Based on our writeahead and the chunksize, we'll never fill the buffer.  We
+	 * need to increase the writeahead.
+	 */
+
+	int prefetch = cursorend - cursorstart;
+	wrap( prefetch, buffersize );
+
+	int old_writeahead = writeahead;
+	writeahead = writeahead * 4 / 3;
+	/* Snap to bytes_per_frame. */
+	writeahead = (writeahead / bytes_per_frame()) * bytes_per_frame();
+	writeahead = min( writeahead, buffersize );
+
+	LOG->Trace("insufficient writeahead: wants %i, but we'll only fill to %i; writeahead adjusted from %i to %i",
+		prefetch/bytes_per_frame(), fake_buffer_bytes_filled/bytes_per_frame(), old_writeahead/bytes_per_frame(), writeahead/bytes_per_frame() );
+}
+
 bool DSoundBuf::get_output_buf( char **buffer, unsigned *bufsiz, int chunksize )
 {
 	ASSERT(!buffer_locked);
@@ -369,65 +530,17 @@ bool DSoundBuf::get_output_buf( char **buffer, unsigned *bufsiz, int chunksize )
 	/* Update buffer_bytes_filled. */
 	{
 		int first_byte_filled = write_cursor-buffer_bytes_filled;
-		if( first_byte_filled < 0 )
-			first_byte_filled += buffersize; /* unwrap */
+		wrap( first_byte_filled, buffersize );
 
 		/* The number of bytes that have been played since the last time we got here: */
 		int bytes_played = cursorstart - first_byte_filled;
-		if( bytes_played < 0 )
-			bytes_played += buffersize; /* unwrap */
+		wrap( bytes_played, buffersize );
 
 		buffer_bytes_filled -= bytes_played;
 		buffer_bytes_filled = max( 0, buffer_bytes_filled );
 	}
 
-	/* XXX We can figure out if we've underrun, and increase the write-ahead
-	 * when it happens.  Two problems:
-	 * 1. It's ugly to wait until we actually underrun. (We could store the
-	 *    write-ahead, though.)
-	 * 2. We don't want a random underrun (eg. virus scanner starts) to
-	 *    permanently increase our write-ahead.  We want the smallest possible
-	 *    that will give us reliable audio in normal conditions.  I'm not sure
-	 *    of a robust way to do this.
-	 *
-	 * Also, writeahead should be a static (all buffers write ahead the same
-	 * amount); writeahead in the ctor should be a hint only (initial value),
-	 * and the sound driver should query a sound to get the current writeahead
-	 * in GetLatencySeconds().
-	 */
-
-	/* If the buffer is full, we can't be underrunning. */
-	if( buffer_bytes_filled < buffersize )
-	{
-		int first_byte_filled = write_cursor-buffer_bytes_filled;
-		if( first_byte_filled < 0 )
-			first_byte_filled += buffersize; /* unwrap */
-
-		/* Data between the play cursor and the write cursor is committed to be
-		 * played.  If we don't actually have data there, we've underrun. */
-
-		/* We're already underrunning, which means the play cursor has passed valid
-		 * data.  Let's move the cursor forward. */
-		if( !contained(first_byte_filled, write_cursor, cursorstart) ||
-		    !contained(first_byte_filled, write_cursor, cursorend) )
-		{
-			int missed_by = cursorend - write_cursor;
-			wrap( missed_by, buffersize );
-			LOG->Trace("underrun %p: %i..%i filled but cursor at %i..%i (missed it by %i) %i/%i",
-				this, first_byte_filled, write_cursor, cursorstart, cursorend,
-				missed_by, buffer_bytes_filled, buffersize);
-
-			/* Pretend the space between the play and write cursor is filled
-			 * with data, and continue filling from there. */
-			int no_write_zone_size = cursorend - cursorstart;
-			if( no_write_zone_size < 0 )
-				no_write_zone_size += buffersize; /* unwrap */
-
-			buffer_bytes_filled = no_write_zone_size;
-			write_cursor = cursorend;
-		}
-	}
-
+	CheckUnderrun( cursorstart, cursorend, chunksize );
 
 	/* If we already have enough bytes written ahead, stop. */
 	if( buffer_bytes_filled > writeahead )
@@ -447,7 +560,11 @@ bool DSoundBuf::get_output_buf( char **buffer, unsigned *bufsiz, int chunksize )
 	/* Don't fill more than one chunk at a time.  This reduces the maximum
 	 * amount of time until we give data; that way, if we're short on time,
 	 * we'll give some data soon instead of lots of data later. */
-	num_bytes_empty = min(num_bytes_empty, chunksize);
+	/* Let's not do this; treat chunksize as a "min bytes to fill" above (so we're not
+	 * constantly filling in a few frames at a time), but not "max bytes to fill".  This
+	 * reduces cases where we don't fill the buffer as much as we should, and in practice
+	 * makes the "increase the writeahead" logic work much better. */
+//	num_bytes_empty = min(num_bytes_empty, chunksize);
 
 //	LOG->Trace("gave %i at %i (%i, %i) %i filled", num_bytes_empty, write_cursor, cursor, write, buffer_bytes_filled);
 

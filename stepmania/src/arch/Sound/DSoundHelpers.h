@@ -53,6 +53,8 @@ private:
 	int buffersize_frames() const { return buffersize / bytes_per_frame(); }
 	int bytes_per_frame() const { return channels*samplebits/8; }
 
+	void CheckUnderrun( int cursorstart, int cursorend, int chunksize );
+
 	IDirectSoundBuffer *buf;
 
 	int channels, samplerate, samplebits, writeahead;
