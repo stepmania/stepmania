@@ -13,6 +13,7 @@
 
 #include "ActorFrame.h"
 #include "Sprite.h"
+#include "CroppedSprite.h"
 
 
 class ScrollingList : public ActorFrame
@@ -31,17 +32,20 @@ public:
 	int GetSelection();
 	void SetNumberVisible( int iNumVisibleElements );
 	void SetSpacing( int iSpacingInPixels );
-	
+	void UseSpriteType(int NewSpriteType);
 	void Left();
 	void Right();
 
 protected:
-
+	
+	int						m_iBannerPrefs;
+	int						m_iSpriteType;
 	int						m_iSelection;
 	float					m_fSelectionLag;
 	int						m_iSpacing;
 	int						m_iNumVisible;
 	CArray<Sprite*,Sprite*>	m_apSprites;	// stores the list of elements (left to right)
+	CArray<CroppedSprite*,CroppedSprite*>	m_apCSprites;	// stores the list of elements (left to right)
 };
 
 #endif

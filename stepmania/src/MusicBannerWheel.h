@@ -15,6 +15,8 @@
 #include "Banner.h"
 #include "Sprite.h"
 #include "ScrollingList.h"
+#include "SongManager.h"
+#include "BitmapText.h"
 
 class MusicBannerWheel : public ActorFrame
 {
@@ -27,9 +29,15 @@ public:
 private:
 	void SetNewPos(int NewPos);
 	void PlayMusicSample();
+	void LoadSongData();
+
+	BitmapText	m_debugtext;
 
 	ScrollingList m_ScrollingList;
 	int currentPos;
+	int scrlistPos;
+
+	CArray<Song*, Song*> arraySongs;
 };
 
 #endif

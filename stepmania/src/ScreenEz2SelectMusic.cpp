@@ -28,13 +28,23 @@
 #include "PrefsManager.h"
 #include "ThemeManager.h"
 
+#define HELP_TEXT				THEME->GetMetric("ScreenSelectMusic","HelpText")
+#define TIMER_SECONDS			THEME->GetMetricI("ScreenSelectMusic","TimerSeconds")
 
 ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 {	
-	MUSIC->Stop();
+	m_Menu.Load(
+		THEME->GetPathTo("BGAnimations","select music"), 
+		THEME->GetPathTo("Graphics","select music top edge"),
+		HELP_TEXT, true, true, TIMER_SECONDS 
+		);
+	this->AddChild( &m_Menu );
+
 	m_MusicBannerWheel.SetX(CENTER_X);
 	m_MusicBannerWheel.SetY(CENTER_Y);
 	this->AddChild( &m_MusicBannerWheel );
+
+	m_Menu.TweenOnScreenFromMenu( SM_None );
 }
 
 void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -83,9 +93,9 @@ void ScreenEz2SelectMusic::Update( float fDeltaTime )
 
 void ScreenEz2SelectMusic::DrawPrimitives()
 {
-//	m_Menu.DrawBottomLayer();
+	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
-//	m_Menu.DrawTopLayer();
+	m_Menu.DrawTopLayer();
 }
 
 

@@ -19,7 +19,7 @@
 #include "TipDisplay.h"
 #include "RageSoundStream.h"
 #include "MusicBannerWheel.h"
-
+#include "MenuElements.h"
 
 class ScreenEz2SelectMusic : public Screen
 {
@@ -32,6 +32,7 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 protected:
 	MusicBannerWheel			m_MusicBannerWheel;
+	MenuElements		m_Menu;
 
 };
 

@@ -3,8 +3,11 @@ X denotes task complete or no longer required to do.
 - denotes task to do, but also being worked upon by other dev.
 H denotes task on hold.
 
+TODO As of: 06:36:PM 10/12/02
+* Optimize The Music Banner Wheel
+
 TODO As of: 04:46:PM 27/11/02
-* Systems Programming Assignment
+X Systems Programming Assignment
 * Integrating Assignment 2
 * Add Scoreboard Initials Entry Frontend
 
@@ -18,7 +21,7 @@ TODO As of: 07:30:PM 28/10/02
 
 X Networking Assignment
 X Integrating Assignment 1
-* Update Menu Graphics for Para
+- Update Menu Graphics for Para
 H Update Menu Graphics for Ez2
 H Finish The PUMP Graphics
 * Work on Beatmania Support
