@@ -8,6 +8,7 @@ public:
 	ArchHooks_Win32();
 	void Log(CString str, bool important);
 	void DumpDebugInfo();
+	void AdditionalLog(CString str);
 };
 
 #undef ARCH_HOOKS

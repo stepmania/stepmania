@@ -21,6 +21,9 @@ public:
 	/* This receives all logs.  'important' is set for Warn and Info. */
 	virtual void Log(CString str, bool important) { }
 
+	/* This receives a pointer to data to be included in diagnostic output. */
+	virtual void AdditionalLog(CString str) { }
+
 	/* This is called as soon as SDL is set up, the loading window is shown
 	 * and we can safely log and throw. */
 	virtual void DumpDebugInfo() { }

@@ -67,6 +67,7 @@ static VDDebugInfoContext g_debugInfo;
 BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 static void ReportCrashLog(HWND hwnd, HANDLE hFile);
 static void ReportStaticLog(HWND hwnd, HANDLE hFile);
+static void ReportAdditionalLog(HWND hwnd, HANDLE hFile);
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -433,7 +434,7 @@ static void SetWindowTitlef(HWND hwnd, const char *format, ...) {
 }
 
 static void ReportCrashData(HWND hwnd, HWND hwndReason, HANDLE hFile, const EXCEPTION_POINTERS *const pExc) {
-	const EXCEPTION_RECORD *const pRecord = (const EXCEPTION_RECORD *)pExc->ExceptionRecord;
+//	const EXCEPTION_RECORD *const pRecord = (const EXCEPTION_RECORD *)pExc->ExceptionRecord;
 	const CONTEXT *const pContext = (const CONTEXT *)pExc->ContextRecord;
 	int i, tos;
 
@@ -1351,6 +1352,7 @@ static void DoSave(const EXCEPTION_POINTERS *pExc) {
 	Report(NULL, hFile, "");
 
 	ReportStaticLog(NULL, hFile);
+	ReportAdditionalLog(NULL, hFile);
 	Report(NULL, hFile, "");
 
 	ReportCrashLog(NULL, hFile);
@@ -1572,6 +1574,7 @@ void StaticLog(const char *str)
 	staticlog_ptr += len-1;
 }
 
+
 static void ReportStaticLog(HWND hwnd, HANDLE hFile)
 {
 	Report(NULL, hFile, "Static log:");
@@ -1580,3 +1583,21 @@ static void ReportStaticLog(HWND hwnd, HANDLE hFile)
 //	Report(hwnd, hFile, "%s", staticlog);
 }
 
+static const int ADDLOG_SIZE = 1024*32;
+static char addlog[ADDLOG_SIZE]="";
+void AdditionalLog(const char *str)
+{
+	strncpy(addlog, str, ADDLOG_SIZE-1);
+	addlog[ADDLOG_SIZE-1]=0;
+}
+
+static void ReportAdditionalLog(HWND hwnd, HANDLE hFile)
+{
+	DWORD dwActual;
+
+	/* We crashed, so this data might well be bogus; don't use strlen. */
+	const char *p = (const char *) memchr(addlog, '\0', ADDLOG_SIZE);
+	int len = p? p-addlog: 0;
+
+	WriteFile(hFile, addlog, len, &dwActual, NULL);
+}

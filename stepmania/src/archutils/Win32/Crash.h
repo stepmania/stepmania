@@ -32,7 +32,7 @@ struct VirtualDubCheckpoint {
 	inline void set(const char *f, int l, const char *m=NULL) { file=f; line=l; message=m; }
 };
 
-#define CHECKPOINT_COUNT		(16)
+#define CHECKPOINT_COUNT		(4)
 
 struct VirtualDubThreadState {
 	const char				*pszThreadName;
@@ -54,6 +54,7 @@ extern long __stdcall CrashHandler(struct _EXCEPTION_POINTERS *ExceptionInfo);
 
 void CrashLog(const char *str);
 void StaticLog(const char *str);
+void AdditionalLog(const char *str);
 
 /* Exactly as advertised.  (This will bring up the crash handler even
  * in the debugger.) */
