@@ -87,41 +87,81 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Notes* pNotes )
 	//
 	// Calculate the score multiplier
 	//
-	NoteData noteData;
-	pNotes->GetNoteData( &noteData );
-
-	int iMaxPossiblePoints = 0;
+	m_iMaxPossiblePoints = 0;
 	if( GAMESTATE->IsCourseMode() )
 	{
 		const int numSongsInCourse = apNotes.size();
-		int courseMult = (numSongsInCourse * (numSongsInCourse + 1)) / 2;
+		ASSERT( numSongsInCourse != 0 );
 
 		if ( iSongInCourseIndex == numSongsInCourse - 1 )
 			m_bIsLastSongInCourse = true;
 
-		iMaxPossiblePoints = (100000000 * (iSongInCourseIndex+1)) / courseMult;
-		m_iMaxScoreSoFar += iMaxPossiblePoints;
+		if( numSongsInCourse < 10 )
+		{
+			const int courseMult = (numSongsInCourse * (numSongsInCourse + 1)) / 2;
+			ASSERT(courseMult >= 0);
+
+			/* This will overflow at about 200 songs. XXX */
+			m_iMaxPossiblePoints = (100000000 * (iSongInCourseIndex+1)) / courseMult;
+		}
+		else
+		{
+			/* When we have lots of songs, the scale above has two problems.  First,
+			 * it biases too much: in a course with 50 songs, the first song is worth
+			 * 80k, the last 4mil, which is too much of a difference.  Second, songs
+			 * worth that little end up having a iScoreMultiplier of 0, which causes
+			 * the entire score of the song to be on the bonus. 
+			 *
+			 * With this, each song in a 50-song course will be worth 2mil.  It won't
+			 * cause the iScoreMultiplier problem until 10*sum (below) exceeds 
+			 1000-song course will be worth 100000 */
+			m_iMaxPossiblePoints = 100000000 / numSongsInCourse;
+		}
 	}
 	else
 	{
-		int iMeter = pNotes->GetMeter();
-		CLAMP( iMeter, 1, 10 );
-		iMaxPossiblePoints = iMeter * 10000000;
+		const int iMeter = clamp(pNotes->GetMeter(), 1, 10);
+		m_iMaxPossiblePoints = iMeter * 10000000;
 	}
+	ASSERT( m_iMaxPossiblePoints >= 0 );
+	m_iMaxScoreSoFar += m_iMaxPossiblePoints;
 
-	const int N = noteData.GetNumRowsWithTaps() + noteData.GetNumHoldNotes();
-	const int sum = (N * (N + 1)) / 2;
-	m_iNumTapsAndHolds = N;
+	NoteData noteData;
+	pNotes->GetNoteData( &noteData );
+	m_iNumTapsAndHolds = noteData.GetNumRowsWithTaps() + noteData.GetNumHoldNotes();
 
-	m_iScoreMultiplier = iMaxPossiblePoints / (10*sum);
-	m_iPointBonus = iMaxPossiblePoints - (sum * 10 * m_iScoreMultiplier);
+	m_iPointBonus = m_iMaxPossiblePoints;
 
-	ASSERT( m_iScoreMultiplier >= 0 );
 	ASSERT( m_iPointBonus >= 0 );
 
 	m_iTapNotesHit = 0;
 }
 
+static int GetScore(int p, int B, int S, int n)
+{
+	/* There's a problem with the scoring system described below.  B/S is truncated
+	 * to an int.  However, in some cases we can end up with very small base scores.
+	 * Each song in a 50-song nonstop course will be worth 2mil, which is a base of
+	 * 200k; B/S will end up being zero.
+	 *
+	 * If we rearrange the equation to (p*B*n) / S, this problem goes away.
+	 * (To do that, we need to either use 64-bit ints or rearrange it a little
+	 * more and use floats, since p*B*n won't fit a 32-bit int.)  However, this
+	 * changes the scoring rules slightly.
+	 */
+
+#if 0
+	/* This is the actual method described below. */
+	return p * (B / S) * n;
+#elif 1
+	/* This doesn't round down B/S. */
+	return int(Uint64(p) * n * B / S);
+#else
+	/* This also doesn't round down B/S. Use this if you don't have 64-bit ints. */
+	return int(p * n * (float(B) / S));
+#endif
+
+}
 
 void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 {
@@ -168,9 +208,18 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 
 	m_iTapNotesHit++;
 
-	m_iScore += (p * m_iTapNotesHit) * m_iScoreMultiplier;
+	const int N = m_iNumTapsAndHolds;
+	const int sum = (N * (N + 1)) / 2;
+	const int B = m_iMaxPossiblePoints/10;
 
-	// bonus on the last step being the difference between 10 * sum * mult and meter * 10m
+	int iScoreMultiplier = (m_iMaxPossiblePoints / (10*sum));
+	ASSERT( iScoreMultiplier >= 0 );
+
+	m_iScore += GetScore(p, B, sum, m_iTapNotesHit);
+
+	/* Subtract the maximum this step could have been worth from the bonus. */
+	m_iPointBonus -= GetScore(10, B, sum, m_iTapNotesHit);
+
 	if ( m_iTapNotesHit == m_iNumTapsAndHolds && score >= TNS_PERFECT )
 	{
 		m_iScore += m_iPointBonus;
