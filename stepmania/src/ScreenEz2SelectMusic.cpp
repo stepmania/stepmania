@@ -476,25 +476,25 @@ void ScreenEz2SelectMusic::MusicChanged()
 		SortNotesArrayByDifficulty( m_arrayNotes[pn] );
 	}
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( pn=0; pn<NUM_PLAYERS; pn++ )
 	{
-		if( !GAMESTATE->IsPlayerEnabled( PlayerNumber(p) ) )
+		if( !GAMESTATE->IsPlayerEnabled( PlayerNumber(pn) ) )
 			continue;
-		for( unsigned i=0; i<m_arrayNotes[p].size(); i++ )
+		for( unsigned i=0; i<m_arrayNotes[pn].size(); i++ )
 		{
-			if( m_arrayNotes[p][i]->GetDifficulty() == GAMESTATE->m_PreferredDifficulty[p] )
+			if( m_arrayNotes[pn][i]->GetDifficulty() == GAMESTATE->m_PreferredDifficulty[pn] )
 			{
-				m_iSelection[p] = i;
+				m_iSelection[pn] = i;
 				break;
 			}
 		}
 
-		m_iSelection[p] = clamp( m_iSelection[p], 0, int(m_arrayNotes[p].size()) ) ;
+		m_iSelection[pn] = clamp( m_iSelection[pn], 0, int(m_arrayNotes[pn].size()) ) ;
 	}
 
-	for( p=0; p<NUM_PLAYERS; p++ )
+	for( pn=0; pn<NUM_PLAYERS; pn++ )
 	{
-		AfterNotesChange( (PlayerNumber)p );
+		AfterNotesChange( (PlayerNumber)pn );
 	}
 }
 
