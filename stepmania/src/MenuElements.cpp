@@ -67,7 +67,7 @@ void MenuElements::Load( CString sClassName, bool bEnableTimer, bool bLoadStyleI
 	 * If TIMER_SECONDS is -1, then the timer isn't shown at all.  bTimerEnabled == 0
 	 * is the same as !bTimerEnabled.  Phase out bTimerEnabled and just set no timer
 	 * in the theme. */
-	m_bTimerEnabled = (TIMER_SECONDS != -1);
+	m_bTimerEnabled = bEnableTimer && (TIMER_SECONDS != -1);
 
 	if( m_bTimerEnabled )
 	{
