@@ -67,22 +67,28 @@ Grade StageStats::GetGrade( PlayerNumber pn )
 	if( bFailed[pn] )
 		return GRADE_E;
 
-	/* Based on the percentage of your total "Dance Points" to the maximum
-	 * possible number, the following rank is assigned: 
-	 *
-	 * 100% - AAA
-	 *  93% - AA
-	 *  80% - A
-	 *  65% - B
-	 *  45% - C
-	 * Less - D
-	 * Fail - E
-	 */
-	float fPercentDancePoints = iActualDancePoints[pn] / (float)iPossibleDancePoints[pn];
+	/* XXX: This entire calculation should be in ScoreKeeper, but final evaluation
+	 * is tricky since at that point the ScoreKeepers no longer exist. */
+	const float TapScoreValues[NUM_TAP_NOTE_SCORES] = { 0, -8, -4, 0, +1, +2, +2 };
+	const float HoldScoreValues[NUM_HOLD_NOTE_SCORES] = { 0, 0, +6 };
+
+	float Possible = 0, Actual = 0;
+	int i;
+	for( i = TNS_MISS; i < NUM_TAP_NOTE_SCORES; ++i )
+	{
+		Actual += iTapNoteScores[pn][i] * TapScoreValues[i];
+		Possible += iTapNoteScores[pn][i] * TapScoreValues[TNS_MARVELOUS];
+	}
+
+	for( i = HNS_OK; i < NUM_HOLD_NOTE_SCORES; ++i )
+	{
+		Actual += iHoldNoteScores[pn][i] * HoldScoreValues[i];
+		Possible += iHoldNoteScores[pn][i] * HoldScoreValues[HNS_OK];
+	}
+
+	float fPercentDancePoints = Actual / Possible;
 	fPercentDancePoints = max( 0.f, fPercentDancePoints );
-	LOG->Trace( "iActualDancePoints: %i", iActualDancePoints[pn] );
-	LOG->Trace( "iPossibleDancePoints: %i", iPossibleDancePoints[pn] );
-	LOG->Trace( "fPercentDancePoints: %f", fPercentDancePoints  );
+	LOG->Trace( "GetGrade: Actual: %f, Possible: %f, Percent: %f", Actual, Possible, fPercentDancePoints );
 
 	/* check for "AAAA".  Check DP == 100%: if we're using eg. "LITTLE", we might have all
 	 * marvelouses but still not qualify for a AAAA. */
@@ -95,6 +101,18 @@ Grade StageStats::GetGrade( PlayerNumber pn )
 		iTapNoteScores[pn][TNS_MISS] == 0 &&
 		iHoldNoteScores[pn][HNS_NG] == 0 )
 		return GRADE_AAAA;
+
+	/* Based on the percentage of your total "Dance Points" to the maximum
+	 * possible number, the following rank is assigned: 
+	 *
+	 * 100% - AAA
+	 *  93% - AA
+	 *  80% - A
+	 *  65% - B
+	 *  45% - C
+	 * Less - D
+	 * Fail - E
+	 */
 
 	if     ( fPercentDancePoints == 1.00 )		return GRADE_AAA;
 	else if( fPercentDancePoints >= 0.93 )		return GRADE_AA;
