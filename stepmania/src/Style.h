@@ -28,6 +28,7 @@ enum Style
 	STYLE_EZ2_SINGLE_VERSUS,
 	STYLE_EZ2_SINGLE_HARD_VERSUS,
 	STYLE_EZ2_REAL_VERSUS,
+	STYLE_PARA_SINGLE,
 	NUM_STYLES,	// leave this at the end
 	STYLE_NONE,
 	STYLE_PUMP_COUPLE,
@@ -36,7 +37,7 @@ enum Style
 const int NUM_DANCE_STYLES = 6;
 const int NUM_PUMP_STYLES = 3;
 const int NUM_EZ2_STYLES = 7;
-
+const int NUM_PARA_STYLES = 1;
 
 // Ugh.  This is needed for the style icon.
 // TODO:  Find a more elegant way to handle this
@@ -48,6 +49,7 @@ inline int GetStyleIndexRelativeToGame( int iGameIndex, Style style )
 	case 0:														break;	// dance
 	case 1:	iStyleIndex -= NUM_DANCE_STYLES;					break;	// pump
 	case 2:	iStyleIndex -= NUM_DANCE_STYLES+NUM_PUMP_STYLES;	break;	// ez2
+	case 3:	iStyleIndex -= NUM_DANCE_STYLES+NUM_PUMP_STYLES+NUM_EZ2_STYLES;	break;	// ez2
 	default:	ASSERT(0);	// invalid game index
 	}
 	return iStyleIndex;

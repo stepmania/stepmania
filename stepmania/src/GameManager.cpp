@@ -26,7 +26,7 @@ const int DANCE_6PANEL_VERSUS_COL_SPACING = 54;
 const int PUMP_COL_SPACING = 50;
 const int EZ2_COL_SPACING = 46; 
 const int EZ2_DOUBLE_ADJUST = 150;
-
+const int PARA_COL_SPACING = 54;
 
 struct {
 	char *name;
@@ -41,7 +41,8 @@ struct {
 	{ "ez2-single", 5 },		// Single: TL,LHH,D,RHH,TR
 	{ "ez2-single-hard", 5 },	// Single: TL,LHH,D,RHH,TR
 	{ "ez2-double", 10 },		// Double: Single x2
-	{ "ez2-real", 7 }			// Real: TL,LHH,LHL,D,RHL,RHH,TR
+	{ "ez2-real", 7 },			// Real: TL,LHH,LHL,D,RHL,RHH,TR
+	{ "para-single", 5 }
 };
 
 //
@@ -289,7 +290,82 @@ GameDef g_GameDefs[NUM_GAMES] =
 			},
 		},
 	},
-
+	{	// GAME_PARA
+		"para",					// m_szName
+		"Para Para Paradise",	// m_szDescription
+		2,							// m_iNumControllers
+		NUM_DANCE_BUTTONS,			// m_iButtonsPerController
+		{	// m_szButtonNames
+			"Left",
+			"UpLeft",
+			"Up",
+			"UpRight",
+			"Right",
+			"Start",
+			"Back",
+			"MenuLeft",
+			"MenuRight",
+			"MenuUp",
+			"MenuDown",
+		},
+		{	// m_szSecondaryFunction
+			"(MenuLeft)",
+			"(MenuDown)",
+			"",
+			"(MenuUp)",
+			"(MenuRight)",
+			"",
+			"",
+			"(dedicated)",
+			"(dedicated)",
+			"(dedicated)",
+			"(dedicated)",
+		},
+		{	// m_DedicatedMenuButton
+			PARA_BUTTON_MENULEFT,	// MENU_BUTTON_LEFT
+			PARA_BUTTON_MENURIGHT,	// MENU_BUTTON_RIGHT
+			PARA_BUTTON_MENUUP,	// MENU_BUTTON_UP
+			PARA_BUTTON_MENUDOWN,	// MENU_BUTTON_DOWN
+			PARA_BUTTON_START,		// MENU_BUTTON_START
+			PARA_BUTTON_BACK,		// MENU_BUTTON_BACK
+		},
+		{	// m_SecondaryMenuButton
+			PARA_BUTTON_LEFT,		// MENU_BUTTON_LEFT
+			PARA_BUTTON_RIGHT,		// MENU_BUTTON_RIGHT
+			PARA_BUTTON_UPRIGHT,			// MENU_BUTTON_UP
+			PARA_BUTTON_UPLEFT,		// MENU_BUTTON_DOWN
+			PARA_BUTTON_START,		// MENU_BUTTON_START
+			PARA_BUTTON_BACK,		// MENU_BUTTON_BACK
+		},
+		{	// m_iDefaultKeyboardKey
+			{	// PLAYER_1
+				DIK_Z,					// PARA_BUTTON_LEFT,
+				DIK_X,					// PARA_BUTTON_UPLEFT,
+				DIK_C,					// PARA_BUTTON_UP,
+				DIK_V,					// PARA_BUTTON_UPRIGHT,
+				DIK_B,					// PARA_BUTTON_RIGHT,
+				DIK_RETURN,				// PARA_BUTTON_START,
+				DIK_ESCAPE,				// PARA_BUTTON_BACK
+				DIK_LEFT, //no default key	// PARA_BUTTON_MENULEFT
+				DIK_RIGHT, //no default key	// PARA_BUTTON_MENURIGHT
+				DIK_UP,					// PARA_BUTTON_MENUUP
+				DIK_DOWN,				// PARA_BUTTON_MENUDOWN
+			},
+			{	// PLAYER_2
+				-1,					// PARA_BUTTON_LEFT,
+				-1,					// PARA_BUTTON_UPLEFT,
+				-1,					// PARA_BUTTON_UP,
+				-1,					// PARA_BUTTON_UPRIGHT,
+				-1,					// PARA_BUTTON_RIGHT,
+				-1,				// PARA_BUTTON_START,
+				-1,				// PARA_BUTTON_BACK
+				-1, //no default key	// PARA_BUTTON_MENULEFT
+				-1, //no default key	// PARA_BUTTON_MENURIGHT
+				-1,					// PARA_BUTTON_MENUUP
+				-1,
+			},
+		}
+	},
 };
 
 StyleDef g_StyleDefs[NUM_STYLES] = 
@@ -701,6 +777,40 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			2,0,4,1,3 // This should be from back to front: Down, UpLeft, UpRight, Upper Left Hand, Upper Right Hand 
 		},
 	},
+	{	// EZ2_STYLE_REAL
+		GAME_EZ2,								// m_Game
+		true,									// m_bUsedForGameplay
+		true,									// m_bUsedForEdit
+		"EZ2 Real",								// m_szName
+		{ NOTES_TYPE_EZ2_REAL,NOTES_TYPE_EZ2_REAL },	// m_NotesTypes
+		NOTES_TYPE_INVALID,						// m_FallbackNotesType
+		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		{ 160, 480 },							// m_iCenterX
+		7,										// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	GAME_CONTROLLER_1,	EZ2_BUTTON_FOOTUPLEFT,	-EZ2_COL_SPACING*3 },
+				{ TRACK_2,	GAME_CONTROLLER_1,	EZ2_BUTTON_HANDLRLEFT,	-EZ2_COL_SPACING*2 },
+				{ TRACK_3,	GAME_CONTROLLER_1,	EZ2_BUTTON_HANDUPLEFT,	-EZ2_COL_SPACING*1 }, 
+				{ TRACK_4,	GAME_CONTROLLER_1,	EZ2_BUTTON_FOOTDOWN,	+EZ2_COL_SPACING*0 },
+				{ TRACK_5,	GAME_CONTROLLER_1,	EZ2_BUTTON_HANDUPRIGHT,	+EZ2_COL_SPACING*1 }, 
+				{ TRACK_6,	GAME_CONTROLLER_1,	EZ2_BUTTON_HANDLRRIGHT,	+EZ2_COL_SPACING*2 },
+				{ TRACK_7,	GAME_CONTROLLER_1,	EZ2_BUTTON_FOOTUPRIGHT,	+EZ2_COL_SPACING*3 },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	GAME_CONTROLLER_2,	EZ2_BUTTON_FOOTUPLEFT,	-EZ2_COL_SPACING*3 },
+				{ TRACK_2,	GAME_CONTROLLER_2,	EZ2_BUTTON_HANDLRLEFT,	-EZ2_COL_SPACING*2 },
+				{ TRACK_3,	GAME_CONTROLLER_2,	EZ2_BUTTON_HANDUPLEFT,	-EZ2_COL_SPACING*1 }, 
+				{ TRACK_4,	GAME_CONTROLLER_2,	EZ2_BUTTON_FOOTDOWN,	+EZ2_COL_SPACING*0 },
+				{ TRACK_5,	GAME_CONTROLLER_2,	EZ2_BUTTON_HANDUPRIGHT,	+EZ2_COL_SPACING*1 }, 
+				{ TRACK_6,	GAME_CONTROLLER_2,	EZ2_BUTTON_HANDLRRIGHT,	+EZ2_COL_SPACING*2 },
+				{ TRACK_7,	GAME_CONTROLLER_2,	EZ2_BUTTON_FOOTUPRIGHT,	+EZ2_COL_SPACING*3 },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			3,0,6,2,4,1,5 // This should be from back to front: Down, UpLeft, UpRight, Lower Left Hand, Lower Right Hand, Upper Left Hand, Upper Right Hand 
+		},
+	},
 	{	// EZ2_STYLE_DOUBLE
 		GAME_EZ2,								// m_Game
 		true,									// m_bUsedForGameplay
@@ -739,40 +849,6 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			2,0,4,1,3,7,5,9,6,8 // This should be from back to front: Down, UpLeft, UpRight, Upper Left Hand, Upper Right Hand 
-		},
-	},
-	{	// EZ2_STYLE_REAL
-		GAME_EZ2,								// m_Game
-		true,									// m_bUsedForGameplay
-		true,									// m_bUsedForEdit
-		"EZ2 Real",								// m_szName
-		{ NOTES_TYPE_EZ2_REAL,NOTES_TYPE_EZ2_REAL },	// m_NotesTypes
-		NOTES_TYPE_INVALID,						// m_FallbackNotesType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
-		{ 160, 480 },							// m_iCenterX
-		7,										// m_iColsPerPlayer
-		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
-			{	// PLAYER_1
-				{ TRACK_1,	GAME_CONTROLLER_1,	EZ2_BUTTON_FOOTUPLEFT,	-EZ2_COL_SPACING*3 },
-				{ TRACK_2,	GAME_CONTROLLER_1,	EZ2_BUTTON_HANDLRLEFT,	-EZ2_COL_SPACING*2 },
-				{ TRACK_3,	GAME_CONTROLLER_1,	EZ2_BUTTON_HANDUPLEFT,	-EZ2_COL_SPACING*1 }, 
-				{ TRACK_4,	GAME_CONTROLLER_1,	EZ2_BUTTON_FOOTDOWN,	+EZ2_COL_SPACING*0 },
-				{ TRACK_5,	GAME_CONTROLLER_1,	EZ2_BUTTON_HANDUPRIGHT,	+EZ2_COL_SPACING*1 }, 
-				{ TRACK_6,	GAME_CONTROLLER_1,	EZ2_BUTTON_HANDLRRIGHT,	+EZ2_COL_SPACING*2 },
-				{ TRACK_7,	GAME_CONTROLLER_1,	EZ2_BUTTON_FOOTUPRIGHT,	+EZ2_COL_SPACING*3 },
-			},
-			{	// PLAYER_2
-				{ TRACK_1,	GAME_CONTROLLER_2,	EZ2_BUTTON_FOOTUPLEFT,	-EZ2_COL_SPACING*3 },
-				{ TRACK_2,	GAME_CONTROLLER_2,	EZ2_BUTTON_HANDLRLEFT,	-EZ2_COL_SPACING*2 },
-				{ TRACK_3,	GAME_CONTROLLER_2,	EZ2_BUTTON_HANDUPLEFT,	-EZ2_COL_SPACING*1 }, 
-				{ TRACK_4,	GAME_CONTROLLER_2,	EZ2_BUTTON_FOOTDOWN,	+EZ2_COL_SPACING*0 },
-				{ TRACK_5,	GAME_CONTROLLER_2,	EZ2_BUTTON_HANDUPRIGHT,	+EZ2_COL_SPACING*1 }, 
-				{ TRACK_6,	GAME_CONTROLLER_2,	EZ2_BUTTON_HANDLRRIGHT,	+EZ2_COL_SPACING*2 },
-				{ TRACK_7,	GAME_CONTROLLER_2,	EZ2_BUTTON_FOOTUPRIGHT,	+EZ2_COL_SPACING*3 },
-			},
-		},
-		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-			3,0,6,2,4,1,5 // This should be from back to front: Down, UpLeft, UpRight, Lower Left Hand, Lower Right Hand, Upper Left Hand, Upper Right Hand 
 		},
 	},
 	{	// EZ2_STYLE_SINGLE_VERSUS
@@ -869,6 +945,36 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			3,0,6,2,4,1,5 // This should be from back to front: Down, UpLeft, UpRight, Lower Left Hand, Lower Right Hand, Upper Left Hand, Upper Right Hand 
 		},
 	},
+	{	// PARA_SINGLE
+		GAME_PARA,								// m_Game
+		true,									// m_bUsedForGameplay
+		true,									// m_bUsedForEdit
+		"Para Single",							// m_szName
+		{ NOTES_TYPE_PARA,NOTES_TYPE_PARA}, // m_NotesTypes
+		NOTES_TYPE_INVALID,						// m_FallbackNotesType
+		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
+		{ 320, 320 },							// m_iCenterX
+		5,										// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	GAME_CONTROLLER_1,	PARA_BUTTON_LEFT,	-PARA_COL_SPACING*2 },
+				{ TRACK_2,	GAME_CONTROLLER_1,	PARA_BUTTON_UPLEFT,	-PARA_COL_SPACING*1 },
+				{ TRACK_3,	GAME_CONTROLLER_1,	PARA_BUTTON_UP,	+PARA_COL_SPACING*0 },
+				{ TRACK_4,	GAME_CONTROLLER_1,	PARA_BUTTON_UPRIGHT,	+PARA_COL_SPACING*1 },
+				{ TRACK_5,	GAME_CONTROLLER_1,	PARA_BUTTON_RIGHT,	+PARA_COL_SPACING*2 },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	GAME_CONTROLLER_2,	PARA_BUTTON_LEFT,	-PARA_COL_SPACING*2 },
+				{ TRACK_2,	GAME_CONTROLLER_2,	PARA_BUTTON_UPLEFT,	-PARA_COL_SPACING*1 },
+				{ TRACK_3,	GAME_CONTROLLER_2,	PARA_BUTTON_UP,	+PARA_COL_SPACING*0 },
+				{ TRACK_4,	GAME_CONTROLLER_2,	PARA_BUTTON_UPRIGHT,	+PARA_COL_SPACING*1 },
+				{ TRACK_5,	GAME_CONTROLLER_2,	PARA_BUTTON_RIGHT,	+PARA_COL_SPACING*2 },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			2,0,4,1,3 
+		},
+	}
 };
 
 

@@ -15,6 +15,7 @@ enum Game
 	GAME_DANCE, // Dance Dance Revolution
 	GAME_PUMP, // Pump It Up
 	GAME_EZ2, // Ez2dancer
+	GAME_PARA, // ParaPAraParadise
 	NUM_GAMES,	// leave this at the end
 	GAME_INVALID,
 };
