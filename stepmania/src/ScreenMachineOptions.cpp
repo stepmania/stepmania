@@ -116,6 +116,7 @@ void ScreenMachineOptions::ImportOptions()
 	m_iSelectedOption[0][MO_COIN_MODE]				= PREFSMAN->m_CoinMode;
 	m_iSelectedOption[0][MO_COINS_PER_CREDIT]		= PREFSMAN->m_iCoinsPerCredit - 1;
 	m_iSelectedOption[0][MO_JOINT_PREMIUM]			= PREFSMAN->m_bJointPremium ? 1:0;
+	m_iSelectedOption[0][MO_SHOW_SONG_OPTIONS]		= PREFSMAN->m_bShowSongOptions ? 1:0;
 }
 
 void ScreenMachineOptions::ExportOptions()
