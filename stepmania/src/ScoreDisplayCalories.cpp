@@ -12,7 +12,7 @@
 // lua start
 LUA_REGISTER_CLASS( ScoreDisplayCalories )
 // lua end
-REGISTER_ACTOR_CLASS( ScoreDisplayCalories );
+REGISTER_ACTOR_CLASS( ScoreDisplayCalories )
 
 ScoreDisplayCalories::ScoreDisplayCalories()
 {

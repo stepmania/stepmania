@@ -77,7 +77,7 @@ void HelpDisplay::Update( float fDeltaTime )
 #include "Style.h"
 #include "Foreach.h"
 
-REGISTER_ACTOR_CLASS( GenreDisplay );
+REGISTER_ACTOR_CLASS( GenreDisplay )
 
 GenreDisplay::GenreDisplay()
 {

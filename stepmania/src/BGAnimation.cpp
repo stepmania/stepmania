@@ -9,7 +9,7 @@
 #include "LuaManager.h"
 
 
-REGISTER_ACTOR_CLASS( BGAnimation );
+REGISTER_ACTOR_CLASS( BGAnimation )
 
 BGAnimation::BGAnimation()
 {

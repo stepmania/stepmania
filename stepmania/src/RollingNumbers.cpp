@@ -7,7 +7,7 @@
 // lua start
 LUA_REGISTER_CLASS( RollingNumbers )
 // lua end
-REGISTER_ACTOR_CLASS( RollingNumbers );
+REGISTER_ACTOR_CLASS( RollingNumbers )
 
 RollingNumbers::RollingNumbers()
 {

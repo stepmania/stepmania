@@ -15,7 +15,7 @@
 // lua start
 LUA_REGISTER_CLASS( BitmapText )
 // lua end
-REGISTER_ACTOR_CLASS( BitmapText );
+REGISTER_ACTOR_CLASS( BitmapText )
 
 /*
  * XXX: Changing a whole array of diffuse colors every frame (several times) is a waste,
