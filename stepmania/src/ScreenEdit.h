@@ -14,6 +14,8 @@
 #include "Foreground.h"
 #include "Course.h"
 #include "NoteField.h"
+#include "song.h"
+#include "Steps.h"
 
 const int NUM_ACTION_MENU_ITEMS = 23;
 const int NUM_NAMING_MENU_ITEMS = 6;
@@ -174,6 +176,13 @@ protected:
 	Transition		m_In;
 	Transition		m_Out;
 
+	// used for reverting
+	void CopyToLastSave();
+	void CopyFromLastSave();
+
+	Song m_songLastSave;
+	Steps m_stepsLastSave;
+
 
 // for MODE_RECORD
 
@@ -201,7 +210,7 @@ public:
 		play_whole_song,
 		play_current_beat_to_end,
 		save,
-		reload,
+		revert_to_last_save,
 		player_options,
 		song_options,
 		edit_song_info,

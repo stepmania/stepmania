@@ -67,7 +67,7 @@ const ScreenMessage SM_BackFromInsertAttack			= (ScreenMessage)(SM_User+9);
 const ScreenMessage SM_BackFromInsertAttackModifiers= (ScreenMessage)(SM_User+10);
 const ScreenMessage SM_BackFromPrefs				= (ScreenMessage)(SM_User+11);
 const ScreenMessage SM_BackFromCourseModeMenu		= (ScreenMessage)(SM_User+12);
-const ScreenMessage SM_DoReloadFromDisk				= (ScreenMessage)(SM_User+13);
+const ScreenMessage SM_DoRevertToLastSave				= (ScreenMessage)(SM_User+13);
 const ScreenMessage SM_DoUpdateTextInfo				= (ScreenMessage)(SM_User+14);
 const ScreenMessage SM_BackFromBPMChange			= (ScreenMessage)(SM_User+15);
 const ScreenMessage SM_BackFromStopChange			= (ScreenMessage)(SM_User+16);
@@ -372,7 +372,7 @@ static const MenuRow g_MainMenuItems[] =
 	{ ScreenEdit::play_whole_song,			"Play Whole Song",			true, true, 0, { NULL } },
 	{ ScreenEdit::play_current_beat_to_end, "Play Current Beat To End",	true, true, 0, { NULL } },
 	{ ScreenEdit::save,						"Save",						true, true, 0, { NULL } },
-	{ ScreenEdit::reload,					"Revert",					true, true, 0, { NULL } },
+	{ ScreenEdit::revert_to_last_save,		"Revert to Last Save",		true, true, 0, { NULL } },
 	{ ScreenEdit::player_options,			"Player Options",			true, true, 0, { NULL } },
 	{ ScreenEdit::song_options,				"Song Options",				true, false, 0, { NULL } },
 	{ ScreenEdit::edit_song_info,			"Edit Song Info",			true, false, 0, { NULL } },
@@ -503,6 +503,11 @@ void ScreenEdit::Init()
 
 	/* We do this ourself. */
 	SOUND->HandleSongTimer( false );
+
+
+	// save the originals for reverting later
+	CopyToLastSave();
+
 
 	// set both players to joined so the credit message doesn't show
 	FOREACH_PlayerNumber( p )
@@ -1489,24 +1494,12 @@ void ScreenEdit::TransitionFromRecordToEdit()
 	m_NoteDataRecord.ClearAll();
 }
 
-/* Helper for SM_DoReloadFromDisk */
-static bool g_DoReload;
-void ReloadFromDisk( void *p )
-{
-	g_DoReload = true;
-}
-
 void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
 	case SM_GoToNextScreen:
-		// Reload song from disk to discard changes.
-		SONGMAN->RevertFromDisk( GAMESTATE->m_pCurSong, true );
-		
-		/* We might do something with m_pSteps (eg. UpdateTextInfo) before we end up
-		 * in ScreenEditMenu, and m_pSteps might be invalid due to RevertFromDisk. */
-		m_pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+		CopyFromLastSave();
 
 		SCREENMAN->SetNewScreen( "ScreenEditMenu" );
 
@@ -1591,52 +1584,14 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			GAMESTATE->RestoreSelectedOptions();	// restore the edit and playback options
 		}
 		break;
-	case SM_DoReloadFromDisk:
-	{
-		if( !g_DoReload )
-			return;
-
-		const StepsType st = m_pSteps->m_StepsType;
-		StepsID id;
-		id.FromSteps( m_pSteps );
-
-		GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL ); /* make RevertFromDisk not try to reset it */
-		SONGMAN->RevertFromDisk( GAMESTATE->m_pCurSong );
-
-		CString sMessage = "Reloaded from disk.";
-		Steps *pSteps = id.ToSteps( GAMESTATE->m_pCurSong, false );
-
-		// Don't allow an autogen match.  This can't be what they chose to 
-		// edit originally because autogen steps are hidden.
-		if( pSteps && pSteps->IsAutogen() )
-			pSteps = NULL;
-
-		/* If we couldn't find the steps we were on before, warn and use the first available. */
-		if( pSteps == NULL )
+	case SM_DoRevertToLastSave:
+		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
 		{
-			pSteps = GAMESTATE->m_pCurSong->GetStepsByDifficulty( st, DIFFICULTY_INVALID, false );
+			CopyFromLastSave();
 
-			if( pSteps )
-				sMessage = ssprintf( "old steps not found; changed to %s.",
-					DifficultyToString(pSteps->GetDifficulty()).c_str() );
+			m_pSteps->GetNoteData( m_NoteDataEdit );
 		}
-
-		/* If we still couldn't find any steps, then all steps of the current StepsType
-		 * were removed.  Don't create them; only do that in EditMenu. */
-		if( pSteps == NULL )
-		{
-			SCREENMAN->SetNewScreen( "ScreenEditMenu" );
-			return;
-		}
-
-		SCREENMAN->SystemMessage( sMessage );
-
-		m_pSteps = pSteps;
-		GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
-		m_pSteps->GetNoteData( m_NoteDataEdit );
-
 		break;
-	}
 	case SM_DoUpdateTextInfo:
 		this->PostScreenMessage( SM_DoUpdateTextInfo, 0.5f );
 		UpdateTextInfo();
@@ -1645,6 +1600,8 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	case SM_DoExit:
 		if( ScreenPrompt::s_LastAnswer != ANSWER_CANCEL )
 		{
+			CopyFromLastSave();
+			
 			// If these steps have never been saved, then we should delete them.
 			// If the user created them in the edit menu and never bothered
 			// to save them, then they aren't wanted.
@@ -1798,6 +1755,10 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				pSteps->SetNoteData( m_NoteDataEdit );
 				pSteps->SetSavedToDisk( true );
 
+
+				CopyToLastSave();
+
+
 				if( HOME_EDIT_MODE )
 				{
 					CString s;
@@ -1813,23 +1774,23 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				{
 					GAMESTATE->m_pCurSong->Save();
 					SCREENMAN->ZeroNextUpdate();
+
+					// we shouldn't say we're saving a DWI if we're on any game besides
+					// dance, it just looks tacky and people may be wondering where the
+					// DWI file is :-)
+					if ((int)pSteps->m_StepsType <= (int)STEPS_TYPE_DANCE_SOLO) 
+						SCREENMAN->SystemMessage( "Saved as SM and DWI." );
+					else
+						SCREENMAN->SystemMessage( "Saved as SM." );
 				}
 
-				// we shouldn't say we're saving a DWI if we're on any game besides
-				// dance, it just looks tacky and people may be wondering where the
-				// DWI file is :-)
-				if ((int)pSteps->m_StepsType <= (int)STEPS_TYPE_DANCE_SOLO) 
-					SCREENMAN->SystemMessage( "Saved as SM and DWI." );
-				else
-					SCREENMAN->SystemMessage( "Saved as SM." );
 				SOUND->PlayOnce( THEME->GetPathS("ScreenEdit","save") );
 			}
 			break;
-		case reload:
-			g_DoReload = false;
-			SCREENMAN->Prompt( SM_DoReloadFromDisk,
-				"Do you want to reload from disk?\n\nThis will destroy all changes.",
-				PROMPT_YES_NO, ANSWER_NO, ReloadFromDisk, NULL, NULL );
+		case revert_to_last_save:
+			SCREENMAN->Prompt( SM_DoRevertToLastSave,
+				"Do you want to revert to your last save?\n\nThis will destroy all unsaved changes.",
+				PROMPT_YES_NO, ANSWER_NO );
 			break;
 		case player_options:
 			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromPlayerOptions );
@@ -2452,6 +2413,18 @@ void ScreenEdit::SetupCourseAttacks()
 			GAMESTATE->LaunchAttack( PLAYER_1, Attacks[i] );
 	}
 	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( PLAYER_1 );
+}
+
+void ScreenEdit::CopyToLastSave()
+{
+	m_songLastSave = *GAMESTATE->m_pCurSong;
+	m_stepsLastSave = *GAMESTATE->m_pCurSteps[PLAYER_1];
+}
+
+void ScreenEdit::CopyFromLastSave()
+{
+	*GAMESTATE->m_pCurSong = m_songLastSave;
+	*GAMESTATE->m_pCurSteps[PLAYER_1] = m_stepsLastSave;
 }
 
 /*
