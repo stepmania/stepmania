@@ -204,7 +204,7 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 	// init highlights
 	FOREACH_HumanPlayer( p )
 	{
-		m_Cursor[p].Load( "ScreenOptions", OptionsCursor::cursor );
+		m_Cursor[p].Load( m_sName, OptionsCursor::cursor );
 		m_Cursor[p].Set( p );
 		m_framePage.AddChild( &m_Cursor[p] );
 	}
@@ -801,16 +801,16 @@ bool ScreenOptions::AllAreOnLastRow() const
 	return true;
 }
 
-void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType )
+void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 {
-	switch( selectType )
+	switch( type )
 	{
 	case IET_FIRST_PRESS:
 		m_bGotAtLeastOneStartPressed[pn] = true;
 		break;
 	case IET_RELEASE:
 		return;	// ignore
-	default:	// repeat selectType
+	default:	// repeat type
 		if( !m_bGotAtLeastOneStartPressed[pn] )
 			return;	// don't allow repeat
 		break;
@@ -832,7 +832,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 				INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_LEFT) );
 			if( bHoldingLeftAndRight )
 			{
-				MoveRow( pn, -1, selectType != IET_FIRST_PRESS );		
+				MoveRow( pn, -1, type != IET_FIRST_PRESS );		
 				return;
 			}
 		}
@@ -853,7 +853,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 			bEndThisScreen = true;
 
 		/* Don't accept START to go to the next screen if we're still transitioning in. */
-		if( selectType != IET_FIRST_PRESS || IsTransitioning() )
+		if( type != IET_FIRST_PRESS || IsTransitioning() )
 			bEndThisScreen = false;
 		
 		if( bEndThisScreen )
@@ -868,7 +868,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 		int iChoiceInRow = row.GetChoiceInRowWithFocus(pn);
 		if( iChoiceInRow == 0 )
 		{
-			MenuDown( pn, selectType );
+			MenuDown( pn, type );
 			return;
 		}
 	}
@@ -890,7 +890,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 		if( row.GetFirstItemGoesDown() )
 		{
 			// move to the first choice in the row
-			ChangeValueInRow( pn, -row.GetChoiceInRowWithFocus(pn), selectType != IET_FIRST_PRESS );
+			ChangeValueInRow( pn, -row.GetChoiceInRowWithFocus(pn), type != IET_FIRST_PRESS );
 		}
 	}
 	else	// data.selectType != SELECT_MULTIPLE
@@ -898,7 +898,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 		switch( m_OptionsNavigation )
 		{
 		case NAV_THREE_KEY:
-			MenuDown( pn, selectType );
+			MenuDown( pn, type );
 			break;
 		case NAV_TOGGLE_THREE_KEY:
 		case NAV_TOGGLE_FIVE_KEY:
@@ -911,19 +911,19 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 					row.SetOneSelection( pn, iChoiceInRow );
 			}
 			if( row.GetFirstItemGoesDown() )
-				ChangeValueInRow( pn, -row.GetChoiceInRowWithFocus(pn), selectType != IET_FIRST_PRESS );	// move to the first choice
+				ChangeValueInRow( pn, -row.GetChoiceInRowWithFocus(pn), type != IET_FIRST_PRESS );	// move to the first choice
 			else
-				ChangeValueInRow( pn, 0, selectType != IET_FIRST_PRESS );
+				ChangeValueInRow( pn, 0, type != IET_FIRST_PRESS );
 			break;
 		case NAV_THREE_KEY_MENU:
 			/* Don't accept START to go to the next screen if we're still transitioning in. */
-			if( selectType == IET_FIRST_PRESS && !IsTransitioning() )
+			if( type == IET_FIRST_PRESS && !IsTransitioning() )
 				this->BeginFadingOut();
 			break;
 		case NAV_FIVE_KEY:
 			/* Jump to the exit row.  (If everyone's already on the exit row, then
 			 * we'll have already gone to the next screen above.) */
-			MoveRow( pn, m_Rows.size()-m_iCurrentRow[pn]-1, selectType != IET_FIRST_PRESS );
+			MoveRow( pn, m_Rows.size()-m_iCurrentRow[pn]-1, type != IET_FIRST_PRESS );
 			break;
 		}
 	}
@@ -1136,18 +1136,26 @@ void ScreenOptions::MenuUpDown( PlayerNumber pn, const InputEventType type, int 
 {
 	ASSERT( iDir == -1 || iDir == +1 );
 
+	bool bRepeat = type != IET_FIRST_PRESS;
+
 	int iDest = -1;
 	for( int r=1; r<(int)m_Rows.size(); r++ )
 	{
 		int iDelta = r*iDir;
 		iDest = m_iCurrentRow[pn] + iDelta;
+		int iOldDest = iDest;
 		ASSERT( m_Rows.size() );
 		wrap( iDest, m_Rows.size() );
+
+		// Don't wrap on repeating inputs.
+		bool bWrapped = iOldDest != iDest;
+		if( bRepeat && bWrapped )
+			return;
 
 		OptionRow &row = *m_Rows[iDest];
 		if( row.GetRowDef().IsEnabledForPlayer(pn) )
 		{
-			MoveRow( pn, iDelta, type != IET_FIRST_PRESS );
+			MoveRow( pn, iDelta, bRepeat );
 			return;
 		}
 	}
