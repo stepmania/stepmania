@@ -190,7 +190,8 @@ static int xtoi( const char *hex )
 	return ret;
 }
 
-static int get_readable_ranges( const void **starts, const void **ends, int size )
+enum { READABLE_ONLY=1, EXECUTABLE_ONLY=2 };
+static int get_readable_ranges( const void **starts, const void **ends, int size, int type=READABLE_ONLY )
 {
 	char path[PATH_MAX] = "/proc/";
 	strcat( path, itoa(getpid()) );
@@ -244,11 +245,17 @@ static int get_readable_ranges( const void **starts, const void **ends, int size
 				continue; /* Parse error. */
 
 			/* " rwxp".  If space[1] isn't 'r', then the block isn't readable. */
-			if( strlen(space) < 2 || space[1] != 'r' )
-				continue;
+			if( type & READABLE_ONLY )
+				if( strlen(space) < 2 || space[1] != 'r' )
+					continue;
+			/* " rwxp".  If space[3] isn't 'x', then the block isn't readable. */
+			if( type & EXECUTABLE_ONLY )
+				if( strlen(space) < 4 || space[3] != 'x' )
+					continue;
 
 			*starts++ = (const void *) xtoi( line );
 			*ends++ = (const void *) xtoi( hyphen+1 );
+			++got;
 		}
 
 		if( file_used == sizeof(file) )
@@ -268,7 +275,7 @@ static int get_readable_ranges( const void **starts, const void **ends, int size
 
 /* If the address is readable (eg. reading it won't cause a segfault), return
  * the block it's in.  Otherwise, return -1. */
-static int find_address( void *p, const void **starts, const void **ends )
+static int find_address( const void *p, const void **starts, const void **ends )
 {
 	for( int i = 0; starts[i]; ++i )
 	{
