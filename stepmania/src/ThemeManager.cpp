@@ -836,15 +836,12 @@ void ThemeManager::GetMetricsThatBeginWith( const CString &_sClassName, const CS
 				continue;
 
 			// Iterate over all metrics that match.
-			XAttrs::const_iterator j = cur->m_attrs.lower_bound( sValueName );
-			if( j == cur->m_attrs.end() )
-				continue;
-			for( ; true; j++ )
+			for( XAttrs::const_iterator j = cur->m_attrs.lower_bound( sValueName ); j != cur->m_attrs.end(); j++ )
 			{
 				const CString &sv = j->first;
 				if( sv.Left(sValueName.size()) == sValueName )
 					vsValueNamesOut.insert( sv );
-				else
+				else	// we passed the last metric that matched sValueName
 					break;
 			}
 		}
