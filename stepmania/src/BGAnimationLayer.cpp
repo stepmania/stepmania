@@ -342,8 +342,8 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 			m_fTilesStartY = s.GetUnzoomedHeight() / 2;
 			m_fTilesSpacingX = s.GetUnzoomedWidth();
 			m_fTilesSpacingY = s.GetUnzoomedHeight();
-			m_fTilesSpacingX -= 1;	// HACK:  Fix textures with transparence have gaps
-			m_fTilesSpacingY -= 1;	// HACK:  Fix textures with transparence have gaps
+//			m_fTilesSpacingX -= 1;	// HACK:  Fix textures with transparence have gaps
+//			m_fTilesSpacingY -= 1;	// HACK:  Fix textures with transparence have gaps
 			for( int x=0; x<m_iNumTilesWide; x++ )
 			{
 				for( int y=0; y<m_iNumTilesHigh; y++ )
@@ -565,12 +565,12 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 			if( m_fTilesSpacingX == -1 )
 			{
 				m_fTilesSpacingX = m_Sprites.back()->GetUnzoomedWidth();
-				m_fTilesSpacingX -= 1;	// HACK:  Fix textures with transparence have gaps
+//				m_fTilesSpacingX -= 1;	// HACK:  Fix textures with transparence have gaps
 			}
 			if( m_fTilesSpacingY == -1 )
 			{
 				m_fTilesSpacingY = m_Sprites.back()->GetUnzoomedHeight();
-				m_fTilesSpacingY -= 1;	// HACK:  Fix textures with transparence have gaps
+//				m_fTilesSpacingY -= 1;	// HACK:  Fix textures with transparence have gaps
 			}
 			m_iNumTilesWide = 2+(int)(SCREEN_WIDTH /m_fTilesSpacingX);
 			m_iNumTilesHigh = 2+(int)(SCREEN_HEIGHT/m_fTilesSpacingY);
