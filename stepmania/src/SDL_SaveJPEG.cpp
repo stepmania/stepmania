@@ -77,30 +77,20 @@ static void term_destination (jpeg::j_compress_ptr cinfo)
  */
 static void jpeg_SDL_RW_dest( jpeg::j_compress_ptr cinfo, SDL_RWops *ctx )
 {
-	my_destination_mgr *dest;
+	ASSERT( cinfo->dest == NULL );
 
-	/* The source object and input buffer are made permanent so that a series
-	 * of JPEG images can be read from the same file by calling jpeg_stdio_src
-	 * only before the first one.  (If we discarded the buffer at the end of
-	 * one image, we'd likely lose the start of the next one.)
-	 * This makes it unsafe to use this manager and a different source
-	 * manager serially with the same JPEG object.  Caveat programmer. */
-	if( cinfo->dest == NULL )
-	{
-		/* first time for this JPEG object? */
-		cinfo->dest = (struct jpeg::jpeg_destination_mgr *)
-			(*cinfo->mem->alloc_small) ( (jpeg::j_common_ptr) cinfo, JPOOL_PERMANENT,
-				sizeof(my_destination_mgr) );
-		dest = (my_destination_mgr *) cinfo->dest;
-	}
+	cinfo->dest = (struct jpeg::jpeg_destination_mgr *)
+		(*cinfo->mem->alloc_small) ( (jpeg::j_common_ptr) cinfo, JPOOL_PERMANENT,
+			sizeof(my_destination_mgr) );
 
-	dest = (my_destination_mgr *) cinfo->dest;
+	my_destination_mgr *dest = (my_destination_mgr *) cinfo->dest;
 	dest->pub.init_destination = init_destination;
 	dest->pub.empty_output_buffer = empty_output_buffer;
 	dest->pub.term_destination = term_destination;
-	dest->ctx = ctx;
 	dest->pub.free_in_buffer = OUTPUT_BUFFER_SIZE; /* forces fill_input_buffer on first read */
 	dest->pub.next_output_byte = dest->buffer; /* until buffer loaded */
+
+	dest->ctx = ctx;
 }
 
 /* Save a JPEG to a file.  cjpeg.c and example.c from jpeglib were helpful in writing this. */
