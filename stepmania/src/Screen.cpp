@@ -45,21 +45,36 @@ void Screen::Update( float fDeltaTime )
 	// update the times of queued ScreenMessages and send if timer has expired
 	// The order you remove messages in must be very careful!  Sending a message can 
 	// potentially clear all m_QueuedMessages, and set a new state!
-	for( unsigned i=0; i<m_QueuedMessages.size(); i++ )
+	/* Also, it might call ClearMessageQueue() to clear a single message type.
+	 * This might clear previous messages on the queue.  So, first apply time to
+	 * everything. */
+	
+	unsigned i;
+	for( i=0; i<m_QueuedMessages.size(); i++ )
+		m_QueuedMessages[i].fDelayRemaining -= fDeltaTime;
+
+	/* Now dispatch messages.  If the number of messages on the queue changes
+	 * within HandleScreenMessage, someone cleared messages on the queue.  This
+	 * means we have no idea where 'i' is, so start over. Since we applied time
+	 * already, this won't cause messages to be mistimed. */
+	for( i=0; i<m_QueuedMessages.size(); i++ )
 	{
-		/* Er, wait.  Shouldn't we subtract first?  This will make messages
-		 * get delayed an extra frame. -glenn */
-		if( m_QueuedMessages[i].fDelayRemaining <= 0.0f )		// send this sucker!
-		{
-			this->HandleScreenMessage( m_QueuedMessages[i].SM );
-			if(i < m_QueuedMessages.size())
-				m_QueuedMessages.erase(m_QueuedMessages.begin()+i);
-			i--;
-		}
-		else
-		{
-			m_QueuedMessages[i].fDelayRemaining -= fDeltaTime;
-		}
+		if( m_QueuedMessages[i].fDelayRemaining > 0.0f )
+			continue; /* not yet */
+
+		/* Remove the message from the list. */
+		const ScreenMessage SM = m_QueuedMessages[i].SM;
+		m_QueuedMessages.erase(m_QueuedMessages.begin()+i);
+		i--;
+
+		unsigned size = m_QueuedMessages.size();
+
+		// send this sucker!
+		this->HandleScreenMessage( SM );
+
+		/* If the size changed, start over. */
+		if(size != m_QueuedMessages.size())
+			i = 0;
 	}
 }
 
