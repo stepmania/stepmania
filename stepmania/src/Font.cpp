@@ -102,14 +102,14 @@ void FontPage::Load( FontPageSettings cfg )
 	/* Shift the character up so the top will be rendered at the baseline. */
 	vshift = (float) -baseline;
 
-	SetTextureCoords(FrameWidths);
+	SetTextureCoords(FrameWidths, cfg.AdvanceExtraPixels);
 	SetExtraPixels(cfg.DrawExtraPixelsLeft, cfg.DrawExtraPixelsRight);
 
 //	LOG->Trace("Font %s: height %i, baseline %i ( == top %i)",
 //		   m_sTexturePath.c_str(), height, baseline, baseline-height);
 }
 
-void FontPage::SetTextureCoords(const vector<int> &widths)
+void FontPage::SetTextureCoords(const vector<int> &widths, int AdvanceExtraPixels)
 {
 	for(int i = 0; i < m_pTexture->GetNumFrames(); ++i)
 	{
@@ -125,9 +125,7 @@ void FontPage::SetTextureCoords(const vector<int> &widths)
 		g.width = float(widths[i]);
 		g.height = float(m_pTexture->GetSourceFrameHeight());
 
-		/* By default, advance one pixel more than the width.  (This could be
-		 * an option.) */
-		g.hadvance = int(g.width + 1);
+		g.hadvance = int(g.width) + AdvanceExtraPixels;
 
 		/* Do the same thing with X.  Do this by changing the actual rendered
 		 * rect, instead of shifting it, so we don't render more than we need to. */
@@ -481,6 +479,7 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 	ini.GetValueI( PageName, "Top", cfg.Top );
 	ini.GetValueI( PageName, "Baseline", cfg.Baseline );
 	ini.GetValueI( PageName, "DefaultWidth", cfg.DefaultWidth );
+	ini.GetValueI( PageName, "AdvanceExtraPixels", cfg.AdvanceExtraPixels );
 
 	/* Iterate over all keys. */
 	const IniFile::key *k = ini.GetKey(PageName);

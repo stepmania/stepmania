@@ -45,7 +45,8 @@ struct FontPageSettings
 		LineSpacing,
 		Top,
 		Baseline,
-		DefaultWidth;
+		DefaultWidth,
+		AdvanceExtraPixels;
 	float ScaleAllWidthsBy;
 	
 	map<longchar,int> CharToGlyphNo;
@@ -59,6 +60,7 @@ struct FontPageSettings
 		Top(-1),
 		Baseline(-1),
 		DefaultWidth(-1),
+		AdvanceExtraPixels(1),
 		ScaleAllWidthsBy(1)
 	{ }
 
@@ -92,7 +94,7 @@ public:
 
 private:
 	void SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight);
-	void SetTextureCoords(const vector<int> &widths);
+	void SetTextureCoords(const vector<int> &widths, int AdvanceExtraPixels);
 };
 
 class Font
