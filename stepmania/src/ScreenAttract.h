@@ -13,13 +13,9 @@
 */
 
 #include "Screen.h"
-#include "Sprite.h"
-#include "BitmapText.h"
 #include "Transition.h"
 #include "RandomSample.h"
 #include "BGAnimation.h"
-#include "RageTimer.h"
-#include "RageSound.h"
 
 
 class ScreenAttract : public Screen
