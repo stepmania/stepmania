@@ -211,7 +211,8 @@ void mySDL_WM_SetIcon( CString sIconFile )
 		return;
 	}
 
-	RageSurface *srf = RageSurfaceUtils::LoadFile(sIconFile);
+	CString error;
+	RageSurface *srf = RageSurfaceUtils::LoadFile( sIconFile, error );
 	if( srf == NULL )
 		return;
 
@@ -247,11 +248,39 @@ SDL_Surface *SDLSurfaceFromRageSurface( RageSurface *surf )
 	if( surf->format->BytesPerPixel == 1 )
 	{
 		ASSERT( sizeof(RageSurfaceColor) == sizeof(SDL_Color) );
-		memcpy( ret->format->palette->colors, surf->fmt.palette->colors,
-				256 * sizeof(RageSurfaceColor) );
+		SDL_SetPalette( ret, SDL_LOGPAL, (SDL_Color *) surf->fmt.palette->colors, 0, 256 );
+
+		/* If we have one alpha value, transfer it to the color key. */
+		int iKey = -1;
+		bool bUsesColorKey = true;
+
+		for( int i = 0; i < surf->format->palette->ncolors; ++i )
+		{
+			if( surf->format->palette->colors[i].a == 0xFF )
+				continue;
+			if( surf->format->palette->colors[i].a != 0 )
+			{
+				bUsesColorKey = false;
+				break;
+			}
+
+			/* a == 0 */
+			if( iKey != -1 )
+			{
+				bUsesColorKey = false;
+				break;
+			}
+			iKey = i;
+		}
+
+		if( bUsesColorKey && iKey != -1 )
+			SDL_SetColorKey( ret, SDL_SRCCOLORKEY, iKey );
+
+		/* XXX: If we have more than one alpha value, or any alpha values between 1 and
+		 * 254, it needs to be converted to RGBA.  I'm not sure that we ever do that
+		 * with surfaces passed to SDL, though. */
 	}
 
-	/* XXX: if we have one alpha value, transfer to colorkey */
 	return ret;
 }
 
