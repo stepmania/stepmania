@@ -30,6 +30,7 @@ static const CString RadarCategoryNames[NUM_RADAR_CATEGORIES] = {
 	"Hands",
 };
 XToString( RadarCategory );
+XToThemedString( RadarCategory );
 
 
 static const CString DifficultyNames[NUM_RADAR_CATEGORIES] = {
@@ -89,6 +90,7 @@ static const CString PlayModeNames[NUM_PLAY_MODES] = {
 	"Rave",
 };
 XToString( PlayMode );
+XToThemedString( PlayMode );
 StringToX( PlayMode );
 
 

@@ -33,9 +33,11 @@
 const CString STATS_HTML	= "Stats.html";
 const CString STYLE_CSS		= "Style.css";
 
-#define TITLE				THEME->GetMetric("ProfileHtml","Title")
-#define FOOTER				THEME->GetMetric("ProfileHtml","Footer")
-#define VERIFICATION_TEXT	THEME->GetMetric("ProfileHtml","VerificationText")
+#define TITLE					THEME->GetMetric("ProfileHtml","Title")
+#define FOOTER					THEME->GetMetric("ProfileHtml","Footer")
+#define VERIFICATION_TEXT		THEME->GetMetric("ProfileHtml","VerificationText")
+#define SHOW_PLAY_MODE(pm)		THEME->GetMetric("ProfileHtml","ShowPlayMode"+PlayModeToString(pm))
+#define SHOW_RADAR_CATEGORY(rc)	THEME->GetMetric("ProfileHtml","ShowCategory"+RadarCategoryToString(rc))
 
 
 static int g_Level = 1;
@@ -298,7 +300,11 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 		{
 			BEGIN_TABLE(4);
 			FOREACH_PlayMode( pm )
-				TABLE_LINE2( PlayModeToString(pm), pProfile->m_iNumSongsPlayedByPlayMode[pm] );
+			{
+				if( !SHOW_PLAY_MODE(pm) )
+					continue;	// skip
+				TABLE_LINE2( PlayModeToThemedString(pm), pProfile->m_iNumSongsPlayedByPlayMode[pm] );
+			}
 			END_TABLE;
 		}
 		PRINT_CLOSE(f);
@@ -328,7 +334,7 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 		{
 			BEGIN_TABLE(4);
 			FOREACH_Difficulty( dc )
-				TABLE_LINE2( DifficultyToString(dc), pProfile->m_iNumSongsPlayedByDifficulty[dc] );
+				TABLE_LINE2( DifficultyToThemedString(dc), pProfile->m_iNumSongsPlayedByDifficulty[dc] );
 			END_TABLE;
 		}
 		PRINT_CLOSE(f);
@@ -457,9 +463,9 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 					if( iNumTimesPlayed==0 )
 						continue;	// skip
 					CString s;
-					s += GAMEMAN->NotesTypeToString(pSteps->m_StepsType);
+					s += GAMEMAN->NotesTypeToThemedString(pSteps->m_StepsType);
 					s += " ";
-					s += DifficultyToString(pSteps->GetDifficulty());
+					s += DifficultyToThemedString(pSteps->GetDifficulty());
 					TABLE_LINE5(i+1, pSong->GetDisplayMainTitle(), pSong->GetDisplaySubTitle(), s, PrettyPercent(iNumTimesPlayed,iTotalPlays) );
 				}
 				if( i == 0 )
@@ -614,7 +620,7 @@ void PrintHighScoreListTable( RageFile &f, const HighScoreList& hsl )
 		const HighScore &hs = hsl.vHighScores[i];
 		CString sName = ssprintf("#%d",i+1);
 		CString sHSName = hs.sName.empty() ? "????" : hs.sName;
-		CString sValue = ssprintf("%s, %s, %i, %.2f%%", sHSName.c_str(), GradeToString(hs.grade).c_str(), hs.iScore, hs.fPercentDP*100);
+		CString sValue = ssprintf("%s, %s, %i, %.2f%%", sHSName.c_str(), GradeToThemedString(hs.grade).c_str(), hs.iScore, hs.fPercentDP*100);
 		TABLE_LINE2( sName.c_str(), sValue );
 	}
 	END_TABLE;
@@ -648,9 +654,9 @@ bool PrintHighScoresForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 				continue;
 
 			CString s = 
-				GAMEMAN->NotesTypeToString(pSteps->m_StepsType) + 
+				GAMEMAN->NotesTypeToThemedString(pSteps->m_StepsType) + 
 				" - " +
-				DifficultyToString(pSteps->GetDifficulty());
+				DifficultyToThemedString(pSteps->GetDifficulty());
 			PRINT_OPEN(f, s, true);
 			{
 				PrintHighScoreListTable( f, hsl );
@@ -677,7 +683,7 @@ bool PrintHighScoresForCourse( RageFile &f, const Profile *pProfile, Course* pCo
 
 			bPrintedAny = true;
 
-			PRINT_OPEN(f, GAMEMAN->NotesTypeToString(st)+" - "+CourseDifficultyToString(cd) );
+			PRINT_OPEN(f, GAMEMAN->NotesTypeToThemedString(st)+" - "+CourseDifficultyToThemedString(cd) );
 			{
 				PrintHighScoreListTable( f, hsl );
 			}
@@ -708,7 +714,7 @@ bool PrintGradeTableForStepsType( RageFile &f, const Profile *pProfile, StepsTyp
 	unsigned i;
 	const vector<Song*> &vpSongs = SONGMAN->GetAllSongs();
 
- 	PRINT_OPEN(f, GAMEMAN->NotesTypeToString(st).c_str() );
+ 	PRINT_OPEN(f, GAMEMAN->NotesTypeToThemedString(st).c_str() );
 	{
 		f.PutLine( "<table class='difficulty'>\n" );
 
@@ -718,7 +724,7 @@ bool PrintGradeTableForStepsType( RageFile &f, const Profile *pProfile, StepsTyp
 		{
 			if( dc == DIFFICULTY_EDIT )
 				continue;	// skip
-			f.PutLine( ssprintf("<td>%s</td>", Capitalize(DifficultyToString(dc)).c_str()) );
+			f.PutLine( ssprintf("<td>%s</td>", Capitalize(DifficultyToThemedString(dc)).c_str()) );
 		}
 		f.PutLine( "</tr>" );
 
@@ -802,9 +808,9 @@ bool PrintInventoryForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 			if( pSteps->IsAutogen() )
 				continue;	// skip autogen
 			CString s = 
-				GAMEMAN->NotesTypeToString(pSteps->m_StepsType) + 
+				GAMEMAN->NotesTypeToThemedString(pSteps->m_StepsType) + 
 				" - " +
-				DifficultyToString(pSteps->GetDifficulty());
+				DifficultyToThemedString(pSteps->GetDifficulty());
 			PRINT_OPEN(f, s, true);	// use poister value as the hash
 			{
 				BEGIN_TABLE(3);
@@ -816,7 +822,10 @@ bool PrintInventoryForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 				BEGIN_TABLE(2);
 				FOREACH_RadarCategory( cat )
 				{
-					CString sCat = RadarCategoryToString(cat);
+					if( !SHOW_RADAR_CATEGORY(cat) )
+						continue;	// skip
+
+					CString sCat = RadarCategoryToThemedString(cat);
 					float fVal = pSteps->GetRadarValues()[cat];
 					CString sVal = ssprintf( "%.2f", fVal );
 					TABLE_LINE2( sCat, sVal );

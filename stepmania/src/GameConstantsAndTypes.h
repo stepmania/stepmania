@@ -60,6 +60,7 @@ enum RadarCategory
 };
 #define FOREACH_RadarCategory( rc ) FOREACH_ENUM( RadarCategory, NUM_RADAR_CATEGORIES, rc )
 const CString& RadarCategoryToString( RadarCategory cat );
+CString RadarCategoryToThemedString( RadarCategory cat );
 
 struct RadarValues
 {
@@ -164,6 +165,7 @@ enum PlayMode
 };
 #define FOREACH_PlayMode( pm ) FOREACH_ENUM( PlayMode, NUM_PLAY_MODES, pm )
 const CString& PlayModeToString( PlayMode pm );
+CString PlayModeToThemedString( PlayMode pm );
 PlayMode StringToPlayMode( const CString& s );
 
 
