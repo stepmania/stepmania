@@ -68,7 +68,7 @@ public:
 	void Stop();
 
 	float GetLengthSeconds();
-	float GetPositionSeconds( bool *approximate=NULL ) const;
+	float GetPositionSeconds( bool *approximate=NULL, RageTimer *Timestamp=NULL ) const;
 	int GetSampleRate() const;
 	bool SetPositionSeconds( float fSeconds = -1);
 	void SetAccurateSync(bool yes=true) { AccurateSync = yes; }

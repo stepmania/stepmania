@@ -38,6 +38,7 @@
 #include "RageLog.h"
 #include "RageException.h"
 #include "PrefsManager.h"
+#include "arch/ArchHooks/ArchHooks.h"
 
 #include <math.h>
 
@@ -654,9 +655,21 @@ int RageSound::GetPositionSecondsInternal( bool *approximate ) const
 	return SearchPosMap( pos_map, cur_sample, approximate );
 }
 
-float RageSound::GetPositionSeconds( bool *approximate ) const
+float RageSound::GetPositionSeconds( bool *approximate, RageTimer *Timestamp ) const
 {
+	LockMut(SOUNDMAN->lock);
+
+	if( Timestamp )
+	{
+		HOOKS->EnterTimeCriticalSection();
+		Timestamp->Touch();
+	}
+
 	const float pos = GetPositionSecondsInternal( approximate ) / float(samplerate());
+
+	if( Timestamp )
+		HOOKS->ExitTimeCriticalSection();
+
 	const float fixed_pos = pos + Sample->GetOffsetFix();
 	return GetPlaybackRate() * fixed_pos;
 }
