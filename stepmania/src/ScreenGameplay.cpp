@@ -1282,6 +1282,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 	case SM_BeginLoadingNextSong:
 		LoadNextSong();
+		GAMESTATE->m_bPastHereWeGo = true;
 		/* We're fading in, so don't hit any notes for a few seconds; they'll be
 		 * obscured by the fade. */
 		StartPlayingSong( 3, 0 );
