@@ -1004,8 +1004,12 @@ int RageSoundReader_MP3::SetPosition_estimate( int ms )
 
 	/* We've jumped across the file, so the decoder is currently desynced. 
 	 * Don't use resync(); it's slow.  Just decode a few frames. */
-	if( do_mad_frame_decode() == -1 ) return -1;
-	if( do_mad_frame_decode() == -1 ) return -1;
+	for( int i = 0; i < 2; ++i )
+	{
+		int ret = do_mad_frame_decode();
+		if( ret <= 0 )
+			return ret;
+	}
 
 	/* Throw out one synth. */
 	synth_output();
