@@ -56,6 +56,11 @@ void ScreenNetworkOptions::Init()
 	g_NetworkOptionsLines[PO_SERVER].choices.push_back("Stop");
 	g_NetworkOptionsLines[PO_SERVER].choices.push_back("Start...");
 	
+	//Enable all lines for all players
+	for ( unsigned int i = 0; i < NUM_NETWORK_OPTIONS_LINES; i++ )
+		FOREACH_PlayerNumber( pn )
+			g_NetworkOptionsLines[i].m_vEnabledForPlayers.insert( pn );
+
 	vector<OptionRowDefinition> vDefs( &g_NetworkOptionsLines[0], &g_NetworkOptionsLines[ARRAYSIZE(g_NetworkOptionsLines)] );
 	vector<OptionRowHandler*> vHands( vDefs.size(), NULL );
 
