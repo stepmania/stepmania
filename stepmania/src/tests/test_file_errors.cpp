@@ -97,6 +97,8 @@ RageFileDriverTest::RageFileDriverTest( CString root_ ):
 	RageFileDriver( new TestFilenameDB(root_) ),
 	root(root_)
 {
+	if( root.Right(1) != "/" )
+		root += '/';
 }
 
 
