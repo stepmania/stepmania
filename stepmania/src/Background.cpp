@@ -27,7 +27,6 @@ const CString RANDOMMOVIES_DIR = "RandomMovies\\";
 
 const float FADE_SECONDS = 1.0f;
 
-// TODO: Move these into theme metrics
 #define LEFT_EDGE			THEME->GetMetricI("Background","LeftEdge")
 #define TOP_EDGE			THEME->GetMetricI("Background","TopEdge")
 #define RIGHT_EDGE			THEME->GetMetricI("Background","RightEdge")
