@@ -200,6 +200,14 @@ SOURCE=.\Window.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\WindowAdvancedOptions.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowAdvancedOptions.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\WindowCaution.cpp
 # End Source File
 # Begin Source File
@@ -280,14 +288,6 @@ SOURCE=.\WindowMenu.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\WindowMenuResults.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowMenuResults.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\WindowMessage.h
 # End Source File
 # Begin Source File
@@ -313,6 +313,14 @@ SOURCE=.\WindowPrompt.cpp
 # Begin Source File
 
 SOURCE=.\WindowPrompt.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowResults.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowResults.h
 # End Source File
 # Begin Source File
 
@@ -725,6 +733,14 @@ SOURCE=.\GranularityIndicator.cpp
 # Begin Source File
 
 SOURCE=.\GranularityIndicator.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\InfoFrame.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\InfoFrame.h
 # End Source File
 # Begin Source File
 

@@ -24,7 +24,7 @@ GrayArrow::GrayArrow()
 
 void GrayArrow::SetBeat( const float fSongBeat )
 {
-	SetState( fmod(fSongBeat,1) * Sprite::GetNumStates() );
+	SetState( (int)( fmod(fSongBeat,1) * Sprite::GetNumStates() ) );
 }
 
 void GrayArrow::Step()
