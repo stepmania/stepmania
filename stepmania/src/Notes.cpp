@@ -108,7 +108,7 @@ CString Notes::GetSMNoteData() const
 
 RageColor Notes::GetColor() const
 {
-	switch( m_Difficulty )
+	switch( GetDifficulty() )
 	{
 	case DIFFICULTY_BEGINNER:	return COLOR_BEGINNER;
 	case DIFFICULTY_EASY:		return COLOR_EASY;
