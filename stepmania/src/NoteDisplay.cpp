@@ -78,7 +78,7 @@ int NoteDisplay::GetTapColorFrameNo( const float fNoteBeat )
 
 void NoteDisplay::GetTapEdgeColors( const float fNoteBeat, D3DXCOLOR &colorLeadingOut, D3DXCOLOR &colorTrailingOut )
 {
-// Chris: If EZ2 doesn't use these values, it can just ignore them.
+// Chris: If EZ2 doesn't use a color part, leave that part of the NoteSkin graphic empty
 //
 // Andy:
 //	if (GAMESTATE->m_CurGame == GAME_EZ2)
@@ -168,335 +168,12 @@ void NoteDisplay::GetTapEdgeColors( const float fNoteBeat, D3DXCOLOR &colorLeadi
 	colorTrailingOut = m_colorTapTweens[iTrailingColor1] * (1-fTrailingColorWeightOf2) + m_colorTapTweens[iTrailingColor2] * fTrailingColorWeightOf2;
 }
 
-/*
-D3DXCOLOR NoteDisplay::GetHoldColor( const float fY, const float fYTop, const float fYBottom )
+void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float fLife, const float fPercentFadeToFail, bool bDrawGlowOnly )
 {
-	if( fY == fYTop )
-		return m_colorHoldTweens[0];
+	// bDrawGlowOnly is a little hacky.  We need to draw the diffuse part and the glow part one pass at a time to minimize state changes
 
-	float fDistFromEnd = fYBottom - fY;
-	float fArrowSizesFromEnd = fDistFromEnd / (float)ARROW_SIZE;
-	float fPercentThroughColors = fmodf( fArrowSizesFromEnd, 2 ) / 2.0f; 
-	float fIndex = fPercentThroughColors * (m_colorHoldTweens.GetSize()-1);
-	float fWeightOf2 = fIndex - int(fIndex);
-	int iColor1 = int(fIndex);
-	int iColor2 = (iColor1+1) % m_colorHoldTweens.GetSize();
-	return m_colorHoldTweens[iColor1] * (1-fWeightOf2) + m_colorHoldTweens[iColor2] * fWeightOf2;	
-}
-*/
+	const bool bReverse = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bReverseScroll;
 
-float NoteDisplay::GetAddAlpha( float fDiffuseAlpha, float fPercentFadeToFail )
-{
-	if( fPercentFadeToFail != -1 )
-		return 1-fPercentFadeToFail;
-
-	float fDistFromCenter = fabsf( 0.5f - fDiffuseAlpha );
-	return clamp( 1-fDistFromCenter*2, 0, 1 );
-}
-
-
-/*
-void NoteDisplay::DrawList( int iCount, NoteDisplayInstance cni[], bool bDrawAddPass )
-{
-	int iNumV;
-
-	LPDIRECT3DVERTEXBUFFER8 pVB = DISPLAY->GetVertexBuffer();
-	RAGEVERTEX* v;
-
-	LPDIRECT3DDEVICE8 pd3dDevice = DISPLAY->GetDevice();
-
-	pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA );
-	pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-
-	pd3dDevice->SetVertexShader( D3DFVF_RAGEVERTEX );
-	pd3dDevice->SetStreamSource( 0, pVB, sizeof(RAGEVERTEX) );
-
-
-	const float fGrayWidth		= m_sprHoldParts.GetUnzoomedWidth();
-	const float fGrayHeight		= m_sprHoldParts.GetUnzoomedHeight();
-	const float fColorWidth		= m_sprTapParts.GetUnzoomedWidth();
-	const float fColorHeight	= m_sprTapParts.GetUnzoomedHeight();
-
-	RageTexture*	pGrayTexture	= m_sprHoldParts.GetTexture();
-	RageTexture*	pColorTexture	= m_sprTapParts.GetTexture();
-
-	//
-	//	Draw gray parts diffuse pass
-	//
-	pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-	pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-	pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE );
-	pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-	pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
-	pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
-
-	pd3dDevice->SetTexture( 0, pGrayTexture->GetD3DTexture() );
-	
-	pVB->Lock( 0, 0, (BYTE**)&v, 0 );
-
-	iNumV = 0;
-	for( int i=0; i<iCount; i++ )
-	{
-		NoteDisplayInstance* pCNI = &cni[i];
-		const float fX = pCNI->fX;
-		const float fY = pCNI->fY;
-		const float fRotation = pCNI->fRotation;
-		D3DXVECTOR3 vecPoints[4];	// top left, bottom left, top right, bottom right
-
-		
-		//
-		// Set vertex positions
-		//
-		vecPoints[0] = D3DXVECTOR3( -fGrayWidth/2, -fGrayHeight/2,	0 );	// top left
-		vecPoints[1] = D3DXVECTOR3( -fGrayWidth/2, +fGrayHeight/2,	0 );	// bottom left
-		vecPoints[2] = D3DXVECTOR3( +fGrayWidth/2, -fGrayHeight/2,	0 );	// top right
-		vecPoints[3] = D3DXVECTOR3( +fGrayWidth/2, +fGrayHeight/2,	0 );	// bottom right
-
-		if( fRotation != 0 )
-		{
-			D3DXMATRIX matRotation;
-			D3DXMatrixRotationZ( &matRotation, fRotation );
-
-			for( int j=0; j<4; j++ )
-				D3DXVec3TransformCoord( &vecPoints[j], &vecPoints[j], &matRotation ); 
-		}
-		for( int j=0; j<4; j++ )
-		{
-			vecPoints[j].x += fX;
-			vecPoints[j].y += fY;
-		}
-
-		// first triangle
-		v[iNumV++].p = vecPoints[0];	// top left
-		v[iNumV++].p = vecPoints[1];	// bottom left
-		v[iNumV++].p = vecPoints[2];	// top right
-		// 2nd triangle
-		v[iNumV++].p = vecPoints[2];	// top right
-		v[iNumV++].p = vecPoints[1];	// bottom left
-		v[iNumV++].p = vecPoints[3];	// bottom right
-
-		//
-		// set texture coordinates
-		//
-		iNumV -= 6;
-
-		FRECT* pTexCoordRect = pGrayTexture->GetTextureCoordRect( pCNI->iGrayPartFrameNo );
-
-		v[iNumV++].t = D3DXVECTOR2( pTexCoordRect->left,	pTexCoordRect->top );		// top left
-		v[iNumV++].t = D3DXVECTOR2( pTexCoordRect->left,	pTexCoordRect->bottom );	// bottom left
-		v[iNumV++].t = D3DXVECTOR2( pTexCoordRect->right,	pTexCoordRect->top );		// top right
-		v[iNumV++].t = v[iNumV-1].t;													// top right
-		v[iNumV++].t = v[iNumV-3].t;													// bottom left
-		v[iNumV++].t = D3DXVECTOR2( pTexCoordRect->right,	pTexCoordRect->bottom );	// bottom right
-
-		//
-		// set vertex colors
-		//
-		iNumV -= 6;
-
-		D3DXCOLOR	colorGrayPart(1,1,1,pCNI->fAlpha);
-
-		v[iNumV++].color = colorGrayPart;	// top left
-		v[iNumV++].color = colorGrayPart;	// bottom left
-		v[iNumV++].color = colorGrayPart;	// top right
-		v[iNumV++].color = colorGrayPart;	// top right
-		v[iNumV++].color = colorGrayPart;	// bottom left
-		v[iNumV++].color = colorGrayPart;	// bottom right
-
-	}
-	ASSERT( iNumV == iCount*6 );	// two triangles for each note
-
-	pVB->Unlock();
-
-	pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, iNumV/3 );
-
-
-	//
-	//	Draw gray parts add pass
-	//
-	if( bDrawAddPass )
-	{
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
-
-		pVB->Lock( 0, 0, (BYTE**)&v, 0 );
-
-
-		iNumV = 0;
-		for( int i=0; i<iCount; i++ )
-		{
-			NoteDisplayInstance* pCNI = &cni[i];
-
-			const D3DXCOLOR colorGlow = D3DXCOLOR(1,1,1,pCNI->fAddAlpha);
-
-			//
-			// set vertex colors
-			//
-			v[iNumV++].color = colorGlow;	// top left
-			v[iNumV++].color = colorGlow;	// bottom left
-			v[iNumV++].color = colorGlow;	// top right
-			v[iNumV++].color = colorGlow;	// top right
-			v[iNumV++].color = colorGlow;	// bottom left
-			v[iNumV++].color = colorGlow;	// bottom right
-
-		}
-		ASSERT( iNumV == iCount*6 );	// two triangles for each note
-
-		pVB->Unlock();
-
-		pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, iNumV/3 );
-	}
-
-		
-
-		
-
-
-
-
-	//
-	//	Draw color parts diffuse pass
-	//
-	pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-	pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-	pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE );
-	pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-	pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
-	pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
-
-	pd3dDevice->SetTexture( 0, pColorTexture->GetD3DTexture() );
-	
-	pVB->Lock( 0, 0, (BYTE**)&v, 0 );
-
-	iNumV = 0;
-	for( i=0; i<iCount; i++ )
-	{
-		NoteDisplayInstance* pCNI = &cni[i];
-		const float fX = pCNI->fX;
-		const float fY = pCNI->fY;
-		const float fRotation = pCNI->fRotation;
-		D3DXVECTOR3 vecPoints[4];	// top left, bottom left, top right, bottom right
-
-		//
-		// Set vertex positions
-		//
-		vecPoints[0] = D3DXVECTOR3( -fColorWidth/2, -fColorHeight/2,	0 );	// top left
-		vecPoints[1] = D3DXVECTOR3( -fColorWidth/2, +fColorHeight/2,	0 );	// bottom left
-		vecPoints[2] = D3DXVECTOR3( +fColorWidth/2, -fColorHeight/2,	0 );	// top right
-		vecPoints[3] = D3DXVECTOR3( +fColorWidth/2, +fColorHeight/2,	0 );	// bottom right
-
-		if( fRotation != 0 )
-		{
-			D3DXMATRIX matRotation;
-			D3DXMatrixRotationZ( &matRotation, fRotation );
-
-			for( int j=0; j<4; j++ )
-				D3DXVec3TransformCoord( &vecPoints[j], &vecPoints[j], &matRotation ); 
-		}
-		for( int j=0; j<4; j++ )
-		{
-			vecPoints[j].x += fX;
-			vecPoints[j].y += fY;
-		}
-
-		// first triangle
-		v[iNumV++].p = vecPoints[0];	// top left
-		v[iNumV++].p = vecPoints[1];	// bottom left
-		v[iNumV++].p = vecPoints[2];	// top right
-		// 2nd triangle
-		v[iNumV++].p = vecPoints[2];	// top right
-		v[iNumV++].p = vecPoints[1];	// bottom left
-		v[iNumV++].p = vecPoints[3];	// bottom right
-
-		//
-		// set texture coordinates
-		//
-		iNumV -= 6;
-
-		FRECT* pTexCoordRect = pColorTexture->GetTextureCoordRect( pCNI->iColorPartFrameNo );
-
-		v[iNumV++].t = D3DXVECTOR2( pTexCoordRect->left,	pTexCoordRect->top );		// top left
-		v[iNumV++].t = D3DXVECTOR2( pTexCoordRect->left,	pTexCoordRect->bottom );	// bottom left
-		v[iNumV++].t = D3DXVECTOR2( pTexCoordRect->right,	pTexCoordRect->top );		// top right
-		v[iNumV++].t = v[iNumV-1].t;													// top right
-		v[iNumV++].t = v[iNumV-3].t;													// bottom left
-		v[iNumV++].t = D3DXVECTOR2( pTexCoordRect->right,	pTexCoordRect->bottom );	// bottom right
-
-		//
-		// set vertex colors
-		//
-		iNumV -= 6;
-
-		D3DXCOLOR colorLeadingEdge = D3DXCOLOR(pCNI->colorLeadingEdge);
-		D3DXCOLOR colorTrailingEdge = D3DXCOLOR(pCNI->colorTrailingEdge);
-
-		colorLeadingEdge.a = pCNI->fAlpha;
-		colorTrailingEdge.a = pCNI->fAlpha;
-	
-		v[iNumV++].color = colorLeadingEdge;	// top left
-		v[iNumV++].color = colorTrailingEdge;	// bottom left
-		v[iNumV++].color = colorLeadingEdge;	// top right
-		v[iNumV++].color = v[iNumV-1].color;	// top right
-		v[iNumV++].color = v[iNumV-3].color;	// bottom left
-		v[iNumV++].color = colorTrailingEdge;	// bottom right
-
-	}
-	ASSERT( iNumV == iCount*6 );	// two triangles for each note
-
-	pVB->Unlock();
-
-	pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, iNumV/3 );
-
-
-	//
-	//	Draw Color parts add pass
-	//
-	if( bDrawAddPass )
-	{
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
-
-		pVB->Lock( 0, 0, (BYTE**)&v, 0 );
-
-
-		iNumV = 0;
-		for( int i=0; i<iCount; i++ )
-		{
-			NoteDisplayInstance* pCNI = &cni[i];
-
-			const D3DXCOLOR colorGlow = D3DXCOLOR(1,1,1,pCNI->fAddAlpha);
-
-			//
-			// set vertex colors
-			//
-			v[iNumV++].color = colorGlow;	// top left
-			v[iNumV++].color = colorGlow;	// bottom left
-			v[iNumV++].color = colorGlow;	// top right
-			v[iNumV++].color = colorGlow;	// top right
-			v[iNumV++].color = colorGlow;	// bottom left
-			v[iNumV++].color = colorGlow;	// bottom right
-
-		}
-		ASSERT( iNumV == iCount*6 );	// two triangles for each note
-
-		pVB->Unlock();
-
-		pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, iNumV/3 );
-	}
-}
-*/
-
-
-void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float fLife, const float fPercentFadeToFail )
-{
 	const int	iCol			= hn.m_iTrack;
 	const float fStartYOffset	= ArrowGetYOffset(	m_PlayerNumber, hn.m_fStartBeat );
 	const float fStartYPos		= ArrowGetYPos(		m_PlayerNumber, fStartYOffset );
@@ -508,8 +185,8 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	const float fFrameHeight = m_sprHoldParts.GetUnzoomedHeight();
 	const float fBodyHeight = fFrameHeight*2;
 
-	const float fYHead = min(fStartYPos, fEndYPos);		// stop drawing here
-	const float fYTail = max(fStartYPos, fEndYPos);		// the center the tail
+	const float fYHead = bReverse ? fEndYPos : fStartYPos;		// the center of the head
+	const float fYTail = bReverse ? fStartYPos : fEndYPos;		// the center the tail
 
 	const float fYTailTop = fYTail-fFrameHeight/2;		
 	const float fYTailBottom = fYTail+fFrameHeight/2;	
@@ -520,7 +197,10 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	const int	fYStep = 8;		// draw a segment every 8 pixels	// this requires that the texture dimensions be a multiple of 8
 
 	DISPLAY->SetBlendModeNormal();
-	DISPLAY->SetColorTextureMultDiffuse();
+	if( bDrawGlowOnly )
+		DISPLAY->SetColorDiffuse();
+	else
+		DISPLAY->SetColorTextureMultDiffuse();
 	DISPLAY->SetAlphaTextureMultDiffuse();
 	DISPLAY->SetTexture( m_sprHoldParts.GetTexture() );
 
@@ -532,8 +212,8 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	{
 		const float fYTop			= fY;
 		const float fYBottom		= fY+min(fYStep, fYTailBottom-fY);
-		const float fXTop			= ArrowGetXPos2( m_PlayerNumber, iCol, fYTop );
-		const float fXBottom		= ArrowGetXPos2( m_PlayerNumber, iCol, fYBottom );
+		const float fXTop			= ArrowGetXPos( m_PlayerNumber, iCol, fYTop );
+		const float fXBottom		= ArrowGetXPos( m_PlayerNumber, iCol, fYBottom );
 		const float fXTopLeft		= fXTop - fFrameWidth/2;
 		const float fXTopRight		= fXTop + fFrameWidth/2;
 		const float fXBottomLeft	= fXBottom - fFrameWidth/2;
@@ -547,21 +227,26 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		const float fTexCoordRight	= bActive ? 0.50f : 0.25f;
 		const float	fAlphaTop		= ArrowGetAlpha( m_PlayerNumber, fYTop );
 		const float	fAlphaBottom	= ArrowGetAlpha( m_PlayerNumber, fYBottom );
-		const float	fAddAlphaTop	= GetAddAlpha( fAlphaTop, fPercentFadeToFail );
-		const float	fAddAlphaBottom	= GetAddAlpha( fAlphaBottom, fPercentFadeToFail );
+		const float	fGlowTop		= ArrowGetGlow( m_PlayerNumber, fYTop );
+		const float	fGlowBottom		= ArrowGetGlow( m_PlayerNumber, fYBottom );
 		const float fColorScale		= SCALE(fLife,0,1,0.5f,1);
 		const D3DXCOLOR colorDiffuseTop		= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaTop);
 		const D3DXCOLOR colorDiffuseBottom	= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaBottom);
-		const D3DXCOLOR colorGlowTop			= D3DXCOLOR(1,1,1,fAddAlphaTop);
-		const D3DXCOLOR colorGlowBottom		= D3DXCOLOR(1,1,1,fAddAlphaBottom);
+		const D3DXCOLOR colorGlowTop		= D3DXCOLOR(1,1,1,fGlowTop);
+		const D3DXCOLOR colorGlowBottom		= D3DXCOLOR(1,1,1,fGlowBottom);
 
 		// the shift by -0.5 is to align texels to pixels
 
+		if( bDrawGlowOnly && colorGlowTop.a==0 && colorGlowBottom.a==0 )
+			continue;
+		if( !bDrawGlowOnly && colorDiffuseTop.a==0 && colorDiffuseBottom.a==0 )
+			continue;
+
 		DISPLAY->AddQuad( 
-			D3DXVECTOR3(fXTopLeft-0.5f,    fYTop-0.5f,   0), colorDiffuseTop,    D3DXVECTOR2(fTexCoordLeft,  fTexCoordTop),   // colorGlowTop,			// top-left
-			D3DXVECTOR3(fXTopRight-0.5f,   fYTop-0.5f,   0), colorDiffuseTop,    D3DXVECTOR2(fTexCoordRight, fTexCoordTop),   // colorGlowTop,			// top-right
-			D3DXVECTOR3(fXBottomLeft-0.5f, fYBottom-0.5f,0), colorDiffuseBottom, D3DXVECTOR2(fTexCoordLeft,  fTexCoordBottom),// colorGlowBottom,		// bottom-left
-			D3DXVECTOR3(fXBottomRight-0.5f,fYBottom-0.5f,0), colorDiffuseBottom, D3DXVECTOR2(fTexCoordRight, fTexCoordBottom) );//, colorGlowBottom );	// bottom-right
+			D3DXVECTOR3(fXTopLeft-0.5f,    fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    D3DXVECTOR2(fTexCoordLeft,  fTexCoordTop),   // colorGlowTop,			// top-left
+			D3DXVECTOR3(fXTopRight-0.5f,   fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    D3DXVECTOR2(fTexCoordRight, fTexCoordTop),   // colorGlowTop,			// top-right
+			D3DXVECTOR3(fXBottomLeft-0.5f, fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, D3DXVECTOR2(fTexCoordLeft,  fTexCoordBottom),// colorGlowBottom,		// bottom-left
+			D3DXVECTOR3(fXBottomRight-0.5f,fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, D3DXVECTOR2(fTexCoordRight, fTexCoordBottom) );//, colorGlowBottom );	// bottom-right
 	}
 
 	//
@@ -571,8 +256,8 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	{
 		const float fYTop			= fY;
 		const float fYBottom		= min( fY+fYStep, fYTailTop+1 );
-		const float fXTop			= ArrowGetXPos2( m_PlayerNumber, iCol, fYTop );
-		const float fXBottom		= ArrowGetXPos2( m_PlayerNumber, iCol, fYBottom );
+		const float fXTop			= ArrowGetXPos( m_PlayerNumber, iCol, fYTop );
+		const float fXBottom		= ArrowGetXPos( m_PlayerNumber, iCol, fYBottom );
 		const float fXTopLeft		= fXTop - fFrameWidth/2;
 		const float fXTopRight		= fXTop + fFrameWidth/2;
 		const float fXBottomLeft	= fXBottom - fFrameWidth/2;
@@ -585,19 +270,24 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		const float fTexCoordRight	= bActive ? 1.00f : 0.75f;
 		const float	fAlphaTop		= ArrowGetAlpha( m_PlayerNumber, fYTop );
 		const float	fAlphaBottom	= ArrowGetAlpha( m_PlayerNumber, fYBottom );
-		const float	fAddAlphaTop	= GetAddAlpha( fAlphaTop, fPercentFadeToFail );
-		const float	fAddAlphaBottom	= GetAddAlpha( fAlphaBottom, fPercentFadeToFail );
+		const float	fGlowTop		= ArrowGetGlow( m_PlayerNumber, fYTop );
+		const float	fGlowBottom		= ArrowGetGlow( m_PlayerNumber, fYBottom );
 		const float fColorScale		= SCALE(fLife,0,1,0.5f,1);
 		const D3DXCOLOR colorDiffuseTop		= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaTop);
 		const D3DXCOLOR colorDiffuseBottom	= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlphaBottom);
-		const D3DXCOLOR colorGlowTop			= D3DXCOLOR(1,1,1,fAddAlphaTop);
-		const D3DXCOLOR colorGlowBottom		= D3DXCOLOR(1,1,1,fAddAlphaBottom);
+		const D3DXCOLOR colorGlowTop		= D3DXCOLOR(1,1,1,fGlowTop);
+		const D3DXCOLOR colorGlowBottom		= D3DXCOLOR(1,1,1,fGlowBottom);
+
+		if( bDrawGlowOnly && colorGlowTop.a==0 && colorGlowBottom.a==0 )
+			continue;
+		if( !bDrawGlowOnly && colorDiffuseTop.a==0 && colorDiffuseBottom.a==0 )
+			continue;
 
 		DISPLAY->AddQuad( 
-			D3DXVECTOR3(fXTopLeft-0.5f,    fYTop-0.5f,   0), colorDiffuseTop,    D3DXVECTOR2(fTexCoordLeft,  fTexCoordTop),    //colorGlowTop,			// top-left
-			D3DXVECTOR3(fXTopRight-0.5f,   fYTop-0.5f,   0), colorDiffuseTop,    D3DXVECTOR2(fTexCoordRight, fTexCoordTop),    //colorGlowTop,			// top-right
-			D3DXVECTOR3(fXBottomLeft-0.5f, fYBottom-0.5f,0), colorDiffuseBottom, D3DXVECTOR2(fTexCoordLeft,  fTexCoordBottom), //colorGlowBottom,		// bottom-left
-			D3DXVECTOR3(fXBottomRight-0.5f,fYBottom-0.5f,0), colorDiffuseBottom, D3DXVECTOR2(fTexCoordRight, fTexCoordBottom) );//, colorGlowBottom );	// bottom-right
+			D3DXVECTOR3(fXTopLeft-0.5f,    fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    D3DXVECTOR2(fTexCoordLeft,  fTexCoordTop),    //colorGlowTop,			// top-left
+			D3DXVECTOR3(fXTopRight-0.5f,   fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    D3DXVECTOR2(fTexCoordRight, fTexCoordTop),    //colorGlowTop,			// top-right
+			D3DXVECTOR3(fXBottomLeft-0.5f, fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, D3DXVECTOR2(fTexCoordLeft,  fTexCoordBottom), //colorGlowBottom,		// bottom-left
+			D3DXVECTOR3(fXBottomRight-0.5f,fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, D3DXVECTOR2(fTexCoordRight, fTexCoordBottom) );//, colorGlowBottom );	// bottom-right
 	}	
 
 	DISPLAY->FlushQueue();
@@ -608,19 +298,51 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	//
 	{
 		fY							= fYHead;
-		const float fX				= ArrowGetXPos2( m_PlayerNumber, iCol, fY );
+		const float fX				= ArrowGetXPos( m_PlayerNumber, iCol, fY );
 		const float	fAlpha			= ArrowGetAlpha( m_PlayerNumber, fY );
-		const float	fAddAlpha		= GetAddAlpha( fAlpha, fPercentFadeToFail );
+		const float	fGlow			= ArrowGetGlow( m_PlayerNumber, fY );
 		const float fColorScale		= SCALE(fLife,0,1,0.5f,1);
 		const D3DXCOLOR colorDiffuse= D3DXCOLOR(fColorScale,fColorScale,fColorScale,fAlpha);
-		const D3DXCOLOR colorGlow	= D3DXCOLOR(1,1,1,fAddAlpha);
+		const D3DXCOLOR colorGlow	= D3DXCOLOR(1,1,1,fGlow);
 
 		m_sprHoldParts.SetState( bActive?1:0 );
 		m_sprHoldParts.SetXY( fX, fY );
-		m_sprHoldParts.SetDiffuseColor( colorDiffuse );
-		m_sprHoldParts.SetGlowColor( colorGlow );
+		if( bDrawGlowOnly )
+		{
+			m_sprHoldParts.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+			m_sprHoldParts.SetGlowColor( colorGlow );
+		}
+		else
+		{
+			m_sprHoldParts.SetDiffuseColor( colorDiffuse );
+			m_sprHoldParts.SetGlowColor( D3DXCOLOR(0,0,0,0) );
+		}
 		m_sprHoldParts.Draw();
 	}
+
+	//
+	// We've drawn the diffuse pass, now draw the glow pass if necessary
+	//
+	bool bDrawGlow = false;
+	if( fPercentFadeToFail > 0 )
+		bDrawGlow = true;
+	if( !bDrawGlowOnly )
+	{
+		switch( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_AppearanceType )
+		{ 
+		case PlayerOptions::APPEARANCE_VISIBLE:
+		case PlayerOptions::APPEARANCE_STEALTH:
+			break;	// don't need to draw glow
+		case PlayerOptions::APPEARANCE_HIDDEN:
+		case PlayerOptions::APPEARANCE_SUDDEN:
+			bDrawGlow = true;
+			break;
+		default:
+			ASSERT(0);
+		}
+	}
+	if( bDrawGlow )
+		DrawHold( hn, bActive, fLife, fPercentFadeToFail, true );
 }
 
 void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bUseHoldColor, const float fPercentFadeToFail )
@@ -628,9 +350,9 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bUseHol
 	const float fYOffset		= ArrowGetYOffset(	m_PlayerNumber, fBeat );
 	const float fYPos			= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 	const float fRotation		= ArrowGetRotation(	m_PlayerNumber, iCol, fYOffset );
-	const float fXPos			= ArrowGetXPos2(	m_PlayerNumber, iCol, fYPos );
+	const float fXPos			= ArrowGetXPos(		m_PlayerNumber, iCol, fYPos );
 	const float fAlpha			= ArrowGetAlpha(	m_PlayerNumber, fYPos );
-	const float fAddAlpha		= GetAddAlpha(		fAlpha, fPercentFadeToFail );
+	const float fGlow			= ArrowGetGlow(		m_PlayerNumber, fYPos );
 	const int iGrayPartFrameNo	= GetTapGrayFrameNo( fBeat );
 	const int iColorPartFrameNo	= GetTapColorFrameNo( fBeat );
 
@@ -638,7 +360,7 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bUseHol
 	D3DXCOLOR colorLeadingEdge;
 	D3DXCOLOR colorTrailingEdge;
 	if( bUseHoldColor )
-		colorLeadingEdge = colorTrailingEdge = D3DXCOLOR(0,1,0,1);	// HACK: green.
+		colorLeadingEdge = colorTrailingEdge = D3DXCOLOR(0,1,0,1);	// HACK: green.  Move this into the note skin
 	else
 		GetTapEdgeColors( fBeat, colorLeadingEdge, colorTrailingEdge );
 	colorGrayPart.a		*= fAlpha;
@@ -647,7 +369,7 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bUseHol
 
 	m_sprTapParts.SetXY( fXPos, fYPos );
 	m_sprTapParts.SetRotation( fRotation );
-	m_sprTapParts.SetGlowColor( D3DXCOLOR(1,1,1,fAddAlpha) );
+	m_sprTapParts.SetGlowColor( D3DXCOLOR(1,1,1,fGlow) );
 
 	//
 	// draw gray part

@@ -62,7 +62,7 @@ void GhostArrowRow::DrawPrimitives()
 {
 	for( int c=0; c<m_iNumCols; c++ )
 	{
-		float fX = ArrowGetXPos2( m_PlayerNumber, c, 0 );
+		float fX = ArrowGetXPos( m_PlayerNumber, c, 0 );
 		m_GhostArrowRow[c].SetX( fX );
 		m_GhostArrowRowBright[c].SetX( fX );
 		m_HoldGhostArrowRow[c].SetX( fX );

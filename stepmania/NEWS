@@ -1,4 +1,5 @@
 ﻿------------------------CVS after 3.00 beta 6----------------
+CHANGE:  Improved the appearance of hidden/sudden.
 CHANGE:  After changing sort to "BEST", focus will be changed to the 
 	the most-played song.
 CHANGE:  Texture Hints have been removed in favor of smarter, automatic

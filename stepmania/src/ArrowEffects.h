@@ -39,10 +39,15 @@ float ArrowGetYPos(	PlayerNumber pn, float fYOffset );
 //	fXPos is a horizontal position in pixels relative to the center of the field.
 //	This depends on the column of the arrow and possibly the Arrow effect and
 //	fYPos (in the case of EFFECT_DRUNK).
-float ArrowGetXPos2( PlayerNumber pn, int iCol, float fYPos );
+float ArrowGetXPos( PlayerNumber pn, int iCol, float fYPos );
 
 
 //	fAlpha is the transparency of the arrow.  It depends on fYPos and the 
 //	ArrowAppearance.
 float ArrowGetAlpha( PlayerNumber pn, float fYPos );
+
+
+//	fAlpha is the transparency of the arrow.  It depends on fYPos and the 
+//	ArrowAppearance.
+float ArrowGetGlow( PlayerNumber pn, float fYPos );
 

@@ -15,26 +15,46 @@
 #include "PrefsManager.h"
 
 
-#define POP_UP_SECONDS		THEME->GetMetricF("GhostArrow","PopUpSeconds")
+#define SHOW_SECONDS		THEME->GetMetricF("GhostArrow","ShowSeconds")
 #define ZOOM_START			THEME->GetMetricF("GhostArrow","ZoomStart")
 #define ZOOM_END			THEME->GetMetricF("GhostArrow","ZoomEnd")
-#define COLOR_PERFECT		THEME->GetMetricC("GhostArrow","ColorPerfect")
-#define COLOR_GREAT			THEME->GetMetricC("GhostArrow","ColorGreat")
-#define COLOR_GOOD			THEME->GetMetricC("GhostArrow","ColorGood")
-#define COLOR_BOO			THEME->GetMetricC("GhostArrow","ColorBoo")
+#define COLOR_PERFECT_START	THEME->GetMetricC("GhostArrow","ColorPerfectStart")
+#define COLOR_PERFECT_END	THEME->GetMetricC("GhostArrow","ColorPerfectEnd")
+#define COLOR_GREAT_START	THEME->GetMetricC("GhostArrow","ColorGreatStart")
+#define COLOR_GREAT_END		THEME->GetMetricC("GhostArrow","ColorGreatEnd")
+#define COLOR_GOOD_START	THEME->GetMetricC("GhostArrow","ColorGoodStart")
+#define COLOR_GOOD_END		THEME->GetMetricC("GhostArrow","ColorGoodEnd")
+#define COLOR_BOO_START		THEME->GetMetricC("GhostArrow","ColorBooStart")
+#define COLOR_BOO_END		THEME->GetMetricC("GhostArrow","ColorBooEnd")
 
+float g_fShowSeconds;
+float g_fZoomStart, g_fZoomEnd;
+D3DXCOLOR 
+	g_colorPerfectStart, g_colorPerfectEnd, 
+	g_colorGreatStart, g_colorGreatEnd, 
+	g_colorGoodStart, g_colorGoodEnd, 
+	g_colorBooStart, g_colorBooEnd;
 
 GhostArrow::GhostArrow()
 {
-	m_fPopUpSeconds = POP_UP_SECONDS;
-	m_fZoomStart = ZOOM_START;
-	m_fZoomEnd = ZOOM_END;
-	m_colorPerfect = COLOR_PERFECT;
-	m_colorGreat = COLOR_GREAT;
-	m_colorGood = COLOR_GOOD;
-	m_colorBoo = COLOR_BOO;
+	g_fShowSeconds		= SHOW_SECONDS;
+	g_fZoomStart		= ZOOM_START;
+	g_fZoomEnd			= ZOOM_END;
+	g_colorPerfectStart = COLOR_PERFECT_START;
+	g_colorPerfectEnd	= COLOR_PERFECT_END;
+	g_colorGreatStart	= COLOR_GREAT_START;
+	g_colorGreatEnd		= COLOR_GREAT_END;
+	g_colorGoodStart	= COLOR_GOOD_START;
+	g_colorGoodEnd		= COLOR_GOOD_END;
+	g_colorBooStart		= COLOR_BOO_START;
+	g_colorBooEnd		= COLOR_BOO_END;
+
+
 	SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-	TurnShadowOff();
+
+	// set the length of each frame so the animation plays in exactly 1 pop up time
+	for( int i=0; i<Sprite::GetNumStates(); i++ )
+		Sprite::m_fDelay[i] = g_fShowSeconds / (float)Sprite::GetNumStates();
 }
 
 void GhostArrow::Update( float fDeltaTime )
@@ -44,24 +64,27 @@ void GhostArrow::Update( float fDeltaTime )
 
 void GhostArrow::Step( TapNoteScore score )
 {
-	D3DXCOLOR color;
+	D3DXCOLOR colorStart, colorEnd;
 	switch( score )
 	{
-	case TNS_PERFECT:	color = m_colorPerfect;	break;
-	case TNS_GREAT:		color = m_colorGreat;	break;
-	case TNS_GOOD:		color = m_colorGood;	break;
-	case TNS_BOO:		color = m_colorBoo;		break;
+	case TNS_PERFECT:	colorStart = g_colorPerfectStart;	colorEnd = g_colorPerfectEnd;	break;
+	case TNS_GREAT:		colorStart = g_colorGreatStart;		colorEnd = g_colorGreatEnd;		break;
+	case TNS_GOOD:		colorStart = g_colorGoodStart;		colorEnd = g_colorGoodEnd;		break;
+	case TNS_BOO:		colorStart = g_colorBooStart;		colorEnd = g_colorBooEnd;		break;
 	case TNS_MISS:		// miss should never be passed in here
 	default:
 		ASSERT(0);
 	}
 
 	StopTweening();
-	SetDiffuseColor( color );
+	SetDiffuseColor( colorStart );
 	SetState( 0 );
-	SetZoom( m_fZoomStart );
-	BeginTweening( m_fPopUpSeconds );
-	SetTweenZoom( m_fZoomEnd );
-	color.a = 0;
-	SetTweenDiffuseColor( color );
+	SetZoom( g_fZoomStart );
+	
+	BeginTweeningQueued( g_fShowSeconds );
+	SetTweenZoom( g_fZoomEnd );
+	SetTweenDiffuseColor( colorEnd );
+
+	BeginTweeningQueued( 0.0001f );		// snap to invisible
+	SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
 }

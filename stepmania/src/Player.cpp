@@ -33,6 +33,7 @@
 #define JUDGE_BOO_ZOOM_X			THEME->GetMetricF("Player","JudgeBooZoomX")
 #define JUDGE_BOO_ZOOM_Y			THEME->GetMetricF("Player","JudgeBooZoomY")
 #define COMBO_JUDGE_TWEEN_SECONDS	THEME->GetMetricF("Player","ComboJudgeTweenSeconds")
+#define BRIGHT_GHOST_THRESHOLD		THEME->GetMetricI("Player","BrightGhostThreshold")
 
 
 // cache because reading from theme metrics is slow
@@ -45,6 +46,7 @@ float g_fJudgePerfectZoomX,
 	  g_fJudgeBooZoomX,
       g_fJudgeBooZoomY,
       g_fComboJudgeTweenSeconds;
+int	  g_iBrightGhostThreshold;
 
 // these two items are in the
 const float FRAME_JUDGE_AND_COMBO_Y = CENTER_Y;
@@ -71,6 +73,7 @@ Player::Player()
 	g_fJudgeBooZoomX = JUDGE_BOO_ZOOM_X;
     g_fJudgeBooZoomY = JUDGE_BOO_ZOOM_Y;
 	g_fComboJudgeTweenSeconds = COMBO_JUDGE_TWEEN_SECONDS;
+	g_iBrightGhostThreshold = BRIGHT_GHOST_THRESHOLD;
 
 
 	m_PlayerNumber = PLAYER_INVALID;
@@ -438,7 +441,7 @@ void Player::OnRowDestroyed( int col, int iIndexThatWasSteppedOn )
 	{
 		if( m_TapNotes[c][iIndexThatWasSteppedOn] != '0' )	// if there is a note in this col
 		{
-			m_GhostArrowRow.TapNote( c, score, m_Combo.GetCurrentCombo()>100 );	// show the ghost arrow for this column
+			m_GhostArrowRow.TapNote( c, score, m_Combo.GetCurrentCombo()>g_iBrightGhostThreshold );	// show the ghost arrow for this column
 			
 			HandleNoteScore( score );	// update score - called once per note in this row
 

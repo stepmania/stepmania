@@ -37,7 +37,7 @@ float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )
 	return fYOffset;
 }
 
-float ArrowGetXPos2( PlayerNumber pn, int iColNum, float fYPos ) 
+float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYPos ) 
 {
 	float fSongBeat = GAMESTATE->m_fSongBeat;
 	float fPixelOffsetFromCenter = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[PLAYER_1][iColNum].fXOffset;
@@ -70,76 +70,54 @@ float ArrowGetYPos( PlayerNumber pn, float fYOffset )
 	return fYOffset * GAMESTATE->m_PlayerOptions[pn].m_fArrowScrollSpeed * (GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll ? -1 : 1 );
 }
 
-float ArrowGetAlpha( PlayerNumber pn, float fYPos )
-{
-	float fAlpha;
-	static	float blinktimer=0;
-	if (blinktimer == 0)
-		blinktimer = TIMER->GetTimeSinceStart();
-	
-	const bool bReverse = GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll;
 
-	static int blinkstate=2;
+const float fCenterLine = 160;	// from fYPos == 0
+const float fFadeDist = 100;
+
+// used by ArrowGetAlpha and ArrowGetGlow below
+float ArrowGetPercentVisible( PlayerNumber pn, float fYPos )
+{
+	const bool bReverse = GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll;
+	const float fCorrectedYPos = bReverse ? -fYPos : fYPos;
+	const float fDistFromCenterLine = fCorrectedYPos - fCenterLine;
+	float fAlpha;
+
 	switch( GAMESTATE->m_PlayerOptions[pn].m_AppearanceType )
 	{ 
 	case PlayerOptions::APPEARANCE_VISIBLE:
 		fAlpha = 1;
 		break;
 	case PlayerOptions::APPEARANCE_HIDDEN:
-		fAlpha = ((bReverse?-fYPos:fYPos)-100)/100;
+		fAlpha = SCALE( fDistFromCenterLine, 0, fFadeDist, 0, 1 );
 		break;
 	case PlayerOptions::APPEARANCE_SUDDEN:
-		fAlpha = ((SCREEN_HEIGHT-(bReverse?-fYPos:fYPos))-260)/100;
+		fAlpha = SCALE( fDistFromCenterLine, 0, -fFadeDist, 0, 1 );
 		break;
 	case PlayerOptions::APPEARANCE_STEALTH:
 		fAlpha = 0;
 		break;
 	case PlayerOptions::APPEARANCE_BLINK: // this is an Ez2dancer Appearance Mode
-		if (TIMER->GetTimeSinceStart() > blinktimer + 0.20f)
-		{
-			blinktimer = TIMER->GetTimeSinceStart();
-			if (blinkstate == 1)
-			{
-				blinkstate = 2;
-			}
-			else if (blinkstate == 0)
-			{
-				blinkstate = 3;
-			}
-			else if (blinkstate == 2)
-			{
-				blinkstate = 0;
-			}
-			else
-			{
-				blinkstate = 1;
-			}
-		}
-
-		if (blinkstate == 1)
-		{
-			fAlpha = 1;			
-		}
-		else if (blinkstate == 0)
-		{				
-			fAlpha = 0;
-		}
-		else
-		{
-			fAlpha = ((fYPos-200)/200) + (((SCREEN_HEIGHT-fYPos)-260)/200);	
-		}
-
+		fAlpha = sinf( TIMER->GetTimeSinceStart() );
+		fAlpha = froundf( fAlpha, 0.3333f );
 		break;
 	default:
-		ASSERT( false );
-		fAlpha = 0;
-	};
-	if( !bReverse  &&  fYPos < 0 )
+		ASSERT(0);
 		fAlpha = 1;
-	else if( bReverse  &&  fYPos > 0 )
+	}
+
+	if( fCorrectedYPos < 0 )	// past Gray Arrows
 		fAlpha = 1;
 
 	return clamp( fAlpha, 0, 1 );
-};
+}
 
+float ArrowGetAlpha( PlayerNumber pn, float fYPos )
+{
+	return (ArrowGetPercentVisible(pn,fYPos) > 0.5f) ? 1.0f : 0.0f;
+}
 
+float ArrowGetGlow( PlayerNumber pn, float fYPos )
+{
+	const float fDistFromHalf = fabsf( ArrowGetPercentVisible(pn,fYPos) - 0.5f );
+	return SCALE( fDistFromHalf, 0, 0.5f, 1, 0 );
+}

@@ -58,7 +58,7 @@ void GrayArrowRow::DrawPrimitives()
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
 		// set arrow X
-		float fX = ArrowGetXPos2( m_PlayerNumber, c, 0 );
+		float fX = ArrowGetXPos( m_PlayerNumber, c, 0 );
 		m_GrayArrow[c].SetX( fX );
 
 

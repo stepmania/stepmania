@@ -47,7 +47,7 @@ Combo::Combo()
 
 void Combo::UpdateScore( TapNoteScore score )
 {
-	if( PREFSMAN->m_bAutoPlay )	// cheaters never prosper
+	if( PREFSMAN->m_bAutoPlay && !GAMESTATE->m_bDemonstration )	// cheaters never prosper
 	{
 		m_iCurCombo = 0;
 		m_iCurComboOfPerfects = 0;
