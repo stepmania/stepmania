@@ -184,6 +184,8 @@ void LuaManager::ResetState()
 	luaopen_string( L );
 	lua_settop(L, 0); // luaopen_* pushes stuff onto the stack that we don't need
 
+	RunScript( "nop = function(self) end" );
+
 	for( const LuaFunctionList *p = g_LuaFunctions; p; p=p->next )
 		lua_register( L, p->name, p->func );
 

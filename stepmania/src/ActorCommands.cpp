@@ -58,6 +58,12 @@ void ActorCommands::PushSelf( lua_State *L ) const
 
 void ActorCommands::Register( const Commands& cmds )
 {
+	if( cmds.v.size() == 0 )
+	{
+		m_sLuaFunctionName = "nop";
+		return;
+	}
+
 	// TODO: calculate a better function name, or figure out how
 	// to keep a pointer directly to the Lua function so no global
 	// table lookup is necessary.
@@ -130,9 +136,12 @@ void ActorCommands::Unregister()
 
 	ASSERT( m_sLuaFunctionName.size() );
 
-	lua_pushstring( LUA->L, m_sLuaFunctionName );
-	lua_pushnil( LUA->L );
-	lua_settable( LUA->L, LUA_GLOBALSINDEX );
+	if( m_sLuaFunctionName != "nop" )
+	{
+		lua_pushstring( LUA->L, m_sLuaFunctionName );
+		lua_pushnil( LUA->L );
+		lua_settable( LUA->L, LUA_GLOBALSINDEX );
+	}
 
 	m_sLuaFunctionName = "";
 }
