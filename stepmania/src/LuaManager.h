@@ -30,7 +30,8 @@ public:
 	bool RunExpressionS( const CString &str, CString &sOut );
 
 	/* If sStr begins with @, evaluate the rest as an expression and store the result over sStr. */
-	bool RunAtExpression( CString &sStr );
+	bool RunAtExpressionS( CString &sStr );
+	float RunAtExpressionF( const CString &sStr );
 
 	void Fail( const CString &err );
 

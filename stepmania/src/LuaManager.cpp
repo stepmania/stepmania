@@ -364,7 +364,7 @@ bool LuaManager::RunExpressionS( const CString &str, CString &sOut )
 	return true;
 }
 
-bool LuaManager::RunAtExpression( CString &sStr )
+bool LuaManager::RunAtExpressionS( CString &sStr )
 {
 	if( sStr.size() == 0 || sStr[0] != '@' )
 		return false;
@@ -376,6 +376,21 @@ bool LuaManager::RunAtExpression( CString &sStr )
 	RunExpressionS( sStr, sOut );
 	sStr = sOut;
 	return true;
+}
+
+float LuaManager::RunAtExpressionF( const CString &_sStr )
+{
+	if( _sStr.size() == 0 || _sStr[0] != '@' )
+		return 0;
+
+	CString sStr = _sStr;
+
+	/* Erase "@". */
+	sStr.erase( 0, 1 );
+
+	CString sOut;
+	RunExpressionS( sStr, sOut );
+	return atof( sOut );
 }
 
 void LuaManager::Fail( const CString &err )

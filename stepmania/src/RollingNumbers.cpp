@@ -26,9 +26,12 @@ void RollingNumbers::LoadFromNode( const CString& sDir, const XNode* pNode )
 	pNode->GetAttrValue( "Format", m_sFormat );
 	pNode->GetAttrValue( "ApproachSeconds", m_fApproachSeconds );
 	
-	float fTargetNumber;
-	if( pNode->GetAttrValue( "TargetNumber", fTargetNumber ) )
+	CString sTargetNumber;
+	if( pNode->GetAttrValue( "TargetNumber", sTargetNumber ) )
+	{
+		float fTargetNumber = LUA->RunExpressionF(sTargetNumber);
 		SetTargetNumber( fTargetNumber );
+	}
 
 	UpdateText();
 }

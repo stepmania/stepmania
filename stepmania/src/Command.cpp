@@ -34,7 +34,7 @@ Command::Arg Command::GetArg( unsigned index ) const
 Command::Arg::operator CString ()
 {
 	CString sValue = s;
-	LUA->RunAtExpression( sValue );
+	LUA->RunAtExpressionS( sValue );
 	return sValue;
 }
 

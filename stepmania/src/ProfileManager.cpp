@@ -550,7 +550,7 @@ public:
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,
-		// then we'll register it later when we reload the theme just before 
+		// then we'll register it later when we reinit Lua just before 
 		// initializing the display.
 		if( PROFILEMAN )
 		{

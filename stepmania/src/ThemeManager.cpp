@@ -677,7 +677,7 @@ void ThemeManager::EvaluateString( CString &sText )
 {
 	/* If the string begins with an @, treat it as a raw Lua expression, and don't do any
 	 * other filtering.  (XXX: maybe we should still do font aliases) */
-	if( LUA->RunAtExpression( sText ) )
+	if( LUA->RunAtExpressionS( sText ) )
 		return;
 
 	// "::" means newline since you can't use line breaks in an ini file.
