@@ -360,7 +360,7 @@ MusicWheel::MusicWheel()
 	{
 		CStringArray asGroupNames;
 		SONGMAN->GetGroupNames( asGroupNames );
-		if( asGroupNames.GetSize() > 0 )
+		if( !asGroupNames.empty() )
 		{
 			/* XXX: Do groups get added if they're empty?
 			 * This will select songs we can't use; we want the first song
@@ -368,7 +368,7 @@ MusicWheel::MusicWheel()
 			 * -glenn */
 			CArray<Song*, Song*> arraySongs;
 			SONGMAN->GetSongsInGroup( asGroupNames[0], arraySongs );
-			if( arraySongs.GetSize() > 0 ) // still nothing selected
+			if( !arraySongs.empty() ) // still nothing selected
 				GAMESTATE->m_pCurSong = arraySongs[0];	// select the first song
 		}
 	}
@@ -377,7 +377,7 @@ MusicWheel::MusicWheel()
 	// Select the the previously selected song (if any)
 	if( GAMESTATE->m_pCurSong )
 	{
-		for( int i=0; i<GetCurWheelItemDatas().GetSize(); i++ )
+		for( unsigned i=0; i<GetCurWheelItemDatas().size(); i++ )
 		{
 			if( GetCurWheelItemDatas()[i].m_pSong == GAMESTATE->m_pCurSong )
 			{
@@ -391,7 +391,7 @@ MusicWheel::MusicWheel()
 	// Select the the previously selected course (if any)
 	if( GAMESTATE->m_pCurCourse != NULL )
 	{
-		for( int i=0; i<GetCurWheelItemDatas().GetSize(); i++ )
+		for( unsigned i=0; i<GetCurWheelItemDatas().size(); i++ )
 		{
 			if( GetCurWheelItemDatas()[i].m_pCourse == GAMESTATE->m_pCurCourse )
 			{
@@ -418,7 +418,7 @@ CArray<WheelItemData, WheelItemData&>& MusicWheel::GetCurWheelItemDatas()
 
 void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arrayWheelItemDatas, SongSortOrder so, bool bRoulette )
 {
-	int i;
+	unsigned i;
 
 	switch( GAMESTATE->m_PlayMode )
 	{
@@ -430,7 +430,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 			CArray<Song*, Song*> arraySongs;
 			
 			// copy only songs that have at least one Notes for the current GameMode
-			for( i=0; i<SONGMAN->m_pSongs.GetSize(); i++ )
+			for( i=0; i<SONGMAN->m_pSongs.size(); i++ )
 			{
 				Song* pSong = SONGMAN->m_pSongs[i];
 
@@ -448,7 +448,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 				CArray<Notes*, Notes*> arraySteps;
 				pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, arraySteps );
 
-				if( arraySteps.GetSize() > 0 )
+				if( !arraySteps.empty() )
 					arraySongs.Add( pSong );
 			}
 
@@ -470,7 +470,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 		//		break;
 			case SORT_MOST_PLAYED:
 				SortSongPointerArrayByMostPlayed( arraySongs );
-				if( arraySongs.GetSize() > 30 )
+				if( arraySongs.size() > 30 )
 					arraySongs.erase(arraySongs.begin()+30, arraySongs.end());
 				break;
 			default:
@@ -502,7 +502,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 				// make WheelItemDatas with sections
 				CString sLastSection = "";
 				RageColor colorSection;
-				for( int i=0; i< arraySongs.GetSize(); i++ )
+				for( unsigned i=0; i< arraySongs.size(); i++ )
 				{
 					Song* pSong = arraySongs[i];
 					CString sThisSection = GetSectionNameFromSongAndSort( pSong, so );
@@ -523,7 +523,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 			}
 			else
 			{
-				for( int i=0; i<arraySongs.GetSize(); i++ )
+				for( unsigned i=0; i<arraySongs.size(); i++ )
 				{
 					Song* pSong = arraySongs[i];
 					if( GAMESTATE->m_sPreferredGroup != "ALL MUSIC"  &&  pSong->m_sGroupName != GAMESTATE->m_sPreferredGroup )
@@ -550,7 +550,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 			
 			bool bFoundExtraSong = false;
 
-			for( int i=0; i<arrayWheelItemDatas.GetSize(); i++ )
+			for( unsigned i=0; i<arrayWheelItemDatas.size(); i++ )
 			{
 				if( arrayWheelItemDatas[i].m_pSong == pSong )
 				{
@@ -567,23 +567,23 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		{
-			int i;
+			unsigned i;
 
 			CArray<Course*,Course*> apCourses;
 			switch( GAMESTATE->m_PlayMode )
 			{
 			case PLAY_MODE_ONI:
-				for( i=0; i<SONGMAN->m_aOniCourses.GetSize(); i++ )
+				for( i=0; i<SONGMAN->m_aOniCourses.size(); i++ )
 					apCourses.Add( &SONGMAN->m_aOniCourses[i] );
 				SortCoursePointerArrayByDifficulty( apCourses );
 				break;
 			case PLAY_MODE_ENDLESS:
-				for( i=0; i<SONGMAN->m_aEndlessCourses.GetSize(); i++ )
+				for( i=0; i<SONGMAN->m_aEndlessCourses.size(); i++ )
 					apCourses.Add( &SONGMAN->m_aEndlessCourses[i] );
 				break;
 			}
 
-			for( int c=0; c<apCourses.GetSize(); c++ )	// foreach course
+			for( unsigned c=0; c<apCourses.size(); c++ )	// foreach course
 			{
 				Course* pCourse = apCourses[c];
 
@@ -593,7 +593,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 				CStringArray asModifiers;
 				pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers, false );
 
-				if( apNotes.GetSize() > 0 )
+				if( !apNotes.empty() )
 					arrayWheelItemDatas.Add( WheelItemData(TYPE_COURSE, NULL, "", pCourse, pCourse->GetColor()) );
 			}
 		}
@@ -603,7 +603,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 	}
 
 	// init crowns
-	for( i=0; i<arrayWheelItemDatas.GetSize(); i++ )
+	for( i=0; i<arrayWheelItemDatas.size(); i++ )
 	{
 		Song* pSong = arrayWheelItemDatas[i].m_pSong;
 		if( pSong == NULL )
@@ -617,16 +617,14 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 	if( so == SORT_MOST_PLAYED )
 	{
 		// init crown icons 
-		for( int i=0; i< min(3,arrayWheelItemDatas.GetSize()); i++ )
+		for( i=0; i< min(3u,arrayWheelItemDatas.size()); i++ )
 		{
 			WheelItemData& WID = arrayWheelItemDatas[i];
 			WID.m_IconType = MusicStatusDisplay::IconType(MusicStatusDisplay::crown1 + i);
 		}
 	}
 
-
-
-	if( arrayWheelItemDatas.GetSize() == 0 )
+	if( arrayWheelItemDatas.empty() )
 	{
 		arrayWheelItemDatas.Add( WheelItemData(TYPE_SECTION, NULL, "- EMPTY -", NULL, RageColor(1,0,0,1)) );
 	}
@@ -684,7 +682,7 @@ void MusicWheel::RebuildWheelItemDisplays()
 {
 	// rewind to first index that will be displayed;
 	int iIndex = m_iSelection;
-	if( m_iSelection > GetCurWheelItemDatas().GetSize()-1 )
+	if( m_iSelection > int(GetCurWheelItemDatas().size()-1) )
 		m_iSelection = 0;
 
 	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW/2; i++ )
@@ -693,7 +691,7 @@ void MusicWheel::RebuildWheelItemDisplays()
 		{
 			iIndex--;
 			if( iIndex < 0 )
-				iIndex = GetCurWheelItemDatas().GetSize()-1;
+				iIndex = GetCurWheelItemDatas().size()-1;
 		} 
 		while( GetCurWheelItemDatas()[iIndex].m_WheelItemType == TYPE_SONG 
 			&& GetCurWheelItemDatas()[iIndex].m_sSectionName != ""
@@ -712,7 +710,7 @@ void MusicWheel::RebuildWheelItemDisplays()
 		do
 		{
 			iIndex++;
-			if( iIndex > GetCurWheelItemDatas().GetSize()-1 )
+			if( iIndex > int(GetCurWheelItemDatas().size()-1) )
 				iIndex = 0;
 		} 
 		while( GetCurWheelItemDatas()[iIndex].m_WheelItemType == TYPE_SONG 
@@ -773,16 +771,16 @@ void MusicWheel::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
-
-	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
+	unsigned i;
+	for( i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
 	{
 		WheelItemDisplay& display = m_WheelItemDisplays[i];
 
 		display.Update( fDeltaTime );
 	}
 
-	float fScrollPercentage = (m_iSelection-m_fPositionOffsetFromSelection) / (float)GetCurWheelItemDatas().GetSize();
-	float fPercentItemsShowing = NUM_WHEEL_ITEMS_TO_DRAW / (float)GetCurWheelItemDatas().GetSize();
+	float fScrollPercentage = (m_iSelection-m_fPositionOffsetFromSelection) / (float)GetCurWheelItemDatas().size();
+	float fPercentItemsShowing = NUM_WHEEL_ITEMS_TO_DRAW / (float)GetCurWheelItemDatas().size();
 	m_ScrollBar.SetPercentage( fScrollPercentage-fPercentItemsShowing/2, fScrollPercentage+fPercentItemsShowing/2 );
 
 	if( m_WheelState == STATE_ROULETTE_SPINNING )
@@ -815,7 +813,7 @@ void MusicWheel::Update( float fDeltaTime )
 				if( pPrevSelectedSong != NULL )		// the previous selected item was a song
 				{
 					// find the previously selected song, and select it
-					for( i=0; i<GetCurWheelItemDatas().GetSize(); i++ )
+					for( i=0; i<GetCurWheelItemDatas().size(); i++ )
 					{
 						if( GetCurWheelItemDatas()[i].m_pSong == pPrevSelectedSong )
 						{
@@ -827,7 +825,7 @@ void MusicWheel::Update( float fDeltaTime )
 				else	// the previously selected item was a section
 				{
 					// find the previously selected song, and select it
-					for( i=0; i<GetCurWheelItemDatas().GetSize(); i++ )
+					for( i=0; i<GetCurWheelItemDatas().size(); i++ )
 					{
 						if( GetCurWheelItemDatas()[i].m_sSectionName == sPrevSelectedSection )
 						{
@@ -840,7 +838,7 @@ void MusicWheel::Update( float fDeltaTime )
 				// If changed sort to "BEST", put selection on most popular song
 				if( GAMESTATE->m_SongSortOrder == SORT_MOST_PLAYED )
 				{
-					for( i=0; i<GetCurWheelItemDatas().GetSize(); i++ )
+					for( i=0; i<GetCurWheelItemDatas().size(); i++ )
 					{
 						if( GetCurWheelItemDatas()[i].m_pSong != NULL )
 						{
@@ -1006,7 +1004,7 @@ void MusicWheel::PrevMusic( bool bSendSongChangedMessage )
 	{
 		m_iSelection--;
 		if( m_iSelection < 0 )
-			m_iSelection = GetCurWheelItemDatas().GetSize()-1;
+			m_iSelection = GetCurWheelItemDatas().size()-1;
 	} 
 	while( (GetCurWheelItemDatas()[m_iSelection].m_WheelItemType == TYPE_SONG || GetCurWheelItemDatas()[m_iSelection].m_WheelItemType == TYPE_COURSE)
 		&& GetCurWheelItemDatas()[m_iSelection].m_sSectionName != ""
@@ -1050,7 +1048,7 @@ void MusicWheel::NextMusic( bool bSendSongChangedMessage )
 	do
 	{
 		m_iSelection++;
-		if( m_iSelection > GetCurWheelItemDatas().GetSize()-1 )
+		if( m_iSelection > int(GetCurWheelItemDatas().size()-1) )
 			m_iSelection = 0;
 	} 
 	while( (GetCurWheelItemDatas()[m_iSelection].m_WheelItemType == TYPE_SONG || GetCurWheelItemDatas()[m_iSelection].m_WheelItemType == TYPE_COURSE)
@@ -1123,7 +1121,7 @@ bool MusicWheel::Select()	// return true of a playable item was chosen
 
 		m_iSelection = 0;	// reset in case we can't find the last selected song
 		// find the section header and select it
-		for( int i=0; i<GetCurWheelItemDatas().GetSize(); i++ )
+		for( unsigned  i=0; i<GetCurWheelItemDatas().size(); i++ )
 		{
 			if( GetCurWheelItemDatas()[i].m_WheelItemType == TYPE_SECTION  
 				&&  GetCurWheelItemDatas()[i].m_sSectionName == sThisItemSectionName )

@@ -56,13 +56,13 @@ void SongManager::InitSongArrayFromDisk( void(*callback)() )
 {
 	LoadStepManiaSongDir( "Songs", callback );
 
-	for( int i=0; i<PREFSMAN->m_asAdditionalSongFolders.GetSize(); i++ )
+	for( unsigned i=0; i<PREFSMAN->m_asAdditionalSongFolders.size(); i++ )
         LoadStepManiaSongDir( PREFSMAN->m_asAdditionalSongFolders[i], callback );
 
 	if( PREFSMAN->m_DWIPath != "" )
 		LoadStepManiaSongDir( PREFSMAN->m_DWIPath + "\\Songs", callback );
 
-	LOG->Trace( "Found %d Songs.", m_pSongs.GetSize() );
+	LOG->Trace( "Found %d Songs.", m_pSongs.size() );
 }
 
 void SongManager::SanityCheckGroupDir( CString sDir ) const
@@ -72,7 +72,7 @@ void SongManager::SanityCheckGroupDir( CString sDir ) const
 	GetDirListing( sDir + "\\*.mp3", arrayFiles );
 	GetDirListing( sDir + "\\*.ogg", arrayFiles );
 	GetDirListing( sDir + "\\*.wav", arrayFiles );
-	if( arrayFiles.GetSize() > 0 )
+	if( !arrayFiles.empty() )
 		throw RageException( 
 			"The folder '%s' contains music files.\n\n"
 			"This means that you have a music outside of a song folder.\n"
@@ -85,11 +85,11 @@ void SongManager::SanityCheckGroupDir( CString sDir ) const
 
 void SongManager::AddGroup( CString sDir, CString sGroupDirName )
 {
-	int j;
-	for(j = 0; j < m_arrayGroupNames.GetSize(); ++j)
+	unsigned j;
+	for(j = 0; j < m_arrayGroupNames.size(); ++j)
 		if( sGroupDirName == m_arrayGroupNames[j] ) break;
 
-	if( j != m_arrayGroupNames.GetSize() )
+	if( j != m_arrayGroupNames.size() )
 		return; /* the group is already added */
 
 	// Look for a group banner in this group folder
@@ -100,7 +100,7 @@ void SongManager::AddGroup( CString sDir, CString sGroupDirName )
 	GetDirListing( ssprintf("%s\\%s\\*.bmp", sDir.GetString(), sGroupDirName.GetString()), arrayGroupBanners );
 	CString sBannerPath;
 
-	if( arrayGroupBanners.GetSize() > 0 )
+	if( !arrayGroupBanners.empty() )
 	{
 		sBannerPath = ssprintf("%s\\%s\\%s", sDir.GetString(), sGroupDirName.GetString(), arrayGroupBanners[0].GetString() );
 		LOG->Trace( "Group banner for '%s' is '%s'.", sGroupDirName.GetString(), sBannerPath.GetString() );
@@ -120,7 +120,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 	GetDirListing( sDir+"\\*.*", arrayGroupDirs, true );
 	SortCStringArray( arrayGroupDirs );
 	
-	for( int i=0; i< arrayGroupDirs.GetSize(); i++ )	// for each dir in /Songs/
+	for( unsigned i=0; i< arrayGroupDirs.size(); i++ )	// for each dir in /Songs/
 	{
 		CString sGroupDirName = arrayGroupDirs[i];
 
@@ -134,10 +134,10 @@ void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 		GetDirListing( ssprintf("%s\\%s\\*.*", sDir.GetString(), sGroupDirName.GetString()), arraySongDirs, true );
 		SortCStringArray( arraySongDirs );
 
-		int j;
+		unsigned j;
 		int loaded = 0;
 
-		for( j=0; j< arraySongDirs.GetSize(); j++ )	// for each song dir
+		for( j=0; j< arraySongDirs.size(); j++ )	// for each song dir
 		{
 			CString sSongDirName = arraySongDirs[j];
 
@@ -192,7 +192,7 @@ void SongManager::LoadDWISongDir( CString DWIHome )
 	GetDirListing( ssprintf("%s\\Songs\\*.*", DWIHome ), MixDirs.GetString(), true );
 	SortCStringArray( MixDirs );
 	
-	for( int i=0; i< MixDirs.GetSize(); i++ )	// for each dir in /Songs/
+	for( unsigned i=0; i< MixDirs.size(); i++ )	// for each dir in /Songs/
 	{
 		// the dir name will most likely be something like
 		// Dance Dance Revolution 4th Mix, etc.
@@ -203,14 +203,14 @@ void SongManager::LoadDWISongDir( CString DWIHome )
 		GetDirListing( ssprintf("%s\\Songs\\%s\\*.*", DWIHome.GetString(), MixDirs[i].GetString()), arrayDirs,  true);
 		SortCStringArray(arrayDirs, true);
 
-		for( int b = 0; b < arrayDirs.GetSize(); b++)
+		for( unsigned b = 0; b < arrayDirs.size(); b++)
 		{
 			// Find all DWIs in this directory
 			CStringArray arrayDWIFiles;
 			GetDirListing( ssprintf("%s\\Songs\\%s\\%s\\*.dwi", DWIHome.GetString(), MixDirs[i].GetString(), arrayDirs[b].GetString()), arrayDWIFiles, false);
 			SortCStringArray( arrayDWIFiles );
 
-			for( int j=0; j< arrayDWIFiles.GetSize(); j++ )	// for each DWI file
+			for( unsigned j=0; j< arrayDWIFiles.size(); j++ )	// for each DWI file
 			{
 				CString sDWIFileName = arrayDWIFiles[j];
 				sDWIFileName.MakeLower();
@@ -231,7 +231,7 @@ void SongManager::LoadDWISongDir( CString DWIHome )
 
 void SongManager::FreeSongArray()
 {
-	for( int i=0; i<m_pSongs.GetSize(); i++ )
+	for( unsigned i=0; i<m_pSongs.size(); i++ )
 		SAFE_DELETE( m_pSongs[i] );
 	m_pSongs.clear();
 
@@ -272,7 +272,7 @@ void SongManager::ReadStatisticsFromDisk()
 			char szNotesType[256];
 			char szNotesDescription[256];
 			int iRetVal;
-			int i;
+			unsigned i;
 
 			// Parse for Song name and Notes name
 			iRetVal = sscanf( name, "%[^:]::%[^:]::%[^\n]", szSongDir, szNotesType, szNotesDescription );
@@ -283,7 +283,7 @@ void SongManager::ReadStatisticsFromDisk()
 			
 			// Search for the corresponding Song pointer.
 			Song* pSong = NULL;
-			for( i=0; i<m_pSongs.GetSize(); i++ )
+			for( i=0; i<m_pSongs.size(); i++ )
 			{
 				if( m_pSongs[i]->m_sSongDir == szSongDir )	// match!
 				{
@@ -297,7 +297,7 @@ void SongManager::ReadStatisticsFromDisk()
 
 			// Search for the corresponding Notes pointer.
 			Notes* pNotes = NULL;
-			for( i=0; i<pSong->m_apNotes.GetSize(); i++ )
+			for( i=0; i<pSong->m_apNotes.size(); i++ )
 			{
 				if( pSong->m_apNotes[i]->m_NotesType == notesType  &&
 					pSong->m_apNotes[i]->m_sDescription == szNotesDescription )	// match!
@@ -335,11 +335,11 @@ void SongManager::SaveStatisticsToDisk()
 	ini.SetPath( g_sStatisticsFileName );
 
 	// save song statistics
-	for( int i=0; i<m_pSongs.GetSize(); i++ )		// for each Song
+	for( unsigned i=0; i<m_pSongs.size(); i++ )		// for each Song
 	{
 		Song* pSong = m_pSongs[i];
 
-		for( int j=0; j<pSong->m_apNotes.GetSize(); j++ )		// for each Notes
+		for( unsigned j=0; j<pSong->m_apNotes.size(); j++ )		// for each Notes
 		{
 			Notes* pNotes = pSong->m_apNotes[j];
 
@@ -367,11 +367,11 @@ void SongManager::SaveStatisticsToDisk()
 
 CString SongManager::GetGroupBannerPath( CString sGroupName )
 {
-	int i;
-	for(i = 0; i < m_arrayGroupNames.GetSize(); ++i)
+	unsigned i;
+	for(i = 0; i < m_arrayGroupNames.size(); ++i)
 		if( sGroupName == m_arrayGroupNames[i] ) break;
 
-	if( i == m_arrayGroupNames.GetSize() )
+	if( i == m_arrayGroupNames.size() )
 		return "";
 
 	return m_GroupBannerPaths[i];
@@ -385,12 +385,13 @@ void SongManager::GetGroupNames( CStringArray &AddTo )
 RageColor SongManager::GetGroupColor( const CString &sGroupName )
 {
 	// search for the group index
-	for( int i=0; i<m_arrayGroupNames.GetSize(); i++ )
+	unsigned i;
+	for( i=0; i<m_arrayGroupNames.size(); i++ )
 	{
 		if( m_arrayGroupNames[i] == sGroupName )
 			break;
 	}
-	ASSERT( i != m_arrayGroupNames.GetSize() );	// this is not a valid group
+	ASSERT( i != m_arrayGroupNames.size() );	// this is not a valid group
 
 	return g_GroupColors[i%NUM_GROUP_COLORS];
 }
@@ -398,7 +399,7 @@ RageColor SongManager::GetGroupColor( const CString &sGroupName )
 RageColor SongManager::GetSongColor( Song* pSong )
 {
 	ASSERT( pSong );
-	for( int i=0; i<pSong->m_apNotes.GetSize(); i++ )
+	for( unsigned i=0; i<pSong->m_apNotes.size(); i++ )
 	{
 		Notes* pNotes = pSong->m_apNotes[i];
 		if( pNotes->m_iMeter == 10 )
@@ -411,7 +412,7 @@ RageColor SongManager::GetSongColor( Song* pSong )
 
 void SongManager::GetSongsInGroup( const CString sGroupName, CArray<Song*, Song*> &AddTo )
 {
-	for( int i=0; i<m_pSongs.GetSize(); i++ )
+	for( unsigned i=0; i<m_pSongs.size(); i++ )
 	{
 		Song* pSong = m_pSongs[i];
 		if( sGroupName == m_pSongs[i]->m_sGroupName )
@@ -447,7 +448,7 @@ void SongManager::InitCoursesFromDisk()
 	//
 	CStringArray saCourseFiles;
 	GetDirListing( "Courses\\*.crs", saCourseFiles );
-	for( int i=0; i<saCourseFiles.GetSize(); i++ )
+	for( unsigned i=0; i<saCourseFiles.size(); i++ )
 	{
 		Course course;
 		course.LoadFromCRSFile( "Courses\\" + saCourseFiles[i], m_pSongs );
@@ -460,7 +461,8 @@ void SongManager::InitCoursesFromDisk()
 	//
 	CStringArray saGroupNames;
 	this->GetGroupNames( saGroupNames );
-	for( int g=0; g<saGroupNames.GetSize(); g++ )	// foreach Group
+	unsigned g;
+	for( g=0; g<saGroupNames.size(); g++ )	// foreach Group
 	{
 		CString sGroupName = saGroupNames[g];
 		CArray<Song*, Song*> apGroupSongs;
@@ -480,12 +482,12 @@ void SongManager::InitCoursesFromDisk()
 	//
 	// Load extra stages
 	//
-	for( g=0; g<saGroupNames.GetSize(); g++ )	// foreach Group
+	for( g=0; g<saGroupNames.size(); g++ )	// foreach Group
 	{
 		CString sGroupName = saGroupNames[g];
 		CStringArray saCoursePaths;
 		GetDirListing( "Songs\\" + sGroupName + "\\*.crs", saCoursePaths, false, true );
-		for( int i=0; i<saCoursePaths.GetSize(); i++ )
+		for( unsigned i=0; i<saCoursePaths.size(); i++ )
 		{
 			Course course;
 			course.LoadFromCRSFile( saCoursePaths[i], m_pSongs );
@@ -538,13 +540,13 @@ void SongManager::GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, cons
 	
 	CArray<Song*,Song*> apSongs;
 	SONGMAN->GetSongsInGroup( GAMESTATE->m_sPreferredGroup, apSongs );
-	for( int s=0; s<apSongs.GetSize(); s++ )	// foreach song
+	for( unsigned s=0; s<apSongs.size(); s++ )	// foreach song
 	{
 		Song* pSong = apSongs[s];
 
 		CArray<Notes*,Notes*> apNotes;
 		pSong->GetNotesThatMatch( sd->m_NotesType, apNotes );
-		for( int n=0; n<apNotes.GetSize(); n++ )	// foreach Notes
+		for( unsigned n=0; n<apNotes.size(); n++ )	// foreach Notes
 		{
 			Notes* pNotes = apNotes[n];
 
@@ -603,15 +605,15 @@ void SongManager::GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, cons
 /* Pick a random song (for the demonstration). */
 bool SongManager::ChooseRandomSong()
 {
-	if( SONGMAN->m_pSongs.GetSize() == 0 )
+	if( SONGMAN->m_pSongs.empty() )
 		return false;
 
 	int i;
 	for( i=0; i<600; i++ )	// try 600 times
 	{
-		Song* pSong = m_pSongs[ rand()%m_pSongs.GetSize() ];
+		Song* pSong = m_pSongs[ rand()%m_pSongs.size() ];
 
-		if( pSong->m_apNotes.GetSize() == 0 )
+		if( pSong->m_apNotes.empty() )
 			continue;	// skip
 		
 		if( !pSong->HasMusic() )
@@ -619,7 +621,7 @@ bool SongManager::ChooseRandomSong()
 
 		for( int j=0; j<3; j++ )	// try 3 times
 		{
-			Notes* pNotes = pSong->m_apNotes[ rand()%pSong->m_apNotes.GetSize() ];
+			Notes* pNotes = pSong->m_apNotes[ rand()%pSong->m_apNotes.size() ];
 			if( pNotes->m_NotesType != GAMESTATE->GetCurrentStyleDef()->m_NotesType )
 				continue;
 

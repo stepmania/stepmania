@@ -33,7 +33,7 @@ void SMLoader::LoadFromSMTokens(
 	out.m_iMeter = atoi(sMeter);
 	CStringArray saValues;
 	split( sRadarValues, ",", saValues, true );
-	if( saValues.GetSize() == NUM_RADAR_VALUES )
+	if( saValues.size() == NUM_RADAR_VALUES )
 		for( int r=0; r<NUM_RADAR_VALUES; r++ )
 			out.m_fRadarValues[r] = (float)atof(saValues[r]);
     
@@ -139,7 +139,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			CStringArray arrayFreezeExpressions;
 			split( sParams[1], ",", arrayFreezeExpressions );
 
-			for( int f=0; f<arrayFreezeExpressions.GetSize(); f++ )
+			for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
 			{
 				CStringArray arrayFreezeValues;
 				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
@@ -161,7 +161,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			CStringArray arrayBPMChangeExpressions;
 			split( sParams[1], ",", arrayBPMChangeExpressions );
 
-			for( int b=0; b<arrayBPMChangeExpressions.GetSize(); b++ )
+			for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
 			{
 				CStringArray arrayBPMChangeValues;
 				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
@@ -181,7 +181,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			CStringArray aBGChangeExpressions;
 			split( sParams[1], ",", aBGChangeExpressions );
 
-			for( int b=0; b<aBGChangeExpressions.GetSize(); b++ )
+			for( unsigned b=0; b<aBGChangeExpressions.size(); b++ )
 			{
 				CStringArray aBGChangeValues;
 				split( aBGChangeExpressions[b], "=", aBGChangeValues );
@@ -229,12 +229,12 @@ bool SMLoader::LoadFromDir( CString sPath, Song &out )
 	CStringArray aFileNames;
 	GetApplicableFiles( sPath, aFileNames );
 
-	if( aFileNames.GetSize() > 1 )
+	if( aFileNames.size() > 1 )
 		throw RageException( "There is more than one SM file in '%s'.  There should be only one!", sPath.GetString() );
 
 	/* We should have exactly one; if we had none, we shouldn't have been
 	 * called to begin with. */
-	ASSERT( aFileNames.GetSize() == 1 );
+	ASSERT( aFileNames.size() == 1 );
 
 	return LoadFromSMFile( sPath + aFileNames[0], out );
 }

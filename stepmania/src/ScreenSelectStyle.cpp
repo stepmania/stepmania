@@ -51,10 +51,11 @@ ScreenSelectStyle::ScreenSelectStyle()
 	GAMESTATE->m_bPlayersCanJoin = true;
 
 	GAMEMAN->GetGameplayStylesForGame( GAMESTATE->m_CurGame, m_aPossibleStyles );
-	ASSERT( m_aPossibleStyles.GetSize() > 0 );	// every game should have at least one Style, or else why have the Game? :-)
+	ASSERT( !m_aPossibleStyles.empty() );	// every game should have at least one Style, or else why have the Game? :-)
 	m_iSelection = 0;
 
-	for( int i=0; i<m_aPossibleStyles.GetSize(); i++ )
+	unsigned i;
+	for( i=0; i<m_aPossibleStyles.size(); i++ )
 	{
 		m_sprIcon[i].Load( THEME->GetPathTo("Graphics",ssprintf("select style icons %s",GAMESTATE->GetCurrentGameDef()->m_szName) ) );
 		m_sprIcon[i].StopAnimating();
@@ -80,7 +81,7 @@ ScreenSelectStyle::ScreenSelectStyle()
 	const StyleDef* pStyleDef = GAMEMAN->GetStyleDefForStyle( m_aPossibleStyles[m_iSelection] );
 
 	// Load dummy Sprites
-	for( i=0; i<m_aPossibleStyles.GetSize(); i++ )
+	for( i=0; i<m_aPossibleStyles.size(); i++ )
 	{
 		m_sprDummyPreview[i].Load( THEME->GetPathTo("Graphics",ssprintf("select style preview %s %s",pGameDef->m_szName,pStyleDef->m_szName)) );
 		m_sprDummyInfo[i].Load(    THEME->GetPathTo("Graphics",ssprintf("select style info %s %s",pGameDef->m_szName,pStyleDef->m_szName)) );
@@ -217,7 +218,7 @@ void ScreenSelectStyle::MenuRight( PlayerNumber pn )
 {
 	// search for a style to the right of the current selection that is enabled
 	int iSwitchToStyleIndex = -1;	// -1 means none found
-	for( int i=m_iSelection+1; i<m_aPossibleStyles.GetSize(); i++ )	
+	for( unsigned i=m_iSelection+1; i<m_aPossibleStyles.size(); i++ )	
 	{
 		if( IsEnabled(i) )
 		{
@@ -281,8 +282,8 @@ void ScreenSelectStyle::MenuBack( PlayerNumber pn )
 
 void ScreenSelectStyle::TweenOnScreen() 
 {
-	for( int i=0; i<m_aPossibleStyles.GetSize(); i++ )
-		m_sprIcon[i].FadeOn( (m_aPossibleStyles.GetSize()-i)*0.05f, "Left Accelerate", MENU_ELEMENTS_TWEEN_TIME );
+	for( unsigned i=0; i<m_aPossibleStyles.size(); i++ )
+		m_sprIcon[i].FadeOn( (m_aPossibleStyles.size()-i)*0.05f, "Left Accelerate", MENU_ELEMENTS_TWEEN_TIME );
 
 	m_sprExplanation.FadeOn( 0, "Right Accelerate", MENU_ELEMENTS_TWEEN_TIME );
 
@@ -291,7 +292,7 @@ void ScreenSelectStyle::TweenOnScreen()
 
 void ScreenSelectStyle::TweenOffScreen()
 {
-	for( int i=0; i<m_aPossibleStyles.GetSize(); i++ )
+	for( unsigned i=0; i<m_aPossibleStyles.size(); i++ )
 		m_sprIcon[i].FadeOff( 0, "FoldY", MENU_ELEMENTS_TWEEN_TIME );
 
 	m_sprExplanation.FadeOff( 0, "FoldY", MENU_ELEMENTS_TWEEN_TIME );
@@ -322,10 +323,10 @@ bool ScreenSelectStyle::IsEnabled( int iStyleIndex )
 
 void ScreenSelectStyle::UpdateEnabledDisabled()
 {
-	int i;
+	unsigned i;
 	/* XXX: If a player joins during the tween-in, this diffuse change
 	 * will be undone by the tween.  Hmm. */
-	for( i=0; i<m_aPossibleStyles.GetSize(); i++ )
+	for( i=0; i<m_aPossibleStyles.size(); i++ )
 	{
 		if( IsEnabled(i) )
 			m_sprIcon[i].SetDiffuse( RageColor(1,1,1,1) );
@@ -337,7 +338,7 @@ void ScreenSelectStyle::UpdateEnabledDisabled()
 	BeforeChange();
 
 	int iSwitchToStyleIndex = -1;	// -1 means none found
-	for( i=0; i<m_aPossibleStyles.GetSize(); i++ )
+	for( i=0; i<m_aPossibleStyles.size(); i++ )
 	{
 		if( IsEnabled(i) )
 		{
