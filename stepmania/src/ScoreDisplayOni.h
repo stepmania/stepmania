@@ -12,7 +12,7 @@ class ScoreDisplayOni : public ScoreDisplay
 public:
 	ScoreDisplayOni();
 
-	virtual void Init( PlayerNumber pn );
+	virtual void Init( const PlayerState* pPlayerState );
 
 	virtual void Update( float fDelta );
 

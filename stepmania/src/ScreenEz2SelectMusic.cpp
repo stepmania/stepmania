@@ -17,6 +17,7 @@
 #include "MenuTimer.h"
 #include "StepsUtil.h"
 #include "ScreenDimensions.h"
+#include "PlayerState.h"
 
 #define SCROLLING_LIST_X		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListX")
 #define SCROLLING_LIST_Y		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListY")
@@ -309,7 +310,7 @@ void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 
 void ScreenEz2SelectMusic::UpdateOptions(PlayerNumber pn, int nosound)
 {
-	sOptions = GAMESTATE->m_PlayerOptions[pn].GetString();
+	sOptions = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetString();
 
 	#ifdef DEBUG
 		m_debugtext.SetText( "DEBUG: " + sOptions );

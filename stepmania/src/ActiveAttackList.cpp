@@ -4,23 +4,25 @@
 #include "GameState.h"
 #include "Inventory.h"
 #include "RageTimer.h"
+#include "PlayerOptions.h"
+#include "PlayerState.h"
 
 
 ActiveAttackList::ActiveAttackList()
 {
 }
 
-void ActiveAttackList::Init( PlayerNumber pn )
+void ActiveAttackList::Init( const PlayerState* pPlayerState )
 {
-	m_PlayerNumber = pn;
+	m_pPlayerState = pPlayerState;
 }
 
 void ActiveAttackList::Update( float fDelta ) 
 {
 	bool bTimeToRefresh = 
 		IsFirstUpdate() || // check this before running Actor::Update()
-		GAMESTATE->m_bAttackBeganThisUpdate[m_PlayerNumber] ||
-		GAMESTATE->m_bAttackEndedThisUpdate[m_PlayerNumber];
+		m_pPlayerState->m_bAttackBeganThisUpdate ||
+		m_pPlayerState->m_bAttackEndedThisUpdate;
 
 	BitmapText::Update( fDelta ); 
 
@@ -32,7 +34,7 @@ void ActiveAttackList::Refresh()
 {
 	CString s;
 
-	const AttackArray& attacks = GAMESTATE->m_ActiveAttacks[m_PlayerNumber];	// NUM_INVENTORY_SLOTS
+	const AttackArray& attacks = m_pPlayerState->m_ActiveAttacks;
 	
 	// clear all lines, then add all active attacks
 	for( unsigned i=0; i<attacks.size(); i++ )

@@ -18,6 +18,7 @@
 #include "StageStats.h"
 #include "Game.h"
 #include "ScreenDimensions.h"
+#include "PlayerState.h"
 
 
 //
@@ -123,7 +124,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 	// reset Player and Song Options
 	{
 		FOREACH_PlayerNumber( p )
-			GAMESTATE->m_PlayerOptions[p] = PlayerOptions();
+			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions = PlayerOptions();
 		GAMESTATE->m_SongOptions = SongOptions();
 	}
 
@@ -173,7 +174,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 			continue;	// skip
 
 		// remove modifiers that may have been on the last song
-		GAMESTATE->m_PlayerOptions[p] = PlayerOptions();
+		GAMESTATE->m_pPlayerState[p]->m_PlayerOptions = PlayerOptions();
 
 		ASSERT( GAMESTATE->IsHumanPlayer(p) );	// they better be enabled if they made a high score!
 
@@ -182,7 +183,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 
 		float fPlayerX = PLAYER_X(p,GAMESTATE->GetCurrentStyle()->m_StyleType);
 
-		m_ReceptorArrowRow[p].Load( p, GAMESTATE->m_PlayerOptions[p].m_sNoteSkin, 0 );
+		m_ReceptorArrowRow[p].Load( GAMESTATE->m_pPlayerState[p], GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_sNoteSkin, 0 );
 		m_ReceptorArrowRow[p].SetX( fPlayerX );
 		m_ReceptorArrowRow[p].SetY( SCREEN_TOP + 100 );
 		this->AddChild( &m_ReceptorArrowRow[p] );

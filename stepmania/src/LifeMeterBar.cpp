@@ -9,6 +9,7 @@
 #include "song.h"
 #include "StageStats.h"
 #include "ThemeMetric.h"
+#include "PlayerState.h"
 
 
 static ThemeMetric<float> METER_WIDTH		("LifeMeterBar","MeterWidth");
@@ -466,9 +467,9 @@ void LifeMeterBar::AfterLifeChanged()
 
 bool LifeMeterBar::IsPastPassmark() const
 {
-    if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fPassmark > 0 )
+    if( GAMESTATE->m_pPlayerState[m_PlayerNumber]->m_PlayerOptions.m_fPassmark > 0 )
     {
-	return m_fLifePercentage >= GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fPassmark;
+	return m_fLifePercentage >= GAMESTATE->m_pPlayerState[m_PlayerNumber]->m_PlayerOptions.m_fPassmark;
     }
     else
     {

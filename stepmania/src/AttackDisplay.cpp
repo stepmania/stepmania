@@ -7,6 +7,7 @@
 #include "RageLog.h"
 #include "RageTextureManager.h"
 #include <set>
+#include "PlayerState.h"
 
 CString GetAttackPath( const CString &sAttack )
 {
@@ -25,14 +26,17 @@ AttackDisplay::AttackDisplay()
 		GAMESTATE->m_PlayMode != PLAY_MODE_RAVE )
 		return;
 
-	m_sprAttack.SetName( ssprintf("TextP%d",m_PlayerNumber+1) );
 	m_sprAttack.SetDiffuseAlpha( 0 );	// invisible
 	this->AddChild( &m_sprAttack );
 }
 
-void AttackDisplay::Init( PlayerNumber pn )
+void AttackDisplay::Init( const PlayerState* pPlayerState )
 {
-	m_PlayerNumber = pn;
+	m_pPlayerState = pPlayerState;
+
+	// TODO: Remove use of PlayerNumber.
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+	m_sprAttack.SetName( ssprintf("TextP%d",pn+1) );
 
 	if( GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE &&
 		GAMESTATE->m_PlayMode != PLAY_MODE_RAVE )
@@ -71,22 +75,24 @@ void AttackDisplay::Update( float fDelta )
 		GAMESTATE->m_PlayMode != PLAY_MODE_RAVE )
 		return;
 
-	if( !GAMESTATE->m_bAttackBeganThisUpdate[m_PlayerNumber] )
+	if( !m_pPlayerState->m_bAttackBeganThisUpdate )
 		return;
 	// don't handle this again
 
-	for( unsigned s=0; s<GAMESTATE->m_ActiveAttacks[m_PlayerNumber].size(); s++ )
+	for( unsigned s=0; s<m_pPlayerState->m_ActiveAttacks.size(); s++ )
 	{
-		if( GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].fStartSecond >= 0 )
+		const Attack& attack = m_pPlayerState->m_ActiveAttacks[s];
+
+		if( attack.fStartSecond >= 0 )
 			continue; /* hasn't started yet */
 
-		if( GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].fSecsRemaining <= 0 )
+		if( attack.fSecsRemaining <= 0 )
 			continue; /* ended already */
 
-		if( GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].IsBlank() )
+		if( attack.IsBlank() )
 			continue;
 
-		SetAttack( GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].sModifier );
+		SetAttack( attack.sModifier );
 		break;
 	}
 }
@@ -99,7 +105,11 @@ void AttackDisplay::SetAttack( const CString &sText )
 
 	m_sprAttack.SetDiffuseAlpha( 1 );
 	m_sprAttack.Load( path );
-	const CString sName = ssprintf( "%sP%i", sText.c_str(), m_PlayerNumber+1 );
+
+	// TODO: Remove use of PlayerNumber.
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+	const CString sName = ssprintf( "%sP%i", sText.c_str(), pn+1 );
 	m_sprAttack.RunCommands( THEME->GetMetricA("AttackDisplay", sName + "OnCommand" ) );
 }
 

@@ -10,6 +10,7 @@
 #include "Course.h"
 #include "ScreenMiniMenu.h"
 #include "ScreenManager.h"
+#include "PlayerState.h"
 
 //
 // Defines specific to EditCoursesMenu
@@ -326,8 +327,8 @@ void EditCoursesMenu::Start()
 	case ROW_ENTRY_PLAYER_OPTIONS:
 		SCREENMAN->PlayStartSound();
 			
-		GAMESTATE->m_PlayerOptions[PLAYER_1] = PlayerOptions();
-		GAMESTATE->m_PlayerOptions[PLAYER_1].FromString( pEntry->modifiers );
+		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions = PlayerOptions();
+		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.FromString( pEntry->modifiers );
 
 		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromPlayerOptions );
 		break;
@@ -365,7 +366,7 @@ void EditCoursesMenu::HandleScreenMessage( const ScreenMessage SM )
 	case SM_BackFromPlayerOptions:
 	case SM_BackFromSongOptions:
 		// coming back from PlayerOptions or SongOptions
-		pEntry->modifiers = GAMESTATE->m_PlayerOptions[PLAYER_1].GetString() + "," + GAMESTATE->m_SongOptions.GetString();
+		pEntry->modifiers = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetString() + "," + GAMESTATE->m_SongOptions.GetString();
 		OnRowValueChanged( ROW_ENTRY_PLAYER_OPTIONS );
 		break;
 	}

@@ -12,17 +12,17 @@
  */
 
 #include "Actor.h"
-#include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"	// for TapNoteScore and HoldNoteScore
 class NoteData;
 class Inventory;
 class Steps;
+struct PlayerState;
 
 
 class ScoreKeeper: public Actor 
 {
 protected:
-	PlayerNumber m_PlayerNumber;
+	PlayerState* m_pPlayerState;
 
 	/* Common toggles that this class handles directly: */
 
@@ -31,7 +31,7 @@ protected:
 //	bool Stats_DoublesCount;
 
 public:
-	ScoreKeeper(PlayerNumber pn) { m_PlayerNumber=pn; }
+	ScoreKeeper(PlayerState* pPlayerState) { m_pPlayerState=pPlayerState; }
 	virtual void DrawPrimitives() { }
 	virtual void Update( float fDelta ) { }
 

@@ -1580,7 +1580,7 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const AttackArray &aa, Steps
 		if( po.ContainsTransformOrTurn() )
 		{
 			float fStartBeat, fEndBeat;
-			a->GetAttackBeats( pSong, PLAYER_INVALID, fStartBeat, fEndBeat );
+			a->GetAttackBeats( pSong, NULL, fStartBeat, fEndBeat );
 
 			NoteDataUtil::TransformNoteData( nd, po, st, fStartBeat, fEndBeat );
 		}

@@ -13,7 +13,7 @@ class ScoreDisplayNormal : public ScoreDisplay
 public:
 	ScoreDisplayNormal();
 
-	virtual void Init( PlayerNumber pn );
+	virtual void Init( const PlayerState* pPlayerState );
 
 	virtual void Update( float fDeltaTime );
 

@@ -3,6 +3,7 @@
 #include "ScoreDisplayPercentage.h"
 #include "ThemeManager.h"
 #include "StageStats.h"
+#include "PlayerState.h"
 
 ScoreDisplayPercentage::ScoreDisplayPercentage()
 {
@@ -13,9 +14,9 @@ ScoreDisplayPercentage::ScoreDisplayPercentage()
 	this->AddChild( &m_Percent );
 }
 
-void ScoreDisplayPercentage::Init( PlayerNumber pn ) 
+void ScoreDisplayPercentage::Init( const PlayerState* pPlayerState ) 
 {
-	m_Percent.Load( pn, &g_CurStageStats, true );
+	m_Percent.Load( pPlayerState->m_PlayerNumber, &g_CurStageStats, true );
 }
 
 /*

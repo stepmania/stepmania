@@ -11,6 +11,7 @@
 #include "IniFile.h"
 #include "Game.h"
 #include "ScreenDimensions.h"
+#include "PlayerState.h"
 
 /* Copies of the current mode.  Update this by calling Load. */
 NoteFieldMode g_NoteFieldMode[NUM_PLAYERS];
@@ -134,7 +135,7 @@ void NoteFieldPositioning::Load(PlayerNumber pn)
 	}
 
 	/* Is there a custom mode with the current name that fits the current game? */
-	const int ModeNum = GetID(GAMESTATE->m_PlayerOptions[pn].m_sPositioning);
+	const int ModeNum = GetID(GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_sPositioning);
 	if(ModeNum == -1)
 		return; /* No, only use the style table settings. */
 

@@ -23,6 +23,7 @@
 #include "UnlockSystem.h"
 #include "GameSoundManager.h"
 #include "ThemeManager.h"
+#include "PlayerState.h"
 
 void GameCommand::Init()
 {
@@ -91,12 +92,12 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 	if( m_sModifiers != "" )
 	{
 		/* Apply modifiers. */
-		PlayerOptions po = GAMESTATE->m_PlayerOptions[pn];
+		PlayerOptions po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions;
 		SongOptions so = GAMESTATE->m_SongOptions;
 		po.FromString( m_sModifiers );
 		so.FromString( m_sModifiers );
 
-		if( po != GAMESTATE->m_PlayerOptions[pn] )
+		if( po != GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions )
 			return false;
 		if( so != GAMESTATE->m_SongOptions )
 			return false;

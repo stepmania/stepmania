@@ -15,6 +15,7 @@
 #include "NoteSkinManager.h"
 #include "song.h"
 #include "ScreenDimensions.h"
+#include "PlayerState.h"
 
 NoteField::NoteField()
 {	
@@ -55,9 +56,9 @@ void NoteField::CacheNoteSkin( CString skin )
 	LOG->Trace("NoteField::CacheNoteSkin: cache %s", skin.c_str() );
 	NoteDisplayCols *nd = new NoteDisplayCols( GetNumTracks() );
 	for( int c=0; c<GetNumTracks(); c++ ) 
-		nd->display[c].Load( c, m_PlayerNumber, skin, m_fYReverseOffsetPixels );
-	nd->m_ReceptorArrowRow.Load( m_PlayerNumber, skin, m_fYReverseOffsetPixels );
-	nd->m_GhostArrowRow.Load( m_PlayerNumber, skin, m_fYReverseOffsetPixels );
+		nd->display[c].Load( c, m_pPlayerState, skin, m_fYReverseOffsetPixels );
+	nd->m_ReceptorArrowRow.Load( m_pPlayerState, skin, m_fYReverseOffsetPixels );
+	nd->m_GhostArrowRow.Load( m_pPlayerState, skin, m_fYReverseOffsetPixels );
 
 	m_NoteDisplays[ skin ] = nd;
 }
@@ -71,11 +72,16 @@ void NoteField::CacheAllUsedNoteSkins()
 		CacheNoteSkin( skins[i] );
 }
 
-void NoteField::Load( const NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDraw, int iLastPixelToDraw, float fYReverseOffsetPixels )
+void NoteField::Load( 
+	const NoteData* pNoteData, 
+	const PlayerState* pPlayerState, 
+	int iFirstPixelToDraw, 
+	int iLastPixelToDraw, 
+	float fYReverseOffsetPixels )
 {
 	Unload();
 
-	m_PlayerNumber = pn;
+	m_pPlayerState = pPlayerState;
 	m_iStartDrawingPixel = iFirstPixelToDraw;
 	m_iEndDrawingPixel = iLastPixelToDraw;
 	m_fYReverseOffsetPixels = fYReverseOffsetPixels;
@@ -103,16 +109,17 @@ void NoteField::RefreshBeatToNoteSkin()
 	m_LastSeenBeatToNoteSkinRev = GAMESTATE->m_BeatToNoteSkinRev;
 
 	/* Set by GameState::ResetNoteSkins(): */
-	ASSERT( !GAMESTATE->m_BeatToNoteSkin[m_PlayerNumber].empty() );
+	ASSERT( !m_pPlayerState->m_BeatToNoteSkin.empty() );
 
 	m_BeatToNoteDisplays.clear();
 
 	/* GAMESTATE->m_BeatToNoteSkin[pn] maps from song beats to note skins.  Maintain
 	 * m_BeatToNoteDisplays, to map from song beats to NoteDisplay*s, so we don't
 	 * have to do it while rendering. */
-	map<float,CString>::iterator it;
-	for( it = GAMESTATE->m_BeatToNoteSkin[m_PlayerNumber].begin(); 
-		 it != GAMESTATE->m_BeatToNoteSkin[m_PlayerNumber].end(); ++it )
+	
+	for( map<float,CString>::const_iterator it = m_pPlayerState->m_BeatToNoteSkin.begin(); 
+		 it != m_pPlayerState->m_BeatToNoteSkin.end(); 
+		 ++it )
 	{
 		const float Beat = it->first;
 		const CString &Skin = it->second;
@@ -169,7 +176,9 @@ void NoteField::Update( float fDeltaTime )
 	 * Update all NoteDisplays.  Hack: We need to call this once per frame, not
 	 * once per player.
 	 */
-	if( m_PlayerNumber == GAMESTATE->m_MasterPlayerNumber )
+	// TODO: Remove use of PlayerNumber.
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+	if( pn == GAMESTATE->m_MasterPlayerNumber )
 		NoteDisplay::Update( fDeltaTime );
 }
 
@@ -177,7 +186,8 @@ float NoteField::GetWidth()
 {
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 	float fMinX, fMaxX;
-	pStyle->GetMinAndMaxColX( m_PlayerNumber, fMinX, fMaxX );
+	// TODO: Remove use of PlayerNumber.
+	pStyle->GetMinAndMaxColX( m_pPlayerState->m_PlayerNumber, fMinX, fMaxX );
 
 	return fMaxX - fMinX + ARROW_SIZE;
 }
@@ -190,8 +200,8 @@ void NoteField::DrawBeatBar( const float fBeat )
 
 	NoteType nt = BeatToNoteType( fBeat );
 
-	const float fYOffset	= ArrowGetYOffset( m_PlayerNumber, 0, fBeat );
-	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
+	const float fYPos		= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
 
 	float fAlpha;
 	int iState;
@@ -203,7 +213,7 @@ void NoteField::DrawBeatBar( const float fBeat )
 	}
 	else
 	{
-		float fScrollSpeed = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fScrollSpeed;
+		float fScrollSpeed = m_pPlayerState->m_CurrentPlayerOptions.m_fScrollSpeed;
 		switch( nt )
 		{
 		default:	ASSERT(0);
@@ -239,8 +249,8 @@ void NoteField::DrawBeatBar( const float fBeat )
 
 void NoteField::DrawMarkerBar( const float fBeat )
 {
-	const float fYOffset	= ArrowGetYOffset( m_PlayerNumber, 0, fBeat );
-	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
+	const float fYPos		= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
 
 
 	m_rectMarkerBar.StretchTo( RectF(-GetWidth()/2, fYPos-ARROW_SIZE/2, GetWidth()/2, fYPos+ARROW_SIZE/2) );
@@ -249,10 +259,10 @@ void NoteField::DrawMarkerBar( const float fBeat )
 
 void NoteField::DrawAreaHighlight( const float fStartBeat, const float fEndBeat )
 {
-	float fYStartOffset	= ArrowGetYOffset( m_PlayerNumber, 0, fStartBeat );
-	float fYStartPos	= ArrowGetYPos(	m_PlayerNumber, 0, fYStartOffset, m_fYReverseOffsetPixels );
-	float fYEndOffset	= ArrowGetYOffset( m_PlayerNumber, 0, fEndBeat );
-	float fYEndPos		= ArrowGetYPos(	m_PlayerNumber, 0, fYEndOffset, m_fYReverseOffsetPixels );
+	float fYStartOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fStartBeat );
+	float fYStartPos	= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYStartOffset, m_fYReverseOffsetPixels );
+	float fYEndOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fEndBeat );
+	float fYEndPos		= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYEndOffset, m_fYReverseOffsetPixels );
 
 	// Something in OpenGL crashes if this is values are too large.  Strange.  -Chris
 	fYStartPos = max( fYStartPos, -1000 );	
@@ -267,8 +277,8 @@ void NoteField::DrawAreaHighlight( const float fStartBeat, const float fEndBeat 
 
 void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 {
-	const float fYOffset	= ArrowGetYOffset( m_PlayerNumber, 0, fBeat );
-	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
+	const float fYPos		= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
 
 	m_textMeasureNumber.SetHorizAlign( Actor::align_right );
 	m_textMeasureNumber.SetDiffuse( RageColor(1,0,0,1) );
@@ -280,8 +290,8 @@ void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 
 void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 {
-	const float fYOffset	= ArrowGetYOffset(			m_PlayerNumber, 0, fBeat );
- 	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
+ 	const float fYPos		= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
 
 	m_textMeasureNumber.SetHorizAlign( Actor::align_right );
 	m_textMeasureNumber.SetDiffuse( RageColor(0.8f,0.8f,0,1) );
@@ -293,8 +303,8 @@ void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 
 void NoteField::DrawBGChangeText( const float fBeat, const CString sNewBGName )
 {
-	const float fYOffset	= ArrowGetYOffset(			m_PlayerNumber, 0, fBeat );
-	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
+	const float fYPos		= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
 
 	m_textMeasureNumber.SetHorizAlign( Actor::align_left );
 	m_textMeasureNumber.SetDiffuse( RageColor(0,1,0,1) );
@@ -348,13 +358,13 @@ NoteField::NoteDisplayCols *NoteField::SearchForBeat( float Beat )
 
 // CPU OPTIMIZATION OPPORTUNITY:
 // change this probing to binary search
-float FindFirstDisplayedBeat( PlayerNumber pn, int iFirstPixelToDraw )
+float FindFirstDisplayedBeat( const PlayerState* pPlayerState, int iFirstPixelToDraw )
 {
 	float fFirstBeatToDraw = GAMESTATE->m_fSongBeat-4;	// Adjust to balance off performance and showing enough notes.
 
 	while( fFirstBeatToDraw < GAMESTATE->m_fSongBeat )
 	{
-		float fYOffset = ArrowGetYOffset( pn, 0, fFirstBeatToDraw, true );
+		float fYOffset = ArrowEffects::GetYOffset( pPlayerState, 0, fFirstBeatToDraw, true );
 		if( fYOffset < iFirstPixelToDraw )	// off screen
 			fFirstBeatToDraw += 0.1f;	// move toward fSongBeat
 		else	// on screen
@@ -364,7 +374,7 @@ float FindFirstDisplayedBeat( PlayerNumber pn, int iFirstPixelToDraw )
 	return fFirstBeatToDraw;
 }
 
-float FindLastDisplayedBeat( PlayerNumber pn, int iLastPixelToDraw )
+float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iLastPixelToDraw )
 {
 	//
 	// Probe for last note to draw.
@@ -378,7 +388,7 @@ float FindLastDisplayedBeat( PlayerNumber pn, int iLastPixelToDraw )
 
 	for( int i=0; i<NUM_ITERATIONS; i++ )
 	{
-		float fYOffset = ArrowGetYOffset( pn, 0, fLastBeatToDraw, true );
+		float fYOffset = ArrowEffects::GetYOffset( pPlayerState, 0, fLastBeatToDraw, true );
 
 		if( fYOffset > iLastPixelToDraw )	// off screen
 			fLastBeatToDraw -= fSearchDistance;
@@ -402,7 +412,7 @@ void NoteField::DrawPrimitives()
 	NoteDisplayCols *cur = SearchForSongBeat();
 	cur->m_ReceptorArrowRow.Draw();
 
-	const PlayerOptions &current_po = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber];
+	const PlayerOptions &current_po = m_pPlayerState->m_CurrentPlayerOptions;
 
 	//
 	// Adjust draw range depending on some effects
@@ -420,18 +430,20 @@ void NoteField::DrawPrimitives()
 	fDrawScale *= 1 + 0.5f * fabsf( current_po.m_fPerspectiveTilt );
 	fDrawScale *= 1 + fabsf( current_po.m_fEffects[PlayerOptions::EFFECT_MINI] );
 	
-	float fFirstDrawScale = g_NoteFieldMode[m_PlayerNumber].m_fFirstPixelToDrawScale;
-	float fLastDrawScale = g_NoteFieldMode[m_PlayerNumber].m_fLastPixelToDrawScale;
+	// TODO: Remove use of PlayerNumber.
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+	float fFirstDrawScale = g_NoteFieldMode[pn].m_fFirstPixelToDrawScale;
+	float fLastDrawScale = g_NoteFieldMode[pn].m_fLastPixelToDrawScale;
 
 	iFirstPixelToDraw = (int)(iFirstPixelToDraw * fFirstDrawScale * fDrawScale);
 	iLastPixelToDraw = (int)(iLastPixelToDraw * fLastDrawScale * fDrawScale);
 
 
 	// Probe for first and last notes on the screen
-	float fFirstBeatToDraw = FindFirstDisplayedBeat( m_PlayerNumber, iFirstPixelToDraw );
-	float fLastBeatToDraw = FindLastDisplayedBeat( m_PlayerNumber, iLastPixelToDraw );
+	float fFirstBeatToDraw = FindFirstDisplayedBeat( m_pPlayerState, iFirstPixelToDraw );
+	float fLastBeatToDraw = FindLastDisplayedBeat( m_pPlayerState, iLastPixelToDraw );
 
-	GAMESTATE->m_fLastDrawnBeat[m_PlayerNumber] = fLastBeatToDraw;
+	m_pPlayerState->m_fLastDrawnBeat = fLastBeatToDraw;
 
 	const int iFirstIndexToDraw  = BeatToNoteRow(fFirstBeatToDraw);
 	const int iLastIndexToDraw   = BeatToNoteRow(fLastBeatToDraw);
@@ -518,7 +530,9 @@ void NoteField::DrawPrimitives()
 
 	for( int c=0; c<GetNumTracks(); c++ )	// for each arrow column
 	{
-		g_NoteFieldMode[m_PlayerNumber].BeginDrawTrack(c);
+		// TODO: Remove use of PlayerNumber.
+		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+		g_NoteFieldMode[pn].BeginDrawTrack(c);
 
 		//
 		// Draw all HoldNotes in this column (so that they appear under the tap notes)
@@ -543,8 +557,8 @@ void NoteField::DrawPrimitives()
 			// TRICKY: If boomerang is on, then all notes in the range 
 			// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
 			// Test every note to make sure it's on screen before drawing
-			float fYStartOffset = ArrowGetYOffset( m_PlayerNumber, c, NoteRowToBeat(hn.iStartRow) );
-			float fYEndOffset = ArrowGetYOffset( m_PlayerNumber, c, NoteRowToBeat(hn.iEndRow) );
+			float fYStartOffset = ArrowEffects::GetYOffset( m_pPlayerState, c, NoteRowToBeat(hn.iStartRow) );
+			float fYEndOffset = ArrowEffects::GetYOffset( m_pPlayerState, c, NoteRowToBeat(hn.iEndRow) );
 			if( !( iFirstPixelToDraw <= fYEndOffset && fYEndOffset <= iLastPixelToDraw  ||
 				iFirstPixelToDraw <= fYStartOffset  && fYStartOffset <= iLastPixelToDraw  ||
 				fYStartOffset < iFirstPixelToDraw   && fYEndOffset > iLastPixelToDraw ) )
@@ -588,7 +602,7 @@ void NoteField::DrawPrimitives()
 			// TRICKY: If boomerang is on, then all notes in the range 
 			// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
 			// Test every note to make sure it's on screen before drawing
-			float fYOffset = ArrowGetYOffset( m_PlayerNumber, c, NoteRowToBeat(i) );
+			float fYOffset = ArrowEffects::GetYOffset( m_pPlayerState, c, NoteRowToBeat(i) );
 			if( fYOffset > iLastPixelToDraw )	// off screen
 				continue;	// skip
 			if( fYOffset < iFirstPixelToDraw )	// off screen
@@ -633,7 +647,7 @@ void NoteField::DrawPrimitives()
 		}
 
 
-		g_NoteFieldMode[m_PlayerNumber].EndDrawTrack(c);
+		g_NoteFieldMode[pn].EndDrawTrack(c);
 	}
 
 	cur->m_GhostArrowRow.Draw();

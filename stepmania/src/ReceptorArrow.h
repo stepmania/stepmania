@@ -8,11 +8,13 @@
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 
+struct PlayerState;
+
 class ReceptorArrow : public ActorFrame
 {
 public:
 	ReceptorArrow();
-	bool Load( CString NoteSkin, PlayerNumber pn, int iColNo );
+	bool Load( CString NoteSkin, const PlayerState* pPlayerState, int iColNo );
 
 	virtual void DrawPrimitives();
 	virtual void Update( float fDeltaTime );
@@ -20,7 +22,7 @@ public:
 	void SetPressed() { m_bIsPressed = true; };
 private:
 
-	PlayerNumber m_PlayerNumber;
+	const PlayerState* m_pPlayerState;
 	int m_iColNo;
 
 	AutoActor m_pReceptorWaiting;

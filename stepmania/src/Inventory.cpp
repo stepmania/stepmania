@@ -10,6 +10,7 @@
 #include "ScreenGameplay.h"
 #include "StageStats.h"
 #include "ThemeMetric.h"
+#include "PlayerState.h"
 
 
 #define NUM_ITEM_TYPES			THEME->GetMetricF("Inventory","NumItemTypes")
@@ -61,11 +62,11 @@ Inventory::~Inventory()
 	m_vpSoundUseItem.clear();
 }
 
-void Inventory::Load( PlayerNumber pn )
+void Inventory::Load( PlayerState* pPlayerState )
 {
 	ReloadItems();
 
-	m_PlayerNumber = pn;
+	m_pPlayerState = pPlayerState;
 	m_iLastSeenCombo = 0;
 
 	// don't load battle sounds if they're not going to be used
@@ -87,10 +88,11 @@ void Inventory::Load( PlayerNumber pn )
 
 void Inventory::Update( float fDelta )
 {
-	if( GAMESTATE->m_bAttackEndedThisUpdate[m_PlayerNumber] )
+	if( m_pPlayerState->m_bAttackEndedThisUpdate )
 		m_soundItemEnding.Play();
 
-	PlayerNumber pn = m_PlayerNumber;
+	// TODO: remove use of PlayerNumber
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
 	// check to see if they deserve a new item
 	if( g_CurStageStats.iCurCombo[pn] != m_iLastSeenCombo )
@@ -120,7 +122,7 @@ void Inventory::Update( float fDelta )
 
 
 	// use items if this player is CPU-controlled
-	if( GAMESTATE->m_PlayerController[m_PlayerNumber] != PC_HUMAN &&
+	if( m_pPlayerState->m_PlayerController != PC_HUMAN &&
 		GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fLastBeat )
 	{
 		// every 1 seconds, try to use an item
@@ -129,7 +131,7 @@ void Inventory::Update( float fDelta )
 		if( iLastSecond != iThisSecond )
 		{
 			for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
-				if( !GAMESTATE->m_Inventory[m_PlayerNumber][s].IsBlank() )
+				if( !m_pPlayerState->m_Inventory[s].IsBlank() )
 					if( randomf(0,1) < ITEM_USE_PROBABILITY )
 						UseItem( s );
 		}
@@ -140,25 +142,29 @@ void Inventory::AwardItem( int iItemIndex )
 {
 	// CPU player is vanity only.  It should have no effect on gameplay
 	// and should not aquire/launch attacks.
-	if( GAMESTATE->IsCpuPlayer(m_PlayerNumber) )
+	if( m_pPlayerState->m_PlayerController == PC_CPU )
 		return;
 
 
 	// search for the first open slot
 	int iOpenSlot = -1;
 
-	Attack* asInventory = GAMESTATE->m_Inventory[m_PlayerNumber]; //[NUM_INVENTORY_SLOTS]
+	Attack* pInventory = m_pPlayerState->m_Inventory; //[NUM_INVENTORY_SLOTS]
 
-	if( asInventory[NUM_INVENTORY_SLOTS/2].IsBlank() )
+	if( pInventory[NUM_INVENTORY_SLOTS/2].IsBlank() )
+	{
 		iOpenSlot = NUM_INVENTORY_SLOTS/2;
+	}
 	else
 	{
 		for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
-			if( asInventory[s].IsBlank() )
+		{
+			if( pInventory[s].IsBlank() )
 			{
 				iOpenSlot = s;
 				break;
 			}
+		}
 	}
 
 	if( iOpenSlot != -1 )
@@ -167,7 +173,7 @@ void Inventory::AwardItem( int iItemIndex )
 		a.sModifier = g_Items[iItemIndex].sModifier;
 		a.fSecsRemaining = ITEM_DURATION_SECONDS;
 		a.level = g_Items[iItemIndex].level;
-		asInventory[iOpenSlot] = a;
+		pInventory[iOpenSlot] = a;
 		m_soundAcquireItem.Play();
 	}
 	// else not enough room to insert item
@@ -175,16 +181,17 @@ void Inventory::AwardItem( int iItemIndex )
 
 void Inventory::UseItem( int iSlot )
 {
-	Attack* asInventory = GAMESTATE->m_Inventory[m_PlayerNumber]; //[NUM_INVENTORY_SLOTS]
+	Attack* pInventory = m_pPlayerState->m_Inventory; //[NUM_INVENTORY_SLOTS]
 
-	if( asInventory[iSlot].IsBlank() )
+	if( pInventory[iSlot].IsBlank() )
 		return;
 
-    PlayerNumber pnToAttack = OPPOSITE_PLAYER[m_PlayerNumber];
-	Attack a = asInventory[iSlot];
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+    PlayerNumber pnToAttack = OPPOSITE_PLAYER[pn];
+	Attack a = pInventory[iSlot];
 
 	// remove the item
-	asInventory[iSlot].MakeBlank();
+	pInventory[iSlot].MakeBlank();
 	m_vpSoundUseItem[a.level]->Play();
 
 	GAMESTATE->LaunchAttack( pnToAttack, a );

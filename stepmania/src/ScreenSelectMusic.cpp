@@ -24,6 +24,7 @@
 #include "StepsUtil.h"
 #include "Foreach.h"
 #include "Style.h"
+#include "PlayerState.h"
 
 
 const int NUM_SCORE_DIGITS	=	9;
@@ -1727,7 +1728,7 @@ void ScreenSelectMusic::UpdateOptionsDisplays()
 		{
 			m_OptionIconRow[p].Refresh();
 
-			CString s = GAMESTATE->m_PlayerOptions[p].GetString();
+			CString s = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetString();
 			s.Replace( ", ", "\n" );
 //			m_textPlayerOptions[p].SetText( s );
 		}

@@ -3,63 +3,65 @@
 #include "Steps.h"
 #include "GameConstantsAndTypes.h"
 #include "GameManager.h"
-#include "GameState.h"
 #include "RageException.h"
 #include "RageTimer.h"
 #include "NoteDisplay.h"
 #include "song.h"
 #include "RageMath.h"
 #include "ScreenDimensions.h"
+#include "PlayerState.h"
+#include "GameState.h"
+#include "Style.h"
 
 const float ARROW_SPACING	= ARROW_SIZE;// + 2;
 
 float		g_fExpandSeconds = 0;
 
-static float GetNoteFieldHeight( PlayerNumber pn )
+static float GetNoteFieldHeight( const PlayerState* pPlayerState )
 {
-	return SCREEN_HEIGHT + fabsf(GAMESTATE->m_CurrentPlayerOptions[pn].m_fPerspectiveTilt)*200;
+	return SCREEN_HEIGHT + fabsf(pPlayerState->m_CurrentPlayerOptions.m_fPerspectiveTilt)*200;
 }
 
 /* For visibility testing: if bAbsolute is false, random modifiers must return the
  * minimum possible scroll speed. */
-float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat, bool bAbsolute )
+float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float fNoteBeat, bool bAbsolute )
 {
 	float fYOffset = 0;
 
 	/* Usually, fTimeSpacing is 0 or 1, in which case we use entirely beat spacing or
 	 * entirely time spacing (respectively).  Occasionally, we tween between them. */
-	if( GAMESTATE->m_CurrentPlayerOptions[pn].m_fTimeSpacing != 1.0f )
+	if( pPlayerState->m_CurrentPlayerOptions.m_fTimeSpacing != 1.0f )
 	{
 		float fSongBeat = GAMESTATE->m_fSongBeat;
 		float fBeatsUntilStep = fNoteBeat - fSongBeat;
 		float fYOffsetBeatSpacing = fBeatsUntilStep * ARROW_SPACING;
-		fYOffset += fYOffsetBeatSpacing * (1-GAMESTATE->m_CurrentPlayerOptions[pn].m_fTimeSpacing);
+		fYOffset += fYOffsetBeatSpacing * (1-pPlayerState->m_CurrentPlayerOptions.m_fTimeSpacing);
 	}
 
-	if( GAMESTATE->m_CurrentPlayerOptions[pn].m_fTimeSpacing != 0.0f )
+	if( pPlayerState->m_CurrentPlayerOptions.m_fTimeSpacing != 0.0f )
 	{
 		float fSongSeconds = GAMESTATE->m_fMusicSeconds;
 		float fNoteSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fNoteBeat);
 		float fSecondsUntilStep = fNoteSeconds - fSongSeconds;
-		float fBPM = GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollBPM;
+		float fBPM = pPlayerState->m_CurrentPlayerOptions.m_fScrollBPM;
 		float fBPS = fBPM/60.f;
 		float fYOffsetTimeSpacing = fSecondsUntilStep * fBPS * ARROW_SPACING;
-		fYOffset += fYOffsetTimeSpacing * GAMESTATE->m_CurrentPlayerOptions[pn].m_fTimeSpacing;
+		fYOffset += fYOffsetTimeSpacing * pPlayerState->m_CurrentPlayerOptions.m_fTimeSpacing;
 	}
 
 	// don't mess with the arrows after they've crossed 0
 	if( fYOffset < 0 )
-		return fYOffset * GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
+		return fYOffset * pPlayerState->m_CurrentPlayerOptions.m_fScrollSpeed;
 
-	const float* fAccels = GAMESTATE->m_CurrentPlayerOptions[pn].m_fAccels;
-	//const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
+	const float* fAccels = pPlayerState->m_CurrentPlayerOptions.m_fAccels;
+	//const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
 
 
 	float fYAdjust = 0;	// fill this in depending on PlayerOptions
 
 	if( fAccels[PlayerOptions::ACCEL_BOOST] > 0 )
 	{
-		float fEffectHeight = GetNoteFieldHeight(pn);
+		float fEffectHeight = GetNoteFieldHeight(pPlayerState);
 		float fNewYOffset = fYOffset * 1.5f / ((fYOffset+fEffectHeight/1.2f)/fEffectHeight); 
 		float fAccelYAdjust =	fAccels[PlayerOptions::ACCEL_BOOST] * (fNewYOffset - fYOffset);
 		// TRICKY:	Clamp this value, or else BOOST+BOOMERANG will draw a ton of arrows on the screen.
@@ -68,7 +70,7 @@ float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat, bool bAbsolut
 	}
 	if( fAccels[PlayerOptions::ACCEL_BRAKE] > 0 )
 	{
-		float fEffectHeight = GetNoteFieldHeight(pn);
+		float fEffectHeight = GetNoteFieldHeight(pPlayerState);
 		float fScale = SCALE( fYOffset, 0.f, fEffectHeight, 0, 1.f );
 		float fNewYOffset = fYOffset * fScale; 
 		float fBrakeYAdjust = fAccels[PlayerOptions::ACCEL_BRAKE] * (fNewYOffset - fYOffset);
@@ -84,8 +86,8 @@ float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat, bool bAbsolut
 	if( fAccels[PlayerOptions::ACCEL_BOOMERANG] > 0 )
 		fYOffset +=	fAccels[PlayerOptions::ACCEL_BOOMERANG] * (fYOffset * SCALE( fYOffset, 0.f, SCREEN_HEIGHT, 1.5f, 0.5f )- fYOffset);
 
-	float fScrollSpeed = GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
-	if( GAMESTATE->m_CurrentPlayerOptions[pn].m_fRandomSpeed > 0 && !bAbsolute )
+	float fScrollSpeed = pPlayerState->m_CurrentPlayerOptions.m_fScrollSpeed;
+	if( pPlayerState->m_CurrentPlayerOptions.m_fRandomSpeed > 0 && !bAbsolute )
 	{
 		int seed = GAMESTATE->m_iRoundSeed + ( BeatToNoteRow( fNoteBeat ) << 8 ) + (iCol * 100);
 
@@ -99,7 +101,7 @@ float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat, bool bAbsolut
 		fScrollSpeed *=
 				SCALE( fRandom,
 						0.0f, 1.0f,
-						1.0f, GAMESTATE->m_CurrentPlayerOptions[pn].m_fRandomSpeed + 1.0f );
+						1.0f, pPlayerState->m_CurrentPlayerOptions.m_fRandomSpeed + 1.0f );
 	}	
 
 
@@ -121,50 +123,50 @@ float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat, bool bAbsolut
 }
 
 
-static void ArrowGetReverseShiftAndScale( PlayerNumber pn, int iCol, float fYReverseOffsetPixels, float &fShiftOut, float &fScaleOut )
+void ArrowGetReverseShiftAndScale( const PlayerState* pPlayerState, int iCol, float fYReverseOffsetPixels, float &fShiftOut, float &fScaleOut )
 {
 	/* XXX: Hack: we need to scale the reverse shift by the zoom. */
-	float fMiniPercent = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_MINI];
+	float fMiniPercent = pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI];
 	float fZoom = 1 - fMiniPercent*0.5f;
 
-	float fPercentReverse = GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol);
+	float fPercentReverse = pPlayerState->m_CurrentPlayerOptions.GetReversePercentForColumn(iCol);
 	fShiftOut = SCALE( fPercentReverse, 0.f, 1.f, -fYReverseOffsetPixels/fZoom/2, fYReverseOffsetPixels/fZoom/2 );
-	float fPercentCentered = GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrolls[PlayerOptions::SCROLL_CENTERED];
+	float fPercentCentered = pPlayerState->m_CurrentPlayerOptions.m_fScrolls[PlayerOptions::SCROLL_CENTERED];
 	fShiftOut = SCALE( fPercentCentered, 0.f, 1.f, fShiftOut, 0.5f );
 
 	fScaleOut = SCALE( fPercentReverse, 0.f, 1.f, 1.f, -1.f);
 }
 
-float ArrowGetYPos( PlayerNumber pn, int iCol, float fYOffset, float fYReverseOffsetPixels, bool WithReverse )
+float ArrowEffects::GetYPos( const PlayerState* pPlayerState, int iCol, float fYOffset, float fYReverseOffsetPixels, bool WithReverse )
 {
 	float f = fYOffset;
 
 	if( WithReverse )
 	{
 		float fShift, fScale;
-		ArrowGetReverseShiftAndScale( pn, iCol, fYReverseOffsetPixels, fShift, fScale );
+		ArrowGetReverseShiftAndScale( pPlayerState, iCol, fYReverseOffsetPixels, fShift, fScale );
 
 		f *= fScale;
 		f += fShift;
 	}
 
-	const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
+	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
 
 	if( fEffects[PlayerOptions::EFFECT_TIPSY] > 0 )
 		f += fEffects[PlayerOptions::EFFECT_TIPSY] * ( cosf( RageTimer::GetTimeSinceStart()*1.2f + iCol*1.8f) * ARROW_SIZE*0.4f );
 	return f;
 }
 
-float ArrowGetYOffsetFromYPos( PlayerNumber pn, int iCol, float YPos, float fYReverseOffsetPixels )
+float ArrowEffects::GetYOffsetFromYPos( const PlayerState* pPlayerState, int iCol, float YPos, float fYReverseOffsetPixels )
 {
 	float f = YPos;
 
-	const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
+	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
 	if( fEffects[PlayerOptions::EFFECT_TIPSY] > 0 )
 		f -= fEffects[PlayerOptions::EFFECT_TIPSY] * ( cosf( RageTimer::GetTimeSinceStart()*1.2f + iCol*2.f) * ARROW_SIZE*0.4f );
 
 	float fShift, fScale;
-	ArrowGetReverseShiftAndScale( pn, iCol, fYReverseOffsetPixels, fShift, fScale );
+	ArrowGetReverseShiftAndScale( pPlayerState, iCol, fYReverseOffsetPixels, fShift, fScale );
 
 	f -= fShift;
 	if( fScale )
@@ -173,11 +175,11 @@ float ArrowGetYOffsetFromYPos( PlayerNumber pn, int iCol, float YPos, float fYRe
 	return f;
 }
 
-float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYOffset ) 
+float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float fYOffset ) 
 {
 	float fPixelOffsetFromCenter = 0;
 	
-	const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
+	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
 
 	if( fEffects[PlayerOptions::EFFECT_TORNADO] > 0 )
 	{
@@ -195,6 +197,10 @@ float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYOffset )
 
 		float fMinX = +100000;
 		float fMaxX = -100000;
+		
+		// TODO: Don't index by PlayerNumber.
+		PlayerNumber pn = pPlayerState->m_PlayerNumber;
+
 		for( int i=iStartCol; i<=iEndCol; i++ )
 		{
 			fMinX = min( fMinX, pStyle->m_ColumnInfo[pn][i].fXOffset );
@@ -215,6 +221,9 @@ float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYOffset )
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * ( cosf( RageTimer::GetTimeSinceStart() + iColNum*0.2f + fYOffset*10/SCREEN_HEIGHT) * ARROW_SIZE*0.5f );
 	if( fEffects[PlayerOptions::EFFECT_FLIP] > 0 )
 	{
+		// TODO: Don't index by PlayerNumber.
+		PlayerNumber pn = pPlayerState->m_PlayerNumber;
+
 //		fPixelOffsetFromCenter *= SCALE(fEffects[PlayerOptions::EFFECT_FLIP], 0.f, 1.f, 1.f, -1.f);
 		const float fRealPixelOffset = GAMESTATE->GetCurrentStyle()->m_ColumnInfo[pn][iColNum].fXOffset;
 		const float fDistance = -fRealPixelOffset * 2;
@@ -268,13 +277,13 @@ float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYOffset )
 	return fPixelOffsetFromCenter;
 }
 
-float ArrowGetRotation( PlayerNumber pn, float fNoteBeat ) 
+float ArrowEffects::GetRotation( const PlayerState* pPlayerState, float fNoteBeat ) 
 {
-	if( GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_DIZZY] > 0 )
+	if( pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_DIZZY] > 0 )
 	{
 		const float fSongBeat = GAMESTATE->m_fSongBeat;
 		float fDizzyRotation = fNoteBeat - fSongBeat;
-		fDizzyRotation *= GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_DIZZY];
+		fDizzyRotation *= pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_DIZZY];
 		fDizzyRotation = fmodf( fDizzyRotation, 2*PI );
 		fDizzyRotation *= 180/PI;
 		return fDizzyRotation;
@@ -287,9 +296,9 @@ float ArrowGetRotation( PlayerNumber pn, float fNoteBeat )
 #define CENTER_LINE_Y 160	// from fYOffset == 0
 #define FADE_DIST_Y 40
 
-static float GetCenterLine( PlayerNumber pn )
+static float GetCenterLine( const PlayerState* pPlayerState )
 {
-	const float fMiniPercent = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_MINI];
+	const float fMiniPercent = pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI];
 	const float fZoom = 1 - fMiniPercent*0.5f;
 
 	/* Another mini hack: if EFFECT_MINI is on, then our center line is at eg. 320, 
@@ -297,9 +306,9 @@ static float GetCenterLine( PlayerNumber pn )
 	return CENTER_LINE_Y / fZoom;
 }
 
-static float GetHiddenSudden( PlayerNumber pn ) 
+static float GetHiddenSudden( const PlayerState* pPlayerState ) 
 {
-	const float* fAppearances = GAMESTATE->m_CurrentPlayerOptions[pn].m_fAppearances;
+	const float* fAppearances = pPlayerState->m_CurrentPlayerOptions.m_fAppearances;
 	return fAppearances[PlayerOptions::APPEARANCE_HIDDEN] *
 		fAppearances[PlayerOptions::APPEARANCE_SUDDEN];
 }
@@ -316,50 +325,50 @@ static float GetHiddenSudden( PlayerNumber pn )
 //  ...invisible...
 //
 // TRICKY:  We fudge hidden and sudden to be farther apart if they're both on.
-static float GetHiddenEndLine( PlayerNumber pn )
+static float GetHiddenEndLine( const PlayerState* pPlayerState )
 {
-	return GetCenterLine( pn ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pn), 0.f, 1.f, -1.0f, -1.25f );
+	return GetCenterLine( pPlayerState ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pPlayerState), 0.f, 1.f, -1.0f, -1.25f );
 }
 
-static float GetHiddenStartLine( PlayerNumber pn )
+static float GetHiddenStartLine( const PlayerState* pPlayerState )
 {
-	return GetCenterLine( pn ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pn), 0.f, 1.f, +0.0f, -0.25f );
+	return GetCenterLine( pPlayerState ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pPlayerState), 0.f, 1.f, +0.0f, -0.25f );
 }
 
-static float GetSuddenEndLine( PlayerNumber pn )
+static float GetSuddenEndLine( const PlayerState* pPlayerState )
 {
-	return GetCenterLine( pn ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pn), 0.f, 1.f, -0.0f, +0.25f );
+	return GetCenterLine( pPlayerState ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pPlayerState), 0.f, 1.f, -0.0f, +0.25f );
 }
 
-static float GetSuddenStartLine( PlayerNumber pn )
+static float GetSuddenStartLine( const PlayerState* pPlayerState )
 {
-	return GetCenterLine( pn ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pn), 0.f, 1.f, +1.0f, +1.25f );
+	return GetCenterLine( pPlayerState ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pPlayerState), 0.f, 1.f, +1.0f, +1.25f );
 }
 
 // used by ArrowGetAlpha and ArrowGetGlow below
-static float ArrowGetPercentVisible( PlayerNumber pn, int iCol, float fYOffset, float fYReverseOffsetPixels )
+float ArrowGetPercentVisible( const PlayerState* pPlayerState, int iCol, float fYOffset, float fYReverseOffsetPixels )
 {
 	/* Get the YPos without reverse (that is, factor in EFFECT_TIPSY). */
-	float fYPos = ArrowGetYPos( pn, iCol, fYOffset, fYReverseOffsetPixels, false );
+	float fYPos = ArrowEffects::GetYPos( pPlayerState, iCol, fYOffset, fYReverseOffsetPixels, false );
 
-	const float fDistFromCenterLine = fYPos - GetCenterLine( pn );
+	const float fDistFromCenterLine = fYPos - GetCenterLine( pPlayerState );
 
 	if( fYPos < 0 )	// past Gray Arrows
 		return 1;	// totally visible
 
-	const float* fAppearances = GAMESTATE->m_CurrentPlayerOptions[pn].m_fAppearances;
+	const float* fAppearances = pPlayerState->m_CurrentPlayerOptions.m_fAppearances;
 
 	float fVisibleAdjust = 0;
 
 	if( fAppearances[PlayerOptions::APPEARANCE_HIDDEN] > 0 )
 	{
-		float fHiddenVisibleAdjust = SCALE( fYPos, GetHiddenStartLine(pn), GetHiddenEndLine(pn), 0, -1 );
+		float fHiddenVisibleAdjust = SCALE( fYPos, GetHiddenStartLine(pPlayerState), GetHiddenEndLine(pPlayerState), 0, -1 );
 		CLAMP( fHiddenVisibleAdjust, -1, 0 );
 		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_HIDDEN] * fHiddenVisibleAdjust;
 	}
 	if( fAppearances[PlayerOptions::APPEARANCE_SUDDEN] > 0 )
 	{
-		float fSuddenVisibleAdjust = SCALE( fYPos, GetSuddenStartLine(pn), GetSuddenEndLine(pn), -1, 0 );
+		float fSuddenVisibleAdjust = SCALE( fYPos, GetSuddenStartLine(pPlayerState), GetSuddenEndLine(pPlayerState), -1, 0 );
 		CLAMP( fSuddenVisibleAdjust, -1, 0 );
 		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_SUDDEN] * fSuddenVisibleAdjust;
 	}
@@ -382,9 +391,9 @@ static float ArrowGetPercentVisible( PlayerNumber pn, int iCol, float fYOffset, 
 	return clamp( 1+fVisibleAdjust, 0, 1 );
 }
 
-float ArrowGetAlpha( PlayerNumber pn, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels )
+float ArrowEffects::GetAlpha( const PlayerState* pPlayerState, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels )
 {
-	float fPercentVisible = ArrowGetPercentVisible(pn,iCol,fYOffset,fYReverseOffsetPixels);
+	float fPercentVisible = ArrowGetPercentVisible(pPlayerState,iCol,fYOffset,fYReverseOffsetPixels);
 
 	if( fPercentFadeToFail != -1 )
 		fPercentVisible = 1 - fPercentFadeToFail;
@@ -392,9 +401,9 @@ float ArrowGetAlpha( PlayerNumber pn, int iCol, float fYOffset, float fPercentFa
 	return (fPercentVisible>0.5f) ? 1.0f : 0.0f;
 }
 
-float ArrowGetGlow( PlayerNumber pn, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels )
+float ArrowEffects::GetGlow( const PlayerState* pPlayerState, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels )
 {
-	float fPercentVisible = ArrowGetPercentVisible(pn,iCol,fYOffset,fYReverseOffsetPixels);
+	float fPercentVisible = ArrowGetPercentVisible(pPlayerState,iCol,fYOffset,fYReverseOffsetPixels);
 
 	if( fPercentFadeToFail != -1 )
 		fPercentVisible = 1 - fPercentFadeToFail;
@@ -403,7 +412,7 @@ float ArrowGetGlow( PlayerNumber pn, int iCol, float fYOffset, float fPercentFad
 	return SCALE( fDistFromHalf, 0, 0.5f, 1.3f, 0 );
 }
 
-float ArrowGetBrightness( PlayerNumber pn, float fNoteBeat )
+float ArrowEffects::GetBrightness( const PlayerState* pPlayerState, float fNoteBeat )
 {
 	if( GAMESTATE->m_bEditing )
 		return 1;
@@ -417,10 +426,10 @@ float ArrowGetBrightness( PlayerNumber pn, float fNoteBeat )
 }
 
 
-float ArrowGetZPos( PlayerNumber pn, int iCol, float fYOffset )
+float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fYOffset )
 {
 	float fZPos=0;
-	const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
+	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
 
 	if( fEffects[PlayerOptions::EFFECT_BUMPY] > 0 )
 		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*sinf( fYOffset/16.0f );
@@ -428,16 +437,16 @@ float ArrowGetZPos( PlayerNumber pn, int iCol, float fYOffset )
 	return fZPos;
 }
 
-bool ArrowsNeedZBuffer( PlayerNumber pn )
+bool ArrowEffects::NeedZBuffer( const PlayerState* pPlayerState )
 {
-	const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
+	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
 	if( fEffects[PlayerOptions::EFFECT_BUMPY] > 0 )
 		return true;
 
 	return false;
 }
 
-float ArrowGetZoom( PlayerNumber pn )
+float ArrowEffects::GetZoom( const PlayerState* pPlayerState )
 {
 	// FIXME: Move the zoom values into Style
 	if( GAMESTATE->m_pCurStyle->m_bNeedsZoomOutWith2Players &&

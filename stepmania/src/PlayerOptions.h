@@ -92,7 +92,7 @@ struct PlayerOptions
 		SCROLL_CENTERED,
 		NUM_SCROLLS
 	};
-	float GetReversePercentForColumn( int iCol ); // accounts for all Directions
+	float GetReversePercentForColumn( int iCol ) const; // accounts for all Directions
 
 	/* All floats have a corresponding speed setting, which determines how fast
 	 * PlayerOptions::Approach approaches. */

@@ -28,6 +28,7 @@
 #include "CryptManager.h"
 #include "Style.h"
 #include "MemoryCardManager.h"
+#include "PlayerState.h"
 
 const int NUM_SCORE_DIGITS	=	9;
 
@@ -113,11 +114,11 @@ void ScreenEvaluation::Init()
 		GAMESTATE->m_pCurSteps[PLAYER_2] = GAMESTATE->m_pCurSong->GetAllSteps()[0];
 		g_CurStageStats.vpSteps[PLAYER_1].push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
 		g_CurStageStats.vpSteps[PLAYER_2].push_back( GAMESTATE->m_pCurSteps[PLAYER_2] );
-		GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed = 2;
-		GAMESTATE->m_PlayerOptions[PLAYER_2].m_fScrollSpeed = 2;
+		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fScrollSpeed = 2;
+		GAMESTATE->m_pPlayerState[PLAYER_2]->m_PlayerOptions.m_fScrollSpeed = 2;
 		GAMESTATE->m_iCurrentStageIndex = 0;
-		GAMESTATE->m_PlayerOptions[PLAYER_1].ChooseRandomMofifiers();
-		GAMESTATE->m_PlayerOptions[PLAYER_2].ChooseRandomMofifiers();
+		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.ChooseRandomMofifiers();
+		GAMESTATE->m_pPlayerState[PLAYER_2]->m_PlayerOptions.ChooseRandomMofifiers();
 
 		for( float f = 0; f < 100.0f; f += 1.0f )
 		{
@@ -410,7 +411,7 @@ void ScreenEvaluation::Init()
 					this->AddChild( &m_DifficultyMeter[p] );
 					
 					m_textPlayerOptions[p].LoadFromFont( THEME->GetPathToF("Common normal") );
-					CString sPO = GAMESTATE->m_PlayerOptions[p].GetThemedString();
+					CString sPO = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetThemedString();
 					sPO.Replace( ", ", PLAYER_OPTIONS_SEPARATOR );
 					m_textPlayerOptions[p].SetName( ssprintf("PlayerOptionsP%d",p+1) );
 					SET_XY_AND_ON_COMMAND( m_textPlayerOptions[p] );
@@ -930,7 +931,7 @@ void ScreenEvaluation::CommitScores(
 			hs.iScore = stageStats.iScore[p];
 			hs.fPercentDP = stageStats.GetPercentDancePoints( p );
 			hs.fSurviveSeconds = stageStats.fAliveSeconds[p];
-			hs.sModifiers = GAMESTATE->m_PlayerOptions[p].GetString();
+			hs.sModifiers = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetString();
 			hs.dateTime = DateTime::GetNowDateTime();
 			hs.sPlayerGuid = PROFILEMAN->IsUsingProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : CString("");
 			hs.sMachineGuid = PROFILEMAN->GetMachineProfile()->m_sGuid;

@@ -13,6 +13,7 @@
 #include "GameSoundManager.h"
 #include "Model.h"
 #include "ThemeMetric.h"
+#include "PlayerState.h"
 
 static const ThemeMetric<float>			SECONDS_TO_SHOW		("ScreenHowToPlay","SecondsToShow");
 static const ThemeMetric<CString>		STEPFILE			("ScreenHowToPlay","Stepfile");
@@ -147,16 +148,16 @@ ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 
 		GAMESTATE->m_pCurSong = &m_Song;
 		GAMESTATE->m_bPastHereWeGo = true;
-		GAMESTATE->m_PlayerController[PLAYER_1] = PC_AUTOPLAY;
+		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_AUTOPLAY;
 
 		m_pPlayer = new Player;
-		m_pPlayer->Load( PLAYER_1, m_NoteData, m_pLifeMeterBar, NULL, NULL, NULL, NULL, NULL, NULL );
+		m_pPlayer->Load( GAMESTATE->m_pPlayerState[PLAYER_1], m_NoteData, m_pLifeMeterBar, NULL, NULL, NULL, NULL, NULL, NULL );
 		m_pPlayer->SetName( "Player" );
 		this->AddChild( m_pPlayer );
 		SET_XY_AND_ON_COMMAND( m_pPlayer );
 
 		// Don't show judgement
-		GAMESTATE->m_PlayerOptions[PLAYER_1].m_fBlind = 1;
+		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fBlind = 1;
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 		GAMESTATE->m_bDemonstrationOrJukebox = true;
 	}
@@ -250,7 +251,7 @@ void ScreenHowToPlay::Update( float fDelta )
 		// switch the controller to HUMAN. since we aren't taking input,
 		// the steps will always be misses.
 		if(m_iPerfects > m_iNumPerfects)
-			GAMESTATE->m_PlayerController[PLAYER_1] = PC_HUMAN;
+			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_HUMAN;
 
 		if ( m_pmCharacter )
 		{

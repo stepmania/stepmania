@@ -5,16 +5,17 @@
 
 #include "ReceptorArrow.h"
 #include "ActorFrame.h"
-#include "Style.h"
 #include "GameConstantsAndTypes.h"
+#include "NoteTypes.h"
 
+struct PlayerState;
 
 class ReceptorArrowRow : public ActorFrame
 {
 public:
 	ReceptorArrowRow();
 
-	void Load( PlayerNumber pn, CString NoteSkin, float fYReverseOffset );
+	void Load( const PlayerState* pPlayerState, CString NoteSkin, float fYReverseOffset );
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -25,7 +26,7 @@ public:
 	
 protected:
 	int m_iNumCols;
-	PlayerNumber m_PlayerNumber;
+	const PlayerState* m_pPlayerState;
 	float m_fYReverseOffsetPixels;
 
 	ReceptorArrow	m_ReceptorArrow[MAX_NOTE_TRACKS];

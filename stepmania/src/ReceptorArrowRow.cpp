@@ -7,6 +7,7 @@
 #include "GameState.h"
 #include "PrefsManager.h"
 #include "NoteFieldPositioning.h"
+#include "PlayerState.h"
 
 
 ReceptorArrowRow::ReceptorArrowRow()
@@ -14,9 +15,9 @@ ReceptorArrowRow::ReceptorArrowRow()
 	m_iNumCols = 0;
 }
 
-void ReceptorArrowRow::Load( PlayerNumber pn, CString NoteSkin, float fYReverseOffset )
+void ReceptorArrowRow::Load( const PlayerState* pPlayerState, CString NoteSkin, float fYReverseOffset )
 {
-	m_PlayerNumber = pn;
+	m_pPlayerState = pPlayerState;
 	m_fYReverseOffsetPixels = fYReverseOffset;
 
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
@@ -26,7 +27,7 @@ void ReceptorArrowRow::Load( PlayerNumber pn, CString NoteSkin, float fYReverseO
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
 		m_ReceptorArrow[c].SetName( "ReceptorArrow" );
-		m_ReceptorArrow[c].Load( NoteSkin, m_PlayerNumber, c );
+		m_ReceptorArrow[c].Load( NoteSkin, m_pPlayerState, c );
 	}
 }
 
@@ -35,28 +36,31 @@ void ReceptorArrowRow::Update( float fDeltaTime )
 	for( int c=0; c<m_iNumCols; c++ )
 	{
 		m_ReceptorArrow[c].Update( fDeltaTime );
-		m_ReceptorArrow[c].SetDiffuse( RageColor(1,1,1,1 - GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fDark) );
+		m_ReceptorArrow[c].SetDiffuse( RageColor(1,1,1,1 - m_pPlayerState->m_CurrentPlayerOptions.m_fDark) );
 
 		// set arrow XYZ
-		const float fX = ArrowGetXPos( m_PlayerNumber, c, 0 );
-		const float fY = ArrowGetYPos( m_PlayerNumber, c, 0, m_fYReverseOffsetPixels );
-		const float fZ = ArrowGetZPos( m_PlayerNumber, c, 0 );
+		const float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
+		const float fY = ArrowEffects::GetYPos( m_pPlayerState, c, 0, m_fYReverseOffsetPixels );
+		const float fZ = ArrowEffects::GetZPos( m_pPlayerState, c, 0 );
 		m_ReceptorArrow[c].SetX( fX );
 		m_ReceptorArrow[c].SetY( fY );
 		m_ReceptorArrow[c].SetZ( fZ );
 
-		const float fZoom = ArrowGetZoom( m_PlayerNumber );
+		const float fZoom = ArrowEffects::GetZoom( m_pPlayerState );
 		m_ReceptorArrow[c].SetZoom( fZoom );
 	}
 }
 
 void ReceptorArrowRow::DrawPrimitives()
 {
+	// TODO: Remove use of PlayerNumber.
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
-		g_NoteFieldMode[m_PlayerNumber].BeginDrawTrack(c);
+		g_NoteFieldMode[pn].BeginDrawTrack(c);
 		m_ReceptorArrow[c].Draw();
-		g_NoteFieldMode[m_PlayerNumber].EndDrawTrack(c);
+		g_NoteFieldMode[pn].EndDrawTrack(c);
 	}
 }
 

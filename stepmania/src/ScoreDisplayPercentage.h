@@ -8,7 +8,7 @@ class ScoreDisplayPercentage : public ScoreDisplay
 {
 public:
 	ScoreDisplayPercentage();
-	void Init( PlayerNumber pn );
+	void Init( const PlayerState* pPlayerState );
 
 private:
 	PercentageDisplay	m_Percent;

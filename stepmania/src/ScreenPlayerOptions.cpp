@@ -11,6 +11,7 @@
 #include "CodeDetector.h"
 #include "ScreenDimensions.h"
 #include "Style.h"
+#include "PlayerState.h"
 
 
 #define PREV_SCREEN		THEME->GetMetric ("ScreenPlayerOptions","PrevScreen")
@@ -123,8 +124,8 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 		SOUND->PlayOnce( THEME->GetPathToS("ScreenPlayerOptions cancel all") );
 		
 		// apply the game default mods, but not the Profile saved mods
-		GAMESTATE->m_PlayerOptions[pn].Init();
-		GAMESTATE->m_PlayerOptions[pn].FromString( PREFSMAN->m_sDefaultModifiers );
+		GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.Init();
+		GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.FromString( PREFSMAN->m_sDefaultModifiers );
 		
 		UtilCommand( m_sprCancelAll[pn], m_sName, "Show" );
 
@@ -176,7 +177,7 @@ void ScreenPlayerOptions::UpdateDisqualified()
 
 	FOREACH_PlayerNumber( p )
 	{
-		po[p] = GAMESTATE->m_PlayerOptions[p];
+		po[p] = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions;
 	}
 	
 	// export the currently selection options, which will fill GAMESTATE->m_PlayerOptions
@@ -189,7 +190,7 @@ void ScreenPlayerOptions::UpdateDisqualified()
 		m_sprDisqualify[p]->SetHidden( !bIsHandicap );
 
 		// restore previous player options in case the user escapes back after this
-		GAMESTATE->m_PlayerOptions[p] = po[p];
+		GAMESTATE->m_pPlayerState[p]->m_PlayerOptions = po[p];
 	}
 }
 

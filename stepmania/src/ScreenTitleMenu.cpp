@@ -23,6 +23,7 @@
 #include "CommonMetrics.h"
 #include "Game.h"
 #include "ScreenOptionsMasterPrefs.h"
+#include "PlayerState.h"
 
 
 #define LOGO_ON_COMMAND				THEME->GetMetricA("ScreenTitleMenu","LogoOnCommand")
@@ -362,7 +363,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 		{
 			// apply default options
 			FOREACH_PlayerNumber( p )
-				GAMESTATE->m_PlayerOptions[p].FromString( PREFSMAN->m_sDefaultModifiers );
+				GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.FromString( PREFSMAN->m_sDefaultModifiers );
 			GAMESTATE->m_SongOptions.FromString( PREFSMAN->m_sDefaultModifiers );
 		}
 		m_aGameCommands[m_Choice].ApplyToAllPlayers();

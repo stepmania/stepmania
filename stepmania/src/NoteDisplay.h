@@ -6,10 +6,10 @@
 #include "Sprite.h"
 class Model;
 #include "NoteTypes.h"
-#include "PlayerNumber.h"
 
 struct HoldNoteResult;
 struct NoteMetricCache_t;
+struct PlayerState;
 
 class NoteDisplay
 {
@@ -17,7 +17,7 @@ public:
 	NoteDisplay();
 	~NoteDisplay();
 
-	void Load( int iColNum, PlayerNumber pn, CString NoteSkin, float fYReverseOffsetPixels );
+	void Load( int iColNum, const PlayerState* pPlayerState, CString NoteSkin, float fYReverseOffsetPixels );
 
 	static void Update( float fDeltaTime );
 
@@ -42,7 +42,7 @@ protected:
 	void DrawHoldTail( const HoldNote& hn, const bool bIsBeingHeld, float fYTail, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow );
 	void DrawHoldHead( const HoldNote& hn, const bool bIsBeingHeld, float fYHead, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow );
 
-	PlayerNumber m_PlayerNumber;	// to look up PlayerOptions
+	const PlayerState* m_pPlayerState;	// to look up PlayerOptions
 
 	struct NoteMetricCache_t *cache;
 

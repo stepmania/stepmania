@@ -8,6 +8,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "Game.h"
+#include "PlayerState.h"
 
 
 ReceptorArrow::ReceptorArrow()
@@ -16,10 +17,13 @@ ReceptorArrow::ReceptorArrow()
 	StopAnimating();
 }
 
-bool ReceptorArrow::Load( CString NoteSkin, PlayerNumber pn, int iColNo )
+bool ReceptorArrow::Load( CString NoteSkin, const PlayerState* pPlayerState, int iColNo )
 {
-	m_PlayerNumber = pn;
+	m_pPlayerState = pPlayerState;
 	m_iColNo = iColNo;
+
+	// TODO: Remove use of PlayerNumber.
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
     NoteFieldMode &mode = g_NoteFieldMode[pn];
 	CString sButton = mode.GrayButtonNames[iColNo];
@@ -55,7 +59,7 @@ void ReceptorArrow::Update( float fDeltaTime )
 	ActorFrame::Update( fDeltaTime );
 
 	// update pressblock alignment based on scroll direction
-	bool bReverse = GAMESTATE->m_PlayerOptions[m_PlayerNumber].GetReversePercentForColumn(m_iColNo) > 0.5;
+	bool bReverse = m_pPlayerState->m_PlayerOptions.GetReversePercentForColumn(m_iColNo) > 0.5;
 	m_pPressBlock->SetVertAlign( bReverse ? Actor::align_bottom : Actor::align_top );
 }
 

@@ -4,15 +4,17 @@
 #include "PlayerNumber.h"
 #include "ActorFrame.h"
 
+struct PlayerState;
+
 class ScoreDisplay : public ActorFrame
 {
 public:
-	virtual void Init( PlayerNumber pn ) { m_PlayerNumber = pn; };
+	virtual void Init( const PlayerState* pPlayerState ) { m_pPlayerState = pPlayerState; }
 
-	virtual void SetScore( int iNewScore ) {};
+	virtual void SetScore( int iNewScore ) {}
 
 protected:
-	PlayerNumber m_PlayerNumber;	// needed to look up statistics in GAMESTATE
+	const PlayerState* m_pPlayerState;	// needed to look up statistics in GAMESTATE
 };
 
 #endif

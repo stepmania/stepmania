@@ -5,6 +5,7 @@
 #include "PrefsManager.h"
 #include "GameState.h"
 #include "ThemeManager.h"
+#include "PlayerState.h"
 
 
 const float SCORE_TWEEN_TIME = 0.2f;
@@ -33,9 +34,13 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 	this->AddChild( &m_text );
 }
 
-void ScoreDisplayNormal::Init( PlayerNumber pn ) 
+void ScoreDisplayNormal::Init( const PlayerState* pPlayerState ) 
 {
-	ScoreDisplay::Init( pn );
+	ScoreDisplay::Init( pPlayerState );
+
+	// TODO: Remove use of PlayerNumber.
+	PlayerNumber pn = pPlayerState->m_PlayerNumber;
+	
 	m_text.SetDiffuse( PlayerToColor(pn) );
 }
 

@@ -7,6 +7,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "RageTextureManager.h"
+#include "PlayerState.h"
 
 #define ITEM_X( i )				THEME->GetMetricF("ScoreDisplayBattle",ssprintf("Item%dX",i+1))
 #define ITEM_Y( i )				THEME->GetMetricF("ScoreDisplayBattle",ssprintf("Item%dY",i+1))
@@ -31,9 +32,9 @@ ScoreDisplayBattle::ScoreDisplayBattle()
 		TEXTUREMAN->CacheTexture( asIconPaths[j] );
 }
 
-void ScoreDisplayBattle::Init( PlayerNumber pn )
+void ScoreDisplayBattle::Init( const PlayerState* pPlayerState )
 {
-	ScoreDisplay::Init( pn );
+	ScoreDisplay::Init( pPlayerState );
 }
 
 void ScoreDisplayBattle::Update( float fDelta )
@@ -42,7 +43,7 @@ void ScoreDisplayBattle::Update( float fDelta )
 
 	for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
 	{
-		Attack attack = GAMESTATE->m_Inventory[m_PlayerNumber][s];
+		const Attack& attack = m_pPlayerState->m_Inventory[s];
 		CString sNewModifier = attack.sModifier;
 
 		if( sNewModifier != m_iLastSeenInventory[s] )

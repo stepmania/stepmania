@@ -30,6 +30,7 @@
 #include "ScreenDimensions.h"
 #include "RageSoundManager.h"
 #include "ThemeMetric.h"
+#include "PlayerState.h"
 
 ThemeMetric<float> GRAY_ARROWS_Y_STANDARD		("Player","ReceptorArrowsYStandard");
 ThemeMetric<float> GRAY_ARROWS_Y_REVERSE		("Player","ReceptorArrowsYReverse");
@@ -59,7 +60,7 @@ static const float StepSearchDistance = 1.0f;
 
 PlayerMinus::PlayerMinus()
 {
-	m_PlayerNumber = PLAYER_INVALID;
+	m_pPlayerState = NULL;
 	m_fNoteFieldHeight = 0;
 
 	m_pLifeMeter = NULL;
@@ -89,7 +90,7 @@ PlayerMinus::~PlayerMinus()
 }
 
 void PlayerMinus::Load( 
-	PlayerNumber pn, 
+	PlayerState* pPlayerState, 
 	const NoteData& noteData, 
 	LifeMeter* pLM, 
 	CombinedLifeMeter* pCombinedLM, 
@@ -102,9 +103,7 @@ void PlayerMinus::Load(
 {
 	m_iDCState = AS2D_IDLE;
 
-	GAMESTATE->ResetNoteSkinsForPlayer( pn );
-	
-	m_PlayerNumber = pn;
+	m_pPlayerState = pPlayerState;
 	m_pLifeMeter = pLM;
 	m_pCombinedLifeMeter = pCombinedLM;
 	m_pScoreDisplay = pScoreDisplay;
@@ -116,9 +115,14 @@ void PlayerMinus::Load(
 	m_iRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;	// why this?
 	m_iMineRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;	// why this?
 
+	// TODO: Remove use of PlayerNumber.
+	PlayerNumber pn = pPlayerState->m_PlayerNumber;
+
+	GAMESTATE->ResetNoteSkinsForPlayer( pn );
+
 	/* Ensure that this is up-to-date. */
 	GAMESTATE->m_pPosition->Load(pn);
-
+	
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 
 	// init steps
@@ -133,8 +137,8 @@ void PlayerMinus::Load(
 	m_Judgment.StopTweening();
 //	m_Combo.Reset();				// don't reset combos between songs in a course!
 	m_Combo.Init( pn );
-	m_Combo.SetCombo( g_CurStageStats.iCurCombo[m_PlayerNumber], g_CurStageStats.iCurMissCombo[m_PlayerNumber]  );	// combo can persist between songs and games
-	m_AttackDisplay.Init( pn );
+	m_Combo.SetCombo( g_CurStageStats.iCurCombo[pn], g_CurStageStats.iCurMissCombo[pn]  );	// combo can persist between songs and games
+	m_AttackDisplay.Init( m_pPlayerState );
 	m_Judgment.Reset();
 
 	/* Don't re-init this; that'll reload graphics.  Add a separate Reset() call
@@ -143,7 +147,7 @@ void PlayerMinus::Load(
 //		m_pScore->Init( pn );
 
 	/* Apply transforms. */
-	NoteDataUtil::TransformNoteData( m_NoteData, GAMESTATE->m_PlayerOptions[pn], GAMESTATE->GetCurrentStyle()->m_StepsType );
+	NoteDataUtil::TransformNoteData( m_NoteData, GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, GAMESTATE->GetCurrentStyle()->m_StepsType );
 	
 	switch( GAMESTATE->m_PlayMode )
 	{
@@ -151,7 +155,7 @@ void PlayerMinus::Load(
 		case PLAY_MODE_BATTLE:
 			{
 				// ugly, ugly, ugly.  Works only w/ dance.
-				NoteDataUtil::TransformNoteData( m_NoteData, GAMESTATE->m_PlayerOptions[pn], GAMESTATE->GetCurrentStyle()->m_StepsType );
+				NoteDataUtil::TransformNoteData( m_NoteData, GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, GAMESTATE->GetCurrentStyle()->m_StepsType );
 				
 				// shuffle either p1 or p2
 				static int count = 0;
@@ -186,18 +190,18 @@ void PlayerMinus::Load(
 	
 	m_pNoteField->SetY( fNoteFieldMidde );
 	m_fNoteFieldHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
-	m_pNoteField->Load( &m_NoteData, pn, iStartDrawingAtPixels, iStopDrawingAtPixels, m_fNoteFieldHeight );
+	m_pNoteField->Load( &m_NoteData, m_pPlayerState, iStartDrawingAtPixels, iStopDrawingAtPixels, m_fNoteFieldHeight );
 	m_ArrowBackdrop.SetPlayer( pn );
 
-	const bool bReverse = GAMESTATE->m_PlayerOptions[pn].GetReversePercentForColumn(0) == 1;
+	const bool bReverse = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetReversePercentForColumn(0) == 1;
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==ONE_PLAYER_TWO_SIDES;
-	m_Combo.SetX( COMBO_X(m_PlayerNumber,bPlayerUsingBothSides) );
+	m_Combo.SetX( COMBO_X(pn,bPlayerUsingBothSides) );
 	m_Combo.SetY( bReverse ? COMBO_Y_REVERSE : COMBO_Y );
-	m_AttackDisplay.SetX( ATTACK_DISPLAY_X(m_PlayerNumber,bPlayerUsingBothSides) - 40 );
+	m_AttackDisplay.SetX( ATTACK_DISPLAY_X(pn,bPlayerUsingBothSides) - 40 );
 	m_AttackDisplay.SetY( bReverse ? ATTACK_DISPLAY_Y_REVERSE : ATTACK_DISPLAY_Y );
-	m_Judgment.SetX( JUDGMENT_X(m_PlayerNumber,bPlayerUsingBothSides) );
+	m_Judgment.SetX( JUDGMENT_X(pn,bPlayerUsingBothSides) );
 	m_Judgment.SetY( bReverse ? JUDGMENT_Y_REVERSE : JUDGMENT_Y );
-	m_ProTimingDisplay.SetX( JUDGMENT_X(m_PlayerNumber,bPlayerUsingBothSides) );
+	m_ProTimingDisplay.SetX( JUDGMENT_X(pn,bPlayerUsingBothSides) );
 	m_ProTimingDisplay.SetY( bReverse ? SCREEN_BOTTOM-JUDGMENT_Y : SCREEN_TOP+JUDGMENT_Y );
 
 	/* These commands add to the above positioning, and are usually empty. */
@@ -236,7 +240,7 @@ void PlayerMinus::Load(
 	if( GAMESTATE->GetNumPlayersEnabled() == 2 )
 	{
 		/* Two players are active.  Play sounds on this player's side. */
-		p.m_Balance = (m_PlayerNumber == PLAYER_1)? -1.0f:1.0f;
+		p.m_Balance = (pn == PLAYER_1)? -1.0f:1.0f;
 	}
 	m_soundMine.SetParams( p );
 	m_soundAttackLaunch.SetParams( p );
@@ -265,9 +269,9 @@ void PlayerMinus::Update( float fDeltaTime )
 	if( GAMESTATE->m_pCurSong==NULL )
 		return;
 
-	if( GAMESTATE->m_bAttackBeganThisUpdate[m_PlayerNumber] )
+	if( m_pPlayerState->m_bAttackBeganThisUpdate )
 		m_soundAttackLaunch.Play();
-	if( GAMESTATE->m_bAttackEndedThisUpdate[m_PlayerNumber] )
+	if( m_pPlayerState->m_bAttackEndedThisUpdate )
 		m_soundAttackEnding.Play();
 
 
@@ -282,12 +286,12 @@ void PlayerMinus::Update( float fDeltaTime )
 	{
 		for( int c=0; c<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; c++ )
 		{
-			float fPercentReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].GetReversePercentForColumn(c);
+			float fPercentReverse = m_pPlayerState->m_CurrentPlayerOptions.GetReversePercentForColumn(c);
 			float fHoldJudgeYPos = SCALE( fPercentReverse, 0.f, 1.f, HOLD_JUDGMENT_Y_STANDARD, HOLD_JUDGMENT_Y_REVERSE );
 //			float fGrayYPos = SCALE( fPercentReverse, 0.f, 1.f, GRAY_ARROWS_Y_STANDARD, GRAY_ARROWS_Y_REVERSE );
 
-			const float fX = ArrowGetXPos( m_PlayerNumber, c, 0 );
-			const float fZ = ArrowGetZPos( m_PlayerNumber, c, 0 );
+			const float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
+			const float fZ = ArrowEffects::GetZPos( m_pPlayerState, c, 0 );
 
 			m_HoldJudgment[c].SetX( fX );
 			m_HoldJudgment[c].SetY( fHoldJudgeYPos );
@@ -295,14 +299,14 @@ void PlayerMinus::Update( float fDeltaTime )
 		}
 	}
 
-	float fPercentReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].GetReversePercentForColumn(0);
+	float fPercentReverse = m_pPlayerState->m_CurrentPlayerOptions.GetReversePercentForColumn(0);
 	float fGrayYPos = SCALE( fPercentReverse, 0.f, 1.f, GRAY_ARROWS_Y_STANDARD, GRAY_ARROWS_Y_REVERSE );
 	m_ArrowBackdrop.SetY( fGrayYPos );
 
 	// NoteField accounts for reverse on its own now.
 //	m_pNoteField->SetY( fGrayYPos );
 
-	float fMiniPercent = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fEffects[PlayerOptions::EFFECT_MINI];
+	float fMiniPercent = m_pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI];
 	float fNoteFieldZoom = 1 - fMiniPercent*0.5f;
 	float fJudgmentZoom = 1 - fMiniPercent*0.25f;
 	m_pNoteField->SetZoom( fNoteFieldZoom );
@@ -320,12 +324,15 @@ void PlayerMinus::Update( float fDeltaTime )
 	ASSERT_M( iNumCols < MAX_COLS_PER_PLAYER, ssprintf("%i >= %i", iNumCols, MAX_COLS_PER_PLAYER) );
 	for( int col=0; col < iNumCols; ++col )
 	{
+		// TODO: Remove use of PlayerNumber.
+		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
 		CHECKPOINT_M( ssprintf("%i %i", col, iNumCols) );
-		const StyleInput StyleI( m_PlayerNumber, col );
+		const StyleInput StyleI( pn, col );
 		const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( StyleI );
 		bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
 		// TODO: Make this work for non-human-controlled players
-		if( bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox && GAMESTATE->m_PlayerController[m_PlayerNumber]==PC_HUMAN )
+		if( bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox && m_pPlayerState->m_PlayerController==PC_HUMAN )
 			m_pNoteField->SetPressed( col );
 	}
 	
@@ -346,7 +353,10 @@ void PlayerMinus::Update( float fDeltaTime )
 		if( iSongRow < hn.iStartRow )
 			continue;	// hold hasn't happened yet
 
-		const StyleInput StyleI( m_PlayerNumber, hn.iTrack );
+		// TODO: Remove use of PlayerNumber.
+		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+		const StyleInput StyleI( pn, hn.iTrack );
 		const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( StyleI );
 
 		// if they got a bad score or haven't stepped on the corresponding tap yet
@@ -361,7 +371,7 @@ void PlayerMinus::Update( float fDeltaTime )
 			bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
 			
 			// TODO: Make the CPU miss sometimes.
-			if( GAMESTATE->m_PlayerController[m_PlayerNumber] != PC_HUMAN )
+			if( m_pPlayerState->m_PlayerController != PC_HUMAN )
 				bIsHoldingButton = true;
 
 			// set hold flag so NoteField can do intelligent drawing
@@ -423,7 +433,10 @@ void PlayerMinus::Update( float fDeltaTime )
 
 			int ms_error = (hns == HNS_OK)? 0:MAX_PRO_TIMING_ERROR;
 
-			g_CurStageStats.iTotalError[m_PlayerNumber] += ms_error;
+			// TODO: Remove use of PlayerNumber.
+			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+			g_CurStageStats.iTotalError[pn] += ms_error;
 			if( hns == HNS_NG ) /* don't show a 0 for an OK */
 				m_ProTimingDisplay.SetJudgment( ms_error, TNS_MISS );
 		}
@@ -435,6 +448,9 @@ void PlayerMinus::Update( float fDeltaTime )
 		m_NoteData.SetHoldNoteScore(hn, hns);
 	}
 
+	// TODO: Remove use of PlayerNumber.
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
 	{
 		// Why was this originally "BeatToNoteRowNotRounded"?  It should be rounded.  -Chris
 		/* We want to send the crossed row message exactly when we cross the row--not
@@ -444,7 +460,7 @@ void PlayerMinus::Update( float fDeltaTime )
 		if( iRowNow >= 0 )
 		{
 			for( ; m_iRowLastCrossed <= iRowNow; m_iRowLastCrossed++ )  // for each index we crossed since the last update
-				if( GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
+				if( GAMESTATE->IsPlayerEnabled(pn) )
 					CrossedRow( m_iRowLastCrossed );
 		}
 	}
@@ -458,7 +474,7 @@ void PlayerMinus::Update( float fDeltaTime )
 		if( iRowNow >= 0 )
 		{
 			for( ; m_iMineRowLastCrossed <= iRowNow; m_iMineRowLastCrossed++ )  // for each index we crossed since the last update
-				if( GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
+				if( GAMESTATE->IsPlayerEnabled(pn) )
 					CrossedMineRow( m_iMineRowLastCrossed );
 		}
 	}
@@ -477,9 +493,9 @@ void PlayerMinus::Update( float fDeltaTime )
 
 void PlayerMinus::ApplyWaitingTransforms()
 {
-	for( unsigned j=0; j<GAMESTATE->m_ModsToApply[m_PlayerNumber].size(); j++ )
+	for( unsigned j=0; j<m_pPlayerState->m_ModsToApply.size(); j++ )
 	{
-		const Attack &mod = GAMESTATE->m_ModsToApply[m_PlayerNumber][j];
+		const Attack &mod = m_pPlayerState->m_ModsToApply[j];
 		PlayerOptions po;
 		/* Should this default to "" always? need it blank so we know if mod.sModifier
 		 * changes the note skin. */
@@ -487,31 +503,34 @@ void PlayerMinus::ApplyWaitingTransforms()
 		po.FromString( mod.sModifier );
 
 		float fStartBeat, fEndBeat;
-		mod.GetAttackBeats( GAMESTATE->m_pCurSong, m_PlayerNumber, fStartBeat, fEndBeat );
+		mod.GetAttackBeats( GAMESTATE->m_pCurSong, m_pPlayerState, fStartBeat, fEndBeat );
 		fEndBeat = min( fEndBeat, m_NoteData.GetLastBeat() );
 
 		LOG->Trace( "Applying transform '%s' from %f to %f to '%s'", mod.sModifier.c_str(), fStartBeat, fEndBeat,
 			GAMESTATE->m_pCurSong->GetTranslitMainTitle().c_str() );
 		if( po.m_sNoteSkin != "" )
-			GAMESTATE->SetNoteSkinForBeatRange( m_PlayerNumber, po.m_sNoteSkin, fStartBeat, fEndBeat );
+			GAMESTATE->SetNoteSkinForBeatRange( m_pPlayerState, po.m_sNoteSkin, fStartBeat, fEndBeat );
 
 		NoteDataUtil::TransformNoteData( m_NoteData, po, GAMESTATE->GetCurrentStyle()->m_StepsType, fStartBeat, fEndBeat );
 		m_pNoteField->CopyRange( m_NoteData, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat), BeatToNoteRow(fStartBeat) );
 	}
-	GAMESTATE->m_ModsToApply[m_PlayerNumber].clear();
+	m_pPlayerState->m_ModsToApply.clear();
 }
 
 void PlayerMinus::DrawPrimitives()
 {
+	// TODO: Remove use of PlayerNumber.
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
 	// May have both players in doubles (for battle play); only draw primary player.
 	if( GAMESTATE->GetCurrentStyle()->m_StyleType == ONE_PLAYER_TWO_SIDES  &&
-		m_PlayerNumber != GAMESTATE->m_MasterPlayerNumber )
+		pn != GAMESTATE->m_MasterPlayerNumber )
 		return;
 
 
 	// Draw these below everything else.
 	m_ArrowBackdrop.Draw();
-	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind == 0 )
+	if( m_pPlayerState->m_PlayerOptions.m_fBlind == 0 )
 		m_Combo.Draw();
 
 	m_AttackDisplay.Draw();
@@ -522,9 +541,9 @@ void PlayerMinus::DrawPrimitives()
 	if( HOLD_JUDGMENTS_UNDER_FIELD )
 		DrawHoldJudgments();
 
-	float fTilt = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fPerspectiveTilt;
-	float fSkew = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fSkew;
-	bool bReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].GetReversePercentForColumn(0)>0.5;
+	float fTilt = m_pPlayerState->m_CurrentPlayerOptions.m_fPerspectiveTilt;
+	float fSkew = m_pPlayerState->m_CurrentPlayerOptions.m_fSkew;
+	bool bReverse = m_pPlayerState->m_CurrentPlayerOptions.GetReversePercentForColumn(0)>0.5;
 
 
 	DISPLAY->CameraPushMatrix();
@@ -539,7 +558,7 @@ void PlayerMinus::DrawPrimitives()
 	float fTiltDegrees = SCALE(fTilt,-1.f,+1.f,+30,-30) * (bReverse?-1:1);
 
 
-	float fZoom = SCALE( GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fEffects[PlayerOptions::EFFECT_MINI], 0.f, 1.f, 1.f, 0.5f );
+	float fZoom = SCALE( m_pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI], 0.f, 1.f, 1.f, 0.5f );
 	if( fTilt > 0 )
 		fZoom *= SCALE( fTilt, 0.f, 1.f, 1.f, 0.9f );
 	else
@@ -571,10 +590,10 @@ void PlayerMinus::DrawPrimitives()
 
 void PlayerMinus::DrawTapJudgments()
 {
-	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind > 0 )
+	if( m_pPlayerState->m_PlayerOptions.m_fBlind > 0 )
 		return;
 
-	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bProTiming )
+	if( m_pPlayerState->m_PlayerOptions.m_bProTiming )
 		m_ProTimingDisplay.Draw();
 	else
 		m_Judgment.Draw();
@@ -582,16 +601,19 @@ void PlayerMinus::DrawTapJudgments()
 
 void PlayerMinus::DrawHoldJudgments()
 {
-	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind > 0 )
+	if( m_pPlayerState->m_PlayerOptions.m_fBlind > 0 )
 		return;
+
+	// TODO: Remove use of PlayerNumber.
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
 	for( int c=0; c<m_NoteData.GetNumTracks(); c++ )
 	{
-		g_NoteFieldMode[m_PlayerNumber].BeginDrawTrack(c);
+		g_NoteFieldMode[pn].BeginDrawTrack(c);
 
 		m_HoldJudgment[c].Draw();
 
-		g_NoteFieldMode[m_PlayerNumber].EndDrawTrack(c);
+		g_NoteFieldMode[pn].EndDrawTrack(c);
 	}
 }
 
@@ -648,7 +670,10 @@ int PlayerMinus::GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, flo
 
 void PlayerMinus::Step( int col, RageTimer tm )
 {
-	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  g_CurStageStats.bFailed[m_PlayerNumber] )	// Oni dead
+	// TODO: Remove use of PlayerNumber.
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  g_CurStageStats.bFailed[pn] )	// Oni dead
 		return;	// do nothing
 
 	//LOG->Trace( "PlayerMinus::HandlePlayerStep()" );
@@ -699,7 +724,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 
 		TapNote tn = m_NoteData.GetTapNote( col, iIndexOverlappingNote );
 
-		switch( GAMESTATE->m_PlayerController[m_PlayerNumber] )
+		switch( m_pPlayerState->m_PlayerController )
 		{
 		case PC_HUMAN:
 
@@ -714,8 +739,12 @@ void PlayerMinus::Step( int col, RageTimer tm )
 
 					if( m_pLifeMeter )
 						m_pLifeMeter->ChangeLifeMine();
+
+					// TODO: Remove use of PlayerNumber.
+					PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
 					if( m_pCombinedLifeMeter )
-						m_pCombinedLifeMeter->ChangeLifeMine(m_PlayerNumber);
+						m_pCombinedLifeMeter->ChangeLifeMine( pn );
 					m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
 					m_pNoteField->DidTapNote( col, score, false );
 				}
@@ -736,7 +765,11 @@ void PlayerMinus::Step( int col, RageTimer tm )
 						true,
 						false
 						);
-					GAMESTATE->LaunchAttack( OPPOSITE_PLAYER[m_PlayerNumber], attack );
+
+					// TODO: Remove use of PlayerNumber
+					PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+					GAMESTATE->LaunchAttack( OPPOSITE_PLAYER[pn], attack );
 
 					// remove all TapAttacks on this row
 					for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
@@ -763,10 +796,10 @@ void PlayerMinus::Step( int col, RageTimer tm )
 		
 		case PC_CPU:
 		case PC_AUTOPLAY:
-			switch( GAMESTATE->m_PlayerController[m_PlayerNumber] )
+			switch( m_pPlayerState->m_PlayerController )
 			{
 			case PC_CPU:
-				score = PlayerAI::GetTapNoteScore( m_PlayerNumber );
+				score = PlayerAI::GetTapNoteScore( m_pPlayerState );
 				break;
 			case PC_AUTOPLAY:
 				score = TNS_MARVELOUS;
@@ -801,8 +834,12 @@ void PlayerMinus::Step( int col, RageTimer tm )
 					m_soundMine.Play();
 					if( m_pLifeMeter )
 						m_pLifeMeter->ChangeLifeMine();
+					
+					// Remove use of PlayerNumber.
+					PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
 					if( m_pCombinedLifeMeter )
-						m_pCombinedLifeMeter->ChangeLifeMine(m_PlayerNumber);
+						m_pCombinedLifeMeter->ChangeLifeMine( pn );
 					m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
 					m_pNoteField->DidTapNote( col, score, false );
 				}
@@ -830,7 +867,11 @@ void PlayerMinus::Step( int col, RageTimer tm )
 					true,
 					false
 					);
-				GAMESTATE->LaunchAttack( OPPOSITE_PLAYER[m_PlayerNumber], attack );
+
+				// TODO: Remove use of PlayerNumber.
+				PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+				GAMESTATE->LaunchAttack( OPPOSITE_PLAYER[pn], attack );
 				
 				// remove all TapAttacks on this row
 				for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
@@ -868,8 +909,11 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			int ms_error = (int) roundf( fSecondsFromPerfect * 1000 );
 			ms_error = min( ms_error, MAX_PRO_TIMING_ERROR );
 
-			g_CurStageStats.iTotalError[m_PlayerNumber] += ms_error;
-			if (!GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind)
+			// TODO: Remove use of PlayerNumber.
+			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+			g_CurStageStats.iTotalError[pn] += ms_error;
+			if (!m_pPlayerState->m_PlayerOptions.m_fBlind)
 				m_ProTimingDisplay.SetJudgment( ms_error, score );
 		}
 
@@ -885,12 +929,15 @@ void PlayerMinus::Step( int col, RageTimer tm )
 		if( score != TNS_NONE )
 			m_NoteData.SetTapNoteOffset(col, iIndexOverlappingNote, -fNoteOffset);
 
-		if( GAMESTATE->m_PlayerController[m_PlayerNumber] == PC_HUMAN  && 
+		if( m_pPlayerState->m_PlayerController == PC_HUMAN  && 
 			score >= TNS_GREAT ) 
 			HandleAutosync(fNoteOffset);
 
+		// TODO: Remove use of PlayerNumber.
+		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
 		//Keep this here so we get the same data as Autosync
-		NSMAN->ReportTiming(fNoteOffset,m_PlayerNumber);
+		NSMAN->ReportTiming(fNoteOffset,pn);
 		
 		if( m_pPrimaryScoreKeeper )
 			m_pPrimaryScoreKeeper->HandleTapScore( score );
@@ -998,15 +1045,18 @@ void PlayerMinus::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 
 		// If the score is great or better, remove the note from the screen to 
 		// indicate success.  (Or always if blind is on.)
-		if( score >= TNS_GREAT || GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind )
+		if( score >= TNS_GREAT || m_pPlayerState->m_PlayerOptions.m_fBlind )
 			m_pNoteField->SetTapNote(c, iIndexThatWasSteppedOn, TAP_EMPTY);
 
 		// show the ghost arrow for this column
-		if (GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind)
+		if (m_pPlayerState->m_PlayerOptions.m_fBlind)
 			m_pNoteField->DidTapNote( c, TNS_MARVELOUS, false );
 		else
 		{
-			bool bBright = g_CurStageStats.iCurCombo[m_PlayerNumber]>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+			// TODO: Remove use of PlayerNumber.
+			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+			bool bBright = g_CurStageStats.iCurCombo[pn]>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
 			m_pNoteField->DidTapNote( c, score, bBright );
 		}
 	}
@@ -1064,7 +1114,11 @@ void PlayerMinus::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 				// A normal note.  Penalize for not stepping on it.
 				MissedNoteOnThisRow = true;
 				m_NoteData.SetTapNoteScore( t, r, TNS_MISS );
-				g_CurStageStats.iTotalError[m_PlayerNumber] += MAX_PRO_TIMING_ERROR;
+
+				// TODO: Remove use of PlayerNumber.
+				PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+				g_CurStageStats.iTotalError[pn] += MAX_PRO_TIMING_ERROR;
 				m_ProTimingDisplay.SetJudgment( MAX_PRO_TIMING_ERROR, TNS_MISS );
 			}
 		}
@@ -1084,12 +1138,12 @@ void PlayerMinus::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 void PlayerMinus::CrossedRow( int iNoteRow )
 {
 	// If we're doing random vanish, randomise notes on the fly.
-	if(GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH]==1)
+	if(m_pPlayerState->m_CurrentPlayerOptions.m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH]==1)
 		RandomizeNotes( iNoteRow );
 
 	// check to see if there's a note at the crossed row
 	RageTimer now;
-	if( GAMESTATE->m_PlayerController[m_PlayerNumber] != PC_HUMAN )
+	if( m_pPlayerState->m_PlayerController != PC_HUMAN )
 	{
 		for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 		{
@@ -1108,7 +1162,10 @@ void PlayerMinus::CrossedMineRow( int iNoteRow )
 	{
 		if( m_NoteData.GetTapNote(t,iNoteRow).type == TapNote::mine )
 		{
-			const StyleInput StyleI( m_PlayerNumber, t );
+			// TODO: Remove use of PlayerNumber.
+			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+			const StyleInput StyleI( pn, t );
 			const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( StyleI );
 			if( PREFSMAN->m_fPadStickSeconds > 0 )
 			{
@@ -1132,7 +1189,7 @@ void PlayerMinus::RandomizeNotes( int iNoteRow )
 	/* This is incorrect: if m_fScrollSpeed is 0.5, we'll never change
 	 * any odd rows, and if it's 2, we'll shuffle each row twice. */
 	int iNewNoteRow = iNoteRow + ROWS_PER_BEAT*2;
-	iNewNoteRow = int( iNewNoteRow / GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fScrollSpeed );
+	iNewNoteRow = int( iNewNoteRow / m_pPlayerState->m_PlayerOptions.m_fScrollSpeed );
 
 	int iNumOfTracks = m_NoteData.GetNumTracks();
 	for( int t=0; t+1 < iNumOfTracks; t++ )
@@ -1183,22 +1240,25 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 	if(GAMESTATE->m_bDemonstrationOrJukebox)
 		NoCheating = false;
 	// don't accumulate points if AutoPlay is on.
-	if( NoCheating && GAMESTATE->m_PlayerController[m_PlayerNumber] == PC_AUTOPLAY )
+	if( NoCheating && m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 		return;
 
+	// TODO: Remove use of PlayerNumber.
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
 	/* Update miss combo, and handle "combo stopped" messages. */
-	int &iCurCombo = g_CurStageStats.iCurCombo[m_PlayerNumber];
+	int &iCurCombo = g_CurStageStats.iCurCombo[pn];
 	switch( scoreOfLastTap )
 	{
 	case TNS_MARVELOUS:
 	case TNS_PERFECT:
 	case TNS_GREAT:
-		g_CurStageStats.iCurMissCombo[m_PlayerNumber] = 0;
+		g_CurStageStats.iCurMissCombo[pn] = 0;
 		SCREENMAN->PostMessageToTopScreen( SM_MissComboAborted, 0 );
 		break;
 
 	case TNS_MISS:
-		++g_CurStageStats.iCurMissCombo[m_PlayerNumber];
+		++g_CurStageStats.iCurMissCombo[pn];
 		m_iDCState = AS2D_MISS; // update dancing 2d characters that may have missed a note
 	case TNS_GOOD:
 	case TNS_BOO:
@@ -1212,14 +1272,14 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 	}
 
 	/* The score keeper updates the hit combo.  Remember the old combo for handling announcers. */
-	const int iOldCombo = g_CurStageStats.iCurCombo[m_PlayerNumber];
+	const int iOldCombo = g_CurStageStats.iCurCombo[pn];
 
 	if(m_pPrimaryScoreKeeper)
 		m_pPrimaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow );
 	if(m_pSecondaryScoreKeeper)
 		m_pSecondaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow );
 
-	m_Combo.SetCombo( g_CurStageStats.iCurCombo[m_PlayerNumber], g_CurStageStats.iCurMissCombo[m_PlayerNumber] );
+	m_Combo.SetCombo( g_CurStageStats.iCurCombo[pn], g_CurStageStats.iCurMissCombo[pn] );
 
 #define CROSSED( x ) (iOldCombo<x && iCurCombo>=x)
 	if ( CROSSED(100) )	
@@ -1247,12 +1307,12 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 #undef CROSSED
 
 	// new max combo
-	g_CurStageStats.iMaxCombo[m_PlayerNumber] = max(g_CurStageStats.iMaxCombo[m_PlayerNumber], iCurCombo);
+	g_CurStageStats.iMaxCombo[pn] = max(g_CurStageStats.iMaxCombo[pn], iCurCombo);
 
 	/* Use the real current beat, not the beat we've been passed.  That's because we
 	 * want to record the current life/combo to the current time; eg. if it's a MISS,
 	 * the beat we're registering is in the past, but the life is changing now. */
-	g_CurStageStats.UpdateComboList( m_PlayerNumber, g_CurStageStats.fAliveSeconds[m_PlayerNumber], false );
+	g_CurStageStats.UpdateComboList( pn, g_CurStageStats.fAliveSeconds[pn], false );
 
 	float life = -1;
 	if( m_pLifeMeter )
@@ -1260,24 +1320,24 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 	else if( m_pCombinedLifeMeter )
 	{
 		life = GAMESTATE->m_fTugLifePercentP1;
-		if( m_PlayerNumber == PLAYER_2 )
+		if( pn == PLAYER_2 )
 			life = 1.0f - life;
 	}
 	if( life != -1 )
-		g_CurStageStats.SetLifeRecordAt( m_PlayerNumber, life, g_CurStageStats.fAliveSeconds[m_PlayerNumber] );
+		g_CurStageStats.SetLifeRecordAt( pn, life, g_CurStageStats.fAliveSeconds[pn] );
 
 	if (m_pScoreDisplay)
-		m_pScoreDisplay->SetScore(g_CurStageStats.iScore[m_PlayerNumber]);
+		m_pScoreDisplay->SetScore(g_CurStageStats.iScore[pn]);
 	if (m_pSecondaryScoreDisplay)
-		m_pSecondaryScoreDisplay->SetScore(g_CurStageStats.iScore[m_PlayerNumber]);
+		m_pSecondaryScoreDisplay->SetScore(g_CurStageStats.iScore[pn]);
 
 	if( m_pLifeMeter ) {
 		m_pLifeMeter->ChangeLife( scoreOfLastTap );
 		m_pLifeMeter->OnDancePointsChange();    // update oni life meter
 	}
 	if( m_pCombinedLifeMeter ) {
-		m_pCombinedLifeMeter->ChangeLife( m_PlayerNumber, scoreOfLastTap );
-		m_pCombinedLifeMeter->OnDancePointsChange( m_PlayerNumber );    // update oni life meter
+		m_pCombinedLifeMeter->ChangeLife( pn, scoreOfLastTap );
+		m_pCombinedLifeMeter->OnDancePointsChange( pn );    // update oni life meter
 	}
 }
 
@@ -1292,7 +1352,7 @@ void PlayerMinus::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScor
 	if(GAMESTATE->m_bDemonstrationOrJukebox)
 		NoCheating = false;
 	// don't accumulate points if AutoPlay is on.
-	if( NoCheating && GAMESTATE->m_PlayerController[m_PlayerNumber] == PC_AUTOPLAY )
+	if( NoCheating && m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 		return;
 
 	if(m_pPrimaryScoreKeeper)
@@ -1300,18 +1360,23 @@ void PlayerMinus::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScor
 	if(m_pSecondaryScoreKeeper)
 		m_pSecondaryScoreKeeper->HandleHoldScore(holdScore, tapScore );
 
-	if (m_pScoreDisplay)
-		m_pScoreDisplay->SetScore(g_CurStageStats.iScore[m_PlayerNumber]);
-	if (m_pSecondaryScoreDisplay)
-		m_pSecondaryScoreDisplay->SetScore(g_CurStageStats.iScore[m_PlayerNumber]);
+	// TODO: Remove use of PlayerNumber.
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
-	if( m_pLifeMeter ) {
+	if (m_pScoreDisplay)
+		m_pScoreDisplay->SetScore(g_CurStageStats.iScore[pn]);
+	if (m_pSecondaryScoreDisplay)
+		m_pSecondaryScoreDisplay->SetScore(g_CurStageStats.iScore[pn]);
+
+	if( m_pLifeMeter ) 
+	{
 		m_pLifeMeter->ChangeLife( holdScore, tapScore );
 		m_pLifeMeter->OnDancePointsChange();
 	}
-	if( m_pCombinedLifeMeter ) {
-		m_pCombinedLifeMeter->ChangeLife( m_PlayerNumber, holdScore, tapScore );
-		m_pCombinedLifeMeter->OnDancePointsChange( m_PlayerNumber );
+	if( m_pCombinedLifeMeter ) 
+	{
+		m_pCombinedLifeMeter->ChangeLife( pn, holdScore, tapScore );
+		m_pCombinedLifeMeter->OnDancePointsChange( pn );
 	}
 }
 
@@ -1328,7 +1393,7 @@ void PlayerMinus::FadeToFail()
 /* XXX: Why's m_NoteField in a separate class, again?  Is that still needed? */
 /* It was used to have an invisible computer player in PLAY_MODE_BATTLE. -Chris */
 void Player::Load( 
-	PlayerNumber player_no, 
+	PlayerState* pPlayerState, 
 	const NoteData& noteData, 
 	LifeMeter* pLM, 
 	CombinedLifeMeter* pCombinedLM, 
@@ -1339,7 +1404,7 @@ void Player::Load(
 	ScoreKeeper* pSecondaryScoreKeeper )
 {
 	PlayerMinus::Load( 
-		player_no, 
+		pPlayerState, 
 		noteData, 
 		pLM, 
 		pCombinedLM, 

@@ -39,6 +39,7 @@ void NetworkSyncManager::SelectUserSong() { }
 #include "ScreenMessage.h"
 #include "GameManager.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
+#include "PlayerState.h"
 
 const ScreenMessage	SM_AddToChat	= ScreenMessage(SM_User+4);
 const ScreenMessage SM_ChangeSong	= ScreenMessage(SM_User+5);
@@ -418,7 +419,7 @@ void NetworkSyncManager::StartRequest(short position)
 	FOREACH_PlayerNumber (p)
 	{
 		++players;
-		m_packet.WriteNT(GAMESTATE->m_PlayerOptions[p].GetString());
+		m_packet.WriteNT(GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetString());
 	}
 	for (int i=0; i<2-players; ++i)
 		m_packet.WriteNT("");	//Write a NULL if no player
@@ -697,7 +698,7 @@ void NetworkSyncManager::ReportPlayerOptions()
 	m_packet.ClearPacket();
 	m_packet.Write1( NSCUPOpts );
 	FOREACH_PlayerNumber (pn)
-		m_packet.WriteNT( GAMESTATE->m_PlayerOptions[pn].GetString() );
+		m_packet.WriteNT( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetString() );
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
 }
 

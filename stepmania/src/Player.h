@@ -39,7 +39,7 @@ public:
 	virtual void DrawPrimitives();
 
 	void Load( 
-		PlayerNumber player_no, 
+		PlayerState* pPlayerState, 
 		const NoteData& noteData, 
 		LifeMeter* pLM, 
 		CombinedLifeMeter* pCombinedLM, 
@@ -74,7 +74,7 @@ protected:
 	int GetClosestNoteDirectional( int col, int iStartRow, int iMaxRowsAhead, bool bAllowGraded, bool bForward ) const;
 	int GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind, bool bAllowGraded ) const;
 
-	PlayerNumber	m_PlayerNumber;
+	PlayerState*	m_pPlayerState;
 	float			m_fNoteFieldHeight;
 
 	float			m_fOffset[SAMPLE_COUNT]; // for AutoSync
@@ -93,20 +93,20 @@ protected:
 	AttackDisplay	m_AttackDisplay;
 
 	int m_iDCState;
-	LifeMeter*		m_pLifeMeter;
-	CombinedLifeMeter*		m_pCombinedLifeMeter;
-	ScoreDisplay*	m_pScoreDisplay;
-	ScoreDisplay*	m_pSecondaryScoreDisplay;
-	ScoreKeeper*	m_pPrimaryScoreKeeper;
-	ScoreKeeper*	m_pSecondaryScoreKeeper;
-	Inventory*		m_pInventory;
+	LifeMeter*			m_pLifeMeter;
+	CombinedLifeMeter*	m_pCombinedLifeMeter;
+	ScoreDisplay*		m_pScoreDisplay;
+	ScoreDisplay*		m_pSecondaryScoreDisplay;
+	ScoreKeeper*		m_pPrimaryScoreKeeper;
+	ScoreKeeper*		m_pSecondaryScoreKeeper;
+	Inventory*			m_pInventory;
 
-	int				m_iRowLastCrossed;
-	int				m_iMineRowLastCrossed;
+	int			m_iRowLastCrossed;
+	int			m_iMineRowLastCrossed;
 
-	RageSound		m_soundMine;
-	RageSound		m_soundAttackLaunch;
-	RageSound		m_soundAttackEnding;
+	RageSound	m_soundMine;
+	RageSound	m_soundAttackLaunch;
+	RageSound	m_soundAttackEnding;
 
 	vector<RageSound> m_vKeysounds;
 };
@@ -115,7 +115,7 @@ class Player : public PlayerMinus
 {
 public:
 	void Load( 
-		PlayerNumber player_no, 
+		PlayerState* pPlayerState, 
 		const NoteData& noteData, 
 		LifeMeter* pLM, 
 		CombinedLifeMeter* pCombinedLM, 

@@ -3,22 +3,22 @@
 
 #include "ActorFrame.h"
 #include "Sprite.h"
-#include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"	// for TapNoteScore
 
+struct PlayerState;
 
 class AttackDisplay : public ActorFrame
 {
 public:
 	AttackDisplay();
 
-	void Init( PlayerNumber pn );
+	void Init( const PlayerState* pPlayerState );
 	void SetAttack( const CString &mod );
 
 	virtual void Update( float fDelta );
 
 protected:
-	PlayerNumber m_PlayerNumber;
+	const PlayerState* m_pPlayerState;
 
 	Sprite		m_sprAttack;
 };

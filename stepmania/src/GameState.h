@@ -4,7 +4,6 @@
 #define GAMESTATE_H
 
 #include "GameConstantsAndTypes.h"
-#include "PlayerOptions.h"
 #include "SongOptions.h"
 #include "Grade.h"
 #include "Attack.h"
@@ -24,6 +23,7 @@ class NoteFieldPositioning;
 class Character;
 class TimingData;
 struct StageStats;
+struct PlayerState;
 
 class GameState
 {
@@ -89,13 +89,6 @@ public:
 	Character* GameState::GetRandomCharacter();
 	Character* GameState::GetDefaultCharacter();
 
-	PlayerController	m_PlayerController[NUM_PLAYERS];
-	
-	// Used in Battle and Rave
-	int					m_iCpuSkill[NUM_PLAYERS];	// only used when m_PlayerController is PC_CPU
-	// Used in Rave
-	float				m_fSuperMeterGrowthScale[NUM_PLAYERS];
-
 
 	bool IsCourseMode() const;
 	bool IsBattleMode() const; /* not Rave */
@@ -155,9 +148,7 @@ public:
 	bool		m_bFreeze;	// in the middle of a freeze
 	RageTimer	m_LastBeatUpdate; // time of last m_fSongBeat, etc. update
 	bool		m_bPastHereWeGo;
-	float		m_fLastDrawnBeat[NUM_PLAYERS]; // set by NoteField
 
-	map<float,CString> m_BeatToNoteSkin[NUM_PLAYERS];
 	int			m_BeatToNoteSkinRev; /* hack: incremented whenever m_BeatToNoteSkin changes */
 	void ResetNoteSkins();
 	void ResetNoteSkinsForPlayer( PlayerNumber pn );
@@ -169,36 +160,21 @@ public:
 	void UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp = RageZeroTimer );
 	float GetSongPercent( float beat ) const;
 
-	enum HealthState { HOT, ALIVE, DANGER, DEAD };
-	HealthState	m_HealthState[NUM_PLAYERS];
 	bool AllAreInDangerOrWorse() const;
 	bool AllAreDead() const;
 	bool AllHaveComboOf30OrMoreMisses() const;
 	bool OneIsHot() const;
 
 	// used in PLAY_MODE_BATTLE and PLAY_MODE_RAVE
-	AttackArray	m_ActiveAttacks[NUM_PLAYERS];
-	
-	// Attacks take a while to transition out of use.  Account for this in PlayerAI
-	// by still penalizing it for 1 second after the player options are rebuilt.
-	int		m_iLastPositiveSumOfAttackLevels[NUM_PLAYERS];
-	float	m_fSecondsUntilAttacksPhasedOut[NUM_PLAYERS];	// positive means PlayerAI is still affected
-
-	vector<Attack>	m_ModsToApply[NUM_PLAYERS];
-
-	void SetNoteSkinForBeatRange( PlayerNumber pn, CString sNoteSkin, float StartBeat, float EndBeat );
+	void SetNoteSkinForBeatRange( PlayerState* pPlayerState, const CString& sNoteSkin, float StartBeat, float EndBeat );
 
 	// used in PLAY_MODE_BATTLE
-	Attack	m_Inventory[NUM_PLAYERS][NUM_INVENTORY_SLOTS];
 	float	m_fOpponentHealthPercent;
 
 	// used in PLAY_MODE_RAVE
 	float	m_fTugLifePercentP1;
-	float	m_fSuperMeter[NUM_PLAYERS];	// between 0 and NUM_ATTACK_LEVELS
 	
-	bool	m_bAttackBeganThisUpdate[NUM_PLAYERS];	// flag for other objects to watch (play sounds)
-	bool	m_bAttackEndedThisUpdate[NUM_PLAYERS];	// flag for other objects to watch (play sounds)
-	void GetUndisplayedBeats( PlayerNumber pn, float TotalSeconds, float &StartBeat, float &EndBeat ) const; // only meaningful when a NoteField is in use
+	void GetUndisplayedBeats( const PlayerState* pPlayerState, float TotalSeconds, float &StartBeat, float &EndBeat ) const; // only meaningful when a NoteField is in use
 	void LaunchAttack( PlayerNumber target, const Attack& a );
 	void RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn );
 	void RemoveAllActiveAttacks();	// called on end of song
@@ -216,9 +192,6 @@ public:
 	// Options stuff
 	//
 
-	PlayerOptions	m_CurrentPlayerOptions[NUM_PLAYERS];    // current approaches destination
-	PlayerOptions	m_PlayerOptions[NUM_PLAYERS];			// change this, and current will move gradually toward it
-	PlayerOptions   m_StoredPlayerOptions[NUM_PLAYERS];	// user's choices on the PlayerOptions screen
 	SongOptions		m_SongOptions;
 	SongOptions		m_StoredSongOptions;
 
@@ -292,6 +265,11 @@ public:
 	//
 	void GetDifficultiesToShow( set<Difficulty> &AddTo );
 	void GetCourseDifficultiesToShow( set<CourseDifficulty> &AddTo );
+
+	//
+	// PlayerState
+	//
+	PlayerState* m_pPlayerState[NUM_PLAYERS];
 };
 
 

@@ -13,6 +13,7 @@
 #include "RageFile.h"
 #include "StageStats.h"
 #include "Steps.h"
+#include "PlayerState.h"
 
 ConditionalBGA::ConditionalBGA()
 {
@@ -397,7 +398,7 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 			unsigned md;
 			for(md=0;md<PlayerOptions::NUM_ACCELS;md++)
 			{
-				if(po.m_fAccels[md] != 0.0f && GAMESTATE->m_PlayerOptions[pn].m_fAccels[md] != 0.0f)
+				if(po.m_fAccels[md] != 0.0f && GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_fAccels[md] != 0.0f)
 				{
 					bModsValid=false;
 					LOG->Info("Found Invalid Accel Mod");
@@ -405,7 +406,7 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 			}
 			for(md=0;md<PlayerOptions::NUM_EFFECTS;md++)
 			{
-				if(po.m_fEffects[md] != 0.0f && GAMESTATE->m_PlayerOptions[pn].m_fEffects[md] != 0.0f)
+				if(po.m_fEffects[md] != 0.0f && GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_fEffects[md] != 0.0f)
 				{
 					bModsValid=false;
 					LOG->Info("Found Invalid Effect Mod");
@@ -413,7 +414,7 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 			}
 			for(md=0;md<PlayerOptions::NUM_APPEARANCES;md++)
 			{
-				if(po.m_fAppearances[md] != 0.0f && GAMESTATE->m_PlayerOptions[pn].m_fAppearances[md] != 0.0f)
+				if(po.m_fAppearances[md] != 0.0f && GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_fAppearances[md] != 0.0f)
 				{
 					bModsValid=false;
 					LOG->Info("Found Invalid Appearance Mod");
@@ -421,7 +422,7 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 			}
 			for(md=0;md<PlayerOptions::NUM_TURNS;md++)
 			{
-				if(po.m_bTurns[md] != 0.0f && GAMESTATE->m_PlayerOptions[pn].m_bTurns[md] != 0.0f)
+				if(po.m_bTurns[md] != 0.0f && GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_bTurns[md] != 0.0f)
 				{
 					bModsValid=false;
 					LOG->Info("Found Invalid Turn Mod");
@@ -429,7 +430,7 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 			}
 			for(md=0;md<PlayerOptions::NUM_TRANSFORMS;md++)
 			{
-				if(po.m_bTransforms[md] != 0.0f && GAMESTATE->m_PlayerOptions[pn].m_bTransforms[md] != 0.0f)
+				if(po.m_bTransforms[md] != 0.0f && GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_bTransforms[md] != 0.0f)
 				{
 					bModsValid=false;
 					LOG->Info("Found Invalid Transform Mod");

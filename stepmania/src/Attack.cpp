@@ -4,8 +4,9 @@
 #include "RageUtil.h"
 #include "song.h"
 #include "Foreach.h"
+#include "PlayerOptions.h"
 
-void Attack::GetAttackBeats( const Song *song, PlayerNumber pn, float &fStartBeat, float &fEndBeat ) const
+void Attack::GetAttackBeats( const Song *song, const PlayerState* pPlayerState, float &fStartBeat, float &fEndBeat ) const
 {
 	ASSERT( song );
 
@@ -14,17 +15,21 @@ void Attack::GetAttackBeats( const Song *song, PlayerNumber pn, float &fStartBea
 		CHECKPOINT;
 		fStartBeat = song->GetBeatFromElapsedTime( fStartSecond );
 		fEndBeat = song->GetBeatFromElapsedTime( fStartSecond+fSecsRemaining );
-	} else {
+	}
+	else
+	{
 		CHECKPOINT;
 		/* If fStartSecond < 0, then the attack starts right off the screen; this requires
 		 * that a song actually be playing.  Pre-queued course attacks must always have 
 		 * fStartSecond >= 0. */
 		ASSERT( GAMESTATE->m_pCurSong );
 		
+		ASSERT( pPlayerState );
+
 		/* We're setting this effect on the fly.  If it's an arrow-changing effect
 		 * (transform or note skin), apply it in the future, after what's currently on
 		 * screen, so new arrows will scroll on screen with this effect. */
-		GAMESTATE->GetUndisplayedBeats( pn, fSecsRemaining, fStartBeat, fEndBeat );
+		GAMESTATE->GetUndisplayedBeats( pPlayerState, fSecsRemaining, fStartBeat, fEndBeat );
 	}
 
 	ASSERT_M( fEndBeat >= fStartBeat, ssprintf("%f >= %f", fEndBeat, fStartBeat) );

@@ -7,9 +7,8 @@
 #include "GhostArrow.h"
 #include "HoldGhostArrow.h"
 #include "GameConstantsAndTypes.h"
-#include "Style.h"
 
-
+struct PlayerState;
 
 class GhostArrowRow : public ActorFrame
 {
@@ -20,7 +19,7 @@ public:
 	virtual void DrawPrimitives();
 	virtual void CopyTweening( const GhostArrowRow &from );
 
-	void Load( PlayerNumber pn, CString NoteSkin, float fYReverseOffset );
+	void Load( const PlayerState* pPlayerState, CString NoteSkin, float fYReverseOffset );
 	void Unload();
 	
 	void DidTapNote( int iCol, TapNoteScore score, bool bBright );
@@ -29,7 +28,7 @@ public:
 protected:
 	int m_iNumCols;
 	float m_fYReverseOffsetPixels;
-	PlayerNumber m_PlayerNumber;
+	const PlayerState* m_pPlayerState;
 
 	vector<GhostArrow *> 	m_GhostDim;
 	vector<GhostArrow *>	m_GhostBright;

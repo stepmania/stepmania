@@ -3,6 +3,8 @@
 
 #include "GameConstantsAndTypes.h"
 
+struct PlayerState;
+
 const int NUM_SKILL_LEVELS = 6;	// 0-5
 
 class PlayerAI
@@ -10,7 +12,7 @@ class PlayerAI
 public:
 
 	static void InitFromDisk();
-	static TapNoteScore GetTapNoteScore( PlayerNumber pn );
+	static TapNoteScore GetTapNoteScore( const PlayerState* pPlayerState );
 
 };
 

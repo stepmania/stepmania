@@ -28,6 +28,7 @@
 #include "StepMania.h"
 #include "CommonMetrics.h"
 #include "Actor.h"
+#include "PlayerState.h"
 
 #include <ctime>
 #include <set>
@@ -57,6 +58,12 @@ GameState::GameState()
 	FOREACH_PlayerNumber( p )
 		m_bSideIsJoined[p] = false; // used by GetNumSidesJoined before the first screen
 
+	FOREACH_PlayerNumber( p )
+	{
+		m_pPlayerState[p] = new PlayerState;
+		m_pPlayerState[p]->m_PlayerNumber = p;
+	}
+
 	/* Don't reset yet; let the first screen do it, so we can
 	 * use PREFSMAN and THEME. */
 //	Reset();
@@ -64,9 +71,12 @@ GameState::GameState()
 
 GameState::~GameState()
 {
-	delete m_pPosition;
+	SAFE_DELETE( m_pPosition );
 	for( unsigned i=0; i<m_pCharacters.size(); i++ )
-		delete m_pCharacters[i];
+		SAFE_DELETE( m_pCharacters[i] );
+
+	FOREACH_PlayerNumber( p )
+		SAFE_DELETE( m_pPlayerState[p] );
 }
 
 void GameState::ApplyCmdline()
@@ -146,7 +156,7 @@ void GameState::Reset()
 	m_pPosition = new NoteFieldPositioning("Positioning.ini");
 
 	FOREACH_PlayerNumber( p )
-		m_bAttackBeganThisUpdate[p] = false;
+		m_pPlayerState[p]->m_bAttackBeganThisUpdate = false;
 
 	ResetMusicStatistics();
 	ResetStageStatistics();
@@ -162,9 +172,9 @@ void GameState::Reset()
 
 	FOREACH_PlayerNumber( p )
 	{	
-		m_CurrentPlayerOptions[p].Init();
-		m_PlayerOptions[p].Init();
-		m_StoredPlayerOptions[p].Init();
+		m_pPlayerState[p]->m_CurrentPlayerOptions.Init();
+		m_pPlayerState[p]->m_PlayerOptions.Init();
+		m_pPlayerState[p]->m_StoredPlayerOptions.Init();
 	}
 	m_SongOptions.Init();
 	
@@ -192,8 +202,8 @@ void GameState::Reset()
 
 	FOREACH_PlayerNumber(p)
 	{
-		m_fSuperMeterGrowthScale[p] = 1;
-		m_iCpuSkill[p] = 5;
+		m_pPlayerState[p]->m_fSuperMeterGrowthScale = 1;
+		m_pPlayerState[p]->m_iCpuSkill = 5;
 	}
 
 
@@ -253,7 +263,7 @@ void GameState::PlayersFinalized()
 			 * sets a default of "reverse", and the player turns it off, we should
 			 * set it off.  However, don't reset modifiers that aren't saved by the
 			 * profile, so we don't ignore unsaved modifiers when a profile is in use. */
-			GAMESTATE->m_PlayerOptions[pn].ResetSavedPrefs();
+			GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.ResetSavedPrefs();
 			GAMESTATE->ApplyModifiers( pn, sModifiers );
 		}
 		// Only set the sort order if it wasn't already set by a GameCommand (or by an earlier profile)
@@ -391,7 +401,7 @@ void GameState::SaveCurrentSettingsToProfile( PlayerNumber pn )
 
 	Profile* pProfile = PROFILEMAN->GetProfile(pn);
 
-	pProfile->SetDefaultModifiers( this->m_pCurGame, m_PlayerOptions[pn].GetSavedPrefsString() );
+	pProfile->SetDefaultModifiers( this->m_pCurGame, m_pPlayerState[pn]->m_PlayerOptions.GetSavedPrefsString() );
 	if( IsSongSort(m_SortOrder) )
 		pProfile->m_SortOrder = m_SortOrder;
 	if( m_PreferredDifficulty[pn] != DIFFICULTY_INVALID )
@@ -408,19 +418,19 @@ void GameState::Update( float fDelta )
 {
 	FOREACH_PlayerNumber( p )
 	{
-		m_CurrentPlayerOptions[p].Approach( m_PlayerOptions[p], fDelta );
+		m_pPlayerState[p]->m_CurrentPlayerOptions.Approach( m_pPlayerState[p]->m_PlayerOptions, fDelta );
 
 		// TRICKY: GAMESTATE->Update is run before any of the Screen update's,
 		// so we'll clear these flags here and let them get turned on later
-		m_bAttackBeganThisUpdate[p] = false;
-		m_bAttackEndedThisUpdate[p] = false;
+		m_pPlayerState[p]->m_bAttackBeganThisUpdate = false;
+		m_pPlayerState[p]->m_bAttackEndedThisUpdate = false;
 
 		bool bRebuildPlayerOptions = false;
 
 		/* See if any delayed attacks are starting or ending. */
-		for( unsigned s=0; s<m_ActiveAttacks[p].size(); s++ )
+		for( unsigned s=0; s<m_pPlayerState[p]->m_ActiveAttacks.size(); s++ )
 		{
-			Attack &attack = m_ActiveAttacks[p][s];
+			Attack &attack = m_pPlayerState[p]->m_ActiveAttacks[s];
 			
 			// -1 is the "starts now" sentinel value.  You must add the attack
 			// by calling GameState::LaunchAttack, or else the -1 won't be 
@@ -432,24 +442,24 @@ void GameState::Update( float fDelta )
 				( attack.fStartSecond < this->m_fMusicSeconds &&
 				m_fMusicSeconds < attack.fStartSecond+attack.fSecsRemaining );
 
-			if( m_ActiveAttacks[p][s].bOn == bCurrentlyEnabled )
+			if( m_pPlayerState[p]->m_ActiveAttacks[s].bOn == bCurrentlyEnabled )
 				continue; /* OK */
 
-			if( m_ActiveAttacks[p][s].bOn && !bCurrentlyEnabled )
-				m_bAttackEndedThisUpdate[p] = true;
-			else if( !m_ActiveAttacks[p][s].bOn && bCurrentlyEnabled )
-				m_bAttackBeganThisUpdate[p] = true;
+			if( m_pPlayerState[p]->m_ActiveAttacks[s].bOn && !bCurrentlyEnabled )
+				m_pPlayerState[p]->m_bAttackEndedThisUpdate = true;
+			else if( !m_pPlayerState[p]->m_ActiveAttacks[s].bOn && bCurrentlyEnabled )
+				m_pPlayerState[p]->m_bAttackBeganThisUpdate = true;
 
 			bRebuildPlayerOptions = true;
 
-			m_ActiveAttacks[p][s].bOn = bCurrentlyEnabled;
+			m_pPlayerState[p]->m_ActiveAttacks[s].bOn = bCurrentlyEnabled;
 		}
 
 		if( bRebuildPlayerOptions )
 			RebuildPlayerOptionsFromActiveAttacks( (PlayerNumber)p );
 
-		if( m_fSecondsUntilAttacksPhasedOut[p] > 0 )
-			m_fSecondsUntilAttacksPhasedOut[p] = max( 0, m_fSecondsUntilAttacksPhasedOut[p] - fDelta );
+		if( m_pPlayerState[p]->m_fSecondsUntilAttacksPhasedOut > 0 )
+			m_pPlayerState[p]->m_fSecondsUntilAttacksPhasedOut = max( 0, m_pPlayerState[p]->m_fSecondsUntilAttacksPhasedOut - fDelta );
 	}
 }
 
@@ -531,11 +541,11 @@ void GameState::ResetStageStatistics()
 	m_fTugLifePercentP1 = 0.5f;
 	FOREACH_PlayerNumber( p )
 	{
-		m_fSuperMeter[p] = 0;
-		m_HealthState[p] = ALIVE;
+		m_pPlayerState[p]->m_fSuperMeter = 0;
+		m_pPlayerState[p]->m_HealthState = PlayerState::ALIVE;
 
-		m_iLastPositiveSumOfAttackLevels[p] = 0;
-		m_fSecondsUntilAttacksPhasedOut[p] = 0;	// PlayerAI not affected
+		m_pPlayerState[p]->m_iLastPositiveSumOfAttackLevels = 0;
+		m_pPlayerState[p]->m_fSecondsUntilAttacksPhasedOut = 0;	// PlayerAI not affected
 	}
 
 
@@ -1082,7 +1092,7 @@ void GameState::ApplyModifiers( PlayerNumber pn, CString sModifiers )
 {
 	const SongOptions::FailType ft = this->m_SongOptions.m_FailType;
 
-	m_PlayerOptions[pn].FromString( sModifiers );
+	m_pPlayerState[pn]->m_PlayerOptions.FromString( sModifiers );
 	m_SongOptions.FromString( sModifiers );
 
 	if( ft != this->m_SongOptions.m_FailType )
@@ -1094,7 +1104,7 @@ void GameState::ApplyModifiers( PlayerNumber pn, CString sModifiers )
 void GameState::StoreSelectedOptions()
 {
 	FOREACH_PlayerNumber( p )
-		this->m_StoredPlayerOptions[p] = this->m_PlayerOptions[p];
+		m_pPlayerState[p]->m_StoredPlayerOptions = m_pPlayerState[p]->m_PlayerOptions;
 	m_StoredSongOptions = m_SongOptions;
 }
 
@@ -1105,7 +1115,7 @@ void GameState::StoreSelectedOptions()
 void GameState::RestoreSelectedOptions()
 {
 	FOREACH_PlayerNumber( p )
-		this->m_PlayerOptions[p] = this->m_StoredPlayerOptions[p];
+		m_pPlayerState[p]->m_PlayerOptions = m_pPlayerState[p]->m_StoredPlayerOptions;
 	m_SongOptions = m_StoredSongOptions;
 }
 
@@ -1116,13 +1126,13 @@ bool GameState::IsDisqualified( PlayerNumber pn )
 
 	if( GAMESTATE->IsCourseMode() )
 	{
-		return GAMESTATE->m_PlayerOptions[pn].IsEasierForCourseAndTrail( 
+		return GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.IsEasierForCourseAndTrail( 
 			GAMESTATE->m_pCurCourse, 
 			GAMESTATE->m_pCurTrail[pn] );
 	}
 	else
 	{
-		return GAMESTATE->m_PlayerOptions[pn].IsEasierForSongAndSteps( 
+		return GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.IsEasierForSongAndSteps( 
 			GAMESTATE->m_pCurSong, 
 			GAMESTATE->m_pCurSteps[pn] );
 	}
@@ -1138,8 +1148,8 @@ void GameState::ResetNoteSkins()
 
 void GameState::ResetNoteSkinsForPlayer( PlayerNumber pn )
 {
-	m_BeatToNoteSkin[pn].clear();
-	m_BeatToNoteSkin[pn][-1000] = this->m_PlayerOptions[pn].m_sNoteSkin;
+	m_pPlayerState[pn]->m_BeatToNoteSkin.clear();
+	m_pPlayerState[pn]->m_BeatToNoteSkin[-1000] = m_pPlayerState[pn]->m_PlayerOptions.m_sNoteSkin;
 
 	++m_BeatToNoteSkinRev;
 }
@@ -1148,7 +1158,7 @@ void GameState::GetAllUsedNoteSkins( vector<CString> &out ) const
 {
 	FOREACH_EnabledPlayer( pn )
 	{
-		out.push_back( this->m_PlayerOptions[pn].m_sNoteSkin );
+		out.push_back( m_pPlayerState[pn]->m_PlayerOptions.m_sNoteSkin );
 
 		switch( this->m_PlayMode )
 		{
@@ -1171,18 +1181,18 @@ void GameState::GetAllUsedNoteSkins( vector<CString> &out ) const
 			}
 		}
 
-		for( map<float,CString>::const_iterator it = m_BeatToNoteSkin[pn].begin(); 
-			it != m_BeatToNoteSkin[pn].end(); ++it )
+		for( map<float,CString>::const_iterator it = m_pPlayerState[pn]->m_BeatToNoteSkin.begin(); 
+			it != m_pPlayerState[pn]->m_BeatToNoteSkin.end(); ++it )
 			out.push_back( it->second );
 	}
 }
 
 /* From NoteField: */
 
-void GameState::GetUndisplayedBeats( PlayerNumber pn, float TotalSeconds, float &StartBeat, float &EndBeat ) const
+void GameState::GetUndisplayedBeats( const PlayerState* pPlayerState, float TotalSeconds, float &StartBeat, float &EndBeat ) const
 {
 	/* If reasonable, push the attack forward so notes on screen don't change suddenly. */
-	StartBeat = min( this->m_fSongBeat+BEATS_PER_MEASURE*2, m_fLastDrawnBeat[pn] );
+	StartBeat = min( m_fSongBeat+BEATS_PER_MEASURE*2, pPlayerState->m_fLastDrawnBeat );
 	StartBeat = truncf(StartBeat)+1;
 
 	const float StartSecond = this->m_pCurSong->GetElapsedTimeFromBeat( StartBeat );
@@ -1192,9 +1202,9 @@ void GameState::GetUndisplayedBeats( PlayerNumber pn, float TotalSeconds, float 
 }
 
 
-void GameState::SetNoteSkinForBeatRange( PlayerNumber pn, CString sNoteSkin, float StartBeat, float EndBeat )
+void GameState::SetNoteSkinForBeatRange( PlayerState* pPlayerState, const CString& sNoteSkin, float StartBeat, float EndBeat )
 {
-	map<float,CString> &BeatToNoteSkin = m_BeatToNoteSkin[pn];
+	map<float,CString> &BeatToNoteSkin = pPlayerState->m_BeatToNoteSkin;
 
 	/* Erase any other note skin settings in this range. */
 	map<float,CString>::iterator it = BeatToNoteSkin.lower_bound( StartBeat );
@@ -1213,7 +1223,7 @@ void GameState::SetNoteSkinForBeatRange( PlayerNumber pn, CString sNoteSkin, flo
 	BeatToNoteSkin[StartBeat] = sNoteSkin;
 
 	/* Return to the default note skin after the duration. */
-	BeatToNoteSkin[EndBeat] = m_StoredPlayerOptions[pn].m_sNoteSkin;
+	BeatToNoteSkin[EndBeat] = pPlayerState->m_StoredPlayerOptions.m_sNoteSkin;
 
 	++m_BeatToNoteSkinRev;
 }
@@ -1230,21 +1240,21 @@ void GameState::LaunchAttack( PlayerNumber target, const Attack& a )
 	 * mark the real time it's starting (now), so Update() can know when the attack started
 	 * so it can be removed later.  For m_ModsToApply, leave the -1 in, so Player::Update
 	 * knows to apply attack transforms correctly.  (yuck) */
-	m_ModsToApply[target].push_back( attack );
+	m_pPlayerState[target]->m_ModsToApply.push_back( attack );
 	if( attack.fStartSecond == -1 )
 		attack.fStartSecond = this->m_fMusicSeconds;
-	m_ActiveAttacks[target].push_back( attack );
+	m_pPlayerState[target]->m_ActiveAttacks.push_back( attack );
 
 	this->RebuildPlayerOptionsFromActiveAttacks( target );
 }
 
 void GameState::RemoveActiveAttacksForPlayer( PlayerNumber pn, AttackLevel al )
 {
-	for( unsigned s=0; s<m_ActiveAttacks[pn].size(); s++ )
+	for( unsigned s=0; s<m_pPlayerState[pn]->m_ActiveAttacks.size(); s++ )
 	{
-		if( al != NUM_ATTACK_LEVELS && al != m_ActiveAttacks[pn][s].level )
+		if( al != NUM_ATTACK_LEVELS && al != m_pPlayerState[pn]->m_ActiveAttacks[s].level )
 			continue;
-		m_ActiveAttacks[pn].erase( m_ActiveAttacks[pn].begin()+s, m_ActiveAttacks[pn].begin()+s+1 );
+		m_pPlayerState[pn]->m_ActiveAttacks.erase( m_pPlayerState[pn]->m_ActiveAttacks.begin()+s, m_pPlayerState[pn]->m_ActiveAttacks.begin()+s+1 );
 		--s;
 	}
 	RebuildPlayerOptionsFromActiveAttacks( pn );
@@ -1253,36 +1263,38 @@ void GameState::RemoveActiveAttacksForPlayer( PlayerNumber pn, AttackLevel al )
 void GameState::RemoveAllInventory()
 {
 	FOREACH_PlayerNumber( p )
+	{
 		for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
 		{
-			m_Inventory[p][s].fSecsRemaining = 0;
-			m_Inventory[p][s].sModifier = "";
+			m_pPlayerState[p]->m_Inventory[s].fSecsRemaining = 0;
+			m_pPlayerState[p]->m_Inventory[s].sModifier = "";
 		}
+	}
 }
 
 void GameState::RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn )
 {
 	// rebuild player options
-	PlayerOptions po = m_StoredPlayerOptions[pn];
-	for( unsigned s=0; s<m_ActiveAttacks[pn].size(); s++ )
+	PlayerOptions po = m_pPlayerState[pn]->m_StoredPlayerOptions;
+	for( unsigned s=0; s<m_pPlayerState[pn]->m_ActiveAttacks.size(); s++ )
 	{
-		if( !m_ActiveAttacks[pn][s].bOn )
+		if( !m_pPlayerState[pn]->m_ActiveAttacks[s].bOn )
 			continue; /* hasn't started yet */
-		po.FromString( m_ActiveAttacks[pn][s].sModifier );
+		po.FromString( m_pPlayerState[pn]->m_ActiveAttacks[s].sModifier );
 	}
-	m_PlayerOptions[pn] = po;
+	m_pPlayerState[pn]->m_PlayerOptions = po;
 
 
 	int iSumOfAttackLevels = GetSumOfActiveAttackLevels( pn );
 	if( iSumOfAttackLevels > 0 )
 	{
-		m_iLastPositiveSumOfAttackLevels[pn] = iSumOfAttackLevels;
-		m_fSecondsUntilAttacksPhasedOut[pn] = 10000;	// any positive number that won't run out before the attacks
+		m_pPlayerState[pn]->m_iLastPositiveSumOfAttackLevels = iSumOfAttackLevels;
+		m_pPlayerState[pn]->m_fSecondsUntilAttacksPhasedOut = 10000;	// any positive number that won't run out before the attacks
 	}
 	else
 	{
 		// don't change!  m_iLastPositiveSumOfAttackLevels[p] = iSumOfAttackLevels;
-		m_fSecondsUntilAttacksPhasedOut[pn] = 2;	// 2 seconds to phase out
+		m_pPlayerState[pn]->m_fSecondsUntilAttacksPhasedOut = 2;	// 2 seconds to phase out
 	}
 }
 
@@ -1296,9 +1308,9 @@ int GameState::GetSumOfActiveAttackLevels( PlayerNumber pn ) const
 {
 	int iSum = 0;
 
-	for( unsigned s=0; s<m_ActiveAttacks[pn].size(); s++ )
-		if( m_ActiveAttacks[pn][s].fSecsRemaining > 0 && m_ActiveAttacks[pn][s].level != NUM_ATTACK_LEVELS )
-			iSum += m_ActiveAttacks[pn][s].level;
+	for( unsigned s=0; s<m_pPlayerState[pn]->m_ActiveAttacks.size(); s++ )
+		if( m_pPlayerState[pn]->m_ActiveAttacks[s].fSecsRemaining > 0 && m_pPlayerState[pn]->m_ActiveAttacks[s].level != NUM_ATTACK_LEVELS )
+			iSum += m_pPlayerState[pn]->m_ActiveAttacks[s].level;
 
 	return iSum;
 }
@@ -1674,7 +1686,7 @@ void GameState::StoreRankingName( PlayerNumber pn, CString name )
 bool GameState::AllAreInDangerOrWorse() const
 {
 	FOREACH_EnabledPlayer( p )
-		if( m_HealthState[p] < DANGER )
+		if( m_pPlayerState[p]->m_HealthState < PlayerState::DANGER )
 			return false;
 	return true;
 }
@@ -1682,7 +1694,7 @@ bool GameState::AllAreInDangerOrWorse() const
 bool GameState::AllAreDead() const
 {
 	FOREACH_EnabledPlayer( p )
-		if( m_HealthState[p] < DEAD )
+		if( m_pPlayerState[p]->m_HealthState < PlayerState::DEAD )
 			return false;
 	return true;
 }
@@ -1698,7 +1710,7 @@ bool GameState::AllHaveComboOf30OrMoreMisses() const
 bool GameState::OneIsHot() const
 {
 	FOREACH_EnabledPlayer( p )
-		if( m_HealthState[p] == HOT )
+		if( m_pPlayerState[p]->m_HealthState == PlayerState::HOT )
 			return true;
 	return false;
 }
@@ -1870,12 +1882,12 @@ Difficulty GameState::GetEasiestNotesDifficulty() const
 
 bool PlayerIsUsingModifier( PlayerNumber pn, const CString sModifier )
 {
-	PlayerOptions po = GAMESTATE->m_PlayerOptions[pn];
+	PlayerOptions po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions;
 	SongOptions so = GAMESTATE->m_SongOptions;
 	po.FromString( sModifier );
 	so.FromString( sModifier );
 
-	return po == GAMESTATE->m_PlayerOptions[pn] && so == GAMESTATE->m_SongOptions;
+	return po == GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions && so == GAMESTATE->m_SongOptions;
 }
 
 #include "LuaFunctions.h"

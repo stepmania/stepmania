@@ -16,6 +16,7 @@
 #include "StageStats.h"
 #include "ScreenDimensions.h"
 #include "ThemeMetric.h"
+#include "PlayerState.h"
 
 #include <set>
 
@@ -632,14 +633,14 @@ bool Background::IsDangerPlayerVisible( PlayerNumber pn )
 		return false;
 	if( !PREFSMAN->m_bShowDanger )
 		return false;
-	return GAMESTATE->m_HealthState[pn] == GameState::DANGER;
+	return GAMESTATE->m_pPlayerState[pn]->m_HealthState == PlayerState::DANGER;
 }
 
 bool Background::IsDeadPlayerVisible( PlayerNumber pn )
 {
 	if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_OFF )
 		return false;
-	return GAMESTATE->m_HealthState[pn] == GameState::DEAD;
+	return GAMESTATE->m_pPlayerState[pn]->m_HealthState == PlayerState::DEAD;
 }
 
 
@@ -670,8 +671,8 @@ void BrightnessOverlay::Update( float fDeltaTime )
 
 void BrightnessOverlay::SetActualBrightness()
 {
-	float fLeftBrightness = 1-GAMESTATE->m_PlayerOptions[PLAYER_1].m_fCover;
-	float fRightBrightness = 1-GAMESTATE->m_PlayerOptions[PLAYER_2].m_fCover;
+	float fLeftBrightness = 1-GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fCover;
+	float fRightBrightness = 1-GAMESTATE->m_pPlayerState[PLAYER_2]->m_PlayerOptions.m_fCover;
 
 	fLeftBrightness *= PREFSMAN->m_fBGBrightness;
 	fRightBrightness *= PREFSMAN->m_fBGBrightness;

@@ -5,7 +5,6 @@
 #include "ActorFrame.h"
 #include "BitmapText.h"
 #include "PrefsManager.h"
-#include "Style.h"
 #include "BitmapText.h"
 #include "Quad.h"
 #include "NoteDataWithScoring.h"
@@ -24,7 +23,12 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 	
-	virtual void Load( const NoteData* pNoteData, PlayerNumber pn, int iStartDrawingPixel, int iEndDrawingPixel, float fYReverseOffsetPixels );
+	virtual void Load( 
+		const NoteData* pNoteData, 
+		const PlayerState* pPlayerState, 
+		int iStartDrawingPixel, 
+		int iEndDrawingPixel, 
+		float fYReverseOffsetPixels );
 	virtual void Unload();
 	void RemoveTapNoteRow( int iIndex );
 
@@ -56,7 +60,7 @@ protected:
 
 	float	m_fPercentFadeToFail;	// -1 of not fading to fail
 
-	PlayerNumber	m_PlayerNumber;
+	const PlayerState*	m_pPlayerState;
 	int				m_iStartDrawingPixel;	// this should be a negative number
 	int				m_iEndDrawingPixel;	// this should be a positive number
 	float			m_fYReverseOffsetPixels;

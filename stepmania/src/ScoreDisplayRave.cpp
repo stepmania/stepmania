@@ -7,6 +7,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "ActorUtil.h"
+#include "PlayerState.h"
 
 
 ScoreDisplayRave::ScoreDisplayRave()
@@ -34,9 +35,11 @@ ScoreDisplayRave::ScoreDisplayRave()
 	this->AddChild( &m_textLevel );
 }
 
-void ScoreDisplayRave::Init( PlayerNumber pn )
+void ScoreDisplayRave::Init( const PlayerState* pPlayerState )
 {
-	ScoreDisplay::Init( pn );
+	ScoreDisplay::Init( pPlayerState );
+
+	PlayerNumber pn = pPlayerState->m_PlayerNumber;
 
 	m_sprFrameBase.Load( THEME->GetPathToG(ssprintf("ScoreDisplayRave frame base p%d",pn+1)) );
 	m_sprFrameOverlay.Load( THEME->GetPathToG(ssprintf("ScoreDisplayRave frame overlay p%d",pn+1)) );
@@ -55,7 +58,9 @@ void ScoreDisplayRave::Update( float fDelta )
 {
 	ScoreDisplay::Update( fDelta );
 
-	float fLevel = GAMESTATE->m_fSuperMeter[m_PlayerNumber];
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+	float fLevel = m_pPlayerState->m_fSuperMeter;
 	AttackLevel level = (AttackLevel)(int)fLevel;
 
 	if( level != m_lastLevelSeen )

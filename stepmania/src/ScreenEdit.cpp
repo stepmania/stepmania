@@ -25,6 +25,7 @@
 #include "Foreach.h"
 #include "ScreenDimensions.h"
 #include "ThemeMetric.h"
+#include "PlayerState.h"
 
 const float RECORD_HOLD_SECONDS = 0.3f;
 
@@ -404,11 +405,11 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	GAMESTATE->m_fSongBeat = 0;
 	m_fTrailingBeat = GAMESTATE->m_fSongBeat;
 
-	GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed = 1;
+	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fScrollSpeed = 1;
 	GAMESTATE->m_SongOptions.m_fMusicRate = 1;
 	/* Not all games have a noteskin named "note" ... */
 	if( NOTESKIN->DoesNoteSkinExist("note") )
-		GAMESTATE->m_PlayerOptions[PLAYER_1].m_sNoteSkin = "note";	// change noteskin before loading all of the edit Actors
+		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_sNoteSkin = "note";	// change noteskin before loading all of the edit Actors
 	GAMESTATE->ResetNoteSkins();
 	GAMESTATE->StoreSelectedOptions();
 
@@ -421,29 +422,29 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 
 	m_NoteFieldEdit.SetXY( EDIT_X, PLAYER_Y );
 	m_NoteFieldEdit.SetZoom( 0.5f );
-	m_NoteFieldEdit.Load( &noteData, PLAYER_1, -240, 800, PLAYER_HEIGHT*2 );
+	m_NoteFieldEdit.Load( &noteData, GAMESTATE->m_pPlayerState[PLAYER_1], -240, 800, PLAYER_HEIGHT*2 );
 
 	m_rectRecordBack.StretchTo( RectF(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 	m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0) );
 
 	m_NoteFieldRecord.SetXY( EDIT_X, PLAYER_Y );
 	m_NoteFieldRecord.SetZoom( 1.0f );
-	m_NoteFieldRecord.Load( &noteData, PLAYER_1, -150, 350, 350 );
+	m_NoteFieldRecord.Load( &noteData, GAMESTATE->m_pPlayerState[PLAYER_1], -150, 350, 350 );
 
 	m_Clipboard.SetNumTracks( m_NoteFieldEdit.GetNumTracks() );
 
 
-	GAMESTATE->m_PlayerOptions[PLAYER_1].Init();	// don't allow weird options in editor.  It doesn't handle reverse well.
+	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.Init();	// don't allow weird options in editor.  It doesn't handle reverse well.
 	// Set NoteSkin to note if available.
 	// Change noteskin back to default before loading player.
 	if( NOTESKIN->DoesNoteSkinExist("note") )
-		GAMESTATE->m_PlayerOptions[PLAYER_1].m_sNoteSkin = "note";
+		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_sNoteSkin = "note";
 	GAMESTATE->ResetNoteSkins();
 
 	/* XXX: Do we actually have to send real note data here, and to m_NoteFieldRecord? 
 	 * (We load again on play/record.) */
-	m_Player.Load( PLAYER_1, noteData, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
-	GAMESTATE->m_PlayerController[PLAYER_1] = PC_HUMAN;
+	m_Player.Load( GAMESTATE->m_pPlayerState[PLAYER_1], noteData, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
+	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_HUMAN;
 	m_Player.SetXY( PLAYER_X, PLAYER_Y );
 
 	m_In.Load( THEME->GetPathToB("ScreenEdit in") );
@@ -636,7 +637,7 @@ void ScreenEdit::Update( float fDeltaTime )
 	else
 	{
 		float fSign = fDelta / fabsf(fDelta);
-		float fMoveDelta = fSign*fDeltaTime*40 / GAMESTATE->m_CurrentPlayerOptions[PLAYER_1].m_fScrollSpeed;
+		float fMoveDelta = fSign*fDeltaTime*40 / GAMESTATE->m_pPlayerState[PLAYER_1]->m_CurrentPlayerOptions.m_fScrollSpeed;
 		if( fabsf(fMoveDelta) > fabsf(fDelta) )
 			fMoveDelta = fDelta;
 		m_fTrailingBeat += fMoveDelta;
@@ -884,7 +885,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			if(lIsHeld)
 #endif
 			{
-				float& fScrollSpeed = GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed;
+				float& fScrollSpeed = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fScrollSpeed;
 				float fNewScrollSpeed = fScrollSpeed;
 
 				if( DeviceI.button == KEY_UP )
@@ -1399,9 +1400,8 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 		case KEY_F8:
 			{
 				PREFSMAN->m_bAutoPlay = !PREFSMAN->m_bAutoPlay;
-				FOREACH_PlayerNumber( p )
-					if( GAMESTATE->IsHumanPlayer(p) )
-						GAMESTATE->m_PlayerController[p] = PREFSMAN->m_bAutoPlay?PC_AUTOPLAY:PC_HUMAN;
+				FOREACH_HumanPlayer( p )
+					GAMESTATE->m_pPlayerState[p]->m_PlayerController = PREFSMAN->m_bAutoPlay?PC_AUTOPLAY:PC_HUMAN;
 			}
 			break;
 		case KEY_F11:
@@ -1466,7 +1466,7 @@ void ScreenEdit::TransitionToEdit()
 	/* Stop displaying course attacks, if any. */
 	GAMESTATE->RemoveAllActiveAttacks();
 	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( PLAYER_1 );
-	GAMESTATE->m_CurrentPlayerOptions[PLAYER_1] = GAMESTATE->m_PlayerOptions[PLAYER_1];
+	GAMESTATE->m_pPlayerState[PLAYER_1]->m_CurrentPlayerOptions = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
 }
 
 void ScreenEdit::TransitionFromRecordToEdit()
@@ -1553,7 +1553,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_BackFromInsertAttackModifiers:
 		{
-			PlayerOptions poChosen = GAMESTATE->m_PlayerOptions[PLAYER_1];
+			PlayerOptions poChosen = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
 			CString sMods = poChosen.GetString();
 			const int row = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 			
@@ -2095,8 +2095,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 
 				SetupCourseAttacks();
 
-				m_Player.Load( PLAYER_1, m_NoteFieldEdit, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
-				GAMESTATE->m_PlayerController[PLAYER_1] = PREFSMAN->m_bAutoPlay?PC_AUTOPLAY:PC_HUMAN;
+				m_Player.Load( GAMESTATE->m_pPlayerState[PLAYER_1], m_NoteFieldEdit, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
+				GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PREFSMAN->m_bAutoPlay?PC_AUTOPLAY:PC_HUMAN;
 
 				m_rectRecordBack.StopTweening();
 				m_rectRecordBack.BeginTweening( 0.5f );
@@ -2141,7 +2141,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				GAMESTATE->ResetNoteSkins();
 
 				// initialize m_NoteFieldRecord
-				m_NoteFieldRecord.Load( &m_NoteFieldEdit, PLAYER_1, -150, 350, 350 );
+				m_NoteFieldRecord.Load( &m_NoteFieldEdit, GAMESTATE->m_pPlayerState[PLAYER_1], -150, 350, 350 );
 				m_NoteFieldRecord.SetNumTracks( m_NoteFieldEdit.GetNumTracks() );
 
 				m_rectRecordBack.StopTweening();
@@ -2350,10 +2350,10 @@ void ScreenEdit::SetupCourseAttacks()
 {
 	/* This is the first beat that can be changed without it being visible.  Until
 	 * we draw for the first time, any beat can be changed. */
-	GAMESTATE->m_fLastDrawnBeat[PLAYER_1] = -100;
+	GAMESTATE->m_pPlayerState[PLAYER_1]->m_fLastDrawnBeat = -100;
 
 	// Put course options into effect.
-	GAMESTATE->m_ModsToApply[PLAYER_1].clear();
+	GAMESTATE->m_pPlayerState[PLAYER_1]->m_ModsToApply.clear();
 	GAMESTATE->RemoveActiveAttacksForPlayer( PLAYER_1 );
 
 

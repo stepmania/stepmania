@@ -484,7 +484,7 @@ void PlayerOptions::ToggleOneTurn( Turn t )
 	m_bTurns[t] = !bWasOn;
 }
 
-float PlayerOptions::GetReversePercentForColumn( int iCol )
+float PlayerOptions::GetReversePercentForColumn( int iCol ) const
 {
 	float f = 0;
 	int iNumCols = GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer;

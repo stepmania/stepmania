@@ -24,6 +24,7 @@
 #include "Foreach.h"
 #include "Style.h"
 #include "ThemeMetric.h"
+#include "PlayerState.h"
 
 
 #define FADE_SECONDS				THEME->GetMetricF("MusicWheel","FadeSeconds")
@@ -142,14 +143,11 @@ void MusicWheel::Load()
 			po,
 			so );
 		GAMESTATE->m_pCurSong = GAMESTATE->m_pPreferredSong = pSong;
-		FOREACH_PlayerNumber( p )
+		FOREACH_HumanPlayer( p )
 		{
-			if( GAMESTATE->IsHumanPlayer(p) )
-			{
-				GAMESTATE->m_pCurSteps[p] = pSteps;
-				GAMESTATE->m_PlayerOptions[p] = po;
-				GAMESTATE->m_PreferredDifficulty[p] = pSteps->GetDifficulty();
-			}
+			GAMESTATE->m_pCurSteps[p] = pSteps;
+			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions = po;
+			GAMESTATE->m_PreferredDifficulty[p] = pSteps->GetDifficulty();
 		}
 		GAMESTATE->m_SongOptions = so;
 	}

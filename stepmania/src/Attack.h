@@ -4,6 +4,7 @@
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
 class Song;
+struct PlayerState;
 
 struct Attack
 {
@@ -32,8 +33,8 @@ struct Attack
 		bGlobal = bGlobal_;
 	}
 
-	void GetAttackBeats( const Song *song, PlayerNumber pn, float &fStartBeat, float &fEndBeat ) const;
-	bool IsBlank() { return sModifier.empty(); }
+	void GetAttackBeats( const Song *song, const PlayerState* pPlayerState, float &fStartBeat, float &fEndBeat ) const;
+	bool IsBlank() const { return sModifier.empty(); }
 	bool operator== ( const Attack &rhs ) const;
 	bool ContainsTransformOrTurn() const;
 };

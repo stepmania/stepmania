@@ -7,11 +7,13 @@
 #include "ScreenManager.h"
 #include "PrefsManager.h"
 #include "ThemeMetric.h"
+#include "PlayerState.h"
+
 
 ThemeMetric<float> ATTACK_DURATION_SECONDS	("ScoreKeeperRave","AttackDurationSeconds");
 
 
-ScoreKeeperRave::ScoreKeeperRave(PlayerNumber pn) : ScoreKeeper(pn)
+ScoreKeeperRave::ScoreKeeperRave( PlayerState* pPlayerState ) : ScoreKeeper(pPlayerState)
 {
 }
 
@@ -63,7 +65,7 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 {
 	if( PREFSMAN->m_bMercifulDrain  &&  fUnscaledPercentChange<0 )
 	{
-		float fSuperPercentage = GAMESTATE->m_fSuperMeter[m_PlayerNumber] / NUM_ATTACK_LEVELS;
+		float fSuperPercentage = m_pPlayerState->m_fSuperMeter / NUM_ATTACK_LEVELS;
 		fUnscaledPercentChange *= SCALE( fSuperPercentage, 0.f, 1.f, 0.5f, 1.f);
 	}
 
@@ -71,7 +73,7 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 	if( PREFSMAN->m_bMercifulSuperMeter )
 	{
 		float fLifePercentage = 0;
-		switch( m_PlayerNumber )
+		switch( m_pPlayerState->m_PlayerNumber )
 		{
 		case PLAYER_1:	fLifePercentage = GAMESTATE->m_fTugLifePercentP1;		break;
 		case PLAYER_2:	fLifePercentage = 1 - GAMESTATE->m_fTugLifePercentP1;	break;
@@ -87,35 +89,35 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 
 	// mercy: drop super meter faster if at a higher level
 	if( fUnscaledPercentChange < 0 )
-		fUnscaledPercentChange *= SCALE( GAMESTATE->m_fSuperMeter[m_PlayerNumber], 0.f, 1.f, 0.01f, 1.f );
+		fUnscaledPercentChange *= SCALE( m_pPlayerState->m_fSuperMeter, 0.f, 1.f, 0.01f, 1.f );
 
-	AttackLevel oldAL = (AttackLevel)(int)GAMESTATE->m_fSuperMeter[m_PlayerNumber];
+	AttackLevel oldAL = (AttackLevel)(int)m_pPlayerState->m_fSuperMeter;
 
 	float fPercentToMove = fUnscaledPercentChange;
-	GAMESTATE->m_fSuperMeter[m_PlayerNumber] += fPercentToMove * GAMESTATE->m_fSuperMeterGrowthScale[m_PlayerNumber];
-	CLAMP( GAMESTATE->m_fSuperMeter[m_PlayerNumber], 0.f, NUM_ATTACK_LEVELS );
+	m_pPlayerState->m_fSuperMeter += fPercentToMove * m_pPlayerState->m_fSuperMeterGrowthScale;
+	CLAMP( m_pPlayerState->m_fSuperMeter, 0.f, NUM_ATTACK_LEVELS );
 
-	AttackLevel newAL = (AttackLevel)(int)GAMESTATE->m_fSuperMeter[m_PlayerNumber];
+	AttackLevel newAL = (AttackLevel)(int)m_pPlayerState->m_fSuperMeter;
 
 	if( newAL > oldAL )
 	{
 		LaunchAttack( oldAL );
 		if( newAL == NUM_ATTACK_LEVELS )	// hit upper bounds of meter
-			GAMESTATE->m_fSuperMeter[m_PlayerNumber] -= 1.f;
+			m_pPlayerState->m_fSuperMeter -= 1.f;
 	}
 
 	// mercy: if losing remove attacks on life drain
 	if( fUnscaledPercentChange < 0 )
 	{
 		bool bWinning;
-		switch( m_PlayerNumber )
+		switch( m_pPlayerState->m_PlayerNumber )
 		{
 		case PLAYER_1:	bWinning = GAMESTATE->m_fTugLifePercentP1 > 0.5f;	break;
 		case PLAYER_2:	bWinning = GAMESTATE->m_fTugLifePercentP1 < 0.5f;	break;
 		default:	ASSERT(0);
 		}
 		if( !bWinning )
-			GAMESTATE->RemoveActiveAttacksForPlayer( m_PlayerNumber );
+			GAMESTATE->RemoveActiveAttacksForPlayer( m_pPlayerState->m_PlayerNumber );
 	}
 }
 
@@ -126,10 +128,12 @@ void ScoreKeeperRave::Update( float fDelta )
 
 void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 {
-	CString* asAttacks = GAMESTATE->m_pCurCharacters[m_PlayerNumber]->m_sAttacks[al];	// [NUM_ATTACKS_PER_LEVEL]
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+	CString* asAttacks = GAMESTATE->m_pCurCharacters[pn]->m_sAttacks[al];	// [NUM_ATTACKS_PER_LEVEL]
 	CString sAttackToGive;
 
-	if (GAMESTATE->m_pCurCharacters[m_PlayerNumber] != NULL)		
+	if (GAMESTATE->m_pCurCharacters[pn] != NULL)		
 		sAttackToGive = asAttacks[ rand()%NUM_ATTACKS_PER_LEVEL ];
 	else
 	{
@@ -138,7 +142,7 @@ void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 		sAttackToGive = DefaultAttacks[ rand()%8 ];
 	}
 
-  	PlayerNumber pnToAttack = OPPOSITE_PLAYER[m_PlayerNumber];
+  	PlayerNumber pnToAttack = OPPOSITE_PLAYER[pn];
 
 	Attack a;
 	a.level = al;

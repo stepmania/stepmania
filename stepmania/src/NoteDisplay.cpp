@@ -13,6 +13,7 @@
 #include "ActorUtil.h"
 #include "NoteDataWithScoring.h"
 #include "Game.h"
+#include "PlayerState.h"
 
 enum part
 {
@@ -224,12 +225,14 @@ NoteDisplay::~NoteDisplay()
 	delete cache;
 }
 
-void NoteDisplay::Load( int iColNum, PlayerNumber pn, CString NoteSkin, float fYReverseOffsetPixels )
+void NoteDisplay::Load( int iColNum, const PlayerState* pPlayerState, CString NoteSkin, float fYReverseOffsetPixels )
 {
-	m_PlayerNumber = pn;
+	m_pPlayerState = pPlayerState;
 	m_fYReverseOffsetPixels = fYReverseOffsetPixels;
 
 	/* Normally, this is empty and we use the style table entry via ColToButtonName. */
+	// TODO: Remove indexing with PlayerNumber.
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 	NoteFieldMode &mode = g_NoteFieldMode[pn];
 	CString Button = mode.NoteButtonNames[iColNum];
 	if( Button == "" )
@@ -555,12 +558,12 @@ Actor* NoteDisplay::GetHoldTailActor( float fNoteBeat, bool bIsBeingHeld )
 	return pActorOut;
 }
 
-static float ArrowGetAlphaOrGlow( bool bGlow, PlayerNumber pn, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels )
+static float ArrowGetAlphaOrGlow( bool bGlow, const PlayerState* pPlayerState, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels )
 {
 	if( bGlow )
-		return ArrowGetGlow( pn, iCol, fYOffset, fPercentFadeToFail, fYReverseOffsetPixels );
+		return ArrowEffects::GetGlow( pPlayerState, iCol, fYOffset, fPercentFadeToFail, fYReverseOffsetPixels );
 	else
-		return ArrowGetAlpha( pn, iCol, fYOffset, fPercentFadeToFail, fYReverseOffsetPixels );
+		return ArrowEffects::GetAlpha( pPlayerState, iCol, fYOffset, fPercentFadeToFail, fYReverseOffsetPixels );
 }
 
 struct StripBuffer
@@ -590,7 +593,7 @@ void NoteDisplay::DrawHoldTopCap( const HoldNote& hn, const bool bIsBeingHeld, f
 
 	Sprite* pSprTopCap = GetHoldTopCapSprite( hn.GetStartBeat(), bIsBeingHeld );
 
-	pSprTopCap->SetZoom( ArrowGetZoom( m_PlayerNumber ) );
+	pSprTopCap->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
 	// draw manually in small segments
 	RageTexture* pTexture = pSprTopCap->GetTexture();
@@ -622,16 +625,16 @@ void NoteDisplay::DrawHoldTopCap( const HoldNote& hn, const bool bIsBeingHeld, f
 			bLast = true;
 		}
 
-		const float fYOffset				= ArrowGetYOffsetFromYPos( m_PlayerNumber, iCol, fY, m_fYReverseOffsetPixels );
-		const float fZ						= ArrowGetZPos(	m_PlayerNumber, iCol, fYOffset );
-		const float fX						= ArrowGetXPos( m_PlayerNumber, iCol, fYOffset );
+		const float fYOffset				= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
+		const float fZ						= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
+		const float fX						= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
 		const float fXLeft					= fX - fFrameWidth/2;
 		const float fXRight					= fX + fFrameWidth/2;
 		const float fTopDistFromHeadTop		= fY - fYCapTop;
 		const float fTexCoordTop			= SCALE( fTopDistFromHeadTop,    0, fFrameHeight, pRect->top, pRect->bottom );
 		const float fTexCoordLeft			= pRect->left;
 		const float fTexCoordRight			= pRect->right;
-		const float	fAlpha					= ArrowGetAlphaOrGlow( bGlow, m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const float	fAlpha					= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
 		const RageColor color				= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 
 		if( fAlpha > 0 )
@@ -665,7 +668,7 @@ void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bIsBeingHeld, flo
 
 	Sprite* pSprBody = GetHoldBodySprite( hn.GetStartBeat(), bIsBeingHeld );
 
-	pSprBody->SetZoom( ArrowGetZoom( m_PlayerNumber ) );
+	pSprBody->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
 	// draw manually in small segments
 	RageTexture* pTexture = pSprBody->GetTexture();
@@ -682,7 +685,7 @@ void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bIsBeingHeld, flo
 	const float fYBodyTop = fYHead + cache->m_iStartDrawingHoldBodyOffsetFromHead;
 	const float fYBodyBottom = fYTail + cache->m_iStopDrawingHoldBodyOffsetFromTail;
 
-	const bool bReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].GetReversePercentForColumn(iCol) > 0.5;
+	const bool bReverse = m_pPlayerState->m_CurrentPlayerOptions.GetReversePercentForColumn(iCol) > 0.5;
 	bool bAnchorToBottom = bReverse && cache->m_bFlipHeadAndTailWhenReverse;
 
 	if( bGlow )
@@ -699,9 +702,9 @@ void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bIsBeingHeld, flo
 			bLast = true;
 		}
 
-		const float fYOffset			= ArrowGetYOffsetFromYPos( m_PlayerNumber, iCol, fY, m_fYReverseOffsetPixels );
-		const float fZ					= ArrowGetZPos(	m_PlayerNumber, iCol, fYOffset );
-		const float fX					= ArrowGetXPos( m_PlayerNumber, iCol, fYOffset );
+		const float fYOffset			= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
+		const float fZ					= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
+		const float fX					= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
 		const float fXLeft				= fX - fFrameWidth/2;
 		const float fXRight				= fX + fFrameWidth/2;
 		const float fDistFromBodyBottom	= fYBodyBottom - fY;
@@ -709,7 +712,7 @@ void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bIsBeingHeld, flo
 		const float fTexCoordTop		= SCALE( bAnchorToBottom ? fDistFromBodyTop : fDistFromBodyBottom,    0, fFrameHeight, pRect->bottom, pRect->top );
 		const float fTexCoordLeft		= pRect->left;
 		const float fTexCoordRight		= pRect->right;
-		const float	fAlpha				= ArrowGetAlphaOrGlow( bGlow, m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const float	fAlpha				= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
 		const RageColor color			= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 
 		if( fAlpha > 0 )
@@ -743,7 +746,7 @@ void NoteDisplay::DrawHoldBottomCap( const HoldNote& hn, const bool bIsBeingHeld
 
 	Sprite* pBottomCap = GetHoldBottomCapSprite( hn.GetStartBeat(), bIsBeingHeld );
 
-	pBottomCap->SetZoom( ArrowGetZoom( m_PlayerNumber ) );
+	pBottomCap->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
 	// draw manually in small segments
 	RageTexture* pTexture = pBottomCap->GetTexture();
@@ -774,16 +777,16 @@ void NoteDisplay::DrawHoldBottomCap( const HoldNote& hn, const bool bIsBeingHeld
 			bLast = true;
 		}
 
-		const float fYOffset				= ArrowGetYOffsetFromYPos( m_PlayerNumber, iCol, fY, m_fYReverseOffsetPixels );
-		const float fZ						= ArrowGetZPos(	m_PlayerNumber, iCol, fYOffset );
-		const float fX						= ArrowGetXPos( m_PlayerNumber, iCol, fYOffset );
+		const float fYOffset				= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
+		const float fZ						= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
+		const float fX						= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
 		const float fXLeft					= fX - fFrameWidth/2;
 		const float fXRight					= fX + fFrameWidth/2;
 		const float fTopDistFromTail		= fY - fYCapTop;
 		const float fTexCoordTop			= SCALE( fTopDistFromTail,    0, fFrameHeight, pRect->top, pRect->bottom );
 		const float fTexCoordLeft			= pRect->left;
 		const float fTexCoordRight			= pRect->right;
-		const float	fAlpha					= ArrowGetAlphaOrGlow( bGlow, m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const float	fAlpha					= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
 		const RageColor color				= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 
 		if( fAlpha > 0 )
@@ -814,14 +817,14 @@ void NoteDisplay::DrawHoldTail( const HoldNote& hn, bool bIsBeingHeld, float fYT
 	//
 	Actor* pSprTail = GetHoldTailActor( hn.GetStartBeat(), bIsBeingHeld );
 
-	pSprTail->SetZoom( ArrowGetZoom( m_PlayerNumber ) );
+	pSprTail->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
 	const float fY				= fYTail;
-	const float fYOffset		= ArrowGetYOffsetFromYPos( m_PlayerNumber, iCol, fY, m_fYReverseOffsetPixels );
-	const float fX				= ArrowGetXPos( m_PlayerNumber, iCol, fYOffset );
-	const float fZ				= ArrowGetZPos(	m_PlayerNumber, iCol, fYOffset );
-	const float	fAlpha			= ArrowGetAlpha( m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
-	const float	fGlow			= ArrowGetGlow( m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+	const float fYOffset		= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
+	const float fX				= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
+	const float fZ				= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
+	const float	fAlpha			= ArrowEffects::GetAlpha( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+	const float	fGlow			= ArrowEffects::GetGlow( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
 	const RageColor colorDiffuse= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	const RageColor colorGlow	= RageColor(1,1,1,fGlow);
 
@@ -866,15 +869,15 @@ void NoteDisplay::DrawHoldHead( const HoldNote& hn, bool bIsBeingHeld, float fYH
 	//
 	Actor* pActor = GetHoldHeadActor( hn.GetStartBeat(), bIsBeingHeld );
 
-	pActor->SetZoom( ArrowGetZoom( m_PlayerNumber ) );
+	pActor->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
 	// draw with normal Sprite
 	const float fY				= fYHead;
-	const float fYOffset		= ArrowGetYOffsetFromYPos( m_PlayerNumber, iCol, fY, m_fYReverseOffsetPixels );
-	const float fX				= ArrowGetXPos( m_PlayerNumber, iCol, fYOffset );
-	const float fZ				= ArrowGetZPos(	m_PlayerNumber, iCol, fYOffset );
-	const float	fAlpha			= ArrowGetAlpha( m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
-	const float	fGlow			= ArrowGetGlow( m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+	const float fYOffset		= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
+	const float fX				= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
+	const float fZ				= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
+	const float	fAlpha			= ArrowEffects::GetAlpha( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+	const float	fGlow			= ArrowEffects::GetGlow( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
 	const RageColor colorDiffuse= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	const RageColor colorGlow	= RageColor(1,1,1,fGlow);
 
@@ -917,23 +920,23 @@ void NoteDisplay::DrawHold( const HoldNote& hn, bool bIsBeingHeld, bool bIsActiv
 {
 	// bDrawGlowOnly is a little hacky.  We need to draw the diffuse part and the glow part one pass at a time to minimize state changes
 
-	int	iCol			= hn.iTrack;
-	bool bReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].GetReversePercentForColumn(iCol) > 0.5;
-	float fStartYOffset	= ArrowGetYOffset( m_PlayerNumber, iCol, Result.GetLastHeldBeat() );
+	int	iCol = hn.iTrack;
+	bool bReverse = m_pPlayerState->m_CurrentPlayerOptions.GetReversePercentForColumn(iCol) > 0.5;
+	float fStartYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, iCol, Result.GetLastHeldBeat() );
 	
 	// HACK: If active, don't allow the top of the hold to go above the receptor
 	if( bIsActive )
 		fStartYOffset = 0;
 
-	float fStartYPos		= ArrowGetYPos(	   m_PlayerNumber, iCol, fStartYOffset, fReverseOffsetPixels );
-	float fEndYOffset		= ArrowGetYOffset( m_PlayerNumber, iCol, hn.GetEndBeat() );
-	float fEndYPos		= ArrowGetYPos(	   m_PlayerNumber, iCol, fEndYOffset, fReverseOffsetPixels );
+	float fStartYPos	= ArrowEffects::GetYPos( m_pPlayerState, iCol, fStartYOffset, fReverseOffsetPixels );
+	float fEndYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, iCol, hn.GetEndBeat() );
+	float fEndYPos		= ArrowEffects::GetYPos( m_pPlayerState, iCol, fEndYOffset, fReverseOffsetPixels );
 
 	const float fYHead = bReverse ? fEndYPos : fStartYPos;		// the center of the head
 	const float fYTail = bReverse ? fStartYPos : fEndYPos;		// the center the tail
 
 //	const bool  bWavy = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fEffects[PlayerOptions::EFFECT_DRUNK] > 0;
-	const bool WavyPartsNeedZBuffer = ArrowsNeedZBuffer( m_PlayerNumber );
+	const bool WavyPartsNeedZBuffer = ArrowEffects::NeedZBuffer( m_pPlayerState );
 	/* Hack: Z effects need a finer grain step. */
 	const int	fYStep = WavyPartsNeedZBuffer? 4: 16; //bWavy ? 16 : 128;	// use small steps only if wavy
 
@@ -974,15 +977,15 @@ void NoteDisplay::DrawHold( const HoldNote& hn, bool bIsBeingHeld, bool bIsActiv
 
 void NoteDisplay::DrawActor( Actor* pActor, int iCol, float fBeat, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels, bool bUseLighting )
 {
-	const float fYOffset		= ArrowGetYOffset(	m_PlayerNumber, iCol, fBeat );
-	const float fYPos			= ArrowGetYPos(	m_PlayerNumber, iCol, fYOffset, fReverseOffsetPixels );
-	const float fRotation		= ArrowGetRotation(	m_PlayerNumber, fBeat );
-	const float fXPos			= ArrowGetXPos(		m_PlayerNumber, iCol, fYOffset );
-	const float fZPos			= ArrowGetZPos(	   m_PlayerNumber, iCol, fYOffset );
-	const float fAlpha			= ArrowGetAlpha(	m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
-	const float fGlow			= ArrowGetGlow(		m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
-	const float fColorScale		= ArrowGetBrightness( m_PlayerNumber, fBeat ) * SCALE(fLife,0,1,0.2f,1);
-	const float fZoom			= ArrowGetZoom( m_PlayerNumber );
+	const float fYOffset		= ArrowEffects::GetYOffset(	m_pPlayerState, iCol, fBeat );
+	const float fYPos			= ArrowEffects::GetYPos(	m_pPlayerState, iCol, fYOffset, fReverseOffsetPixels );
+	const float fRotation		= ArrowEffects::GetRotation(	m_pPlayerState, fBeat );
+	const float fXPos			= ArrowEffects::GetXPos(		m_pPlayerState, iCol, fYOffset );
+	const float fZPos			= ArrowEffects::GetZPos(	   m_pPlayerState, iCol, fYOffset );
+	const float fAlpha			= ArrowEffects::GetAlpha(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+	const float fGlow			= ArrowEffects::GetGlow(		m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+	const float fColorScale		= ArrowEffects::GetBrightness( m_pPlayerState, fBeat ) * SCALE(fLife,0,1,0.2f,1);
+	const float fZoom			= ArrowEffects::GetZoom( m_pPlayerState );
 	RageColor diffuse = RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	RageColor glow = RageColor(1,1,1,fGlow);
 

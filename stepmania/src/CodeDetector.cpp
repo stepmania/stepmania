@@ -10,6 +10,7 @@
 #include "Style.h"
 #include "RageUtil.h"
 #include "PrefsManager.h"
+#include "PlayerState.h"
 
 const CString g_sCodeNames[CodeDetector::NUM_CODES] = {
 	"Easier1",
@@ -220,8 +221,8 @@ bool CodeDetector::EnteredModeMenu( GameController controller )
 #define  INCREMENT_SCROLL_SPEED(s)	(s==0.5f) ? s=0.75f : (s==0.75f) ? s=1.0f : (s==1.0f) ? s=1.5f : (s==1.5f) ? s=2.0f : (s==2.0f) ? s=3.0f : (s==3.0f) ? s=4.0f : (s==4.0f) ? s=5.0f : (s==5.0f) ? s=8.0f : s=0.5f;
 #define  DECREMENT_SCROLL_SPEED(s)	(s==0.75f) ? s=0.5f : (s==1.0f) ? s=0.75f : (s==1.5f) ? s=1.0f : (s==2.0f) ? s=1.5f : (s==3.0f) ? s=2.0f : (s==4.0f) ? s=3.0f : (s==5.0f) ? s=4.0f : (s==8.0f) ? s=4.0f : s=8.0f;
 
-#define  TOGGLE_HIDDEN ZERO(GAMESTATE->m_PlayerOptions[pn].m_fAppearances); GAMESTATE->m_PlayerOptions[pn].m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN] = 1; 
-#define  TOGGLE_RANDOMVANISH ZERO(GAMESTATE->m_PlayerOptions[pn].m_fAppearances); GAMESTATE->m_PlayerOptions[pn].m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] = 1;
+#define  TOGGLE_HIDDEN ZERO(GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_fAppearances); GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN] = 1; 
+#define  TOGGLE_RANDOMVANISH ZERO(GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_fAppearances); GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] = 1;
 
 bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
 {
@@ -232,32 +233,34 @@ bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
 	{
 		Code code = (Code)c;
 		
+		PlayerOptions& po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions;
+
 		if( EnteredCode(controller,code) )
 		{
 			switch( code )
 			{
-			case CODE_MIRROR:			GAMESTATE->m_PlayerOptions[pn].ToggleOneTurn( PlayerOptions::TURN_MIRROR );		break;
-			case CODE_LEFT:				GAMESTATE->m_PlayerOptions[pn].ToggleOneTurn( PlayerOptions::TURN_LEFT );		break;
-			case CODE_RIGHT:			GAMESTATE->m_PlayerOptions[pn].ToggleOneTurn( PlayerOptions::TURN_RIGHT );		break;
-			case CODE_SHUFFLE:			GAMESTATE->m_PlayerOptions[pn].ToggleOneTurn( PlayerOptions::TURN_SHUFFLE );	break;
-			case CODE_SUPER_SHUFFLE:	GAMESTATE->m_PlayerOptions[pn].ToggleOneTurn( PlayerOptions::TURN_SUPER_SHUFFLE );	break;
-			case CODE_NEXT_TRANSFORM:	GAMESTATE->m_PlayerOptions[pn].NextTransform();									break;
-			case CODE_NEXT_SCROLL_SPEED:INCREMENT_SCROLL_SPEED( GAMESTATE->m_PlayerOptions[pn].m_fScrollSpeed );		break;
-			case CODE_PREVIOUS_SCROLL_SPEED:DECREMENT_SCROLL_SPEED( GAMESTATE->m_PlayerOptions[pn].m_fScrollSpeed );	break;
-			case CODE_NEXT_ACCEL:		GAMESTATE->m_PlayerOptions[pn].NextAccel();										break;
-			case CODE_NEXT_EFFECT:		GAMESTATE->m_PlayerOptions[pn].NextEffect();									break;
-			case CODE_NEXT_APPEARANCE:	GAMESTATE->m_PlayerOptions[pn].NextAppearance();								break;
-			case CODE_NEXT_TURN:		GAMESTATE->m_PlayerOptions[pn].NextTurn();										break;
-			case CODE_REVERSE:			GAMESTATE->m_PlayerOptions[pn].NextScroll();									break;
-			case CODE_HOLDS:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_bTransforms[PlayerOptions::TRANSFORM_NOHOLDS], true, false );				break;
-			case CODE_MINES:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_bTransforms[PlayerOptions::TRANSFORM_NOMINES], true, false );					break;
-			case CODE_DARK:				FLOAT_TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_fDark );							break;
-			case CODE_CANCEL_ALL:		GAMESTATE->m_PlayerOptions[pn].Init();
-										GAMESTATE->m_PlayerOptions[pn].FromString( PREFSMAN->m_sDefaultModifiers );		break;
-			case CODE_HIDDEN:			TOGGLE_HIDDEN; break;
-			case CODE_RANDOMVANISH:		TOGGLE_RANDOMVANISH; break;
+			case CODE_MIRROR:					po.ToggleOneTurn( PlayerOptions::TURN_MIRROR );		break;
+			case CODE_LEFT:						po.ToggleOneTurn( PlayerOptions::TURN_LEFT );		break;
+			case CODE_RIGHT:					po.ToggleOneTurn( PlayerOptions::TURN_RIGHT );		break;
+			case CODE_SHUFFLE:					po.ToggleOneTurn( PlayerOptions::TURN_SHUFFLE );	break;
+			case CODE_SUPER_SHUFFLE:			po.ToggleOneTurn( PlayerOptions::TURN_SUPER_SHUFFLE );	break;
+			case CODE_NEXT_TRANSFORM:			po.NextTransform();									break;
+			case CODE_NEXT_SCROLL_SPEED:		INCREMENT_SCROLL_SPEED( po.m_fScrollSpeed );		break;
+			case CODE_PREVIOUS_SCROLL_SPEED:	DECREMENT_SCROLL_SPEED( po.m_fScrollSpeed );	break;
+			case CODE_NEXT_ACCEL:				po.NextAccel();										break;
+			case CODE_NEXT_EFFECT:				po.NextEffect();									break;
+			case CODE_NEXT_APPEARANCE:			po.NextAppearance();								break;
+			case CODE_NEXT_TURN:				po.NextTurn();										break;
+			case CODE_REVERSE:					po.NextScroll();									break;
+			case CODE_HOLDS:					TOGGLE( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHOLDS], true, false );				break;
+			case CODE_MINES:					TOGGLE( po.m_bTransforms[PlayerOptions::TRANSFORM_NOMINES], true, false );					break;
+			case CODE_DARK:						FLOAT_TOGGLE( po.m_fDark );							break;
+			case CODE_CANCEL_ALL:				po.Init();
+												po.FromString( PREFSMAN->m_sDefaultModifiers );		break;
+			case CODE_HIDDEN:					TOGGLE_HIDDEN; break;
+			case CODE_RANDOMVANISH:				TOGGLE_RANDOMVANISH; break;
 				
-				// GAMESTATE->m_PlayerOptions[pn].SetOneAppearance(GAMESTATE->m_PlayerOptions[pn].GetFirstAppearance()); break;
+				// po.SetOneAppearance(po.GetFirstAppearance()); break;
 			default: ;
 			}
 			return true;	// don't check any more

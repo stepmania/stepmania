@@ -4,6 +4,7 @@
 #include "PlayerOptions.h"
 #include "GameState.h"
 #include "RageLog.h"
+#include "PlayerState.h"
 
 
 #define SPACING_X	THEME->GetMetricF("OptionIconRow","SpacingX")
@@ -95,7 +96,7 @@ void OptionIconRow::Refresh()
 	for( unsigned i=0; i<NUM_OPTION_COLS; i++ )
 		m_OptionIcon[i].Load( m_PlayerNumber, "", i==0 );		
 
-	CString sOptions = GAMESTATE->m_PlayerOptions[m_PlayerNumber].GetString();
+	CString sOptions = GAMESTATE->m_pPlayerState[m_PlayerNumber]->m_PlayerOptions.GetString();
 	CStringArray asOptions;
 	split( sOptions, ", ", asOptions, true );
 

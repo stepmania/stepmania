@@ -7,6 +7,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "StageStats.h"
+#include "PlayerState.h"
 
 
 ScoreDisplayOni::ScoreDisplayOni()
@@ -22,9 +23,13 @@ ScoreDisplayOni::ScoreDisplayOni()
 	this->AddChild( &m_text );
 }
 
-void ScoreDisplayOni::Init( PlayerNumber pn ) 
+void ScoreDisplayOni::Init( const PlayerState* pPlayerState ) 
 {
-	ScoreDisplay::Init( pn );
+	ScoreDisplay::Init( pPlayerState );
+
+	// TODO: Remove use of PlayerNumber.
+	PlayerNumber pn = pPlayerState->m_PlayerNumber;
+
 	m_text.SetDiffuse( PlayerToColor(pn) );
 }
 
@@ -33,9 +38,12 @@ void ScoreDisplayOni::Update( float fDelta )
 {
 	ScoreDisplay::Update( fDelta );
 
+	// TODO: Remove use of PlayerNumber.
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
 	float fSecsIntoPlay = 0;
-	if( GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
-		fSecsIntoPlay = g_CurStageStats.fAliveSeconds[m_PlayerNumber];
+	if( GAMESTATE->IsPlayerEnabled(pn) )
+		fSecsIntoPlay = g_CurStageStats.fAliveSeconds[pn];
 
 	m_text.SetText( SecondsToMMSSMsMs(fSecsIntoPlay) );
 }

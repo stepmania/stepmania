@@ -14,6 +14,8 @@
 #include "UnlockSystem.h"
 #include "Course.h"
 #include "ThemeManager.h"
+#include "Style.h"
+#include "PlayerState.h"
 
 // HACK: This belongs in ScreenDemonstration
 #define DIFFICULTIES_TO_SHOW		THEME->GetMetric ("ScreenDemonstration","DifficultiesToShow")
@@ -133,10 +135,10 @@ bool ScreenJukebox::PrepareForJukebox( bool bDemonstration )		// always return t
 
 			/* Lots and lots of arrows.  This might even bias to arrows a little
 			 * too much. */
-			GAMESTATE->m_PlayerOptions[p] = PlayerOptions();
-			GAMESTATE->m_PlayerOptions[p].m_fScrollSpeed = .25f;
-			GAMESTATE->m_PlayerOptions[p].m_fPerspectiveTilt = -1;
-			GAMESTATE->m_PlayerOptions[p].m_fEffects[ PlayerOptions::EFFECT_MINI ] = 1;
+			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions = PlayerOptions();
+			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_fScrollSpeed = .25f;
+			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_fPerspectiveTilt = -1;
+			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_fEffects[ PlayerOptions::EFFECT_MINI ] = 1;
 		}
 		GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
 		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
@@ -149,9 +151,9 @@ bool ScreenJukebox::PrepareForJukebox( bool bDemonstration )		// always return t
 
 		if( GAMESTATE->m_bJukeboxUsesModifiers )
 		{
-			GAMESTATE->m_PlayerOptions[p].Init();
-			GAMESTATE->m_PlayerOptions[p].FromString( PREFSMAN->m_sDefaultModifiers );
-			GAMESTATE->m_PlayerOptions[p].ChooseRandomMofifiers();
+			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.Init();
+			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.FromString( PREFSMAN->m_sDefaultModifiers );
+			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.ChooseRandomMofifiers();
 		}
 	}
 

@@ -3,56 +3,58 @@
 #ifndef ARROWEFFECTS_H
 #define ARROWEFFECTS_H
 
+struct PlayerState;
 
-#include "GameConstantsAndTypes.h"
-#include "Style.h"
+class ArrowEffects
+{
+public:
+	
+	//	fYOffset is a vertical position in pixels relative to the center.
+	//	(positive if has not yet been stepped on, negative if has already passed).
+	//	The ArrowEffect and ScrollSpeed is applied in this stage.
+	static float GetYOffset( const PlayerState* pPlayerState, int iCol, float fNoteBeat, bool bAbsolute=false );
 
+	/* Actual display position, with reverse and post-reverse-effects factored in
+	 * (fYOffset -> YPos). */
+	static float GetYPos(	const PlayerState* pPlayerState, int iCol, float fYOffset, float fYReverseOffsetPixels, bool WithReverse = true );
 
-//	fYOffset is a vertical position in pixels relative to the center.
-//	(positive if has not yet been stepped on, negative if has already passed).
-//	The ArrowEffect and ScrollSpeed is applied in this stage.
-float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat, bool bAbsolute=false );
-
-/* Actual display position, with reverse and post-reverse-effects factored in
- * (fYOffset -> YPos). */
-float ArrowGetYPos(	PlayerNumber pn, int iCol, float fYOffset, float fYReverseOffsetPixels, bool WithReverse = true );
-
-// Inverse of ArrowGetYPos (YPos -> fYOffset).
-float ArrowGetYOffsetFromYPos( PlayerNumber pn, int iCol, float YPos, float fYReverseOffsetPixels );
-
-
-//	fRotation is Z rotation of an arrow.  This will depend on the column of 
-//	the arrow and possibly the Arrow effect and the fYOffset (in the case of 
-//	EFFECT_DIZZY).
-float ArrowGetRotation(	PlayerNumber pn, float fNoteBeat );
+	// Inverse of ArrowGetYPos (YPos -> fYOffset).
+	static float GetYOffsetFromYPos( const PlayerState* pPlayerState, int iCol, float YPos, float fYReverseOffsetPixels );
 
 
-//	fXPos is a horizontal position in pixels relative to the center of the field.
-//	This depends on the column of the arrow and possibly the Arrow effect and
-//	fYPos (in the case of EFFECT_DRUNK).
-float ArrowGetXPos( PlayerNumber pn, int iCol, float fYOffset );
-
-//  Z position; normally 0.  Only visible in perspective modes.
-float ArrowGetZPos( PlayerNumber pn, int iCol, float fYPos );
-
-// Enable this if any ZPos effects are enabled.
-bool ArrowsNeedZBuffer( PlayerNumber pn );
-
-//	fAlpha is the transparency of the arrow.  It depends on fYPos and the 
-//	AppearanceType.
-float ArrowGetAlpha( PlayerNumber pn, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels );
+	//	fRotation is Z rotation of an arrow.  This will depend on the column of 
+	//	the arrow and possibly the Arrow effect and the fYOffset (in the case of 
+	//	EFFECT_DIZZY).
+	static float GetRotation(	const PlayerState* pPlayerState, float fNoteBeat );
 
 
-//	fAlpha is the transparency of the arrow.  It depends on fYPos and the 
-//	AppearanceType.
-float ArrowGetGlow( PlayerNumber pn, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels );
+	//	fXPos is a horizontal position in pixels relative to the center of the field.
+	//	This depends on the column of the arrow and possibly the Arrow effect and
+	//	fYPos (in the case of EFFECT_DRUNK).
+	static float GetXPos( const PlayerState* pPlayerState, int iCol, float fYOffset );
+
+	//  Z position; normally 0.  Only visible in perspective modes.
+	static float GetZPos( const PlayerState* pPlayerState, int iCol, float fYPos );
+
+	// Enable this if any ZPos effects are enabled.
+	static bool NeedZBuffer( const PlayerState* pPlayerState );
+
+	//	fAlpha is the transparency of the arrow.  It depends on fYPos and the 
+	//	AppearanceType.
+	static float GetAlpha( const PlayerState* pPlayerState, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels );
 
 
-//	Depends on fYOffset.
-float ArrowGetBrightness( PlayerNumber pn, float fNoteBeat );
+	//	fAlpha is the transparency of the arrow.  It depends on fYPos and the 
+	//	AppearanceType.
+	static float GetGlow( const PlayerState* pPlayerState, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels );
 
-// This is the zoom of the individual tracks, not of the whole Player.
-float ArrowGetZoom( PlayerNumber pn );
+
+	//	Depends on fYOffset.
+	static float GetBrightness( const PlayerState* pPlayerState, float fNoteBeat );
+
+	// This is the zoom of the individual tracks, not of the whole Player.
+	static float GetZoom( const PlayerState* pPlayerState );
+};
 
 #endif
 

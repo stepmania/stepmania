@@ -2,22 +2,21 @@
 #define ACTIVE_ATTACK_LIST_H
 
 #include "BitmapText.h"
-#include "PlayerNumber.h"
-
+struct PlayerState;
 
 class ActiveAttackList : public BitmapText
 {
 public:
 	ActiveAttackList();
 
-	void Init( PlayerNumber pn );
+	void Init( const PlayerState* pPlayerState );
 
 	virtual void Update( float fDelta );
 
 	void Refresh();
 
 protected:
-	PlayerNumber m_PlayerNumber;
+	const PlayerState* m_pPlayerState;
 };
 
 #endif

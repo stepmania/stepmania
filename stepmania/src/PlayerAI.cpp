@@ -5,6 +5,7 @@
 #include "RageException.h"
 #include "GameState.h"
 #include "arch/arch.h"
+#include "PlayerState.h"
 
 #define AI_PATH "Data/AI.ini"
 
@@ -60,17 +61,16 @@ void PlayerAI::InitFromDisk()
 }
 
 
-TapNoteScore PlayerAI::GetTapNoteScore( PlayerNumber pn )
+TapNoteScore PlayerAI::GetTapNoteScore( const PlayerState* pPlayerState )
 {
-
-	int iCpuSkill = GAMESTATE->m_iCpuSkill[pn];
+	int iCpuSkill = pPlayerState->m_iCpuSkill;
 	int iSumOfAttackLevels = 
-		GAMESTATE->m_fSecondsUntilAttacksPhasedOut[pn] > 0 ? 
-		GAMESTATE->m_iLastPositiveSumOfAttackLevels[pn] : 
+		pPlayerState->m_fSecondsUntilAttacksPhasedOut > 0 ? 
+		pPlayerState->m_iLastPositiveSumOfAttackLevels : 
 		0;
 
 	ASSERT_M( iCpuSkill>=0 && iCpuSkill<NUM_SKILL_LEVELS, ssprintf("%i", iCpuSkill) );
-	ASSERT_M( GAMESTATE->m_PlayerController[pn] == PC_CPU, ssprintf("%i", GAMESTATE->m_PlayerController[pn]) );
+	ASSERT_M( pPlayerState->m_PlayerController == PC_CPU, ssprintf("%i", pPlayerState->m_PlayerController) );
 
 	iCpuSkill -= iSumOfAttackLevels*3;
 	CLAMP( iCpuSkill, 0, NUM_SKILL_LEVELS-1 );

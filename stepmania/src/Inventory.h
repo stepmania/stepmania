@@ -7,13 +7,14 @@
 #include "PlayerNumber.h"
 #include "RageSound.h"
 
+struct PlayerState;
 
 class Inventory : public Actor
 {
 public:
 	Inventory();
 	~Inventory();
-	void Load( PlayerNumber pn );
+	void Load( PlayerState* pPlayerState );
 
 	virtual void Update( float fDelta );
 	virtual void DrawPrimitives() {};
@@ -23,7 +24,7 @@ public:
 protected:
 	void AwardItem( int iItemIndex );
 
-	PlayerNumber m_PlayerNumber;
+	PlayerState* m_pPlayerState;
 	int m_iLastSeenCombo;
 
 	RageSound m_soundAcquireItem;

@@ -9,6 +9,7 @@
 #include "PrefsManager.h"
 #include "NoteFieldPositioning.h"
 #include "Game.h"
+#include "PlayerState.h"
 
 
 GhostArrowRow::GhostArrowRow()
@@ -16,11 +17,11 @@ GhostArrowRow::GhostArrowRow()
 	m_iNumCols = 0;
 }
 #include "RageLog.h"
-void GhostArrowRow::Load( PlayerNumber pn, CString NoteSkin, float fYReverseOffset )
+void GhostArrowRow::Load( const PlayerState* pPlayerState, CString NoteSkin, float fYReverseOffset )
 {
 	Unload();
 
-	m_PlayerNumber = pn;
+	m_pPlayerState = pPlayerState;
 	m_fYReverseOffsetPixels = fYReverseOffset;
 
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
@@ -30,6 +31,8 @@ void GhostArrowRow::Load( PlayerNumber pn, CString NoteSkin, float fYReverseOffs
 	// init arrows
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
+		// TODO: Remove indexing by PlayerNumber;
+		PlayerNumber pn = pPlayerState->m_PlayerNumber;
 		NoteFieldMode &mode = g_NoteFieldMode[pn];
 		CString Button = mode.GhostButtonNames[c];
 		if( Button == "" )
@@ -78,9 +81,9 @@ void GhostArrowRow::Update( float fDeltaTime )
 		m_GhostBright[c]->Update( fDeltaTime );
 		m_HoldGhost[c]->Update( fDeltaTime );
 
-		const float fX = ArrowGetXPos( m_PlayerNumber, c, 0 );
-		const float fY = ArrowGetYPos( m_PlayerNumber, c, 0, m_fYReverseOffsetPixels );
-		const float fZ = ArrowGetZPos( m_PlayerNumber, c, 0 );
+		const float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
+		const float fY = ArrowEffects::GetYPos( m_pPlayerState, c, 0, m_fYReverseOffsetPixels );
+		const float fZ = ArrowEffects::GetZPos( m_pPlayerState, c, 0 );
 
 		m_GhostDim[c]->SetX( fX );
 		m_GhostBright[c]->SetX( fX );
@@ -94,7 +97,7 @@ void GhostArrowRow::Update( float fDeltaTime )
 		m_GhostBright[c]->SetZ( fZ );
 		m_HoldGhost[c]->SetZ( fZ );
 
-		const float fZoom = ArrowGetZoom( m_PlayerNumber );
+		const float fZoom = ArrowEffects::GetZoom( m_pPlayerState );
 		m_GhostDim[c]->SetZoom( fZoom );
 		m_GhostBright[c]->SetZoom( fZoom );
 		m_HoldGhost[c]->SetZoom( fZoom );
@@ -105,13 +108,16 @@ void GhostArrowRow::DrawPrimitives()
 {
 	for( int c=0; c<m_iNumCols; c++ )
 	{
-		g_NoteFieldMode[m_PlayerNumber].BeginDrawTrack(c);
+		// TODO: Remove indexing by PlayerNumber.
+		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+		g_NoteFieldMode[pn].BeginDrawTrack(c);
 
 		m_GhostDim[c]->Draw();
 		m_GhostBright[c]->Draw();
 		m_HoldGhost[c]->Draw();
 
-		g_NoteFieldMode[m_PlayerNumber].EndDrawTrack(c);
+		g_NoteFieldMode[pn].EndDrawTrack(c);
 	}
 }
 

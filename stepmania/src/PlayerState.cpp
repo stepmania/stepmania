@@ -1,32 +1,9 @@
-/* ScoreKeeperRave - Launches attacks in PLAY_MODE_RAVE. */
+#include "global.h"
+#include "PlayerState.h"
 
-#ifndef ScoreKeeperRave_H
-#define ScoreKeeperRave_H
-
-#include "ScoreKeeper.h"
-#include "GameConstantsAndTypes.h"
-
-
-class ScoreKeeperRave : public ScoreKeeper
-{
-public:
-	// Overrides
-	ScoreKeeperRave( PlayerState* pPlayerState );
-	void Update( float fDelta );
-	void OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData );	// before a song plays (called multiple times if course)
-	void HandleTapScore( TapNoteScore score );
-	void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow );
-	void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );
-
-protected:
-	void LaunchAttack( AttackLevel al );
-	void AddSuperMeterDelta( float fUnscaledPercentChange );
-};
-
-#endif
 
 /*
- * (c) 2001-2004 Chris Danford
+ * (c) 2001-2004 Chris Danford, Chris Gomez
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
