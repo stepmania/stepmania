@@ -159,6 +159,32 @@ void CSmpackageDlg::OnButtonExport()
 
 	// Create a new zip file on the desktop
 	CString sZipFileName = sSongName + ".smzip";
+	sZipFileName.Replace( " ", "_" );
+	sZipFileName.Replace( "!", "_" );
+	sZipFileName.Replace( "@", "_" );
+	sZipFileName.Replace( "#", "_" );
+	sZipFileName.Replace( "$", "_" );
+	sZipFileName.Replace( "%", "_" );
+	sZipFileName.Replace( "^", "_" );
+	sZipFileName.Replace( "&", "_" );
+	sZipFileName.Replace( "*", "_" );
+	sZipFileName.Replace( "(", "_" );
+	sZipFileName.Replace( ")", "_" );
+	sZipFileName.Replace( "+", "_" );
+	sZipFileName.Replace( "=", "_" );
+	sZipFileName.Replace( "[", "_" );
+	sZipFileName.Replace( "]", "_" );
+	sZipFileName.Replace( "{", "_" );
+	sZipFileName.Replace( "}", "_" );
+	sZipFileName.Replace( "|", "_" );
+	sZipFileName.Replace( ":", "_" );
+	sZipFileName.Replace( "\'","_" );
+	sZipFileName.Replace( "\"","_" );
+	sZipFileName.Replace( "<", "_" );
+	sZipFileName.Replace( ">", "_" );
+	sZipFileName.Replace( ",", "_" );
+	sZipFileName.Replace( "?", "_" );
+	sZipFileName.Replace( "/", "_" );
 	CString sZipFilePath = sDesktopPath + sZipFileName;
 	//MessageBox( ssprintf("sZipFilePath is '%s'", sZipFilePath), "", MB_OK );
 	try
