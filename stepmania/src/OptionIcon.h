@@ -14,7 +14,7 @@ class OptionIcon : public ActorFrame
 public:
 	OptionIcon();
 
-	void Load( PlayerNumber pn, CString sText, bool bHeader = false );
+	void Load( PlayerNumber pn, const CString &sText, bool bHeader = false );
 	void DrawPrimitives();
 
 protected:

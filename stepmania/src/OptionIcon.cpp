@@ -28,8 +28,10 @@ OptionIcon::OptionIcon()
 	this->AddChild( &m_text );
 }
 
-void OptionIcon::Load( PlayerNumber pn, CString sText, bool bHeader )
+void OptionIcon::Load( PlayerNumber pn, const CString &_sText, bool bHeader )
 {
+	CString sText = _sText;
+
 	static const CString sStopWords[] = 
 	{
 		"1X",
