@@ -333,7 +333,7 @@ static void child_process()
     fprintf(CrashDump, "\n");
 
     CString Signal;
-#if !defined(BACKTRACE_METHOD_POWERPC_DARWIN)
+#if !defined(DARWIN)
 #define X(a) case a: Signal = #a; break;
     switch(SignalReceived)
     {
