@@ -70,6 +70,7 @@ PrefsManager::PrefsManager()
 	m_iUnloadTextureDelaySeconds = 0; // disabled 60*30;	// 30 mins
 	m_bCoinOpMode = false;
 	m_bMusicWheelUsesSections = true;
+	m_iMusicWheelSwitchSpeed = 10;
 	m_bChangeBannersWhenFast = false;
 	m_bEasterEggs = true;
 	m_bMarvelousTiming = true;
@@ -135,6 +136,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueI( "Options", "UnloadTextureDelaySeconds",	m_iUnloadTextureDelaySeconds );
 	ini.GetValueB( "Options", "CoinOpMode",					m_bCoinOpMode );
 	ini.GetValueB( "Options", "MusicWheelUsesSections",		m_bMusicWheelUsesSections );
+	ini.GetValueI( "Options", "MusicWheelSwitchSpeed",		m_iMusicWheelSwitchSpeed );
 	ini.GetValueB( "Options", "ChangeBannersWhenFast",		m_bChangeBannersWhenFast );
 	ini.GetValue ( "Options", "SoundDrivers",				m_sSoundDrivers );
 	ini.GetValueB( "Options", "EasterEggs",					m_bEasterEggs );
@@ -198,6 +200,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValue ( "Options", "DWIPath",					m_DWIPath );
 	ini.SetValueI( "Options", "UnloadTextureDelaySeconds",	m_iUnloadTextureDelaySeconds );
 	ini.SetValueB( "Options", "MusicWheelUsesSections",		m_bMusicWheelUsesSections );
+	ini.SetValueI( "Options", "MusicWheelSwitchSpeed",		m_iMusicWheelSwitchSpeed );
 	ini.SetValueB( "Options", "ChangeBannersWhenFast",		m_bChangeBannersWhenFast );
 	ini.SetValue ( "Options", "SoundDrivers",				m_sSoundDrivers );
 	ini.SetValueB( "Options", "EasterEggs",					m_bEasterEggs );

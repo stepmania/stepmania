@@ -54,6 +54,7 @@ public:
 	bool			m_bArcadeOptionsNavigation;
 	bool			m_bCoinOpMode;
 	bool			m_bMusicWheelUsesSections;
+	int				m_iMusicWheelSwitchSpeed;
 	bool			m_bChangeBannersWhenFast;
 	bool			m_bEasterEggs;
 	bool			m_bMarvelousTiming;
