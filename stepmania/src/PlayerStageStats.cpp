@@ -166,7 +166,7 @@ Grade PlayerStageStats::GetGrade() const
 			iTapNoteScores[TNS_MISS] == 0 &&
 			iTapNoteScores[TNS_HIT_MINE] == 0 &&
 			iHoldNoteScores[HNS_NG] == 0 )
-			return GRADE_TIER_1;
+			return GRADE_TIER_01;
 
 		if( iTapNoteScores[TNS_PERFECT] > 0 &&
 			iTapNoteScores[TNS_GREAT] == 0 &&
@@ -175,9 +175,9 @@ Grade PlayerStageStats::GetGrade() const
 			iTapNoteScores[TNS_MISS] == 0 &&
 			iTapNoteScores[TNS_HIT_MINE] == 0 &&
 			iHoldNoteScores[HNS_NG] == 0 )
-			return GRADE_TIER_2;
+			return GRADE_TIER_02;
 
-		return max( grade, GRADE_TIER_3 );
+		return max( grade, GRADE_TIER_03 );
 	}
 
 	return grade;

@@ -951,7 +951,7 @@ bool GameState::HasEarnedExtraStage() const
 			if( PREFSMAN->m_bPickExtraStage && this->IsExtraStage() && !this->m_bAllow2ndExtraStage )
 				continue;
 
-			if( STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_3 )
+			if( STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_03 )
 				return true;
 		}
 	}

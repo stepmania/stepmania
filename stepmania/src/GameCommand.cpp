@@ -587,7 +587,7 @@ static HighScore MakeRandomHighScore()
 {
 	HighScore hs;
 	hs.sName = "FAKE";
-	hs.grade = (Grade)SCALE( rand()%5, 0, 4, GRADE_TIER_1, GRADE_TIER_5 );
+	hs.grade = (Grade)SCALE( rand()%5, 0, 4, GRADE_TIER_01, GRADE_TIER_05 );
 	hs.iScore = rand()%100*1000;
 	hs.fPercentDP = randomf( 0.5f, 1.0f );
 	hs.fSurviveSeconds = randomf( 30.0f, 100.0f );

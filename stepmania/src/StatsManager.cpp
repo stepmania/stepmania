@@ -218,7 +218,7 @@ static Grade GetBestGrade()
 
 static Grade GetWorstGrade()
 {
-	Grade g = GRADE_TIER_1;
+	Grade g = GRADE_TIER_01;
 	FOREACH_EnabledPlayer( pn )
 		g = max( g, STATSMAN->m_CurStageStats.m_player[pn].GetGrade() );
 	return g;

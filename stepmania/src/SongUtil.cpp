@@ -123,7 +123,7 @@ void SongUtil::SortSongPointerArrayByGrade( vector<Song*> &arraySongPointers )
 
 		CString foo;
 		foo.reserve(256);
-		for( int g=GRADE_TIER_1; g<=GRADE_NO_DATA; ++g )
+		for( int g=GRADE_TIER_01; g<=GRADE_NO_DATA; ++g )
 			AppendOctal( iCounts[g], 3, foo );
 		vals.push_back( val(pSong, foo) );
 	}
@@ -261,7 +261,7 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			int iCounts[NUM_GRADES];
 			PROFILEMAN->GetMachineProfile()->GetGrades( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType, iCounts );
 
-			for( int i=GRADE_TIER_1; i<NUM_GRADES; ++i )
+			for( int i=GRADE_TIER_01; i<NUM_GRADES; ++i )
 			{
 				Grade g = (Grade)i;
 				if( iCounts[i] > 0 )
