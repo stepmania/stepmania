@@ -71,7 +71,7 @@ public:
 	
 	void ClearRange( int iNoteIndexBegin, int iNoteIndexEnd );
 	void ClearAll();
-	void CopyRange( const NoteData* pFrom, int iFromIndexBegin, int iFromIndexEnd, int iToIndexBegin = -1 );
+	void CopyRange( const NoteData* pFrom, int iFromIndexBegin, int iFromIndexEnd, int iToIndexBegin = 0 );
 	void CopyAll( const NoteData* pFrom );
 
 	bool IsRowEmpty( int index ) const;

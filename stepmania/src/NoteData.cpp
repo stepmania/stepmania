@@ -84,9 +84,6 @@ void NoteData::CopyRange( const NoteData* pFrom, int iFromIndexBegin, int iFromI
 {
 	ASSERT( pFrom->m_iNumTracks == m_iNumTracks );
 
-	if( iToIndexBegin == -1 )
-		iToIndexBegin = 0;
-
 	NoteData From, To;
 	From.To4s( *pFrom );
 	To.To4s( *this );
@@ -288,8 +285,7 @@ int NoteData::GetMatchingHoldNote( const HoldNote &hn ) const
 		if( ret.iTrack == hn.iTrack && ret.iEndRow == hn.iEndRow )
 			return i;
 	}
-	ASSERT(0);
-	return -1;
+	FAIL_M( ssprintf("%i..%i, %i", hn.iStartRow, hn.iEndRow, hn.iTrack) );
 }
 
 
