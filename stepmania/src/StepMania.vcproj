@@ -591,6 +591,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="NoteDataWithScoring.h">
 			</File>
 			<File
+				RelativePath="NoteFieldPositioning.cpp">
+			</File>
+			<File
+				RelativePath="NoteFieldPositioning.h">
+			</File>
+			<File
 				RelativePath="NoteTypes.cpp">
 			</File>
 			<File

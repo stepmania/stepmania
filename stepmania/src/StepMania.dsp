@@ -553,6 +553,14 @@ SOURCE=.\TitleSubstitution.cpp
 
 SOURCE=.\TitleSubstitution.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\NoteFieldPositioning.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\NoteFieldPositioning.h
+# End Source File
 # End Group
 # Begin Group "File Types"
 
