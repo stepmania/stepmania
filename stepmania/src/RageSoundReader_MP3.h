@@ -12,7 +12,6 @@ class RageSoundReader_MP3: public SoundReader_FileReader
 public:
 	int SampleRate;
     int Channels;
-	float OffsetFix;
 
 	CString filename;
     RageFile file;
@@ -23,7 +22,6 @@ public:
 	int SetPosition_toc( int ms, bool Xing );
 	int SetPosition_hard( int ms );
 	int SetPosition_estimate( int ms );
-	int FindOffsetFix();
 
 	int fill_buffer();
 	int do_mad_frame_decode( bool headers_only=false );
@@ -43,7 +41,6 @@ public:
 	int SetPosition_Fast(int ms);
 	int Read(char *buf, unsigned len);
 	int GetSampleRate() const { return SampleRate; }
-	float GetOffsetFix() const { return OffsetFix; }
 
 	RageSoundReader_MP3();
 	~RageSoundReader_MP3();

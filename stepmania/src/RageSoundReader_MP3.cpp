@@ -148,6 +148,7 @@ struct xing
 	unsigned long bytes;		/* total number of bytes */
 	unsigned char toc[100];		/* 100-point seek table */
 	long scale;					/* ?? */
+	enum { XING, INFO } type;
 };
 
 enum {
@@ -295,7 +296,24 @@ int RageSoundReader_MP3::handle_first_frame()
 		int bytes = mad->filesize - mad->header_bytes;
 		mad->bitrate = (int)(bytes * 8 / (mad->length/1000.f));
 
-		ret = 1;
+		/* "Info" tags are written by some tools: LAME in CBR, Fb2k.  They're just
+		 * Xing tags.  I suspect LAME does this to avoid confsing decoders that
+		 * assume files with Xing tags are VBR.
+		 * 
+		 * However, DWI's decoder, BASS, doesn't understand this, and treats it as
+		 * a corrupt frame, outputting a frame of silence.
+		 *
+		 * I can't quite decide.  We can decode correctly, which means sync won't change
+		 * if a Xing tag is rewritten to an Info tag (eg. "Fix MP3 headers..." in FB2k.)
+		 *
+		 * However, that'll result in different sync than DWI.
+		 *
+		 * Let's be compatible with DWI in this; different sync is annoying, and most
+		 * people probably aren't changing header types.  However, decode the header
+		 * anyway, so we can use the data in it.
+		 */
+		if( mad->xingtag.type == xing::XING )
+			ret = 1;
 	}
 
 	/* If there's no Xing tag, mad->length will be filled in by _open. */
@@ -365,6 +383,22 @@ int RageSoundReader_MP3::do_mad_frame_decode( bool headers_only )
 			ret=mad_header_decode( &mad->Frame.header,&mad->Stream );
 		else
 			ret=mad_frame_decode( &mad->Frame,&mad->Stream );
+		if( mad->Stream.error == MAD_ERROR_BADDATAPTR && mad->first_frame )
+		{
+			/*
+			 * Something's corrupt.  One cause of this is cutting an MP3 in the middle
+			 * without reencoding; the first two frames will reference data from previous
+			 * frames that have been removed.  The frame is valid--we can get a header from
+			 * it, we just can't synth useful data.
+			 *
+			 * BASS pretends the bad frame is silent.  Let's emulate that if we're at the
+			 * beginning, since that's probably a cut.  The only time I've seen this in
+			 * the middle of a stream is a corruption, which will probably lose sync anyway.
+			 */
+
+			ret = 0; /* pretend success */
+		}
+
 		if( !ret )
 		{
 			/* OK. */
@@ -449,112 +483,6 @@ int RageSoundReader_MP3::do_mad_frame_decode( bool headers_only )
 	}
 }
 
-/* Previously, there was a bug in MADLIB_rewind: it didn't clear synth.  This
- * resulted in some files having a few frames of silence at the beginning, throwing
- * off sync.  Figure out how far ahead the file was offset under those conditions,
- * so we can emulate that sync offset. */
-int RageSoundReader_MP3::FindOffsetFix()
-{
-	/* Do a fake rewind. */
-	file.Rewind();
-
-	mad_frame_mute(&mad->Frame);
-	mad_synth_mute(&mad->Synth);
-	mad_timer_reset(&mad->Timer);
-	mad->outpos = mad->outleft = 0;
-
-//	mad_stream_finish(&mad->Stream); // fake
-//	mad_stream_init(&mad->Stream);   // fake
-	mad_stream_buffer(&mad->Stream, NULL, 0);
-	mad->inbuf_filepos = 0;
-	mad->header_bytes = 0;
-	mad->first_frame = true;
-
-	/* Read a couple frames, to make sure we're synced. */
-	int FramesToRead = 5;
-	while( FramesToRead-- )
-	{
-		int ret = do_mad_frame_decode();
-		if( ret == 0 )
-		{
-			SetError("Unexpected EOF");
-			return false;
-		}
-		if( ret == -1 )
-			return false; /* it set the error */
-
-		/* If this frame is silent, it's not an appropriate sample.  Find
-		 * a frame with actual sound in it. */
-		if( !FramesToRead )
-		{
-			/* We've read enough frames.  Now, make sure this frame isn't silent. */
-			bool Silent = true;
-			for( int j = 0; j < 2; ++j )
-			for( int k = 0; k < 36; ++k )
-			for( int l = 0; l < 32; ++l )
-				if( mad->Frame.sbsample[j][k][l] )
-					Silent=false;
-			/* If it's silent, it's not an appropriate sample.  Find a frame
-			 * with actual sound in it. */
-
-			if( Silent )
-				++FramesToRead;
-		}
-
-	}
-
-	/* Clear the TOC cache.  We might have cached bogus values. */
-	int i;
-	for( i = 0; i < 200; ++i)
-		mad->toc[i] = -1;
-
-	/* Save the current timestamp.  This is the time we thought we were at when
-	 * we decoded the last frame. */
-	mad_timer_t Apparent = mad->Timer;
-
-	/* Save the last frame's subband samples. */
-	mad_fixed_t cpy[2][36][32];
-	memcpy( cpy, mad->Frame.sbsample, sizeof(mad->Frame.sbsample) );
-
-	/* Do a real rewind. */
-	MADLIB_rewind();
-
-	/* Search for the frame we just saved. */
-	mad_timer_t Actual = mad_timer_zero;
-	bool found = false;
-	for( i = 0; i < 10; ++i )
-	{
-		int ret = do_mad_frame_decode();
-		if( ret == 0 )
-		{
-			SetError("Unexpected EOF");
-			return false;
-		}
-		if( ret == -1 )
-			return false; /* it set the error */
-
-		if( !memcmp( cpy, mad->Frame.sbsample, sizeof(mad->Frame.sbsample) ) )
-		{
-			/* Found it.  Record that frame's real timestamp. */
-			Actual = mad->Timer;
-			found = true;
-			break;
-		}
-	}
-
-	if( found )
-	{
-		/* Save the offset, so timestamps can be corrected. */
-		mad_timer_t Offset = Apparent;
-		mad_timer_sub( &Offset, Actual );
-		this->OffsetFix = mad_timer_count( Offset, (mad_units) 1000) / 1000.0f;
-	}
-	else
-		this->OffsetFix = 0;
-
-	MADLIB_rewind();
-	return true;
-}
 
 void RageSoundReader_MP3::synth_output()
 {
@@ -726,10 +654,6 @@ SoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( CString filename_ 
 	 * the stream. */
 	synth_output();
 
-//	ret = FindOffsetFix();
-//	ASSERT( ret != -1 );
-	this->OffsetFix = 0;
-
     if(mad->length == -1)
     {
 		/* If vbr and !xing, this is just an estimate. */
@@ -755,7 +679,6 @@ SoundReader *RageSoundReader_MP3::Copy() const
 	ret->SampleRate = SampleRate;
 	ret->mad->framelength = mad->framelength;
 	ret->Channels = Channels;
-	ret->OffsetFix = OffsetFix;
 	ret->mad->length = mad->length;
 
 //	int n = ret->do_mad_frame_decode();
@@ -1145,8 +1068,18 @@ void xing_init(struct xing *xing)
 int xing_parse(struct xing *xing, struct mad_bitptr ptr, unsigned int bitlen)
 {
 	const unsigned XING_MAGIC = (('X' << 24) | ('i' << 16) | ('n' << 8) | 'g');
-	if (bitlen < 64 || mad_bit_read(&ptr, 32) != XING_MAGIC)
-	goto fail;
+	const unsigned INFO_MAGIC = (('I' << 24) | ('n' << 16) | ('f' << 8) | 'o');
+	unsigned data;
+	if (bitlen < 64)
+		goto fail;
+	data = mad_bit_read(&ptr, 32);
+
+	if( data == XING_MAGIC )
+		xing->type = xing::XING;
+	else if( data == INFO_MAGIC )
+		xing->type = xing::INFO;
+	else
+		goto fail;
 
 	xing->flags = mad_bit_read(&ptr, 32);
 	bitlen -= 64;
