@@ -363,7 +363,7 @@ MusicWheel::MusicWheel()
 		{
 			/* XXX: Do groups get added if they're empty?
 			 * This will select songs we can't use; we want the first song
-			 * that's actually visible.  Should we select out wheel data? 
+			 * that's actually visible.  Should we select out of wheel data? 
 			 * -glenn */
 			CArray<Song*, Song*> arraySongs;
 			SONGMAN->GetSongsInGroup( asGroupNames[0], arraySongs );
@@ -578,8 +578,8 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 		if( pSong == NULL )
 			continue;
 
-		WheelItemData& WID = arrayWheelItemDatas[i];
 		bool bIsEasy = pSong->IsEasy( GAMESTATE->GetCurrentStyleDef()->m_NotesTypes[0] ); 
+		WheelItemData& WID = arrayWheelItemDatas[i];
 		WID.m_IconType = bIsEasy ? MusicStatusDisplay::easy : MusicStatusDisplay::none;
 	}
 
