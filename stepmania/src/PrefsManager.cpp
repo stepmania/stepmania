@@ -74,7 +74,7 @@ PrefsManager::PrefsManager()
 	m_bArcadeOptionsNavigation = false;
 	m_bSoloSingle = false;
 	m_bDelayedTextureDelete = true;
-	m_bDelayedScreenLoad = true; /* temporary */ // false;
+	m_bDelayedScreenLoad = false;
 	m_MusicWheelUsesSections = ALWAYS;
 	m_iMusicWheelSwitchSpeed = 10;
 	m_bEasterEggs = true;
