@@ -58,6 +58,9 @@ RageFileDriverDirect::RageFileDriverDirect( CString root_ ):
 {
 	if( root.Right(1) != "/" )
 		root += '/';
+
+	/* If the root path doesn't exist, create it. */
+	CreateDirectories( root );
 }
 
 
