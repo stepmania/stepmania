@@ -35,7 +35,6 @@ struct __declspec(uuid("{71771540-2017-11cf-ae26-0020afd79767}")) CLSID_TextureR
 //-----------------------------------------------------------------------------
 #include "RageMovieTexture.h"
 #include "dxerr8.h"
-#include "DXUtil.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
