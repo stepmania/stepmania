@@ -93,7 +93,7 @@ void FileSet::LoadFromDir(const CString &dir)
 		
 		File f;
 		f.name=ent->d_name;
-		f.dir = IsADirectory(ent->d_name);
+    f.dir = ::IsADirectory(ent->d_name);
 
 		files.insert(f);
 	}
