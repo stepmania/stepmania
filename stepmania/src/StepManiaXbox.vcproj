@@ -1087,6 +1087,9 @@ cl                                                                              
 				<File
 					RelativePath="arch\arch_platform.h">
 				</File>
+				<File
+					RelativePath="arch\arch_xbox.h">
+				</File>
 				<Filter
 					Name="LoadingWindow"
 					Filter="">
@@ -1129,10 +1132,7 @@ cl                                                                              
 						RelativePath="arch\ArchHooks\ArchHooks.h">
 					</File>
 					<File
-						RelativePath="arch\ArchHooks\ArchHooks_Win32.cpp">
-					</File>
-					<File
-						RelativePath="arch\ArchHooks\ArchHooks_Win32.h">
+						RelativePath="arch\ArchHooks\ArchHooks_Null.h">
 					</File>
 				</Filter>
 				<Filter
@@ -1159,12 +1159,6 @@ cl                                                                              
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture.h">
-					</File>
-					<File
-						RelativePath="arch\MovieTexture\MovieTexture_FFMpeg.cpp">
-					</File>
-					<File
-						RelativePath="arch\MovieTexture\MovieTexture_FFMpeg.h">
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture_Null.cpp">
@@ -1201,12 +1195,6 @@ cl                                                                              
 					<File
 						RelativePath="arch\Lights\LightsDriver_SystemMessage.h">
 					</File>
-					<File
-						RelativePath="arch\Lights\LightsDriver_Win32Parallel.cpp">
-					</File>
-					<File
-						RelativePath="arch\Lights\LightsDriver_Win32Parallel.h">
-					</File>
 				</Filter>
 				<Filter
 					Name="MemoryCard"
@@ -1229,12 +1217,6 @@ cl                                                                              
 					</File>
 					<File
 						RelativePath="arch\Dialog\DialogDriver.h">
-					</File>
-					<File
-						RelativePath="arch\Dialog\DialogDriver_Win32.cpp">
-					</File>
-					<File
-						RelativePath="arch\Dialog\DialogDriver_Win32.h">
 					</File>
 				</Filter>
 				<Filter

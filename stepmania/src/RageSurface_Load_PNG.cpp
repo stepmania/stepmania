@@ -13,6 +13,10 @@
 #include <png.h>
 #endif
 
+#if defined(_XBOX)
+#  include <Malloc.h>	// for alloca
+#endif
+
 #ifndef png_jmpbuf
 #define png_jmpbuf(png) ((png)->jmpbuf)
 #endif
