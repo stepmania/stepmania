@@ -67,7 +67,7 @@ ScoreKeeperRave.cpp ScoreKeeperRave.h Song.cpp song.h SongCacheIndex.cpp SongCac
 SongOptions.cpp SongOptions.h SongUtil.cpp SongUtil.h StageStats.cpp StageStats.h Steps.cpp Steps.h \
 StepsUtil.cpp StepsUtil.h Style.h StyleDef.cpp StyleDef.h \
 StyleInput.h TimeConstants.cpp TimeConstants.h TimingData.cpp TimingData.h \
-Trail.cpp Trail.h TitleSubstitution.cpp TitleSubstitution.h
+Trail.cpp Trail.h TrailUtil.cpp TrailUtil.h TitleSubstitution.cpp TitleSubstitution.h
 
 FileTypes = IniFile.cpp IniFile.h \
 		MsdFile.cpp MsdFile.h \
