@@ -1,6 +1,6 @@
 bin_PROGRAMS = stepmania
 if BUILD_TESTS
-bin_PROGRAMS += test_audio_readers test_file_readers test_timing_data
+bin_PROGRAMS += test_audio_readers test_file_readers test_timing_data test_threads
 endif
 
 AM_LDFLAGS =
@@ -133,7 +133,10 @@ ArchUtils = archutils/Unix/SignalHandler.cpp archutils/Unix/SignalHandler.h \
 
 if USE_CRASH_HANDLER
 ArchUtils += archutils/Unix/CrashHandler.cpp archutils/Unix/CrashHandler.h \
-	     archutils/Unix/CrashHandlerChild.cpp archutils/Unix/CrashHandlerInternal.h
+	     archutils/Unix/CrashHandlerChild.cpp archutils/Unix/CrashHandlerInternal.h \
+	     archutils/Unix/Backtrace.cpp archutils/Unix/Backtrace.h \
+	     archutils/Unix/BacktraceNames.cpp archutils/Unix/BacktraceNames.h \
+	     archutils/Unix/LinuxThreadHelpers.cpp archutils/Unix/LinuxThreadHelpers.h
 endif
 
 Arch = $(LoadingWindow) $(Sound) $(ArchHooks) $(InputHandler) $(MovieTexture) $(Lights) $(MemoryCard) $(LowLevelWindow) $(ArchUtils) \
@@ -248,6 +251,7 @@ all_test_SOURCES = \
 		PrefsManager.cpp PrefsManager.h \
 		arch/ArchHooks/ArchHooks.cpp arch/ArchHooks/ArchHooks.h \
 		IniFile.cpp IniFile.h \
+		$(ArchUtils) \
 		$(PCRE)
 
 test_audio_readers_SOURCES = $(all_test_SOURCES) \
@@ -273,6 +277,9 @@ test_file_readers_LDADD = \
 
 test_timing_data_SOURCES = $(all_test_SOURCES) \
 		tests/test_timing_data.cpp TimingData.cpp TimingData.h
+
+test_threads_SOURCES = $(all_test_SOURCES) \
+		tests/test_threads.cpp
 
 INCLUDES = $(SDL_CFLAGS) $(LUA_CFLAGS)
 
