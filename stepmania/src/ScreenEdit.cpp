@@ -755,11 +755,13 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 					{
 						fScrollSpeed = 2;
 						m_soundMarker.Play();
+						GAMESTATE->StoreSelectedOptions();
 					}
 					else if( fScrollSpeed == 2 )
 					{
 						fScrollSpeed = 1;
 						m_soundMarker.Play();
+						GAMESTATE->StoreSelectedOptions();
 					}
 					break;
 				}
@@ -769,11 +771,13 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 					{
 						fScrollSpeed = 4;
 						m_soundMarker.Play();
+						GAMESTATE->StoreSelectedOptions();
 					}
 					else if( fScrollSpeed == 1 )
 					{
 						fScrollSpeed = 2;
 						m_soundMarker.Play();
+						GAMESTATE->StoreSelectedOptions();
 					}
 					break;
 				}
