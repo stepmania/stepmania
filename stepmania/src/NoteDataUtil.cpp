@@ -346,8 +346,8 @@ void NoteDataUtil::LoadOverlapped( const NoteData &input, NoteData &out, int iNe
 
 	const int ShiftThreshold = BeatToNoteRow(1);
 
-	const int iLastRow = in.GetMaxRow();
-	for( int row = 0; row < iLastRow; ++row )
+	const int iNumRows = in.GetNumRows();
+	for( int row = 0; row < iNumRows; ++row )
 	{
 		for ( int i = 0; i < in.GetNumTracks(); i++ )
 		{
@@ -393,7 +393,7 @@ void NoteDataUtil::LoadTransformedLights( const NoteData &in, NoteData &out, int
 	out.Config(in);
 	out.SetNumTracks( iNewNumTracks );
 
-	for( int r=0; r < Original.GetMaxRow(); ++r )
+	for( int r=0; r < Original.GetNumRows(); ++r )
 	{
 		if( Original.IsRowEmpty( r ) )
 			continue;
@@ -775,14 +775,14 @@ void NoteDataUtil::Turn( NoteData &in, StepsType st, TrackMapping tt, float fSta
 	GetTrackMapping( st, tt, in.GetNumTracks(), iTakeFromTrack );
 
 	if( fEndBeat == -1 )
-		fEndBeat = in.GetMaxBeat();
+		fEndBeat = in.GetNumBeats();
 
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
 	/* Clamp to known-good ranges. */
 	iStartIndex = max( iStartIndex, 0 );
-	iEndIndex = min( iEndIndex, in.GetMaxRow()-1 );
+	iEndIndex = min( iEndIndex, in.GetNumRows()-1 );
 
 	/* XXX: We could do this without an extra temporary NoteData: calculate
 	 * a list of "swaps".  For example, the 4-track mapping 1 0 2 3 is swaps
@@ -1514,7 +1514,7 @@ void NoteDataUtil::FixImpossibleRows( NoteData &in, StepsType st )
 		return;
 
 	// each row must pass at least one valid mask
-	for( int r=0; r<=in.GetMaxRow(); r++ )
+	for( int r=0; r<in.GetNumRows(); r++ )
 	{
 		// only check rows with jumps
 		if( in.GetNumTapNonEmptyTracks(r) < 2 )

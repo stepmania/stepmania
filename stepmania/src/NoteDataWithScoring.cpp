@@ -24,7 +24,7 @@ int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float 
 	int iNumSuccessfulTapNotes = 0;
 
 	if(fEndBeat == -1)
-		fEndBeat = GetMaxBeat()+1;
+		fEndBeat = GetNumBeats()+1;
 
 	unsigned iStartIndex = BeatToNoteRow( fStartBeat );
 	unsigned iEndIndex = BeatToNoteRow( fEndBeat );
@@ -44,13 +44,13 @@ int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float 
 int NoteDataWithScoring::GetNumNWithScore( TapNoteScore tns, int MinTaps, const float fStartBeat, float fEndBeat ) const
 {
 	if( fEndBeat == -1 )
-		fEndBeat = GetMaxBeat();
+		fEndBeat = GetNumBeats();
 
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
 	iStartIndex = max( iStartIndex, 0 );
-	iEndIndex = min( iEndIndex, GetMaxRow()-1 );
+	iEndIndex = min( iEndIndex, GetNumRows()-1 );
 
 	int iNumSuccessfulDoubles = 0;
 	for( int i=iStartIndex; i<=iEndIndex; i++ )
@@ -80,7 +80,7 @@ int NoteDataWithScoring::GetNumHoldNotesWithScore( HoldNoteScore hns, const floa
 	int iNumSuccessfulHolds = 0;
 
 	if(fEndBeat == -1)
-		fEndBeat = GetMaxBeat();
+		fEndBeat = GetNumBeats();
 
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
@@ -99,13 +99,13 @@ int NoteDataWithScoring::GetNumHoldNotesWithScore( HoldNoteScore hns, const floa
 int NoteDataWithScoring::GetSuccessfulMines( float fStartBeat, float fEndBeat ) const
 {
 	if( fEndBeat == -1 )
-		fEndBeat = GetMaxBeat();
+		fEndBeat = GetNumBeats();
 
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
 	iStartIndex = max( iStartIndex, 0 );
-	iEndIndex = min( iEndIndex, GetMaxRow()-1 );
+	iEndIndex = min( iEndIndex, GetNumRows()-1 );
 
 	int iNumSuccessfulMinesNotes = 0;
 	for( int i=iStartIndex; i<=iEndIndex; i++ )
@@ -124,14 +124,14 @@ int NoteDataWithScoring::GetSuccessfulMines( float fStartBeat, float fEndBeat ) 
 int NoteDataWithScoring::GetSuccessfulHands( float fStartBeat, float fEndBeat ) const
 {
 	if( fEndBeat == -1 )
-		fEndBeat = GetMaxBeat();
+		fEndBeat = GetNumBeats();
 
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
 	/* Clamp to known-good ranges. */
 	iStartIndex = max( iStartIndex, 0 );
-	iEndIndex = min( iEndIndex, GetMaxRow()-1 );
+	iEndIndex = min( iEndIndex, GetNumRows()-1 );
 
 	int iNum = 0;
 	for( int i=iStartIndex; i<=iEndIndex; i++ )

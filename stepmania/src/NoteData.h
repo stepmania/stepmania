@@ -49,7 +49,7 @@ public:
 	void ReserveRows( int row );
 
 	/* GetTapNote is called a lot.  This one doesn't do any bounds checking,
-	 * which is much faster.  Be sure that 0 <= row < GetMaxRow(). */
+	 * which is much faster.  Be sure that 0 <= row < GetNumRows(). */
 	inline TapNote GetTapNoteX(unsigned track, int row) const
 	{
 		return m_TapNotes[track][row];
@@ -100,10 +100,10 @@ public:
 	//
 	// statistics
 	//
-	/* Return the highest beat/row that might contain notes.  (Use GetLastBeat if you need
-	 * accuracy.) */
-	float GetMaxBeat() const { return NoteRowToBeat(GetMaxRow()); }
-	int GetMaxRow() const { return int(m_TapNotes[0].size()); }
+	/* Return the number of beats/rows that might contain notes.  Use 
+	 * GetLast* if you need to know the location of the last note. */
+	float GetNumBeats() const { return NoteRowToBeat(GetNumRows()); }
+	int GetNumRows() const { return int(m_TapNotes[0].size()); }
 
 	float GetFirstBeat() const;	// return the beat number of the first note
 	int GetFirstRow() const;

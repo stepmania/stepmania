@@ -473,7 +473,7 @@ void PlayerMinus::ApplyWaitingTransforms()
 
 		float fStartBeat, fEndBeat;
 		mod.GetAttackBeats( GAMESTATE->m_pCurSong, m_PlayerNumber, fStartBeat, fEndBeat );
-		fEndBeat = min( fEndBeat, GetMaxBeat() );
+		fEndBeat = min( fEndBeat, GetNumBeats() );
 
 		LOG->Trace( "Applying transform '%s' from %f to %f to '%s'", mod.sModifier.c_str(), fStartBeat, fEndBeat,
 			GAMESTATE->m_pCurSong->GetTranslitMainTitle().c_str() );
