@@ -128,6 +128,7 @@ void BGAnimationLayer::LoadFromMovie( CString sMoviePath )
 	Sprite* pSprite = new Sprite;
 	pSprite->LoadBG( sMoviePath );
 	pSprite->StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+	/* XXX: Handle this within the movie decoder, not here. (already done in MovieTexture_AVCodec) */
 	pSprite->GetTexture()->Play();
 	SDL_Delay( 50 );	// decode a frame so we don't see a black flash at the beginning
 	pSprite->GetTexture()->Pause();
