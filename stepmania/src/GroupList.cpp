@@ -116,24 +116,15 @@ void GroupList::SetSelection( unsigned sel )
 {
 	BeforeChange();
 
-	if( sel == m_iSelection ) ;
-	else if( sel == m_iSelection+1 ) {
-		if( m_iSelection >= MAX_GROUPS_ONSCREEN/2 ) 
-			m_iTop++;
-	} else if( sel == m_iSelection-1 ) {
-		if(m_iTop && m_iSelection < m_textLabels.size() - MAX_GROUPS_ONSCREEN/2)
-			m_iTop--;
-	} else {
-		/* We're jumping somewhere else; just put the top somewhere
-		 * reasonable. */
-		if(sel >= MAX_GROUPS_ONSCREEN/2)
-			m_iTop = sel - MAX_GROUPS_ONSCREEN/2;
-		else
-			m_iTop = 0;
-	}
-
 	m_iSelection=sel;
-	m_iTop = clamp( m_iTop, 0u, m_textLabels.size()-MAX_GROUPS_ONSCREEN );
+
+	if( m_textLabels.size() <= MAX_GROUPS_ONSCREEN ||
+		  sel <= MAX_GROUPS_ONSCREEN/2 )
+		m_iTop = 0;
+	else if ( sel >= m_textLabels.size() - MAX_GROUPS_ONSCREEN/2 )
+		m_iTop = m_textLabels.size() - MAX_GROUPS_ONSCREEN;
+	else
+		m_iTop = sel - MAX_GROUPS_ONSCREEN/2;
 
 	/* The current selection must always be visible. */
 	ASSERT( m_iTop <= m_iSelection );
