@@ -44,7 +44,7 @@ public:
 
 	/* Return the note at the given track and row.  Row may be out of
 	 * range; pretend the song goes on with TAP_EMPTYs indefinitely. */
-	inline TapNote GetTapNote(unsigned track, int row) const
+	inline const TapNote &GetTapNote(unsigned track, int row) const
 	{
 		return GetTapNoteX( track, row );
 	}
@@ -52,7 +52,7 @@ public:
 
 	/* GetTapNote is called a lot.  This one doesn't do any bounds checking,
 	 * which is much faster.  Be sure that 0 <= row < GetNumRows(). */
-	inline TapNote GetTapNoteX(unsigned track, int row) const
+	inline const TapNote &GetTapNoteX(unsigned track, int row) const
 	{
 		const TrackMap &mapTrack = m_TapNotes[track];
 		TrackMap::const_iterator iter = mapTrack.find( row );
@@ -69,30 +69,32 @@ public:
 	bool GetNextTapNoteRowForAllTracks( int &rowInOut ) const;
 	
 	void MoveTapNoteTrack( int dest, int src );
-	void SetTapNote( int track, int row, TapNote tn );
+	void SetTapNote( int track, int row, const TapNote& tn );
 	
 	void ClearRange( int rowBegin, int rowEnd );
 	void ClearAll();
-	void CopyRange( const NoteData& from, int iFromIndexBegin, int iFromIndexEnd, int iToIndexBegin = 0 );
+	void CopyRange( const NoteData& from, int rowFromBegin, int rowFromEnd, int rowToBegin = 0 );
 	void CopyAll( const NoteData& from );
 
-	bool IsRowEmpty( int index ) const;
-	bool IsRangeEmpty( int track, int iIndexBegin, int iIndexEnd ) const;
-	int GetNumTapNonEmptyTracks( int index ) const;
-	void GetTapNonEmptyTracks( int index, set<int>& addTo ) const;
-	int GetFirstNonEmptyTrack( int index ) const;
-	int GetNumTracksWithTap( int index ) const;
-	int GetNumTracksWithTapOrHoldHead( int index ) const;
-	int GetFirstTrackWithTap( int index ) const;
-	int GetFirstTrackWithTapOrHoldHead( int index ) const;
+	bool IsRowEmpty( int row ) const;
+	bool IsRangeEmpty( int track, int rowBegin, int rowEnd ) const;
+	int GetNumTapNonEmptyTracks( int row ) const;
+	void GetTapNonEmptyTracks( int row, set<int>& addTo ) const;
+	bool GetTapFirstNonEmptyTrack( int row, int &iNonEmptyTrackOut ) const;		// return false if no non-empty tracks at row
+	bool GetTapFirstEmptyTrack( int row, int &iEmptyTrackOut ) const;		// return false if no non-empty tracks at row
+	bool GetTapLastEmptyTrack( int row, int &iEmptyTrackOut ) const;		// return false if no empty tracks at row
+	int GetNumTracksWithTap( int row ) const;
+	int GetNumTracksWithTapOrHoldHead( int row ) const;
+	int GetFirstTrackWithTap( int row ) const;
+	int GetFirstTrackWithTapOrHoldHead( int row ) const;
 
-	inline bool IsThereATapAtRow( int index ) const
+	inline bool IsThereATapAtRow( int row ) const
 	{
-		return GetFirstTrackWithTap( index ) != -1;
+		return GetFirstTrackWithTap( row ) != -1;
 	}
-	inline bool IsThereATapOrHoldHeadAtRow( int index ) const
+	inline bool IsThereATapOrHoldHeadAtRow( int row ) const
 	{
-		return GetFirstTrackWithTapOrHoldHead( index ) != -1;
+		return GetFirstTrackWithTapOrHoldHead( row ) != -1;
 	}
 	void GetTracksHeldAtRow( int row, set<int>& addTo );
 	int GetNumTracksHeldAtRow( int row );

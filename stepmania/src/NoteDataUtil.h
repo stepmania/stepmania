@@ -32,20 +32,20 @@ namespace NoteDataUtil
 
 	void GetRadarValues( const NoteData &in, float fSongSeconds, RadarValues& out );
 
-	void RemoveHoldNotes( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
-	void RemoveSimultaneousNotes( NoteData &in, int iMaxSimultaneous, float fStartBeat = 0, float fEndBeat = 99999 );
-	void RemoveJumps( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
-	void RemoveHands( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
-	void RemoveQuads( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
-	void RemoveMines( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
+	void RemoveHoldNotes( NoteData &inout, float fStartBeat = 0, float fEndBeat = 99999 );
+	void RemoveSimultaneousNotes( NoteData &inout, int iMaxSimultaneous, float fStartBeat = 0, float fEndBeat = 99999 );
+	void RemoveJumps( NoteData &inout, float fStartBeat = 0, float fEndBeat = 99999 );
+	void RemoveHands( NoteData &inout, float fStartBeat = 0, float fEndBeat = 99999 );
+	void RemoveQuads( NoteData &inout, float fStartBeat = 0, float fEndBeat = 99999 );
+	void RemoveMines( NoteData &inout, float fStartBeat = 0, float fEndBeat = 99999 );
 	enum TrackMapping { left, right, mirror, shuffle, super_shuffle, stomp, NUM_TRACK_MAPPINGS };
-	void Turn( NoteData &in, StepsType st, TrackMapping tt, float fStartBeat = 0, float fEndBeat = -1 );
-	void Little( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
-	void Wide( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
-	void Big( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
-	void Quick( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
-	void BMRize( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
-	void Skippy( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Turn( NoteData &inout, StepsType st, TrackMapping tt, float fStartBeat = 0, float fEndBeat = -1 );
+	void Little( NoteData &inout, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Wide( NoteData &inout, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Big( NoteData &inout, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Quick( NoteData &inout, float fStartBeat = 0, float fEndBeat = 99999 );
+	void BMRize( NoteData &inout, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Skippy( NoteData &inout, float fStartBeat = 0, float fEndBeat = 99999 );
 	void InsertIntelligentTaps( 
 		NoteData &in, 
 		float fWindowSizeBeats, 
@@ -54,36 +54,36 @@ namespace NoteDataUtil
 		bool bSkippy, 
 		float fStartBeat = 0, 
 		float fEndBeat = 99999 );
-	void AddMines( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
-	void Echo( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
-	void Stomp( NoteData &in, StepsType st, float fStartBeat = 0, float fEndBeat = 99999 );
-	void Planted( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
-	void Floored( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
-	void Twister( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
-	void ConvertTapsToHolds( NoteData &in, int iSimultaneousHolds, float fStartBeat = 0, float fEndBeat = 99999 );
+	void AddMines( NoteData &inout, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Echo( NoteData &inout, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Stomp( NoteData &inout, StepsType st, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Planted( NoteData &inout, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Floored( NoteData &inout, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Twister( NoteData &inout, float fStartBeat = 0, float fEndBeat = 99999 );
+	void ConvertTapsToHolds( NoteData &inout, int iSimultaneousHolds, float fStartBeat = 0, float fEndBeat = 99999 );
 
 	// change all TAP_ADDITIONs to TAP_TAPs
-	void ConvertAdditionsToRegular( NoteData &in );
+	void ConvertAdditionsToRegular( NoteData &inout );
 
-	void Backwards( NoteData &in );
-	void SwapSides( NoteData &in );
-	void CopyLeftToRight( NoteData &in );
-	void CopyRightToLeft( NoteData &in );
-	void ClearLeft( NoteData &in );
-	void ClearRight( NoteData &in );
-	void CollapseToOne( NoteData &in );
-	void CollapseLeft( NoteData &in );
-	void ShiftLeft( NoteData &in );
-	void ShiftRight( NoteData &in );
+	void Backwards( NoteData &inout );
+	void SwapSides( NoteData &inout );
+	void CopyLeftToRight( NoteData &inout );
+	void CopyRightToLeft( NoteData &inout );
+	void ClearLeft( NoteData &inout );
+	void ClearRight( NoteData &inout );
+	void CollapseToOne( NoteData &inout );
+	void CollapseLeft( NoteData &inout );
+	void ShiftLeft( NoteData &inout );
+	void ShiftRight( NoteData &inout );
 
-	void SnapToNearestNoteType( NoteData &in, NoteType nt1, NoteType nt2, float fBeginBeat, float fEndBeat );
+	void SnapToNearestNoteType( NoteData &inout, NoteType nt1, NoteType nt2, float fBeginBeat, float fEndBeat );
 
-	inline void SnapToNearestNoteType( NoteData &in, NoteType nt, float fBeginBeat, float fEndBeat ) { SnapToNearestNoteType( in, nt, (NoteType)-1, fBeginBeat, fEndBeat ); }
+	inline void SnapToNearestNoteType( NoteData &inout, NoteType nt, float fBeginBeat, float fEndBeat ) { SnapToNearestNoteType( inout, nt, (NoteType)-1, fBeginBeat, fEndBeat ); }
 
-	void FixImpossibleRows( NoteData &in, StepsType st );
+	void FixImpossibleRows( NoteData &inout, StepsType st );
 
 	// True if no notes in row that aren't true in the mask
-	bool RowPassesValidMask( NoteData &in, int row, const bool bValidMask[] );
+	bool RowPassesValidMask( NoteData &inout, int row, const bool bValidMask[] );
 
 	void TransformNoteData( NoteData &nd, const AttackArray &aa, StepsType st, Song* pSong );
 	void TransformNoteData( NoteData &nd, const PlayerOptions &po, StepsType st, float fStartBeat = 0, float fEndBeat = 99999 );

@@ -53,7 +53,7 @@ struct TapNote
 		bKeysound = bKeysound_;
 		iKeysoundIndex = iKeysoundIndex_;
 	}
-	bool operator==( const TapNote &other )
+	bool operator==( const TapNote &other ) const
 	{
 #define COMPARE(x)	if(x!=other.x) return false;
 		COMPARE(type);
@@ -69,13 +69,13 @@ struct TapNote
 
 const unsigned MAX_NUM_ATTACKS = 2*2*2;	// 3 bits to hold the attack index currently
 
-extern TapNote TAP_EMPTY;				// '0'
-extern TapNote TAP_ORIGINAL_TAP;		// '1'
-extern TapNote TAP_ORIGINAL_HOLD_HEAD;	// '2'
-extern TapNote TAP_ORIGINAL_HOLD_TAIL;	// '3'
-extern TapNote TAP_ORIGINAL_HOLD;		// '4'
-extern TapNote TAP_ORIGINAL_MINE;		// 'M'
-extern TapNote TAP_ORIGINAL_ATTACK;		// 'A'
+extern TapNote TAP_EMPTY;					// '0'
+extern TapNote TAP_ORIGINAL_TAP;			// '1'
+extern TapNote TAP_ORIGINAL_HOLD_HEAD;		// '2'
+extern TapNote TAP_ORIGINAL_HOLD_TAIL;		// '3'
+extern TapNote TAP_ORIGINAL_HOLD;			// '4'
+extern TapNote TAP_ORIGINAL_MINE;			// 'M'
+extern TapNote TAP_ORIGINAL_ATTACK;			// 'A'
 extern TapNote TAP_ADDITION_TAP;
 extern TapNote TAP_ADDITION_MINE;
 

@@ -32,9 +32,9 @@ int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float 
 
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, i, iStartIndex, iEndIndex )
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, r, iStartIndex, iEndIndex )
 		{
-			if( GetTapNoteScore(t, i) >= tns )
+			if( GetTapNoteScore(t, r) >= tns )
 				iNumSuccessfulTapNotes++;
 		}
 	}

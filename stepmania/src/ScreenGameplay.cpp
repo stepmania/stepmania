@@ -827,7 +827,6 @@ void ScreenGameplay::SetupSong( PlayerNumber p, int iSongIndex )
 		m_pPrimaryScoreKeeper[p], 
 		m_pSecondaryScoreKeeper[p] );
 
-
 	// Put course options into effect.  Do this after Player::Load so
 	// that mods aren't double-applied.
 	GAMESTATE->m_ModsToApply[p].clear();
@@ -898,7 +897,6 @@ void ScreenGameplay::LoadNextSong()
 		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_IMMEDIATE;
 
 	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );
-
 
 	FOREACH_EnabledPlayer( p )
 	{
@@ -1273,7 +1271,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 		m_bZeroDeltaOnNextUpdate = false;
 	}
 	else
+	{
 		Screen::Update( fDeltaTime );
+	}
 
 	/* This happens if ScreenDemonstration::HandleScreenMessage sets a new screen when
 	 * PREFSMAN->m_bDelayedScreenLoad. */
@@ -1291,7 +1291,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 	//LOG->Trace( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
 
 	m_BeginnerHelper.Update(fDeltaTime);
-	
 
 	//
 	// update GameState HealthState
@@ -1524,8 +1523,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 		{
 			FOREACH_CabinetLight( cl )
 			{	
-				// Somehow, step data was getting majorly corrupted, therefor causing light
-				// signals to be sent at incorrect times where notes were not even present.
 				bool bBlink = (m_CabinetLightsNoteData.GetTapNote( cl, r ).type != TapNote::empty );
 				bBlinkCabinetLight[cl] |= bBlink;
 			}
