@@ -301,11 +301,10 @@ HRESULT CreateObjects( HWND hWnd )
 	GAMEINFO	= new GameInfo;
 	WM			= new WindowManager;
 
-
-    DXUtil_Timer( TIMER_START );    // Start the accurate timer
-
 	//WM->SetNewWindow( new WindowSandbox );
 	WM->SetNewWindow( new WindowTitleMenu );
+
+    DXUtil_Timer( TIMER_START );    // Start the accurate timer
 
 
 	return S_OK;

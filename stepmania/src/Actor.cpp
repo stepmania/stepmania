@@ -37,7 +37,7 @@ void Actor::Init()
 }
 
 
-void Actor::Update( const FLOAT &fDeltaTime )
+void Actor::Update( const float &fDeltaTime )
 {
 //	RageLog( "Actor::Update( %f )", fDeltaTime );
 
