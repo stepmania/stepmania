@@ -366,6 +366,10 @@ static void RunCrashHandler( const CrashData *crash )
 
 		int status = 0;
 		waitpid( childpid, &status, 0 );
+
+		/* We need to resume threads before continuing, or we may deadlock on _exit(). */
+		RageThread::ResumeAllThreads();
+
 		if( WIFSIGNALED(status) )
 			safe_print( fileno(stderr), "Crash handler child exited with signal ", itoa(WTERMSIG(status)), "\n", NULL);
 	}
