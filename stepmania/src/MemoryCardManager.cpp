@@ -1,7 +1,6 @@
 #include "global.h"
 #include "MemoryCardManager.h"
 #include "arch/MemoryCard/MemoryCardDriver.h"	// for UsbStorageDevice
-#include "arch/arch.h"
 #include "ScreenManager.h"
 #include "ThemeManager.h"
 #include "PrefsManager.h"

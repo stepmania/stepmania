@@ -3,7 +3,6 @@
 #include "GameState.h"
 #include "RageTimer.h"
 #include "arch/Lights/LightsDriver.h"
-#include "arch/arch.h"
 #include "RageUtil.h"
 #include "GameInput.h"	// for GameController
 #include "InputMapper.h"

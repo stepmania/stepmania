@@ -1127,6 +1127,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					Name="Lights"
 					Filter="">
 					<File
+						RelativePath="arch\Lights\LightsDriver.cpp">
+					</File>
+					<File
 						RelativePath="arch\Lights\LightsDriver.h">
 					</File>
 					<File
@@ -1148,6 +1151,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				<Filter
 					Name="MemoryCard"
 					Filter="">
+					<File
+						RelativePath="arch\MemoryCard\MemoryCardDriver.cpp">
+					</File>
 					<File
 						RelativePath="arch\MemoryCard\MemoryCardDriver.h">
 					</File>
