@@ -25,4 +25,6 @@ protected:
 	vector<Sprite*> Unlocks;
 	vector<BitmapText*> item; // scrolling text
 	vector<Sprite*> ItemIcons;  // icons for scrolling text
+
+	vector<int> LastUnlocks;  // used for "last few" method
 };
