@@ -10,7 +10,6 @@
 #include "RageUtil.h"
 #include "RageFile.h"
 #include "ScreenTextEntry.h"
-#include "ScreenNetSelectBase.h"	//Used for Quad Utility
 #include "ScreenManager.h"
 #include <cstdlib>
 
@@ -647,6 +646,7 @@ void ScreenPackages::HTTPUpdate()
 	{
 		m_iDownloaded = m_sBUFFER.length();
 	}
+
 	if ( ( m_iTotalBytes <= m_iDownloaded && m_iTotalBytes != -1 ) ||
 					//We have the full doc. (And we knew how big it was)
 		( m_iTotalBytes == -1 && 
@@ -678,53 +678,33 @@ void ScreenPackages::HTTPUpdate()
 	}
 }
 
-bool ScreenPackages::ParseHTTPAddress( const CString & URL, CString & Proto, CString & Server, int & Port, CString & sAddress )
+bool ScreenPackages::ParseHTTPAddress( const CString &URL, CString &sProto, CString &sServer, int &iPort, CString &sAddress )
 {
-	int i,j,k,l;
-
 	// [PROTO://]SERVER[:PORT][/URL]
 
-	if ( URL.length() == 0 )
+	Regex re(
+		"^([A-Z]+)://" // [0]: HTTP://
+		"([^/:]+)"     // [1]: a.b.com
+		"(:([0-9]+))?" // [2], [3]: :1234 (optional, default 80)
+		"(/(.*))?$");    // [4], [5]: /foo.html (optional)
+	vector<CString> asMatches;
+	if( !re.Compare( URL, asMatches ) )
 		return false;
+	ASSERT( asMatches.size() == 6 );
 
-	//PROTO
-	i = URL.Find( "://" );
-	if ( i >= 0 )
+	sProto = asMatches[0];
+	sServer = asMatches[1];
+	if( asMatches[3] != "" )
 	{
-		Proto = URL.substr( 0, i );
-		i+=3;
-	}
-	else
-		i = 0;
-	//SERVER
-	j = URL.Find( '/', i );
-	k = URL.Find( ':', i );
-	if ( ( k >= 0 ) && ( j >= 0 ) )
-		l = min ( j, k );
-	else if ( k >= 0 )
-		l = k;
-	else if ( j >= 0 )
-		l = j;
-	else
-		l = URL.length();		
-	Server = URL.substr( i, l-i );
-
-	//PORT
-	if ( URL.substr( l, 1 ).compare(":")==0 )
-	{
-		l++;
-		j = URL.Find( '/', l );
-		if ( j < 0 )
-			j = URL.length();
-		Port = atoi( URL.substr( l, j-l ).c_str() );
-		if (Port == 0)
+		iPort = atoi(asMatches[3]);
+		if( iPort == 0 )
 			return false;
-		l=j;
 	}
-	if (l<URL.length())
-		l++;
-	sAddress = URL.substr( l );
-	
+	else
+		iPort = 80;
+
+	sAddress = asMatches[5];
+
 	return true;
 }
 
