@@ -4,6 +4,10 @@
 #include "SignalHandler.h"
 #include "GetSysInfo.h"
 
+#if defined(LINUX)
+#include "archutils/Unix/LinuxThreadHelpers.h"
+#endif
+
 #include <signal.h>
 #include <cstdlib>
 #include <unistd.h>
@@ -117,17 +121,13 @@ void SignalHandler::OnClose(handler h)
 		bool bUseAltSigStack = true;
 
 #if defined(LINUX)
-		/* Ugh.  Signal stack + pthreads + Linux 2.4 = crash or hang. */
-		CString system;
-		int version;
-		GetKernel( system, version );
-
-		/* Allocate a separate signal stack.  This makes the crash handler work
-		 * if we run out of stack space. */
-		if( version < 20500 )
+		/* Linuxthreads (pre-NPTL) sigaltstack is broken. */
+		if( !UsingNPTL() )
 			bUseAltSigStack = false;
 #endif
 
+		/* Allocate a separate signal stack.  This makes the crash handler work
+		 * if we run out of stack space. */
 		const int AltStackSize = 1024*64;
 		void *p = NULL;
 		if( bUseAltSigStack )
