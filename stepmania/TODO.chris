@@ -2,6 +2,17 @@
 Fix
 /////////////////////////
 
+fix DWI writing
+
+fix weird colors in recording
+
+
+I noticed 2 things with Challenge Mode, one new to this release candidate, and one that I've noticed since I've started using SM in Beta 5.
+
+1) The timer at the end of the song jumps about 1:30 for a brief period of time. Perhaps it's adding the length of the next song. Once the next song starts however, it goes back the 1:30 or so back to what it was supposed to be. This is a new bug as far as I know.
+
+2) On Kidou II, the final song, Kakumei is on Reverse/Dark and stuff, but the green heavy logo doesn't move to the top of the screen like all the other reverse songs do. And especially when it's on dark, the bottom of the screen is partially blocked by this Heavy logo. I know if I pick Reverse in any other mode, the Heavy logo will move up below the health meter, but it doesn't for Challenge Mode, or at least this course anyway. This bug has been present since Beta 5.
+
 crowd cheer on AA or greater
 
 - ez2dancer missing graphic

@@ -70,7 +70,7 @@ CString NotesWriterDWI::NotesToDWIString( char cNoteCol1, char cNoteCol2, char c
 
 CString NotesWriterDWI::NotesToDWIString( char cNoteCol1, char cNoteCol2, char cNoteCol3, char cNoteCol4 )
 {
-	return NotesToDWIString( '0', cNoteCol1, cNoteCol2, cNoteCol3, cNoteCol4, '0' );
+	return NotesToDWIString( cNoteCol1, '0', cNoteCol2, cNoteCol3, '0', cNoteCol4 );
 }
 
 void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Notes &out, int start )
