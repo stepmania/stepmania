@@ -91,7 +91,7 @@ void FadingBanner::BeforeChange()
 void FadingBanner::LoadFromCachedBanner( const CString &path )
 {
 	/* If we're already on the given banner, don't fade again. */
-	if( m_Banner[GetBackIndex()].GetTexturePath() == path )
+	if( path != "" && m_Banner[GetBackIndex()].GetTexturePath() == path )
 		return;
 
 	/* If we're currently fading to the given banner, go through this again,
