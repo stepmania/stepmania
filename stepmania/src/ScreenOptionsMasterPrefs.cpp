@@ -214,6 +214,18 @@ MOVE( AutogenSteps,			PREFSMAN->m_bAutogenSteps );
 MOVE( AutogenGroupCourses,	PREFSMAN->m_bAutogenGroupCourses );
 MOVE( FastLoad,				PREFSMAN->m_bFastLoad );
 
+static void SaveStats( int &sel, bool ToSel, const CStringArray &choices )
+{
+	if( ToSel )
+	{
+		sel = (PREFSMAN->m_bWriteMachineStatsHtml)? 1:0;
+		sel |= (PREFSMAN->m_bWriteProfileStatsHtml)? 2:0;
+	} else {
+		PREFSMAN->m_bWriteMachineStatsHtml = !!(sel&1);
+		PREFSMAN->m_bWriteProfileStatsHtml = !!(sel&2);
+	}
+}
+
 /* Background options */
 MOVE( BackgroundMode,		PREFSMAN->m_BackgroundMode );
 MOVE( ShowDanger,			PREFSMAN->m_bShowDanger );
@@ -424,6 +436,7 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Autogen\nSteps",		AutogenSteps, "OFF","ON" ),
 	ConfOption( "Autogen\nGroup Courses", AutogenGroupCourses, "OFF","ON" ),
 	ConfOption( "Fast\nLoad",			  FastLoad,			   "OFF","ON" ),
+	ConfOption( "Save\nStats",			  SaveStats,			"OFF", "MACHINE", "PROFILE", "BOTH" ),
 
 	/* Background options */
 	ConfOption( "Background\nMode",		BackgroundMode,		"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES" ),
