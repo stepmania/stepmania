@@ -52,7 +52,8 @@ public:
 	bool			m_bHowToPlay, m_bShowDontDie, m_bShowSelectGroup;
 	bool			m_bArcadeOptionsNavigation;
 	bool			m_bCoinOpMode;
-	
+	bool			m_bMusicWheelUsesSections;
+
 	CStringArray m_asAdditionalSongFolders;
 	CString m_DWIPath;
 

@@ -498,6 +498,8 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 			if( bRoulette )
 				bUseSections = false;
 
+			if( !PREFSMAN->m_bMusicWheelUsesSections )
+				bUseSections = false;
 
 			if( bUseSections )
 			{
