@@ -84,6 +84,7 @@ PrefsManager::PrefsManager()
 	m_iMaxRegenComboAfterFail = 10;
 	m_iMaxRegenComboAfterMiss = 10;
 	m_bTwoPlayerRecovery = true;
+	m_bMercifulMines = true;
 	
 	m_iPercentScoreMarvelousWeight = 3;
 	m_iPercentScorePerfectWeight = 2;
@@ -311,6 +312,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "MaxRegenComboAfterFail",			m_iMaxRegenComboAfterFail );
 	ini.GetValue( "Options", "MaxRegenComboAfterMiss",			m_iMaxRegenComboAfterMiss );
 	ini.GetValue( "Options", "TwoPlayerRecovery",				m_bTwoPlayerRecovery );
+	ini.GetValue( "Options", "MercifulMines",					m_bMercifulMines );
 
 	ini.GetValue( "Options", "PercentScoreMarvelousWeight",		m_iPercentScoreMarvelousWeight );
 	ini.GetValue( "Options", "PercentScorePerfectWeight",		m_iPercentScorePerfectWeight );
@@ -494,6 +496,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "MaxRegenComboAfterFail",			m_iMaxRegenComboAfterFail );
 	ini.SetValue( "Options", "MaxRegenComboAfterMiss",			m_iMaxRegenComboAfterMiss );
 	ini.SetValue( "Options", "TwoPlayerRecovery",				m_bTwoPlayerRecovery );
+	ini.SetValue( "Options", "MercifulMines",					m_bMercifulMines );
 
 	ini.SetValue( "Options", "PercentScoreMarvelousWeight",		m_iPercentScoreMarvelousWeight );
 	ini.SetValue( "Options", "PercentScorePerfectWeight",		m_iPercentScorePerfectWeight );

@@ -456,6 +456,9 @@ void LifeMeterBar::ChangeLifeMine()
 		ASSERT(0);
 	}
 
+	if( PREFSMAN->m_bMercifulMines )
+		m_fLifePercentage *= m_fLifePercentage;
+
 	ChangeLife( fDeltaLife );
 }
 

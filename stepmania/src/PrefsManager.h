@@ -79,6 +79,7 @@ public:
 	int				m_iMaxRegenComboAfterFail;
 	int				m_iMaxRegenComboAfterMiss;
 	bool			m_bTwoPlayerRecovery;
+	bool			m_bMercifulMines;
 	int				m_iPercentScoreMarvelousWeight;
 	int				m_iPercentScorePerfectWeight;
 	int				m_iPercentScoreGreatWeight;
