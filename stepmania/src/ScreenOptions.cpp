@@ -23,6 +23,8 @@
 #include "ActorUtil.h"
 #include "ProfileManager.h"
 #include "song.h"
+#include "Course.h"
+#include "StyleDef.h"
 
 const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 
@@ -520,14 +522,59 @@ CString ScreenOptions::GetExplanationTitle( int iRow ) const
 	// HACK: tack the BPM onto the name of the speed line
 	if( sLineName.CompareNoCase("speed")==0 )
 	{
-		if( SHOW_BPM_IN_SPEED_TITLE && GAMESTATE->m_pCurSong )
+		if( SHOW_BPM_IN_SPEED_TITLE )
 		{
-			float fMinBpm, fMaxBpm;
-			GAMESTATE->m_pCurSong->GetDisplayBPM( fMinBpm, fMaxBpm );
-			if( fMinBpm == fMaxBpm )
-				sTitle += ssprintf( " (%.0f)", fMinBpm );
-			else
-				sTitle += ssprintf( " (%.0f-%.0f)", fMinBpm, fMaxBpm );
+			if( GAMESTATE->m_pCurSong )
+			{
+				float fMinBpm, fMaxBpm;
+				GAMESTATE->m_pCurSong->GetDisplayBPM( fMinBpm, fMaxBpm );
+				if( fMinBpm == fMaxBpm )
+					sTitle += ssprintf( " (%.0f)", fMinBpm );
+				else
+					sTitle += ssprintf( " (%.0f-%.0f)", fMinBpm, fMaxBpm );
+			}
+			else if( GAMESTATE->m_pCurCourse )
+			{
+				float fTotalMinBpm = -1, fTotalMaxBpm = -1;	// -1 == no marker
+				vector<Course::Info> ci;
+				GAMESTATE->m_pCurCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci );
+
+				ASSERT( ci.size() );
+
+				for( unsigned i = 0; i < ci.size(); ++i )
+				{
+					if( ci[i].Mystery )
+						continue;
+
+					Song *pSong = ci[i].pSong;
+					ASSERT( pSong );
+					switch( pSong->m_DisplayBPMType )
+					{
+					case Song::DISPLAY_ACTUAL:
+					case Song::DISPLAY_SPECIFIED:
+						{
+							float fMinBpm, fMaxBpm;
+							pSong->GetDisplayBPM( fMinBpm, fMaxBpm );
+							if( fTotalMinBpm == -1 )	fTotalMinBpm = fMinBpm;
+							else						fTotalMinBpm = min( fTotalMinBpm, fMinBpm );
+							if( fTotalMaxBpm == -1 )	fTotalMaxBpm = fMaxBpm;
+							else						fTotalMaxBpm = max( fTotalMaxBpm, fMaxBpm );
+						}
+						break;
+					case Song::DISPLAY_RANDOM:
+						break;
+					default:
+						ASSERT(0);
+					}
+				}
+
+				if( fTotalMinBpm == -1 || fTotalMaxBpm == -1 )
+					sTitle += ssprintf( " (???)", fTotalMinBpm );
+				else if( fTotalMinBpm == fTotalMaxBpm )
+					sTitle += ssprintf( " (%.0f)", fTotalMinBpm );
+				else
+					sTitle += ssprintf( " (%.0f-%.0f)", fTotalMinBpm, fTotalMaxBpm );
+			}
 		}
 	}
 
