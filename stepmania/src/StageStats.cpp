@@ -61,17 +61,10 @@ int StageStats::GetAverageMeter( PlayerNumber pn ) const
 
 	for( unsigned i=0; i<vpSongs.size(); i++ )
 	{
-		Song* pSong = vpSongs[i];
-		Steps* pSteps = vpSteps[pn][i];
-
-		// weight long and marathon songs
-		int iWeight = SongManager::GetNumStagesForSong( pSong );
-		int iMeter = pSteps->GetMeter();
-		
-		iTotalMeter += iMeter;
-		iTotalCount += iWeight;
+		const Steps* pSteps = vpSteps[pn][i];
+		iTotalMeter += pSteps->GetMeter();
 	}
-	return iTotalMeter / iTotalCount;	// round down
+	return iTotalMeter / vpSongs.size();	// round down
 }
 
 void StageStats::AddStats( const StageStats& other )
