@@ -767,10 +767,11 @@ void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, c
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 		return;
 
+	const DeviceInput& di =
 #if defined(XBOX)
-	DeviceInput di = TranslateInput(DeviceI, type);
+		TranslateInput(DeviceI, type);
 #else
-	DeviceInput& di = DeviceI;
+		DeviceI;
 #endif
 
 	switch( m_EditMode )
