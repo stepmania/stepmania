@@ -51,7 +51,7 @@ CString GradeToOldString( Grade g );	// "AAA", "B", etc for backward compatibili
 CString GradeToThemedString( Grade g );
 Grade StringToGrade( const CString &s );
 #define FOREACH_Grade( g ) FOREACH_ENUM( Grade, NUM_GRADES, g )
-#define FOREACH_UsedGrade( g ) FOREACH_ENUM( Grade, PREFSMAN->m_iNumGradeTiersUsed, g )
+#define FOREACH_UsedGrade( g ) FOREACH_ENUM( Grade, THEME->GetMetricI("PlayerStageStats","NumGradeTiersUsed"), g )
 
 #endif
 

@@ -168,17 +168,6 @@ void PrefsManager::Init()
 	m_iGradeWeightHitMine = -8;
 	m_iGradeWeightOK = 6;
 	m_iGradeWeightNG = 0;
-	m_iNumGradeTiersUsed = 7;
-	for( int i=0; i<NUM_GRADE_TIERS; i++ )
-		m_fGradePercent[i] = 0;
-	m_fGradePercent[GRADE_TIER_1] = 1.0f;
-	m_fGradePercent[GRADE_TIER_2] = 1.0f;
-	m_fGradePercent[GRADE_TIER_3] = 0.93f;	// AA
-	m_fGradePercent[GRADE_TIER_4] = 0.80f;	// A
-	m_fGradePercent[GRADE_TIER_5] = 0.65f;	// B
-	m_fGradePercent[GRADE_TIER_6] = 0.45f;	// C
-	m_fGradePercent[GRADE_TIER_7] = -99999;	// D
-	m_bGradeTier02IsAllPerfects = true;
 	
 	m_fSuperMeterPercentChangeMarvelous =	+0.05f;
 	m_fSuperMeterPercentChangePerfect =		+0.04f;
@@ -416,15 +405,6 @@ void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
 	ini.GetValue( "Options", "GradeWeightOK",					m_iGradeWeightOK );
 	ini.GetValue( "Options", "GradeWeightNG",					m_iGradeWeightNG );
 
-	ini.GetValue( "Options", "NumGradeTiersUsed",				m_iNumGradeTiersUsed );
-	for( int g=0; g<NUM_GRADE_TIERS; g++ )
-	{
-		Grade grade = (Grade)g;
-		CString s = GradeToString( grade );
-		ini.GetValue( "Options", "GradePercent"+s,				m_fGradePercent[g] );
-	}
-	ini.GetValue( "Options", "GradeTier02IsAllPerfects",		m_bGradeTier02IsAllPerfects );
-
 	ini.GetValue( "Options", "SuperMeterPercentChangeMarvelous",m_fSuperMeterPercentChangeMarvelous );
 	ini.GetValue( "Options", "SuperMeterPercentChangePerfect",	m_fSuperMeterPercentChangePerfect );
 	ini.GetValue( "Options", "SuperMeterPercentChangeGreat",	m_fSuperMeterPercentChangeGreat );
@@ -644,15 +624,6 @@ void PrefsManager::SaveGlobalPrefsToIni( IniFile &ini ) const
 	ini.SetValue( "Options", "GradeWeightOK",					m_iGradeWeightOK );
 	ini.SetValue( "Options", "GradeWeightNG",					m_iGradeWeightNG );
 	
-	ini.SetValue( "Options", "NumGradeTiersUsed",				m_iNumGradeTiersUsed );
-	for( int g=0; g<NUM_GRADE_TIERS; g++ )
-	{
-		Grade grade = (Grade)g;
-		CString s = GradeToString( grade );
-		ini.SetValue( "Options", "GradePercent"+s,			m_fGradePercent[g] );
-	}
-	ini.SetValue( "Options", "GradeTier02IsAllPerfects",		m_bGradeTier02IsAllPerfects );
-
 	ini.SetValue( "Options", "SuperMeterPercentChangeMarvelous",m_fSuperMeterPercentChangeMarvelous );
 	ini.SetValue( "Options", "SuperMeterPercentChangePerfect",	m_fSuperMeterPercentChangePerfect );
 	ini.SetValue( "Options", "SuperMeterPercentChangeGreat",	m_fSuperMeterPercentChangeGreat );

@@ -2,7 +2,11 @@
 #include "PlayerStageStats.h"
 #include "RageLog.h"
 #include "PrefsManager.h"
+#include "ThemeManager.h"
 #include "Foreach.h"
+
+#define GRADE_PERCENT_TIER(i)			THEME->GetMetricF("PlayerStageStats",ssprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
+#define GRADE_TIER_02_IS_ALL_PERFECTS	THEME->GetMetricB("PlayerStageStats","GradeTier02IsAllPerfects")
 
 void PlayerStageStats::Init()
 {
@@ -144,15 +148,15 @@ Grade PlayerStageStats::GetGrade() const
 
 	FOREACH_Grade(g)
 	{
-		if( fPercent >= PREFSMAN->m_fGradePercent[g] )
+		if( fPercent >= GRADE_PERCENT_TIER(g) )
 		{
 			grade = g;
 			break;
 		}
 	}
 
-	LOG->Trace( "GetGrade: Grade: %s, %i", GradeToString(grade).c_str(), PREFSMAN->m_bGradeTier02IsAllPerfects );
-	if( PREFSMAN->m_bGradeTier02IsAllPerfects )
+	LOG->Trace( "GetGrade: Grade: %s, %i", GradeToString(grade).c_str(), GRADE_TIER_02_IS_ALL_PERFECTS );
+	if( GRADE_TIER_02_IS_ALL_PERFECTS )
 	{
 		if(	iTapNoteScores[TNS_MARVELOUS] > 0 &&
 			iTapNoteScores[TNS_PERFECT] == 0 &&
