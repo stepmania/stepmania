@@ -31,7 +31,6 @@
 #define NUM_CHOICES				THEME->GetMetricI(m_sName,"NumChoices")
 #define CHOICE( choice )		THEME->GetMetric (m_sName,ssprintf("Choice%d",choice+1))
 #define HELP_TEXT				THEME->GetMetric (m_sName,"HelpText")
-#define TIMER_SECONDS			THEME->GetMetricI(m_sName,"TimerSeconds")
 #define NEXT_SCREEN( choice )	THEME->GetMetric (m_sName,ssprintf("NextScreen%d",choice+1))
 
 ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
