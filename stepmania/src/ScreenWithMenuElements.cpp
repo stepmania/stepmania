@@ -11,7 +11,7 @@
 #include "GameSoundManager.h"
 #include "AnnouncerManager.h"
 
-#define TIMER_SECONDS			THEME->GetMetricI(m_sName,"TimerSeconds")
+#define TIMER_SECONDS			THEME->GetMetricF(m_sName,"TimerSeconds")
 #define TIMER_STEALTH			THEME->GetMetricB(m_sName,"TimerStealth")
 #define STYLE_ICON				THEME->GetMetricB(m_sName,"StyleIcon")
 #define MEMORY_CARD_ICONS		THEME->GetMetricB(m_sName,"MemoryCardIcons")

@@ -15,8 +15,8 @@ static const ThemeMetric<int>	WARNING_BEEP_START	("MenuTimer","WarningBeepStart"
 #define		WARNING_COMMAND(i)	THEME->GetMetricA	("MenuTimer", ssprintf("WarningCommand%i",i))
 static const ThemeMetric<apActorCommands> ON_COMMAND	("MenuTimer","OnCommand");
 
-static const int TIMER_SECONDS = 99;
-static const int MAX_STALL_SECONDS = 30;
+static const float TIMER_PAUSE_SECONDS = 99;
+static const float MAX_STALL_SECONDS = 30;
 
 MenuTimer::MenuTimer()
 {
@@ -34,7 +34,7 @@ MenuTimer::MenuTimer()
 	this->AddChild( &m_textDigit1 );
 	this->AddChild( &m_textDigit2 );
 
-	SetSeconds( TIMER_SECONDS );
+	SetSeconds( TIMER_PAUSE_SECONDS );
 
 	m_soundBeep.Load( THEME->GetPathS("MenuTimer","tick") );
 }
@@ -132,15 +132,15 @@ void MenuTimer::Stall()
 	m_fStallSecondsLeft -= ToAdd;
 }
 
-void MenuTimer::SetSeconds( int iSeconds )
+void MenuTimer::SetSeconds( float fSeconds )
 {
-	m_fSecondsLeft = (float)iSeconds;
+	m_fSecondsLeft = fSeconds;
 	CLAMP( m_fSecondsLeft, 0, 99 );
 
 	m_textDigit1.RunCommands( ON_COMMAND );
 	m_textDigit2.RunCommands( ON_COMMAND );
 
-	SetText( iSeconds );
+	SetText( (int)fSeconds );
 }
 
 void MenuTimer::Start()

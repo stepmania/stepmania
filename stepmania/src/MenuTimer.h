@@ -17,7 +17,7 @@ public:
 	
 	virtual void Update( float fDeltaTime ); 
 
-	void SetSeconds( int iTimerSeconds );
+	void SetSeconds( float fSeconds );
 	void Start();		// resume countdown from paused
 	void Pause();		// don't count down
 	void Stop();		// set to "00" and pause
