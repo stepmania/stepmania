@@ -241,7 +241,7 @@ void Steps::DeAutogen()
 	Compress();
 }
 
-void Steps::AutogenFrom( Steps *parent_, StepsType ntTo )
+void Steps::AutogenFrom( const Steps *parent_, StepsType ntTo )
 {
 	parent = parent_;
 	m_StepsType = ntTo;

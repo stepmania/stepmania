@@ -25,7 +25,7 @@ public:
 	~Steps();
 
 	// initializers
-	void AutogenFrom( Steps *parent, StepsType ntTo );
+	void AutogenFrom( const Steps *parent, StepsType ntTo );
 	void CopyFrom( Steps* pSource, StepsType ntTo );
 	void CreateBlank( StepsType ntTo );
 
