@@ -14,7 +14,7 @@
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 #include "Grade.h"
-struct Notes;
+class Notes;
 class StyleDef;
 class NotesLoader;
 class LyricsLoader;

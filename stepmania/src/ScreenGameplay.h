@@ -84,9 +84,9 @@ protected:
 		STATE_OUTRO,	// not allowed to press Back
 		NUM_DANCING_STATES
 	} m_DancingState;
-	vector<Song*>		m_apCourseSongs;		// used only in a GameModes with courses
-	vector<Notes*>		m_apCourseNotes;		// used only in a GameModes with courses
-	CStringArray		m_asCourseModifiers;	// used only in a GameModes with courses
+	vector<Song*>		m_apSongsQueue;					// size may be >1 if playing a course
+	vector<Notes*>		m_apNotesQueue[NUM_PLAYERS];	// size may be >1 if playing a course
+	CStringArray		m_asModifiersQueue[NUM_PLAYERS];// size may be >1 if playing a course
 
 	bool				m_bChangedOffsetOrBPM;
 	float				m_fTimeLeftBeforeDancingComment;	// this counter is only running while STATE_DANCING

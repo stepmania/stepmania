@@ -132,63 +132,41 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	GAMESTATE->m_CurStageStats = StageStats();	// clear values
 
 
+	//
+	// fill in m_apSongsQueue, m_apNotesQueue, m_asModifiersQueue
+	//
+	if( GAMESTATE->IsCourseMode() )
+	{
+		Course* pCourse = GAMESTATE->m_pCurCourse;
+		pCourse->GetStageInfo( m_apSongsQueue, m_apNotesQueue[0], m_asModifiersQueue[0], GAMESTATE->GetCurrentStyleDef()->m_NotesType, false );
+		for( int p=1; p<NUM_PLAYERS; p++ )
+		{
+			m_apNotesQueue[p] = m_apNotesQueue[0];
+			m_asModifiersQueue[p] = m_asModifiersQueue[0];
+		}
+	}
+	else
+	{
+		m_apSongsQueue.push_back( GAMESTATE->m_pCurSong );
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			m_apNotesQueue[p].push_back( GAMESTATE->m_pCurNotes[p] );
+			m_asModifiersQueue[p].push_back( "" );
+		}
+	}
+
+	
+	//
+	// Init ScoreKeepers
+	//
 	int p;
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;	// skip
-		m_pScoreKeeper[p] = new ScoreKeeperMAX2(GAMESTATE->m_pCurNotes[p], (PlayerNumber)p);
+		m_pScoreKeeper[p] = new ScoreKeeperMAX2( m_apNotesQueue[p], (PlayerNumber)p );
 	}
 
-
-	// Fill in m_CurStageStats
-	NoteData notedata;
-	switch( GAMESTATE->m_PlayMode )
-	{
-	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_BATTLE:
-		{
-			GAMESTATE->m_CurStageStats.pSong = GAMESTATE->m_pCurSong;
-			for( int p=0; p<NUM_PLAYERS; p++ )
-			{
-				if( !GAMESTATE->IsPlayerEnabled(p) )
-					continue;	// skip
-				GAMESTATE->m_CurStageStats.iMeter[p] = GAMESTATE->m_pCurNotes[p]->GetMeter();
-				GAMESTATE->m_pCurNotes[p]->GetNoteData( &notedata );
-				// TODO:  Make this more elegant
-				GAMESTATE->m_CurStageStats.iPossibleDancePoints[p] = m_pScoreKeeper[p]->GetPossibleDancePoints( &notedata );
-			}
-		}
-		break;
-	case PLAY_MODE_NONSTOP:
-	case PLAY_MODE_ONI:
-	case PLAY_MODE_ENDLESS:
-		{
-			Course* pCourse = GAMESTATE->m_pCurCourse;
-			pCourse->GetStageInfo( m_apCourseSongs, m_apCourseNotes, m_asCourseModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType, false );
-
-			int iTotalMeter = 0;
-			int iTotalPossibleDancePoints = 0;
-			for( unsigned i=0; i<m_apCourseNotes.size(); i++ )
-			{
-				iTotalMeter += m_apCourseNotes[i]->GetMeter();
-				m_apCourseNotes[i]->GetNoteData( &notedata );
-				iTotalPossibleDancePoints += m_pScoreKeeper[GAMESTATE->m_MasterPlayerNumber]->GetPossibleDancePoints( &notedata );
-			}
-
-			GAMESTATE->m_CurStageStats.pSong = NULL;
-			for( int p=0; p<NUM_PLAYERS; p++ )
-			{
-				if( !GAMESTATE->IsPlayerEnabled(p) )
-					continue;	// skip
-				GAMESTATE->m_CurStageStats.iMeter[p] = iTotalMeter;
-				GAMESTATE->m_CurStageStats.iPossibleDancePoints[p] = iTotalPossibleDancePoints;
-			}
-		}
-		break;
-	default:
-		ASSERT(0);
-	}
 
 
 
@@ -529,26 +507,10 @@ ScreenGameplay::~ScreenGameplay()
 
 bool ScreenGameplay::IsLastSong()
 {
-	switch( GAMESTATE->m_PlayMode )
-	{
-	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_BATTLE:
-		return true;
-	case PLAY_MODE_NONSTOP:
-	case PLAY_MODE_ONI:
-	case PLAY_MODE_ENDLESS:
-		{
-			Course* pCourse = GAMESTATE->m_pCurCourse;
-			if( pCourse->m_bRepeat )
-				return false;
-			else
-                return GAMESTATE->GetCourseSongIndex()+1 == (int)m_apCourseSongs.size(); // GetCourseSongIndex() is 0-based but size() is not
-		}
-		break;
-	default:
-		ASSERT(0);
-		return true;
-	}
+	if( GAMESTATE->m_pCurCourse  &&  GAMESTATE->m_pCurCourse->m_bRepeat )
+		return false;
+
+	return GAMESTATE->GetCourseSongIndex()+1 == (int)m_apSongsQueue.size(); // GetCourseSongIndex() is 0-based but size() is not
 }
 
 void ScreenGameplay::LoadNextSong()
@@ -559,39 +521,15 @@ void ScreenGameplay::LoadNextSong()
 		if( GAMESTATE->IsPlayerEnabled(p) )
 			GAMESTATE->m_CurStageStats.iSongsPlayed[p]++;
 
-	switch( GAMESTATE->m_PlayMode )
-	{
-	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_BATTLE:
-		break;
-	case PLAY_MODE_NONSTOP:
-	case PLAY_MODE_ONI:
-	case PLAY_MODE_ENDLESS:
-		{
-			for( p=0; p<NUM_PLAYERS; p++ )
-				m_textCourseSongNumber[p].SetText( ssprintf("%d", GAMESTATE->m_CurStageStats.iSongsPlayed[p]) );
+	for( p=0; p<NUM_PLAYERS; p++ )
+		m_textCourseSongNumber[p].SetText( ssprintf("%d", GAMESTATE->m_CurStageStats.iSongsPlayed[p]) );
 
-			int iPlaySongIndex = GAMESTATE->GetCourseSongIndex();
-			iPlaySongIndex %= m_apCourseSongs.size();
-			GAMESTATE->m_pCurSong = m_apCourseSongs[iPlaySongIndex];
+	int iPlaySongIndex = GAMESTATE->GetCourseSongIndex();
+	iPlaySongIndex %= m_apSongsQueue.size();
+	GAMESTATE->m_pCurSong = m_apSongsQueue[iPlaySongIndex];
 
-			// Restore the player's originally selected options.
-			GAMESTATE->RestoreSelectedOptions();
-
-			for( p=0; p<NUM_PLAYERS; p++ )
-			{
-				GAMESTATE->m_pCurNotes[p] = m_apCourseNotes[iPlaySongIndex];
-
-				// Put courses options into effect.
-				GAMESTATE->m_PlayerOptions[p].FromString( m_asCourseModifiers[iPlaySongIndex] );
-				GAMESTATE->m_SongOptions.FromString( m_asCourseModifiers[iPlaySongIndex] );
-			}
-		}
-		break;
-	default:
-		ASSERT(0);
-		break;
-	}
+	// Restore the player's originally selected options.
+	GAMESTATE->RestoreSelectedOptions();
 
 	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );
 
@@ -599,6 +537,13 @@ void ScreenGameplay::LoadNextSong()
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
+
+		GAMESTATE->m_pCurNotes[p] = m_apNotesQueue[p][iPlaySongIndex];
+		m_pScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurNotes[p] );
+
+		// Put courses options into effect.
+		GAMESTATE->m_PlayerOptions[p].FromString( m_asModifiersQueue[p][iPlaySongIndex] );
+		GAMESTATE->m_SongOptions.FromString( m_asModifiersQueue[p][iPlaySongIndex] );
 
 		m_textPlayerOptions[p].SetText( GAMESTATE->m_PlayerOptions[p].GetString() );
 
@@ -1160,8 +1105,8 @@ void SaveChanges()
 	case PLAY_MODE_ENDLESS:
 		{
 			// FIXME
-			//for( int i=0; i<m_apCourseSongs.size(); i++ )
-			//	m_apCourseSongs[i]->Save();
+			//for( int i=0; i<m_apSongsQueue.size(); i++ )
+			//	m_apSongsQueue[i]->Save();
 		}
 		break;
 	default:
@@ -1184,9 +1129,9 @@ void DontSaveChanges()
 	case PLAY_MODE_ENDLESS:
 		{
 			// FIXME
-//			for( unsigned i=0; i<m_apCourseSongs.size(); i++ )
+//			for( unsigned i=0; i<m_apSongsQueue.size(); i++ )
 //			{
-//				Song* pSong = m_apCourseSongs[i];
+//				Song* pSong = m_apSongsQueue[i];
 //				ld.LoadFromSMFile( pSong->GetCacheFilePath(), *pSong );
 //			}
 		}

@@ -314,6 +314,7 @@ void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& 
 	}
 }
 
+
 /* XXX: Should we store song options, too? */
 /* Store the player's preferred options.  This is called at the very beginning
  * of gameplay. */
@@ -321,6 +322,7 @@ void GameState::StoreSelectedOptions()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		GAMESTATE->m_StoredPlayerOptions[p] = GAMESTATE->m_PlayerOptions[p];
+	m_StoredSongOptions = m_SongOptions;
 }
 
 /* Restore the preferred options.  This is called after a song ends, before
@@ -335,6 +337,7 @@ void GameState::RestoreSelectedOptions()
 	 * to stick around for the length of the course (for regaining).  Let's
 	 * just reset the options that can actually be set per-song. XXX */
 //	GAMESTATE->m_SongOptions.Init();
-	GAMESTATE->m_SongOptions.m_DrainType = SongOptions::DRAIN_NORMAL;
-	GAMESTATE->m_SongOptions.m_fMusicRate = 1.0f;
+	m_SongOptions = m_StoredSongOptions;
+//	GAMESTATE->m_SongOptions.m_DrainType = SongOptions::DRAIN_NORMAL;
+//	GAMESTATE->m_SongOptions.m_fMusicRate = 1.0f;
 }

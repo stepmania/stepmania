@@ -23,6 +23,7 @@
 #include "GameConstantsAndTypes.h"	// for TapNoteScore and HoldNoteScore
 class NoteData;
 class Inventory;
+class Notes;
 
 
 class ScoreKeeper: public Actor 
@@ -37,8 +38,10 @@ protected:
 //	bool Stats_DoublesCount;
 
 public:
-	ScoreKeeper(PlayerNumber pn) { m_PlayerNumber=pn; }
+	ScoreKeeper(const vector<Notes*>& apNotes, PlayerNumber pn) { m_PlayerNumber=pn; }
 	virtual void DrawPrimitives() { }
+
+	virtual void OnNextSong( int iSongInCourseIndex, Notes* pNotes ) = 0;	// before a song plays (called multiple times if course)
 
 	virtual void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, Inventory* pInventory ) = 0;
 	virtual void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore ) = 0;

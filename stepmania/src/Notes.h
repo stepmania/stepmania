@@ -18,7 +18,7 @@
 #include "Grade.h"
 class NoteData;
 
-struct Notes
+class Notes
 {
 public:
 	Notes();

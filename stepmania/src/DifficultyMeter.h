@@ -12,7 +12,7 @@
 */
 
 #include "BitmapText.h"
-struct Notes;
+class Notes;
 
 
 class DifficultyMeter : public BitmapText

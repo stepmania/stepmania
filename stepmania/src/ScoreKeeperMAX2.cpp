@@ -17,58 +17,147 @@
 #include "ScreenManager.h"
 #include "ScreenGameplay.h"
 #include "GameState.h"
+#include "Course.h"
 
 
-ScoreKeeperMAX2::ScoreKeeperMAX2(Notes *notes, PlayerNumber pn_):
-	ScoreKeeper(pn_)
+ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Notes*>& apNotes, PlayerNumber pn_ ):
+	ScoreKeeper(apNotes, pn_)
 {
-	if( notes )
+	//
+	// Fill in m_CurStageStats, calculate multiplier
+	//
+	NoteData notedata;
+	switch( GAMESTATE->m_PlayMode )
 	{
-		NoteData noteData;
-		notes->GetNoteData( &noteData );
+	case PLAY_MODE_ARCADE:
+	case PLAY_MODE_BATTLE:
+		{
+			ASSERT( !apNotes.empty() );
+			Notes* pNotes = apNotes[0];
+			GAMESTATE->m_CurStageStats.pSong = GAMESTATE->m_pCurSong;
+			GAMESTATE->m_CurStageStats.iMeter[pn_] = pNotes->GetMeter();
+			pNotes->GetNoteData( &notedata );
+			GAMESTATE->m_CurStageStats.iPossibleDancePoints[pn_] = this->GetPossibleDancePoints( &notedata );
+		}
+		break;
+	case PLAY_MODE_NONSTOP:
+	case PLAY_MODE_ONI:
+	case PLAY_MODE_ENDLESS:
+		{
+			int iTotalPossibleDancePoints = 0;
+			for( unsigned i=0; i<apNotes.size(); i++ )
+			{
+				apNotes[i]->GetNoteData( &notedata );
+				iTotalPossibleDancePoints += this->GetPossibleDancePoints( &notedata );
+			}
 
-		int Meter = notes->GetMeter();
-		Meter = min(Meter, 10);
-
-		int N = noteData.GetNumRowsWithTaps() + noteData.GetNumHoldNotes();
-		
-		int sum = (N * (N + 1)) / 2;
-
-		if(sum)
-			m_fScoreMultiplier = float(Meter * 1000000) / sum;
-		else /* avoid div/0 on empty songs */
-			m_fScoreMultiplier = 0.f;
-
-		ASSERT(m_fScoreMultiplier >= 0.0);
+			GAMESTATE->m_CurStageStats.pSong = NULL;
+			GAMESTATE->m_CurStageStats.iPossibleDancePoints[pn_] = iTotalPossibleDancePoints;
+		}
+		break;
+	default:
+		ASSERT(0);
 	}
-	else
-	{
-		ASSERT( GAMESTATE->IsCourseMode() );
-		m_fScoreMultiplier = 0.f;
-	}
 
-	m_iTapNotesHit = 0;
-	m_lScore = 0;
+
+
+	m_fScore = 0;
 	m_iCurToastyCombo = 0; 
 }
 
-void ScoreKeeperMAX2::AddScore( TapNoteScore score )
+void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Notes* pNotes )
 {
-	int p;	// score multiplier 
-	
-	switch( score )
+/*
+  http://www.aaroninjapan.com/ddr2.html
+
+  Note on NONSTOP Mode scoring
+
+  Nonstop mode requires the player to play 4 songs in succession, with the total maximum possible score for the four song set being 100,000,000. This comes from the sum of the four stages' maximum possible scores, which, regardless of song or difficulty is: 
+
+  10,000,000 for the first song
+  20,000,000 for the second song
+  30,000,000 for the third song
+  40,000,000 for the fourth song
+*/
+	//
+	// Calculate the score multiplier
+	//
+	NoteData noteData;
+	pNotes->GetNoteData( &noteData );
+	int N = noteData.GetNumRowsWithTaps() + noteData.GetNumHoldNotes();
+	int sum = (N * (N + 1)) / 2;
+
+	int iMaxPossiblePoints;	// fill this in below
+	if( GAMESTATE->IsCourseMode() )
 	{
-	case TNS_MARVELOUS:	p = 10;		break;
-	case TNS_PERFECT:	p = 10;		break;
-	case TNS_GREAT:		p = 5;		break;
-	default:			p = 0;		break;
+		iMaxPossiblePoints = (iSongInCourseIndex+1) * 1000000;
+	}
+	else
+	{
+		int iMeter = pNotes->GetMeter();
+		CLAMP( iMeter, 1, 10 );
+		iMaxPossiblePoints = iMeter * 100000;
 	}
 
-	m_lScore += p * ++m_iTapNotesHit;
+	m_fScoreMultiplier = (float)iMaxPossiblePoints / sum;
 
-	ASSERT(m_lScore >= 0);
+	ASSERT(m_fScoreMultiplier >= 0.0);
 
-	GAMESTATE->m_CurStageStats.fScore[m_PlayerNumber] = m_lScore * m_fScoreMultiplier;
+	m_iTapNotesHit = 0;
+}
+
+
+void ScoreKeeperMAX2::AddScore( TapNoteScore score )
+{
+	int p = 0;	// score multiplier 
+/*
+  http://www.aaroninjapan.com/ddr2.html
+
+  Regular scoring:
+
+  Let p = score multiplier (Perfect = 10, Great = 5, other = 0)
+  
+  Note on NONSTOP Mode scoring
+
+  Let p = score multiplier (Marvelous = 10, Perfect = 9, Great = 5, other = 0)
+
+*/
+	switch( GAMESTATE->m_PlayMode )
+	{
+	case PLAY_MODE_ARCADE:
+	case PLAY_MODE_BATTLE:
+		switch( score )
+		{
+		case TNS_MARVELOUS:	p = 10;		break;
+		case TNS_PERFECT:	p = 10;		break;
+		case TNS_GREAT:		p = 5;		break;
+		default:			p = 0;		break;
+		}
+		break;
+	case PLAY_MODE_NONSTOP:
+	case PLAY_MODE_ONI:
+	case PLAY_MODE_ENDLESS:
+		switch( score )
+		{
+		case TNS_MARVELOUS:	p = 10;		break;
+		case TNS_PERFECT:	p = 9;		break;
+		case TNS_GREAT:		p = 5;		break;
+		default:			p = 0;		break;
+		}
+		break;
+	default:
+		ASSERT(0);
+	}
+
+	m_iTapNotesHit++;
+
+	m_fScore += (p * m_iTapNotesHit) * m_fScoreMultiplier;
+
+	ASSERT(m_fScore >= 0);
+
+	printf( "score: %10.0f\n", m_fScore );
+
+	GAMESTATE->m_CurStageStats.fScore[m_PlayerNumber] = m_fScore;
 }
 
 void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, Inventory* pInventory )
@@ -118,7 +207,7 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 		
   3dfsux:
   I redid this code so it will store the score as a long, then correct the score for each song based on that value.
-  		lScore == p * n
+  		m_lScore == p * n
   		m_fScoreMultiplier = (B/S)
    keeping these seperate for as long as possible improves accuracy.
 
@@ -140,20 +229,26 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	//
 	// Toasty combo
 	//
-	switch( scoreOfLastTap )
+	if( GAMESTATE->IsCourseMode() )
 	{
-	case TNS_MARVELOUS:
-	case TNS_PERFECT:
-		m_iCurToastyCombo += iNumTapsInRow;
-
-		if( m_iCurToastyCombo==250 && !GAMESTATE->m_bDemonstrationOrJukebox )
-			SCREENMAN->PostMessageToTopScreen( SM_PlayToasty, 0 );
-		break;
-	default:
-		m_iCurToastyCombo = 0;
-		break;
+		// don't play Toasty in a course.  It's distracting.
 	}
+	else
+	{
+		switch( scoreOfLastTap )
+		{
+		case TNS_MARVELOUS:
+		case TNS_PERFECT:
+			m_iCurToastyCombo += iNumTapsInRow;
 
+			if( m_iCurToastyCombo==250 && !GAMESTATE->m_bDemonstrationOrJukebox )
+				SCREENMAN->PostMessageToTopScreen( SM_PlayToasty, 0 );
+			break;
+		default:
+			m_iCurToastyCombo = 0;
+			break;
+		}
+	}
 
 	//
 	// Regular combo

@@ -13,7 +13,7 @@
 
 #include "Sprite.h"
 #include "PlayerNumber.h"
-struct Notes;
+class Notes;
 
 
 class DifficultyIcon : public Sprite

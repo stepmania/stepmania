@@ -17,7 +17,7 @@
 struct PlayerOptions;
 struct SongOptions;
 class Song;
-struct Notes;
+class Notes;
 
 class Course
 {

@@ -20,7 +20,7 @@
 #include "StageStats.h"
 
 class Song;
-struct Notes;
+class Notes;
 class Course;
 class GameDef;
 class StyleDef;
@@ -129,6 +129,7 @@ public:
 	PlayerOptions	m_PlayerOptions[NUM_PLAYERS];			// change this, and current will move gradually toward it
 	PlayerOptions   m_StoredPlayerOptions[NUM_PLAYERS];	// user's choices on the PlayerOptions screen
 	SongOptions		m_SongOptions;
+	SongOptions		m_StoredSongOptions;
 
 	void StoreSelectedOptions();
 	void RestoreSelectedOptions();

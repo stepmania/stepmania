@@ -19,7 +19,7 @@
 #include "GameConstantsAndTypes.h"
 class Course;
 class Song;
-struct Notes;
+class Notes;
 
 
 class CourseEntryDisplay : public ActorFrame
