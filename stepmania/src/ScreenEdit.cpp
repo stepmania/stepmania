@@ -81,12 +81,12 @@ const CString SHORTCUT_TEXT =
 	"D: Toggle difficulty\n"
 	"Ins: Insert blank beat\n"
 	"Del: Delete current beat and shift\n"
+	"       Hold keys for faster change:\n"
 	"F7/F8: Decrease/increase BPM at cur beat\n"
 	"F9/F10: Dec/inc freeze secs at cur beat\n"
 	"F11/F12: Decrease/increase music offset\n"
-	"F1/F2 : Dec/inc sample music start\n"
-	"       Hold F keys for faster change:\n"
-	"[/]: Dec/inc sample music length\n"
+	"[/]: Dec/inc sample music start\n"
+	"{/}: Dec/inc sample music length\n"
 	"M: Play sample music\n";
 
 const CString MENU_ITEM_TEXT[NUM_MENU_ITEMS] = {
@@ -194,7 +194,7 @@ ScreenEdit::ScreenEdit()
 	m_sprBackground.Load( THEME->GetPathTo("Graphics","edit background") );
 	m_sprBackground.StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 
-
+	shiftAnchor = -1;
 	m_SnapDisplay.SetXY( EDIT_X, EDIT_GRAY_Y );
 	m_SnapDisplay.Load( PLAYER_1 );
 	m_SnapDisplay.SetZoom( 0.5f );
@@ -483,7 +483,7 @@ void ScreenEdit::DrawPrimitives()
 
 void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	//LOG->Trace( "ScreenEdit::Input()" );
+	LOG->Trace( "ScreenEdit::Input()" );
 
 	switch( m_EditMode )
 	{
@@ -499,6 +499,17 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 {
 	if( DeviceI.device != DEVICE_KEYBOARD )
 		return;
+
+	if(type == IET_RELEASE)
+	{
+		switch( DeviceI.button ) {
+		case DIK_LSHIFT:
+		case DIK_RSHIFT:
+			shiftAnchor = -1;
+			break;
+		}
+		return;
+	}
 
 	switch( DeviceI.button )
 	{
@@ -599,16 +610,40 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			for( int col=0; col<m_NoteFieldEdit.m_iNumTracks && col<=10; col++ )
 			{
 				const DeviceInput di(DEVICE_KEYBOARD, DIK_1+col);
-				BOOL bIsBeingHeld = INPUTMAN->IsBeingPressed(di);
 
-				if( bIsBeingHeld )
+				if( !INPUTMAN->IsBeingPressed(di) )
+					continue;
+
+				// create a new hold note
+				HoldNote newHN;
+				newHN.m_iTrack = col;
+				newHN.m_fStartBeat = min(fStartBeat, fEndBeat);
+				newHN.m_fEndBeat = max(fStartBeat, fEndBeat);
+				m_NoteFieldEdit.AddHoldNote( newHN );
+			}
+
+			if( INPUTMAN->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_LSHIFT)) ||
+				INPUTMAN->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_RSHIFT)))
+			{
+				/* Shift is being held. 
+				 *
+				 * If this is the first time we've moved since shift was depressed,
+				 * the old position (before this move) becomes the start pos: */
+
+				if(shiftAnchor == -1)
+					shiftAnchor = fStartBeat;
+				
+				if(fEndBeat == shiftAnchor)
 				{
-					// create a new hold note
-					HoldNote newHN;
-					newHN.m_iTrack = col;
-					newHN.m_fStartBeat = min(fStartBeat, fEndBeat);
-					newHN.m_fEndBeat = max(fStartBeat, fEndBeat);
-					m_NoteFieldEdit.AddHoldNote( newHN );
+					/* We're back at the anchor, so we have nothing selected. */
+					m_NoteFieldEdit.m_fBeginMarker = m_NoteFieldEdit.m_fEndMarker = -1;
+				}
+				else
+				{
+					m_NoteFieldEdit.m_fBeginMarker = shiftAnchor;
+					m_NoteFieldEdit.m_fEndMarker = fEndBeat;
+					if(m_NoteFieldEdit.m_fBeginMarker > m_NoteFieldEdit.m_fEndMarker)
+						swap(m_NoteFieldEdit.m_fBeginMarker, m_NoteFieldEdit.m_fEndMarker);
 				}
 			}
 
@@ -920,33 +955,11 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case DIK_LBRACKET:
 	case DIK_RBRACKET:
 		{
-			float fOffsetDelta;
-			switch( DeviceI.button )
-			{
-			case DIK_LBRACKET:		fOffsetDelta = -0.025f;	break;
-			case DIK_RBRACKET:		fOffsetDelta = +0.025f;	break;
-			default:	ASSERT(0);
-			}
-			switch( type )
-			{
-			case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
-			case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
-			}
-
-			m_pSong->m_fMusicSampleStartSeconds += fOffsetDelta;
-			m_pSong->m_fMusicSampleStartSeconds = max(m_pSong->m_fMusicSampleStartSeconds,0);
-		}
-		break;
-	/* I think this would be better on { and }, but we don't have any
-	 * shift state ... */
-	case DIK_SUBTRACT:
-	case DIK_ADD:
-		{
 			float fDelta;
 			switch( DeviceI.button )
 			{
-			case DIK_SUBTRACT:	fDelta = -0.025f;		break;
-			case DIK_ADD:		fDelta = +0.025f;		break;
+			case DIK_LBRACKET:		fDelta = -0.025f;	break;
+			case DIK_RBRACKET:		fDelta = +0.025f;	break;
 			default:	ASSERT(0);
 			}
 			switch( type )
@@ -955,8 +968,15 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			case IET_FAST_REPEAT:	fDelta *= 40;	break;
 			}
 
-			m_pSong->m_fMusicSampleLengthSeconds += fDelta;
-			m_pSong->m_fMusicSampleLengthSeconds = max(m_pSong->m_fMusicSampleLengthSeconds,0);
+			if( INPUTMAN->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_LSHIFT)) ||
+				INPUTMAN->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_RSHIFT)))
+			{
+				m_pSong->m_fMusicSampleLengthSeconds += fDelta;
+				m_pSong->m_fMusicSampleLengthSeconds = max(m_pSong->m_fMusicSampleLengthSeconds,0);
+			} else {
+				m_pSong->m_fMusicSampleStartSeconds += fDelta;
+				m_pSong->m_fMusicSampleStartSeconds = max(m_pSong->m_fMusicSampleStartSeconds,0);
+			}
 		}
 		break;
 	}
@@ -964,6 +984,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
+	if(type == IET_RELEASE) return; // don't care
 	if( DeviceI.device == DEVICE_KEYBOARD )
 	{
 		switch( DeviceI.button )
@@ -1019,6 +1040,7 @@ void ScreenEdit::InputMenu( const DeviceInput& DeviceI, const InputEventType typ
 {
 	if( DeviceI.device != DEVICE_KEYBOARD )
 		return;
+	if(type == IET_RELEASE) return; // don't care
 
 	switch( DeviceI.button )
 	{
