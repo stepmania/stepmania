@@ -25,11 +25,15 @@
 #define NUM_FEET_IN_METER						THEME->GetMetricI(m_sName,"NumFeetInMeter")
 #define MAX_FEET_IN_METER						THEME->GetMetricI(m_sName,"MaxFeetInMeter")
 #define GLOW_IF_METER_GREATER_THAN				THEME->GetMetricI(m_sName,"GlowIfMeterGreaterThan")
+#define SHOW_FEET								THEME->GetMetricB(m_sName,"ShowFeet")
+/* "easy", "hard" */
+#define SHOW_DIFFICULTY							THEME->GetMetricB(m_sName,"ShowDifficulty")
+/* 3, 9 */
+#define SHOW_METER								THEME->GetMetricB(m_sName,"ShowMeter")
 
 
 DifficultyMeter::DifficultyMeter()
 {
-	this->AddChild( &m_textFeet );
 }
 
 /* sID experiment:
@@ -56,9 +60,30 @@ DifficultyMeter::DifficultyMeter()
 
 void DifficultyMeter::Load()
 {
-	m_textFeet.SetName( "Feet" );
-	m_textFeet.LoadFromTextureAndChars( THEME->GetPathToG( ssprintf("%s bar 2x1", m_sName.c_str())), "10" );
-	SET_XY_AND_ON_COMMAND( &m_textFeet );
+	if( SHOW_FEET )
+	{
+		m_textFeet.SetName( "Feet" );
+		m_textFeet.LoadFromTextureAndChars( THEME->GetPathToG( ssprintf("%s bar 2x1", m_sName.c_str())), "10" );
+		SET_XY_AND_ON_COMMAND( &m_textFeet );
+		this->AddChild( &m_textFeet );
+	}
+
+	if( SHOW_DIFFICULTY )
+	{
+		m_Difficulty.Load( THEME->GetPathToG( ssprintf("%s difficulty", m_sName.c_str())) );
+		m_Difficulty->SetName( "Difficulty" );
+		SET_XY_AND_ON_COMMAND( m_Difficulty );
+		this->AddChild( m_Difficulty );
+	}
+
+	if( SHOW_METER )
+	{
+		m_textMeter.SetName( "Meter" );
+		m_textMeter.LoadFromNumbers( THEME->GetPathToN( ssprintf("%s meter", m_sName.c_str())) );
+		SET_XY_AND_ON_COMMAND( m_textMeter );
+		this->AddChild( &m_textMeter );
+	}
+
 	Unset();
 }
 
@@ -72,6 +97,8 @@ void DifficultyMeter::SetFromNotes( const Steps* pNotes )
 
 	SetMeter( pNotes->GetMeter() );
 	m_textFeet.SetDiffuse( SONGMAN->GetDifficultyColor(pNotes->GetDifficulty()) );
+
+	SetDifficulty( DifficultyToString( pNotes->GetDifficulty() ) );
 }
 
 void DifficultyMeter::SetFromCourse( const Course* pCourse )
@@ -86,18 +113,22 @@ void DifficultyMeter::SetFromCourse( const Course* pCourse )
 	SetMeter( meter );
 	
 	// XXX
-	RageColor c;
+	Difficulty FakeDifficulty;
 	if( meter <= 1 )
-		c = SONGMAN->GetDifficultyColor( DIFFICULTY_BEGINNER );
+		FakeDifficulty = DIFFICULTY_BEGINNER;
 	else if( meter <= 2 )
-		c = SONGMAN->GetDifficultyColor( DIFFICULTY_EASY );
+		FakeDifficulty = DIFFICULTY_EASY;
 	else if( meter <= 5 )
-		c = SONGMAN->GetDifficultyColor( DIFFICULTY_MEDIUM );
+		FakeDifficulty = DIFFICULTY_MEDIUM;
 	else if( meter <= 7 )
-		c = SONGMAN->GetDifficultyColor( DIFFICULTY_HARD );
+		FakeDifficulty = DIFFICULTY_HARD;
 	else
-		c = SONGMAN->GetDifficultyColor( DIFFICULTY_CHALLENGE );
+		FakeDifficulty = DIFFICULTY_CHALLENGE;
+
+	RageColor c = SONGMAN->GetDifficultyColor( FakeDifficulty );
 	m_textFeet.SetDiffuse( c );
+
+	SetDifficulty( DifficultyToString(FakeDifficulty) + "Course" );
 }
 
 void DifficultyMeter::Unset()
@@ -105,6 +136,7 @@ void DifficultyMeter::Unset()
 	m_textFeet.SetEffectNone();
 	m_textFeet.SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
 	SetMeter( 0 );
+	SetDifficulty( "None" );
 }
 
 void DifficultyMeter::SetFromGameState( PlayerNumber pn )
@@ -119,18 +151,40 @@ void DifficultyMeter::SetFromGameState( PlayerNumber pn )
 
 void DifficultyMeter::SetMeter( int iMeter )
 {
-	CString sNewText;
-	int f;
-	for( f=0; f<NUM_FEET_IN_METER; f++ )
-		sNewText += (f<iMeter) ? "1" : "0";
-	for( f=NUM_FEET_IN_METER; f<MAX_FEET_IN_METER; f++ )
-		if( f<iMeter )
-			sNewText += "1";
+	if( SHOW_FEET )
+	{
+		CString sNewText;
+		int f;
+		for( f=0; f<NUM_FEET_IN_METER; f++ )
+			sNewText += (f<iMeter) ? "1" : "0";
+		for( f=NUM_FEET_IN_METER; f<MAX_FEET_IN_METER; f++ )
+			if( f<iMeter )
+				sNewText += "1";
 
-	m_textFeet.SetText( sNewText );
+		m_textFeet.SetText( sNewText );
 
-	if( iMeter > GLOW_IF_METER_GREATER_THAN )
-		m_textFeet.SetEffectGlowShift();
-	else
-		m_textFeet.SetEffectNone();
+		if( iMeter > GLOW_IF_METER_GREATER_THAN )
+			m_textFeet.SetEffectGlowShift();
+		else
+			m_textFeet.SetEffectNone();
+	}
+
+	if( SHOW_METER )
+	{
+		const CString sMeter = ssprintf( "%i", iMeter );
+		if( sMeter != m_textMeter.GetText() )
+			m_textMeter.SetText( sMeter );
+	}
+}
+
+void DifficultyMeter::SetDifficulty( CString diff )
+{
+	if( m_CurDifficulty == diff )
+		return;
+	m_CurDifficulty = diff;
+
+	if( SHOW_DIFFICULTY )
+		COMMAND( m_Difficulty, "Set" + Capitalize(diff) );
+	if( SHOW_METER )
+		COMMAND( m_textMeter, "Set" + Capitalize(diff) );
 }

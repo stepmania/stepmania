@@ -14,6 +14,8 @@
 #include "BitmapText.h"
 #include "PlayerNumber.h"
 #include "ActorFrame.h"
+#include "GameConstantsAndTypes.h"
+#include "ActorUtil.h"
 
 class Steps;
 class Course;
@@ -32,7 +34,13 @@ public:
 
 private:
 	void SetMeter( int iMeter );
-	BitmapText	m_textFeet;
+	void SetDifficulty( CString diff );
+	BitmapText		m_textFeet;
+
+	CString			m_CurDifficulty;
+	AutoActor		m_Difficulty;
+
+	BitmapText		m_textMeter;
 };
 
 #endif
