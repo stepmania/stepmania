@@ -47,6 +47,7 @@ public:
 	vector<GameCommand> ListEntries;
 	GameCommand Default;
 	bool m_bUseModNameForIcon;
+	vector<CString> m_vsBroadcastOnExport;
 
 	OptionRowHandlerList::OptionRowHandlerList() { Init(); }
 	virtual void Init()
@@ -55,6 +56,7 @@ public:
 		ListEntries.clear();
 		Default.Init();
 		m_bUseModNameForIcon = false;
+		m_vsBroadcastOnExport.clear();
 	}
 	virtual void Load( OptionRowDefinition &defOut, CString sParam )
 	{
@@ -111,6 +113,11 @@ public:
 				}
 			}
 			else if( sName == "exportonchange" )	defOut.m_bExportOnChange = true;
+			else if( sName == "broadcastonexport" )
+			{
+				for( unsigned i=1; i<cmd.m_vsArgs.size(); i++ )
+					m_vsBroadcastOnExport.push_back( cmd.m_vsArgs[i] );
+			}
 			else		RageException::Throw( "Unkown row flag \"%s\"", sName.c_str() );
 		}
 
@@ -188,8 +195,12 @@ public:
 	{
 		Default.Apply( pn );
 		for( unsigned i=0; i<vbSelected.size(); i++ )
+		{
 			if( vbSelected[i] )
 				ListEntries[i].Apply( pn );
+		}
+		FOREACH_CONST( CString, m_vsBroadcastOnExport, s )
+			MESSAGEMAN->Broadcast( *s );
 		return 0;
 	}
 
@@ -599,6 +610,31 @@ public:
 				}
 			}
 			lua_pop( LUA->L, 1 ); /* pop EnabledForPlayers table */
+
+			
+			/* Iterate over the "ReloadRowMessages" table. */
+			lua_pushstring( LUA->L, "ReloadRowMessages" );
+			lua_gettable( LUA->L, -2 );
+			if( !lua_isnil( LUA->L, -1 ) )
+			{
+				if( !lua_istable( LUA->L, -1 ) )
+					RageException::Throw( "\"%s\" \"ReloadRowMessages\" is not a table", sLuaFunction.c_str() );
+
+				lua_pushnil( LUA->L );
+				while( lua_next(LUA->L, -2) != 0 )
+				{
+					/* `key' is at index -2 and `value' at index -1 */
+					const char *pValue = lua_tostring( LUA->L, -1 );
+					if( pValue == NULL )
+						RageException::Throw( "\"%s\" Column entry is not a string", sLuaFunction.c_str() );
+					LOG->Trace( "'%s'", pValue);
+
+					m_vsReloadRowMessages.push_back( pValue );
+
+					lua_pop( LUA->L, 1 );  /* removes `value'; keeps `key' for next iteration */
+				}
+			}
+			lua_pop( LUA->L, 1 ); /* pop ReloadRowMessages table */
 
 			
 			/* Look for "ExportOnChange" value. */
