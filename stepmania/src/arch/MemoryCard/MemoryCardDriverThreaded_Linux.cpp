@@ -105,7 +105,7 @@ static bool TestWrite( CCStringRef sDir )
 {
   // Try to write a file.
   // TODO: Can we use RageFile for this?
-  CString sFile = sDir + "temp";
+  CString sFile = sDir + "/temp";
   FILE* fp = fopen( sFile, "w" );
   if( fp == NULL )
     return false;
