@@ -418,5 +418,3 @@ void FilenameDB::GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDi
 	}
 }
 
-bool ResolvePath(CString &path) { return true; } // XXX
-

@@ -298,7 +298,6 @@ void GetDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs=fa
 bool DoesFileExist( const CString &sPath );
 bool IsAFile( const CString &sPath );
 bool IsADirectory( const CString &sPath );
-bool ResolvePath(CString &path);
 unsigned GetFileSizeInBytes( const CString &sFilePath );
 void FlushDirCache();
 
