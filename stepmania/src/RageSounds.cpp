@@ -25,7 +25,7 @@ RageSounds *SOUND = NULL;
  */
 static RageSound *g_Music;
 static TimingData g_Timing;
-static float g_FirstSecond;
+static bool g_TimingDelayed;
 static bool g_HasTiming;
 static bool g_UpdatingTimer;
 
@@ -46,10 +46,9 @@ RageSounds::RageSounds()
 	ASSERT( SOUNDMAN );
 
 	g_Music = new RageSound;
-	g_Timing = TimingData();
 	g_HasTiming = false;
 	g_UpdatingTimer = false;
-	g_FirstSecond = -1;
+	g_TimingDelayed = false;
 
 	g_Timing.AddBPMSegment( BPMSegment(0,120) );
 }
@@ -60,16 +59,14 @@ RageSounds::~RageSounds()
 }
 
 
-void StartQueuedMusic()
+void StartQueuedMusic( const RageTimer &when )
 {
 	if( g_MusicToPlay.file.size() == 0 )
 		return; /* nothing to do */
 
 	/* Go. */
-	LOG->Trace("Start sound \"%s\"", g_MusicToPlay.file.c_str() );
-
 	g_HasTiming = g_MusicToPlay.HasTiming;
-	g_FirstSecond = g_MusicToPlay.start_sec;
+	g_TimingDelayed = true;
 
 	g_Music->Load( g_MusicToPlay.file, false );
 
@@ -88,78 +85,38 @@ void StartQueuedMusic()
 
 	g_Music->SetFadeLength( g_MusicToPlay.fade_len );
 	g_Music->SetPositionSeconds();
+	g_Music->SetStartTime( when );
 	g_Music->StartPlaying();
 
 	g_MusicToPlay.file = ""; /* done */
 }
 
 
-/* If we have a music file queued, try to start it.  If we're doing a beat update,
- * fOldBeat is the beat before the update and fNewBeat is the beat after the update;
- * we'll only start the sound if the fractional part of the beat we'll be moving to
- * lies between them. */
-bool TryToStartQueuedMusic( float fOldSeconds, float fNewSeconds )
-{
-	if( g_MusicToPlay.file.size() == 0 )
-		return false; /* nothing to do */
-
-	if( g_UpdatingTimer )
-	{
-		/* GetPlayLatency returns the minimum time until a sound starts.  That's
-		 * common when starting a precached sound, but our sound isn't, so it'll
-		 * probably take a little longer.  Nudge the latency up. */
-		float Latency = SOUND->GetPlayLatency() + 0.040f;
-		fOldSeconds += Latency;
-		fNewSeconds += Latency;
-
-		const float fOldBeat = g_Timing.GetBeatFromElapsedTime( fOldSeconds );
-		const float fNewBeat = g_Timing.GetBeatFromElapsedTime( fNewSeconds );
-
-		float fOldBeatFraction = fmodfp( fOldBeat,1 );
-		float fNewBeatFraction = fmodfp( fNewBeat,1 );
-
-		/* The beat that the new sound will start on.  See if this lies within the beat
-		 * range of this update. */
-		float fStartBeatFraction = fmodfp( g_MusicToPlay.timing.GetBeatFromElapsedTime(g_MusicToPlay.start_sec), 1 );
-		if( fNewBeatFraction < fOldBeatFraction )
-			fNewBeatFraction += 1.0f; /* unwrap */
-		if( fStartBeatFraction < fOldBeatFraction )
-			fStartBeatFraction += 1.0f; /* unwrap */
-
-		if( !( fOldBeatFraction <= fStartBeatFraction && fStartBeatFraction <= fNewBeatFraction ) )
-			return false;
-	}
-
-	StartQueuedMusic();
-	return true;
-}
-
-/* maybe, instead of delaying the start, keep using the old time and tween to the new one? */
 void RageSounds::Update( float fDeltaTime )
 {
-	const float fOldSeconds = GAMESTATE->m_fMusicSeconds;
 	if( g_UpdatingTimer )
 	{
 		if( g_Music->IsPlaying() )
 		{
-			/* With some sound drivers, there's a delay between us calling Play() and
-			 * the sound actually playing.  During this time, timestamps are approximated,
-			 * and will be less than the start position we gave.  We don't want to use
-			 * those, since the beat won't necessarily line up. 
-			 *
-			 * Look at fSeconds; if it's less than the position we gave, it's approximate;
-			 * keep using the previous timing data. */
-			const float fSeconds = g_Music->GetPositionSeconds();
+			/* There's a delay between us calling Play() and the sound actually playing.
+			 * During this time, approximate will be true.  Keep using the previous timing
+			 * data until we get a non-approximate time, indicating that the sound has actually
+			 * started playing. */
+			bool approximate;
+			const float fSeconds = g_Music->GetPositionSeconds( &approximate );
 
-			if( g_FirstSecond != -1 && fSeconds >= g_FirstSecond )
+			if( g_TimingDelayed && !approximate )
 			{
 				/* We've passed the start position of the new sound, so we should be OK.
 				 * Load up the new timing data. */
 				g_Timing = g_MusicToPlay.timing;
-				g_FirstSecond = -1;
+				g_TimingDelayed = false;
 			}
 
-			if( g_FirstSecond != -1 )
+			RageTimer now;
+			now.Touch();
+
+			if( approximate )
 			{
 				/* We're still waiting for the new sound to start playing, so keep using the
 				 * old timing data and fake the time. */
@@ -173,13 +130,6 @@ void RageSounds::Update( float fDeltaTime )
 			/* There's no song playing.  Fake it. */
 			GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSeconds + fDeltaTime, g_Timing );
 		}
-	}
-
-	/* If we have a sound queued to play, try to start it. */
-	if( TryToStartQueuedMusic( fOldSeconds, GAMESTATE->m_fMusicSeconds ) )
-	{
-		/* New music started.  Re-update. */
-		Update( 0 );
 	}
 }
 
@@ -277,10 +227,35 @@ void RageSounds::PlayMusic( const CString &file, const CString &timing_file, boo
 	if( !g_HasTiming && !g_UpdatingTimer )
 		StartImmediately = true;
 
-	if( StartImmediately )
-		StartQueuedMusic();
-	if( g_MusicToPlay.file != "" )
-		LOG->Trace("Queued sound \"%s\"", g_MusicToPlay.file.c_str() );
+	if( g_MusicToPlay.file == "" )
+		return;
+
+	RageTimer when; /* zero */
+	if( !StartImmediately )
+	{
+		/* GetPlayLatency returns the minimum time until a sound starts.  That's
+		 * common when starting a precached sound, but our sound isn't, so it'll
+		 * probably take a little longer.  Nudge the latency up. */
+		const float PresumedLatency = SOUND->GetPlayLatency() + 0.040f;
+		const float fCurSecond = GAMESTATE->m_fMusicSeconds + PresumedLatency;
+		const float fCurBeat = g_Timing.GetBeatFromElapsedTime( fCurSecond );
+		const float fCurBeatFraction = fmodfp( fCurBeat,1 );
+
+		/* The beat that the new sound will start on. */
+		const float fStartBeat = g_MusicToPlay.timing.GetBeatFromElapsedTime( g_MusicToPlay.start_sec );
+		float fStartBeatFraction = fmodfp( fStartBeat, 1 );
+		if( fStartBeatFraction < fCurBeatFraction )
+			fStartBeatFraction += 1.0f; /* unwrap */
+
+		const float fCurBeatToStartOn = truncf(fCurBeat) + fStartBeatFraction;
+		const float fSecondToStartOn = g_Timing.GetElapsedTimeFromBeat( fCurBeatToStartOn );
+		const float fDistance = fSecondToStartOn - fCurSecond;
+
+		when.Touch();
+		when = when + fDistance;
+	}
+
+	StartQueuedMusic( when );
 }
 
 void RageSounds::HandleSongTimer( bool on )
