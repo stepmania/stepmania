@@ -17,7 +17,6 @@
 #include "RageTimer.h"
 #include "ProTimingDisplay.h"
 #include "RageSound.h"
-#include "DancingCharacters.h"
 #include "AttackDisplay.h"
 #include "NoteField.h"
 
@@ -82,7 +81,6 @@ protected:
 	AttackDisplay	m_AttackDisplay;
 
 	int m_iDCState;
-//	DancingCharacters* m_pDancingCharacters; // used to adjust the 2D anims dancing states
 	LifeMeter*		m_pLifeMeter;
 	CombinedLifeMeter*		m_pCombinedLifeMeter;
 	ScoreDisplay*	m_pScoreDisplay;

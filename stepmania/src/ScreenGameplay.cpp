@@ -39,6 +39,7 @@
 #include "PlayerAI.h"	// for NUM_SKILL_LEVELS
 #include "NetworkSyncManager.h"
 #include "Foreach.h"
+#include "DancingCharacters.h"
 
 //
 // Defines

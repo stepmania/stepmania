@@ -11,6 +11,7 @@
 #include "GameManager.h"
 #include "NotesLoaderSM.h"
 #include "GameSoundManager.h"
+#include "Model.h"
 
 #define SECONDS_TO_SHOW						THEME->GetMetricF("ScreenHowToPlay","SecondsToShow")
 #define STEPFILE							THEME->GetMetric ("ScreenHowToPlay","Stepfile")

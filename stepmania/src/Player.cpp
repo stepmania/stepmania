@@ -26,6 +26,7 @@
 #include "ArrowEffects.h"
 #include "Game.h"
 #include "NetworkSyncManager.h"	//used for sending timing offset
+#include "DancingCharacters.h"
 
 CachedThemeMetricF GRAY_ARROWS_Y_STANDARD		("Player","ReceptorArrowsYStandard");
 CachedThemeMetricF GRAY_ARROWS_Y_REVERSE		("Player","ReceptorArrowsYReverse");
