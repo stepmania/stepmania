@@ -27,7 +27,8 @@ public:
 	virtual void MenuStart( PlayerNumber pn );
 
 private:
-	
+	bool m_bSavedScreenshot[NUM_PLAYERS];
+
 	AutoActor	m_Received[NUM_PLAYERS];
 	AutoActor	m_Trophy[NUM_PLAYERS];
 	BitmapText	m_textDescription[NUM_PLAYERS];

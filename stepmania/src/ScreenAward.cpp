@@ -18,6 +18,11 @@
 #include "GameState.h"
 #include "SongManager.h"
 #include "Steps.h"
+#include "StyleDef.h"
+#include "CodeDetector.h"
+#include "ProfileManager.h"
+#include "StepMania.h"
+#include "CryptManager.h"
 
 
 #define NEXT_SCREEN		THEME->GetMetric (m_sName,"NextScreen")
@@ -26,6 +31,7 @@
 ScreenAward::ScreenAward( CString sName ) : Screen( sName )
 {
 	bool bEitherPlayerHasAward = false;
+	ZERO( m_bSavedScreenshot );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -100,6 +106,38 @@ void ScreenAward::Input( const DeviceInput& DeviceI, const InputEventType type, 
 
 	if( m_Menu.IsTransitioning() )
 		return;
+
+
+	if( GameI.IsValid() )
+	{
+		PlayerNumber pn = GAMESTATE->GetCurrentStyleDef()->ControllerToPlayerNumber( GameI.controller );
+
+		if( CodeDetector::EnteredCode(GameI.controller, CodeDetector::CODE_SAVE_SCREENSHOT) )
+		{
+			if( !m_bSavedScreenshot[pn]  &&	// only allow one screenshot
+				PROFILEMAN->IsUsingProfile(pn) )
+			{
+				Profile* pProfile = PROFILEMAN->GetProfile(pn);
+				CString sDir = PROFILEMAN->GetProfileDir((ProfileSlot)pn) + "Screenshots/";
+				int iScreenshotIndex = pProfile->GetNextScreenshotIndex();
+				CString sFileName = SaveScreenshot( sDir, true, true, iScreenshotIndex );
+				CString sPath = sDir+sFileName;
+				
+				if( !sFileName.empty() )
+				{
+					Profile::Screenshot screenshot;
+					screenshot.sFileName = sFileName;
+					screenshot.sMD5 = CRYPTMAN->GetMD5( sPath );
+					screenshot.time = time(NULL);
+					screenshot.iMachineGuid = PROFILEMAN->GetMachineProfile()->m_iGuid;
+					pProfile->AddScreenshot( screenshot );
+				}
+
+				m_bSavedScreenshot[pn] = true;
+				return;	// handled
+			}
+		}
+	}
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
