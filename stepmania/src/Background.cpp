@@ -16,6 +16,7 @@
 #include "RageBitmapTexture.h"
 #include "RageException.h"
 #include "RageTimer.h"
+#include "RageLog.h"
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "PrefsManager.h"
@@ -357,7 +358,7 @@ void Background::Update( float fDeltaTime )
 
 		if( int(i) > m_iCurBGChange )
 		{
-//			LOG->Trace( "%d, %d, %f, %f\n", m_iCurBGSegment, i, m_aBGSegments[i].m_fStartBeat, GAMESTATE->m_fSongBeat );
+			LOG->Trace( "new bga %d, %d, %f, %f", m_iCurBGChange, i, m_aBGChanges[i].m_fStartBeat, GAMESTATE->m_fSongBeat );
 			BGAnimation* pOld = GetCurrentBGA();
 			m_iCurBGChange = i;
 			BGAnimation* pNew = GetCurrentBGA();
