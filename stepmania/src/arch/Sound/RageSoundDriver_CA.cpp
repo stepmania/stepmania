@@ -57,7 +57,8 @@ RageSound_CA::RageSound_CA()
 
     idealFormat.mSampleRate = kSampleRate;
     idealFormat.mFormatID = kAudioFormatLinearPCM;
-    idealFormat.mFormatFlags = 0x1E; //kLinearPCMFormatFlagIsBigEndian | kLinearPCMFormatFlagIsPacked;
+    idealFormat.mFormatFlags =  kLinearPCMFormatFlagIsBigEndian | kLinearPCMFormatFlagIsPacked
+        | kLinearPCMFormatFlagIsSignedInteger;
     idealFormat.mBytesPerPacket = kPacketSize;
     idealFormat.mFramesPerPacket = 1;
     idealFormat.mBytesPerFrame = kPacketSize;
