@@ -863,7 +863,7 @@ void NoteDataUtil::Wide( NoteData &inout, float fStartBeat, float fEndBeat )
 	inout.ConvertHoldNotesTo4s();
 
 	/* Start on an even beat. */
-	fStartBeat = froundf( fStartBeat, 2 );
+	fStartBeat = Quantize( fStartBeat, 2 );
 
 	const int first_row = BeatToNoteRow( fStartBeat );
 	const int last_row = min( BeatToNoteRow(fEndBeat), inout.GetLastRow() );
@@ -949,7 +949,7 @@ void NoteDataUtil::InsertIntelligentTaps(
 	bool bRequireNoteAtEndOfWindow = true;
 
 	/* Start on a multiple of fBeatInterval. */
-	fStartBeat = froundf( fStartBeat, fWindowStrideBeats );
+	fStartBeat = Quantize( fStartBeat, fWindowStrideBeats );
 
 	// Insert a beat in the middle of every fBeatInterval.
 	const int first_row = BeatToNoteRow( fStartBeat );
@@ -1098,7 +1098,7 @@ void NoteDataUtil::Echo( NoteData &inout, float fStartBeat, float fEndBeat )
 	// add 8th note tap "echos" after all taps
 	int iEchoTrack = -1;
 
-	fStartBeat = froundf( fStartBeat, 0.5 );
+	fStartBeat = Quantize( fStartBeat, 0.5 );
 
 	const int first_row = BeatToNoteRow( fStartBeat );
 	const int last_row = min( BeatToNoteRow(fEndBeat), inout.GetLastRow() );
@@ -1304,8 +1304,8 @@ void NoteDataUtil::SnapToNearestNoteType( NoteData &inout, NoteType nt1, NoteTyp
 	{
 		int iOldIndex = i;
 		float fOldBeat = NoteRowToBeat( iOldIndex );
-		float fNewBeat1 = froundf( fOldBeat, fSnapInterval1 );
-		float fNewBeat2 = froundf( fOldBeat, fSnapInterval2 );
+		float fNewBeat1 = Quantize( fOldBeat, fSnapInterval1 );
+		float fNewBeat2 = Quantize( fOldBeat, fSnapInterval2 );
 
 		bool bNewBeat1IsCloser = fabsf(fNewBeat1-fOldBeat) < fabsf(fNewBeat2-fOldBeat);
 		float fNewBeat = bNewBeat1IsCloser ? fNewBeat1 : fNewBeat2;

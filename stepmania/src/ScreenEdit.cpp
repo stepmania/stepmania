@@ -453,8 +453,8 @@ void ScreenEdit::Update( float fDeltaTime )
 				float fEndBeat = max( fStartBeat, GAMESTATE->m_fSongBeat );
 
 				// Round hold start and end to the nearest snap interval
-				fStartBeat = froundf( fStartBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
-				fEndBeat = froundf( fEndBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
+				fStartBeat = Quantize( fStartBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
+				fEndBeat = Quantize( fEndBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 
 				// create a new hold note
 				HoldNote newHN( t, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat) );
@@ -856,7 +856,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 			GAMESTATE->m_fSongBeat += fBeatsToMove;
 			GAMESTATE->m_fSongBeat = max( GAMESTATE->m_fSongBeat, 0 );
-			GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
+			GAMESTATE->m_fSongBeat = Quantize( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 			m_soundChangeLine.Play();
 		}
 		break;
@@ -1207,7 +1207,7 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 			// Add a tap
 
 			float fBeat = GAMESTATE->m_fSongBeat;
-			fBeat = froundf( fBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
+			fBeat = Quantize( fBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 			
 			const int iRow = BeatToNoteRow( fBeat );
 			if( iRow < 0 )
@@ -1301,7 +1301,7 @@ void ScreenEdit::TransitionToEdit()
 	m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0) );
 
 	/* Make sure we're snapped. */
-	GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
+	GAMESTATE->m_fSongBeat = Quantize( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 
 	/* Playing and recording have lead-ins, which may start before beat 0;
 	 * make sure we don't stay there if we escaped out early. */

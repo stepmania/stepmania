@@ -447,7 +447,7 @@ void NoteField::DrawPrimitives()
 		// Draw beat bars
 		//
 		{
-			float fStartDrawingMeasureBars = max( 0, froundf(fFirstBeatToDraw-0.25f,0.25f) );
+			float fStartDrawingMeasureBars = max( 0, Quantize(fFirstBeatToDraw-0.25f,0.25f) );
 			for( float f=fStartDrawingMeasureBars; f<fLastBeatToDraw; f+=0.25f )
 				DrawBeatBar( f );
 		}

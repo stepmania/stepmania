@@ -112,7 +112,7 @@ public:
 			float fPercentBetweenStrips = 1.0f/NUM_STRIPS;
 			// round this so that the chamber overflows align
 			if( NUM_CHAMBERS > 10 )
-				fPercentBetweenStrips = froundf( fPercentBetweenStrips, fChamberWidthInPercent );
+				fPercentBetweenStrips = Quantize( fPercentBetweenStrips, fChamberWidthInPercent );
 
 			float fPercentOffset = fmodf( GAMESTATE->m_fSongBeat/4+1000, fPercentBetweenStrips );
 			ASSERT( fPercentOffset >= 0  &&  fPercentOffset <= fPercentBetweenStrips );

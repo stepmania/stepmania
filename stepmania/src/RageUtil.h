@@ -151,7 +151,7 @@ inline float randomf( const float low=-1.0f, const float high=1.0f )
 }
 
 /* return f rounded to the nearest multiple of fRoundInterval */
-inline float froundf( const float f, const float fRoundInterval )
+inline float Quantize( const float f, const float fRoundInterval )
 {
 	return int( (f + fRoundInterval/2)/fRoundInterval ) * fRoundInterval;
 }

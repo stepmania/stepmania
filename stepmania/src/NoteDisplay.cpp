@@ -369,7 +369,7 @@ void NoteDisplay::SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAni
 		// one tick off in general
 		const float fFraction = fNoteBeatFraction - 0.25f/fAnimationLengthInBeats;
 		const float fInterval = 1.f / fAnimationLengthInBeats;
-		fPercentIntoAnimation += froundf(fFraction,fInterval);
+		fPercentIntoAnimation += Quantize(fFraction,fInterval);
 	}
 
 	// just in case somehow we're majorly negative with the subtraction
