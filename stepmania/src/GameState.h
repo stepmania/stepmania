@@ -10,6 +10,7 @@
 #include "RageTimer.h"
 #include "Difficulty.h"
 #include "MessageManager.h"
+#include "SongOptions.h"
 
 #include <map>
 #include <deque>
@@ -101,7 +102,7 @@ public:
 
 	CString			m_sLoadingMessage;	// used in loading screen
 	CString			m_sPreferredSongGroup;	// GROUP_ALL_MUSIC denotes no preferred group
-	bool			m_bChangedFailType;	// true if FailType was changed in the song options screen
+	bool			m_bChangedFailTypeOnScreenSongOptions;	// true if FailType was changed in the song options screen
 	BroadcastOnChange1D<Difficulty,NUM_PLAYERS>	m_PreferredDifficulty;
 	SortOrder		m_PreferredSortOrder;			// used by MusicWheel
 	bool			m_bEditing;			// NoteField does special stuff when this is true
@@ -165,6 +166,9 @@ public:
 	void UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp = RageZeroTimer );
 	float GetSongPercent( float beat ) const;
 
+	bool IsPlayerHot( PlayerNumber pn ) const;
+	bool IsPlayerInDanger( PlayerNumber pn ) const;
+	bool IsPlayerDead( PlayerNumber pn ) const;
 	bool AllAreInDangerOrWorse() const;
 	bool AllAreDead() const;
 	bool AllHaveComboOf30OrMoreMisses() const;
@@ -209,7 +213,7 @@ public:
 
 	bool IsDisqualified( PlayerNumber pn );
 
-	void AdjustFailType();
+	SongOptions::FailType GetPlayerFailType( PlayerNumber pn ) const;
 
 	// character stuff
 private:
@@ -275,7 +279,7 @@ public:
 	// These options have weird interactions depending on m_bEventMode, 
 	// so wrap them
 	bool		m_bTemporaryEventMode;
-	bool		GetEventMode();
+	bool		IsEventMode() const;
 	CoinMode	GetCoinMode();
 	Premium		GetPremium();
 	

@@ -133,10 +133,6 @@ void ScreenGameplay::Init()
 	if( GAMESTATE->m_pCurSong == NULL && GAMESTATE->m_pCurCourse == NULL )
 		return;	// ScreenDemonstration will move us to the next screen.  We just need to survive for one update without crashing.
 
-	/* This is usually done already, but we might have come here without going through
-	 * ScreenSelectMusic or the options menus at all. */
-	GAMESTATE->AdjustFailType();
-
 	/* Save selected options before we change them. */
 	GAMESTATE->StoreSelectedOptions();
 
@@ -905,7 +901,10 @@ void ScreenGameplay::LoadNextSong()
 		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BATTERY && STATSMAN->m_CurStageStats.m_player[p].bFailed )	// already failed
 			ShowOniGameOver(p);
 
-		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BAR && GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR && !GAMESTATE->GetEventMode() && !GAMESTATE->m_bDemonstrationOrJukebox)
+		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BAR && 
+			GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR && 
+			!GAMESTATE->IsEventMode() && 
+			!GAMESTATE->m_bDemonstrationOrJukebox )
 		{
 			m_pLifeMeter[p]->UpdateNonstopLifebar(
 				GAMESTATE->GetStageIndex(), 
@@ -1333,67 +1332,68 @@ void ScreenGameplay::Update( float fDeltaTime )
 	case STATE_DANCING:
 		/* Set STATSMAN->m_CurStageStats.bFailed for failed players.  In, FAIL_IMMEDIATE, send
 		* SM_BeginFailed if all players failed, and kill dead Oni players. */
-		switch( GAMESTATE->m_SongOptions.m_FailType )
+		FOREACH_EnabledPlayer( pn )
 		{
-		case SongOptions::FAIL_OFF:
-			// don't allow fail
-			break;
-		default:
-			// check for individual fail
-			FOREACH_EnabledPlayer( pn )
-			{
-				if( (m_pLifeMeter[pn] && !m_pLifeMeter[pn]->IsFailing()) || 
-					(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsFailing(pn)) )
-					continue; /* isn't failing */
-				if( STATSMAN->m_CurStageStats.m_player[pn].bFailed )
-					continue; /* failed and is already dead */
+			SongOptions::FailType ft = GAMESTATE->GetPlayerFailType(pn);
+			if( ft == SongOptions::FAIL_OFF )
+				continue;
 			
-				/* If recovery is enabled, only set fail if both are failing.
-				* There's no way to recover mid-song in battery mode. */
-				if( GAMESTATE->m_SongOptions.m_LifeType != SongOptions::LIFE_BATTERY &&
-					PREFSMAN->m_bTwoPlayerRecovery && !GAMESTATE->AllAreDead() )
-					continue;
+			// check for individual fail
+			if( (m_pLifeMeter[pn] && !m_pLifeMeter[pn]->IsFailing()) || 
+				(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsFailing(pn)) )
+				continue; /* isn't failing */
+			if( STATSMAN->m_CurStageStats.m_player[pn].bFailed )
+				continue; /* failed and is already dead */
+		
+			/* If recovery is enabled, only set fail if both are failing.
+			* There's no way to recover mid-song in battery mode. */
+			if( GAMESTATE->m_SongOptions.m_LifeType != SongOptions::LIFE_BATTERY &&
+				PREFSMAN->m_bTwoPlayerRecovery && !GAMESTATE->AllAreDead() )
+				continue;
 
-				LOG->Trace("Player %d failed", (int)pn);
-				STATSMAN->m_CurStageStats.m_player[pn].bFailed = true;	// fail
+			LOG->Trace("Player %d failed", (int)pn);
+			STATSMAN->m_CurStageStats.m_player[pn].bFailed = true;	// fail
 
-				if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY &&
-					GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_IMMEDIATE )
+			if( ft  == SongOptions::LIFE_BATTERY &&
+				ft  == SongOptions::FAIL_IMMEDIATE )
+			{
+				if( !STATSMAN->m_CurStageStats.AllFailedEarlier() )	// if not the last one to fail
 				{
-					if( !STATSMAN->m_CurStageStats.AllFailedEarlier() )	// if not the last one to fail
-					{
-						// kill them!
-						SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
-						ShowOniGameOver(pn);
-						m_Player[pn].m_NoteData.Init();		// remove all notes and scoring
-						m_Player[pn].FadeToFail();	// tell the NoteField to fade to white
-					}
+					// kill them!
+					SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
+					ShowOniGameOver(pn);
+					m_Player[pn].m_NoteData.Init();		// remove all notes and scoring
+					m_Player[pn].FadeToFail();	// tell the NoteField to fade to white
 				}
 			}
-			break;
 		}
 
-		/* If FAIL_IMMEDIATE and everyone is failing, start SM_BeginFailed. */
-		bool bBeginFailed = false;
-		SongOptions::FailType ft = GAMESTATE->m_SongOptions.m_FailType;
-		if( PREFSMAN->m_bMinimum1FullSongInCourses && GAMESTATE->IsCourseMode() && GAMESTATE->GetCourseSongIndex()==0 )
+		bool bAllFailed = true;
+		FOREACH_EnabledPlayer( pn )
 		{
-			// take the least harsh of the two FailTypes
-			ft = max( ft, SongOptions::FAIL_COMBO_OF_30_MISSES );
+			SongOptions::FailType ft = GAMESTATE->GetPlayerFailType(pn);
+			switch( ft )
+			{
+			case SongOptions::FAIL_IMMEDIATE:
+				if( GAMESTATE->m_pPlayerState[pn]->m_HealthState < PlayerState::DEAD )
+					bAllFailed = false;
+				break;
+			case SongOptions::FAIL_COMBO_OF_30_MISSES:
+				if( STATSMAN->m_CurStageStats.m_player[pn].iCurMissCombo < 30 )
+					bAllFailed = false;
+				break;
+			case SongOptions::FAIL_END_OF_SONG:
+				bAllFailed = false;	// wait until the end of the song to fail.
+				break;
+			case SongOptions::FAIL_OFF:
+				bAllFailed = false;	// never fail.
+				break;
+			default:
+				ASSERT(0);
+			}
 		}
-		switch( ft )
-		{
-		case SongOptions::FAIL_IMMEDIATE:
-			if( GAMESTATE->AllAreDead() )
-				bBeginFailed = true;
-			break;
-		case SongOptions::FAIL_COMBO_OF_30_MISSES:
-			if( GAMESTATE->AllHaveComboOf30OrMoreMisses() )
-				bBeginFailed = true;
-			break;
-		}
-
-		if( bBeginFailed )
+		
+		if( bAllFailed )
 			SCREENMAN->PostMessageToTopScreen( SM_BeginFailed, 0 );
 
 		//
@@ -2106,7 +2106,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			}
 
 			/* Mark failure.  This hasn't been done yet if m_bTwoPlayerRecovery is set. */
-			if( GAMESTATE->m_SongOptions.m_FailType != SongOptions::FAIL_OFF &&
+			if( GAMESTATE->GetPlayerFailType(p) != SongOptions::FAIL_OFF &&
 				(m_pLifeMeter[p] && m_pLifeMeter[p]->IsFailing()) || 
 				(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsFailing(p)) )
 				STATSMAN->m_CurStageStats.m_player[p].bFailed = true;

@@ -82,7 +82,7 @@ void ScreenTitleMenu::Init()
 	m_textMaxStages.LoadFromFont( THEME->GetPathF(m_sName,"MaxStages") );
 	m_textMaxStages.SetName( "MaxStages" );
 	CString sText = 
-		GAMESTATE->GetEventMode() ?
+		GAMESTATE->IsEventMode() ?
 		CString("event mode") :
 		ssprintf( "%d %s%s max", PREFSMAN->m_iNumArcadeStages.Value(), MAX_STAGES_TEXT.c_str(), (PREFSMAN->m_iNumArcadeStages>1)?"s":"" );
 	m_textMaxStages.SetText( sText );

@@ -251,7 +251,7 @@ void MusicWheel::Load( CString sType )
 	// but someone mentioned it does it sometimes.
 	if( GAMESTATE->m_pCurSong != NULL && 
 		SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong ) + GAMESTATE->m_iCurrentStageIndex > PREFSMAN->m_iNumArcadeStages
-		&& !GAMESTATE->GetEventMode()
+		&& !GAMESTATE->IsEventMode()
 		&& !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() )
 	{
 		GAMESTATE->m_pCurSong.Set( NULL );
@@ -498,7 +498,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			case SORT_ONI_COURSES:
 			case SORT_ENDLESS_COURSES:
 				/* Don't display course modes after the first stage. */
-				if( !GAMESTATE->GetEventMode() && GAMESTATE->m_iCurrentStageIndex )
+				if( !GAMESTATE->IsEventMode() && GAMESTATE->m_iCurrentStageIndex )
 					continue;
 			}
 

@@ -13,6 +13,8 @@ public:
 	static CString GetNextScreen();
 
 private:
+	virtual void ExportOptions( int row, const vector<PlayerNumber> &vpns );
+
 	void GoToNextScreen();
 	void GoToPrevScreen();
 };

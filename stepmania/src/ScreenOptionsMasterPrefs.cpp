@@ -398,7 +398,9 @@ static void DefaultFailType( int &sel, bool ToSel, const ConfOption *pConfOption
 		SongOptions so;
 		so.FromString( PREFSMAN->m_sDefaultModifiers );
 		sel = so.m_FailType;
-	} else {
+	}
+	else
+	{
 		PlayerOptions po;
 		SongOptions so;
 		GetDefaultModifiers( po, so );

@@ -95,8 +95,6 @@ void ScreenPlayerOptions::GoToNextScreen()
 	}
 	else
 	{
-		GAMESTATE->AdjustFailType();
-
 		if( m_bGoToOptions )
 			SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		else

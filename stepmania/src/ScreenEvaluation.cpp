@@ -1355,7 +1355,7 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
-		if( GAMESTATE->GetEventMode() )
+		if( GAMESTATE->IsEventMode() )
 		{
 			SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		}
@@ -1460,7 +1460,7 @@ void ScreenEvaluation::EndScreen()
 	FOREACH_PlayerNumber( p )
 		m_Grades[p].SettleImmediately();
 
-	if( !GAMESTATE->GetEventMode() )
+	if( !GAMESTATE->IsEventMode() )
 	{
 		switch( m_Type )
 		{

@@ -1113,7 +1113,6 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		}
 		else
 		{
-			GAMESTATE->AdjustFailType();
 			SOUND->StopMusic();
 			SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		}
@@ -1170,7 +1169,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 			/* See if this song is a repeat.  If we're in event mode, only check the last five songs. */
 			bool bIsRepeat = false;
 			int i = 0;
-			if( GAMESTATE->GetEventMode() )
+			if( GAMESTATE->IsEventMode() )
 				i = max( 0, int(STATSMAN->m_vPlayedStageStats.size())-5 );
 			for( ; i < (int)STATSMAN->m_vPlayedStageStats.size(); ++i )
 				if( STATSMAN->m_vPlayedStageStats[i].vpSongs.back() == m_MusicWheel.GetSelectedSong() )

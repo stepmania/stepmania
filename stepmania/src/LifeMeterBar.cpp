@@ -291,7 +291,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		default:
 			ASSERT(0);
 		}
-		if( IsHot()  &&  score < TNS_GOOD )
+		if( GAMESTATE->IsPlayerHot(m_PlayerNumber)  &&  score < TNS_GOOD )
 			fDeltaLife = -0.10f;		// make it take a while to get back to "doing great"
 		break;
 	case SongOptions::DRAIN_NO_RECOVER:
@@ -347,7 +347,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 		default:
 			ASSERT(0);
 		}
-		if( IsHot()  &&  score == HNS_NG )
+		if( GAMESTATE->IsPlayerHot(m_PlayerNumber)  &&  score == HNS_NG )
 			fDeltaLife = -0.10f;		// make it take a while to get back to "doing great"
 		break;
 	case SongOptions::DRAIN_NO_RECOVER:
@@ -477,13 +477,16 @@ void LifeMeterBar::Update( float fDeltaTime )
 	// HACK:  Tweaking these values is very difficulty.  Update the
 	// "physics" many times so that the spring motion appears faster
 
+	bool bIsDead = GAMESTATE->IsPlayerDead(m_PlayerNumber);
+	bool bIsHot = GAMESTATE->IsPlayerHot(m_PlayerNumber);
+
 	for( int i=0; i<10; i++ )
 	{
 		const float fDelta = m_fLifePercentage - m_fTrailingLifePercentage;
 
 		// Don't apply spring and viscous forces if we're full or empty.
 		// Just move straight to either full or empty.
-		if( IsFailing() || IsHot() )
+		if( bIsDead || bIsHot )
 		{
 			m_fLifeVelocity = (fDelta / fabsf(fDelta)) * 4;
 		}
@@ -508,10 +511,10 @@ void LifeMeterBar::Update( float fDeltaTime )
 	m_fPassingAlpha += IsPastPassmark() ? +fDeltaTime*2 : -fDeltaTime*2;
 	CLAMP( m_fPassingAlpha, 0, 1 );
 
-	m_fHotAlpha  += IsHot() ? + fDeltaTime*2 : -fDeltaTime*2;
+	m_fHotAlpha  += bIsHot ? + fDeltaTime*2 : -fDeltaTime*2;
 	CLAMP( m_fHotAlpha, 0, 1 );
 
-	if( IsHot() )
+	if( bIsHot )
 		m_fLifeVelocity = max( 0, m_fLifeVelocity );
 }
 
@@ -523,7 +526,7 @@ void LifeMeterBar::DrawPrimitives()
 	m_pStream->m_fHotAlpha = m_fHotAlpha;
 
 	float fPercentRed = 0;
-	if( IsFailing() ) 
+	if( GAMESTATE->IsPlayerDead(m_PlayerNumber) ) 
 		fPercentRed = 0;
 	else if( m_fTrailingLifePercentage<DANGER_THRESHOLD ) 
 		fPercentRed = RageFastSin( RageTimer::GetTimeSinceStartFast()*PI*4 )/2+0.5f;

@@ -36,6 +36,16 @@ void ScreenSongOptions::Init()
 	}
 }
 
+void ScreenSongOptions::ExportOptions( int row, const vector<PlayerNumber> &vpns )
+{
+	const SongOptions::FailType ft = GAMESTATE->m_SongOptions.m_FailType;
+
+	ScreenOptionsMaster::ExportOptions( row, vpns );
+
+	if( ft != GAMESTATE->m_SongOptions.m_FailType )
+		GAMESTATE->m_bChangedFailTypeOnScreenSongOptions = true;
+}
+
 void ScreenSongOptions::GoToPrevScreen()
 {
 	if( GAMESTATE->m_bEditing )

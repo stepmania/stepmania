@@ -597,10 +597,10 @@ void Background::Update( float fDeltaTime )
 
 	FOREACH_PlayerNumber( p )
 	{
-		if( IsDangerPlayerVisible(p) )
+		if( GAMESTATE->IsPlayerInDanger(p) )
 			m_DangerPlayer[p].Update( fDeltaTime );
 			
-		if( IsDeadPlayerVisible(p) )
+		if( GAMESTATE->IsPlayerDead(p) )
 			m_DeadPlayer[p].Update( fDeltaTime );
 	}
 
@@ -652,9 +652,9 @@ void Background::DrawPrimitives()
 
 		FOREACH_PlayerNumber( p )
 		{
-			if( IsDangerPlayerVisible(p) )
+			if( GAMESTATE->IsPlayerInDanger(p) )
 				m_DangerPlayer[p].Draw();
-			if( IsDeadPlayerVisible(p) )
+			if( GAMESTATE->IsPlayerDead(p) )
 				m_DeadPlayer[p].Draw();
 		}
 	}
@@ -667,8 +667,9 @@ void Background::DrawPrimitives()
 
 bool Background::IsDangerAllVisible()
 {
-	if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_OFF )
-		return false;
+	FOREACH_PlayerNumber( p )
+		if( GAMESTATE->GetPlayerFailType(p) == SongOptions::FAIL_OFF )
+			return false;
 	if( !PREFSMAN->m_bShowDanger )
 		return false;
 
@@ -685,23 +686,6 @@ bool Background::IsDangerAllVisible()
 	else
 		return true;
 }
-
-bool Background::IsDangerPlayerVisible( PlayerNumber pn )
-{
-	if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_OFF )
-		return false;
-	if( !PREFSMAN->m_bShowDanger )
-		return false;
-	return GAMESTATE->m_pPlayerState[pn]->m_HealthState == PlayerState::DANGER;
-}
-
-bool Background::IsDeadPlayerVisible( PlayerNumber pn )
-{
-	if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_OFF )
-		return false;
-	return GAMESTATE->m_pPlayerState[pn]->m_HealthState == PlayerState::DEAD;
-}
-
 
 BrightnessOverlay::BrightnessOverlay()
 {

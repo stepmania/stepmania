@@ -145,7 +145,7 @@ void GameState::Reset()
 	m_MasterPlayerNumber = PLAYER_INVALID;
 	m_mapEnv.clear();
 	m_sPreferredSongGroup	= GROUP_ALL_MUSIC;
-	m_bChangedFailType = false;
+	m_bChangedFailTypeOnScreenSongOptions = false;
 	FOREACH_PlayerNumber( p )
 	{
 		m_PreferredDifficulty[p].Set( DIFFICULTY_INVALID );
@@ -475,7 +475,7 @@ void GameState::FinishStage()
 	if( m_bDemonstrationOrJukebox )
 		return;
 
-	if( GAMESTATE->GetEventMode() )
+	if( GAMESTATE->IsEventMode() )
 	{
 		const int iSaveProfileEvery = 3;
 		if( iOldStageIndex/iSaveProfileEvery < m_iCurrentStageIndex/iSaveProfileEvery )
@@ -688,14 +688,14 @@ int GameState::GetNumStagesLeft() const
 {
 	if( IsExtraStage() || IsExtraStage2() )
 		return 1;
-	if( GAMESTATE->GetEventMode() )
+	if( GAMESTATE->IsEventMode() )
 		return 999;
 	return PREFSMAN->m_iNumArcadeStages - m_iCurrentStageIndex;
 }
 
 bool GameState::IsFinalStage() const
 {
-	if( GAMESTATE->GetEventMode() )
+	if( GAMESTATE->IsEventMode() )
 		return false;
 
 	if( this->IsCourseMode() )
@@ -710,14 +710,14 @@ bool GameState::IsFinalStage() const
 
 bool GameState::IsExtraStage() const
 {
-	if( GAMESTATE->GetEventMode() )
+	if( GAMESTATE->IsEventMode() )
 		return false;
 	return m_iCurrentStageIndex == PREFSMAN->m_iNumArcadeStages;
 }
 
 bool GameState::IsExtraStage2() const
 {
-	if( GAMESTATE->GetEventMode() )
+	if( GAMESTATE->IsEventMode() )
 		return false;
 	return m_iCurrentStageIndex == PREFSMAN->m_iNumArcadeStages+1;
 }
@@ -726,7 +726,7 @@ CString GameState::GetStageText() const
 {
 	if( m_bDemonstrationOrJukebox )				return "demo";
 	// "event" has precedence
-	else if( GAMESTATE->GetEventMode() )		return "event";
+	else if( GAMESTATE->IsEventMode() )		return "event";
 	else if( m_PlayMode == PLAY_MODE_ONI )		return "oni";
 	else if( m_PlayMode == PLAY_MODE_NONSTOP )	return "nonstop";
 	else if( m_PlayMode == PLAY_MODE_ENDLESS )	return "endless";
@@ -931,7 +931,7 @@ bool GameState::IsBattleMode() const
 
 bool GameState::HasEarnedExtraStage() const
 {
-	if( GAMESTATE->GetEventMode() )
+	if( GAMESTATE->IsEventMode() )
 		return false;
 
 	if( !PREFSMAN->m_bAllowExtraStage )
@@ -1005,13 +1005,8 @@ StageResult GameState::GetStageResult( PlayerNumber pn ) const
 
 void GameState::ApplyModifiers( PlayerNumber pn, CString sModifiers )
 {
-	const SongOptions::FailType ft = this->m_SongOptions.m_FailType;
-
 	m_pPlayerState[pn]->m_PlayerOptions.FromString( sModifiers );
 	m_SongOptions.FromString( sModifiers );
-
-	if( ft != this->m_SongOptions.m_FailType )
-		this->m_bChangedFailType = true;
 }
 
 /* Store the player's preferred options.  This is called at the very beginning
@@ -1277,38 +1272,44 @@ void setmax( T &a, const T &b )
 	a = max(a, b);
 }
 
-/* Adjust the fail mode based on the chosen difficulty.  This must be called
- * after the difficulty has been finalized (usually in ScreenSelectMusic or
- * ScreenPlayerOptions), and before the fail mode is displayed or used (usually
- * in ScreenSongOptions). */
-void GameState::AdjustFailType()
+SongOptions::FailType GameState::GetPlayerFailType( PlayerNumber pn ) const
 {
-	/* Single song mode only. */
-	if( this->IsCourseMode() )
-		return;
+	SongOptions::FailType ft = m_SongOptions.m_FailType;
 
 	/* If the player changed the fail mode explicitly, leave it alone. */
-	if( this->m_bChangedFailType )
-		return;
+	if( this->m_bChangedFailTypeOnScreenSongOptions )
+		return ft;
 
-	/* Find the easiest difficulty notes selected by either player. */
-	const Difficulty dc = GetEasiestNotesDifficulty();
+	if( this->IsCourseMode() )
+	{
+		if( PREFSMAN->m_bMinimum1FullSongInCourses && GAMESTATE->IsCourseMode() && GAMESTATE->GetCourseSongIndex()==0 )
+			ft = max( ft, SongOptions::FAIL_COMBO_OF_30_MISSES );	// take the least harsh of the two FailTypes
+	}
+	else
+	{
+		Difficulty dc = DIFFICULTY_INVALID;
+		if( m_pCurSteps[pn] )
+			dc = m_pCurSteps[pn]->GetDifficulty();
 
-	/* Reset the fail type to the default. */
-	SongOptions so;
-	so.FromString( PREFSMAN->m_sDefaultModifiers );
-	this->m_SongOptions.m_FailType = so.m_FailType;
+		bool bFirstStage = !GAMESTATE->IsEventMode() && m_iCurrentStageIndex == 0;
 
-    /* Easy and beginner are never harder than FAIL_END_OF_SONG. */
-	if(dc <= DIFFICULTY_EASY)
-		setmax(this->m_SongOptions.m_FailType, SongOptions::FAIL_END_OF_SONG);
+		/* Easy and beginner are never harder than FAIL_END_OF_SONG. */
+		if( dc <= DIFFICULTY_EASY )
+			setmax( ft, SongOptions::FAIL_END_OF_SONG );
 
-	/* If beginner's steps were chosen, and this is the first stage,
-		* turn off failure completely--always give a second try. */
-	if(dc == DIFFICULTY_BEGINNER &&
-		GAMESTATE->GetEventMode() && /* stage index is meaningless in event mode */
-		this->m_iCurrentStageIndex == 0)
-		setmax(this->m_SongOptions.m_FailType, SongOptions::FAIL_OFF);
+		if( dc <= DIFFICULTY_EASY && bFirstStage && PREFSMAN->m_bFailOffForFirstStageEasy )
+			setmax( ft, SongOptions::FAIL_OFF );
+
+		/* If beginner's steps were chosen, and this is the first stage,
+		 * turn off failure completely. */
+		if( dc == DIFFICULTY_BEGINNER && bFirstStage )
+			setmax( ft, SongOptions::FAIL_OFF );
+
+		if( dc == DIFFICULTY_BEGINNER && PREFSMAN->m_bFailOffInBeginner )
+			setmax( ft, SongOptions::FAIL_OFF );
+	}
+
+	return ft;
 }
 
 bool GameState::ShowMarvelous() const
@@ -1788,14 +1789,14 @@ Difficulty GameState::GetEasiestNotesDifficulty() const
 	return dc;
 }
 
-bool GameState::GetEventMode()
+bool GameState::IsEventMode() const
 {
 	return m_bTemporaryEventMode || PREFSMAN->m_bEventMode; 
 }
 
 CoinMode GameState::GetCoinMode()
 {
-	if( GetEventMode() && PREFSMAN->m_CoinMode == COIN_PAY )
+	if( IsEventMode() && PREFSMAN->m_CoinMode == COIN_PAY )
 		return COIN_FREE; 
 	else 
 		return PREFSMAN->m_CoinMode; 
@@ -1803,12 +1804,32 @@ CoinMode GameState::GetCoinMode()
 
 Premium	GameState::GetPremium() 
 { 
-	if( GetEventMode() ) 
+	if( IsEventMode() ) 
 		return PREMIUM_NONE; 
 	else 
 		return PREFSMAN->m_Premium; 
 }
 
+bool GameState::IsPlayerHot( PlayerNumber pn ) const
+{
+	return GAMESTATE->m_pPlayerState[pn]->m_HealthState == PlayerState::HOT;
+}
+
+bool GameState::IsPlayerInDanger( PlayerNumber pn ) const
+{
+	if( GAMESTATE->GetPlayerFailType(pn) == SongOptions::FAIL_OFF )
+		return false;
+	if( !PREFSMAN->m_bShowDanger )
+		return false;
+	return GAMESTATE->m_pPlayerState[pn]->m_HealthState == PlayerState::DANGER;
+}
+
+bool GameState::IsPlayerDead( PlayerNumber pn ) const
+{
+	if( GAMESTATE->GetPlayerFailType(pn) == SongOptions::FAIL_OFF )
+		return false;
+	return GAMESTATE->m_pPlayerState[pn]->m_HealthState == PlayerState::DEAD;
+}
 
 
 

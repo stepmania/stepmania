@@ -150,6 +150,8 @@ void PrefsManager::Init()
 	m_bTwoPlayerRecovery = true;
 	m_bMercifulDrain = true;
 	m_bMinimum1FullSongInCourses = false;
+	m_bFailOffInBeginner = false;
+	m_bFailOffForFirstStageEasy = false;
 	
 	m_iPercentScoreWeightMarvelous = 3;
 	m_iPercentScoreWeightPerfect = 2;
@@ -382,7 +384,9 @@ void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
 	ini.GetValue( "Options", "MaxRegenComboAfterMiss",			m_iMaxRegenComboAfterMiss );
 	ini.GetValue( "Options", "TwoPlayerRecovery",				m_bTwoPlayerRecovery );
 	ini.GetValue( "Options", "MercifulDrain",					m_bMercifulDrain );
-	ini.GetValue( "Options", "Minimum1FullSongInCourses",			m_bMinimum1FullSongInCourses );
+	ini.GetValue( "Options", "Minimum1FullSongInCourses",		m_bMinimum1FullSongInCourses );
+	ini.GetValue( "Options", "FailOffInBeginner",				m_bFailOffInBeginner );
+	ini.GetValue( "Options", "FailOffForFirstStageEasy",		m_bFailOffForFirstStageEasy );
 
 	ini.GetValue( "Options", "PercentScoreWeightMarvelous",		m_iPercentScoreWeightMarvelous );
 	ini.GetValue( "Options", "PercentScoreWeightPerfect",		m_iPercentScoreWeightPerfect );
@@ -599,7 +603,9 @@ void PrefsManager::SaveGlobalPrefsToIni( IniFile &ini ) const
 	ini.SetValue( "Options", "MaxRegenComboAfterMiss",			m_iMaxRegenComboAfterMiss );
 	ini.SetValue( "Options", "TwoPlayerRecovery",				m_bTwoPlayerRecovery );
 	ini.SetValue( "Options", "MercifulDrain",					m_bMercifulDrain );
-	ini.SetValue( "Options", "Minimum1FullSongInCourses",			m_bMinimum1FullSongInCourses );
+	ini.SetValue( "Options", "Minimum1FullSongInCourses",		m_bMinimum1FullSongInCourses );
+	ini.SetValue( "Options", "FailOffInBeginner",				m_bFailOffInBeginner );
+	ini.SetValue( "Options", "FailOffForFirstStageEasy",		m_bFailOffForFirstStageEasy );
 
 	ini.SetValue( "Options", "PercentScoreWeightMarvelous",		m_iPercentScoreWeightMarvelous );
 	ini.SetValue( "Options", "PercentScoreWeightPerfect",		m_iPercentScoreWeightPerfect );

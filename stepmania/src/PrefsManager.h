@@ -96,6 +96,8 @@ public:
 	bool			m_bTwoPlayerRecovery;
 	bool			m_bMercifulDrain;	// negative life deltas are scaled by the players life percentage
 	bool			m_bMinimum1FullSongInCourses;	// FEoS for 1st song, FailImmediate thereafter
+	bool			m_bFailOffInBeginner;
+	bool			m_bFailOffForFirstStageEasy;
 
 	// percent score (the number that is shown on the screen and saved to memory card)
 	int				m_iPercentScoreWeightMarvelous;

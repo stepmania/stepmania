@@ -51,9 +51,7 @@ protected:
 	void LoadFromRandom( float fFirstBeat, float fLastBeat, const TimingData &timing, CString sPreferredSubDir );
 	int FindBGSegmentForBeat( float fBeat ) const;
 
-	bool IsDangerPlayerVisible( PlayerNumber pn );
 	bool IsDangerAllVisible();
-	bool IsDeadPlayerVisible( PlayerNumber pn );
 	void UpdateCurBGChange( float fCurrentTime );
 	
 	bool m_bInitted;
