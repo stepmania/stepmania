@@ -785,12 +785,12 @@ void ScreenGameplay::Update( float fDeltaTime )
 					if( !AllFailedEarlier() )	// if not the last one to fail
 					{
 						// kill them!
-						GAMESTATE->m_CurStageStats.bFailed[pn] = true;
 						m_soundOniDie.PlayRandom();
 						ShowOniGameOver((PlayerNumber)pn);
 						m_Player[pn].Init();		// remove all notes and scoring
 						m_Player[pn].FadeToFail();	// tell the NoteField to fade to white
 					}
+					GAMESTATE->m_CurStageStats.bFailed[pn] = true;
 				}
 				break;
 			}
