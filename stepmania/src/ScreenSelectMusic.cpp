@@ -50,7 +50,6 @@ const int NUM_SCORE_DIGITS	=	9;
 #define SHOW_GRAPH							THEME->GetMetricB(m_sName,"ShowGraph")
 #define SHOW_PANES							THEME->GetMetricB(m_sName,"ShowPanes")
 #define SHOW_DIFFICULTY_LIST				THEME->GetMetricB(m_sName,"ShowDifficultyList")
-#define CDTITLE_SPIN_SECONDS				THEME->GetMetricF(m_sName,"CDTitleSpinSeconds")
 #define PREV_SCREEN							THEME->GetMetric (m_sName,"PrevScreen")
 #define NEXT_SCREEN							THEME->GetMetric (m_sName,"NextScreen")
 #define NEXT_OPTIONS_SCREEN					THEME->GetMetric (m_sName,"NextOptionsScreen")
@@ -159,18 +158,14 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 
 	m_sprCDTitleFront.SetName( "CDTitle" );
 	m_sprCDTitleFront.Load( THEME->GetPathG(m_sName,"fallback cdtitle") );
-	m_sprCDTitleFront.SetCullMode( CULL_BACK );
-	m_sprCDTitleFront.SetDiffuse( RageColor(1,1,1,1) );
-	m_sprCDTitleFront.SetEffectSpin( RageVector3(0, 360/CDTITLE_SPIN_SECONDS, 0) );
 	SET_XY( m_sprCDTitleFront );
+	COMMAND( m_sprCDTitleFront, "Front" );
 	this->AddChild( &m_sprCDTitleFront );
 
 	m_sprCDTitleBack.SetName( "CDTitle" );
 	m_sprCDTitleBack.Load( THEME->GetPathG(m_sName,"fallback cdtitle") );
-	m_sprCDTitleBack.SetCullMode( CULL_FRONT );
-	m_sprCDTitleBack.SetDiffuse( RageColor(0.2f,0.2f,0.2f,1) );
-	m_sprCDTitleBack.SetEffectSpin( RageVector3(0, 360/CDTITLE_SPIN_SECONDS, 0) );
 	SET_XY( m_sprCDTitleBack );
+	COMMAND( m_sprCDTitleBack, "Back" );
 	this->AddChild( &m_sprCDTitleBack );
 
 	m_GrooveRadar.SetName( "Radar" );
