@@ -226,6 +226,59 @@ void test_backtracing_main_thread()
 	g_ThreadId = -1;
 }
 
+static RageMutex g_Mutex("test");
+
+int TestLocksThread( void *p )
+{
+	printf("Test thread started\n");
+
+	g_ThreadId = GetCurrentThreadId();
+
+	while( !g_Finish )
+	{
+		g_Mutex.Lock();
+		++g_Counter;
+		g_Mutex.Unlock();
+	}
+
+	return 0;
+}
+
+void test_locks()
+{
+	ASSERT( !g_Finish );
+	ASSERT( g_ThreadId == -1 );
+
+	RageThread testing;
+	testing.SetName( "TestLocks" );
+	testing.Create( TestLocksThread, NULL );
+
+	while( g_ThreadId == -1 )
+		;
+
+	/* Stop the thread. */
+	g_Mutex.Lock();
+
+	int OldCounter = g_Counter;
+
+	/* Wait a while.  g_Counter shouldn't change. */
+	usleep( 100000 );
+
+	ASSERT( g_Counter == OldCounter );
+
+	/* Start it again, and wait. */
+	g_Mutex.Unlock();
+	usleep( 100000 );
+
+	/* g_Counter should change. */
+	ASSERT( g_Counter != OldCounter );
+
+	g_Finish = true;
+	testing.Wait();
+	g_Finish = false;
+	g_ThreadId = -1;
+}
+
 void go()
 {
 	/* Test the main thread suspending a secondary thread, and vice versa. */
@@ -235,6 +288,8 @@ void go()
 	/* Test the main thread backtracing a secondary thread, and vice versa. */
 	test_backtracing_secondary_thread();
 	test_backtracing_main_thread();
+
+	test_locks();
 }
 
 int main( int argc, char *argv[] )
