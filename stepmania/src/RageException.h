@@ -12,17 +12,27 @@
 */
 
 #include <exception>
+#include <stdarg.h>
 
 class RageException : public exception
 {
 public:
 	RageException( const char *fmt, ...);
+	RageException( const char *fmt, va_list va);
 
 	virtual const char *what() const throw();
 	virtual ~RageException() throw() { }
 
+	/* The only difference between these is that ThrowFatal triggers debug
+	 * behavior, and Nonfatal doesn't.  Nonfatal is used when the exception
+	 * happens normally and will be caught, such as when a driver fails to
+	 * initialize. */
+	static ThrowFatal(const char *fmt, ...);
+	static ThrowNonfatal(const char *fmt, ...);
+
 protected:
 	CString m_sError;
 };
+
 
 #endif

@@ -18,13 +18,38 @@ RageException::RageException( const char *fmt, ...)
     va_list	va;
     va_start(va, fmt);
     m_sError = vssprintf( fmt, va );
-#ifdef _DEBUG
-	MessageBox( NULL, m_sError, "Fatal Error", MB_OK );
-	DebugBreak();
-#endif
+    va_end(va);
+}
+
+RageException::RageException( const char *fmt, va_list va)
+{
+    m_sError = vssprintf( fmt, va );
 }
 
 const char* RageException::what() const throw ()
 {
 	return m_sError;
+}
+
+RageException::ThrowFatal(const char *fmt, ...)
+{
+    va_list	va;
+    va_start(va, fmt);
+    CString error = vssprintf( fmt, va );
+    va_end(va);
+
+#if defined(WIN32) && defined(DEBUG)
+	MessageBox( NULL, error, "Fatal Error", MB_OK );
+	DebugBreak();
+#endif
+
+	throw RageException("%s", error);
+}
+
+RageException::ThrowNonfatal(const char *fmt, ...)
+{
+    va_list	va;
+    va_start(va, fmt);
+
+	throw RageException(fmt, va);
 }
