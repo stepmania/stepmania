@@ -16,8 +16,10 @@
 #define ROOMSBG_HEIGHT				THEME->GetMetricF(m_sName,"RoomsBGHeight")
 #define SELECTION_WIDTH				THEME->GetMetricF(m_sName,"SelectionWidth")
 #define SELECTION_HEIGHT			THEME->GetMetricF(m_sName,"SelectionHeight")
-
-#define	NUM_ROOMS_SHOW				THEME->GetMetricI(m_sName,"NumRoomsShow");
+#define ROOMSPACEX					THEME->GetMetricF(m_sName,"RoomsSpacingX")
+#define ROOMSPACEY					THEME->GetMetricF(m_sName,"RoomsSpacingY")
+#define ROOMLOWERBOUND				THEME->GetMetricF(m_sName,"RoomsLowerBound")
+#define ROOMUPPERBOUND				THEME->GetMetricF(m_sName,"RoomsUpperBound")
 
 const ScreenMessage SM_SMOnlinePack	= ScreenMessage(SM_User+8);	//Unused, but should be known
 const ScreenMessage	SM_BackFromRoomName	= ScreenMessage(SM_User+15);
@@ -118,9 +120,15 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 					m_Rooms.clear();
 					for (int i=0;i<numRooms;i++)
 					{
-						m_Rooms.push_back( NSMAN->m_SMOnlinePacket.ReadNT() );
-						NSMAN->m_SMOnlinePacket.ReadNT();
+						RoomData tmpRoomData;
+						tmpRoomData.SetName(NSMAN->m_SMOnlinePacket.ReadNT());
+						tmpRoomData.SetDescription(NSMAN->m_SMOnlinePacket.ReadNT());
+						m_Rooms.push_back( tmpRoomData );
 					}
+					//Abide by protocol and read room status
+					for (int i=0;i<numRooms;i++)
+						m_Rooms[i].SetState(NSMAN->m_SMOnlinePacket.Read1());
+
 					if (m_iRoomPlace<0)
 						m_iRoomPlace=0;
 					if( m_iRoomPlace >= (int) m_Rooms.size() )
@@ -169,7 +177,7 @@ void ScreenNetRoom::MenuStart( PlayerNumber pn )
 		NSMAN->m_SMOnlinePacket.ClearPacket();
 		NSMAN->m_SMOnlinePacket.Write1( 1 );
 		NSMAN->m_SMOnlinePacket.Write1( 1 ); //Type (enter a room)
-		NSMAN->m_SMOnlinePacket.WriteNT( m_Rooms[m_iRoomPlace] );
+		NSMAN->m_SMOnlinePacket.WriteNT( m_RoomList[m_iRoomPlace].GetText() );
 		NSMAN->SendSMOnline( );
 		ScreenNetSelectBase::MenuStart( pn );
 		break;
@@ -193,12 +201,10 @@ void ScreenNetRoom::MenuUp( PlayerNumber pn, const InputEventType type )
 {
 	switch (m_SelectMode) {
 	case SelectRooms:
-		m_iRoomPlace--;
-		if (m_iRoomPlace<0)
-			m_iRoomPlace=0;
-		if( m_iRoomPlace >= (int) m_Rooms.size() )
-			m_iRoomPlace=m_Rooms.size()-1;
-		UpdateRoomsList();
+		if (m_iRoomPlace+1 < m_RoomList.size()) {
+			ShiftRoomsUp();
+			m_iRoomPlace++;
+		}
 		ScreenNetSelectBase::MenuUp( pn );
 		break;
 	};
@@ -208,12 +214,10 @@ void ScreenNetRoom::MenuDown( PlayerNumber pn, const InputEventType type )
 {
 	switch (m_SelectMode) {
 	case SelectRooms:
-		m_iRoomPlace++;
-		if (m_iRoomPlace<0)
-			m_iRoomPlace=0;
-		if( m_iRoomPlace >= (int) m_Rooms.size() )
-			m_iRoomPlace=m_Rooms.size()-1;
-		UpdateRoomsList();
+		if (m_iRoomPlace > 0) {
+			ShiftRoomsDown();
+			m_iRoomPlace--;
+		}
 		ScreenNetSelectBase::MenuDown( pn );
 		break;
 	};
@@ -239,18 +243,38 @@ void ScreenNetRoom::MenuRight( PlayerNumber pn, const InputEventType type )
 
 void ScreenNetRoom::UpdateRoomsList()
 {
-	CString TempText="";
+	float cx = THEME->GetMetricF(m_sName, "RoomsX");
+	float cy = THEME->GetMetricF(m_sName, "RoomsY");
 	//It doesn't like this stuff inline
-	int min = m_iRoomPlace-NUM_ROOMS_SHOW;
-	int max = m_iRoomPlace+NUM_ROOMS_SHOW;
-	for (int i=min; i<max; i++ )
-	{
-		if( i >= 0 && i < (int) m_Rooms.size() )
-			TempText += m_Rooms[i] + '\n';
-		else
-			TempText += '\n';
+	for (unsigned int i = 0; i < m_RoomList.size(); ++i)
+		this->RemoveChild(&m_RoomList[i]);
+
+	m_RoomList.clear();
+	m_RoomList.resize(m_Rooms.size());
+
+	for (unsigned int i = 0; i < m_Rooms.size(); ++i) {
+		m_RoomList[i].LoadFromFont( THEME->GetPathF(m_sName,"Rooms") );
+		m_RoomList[i].SetName( "RoomListEliment" );
+		m_RoomList[i].SetShadowLength( 1 );
+		m_RoomList[i].SetXY( cx, cy );
+		m_RoomList[i].SetText(m_Rooms[i].Name());
+		switch (m_Rooms[i].State()) {
+		case 0:
+			m_RoomList[i].SetDiffuseColor (THEME->GetMetricC( m_sName, "OpenRoomColor"));
+			break;
+		case 1:
+			m_RoomList[i].SetDiffuseColor (THEME->GetMetricC( m_sName, "PasswdRoomColor"));
+			break;
+		case 2:
+			m_RoomList[i].SetDiffuseColor (THEME->GetMetricC( m_sName, "InGameRoomColor"));
+			break;
+		}
+		this->AddChild( &m_RoomList[i] );
+		if (cy > ROOMLOWERBOUND)
+			COMMAND(m_RoomList[i], "RoomsOff");
+		cx+=ROOMSPACEX;
+		cy+=ROOMSPACEY;
 	}
-	m_textRooms.SetText( TempText );
 }
 
 void ScreenNetRoom::CreateNewRoom( const CString& rName,  const CString& rDesc ) {
@@ -260,6 +284,30 @@ void ScreenNetRoom::CreateNewRoom( const CString& rName,  const CString& rDesc )
 	NSMAN->m_SMOnlinePacket.WriteNT(rName);
 	NSMAN->m_SMOnlinePacket.WriteNT(rDesc);
 	NSMAN->SendSMOnline( );
+}
+
+void ScreenNetRoom::ShiftRoomsUp() {
+	for (unsigned int x = 0; x < m_RoomList.size(); ++x) {
+		if ((m_RoomList[x].GetY()-ROOMSPACEY >= ROOMUPPERBOUND)&&(m_RoomList[x].GetY()-ROOMSPACEY < ROOMLOWERBOUND)) {
+			COMMAND(m_RoomList[x], "ShiftUp");
+			COMMAND(m_RoomList[x], "RoomsOn");
+		} else {
+			COMMAND(m_RoomList[x], "ShiftUp");
+			COMMAND(m_RoomList[x], "RoomsOff");
+		}
+	}
+}
+
+void ScreenNetRoom::ShiftRoomsDown() {
+	for ( int x = 0; x < m_RoomList.size(); ++x) {
+		if ((m_RoomList[x].GetY()+ROOMSPACEY >= ROOMUPPERBOUND)&&(m_RoomList[x].GetY()+ROOMSPACEY < ROOMLOWERBOUND)) {
+			COMMAND(m_RoomList[x], "ShiftDown");
+			COMMAND(m_RoomList[x], "RoomsOn");
+		} else {
+			COMMAND(m_RoomList[x], "ShiftDown");
+			COMMAND(m_RoomList[x], "RoomsOff");
+		}
+	}
 }
 
 #endif

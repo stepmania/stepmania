@@ -7,6 +7,20 @@
 #include "ScreenNetSelectBase.h"
 #include <vector>
 
+class RoomData {
+public:
+	void SetName(CString& name) { m_name = name; }
+	void SetDescription(CString& desc) { m_description = desc; }
+	void SetState(unsigned int state) { m_state = state; }
+	inline CString Name() { return m_name; }
+	inline CString Description() { return m_description; }
+	inline unsigned int State() { return m_state; }
+private:
+	CString m_name;
+	CString m_description;
+	uint8_t m_state;
+};
+
 class ScreenNetRoom : public ScreenNetSelectBase
 {
 public:
@@ -30,6 +44,8 @@ private:
 	void MenuLeft( PlayerNumber pn, const InputEventType type );
 	void MenuRight( PlayerNumber pn, const InputEventType type );
 	void CreateNewRoom( const CString& rName,  const CString& rDesc );
+	void ShiftRoomsUp();
+	void ShiftRoomsDown();
 
 	enum NetSelectModes
 	{
@@ -52,12 +68,12 @@ private:
 
 	Sprite m_sprCreateRoom;
 
-	vector < CString > m_Rooms;
+	vector < BitmapText > m_RoomList;
+	vector < RoomData > m_Rooms;
 	int m_iRoomPlace;
 
 	CString m_newRoomName, m_newRoomDesc;
 };
-
 #endif
 
 /*
