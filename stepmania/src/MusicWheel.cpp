@@ -26,6 +26,7 @@
 #include "ThemeManager.h"
 #include "Song.h"
 #include "Course.h"
+#include "RageDisplay.h"
 
 
 #define NUM_WHEEL_ITEMS				min( MAX_WHEEL_ITEMS, THEME->GetMetricI("MusicWheel","NumWheelItems") )
@@ -44,7 +45,7 @@ CachedThemeMetricF ITEM_SPACING_Y	("MusicWheel","ItemSpacingY");
 #define SONG_REAL_EXTRA_COLOR		THEME->GetMetricC("MusicWheel","SongRealExtraColor")
 #define SHOW_ROULETTE				THEME->GetMetricB("MusicWheel","ShowRoulette")
 #define SHOW_RANDOM					THEME->GetMetricB("MusicWheel","ShowRandom")
-
+CachedThemeMetricB	USE_3D			("MusicWheel","Use3D");
 
 const int MAX_WHEEL_SOUND_SPEED = 15;
 
@@ -74,6 +75,7 @@ MusicWheel::MusicWheel()
 	// update theme metric cache
 	ITEM_CURVE_X.Refresh();
 	ITEM_SPACING_Y.Refresh();
+	USE_3D.Refresh();
 
 	// for debugging
 	if( GAMESTATE->m_CurStyle == STYLE_INVALID )
@@ -508,16 +510,31 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 	}
 }
 
-float MusicWheel::GetBannerY( float fPosOffsetsFromMiddle )
+void MusicWheel::GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, float& fY_out, float& fZ_out, float& fRotationX_out )
 {
-	return roundf( fPosOffsetsFromMiddle*ITEM_SPACING_Y );
-}
+	if( USE_3D )
+	{
+		fRotationX_out = SCALE(fPosOffsetsFromMiddle,-7,+7,-PI/2.f,+PI/2.f);
 
-float MusicWheel::GetBannerX( float fPosOffsetsFromMiddle )
-{	
-	float fX = (1-cosf(fPosOffsetsFromMiddle/PI))*ITEM_CURVE_X;
-	
-	return roundf( fX );
+		printf( "fRotationX_out = %f\n", fRotationX_out );
+
+		float radius = 200;
+
+		fX_out = 0;
+		fY_out = -radius*sinf(fRotationX_out);
+		fZ_out = -100+radius*cosf(fRotationX_out);	// getting werid results with acosf()
+	}
+	else
+	{
+		fX_out = (1-cosf(fPosOffsetsFromMiddle/PI))*ITEM_CURVE_X;
+		fY_out = fPosOffsetsFromMiddle*ITEM_SPACING_Y;
+		fZ_out = 0;
+		fRotationX_out = 0;
+
+		fX_out = roundf( fX_out );
+		fY_out = roundf( fY_out );
+		fZ_out = roundf( fZ_out );
+	}
 }
 
 void MusicWheel::RebuildMusicWheelItems()
@@ -562,29 +579,45 @@ void MusicWheel::NotesChanged( PlayerNumber pn )	// update grade graphics and to
 
 void MusicWheel::DrawPrimitives()
 {
+	if( USE_3D )
+	{
+		DISPLAY->PushMatrix();
+		DISPLAY->EnterPerspective(45, false);
+
+		// construct view and project matrix
+		RageVector3 Up( 0.0f, 1.0f, 0.0f );
+		RageVector3 Eye( CENTER_X, CENTER_Y, 550 );
+		RageVector3 At( CENTER_X, CENTER_Y, 0 );
+
+		DISPLAY->LookAt(Eye, At, Up);
+	}
+
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
 		MusicWheelItem& display = m_MusicWheelItems[i];
 
-		switch( m_WheelState )
-		{
-		case STATE_SELECTING_MUSIC:
-		case STATE_ROULETTE_SPINNING:
-		case STATE_ROULETTE_SLOWING_DOWN:
-		case STATE_RANDOM_SPINNING:
-		case STATE_LOCKED:
-			{
+//		switch( m_WheelState )
+//		{
+//		case STATE_SELECTING_MUSIC:
+//		case STATE_ROULETTE_SPINNING:
+//		case STATE_ROULETTE_SLOWING_DOWN:
+//		case STATE_RANDOM_SPINNING:
+//		case STATE_LOCKED:
+//			{
 				float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
 
-				float fY = GetBannerY( fThisBannerPositionOffsetFromSelection );
+				float fX, fY, fZ, fRotationX;
+				GetItemPosition( fThisBannerPositionOffsetFromSelection, fX, fY, fZ, fRotationX );
+
 				if( fY < -SCREEN_HEIGHT/2  ||  fY > SCREEN_HEIGHT/2 )
 					continue; // skip
 
-				float fX = GetBannerX( fThisBannerPositionOffsetFromSelection );
 				display.SetXY( fX, fY );
-			}
-			break;
-		}
+				display.SetZ( fZ );
+				display.SetRotationX( fRotationX );
+//			}
+//			break;
+//		}
 
 		if( m_WheelState == STATE_LOCKED  &&  i != NUM_WHEEL_ITEMS/2 )
 			display.m_fPercentGray = 0.5f;
@@ -595,6 +628,12 @@ void MusicWheel::DrawPrimitives()
 	}
 
 	ActorFrame::DrawPrimitives();
+	
+	if( USE_3D )
+	{
+		DISPLAY->ExitPerspective();
+		DISPLAY->PopMatrix();
+	}
 }
 
 void MusicWheel::UpdateScrollbar()
@@ -1041,9 +1080,12 @@ void MusicWheel::TweenOnScreen(bool changing_sort)
 
 	m_WheelState = STATE_TWEENING_ON_SCREEN;
 
-	float fX = GetBannerX(0), fY = GetBannerY(0);
+	float fX, fY, fZ, fRotationX;
+	GetItemPosition( 0, fX, fY, fZ, fRotationX );
 	
 	m_sprSelectionOverlay.SetXY( fX+320, fY );
+	m_sprSelectionOverlay.SetZ( fZ );
+	m_sprSelectionOverlay.SetRotationX( fRotationX );
 
 	if(changing_sort) {
 		m_sprSelectionOverlay.BeginTweening( 0.04f * NUM_WHEEL_ITEMS/2 * factor );	// sleep
@@ -1067,9 +1109,11 @@ void MusicWheel::TweenOnScreen(bool changing_sort)
 		MusicWheelItem& display = m_MusicWheelItems[i];
 		float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
 
-		float fX = GetBannerX(fThisBannerPositionOffsetFromSelection);
-		float fY = GetBannerY(fThisBannerPositionOffsetFromSelection);
+		float fX, fY, fZ, fRotationX;
+		GetItemPosition( fThisBannerPositionOffsetFromSelection, fX, fY, fZ, fRotationX );
 		display.SetXY( fX+320, fY );
+		display.SetZ( fZ );
+		display.SetRotationX( fRotationX );
 		display.BeginTweening( 0.04f*i * factor );	// sleep
 		display.BeginTweening( 0.2f * factor, Actor::TWEEN_ACCELERATE );
 		display.SetTweenX( fX );
@@ -1085,10 +1129,11 @@ void MusicWheel::TweenOffScreen(bool changing_sort)
 
 	m_WheelState = STATE_TWEENING_OFF_SCREEN;
 
-	float fX, fY;
-	fX = GetBannerX(0);
-	fY = GetBannerY(0);
+	float fX, fY, fZ, fRotationX;
+	GetItemPosition( 0, fX, fY, fZ, fRotationX );
 	m_sprSelectionOverlay.SetXY( fX, fY );
+	m_sprSelectionOverlay.SetZ( fZ );
+	m_sprSelectionOverlay.SetRotationX( fRotationX );
 
 	if(changing_sort) {
 		/* When changing sort, tween the overlay with the item in the center;
@@ -1110,9 +1155,11 @@ void MusicWheel::TweenOffScreen(bool changing_sort)
 		MusicWheelItem& display = m_MusicWheelItems[i];
 		float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
 
-		float fX = GetBannerX(fThisBannerPositionOffsetFromSelection);
-		float fY = GetBannerY(fThisBannerPositionOffsetFromSelection);
+		float fX, fY, fZ, fRotationX;
+		GetItemPosition( fThisBannerPositionOffsetFromSelection, fX, fY, fZ, fRotationX );
 		display.SetXY( fX, fY );
+		display.SetZ( fZ );
+		display.SetRotationX( fRotationX );
 		display.BeginTweening( 0.04f*i * factor );	// sleep
 		display.BeginTweening( 0.2f * factor, Actor::TWEEN_DECELERATE );
 		display.SetTweenX( fX+320 );

@@ -267,11 +267,11 @@ void Player::DrawPrimitives()
 		DISPLAY->EnterPerspective(45, false);
 
 		// construct view and project matrix
-		RageVector3 Eye, At, Up( 0.0f, 1.0f, 0.0f );
-		Eye = RageVector3( CENTER_X, CENTER_Y+SCALE(fTilt*fReverseScale,-1,1,-350,350), 500 );
+		RageVector3 Up( 0.0f, 1.0f, 0.0f );
+		RageVector3 Eye( CENTER_X, CENTER_Y+SCALE(fTilt*fReverseScale,-1,1,-350,350), 500 );
 		// give a push the receptors toward the edge of the screen so they aren't so far in the middle
 		float fYOffset = SCALE(fTilt,-1,+1,10*fReverseScale,60*fReverseScale);
-		At = RageVector3( CENTER_X, CENTER_Y+fYOffset, 0 );
+		RageVector3 At( CENTER_X, CENTER_Y+fYOffset, 0 );
 
 		DISPLAY->LookAt(Eye, At, Up);
 	}

@@ -63,8 +63,7 @@ public:
 
 	void NotesChanged( PlayerNumber pn );	// update grade graphics and top score
 
-	float GetBannerX( float fPosOffsetsFromMiddle );
-	float GetBannerY( float fPosOffsetsFromMiddle );
+	void GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, float& fY_out, float& fZ_out, float& fRotationX_out );
 
 	bool Select();	// return true if the selected item is a music, otherwise false
 	WheelItemType	GetSelectedType()	{ return m_CurWheelItemData[m_iSelection]->m_Type; };

@@ -13,7 +13,9 @@
 
 #include "ActorFrame.h"
 #include "Sprite.h"
-#include "song.h"
+#include "PlayerNumber.h"
+#include "GameConstantsAndTypes.h"
+class Notes;
 
 
 class GrooveRadar : public ActorFrame
