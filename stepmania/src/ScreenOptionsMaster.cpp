@@ -17,6 +17,7 @@
 #include "PrefsManager.h"
 #include "ScreenOptionsMasterPrefs.h"
 #include "RageSounds.h"
+#include "StepMania.h"
 
 #define OPTION_MENU_FLAGS		THEME->GetMetric (m_sName,"OptionMenuFlags")
 #define ROW_LINE(i)				THEME->GetMetric (m_sName,ssprintf("Line%i",(i+1)))
@@ -329,7 +330,7 @@ int ScreenOptionsMaster::ImportOption( const OptionRow &row, const OptionRowHand
 	}
 
 	case ROW_CONFIG:
-		return hand.opt->Get();
+		return hand.opt->Get( row.choices );
 
 	default:
 		ASSERT(0);
@@ -372,7 +373,7 @@ void ScreenOptionsMaster::ExportOption( const OptionRow &row, const OptionRowHan
 		break;
 
 	case ROW_CONFIG:
-		hand.opt->Put( sel );
+		hand.opt->Put( sel, row.choices );
 		break;
 
 	case ROW_CHARACTER:
@@ -421,6 +422,8 @@ void ScreenOptionsMaster::ExportOption( const OptionRow &row, const OptionRowHan
 
 void ScreenOptionsMaster::ExportOptions()
 {
+	const CString OldTheme = THEME->GetCurThemeName();
+
 	unsigned i;
 	for( i = 0; i < OptionRowHandlers.size(); ++i )
 	{
@@ -461,12 +464,22 @@ void ScreenOptionsMaster::ExportOptions()
 		m_NextScreen = NEXT_SCREEN;
 
 	/* If any ROW_CONFIG options were used, save preferences. */
-	bool ConfUsed = false;
+	bool ConfChanged = false;
 	for( i = 0; i < OptionRowHandlers.size(); ++i )
 		if( OptionRowHandlers[i].type == ROW_CONFIG )
-			ConfUsed = true;
+			ConfChanged = true;
 
-	if( ConfUsed )
+	/* Did the theme change? */
+	if( OldTheme != THEME->GetCurThemeName() )
+	{
+		// THEME->SwitchThemeAndLanguage( sNewTheme, THEME->GetCurLanguage() );
+		ApplyGraphicOptions();	// reset graphics to apply new window title and icon
+
+		SONGMAN->UpdateRankingCourses(); // update ranking courses
+		ConfChanged = true; // save it
+	}
+
+	if( ConfChanged )
 	{
 		LOG->Trace("ROW_CONFIG used; saving ...");
 		PREFSMAN->SaveGlobalPrefsToDisk();
