@@ -28,6 +28,7 @@ AutoScreenMessage( SM_SMOnlinePack )
 AutoScreenMessage( SM_SetWheelSong )
 AutoScreenMessage( SM_RefreshWheelLocation )
 AutoScreenMessage( SM_SongChanged )
+AutoScreenMessage( SM_UsersUpdate )
 
 const CString AllGroups			= "[ALL MUSIC]";
 
@@ -156,6 +157,10 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	{
 		SOUND->StopMusic();
 		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "NextScreen") );
+	}
+	else if( SM == SM_UsersUpdate )
+	{
+		m_MusicWheel.Move( 0 );
 	}
 	else if( SM == SM_NoSongs )
 	{
@@ -484,10 +489,15 @@ void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 
+	Steps * pSteps = GAMESTATE->m_pCurSong->GetStepsByDifficulty( st, m_DC[pn] );
+	GAMESTATE->m_pCurSteps[pn].Set( pSteps );
+
 	if ( ( m_DC[pn] < NUM_DIFFICULTIES ) && ( m_DC[pn] >= DIFFICULTY_BEGINNER ) )
-		m_DifficultyMeters[pn].SetFromSteps( GAMESTATE->m_pCurSong->GetStepsByDifficulty( st, m_DC[pn] ) );
+		m_DifficultyMeters[pn].SetFromSteps( pSteps );
 	else
 		m_DifficultyMeters[pn].SetFromMeterAndDifficulty( 0, DIFFICULTY_BEGINNER ); 
+
+	m_MusicWheel.NotesOrTrailChanged( pn );
 }
 
 void ScreenNetSelectMusic::MusicChanged()
