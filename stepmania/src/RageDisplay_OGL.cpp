@@ -78,6 +78,8 @@ PFNGLCOLORTABLEPARAMETERIVPROC GLExt::glGetColorTableParameterivEXT = NULL;
 bool g_bEXT_texture_env_combine = true;
 bool g_bGL_EXT_bgra = true;
 
+bool g_bReversePackedPixelsWorks = true;
+
 /* OpenGL system information that generally doesn't change at runtime. */
 
 /* Range and granularity of points and lines: */
@@ -181,6 +183,16 @@ static CString GLToString( GLenum e )
 	return ssprintf( "%i", e );
 }
 
+/* GL_PIXFMT_INFO is used for both texture formats and surface formats.  For example,
+ * it's fine to ask for a FMT_RGB5 texture, but to supply a surface matching
+ * FMT_RGB8.  OpenGL will simply discard the extra bits.
+ *
+ * It's possible for a format to be supported as a texture format but not as a
+ * surface format.  For example, if packed pixels aren't supported, we can still
+ * use GL_RGB5_A1, but we'll have to convert to a supported surface pixel format
+ * first.  It's not ideal, since we'll convert to RGBA8 and OGL will convert back,
+ * but it works fine.
+ */
 struct GLPixFmtInfo_t {
 	GLenum internalfmt; /* target format */
 	GLenum format; /* target format */
@@ -406,6 +418,26 @@ fail:
 	LOG->Info("Paletted textures disabled: %s.", error.c_str());
 }
 
+static void CheckReversePackedPixels()
+{
+	/* Try to create a texture. */
+	FlushGLErrors();
+	glTexImage2D(GL_PROXY_TEXTURE_2D,
+				0, GL_RGBA, 
+				16, 16, 0,
+				GL_BGRA, 2, NULL);//GL_UNSIGNED_SHORT_1_5_5_5_REV, NULL);
+
+	const GLenum glError = glGetError();
+	if( glError == GL_NO_ERROR )
+		g_bReversePackedPixelsWorks = true;
+	else
+	{
+		g_bReversePackedPixelsWorks = false;
+		LOG->Info("GL_UNSIGNED_SHORT_1_5_5_5_REV failed (%s), disabled",
+			GLToString(glError).c_str() );
+	}
+}
+
 void SetupExtensions()
 {
 	const float fGLVersion = (float) atof( (const char *) glGetString(GL_VERSION) );
@@ -419,6 +451,7 @@ void SetupExtensions()
 	g_bEXT_texture_env_combine = HasExtension("GL_EXT_texture_env_combine");
 	g_bGL_EXT_bgra = HasExtension("GL_EXT_bgra");
 	CheckPalettedTextures();
+	CheckReversePackedPixels();
 
 	// Checks for known bad drivers
 	CString sRenderer = (const char*)glGetString(GL_RENDERER);
@@ -1006,13 +1039,15 @@ PixelFormat RageDisplay_OGL::GetImgPixelFormat( SDL_Surface* &img, bool &FreeImg
 {
 	PixelFormat pixfmt = FindPixelFormat( img->format->BitsPerPixel, img->format->Rmask, img->format->Gmask, img->format->Bmask, img->format->Amask );
 	
-	if( pixfmt == NUM_PIX_FORMATS )
+	if( pixfmt == NUM_PIX_FORMATS || !SupportsSurfaceFormat(pixfmt) )
 	{
 		/* The source isn't in a supported, known pixel format.  We need to convert
 		 * it ourself.  Just convert it to RGBA8, and let OpenGL convert it back
 		 * down to whatever the actual pixel format is.  This is a very slow code
 		 * path, which should almost never be used. */
 		pixfmt = FMT_RGBA8;
+		ASSERT( SupportsSurfaceFormat(pixfmt) );
+
 		const PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
 
 		SDL_SetAlpha( img, 0, SDL_ALPHA_OPAQUE );
@@ -1181,3 +1216,29 @@ RageMatrix RageDisplay_OGL::GetOrthoMatrix( float l, float r, float b, float t, 
 		-(r+l)/(r-l), -(t+b)/(t-b), -(zf+zn)/(zf-zn),  1 );
 	return m;
 }
+
+/*
+ * Although we pair texture formats (eg. GL_RGB8) and surface formats
+ * (pairs of eg. GL_RGB8,GL_UNSIGNED_SHORT_5_5_5_1), it's possible for
+ * a format to be supported for a texture format but not a surface
+ * format.  This is abstracted, so you don't need to know about this
+ * as a user calling CreateTexture.
+ *
+ * One case of this is if packed pixels aren't supported.  We can still
+ * use 16-bit color modes, but we have to send it in 32-bit.  Almost
+ * everything supports packed pixels.
+ *
+ * Another case of this is incomplete packed pixels support.  Some implementations
+ * neglect GL_UNSIGNED_SHORT_*_REV. 
+ */
+bool RageDisplay_OGL::SupportsSurfaceFormat( PixelFormat pixfmt )
+{
+	switch( GL_PIXFMT_INFO[pixfmt].type )
+	{
+	case GL_UNSIGNED_SHORT_1_5_5_5_REV:
+		return g_bReversePackedPixelsWorks;
+	default:
+		return true;
+	}
+}
+
