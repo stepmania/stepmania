@@ -270,14 +270,6 @@ Actor* ActorUtil::MakeActor( const RageTextureID &ID )
 		CString sDir = Dirname( ID.filename );
 		return LoadFromActorFile( sDir, &xml );
 	}
-	else if( sExt=="ini" )
-	{
-		IniFile ini;
-		BGAnimation *pBGA = new BGAnimation;
-		CString sDir = Dirname( ID.filename );
-		pBGA->LoadFromIni( sDir, ID.filename );
-		return pBGA;
-	}
 	else if( sExt=="actor" )
 	{
 		// TODO: Check for recursive loading

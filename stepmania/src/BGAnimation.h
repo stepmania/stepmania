@@ -19,7 +19,6 @@ public:
 	void Unload();
 
 	void LoadFromAniDir( const CString &sAniDir, bool bGeneric=true );
-	void LoadFromIni( const CString &sDir, const CString &sPathToIni, bool bGeneric=true );
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
 
 protected:
