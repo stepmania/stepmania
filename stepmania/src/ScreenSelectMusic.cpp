@@ -487,32 +487,32 @@ void ScreenSelectMusic::AdjustOptions()
 	 * player changes to a mode easier than the preference setting, we might
 	 * reset it to the preference later. XXX */
 
-	// Note all these if()s are mutually exclusive.
-	/* No; the second if overrides the first, and the third overrides the first
-	 * two. */
+	/* Never set the FailType harder than the preference. */
+	SongOptions::FailType ft = SongOptions::FAIL_ARCADE;
 
 	/* Easy and beginner are never harder than FAIL_END_OF_SONG. */
 	if(dc <= DIFFICULTY_EASY)
-		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_END_OF_SONG;
-	
+		ft = SongOptions::FAIL_END_OF_SONG;
 	/* If beginner's steps were chosen, and this is the first stage,
 	 * turn off failure completely--always give a second try. */
 	if(dc == DIFFICULTY_BEGINNER &&
 		!PREFSMAN->m_bEventMode && /* stage index is meaningless in event mode */
 		GAMESTATE->m_iCurrentStageIndex == 0)
-		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
+		ft = SongOptions::FAIL_OFF;
+//  Redundant.   -Chris
+//	else if(GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2())
+//	{
+//		/* Extra stage.  We need to make sure we undo any changes above from
+//		 * previous rounds; eg. where one player is on beginner and the other
+//		 * is on hard, we've changed the fail mode in previous rounds and we
+//		 * want to reset it for the extra stage.
+//		 *
+//		 * Besides, extra stage should probably always be FAIL_ARCADE anyway,
+//		 * unless the extra stage course says otherwise. */
+//		ft = SongOptions::FAIL_ARCADE;
+//	}
 
-	if(GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2())
-	{
-		/* Extra stage.  We need to make sure we undo any changes above from
-		 * previous rounds; eg. where one player is on beginner and the other
-		 * is on hard, we've changed the fail mode in previous rounds and we
-		 * want to reset it for the extra stage.
-		 *
-		 * Besides, extra stage should probably always be FAIL_ARCADE anyway,
-		 * unless the extra stage course says otherwise. */
-		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_ARCADE;
-	}
+	GAMESTATE->m_SongOptions.m_FailType = max( ft, GAMESTATE->m_SongOptions.m_FailType );
 }
 
 void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
