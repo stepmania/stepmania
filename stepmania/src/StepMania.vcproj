@@ -1897,6 +1897,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="LightsManager.h">
 			</File>
 			<File
+				RelativePath="MemoryCardManager.cpp">
+			</File>
+			<File
+				RelativePath="MemoryCardManager.h">
+			</File>
+			<File
 				RelativePath="NoteSkinManager.cpp">
 			</File>
 			<File
