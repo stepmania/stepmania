@@ -83,11 +83,6 @@ RageSound::RageSound():
 
 RageSound::~RageSound()
 {
-	/* If we're a "master" sound (not a copy), tell RageSoundManager to
-	 * stop mixing us and everything that's copied from us. */
-	if(original == this)
-		SOUNDMAN->StopPlayingAllCopiesOfSound(*this);
-
 	Unload();
 
 	/* Unregister ourself. */
@@ -594,8 +589,6 @@ void RageSound::StartPlaying()
 
 	SOUNDMAN->StartMixing(this);
 
-	SOUNDMAN->RegisterPlayingSound( this );
-
 //	LOG->Trace("StartPlaying %p finished (%s)", this, this->GetLoadedFilePath().c_str());
 }
 
@@ -608,8 +601,6 @@ void RageSound::StopPlaying()
 
 	/* Tell the sound driver to stop mixing this sound. */
 	SOUNDMAN->StopMixing(this);
-
-	SOUNDMAN->UnregisterPlayingSound( this );
 
 	/* Lock the mutex after calling UnregisterPlayingSound.  We must not make driver
 	 * calls with our mutex locked (driver mutex < sound mutex).  Nobody else will
@@ -647,8 +638,6 @@ void RageSound::SoundIsFinishedPlaying()
 
 	stopped_position = (int) GetPositionSecondsInternal();
 
-	SOUNDMAN->UnregisterPlayingSound( this );
-
 //	LOG->Trace("set playing false for %p (SoundIsFinishedPlaying) (%s)", this, this->GetLoadedFilePath().c_str());
 	playing = false;
 	playing_thread = 0;
@@ -667,7 +656,7 @@ RageSound *RageSound::Play( const RageSoundParams *params )
 
 void RageSound::Stop()
 {
-	SOUNDMAN->StopPlayingAllCopiesOfSound(*this);
+	StopPlaying();
 }
 
 
