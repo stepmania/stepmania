@@ -38,12 +38,12 @@ typedef vector<InputEvent> InputEventArray;
 class RageMutex;
 class InputFilter
 {
-	bool m_BeingHeld[NUM_INPUT_DEVICES][NUM_DEVICE_BUTTONS];
-	bool m_BeingForced[NUM_INPUT_DEVICES][NUM_DEVICE_BUTTONS];
-	float m_fSecsHeld[NUM_INPUT_DEVICES][NUM_DEVICE_BUTTONS];
+	bool m_BeingHeld[NUM_INPUT_DEVICES][MAX_DEVICE_BUTTONS];
+	bool m_BeingForced[NUM_INPUT_DEVICES][MAX_DEVICE_BUTTONS];
+	float m_fSecsHeld[NUM_INPUT_DEVICES][MAX_DEVICE_BUTTONS];
 
 	/* If > 0, then when it reaches 0, stop forcing. */
-	float m_fSecsToForce[NUM_INPUT_DEVICES][NUM_DEVICE_BUTTONS];
+	float m_fSecsToForce[NUM_INPUT_DEVICES][MAX_DEVICE_BUTTONS];
 	InputEventArray queue;
 	RageMutex *queuemutex;
 

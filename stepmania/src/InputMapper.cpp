@@ -448,7 +448,7 @@ void InputMapper::UpdateTempDItoGI()
 	// clear out m_tempDItoGI
 	for( int d=0; d<NUM_INPUT_DEVICES; d++ )
 	{
-		for( int b=0; b<NUM_DEVICE_BUTTONS; b++ )
+		for( int b=0; b<NUM_DEVICE_BUTTONS[d]; b++ )
 		{
 			m_tempDItoGI[d][b].MakeInvalid();
 		}

@@ -27,7 +27,7 @@ InputFilter::InputFilter()
 	memset( m_BeingForced, 0, sizeof(m_BeingForced) );
 	memset( m_fSecsHeld, 0, sizeof(m_fSecsHeld) );
 	for( int d=0; d<NUM_INPUT_DEVICES; d++ )	// foreach InputDevice
-		for( int b=0; b < NUM_DEVICE_BUTTONS; b++ )	// foreach button
+		for( int b=0; b < NUM_DEVICE_BUTTONS[d]; b++ )	// foreach button
 			m_fSecsToForce[d][b] = -1;	
 
 	Reset();
@@ -142,7 +142,7 @@ void InputFilter::StopForcingKey( DeviceInput di )
 /* Release all buttons on the given device. */
 void InputFilter::ResetDevice( InputDevice dev )
 {
-	for( int button = 0; button < NUM_DEVICE_BUTTONS; ++button )
+	for( int button = 0; button < NUM_DEVICE_BUTTONS[dev]; ++button )
 		ButtonPressed( DeviceInput(dev, button), false );
 }
 
@@ -174,11 +174,17 @@ void InputFilter::Update(float fDeltaTime)
 	 * things like "key pressed, key release, key repeat". */
 	LockMut(*queuemutex);
 
+	// Don't reconstruct "di" inside the loop.  This line alone is 
+	// taking 4% of the CPU on a P3-666.
+	DeviceInput di( (InputDevice)0,0,now);
+
 	for( int d=0; d<NUM_INPUT_DEVICES; d++ )	// foreach InputDevice
 	{
-		for( int b=0; b < NUM_DEVICE_BUTTONS; b++ )	// foreach button
+		di.device = (InputDevice)d;
+
+		for( int b=0; b < NUM_DEVICE_BUTTONS[d]; b++ )	// foreach button
 		{
-			DeviceInput di( (InputDevice)d,b,now);
+			di.button = b;
 
 			if( m_fSecsToForce[d][b] > 0 )
 			{
