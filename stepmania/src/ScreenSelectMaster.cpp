@@ -101,9 +101,9 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 
 			for( unsigned c=0; c<m_aModeChoices.size(); c++ )
 			{
-		//		const ModeChoice& mc = m_aModeChoices[c];
+				const ModeChoice& mc = m_aModeChoices[c];
 
-				CString sFName = ssprintf("%s Scroll Choice%d", m_sName.c_str(),c+1);
+				CString sFName = ssprintf("%s Scroll Choice%s", m_sName.c_str(),mc.m_sName.c_str());
 				m_sprScroll[c][0].Load( THEME->GetPathToG(sFName) );
 				m_sprScroll[c][0]->SetName( ssprintf("Scroll") );
 				m_Scroller[0].AddChild( m_sprScroll[c][0] );
@@ -128,9 +128,9 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 				
 				for( unsigned c=0; c<m_aModeChoices.size(); c++ )
 				{
-			//		const ModeChoice& mc = m_aModeChoices[c];
+					const ModeChoice& mc = m_aModeChoices[c];
 
-					CString sFName = ssprintf("%s Scroll Choice%d P%d", m_sName.c_str(),c+1,p+1);
+					CString sFName = ssprintf("%s Scroll Choice%s P%s", m_sName.c_str(),mc.m_sName.c_str(),p+1);
 					m_sprScroll[c][p].Load( THEME->GetPathToG(sFName) );
 					m_sprScroll[c][p]->SetName( ssprintf("ScrollP%d",p+1) );
 					m_Scroller[p].AddChild( m_sprScroll[c][p] );
@@ -141,12 +141,12 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 
 	for( unsigned c=0; c<m_aModeChoices.size(); c++ )
 	{
-//		const ModeChoice& mc = m_aModeChoices[c];
+		const ModeChoice& mc = m_aModeChoices[c];
 
 		// init icon
 		for( i=0; i<NUM_ICON_PARTS; i++ )
 		{
-			CString sFName = ssprintf("%s Icon Part%d Choice%d", m_sName.c_str(),i+1,c+1);
+			CString sFName = ssprintf("%s Icon Part%d Choice%s", m_sName.c_str(),i+1,mc.m_sName.c_str());
 			m_sprIcon[i][c].Load( THEME->GetPathToG(sFName) );
 			m_sprIcon[i][c]->SetName( ssprintf("IconPart%dChoice%d",i+1,c+1) );
 			this->AddChild( m_sprIcon[i][c] );
@@ -157,7 +157,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 		{
 			for( i=0; i<NUM_PREVIEW_PARTS; i++ )
 			{
-				CString sFName = ssprintf("%s Preview Part%d Choice%d", m_sName.c_str(),i+1,c+1);
+				CString sFName = ssprintf("%s Preview Part%d Choice%s", m_sName.c_str(),i+1,mc.m_sName.c_str());
 				m_sprPreview[i][c][0].Load( THEME->GetPathToG(sFName) );
 				m_sprPreview[i][c][0]->SetName( ssprintf("PreviewPart%d",i+1) );
 				this->AddChild( m_sprPreview[i][c][0] );
@@ -171,7 +171,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 					continue;	// skip
 				for( i=0; i<NUM_PREVIEW_PARTS; i++ )
 				{
-					CString sFName = ssprintf("%s Preview Part%d Choice%d P%d", m_sName.c_str(),i+1,c+1,p+1);
+					CString sFName = ssprintf("%s Preview Part%d Choice%s P%d", m_sName.c_str(),i+1,mc.m_sName.c_str(),p+1);
 					m_sprPreview[i][c][p].Load( THEME->GetPathToG(sFName) );
 					m_sprPreview[i][c][p]->SetName( ssprintf("PreviewPart%dP%d",i+1,p+1) );
 					this->AddChild( m_sprPreview[i][c][p] );
@@ -575,7 +575,8 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 	if( m_bChosen[pn] == true )
 		return;
 
-	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("%s comment %s",m_sName.c_str(), m_aModeChoices[m_iChoice[pn]].m_sName.c_str())) );
+	ModeChoice &mc = m_aModeChoices[m_iChoice[pn]];
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("%s comment %s",m_sName.c_str(), mc.m_sName.c_str())) );
 	m_soundSelect.Play();
 
 	float fSecs = 0;

@@ -30,13 +30,13 @@
 #include "arch/ArchHooks/ArchHooks.h"
 
 
-#define NUM_CHOICES				THEME->GetMetricI(m_sName,"NumChoices")
-#define CHOICE( choice )		THEME->GetMetric (m_sName,ssprintf("Choice%d",choice+1))
+#define CHOICE_NAMES			THEME->GetMetric (m_sName,"ChoiceNames")
+#define CHOICE( choice_name )	THEME->GetMetric (m_sName,ssprintf("Choice%s",choice_name.c_str()))
 #define NUM_CODES				THEME->GetMetricI(m_sName,"NumCodes")
-#define CODE( choice )			THEME->GetMetric (m_sName,ssprintf("Code%d",choice+1))
-#define CODE_ACTION( choice )	THEME->GetMetric (m_sName,ssprintf("Code%dAction",choice+1))
+#define CODE( c )				THEME->GetMetric (m_sName,ssprintf("Code%d",c+1))
+#define CODE_ACTION( c )		THEME->GetMetric (m_sName,ssprintf("Code%dAction",c+1))
 #define HELP_TEXT				THEME->GetMetric (m_sName,"HelpText")
-#define NEXT_SCREEN( choice )	THEME->GetMetric (m_sName,ssprintf("NextScreen%d",choice+1))
+#define NEXT_SCREEN( c )		THEME->GetMetric (m_sName,ssprintf("NextScreen%d",c+1))
 
 ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 {
@@ -44,19 +44,29 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 
 	m_sName = sClassName;
 
+	// Instead of using NUM_CHOICES, use a comma-separated list of choices.  Each
+	// element in the list is a choice name.  This level of indirection 
+	// makes it easier to add or remove items without having to change a bunch
+	// of indices.
+	CStringArray asChoiceNames;
+	split( CHOICE_NAMES, ",", asChoiceNames, true );
+
 	int c;
-	for( c=0; c<NUM_CHOICES; c++ )
+	for( c=0; c<asChoiceNames.size(); c++ )
 	{
-		CString sChoice = CHOICE(c);
+		CString sChoiceName = asChoiceNames[c];
+		CString sChoice = CHOICE(sChoiceName);
 
 		ModeChoice mc;
+		mc.m_sName = sChoiceName;
 		mc.Load( c, sChoice );
 		m_aModeChoices.push_back( mc );
 	
 		CString sBGAnimationDir = THEME->GetPathTo(BGAnimations, m_sName, mc.m_sName, true);	// true="optional"
 		if( sBGAnimationDir == "" )
 			sBGAnimationDir = THEME->GetPathToB(m_sName+" background");
-		m_BGAnimations[c].LoadFromAniDir( sBGAnimationDir );
+		BGAnimation *pBGA = new BGAnimation;
+		m_vpBGAnimations.push_back( pBGA );
 	}
 
 	m_Menu.Load( sClassName );
@@ -80,6 +90,9 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 ScreenSelect::~ScreenSelect()
 {
 	LOG->Trace( "ScreenSelect::~ScreenSelect()" );
+	for( int i=0; i<m_vpBGAnimations.size(); i++ )
+		SAFE_DELETE( m_vpBGAnimations[i] );
+	m_vpBGAnimations.clear();
 }
 
 void ScreenSelect::Update( float fDelta )
@@ -98,7 +111,7 @@ void ScreenSelect::Update( float fDelta )
 	if( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID )	
 	{
 		int iSelection = this->GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
-		m_BGAnimations[iSelection].Update( fDelta );
+		m_vpBGAnimations[iSelection]->Update( fDelta );
 	}
 }
 
@@ -109,7 +122,7 @@ void ScreenSelect::DrawPrimitives()
 	if( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID )	
 	{
 		int iSelection = this->GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
-		m_BGAnimations[iSelection].Draw();
+		m_vpBGAnimations[iSelection]->Draw();
 	}
 	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
