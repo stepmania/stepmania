@@ -1298,7 +1298,7 @@ void SongManager::WriteStatsWebPage()
 		fprintf( fp, "<tr><td>&nbsp;</td>" );
 		for( j=0; j<aStepsTypes.size(); j++ )
 		{
-			StepsType st = aStepsTypes[j];
+//			StepsType st = aStepsTypes[j];
 
 			for( unsigned k=0; k<NUM_DIFFICULTIES; k++ )
 			{
