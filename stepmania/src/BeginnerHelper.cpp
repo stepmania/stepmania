@@ -250,8 +250,8 @@ void BeginnerHelper::Update( float fDeltaTime )
 				Step( pn, iStep );
 			}
 		}
-		m_fLastBeatChecked = fCurBeat;
 	}
+	m_fLastBeatChecked = fCurBeat;
 
 	ActorFrame::Update( fDeltaTime );
 	m_mDancePad.Update( fDeltaTime );
