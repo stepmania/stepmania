@@ -1104,13 +1104,6 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 				INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_LEFT) );
 			if( bHoldingLeftAndRight )
 			{
-				// If moving up from a bFirstChoiceGoesDown row, put focus back on 
-				// the first choice before moving up.
-				int iCurrentRow = m_iCurrentRow[pn];
-				Row &row = *m_Rows[iCurrentRow];
-				if( m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN )
-					row.m_iChoiceWithFocus[pn] = 0;
-
 				MoveRow( pn, -1, type != IET_FIRST_PRESS );		
 				return;
 			}
@@ -1277,6 +1270,15 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 /* Up/down */
 void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat ) 
 {
+	if( m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN )
+	{
+		// If moving from a bFirstChoiceGoesDown row, put focus back on 
+		// the first choice before moving.
+		const int iCurrentRow = m_iCurrentRow[pn];
+		Row &row = *m_Rows[iCurrentRow];
+		row.m_iChoiceWithFocus[pn] = 0;
+	}
+
 	LOG->Trace("move pn %i, dir %i, rep %i", pn, dir, Repeat);
 	bool changed = false;
 	for( int p=0; p<NUM_PLAYERS; p++ )
