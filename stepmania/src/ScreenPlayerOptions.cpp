@@ -85,7 +85,7 @@ void ScreenPlayerOptions::ImportOptions()
 		for( int i=0; i<PlayerOptions::NUM_EFFECT_TYPES; i++ ) 
 		{
 			if( po.m_bEffects[i] )
-				m_iSelectedOption[p][PO_EFFECT] = i-1;
+				m_iSelectedOption[p][PO_EFFECT] = i+1;
 		}
 
 		m_iSelectedOption[p][PO_APPEAR]		= po.m_AppearanceType;

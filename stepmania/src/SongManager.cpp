@@ -269,15 +269,17 @@ void SongManager::ReadStatisticsFromDisk()
 
 			// Each value has the format "SongName::StepsName=TimesPlayed::TopGrade::TopScore::MaxCombo".
 			char szSongDir[256];
-			char szNotesName[256];
+			char szNotesType[256];
+			char szNotesDescription[256];
 			int iRetVal;
 			int i;
 
 			// Parse for Song name and Notes name
-			iRetVal = sscanf( name, "%[^:]::%[^\n]", szSongDir, szNotesName );
-			if( iRetVal != 2 )
+			iRetVal = sscanf( name, "%[^:]::%[^:]::%[^\n]", szSongDir, szNotesType, szNotesDescription );
+			if( iRetVal != 3 )
 				continue;	// this line doesn't match what is expected
 	
+			NotesType notesType = GameManager::StringToNotesType( szNotesType );
 			
 			// Search for the corresponding Song pointer.
 			Song* pSong = NULL;
@@ -297,7 +299,8 @@ void SongManager::ReadStatisticsFromDisk()
 			Notes* pNotes = NULL;
 			for( i=0; i<pSong->m_apNotes.GetSize(); i++ )
 			{
-				if( pSong->m_apNotes[i]->m_sDescription == szNotesName )	// match!
+				if( pSong->m_apNotes[i]->m_NotesType == notesType  &&
+					pSong->m_apNotes[i]->m_sDescription == szNotesDescription )	// match!
 				{
 					pNotes = pSong->m_apNotes[i];
 					break;
@@ -345,7 +348,7 @@ void SongManager::SaveStatisticsToDisk()
 
 			// Each value has the format "SongName::NotesName=TimesPlayed::TopGrade::TopScore::MaxCombo".
 
-			CString sName = ssprintf( "%s::%s", pSong->m_sSongDir, pNotes->m_sDescription );
+			CString sName = ssprintf( "%s::%s::%s", pSong->m_sSongDir, GameManager::NotesTypeToString(pNotes->m_NotesType), pNotes->m_sDescription );
 			CString sValue = ssprintf( 
 				"%d::%s::%d::%d",
 				pNotes->m_iNumTimesPlayed,
@@ -425,6 +428,15 @@ CString SongManager::ShortenGroupName( const CString &sOrigGroupName )
 	sShortName.Replace( "Pump It Up", "PIU" );
 	sShortName.Replace( "pump it up", "PIU" );
 	sShortName.Replace( "PUMP IT UP", "PIU" );
+	sShortName.Replace( "ParaParaParadise", "PPP" );
+	sShortName.Replace( "paraparaparadise", "PPP" );
+	sShortName.Replace( "PARAPARAPARADUSE", "PPP" );
+	sShortName.Replace( "Para Para Paradise", "PPP" );
+	sShortName.Replace( "para para paradise", "PPP" );
+	sShortName.Replace( "PARA PARA PARADUSE", "PPP" );
+	sShortName.Replace( "Dancing Stage", "DS" );
+	sShortName.Replace( "Dancing Stage", "DS" );
+	sShortName.Replace( "Dancing Stage", "DS" );
 	return sShortName;
 }
 

@@ -12,16 +12,16 @@ char NotesWriterDWI::NotesToDWIChar( bool bCol1, bool bCol2, bool bCol3, bool bC
 		bool bCol[6];	
 	} const lookup[] = {
 		{ '0', 0, 0, 0, 0, 0, 0 },
-		{ '1', 0, 1, 1, 0, 0, 0 },
+		{ '1', 1, 0, 1, 0, 0, 0 },
 		{ '2', 0, 0, 1, 0, 0, 0 },
-		{ '3', 0, 0, 1, 0, 1, 0 },
-		{ '4', 0, 1, 0, 0, 0, 0 },
-		{ '6', 0, 0, 0, 0, 1, 0 },
-		{ '7', 0, 1, 0, 1, 0, 0 },
+		{ '3', 0, 0, 1, 0, 0, 1 },
+		{ '4', 1, 0, 0, 0, 0, 0 },
+		{ '6', 0, 0, 0, 0, 0, 1 },
+		{ '7', 1, 0, 0, 1, 0, 0 },
 		{ '8', 0, 0, 0, 1, 0, 0 },
-		{ '9', 0, 0, 0, 1, 1, 0 },
+		{ '9', 0, 0, 0, 1, 0, 1 },
 		{ 'A', 0, 0, 1, 1, 0, 0 },
-		{ 'B', 0, 1, 0, 0, 1, 0 },
+		{ 'B', 1, 0, 0, 0, 0, 1 },
 		{ 'C', 0, 1, 0, 0, 0, 0 },
 		{ 'D', 0, 0, 0, 0, 1, 0 },
 		{ 'E', 1, 1, 0, 0, 0, 0 },
@@ -42,13 +42,13 @@ char NotesWriterDWI::NotesToDWIChar( bool bCol1, bool bCol2, bool bCol3, bool bC
 		if( l.bCol[0]==bCol1 && l.bCol[1]==bCol2 && l.bCol[2]==bCol3 && l.bCol[3]==bCol4 && l.bCol[4]==bCol5 && l.bCol[5]==bCol6 )
 			return l.c;
 	}
-	ASSERT(0);
+	ASSERT(0);	// if we assert here, we didn't find the row in the DWI char lookup above.  It must be missing an entry.
 	return '0';
 }
 
 char NotesWriterDWI::NotesToDWIChar( bool bCol1, bool bCol2, bool bCol3, bool bCol4 )
 {
-	return NotesToDWIChar( 0, bCol1, bCol2, bCol3, bCol4, 0 );
+	return NotesToDWIChar( bCol1, 0, bCol2, bCol3, 0, bCol4 );
 }
 
 CString NotesWriterDWI::NotesToDWIString( char cNoteCol1, char cNoteCol2, char cNoteCol3, char cNoteCol4, char cNoteCol5, char cNoteCol6 )

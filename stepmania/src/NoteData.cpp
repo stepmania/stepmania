@@ -882,7 +882,7 @@ void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTra
 				this->m_TapNotes[iNewTrack][r] = pOriginal->m_TapNotes[iOldTrack][r];
 		}
 
-		if( r % (ROWS_PER_MEASURE*2) == 0 )	// adjust sliding window every two measures
+		if( r % (ROWS_PER_MEASURE*4) == 0 )	// adjust sliding window every 4 measures
 		{
 			// See if there is a hold crossing the beginning of this measure
 			pOriginal->Convert4sToHoldNotes();
