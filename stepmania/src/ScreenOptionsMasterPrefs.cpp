@@ -76,19 +76,19 @@ static void MoveMap( int &sel, T &opt, bool ToSel, const T *mapping, unsigned cn
  * MoveMap for a generic preference.  We don't know its type, but MoveMap is only used on numeric
  * values, so pretend it's a float.
  */
-static void MoveMap( int &sel, IPreference *pOption, bool ToSel, const float *mapping, unsigned cnt )
+static void MoveMap( int &sel, IPreference &pOption, bool ToSel, const float *mapping, unsigned cnt )
 {
 	if( ToSel )
 	{
 		/* opt -> sel.  Find the closest entry in mapping. */
-		CString sStr = pOption->ToString();
+		CString sStr = pOption.ToString();
 		float fValue = strtof( sStr, NULL );
 			
 		sel = FindClosestEntry( fValue, mapping, cnt );
 	} else {
 		/* sel -> opt */
 		CString sStr = ssprintf( "%f", mapping[sel] );
-		pOption->FromString( sStr );
+		pOption.FromString( sStr );
 	}
 }
 
@@ -348,12 +348,12 @@ static void PremiumM( int &sel, bool ToSel, const ConfOption *pConfOption )
 
 static void SongsPerPlay( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const int mapping[] = { 1,2,3,4,5,6,7 };
+	const float mapping[] = { 1,2,3,4,5,6,7 };
 	MoveMap( sel, PREFSMAN->m_iNumArcadeStages, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 static void SongsPerPlayOrEventMode( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const int mapping[] = { 1,2,3,4,5,6,7,8 };
+	const float mapping[] = { 1,2,3,4,5,6,7,8 };
 	MoveMap( sel, PREFSMAN->m_iNumArcadeStages, ToSel, mapping, ARRAYSIZE(mapping) );
 
 	if( ToSel && PREFSMAN->m_bEventMode )

@@ -118,7 +118,9 @@ PrefsManager::PrefsManager() :
 	m_fLifeDeltaPercentChangeOK			( Options, "LifeDeltaPercentChangeOK",			+0.008f ),
 	m_fLifeDeltaPercentChangeNG			( Options, "LifeDeltaPercentChangeNG",			-0.080f ),
 	m_bShowCaution						( Options, "ShowCaution", true ),
-	m_bEventMode						( Options, "EventMode", false )
+	m_bEventMode						( Options, "EventMode", false ),
+	m_iNumArcadeStages					( Options, "NumArcadeStages", 3 ),
+	m_fGlobalOffsetSeconds				( Options, "GlobalOffsetSeconds", 0 )
 {
 	Init();
 	ReadGlobalPrefsFromDisk();
@@ -128,7 +130,6 @@ void PrefsManager::Init()
 {
 	m_bCelShadeModels = false;		// Work-In-Progress.. disable by default.
 	m_fConstantUpdateDeltaSeconds = 0;
-	m_iNumArcadeStages = 3;
 	m_bAutoPlay = false;
 
 	m_fTugMeterPercentChangeMarvelous =		+0.010f;
@@ -221,7 +222,6 @@ void PrefsManager::Init()
 	m_bUseUnlockSystem = false;
 	m_bFirstRun = true;
 	m_bAutoMapOnJoyChange = true;
-	m_fGlobalOffsetSeconds = 0;
 	m_bShowBeginnerHelper = false;
 	m_bEndlessBreakEnabled = true;
 	m_iEndlessNumStagesUntilBreak = 5;
@@ -379,7 +379,6 @@ void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
 {
 	ini.GetValue( "Options", "CelShadeModels",					m_bCelShadeModels );
 	ini.GetValue( "Options", "ConstantUpdateDeltaSeconds",		m_fConstantUpdateDeltaSeconds );
-	ini.GetValue( "Options", "NumArcadeStages",					m_iNumArcadeStages );
 	ini.GetValue( "Options", "AutoPlay",						m_bAutoPlay );
 	ini.GetValue( "Options", "TugMeterPercentChangeMarvelous",	m_fTugMeterPercentChangeMarvelous );
 	ini.GetValue( "Options", "TugMeterPercentChangePerfect",	m_fTugMeterPercentChangePerfect );
@@ -509,7 +508,6 @@ void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
 	ini.GetValue( "Options", "CoursesToShowRanking",			m_sCoursesToShowRanking );
 	ini.GetValue( "Options", "GetRankingName",					(int&)m_iGetRankingName);
 	ini.GetValue( "Options", "SmoothLines",						m_bSmoothLines );
-	ini.GetValue( "Options", "GlobalOffsetSeconds",				m_fGlobalOffsetSeconds );
 	ini.GetValue( "Options", "ShowBeginnerHelper",				m_bShowBeginnerHelper );
 	ini.GetValue( "Options", "Language",						m_sLanguage );
 	ini.GetValue( "Options", "EndlessBreakEnabled",				m_bEndlessBreakEnabled );
@@ -589,7 +587,6 @@ void PrefsManager::SaveGlobalPrefsToIni( IniFile &ini ) const
 	ini.SetValue( "Options", "BackgroundMode",					m_iBackgroundMode);
 	ini.SetValue( "Options", "NumBackgrounds",					m_iNumBackgrounds);
 	ini.SetValue( "Options", "BGBrightness",					m_fBGBrightness );
-	ini.SetValue( "Options", "NumArcadeStages",					m_iNumArcadeStages );
 	ini.SetValue( "Options", "AutoPlay",						m_bAutoPlay );
 	ini.SetValue( "Options", "JudgeWindowScale",				m_fJudgeWindowScale );
 	ini.SetValue( "Options", "JudgeWindowAdd",					m_fJudgeWindowAdd );
@@ -730,7 +727,6 @@ void PrefsManager::SaveGlobalPrefsToIni( IniFile &ini ) const
 	ini.SetValue( "Options", "CoursesToShowRanking",			m_sCoursesToShowRanking );
 	ini.SetValue( "Options", "GetRankingName",					m_iGetRankingName);
 	ini.SetValue( "Options", "SmoothLines",						m_bSmoothLines );
-	ini.SetValue( "Options", "GlobalOffsetSeconds",				m_fGlobalOffsetSeconds );
 
 	ini.SetValue( "Options", "CourseSortOrder",					m_iCourseSortOrder );
 	ini.SetValue( "Options", "MoveRandomToEnd",					m_bMoveRandomToEnd );

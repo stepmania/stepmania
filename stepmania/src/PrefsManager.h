@@ -143,7 +143,7 @@ public:
 	int 			m_iMarvelousTiming;
 	Preference<bool>	m_bEventMode;
 	int				m_iCoinsPerCredit;
-	int				m_iNumArcadeStages;
+	Preference<int>		m_iNumArcadeStages;
 
 	// These options have weird interactions depending on m_bEventMode, 
 	// so wrap them.
@@ -173,7 +173,7 @@ public:
 	bool			m_bUseUnlockSystem;
 	bool			m_bFirstRun;
 	bool			m_bAutoMapOnJoyChange;
-	float			m_fGlobalOffsetSeconds;
+	Preference<float>	m_fGlobalOffsetSeconds;
 	int				m_iProgressiveLifebar;
 	int				m_iProgressiveStageLifebar;
 	int				m_iProgressiveNonstopLifebar;
