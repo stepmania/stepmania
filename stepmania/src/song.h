@@ -176,7 +176,8 @@ public:
 	bool SongCompleteForStyle( const Style *st ) const;
 	bool HasStepsType( StepsType st ) const;
 	bool HasStepsTypeAndDifficulty( StepsType st, Difficulty dc ) const;
-	const vector<Steps*>& GetAllSteps( StepsType st=STEPS_TYPE_INVALID ) const { return st==STEPS_TYPE_INVALID? m_vpSteps:m_vpStepsByType[st]; }
+	const vector<Steps*>& GetAllSteps() const { return m_vpSteps; }
+	const vector<Steps*>& GetStepsByStepsType( StepsType st ) const { return m_vpStepsByType[st]; }
 	void GetSteps( 
 		vector<Steps*>& arrayAddTo, 
 		StepsType st = STEPS_TYPE_INVALID, 

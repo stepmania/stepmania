@@ -337,7 +337,7 @@ void ScreenNetSelectMusic::MenuDown( PlayerNumber pn, const InputEventType type 
 		return;
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 	vector <Steps *> MultiSteps;
-	MultiSteps = GAMESTATE->m_pCurSong->GetAllSteps( st );
+	MultiSteps = GAMESTATE->m_pCurSong->GetStepsByStepsType( st );
 	if (MultiSteps.size() == 0)
 		m_DC[pn] = NUM_DIFFICULTIES;
 	else
@@ -489,7 +489,7 @@ void ScreenNetSelectMusic::MusicChanged()
 		m_DC[pn] = GAMESTATE->m_PreferredDifficulty[pn];
 		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 		vector <Steps *> MultiSteps;
-		MultiSteps = GAMESTATE->m_pCurSong->GetAllSteps( st );
+		MultiSteps = GAMESTATE->m_pCurSong->GetStepsByStepsType( st );
 		if (MultiSteps.size() == 0)
 			m_DC[pn] = NUM_DIFFICULTIES;
 		else

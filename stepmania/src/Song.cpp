@@ -826,7 +826,7 @@ void Song::GetSteps(
 	if( !iMaxToGet )
 		return;
 
-	const vector<Steps*>& vpSteps = GetAllSteps(st);
+	const vector<Steps*>& vpSteps = GetStepsByStepsType(st);
 	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
 	{
 		Steps* pSteps = vpSteps[i];
@@ -875,7 +875,7 @@ Steps* Song::GetSteps(
 
 Steps* Song::GetStepsByDifficulty( StepsType st, Difficulty dc, bool bIncludeAutoGen ) const
 {
-	const vector<Steps*>& vpSteps = GetAllSteps(st);
+	const vector<Steps*>& vpSteps = GetStepsByStepsType(st);
 	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
 	{
 		Steps* pSteps = vpSteps[i];
@@ -893,7 +893,7 @@ Steps* Song::GetStepsByDifficulty( StepsType st, Difficulty dc, bool bIncludeAut
 
 Steps* Song::GetStepsByMeter( StepsType st, int iMeterLow, int iMeterHigh ) const
 {
-	const vector<Steps*>& vpSteps = GetAllSteps(st);
+	const vector<Steps*>& vpSteps = GetStepsByStepsType(st);
 	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
 	{
 		Steps* pSteps = vpSteps[i];
@@ -924,7 +924,7 @@ Steps* Song::GetClosestNotes( StepsType st, Difficulty dc ) const
 {
 	ASSERT( dc != DIFFICULTY_INVALID );
 
-	const vector<Steps*>& vpSteps = GetAllSteps(st);
+	const vector<Steps*>& vpSteps = GetStepsByStepsType(st);
 	Steps *pClosest = NULL;
 	int iClosestDistance = 999;
 	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
@@ -1422,6 +1422,13 @@ public:
 		CreateTableFromArray<Steps*>( v, L );
 		return 1;
 	}
+	static int GetStepsByStepsType( T* p, lua_State *L )
+	{
+		StepsType st = (StepsType)IArg(1);
+		const vector<Steps*> &v = p->GetStepsByStepsType( st );
+		CreateTableFromArray<Steps*>( v, L );
+		return 1;
+	}
 	static int GetSongDir( T* p, lua_State *L )	{ lua_pushstring(L, p->GetSongDir() ); return 1; }
 
 	static void Register(lua_State *L)
@@ -1429,6 +1436,7 @@ public:
 		ADD_METHOD( GetFullDisplayTitle )
 		ADD_METHOD( GetFullTranslitTitle )
 		ADD_METHOD( GetAllSteps )
+		ADD_METHOD( GetStepsByStepsType )
 		ADD_METHOD( GetSongDir )
 		Luna<T>::Register( L );
 	}
