@@ -26,21 +26,7 @@ void InputFilter::GetInputEvents( InputEventArray &array, float fDeltaTime )
 
 	for( int d=0; d<NUM_INPUT_DEVICES; d++ )	// foreach InputDevice
 	{
-		int iNumButtonsToCheck;
-		switch( d )
-		{
-		case DEVICE_KEYBOARD:	
-			iNumButtonsToCheck = NUM_KEYBOARD_BUTTONS;	
-			break;
-		case DEVICE_JOY1:
-		case DEVICE_JOY2:
-		case DEVICE_JOY3:
-		case DEVICE_JOY4:
-			iNumButtonsToCheck = NUM_JOYSTICK_BUTTONS;	
-			break;
-		default:
-			ASSERT( false );
-		}
+		int iNumButtonsToCheck = DeviceInput::NumButtons(InputDevice(d));
 
 		for( int b=0; b<iNumButtonsToCheck; b++ )	// foreach button
 		{
