@@ -62,6 +62,8 @@ ScreenMiniMenu::ScreenMiniMenu( const Menu* pDef, ScreenMessage SM_SendOnOK, Scr
 	m_textTitle.SetZoom( 0.8f );
 	this->AddChild( &m_textTitle );
 
+	m_sndRow.Load( THEME->GetPathS("ScreenMiniMenu","row") );
+
 	bool bMarkedFirstEnabledLine = false;
 	m_iCurLine = 0;
 
@@ -232,7 +234,7 @@ void ScreenMiniMenu::BeforeLineChanged()
 	m_textAnswer[m_iCurLine].SetEffectNone();
 	m_textLabel[m_iCurLine].SetZoom( ZOOM_NOT_SELECTED );
 	m_textAnswer[m_iCurLine].SetZoom( ZOOM_NOT_SELECTED );
-	SOUND->PlayOnce( THEME->GetPathS("ScreenMiniMenu","row") );
+	m_sndRow.Play();
 }
 
 void ScreenMiniMenu::AfterLineChanged()
@@ -245,7 +247,7 @@ void ScreenMiniMenu::AfterLineChanged()
 
 void ScreenMiniMenu::AfterAnswerChanged()
 {
-	SOUND->PlayOnce( THEME->GetPathS("ScreenMiniMenu","row") );
+	m_sndRow.Play();
 	int iAnswerInRow = m_iCurAnswers[m_iCurLine];
 	CString sAnswerText = m_Def.rows[m_iCurLine].choices[iAnswerInRow];
 	m_textAnswer[m_iCurLine].SetText( sAnswerText );

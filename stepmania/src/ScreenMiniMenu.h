@@ -7,7 +7,7 @@
 #include "BitmapText.h"
 #include "Transition.h"
 #include "Quad.h"
-#include "RandomSample.h"
+#include "RageSound.h"
 #include "BGAnimation.h"
 
 #define MAX_MENU_ROWS  40
@@ -94,6 +94,7 @@ protected:
 	int					m_iCurLine;
 	int					m_iCurAnswers[MAX_MENU_ROWS];
 	ScreenMessage		m_SMSendOnOK, m_SMSendOnCancel;
+	RageSound		m_sndRow;
 	Transition		m_In;
 	Transition		m_Out;
 
