@@ -127,7 +127,7 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 		GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.Init();
 		GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.FromString( PREFSMAN->m_sDefaultModifiers );
 		
-		ActorUtil::Command( m_sprCancelAll[pn], m_sName, "Show" );
+		COMMAND( m_sprCancelAll[pn], "Show" );
 
 		this->ImportOptionsForPlayer( pn );
 		this->PositionUnderlines();
