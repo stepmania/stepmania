@@ -6,7 +6,6 @@
 #include "RageUtil.h"
 #include "GameState.h"
 #include "TimingData.h"
-#include "MsdFile.h"
 #include "NotesLoaderSM.h"
 
 RageSounds *SOUND = NULL;
@@ -156,15 +155,8 @@ void StartMusic( MusicToPlay &ToPlay )
 	if( IsAFile(ToPlay.timing_file) )
 	{
 		LOG->Trace("Found '%s'", ToPlay.timing_file.c_str());
-		MsdFile msd;
-		bool bResult = msd.ReadFile( ToPlay.timing_file );
-		if( !bResult )
-			LOG->Warn( "Couldn't load %s, \"%s\"", ToPlay.timing_file.c_str(), msd.GetError().c_str() );
-		else
-		{
-			SMLoader::LoadTimingFromSMFile( msd, NewMusic->m_NewTiming );
+		if( SMLoader::LoadTimingFromFile( ToPlay.timing_file, NewMusic->m_NewTiming ) )
 			ToPlay.HasTiming = true;
-		}
 	}
 
 	if( ToPlay.HasTiming && ToPlay.force_loop && ToPlay.length_sec != -1 )
