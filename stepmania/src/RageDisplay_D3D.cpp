@@ -169,12 +169,21 @@ static const PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
 		  0x001F,
 		  0x0000 },
 	}, {
+#if defined _XBOX
+		/* A8B8G8R8 */
+		32,
+		{ 0x00FF0000,
+		  0x0000FF00,
+		  0x000000FF,
+		  0xFF000000 }
+#else
 		/* B8G8R8 */
 		24,
 		{ 0xFF0000,
 		  0x00FF00,
 		  0x0000FF,
 		  0x000000 }
+#endif
 	}, {
 		/* Paletted */
 		8,
@@ -194,10 +203,10 @@ static D3DFORMAT D3DFORMATS[NUM_PIX_FORMATS] =
 	D3DFMT_A4R4G4B4,
 	D3DFMT_A1R5G5B5,
 	D3DFMT_X1R5G5B5,
-#ifndef _XBOX
-	D3DFMT_R8G8B8,
-#else
+#if defined _XBOX
 	D3DFMT_A8R8G8B8,
+#else
+	D3DFMT_R8G8B8,
 #endif
 	D3DFMT_P8,
 	D3DFMT_UNKNOWN, /* no BGR */
@@ -258,6 +267,7 @@ RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
 		 * actually initialize the window.  Do this after as many error conditions
 		 * as possible, because if we have to shut it down again we'll flash a window
 		 * briefly. */
+//#if defined _WINDOWS
 		if(!SDL_WasInit(SDL_INIT_VIDEO))
 		{
 			if( SDL_InitSubSystem(SDL_INIT_VIDEO) == -1 )
@@ -272,6 +282,7 @@ RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
 		 * of the SDL video system--it'll be reinitialized on us if we do this first. */
 		SDL_EventState(0xFF /*SDL_ALLEVENTS*/, SDL_IGNORE);
 		SDL_EventState(SDL_VIDEORESIZE, SDL_ENABLE);
+//#endif
 
 		g_PaletteIndex.clear();
 		for( int i = 0; i < 256; ++i )
@@ -280,17 +291,21 @@ RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
 		// Save the original desktop format.
 		g_pd3d->GetAdapterDisplayMode( D3DADAPTER_DEFAULT, &g_DesktopMode );
 
+#if defined _WINDOWS
 		// Create the SDL window
 		int flags = SDL_RESIZABLE | SDL_SWSURFACE;
 		SDL_Surface *screen = SDL_SetVideoMode(p.width, p.height, p.bpp, flags);
 		if(!screen)
 			RageException::Throw("SDL_SetVideoMode failed: %s", SDL_GetError());
+#endif
 
 		SetVideoMode( p );
 	} catch(...) {
 		// Clean up; ~RageDisplay will not be called.
+#if defined _WINDOWS
 		if( SDL_WasInit(SDL_INIT_VIDEO) )
 			SDL_QuitSubSystem(SDL_INIT_VIDEO);
+#endif
 
 		if( g_pd3d )
 		{
@@ -311,6 +326,7 @@ RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
 
 void RageDisplay_D3D::Update(float fDeltaTime)
 {
+#if defined _WINDOWS
 	SDL_Event event;
 	while(SDL_GetEvent(event, SDL_VIDEORESIZEMASK))
 	{
@@ -325,6 +341,7 @@ void RageDisplay_D3D::Update(float fDeltaTime)
 			break;
 		}
 	}
+#endif
 }
 
 bool RageDisplay_D3D::IsSoftwareRenderer()
@@ -336,8 +353,10 @@ RageDisplay_D3D::~RageDisplay_D3D()
 {
 	LOG->Trace( "RageDisplay_D3D::~RageDisplay()" );
 
+#if defined _WINDOWS
 	SDL_EventState(SDL_VIDEORESIZE, SDL_IGNORE);
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
+#endif
 
 	g_pd3dDevice->Release();
     g_pd3d->Release();
@@ -367,7 +386,9 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 	}
 	if( !bWindowed && iBPP != 16 && iBPP != 32 )
 	{
+#if defined _WINDOWS
 		SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
+#endif
 		throw RageException( ssprintf("Invalid BPP '%u' specified", iBPP) );
 	}
 
@@ -400,7 +421,7 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 	return (D3DFORMAT)-1;
 }
 
-#ifndef _XBOX
+#if defined _WINDOWS
 HWND GetHwnd()
 {
 	SDL_SysWMinfo info;
@@ -425,6 +446,7 @@ bool RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 	if( FindBackBufferType( p.windowed, p.bpp ) == -1 )	// no possible back buffer formats
 		return false;	// failed to set mode
 
+#if defined _WINDOWS
 	/* Set SDL window title and icon -before- creating the window */
 	SDL_WM_SetCaption( p.sWindowTitle, "" );
 	mySDL_WM_SetIcon( p.sIconFile );
@@ -436,6 +458,7 @@ bool RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 	// SDL window only if we're not fullscreen.
 
 	SDL_ShowCursor( p.windowed );
+#endif
 
     ZeroMemory( &g_d3dpp, sizeof(g_d3dpp) );
 	g_d3dpp.BackBufferWidth			=	p.width;
@@ -481,7 +504,9 @@ bool RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 			&g_pd3dDevice );
 		if( FAILED(hr) )
 		{
+#if defined _WINDOWS
 			SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
+#endif
 			RageException::Throw( "CreateDevice failed: '%s'", GetErrorString(hr).c_str() );
 		}
 	}
@@ -491,13 +516,16 @@ bool RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 		hr = g_pd3dDevice->Reset( &g_d3dpp );
 		if( FAILED(hr) )
 		{
+#if defined _WINDOWS
 			SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
+#endif
 			RageException::Throw( "g_pd3dDevice->Reset failed: '%s'", GetErrorString(hr).c_str() );
 		}
 	}
 	
 	if( p.windowed )
 	{
+#if defined _WINDOWS
 		int flags = SDL_RESIZABLE | SDL_SWSURFACE;
 		
 		// Don't use SDL to change the video mode.  This will cause a 
@@ -513,6 +541,7 @@ bool RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 			SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
 			RageException::Throw("SDL_SetVideoMode failed: %s", SDL_GetError());
 		}
+#endif
 	}
 
 	ResolutionChanged();
@@ -572,6 +601,15 @@ void RageDisplay_D3D::EndFrame()
 
 bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt )
 {
+#if defined _XBOX
+	// Lazy...  Xbox handles paletted textures completely differently
+	// than D3D and I don't want to add a bunch of code for it.  Also, 
+	// paletted textures result in worse cache efficiency (see "Xbox 
+	// Palettized Texture Performance" in XDK).  So, we'll force 32bit
+	// ARGB textures.  -Chris
+	return pixfmt == FMT_RGBA8;
+#endif
+
 	// Some cards (Savage) don't support alpha in palettes.
 	// Don't allow paletted textures if this is the case.
 	if( pixfmt == FMT_PAL  &&  !(g_DeviceCaps.TextureCaps & D3DPTEXTURECAPS_ALPHAPALETTE) )
@@ -969,12 +1007,28 @@ void RageDisplay_D3D::UpdateTexture(
 	ASSERT( xoffset+width <= int(desc.Width) );
 	ASSERT( yoffset+height <= int(desc.Height) );
 
+	//
+	// Copy bits
+	//
+#if _XBOX
+	// Xbox textures need to be swizzled
+	XGSwizzleRect(
+		img->pixels,	// pSource, 
+		img->pitch,		// Pitch,
+		NULL,	// pRect,
+		lr.pBits,	// pDest,
+		img->w,	// Width,
+		img->h,	// Height,
+		NULL,	// pPoint,
+		img->format->BytesPerPixel ); //BytesPerPixel
+#else
 	int texpixfmt;
 	for(texpixfmt = 0; texpixfmt < NUM_PIX_FORMATS; ++texpixfmt)
 		if(D3DFORMATS[texpixfmt] == desc.Format) break;
 	ASSERT( texpixfmt != NUM_PIX_FORMATS );
 
 	SDL_Surface *Texture = CreateSurfaceFromPixfmt(PixelFormat(texpixfmt), lr.pBits, width, height, lr.Pitch);
+	ASSERT( Texture );
 	SDL_Rect area;
 	area.x = area.y = 0;
 	area.w = (Uint16) width;
@@ -985,17 +1039,8 @@ void RageDisplay_D3D::UpdateTexture(
 	mySDL_BlitSurface( img, Texture, width, height, false );
 
 	SDL_FreeSurface( Texture );
-
-#if 0
-	// copy each row
-	int bytes_per_pixel = img->format->BytesPerPixel;
-	for( int y=rect.top; y<rect.bottom; y++ )
-	{
-		char* src = (char*)img->pixels + y*img->pitch + rect.left*bytes_per_pixel;
-		char* dst = (char*)lr.pBits    + y*lr.Pitch   + rect.left*bytes_per_pixel;
-		memcpy( dst, src, (rect.right-rect.left)*bytes_per_pixel );
-	}
 #endif
+
 	pTex->UnlockRect( 0 );
 }
 

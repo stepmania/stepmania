@@ -84,7 +84,6 @@ void RageBitmapTexture::Create()
 	/* Load the image into an SDL surface. */
 	SDL_Surface *img = IMG_Load( GetID().filename );
 
-
 	/* XXX: Wait, we don't want to throw for all images; in particular, we
 	 * want to tolerate corrupt/unknown background images. */
 	if(img == NULL)
@@ -257,6 +256,7 @@ apply_color_key:
 //			texturePixfmt = FMT_ALPHA8;
 //		}
 
+
 		/* It's either not a paletted image, or we can't handle paletted textures.
 		 * Convert to the desired RGBA format, dithering if appropriate. */
 		if( actualID.bDither && 
@@ -286,7 +286,7 @@ apply_color_key:
 		if( !DISPLAY->SupportsTextureFormat(pixfmt) )
 			pixfmt = FMT_RGBA4;
 	}
-		
+
 
 	/* Convert the data to the destination format and dimensions 
 	 * required by OpenGL if it's not in it already.  */

@@ -12,20 +12,27 @@
 #include "SDL.h"
 #include "SDL_utils.h"
 #include "SDL_endian.h"
-
-#if defined(WIN32)
+#include "RageFile.h"
 
 /* Pull in all of our SDL libraries here. */
-#ifdef DEBUG
-#pragma comment(lib, "SDL-1.2.5/lib/SDLd.lib")
-#pragma comment(lib, "SDL_image-1.2/SDL_imaged.lib")
-#else
-#pragma comment(lib, "SDL-1.2.5/lib/SDL.lib")
-#pragma comment(lib, "SDL_image-1.2/SDL_image.lib")
+#ifdef _XBOX
+	#ifdef DEBUG
+	#pragma comment(lib, "SDLx-0.02/SDLxd.lib")
+	#pragma comment(lib, "SDL_image-1.2/xbox_SDL_imaged.lib")
+	#else
+	#pragma comment(lib, "SDLx-0.02/SDLx.lib")
+	#pragma comment(lib, "SDL_image-1.2/xbox_SDL_image.lib")
+	#endif
+#elif defined _WINDOWS
+	#ifdef DEBUG
+	#pragma comment(lib, "SDL-1.2.5/lib/SDLd.lib")
+	#pragma comment(lib, "SDL_image-1.2/SDL_imaged.lib")
+	#else
+	#pragma comment(lib, "SDL-1.2.5/lib/SDL.lib")
+	#pragma comment(lib, "SDL_image-1.2/SDL_image.lib")
+	#endif
 #endif
 
-
-#endif
 
 Uint32 mySDL_Swap24(Uint32 x)
 {
@@ -598,7 +605,7 @@ struct SurfaceHeader
 /* Save and load SDL_Surfaces to disk.  This avoids problems with bitmaps. */
 bool mySDL_SaveSurface( SDL_Surface *img, CString file )
 {
-	FILE *f = fopen(file.c_str(), "wb+");
+	FILE *f = Ragefopen(file.c_str(), "wb+");
 	if(f == NULL)
 		return false;
 
@@ -636,7 +643,7 @@ bool mySDL_SaveSurface( SDL_Surface *img, CString file )
 
 SDL_Surface *mySDL_LoadSurface( CString file )
 {
-	FILE *f = fopen(file.c_str(), "rb");
+	FILE *f = Ragefopen(file.c_str(), "rb");
 	if(f == NULL)
 		return NULL;
 

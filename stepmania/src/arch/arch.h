@@ -20,14 +20,25 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers);
 /* Define the default list of sound drivers for each arch.  It's
  * OK to list drivers that may not be available. */
 #if defined(LINUX)
-#define DEFAULT_SOUND_DRIVER_LIST "ALSA9,OSS,Null"
+	#define DEFAULT_SOUND_DRIVER_LIST "ALSA9,OSS,Null"
 #elif defined(DARWIN)
-#define DEFAULT_SOUND_DRIVER_LIST "QT,QT1,Null"
-#elif defined(WIN32)
-#define DEFAULT_SOUND_DRIVER_LIST "DirectSound,DirectSound-sw,WaveOut"
+	#define DEFAULT_SOUND_DRIVER_LIST "QT,QT1,Null"
+#elif defined(_WINDOWS)
+	#define DEFAULT_SOUND_DRIVER_LIST "DirectSound,DirectSound-sw,WaveOut"
+#elif defined(_XBOX)
+	#define DEFAULT_SOUND_DRIVER_LIST "DirectSound"
 #else
-#define DEFAULT_SOUND_DRIVER_LIST "Null"
+	#define DEFAULT_SOUND_DRIVER_LIST "Null"
 #endif
+
+
+/* Hack for Xbox: All paths must be absolute. */
+#if defined(_XBOX)
+	#define BASE_PATH "D:\\"
+#else
+	#define BASE_PATH ""
+#endif
+
 
 #endif
 

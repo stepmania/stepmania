@@ -55,23 +55,24 @@ using namespace std;
 #undef ASSERT
 #endif
 
-#if defined(WIN32)
-/* Assertion that sets an optional message and brings up the crash handler, so
- * we get a backtrace.  This should probably be used instead of throwing an
- * exception in most cases we expect never to happen (but not in cases that
- * we do expect, such as DSound init failure.) */
-#include "archutils/win32/crash.h"
-#define RAGE_ASSERT_M(COND, MESSAGE) { if(!(COND)) { VDCHECKPOINT_M(MESSAGE); *(char*)0=0; } }
-#define RAGE_ASSERT(COND) RAGE_ASSERT_M((COND), "Assertion '" #COND "' failed")
-#define ASSERT RAGE_ASSERT
+#if defined(_WINDOWS)
+	/* Assertion that sets an optional message and brings up the crash handler, so
+	 * we get a backtrace.  This should probably be used instead of throwing an
+	 * exception in most cases we expect never to happen (but not in cases that
+	 * we do expect, such as DSound init failure.) */
+	#include "archutils/win32/crash.h"
+	#define RAGE_ASSERT_M(COND, MESSAGE) { if(!(COND)) { VDCHECKPOINT_M(MESSAGE); *(char*)0=0; } }
+	#define RAGE_ASSERT(COND) RAGE_ASSERT_M((COND), "Assertion '" #COND "' failed")
+	#define ASSERT RAGE_ASSERT
 #else
-
-#include <assert.h>
-/* TODO: do something useful and portable with RAGE_ASSERT*. */
-#define RAGE_ASSERT_M(COND, MESSAGE) ASSERT(COND)
-#define RAGE_ASSERT(COND) RAGE_ASSERT_M((COND), "Assertion '" #COND "' failed")
-#define ASSERT assert
+	#define VDCHECKPOINT (void*)(0)
+	#include <assert.h>
+	/* TODO: do something useful and portable with RAGE_ASSERT*. */
+	#define RAGE_ASSERT_M(COND, MESSAGE) ASSERT(COND)
+	#define RAGE_ASSERT(COND) RAGE_ASSERT_M((COND), "Assertion '" #COND "' failed")
+	#define ASSERT assert
 #endif
+
 
 #ifdef DEBUG
 #define DEBUG_ASSERT(x)	ASSERT(x)
@@ -135,6 +136,12 @@ inline float acosf(float x) { return float(acos(double(x))); }
 #include <xtl.h>
 #include <xgraphics.h>
 #include <stdio.h>
+#endif
+
+#if defined(_XBOX)
+	#define SLASH "\\"
+#else
+	#define SLASH "/"
 #endif
 
 /* Don't include our own headers here, since they tend to change often. */

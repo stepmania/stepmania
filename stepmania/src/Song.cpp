@@ -29,6 +29,8 @@
 #include "BannerCache.h"
 #include "Sprite.h"
 #include "PrefsManager.h"
+#include "arch/arch.h"
+#include "RageFile.h"
 
 #include "NotesLoaderSM.h"
 #include "NotesLoaderDWI.h"
@@ -42,6 +44,7 @@
 #include "SDL.h"
 #include "SDL_image.h"
 
+#define CACHE_DIR BASE_PATH "Cache" SLASH
 
 const int FILE_CACHE_VERSION = 126;	// increment this when Song or Notes changes to invalidate cache
 
@@ -292,7 +295,7 @@ float Song::GetElapsedTimeFromBeat( float fBeat ) const
 
 CString Song::GetCacheFilePath() const
 {
-	return ssprintf( "Cache/Songs/%u", GetHashForString(m_sSongDir) );
+	return ssprintf( CACHE_DIR "Songs" SLASH "%u", GetHashForString(m_sSongDir) );
 }
 
 /* Get a path to the SM containing data for this song.  It might
@@ -361,17 +364,16 @@ bool Song::LoadFromSongDir( CString sDir )
 //	LOG->Trace( "Song::LoadFromSongDir(%s)", sDir.c_str() );
 	ASSERT( sDir != "" );
 
-	sDir.Replace("\\", "/");
 	// make sure there is a trailing slash at the end of sDir
-	if( sDir.Right(1) != "/" )
-		sDir += "/";
+	if( sDir.Right(1) != SLASH )
+		sDir += SLASH;
 
 	// save song dir
 	m_sSongDir = sDir;
 
 	// save group name
 	CStringArray sDirectoryParts;
-	split( m_sSongDir, "/", sDirectoryParts, false );
+	split( m_sSongDir, SLASH, sDirectoryParts, false );
 	m_sGroupName = sDirectoryParts[sDirectoryParts.size()-3];	// second from last item
 
 	//
@@ -534,9 +536,8 @@ void Song::TidyUpData()
 	{
 		/* Use the song directory name. */
 		CString SongDir = this->GetSongDir();
-		SongDir.Replace("\\", "/");
 		vector<CString> parts;
-		split(SongDir, "/", parts);
+		split(SongDir, SLASH, parts);
 		ASSERT(parts.size() > 0);
 
 		NotesLoader::GetMainAndSubTitlesFromFullTitle( parts[parts.size()-1], m_sMainTitle, m_sSubTitle );
@@ -598,11 +599,11 @@ void Song::TidyUpData()
 	LOG->Trace("Looking for images...");
 
 	/* Replace backslashes with slashes in all paths. */	
-	m_sMusicFile.Replace("\\", "/");
-	m_sBannerFile.Replace("\\", "/");
-	m_sBackgroundFile.Replace("\\", "/");
-	m_sCDTitleFile.Replace("\\", "/");
-	m_sLyricsFile.Replace("\\", "/");
+	FixSlashes( m_sMusicFile );
+	FixSlashes( m_sBannerFile );
+	FixSlashes( m_sBackgroundFile );
+	FixSlashes( m_sCDTitleFile );
+	FixSlashes( m_sLyricsFile );
 
 	/* Many imported files contain erroneous whitespace before or after
 	 * filenames.  Paths usually don't actually start or end with spaces,
@@ -691,11 +692,12 @@ void Song::TidyUpData()
 		if( HasCDTitle()  &&  stricmp(m_sCDTitleFile, arrayImages[i])==0 )
 			continue;	// skip
 
-		SDL_Surface *img = IMG_Load( m_sSongDir + arrayImages[i] );
+		CString sPath = m_sSongDir + arrayImages[i];
+		SDL_Surface *img = IMG_Load( sPath );
 		if( !img )
 		{
-			LOG->Trace("Couldn't load %s%s: %s", 
-				m_sSongDir.c_str(), arrayImages[i].c_str(), SDL_GetError());
+			LOG->Trace("Couldn't load '%s': %s", 
+				sPath.c_str(), SDL_GetError());
 			continue;
 		}
 
@@ -1464,7 +1466,7 @@ CString Song::GetMusicPath() const
 	/* The file has a path.  If it was loaded from the m_DWIPath, it's relative
 	 * to that. */
 	if( PREFSMAN->m_DWIPath!="" && m_sSongDir.Left(PREFSMAN->m_DWIPath.GetLength()) == PREFSMAN->m_DWIPath )
-		return PREFSMAN->m_DWIPath+"/"+m_sMusicFile;
+		return PREFSMAN->m_DWIPath+SLASH+m_sMusicFile;
 
 	/* Otherwise, it's relative to the top of the SM directory (the CWD), so
 	 * return it directly. */
@@ -1487,7 +1489,7 @@ CString Song::GetCDTitlePath() const
 		return m_sSongDir+m_sCDTitleFile;
 
 	if( PREFSMAN->m_DWIPath!="" && m_sSongDir.Left(PREFSMAN->m_DWIPath.GetLength()) == PREFSMAN->m_DWIPath )
-		return PREFSMAN->m_DWIPath+"/"+m_sCDTitleFile;
+		return PREFSMAN->m_DWIPath+SLASH+m_sCDTitleFile;
 
 	return m_sCDTitleFile;
 }

@@ -1,12 +1,12 @@
 #ifndef XBOX_ARCH_H
 #define XBOX_ARCH_H
 
-/* Load drivers for Win32. */
-#include "LoadingWindow/LoadingWindow_SDL.h"
+/* Load drivers for Xbox. */
+#include "LoadingWindow/LoadingWindow_Null.h"
 #include "ErrorDialog/ErrorDialog_null.h"
 #include "ArchHooks/ArchHooks_none.h"
 
-#include "InputHandler/InputHandler_DirectInput.h"
+#include "InputHandler/InputHandler_SDL.h"
 
 #include "Sound/RageSoundDriver_DSound.h"
 

@@ -30,6 +30,7 @@
 #include "Notes.h"
 #include <utility>
 #include "NoteFieldPositioning.h"
+#include "arch/arch.h"
 
 
 const float RECORD_HOLD_SECONDS = 0.3f;

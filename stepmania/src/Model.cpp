@@ -16,7 +16,7 @@
 #include "RageUtil.h"
 #include "RageTextureManager.h"
 #include "IniFile.h"
-
+#include "RageFile.h"
 
 const float FRAMES_PER_SECOND = 30;
 const CString DEFAULT_ANIMATION_NAME = "default";
@@ -77,7 +77,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 	CString sDir, sThrowAway;
 	splitrelpath( sPath, sDir, sThrowAway, sThrowAway );
 
-	FILE *file = fopen (sPath, "rt");
+	FILE *file = Ragefopen (sPath, "rt");
 	if (!file)
 		RageException::Throw( "Model::LoadMilkshapeAscii Could not open '%s'.", sPath.c_str() );
 
@@ -438,7 +438,7 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 	CString sDir, sThrowAway;
 	splitrelpath( sPath, sDir, sThrowAway, sThrowAway );
 
-	FILE *file = fopen (sPath, "rt");
+	FILE *file = Ragefopen (sPath, "rt");
 	if (!file)
 		RageException::Throw( "Model:: Could not open '%s'.", sPath.c_str() );
 

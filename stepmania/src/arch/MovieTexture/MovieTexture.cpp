@@ -13,7 +13,7 @@
 #define DEFAULT_MOVIE_DRIVER_LIST "Null"
 #endif
 
-#include <fstream>
+#include "RageFile.h"
 bool RageMovieTexture::GetFourCC( CString fn, CString &handler, CString &type )
 {
 	CString ignore, ext;

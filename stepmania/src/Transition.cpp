@@ -14,6 +14,7 @@
 #include "RageUtil.h"
 #include "ScreenManager.h"
 #include "IniFile.h"
+#include "RageFile.h"
 
 
 Transition::Transition()
@@ -24,8 +25,8 @@ Transition::Transition()
 
 void Transition::Load( CString sBGAniDir )
 {
-	if( !sBGAniDir.empty() && sBGAniDir.Right(1) != "/" )
-		sBGAniDir += "/";
+	if( !sBGAniDir.empty() && sBGAniDir.Right(1) != SLASH )
+		sBGAniDir += SLASH;
 
 	m_BGAnimation.LoadFromAniDir( sBGAniDir );
 
@@ -39,9 +40,16 @@ void Transition::Load( CString sBGAniDir )
 
 	CString sSoundFileName;
 	if( ini.GetValue("BGAnimation","Sound",sSoundFileName) )
-		m_sound.Load( sBGAniDir+sSoundFileName );
+	{
+		FixSlashesInPlace( sSoundFileName );
+		CString sPath = sBGAniDir+sSoundFileName;
+		CollapsePath( sPath );
+		m_sound.Load( sPath );
+	}
 	else
+	{
 		m_sound.Load( sBGAniDir );
+	}
 }
 
 

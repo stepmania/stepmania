@@ -5,10 +5,29 @@
 #include "RageUtil.h"
 #include "SDL_utils.h"
 #include "RageSoundReader_Vorbisfile.h"
+
+#ifdef _XBOX
+#include "vorbis/vorbisfile.h"
+#else
 #include "tremor/ivorbisfile.h"
+#endif
+
+#if defined _XBOX
+#pragma comment(lib, "SDL_sound-1.0.0/lib/xbox_ogg_static.lib")
+#pragma comment(lib, "SDL_sound-1.0.0/lib/xbox_vorbis_static.lib")
+#pragma comment(lib, "SDL_sound-1.0.0/lib/xbox_vorbisfile_static.lib")
+#elif defined _WINDOWS
+#pragma comment(lib, "SDL_sound-1.0.0/lib/ogg_static.lib")
+#pragma comment(lib, "SDL_sound-1.0.0/lib/vorbis_static.lib")
+#pragma comment(lib, "SDL_sound-1.0.0/lib/vorbisfile_static.lib")
+#endif
 
 #include <string.h>
-#include <sys/errno.h>
+#include "RageFile.h"
+
+/* What is this file, and why is it needed?  Seems to compile on 
+ * Win32 w/o it. -Chris */
+//#include <sys/errno.h>
 
 
 const int channels = 2;
@@ -21,7 +40,7 @@ bool RageSoundReader_Vorbisfile::Open(CString filename_)
 	filename=filename_;
 
 	vf = new OggVorbis_File;
-	FILE *f = fopen(filename, "r");
+	FILE *f = Ragefopen(filename, "r");
 	if(f == NULL)
 	{
 		SetError(ssprintf("ogg fopen(%s) failed: %s", filename.c_str(), strerror(errno)));
@@ -81,7 +100,12 @@ int RageSoundReader_Vorbisfile::Read(char *buf, unsigned len)
 			char tmpbuf[4096];
 			int bstream;
 
+#ifdef _XBOX // float vorbis decoder
+			int ret = ov_read(vf, tmpbuf, sizeof(tmpbuf), 0, 2, 1, &bstream);
+#else // integer vorbis decoder
 			int ret = ov_read(vf, tmpbuf, sizeof(tmpbuf), &bstream);
+#endif
+
 //int ret = 4096;
 //memset(tmpbuf, 0, sizeof(tmpbuf));
 			if(ret == OV_HOLE)

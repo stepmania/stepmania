@@ -24,6 +24,7 @@
 #include "NoteTypes.h"
 #include <math.h>	// for fmodf
 #include "DancingCharacters.h"
+#include "arch/arch.h"
 
 
 const float FADE_SECONDS = 1.0f;

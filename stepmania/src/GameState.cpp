@@ -27,10 +27,12 @@
 #include "Character.h"
 #include "UnlockSystem.h"
 #include "AnnouncerManager.h"
+#include "arch/arch.h"
 
 
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
 
+#define CHARACTERS_DIR BASE_PATH "Characters" SLASH
 
 GameState::GameState()
 {
@@ -163,7 +165,7 @@ void GameState::ReloadCharacters()
 		m_pCurCharacters[p] = NULL;
 
 	CStringArray as;
-	GetDirListing( "Characters/*", as, true, true );
+	GetDirListing( CHARACTERS_DIR "*", as, true, true );
 	for( i=0; i<as.size(); i++ )
 	{
 		Character* pChar = new Character;

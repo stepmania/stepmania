@@ -13,18 +13,19 @@
 #include "Character.h"
 #include "IniFile.h"
 #include "RageUtil.h"
+#include "arch/arch.h"
 
 
 bool Character::Load( CString sCharDir )
 {
 	// Save character directory
-	if( sCharDir.Right(1)!="/" )
-		sCharDir += '/';
+	if( sCharDir.Right(1)!=SLASH )
+		sCharDir += SLASH;
 	m_sCharDir = sCharDir;
 
 	// Save character name
 	vector<CString> as;
-	split( sCharDir, "/", as );
+	split( sCharDir, SLASH, as );
 	m_sName = as.back();
 
 	// Save attacks
@@ -52,9 +53,9 @@ CString GetRandomFileInDir( CString sDir )
 
 
 CString Character::GetModelPath()			{ return m_sCharDir + "model.txt"; }
-CString Character::GetRestAnimationPath()	{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Rest/")); }
-CString Character::GetWarmUpAnimationPath() { return DerefRedir(GetRandomFileInDir(m_sCharDir + "WarmUp/")); }
-CString Character::GetDanceAnimationPath()	{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Dance/")); }
+CString Character::GetRestAnimationPath()	{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Rest" SLASH)); }
+CString Character::GetWarmUpAnimationPath() { return DerefRedir(GetRandomFileInDir(m_sCharDir + "WarmUp" SLASH)); }
+CString Character::GetDanceAnimationPath()	{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Dance" SLASH)); }
 CString Character::GetTakingABreakPath()
 {
 	CStringArray as;

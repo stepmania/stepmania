@@ -23,13 +23,15 @@
 #include "FontCharAliases.h"
 #include "RageDisplay.h"
 #include "arch/ArchHooks/ArchHooks.h"
+#include "arch/arch.h"
+#include "RageFile.h"
 
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
 
 
 const CString BASE_THEME_NAME = "default";
-const CString THEMES_DIR  = "Themes/";
+const CString THEMES_DIR  = BASE_PATH "Themes" SLASH;
 const CString ELEMENT_CATEGORY_STRING[NUM_ELEMENT_CATEGORIES] =
 {
 	"BGAnimations",
@@ -57,7 +59,7 @@ ThemeManager::~ThemeManager()
 
 void ThemeManager::GetThemeNames( CStringArray& AddTo )
 {
-	GetDirListing( THEMES_DIR+"/*", AddTo, true );
+	GetDirListing( THEMES_DIR + "*", AddTo, true );
 	
 	// strip out the folder called "CVS"
 	for( CStringArray::iterator i=AddTo.begin(); i != AddTo.end(); ++i )
@@ -104,7 +106,7 @@ void ThemeManager::SwitchTheme( CString sThemeName )
 
 CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
 {
-	return THEMES_DIR + sThemeName + "/";
+	return THEMES_DIR + sThemeName + SLASH;
 }
 
 CString ThemeManager::GetPathTo( CString sThemeName, ElementCategory category, CString sFileName ) 
@@ -125,12 +127,12 @@ try_element_again:
 
 	if( bLookingForSpecificFile )
 	{
-		GetDirListing( sThemeDir + sCategory+"/"+sFileName, asElementPaths, bDirsOnly, true );
+		GetDirListing( sThemeDir + sCategory+SLASH+sFileName, asElementPaths, bDirsOnly, true );
 	}
 	else	// look for all files starting with sFileName that have types we can use
 	{
 		/* First, look for redirs. */
-		GetDirListing( sThemeDir + sCategory+"/"+sFileName + ".redir",
+		GetDirListing( sThemeDir + sCategory + SLASH + sFileName + ".redir",
 						asElementPaths, false, true );
 
 		static const char *masks[NUM_ELEMENT_CATEGORIES][12] = {
@@ -143,7 +145,7 @@ try_element_again:
 		const char **asset_masks = masks[category];
 
 		for( int i = 0; asset_masks[i]; ++i )
-			GetDirListing( sThemeDir + sCategory+"/" + sFileName + asset_masks[i],
+			GetDirListing( sThemeDir + sCategory + SLASH + sFileName + asset_masks[i],
 							asElementPaths, bDirsOnly, true );
 		if( category == Fonts )
 			Font::WeedFontNames(asElementPaths, sFileName);
@@ -223,6 +225,7 @@ try_element_again:
 
 CString ThemeManager::GetPathTo( ElementCategory category, CString sFileName, bool bOptional ) 
 {
+	// TODO: Use HOOKS->MessageBox()
 #if defined(DEBUG) && defined(WIN32)
 try_element_again:
 #endif
@@ -230,6 +233,7 @@ try_element_again:
 	CString ret = GetPathTo( m_sCurThemeName, category, sFileName);
 	if( !ret.empty() )	// we found something
 		return ret;
+
 	ret = GetPathTo( BASE_THEME_NAME, category, sFileName);
 	if( !ret.empty() )	// we found something
 		return ret;
@@ -239,14 +243,14 @@ try_element_again:
 	CString sCategory = ELEMENT_CATEGORY_STRING[category];
 
 #if defined(DEBUG) && defined(WIN32)
-	CString sMessage = ssprintf("The theme element '%s/%s' is missing.",sCategory.c_str(),sFileName.c_str());
+	CString sMessage = "The theme element '" + sCategory + SLASH + sFileName +"' is missing.";
 	switch( MessageBox(NULL, sMessage, "ThemeManager", MB_RETRYCANCEL ) )
 	{
 	case IDRETRY:
 		FlushDirCache();
 		goto try_element_again;
 	case IDCANCEL:
-		RageException::Throw( "Theme element '%s/%s' could not be found in '%s' or '%s'.", 
+		RageException::Throw( "Theme element '%s" SLASH "%s' could not be found in '%s' or '%s'.", 
 			sCategory.c_str(),
 			sFileName.c_str(), 
 			GetThemeDirFromName(m_sCurThemeName).c_str(), 
@@ -256,7 +260,7 @@ try_element_again:
 #endif
 
 	LOG->Warn( 
-		"Theme element '%s/%s' could not be found in '%s' or '%s'.", 
+		"Theme element '%s" SLASH "%s' could not be found in '%s' or '%s'.", 
 		sCategory.c_str(),
 		sFileName.c_str(), 
 		GetThemeDirFromName(m_sCurThemeName).c_str(), 
@@ -264,7 +268,7 @@ try_element_again:
 
 	/* Err? */
 	if(sFileName == "_missing")
-		RageException::Throw("_missing element missing from %s/%s", GetThemeDirFromName(BASE_THEME_NAME).c_str(), sCategory.c_str() );
+		RageException::Throw("'_missing' isn't present in '%s%s'", GetThemeDirFromName(BASE_THEME_NAME).c_str(), sCategory.c_str() );
 	return GetPathTo( category, "_missing" );
 }
 

@@ -27,8 +27,9 @@ RageInput::RageInput()
 
 	/* If no input devices are loaded, the user won't be able to input anything.
 	 * That should never happen. */
-	if(Devices.size() == 0)
-		RageException::Throw("No input devices were loaded.  This shouldn't happen; please file a bug.");
+	/* Temporarily commented out until Xbox is working. -Chris */
+//	if(Devices.size() == 0)
+//		RageException::Throw("No input devices were loaded.  This shouldn't happen; please file a bug.");
 }
 
 RageInput::~RageInput()

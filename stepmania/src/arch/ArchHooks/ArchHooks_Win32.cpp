@@ -114,4 +114,5 @@ ArchHooks::MessageBoxResult ArchHooks_Win32::MessageBoxAbortRetryIgnore( CString
  * Copyright (c) 2002-2003 by the person(s) listed below.  All rights reserved.
  *
  * Glenn Maynard
+ * Chris Danford
  */

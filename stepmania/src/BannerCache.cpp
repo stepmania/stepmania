@@ -6,6 +6,7 @@
 
 #include "global.h"
 
+#include "arch/arch.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"
 #include "RageLog.h"
@@ -18,6 +19,8 @@
 #include "SDL_rotozoom.h"
 
 #include "Banner.h"
+
+#define CACHE_DIR BASE_PATH "Cache" SLASH
 
 /* Call CacheBanner to cache a banner by path.  If the banner is already
  * cached, it'll be recreated.  This is efficient if the banner hasn't changed,
@@ -47,7 +50,7 @@ CString BannerCache::GetBannerCachePath( CString BannerPath )
 {
 	/* Use GetHashForString, not ForFile, since we don't want to spend time
 	 * checking the file size and date. */
-	return ssprintf( "Cache/Banners/%u", GetHashForString(BannerPath) );
+	return ssprintf( CACHE_DIR "Banners" SLASH "%u", GetHashForString(BannerPath) );
 }
 
 void BannerCache::LoadBanner( CString BannerPath )
@@ -112,8 +115,8 @@ void BannerCache::UnloadAllBanners()
 
 BannerCache::BannerCache()
 {
-	CreateDirectories("Cache/Banners/");
-	BannerData.SetPath( "Cache/banners.cache" );
+	CreateDirectories( CACHE_DIR "Banners" SLASH );
+	BannerData.SetPath( CACHE_DIR "banners.cache" );
 	BannerData.ReadFile();	// don't care if this fails
 }
 

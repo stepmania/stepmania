@@ -28,6 +28,7 @@
 #include "ActorUtil.h"
 #include "arch/ArchHooks/ArchHooks.h"
 #include "RageTextureManager.h"
+#include "RageFile.h"
 
 
 const float PARTICLE_SPEED = 300;
@@ -409,7 +410,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 	/*
 	CString sDir, sFName, sExt;
 	splitrelpath( sPath, sDir, sFName, sExt );
-	CString sIniPath = sDir+"/"+sFName+".ini";
+	CString sIniPath = sDir+SLASH+sFName+".ini";
 	IniFile ini;
 	ini.SetPath( sIniPath );
 	if( ini.ReadFile() )
@@ -454,11 +455,12 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 }
 
 
+
 void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 {
 	Init();
-	if( sAniDir.Right(1) != "/" )
-		sAniDir += "/";
+	if( sAniDir.Right(1) != SLASH )
+		sAniDir += SLASH;
 
 	ASSERT( IsADirectory(sAniDir) );
 
@@ -471,8 +473,12 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 
 	CString sFile;
 	ini.GetValue( sLayer, "File", sFile );
+	FixSlashesInPlace( sFile );
 	
 	CString sPath = sAniDir+sFile;
+	LOG->Trace( "old path is '%s'", sPath.c_str() );
+	CollapsePath( sPath );
+	LOG->Trace( "new path is '%s'", sPath.c_str() );
 
 	if( sFile.CompareNoCase("songbackground")==0 )
 	{
@@ -506,17 +512,21 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 		GetDirListing( sPath + "*", asElementPaths, false, true );
 		if(asElementPaths.size() == 0)
 		{
+			CString sError = ssprintf("In the ini file for BGAnimation '%s', the specified File '%s' does not exist.", sAniDir.c_str(), sFile.c_str());
 			if( DISPLAY->IsWindowed() )
-				HOOKS->MessageBoxOK( ssprintf("In the ini file for BGAnimation '%s', the specified File '%s' does not exist.", sAniDir.c_str(), sFile.c_str()) );
+				HOOKS->MessageBoxOK( sError );
+			LOG->Warn( sError );
 			return;
 		}
 		if(asElementPaths.size() > 1)
 		{
-			if( DISPLAY->IsWindowed() )
-				HOOKS->MessageBoxOK( ssprintf( 
+			CString sError = ssprintf( 
 					"There is more than one file that matches "
 					"'%s/%s'.  Please remove all but one of these matches.",
-					sAniDir.c_str(), sFile.c_str() ) );
+					sAniDir.c_str(), sFile.c_str() );
+			if( DISPLAY->IsWindowed() )
+				HOOKS->MessageBoxOK( sError );
+			LOG->Warn( sError );
 		}
 		sPath = asElementPaths[0];
 	}

@@ -15,6 +15,7 @@
 #include "RageLog.h"
 #include "NotesLoaderDWI.h"
 #include "BannerCache.h"
+#include "arch/arch.h"
 
 #include "GameState.h"
 #include "PrefsManager.h"
@@ -26,15 +27,16 @@
 #include "ThemeManager.h"
 #include "GameManager.h"
 
-#include <fstream>
+#include "RageFile.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
-
-const CString CATEGORY_RANKING_FILE = "Data/CategoryRanking.dat";
-const CString COURSE_RANKING_FILE = "Data/CourseRanking.dat";
-const CString NOTES_SCORES_FILE[NUM_MEMORY_CARDS] = { "Data/Player1NotesScores.dat", "Data/Player2NotesScores.dat", "Data/MachineNotesScores.dat" };
-const CString COURSE_SCORES_FILE[NUM_MEMORY_CARDS] = { "Data/Player1CourseScores.dat", "Data/Player2CourseScores.dat", "Data/MachineCourseScores.dat" };
+#define SONGS_DIR BASE_PATH "Songs" SLASH
+#define COURSES_DIR BASE_PATH "Courses" SLASH
+const CString CATEGORY_RANKING_FILE = BASE_PATH "Data" SLASH "CategoryRanking.dat";
+const CString COURSE_RANKING_FILE = BASE_PATH "Data" SLASH "CourseRanking.dat";
+const CString NOTES_SCORES_FILE[NUM_MEMORY_CARDS] = { BASE_PATH "Data" SLASH "Player1NotesScores.dat", BASE_PATH "Data" SLASH "Player2NotesScores.dat", BASE_PATH "Data" SLASH "MachineNotesScores.dat" };
+const CString COURSE_SCORES_FILE[NUM_MEMORY_CARDS] = { BASE_PATH "Data" SLASH "Player1CourseScores.dat", BASE_PATH "Data" SLASH "Player2CourseScores.dat", BASE_PATH "Data" SLASH "MachineCourseScores.dat" };
 const int CATEGORY_RANKING_VERSION = 1;
 const int COURSE_RANKING_VERSION = 1;
 const int NOTES_SCORES_VERSION = 2;
@@ -80,13 +82,24 @@ SongManager::SongManager( LoadingWindow *ld )
 SongManager::~SongManager()
 {
 	SaveMachineScoresToDisk();
+
 	FreeSongArray();
 }
 
+void SongManager::SaveMachineScoresToDisk()
+{
+	SaveCategoryRankingsToFile( CATEGORY_RANKING_FILE );
+	SaveCourseRankingsToFile( COURSE_RANKING_FILE );
+	for( int c=0; c<NUM_MEMORY_CARDS; c++ )
+	{
+		SaveNoteScoresToFile( NOTES_SCORES_FILE[c], c );
+		SaveCourseScoresToFile( COURSE_SCORES_FILE[c], c );
+	}
+}
 
 void SongManager::InitSongArrayFromDisk( LoadingWindow *ld )
 {
-	LoadStepManiaSongDir( "Songs", ld );
+	LoadStepManiaSongDir( SONGS_DIR, ld );
 
 	for( unsigned i=0; i<PREFSMAN->m_asAdditionalSongFolders.size(); i++ )
         LoadStepManiaSongDir( PREFSMAN->m_asAdditionalSongFolders[i], ld );
@@ -133,7 +146,7 @@ void SongManager::AddGroup( CString sDir, CString sGroupDirName )
 
 	CString sBannerPath;
 	if( !arrayGroupBanners.empty() )
-		sBannerPath = sDir+sGroupDirName+"/"+arrayGroupBanners[0] ;
+		sBannerPath = sDir+sGroupDirName+SLASH+arrayGroupBanners[0] ;
 	else
 	{
 		// Look for a group banner in the parent folder
@@ -155,7 +168,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 {
 	/* Make sure sDir has a trailing slash. */
 	TrimRight( sDir, "/\\" );
-	sDir += "/";
+	sDir += SLASH;
 
 	// Find all group directories in "Songs" folder
 	CStringArray arrayGroupDirs;
@@ -173,7 +186,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 
 		// Find all Song folders in this group directory
 		CStringArray arraySongDirs;
-		GetDirListing( sDir+sGroupDirName + "/*", arraySongDirs, true, true );
+		GetDirListing( sDir+sGroupDirName + SLASH "*", arraySongDirs, true, true );
 		SortCStringArray( arraySongDirs );
 
 		unsigned j;
@@ -239,7 +252,7 @@ void SongManager::ReloadSongArray()
 
 void SongManager::ReadNoteScoresFromFile( CString fn, int c )
 {
-	ifstream f(fn);
+	Rageifstream f(fn);
 	if( !f.good() )
 		return;
 	CString line;
@@ -302,7 +315,7 @@ void SongManager::ReadNoteScoresFromFile( CString fn, int c )
 
 void SongManager::ReadCourseScoresFromFile( CString fn, int c )
 {
-	FILE* fp = fopen( fn, "r" );
+	FILE* fp = Ragefopen( fn, "r" );
 
 	if( !fp )
 		return;
@@ -342,7 +355,7 @@ void SongManager::ReadCourseScoresFromFile( CString fn, int c )
 
 void SongManager::ReadCategoryRankingsFromFile( CString fn )
 {
-	FILE* fp = fopen( fn, "r" );
+	FILE* fp = Ragefopen( fn, "r" );
 	if( !fp )
 		return;
 
@@ -365,7 +378,7 @@ void SongManager::ReadCategoryRankingsFromFile( CString fn )
 
 void SongManager::ReadCourseRankingsFromFile( CString fn )
 {
-	FILE* fp = fopen( fn, "r" );
+	FILE* fp = Ragefopen( fn, "r" );
 
 	if( !fp )
 		return;
@@ -432,28 +445,31 @@ void SongManager::InitMachineScoresFromDisk()
 		ReadCourseScoresFromFile( COURSE_SCORES_FILE[c], c );
 }
 
-void SongManager::SaveMachineScoresToDisk()
+
+void SongManager::SaveCategoryRankingsToFile( CString fn )
 {
 	// category ranking
 	LOG->Trace("Writing category ranking");
-	{
-		FILE* fp = fopen( CATEGORY_RANKING_FILE, "w" );
-		if( fp )
-		{
-			fprintf(fp,"%d\n",CATEGORY_RANKING_VERSION);
-			for( int i=0; i<NUM_NOTES_TYPES; i++ )
-				for( int j=0; j<NUM_RANKING_CATEGORIES; j++ )
-					for( int k=0; k<NUM_RANKING_LINES; k++ )
-						if( fp )
-							fprintf(fp, "%i %s\n", m_MachineScores[i][j][k].iScore, m_MachineScores[i][j][k].sName.c_str());
-			fclose(fp);
-		}
-	}
 
+	FILE* fp = Ragefopen( fn, "w" );
+	if( fp )
+	{
+		fprintf(fp,"%d\n",CATEGORY_RANKING_VERSION);
+		for( int i=0; i<NUM_NOTES_TYPES; i++ )
+			for( int j=0; j<NUM_RANKING_CATEGORIES; j++ )
+				for( int k=0; k<NUM_RANKING_LINES; k++ )
+					if( fp )
+						fprintf(fp, "%i %s\n", m_MachineScores[i][j][k].iScore, m_MachineScores[i][j][k].sName.c_str());
+		fclose(fp);
+	}
+}
+
+void SongManager::SaveCourseRankingsToFile( CString fn )
+{
 	// course ranking
 	LOG->Trace("Writing course ranking");
 	{
-		FILE* fp = fopen( COURSE_RANKING_FILE, "w" );
+		FILE* fp = Ragefopen( fn, "w" );
 
 		if( fp )
 		{
@@ -482,11 +498,14 @@ void SongManager::SaveMachineScoresToDisk()
 		}
 	}
 
+}
+
+void SongManager::SaveNoteScoresToFile( CString fn, int c )
+{
 	// notes scores
 	LOG->Trace("Writing note scores");
-	for( int c=0; c<NUM_MEMORY_CARDS; c++ )
 	{
-		FILE* fp = fopen( NOTES_SCORES_FILE[c], "w" );
+		FILE* fp = Ragefopen( fn, "w" );
 		if( fp )
 		{
 			fprintf(fp,"%d\n",NOTES_SCORES_VERSION);
@@ -533,36 +552,36 @@ void SongManager::SaveMachineScoresToDisk()
 			fclose(fp);
 		}
 	}
+}
 
+void SongManager::SaveCourseScoresToFile( CString fn, int c )
+{
 	// course scores
 	LOG->Trace("Writing course scores");
 	{
-		for( int c=0; c<NUM_MEMORY_CARDS; c++ )
+		FILE* fp = Ragefopen( fn, "w" );
+		if( fp )
 		{
-			FILE* fp = fopen( COURSE_SCORES_FILE[c], "w" );
-			if( fp )
+			fprintf(fp,"%d\n",COURSE_SCORES_VERSION);
+
+			for( unsigned i=0; i<m_pCourses.size(); i++ )	// foreach song
 			{
-				fprintf(fp,"%d\n",COURSE_SCORES_VERSION);
+				Course* pCourse = m_pCourses[i];
+				ASSERT(pCourse);
 
-				for( unsigned i=0; i<m_pCourses.size(); i++ )	// foreach song
-				{
-					Course* pCourse = m_pCourses[i];
-					ASSERT(pCourse);
-
-					if( pCourse->m_bIsAutogen )
-						fprintf(fp, "%s\n", pCourse->m_sName.c_str());
-					else
-						fprintf(fp, "%s\n", pCourse->m_sPath.c_str());
-					
-					for( int nt=0; nt<NUM_NOTES_TYPES; nt++ )
-						fprintf(fp, "%d %d %f\n", 
-							pCourse->m_MemCardScores[c][nt].iNumTimesPlayed, 
-							pCourse->m_MemCardScores[c][nt].iScore, 
-							pCourse->m_MemCardScores[c][nt].fSurviveTime);
-				}
-
-				fclose(fp);
+				if( pCourse->m_bIsAutogen )
+					fprintf(fp, "%s\n", pCourse->m_sName.c_str());
+				else
+					fprintf(fp, "%s\n", pCourse->m_sPath.c_str());
+				
+				for( int nt=0; nt<NUM_NOTES_TYPES; nt++ )
+					fprintf(fp, "%d %d %f\n", 
+						pCourse->m_MemCardScores[c][nt].iNumTimesPlayed, 
+						pCourse->m_MemCardScores[c][nt].iScore, 
+						pCourse->m_MemCardScores[c][nt].fSurviveTime);
 			}
+
+			fclose(fp);
 		}
 	}
 }
@@ -724,7 +743,7 @@ void SongManager::InitCoursesFromDisk()
 	// Load courses from in Courses dir
 	//
 	CStringArray saCourseFiles;
-	GetDirListing( "Courses/*.crs", saCourseFiles, false, true );
+	GetDirListing( COURSES_DIR "*.crs", saCourseFiles, false, true );
 	for( i=0; i<saCourseFiles.size(); i++ )
 	{
 		Course* pCourse = new Course;
@@ -735,7 +754,7 @@ void SongManager::InitCoursesFromDisk()
 
 	// Find all group directories in Courses dir
 	CStringArray arrayGroupDirs;
-	GetDirListing( "Courses/*", arrayGroupDirs, true );
+	GetDirListing( COURSES_DIR "*", arrayGroupDirs, true );
 	SortCStringArray( arrayGroupDirs );
 	
 	for( i=0; i< arrayGroupDirs.size(); i++ )	// for each dir in /Courses/
@@ -747,7 +766,7 @@ void SongManager::InitCoursesFromDisk()
 
 		// Find all CRS files in this group directory
 		CStringArray arrayCoursePaths;
-		GetDirListing( "Courses/"+sGroupDirName + "/*.crs", arrayCoursePaths, false, true );
+		GetDirListing( COURSES_DIR + sGroupDirName + "/*.crs", arrayCoursePaths, false, true );
 		SortCStringArray( arrayCoursePaths );
 
 		for( unsigned j=0; j<arrayCoursePaths.size(); j++ )
@@ -843,21 +862,21 @@ void SongManager::GetEndlessCourses( vector<Course*> &AddTo, bool bIncludeAutoge
 bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredGroup,
 								   Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out )
 {
-	const CString sCourseSuffix = sPreferredGroup + "/" + (bExtra2 ? "extra2" : "extra1") + ".crs";
-	CString sCoursePath = "Songs/" + sCourseSuffix;
+	const CString sCourseSuffix = sPreferredGroup + SLASH + (bExtra2 ? "extra2" : "extra1") + ".crs";
+	CString sCoursePath = SONGS_DIR + sCourseSuffix;
 	if( !DoesFileExist(sCoursePath) ) 
 	{
 		/* try alternative song folders */
 		for( unsigned i=0; i<PREFSMAN->m_asAdditionalSongFolders.size(); i++ )
 		{
-			sCoursePath = PREFSMAN->m_asAdditionalSongFolders[i] + "/" + sCourseSuffix;
+			sCoursePath = PREFSMAN->m_asAdditionalSongFolders[i] + SLASH + sCourseSuffix;
 			if( DoesFileExist(sCoursePath) ) 
 				break;
 		}
 	}
 
 	if( !DoesFileExist(sCoursePath) && PREFSMAN->m_DWIPath.size() )
-		sCoursePath = PREFSMAN->m_DWIPath + "/Songs/" + sCourseSuffix;
+		sCoursePath = PREFSMAN->m_DWIPath + SLASH "Songs" SLASH + sCourseSuffix;
 
 	/* Couldn't find course in DWI path or alternative song folders */
 	if( !DoesFileExist(sCoursePath) )

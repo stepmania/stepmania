@@ -9,7 +9,7 @@
 #include <math.h>
 
 #pragma comment(lib, "dsound.lib")
-#pragma comment(lib, "dxguid.lib")
+//#pragma comment(lib, "dxguid.lib")
 
 BOOL CALLBACK DSound::EnumCallback(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lpcstrModule, LPVOID lpContext)
 {

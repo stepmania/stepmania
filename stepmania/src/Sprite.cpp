@@ -48,7 +48,7 @@ Sprite::~Sprite()
 bool Sprite::LoadBG( RageTextureID ID )
 {
 	ID.iMipMaps = 1;
-	ID.bDither = true;
+//	ID.bDither = true;
 	return Load(ID);
 }
 
@@ -175,6 +175,8 @@ void Sprite::EnableAnimation( bool bEnable )
 
 bool Sprite::LoadFromTexture( RageTextureID ID )
 {
+	LOG->Trace( "Sprite::LoadFromTexture( %s )", ID.filename.c_str() );
+
 	if( !m_pTexture || !(m_pTexture->GetID() == ID) )
 	{
 		/* Load the texture if it's not already loaded.  We still need

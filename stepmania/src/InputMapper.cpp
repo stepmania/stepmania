@@ -19,10 +19,12 @@
 #include "RageUtil.h"
 #include "PrefsManager.h"
 #include "RageInput.h"
+#include "arch/arch.h"
 
 
 InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our program
 
+#define KEYMAPS_PATH BASE_PATH "Data" SLASH "Keymaps.ini"
 
 InputMapper::InputMapper()
 {
@@ -74,6 +76,7 @@ struct AutoJoyMapping
 	struct {
 		int deviceButton;
 		GameButton gb;
+		int iSlot;
 		/* If this is true, this is an auxilliary mapping assigned to the second
 		 * player.  If two of the same device are found, and the device has secondary
 		 * entries, the later entries take precedence.  This way, if a Pump pad is
@@ -93,10 +96,10 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		false,
 		4,
 		{
-			{ JOY_16, DANCE_BUTTON_LEFT },
-			{ JOY_14, DANCE_BUTTON_RIGHT },
-			{ JOY_13, DANCE_BUTTON_UP },
-			{ JOY_15, DANCE_BUTTON_DOWN },
+			{ JOY_16, DANCE_BUTTON_LEFT,	1 },
+			{ JOY_14, DANCE_BUTTON_RIGHT,	1 },
+			{ JOY_13, DANCE_BUTTON_UP,		1 },
+			{ JOY_15, DANCE_BUTTON_DOWN,	1 },
 		}
 	},
 	{
@@ -105,10 +108,10 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		false,
 		4,
 		{
-			{ JOY_16, DANCE_BUTTON_LEFT },
-			{ JOY_14, DANCE_BUTTON_RIGHT },
-			{ JOY_13, DANCE_BUTTON_UP },
-			{ JOY_15, DANCE_BUTTON_DOWN },
+			{ JOY_16, DANCE_BUTTON_LEFT,	1 },
+			{ JOY_14, DANCE_BUTTON_RIGHT,	1 },
+			{ JOY_13, DANCE_BUTTON_UP,		1 },
+			{ JOY_15, DANCE_BUTTON_DOWN,	1 },
 		}
 	},
 	{
@@ -117,18 +120,38 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		false,
 		12,
 		{
-			{ JOY_LEFT,		DANCE_BUTTON_LEFT },
-			{ JOY_RIGHT,	DANCE_BUTTON_RIGHT },
-			{ JOY_UP,		DANCE_BUTTON_UP },
-			{ JOY_DOWN,		DANCE_BUTTON_DOWN },
-			{ JOY_1,		DANCE_BUTTON_LEFT },
-			{ JOY_3,		DANCE_BUTTON_RIGHT },
-			{ JOY_4,		DANCE_BUTTON_UP },
-			{ JOY_2,		DANCE_BUTTON_DOWN },
-			{ JOY_5,		DANCE_BUTTON_UPLEFT },
-			{ JOY_6,		DANCE_BUTTON_UPRIGHT },
-			{ JOY_9,		DANCE_BUTTON_BACK },
-			{ JOY_10,		DANCE_BUTTON_START },
+			{ JOY_LEFT,		DANCE_BUTTON_LEFT,		1 },
+			{ JOY_RIGHT,	DANCE_BUTTON_RIGHT,		1 },
+			{ JOY_UP,		DANCE_BUTTON_UP,		1 },
+			{ JOY_DOWN,		DANCE_BUTTON_DOWN,		1 },
+			{ JOY_1,		DANCE_BUTTON_LEFT,		2 },
+			{ JOY_3,		DANCE_BUTTON_RIGHT,		2 },
+			{ JOY_4,		DANCE_BUTTON_UP,		2 },
+			{ JOY_2,		DANCE_BUTTON_DOWN,		2 },
+			{ JOY_5,		DANCE_BUTTON_UPLEFT,	1 },
+			{ JOY_6,		DANCE_BUTTON_UPRIGHT,	1 },
+			{ JOY_9,		DANCE_BUTTON_BACK,		1 },
+			{ JOY_10,		DANCE_BUTTON_START,		1 },
+		}
+	},
+	{
+		GAME_DANCE,
+		"XBOX Gamepad Plugin V0.01",
+		false,
+		12,
+		{
+			{ JOY_HAT_LEFT,		DANCE_BUTTON_LEFT,		1 },
+			{ JOY_HAT_RIGHT,	DANCE_BUTTON_RIGHT,		1 },
+			{ JOY_HAT_UP,		DANCE_BUTTON_UP,		1 },
+			{ JOY_HAT_DOWN,		DANCE_BUTTON_DOWN,		1 },
+			{ JOY_1,			DANCE_BUTTON_DOWN,		2 }, // A
+			{ JOY_2,			DANCE_BUTTON_RIGHT,		2 }, // B
+			{ JOY_3,			DANCE_BUTTON_LEFT,		2 }, // X
+			{ JOY_4,			DANCE_BUTTON_UP,		2 }, // Y
+			{ JOY_7,			DANCE_BUTTON_UPLEFT,	1 }, // L shoulder
+			{ JOY_8,			DANCE_BUTTON_UPRIGHT,	1 }, // R shoulder
+			{ JOY_9,			DANCE_BUTTON_START,		1 },
+			{ JOY_10,			DANCE_BUTTON_BACK,		1 },
 		}
 	},
 	{
@@ -137,21 +160,21 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		false,
 		11,
 		{
-			{ PUMP_UL,		PUMP_BUTTON_UPLEFT },
-			{ PUMP_UR,		PUMP_BUTTON_UPRIGHT },
-			{ PUMP_MID,		PUMP_BUTTON_CENTER },
-			{ PUMP_DL,		PUMP_BUTTON_DOWNLEFT },
-			{ PUMP_DR,		PUMP_BUTTON_DOWNRIGHT },
-			{ PUMP_ESCAPE,	PUMP_BUTTON_BACK },
-			{ PUMP_2P_UL,	PUMP_BUTTON_UPLEFT,		true },
-			{ PUMP_2P_UR,	PUMP_BUTTON_UPRIGHT,	true },
-			{ PUMP_2P_MID,	PUMP_BUTTON_CENTER,		true },
-			{ PUMP_2P_DL,	PUMP_BUTTON_DOWNLEFT,	true },
-			{ PUMP_2P_DR,	PUMP_BUTTON_DOWNRIGHT,	true },
+			{ PUMP_UL,		PUMP_BUTTON_UPLEFT,		1 },
+			{ PUMP_UR,		PUMP_BUTTON_UPRIGHT,	1 },
+			{ PUMP_MID,		PUMP_BUTTON_CENTER,		1 },
+			{ PUMP_DL,		PUMP_BUTTON_DOWNLEFT,	1 },
+			{ PUMP_DR,		PUMP_BUTTON_DOWNRIGHT,	1 },
+			{ PUMP_ESCAPE,	PUMP_BUTTON_BACK,		1 },
+			{ PUMP_2P_UL,	PUMP_BUTTON_UPLEFT,		1,	true },
+			{ PUMP_2P_UR,	PUMP_BUTTON_UPRIGHT,	1,	true },
+			{ PUMP_2P_MID,	PUMP_BUTTON_CENTER,		1,	true },
+			{ PUMP_2P_DL,	PUMP_BUTTON_DOWNLEFT,	1,	true },
+			{ PUMP_2P_DR,	PUMP_BUTTON_DOWNRIGHT,	1,	true },
 		}
 	},
 };
-const int NUM_AUTO_JOY_MAPPINGS = sizeof(g_AutoJoyMappings) / sizeof(g_AutoJoyMappings[0]);
+const int NUM_AUTO_JOY_MAPPINGS = ARRAYSIZE(g_AutoJoyMappings);
 
 void InputMapper::AutoMapJoysticksForCurrentGame()
 {
@@ -195,7 +218,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 
 					DeviceInput di( device, mapping.mapping[k].deviceButton );
 					GameInput gi( gc, mapping.mapping[k].gb );
-					SetInputMap( di, gi, 1 );
+					SetInputMap( di, gi, mapping.mapping[k].iSlot );
 				}
 				break;
 			}
@@ -210,9 +233,9 @@ void InputMapper::ReadMappingsFromDisk()
 	ClearAllMappings();
 
 	IniFile ini;
-	ini.SetPath( "Data/Keymaps.ini" );
+	ini.SetPath( KEYMAPS_PATH );
 	if( !ini.ReadFile() )
-		LOG->Warn( "could not input mapping file \"Keymaps.ini\"." );
+		LOG->Warn( "could not input mapping file '%s'.", KEYMAPS_PATH );
 
 	const IniFile::key *Key = ini.GetKey( GAMESTATE->GetCurrentGameDef()->m_szName );
 
@@ -247,7 +270,7 @@ void InputMapper::ReadMappingsFromDisk()
 void InputMapper::SaveMappingsToDisk()
 {
 	IniFile ini;
-	ini.SetPath( "Data/Keymaps.ini" );
+	ini.SetPath( KEYMAPS_PATH );
 	ini.ReadFile();
 	
 	// erase the key so that we overwrite everything for this game

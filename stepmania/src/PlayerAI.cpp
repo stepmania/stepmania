@@ -16,7 +16,9 @@
 #include "RageException.h"
 #include "GameState.h"
 #include <math.h>
+#include "arch/arch.h"
 
+#define AI_PATH BASE_PATH "Data" SLASH "AI.ini"
 
 struct TapScoreDistribution
 {
@@ -44,7 +46,7 @@ TapScoreDistribution g_Distributions[NUM_SKILL_LEVELS];
 void PlayerAI::InitFromDisk()
 {
 	IniFile ini;
-	ini.SetPath( "Data/AI.ini" );
+	ini.SetPath( AI_PATH );
 	ini.ReadFile();
 
 	for( int i=0; i<NUM_SKILL_LEVELS; i++ )

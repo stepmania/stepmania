@@ -12,6 +12,7 @@
 #ifdef HAVE_GTK
 #  include "LoadingWindow/LoadingWindow_Gtk.h"
 #endif
+#include "InputHandler/InputHandler_SDL.h"
 
 #endif
 /*

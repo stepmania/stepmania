@@ -122,6 +122,11 @@ protected:
 	void ReadCourseRankingsFromFile( CString fn );
 	Song *FindSong( CString sGroup, CString sSong );
 
+	void SaveNoteScoresToFile( CString fn, int c );
+	void SaveCourseScoresToFile( CString fn, int c );
+	void SaveCategoryRankingsToFile( CString fn );
+	void SaveCourseRankingsToFile( CString fn );
+
 	vector<Song*>		m_pSongs;	// all songs that can be played
 	vector<Song*>		m_pBestSongs;
 	CStringArray		m_arrayGroupNames;

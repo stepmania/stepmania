@@ -32,13 +32,10 @@ void MakeInputHandlers(vector<InputHandler *> &Add)
 {
 #if defined(_WINDOWS)
 	Add.push_back(new InputHandler_DInput);
-#else
-	Add.push_back(new InputHandler_SDL);
-#endif
-
-#if defined(_WINDOWS)
 	Add.push_back(new InputHandler_Win32_Pump);
 //	Add.push_back(new InputHandler_Win32_Para);
+#else
+	Add.push_back(new InputHandler_SDL);
 #endif
 }
 

@@ -12,13 +12,14 @@
 
 #include "AnnouncerManager.h"
 #include "RageLog.h"
+#include "arch/arch.h"
 
 
 AnnouncerManager*	ANNOUNCER = NULL;	// global object accessable from anywhere in the program
 
 
 const CString EMPTY_ANNOUNCER_NAME = "Empty";
-const CString ANNOUNCERS_DIR  = "Announcers/";
+const CString ANNOUNCERS_DIR  = BASE_PATH "Announcers" SLASH;
 
 /* XXX: move to RageUtil when I feel like spending 20 minutes recompiling */
 /* Return true if "dir" is empty or does not exist. */
@@ -69,7 +70,7 @@ bool AnnouncerManager::DoesAnnouncerExist( CString sAnnouncerName )
 
 CString AnnouncerManager::GetAnnouncerDirFromName( CString sAnnouncerName )
 {
-	return ANNOUNCERS_DIR + sAnnouncerName + "/";
+	return ANNOUNCERS_DIR + sAnnouncerName + SLASH;
 }
 
 void AnnouncerManager::SwitchAnnouncer( CString sNewAnnouncerName )
@@ -115,8 +116,8 @@ CString AnnouncerManager::GetPathTo( CString sAnnouncerName, CString sFolderName
 
 	const CString AnnouncerPath = GetAnnouncerDirFromName(sAnnouncerName);
 
-	if( !DirectoryIsEmpty(AnnouncerPath+sFolderName+"/") )
-		return AnnouncerPath+sFolderName+"/";
+	if( !DirectoryIsEmpty(AnnouncerPath+sFolderName+SLASH) )
+		return AnnouncerPath+sFolderName+SLASH;
 
 	/* Search for the announcer folder in the list of aliases. */
 	int i;
@@ -125,14 +126,14 @@ CString AnnouncerManager::GetPathTo( CString sAnnouncerName, CString sFolderName
 		if(sFolderName.CompareNoCase(aliases[i][0]))
 			continue; /* no match */
 
-		if( !DirectoryIsEmpty(AnnouncerPath+aliases[i][1]+"/") )
-			return AnnouncerPath+aliases[i][1]+"/";
+		if( !DirectoryIsEmpty(AnnouncerPath+aliases[i][1]+SLASH) )
+			return AnnouncerPath+aliases[i][1]+SLASH;
 	}
 
 	/* No announcer directory matched.  In debug, create the directory by
 	 * its preferred name. */
 #ifdef DEBUG
-	LOG->Trace( "The announcer in \"%s\" is missing the folder '%s'.",
+	LOG->Trace( "The announcer in '%s' is missing the folder '%s'.",
 		AnnouncerPath.c_str(), sFolderName.c_str() );
 //	MessageBeep( MB_OK );
 	CreateDirectories( AnnouncerPath+sFolderName );

@@ -50,16 +50,24 @@
 #include "BannerCache.h"
 #include "UnlockSystem.h"
 #include "arch/ArchHooks/ArchHooks.h"
+#include "RageFile.h"
 
 
-#ifdef WIN32
-
-#ifdef DEBUG
-#pragma comment(lib, "SDL-1.2.5/lib/SDLmaind.lib")
-#else
-#pragma comment(lib, "SDL-1.2.5/lib/SDLmain.lib")
+#if defined(_XBOX)
+	#ifdef DEBUG
+	#pragma comment(lib, "SDL-1.2.5/lib/xboxSDLmaind.lib")
+	#else
+	#pragma comment(lib, "SDL-1.2.5/lib/xboxSDLmain.lib")
+	#endif	
+#elif defined(_WINDOWS)
+	#ifdef DEBUG
+	#pragma comment(lib, "SDL-1.2.5/lib/SDLmaind.lib")
+	#else
+	#pragma comment(lib, "SDL-1.2.5/lib/SDLmain.lib")
+	#endif	
 #endif
 
+#ifdef _WINDOWS
 HWND g_hWndMain = NULL;
 #endif
 
@@ -71,6 +79,7 @@ static bool g_bQuitting = false;
 
 static void ChangeToDirOfExecutable(const char *argv0)
 {
+#ifndef _XBOX
 	/* Make sure the current directory is the root program directory
 	 * We probably shouldn't do this; rather, we should know where things
 	 * are and use paths as needed, so we don't depend on the binary being
@@ -84,6 +93,7 @@ static void ChangeToDirOfExecutable(const char *argv0)
 
 		chdir( dir.c_str() );
 	}
+#endif
 }
 
 void ApplyGraphicOptions()
@@ -275,6 +285,8 @@ static void CheckSettings()
 
 static const CString D3DURL = "http://search.microsoft.com/gomsuri.asp?n=1&c=rp_BestBets&siteid=us&target=http://www.microsoft.com/downloads/details.aspx?FamilyID=a19bed22-0b25-4e5d-a584-6389d8a3dad0&displaylang=en";
 
+#define VIDEOCARDS_INI_PATH BASE_PATH "Data" SLASH "VideoCardDefaults.ini"
+
 RageDisplay *CreateDisplay()
 {
 	/* We never want to bother users with having to decide which API to use.
@@ -301,10 +313,9 @@ RageDisplay *CreateDisplay()
 	 */
 
 	// Video card changed since last run
-#if defined(WIN32)
+#if defined(_WINDOWS)
 	CString sVideoDriver = GetPrimaryVideoDriverName();
-#endif
-#if !defined(WIN32)
+#else
     CString sVideoDriver = "OpenGL";
 #endif
 	if( PREFSMAN->m_sVideoRenderers == "" || 
@@ -312,9 +323,9 @@ RageDisplay *CreateDisplay()
 	{
 		// Apply default graphic settings for this card
 		IniFile ini;
-		ini.SetPath( "Data/VideoCardDefaults.ini" );
+		ini.SetPath( VIDEOCARDS_INI_PATH );
 		if(!ini.ReadFile())
-			RageException::Throw( "Couldn't read Data/VideoCardDefaults.ini." );
+			RageException::Throw( "Couldn't read '%s'." VIDEOCARDS_INI_PATH );
 
 		IniFile::const_iterator i;
 		for( i = ini.begin(); i != ini.end(); ++i )
@@ -339,10 +350,9 @@ RageDisplay *CreateDisplay()
 			ini.GetValueB( sKey, "AntiAliasing", PREFSMAN->m_bAntiAliasing );
 
 			// Update last seen video card
-#if defined(WIN32)
+#if defined(_WINDOWS)
 			PREFSMAN->m_sLastSeenVideoDriver = GetPrimaryVideoDriverName();
-#endif
-#if !defined(WIN32)
+#else
             PREFSMAN->m_sLastSeenVideoDriver = "OpenGL";
 #endif
 
@@ -424,6 +434,9 @@ static void RestoreAppPri()
 	SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS);
 #endif
 }
+
+#define UNLOCKS_PATH BASE_PATH "Data" SLASH "Unlocks.dat"
+
 
 int main(int argc, char* argv[])
 {
@@ -533,7 +546,7 @@ int main(int argc, char* argv[])
 	ResetGame();
 
 	/* Load the unlocks into memory */
-	GAMESTATE->m_pUnlockingSys->LoadFromDATFile("Data/Unlocks.dat");
+	GAMESTATE->m_pUnlockingSys->LoadFromDATFile( UNLOCKS_PATH );
 
 	/* Run the main loop. */
 	GameLoop();

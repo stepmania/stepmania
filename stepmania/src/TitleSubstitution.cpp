@@ -1,10 +1,13 @@
 #include "global.h"
 #include "TitleSubstitution.h"
+#include "arch/arch.h"
 
 #include "RageUtil.h"
 #include "FontCharAliases.h"
 
-#include <fstream>
+#include "RageFile.h"
+
+#define TRANSLATION_PATH BASE_PATH "Data" SLASH "Translation.dat"
 
 struct TitleTrans
 {
@@ -92,12 +95,12 @@ void TitleSubst::Subst(CString &title, CString &subtitle, CString &artist,
 
 TitleSubst::TitleSubst(const CString &section)
 {
-	Load("data/Translation.dat", section);
+	Load( TRANSLATION_PATH, section);
 }
 
 void TitleSubst::Load(const CString &filename, const CString &section)
 {
-	ifstream f;
+	Rageifstream f;
 	f.open(filename);
 	if(!f.good()) return;
 

@@ -7,13 +7,16 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "song.h"
+#include "arch/arch.h"
+
+#define CACHE_DIR BASE_PATH "Cache" SLASH
 
 SongCacheIndex *SONGINDEX;
 
 SongCacheIndex::SongCacheIndex()
 {
-	CreateDirectories( "Cache/Songs" );
-	CacheIndex.SetPath( "Cache/index.cache" );
+	CreateDirectories( CACHE_DIR "Songs" );
+	CacheIndex.SetPath( CACHE_DIR "index.cache" );
 	ReadCacheIndex();
 }
 
@@ -48,9 +51,9 @@ void SongCacheIndex::ReadCacheIndex()
 		return; /* OK */
 
 	LOG->Trace( "Cache format is out of date.  Deleting all cache files." );
-	EmptyDir( "Cache/" );
-	EmptyDir( "Cache/Banners/" );
-	EmptyDir( "Cache/Songs/" );
+	EmptyDir( CACHE_DIR );
+	EmptyDir( CACHE_DIR "Banners" SLASH );
+	EmptyDir( CACHE_DIR "Songs" SLASH );
 
 	CacheIndex.Reset();
 }

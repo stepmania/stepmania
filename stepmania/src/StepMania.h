@@ -11,6 +11,7 @@
 -----------------------------------------------------------------------------
 */
 
+int SMmain(int argc, char* argv[]);
 void ApplyGraphicOptions();
 void ExitGame();
 void ResetGame();

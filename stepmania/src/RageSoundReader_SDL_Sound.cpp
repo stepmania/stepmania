@@ -6,19 +6,23 @@
  * something wrong with my SDL_sound MAD wrapper ...
  */
 
-#ifdef WIN32
-
-#ifdef DEBUG
-#pragma comment(lib, "SDL_sound-1.0.0/lib/sdl_sound_static_d.lib")
+#ifdef _XBOX
+//	#ifdef DEBUG
+//	#pragma comment(lib, "SDL_sound-1.0.0/lib/xbox_sdl_sound_static_d.lib")
+//	#else
+	#pragma comment(lib, "SDL_sound-1.0.0/lib/xbox_sdl_sound_static.lib")
+//	#endif
 #else
-#pragma comment(lib, "SDL_sound-1.0.0/lib/sdl_sound_static.lib")
+	#ifdef DEBUG
+	#pragma comment(lib, "SDL_sound-1.0.0/lib/sdl_sound_static_d.lib")
+	#else
+	#pragma comment(lib, "SDL_sound-1.0.0/lib/sdl_sound_static.lib")
+	#endif
+	#pragma comment(lib, "SDL_sound-1.0.0/lib/ogg_static.lib")
+	#pragma comment(lib, "SDL_sound-1.0.0/lib/vorbis_static.lib")
+	#pragma comment(lib, "SDL_sound-1.0.0/lib/vorbisfile_static.lib")
 #endif
 
-#pragma comment(lib, "SDL_sound-1.0.0/lib/ogg_static.lib")
-#pragma comment(lib, "SDL_sound-1.0.0/lib/vorbis_static.lib")
-#pragma comment(lib, "SDL_sound-1.0.0/lib/vorbisfile_static.lib")
-
-#endif
 
 #include "RageSoundReader_SDL_Sound.h"
 

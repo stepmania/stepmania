@@ -24,6 +24,8 @@
 #include "GameConstantsAndTypes.h"
 #include "arch/arch.h" /* for default driver specs */
 
+#define STEPMANIA_INI_PATH BASE_PATH "Data" SLASH "StepMania.ini"
+#define GAMEPREFS_INI_PATH BASE_PATH "Data" SLASH "GamePrefs.ini"
 
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -141,7 +143,7 @@ PrefsManager::~PrefsManager()
 void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 {
 	IniFile ini;
-	ini.SetPath( "Data/StepMania.ini" );
+	ini.SetPath( STEPMANIA_INI_PATH );
 	if( !ini.ReadFile() )
 		return;		// could not read config file, load nothing
 
@@ -244,7 +246,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 void PrefsManager::SaveGlobalPrefsToDisk()
 {
 	IniFile ini;
-	ini.SetPath( "Data/StepMania.ini" );
+	ini.SetPath( STEPMANIA_INI_PATH );
 
 	ini.SetValueB( "Options", "Windowed",					m_bWindowed );
 	ini.SetValueI( "Options", "DisplayWidth",				m_iDisplayWidth );
@@ -348,7 +350,7 @@ void PrefsManager::ReadGamePrefsFromDisk()
 
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 	IniFile ini;
-	ini.SetPath( "Data/GamePrefs.ini" );
+	ini.SetPath( GAMEPREFS_INI_PATH );
 	ini.ReadFile();	// it's OK if this fails
 
 	CString sAnnouncer = sGameName, sTheme = sGameName, sNoteSkin = sGameName;
@@ -378,7 +380,7 @@ void PrefsManager::SaveGamePrefsToDisk()
 
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 	IniFile ini;
-	ini.SetPath( "Data/GamePrefs.ini" );
+	ini.SetPath( GAMEPREFS_INI_PATH );
 	ini.ReadFile();	// it's OK if this fails
 
 	ini.SetValue( sGameName, "Announcer",		ANNOUNCER->GetCurAnnouncerName() );

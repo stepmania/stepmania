@@ -9,19 +9,13 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <errno.h>
+#include <RageFile.h>
+#include "arch/arch.h"
 
 #if !defined(WIN32)
 #include <dirent.h>
 #endif
 
-static void GetCwd(CString &s)
-{
-	char buf[PATH_MAX];
-	bool ret = getcwd(buf, PATH_MAX) != NULL;
-	ASSERT(ret);
-
-	s = buf;
-}
 
 struct File {
 	istring name;
@@ -59,19 +53,12 @@ void FileSet::LoadFromDir(const CString &dir)
 	age.GetDeltaTime(); /* reset */
 	files.clear();
 
-	CString oldpath;
-	GetCwd(oldpath);
-	if(chdir(dir) == -1) return;
-
 #if defined(WIN32)
 	WIN32_FIND_DATA fd;
-	HANDLE hFind = FindFirstFile( "*", &fd );
+	HANDLE hFind = FindFirstFile( dir+SLASH "*", &fd );
 
 	if( hFind == INVALID_HANDLE_VALUE )
-	{
-		chdir(oldpath);
 		return;
-	}
 
 	do {
 		if(!strcmp(fd.cFileName, ".") || !strcmp(fd.cFileName, ".."))
@@ -85,7 +72,7 @@ void FileSet::LoadFromDir(const CString &dir)
 	} while( FindNextFile( hFind, &fd ) );
 	FindClose(hFind);
 #else
-	DIR *d = opendir(".");
+	DIR *d = opendir(dir+"/.");
 
 	while(struct dirent *ent = readdir(d))
 	{
@@ -116,7 +103,6 @@ void FileSet::LoadFromDir(const CString &dir)
 	       
 	closedir(d);
 #endif
-	chdir(oldpath);
 }
 
 /* Search for "beginning*containing*ending". */
@@ -195,7 +181,7 @@ static void SplitPath( CString Path, CString &Dir, CString &Name )
 		Name = match[1];
 	} else {
 		/* No slash. */
-		Dir = "./";
+		Dir = "." SLASH;
 		Name = Path;
 	}
 }
@@ -261,18 +247,16 @@ bool FilenameDB::ResolvePath(CString &path)
 	if(path == ".") return true;
 	if(path == "") return true;
 
-	path.Replace("\\", "/");
-
 	/* Split path into components. */
 	vector<CString> p;
-	split(path, "/", p, true);
+	split(path, SLASH, p, true);
 
 	/* Resolve each component.  Assume the first component is correct. XXX
 	 * don't do that! "Songs/" vs "songs/" */
 	CString ret = p[0];
 	for(unsigned i = 1; i < p.size(); ++i)
 	{
-		ret += "/";
+		ret += SLASH;
 
 		vector<CString> lst;
 		FileSet &fs = GetFileSet(ret.c_str());
@@ -282,14 +266,14 @@ bool FilenameDB::ResolvePath(CString &path)
 		if(lst.empty()) return false;
 
 		if(lst.size() > 1)
-			LOG->Warn("Ambiguous filenames \"%s\" and \"%s\"",
+			LOG->Warn("Ambiguous filenames '%s' and '%s'",
 				lst[0].c_str(), lst[1].c_str());
 
 		ret += lst[0];
 	}
 
-	if(path[path.size()-1] == '/')
-		path = ret + "/";
+	if(path.Right(1) == SLASH)
+		path = ret + SLASH;
 	else
 		path = ret;
 	return true;
@@ -335,8 +319,9 @@ void FilenameDB::GetFilesSimpleMatch(const CString &dir, const CString &fn, vect
 FileSet &FilenameDB::GetFileSet(CString dir, bool ResolveCase)
 {
 	/* Normalize the path. */
-	dir.Replace("\\", "/"); /* foo\bar -> foo/bar */
-	dir.Replace("//", "/"); /* foo//bar -> foo/bar */
+	dir.Replace("\\", SLASH); /* foo\bar -> foo/bar */
+	dir.Replace("/", SLASH); /* foo//bar -> foo/bar */
+	dir.Replace("//", SLASH); /* foo//bar -> foo/bar */
 
 	FileSet *ret;
 	map<istring, FileSet *>::iterator i = dirs.find(dir.c_str());
@@ -381,6 +366,8 @@ FilenameDB FDB;
 
 void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
+//	LOG->Trace( "GetDirListing( %s )", sPath.c_str() );
+
 	/* If you want the CWD, use ".". */
 	ASSERT(!sPath.empty());
 
@@ -389,7 +376,7 @@ void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bRe
 	 * prepend "./" */
 
 	/* Strip off the last path element and use it as a mask. */
-	unsigned pos = sPath.find_last_of("/\\");
+	unsigned pos = sPath.find_last_of( SLASH );
 	CString fn;
 	if(pos != sPath.npos)
 	{
@@ -414,6 +401,11 @@ void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bRe
 			start++;
 		}
 	}
+
+//	LOG->Trace( "dir is '%s'", sPath.c_str() );
+//	LOG->Trace( "Found:" );
+//	for( unsigned i=0; i<AddTo.size(); i++ )
+//		LOG->Trace( AddTo[i] );
 }
 
 bool ResolvePath(CString &path) { return FDB.ResolvePath(path); }

@@ -19,13 +19,14 @@
 #include "StyleDef.h"
 #include "RageUtil.h"
 #include "GameManager.h"
+#include "arch/arch.h"
 
 
 NoteSkinManager*	NOTESKIN = NULL;	// global object accessable from anywhere in the program
 
 
 const CString BASE_NOTESKIN_NAME = "default";
-const CString NOTESKINS_DIR  = "NoteSkins/";
+const CString NOTESKINS_DIR = BASE_PATH "NoteSkins" SLASH;
 
 NoteSkinManager::NoteSkinManager()
 {
@@ -39,7 +40,7 @@ void NoteSkinManager::RefreshNoteSkinData( Game game )
 {
 	GameDef* pGameDef = GAMEMAN->GetGameDefForGame( game );
 
-	CString sBaseSkinFolder = NOTESKINS_DIR + pGameDef->m_szName + "/";
+	CString sBaseSkinFolder = NOTESKINS_DIR + pGameDef->m_szName + SLASH;
 	CStringArray asNoteSkinNames;
 	GetDirListing( sBaseSkinFolder + "*", asNoteSkinNames, true );
 
@@ -112,7 +113,7 @@ CString NoteSkinManager::GetNoteSkinDir( CString sSkinName )
 {
 	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
 
-	return NOTESKINS_DIR + ssprintf("%s/%s/", pGameDef->m_szName, sSkinName.c_str());
+	return NOTESKINS_DIR + pGameDef->m_szName + SLASH + sSkinName + SLASH;
 }
 
 CString NoteSkinManager::GetMetric( PlayerNumber pn, CString sButtonName, CString sValue )	// looks in GAMESTATE for the current Style

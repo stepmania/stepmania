@@ -13,11 +13,12 @@
 #include "RageUtil.h"
 #include "RageUtil_FileDB.h"
 #include "RageLog.h"
+#include "arch/arch.h"
 
 #include <numeric>
 #include <time.h>
 #include <math.h>
-#include <fstream>
+#include "RageFile.h"
 #include <map>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -298,12 +299,11 @@ bool CreateDirectories( CString Path )
 {
 	CStringArray parts;
 	CString curpath;
-	Path.Replace("\\", "/");
-	split(Path, "/", parts);
+	split(Path, SLASH, parts);
 
 	for(unsigned i = 0; i < parts.size(); ++i)
 	{
-		curpath += parts[i] + "/";
+		curpath += parts[i] + SLASH;
 		if(mkdir( curpath, 0755 ))
 			continue;
 
@@ -404,7 +404,7 @@ unsigned int GetHashForDirectory( CString sDir )
 	hash += GetHashForFile( sDir );
 
 	CStringArray arrayFiles;
-	GetDirListing( sDir+"/*", arrayFiles, false );
+	GetDirListing( sDir+"*", arrayFiles, false );
 	for( unsigned i=0; i<arrayFiles.size(); i++ )
 	{
 		const CString sFilePath = sDir + arrayFiles[i];
@@ -491,7 +491,7 @@ CString DerefRedir(const CString &path)
 
 	CString sNewFileName;
 	{
-		ifstream file(path);
+		Rageifstream file(path);
 		getline(file, sNewFileName);
 	}
 
@@ -515,7 +515,7 @@ CString GetRedirContents(const CString &path)
 
 	CString sNewFileName;
 	{
-		ifstream file(path);
+		Rageifstream file(path);
 		getline(file, sNewFileName);
 	}
 

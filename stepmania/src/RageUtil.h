@@ -22,8 +22,9 @@
 #define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
 #define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
 
-#define ZERO(x)					memset(&x, 0, sizeof(x))
-#define COPY(a,b)				{ ASSERT(sizeof(a)==sizeof(b)); memcpy(&a, &b, sizeof(a)); }
+#define ZERO(x)	memset(&x, 0, sizeof(x))
+#define COPY(a,b) { ASSERT(sizeof(a)==sizeof(b)); memcpy(&a, &b, sizeof(a)); }
+#define ARRAYSIZE(a) (sizeof(a) / sizeof((a)[0]))
 
 /* Common harmless mismatches.  All min(T,T) and max(T,T) cases are handled
  * by the generic template we get from <algorithm>. */

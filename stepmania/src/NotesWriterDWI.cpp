@@ -4,6 +4,7 @@
 #include "NoteData.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageFile.h"
 
 /* Output is an angle bracket expression without angle brackets, eg. "468". */
 CString NotesWriterDWI::NotesToDWIString( const TapNote cNoteCols[6] )
@@ -321,7 +322,7 @@ bool NotesWriterDWI::WriteDWINotesTag( FILE* fp, const Notes &out )
 
 bool NotesWriterDWI::Write( CString sPath, const Song &out )
 {
-	FILE* fp = fopen( sPath, "w" );	
+	FILE* fp = Ragefopen( sPath, "w" );	
 	if( fp == NULL )
 		RageException::Throw( "Error opening song file '%s' for writing.", sPath.c_str() );
 

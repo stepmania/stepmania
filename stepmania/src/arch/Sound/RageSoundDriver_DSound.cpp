@@ -12,7 +12,11 @@
 #include "RageUtil.h"
 #include "RageSound.h"
 #include "RageLog.h"
+
+#ifdef _WINDOWS
 #include "archutils/win32/tls.h"
+#endif
+
 #include "SDL.h"
 
 const int channels = 2;
@@ -36,7 +40,9 @@ int RageSound_DSound::MixerThread_start(void *p)
 
 void RageSound_DSound::MixerThread()
 {
+#ifdef _WINDOWS
 	InitThreadData("Mixer thread");
+#endif
 	VDCHECKPOINT;
 
 	/* SOUNDMAN will be set once RageSoundManager's ctor returns and
