@@ -98,17 +98,15 @@ RageSound_CA::RageSound_CA()
     AudioStreamID sID = mOutputDevice->GetStreamByIndex( kAudioDeviceSectionOutput, 0 );
     CAAudioHardwareStream stream( sID );
 
-    vector<Desc> procFormats;
-    GetIOProcFormats( sID, procFormats );
-
     vector<Desc> physicalFormats;
     GetPhysicalFormats( sID, physicalFormats );
-
-    const Desc& procFormat = FindClosestFormat( procFormats );
-    stream.SetCurrentIOProcFormat( procFormat );
-
     const Desc& physicalFormat = FindClosestFormat( physicalFormats );
     stream.SetCurrentPhysicalFormat( physicalFormat );
+
+    vector<Desc> procFormats;
+    GetIOProcFormats( sID, procFormats );
+    const Desc& procFormat = FindClosestFormat( procFormats );
+    stream.SetCurrentIOProcFormat( procFormat );
 
 	StartDecodeThread();
 
