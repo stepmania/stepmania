@@ -24,7 +24,7 @@ public:
 	Font( const CString &sTexturePath, const CString& sChars );
 	~Font();
 
-	int GetLineWidthInSourcePixels( LPCTSTR szLine, int iLength );
+	int GetLineWidthInSourcePixels( const char *szLine, int iLength );
 
 	int m_iRefCount;
 

@@ -194,7 +194,7 @@ void BitmapText::DrawPrimitives()
 
 	for( int i=0; i<m_iNumLines; i++ )		// foreach line
 	{
-		LPCTSTR szLine = m_szTextLines[i];
+		const char *szLine = m_szTextLines[i];
 		const int iLineLength = m_iLineLengths[i];
 		const int iLineWidth = m_iLineWidths[i];
 		

@@ -209,7 +209,7 @@ Font::~Font()
 }
 
 
-int Font::GetLineWidthInSourcePixels( LPCTSTR szLine, int iLength )
+int Font::GetLineWidthInSourcePixels( const char *szLine, int iLength )
 {
 	int iLineWidth = 0;
 	
