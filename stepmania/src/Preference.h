@@ -3,26 +3,18 @@
 #ifndef PREFERENCE_H
 #define PREFERENCE_H
 
-#include "IniFile.h"
-#include "PrefsManager.h"
+#include "EnumHelper.h"
+class IniFile;
 
 enum PrefsGroup
 {
 	Debug,
 	Editor,
 	Options,
+	NUM_PREFS_GROUPS
 };
+const CString& PrefsGroupToString( PrefsGroup pg );
 
-inline CString PrefsGroupToString( PrefsGroup pg )
-{
-	switch( pg )
-	{
-	case Debug:		return "Debug";
-	case Editor:	return "Editor";
-	case Options:	return "Options";
-	default:	ASSERT(0); return "";
-	}
-}
 
 class IPreference
 {
@@ -33,6 +25,9 @@ public:
 	virtual void WriteTo( IniFile &ini ) const = 0;
 };
 
+void SubscribePreference( IPreference *p );
+void UnsubscribePreference( IPreference *p );
+
 template <class T>
 class Preference : public IPreference
 {
@@ -41,6 +36,9 @@ private:
 	CString		m_sName;
 	T			m_defaultValue;
 	T			m_currentValue;
+	
+	CString ToString();
+	void FromString( const CString &s );
 
 public:
 	Preference( PrefsGroup PrefsGroup, const CString& sName, const T& defaultValue ):
@@ -49,12 +47,13 @@ public:
 		m_defaultValue( defaultValue ),
 		m_currentValue( defaultValue )
 	{
-		PrefsManager::Subscribe( this );
+		SubscribePreference( this );
+		LoadDefault();
 	}
 
 	~Preference()
 	{
-		PrefsManager::Unsubscribe( this );
+		UnsubscribePreference( this );
 	}
 
 	void LoadDefault()
@@ -62,21 +61,14 @@ public:
 		m_currentValue = m_defaultValue;
 	}
 
-	void ReadFrom( const IniFile &ini )
-	{
-		ini.GetValue( PrefsGroupToString(m_PrefsGroup), m_sName, m_currentValue );
-	}
+	void ReadFrom( const IniFile &ini );
+	void WriteTo( IniFile &ini ) const;
 
-	void WriteTo( IniFile &ini ) const
-	{
-		ini.SetValue( PrefsGroupToString(m_PrefsGroup), m_sName, m_currentValue );
-	}
-
-	const T& GetValue() const
+	operator T& ()
 	{
 		return m_currentValue;
 	}
-	
+
 	operator const T& () const
 	{
 		return m_currentValue;

@@ -275,12 +275,15 @@ void ScreenSystemLayer::Update( float fDeltaTime )
 {
 	Screen::Update(fDeltaTime);
 
-	if( PREFSMAN  &&  PREFSMAN->m_bShowStats )
+	if( PREFSMAN  &&  (bool)PREFSMAN->m_bShowStats )
 	{
 		m_textStats.SetDiffuse( RageColor(1,1,1,0.7f) );
 		m_textStats.SetText( DISPLAY->GetStats() );
-	} else
+	}
+	else
+	{
 		m_textStats.SetDiffuse( RageColor(1,1,1,0) ); /* hide */
+	}
 
 	UpdateTimestampAndSkips();
 }
