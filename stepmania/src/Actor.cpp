@@ -125,7 +125,7 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 
 
 	
-	DISPLAY->Translate( m_temp.pos.x, m_temp.pos.y, m_temp.pos.z );	// offset so that pixels are aligned to texels
+	DISPLAY->Translate( m_temp.pos.x, m_temp.pos.y, m_temp.pos.z );
 	DISPLAY->Scale( m_temp.scale.x, m_temp.scale.y, 1 );
 
 	// super slow, and most Actors don't have any rotation	
