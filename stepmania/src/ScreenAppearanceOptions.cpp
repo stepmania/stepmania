@@ -29,8 +29,8 @@
 enum {
 	AO_ANNOUNCER = 0,
 	AO_THEME,
-	AO_DIFF_SELECT,
-//	AO_SKIN,
+//	AO_DIFF_SELECT,
+	AO_SKIN,
 	AO_INSTRUCTIONS,
 	AO_CAUTION,
 	AO_SELECT_GROUP,
@@ -42,8 +42,8 @@ enum {
 OptionRowData g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
 	{ "Announcer",		    1, {"OFF"} },	// fill this in on ImportOptions()
 	{ "Theme",			    0, {""} },		// fill this in on ImportOptions()
-	{ "Difficulty\nSelect", 2, {"DDR Extreme", "Normal"} },
-//	{ "Note\nSkin",		    0, {""} },		// fill this in on ImportOptions()
+//	{ "Difficulty\nSelect", 2, {"DDR Extreme", "Normal"} },
+	{ "Note\nSkin",		    0, {""} },		// fill this in on ImportOptions()
 	{ "How To\nPlay",	    2, {"SKIP","SHOW"} },
 	{ "Caution",		    2, {"SKIP","SHOW"} },
 	{ "Song\nGroup",	    2, {"ALL MUSIC","CHOOSE"} },
@@ -133,9 +133,33 @@ void ScreenAppearanceOptions::ImportOptions()
 	if( m_iSelectedOption[0][AO_THEME] == -1 )
 		m_iSelectedOption[0][AO_THEME] = 0;
 
+	//
+	// fill in skin names
+	//
+	CStringArray arraySkinNames;
+	NOTESKIN->GetNoteSkinNames( arraySkinNames );
+
+	m_OptionRowData[AO_SKIN].iNumOptions    =       arraySkinNames.size();
+
+	for( i=0; i<arraySkinNames.size(); i++ )
+	strcpy( m_OptionRowData[AO_SKIN].szOptionsText[i], arraySkinNames[i] );
+
+	// highlight currently selected skin
+	m_iSelectedOption[0][AO_SKIN] = -1;
+	for( i=0; i<m_OptionRowData[AO_SKIN].iNumOptions; i++ )
+	{
+		if( 0==stricmp(m_OptionRowData[AO_SKIN].szOptionsText[i], PREFSMAN->m_sDefaultNoteSkin) )
+		{
+			m_iSelectedOption[0][AO_SKIN] = i;
+			break;
+		}
+	}
+	if( m_iSelectedOption[0][AO_SKIN] == -1 )
+		m_iSelectedOption[0][AO_SKIN] = 0;
+
 	m_iSelectedOption[0][AO_INSTRUCTIONS]				= PREFSMAN->m_bInstructions? 1:0;
 	m_iSelectedOption[0][AO_CAUTION]					= PREFSMAN->m_bShowDontDie? 1:0;
-	m_iSelectedOption[0][AO_DIFF_SELECT]				= PREFSMAN->m_bDDRExtremeDifficultySelect? 1:0;
+//	m_iSelectedOption[0][AO_DIFF_SELECT]				= PREFSMAN->m_bDDRExtremeDifficultySelect? 1:0;
 	m_iSelectedOption[0][AO_SELECT_GROUP]				= PREFSMAN->m_bShowSelectGroup? 1:0;
 	m_iSelectedOption[0][AO_WHEEL_SECTIONS]				= (int)PREFSMAN->m_MusicWheelUsesSections;
 	m_iSelectedOption[0][AO_SHOW_TRANSLATIONS]			= PREFSMAN->m_bShowTranslations;
@@ -156,7 +180,11 @@ void ScreenAppearanceOptions::ExportOptions()
 	CString sNewTheme = m_OptionRowData[AO_THEME].szOptionsText[iSelectedTheme];
 	THEME->SwitchTheme( sNewTheme );
 
-	PREFSMAN->m_bDDRExtremeDifficultySelect		= !!m_iSelectedOption[0][AO_DIFF_SELECT];
+    int iSelectedSkin = m_iSelectedOption[0][AO_SKIN];
+    CString sNewSkin = m_OptionRowData[AO_SKIN].szOptionsText[iSelectedSkin];
+
+	PREFSMAN->m_sDefaultNoteSkin				= sNewSkin;
+//	PREFSMAN->m_bDDRExtremeDifficultySelect		= !!m_iSelectedOption[0][AO_DIFF_SELECT];
 	PREFSMAN->m_bInstructions					= !!m_iSelectedOption[0][AO_INSTRUCTIONS];
 	PREFSMAN->m_bShowDontDie					= !!m_iSelectedOption[0][AO_CAUTION];
 	PREFSMAN->m_bShowSelectGroup				= !!m_iSelectedOption[0][AO_SELECT_GROUP];

@@ -102,6 +102,8 @@ PrefsManager::PrefsManager()
 	m_sSoundDrivers = DEFAULT_SOUND_DRIVER_LIST;
 	m_fSoundVolume = DEFAULT_SOUND_VOLUME;
 
+	m_sDefaultNoteSkin = "default";
+
 	ReadGlobalPrefsFromDisk( true );
 }
 
@@ -273,16 +275,22 @@ void PrefsManager::ReadGamePrefsFromDisk()
 	ini.SetPath( "GamePrefs.ini" );
 	ini.ReadFile();	// it's OK if this fails
 
-	CString sAnnouncer = sGameName, sTheme = sGameName;//, sNoteSkin = sGameName;
+	CString sAnnouncer = sGameName, sTheme = sGameName, sNoteSkin = sGameName;
 
 	// if these calls fail, the three strings will keep the initial values set above.
 	ini.GetValue( sGameName, "Announcer",		sAnnouncer );
 	ini.GetValue( sGameName, "Theme",			sTheme );
-//	ini.GetValue( sGameName, "NoteSkin",		sNoteSkin );
+	ini.GetValue( sGameName, "NoteSkin",		sNoteSkin );
 
 	// it's OK to call these functions with names that don't exist.
 	ANNOUNCER->SwitchAnnouncer( sAnnouncer );
 	THEME->SwitchTheme( sTheme );
+
+	if(NOTESKIN->DoesNoteSkinExist(sNoteSkin))
+		m_sDefaultNoteSkin = sNoteSkin;
+	else
+		m_sDefaultNoteSkin = "default";
+
 //	NOTESKIN->SwitchNoteSkin( sNoteSkin );
 }
 
@@ -299,6 +307,7 @@ void PrefsManager::SaveGamePrefsToDisk()
 	ini.SetValue( sGameName, "Announcer",		ANNOUNCER->GetCurAnnouncerName() );
 	ini.SetValue( sGameName, "Theme",			THEME->GetCurThemeName() );
 //	ini.SetValue( sGameName, "NoteSkin",		NOTESKIN->GetCurNoteSkinName() );
+	ini.SetValue( sGameName, "NoteSkin",		m_sDefaultNoteSkin );
 
 	ini.WriteFile();
 }

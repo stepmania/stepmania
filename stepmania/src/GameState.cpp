@@ -21,6 +21,7 @@
 #include "ThemeManager.h"
 #include "RageUtil.h"
 #include "SongManager.h"
+#include "NoteSkinManager.h"
 
 
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
@@ -44,7 +45,9 @@ GameState::GameState()
 {
 	m_CurGame = GAME_DANCE;
 	m_iCoins = 0;
-	Reset();
+	/* Don't reset yet; let the first screen do it, so we can
+	 * use PREFSMAN. */
+//	Reset();
 
 	ResetLastRanking();
 }
@@ -87,6 +90,8 @@ void GameState::Reset()
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_PlayerOptions[p] = PlayerOptions();
 	m_SongOptions = SongOptions();
+	for( p=0; p<NUM_PLAYERS; p++ )
+		NOTESKIN->SwitchNoteSkin( PlayerNumber(p), PREFSMAN->m_sDefaultNoteSkin );
 }
 
 void GameState::ResetLastRanking()

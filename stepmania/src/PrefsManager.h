@@ -83,6 +83,9 @@ public:
 	CString			m_sSoundDrivers;
 	float			m_fSoundVolume;
 
+	/* Game-specific prefs: */
+	CString			m_sDefaultNoteSkin;
+
 	void ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame );
 	void SaveGlobalPrefsToDisk();
 
