@@ -309,7 +309,7 @@ void Checkpoints::SetCheckpoint( const char *file, int line, const char *message
 		slot = GetUnknownThreadSlot();
 	/* We can't ASSERT here, since that uses checkpoints. */
 	if( slot == NULL )
-		sm_crash();
+		sm_crash( "GetUnknownThreadSlot() returned NULL" );
 
 	slot->Checkpoints[slot->CurCheckpoint].Set( file, line, message );
 
