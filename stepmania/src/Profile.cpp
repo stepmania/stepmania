@@ -1030,26 +1030,21 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 
 }
 
-void Profile::AddStepTotals( int iTotalTapsAndHolds, int iTotalJumps, int iTotalHolds, int iTotalMines, int iTotalHands )
+void Profile::AddStepTotals( int iTotalTapsAndHolds, int iTotalJumps, int iTotalHolds, int iTotalMines, int iTotalHands, float fCaloriesBurned )
 {
 	m_iTotalTapsAndHolds += iTotalTapsAndHolds;
 	m_iTotalJumps += iTotalJumps;
 	m_iTotalHolds += iTotalHolds;
 	m_iTotalMines += iTotalMines;
 	m_iTotalHands += iTotalHands;
+	m_fTotalCaloriesBurned += fCaloriesBurned;
 
 	if( m_iWeightPounds != 0 )
 	{
-		float fCals = 
-			SCALE( m_iWeightPounds, 100.f, 200.f, 0.029f, 0.052f ) * iTotalTapsAndHolds +
-			SCALE( m_iWeightPounds, 100.f, 200.f, 0.111f, 0.193f ) * iTotalJumps +
-			SCALE( m_iWeightPounds, 100.f, 200.f, 0.029f, 0.052f ) * iTotalHolds +
-			SCALE( m_iWeightPounds, 100.f, 200.f, 0.000f, 0.000f ) * iTotalMines +
-			SCALE( m_iWeightPounds, 100.f, 200.f, 0.222f, 0.386f ) * iTotalHands;
-		m_fTotalCaloriesBurned += fCals;
+		m_fTotalCaloriesBurned += fCaloriesBurned;
 
 		DateTime date = DateTime::GetNowDate();
-		m_mapDayToCaloriesBurned[date] += fCals;
+		m_mapDayToCaloriesBurned[date] += fCaloriesBurned;
 	}
 }
 

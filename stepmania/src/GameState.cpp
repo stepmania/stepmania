@@ -652,7 +652,8 @@ void GameState::FinishStage()
 		int iNumHolds			= (int) g_CurStageStats.m_player[pn].radarActual[RADAR_NUM_HOLDS];
 		int iNumMines			= (int) g_CurStageStats.m_player[pn].radarActual[RADAR_NUM_MINES];
 		int iNumHands			= (int) g_CurStageStats.m_player[pn].radarActual[RADAR_NUM_HANDS];
-		PROFILEMAN->AddStepTotals( pn, iNumTapsAndHolds, iNumJumps, iNumHolds, iNumMines, iNumHands );
+		float fCaloriesBurned	= g_CurStageStats.m_player[pn].fCaloriesBurned;
+		PROFILEMAN->AddStepTotals( pn, iNumTapsAndHolds, iNumJumps, iNumHolds, iNumMines, iNumHands, fCaloriesBurned );
 	}
 
 

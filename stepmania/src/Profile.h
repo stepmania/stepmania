@@ -77,7 +77,7 @@ public:
 	bool GetDefaultModifiers( const Game* pGameType, CString &sModifiersOut ) const;
 	void SetDefaultModifiers( const Game* pGameType, const CString &sModifiers );
 	
-	void AddStepTotals( int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumMines, int iNumHands );
+	void AddStepTotals( int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumMines, int iNumHands, float fCaloriesBurned );
 
 	bool IsMachine() const;
 
@@ -86,7 +86,7 @@ public:
 	//
 	CString m_sDisplayName;
 	CString m_sLastUsedHighScoreName;	// this doesn't really belong in "editable", but we need it in the smaller editable file so that it can be ready quickly.
-	int m_iWeightPounds;
+	int m_iWeightPounds;	// 0 == invalid
 
 	//
 	// General data

@@ -123,7 +123,7 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 		return false;
 	if( m_SortOrder != SORT_INVALID && GAMESTATE->m_PreferredSortOrder != m_SortOrder )
 		return false;
-	if( m_iWeightPounds != -1 && GAMESTATE->m_pPlayerState[pn]->m_iWeightPounds != m_iWeightPounds )
+	if( m_iWeightPounds != -1 && PROFILEMAN->IsUsingProfile(pn) && PROFILEMAN->GetProfile(pn)->m_iWeightPounds != m_iWeightPounds )
 		return false;
 	if( m_iStopCourseAtSeconds != -1 && GAMESTATE->m_iStopCourseAtSeconds != m_iStopCourseAtSeconds )
 		return false;
@@ -642,7 +642,8 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 		SOUND->PlayOnce( THEME->GetPathToS( m_sSoundPath ) );
 	if( m_iWeightPounds != -1 )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
-			GAMESTATE->m_pPlayerState[*pn]->m_iWeightPounds = m_iWeightPounds;
+			if( PROFILEMAN->IsUsingProfile(*pn) )
+				PROFILEMAN->GetProfile(*pn)->m_iWeightPounds = m_iWeightPounds;
 	if( m_iStopCourseAtSeconds != -1 )
 		GAMESTATE->m_iStopCourseAtSeconds = m_iStopCourseAtSeconds;
 

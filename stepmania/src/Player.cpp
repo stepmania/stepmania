@@ -37,6 +37,7 @@
 #include "GameSoundManager.h"
 #include "Style.h"
 #include "MessageManager.h"
+#include "ProfileManager.h"
 
 CString JUDGMENT_X_NAME( size_t p, size_t both_sides )		{ return "JudgmentXOffset" + (both_sides ? CString("BothSides") : ssprintf("OneSideP%d",p+1) ); }
 CString COMBO_X_NAME( size_t p, size_t both_sides )			{ return "ComboXOffset" + (both_sides ? CString("BothSides") : ssprintf("OneSideP%d",p+1) ); }
@@ -693,10 +694,45 @@ void Player::HandleStep( int col, const RageTimer &tm )
 	//
 	// Count calories for this step.
 	//
-	if( m_pPlayerStageStats )
+	if( m_pPlayerStageStats && m_pPlayerState )
 	{
-		// FIXME:
-		m_pPlayerStageStats->fCaloriesBurned += randomf( 1.f, 2.f );
+		// TODO: remove use of PlayerNumber
+		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+		Profile* pProfile = PROFILEMAN->GetProfile(pn);
+		if( pProfile )
+		{
+			int iLbs = pProfile->m_iWeightPounds;
+			if( iLbs != 0 )
+			{
+				int iNumTracksHeld = 0;
+				for( unsigned t=0; t<m_NoteData.GetNumTracks(); t++ )
+				{
+					const StyleInput StyleI( pn, t );
+					const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( StyleI );
+					float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
+					if( fSecsHeld > 0 )
+						iNumTracksHeld++;
+				}
+
+				float fCals = 0;
+				switch( iNumTracksHeld )
+				{
+				case 0:
+					// autoplay is on, or this is a computer player
+					fCals = 0;
+					break;
+				default:
+					{
+						float fCalsFor100Lbs = SCALE( iNumTracksHeld, 1, 2, 0.029f, 0.222f );
+						float fCalsFor200Lbs = SCALE( iNumTracksHeld, 1, 2, 0.052f, 0.386f );
+						fCals = SCALE( iLbs, 100.f, 200.f, fCalsFor100Lbs, fCalsFor200Lbs );
+					}
+					break;
+				}
+
+				m_pPlayerStageStats->fCaloriesBurned += fCals;
+			}
+		}
 	}
 
 

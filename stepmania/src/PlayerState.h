@@ -42,8 +42,6 @@ struct PlayerState
 
 		for( int i=0; i<NUM_INVENTORY_SLOTS; i++ )
 			m_Inventory[i].MakeBlank();
-
-		m_iWeightPounds = -1;
 	}
 
 
@@ -91,11 +89,6 @@ struct PlayerState
 	// Used in Battle
 	//
 	Attack	m_Inventory[NUM_INVENTORY_SLOTS];
-
-	//
-	// Used in Workout
-	//
-	int		m_iWeightPounds;	// -1 == no weight set
 };
 
 #endif
