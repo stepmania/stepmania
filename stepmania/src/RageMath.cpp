@@ -60,7 +60,7 @@ void RageVec3TransformCoord( RageVector3* pOut, const RageVector3* pV, const Rag
 void RageVec4TransformCoord( RageVector4* pOut, const RageVector4* pV, const RageMatrix* pM )
 {
     const RageMatrix &a = *pM;
-    const RageVector4 &v = *pOut;
+    const RageVector4 &v = *pV;
 	*pOut = RageVector4(
 		a.m00*v.x+a.m10*v.y+a.m20*v.z+a.m30*v.w,
 		a.m01*v.x+a.m11*v.y+a.m21*v.z+a.m31*v.w,
