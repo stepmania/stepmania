@@ -122,6 +122,8 @@ protected:
 
 	bool WheelItemIsVisible(int n);
 	void UpdateScrollbar();
+
+	ThemeMetric1D<RageColor> SECTION_COLORS;
 };
 
 #endif

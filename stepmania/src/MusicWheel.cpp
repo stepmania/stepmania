@@ -27,37 +27,38 @@
 #include "PlayerState.h"
 
 
-ThemeMetric<float>	SWITCH_SECONDS	("MusicWheel","SwitchSeconds");
-#define ROULETTE_SWITCH_SECONDS		THEME->GetMetricF("MusicWheel","RouletteSwitchSeconds")
-#define ROULETTE_SLOW_DOWN_SWITCHES	THEME->GetMetricI("MusicWheel","RouletteSlowDownSwitches")
-#define LOCKED_INITIAL_VELOCITY		THEME->GetMetricF("MusicWheel","LockedInitialVelocity")
-#define SCROLL_BAR_X				THEME->GetMetricF("MusicWheel","ScrollBarX")
-#define SCROLL_BAR_HEIGHT			THEME->GetMetricI("MusicWheel","ScrollBarHeight")
-ThemeMetric<float>	ITEM_CURVE_X		("MusicWheel","ItemCurveX");
-#define USE_LINEAR_WHEEL			THEME->GetMetricB("MusicWheel","NoCurving")
-ThemeMetric<float>	ITEM_SPACING_Y	("MusicWheel","ItemSpacingY");
-ThemeMetric<float>	WHEEL_3D_RADIUS	("MusicWheel","Wheel3DRadius");
-ThemeMetric<float>	CIRCLE_PERCENT	("MusicWheel","CirclePercent");
-#define NUM_SECTION_COLORS			THEME->GetMetricI("MusicWheel","NumSectionColors")
-#define SECTION_COLORS( i )			THEME->GetMetricC("MusicWheel",ssprintf("SectionColor%d",i+1))
-#define SONG_REAL_EXTRA_COLOR		THEME->GetMetricC("MusicWheel","SongRealExtraColor")
-#define SORT_MENU_COLOR				THEME->GetMetricC("MusicWheel","SortMenuColor")
-#define SHOW_ROULETTE				THEME->GetMetricB("MusicWheel","ShowRoulette")
-#define SHOW_RANDOM					THEME->GetMetricB("MusicWheel","ShowRandom")
-#define SHOW_PORTAL					THEME->GetMetricB("MusicWheel","ShowPortal")
-ThemeMetric<bool>	USE_3D			("MusicWheel","Use3D");
-ThemeMetric<float>	NUM_WHEEL_ITEMS_TO_DRAW	("MusicWheel","NumWheelItems");
-#define NUM_WHEEL_ITEMS				((int)ceil(NUM_WHEEL_ITEMS_TO_DRAW+2))
-#define MOST_PLAYED_SONGS_TO_SHOW	THEME->GetMetricI("MusicWheel","MostPlayedSongsToShow")
-#define MODE_MENU_CHOICE_NAMES		THEME->GetMetric ("MusicWheel","ModeMenuChoiceNames")
-#define CHOICE( sChoiceName )		THEME->GetMetricM("MusicWheel",ssprintf("Choice%s",sChoiceName.c_str()))
-#define WHEEL_ITEM_ON_DELAY_CENTER	THEME->GetMetricF("MusicWheel","WheelItemOnDelayCenter")
-#define WHEEL_ITEM_ON_DELAY_OFFSET	THEME->GetMetricF("MusicWheel","WheelItemOnDelayOffset")
-#define WHEEL_ITEM_OFF_DELAY_CENTER	THEME->GetMetricF("MusicWheel","WheelItemOffDelayCenter")
-#define WHEEL_ITEM_OFF_DELAY_OFFSET	THEME->GetMetricF("MusicWheel","WheelItemOffDelayOffset")
+ThemeMetric<float>	SWITCH_SECONDS				("MusicWheel","SwitchSeconds");
+ThemeMetric<float> ROULETTE_SWITCH_SECONDS		("MusicWheel","RouletteSwitchSeconds");
+ThemeMetric<int> ROULETTE_SLOW_DOWN_SWITCHES	("MusicWheel","RouletteSlowDownSwitches");
+ThemeMetric<float> LOCKED_INITIAL_VELOCITY		("MusicWheel","LockedInitialVelocity");
+ThemeMetric<float> SCROLL_BAR_X					("MusicWheel","ScrollBarX");
+ThemeMetric<int> SCROLL_BAR_HEIGHT				("MusicWheel","ScrollBarHeight");
+ThemeMetric<float>	ITEM_CURVE_X				("MusicWheel","ItemCurveX");
+ThemeMetric<bool> USE_LINEAR_WHEEL				("MusicWheel","NoCurving");
+ThemeMetric<float>	ITEM_SPACING_Y				("MusicWheel","ItemSpacingY");
+ThemeMetric<float>	WHEEL_3D_RADIUS				("MusicWheel","Wheel3DRadius");
+ThemeMetric<float>	CIRCLE_PERCENT				("MusicWheel","CirclePercent");
+ThemeMetric<int> NUM_SECTION_COLORS				("MusicWheel","NumSectionColors");
+ThemeMetric<RageColor> SONG_REAL_EXTRA_COLOR	("MusicWheel","SongRealExtraColor");
+ThemeMetric<RageColor> SORT_MENU_COLOR			("MusicWheel","SortMenuColor");
+ThemeMetric<bool> SHOW_ROULETTE					("MusicWheel","ShowRoulette");
+ThemeMetric<bool> SHOW_RANDOM					("MusicWheel","ShowRandom");
+ThemeMetric<bool> SHOW_PORTAL					("MusicWheel","ShowPortal");
+ThemeMetric<bool>	USE_3D						("MusicWheel","Use3D");
+ThemeMetric<float>	NUM_WHEEL_ITEMS_TO_DRAW		("MusicWheel","NumWheelItems");
+#define NUM_WHEEL_ITEMS		((int)ceil(NUM_WHEEL_ITEMS_TO_DRAW+2))
+ThemeMetric<int> MOST_PLAYED_SONGS_TO_SHOW		("MusicWheel","MostPlayedSongsToShow");
+ThemeMetric<CString> MODE_MENU_CHOICE_NAMES		("MusicWheel","ModeMenuChoiceNames");
+#define CHOICE( sChoiceName ) THEME->GetMetricM ("MusicWheel",ssprintf("Choice%s",sChoiceName.c_str()))
+ThemeMetric<float> WHEEL_ITEM_ON_DELAY_CENTER	("MusicWheel","WheelItemOnDelayCenter");
+ThemeMetric<float> WHEEL_ITEM_ON_DELAY_OFFSET	("MusicWheel","WheelItemOnDelayOffset");
+ThemeMetric<float> WHEEL_ITEM_OFF_DELAY_CENTER	("MusicWheel","WheelItemOffDelayCenter");
+ThemeMetric<float> WHEEL_ITEM_OFF_DELAY_OFFSET	("MusicWheel","WheelItemOffDelayOffset");
 // leaving this one under ScreenSelectMusic because that is the only place it takes effect anyway.
-#define DEFAULT_SORT				THEME->GetMetric ("ScreenSelectMusic","DefaultSort")
+ThemeMetric<CString> DEFAULT_SORT				("ScreenSelectMusic","DefaultSort");
 
+static CString SECTION_COLORS_NAME( size_t i )	{ return ssprintf("SectionColor%d",i+1); }
+ThemeMetric1D<RageColor> SECTION_COLORS			("MusicWheel",SECTION_COLORS_NAME,NUM_SECTION_COLORS);
 			
 const int MAX_WHEEL_SOUND_SPEED = 15;
 
@@ -73,7 +74,8 @@ static const SortOrder g_SongSortOrders[] =
 };
 vector<SortOrder> SONG_SORT_ORDERS( g_SongSortOrders, g_SongSortOrders + ARRAYSIZE(g_SongSortOrders) );
 	
-MusicWheel::MusicWheel() 
+MusicWheel::MusicWheel() :
+	SECTION_COLORS		("MusicWheel",SECTION_COLORS_NAME,NUM_SECTION_COLORS)
 {
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 		m_MusicWheelItems.push_back( new MusicWheelItem );
@@ -606,7 +608,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 
 				if( sThisSection != sLastSection)	// new section, make a section item
 				{
-					RageColor colorSection = (so==SORT_GROUP) ? SONGMAN->GetGroupColor(pSong->m_sGroupName) : SECTION_COLORS(iSectionColorIndex);
+					RageColor colorSection = (so==SORT_GROUP) ? SONGMAN->GetGroupColor(pSong->m_sGroupName) : SECTION_COLORS.GetValue(iSectionColorIndex);
 					iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
 					arrayWheelItemDatas.push_back( WheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, colorSection) );
 					sLastSection = sThisSection;
@@ -726,7 +728,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 
 			if( sThisSection != sLastSection )	// new section, make a section item
 			{
-				RageColor c = SECTION_COLORS(iSectionColorIndex);
+				RageColor c = SECTION_COLORS.GetValue(iSectionColorIndex);
 				iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
 				arrayWheelItemDatas.push_back( WheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, c) );
 				sLastSection = sThisSection;
