@@ -4,7 +4,8 @@
 -----------------------------------------------------------------------------
  Class: LightsDriver_Win32Parallel
 
- Desc: Control lights.
+ Desc: Control lights with Kit 74:
+	http://www.google.com/search?hl=en&lr=&ie=UTF-8&oe=UTF-8&q=kit+74+relay
 
  Copyright (c) 2003 by the person(s) listed below.  All rights reserved.
 	Chris Danford
