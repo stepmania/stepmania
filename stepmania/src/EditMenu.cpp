@@ -371,7 +371,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			if( *dc == DIFFICULTY_EDIT )
 			{
 				vector<Steps*> v;
-				GetSelectedSong()->GetSteps( v, GetSelectedStepsType(), DIFFICULTY_EDIT );
+				GetSelectedSong()->GetSteps( v, GetSelectedSourceStepsType(), DIFFICULTY_EDIT );
 				StepsUtil::SortStepsByDescription( v );
 				m_vpSourceSteps.insert( m_vpSourceSteps.end(), v.begin(), v.end() );
 				
@@ -381,7 +381,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			}
 			else
 			{
-				Steps *pSteps = GetSelectedSong()->GetStepsByDifficulty( GetSelectedStepsType(), *dc );
+				Steps *pSteps = GetSelectedSong()->GetStepsByDifficulty( GetSelectedSourceStepsType(), *dc );
 				m_vpSourceSteps.push_back( pSteps );
 			}
 		}
