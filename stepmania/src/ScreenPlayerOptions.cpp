@@ -59,6 +59,15 @@ OptionRow g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 	OptionRow( "Character",			"" ),
 };
 
+static const PlayerOptions::Effect ChoosableEffects[] = 
+{
+	PlayerOptions::EFFECT_DRUNK,
+	PlayerOptions::EFFECT_DIZZY,
+	PlayerOptions::EFFECT_MINI,
+	PlayerOptions::EFFECT_FLIP,
+	PlayerOptions::EFFECT_TORNADO,
+	PlayerOptions::NUM_EFFECTS
+};
 
 ScreenPlayerOptions::ScreenPlayerOptions() :
 	ScreenOptions("ScreenPlayerOptions",true)
@@ -174,7 +183,14 @@ void ScreenPlayerOptions::ImportOptions()
 		else									m_iSelectedOption[p][PO_SPEED] = 3;
 
 		m_iSelectedOption[p][PO_ACCEL]		= po.GetFirstAccel()+1;
-		m_iSelectedOption[p][PO_EFFECT]		= po.GetFirstEffect()+1;
+
+		const PlayerOptions::Effect e = po.GetFirstEffect();
+		m_iSelectedOption[p][PO_EFFECT] = 0;
+		for( i = 0; ChoosableEffects[i] != PlayerOptions::NUM_EFFECTS; ++i )
+			if( ChoosableEffects[i] == e )
+				m_iSelectedOption[p][PO_EFFECT] = i+1;
+
+// 		m_iSelectedOption[p][PO_EFFECT]		= po.GetFirstEffect()+1;
 		m_iSelectedOption[p][PO_APPEAR]		= po.GetFirstAppearance()+1;
 		m_iSelectedOption[p][PO_TURN]		= po.m_Turn;
 		m_iSelectedOption[p][PO_TRANSFORM]	= po.m_Transform;
@@ -235,7 +251,8 @@ void ScreenPlayerOptions::ImportOptions()
 			if( GAMESTATE->m_pCurCharacters[p] == GAMESTATE->m_pCharacters[i] )
 				m_iSelectedOption[p][PO_CHARACTER] = i+1;
 
-		po.Init();
+		/* Why do this?  We don't want to erase if we back out. */
+		// po.Init();
 	}
 }
 
@@ -244,7 +261,9 @@ void ScreenPlayerOptions::ExportOptions()
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		PlayerOptions &po = GAMESTATE->m_PlayerOptions[p];
-		po.Init();
+		/* Why do this?  We don't necessarily set everything in po, so we shouldn't
+		 * erase everything. */
+		// po.Init();
 
 		switch( m_iSelectedOption[p][PO_SPEED] )
 		{
@@ -264,8 +283,16 @@ void ScreenPlayerOptions::ExportOptions()
 
 		if( m_iSelectedOption[p][PO_ACCEL] != 0 )
 			po.SetOneAccel( (PlayerOptions::Accel)(m_iSelectedOption[p][PO_ACCEL]-1) );
-		if( m_iSelectedOption[p][PO_EFFECT] != 0 )
-			po.SetOneEffect( (PlayerOptions::Effect)(m_iSelectedOption[p][PO_EFFECT]-1) );
+
+		/* Don't change effects that aren't displayed. */
+		for( int i = 0; ChoosableEffects[i] != PlayerOptions::NUM_EFFECTS; ++i )
+		{
+			const bool on = (i+1 == m_iSelectedOption[p][PO_EFFECT]);
+			const PlayerOptions::Effect e = ChoosableEffects[i];
+
+			po.m_fEffects[e] = on? 1.0f:0.0f;
+		}
+
 		if( m_iSelectedOption[p][PO_APPEAR] != 0 )
 			po.SetOneAppearance( (PlayerOptions::Appearance)(m_iSelectedOption[p][PO_APPEAR]-1) );
 
