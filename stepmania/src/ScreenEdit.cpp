@@ -178,6 +178,8 @@ ScreenEdit::ScreenEdit()
 		// want to extract the NotesType for a (NEW) sequence.
 
 		m_pSong->m_apNotes.Add( m_pNotes );
+
+		GAMESTATE->m_pCurNotes[PLAYER_1] = m_pNotes;
 	}
 
 	NoteData noteData;
@@ -580,6 +582,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			Song* pSong = GAMESTATE->m_pCurSong;
 			Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
 
+			ASSERT( pNotes  );
+/*
 			if( pNotes == NULL )
 			{
 				// allocate a new Notes
@@ -589,7 +593,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				pNotes->m_sDescription = "Untitled";
 				pNotes->m_iMeter = 1;
 			}
-
+*/
 			pNotes->SetNoteData( (NoteData*)&m_NoteFieldEdit );
 			switch( DeviceI.button )
 			{
