@@ -128,8 +128,9 @@ File "Characters\instructions.txt"
 CreateDirectory "$INSTDIR\Courses"
 SetOutPath "$INSTDIR\Courses"
 File "Courses\instructions.txt"
-CreateDirectory "$INSTDIR\Courses\Samples"
-SetOutPath "$INSTDIR\Courses\Samples"
+
+CreateDirectory "$INSTDIR\Courses"
+SetOutPath "$INSTDIR\Courses"
 File /r "Courses\Samples"
 
 RMDir /r "$INSTDIR\NoteSkins\dance\MAX"
@@ -180,6 +181,10 @@ CreateDirectory "$INSTDIR\Visualizations"
 SetOutPath "$INSTDIR\Visualizations"
 File "Visualizations\instructions.txt"
 
+CreateDirectory "$INSTDIR\Data"
+SetOutPath "$INSTDIR\Data"
+File "Data\Translation.dat"
+
 SetOutPath "$INSTDIR"
 File "msvcr70.dll"
 File "msvcp70.dll"
@@ -194,7 +199,6 @@ File "NEWS"
 File "stepmania.exe"
 File "stepmania.vdi"
 File "smpackage.exe"
-File "Translation.dat"
 
 ; What to do here?  Better to just delete an existing INI than to
 ; drop the local one in ... -glenn
@@ -292,6 +296,9 @@ RMDir "$INSTDIR\Themes"
 Delete "$INSTDIR\Visualizations\instructions.txt"
 RMDir "$INSTDIR\Visualizations"
 
+Delete "$INSTDIR\Data\Translation.dat"
+RMDir "$INSTDIR\Data"
+
 Delete "$INSTDIR\msvcr70.dll"
 Delete "$INSTDIR\msvcp70.dll"
 Delete "$INSTDIR\jpeg.dll"
@@ -305,10 +312,10 @@ Delete "$INSTDIR\stepmania.ini"
 Delete "$INSTDIR\Keymaps.ini"
 Delete "$INSTDIR\GamePrefs.ini"
 Delete "$INSTDIR\smpackage.exe"
-Delete "$INSTDIR\Translation.dat"
 Delete "$INSTDIR\StepMania.vdi"
 Delete "$INSTDIR\log.txt"
 Delete "$INSTDIR\info.txt"
+Delete "$INSTDIR\crashinfo.txt"
 
 RMDir "$INSTDIR"	; will delete only if empty
 
