@@ -186,7 +186,7 @@ float ArrowGetBrightness( PlayerNumber pn, float fYOffset )
 {
 	float fBrightness = SCALE( fYOffset, 0, -ARROW_SIZE, 1.f, 0.f );
 	CLAMP( fBrightness, 0, 1 );
-	printf( "fBrightness = %f\n", fBrightness );
+// noisy	printf( "fBrightness = %f\n", fBrightness );
 	return fBrightness;
 }
 
