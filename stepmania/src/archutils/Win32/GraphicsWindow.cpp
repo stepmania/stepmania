@@ -13,6 +13,7 @@
 
 static const CString g_sClassName = CString(PRODUCT_NAME) + " LowLevelWindow_Win32";
 
+static HWND g_hWndMain;
 static HDC g_HDC;
 static RageDisplay::VideoModeParams g_CurrentParams;
 static bool g_bResolutionChanged = false;
