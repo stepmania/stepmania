@@ -216,7 +216,7 @@ CString ThemeManager::GetPathToOptional( CString sAssetCategory, CString sFileNa
 
 CString ThemeManager::GetPathTo( CString sAssetCategory, CString sFileName ) 
 {
-#ifdef DEBUG
+#if defined(DEBUG) && defined(WIN32)
 try_element_again:
 #endif
 
@@ -262,7 +262,7 @@ CString ThemeManager::GetMetricsPathFromName( CString sThemeName )
 
 CString ThemeManager::GetMetric( CString sClassName, CString sValueName )
 {
-#ifdef DEBUG
+#if defined(DEBUG) && defined(WIN32)
 try_metric_again:
 #endif
 	CString sCurMetricPath = GetMetricsPathFromName(m_sCurThemeName);
