@@ -17,6 +17,7 @@ static char THIS_FILE[] = __FILE__;
 
 ShowComment::ShowComment(CWnd* pParent /*=NULL*/)
 	: CDialog(ShowComment::IDD, pParent)
+	, m_bDontShow(FALSE)
 {
 	//{{AFX_DATA_INIT(ShowComment)
 		// NOTE: the ClassWizard will add member initialization here
@@ -30,6 +31,7 @@ void ShowComment::DoDataExchange(CDataExchange* pDX)
 	//{{AFX_DATA_MAP(ShowComment)
 	DDX_Control(pDX, IDC_EDIT, m_edit);
 	//}}AFX_DATA_MAP
+	DDX_Check(pDX, IDC_DONTSHOW, m_bDontShow);
 }
 
 

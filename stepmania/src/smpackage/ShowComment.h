@@ -40,6 +40,8 @@ protected:
 	virtual BOOL OnInitDialog();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+public:
+	BOOL m_bDontShow;
 };
 
 //{{AFX_INSERT_LOCATION}}

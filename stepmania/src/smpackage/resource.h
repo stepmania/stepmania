@@ -52,8 +52,8 @@
 #define IDC_BUTTON_OVERRIDE             1037
 #define IDC_BUTTON_HELP                 1038
 #define IDC_BUTTON_CLOSE                1039
-#define IDC_CHECK1                      1040
 #define IDC_DONTASK                     1041
+#define IDC_DONTSHOW                    1042
 
 // Next default values for new objects
 // 
@@ -61,7 +61,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        147
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1042
+#define _APS_NEXT_CONTROL_VALUE         1043
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
