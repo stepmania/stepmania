@@ -85,7 +85,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 
 		if( pSong == NULL)
 		{
-			LOG->Trace("Can't find song %s", SongTitle);
+			LOG->Trace("Can't find song %s", SongTitle.c_str());
 			continue;
 		}
 
@@ -136,6 +136,8 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 			
 			DisplayedSong.MakeUpper();
 			SongEntry *pSong = GAMESTATE->m_pUnlockingSys->FindLockEntry(DisplayedSong);
+			if ( pSong == NULL )
+				continue;
 
 			/* Reset zoom before using SetTextMaxWidth. */
 			text->SetZoom(ScrollingTextZoom);
