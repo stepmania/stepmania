@@ -543,8 +543,8 @@ void NoteField::DrawPrimitives()
 			// TRICKY: If boomerang is on, then all notes in the range 
 			// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
 			// Test every note to make sure it's on screen before drawing
-			float fYStartOffset = ArrowGetYOffset( m_PlayerNumber, 0, NoteRowToBeat(hn.iStartRow), true );
-			float fYEndOffset = ArrowGetYOffset( m_PlayerNumber, 0, NoteRowToBeat(hn.iEndRow), true );
+			float fYStartOffset = ArrowGetYOffset( m_PlayerNumber, c, NoteRowToBeat(hn.iStartRow) );
+			float fYEndOffset = ArrowGetYOffset( m_PlayerNumber, c, NoteRowToBeat(hn.iEndRow) );
 			if( !( iFirstPixelToDraw <= fYEndOffset && fYEndOffset <= iLastPixelToDraw  ||
 				iFirstPixelToDraw <= fYStartOffset  && fYStartOffset <= iLastPixelToDraw  ||
 				fYStartOffset < iFirstPixelToDraw   && fYEndOffset > iLastPixelToDraw ) )
@@ -588,7 +588,7 @@ void NoteField::DrawPrimitives()
 			// TRICKY: If boomerang is on, then all notes in the range 
 			// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
 			// Test every note to make sure it's on screen before drawing
-			float fYOffset = ArrowGetYOffset( m_PlayerNumber, 0, NoteRowToBeat(i), true );
+			float fYOffset = ArrowGetYOffset( m_PlayerNumber, c, NoteRowToBeat(i) );
 			if( fYOffset > iLastPixelToDraw )	// off screen
 				continue;	// skip
 			if( fYOffset < iFirstPixelToDraw )	// off screen
