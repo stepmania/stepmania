@@ -127,7 +127,7 @@ Dialog::Result Dialog::AbortRetryIgnore( CString sMessage, CString ID )
 	Dialog::Init();
 
 	if( ID != "" && MessageIsIgnored( ID ) )
-		return Dialog::AbortRetryIgnore( sMessage, ID );
+		return g_pNullDriver.AbortRetryIgnore( sMessage, ID );
 
 	// only show Dialog if windowed
 	if( !g_bWindowed )
@@ -141,7 +141,7 @@ Dialog::Result Dialog::RetryCancel( CString sMessage, CString ID )
 	Dialog::Init();
 
 	if( ID != "" && MessageIsIgnored( ID ) )
-		return Dialog::RetryCancel( sMessage, ID );
+		return g_pNullDriver.RetryCancel( sMessage, ID );
 
 	// only show Dialog if windowed
 	if( !g_bWindowed )
