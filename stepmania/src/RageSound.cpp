@@ -61,7 +61,7 @@ const int samplesize = 2 * channels; /* 16-bit */
 const int internal_buffer_size = 1024*16;
 
 /* The amount of data to read from SDL_sound at once. */
-const int read_block_size = 1024;
+const unsigned read_block_size = 1024;
 
 /* The number of samples we should keep pos_map data for.  This being too high
  * is mostly harmless; the data is small. */
@@ -280,7 +280,7 @@ void RageSound::RateChange(char *buf, int &cnt,
 			 * rounding error. */
 
 			Sint16 samps[16];
-			ASSERT(speed_input_samples <= sizeof(samps)/sizeof(*samps));
+			ASSERT(size_t(speed_input_samples) <= sizeof(samps)/sizeof(*samps));
 			int s;
 			for(s = 0; s < speed_input_samples; ++s) {
 				samps[s] = *in; in += channels;
@@ -322,7 +322,7 @@ int RageSound::FillBuf(int bytes)
 			break; /* full */
 
 		char inbuf[10240];
-		int read_size = read_block_size;
+		unsigned read_size = read_block_size;
 		int cnt = 0;
 
 		if(speed_input_samples != speed_output_samples)
