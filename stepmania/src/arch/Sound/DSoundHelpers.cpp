@@ -410,7 +410,10 @@ void DSoundBuf::CheckUnderrun( int cursorstart, int cursorend )
 	 * buffer (64k = ~350ms), this doesn't break stride.  We'll skip forward, but
 	 * the beat won't be lost, which is a lot easier to recover from in play. */
 	/* XXX: If this happens repeatedly over a period of time, increase writeahead. */
-	int needed_writeahead = (cursorstart + writeahead) - write_cursor;
+	/* XXX: What was I doing here?  This isn't working.  We want to know the writeahead
+	 * value needed to fill from the current first_byte_filled all the way to cursorend. */
+	// int needed_writeahead = (cursorstart + writeahead) - write_cursor;
+	int needed_writeahead = cursorend - first_byte_filled;
 	wrap( needed_writeahead, buffersize );
 	if( needed_writeahead > writeahead )
 	{
