@@ -32,6 +32,7 @@ MovieTexture_Null::MovieTexture_Null(RageTextureID ID) : RageMovieTexture(ID)
     const RageDisplay::PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc( pixfmt );
     RageSurface *img = CreateSurface( size, size, pfd->bpp,
 		pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
+    memset( img->pixels, 0, img->pitch*img->h );
 
     texHandle = DISPLAY->CreateTexture( pixfmt, img, false );
 
