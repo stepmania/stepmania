@@ -759,8 +759,6 @@ void ScreenEdit::Update( float fDeltaTime )
 		}
 	}
 
-	m_NoteFieldEdit.Update( fDeltaTime );
-
 	PlayTicks();
 }
 
