@@ -639,11 +639,10 @@ void RageSemaphore::Wait()
 
 	/* We waited too long.  We're probably deadlocked, though unlike mutexes, we can't
 	 * tell which thread we're stuck on. */
-#if defined(CRASH_HANDLER)
 	const ThreadSlot *ThisSlot = GetThreadSlotFromID( GetThisThreadId() );
 	const CString sReason = ssprintf( "Semaphore timeout on mutex %s on thread %s",
 		GetName().c_str(), ThisSlot? ThisSlot->GetThreadName(): "(???" ")" ); // stupid trigraph warnings
-
+#if defined(CRASH_HANDLER)
 	ForceCrashHandler( sReason );
 #else
 	RageException::Throw( "%s", sReason.c_str() );
