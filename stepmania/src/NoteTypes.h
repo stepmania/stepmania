@@ -70,7 +70,7 @@ static const TapNote TAP_REMOVED_HOLD_TAIL	= '\'';
 
 // MD 11/12/03 end
 
-// mine note - don't step!
+// step for an item
 static const TapNote TAP_ATTACK_BEGIN		= 'a';
 static const TapNote TAP_ATTACK_END			= 'z';
 
@@ -112,6 +112,11 @@ enum NoteType
 	NOTE_TYPE_16TH,	// sixteenth note
 	NOTE_TYPE_24TH,	// twenty-fourth note
 	NOTE_TYPE_32ND,	// thirty-second note
+
+	// Why is this high of resolution needed?  It's breaking NoteSkins
+	// with note-coloring, and the extra resolution will take up more 
+	// memory.  Does any game actually use this?  -Chris
+
 	// MD 11/02/03 - added finer divisions
 	NOTE_TYPE_48TH, // forty-eighth note
 	NOTE_TYPE_64TH,	// sixty-fourth note
