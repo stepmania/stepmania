@@ -307,6 +307,10 @@ static void RunCrashHandler( const CrashData *crash )
 			safe_print( fileno(stderr), "Fatal signal (", SignalName(crash->signal), ")", NULL );
 			break;
 
+		case CrashData::FORCE_CRASH_DEADLOCK:
+			safe_print( fileno(stderr), "Deadlock (", crash->reason, ")", NULL );
+			break;
+
 #if defined(DARWIN)
 		case CrashData::OSX_EXCEPTION:
 			safe_print( fileno(stderr), "Fatal exception (", ExceptionName( crash->kind ), ")", NULL );
@@ -367,6 +371,12 @@ static void RunCrashHandler( const CrashData *crash )
 		waitpid( childpid, &status, 0 );
 
 		/* We need to resume threads before continuing, or we may deadlock on _exit(). */
+		/* XXX: race condition:  If two threads are deadlocked on a pair of mutexes, there's
+		 * a chance that they'll both try to lock the other's mutex at the same time.  If
+		 * that happens, then they'll both time out the lock at about the same time.  One
+		 * will trigger the deadlock crash first, and the other will be suspended.  However,
+		 * once we resume it here, it'll continue, and * trigger the deadlock crash again.
+		 * It can result in unrecoverable deadlocks. */
 		RageThread::ResumeAllThreads();
 
 		if( WIFSIGNALED(status) )
@@ -388,7 +398,7 @@ void ForceCrashHandler( const char *reason )
 	RunCrashHandler( &crash );
 }
 
-void ForceCrashHandlerDeadlock( const char *reason, const BacktraceContext *ctx )
+void ForceCrashHandlerDeadlock( CString reason, const BacktraceContext *ctx )
 {
 	CrashData crash;
 	memset( &crash, 0, sizeof(crash) );
@@ -401,6 +411,21 @@ void ForceCrashHandlerDeadlock( const char *reason, const BacktraceContext *ctx 
 	GetBacktrace( crash.BacktracePointers2, BACKTRACE_MAX_SIZE, ctx );
 
 	RunCrashHandler( &crash );
+}
+
+/* iCrashHandle comes from ThreadImpl_Pthreads::GetCrashHandle. */
+void ForceCrashHandlerDeadlock( CString reason, uint64_t iCrashHandle )
+{
+	BacktraceContext ctx;
+	if( !GetThreadBacktraceContext( iCrashHandle, &ctx ) )
+	{
+		reason += "; GetThreadBacktraceContext failed";
+		ForceCrashHandler( reason );
+	} else {
+		ForceCrashHandlerDeadlock( reason, &ctx );
+	}
+
+	_exit(1);
 }
 
 /* XXX test for recursive crashes here (eg. GetBacktrace crashing) */
