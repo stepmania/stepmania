@@ -1320,6 +1320,54 @@ static CString HTMLQuoteDoubleQuotes( CString str )
 	return str;
 }
 
+static bool CompareStepsPointersByTypeAndDifficulty(const Steps *pStep1, const Steps *pStep2)
+{
+	if( pStep1->m_StepsType < pStep2->m_StepsType )
+		return true;
+	if( pStep1->m_StepsType > pStep2->m_StepsType )
+		return false;
+	return pStep1->GetDifficulty() < pStep2->GetDifficulty();
+}
+
+static void SortStepsByTypeAndDifficulty( vector<Steps*> &arraySongPointers )
+{
+	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareStepsPointersByTypeAndDifficulty );
+}
+
+static void HTMLWritePerGameHeader( FILE* fp, Game game )
+{
+	const GameDef* pGameDef = GAMEMAN->GetGameDefForGame(game);
+
+	vector<StepsType> aStepsTypes;
+	GAMEMAN->GetNotesTypesForGame( game, aStepsTypes );
+
+	fprintf( fp, "<h1>%s</h1>\n", pGameDef->m_szName );
+
+	fprintf( fp, "<table border='1'>\n" );
+	fprintf( fp, "<tr><td>title</td>" );
+
+	unsigned j;
+	for( j=0; j<aStepsTypes.size(); j++ )
+	{
+		StepsType st = aStepsTypes[j];
+
+		fprintf( fp, "<td colspan='%d'>%s</td>\n", NUM_DIFFICULTIES, GAMEMAN->NotesTypeToString(st).c_str() );
+	}
+	fprintf( fp, "</tr>\n" );
+
+	fprintf( fp, "<tr><td>&nbsp;</td>" );
+	for( j=0; j<aStepsTypes.size(); j++ )
+	{
+		for( unsigned k=0; k<NUM_DIFFICULTIES; k++ )
+		{
+			Difficulty d = (Difficulty)k;
+			fprintf( fp, "<td>%s</td>\n", Capitalize(DifficultyToString(d).Left(3)).c_str() );
+		}
+	}
+
+	fprintf( fp, "</tr>\n" );
+}
+
 // TODO: Move this to a different file.  No need to clutter SongManager.
 void SongManager::WriteStatsWebPage()
 {
@@ -1374,68 +1422,67 @@ void SongManager::WriteStatsWebPage()
 	for( int g=0; g<NUM_GAMES; g++ )
 	{
 		Game game = (Game)g;
-		const GameDef* pGameDef = GAMEMAN->GetGameDefForGame(game);
 		
 		vector<StepsType> aStepsTypes;
 		GAMEMAN->GetNotesTypesForGame( game, aStepsTypes );
 
-
-		fprintf( fp, "<h1>%s</h1>\n", pGameDef->m_szName );
-
-
-		fprintf( fp, "<table border='1'>\n" );
-		fprintf( fp, "<tr><td>title</td>" );
-		unsigned j;
-		for( j=0; j<aStepsTypes.size(); j++ )
-		{
-			StepsType st = aStepsTypes[j];
-
-			fprintf( fp, "<td colspan='%d'>%s</td>\n", NUM_DIFFICULTIES, GAMEMAN->NotesTypeToString(st).c_str() );
-		}
-		fprintf( fp, "</tr>\n" );
-
-		fprintf( fp, "<tr><td>&nbsp;</td>" );
-		for( j=0; j<aStepsTypes.size(); j++ )
-		{
-//			StepsType st = aStepsTypes[j];
-
-			for( unsigned k=0; k<NUM_DIFFICULTIES; k++ )
-			{
-				Difficulty d = (Difficulty)k;
-				fprintf( fp, "<td>%s</td>\n", Capitalize(DifficultyToString(d).Left(3)).c_str() );
-			}
-		}
-		fprintf( fp, "</tr>\n" );
+		bool WroteHeader = false;
 		for( unsigned i=0; i<vSongs.size(); i++ )
 		{
+			/* Get the steps for this game type. */
 			Song* pSong = m_pSongs[i];
+			vector<Steps*> Steps;
+			unsigned j;
+			for( j=0; j < aStepsTypes.size(); j++ )
+				pSong->GetSteps( Steps, (StepsType) aStepsTypes[j], DIFFICULTY_INVALID, -1, -1, "", false );
+
+			/* Don't write anything for songs that have no steps at all for this
+			 * game.  Otherwise, we'll write pages and pages of empty fields for
+			 * all of the less-used game types. */
+			if( Steps.size() == 0 )
+				continue;	// skip	
+
+			/* We have some steps for this game.  Make sure we've written the game header. */
+			if( !WroteHeader )
+			{
+				HTMLWritePerGameHeader( fp, game );
+				WroteHeader = true;
+			}
+
+
 			fprintf( fp, "<tr>\n" );
 			
 			fprintf( fp, "<td>%s</td>", pSong->GetTranslitMainTitle().c_str() );
 
-			for( unsigned j=0; j<aStepsTypes.size(); j++ )
-			{
-				StepsType st = aStepsTypes[j];
+			SortStepsByTypeAndDifficulty( Steps );
 
-				for( unsigned k=0; k<NUM_DIFFICULTIES; k++ )
+			unsigned CurSteps = 0;
+			for( j=0; j<aStepsTypes.size(); j++ )
+			{
+				for( int k=0; k<NUM_DIFFICULTIES; k++ )
 				{
-					Difficulty d = (Difficulty)k;
-					Steps* pSteps = pSong->GetStepsByDifficulty( st, d, false );
-					if( pSteps )
-						fprintf( fp, "<td>%d</td>\n", pSteps->GetMeter() );
+					if( CurSteps < Steps.size() &&
+						Steps[CurSteps]->m_StepsType == aStepsTypes[j] &&
+						Steps[CurSteps]->GetDifficulty() == k )
+					{
+						fprintf( fp, "<td>%d</td>\n", Steps[CurSteps]->GetMeter() );
+						++CurSteps;
+					}
 					else
 						fprintf( fp, "<td>&nbsp;</td>\n" );
 				}
 			}
 
 			fprintf( fp, "</tr>" );
-
 		}
-		fprintf( fp, "</table>\n<br>\n" );
+		if( WroteHeader )
+			fprintf( fp, "</table>\n<br>\n" ); // footer
 	}
 
 	fprintf( fp, 
 		"</body>\n"
 		"</html>\n"
 		);
+
+	fclose( fp );
 }
