@@ -291,12 +291,13 @@ static void GameLoop();
 
 static bool ChangeAppPri()
 {
-	if(PREFSMAN->m_iBoostAppPriority == 0)
+	if( PREFSMAN->m_iBoostAppPriority == 0 )
 		return false;
 
 	// if using NTPAD don't boost or else input is laggy
-	if(PREFSMAN->m_iBoostAppPriority == -1)
-	{	vector<InputDevice> vDevices;
+	if( PREFSMAN->m_iBoostAppPriority == -1 )
+	{
+		vector<InputDevice> vDevices;
 		vector<CString> vDescriptions;
 		INPUTMAN->GetDevicesAndDescriptions(vDevices,vDescriptions);
 		CString sInputDevices = join( ",", vDescriptions );
@@ -309,7 +310,7 @@ static bool ChangeAppPri()
 
 	/* If -1 and this is a debug build, don't.  It makes the debugger sluggish. */
 #ifdef DEBUG
-	if(PREFSMAN->m_iBoostAppPriority == -1)
+	if( PREFSMAN->m_iBoostAppPriority == -1 )
 		return false;
 #endif
 
@@ -318,7 +319,7 @@ static bool ChangeAppPri()
 
 static void BoostAppPri()
 {
-	if(!ChangeAppPri())
+	if( !ChangeAppPri() )
 		return;
 
 #ifdef _WINDOWS
@@ -328,9 +329,9 @@ static void BoostAppPri()
 	 * and later. */
 	OSVERSIONINFO version;
 	version.dwOSVersionInfoSize=sizeof(version);
-	if(!GetVersionEx(&version))
+	if( !GetVersionEx(&version) )
 	{
-		LOG->Warn(werr_ssprintf(GetLastError(), "GetVersionEx failed"));
+		LOG->Warn( werr_ssprintf(GetLastError(), "GetVersionEx failed") );
 		return;
 	}
 
@@ -339,12 +340,12 @@ static void BoostAppPri()
 #endif
 
 	DWORD pri = HIGH_PRIORITY_CLASS;
-	if(version.dwMajorVersion >= 5)
+	if( version.dwMajorVersion >= 5 )
 		pri = ABOVE_NORMAL_PRIORITY_CLASS;
 
 	/* Be sure to boost the app, not the thread, to make sure the
 	 * sound thread stays higher priority than the main thread. */
-	SetPriorityClass(GetCurrentProcess(), pri);
+	SetPriorityClass( GetCurrentProcess(), pri );
 #endif
 }
 
