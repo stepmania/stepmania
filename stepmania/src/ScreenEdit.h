@@ -73,8 +73,6 @@ protected:
 	 * -1 when shift isn't pressed: */
 	float shiftAnchor;
 
-	float			m_fDestinationScrollSpeed;
-
 	NoteData			m_Clipboard;
 
 	RageSound			m_soundChangeLine;

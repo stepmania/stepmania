@@ -89,11 +89,22 @@ void GameState::Reset()
 	m_vPassedStageStats.clear();
 
 	for( p=0; p<NUM_PLAYERS; p++ )
-		m_PlayerOptions[p] = PlayerOptions();
-	m_SongOptions = SongOptions();
+	{	
+		m_CurrentPlayerOptions[p].Init();
+		m_PlayerOptions[p].Init();
+		m_StoredPlayerOptions[p].Init();
+	}
+	m_SongOptions.Init();
 	for( p=0; p<NUM_PLAYERS; p++ )
 		NOTESKIN->SwitchNoteSkin( PlayerNumber(p), PREFSMAN->m_sDefaultNoteSkin );
 }
+
+void GameState::Update( float fDelta )
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		m_CurrentPlayerOptions[p].Approach( m_PlayerOptions[p], fDelta );
+}
+
 
 void GameState::ResetLastRanking()
 {
@@ -315,7 +326,7 @@ void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& 
 void GameState::StoreSelectedOptions()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		GAMESTATE->m_SelectedOptions[p] = GAMESTATE->m_PlayerOptions[p];
+		GAMESTATE->m_StoredPlayerOptions[p] = GAMESTATE->m_PlayerOptions[p];
 }
 
 /* Restore the preferred options.  This is called after a song ends, before
@@ -325,7 +336,7 @@ void GameState::StoreSelectedOptions()
 void GameState::RestoreSelectedOptions()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		GAMESTATE->m_PlayerOptions[p] = GAMESTATE->m_SelectedOptions[p];
+		GAMESTATE->m_PlayerOptions[p] = GAMESTATE->m_StoredPlayerOptions[p];
 	/* Oops.  We can't do this; it'll reset lives back to 4, and we need it
 	 * to stick around for the length of the course (for regaining).  Let's
 	 * just reset the options that can actually be set per-song. XXX */

@@ -95,10 +95,10 @@ bool SetUpSongOptions()		// always return true.
 
 			/* Lots and lots of arrows.  This might even bias to arrows a little
 			 * too much. */
-			GAMESTATE->m_PlayerOptions[p] = PlayerOptions();
+			GAMESTATE->m_PlayerOptions[p].Init();
 			GAMESTATE->m_PlayerOptions[p].m_fScrollSpeed = .25f;
-			GAMESTATE->m_PlayerOptions[p].m_bEffects[ PlayerOptions::EFFECT_SPACE ] = true;
-			GAMESTATE->m_PlayerOptions[p].m_bEffects[ PlayerOptions::EFFECT_MINI ] = true;
+			GAMESTATE->m_PlayerOptions[p].m_fEffects[ PlayerOptions::EFFECT_SPACE ] = 1;
+			GAMESTATE->m_PlayerOptions[p].m_fEffects[ PlayerOptions::EFFECT_MINI ] = 1;
 		}
 		GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
 		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
@@ -109,7 +109,7 @@ bool SetUpSongOptions()		// always return true.
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 
-		GAMESTATE->m_PlayerOptions[p] = PlayerOptions();
+		GAMESTATE->m_PlayerOptions[p].Init();
 		GAMESTATE->m_PlayerOptions[p].ChooseRandomMofifiers();
 	}
 

@@ -107,7 +107,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	if( !GAMESTATE->m_PlayerOptions[pn].m_bHoldNotes )
 		NoteDataUtil::RemoveHoldNotes(*this);
 
-	switch( GAMESTATE->m_PlayerOptions[pn].m_TurnType )
+	switch( GAMESTATE->m_PlayerOptions[pn].m_Turn )
 	{
 	case PlayerOptions::TURN_NONE:																		break;
 	case PlayerOptions::TURN_MIRROR:		NoteDataUtil::Turn( *this, NoteDataUtil::mirror );			break;
@@ -132,12 +132,12 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	int iStopDrawingAtPixels = GAMESTATE->m_bEditing ? 400 : STOP_DRAWING_AT_PIXELS;
 
 	// If both options are on, we *do* need to multiply it twice.
-	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_MINI] )
+	if( GAMESTATE->m_PlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_MINI]==1 )
 	{
 		iStartDrawingAtPixels *= 2;
 		iStopDrawingAtPixels *= 2;
 	}
-	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_SPACE] )
+	if( GAMESTATE->m_PlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_SPACE]==1 )
 	{
 		iStartDrawingAtPixels *= 2;
 		iStopDrawingAtPixels *= 2;
@@ -148,7 +148,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	m_GrayArrowRow.Load( pn );
 	m_GhostArrowRow.Load( pn );
 
-	bool bReverse = GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll;
+	bool bReverse = GAMESTATE->m_PlayerOptions[pn].m_fReverseScroll == 1;
 	m_Combo.SetY( bReverse ? SCREEN_BOTTOM-COMBO_Y : SCREEN_TOP+COMBO_Y );
 	m_Judgment.SetY( bReverse ? SCREEN_BOTTOM-JUDGMENT_Y : SCREEN_TOP+JUDGMENT_Y );
 
@@ -163,7 +163,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	m_GrayArrowRow.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
 	m_GhostArrowRow.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
 
-	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_MINI] )
+	if( GAMESTATE->m_PlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_MINI] == 1 )
 	{
 		m_NoteField.SetZoom( 0.5f );
 		m_GrayArrowRow.SetZoom( 0.5f );
@@ -272,14 +272,14 @@ void Player::DrawPrimitives()
 {
 	m_Combo.Draw();	// draw this below everything else
 
-	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bEffects[PlayerOptions::EFFECT_SPACE] )
+	if( GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fEffects[PlayerOptions::EFFECT_SPACE] == 1 )
 	{
 		DISPLAY->PushMatrix();
 		DISPLAY->EnterPerspective(45, false);
 
 		// construct view and project matrix
 		RageVector3 Eye, At, Up( 0.0f, 1.0f, 0.0f );
-		if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bReverseScroll ) {
+		if( GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fReverseScroll==1 ) {
 			Eye = RageVector3( CENTER_X, -300.0f, 400.0f );
 			At = RageVector3( CENTER_X, 100.0f, 0.0f );
 		} else {
@@ -296,7 +296,7 @@ void Player::DrawPrimitives()
 	m_NoteField.Draw();
 	m_GhostArrowRow.Draw();
 
-	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bEffects[PlayerOptions::EFFECT_SPACE] )
+	if( GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fEffects[PlayerOptions::EFFECT_SPACE]==1 )
 	{
 		DISPLAY->ExitPerspective();
 		DISPLAY->PopMatrix();

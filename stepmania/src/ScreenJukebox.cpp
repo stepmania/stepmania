@@ -90,8 +90,8 @@ bool PrepareForJukebox()		// always return true.
 			 * too much. */
 			GAMESTATE->m_PlayerOptions[p] = PlayerOptions();
 			GAMESTATE->m_PlayerOptions[p].m_fScrollSpeed = .25f;
-			GAMESTATE->m_PlayerOptions[p].m_bEffects[ PlayerOptions::EFFECT_SPACE ] = true;
-			GAMESTATE->m_PlayerOptions[p].m_bEffects[ PlayerOptions::EFFECT_MINI ] = true;
+			GAMESTATE->m_PlayerOptions[p].m_fEffects[ PlayerOptions::EFFECT_SPACE ] = 1;
+			GAMESTATE->m_PlayerOptions[p].m_fEffects[ PlayerOptions::EFFECT_MINI ] = 1;
 		}
 		GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
 		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;

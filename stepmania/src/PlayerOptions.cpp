@@ -12,21 +12,48 @@
 
 #include "PlayerOptions.h"
 #include "RageUtil.h"
+#include "math.h"
 
 
 void PlayerOptions::Init()
 {
 	m_fScrollSpeed = 1.0f;
-	m_AccelType = ACCEL_OFF;
-	ZERO( m_bEffects );
-	m_AppearanceType = APPEARANCE_VISIBLE;
-	m_TurnType = TURN_NONE;
+	ZERO( m_fAccels );
+	ZERO( m_fEffects );
+	ZERO( m_fAppearances );
+	m_fReverseScroll = 0;
+	m_fDark = 0;
+	m_Turn = TURN_NONE;
 	m_Transform = TRANSFORM_NONE;
-	m_bReverseScroll = false;
 	m_bHoldNotes = true;
-	m_bDark = false;
 }
 
+void FLOAT_APPROACH( float& val, float other_val, float deltaPercent )
+{
+	if( val == other_val )
+		return;
+	float fDelta = other_val - val;
+	float fSign = fDelta / fabsf( fDelta );
+	float fToMove = fSign*deltaPercent;
+	if( fabsf(fToMove) > fabsf(fDelta) )
+		fToMove = fDelta;	// snap
+	val += fToMove;
+}
+
+void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
+{
+	int i;
+
+	FLOAT_APPROACH( m_fScrollSpeed, other.m_fScrollSpeed, fDeltaSeconds*max(m_fScrollSpeed,other.m_fScrollSpeed) );	// make big jumps in scroll speed move faster
+	for( i=0; i<NUM_ACCELS; i++ )
+		FLOAT_APPROACH( m_fAccels[i], other.m_fAccels[i], fDeltaSeconds );
+	for( i=0; i<NUM_EFFECTS; i++ )
+		FLOAT_APPROACH( m_fEffects[i], other.m_fEffects[i], fDeltaSeconds );
+	for( i=0; i<NUM_APPEARANCES; i++ )
+		FLOAT_APPROACH( m_fAppearances[i], other.m_fAppearances[i], fDeltaSeconds );
+	FLOAT_APPROACH( m_fReverseScroll, other.m_fReverseScroll, fDeltaSeconds );
+	FLOAT_APPROACH( m_fDark, other.m_fDark, fDeltaSeconds );
+}
 
 CString PlayerOptions::GetString()
 {
@@ -47,35 +74,30 @@ CString PlayerOptions::GetString()
 		sReturn += s + "X, ";
 	}
 
-	switch( m_AccelType )
-	{
-	case ACCEL_OFF:									break;
-	case ACCEL_BOOST:		sReturn += "Boost, ";	break;
-	case ACCEL_LAND:		sReturn += "Land, ";	break;
-	case ACCEL_WAVE:		sReturn += "Wave, ";	break;
-	case ACCEL_EXPAND:		sReturn += "Expand, ";	break;
-	case ACCEL_BOOMERANG:	sReturn += "Boomerang, ";	break;
-	default:	ASSERT(0);
-	}
+	if( m_fAccels[ACCEL_BOOST]==1 )		sReturn += "Boost, ";
+	if( m_fAccels[ACCEL_LAND]==1 )		sReturn += "Land, ";
+	if( m_fAccels[ACCEL_WAVE]==1 )		sReturn += "Wave, ";
+	if( m_fAccels[ACCEL_EXPAND]==1 )	sReturn += "Expand, ";
+	if( m_fAccels[ACCEL_BOOMERANG]==1 )	sReturn += "Boomerang, ";
 
-	if( m_bEffects[EFFECT_DRUNK] )	sReturn += "Drunk, ";
-	if( m_bEffects[EFFECT_DIZZY] )	sReturn += "Dizzy, ";
-	if( m_bEffects[EFFECT_SPACE] )	sReturn += "Space, ";
-	if( m_bEffects[EFFECT_MINI] )	sReturn += "Mini, ";
-	if( m_bEffects[EFFECT_FLIP] )	sReturn += "Flip, ";
-	if( m_bEffects[EFFECT_TORNADO] )sReturn += "Tornado, ";
+	if( m_fEffects[EFFECT_DRUNK]==1 )	sReturn += "Drunk, ";
+	if( m_fEffects[EFFECT_DIZZY]==1 )	sReturn += "Dizzy, ";
+	if( m_fEffects[EFFECT_SPACE]==1 )	sReturn += "Space, ";
+	if( m_fEffects[EFFECT_MINI]==1 )	sReturn += "Mini, ";
+	if( m_fEffects[EFFECT_FLIP]==1 )	sReturn += "Flip, ";
+	if( m_fEffects[EFFECT_TORNADO]==1 )	sReturn += "Tornado, ";
 
-	switch( m_AppearanceType )
-	{
-	case APPEARANCE_VISIBLE:							break;
-	case APPEARANCE_HIDDEN:		sReturn += "Hidden, ";	break;
-	case APPEARANCE_SUDDEN:		sReturn += "Sudden, ";	break;
-	case APPEARANCE_STEALTH:	sReturn += "Stealth, ";	break;
-	case APPEARANCE_BLINK:		sReturn += "Blink, ";	break;
-	default:	ASSERT(0);	// invalid
-	}
+	if( m_fAppearances[APPEARANCE_HIDDEN]==1 )	sReturn += "Hidden, ";
+	if( m_fAppearances[APPEARANCE_SUDDEN]==1 )	sReturn += "Sudden, ";
+	if( m_fAppearances[APPEARANCE_STEALTH]==1 )	sReturn += "Stealth, ";
+	if( m_fAppearances[APPEARANCE_BLINK]==1 )	sReturn += "Blink, ";
 
-	switch( m_TurnType )
+	if( m_fReverseScroll == 1 )		sReturn += "Reverse, ";
+
+	if( m_fDark == 1)				sReturn += "Dark, ";
+
+
+	switch( m_Turn )
 	{
 	case TURN_NONE:										break;
 	case TURN_MIRROR:		sReturn += "Mirror, ";		break;
@@ -96,14 +118,8 @@ CString PlayerOptions::GetString()
 	default:	ASSERT(0);	// invalid
 	}
 
-	if( m_bReverseScroll )
-		sReturn += "Reverse, ";
+	if( !m_bHoldNotes )		sReturn += "NoHolds, ";
 
-	if( !m_bHoldNotes )
-		sReturn += "NoHolds, ";
-
-	if( m_bDark )
-		sReturn += "Dark, ";
 
 	if( sReturn.GetLength() > 2 )
 		sReturn.erase( sReturn.GetLength()-2 );	// delete the trailing ", "
@@ -134,73 +150,77 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "4.0x" )		m_fScrollSpeed = 4.0f;
 		else if( sBit == "5.0x" )		m_fScrollSpeed = 5.0f;
 		else if( sBit == "8.0x" )		m_fScrollSpeed = 8.0f;
-		else if( sBit == "boost" )		m_AccelType = ACCEL_BOOST;
-		else if( sBit == "land" )		m_AccelType = ACCEL_LAND;
-		else if( sBit == "wave" )		m_AccelType = ACCEL_WAVE;
-		else if( sBit == "expand" )		m_AccelType = ACCEL_EXPAND;
-		else if( sBit == "boomerang" )	m_AccelType = ACCEL_BOOMERANG;
-		else if( sBit == "drunk" )		m_bEffects[EFFECT_DRUNK] = true;
-		else if( sBit == "dizzy" )		m_bEffects[EFFECT_DIZZY] = true;
-		else if( sBit == "space" )		m_bEffects[EFFECT_SPACE] = true;
-		else if( sBit == "mini" )		m_bEffects[EFFECT_MINI] = true;
-		else if( sBit == "flip" )		m_bEffects[EFFECT_FLIP] = true;
-		else if( sBit == "tornado" )	m_bEffects[EFFECT_TORNADO] = true;
-		else if( sBit == "hidden" )		m_AppearanceType = APPEARANCE_HIDDEN;
-		else if( sBit == "sudden" )		m_AppearanceType = APPEARANCE_SUDDEN;
-		else if( sBit == "stealth" )	m_AppearanceType = APPEARANCE_STEALTH;
-		else if( sBit == "blink" )		m_AppearanceType = APPEARANCE_BLINK;
-		else if( sBit == "mirror" )		m_TurnType = TURN_MIRROR;
-		else if( sBit == "left" )		m_TurnType = TURN_LEFT;
-		else if( sBit == "right" )		m_TurnType = TURN_RIGHT;
-		else if( sBit == "shuffle" )	m_TurnType = TURN_SHUFFLE;
-		else if( sBit == "supershuffle" )m_TurnType = TURN_SUPER_SHUFFLE;
+		else if( sBit == "boost" )		m_fAccels[ACCEL_BOOST] = 1;
+		else if( sBit == "land" )		m_fAccels[ACCEL_LAND] = 1;
+		else if( sBit == "wave" )		m_fAccels[ACCEL_WAVE] = 1;
+		else if( sBit == "expand" )		m_fAccels[ACCEL_EXPAND] = 1;
+		else if( sBit == "boomerang" )	m_fAccels[ACCEL_BOOMERANG] = 1;
+		else if( sBit == "drunk" )		m_fEffects[EFFECT_DRUNK] = 1;
+		else if( sBit == "dizzy" )		m_fEffects[EFFECT_DIZZY] = 1;
+		else if( sBit == "space" )		m_fEffects[EFFECT_SPACE] = 1;
+		else if( sBit == "mini" )		m_fEffects[EFFECT_MINI] = 1;
+		else if( sBit == "flip" )		m_fEffects[EFFECT_FLIP] = 1;
+		else if( sBit == "tornado" )	m_fEffects[EFFECT_TORNADO] = 1;
+		else if( sBit == "hidden" )		m_fAppearances[APPEARANCE_HIDDEN] = 1;
+		else if( sBit == "sudden" )		m_fAppearances[APPEARANCE_SUDDEN] = 1;
+		else if( sBit == "stealth" )	m_fAppearances[APPEARANCE_STEALTH] = 1;
+		else if( sBit == "blink" )		m_fAppearances[APPEARANCE_BLINK] = 1;
+		else if( sBit == "mirror" )		m_Turn = TURN_MIRROR;
+		else if( sBit == "left" )		m_Turn = TURN_LEFT;
+		else if( sBit == "right" )		m_Turn = TURN_RIGHT;
+		else if( sBit == "shuffle" )	m_Turn = TURN_SHUFFLE;
+		else if( sBit == "supershuffle" )m_Turn = TURN_SUPER_SHUFFLE;
 		else if( sBit == "little" )		m_Transform = TRANSFORM_LITTLE;
 		else if( sBit == "wide" )		m_Transform = TRANSFORM_WIDE;
 		else if( sBit == "big" )		m_Transform = TRANSFORM_BIG;
 		else if( sBit == "quick" )		m_Transform = TRANSFORM_QUICK;
-		else if( sBit == "reverse" )	m_bReverseScroll = true;
+		else if( sBit == "reverse" )	m_fReverseScroll = 1;
 		else if( sBit == "noholds" )	m_bHoldNotes = false;
 		else if( sBit == "nofreeze" )	m_bHoldNotes = false;
-		else if( sBit == "dark" )		m_bDark = true;
+		else if( sBit == "dark" )		m_fDark = 1;
 	}
 }
 
 
+void NextFloat( float fValues[], int size )
+{
+	int index = -1;
+	for( int i=0; i<size; i++ )
+	{
+		if( fValues[i] == 1 )
+		{
+			index = i;
+			break;
+		}
+	}
+
+	memset( fValues, 0, size );
+
+	index++;
+	if( index == size )	// if true, then the last float in the list was selected
+		;	// leave all off
+	else
+		fValues[index] = 1;
+}
+
 void PlayerOptions::NextAccel()
 {
-	m_AccelType = (AccelType) ((m_AccelType+1)%NUM_ACCEL_TYPES);
+	NextFloat( m_fAccels, NUM_ACCELS );
 }
 
 void PlayerOptions::NextEffect()
 {
-	if( m_bEffects[NUM_EFFECT_TYPES-1] )	// last effect is on
-	{
-		ZERO( m_bEffects );
-		return;
-	}
-
-	for( int i=0; i<NUM_EFFECT_TYPES-1; i++ )
-	{
-		if( m_bEffects[i] )
-		{
-			ZERO( m_bEffects );
-			m_bEffects[i+1] = true;
-			return;
-		}
-	}
-
-	// if we get here, no effects are on
-	m_bEffects[0] = true;
+	NextFloat( m_fEffects, NUM_EFFECTS );
 }
 
 void PlayerOptions::NextAppearance()
 {
-	m_AppearanceType = (AppearanceType) ((m_AppearanceType+1)%NUM_APPEARANCE_TYPES);
+	NextFloat( m_fAppearances, NUM_APPEARANCES );
 }
 
 void PlayerOptions::NextTurn()
 {
-	m_TurnType = (TurnType) ((m_TurnType+1)%NUM_TURN_TYPES);
+	m_Turn = (Turn) ((m_Turn+1)%NUM_TURNS);
 }
 
 void PlayerOptions::NextTransform()
@@ -213,18 +233,60 @@ void PlayerOptions::ChooseRandomMofifiers()
 	if( RandomFloat(0,1)>0.8f )
 		m_fScrollSpeed = 1.5f;
 	if( RandomFloat(0,1)>0.8f )
-		m_bReverseScroll = true;
+		m_fReverseScroll = 1;
 	if( RandomFloat(0,1)>0.9f )
-		m_bDark = true;
+		m_fDark = 1;
 	float f;
 	f = RandomFloat(0,1);
 	if( f>0.66f )
-		m_AccelType = (AccelType)(rand()%NUM_ACCEL_TYPES);
+		m_fAccels[rand()%NUM_ACCELS] = 1;
 	else if( f>0.33f )
-		m_bEffects[ rand()%NUM_EFFECT_TYPES ] = true;
+		m_fEffects[rand()%NUM_EFFECTS] = 1;
 	f = RandomFloat(0,1);
 	if( f>0.95f )
-		m_AppearanceType = APPEARANCE_HIDDEN;
+		m_fAppearances[APPEARANCE_HIDDEN] = 1;
 	else if( f>0.9f )
-		m_AppearanceType = APPEARANCE_SUDDEN;
+		m_fAppearances[APPEARANCE_SUDDEN] = 1;
+}
+
+PlayerOptions::Accel PlayerOptions::GetFirstAccel()
+{
+	for( int i=0; i<NUM_ACCELS; i++ )
+		if( m_fAccels[i] == 1.f )
+			return (Accel)i;
+	return (Accel)-1;
+}
+
+PlayerOptions::Effect PlayerOptions::GetFirstEffect()
+{
+	for( int i=0; i<NUM_EFFECTS; i++ )
+		if( m_fEffects[i] == 1.f )
+			return (Effect)i;
+	return (Effect)-1;
+}
+
+PlayerOptions::Appearance PlayerOptions::GetFirstAppearance()
+{
+	for( int i=0; i<NUM_APPEARANCES; i++ )
+		if( m_fAppearances[i] == 1.f )
+			return (Appearance)i;
+	return (Appearance)-1;
+}
+
+void PlayerOptions::SetOneAccel( Accel a )
+{
+	ZERO( m_fAccels );
+	m_fAccels[a] = 1;
+}
+
+void PlayerOptions::SetOneEffect( Effect e )
+{
+	ZERO( m_fEffects );
+	m_fEffects[e] = 1;
+}
+
+void PlayerOptions::SetOneAppearance( Appearance a )
+{
+	ZERO( m_fAppearances );
+	m_fAppearances[a] = 1;
 }

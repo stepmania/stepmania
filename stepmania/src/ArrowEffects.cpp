@@ -30,55 +30,48 @@ float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )
 	float fBeatsUntilStep = fNoteBeat - fSongBeat;
 	float fYOffset = fBeatsUntilStep * ARROW_GAP;
 
-	/* With both boost and wave enabled, the effect is that the
-	 * notes "buffer" at the bottom of the screen and shoot out
-	 * at high speed.
-	 *
-	 * With wave first, the boost appears halfway down the screen.
-	 * With boost first, it appears about 1/4 down the screen.
-	 *
-	 * I'm not sure which is better. - glenn
-	 */
-	/* Boost and wave can no longer be used at the same time.  -Chris */
+	// don't mess with the arrows after they've crossed 0
+	if( fYOffset < 0 )
+		return fYOffset;
+
+	const float* fAccels = GAMESTATE->m_CurrentPlayerOptions[pn].m_fAccels;
 
 
-	switch( GAMESTATE->m_PlayerOptions[pn].m_AccelType )
+	float fYAdjust = 0;	// fill this in depending on PlayerOptions
+
+	if( fAccels[PlayerOptions::ACCEL_BOOST] > 0 )
 	{
-	case PlayerOptions::ACCEL_BOOST:
-		if( fYOffset > 0 )	// speed the arrows back to normal after they cross 0
-			fYOffset *= 1.5f / ((fYOffset+SCREEN_HEIGHT/1.2f)/SCREEN_HEIGHT); 
-		break;
-	case PlayerOptions::ACCEL_LAND:
-		if( fYOffset > 0 )	// speed the arrows back to normal after they cross 0
-			fYOffset *= SCALE( fYOffset, 0.f, SCREEN_HEIGHT, 0.25f, 1.5f ); 
-		break;
-	case PlayerOptions::ACCEL_WAVE:
-		fYOffset += 20.0f*sinf( fYOffset/38.0f ); 
-		break;
-	case PlayerOptions::ACCEL_EXPAND:
+		float fNewYOffset = fYOffset * 1.5f / ((fYOffset+SCREEN_HEIGHT/1.2f)/SCREEN_HEIGHT); 
+		fYAdjust +=	fAccels[PlayerOptions::ACCEL_BOOST] * (fNewYOffset - fYOffset);
+	}
+	if( fAccels[PlayerOptions::ACCEL_LAND] > 0 )
+	{
+		float fNewYOffset = fYOffset * SCALE( fYOffset, 0.f, SCREEN_HEIGHT, 0.25f, 1.5f ); 
+		fYAdjust +=	fAccels[PlayerOptions::ACCEL_LAND] * (fNewYOffset - fYOffset);
+	}
+	if( fAccels[PlayerOptions::ACCEL_WAVE] > 0 )
+		fYAdjust +=	fAccels[PlayerOptions::ACCEL_WAVE] * 20.0f*sinf( fYOffset/38.0f );
+	if( fAccels[PlayerOptions::ACCEL_EXPAND] > 0 )
+	{
 		if( !GAMESTATE->m_bFreeze )
 			g_fExpandSeconds += g_timerExpand.GetDeltaTime();
 		else
 			g_timerExpand.GetDeltaTime();	// throw away
-		fYOffset *= SCALE( cosf(g_fExpandSeconds*3), -1, 1, 0.5f, 1.5f ); 
-		break;
-	case PlayerOptions::ACCEL_BOOMERANG:
-		fYOffset *= SCALE( fYOffset, 0.f, SCREEN_HEIGHT, 1.5f, 0.5f );
-		break;
+		fYAdjust +=	fAccels[PlayerOptions::ACCEL_EXPAND] * (fYOffset * SCALE( cosf(g_fExpandSeconds*3), -1, 1, 0.5f, 1.5f ) - fYOffset); 
 	}
+	if( fAccels[PlayerOptions::ACCEL_BOOMERANG] > 0 )
+		fYAdjust +=	fAccels[PlayerOptions::ACCEL_BOOMERANG] * (fYOffset * SCALE( fYOffset, 0.f, SCREEN_HEIGHT, 1.5f, 0.5f )- fYOffset);
 
-	return fYOffset;
+	return fYOffset + fYAdjust;
 }
 
 float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYPos ) 
 {
 	float fPixelOffsetFromCenter = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[pn][iColNum].fXOffset;
 	
-	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_DRUNK] )
-		fPixelOffsetFromCenter += cosf( RageTimer::GetTimeSinceStart() + iColNum*0.2f + fYPos*6/SCREEN_HEIGHT) * ARROW_SIZE*0.5f; 
-	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_FLIP] )
-		fPixelOffsetFromCenter = -fPixelOffsetFromCenter; 
-	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_TORNADO] )
+	const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
+
+	if( fEffects[PlayerOptions::EFFECT_TORNADO] > 0 )
 	{
 		const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 		float fMinX, fMaxX;
@@ -91,30 +84,35 @@ float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYPos )
 		fPixelOffsetFromCenter = SCALE( cosf(fRads), -1, 1, fMinX, fMaxX );
 	}
 
+	if( fEffects[PlayerOptions::EFFECT_DRUNK] > 0 )
+		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * ( cosf( RageTimer::GetTimeSinceStart() + iColNum*0.2f + fYPos*10/SCREEN_HEIGHT) * ARROW_SIZE*0.5f );
+	if( fEffects[PlayerOptions::EFFECT_FLIP] > 0 )
+		fPixelOffsetFromCenter *= SCALE(fEffects[PlayerOptions::EFFECT_FLIP], 0.f, 1.f, 1.f, -1.f);
+
 	return fPixelOffsetFromCenter;
 }
 
 float ArrowGetRotation( PlayerNumber pn, float fNoteBeat ) 
 {
-	float fRotation = 0; //StyleDef.m_ColumnToRotation[iColNum];
-
-	if( GAMESTATE->m_PlayerOptions[pn].m_bEffects[PlayerOptions::EFFECT_DIZZY] )
+	if( GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_DIZZY] > 0 )
 	{
 		float fSongBeat = GAMESTATE->m_fSongBeat;
-		float fBeatsUntilStep = fNoteBeat - fSongBeat;
-		fRotation += fBeatsUntilStep; 
+		float fDizzyRotation = fNoteBeat - fSongBeat;
+		fDizzyRotation = fmodf( fDizzyRotation, 2*PI );
+		return fDizzyRotation * GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_DIZZY];
 	}
-	return fRotation;
+	else
+		return 0;
 }
 
 float ArrowGetYPosWithoutReverse( PlayerNumber pn, float fYOffset )
 {
-	return fYOffset * GAMESTATE->m_PlayerOptions[pn].m_fScrollSpeed;
+	return fYOffset * GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
 }
 
 float ArrowGetYPos( PlayerNumber pn, float fYOffset )
 {
-	return ArrowGetYPosWithoutReverse(pn,fYOffset) * (GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll ? -1 : 1 );
+	return ArrowGetYPosWithoutReverse(pn,fYOffset) * SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].m_fReverseScroll, 0.f, 1.f, 1.f, -1.f );
 }
 
 
@@ -122,44 +120,33 @@ const float fCenterLine = 160;	// from fYPos == 0
 const float fFadeDist = 100;
 
 // used by ArrowGetAlpha and ArrowGetGlow below
-float ArrowGetPercentVisible( PlayerNumber pn, float fYPos )
+float ArrowGetPercentVisible( PlayerNumber pn, float fYPosWithoutReverse )
 {
-	const bool bReverse = GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll;
-	const float fCorrectedYPos = bReverse ? -fYPos : fYPos;
-	const float fDistFromCenterLine = fCorrectedYPos - fCenterLine;
-	float fAlpha;
+	const float fDistFromCenterLine = fYPosWithoutReverse - fCenterLine;
 
-	switch( GAMESTATE->m_PlayerOptions[pn].m_AppearanceType )
-	{ 
-	case PlayerOptions::APPEARANCE_VISIBLE:
-		fAlpha = 1;
-		break;
-	case PlayerOptions::APPEARANCE_HIDDEN:
-		fAlpha = SCALE( fDistFromCenterLine, 0, fFadeDist, 0, 1 );
-		break;
-	case PlayerOptions::APPEARANCE_SUDDEN:
-		fAlpha = SCALE( fDistFromCenterLine, 0, -fFadeDist, 0, 1 );
-		break;
-	case PlayerOptions::APPEARANCE_STEALTH:
-		fAlpha = 0;
-		break;
-	case PlayerOptions::APPEARANCE_BLINK: // this is an Ez2dancer Appearance Mode
-		fAlpha = sinf( RageTimer::GetTimeSinceStart()*12 );
-		fAlpha = froundf( fAlpha, 0.3333f );
-		break;
-	default:
-		ASSERT(0);
-		fAlpha = 1;
-	}
+	if( fYPosWithoutReverse < 0 )	// past Gray Arrows
+		return 1;	// totally visible
 
-	if( fCorrectedYPos < 0 )	// past Gray Arrows
-		fAlpha = 1;
 
-	return clamp( fAlpha, 0, 1 );
+	const float* fAppearances = GAMESTATE->m_CurrentPlayerOptions[pn].m_fAppearances;
+
+	float fVisibleAdjust = 0;
+
+	if( fAppearances[PlayerOptions::APPEARANCE_HIDDEN] > 0 )
+		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_HIDDEN] * SCALE( fDistFromCenterLine, 0, fFadeDist, -1, 0 );
+	if( fAppearances[PlayerOptions::APPEARANCE_SUDDEN] > 0 )
+		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_SUDDEN] * SCALE( fDistFromCenterLine, 0, -fFadeDist, -1, 0 );
+	if( fAppearances[PlayerOptions::APPEARANCE_STEALTH] > 0 )
+		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_STEALTH] * -1;
+	if( fAppearances[PlayerOptions::APPEARANCE_BLINK] > 0 )
+		fVisibleAdjust += clamp( sinf(RageTimer::GetTimeSinceStart()*10)-1, 0, 1 );
+
+	return clamp( 1+fVisibleAdjust, 0, 1 );
 }
 
 float ArrowGetAlpha( PlayerNumber pn, float fYPos, float fPercentFadeToFail )
 {
+	fYPos /= GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
 	float fPercentVisible = ArrowGetPercentVisible(pn,fYPos);
 
 	if( fPercentFadeToFail != -1 )
@@ -170,6 +157,7 @@ float ArrowGetAlpha( PlayerNumber pn, float fYPos, float fPercentFadeToFail )
 
 float ArrowGetGlow( PlayerNumber pn, float fYPos, float fPercentFadeToFail )
 {
+	fYPos /= GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
 	float fPercentVisible = ArrowGetPercentVisible(pn,fYPos);
 
 	if( fPercentFadeToFail != -1 )

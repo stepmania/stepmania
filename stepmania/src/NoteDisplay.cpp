@@ -351,7 +351,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 {
 	// bDrawGlowOnly is a little hacky.  We need to draw the diffuse part and the glow part one pass at a time to minimize state changes
 
-	const bool bReverse = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bReverseScroll;
+	const bool bReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fReverseScroll == 1;
 
 	const int	iCol			= hn.iTrack;
 	const float fStartYOffset	= ArrowGetYOffset( m_PlayerNumber, hn.fStartBeat );

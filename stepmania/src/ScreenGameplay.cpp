@@ -177,8 +177,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 
 	const bool bExtra = GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2();
 	const bool bReverse[NUM_PLAYERS] = { 
-		GAMESTATE->m_PlayerOptions[0].m_bReverseScroll,
-		GAMESTATE->m_PlayerOptions[1].m_bReverseScroll
+		GAMESTATE->m_PlayerOptions[0].m_fReverseScroll == 1,
+		GAMESTATE->m_PlayerOptions[1].m_fReverseScroll == 1
 	};
 
 

@@ -99,20 +99,14 @@ void ScreenPlayerOptions::ImportOptions()
 		else if( po.m_fScrollSpeed == 5.0f )	m_iSelectedOption[p][PO_SPEED] = 8;
 		else if( po.m_fScrollSpeed == 8.0f )	m_iSelectedOption[p][PO_SPEED] = 9;
 		else if( po.m_fScrollSpeed == 12.0f)	m_iSelectedOption[p][PO_SPEED] = 10;
-		else										m_iSelectedOption[p][PO_SPEED] = 3;
+		else									m_iSelectedOption[p][PO_SPEED] = 3;
 
-		m_iSelectedOption[p][PO_ACCEL]		= po.m_AccelType;
-
-		for( int i=0; i<PlayerOptions::NUM_EFFECT_TYPES; i++ ) 
-		{
-			if( po.m_bEffects[i] )
-				m_iSelectedOption[p][PO_EFFECT] = i+1;
-		}
-
-		m_iSelectedOption[p][PO_APPEAR]		= po.m_AppearanceType;
-		m_iSelectedOption[p][PO_TURN]		= po.m_TurnType;
+		m_iSelectedOption[p][PO_ACCEL]		= po.GetFirstAccel()+1;
+		m_iSelectedOption[p][PO_EFFECT]		= po.GetFirstEffect()+1;
+		m_iSelectedOption[p][PO_APPEAR]		= po.GetFirstAppearance()+1;
+		m_iSelectedOption[p][PO_TURN]		= po.m_Turn;
 		m_iSelectedOption[p][PO_TRANSFORM]	= po.m_Transform;
-		m_iSelectedOption[p][PO_SCROLL]		= po.m_bReverseScroll ? 1 : 0 ;
+		m_iSelectedOption[p][PO_SCROLL]		= po.m_fReverseScroll==1 ? 1 : 0 ;
 
 
 		// highlight currently selected skin
@@ -130,7 +124,10 @@ void ScreenPlayerOptions::ImportOptions()
 
 
 		m_iSelectedOption[p][PO_HOLD_NOTES]	= po.m_bHoldNotes ? 1 : 0;
-		m_iSelectedOption[p][PO_DARK]		= po.m_bDark ? 1 : 0;
+		m_iSelectedOption[p][PO_DARK]		= po.m_fDark==1 ? 1 : 0;
+
+
+		po.Init();
 	}
 }
 
@@ -139,6 +136,7 @@ void ScreenPlayerOptions::ExportOptions()
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		PlayerOptions &po = GAMESTATE->m_PlayerOptions[p];
+		po.Init();
 
 		switch( m_iSelectedOption[p][PO_SPEED] )
 		{
@@ -155,16 +153,16 @@ void ScreenPlayerOptions::ExportOptions()
 		case 10: po.m_fScrollSpeed = 12.0f;	break;
 		}
 
-		po.m_AccelType	= (PlayerOptions::AccelType)m_iSelectedOption[p][PO_ACCEL];
+		if( m_iSelectedOption[p][PO_ACCEL] != 0 )
+			po.SetOneAccel( (PlayerOptions::Accel)(m_iSelectedOption[p][PO_ACCEL]-1) );
+		if( m_iSelectedOption[p][PO_EFFECT] != 0 )
+			po.SetOneEffect( (PlayerOptions::Effect)(m_iSelectedOption[p][PO_EFFECT]-1) );
+		if( m_iSelectedOption[p][PO_APPEAR] != 0 )
+			po.SetOneAppearance( (PlayerOptions::Appearance)(m_iSelectedOption[p][PO_APPEAR]-1) );
 
-		ZERO( po.m_bEffects );
-		if( m_iSelectedOption[p][PO_EFFECT] > 0 )
-			po.m_bEffects[ m_iSelectedOption[p][PO_EFFECT]-1 ] = true;
-
-		po.m_AppearanceType	= (PlayerOptions::AppearanceType)m_iSelectedOption[p][PO_APPEAR];
-		po.m_TurnType		= (PlayerOptions::TurnType)m_iSelectedOption[p][PO_TURN];
+		po.m_Turn			= (PlayerOptions::Turn)m_iSelectedOption[p][PO_TURN];
 		po.m_Transform		= (PlayerOptions::Transform)m_iSelectedOption[p][PO_TRANSFORM];
-		po.m_bReverseScroll	= (m_iSelectedOption[p][PO_SCROLL] == 1);
+		po.m_fReverseScroll	= (m_iSelectedOption[p][PO_SCROLL] == 1) ? 1.f : 0.f;
 
 
 		int iSelectedSkin = m_iSelectedOption[p][PO_NOTE_SKIN];
@@ -173,7 +171,7 @@ void ScreenPlayerOptions::ExportOptions()
 
 
 		po.m_bHoldNotes		= (m_iSelectedOption[p][PO_HOLD_NOTES] == 1);
-		po.m_bDark			= (m_iSelectedOption[p][PO_DARK] == 1);
+		po.m_fDark			= (m_iSelectedOption[p][PO_DARK] == 1) ? 1.f : 0.f;
 	}
 }
 

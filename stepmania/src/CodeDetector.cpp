@@ -151,6 +151,7 @@ bool CodeDetector::EnteredNextSort( GameController controller )
 }
 
 #define  TOGGLE(v,a,b)	if(v!=a) v=a; else v=b;
+#define  FLOAT_TOGGLE(v)	if(v!=1.f) v=1.f; else v=0.f;
 #define  INCREMENT_SCROLL_SPEED(s)	(s==0.5f) ? s=0.75f : (s==0.75f) ? s=1.0f : (s==1.0f) ? s=1.5f : (s==1.5f) ? s=2.0f : (s==2.0f) ? s=3.0f : (s==3.0f) ? s=4.0f : (s==4.0f) ? s=5.0f : (s==5.0f) ? s=8.0f : s=0.5f;
 #define  DECREMENT_SCROLL_SPEED(s)	(s==0.75f) ? s=0.5f : (s==1.0f) ? s=0.75f : (s==1.5f) ? s=1.0f : (s==2.0f) ? s=1.5f : (s==3.0f) ? s=2.0f : (s==4.0f) ? s=3.0f : (s==5.0f) ? s=4.0f : (s==8.0f) ? s=4.0f : s=8.0f;
 
@@ -167,22 +168,22 @@ bool CodeDetector::DetectAndAdjustOptions( GameController controller )
 		{
 			switch( code )
 			{
-			case CODE_MIRROR:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_TurnType, PlayerOptions::TURN_MIRROR,			PlayerOptions::TURN_NONE );	break;
-			case CODE_LEFT:				TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_TurnType, PlayerOptions::TURN_LEFT,			PlayerOptions::TURN_NONE );	break;
-			case CODE_RIGHT:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_TurnType, PlayerOptions::TURN_RIGHT,			PlayerOptions::TURN_NONE );	break;
-			case CODE_SHUFFLE:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_TurnType, PlayerOptions::TURN_SHUFFLE,			PlayerOptions::TURN_NONE );	break;
-			case CODE_SUPER_SHUFFLE:	TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_TurnType, PlayerOptions::TURN_SUPER_SHUFFLE,	PlayerOptions::TURN_NONE );	break;
+			case CODE_MIRROR:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_Turn, PlayerOptions::TURN_MIRROR,			PlayerOptions::TURN_NONE );	break;
+			case CODE_LEFT:				TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_Turn, PlayerOptions::TURN_LEFT,			PlayerOptions::TURN_NONE );	break;
+			case CODE_RIGHT:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_Turn, PlayerOptions::TURN_RIGHT,			PlayerOptions::TURN_NONE );	break;
+			case CODE_SHUFFLE:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_Turn, PlayerOptions::TURN_SHUFFLE,			PlayerOptions::TURN_NONE );	break;
+			case CODE_SUPER_SHUFFLE:	TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_Turn, PlayerOptions::TURN_SUPER_SHUFFLE,	PlayerOptions::TURN_NONE );	break;
 			case CODE_NEXT_TRANSFORM:	GAMESTATE->m_PlayerOptions[pn].NextTransform();									break;
-			case CODE_NEXT_SCROLL_SPEED:INCREMENT_SCROLL_SPEED( GAMESTATE->m_PlayerOptions[pn].m_fScrollSpeed );	break;
+			case CODE_NEXT_SCROLL_SPEED:INCREMENT_SCROLL_SPEED( GAMESTATE->m_PlayerOptions[pn].m_fScrollSpeed );		break;
 			case CODE_PREVIOUS_SCROLL_SPEED:DECREMENT_SCROLL_SPEED( GAMESTATE->m_PlayerOptions[pn].m_fScrollSpeed );	break;
-			case CODE_NEXT_ACCEL:		GAMESTATE->m_PlayerOptions[pn].NextAccel();									break;
+			case CODE_NEXT_ACCEL:		GAMESTATE->m_PlayerOptions[pn].NextAccel();										break;
 			case CODE_NEXT_EFFECT:		GAMESTATE->m_PlayerOptions[pn].NextEffect();									break;
-			case CODE_NEXT_APPEARANCE:	GAMESTATE->m_PlayerOptions[pn].NextAppearance();;				break;
-			case CODE_NEXT_TURN:		GAMESTATE->m_PlayerOptions[pn].NextTurn();						break;
-			case CODE_REVERSE:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll, true, false );			break;
+			case CODE_NEXT_APPEARANCE:	GAMESTATE->m_PlayerOptions[pn].NextAppearance();;								break;
+			case CODE_NEXT_TURN:		GAMESTATE->m_PlayerOptions[pn].NextTurn();										break;
+			case CODE_REVERSE:			FLOAT_TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_fReverseScroll );				break;
 			case CODE_HOLDS:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_bHoldNotes, true, false );				break;
-			case CODE_DARK:				TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_bDark, true, false );					break;
-			case CODE_CANCEL_ALL:		GAMESTATE->m_PlayerOptions[pn] = PlayerOptions();								break;
+			case CODE_DARK:				FLOAT_TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_fDark );							break;
+			case CODE_CANCEL_ALL:		GAMESTATE->m_PlayerOptions[pn].Init();								break;
 			default:
 				ASSERT(0);	// unhandled code
 			}

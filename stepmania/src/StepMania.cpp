@@ -538,22 +538,22 @@ static void GameLoop()
 				DISPLAY->ResolutionChanged(event.resize.w, event.resize.h);
 				break;
 			case SDL_ACTIVEEVENT:
-			{
-				/* We don't care about mouse focus. */
-				if(event.active.state == SDL_APPMOUSEFOCUS)
-					break;
+				{
+					/* We don't care about mouse focus. */
+					if(event.active.state == SDL_APPMOUSEFOCUS)
+						break;
 
-				Uint8 i = SDL_GetAppState();
-				
-				g_bHasFocus = i&SDL_APPINPUTFOCUS && i&SDL_APPACTIVE;
-				LOG->Trace("App %s focus (%i%i)", g_bHasFocus? "has":"doesn't have",
-					i&SDL_APPINPUTFOCUS, i&SDL_APPACTIVE);
+					Uint8 i = SDL_GetAppState();
+					
+					g_bHasFocus = i&SDL_APPINPUTFOCUS && i&SDL_APPACTIVE;
+					LOG->Trace("App %s focus (%i%i)", g_bHasFocus? "has":"doesn't have",
+						i&SDL_APPINPUTFOCUS, i&SDL_APPACTIVE);
 
-				if(g_bHasFocus)
-					BoostAppPri();
-				else
-					RestoreAppPri();
-			}
+					if(g_bHasFocus)
+						BoostAppPri();
+					else
+						RestoreAppPri();
+				}
 			}
 		}
 
@@ -572,8 +572,7 @@ static void GameLoop()
 				fDeltaTime /= 4;
 
 		TEXTUREMAN->Update( fDeltaTime );
-
-
+		GAMESTATE->Update( fDeltaTime );
 		SCREENMAN->Update( fDeltaTime );
 		SOUNDMAN->Update( fDeltaTime );
 

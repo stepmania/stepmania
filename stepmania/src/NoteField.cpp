@@ -107,7 +107,7 @@ void NoteField::DrawBeatBar( const float fBeat )
 	}
 	else
 	{
-		float fScrollSpeed = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fScrollSpeed;
+		float fScrollSpeed = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fScrollSpeed;
 		switch( nt )
 		{
 		default:	ASSERT(0);

@@ -65,7 +65,7 @@ MusicWheel::MusicWheel()
 	if(DEFAULT_SCROLL_DIRECTION && GAMESTATE->m_pCurSong == NULL) /* check the song is null... incase they have just come back from a song and changed their PlayerOptions */
 	{
 		for(int i=0; i<NUM_PLAYERS; i++)
-			GAMESTATE->m_PlayerOptions[i].m_bReverseScroll = true;
+			GAMESTATE->m_PlayerOptions[i].m_fReverseScroll = 1;
 	}
 
 

@@ -35,6 +35,8 @@ public:
 	void Reset();
 	void ResetLastRanking();
 
+	void Update( float fDelta );
+
 	//
 	// Main State Info
 	//
@@ -80,8 +82,6 @@ public:
 	RageColor		GetStageColor();
 	int				GetCourseSongIndex();
 
-	void StoreSelectedOptions();
-	void RestoreSelectedOptions();
 
 	//
 	// State Info used during gameplay
@@ -118,16 +118,28 @@ public:
 	void	GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& vSongsOut );	// shown on arcade final evaluation
 
 
-	PlayerOptions	m_PlayerOptions[NUM_PLAYERS];    // The currently active options
-	PlayerOptions   m_SelectedOptions[NUM_PLAYERS];  // Keep track of player-selected options for
-													 // courses separately from the active options.
+	//
+	// Options stuff
+	//
+
+	PlayerOptions	m_CurrentPlayerOptions[NUM_PLAYERS];    // current approaches destination
+	PlayerOptions	m_PlayerOptions[NUM_PLAYERS];			// change this, and current will move gradually toward it
+	PlayerOptions   m_StoredPlayerOptions[NUM_PLAYERS];	// user's choices on the PlayerOptions screen
 	SongOptions		m_SongOptions;
+
+	void StoreSelectedOptions();
+	void RestoreSelectedOptions();
+
 
 	int				m_iItems[NUM_PLAYERS][NUM_ITEM_SLOTS];
 
 	bool HasEarnedExtraStage();
 	bool m_bAllow2ndExtraStage; //only used when "Allow Selection of Extra Stage is on"
 
+
+	//
+	// Ranking Stuff
+	//
 
 	// Filled in by ScreenNameEntry and used by ScreenRanking to flash the recent high scores
 	NotesType			m_RankingNotesType;	// meaningless if a course was played

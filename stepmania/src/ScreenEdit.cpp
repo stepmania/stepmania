@@ -199,7 +199,6 @@ ScreenEdit::ScreenEdit()
 	SCREENMAN->RefreshCreditsMessages();
 
 	m_iRowLastCrossed = -1;
-	m_fDestinationScrollSpeed = 1;
 
 	m_pSong = GAMESTATE->m_pCurSong;
 
@@ -331,16 +330,6 @@ bool ScreenEdit::PlayTicks() const
 
 void ScreenEdit::Update( float fDeltaTime )
 {
-	// approach destonation scroll speed
-	if( m_fDestinationScrollSpeed != GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed )
-	{
-		float fDelta = m_fDestinationScrollSpeed - GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed;
-		float fSign = fDelta / fabsf(fDelta);
-		float fToMove = fSign * fDeltaTime * 4 * (m_fDestinationScrollSpeed>2 ? 2 : 1);
-		CLAMP( fToMove, -fabsf(fDelta), fabsf(fDelta) );
-		GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed += fToMove;
-	}
-
 	if(m_soundMusic.IsPlaying())
 		GAMESTATE->UpdateSongPosition(m_soundMusic.GetPositionSeconds());
 
@@ -427,7 +416,7 @@ void ScreenEdit::Update( float fDeltaTime )
 	else
 	{
 		float fSign = fDelta / fabsf(fDelta);
-		float fMoveDelta = fSign*fDeltaTime*40 / GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed;
+		float fMoveDelta = fSign*fDeltaTime*40 / GAMESTATE->m_CurrentPlayerOptions[PLAYER_1].m_fScrollSpeed;
 		if( fabsf(fMoveDelta) > fabsf(fDelta) )
 			fMoveDelta = fDelta;
 		m_fTrailingBeat += fMoveDelta;
@@ -610,30 +599,32 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,SDLK_LCTRL)) ||
 				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,SDLK_RCTRL)) )
 			{
+				float& fScrollSpeed = GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed;
+
 				if( DeviceI.button == SDLK_UP )
 				{
-					if( m_fDestinationScrollSpeed == 4 )
+					if( fScrollSpeed == 4 )
 					{
-						m_fDestinationScrollSpeed = 2;
+						fScrollSpeed = 2;
 						m_soundMarker.Play();
 					}
-					else if( m_fDestinationScrollSpeed == 2 )
+					else if( fScrollSpeed == 2 )
 					{
-						m_fDestinationScrollSpeed = 1;
+						fScrollSpeed = 1;
 						m_soundMarker.Play();
 					}
 					break;
 				}
 				else if( DeviceI.button == SDLK_DOWN )
 				{
-					if( m_fDestinationScrollSpeed == 2 )
+					if( fScrollSpeed == 2 )
 					{
-						m_fDestinationScrollSpeed = 4;
+						fScrollSpeed = 4;
 						m_soundMarker.Play();
 					}
-					else if( m_fDestinationScrollSpeed == 1 )
+					else if( fScrollSpeed == 1 )
 					{
-						m_fDestinationScrollSpeed = 2;
+						fScrollSpeed = 2;
 						m_soundMarker.Play();
 					}
 					break;
@@ -1048,7 +1039,6 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_RegainingFocus:
 		// coming back from PlayerOptions or SongOptions
-		m_fDestinationScrollSpeed = GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed;
 		m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 		break;
 	}

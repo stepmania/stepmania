@@ -44,7 +44,7 @@ void ActiveItemList::Init( PlayerNumber pn, Inventory* pInventory )
 	for( int i=0; i<MAX_ACTIVE_ITEMS_LINES; i++ )
 	{
 		m_text[i].SetHorizAlign( (Actor::HorizAlign)TEXT_HORIZ_ALIGN(pn) );
-		bool bReverse = GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll;
+		bool bReverse = GAMESTATE->m_PlayerOptions[pn].m_fReverseScroll == 1;
 		float fHeight = SPACING_Y*MAX_ACTIVE_ITEMS_LINES * (bReverse ? 1 : -1 );
 		float fY = SCALE(i,0.f,MAX_ACTIVE_ITEMS_LINES,0.f,fHeight);
 		m_text[i].SetY( fY );

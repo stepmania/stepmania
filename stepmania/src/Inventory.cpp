@@ -130,8 +130,21 @@ void Inventory::UseItem( PlayerNumber pn, int iSlot )
 	default:	ASSERT(0);	pnToAttack = PLAYER_1;	break;
 	}
 
-	ActiveItem ai = { ITEM_DURATION_SECONDS, iItemIndex };
-	m_ActiveItems[pnToAttack].push_back( ai );
+	// see if there is already an active instance of this item index
+	bool bAddedToExisting = false;
+	for( unsigned i=0; i<m_ActiveItems[pnToAttack].size(); i++ )
+	{
+		if( m_ActiveItems[pnToAttack][i].iItemDefIndex == iItemIndex )
+		{
+			m_ActiveItems[pnToAttack][i].fSecondsLeft += ITEM_DURATION_SECONDS;
+			bAddedToExisting = true;
+		}
+	}
+	if( !bAddedToExisting )
+	{
+		ActiveItem ai = { ITEM_DURATION_SECONDS, iItemIndex };
+		m_ActiveItems[pnToAttack].push_back( ai );
+	}
 
 	RebuildPlayerOptions( pnToAttack );
 
@@ -144,7 +157,7 @@ void Inventory::UseItem( PlayerNumber pn, int iSlot )
 void Inventory::RebuildPlayerOptions( PlayerNumber pn )
 {
 	// rebuild player options
-	PlayerOptions po = GAMESTATE->m_SelectedOptions[pn];
+	PlayerOptions po = GAMESTATE->m_StoredPlayerOptions[pn];
 	for( int i=0; i<(int)m_ActiveItems[pn].size(); i++ )
 	{
 		int iItemDefIndex = m_ActiveItems[pn][i].iItemDefIndex;

@@ -50,14 +50,12 @@ void GrayArrowRow::Update( float fDeltaTime )
 	for( int c=0; c<m_iNumCols; c++ )
 	{
 		m_GrayArrow[c].Update( fDeltaTime );
+		m_GrayArrow[c].SetDiffuse( RageColor(1,1,1,1 - GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fDark) );
 	}
 }
 
 void GrayArrowRow::DrawPrimitives()
 {
-	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bDark )
-		return;
-
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
 		// set arrow X
