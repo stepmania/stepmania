@@ -1,11 +1,12 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: RageMovieTexture.h
+ Class: RageMovieTexture
 
- Desc: Based on the DShowTextures example in the DX8 SDK.
+ Desc: See header.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -18,9 +19,9 @@
  
 // Link with the DirectShow base class libraries
 #if defined(DEBUG) | defined(_DEBUG)
-	#pragma comment(lib, "strmbasd.lib") 
+	#pragma comment(lib, "baseclasses/debug/strmbasd.lib") 
 #else
-	#pragma comment(lib, "strmbase.lib") 
+	#pragma comment(lib, "baseclasses/release/strmbase.lib") 
 #endif
  
 //-----------------------------------------------------------------------------

@@ -1,10 +1,11 @@
 /*
 -----------------------------------------------------------------------------
- File: RageMovieTexture.h
+ Class: RageMovieTexture
 
  Desc: Based on the DShowTextures example in the DX8 SDK.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -18,7 +19,7 @@
 //#include <d3d8types.h>
 #include <atlbase.h>
 
-#include <streams.h>
+#include "baseclasses/streams.h"
 
 //-----------------------------------------------------------------------------
 // Define GUID for Texture Renderer
