@@ -296,11 +296,16 @@ File *FilenameDB::GetFile( const CString &sPath )
 	SplitPath(sPath, Dir, Name);
 	FileSet &fs = GetFileSet( Dir );
 
-	set<File>::iterator i = fs.files.find( File(Name) );
-	if(i == fs.files.end())
+	set<File>::iterator it;
+	it = fs.files.find( File(Name) );
+	if( it == fs.files.end() )
 		return NULL;
 
-	return &*i;
+	/* Oops.  &*it is a const File &, because you can't change the order
+	 * of something once it's in a list.  Cast away the const; we won't
+	 * change the filename (used for the ordering), but the rest of the
+	 * values are non-const. */
+	return const_cast<File *> (&*it);
 }
 
 
