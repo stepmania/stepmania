@@ -85,14 +85,6 @@ OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
                                const AudioTimeStamp *inOutputTime,
                                void *inClientData)
 {
-    static bool handlerInstalled = false;
-    
-    if (!handlerInstalled)
-    {
-        InstallExceptionHandler(CrashExceptionHandler);
-        handlerInstalled = true;
-    }
-    
     RageSound_CA *This = (RageSound_CA *)inClientData;
     UInt32 dataPackets = outOutputData->mBuffers[0].mDataByteSize;
     
