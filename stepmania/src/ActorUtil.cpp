@@ -17,6 +17,8 @@
 #include "SongManager.h"
 #include "Course.h"
 
+#include "arch/Dialog/Dialog.h"
+
 
 Actor* LoadFromActorFile( CString sIniPath, CString sLayer )
 {
@@ -159,6 +161,7 @@ Actor* LoadFromActorFile( CString sIniPath, CString sLayer )
 			}
 			else 
 			{
+retry:
 				/* XXX: We need to do a theme search, since the file we're loading might
 				 * be overridden by the theme. */
 				CString sNewPath = sDir+sFile;
@@ -171,9 +174,35 @@ Actor* LoadFromActorFile( CString sIniPath, CString sLayer )
 					GetDirListing( sNewPath + "*", asPaths, false, true );	// return path too
 
 					if( asPaths.empty() )
-						RageException::Throw( "The actor file '%s' references a file '%s' which doesn't exist.", sIniPath.c_str(), sFile.c_str() );
+					{
+						CString sError = ssprintf( "The actor file '%s' references a file '%s' which doesn't exist.", sIniPath.c_str(), sFile.c_str() );
+						switch( Dialog::RetryCancel( sError, sError ) )
+						{
+						case Dialog::cancel:
+							RageException::Throw( sError ); 
+							break;
+						case Dialog::retry:
+							FlushDirCache();
+							goto retry;
+						default:
+							ASSERT(0);
+						}
+					}
 					else if( asPaths.size() > 1 )
-						RageException::Throw( "The actor file '%s' references a file '%s' which has multiple matches.", sIniPath.c_str(), sFile.c_str() );
+					{
+						CString sError = ssprintf( "The actor file '%s' references a file '%s' which has multiple matches.", sIniPath.c_str(), sFile.c_str() );
+						switch( Dialog::RetryCancel( sError, sError ) )
+						{
+						case Dialog::cancel:
+							RageException::Throw( sError ); 
+							break;
+						case Dialog::retry:
+							FlushDirCache();
+							goto retry;
+						default:
+							ASSERT(0);
+						}
+					}
 
 					sNewPath = asPaths[0];
 				}
