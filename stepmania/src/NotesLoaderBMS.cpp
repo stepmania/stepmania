@@ -889,19 +889,18 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	{
 		for( unsigned i=0; i < aBMSData.size(); i++ )
 		{
-			CString sTitle; // Declare here for less memory thrashing
-			if( GetTagFromMap( aBMSData[i], "#title", sTitle ) )
+			CString sTitle;
+			if( !GetTagFromMap( aBMSData[i], "#title", sTitle ) )
+				continue;
+
+			commonSubstring = FindLargestCommonSubstring( commonSubstring, sTitle );
+			if( commonSubstring == "" )
 			{
-				commonSubstring = FindLargestCommonSubstring( commonSubstring, sTitle );
-				if( commonSubstring == "" )
-				{
-					// All bets are off; the titles don't match at all.
-					// At this rate we're lucky if we even get the title right.
-					LOG->Warn("BMS files in %s have inconsistent titles", sDir.c_str() );
-					break;
-				}
+				// All bets are off; the titles don't match at all.
+				// At this rate we're lucky if we even get the title right.
+				LOG->Warn("BMS files in %s have inconsistent titles", sDir.c_str() );
+				break;
 			}
-			// else no comparison, this file is missing a #title tag.
 		}
 	}
 	// Yay, we have our substring. (something like "LION SUKI")
