@@ -76,6 +76,23 @@ void TimingData::SetBPMAtBeat( float fBeat, float fBPM )
 	}
 }
 
+/* Multiply the BPM in the range [fStartBeat,fEndBeat) by fFactor. */
+void TimingData::MultiplyBPMInBeatRange( float fStartBeat, float fEndBeat, float fFactor )
+{
+	/* Record the BPM at fEndBeat, so we can make sure it doesn't change. */
+	float fEndBPM = GetBPMAtBeat( fEndBeat );
+
+	/* Set the first beat. */
+	SetBPMAtBeat( fStartBeat, GetBPMAtBeat(fStartBeat) * fFactor );
+
+	/* Change all other BPM segments in this range. */
+	for( unsigned i=0; i<m_BPMSegments.size(); i++ )
+		if( m_BPMSegments[i].m_fStartBeat > fStartBeat && m_BPMSegments[i].m_fStartBeat < fEndBeat )
+			m_BPMSegments[i].m_fBPM *= fFactor;
+
+	/* Don't change the BPM at the end of the range. */
+	SetBPMAtBeat( fEndBeat, fEndBPM );
+}
 
 float TimingData::GetBPMAtBeat( float fBeat ) const
 {
