@@ -190,20 +190,7 @@ void ResetGame( bool ReturnToFirstScreen )
 	INPUTMAPPER->ReadMappingsFromDisk();
 
 	NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_pCurGame );
-
-	/*
-	GameState::Reset() will switch the NoteSkin
-	FOREACH_PlayerNumber( p )
-	{
-		PlayerNumber pn = (PlayerNumber)p;
-		if( !NOTESKIN->DoesNoteSkinExist( NOTESKIN->GetCurNoteSkinName(pn) ) )
-		{
-			CStringArray asNoteSkinNames;
-			NOTESKIN->GetNoteSkinNames( asNoteSkinNames );
-			NOTESKIN->SwitchNoteSkin( pn, asNoteSkinNames[0] );
-		}
-	}
-	*/
+	
 	if( !THEME->DoesThemeExist( THEME->GetCurThemeName() ) )
 	{
 		CString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
