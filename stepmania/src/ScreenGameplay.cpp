@@ -1204,12 +1204,18 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				case SDLK_F12:	fOffsetDelta = +0.02f;		break;
 				default:	ASSERT(0);						return;
 				}
-				if( type == IET_FAST_REPEAT )
-					fOffsetDelta *= 10;
+				if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
+					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
+					fOffsetDelta /= 20; /* 1ms */
+				else switch( type )
+				{
+				case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
+				case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
+				}
 
 				GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds += fOffsetDelta;
 
-				m_textDebug.SetText( ssprintf("Offset = %f", GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds) );
+				m_textDebug.SetText( ssprintf("Offset = %.3f", GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds) );
 				m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 				m_textDebug.StopTweening();
 				m_textDebug.BeginTweening( 3 );		// sleep
