@@ -16,6 +16,7 @@
 #include "GameState.h"
 #include "RageLog.h"
 #include "InputFilter.h"
+#include "RageUtil.h"
 
 
 InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our program

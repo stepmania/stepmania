@@ -31,7 +31,6 @@
 #include "SDL_opengl.h"
 
 #include "glext.h"
-PFNGLBLENDFUNCSEPARATEPROC glBlendFuncSeparate;
 
 RageDisplay*		DISPLAY	= NULL;
 
@@ -160,8 +159,6 @@ void RageDisplay::SetupExtensions()
 	GetGLExtensions(g_oglspecs.glExts);
 	if(g_oglspecs.glExts.find("GL_EXT_texture_env_combine") != g_oglspecs.glExts.end())
 		g_oglspecs.EXT_texture_env_combine = true;
-
-	glBlendFuncSeparate = (PFNGLBLENDFUNCSEPARATEPROC) SDL_GL_GetProcAddress ("glBlendFuncSeparate");
 
 	/* Windows vsync: */
 	if(g_oglspecs.glExts.find("WGL_EXT_swap_control") != g_oglspecs.glExts.end()) {

@@ -71,7 +71,7 @@ void Screen::Input( const DeviceInput& DeviceI, const InputEventType type, const
 	if(type == IET_RELEASE) return; // don't care
 
 	/* Don't make the user hold the back button if they're pressing escape. */
-	if( DeviceI.device == DEVICE_KEYBOARD  &&  DeviceI.button == DIK_ESCAPE )
+	if( DeviceI.device == DEVICE_KEYBOARD  &&  DeviceI.button == SDLK_ESCAPE )
 	{
 		this->MenuBack( MenuI.player );
 		return;

@@ -83,14 +83,14 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 
 	switch( DeviceI.button )
 	{
-	case DIK_ESCAPE:
+	case SDLK_ESCAPE:
 		m_bCancelled = true;
 		MenuStart(PLAYER_1);
 		break;
-	case DIK_RETURN:
+	case SDLK_RETURN:
 		MenuStart(PLAYER_1);
 		break;
-	case DIK_BACK:
+	case SDLK_BACKSPACE:
 		m_sAnswer = m_sAnswer.Left( max(0,m_sAnswer.GetLength()-1) );
 		m_textAnswer.SetText( m_sAnswer );
 		break;
@@ -99,8 +99,8 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 		c = DeviceI.ToChar();
 
 		bool bHoldingShift = 
-			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_LSHIFT)) ||
-			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_RSHIFT));
+			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT)) ||
+			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RSHIFT));
 
 		// International keyboards often have other keys mapped to shifted keys, and always 
 		// using a US layout is a bit gimped.  This is better than nothing though.

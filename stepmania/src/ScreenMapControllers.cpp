@@ -178,9 +178,9 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 		/* We only advertise space as doing this, but most games
 		 * use either backspace or delete, and I find them more
 		 * intuitive, so allow them, too. -gm */
-		case DIK_SPACE:
-		case DIK_DELETE:
-		case DIK_BACK: /* Clear the selected input mapping. */
+		case SDLK_SPACE:
+		case SDLK_DELETE:
+		case SDLK_BACKSPACE: /* Clear the selected input mapping. */
 			{
 				GameInput curGameI( (GameController)m_iCurController, (GameButton)m_iCurButton );
 				INPUTMAPPER->ClearFromInputMap( curGameI, m_iCurSlot );
@@ -189,7 +189,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 				INPUTMAPPER->SaveMappingsToDisk();
 			}
 			break;
-		case DIK_LEFT: /* Move the selection left, wrapping up. */
+		case SDLK_LEFT: /* Move the selection left, wrapping up. */
 			if( m_iCurSlot == 0 && m_iCurController == 0 )
 				break;	// can't go left any more
 			m_iCurSlot--;
@@ -199,7 +199,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 				m_iCurController--;
 			}
 			break;
-		case DIK_RIGHT:	/* Move the selection right, wrapping down. */
+		case SDLK_RIGHT:	/* Move the selection right, wrapping down. */
 			if( m_iCurSlot == NUM_CHANGABLE_SLOTS-1 && m_iCurController == MAX_GAME_CONTROLLERS-1 )
 				break;	// can't go right any more
 			m_iCurSlot++;
@@ -209,20 +209,20 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 				m_iCurController++;
 			}
 			break;
-		case DIK_UP: /* Move the selection up. */
+		case SDLK_UP: /* Move the selection up. */
 			if( m_iCurButton == 0 )
 				break;	// can't go up any more
 			m_iCurButton--;
 			break;
-		case DIK_DOWN: /* Move the selection down. */
+		case SDLK_DOWN: /* Move the selection down. */
 			if( m_iCurButton == GAMESTATE->GetCurrentGameDef()->m_iButtonsPerController-1 )
 				break;	// can't go down any more
 			m_iCurButton++;
 			break;
-		case DIK_ESCAPE: /* Quit the screen. */
+		case SDLK_ESCAPE: /* Quit the screen. */
 			m_Menu.TweenOffScreenToBlack( SM_GoToNextScreen, true );		
 			break;
-		case DIK_RETURN: /* Change the selection. */
+		case SDLK_RETURN: /* Change the selection. */
 			m_bWaitingForPress = true;	
 			break;
 		}

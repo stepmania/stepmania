@@ -6,29 +6,25 @@
  Desc: Wrapper for DirectInput.  Generates InputEvents.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
-
 
 //-----------------------------------------------------------------------------
 // In-line Links
 //-----------------------------------------------------------------------------
-#pragma comment(lib, "dinput8.lib") 
-#pragma comment(lib, "dxguid.lib") 
-
 #pragma comment(lib, "ddk/setupapi.lib") 
 #pragma comment(lib, "ddk/hid.lib") 
 
 //-----------------------------------------------------------------------------
 // Includes
 //-----------------------------------------------------------------------------
-#include <windows.h>
 #include "RageInput.h"
-#include <dinput.h>
+#include "SDL.h"
+#include "SDL_keyboard.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
-
 
 
 RageInput*		INPUTMAN	= NULL;		// globally accessable input device
@@ -53,7 +49,7 @@ int DeviceInput::NumButtons(InputDevice device)
 	case DEVICE_PUMP2:
 		return NUM_PUMP_PAD_BUTTONS;	
 	default:
-		ASSERT( false );
+		ASSERT(0);	// invalid device
 	}
 	return -1; /* quiet compiler */
 }
@@ -136,116 +132,117 @@ CString DeviceInput::GetDescription()
 		break;
 
 	case DEVICE_KEYBOARD:		// keyboard
-		sReturn = "Key ";
-
+		sReturn = ssprintf("Key %s", SDL_GetKeyName((SDLKey)button) );
+/*
 		switch( button )
 		{
-		case DIK_ESCAPE:	sReturn += "Escape";	break;
-		case DIK_1:			sReturn += "1";			break;
-		case DIK_2:			sReturn += "2";			break;
-		case DIK_3:			sReturn += "3";			break;
-		case DIK_4:			sReturn += "4";			break;
-		case DIK_5:			sReturn += "5";			break;
-		case DIK_6:			sReturn += "6";			break;
-		case DIK_7:			sReturn += "7";			break;
-		case DIK_8:			sReturn += "8";			break;
-		case DIK_9:			sReturn += "9";			break;
-		case DIK_0:			sReturn += "0";			break;
-		case DIK_MINUS:		sReturn += "Minus";		break;
-		case DIK_EQUALS:	sReturn += "Equals";	break;
-		case DIK_BACK:		sReturn += "Backsp";	break;
-		case DIK_TAB:		sReturn += "Tab";		break;
-		case DIK_Q:			sReturn += "Q";			break;
-		case DIK_W:			sReturn += "W";			break;
-		case DIK_E:			sReturn += "E";			break;
-		case DIK_R:			sReturn += "R";			break;
-		case DIK_T:			sReturn += "T";			break;
-		case DIK_Y:			sReturn += "Y";			break;
-		case DIK_U:			sReturn += "U";			break;
-		case DIK_I:			sReturn += "I";			break;
-		case DIK_O:			sReturn += "O";			break;
-		case DIK_P:			sReturn += "P";			break;
-		case DIK_LBRACKET:	sReturn += "LBracket";	break;
-		case DIK_RBRACKET:	sReturn += "RBracket";	break;
-		case DIK_RETURN:	sReturn += "Return";	break;
-		case DIK_LCONTROL:	sReturn += "LControl";	break;
-		case DIK_A:			sReturn += "A";			break;
-		case DIK_S:			sReturn += "S";			break;
-		case DIK_D:			sReturn += "D";			break;
-		case DIK_F:			sReturn += "F";			break;
-		case DIK_G:			sReturn += "G";			break;
-		case DIK_H:			sReturn += "H";			break;
-		case DIK_J:			sReturn += "J";			break;
-		case DIK_K:			sReturn += "K";			break;
-		case DIK_L:			sReturn += "L";			break;
-		case DIK_SEMICOLON:	sReturn += "Semicln";	break;
-		case DIK_APOSTROPHE:sReturn += "Apostro";	break;
-		case DIK_GRAVE:		sReturn += "Grave";		break;
-		case DIK_LSHIFT:	sReturn += "LShift";	break;
-		case DIK_BACKSLASH:	sReturn += "Backslsh";	break;
-		case DIK_Z:			sReturn += "Z";			break;
-		case DIK_X:			sReturn += "X";			break;
-		case DIK_C:			sReturn += "C";			break;
-		case DIK_V:			sReturn += "V";			break;
-		case DIK_B:			sReturn += "B";			break;
-		case DIK_N:			sReturn += "N";			break;
-		case DIK_M:			sReturn += "M";			break;
-		case DIK_COMMA:		sReturn += "Comma";		break;
-		case DIK_PERIOD:	sReturn += "Period";	break;
-		case DIK_SLASH:		sReturn += "Slash";		break;
-		case DIK_RSHIFT:	sReturn += "RShift";	break;
-		case DIK_MULTIPLY:	sReturn += "Mult";		break;
-		case DIK_LMENU:		sReturn += "LMenu";		break;
-		case DIK_SPACE:		sReturn += "Space";		break;
-		case DIK_CAPITAL:	sReturn += "CapsLk";	break;
-		case DIK_F1:		sReturn += "F1";		break;
-		case DIK_F2:		sReturn += "F2";		break;
-		case DIK_F3:		sReturn += "F3";		break;
-		case DIK_F4:		sReturn += "F4";		break;
-		case DIK_F5:		sReturn += "F5";		break;
-		case DIK_F6:		sReturn += "F6";		break;
-		case DIK_F7:		sReturn += "F7";		break;
-		case DIK_F8:		sReturn += "F8";		break;
-		case DIK_F9:		sReturn += "F9";		break;
-		case DIK_F10:		sReturn += "F10";		break;
-		case DIK_NUMLOCK:	sReturn += "Numlock";	break;
-		case DIK_SCROLL:	sReturn += "Scroll";	break;
-		case DIK_NUMPAD7:	sReturn += "NumPad7";	break;
-		case DIK_NUMPAD8:	sReturn += "NumPad8";	break;
-		case DIK_NUMPAD9:	sReturn += "NumPad9";	break;
-		case DIK_SUBTRACT:	sReturn += "Subtract";	break;
-		case DIK_NUMPAD4:	sReturn += "NumPad4";	break;
-		case DIK_NUMPAD5:	sReturn += "NumPad5";	break;
-		case DIK_NUMPAD6:	sReturn += "NumPad6";	break;
-		case DIK_ADD:		sReturn += "Add";		break;
-		case DIK_NUMPAD1:	sReturn += "NumPad1";	break;
-		case DIK_NUMPAD2:	sReturn += "NumPad2";	break;
-		case DIK_NUMPAD3:	sReturn += "NumPad3";	break;
-		case DIK_NUMPAD0:	sReturn += "NumPad0";	break;
-		case DIK_DECIMAL:	sReturn += "Decimal";	break;
-		case DIK_RMENU:		sReturn += "RightAlt";	break;
-		case DIK_PAUSE:		sReturn += "Pause";		break;
-		case DIK_HOME:		sReturn += "Home";		break;
-		case DIK_UP:		sReturn += "Up";		break;
-		case DIK_PRIOR:		sReturn += "PageUp";	break;
-		case DIK_LEFT:		sReturn += "Left";		break;
-		case DIK_RIGHT:		sReturn += "Right";		break;
-		case DIK_END:		sReturn += "End";		break;
-		case DIK_DOWN:		sReturn += "Down";		break;
-		case DIK_NEXT:		sReturn += "PageDn";	break;
-		case DIK_INSERT:	sReturn += "Insert";	break;
-		case DIK_DELETE:	sReturn += "Delete";	break;
-		case DIK_LWIN:		sReturn += "LeftWin";	break;
-		case DIK_RWIN:		sReturn += "RightWin";	break;
-		case DIK_APPS:		sReturn += "AppMenu";	break;
-		case DIK_NUMPADENTER:	sReturn += "PadEnter";	break;
-		case DIK_DIVIDE:	sReturn += "PadSlash";	break;
+		case SDLK_ESCAPE:	sReturn += "Escape";	break;
+		case SDLK_1:			sReturn += "1";			break;
+		case SDLK_2:			sReturn += "2";			break;
+		case SDLK_3:			sReturn += "3";			break;
+		case SDLK_4:			sReturn += "4";			break;
+		case SDLK_5:			sReturn += "5";			break;
+		case SDLK_6:			sReturn += "6";			break;
+		case SDLK_7:			sReturn += "7";			break;
+		case SDLK_8:			sReturn += "8";			break;
+		case SDLK_9:			sReturn += "9";			break;
+		case SDLK_0:			sReturn += "0";			break;
+		case SDLK_MINUS:		sReturn += "Minus";		break;
+		case SDLK_EQUALS:	sReturn += "Equals";	break;
+		case SDLK_BACKSPACE:		sReturn += "Backsp";	break;
+		case SDLK_TAB:		sReturn += "Tab";		break;
+		case SDLK_Q:			sReturn += "Q";			break;
+		case SDLK_W:			sReturn += "W";			break;
+		case SDLK_E:			sReturn += "E";			break;
+		case SDLK_R:			sReturn += "R";			break;
+		case SDLK_T:			sReturn += "T";			break;
+		case SDLK_Y:			sReturn += "Y";			break;
+		case SDLK_U:			sReturn += "U";			break;
+		case SDLK_I:			sReturn += "I";			break;
+		case SDLK_O:			sReturn += "O";			break;
+		case SDLK_P:			sReturn += "P";			break;
+		case SDLK_LBRACKET:	sReturn += "LBracket";	break;
+		case SDLK_RBRACKET:	sReturn += "RBracket";	break;
+		case SDLK_RETURN:	sReturn += "Return";	break;
+		case SDLK_LCONTROL:	sReturn += "LControl";	break;
+		case SDLK_A:			sReturn += "A";			break;
+		case SDLK_S:			sReturn += "S";			break;
+		case SDLK_D:			sReturn += "D";			break;
+		case SDLK_F:			sReturn += "F";			break;
+		case SDLK_G:			sReturn += "G";			break;
+		case SDLK_H:			sReturn += "H";			break;
+		case SDLK_J:			sReturn += "J";			break;
+		case SDLK_K:			sReturn += "K";			break;
+		case SDLK_L:			sReturn += "L";			break;
+		case SDLK_SEMICOLON:	sReturn += "Semicln";	break;
+		case SDLK_APOSTROPHE:sReturn += "Apostro";	break;
+		case SDLK_GRAVE:		sReturn += "Grave";		break;
+		case SDLK_LSHIFT:	sReturn += "LShift";	break;
+		case SDLK_BACKSLASH:	sReturn += "Backslsh";	break;
+		case SDLK_Z:			sReturn += "Z";			break;
+		case SDLK_X:			sReturn += "X";			break;
+		case SDLK_C:			sReturn += "C";			break;
+		case SDLK_V:			sReturn += "V";			break;
+		case SDLK_B:			sReturn += "B";			break;
+		case SDLK_N:			sReturn += "N";			break;
+		case SDLK_M:			sReturn += "M";			break;
+		case SDLK_COMMA:		sReturn += "Comma";		break;
+		case SDLK_PERIOD:	sReturn += "Period";	break;
+		case SDLK_SLASH:		sReturn += "Slash";		break;
+		case SDLK_RSHIFT:	sReturn += "RShift";	break;
+		case SDLK_MULTIPLY:	sReturn += "Mult";		break;
+		case SDLK_LMENU:		sReturn += "LMenu";		break;
+		case SDLK_SPACE:		sReturn += "Space";		break;
+		case SDLK_CAPITAL:	sReturn += "CapsLk";	break;
+		case SDLK_F1:		sReturn += "F1";		break;
+		case SDLK_F2:		sReturn += "F2";		break;
+		case SDLK_F3:		sReturn += "F3";		break;
+		case SDLK_F4:		sReturn += "F4";		break;
+		case SDLK_F5:		sReturn += "F5";		break;
+		case SDLK_F6:		sReturn += "F6";		break;
+		case SDLK_F7:		sReturn += "F7";		break;
+		case SDLK_F8:		sReturn += "F8";		break;
+		case SDLK_F9:		sReturn += "F9";		break;
+		case SDLK_F10:		sReturn += "F10";		break;
+		case SDLK_NUMLOCK:	sReturn += "Numlock";	break;
+		case SDLK_SCROLL:	sReturn += "Scroll";	break;
+		case SDLK_NUMPAD7:	sReturn += "NumPad7";	break;
+		case SDLK_NUMPAD8:	sReturn += "NumPad8";	break;
+		case SDLK_NUMPAD9:	sReturn += "NumPad9";	break;
+		case SDLK_SUBTRACT:	sReturn += "Subtract";	break;
+		case SDLK_NUMPAD4:	sReturn += "NumPad4";	break;
+		case SDLK_NUMPAD5:	sReturn += "NumPad5";	break;
+		case SDLK_NUMPAD6:	sReturn += "NumPad6";	break;
+		case SDLK_ADD:		sReturn += "Add";		break;
+		case SDLK_NUMPAD1:	sReturn += "NumPad1";	break;
+		case SDLK_NUMPAD2:	sReturn += "NumPad2";	break;
+		case SDLK_NUMPAD3:	sReturn += "NumPad3";	break;
+		case SDLK_NUMPAD0:	sReturn += "NumPad0";	break;
+		case SDLK_DECIMAL:	sReturn += "Decimal";	break;
+		case SDLK_RMENU:		sReturn += "RightAlt";	break;
+		case SDLK_PAUSE:		sReturn += "Pause";		break;
+		case SDLK_HOME:		sReturn += "Home";		break;
+		case SDLK_UP:		sReturn += "Up";		break;
+		case SDLK_PRIOR:		sReturn += "PageUp";	break;
+		case SDLK_LEFT:		sReturn += "Left";		break;
+		case SDLK_RIGHT:		sReturn += "Right";		break;
+		case SDLK_END:		sReturn += "End";		break;
+		case SDLK_DOWN:		sReturn += "Down";		break;
+		case SDLK_NEXT:		sReturn += "PageDn";	break;
+		case SDLK_INSERT:	sReturn += "Insert";	break;
+		case SDLK_DELETE:	sReturn += "Delete";	break;
+		case SDLK_LWIN:		sReturn += "LeftWin";	break;
+		case SDLK_RWIN:		sReturn += "RightWin";	break;
+		case SDLK_APPS:		sReturn += "AppMenu";	break;
+		case SDLK_NUMPADENTER:	sReturn += "PadEnter";	break;
+		case SDLK_DIVIDE:	sReturn += "PadSlash";	break;
 
 		default:			sReturn += "Unknown Key"; break;
 		}
+*/
 		break;
 	default:
-		ASSERT( false );	// what device is this?
+		ASSERT(0);	// what device is this?
 	}
 
 	return sReturn;
@@ -275,7 +272,7 @@ bool DeviceInput::fromString( const CString &s )
 }
 
 /* FIXME: The main font doesn't have '`' (0x29), so that's disabled. */
-static const char dik_charmap[] = {
+static const char SDLK_charmap[] = {
 	    /*   0   1   2   3   4   5   6   7   8    9    A   B   C   D   E  F */ 
 /* 0x0x */    0,  0,'1','2','3','4','5','6','7', '8','9', '0','-','=',  0,  0,
 /* 0x1x */	'q','w','e','r','t','y','u','i','o', 'p','[', ']',  0,  0,'a','s',
@@ -296,8 +293,8 @@ char DeviceInput::ToChar() const
 	switch( device )
 	{
 	case DEVICE_KEYBOARD:
-		if( button < sizeof(dik_charmap) )
-			return dik_charmap[button];
+		if( button < sizeof(SDLK_charmap) )
+			return SDLK_charmap[button];
 		return '\0';
 	default:
 		return '\0';
@@ -305,231 +302,60 @@ char DeviceInput::ToChar() const
 }
 
 
-//-----------------------------------------------------------------------------
-// Name: EnumJoysticksCallMenuBack( PlayerNumber pn )
-// Desc: Called once for each enumerated joystick. If we find one, create a
-//       device interface on it so we can play with it.
-//-----------------------------------------------------------------------------
-BOOL CALLBACK	RageInput::EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance,
-										       VOID* pContext )
-{
-	RageInput* pInput = (RageInput*)pContext;
-	LPDIRECTINPUT8 pDI = pInput->GetDirectInput();
 
-
-	static int i=0;		// ASSUMPTION:  This callback is only used on application start!
-
-    // Obtain an interface to the enumerated joystick.
-	if( i >= NUM_JOYSTICKS  )
-	    return DIENUM_STOP;		// we only care about the first 4 
-
-	HRESULT hr = pDI->CreateDevice( pdidInstance->guidInstance, 
-									&pInput->m_pJoystick[i++], 
-									NULL );
-	if( FAILED( hr ) )
-		throw RageException( hr, "Error in CreateDevice() for joystick %d.", i );
-
-	return DIENUM_CONTINUE;
-}
-
-
-
-
-//-----------------------------------------------------------------------------
-// Name: EnumAxesCallMenuBack( PlayerNumber pn )
-// Desc: Callback function for enumerating the axes on a joystick
-//-----------------------------------------------------------------------------
-BOOL CALLBACK	RageInput::EnumAxesCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,
-									      VOID* pContext )
-{
-    LPDIRECTINPUTDEVICE8 pJoystick = (LPDIRECTINPUTDEVICE8)pContext;
-
-    DIPROPRANGE diprg; 
-    diprg.diph.dwSize       = sizeof(DIPROPRANGE); 
-    diprg.diph.dwHeaderSize = sizeof(DIPROPHEADER); 
-    diprg.diph.dwHow        = DIPH_BYID; 
-    diprg.diph.dwObj        = pdidoi->dwType; // Specify the enumerated axis
-    diprg.lMin              = -1000; 
-    diprg.lMax              = +1000; 
-    
-	// Set the range for the axis
-	if( FAILED( pJoystick->SetProperty( DIPROP_RANGE, &diprg.diph ) ) )
-		return DIENUM_STOP;
-
-
-    return DIENUM_CONTINUE;
-}
-
-
-
-
-RageInput::RageInput( HWND hWnd )
+RageInput::RageInput()
 {
 	LOG->Trace( "RageInput::RageInput()" );
 
-	int i;
+	SDL_InitSubSystem( SDL_INIT_JOYSTICK );
 
-	m_hWnd = hWnd;
+	// init state info
+	memset( m_keys, 0, sizeof(m_keys) );
+	memset( m_oldKeys, 0, sizeof(m_oldKeys) );
+	memset( m_joyState, 0, sizeof(m_joyState) );
+	memset( m_oldJoyState, 0, sizeof(m_oldJoyState) );
+	memset( m_pumpState, 0, sizeof(m_pumpState) );
+	memset( m_oldPumpState, 0, sizeof(m_oldPumpState) );
 
 
-	m_pDI = NULL;
-	m_pKeyboard = NULL;
-	m_pMouse = NULL;
-	for( i=0; i<NUM_JOYSTICKS; i++ )
-		m_pJoystick[i]=NULL;
+	//
+	// Init keyboard
+	//
+	SDL_EnableKeyRepeat( 0, 0 );
 
 
-	ZeroMemory( &m_keys, sizeof(m_keys) );
-	ZeroMemory( &m_oldKeys, sizeof(m_oldKeys) );
+	//
+	// Init joysticks
+	//
+	memset( m_pJoystick, 0, sizeof(m_pJoystick) );
+	int iNumJoySticks = min( SDL_NumJoysticks(), NUM_JOYSTICKS );
+	for( int i=0; i<iNumJoySticks; i++ )
+	{
+		m_pJoystick[i] = SDL_JoystickOpen( i );
+		LOG->Trace( "Found joystick %d: %s", i, SDL_JoystickName(i) );
+	}
+	SDL_JoystickEventState( SDL_IGNORE );
 
-	ZeroMemory( &m_oldJoyState, sizeof(m_oldJoyState) );
-	ZeroMemory( &m_pumpState, sizeof(m_pumpState) );
-	ZeroMemory( &m_oldPumpState, sizeof(m_oldPumpState) );
+
+	//
+	// Init pumps
+	//
 	m_Pumps = new pump_t[NUM_PUMPS];
 
-	Initialize();
-}
-
-RageInput::~RageInput()
-{
-	Release();
-}
-
-void RageInput::Initialize()
-{
-	HRESULT hr;
-
-	////////////////////////////////
-	// Create the DirectInput object
-	////////////////////////////////
-    if( FAILED(hr = DirectInput8Create( GetModuleHandle(NULL), DIRECTINPUT_VERSION, 
-                                         IID_IDirectInput8, (VOID**)&m_pDI, NULL ) ) )
-		throw RageException( hr, "DirectInput8Create failed." );
-	
-	/////////////////////////////
-	// Create the keyboard device
-	/////////////////////////////
-
-	// Create our DirectInput Object for the Keyboard
-    if( FAILED( hr = m_pDI->CreateDevice( GUID_SysKeyboard, &m_pKeyboard, NULL ) ) )
-		m_pKeyboard = NULL;
-
-	if(m_pKeyboard) {
-		// Set our Cooperation Level with each Device
-		if( FAILED( hr = m_pKeyboard->SetCooperativeLevel(m_hWnd, DISCL_FOREGROUND | 
-																  DISCL_NOWINKEY |
-																  DISCL_NONEXCLUSIVE) ) )
-			throw RageException( hr, "m_pKeyboard->SetCooperativeLevel failed." );
-
-		// Set the Data Format of each device
-		if( FAILED( hr = m_pKeyboard->SetDataFormat(&c_dfDIKeyboard) ) )
-			throw RageException( hr, "m_pKeyboard->SetDataFormat failed." );
-
-		// Acquire the Keyboard Device
-		//if( FAILED( hr = m_pKeyboard->Acquire() ) )
-		//	throw RageException( "m_pKeyboard->Acquire failed.", hr );
-	}
-
-
-	//////////////////////////
-	// Create the mouse device
-	//////////////////////////
-	
-	// Obtain an interface to the system mouse device.
-	if( FAILED( hr = m_pDI->CreateDevice( GUID_SysMouse, &m_pMouse, NULL ) ) )
-		m_pMouse = NULL;
-
-	if(m_pMouse) {
-		if( FAILED( hr = m_pMouse->SetCooperativeLevel( m_hWnd, DISCL_NONEXCLUSIVE|DISCL_FOREGROUND ) ) )
-			throw RageException( hr, "m_pMouse->SetCooperativeLevel failed." );
-    
-		if( FAILED( hr = m_pMouse->SetDataFormat( &c_dfDIMouse2 ) ) )
-			throw RageException( hr, "m_pMouse->SetDataFormat failed." );
-/*
-    DIPROPDWORD dipdw;
-    dipdw.diph.dwSize       = sizeof(DIPROPDWORD);
-    dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
-    dipdw.diph.dwObj        = 0;
-    dipdw.diph.dwHow        = DIPH_DEVICE;
-    dipdw.dwData            = DIPROPAXISMODE_ABS;
-
-    if( FAILED( m_pMouse->SetProperty( DIPROP_AXISMODE, &dipdw.diph ) ) )
-        return E_FAIL;*/
-	//if( FAILED( hr = m_pMouse->Acquire()))
-	//	throw RageException( "m_pMouse->Acquire failed.", hr );
-
-		m_RelPosition_x = m_RelPosition_y = 0;
-
-		m_AbsPosition_x = 640/2;
-		m_AbsPosition_y = 480/2;
-	}	
-
-	{
-		/* Nasty hack to work around a bug in DirectInput8: Pump pads
-		 * crash EnumDevices.  Prevent this by opening the pad with
-		 * exclusive access while we enumerate, then closing it when
-		 * we finish.  We don't do anything with this; we open it
-		 * for real down below, since we don't *really* want to open
-		 * the pad with exclusive access.  (I also don't want to introduce
-		 * dependencies, such as "pump must be initialized before joysticks",
-		 * so this doesn't bite us again down the road.) */
-		pump_t m_TempPumps[NUM_PUMPS];
-		for(int pumpNo = 0; pumpNo < NUM_PUMPS; ++pumpNo)
-			m_TempPumps[pumpNo].init(pumpNo, false);
-
-		//////////////////////////////
-		// Create the joystick devices
-		//////////////////////////////
-		// Look for joysticks
-		// TODO:  Why is this function so slow to return?  Is it just my machine?
-		if( FAILED( hr = m_pDI->EnumDevices( DI8DEVCLASS_GAMECTRL, 
-											 EnumJoysticksCallback,
-											 (VOID*)this, 
-											 DIEDFL_ATTACHEDONLY ) ) )
-			throw RageException( hr, "m_pDI->EnumDevices failed." );
-	}
-
-	for( int i=0; i<NUM_JOYSTICKS; i++ )
-	{
-		// Set the data format to "simple joystick" - a predefined data format 
-		//
-		// A data format specifies which controls on a device we are interested in,
-		// and how they should be reported. This tells DInput that we will be
-		// passing a DIJOYSTATE2 structure to IDirectInputDevice::GetDeviceState().
-		if( m_pJoystick[i] )
-			if( FAILED( hr = m_pJoystick[i]->SetDataFormat( &c_dfDIJoystick2 ) ) )
-				throw RageException( hr, "m_pJoystick[i]->SetDataFormat failed." );
-
-
-		// Set the cooperative level to let DInput know how this device should
-		// interact with the system and with other DInput applications.
-		if( m_pJoystick[i] )
-			if( FAILED( hr = m_pJoystick[i]->SetCooperativeLevel( m_hWnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND ) ) )
-				throw RageException( hr, "m_pJoystick[i]->SetCooperativeLevel failed." );
-
-
-		/*
-		// Determine how many axis the joystick has (so we don't error out setting
-		// properties for unavailable axis)	
-		if ( m_pJoystick[i] )	{
-			g_diDevCaps.dwSize = sizeof(DIDEVCAPS);
-			if ( FAILED( hr = m_pJoystick[i]->GetCapabilities(&g_diDevCaps) ) )
-				return hr;
-		}
-		*/
-
-		// Enumerate the axes of the joyctick and set the range of each axis. Note:
-		// we could just use the defaults, but we're just trying to show an example
-		// of enumerating device objects (axes, buttons, etc.).
-		if( m_pJoystick[i] )
-			if ( FAILED( hr = m_pJoystick[i]->EnumObjects( EnumAxesCallback, (VOID*)m_pJoystick[i], DIDFT_AXIS ) ) )
-				throw RageException( hr, "m_pJoystick[i]->EnumObjects failed." );
-
-		// Acquire the newly created devices
-		if( m_pJoystick[i] )
-			if( FAILED( hr = m_pJoystick[i]->Acquire() ) )
-				throw RageException( hr, "m_pJoystick[i]->Acquire failed." );
-	}
+//	{
+//		/* Nasty hack to work around a bug in DirectInput8: Pump pads
+//		 * crash EnumDevices.  Prevent this by opening the pad with
+//		 * exclusive access while we enumerate, then closing it when
+//		 * we finish.  We don't do anything with this; we open it
+//		 * for real down below, since we don't *really* want to open
+//		 * the pad with exclusive access.  (I also don't want to introduce
+//		 * dependencies, such as "pump must be initialized before joysticks",
+//		 * so this doesn't bite us again down the road.) */
+//		pump_t m_TempPumps[NUM_PUMPS];
+//		for(int pumpNo = 0; pumpNo < NUM_PUMPS; ++pumpNo)
+//			m_TempPumps[pumpNo].init(pumpNo, false);
+//
+//	}
 
 	for(int pumpNo = 0; pumpNo < NUM_PUMPS; ++pumpNo)
 	{
@@ -538,91 +364,96 @@ void RageInput::Initialize()
 	}
 }
 
-void RageInput::Release()
+RageInput::~RageInput()
 {
-	// Unacquire the keyboard device
-	if (m_pKeyboard)
-		m_pKeyboard->Unacquire();
-	// Release the keyboard device
-	SAFE_RELEASE(m_pKeyboard);
-	// Unacquire the Mouse device
-	if (m_pMouse)
-		m_pMouse->Unacquire();
-	// Release the Mouse device
-	SAFE_RELEASE(m_pMouse);
+	//
+	// De-init keyboard
+	//
 
+	//
+	// De-init joysticks
+	//
 	for( int i=0; i<NUM_JOYSTICKS; i++ )
 	{
-		if (m_pJoystick[i])
-			m_pJoystick[i]->Unacquire();
-		// Release the Mouse device
-		SAFE_RELEASE(m_pJoystick[i]);
+		if( m_pJoystick[i] )
+		{
+			SDL_JoystickClose(m_pJoystick[i]);
+			m_pJoystick[i] = NULL;
+		}
 	}
 
-	// Release the DirectInput object
-	SAFE_RELEASE(m_pDI);
+	//
+	// De-init pumps
+	//
 	delete[] m_Pumps;
+
+
+	SDL_QuitSubSystem( SDL_INIT_JOYSTICK );
 }
 
-HRESULT RageInput::UpdateMouse()
+void RageInput::Update( float fDeltaTime )
 {
-	if( NULL == m_pMouse ) 
-		return E_FAIL;
-
-	ZeroMemory( &m_mouseState, sizeof(m_mouseState) );
-
-	// Get the input's device state, and put the state in DIMOUSESTATE2
-    if (FAILED(m_pMouse->GetDeviceState( sizeof(DIMOUSESTATE2), &m_mouseState )))
-    {
-        // If input is lost then acquire and keep trying 
-		HRESULT hr = m_pMouse->Acquire();
-        while( hr == DIERR_INPUTLOST ) 
-            hr = m_pMouse->Acquire();
-
-		return E_FAIL;
-    }
+	//
+	// Move last current state to old state
+	//
+	memcpy( m_oldKeys, m_keys, sizeof(m_oldKeys) );
+	memcpy( m_oldJoyState, m_joyState, sizeof(m_joyState) );
+	memcpy( m_oldPumpState, m_pumpState, sizeof(m_pumpState) );
 
 
-	m_RelPosition_x = m_mouseState.lX;
-	m_RelPosition_y = m_mouseState.lY;
+	//
+	// Update keyboard
+	//
+	SDL_PumpEvents();
+	Uint8* keystate = SDL_GetKeyState(NULL);
+	memcpy( m_keys, keystate, sizeof(m_keys) );
 
-	m_AbsPosition_x += m_mouseState.lX;
-	m_AbsPosition_y += m_mouseState.lY;
+	//
+	// Update Joystick
+	//
+	SDL_JoystickUpdate();
 
-	/* Clamp the mouse to 0...640-1, 0...480-1. */
-	m_AbsPosition_x = clamp(m_AbsPosition_x, 0, 640-1);
-	m_AbsPosition_y = clamp(m_AbsPosition_y, 0, 480-1);
+	memset( m_joyState, 0, sizeof(m_joyState) );	// clear current state
 
-	return S_OK;
-}
-
-HRESULT RageInput::UpdateKeyboard()
-{
-	ZeroMemory( &m_keys, sizeof(m_keys) );
-
-	if( NULL == m_pKeyboard ) 
-		return E_FAIL;
-
-	if( FAILED(m_pKeyboard->GetDeviceState( sizeof(m_keys),(LPVOID)&m_keys )) )
+	for( int joy=0; joy<NUM_JOYSTICKS; joy++ )	// foreach joystick
 	{
-		// DirectInput may be telling us that the input stream has been
-		// interrupted.  We aren't tracking any state between polls, so
-		// we don't have any special reset that needs to be done.
-		// We just re-acquire and try again.
-        
-		// If input is lost then acquire and keep trying 
-		HRESULT hr = m_pKeyboard->Acquire();
-		while( hr == DIERR_INPUTLOST ) 
-			hr = m_pKeyboard->Acquire();
+		SDL_Joystick* pJoy = m_pJoystick[joy];
+		if( !pJoy )
+			continue;
 
-		return E_FAIL;
+		int iNumJoyAxes = min(NUM_JOYSTICK_AXES,SDL_JoystickNumAxes(pJoy));
+		for( int axis=0; axis<iNumJoyAxes; axis++ )
+		{
+			Sint16 val = SDL_JoystickGetAxis(pJoy,axis);
+			if( val < -100 )
+			{
+				JoystickButton b = (JoystickButton)(JOY_LEFT+2*axis);
+				m_joyState[joy].button[b] = true;
+			}
+		}
+
+		int iNumJoyHats = min(NUM_JOYSTICK_HATS,SDL_JoystickNumHats(pJoy));
+		for( int hat=0; axis<iNumJoyHats; hat++ )
+		{
+			Uint8 val = SDL_JoystickGetHat(pJoy,hat);
+			m_joyState[joy].button[JOY_HAT_UP] = (val & SDL_HAT_UP) != 0;
+			m_joyState[joy].button[JOY_HAT_RIGHT] = (val & SDL_HAT_RIGHT) != 0;
+			m_joyState[joy].button[JOY_HAT_DOWN] = (val & SDL_HAT_DOWN) != 0;
+			m_joyState[joy].button[JOY_HAT_LEFT] = (val & SDL_HAT_LEFT) != 0;
+		}
+
+		int iNumJoyButtons = MIN(NUM_JOYSTICK_BUTTONS,SDL_JoystickNumButtons(pJoy));
+		for( int button=0; button<iNumJoyButtons; button++ )
+		{
+			JoystickButton b = (JoystickButton)(JOY_1 + button);
+			m_joyState[joy].button[b] = SDL_JoystickGetButton(pJoy,button) != 0;
+		}
 	}
 
-	return S_OK;
-}
 
-HRESULT RageInput::UpdatePump()
-{
+	//
+	// Update Pump
+	//
 	for( int i=0; i<NUM_PUMPS; i++ )
 	{
 		if(m_Pumps[i].h == INVALID_HANDLE_VALUE)
@@ -650,159 +481,37 @@ HRESULT RageInput::UpdatePump()
 				m_pumpState[i].button[butno] = true;
 		}
 	}
-	return S_OK;
-}
 
-void RageInput::Update()
-{
-// macros for reading DI state structures
-#define IS_PRESSED(b)	(b & 0x80) 
-#define AXIS_THRESHOLD	250		// joystick axis threshold
-#define IS_LEFT(a)		(a <= -AXIS_THRESHOLD)
-#define IS_RIGHT(a)		(a >=  AXIS_THRESHOLD)
-#define IS_UP(a)		IS_LEFT(a)
-#define IS_DOWN(a)		IS_RIGHT(a)
-
-
-	HRESULT hr;
-	
-	//////////////////////////////////////////////////////////////////
-	// the current state last update becomes the old state this update
-	//////////////////////////////////////////////////////////////////
-
-	CopyMemory( &m_oldKeys, &m_keys, sizeof(m_keys) );
-	CopyMemory( &m_oldPumpState, &m_pumpState, sizeof(m_pumpState) );
-	CopyMemory( &m_oldJoyState, &m_joyState, sizeof(m_joyState) );
-
-	ZeroMemory( &m_joyState, sizeof(m_joyState) );
-
-
-	////////////////////
-	// Read the keyboard
-	////////////////////
-	UpdateKeyboard();
-
-	////////////////////
-	// Read the mouse
-	////////////////////
-	UpdateMouse();
-
-	/////////////////////
-	// Read the joysticks
-	/////////////////////
-
-	// read joystick state
-	for( BYTE i=0; i<4; i++ )	// foreach joystick
-	{
-		// read joystick states
-		if ( !m_pJoystick[i] )
-			continue;
-
-		// Poll the device to read the current state
-		hr = m_pJoystick[i]->Poll(); 
-		if( FAILED(hr) )  
-		{
-			// DInput is telling us that the input stream has been
-			// interrupted. We aren't tracking any state between polls, so
-			// we don't have any special reset that needs to be done. We
-			// just re-acquire and try again.
-			hr = m_pJoystick[i]->Acquire();
-			while( hr == DIERR_INPUTLOST ) 
-				hr = m_pJoystick[i]->Acquire();
-
-			// hr may be DIERR_OTHERAPPHASPRIO or other errors.  This
-			// may occur when the app is minimized or in the process of 
-			// switching, so just try again later 
-			break;
-		}
-
-		DIJOYSTATE2 joyState;
-		ZeroMemory( &joyState, sizeof(joyState) );
-		// Get the input's device state
-		if( FAILED( hr = m_pJoystick[i]->GetDeviceState( sizeof(DIJOYSTATE2), &joyState ) ) )
-		{
-			LOG->Trace(hr, "Failed to read joystick %i\n", i);
-			continue;
-		}
-
-		if ( IS_LEFT(joyState.lX) )  m_joyState[i][JOY_LEFT] = true;
-		if ( IS_RIGHT(joyState.lX) ) m_joyState[i][JOY_RIGHT] = true;
-		if ( IS_UP(joyState.lY) )    m_joyState[i][JOY_UP] = true;
-		if ( IS_DOWN(joyState.lY) )  m_joyState[i][JOY_DOWN] = true;
-		if ( IS_UP(joyState.lZ) )    m_joyState[i][JOY_Z_UP] = true;
-		if ( IS_DOWN(joyState.lZ) )  m_joyState[i][JOY_Z_DOWN] = true;
-		if ( IS_UP(joyState.lRz) )   m_joyState[i][JOY_Z_ROT_UP] = true;
-		if ( IS_DOWN(joyState.lRz) ) m_joyState[i][JOY_Z_ROT_DOWN] = true;
-		if ( joyState.rgdwPOV[0] == 27000 ) m_joyState[i][JOY_HAT_LEFT] = true;
-		if ( joyState.rgdwPOV[0] == 9000 )  m_joyState[i][JOY_HAT_RIGHT] = true;
-		if ( joyState.rgdwPOV[0] == 0 )     m_joyState[i][JOY_HAT_UP] = true;
-		if ( joyState.rgdwPOV[0] == 18000 ) m_joyState[i][JOY_HAT_DOWN] = true;
-
-		for (int button_index = JOY_1; button_index < NUM_JOYSTICK_BUTTONS; ++button_index)
-		{
-			if ( IS_PRESSED( joyState.rgbButtons[button_index - JOY_1] ) )
-			m_joyState[i][button_index] = true;
-		}
-	}
-
-	UpdatePump();
 }
 
 
-bool RageInput::BeingPressed( DeviceInput di, bool Prev )
-{
-	if(Prev) return WasBeingPressed(di);
-	return IsBeingPressed(di);
-}
-
-bool RageInput::IsBeingPressed( DeviceInput di )
+bool RageInput::BeingPressed( DeviceInput di, bool bPrevState )
 {
 	switch( di.device )
 	{
 	case DEVICE_KEYBOARD:
-		return 0 != m_keys[ di.button ];
-	case DEVICE_JOY1:
-	case DEVICE_JOY2:
-	case DEVICE_JOY3:
-	case DEVICE_JOY4: {
-		return m_joyState[di.device - DEVICE_JOY1][ di.button ];
-	}
-	case DEVICE_PUMP1:
-	case DEVICE_PUMP2:
-	{
-		ASSERT(di.button < NUM_PUMP_PAD_BUTTONS);
-		return m_pumpState[di.device - DEVICE_PUMP1].button[di.button];
-	}
-	default:
-		ASSERT( false ); // bad device
-	}
-
-	return false;	// how did we get here?!?
-}
-
-bool RageInput::WasBeingPressed( DeviceInput di )
-{
-	switch( di.device )
-	{
-	case DEVICE_KEYBOARD:
-		return 0 != m_oldKeys[ di.button ];
+		{
+			ASSERT(di.button < NUM_KEYBOARD_BUTTONS);
+			return (bPrevState?m_oldKeys:m_keys) [ di.button ];
+		}
 	case DEVICE_JOY1:
 	case DEVICE_JOY2:
 	case DEVICE_JOY3:
 	case DEVICE_JOY4:
-		return m_oldJoyState[di.device - DEVICE_JOY1][ di.button ];
-
+		{
+			ASSERT(di.button < NUM_JOYSTICK_BUTTONS);
+			return (bPrevState?m_oldJoyState:m_joyState) [di.device - DEVICE_JOY1].button[ di.button ];
+		}
 	case DEVICE_PUMP1:
-	case DEVICE_PUMP2: {
-		ASSERT(di.button < NUM_PUMP_PAD_BUTTONS);
-		return m_oldPumpState[di.device - DEVICE_PUMP1].button[di.button];
-	}
-
+	case DEVICE_PUMP2:
+		{
+			ASSERT(di.button < NUM_PUMP_PAD_BUTTONS);
+			return (bPrevState?m_oldPumpState:m_pumpState) [di.device - DEVICE_PUMP1].button[di.button];
+		}
 	default:
-		ASSERT( false ); // bad device
+		ASSERT( 0 ); // bad device
+		return false;	// hush compiler
 	}
-
-	return false;	// how did we get here?!?
 }
 
 extern "C" {

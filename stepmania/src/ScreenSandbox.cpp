@@ -55,26 +55,26 @@ void ScreenSandbox::Input( const DeviceInput& DeviceI, const InputEventType type
 	case DEVICE_KEYBOARD:
 		switch( DeviceI.button )
 		{
-		case DIK_LEFT:
+		case SDLK_LEFT:
 			obj.SetX(obj.GetX() - 10);
 			break;
-		case DIK_RIGHT:
+		case SDLK_RIGHT:
 			obj.SetX(obj.GetX() + 10);
 			break;
-		case DIK_UP:
+		case SDLK_UP:
 			obj.SetY(obj.GetY() - 10);
 			break;
-		case DIK_DOWN:
+		case SDLK_DOWN:
 			obj.SetY(obj.GetY() + 10);
 			break;
-		case DIK_T: 
+		case SDLK_t: 
 			{
 				SDL_Event *event;
 				event = (SDL_Event *) malloc(sizeof(event));
 				event->type = SDL_QUIT;
 				SDL_PushEvent(event);
 			}
-		case DIK_ESCAPE: 
+		case SDLK_ESCAPE: 
 			{
 			SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 			}

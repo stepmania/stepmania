@@ -353,7 +353,7 @@ int main(int argc, char* argv[])
 		throw RageException( "SDL_GetWMInfo failed" );
 	HWND hwnd = info.window;
 
-	INPUTMAN	= new RageInput( hwnd );
+	INPUTMAN	= new RageInput();
 //	SOUNDMAN	= new RageSoundManager();
 
 	// These things depend on the TextureManager, so do them after!
@@ -482,13 +482,13 @@ void GameLoop()
 		// See ScreenManager::Update comments for why we shouldn't do this. -glenn
 		//if( fDeltaTime > 0.050f )	// we dropped a bunch of frames
 		// 	fDeltaTime = 0.050f;
-		if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_TAB) ) ) {
-			if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_GRAVE) ) )
+		if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_TAB) ) ) {
+			if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_QUOTEDBL) ) )
 				fDeltaTime = 0; /* both; stop time */
 			else
 				fDeltaTime *= 4;
 		} else
-			if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_GRAVE) ) )
+			if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_QUOTEDBL) ) )
 				fDeltaTime /= 4;
 
 		TEXTUREMAN->Update( fDeltaTime );
@@ -506,10 +506,10 @@ void GameLoop()
 
 			/* ALT-F4 -> quit (better place for this? in ScreenManager perhaps?) */
 			/* Nah.  this is fine.  -Chris */
-			if(type == IET_FIRST_PRESS && DeviceI == DeviceInput(DEVICE_KEYBOARD, DIK_F4))
+			if(type == IET_FIRST_PRESS && DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F4))
 			{
-				if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_RMENU)) ||
-					INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_LMENU)) )
+				if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
+					INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
 				{
 					// pressed Alt+F4
 					SDL_Event *event;
@@ -526,7 +526,7 @@ void GameLoop()
 					// fall through
 				}
 			}
-			else if( type == IET_FIRST_PRESS && DeviceI == DeviceInput(DEVICE_KEYBOARD, DIK_F5))
+			else if( type == IET_FIRST_PRESS && DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F5))
 			{
 				// pressed F5.  Toggle detail.
 				if(PREFSMAN->m_iDisplayWidth != 640)
@@ -544,10 +544,10 @@ void GameLoop()
 	
 			}
 
-			if(type == IET_FIRST_PRESS && DeviceI == DeviceInput(DEVICE_KEYBOARD, DIK_RETURN))
+			if(type == IET_FIRST_PRESS && DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_RETURN))
 			{
-				if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_RMENU)) ||
-					INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_LMENU)) )
+				if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
+					INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
 				{
 					/* alt-enter */
 					PREFSMAN->m_bWindowed = !PREFSMAN->m_bWindowed;

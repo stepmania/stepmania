@@ -868,7 +868,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	if( GAMESTATE->m_bDemonstration )
 	{
 		/* Special case:always allow escape. */
-		if( DeviceI.device==DEVICE_KEYBOARD  &&  DeviceI.button==DIK_ESCAPE  &&  !m_Fade.IsClosing() )
+		if( DeviceI.device==DEVICE_KEYBOARD  &&  DeviceI.button==SDLK_ESCAPE  &&  !m_Fade.IsClosing() )
 		{
 			this->SendScreenMessage( SM_BeginFadingToTitleMenu, 0 );
 		}
@@ -890,7 +890,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	{
 		switch( DeviceI.button )
 		{
-		case DIK_F6:
+		case SDLK_F6:
 			m_bChangedOffsetOrBPM = true;
 
 			if (GAMESTATE->m_SongOptions.m_AutoAdjust == SongOptions::ADJUST_ON) {
@@ -906,7 +906,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			m_textDebug.BeginTweening( 0.5f );	// fade out
 			m_textDebug.SetTweenDiffuse( RageColor(1,1,1,0) );
 			break;
-		case DIK_F7:
+		case SDLK_F7:
 			if( GAMESTATE->m_SongOptions.m_AssistType == SongOptions::ASSIST_NONE )
 				GAMESTATE->m_SongOptions.m_AssistType = SongOptions::ASSIST_TICK;
 			else
@@ -918,19 +918,19 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			m_textDebug.BeginTweening( 0.5f );	// fade out
 			m_textDebug.SetTweenDiffuse( RageColor(1,1,1,0) );
 			break;
-		case DIK_F8:
+		case SDLK_F8:
 			PREFSMAN->m_bAutoPlay = !PREFSMAN->m_bAutoPlay;
 			break;
-		case DIK_F9:
-		case DIK_F10:
+		case SDLK_F9:
+		case SDLK_F10:
 			{
 				m_bChangedOffsetOrBPM = true;
 
 				float fOffsetDelta;
 				switch( DeviceI.button )
 				{
-				case DIK_F9:	fOffsetDelta = -0.025f;		break;
-				case DIK_F10:	fOffsetDelta = +0.025f;		break;
+				case SDLK_F9:	fOffsetDelta = -0.025f;		break;
+				case SDLK_F10:	fOffsetDelta = +0.025f;		break;
 				default:	ASSERT(0);						return;
 				}
 				if( type == IET_FAST_REPEAT )
@@ -947,16 +947,16 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				m_textDebug.SetTweenDiffuse( RageColor(1,1,1,0) );
 			}
 			break;
-		case DIK_F11:
-		case DIK_F12:
+		case SDLK_F11:
+		case SDLK_F12:
 			{
 				m_bChangedOffsetOrBPM = true;
 
 				float fOffsetDelta;
 				switch( DeviceI.button )
 				{
-				case DIK_F11:	fOffsetDelta = -0.02f;		break;
-				case DIK_F12:	fOffsetDelta = +0.02f;		break;
+				case SDLK_F11:	fOffsetDelta = -0.02f;		break;
+				case SDLK_F12:	fOffsetDelta = +0.02f;		break;
 				default:	ASSERT(0);						return;
 				}
 				if( type == IET_FAST_REPEAT )

@@ -24,6 +24,7 @@
 #include "RageLog.h"
 #include <math.h>
 #include "ThemeManager.h"
+#include "SDL_keysym.h"		// for SDLKeys
 
 #include <utility>
 
@@ -129,29 +130,29 @@ const CString ACTION_MENU_ITEM_TEXT[NUM_ACTION_MENU_ITEMS] = {
 	"Q:      Quit"
 };
 const int ACTION_MENU_ITEM_KEY[NUM_ACTION_MENU_ITEMS] = {
-	DIK_RETURN,
-	DIK_SPACE,
-	DIK_P,
-	DIK_R,
-	DIK_T,
-	DIK_X,
-	DIK_C,
-	DIK_V,
-	DIK_D,
-	DIK_E,
-	DIK_N,
-	DIK_I,
-	DIK_B,
-	DIK_INSERT,
-	DIK_DELETE,
-	DIK_G,
-	DIK_H,
-	DIK_J,
-	DIK_K,
-	DIK_L,
-	DIK_M,
-	DIK_S,
-	DIK_Q,
+	SDLK_RETURN,
+	SDLK_SPACE,
+	SDLK_p,
+	SDLK_r,
+	SDLK_t,
+	SDLK_x,
+	SDLK_c,
+	SDLK_v,
+	SDLK_d,
+	SDLK_e,
+	SDLK_n,
+	SDLK_i,
+	SDLK_b,
+	SDLK_INSERT,
+	SDLK_DELETE,
+	SDLK_g,
+	SDLK_h,
+	SDLK_j,
+	SDLK_k,
+	SDLK_l,
+	SDLK_m,
+	SDLK_s,
+	SDLK_q,
 };
 
 const CString NAMING_MENU_ITEM_TEXT[NUM_NAMING_MENU_ITEMS] = {
@@ -164,12 +165,12 @@ const CString NAMING_MENU_ITEM_TEXT[NUM_NAMING_MENU_ITEMS] = {
 };
 // Pairs of keystroke + ifCapital
 const std::pair<int, bool> NAMING_MENU_ITEM_KEY[NUM_NAMING_MENU_ITEMS] = {
-	std::make_pair(DIK_M, false),
-	std::make_pair(DIK_S, false),
-	std::make_pair(DIK_A, false),
-	std::make_pair(DIK_M, true),
-	std::make_pair(DIK_S, true),
-	std::make_pair(DIK_A, true),
+	std::make_pair(SDLK_m, false),
+	std::make_pair(SDLK_s, false),
+	std::make_pair(SDLK_a, false),
+	std::make_pair(SDLK_m, true),
+	std::make_pair(SDLK_s, true),
+	std::make_pair(SDLK_a, true),
 };
 
 const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User+1);
@@ -550,7 +551,7 @@ void ScreenEdit::DrawPrimitives()
 	m_textHelp.Draw();
 	m_textInfo.Draw();
 	m_Fade.Draw();
-/*	if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,DIK_F1) ) )
+/*	if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,SDLK_F1) ) )
 	{
 		m_rectShortcutsBack.Draw();
 		m_textShortcuts.Draw();
@@ -688,8 +689,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	if(type == IET_RELEASE)
 	{
 		switch( DeviceI.button ) {
-		case DIK_LSHIFT:
-		case DIK_RSHIFT:
+		case SDLK_LSHIFT:
+		case SDLK_RSHIFT:
 			shiftAnchor = -1;
 			break;
 		}
@@ -698,21 +699,21 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 	switch( DeviceI.button )
 	{
-	case DIK_1:
-	case DIK_2:
-	case DIK_3:
-	case DIK_4:
-	case DIK_5:
-	case DIK_6:
-	case DIK_7:
-	case DIK_8:
-	case DIK_9:
-	case DIK_0:
+	case SDLK_1:
+	case SDLK_2:
+	case SDLK_3:
+	case SDLK_4:
+	case SDLK_5:
+	case SDLK_6:
+	case SDLK_7:
+	case SDLK_8:
+	case SDLK_9:
+	case SDLK_0:
 		{
 			if( type != IET_FIRST_PRESS )
 				break;	// We only care about first presses
 
-			int iCol = DeviceI.button - DIK_1;
+			int iCol = DeviceI.button - SDLK_1;
 			const float fSongBeat = GAMESTATE->m_fSongBeat;
 			const int iSongIndex = BeatToNoteRow( fSongBeat );
 
@@ -744,10 +745,10 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 		}
 		break;
-	case DIK_Q:
+	case SDLK_q:
 		SCREENMAN->SetNewScreen( "ScreenEditMenu" );
 		break;
-	case DIK_S:
+	case SDLK_s:
 		{
 			// copy edit into current Notes
 			Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
@@ -761,24 +762,24 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","edit save") );
 		}
 		break;
-	case DIK_UP:
-	case DIK_DOWN:
-	case DIK_PGUP:
-	case DIK_PGDN:
+	case SDLK_UP:
+	case SDLK_DOWN:
+	case SDLK_PAGEUP:
+	case SDLK_PAGEDOWN:
 		{
 			float fBeatsToMove=0.f;
 			switch( DeviceI.button )
 			{
-			case DIK_UP:
-			case DIK_DOWN:
+			case SDLK_UP:
+			case SDLK_DOWN:
 				fBeatsToMove = NoteTypeToBeat( m_SnapDisplay.GetNoteType() );
-				if( DeviceI.button == DIK_UP )	
+				if( DeviceI.button == SDLK_UP )	
 					fBeatsToMove *= -1;
 			break;
-			case DIK_PGUP:
-			case DIK_PGDN:
+			case SDLK_PAGEUP:
+			case SDLK_PAGEDOWN:
 				fBeatsToMove = BEATS_PER_MEASURE;
-				if( DeviceI.button == DIK_PGUP )	
+				if( DeviceI.button == SDLK_PAGEUP )	
 					fBeatsToMove *= -1;
 			}
 
@@ -788,7 +789,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			// check to see if they're holding a button
 			for( int col=0; col<m_NoteFieldEdit.m_iNumTracks && col<=10; col++ )
 			{
-				const DeviceInput di(DEVICE_KEYBOARD, DIK_1+col);
+				const DeviceInput di(DEVICE_KEYBOARD, SDLK_1+col);
 
 				if( !INPUTFILTER->IsBeingPressed(di) )
 					continue;
@@ -805,8 +806,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				m_NoteFieldEdit.AddHoldNote( newHN );
 			}
 
-			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_LSHIFT)) ||
-				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_RSHIFT)))
+			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT)) ||
+				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RSHIFT)))
 			{
 				/* Shift is being held. 
 				 *
@@ -836,23 +837,23 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			m_soundChangeLine.Play();
 		}
 		break;
-	case DIK_HOME:
+	case SDLK_HOME:
 		GAMESTATE->m_fSongBeat = 0;
 		m_soundChangeLine.Play();
 		break;
-	case DIK_END:
+	case SDLK_END:
 		GAMESTATE->m_fSongBeat = m_NoteFieldEdit.GetLastBeat();
 		m_soundChangeLine.Play();
 		break;
-	case DIK_RIGHT:
+	case SDLK_RIGHT:
 		m_SnapDisplay.PrevSnapMode();
 		OnSnapModeChange();
 		break;
-	case DIK_LEFT:
+	case SDLK_LEFT:
 		m_SnapDisplay.NextSnapMode();
 		OnSnapModeChange();
 		break;
-	case DIK_RETURN:
+	case SDLK_RETURN:
 		if( m_NoteFieldEdit.m_fEndMarker != -1  &&  GAMESTATE->m_fSongBeat > m_NoteFieldEdit.m_fEndMarker )
 		{
 			// invalid!  The begin maker must be placed before the end marker
@@ -864,7 +865,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			m_soundMarker.Play();
 		}
 		break;
-	case DIK_SPACE:
+	case SDLK_SPACE:
 		if( m_NoteFieldEdit.m_fBeginMarker != -1  &&  GAMESTATE->m_fSongBeat < m_NoteFieldEdit.m_fBeginMarker )
 		{
 			// invalid!  The end maker must be placed after the begin marker
@@ -876,11 +877,11 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			m_soundMarker.Play();
 		}
 		break;
-	case DIK_G:
-	case DIK_H:
-	case DIK_J:
-	case DIK_K:
-	case DIK_L:
+	case SDLK_g:
+	case SDLK_h:
+	case SDLK_j:
+	case SDLK_k:
+	case SDLK_l:
 		{
 			if( m_NoteFieldEdit.m_fBeginMarker == -1  ||  m_NoteFieldEdit.m_fEndMarker == -1 )
 			{
@@ -892,11 +893,11 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				NoteType noteType2;
 				switch( DeviceI.button )
 				{
-					case DIK_G:	noteType1 = NOTE_TYPE_4TH;	noteType2 = NOTE_TYPE_4TH;	break;
-					case DIK_H:	noteType1 = NOTE_TYPE_8TH;	noteType2 = NOTE_TYPE_8TH;	break;
-					case DIK_J:	noteType1 = NOTE_TYPE_12TH;	noteType2 = NOTE_TYPE_12TH;	break;
-					case DIK_K:	noteType1 = NOTE_TYPE_16TH;	noteType2 = NOTE_TYPE_16TH;	break;
-					case DIK_L:	noteType1 = NOTE_TYPE_12TH;	noteType2 = NOTE_TYPE_16TH;	break;
+					case SDLK_g:	noteType1 = NOTE_TYPE_4TH;	noteType2 = NOTE_TYPE_4TH;	break;
+					case SDLK_h:	noteType1 = NOTE_TYPE_8TH;	noteType2 = NOTE_TYPE_8TH;	break;
+					case SDLK_j:	noteType1 = NOTE_TYPE_12TH;	noteType2 = NOTE_TYPE_12TH;	break;
+					case SDLK_k:	noteType1 = NOTE_TYPE_16TH;	noteType2 = NOTE_TYPE_16TH;	break;
+					case SDLK_l:	noteType1 = NOTE_TYPE_12TH;	noteType2 = NOTE_TYPE_16TH;	break;
 					default:	ASSERT( false );		return;
 				}
 
@@ -904,7 +905,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 		}
 		break;
-	case DIK_ESCAPE:
+	case SDLK_ESCAPE:
 		{
 			m_EditMode = MODE_ACTION_MENU;
 			m_iMenuSelection = 0;
@@ -915,7 +916,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			m_rectRecordBack.SetTweenDiffuse( RageColor(0,0,0,0.8f) );
 		}
 		break;
-	case DIK_N:
+	case SDLK_n:
 		{
 			m_EditMode = MODE_NAMING_MENU;
 			m_iMenuSelection = 0;
@@ -926,15 +927,15 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			m_rectRecordBack.SetTweenDiffuse( RageColor(0,0,0,0.8f) );
 		}
 		break;
-	case DIK_R:
-	case DIK_P:
+	case SDLK_r:
+	case SDLK_p:
 		{
 			if( m_NoteFieldEdit.m_fBeginMarker == -1 )
 				m_NoteFieldEdit.m_fBeginMarker = GAMESTATE->m_fSongBeat;
 			if( m_NoteFieldEdit.m_fEndMarker == -1 )
 				m_NoteFieldEdit.m_fEndMarker = m_pSong->m_fLastBeat;
 
-			if(DeviceI.button == DIK_R) {
+			if(DeviceI.button == SDLK_r) {
 				m_EditMode = MODE_RECORDING;
 
 				// initialize m_NoteFieldRecord
@@ -960,7 +961,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 		}
 		break;
-	case DIK_T:
+	case SDLK_t:
 		if(     GAMESTATE->m_SongOptions.m_fMusicRate == 1.0f )		GAMESTATE->m_SongOptions.m_fMusicRate = 0.9f;
 		else if( GAMESTATE->m_SongOptions.m_fMusicRate == 0.9f )	GAMESTATE->m_SongOptions.m_fMusicRate = 0.8f;
 		else if( GAMESTATE->m_SongOptions.m_fMusicRate == 0.8f )	GAMESTATE->m_SongOptions.m_fMusicRate = 0.7f;
@@ -971,8 +972,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		else if( GAMESTATE->m_SongOptions.m_fMusicRate == 1.2f )	GAMESTATE->m_SongOptions.m_fMusicRate = 1.1f;
 		else if( GAMESTATE->m_SongOptions.m_fMusicRate == 1.1f )	GAMESTATE->m_SongOptions.m_fMusicRate = 1.0f;
 		break;
-	case DIK_INSERT:
-	case DIK_DELETE:
+	case SDLK_INSERT:
+	case SDLK_DELETE:
 		{
 			NoteData temp;
 			temp.m_iNumTracks = m_NoteFieldEdit.m_iNumTracks;
@@ -980,11 +981,11 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			int iPasteAtRow;
 			switch( DeviceI.button )
 			{
-			case DIK_INSERT:
+			case SDLK_INSERT:
 				iTakeFromRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 				iPasteAtRow = BeatToNoteRow( GAMESTATE->m_fSongBeat+1 );
 				break;
-			case DIK_DELETE:
+			case SDLK_DELETE:
 				iTakeFromRow = BeatToNoteRow( GAMESTATE->m_fSongBeat+1 );
 				iPasteAtRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 				break;
@@ -994,7 +995,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			m_NoteFieldEdit.CopyRange( &temp, 0, MAX_TAP_NOTE_ROWS-iTakeFromRow, iPasteAtRow );
 		}
 		break;
-	case DIK_X:
+	case SDLK_x:
 		if( m_NoteFieldEdit.m_fBeginMarker == -1  ||  m_NoteFieldEdit.m_fEndMarker == -1 )
 		{
 			m_soundInvalid.Play();
@@ -1008,7 +1009,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			m_NoteFieldEdit.ClearRange( iFirstRow, iLastRow  );
 		}
 		break;
-	case DIK_C:
+	case SDLK_c:
 		if( m_NoteFieldEdit.m_fBeginMarker == -1  ||  m_NoteFieldEdit.m_fEndMarker == -1 )
 		{
 			m_soundInvalid.Play();
@@ -1021,7 +1022,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			m_Clipboard.CopyRange( &m_NoteFieldEdit, iFirstRow, iLastRow );
 		}
 		break;
-	case DIK_V:
+	case SDLK_v:
 		{
 			int iSrcFirstRow = 0;
 			int iSrcLastRow  = BeatToNoteRow( m_Clipboard.GetLastBeat() );
@@ -1031,18 +1032,18 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		}
 		break;
 
-	case DIK_D:
+	case SDLK_d:
 		{
 			Difficulty &dc = m_pNotes->m_Difficulty;
 			dc = Difficulty( (dc+1)%NUM_DIFFICULTIES );
 		}
 		break;
 
-	case DIK_E:
+	case SDLK_e:
 		SCREENMAN->TextEntry( SM_None, "Edit notes description.\nPress Enter to confirm,\nEscape to cancel.", m_pNotes->m_sDescription, ChangeDescription, NULL );
 		break;
 
-	case DIK_B:
+	case SDLK_b:
 		{
 			CString sOldBackground;
 			unsigned i;
@@ -1058,22 +1059,22 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		}
 		break;
 
-	case DIK_I:
+	case SDLK_i:
 		if( GAMESTATE->m_SongOptions.m_AssistType==SongOptions::ASSIST_TICK )
 			GAMESTATE->m_SongOptions.m_AssistType = SongOptions::ASSIST_NONE;
 		else
 			GAMESTATE->m_SongOptions.m_AssistType = SongOptions::ASSIST_TICK;
 		break;
 
-	case DIK_F7:
-	case DIK_F8:
+	case SDLK_F7:
+	case SDLK_F8:
 		{
 			float fBPM = m_pSong->GetBPMAtBeat( GAMESTATE->m_fSongBeat );
 			float fDeltaBPM;
 			switch( DeviceI.button )
 			{
-			case DIK_F7:	fDeltaBPM = - 0.020f;		break;
-			case DIK_F8:	fDeltaBPM = + 0.020f;		break;
+			case SDLK_F7:	fDeltaBPM = - 0.020f;		break;
+			case SDLK_F8:	fDeltaBPM = + 0.020f;		break;
 			default:	ASSERT(0);						return;
 			}
 			switch( type )
@@ -1103,14 +1104,14 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 		}
 		break;
-	case DIK_F9:
-	case DIK_F10:
+	case SDLK_F9:
+	case SDLK_F10:
 		{
 			float fStopDelta;
 			switch( DeviceI.button )
 			{
-			case DIK_F9:	fStopDelta = -0.02f;		break;
-			case DIK_F10:	fStopDelta = +0.02f;		break;
+			case SDLK_F9:	fStopDelta = -0.02f;		break;
+			case SDLK_F10:	fStopDelta = +0.02f;		break;
 			default:	ASSERT(0);						return;
 			}
 			switch( type )
@@ -1141,14 +1142,14 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 		}
 		break;
-	case DIK_F11:
-	case DIK_F12:
+	case SDLK_F11:
+	case SDLK_F12:
 		{
 			float fOffsetDelta;
 			switch( DeviceI.button )
 			{
-			case DIK_F11:	fOffsetDelta = -0.02f;		break;
-			case DIK_F12:	fOffsetDelta = +0.02f;		break;
+			case SDLK_F11:	fOffsetDelta = -0.02f;		break;
+			case SDLK_F12:	fOffsetDelta = +0.02f;		break;
 			default:	ASSERT(0);						return;
 			}
 			switch( type )
@@ -1160,18 +1161,18 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			m_pSong->m_fBeat0OffsetInSeconds += fOffsetDelta;
 		}
 		break;
-	case DIK_M:
+	case SDLK_m:
 		MUSIC->Load( m_pSong->GetMusicPath() );
 		MUSIC->Play( false, m_pSong->m_fMusicSampleStartSeconds, m_pSong->m_fMusicSampleLengthSeconds );
 		break;
-	case DIK_LBRACKET:
-	case DIK_RBRACKET:
+	case SDLK_LEFTBRACKET:
+	case SDLK_RIGHTBRACKET:
 		{
 			float fDelta;
 			switch( DeviceI.button )
 			{
-			case DIK_LBRACKET:		fDelta = -0.02f;	break;
-			case DIK_RBRACKET:		fDelta = +0.02f;	break;
+			case SDLK_LEFTBRACKET:		fDelta = -0.02f;	break;
+			case SDLK_RIGHTBRACKET:		fDelta = +0.02f;	break;
 			default:	ASSERT(0);						return;
 			}
 			switch( type )
@@ -1180,8 +1181,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			case IET_FAST_REPEAT:	fDelta *= 40;	break;
 			}
 
-			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_LSHIFT)) ||
-				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_RSHIFT)))
+			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT)) ||
+				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RSHIFT)))
 			{
 				m_pSong->m_fMusicSampleLengthSeconds += fDelta;
 				m_pSong->m_fMusicSampleLengthSeconds = max(m_pSong->m_fMusicSampleLengthSeconds,0);
@@ -1196,7 +1197,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	if( DeviceI.device == DEVICE_KEYBOARD  &&  DeviceI.button == DIK_ESCAPE )
+	if( DeviceI.device == DEVICE_KEYBOARD  &&  DeviceI.button == SDLK_ESCAPE )
 	{
 		TransitionFromRecordToEdit();
 		return;
@@ -1240,23 +1241,23 @@ void ScreenEdit::InputActionMenu( const DeviceInput& DeviceI, const InputEventTy
 
 	switch( DeviceI.button )
 	{
-	case DIK_UP:
+	case SDLK_UP:
 		MenuItemLoseFocus( &m_textActionMenu[m_iMenuSelection] );
 		m_iMenuSelection = (m_iMenuSelection-1+NUM_ACTION_MENU_ITEMS) % NUM_ACTION_MENU_ITEMS;
 		printf( "%d\n", m_iMenuSelection );
 		MenuItemGainFocus( &m_textActionMenu[m_iMenuSelection] );
 		break;
-	case DIK_DOWN:
+	case SDLK_DOWN:
 		MenuItemLoseFocus( &m_textActionMenu[m_iMenuSelection] );
 		m_iMenuSelection = (m_iMenuSelection+1) % NUM_ACTION_MENU_ITEMS;
 		printf( "%d\n", m_iMenuSelection );
 		MenuItemGainFocus( &m_textActionMenu[m_iMenuSelection] );
 		break;
-	case DIK_RETURN:
-	case DIK_ESCAPE:
+	case SDLK_RETURN:
+	case SDLK_ESCAPE:
 		TransitionToEdit();
 		MenuItemLoseFocus( &m_textActionMenu[m_iMenuSelection] );
-		if( DeviceI.button == DIK_RETURN )
+		if( DeviceI.button == SDLK_RETURN )
 		{
 			SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
 			int iMenuKey = ACTION_MENU_ITEM_KEY[m_iMenuSelection];
@@ -1285,15 +1286,15 @@ void ScreenEdit::InputNamingMenu( const DeviceInput& DeviceI, const InputEventTy
 	if(type == IET_RELEASE) return; // don't care
 
 	bool translit = forceShiftPressed ||
-					INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_LSHIFT)) ||
-					INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_RSHIFT));
+					INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT)) ||
+					INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RSHIFT));
 
 	switch( DeviceI.button ) {
-	case DIK_M:
-	case DIK_S:
-	case DIK_A:
-	case DIK_ESCAPE:
-	case DIK_RETURN:
+	case SDLK_m:
+	case SDLK_s:
+	case SDLK_a:
+	case SDLK_ESCAPE:
+	case SDLK_RETURN:
 		TransitionToEdit();
 		MenuItemLoseFocus( &m_textNamingMenu[m_iMenuSelection] );
 		break;
@@ -1301,7 +1302,7 @@ void ScreenEdit::InputNamingMenu( const DeviceInput& DeviceI, const InputEventTy
 
 	switch( DeviceI.button )
 	{
-	case DIK_M:
+	case SDLK_m:
 		if(translit) {
 			SCREENMAN->TextEntry( SM_None, "Edit song main title transliteration.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sMainTitleTranslit, ChangeMainTitleTranslit, NULL);
 		} else {
@@ -1309,7 +1310,7 @@ void ScreenEdit::InputNamingMenu( const DeviceInput& DeviceI, const InputEventTy
 		}
 		break;
 
-	case DIK_S:
+	case SDLK_s:
 		if(translit) {
 			SCREENMAN->TextEntry( SM_None, "Edit song sub title transliteration.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sSubTitleTranslit, ChangeSubTitleTranslit, NULL);
 		} else {
@@ -1317,7 +1318,7 @@ void ScreenEdit::InputNamingMenu( const DeviceInput& DeviceI, const InputEventTy
 		}
 		break;
 
-	case DIK_A:
+	case SDLK_a:
 		if(translit) {
 			SCREENMAN->TextEntry( SM_None, "Edit song artist transliteration.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sArtistTranslit, ChangeArtistTranslit, NULL);
 		} else {
@@ -1325,19 +1326,19 @@ void ScreenEdit::InputNamingMenu( const DeviceInput& DeviceI, const InputEventTy
 		}
 		break;
 
-	case DIK_UP:
+	case SDLK_UP:
 		MenuItemLoseFocus( &m_textNamingMenu[m_iMenuSelection] );
 		m_iMenuSelection = (m_iMenuSelection-1+NUM_NAMING_MENU_ITEMS) % NUM_NAMING_MENU_ITEMS;
 		printf( "%d\n", m_iMenuSelection );
 		MenuItemGainFocus( &m_textNamingMenu[m_iMenuSelection] );
 		break;
-	case DIK_DOWN:
+	case SDLK_DOWN:
 		MenuItemLoseFocus( &m_textNamingMenu[m_iMenuSelection] );
 		m_iMenuSelection = (m_iMenuSelection+1) % NUM_NAMING_MENU_ITEMS;
 		printf( "%d\n", m_iMenuSelection );
 		MenuItemGainFocus( &m_textNamingMenu[m_iMenuSelection] );
 		break;
-	case DIK_RETURN:
+	case SDLK_RETURN:
 		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
 		const std::pair<int, bool>& pairMenuKey = NAMING_MENU_ITEM_KEY[m_iMenuSelection];
 		InputNamingMenu( DeviceInput(DEVICE_KEYBOARD,pairMenuKey.first), IET_FIRST_PRESS, GameInput(), MenuInput(), StyleInput(), pairMenuKey.second );
@@ -1354,17 +1355,17 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 	{
 		switch( DeviceI.button )
 		{
-		case DIK_ESCAPE:
+		case SDLK_ESCAPE:
 			TransitionToEdit();
 			break;
-		case DIK_F11:
-		case DIK_F12:
+		case SDLK_F11:
+		case SDLK_F12:
 			{
 				float fOffsetDelta;
 				switch( DeviceI.button )
 				{
-				case DIK_F11:	fOffsetDelta = -0.020f;		break;
-				case DIK_F12:	fOffsetDelta = +0.020f;		break;
+				case SDLK_F11:	fOffsetDelta = -0.020f;		break;
+				case SDLK_F12:	fOffsetDelta = +0.020f;		break;
 				default:	ASSERT(0);						return;
 				}
 				switch( type )

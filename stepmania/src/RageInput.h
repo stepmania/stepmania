@@ -4,24 +4,26 @@
 -----------------------------------------------------------------------------
  File: RageInput.h
 
- Desc: Wrapper for DirectInput.  Generates InputEvents.
+ Desc: Wrapper for SDL's input routines.  Generates InputEvents.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
-#ifndef DIRECTINPUT_VERSION 
-#define DIRECTINPUT_VERSION 0x0800
-#endif
+struct _SDL_Joystick;
+typedef struct _SDL_Joystick SDL_Joystick;
 
-#include <dinput.h>
-#include "RageUtil.h"
+#include "SDL_keysym.h"
 
-const int NUM_KEYBOARD_BUTTONS = 256;
-
+const int NUM_KEYBOARD_BUTTONS = SDLK_LAST;
 const int NUM_JOYSTICKS = 4;
+const int NUM_JOYSTICK_AXES = 4;	// X, Y, Z, rudder
+const int NUM_JOYSTICK_HATS = 1;
 const int NUM_PUMPS = 2;
 const int NUM_PUMP_PAD_BUTTONS = 11;
+
+const int NUM_DEVICE_BUTTONS = NUM_KEYBOARD_BUTTONS;
 
 enum InputDevice {
 	DEVICE_KEYBOARD = 0,
@@ -47,8 +49,6 @@ enum JoystickButton {
 	NUM_JOYSTICK_BUTTONS	// leave this at the end
 };
 
-const int NUM_DEVICE_BUTTONS = MAX( MAX( NUM_KEYBOARD_BUTTONS, NUM_JOYSTICK_BUTTONS ), 
-								NUM_PUMP_PAD_BUTTONS );
 
 struct DeviceInput
 {
@@ -78,32 +78,20 @@ public:
 };
 
 
-
 class RageInput
 {
-	// Our Screens Handle
-	HWND m_hWnd;
+	SDL_Joystick*		m_pJoystick[NUM_JOYSTICKS];
 
-	// Main DirectInput Object
-	LPDIRECTINPUT8			m_pDI;	
-	// Keyboard Device
-	LPDIRECTINPUTDEVICE8	m_pKeyboard;
-	// Mouse Device
-	LPDIRECTINPUTDEVICE8    m_pMouse;
-	// Joystick Devices
-	LPDIRECTINPUTDEVICE8	m_pJoystick[NUM_JOYSTICKS];
+	// Keyboard state data
+	bool	m_keys[NUM_KEYBOARD_BUTTONS];
+	bool	m_oldKeys[NUM_KEYBOARD_BUTTONS];
 
-	// Arrays for Keyboard Data
-	byte m_keys[NUM_KEYBOARD_BUTTONS];
-	byte m_oldKeys[NUM_KEYBOARD_BUTTONS];
+	// Joystick state data
+	struct {
+		bool button[NUM_JOYSTICK_BUTTONS];
+	} m_joyState[NUM_JOYSTICKS], m_oldJoyState[NUM_JOYSTICKS];
 
-	// DirectInput mouse state structure
-	DIMOUSESTATE2 m_mouseState;
-
-	// Joystick data for NUM_JOYSTICKS controllers
-	bool	m_joyState[NUM_JOYSTICKS][NUM_JOYSTICK_BUTTONS];
-	bool	m_oldJoyState[NUM_JOYSTICKS][NUM_JOYSTICK_BUTTONS];
-
+	// Pump state data
 	struct {
 		bool button[NUM_PUMP_PAD_BUTTONS];
 	} m_pumpState[NUM_PUMPS], m_oldPumpState[NUM_PUMPS];
@@ -121,37 +109,14 @@ class RageInput
 		int GetPadEvent();
 	} *m_Pumps;
 
-	INT m_AbsPosition_x, m_AbsPosition_y;
-	INT m_RelPosition_x, m_RelPosition_y;
-
-	static BOOL CALLBACK EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance,
-										       VOID* pContext );
-
-	static BOOL CALLBACK EnumAxesCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,
-									       VOID* pContext );
-
-	HRESULT UpdateMouse();
-	HRESULT UpdateKeyboard();
-	HRESULT UpdatePump();
-
-	LPDIRECTINPUT8		 GetDirectInput() { return m_pDI; }
-
 public:
-	RageInput(HWND hWnd);
+	RageInput();
 	~RageInput();
 
-	// Initialize DirectInput Resources
-	void Initialize();
-	// Release all DirectInput Resources
-	void Release();
-	// Get our Devices State
-	void Update();
-	bool IsBeingPressed( DeviceInput di );
-	bool WasBeingPressed( DeviceInput di );
-	bool BeingPressed( DeviceInput di, bool Prev = false);
-
-//	DIMOUSESTATE2		 GetMouseState() { return dimMouseState; }
-	void GetAbsPosition( int &x, int &y ) const { x = m_AbsPosition_x; y = m_AbsPosition_y; }
+	void Update( float fDeltaTime );
+	bool BeingPressed( DeviceInput di, bool bPrevState );
+	bool IsBeingPressed( DeviceInput di ) { return BeingPressed(di, false); }
+	bool WasBeingPressed( DeviceInput di ) { return BeingPressed(di, true); }
 };
 
 namespace USB {

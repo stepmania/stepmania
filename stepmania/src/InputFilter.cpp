@@ -14,6 +14,7 @@
 #include "InputFilter.h"
 #include "RageLog.h"
 #include "RageInput.h"
+#include "SDL_keyboard.h"
 
 
 InputFilter*	INPUTFILTER = NULL;	// global and accessable from anywhere in our program
@@ -58,7 +59,7 @@ float InputFilter::GetSecsHeld( DeviceInput di )
 
 void InputFilter::GetInputEvents( InputEventArray &array, float fDeltaTime )
 {
-	INPUTMAN->Update();
+	INPUTMAN->Update( fDeltaTime );
 
 	for( int d=0; d<NUM_INPUT_DEVICES; d++ )	// foreach InputDevice
 	{
