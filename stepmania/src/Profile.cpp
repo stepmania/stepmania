@@ -83,7 +83,7 @@ void Profile::InitGeneralData()
 	m_sDefaultModifiers = "";
 	m_SortOrder = SORT_INVALID;
 	m_LastDifficulty = DIFFICULTY_INVALID;
-	m_LastCourseDifficulty = COURSE_DIFFICULTY_INVALID;
+	m_LastCourseDifficulty = DIFFICULTY_INVALID;
 	m_pLastSong = NULL;
 	m_pLastCourse = NULL;
 	m_iTotalPlays = 0;

@@ -21,7 +21,7 @@
 #include "Foreach.h"
 
 /* Amount to increase meter ranges to make them difficult: */
-const int COURSE_DIFFICULTY_CLASS_CHANGE[NUM_COURSE_DIFFICULTIES] = { -1, 0, 1 };
+const int COURSE_DIFFICULTY_CLASS_CHANGE[NUM_DIFFICULTIES] = { -1, -1, 0, 1, 1 };
 
 /* Maximum lower value of ranges when difficult: */
 const int MAX_BOTTOM_RANGE = 10;
@@ -91,11 +91,11 @@ void Course::LoadFromCRSFile( CString sPath )
 		else if( 0 == stricmp(sValueName, "METER") )
 		{
 			if( sParams.params.size() == 2 )
-				m_iCustomMeter[COURSE_DIFFICULTY_REGULAR] = atoi( sParams[1] ); /* compat */
+				m_iCustomMeter[DIFFICULTY_MEDIUM] = atoi( sParams[1] ); /* compat */
 			else if( sParams.params.size() == 3 )
 			{
 				const CourseDifficulty cd = StringToCourseDifficulty( sParams[1] );
-				if( cd == COURSE_DIFFICULTY_INVALID )
+				if( cd == DIFFICULTY_INVALID )
 				{
 					LOG->Warn( "Course file '%s' contains an invalid #METER string: \"%s\"",
 								m_sPath.c_str(), sParams[1].c_str() );
@@ -472,7 +472,7 @@ void Course::AutogenOniFromArtist( CString sArtistName, CString sArtistNameTrans
 
 bool Course::IsPlayableIn( StepsType st ) const
 {
-	return GetTrail( st, COURSE_DIFFICULTY_REGULAR ) != NULL;
+	return GetTrail( st ) != NULL;
 }
 
 static vector<Song*> GetFilteredBestSongs( StepsType st )
@@ -533,7 +533,7 @@ CString Course::GetDisplayName() const
  * course difficulty doesn't exist, NULL is returned. */
 Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 {
-	ASSERT( cd != COURSE_DIFFICULTY_INVALID );
+	ASSERT( cd != DIFFICULTY_INVALID );
 
 	//
 	// Look in the Trail cache
@@ -570,16 +570,16 @@ bool Course::GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) c
 
 	if( this->m_bSortByMeter )
 	{
-		/* Sort according to COURSE_DIFFICULTY_REGULAR, since the order of songs
+		/* Sort according to DIFFICULTY_MEDIUM, since the order of songs
 		 * must not change across difficulties. */
 		Trail SortTrail;
-		if( cd == COURSE_DIFFICULTY_REGULAR )
+		if( cd == DIFFICULTY_MEDIUM )
 			SortTrail = trail;
 		else
 		{
-			bool bOK = GetTrailUnsorted( st, COURSE_DIFFICULTY_REGULAR, SortTrail );
+			bool bOK = GetTrailUnsorted( st, DIFFICULTY_MEDIUM, SortTrail );
 
-			/* If we have any other difficulty, we must have COURSE_DIFFICULTY_REGULAR. */
+			/* If we have any other difficulty, we must have DIFFICULTY_MEDIUM. */
 			ASSERT( bOK );
 		}
 		ASSERT_M( trail.m_vEntries.size() == SortTrail.m_vEntries.size(),
@@ -605,6 +605,13 @@ bool Course::GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) c
 bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const
 {
 	trail.Init();
+
+	switch( cd )
+	{
+	case DIFFICULTY_BEGINNER:
+	case DIFFICULTY_CHALLENGE:
+		return false;
+	}
 
 	//
 	// Construct a new Trail, add it to the cache, then return it.
@@ -637,13 +644,13 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	trail.m_CourseDifficulty = cd;
 
 	/* Set to true if CourseDifficulty is able to change something. */
-	bool bCourseDifficultyIsSignificant = (cd == COURSE_DIFFICULTY_REGULAR);
+	bool bCourseDifficultyIsSignificant = (cd == DIFFICULTY_MEDIUM);
 	for( unsigned i=0; i<entries.size(); i++ )
 	{
 		const CourseEntry &e = entries[i];
 		CourseDifficulty entry_difficulty = cd;
-		if( e.no_difficult && entry_difficulty == COURSE_DIFFICULTY_DIFFICULT )
-			entry_difficulty = COURSE_DIFFICULTY_REGULAR;
+		if( e.no_difficult && entry_difficulty == DIFFICULTY_HARD )
+			entry_difficulty = DIFFICULTY_MEDIUM;
 
 		Song* pSong = NULL;	// fill this in
 		Steps* pSteps = NULL;	// fill this in
@@ -744,7 +751,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			continue;	// this song entry isn't playable.  Skip.
 
 		Difficulty dc = pSteps->GetDifficulty();
-		if( entry_difficulty != COURSE_DIFFICULTY_REGULAR )
+		if( entry_difficulty != DIFFICULTY_MEDIUM )
 		{
 			/* See if we can find a NoteData after adjusting the difficulty by COURSE_DIFFICULTY_CLASS_CHANGE.
 			 * If we can't, just use the one we already have. */
@@ -810,7 +817,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		trail.m_iSpecifiedMeter = m_iCustomMeter[cd];
 
 	/* If the course difficulty never actually changed anything, then this difficulty
-	 * is equivalent to COURSE_DIFFICULTY_REGULAR; it doesn't exist. */
+	 * is equivalent to DIFFICULTY_MEDIUM; it doesn't exist. */
 	return bCourseDifficultyIsSignificant;
 }
 
@@ -923,7 +930,7 @@ bool Course::GetTotalSeconds( StepsType st, float& fSecondsOut ) const
 	if( !IsFixed() )
 		return false;
 
-	Trail* pTrail = GetTrail( st, COURSE_DIFFICULTY_REGULAR );
+	Trail* pTrail = GetTrail( st, DIFFICULTY_MEDIUM );
 
 	fSecondsOut = pTrail->GetLengthSeconds();
 	return true;
@@ -967,7 +974,7 @@ void Course::UpdateCourseStats( StepsType st )
 		return;
 	}
 
-	Trail* pTrail = GetTrail( st, COURSE_DIFFICULTY_REGULAR );
+	Trail* pTrail = GetTrail( st, DIFFICULTY_MEDIUM );
 
 	m_SortOrder_TotalDifficulty += pTrail->GetTotalMeter();
 

@@ -99,6 +99,9 @@ void SongManager::InitAll( LoadingWindow *ld )
 	InitSongsFromDisk( ld );
 	InitCoursesFromDisk( ld );
 	InitAutogenCourses();
+
+	/* This shouldn't need to be here; if it's taking long enough that this is
+	 * even visible, we should be fixing it, not showing a progress display. */
 	if( ld )
 		ld->SetText( "Saving Catalog.xml ..." );
 	SaveCatalogXml( DATA_DIR );
@@ -726,7 +729,7 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 	course.LoadFromCRSFile( sCoursePath );
 	if( course.GetEstimatedNumStages() <= 0 ) return false;
 
-	Trail *pTrail = course.GetTrail( GAMESTATE->GetCurrentStyleDef()->m_StepsType, COURSE_DIFFICULTY_REGULAR );
+	Trail *pTrail = course.GetTrail( GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 	if( pTrail->m_vEntries.empty() )
 		return false;
 

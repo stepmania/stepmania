@@ -137,7 +137,7 @@ void DifficultyMeter::SetFromTrail( const Trail* pTrail )
 		Unset();
 		return;
 	}
-
+/*
 	Difficulty FakeDifficulty;
 	switch( pTrail->m_CourseDifficulty )
 	{
@@ -146,9 +146,9 @@ void DifficultyMeter::SetFromTrail( const Trail* pTrail )
 	case COURSE_DIFFICULTY_DIFFICULT:	FakeDifficulty = DIFFICULTY_HARD;	break;
 	default:	ASSERT(0);
 	}
-
-	SetFromMeterAndDifficulty( pTrail->GetMeter(), FakeDifficulty );
-	SetDifficulty( DifficultyToString(FakeDifficulty) + "Course" );
+*/
+	SetFromMeterAndDifficulty( pTrail->GetMeter(), pTrail->m_CourseDifficulty );
+	SetDifficulty( CourseDifficultyToString(pTrail->m_CourseDifficulty) + "Course" );
 }
 
 void DifficultyMeter::Unset()

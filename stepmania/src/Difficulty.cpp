@@ -43,11 +43,13 @@ Difficulty StringToDifficulty( const CString& sDC )
 }
 
 
-static const CString CourseDifficultyNames[NUM_COURSE_DIFFICULTIES] =
+static const CString CourseDifficultyNames[NUM_DIFFICULTIES] =
 {
+	"(not used)",
 	"Easy",
 	"Regular",
 	"Difficult",
+	"(not used)",
 };
 XToString( CourseDifficulty );
 XToThemedString( CourseDifficulty );
@@ -55,12 +57,12 @@ StringToX( CourseDifficulty );
 
 CourseDifficulty GetNextShownCourseDifficulty( CourseDifficulty cd )
 {
-	for( CourseDifficulty d=(CourseDifficulty)(cd+1); d<NUM_COURSE_DIFFICULTIES; ((int&)d)++ )
+	for( CourseDifficulty d=(CourseDifficulty)(cd+1); d<NUM_DIFFICULTIES; ((int&)d)++ )
 	{
 		if( GAMESTATE->IsCourseDifficultyShown(d) )
 			return d;
 	}
-	return COURSE_DIFFICULTY_INVALID;
+	return DIFFICULTY_INVALID;
 }
 
 /*

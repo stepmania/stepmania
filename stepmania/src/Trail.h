@@ -51,7 +51,7 @@ public:
 	void Init()
 	{
 		m_StepsType = STEPS_TYPE_INVALID;
-		m_CourseDifficulty = COURSE_DIFFICULTY_INVALID;
+		m_CourseDifficulty = DIFFICULTY_INVALID;
 		m_iSpecifiedMeter = -1;
 		m_vEntries.clear();
 	}

@@ -11,7 +11,7 @@ void TrailID::FromTrail( const Trail *p )
 	if( p == NULL )
 	{
 		st = STEPS_TYPE_INVALID;
-		cd = COURSE_DIFFICULTY_INVALID;
+		cd = DIFFICULTY_INVALID;
 	}
 	else
 	{
@@ -24,7 +24,7 @@ Trail *TrailID::ToTrail( const Course *p, bool bAllowNull ) const
 {
 	ASSERT( p );
 
-	if( st == STEPS_TYPE_INVALID || cd == COURSE_DIFFICULTY_INVALID )
+	if( st == STEPS_TYPE_INVALID || cd == DIFFICULTY_INVALID )
 		return NULL;
 
 	Trail *ret = p->GetTrail( st, cd );
@@ -67,7 +67,7 @@ CString TrailID::ToString() const
 
 bool TrailID::IsValid() const
 {
-	return st != STEPS_TYPE_INVALID && cd != COURSE_DIFFICULTY_INVALID;
+	return st != STEPS_TYPE_INVALID && cd != DIFFICULTY_INVALID;
 }
 
 bool TrailID::operator<( const TrailID &rhs ) const

@@ -1532,7 +1532,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	{
 		Course* pCourse = m_MusicWheel.GetSelectedCourse();
 		StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-		Trail *pTrail = pCourse->GetTrail( st, COURSE_DIFFICULTY_REGULAR );
+		Trail *pTrail = pCourse->GetTrail( st );
 		ASSERT( pTrail );
 
 		pCourse->GetTrails( m_vpTrails, GAMESTATE->GetCurrentStyleDef()->m_StepsType );

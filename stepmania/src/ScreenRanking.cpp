@@ -327,7 +327,7 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 				if( pts.pCourse == NULL )
 					continue;
 
-				pts.pTrail = pts.pCourse->GetTrail( pts.nt, COURSE_DIFFICULTY_REGULAR );
+				pts.pTrail = pts.pCourse->GetTrail( pts.nt );
 				if( pts.pTrail == NULL )
 					continue;
 

@@ -85,7 +85,7 @@ public:
 	bool		m_bRepeat;	// repeat after last song?  "Endless"
 	bool		m_bRandomize;	// play the songs in a random order
 	int			m_iLives;	// -1 means use bar life meter
-	int			m_iCustomMeter[NUM_COURSE_DIFFICULTIES];	// -1 = no meter specified
+	int			m_iCustomMeter[NUM_DIFFICULTIES];	// -1 = no meter specified
 	bool		m_bSortByMeter;
 
 	vector<CourseEntry> m_entries;
@@ -95,9 +95,9 @@ public:
 	CString GetTranslitName() const { return m_sNameTranslit.size()? m_sNameTranslit: m_sName; }
 
 	// Dereferences course_entries and returns only the playable Songs and Steps
-	Trail* GetTrail( StepsType st, CourseDifficulty cd ) const;
+	Trail* GetTrail( StepsType st, CourseDifficulty cd=DIFFICULTY_MEDIUM ) const;
 	void GetTrails( vector<Trail*> &AddTo, StepsType st ) const;
-	float GetMeter( StepsType st, CourseDifficulty cd ) const;
+	float GetMeter( StepsType st, CourseDifficulty cd=DIFFICULTY_MEDIUM ) const;
 	bool HasMods() const;
 	bool AllSongsAreFixed() const;
 
@@ -135,9 +135,9 @@ private:
 	bool GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
 	bool GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
 
-	mutable Trail m_TrailCache[NUM_STEPS_TYPES][NUM_COURSE_DIFFICULTIES];
-	mutable bool m_TrailCacheValid[NUM_STEPS_TYPES][NUM_COURSE_DIFFICULTIES];
-	mutable bool m_TrailCacheNull[NUM_STEPS_TYPES][NUM_COURSE_DIFFICULTIES];
+	mutable Trail m_TrailCache[NUM_STEPS_TYPES][NUM_DIFFICULTIES];
+	mutable bool m_TrailCacheValid[NUM_STEPS_TYPES][NUM_DIFFICULTIES];
+	mutable bool m_TrailCacheNull[NUM_STEPS_TYPES][NUM_DIFFICULTIES];
 };
 
 #endif

@@ -23,22 +23,15 @@ CString DifficultyToThemedString( Difficulty dc );
 Difficulty StringToDifficulty( const CString& sDC );
 
 
-enum CourseDifficulty 
-{
-	COURSE_DIFFICULTY_EASY,
-	COURSE_DIFFICULTY_REGULAR,
-	COURSE_DIFFICULTY_DIFFICULT,
-	NUM_COURSE_DIFFICULTIES,
-	COURSE_DIFFICULTY_INVALID
-};
-#define FOREACH_CourseDifficulty( cd ) FOREACH_ENUM( CourseDifficulty, NUM_COURSE_DIFFICULTIES, cd )
-#define FOREACH_ShownCourseDifficulty( cd ) for( CourseDifficulty cd=GetNextShownCourseDifficulty((CourseDifficulty)-1); cd!=COURSE_DIFFICULTY_INVALID; cd=GetNextShownCourseDifficulty(cd) )
+typedef Difficulty CourseDifficulty;
+#define FOREACH_CourseDifficulty FOREACH_Difficulty
+#define FOREACH_ShownCourseDifficulty( cd ) for( Difficulty cd=GetNextShownCourseDifficulty((CourseDifficulty)-1); cd!=DIFFICULTY_INVALID; cd=GetNextShownCourseDifficulty(cd) )
 
-const CString& CourseDifficultyToString( CourseDifficulty dc );
-CString CourseDifficultyToThemedString( CourseDifficulty dc );
-CourseDifficulty StringToCourseDifficulty( const CString& sDC );
+const CString& CourseDifficultyToString( Difficulty dc );
+CString CourseDifficultyToThemedString( Difficulty dc );
+Difficulty StringToCourseDifficulty( const CString& sDC );
 
-CourseDifficulty GetNextShownCourseDifficulty( CourseDifficulty pn );
+Difficulty GetNextShownCourseDifficulty( Difficulty pn );
 
 #endif
 

@@ -124,7 +124,7 @@ void GameState::Reset()
 	FOREACH_PlayerNumber( p )
 	{
 		m_PreferredDifficulty[p] = DIFFICULTY_INVALID;
-		m_PreferredCourseDifficulty[p] = COURSE_DIFFICULTY_REGULAR;
+		m_PreferredCourseDifficulty[p] = DIFFICULTY_MEDIUM;
 	}
 	m_SortOrder = SORT_INVALID;
 	m_PlayMode = PLAY_MODE_INVALID;
@@ -273,7 +273,7 @@ void GameState::PlayersFinalized()
 			m_SortOrder = pProfile->m_SortOrder;
 		if( pProfile->m_LastDifficulty != DIFFICULTY_INVALID )
 			m_PreferredDifficulty[pn] = pProfile->m_LastDifficulty;
-		if( pProfile->m_LastCourseDifficulty != COURSE_DIFFICULTY_INVALID )
+		if( pProfile->m_LastCourseDifficulty != DIFFICULTY_INVALID )
 			m_PreferredCourseDifficulty[pn] = pProfile->m_LastCourseDifficulty;
 		if( m_pPreferredSong == NULL && pProfile->m_pLastSong )
 			m_pPreferredSong = pProfile->m_pLastSong;
@@ -399,7 +399,7 @@ void GameState::SaveCurrentSettingsToProfile( PlayerNumber pn )
 		pProfile->m_SortOrder = m_SortOrder;
 	if( m_PreferredDifficulty[pn] != DIFFICULTY_INVALID )
 		pProfile->m_LastDifficulty = m_PreferredDifficulty[pn];
-	if( m_PreferredCourseDifficulty[pn] != COURSE_DIFFICULTY_INVALID )
+	if( m_PreferredCourseDifficulty[pn] != DIFFICULTY_INVALID )
 		pProfile->m_LastCourseDifficulty = m_PreferredCourseDifficulty[pn];
 	if( m_pPreferredSong )
 		pProfile->m_pLastSong = m_pPreferredSong;
@@ -1511,7 +1511,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 					feat.Type = RankingFeat::COURSE;
 					feat.pCourse = pCourse;
 					feat.Feat = ssprintf("MR #%d in %s", i+1, pCourse->m_sName.c_str() );
-					if( cd != COURSE_DIFFICULTY_REGULAR )
+					if( cd != DIFFICULTY_MEDIUM )
 						feat.Feat += " " + CourseDifficultyToThemedString(cd);
 					feat.pStringToFill = &hs.sName;
 					feat.grade = GRADE_NO_DATA;
@@ -1704,7 +1704,7 @@ static void GetCourseDifficultiesToShow( set<CourseDifficulty> &ret )
 	for( unsigned i = 0; i < asDiff.size(); ++i )
 	{
 		CourseDifficulty cd = StringToCourseDifficulty(asDiff[i]);
-		if( cd == NUM_COURSE_DIFFICULTIES )
+		if( cd == NUM_DIFFICULTIES )
 			RageException::Throw( "Unknown difficulty \"%s\" in CourseDifficultiesToShow", asDiff[i].c_str() );
 		cache.insert( cd );
 	}
@@ -1736,7 +1736,7 @@ bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, int dir )
 	while( 1 )
 	{
 		cd = (CourseDifficulty)(cd+dir);
-		if( cd < 0 || cd >= NUM_COURSE_DIFFICULTIES )
+		if( cd < 0 || cd >= NUM_DIFFICULTIES )
 			return false;
 		if( asDiff.find(cd) == asDiff.end() )
 			continue; /* not available */

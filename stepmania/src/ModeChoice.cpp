@@ -24,7 +24,7 @@ void ModeChoice::Init()
 	m_style = STYLE_INVALID;
 	m_pm = PLAY_MODE_INVALID;
 	m_dc = DIFFICULTY_INVALID;
-	m_CourseDifficulty = COURSE_DIFFICULTY_INVALID;
+	m_CourseDifficulty = DIFFICULTY_INVALID;
 	m_sModifiers = "";
 	m_sAnnouncer = "";
 	m_sScreen = "";
@@ -436,7 +436,7 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 	}
 	if( m_pTrail )
 		GAMESTATE->m_pCurTrail[pn] = m_pTrail;
-	if( m_CourseDifficulty != COURSE_DIFFICULTY_INVALID )
+	if( m_CourseDifficulty != DIFFICULTY_INVALID )
 		GAMESTATE->ChangePreferredCourseDifficulty( pn, m_CourseDifficulty );
 	if( m_pCharacter )
 		GAMESTATE->m_pCurCharacters[pn] = m_pCharacter;
@@ -470,7 +470,7 @@ bool ModeChoice::IsZero() const
 		m_pCourse != NULL || 
 		m_pTrail != NULL || 
 		m_pCharacter != NULL || 
-		m_CourseDifficulty != COURSE_DIFFICULTY_INVALID )
+		m_CourseDifficulty != DIFFICULTY_INVALID )
 		return false;
 
 	return true;
