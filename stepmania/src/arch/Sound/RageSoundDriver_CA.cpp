@@ -11,11 +11,7 @@
 #include <mach/thread_act.h>
 #include <mach/mach_init.h>
 
-namespace
-{
-    AudioConverter *gConverter;
-}
-
+static AudioConverter *gConverter;
 
 static Desc FindClosestFormat(const vector<Desc>& formats)
 {
@@ -91,10 +87,11 @@ RageSound_CA::RageSound_CA()
     try
     {
         UInt32 frames = mOutputDevice->GetLatency(kAudioDeviceSectionOutput);
-        mLatency = frames / 44100.0; // maybe? I'm tired, I don't know.
+        mLatency = frames / 44100.0;
     }
     catch (const CAException& e)
     {
+        delete mOutputDevice;
         RageException::ThrowNonfatal("Couldn't get Latency.");
     }
     
@@ -122,7 +119,8 @@ RageSound_CA::RageSound_CA()
     }
     catch(const CAException& e)
     {
-	delete gConverter;
+        delete gConverter;
+        delete mOutputDevice;
         RageException::Throw("Couldn't start the IOProc.");
     }
 }
@@ -171,6 +169,7 @@ void RageSound_CA::SetupDecodingThread()
 	/* Increase the scheduling precedence of the decoder thread. */
 	thread_precedence_policy po;
 	po.importance = 5;
-	thread_policy_set( mach_thread_self(), THREAD_PRECEDENCE_POLICY, (int *)&po, THREAD_PRECEDENCE_POLICY_COUNT );
+	thread_policy_set( mach_thread_self(), THREAD_PRECEDENCE_POLICY,
+                       (int *)&po, THREAD_PRECEDENCE_POLICY_COUNT );
 }
 

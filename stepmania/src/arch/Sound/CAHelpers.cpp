@@ -44,4 +44,3 @@ OSStatus AudioConverter::FormatConverterInputProc(UInt32& ioNumberDataPackets,
     buf.mData = mBuffer;
     return noErr;
 }
-
