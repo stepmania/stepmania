@@ -135,6 +135,31 @@ static RageDisplay::VideoModeParams GetCurVideoModeParams()
 	);
 }
 
+static void StoreActualGraphicOptions( bool initial )
+{
+	// find out what we actually have
+	PREFSMAN->m_bWindowed = DISPLAY->GetVideoModeParams().windowed;
+	PREFSMAN->m_iDisplayWidth = DISPLAY->GetVideoModeParams().width;
+	PREFSMAN->m_iDisplayHeight = DISPLAY->GetVideoModeParams().height;
+	PREFSMAN->m_iDisplayColorDepth = DISPLAY->GetVideoModeParams().bpp;
+	PREFSMAN->m_iRefreshRate = DISPLAY->GetVideoModeParams().rate;
+	PREFSMAN->m_bVsync = DISPLAY->GetVideoModeParams().vsync;
+
+	CString log = ssprintf("%s %dx%d %d color %d texture %dHz %s %s",
+		PREFSMAN->m_bWindowed ? "Windowed" : "Fullscreen",
+		PREFSMAN->m_iDisplayWidth, 
+		PREFSMAN->m_iDisplayHeight, 
+		PREFSMAN->m_iDisplayColorDepth, 
+		PREFSMAN->m_iTextureColorDepth, 
+		PREFSMAN->m_iRefreshRate,
+		PREFSMAN->m_bVsync ? "Vsync" : "NoVsync",
+		PREFSMAN->m_bAntiAliasing? "AA" : "NoAA" );
+	if( initial )
+		LOG->Info( "%s", log.c_str() );
+	else
+		SCREENMAN->SystemMessage( log );
+}
+
 void ApplyGraphicOptions()
 { 
 	bool bNeedReload = false;
@@ -150,23 +175,7 @@ void ApplyGraphicOptions()
 	if( bNeedReload )
 		TEXTUREMAN->ReloadAll();
 
-	// find out what we actually got
-	PREFSMAN->m_bWindowed = DISPLAY->GetVideoModeParams().windowed;
-	PREFSMAN->m_iDisplayWidth = DISPLAY->GetVideoModeParams().width;
-	PREFSMAN->m_iDisplayHeight = DISPLAY->GetVideoModeParams().height;
-	PREFSMAN->m_iDisplayColorDepth = DISPLAY->GetVideoModeParams().bpp;
-	PREFSMAN->m_iRefreshRate = DISPLAY->GetVideoModeParams().rate;
-	PREFSMAN->m_bVsync = DISPLAY->GetVideoModeParams().vsync;
-
-	SCREENMAN->SystemMessage( ssprintf("%s %dx%d %d color %d texture %dHz %s %s",
-		PREFSMAN->m_bWindowed ? "Windowed" : "Fullscreen",
-		PREFSMAN->m_iDisplayWidth, 
-		PREFSMAN->m_iDisplayHeight, 
-		PREFSMAN->m_iDisplayColorDepth, 
-		PREFSMAN->m_iTextureColorDepth, 
-		PREFSMAN->m_iRefreshRate,
-		PREFSMAN->m_bVsync ? "Vsync" : "NoVsync",
-		PREFSMAN->m_bAntiAliasing? "AA" : "NoAA" ) );
+	StoreActualGraphicOptions( false );
 
 	/* Give the input handlers a chance to re-open devices as necessary. */
 	INPUTMAN->WindowReset();
@@ -575,6 +584,8 @@ int main(int argc, char* argv[])
 		PREFSMAN->m_iMovieColorDepth,
 		PREFSMAN->m_bDelayedTextureDelete, 
 		PREFSMAN->m_iMaxTextureResolution );
+
+	StoreActualGraphicOptions( true );
 
 	/* Now that we've started DISPLAY, we can set up event masks. */
 	mySDL_EventState(SDL_QUIT, SDL_ENABLE);
