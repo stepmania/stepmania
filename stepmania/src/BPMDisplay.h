@@ -1,3 +1,5 @@
+#ifndef _BPMDisplay_H_
+#define _BPMDisplay_H_
 /*
 -----------------------------------------------------------------------------
  File: BPMDisplay.h
@@ -5,13 +7,9 @@
  Desc: A graphic displayed in the BPMDisplay during Dancing.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-
-#ifndef _BPMDisplay_H_
-#define _BPMDisplay_H_
-
 
 #include "Sprite.h"
 #include "song.h"
@@ -29,8 +27,7 @@ public:
 
 protected:
 	BitmapText m_textBPM;
-	BitmapText m_textLabel;
-	Quad m_rectFrame;
+	Sprite m_sprLabel;
 
 	float m_fCurrentBPM;
 	float m_fLowBPM, m_fHighBPM;
