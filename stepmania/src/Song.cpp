@@ -51,7 +51,7 @@
 
 #define CACHE_DIR "Cache/"
 
-const int FILE_CACHE_VERSION = 136;	// increment this when Song or Steps changes to invalidate cache
+const int FILE_CACHE_VERSION = 137;	// increment this when Song or Steps changes to invalidate cache
 // also increment it on the rare occasion where we split modes
 
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
@@ -849,6 +849,11 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 		 * Many songs have stray, empty song patterns.  Ignore them, so
 		 * they don't force the first beat of the whole song to 0. */
 		if(tempNoteData.GetLastRow() == 0)
+			continue;
+
+		// Don't set first/last beat based on lights.  They often start very 
+		// early and end very late.
+		if( pNotes->m_StepsType == STEPS_TYPE_LIGHTS_CABINET )
 			continue;
 
 		float fFirstBeat = tempNoteData.GetFirstBeat();
