@@ -105,9 +105,7 @@ void ScreenOptionsMaster::Init()
 
 	ASSERT( OptionRowHandlers.size() == asLineNames.size() );
 
-	vector<OptionRowHandler*> vHands( m_OptionRowAlloc.size(), NULL );
-
-	InitMenu( im, m_OptionRowAlloc, vHands, bShowUnderlines );
+	InitMenu( im, m_OptionRowAlloc, OptionRowHandlers, bShowUnderlines );
 }
 
 ScreenOptionsMaster::~ScreenOptionsMaster()
@@ -279,35 +277,6 @@ void ScreenOptionsMaster::RefreshIcons()
 				sIcon = "";
 
 			LoadOptionIcon( p, i, sIcon );
-		}
-	}
-}
-
-void ScreenOptionsMaster::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
-{
-	ScreenOptions::ChangeValueInRow( pn, iDelta, Repeat );
-
-	int iRow = m_iCurrentRow[pn];
-
-	const OptionRowHandler *pHand = OptionRowHandlers[iRow];
-
-	FOREACH_CONST( CString, pHand->m_vsRefreshRowNames, sRowToRefreshName )
-	{
-		for( unsigned r=0; r<m_Rows.size(); r++ )
-		{
-			OptionRow &rowOther = *m_Rows[r];
-
-			if( rowOther.GetRowType() == OptionRow::ROW_EXIT )
-				continue;
-
-			OptionRowHandler *pHandOther = OptionRowHandlers[r];
-			OptionRowDefinition &defOther = m_OptionRowAlloc[r];
-
-			if( *sRowToRefreshName == pHandOther->m_sName )
-			{
-				pHandOther->Reload( defOther );
-				ScreenOptions::RefreshRowChoices( r, defOther );
-			}
 		}
 	}
 }

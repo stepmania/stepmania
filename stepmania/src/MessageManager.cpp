@@ -31,12 +31,23 @@ void MessageManager::Subscribe( IMessageSubscriber* pSubscriber, const CString& 
 #endif
 	subs.insert( pSubscriber );
 }
+
+void MessageManager::Subscribe( IMessageSubscriber* pSubscriber, Message m )
+{
+	Subscribe( pSubscriber, MessageToString(m) );
+}
+
 void MessageManager::Unsubscribe( IMessageSubscriber* pSubscriber, const CString& sMessage )
 {
 	SubscribersSet& subs = m_MessageToSubscribers[sMessage];
 	SubscribersSet::iterator iter = subs.find(pSubscriber);
 	ASSERT( iter != subs.end() );
 	subs.erase( iter );
+}
+
+void MessageManager::Unsubscribe( IMessageSubscriber* pSubscriber, Message m )
+{
+	Unsubscribe( pSubscriber, MessageToString(m) );
 }
 
 void MessageManager::Broadcast( const CString& sMessage )

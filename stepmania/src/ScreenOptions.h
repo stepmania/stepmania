@@ -49,7 +49,6 @@ protected:
 	void UpdateEnabledDisabled();
 	void UpdateEnabledDisabled( int row );
 	virtual void OnChange( PlayerNumber pn );
-	void RefreshRowChoices( int row, const OptionRowDefinition &def );
 
 	virtual void MenuBack( PlayerNumber pn );
 	virtual void MenuStart( PlayerNumber pn, const InputEventType type );
@@ -59,7 +58,7 @@ protected:
 	virtual void GoToNextScreen() = 0;
 	virtual void GoToPrevScreen() = 0;
 
-	virtual void ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat );
+	void ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat );
 	void MoveRow( PlayerNumber pn, int dir, bool Repeat );
 
 	void MenuLeft( PlayerNumber pn, const InputEventType type )		{ ChangeValueInRow(pn,-1,type != IET_FIRST_PRESS); }

@@ -3,6 +3,8 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "Font.h"
+#include "Foreach.h"
+#include "OptionRowHandler.h"
 
 static const CString SelectTypeNames[NUM_SELECT_TYPES] = {
 	"SelectOne",
@@ -52,6 +54,12 @@ void OptionRow::Clear()
 		m_Underline[p].clear();
 	}
 
+	if( m_pHand )
+	{
+		FOREACH_CONST( CString, m_pHand->m_vsReloadRowMessages, m )
+			MESSAGEMAN->Unsubscribe( this, *m );
+	}
+
 	m_pHand = NULL;
 }
 
@@ -60,6 +68,12 @@ void OptionRow::LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pH
 	m_RowDef = def;
 	m_RowType = OptionRow::ROW_NORMAL;
 	m_pHand = pHand;
+
+	if( m_pHand )
+	{
+		FOREACH_CONST( CString, m_pHand->m_vsReloadRowMessages, m )
+			MESSAGEMAN->Subscribe( this, *m );
+	}
 
 	if( !def.choices.size() )
 		RageException::Throw( "Screen %s menu entry \"%s\" has no choices",
@@ -563,6 +577,36 @@ void OptionRow::SetExitText( CString sExitText )
 {
 	BitmapText *bt = m_textItems.back();
 	bt->SetText( sExitText );
+}
+
+void OptionRow::Reload()
+{
+	if( m_pHand == NULL )
+		return;
+
+	OptionRowDefinition def;
+	m_pHand->Reload( def );
+
+	switch( GetRowType() )
+	{
+	case OptionRow::ROW_NORMAL:
+		{
+			ASSERT( m_RowDef.layoutType == LAYOUT_SHOW_ONE_IN_ROW );
+			m_RowDef = def;
+			UpdateText( true );
+		}
+		break;
+	case OptionRow::ROW_EXIT:
+		// nothing to do
+		break;
+	default:
+		ASSERT(0);
+	}
+}
+
+void OptionRow::HandleMessage( const CString& sMessage )
+{
+	Reload();
 }
 
 

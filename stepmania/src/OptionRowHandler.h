@@ -13,18 +13,19 @@ class OptionRowHandler
 {
 public:
 	CString m_sName;
-	vector<CString> m_vsRefreshRowNames;	// refresh these rows when the value of this row changes
+	vector<CString> m_vsReloadRowMessages;	// refresh this row on on these messages
 	
 	OptionRowHandler::OptionRowHandler() { Init(); }
 	virtual void Init()
 	{
 		m_sName = "";
-		m_vsRefreshRowNames.clear();
+		m_vsReloadRowMessages.clear();
 	}
+	virtual void Load( OptionRowDefinition &defOut, CString sParam ) = 0;
+	void Reload( OptionRowDefinition &defOut ) { this->Load(defOut,m_sName); }
 	virtual void ImportOption( const OptionRowDefinition &row, PlayerNumber pn, vector<bool> &vbSelectedOut ) const = 0;
 	/* Returns an OPT mask. */
 	virtual int ExportOption( const OptionRowDefinition &def, PlayerNumber pn, const vector<bool> &vbSelected ) const = 0;
-	virtual void Reload( OptionRowDefinition &defOut ) {}
 	virtual CString GetIconText( const OptionRowDefinition &def, int iFirstSelection ) const { return ""; }
 	virtual CString GetAndEraseScreen( int iChoice ) { return ""; }
 };

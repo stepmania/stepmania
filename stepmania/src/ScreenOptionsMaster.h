@@ -24,8 +24,6 @@ protected:
 protected:
 	void HandleScreenMessage( const ScreenMessage SM );
 
-	virtual void ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat );
-
 	virtual void ImportOptions( int row );
 	virtual void ExportOptions( int row );
 	virtual void ImportOptionsForPlayer( PlayerNumber pn ); // used by ScreenPlayerOptions

@@ -153,6 +153,13 @@ public:
 
 	void SetExitText( CString sExitText );
 
+	void Reload();
+
+	//
+	// Messages
+	//
+	virtual void HandleMessage( const CString& sMessage );
+
 protected:
 	OptionRowDefinition		m_RowDef;
 	RowType					m_RowType;

@@ -1142,47 +1142,6 @@ int ScreenOptions::GetCurrentRow( PlayerNumber pn ) const
 	return r;
 }
 
-void ScreenOptions::RefreshRowChoices( int r, const OptionRowDefinition &newdef )
-{
-	OptionRow &row = *m_Rows[r];
-
-	switch( row.GetRowType() )
-	{
-	case OptionRow::ROW_NORMAL:
-		{
-			Font* pFont = FONT->LoadFont( THEME->GetPathF(m_sName,"item") );
-			row.Clear();
-			row.LoadNormal( newdef, row.GetHandler() );
-			row.AfterImportOptions( 
-				pFont, 
-				ITEMS_START_X, 
-				ITEMS_GAP_X, 
-				ITEMS_END_X, 
-				ITEMS_LONG_ROW_SHARED_X,
-				ITEMS_LONG_ROW_X,
-				ITEMS_ZOOM, 
-				CAPITALIZE_ALL_OPTION_NAMES,
-				THEME->GetPathF(m_sName,"item"),
-				THEME->GetPathF(m_sName,"title"),
-				GetExplanationTitle( r ),
-				THEME->GetPathG(m_sName,"bullet"),
-				LABELS_X,
-				ARROWS_X,
-				row.GetRowY(),
-				LABELS_ON_COMMAND
-				);
-			FONT->UnloadFont( pFont );
-			pFont = NULL;
-			UpdateEnabledDisabled( r );
-		}
-		break;
-	case OptionRow::ROW_EXIT:
-		// nothing to do
-		break;
-	default:
-		ASSERT(0);
-	}
-}
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard

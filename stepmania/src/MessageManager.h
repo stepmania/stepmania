@@ -38,7 +38,9 @@ public:
 	~MessageManager();
 
 	void Subscribe( IMessageSubscriber* pSubscriber, const CString& sMessage );
+	void Subscribe( IMessageSubscriber* pSubscriber, Message m );
 	void Unsubscribe( IMessageSubscriber* pSubscriber, const CString& sMessage );
+	void Unsubscribe( IMessageSubscriber* pSubscriber, Message m );
 	void Broadcast( const CString& sMessage );
 
 private:
