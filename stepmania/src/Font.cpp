@@ -642,12 +642,17 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 	 * respectively.  If it's anything else, we don't know what it
 	 * is, so don't make any default mappings (the INI needs to do
 	 * it itself). */
-	if(cfg.CharToGlyphNo.empty() && NumFrames == 128)
-		cfg.MapRange("ascii", 0, 0, -1);
-	else if(cfg.CharToGlyphNo.empty() && NumFrames == 256)
-		cfg.MapRange("cp1252", 0, 0, -1);
-	else if(cfg.CharToGlyphNo.empty() && NumFrames == 15)
-		cfg.MapRange("numbers", 0, 0, -1);
+	if( PageName != "common" && cfg.CharToGlyphNo.empty() )
+	{
+		if( NumFrames == 128 )
+			cfg.MapRange( "ascii", 0, 0, -1 );
+		else if( NumFrames == 256 )
+			cfg.MapRange( "cp1252", 0, 0, -1 );
+		else if( NumFrames == 15 )
+			cfg.MapRange( "numbers", 0, 0, -1 );
+		else
+			LOG->Trace( "Font page \"%s\" has no characters", TexturePath.c_str() );
+	}
 
 	/* If ' ' is set and nbsp is not, set nbsp. */
 	if( cfg.CharToGlyphNo.find(' ') != cfg.CharToGlyphNo.end() )
