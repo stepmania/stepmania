@@ -34,6 +34,7 @@ public:
 	CString GetCurLanguage() { return m_sCurLanguage; };
 	CString GetCurThemeDir() { return GetThemeDirFromName(m_sCurThemeName); };
 	void NextTheme();
+	void ReloadMetrics();
 	void ReloadMetricsIfNecessary();
 
 	CString GetPathTo( ElementCategory category, CString sFileName, bool bOptional=false );

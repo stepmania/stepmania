@@ -396,9 +396,14 @@ void ThemeManager::ReloadMetricsIfNecessary()
 	if( m_uHashForCurThemeMetrics != GetHashForFile(sCurMetricPath)  ||
 		m_uHashForBaseThemeMetrics != GetHashForFile(sDefaultMetricPath) )
 	{
-		SwitchThemeAndLanguage(m_sCurThemeName, m_sCurLanguage);	// force a reload of the metrics cache
-		SCREENMAN->SystemMessage( "Reloaded metrics" );
+		ReloadMetrics();
 	}
+}
+
+void ThemeManager::ReloadMetrics()
+{
+	SwitchThemeAndLanguage(m_sCurThemeName, m_sCurLanguage);	// force a reload of the metrics cache
+	SCREENMAN->SystemMessage( "Reloaded metrics" );
 
 	//
 	// clear theme path cache
@@ -428,7 +433,7 @@ try_metric_again:
 			break;	// fall through
 		case ArchHooks::retry:
 			FlushDirCache();
-			ReloadMetricsIfNecessary();
+			ReloadMetrics();
 			goto try_metric_again;
 		case ArchHooks::ignore:
 			return "";

@@ -39,10 +39,11 @@ ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our p
 #define CREDITS_COLOR					THEME->GetMetricC("ScreenSystemLayer","CreditsColor")
 #define CREDITS_SHADOW_LENGTH			THEME->GetMetricF("ScreenSystemLayer","CreditsShadowLength")
 #define CREDITS_ZOOM					THEME->GetMetricF("ScreenSystemLayer","CreditsZoom")
-#define CREDITS_TEXT_HOME_JOIN			THEME->GetMetric ("ScreenSystemLayer","CreditsTextHomeJoin")
-#define CREDITS_TEXT_HOME_JOINED		THEME->GetMetric ("ScreenSystemLayer","CreditsTextHomeJoined")
-#define CREDITS_TEXT_HOME_TOO_LATE		THEME->GetMetric ("ScreenSystemLayer","CreditsTextHomeTooLate")
-#define CREDITS_TEXT_PAY				THEME->GetMetric ("ScreenSystemLayer","CreditsTextPay")
+#define CREDITS_TEXT_PRESS_START		THEME->GetMetric ("ScreenSystemLayer","CreditsTextPressStart")
+#define CREDITS_TEXT_JOINED				THEME->GetMetric ("ScreenSystemLayer","CreditsTextJoined")
+#define CREDITS_TEXT_TOO_LATE			THEME->GetMetric ("ScreenSystemLayer","CreditsTextTooLate")
+#define CREDITS_TEXT_INSERT_MORE		THEME->GetMetric ("ScreenSystemLayer","CreditsTextInsertMore")
+#define CREDITS_TEXT_CREDITS			THEME->GetMetric ("ScreenSystemLayer","CreditsTextCredits")
 #define CREDITS_TEXT_FREE				THEME->GetMetric ("ScreenSystemLayer","CreditsTextFree")
 
 const int NUM_SKIPS = 5;
@@ -53,7 +54,8 @@ class ScreenSystemLayer: public Screen
 {
 	BitmapText m_textStats;
 	BitmapText m_textSystemMessage;
-	BitmapText m_textCreditInfo[NUM_PLAYERS];
+	BitmapText m_textPlayerInfo[NUM_PLAYERS];
+	BitmapText m_textCredits;
 	BitmapText m_textSysTime;
 	BitmapText m_Skips[NUM_SKIPS];
 	int m_LastSkip;
@@ -99,8 +101,10 @@ ScreenSystemLayer::ScreenSystemLayer() : Screen("ScreenSystemLayer")
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		this->AddChild(&m_textCreditInfo[p]);
+		this->AddChild(&m_textPlayerInfo[p]);
 	}
+
+	this->AddChild(&m_textCredits);
 
 	/* "Was that a skip?"  This displays a message when an update takes
 	 * abnormally long, to quantify skips more precisely, verify them
@@ -147,48 +151,68 @@ void ScreenSystemLayer::SystemMessage( CString sMessage )
 
 void ScreenSystemLayer::RefreshCreditsMessages()
 {
+	m_textCredits.LoadFromFont( THEME->GetPathToF("ScreenManager credits") );
+	m_textCredits.SetName( "Credits" );
+	SET_XY( &m_textCredits );
+	m_textCredits.SetZoom( CREDITS_ZOOM );
+	m_textCredits.SetDiffuse( CREDITS_COLOR );
+	m_textCredits.SetShadowLength( CREDITS_SHADOW_LENGTH );
+
+	CString sCredits;
+	switch( PREFSMAN->m_iCoinMode )
+	{
+	case COIN_HOME:
+		sCredits = "";
+		break;
+	case COIN_PAY:
+		{
+			int Coins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
+			sCredits = ssprintf("%s %d", CREDITS_TEXT_CREDITS.c_str(), GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit);
+			if (Coins)
+				sCredits += ssprintf("  %d/%d", Coins, PREFSMAN->m_iCoinsPerCredit );
+		}
+		break;
+	case COIN_FREE:
+		sCredits = CREDITS_TEXT_FREE;
+		break;
+	default:
+		ASSERT(0);
+	}
+	m_textCredits.SetText( sCredits );
+
+
 	// update joined
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_textCreditInfo[p].LoadFromFont( THEME->GetPathToF("ScreenManager credits") );
-		m_textCreditInfo[p].SetName( ssprintf("CreditsP%d",p+1 ) );
-		SET_XY( &m_textCreditInfo[p] );
-		m_textCreditInfo[p].SetZoom( CREDITS_ZOOM );
-		m_textCreditInfo[p].SetDiffuse( CREDITS_COLOR );
-		m_textCreditInfo[p].SetShadowLength( CREDITS_SHADOW_LENGTH );
+		m_textPlayerInfo[p].LoadFromFont( THEME->GetPathToF("ScreenManager credits") );
+		m_textPlayerInfo[p].SetName( ssprintf("PlayerInfoP%d",p+1 ) );
+		SET_XY( &m_textPlayerInfo[p] );
+		m_textPlayerInfo[p].SetZoom( CREDITS_ZOOM );
+		m_textPlayerInfo[p].SetDiffuse( CREDITS_COLOR );
+		m_textPlayerInfo[p].SetShadowLength( CREDITS_SHADOW_LENGTH );
 
-		CString sText;
-		switch( PREFSMAN->m_iCoinMode )
+		CString sPlayerInfo;
+		if( GAMESTATE->m_bSideIsJoined[p] )
 		{
-		case COIN_HOME:
-			if( GAMESTATE->m_bSideIsJoined[p] )
-				sText = CREDITS_TEXT_HOME_JOINED;
-			else if( GAMESTATE->m_bPlayersCanJoin )		// would  (GAMESTATE->m_CurStyle!=STYLE_INVALID) do the same thing?
-				sText = CREDITS_TEXT_HOME_JOIN;
+			sPlayerInfo = CREDITS_TEXT_JOINED;
+		}
+		else if( GAMESTATE->m_bPlayersCanJoin )
+		{
+			if( PREFSMAN->m_iCoinMode==COIN_PAY && GAMESTATE->m_iCoins<PREFSMAN->m_iCoinsPerCredit )
+				sPlayerInfo = CREDITS_TEXT_INSERT_MORE;
 			else
-				sText = CREDITS_TEXT_HOME_TOO_LATE;
-			break;
-		case COIN_PAY:
-			{
-				int Coins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
-				CString txt = ssprintf("%s %d", CREDITS_TEXT_PAY.c_str(), GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit);
-				if (Coins)
-					txt += ssprintf("  %d/%d", Coins, PREFSMAN->m_iCoinsPerCredit );
-				sText = txt;
-			}
-			break;
-		case COIN_FREE:
-			sText = CREDITS_TEXT_FREE;
-			break;
-		default:
-			ASSERT(0);
+				sPlayerInfo = CREDITS_TEXT_PRESS_START;
+		}
+		else
+		{
+			sPlayerInfo = CREDITS_TEXT_TOO_LATE;
 		}
 		
 		Profile* pProfile = PROFILEMAN->GetProfile( (PlayerNumber)p );
 		if( pProfile )
-			sText += "  " + pProfile->m_sName;
+			sPlayerInfo += "  " + pProfile->m_sName;
 
-		m_textCreditInfo[p].SetText( sText );
+		m_textPlayerInfo[p].SetText( sPlayerInfo );
 	}
 }
 
