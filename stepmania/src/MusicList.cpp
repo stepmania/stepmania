@@ -102,6 +102,7 @@ void MusicList::TweenOffScreen()
 {
 	for( int i=0; i<NUM_COLUMNS; i++ )
 	{
+		m_textTitles[i].StopTweening();
 		m_textTitles[i].BeginTweening( 0.7f );
 		m_textTitles[i].BeginTweening( 0.5f );
 		m_textTitles[i].SetTweenDiffuse( RageColor(1,1,1,0) );
