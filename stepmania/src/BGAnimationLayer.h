@@ -26,9 +26,6 @@ public:
 
 	float GetMaxTweenTimeLeft() const;
 	void GainFocus( float fRate, bool bRewindMovie, bool bLoop );
-	void LoseFocus();
-
-	void PlayCommand( const CString &sCommandName );
 
 protected:
 	vector<RageVector3> m_vParticleVelocity;

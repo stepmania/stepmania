@@ -736,16 +736,6 @@ void BGAnimationLayer::GainFocus( float fRate, bool bRewindMovie, bool bLoop )
 	ActorFrame::GainFocus( fRate, bRewindMovie, bLoop );
 }
 
-void BGAnimationLayer::LoseFocus()
-{
-	ActorFrame::LoseFocus();
-}
-
-void BGAnimationLayer::PlayCommand( const CString &sCommandName )
-{
-	ActorFrame::PlayCommand( sCommandName );
-}
-
 
 /*
  * (c) 2001-2004 Ben Nordstrom, Chris Danford, Glenn Maynard
