@@ -238,8 +238,9 @@ ScreenEdit::ScreenEdit() : Screen("ScreenEdit")
 
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed = 1;
 	GAMESTATE->m_SongOptions.m_fMusicRate = 1;
-	/* Err, not all games have a noteskin named "note" ... */
-//	GAMESTATE->m_PlayerOptions[PLAYER_1].m_sNoteSkin = "note";	// change noteskin before loading all of the edit Actors
+	/* Not all games have a noteskin named "note" ... */
+	if( NOTESKIN->DoesNoteSkinExist("note") )
+		GAMESTATE->m_PlayerOptions[PLAYER_1].m_sNoteSkin = "note";	// change noteskin before loading all of the edit Actors
 
 	m_BGAnimation.LoadFromAniDir( THEME->GetPathToB("ScreenEdit background") );
 

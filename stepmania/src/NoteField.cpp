@@ -66,8 +66,6 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDra
 	// init note displays
 	for( int c=0; c<GetNumTracks(); c++ ) 
 		m_NoteDisplay[c].Load( c, pn );
-
-	m_sLastSeenNoteSkin = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_sNoteSkin;
 	
 	ASSERT( GetNumTracks() == GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer );
 }
@@ -81,12 +79,6 @@ void NoteField::ReloadNoteSkin()
 
 void NoteField::Update( float fDeltaTime )
 {
-	if( m_sLastSeenNoteSkin != GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_sNoteSkin )
-	{
-		ReloadNoteSkin();
-		m_sLastSeenNoteSkin = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_sNoteSkin;
-	}
-
 	m_rectMarkerBar.Update( fDeltaTime );
 
 	if( m_fPercentFadeToFail >= 0 )

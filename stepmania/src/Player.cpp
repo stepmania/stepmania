@@ -318,6 +318,15 @@ void Player::Update( float fDeltaTime )
 				CrossedRow( m_iRowLastCrossed );
 	}
 
+
+	// reload noteskin if it has changed
+	if( m_sLastSeenNoteSkin != GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_sNoteSkin )
+	{
+		m_NoteField.ReloadNoteSkin();
+		m_sLastSeenNoteSkin = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_sNoteSkin;
+	}
+
+
 	ActorFrame::Update( fDeltaTime );
 }
 

@@ -40,9 +40,9 @@ public:
 	float	m_fBeginMarker, m_fEndMarker;	// only used with MODE_EDIT
 
 	void FadeToFail();
+	void ReloadNoteSkin();
 
 protected:
-	void ReloadNoteSkin();
 	void DrawBeatBar( const float fBeat );
 	void DrawMarkerBar( const float fBeat );
 	void DrawAreaHighlight( const float fStartBeat, const float fEndBeat );
@@ -65,7 +65,6 @@ protected:
 	BitmapText		m_textMeasureNumber;
 	Quad			m_rectMarkerBar;
 	Quad			m_rectAreaHighlight;
-	CString			m_sLastSeenNoteSkin;
 };
 
 #endif
