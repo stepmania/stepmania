@@ -1,18 +1,41 @@
-#pragma once
+#ifndef RAGEMOVIETEXTURE_H
+#define RAGEMOVIETEXTURE_H
 /*
 -----------------------------------------------------------------------------
  Class: RageMovieTexture
 
- Desc: Based on the NeHe tutorial 35
+ Desc: Based on the DShowTextures example in the DX8 SDK.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
 
-#include "RageTexture.h"
+/* Don't know why we need this for the headers ... */
+typedef char TCHAR, *PTCHAR;
 
-struct AviRenderer;	// defined in RageMovieTexture.cpp
+/* Prevent these from using Dbg stuff, which we don't link in. */
+#ifdef DEBUG
+#undef DEBUG
+#undef _DEBUG
+#define GIVE_BACK_DEBUG
+#endif
+
+#include <atlbase.h>
+
+#ifdef GIVE_BACK_DEBUG
+#undef GIVE_BACK_DEBUG
+#define _DEBUG
+#define DEBUG
+#endif
+
+#include "baseclasses/streams.h"
+
+#include "RageDisplay.h"
+#include "RageTexture.h"
+#include "RageThreads.h"
+
+
 
 //-----------------------------------------------------------------------------
 // RageMovieTexture Class Declarations
@@ -20,24 +43,50 @@ struct AviRenderer;	// defined in RageMovieTexture.cpp
 class RageMovieTexture : public RageTexture
 {
 public:
-	RageMovieTexture( CString sFilePath, RageTexturePrefs prefs );
+	RageMovieTexture( const CString &sFilePath, RageTexturePrefs prefs );
 	virtual ~RageMovieTexture();
-	virtual void Update( float fDeltaTime );
-	virtual void Invalidate() { m_uGLTextureID = 0; }
+	void Update(float fDeltaTime);
+
 	virtual void Reload( RageTexturePrefs prefs );
 
 	virtual void Play();
 	virtual void Pause();
 	virtual void Stop();
 	virtual void SetPosition( float fSeconds );
+	virtual bool IsAMovie() const { return true; };
 	virtual bool IsPlaying() const;
-	void SetLooping(bool looping);
+	void SetLooping(bool looping=true) { m_bLoop = looping; }
+
+//	LPDIRECT3DTEXTURE8 GetBackBuffer() { return m_pd3dTexture[!m_iIndexFrontBuffer]; }
+//	void Flip() { m_iIndexFrontBuffer = !m_iIndexFrontBuffer; }
+
+	void NewData(char *buffer);
 
 protected:
-	void Create();	// called by constructor and Reload
+//	LPDIRECT3DTEXTURE8  m_pd3dTexture[2];	// double buffered
+	int m_iIndexFrontBuffer;	// index of the buffer that should be rendered from - either 0 or 1
+
+	char *buffer;
+	bool buffer_changed;
+	RageMutex buffer_mutex;
+
+	void Create();
+
+	bool CreateTexture();
+	bool PlayMovie();
+	void CheckMovieStatus();
+
+	CString m_FilePath;
 
 	virtual unsigned int GetGLTextureID();
+	unsigned int m_uGLTextureID;
 
-	unsigned int	m_uGLTextureID;
-	struct AviRenderer* pAviRenderer;
+	//-----------------------------------------------------------------------------
+	// DirectShow pointers
+	//-----------------------------------------------------------------------------
+	CComPtr<IGraphBuilder>  m_pGB;          // GraphBuilder
+	bool					m_bLoop;
+	bool					m_bPlaying;
 };
+
+#endif
