@@ -22,6 +22,7 @@ public:
 	void Load( float fScrollSecondsPerItem, float fSpacingX, float fSpacingY );
 
 	virtual void Update( float fDelta );
+	virtual void DrawPrimitives() {}	// doesn't draw!
 
 	void SetDestinationItem( int iItem ) { m_fDestinationItem = float(iItem); }
 	void SetCurrentAndDestinationItem( int iItem ) { m_fCurrentItem = m_fDestinationItem = float(iItem); }

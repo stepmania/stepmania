@@ -43,6 +43,7 @@ inline float UtilOffCommand( Actor* pActor, CString sClassName ) { return UtilOf
 inline float UtilSetXYAndOnCommand( Actor* pActor, CString sClassName ) { return UtilSetXYAndOnCommand( *pActor, sClassName ); }
 
 // Return a Sprite, BitmapText, or Model depending on the file type
+Actor* LoadFromActorFile( CString sIniPath, CString sLayer = "Actor" );
 Actor* MakeActor( RageTextureID ID );
 
 

@@ -23,74 +23,113 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "RageFileManager.h"
 #include "SongCreditDisplay.h"
+#include "song.h"
+#include "GameState.h"
+#include "RageTextureManager.h"
 
 
-static Actor* LoadActor( CString sPath )
+Actor* LoadFromActorFile( CString sIniPath, CString sLayer )
 {
 	// TODO: Check for recursive loading
 	IniFile ini;
-	ini.SetPath( sPath );
+	ini.SetPath( sIniPath );
 	ini.ReadFile();
 	
-	if( !ini.GetKey("Actor") )
-		RageException::Throw( "The actor file '%s' is invalid.", sPath.c_str() );
+	if( !ini.GetKey(sLayer) )
+		RageException::Throw( "The file '%s' doesn't have layer '%s'.", sIniPath.c_str(), sLayer.c_str() );
 
-	CString sFileName;
-	ini.GetValue( "Actor", "File", sFileName );
-	
-	CString sDir = Dirname( sPath );
+	Actor* pActor = NULL;	// fill this in before we return;
 
-	/* XXX: How to handle translations?  Maybe we should have one metrics section,
-	 * "Text", eg:
-	 *
-	 * [Text]
-	 * SoundVolume=Sound Volume
-	 * TextItem=Hello
-	 *
-	 * and allow "$TextItem$" in .actors to reference that.
-	 */
-	Actor* pActor = NULL;
-	CString text;
-	if( ini.GetValue ( "Actor", "Text", text ) )
+	CString sType;
+	ini.GetValue( sLayer, "Type", sType );
+	CString sFile;
+	ini.GetValue( sLayer, "File", sFile );
+	CString sDir = Dirname( sIniPath );
+
+	if( sType == "SongCreditDisplay" )
 	{
-		/* It's a BitmapText. Note that we could do the actual text setting with metrics,
-		 * by adding "text" and "alttext" commands, but right now metrics can't contain
-		 * commas or semicolons.  It's useful to be able to refer to fonts in the real
-		 * theme font dirs, too. */
-		CString alttext;
-		ini.GetValue ( "Actor", "AltText", alttext );
-		text.Replace( "::", "\n" );
-		alttext.Replace( "::", "\n" );
-
-		BitmapText* pBitmapText = new BitmapText;
-		pActor = pBitmapText;
-
-		pBitmapText->LoadFromFont( THEME->GetPathToF( sFileName ) );
-		pBitmapText->SetText( text, alttext );
+		pActor = new SongCreditDisplay;
 	}
 	else
 	{
-		CStringArray asFiles;
-		GetDirListing( sDir + sFileName + "*", asFiles );
 
-		if( asFiles.empty() )
-			RageException::Throw( "The actor file '%s' references a file '%s' which doesn't exist.", sPath.c_str(), sFileName.c_str() );
-		else if( asFiles.size() > 1 )
-			RageException::Throw( "The actor file '%s' references a file '%s' which has multiple matches.", sPath.c_str(), sFileName.c_str() );
+		/* XXX: How to handle translations?  Maybe we should have one metrics section,
+		 * "Text", eg:
+		 *
+		 * [Text]
+		 * SoundVolume=Sound Volume
+		 * TextItem=Hello
+		 *
+		 * and allow "$TextItem$" in .actors to reference that.
+		 */
+		CString text;
+		if( ini.GetValue ( sLayer, "Text", text ) )
+		{
+			/* It's a BitmapText. Note that we could do the actual text setting with metrics,
+			 * by adding "text" and "alttext" commands, but right now metrics can't contain
+			 * commas or semicolons.  It's useful to be able to refer to fonts in the real
+			 * theme font dirs, too. */
+			CString alttext;
+			ini.GetValue ( sLayer, "AltText", alttext );
+			text.Replace( "::", "\n" );
+			alttext.Replace( "::", "\n" );
 
-		CString sNewPath = DerefRedir( sDir + asFiles[0] );
+			BitmapText* pBitmapText = new BitmapText;
 
-		pActor = MakeActor( sNewPath );
+			pBitmapText->LoadFromFont( THEME->GetPathToF( sFile ) );
+			pBitmapText->SetText( text, alttext );
+			pActor = pBitmapText;
+		}
+		else
+		{
+
+			if( sFile.CompareNoCase("songbackground")==0 )
+			{
+				Song *pSong = GAMESTATE->m_pCurSong;
+				if( pSong && pSong->HasBackground() )
+					sFile = pSong->GetBackgroundPath();
+				else
+					sFile = THEME->GetPathToG("Common fallback background");
+
+				pActor = MakeActor( sFile );
+			}
+			else if( sFile.CompareNoCase("songbanner")==0 )
+			{
+				const Song *pSong = GAMESTATE->m_pCurSong;
+				if( pSong && pSong->HasBanner() )
+					sFile = pSong->GetBannerPath();
+				else
+					sFile = THEME->GetPathToG("Common fallback banner");
+
+				TEXTUREMAN->DisableOddDimensionWarning();
+				pActor = MakeActor( sFile );
+				TEXTUREMAN->EnableOddDimensionWarning();
+			}
+			else
+			{
+				CStringArray asPaths;
+				GetDirListing( sDir + sFile + "*", asPaths, false, true );	// return path too
+
+				if( asPaths.empty() )
+					RageException::Throw( "The actor file '%s' references a file '%s' which doesn't exist.", sIniPath.c_str(), sFile.c_str() );
+				else if( asPaths.size() > 1 )
+					RageException::Throw( "The actor file '%s' references a file '%s' which has multiple matches.", sIniPath.c_str(), sFile.c_str() );
+
+				CString sNewPath = DerefRedir( asPaths[0] );
+				pActor = MakeActor( sNewPath );
+			}
+		}
 	}
 
 	float f;
-	if( ini.GetValue ( "Actor", "BaseRotationXDegrees", f ) )	pActor->SetBaseRotationX( f );
-	if( ini.GetValue ( "Actor", "BaseRotationYDegrees", f ) )	pActor->SetBaseRotationY( f );
-	if( ini.GetValue ( "Actor", "BaseRotationZDegrees", f ) )	pActor->SetBaseRotationZ( f );
-	if( ini.GetValue ( "Actor", "BaseZoomX", f ) )				pActor->SetBaseZoomX( f );
-	if( ini.GetValue ( "Actor", "BaseZoomY", f ) )				pActor->SetBaseZoomY( f );
-	if( ini.GetValue ( "Actor", "BaseZoomZ", f ) )				pActor->SetBaseZoomZ( f );
+	if( ini.GetValue ( sLayer, "BaseRotationXDegrees", f ) )	pActor->SetBaseRotationX( f );
+	if( ini.GetValue ( sLayer, "BaseRotationYDegrees", f ) )	pActor->SetBaseRotationY( f );
+	if( ini.GetValue ( sLayer, "BaseRotationZDegrees", f ) )	pActor->SetBaseRotationZ( f );
+	if( ini.GetValue ( sLayer, "BaseZoomX", f ) )				pActor->SetBaseZoomX( f );
+	if( ini.GetValue ( sLayer, "BaseZoomY", f ) )				pActor->SetBaseZoomY( f );
+	if( ini.GetValue ( sLayer, "BaseZoomZ", f ) )				pActor->SetBaseZoomZ( f );
 
+	ASSERT( pActor );	// we should have filled this in above
 	return pActor;
 }
 
@@ -99,13 +138,9 @@ Actor* MakeActor( RageTextureID ID )
 	CString sExt = GetExtension( ID.filename );
 	sExt.MakeLower();
 	
-	if( ID.filename.Right(strlen("SongCreditDisplay")) == "SongCreditDisplay" )
+	if( sExt=="actor" )
 	{
-		return new SongCreditDisplay;
-	}
-	else if( sExt=="actor" )
-	{
-		return LoadActor( ID.filename );
+		return LoadFromActorFile( ID.filename );
 	}
 	else if( sExt=="png" ||
 		sExt=="jpg" || 

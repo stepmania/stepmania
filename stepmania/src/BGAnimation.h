@@ -13,6 +13,7 @@
 */
 
 #include "ActorFrame.h"
+#include "ActorScroller.h"
 
 
 class BGAnimationLayer;
@@ -52,6 +53,8 @@ protected:
 	vector<BGAnimationLayer*> m_Layers;
 	float	m_fLengthSeconds;
 	bool	m_bGeneric;
+
+	ActorScroller m_Scroller;
 };
 
 

@@ -122,6 +122,27 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 				m_fLengthSeconds = max(m_fLengthSeconds, m_Layers[i]->GetMaxTweenTimeLeft());
 		}
 
+		bool bUseScroller;
+		if( ini.GetValue( "BGAnimation", "UseScroller", bUseScroller ) && bUseScroller )
+		{
+#define REQUIRED_GET_VALUE( szName, valueOut ) \
+	if( !ini.GetValue( "BGAnimation", szName, valueOut ) ) \
+		RageException::Throw( "File '%s' is missing the value BGAnimation::%s", sPathToIni.c_str(), szName );
+
+			float fScrollSecondsPerItem, fSpacingX, fSpacingY;
+			REQUIRED_GET_VALUE( "ScrollSecondsPerItem", fScrollSecondsPerItem );
+			REQUIRED_GET_VALUE( "ScrollSpacingX", fSpacingX );
+			REQUIRED_GET_VALUE( "ScrollSpacingY", fSpacingY );
+#undef REQUIRED_GET_VALUE
+
+			m_Scroller.Load( fScrollSecondsPerItem, fSpacingX, fSpacingY );
+			for( unsigned i=0; i<m_Layers.size(); i++ )
+				m_Scroller.AddChild( m_Layers[i] );
+			m_Scroller.SetCurrentAndDestinationItem( 0 );
+			m_Scroller.SetDestinationItem( m_Layers.size()-1 );
+			this->AddChild( &m_Scroller );
+		}
+
 		CString InitCommand;
 		if( ini.GetValue( "BGAnimation", "InitCommand", InitCommand ) )
 		{

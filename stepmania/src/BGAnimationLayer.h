@@ -12,11 +12,11 @@
 -----------------------------------------------------------------------------
 */
 
-#include "RageTypes.h"
-#include "Sprite.h"
 #include "GameConstantsAndTypes.h"
+#include "ActorFrame.h"
+#include <map>
 
-class BGAnimationLayer
+class BGAnimationLayer : public ActorFrame
 {
 public:
 	BGAnimationLayer( bool Generic );
@@ -31,7 +31,7 @@ public:
 	void LoadFromIni( CString sDir, CString sLayer );
 
 	void Update( float fDeltaTime );
-	void Draw();
+	void DrawPrimitives();
 
 	void SetDiffuse( RageColor c );
 
@@ -44,7 +44,6 @@ public:
 	void PlayOffCommand() { PlayCommand( "Off" ); }
 
 protected:
-	vector<Actor*> m_pActors;
 	vector<RageVector3> m_vParticleVelocity;
 
 	enum Effect {

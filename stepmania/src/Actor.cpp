@@ -741,9 +741,9 @@ void Actor::HandleCommand( const ParsedCommand &command )
 	else if( sName=="x" )				SetX( fParam(1) );
 	else if( sName=="y" )				SetY( fParam(1) );
 	else if( sName=="z" )				SetZ( fParam(1) );
-	else if( sName=="addx" )			SetX( GetX()+fParam(1) );
-	else if( sName=="addy" )			SetY( GetY()+fParam(1) );
-	else if( sName=="addz" )			SetZ( GetZ()+fParam(1) );
+	else if( sName=="addx" )			SetX( GetDestX()+fParam(1) );
+	else if( sName=="addy" )			SetY( GetDestY()+fParam(1) );
+	else if( sName=="addz" )			SetZ( GetDestZ()+fParam(1) );
 	else if( sName=="zoom" )			SetZoom( fParam(1) );
 	else if( sName=="zoomx" )			SetZoomX( fParam(1) );
 	else if( sName=="zoomy" )			SetZoomY( fParam(1) );
