@@ -23,7 +23,7 @@ class MusicSortDisplay : public Sprite
 {
 public:
 	MusicSortDisplay();
-	void Set( SongSortOrder so );
+	void Set( SortOrder so );
 
 protected:
 

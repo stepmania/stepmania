@@ -288,7 +288,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	}	
 
 	m_MusicSortDisplay.SetName( "SortIcon" );
-	m_MusicSortDisplay.Set( GAMESTATE->m_SongSortOrder );
+	m_MusicSortDisplay.Set( GAMESTATE->m_SortOrder );
 	SET_XY( m_MusicSortDisplay );
 	this->AddChild( &m_MusicSortDisplay );
 
@@ -499,7 +499,7 @@ void ScreenSelectMusic::TweenOnScreen()
 	TweenSongPartsOnScreen( true );
 	TweenCoursePartsOnScreen( true );
 
-	switch( GAMESTATE->m_SongSortOrder )
+	switch( GAMESTATE->m_SortOrder )
 	{
 	case SORT_ALL_COURSES:
 	case SORT_NONSTOP_COURSES:
@@ -552,7 +552,7 @@ void ScreenSelectMusic::TweenOnScreen()
 
 void ScreenSelectMusic::TweenOffScreen()
 {
-	switch( GAMESTATE->m_SongSortOrder )
+	switch( GAMESTATE->m_SortOrder )
 	{
 	case SORT_ALL_COURSES:
 	case SORT_NONSTOP_COURSES:
@@ -632,7 +632,7 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 		m_sprHighScoreFrame[p].Command( SCORE_FRAME_SORT_CHANGE_COMMAND(p) );
 	}
 
-	switch( GAMESTATE->m_SongSortOrder )
+	switch( GAMESTATE->m_SortOrder )
 	{
 	case SORT_ALL_COURSES:
 	case SORT_NONSTOP_COURSES:
@@ -1498,9 +1498,9 @@ void ScreenSelectMusic::UpdateOptionsDisplays()
 
 void ScreenSelectMusic::SortOrderChanged()
 {
-	m_MusicSortDisplay.Set( GAMESTATE->m_SongSortOrder );
+	m_MusicSortDisplay.Set( GAMESTATE->m_SortOrder );
 
-	switch( GAMESTATE->m_SongSortOrder )
+	switch( GAMESTATE->m_SortOrder )
 	{
 	case SORT_ALL_COURSES:
 	case SORT_NONSTOP_COURSES:

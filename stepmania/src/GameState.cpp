@@ -93,7 +93,7 @@ void GameState::Reset()
 		m_PreferredDifficulty[p] = DIFFICULTY_INVALID;
 		m_CourseDifficulty[p] = COURSE_DIFFICULTY_REGULAR;
 	}
-	m_SongSortOrder = SORT_INVALID;
+	m_SortOrder = SORT_INVALID;
 	m_PlayMode = PLAY_MODE_INVALID;
 	m_bEditing = false;
 	m_bDemonstrationOrJukebox = false;

@@ -54,7 +54,7 @@ public:
 	virtual void TweenOffScreen() { TweenOffScreen(false); }
 
 	void Move(int n);
-	bool ChangeSort( SongSortOrder new_so );	// return true if change successful
+	bool ChangeSort( SortOrder new_so );	// return true if change successful
 	bool NextSort();		// return true if change successful
 	void StartRoulette();
 	void StartRandom();
@@ -77,13 +77,13 @@ public:
 	void RebuildMusicWheelItems();
 
 protected:
-	void GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CString sPreferredGroup );
-	void BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItems, SongSortOrder so );
-	void SetOpenGroup(CString group, SongSortOrder so = SORT_INVALID);
+	void GetSongList(vector<Song*> &arraySongs, SortOrder so, CString sPreferredGroup );
+	void BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItems, SortOrder so );
+	void SetOpenGroup(CString group, SortOrder so = SORT_INVALID);
 	bool SelectSongOrCourse();
 	bool SelectSong( Song *p );
 	bool SelectCourse( Course *p );
-	bool SelectSort( SongSortOrder so );
+	bool SelectSort( SortOrder so );
 	void ChangeMusic(int dist); /* +1 or -1 */
 
 	ScrollBar			m_ScrollBar;
@@ -96,7 +96,7 @@ protected:
 	
 	int					m_iSelection;		// index into m_CurWheelItemData
 	CString				m_sExpandedSectionName;
- 	SongSortOrder		m_LastSongSortOrder;
+ 	SortOrder		m_LastSortOrder;
 
 	int					m_iSwitchesLeftInSpinDown;		
 	float				m_fLockedWheelVelocity;

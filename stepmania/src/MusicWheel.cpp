@@ -33,6 +33,7 @@
 #include "UnlockSystem.h"
 #include "ModeChoice.h"
 #include "ActorUtil.h"
+#include "ProfileManager.h"
 
 
 #define FADE_SECONDS				THEME->GetMetricF("MusicWheel","FadeSeconds")
@@ -72,7 +73,7 @@ CachedThemeMetricI  NUM_WHEEL_ITEMS_METRIC	("MusicWheel","NumWheelItems");
 const int MAX_WHEEL_SOUND_SPEED = 15;
 
 
-static const SongSortOrder SortOrder[] =
+static const SortOrder SORT_ORDERS[] =
 {
 	SORT_GROUP, 
 	SORT_TITLE, 
@@ -130,7 +131,7 @@ void MusicWheel::Load()
 
 	
 	m_iSelection = 0;
-	m_LastSongSortOrder = SORT_INVALID;
+	m_LastSortOrder = SORT_INVALID;
 
 	m_WheelState = STATE_SELECTING_MUSIC;
 	m_fTimeLeftInState = 0;
@@ -172,16 +173,32 @@ void MusicWheel::Load()
 		GAMESTATE->m_SongOptions = so;
 	}
 
-	if( GAMESTATE->m_SongSortOrder == SORT_INVALID )
+	if( GAMESTATE->m_SortOrder == SORT_INVALID )
 	{
 		switch( GAMESTATE->m_PlayMode )
 		{
-		case PLAY_MODE_ONI:		GAMESTATE->m_SongSortOrder = SORT_ONI_COURSES; break;
-		case PLAY_MODE_NONSTOP:	GAMESTATE->m_SongSortOrder = SORT_NONSTOP_COURSES; break;
-		case PLAY_MODE_ENDLESS:	GAMESTATE->m_SongSortOrder = SORT_ENDLESS_COURSES; break;
+		case PLAY_MODE_ONI:		GAMESTATE->m_SortOrder = SORT_ONI_COURSES; break;
+		case PLAY_MODE_NONSTOP:	GAMESTATE->m_SortOrder = SORT_NONSTOP_COURSES; break;
+		case PLAY_MODE_ENDLESS:	GAMESTATE->m_SortOrder = SORT_ENDLESS_COURSES; break;
 		default:
-			GAMESTATE->m_SongSortOrder = StringToSongSortOrder( DEFAULT_SORT );
-			ASSERT( GAMESTATE->m_SongSortOrder != SORT_INVALID );
+			// look for a player's saved sort
+			FOREACH_HumanPlayer( pn )
+			{
+				if( PROFILEMAN->IsUsingProfile(pn) )
+				{
+					GAMESTATE->m_SortOrder = PROFILEMAN->GetProfile(pn)->m_SortOrder;
+					if( GAMESTATE->m_SortOrder != SORT_INVALID )	// we found one
+						break;	// stop searching
+				}
+			}
+			
+			// if no player preferred sort, fall back to theme default
+			if( GAMESTATE->m_SortOrder == SORT_INVALID )
+			{
+				GAMESTATE->m_SortOrder = StringToSortOrder( DEFAULT_SORT );
+				ASSERT( GAMESTATE->m_SortOrder != SORT_INVALID );
+			}
+
 			break;
 		}
 	}
@@ -200,7 +217,7 @@ void MusicWheel::Load()
 	 * the extra stage, so it knows to always display it. */
 	for( int so=0; so<NUM_SORT_ORDERS; so++ )
 	{
-		BuildWheelItemDatas( m_WheelItemDatas[so], SongSortOrder(so) );
+		BuildWheelItemDatas( m_WheelItemDatas[so], SortOrder(so) );
 		times += ssprintf( "%i:%.3f ", so, timer.GetDeltaTime() );
 	}
 	LOG->Trace( "took: %s", times.c_str() );
@@ -238,7 +255,7 @@ bool MusicWheel::SelectSongOrCourse()
 		return true;
 
 	// Select the first selectable song based on the sort order...
-	vector<WheelItemData> &wiWheelItems = m_WheelItemDatas[GAMESTATE->m_SongSortOrder];
+	vector<WheelItemData> &wiWheelItems = m_WheelItemDatas[GAMESTATE->m_SortOrder];
 	for( unsigned i = 0; i < wiWheelItems.size(); i++ )
 	{
 		if( wiWheelItems[i].m_pSong )
@@ -259,7 +276,7 @@ bool MusicWheel::SelectSong( Song *p )
 	GAMESTATE->m_pCurSong = p;
 
 	unsigned i;
-	vector<WheelItemData> &from = m_WheelItemDatas[GAMESTATE->m_SongSortOrder];
+	vector<WheelItemData> &from = m_WheelItemDatas[GAMESTATE->m_SortOrder];
 	for( i=0; i<from.size(); i++ )
 	{
 		if( from[i].m_pSong == p )
@@ -289,7 +306,7 @@ bool MusicWheel::SelectCourse( Course *p )
 	GAMESTATE->m_pCurCourse = p;
 
 	unsigned i;
-	vector<WheelItemData> &from = m_WheelItemDatas[GAMESTATE->m_SongSortOrder];
+	vector<WheelItemData> &from = m_WheelItemDatas[GAMESTATE->m_SortOrder];
 	for( i=0; i<from.size(); i++ )
 	{
 		if( from[i].m_pCourse == p )
@@ -312,16 +329,16 @@ bool MusicWheel::SelectCourse( Course *p )
 	return true;
 }
 
-bool MusicWheel::SelectSort( SongSortOrder so )
+bool MusicWheel::SelectSort( SortOrder so )
 {
 	if(so == SORT_INVALID)
 		return false;
 
 	unsigned i;
-	vector<WheelItemData> &from = m_WheelItemDatas[GAMESTATE->m_SongSortOrder];
+	vector<WheelItemData> &from = m_WheelItemDatas[GAMESTATE->m_SortOrder];
 	for( i=0; i<from.size(); i++ )
 	{
-		if( from[i].m_SongSortOrder != so )
+		if( from[i].m_SortOrder != so )
 			continue;
 		if( !from[i].m_Action.DescribesCurrentModeForAllPlayers() )
 			continue;
@@ -336,7 +353,7 @@ bool MusicWheel::SelectSort( SongSortOrder so )
 
 	for( i=0; i<m_CurWheelItemData.size(); i++ )
 	{
-		if( m_CurWheelItemData[i]->m_SongSortOrder != so )
+		if( m_CurWheelItemData[i]->m_SortOrder != so )
 			continue;
 		if( !m_CurWheelItemData[i]->m_Action.DescribesCurrentModeForAllPlayers() )
 			continue;
@@ -347,7 +364,7 @@ bool MusicWheel::SelectSort( SongSortOrder so )
 	return true;
 }
 
-void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CString sPreferredGroup )
+void MusicWheel::GetSongList(vector<Song*> &arraySongs, SortOrder so, CString sPreferredGroup )
 {
 	vector<Song*> apAllSongs;
 //	if( so==SORT_PREFERRED && GAMESTATE->m_sPreferredGroup!=GROUP_ALL_MUSIC)
@@ -393,7 +410,7 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CStrin
 
 
 
-void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas, SongSortOrder so )
+void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas, SortOrder so )
 {
 	unsigned i;
 
@@ -417,13 +434,13 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			vector<CString> parts;
 			split( Actions[i], ";", parts );
 		
-			SongSortOrder so = SORT_GROUP;
+			SortOrder so = SORT_GROUP;
 			for( unsigned j = 0; j < parts.size(); ++j )
 			{
 				CStringArray asBits;
 				split( parts[j], ",", asBits );
 				if( !asBits[0].CompareNoCase("sort") )
-					so = StringToSongSortOrder( asBits[1] );
+					so = StringToSortOrder( asBits[1] );
 			}
 
 			WheelItemData wid( TYPE_SORT, NULL, "", NULL, SORT_MENU_COLOR, so );
@@ -894,14 +911,14 @@ void MusicWheel::Update( float fDeltaTime )
 
 				SCREENMAN->PostMessageToTopScreen( SM_SortOrderChanged, 0 );
 				
-				SetOpenGroup(GetSectionNameFromSongAndSort( pPrevSelectedSong, GAMESTATE->m_SongSortOrder ));
+				SetOpenGroup(GetSectionNameFromSongAndSort( pPrevSelectedSong, GAMESTATE->m_SortOrder ));
 
 				m_iSelection = 0;
 
 				//
 				// Select the previously selected item
 				//
-				switch( GAMESTATE->m_SongSortOrder )
+				switch( GAMESTATE->m_SortOrder )
 				{
 				default:
 					// Look for the last selected song or course
@@ -909,7 +926,7 @@ void MusicWheel::Update( float fDeltaTime )
 					break;
 				case SORT_SORT_MENU:
 				case SORT_MODE_MENU:
-					SelectSort( m_LastSongSortOrder );
+					SelectSort( m_LastSortOrder );
 					break;
 				}
 
@@ -917,7 +934,7 @@ void MusicWheel::Update( float fDeltaTime )
 				// Change difficulty for sorts by meter
 				//
 				Difficulty dc = DIFFICULTY_INVALID;
-				switch( GAMESTATE->m_SongSortOrder )
+				switch( GAMESTATE->m_SortOrder )
 				{
 				case SORT_EASY_METER:		dc = DIFFICULTY_EASY;		break;
 				case SORT_MEDIUM_METER:		dc = DIFFICULTY_MEDIUM;		break;
@@ -939,7 +956,7 @@ void MusicWheel::Update( float fDeltaTime )
 				 * back on the default song.  From the CVS commit, this looks like it
 				 * was originally to fix ScreenOptionsMaster difficulty display, and
 				 * isn't needed anymore ... -glenn */
-/*				switch( GAMESTATE->m_SongSortOrder )
+/*				switch( GAMESTATE->m_SortOrder )
 				{
 				case SORT_PREFERRED:
 				case SORT_GROUP:
@@ -1130,10 +1147,10 @@ void MusicWheel::ChangeMusic(int dist)
 		m_soundChangeMusic.Play();
 }
 
-bool MusicWheel::ChangeSort( SongSortOrder new_so )	// return true if change successful
+bool MusicWheel::ChangeSort( SortOrder new_so )	// return true if change successful
 {
 	ASSERT( new_so < NUM_SORT_ORDERS );
-	if( GAMESTATE->m_SongSortOrder == new_so )
+	if( GAMESTATE->m_SortOrder == new_so )
 		return false;
 
 	switch( m_WheelState )
@@ -1151,8 +1168,19 @@ bool MusicWheel::ChangeSort( SongSortOrder new_so )	// return true if change suc
 
 	TweenOffScreen(true);
 
-	m_LastSongSortOrder = GAMESTATE->m_SongSortOrder;
-	GAMESTATE->m_SongSortOrder = new_so;
+	m_LastSortOrder = GAMESTATE->m_SortOrder;
+	GAMESTATE->m_SortOrder = new_so;
+	
+	// Save the new sort to all profiles
+	// HACK: Don't save course sorts
+	if( IsSongSort(new_so) )
+	{
+		FOREACH_HumanPlayer( pn )
+		{
+			if( PROFILEMAN->IsUsingProfile(pn) )
+				PROFILEMAN->GetProfile(pn)->m_SortOrder = new_so;
+		}
+	}
 
 	m_WheelState = STATE_FLYING_OFF_BEFORE_NEXT_SORT;
 	return true;
@@ -1161,7 +1189,7 @@ bool MusicWheel::ChangeSort( SongSortOrder new_so )	// return true if change suc
 bool MusicWheel::NextSort()		// return true if change successful
 {
 	// don't allow NextSort when on the sort menu or mode menu
-	switch( GAMESTATE->m_SongSortOrder )
+	switch( GAMESTATE->m_SortOrder )
 	{
 	case SORT_SORT_MENU:
 	case SORT_MODE_MENU:
@@ -1170,15 +1198,15 @@ bool MusicWheel::NextSort()		// return true if change successful
 
 	// find the index of the current sort
 	int cur = 0;
-	while( cur < int(ARRAYSIZE(SortOrder)) && SortOrder[cur] != GAMESTATE->m_SongSortOrder )
+	while( cur < int(ARRAYSIZE(SORT_ORDERS)) && SORT_ORDERS[cur] != GAMESTATE->m_SortOrder )
 		++cur;
 
 	// move to the next sort with wrapping
 	++cur;
-	wrap( cur, ARRAYSIZE(SortOrder) );
+	wrap( cur, ARRAYSIZE(SORT_ORDERS) );
 
 	// apply new sort
-	SongSortOrder soNew = SortOrder[cur];
+	SortOrder soNew = SORT_ORDERS[cur];
 	return ChangeSort( soNew );
 }
 
@@ -1239,8 +1267,8 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 		return true;
 	case TYPE_SORT:
 		m_CurWheelItemData[m_iSelection]->m_Action.ApplyToAllPlayers();
-		LOG->Trace("New sort order selected: %s - %d", m_CurWheelItemData[m_iSelection]->m_sLabel.c_str(), m_CurWheelItemData[m_iSelection]->m_SongSortOrder );
-		ChangeSort( m_CurWheelItemData[m_iSelection]->m_SongSortOrder );
+		LOG->Trace("New sort order selected: %s - %d", m_CurWheelItemData[m_iSelection]->m_sLabel.c_str(), m_CurWheelItemData[m_iSelection]->m_SortOrder );
+		ChangeSort( m_CurWheelItemData[m_iSelection]->m_SortOrder );
 		return false;
 	default:
 		ASSERT(0);
@@ -1254,7 +1282,7 @@ void MusicWheel::StartRoulette()
 	m_Moving = 1;
 	m_TimeBeforeMovingBegins = 0;
 	m_SpinSpeed = 1.0f/ROULETTE_SWITCH_SECONDS;
-	SetOpenGroup("", SongSortOrder(SORT_ROULETTE));
+	SetOpenGroup("", SortOrder(SORT_ROULETTE));
 }
 
 void MusicWheel::StartRandom()
@@ -1265,7 +1293,7 @@ void MusicWheel::StartRandom()
 		RandomGen rnd;
 		random_shuffle( m_WheelItemDatas[SORT_ROULETTE].begin(), m_WheelItemDatas[SORT_ROULETTE].end(), rnd );
 
-		SetOpenGroup("", SongSortOrder(SORT_ROULETTE));
+		SetOpenGroup("", SortOrder(SORT_ROULETTE));
 
 		m_Moving = -1;
 		m_TimeBeforeMovingBegins = 0;
@@ -1287,10 +1315,10 @@ void MusicWheel::StartRandom()
 	}
 }
 
-void MusicWheel::SetOpenGroup(CString group, SongSortOrder so)
+void MusicWheel::SetOpenGroup(CString group, SortOrder so)
 {
 	if( so == SORT_INVALID)
-		so = GAMESTATE->m_SongSortOrder;
+		so = GAMESTATE->m_SortOrder;
 
 	m_sExpandedSectionName = group;
 

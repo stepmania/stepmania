@@ -65,7 +65,7 @@ enum WheelItemType { TYPE_SECTION, TYPE_SONG, TYPE_ROULETTE, TYPE_RANDOM, TYPE_C
 struct WheelItemData
 {
 	WheelItemData() {}
-	WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color, SongSortOrder so );
+	WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color, SortOrder so );
 
 	bool HasBanner() const;
 	CString GetBanner() const;
@@ -80,7 +80,7 @@ struct WheelItemData
 	// for TYPE_SORT
 	CString			m_sLabel;
 	ModeChoice		m_Action;
-	SongSortOrder	m_SongSortOrder;
+	SortOrder	m_SortOrder;
 };
 
 #endif

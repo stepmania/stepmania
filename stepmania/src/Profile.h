@@ -88,6 +88,7 @@ public:
 	//
 	bool m_bUsingProfileDefaultModifiers;
 	CString m_sDefaultModifiers;
+	SortOrder m_SortOrder;
 	int m_iTotalPlays;
 	int m_iTotalPlaySeconds;
 	int m_iTotalGameplaySeconds;

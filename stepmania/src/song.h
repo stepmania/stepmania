@@ -215,8 +215,8 @@ void SortSongPointerArrayByGroupAndTitle( vector<Song*> &arraySongPointers );
 void SortSongPointerArrayByNumPlays( vector<Song*> &arraySongPointers, ProfileSlot slot, bool bDescending );
 void SortSongPointerArrayByNumPlays( vector<Song*> &arraySongPointers, const Profile* pProfile, bool bDescending );
 void SortSongPointerArrayByMeter( vector<Song*> &arraySongPointers, Difficulty dc );
-CString GetSectionNameFromSongAndSort( const Song* pSong, SongSortOrder so );
-void SortSongPointerArrayBySectionName( vector<Song*> &arraySongPointers, SongSortOrder so );
+CString GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so );
+void SortSongPointerArrayBySectionName( vector<Song*> &arraySongPointers, SortOrder so );
 
 
 

@@ -1393,7 +1393,7 @@ void SortSongPointerArrayByNumPlays( vector<Song*> &arraySongPointers, const Pro
 	song_sort_val.clear();
 }
 
-CString GetSectionNameFromSongAndSort( const Song* pSong, SongSortOrder so )
+CString GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so )
 {
 	if( pSong == NULL )
 		return "";
@@ -1488,7 +1488,7 @@ CString GetSectionNameFromSongAndSort( const Song* pSong, SongSortOrder so )
 	}
 }
 
-void SortSongPointerArrayBySectionName( vector<Song*> &arraySongPointers, SongSortOrder so )
+void SortSongPointerArrayBySectionName( vector<Song*> &arraySongPointers, SortOrder so )
 {
 	for(unsigned i = 0; i < arraySongPointers.size(); ++i)
 	{

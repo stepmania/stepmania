@@ -102,7 +102,7 @@ public:
 	CString			m_sPreferredGroup;	// GROUP_ALL_MUSIC denotes no preferred group
 	bool			m_bChangedFailType;	// true if FailType was changed in the song options screen
 	Difficulty		m_PreferredDifficulty[NUM_PLAYERS];
-	SongSortOrder	m_SongSortOrder;			// used by MusicWheel
+	SortOrder	m_SortOrder;			// used by MusicWheel
 	bool			m_bEditing;			// NoteField does special stuff when this is true
 	bool			m_bDemonstrationOrJukebox;	// ScreenGameplay does special stuff when this is true
 	bool			m_bJukeboxUsesModifiers;

@@ -344,7 +344,7 @@ void PaneDisplay::SetFromGameState()
 
 PaneModes PaneDisplay::GetMode() const
 {
-	switch( GAMESTATE->m_SongSortOrder )
+	switch( GAMESTATE->m_SortOrder )
 	{
 	case SORT_ALL_COURSES:
 	case SORT_NONSTOP_COURSES:

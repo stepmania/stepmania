@@ -62,7 +62,7 @@ enum RadarCategory
 };
 #define FOREACH_RadarCategory( rc ) FOREACH_ENUM( RadarCategory, NUM_RADAR_CATEGORIES, rc )
 
-CString RadarCategoryToString( RadarCategory cat );
+const CString& RadarCategoryToString( RadarCategory cat );
 
 struct RadarValues
 {
@@ -99,8 +99,8 @@ enum Difficulty
 };
 #define FOREACH_Difficulty( dc ) FOREACH_ENUM( Difficulty, NUM_DIFFICULTIES, dc )
 
-CString DifficultyToString( Difficulty dc );
-Difficulty StringToDifficulty( CString sDC );
+const CString& DifficultyToString( Difficulty dc );
+Difficulty StringToDifficulty( const CString& sDC );
 
 
 enum CourseDifficulty 
@@ -112,8 +112,8 @@ enum CourseDifficulty
 };
 #define FOREACH_CourseDifficulty( cd ) FOREACH_ENUM( CourseDifficulty, NUM_COURSE_DIFFICULTIES, cd )
 
-CString CourseDifficultyToString( CourseDifficulty dc );
-CourseDifficulty StringToCourseDifficulty( CString sDC );
+const CString& CourseDifficultyToString( CourseDifficulty dc );
+CourseDifficulty StringToCourseDifficulty( const CString& sDC );
 
 
 enum StepsType
@@ -166,13 +166,13 @@ enum PlayMode
 };
 #define FOREACH_PlayMode( pm ) FOREACH_ENUM( PlayMode, NUM_PLAY_MODES, pm )
 
-CString PlayModeToString( PlayMode pm );
-PlayMode StringToPlayMode( CString s );
+const CString& PlayModeToString( PlayMode pm );
+PlayMode StringToPlayMode( const CString& s );
 
 
 
 
-enum SongSortOrder {
+enum SortOrder {
 	SORT_PREFERRED,
 	SORT_GROUP, 
 	SORT_TITLE, 
@@ -194,13 +194,14 @@ enum SongSortOrder {
 	NUM_SORT_ORDERS,
 	SORT_INVALID
 };
-const SongSortOrder MAX_SELECTABLE_SORT = (SongSortOrder)(SORT_ROULETTE-1);
+const SortOrder MAX_SELECTABLE_SORT = (SortOrder)(SORT_ROULETTE-1);
 
-#define FOREACH_SongSortOrder( so ) FOREACH_ENUM( SongSortOrder, NUM_SORT_ORDERS, so )
+#define FOREACH_SortOrder( so ) FOREACH_ENUM( SortOrder, NUM_SORT_ORDERS, so )
 
-CString SongSortOrderToString( SongSortOrder so );
-SongSortOrder StringToSongSortOrder( CString str );
+const CString& SortOrderToString( SortOrder so );
+SortOrder StringToSortOrder( const CString& str );
 
+inline bool IsSongSort( SortOrder so ) { return so >= SORT_PREFERRED && so <= SORT_CHALLENGE_METER; }
 
 //
 // Scoring stuff
@@ -219,7 +220,7 @@ enum TapNoteScore {
 };
 #define FOREACH_TapNoteScore( tns ) FOREACH_ENUM( TapNoteScore, NUM_TAP_NOTE_SCORES, tns )
 
-CString TapNoteScoreToString( TapNoteScore tns );
+const CString& TapNoteScoreToString( TapNoteScore tns );
 
 //enum TapNoteTiming { 
 //	TNT_NONE, 
@@ -262,7 +263,7 @@ enum MemoryCardState
 	MEMORY_CARD_STATE_INVALID,
 };
 
-CString MemoryCardStateToString( MemoryCardState mcs );
+const CString& MemoryCardStateToString( MemoryCardState mcs );
 
 
 //
@@ -278,11 +279,11 @@ enum RankingCategory
 	RANKING_INVALID
 };
 #define FOREACH_RankingCategory( rc ) FOREACH_ENUM( RankingCategory, NUM_RANKING_CATEGORIES, rc )
-CString RankingCategoryToString( RankingCategory rc );
-RankingCategory StringToRankingCategory( CString rc );
+const CString& RankingCategoryToString( RankingCategory rc );
+RankingCategory StringToRankingCategory( const CString& rc );
 
 const CString RANKING_TO_FILL_IN_MARKER[NUM_PLAYERS] = {"#P1#","#P2#"};
-inline bool IsRankingToFillIn( CString sName ) { return !sName.empty() && sName[0]=='#'; }
+inline bool IsRankingToFillIn( const CString& sName ) { return !sName.empty() && sName[0]=='#'; }
 
 RankingCategory AverageMeterToRankingCategory( float fAverageMeter );
 
@@ -345,7 +346,7 @@ const int ITEM_NONE = -1;
 
 enum CoinMode { COIN_HOME, COIN_PAY, COIN_FREE, NUM_COIN_MODES };
 
-CString CoinModeToString( CoinMode cm );
+const CString& CoinModeToString( CoinMode cm );
 
 
 //
@@ -366,9 +367,9 @@ enum PerDifficultyAward
 	PER_DIFFICULTY_AWARD_INVALID,
 };
 #define FOREACH_PerDifficultyAward( pma ) FOREACH_ENUM( PerDifficultyAward, NUM_PER_DIFFICULTY_AWARDS, pma )
-CString PerDifficultyAwardToString( PerDifficultyAward pma );
+const CString& PerDifficultyAwardToString( PerDifficultyAward pma );
 CString PerDifficultyAwardToThemedString( PerDifficultyAward pma );
-PerDifficultyAward StringToPerDifficultyAward( CString pma );
+PerDifficultyAward StringToPerDifficultyAward( const CString& pma );
 
 
 enum PeakComboAward 
@@ -387,9 +388,9 @@ enum PeakComboAward
 	PEAK_COMBO_AWARD_INVALID,
 };
 #define FOREACH_PeakComboAward( pca ) FOREACH_ENUM( PeakComboAward, NUM_PEAK_COMBO_AWARDS, pca )
-CString PeakComboAwardToString( PeakComboAward pma );
+const CString& PeakComboAwardToString( PeakComboAward pma );
 CString PeakComboAwardToThemedString( PeakComboAward pma );
-PeakComboAward StringToPeakComboAward( CString pma );
+PeakComboAward StringToPeakComboAward( const CString& pma );
 
 
 #endif

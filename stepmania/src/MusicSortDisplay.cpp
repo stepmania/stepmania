@@ -23,7 +23,7 @@ MusicSortDisplay::MusicSortDisplay()
 {
 }
 
-void MusicSortDisplay::Set( SongSortOrder so ) 
+void MusicSortDisplay::Set( SortOrder so ) 
 { 
-	Load( THEME->GetPathToG(ssprintf("MusicSortDisplay %s",SongSortOrderToString(so).c_str())) );
+	Load( THEME->GetPathToG(ssprintf("MusicSortDisplay %s",SortOrderToString(so).c_str())) );
 }
