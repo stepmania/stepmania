@@ -14,7 +14,7 @@
 #include "archutils/Darwin/Crash.h"
 #include "archutils/Unix/CrashHandler.h"
 #include <Carbon/Carbon.h>
-#if 0
+#if 1
 #include <QuickTime/QuickTime.h>
 #endif
 
@@ -66,7 +66,6 @@ ArchHooks_darwin::~ArchHooks_darwin() {
 
 void ArchHooks_darwin::DumpDebugInfo()
 {
-    CString date = __DATE__;
     CString systemVersion;
     long ram;
     long vRam;
@@ -214,7 +213,6 @@ void ArchHooks_darwin::DumpDebugInfo()
     /* TODO */
 
     /* Send all of the information to the log */
-    LOG->Info("Compiled %s", date.c_str());
     LOG->Info(machine.c_str());
     LOG->Info("Processor: %s (%d)", processor.c_str(), numProcessors);
     LOG->Info("%s", systemVersion.c_str());
@@ -311,5 +309,14 @@ int TaskMovies(void *data) {
             RageException::Throw("MoviesTask failed with error: %d", err);
     }
     return 0;
+}
+#endif
+#if 0
+inline void ArchHooks_darwin::Update(float delta) {
+#pragma unused(delta)
+    MoviesTask(NULL, 0);
+    OSErr err = GetMoviesError();
+    if (__builtin_expect(err, noErr))
+        RageException::Throw("MoviesTask failed with error: %d", err);
 }
 #endif
