@@ -31,7 +31,8 @@ SDL_Surface *RageSurface::LoadFile( const CString &sPath )
 		SDL_RWclose( rw );
 		SDL_FreeRW( rw );
 
-		mySDL_FixupPalettedAlpha( ret );
+		if( ret )
+			mySDL_FixupPalettedAlpha( ret );
 	}
 	else
 	{
