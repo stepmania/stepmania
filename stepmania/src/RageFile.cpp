@@ -343,13 +343,29 @@ void RageFile::Rewind()
 	m_File->Rewind();
 }
 
-int RageFile::Read( CString &buffer, size_t bytes )
+int RageFile::Read( CString &buffer, int bytes )
 {
-	char *buf = new char[bytes];
-	int ret = Read( buf, bytes );
-	if( ret != -1 )
-		buffer.assign( buf, buf+ret );
-	delete [] buf;
+	buffer.clear();
+	buffer.reserve( bytes != -1? bytes: this->GetFileSize() );
+
+	int ret = 0;
+	char buf[4096];
+	while( bytes == -1 || ret < bytes )
+	{
+		int ToRead = sizeof(buf);
+		if( bytes != -1 )
+			ToRead  = min( ToRead, bytes-ret );
+
+		const int got = Read( buf, ToRead );
+		if( got == 0 )
+			break;
+		if( got == -1 )
+			return -1;
+
+		buffer.append( buf, got );
+		ret += got;
+	}
+
 	return ret;
 }
 
