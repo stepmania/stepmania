@@ -31,6 +31,7 @@
 #include "ProfileManager.h"
 #include "arch/arch.h"
 #include "ThemeManager.h"
+#include "Bookkeeper.h"
 
 
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
@@ -130,6 +131,10 @@ void GameState::Reset()
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 		PROFILEMAN->UnloadProfile( (PlayerNumber)p );
+
+	// save stats info intermitently in case of crash
+	BOOKKEEPER->WriteToDisk();
+	SONGMAN->SaveMachineScoresToDisk();
 }
 
 void GameState::Update( float fDelta )
