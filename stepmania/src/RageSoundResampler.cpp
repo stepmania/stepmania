@@ -32,9 +32,9 @@ void RageSoundResampler::write(const void *data_, int bytes)
 {
 	ASSERT(!at_eof);
 
-	const Sint16 *data = (const Sint16 *) data_;
+	const int16_t *data = (const int16_t *) data_;
 
-	const unsigned samples = bytes / sizeof(Sint16);
+	const unsigned samples = bytes / sizeof(int16_t);
 	const unsigned frames = samples / channels;
 
 	if(InputRate == OutputRate)
@@ -58,7 +58,7 @@ void RageSoundResampler::write(const void *data_, int bytes)
 			for(int c = 0; c < channels; ++c)
 			{
 				const float f = 0.5f;
-				prev[c] = Sint16(prev[c] * (f) + data[c] * (1-f));
+				prev[c] = int16_t(prev[c] * (f) + data[c] * (1-f));
 				for(int i = ipos_begin; i < ipos_end; ++i)
 					outbuf.push_back(prev[c]);
 			}
@@ -75,7 +75,7 @@ void RageSoundResampler::write(const void *data_, int bytes)
 		{
 			while(t[c] < 1.0f)
 			{
-				Sint16 s = Sint16(prev[c]*(1-t[c]) + data[c]*t[c]);
+				int16_t s = int16_t(prev[c]*(1-t[c]) + data[c]*t[c]);
 				outbuf.push_back(s);
 				t[c] += div;
 			}
@@ -105,9 +105,9 @@ void RageSoundResampler::eof()
 	if( bNeedsFlush )
 	{
 		const int size = channels*16;
-		Sint16 *data = new Sint16[size];
-		memset(data, 0, size * sizeof(Sint16));
-		write(data, size * sizeof(Sint16));
+		int16_t *data = new int16_t[size];
+		memset(data, 0, size * sizeof(int16_t));
+		write(data, size * sizeof(int16_t));
 		delete [] data;
 	}
 
@@ -118,16 +118,16 @@ void RageSoundResampler::eof()
 int RageSoundResampler::read(void *data, unsigned bytes)
 {
 	/* Don't be silly. */
-	ASSERT( (bytes % sizeof(Sint16)) == 0);
+	ASSERT( (bytes % sizeof(int16_t)) == 0);
 
 	/* If no data is available, and we're at_eof, return -1. */
 	if(outbuf.size() == 0 && at_eof)
 		return -1;
 
 	/* Fill as much as we have. */
-	int Avail = min(outbuf.size()*sizeof(Sint16), bytes);
+	int Avail = min(outbuf.size()*sizeof(int16_t), bytes);
 	memcpy(data, &outbuf[0], Avail);
-	outbuf.erase(outbuf.begin(), outbuf.begin() + Avail/sizeof(Sint16));
+	outbuf.erase(outbuf.begin(), outbuf.begin() + Avail/sizeof(int16_t));
 	return Avail;
 }
 

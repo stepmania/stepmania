@@ -1,17 +1,15 @@
 #ifndef RAGE_SOUND_RESAMPLER_H
 #define RAGE_SOUND_RESAMPLER_H
 
-#include "SDL_utils.h"
-
 enum { MAX_CHANNELS = 15 };
 
 class RageSoundResampler
 {
 	int InputRate, OutputRate;
 
-	Sint16 prev[MAX_CHANNELS];
+	int16_t prev[MAX_CHANNELS];
 
-	vector<Sint16> outbuf;
+	vector<int16_t> outbuf;
 	bool at_eof;
 	int ipos;
 
