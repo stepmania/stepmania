@@ -589,14 +589,10 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 void RageDisplay_D3D::ResolutionChanged()
 {
 #ifdef _XBOX
-	g_CurrentParams.width = (int)PREFSMAN->m_fScreenWidth;
-	g_CurrentParams.height = (int)PREFSMAN->m_fScreenHeight;
-	D3DVIEWPORT8 viewData2 = { 0,0,640,480, 0.f, 1.f };
-	g_pd3dDevice->SetViewport( &viewData2 );
+	D3DVIEWPORT8 viewData = { 0,0,640,480, 0.f, 1.f };
+	g_pd3dDevice->SetViewport( &viewData0 );
 	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,
 						 D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
-	D3DVIEWPORT8 viewData = { (DWORD)PREFSMAN->m_fScreenPosX, (DWORD)PREFSMAN->m_fScreenPosY, g_CurrentParams.width, g_CurrentParams.height, 0.f, 1.f };
-	g_pd3dDevice->SetViewport( &viewData );
 #endif
 	// no need to clear because D3D uses an overlay
 //	SetViewport(0,0);
