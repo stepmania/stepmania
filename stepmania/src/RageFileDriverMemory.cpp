@@ -68,11 +68,6 @@ public:
 		return bytes;
 	}
 
-	void Rewind()
-	{
-		m_iFilePos = 0;
-	}
-
 	int Seek( int offset )
 	{
 		m_iFilePos = clamp( offset, 0, GetFileSize() );

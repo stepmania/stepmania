@@ -83,7 +83,6 @@ public:
 	~RageFileObjZipDeflated();
 	int Read(void *buffer, size_t bytes);
 	int Write(const void *buffer, size_t bytes) { SetError( "Not implemented" ); return -1; }
-	void Rewind();
 	int Seek( int offset );
 	int GetFileSize() { return info.uncompr_size; }
 	RageFileObj *Copy( RageFile &p ) const
@@ -105,12 +104,6 @@ public:
 	RageFileObjZipStored( const RageFile &f, const FileInfo &info, RageFile &p );
 	int Read(void *buffer, size_t bytes);
 	int Write(const void *buffer, size_t bytes) { SetError( "Not implemented" ); return -1; }
-
-	void Rewind()
-	{
-		zip.Seek( info.data_offset );
-		FilePos = 0;
-	}
 
 	int Seek( int offset );
 	int GetFileSize() { return info.uncompr_size; }
@@ -566,17 +559,6 @@ int RageFileObjZipDeflated::Read( void *buf, size_t bytes )
 	}
 
 	return ret;
-}
-
-void RageFileObjZipDeflated::Rewind()
-{
-	inflateReset( &dstrm );
-	decomp_buf_ptr = decomp_buf;
-	decomp_buf_avail = 0;
-
-    zip.Seek( info.data_offset );
-	CFilePos = 0;
-	UFilePos = 0;
 }
 
 int RageFileObjZipDeflated::Seek( int iPos )

@@ -44,7 +44,6 @@ public:
 	virtual int Read(void *buffer, size_t bytes);
 	virtual int Write(const void *buffer, size_t bytes);
 	virtual int Flush();
-	virtual void Rewind();
 	virtual int Seek( int offset );
 	virtual RageFileObj *Copy( RageFile &p ) const;
 	virtual CString GetDisplayPath() const { return path; }
@@ -357,11 +356,6 @@ int RageFileObjDirect::Write( const void *buf, size_t bytes )
 
 	write_buf.append( (const char *)buf, (const char *)buf+bytes );
 	return bytes;
-}
-
-void RageFileObjDirect::Rewind()
-{
-	lseek( fd, 0, SEEK_SET );
 }
 
 int RageFileObjDirect::Seek( int offset )
