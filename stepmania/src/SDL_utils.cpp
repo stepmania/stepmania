@@ -553,6 +553,8 @@ bool mySDL_SaveSurface( SDL_Surface *img, CString file )
 		return false;
 
 	SurfaceHeader h;
+	memset( &h, 0, sizeof(h) );
+
 	h.height = img->h;
 	h.width = img->w;
 	h.pitch = img->pitch;
