@@ -53,14 +53,14 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo /o"../StepMania-StackTrace.bsc"
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 $(intdir)\verstub.obj kernel32.lib gdi32.lib shell32.lib user32.lib advapi32.lib  winmm.lib /nologo /subsystem:windows /pdb:"../release6/StepMania.pdb" /map /debug /machine:I386
+# ADD LINK32 $(intdir)\verstub.obj kernel32.lib gdi32.lib shell32.lib user32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /pdb:"../release6/StepMania.pdb" /map /debug /machine:I386
 # SUBTRACT LINK32 /verbose /pdb:none
 # Begin Special Build Tool
 IntDir=.\../Release6
 TargetDir=\temp\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                  	cl                                   /Zl                                   /nologo                                   /c                                   verstub.cpp                                   /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                   	cl                                    /Zl                                    /nologo                                    /c                                    verstub.cpp                                    /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -88,14 +88,14 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 $(intdir)\verstub.obj kernel32.lib shell32.lib user32.lib gdi32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /pdb:"../debug6/StepMania-debug.pdb" /map /debug /machine:I386 /out:"../StepMania-debug.exe"
-# SUBTRACT LINK32 /profile /pdb:none /incremental:no /nodefaultlib
+# ADD LINK32 $(intdir)\verstub.obj kernel32.lib shell32.lib user32.lib gdi32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /pdb:"../debug6/StepMania-debug.pdb" /map /debug /machine:I386 /nodefaultlib:"libcmtd.lib" /out:"../StepMania-debug.exe"
+# SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
 TargetDir=\temp\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                  	cl                                   /Zl                                   /nologo                                   /c                                   verstub.cpp                                   /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                   	cl                                    /Zl                                    /nologo                                    /c                                    verstub.cpp                                    /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -1525,6 +1525,10 @@ SOURCE=.\ThemeManager.h
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\Crash.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Crash.h
 # End Source File
 # Begin Source File
@@ -1533,7 +1537,15 @@ SOURCE=.\CrashList.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Disasm.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Disasm.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Tls.cpp
 # End Source File
 # Begin Source File
 

@@ -1245,13 +1245,22 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			Name="Disasm"
 			Filter="">
 			<File
+				RelativePath="Crash.cpp">
+			</File>
+			<File
 				RelativePath="Crash.h">
 			</File>
 			<File
 				RelativePath="CrashList.h">
 			</File>
 			<File
+				RelativePath="Disasm.cpp">
+			</File>
+			<File
 				RelativePath="Disasm.h">
+			</File>
+			<File
+				RelativePath="Tls.cpp">
 			</File>
 			<File
 				RelativePath="Tls.h">
