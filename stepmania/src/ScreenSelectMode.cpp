@@ -32,6 +32,7 @@ Chris Danford
 #define SCROLLING_LIST_Y	THEME->GetMetricI("ScreenSelectMode","ScrollingListY")
 #define GUIDE_X		THEME->GetMetricF("ScreenSelectMode", "GuideX")
 #define GUIDE_Y		THEME->GetMetricF("ScreenSelectMode", "GuideY")
+#define USECONFIRM THEME->GetMetricI("ScreenSelectMode","UseConfirm")
 
 /************************************
 ScreenSelectMode (Constructor)
@@ -40,11 +41,13 @@ Desc: Sets up the screen display
 
 ScreenSelectMode::ScreenSelectMode() : ScreenSelect( "ScreenSelectMode" )
 {
+	m_bSelected = false;
 	m_ChoiceListFrame.Load( THEME->GetPathToG("ScreenSelectMode list frame"));
 	m_ChoiceListFrame.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y);
 	this->AddChild( &m_ChoiceListFrame );
 
 	m_soundModeChange.Load( THEME->GetPathToS("ScreenSelectMode modechange"));
+	m_soundConfirm.Load( THEME->GetPathToS("ScreenSelectMode modeconfirm"));
 		unsigned i;
 	for( i=0; i<m_aModeChoices.size(); i++ )
 	{
@@ -82,17 +85,28 @@ is terminated.
 ************************************/
 ScreenSelectMode::~ScreenSelectMode()
 {
+	m_ScrollingList.StopTweening();
 	LOG->Trace( "ScreenSelectMode::~ScreenSelectMode()" );
 }
 
 void ScreenSelectMode::MenuLeft( PlayerNumber pn )
 {
+	if(m_bSelected && USECONFIRM == 1)
+	{
+		m_bSelected = false;
+		m_ScrollingList.StopBouncing();
+	}
 	m_ScrollingList.Left();
 	m_soundModeChange.Play();
 }
 
 void ScreenSelectMode::MenuRight( PlayerNumber pn )
 {
+	if(m_bSelected && USECONFIRM == 1)
+	{
+		m_bSelected = false;
+		m_ScrollingList.StopBouncing();
+	}
 	m_ScrollingList.Right();
 	m_soundModeChange.Play();
 }
@@ -116,8 +130,8 @@ void ScreenSelectMode::UpdateSelectableChoices()
 		if(
 		(PREFSMAN->m_bJointPremium && INCLUDE_DOUBLE_IN_JP == 1 && ((GAMESTATE->GetNumSidesJoined() == 1 && mc.numSidesJoinedToPlay == 1) || (GAMESTATE->GetNumSidesJoined() == 2 && mc.numSidesJoinedToPlay == 2))) ||
 		(PREFSMAN->m_bJointPremium && INCLUDE_DOUBLE_IN_JP == 0 && 
-			((modename.substr(0, 6) == "DOUBLE" && GAMESTATE->GetNumSidesJoined() != 2 ) || GAMESTATE->GetNumSidesJoined() == 1 && mc.numSidesJoinedToPlay == 1) || 
-			(modename.substr(0, 6) != "DOUBLE" && GAMESTATE->GetNumSidesJoined() == 2 && mc.numSidesJoinedToPlay == 2)) ||
+			(((modename.substr(0, 6) == "DOUBLE" || modename.substr(0, 13) == "ARCADE-DOUBLE")  && GAMESTATE->GetNumSidesJoined() != 2 ) || GAMESTATE->GetNumSidesJoined() == 1 && mc.numSidesJoinedToPlay == 1) || 
+			((modename.substr(0, 6) != "DOUBLE" || modename.substr(0, 13) != "ARCADE-DOUBLE") && GAMESTATE->GetNumSidesJoined() == 2 && mc.numSidesJoinedToPlay == 2)) ||
 		(!PREFSMAN->m_bJointPremium)
 		)
 		{
@@ -134,6 +148,7 @@ void ScreenSelectMode::UpdateSelectableChoices()
 			GraphicPaths.push_back(arrayLocations[i]);
 		}
 	}
+	m_ScrollingList.SetSelection(0);
 	m_ScrollingList.Unload();
 	m_ScrollingList.Load(GraphicPaths);
 }
@@ -141,7 +156,16 @@ void ScreenSelectMode::UpdateSelectableChoices()
 
 void ScreenSelectMode::MenuStart( PlayerNumber pn )
 {
+	if(!m_bSelected && USECONFIRM == 1)
+	{
+		m_soundConfirm.Play();
+		m_ScrollingList.StartBouncing();
+		m_bSelected = true;
+		return;
+	}
 	SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, 0 );
+	m_ScrollingList.BeginTweening(1.0f);
+	m_ScrollingList.SetRotationZ(0.0f);
 }
 
 int ScreenSelectMode::GetSelectionIndex( PlayerNumber pn )

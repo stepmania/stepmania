@@ -63,6 +63,7 @@ ScrollingList::ScrollingList()
 	m_iBounceDir=0;
 	m_iBounceWait=0;
 	m_RippleCSprite.SetXY(0,0);
+	m_RippleSprite.SetXY(0,0);
 }
 
 void ScrollingList::UseSpriteType(int NewSpriteType)
@@ -96,7 +97,10 @@ void ScrollingList::StartBouncing()
 	m_iBouncingState = 1;
 	if(m_iSpriteType == SPRITE_TYPE_SPRITE)
 	{
-
+		m_RippleSprite.Load( m_apSprites[m_iSelection]->GetTexturePath() );
+		m_RippleSprite.SetXY( m_apSprites[m_iSelection]->GetX(), m_apSprites[m_iSelection]->GetY() );
+		m_RippleSprite.SetZoom( 1.1f );
+		m_RippleSprite.SetDiffuse( RageColor(1,1,1,0.5f));
 	}
 	else
 	{
@@ -271,6 +275,55 @@ void ScrollingList::Update( float fDeltaTime )
 
 	if(m_iSpriteType == SPRITE_TYPE_SPRITE)
 	{
+		if(m_iBouncingState)	// bouncing
+		{
+			if(m_fNextTween <= 0) // we're ready to update stuff
+			{
+				m_fNextTween = 0.1f; // reset the tween count
+				if(m_apSprites[m_iSelection]->GetZoom() >= 1.2f && m_iBounceDir == 1) // if we're over biggest boundary
+				{
+					m_iBounceDir = 2; // next phase will be a wait
+					m_apSprites[m_iSelection]->SetZoom( m_apSprites[m_iSelection]->GetZoom() - 0.25f); // make it smaller
+					m_RippleSprite.SetZoom( m_RippleSprite.GetZoom() - 0.30f); // make the ripple smaller
+				}
+				else if(m_apSprites[m_iSelection]->GetZoom() <= 1.0f && m_iBounceDir == 0) // if we're over smallest boundary
+				{
+					m_iBounceDir = 1; // next phase will be making graphic bigger
+					m_apSprites[m_iSelection]->SetZoom( m_apSprites[m_iSelection]->GetZoom() + 0.25f); // make it bigger
+					m_RippleSprite.SetZoom( m_RippleSprite.GetZoom() + 0.30f); // make ripple bigger
+					m_RippleSprite.SetDiffuse( RageColor(1,1,1,0.5f)); // make ripple appear semi transparent
+				}
+				else if(m_iBounceDir == 0 && m_apSprites[m_iSelection]->GetZoom() != 1.0f) // travelling smaller
+				{
+					m_apSprites[m_iSelection]->SetZoom( m_apSprites[m_iSelection]->GetZoom() - 0.25f); // make smaller
+					m_RippleSprite.SetZoom( m_RippleSprite.GetZoom() - 0.30f); // make smaller
+				}
+				else if(m_iBounceDir == 1 && m_apSprites[m_iSelection]->GetZoom() != 1.2f) // travelling bigger
+				{
+					m_apSprites[m_iSelection]->SetZoom( m_apSprites[m_iSelection]->GetZoom() + 0.25f); // make bigger
+					m_RippleSprite.SetZoom( m_RippleSprite.GetZoom() + 0.30f ); // make bigger
+				}
+				else if(m_iBounceDir == 2) // we're waiting before doing bounce processes again
+				{
+					if(m_iBounceWait == 0) // if we're at 0 from last time....
+						m_iBounceWait = 3; // start wait at 3
+					else
+						m_iBounceWait--; // otherwise decrease by 1
+					
+					if(m_iBounceWait == 2) // if we're one moment after start of wait
+						m_RippleSprite.SetDiffuse( RageColor(1,1,1,0.0f)); // hide the ripple
+
+					if(m_iBounceWait == 0) // if we just turned to 0 
+						m_iBounceDir = 0; // go to the 'make smaller' stage. as we SHOULD already be pretty small, we should start increasing in size a couple phases on.
+				}
+			}
+			else
+			{
+				m_fNextTween -= fDeltaTime; // update the tween time.
+			}
+
+		}
+
 		for( unsigned i=0; i<m_apSprites.size(); i++ )
 			m_apSprites[i]->Update( fDeltaTime );
 	}
@@ -434,12 +487,17 @@ void ScrollingList::DrawPrimitives()
 	}
 	if(m_iSpriteType == SPRITE_TYPE_SPRITE)
 	{
+		if(m_iBouncingState)
+		{
+			m_RippleSprite.Draw();
+		}
 	}
 	else
 	{
 		if(m_iBouncingState)
 		{
 			m_RippleCSprite.Draw();
+			m_RippleSprite.Draw();
 		}
 	}
 }

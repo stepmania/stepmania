@@ -55,6 +55,7 @@ protected:
 	float					m_fNextTween;
 
 	CroppedSprite	m_RippleCSprite;
+	Sprite m_RippleSprite;
 
 	vector<Sprite*>	m_apSprites;	// stores the list of elements (left to right)
 	vector<CroppedSprite*>	m_apCSprites;	// stores the list of elements (left to right)

@@ -37,6 +37,7 @@ protected:
 	int m_iNumChoices;
 	int m_iSelectableChoices[MAX_ELEMS];
 	RageSound			m_soundModeChange;
+	RageSound			m_soundConfirm;
 	CStringArray arrayLocations;
 	ScrollingList m_ScrollingList;
 	Sprite m_ChoiceListFrame;
@@ -44,4 +45,5 @@ protected:
 	Sprite m_sprJoinMessage[NUM_PLAYERS];
 	Sprite m_sprJoinFrame[NUM_PLAYERS];
 	Sprite m_Guide;
+	bool m_bSelected;
 };
