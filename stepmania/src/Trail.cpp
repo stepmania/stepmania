@@ -23,7 +23,7 @@ bool TrailEntry::operator== ( const TrailEntry &rhs ) const
 		EQUAL(pSteps) &&
 		EQUAL(Modifiers) &&
 		EQUAL(Attacks) &&
-		EQUAL(bMystery) &&
+		EQUAL(bSecret) &&
 		EQUAL(iLowMeter) &&
 		EQUAL(iHighMeter) &&
 		EQUAL(dc);
@@ -62,7 +62,7 @@ void Trail::SetRadarValues( const RadarValues &rv )
 
 RadarValues Trail::GetRadarValues() const
 {
-	if( IsMystery() )
+	if( IsSecret() )
 	{
 		// Don't calculate RadarValues for a non-fixed Course.  They values are 
 		// worthless because they'll change every time this Trail is 
@@ -152,7 +152,7 @@ void Trail::GetDisplayBpms( DisplayBpms &AddTo )
 {
 	FOREACH_CONST( TrailEntry, m_vEntries, e )
 	{
-		if( e->bMystery )
+		if( e->bSecret )
 		{
 			AddTo.Add( -1 );
 			continue;
@@ -177,11 +177,11 @@ void Trail::GetDisplayBpms( DisplayBpms &AddTo )
 	}
 }
 
-bool Trail::IsMystery() const
+bool Trail::IsSecret() const
 {
 	FOREACH_CONST( TrailEntry, m_vEntries, e )
 	{
-		if( e->bMystery )
+		if( e->bSecret )
 			return true;
 	}
 	return false;

@@ -180,12 +180,12 @@ void Course::LoadFromCRSFile( CString sPath )
 			}
 			else if( sParams[1] == "*" )
 			{
-				new_entry.mystery = true;
+				new_entry.bSecret = true;
 				new_entry.type = COURSE_ENTRY_RANDOM;
 			}
 			else if( sParams[1].Right(1) == "*" )
 			{
-				new_entry.mystery = true;
+				new_entry.bSecret = true;
 				new_entry.type = COURSE_ENTRY_RANDOM_WITHIN_GROUP;
 				CString sSong = sParams[1];
 				sSong.Replace( "\\", "/" );
@@ -241,16 +241,16 @@ void Course::LoadFromCRSFile( CString sPath )
 			}
 
 			{
-				/* If "showcourse" or "noshowcourse" is in the list, force new_entry.mystery 
+				/* If "showcourse" or "noshowcourse" is in the list, force new_entry.secret 
 				 * on or off. */
 				CStringArray mods;
 				split( sParams[3], ",", mods, true );
 				for( int j = (int) mods.size()-1; j >= 0 ; --j )
 				{
 					if( !mods[j].CompareNoCase("showcourse") )
-						new_entry.mystery = false;
+						new_entry.bSecret = false;
 					else if( !mods[j].CompareNoCase("noshowcourse") )
-						new_entry.mystery = true;
+						new_entry.bSecret = true;
 					else if( !mods[j].CompareNoCase("nodifficult") )
 						new_entry.no_difficult = true;
 					else 
@@ -496,12 +496,12 @@ void Course::Save( CString sPath, bool bSavingCache )
 		line += ":";
 
 		CString modifiers = entry.modifiers;
-		bool default_mystery = (entry.type == COURSE_ENTRY_RANDOM || entry.type == COURSE_ENTRY_RANDOM_WITHIN_GROUP);
-		if( default_mystery != entry.mystery )
+		bool default_secret = (entry.type == COURSE_ENTRY_RANDOM || entry.type == COURSE_ENTRY_RANDOM_WITHIN_GROUP);
+		if( default_secret != entry.bSecret )
 		{
 			if( modifiers != "" )
 				modifiers += ",";
-			modifiers += entry.mystery? "noshowcourse":"showcourse";
+			modifiers += entry.bSecret? "noshowcourse":"showcourse";
 		}
 
 		if( entry.no_difficult )
@@ -547,7 +547,7 @@ void Course::AutogenEndlessFromGroup( CString sGroupName, Difficulty diff )
 
 	e.group_name = sGroupName;
 	e.difficulty = diff;
-	e.mystery = true;
+	e.bSecret = true;
 
 	vector<Song*> vSongs;
 	SONGMAN->GetSongs( vSongs, e.group_name );
@@ -1014,7 +1014,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		te.pSteps = pSteps;
 		te.Modifiers = e.modifiers;
 		te.Attacks = e.attacks;
-		te.bMystery = e.mystery;
+		te.bSecret = e.bSecret;
 		te.iLowMeter = low_meter;
 		te.iHighMeter = high_meter;
 		/* If we chose based on meter (not difficulty), then store DIFFICULTY_INVALID, so

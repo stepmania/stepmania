@@ -15,7 +15,7 @@ struct TrailEntry
 	TrailEntry(): 
 		pSong(NULL), 
 		pSteps(NULL),
-		bMystery(false),
+		bSecret(false),
 		iLowMeter(-1),
 		iHighMeter(-1),
 		dc(DIFFICULTY_INVALID)
@@ -27,7 +27,7 @@ struct TrailEntry
 	Steps*		pSteps;
 	CString		Modifiers;
 	AttackArray Attacks;
-	bool		bMystery;
+	bool		bSecret;
 
 	/* These represent the meter and difficulty used by the course to pick the
 	 * steps; if you want the real difficulty and meter, look at pSteps. */
@@ -69,7 +69,7 @@ public:
 	int GetTotalMeter() const;
 	float GetLengthSeconds() const;
 	void GetDisplayBpms( DisplayBpms &AddTo );
-	bool IsMystery() const;
+	bool IsSecret() const;
 	bool ContainsSong( Song* pSong ) const;
 };
 

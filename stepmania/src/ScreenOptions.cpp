@@ -338,7 +338,7 @@ CString ScreenOptions::GetExplanationTitle( int iRow ) const
 				pTrail->GetDisplayBpms( bpms );
 			}
 
-			if( bpms.IsMystery() )
+			if( bpms.IsSecret() )
 				sTitle += ssprintf( " (??" "?)" ); /* split so gcc doesn't think this is a trigraph */
 			else if( bpms.BpmIsConstant() )
 				sTitle += ssprintf( " (%.0f)", bpms.GetMin() );

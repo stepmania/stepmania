@@ -44,7 +44,7 @@ class CourseEntry
 {
 public:
 	CourseEntryType type;
-	bool mystery;			// show "??????"
+	bool bSecret;			// show "??????"
 	Song* pSong;			// used in type=fixed
 	CString group_name;		// used in type=random_within_group
 	Difficulty difficulty;	// = DIFFICULTY_INVALID if no difficulty specified
@@ -58,7 +58,7 @@ public:
 	CourseEntry()
 	{
 		type = (CourseEntryType)0;
-		mystery = false;
+		bSecret = false;
 		pSong = NULL;
 		group_name = "";
 		difficulty = DIFFICULTY_INVALID;

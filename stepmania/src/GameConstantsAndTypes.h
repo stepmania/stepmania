@@ -328,7 +328,7 @@ struct DisplayBpms
 	float GetMin() const;
 	float GetMax() const;
 	bool BpmIsConstant() const;
-	bool IsMystery() const;
+	bool IsSecret() const;
 	vector<float> vfBpms;
 };
 

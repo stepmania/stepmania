@@ -79,7 +79,7 @@ void CourseEntryDisplay::LoadFromTrailEntry( int iNum, const TrailEntry *tes[NUM
 	if( te == NULL )
 		return;
 
-	if( te->bMystery )
+	if( te->bSecret )
 	{
 		FOREACH_EnabledPlayer(pn)
 		{
@@ -96,7 +96,9 @@ void CourseEntryDisplay::LoadFromTrailEntry( int iNum, const TrailEntry *tes[NUM
 				SetDifficulty( pn, ssprintf(iLow==iHigh?"%d":"%d-%d", iLow, iHigh), colorNotes );
 			}
 			else
+			{
 				SetDifficulty( pn, "?", SONGMAN->GetDifficultyColor( dc ) );
+			}
 		}
 
 		m_TextBanner.LoadFromString( "??????????", "??????????", "", "", "", "" );

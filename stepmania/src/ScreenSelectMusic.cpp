@@ -1641,11 +1641,13 @@ void ScreenSelectMusic::AfterMusicChange()
 
 		FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
 		{
-			if( e->bMystery )
+			if( e->bSecret )
 			{
 				m_Artists.push_back( "???" );
 				m_AltArtists.push_back( "???" );
-			} else {
+			}
+			else
+			{
 				m_Artists.push_back( e->pSong->GetDisplayArtist() );
 				m_AltArtists.push_back( e->pSong->GetTranslitArtist() );
 			}

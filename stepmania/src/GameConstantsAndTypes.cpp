@@ -246,7 +246,7 @@ bool DisplayBpms::BpmIsConstant() const
 	return fabsf( GetMin() - GetMax() ) < 0.001f;
 }
 
-bool DisplayBpms::IsMystery() const
+bool DisplayBpms::IsSecret() const
 {
 	FOREACH_CONST( float, vfBpms, f )
 	{
