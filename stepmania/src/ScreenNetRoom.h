@@ -27,20 +27,35 @@ protected:
 
 private:
 	void UpdateRoomsList();
+	void MenuLeft( PlayerNumber pn, const InputEventType type );
+	void MenuRight( PlayerNumber pn, const InputEventType type );
+	void CreateNewRoom( const CString& rName,  const CString& rDesc );
+
+	enum NetSelectModes
+	{
+		SelectRooms = 0,
+		SelectMakeRoom,
+		SelectModes,
+	};
+
+	NetSelectModes m_SelectMode;
 		
 	RageSound m_soundChangeSel;
 	
 	BitmapText m_textTitle;
 	Quad m_rectTitleBG;
 
-	Quad m_rectRoomsBG;
+	Sprite m_sprRoomsBG;
 	BitmapText m_textRooms;
-	Quad m_rectRoomsSel;
+
+	Sprite m_sprSelection;
 
 	Sprite m_sprCreateRoom;
 
 	vector < CString > m_Rooms;
 	int m_iRoomPlace;
+
+	CString m_newRoomName, m_newRoomDesc;
 };
 
 #endif
