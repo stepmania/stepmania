@@ -860,7 +860,15 @@ void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType type
 
 	if( type != IET_RELEASE && bHoldingLeftOrRight )
 	{
+		// If moving up from a multiselect row, put focus back on the first 
+		// choice before moving up.
+		int iCurrentRow = m_iCurrentRow[MenuI.player];
+		Row &row = *m_Rows[iCurrentRow];
+		if( row.m_RowDef.bMultiSelect )
+			row.m_iChoiceWithFocus[MenuI.player] = 0;
+
 		MoveRow( MenuI.player, -1, type != IET_FIRST_PRESS );
+		
 		return;
 	}
 
@@ -1162,6 +1170,8 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 
 	/* If START is being pressed, and in NAV_THREE_KEY, then we're holding left/right
 	 * and start to move backwards.  Don't move left and right, too. */
+	/* DO move so that when we press Left then Right, we move back to the option 
+	 * that was selected before we started the combination to go Up.  -Chris */
 //	if( m_OptionsNavigation == NAV_THREE_KEY && INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_START) ) )
 //		return;
 
