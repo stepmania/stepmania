@@ -60,7 +60,7 @@ IntDir=.\../Release6
 TargetDir=\temp\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                         	cl                                          /Zl                                          /nologo                                          /c                                          verstub.cpp                                          /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                          	cl                                           /Zl                                           /nologo                                           /c                                           verstub.cpp                                           /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -95,7 +95,7 @@ IntDir=.\../Debug6
 TargetDir=\temp\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                         	cl                                          /Zl                                          /nologo                                          /c                                          verstub.cpp                                          /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                          	cl                                           /Zl                                           /nologo                                           /c                                           verstub.cpp                                           /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -118,6 +118,14 @@ SOURCE=.\RageMovieTextureHelper.cpp
 # Begin Source File
 
 SOURCE=.\RageMovieTextureHelper.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\regex.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\regex.h
 # End Source File
 # Begin Source File
 
@@ -168,6 +176,7 @@ SOURCE=.\RageDisplay.cpp
 # Begin Source File
 
 SOURCE=.\RageDisplay.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\RageDisplayInternal.h

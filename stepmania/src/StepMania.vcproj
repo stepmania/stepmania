@@ -1230,6 +1230,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				<File
 					RelativePath="glext.h">
 				</File>
+				<File
+					RelativePath="regex.c">
+				</File>
+				<File
+					RelativePath="regex.h">
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
