@@ -556,39 +556,40 @@ void NoteDataUtil::Wide( NoteData &in, float fStartBeat, float fEndBeat )
 
 void NoteDataUtil::Big( NoteData &in, float fStartBeat, float fEndBeat )
 {
-	InsertIntelligentTaps(in,1.0f,0.5f,false,fStartBeat,fEndBeat);	// add 8ths between 4ths
+	InsertIntelligentTaps(in,1.0f,0.5f,1.0f,false,fStartBeat,fEndBeat);	// add 8ths between 4ths
 }
 
 void NoteDataUtil::Quick( NoteData &in, float fStartBeat, float fEndBeat )
 {
-	InsertIntelligentTaps(in,0.5f,0.25f,false,fStartBeat,fEndBeat);	// add 16ths between 8ths
+	InsertIntelligentTaps(in,0.5f,0.25f,1.0f,false,fStartBeat,fEndBeat);	// add 16ths between 8ths
 }
 
 void NoteDataUtil::Skippy( NoteData &in, float fStartBeat, float fEndBeat )
 {
-	InsertIntelligentTaps(in,1.0f,0.75f,true,fStartBeat,fEndBeat);	// add 16ths between 4ths
+	InsertIntelligentTaps(in,1.0f,0.75f,1.0f,true,fStartBeat,fEndBeat);	// add 16ths between 4ths
 }
 
-void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fBeatInterval, float fInsertBeatOffset, bool bSkippy, float fStartBeat, float fEndBeat )
+void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fWindowSizeBeats, float fInsertOffsetBeats, float fWindowStrideBeats, bool bSkippy, float fStartBeat, float fEndBeat )
 {
-	ASSERT( fInsertBeatOffset <= fBeatInterval );
-
+	ASSERT( fInsertOffsetBeats <= fWindowSizeBeats );
+	ASSERT( fWindowSizeBeats <= fWindowStrideBeats );
 	in.ConvertHoldNotesTo4s();
 
 	/* Start on a multiple of fBeatInterval. */
-	fStartBeat = froundf( fStartBeat, fBeatInterval );
+	fStartBeat = froundf( fStartBeat, fWindowStrideBeats );
 
 	// Insert a beat in the middle of every fBeatInterval.
 	const int first_row = BeatToNoteRow( fStartBeat );
 	const int last_row = min( BeatToNoteRow(fEndBeat), in.GetLastRow() );
 
-	const int rows_per_interval = BeatToNoteRow( fBeatInterval );
-	const int insert_row_offset = BeatToNoteRow( fInsertBeatOffset );
+	const int rows_per_window = BeatToNoteRow( fWindowSizeBeats );
+	const int rows_per_stride = BeatToNoteRow( fWindowStrideBeats );
+	const int insert_row_offset = BeatToNoteRow( fInsertOffsetBeats );
 
-	for( int i=first_row; i<last_row; i+=rows_per_interval ) 
+	for( int i=first_row; i<last_row; i+=rows_per_stride ) 
 	{
 		int iRowEarlier = i;
-		int iRowLater = i + rows_per_interval;
+		int iRowLater = i + rows_per_window;
 		int iRowToAdd = i + insert_row_offset;
 		if( in.GetNumTapNonEmptyTracks(iRowEarlier)!=1 || in.GetNumTracksWithTap(iRowEarlier)!=1 )
 			continue;
