@@ -192,6 +192,10 @@ void Lua::PrepareExpression( CString &sInOut )
 	
 	// comment out HTML style color values
 	sInOut.Replace( "#", "--" );
+	
+	// HACK: Some actor commands ("screen,") have illegal Lua characters.
+	sInOut.Replace( " ", "" );
+	sInOut.Replace( "/", "" );
 
 	// Remove leading +, eg. "+50"; Lua doesn't handle that.
 	if( sInOut.size() >= 1 && sInOut[0] == '+' )
