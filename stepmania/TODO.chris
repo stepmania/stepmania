@@ -2,6 +2,8 @@
 Fix
 /////////////////////////
 
+disable modifiers in extra stage
+
 the only other thing is to encorporate `...'   to replace <...>, and instead turn the <...> as triple jumps or more than 2 arrow jumps. its the new DWI format.
 
 change "bg change" to show a list
