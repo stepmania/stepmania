@@ -311,7 +311,7 @@ void RageSound::RateChange(char *buf, int &cnt,
 		{
 
 			/* Input 4 samples, output 5; 25% slowdown with no
-				* rounding error. */
+			 * rounding error. */
 
 			Sint16 samps[16];
 			ASSERT(speed_input_samples <= sizeof(samps)/sizeof(*samps));
@@ -704,35 +704,29 @@ bool RageSound::SetPositionSamples( int samples )
 
 	/* This can take a while.  Only lock the sound buffer if we're actually playing. */
 	LockMutex L(SOUNDMAN->lock);
-
-	/* This can take a while.  Only hold the sound buffer if we're actually playing. */
 	if(!playing)
 		L.Unlock();
 
-	/* If we're seeking to sample 10, and the playback rate is 0.5, we really
-	 * want to seek to sample 20; it'll be multiplied back out in GetPosition.
-	 * (The reason for this is to keep "position" in 44100 samples/second, so
-	 * sound drivers don't have to know about the playback rate.)  Think of
-	 * it this way: if we seek to sample 10 in the input file, and we're playing
-	 * it half speed, we would have actually played 20 samples, not 10, and
-	 * it's the number of real speaker samples that "position" represents. */
-	samples = int(samples / GetPlaybackRate());
+	{
+		/* "position" records the number of samples we've output to the
+		 * speaker.  If the rate isn't 1.0, this will be different from the
+		 * position in the sound data itself.  For example, if we're playing
+		 * at 0.5x, and we're seeking to the 10th sample, we would have actually
+		 * played 20 samples, and it's the number of real speaker samples that
+		 * "position" represents. */
+	    const int scaled_samples = int(samples / GetPlaybackRate());
 
-	/* If we're already there, don't do anything. */
-	if(position == samples)
-		return true;
+	    /* If we're already there, don't do anything. */
+	    if(position == scaled_samples)
+		    return true;
 
-	position = samples;
-	if( samples < 0 )
-		samples = 0;
+	    position = scaled_samples;
+	}
 
-	/* RageSoundReader don't know about out playback rate and our notion of 
-	 * "logical samples" that are scaled by the playback rate.
-	 * So, we have to request the position NOT scaled by the playback rate.
-	 * To do this, we'll undo the muliply by the playback rate above.
-	 * Glenn:  Feel free to change this to whatever method is more elegant.
-	 * -Chris */
-	int ms = int( float(samples) * 1000.f / samplerate * GetPlaybackRate() );
+	/* The position we're going to seek the input stream to.  We have
+	 * to do this in floating point to avoid overflow. */
+	int ms = int(float(samples) * 1000.f / samplerate);
+	ms = max(ms, 0);
 
 	if(!big) {
 		/* Just make sure the position is in range. */
