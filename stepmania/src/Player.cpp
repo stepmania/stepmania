@@ -493,7 +493,11 @@ void Player::Step( int col, RageTimer tm )
 			break;
 		}
 
-		if( score != TNS_NONE )
+		// Stepping on a mine counts as a miss
+		if( GetTapNote(col,iIndexOverlappingNote) == TAP_MINE )
+			score = TNS_MISS;
+
+		if( score != TNS_NONE && score != TNS_MISS )
 		{
 			int ms_error = (int) roundf( fSecondsFromPerfect * 1000 );
 			ms_error = min( ms_error, MAX_PRO_TIMING_ERROR );
@@ -554,25 +558,26 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 	
 	/* Find the minimum score of the row.  This will never be TNS_NONE, since this
 	 * function is only called when a row is completed. */
+	/* Instead, use the last tap score (ala DDR).  Using the minimum results in 
+	 * slightly more harsh scoring than DDR */
 //	TapNoteScore score = MinTapNoteScore(iIndexThatWasSteppedOn);
 	TapNoteScore score = LastTapNoteScore(iIndexThatWasSteppedOn);
 	ASSERT(score != TNS_NONE);
 
 	/* If the whole row was hit with perfects or greats, remove the row
 	 * from the NoteField, so it disappears. */
-	switch ( score )
-	{
-	case TNS_MARVELOUS:
-	case TNS_PERFECT:
-	case TNS_GREAT:
-		m_NoteField.RemoveTapNoteRow( iIndexThatWasSteppedOn );
-		break;
-	}
 
 	for( int c=0; c<GetNumTracks(); c++ )	// for each column
 	{
-		if( GetTapNote(c, iIndexThatWasSteppedOn) == TAP_EMPTY )
-			continue; /* no note in this col */
+		TapNote tn = GetTapNote(c, iIndexThatWasSteppedOn);
+
+		if( tn == TAP_EMPTY )	continue; /* no note in this col */
+		if( tn == TAP_MINE )	continue; /* don't flash on mines b/c they're supposed to be missed */
+
+		// If the score is great or better, remove the note from the screen to 
+		// indicate success.
+		if( score >= TNS_GREAT )
+			m_NoteField.SetTapNote(c, iIndexThatWasSteppedOn, TAP_EMPTY);
 
 		// show the ghost arrow for this column
 		switch( score )
@@ -620,28 +625,50 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 	//LOG->Trace( "iStartCheckingAt: %d   iMissIfOlderThanThisIndex:  %d", iStartCheckingAt, iMissIfOlderThanThisIndex );
 
 	int iNumMissesFound = 0;
+	int iNumMinesMissed = 0;
 	for( int r=iStartCheckingAt; r<iMissIfOlderThanThisIndex; r++ )
 	{
 		bool MissedNoteOnThisRow = false;
+		bool MissedMineOnThisRow = false;
 		for( int t=0; t<GetNumTracks(); t++ )
 		{
 			if( GetTapNote(t, r) == TAP_EMPTY) continue; /* no note here */
-			if( GetTapNoteScore(t, r) != TNS_NONE ) continue; /* note here is hit */
-
-			MissedNoteOnThisRow = true;
-			SetTapNoteScore(t, r, TNS_MISS);
-			GAMESTATE->m_CurStageStats.iTotalError[m_PlayerNumber] += MAX_PRO_TIMING_ERROR;
-			m_ProTimingDisplay.SetJudgment( MAX_PRO_TIMING_ERROR, TNS_MISS );
+			if( GetTapNoteScore(t, r) != TNS_NONE ) continue; /* note here is already hit */
+			
+			if( GetTapNote(t, r) == TAP_MINE )
+			{
+				// A mine.  Reward for not stepping on it.
+				MissedMineOnThisRow = true;
+				SetTapNoteScore(t, r, TNS_MARVELOUS);
+			}
+			else
+			{
+				// A normal note.  Penalize for not stepping on it.
+				MissedNoteOnThisRow = true;
+				SetTapNoteScore(t, r, TNS_MISS);
+				GAMESTATE->m_CurStageStats.iTotalError[m_PlayerNumber] += MAX_PRO_TIMING_ERROR;
+				m_ProTimingDisplay.SetJudgment( MAX_PRO_TIMING_ERROR, TNS_MISS );
+			}
 		}
 
-		if(!MissedNoteOnThisRow) continue;
-		iNumMissesFound++;
-		HandleTapRowScore( r );
-		m_Combo.SetCombo( GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] );
+		if( MissedNoteOnThisRow )
+		{
+			iNumMissesFound++;
+			HandleTapRowScore( r );
+			m_Combo.SetCombo( GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] );
+		}
+		else if( MissedMineOnThisRow )
+		{
+			iNumMinesMissed++;
+			HandleTapRowScore( r );
+			m_Combo.SetCombo( GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] );
+		}
 	}
 
 	if( iNumMissesFound > 0 )
 		m_Judgment.SetJudgment( TNS_MISS );
+	else if( iNumMinesMissed > 0 )
+		m_Judgment.SetJudgment( TNS_MARVELOUS );
 }
 
 
