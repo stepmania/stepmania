@@ -40,6 +40,7 @@ const CString DONT_SHARE_SIG		= "DontShare.sig";
 const CString PUBLIC_KEY_FILE		= "public.key";
 const CString SCREENSHOTS_SUBDIR	= "Screenshots/";
 const CString EDITS_SUBDIR			= "Edits/";
+const CString LASTGOOD_SUBDIR		= "LastGood/";
 
 class Style;
 
