@@ -231,15 +231,13 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 bool ScreenSelectMaster::Move( PlayerNumber pn, int dir )
 {
 	int iSwitchToIndex = m_iChoice[pn];
-	while( iSwitchToIndex >= 0 && iSwitchToIndex < (int) m_aModeChoices.size() )
+	do
 	{
 		iSwitchToIndex += dir;
-		if( m_aModeChoices[iSwitchToIndex].IsPlayable() )
-			break;
+		if( iSwitchToIndex < 0 || iSwitchToIndex >= (int) m_aModeChoices.size() )
+			return false; // none found
 	}
-
-	while( iSwitchToIndex < 0 || iSwitchToIndex >= (int) m_aModeChoices.size() )
-		return false; // none found
+	while( !m_aModeChoices[iSwitchToIndex].IsPlayable() );
 
 	return ChangeSelection( pn, iSwitchToIndex );
 }
