@@ -305,6 +305,70 @@ bool ReadUsbStorageDescriptor( CString fn, int iScsiIndex, vector<UsbStorageDevi
   return true;
 }
 
+#if 0
+/* usbd must have the serial number filled in; fill in iPort and iLevel. */
+static bool GetPortAndLevelFromSerial( CString sSerial, UsbStorageDeviceEx &usbd )
+{
+	// Find all attached USB devices.  Output looks like:
+	// T:  Bus=02 Lev=00 Prnt=00 Port=00 Cnt=00 Dev#=  1 Spd=12  MxCh= 2
+	// B:  Alloc=  0/900 us ( 0%), #Int=  0, #Iso=  0
+	// D:  Ver= 1.00 Cls=09(hub  ) Sub=00 Prot=00 MxPS= 8 #Cfgs=  1
+	// P:  Vendor=0000 ProdID=0000 Rev= 0.00
+	// S:  Product=USB UHCI Root Hub
+	// S:  SerialNumber=ff80
+	// C:* #Ifs= 1 Cfg#= 1 Atr=40 MxPwr=  0mA
+	// I:  If#= 0 Alt= 0 #EPs= 1 Cls=09(hub  ) Sub=00 Prot=00 Driver=hub
+	// E:  Ad=81(I) Atr=03(Int.) MxPS=   8 Ivl=255ms
+	// T:  Bus=02 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=12  MxCh= 0
+	// D:  Ver= 1.10 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 8 #Cfgs=  1
+	// P:  Vendor=04e8 ProdID=0100 Rev= 0.01
+	// S:  Manufacturer=KINGSTON     
+	// S:  Product=USB DRIVE    
+	// S:  SerialNumber=1125198948886
+	// C:* #Ifs= 1 Cfg#= 1 Atr=80 MxPwr= 90mA
+	// I:  If#= 0 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=06 Prot=50 Driver=usb-storage
+	// E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+	// E:  Ad=03(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+
+	RageFile f;
+	CString fn = "/proc/bus/usb/devices";
+	LOG->Trace( fn );
+	if( !f.Open(fn) )
+	{
+		LOG->Warn( "can't open \"%s\": %s", fn.c_str(), f.GetError().c_str() );
+		return false;
+	}
+
+	CString sLine;
+	int iPort, iLevel;
+	while( f.GetLine(sLine) > 0 )
+	{
+		int iRet, iThrowAway;
+
+		// T:  Bus=02 Lev=00 Prnt=00 Port=00 Cnt=00 Dev#=  1 Spd=12  MxCh= 2
+		iRet = sscanf( sLine.c_str(), "T:  Bus=%d Lev=%d Prnt=%d Port=%d Cnt=%d Dev#=%d Spd=%d  MxCh=%d", &iThrowAway, &iLevel, &iThrowAway, &iPort, &iThrowAway, &iThrowAway, &iThrowAway, &iThrowAway );
+		if( iRet == 8 )
+			continue;	// stop processing this line
+
+		// S:  SerialNumber=ff80
+		char szSerial[1024];
+		iRet = sscanf( sLine.c_str(), "S:  SerialNumber=%[^\n]", szSerial );
+		if( iRet == 1 )
+		{
+			if( sSerial == szSerial )
+			{
+				usbd.iPort = iPort;
+				usbd.iLevel = iLevel;
+				/* got what we came for */
+				return true;
+			}
+			
+			continue;	// stop processing this line
+		}
+	}
+}
+#endif
+
 void GetNewStorageDevices( vector<UsbStorageDeviceEx>& vDevicesOut )
 {
   LOG->Trace( "GetNewStorageDevices" );
@@ -312,80 +376,6 @@ void GetNewStorageDevices( vector<UsbStorageDeviceEx>& vDevicesOut )
 	vDevicesOut.clear();
 
 	{
-		// Find all attached USB devices.  Output looks like:
-	  /*
-		// T:  Bus=02 Lev=00 Prnt=00 Port=00 Cnt=00 Dev#=  1 Spd=12  MxCh= 2
-		// B:  Alloc=  0/900 us ( 0%), #Int=  0, #Iso=  0
-		// D:  Ver= 1.00 Cls=09(hub  ) Sub=00 Prot=00 MxPS= 8 #Cfgs=  1
-		// P:  Vendor=0000 ProdID=0000 Rev= 0.00
-		// S:  Product=USB UHCI Root Hub
-		// S:  SerialNumber=ff80
-		// C:* #Ifs= 1 Cfg#= 1 Atr=40 MxPwr=  0mA
-		// I:  If#= 0 Alt= 0 #EPs= 1 Cls=09(hub  ) Sub=00 Prot=00 Driver=hub
-		// E:  Ad=81(I) Atr=03(Int.) MxPS=   8 Ivl=255ms
-		// T:  Bus=02 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=12  MxCh= 0
-		// D:  Ver= 1.10 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 8 #Cfgs=  1
-		// P:  Vendor=04e8 ProdID=0100 Rev= 0.01
-		// S:  Manufacturer=KINGSTON     
-		// S:  Product=USB DRIVE    
-		// S:  SerialNumber=1125198948886
-		// C:* #Ifs= 1 Cfg#= 1 Atr=80 MxPwr= 90mA
-		// I:  If#= 0 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=06 Prot=50 Driver=usb-storage
-		// E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-		// E:  Ad=03(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-
-		ifstream f;
-		CString fn = "/proc/bus/usb/devices";
-		LOG->Trace( fn );
-		f.open(fn);
-		if( !f.is_open() )
-		{
-			LOG->Warn( "can't open '%s'", fn.c_str() );
-			return;
-		}
-
-		UsbStorageDeviceEx usbd;
-		CString sLine;
-		while( getline(f, sLine) )
-		{
-			int iRet, iThrowAway;
-
-			// T:  Bus=02 Lev=00 Prnt=00 Port=00 Cnt=00 Dev#=  1 Spd=12  MxCh= 2
-			int iBus, iLevel, iPort, iDevice;
-			iRet = sscanf( sLine.c_str(), "T:  Bus=%d Lev=%d Prnt=%d Port=%d Cnt=%d Dev#=%d Spd=%d  MxCh=%d", &iBus, &iLevel, &iThrowAway, &iPort, &iThrowAway, &iDevice, &iThrowAway, &iThrowAway );
-			if( iRet == 8 )
-			{
-				usbd.iBus = iBus;
-				usbd.iPort = iPort;
-				usbd.iLevel = iLevel;
-				continue;	// stop processing this line
-			}
-
-			// S:  SerialNumber=ff80
-			char szSerial[1024];
-			iRet = sscanf( sLine.c_str(), "S:  SerialNumber=%[^\n]", szSerial );
-			if( iRet == 1 )
-			{
-				usbd.sSerial = szSerial;
-				continue;	// stop processing this line
-			}
-			
-			// I:  If#= 0 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=06 Prot=50 Driver=usb-storage
-			int iClass;
-			iRet = sscanf( sLine.c_str(), "I:  If#=%d Alt=%d #EPs=%d Cls=%d", &iThrowAway, &iThrowAway, &iThrowAway, &iClass );
-			if( iRet == 4 )
-			{
-				if( iClass == 8 )	// storage class
-				{
-					vDevicesOut.push_back( usbd );
-					LOG->Trace( "iScsiIndex: %d, iBus: %d, iLevel: %d, iPort: %d",
-						usbd.iScsiIndex, usbd.iBus, usbd.iLevel, usbd.iPort );
-				}
-				continue;	// stop processing this line
-			}
-		}
-	  */
-
 	  // Bus 002 Device 001: ID 0000:0000
 	  //   iSerial                 3 1125198948886
 	  //       bInterfaceClass         8 Mass Storage
