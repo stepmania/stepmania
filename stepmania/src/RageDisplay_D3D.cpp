@@ -857,6 +857,9 @@ unsigned RageDisplay_D3D::CreateTexture(
 	HRESULT hr;
 	IDirect3DTexture8* pTex;
 	hr = g_pd3dDevice->CreateTexture( img->w, img->h, 1, 0, D3DFORMATS[pixfmt], D3DPOOL_MANAGED, &pTex );
+	if( FAILED(hr) )
+		RageException::Throw( "CreateTexture(%i,%i,pixfmt=%i) failed: %s", 
+		img->w, img->h, pixfmt, DXGetErrorString8(hr) );
 
 	unsigned uTexHandle = (unsigned)pTex;
 
@@ -891,7 +894,8 @@ void RageDisplay_D3D::UpdateTexture(
 	int xoffset, int yoffset, int width, int height )
 {
 	IDirect3DTexture8* pTex = (IDirect3DTexture8*)uTexHandle;
-
+	ASSERT( pTex != NULL );
+	
 	RECT rect; 
 	rect.left = xoffset;
 	rect.top = yoffset;
