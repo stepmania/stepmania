@@ -32,6 +32,7 @@ StringToX( LayoutType );
 	for( PlayerNumber pn=GetNextHumanPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID && (!m_RowDef.bOneChoiceForAllPlayers || pn==0); pn=GetNextHumanPlayer(pn) )
 
 const CString NEXT_ROW_NAME = "NextRow";
+const CString EXIT_NAME = "Exit";
 
 void OptionRow::PrepareItemText( CString &s ) const
 {
@@ -39,8 +40,9 @@ void OptionRow::PrepareItemText( CString &s ) const
 		return;
 	bool bTheme = false;
 	
-	// HACK: Always theme the NEXT_ROW item
+	// HACK: Always theme the NEXT_ROW and EXIT items, even if metrics says not to theme.
 	if( s == NEXT_ROW_NAME )							bTheme = true;
+	if( s == EXIT_NAME )								bTheme = true;
 	if( m_RowDef.m_bAllowThemeItems && THEME_ITEMS )	bTheme = true;
 
 	if( bTheme ) 
@@ -402,7 +404,7 @@ void OptionRow::AfterImportOptions( float fY )
 void OptionRow::LoadExit()
 {
 	m_RowType = OptionRow::ROW_EXIT;
-	m_RowDef.name = "Exit";
+	m_RowDef.name = EXIT_NAME;
 	m_RowDef.choices.push_back( "" );
 
 	BitmapText *bt = new BitmapText;
