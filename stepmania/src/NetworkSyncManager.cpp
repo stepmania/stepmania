@@ -97,16 +97,18 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 
 	WriteNT(m_packet, CString(PRODUCT_NAME_VER)); 
 
-	NetPlayerClient->SendPack((char*)m_packet.Data,m_packet.Position);
-
-	ClearPacket(m_packet);
-
 	//Block until responce is received
 	//Move mode to blocking in order to give CPU back to the 
 	//system, and not wait.
 	
 	bool dontExit = true;
 	NetPlayerClient->blocking = true;
+
+	//Following packet must get through, so we block for it.
+	NetPlayerClient->SendPack((char*)m_packet.Data,m_packet.Position);
+
+	ClearPacket(m_packet);
+
 	while (dontExit)
 	{
 		ClearPacket(m_packet);
@@ -310,17 +312,21 @@ void NetworkSyncManager::StartRequest(short position)
 	else
 		WriteNT(m_packet,CString(""));
 
-	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
-	
-	LOG->Trace("Waiting for RECV");
-
-	ClearPacket(m_packet);
 	//Block until go is recieved.
 	//Switch to blocking mode (this is the only
 	//way I know how to get precievably instantanious results
 
 	bool dontExit=true;
 	NetPlayerClient->blocking=true;
+
+	//The following packet HAS to get through, so we turn blocking on for it as well
+	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
+	
+	LOG->Trace("Waiting for RECV");
+
+	ClearPacket(m_packet);
+
+	
 	while (dontExit)
 	{
 		ClearPacket(m_packet);
