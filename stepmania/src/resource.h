@@ -1,5 +1,5 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Developer Studio generated include file.
+// Microsoft Visual C++ generated include file.
 // Used by StepMania.RC
 //
 #define IDC_CRASH_SAVE                  16
@@ -10,7 +10,6 @@
 #define BITMAP_ERROR                    129
 #define IDD_DISASM_CRASH                199
 #define IDC_SHOCKWAVEFLASH1             1000
-#define IDR_MAIN_ACCEL                  1001
 #define IDC_BUTTON_RESTART              1001
 #define IDM_TOGGLEFULLSCREEN            1002
 #define IDC_BUTTON_REPORT               1002
