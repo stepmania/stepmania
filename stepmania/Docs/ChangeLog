@@ -1,3 +1,21 @@
+* Alpha 20
+Fixed image loading crashes.
+Fixed GIF loading.
+Fixed crash after failed image loads.
+Fixed missing images in ScreenSelectMusic.
+Fixed assertion failure in easy course mode.
+Fixed profile step totals.
+Fixed OpenGL crashes in X11R6.7.0.
+Fixed toasties not always showing.
+Fixed cursor not moving if p2 is on beginner when p1 moves to page 2 during difficulty selection.
+Fixed statistics for the current game not being saved if Alt-F4 is pressed mid-game.
+Editor: Fixed assertion failure playing long songs.
+Steps and calories still count after failing a stage.
+ScreenSelectCourse is now based on ScreenSelectMusic.
+Added Yuki Matsuoka kanji.
+Added Oni course autogen by artist.
+Courses now support the #COURSETRANSLIT tag; works identically to .SM #TITLETRANSLIT.
+
 * Alpha 19b
 Fixed loading images with incorrect file extensions.
 Fixed CDTitle rendering regression.
