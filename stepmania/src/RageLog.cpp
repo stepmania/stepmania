@@ -24,7 +24,7 @@ RageLog* LOG;		// global and accessable from anywhere in the program
 RageLog::RageLog()
 {
 	// delete old log files
-	DeleteFile( LOG_FILE_NAME );
+	remove( LOG_FILE_NAME );
 
 	// Open log file and leave it open.
 	m_fileLog = fopen( LOG_FILE_NAME, "w" );
