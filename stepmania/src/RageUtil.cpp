@@ -159,7 +159,7 @@ void do_split( const S &Source, const S &Deliminator, vector<S> &AddIt, const bo
 	unsigned startpos = 0;
 
 	do {
-		unsigned pos = Source.find_first_of(Deliminator, startpos);
+		unsigned pos = Source.find(Deliminator, startpos);
 		if ( pos == Source.npos ) pos=Source.size();
 
 		S AddCString = Source.substr(startpos, pos-startpos);
