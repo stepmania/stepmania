@@ -54,6 +54,11 @@ ScreenOptionsMenu::ScreenOptionsMenu() :
 {
 	LOG->Trace( "ScreenOptionsMenu::ScreenOptionsMenu()" );
 
+	/* We might have been entered from anywhere; make sure all players are enabled. */
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		GAMESTATE->m_bSideIsJoined[p] = true;
+	GAMESTATE->m_MasterPlayerNumber = PlayerNumber(0);
+
 	Init( 
 		INPUTMODE_BOTH, 
 		g_OptionsMenuLines, 
