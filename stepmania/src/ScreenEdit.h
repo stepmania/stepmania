@@ -146,8 +146,8 @@ public:
 	enum EditNotesStatisticsChoice {
 		difficulty,
 		meter,
-		predict_meter,
 		description,
+		predict_meter,
 		tap_notes,
 		hold_notes,
 		stream,
