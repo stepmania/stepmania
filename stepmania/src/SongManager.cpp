@@ -619,7 +619,8 @@ void SongManager::InitAutogenCourses()
 			/* Different artist, or we're at the end.  If we have enough entries for
 			 * the last artist, add it.  Skip blanks and "Unknown artist". */
 			if( iCurArtistCount >= 3 && sCurArtistTranslit != "" &&
-				sCurArtistTranslit.CompareNoCase("Unknown artist") )
+				sCurArtistTranslit.CompareNoCase("Unknown artist") &&
+				sCurArtist.CompareNoCase("Unknown artist") )
 			{
 				pCourse = new Course;
 				pCourse->AutogenOniFromArtist( sCurArtist, sCurArtistTranslit, aSongs, DIFFICULTY_HARD );
