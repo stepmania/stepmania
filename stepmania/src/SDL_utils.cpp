@@ -1,10 +1,8 @@
 /*
  * Various small SDL tools.
  * 
- * Copyright (c) 2002 by the person(s) listed below.  All rights reserved.
+ * Copyright (c) 2002-2004 by the person(s) listed below.  All rights reserved.
  *	Glenn Maynard
- * 
- * Portions from SDL source and documentation.
  */
 
 #include "global.h"
@@ -44,7 +42,8 @@ Uint32 mySDL_Swap24(Uint32 x)
 /* These conditionals in the inner loop are slow.  Templates? */
 inline Uint32 decodepixel(const Uint8 *p, int bpp)
 {
-    switch(bpp) {
+    switch(bpp)
+	{
     case 1: return *p;
     case 2: return *(Uint16 *)p;
 	case 3:
@@ -60,7 +59,8 @@ inline Uint32 decodepixel(const Uint8 *p, int bpp)
 
 void encodepixel(Uint8 *p, int bpp, Uint32 pixel)
 {
-    switch(bpp) {
+    switch(bpp)
+	{
     case 1: *p = Uint8(pixel); break;
     case 2: *(Uint16 *)p = Uint16(pixel); break;
     case 3:
@@ -86,7 +86,8 @@ void encodepixel(Uint8 *p, int bpp, Uint32 pixel)
 void mySDL_GetRawRGBAV(Uint32 pixel, const SDL_Surface *src, Uint8 *v)
 {
 	const SDL_PixelFormat *fmt = src->format;
-	if(src->format->BytesPerPixel == 1) {
+	if( src->format->BytesPerPixel == 1 )
+	{
 		v[0] = fmt->palette->colors[pixel].r;
 		v[1] = fmt->palette->colors[pixel].g;
 		v[2] = fmt->palette->colors[pixel].b;
@@ -98,7 +99,8 @@ void mySDL_GetRawRGBAV(Uint32 pixel, const SDL_Surface *src, Uint8 *v)
 		v[3] = Uint8((pixel & fmt->Amask) >> fmt->Ashift);
 	}
 
-	if(src->flags & SDL_SRCCOLORKEY) {
+	if( src->flags & SDL_SRCCOLORKEY )
+	{
 		if((fmt->colorkey & ~fmt->Amask) == (pixel & ~fmt->Amask))
 			v[3] = 0;
 	}
@@ -171,7 +173,8 @@ void mySDL_SetRGBAV(Uint8 *p, const SDL_Surface *src, const Uint8 *v)
 /* Get the number of bits representing each color channel in fmt. */
 void mySDL_GetBitsPerChannel(const SDL_PixelFormat *fmt, Uint32 bits[4])
 {
-	if(fmt->BytesPerPixel == 1) {
+	if( fmt->BytesPerPixel == 1 )
+	{
 		/* If we're paletted, the palette is 8888. For some reason, the 
 		 * *loss values are all 8 on paletted surfaces; they should be
 		 * 0, to represent the palette.  Since they're not, we have to
@@ -306,9 +309,9 @@ static void FindAlphaRGB(const SDL_Surface *img, Uint8 &r, Uint8 &g, Uint8 &b, b
 	r = g = b = 0;
 	
 	/* If we have no alpha or no color key, there's no alpha color. */
-	if(img->format->BitsPerPixel == 8 && !(img->flags & SDL_SRCCOLORKEY))
+	if( img->format->BitsPerPixel == 8 && !(img->flags & SDL_SRCCOLORKEY) )
 		return;
-	if(img->format->BitsPerPixel > 8 && !img->format->Amask)
+	if( img->format->BitsPerPixel > 8 && !img->format->Amask )
 		return;
 
 	/* Eww.  Sorry.  Iterate front-to-back or in reverse. */
@@ -330,7 +333,7 @@ static void FindAlphaRGB(const SDL_Surface *img, Uint8 &r, Uint8 &g, Uint8 &b, b
 				return;
 			}
 
-			if(reverse)
+			if( reverse )
 				row -= img->format->BytesPerPixel;
 			else
 				row += img->format->BytesPerPixel;
@@ -347,9 +350,9 @@ static void SetAlphaRGB(const SDL_Surface *img, Uint8 r, Uint8 g, Uint8 b)
 {
 	/* If it's a paletted surface, all we have to do is change the
 	 * colorkey, if any. */
-	if(img->format->BitsPerPixel == 8)
+	if( img->format->BitsPerPixel == 8 )
 	{
-		if(img->flags & SDL_SRCCOLORKEY)
+		if( img->flags & SDL_SRCCOLORKEY )
 		{
 			img->format->palette->colors[img->format->colorkey].r = r;
 			img->format->palette->colors[img->format->colorkey].g = g;
@@ -360,20 +363,20 @@ static void SetAlphaRGB(const SDL_Surface *img, Uint8 r, Uint8 g, Uint8 b)
 	}
 
 	/* It's RGBA.  If there's no alpha channel, we have nothing to do. */
-	if(!img->format->Amask)
+	if( !img->format->Amask )
 		return;
 
 	Uint32 trans = SDL_MapRGBA(img->format, r, g, b, 0);
-	for(int y = 0; y < img->h; ++y)
+	for( int y = 0; y < img->h; ++y )
 	{
 		Uint8 *row = (Uint8 *)img->pixels + img->pitch*y;
 
-		for(int x = 0; x < img->w; ++x)
+		for( int x = 0; x < img->w; ++x )
 		{
-			Uint32 val = decodepixel(row, img->format->BytesPerPixel);
-			if(val != trans && !(val&img->format->Amask))
+			Uint32 val = decodepixel( row, img->format->BytesPerPixel );
+			if( val != trans && !(val&img->format->Amask) )
 			{
-				encodepixel(row, img->format->BytesPerPixel, trans);
+				encodepixel( row, img->format->BytesPerPixel, trans );
 			}
 
 			row += img->format->BytesPerPixel;
@@ -397,7 +400,7 @@ static void SetAlphaRGB(const SDL_Surface *img, Uint8 r, Uint8 g, Uint8 b)
  * left).  If the color we find is different, we'll just set the border
  * color to black.  
  */
-void FixHiddenAlpha(SDL_Surface *img)
+void FixHiddenAlpha( SDL_Surface *img )
 {
 	Uint8 r, g, b;
 	FindAlphaRGB(img, r, g, b, false);
@@ -405,7 +408,7 @@ void FixHiddenAlpha(SDL_Surface *img)
 	Uint8 cr, cg, cb; /* compare */
 	FindAlphaRGB(img, cr, cg, cb, true);
 
-	if(cr != r || cg != g || cb != b)
+	if( cr != r || cg != g || cb != b )
 		r = g = b = 0;
 
 	SetAlphaRGB(img, r, g, b);
@@ -422,7 +425,7 @@ void FixHiddenAlpha(SDL_Surface *img)
  * XXX: We could do the FindAlphaRGB search here, too, but we need that information
  * in a different place. */
 
-int FindSurfaceTraits(const SDL_Surface *img)
+int FindSurfaceTraits( const SDL_Surface *img )
 {
 	const int NEEDS_NO_ALPHA=0, NEEDS_BOOL_ALPHA=1, NEEDS_FULL_ALPHA=2;
 	int alpha_type = NEEDS_NO_ALPHA;
@@ -462,7 +465,7 @@ int FindSurfaceTraits(const SDL_Surface *img)
 	return ret;
 }
 
-bool SDL_GetEvent(SDL_Event &event, int mask)
+bool SDL_GetEvent( SDL_Event &event, int mask )
 {
 	/* SDL_PeepEvents returns error if video isn't initialized. */
 	if(!SDL_WasInit(SDL_INIT_VIDEO))
@@ -477,7 +480,7 @@ bool SDL_GetEvent(SDL_Event &event, int mask)
 }
 
 /* Reads all currently queued SDL events, clearing them from the queue. */
-void mySDL_GetAllEvents(vector<SDL_Event> &events)
+void mySDL_GetAllEvents( vector<SDL_Event> &events )
 {
 	while(1)
 	{
@@ -490,7 +493,7 @@ void mySDL_GetAllEvents(vector<SDL_Event> &events)
 }
 
 /* Pushes the given events onto the SDL event queue. */
-void mySDL_PushEvents(vector<SDL_Event> &events)
+void mySDL_PushEvents( vector<SDL_Event> &events )
 {
 	for(unsigned i = 0; i < events.size(); ++i)
 		SDL_PushEvent(&events[i]);
@@ -498,7 +501,7 @@ void mySDL_PushEvents(vector<SDL_Event> &events)
 
 /* For some bizarre reason, SDL_EventState flushes all events.  This is a pain, so
  * avoid it. */
-Uint8 mySDL_EventState(Uint8 type, int state)
+Uint8 mySDL_EventState( Uint8 type, int state )
 {
 	if(state == SDL_QUERY)
 		return SDL_EventState(type, state);
@@ -527,14 +530,9 @@ Uint8 mySDL_EventState(Uint8 type, int state)
 
 #include "SDL_rotozoom.h"	// for setting icon
 
-#if defined(DARWIN) && DARWIN
 void mySDL_WM_SetIcon( CString sIconFile )
 {
-#pragma unused(sIconFile)
-}
-#else /* !defined(DARWIN) || !DARWIN */
-void mySDL_WM_SetIcon( CString sIconFile )
-{
+#if !defined(DARWIN)
 	if( sIconFile.empty() )
 	{
 		SDL_WM_SetIcon(NULL, NULL);
@@ -559,8 +557,8 @@ void mySDL_WM_SetIcon( CString sIconFile )
 	SDL_SetAlpha( srf, SDL_SRCALPHA, SDL_ALPHA_OPAQUE );
 	SDL_WM_SetIcon(srf, NULL /* derive from alpha */);
 	SDL_FreeSurface(srf);
+#endif
 }
-#endif /* !defined(DARWIN) || !DARWIN */
 
 
 struct SurfaceHeader
@@ -655,7 +653,7 @@ SDL_Surface *mySDL_LoadSurface( CString file )
 
 /* Annoying: SDL_MapRGB will do a nearest-match if the specified color isn't found.
  * This breaks color keyed images that don't actually use the color key. */
-int mySDL_MapRGBExact(SDL_PixelFormat *fmt, Uint8 R, Uint8 G, Uint8 B)
+int mySDL_MapRGBExact( SDL_PixelFormat *fmt, Uint8 R, Uint8 G, Uint8 B )
 {
 	Uint32 color = SDL_MapRGB(fmt, R, G, B);
 
@@ -669,12 +667,12 @@ int mySDL_MapRGBExact(SDL_PixelFormat *fmt, Uint8 R, Uint8 G, Uint8 B)
 	return color;
 }
 
-inline static float scale(float x, float l1, float h1, float l2, float h2)
+inline static float scale( float x, float l1, float h1, float l2, float h2 )
 {
 	return ((x - l1) / (h1 - l1) * (h2 - l2) + l2);
 }
 
-inline void mySDL_GetRawRGBAV_XY(const SDL_Surface *src, Uint8 *v, int x, int y)
+inline void mySDL_GetRawRGBAV_XY( const SDL_Surface *src, Uint8 *v, int x, int y )
 {
 	const Uint8 *srcp = (const Uint8 *) src->pixels + (y * src->pitch);
 	const Uint8 *srcpx = srcp + (x * src->format->BytesPerPixel);

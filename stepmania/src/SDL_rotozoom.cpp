@@ -11,17 +11,6 @@
 #include <vector>
 using namespace std;
 
-struct tColorRGBA {
-    Uint8 c[4];
-};
-
-/* 
- 
- 32bit Zoomer with optional anti-aliasing by bilinear interpolation.
-
- Zooms 32bit RGBA/ABGR 'src' surface to 'dst' surface.
- 
-*/
 /* Coordinate 0x0 represents the exact top-left corner of a bitmap.  .5x.5
  * represents the center of the top-left pixel; 1x1 is the center of the top
  * square of pixels.  
@@ -33,8 +22,8 @@ struct tColorRGBA {
 static void ZoomSurface( SDL_Surface * src, SDL_Surface * dst )
 {
     /* Ratio from source to dest. */
-    float sx = float(src->w) / dst->w;
-    float sy = float(src->h) / dst->h;
+    const float sx = float(src->w) / dst->w;
+    const float sy = float(src->h) / dst->h;
 
     /* For each destination coordinate, two source rows, two source columns
      * and the percentage of the first row and first column: */
@@ -99,57 +88,42 @@ static void ZoomSurface( SDL_Surface * src, SDL_Surface * dst )
 		}
     }
 
-    const tColorRGBA *sp = (tColorRGBA *) src->pixels;
+    const Uint8 *sp = (Uint8 *) src->pixels;
 
-    /* Scan destination */
     for( y = 0; y < dst->h; y++ )
 	{
-		tColorRGBA *dp = (tColorRGBA *) ((Uint8 *) dst->pixels + dst->pitch*y);
+		Uint8 *dp = ((Uint8 *) dst->pixels + dst->pitch*y);
 		/* current source pointer and next source pointer (first and second 
 		 * rows sampled for this row): */
-		const tColorRGBA *csp = (tColorRGBA *) ((Uint8 *) sp + esy0[y] * src->pitch);
-		const tColorRGBA *ncsp = (tColorRGBA *) ((Uint8 *) sp + esy1[y] * src->pitch);
+		const Uint8 *csp = (Uint8 *) (sp + esy0[y] * src->pitch);
+		const Uint8 *ncsp = (Uint8 *) (sp + esy1[y] * src->pitch);
 
 		for( x = 0; x < dst->w; x++ )
 		{
 			/* Grab pointers to the sampled pixels: */
-			const tColorRGBA *c00 = csp + esx0[x];
-			const tColorRGBA *c01 = csp + esx1[x];
-			const tColorRGBA *c10 = ncsp + esx0[x];
-			const tColorRGBA *c11 = ncsp + esx1[x];
+			const Uint8 *c00 = (Uint8 *) (csp + esx0[x]*4);
+			const Uint8 *c01 = (Uint8 *) (csp + esx1[x]*4);
+			const Uint8 *c10 = (Uint8 *) (ncsp + esx0[x]*4);
+			const Uint8 *c11 = (Uint8 *) (ncsp + esx1[x]*4);
 
+			Uint8 color[4];
 			for( int c = 0; c < 4; ++c )
 			{
 				float x0, x1;
-				x0 = c00->c[c] * ex0[x];
-				x0 += c01->c[c] * (1-ex0[x]);
-				x1 = c10->c[c] * ex0[x];
-				x1 += c11->c[c] * (1-ex0[x]);
+				x0 = c00[c] * ex0[x];
+				x0 += c01[c] * (1-ex0[x]);
+				x1 = c10[c] * ex0[x];
+				x1 += c11[c] * (1-ex0[x]);
 
 				const float res = (x0 * ey0[y]) + (x1 * (1-ey0[y]));
-				dp->c[c] = Uint8(res);
+				color[c] = Uint8(res);
 			}
+			*(Uint32 *) dp = *(Uint32 *) color;
 
 			/* Advance destination pointer. */
-			dp++;
+			dp += 4;
 		}
     }
-}
-
-
-static SDL_Surface *zoomSurface_ll( SDL_Surface *src, int dstwidth, int dstheight )
-{
-    if( src == NULL )
-		return NULL;
-
-    SDL_Surface *dst =
-		SDL_CreateRGBSurface(SDL_SWSURFACE, dstwidth, dstheight, 32,
-			    src->format->Rmask, src->format->Gmask,
-			    src->format->Bmask, src->format->Amask);
-
-    ZoomSurface( src, dst );
-
-    return dst;
 }
 
 
@@ -172,7 +146,12 @@ void zoomSurface( SDL_Surface *&src, int dstwidth, int dstheight )
 		int target_width = int(src->w*xscale + .5);
 		int target_height = int(src->h*yscale + .5);
 
-		SDL_Surface	*dst = zoomSurface_ll(src, target_width, target_height);
+		SDL_Surface *dst =
+			SDL_CreateRGBSurface(SDL_SWSURFACE, target_width, target_height, 32,
+					src->format->Rmask, src->format->Gmask,
+					src->format->Bmask, src->format->Amask);
+
+	    ZoomSurface( src, dst );
 
 		SDL_FreeSurface(src);
 
