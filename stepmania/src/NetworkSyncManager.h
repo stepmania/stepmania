@@ -70,6 +70,10 @@ public:
 	//Used togeather for 
 	bool ChangedScoreboard(int Column);	//If scoreboard changed since this function last called, then true.
 	CString m_Scoreboard[NUM_NSSB_CATEGORIES];
+
+	//Used for chatting
+	void SendChat( CString message );
+	CString m_WaitingChat;
 private:
 #if !defined(WITHOUT_NETWORKING)
 

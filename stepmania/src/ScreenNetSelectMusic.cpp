@@ -16,6 +16,7 @@
 #include "RageTextureManager.h"
 #include "AnnouncerManager.h"
 #include "MenuTimer.h"
+#include "NetworkSyncManager.h"
 #include "StepsUtil.h"
 
 #define CHATINPUT_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","ChatInputBoxWidth")
@@ -24,6 +25,8 @@
 #define CHATOUTPUT_WIDTH			THEME->GetMetricF("ScreenNetSelectMusic","ChatOutputBoxWidth")
 #define CHATOUTPUT_HEIGHT			THEME->GetMetricF("ScreenNetSelectMusic","ChatOutputBoxHeight")
 #define CHATOUTPUT_COLOR			THEME->GetMetricC("ScreenNetSelectMusic","ChatOutputBoxColor")
+#define SHOW_CHAT_LINES				THEME->GetMetricI("ScreenNetSelectMusic","ChatOutputLines")
+
 
 #define GROUPSBG_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","GroupsBGWidth")
 #define GROUPSBG_HEIGHT				THEME->GetMetricF("ScreenNetSelectMusic","GroupsBGHeight")
@@ -32,6 +35,14 @@
 #define SONGSBG_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","SongsBGWidth")
 #define SONGSBG_HEIGHT				THEME->GetMetricF("ScreenNetSelectMusic","SongsBGHeight")
 #define SONGSBG_COLOR				THEME->GetMetricC("ScreenNetSelectMusic","SongsBGColor")
+
+#define DIFFBG_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","DiffBGWidth")
+#define DIFFBG_HEIGHT				THEME->GetMetricF("ScreenNetSelectMusic","DiffBGHeight")
+#define DIFFBG_COLOR				THEME->GetMetricC("ScreenNetSelectMusic","DiffBGColor")
+
+#define EXINFOBG_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","ExInfoBGWidth")
+#define EXINFOBG_HEIGHT				THEME->GetMetricF("ScreenNetSelectMusic","ExInfoBGHeight")
+#define EXINFOBG_COLOR				THEME->GetMetricC("ScreenNetSelectMusic","ExInfoBGColor")
 
 #define	NUM_GROUPS_SHOW				THEME->GetMetricI("ScreenNetSelectMusic","NumGroupsShow");
 #define	NUM_SONGS_SHOW				THEME->GetMetricI("ScreenNetSelectMusic","NumSongsShow");
@@ -43,7 +54,10 @@
 #define SUBTITLE_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","SongsSubtitleWidth")
 #define ARTIST_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","SongsArtistWidth")
 
-const ScreenMessage SM_NoSongs	= ScreenMessage(SM_User+3);
+const ScreenMessage SM_NoSongs		= ScreenMessage(SM_User+3);
+const ScreenMessage	SM_AddToChat	= ScreenMessage(SM_User+4);
+const ScreenMessage SM_ChangeSong	= ScreenMessage(SM_User+5);
+
 const CString AllGroups			= "[ALL MUSIC]";
 
 ScreenNetSelectMusic::ScreenNetSelectMusic( CString sName ) : ScreenWithMenuElements( sName )
@@ -80,7 +94,7 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( CString sName ) : ScreenWithMenuElem
 	m_textChatOutput.SetVertAlign( align_top );
 	m_textChatOutput.SetShadowLength( 0 );
 	m_textChatOutput.SetName( "ChatOutput" );
-	m_textChatOutput.SetWrapWidthPixels( (int)(CHATOUTPUT_WIDTH * 2) );
+	m_textChatOutput.SetMaxWidth( (int)(CHATOUTPUT_WIDTH * 2) );
 	SET_XY_AND_ON_COMMAND( m_textChatOutput );
 	this->AddChild( &m_textChatOutput );
 
@@ -115,13 +129,12 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( CString sName ) : ScreenWithMenuElem
 	SET_XY_AND_ON_COMMAND( m_textSongs );
 	this->AddChild( &m_textSongs);
 
-	m_SelectMode = SelectGroup;
-	m_rectSelection.SetDiffuse( SEL_COLOR );
-	m_rectSelection.SetName( "Sel" );
-	m_rectSelection.SetWidth( SEL_WIDTH );
-	m_rectSelection.SetHeight( SEL_HEIGHT );
-	SET_XY_AND_ON_COMMAND( m_rectSelection );
-	this->AddChild( &m_rectSelection );
+	m_rectExInfo.SetDiffuse( EXINFOBG_COLOR );
+	m_rectExInfo.SetName( "ExInfoBG" );
+	m_rectExInfo.SetWidth( EXINFOBG_WIDTH );
+	m_rectExInfo.SetHeight( EXINFOBG_HEIGHT );
+	SET_XY_AND_ON_COMMAND( m_rectExInfo );
+	this->AddChild( &m_rectExInfo );
 
 	m_textArtist.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
 	m_textArtist.SetShadowLength( 0 );
@@ -138,6 +151,15 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( CString sName ) : ScreenWithMenuElem
 	this->AddChild( &m_textSubtitle );
 
 
+	//Diff Icon background
+	m_rectDiff.SetDiffuse( DIFFBG_COLOR );
+	m_rectDiff.SetName( "DiffBG" );
+	m_rectDiff.SetWidth( DIFFBG_WIDTH );
+	m_rectDiff.SetHeight( DIFFBG_HEIGHT );
+	SET_XY_AND_ON_COMMAND( m_rectDiff );
+	this->AddChild( &m_rectDiff );
+
+
 	FOREACH_EnabledPlayer (p)
 	{
 		m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
@@ -148,6 +170,15 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( CString sName ) : ScreenWithMenuElem
 		m_DC[p] = GAMESTATE->m_PreferredDifficulty[p];
 		m_DifficultyIcon[p].SetFromDifficulty( p, m_DC[p] );
 	}
+
+	m_SelectMode = SelectGroup;
+	m_rectSelection.SetDiffuse( SEL_COLOR );
+	m_rectSelection.SetName( "Sel" );
+	m_rectSelection.SetWidth( SEL_WIDTH );
+	m_rectSelection.SetHeight( SEL_HEIGHT );
+	SET_XY_AND_ON_COMMAND( m_rectSelection );
+	this->AddChild( &m_rectSelection );
+
 
 	SONGMAN->GetGroupNames( m_vGroups );
 	if (m_vGroups.size()<1)
@@ -175,6 +206,11 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( CString sName ) : ScreenWithMenuElem
 	m_iSongNum = i;
 
 	UpdateSongsListPos();
+
+	//Load SFX next
+	m_soundChangeOpt.Load( THEME->GetPathToS("ScreenNetSelectMusic change opt"));
+	m_soundChangeSel.Load( THEME->GetPathToS("ScreenNetSelectMusic change sel"));
+
 	return;
 }
 
@@ -193,7 +229,8 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 
 	bool bHoldingCtrl = 
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LCTRL)) ||
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RCTRL));
+		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RCTRL)) ||
+		(!NSMAN->useSMserver);	//If we are disconnected, assume no chatting
 
 	switch( DeviceI.button )
 	{
@@ -201,6 +238,7 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 	case SDLK_KP_ENTER:
 		if (!bHoldingCtrl)
 		{
+			NSMAN->SendChat( m_sTextInput );
 			m_sTextInput="";
 			UpdateTextInput();
 			return;
@@ -283,18 +321,33 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToNextScreen:
 		SOUND->StopMusic();
 		SCREENMAN->SetNewScreen( "ScreenStage" );
+		break;
 	case SM_NoSongs:
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
-	break;
+		break;
+	case SM_AddToChat:
+		{
+			CString OutText = "";
+			m_vChatText.push_back ( NSMAN->m_WaitingChat );
+			NSMAN->m_WaitingChat = "";
+			int i;
+			for ( i= max( (int) m_vChatText.size() - SHOW_CHAT_LINES, 0 );
+				i<m_vChatText.size() ; i++ )
+				OutText+=m_vChatText[i]+'\n';
+			m_textChatOutput.SetText( OutText );
+			break;
+		}
+	case SM_ChangeSong:
+
+		break;
 	}
 
 }
 
-
 void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type )
 {
 	int i;
-
+	m_soundChangeOpt.Play();
 	switch (m_SelectMode)
 	{
 	case SelectGroup:
@@ -332,6 +385,7 @@ void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type 
 void ScreenNetSelectMusic::MenuRight( PlayerNumber pn, const InputEventType type )
 {
 	int i;
+	m_soundChangeOpt.Play();
 	switch (m_SelectMode)
 	{
 	case SelectGroup:
@@ -368,6 +422,7 @@ void ScreenNetSelectMusic::MenuRight( PlayerNumber pn, const InputEventType type
 
 void ScreenNetSelectMusic::MenuUp( PlayerNumber pn, const InputEventType type )
 {
+	m_soundChangeSel.Play();
 	m_SelectMode = (NetScreenSelectModes) ( ( (int)m_SelectMode - 1) % (int)SelectModes);
 	if ( (int) m_SelectMode < 0) 
 		m_SelectMode = (NetScreenSelectModes) (SelectModes - 1);
@@ -376,6 +431,7 @@ void ScreenNetSelectMusic::MenuUp( PlayerNumber pn, const InputEventType type )
 
 void ScreenNetSelectMusic::MenuDown( PlayerNumber pn, const InputEventType type )
 {
+	m_soundChangeSel.Play();
 	m_SelectMode = (NetScreenSelectModes) ( ( (int)m_SelectMode + 1) % (int)SelectModes);
 	COMMAND( m_rectSelection,  ssprintf("To%d", m_SelectMode+1 ) );
 }
@@ -392,7 +448,8 @@ void ScreenNetSelectMusic::MenuStart( PlayerNumber pn )
 	}
 	GAMESTATE->m_pCurSong = pSong;
 	
-	SCREENMAN->SetNewScreen( "ScreenStage" );
+	TweenOffScreen();
+	StartTransitioning( SM_GoToNextScreen );
 }
 
 void ScreenNetSelectMusic::MenuBack( PlayerNumber pn )
@@ -420,6 +477,9 @@ void ScreenNetSelectMusic::TweenOffScreen()
 
 	OFF_COMMAND( m_textArtist );
 	OFF_COMMAND( m_textSubtitle );
+
+	OFF_COMMAND( m_rectExInfo );
+	OFF_COMMAND( m_rectDiff );
 
 	FOREACH_EnabledPlayer (pn)
 		OFF_COMMAND( m_DifficultyIcon[pn] );
@@ -462,7 +522,7 @@ void ScreenNetSelectMusic::UpdateSongsListPos()
 	m_textSubtitle.SetText( m_vSongs[j]->GetTranslitSubTitle() );
 
 	//Update the difficulty Icons
-
+	//Handle difficulty
 	FOREACH_EnabledPlayer (pn)
 	{
 		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
@@ -483,6 +543,23 @@ void ScreenNetSelectMusic::UpdateSongsListPos()
 		}
 		m_DifficultyIcon[pn].SetFromDifficulty( pn, m_DC[pn] );
 	}
+
+
+	//Then handle sound (Copied from MusicBannerWheel)
+	SOUND->StopMusic();
+	Song* pSong = m_vSongs[j];
+	if( pSong  &&  pSong->HasMusic() )
+	{
+		if(SOUND->GetMusicPath().CompareNoCase(pSong->GetMusicPath())) // dont play the same sound over and over
+		{
+			
+			SOUND->StopMusic();
+			SOUND->PlayMusic(pSong->GetMusicPath(), true,
+				pSong->m_fMusicSampleStartSeconds,
+				pSong->m_fMusicSampleLengthSeconds);
+		}
+	}
+
 }
 
 void ScreenNetSelectMusic::UpdateGroupsListPos()

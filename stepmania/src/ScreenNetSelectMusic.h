@@ -61,6 +61,7 @@ protected:
 	Quad			m_rectChatInputBox;
 	Quad			m_rectChatOutputBox;
 	CString			m_sTextInput;
+	vector <CString>	m_vChatText;
 
 	//Selection
 	Quad			m_rectSelection;
@@ -75,12 +76,18 @@ protected:
 	Quad			m_rectSongsBackground;
 	vector <Song *>		m_vSongs;
 
+	Quad			m_rectExInfo;
+	Quad			m_rectDiff;
+
 	BitmapText		m_textArtist;
 	BitmapText		m_textSubtitle;
 
 	//Difficulty Icon(s)
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 	Difficulty			m_DC[NUM_PLAYERS];
+
+	RageSound m_soundChangeOpt;
+	RageSound m_soundChangeSel;
 };
 
 #endif

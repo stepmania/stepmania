@@ -17,6 +17,7 @@ void NetworkSyncManager::StartRequest(short position) { }
 void NetworkSyncManager::DisplayStartupStatus() { }
 void NetworkSyncManager::Update( float fDeltaTime ) { }
 bool NetworkSyncManager::ChangedScoreboard(int Column) { return false; }
+void NetworkSyncManager::SendChat( CString message ) { }
 #else
 #include "ezsockets.h"
 #include "ProfileManager.h"
@@ -474,9 +475,14 @@ void NetworkSyncManager::ProcessInput()
 		case 6:	//System message from server
 			{
 				CString SysMSG = m_packet.ReadNT();
-				SCREENMAN->SystemMessage(SysMSG);
+				SCREENMAN->SystemMessage( SysMSG );
 			}
 			break;
+		case 7:	//Chat message from server
+			{
+				m_WaitingChat = m_packet.ReadNT();
+				SCREENMAN->SendMessageToTopScreen( SM_AddToChat );
+			}
 		}
 		m_packet.ClearPacket();
 	}
@@ -488,6 +494,14 @@ bool NetworkSyncManager::ChangedScoreboard(int Column)
 		return false;
 	m_scoreboardchange[Column]=false;
 	return true;
+}
+
+void NetworkSyncManager::SendChat( CString message ) 
+{
+	m_packet.ClearPacket();
+	m_packet.Write1( 7 );
+	m_packet.WriteNT( message );
+	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
 }
 
 
