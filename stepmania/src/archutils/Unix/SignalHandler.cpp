@@ -48,7 +48,8 @@ static void SigHandler(int sig)
 	for(unsigned i = 0; i < handlers.size(); ++i)
 		handlers[i](sig);
 
-	_exit(1);
+	kill( 0, SIGKILL );
+	// _exit(1);
 }
 
 /* Hook up events to fatal signals, so we can clean up if we're killed. */
