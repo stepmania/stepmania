@@ -491,13 +491,12 @@ bool NoteData::RowNeedsAtLeastSimultaneousPresses( int iMinSimultaneousPresses, 
 		{
 		case TapNote::mine:
 		case TapNote::empty:
-		case TapNote::hold_head: // handled below
 			continue;	// skip these types - they don't count
 		}
 		++iNumNotesThisIndex;
 	}
 
-	/* We must have at least one non-hold-body at this row to count it. */
+	/* We must have at least one tap or hold head at this row to count it. */
 	if( !iNumNotesThisIndex )
 		return false;
 

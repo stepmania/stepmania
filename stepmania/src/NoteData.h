@@ -140,7 +140,7 @@ public:
 
 	// This row needs at least iMinSimultaneousPresses either tapped or held.
 	bool RowNeedsAtLeastSimultaneousPresses( int iMinSimultaneousPresses, int row ) const;
-	bool RowNeedsHands( int row ) const { return RowNeedsAtLeastSimultaneousPresses(2,row); }
+	bool RowNeedsHands( int row ) const { return RowNeedsAtLeastSimultaneousPresses(3,row); }
 
 	// Count rows that need iMinSimultaneousPresses either tapped or held.
 	int GetNumRowsWithSimultaneousPresses( int iMinSimultaneousPresses, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
