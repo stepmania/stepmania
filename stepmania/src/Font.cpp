@@ -42,11 +42,7 @@ void FontPage::Load( FontPageSettings cfg )
 	if( cfg.TextureHints != "default" )
 		ID.AdditionalTextureHints = cfg.TextureHints;
 	else
-	{
-		/* Using grayscale and 16bpp together means to use a 16bpp image if a grayscale 
-		 * image couldn't be loaded. */
-		ID.AdditionalTextureHints = "grayscale 16bpp";
-	}
+		ID.AdditionalTextureHints = "16bpp";
 
 	m_pTexture = TEXTUREMAN->LoadTexture( ID );
 	ASSERT( m_pTexture != NULL );
@@ -820,6 +816,7 @@ void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
 
 		/* Load settings for this page from the INI. */
 		FontPageSettings cfg;
+		LoadFontPageSettings(cfg, ini, TexturePaths[i], "common", sChars);
 		LoadFontPageSettings(cfg, ini, TexturePaths[i], pagename, sChars);
 
 		/* Go. */
