@@ -1,0 +1,377 @@
+﻿# This file is UTF-8; to be readable, edit it in an editor capable
+# of UTF-8, such as Notepad in Windows 2000 and later.
+#
+# Six keywords: TitleFrom, ArtistFrom, SubtitleFrom, TitleTo,
+# ArtistTo, SubtitleTo.
+#
+# From lines are regular expressions.  If all From lines for a set
+# are matched, all To lines are replaced.
+#
+# All lines, by default, must match the entire line; for example,
+# "Foo" matches only "Foo", not "Foobar".  Matches are case-insensitive.
+#
+# Matches are checked in the order given in this file; more than one
+# set may match a single song.
+#
+# Courses are matched by title only.
+#
+# Note that changes to this file are only applied to songs when they are
+# first loaded.  Delete the files in the "Cache" directory after making
+# changes.
+
+[Songs]
+# "Candy", "Candy star", or "Candy #".
+TitleFrom: Candy(( star)?|#)
+ArtistFrom: Luv.*
+TitleTo: CANDY☆
+*
+# "Candy", "Candy heart", or "Candy $".
+TitleFrom: Candy(( heart)?|\$)
+ArtistFrom: .*Riyu.*
+TitleTo: CANDY♡
+*
+# Make sure this appears after the above "Riyu" match, so it doesn't
+# break it.  I've seen both "Kosaku" and "Kosaka"; I think Kosaka is
+# correct, but handle both. */
+ArtistFrom: Riyu Kosak[au]
+ArtistTo: 小坂りゆ
+*
+ArtistFrom: Kosak[au] Riyu
+ArtistTo: 小坂りゆ
+*
+# Matsuri Japan is often just "Japan".  There may be other songs by
+# that name, too, so match the artist, too.
+TitleFrom: Japan
+ArtistFrom: .*(Re-Venge)|(RevenG).*
+TitleTo: 祭 JAPAN
+*
+/* Fix up hacked titles: */
+TitleFrom: Max 300
+ArtistFrom: %
+ArtistTo: Ω
+*
+TitleFrom: Bre=kdown
+TitleTo: BRE∀K DOWN!
+*
+TitleFrom: } JAPAN
+TitleTo: 祭 JAPAN
+*
+TitleFrom: \+\{
+TitleTo: 革命
+*
+TitleFrom: Sweet Sweet \$ Magic
+TitleTo: Sweet Sweet ♡ Magic
+*
+
+# Special stuff is done.  Titles:
+TitleFrom: Matsuri Japan
+TitleTo: 祭 JAPAN
+*
+TitleFrom: Kakumei
+TitleTo: 革命
+*
+TitleFrom: Sweet Sweet (Love )?Magic
+TitleTo: Sweet Sweet ♡ Magic
+*
+TitleFrom: Break ?Down!?
+TitleTo: BRE∀K DOWN!
+*
+# People can't decide how they want to spell this, so cope with
+# both l or r, and one or two l/r and t.
+TitleFrom: Sana Mo((ll?)|(rr?))et(t?)e Ne Ente
+TitleTo: サナ・モレッテ・ネ・エンテ
+*
+TitleFrom: Freckles
+TitleTo: そばかす
+*
+TitleFrom: Sobakasu
+TitleTo: そばかす
+*
+TitleFrom: Sobakasu.*Freckles
+TitleTo: そばかす
+*
+TitleFrom: Hypnotic Crisis
+TitleTo: HYPNØTIC CRISIS
+*
+TitleFrom: Yozora no Muko
+TitleTo: 夜空ノムコウ
+*
+TitleFrom: 17 ?(Sai|Ages)?
+TitleTo: 17才
+*
+# Handle "Mobo Moga:Mobo * Moga"; spaces optional.
+TitleFrom: Mobo ?\*? ?Moga
+TitleTo: MOBO★MOGA
+*
+TitleFrom: Love (Love )?Shine
+TitleTo: LOVE ♡ SHINE
+*
+TitleFrom: God of Romance
+TitleTo: ロマンスの神様
+*
+TitleFrom: Dancing Pompokolin
+TitleTo: おどるポンポコリン
+*
+TitleFrom: Aoi Shoudou
+TitleTo: 蒼い衝動
+*
+TitleFrom: Blue Impulse
+TitleTo: 蒼い衝動
+*
+# Handle a typo:
+TitleFrom: Aio Shoudou
+TitleTo: 蒼い衝動
+*
+TitleFrom: Daikenkai
+TitleTo: 大見解
+*
+TitleFrom: Love Love Sugar
+TitleTo: ♡LOVE²シュガ→♡
+*
+TitleFrom: Mikeneko Rock
+TitleTo: 三毛猫ロック
+*
+TitleFrom: Sakura
+TitleTo: 桜
+*
+# Handle Door and Doors
+TitleFrom: (Doors? of Magic)|(Mahou no Tobira)
+TitleTo: 魔法の扉
+SubtitleTo: (スペース☆マコのテーマ)
+* 
+# No need to write transliterations for these.
+TitleFrom: Senorita
+TitleTo: SEÑORITA
+DontTransliterate
+* 
+TitleFrom: Senorita\(Speedy Mix\)
+TitleTo: SEÑORITA
+SubtitleTo: Speedy Mix
+*
+TitleFrom: La Senorita
+TitleTo: La Señorita
+*
+TitleFrom: La Senorita Virtual
+TitleTo: La Señorita Virtual
+*
+TitleFrom: L'amour et la liberte
+TitleTo: L'amour et la liberté
+*
+TitleFrom: Chotto Kiitena
+TitleTo: ちょっときいてな
+*
+# Subtitles:
+# (Title is Graduation.)
+SubtitleFrom: .*Each Tomorrow.*
+SubtitleTo: ~それぞれの明日~
+*
+
+# Artists:
+ArtistFrom: Omega
+ArtistTo: Ω
+*
+ArtistFrom: ZZ
+ArtistTo: &doublezeta;
+*
+# Serious tropical ska bomb? ruh roh
+ArtistFrom: Anettai Maji.*Ska (Bakudan|Bukuden)
+ArtistTo: 亜熱帯マジ-SKA爆弾
+*
+ArtistFrom: Spanish Folk Music
+ArtistTo: メキシコ民謡
+*
+ArtistFrom: Sanae? Shintani
+ArtistTo: 新谷さなえ
+*
+ArtistFrom: dj TAKA feat. ?Noria
+ArtistTo: dj TAKA feat. のりあ
+*
+ArtistFrom: Miyuki Kunitake
+ArtistTo: くにたけみゆき
+*
+ArtistFrom: Kunitake Miyuki
+ArtistTo: くにたけみゆき
+*
+# DREAMS COME TRUE:
+TitleFrom: Asa ga Mata Kuru
+TitleTo: 朝がまた来る
+*
+TitleFrom: Haretara Line
+TitleTo: 晴れたらいいね
+*
+TitleFrom: Kessenwa Kinyoubi
+TitleTo: 決戦は金曜日
+*
+TitleFrom: Nante Koi Shitandaro
+TitleTo: なんて恋したんだろ
+*
+TitleFrom: Ureshii! Tanoshii! Daisuki!
+TitleTo: うれしい! たのしい! 大好き!
+*
+# OHA:
+ArtistFrom: Warijiennu
+ArtistTo: わるじぇんぬ
+*
+ArtistFrom: Yamachan with Jimusasuhikaru
+ArtistTo: やまちゃん with ジムナスひかる
+*
+TitleFrom: OHA OHA Sutaataa
+TitleTo: OHA OHA スターター
+*
+ArtistFrom: Yamachan & Reimondo
+ArtistTo: やまちゃん&レイモンド
+*
+ArtistFrom: Oha Kids with Imakuni
+ArtistTo: おはおはキッズ with イマクニ
+*
+TitleFrom: Sayonara no Kawari Ni
+TitleTo: サヨナラのかわりに
+*
+ArtistFrom: Ohhagumi
+ArtistTo: おはぐみ
+*
+ArtistFrom: Morikubo Shoutarou
+ArtistTo: 怪人ゾナー
+*
+TitleFrom: Zonapara
+SubtitleFrom: WHY! Parapara Remix
+ArtistFrom: Zobekka
+TitleTo: ゾナパラ
+SubtitleTo: WHY! パラパラ・リミックス
+ArtistTo: ゾベッカ
+*
+#TOKIMEKI MEMORIAL DANCING SUMMER VACATION
+TitleFrom: Anata
+ArtistFrom: Unknown
+TitleTo: あなたに会えて
+SubtitleTo: ~Dancing Summer Mix~
+ArtistTo: 野田 順子
+*
+TitleFrom: Futari
+ArtistFrom: Unknown
+TitleTo: 二人の時
+SubtitleTo: ~Dancing Summer Mix~
+ArtistTo: 金月 真美
+*
+TitleFrom: Haru
+ArtistFrom: Unknown
+TitleTo: 春色の風の中で
+SubtitleTo: ~Dancing Summer Mix~
+ArtistTo: 金月 真美
+*
+TitleFrom: Kamisama
+ArtistFrom: Unknown
+TitleTo: 勇気の神様
+SubtitleTo: ~Dancing Summer Mix~
+ArtistTo: 野田 順子
+*
+TitleFrom: Mot! Mot! Tokimeki
+ArtistFrom: Unknown
+TitleTo: もっと ! モット ! TOKIMEKI
+SubtitleTo: ~Dancing Summer Mix~
+ArtistTo: 金月 真美
+*
+TitleFrom: Olgore
+ArtistFrom: Unkown
+TitleTo: ときめきのオルゴーレ
+SubtitleTo: ~Dancing Summer Mix~
+ArtistTo: 金月 真美
+*
+TitleFrom: Hero Club-MIX
+ArtistFrom: Unknown
+ArtistTo: 朝比奈 夕子
+
+
+*
+TitleFrom: Pokemon
+TitleTo: Pokémon
+*
+# Fanboy bonus:
+
+ArtistFrom: (Megumi Hayashibara)|(Hayashibara Megumi)
+ArtistTo: 林原めぐみ
+*
+ArtistFrom: (Ayumi Hamasaki)|(Hamasaki Ayumi)
+ArtistTo: 浜崎あゆみ
+*
+ArtistFrom: (Hiroko Kasahara)|(Kasahara Hiroko)
+ArtistTo: 笠原拡子 
+*
+ArtistFrom: (Mai Kuraki)|(Kuraki Mai)
+ArtistTo: 倉木麻衣
+*
+ArtistFrom: (Yuki Kimura)|(Kimura Yuki)
+ArtistTo: 木村由姫
+*
+ArtistFrom: (Takako Matsu)|(Matsu Takako)
+ArtistTo: 松たか子
+*
+ArtistFrom: (Suzuki Ami)|(Ami Suzuki)
+ArtistTo: 鈴木あみ
+*
+ArtistFrom: (Sakura Tange)|(Tange Sakura)
+ArtistTo: 丹下桜
+*
+ArtistFrom: (Hikaru Utada)|(Utada Hikaru)
+ArtistTo: 宇多田ひかる
+*
+ArtistFrom: (Masami Okui)|(Okui Masami)
+ArtistTo: 奥井雅美
+*
+ArtistFrom: Morning Musume
+ArtistTo: Morning娘
+*
+ArtistFrom: (Youko Ishida)|(Ishida Youko)
+ArtistTo: 石田燿子
+*
+ArtistFrom: (Youko Kanno)|(Kanno Youko)
+ArtistTo: 菅野よう子
+*
+ArtistFrom: (Megumi Ogata)|(Ogata Megumi)
+ArtistTo: 緒方恵美
+*
+ArtistFrom: (Yoko Takahashi)|(Takahashi Yoko)
+ArtistTo: 高橋洋子
+*
+ArtistFrom: (Daichi Akitaroh)|(Akitaroh Daichi)
+ArtistTo: 大地丙太郎
+*
+ArtistFrom: (Yui Horie)|(Horie Yui)
+ArtistTo: 堀江由衣
+*
+ArtistFrom: (Nobuo Uematsu)|(Uematsu Nobuo)
+ArtistTo: 植松伸夫
+
+[Courses]
+TitleFrom: (Kidou)|(Demon Road)|(Road of Oni)|(Oni Michi)
+TitleTo: 鬼道
+*
+TitleFrom: (Kidou 2)|(Demon Road 2)|(Road of Oni 2)|(Oni Michi 2)
+TitleTo: 鬼道 弐
+*
+TitleFrom: Love
+TitleTo: Love ♡
+*
+TitleFrom: Love Love
+TitleTo: Love ♡
+*
+TitleFrom: (2 ?MB)|(Road of 2 ?MB)
+TitleTo: 2MB道
+*
+TitleFrom: Dancemania( Oni)?
+TitleTo: Dancemania 鬼
+*
+TitleFrom: (TaQ( Oni)?)|(Road of TaQ)
+TitleTo: TaQ 道
+*
+TitleFrom: (Legend Road)|(Road of Legend)
+TitleTo: 伝説道
+*
+TitleFrom: (Slow Demon Road)|(Road of Slow)
+TitleTo: 鬼の遅道
+*
+# "Road of True"?  Maybe "Truth"?
+TitleFrom: (True Demon Road)|(Road of Tru.*)
+TitleTo: 真鬼道
+*
+
