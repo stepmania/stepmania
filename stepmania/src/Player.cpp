@@ -335,7 +335,7 @@ void Player::DrawPrimitives()
 
 	m_frameJudgement.Draw();
 
-	for( int c=0; c<m_iNumTracks; c++ )
+	for( int c=0; c<GetNumTracks(); c++ )
 		m_HoldJudgement[c].Draw();
 }
 
@@ -346,7 +346,7 @@ void Player::Step( int col )
 
 	//LOG->Trace( "Player::HandlePlayerStep()" );
 
-	ASSERT( col >= 0  &&  col <= m_iNumTracks );
+	ASSERT( col >= 0  &&  col <= GetNumTracks() );
 
 	const float fSongBeat = GAMESTATE->m_fSongBeat;
 
@@ -447,7 +447,7 @@ void Player::Step( int col )
 
 		if (score > TNS_NONE) {
 			bool bRowDestroyed = true;
-			for( int t=0; t<m_iNumTracks; t++ )			// did this complete the elimination of the row?
+			for( int t=0; t<GetNumTracks(); t++ )			// did this complete the elimination of the row?
 			{
 				if( GetTapNote(t, iIndexOverlappingNote) != TAP_EMPTY  &&			// there is a note here
 					GetTapNoteScore(t, iIndexOverlappingNote) == TNS_NONE )			// and it doesn't have a score
@@ -471,7 +471,7 @@ void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
 	
 	// find the minimum score of the row
 	TapNoteScore score = TNS_MARVELOUS;
-	for( int t=0; t<m_iNumTracks; t++ )
+	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		TapNoteScore tns = GetTapNoteScore(t, iIndexThatWasSteppedOn);
 		if( tns >= TNS_BOO )
@@ -502,7 +502,7 @@ void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
 	}
 
 	int iNumNotesInThisRow = 0;
-	for( int c=0; c<m_iNumTracks; c++ )	// for each column
+	for( int c=0; c<GetNumTracks(); c++ )	// for each column
 	{
 		if( GetTapNote(c, iIndexThatWasSteppedOn) != TAP_EMPTY )	// if there is a note in this col
 		{
@@ -565,7 +565,7 @@ int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat )
 	for( int r=iStartCheckingAt; r<iMissIfOlderThanThisIndex; r++ )
 	{
 		int iNumMissesThisRow = 0;
-		for( int t=0; t<m_iNumTracks; t++ )
+		for( int t=0; t<GetNumTracks(); t++ )
 		{
 			if( GetTapNote(t, r) != TAP_EMPTY  &&  GetTapNoteScore(t, r) == TNS_NONE )
 			{
@@ -595,7 +595,7 @@ void Player::CrossedRow( int iNoteRow )
 	if( PREFSMAN->m_bAutoPlay  ||  GAMESTATE->m_bDemonstration )
 	{
 		// check to see if there's at the crossed row
-		for( int t=0; t<m_iNumTracks; t++ )
+		for( int t=0; t<GetNumTracks(); t++ )
 		{
 			if( GetTapNote(t, iNoteRow) != TAP_EMPTY )
 				this->Step( t );

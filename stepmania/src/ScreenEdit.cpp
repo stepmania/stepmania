@@ -249,7 +249,7 @@ ScreenEdit::ScreenEdit()
 	m_NoteFieldRecord.SetZoom( 1.0f );
 	m_NoteFieldRecord.Load( &noteData, PLAYER_1, -150, 350 );
 
-	m_Clipboard.m_iNumTracks = m_NoteFieldEdit.m_iNumTracks;
+	m_Clipboard.SetNumTracks( m_NoteFieldEdit.GetNumTracks() );
 
 	m_Player.Load( PLAYER_1, &noteData, NULL, NULL );
 	m_Player.SetXY( PLAYER_X, PLAYER_Y );
@@ -715,7 +715,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			const float fSongBeat = GAMESTATE->m_fSongBeat;
 			const int iSongIndex = BeatToNoteRow( fSongBeat );
 
-			if( iCol >= m_NoteFieldEdit.m_iNumTracks )	// this button is not in the range of columns for this StyleDef
+			if( iCol >= m_NoteFieldEdit.GetNumTracks() )	// this button is not in the range of columns for this StyleDef
 				break;
 
 			/* XXX: easier to do with 4s */
@@ -784,7 +784,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			const float fEndBeat = GAMESTATE->m_fSongBeat + fBeatsToMove;
 
 			// check to see if they're holding a button
-			for( int col=0; col<m_NoteFieldEdit.m_iNumTracks && col<=10; col++ )
+			for( int col=0; col<m_NoteFieldEdit.GetNumTracks() && col<=10; col++ )
 			{
 				const DeviceInput di(DEVICE_KEYBOARD, SDLK_1+col);
 
@@ -937,7 +937,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 				// initialize m_NoteFieldRecord
 				m_NoteFieldRecord.ClearAll();
-				m_NoteFieldRecord.m_iNumTracks = m_NoteFieldEdit.m_iNumTracks;
+				m_NoteFieldRecord.SetNumTracks( m_NoteFieldEdit.GetNumTracks() );
 				m_NoteFieldRecord.m_fBeginMarker = m_NoteFieldEdit.m_fBeginMarker;
 				m_NoteFieldRecord.m_fEndMarker = m_NoteFieldEdit.m_fEndMarker;
 
@@ -973,7 +973,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case SDLK_DELETE:
 		{
 			NoteData temp;
-			temp.m_iNumTracks = m_NoteFieldEdit.m_iNumTracks;
+			temp.SetNumTracks( m_NoteFieldEdit.GetNumTracks() );
 			int iTakeFromRow=0;
 			int iPasteAtRow;
 			switch( DeviceI.button )

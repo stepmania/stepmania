@@ -27,6 +27,8 @@ class NoteData
 {
 	/* Keep this aligned, so that they all have the same size. */
 	vector<TapNote> m_TapNotes[MAX_NOTE_TRACKS];
+	int m_iNumTracks;
+
 	vector<HoldNote>	m_HoldNotes;
 
 	/* Pad m_TapNotes so it includes the row "rows". */
@@ -37,11 +39,12 @@ public:
 	 * divisor.  Doesn't allocate or copy anything. */
 	void Config( const NoteData &From );
 
-	int m_iNumTracks;
-
 	NoteData();
 	~NoteData();
 	void Init();
+
+	int GetNumTracks();
+	void SetNumTracks( int iNewNumTracks );
 
 	/* Return the note at the given track and row.  Row may be out of
 	 * range; pretend the song goes on with TAP_EMPTYs indefinitely. */

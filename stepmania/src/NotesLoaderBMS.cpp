@@ -65,7 +65,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 	out.m_NotesType = NOTES_TYPE_INVALID;
 
 	NoteData* pNoteData = new NoteData;
-	pNoteData->m_iNumTracks = MAX_NOTE_TRACKS;
+	pNoteData->SetNumTracks( MAX_NOTE_TRACKS );
 
 	ifstream file(sPath);
 	if( file.bad() )
@@ -230,7 +230,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 	}
 
 	NoteData* pNoteData2 = new NoteData;
-	pNoteData2->m_iNumTracks = iNumNewTracks;
+	pNoteData2->SetNumTracks( iNumNewTracks );
 	pNoteData2->LoadTransformed( pNoteData, iNumNewTracks, iTransformNewToOld );
 
 	out.SetNoteData(pNoteData2);

@@ -64,7 +64,7 @@ Notes::~Notes()
 
 void Notes::SetNoteData( NoteData* pNewNoteData )
 {
-	ASSERT( pNewNoteData->m_iNumTracks == GameManager::NotesTypeToNumTracks(m_NotesType) );
+	ASSERT( pNewNoteData->GetNumTracks() == GameManager::NotesTypeToNumTracks(m_NotesType) );
 
 	DeAutogen();
 
@@ -80,7 +80,7 @@ void Notes::GetNoteData( NoteData* pNoteDataOut ) const
 	ASSERT(this);
 	ASSERT(pNoteDataOut);
 	Decompress();
-	pNoteDataOut->m_iNumTracks = notes->m_iNumTracks;
+	pNoteDataOut->SetNumTracks( notes->GetNumTracks() );
 	*pNoteDataOut = *notes;
 }
 
@@ -218,11 +218,11 @@ void Notes::Decompress() const
 		parent->GetNoteData(&pdata);
 
 		notes = new NoteData;
-		notes->m_iNumTracks = GameManager::NotesTypeToNumTracks(m_NotesType);
-		if(pdata.m_iNumTracks == notes->m_iNumTracks)
+		notes->SetNumTracks( GameManager::NotesTypeToNumTracks(m_NotesType) );
+		if(pdata.GetNumTracks() == notes->GetNumTracks())
 			notes->CopyRange( &pdata, 0, pdata.GetLastRow(), 0 );
 		else
-			notes->LoadTransformedSlidingWindow( &pdata, notes->m_iNumTracks );
+			notes->LoadTransformedSlidingWindow( &pdata, notes->GetNumTracks() );
 
 		return;
 	}
@@ -230,7 +230,7 @@ void Notes::Decompress() const
 	if(!notes_comp) return; /* no data is no data */
 
 	notes = new NoteData;
-	notes->m_iNumTracks = GameManager::NotesTypeToNumTracks(m_NotesType);
+	notes->SetNumTracks( GameManager::NotesTypeToNumTracks(m_NotesType) );
 
 	NoteDataUtil::LoadFromSMNoteDataString(*notes, *notes_comp);
 }
@@ -298,7 +298,7 @@ void Notes::CopyFrom( Notes* pSource, NotesType ntTo )	// pSource does not have 
 	m_NotesType = ntTo;
 	NoteData noteData;
 	pSource->GetNoteData( &noteData );
-	noteData.m_iNumTracks = GameManager::NotesTypeToNumTracks(ntTo);
+	noteData.SetNumTracks( GameManager::NotesTypeToNumTracks(ntTo) ); 
 	this->SetNoteData( &noteData );
 	this->SetDescription( "Copied from "+pSource->GetDescription() );
 	this->SetDifficulty( pSource->GetDifficulty() );
@@ -313,7 +313,7 @@ void Notes::CreateBlank( NotesType ntTo )
 {
 	m_NotesType = ntTo;
 	NoteData noteData;
-	noteData.m_iNumTracks = GameManager::NotesTypeToNumTracks(ntTo);
+	noteData.SetNumTracks( GameManager::NotesTypeToNumTracks(ntTo) );
 	this->SetNoteData( &noteData );
 }
 

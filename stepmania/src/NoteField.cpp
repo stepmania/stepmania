@@ -61,10 +61,10 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDra
 	this->CopyAll( pNoteData );
 
 	// init note displays
-	for( int c=0; c<m_iNumTracks; c++ ) 
+	for( int c=0; c<GetNumTracks(); c++ ) 
 		m_NoteDisplay[c].Load( c, pn );
 
-	ASSERT( m_iNumTracks == GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer );
+	ASSERT( GetNumTracks() == GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer );
 }
 
 void NoteField::Update( float fDeltaTime )
@@ -84,7 +84,7 @@ void NoteField::DrawMeasureBar( int iMeasureIndex )
 	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, fYOffset );
 
 	m_rectMeasureBar.SetXY( 0, fYPos );
-	m_rectMeasureBar.SetZoomX( (float)(m_iNumTracks+1) * ARROW_SIZE );
+	m_rectMeasureBar.SetZoomX( (float)(GetNumTracks()+1) * ARROW_SIZE );
 	m_rectMeasureBar.SetZoomY( 20 );
 	m_rectMeasureBar.SetDiffuse( RageColor(0,0,0,0.5f) );
 	m_rectMeasureBar.Draw();
@@ -102,7 +102,7 @@ void NoteField::DrawMarkerBar( const float fBeat )
 	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, fYOffset );
 
 	m_rectMarkerBar.SetXY( 0, fYPos );
-	m_rectMarkerBar.SetZoomX( (float)(m_iNumTracks+1) * ARROW_SIZE );
+	m_rectMarkerBar.SetZoomX( (float)(GetNumTracks()+1) * ARROW_SIZE );
 	m_rectMarkerBar.SetZoomY( 20 );
 	m_rectMarkerBar.SetDiffuse( RageColor(0,0,0,0.5f) );
 	m_rectMarkerBar.Draw();
@@ -249,7 +249,7 @@ void NoteField::DrawPrimitives()
 	// draw in big batches.
 	//
 
-	for( int c=0; c<m_iNumTracks; c++ )	// for each arrow column
+	for( int c=0; c<GetNumTracks(); c++ )	// for each arrow column
 	{
 		/////////////////////////////////
 		// Draw all HoldNotes in this column (so that they appear under the tap notes)
@@ -295,7 +295,7 @@ void NoteField::DrawPrimitives()
 
 			// See if there is a hold step that begins on this index.
 			bool bHoldNoteBeginsOnThisBeat = false;
-			for( int c2=0; c2<m_iNumTracks; c2++ )
+			for( int c2=0; c2<GetNumTracks(); c2++ )
 			{
 				if( GetTapNote(c2, i) == TAP_HOLD_HEAD )
 				{
@@ -313,7 +313,7 @@ void NoteField::DrawPrimitives()
 
 void NoteField::RemoveTapNoteRow( int iIndex )
 {
-	for( int c=0; c<m_iNumTracks; c++ )
+	for( int c=0; c<GetNumTracks(); c++ )
 		SetTapNote(c, iIndex, TAP_EMPTY);
 }
 

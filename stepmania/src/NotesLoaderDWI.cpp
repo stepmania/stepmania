@@ -130,7 +130,7 @@ bool DWILoader::LoadFromDWITokens(
 
 	NoteData* pNoteData = new NoteData;
 	ASSERT( pNoteData );
-	pNoteData->m_iNumTracks = mapDanceNoteToNoteDataColumn.size();
+	pNoteData->SetNumTracks( mapDanceNoteToNoteDataColumn.size() );
 
 	for( int pad=0; pad<2; pad++ )		// foreach pad
 	{
@@ -236,7 +236,7 @@ bool DWILoader::LoadFromDWITokens(
 	// this will expand the HoldNote begin markers we wrote into actual HoldNotes
 	pNoteData->Convert2sAnd3sToHoldNotes();
 
-	ASSERT( pNoteData->m_iNumTracks > 0 );
+	ASSERT( pNoteData->GetNumTracks() > 0 );
 
 	out.SetNoteData(pNoteData);
 

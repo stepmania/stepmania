@@ -39,7 +39,7 @@ int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float 
 
 	for( unsigned i=iStartIndex; i<min(iEndIndex, m_TapNoteScores[0].size()); i++ )
 	{
-		for( int t=0; t<m_iNumTracks; t++ )
+		for( int t=0; t<GetNumTracks(); t++ )
 		{
 			if( this->GetTapNote(t, i) != TAP_EMPTY && GetTapNoteScore(t, i) == tns )
 				iNumSuccessfulTapNotes++;
@@ -60,7 +60,7 @@ int NoteDataWithScoring::GetNumDoublesWithScore( TapNoteScore tns, const float f
 	{
 		int iNumNotesThisIndex = 0;
 		TapNoteScore	minTapNoteScore = TNS_MARVELOUS;
-		for( int t=0; t<m_iNumTracks; t++ )
+		for( int t=0; t<GetNumTracks(); t++ )
 		{
 			if( GetTapNote(t, i) != TAP_EMPTY )
 			{
@@ -90,7 +90,7 @@ int NoteDataWithScoring::GetNumHoldNotesWithScore( HoldNoteScore hns, const floa
 
 bool NoteDataWithScoring::IsRowComplete( int index )
 {
-	for( int t=0; t<m_iNumTracks; t++ )
+	for( int t=0; t<GetNumTracks(); t++ )
 		if( GetTapNote(t, index) != TAP_EMPTY && GetTapNoteScore(t, index) < TNS_GREAT )
 			return false;
 	return true;

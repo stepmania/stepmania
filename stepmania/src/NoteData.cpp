@@ -37,6 +37,17 @@ NoteData::~NoteData()
 {
 }
 
+int NoteData::GetNumTracks()
+{
+	return m_iNumTracks;
+}
+
+void NoteData::SetNumTracks( int iNewNumTracks )
+{
+	m_iNumTracks = iNewNumTracks;
+}
+
+
 /* Clear [iNoteIndexBegin,iNoteIndexEnd]; that is, including iNoteIndexEnd. */
 void NoteData::ClearRange( int iNoteIndexBegin, int iNoteIndexEnd )
 {
@@ -566,9 +577,9 @@ NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &n, int iMe
 void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData )
 {
 	/* Clear notes, but keep the same number of tracks. */
-	int iNumTracks = out.m_iNumTracks;
+	int iNumTracks = out.GetNumTracks();
 	out.Init();
-	out.m_iNumTracks = iNumTracks;
+	out.SetNumTracks( iNumTracks );
 
 	// strip comments out of sSMNoteData
 	while( sSMNoteData.Find("//") != -1 )
@@ -611,7 +622,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 //			if( m_iNumTracks != sMeasureLine.GetLength() )
 //				RageException::Throw( "Actual number of note columns (%d) is different from the NotesType (%d).", m_iNumTracks, sMeasureLine.GetLength() );
 
-			for( int c=0; c<min(sMeasureLine.GetLength(),out.m_iNumTracks); c++ )
+			for( int c=0; c<min(sMeasureLine.GetLength(),out.GetNumTracks()); c++ )
 			{
 				TapNote t;
 				switch(sMeasureLine[c])
@@ -655,7 +666,7 @@ CString NoteDataUtil::GetSMNoteDataString(NoteData &in)
 
 		for( int r=iMeasureStartRow; r<=iMeasureLastRow; r+=iRowSpacing )
 		{
-			for( int t=0; t<in.m_iNumTracks; t++ ) {
+			for( int t=0; t<in.GetNumTracks(); t++ ) {
 				char c;
 				switch(in.GetTapNote(t, r)) {
 				case TAP_EMPTY: c = '0'; break;
@@ -783,8 +794,8 @@ void NoteDataUtil::Turn( NoteData &in, PlayerOptions::TurnType tt )
 	case PlayerOptions::TURN_NONE:
 		return;		// nothing to do
 	case PlayerOptions::TURN_MIRROR:
-		for( t=0; t<in.m_iNumTracks; t++ )
-			iTakeFromTrack[t] = in.m_iNumTracks-t-1;
+		for( t=0; t<in.GetNumTracks(); t++ )
+			iTakeFromTrack[t] = in.GetNumTracks()-t-1;
 		break;
 	case PlayerOptions::TURN_LEFT:
 	case PlayerOptions::TURN_RIGHT:		// HACK: TurnRight does the same thing as TurnLeft.  I'll fix this later...
@@ -859,10 +870,10 @@ void NoteDataUtil::Turn( NoteData &in, PlayerOptions::TurnType tt )
 	case PlayerOptions::TURN_SUPER_SHUFFLE:		// use this code to shuffle the HoldNotes
 		{
 			vector<int> aiTracksLeftToMap;
-			for( t=0; t<in.m_iNumTracks; t++ )
+			for( t=0; t<in.GetNumTracks(); t++ )
 				aiTracksLeftToMap.push_back( t );
 			
-			for( t=0; t<in.m_iNumTracks; t++ )
+			for( t=0; t<in.GetNumTracks(); t++ )
 			{
 				int iRandTrackIndex = rand()%aiTracksLeftToMap.size();
 				int iRandTrack = aiTracksLeftToMap[iRandTrackIndex];
@@ -885,7 +896,7 @@ void NoteDataUtil::Turn( NoteData &in, PlayerOptions::TurnType tt )
 
 	// transform notes
 	int max_row = in.GetLastRow();
-	for( t=0; t<in.m_iNumTracks; t++ )
+	for( t=0; t<in.GetNumTracks(); t++ )
 		for( int r=0; r<=max_row; r++ ) 			
 			tempNoteData.SetTapNote(t, r, in.GetTapNote(iTakeFromTrack[t], r));
 
@@ -919,11 +930,11 @@ void NoteDataUtil::Turn( NoteData &in, PlayerOptions::TurnType tt )
 
 			// shuffle this row
 			vector<int> aiTracksThatCouldHaveTapNotes;
-			for( t=0; t<in.m_iNumTracks; t++ )
+			for( t=0; t<in.GetNumTracks(); t++ )
 				if( in.GetTapNote(t, r) != TAP_HOLD )	// any point that isn't part of a hold
 					aiTracksThatCouldHaveTapNotes.push_back( t );
 
-			for( t=0; t<in.m_iNumTracks; t++ )
+			for( t=0; t<in.GetNumTracks(); t++ )
 			{
 				if( in.GetTapNote(t, r) != TAP_HOLD  &&  in.GetTapNote(t, r) != TAP_EMPTY )	// there is a tap note here (and not a HoldNote)
 				{
@@ -950,7 +961,7 @@ void NoteDataUtil::MakeLittle(NoteData &in)
 		if( i%ROWS_PER_BEAT != 0 )
 		{
 			// filter out all non-quarter notes
-			for( int c=0; c<in.m_iNumTracks; c++ ) 
+			for( int c=0; c<in.GetNumTracks(); c++ ) 
 			{
 				in.SetTapNote(c, i, TAP_EMPTY);
 			}
@@ -1001,7 +1012,7 @@ void NoteDataUtil::SnapToNearestNoteType( NoteData &in, NoteType nt1, NoteType n
 		float fNewBeat = bNewBeat1IsCloser ? fNewBeat1 : fNewBeat2;
 		int iNewIndex = BeatToNoteRow( fNewBeat );
 
-		for( int c=0; c<in.m_iNumTracks; c++ )
+		for( int c=0; c<in.GetNumTracks(); c++ )
 		{
 			TapNote note = in.GetTapNote(c, iOldIndex);
 			in.SetTapNote(c, iOldIndex, TAP_EMPTY);

@@ -75,14 +75,14 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 			if(!out.GetMeter()) out.SetMeter(5);
 		}
 
-		notedata.m_iNumTracks = 5;
+		notedata.SetNumTracks( 5 );
 		out.m_NotesType = NOTES_TYPE_PUMP_SINGLE;
 		if( sFName.Find("double") != -1 )
 		{
-			notedata.m_iNumTracks = 10;
+			notedata.SetNumTracks( 10 );
 			out.m_NotesType = NOTES_TYPE_PUMP_DOUBLE;
 		} else if( sFName.Find("_2") != -1 ) {
-			notedata.m_iNumTracks = 10;
+			notedata.SetNumTracks( 10 );
 			out.m_NotesType = NOTES_TYPE_PUMP_COUPLE;
 		}
 	}
@@ -112,7 +112,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 		// the length of a note in a row depends on TICKCOUNT
 		float fBeatThisRow = r/(float)iTickCount;
 		int row = BeatToNoteRow(fBeatThisRow);
-		for( int t=0; t < notedata.m_iNumTracks; t++ )
+		for( int t=0; t < notedata.GetNumTracks(); t++ )
 		{
 			if( sRowString[t] == '4' )
 			{
