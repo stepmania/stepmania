@@ -1701,21 +1701,6 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
 			}
 			break;
-		// testing:
-		case SDLK_PAUSE:
-			{
-				if( GAMESTATE->m_PlayerOptions[PLAYER_1].m_fPerspectiveTilt == -1 )	// incoming
-				{
-					for( int p=0; p<NUM_PLAYERS; p++ )
-						GAMESTATE->m_PlayerOptions[PLAYER_1].m_fPerspectiveTilt = 0;
-				}
-				else
-				{
-					for( int p=0; p<NUM_PLAYERS; p++ )
-						GAMESTATE->m_PlayerOptions[PLAYER_1].m_fPerspectiveTilt = -1;
-				}
-			}
-			break;
 		}
 	}
 
