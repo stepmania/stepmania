@@ -4,6 +4,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "NoteTypes.h"
+#include <float.h>
 
 void BPMSegment::SetBPM( float f )
 {
@@ -42,7 +43,7 @@ void SortStopSegmentsArray( vector<StopSegment> &arrayStopSegments )
 
 void TimingData::GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut ) const
 {
-	fMinBPMOut = 99999;
+	fMinBPMOut = FLT_MAX;
 	fMaxBPMOut = 0;
 	for( unsigned i=0; i<m_BPMSegments.size(); i++ ) 
 	{

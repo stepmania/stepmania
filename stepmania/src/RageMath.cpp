@@ -11,10 +11,11 @@
 #include "RageDisplay.h"
 #include "RageLog.h"
 #include "arch/Dialog/Dialog.h"
+#include <float.h>
 
 void RageVec3ClearBounds( RageVector3 &mins, RageVector3 &maxs )
 {
-	mins = RageVector3( 999999, 999999, 999999 );
+	mins = RageVector3( FLT_MAX, FLT_MAX, FLT_MAX );
 	maxs = mins * -1;
 }
 

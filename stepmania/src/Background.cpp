@@ -18,8 +18,8 @@
 #include "PlayerState.h"
 #include "Command.h"
 #include "ActorUtil.h"
-
 #include <set>
+#include <float.h>
 
 const float FADE_SECONDS = 1.0f;
 
@@ -438,7 +438,7 @@ void Background::LoadFromSong( const Song* pSong )
 			continue;
 
 		const float fStartBeat = change.m_fStartBeat;
-		const float fLastBeat = (i+1 < m_aBGChanges.size())? m_aBGChanges[i+1].m_fStartBeat: 99999;
+		const float fLastBeat = (i+1 < m_aBGChanges.size())? m_aBGChanges[i+1].m_fStartBeat: FLT_MAX;
 
 		m_aBGChanges.erase( m_aBGChanges.begin()+i );
 		--i;

@@ -239,7 +239,7 @@ unsigned RageSoundReader_Chain::GetNextSoundIndex() const
 int RageSoundReader_Chain::ReadBlock( int16_t *pBuffer, int iFrames )
 {
 	/* How many samples should we read before we need to start up a sound? */
-	int iFramesToRead = 999999999; /* inf */
+	int iFramesToRead = INT_MAX;
 	if( m_iNextSound < m_Sounds.size() )
 	{
 		int iStartFrame = m_iCurrentFrame;

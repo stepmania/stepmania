@@ -758,7 +758,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 	{
 		if( type != IET_FIRST_PRESS ) return;
 		PREFSMAN->m_bShowNativeLanguage ^= 1;
-		m_MusicWheel.RebuildMusicWheelItems();
+		m_MusicWheel.RebuildAllMusicWheelItems();
 		m_CourseContentsFrame.SetFromGameState();
 		return;
 	}

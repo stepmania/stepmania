@@ -8,6 +8,7 @@
 #include "PrefsManager.h"
 #include "LuaManager.h"
 #include "GameManager.h"
+#include <float.h>
 
 
 static const CString RadarCategoryNames[NUM_RADAR_CATEGORIES] = {
@@ -218,13 +219,13 @@ void DisplayBpms::Add( float f )
 
 float DisplayBpms::GetMin() const
 {
-	float fMin = 99999;
+	float fMin = FLT_MAX;
 	FOREACH_CONST( float, vfBpms, f )
 	{
 		if( *f != -1 )
 			fMin = min( fMin, *f );
 	}
-	if( fMin == 99999 )
+	if( fMin == FLT_MAX )
 		return 0;
 	else
 		return fMin;

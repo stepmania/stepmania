@@ -64,7 +64,8 @@ public:
 	CString			GetSelectedSection(){ return m_CurWheelItemData[m_iSelection]->m_sSectionName; }
 
 	bool WheelIsLocked() { return (m_WheelState == STATE_LOCKED ? true : false); }
-	void RebuildMusicWheelItems( int dist = -999999 );	// -999999 = refresh all
+	void RebuildAllMusicWheelItems();
+	void RebuildMusicWheelItems( int dist );
 
 	Song *GetPreferredSelectionForRandomOrPortal();
 

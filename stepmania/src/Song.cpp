@@ -34,6 +34,7 @@
 #include "LyricsLoader.h"
 
 #include <set>
+#include <float.h>
 
 #define CACHE_DIR "Cache/"
 
@@ -778,7 +779,7 @@ void Song::TranslateTitles()
 
 void Song::ReCalculateRadarValuesAndLastBeat()
 {
-	float fFirstBeat = 999999; /* inf */
+	float fFirstBeat = FLT_MAX; /* inf */
 	float fLastBeat = 0;
 
 	for( unsigned i=0; i<m_vpSteps.size(); i++ )

@@ -50,7 +50,7 @@ void AutoKeysounds::FinishLoading()
 		while(1)
 		{
 			/* Find the next row that either player has a note on. */
-			int iNextRow = 999999999;
+			int iNextRow = INT_MAX;
 			FOREACH_EnabledPlayer(pn)
 			{
 				int iNextRowForPlayer = iRow;
@@ -58,7 +58,7 @@ void AutoKeysounds::FinishLoading()
 					iNextRow = min( iNextRow, iNextRowForPlayer );
 			}
 
-			if( iNextRow == 999999999 )
+			if( iNextRow == INT_MAX )
 				break;
 			iRow = iNextRow;
 

@@ -4,6 +4,7 @@
 #include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "Foreach.h"
+#include <float.h>
 
 #define GRADE_PERCENT_TIER(i)			THEME->GetMetricF("PlayerStageStats",ssprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
 #define GRADE_TIER_02_IS_ALL_PERFECTS	THEME->GetMetricB("PlayerStageStats","GradeTier02IsAllPerfects")
@@ -25,7 +26,7 @@ void PlayerStageStats::Init()
 	radarPossible.Zero();
 	radarActual.Zero();
 
-	fFirstSecond = 999999;
+	fFirstSecond = FLT_MAX;
 	fLastSecond = 0;
 }
 

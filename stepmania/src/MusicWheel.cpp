@@ -262,7 +262,7 @@ void MusicWheel::Load( CString sType )
 		SetOpenGroup("");
 
 	// rebuild the WheelItems that appear on screen
-	RebuildMusicWheelItems();
+	RebuildAllMusicWheelItems();
 }
 
 MusicWheel::~MusicWheel()
@@ -849,6 +849,11 @@ void CircularShift( vector<T> &v, int dist )
 	}
 }
 
+void MusicWheel::RebuildAllMusicWheelItems()
+{
+	RebuildMusicWheelItems( INT_MAX );
+}
+
 void MusicWheel::RebuildMusicWheelItems( int dist )
 {
 	// rewind to first index that will be displayed;
@@ -864,7 +869,7 @@ void MusicWheel::RebuildMusicWheelItems( int dist )
 
 	// iIndex is now the index of the lowest WheelItem to draw
 
-	if( dist == -999999 )
+	if( dist == INT_MAX )
 	{
 		// Refresh all
 		for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
@@ -1081,7 +1086,7 @@ void MusicWheel::Update( float fDeltaTime )
 				}
 
 				SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
-				RebuildMusicWheelItems();
+				RebuildAllMusicWheelItems();
 				TweenOnScreen(true);
 				m_WheelState = STATE_FLYING_ON_AFTER_NEXT_SORT;
 			}
@@ -1396,7 +1401,7 @@ void MusicWheel::StartRandom()
 	SelectSong( GetPreferredSelectionForRandomOrPortal() );
 
 	this->Select();
-	RebuildMusicWheelItems();
+	RebuildAllMusicWheelItems();
 }
 
 void MusicWheel::SetOpenGroup(CString group, SortOrder so)
@@ -1444,7 +1449,7 @@ void MusicWheel::SetOpenGroup(CString group, SortOrder so)
 		}
 	}
 
-	RebuildMusicWheelItems();
+	RebuildAllMusicWheelItems();
 }
 
 bool MusicWheel::IsRouletting() const

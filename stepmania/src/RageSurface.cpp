@@ -19,7 +19,7 @@ int32_t RageSurfacePalette::FindColor( const RageSurfaceColor &color ) const
 int32_t RageSurfacePalette::FindClosestColor( const RageSurfaceColor &color ) const
 {
 	int iBest = -1;
-	int iBestDist = 99999;
+	int iBestDist = INT_MAX;
 	for( int i = 0; i < ncolors; ++i )
 	{
 		if( colors[i] == color )
