@@ -16,7 +16,6 @@ LyricDisplay::LyricDisplay()
 	{
 		m_textLyrics[i].LoadFromFont( THEME->GetPathToF("LyricDisplay text") );
 		m_textLyrics[i].SetDiffuse( RageColor(1,1,1,1) );
-		m_textLyrics[i].SetDiffuse( RageColor(1,1,1,1) );
 		this->AddChild(&m_textLyrics[i]);
 	}
 
@@ -51,7 +50,7 @@ void LyricDisplay::Update( float fDeltaTime )
 	if( m_iCurLyricNumber >= GAMESTATE->m_pCurSong->m_LyricSegments.size() )
 		return;
 
-	Song *song = GAMESTATE->m_pCurSong;
+	const Song *song = GAMESTATE->m_pCurSong;
 	const float fStartTime = (song->m_LyricSegments[m_iCurLyricNumber].m_fStartTime) - g_TweenInTime;
 
 	if(GAMESTATE->m_fMusicSeconds < fStartTime)
