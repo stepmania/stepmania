@@ -24,6 +24,8 @@ int DeviceInput::NumButtons(InputDevice device)
 	case DEVICE_JOY2:
 	case DEVICE_JOY3:
 	case DEVICE_JOY4:
+	case DEVICE_JOY5:
+	case DEVICE_JOY6:
 		return NUM_JOYSTICK_BUTTONS;	
 	case DEVICE_PUMP1:
 	case DEVICE_PUMP2:
@@ -48,6 +50,8 @@ CString DeviceInput::GetDescription()
 	case DEVICE_JOY2:
 	case DEVICE_JOY3:
 	case DEVICE_JOY4:
+	case DEVICE_JOY5:
+	case DEVICE_JOY6:
 		sReturn = ssprintf("Joy%d ", device - DEVICE_JOY1 + 1 );
 
 		switch( button )

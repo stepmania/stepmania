@@ -5,7 +5,7 @@
 #include "RageTimer.h"
 
 const int NUM_KEYBOARD_BUTTONS = SDLK_LAST;
-const int NUM_JOYSTICKS = 4;
+const int NUM_JOYSTICKS = 6;
 const int NUM_JOYSTICK_HATS = 1;
 const int NUM_PUMPS = 2;
 
@@ -15,6 +15,8 @@ enum InputDevice {
 	DEVICE_JOY2,
 	DEVICE_JOY3,
 	DEVICE_JOY4,
+	DEVICE_JOY5,
+	DEVICE_JOY6,
 	DEVICE_PUMP1,
 	DEVICE_PUMP2,
 	NUM_INPUT_DEVICES,	// leave this at the end
@@ -62,6 +64,8 @@ const int NUM_DEVICE_BUTTONS[NUM_INPUT_DEVICES] =
 	NUM_JOYSTICK_BUTTONS, // DEVICE_JOY2
 	NUM_JOYSTICK_BUTTONS, // DEVICE_JOY3
 	NUM_JOYSTICK_BUTTONS, // DEVICE_JOY4
+	NUM_JOYSTICK_BUTTONS, // DEVICE_JOY5
+	NUM_JOYSTICK_BUTTONS, // DEVICE_JOY6
 	NUM_PUMP_PAD_BUTTONS, // DEVICE_PUMP1
 	NUM_PUMP_PAD_BUTTONS, // DEVICE_PUMP2
 };
@@ -95,7 +99,7 @@ public:
 
 	char ToChar() const;
 
-	bool IsJoystick() const { return DEVICE_JOY1 <= device && device <= DEVICE_JOY4; }
+	bool IsJoystick() const { return DEVICE_JOY1 <= device && device < DEVICE_JOY1+NUM_JOYSTICKS; }
 
 	static int NumButtons(InputDevice device);
 };
