@@ -19,6 +19,7 @@ public:
 // Dialog Data
 	//{{AFX_DATA(ConvertThemeDlg)
 	enum { IDD = IDD_CONVERT_THEME };
+	CButton	m_buttonAnalyze;
 	CButton	m_buttonConvert;
 	CListBox	m_listThemes;
 	//}}AFX_DATA
@@ -39,6 +40,7 @@ protected:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnButtonConvert();
 	afx_msg void OnSelchangeListThemes();
+	afx_msg void OnButtonAnalyze();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

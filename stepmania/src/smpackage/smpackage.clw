@@ -13,16 +13,16 @@ Class2=CSmpackageDlg
 
 ResourceCount=7
 Resource1=IDR_MAINFRAME
-Resource2=IDD_DIALOG_NAME
+Resource2=IDD_MENU
 Class3=CSMPackageInstallDlg
 Class4=CSmpackageExportDlg
-Resource3=IDD_INSTALL
+Resource3=IDD_EDIT_INSTALLATIONS
 Class5=EnterName
-Resource4=IDD_EXPORTER
+Resource4=IDD_DIALOG_NAME
 Class6=EditInsallations
-Resource5=IDD_MENU
+Resource5=IDD_EXPORTER
 Class7=MainMenuDlg
-Resource6=IDD_EDIT_INSTALLATIONS
+Resource6=IDD_INSTALL
 Class8=ConvertThemeDlg
 Resource7=IDD_CONVERT_THEME
 
@@ -139,18 +139,20 @@ LastObject=EditInsallations
 [DLG:IDD_MENU]
 Type=1
 Class=MainMenuDlg
-ControlCount=11
+ControlCount=13
 Control1=IDOK,button,1342242817
 Control2=IDC_STATIC,static,1342177294
 Control3=IDC_EXPORT_PACKAGES,button,1342242816
 Control4=IDC_STATIC,static,1342308352
 Control5=IDC_STATIC,button,1342177287
 Control6=IDC_STATIC,button,1342177287
-Control7=IDC_CONVERT_THEME,button,1342242816
-Control8=IDC_STATIC,static,1342308352
-Control9=IDC_EDIT_INSTALLATIONS,button,1342242816
-Control10=IDC_STATIC,static,1342308352
-Control11=IDC_STATIC,button,1342177287
+Control7=IDC_ANALYZE_ELEMENTS,button,1342242816
+Control8=IDC_EDIT_INSTALLATIONS,button,1342242816
+Control9=IDC_STATIC,static,1342308352
+Control10=IDC_STATIC,button,1342177287
+Control11=IDC_EDIT_METRICS,button,1342242816
+Control12=IDC_STATIC,static,1342308352
+Control13=IDC_STATIC,static,1342308352
 
 [CLS:MainMenuDlg]
 Type=0
@@ -164,14 +166,17 @@ LastObject=IDC_CONVERT_THEME
 [DLG:IDD_CONVERT_THEME]
 Type=1
 Class=ConvertThemeDlg
-ControlCount=7
+ControlCount=10
 Control1=IDOK,button,1342242817
 Control2=IDC_STATIC,static,1342177294
 Control3=IDC_LIST_THEMES,listbox,1352728835
 Control4=IDC_BUTTON_CONVERT,button,1476460544
-Control5=IDC_STATIC,button,1342177287
+Control5=IDC_STATIC,static,1342308352
 Control6=IDC_STATIC,static,1342308352
-Control7=IDC_STATIC,static,1342308352
+Control7=IDC_STATIC,button,1342177287
+Control8=IDC_STATIC,button,1342177287
+Control9=IDC_STATIC,static,1342308352
+Control10=IDC_BUTTON_ANALYZE,button,1476460544
 
 [CLS:ConvertThemeDlg]
 Type=0
@@ -179,6 +184,6 @@ HeaderFile=onvertThemeDlg.h
 ImplementationFile=onvertThemeDlg.cpp
 BaseClass=CDialog
 Filter=D
-LastObject=IDC_LIST_THEMES
+LastObject=ConvertThemeDlg
 VirtualFilter=dWC
 

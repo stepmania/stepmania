@@ -38,21 +38,14 @@ void MainMenuDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(MainMenuDlg, CDialog)
 	//{{AFX_MSG_MAP(MainMenuDlg)
-	ON_BN_CLICKED(IDC_CONVERT_THEME, OnConvertTheme)
 	ON_BN_CLICKED(IDC_EXPORT_PACKAGES, OnExportPackages)
 	ON_BN_CLICKED(IDC_EDIT_INSTALLATIONS, OnEditInstallations)
+	ON_BN_CLICKED(IDC_ANALYZE_ELEMENTS, OnAnalyzeElements)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // MainMenuDlg message handlers
-
-void MainMenuDlg::OnConvertTheme() 
-{
-	// TODO: Add your control notification handler code here
-	ConvertThemeDlg dlg;
-	int nResponse = dlg.DoModal();	
-}
 
 void MainMenuDlg::OnExportPackages() 
 {
@@ -66,5 +59,12 @@ void MainMenuDlg::OnEditInstallations()
 {
 	// TODO: Add your control notification handler code here
 	EditInsallations dlg;
+	int nResponse = dlg.DoModal();	
+}
+
+void MainMenuDlg::OnAnalyzeElements() 
+{
+	// TODO: Add your control notification handler code here
+	ConvertThemeDlg dlg;
 	int nResponse = dlg.DoModal();	
 }

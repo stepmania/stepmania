@@ -31,6 +31,12 @@ CHANGE:  HoldNote life snaps to full when button is pressed (instead of
 	refilling slowly) ala DDR
 NEW FEATURE:  Toggle for Autogen of missing steps
 NEW FEATURE:  Toggle for Autogen of group Nonstop and Endless Courses
+OPTIMIZATION:  Turned off compression when exporting package, which makes
+	exporting significantly faster.
+NEW FEATURE:  Convert a theme from the 3.0 naming convention to the 4.0 
+	naming convention using "Analyze Theme" in smpackage.exe.
+NEW FEATURE:  Check for redundant and possibly mis-named theme elements using
+	"Analyze Theme" in smpackage.exe.
 
 ----------------------- Version 3.01 ---------------------------
 CHANGE:  Simplified NoteSkin tap graphic format.  Old NoteSkins will need to 

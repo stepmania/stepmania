@@ -29,6 +29,7 @@ void ConvertThemeDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(ConvertThemeDlg)
+	DDX_Control(pDX, IDC_BUTTON_ANALYZE, m_buttonAnalyze);
 	DDX_Control(pDX, IDC_BUTTON_CONVERT, m_buttonConvert);
 	DDX_Control(pDX, IDC_LIST_THEMES, m_listThemes);
 	//}}AFX_DATA_MAP
@@ -39,6 +40,7 @@ BEGIN_MESSAGE_MAP(ConvertThemeDlg, CDialog)
 	//{{AFX_MSG_MAP(ConvertThemeDlg)
 	ON_BN_CLICKED(IDC_BUTTON_CONVERT, OnButtonConvert)
 	ON_LBN_SELCHANGE(IDC_LIST_THEMES, OnSelchangeListThemes)
+	ON_BN_CLICKED(IDC_BUTTON_ANALYZE, OnButtonAnalyze)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -54,7 +56,8 @@ BOOL ConvertThemeDlg::OnInitDialog()
 	CStringArray asThemes;
 	GetDirListing( "Themes\\*.*", asThemes, true, false );
 	for( int i=0; i<asThemes.GetSize(); i++ )
-		m_listThemes.AddString( asThemes[i] );
+		if( asThemes[i] != "default" )
+			m_listThemes.AddString( asThemes[i] );
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
@@ -89,7 +92,6 @@ void ConvertThemeDlg::OnButtonConvert()
 {
 	// TODO: Add your control notification handler code here
 	int iSel = m_listThemes.GetCurSel();
-
 	CString sThemeDir;
 	m_listThemes.GetText( iSel, sThemeDir );
 	sThemeDir = "Themes\\" + sThemeDir;
@@ -189,4 +191,126 @@ void ConvertThemeDlg::OnSelchangeListThemes()
 	// TODO: Add your control notification handler code here
 	BOOL bSomethingSelected = m_listThemes.GetCurSel() != LB_ERR;
 	m_buttonConvert.EnableWindow( bSomethingSelected );
+	m_buttonAnalyze.EnableWindow( bSomethingSelected );
+}
+
+bool FilesAreIdentical( CString sPath1, CString sPath2 )
+{
+	if( IsADirectory(sPath1) || IsADirectory(sPath2) )
+		return false;
+
+	FILE* fp1 = fopen( sPath1, "r" );
+	FILE* fp2 = fopen( sPath2, "r" );
+
+	if( GetFileSizeInBytes(sPath1) != GetFileSizeInBytes(sPath2) )
+		return false;
+
+	char buffer1[1024], buffer2[1024];
+	ZERO( buffer1 );
+	ZERO( buffer2 );
+	while( !feof(fp1) )
+	{
+		fread( buffer1, 1, sizeof(buffer1), fp1 );
+		fread( buffer2, 1, sizeof(buffer2), fp2 );
+		if( memcmp( buffer1, buffer2, sizeof(buffer1) ) != 0 )
+			return false;
+	}
+	return true;
+}
+
+CString StripExtension( CString sPath )
+{
+	CString sDir, sFName, sExt;
+	splitrelpath( sPath, sDir, sFName, sExt );
+	return sDir + sFName;
+}
+
+void ConvertThemeDlg::OnButtonAnalyze() 
+{
+	// TODO: Add your control notification handler code here
+	int i;
+
+	CString sBaseDir = "Themes\\default\\";
+	int iSel = m_listThemes.GetCurSel();
+	CString sThemeDir;
+	m_listThemes.GetText( iSel, sThemeDir );
+	sThemeDir = "Themes\\"+sThemeDir+"\\";
+
+	CStringArray asBaseFilePaths;
+	GetDirListing( sBaseDir+"BGAnimations\\*.*", asBaseFilePaths, false, true );
+	GetDirListing( sBaseDir+"Fonts\\*.*", asBaseFilePaths, false, true );
+	GetDirListing( sBaseDir+"Graphics\\*.*", asBaseFilePaths, false, true );
+	GetDirListing( sBaseDir+"Numbers\\*.*", asBaseFilePaths, false, true );
+	GetDirListing( sBaseDir+"Sounds\\*.*", asBaseFilePaths, false, true );
+
+	CStringArray asThemeFilePaths;
+	GetDirListing( sThemeDir+"BGAnimations\\*.*", asThemeFilePaths, false, true );
+	GetDirListing( sThemeDir+"Fonts\\*.*", asThemeFilePaths, false, true );
+	GetDirListing( sThemeDir+"Graphics\\*.*", asThemeFilePaths, false, true );
+	GetDirListing( sThemeDir+"Numbers\\*.*", asThemeFilePaths, false, true );
+	GetDirListing( sThemeDir+"Sounds\\*.*", asThemeFilePaths, false, true );
+
+	FILE* fp = fopen( "theme_report.txt", "w" );
+	ASSERT( fp );
+	CStringArray asRedundantPaths;
+	CStringArray asWarningPaths;
+	for( i=0; i<asThemeFilePaths.GetSize(); i++ )
+	{
+		CString sThemeElement = asThemeFilePaths[i];
+		sThemeElement.Replace( sThemeDir, "" );
+		sThemeElement = StripExtension( sThemeElement );
+
+		for( int j=0; j<asBaseFilePaths.GetSize(); j++ )
+		{
+			CString sBaseElement = asBaseFilePaths[j];
+			sBaseElement.Replace( sBaseDir, "" );
+			sBaseElement = StripExtension( sBaseElement );
+
+			if( sThemeElement.CompareNoCase(sBaseElement)==0 )	// file names match
+			{
+				if( FilesAreIdentical( asThemeFilePaths[i], asBaseFilePaths[j] ) )
+				{
+					asRedundantPaths.Add( asThemeFilePaths[i] );
+					break;
+				}
+				else	// files are not identical
+				{
+					break;	// skip to next file in asThemeFilePaths
+				}
+			}
+		}
+		if( j == asBaseFilePaths.GetSize() )
+			asWarningPaths.Add( asThemeFilePaths[i] );
+	}
+	fprintf( fp, "The following elements are REDUNDANT.\n"
+		"    (These elements are identical to the elements in the base theme.\n"
+		"    They are unnecessary and should be deleted.)\n" );
+	for( i=0; i<asRedundantPaths.GetSize(); i++ )
+		fprintf( fp, asRedundantPaths[i] + "\n" );
+	fprintf( fp, "\n" );
+	fprintf( fp, "The following elements are possibly MISNAMED.\n"
+		"    (These files do not have a corresponding element in\n"
+		"    the base theme.  This likely means that there is an error in the file name.)\n" );
+	for( i=0; i<asWarningPaths.GetSize(); i++ )
+		fprintf( fp, asWarningPaths[i] + "\n" );
+	fclose( fp );
+
+	// launch notepad
+	PROCESS_INFORMATION pi;
+	STARTUPINFO	si;
+	ZeroMemory( &si, sizeof(si) );
+
+	CreateProcess(
+		NULL,		// pointer to name of executable module
+		"notepad.exe theme_report.txt",		// pointer to command line string
+		NULL,  // process security attributes
+		NULL,   // thread security attributes
+		false,  // handle inheritance flag
+		0, // creation flags
+		NULL,  // pointer to new environment block
+		NULL,   // pointer to current directory name
+		&si,  // pointer to STARTUPINFO
+		&pi  // pointer to PROCESS_INFORMATION
+	);
+
 }
