@@ -1,0 +1,1176 @@
+# IA-32 disassembly ruleset module for VirtualDub -- V1.00
+# By Avery Lee <phaeron@virtualdub.org>
+#
+# Based off of:
+#	Intel IA-32 Software Developer's Manual, Volume 2
+#	AMD 3DNow! Technology manual
+#	AMD Extensions to the 3DNow! and MMX Instruction Sets Manual
+#
+# This version supports MMX, SSE, SSE2, 3DNow!, and 3DNow! Professional
+# (Athlon) instruction set extensions.
+#
+# Known issues:
+#
+# * LOCK is printed as a separate instruction instead of a prefix.
+# * Pentium 4 branch hints aren't printed.
+# * Valid disassemblies are produced for some invalid instructions, like
+#   CMPXCHG8B EAX.
+
+#--------------------------------------------------------------------------
+# Pattern format
+#
+# All patterns are composed of sequences of the following:
+#	[66], [67], [F2], [F3]		Prefix required
+#	[!s]						Lack of segment offset required
+#	xx							Single byte match (i.e. 0F)
+#	xx-xx						Byte match with mask -- mask is determined
+#								by XOR of two bytes (10-1E gives mask 0E)
+#	*							Any byte
+#	ruleset						Apply ruleset at current point
+#	:							End of pattern and start of result string
+#
+# Patterns are matched from top to bottom in a ruleset; if two patterns
+# overlap, the first pattern wins.  If no pattern in a ruleset matches, the
+# search fails; this causes the parent rule to fail as well, continuing
+# the search one level up.  The last ruleset (the main ruleset) must never
+# fail.
+#
+# Masked byte compares (10-1E) need not compare on contiguous bitfields but
+# must match the full bitfield.  A 10-15 token doesn't match 10, 11, 12,
+# 13, and 14, but only 10, 11, 14, and 15.  To match all six bytes, two
+# rules should be used: one with 16-17, and another with 
+#
+# If a ruleset call is prefixed by !, the submatch begins with the previous
+# source byte rather than the current one.  This is used when the register
+# field of a modrm byte selects the instruction as well and thus must be
+# matched in the parent rule, like some of the shift instruction encodings.
+#
+# A lone colon is valid and represents a pattern that consumes no bytes and
+# always matches.  Needless to say it must be last.  No path may exist from
+# the main ruleset that matches only blank rules, since it will cause the
+# disassembler to get stuck in a loop, since no bytes are ever consumed.
+#
+# All byte pattern rules place one byte onto the result stack; all ruleset
+# submatch tokens place both the first byte matched and their output string
+# onto the stack.  Result stacks are local to each rule, and no rule can
+# "see" the stacks of a submatch.
+
+#--------------------------------------------------------------------------
+# Result format
+#
+# Result strings are composed of the following tokens:
+#	"xyz"						Literal string
+#	$<n>[<bitfield>]<format>	Formatted argument (see below)
+#	$ap							Addressing prefix (cs:, etc. or nothing)
+#	$p_66, $p_67, $p_f2, $p_f3	Set a prefix flag (no output)
+#	$p_cs, $p_ds, etc.			Set addressing prefix (no output)
+#
+# Formatted arguments take a value from the result stack and output them;
+# the argument number ranges from 1 to the number of values on the stack,
+# which is at least the number of pattern tokens.  The valid formatting
+# types are:
+#
+#		a/ha/la					8/16/32-bit PC-relative offset
+#		o/ho/lo					8/16/32-bit displacement
+#		r8						8-bit register (AL, AH, BL, ...)
+#		r16						16-bit register (AX, BX, CX, ...)
+#		r1632					$r16 if 66 prefix flag is set, else $r32
+#		r32						32-bit register (EAX, EBX, ECX, ...)
+#		rc						Control register (CR0, CR1, ...)
+#		rd						Debug register (DR0, DR1, ...)
+#		rf						FPU stack register (st(0), st(1), ...)
+#		rm						MMX register (MM0, MM1, ...)
+#		rmx						$rx if 66 prefix flag is set, else $rm
+#		rs						Segment register (CS, DS, ...)
+#		rx						SSE register (XMM0, XMM1, ...)
+#		s						string
+#		x/hx/lx					8/16/32-bit hex constant
+#
+# Format arguments can also contain by a bitfield descriptor of the form
+# [a-b], where a is the LSB and b is the MSB of the bitfield to extract.
+# This is often used for modrm encodings to extract the register
+# argument, i.e. $2[3-5]r8.
+#
+# Some of the format types will attempt a symbol lookup, and print symbol
+# and offset as well if there is a match.  This includes $a, $ha, $la,
+# $lo, and $lx.
+#
+# If a result string produces no output, the disassembler loops back again
+# and reapplies the main ruleset, keeping the current state.  This is used
+# to handle prefixes without needlessly recursing and recopying output
+# strings.
+
+
+#--------------------------------------------------------------------------
+# Rulesets for shift-index-base (sib) addressing bytes
+
+%sib
+
+# xx10 0xxx -> no index
+20-E7:				$1[0-2]r32
+
+00-3F:				$1[0-2]r32 "+" $1[3-5]r32
+40-7F:				$1[0-2]r32 "+" $1[3-5]r32 "*2"
+80-BF:				$1[0-2]r32 "+" $1[3-5]r32 "*4"
+C0-FF:				$1[0-2]r32 "+" $1[3-5]r32 "*8"
+
+%sib00
+25-E5 * * * *:		$2lx
+05-3D * * * *:		$1[3-5]r32 "+" $2lx
+45-7D * * * *:		$1[3-5]r32 "*2+" $2lx
+85-BD * * * *:		$1[3-5]r32 "*4+" $2lx
+C5-FD * * * *:		$1[3-5]r32 "*8+" $2lx
+sib:				$2s
+
+#--------------------------------------------------------------------------
+# Rulesets for mode-reg/mem (modrm) addressing bytes
+
+%modrm_base32
+04-3C sib00:		"[" $3s "]"
+44-7C sib *:		"[" $3s $4o  "]"
+84-BC sib * * * *:	"[" $3s $4lo "]"
+
+05-3D * * * *:		"[" $2lx "]"
+00-3F:				"[" $1[0-2]r32 "]"
+40-7F *:			"[" $1[0-2]r32 $2o "]"
+80-BF * * * *:		"[" $1[0-2]r32 $2lo "]"
+
+%modrm_base16
+00-38:				"[bx+si]"
+01-39:				"[bx+di]"
+02-3A:				"[bp+si]"
+03-3B:				"[bp+di]"
+04-3C:				"[si]"
+05-3D:				"[di]"
+06-3E * *:			"[" $2hx "]"
+07-3F:				"[bx]"
+
+40-78 *:			"[bx+si+" $2o "]"
+41-79 *:			"[bx+di+" $2o "]"
+42-7A *:			"[bp+si+" $2o "]"
+43-7B *:			"[bp+di+" $2o "]"
+44-7C *:			"[si+" $2o "]"
+45-7D *:			"[di+" $2o "]"
+46-7E *:			"[bp+" $2o "]"
+47-7F *:			"[bx+" $2o "]"
+
+80-B8 *:			"[bx+si+" $2ho "]"
+81-B9 *:			"[bx+di+" $2ho "]"
+82-BA *:			"[bp+si+" $2ho "]"
+83-BB *:			"[bp+di+" $2ho "]"
+84-BC *:			"[si+" $2ho "]"
+85-BD *:			"[di+" $2ho "]"
+86-BE *:			"[bp+" $2ho "]"
+87-BF *:			"[bx+" $2ho "]"
+
+C0-FF:				$1r16
+
+%modrm_base
+[67] modrm_base16:	$2s
+modrm_base32:		$2s
+
+%modrm
+modrm_base:			$ap $2s
+
+%modrm8
+C0-FF:				$1[0-2]r8
+modrm:				$2s
+
+%modrm16
+C0-FF:				$1[0-2]r16
+modrm:				$2s
+
+%modrm32
+C0-FF:				$1[0-2]r32
+modrm:				$2s
+
+%modrm1632
+[66] C0-FF:			$1[0-2]r16
+C0-FF:				$1[0-2]r32
+modrm:				$2s
+
+%modrm128
+C0-FF:				$1[0-2]rx
+modrm:				$2s
+
+%modrm8d
+C0-FF:				$1[0-2]r8
+modrm_base:			$ap "byte ptr " $2s
+
+%modrm16d
+C0-FF:				$1[0-2]r8
+modrm_base:			$ap "word ptr " $2s
+
+%modrm32d
+C0-FF:				$1[0-2]r32
+modrm_base:			$ap "dword ptr " $2s
+
+%modrm1632d
+C0-FF:				$1[0-2]r1632
+[66] modrm_base:	$ap "word ptr " $2s
+modrm_base:			$ap "dword ptr " $2s
+
+%modrm32x
+C0-FF:				$1[0-2]rx
+modrm:				$2s
+
+%modrm32m
+C0-FF:				$1[0-2]rm
+modrm:				$2s
+
+%modrm3248d
+C0-FF:				$1[0-2]r1632
+[66] modrm_base:	$ap "dword ptr " $2s
+modrm_base:			$ap "fword ptr " $2s
+
+%modrm48d
+C0-FF:				$1[0-2]r32
+modrm_base:			$ap "fword ptr " $2s
+
+%modrm64d
+C0-FF:				$1[0-2]r32
+modrm_base:			$ap "qword ptr " $2s
+
+%modrm64m
+C0-FF:				$1[0-2]rm
+modrm:				$2s
+
+%modrm64x
+C0-FF:				$1[0-2]rx
+modrm:				$2s
+
+%modrm64128
+[66] C0-FF:			$1[0-2]rx
+C0-FF:				$1[0-2]rm
+modrm:				$2s
+
+%modrm80d
+modrm_base:			$ap "real80 ptr " $2s
+
+#--------------------------------------------------------------------------
+# Rulesets for block moves
+
+%blockb
+[67]:				" es:byte ptr [di], " $ap "byte ptr [si]"
+[!s]:				"b"
+:					" es:byte ptr [edi], " $ap "byte ptr [esi]"
+
+%blockw
+[66] [67]:			" es:word ptr [di], " $ap "word ptr [si]"
+[66] [!s]:			"w"
+[66]:				" es:word ptr [edi], " $ap "word ptr [esi]"
+[67]:				" es:dword ptr [di], " $ap "dword ptr [si]"
+[!s]:				"d"
+:					" es:dword ptr [edi], " $ap "dword ptr [esi]"
+
+#--------------------------------------------------------------------------
+# Rulesets for instructions beginning with 0F
+
+%prefix_0F
+00 00-C7 !modrm16d:	"sldt " $4s
+00 08-CF !modrm16d:	"str " $4s
+00 10-D7 !modrm16d:	"lldt " $4s
+00 18-DF !modrm16d:	"ltr " $4s
+00 20-E7 !modrm16d:	"verr " $4s
+00 28-EF !modrm16d:	"verw " $4s
+
+01 00-C7 !modrm48d:	"sgdt " $4s
+01 08-CF !modrm48d:	"sidt " $4s
+01 10-D7 !modrm48d:	"lgdt " $4s
+01 18-DF !modrm48d:	"lidt " $4s
+01 20-E7 !modrm16d:	"smsw " $4s
+01 30-F7 !modrm16d:	"lmsw " $4s
+01 38-FF !modrm8d:	"invlpg " $4s
+
+02 modrm16d:		"lar " $2[3-5]rx ", " $3s
+03 modrm16d:		"lsl " $2[3-5]rx ", " $3s
+06:				"clts"
+08:				"invd"
+09:				"wbinvd"
+0B:				"ud2"
+
+0D 00-C7 !modrm:	"prefetch " $4s							# 3DNow!
+0D 08-CF !modrm:	"prefetchw " $4s						# 3DNow!
+0E:				"femms"									# 3DNow!
+
+0F modrm64m 0C:	"pi2fw " $2[3-5]rm ", " $3s				# 3DNow! DSP Extensions
+0F modrm64m 0D:	"pi2fd " $2[3-5]rm ", " $3s				# 3DNow!
+0F modrm64m 1C:	"pf2iw " $2[3-5]rm ", " $3s				# 3DNow! DSP Extensions
+0F modrm64m 1D:	"pf2id " $2[3-5]rm ", " $3s				# 3DNow!
+0F modrm64m 8A:	"pfnacc " $2[3-5]rm ", " $3s			# 3DNow! DSP Extensions
+0F modrm64m 8E:	"pfpnacc " $2[3-5]rm ", " $3s			# 3DNow! DSP Extensions
+0F modrm64m 90:	"pfcmpge " $2[3-5]rm ", " $3s			# 3DNow!
+0F modrm64m 94:	"pfmin " $2[3-5]rm ", " $3s				# 3DNow!
+0F modrm64m 96:	"pfrcp " $2[3-5]rm ", " $3s				# 3DNow!
+0F modrm64m 97:	"pfrsqrt " $2[3-5]rm ", " $3s			# 3DNow!
+0F modrm64m 9A:	"pfsub " $2[3-5]rm ", " $3s				# 3DNow!
+0F modrm64m 9E:	"pfadd " $2[3-5]rm ", " $3s				# 3DNow!
+0F modrm64m A0:	"pfcmpgt " $2[3-5]rm ", " $3s			# 3DNow!
+0F modrm64m A4:	"pfmax " $2[3-5]rm ", " $3s				# 3DNow!
+0F modrm64m A6:	"pfrcpit1 " $2[3-5]rm ", " $3s			# 3DNow!
+0F modrm64m A7:	"pfrsqit1 " $2[3-5]rm ", " $3s			# 3DNow!
+0F modrm64m AA:	"pfsubr " $2[3-5]rm ", " $3s			# 3DNow!
+0F modrm64m AE:	"pfacc " $2[3-5]rm ", " $3s				# 3DNow!
+0F modrm64m B0:	"pfcmpeq " $2[3-5]rm ", " $3s			# 3DNow!
+0F modrm64m B4:	"pfmul " $2[3-5]rm ", " $3s				# 3DNow!
+0F modrm64m B6:	"pfrcpit2 " $2[3-5]rm ", " $3s			# 3DNow!
+0F modrm64m B7:	"pmulhrw " $2[3-5]rm ", " $3s			# 3DNow!
+0F modrm64m BB:	"pswapd " $2[3-5]rm ", " $3s			# 3DNow! DSP Extensions
+0F modrm64m BF:	"pavgusb " $2[3-5]rm ", " $3s			# 3DNow!
+
+[66] 10 modrm128:	"movupd " $2[3-5]rx ", " $3s		# SSE2
+[66] 11 modrm128:	"movupd " $3s ", " $2[3-5]rx		# SSE2
+[66] 12 modrm64x:	"movlpd " $2[3-5]rx ", " $3s		# SSE2
+[66] 13 modrm64x:	"movlpd " $3s ", " $2[3-5]rx		# SSE2
+[66] 14 modrm64x:	"unpcklpd" $2[3-5]rx ", " $3s		# SSE2
+[66] 15 modrm64x:	"unpckhpd" $2[3-5]rx ", " $3s		# SSE2
+[66] 16 modrm64x:	"movhpd " $2[3-5]rx ", " $3s		# SSE2
+[66] 17 modrm64x:	"movhpd " $3s ", " $2[3-5]rx		# SSE2
+
+[F2] 10 modrm64x:		"movsd " $2[3-5]rx ", " $3s			# SSE2
+[F2] 11 modrm64x:		"movsd " $3s ", " $2[3-5]rx			# SSE2
+
+10 modrm128:			"movups " $2[3-5]rx ", " $3s		# SSE
+11 modrm128:			"movups " $3s ", " $2[3-5]rx		# SSE
+12 C0-FF:				"movhlps " $2[3-5]rx ", " $2[0-2]rx	# SSE
+12 modrm64x:			"movlps " $2[3-5]rx ", " $3s		# SSE
+13 modrm64x:			"movlps " $3s ", " $2[3-5]rx		# SSE
+14 modrm64x:			"unpcklps" $2[3-5]rx ", " $3s		# SSE
+15 modrm64x:			"unpckhps" $2[3-5]rx ", " $3s		# SSE
+16 C0-FF:				"movlhps " $2[3-5]rx ", " $2[0-2]rx	# SSE
+16 modrm64x:			"movhps " $2[3-5]rx ", " $3s		# SSE
+17 modrm64x:			"movhps " $3s ", " $2[3-5]rx		# SSE
+
+[F3] 10 modrm32x:		"movss " $2[3-5]rx ", " $3s			# SSE
+[F3] 11 modrm32x:		"movss " $3s ", " $2[3-5]rx			# SSE
+
+18 modrm 00:		"prefetchnta " $3s						# MMX2
+18 modrm 01:		"prefetcht0 " $3s						# MMX2
+18 modrm 02:		"prefetcht1 " $3s						# MMX2
+18 modrm 03:		"prefetcht2 " $3s						# MMX2
+
+20 C0-FF:		"mov " $2[0-2]r32 ", " $2[3-5]rc
+21 C0-FF:		"mov " $2[0-2]r32 ", " $2[3-5]rd
+22 C0-FF:		"mov " $2[3-5]rc ", " $2[0-2]r32
+23 C0-FF:		"mov " $2[3-5]rd ", " $2[0-2]r32
+
+[66] 28 modrm128:		"movapd " $2[3-5]rx ", " $3s
+[66] 29 modrm128:		"movapd " $3s ", " $2[3-5]rx
+[66] 2A modrm64m:		"cvtpi2pd " $2[3-5]rx ", " $3s
+[F2] 2A modrm32:			"cvtsi2sd " $2[3-5]rx ", " $3s
+[66] 2B modrm128:		"movntpd " $3s ", " $2[3-5]rx
+[66] 2C modrm64m:		"cvttpd2pi " $2[3-5]rm ", " $3s
+[F2] 2C modrm32x:		"cvttsd2si " $2[3-5]r32 ", " $3s
+[66] 2D modrm64x:		"cvtpd2pi " $2[3-5]rm ", " $3s
+[F2] 2D modrm32x:		"cvtsd2si " $2[3-5]r32 ", " $3s
+[66] 2E modrm32x:		"ucomisd " $2[3-5]rx ", " $3s
+[66] 2F modrm32x:		"comisd " $2[3-5]rx ", " $3s
+
+28 modrm128:		"movaps " $2[3-5]rx ", " $3s
+29 modrm128:		"movaps " $3s ", " $2[3-5]rx
+2A modrm64m:		"cvtpi2ps " $2[3-5]rx ", " $3s
+[F3] 2A modrm32:	"cvtsi2ss " $2[3-5]rx ", " $3s
+2B modrm128:		"movntps " $3s ", " $2[3-5]rx
+2C modrm64m:		"cvttps2pi " $2[3-5]rm ", " $3s
+[F3] 2C modrm32x:	"cvttss2si " $2[3-5]r32 ", " $3s
+2D modrm64m:		"cvtps2pi " $2[3-5]rm ", " $3s
+[F3] 2D modrm32x:	"cvtss2si " $2[3-5]r32 ", " $3s
+2E modrm32x:		"ucomiss " $2[3-5]rx ", " $3s
+2F modrm32x:		"comiss " $2[3-5]rx ", " $3s
+
+30:				"wrmsr"
+31:				"rdtsc"
+32:				"rdmsr"
+33:				"rdpmc"
+34:				"sysenter"
+35:				"sysexit"
+
+40 modrm32:		"cmovo " $2[3-5]r32 ", " $3s
+41 modrm32:		"cmovno " $2[3-5]r32 ", " $3s
+42 modrm32:		"cmovc " $2[3-5]r32 ", " $3s
+43 modrm32:		"cmovnc " $2[3-5]r32 ", " $3s
+44 modrm32:		"cmovz " $2[3-5]r32 ", " $3s
+45 modrm32:		"cmovnz " $2[3-5]r32 ", " $3s
+46 modrm32:		"cmovbe " $2[3-5]r32 ", " $3s
+47 modrm32:		"cmova " $2[3-5]r32 ", " $3s
+48 modrm32:		"cmovs " $2[3-5]r32 ", " $3s
+49 modrm32:		"cmovns " $2[3-5]r32 ", " $3s
+4A modrm32:		"cmovpe " $2[3-5]r32 ", " $3s
+4B modrm32:		"cmovpo " $2[3-5]r32 ", " $3s
+4C modrm32:		"cmovl " $2[3-5]r32 ", " $3s
+4D modrm32:		"cmovge " $2[3-5]r32 ", " $3s
+4E modrm32:		"cmovle " $2[3-5]r32 ", " $3s
+4F modrm32:		"cmovg " $2[3-5]r32 ", " $3s
+
+[66] 50 modrm32:		"movmskpd " $3s ", " $2[3-5]rx
+[66] 51 modrm128:	"sqrtpd "  $2[3-5]rx ", " $3s		# SSE2
+[66] 52 modrm128:	"rsqrtpd " $2[3-5]rx ", " $3s		# SSE2
+[66] 53 modrm128:	"rcppd "   $2[3-5]rx ", " $3s		# SSE2
+[66] 54 modrm128:	"andpd "   $2[3-5]rx ", " $3s		# SSE2
+[66] 55 modrm128:	"andnpd "  $2[3-5]rx ", " $3s		# SSE2
+[66] 56 modrm128:	"orpd "    $2[3-5]rx ", " $3s		# SSE2
+[66] 57 modrm128:	"xorpd "   $2[3-5]rx ", " $3s		# SSE2
+[66] 58 modrm128:	"addpd "   $2[3-5]rx ", " $3s		# SSE2
+[66] 59 modrm128:	"mulpd "   $2[3-5]rx ", " $3s		# SSE2
+[66] 5C modrm128:	"subpd "   $2[3-5]rx ", " $3s		# SSE2
+[66] 5D modrm128:	"minpd "   $2[3-5]rx ", " $3s		# SSE2
+[66] 5E modrm128:	"divpd "   $2[3-5]rx ", " $3s		# SSE2
+[66] 5F modrm128:	"maxpd "   $2[3-5]rx ", " $3s		# SSE2
+
+[F2] 51 modrm64x:		"sqrtsd " $2[3-5]rx ", " $3s
+[F2] 52 modrm64x:		"rsqrtsd " $2[3-5]rx ", " $3s
+[F2] 53 modrm64x:		"rcpsd " $2[3-5]rx ", " $3s
+[F2] 58 modrm64x:		"addsd " $2[3-5]rx ", " $3s
+[F2] 59 modrm64x:		"mulsd " $2[3-5]rx ", " $3s
+[F2] 5C modrm64x:		"subsd " $2[3-5]rx ", " $3s
+[F2] 5D modrm64x:		"minsd " $2[3-5]rx ", " $3s
+[F2] 5E modrm64x:		"divsd " $2[3-5]rx ", " $3s
+[F2] 5F modrm64x:		"maxsd " $2[3-5]rx ", " $3s
+
+50 modrm32:			"movmskps " $3s ", " $2[3-5]rx
+51 modrm128:			"sqrtps " $2[3-5]rx ", " $3s
+52 modrm128:			"rsqrtps " $2[3-5]rx ", " $3s
+53 modrm128:			"rcpps " $2[3-5]rx ", " $3s
+54 modrm128:			"andps " $2[3-5]rx ", " $3s
+55 modrm128:			"andnps " $2[3-5]rx ", " $3s
+56 modrm128:			"orps " $2[3-5]rx ", " $3s
+57 modrm128:			"xorps " $2[3-5]rx ", " $3s
+58 modrm128:			"addps " $2[3-5]rx ", " $3s
+59 modrm128:			"mulps " $2[3-5]rx ", " $3s
+5C modrm128:			"subps " $2[3-5]rx ", " $3s
+5D modrm128:			"minps " $2[3-5]rx ", " $3s
+5E modrm128:			"divps " $2[3-5]rx ", " $3s
+5F modrm128:			"maxps " $2[3-5]rx ", " $3s
+
+[F3] 51 modrm32x:		"sqrtss " $2[3-5]rx ", " $3s
+[F3] 52 modrm32x:		"rsqrtss " $2[3-5]rx ", " $3s
+[F3] 53 modrm32x:		"rcpss " $2[3-5]rx ", " $3s
+[F3] 58 modrm32x:		"addss " $2[3-5]rx ", " $3s
+[F3] 59 modrm32x:		"mulss " $2[3-5]rx ", " $3s
+[F3] 5C modrm32x:		"subss " $2[3-5]rx ", " $3s
+[F3] 5D modrm32x:		"minss " $2[3-5]rx ", " $3s
+[F3] 5E modrm32x:		"divss " $2[3-5]rx ", " $3s
+[F3] 5F modrm32x:		"maxss " $2[3-5]rx ", " $3s
+
+60 modrm64128:		"punpcklbw " $2[3-5]rmx ", " $3s
+61 modrm64128:		"punpcklwd " $2[3-5]rmx ", " $3s
+62 modrm64128:		"punpcklqd " $2[3-5]rmx ", " $3s
+63 modrm64128:		"packsswb "  $2[3-5]rmx ", " $3s
+64 modrm64128:		"pcmpgtb "   $2[3-5]rmx ", " $3s
+65 modrm64128:		"pcmpgtw "   $2[3-5]rmx ", " $3s
+66 modrm64128:		"pcmpgtd "   $2[3-5]rmx ", " $3s
+67 modrm64128:		"packuswb "  $2[3-5]rmx ", " $3s
+68 modrm64128:		"punpckhbw " $2[3-5]rmx ", " $3s
+69 modrm64128:		"punpckhwd " $2[3-5]rmx ", " $3s
+6A modrm64128:		"punpckhdq " $2[3-5]rmx ", " $3s
+6B modrm64128:		"packssdw "  $2[3-5]rmx ", " $3s
+
+[66] 6C modrm128:		"punpcklqdq " $2[3-5]rx ", " $3s
+[66] 6D modrm128:		"punpckhqdq " $2[3-5]rx ", " $3s
+[66] 6E modrm32:			"movd " $2[3-5]rx ", " $3s
+[66] 6F modrm128:		"movdqa " $2[3-5]rx ", " $3s
+[F3] 6F modrm128:		"movdqu " $2[3-5]rx ", " $3s
+
+6E modrm32:		"movd " $2[3-5]rm ", " $3s
+6F modrm64m:		"movq " $2[3-5]rm ", " $3s
+
+[66] 70 modrm128 *:	"pshufd " $2[3-5]rx ", " $3s ", " $4x
+[F2] 70 modrm128 *:	"pshuflw " $2[3-5]rx ", " $3s ", " $4x
+[F3] 70 modrm128 *:	"pshufhw " $2[3-5]rx ", " $3s ", " $4x
+[F3] 7E modrm64x:	"movq " $2[3-5]rx ", " $3s				# SSE2
+[66] 7F modrm128:	"movdqa " $3s ", " $2[3-5]rx
+[F3] 7F modrm128:	"movdqu " $3s ", " $2[3-5]rx
+
+[66] 73 D8-DF *:	"psrldq " $2[0-2]rx ", " $3x
+[66] 73 F8-FF *:	"pslldq " $2[0-2]rx ", " $3x
+
+70 modrm64m *:	"pshufw " $2[3-5]rm ", " $3s ", " $4x
+71 D0-D7 *:		"psrlw " $2[0-2]rmx ", " $3x
+71 E0-E7 *:		"psraw " $2[0-2]rmx ", " $3x
+71 F0-F7 *:		"psllw " $2[0-2]rmx ", " $3x
+72 D0-D7 *:		"psrld " $2[0-2]rmx ", " $3x
+72 E0-E7 *:		"psrad " $2[0-2]rmx ", " $3x
+72 F0-F7 *:		"pslld " $2[0-2]rmx ", " $3x
+73 D0-D7 *:		"psrlq " $2[0-2]rmx ", " $3x
+73 F0-F7 *:		"psllq " $2[0-2]rmx ", " $3x
+74 modrm64128:	"pcmpeqb " $2[3-5]rmx ", " $3s
+75 modrm64128:	"pcmpeqw " $2[3-5]rmx ", " $3s
+76 modrm64128:	"pcmpeqd " $2[3-5]rmx ", " $3s
+77:				"emms"
+7E modrm32:		"movd " $3s ", " $2[3-5]rmx
+7F modrm64m:		"movq " $3s ", " $2[3-5]rm
+
+80 * * * *:		"jo " $2la
+81 * * * *:		"jno " $2la
+82 * * * *:		"jc " $2la
+83 * * * *:		"jnc " $2la
+84 * * * *:		"jz " $2la
+85 * * * *:		"jnz " $2la
+86 * * * *:		"jbe " $2la
+87 * * * *:		"ja " $2la
+88 * * * *:		"js " $2la
+89 * * * *:		"jns " $2la
+8A * * * *:		"jpe " $2la
+8B * * * *:		"jpo " $2la
+8C * * * *:		"jl " $2la
+8D * * * *:		"jge " $2la
+8E * * * *:		"jle " $2la
+8F * * * *:		"jg " $2la
+
+90 modrm8:		"seto " $3s
+91 modrm8:		"setno " $3s
+92 modrm8:		"setc " $3s
+93 modrm8:		"setnc " $3s
+94 modrm8:		"setz " $3s
+95 modrm8:		"setnz " $3s
+96 modrm8:		"setbe " $3s
+97 modrm8:		"seta " $3s
+98 modrm8:		"sets " $3s
+99 modrm8:		"setns " $3s
+9A modrm8:		"setpe " $3s
+9B modrm8:		"setpo " $3s
+9C modrm8:		"setl " $3s
+9D modrm8:		"setge " $3s
+9E modrm8:		"setle " $3s
+9F modrm8:		"setg " $3s
+
+A0:				"push fs"
+A1:				"pop fs"
+A2:				"cpuid"
+A3 modrm32:		"bt " $3s ", " $2[3-5]r32
+A4 modrm32 *:	"shld " $3s ", " $2[3-5]r32 ", " $4x
+A5 modrm32:		"shld " $3s ", " $2[3-5]r32 ", cl"
+A8:				"push gs"
+A9:				"pop gs"
+AA:				"rsm"
+AB modrm32:		"bts " $3s ", " $2[3-5]r32
+AC modrm32 *:	"shrd " $3s ", " $2[3-5]r32 ", " $4x
+AD modrm32:		"shrd " $3s ", " $2[3-5]r32 ", cl"
+AE 00-87 !modrm:	"fxsave " $4s
+AE 08-8F !modrm:	"fxrstor " $4s
+AE 10-97 !modrm:	"ldmxcsr " $4s
+AE 18-9F !modrm:	"stmxcsr " $4s
+AE 38-BF !modrm:	"clflush " $4s
+AE E8-EF:		"lfence" 
+AE F0-F7:		"mfence" 
+AE F8-FF:		"sfence" 
+AF modrm32:		"imul " $2[3-5]r32 ", " $3s
+
+B0 modrm32:		"cmpxchg " $3s ", " $2[3-5]r32
+B1 modrm32:		"cmpxchg " $2[3-5]r32 ", " $3s
+B2 modrm48d:		"lss " $2[3-5]r32 ", " $3s
+B3 modrm32:		"btr " $3s ", " $2[3-5]r32
+B4 modrm48d:		"lfs " $2[3-5]r32 ", " $3s
+B5 modrm48d:		"lgs " $2[3-5]r32 ", " $3s
+B6 modrm8d:		"movzx " $2[3-5]r32 ", " $3s
+B7 modrm16d:		"movzx " $2[3-5]r32 ", " $3s
+
+BA 20-E7 !modrm32d *:	"bt " $3s ", " $4x
+BA 28-EF !modrm32d *:	"bts " $3s ", " $4x
+BA 30-F7 !modrm32d *:	"btr " $3s ", " $4x
+BA 38-FF !modrm32d *:	"btc " $3s ", " $4x
+BB modrm32:				"btc " $3s ", " $2[3-5]r32
+BC modrm32:				"bsf " $2[3-5]r32 ", " $3s
+BD modrm32:				"bsr " $2[3-5]r32 ", " $3s
+BE modrm8d:				"movsx " $2[3-5]r32 ", " $3s
+BF modrm16d:				"movsx " $2[3-5]r32 ", " $3s
+
+C0 modrm8:		"xadd " $3s ", " $2[3-5]r8
+C1 modrm32:		"xadd " $3s ", " $2[3-5]r32
+
+[66] C2 modrm128 *:		"cmppd " $2[3-5]rx ", " $3s ", " $4x		# SSE2
+[F2] C2 modrm64x *:		"cmpsd " $2[3-5]rx ", " $3s ", " $4x		# SSE2
+
+C2 modrm128 *:			"cmpps " $2[3-5]rx ", " $3s ", " $4x		# SSE
+[F3] C2 modrm32x *:		"cmpss " $2[3-5]rx ", " $3s ", " $4x		# SSE
+
+C3 modrm32:			"movnti " $3s ", " $2[3-5]r32					# SSE2
+
+[66] C4 modrm32 *:		"pinsrw " $2[3-5]rx ", " $3s ", " $4x
+C4 modrm32 *:			"pinsrw " $2[3-5]rm ", " $3s ", " $4x
+[66] C5 C0-FF *:			"pextrw " $2[0-2]r32 ", " $2[3-5]rx ", " $3x
+C5 C0-FF *:				"pextrw " $2[0-2]r32 ", " $2[3-5]rm ", " $3x
+[66] C6 modrm128 *:	"shufpd " $2[3-5]rx ", " $3s ", " $4x
+C6 modrm128 *:		"shufps " $2[3-5]rx ", " $3s ", " $4x
+C7 08-8F !modrm64d:	"cmpxchg8b " $4s
+C8-CF:				"bswap " $1[0-2]r32
+
+[66] D6 modrm64x:		"movq " $3s ", " $2[3-5]rx							# SSE2
+[F2] D6 C0-FF:			"movdq2q " $2[0-2]rm ", " $2[3-5]rx					# SSE2
+[F3] D6 C0-FF:			"movq2dq " $2[3-5]rx ", " $2[0-2]rm					# SSE2
+
+D1 modrm64128:		"psrlw " $2[3-5]rmx ", " $3s
+D2 modrm64128:		"psrld " $2[3-5]rmx ", " $3s
+D3 modrm64128:		"psrlq " $2[3-5]rmx ", " $3s
+D4 modrm64128:		"paddq " $2[3-5]rmx ", " $3s
+D5 modrm64128:		"pmullw " $2[3-5]rmx ", " $3s
+D7 C0-FF:			"pmovmskb " $2[3-5]r32 ", " $2[0-2]rmx
+D8 modrm64128:		"psubusb " $2[3-5]rmx ", " $3s
+D9 modrm64128:		"psubusw " $2[3-5]rmx ", " $3s
+DA modrm64128:		"pminub " $2[3-5]rmx ", " $3s
+DB modrm64128:		"pand " $2[3-5]rmx ", " $3s
+DC modrm64128:		"paddusb " $2[3-5]rmx ", " $3s
+DD modrm64128:		"paddusw " $2[3-5]rmx ", " $3s
+DE modrm64128:		"pmaxub " $2[3-5]rmx ", " $3s
+DF modrm64128:		"pandn " $2[3-5]rmx ", " $3s
+
+E0 modrm64128:			"pavgb " $2[3-5]rmx ", " $3s
+E1 modrm64128:			"psraw " $2[3-5]rmx ", " $3s
+E2 modrm64128:			"psrad " $2[3-5]rmx ", " $3s
+E3 modrm64128:			"psraq " $2[3-5]rmx ", " $3s
+E4 modrm64128:			"pmulhuw " $2[3-5]rmx ", " $3s
+E5 modrm64128:			"pmulhw " $2[3-5]rmx ", " $3s
+[66] E7 modrm128:		"movntdq " $2[3-5]rx ", " $3s
+E7 modrm64m:			"movntq " $2[3-5]rm ", " $3s
+E8 modrm64128:			"psubsb " $2[3-5]rmx ", " $3s
+E9 modrm64128:			"psubsw " $2[3-5]rmx ", " $3s
+EA modrm64128:			"pminsw " $2[3-5]rmx ", " $3s
+EB modrm64128:			"por " $2[3-5]rmx ", " $3s
+EC modrm64128:			"paddsb " $2[3-5]rmx ", " $3s
+ED modrm64128:			"paddsw " $2[3-5]rmx ", " $3s
+EE modrm64128:			"pmaxsw " $2[3-5]rmx ", " $3s
+EF modrm64128:			"pxor " $2[3-5]rmx ", " $3s
+
+F1 modrm64128:		"psllw " $2[3-5]rmx ", " $3s
+F2 modrm64128:		"pslld " $2[3-5]rmx ", " $3s
+F3 modrm64128:		"psllq " $2[3-5]rmx ", " $3s
+F4 modrm64128:		"pmuludq " $2[3-5]rmx ", " $3s
+F5 modrm64128:		"pmaddwd " $2[3-5]rmx ", " $3s
+F6 modrm64128:		"psadbw " $2[3-5]rmx ", " $3s
+[66] F7 modrm128:		"maskmovdqu " $2[3-5]rx ", " $3s
+F7 modrm64128:		"maskmovq " $2[3-5]rm ", " $3s
+F8 modrm64128:		"psubb " $2[3-5]rmx ", " $3s
+F9 modrm64128:		"psubw " $2[3-5]rmx ", " $3s
+FA modrm64128:		"psubd " $2[3-5]rmx ", " $3s
+FB modrm64128:		"psubq " $2[3-5]rmx ", " $3s
+FC modrm64128:		"paddb " $2[3-5]rmx ", " $3s
+FD modrm64128:		"paddw " $2[3-5]rmx ", " $3s
+FE modrm64128:		"paddd " $2[3-5]rmx ", " $3s
+
+#--------------------------------------------------------------------------
+# Initial ruleset
+
+%main
+
+00 modrm8:			"add " $3s ", " $2[3-5]r8
+01 modrm1632:		"add " $3s ", " $2[3-5]r32
+02 modrm8:			"add " $2[3-5]r8 ", " $3s
+03 modrm1632:		"add " $2[3-5]r32 ", " $3s
+04 *:				"add al, " $2x
+[66] 05 * *:		"add ax, " $2hx
+05 * * * *:			"add eax, " $2lx
+
+06:					"push es"
+07:					"pop es"
+
+08 modrm8:			"or " $3s ", " $2[3-5]r8
+09 modrm1632:		"or " $3s ", " $2[3-5]r32
+0A modrm8:			"or " $2[3-5]r8 ", " $3s
+0B modrm1632:		"or " $2[3-5]r32 ", " $3s
+0C *:				"or al, " $2x
+[66] 0D * *:		"or ax, " $2lx
+0D * * * *:			"or eax, " $2lx
+
+0E:					"push cs"
+0F prefix_0F:		$3s
+
+10 modrm8:			"adc " $3s ", " $2[3-5]r8
+11 modrm1632:		"adc " $3s ", " $2[3-5]r32
+12 modrm8:			"adc " $2[3-5]r8 ", " $3s
+13 modrm1632:		"adc " $2[3-5]r32 ", " $3s
+14 *:				"adc al, " $2x
+[66] 15 * *:		"adc ax, " $2hx
+15 * * * *:			"adc eax, " $2lx
+
+16:					"push ss"
+17:					"pop ss"
+
+18 modrm8:			"sbb " $3s ", " $2[3-5]r8
+19 modrm1632:		"sbb " $3s ", " $2[3-5]r32
+1A modrm8:			"sbb " $2[3-5]r8 ", " $3s
+1B modrm1632:		"sbb " $2[3-5]r32 ", " $3s
+1C *:				"sbb al, " $2x
+[66] 1D * *:		"sbb ax, " $2hx
+1D * * * *:			"sbb eax, " $2lx
+
+1E:					"push ds"
+1F:					"pop ds"
+
+20 modrm8:			"and " $3s ", " $2[3-5]r8
+21 modrm1632:		"and " $3s ", " $2[3-5]r32
+22 modrm8:			"and " $2[3-5]r8 ", " $3s
+23 modrm1632:		"and " $2[3-5]r32 ", " $3s
+24 *:				"and al, " $2x
+[66] 25 * * * *:	"and ax, " $2hx
+25 * * * *:			"and eax, " $2lx
+
+26:					$p_es
+27:					"daa"
+
+28 modrm8:			"sub " $3s ", " $2[3-5]r8
+29 modrm1632:		"sub " $3s ", " $2[3-5]r32
+2A modrm8:			"sub " $2[3-5]r8 ", " $3s
+2B modrm1632:		"sub " $2[3-5]r32 ", " $3s
+2C *:				"sub al, " $2x
+[66] 2D * *:		"sub ax, " $2hx
+2D * * * *:			"sub eax, " $2lx
+
+2E:					$p_cs
+2F:					"das"
+
+30 modrm8:			"xor " $3s ", " $2[3-5]r8
+31 modrm1632:		"xor " $3s ", " $2[3-5]r32
+32 modrm8:			"xor " $2[3-5]r8 ", " $3s
+33 modrm1632:		"xor " $2[3-5]r32 ", " $3s
+34 *:				"xor al, " $2x
+[66] 35 * *:		"xor ax, " $2hx
+35 * * * *:			"xor eax, " $2lx
+
+36:					$p_ss
+37:					"aaa"
+
+38 modrm8:			"cmp " $3s ", " $2[3-5]r8
+39 modrm32:			"cmp " $3s ", " $2[3-5]r32
+3A modrm8:			"cmp " $2[3-5]r8 ", " $3s
+3B modrm32:			"cmp " $2[3-5]r32 ", " $3s
+3C *:				"cmp al, " $2x
+[66] 3D * *:		"cmp ax, " $2hx
+3D * * * *:			"cmp eax, " $2lx
+
+3E:					$p_ds
+3F:					"aas"
+
+40-47:				"inc " $1[0-2]r1632
+48-4F:				"dec " $1[0-2]r1632
+50-57:				"push " $1[0-2]r1632
+58-5F:				"pop " $1[0-2]r1632
+
+[66] 60:			"pusha"
+60:					"pushad"
+[66] 61:			"popa"
+61:					"popad"
+62 modrm32:			"bound " $2[3-5]r32 "," $3s
+63 modrm16:			"arpl " $3s ", " $2[3-5]r16
+64:					$p_fs
+65:					$p_gs
+
+66:					$p_66
+67:					$p_67
+
+[66] 68 * *:		"push " $2hx
+68 * * * *:			"push " $2lx
+69 modrm32 * * * *:	"imul " $2[3-5]r32 ", " $3s ", " $4lx
+6A *:				"push " $2x
+6B modrm32 *:		"imul " $2[3-5]r32 ", " $3s ", " $4x
+6C:					"insb"
+[66] 6D:			"insw"
+6D:					"insd"
+6E:					"outsb"
+[66] 6F:			"outsw"
+6F:					"outsd"
+
+70 *:				"jo " $2a
+71 *:				"jno " $2a
+72 *:				"jc " $2a
+73 *:				"jnc " $2a
+74 *:				"jz " $2a
+75 *:				"jnz " $2a
+76 *:				"jbe " $2a
+77 *:				"ja " $2a
+78 *:				"js " $2a
+79 *:				"jns " $2a
+7A *:				"jpe " $2a
+7B *:				"jpo " $2a
+7C *:				"jl " $2a
+7D *:				"jge " $2a
+7E *:				"jle " $2a
+7F *:				"jg " $2a
+
+80      00-C7 !modrm8d *:				"add " $4s ", " $5x
+[66] 81 00-C7 !modrm16d * *:			"add " $4s ", " $5hx
+81      00-C7 !modrm32d * * * *:		"add " $4s ", " $5lx
+82-83   00-C7 !modrm1632d *:			"add " $4s ", " $5x
+80      08-CF !modrm8d *:				"or "  $4s ", " $5x
+[66] 81 08-CF !modrm16d * *:			"or "  $4s ", " $5hx
+81      08-CF !modrm32d * * * *:		"or "  $4s ", " $5lx
+82-83   08-CF !modrm1632d *:			"or "  $4s ", " $5x
+80      10-D7 !modrm8d *:				"adc " $4s ", " $5x
+[66] 81 10-D7 !modrm16d * *:			"adc " $4s ", " $5hx
+81      10-D7 !modrm32d * * * *:		"adc " $4s ", " $5lx
+82-83   10-D7 !modrm1632d *:			"adc " $4s ", " $5x
+80      18-DF !modrm8d *:				"sbb " $4s ", " $5x
+[66] 81 18-DF !modrm16d * *:			"sbb " $4s ", " $5hx
+81      18-DF !modrm32d * * * *:		"sbb " $4s ", " $5lx
+82-83   18-DF !modrm1632d *:			"sbb " $4s ", " $5x
+80      20-E7 !modrm8d *:				"and " $4s ", " $5x
+[66] 81 20-E7 !modrm16d * *:			"and " $4s ", " $5hx
+81      20-E7 !modrm32d * * * *:		"and " $4s ", " $5lx
+82-83   20-E7 !modrm1632d *:			"and " $4s ", " $5x
+80      28-EF !modrm8d *:				"sub " $4s ", " $5x
+[66] 81 28-EF !modrm16d * *:			"sub " $4s ", " $5hx
+81      28-EF !modrm32d * * * *:		"sub " $4s ", " $5lx
+82-83   28-EF !modrm1632d *:			"sub " $4s ", " $5x
+80      30-F7 !modrm8d *:				"xor " $4s ", " $5x
+[66] 81 30-F7 !modrm16d * *:			"xor " $4s ", " $5hx
+81      30-F7 !modrm32d * * * *:		"xor " $4s ", " $5lx
+82-83   30-F7 !modrm1632d *:			"xor " $4s ", " $5x
+80      38-FF !modrm8d *:				"cmp " $4s ", " $5x
+[66] 81 38-FF !modrm16d * *:			"cmp " $4s ", " $5hx
+81      38-FF !modrm32d * * * *:		"cmp " $4s ", " $5lx
+82-83   38-FF !modrm1632d *:			"cmp " $4s ", " $5x
+
+84 modrm8:			"test " $3s ", " $2[3-5]r8
+85 modrm1632:		"test " $3s ", " $2[3-5]r1632
+86 modrm8:			"xchg " $3s ", " $2[3-5]r8
+87 modrm1632:		"xchg " $3s ", " $2[3-5]r1632
+88 modrm8:			"mov " $3s ", " $2[3-5]r8
+89 modrm1632:		"mov " $3s ", " $2[3-5]r1632
+8A modrm8:			"mov " $2[3-5]r8 ", " $3s
+8B modrm1632:		"mov " $2[3-5]r1632 ", " $3s
+8C modrm16:			"mov " $3s ", " $2[3-5]rs
+
+8D modrm1632:		"lea " $2[3-5]r1632 ", " $3s
+8E modrm16:			"mov " $2[3-5]rs ", " $3s
+8F modrm1632d:		"pop " $3s
+
+90:						"nop"
+[F3] 90:				"pause"
+[66] 90-97:				"xchg ax, " $1[0-3]r16
+90-97:					"xchg eax, " $1[0-3]r32
+[66] 98:				"cwd"
+98:						"cwde"
+99:						"cdq"
+[67] 9A * * * *:		"call " $2hx ":" $4hx
+9A * * * * * *:			"call " $2lx ":" $6hx
+9B:						"wait"
+[66] 9C:				"pushf"
+9C:						"pushfd"
+[66] 9D:				"popf"
+9D:						"popfd"
+9E:						"sahf"
+9F:						"lahf"
+
+[67] A0 * *:		"mov al, " $ap "[" $2hx "]"
+A0 * * * *:			"mov al, " $ap "[" $2lx "]"
+
+[66] [67] A1 * *:	"mov ax, " $ap "[" $2hx "]"
+[66] A1 * * * *:	"mov ax, " $ap "[" $2lx "]"
+[67] A1 * *:		"mov eax, " $ap "[" $2hx "]"
+A1 * * * *:			"mov eax, " $ap "[" $2lx "]"
+
+[66] A2 * *:		"mov " $ap "[" $2hx "], al"
+A2 * * * *:			"mov " $ap "[" $2lx "], al"
+
+[67] [66] A3 * *:	"mov " $ap "[" $2hx "], ax"
+[66] A3 * * * *:	"mov " $ap "[" $2lx "], ax"
+[67] A3 * *:		"mov " $ap "[" $2hx "], eax"
+A3 * * * *:			"mov " $ap "[" $2lx "], eax"
+
+[F2] A6 blockb:		"repne cmps " $3s
+[F2] A7 blockw:		"repne cmps " $3s
+[F2] AE blockb:		"repne scas " $3s
+[F2] AF blockw:		"repne scas " $3s
+
+[F3] A4 blockb:		"rep movs" $3s
+[F3] A5 blockw:		"rep movs" $3s
+[F3] A6 blockb:		"repe cmps" $3s
+[F3] A7 blockw:		"repe cmps" $3s
+[F3] AA blockb:		"rep stos" $3s
+[F3] AB blockw:		"rep stos" $3s
+[F3] AC blockb:		"rep lods" $3s
+[F3] AD blockw:		"rep lods" $3s
+[F3] AE blockb:		"repe scas" $3s
+[F3] AF blockw:		"repe scas" $3s
+
+A4 blockb:			"movs" $3s
+A5 blockw:			"movs" $3s
+A6 blockb:			"cmps" $3s
+A7 blockw:			"cmps" $3s
+A8 *:				"test al, " $2x
+[66] A9 * *:		"test ax, " $2hx
+A9 * * * *:			"test eax, " $2lx
+AA blockb:			"stos" $3s
+AB blockw:			"stos" $3s
+AC blockb:			"lods" $3s
+AD blockw:			"lods" $3s
+AE blockb:			"scas" $3s
+AF blockw:			"scas" $3s
+
+B0-B7 *:			"mov " $1[0-2]r8 ", " $2x
+[66] B8-BF * *:		"mov " $1[0-2]r16 ", " $2hx
+B8-BF * * * *:		"mov " $1[0-2]r32 ", " $2lx
+
+C0 00-C7 !modrm8d *:		"rol " $4s ", " $5x
+C1 00-C7 !modrm1632d *:		"rol " $4s ", " $5x
+C0 08-CF !modrm8d *:		"ror " $4s ", " $5x
+C1 08-CF !modrm1632d *:		"ror " $4s ", " $5x
+C0 10-D7 !modrm8d *:		"rcl " $4s ", " $5x
+C1 10-D7 !modrm1632d *:		"rcl " $4s ", " $5x
+C0 18-DF !modrm8d *:		"rcr " $4s ", " $5x
+C1 18-DF !modrm1632d *:		"rcr " $4s ", " $5x
+C0 20-E7 !modrm8d *:		"shl " $4s ", " $5x
+C1 20-E7 !modrm1632d *:		"shl " $4s ", " $5x
+C0 28-EF !modrm8d *:		"shr " $4s ", " $5x
+C1 28-EF !modrm1632d *:		"shr " $4s ", " $5x
+C0 38-FF !modrm8d *:		"sar " $4s ", " $5x
+C1 38-FF !modrm1632d *:		"sar " $4s ", " $5x
+
+C2 * *:					"ret " $2hx
+C3:						"ret"
+C4 modrm3248d:			"les " $2[3-5]r32 ", " $3s
+C5 modrm3248d:			"lds " $2[3-5]r32 ", " $3s
+C6 modrm8d *:			"mov " $3s ", " $4x
+[66] C7 modrm16d * *:	"mov " $3s ", " $4hx
+C7 modrm32d * * * *:	"mov " $3s ", " $4lx
+C8 * * *:				"enter " $2hx ", " $4x
+C9:						"leave"
+CA * *:					"retf " $2hx
+CB:						"retf"
+CC:						"int 3"
+CD *:					"int " $2x
+CE:						"into"
+[66] CF:				"iret"
+CF:						"iretd"
+
+D0 00-07 !modrm8d:		"rol " $4s ", 1"
+D0 08-0F !modrm8d:		"ror " $4s ", 1"
+D0 10-17 !modrm8d:		"rcl " $4s ", 1"
+D0 18-1F !modrm8d:		"rcr " $4s ", 1"
+D0 20-27 !modrm8d:		"shl " $4s ", 1"
+D0 28-2F !modrm8d:		"shr " $4s ", 1"
+D0 38-3F !modrm8d:		"sar " $4s ", 1"
+D1 00-07 !modrm1632d:	"rol " $4s ", 1"
+D1 08-0F !modrm1632d:	"ror " $4s ", 1"
+D1 10-17 !modrm1632d:	"rcl " $4s ", 1"
+D1 18-1F !modrm1632d:	"rcr " $4s ", 1"
+D1 20-27 !modrm1632d:	"shl " $4s ", 1"
+D1 28-2F !modrm1632d:	"shr " $4s ", 1"
+D1 38-3F !modrm1632d:	"sar " $4s ", 1"
+D2 00-07 !modrm8d:		"rol " $4s ", cl"
+D2 08-0F !modrm8d:		"ror " $4s ", cl"
+D2 10-17 !modrm8d:		"rcl " $4s ", cl"
+D2 18-1F !modrm8d:		"rcr " $4s ", cl"
+D2 20-27 !modrm8d:		"shl " $4s ", cl"
+D2 28-2F !modrm8d:		"shr " $4s ", cl"
+D2 38-3F !modrm8d:		"sar " $4s ", cl"
+D3 00-07 !modrm1632d:	"rol " $4s ", cl"
+D3 08-0F !modrm1632d:	"ror " $4s ", cl"
+D3 10-17 !modrm1632d:	"rcl " $4s ", cl"
+D3 18-1F !modrm1632d:	"rcr " $4s ", cl"
+D3 20-27 !modrm1632d:	"shl " $4s ", cl"
+D3 28-2F !modrm1632d:	"shr " $4s ", cl"
+D3 38-3F !modrm1632d:	"sar " $4s ", cl"
+
+D4 *:					"aam " $2x
+D5 *:					"aad " $2x
+D6:						"salc"
+D7:						"xlatb"
+
+D8 00-87 !modrm32:		"fadd " $3s
+D8 08-8F !modrm32:		"fmul " $3s
+D8 10-97 !modrm32:		"fcom " $3s
+D8 18-9F !modrm32:		"fcomp " $3s
+D8 20-A7 !modrm32:		"fsub " $3s
+D8 28-AF !modrm32:		"fsubr " $3s
+D8 30-B7 !modrm32:		"fdiv " $3s
+D8 38-BF !modrm32:		"fdivr " $3s
+D8 C0-C7:				"fadd st, " $2[0-2]rf
+D8 C8-CF:				"fmul st, " $2[0-2]rf
+D8 D0-D7:				"fcom st, " $2[0-2]rf
+D8 D8-DF:				"fcomp st, " $2[0-2]rf
+D8 E0-E7:				"fsub st, " $2[0-2]rf
+D8 E8-EF:				"fsubr st, " $2[0-2]rf
+D8 F0-F7:				"fdiv st, " $2[0-2]rf
+D8 F8-FF:				"fdivr st, " $2[0-2]rf
+
+D9 00-87 !modrm32:		"fld " $3s
+D9 10-97 !modrm32:		"fst " $3s
+D9 18-9F !modrm32:		"fstp " $3s
+D9 20-A7 !modrm:		"fldenv " $3s
+D9 28-AF !modrm16:		"fldcw " $3s
+D9 30-B7 !modrm:		"fstenv " $3s
+D9 38-BF !modrm32:		"fstcw " $3s
+D9 C0-C7:				"fld " $2[0-2]rf
+D9 C8-CF:				"fxch " $2[0-2]rf
+D9 D0:					"fnop"
+D9 E0:					"fchs"
+D9 E1:					"fabs"
+D9 E4:					"ftst"
+D9 E5:					"fxam"
+
+D9 E8:					"fld1"
+D9 E9:					"fldl2t"
+D9 EA:					"fldl2e"
+D9 EB:					"fldpi"
+D9 EC:					"fldlg2"
+D9 ED:					"fldln2"
+D9 EE:					"fldz"
+
+D9 F0:					"f2xm1"
+D9 F1:					"fyl2x"
+D9 F2:					"fptan"
+D9 F3:					"fpatan"
+D9 F4:					"fxtract"
+D9 F5:					"fprem1"
+D9 F6:					"fdecstp"
+D9 F7:					"fincstp"
+
+D9 F8:					"fprem"
+D9 F9:					"fyl2xp1"
+D9 FA:					"fsqrt"
+D9 FB:					"fsincos"
+D9 FC:					"frndint"
+D9 FD:					"fscale"
+D9 FE:					"fsin"
+D9 FF:					"fcos"
+
+DA 00-87 !modrm32:		"fiadd " $3s
+DA 08-8F !modrm32:		"fimul " $3s
+DA 10-97 !modrm32:		"ficom " $3s
+DA 18-9F !modrm32:		"ficomp " $3s
+DA 20-A7 !modrm32:		"fisub " $3s
+DA 28-AF !modrm32:		"fisubr " $3s
+DA 30-B7 !modrm32:		"fidiv " $3s
+DA 38-BF !modrm32:		"fidivr " $3s
+DA C0-C7:				"fcmovb st, " $2[0-2]rf
+DA C8-CF:				"fcmove st, " $2[0-2]rf
+DA D0-D7:				"fcmovbe st, " $2[0-2]rf
+DA D8-DF:				"fcmovu st, " $2[0-2]rf
+DA E1:					"fucompp"
+
+DB 00-87 !modrm32:		"fild " $3s
+DB 10-97 !modrm32:		"fist " $3s
+DB 18-9F !modrm32:		"fistp " $3s
+DB 28-AF !modrm80d:		"fld " $3s
+DB 38-BF !modrm80d:		"fstp " $3s
+DB C0-C7:				"fcmovnb st, " $2[0-2]rf
+DB C8-CF:				"fcmovne st, " $2[0-2]rf
+DB D0-D7:				"fcmovnbe st, " $2[0-2]rf
+DB E2:					"fclex"
+DB E3:					"finit"
+DB E8-EF:				"fucomi st, " $2[0-2]rf
+DB F0-F7:				"fcomi st, " $2[0-2]rf
+
+DC 00-87 !modrm64d:		"fadd " $3s
+DC 08-8F !modrm64d:		"fmul " $3s
+DC 10-97 !modrm64d:		"fcom " $3s
+DC 18-9F !modrm64d:		"fcomp " $3s
+DC 20-A7 !modrm64d:		"fsub " $3s
+DC 28-AF !modrm64d:		"fsubr " $3s
+DC 30-B7 !modrm64d:		"fdiv " $3s
+DC 38-BF !modrm64d:		"fdivr " $3s
+
+DC C0-C7:				"fadd st, " $2[0-2]rf
+DC C8-CF:				"fmul st, " $2[0-2]rf
+DC E0-E7:				"fsubr st, " $2[0-2]rf
+DC E8-EF:				"fsub st, " $2[0-2]rf
+DC F0-F7:				"fdivr st, " $2[0-2]rf
+DC F8-FF:				"fdiv st, " $2[0-2]rf
+
+DD 00-87 !modrm64d:		"fld " $3s
+DD 10-97 !modrm64d:		"fst " $3s
+DD 18-9F !modrm64d:		"fstp " $3s
+DD 20-A7 !modrm:		"frstor " $3s
+DD 30-B7 !modrm:		"fsave " $3s
+DD 38-BF !modrm16d:		"fstsw " $3s
+
+DD C0-C7:				"ffree " $2[0-2]rf
+DD D0-D7:				"fst " $2[0-2]rf
+DD D8-DF:				"fstp " $2[0-2]rf
+DD E0-E7:				"fucom " $2[0-2]rf ", st"
+DD E8-EF:				"fucomp " $2[0-2]rf
+
+DE 00-87 !modrm16d:		"fiadd " $3s
+DE 08-8F !modrm16d:		"fimul " $3s
+DE 10-97 !modrm16d:		"ficom " $3s
+DE 18-9F !modrm16d:		"ficomp " $3s
+DE 20-A7 !modrm16d:		"fisub " $3s
+DE 28-AF !modrm16d:		"fisubr " $3s
+DE 30-B7 !modrm16d:		"fidiv " $3s
+DE 38-BF !modrm16d:		"fidivr " $3s
+
+DE C0-C7:				"faddp " $2[0-2]rf ", st"
+DE C8-CF:				"fmulp " $2[0-2]rf ", st"
+DE D9:					"fcompp"
+DE E0-E7:				"fsubrp " $2[0-2]rf ", st"
+DE E8-EF:				"fsubp " $2[0-2]rf ", st"
+DE F0-F7:				"fdivrp " $2[0-2]rf ", st"
+DE F8-FF:				"fdivp " $2[0-2]rf ", st"
+
+DF 00-87 !modrm16d:		"fild " $3s
+DF 10-97 !modrm16d:		"fist " $3s
+DF 18-9F !modrm16d:		"fistp " $3s
+DF 20-A7 !modrm:		"fbld " $3s
+DF 28-AF !modrm64d:		"fild " $3s
+DF 30-B7 !modrm:		"fbstp " $3s
+DF 38-BF !modrm64d:		"fistp " $3s
+
+DF E0:					"fstsw ax"
+DF E8-EF:				"fucomip st, " $2[0-2]rf
+DF F0-F7:				"fcomip st, " $2[0-2]rf
+
+E0 *:				"loopnz " $2a
+E1 *:				"loopz " $2a
+E2 *:				"loop " $2a
+[67] E3 *:			"jcxz" $2x					# NOTE: Yes, 67h is correct here
+E3 *:				"jecxz" $2x
+E4 *:				"in al, " $2x
+E5 *:				"in eax, " $2x
+E6 *:				"out " $2x ", al"
+E7 *:				"out " $2x ", eax"
+
+[67] E8 * *:		"call " $2ha
+E8 * * * *:			"call " $2la
+[67] E9 * *:		"jmp " $2ha
+E9 * * * *:			"jmp " $2la
+[67] EA * * * *:	"jmp " $4hx ":" $2hx
+EA * * * * * *:		"jmp " $6hx ":" $2lx
+EB *:				"jmp " $2a
+EC:					"in al, dx"
+[66] ED:			"in ax, dx"
+ED:					"in eax, dx"
+EE:					"out dx, al"
+[66] EF:			"out dx, ax"
+EF:					"out dx, eax"
+
+F0:					"lock"
+
+F2:					$p_f2
+F3:					$p_f3
+F4:					"hlt"
+F5:					"cmc"
+
+F6 00-C7 !modrm8 *:				"test " $4s ", " $5x
+F7 00-C7 !modrm32 * * * *:		"test " $4s ", " $5lx
+F6 10-D7 !modrm8d:				"not " $4s
+F7 10-D7 !modrm32d:				"not " $4s
+F6 18-DF !modrm8d:				"neg " $4s
+F7 18-DF !modrm32d:				"neg " $4s
+F6 20-E7 !modrm8d *:			"mul " $4s ", " $5x
+F7 20-E7 !modrm32d * * * *:		"mul " $4s ", " $5lx
+F6 28-EF !modrm8d *:			"imul " $4s ", " $5x
+F7 28-EF !modrm32d * * * *:		"imul " $4s ", " $5lx
+F6 30-F7 !modrm8d *:			"div " $4s ", " $5x
+F7 30-F7 !modrm32d * * * *:		"div " $4s ", " $5lx
+F6 38-FF !modrm8d *:			"idiv " $4s ", " $5x
+F7 38-FF !modrm32d * * * *:		"idiv " $4s ", " $5lx
+
+F8:					"clc"
+F9:					"stc"
+FA:					"cli"
+FB:					"sti"
+FC:					"cld"
+FD:					"std"
+
+FE 00-C7 !modrm8d:		"inc " $4s
+FF 00-C7 !modrm1632d:	"inc " $4s
+FE 08-CF !modrm8d:		"dec " $4s
+FF 08-CF !modrm1632d:	"dec " $4s
+FF 10-D7 !modrm32d:		"call " $4s
+FF 18-DF !modrm48d:		"call " $4s
+FF 20-E7 !modrm32d:		"jmp " $4s
+FF 28-EF !modrm48d:		"jmp " $4s
+FF 30-F7 !modrm1632d:	"push " $4s
+
+
+*:					"db " $1x
