@@ -1,6 +1,7 @@
 #include "global.h"
 #include "SongOptions.h"
 #include "RageUtil.h"
+#include "PrefsManager.h"
 
 void SongOptions::Init() 
 {
@@ -110,6 +111,15 @@ void SongOptions::FromString( CString sOptions )
 		else if( sBit == "fail30misses" )	m_FailType = FAIL_COMBO_OF_30_MISSES;
 		else if( sBit == "failendofsong" )	m_FailType = FAIL_END_OF_SONG;
 		else if( sBit == "failoff" )		m_FailType = FAIL_OFF;
+		
+		else if( sBit == "faildefault" )
+		{
+			SongOptions so;
+			// TODO: Fix this so that SongOptions don't depend on PrefsManager
+			so.FromString( PREFSMAN->m_sDefaultModifiers );
+			m_FailType = so.m_FailType;
+		}
+
 		else if( sBit == "assisttick" )		m_bAssistTick = on;
 		else if( sBit == "autosync" )		m_bAutoSync = on;
 		else if( sBit == "savescore" )		m_bSaveScore = on;
