@@ -315,7 +315,9 @@ void PlayerMinus::Update( float fDeltaTime )
 		if( bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox && GAMESTATE->m_PlayerController[m_PlayerNumber]==PC_HUMAN )
 			m_pNoteField->SetPressed(bar);
 	}
-
+	
+	CHECKPOINT;
+	
 	//
 	// update HoldNotes logic
 	//
