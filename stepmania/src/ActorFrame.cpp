@@ -62,9 +62,7 @@ void ActorFrame::DrawPrimitives()
 void ActorFrame::Update( float fDeltaTime )
 {
 //	LOG->Trace( "ActorFrame::Update( %f )", fDeltaTime );
-
 	Actor::Update( fDeltaTime );
-
 
 	// update all sub-Actors
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
@@ -101,3 +99,30 @@ float ActorFrame::GetTweenTimeLeft() const
 
 }
 
+void ActorFrame::SortByZ()
+{
+	// Sort to have descending Z values so we draw back to front.
+	// STL sort()s typically use qsort, which won't preserve 
+	// ordering of Actors with equal Z values.
+	// Sort it ourselves.  -Chris
+	vector<Actor*> v;
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
+	{
+		Actor* pToInsert = m_SubActors[i];
+
+		for( unsigned j=0; j<v.size(); j++ )
+			if( pToInsert->GetZ() > v[j]->GetZ() )
+			{
+				v.insert( v.begin()+j, pToInsert );
+				break;
+			}
+
+		if( j == v.size() )
+			v.push_back( pToInsert );
+	}
+
+	for( unsigned j=0; j<v.size(); j++ )
+		printf( "%.0f ", v[j]->GetZ() );
+
+	m_SubActors = v;
+}

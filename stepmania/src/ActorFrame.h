@@ -19,6 +19,7 @@ public:
 	virtual void AddChild( Actor* pActor );
 	virtual void MoveToTail( Actor* pActor );
 	virtual void MoveToHead( Actor* pActor );
+	virtual void SortByZ();
 
 	virtual ~ActorFrame() { }
 

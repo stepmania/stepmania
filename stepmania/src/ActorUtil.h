@@ -18,6 +18,7 @@
 #define ON_COMMAND( actor )		UtilOnCommand( actor, m_sName );
 #define OFF_COMMAND( actor )	UtilOffCommand( actor, m_sName );
 #define SET_XY_AND_ON_COMMAND( actor )		UtilSetXYAndOnCommand( actor, m_sName );
+#define COMMAND( actor, command_name )		UtilCommand( actor, m_sName, command_name );
 
 
 inline void UtilSetXY( Actor& actor, CString sClassName )
@@ -28,6 +29,11 @@ inline void UtilSetXY( Actor& actor, CString sClassName )
 inline void UtilOnCommand( Actor& actor, CString sClassName )
 {
 	actor.Command( THEME->GetMetric(sClassName,actor.GetName()+"OnCommand") );
+}
+
+inline void UtilCommand( Actor& actor, CString sClassName, CString sCommandName )
+{
+	actor.Command( THEME->GetMetric(sClassName,actor.GetName()+sCommandName+"Command") );
 }
 
 inline void UtilOffCommand( Actor& actor, CString sClassName )
