@@ -227,7 +227,7 @@ void Player::Update( float fDeltaTime )
 				m_NoteField.m_HoldNotes[i].m_fStartBeat = fSongBeat;	// move the start of this Hold
 			}
 
-			if( bIsHoldingButton )
+			if( bSteppedOnTapNote && bIsHoldingButton )
 			{
 				// Increase life
 				fLife += fDeltaTime/HOLD_ARROW_NG_TIME;
