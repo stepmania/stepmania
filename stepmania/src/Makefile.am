@@ -236,6 +236,7 @@ stepmania_LDADD = \
 # XXX: Make ArchHooks not depend on Display
 # Display depends on SaveJPEG  and SDL_utils, SDL_utils depends on SDL_rotozoom.
 all_test_SOURCES = \
+		tests/test_misc.cpp tests/test_misc.h \
 		global.cpp global.h \
 		RageDisplay.cpp RageDisplay.h \
 		SDL_SaveJPEG.cpp SDL_SaveJPEG.h SDL_utils.cpp SDL_utils.h SDL_rotozoom.cpp SDL_rotozoom.h \
