@@ -302,6 +302,7 @@
 			path = ../crypto51/algebra.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E000653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -311,6 +312,7 @@
 			path = ../crypto51/algebra.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E010653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -320,6 +322,7 @@
 			path = ../crypto51/algparam.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E020653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -329,6 +332,7 @@
 			path = ../crypto51/algparam.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E030653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -338,6 +342,7 @@
 			path = ../crypto51/argnames.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E040653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -347,6 +352,7 @@
 			path = ../crypto51/asn.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E050653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -356,6 +362,7 @@
 			path = ../crypto51/asn.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E0A0653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -365,6 +372,7 @@
 			path = ../crypto51/config.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E0B0653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -374,6 +382,7 @@
 			path = ../crypto51/cryptlib.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E0C0653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -383,6 +392,7 @@
 			path = ../crypto51/cryptlib.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E130653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -392,6 +402,7 @@
 			path = ../crypto51/files.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E140653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -401,6 +412,7 @@
 			path = ../crypto51/files.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E150653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -410,6 +422,7 @@
 			path = ../crypto51/filters.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E160653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -419,6 +432,7 @@
 			path = ../crypto51/filters.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E190653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -428,6 +442,7 @@
 			path = ../crypto51/fltrimpl.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E1C0653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -437,6 +452,7 @@
 			path = ../crypto51/integer.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E1D0653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -446,6 +462,7 @@
 			path = ../crypto51/integer.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E1E0653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -455,6 +472,7 @@
 			path = ../crypto51/iterhash.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E1F0653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -464,6 +482,7 @@
 			path = ../crypto51/iterhash.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E220653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -473,6 +492,7 @@
 			path = ../crypto51/mdc.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E230653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -482,6 +502,7 @@
 			path = ../crypto51/misc.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E240653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -491,6 +512,7 @@
 			path = ../crypto51/misc.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E250653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -500,6 +522,7 @@
 			path = ../crypto51/modarith.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E260653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -509,6 +532,7 @@
 			path = ../crypto51/modes.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E270653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -518,6 +542,7 @@
 			path = ../crypto51/modes.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E280653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -527,6 +552,7 @@
 			path = ../crypto51/mqueue.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E290653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -536,6 +562,7 @@
 			path = ../crypto51/mqueue.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E2A0653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -545,6 +572,7 @@
 			path = ../crypto51/nbtheory.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E2B0653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -554,6 +582,7 @@
 			path = ../crypto51/nbtheory.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E2C0653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -563,6 +592,7 @@
 			path = ../crypto51/oaep.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E2D0653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -572,6 +602,7 @@
 			path = ../crypto51/oaep.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E2E0653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -581,6 +612,7 @@
 			path = ../crypto51/oids.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E2F0653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -590,6 +622,7 @@
 			path = ../crypto51/osrng.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E300653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -599,6 +632,7 @@
 			path = ../crypto51/osrng.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E310653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -608,6 +642,7 @@
 			path = ../crypto51/pch.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E320653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -617,6 +652,7 @@
 			path = ../crypto51/pkcspad.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E330653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -626,6 +662,7 @@
 			path = ../crypto51/pkcspad.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E380653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -635,6 +672,7 @@
 			path = ../crypto51/pubkey.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E390653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -644,6 +682,7 @@
 			path = ../crypto51/pubkey.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E3A0653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -653,6 +692,7 @@
 			path = ../crypto51/queue.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E3B0653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -662,6 +702,7 @@
 			path = ../crypto51/queue.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E3C0653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -671,6 +712,7 @@
 			path = ../crypto51/randpool.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E3D0653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -680,6 +722,7 @@
 			path = ../crypto51/randpool.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E3E0653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -689,6 +732,7 @@
 			path = ../crypto51/rng.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E3F0653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -698,6 +742,7 @@
 			path = ../crypto51/rsa.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E400653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -707,6 +752,7 @@
 			path = ../crypto51/rsa.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E410653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -716,6 +762,7 @@
 			path = ../crypto51/secblock.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E420653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -725,6 +772,7 @@
 			path = ../crypto51/seckey.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E430653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -734,6 +782,7 @@
 			path = ../crypto51/sha.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E440653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -743,6 +792,7 @@
 			path = ../crypto51/sha.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E450653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -752,6 +802,7 @@
 			path = ../crypto51/simple.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E460653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -761,6 +812,7 @@
 			path = ../crypto51/smartptr.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E470653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -770,6 +822,7 @@
 			path = ../crypto51/strciphr.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E480653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -779,6 +832,7 @@
 			path = ../crypto51/strciphr.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E490653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -788,6 +842,7 @@
 			path = ../crypto51/test.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E4B0653BF58001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -797,6 +852,7 @@
 			path = ../crypto51/words.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E4C0653BF58001A3A80 = {
 			fileRef = AA082DFF0653BF58001A3A80;
@@ -1129,6 +1185,7 @@
 			path = CryptHelpers.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E9E0653C7E6001A3A80 = {
 			explicitFileType = sourcecode.cpp;
@@ -1137,6 +1194,7 @@
 			path = CryptHelpers.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA082E9F0653C7E6001A3A80 = {
 			fileRef = AA082E9D0653C7E6001A3A80;
@@ -1158,6 +1216,7 @@
 			path = ../src/ScreenSetTime.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA0A3DE7060513A00044E6B1 = {
 			explicitFileType = sourcecode.cpp;
@@ -1167,6 +1226,7 @@
 			path = ../src/ScreenSetTime.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA0A3DE8060513A00044E6B1 = {
 			fileRef = AA0A3DE6060513A00044E6B1;
@@ -1189,7 +1249,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA0E393404DA8EE700D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -1200,7 +1260,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA0FA06B05AD38D300DA0695 = {
 			explicitFileType = sourcecode.cpp;
@@ -1210,6 +1270,7 @@
 			path = include/libresample.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA0FA06C05AD38D300DA0695 = {
 			fileRef = AA0FA06B05AD38D300DA0695;
@@ -1226,7 +1287,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA14ED100509F40000E3FAD7 = {
 			explicitFileType = sourcecode.cpp;
@@ -1237,7 +1298,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA157B31051677F000D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -1248,7 +1309,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA157B32051677F000D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -1259,7 +1320,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA170C39055481660068A894 = {
 			containerPortal = 29B97313FDCFA39411CA2CEA;
@@ -1277,7 +1338,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1C653B050C00CF0073A143 = {
 			explicitFileType = sourcecode.cpp;
@@ -1288,7 +1349,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1C654B050D212D0073A143 = {
 			explicitFileType = sourcecode.cpp;
@@ -1299,7 +1360,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1C654F050D21AB0073A143 = {
 			children = (
@@ -1328,7 +1389,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1C6553050D23200073A143 = {
 			explicitFileType = sourcecode.cpp;
@@ -1339,7 +1400,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1C6556050D234B0073A143 = {
 			explicitFileType = sourcecode.cpp;
@@ -1350,7 +1411,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1C6557050D234B0073A143 = {
 			explicitFileType = sourcecode.cpp;
@@ -1361,7 +1422,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1C655F050D2ABC0073A143 = {
 			explicitFileType = sourcecode.cpp;
@@ -1372,7 +1433,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1C6560050D2ABC0073A143 = {
 			explicitFileType = sourcecode.cpp;
@@ -1383,7 +1444,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1C6565050D2D0D0073A143 = {
 			explicitFileType = sourcecode.cpp;
@@ -1394,7 +1455,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1C6566050D2D0D0073A143 = {
 			explicitFileType = sourcecode.cpp;
@@ -1405,7 +1466,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1C659C050FD1E00073A143 = {
 			explicitFileType = sourcecode.cpp;
@@ -1416,7 +1477,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1C659D050FD1E00073A143 = {
 			explicitFileType = sourcecode.cpp;
@@ -1427,7 +1488,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1C659E050FD1E00073A143 = {
 			explicitFileType = sourcecode.cpp;
@@ -1438,7 +1499,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1C659F050FD1E00073A143 = {
 			explicitFileType = sourcecode.cpp;
@@ -1449,7 +1510,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1C65A4050FD21F0073A143 = {
 			explicitFileType = sourcecode.cpp;
@@ -1460,7 +1521,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1C65A5050FD21F0073A143 = {
 			explicitFileType = sourcecode.cpp;
@@ -1471,7 +1532,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1C65A6050FD21F0073A143 = {
 			explicitFileType = sourcecode.cpp;
@@ -1482,7 +1543,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1C65A7050FD21F0073A143 = {
 			explicitFileType = sourcecode.cpp;
@@ -1493,7 +1554,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1CD941060AE571003702C4 = {
 			explicitFileType = sourcecode.cpp;
@@ -1502,6 +1563,7 @@
 			path = RageSoundDriver_Generic_Software.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA1CD942060AE571003702C4 = {
 			explicitFileType = sourcecode.cpp;
@@ -1510,6 +1572,7 @@
 			path = RageSoundDriver_Generic_Software.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA1CD943060AE571003702C4 = {
 			fileRef = AA1CD941060AE571003702C4;
@@ -1533,7 +1596,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1DC47404A4861700D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -1545,7 +1608,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1DC47504A4861700D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -1557,7 +1620,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1DC47804A4866B00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -1569,7 +1632,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1DCB6004A4872700D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -1580,7 +1643,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1DCB6104A4872700D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -1592,7 +1655,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1DCB6304A4872700D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -1604,7 +1667,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA1DCB6504A4872700D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -1615,7 +1678,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA230EAE06043704002672F3 = {
 			isa = PBXFileReference;
@@ -1661,6 +1724,7 @@
 			path = ../src/SongCreditDisplay.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA2344DD05C3B53500C8E1AE = {
 			explicitFileType = sourcecode.cpp;
@@ -1670,6 +1734,7 @@
 			path = ../src/SongCreditDisplay.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA2344DE05C3B53500C8E1AE = {
 			fileRef = AA2344DC05C3B53500C8E1AE;
@@ -1692,7 +1757,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA251B7605841FCE00027ACB = {
 			explicitFileType = sourcecode.cpp;
@@ -1703,7 +1768,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA251B7705841FCE00027ACB = {
 			fileRef = AA251B7505841FCE00027ACB;
@@ -1724,7 +1789,7 @@
 			path = Style.h;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA25200E0587225500027ACB = {
 			fileRef = AA25200D0587225500027ACB;
@@ -1740,7 +1805,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA272BF804C7B37A00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -1750,7 +1815,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA272BF904C7B37A00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -1760,7 +1825,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA272BFA04C7B37A00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -1770,7 +1835,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA272BFB04CB779F00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -1780,7 +1845,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA272C3004CD757100D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -1791,7 +1856,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA272C3104CD757100D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -1802,7 +1867,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA2828B2062FC0B7006F61EC = {
 			fileRef = AADB4E8C04D50FB900D02EE9;
@@ -1824,7 +1889,7 @@
 			path = ../src/MemoryCardManager.cpp;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA28B47B058F2F5D0097C109 = {
 			explicitFileType = sourcecode.cpp;
@@ -1834,7 +1899,7 @@
 			path = ../src/MemoryCardManager.h;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA28B47C058F2F5E0097C109 = {
 			fileRef = AA28B47A058F2F5D0097C109;
@@ -5787,6 +5852,7 @@
 			path = CAHelpers.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA34EC780611A500003E5955 = {
 			explicitFileType = sourcecode.cpp;
@@ -5795,6 +5861,7 @@
 			path = CAHelpers.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA34EC790611A500003E5955 = {
 			fileRef = AA34EC770611A500003E5955;
@@ -5875,6 +5942,7 @@
 			path = CAConditionalMacros.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA34ED200611FB83003E5955 = {
 			explicitFileType = sourcecode.cpp;
@@ -5883,6 +5951,7 @@
 			path = FormatConverterClient.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA34ED210611FB83003E5955 = {
 			fileRef = AA34ED1F0611FB83003E5955;
@@ -5903,6 +5972,7 @@
 			path = CAAutoDisposer.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA34ED280611FE33003E5955 = {
 			explicitFileType = sourcecode.cpp;
@@ -5911,6 +5981,7 @@
 			path = CADebugMacros.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA34ED290611FE33003E5955 = {
 			fileRef = AA34ED270611FE33003E5955;
@@ -5933,7 +6004,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA4B425705733D71005FB5DB = {
 			isa = PBXFileReference;
@@ -6140,7 +6211,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA4B59EF0573AA5B005FB5DB = {
 			fileRef = AA4B59EE0573AA5B005FB5DB;
@@ -6157,7 +6228,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA4B5DD1057421F4005FB5DB = {
 			fileRef = AA4B5CC40573AD81005FB5DB;
@@ -6239,7 +6310,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA4F38C104E2D0B700D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -6250,7 +6321,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA50201D05D6D7B200ACEFD0 = {
 			explicitFileType = sourcecode.cpp;
@@ -6260,6 +6331,7 @@
 			path = ../src/Profile.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA50201E05D6D7B200ACEFD0 = {
 			explicitFileType = sourcecode.cpp;
@@ -6269,6 +6341,7 @@
 			path = ../src/Profile.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA50201F05D6D7B200ACEFD0 = {
 			fileRef = AA50201D05D6D7B200ACEFD0;
@@ -6311,7 +6384,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA507E65050BA55B00F96139 = {
 			explicitFileType = sourcecode.cpp;
@@ -6322,7 +6395,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA507E68050BC69000F96139 = {
 			explicitFileType = sourcecode.cpp;
@@ -6333,7 +6406,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA52E9BD04DBBCF400D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -6343,7 +6416,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA53D28405277DAF00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -6354,7 +6427,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA53D28505277DAF00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -6365,7 +6438,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA53D28605277DAF00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -6376,7 +6449,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA53D28705277DAF00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -6387,7 +6460,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA53D28805277DAF00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -6398,7 +6471,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA53D28905277DAF00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -6409,7 +6482,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA56E5B805FBF36E006B24C7 = {
 			explicitFileType = sourcecode.cpp;
@@ -6419,6 +6492,7 @@
 			path = ../src/ScreenAward.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA56E5B905FBF36E006B24C7 = {
 			explicitFileType = sourcecode.cpp;
@@ -6428,6 +6502,7 @@
 			path = ../src/ScreenAward.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA56E5BA05FBF36E006B24C7 = {
 			fileRef = AA56E5B805FBF36E006B24C7;
@@ -6872,6 +6947,7 @@
 			path = CourseUtil.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA5C73F80637A5F000AFB891 = {
 			explicitFileType = sourcecode.cpp;
@@ -6880,6 +6956,7 @@
 			path = CourseUtil.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA5C73F90637A5F000AFB891 = {
 			explicitFileType = sourcecode.cpp;
@@ -6888,6 +6965,7 @@
 			path = SongUtil.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA5C73FA0637A5F000AFB891 = {
 			explicitFileType = sourcecode.cpp;
@@ -6896,6 +6974,7 @@
 			path = SongUtil.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA5C73FB0637A5F000AFB891 = {
 			explicitFileType = sourcecode.cpp;
@@ -6904,6 +6983,7 @@
 			path = StepsUtil.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA5C73FC0637A5F000AFB891 = {
 			explicitFileType = sourcecode.cpp;
@@ -6912,6 +6992,7 @@
 			path = StepsUtil.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA5C73FD0637A5F100AFB891 = {
 			fileRef = AA5C73F70637A5F000AFB891;
@@ -7458,7 +7539,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6DAF0905300B3D00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -7469,7 +7550,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E00090477103E005F316C = {
 			children = (
@@ -7631,7 +7712,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E000B047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7643,7 +7724,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E000C047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7655,7 +7736,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E000D047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7667,7 +7748,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0010047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7679,7 +7760,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0011047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7691,7 +7772,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0016047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7703,7 +7784,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0017047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7715,7 +7796,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0018047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7727,7 +7808,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0019047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7739,7 +7820,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E001A047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7751,7 +7832,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E001B047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7763,7 +7844,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E001C047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7775,7 +7856,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E001D047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7787,7 +7868,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E001E047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7799,7 +7880,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E001F047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7811,7 +7892,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0020047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7823,7 +7904,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0021047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7835,7 +7916,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0022047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7847,7 +7928,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0023047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7859,7 +7940,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0024047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7871,7 +7952,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0025047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7883,7 +7964,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0026047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7895,7 +7976,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0027047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7907,7 +7988,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0028047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7919,7 +8000,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0029047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7931,7 +8012,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E002A047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7943,7 +8024,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E002D047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7955,7 +8036,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E002E047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7967,7 +8048,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E002F047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7979,7 +8060,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0030047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -7991,7 +8072,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0033047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8003,7 +8084,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0034047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8015,7 +8096,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0035047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8027,7 +8108,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0036047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8039,7 +8120,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0037047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8051,7 +8132,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0038047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8063,7 +8144,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0039047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8075,7 +8156,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E003A047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8087,7 +8168,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E003B047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8099,7 +8180,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E003C047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8111,7 +8192,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E003F047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8123,7 +8204,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0040047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8135,7 +8216,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0041047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8147,7 +8228,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0042047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8159,7 +8240,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0044047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8171,7 +8252,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0045047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8183,7 +8264,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0046047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8195,7 +8276,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0047047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8207,7 +8288,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0048047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8219,7 +8300,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0049047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8231,7 +8312,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E004A047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8243,7 +8324,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E004B047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8255,7 +8336,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E004C047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8267,7 +8348,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E004F047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8279,7 +8360,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0050047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8291,7 +8372,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0051047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8303,7 +8384,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0052047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8315,7 +8396,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0053047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8327,7 +8408,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0054047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8339,7 +8420,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0057047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8351,7 +8432,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0058047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8363,7 +8444,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0059047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8375,7 +8456,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E005A047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8387,7 +8468,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E005B047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8399,7 +8480,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E005C047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8411,7 +8492,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E005D047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8423,7 +8504,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E005E047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8435,7 +8516,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E005F047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8447,7 +8528,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0060047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8459,7 +8540,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0061047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8471,7 +8552,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0062047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8483,7 +8564,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0065047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8495,7 +8576,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0066047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8507,7 +8588,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0067047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8519,7 +8600,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0068047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8531,7 +8612,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0069047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8543,7 +8624,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E006A047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8555,7 +8636,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E006B047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8567,7 +8648,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E006C047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8579,7 +8660,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E006F047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8591,7 +8672,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0070047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8603,7 +8684,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0073047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8615,7 +8696,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0074047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8627,7 +8708,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0075047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8639,7 +8720,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0076047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8651,7 +8732,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0077047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8663,7 +8744,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0078047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8675,7 +8756,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0079047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8687,7 +8768,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E007A047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8699,7 +8780,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E007B047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8711,7 +8792,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E007C047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8723,7 +8804,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E007D047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8735,7 +8816,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E007E047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8747,7 +8828,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E007F047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8759,7 +8840,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0080047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8771,7 +8852,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0081047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8783,7 +8864,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E0082047711F3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8795,7 +8876,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E00FE047711FF005F316C = {
 			children = (
@@ -8869,7 +8950,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01000477128A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8881,7 +8962,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01010477128A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8893,7 +8974,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01020477128A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8905,7 +8986,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01030477128A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8917,7 +8998,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01040477128A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8929,7 +9010,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01050477128A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8941,7 +9022,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01060477128A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8953,7 +9034,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01070477128A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8965,7 +9046,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01080477128A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8977,7 +9058,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01090477128A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -8989,7 +9070,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E010A0477128A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9001,7 +9082,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E010B0477128A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9013,7 +9094,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E010C0477128A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9025,7 +9106,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E010D0477128A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9037,7 +9118,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E010E0477128A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9049,7 +9130,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E010F0477128A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9061,7 +9142,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01100477128A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9073,7 +9154,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01120477128A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9085,7 +9166,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01130477128A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9097,7 +9178,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01140477128A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9109,7 +9190,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01150477128A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9121,7 +9202,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E012D04771299005F316C = {
 			children = (
@@ -9151,7 +9232,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E012F047712BE005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9162,7 +9243,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01400477136A005F316C = {
 			children = (
@@ -9195,7 +9276,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01540477136A005F316C = {
 			children = (
@@ -9224,7 +9305,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01570477136A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9235,7 +9316,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E015A0477136A005F316C = {
 			children = (
@@ -9268,7 +9349,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01640477136A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9279,7 +9360,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01650477136A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9290,7 +9371,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E017E0477136A005F316C = {
 			children = (
@@ -9313,7 +9394,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01DD04771F19005F316C = {
 			children = (
@@ -9343,7 +9424,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01DF04772005005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9355,7 +9436,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01E20477205A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9367,7 +9448,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01E30477205A005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9379,7 +9460,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01E6047720A3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9391,7 +9472,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6E01E7047720A3005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9403,7 +9484,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD6D04770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9415,7 +9496,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD6E04770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9427,7 +9508,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD6F04770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9439,7 +9520,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD7004770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9451,7 +9532,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD7204770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9463,7 +9544,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD7304770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9475,7 +9556,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD7404770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9487,7 +9568,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD7504770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9499,7 +9580,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD7604770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9511,7 +9592,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD7704770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9523,7 +9604,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD7804770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9535,7 +9616,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD7904770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9547,7 +9628,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD7A04770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9559,7 +9640,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD7B04770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9571,7 +9652,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD7C04770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9583,7 +9664,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD7D04770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9595,7 +9676,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD7E04770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9607,7 +9688,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD7F04770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9619,7 +9700,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD8004770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9631,7 +9712,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD8104770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9643,7 +9724,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD8204770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9655,7 +9736,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD8304770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9667,7 +9748,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD8604770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9679,7 +9760,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD8704770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9691,7 +9772,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD8804770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9703,7 +9784,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD8904770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9715,7 +9796,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD8A04770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9727,7 +9808,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD8B04770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9739,7 +9820,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD8C04770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9751,7 +9832,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD8D04770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9763,7 +9844,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD8E04770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9775,7 +9856,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD8F04770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9787,7 +9868,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD9004770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9799,7 +9880,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD9104770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9811,7 +9892,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD9204770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9823,7 +9904,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFD9304770A7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9835,7 +9916,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDBB04770A83005F316C = {
 			children = (
@@ -9944,7 +10025,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDBD04770AEA005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9956,7 +10037,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDBE04770AEA005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9968,7 +10049,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDBF04770AEA005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9980,7 +10061,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDC004770AEA005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -9992,7 +10073,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDC104770AEA005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10004,7 +10085,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDC804770AF1005F316C = {
 			children = (
@@ -10116,7 +10197,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDCA04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10128,7 +10209,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDCB04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10140,7 +10221,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDCC04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10152,7 +10233,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDCD04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10164,7 +10245,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDCE04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10176,7 +10257,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDCF04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10188,7 +10269,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDD004770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10200,7 +10281,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDD104770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10212,7 +10293,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDD204770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10224,7 +10305,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDD304770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10236,7 +10317,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDD404770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10248,7 +10329,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDD504770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10260,7 +10341,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDD604770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10272,7 +10353,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDD704770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10284,7 +10365,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDD804770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10296,7 +10377,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDD904770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10308,7 +10389,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDDA04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10320,7 +10401,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDDB04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10332,7 +10413,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDDC04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10344,7 +10425,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDDD04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10356,7 +10437,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDDE04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10368,7 +10449,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDDF04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10380,7 +10461,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDE004770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10392,7 +10473,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDE104770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10404,7 +10485,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDE204770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10416,7 +10497,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDE304770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10428,7 +10509,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDE404770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10440,7 +10521,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDE504770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10452,7 +10533,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDE604770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10464,7 +10545,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDE704770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10476,7 +10557,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDE804770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10488,7 +10569,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDE904770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10500,7 +10581,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDEA04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10512,7 +10593,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDED04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10524,7 +10605,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDEE04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10536,7 +10617,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDEF04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10548,7 +10629,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDF004770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10560,7 +10641,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDF104770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10572,7 +10653,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDF204770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10584,7 +10665,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDF304770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10596,7 +10677,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDF404770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10608,7 +10689,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDF504770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10620,7 +10701,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDF604770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10632,7 +10713,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDF704770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10644,7 +10725,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDF804770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10656,7 +10737,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDF904770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10668,7 +10749,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDFA04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10680,7 +10761,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDFB04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10692,7 +10773,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDFC04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10704,7 +10785,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDFD04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10716,7 +10797,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDFE04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10728,7 +10809,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFDFF04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10740,7 +10821,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE0004770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10752,7 +10833,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE0104770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10764,7 +10845,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE0204770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10776,7 +10857,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE0304770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10788,7 +10869,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE0404770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10800,7 +10881,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE0704770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10812,7 +10893,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE0804770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10824,7 +10905,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE0904770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10836,7 +10917,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE0A04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10848,7 +10929,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE0B04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10860,7 +10941,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE0C04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10872,7 +10953,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE0D04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10884,7 +10965,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE0E04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10896,7 +10977,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE0F04770C79005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10908,7 +10989,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE5704770C7E005F316C = {
 			children = (
@@ -10935,7 +11016,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE5904770CAA005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10947,7 +11028,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE5A04770CAA005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10959,7 +11040,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE5B04770CAA005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10971,7 +11052,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE6004770CF7005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10982,7 +11063,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE6104770CF7005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -10994,7 +11075,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE6204770CF7005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11005,7 +11086,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE6304770CF7005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11016,7 +11097,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE6404770CF7005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11027,7 +11108,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE6A04770D01005F316C = {
 			children = (
@@ -11150,7 +11231,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE6F04770D61005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11162,7 +11243,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE7604770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11174,7 +11255,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE7704770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11186,7 +11267,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE7804770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11198,7 +11279,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE7904770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11210,7 +11291,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE7A04770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11222,7 +11303,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE7B04770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11234,7 +11315,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE7E04770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11246,7 +11327,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE7F04770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11258,7 +11339,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE8004770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11270,7 +11351,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE8104770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11282,7 +11363,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE8204770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11294,7 +11375,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE8304770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11306,7 +11387,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE8404770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11318,7 +11399,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE8504770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11330,7 +11411,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE8A04770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11342,7 +11423,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE8B04770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11354,7 +11435,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE8C04770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11366,7 +11447,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE8D04770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11378,7 +11459,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE8E04770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11390,7 +11471,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE8F04770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11402,7 +11483,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE9004770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11414,7 +11495,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE9104770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11426,7 +11507,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE9204770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11438,7 +11519,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE9304770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11450,7 +11531,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE9404770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11462,7 +11543,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE9504770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11474,7 +11555,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE9604770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11486,7 +11567,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE9704770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11498,7 +11579,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE9A04770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11510,7 +11591,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE9B04770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11522,7 +11603,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE9C04770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11534,7 +11615,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE9D04770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11546,7 +11627,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE9E04770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11558,7 +11639,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFE9F04770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11570,7 +11651,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEA004770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11582,7 +11663,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEA104770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11594,7 +11675,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEA204770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11606,7 +11687,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEA304770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11618,7 +11699,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEA404770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11630,7 +11711,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEA504770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11642,7 +11723,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEA604770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11654,7 +11735,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEA704770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11666,7 +11747,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEA804770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11678,7 +11759,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEA904770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11690,7 +11771,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEAA04770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11702,7 +11783,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEAB04770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11714,7 +11795,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEAC04770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11726,7 +11807,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEAD04770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11738,7 +11819,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEAE04770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11750,7 +11831,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEAF04770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11762,7 +11843,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEB004770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11774,7 +11855,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEB104770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11786,7 +11867,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEB204770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11798,7 +11879,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEB304770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11810,7 +11891,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEB404770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11822,7 +11903,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEB504770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11834,7 +11915,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEB604770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11846,7 +11927,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEB704770E7C005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11858,7 +11939,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEFA04770E84005F316C = {
 			children = (
@@ -11950,7 +12031,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEFE04770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11962,7 +12043,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFEFF04770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11974,7 +12055,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF0004770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11986,7 +12067,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF0104770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -11998,7 +12079,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF0204770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12010,7 +12091,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF0304770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12022,7 +12103,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF0404770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12034,7 +12115,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF0504770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12046,7 +12127,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF0604770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12058,7 +12139,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF0704770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12070,7 +12151,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF0804770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12082,7 +12163,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF0904770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12094,7 +12175,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF0A04770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12106,7 +12187,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF0D04770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12118,7 +12199,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF0E04770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12130,7 +12211,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF1304770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12142,7 +12223,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF1404770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12154,7 +12235,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF1504770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12166,7 +12247,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF1604770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12178,7 +12259,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF1704770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12190,7 +12271,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF1804770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12202,7 +12283,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF1A04770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12214,7 +12295,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF1B04770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12226,7 +12307,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF1C04770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12238,7 +12319,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF1D04770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12250,7 +12331,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF1E04770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12262,7 +12343,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF1F04770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12274,7 +12355,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF2004770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12286,7 +12367,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF2104770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12298,7 +12379,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF2204770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12310,7 +12391,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF2304770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12322,7 +12403,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF2404770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12334,7 +12415,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF2504770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12346,7 +12427,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF2604770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12358,7 +12439,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF2704770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12370,7 +12451,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF2804770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12382,7 +12463,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF2904770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12394,7 +12475,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF2A04770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12406,7 +12487,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF2B04770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12418,7 +12499,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF2C04770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12430,7 +12511,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF2D04770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12442,7 +12523,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF2E04770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12454,7 +12535,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF3004770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12466,7 +12547,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF3104770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12478,7 +12559,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF3204770F63005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12490,7 +12571,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF6F04770F6A005F316C = {
 			children = (
@@ -12515,7 +12596,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF7104770F86005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12527,7 +12608,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF7404770F8B005F316C = {
 			children = (
@@ -12571,7 +12652,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF7604770FFD005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12583,7 +12664,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF7704770FFD005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12595,7 +12676,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF7804770FFD005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12607,7 +12688,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF7904770FFD005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12619,7 +12700,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFF7A04770FFD005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12631,7 +12712,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFFB904770FFD005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12643,7 +12724,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFFBA04770FFD005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12655,7 +12736,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFFBD04770FFD005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12667,7 +12748,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFFBE04770FFD005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12679,7 +12760,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFFBF04770FFD005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12691,7 +12772,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFFC004770FFD005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12703,7 +12784,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFFC104770FFD005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12715,7 +12796,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFFC204770FFD005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12727,7 +12808,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA6EFFC304770FFD005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -12739,7 +12820,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA70E3640663112800DAE1FD = {
 			explicitFileType = sourcecode.cpp;
@@ -12748,6 +12829,7 @@
 			path = Foreach.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA70E3650663112800DAE1FD = {
 			explicitFileType = sourcecode.cpp;
@@ -12756,6 +12838,7 @@
 			path = Trail.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA70E3660663112800DAE1FD = {
 			explicitFileType = sourcecode.cpp;
@@ -12764,6 +12847,7 @@
 			path = Trail.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA70E3670663112800DAE1FD = {
 			explicitFileType = sourcecode.cpp;
@@ -12772,6 +12856,7 @@
 			path = TrailUtil.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA70E3680663112800DAE1FD = {
 			explicitFileType = sourcecode.cpp;
@@ -12780,6 +12865,7 @@
 			path = TrailUtil.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA70E3690663112800DAE1FD = {
 			fileRef = AA70E3640663112800DAE1FD;
@@ -12819,7 +12905,7 @@
 			path = ../src/TimingData.cpp;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA729C430599B50D00779F33 = {
 			explicitFileType = sourcecode.cpp;
@@ -12829,7 +12915,7 @@
 			path = ../src/TimingData.h;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA729C440599B50D00779F33 = {
 			fileRef = AA729C420599B50D00779F33;
@@ -12851,7 +12937,7 @@
 			path = ../src/MemoryCardDisplay.cpp;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA729C470599B54D00779F33 = {
 			explicitFileType = sourcecode.cpp;
@@ -12861,7 +12947,7 @@
 			path = ../src/MemoryCardDisplay.h;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA729C480599B54D00779F33 = {
 			fileRef = AA729C460599B54D00779F33;
@@ -12883,7 +12969,7 @@
 			path = ../src/ReceptorArrow.cpp;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA729C4F0599B58D00779F33 = {
 			explicitFileType = sourcecode.cpp;
@@ -12893,7 +12979,7 @@
 			path = ../src/ReceptorArrow.h;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA729C500599B58D00779F33 = {
 			explicitFileType = sourcecode.cpp;
@@ -12903,7 +12989,7 @@
 			path = ../src/ReceptorArrowRow.cpp;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA729C510599B58D00779F33 = {
 			explicitFileType = sourcecode.cpp;
@@ -12913,7 +12999,7 @@
 			path = ../src/ReceptorArrowRow.h;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA729C520599B58D00779F33 = {
 			fileRef = AA729C4E0599B58D00779F33;
@@ -12947,7 +13033,7 @@
 			path = ../src/ScreenBranch.cpp;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA729C65059A2F2400779F33 = {
 			explicitFileType = sourcecode.cpp;
@@ -12957,7 +13043,7 @@
 			path = ../src/ScreenBranch.h;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA729C66059A2F2400779F33 = {
 			fileRef = AA729C64059A2F2400779F33;
@@ -12980,7 +13066,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA76D15404D9D2D200D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -12991,7 +13077,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA76D15504D9D2D200D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13002,7 +13088,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA7D404604FC3C270020E02B = {
 			explicitFileType = sourcecode.cpp;
@@ -13013,7 +13099,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA7D404704FC3C270020E02B = {
 			explicitFileType = sourcecode.cpp;
@@ -13070,7 +13156,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA8B6C7A04AFD87300D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13081,7 +13167,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA8B6C7B04AFD87300D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13092,7 +13178,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA8B6C7C04AFD87300D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13103,7 +13189,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA8B6C7D04AFD87300D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13114,7 +13200,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA8B6C7E04AFD87300D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13125,7 +13211,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA8B6C7F04AFD87300D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13136,7 +13222,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA8DD84904A2E51400D02EE9 = {
 			fallbackIsa = PBXFileReference;
@@ -13157,7 +13243,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA8F118304A04F9B00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13169,7 +13255,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA8F136E0624BAB200C6A467 = {
 			explicitFileType = sourcecode.cpp;
@@ -13178,6 +13264,7 @@
 			path = EnumHelper.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA8F136F0624BAB200C6A467 = {
 			explicitFileType = sourcecode.cpp;
@@ -13186,6 +13273,7 @@
 			path = EnumHelper.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA8F13700624BAB200C6A467 = {
 			fileRef = AA8F136E0624BAB200C6A467;
@@ -13207,6 +13295,7 @@
 			path = ../src/ActorCommands.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA946AC105B27398000A1F2E = {
 			explicitFileType = sourcecode.cpp;
@@ -13216,6 +13305,7 @@
 			path = ../src/ActorCommands.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA946AC205B27398000A1F2E = {
 			fileRef = AA946AC005B27398000A1F2E;
@@ -13237,6 +13327,7 @@
 			path = ../src/ConditionalBGA.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA96881B05DE34B600478B95 = {
 			explicitFileType = sourcecode.cpp;
@@ -13246,6 +13337,7 @@
 			path = ../src/ConditionalBGA.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA96881C05DE34B600478B95 = {
 			fileRef = AA96881A05DE34B600478B95;
@@ -13267,6 +13359,7 @@
 			path = ../src/SDL_SaveJPEG.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA96881F05DE34CD00478B95 = {
 			explicitFileType = sourcecode.cpp;
@@ -13276,6 +13369,7 @@
 			path = ../src/SDL_SaveJPEG.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA96882005DE34CD00478B95 = {
 			fileRef = AA96881E05DE34CD00478B95;
@@ -13298,7 +13392,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA996D9605E9ED34008CA159 = {
 			explicitFileType = sourcecode.cpp;
@@ -13307,6 +13401,7 @@
 			path = TimeConstants.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA996D9705E9ED34008CA159 = {
 			explicitFileType = sourcecode.cpp;
@@ -13315,6 +13410,7 @@
 			path = TimeConstants.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AA996D9805E9ED34008CA159 = {
 			fileRef = AA996D9605E9ED34008CA159;
@@ -13337,7 +13433,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA9D236D0561B6CF00FC7F14 = {
 			fileRef = AA9D236C0561B6CE00FC7F14;
@@ -13354,7 +13450,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA9EC2F1055F5126007E5098 = {
 			explicitFileType = sourcecode.cpp;
@@ -13365,7 +13461,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AA9EC2F2055F5126007E5098 = {
 			fileRef = AA9EC2F0055F5126007E5098;
@@ -13414,6 +13510,7 @@
 			path = ../src/ScreenWithMenuElements.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAA6BFEB0644AB3700AFBBC8 = {
 			explicitFileType = sourcecode.cpp;
@@ -13423,6 +13520,7 @@
 			path = ../src/ScreenWithMenuElements.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAA6BFEC0644AB3700AFBBC8 = {
 			fileRef = AAA6BFEA0644AB3700AFBBC8;
@@ -13443,6 +13541,7 @@
 			path = global.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAA71EA105EE154E00D2E8FF = {
 			fileRef = AAA71EA005EE154E00D2E8FF;
@@ -13459,7 +13558,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAABAD3604F0E12B00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13470,7 +13569,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAABAD3904F0E12B00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13481,7 +13580,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAABAD3A04F0E12B00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13492,7 +13591,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAADA4AE04E5F3DE00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13502,7 +13601,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAADA51604E75DD300D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13513,7 +13612,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAADA51704E75DD300D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13524,7 +13623,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAADA51A04E7609A00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13535,7 +13634,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAADA51B04E7609A00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13546,7 +13645,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAADA51E04E77F4400D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13557,7 +13656,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAADA51F04E77F4400D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13568,7 +13667,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAAE28D60522523F00D02EE9 = {
 			children = (
@@ -13590,7 +13689,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAAE28DC052252A500D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13601,7 +13700,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAAE28DD052252A500D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13612,7 +13711,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAAE28DE052252A500D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13623,7 +13722,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAAE28DF052252A500D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13634,7 +13733,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAAE28E0052252A500D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13645,7 +13744,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAAE28F2052254A900D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13656,7 +13755,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAAE28F3052254A900D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13667,7 +13766,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAAE28F4052254A900D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13678,7 +13777,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAAE28F5052254A900D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13689,7 +13788,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAAE28FA0522550400D02EE9 = {
 			children = (
@@ -13723,7 +13822,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAB005F10579B8CB000BBA58 = {
 			explicitFileType = sourcecode.cpp;
@@ -13734,7 +13833,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAB005F20579B8CB000BBA58 = {
 			fileRef = AAB005F00579B8CB000BBA58;
@@ -13757,7 +13856,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAB0085C057F4F7A000BBA58 = {
 			explicitFileType = sourcecode.cpp;
@@ -13768,7 +13867,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAB0085D057F4F7A000BBA58 = {
 			explicitFileType = sourcecode.cpp;
@@ -13779,7 +13878,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAB0085E057F4F7A000BBA58 = {
 			explicitFileType = sourcecode.cpp;
@@ -13790,7 +13889,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAB0085F057F4F7A000BBA58 = {
 			explicitFileType = sourcecode.cpp;
@@ -13801,7 +13900,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAB00860057F4F7A000BBA58 = {
 			explicitFileType = sourcecode.cpp;
@@ -13812,7 +13911,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAB00861057F4F7A000BBA58 = {
 			fileRef = AAB0085B057F4F7A000BBA58;
@@ -13858,7 +13957,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAB3B36C04C38B4600D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13868,7 +13967,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAB3B37704C38BF600D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13879,7 +13978,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAB3B37F04C3F48700D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13891,7 +13990,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAB3B38004C3F48700D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13903,7 +14002,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAB3B38504C5701D00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13915,7 +14014,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAB3B38604C5701D00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13927,7 +14026,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAB3B38704C5701D00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13939,7 +14038,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAB3B38804C5701D00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13951,7 +14050,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAB3B39004C5921800D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13963,7 +14062,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAB3B39104C5921800D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -13974,7 +14073,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAB691F205704FA50078BED4 = {
 			explicitFileType = sourcecode.cpp;
@@ -13984,7 +14083,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAB691F305704FA50078BED4 = {
 			explicitFileType = sourcecode.cpp;
@@ -13994,7 +14093,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAB691F405704FA50078BED4 = {
 			fileRef = AAB691F205704FA50078BED4;
@@ -14023,6 +14122,7 @@
 			path = ../src/ScreenClearBookkeepingData.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABB00F50659EF8C00738526 = {
 			explicitFileType = sourcecode.cpp;
@@ -14032,6 +14132,7 @@
 			path = ../src/ScreenClearBookkeepingData.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABB00F60659EF8C00738526 = {
 			explicitFileType = sourcecode.cpp;
@@ -14041,6 +14142,7 @@
 			path = ../src/ScreenClearMachineStats.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABB00F70659EF8C00738526 = {
 			explicitFileType = sourcecode.cpp;
@@ -14050,6 +14152,7 @@
 			path = ../src/ScreenClearMachineStats.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABB00F80659EF8C00738526 = {
 			fileRef = AABB00F40659EF8C00738526;
@@ -14083,6 +14186,7 @@
 			path = ../src/ScreenResetToDefaults.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABB00FE0659F0A700738526 = {
 			explicitFileType = sourcecode.cpp;
@@ -14092,6 +14196,7 @@
 			path = ../src/ScreenResetToDefaults.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABB00FF0659F0A700738526 = {
 			fileRef = AABB00FD0659F0A700738526;
@@ -14113,6 +14218,7 @@
 			path = ../src/HighScore.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABBD80705D8E9FC00B44FC2 = {
 			explicitFileType = sourcecode.cpp;
@@ -14122,6 +14228,7 @@
 			path = ../src/HighScore.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABBD80805D8E9FC00B44FC2 = {
 			fileRef = AABBD80605D8E9FC00B44FC2;
@@ -14143,6 +14250,7 @@
 			path = ../src/RageSurface_Load_GIF.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABBF66D0659E78D00738526 = {
 			explicitFileType = sourcecode.cpp;
@@ -14152,6 +14260,7 @@
 			path = ../src/RageSurface_Load_GIF.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABBF66E0659E78D00738526 = {
 			explicitFileType = sourcecode.cpp;
@@ -14161,6 +14270,7 @@
 			path = ../src/RageSurface_Load_JPEG.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABBF66F0659E78D00738526 = {
 			explicitFileType = sourcecode.cpp;
@@ -14170,6 +14280,7 @@
 			path = ../src/RageSurface_Load_JPEG.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABBF6700659E78D00738526 = {
 			explicitFileType = sourcecode.cpp;
@@ -14179,6 +14290,7 @@
 			path = ../src/RageSurface_Load_PNG.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABBF6710659E78D00738526 = {
 			explicitFileType = sourcecode.cpp;
@@ -14188,6 +14300,7 @@
 			path = ../src/RageSurface_Load_PNG.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABBF6720659E78D00738526 = {
 			explicitFileType = sourcecode.cpp;
@@ -14197,6 +14310,7 @@
 			path = ../src/RageSurface_Load_XPM.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABBF6730659E78D00738526 = {
 			explicitFileType = sourcecode.cpp;
@@ -14206,6 +14320,7 @@
 			path = ../src/RageSurface_Load_XPM.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABBF6740659E78D00738526 = {
 			explicitFileType = sourcecode.cpp;
@@ -14215,6 +14330,7 @@
 			path = ../src/RageSurface_Load.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABBF6750659E78D00738526 = {
 			explicitFileType = sourcecode.cpp;
@@ -14224,6 +14340,7 @@
 			path = ../src/RageSurface_Load.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABBF6760659E78D00738526 = {
 			fileRef = AABBF66C0659E78D00738526;
@@ -14307,6 +14424,7 @@
 			path = ../src/CryptHelpers.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABD0B3505DF3F22004F7929 = {
 			explicitFileType = sourcecode.cpp;
@@ -14316,6 +14434,7 @@
 			path = ../src/CryptHelpers.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABD0B3605DF3F22004F7929 = {
 			explicitFileType = sourcecode.cpp;
@@ -14325,6 +14444,7 @@
 			path = ../src/CryptManager.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABD0B3705DF3F22004F7929 = {
 			explicitFileType = sourcecode.cpp;
@@ -14334,6 +14454,7 @@
 			path = ../src/CryptManager.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AABD0B3A05DF3F22004F7929 = {
 			fileRef = AABD0B3605DF3F22004F7929;
@@ -14356,7 +14477,7 @@
 			path = ../src/ScreenEnding.cpp;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABE321B05ACD8ED001A0E84 = {
 			explicitFileType = sourcecode.cpp;
@@ -14366,7 +14487,7 @@
 			path = ../src/ScreenEnding.h;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABE321C05ACD8ED001A0E84 = {
 			fileRef = AABE321A05ACD8ED001A0E84;
@@ -14388,7 +14509,7 @@
 			path = ../src/Foreground.cpp;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABE321F05ACD931001A0E84 = {
 			explicitFileType = sourcecode.cpp;
@@ -14398,7 +14519,7 @@
 			path = ../src/Foreground.h;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABE322005ACD931001A0E84 = {
 			fileRef = AABE321E05ACD931001A0E84;
@@ -14420,7 +14541,7 @@
 			path = ../src/RageFileDriverDirectHelpers.cpp;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABE322305ACDA52001A0E84 = {
 			explicitFileType = sourcecode.cpp;
@@ -14430,7 +14551,7 @@
 			path = ../src/RageFileDriverDirectHelpers.h;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABE322405ACDA52001A0E84 = {
 			fileRef = AABE322205ACDA52001A0E84;
@@ -14454,7 +14575,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABE35EC04967E26005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -14466,7 +14587,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABE35EF04967E6F005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -14478,7 +14599,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABE35F004967E6F005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -14490,7 +14611,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABE36F60497CE16005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -14501,7 +14622,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABE36F70497CE16005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -14512,7 +14633,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABE36F80497CE16005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -14523,7 +14644,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABE36FC0497CE44005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -14535,7 +14656,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABE36FE0497CE67005F316C = {
 			children = (
@@ -14565,7 +14686,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABE37030497CF85005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -14576,7 +14697,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABE78720591287100E8BF50 = {
 			children = (
@@ -14595,7 +14716,7 @@
 			path = MemoryCardDriver.h;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABE78760591287100E8BF50 = {
 			explicitFileType = sourcecode.cpp;
@@ -14604,7 +14725,7 @@
 			path = MemoryCardDriver_Null.h;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABE78770591287100E8BF50 = {
 			fileRef = AABE78730591287100E8BF50;
@@ -14626,7 +14747,7 @@
 			path = ../src/DualScrollBar.h;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABE788C05912B0600E8BF50 = {
 			explicitFileType = sourcecode.cpp;
@@ -14636,7 +14757,7 @@
 			path = ../src/DualScrollBar.cpp;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABE788D05912B0600E8BF50 = {
 			fileRef = AABE788B05912B0600E8BF50;
@@ -14658,7 +14779,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABE7D3F051F07E900D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -14668,7 +14789,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABEB521051F163A00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -14678,7 +14799,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABEB522051F163A00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -14688,7 +14809,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABFA8C905A4535700D3FDD1 = {
 			explicitFileType = sourcecode.cpp;
@@ -14698,7 +14819,7 @@
 			path = ../src/ListDisplay.cpp;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABFA8CA05A4535700D3FDD1 = {
 			explicitFileType = sourcecode.cpp;
@@ -14708,7 +14829,7 @@
 			path = ../src/ListDisplay.h;
 			refType = 4;
 			sourceTree = "<group>";
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AABFA8CB05A4535700D3FDD1 = {
 			fileRef = AABFA8C905A4535700D3FDD1;
@@ -14732,7 +14853,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAC23F7D0485E68D005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -14744,7 +14865,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAC23F7E0485E68D005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -14756,7 +14877,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAC23F7F0485E68D005F316C = {
 			explicitFileType = sourcecode.cpp;
@@ -14768,7 +14889,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAC28BB904F758E500D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -14779,7 +14900,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAC28BBA04F758E500D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -14790,7 +14911,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAC622F805389A0500D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -14801,7 +14922,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAC622F905389A0500D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -14812,7 +14933,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAC622FA05389A0500D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -14823,7 +14944,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAC622FB05389A0500D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -14834,7 +14955,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAC6889905D7F3C800964E6D = {
 			explicitFileType = sourcecode.cpp;
@@ -14844,6 +14965,7 @@
 			path = ../src/XmlFile.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAC6889A05D7F3C800964E6D = {
 			explicitFileType = sourcecode.cpp;
@@ -14853,6 +14975,7 @@
 			path = ../src/XmlFile.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAC6889B05D7F3C800964E6D = {
 			fileRef = AAC6889905D7F3C800964E6D;
@@ -14875,7 +14998,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAC6DCE40567660A00B5D56F = {
 			explicitFileType = sourcecode.cpp;
@@ -14886,7 +15009,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAC6DCE50567660A00B5D56F = {
 			fileRef = AAC6DCE30567660A00B5D56F;
@@ -14922,7 +15045,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAC6DCEF0567663800B5D56F = {
 			explicitFileType = sourcecode.cpp;
@@ -14932,7 +15055,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAC6DCF00567663800B5D56F = {
 			explicitFileType = sourcecode.cpp;
@@ -14942,7 +15065,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAC6DCF10567663800B5D56F = {
 			explicitFileType = sourcecode.cpp;
@@ -14952,7 +15075,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAC6DCF20567663800B5D56F = {
 			fileRef = AAC6DCEE0567663800B5D56F;
@@ -14975,7 +15098,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAC6DDDF0569C71000B5D56F = {
 			explicitFileType = sourcecode.cpp;
@@ -14986,7 +15109,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAC6DDE00569C71000B5D56F = {
 			fileRef = AAC6DDDE0569C71000B5D56F;
@@ -15009,7 +15132,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAC6DDE70569C80900B5D56F = {
 			explicitFileType = sourcecode.cpp;
@@ -15020,7 +15143,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAC6DDE80569C80900B5D56F = {
 			fileRef = AAC6DDE60569C80900B5D56F;
@@ -15042,6 +15165,7 @@
 			path = ../src/RageSoundPosMap.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAD36083062BB8AE00D0CED8 = {
 			explicitFileType = sourcecode.cpp;
@@ -15051,6 +15175,7 @@
 			path = ../src/RageSoundPosMap.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAD36084062BB8AE00D0CED8 = {
 			fileRef = AAD36082062BB8AE00D0CED8;
@@ -15072,6 +15197,7 @@
 			path = ../src/RageUtil_CircularBuffer.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAD3D5AC05B5AB4E00014FAC = {
 			fileRef = AAD3D5AB05B5AB4E00014FAC;
@@ -15738,7 +15864,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAD6201A0528FA5E00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -15749,7 +15875,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAD6201D0528FAAB00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -15760,7 +15886,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAD6201E0528FAAB00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -15771,7 +15897,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAD620A5052EC78B00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -15782,7 +15908,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAD620A6052EC78B00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -15793,7 +15919,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAD64AA10603FE7300EF8CDE = {
 			explicitFileType = sourcecode.cpp;
@@ -15803,6 +15929,7 @@
 			path = StepMania.pch;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAD64AA30604079E00EF8CDE = {
 			explicitFileType = sourcecode.cpp;
@@ -15812,6 +15939,7 @@
 			path = ../src/ScreenDownloadMachineStats.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAD64AA40604079E00EF8CDE = {
 			explicitFileType = sourcecode.cpp;
@@ -15821,6 +15949,7 @@
 			path = ../src/ScreenDownloadMachineStats.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAD64AA50604079E00EF8CDE = {
 			fileRef = AAD64AA30604079E00EF8CDE;
@@ -15841,6 +15970,7 @@
 			path = CatalogXml.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAD6A6DF065E0A8D0042165A = {
 			explicitFileType = sourcecode.cpp;
@@ -15849,6 +15979,7 @@
 			path = CatalogXml.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAD6A6E0065E0A8D0042165A = {
 			fileRef = AAD6A6DE065E0A8D0042165A;
@@ -15869,6 +16000,7 @@
 			path = Difficulty.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAD6A713065E0FDF0042165A = {
 			explicitFileType = sourcecode.cpp;
@@ -15877,6 +16009,7 @@
 			path = Difficulty.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAD6A714065E0FDF0042165A = {
 			fileRef = AAD6A712065E0FDF0042165A;
@@ -15898,6 +16031,7 @@
 			path = ../src/EditCoursesSongMenu.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAD7A2FB0664999800CCAB36 = {
 			explicitFileType = sourcecode.cpp;
@@ -15907,6 +16041,7 @@
 			path = ../src/EditCoursesSongMenu.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAD7A2FC0664999800CCAB36 = {
 			fileRef = AAD7A2FA0664999800CCAB36;
@@ -15929,7 +16064,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AADB4E7B04D4FE5D00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -15940,7 +16075,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AADB4E7C04D4FE5D00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -15951,7 +16086,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AADB4E8004D4FEC400D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -15962,7 +16097,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AADB4E8104D4FEC400D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -15973,7 +16108,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AADB4E8204D4FF9B00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -15984,7 +16119,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AADB4E8304D4FF9B00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -15995,7 +16130,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AADB4E8604D50FB900D02EE9 = {
 			children = (
@@ -16024,7 +16159,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AADB4E8A04D50FB900D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16035,7 +16170,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AADB4E8B04D50FB900D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16045,7 +16180,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AADB4E8C04D50FB900D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16055,7 +16190,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AADB4E8D04D5261C00D02EE9 = {
 			children = (
@@ -16092,7 +16227,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AADB4E9104D5288400D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16103,7 +16238,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AADB4E9204D5288400D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16114,7 +16249,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AADB4F5904D9220700D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16125,7 +16260,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AADB4F5A04D9220700D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16136,7 +16271,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AADBA562062007BA005D4FC2 = {
 			explicitFileType = sourcecode.cpp;
@@ -16145,6 +16280,7 @@
 			path = arch_platform.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AADBA563062007BA005D4FC2 = {
 			fileRef = AADBA562062007BA005D4FC2;
@@ -16161,7 +16297,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AADBE361053D5F8A00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16172,7 +16308,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AADBE362053D5F8A00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16183,7 +16319,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AADBE363053D5F8A00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16194,7 +16330,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AADBE368053DA38C00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16205,7 +16341,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AADBE369053DA38C00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16216,7 +16352,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAE443EB04B0F9F600D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16228,7 +16364,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAE443EC04B0F9F600D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16240,7 +16376,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAE443F304B0FEB700D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16252,7 +16388,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAE443F404B0FEB700D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16264,7 +16400,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAE66F620657634D002E3AD9 = {
 			children = (
@@ -16297,6 +16433,7 @@
 			path = CryptBn.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAE66F640657634D002E3AD9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16305,6 +16442,7 @@
 			path = CryptBn.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAE66F650657634D002E3AD9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16313,6 +16451,7 @@
 			path = CryptMD5.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAE66F660657634D002E3AD9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16321,6 +16460,7 @@
 			path = CryptMD5.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAE66F670657634D002E3AD9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16329,6 +16469,7 @@
 			path = CryptNoise.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAE66F680657634D002E3AD9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16337,6 +16478,7 @@
 			path = CryptPrime.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAE66F690657634D002E3AD9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16345,6 +16487,7 @@
 			path = CryptPrime.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAE66F6A0657634D002E3AD9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16353,6 +16496,7 @@
 			path = CryptRand.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAE66F6B0657634D002E3AD9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16361,6 +16505,7 @@
 			path = CryptRand.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAE66F6C0657634D002E3AD9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16369,6 +16514,7 @@
 			path = CryptRSA.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAE66F6D0657634D002E3AD9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16377,6 +16523,7 @@
 			path = CryptRSA.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAE66F6E0657634D002E3AD9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16385,6 +16532,7 @@
 			path = CryptSH512.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAE66F6F0657634D002E3AD9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16393,6 +16541,7 @@
 			path = CryptSH512.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAE66F700657634D002E3AD9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16401,6 +16550,7 @@
 			path = CryptSHA.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAE66F710657634D002E3AD9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16409,6 +16559,7 @@
 			path = CryptSHA.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAE66F740657634D002E3AD9 = {
 			fileRef = AAE66F650657634D002E3AD9;
@@ -16460,6 +16611,7 @@
 			path = ../src/NetworkSyncManager.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAE7804A060814AC0034E65F = {
 			explicitFileType = sourcecode.cpp;
@@ -16469,6 +16621,7 @@
 			path = ../src/NetworkSyncManager.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAE7804B060814AC0034E65F = {
 			fileRef = AAE78049060814AC0034E65F;
@@ -16490,6 +16643,7 @@
 			path = ../src/ezsockets.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAE7808606081A000034E65F = {
 			explicitFileType = sourcecode.cpp;
@@ -16499,6 +16653,7 @@
 			path = ../src/ezsockets.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAE7808706081A000034E65F = {
 			fileRef = AAE7808506081A000034E65F;
@@ -16520,6 +16675,7 @@
 			path = ../src/ActiveAttackList.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAE7812C0608249E0034E65F = {
 			explicitFileType = sourcecode.cpp;
@@ -16529,6 +16685,7 @@
 			path = ../src/ActiveAttackList.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAE7812D0608249E0034E65F = {
 			fileRef = AAE7812B0608249E0034E65F;
@@ -16555,6 +16712,7 @@
 			path = ProfileHtml.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAEA08FA05E2335300D38622 = {
 			explicitFileType = sourcecode.cpp;
@@ -16563,6 +16721,7 @@
 			path = ProfileHtml.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAEA08FB05E2335300D38622 = {
 			fileRef = AAEA08F905E2335300D38622;
@@ -16583,6 +16742,7 @@
 			path = LuaFunctions.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAEA090705E23DF900D38622 = {
 			explicitFileType = sourcecode.cpp;
@@ -16591,6 +16751,7 @@
 			path = LuaHelpers.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAEA090805E23DF900D38622 = {
 			explicitFileType = sourcecode.cpp;
@@ -16599,6 +16760,7 @@
 			path = LuaHelpers.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAEA090905E23DF900D38622 = {
 			fileRef = AAEA090605E23DF900D38622;
@@ -16636,7 +16798,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAECF8C005265DB600D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16647,7 +16809,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAED6F280601C528002D2DEE = {
 			explicitFileType = sourcecode.cpp;
@@ -16657,6 +16819,7 @@
 			path = Backtrace.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAED6F290601C528002D2DEE = {
 			explicitFileType = sourcecode.cpp;
@@ -16665,6 +16828,7 @@
 			path = Backtrace.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAED6F2A0601C528002D2DEE = {
 			explicitFileType = sourcecode.cpp;
@@ -16673,6 +16837,7 @@
 			path = BacktraceNames.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAED6F2B0601C528002D2DEE = {
 			explicitFileType = sourcecode.cpp;
@@ -16681,6 +16846,7 @@
 			path = BacktraceNames.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAED6F2C0601C528002D2DEE = {
 			fileRef = AAED6F280601C528002D2DEE;
@@ -16715,7 +16881,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAEF3D0D04B533CC00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16726,7 +16892,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAEF3D1004B53E2900D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16736,7 +16902,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAF33F2A04FF213100F93C24 = {
 			fallbackIsa = PBXFileReference;
@@ -16755,6 +16921,7 @@
 			path = ../src/ModelManager.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAF4206605D63FA700056441 = {
 			explicitFileType = sourcecode.cpp;
@@ -16764,6 +16931,7 @@
 			path = ../src/ModelManager.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAF4206705D63FA700056441 = {
 			fileRef = AAF4206505D63FA700056441;
@@ -16785,6 +16953,7 @@
 			path = ../src/RageModelGeometry.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAF4206A05D6400800056441 = {
 			explicitFileType = sourcecode.cpp;
@@ -16794,6 +16963,7 @@
 			path = ../src/RageModelGeometry.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAF4206B05D6400800056441 = {
 			fileRef = AAF4206905D6400800056441;
@@ -16816,7 +16986,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAF430FE04DC98BC00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16827,7 +16997,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAF580A704B3E2DC00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16839,7 +17009,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAF580A804B3E2DC00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -16851,7 +17021,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAF7435906110E8D00B19AD1 = {
 			explicitFileType = sourcecode.cpp;
@@ -16861,6 +17031,7 @@
 			path = ../src/ScreenTestLights.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAF7435A06110E8D00B19AD1 = {
 			explicitFileType = sourcecode.cpp;
@@ -16870,6 +17041,7 @@
 			path = ../src/ScreenTestLights.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAF7435B06110E8D00B19AD1 = {
 			fileRef = AAF7435906110E8D00B19AD1;
@@ -16912,6 +17084,7 @@
 			path = CAAudioHardwareDevice.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAF744B106116B0500B19AD1 = {
 			explicitFileType = sourcecode.cpp;
@@ -16920,6 +17093,7 @@
 			path = CAAudioHardwareDevice.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAF744B206116B0500B19AD1 = {
 			explicitFileType = sourcecode.cpp;
@@ -16928,6 +17102,7 @@
 			path = CAAudioHardwareStream.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAF744B306116B0500B19AD1 = {
 			explicitFileType = sourcecode.cpp;
@@ -16936,6 +17111,7 @@
 			path = CAAudioHardwareStream.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAF744B406116B0500B19AD1 = {
 			explicitFileType = sourcecode.cpp;
@@ -16944,6 +17120,7 @@
 			path = CAAudioHardwareSystem.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAF744B506116B0500B19AD1 = {
 			explicitFileType = sourcecode.cpp;
@@ -16952,6 +17129,7 @@
 			path = CAAudioHardwareSystem.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAF744DA06116B0600B19AD1 = {
 			explicitFileType = sourcecode.cpp;
@@ -16960,6 +17138,7 @@
 			path = CAException.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAF744E706116B0600B19AD1 = {
 			explicitFileType = sourcecode.cpp;
@@ -16968,6 +17147,7 @@
 			path = CAPrefix.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAF744F306116B0600B19AD1 = {
 			explicitFileType = sourcecode.cpp;
@@ -16976,6 +17156,7 @@
 			path = CAStreamBasicDescription.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAF744F406116B0600B19AD1 = {
 			explicitFileType = sourcecode.cpp;
@@ -16984,6 +17165,7 @@
 			path = CAStreamBasicDescription.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAF7458E061181F700B19AD1 = {
 			explicitFileType = sourcecode.cpp;
@@ -16993,6 +17175,7 @@
 			path = ../src/RageDisplay_Null.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAF7458F061181F700B19AD1 = {
 			explicitFileType = sourcecode.cpp;
@@ -17002,6 +17185,7 @@
 			path = ../src/RageDisplay_Null.h;
 			refType = 4;
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		AAF74590061181F700B19AD1 = {
 			fileRef = AAF7458E061181F700B19AD1;
@@ -17024,7 +17208,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAFC7FF10513A67700D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -17035,7 +17219,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAFC7FF20513A67700D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -17046,7 +17230,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAFC803F0513A6EB00D02EE9 = {
 			children = (
@@ -17077,7 +17261,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAFC80420513A6EB00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -17087,7 +17271,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAFC80430513A6EB00D02EE9 = {
 			children = (
@@ -17107,7 +17291,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAFC80460513A6EB00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -17117,7 +17301,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAFF551D0549F39700D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -17128,7 +17312,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAFF551E0549F39700D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -17139,7 +17323,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAFF55210549F43A00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -17150,7 +17334,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAFF55220549F43A00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -17161,7 +17345,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAFF5541054E736D00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -17172,7 +17356,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 		AAFF5542054E736D00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
@@ -17183,7 +17367,7 @@
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
-			usesTabs = 0;
+			usesTabs = 1;
 		};
 	};
 	rootObject = 29B97313FDCFA39411CA2CEA;
