@@ -18,6 +18,7 @@
 #include "StepMania.h"
 #include "ScreenAttract.h"	// for AttractInput()
 #include "ScreenManager.h"
+#include "RageSoundManager.h"
 
 
 #define SHOW_RANDOM_MODIFIERS	THEME->GetMetricF("ScreenDemonstration","SecondsToShow")
@@ -71,6 +72,9 @@ ScreenDemonstration::ScreenDemonstration( CString sName ) : ScreenJukebox( sName
 
 	m_DancingState = STATE_DANCING;
 	this->PostScreenMessage( SM_BeginFadingOut, SECONDS_TO_SHOW );	
+
+	if( !PREFSMAN->m_bAttractSound )
+		SOUNDMAN->SetPrefs( 0 );	// slient
 }
 
 ScreenDemonstration::~ScreenDemonstration()
@@ -95,10 +99,13 @@ void ScreenDemonstration::Input( const DeviceInput& DeviceI, const InputEventTyp
 		case MENU_BUTTON_START:
 		case MENU_BUTTON_BACK:
 
+			m_soundMusic.Stop();
+			if( !PREFSMAN->m_bAttractSound )
+				SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );	// turn volume back on
+
 			if( PREFSMAN->m_iCoinMode == COIN_PAY )
 				if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
 					break;	// don't fall through
-			m_soundMusic.Stop();
 			break;
 		}
 	}
@@ -117,6 +124,9 @@ void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 		return;
 	case SM_GoToNextScreen:
 		m_soundMusic.Stop();
+		if( !PREFSMAN->m_bAttractSound )
+			SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );	// turn volume back on
+
 		GAMESTATE->Reset();
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		return;
