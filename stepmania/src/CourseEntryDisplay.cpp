@@ -89,7 +89,8 @@ void CourseEntryDisplay::LoadFromTrailEntry( int iNum, const TrailEntry *tes[NUM
 			{
 				int iLow = te->iLowMeter;
 				int iHigh = te->iHighMeter;
-				SetDifficulty( pn, ssprintf(iLow==iHigh?"%d":"%d-%d", iLow, iHigh), RageColor(1,1,1,1) );
+				SetDifficulty( pn, ssprintf(iLow==iHigh?"%d":"%d-%d", iLow, iHigh),
+					SONGMAN->GetDifficultyColor(te->pSteps->GetDifficulty()) );
 			}
 			else
 				SetDifficulty( pn, "?", SONGMAN->GetDifficultyColor( dc ) );
