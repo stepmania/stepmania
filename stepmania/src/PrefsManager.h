@@ -92,6 +92,7 @@ public:
 	int				m_iProgressiveLifebar;
 	int				m_iProgressiveStageLifebar;
 	int				m_iProgressiveNonstopLifebar;
+	bool			m_bShowBeginnerHelper;
 	CString			m_sLanguage;
 
 	// course ranking

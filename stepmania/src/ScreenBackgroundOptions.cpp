@@ -28,6 +28,7 @@ enum {
 	BO_BRIGHTNESS,
 	BO_DANGER,
 	BO_DANCING_CHARACTERS,
+	BO_SHOW_BEGINNER_HELPER,
 	BO_RANDOM_BACKGROUNDS,
 	NUM_BACKGROUND_OPTIONS_LINES
 };
@@ -37,6 +38,7 @@ OptionRow g_BackgroundOptionsLines[NUM_BACKGROUND_OPTIONS_LINES] = {
 	OptionRow( "Brightness",			"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%" ),
 	OptionRow( "Danger",				"HIDE","SHOW" ),
 	OptionRow( "Dancing\nCharacters",	"DEFAULT TO OFF","DEFAULT TO RANDOM" ),
+	OptionRow( "Show Beginner\nHelper",	"OFF","ON" ),
 	OptionRow( "Random\nBackgrounds",   "5","10","15","20" ),
 };
 
@@ -57,11 +59,12 @@ ScreenBackgroundOptions::ScreenBackgroundOptions() :
 
 void ScreenBackgroundOptions::ImportOptions()
 {
-	m_iSelectedOption[0][BO_MODE]				= PREFSMAN->m_BackgroundMode;
-	m_iSelectedOption[0][BO_BRIGHTNESS]			= (int)( PREFSMAN->m_fBGBrightness*10+0.5f ); 
-	m_iSelectedOption[0][BO_DANGER]				= PREFSMAN->m_bShowDanger ? 1:0;
-	m_iSelectedOption[0][BO_DANCING_CHARACTERS]	= PREFSMAN->m_bShowDancingCharacters? 1:0;
-	m_iSelectedOption[0][BO_RANDOM_BACKGROUNDS] = clamp((PREFSMAN->m_iNumBackgrounds/5)-1, 0, 3);
+	m_iSelectedOption[0][BO_MODE]					= PREFSMAN->m_BackgroundMode;
+	m_iSelectedOption[0][BO_BRIGHTNESS]				= (int)( PREFSMAN->m_fBGBrightness*10+0.5f ); 
+	m_iSelectedOption[0][BO_DANGER]					= PREFSMAN->m_bShowDanger ? 1:0;
+	m_iSelectedOption[0][BO_DANCING_CHARACTERS]		= PREFSMAN->m_bShowDancingCharacters? 1:0;
+	m_iSelectedOption[0][BO_SHOW_BEGINNER_HELPER]	= PREFSMAN->m_bShowBeginnerHelper? 1:0;
+	m_iSelectedOption[0][BO_RANDOM_BACKGROUNDS]		= clamp((PREFSMAN->m_iNumBackgrounds/5)-1, 0, 3);
 }
 
 void ScreenBackgroundOptions::ExportOptions()
@@ -70,6 +73,7 @@ void ScreenBackgroundOptions::ExportOptions()
 	PREFSMAN->m_fBGBrightness			= m_iSelectedOption[0][BO_BRIGHTNESS] / 10.0f;
 	PREFSMAN->m_bShowDanger				= m_iSelectedOption[0][BO_DANGER] == 1;
 	PREFSMAN->m_bShowDancingCharacters	= m_iSelectedOption[0][BO_DANCING_CHARACTERS] == 1;
+	PREFSMAN->m_bShowBeginnerHelper		= m_iSelectedOption[0][BO_SHOW_BEGINNER_HELPER] == 1;
 	PREFSMAN->m_iNumBackgrounds			= (m_iSelectedOption[0][BO_RANDOM_BACKGROUNDS]+1) * 5;
 }
 

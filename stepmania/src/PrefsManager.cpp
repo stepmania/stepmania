@@ -102,6 +102,7 @@ PrefsManager::PrefsManager()
 	m_fGlobalOffsetSeconds = 0;
 	m_bForceLogFlush = false;
 	m_bLogging = true;
+	m_bShowBeginnerHelper = false;
 #ifdef DEBUG
 	m_bShowLogWindow = true;
 #else
@@ -266,6 +267,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "ForceLogFlush",				m_bForceLogFlush );
 	ini.GetValueB( "Options", "Logging",					m_bLogging );
 	ini.GetValueB( "Options", "ShowLogWindow",				m_bShowLogWindow );
+	ini.GetValueB( "Options", "ShowBeginnnerHelper",		m_bShowBeginnerHelper );
 	ini.GetValue ( "Options", "Language",					m_sLanguage );
 
 
@@ -379,6 +381,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueI( "Options", "ProgressiveLifebar",			m_iProgressiveLifebar );
 	ini.SetValueI( "Options", "ProgressiveStageLifebar",	m_iProgressiveStageLifebar );
 	ini.SetValueI( "Options", "ProgressiveNonstopLifebar",	m_iProgressiveNonstopLifebar );
+	ini.SetValueB( "Options", "ShowBeginnerHelper",			m_bShowBeginnerHelper );
 	ini.SetValue ( "Options", "Language",					m_sLanguage );
 
 	/* Only write these if they aren't the default.  This ensures that we can change
