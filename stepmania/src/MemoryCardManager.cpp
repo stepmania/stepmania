@@ -304,7 +304,7 @@ MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in 
 		}
 	}
 
-#elif	// !LINUX
+#else	// !LINUX
 
 	MemoryCardManager::MemoryCardManager() {}
 	MemoryCardManager::~MemoryCardManager() {}
