@@ -70,7 +70,8 @@ public:
 		ASSERT( sParam.size() );
 
 		if(		 sParam.CompareNoCase("NoteSkins")==0 )		{ FillNoteSkins( defOut, sParam );		return; }
-		else if( sParam.CompareNoCase("Steps")==0 )			{ FillSteps( defOut, sParam );			return; }
+		else if( sParam.CompareNoCase("Steps")==0 )			{ FillSteps( defOut, sParam, false );	return; }
+		else if( sParam.CompareNoCase("StepsLocked")==0 )	{ FillSteps( defOut, sParam, true );	return; }
 		else if( sParam.CompareNoCase("Characters")==0 )	{ FillCharacters( defOut, sParam );		return; }
 		else if( sParam.CompareNoCase("Styles")==0 )		{ FillStyles( defOut, sParam );			return; }
 		else if( sParam.CompareNoCase("Groups")==0 )		{ FillGroups( defOut, sParam );			return; }
@@ -268,7 +269,7 @@ public:
 		}
 	}
 
-	void FillSteps( OptionRowDefinition &defOut, CString sParam )
+	void FillSteps( OptionRowDefinition &defOut, CString sParam, bool bLocked )
 	{
 		Init();
 		defOut.Init();
@@ -277,7 +278,7 @@ public:
 		m_sName = sParam;
 
 		defOut.name = "Steps";
-		defOut.bOneChoiceForAllPlayers = false;
+		defOut.bOneChoiceForAllPlayers = bLocked;
 		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
 
 		// fill in difficulty names
