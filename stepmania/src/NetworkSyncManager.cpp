@@ -828,7 +828,8 @@ void PacketFunctions::ClearPacket()
 
 LuaFunction_NoArgs( IsNetConnected,			NSMAN->useSMserver )
 LuaFunction_NoArgs( IsNetSMOnline,			NSMAN->isSMOnline )
-LuaFunction_NoArgs( ReportStyle,			(NSMAN->ReportStyle(),true) );
+static bool ReportStyle() { NSMAN->ReportStyle(); return true; }
+LuaFunction_NoArgs( ReportStyle,			ReportStyle() )
 LuaFunction_PlayerNumber( IsSMOnlineLoggedIn,	NSMAN->isSMOLoggedIn[pn] )
 
 /*
