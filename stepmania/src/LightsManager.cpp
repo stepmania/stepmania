@@ -16,6 +16,8 @@
 #include "arch/Lights/LightsDriver.h"
 #include "arch/arch.h"
 #include "RageUtil.h"
+#include "GameInput.h"	// for GameController
+#include "InputMapper.h"
 
 #include "windows.h"
 
@@ -35,6 +37,9 @@ LightsManager::~LightsManager()
 
 void LightsManager::Update( float fDeltaTime )
 {
+	//
+	// Update cabinet lights
+	//
 	switch( m_LightMode )
 	{
 	case LIGHTMODE_JOINING:
@@ -115,16 +120,71 @@ void LightsManager::Update( float fDeltaTime )
 				m_pDriver->SetLight( (Light)i, bOn );
 		}
 		break;
-	case LIGHTMODE_ALL_ON:
+	case LIGHTMODE_STAGE:
 		{
 			for( int i=0; i<8; i++ )
 				m_pDriver->SetLight( (Light)i, true );
 		}
 		break;
-	case LIGHTMODE_ALL_OFF:
+	case LIGHTMODE_ALL_CLEARED:
 		{
 			for( int i=0; i<8; i++ )
 				m_pDriver->SetLight( (Light)i, false );
+		}
+		break;
+	default:
+		ASSERT(0);
+	}
+
+	//
+	// Update game controller lights
+	//
+	// FIXME:  Works only with Game==dance
+	// FIXME:  lights pads for players who aren't playing
+	switch( m_LightMode )
+	{
+	case LIGHTMODE_ATTRACT:
+	case LIGHTMODE_MENU:
+	case LIGHTMODE_DEMONSTRATION:
+		{
+			for( int i=LIGHT_GAME_BUTTON1; i<=LIGHT_LAST_GAME_BUTTON; i++ )
+				m_pDriver->SetLight( (Light)i, false );
+		}
+		break;
+	case LIGHTMODE_ALL_CLEARED:
+	case LIGHTMODE_STAGE:
+	case LIGHTMODE_JOINING:
+		{
+			for( int c=0; c<2; c++ )
+			{
+				GameController gc = (GameController)c;
+				bool bOn = GAMESTATE->m_bSideIsJoined[c];
+
+				for( int i=0; i<4; i++ )
+				{
+					GameButton gb = (GameButton)i;
+					Light light = (Light)(LIGHT_GAME_BUTTON1 + c*4+i);
+					m_pDriver->SetLight( light, bOn );
+				}
+			}
+		}
+		break;
+	case LIGHTMODE_GAMEPLAY:
+		{
+			for( int c=0; c<2; c++ )
+			{
+				GameController gc = (GameController)c;
+
+				for( int i=0; i<4; i++ )
+				{
+					GameButton gb = (GameButton)i;
+
+					Light light = (Light)(LIGHT_GAME_BUTTON1 + c*4+i);
+
+					bool bOn = INPUTMAPPER->IsButtonDown( GameInput(gc,gb) );
+					m_pDriver->SetLight( light, bOn );
+				}
+			}
 		}
 		break;
 	default:

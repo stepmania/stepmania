@@ -1715,7 +1715,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 			GAMESTATE->RemoveAllActiveAttacks();
 
-			LIGHTSMAN->SetLightMode( LIGHTMODE_ALL_OFF );
+			LIGHTSMAN->SetLightMode( LIGHTMODE_ALL_CLEARED );
 
 
 			if( bAllReallyFailed )

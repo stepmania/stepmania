@@ -21,6 +21,20 @@ PORTOUT* PortOut = NULL;
 typedef short int (WINAPI ISDRIVERINSTALLED)();
 ISDRIVERINSTALLED* IsDriverInstalled = NULL;
 
+const int LIGHTS_PER_PARALLEL_PORT = 8;
+const int MAX_PARALLEL_PORTS = 3;
+DWORD LPT_ADDRESS[MAX_PARALLEL_PORTS] = 
+{
+	0x378,	// LPT1
+	0x278,	// LPT2
+	0x3bc,	// LPT3
+};
+void LightToLptAndPin( Light light, int &lpt_out, int &pin_out )
+{
+	lpt_out = light / LIGHTS_PER_PARALLEL_PORT;
+	ASSERT( lpt_out >= 0 && lpt_out < MAX_PARALLEL_PORTS );
+	pin_out = light % LIGHTS_PER_PARALLEL_PORT;
+}
 
 LightsDriver_Win32Parallel::LightsDriver_Win32Parallel()
 {
@@ -42,14 +56,26 @@ LightsDriver_Win32Parallel::~LightsDriver_Win32Parallel()
 	FreeLibrary( hDLL );
 }
 
+BYTE g_data[MAX_PARALLEL_PORTS] =
+{
+	0x00,
+	0x00,
+	0x00
+};
+
 void LightsDriver_Win32Parallel::SetLight( Light light, bool bOn )
 {
-	static BYTE data = 0x00;
-	BYTE mask = 0x01 << light;
+	int lpt;
+	int pin;
+	LightToLptAndPin( light, lpt, pin );
+
+	BYTE &data = g_data[lpt];
+	BYTE mask = 0x01 << pin;
 	if( bOn )
 		data |= mask;
 	else
 		data &= ~mask;
-	PortOut( 0x378, data );
-	// ports of interest:  0x278, 0x3BC, 0x378
+
+	DWORD address = LPT_ADDRESS[lpt];
+	PortOut( address, data );
 }
