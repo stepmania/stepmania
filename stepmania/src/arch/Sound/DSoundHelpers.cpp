@@ -306,9 +306,18 @@ void DSoundBuf::SetVolume(float vol)
 
 	if( volume == new_volume )
 		return;
-	volume = new_volume;
 
-	buf->SetVolume( volume );
+	HRESULT hr = buf->SetVolume( volume );
+	if( FAILED(hr) )
+	{
+		static bool bWarned = false;
+		if( !bWarned )
+			LOG->Warn( hr_ssprintf(hr, "DirectSoundBuffer::SetVolume(%i) failed", volume) );
+		bWarned = true;
+		return;
+	}
+
+	volume = new_volume;
 }
 
 /* Determine if "pos" is between "start" and "end", for a circular buffer. */
