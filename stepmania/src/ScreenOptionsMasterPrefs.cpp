@@ -534,6 +534,7 @@ int ConfOption::GetEffects() const
 		{ DisplayResolution,	OPT_APPLY_GRAPHICS },
 		{ DisplayColor,			OPT_APPLY_GRAPHICS },
 		{ TextureResolution,	OPT_APPLY_GRAPHICS },
+		{ TextureColor,			OPT_APPLY_GRAPHICS },
 		{ KeepTexturesInMemory,	OPT_APPLY_GRAPHICS },
 		{ SmoothLines,			OPT_APPLY_GRAPHICS },
 		{ RefreshRate,			OPT_APPLY_GRAPHICS },
