@@ -188,37 +188,35 @@ void RageBitmapTexture::Create(
 	D3DFORMAT fmtTexture;
 
 	if( dwTextureColorDepth == 16 )	{
-		/* 8-bit indexed color (BPP == 1) never needs more than 1 bit of alpha.
-		 *
-		 * If a file has only one bit of alpha, it'll never need more.  (But if
-		 * it has no alpha channel at all, it might still end up needing one
-		 * for the color key.) 
-		 *
-		 * XXX format->alpha isn't a bit count */
-		if( img->format->BytesPerPixel == 1 || img->format->alpha == 1 )
-			iAlphaBits = min(1, iAlphaBits);
+		/* Bits of alpha in the source: */
+		int src_alpha_bits = 8 - img->format->Aloss;
 
-		/* If we have no transparency, we don't need any alpha bits. */
-		if( !img->format->alpha && !img->format->colorkey )
-			iAlphaBits = 0;
+		/* No real alpha in paletted input. */
+		if( img->format->BytesPerPixel == 1 )
+			src_alpha_bits = 0;
+
+		/* Colorkeyed input effectively has at least one bit of alpha: */
+		if( img->flags & SDL_SRCCOLORKEY )
+			src_alpha_bits = max( 1, src_alpha_bits );
+
+		/* Don't use more than we were hinted to. */
+		src_alpha_bits = min( iAlphaBits, src_alpha_bits );
 
 /* XXX Scan the image, and see if it actually uses its alpha channel/color key
  * (if any).  Reduce to 1 or 0 bits of alpha if possible. */
-		
-		switch( iAlphaBits ) {
+
+		switch( src_alpha_bits ) {
 		case 0:		fmtTexture = D3DFMT_R5G6B5;		break;
 		case 1:		fmtTexture = D3DFMT_A1R5G5B5;	break;
-		case 4:		fmtTexture = D3DFMT_A4R4G4B4;	break;
-		default:
-			ASSERT(0);	// invalid iAlphaBits value
-			fmtTexture = D3DFMT_A1R5G5B5;	break;
+		default:	fmtTexture = D3DFMT_A4R4G4B4;	break;
 		}
 	} else if( dwTextureColorDepth == 32 )
 		fmtTexture = D3DFMT_A8R8G8B8;
 	else
 		throw RageException( "Invalid color depth: %d bits", dwTextureColorDepth );
 
-	// find out what the max texture size is
+	/* Cap the max texture size to the hardware max.  Is this needed--won't the
+	 * texture creation do this for us? */
 	dwMaxSize = min( dwMaxSize, int(DISPLAY->GetDeviceCaps().MaxTextureWidth) );
 
 	/* Save information about the source.  Unless something else changes this
@@ -260,14 +258,15 @@ void RageBitmapTexture::Create(
 
 	/* If the source is larger than the texture, we have to scale it down; that's
 	 * "stretching", I guess. */
-	bStretch |= m_iSourceWidth > m_iTextureWidth || m_iSourceHeight > m_iTextureHeight;
+	if(m_iSourceWidth > m_iTextureWidth || m_iSourceHeight > m_iTextureHeight)
+		bStretch = true;
 
 	int target = PixFmtMaskNo(fmtTexture);
 
 	/* Dither only when the target is 16bpp, not when it's 32bpp. */
 	if( PixFmtMasks[target][4] /* XXX magic 4 */ == 4)
 		bDither = false;
-//	bStretch = bDither = false;
+
 	if( bStretch ) {
 		/* zoomSurface takes a ratio.  I'm not sure if it's always exact; we don't
 			* want to accidentally create a 513x513 texture, for example (it won't just
