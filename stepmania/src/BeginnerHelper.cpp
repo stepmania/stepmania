@@ -128,7 +128,7 @@ bool BeginnerHelper::CanUse()
 	switch (GAMESTATE->m_CurStyle)
 	{
 		case STYLE_DANCE_SOLO:
-		case STYLE_DANCE_DOUBLE: return false; break;
+		case STYLE_DANCE_DOUBLE: return false;
 	}
 	return true;
 }
