@@ -127,6 +127,10 @@ RageSoundFileReaders = \
 RageSoundReader_SDL_Sound.cpp RageSoundReader_SDL_Sound.h \
 RageSoundReader_WAV.cpp RageSoundReader_WAV.h 
 
+if HAVE_VORBIS
+RageSoundFileReaders += RageSoundReader_Vorbisfile.cpp RageSoundReader_Vorbisfile.h
+endif
+
 if HAVE_MP3
 RageSoundFileReaders += RageSoundReader_MP3.cpp RageSoundReader_MP3.h
 endif
