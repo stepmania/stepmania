@@ -430,6 +430,8 @@ void ScreenRanking::SetPage( PageToShow pts )
 				ProfileManager::CategoryData::HighScore hs;
 				if( l < (int)PROFILEMAN->m_CategoryDatas[MEMORY_CARD_MACHINE][pts.nt][pts.category].vHighScores.size() )
 					hs = PROFILEMAN->m_CategoryDatas[MEMORY_CARD_MACHINE][pts.nt][pts.category].vHighScores[l];
+				else
+					hs.sName = NO_SCORE_NAME;
 				if( hs.sName.empty() )
 					hs.sName = EMPTY_SCORE_NAME;
 
@@ -482,6 +484,8 @@ void ScreenRanking::SetPage( PageToShow pts )
 				Course::MemCardData::HighScore hs;
 				if( l < (int)pts.pCourse->m_MemCardDatas[pts.nt][MEMORY_CARD_MACHINE].vHighScores.size() )
 					hs = pts.pCourse->m_MemCardDatas[pts.nt][MEMORY_CARD_MACHINE].vHighScores[l];
+				else
+					hs.sName = NO_SCORE_NAME;
 				if( hs.sName.empty() )
 					hs.sName = EMPTY_SCORE_NAME;
 				
@@ -564,6 +568,8 @@ void ScreenRanking::SetPage( PageToShow pts )
 						Steps::MemCardData::HighScore hs;
 						if( l < (int)pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores.size() )
 							hs = pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores[l];
+						else
+							hs.sName = NO_SCORE_NAME;
 						if( hs.sName.empty() )
 							hs.sName = EMPTY_SCORE_NAME;
 
