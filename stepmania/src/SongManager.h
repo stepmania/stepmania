@@ -25,7 +25,10 @@ public:
 	void InitSongsFromDisk( LoadingWindow *ld );
 	void FreeSongs();
 	void Cleanup();
-	void FlushCaches();
+
+	void Invalidate( Song *pStaleSong );
+
+	void RegenerateNonFixedCourses();
 	void SetPreferences();
 
 	void LoadAllFromProfiles();	// song, edits

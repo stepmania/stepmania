@@ -127,6 +127,7 @@ public:
 	bool IsFixed() const;
 
 	void LoadFromCRSFile( CString sPath );
+	void RevertFromDisk();
 	void Init();
 	void Save();
 	void AutogenEndlessFromGroup( CString sGroupName, Difficulty dc );
@@ -140,8 +141,11 @@ public:
 
 	void UpdateCourseStats( StepsType st );
 
-	/* Call to generate Trails with random entries and if song or notes pointers change. */
-	void RegenTrails();
+	/* Call to regenerate Trails with random entries */
+	void RegenerateNonFixedTrails();
+
+	/* Call when a Song or its Steps are deleted/changed. */
+	void Invalidate( Song *pStaleSong );
 
 private:
 	bool GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;

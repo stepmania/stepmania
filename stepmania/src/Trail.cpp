@@ -51,7 +51,14 @@ bool TrailEntry::ContainsTransformOrTurn() const
 
 RadarValues Trail::GetRadarValues() const
 {
-	if( m_bRadarValuesCached )
+	if( IsMystery() )
+	{
+		// Don't calculate RadarValues for a non-fixed Course.  They values are 
+		// worthless because they'll change every time this Trail is 
+		// regenerated.
+		return RadarValues();
+	}
+	else if( m_bRadarValuesCached )
 	{
 		return m_CachedRadarValues;
 	}
@@ -150,6 +157,26 @@ void Trail::GetDisplayBpms( DisplayBpms &AddTo )
 			ASSERT(0);
 		}
 	}
+}
+
+bool Trail::IsMystery() const
+{
+	FOREACH_CONST( TrailEntry, m_vEntries, e )
+	{
+		if( e->bMystery )
+			return true;
+	}
+	return false;
+}
+
+bool Trail::ContainsSong( Song* pSong ) const
+{
+	FOREACH_CONST( TrailEntry, m_vEntries, e )
+	{
+		if( e->pSong == pSong )
+			return true;
+	}
+	return false;
 }
 
 /*

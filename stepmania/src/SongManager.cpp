@@ -28,6 +28,7 @@
 #include "RageFileManager.h"
 #include "UnlockSystem.h"
 #include "CatalogXml.h"
+#include "Foreach.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -78,8 +79,8 @@ SongManager::SongManager()
 
 SongManager::~SongManager()
 {
-	FreeSongs();
 	FreeCourses();
+	FreeSongs();
 }
 
 void SongManager::InitAll( LoadingWindow *ld )
@@ -665,13 +666,19 @@ void SongManager::Cleanup()
 /* Flush all Song*, Steps* and Course* caches.  This is called on reload, and when
  * any of those are removed or changed.  This doesn't touch GAMESTATE and StageStats
  * pointers, which are updated explicitly in Song::RevertFromDisk. */
-void SongManager::FlushCaches()
+void SongManager::Invalidate( Song *pStaleSong )
 {
 	/* Erase cached course info. */
-	for( unsigned i=0; i < m_pCourses.size(); i++ )
-		m_pCourses[i]->RegenTrails();
+	FOREACH_CONST( Course*, m_pCourses, c )
+		(*c)->Invalidate( pStaleSong );
 
-	StepsID::FlushCache();
+	StepsID::Invalidate( pStaleSong );
+}
+
+void SongManager::RegenerateNonFixedCourses()
+{
+	for( unsigned i=0; i < m_pCourses.size(); i++ )
+		m_pCourses[i]->RegenerateNonFixedTrails();
 }
 
 void SongManager::SetPreferences()

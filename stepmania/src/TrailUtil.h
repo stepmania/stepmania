@@ -3,6 +3,7 @@
 
 #include "GameConstantsAndTypes.h"
 
+class Song;
 class Trail;
 class Course;
 struct XNode;
@@ -24,7 +25,7 @@ public:
 	void LoadFromNode( const XNode* pNode );
 	CString ToString() const;
 	bool IsValid() const;
-	static void FlushCache();
+	static void Invalidate( Song* pStaleSong );
 };
 
 #endif

@@ -1815,15 +1815,14 @@ void SaveChanges( void* papSongsQueue )
 void RevertChanges( void* papSongsQueue )
 {
 	vector<Song*>& apSongsQueue = *(vector<Song*>*)papSongsQueue;
-	for( unsigned i=0; i<apSongsQueue.size(); i++ )
-		apSongsQueue[i]->RevertFromDisk();
+	FOREACH( Song*, apSongsQueue, pSong )
+	{
+		(*pSong)->RevertFromDisk();
 
-	// We need to regen any Courses that have any of the songs we just reloaded.
-	// Regen all Courses for now.
-	vector<Course*> vpAllCourses;
-	SONGMAN->GetAllCourses( vpAllCourses, true );
-	FOREACH( Course*, vpAllCourses, pCourse )
-		(*pCourse)->RegenTrails();
+		// We need to regen any Courses that have any of the songs we just reloaded.
+		// Regen all Courses for now.
+		SONGMAN->Invalidate( *pSong );
+	}
 }
 
 void ScreenGameplay::ShowSavePrompt( ScreenMessage SM_SendWhenDone )

@@ -256,6 +256,11 @@ void Course::LoadFromCRSFile( CString sPath )
 	m_sMainTitleTranslit = title.TitleTranslit;
 }
 
+void Course::RevertFromDisk()
+{
+	LoadFromCRSFile( m_sPath );
+}
+
 void Course::Init()
 {
 	m_bIsAutogen = false;
@@ -898,9 +903,9 @@ void Course::GetTrails( vector<Trail*> &AddTo, StepsType st ) const
 
 bool Course::HasMods() const
 {
-	for( unsigned i=0; i<m_entries.size(); i++ )
+	FOREACH_CONST( CourseEntry, m_entries, e )
 	{
-		if( !m_entries[i].modifiers.empty() || !m_entries[i].attacks.empty() )
+		if( !e->modifiers.empty() || !e->attacks.empty() )
 			return true;
 	}
 
@@ -909,17 +914,44 @@ bool Course::HasMods() const
 
 bool Course::AllSongsAreFixed() const
 {
-	for( unsigned i=0; i<m_entries.size(); i++ )
+	FOREACH_CONST( CourseEntry, m_entries, e )
 	{
-		if( m_entries[i].type != COURSE_ENTRY_FIXED )
+		if( e->type != COURSE_ENTRY_FIXED )
 			return false;
 	}
 	return true;
 }
 
-void Course::RegenTrails()
+void Course::Invalidate( Song *pStaleSong )
 {
-	ZERO( m_TrailCacheValid );
+	FOREACH_CONST( CourseEntry, m_entries, e )
+	{
+		if( e->pSong == pStaleSong )	// a fixed entry that references the stale Song
+		{
+			RevertFromDisk();
+			return;
+		}
+	}
+
+	// Invalidate any Trails that contain this song.
+	// If we find a Trail that contains this song, then it's part of a 
+	// non-fixed entry.  So, regenerating the Trail will force different
+	// songs to be chosen.
+	FOREACH_StepsType( st )
+		FOREACH_ShownCourseDifficulty( cd )
+			if( m_TrailCacheValid[st][cd] && !m_TrailCacheNull[st][cd] )
+				if( GetTrail( st, cd )->ContainsSong( pStaleSong ) )
+					m_TrailCacheValid[st][cd] = false;
+}
+
+void Course::RegenerateNonFixedTrails()
+{
+	// Only need to regen Trails if the Course has a random entry.
+	// We can create these Trails on demand because we don't 
+	// calculate RadarValues for Trails with one or more non-fixed 
+	// entry.
+	if( !IsFixed() )
+		ZERO( m_TrailCacheValid );
 }
 
 RageColor Course::GetColor() const
