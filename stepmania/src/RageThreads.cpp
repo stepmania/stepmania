@@ -130,8 +130,41 @@ static int FindEmptyThreadSlot()
 	RageException::Throw("Out of thread slots!");
 }
 
+static void InitThreads()
+{
+	/* We don't have to worry about two threads calling this at on */
+	static bool bInitialized = false;
+	if( bInitialized )
+		return;
+
+	g_ThreadSlotsLock.Lock();
+
+	/* Libraries might start threads on their own, which might call user callbacks,
+	 * which could come back here.  Make sure we don't accidentally initialize twice. */
+	if( bInitialized )
+	{
+		g_ThreadSlotsLock.Unlock();
+		return;
+	}
+
+	bInitialized = true;
+
+	/* Register the "unknown thread" slot. */
+	int slot = FindEmptyThreadSlot();
+	strcpy( g_ThreadSlots[slot].name, "Unknown thread" );
+	g_ThreadSlots[slot].id = GetInvalidThreadId();
+	sprintf( g_ThreadSlots[slot].ThreadFormattedOutput, "Unknown thread" );
+	g_ThreadSlots[slot].used = true;
+	g_pUnknownThreadSlot = &g_ThreadSlots[slot];
+
+	g_ThreadSlotsLock.Unlock();
+}
+
+
 static ThreadSlot *GetThreadSlotFromID( uint64_t iID )
 {
+	InitThreads();
+
 	for( int entry = 0; entry < MAX_THREADS; ++entry )
 	{
 		if( !g_ThreadSlots[entry].used )
@@ -176,6 +209,8 @@ void RageThread::Create( int (*fn)(void *), void *data )
 	/* Don't create a thread that's already running: */
 	ASSERT( m_pSlot == NULL );
 
+	InitThreads();
+
 	/* Lock unused slots, so nothing else uses our slot before we mark it used. */
 	LockMut(g_ThreadSlotsLock);
 
@@ -202,7 +237,8 @@ void RageThread::Create( int (*fn)(void *), void *data )
 	g_ThreadSlots[slotno].used = true;
 }
 
-/* On startup, register the main thread's slot. */
+/* On startup, register the main thread's slot.  We do this in a static constructor,
+ * and not InitThreads(), to guarantee it happens in the main thread. */
 static struct SetupMainThread
 {
 	SetupMainThread()
@@ -212,24 +248,11 @@ static struct SetupMainThread
 		strcpy( g_ThreadSlots[slot].name, "Main thread" );
 		sprintf( g_ThreadSlots[slot].ThreadFormattedOutput, "Thread: %s", g_ThreadSlots[slot].name );
 		g_ThreadSlots[slot].pImpl = MakeThisThread();
+		g_ThreadSlots[slot].id = RageThread::GetCurrentThreadID();
 		g_ThreadSlots[slot].used = true;
 	}
 } SetupMainThreadObj;
 
-/* Register the "unknown thread" slot. */
-static struct SetupUnknownThread
-{
-	SetupUnknownThread()
-	{
-		LockMut(g_ThreadSlotsLock);
-		int slot = FindEmptyThreadSlot();
-		strcpy( g_ThreadSlots[slot].name, "Unknown thread" );
-		g_ThreadSlots[slot].id = GetInvalidThreadId();
-		g_pUnknownThreadSlot = &g_ThreadSlots[slot];
-		sprintf( g_ThreadSlots[slot].ThreadFormattedOutput, "Unknown thread" );
-		g_ThreadSlots[slot].used = true;
-	}
-} SetupUnknownThreadObj;
 
 const char *RageThread::GetCurThreadName()
 {
@@ -269,7 +292,7 @@ void RageThread::HaltAllThreads( bool Kill )
 	{
 		if( !g_ThreadSlots[entry].used )
 			continue;
-		if( ThisThreadID == g_ThreadSlots[entry].id )
+		if( ThisThreadID == g_ThreadSlots[entry].id || g_ThreadSlots[entry].pImpl == NULL )
 			continue;
 		g_ThreadSlots[entry].pImpl->Halt( Kill );
 	}
@@ -282,7 +305,7 @@ void RageThread::ResumeAllThreads()
 	{
 		if( !g_ThreadSlots[entry].used )
 			continue;
-		if( ThisThreadID == g_ThreadSlots[entry].id )
+		if( ThisThreadID == g_ThreadSlots[entry].id || g_ThreadSlots[entry].pImpl == NULL )
 			continue;
 
 		g_ThreadSlots[entry].pImpl->Resume();
