@@ -190,8 +190,10 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 		const CString sValueName = sParams[0];
 
 		// handle the data
+		/* Don't use GetMainAndSubTitlesFromFullTitle; that's only for heuristically
+		 * splitting other formats that *don't* natively support #SUBTITLE. */
 		if( 0==stricmp(sValueName,"TITLE") )
-			GetMainAndSubTitlesFromFullTitle( sParams[1], out.m_sMainTitle, out.m_sSubTitle );
+			out.m_sMainTitle = sParams[1];
 
 		else if( 0==stricmp(sValueName,"SUBTITLE") )
 			out.m_sSubTitle = sParams[1];
