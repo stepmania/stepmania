@@ -28,6 +28,8 @@ struct tm *my_localtime_r( const time_t *timep, struct tm *result );
 #define localtime_r my_localtime_r
 struct tm *my_gmtime_r( const time_t *timep, struct tm *result );
 #define gmtime_r my_gmtime_r
+void my_usleep( unsigned long usec );
+#define usleep my_usleep
 
 /* Missing stdint types: */
 typedef __int8 int8_t;
