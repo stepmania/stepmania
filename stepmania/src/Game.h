@@ -45,7 +45,6 @@ public:
 	int		m_iButtonsPerController;
 	int		GetNumGameplayButtons() const;
 	char	m_szButtonNames[MAX_GAME_BUTTONS][60];	// The name used by the button graphics system.  e.g. "left", "right", "middle C", "snare"
-	char	m_szSecondaryFunction[MAX_GAME_BUTTONS][60];	// displayed on the mapping screen
 	GameButton	m_DedicatedMenuButton[NUM_MENU_BUTTONS];
 	GameButton	m_SecondaryMenuButton[NUM_MENU_BUTTONS];
 	int		m_iDefaultKeyboardKey[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS];	// default keyboard keys only have an effect the current game is this game
