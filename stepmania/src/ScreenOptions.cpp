@@ -202,13 +202,22 @@ void ScreenOptions::DimOption(int line, int option, bool dim)
 		m_textOptions[line][option].SetTweenDiffuseColor( D3DXCOLOR(.5,.5,.5,1) );
 	else
 		m_textOptions[line][option].SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
+
+	/* Don't know if I like this ...-glenn
+	m_textOptionLineTitles[line].BeginTweening(.250);
+	if(RowCompletelyDimmed(line))
+		m_textOptionLineTitles[line].SetTweenZoom( 0.6f );
+	else
+		m_textOptionLineTitles[line].SetTweenZoom( 0.7f );
+	*/
+
 }
 
 bool ScreenOptions::RowCompletelyDimmed(int line) const
 {
 	for(int i = 0; i < m_OptionLineData[line].iNumOptions; ++i)
-		if(!m_OptionDim[line][i]) return true;
-	return false;
+		if(!m_OptionDim[line][i]) return false;
+	return true;
 }
 
 void ScreenOptions::PositionUnderlines()
@@ -394,7 +403,7 @@ void ScreenOptions::MenuUp( const PlayerNumber pn )
 		do {
 			if(--new_row < 0)
 				new_row = m_iNumOptionLines-1; // wrap around
-			if(RowCompletelyDimmed(new_row)) break;
+			if(!RowCompletelyDimmed(new_row)) break;
 		} while(new_row != m_iCurrentRow[p]);
 		m_iCurrentRow[p] = new_row;
 
@@ -415,9 +424,9 @@ void ScreenOptions::MenuDown( const PlayerNumber pn )
 		/* Find the next row with any un-dimmed entries. */
 		int new_row = m_iCurrentRow[p];
 		do {
-			if( ++new_row == m_iNumOptionLines-1 )
+			if( ++new_row == m_iNumOptionLines )
 				new_row = 0; // wrap around
-			if(RowCompletelyDimmed(new_row)) break;
+			if(!RowCompletelyDimmed(new_row)) break;
 		} while(new_row != m_iCurrentRow[p]);
 		m_iCurrentRow[p] = new_row;
 
