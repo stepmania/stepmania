@@ -97,6 +97,8 @@ SoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open(CString file
 	filename=filename_;
 
 	vf = new OggVorbis_File;
+	memset( vf, 0, sizeof(*vf) );
+
 	RageFile *f = new RageFile;
 	
 	if( !f->Open( filename ) )
@@ -306,9 +308,12 @@ RageSoundReader_Vorbisfile::RageSoundReader_Vorbisfile()
 
 RageSoundReader_Vorbisfile::~RageSoundReader_Vorbisfile()
 {
+	CHECKPOINT_M( ssprintf("%p", vf) );
 	if(vf)
 		ov_clear(vf);
+	CHECKPOINT;
 	delete vf;
+	CHECKPOINT;
 }
 
 SoundReader *RageSoundReader_Vorbisfile::Copy() const
