@@ -66,4 +66,3 @@ RankingCategory AverageMeterToRankingCategory( float fAverageMeter )
 
 }
 
-

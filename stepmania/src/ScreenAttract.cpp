@@ -30,8 +30,6 @@
 #define SECONDS_TO_SHOW					THEME->GetMetricF(m_sMetricName,"SecondsToShow")
 #define NEXT_SCREEN						THEME->GetMetric(m_sMetricName,"NextScreen")
 
-const ScreenMessage SM_BeginFadingOut	=	ScreenMessage(SM_User+2);
-
 
 ScreenAttract::ScreenAttract( CString sMetricName, CString sElementName )
 {
@@ -55,7 +53,7 @@ ScreenAttract::ScreenAttract( CString sMetricName, CString sElementName )
 
 	m_soundStart.Load( THEME->GetPathTo("Sounds","menu start") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds",m_sElementName + " music"), false );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds",m_sElementName + " music") );	// DO loop.  -Chris
 
 	GAMESTATE->m_bPlayersCanJoin = true;
 
@@ -96,8 +94,7 @@ void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type
 		{
 		case MENU_BUTTON_LEFT:
 		case MENU_BUTTON_RIGHT:
-			if( !m_Fade.IsOpening() && !m_Fade.IsClosing() )
-				m_Fade.CloseWipingRight( SM_GoToNextScreen );
+			this->SendScreenMessage( SM_BeginFadingOut, 0 );
 			break;
 		case MENU_BUTTON_COIN:
 			Screen::MenuCoin( MenuI.player );	// increment coins, play sound
@@ -149,7 +146,9 @@ void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
 		 * music theme element and it's the same as the one we're playing
 		 * now, don't stop.  (However, if we're going to interrupt it 
 		 * when we fade in, it's cleaner to stop it before we fade out.) */
-		SOUNDMAN->PlayMusic( "" );
+		/* Don't stop the music, or else the music will start over from the 
+		 * beginning for consecutive screens with the same music. -Chris */
+		//SOUNDMAN->PlayMusic( "" );
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	}

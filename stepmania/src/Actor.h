@@ -171,7 +171,9 @@ public:
 	Effect GetEffect() { return m_Effect; };
 
 
+	//
 	// other properties
+	//
 	void TurnShadowOn()		{ m_bShadow = true; };
 	void TurnShadowOff()	{ m_bShadow = false; };
 	void SetShadowLength( float fLength )	{ m_fShadowLength = fLength; };
@@ -180,6 +182,9 @@ public:
 	void SetBlendModeNormal() 	{ m_bBlendAdd = false; };
 
 
+	//
+	// fade command
+	//
 	void Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, bool bOnToScreenOrOffOfScreen );
 	void FadeOn( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,false); };
 	void FadeOff( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,true); };

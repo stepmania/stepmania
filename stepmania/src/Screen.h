@@ -37,8 +37,8 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM ) {};
 
 	void SendScreenMessage( const ScreenMessage SM, const float fDelay );
-	void ClearMessageQueue() { m_QueuedMessages.clear(); }
-
+	void ClearMessageQueue();
+	void ClearMessageQueue( const ScreenMessage SM );	// clear of a specific SM
 protected:
 
 	// structure for holding messages sent to a Screen

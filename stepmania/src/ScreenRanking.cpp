@@ -33,13 +33,15 @@
 #define SCORES_START_Y			THEME->GetMetricF("ScreenRanking","ScoresStartY")
 #define SCORES_ZOOM				THEME->GetMetricF("ScreenRanking","ScoresZoom")
 #define SCORES_COLOR			THEME->GetMetricC("ScreenRanking","ScoresColor")
-#define SECS_BETWEEN_PAGES		THEME->GetMetricF("ScreenRanking","SecsBetweenPages")
+#define SECONDS_PER_PAGE		THEME->GetMetricF("ScreenRanking","SecondsPerPage")
 #define SHOW_CATEGORIES			THEME->GetMetricB("ScreenRanking","ShowCategories")
 #define COURSES_TO_SHOW			THEME->GetMetric("ScreenRanking","CoursesToShow")
 #define NOTES_TYPES_TO_HIDE		THEME->GetMetric("ScreenRanking","NotesTypesToHide")
 
 
-const ScreenMessage SM_NextCategory	=	(ScreenMessage)(SM_User+67);
+const ScreenMessage SM_ShowNextPage		=	(ScreenMessage)(SM_User+67);
+const ScreenMessage SM_HidePage			=	(ScreenMessage)(SM_User+68);
+
 
 ScreenRanking::ScreenRanking() : ScreenAttract("ScreenRanking","ranking")
 {
@@ -59,6 +61,7 @@ ScreenRanking::ScreenRanking() : ScreenAttract("ScreenRanking","ranking")
 		m_sprBullets[i].SetXY( BULLETS_START_X+LINE_SPACING_X*i, BULLETS_START_Y+LINE_SPACING_Y*i );
 		m_sprBullets[i].StopAnimating();
 		m_sprBullets[i].SetState(i);
+		m_sprBullets[i].SetDiffuse( RageColor(1,1,1,0) );
 		this->AddChild( &m_sprBullets[i] );
 
 		m_textNames[i].LoadFromFont( THEME->GetPathTo("Fonts","ranking") );
@@ -77,104 +80,118 @@ ScreenRanking::ScreenRanking() : ScreenAttract("ScreenRanking","ranking")
 	}
 
 
-	vector<NotesType> aNotesTypesToHide;
+	vector<NotesType> aNotesTypesToShow;
+	GAMEMAN->GetNotesTypesForGame( GAMESTATE->m_CurGame, aNotesTypesToShow );
+
+	// subtract hidden NotesTypes
 	{
 		vector<CString> asNotesTypesToHide;
 		split( NOTES_TYPES_TO_HIDE, ",", asNotesTypesToHide, true );
 		for( unsigned i=0; i<asNotesTypesToHide.size(); i++ )
-			if( GameManager::StringToNotesType(asNotesTypesToHide[i]) != NOTES_TYPE_INVALID )
-				aNotesTypesToHide.push_back( GameManager::StringToNotesType(asNotesTypesToHide[i]) );
+		{
+			NotesType nt = GameManager::StringToNotesType(asNotesTypesToHide[i]);
+			if( nt != NOTES_TYPE_INVALID )
+			{
+				const vector<NotesType>::iterator iter = find( aNotesTypesToShow.begin(), aNotesTypesToShow.end(), nt );
+				if( iter != aNotesTypesToShow.end() )
+					aNotesTypesToShow.erase( iter );
+			}
+		}
 	}
 
-	// fill m_vCategoriesToShow
+
+	// fill m_vPagesToShow
 	if( SHOW_CATEGORIES )
 	{
-		for( NotesType nt=(NotesType)0; nt<NUM_NOTES_TYPES; nt=(NotesType)(nt+1) )
+		for( unsigned i=0; i<aNotesTypesToShow.size(); i++ )
 		{
-			for( int i=0; i<NUM_RANKING_CATEGORIES; i++ )
+			for( int c=0; c<NUM_RANKING_CATEGORIES; c++ )
 			{
-				if( find(aNotesTypesToHide.begin(), aNotesTypesToHide.end(), nt) != aNotesTypesToHide.end() )	// hidden
-					continue;	// skip
-
-				CategoryToShow cts;
-				cts.type = CategoryToShow::TYPE_CATEGORY;
-				cts.category = (RankingCategory)i;
-				cts.nt = nt;
-				m_vCategoriesToShow.push_back( cts );
+				PageToShow pts;
+				pts.type = PageToShow::TYPE_CATEGORY;
+				pts.category = (RankingCategory)c;
+				pts.nt = aNotesTypesToShow[i];
+				m_vPagesToShow.push_back( pts );
 			}
 		}
 	}
 
 	vector<CString> asCoursePaths;
 	split( COURSES_TO_SHOW, ",", asCoursePaths, true );
-	for( NotesType nt=(NotesType)0; nt<NUM_NOTES_TYPES; nt=(NotesType)(nt+1) )
+	for( unsigned i=0; i<aNotesTypesToShow.size(); i++ )
 	{
-		for( unsigned i=0; i<asCoursePaths.size(); i++ )
+		for( unsigned c=0; c<asCoursePaths.size(); c++ )
 		{
-			if( find(aNotesTypesToHide.begin(), aNotesTypesToHide.end(), nt) == aNotesTypesToHide.end() )	// hidden
-				continue;	// skip
-
-			CategoryToShow cts;
-			cts.type = CategoryToShow::TYPE_COURSE;
-			cts.nt = nt;
-			cts.pCourse = SONGMAN->GetCourseFromPath( asCoursePaths[i] );
-			if( cts.pCourse )
-				m_vCategoriesToShow.push_back( cts );
+			PageToShow pts;
+			pts.type = PageToShow::TYPE_COURSE;
+			pts.nt = aNotesTypesToShow[i];
+			pts.pCourse = SONGMAN->GetCourseFromPath( asCoursePaths[c] );
+			if( pts.pCourse )
+				m_vPagesToShow.push_back( pts );
 		}
 	}
 
-
 	this->MoveToTail( &m_Fade );
 
-	this->SendScreenMessage( SM_NextCategory, 0.5f );
+	this->ClearMessageQueue( SM_BeginFadingOut );	// ignore ScreenAttract's SecsToShow
+
+	this->SendScreenMessage( SM_ShowNextPage, 0.5f );
 }
 
 void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
-	case SM_NextCategory:
-		if( m_vCategoriesToShow.size() > 0 )
+	case SM_BeginFadingOut:
+		m_Fade.CloseWipingRight(SM_GoToNextScreen);
+		break;
+	case SM_ShowNextPage:
+		if( m_vPagesToShow.size() > 0 )
 		{
-			ShowCategory( m_vCategoriesToShow[0] );
-			m_vCategoriesToShow.erase( m_vCategoriesToShow.begin() );
-			this->SendScreenMessage( SM_NextCategory, 5 );
+			SetPage( m_vPagesToShow[0] );
+			m_vPagesToShow.erase( m_vPagesToShow.begin() );
+			this->SendScreenMessage( SM_HidePage, SECONDS_PER_PAGE-1 );
+			TweenPageOnScreen();
 		}
 		else
 		{
 			m_Fade.CloseWipingRight(SM_GoToNextScreen);
 		}
 		break;
+	case SM_HidePage:
+		TweenPageOffScreen();
+		this->SendScreenMessage( SM_ShowNextPage, 1 );
+		break;
 	}
 
 	ScreenAttract::HandleScreenMessage( SM );
 }
 
-void ScreenRanking::ShowCategory( CategoryToShow cts )
+void ScreenRanking::SetPage( PageToShow pts )
 {
-	switch( cts.type )
+	switch( pts.type )
 	{
-	case CategoryToShow::TYPE_CATEGORY:
+	case PageToShow::TYPE_CATEGORY:
 		{
-			m_textCategory.SetText( ssprintf("Type %c", 'A'+cts.category) );
-			m_textType.SetText( GameManager::NotesTypeToString(cts.nt) );
+			m_textCategory.SetText( ssprintf("Type %c", 'A'+pts.category) );
+			m_textType.SetText( GameManager::NotesTypeToString(pts.nt) );
 			for( int l=0; l<NUM_HIGH_SCORE_LINES; l++ )
 			{
-				CString sName = SONGMAN->m_MachineScores[cts.nt][cts.category][l].sName;
-				float fScore = SONGMAN->m_MachineScores[cts.nt][cts.category][l].fScore;
+				CString sName = SONGMAN->m_MachineScores[pts.nt][pts.category][l].sName;
+				float fScore = SONGMAN->m_MachineScores[pts.nt][pts.category][l].fScore;
 				m_textNames[l].SetText( sName );
 				m_textScores[l].SetText( ssprintf("%.0f",fScore) );
 			}
 		}
 		break;
-	case CategoryToShow::TYPE_COURSE:
+	case PageToShow::TYPE_COURSE:
 		{
-			m_textCategory.SetText( cts.pCourse->m_sName );
-			m_textType.SetText( GameManager::NotesTypeToString(cts.nt) );
+			m_textCategory.SetText( pts.pCourse->m_sName );
+			m_textType.SetText( GameManager::NotesTypeToString(pts.nt) );
 			for( int l=0; l<NUM_HIGH_SCORE_LINES; l++ )
 			{
-				CString sName = cts.pCourse->m_MachineScores[cts.nt][l].sName;
-				int iDancePoints = cts.pCourse->m_MachineScores[cts.nt][l].iDancePoints;
+				CString sName = pts.pCourse->m_MachineScores[pts.nt][l].sName;
+				int iDancePoints = pts.pCourse->m_MachineScores[pts.nt][l].iDancePoints;
 				m_textNames[l].SetText( sName );
 				m_textScores[l].SetText( ssprintf("%d",iDancePoints) );
 			}
@@ -183,39 +200,35 @@ void ScreenRanking::ShowCategory( CategoryToShow cts )
 	default:
 		ASSERT(0);
 	}
+}
 
-	m_textCategory.SetZoomY(0);
-	m_textCategory.BeginTweening(0.0f);		// sleep
-	m_textCategory.BeginTweening(0.25f);
-	m_textCategory.SetTweenZoomY(1);
-	m_textCategory.BeginTweening(3.5f);		// sleep
-	m_textCategory.BeginTweening(0.25f);
-	m_textCategory.SetTweenZoomY(0);
-
-	m_textType.SetZoomY(0);
-	m_textType.BeginTweening(0.2f);		// sleep
-	m_textType.BeginTweening(0.25f);
-	m_textType.SetTweenZoomY(1);
-	m_textType.BeginTweening(3.5f);		// sleep
-	m_textType.BeginTweening(0.25f);
-	m_textType.SetTweenZoomY(0);
+void ScreenRanking::TweenPageOnScreen()
+{
+	m_textCategory.SetDiffuse( RageColor(1,1,1,1) );
+	m_textCategory.FadeOn(0,"bounce right",0.5f);
+	m_textType.SetDiffuse( RageColor(1,1,1,1) );
+	m_textType.FadeOn(0.1f,"bounce right",0.5f);
 
 	for( int l=0; l<NUM_HIGH_SCORE_LINES; l++ )
 	{
-		m_textNames[l].SetZoomY(0);
-		m_textNames[l].BeginTweening(0+l*0.1f+0.4f);	// sleep
-		m_textNames[l].BeginTweening(0.25f);
-		m_textNames[l].SetTweenZoomY(1);
-		m_textNames[l].BeginTweening(3.5f);		// sleep
-		m_textNames[l].BeginTweening(0.25f);
-		m_textNames[l].SetTweenZoomY(0);
+		m_sprBullets[l].SetDiffuse( RageColor(1,1,1,1) );
+		m_sprBullets[l].FadeOn(0.2f+l*0.1f,"bounce right far",1.f);
+		m_textNames[l].SetDiffuse( RageColor(1,1,1,1) );
+		m_textNames[l].FadeOn(0.2f+l*0.1f,"bounce right far",1.f);
+		m_textScores[l].SetDiffuse( RageColor(1,1,1,1) );
+		m_textScores[l].FadeOn(0.2f+l*0.1f,"bounce right far",1.f);
+	}
+}
 
-		m_textScores[l].SetZoomY(0);
-		m_textScores[l].BeginTweening(0+l*0.1f+0.4f);	// sleep
-		m_textScores[l].BeginTweening(0.25f);
-		m_textScores[l].SetTweenZoomY(1);
-		m_textScores[l].BeginTweening(3.5f);		// sleep
-		m_textScores[l].BeginTweening(0.25f);
-		m_textScores[l].SetTweenZoomY(0);
+void ScreenRanking::TweenPageOffScreen()
+{
+	m_textCategory.FadeOff(0,"fade",0.25f);
+	m_textType.FadeOff(0.1f,"fade",0.25f);
+
+	for( int l=0; l<NUM_HIGH_SCORE_LINES; l++ )
+	{
+		m_sprBullets[l].FadeOff(0.2f+l*0.1f,"fade",0.25f);
+		m_textNames[l].FadeOff(0.2f+l*0.1f,"fade",0.25f);
+		m_textScores[l].FadeOff(0.2f+l*0.1f,"fade",0.25f);
 	}
 }

@@ -116,7 +116,7 @@ void Screen::MenuCoin( PlayerNumber pn )
 	}
 }
 
-void Screen::SendScreenMessage( ScreenMessage SM, float fDelay )
+void Screen::SendScreenMessage( const ScreenMessage SM, float fDelay )
 {
 	ASSERT( fDelay >= 0.0 );
 
@@ -124,4 +124,15 @@ void Screen::SendScreenMessage( ScreenMessage SM, float fDelay )
 	QSM.SM = SM;
 	QSM.fDelayRemaining = fDelay;
 	m_QueuedMessages.push_back( QSM );
+}
+
+void Screen::ClearMessageQueue()
+{
+	m_QueuedMessages.clear(); 
+}
+
+void Screen::ClearMessageQueue( const ScreenMessage SM )
+{
+	for( int i=m_QueuedMessages.size()-1; i>=0; i-- )
+		m_QueuedMessages.erase( m_QueuedMessages.begin()+i ); 
 }

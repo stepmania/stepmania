@@ -517,9 +517,19 @@ void Actor::Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, 
 	else if( CONTAINS("spring") )		tt = TWEEN_SPRING;
 	else								tt = TWEEN_LINEAR;
 
-	mod.pos.x		+= (CONTAINS("left")?-SCREEN_WIDTH:0) + (CONTAINS("right")?+SCREEN_HEIGHT:0);
-	mod.pos.y		+= (CONTAINS("top")?-SCREEN_WIDTH:0)  + (CONTAINS("bottom")?+SCREEN_HEIGHT:0);
-	mod.pos.z		+= 0;
+	
+	float fDeltaX	= (float)(CONTAINS("left")?-SCREEN_WIDTH:0) + (CONTAINS("right")?+SCREEN_HEIGHT:0);
+	float fDeltaY	= (float)(CONTAINS("top")?-SCREEN_WIDTH:0)  + (CONTAINS("bottom")?+SCREEN_HEIGHT:0);
+	float fDeltaZ	= (float)0;
+	if( CONTAINS("far") )
+	{
+		fDeltaX *= 2;
+		fDeltaY *= 2;
+		fDeltaZ *= 2;
+	}
+	mod.pos.x		+= fDeltaX;
+	mod.pos.y		+= fDeltaY;
+	mod.pos.z		+= fDeltaZ;
 	mod.rotation.x	+= (CONTAINS("spinx")?-PI*2:0);
 	mod.rotation.y	+= (CONTAINS("spiny")?-PI*2:0);
 	mod.rotation.z	+= (CONTAINS("spinz")?-PI*2:0);
@@ -534,7 +544,7 @@ void Actor::Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, 
 	mod.glow.a *= CONTAINS("glow")?1:0;
 
 
-//	StopTweening();		// Will commenting this out break some of the animations?
+	StopTweening();
 	m_current = bOnToScreenOrOffOfScreen ? original : mod;
 	BeginTweening( fSleepSeconds );
 	BeginTweening( fFadeSeconds, tt );

@@ -25,7 +25,7 @@ public:
 	void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
-	struct CategoryToShow
+	struct PageToShow
 	{
 		enum { TYPE_CATEGORY, TYPE_COURSE } type;
 		NotesType		nt;		// used in category and course
@@ -33,7 +33,9 @@ protected:
 		Course*			pCourse;
 	};
 
-	void ShowCategory( CategoryToShow cts );
+	void SetPage( PageToShow pts );
+	void TweenPageOnScreen();
+	void TweenPageOffScreen();
 
 
 	BitmapText m_textCategory;
@@ -42,7 +44,7 @@ protected:
 	BitmapText m_textNames[NUM_HIGH_SCORE_LINES];
 	BitmapText m_textScores[NUM_HIGH_SCORE_LINES];
 
-	vector<CategoryToShow>	m_vCategoriesToShow;
+	vector<PageToShow>	m_vPagesToShow;
 };
 
 
