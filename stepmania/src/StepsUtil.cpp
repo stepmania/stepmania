@@ -170,7 +170,7 @@ Steps *StepsID::ToSteps( const Song *p, bool bAllowNull, bool bUseCache ) const
 	}
 	
 	if( !bAllowNull )
-		RageException::Throw( "%i, %i, \"%s\"", st, dc, sDescription.c_str() );	
+		FAIL_M( ssprintf("%i, %i, \"%s\"", st, dc, sDescription.c_str()) );
 
 	if( bUseCache )
 		g_Cache[sas] = ret;
