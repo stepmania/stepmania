@@ -10,43 +10,42 @@
 #include "RageException.h"
 #include "RageFile.h"
 
-// BMS encoding:     tap-hold
-// 4&8panel:   Player1     Player2
-//    Left		11-51		21-61
-//    Down		13-53		23-63
-//    Up		15-55		25-65
-//    Right		16-56		26-66
-//	6panel:	   Player1
-//    Left		11-51
-//    Left+Up	12-52
-//    Down		13-53
-//    Up		14-54
-//    Up+Right	15-55
-//    Right		16-56
-//
-//	Notice that 15 and 25 have double meanings!  What were they thinking???
-//	While reading in, use the 6 panel mapping.  After reading in, detect if 
-//only 4 notes
-//	are used.  If so, shift the Up+Right column back to the Up column
-//
+/*	BMS encoding:     tap-hold
+	4&8panel:   Player1     Player2
+	Left		11-51		21-61
+	Down		13-53		23-63
+	Up			15-55		25-65
+	Right		16-56		26-66
 
-// MD 10/26/03 - Hey, folks, BMSes are used for things BESIDES DDR steps,
-//    and so we're borking up BMSes that are for pnm/bm/etc.
-//
-// pnm-nine:   11-15,22-25
-// pnm-five:   13-15,21-22
-// bm-single:  11-16
-// bm-double:  11-16,21-26
-// bm-single7: 11-16,18-19
-// bm-double7: 11-16,18-19,21-26,28-29
-//
-// So the magics for these are:
-// pnm-nine: nothing >5, with 12, 14, 22 and/or 24
-// pnm-five: nothing >5, with 14 and/or 22
-// bm-*: can't tell difference between bm-single and dance-solo
-//       18/19 marks bm-single7, 28/29 marks bm-double7
-//       bm-double uses 21-26.
-//
+	6panel:	   Player1
+	Left		11-51
+	Left+Up		12-52
+	Down		13-53
+	Up			14-54
+	Up+Right	15-55
+	Right		16-56
+
+	Notice that 15 and 25 have double meanings!  What were they thinking???
+	While reading in, use the 6 panel mapping.  After reading in, detect if 
+	only 4 notes are used.  If so, shift the Up+Right column back to the Up
+	column
+
+	Hey, folks, BMSes are used for things BESIDES DDR steps,
+	and so we're borking up BMSes that are for pnm/bm/etc.
+
+	pnm-nine:   11-15,22-25
+	pnm-five:   13-15,21-22
+	bm-single:  11-16
+	bm-double:  11-16,21-26
+	bm-single7: 11-16,18-19
+	bm-double7: 11-16,18-19,21-26,28-29
+
+	So the magics for these are:
+	pnm-nine: nothing >5, with 12, 14, 22 and/or 24
+	pnm-five: nothing >5, with 14 and/or 22
+	bm-*: can't tell difference between bm-single and dance-solo
+		18/19 marks bm-single7, 28/29 marks bm-double7
+		bm-double uses 21-26. */
 
 int iTracks[MAX_NOTE_TRACKS];
 
@@ -62,23 +61,23 @@ StepsType BMSLoader::CheckTracksMagic( void ) {
 	for (int ix = 0; ix<MAX_NOTE_TRACKS; ix++) {
 		if(iTracks[ix] != 0) iTrackCount++;
 	}
-	// Panel counts:
-	// 4 - DDR
-	// 5 - PNM 5-key
-	// 6 - DDR Solo, BM 5-key
-	// 8 - DDR Double. BM 7-key
-	// 9 - PNM 9-key, BM 7-key
-	// 12 - BM Double 5-key
-	// 16 - BM Double 7-key
+	/*	Panel counts:
+		4 - DDR
+		5 - PNM 5-key
+		6 - DDR Solo, BM 5-key
+		8 - DDR Double. BM 7-key
+		9 - PNM 9-key, BM 7-key
+		12 - BM Double 5-key
+		16 - BM Double 7-key */
 	switch(iTrackCount) {
 	case 4:
 		return STEPS_TYPE_DANCE_SINGLE;
 	case 5:
 		return STEPS_TYPE_PNM_FIVE;
 	case 6:
-		// No reason to return STEPS_TYPE_BM_SINGLE here...
-		// ...at least, none that I can see.  Same data, no way to distinguish.
-		// We also don't need to autogen between them, though.
+		/*	No reason to return STEPS_TYPE_BM_SINGLE here...
+			...at least, none that I can see.  Same data, no way to distinguish.
+			We also don't need to autogen between them, though. */
 		return STEPS_TYPE_DANCE_SOLO;
 	case 8:
 		// Could also be couple or 7-key.
@@ -114,20 +113,6 @@ char &cNoteCharOut )
 
 	switch( iBMSTrack )
 	{
-/* MD 10/26/03 - Let's try this with the new numbers.
-	case 11:	iDanceColOut = DANCE_NOTE_PAD1_LEFT;	break;
-	case 12:	iDanceColOut = DANCE_NOTE_PAD1_UPLEFT;	break;
-	case 13:	iDanceColOut = DANCE_NOTE_PAD1_DOWN;	break;
-	case 14:	iDanceColOut = DANCE_NOTE_PAD1_UP;		break;
-	case 15:	iDanceColOut = DANCE_NOTE_PAD1_UPRIGHT;	break;
-	case 16:	iDanceColOut = DANCE_NOTE_PAD1_RIGHT;	break;
-	case 21:	iDanceColOut = DANCE_NOTE_PAD2_LEFT;	break;
-	case 22:	iDanceColOut = DANCE_NOTE_PAD2_UPLEFT;	break;
-	case 23:	iDanceColOut = DANCE_NOTE_PAD2_DOWN;	break;
-	case 24:	iDanceColOut = DANCE_NOTE_PAD2_UP;		break;
-	case 25:	iDanceColOut = DANCE_NOTE_PAD2_UPRIGHT;	break;
-	case 26:	iDanceColOut = DANCE_NOTE_PAD2_RIGHT;	break;
-*/
 	case 11:	iDanceColOut = BMS_P1_KEY1;				break;
 	case 12:	iDanceColOut = BMS_P1_KEY2;				break;
 	case 13:	iDanceColOut = BMS_P1_KEY3;				break;
@@ -161,8 +146,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 	RageFile file(sPath);
 
 	if (!file.IsOpen())
-        RageException::Throw("Failed to open %s for reading.", 
-sPath.c_str());
+        RageException::Throw("Failed to open %s for reading.", sPath.c_str());
 	while (!file.AtEOF())
 	{
 		CString line = file.GetLine();
@@ -200,8 +184,8 @@ sPath.c_str());
 			{
 			case 1:		// 4 or 6 single
 				out.m_StepsType = STEPS_TYPE_DANCE_SINGLE;
-				// if the mode should be solo, then we'll update m_DanceStyle below when 
-// we read in step data
+				/*	if the mode should be solo, then we'll update m_DanceStyle below when 
+					we read in step data */
 				break;
 			case 2:		// couple/battle
 				out.m_StepsType = STEPS_TYPE_DANCE_COUPLE;
@@ -230,7 +214,7 @@ sPath.c_str());
 
 			if( iPosOpenBracket != -1  &&  iPosCloseBracket != -1 )
 				value_data = value_data.substr( iPosOpenBracket+1, 
-iPosCloseBracket-iPosOpenBracket-1 );
+				iPosCloseBracket-iPosOpenBracket-1 );
 			LOG->Trace( "Steps description found to be '%s'", value_data.c_str() );
 
 			out.SetDescription(value_data);
@@ -250,10 +234,9 @@ iPosCloseBracket-iPosOpenBracket-1 );
 			int iMeasureNo	= atoi( value_name.substr(1,3).c_str() );
 			int iTrackNum	= atoi( value_name.substr(4,2).c_str() );
 
-			// MD 10/26/03 - fix for Pop N' and such, including "if there are six panels, then we have Solo" - check here,
-			//    then put the correct step type later
-                        PushTrackNumForMagic(iTrackNum);
-			// end MD 10/26/03
+			/*	fix for Pop N' and such, including "if there are six panels, then we have Solo" - check here,
+				then put the correct step type later */
+			PushTrackNumForMagic(iTrackNum);
 
 			CString &sNoteData = value_data;
 			vector<bool> arrayNotes;
@@ -265,9 +248,6 @@ iPosCloseBracket-iPosOpenBracket-1 );
 			}
 
 			const unsigned iNumNotesInThisMeasure = arrayNotes.size();
-			//LOG->Trace( "%s:%s: iMeasureNo = %d, iNoteNum = %d, iNumNotesInThisMeasure = %d",
-			//	valuename.c_str(), sNoteData.c_str(), iMeasureNo, iNoteNum, iNumNotesInThisMeasure );
-
 
 			for( unsigned j=0; j<iNumNotesInThisMeasure; j++ )
 			{
@@ -289,21 +269,11 @@ iPosCloseBracket-iPosOpenBracket-1 );
 		}
 	}
 
-	// MD 10/26/03 - dance-couple is the only one we should retain unchanged.
+	// dance-couple is the only one we should retain unchanged.
 	if( out.m_StepsType != STEPS_TYPE_DANCE_COUPLE)
 	{
 		out.m_StepsType = CheckTracksMagic();
 	}
-
-	/* We fix this later, since we're not moving columns around right now.
-	if( out.m_StepsType == STEPS_TYPE_DANCE_SINGLE  ||
-		out.m_StepsType == STEPS_TYPE_DANCE_DOUBLE  ||
-		out.m_StepsType == STEPS_TYPE_DANCE_COUPLE)	// if there are 4 panels, then 
-the Up+Right track really contains the notes for Up
-	{
-		pNoteData->MoveTapNoteTrack(DANCE_NOTE_PAD1_UP, DANCE_NOTE_PAD1_UPRIGHT);
-	}
-	*/
 
 	// we're done reading in all of the BMS values
 	if( out.m_StepsType == STEPS_TYPE_INVALID )
@@ -322,7 +292,7 @@ the Up+Right track really contains the notes for Up
 
 	switch( out.m_StepsType )
 	{
-	// MD 10/26/03 fix PNM &c.
+	// fix PNM &c.
 	case STEPS_TYPE_DANCE_SINGLE:
 		iTransformNewToOld[0] = BMS_P1_KEY1;
 		iTransformNewToOld[1] = BMS_P1_KEY3;
@@ -370,8 +340,6 @@ the Up+Right track really contains the notes for Up
 		iTransformNewToOld[7] = BMS_P2_KEY4; // ryellow
 		iTransformNewToOld[8] = BMS_P2_KEY5; // rwhite
 		break;
-	// MD 10/26/03 - uncomment this section when we get around to BM support outside 5-key
-	//    10/29/03 - helps if I actually do what I suggest.
 	case STEPS_TYPE_BM_DOUBLE:
 		iTransformNewToOld[0] = BMS_P1_KEY1;
 		iTransformNewToOld[1] = BMS_P1_KEY2;
@@ -420,8 +388,7 @@ the Up+Right track really contains the notes for Up
 
 	NoteData* pNoteData2 = new NoteData;
 	pNoteData2->SetNumTracks( iNumNewTracks );
-	pNoteData2->LoadTransformed( pNoteData, iNumNewTracks, iTransformNewToOld 
-);
+	pNoteData2->LoadTransformed( pNoteData, iNumNewTracks, iTransformNewToOld );
 
 	out.SetNoteData(pNoteData2);
 
@@ -456,7 +423,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		Steps* pNewNotes = new Steps;
 
 		const bool ok = LoadFromBMSFile( out.GetSongDir() + arrayBMSFileNames[i], 
-*pNewNotes );
+			*pNewNotes );
 		if( ok )
 			out.m_apNotes.push_back( pNewNotes );
 		else
@@ -513,7 +480,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 			{
 				value_data = value_data.Left( iIndex );
 				GetMainAndSubTitlesFromFullTitle( value_data, out.m_sMainTitle, 
-out.m_sSubTitle );
+					out.m_sSubTitle );
 			}
 			else
 				out.m_sMainTitle = value_data;
@@ -556,8 +523,6 @@ out.m_sSubTitle );
 			}
 
 			const unsigned iNumNotesInThisMeasure = arrayNotes.size();
-			//LOG->Trace( "%s:%s: iMeasureNo = %d, iBMSTrackNo = %d, iNumNotesInThisMeasure = %d",
-			//	valuename.c_str(), sNoteData.c_str(), iMeasureNo, iBMSTrackNo, iNumNotesInThisMeasure );
 			for( unsigned j=0; j<iNumNotesInThisMeasure; j++ )
 			{
 				if( arrayNotes[j] == 0 )
@@ -578,7 +543,6 @@ out.m_sSubTitle );
 					float fBPS;
 					fBPS = out.m_BPMSegments[0].m_fBPM/60.0f;
 					out.m_fBeat0OffsetInSeconds = fBeatOffset / fBPS;
-					//LOG->Trace( "Found offset to be index %d, beat %f", iStepIndex, NoteRowToBeat(iStepIndex) );
 					break;
 				}
 				case 3:	{ // bpm change
@@ -589,23 +553,21 @@ out.m_sSubTitle );
 				}
 
 				case 8:	{ // indirect bpm
-					// This is a very inefficient way to parse, but it doesn't matter much
-					// because this is only parsed on the first run after the song is installed.
+					/*	This is a very inefficient way to parse, but it doesn't matter much
+						because this is only parsed on the first run after the song is installed. */
 					CString sTagToLookFor = ssprintf( "#BPM%02x", arrayNotes[j] );
 					float fBPM = -1;
 
 
 					// open the song file again and and look for this tag's value
 					/* I don't like this. I think we should just seek back to the beginning
-					 * rather than open the file again. However, I'm not changing the 
-logic,
+					 * rather than open the file again. However, I'm not changing the logic,
 					 * only the implementation. -- Steve
 					 */
-					RageFile file(sPath);//Why doesn't VC6 bitch here but it does with int??
+					RageFile file(sPath); //Why doesn't VC6 bitch here but it does with int??
 
 					if (!file.IsOpen())
-						RageException::Throw( "Failed to open %s for reading.", sPath.c_str() 
-);
+						RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
 					while (!file.AtEOF())
 					{
 						CString line = file.GetLine();
@@ -641,28 +603,26 @@ logic,
 					}
 
 					if( fBPM == -1 )	// we didn't find the line we were looking for
-						LOG->Trace( "WARNING:  Couldn't find tag '%s' in '%s'.", 
-sTagToLookFor.c_str(), sPath.c_str() );
+						LOG->Trace( "WARNING:  Couldn't find tag '%s' in '%s'.", sTagToLookFor.c_str(), sPath.c_str() );
 					else
 					{
 						BPMSegment newSeg( NoteRowToBeat(iStepIndex), fBPM );
 						out.AddBPMSegment( newSeg );
-						LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", 
-newSeg.m_fStartBeat, newSeg.m_fBPM );
+						LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", newSeg.m_fStartBeat, newSeg.m_fBPM );
 					}
 
 					break;
 				}
 				case 9:	{ // stop
-					// This is a very inefficient way to parse, but it doesn't
-					// matter much because this is only parsed on the first run after the song is installed.
+					/*	This is a very inefficient way to parse, but it doesn't
+						matter much because this is only parsed on the first run after the song is installed. */
 					CString sTagToLookFor = ssprintf( "#STOP%02x", arrayNotes[j] );
 					float fFreezeStartBeat = NoteRowToBeat(iStepIndex);
 					float fFreezeSecs = -1;
 
 
 					// open the song file again and and look for this tag's value
-					RageFile file(sPath);//Why doesn't VC6 bitch here but it does with int??
+					RageFile file(sPath); //Why doesn't VC6 bitch here but it does with int??
 
 					if (!file.IsOpen())
                         RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
@@ -719,15 +679,13 @@ newSeg.m_fStartBeat, newSeg.m_fBPM );
 
 					if( fFreezeSecs == -1 )	// we didn't find the line we were looking for
 					{
-						LOG->Trace( "WARNING:  Couldn't find tag '%s' in '%s'.", 
-sTagToLookFor.c_str(), sPath.c_str() );
+						LOG->Trace( "WARNING:  Couldn't find tag '%s' in '%s'.", sTagToLookFor.c_str(), sPath.c_str() );
 					}
 					else
 					{
 						StopSegment newSeg( fFreezeStartBeat, fFreezeSecs );
 						out.AddStopSegment( newSeg );
-						LOG->Trace( "Inserting new Freeze at beat %f, secs %f", 
-newSeg.m_fStartBeat, newSeg.m_fStopSeconds );
+						LOG->Trace( "Inserting new Freeze at beat %f, secs %f", newSeg.m_fStartBeat, newSeg.m_fStopSeconds );
 					}
 
 					break;
