@@ -112,7 +112,7 @@ static SDL_Surface *RageSurface_Load_JPEG( RageFile *f, const char *fn, char err
 	jerr.pub.error_exit = my_error_exit;
 	jerr.pub.output_message = my_output_message;
 	
-	SDL_Surface *img = NULL;
+	SDL_Surface *volatile img = NULL; /* volatile to prevent possible problems with setjmp */
 
 	if( setjmp(jerr.setjmp_buffer) )
 	{
