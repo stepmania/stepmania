@@ -6,8 +6,9 @@
 
  Desc: Manager/container for Screens.
 
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+ Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
 	Chris Danford
+	Glenn Maynard
 -----------------------------------------------------------------------------
 */
 
@@ -22,6 +23,7 @@
 #include "StyleInput.h"
 class Screen;
 struct MiniMenuDefinition;
+class ScreenSystemLayer;
 
 
 class ScreenManager
@@ -56,12 +58,8 @@ private:
 	vector<Screen*> m_ScreenStack;	// bottommost to topmost
 	vector<Screen*> m_ScreensToDelete;
 	Screen *m_ScreenBuffered;
+	ScreenSystemLayer *m_SystemLayer;
 
-	BitmapText m_textStats;
-	BitmapText m_textSystemMessage;
-	BitmapText m_textCreditInfo[NUM_PLAYERS];
-	BitmapText m_textSysTime;
-	
 	Screen* MakeNewScreen( CString sClassName );
 	void EmptyDeleteQueue();
 	void SetNewScreen( Screen *pNewScreen );

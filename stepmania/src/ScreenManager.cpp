@@ -5,9 +5,10 @@
 
  Desc: See header.
 
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+ Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 	Tim Hentenaar
+	Glenn Maynard
 -----------------------------------------------------------------------------
 */
 
@@ -36,20 +37,24 @@ ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our p
 #define CREDITS_SHADOW_LENGTH	THEME->GetMetricF("ScreenManager","CreditsShadowLength")
 #define CREDITS_ZOOM			THEME->GetMetricF("ScreenManager","CreditsZoom")
 
-
-ScreenManager::ScreenManager()
+/* This screen is drawn on top of everything else, and receives updates,
+ * but not input. */
+class ScreenSystemLayer: public Screen
 {
-	m_ScreenBuffered = NULL;
+	BitmapText m_textStats;
+	BitmapText m_textSystemMessage;
+	BitmapText m_textCreditInfo[NUM_PLAYERS];
+	BitmapText m_textSysTime;
 
-	m_textStats.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-	m_textStats.SetXY( STATS_X, STATS_Y );
-	m_textStats.SetHorizAlign( Actor::align_right );
-	m_textStats.SetVertAlign( Actor::align_top );
-	m_textStats.SetZoom( 0.5f );
-	m_textStats.SetShadowLength( 2 );
+public:
+	ScreenSystemLayer();
+	void SystemMessage( CString sMessage );
+	void RefreshCreditsMessages();
+	void Update( float fDeltaTime );
+};
 
-	// set credits properties on RefreshCreditsMessage
-
+ScreenSystemLayer::ScreenSystemLayer()
+{
 	m_textSystemMessage.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textSystemMessage.SetHorizAlign( Actor::align_left );
 	m_textSystemMessage.SetVertAlign( Actor::align_top );
@@ -57,6 +62,15 @@ ScreenManager::ScreenManager()
 	m_textSystemMessage.SetZoom( 0.8f );
 	m_textSystemMessage.SetShadowLength( 2 );
 	m_textSystemMessage.SetDiffuse( RageColor(1,1,1,0) );
+	this->AddChild(&m_textSystemMessage);
+
+	m_textStats.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textStats.SetXY( STATS_X, STATS_Y );
+	m_textStats.SetHorizAlign( Actor::align_right );
+	m_textStats.SetVertAlign( Actor::align_top );
+	m_textStats.SetZoom( 0.5f );
+	m_textStats.SetShadowLength( 2 );
+	this->AddChild(&m_textStats);
 
 	m_textSysTime.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textSysTime.SetXY( 4.0f, 40.0f );
@@ -65,6 +79,97 @@ ScreenManager::ScreenManager()
 	m_textSysTime.SetZoom( 0.5f );
 	m_textSysTime.SetDiffuse( RageColor(1,0,1,1) );
 	m_textSysTime.EnableShadow(false);
+	this->AddChild(&m_textSysTime);
+
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_textCreditInfo[p].LoadFromFont( THEME->GetPathTo("Fonts","credits") );
+		m_textCreditInfo[p].SetXY( CREDITS_X(p), CREDITS_Y(p) );
+		m_textCreditInfo[p].SetZoom( CREDITS_ZOOM );
+		m_textCreditInfo[p].SetDiffuse( CREDITS_COLOR );
+		m_textCreditInfo[p].SetShadowLength( CREDITS_SHADOW_LENGTH );
+		this->AddChild(&m_textCreditInfo[p]);
+	}
+}
+
+void ScreenSystemLayer::SystemMessage( CString sMessage )
+{
+	m_textSystemMessage.StopTweening();
+	m_textSystemMessage.SetText( sMessage );
+	m_textSystemMessage.SetDiffuse( RageColor(1,1,1,1) );
+	m_textSystemMessage.SetX( -640 );
+	m_textSystemMessage.BeginTweening( 0.3f );
+	m_textSystemMessage.SetX( 4 );
+	m_textSystemMessage.BeginTweening( 5 );
+	m_textSystemMessage.BeginTweening( 0.3f );
+	m_textSystemMessage.SetDiffuse( RageColor(1,1,1,0) );
+}
+
+void ScreenSystemLayer::RefreshCreditsMessages()
+{
+	// update joined
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		switch( PREFSMAN->m_CoinMode )
+		{
+		case PrefsManager::COIN_HOME:
+			if( GAMESTATE->m_bSideIsJoined[p] )
+				m_textCreditInfo[p].SetText( "" );
+			else if( GAMESTATE->m_bPlayersCanJoin )		// would  (GAMESTATE->m_CurStyle!=STYLE_INVALID) do the same thing?
+				m_textCreditInfo[p].SetText( "PRESS START" );
+			else
+				m_textCreditInfo[p].SetText( "NOT PRESENT" );
+			break;
+		case PrefsManager::COIN_PAY:
+			{
+				int Coins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
+				CString txt = ssprintf("CREDIT(S) %d", GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit);
+				if (Coins)
+					txt += ssprintf("  %d/%d", Coins, PREFSMAN->m_iCoinsPerCredit );
+				m_textCreditInfo[p].SetText(txt);
+			}
+			break;
+		case PrefsManager::COIN_FREE:
+			m_textCreditInfo[p].SetText( "FREE PLAY" );
+			break;
+		default:
+			ASSERT(0);
+		}
+	}
+}
+
+void ScreenSystemLayer::Update( float fDeltaTime )
+{
+	Screen::Update(fDeltaTime);
+
+	if( PREFSMAN  &&  PREFSMAN->m_bShowStats )
+	{
+		m_textStats.SetDiffuse( RageColor(1,1,1,1) );
+
+		/* If FPS == 0, we don't have stats yet. */
+		if(DISPLAY->GetFPS())
+			m_textStats.SetText( ssprintf(
+				"%i FPS\n%i av FPS\n%i VPF",
+				DISPLAY->GetFPS(), DISPLAY->GetCumFPS(), 
+				DISPLAY->GetVPF()) );
+		else
+			m_textStats.SetText( "-- FPS\n-- av FPS\n-- VPF" );
+	} else
+		m_textStats.SetDiffuse( RageColor(1,1,1,0) ); /* hide */
+
+	if(PREFSMAN->m_bTimestamping)
+	{
+		m_textSysTime.SetText( SecondsToTime(RageTimer::GetTimeSinceStart()) );
+		m_textSysTime.SetDiffuse( RageColor(1,1,1,1) );
+	} else
+		m_textSysTime.SetDiffuse( RageColor(1,1,1,0) ); /* hide */
+}
+
+ScreenManager::ScreenManager()
+{
+	m_SystemLayer = new ScreenSystemLayer;
+
+	m_ScreenBuffered = NULL;
 }
 
 
@@ -76,8 +181,9 @@ ScreenManager::~ScreenManager()
 
 	// delete current Screens
 	for( unsigned i=0; i<m_ScreenStack.size(); i++ )
-		SAFE_DELETE( m_ScreenStack[i] );
-	SAFE_DELETE( m_ScreenBuffered );
+		delete m_ScreenStack[i];
+	delete m_ScreenBuffered;
+	delete m_SystemLayer;
 }
 
 void ScreenManager::EmptyDeleteQueue()
@@ -91,12 +197,6 @@ void ScreenManager::EmptyDeleteQueue()
 
 void ScreenManager::Update( float fDeltaTime )
 {
-	m_textSystemMessage.Update( fDeltaTime );
-	m_textStats.Update( fDeltaTime );
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		m_textCreditInfo[p].Update( fDeltaTime );
-	m_textSysTime.Update( fDeltaTime );
-
 	EmptyDeleteQueue();
 
 	// Only update the topmost screen on the stack.
@@ -120,6 +220,8 @@ void ScreenManager::Update( float fDeltaTime )
 		pScreen->Update( 0 );
 	else
 		pScreen->Update( fDeltaTime );
+
+	m_SystemLayer->Update( fDeltaTime );
 }
 
 
@@ -128,12 +230,14 @@ void ScreenManager::Restore()
 	// Restore all CurrentScreens (back to front)
 	for( unsigned i=0; i<m_ScreenStack.size(); i++ )
 		m_ScreenStack[i]->Restore();
+	m_SystemLayer->Restore();
 }
 
 void ScreenManager::Invalidate()
 {
 	for( unsigned i=0; i<m_ScreenStack.size(); i++ )
 		m_ScreenStack[i]->Invalidate();
+	m_SystemLayer->Invalidate();
 }
 
 void ScreenManager::Draw()
@@ -143,28 +247,7 @@ void ScreenManager::Draw()
 	else
 		for( unsigned i=0; i<m_ScreenStack.size(); i++ )	// Draw all screens bottom to top
 			m_ScreenStack[i]->Draw();
-
-	m_textSystemMessage.Draw();
-
-	if( PREFSMAN  &&  PREFSMAN->m_bShowStats )
-	{
-		/* If FPS == 0, we don't have stats yet. */
-		m_textStats.SetText( ssprintf(DISPLAY->GetFPS()?
-			"%i FPS\n%i av FPS\n%i VPF":
-			"-- FPS\n-- av FPS\n-- VPF",
-			DISPLAY->GetFPS(), DISPLAY->GetCumFPS(), 
-			DISPLAY->GetVPF()) );
-
-		m_textStats.Draw();
-	}
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		m_textCreditInfo[p].Draw();
-
-	if(PREFSMAN->m_bTimestamping)
-	{
-		m_textSysTime.SetText( SecondsToTime(RageTimer::GetTimeSinceStart()) );
-		m_textSysTime.Draw();
-	}
+	m_SystemLayer->Draw();
 }
 
 
@@ -316,53 +399,11 @@ void ScreenManager::SendMessageToTopScreen( ScreenMessage SM, float fDelay )
 
 void ScreenManager::SystemMessage( CString sMessage )
 {
-	m_textSystemMessage.StopTweening();
-	m_textSystemMessage.SetText( sMessage );
-	m_textSystemMessage.SetDiffuse( RageColor(1,1,1,1) );
-	m_textSystemMessage.SetX( -640 );
-	m_textSystemMessage.BeginTweening( 0.3f );
-	m_textSystemMessage.SetX( 4 );
-	m_textSystemMessage.BeginTweening( 5 );
-	m_textSystemMessage.BeginTweening( 0.3f );
-	m_textSystemMessage.SetTweenDiffuse( RageColor(1,1,1,0) );
+	m_SystemLayer->SystemMessage( sMessage );
 }
 
 void ScreenManager::RefreshCreditsMessages()
 {
-	// update joined
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		m_textCreditInfo[p].LoadFromFont( THEME->GetPathTo("Fonts","credits") );
-		m_textCreditInfo[p].SetXY( CREDITS_X(p), CREDITS_Y(p) );
-		m_textCreditInfo[p].SetZoom( CREDITS_ZOOM );
-		m_textCreditInfo[p].SetDiffuse( CREDITS_COLOR );
-		m_textCreditInfo[p].SetShadowLength( CREDITS_SHADOW_LENGTH );
-		
-		switch( PREFSMAN->m_CoinMode )
-		{
-		case PrefsManager::COIN_HOME:
-			if( GAMESTATE->m_bSideIsJoined[p] )
-				m_textCreditInfo[p].SetText( "" );
-			else if( GAMESTATE->m_bPlayersCanJoin )		// would  (GAMESTATE->m_CurStyle!=STYLE_INVALID) do the same thing?
-				m_textCreditInfo[p].SetText( "PRESS START" );
-			else
-				m_textCreditInfo[p].SetText( "NOT PRESENT" );
-			break;
-		case PrefsManager::COIN_PAY:
-			{
-				int Coins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
-				CString txt = ssprintf("CREDIT(S) %d", GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit);
-				if (Coins)
-					txt += ssprintf("  %d/%d", Coins, PREFSMAN->m_iCoinsPerCredit );
-				m_textCreditInfo[p].SetText(txt);
-			}
-			break;
-		case PrefsManager::COIN_FREE:
-			m_textCreditInfo[p].SetText( "FREE PLAY" );
-			break;
-		default:
-			ASSERT(0);
-		}
-	}
+	m_SystemLayer->RefreshCreditsMessages();
 }
 
