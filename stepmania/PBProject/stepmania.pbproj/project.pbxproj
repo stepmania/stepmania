@@ -13184,6 +13184,7 @@
 			path = ../src/Attack.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
 		};
 		AAFF5542054E736D00D02EE9 = {
 			expectedFileType = sourcecode.c.h;
