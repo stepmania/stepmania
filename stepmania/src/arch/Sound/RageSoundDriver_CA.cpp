@@ -19,7 +19,7 @@ static AudioConverter *gConverter;
 
 /* temporary hack: */
 static float g_fIOProcTime = 0;
-static float g_iIOProcTimeSamples = 0;
+static int g_iIOProcTimeSamples = 0;
 
 static CString FormatToString( int fmt )
 {
