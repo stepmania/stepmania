@@ -18,7 +18,37 @@
 
 InputFilter*	INPUTFILTER = NULL;	// global and accessable from anywhere in our program
 
+InputFilter::InputFilter()
+{
+	for( int i=0; i<NUM_INPUT_DEVICES; i++ )
+	{
+		for( int j=0; j<NUM_DEVICE_BUTTONS; j++ )
+			m_fTimeHeld[i][j] = 0;
+	}
+}
 
+bool InputFilter::BeingPressed( DeviceInput di, bool Prev )
+{
+	switch( di.button ) {
+	case JOY_Z_UP: case JOY_Z_DOWN:
+	case JOY_Z_ROT_UP: case JOY_Z_ROT_DOWN:
+	case JOY_HAT_LEFT: case JOY_HAT_RIGHT: case JOY_HAT_UP: case JOY_HAT_DOWN:
+		/* For now, ignore these. */
+		return false;
+	}
+
+	return INPUTMAN->BeingPressed(di, Prev);
+}
+
+bool InputFilter::WasBeingPressed( DeviceInput di )
+{
+	return BeingPressed(di, true);
+}
+
+bool InputFilter::IsBeingPressed( DeviceInput di )
+{
+	return BeingPressed(di, false);
+}
 
 void InputFilter::GetInputEvents( InputEventArray &array, float fDeltaTime )
 {
@@ -32,9 +62,9 @@ void InputFilter::GetInputEvents( InputEventArray &array, float fDeltaTime )
 		{
 			const DeviceInput di = DeviceInput(InputDevice(d),b);
 
-			if( INPUTMAN->WasBeingPressed(di) )
+			if( WasBeingPressed(di) )
 			{
-				if( INPUTMAN->IsBeingPressed(di) )
+				if( IsBeingPressed(di) )
 				{
 					const float fOldHoldTime = m_fTimeHeld[d][b];
 					m_fTimeHeld[d][b] += fDeltaTime;
@@ -58,16 +88,16 @@ void InputFilter::GetInputEvents( InputEventArray &array, float fDeltaTime )
 							array.Add( InputEvent(di,iet) );
 					}
 				}
-				else {	// !INPUTMAN->IsBeingPressed(di)
+				else {	// !IsBeingPressed(di)
 					m_fTimeHeld[d][b] = 0;
 					array.Add( InputEvent(di,IET_RELEASE) );
 				}
 			}
-			else	// !INPUTMAN->WasBeingPressed(di)
+			else	// !WasBeingPressed(di)
 			{
-				if( INPUTMAN->IsBeingPressed(di) )
+				if( IsBeingPressed(di) )
 					array.Add( InputEvent(di,IET_FIRST_PRESS) );
-				else	// !INPUTMAN->IsBeingPressed(di)
+				else	// !IsBeingPressed(di)
 					;	// don't care
 			}
 		}

@@ -38,15 +38,12 @@ typedef CArray<InputEvent, InputEvent> InputEventArray;
 class InputFilter
 {
 public:
-	InputFilter()
-	{
-		for( int i=0; i<NUM_INPUT_DEVICES; i++ )
-		{
-			for( int j=0; j<NUM_DEVICE_BUTTONS; j++ )
-				m_fTimeHeld[i][j] = 0;
-		}
-	};
+	InputFilter();
 
+	bool BeingPressed( DeviceInput di, bool Prev = false);
+	bool WasBeingPressed( DeviceInput di );
+	bool IsBeingPressed( DeviceInput di );
+	
 	void GetInputEvents( InputEventArray &array, float fDeltaTime );
 
 	float m_fTimeHeld[NUM_INPUT_DEVICES][NUM_DEVICE_BUTTONS];
