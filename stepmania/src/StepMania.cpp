@@ -139,7 +139,7 @@ void Reset()
 	}
 	PREFSMAN->SaveGamePrefsToDisk();
 
-	SCREENMAN->SetNewScreen( "ScreenCompany" );	// Change this to set a different initial screen
+	SCREENMAN->SetNewScreen( THEME->GetMetric("Common","InitialScreen") );
 }
 
 static void GameLoop();
