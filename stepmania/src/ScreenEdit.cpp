@@ -1434,6 +1434,14 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GainFocus:
 		/* We do this ourself. */
 		SOUND->HandleSongTimer( false );
+
+		/* When another screen comes up, RageSounds takes over the sound timer.  When we come
+		 * back, put the timer back to where it was. */
+		GAMESTATE->m_fSongBeat = m_fTrailingBeat;
+		break;
+	case SM_LoseFocus:
+		/* Snap the trailing beat, in case we lose focus while tweening. */
+		m_fTrailingBeat = GAMESTATE->m_fSongBeat;
 		break;
 	}
 }
