@@ -50,6 +50,7 @@ PrefsManager::PrefsManager()
 	m_bShowStats = false;
 #endif
 	m_BackgroundMode = BGMODE_ANIMATIONS;
+	m_iNumBackgrounds = 8;
 	m_bShowDanger = true;
 	m_fBGBrightness = 0.8f;
 	m_bMenuTimer = true;
@@ -147,6 +148,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "UseDedicatedMenuButtons",	m_bOnlyDedicatedMenuButtons );
 	ini.GetValueB( "Options", "ShowStats",					m_bShowStats );
 	ini.GetValueI( "Options", "BackgroundMode",				(int&)m_BackgroundMode );
+	ini.GetValueI( "Options", "NumBackgrounds",				m_iNumBackgrounds);
 	ini.GetValueB( "Options", "ShowDanger",					m_bShowDanger );
 	ini.GetValueF( "Options", "BGBrightness",				m_fBGBrightness );
 	ini.GetValueB( "Options", "MenuTimer",					m_bMenuTimer );
@@ -238,6 +240,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "UseDedicatedMenuButtons",	m_bOnlyDedicatedMenuButtons );
 	ini.SetValueB( "Options", "ShowStats",					m_bShowStats );
 	ini.SetValueI( "Options", "BackgroundMode",				m_BackgroundMode);
+	ini.SetValueI( "Options", "NumBackgrounds",				m_iNumBackgrounds);
 	ini.SetValueB( "Options", "ShowDanger",					m_bShowDanger );
 	ini.SetValueF( "Options", "BGBrightness",				m_fBGBrightness );
 	ini.SetValueB( "Options", "MenuTimer",					m_bMenuTimer );

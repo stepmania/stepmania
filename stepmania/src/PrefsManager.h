@@ -28,6 +28,7 @@ public:
 	int				m_iRefreshRate;
 	bool			m_bShowStats;
 	enum { BGMODE_OFF, BGMODE_ANIMATIONS, BGMODE_MOVIEVIS, BGMODE_RANDOMMOVIES } m_BackgroundMode;
+	int				m_iNumBackgrounds;
 	float			m_fBGBrightness;
 	int 			m_iMovieDecodeMS;
 	bool			m_bUseBGIfNoBanner;
