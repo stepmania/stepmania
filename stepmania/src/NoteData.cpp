@@ -344,6 +344,7 @@ void NoteData::Convert2sAnd3sToHoldNotes()
 	}
 }
 
+
 /* "102000301" ==
  * "104444001" */
 void NoteData::ConvertHoldNotesTo2sAnd3s()
@@ -362,6 +363,13 @@ void NoteData::ConvertHoldNotesTo2sAnd3s()
 		}
 	}
 	m_HoldNotes.clear();
+}
+
+
+void NoteData::Get2sAnd3s( NoteData &out ) const
+{
+	out.CopyAll( this );
+	out.ConvertHoldNotesTo2sAnd3s();
 }
 
 /* "104444001" ==
