@@ -601,14 +601,12 @@ void OptionRow::UpdateEnabledDisabled()
 				bt.BeginTweening( TWEEN_SECONDS );
 				bt.SetDiffuse( color );
 				bt.SetY( m_fY );
-				FOREACH_HumanPlayer( p )
-				{
-					OptionsCursor &ul = *m_Underline[item_no][0];
-					ul.StopTweening();
-					ul.BeginTweening( TWEEN_SECONDS );
-					ul.SetDiffuseAlpha( color.a );
-					ul.SetY( m_fY );
-				}
+
+				OptionsCursor &ul = *m_Underline[pn][0];
+				ul.StopTweening();
+				ul.BeginTweening( TWEEN_SECONDS );
+				ul.SetDiffuseAlpha( color.a );
+				ul.SetY( m_fY );
 			}
 		}
 		break;
