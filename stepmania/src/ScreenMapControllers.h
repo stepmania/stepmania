@@ -32,6 +32,7 @@ private:
 
 	void Refresh();
 
+	void InputInternal( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 
 	int m_iCurController;
 	int m_iCurButton;

@@ -153,6 +153,36 @@ static bool IsAxis( const DeviceInput& DeviceI )
 
 void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
+#ifdef _XBOX
+	if(!m_iWaitingForPress && DeviceI.device == DEVICE_JOY1)
+	{
+		// map the xbox controller buttons to the keyboard equivalents
+		DeviceInput keymap;
+		keymap.device = DEVICE_KEYBOARD;
+
+		if(DeviceI.button == JOY_HAT_LEFT)
+			keymap.button = SDLK_LEFT;
+		else if(DeviceI.button == JOY_HAT_RIGHT)
+			keymap.button = SDLK_RIGHT;
+		else if(DeviceI.button == JOY_HAT_UP)
+			keymap.button = SDLK_UP;
+		else if(DeviceI.button == JOY_HAT_DOWN)
+			keymap.button = SDLK_DOWN;
+		else if(DeviceI.button == JOY_9)
+			keymap.button = SDLK_RETURN;
+		else if(DeviceI.button == JOY_10)
+			keymap.button = SDLK_ESCAPE;
+		
+
+		 InputInternal(keymap, type, GameI, MenuI, StyleI);
+		 return;
+	}
+#endif
+	InputInternal(DeviceI, type, GameI, MenuI, StyleI);
+}
+
+void ScreenMapControllers::InputInternal( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+{
 	if( type != IET_FIRST_PRESS && type != IET_SLOW_REPEAT )
 		return;	// ignore
 
