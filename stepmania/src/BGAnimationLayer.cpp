@@ -53,8 +53,6 @@ void BGAnimationLayer::Init()
 {
 	Unload();
 
-	m_fRepeatCommandEverySeconds = -1;
-	m_fSecondsUntilNextCommand = 0;
 	m_fUpdateRate = 1;
 	m_fFOV = -1;	// no change
 	m_bLighting = false;
@@ -418,8 +416,6 @@ void BGAnimationLayer::LoadFromNode( const CString& sAniDir_, const XNode& layer
 		}
 	}
 
-	layer.GetAttrValue( "CommandRepeatSeconds", m_fRepeatCommandEverySeconds );
-	m_fSecondsUntilNextCommand = m_fRepeatCommandEverySeconds;
 	layer.GetAttrValue( "FOV", m_fFOV );
 	layer.GetAttrValue( "Lighting", m_bLighting );
 	layer.GetAttrValue( "TexCoordVelocityX", m_fTexCoordVelocityX );
@@ -659,19 +655,6 @@ void BGAnimationLayer::Update( float fDeltaTime )
 	default:
 		ASSERT(0);
 	}
-
-	if( m_fRepeatCommandEverySeconds != -1 )	// if repeating
-	{
-		m_fSecondsUntilNextCommand -= fDeltaTime;
-		if( m_fSecondsUntilNextCommand <= 0 )
-		{
-			PlayCommand( "On" );
-			m_fSecondsUntilNextCommand += m_fRepeatCommandEverySeconds;
-
-			/* In case we delayed a long time, don't queue two repeats at once. */
-			wrap( m_fSecondsUntilNextCommand, m_fRepeatCommandEverySeconds );
-		}
-	}
 }
 
 bool BGAnimationLayer::EarlyAbortDraw()
@@ -721,17 +704,6 @@ void BGAnimationLayer::DrawPrimitives()
 void BGAnimationLayer::GainFocus( float fRate, bool bRewindMovie, bool bLoop )
 {
 	m_fUpdateRate = fRate;
-
-	if( m_fRepeatCommandEverySeconds == -1 )	// if not repeating
-	{
-		/* Yuck.  We send OnCommand on load, since that's what's wanted for
-		 * most backgrounds.  However, gameplay backgrounds (loaded from Background)
-		 * should run OnCommand when they're actually displayed, when GainFocus
-		 * gets called.  We've already run OnCommand; abort it so we don't run tweens
-		 * twice. */
-		RunCommandOnChildren( ParseCommands("stoptweening") );
-		PlayCommand( "On" );
-	}
 
 	ActorFrame::GainFocus( fRate, bRewindMovie, bLoop );
 }
