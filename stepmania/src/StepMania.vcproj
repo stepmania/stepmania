@@ -2376,6 +2376,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ModelTypes.h">
 			</File>
 			<File
+				RelativePath="Quad.cpp">
+			</File>
+			<File
 				RelativePath="Quad.h">
 			</File>
 			<File
