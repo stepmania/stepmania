@@ -8,6 +8,7 @@
 # CVS only contains the source files: Makefile.am, configure.ac, and
 # so on.
 
+
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
 
