@@ -204,8 +204,6 @@ void RageBitmapTexture::Create(
 	// save information about the texture
 	m_iTextureWidth		= ddsd.Width;
 	m_iTextureHeight	= ddsd.Height;
-	m_TextureFormat		= ddsd.Format;	
-
 
 	if( bStretch )
 	{

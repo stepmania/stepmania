@@ -492,7 +492,6 @@ HRESULT RageMovieTexture::CreateD3DTexture()
 
 	m_iTextureWidth = ddsd.Width;
 	m_iTextureHeight = ddsd.Height;
-	m_TextureFormat = ddsd.Format;
 
 	if( m_iTextureWidth < m_iImageWidth || m_iTextureHeight < m_iImageHeight )
 	{
@@ -504,9 +503,9 @@ HRESULT RageMovieTexture::CreateD3DTexture()
 		m_iImageHeight = min(m_iImageHeight, m_iTextureHeight);
 	}
 
-    if( m_TextureFormat != D3DFMT_A8R8G8B8 &&
-		m_TextureFormat != D3DFMT_A1R5G5B5 )
-        throw RageException( "Texture is format we can't handle! Format = 0x%x!", m_TextureFormat );
+    if( ddsd.Format != D3DFMT_A8R8G8B8 &&
+		ddsd.Format != D3DFMT_A1R5G5B5 )
+        throw RageException( "Texture is format we can't handle! Format = 0x%x!", ddsd.Format );
 
 
 	return S_OK;
