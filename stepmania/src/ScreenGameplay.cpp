@@ -81,17 +81,6 @@ const ScreenMessage	SM_GoToScreenAfterFail	= ScreenMessage(SM_User+31);
 const ScreenMessage	SM_StartHereWeGo		= ScreenMessage(SM_User+40);
 const ScreenMessage	SM_StopHereWeGo			= ScreenMessage(SM_User+41);
 
-void GetCourseAttackArray( const Course::Info &ci, AttackArray &out )
-{
-	Attack a;
-	a.fStartSecond = 0;
-	a.fSecsRemaining = 10000; /* whole song */
-	a.level = ATTACK_LEVEL_1;
-	a.sModifier = ci.Modifiers;
-
-	out.push_back( a );
-}
-
 
 /* XXX: Not using sName yet here until I work out jukebox/demo. */
 ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("ScreenGameplay")
@@ -170,7 +159,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 			{
 				m_apNotesQueue[p].push_back( ci[c].pNotes );
 				AttackArray a;
-				GetCourseAttackArray( ci[c], a );
+				ci[c].GetAttackArray( a );
 				m_asModifiersQueue[p].push_back( a );
 			}
 		}
@@ -691,8 +680,6 @@ void ScreenGameplay::LoadNextSong()
 	GAMESTATE->RemoveAllActiveAttacks();
 	GAMESTATE->RestoreSelectedOptions();
 
-	GAMESTATE->ResetNoteSkins();
-	
 	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );
 
 	for( p=0; p<NUM_PLAYERS; p++ )

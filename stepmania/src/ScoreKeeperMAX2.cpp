@@ -28,6 +28,8 @@
 ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Steps*>& apNotes_, const vector<AttackArray> &asModifiers, PlayerNumber pn_ ):
 	ScoreKeeper(pn_), apNotes(apNotes_)
 {
+	ASSERT( apSongs.size() == apNotes_.size() );
+	ASSERT( apSongs.size() == asModifiers.size() );
 	//
 	// Fill in m_CurStageStats, calculate multiplier
 	//

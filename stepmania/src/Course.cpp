@@ -132,6 +132,7 @@ void Course::LoadFromCRSFile( CString sPath )
 		BANNERCACHE->CacheBanner( m_sBannerPath );
 	}
 
+	AttackArray attacks;
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
 		CString sValueName = msd.GetParam(i, 0);
@@ -157,6 +158,32 @@ void Course::LoadFromCRSFile( CString sPath )
 		else if( 0 == stricmp(sValueName, "METER") )
 			m_iMeter = atoi( sParams[1] );
 
+		else if( 0 == stricmp(sValueName, "MODS") )
+		{
+			Attack attack;
+
+			for( unsigned j = 1; j < sParams.params.size(); ++j )
+			{
+				CStringArray sBits;
+				split( sParams[j], "=", sBits, false );
+				if( sBits.size() == 0 )
+					continue;
+				LOG->Trace("b '%s'", sBits[0].c_str());
+
+				TrimLeft( sBits[0] );
+				TrimRight( sBits[0] );
+				if( !sBits[0].CompareNoCase("TIME") )
+					attack.fStartSecond = (float) atof( sBits[1] );
+				else if( !sBits[0].CompareNoCase("LEN") )
+					attack.fSecsRemaining = (float) atof( sBits[1] );
+				else if( !sBits[0].CompareNoCase("MODS") )
+				{
+					attack.sModifier = sBits[1];
+				
+					attacks.push_back( attack );
+				}
+			}
+		}
 		else if( 0 == stricmp(sValueName, "SONG") )
 		{
 			CourseEntry new_entry;
@@ -254,6 +281,8 @@ void Course::LoadFromCRSFile( CString sPath )
 				new_entry.modifiers = join( ",", mods );
 			}
 
+			new_entry.attacks = attacks;
+			
 			m_entries.push_back( new_entry );
 		}
 
@@ -613,6 +642,7 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficul
 		cinfo.pSong = pSong;
 		cinfo.pNotes = pNotes;
 		cinfo.Modifiers = e.modifiers;
+		cinfo.Attacks = e.attacks;
 		cinfo.Random = ( e.type == COURSE_ENTRY_RANDOM || e.type == COURSE_ENTRY_RANDOM_WITHIN_GROUP );
 		cinfo.Mystery = e.mystery;
 		cinfo.CourseIndex = i;
@@ -938,10 +968,12 @@ void Course::UpdateCourseStats()
 void Course::Info::GetAttackArray( AttackArray &out ) const
 {
 	Attack a;
-	a.fStartSecond = -1;
+	a.fStartSecond = 0;
 	a.fSecsRemaining = 10000; /* whole song */
 	a.level = ATTACK_LEVEL_1;
 	a.sModifier = Modifiers;
 
 	out.push_back( a );
+
+	out.insert( out.end(), Attacks.begin(), Attacks.end() );
 }

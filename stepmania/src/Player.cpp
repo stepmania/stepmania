@@ -94,6 +94,8 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 {
 	//LOG->Trace( "PlayerMinus::Load()", );
 
+	GAMESTATE->ResetNoteSkinsForPlayer( pn );
+	
 	m_PlayerNumber = pn;
 	m_pLifeMeter = pLM;
 	m_pCombinedLifeMeter = pCombinedLM;

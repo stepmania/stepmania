@@ -83,6 +83,7 @@ void GameState::Reset()
 	m_iCurrentStageIndex = 0;
 	m_bAllow2ndExtraStage = true;
 	m_bDifficultCourses = false;
+	m_BeatToNoteSkinRev = 0;
 
 	NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_CurGame );
 
@@ -576,12 +577,17 @@ void GameState::RestoreSelectedOptions()
 void GameState::ResetNoteSkins()
 {
 	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
-	{
-		m_BeatToNoteSkin[pn].clear();
-		m_BeatToNoteSkin[pn][-1000] = GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin;
-	}
+		ResetNoteSkinsForPlayer( (PlayerNumber) pn );
 
-	m_BeatToNoteSkinRev = 0;
+	++m_BeatToNoteSkinRev;
+}
+
+void GameState::ResetNoteSkinsForPlayer( PlayerNumber pn )
+{
+	m_BeatToNoteSkin[pn].clear();
+	m_BeatToNoteSkin[pn][-1000] = GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin;
+
+	++m_BeatToNoteSkinRev;
 }
 
 void GameState::GetAllUsedNoteSkins( vector<CString> &out ) const

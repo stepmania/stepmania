@@ -153,6 +153,7 @@ public:
 	map<float,CString> m_BeatToNoteSkin[NUM_PLAYERS];
 	int			m_BeatToNoteSkinRev; /* hack: incremented whenever m_BeatToNoteSkin changes */
 	void ResetNoteSkins();
+	void ResetNoteSkinsForPlayer( PlayerNumber pn );
 	void GetAllUsedNoteSkins( vector<CString> &out ) const;
 
 	static const float MUSIC_SECONDS_INVALID;

@@ -55,6 +55,7 @@ public:
 	int high_meter;			// = -1 if no meter range specified
 	int players_index;		// ignored if type isn't 'best' or 'worst'
 	CString modifiers;		// set player and song options using these
+	AttackArray attacks;	// set timed modifiers
 
 	CourseEntry()
 	{
@@ -101,6 +102,7 @@ public:
 		Song*	pSong;
 		Steps*	pNotes;
 		CString	Modifiers;
+		AttackArray Attacks;
 		bool	Random;
 		bool	Mystery;
 		bool	Difficult; /* set to true if this is the difficult version */
