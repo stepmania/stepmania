@@ -209,7 +209,6 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 	if( NumRows == -1 )
 		RageException::Throw( "%s::OptionMenuFlags is missing \"rows\" field", m_sName.c_str() );
 
-	bool TitleSetExplicitly = false;
 	m_OptionRowAlloc = new OptionRow[NumRows];
 	for( i = 0; (int) i < NumRows; ++i )
 	{
@@ -221,6 +220,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 			RageException::Throw( "Parse error in %s::Line%i", m_sName.c_str(), i+1 );
 
 		OptionRowHandler hand;
+		bool TitleSetExplicitly = false;
 		for( unsigned part = 0; part < asParts.size(); ++part)
 		{
 			CStringArray asBits;
