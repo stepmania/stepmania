@@ -1,12 +1,10 @@
+/* ScreenTestInput - Display pressed keys. */
+
 #ifndef SCREEN_TEST_INPUT_H
 #define SCREEN_TEST_INPUT_H
 
 #include "ScreenWithMenuElements.h"
-#include "Sprite.h"
 #include "BitmapText.h"
-#include "PrefsManager.h"
-#include "InputMapper.h"
-#include "RageInputDevice.h"
 
 
 class ScreenTestInput : public ScreenWithMenuElements

@@ -10,7 +10,6 @@
 #include "GameState.h"
 #include "GameSoundManager.h"
 #include "ThemeManager.h"
-#include "RageDisplay.h"
 #include "Game.h"
 #include "HelpDisplay.h"
 #include "ScreenDimensions.h"
