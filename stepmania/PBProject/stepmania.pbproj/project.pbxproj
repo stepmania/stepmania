@@ -214,7 +214,8 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				OTHER_CFLAGS = "-I../src -I/usr/local/include/SDL -DDEBUG -DPBBUILD  -Wno-switch -Wno-missing-braces -fcoalesce-templates -fno-rtti -Wnewline-eof -Os";
+				OPTIMIZATION_CFLAGS = "-O2";
+				OTHER_CFLAGS = "-I../src -I/usr/local/include/SDL -DPBBUILD  -Wno-switch -Wno-missing-braces -fcoalesce-templates -fno-rtti -Wnewline-eof";
 				OTHER_LDFLAGS = "-lSDLmain -lpng ../src/SDL_sound-1.0.0/SDL_sound.o ../src/SDL_sound-1.0.0/ogg.o ../src/SDL_sound-1.0.0/wav.o ../src/SDL_sound-1.0.0/audio_convert.o ../src/SDL_sound-1.0.0/madlib.o -lmad -logg -lvorbisfile -lvorbis";
 				PRODUCT_NAME = StepMania;
 				SECTORDER_FLAGS = "";
@@ -238,7 +239,7 @@
 	<key>CFBundleExecutable</key>
 	<string>StepMania</string>
 	<key>CFBundleGetInfoString</key>
-	<string>StepMania 3.0 b1</string>
+	<string>StepMania 3.9 b1</string>
 	<key>CFBundleIconFile</key>
 	<string>smicon.icns</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -248,11 +249,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.0 b1</string>
+	<string>3.9 b1</string>
 	<key>CFBundleSignature</key>
 	<string>Step</string>
 	<key>CFBundleVersion</key>
-	<string>3.0 b2</string>
+	<string>3.9 b1</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
@@ -505,7 +506,6 @@
 				AAEF3D0E04B533CC00D02EE9,
 				AAEF3D1104B53E2900D02EE9,
 				AA3F8E0B04BA758200D02EE9,
-				AA3F283004BBD38300D02EE9,
 				AAB3B36E04C38B4600D02EE9,
 				AAB3B37804C38BF600D02EE9,
 				AAB3B38104C3F48700D02EE9,
@@ -762,7 +762,6 @@
 				AAEF3D0F04B533CC00D02EE9,
 				AAA983CB04B9060A00D02EE9,
 				AA3F8E0C04BA758200D02EE9,
-				AA3F282F04BBD38300D02EE9,
 				AA3F283C04BE6DDC00D02EE9,
 				AAB3B36D04C38B4600D02EE9,
 				AAB3B38204C3F48700D02EE9,
@@ -996,24 +995,6 @@
 			settings = {
 			};
 		};
-		AA240F5504AC116800D02EE9 = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			path = RageSoundDriver_QT1.cpp;
-			refType = 4;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA240F5604AC116800D02EE9 = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			path = RageSoundDriver_QT1.h;
-			refType = 4;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
 		AA272BF704C7B37A00D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -1158,18 +1139,6 @@
 		};
 		AA272D2504CEC23700D02EE9 = {
 			fileRef = AA272D2304CEC23700D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA3F282F04BBD38300D02EE9 = {
-			fileRef = AA240F5504AC116800D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA3F283004BBD38300D02EE9 = {
-			fileRef = AA240F5604AC116800D02EE9;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -3806,8 +3775,6 @@
 				AABE37030497CF85005F316C,
 				AA6E012E047712BE005F316C,
 				AA6E012F047712BE005F316C,
-				AA240F5504AC116800D02EE9,
-				AA240F5604AC116800D02EE9,
 				AA8F275F04A1127900D02EE9,
 				AA8F275E04A1127900D02EE9,
 			);
