@@ -87,12 +87,6 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData,
 			CStringArray asMeasureLines;
 			split( sMeasureString, "\n", asMeasureLines, true );	// ignore empty is important
 
-			//ASSERT( asMeasureLines.size() == 4  ||
-			//	    asMeasureLines.size() == 8  ||
-			//	    asMeasureLines.size() == 12  ||
-			//	    asMeasureLines.size() == 16 );
-
-
 			for( unsigned l=0; l<asMeasureLines.size(); l++ )
 			{
 				CString &sMeasureLine = asMeasureLines[l];
