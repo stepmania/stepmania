@@ -20,13 +20,20 @@ RageSoundManager::RageSoundManager(CString drivers)
 {
 	/* needs to be done first */
 	SOUNDMAN = this;
-	MixVolume = 1.0f;
 
-	driver = MakeRageSoundDriver(drivers);
-	if(!driver)
-		RageException::Throw("Couldn't find a sound driver that works");
+	try
+	{
+		MixVolume = 1.0f;
 
-	music = new RageSound;
+		driver = MakeRageSoundDriver(drivers);
+		if(!driver)
+			RageException::Throw("Couldn't find a sound driver that works");
+
+		music = new RageSound;
+	} catch(...) {
+		SOUNDMAN = NULL;
+		throw;
+	}
 }
 
 RageSoundManager::~RageSoundManager()

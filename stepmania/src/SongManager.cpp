@@ -51,16 +51,21 @@ SongManager::SongManager( LoadingWindow *ld )
 	/* We initialize things that assume they can get at SONGMAN; we only
 	 * init one of these, so hook us up to it immediately. */
 	SONGMAN = this;
+	try
+	{
+		g_vGroupColors.clear();
+		for( int i=0; i<NUM_GROUP_COLORS; i++ )
+			g_vGroupColors.push_back( GROUP_COLOR(i) );
+		g_ExtraColor = EXTRA_COLOR;
 
-	g_vGroupColors.clear();
-	for( int i=0; i<NUM_GROUP_COLORS; i++ )
-		g_vGroupColors.push_back( GROUP_COLOR(i) );
-	g_ExtraColor = EXTRA_COLOR;
+		InitSongArrayFromDisk( ld );
+		InitMachineScoresFromDisk();
 
-	InitSongArrayFromDisk( ld );
-	InitMachineScoresFromDisk();
-
-	InitCoursesFromDisk();
+		InitCoursesFromDisk();
+	} catch(...) {
+		SONGMAN = NULL;
+		throw;
+	}
 }
 
 SongManager::~SongManager()
