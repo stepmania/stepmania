@@ -253,7 +253,7 @@
 	<key>CFBundleExecutable</key>
 	<string>StepMania</string>
 	<key>CFBundleGetInfoString</key>
-	<string>StepMania 3.9 alpha 6</string>
+	<string>StepMania 3.9 alpha 7</string>
 	<key>CFBundleIconFile</key>
 	<string>smicon.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -265,11 +265,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.9  alpha 6</string>
+	<string>3.9  alpha 7</string>
 	<key>CFBundleSignature</key>
 	<string>Step</string>
 	<key>CFBundleVersion</key>
-	<string>3.9 alpha 6</string>
+	<string>3.9 alpha 7</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>
@@ -420,7 +420,6 @@
 				AA6E00A0047711F3005F316C,
 				AA6E00A2047711F3005F316C,
 				AA6E00A4047711F3005F316C,
-				AA6E00A8047711F3005F316C,
 				AA6E00AE047711F3005F316C,
 				AA6E00B2047711F3005F316C,
 				AA6E00B4047711F3005F316C,
@@ -699,7 +698,6 @@
 				AA6E009F047711F3005F316C,
 				AA6E00A1047711F3005F316C,
 				AA6E00A3047711F3005F316C,
-				AA6E00A7047711F3005F316C,
 				AA6E00B1047711F3005F316C,
 				AA6E00B3047711F3005F316C,
 				AA6E00B5047711F3005F316C,
@@ -1113,6 +1111,7 @@
 				AACC9BB20513BEA300D02EE9,
 				AAAE28EC0522538C00D02EE9,
 				AAAE28ED0522538C00D02EE9,
+				AA6A9F5E0532A07C00D02EE9,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1836,6 +1835,7 @@
 			);
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "../src Installer";
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -2013,6 +2013,12 @@
 		};
 		AA5D1C9504FE259500BE5E4F = {
 			fileRef = AA5D1C9404FE259500BE5E4F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA6A9F5E0532A07C00D02EE9 = {
+			fileRef = AAA0F7CE047AC7BF005F316C;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -3382,18 +3388,6 @@
 		};
 		AA6E00A4047711F3005F316C = {
 			fileRef = AA6E002A047711F3005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA6E00A7047711F3005F316C = {
-			fileRef = AA6E002D047711F3005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA6E00A8047711F3005F316C = {
-			fileRef = AA6E002E047711F3005F316C;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -9362,13 +9356,13 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				LIBRARY_STYLE = STATIC;
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OPTIMIZATION_CFLAGS = "-O2";
 				OTHER_CFLAGS = "-DHAVE_INTTYPES_H=1";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = libresample.a;
-				PROFILING_CODE = YES;
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
 				USE_GCC3_PFE_SUPPORT = NO;
