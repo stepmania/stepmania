@@ -102,6 +102,14 @@ static void ChangeToDirOfExecutable(const char *argv0)
 	DirOfExecutable = argv0;
 	DirOfExecutable.Replace( "\\", "/" );
 
+	bool IsAbsolutePath = false;
+	if( DirOfExecutable.size() == 0 || DirOfExecutable[0] == '/' )
+		IsAbsolutePath = true;
+#if defined(_WIN32)
+	if( DirOfExecutable.size() > 2 && DirOfExecutable[1] == ':' && DirOfExecutable[2] == '/' )
+		IsAbsolutePath = true;
+#endif
+
 	// strip off executable name
 	unsigned n = DirOfExecutable.find_last_of("/");
 	if( n != DirOfExecutable.npos )
@@ -109,17 +117,11 @@ static void ChangeToDirOfExecutable(const char *argv0)
 	else
 		DirOfExecutable.erase();
 
-	bool IsAbsolutePath = false;
-	if( DirOfExecutable.size() == 0 || (DirOfExecutable[0] == '/' || DirOfExecutable[0] == '\\') )
-		IsAbsolutePath = true;
-#if defined(_WIN32)
-	if( DirOfExecutable.size() > 2 && DirOfExecutable[1] == ':' && 
-		(DirOfExecutable[2] == '/' || DirOfExecutable[2] == '\\') )
-		IsAbsolutePath = true;
-#endif
-
 	if( !IsAbsolutePath )
+	{
 		DirOfExecutable = GetCwd() + "/" + DirOfExecutable;
+		DirOfExecutable.Replace( "\\", "/" );
+	}
 
 	/* Set the CWD.  Any effects of this is platform-specific; most files are read and
 	 * written through RageFile.  See also RageFileManager::RageFileManager. */
