@@ -153,6 +153,9 @@ enum NotesType
 	NOTES_TYPE_DANCE_SOLO,
 	NOTES_TYPE_PUMP_SINGLE,
 	NOTES_TYPE_PUMP_DOUBLE,
+	NOTES_TYPE_EZ2_SINGLE,
+	NOTES_TYPE_EZ2_DOUBLE,
+	NOTES_TYPE_EZ2_REAL,
 	NUM_NOTES_TYPES,		// leave this at the end
 	NOTES_TYPE_INVALID,
 };
@@ -167,6 +170,9 @@ inline int NotesTypeToNumColumns( NotesType nt )
 	case NOTES_TYPE_DANCE_SOLO:		return 6;
 	case NOTES_TYPE_PUMP_SINGLE:	return 5;
 	case NOTES_TYPE_PUMP_DOUBLE:	return 10;
+	case NOTES_TYPE_EZ2_SINGLE:		return 5; // Single: TL,LHH,D,RHH,TR
+	case NOTES_TYPE_EZ2_DOUBLE:		return 10; // Double: Single x2
+	case NOTES_TYPE_EZ2_REAL:		return 7; // Real: TL,LHH,LHL,D,RHL,RHH,TR
 	default:	ASSERT(0);		return -1;	// invalid NotesType
 	}
 }
@@ -179,6 +185,9 @@ inline NotesType StringToNotesType( CString sNotesType )
 	else if( sNotesType == "dance-solo" )	return NOTES_TYPE_DANCE_SOLO;
 	else if( sNotesType == "pump-single" )	return NOTES_TYPE_PUMP_SINGLE;
 	else if( sNotesType == "pump-double" )	return NOTES_TYPE_PUMP_DOUBLE;
+	else if( sNotesType == "ez2-single" )	return NOTES_TYPE_EZ2_SINGLE;
+	else if( sNotesType == "ez2-double" )	return NOTES_TYPE_EZ2_DOUBLE;
+	else if( sNotesType == "ez2-real" )		return NOTES_TYPE_EZ2_REAL;
 	else	ASSERT(0);	return NOTES_TYPE_DANCE_SINGLE;	// invalid NotesType
 }
 
@@ -192,6 +201,9 @@ inline CString NotesTypeToString( NotesType nt )
 	case NOTES_TYPE_DANCE_SOLO:		return "dance-solo";
 	case NOTES_TYPE_PUMP_SINGLE:	return "pump-single";
 	case NOTES_TYPE_PUMP_DOUBLE:	return "pump-double";
+	case NOTES_TYPE_EZ2_SINGLE:		return "ez2-single";
+	case NOTES_TYPE_EZ2_DOUBLE:		return "ez2-double";
+	case NOTES_TYPE_EZ2_REAL:		return "ez2-real";
 	default:	ASSERT(0);		return "";	// invalid NotesType
 	}
 }
@@ -240,8 +252,9 @@ enum SongSortOrder {
 ///////////////////////////////
 enum Game
 {
-	GAME_DANCE,
-	GAME_PUMP,
+	GAME_DANCE, // Dance Dance Revolution
+	GAME_PUMP, // Pump It Up
+	GAME_EZ2, // Ez2dancer
 	NUM_GAMES,	// leave this at the end
 	GAME_NONE,
 };
@@ -256,6 +269,9 @@ enum Style
 	STYLE_PUMP_SINGLE,
 	STYLE_PUMP_VERSUS,
 	STYLE_PUMP_DOUBLE,
+	STYLE_EZ2_SINGLE,
+	STYLE_EZ2_DOUBLE,
+	STYLE_EZ2_REAL,
 	NUM_STYLES,	// leave this at the end
 	STYLE_NONE,
 };
@@ -274,6 +290,10 @@ inline Game StyleToGame( Style s )
 	case STYLE_PUMP_VERSUS:
 	case STYLE_PUMP_DOUBLE:
 		return GAME_PUMP;
+	case STYLE_EZ2_SINGLE:
+	case STYLE_EZ2_DOUBLE:
+	case STYLE_EZ2_REAL:
+		return GAME_EZ2;
 	default:
 		ASSERT(0);	// invalid Style
 		return GAME_DANCE;

@@ -15,7 +15,7 @@
 #include "RandomSample.h"
 #include "TransitionFade.h"
 #include "Quad.h"
-
+#include "AnnouncerManager.h"
 
 class ScreenSelectGame : public ScreenOptions
 {

@@ -24,7 +24,7 @@
 #include "RageLog.h"
 #include "GameManager.h"
 #include "string.h"
-
+#include "AnnouncerManager.h"
 
 
 enum {
@@ -75,8 +75,18 @@ void ScreenSelectGame::ExportOptions()
 	Game game = (Game)m_iSelectedOption[0][SG_GAME];
 	switch( game )
 	{
-	case GAME_DANCE:	GAMEMAN->m_CurStyle = STYLE_DANCE_SINGLE;	break;
-	case GAME_PUMP:		GAMEMAN->m_CurStyle = STYLE_PUMP_SINGLE;	break;
+	case GAME_DANCE:	
+		GAMEMAN->m_CurStyle = STYLE_DANCE_SINGLE;
+		ANNOUNCER->SwitchAnnouncer( "default" );
+		break;
+	case GAME_PUMP:		
+		GAMEMAN->m_CurStyle = STYLE_PUMP_SINGLE;
+		ANNOUNCER->SwitchAnnouncer( "default" );
+		break;
+	case GAME_EZ2:		
+		GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;		
+		ANNOUNCER->SwitchAnnouncer( "ez2" );
+		break;
 	default:	ASSERT(0);	// invalid Game
 	}
 
