@@ -67,6 +67,7 @@ static inline int64_t llabs( int64_t i ) { return i >= 0? i: -i; }
 /* Windows is missing some basic math functions: */
 #define NEED_TRUNCF
 #define NEED_ROUNDF
+#define NEED_STRTOF
 #define MISSING_STDINT_H
 
 inline int lrintf( float f )
