@@ -72,12 +72,13 @@ char* _tcsechr( const char* psz, int ch, int escape )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-int _tcselen( int escape, char* srt, char* end = NULL ) 
+int _tcselen( int escape, const char *srt, const char *end )
 {
 	int len = 0;
-	char* pch = srt;
-	if( end==NULL ) end = (char*)sizeof(long);
-	char* prev_escape = NULL;
+	const char *pch = srt;
+	if( end==NULL )
+		end = (char*) sizeof(long);
+	const char *prev_escape = NULL;
 	while( pch && *pch && pch<end )
 	{
 		if( *pch == escape && prev_escape == NULL )
