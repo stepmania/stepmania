@@ -920,14 +920,6 @@ SOURCE=.\TransitionInvisible.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\TransitionKeepAlive.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\TransitionKeepAlive.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\TransitionOniFade.cpp
 # End Source File
 # Begin Source File

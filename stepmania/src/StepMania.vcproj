@@ -984,12 +984,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\TransitionInvisible.h">
 			</File>
 			<File
-				RelativePath="TransitionKeepAlive.cpp">
-			</File>
-			<File
-				RelativePath="TransitionKeepAlive.h">
-			</File>
-			<File
 				RelativePath="TransitionOniFade.cpp">
 			</File>
 			<File
