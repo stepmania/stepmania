@@ -22,6 +22,7 @@
 #include "RageLog.h"
 #include "arch/ArchHooks/ArchHooks.h"
 #include "RageFileManager.h"
+#include "SongCreditDisplay.h"
 
 
 static Actor* LoadActor( CString sPath )
@@ -98,7 +99,11 @@ Actor* MakeActor( RageTextureID ID )
 	CString sExt = GetExtension( ID.filename );
 	sExt.MakeLower();
 	
-	if( sExt=="actor" )
+	if( ID.filename.Right(strlen("SongCreditDisplay")) == "SongCreditDisplay" )
+	{
+		return new SongCreditDisplay;
+	}
+	else if( sExt=="actor" )
 	{
 		return LoadActor( ID.filename );
 	}
