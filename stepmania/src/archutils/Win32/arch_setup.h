@@ -1,6 +1,8 @@
 #ifndef ARCH_SETUP_WINDOWS_H
 #define ARCH_SETUP_WINDOWS_H
 
+#define HAVE_FFMPEG
+
 /* Fix VC breakage. */
 #define PATH_MAX _MAX_PATH
 
