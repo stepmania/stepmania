@@ -12,6 +12,7 @@
 #include "TipDisplay.h"
 #include "RageUtil.h"
 #include "ThemeManager.h"
+#include "RageHelper.h"
 
 
 const float TIP_FADE_TIME	=	0.3f;
@@ -20,7 +21,7 @@ const float TIP_SHOW_TIME	=	2;
 
 TipDisplay::TipDisplay()
 {
-	RageLog( "TipDisplay::TipDisplay()" );
+	HELPER.Log( "TipDisplay::TipDisplay()" );
 
 	m_textTip.Load( THEME->GetPathTo(FONT_NORMAL) );
 	this->AddActor( &m_textTip );

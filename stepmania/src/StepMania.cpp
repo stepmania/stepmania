@@ -14,6 +14,7 @@
 //-----------------------------------------------------------------------------
 #include "resource.h"
 
+#include "RageHelper.h"
 #include "RageScreen.h"
 #include "RageTextureManager.h"
 #include "RageSound.h"
@@ -25,9 +26,9 @@
 #include "ThemeManager.h"
 #include "WindowManager.h"
 #include "GameManager.h"
+#include "FontManager.h"
 
 #include "WindowSandbox.h"
-#include "WindowLoading.h"
 #include "WindowMenuResults.h"
 #include "WindowTitleMenu.h"
 #include "WindowPlayerOptions.h"
@@ -59,8 +60,6 @@ const DWORD g_dwWindowStyle = WS_VISIBLE|WS_POPUP|WS_CAPTION|WS_MINIMIZEBOX|WS_M
 BOOL	g_bIsActive		= FALSE;	// Whether the focus is on our app
 
 
-//LPRageMovieTexture	g_pMovieTexture = NULL;
-
 
 //-----------------------------------------------------------------------------
 // Function prototypes
@@ -69,6 +68,8 @@ BOOL	g_bIsActive		= FALSE;	// Whether the focus is on our app
 LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
 BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
 
+int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow );	// windows entry point
+void MainLoop();		// put everything in here so we can wrap it in a try...catch block
 void Update();			// Update the game logic
 void Render();			// Render a frame
 void ShowFrame();		// Display the contents of the back buffer to the screen
@@ -79,8 +80,7 @@ HRESULT		InvalidateObjects();		// invalidate game objects before a display mode 
 HRESULT		RestoreObjects();			// restore game objects after a display mode change
 VOID		DestroyObjects();			// deallocate game objects when we're done with them
 
-BOOL SwitchDisplayMode();// BOOL bWindowed, DWORD dwWidth, DWORD dwHeight, DWORD dwBPP );
-
+void ApplyGraphicOptions();	// Set the display mode according to the user's preferences
 
 //-----------------------------------------------------------------------------
 // Name: WinMain()
@@ -91,135 +91,93 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 	// Initialize ActiveX for Flash
 	//AfxEnableControlContainer();
 
-#ifndef DEBUG	// don't use error handler in Release mode
-	try
+	//
+	// Check to see if the app is already running.
+	//
+	g_hMutex = CreateMutex( NULL, TRUE, g_sAppName );
+	if( GetLastError() == ERROR_ALREADY_EXISTS )
 	{
-#endif
-		//
-		// Check to see if the app is already running.
-		//
-		g_hMutex = CreateMutex( NULL, TRUE, g_sAppName );
-		if( GetLastError() == ERROR_ALREADY_EXISTS )
-		{
-			CloseHandle( g_hMutex );
-			RageError( "StepMania is already running!" );
-		}
-
-		//
-		// Make sure the current directory is the root program directory
-		//
-		if( !DoesFileExist("Songs") )
-		{
-			// change dir to path of the execuctable
-			TCHAR szFullAppPath[MAX_PATH];
-			GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
-			
-			// strip off executable name
-			LPSTR pLastBackslash = strrchr(szFullAppPath, '\\');
-			*pLastBackslash = '\0';	// terminate the string
-
-			RageLog( "Changing path to '%s'", szFullAppPath );
-			SetCurrentDirectory( szFullAppPath );
-		}
-
-		
-
-
-
-		CoInitialize (NULL);    // Initialize COM
-
-		// Register the window class
-		WNDCLASS wndClass = { 
-			0,
-			WndProc,	// callback handler
-			0,			// cbClsExtra; 
-			0,			// cbWndExtra; 
-			hInstance,
-			LoadIcon( hInstance, MAKEINTRESOURCE(IDI_ICON) ), 
-			LoadCursor( hInstance, IDC_ARROW),
-			(HBRUSH)GetStockObject( BLACK_BRUSH ),
-			NULL,				// lpszMenuName; 
-			g_sAppClassName	// lpszClassName; 
-		}; 
- 		RegisterClass( &wndClass );
-
-
-		// Set the window's initial width
-		RECT rcWnd;
-		SetRect( &rcWnd, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT );
-		AdjustWindowRect( &rcWnd, g_dwWindowStyle, FALSE );
-
-
-		// Create our main window
-		g_hWndMain = CreateWindow(
-					  g_sAppClassName,// pointer to registered class name
-					  g_sAppName,		// pointer to window name
-					  g_dwWindowStyle,	// window StyleDef
-					  CW_USEDEFAULT,	// horizontal position of window
-					  CW_USEDEFAULT,	// vertical position of window
-					  RECTWIDTH(rcWnd),	// window width
-					  RECTHEIGHT(rcWnd),// window height
-					  NULL,				// handle to parent or owner window
-					  NULL,				// handle to menu, or child-window identifier
-					  hInstance,		// handle to application instance
-					  NULL				// pointer to window-creation data
-					);
- 		if( NULL == g_hWndMain )
-			exit(1);
-
-
-		// Load keyboard accelerators
-		HACCEL hAccel = LoadAccelerators( NULL, MAKEINTRESOURCE(IDR_MAIN_ACCEL) );
-
-		// run the game
-		CreateObjects( g_hWndMain );	// Create the game objects
-
-		// Now we're ready to recieve and process Windows messages.
-		MSG msg;
-		ZeroMemory( &msg, sizeof(msg) );
-
-		while( WM_QUIT != msg.message  )
-		{
-			// Look for messages, if none are found then 
-			// update the state and display it
-			if( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) )
-			{
-				GetMessage(&msg, NULL, 0, 0 );
-
-				// Translate and dispatch the message
-				if( 0 == TranslateAccelerator( g_hWndMain, hAccel, &msg ) )
-				{
-					TranslateMessage( &msg ); 
-					DispatchMessage( &msg );
-				}
-			}
-			else	// No messages are waiting.  Render a frame during idle time.
-			{
-				Update();
-				Render();
-				//if( !g_bFullscreen )
-				::Sleep(0 );	// give some time for the movie decoding thread
-			}
-		}	// end  while( WM_QUIT != msg.message  )
-
-
-		// clean up after a normal exit 
 		CloseHandle( g_hMutex );
-		DestroyObjects();			// deallocate our game objects and leave fullscreen
-		DestroyWindow( g_hWndMain );
-		UnregisterClass( g_sAppClassName, hInstance );
-		CoUninitialize();			// Uninitialize COM
-
-
-
-#ifndef DEBUG	// only use pretty error handler in RELEASE build
+		HELPER.FatalError( "StepMania is already running!" );
 	}
-	catch(...)	// catch all exceptions
-	{
-		CloseHandle( g_hMutex );
-		DestroyObjects();			// deallocate our game objects and leave fullscreen
-		ShowWindow( g_hWndMain, SW_HIDE );
 
+
+	//
+	// Make sure the current directory is the root program directory
+	//
+	if( !DoesFileExist("Songs") )
+	{
+		// change dir to path of the execuctable
+		TCHAR szFullAppPath[MAX_PATH];
+		GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
+		
+		// strip off executable name
+		LPSTR pLastBackslash = strrchr(szFullAppPath, '\\');
+		*pLastBackslash = '\0';	// terminate the string
+
+		SetCurrentDirectory( szFullAppPath );
+	}
+
+
+	CoInitialize (NULL);    // Initialize COM
+
+	// Register the window class
+	WNDCLASS wndClass = { 
+		0,
+		WndProc,	// callback handler
+		0,			// cbClsExtra; 
+		0,			// cbWndExtra; 
+		hInstance,
+		LoadIcon( hInstance, MAKEINTRESOURCE(IDI_ICON) ), 
+		LoadCursor( hInstance, IDC_ARROW),
+		(HBRUSH)GetStockObject( BLACK_BRUSH ),
+		NULL,				// lpszMenuName; 
+		g_sAppClassName	// lpszClassName; 
+	}; 
+ 	RegisterClass( &wndClass );
+
+
+	// Set the window's initial width
+	RECT rcWnd;
+	SetRect( &rcWnd, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT );
+	AdjustWindowRect( &rcWnd, g_dwWindowStyle, FALSE );
+
+
+	// Create our main window
+	g_hWndMain = CreateWindow(
+					g_sAppClassName,// pointer to registered class name
+					g_sAppName,		// pointer to window name
+					g_dwWindowStyle,	// window StyleDef
+					CW_USEDEFAULT,	// horizontal position of window
+					CW_USEDEFAULT,	// vertical position of window
+					RECTWIDTH(rcWnd),	// window width
+					RECTHEIGHT(rcWnd),// window height
+					NULL,				// handle to parent or owner window
+					NULL,				// handle to menu, or child-window identifier
+					hInstance,		// handle to application instance
+					NULL				// pointer to window-creation data
+				);
+ 	if( NULL == g_hWndMain )
+		exit(1);
+
+
+
+
+
+
+	bool bSuccess = HELPER.Run( MainLoop );
+
+	
+
+
+
+	// clean up after a normal exit 
+	DestroyObjects();			// deallocate our game objects and leave fullscreen
+	ShowWindow( g_hWndMain, SW_HIDE );
+
+
+	if( !bSuccess )
+	{
 		// throw up a pretty error dialog
 		DialogBox(
 			hInstance,
@@ -227,13 +185,52 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 			NULL,
 			ErrorWndProc
 			);
-		exit( 1 );
 	}
-#endif
 
-
+	DestroyWindow( g_hWndMain );
+	UnregisterClass( g_sAppClassName, hInstance );
+	CoUninitialize();			// Uninitialize COM
+	CloseHandle( g_hMutex );
 
 	return 0L;
+}
+
+void MainLoop()
+{
+	// Load keyboard accelerators
+	HACCEL hAccel = LoadAccelerators( NULL, MAKEINTRESOURCE(IDR_MAIN_ACCEL) );
+
+	// run the game
+	CreateObjects( g_hWndMain );	// Create the game objects
+
+	// Now we're ready to recieve and process Windows messages.
+	MSG msg;
+	ZeroMemory( &msg, sizeof(msg) );
+
+	while( WM_QUIT != msg.message  )
+	{
+		// Look for messages, if none are found then 
+		// update the state and display it
+		if( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) )
+		{
+			GetMessage(&msg, NULL, 0, 0 );
+
+			// Translate and dispatch the message
+			if( 0 == TranslateAccelerator( g_hWndMain, hAccel, &msg ) )
+			{
+				TranslateMessage( &msg ); 
+				DispatchMessage( &msg );
+			}
+		}
+		else	// No messages are waiting.  Render a frame during idle time.
+		{
+			Update();
+			Render();
+			//if( !g_bFullscreen )
+			//::Sleep(0 );	// give some time for the movie decoding thread
+		}
+	}	// end  while( WM_QUIT != msg.message  )
+
 }
 
 
@@ -247,25 +244,14 @@ BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 	{
 	case WM_INITDIALOG:
 		{
-			CString sError;
-			CStdioFile file;
-			if( file.Open("error.txt", CFile::modeRead) )
-			{
-				CString sBuffer;
-				while( file.ReadString(sBuffer) )
-				{
-					sError += sBuffer + "\r\n";
-				}
-			}
-			sError.TrimRight();
-			if( sError == "" )
-				sError = "Program Crash.  Click 'View Log' for trace.";
+			CString sMessage = HELPER.GetError() + "\n\nStack Trace:\n" + HELPER.GetErrorStackTrace();
+			sMessage.Replace( "\n", "\r\n" );
 			SendDlgItemMessage( 
 				hWnd, 
 				IDC_EDIT_ERROR, 
 				WM_SETTEXT, 
 				0, 
-				(LPARAM)(LPCTSTR)sError 
+				(LPARAM)(LPCTSTR)sMessage
 				);
 		}
 		break;
@@ -391,31 +377,18 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 
 		case WM_COMMAND:
 		{
-			GameOptions &go = PREFS->m_GameOptions;
+			GraphicOptions &go = PREFS->m_GraphicOptions;
             switch( LOWORD(wParam) )
             {
-
 				case IDM_TOGGLEFULLSCREEN:
 					go.m_bWindowed = !go.m_bWindowed;
-					SwitchDisplayMode();// !SCREEN->IsWindowed(), SCREEN_WIDTH, SCREEN_HEIGHT, 16 );
+					ApplyGraphicOptions();
 					return 0;
 				case IDM_CHANGERESOLUTION:
 					go.m_iResolution = (go.m_iResolution==640) ? 320 : 640;
-					SwitchDisplayMode();
+					ApplyGraphicOptions();
 					return 0;
-				case IDM_CHANGEDISPLAYCOLOR:
-					go.m_iDisplayColor = (go.m_iDisplayColor==16) ? 32 : 16;
-					SwitchDisplayMode();
-					return 0;
-				case IDM_CHANGETEXTURECOLOR:
-					go.m_iTextureColor = (go.m_iTextureColor==16) ? 32 : 16;
-					SwitchDisplayMode();
-					return 0;
-				case IDM_TOGGLESTATISTICS:
-					go.m_bShowFPS = !go.m_bShowFPS;
-					SwitchDisplayMode();
-					return 0;
-                case IDM_EXIT:
+               case IDM_EXIT:
                     // Recieved key/menu command to exit app
                     SendMessage( hWnd, WM_CLOSE, 0, 0 );
                     return 0;
@@ -481,29 +454,34 @@ HRESULT CreateObjects( HWND hWnd )
 	// Create game objects
 	//
 	srand( (unsigned)time(NULL) );	// seed number generator
-	RageLogStart();
 	
 	SOUND	= new RageSound( hWnd );
 	MUSIC	= new RageSoundStream;
-	INPUT	= new RageInput( hWnd );
+	INPUTM	= new RageInput( hWnd );
 	PREFS	= new PrefsManager;
 	SCREEN	= new RageScreen( hWnd );
-	SONG	= new SongManager;
+	SONG	= new SongManager;		// this takes a long time to load
+	GAME	= new GameManager;
+	THEME	= new ThemeManager;
 
 	BringWindowToTop( hWnd );
 	SetForegroundWindow( hWnd );
 
-	// switch the screen resolution according to user's prefs
-	SwitchDisplayMode(); 
+	// We can't do any texture loading unless the D3D device is created.  
+	// Set the display mode to make sure the D3D device is created.
+	ApplyGraphicOptions(); 
 
-	TM		= new RageTextureManager( SCREEN );
-	THEME	= new ThemeManager;
+	TEXTURE	= new RageTextureManager( SCREEN );
+
+	// Ugly...  Set graphic options again so the TextureManager knows our preferences
+	ApplyGraphicOptions(); 
+
+	// These things depend on the TextureManager, so do them last!
+	FONT	= new FontManager;
 	WM		= new WindowManager;
-	GAME	= new GameManager;
 
-	
 	// Ugly...  Switch the screen resolution again so that the system message will display
-	SwitchDisplayMode(); 
+	ApplyGraphicOptions(); 
 
 	WM->SystemMessage( ssprintf("Found %d songs.", SONG->m_pSongs.GetSize()) );
 
@@ -533,11 +511,12 @@ void DestroyObjects()
 	SAFE_DELETE( PREFS );
 	SAFE_DELETE( SONG );
 	SAFE_DELETE( GAME );
+	SAFE_DELETE( FONT );
 
-	SAFE_DELETE( INPUT );
+	SAFE_DELETE( INPUTM );
 	SAFE_DELETE( MUSIC );
 	SAFE_DELETE( SOUND );
-	SAFE_DELETE( TM );
+	SAFE_DELETE( TEXTURE );
 	SAFE_DELETE( SCREEN );
 }
 
@@ -607,7 +586,7 @@ void Update()
 	
 	// This was a hack to fix timing issues with the old WindowSelectSong
 	//
-	if( fDeltaTime > 0.050f )	// we dropped > 5 frames
+	if( fDeltaTime > 0.050f )	// we dropped a bunch of frames
 		fDeltaTime = 0.050f;
 	
 	MUSIC->Update( fDeltaTime );
@@ -616,8 +595,8 @@ void Update()
 
 
 	static DeviceInputArray diArray;
-	diArray.RemoveAll();
-	INPUT->GetDeviceInputs( diArray );
+	diArray.SetSize( 0, 10 );	// zero the array
+	INPUTM->GetDeviceInputs( diArray );
 
 	DeviceInput DeviceI;
 	PadInput PadI;
@@ -661,7 +640,7 @@ void Render()
             }
 			else
 			{
-				RageErrorHr( "Failed to SCREEN->Reset()", hr );
+				HELPER.FatalErrorHr( hr, "Failed to SCREEN->Reset()" );
 			}
 
 			break;
@@ -707,16 +686,27 @@ void ShowFrame()
 
 
 //-----------------------------------------------------------------------------
-// Name: SwitchDisplayMode()
+// Name: ApplyGraphicOptions()
 // Desc:
 //-----------------------------------------------------------------------------
-BOOL SwitchDisplayMode()//( BOOL bWindowed, DWORD dwWidth, DWORD dwHeight, DWORD dwBPP )
+void ApplyGraphicOptions()
 {
 	InvalidateObjects();
 
+	GraphicOptions &go = PREFS->m_GraphicOptions;
 
+	//
+	// Let the texture manager know about our preferences
+	//
+	if( TEXTURE != NULL )
+	{
+		TEXTURE->SetMaxTextureSize( go.m_iMaxTextureSize );
+		TEXTURE->SetTextureColorDepth( go.m_iTextureColor );
+	}
+
+	//
 	// use GameOptions to get the display settings
-	GameOptions &go = PREFS->m_GameOptions;
+	//
 	bool bWindowed	=	go.m_bWindowed;
 	DWORD dwWidth	=	go.m_iResolution;
 	DWORD dwHeight;
@@ -734,31 +724,32 @@ BOOL SwitchDisplayMode()//( BOOL bWindowed, DWORD dwWidth, DWORD dwHeight, DWORD
 	}
 	DWORD dwBPP		=	go.m_iDisplayColor;
 
+	DWORD dwFlags = 0 | (go.m_b30fpsLock ? SCREEN_FLAG_CAP_AT_30HZ : 0);
 
+	//
 	// If the requested resolution doesn't work, keep switching until we find one that does.
-
-	if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP ) )
+	//
+	if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP, dwFlags ) )
 	{
 		// We failed.  Try full screen with same params.
 		bWindowed = false;
-		if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP ) )
+		if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP, dwFlags ) )
 		{
 			// Failed again.  Try 16 BPP
 			dwBPP = 16;
-			if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP ) )
+			if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP, dwFlags ) )
 			{
 				// Failed again.  Try 640x480
 				dwWidth = 640;
 				dwHeight = 480;
-				if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP ) )
+				if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP, dwFlags ) )
 				{
 					// Failed again.  Try 320x240
 					dwWidth = 320;
 					dwHeight = 240;
-					if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP ) )
+					if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP, dwFlags ) )
 					{
-						RageError( "Tried every possible display mode, and couldn't change to any of them." );
-						return false;
+						HELPER.FatalError( "Tried every possible display mode, and couldn't change to any of them." );
 					}
 				}
 			}
@@ -768,20 +759,15 @@ BOOL SwitchDisplayMode()//( BOOL bWindowed, DWORD dwWidth, DWORD dwHeight, DWORD
 
 	RestoreObjects();
 
-	if( PREFS )
-	{
-	    PREFS->m_GameOptions.m_bWindowed = bWindowed;
-	    PREFS->m_GameOptions.m_iDisplayColor = dwBPP;
-	    PREFS->m_GameOptions.m_iResolution = dwWidth;
-		PREFS->SavePrefsToDisk();
-	}
+    go.m_bWindowed = bWindowed;
+    go.m_iDisplayColor = dwBPP;
+    go.m_iResolution = dwWidth;
+	PREFS->SavePrefsToDisk();
 
 	if( WM )
 	{
 		WM->SystemMessage( ssprintf("%s - %ux%u - %u bits", bWindowed ? "Windowed" : "FullScreen", dwWidth, dwHeight, dwBPP) );
 	}
-
-	return true;
 }
 
 

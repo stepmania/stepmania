@@ -28,8 +28,9 @@ CString GradeToString( Grade g )
 	}
 };
 
-Grade StringToGrade( CString s )
+Grade StringToGrade( const CString &sGrade )
 {
+	CString s = sGrade;
 	s.MakeUpper();
 	if	   ( s == "AAA" )	return GRADE_AAA;
 	else if( s == "AA" )	return GRADE_AA;

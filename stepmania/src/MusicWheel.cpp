@@ -17,6 +17,7 @@
 #include "ThemeManager.h"
 #include "RageMusic.h"
 #include "WindowManager.h"	// for sending SM_PlayMusicSample
+#include "RageHelper.h"
 
 
 
@@ -62,7 +63,7 @@ WheelItemData::WheelItemData()
 	m_MusicStatusDisplayType = TYPE_NONE;
 }
 
-void WheelItemData::LoadFromSectionName( CString sSectionName )
+void WheelItemData::LoadFromSectionName( const CString &sSectionName )
 {
 	m_WheelItemType = TYPE_SECTION;
 	m_sSectionName = sSectionName;
@@ -207,7 +208,7 @@ void WheelItemDisplay::RenderPrimitives()
 
 MusicWheel::MusicWheel() 
 { 
-	RageLog( "MusicWheel::MusicWheel()" );
+	HELPER.Log( "MusicWheel::MusicWheel()" );
 
 	m_sprSelectionBackground.Load( THEME->GetPathTo(GRAPHIC_MUSIC_SELECTION_HIGHLIGHT) );
 	m_sprSelectionBackground.SetXY( 0, 0 );

@@ -19,15 +19,15 @@
 
 bool Banner::LoadFromSong( Song* pSong )		// NULL means no song
 {
-	if( pSong == NULL )					Banner::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER), HINT_NOMIPMAPS );
-	else if( pSong->HasBanner() )		Banner::Load( pSong->GetBannerPath(), HINT_NOMIPMAPS );
-	else if( pSong->HasBackground() )	Banner::Load( pSong->GetBackgroundPath(), HINT_NOMIPMAPS );
-	else								Banner::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER), HINT_NOMIPMAPS );
+	if( pSong == NULL )					Banner::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER), TEXTURE_HINT_NOMIPMAPS );
+	else if( pSong->HasBanner() )		Banner::Load( pSong->GetBannerPath(), TEXTURE_HINT_NOMIPMAPS );
+	else if( pSong->HasBackground() )	Banner::Load( pSong->GetBackgroundPath(), TEXTURE_HINT_NOMIPMAPS );
+	else								Banner::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER), TEXTURE_HINT_NOMIPMAPS );
 
 	return true;
 }
 
-bool Banner::Load( CString sFilePath, DWORD dwHints, bool bForceReload )
+bool Banner::Load( const CString &sFilePath, DWORD dwHints, bool bForceReload )
 {
 	Sprite::Load( sFilePath, dwHints, bForceReload );
 	CropToRightSize();
@@ -39,14 +39,14 @@ void Banner::CropToRightSize()
 {
 	Sprite::TurnShadowOff();
 
-	int iImageWidth		= m_pTexture->GetImageWidth();
-	int iImageHeight	= m_pTexture->GetImageHeight();
+	int iSourceWidth		= m_pTexture->GetSourceWidth();
+	int iSourceHeight	= m_pTexture->GetSourceHeight();
 
 	// save the original X&Y.  We're going to resore them later.
 	float fOriginalX = GetX();
 	float fOriginalY = GetY();
 
-	if( iImageWidth == iImageHeight )		// this is a SSR/DWI StyleDef banner
+	if( iSourceWidth == iSourceHeight )		// this is a SSR/DWI banner
 	{
 		float fCustomImageCoords[8] = {
 			0.22f,	0.98f,	// bottom left

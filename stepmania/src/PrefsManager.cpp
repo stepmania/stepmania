@@ -43,7 +43,7 @@ void PrefsManager::ReadPrefsFromDisk()
 	ini.SetPath( "StepMania.ini" );
 	if( !ini.ReadFile() ) {
 		return;		// load nothing
-		//RageError( "could not read config file" );
+		//HELPER.FatalError( "could not read config file" );
 	}
 
 	CMapStringToString* pKey = ini.GetKeyPointer("Input");
@@ -81,17 +81,28 @@ void PrefsManager::ReadPrefsFromDisk()
 		{
 			pKey->GetNextAssoc( pos, name_string, value_string );
 
-			if( name_string == "Windowed" )				m_GameOptions.m_bWindowed		= ( value_string == "1" );
-			if( name_string == "Resolution" )			m_GameOptions.m_iResolution		= atoi( value_string );
-			if( name_string == "DisplayColor" )			m_GameOptions.m_iDisplayColor	= atoi( value_string );
-			if( name_string == "TextureColor" )			m_GameOptions.m_iTextureColor	= atoi( value_string );
-			if( name_string == "FilterTextures" )		m_GameOptions.m_bFilterTextures	= ( value_string == "1" );
-			if( name_string == "Shadows" )				m_GameOptions.m_bShadows		= ( value_string == "1" );
 			if( name_string == "IgnoreJoyAxes" )		m_GameOptions.m_bIgnoreJoyAxes	= ( value_string == "1" );
 			if( name_string == "ShowFPS" )				m_GameOptions.m_bShowFPS		= ( value_string == "1" );
 			if( name_string == "UseRandomVis" )			m_GameOptions.m_bUseRandomVis	= ( value_string == "1" );
 			if( name_string == "SkipCaution" )			m_GameOptions.m_bSkipCaution	= ( value_string == "1" );
 			if( name_string == "Announcer" )			m_GameOptions.m_bAnnouncer		= ( value_string == "1" );
+		}
+	}
+
+	pKey = ini.GetKeyPointer( "GraphicOptions" );
+	if( pKey )
+	{
+		for( POSITION pos = pKey->GetStartPosition(); pos != NULL; )
+		{
+			pKey->GetNextAssoc( pos, name_string, value_string );
+
+			if( name_string == "Windowed" )				m_GraphicOptions.m_bWindowed		= ( value_string == "1" );
+			if( name_string == "Resolution" )			m_GraphicOptions.m_iResolution		= atoi( value_string );
+			if( name_string == "MaxTextureSize" )		m_GraphicOptions.m_iMaxTextureSize	= atoi( value_string );
+			if( name_string == "DisplayColor" )			m_GraphicOptions.m_iDisplayColor	= atoi( value_string );
+			if( name_string == "TextureColor" )			m_GraphicOptions.m_iTextureColor	= atoi( value_string );
+			if( name_string == "Shadows" )				m_GraphicOptions.m_bShadows			= ( value_string == "1" );
+			if( name_string == "30fpsLock" )			m_GraphicOptions.m_b30fpsLock		= ( value_string == "1" );
 		}
 	}
 
@@ -122,17 +133,20 @@ void PrefsManager::SavePrefsToDisk()
 	}
 
 	// save the GameOptions
-	ini.SetValue( "GameOptions", "Windowed",		m_GameOptions.m_bWindowed ? "1":"0" );
-	ini.SetValue( "GameOptions", "Resolution",		ssprintf("%d", m_GameOptions.m_iResolution) );
-	ini.SetValue( "GameOptions", "DisplayColor",	ssprintf("%d", m_GameOptions.m_iDisplayColor) );
-	ini.SetValue( "GameOptions", "TextureColor",	ssprintf("%d", m_GameOptions.m_iTextureColor) );
-	ini.SetValue( "GameOptions", "FilterTextures",	m_GameOptions.m_bFilterTextures ? "1":"0" );
-	ini.SetValue( "GameOptions", "Shadows",			m_GameOptions.m_bShadows ? "1":"0" );
-	ini.SetValue( "GameOptions", "IgnoreJoyAxes",	m_GameOptions.m_bIgnoreJoyAxes ? "1":"0" );
-	ini.SetValue( "GameOptions", "ShowFPS",			m_GameOptions.m_bShowFPS ? "1":"0" );
-	ini.SetValue( "GameOptions", "UseRandomVis",	m_GameOptions.m_bUseRandomVis ? "1":"0" );
-	ini.SetValue( "GameOptions", "SkipCaution",		m_GameOptions.m_bSkipCaution ? "1":"0" );
-	ini.SetValue( "GameOptions", "Announcer",		m_GameOptions.m_bAnnouncer ? "1":"0" );
+	ini.SetValue( "GraphicOptions", "Windowed",			m_GraphicOptions.m_bWindowed ? "1":"0" );
+	ini.SetValue( "GraphicOptions", "Resolution",		ssprintf("%d", m_GraphicOptions.m_iResolution) );
+	ini.SetValue( "GraphicOptions", "MaxTextureSize",	ssprintf("%d", m_GraphicOptions.m_iMaxTextureSize) );
+	ini.SetValue( "GraphicOptions", "DisplayColor",		ssprintf("%d", m_GraphicOptions.m_iDisplayColor) );
+	ini.SetValue( "GraphicOptions", "TextureColor",		ssprintf("%d", m_GraphicOptions.m_iTextureColor) );
+	ini.SetValue( "GraphicOptions", "Shadows",			m_GraphicOptions.m_bShadows ? "1":"0" );
+	ini.SetValue( "GraphicOptions", "30fpsLock",		m_GraphicOptions.m_b30fpsLock ? "1":"0" );
+
+
+	ini.SetValue( "GameOptions", "IgnoreJoyAxes",		m_GameOptions.m_bIgnoreJoyAxes ? "1":"0" );
+	ini.SetValue( "GameOptions", "ShowFPS",				m_GameOptions.m_bShowFPS ? "1":"0" );
+	ini.SetValue( "GameOptions", "UseRandomVis",		m_GameOptions.m_bUseRandomVis ? "1":"0" );
+	ini.SetValue( "GameOptions", "SkipCaution",			m_GameOptions.m_bSkipCaution ? "1":"0" );
+	ini.SetValue( "GameOptions", "Announcer",			m_GameOptions.m_bAnnouncer ? "1":"0" );
 
 
 
@@ -387,7 +401,7 @@ bool PrefsManager::IsButtonDown( PadInput pi )
 
 		if( PadToDevice( pi, i, di ) )
 		{
-			if( INPUT->IsBeingPressed( di ) )
+			if( INPUTM->IsBeingPressed( di ) )
 				return true;
 		}
 	}

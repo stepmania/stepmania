@@ -1,0 +1,28 @@
+Microsoft Visual Studio Solution File, Format Version 7.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StepMania", "StepMania.vcproj", "{670745A6-106B-420D-A2A9-D4F89A23986E}"
+EndProject
+Project("{059D6162-CD51-11D0-AE1F-00A0C90FFFC3}") = "ZipArchive", "smpackage\ZipArchive\ZipArchive.dsp", "{2AF0D4D5-0984-4AD4-A2BD-402D4BE285CE}"
+EndProject
+Project("{059D6162-CD51-11D0-AE1F-00A0C90FFFC3}") = "smpackage", "smpackage\smpackage.dsp", "{775C9F19-F852-43AC-8563-D869C027722D}"
+	ProjectSection(DevStudioProjDeps) = postProject
+		0 = ZipArchive
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		ConfigName.0 = Debug
+		ConfigName.1 = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{670745A6-106B-420D-A2A9-D4F89A23986E}.Debug.ActiveCfg = Debug|Win32
+		{670745A6-106B-420D-A2A9-D4F89A23986E}.Debug.Build.0 = Debug|Win32
+		{670745A6-106B-420D-A2A9-D4F89A23986E}.Release.ActiveCfg = Release|Win32
+		{670745A6-106B-420D-A2A9-D4F89A23986E}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

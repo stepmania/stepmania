@@ -12,28 +12,29 @@
 
 #include "RageSound.h"
 #include "RageUtil.h"
+#include "RageHelper.h"
 
 #include "bass/bass.h"
 #pragma comment(lib, "bass/bass.lib") 
 
 
-LPRageSound				SOUND	= NULL;
+RageSound*		SOUND	= NULL;
 
 
 RageSound::RageSound( HWND hWnd )
 {
-	RageLog( "RageSound::RageSound()" );
+	HELPER.Log( "RageSound::RageSound()" );
 	// save the HWND
 	if( !hWnd )
-		RageError( "RageSound called with NULL hWnd." );
+		HELPER.FatalError( "RageSound called with NULL hWnd." );
 	m_hWndApp = hWnd;
 
 	if( BASS_GetVersion() != MAKELONG(1,3) )
-		RageError( "BASS version 1.3 DLL could not be loaded.  Verify that Bass.dll exists in the program directory.");
+		HELPER.FatalError( "BASS version 1.3 DLL could not be loaded.  Verify that Bass.dll exists in the program directory.");
 
 	if( !BASS_Init( -1, 44100, BASS_DEVICE_LEAVEVOL|BASS_DEVICE_LATENCY, m_hWndApp ) )
 	{
-		RageError( 
+		HELPER.FatalError( 
 			"There was an error while initializing your sound card.\n\n"
 			"The most likely cause of this problem is that you do not have a sound card\n"
 			"installed, or that you have not yet installed a driver for your sound card.\n"
@@ -49,7 +50,7 @@ RageSound::RageSound( HWND hWnd )
 	BASS_GetInfo( &m_info );
 
 
-	RageLog( 
+	HELPER.Log( 
 		"Sound card info:\n"
 		" - play latency is %u ms\n"
 		" - total device hardware memory is %u bytes\n"

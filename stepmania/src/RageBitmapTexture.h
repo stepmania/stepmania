@@ -10,8 +10,6 @@
 
 
 class RageBitmapTexture;
-typedef RageBitmapTexture* LPRageBitmapTexture;
-
 
 
 
@@ -25,8 +23,8 @@ typedef RageBitmapTexture* LPRageBitmapTexture;
 //#include <d3d8types.h>
 
 
-const DWORD HINT_NOMIPMAPS	=	1 << 0;
-const DWORD HINT_DITHER		=	1 << 1;
+const DWORD TEXTURE_HINT_NOMIPMAPS	=	1 << 0;
+const DWORD TEXTURE_HINT_DITHER		=	1 << 1;
 
 
 //-----------------------------------------------------------------------------
@@ -35,13 +33,19 @@ const DWORD HINT_DITHER		=	1 << 1;
 class RageBitmapTexture : public RageTexture
 {
 public:
-	RageBitmapTexture( LPRageScreen pScreen, CString sFilePath, DWORD dwHints = 0 );
+	RageBitmapTexture( 
+		RageScreen* pScreen, 
+		const CString &sFilePath, 
+		const DWORD dwMaxSize = 2048, 
+		const DWORD dwTextureColorDepth = 16, 
+		const DWORD dwHints = 0 
+		);
 	~RageBitmapTexture();
 
 	virtual LPDIRECT3DTEXTURE8 GetD3DTexture();
 
 protected:
-	virtual VOID Create( DWORD dwHints );
+	virtual void Create( DWORD dwMaxSize, DWORD dwTextureColorDepth, DWORD dwHints );
 
 	LPDIRECT3DTEXTURE8  m_pd3dTexture;
 };

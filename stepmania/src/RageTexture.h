@@ -9,7 +9,6 @@
 */
 
 class RageTexture;
-typedef RageTexture* LPRageTexture;
 
 
 #ifndef _RAGETEXTURE_H_
@@ -42,49 +41,49 @@ public:
 class RageTexture
 {
 public:
-	RageTexture( LPRageScreen pScreen, CString sFilePath );
+	RageTexture( RageScreen* pScreen, const CString &sFilePath );
 	virtual ~RageTexture() PURE;
 
 	virtual LPDIRECT3DTEXTURE8 GetD3DTexture() PURE;
 
-	UINT GetSourceWidth()	{return m_uSourceWidth;};
-	UINT GetSourceHeight()	{return m_uSourceHeight;};
-	UINT GetTextureWidth()	{return m_uTextureWidth;};
-	UINT GetTextureHeight()	{return m_uTextureHeight;};
-	UINT GetImageWidth()	{return m_uImageWidth;};
-	UINT GetImageHeight()	{return m_uImageHeight;};
+	int GetSourceWidth()	{return m_iSourceWidth;};
+	int GetSourceHeight()	{return m_iSourceHeight;};
+	int GetTextureWidth()	{return m_iTextureWidth;};
+	int GetTextureHeight()	{return m_iTextureHeight;};
+	int GetImageWidth()	{return m_iImageWidth;};
+	int GetImageHeight()	{return m_iImageHeight;};
 
-	UINT GetFramesWide()  {return m_uFramesWide;};
-	UINT GetFramesHigh()  {return m_uFramesHigh;};
+	int GetFramesWide()  {return m_iFramesWide;};
+	int GetFramesHigh()  {return m_iFramesHigh;};
 
-	UINT GetSourceFrameWidth()	{return GetSourceWidth()	/	GetFramesWide();};
-	UINT GetSourceFrameHeight()	{return GetSourceHeight()	/	GetFramesHigh();};
-	UINT GetTextureFrameWidth()	{return GetTextureWidth()	/	GetFramesWide();};
-	UINT GetTextureFrameHeight(){return GetTextureHeight()	/	GetFramesHigh();};
-	UINT GetImageFrameWidth()	{return GetImageWidth()		/	GetFramesWide();};
-	UINT GetImageFrameHeight()	{return GetImageHeight()	/	GetFramesHigh();};
+	int GetSourceFrameWidth()	{return GetSourceWidth()	/	GetFramesWide();};
+	int GetSourceFrameHeight()	{return GetSourceHeight()	/	GetFramesHigh();};
+	int GetTextureFrameWidth()	{return GetTextureWidth()	/	GetFramesWide();};
+	int GetTextureFrameHeight(){return GetTextureHeight()	/	GetFramesHigh();};
+	int GetImageFrameWidth()	{return GetImageWidth()		/	GetFramesWide();};
+	int GetImageFrameHeight()	{return GetImageHeight()	/	GetFramesHigh();};
 	
-	FRECT* GetTextureCoordRect( UINT uFrameNo ) {return &m_TextureCoordRects[uFrameNo];};
-	UINT   GetNumFrames()	{return m_TextureCoordRects.GetSize();};
+	FRECT* GetTextureCoordRect( int uFrameNo ) {return &m_TextureCoordRects[uFrameNo];};
+	int   GetNumFrames()	{return m_TextureCoordRects.GetSize();};
 	CString GetFilePath()	{return m_sFilePath;};
 
 	INT					m_iRefCount;
 
 protected:
 	virtual void CreateFrameRects();
-	virtual void GetFrameDimensionsFromFileName( CString sPath, UINT* puFramesWide, UINT* puFramesHigh ) const;
+	virtual void GetFrameDimensionsFromFileName( CString sPath, int* puFramesWide, int* puFramesHigh ) const;
 
 	CString				m_sFilePath;
 	LPDIRECT3DDEVICE8   m_pd3dDevice;
 //	LPDIRECT3DTEXTURE8  m_pd3dTexture;
 
-	UINT				m_uSourceWidth,		m_uSourceHeight;	// dimensions of the original image loaded from disk
-	UINT				m_uTextureWidth,	m_uTextureHeight;	// dimensions of the texture in memory
-	UINT				m_uImageWidth,		m_uImageHeight;		// dimensions of the image in the texture
+	int				m_iSourceWidth,		m_iSourceHeight;	// dimensions of the original image loaded from disk
+	int				m_iTextureWidth,	m_iTextureHeight;	// dimensions of the texture in memory
+	int				m_iImageWidth,		m_iImageHeight;		// dimensions of the image in the texture
 	D3DFORMAT			m_TextureFormat; 
 
 	// The number of frames of animation in each row and column of this texture.
-	UINT				m_uFramesWide, m_uFramesHigh;
+	int				m_iFramesWide, m_iFramesHigh;
 	
 
 	// RECTs that hold the bounds of each frame in the bitmap.

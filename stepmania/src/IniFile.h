@@ -13,7 +13,7 @@
 #define _INIFILE_H_
 
 #include <afxtempl.h>
-#include <iostream.h>
+//#include <iostream.h>
 
 
 class IniFile  
@@ -37,8 +37,6 @@ private:
 	
 	//all private functions
 private:
-	//overloaded to take CString
-	istream & getline( istream & is, CString & str );
 
 	//returns index of specified key, or -1 if not found
 	int FindKey(CString keyname);

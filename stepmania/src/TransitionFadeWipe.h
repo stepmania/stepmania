@@ -16,7 +16,7 @@
 #include "RageScreen.h"
 #include "RageSound.h"
 #include "Sprite.h"
-#include "Rectangle.h"
+#include "RectangleActor.h"
 
 
 class TransitionFadeWipe : public Transition

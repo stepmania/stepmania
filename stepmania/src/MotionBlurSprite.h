@@ -22,7 +22,7 @@ class MotionBlurSprite : public Actor
 {
 public:
 
-	virtual bool Load( CString sFilePath ) { for( int i=0; i<NUM_BLUR_GHOSTS; i++ ) m_sprites[i].Load( sFilePath ); return true; };
+	virtual bool Load( const CString &sFilePath ) { for( int i=0; i<NUM_BLUR_GHOSTS; i++ ) m_sprites[i].Load( sFilePath ); return true; };
 
 	virtual void Update( float fDeltaTime ) { for( int i=0; i<NUM_BLUR_GHOSTS; i++ ) m_sprites[i].Update( fDeltaTime ); };
 	virtual void Draw()						{ for(int i=0; i<NUM_BLUR_GHOSTS; i++) m_sprites[i].Draw(); };

@@ -14,53 +14,32 @@
 #include "RageTextureManager.h"
 #include "PrefsManager.h"
 #include "IniFile.h"
-#include <assert.h>
 #include <math.h>
+#include "RageHelper.h"
 
 
 Sprite::Sprite()
 {
 	m_pTexture = NULL;
-	m_uNumStates = 0;
-	m_uCurState = 0;
+	m_iNumStates = 0;
+	m_iCurState = 0;
 	m_bIsAnimating = TRUE;
 	m_fSecsIntoState = 0.0;
 	m_bUsingCustomTexCoords = false;
-	m_Effect =  no_effect ;
-	m_fPercentBetweenColors = 0.0f;
-	m_bTweeningTowardEndColor = true;
-	m_fDeltaPercentPerSecond = 1.0f;
-	m_fWagRadians =  0.2f;
-	m_fWagPeriod =  2.0f;
-	m_fWagTimer =  0.0f;
-	m_fSpinSpeed =  2.0f;
-	m_fVibrationDistance =  5.0f;
-	m_bVisibleThisFrame =  FALSE;
-	m_HorizAlign = align_center;
-	m_VertAlign = align_middle;
-
-
-	if( PREFS )
-		m_bHasShadow = PREFS->m_GameOptions.m_bShadows;
-	else
-		m_bHasShadow = true;
-
-
-	m_bBlendAdd = false;
 }
 
 
 Sprite::~Sprite()
 {
-//	RageLog( "Sprite Destructor" );
+//	HELPER.Log( "Sprite Destructor" );
 
-	TM->UnloadTexture( m_sTexturePath ); 
+	TEXTURE->UnloadTexture( m_sTexturePath ); 
 }
 
 
 bool Sprite::LoadFromTexture( CString sTexturePath, DWORD dwHints, bool bForceReload )
 {
-	RageLog( ssprintf("Sprite::LoadFromTexture(%s)", sTexturePath) );
+	HELPER.Log( ssprintf("Sprite::LoadFromTexture(%s)", sTexturePath) );
 
 	//Init();
 	return LoadTexture( sTexturePath, dwHints, bForceReload );
@@ -76,7 +55,7 @@ bool Sprite::LoadFromTexture( CString sTexturePath, DWORD dwHints, bool bForceRe
 // Delay0000=2.0
 bool Sprite::LoadFromSpriteFile( CString sSpritePath, DWORD dwHints, bool bForceReload )
 {
-	RageLog( ssprintf("Sprite::LoadFromSpriteFile(%s)", sSpritePath) );
+	HELPER.Log( ssprintf("Sprite::LoadFromSpriteFile(%s)", sSpritePath) );
 
 	//Init();
 
@@ -95,11 +74,11 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath, DWORD dwHints, bool bForce
 	IniFile ini;
 	ini.SetPath( m_sSpritePath );
 	if( !ini.ReadFile() )
-		RageError( ssprintf("Error opening Sprite file '%s'.", m_sSpritePath) );
+		HELPER.FatalError( ssprintf("Error opening Sprite file '%s'.", m_sSpritePath) );
 
 	CString sTextureFile = ini.GetValue( "Sprite", "Texture" );
 	if( sTextureFile == "" )
-		RageError( ssprintf("Error reading  value 'Texture' from %s.", m_sSpritePath) );
+		HELPER.FatalError( ssprintf("Error reading  value 'Texture' from %s.", m_sSpritePath) );
 
 	CString sTexturePath = sFontDir + sTextureFile;	// save the path of the new texture
 
@@ -118,22 +97,22 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath, DWORD dwHints, bool bForce
 		CString sFrameKey( CString("Frame") + sStateNo );
 		CString sDelayKey( CString("Delay") + sStateNo );
 		
-		m_uFrame[i] = ini.GetValueI( "Sprite", sFrameKey );
-		if( m_uFrame[i] >= m_pTexture->GetNumFrames() )
-			RageError( ssprintf("In '%s', %s is %d, but the texture %s only has %d frames.",
-						m_sSpritePath, sFrameKey, m_uFrame[i], sTexturePath, m_pTexture->GetNumFrames()) );
+		m_iStateToFrame[i] = ini.GetValueI( "Sprite", sFrameKey );
+		if( m_iStateToFrame[i] >= m_pTexture->GetNumFrames() )
+			HELPER.FatalError( ssprintf("In '%s', %s is %d, but the texture %s only has %d frames.",
+						m_sSpritePath, sFrameKey, m_iStateToFrame[i], sTexturePath, m_pTexture->GetNumFrames()) );
 		m_fDelay[i] = (float)ini.GetValueF( "Sprite", sDelayKey );
 
-		if( m_uFrame[i] == 0  &&  m_fDelay[i] > -0.00001f  &&  m_fDelay[i] < 0.00001f )	// both values are empty
+		if( m_iStateToFrame[i] == 0  &&  m_fDelay[i] > -0.00001f  &&  m_fDelay[i] < 0.00001f )	// both values are empty
 			break;
 
-		m_uNumStates = i+1;
+		m_iNumStates = i+1;
 	}
 
-	if( m_uNumStates == 0 )
+	if( m_iNumStates == 0 )
 	{
-		m_uNumStates = 1;
-		m_uFrame[0] = 0;
+		m_iNumStates = 1;
+		m_iStateToFrame[0] = 0;
 		m_fDelay[0] = 10;
 	}
 
@@ -143,13 +122,13 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath, DWORD dwHints, bool bForce
 
 bool Sprite::LoadTexture( CString sTexturePath, DWORD dwHints, bool bForceReload )
 {
-	if( m_sTexturePath != "" )			// If there was a previous bitmap...
-		TM->UnloadTexture( m_sTexturePath );	// Unload it.
+	if( m_pTexture != NULL )			// If there was a previous bitmap...
+		TEXTURE->UnloadTexture( m_sTexturePath );	// Unload it.
 
 
 	m_sTexturePath = sTexturePath;
 
-	m_pTexture = TM->LoadTexture( m_sTexturePath, dwHints, bForceReload );
+	m_pTexture = TEXTURE->LoadTexture( m_sTexturePath, dwHints, bForceReload );
 	assert( m_pTexture != NULL );
 
 	// the size of the sprite is the size of the image before it was scaled
@@ -157,11 +136,11 @@ bool Sprite::LoadTexture( CString sTexturePath, DWORD dwHints, bool bForceReload
 	SetHeight( (float)m_pTexture->GetSourceFrameHeight() );		
 
 	// Assume the frames of this animation play in sequential order with 0.2 second delay.
-	for( UINT i=0; i<m_pTexture->GetNumFrames(); i++ )
+	for( int i=0; i<m_pTexture->GetNumFrames(); i++ )
 	{
-		m_uFrame[i] = i;
+		m_iStateToFrame[i] = i;
 		m_fDelay[i] = 0.1f;
-		m_uNumStates = i+1;
+		m_iNumStates = i+1;
 	}
 		
 	return TRUE;
@@ -181,13 +160,13 @@ void Sprite::Update( float fDeltaTime )
 	{
 		m_fSecsIntoState += fDeltaTime;
 
-		if( m_fSecsIntoState > m_fDelay[m_uCurState] )		// it's time to switch frames
+		if( m_fSecsIntoState > m_fDelay[m_iCurState] )		// it's time to switch frames
 		{
 			// increment frame and reset the counter
-			m_fSecsIntoState -= m_fDelay[m_uCurState];		// leave the left over time for the next frame
-			m_uCurState ++;
-			if( m_uCurState >= m_uNumStates )
-				m_uCurState = 0;
+			m_fSecsIntoState -= m_fDelay[m_iCurState];		// leave the left over time for the next frame
+			m_iCurState ++;
+			if( m_iCurState >= m_iNumStates )
+				m_iCurState = 0;
 		}
 	}
 
@@ -204,45 +183,7 @@ void Sprite::RenderPrimitives()
 	if( m_pTexture == NULL )
 		return;
 	
-	D3DXCOLOR	colorDiffuse[4];
-	for(int i=0; i<4; i++)
-		colorDiffuse[i] = m_colorDiffuse[i];
-	D3DXCOLOR	colorAdd		= m_colorAdd;
-
-	// update properties based on SpriteEffects 
-	switch( m_Effect )
-	{
-	case no_effect:
-		break;
-	case blinking:
-		{
-		for(int i=0; i<4; i++)
-			colorDiffuse[i] = m_bTweeningTowardEndColor ? m_effect_colorDiffuse1 : m_effect_colorDiffuse2;
-		}
-		break;
-	case camelion:
-		{
-		for(int i=0; i<4; i++)
-			colorDiffuse[i] = m_effect_colorDiffuse1*m_fPercentBetweenColors + m_effect_colorDiffuse2*(1.0f-m_fPercentBetweenColors);
-		}
-		break;
-	case glowing:
-		colorAdd = m_effect_colorAdd1*m_fPercentBetweenColors + m_effect_colorAdd2*(1.0f-m_fPercentBetweenColors);
-		break;
-	case wagging:
-		break;
-	case spinning:
-		// nothing special needed
-		break;
-	case vibrating:
-		break;
-	case flickering:
-		m_bVisibleThisFrame = !m_bVisibleThisFrame;
-		if( !m_bVisibleThisFrame )
-			for(int i=0; i<4; i++)
-				colorDiffuse[i] = D3DXCOLOR(0,0,0,0);		// don't draw the frame
-		break;
-	}
+	// use m_temp_* variables to draw the object
 
 
 	// make the object in logical units centered at the origin
@@ -288,7 +229,7 @@ void Sprite::RenderPrimitives()
 	} 
 	else 
 	{
-		UINT uFrameNo = m_uFrame[m_uCurState];
+		UINT uFrameNo = m_iStateToFrame[m_iCurState];
 		FRECT* pTexCoordRect = m_pTexture->GetTextureCoordRect( uFrameNo );
 
 		v[0].tu = pTexCoordRect->left;		v[0].tv = pTexCoordRect->bottom;	// bottom left
@@ -315,19 +256,19 @@ void Sprite::RenderPrimitives()
 
 
 
-	if( colorDiffuse[0].a != 0 )
+	if( m_temp_colorDiffuse[0].a != 0 )
 	{
 		//////////////////////
 		// render the shadow
 		//////////////////////
-		if( m_bHasShadow )
+		if( m_bShadow )
 		{
 			SCREEN->PushMatrix();
 			SCREEN->Translate( 5, 5, 0 );	// shift by 5 units
 
 			pVB->Lock( 0, 0, (BYTE**)&v, 0 );
 
-			v[0].color = v[1].color = v[2].color = v[3].color = D3DXCOLOR(0,0,0,0.5f*colorDiffuse[0].a);	// semi-transparent black
+			v[0].color = v[1].color = v[2].color = v[3].color = D3DXCOLOR(0,0,0,0.5f*m_temp_colorDiffuse[0].a);	// semi-transparent black
 			
 			pVB->Unlock();
 
@@ -349,10 +290,10 @@ void Sprite::RenderPrimitives()
 		//////////////////////
 		pVB->Lock( 0, 0, (BYTE**)&v, 0 );
 
-		v[0].color = colorDiffuse[2];	// bottom left
-		v[1].color = colorDiffuse[0];	// top left
-		v[2].color = colorDiffuse[3];	// bottom right
-		v[3].color = colorDiffuse[1];	// top right
+		v[0].color = m_temp_colorDiffuse[2];	// bottom left
+		v[1].color = m_temp_colorDiffuse[0];	// top left
+		v[2].color = m_temp_colorDiffuse[3];	// bottom right
+		v[3].color = m_temp_colorDiffuse[1];	// top right
 		
 		pVB->Unlock();
 
@@ -373,11 +314,11 @@ void Sprite::RenderPrimitives()
 	//////////////////////
 	// render the add pass
 	//////////////////////
-	if( colorAdd.a != 0 )
+	if( m_temp_colorAdd.a != 0 )
 	{
 		pVB->Lock( 0, 0, (BYTE**)&v, 0 );
 
-		v[0].color = v[1].color = v[2].color = v[3].color = colorAdd;
+		v[0].color = v[1].color = v[2].color = v[3].color = m_temp_colorAdd;
 		
 		pVB->Unlock();
 
@@ -394,10 +335,10 @@ void Sprite::RenderPrimitives()
 }
 
 
-void Sprite::SetState( UINT uNewState )
+void Sprite::SetState( int iNewState )
 {
-	ASSERT( uNewState >= 0  &&  uNewState < m_uNumStates );
-	m_uCurState = uNewState;
+	ASSERT( iNewState >= 0  &&  iNewState < m_iNumStates );
+	m_iCurState = iNewState;
 	m_fSecsIntoState = 0.0; 
 }
 

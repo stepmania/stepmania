@@ -45,7 +45,7 @@ void HoldJudgement::RenderPrimitives()
 
 void HoldJudgement::SetHoldJudgement( HoldNoteResult result )
 {
-	//RageLog( "Judgement::SetJudgement()" );
+	//HELPER.Log( "Judgement::SetJudgement()" );
 
 	switch( result )
 	{

@@ -73,7 +73,7 @@ protected:
 class RageMovieTexture : public RageTexture
 {
 public:
-	RageMovieTexture( LPRageScreen pScreen, CString sFilePath );
+	RageMovieTexture( RageScreen* pScreen, const CString &sFilePath );
 	virtual ~RageMovieTexture();
 
 	LPDIRECT3DTEXTURE8 GetD3DTexture();
@@ -100,8 +100,6 @@ protected:
     CTextureRenderer        *m_pCTR;        // DShow Texture renderer
 
 };
-
-typedef RageMovieTexture* LPRageMovieTexture;
 
 
 #endif

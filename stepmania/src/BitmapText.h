@@ -1,10 +1,11 @@
 /*
 -----------------------------------------------------------------------------
- File: BitmapText.h
+ File: BitmapText
 
- Desc: A font class that draws characters from a bitmap.
+ Desc: An actor that holds a Font and draws text to the screen.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -13,13 +14,13 @@
 
 
 #include "Sprite.h"
-#include "BitmapText.h"
+#include "Font.h"
 
 
-const int NUM_CHARS = 256;
+const int MAX_TEXT_LINES	=	20;
+const int MAX_TEXT_CHARS	=	MAX_NUM_QUADS;
 
-
-class BitmapText : public Sprite
+class BitmapText : public Actor
 {
 protected:
 
@@ -27,31 +28,30 @@ public:
 	BitmapText();
 	~BitmapText();
 
+
+	bool Load( const CString &sFontName );
+	void SetText( const CString &sText );
+
+	int GetWidestLineWidthInSourcePixels() { return m_iWidestLineWidth; };
+
+	void RebuildVertexBuffer();		// fill the RageScreen's vertex buffer with what we're going to draw
 	virtual void RenderPrimitives();
 
-	bool Load( CString sFontName );
-	void SetText( CString sText );
-	CString GetText();
-
-	bool LoadFontWidths( CString sFilePath );
-
-	float GetWidestLineWidthInSourcePixels();	// in logical, pre-zoomed units
-	float GetLineWidthInSourcePixels( int iLineNo );
 
 protected:
-	bool LoadCharWidths( CString sWidthFilePath );
-	// a vertex buffer for all to share
-
 	CString m_sFontFilePath;
-	int  m_iCharToFrameNo[NUM_CHARS];
-	float m_fFrameNoToWidth[NUM_CHARS];	// in soure coordinate space
+	Font* m_pFont;
 	
-	
-	LPDIRECT3DVERTEXBUFFER8 m_pVB;	// our vertex buffer only needs to be rebuilt when the text changes
-	int m_iNumV;	// number of verticies used in the vertex buffer
-	void RebuildVertexBuffer();	// this should be called when the text changes
+	// recalculate the items below on SetText()
+	TCHAR   m_szText[MAX_TEXT_CHARS];
+	TCHAR*	m_szTextLines[MAX_TEXT_LINES];	// pointers into m_szText
+	int		m_iLineLengths[MAX_TEXT_LINES];	// in characters
+	int		m_iNumLines;
+	int		m_iLineWidths[MAX_TEXT_LINES];	// in source pixels
+	int		m_iWidestLineWidth;					// in source pixels
 
-	CStringArray	m_sTextLines;
+	// recalculate on RebuildVertexBuffer()
+	int		m_iNumV;		// number of verticies we filled in the vertex buffer
 };
 
 

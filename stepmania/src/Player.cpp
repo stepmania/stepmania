@@ -58,7 +58,7 @@ Player::Player()
 
 void Player::Load( const StyleDef& StyleDef, PlayerNumber player_no, const Pattern& pattern, const PlayerOptions& po )
 {
-	//RageLog( "Player::Load()", );
+	//HELPER.Log( "Player::Load()", );
 
 	m_Style = StyleDef;
 	m_PlayerNumber = player_no;
@@ -74,7 +74,7 @@ void Player::Load( const StyleDef& StyleDef, PlayerNumber player_no, const Patte
 	if( po.m_bLittle )
 		pattern2.MakeLittle();
 
-	m_ColorArrowField.Load( StyleDef, pattern2, po, 2, 10 );
+	m_ColorArrowField.Load( StyleDef, pattern2, po, 1.5f, 5.5f );
 	m_GrayArrows.Load( po, StyleDef );
 	m_GhostArrows.Load( po, StyleDef );
 
@@ -107,7 +107,7 @@ void Player::Load( const StyleDef& StyleDef, PlayerNumber player_no, const Patte
 
 void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference )
 {
-	//RageLog( "Player::Update(%f, %f, %f)", fDeltaTime, fSongBeat, fMaxBeatDifference );
+	//HELPER.Log( "Player::Update(%f, %f, %f)", fDeltaTime, fSongBeat, fMaxBeatDifference );
 
 
 	//
@@ -265,7 +265,7 @@ bool Player::IsThereANoteAtIndex( int iIndex )
 
 void Player::HandlePlayerStep( float fSongBeat, TapNote player_step, float fMaxBeatDiff )
 {
-	//RageLog( "Player::HandlePlayerStep()" );
+	//HELPER.Log( "Player::HandlePlayerStep()" );
 
 	int iColumnNum = m_Style.TapNoteToColumnNumber( player_step );
 	if( iColumnNum == -1 )	// if this TapNote is not used in the current StyleDef
@@ -298,7 +298,7 @@ void Player::HandlePlayerStep( float fSongBeat, TapNote player_step, float fMaxB
 				float fBeatsUntilStep = NoteIndexToBeat( (float)hn.m_iStartIndex ) - fSongBeat;
 				float fPercentFromPerfect = fabsf( fBeatsUntilStep / fMaxBeatDiff );
 
-				//RageLog( "fBeatsUntilStep: %f, fPercentFromPerfect: %f", 
+				//HELPER.Log( "fBeatsUntilStep: %f, fPercentFromPerfect: %f", 
 				//		 fBeatsUntilStep, fPercentFromPerfect );
 
 				// compute what the score should be for the note we stepped on
@@ -340,13 +340,13 @@ void Player::HandlePlayerStep( float fSongBeat, TapNote player_step, float fMaxB
 
 void Player::CheckForCompleteStep( float fSongBeat, TapNote player_step, float fMaxBeatDiff )
 {
-	//RageLog( "Player::CheckForCompleteStep()" );
+	//HELPER.Log( "Player::CheckForCompleteStep()" );
 
 	// look for the closest matching step
 	int iIndexStartLookingAt = BeatToNoteIndex( fSongBeat );
 	int iNumElementsToExamine = BeatToNoteIndex( fMaxBeatDiff );	// number of elements to examine on either end of iIndexStartLookingAt
 	
-	//RageLog( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
+	//HELPER.Log( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
 
 	// Start at iIndexStartLookingAt and search outward.  The first one that overlaps the player's step is the closest match.
 	for( int delta=0; delta <= iNumElementsToExamine; delta++ )
@@ -361,7 +361,7 @@ void Player::CheckForCompleteStep( float fSongBeat, TapNote player_step, float f
 		////////////////////////////
 		// check the step to the left of iIndexStartLookingAt
 		////////////////////////////
-		//RageLog( "Checking Pattern[%d]", iCurrentIndexEarlier );
+		//HELPER.Log( "Checking Pattern[%d]", iCurrentIndexEarlier );
 		if( m_TapNotesRemaining[iCurrentIndexEarlier] & player_step )	// these Pattern overlap
 		{
 			m_TapNotesRemaining[iCurrentIndexEarlier] &= ~player_step;	// subtract player_step
@@ -374,7 +374,7 @@ void Player::CheckForCompleteStep( float fSongBeat, TapNote player_step, float f
 		////////////////////////////
 		// check the step to the right of iIndexStartLookingAt
 		////////////////////////////
-		//RageLog( "Checking Pattern[%d]", iCurrentIndexLater );
+		//HELPER.Log( "Checking Pattern[%d]", iCurrentIndexLater );
 		if( m_TapNotesRemaining[iCurrentIndexLater] & player_step )		// these Pattern overlap
 		{
 			m_TapNotesRemaining[iCurrentIndexLater] &= ~player_step;		// subtract player_step
@@ -394,7 +394,7 @@ void Player::OnCompleteStep( float fSongBeat, TapNote player_step, float fMaxBea
 	float fBeatsUntilStep = fStepBeat - fSongBeat;
 	float fPercentFromPerfect = fabsf( fBeatsUntilStep / fMaxBeatDiff );
 
-	//RageLog( "fBeatsUntilStep: %f, fPercentFromPerfect: %f", 
+	//HELPER.Log( "fBeatsUntilStep: %f, fPercentFromPerfect: %f", 
 	//		 fBeatsUntilStep, fPercentFromPerfect );
 
 	// compute what the score should be for the note we stepped on
@@ -482,7 +482,7 @@ ScoreSummary Player::GetScoreSummary()
 
 int Player::UpdateStepsMissedOlderThan( float fMissIfOlderThanThisBeat )
 {
-	//RageLog( "Pattern::UpdateStepsMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
+	//HELPER.Log( "Pattern::UpdateStepsMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
 
 	int iMissIfOlderThanThisIndex = BeatToNoteIndex( fMissIfOlderThanThisBeat );
 
@@ -491,10 +491,10 @@ int Player::UpdateStepsMissedOlderThan( float fMissIfOlderThanThisBeat )
 	// Instead, only check 10 elements back.  Even 10 is overkill.
 	int iStartCheckingAt = max( 0, iMissIfOlderThanThisIndex-10 );
 
-	//RageLog( "iStartCheckingAt: %d   iMissIfOlderThanThisIndex:  %d", iStartCheckingAt, iMissIfOlderThanThisIndex );
+	//HELPER.Log( "iStartCheckingAt: %d   iMissIfOlderThanThisIndex:  %d", iStartCheckingAt, iMissIfOlderThanThisIndex );
 	for( int i=iStartCheckingAt; i<iMissIfOlderThanThisIndex; i++ )
 	{
-		//RageLog( "Checking for miss:  %d: lefttostepon == %d, score == %d", i, m_LeftToStepOn[i], m_StepScore[i] );
+		//HELPER.Log( "Checking for miss:  %d: lefttostepon == %d, score == %d", i, m_LeftToStepOn[i], m_StepScore[i] );
 		if( m_TapNotesRemaining[i] != 0  &&  m_TapNoteScores[i] != TNS_MISS )
 		{
 			m_TapNoteScores[i] = TNS_MISS;

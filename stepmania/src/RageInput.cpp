@@ -24,9 +24,10 @@
 #include "RageInput.h"
 #include <dinput.h>
 #include "RageUtil.h"
+#include "RageHelper.h"
 
 
-LPRageInput				INPUT	= NULL;		// globally accessable input device
+RageInput*		INPUTM	= NULL;		// globally accessable input device
 
 
 
@@ -203,7 +204,7 @@ CString DeviceInput::toString()
 		return ssprintf("%d-%d", device, button );
 }
 
-bool DeviceInput::fromString( CString s )
+bool DeviceInput::fromString( const CString &s )
 { 
 	CStringArray a;
 	split( s, "-", a);
@@ -229,7 +230,7 @@ bool DeviceInput::fromString( CString s )
 BOOL CALLBACK	EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance,
 										       VOID* pContext )
 {
-	LPRageInput pInput = (LPRageInput)pContext;
+	RageInput* pInput = (RageInput*)pContext;
 	LPDIRECTINPUT8 pDI = pInput->GetDirectInput();
 
 
@@ -238,10 +239,14 @@ BOOL CALLBACK	EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance,
     // Obtain an interface to the enumerated joystick.
 	if( i >= NUM_JOYSTICKS  )
 	    return DIENUM_STOP;		// we only care about the first 4 
+	else
+		ASSERT( false );	// we should never get here since the app is only initialized once
 
 	HRESULT hr = pDI->CreateDevice( pdidInstance->guidInstance, 
 									&pInput->m_pJoystick[i++], 
 									NULL );
+		HELPER.FatalErrorHr( hr, "Error in CreateDevice() for joystick %d.", i );
+
 	return DIENUM_CONTINUE;
 }
 
@@ -314,7 +319,7 @@ HRESULT RageInput::Initialize()
 	////////////////////////////////
     if( FAILED(hr = DirectInput8Create( GetModuleHandle(NULL), DIRECTINPUT_VERSION, 
                                          IID_IDirectInput8, (VOID**)&m_pDI, NULL ) ) )
-		RageErrorHr( "DirectInput8Create failed.", hr );
+		HELPER.FatalErrorHr( hr, "DirectInput8Create failed." );
 	
 	/////////////////////////////
 	// Create the keyboard device
@@ -322,21 +327,21 @@ HRESULT RageInput::Initialize()
 
 	// Create our DirectInput Object for the Keyboard
     if( FAILED( hr = m_pDI->CreateDevice( GUID_SysKeyboard, &m_pKeyboard, NULL ) ) )
-		RageErrorHr( "CreateDevice keyboard failed.", hr );
+		HELPER.FatalErrorHr( hr, "CreateDevice keyboard failed." );
 
 	// Set our Cooperation Level with each Device
 	if( FAILED( hr = m_pKeyboard->SetCooperativeLevel(m_hWnd, DISCL_FOREGROUND | 
 															  DISCL_NOWINKEY |
 															  DISCL_NONEXCLUSIVE) ) )
-		RageErrorHr( "m_pKeyboard->SetCooperativeLevel failed.", hr );
+		HELPER.FatalErrorHr( hr, "m_pKeyboard->SetCooperativeLevel failed." );
 
 	// Set the Data Format of each device
 	if( FAILED( hr = m_pKeyboard->SetDataFormat(&c_dfDIKeyboard) ) )
-		RageErrorHr( "m_pKeyboard->SetDataFormat failed.", hr );
+		HELPER.FatalErrorHr( hr, "m_pKeyboard->SetDataFormat failed." );
 
 	// Acquire the Keyboard Device
 	//if( FAILED( hr = m_pKeyboard->Acquire() ) )
-	//	RageErrorHr( "m_pKeyboard->Acquire failed.", hr );
+	//	HELPER.FatalErrorHr( "m_pKeyboard->Acquire failed.", hr );
 
 
 
@@ -346,13 +351,13 @@ HRESULT RageInput::Initialize()
 	
 	// Obtain an interface to the system mouse device.
 	if( FAILED( hr = m_pDI->CreateDevice( GUID_SysMouse, &m_pMouse, NULL ) ) )
-		RageErrorHr( "CreateDevice mouse failed.", hr );
+		HELPER.FatalErrorHr( hr, "CreateDevice mouse failed." );
 
     if( FAILED( hr = m_pMouse->SetCooperativeLevel( m_hWnd, DISCL_NONEXCLUSIVE|DISCL_FOREGROUND ) ) )
-		RageErrorHr( "m_pMouse->SetCooperativeLevel failed.", hr );
+		HELPER.FatalErrorHr( hr, "m_pMouse->SetCooperativeLevel failed." );
     
 	if( FAILED( hr = m_pMouse->SetDataFormat( &c_dfDIMouse2 ) ) )
-		RageErrorHr( "m_pMouse->SetDataFormat failed.", hr );
+		HELPER.FatalErrorHr( hr, "m_pMouse->SetDataFormat failed." );
 
 /*
     DIPROPDWORD dipdw;
@@ -365,7 +370,7 @@ HRESULT RageInput::Initialize()
     if( FAILED( m_pMouse->SetProperty( DIPROP_AXISMODE, &dipdw.diph ) ) )
         return E_FAIL;*/
 	//if( FAILED( hr = m_pMouse->Acquire()))
-	//	RageErrorHr( "m_pMouse->Acquire failed.", hr );
+	//	HELPER.FatalErrorHr( "m_pMouse->Acquire failed.", hr );
 
 	m_RelPosition_x = 0;
 	m_RelPosition_y = 0;
@@ -382,7 +387,7 @@ HRESULT RageInput::Initialize()
                                          EnumJoysticksCallback,
                                          (VOID*)this, 
 										 DIEDFL_ATTACHEDONLY ) ) )
-		RageErrorHr( "m_pDI->EnumDevices failed.", hr );
+		HELPER.FatalErrorHr( hr, "m_pDI->EnumDevices failed." );
 
 	for( int i=0; i<NUM_JOYSTICKS; i++ )
 	{
@@ -393,14 +398,14 @@ HRESULT RageInput::Initialize()
 		// passing a DIJOYSTATE2 structure to IDirectInputDevice::GetDeviceState().
 		if( m_pJoystick[i] )
 			if( FAILED( hr = m_pJoystick[i]->SetDataFormat( &c_dfDIJoystick2 ) ) )
-				RageErrorHr( "m_pJoystick[i]->SetDataFormat failed.", hr );
+				HELPER.FatalErrorHr( hr, "m_pJoystick[i]->SetDataFormat failed." );
 
 
 		// Set the cooperative level to let DInput know how this device should
 		// interact with the system and with other DInput applications.
 		if( m_pJoystick[i] )
 			if( FAILED( hr = m_pJoystick[i]->SetCooperativeLevel( m_hWnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND ) ) )
-				RageErrorHr( "m_pJoystick[i]->SetCooperativeLevel failed.", hr );
+				HELPER.FatalErrorHr( hr, "m_pJoystick[i]->SetCooperativeLevel failed." );
 
 
 		/*
@@ -418,18 +423,18 @@ HRESULT RageInput::Initialize()
 		// of enumerating device objects (axes, buttons, etc.).
 		if( m_pJoystick[i] )
 			if ( FAILED( hr = m_pJoystick[i]->EnumObjects( EnumAxesCallback, (VOID*)m_pJoystick[i], DIDFT_AXIS ) ) )
-				RageErrorHr( "m_pJoystick[i]->EnumObjects failed.", hr );
+				HELPER.FatalErrorHr( hr, "m_pJoystick[i]->EnumObjects failed." );
 
 		// Acquire the newly created devices
 		if( m_pJoystick[i] )
 			if( FAILED( hr = m_pJoystick[i]->Acquire() ) )
-				RageErrorHr( "m_pJoystick[i]->Acquire failed.", hr );
+				HELPER.FatalErrorHr( hr, "m_pJoystick[i]->Acquire failed." );
 	}
 
 	return S_OK;
 }
 
-VOID RageInput::Release()
+void RageInput::Release()
 {
 	// Unacquire the keyboard device
 	if (m_pKeyboard)
@@ -646,7 +651,7 @@ BOOL RageInput::IsBeingPressed( DeviceInput di )
 			return IS_PRESSED( m_joyState[joy_index].rgbButtons[button_index] );
 		}
 	default:
-		RageError( "Invalid device" );
+		HELPER.FatalError( "Invalid device" );
 	}
 
 	return false;	// how did we get here?!?

@@ -70,10 +70,10 @@ protected:
 		{
 		case opening_right:
 		case opening_left:
-			return 1.0f - m_fPercentThroughTransition;
+			return m_fPercentThroughTransition;
 		case closing_right:
 		case closing_left:
-			return m_fPercentThroughTransition;
+			return 1.0f - m_fPercentThroughTransition;
 		case opened:
 			return 0;
 		case closed:

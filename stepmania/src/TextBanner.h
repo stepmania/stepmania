@@ -15,7 +15,7 @@
 #include "ActorFrame.h"
 #include "Song.h"
 #include "BitmapText.h"
-#include "Rectangle.h"
+#include "RectangleActor.h"
 
 
 const float TEXT_BANNER_WIDTH	= 250;

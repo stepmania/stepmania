@@ -13,6 +13,7 @@
 
 #include "RandomSample.h"
 #include "RageUtil.h"
+#include "RageHelper.h"
 
 
 RandomSample::RandomSample()
@@ -47,7 +48,7 @@ bool RandomSample::LoadRandomSample( CString sSetFilePath )
 {
 	CStdioFile file;
 	if( !file.Open(sSetFilePath, CFile::modeRead|CFile::shareDenyNone) )
-		RageError( ssprintf("Error opening sound set file '%s'.", sSetFilePath) );
+		HELPER.FatalError( ssprintf("Error opening sound set file '%s'.", sSetFilePath) );
 
 	
 	// Split for the directory of the sound set file.  We'll need it below
@@ -67,18 +68,18 @@ bool RandomSample::LoadRandomSample( CString sSetFilePath )
 	
 bool RandomSample::LoadSound( CString sSoundFilePath )
 {
-	RageLog( "RandomSample::LoadSound( %s )", sSoundFilePath );
+	HELPER.Log( "RandomSample::LoadSound( %s )", sSoundFilePath );
 
-	RageLog( "Made it here - A" );
+	HELPER.Log( "Made it here - A" );
 
 	RageSoundSample* pSS = new RageSoundSample;
-	RageLog( "Made it here - B" );
+	HELPER.Log( "Made it here - B" );
 	pSS->Load( sSoundFilePath );
 
 
 	m_pSamples.Add( pSS );
 	
-	RageLog( "Made it here - C" );
+	HELPER.Log( "Made it here - C" );
 
 	return true;
 }
@@ -88,7 +89,7 @@ void RandomSample::PlayRandom()
 	// play one of the samples
 	if( m_pSamples.GetSize() == 0 )
 	{
-		RageLog( "WARNING:  Tried to play a RandomSample that has 0 sounds loaded." );
+		HELPER.Log( "WARNING:  Tried to play a RandomSample that has 0 sounds loaded." );
 	}
 	else
 	{

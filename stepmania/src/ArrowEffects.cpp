@@ -81,6 +81,9 @@ float ArrowGetAlpha( const PlayerOptions& po, float fYPos )
 	case PlayerOptions::APPEARANCE_STEALTH:
 		fAlpha = 0;
 		break;
+	default:
+		ASSERT( false );
+		fAlpha = 0;
 	};
 	if( fYPos < 0 )
 		fAlpha = 1;

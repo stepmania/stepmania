@@ -16,15 +16,15 @@
 #include "Song.h"
 
 
-const float BANNER_WIDTH	= 264;
-const float BANNER_HEIGHT	= 86;
+const float BANNER_WIDTH	= 250;
+const float BANNER_HEIGHT	= 100;
 
 
 class Banner : public Sprite
 {
 public:
 	bool LoadFromSong( Song* pSong );	// NULL means no Song
-	virtual bool Load( CString sFilePath, DWORD dwHints = 0, bool bForceReload = false );
+	virtual bool Load( const CString &sFilePath, DWORD dwHints = 0, bool bForceReload = false );
 
 protected:
 	void CropToRightSize();

@@ -11,12 +11,13 @@
 
 #include "ScoreDisplayRolling.h"
 #include "RageUtil.h"
+#include "RageHelper.h"
 #include "ThemeManager.h"
 
 
 ScoreDisplayRolling::ScoreDisplayRolling()
 {
-	RageLog( "ScoreDisplayRolling::ScoreDisplayRolling()" );
+	HELPER.Log( "ScoreDisplayRolling::ScoreDisplayRolling()" );
 
 	// init the text
 	Load( THEME->GetPathTo(FONT_SCORE_NUMBERS) );

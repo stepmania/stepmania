@@ -41,9 +41,9 @@ public:
 
 	virtual void StartAnimating()	{ m_bIsAnimating = TRUE; };
 	virtual void StopAnimating()	{ m_bIsAnimating = FALSE; };
-	virtual void SetState( UINT uNewState );
+	virtual void SetState( int iNewState );
 	
-	UINT	GetNumStates()		{ return m_uNumStates; };
+	int		GetNumStates()		{ return m_iNumStates; };
 	CString	GetTexturePath()	{ return m_sTexturePath; };
 
 
@@ -52,12 +52,6 @@ public:
 	void SetCustomSourceRect( FRECT rectSourceCoords );	// in source pixel space
 	void SetCustomImageRect( FRECT rectImageCoords );	// in image pixel space
 	void SetCustomImageCoords( float fImageCoords[8] );
-
-	void TurnShadowOn()		{ m_bHasShadow = true; };
-	void TurnShadowOff()	{ m_bHasShadow = false; };
-
-	void SetBlendModeAdd() 		{ m_bBlendAdd = true; }; 
-	void SetBlendModeNormal() 	{ m_bBlendAdd = false; };
 
 protected:
 
@@ -72,20 +66,16 @@ protected:
 	RageTexture* m_pTexture;
 	CString	m_sTexturePath;
 
-	UINT	m_uFrame[MAX_SPRITE_STATES];	// array of indicies into m_rectBitmapFrames
+	int		m_iStateToFrame[MAX_SPRITE_STATES];	// array of indicies into m_rectBitmapFrames
 	float	m_fDelay[MAX_SPRITE_STATES];
-	UINT	m_uNumStates;
-	UINT	m_uCurState;
+	int		m_iNumStates;
+	int		m_iCurState;
 	bool	m_bIsAnimating;
 	float	m_fSecsIntoState;	// number of seconds that have elapsed since we switched to this frame
 
 	bool m_bUsingCustomTexCoords;
 	//FRECT m_CustomTexCoordRect;
 	float m_CustomTexCoords[8];	// (x,y) * 4
-
-	bool	m_bHasShadow;
-
-	bool	m_bBlendAdd;
 };
 
 

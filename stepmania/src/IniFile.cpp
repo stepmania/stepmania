@@ -10,7 +10,6 @@
 
 #include "stdafx.h"
 #include "IniFile.h"
-#include "fstream.h"
 
 
 /////////////////////////////////////////////////////////////////////
@@ -48,53 +47,57 @@ void IniFile::SetPath(CString newpath)
 //returns true if successful, false otherwise
 BOOL IniFile::ReadFile()
 {
-	CFile file;
-	CFileStatus status;
-	if( !file.GetStatus(path,status) )
-		return FALSE;
-	ifstream inifile;
-	CString readinfo;
-	inifile.open(path);
-	int curkey = -1, curval = -1;
-	if( inifile.fail() )
+	CStdioFile file;
+	if( !file.Open(path, CFile::modeRead) )
 	{
 		error = "Unable to open ini file.";
 		return FALSE;
 	}
+
+	CString line;
+	int curkey = -1, curval = -1;
 	CString keyname, valuename, value;
-	CString temp;
-	while( getline(inifile,readinfo) )
+	while( file.ReadString(line) )
 	{
-		if( readinfo != "" )
+		if( line != "" )
 		{
-			if( readinfo[0] == '[' && readinfo[readinfo.GetLength()-1] == ']' ) //if a section heading
+			if( line[0] == '[' && line[line.GetLength()-1] == ']' ) //if a section heading
 			{
-				keyname = readinfo;
+				keyname = line;
 				keyname.TrimLeft('[');
 				keyname.TrimRight(']');
 			}
 			else //if a value
 			{
-				valuename = readinfo.Left(readinfo.Find("="));
-				value = readinfo.Right(readinfo.GetLength()-valuename.GetLength()-1);
+				int iIndexOfEqual = line.Find("=");
+				if( iIndexOfEqual == -1 )	// this is a malformed line
+					continue;
+				valuename = line.Left( iIndexOfEqual );
+				value = line.Right(line.GetLength()-valuename.GetLength()-1);
 				SetValue(keyname,valuename,value);
 			}
 		}
 	}
-	inifile.close();
+	file.Close();
 	return 1;
 }
 
 //writes data stored in class to ini file
 void IniFile::WriteFile()
 {
-	ofstream inifile;
-	inifile.open(path);
+	CStdioFile file;
+	if( !file.Open(path, CFile::modeCreate | CFile::modeWrite ) )
+	{
+		error = "Unable to open ini for writing.";
+		return;
+	}
 
 	// foreach key
 	for( int keynum = 0; keynum <= names.GetUpperBound(); keynum++ )
 	{
-		inifile << '[' << names[keynum] << ']' << endl;
+		CString sTemp;
+		sTemp.Format( "[%s]\n", names[keynum] );
+		file.WriteString( sTemp );
 
 		CMapStringToString &map = keys[keynum];
 
@@ -105,12 +108,13 @@ void IniFile::WriteFile()
 			CString value;
 			map.GetNextAssoc( pos, value_name, value );
 
-			inifile << value_name << "=" << value << endl;
+			sTemp.Format( "%s=%s\n", value_name, value );
+			file.WriteString( sTemp );
 		}
-		inifile << endl;
+		file.WriteString( "\n" );
 	}
 
-	inifile.close();
+	file.Close();
 }
 
 //deletes all stored ini data
@@ -269,11 +273,3 @@ int IniFile::FindKey(CString keyname)
 	return keynum;
 }
 
-//overloaded from original getline to take CString
-istream & IniFile:: getline(istream & is, CString & str)
-{
-    char buf[2048];
-    is.getline(buf,2048);
-    str = buf;
-    return is;
-}

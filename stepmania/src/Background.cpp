@@ -38,7 +38,7 @@ bool Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 	if( pSong->HasBackgroundMovie() )
 	{
 		// load the movie backgound, and don't load a visualization
-		m_sprSongBackground.Load( pSong->HasBackground() );
+		m_sprSongBackground.Load( pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo(GRAPHIC_FALLBACK_BACKGROUND) );
 		m_sprSongBackground.StretchTo( CRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT ) );
 		m_sprSongBackground.SetZoomY( -1 );
 		m_sprSongBackground.SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
@@ -47,8 +47,8 @@ bool Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 	else
 	{
 		// load the static background (if available), and a visualization
-		if( pSong->HasBackground() )	m_sprSongBackground.Load( pSong->GetBackgroundPath(), HINT_DITHER );
-		else						m_sprSongBackground.Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BACKGROUND), HINT_DITHER );
+		if( pSong->HasBackground() )	m_sprSongBackground.Load( pSong->GetBackgroundPath(), TEXTURE_HINT_DITHER );
+		else							m_sprSongBackground.Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BACKGROUND), TEXTURE_HINT_DITHER );
 
 		m_sprSongBackground.StretchTo( CRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT ) );
 		m_sprSongBackground.SetDiffuseColor( D3DXCOLOR(0,0,0,1) );

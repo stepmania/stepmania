@@ -33,10 +33,8 @@ private:
 };
 
 
-typedef RageSound* LPRageSound;
 
-
-extern LPRageSound			SOUND;	// global and accessable from anywhere in our program
+extern RageSound*		SOUND;	// global and accessable from anywhere in our program
 
 
 #endif

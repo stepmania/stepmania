@@ -15,7 +15,7 @@
 #include "Transition.h"
 #include "RageScreen.h"
 #include "RageSound.h"
-#include "Rectangle.h"
+#include "RectangleActor.h"
 
 
 class TransitionStarWipe : public Transition

@@ -1,29 +1,25 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: RageUtil.cpp
+ File: RageUtil
 
- Desc: Helper and error-controlling function used throughout the program.
+ Desc: See header.
 
- Copyright (c) 2001 Chris Danford.  All rights reserved.
+ Copyright (c) 2001-2002 by the names listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
 #include "RageUtil.h"
 
 
-const CString g_sLogFileName = "log.txt";
-const CString g_sErrorFileName = "error.txt";
-FILE* g_fileLog = NULL;
 
-
-
-bool IsAnInt( CString s )
+bool IsAnInt( LPCTSTR s )
 {
-	if( s.GetLength() == 0 )
+	if( strlen(s) == 0 )
 		return false;
 
-	for( int i=0; i<s.GetLength(); i++ )
+	for( UINT i=0; i<strlen(s); i++ )
 	{
 		if( s[i] < '0' || s[i] > '9' )
 			return false;
@@ -32,57 +28,6 @@ bool IsAnInt( CString s )
 	return true;
 }
 
-
-
-//-----------------------------------------------------------------------------
-// Name: RageLogStart()
-// Desc:
-//-----------------------------------------------------------------------------
-void RageLogStart()
-{
-	DeleteFile( g_sLogFileName );
-	DeleteFile( g_sErrorFileName );
-
-	// Open log file and leave it open.  Let the OS close it when the app exits
-	g_fileLog = fopen( g_sLogFileName, "w" );
-
-
-	SYSTEMTIME st;
-    GetLocalTime( &st );
-
-	RageLog( "%s: last compiled on %s.", g_sLogFileName, __TIMESTAMP__ );
-	RageLog( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
-		     st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
-	RageLog( "\n" );
-}
-
-
-//-----------------------------------------------------------------------------
-// Name: RageLog()
-// Desc:
-//-----------------------------------------------------------------------------
-void RageLog( LPCTSTR fmt, ...)
-{
-    va_list	va;
-    va_start(va, fmt);
-
-    CString sBuff = vssprintf( fmt, va );
-	sBuff += "\n";
-
-	fprintf( g_fileLog, sBuff ); 
-	fflush( g_fileLog );
-//	fclose( g_fileLog );
-//	g_fileLog = fopen( g_sLogFileName, "w" );
-}
-
-void RageLogHr( HRESULT hr, LPCTSTR fmt, ...)
-{
-    va_list	va;
-    va_start(va, fmt);
-    CString s = vssprintf( fmt, va );
-	s += ssprintf( "(%s)", DXGetErrorString8(hr) );
-	RageLog( s );
-}
 
 
 //-----------------------------------------------------------------------------
@@ -133,7 +78,7 @@ CString join(CString Deliminator, CStringArray& Source)
 // Name: split()
 // Desc:
 //-----------------------------------------------------------------------------
-void split( CString Source, CString Deliminator, CStringArray& AddIt, bool bIgnoreEmpty )
+void split( const CString &Source, const CString &Deliminator, CStringArray& AddIt, const bool bIgnoreEmpty )
 {
 	CString		 newCString;
 	CString		 tmpCString;
@@ -169,7 +114,7 @@ void split( CString Source, CString Deliminator, CStringArray& AddIt, bool bIgno
 // Name: splitpath()
 // Desc:
 //-----------------------------------------------------------------------------
-void splitpath( BOOL UsingDirsOnly, CString Path, CString& Drive, CString& Dir, CString& FName, CString& Ext )
+void splitpath( const bool UsingDirsOnly, const CString &Path, CString& Drive, CString& Dir, CString& FName, CString& Ext )
 {
 
 	int nSecond;
@@ -239,7 +184,7 @@ void splitpath( BOOL UsingDirsOnly, CString Path, CString& Drive, CString& Dir, 
 // Name: splitpath()
 // Desc:
 //-----------------------------------------------------------------------------
-void splitrelpath( CString Path, CString& Dir, CString& FName, CString& Ext )
+void splitrelpath( const CString &Path, CString& Dir, CString& FName, CString& Ext )
 {
 	// need to split on both forward slashes and back slashes
 	CStringArray sPathBits;
@@ -315,7 +260,7 @@ void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs )
 	::FindClose( hFind );
 }
 
-DWORD GetFileSizeInBytes( CString sFilePath )
+DWORD GetFileSizeInBytes( const CString &sFilePath )
 {
 	HANDLE hFile = CreateFile(
 	  sFilePath,          // pointer to name of the file
@@ -331,9 +276,9 @@ DWORD GetFileSizeInBytes( CString sFilePath )
 }
 
 
-bool DoesFileExist( CString sPath )
+bool DoesFileExist( const CString &sPath )
 {
-	//RageLog( "DoesFileExist(%s)", sPath );
+	//HELPER.Log( "DoesFileExist(%s)", sPath );
 
     DWORD dwAttr = GetFileAttributes( sPath );
     if( dwAttr == (DWORD)-1 )
@@ -343,41 +288,25 @@ bool DoesFileExist( CString sPath )
 
 }
 
-int CompareCStrings(const void *arg1, const void *arg2)
+int CompareCStringsAsc(const void *arg1, const void *arg2)
 {
 	CString str1 = *(CString *)arg1;
 	CString str2 = *(CString *)arg2;
 	return str1.CompareNoCase( str2 );
 }
 
-void SortCStringArray( CStringArray &arrayCStrings, BOOL bSortAcsending )
+int CompareCStringsDesc(const void *arg1, const void *arg2)
 {
-	qsort( arrayCStrings.GetData(), arrayCStrings.GetSize(), sizeof(CString), CompareCStrings );
+	CString str1 = *(CString *)arg1;
+	CString str2 = *(CString *)arg2;
+	return str2.CompareNoCase( str1 );
 }
 
-//-----------------------------------------------------------------------------
-// Name: DisplayErrorAndDie()
-// Desc:
-//-----------------------------------------------------------------------------
-
-VOID DisplayErrorAndDie( CString sError )
+void SortCStringArray( CStringArray &arrayCStrings, const bool bSortAcsending )
 {
-#ifdef DEBUG
-	// display a message box, then break so we can see a stack trace in the debugger
-	AfxMessageBox( sError );
-	AfxDebugBreak();
-	exit(1);
-
-#else	// RELEASE
-	// write the error to a file so our pretty error dialog can display what happened.
-	FILE* fp = fopen( g_sErrorFileName, "w" );
-	fprintf( fp, sError );
-	fclose( fp );
-	// generate an exception so the error handler shows
-	throw(1);
-
-#endif
+	qsort( arrayCStrings.GetData(), arrayCStrings.GetSize(), sizeof(CString), bSortAcsending ? CompareCStringsAsc : CompareCStringsDesc );
 }
+
 
 
 LONG GetRegKey(HKEY key, LPCTSTR subkey, LPTSTR retdata)

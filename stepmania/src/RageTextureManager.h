@@ -9,8 +9,6 @@
 */
 
 class RageTextureManager;
-typedef RageTextureManager* LPRageTextureManager;
-
 
 
 
@@ -29,20 +27,29 @@ typedef RageTextureManager* LPRageTextureManager;
 class RageTextureManager
 {
 public:
-	RageTextureManager( LPRageScreen pScreen );
+	RageTextureManager( RageScreen* pScreen );
 	~RageTextureManager();
 
-	LPRageTexture LoadTexture( CString sTexturePath, DWORD dwHints = 0, bool bForceReload = false );
+	RageTexture* LoadTexture( CString sTexturePath, const DWORD dwHints = 0, const bool bForceReload = false );
 	bool IsTextureLoaded( CString sTexturePath );
 	void UnloadTexture( CString sTexturePath );
 
+	void SetMaxTextureSize( const DWORD dwMaxSize ) { m_dwMaxTextureSize = dwMaxSize; };
+	DWORD GetMaxTextureSize() { return m_dwMaxTextureSize; };
+
+	void SetTextureColorDepth( const DWORD dwTextureColorDepth ) { m_dwTextureColorDepth = dwTextureColorDepth; };
+	DWORD GetTextureColorDepth() { return m_dwTextureColorDepth; };
+
 protected:
-	LPRageScreen m_pScreen;
+	RageScreen* m_pScreen;
+
+	DWORD m_dwMaxTextureSize;
+	DWORD m_dwTextureColorDepth;
 
 	// map from file name to a texture holder
-	CTypedPtrMap<CMapStringToPtr, CString, LPRageTexture> m_mapPathToTexture;
+	CTypedPtrMap<CMapStringToPtr, CString, RageTexture*> m_mapPathToTexture;
 };
 
-extern LPRageTextureManager	TM;	// global and accessable from anywhere in our program
+extern RageTextureManager*	TEXTURE;	// global and accessable from anywhere in our program
 
 #endif

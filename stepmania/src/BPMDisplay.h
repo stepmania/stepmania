@@ -17,7 +17,7 @@
 #include "Song.h"
 #include "ActorFrame.h"
 #include "BitmapText.h"
-#include "Rectangle.h"
+#include "RectangleActor.h"
 
 
 class BPMDisplay : public ActorFrame

@@ -29,7 +29,7 @@ TransitionFade::~TransitionFade()
 
 void TransitionFade::RenderPrimitives()
 {
-	float fPercentageOpaque = GetPercentageOpen();
+	const float fPercentageOpaque = 1 - GetPercentageOpen();
 	if( fPercentageOpaque == 0 )
 		return;	// draw nothing
 

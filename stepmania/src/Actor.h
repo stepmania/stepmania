@@ -157,6 +157,14 @@ public:
 	Effect GetEffect() { return m_Effect; };
 
 
+	// other properties
+	void TurnShadowOn()		{ m_bShadow = true; };
+	void TurnShadowOff()	{ m_bShadow = false; };
+
+	void SetBlendModeAdd() 		{ m_bBlendAdd = true; }; 
+	void SetBlendModeNormal() 	{ m_bBlendAdd = false; };
+
+
 protected:
 
 	D3DXVECTOR2 m_size;		// width, height
@@ -166,8 +174,9 @@ protected:
 	D3DXCOLOR   m_colorDiffuse[4];	// 4 corner colors - left to right, top to bottom
 	D3DXCOLOR   m_colorAdd;
 
-
-	// tweening
+	//
+	// Stuff for tweening
+	//
 	D3DXVECTOR3 m_start_pos;
 	D3DXVECTOR3 m_start_rotation;
 	D3DXVECTOR2 m_start_scale;
@@ -202,17 +211,31 @@ protected:
 	TweenState& GetLatestTween() { return m_QueuedTweens[m_QueuedTweens.GetSize()-1]; };
 
 
-	// alignment
+	//
+	// Temporary variables that are filled just before drawing
+	//
+	D3DXVECTOR2 m_temp_size;
+	D3DXVECTOR3 m_temp_pos;
+	D3DXVECTOR3 m_temp_rotation;
+	D3DXVECTOR2 m_temp_scale;
+	D3DXCOLOR   m_temp_colorDiffuse[4];
+	D3DXCOLOR   m_temp_colorAdd;
+
+
+	//
+	// Stuff for alignment
+	//
 	HorizAlign	m_HorizAlign;
 	VertAlign	m_VertAlign;
 
 
-	// effect
+	//
+	// Stuff for effects
+	//
 	Effect m_Effect;
 
 
-	// Counting variables for sprite effects:
-	// camelion and glowing:
+	// Counting variables for camelion and glowing:
 	D3DXCOLOR   m_effect_colorDiffuse1;
 	D3DXCOLOR   m_effect_colorDiffuse2;
 	D3DXCOLOR   m_effect_colorAdd1;
@@ -239,6 +262,13 @@ protected:
 	D3DXVECTOR3 m_vectBounce;
 	float m_fBouncePeriod;
 	float m_fTimeIntoBounce;
+
+
+	//
+	// other properties
+	//
+	bool	m_bShadow;
+	bool	m_bBlendAdd;
 
 };
 

@@ -87,7 +87,7 @@ public:
 	CString GetDescription();
 	
 	CString toString();
-	bool fromString( CString s );
+	bool fromString( const CString &s );
 
 	bool IsBlank() const { return device == DEVICE_NONE; };
 	void MakeBlank() { device = DEVICE_NONE; };
@@ -95,7 +95,7 @@ public:
 
 
 
-typedef CArray<DeviceInput, DeviceInput&> DeviceInputArray;
+typedef CArray<DeviceInput, DeviceInput> DeviceInputArray;
 
 
 class RageInput
@@ -155,9 +155,7 @@ public:
 };
 
 
-typedef RageInput* LPRageInput;
-
-extern LPRageInput			INPUT;	// global and accessable from anywhere in our program
+extern RageInput*			INPUTM;	// global and accessable from anywhere in our program
 
 
 #endif

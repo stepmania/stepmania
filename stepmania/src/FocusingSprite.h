@@ -22,7 +22,7 @@ public:
 
 	FocusingSprite();
 
-	virtual bool Load( CString sFilePath )
+	virtual bool Load( const CString &sFilePath )
 	{
 		for( int i=0; i<3; i++ )
 			m_sprites[i].Load( sFilePath );

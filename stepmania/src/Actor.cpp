@@ -12,6 +12,7 @@
 #include "Actor.h"
 #include <math.h>
 #include "RageScreen.h"
+#include "PrefsManager.h"
 
 
 Actor::Actor()
@@ -22,6 +23,25 @@ Actor::Actor()
 	m_scale			= m_start_scale			= D3DXVECTOR2( 1, 1 );
 	for(int i=0; i<4; i++) m_colorDiffuse[i]	= m_start_colorDiffuse[i] = D3DXCOLOR( 1, 1, 1, 1 );
 	m_colorAdd		= m_start_colorAdd		= D3DXCOLOR( 0, 0, 0, 0 );
+
+	m_HorizAlign = align_center;
+	m_VertAlign = align_middle;
+
+	m_Effect =  no_effect ;
+	m_fPercentBetweenColors = 0.0f;
+	m_bTweeningTowardEndColor = true;
+	m_fDeltaPercentPerSecond = 1.0f;
+	m_fWagRadians =  0.2f;
+	m_fWagPeriod =  2.0f;
+	m_fWagTimer =  0.0f;
+	m_fSpinSpeed =  2.0f;
+	m_fVibrationDistance =  5.0f;
+	m_bVisibleThisFrame =  FALSE;
+
+	if( PREFS )	m_bShadow = PREFS->m_GraphicOptions.m_bShadows;
+	else		m_bShadow = true;
+
+	m_bBlendAdd = false;
 }
 
 
@@ -29,70 +49,96 @@ void Actor::Draw()		// set the world matrix and calculate actor properties, the 
 {
 	SCREEN->PushMatrix();	// we're actually going to do some drawing in this function	
 
+	int i;
 	
-	D3DXVECTOR3 pos				= m_pos;
-	D3DXVECTOR3 rotation		= m_rotation;
-	D3DXVECTOR2 scale			= m_scale;
+	m_temp_pos			= m_pos;
+	m_temp_rotation		= m_rotation;
+	m_temp_scale		= m_scale;
+	m_temp_colorDiffuse[4];
+	for(i=0; i<4; i++)	
+		m_temp_colorDiffuse[i] = m_colorDiffuse[i];
+	m_temp_colorAdd		= m_colorAdd;
 
-	// update properties based on SpriteEffects 
+
+	//
+	// set temporary drawing properties based on Effects 
+	//
 	switch( m_Effect )
 	{
 	case no_effect:
 		break;
 	case blinking:
+		for(i=0; i<4; i++)
+			m_temp_colorDiffuse[i] = m_bTweeningTowardEndColor ? m_effect_colorDiffuse1 : m_effect_colorDiffuse2;
 		break;
 	case camelion:
+		for(i=0; i<4; i++)
+			m_temp_colorDiffuse[i] = m_effect_colorDiffuse1*m_fPercentBetweenColors + m_effect_colorDiffuse2*(1.0f-m_fPercentBetweenColors);
 		break;
 	case glowing:
+		m_temp_colorAdd = m_effect_colorAdd1*m_fPercentBetweenColors + m_effect_colorAdd2*(1.0f-m_fPercentBetweenColors);
 		break;
 	case wagging:
-		rotation.z = m_fWagRadians * sinf( 
+		m_temp_rotation.z = m_fWagRadians * sinf( 
 			(m_fWagTimer / m_fWagPeriod)	// percent through wag
 			* 2.0f * D3DX_PI );
 		break;
 	case spinning:
-		// nothing special needed
+		ASSERT( false );	// ugh.  What was here before!
 		break;
 	case vibrating:
-		pos.x += m_fVibrationDistance * randomf(-1.0f, 1.0f) * GetZoom();
-		pos.y += m_fVibrationDistance * randomf(-1.0f, 1.0f) * GetZoom();
+		m_temp_pos.x += m_fVibrationDistance * randomf(-1.0f, 1.0f) * GetZoom();
+		m_temp_pos.y += m_fVibrationDistance * randomf(-1.0f, 1.0f) * GetZoom();
 		break;
 	case flickering:
+		m_bVisibleThisFrame = !m_bVisibleThisFrame;
+		if( !m_bVisibleThisFrame )
+			for(int i=0; i<4; i++)
+				m_temp_colorDiffuse[i] = D3DXCOLOR(0,0,0,0);		// don't draw the frame
 		break;
 	case bouncing:
+		{
 		float fPercentThroughBounce = m_fTimeIntoBounce / m_fBouncePeriod;
 		float fPercentOffset = sinf( fPercentThroughBounce*D3DX_PI ); 
-		pos += m_vectBounce * fPercentOffset;
+		m_temp_pos += m_vectBounce * fPercentOffset;
+		}
 		break;
+	default:
+		ASSERT( false );	// invalid Effect
 	}
 
+
+
 	
-	SCREEN->Translate( pos.x, pos.y, pos.z );	// offset so that pixels are aligned to texels
-	SCREEN->Scale( scale.x, scale.y, 1 );
+	SCREEN->Translate( m_temp_pos.x, m_temp_pos.y, m_temp_pos.z );	// offset so that pixels are aligned to texels
+	SCREEN->Scale( m_temp_scale.x, m_temp_scale.y, 1 );
 
 	// super slow!	
 	//	D3DXMatrixRotationYawPitchRoll( &matTemp, rotation.y, rotation.x, rotation.z );	// add in the rotation
 	//	matNewWorld = matTemp * matNewWorld;
 
 	// replace with...
-	if( rotation.z != 0 )
+	if( m_temp_rotation.z != 0 )
 	{
-		SCREEN->RotateZ( rotation.z );
+		SCREEN->RotateZ( m_temp_rotation.z );
+	}    
+	if( m_temp_rotation.y != 0 )
+	{
+		SCREEN->RotateY( m_temp_rotation.y );
 	}    
 
 
 
-	this->RenderPrimitives();
+	this->RenderPrimitives();	// call the most-derived version of RenderPrimitives();
 
 
 	SCREEN->PopMatrix();
-
 }
 
 
 void Actor::Update( float fDeltaTime )
 {
-//	RageLog( "Actor::Update( %f )", fDeltaTime );
+//	HELPER.Log( "Actor::Update( %f )", fDeltaTime );
 
 	// update effect
 	switch( m_Effect )
@@ -117,7 +163,7 @@ void Actor::Update( float fDeltaTime )
 				m_bTweeningTowardEndColor = TRUE;
 			}
 		}
-		//RageLog( "Actor::m_fPercentBetweenColors %f", m_fPercentBetweenColors );
+		//HELPER.Log( "Actor::m_fPercentBetweenColors %f", m_fPercentBetweenColors );
 		break;
 	case wagging:
 		m_fWagTimer += fDeltaTime;

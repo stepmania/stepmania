@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
- File: TransitionInvisible.cpp
+ File: TransitionKeepAlive.cpp
 
  Desc: Fades out or in.
 
@@ -8,26 +8,24 @@
 -----------------------------------------------------------------------------
 */
 
-
-#ifndef _TransitionInvisible_H_
-#define _TransitionInvisible_H_
-
-
-#include "Transition.h"
-#include "RageScreen.h"
-#include "RageSound.h"
-#include "RectangleActor.h"
+#ifndef _TransitionKeepAlive_H_
+#define _TransitionKeepAlive_H_
 
 
-class TransitionInvisible : public Transition
+#include "Sprite.h"
+#include "TransitionFadeWipe.h"
+
+
+class TransitionKeepAlive : public Transition
 {
 public:
-	TransitionInvisible();
-	virtual ~TransitionInvisible();
+	TransitionKeepAlive();
 
+	virtual void Update( float fDeltaTime );
 	virtual void RenderPrimitives();
 
 protected:
+	Sprite m_sprLogo;
 };
 
 

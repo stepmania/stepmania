@@ -1,7 +1,7 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- Class: ThemeManager
+ Class: FontManager
 
  Desc: See header.
 
@@ -11,6 +11,7 @@
 */
 
 #include "ThemeManager.h"
+#include "RageHelper.h"
 
 
 
@@ -50,7 +51,7 @@ bool ThemeManager::SetTheme( CString sThemeName )		// return false if theme does
 
 	if( !DoesFileExist( sThemeDir ) )
 	{
-		RageError( ssprintf( "The theme in diretory '%' could not be loaded.", sThemeDir ) );
+		HELPER.FatalError( ssprintf( "The theme in diretory '%' could not be loaded.", sThemeDir ) );
 		return false;
 	}
 
@@ -62,7 +63,7 @@ void ThemeManager::AssertThemeIsComplete( CString sThemeName )		// return false 
 	for( int i=0; i<NUM_THEME_ELEMENTS; i++ )
 	{
 		if( GetPathTo( (ThemeElement)i, sThemeName ) == "" )
-			RageError( ssprintf( "The theme element for theme '%s' called '%s' could not be found.", sThemeName, ElementToAssetPath((ThemeElement)i) ) );
+			HELPER.FatalError( ssprintf( "The theme element for theme '%s' called '%s' could not be found.", sThemeName, ElementToAssetPath((ThemeElement)i) ) );
 	}
 }
 
@@ -92,8 +93,9 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case GRAPHIC_SELECT_STYLE_TOP_EDGE:		sAssetPath = "Graphics\\select Style top edge";		break;
 		case GRAPHIC_SELECT_MUSIC_TOP_EDGE:		sAssetPath = "Graphics\\select music top edge";		break;
 		case GRAPHIC_GAME_OPTIONS_TOP_EDGE:		sAssetPath = "Graphics\\game options top edge";		break;
+		case GRAPHIC_GRAPHIC_OPTIONS_TOP_EDGE:	sAssetPath = "Graphics\\graphic options top edge";	break;
 		case GRAPHIC_PLAYER_OPTIONS_TOP_EDGE:	sAssetPath = "Graphics\\player options top edge";	break;
-		case GRAPHIC_MUSIC_OPTIONS_TOP_EDGE:	sAssetPath = "Graphics\\music options top edge";	break;
+		case GRAPHIC_SONG_OPTIONS_TOP_EDGE:		sAssetPath = "Graphics\\song options top edge";		break;
 		case GRAPHIC_RESULT_TOP_EDGE:			sAssetPath = "Graphics\\result top edge";			break;
 		case GRAPHIC_FALLBACK_BANNER:			sAssetPath = "Graphics\\Fallback Banner";			break;
 		case GRAPHIC_FALLBACK_BACKGROUND:		sAssetPath = "Graphics\\Fallback Background";		break;
@@ -124,7 +126,6 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case GRAPHIC_PAD_DOUBLE:				sAssetPath = "Graphics\\Pad double";				break;
 		case GRAPHIC_PAD_SOLO:					sAssetPath = "Graphics\\Pad solo";					break;
 		case GRAPHIC_STYLE_ICONS:				sAssetPath = "Graphics\\Style icons 1x5";			break;
-		case GRAPHIC_STYLE_EXPLANATIONS:		sAssetPath = "Graphics\\Style explanations 1x10";	break;
 		case GRAPHIC_MUSIC_SELECTION_HIGHLIGHT:	sAssetPath = "Graphics\\music selection highlight";	break;
 		case GRAPHIC_STEPS_DESCRIPTION:			sAssetPath = "Graphics\\Steps description 1x8";		break;
 		case GRAPHIC_SECTION_BACKGROUND:		sAssetPath = "Graphics\\section background";		break;
@@ -136,11 +137,25 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case GRAPHIC_ARROWS_RIGHT:				sAssetPath = "Graphics\\arrows right 1x4";			break;
 		case GRAPHIC_EDIT_BACKGROUND:			sAssetPath = "Graphics\\edit background";			break;
 		case GRAPHIC_EDIT_SNAP_INDICATOR:		sAssetPath = "Graphics\\edit snap indicator";		break;
-		case GRAPHIC_GAME_OPTIONS_BACKGROUND:	sAssetPath = "Graphics\\game options background";	break;
-		case GRAPHIC_PLAYER_OPTIONS_BACKGROUND:	sAssetPath = "Graphics\\player options background";	break;
-		case GRAPHIC_MUSIC_OPTIONS_BACKGROUND:	sAssetPath = "Graphics\\music options background";	break;
+		case GRAPHIC_GAME_OPTIONS_BACKGROUND:	sAssetPath = "Graphics\\game options background";		break;
+		case GRAPHIC_GRAPHIC_OPTIONS_BACKGROUND:sAssetPath = "Graphics\\graphic options background";	break;
+		case GRAPHIC_PLAYER_OPTIONS_BACKGROUND:	sAssetPath = "Graphics\\player options background";		break;
+		case GRAPHIC_SONG_OPTIONS_BACKGROUND:	sAssetPath = "Graphics\\song options background";		break;	
 		case GRAPHIC_SYNCHRONIZE_BACKGROUND:	sAssetPath = "Graphics\\synchronize background";	break;
 		case GRAPHIC_SYNCHRONIZE_TOP_EDGE:		sAssetPath = "Graphics\\synchronize top edge";		break;
+		case GRAPHIC_TITLE_MENU_LOGO:			sAssetPath = "Graphics\\title menu logo";			break;
+		case GRAPHIC_TITLE_MENU_HELP:			sAssetPath = "Graphics\\title menu help";			break;
+		case GRAPHIC_SELECT_DIFFICULTY_BACKGROUND:	sAssetPath = "Graphics\\select difficulty background";		break;
+		case GRAPHIC_SELECT_DIFFICULTY_TOP_EDGE:	sAssetPath = "Graphics\\select difficulty top edge";		break;
+		case GRAPHIC_SELECT_DIFFICULTY_EXPLANATION:	sAssetPath = "Graphics\\select difficulty explanation";		break;
+		case GRAPHIC_SELECT_DIFFICULTY_EASY:		sAssetPath = "Graphics\\select difficulty easy";			break;
+		case GRAPHIC_SELECT_DIFFICULTY_MEDIUM:		sAssetPath = "Graphics\\select difficulty medium";			break;
+		case GRAPHIC_SELECT_DIFFICULTY_HARD:		sAssetPath = "Graphics\\select difficulty hard";			break;
+		case GRAPHIC_SELECT_DIFFICULTY_ARROW:		sAssetPath = "Graphics\\select difficulty arrow";			break;
+		case GRAPHIC_SELECT_DIFFICULTY_OK:			sAssetPath = "Graphics\\select difficulty ok";				break;
+		case GRAPHIC_SELECT_MUSIC_INFO_FRAME:		sAssetPath = "Graphics\\select music info frame";			break;
+		case GRAPHIC_SELECT_MUSIC_RADAR:			sAssetPath = "Graphics\\select music radar";				break;
+		case GRAPHIC_SELECT_MUSIC_SCORE_FRAME:		sAssetPath = "Graphics\\select music score frame";			break;
 
 		case SOUND_FAILED:						sAssetPath = "Sounds\\failed";						break;
 		case SOUND_ASSIST:						sAssetPath = "Sounds\\Assist";						break;
@@ -159,6 +174,7 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case SOUND_EDIT_CHANGE_SNAP:			sAssetPath = "Sounds\\edit change snap";			break;
 
 		case FONT_OUTLINE:						sAssetPath = "Fonts\\Outline";						break;
+		case FONT_CAPITALS:						sAssetPath = "Fonts\\Capitals";						break;
 		case FONT_NORMAL:						sAssetPath = "Fonts\\Normal";						break;
 		case FONT_FUTURISTIC:					sAssetPath = "Fonts\\Futuristic";					break;
 		case FONT_BOLD_NUMBERS:					sAssetPath = "Fonts\\Bold Numbers";					break;
@@ -186,10 +202,10 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case ANNOUNCER_RESULT_D:				sAssetPath = "Announcer\\result d";					break;
 		case ANNOUNCER_RESULT_E:				sAssetPath = "Announcer\\result e";					break;
 		case ANNOUNCER_TITLE:					sAssetPath = "Announcer\\title";					break;
-
+		case ANNOUNCER_DIFFICULTY_COMMENT:		sAssetPath = "Announcer\\difficulty comment";		break;
 
 		default:
-			RageError( ssprintf("Unhandled theme element %d", te) );
+			HELPER.FatalError( ssprintf("Unhandled theme element %d", te) );
 	}
 	
 	return sAssetPath;
@@ -236,7 +252,7 @@ CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName )
 	}
 	else
 	{
-		RageError( ssprintf("Unknown theme asset dir '%s'.", sAssetDir) );
+		HELPER.FatalError( ssprintf("Unknown theme asset dir '%s'.", sAssetDir) );
 	}
 
 	if( arrayPossibleElementFileNames.GetSize() > 0 )
@@ -271,7 +287,7 @@ CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName )
 	}
 	else
 	{
-		RageError( ssprintf("Unknown theme asset dir '%s'.", sAssetDir) );
+		HELPER.FatalError( ssprintf("Unknown theme asset dir '%s'.", sAssetDir) );
 	}
 
 	if( arrayPossibleElementFileNames.GetSize() > 0 )
@@ -279,6 +295,6 @@ CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName )
 
 
 
-	RageError( ssprintf("The theme element '%s' does not exist in the current theme directory or the default theme directory.", sAssetDir + "\\" + sAssetFileName) );
+	HELPER.FatalError( ssprintf("The theme element '%s' does not exist in the current theme directory or the default theme directory.", sAssetDir + "\\" + sAssetFileName) );
 	return "";
 }

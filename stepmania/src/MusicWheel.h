@@ -17,7 +17,7 @@
 #include "Song.h"
 #include "ActorFrame.h"
 #include "BitmapText.h"
-#include "Rectangle.h"
+#include "RectangleActor.h"
 #include "TextBanner.h"
 #include "RandomSample.h"
 #include "GradeDisplay.h"
@@ -43,7 +43,7 @@ struct WheelItemData
 public:
 	WheelItemData();
 
-	void LoadFromSectionName( CString sSectionName );
+	void LoadFromSectionName( const CString &sSectionName );
 	void LoadFromSong( Song* pSong );
 
 	WheelItemType	m_WheelItemType;

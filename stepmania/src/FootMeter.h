@@ -45,7 +45,7 @@ public:
 
 private:
 
-	void SetNumFeet( int iNumFeet, CString sDescription )
+	void SetNumFeet( int iNumFeet, const CString &sDescription )
 	{
 		CString sNewText;
 		for( int f=0; f<=9; f++ )
@@ -56,25 +56,16 @@ private:
 
 		SetText( sNewText );
 
-
-		sDescription.MakeLower();
-		if(	sDescription.Find( "basic" ) != -1 )
-			SetDiffuseColor( D3DXCOLOR(1,1,0,1) );
-		else if( sDescription.Find( "trick" ) != -1 )
-			SetDiffuseColor( D3DXCOLOR(1,0,0,1) );
-		else if( sDescription.Find( "another" ) != -1 )
-			SetDiffuseColor( D3DXCOLOR(1,0,0,1) );
-		else if( sDescription.Find( "maniac" ) != -1 )
-			SetDiffuseColor( D3DXCOLOR(0,1,0,1) );
-		else if( sDescription.Find( "ssr" ) != -1 )
-			SetDiffuseColor( D3DXCOLOR(0,1,0,1) );
-		else if( sDescription.Find( "battle" ) != -1 )
-			SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-		else if( sDescription.Find( "couple" ) != -1 )
-			SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-		else
-			SetDiffuseColor( D3DXCOLOR(0.8f,0.8f,0.8f,1) );
-
+		CString sTemp = sDescription;
+		sTemp.MakeLower();
+		if(	sTemp.Find( "basic" ) != -1 )		SetDiffuseColor( D3DXCOLOR(1,1,0,1) );
+		else if( sTemp.Find( "trick" ) != -1 )	SetDiffuseColor( D3DXCOLOR(1,0,0,1) );
+		else if( sTemp.Find( "another" ) != -1 )SetDiffuseColor( D3DXCOLOR(1,0,0,1) );
+		else if( sTemp.Find( "maniac" ) != -1 )	SetDiffuseColor( D3DXCOLOR(0,1,0,1) );
+		else if( sTemp.Find( "ssr" ) != -1 )	SetDiffuseColor( D3DXCOLOR(0,1,0,1) );
+		else if( sTemp.Find( "battle" ) != -1 )	SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+		else if( sTemp.Find( "couple" ) != -1 )	SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+		else									SetDiffuseColor( D3DXCOLOR(0.8f,0.8f,0.8f,1) );
 	};
 };
 

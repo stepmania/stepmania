@@ -20,9 +20,9 @@
 //-----------------------------------------------------------------------------
 // RageTexture constructor
 //-----------------------------------------------------------------------------
-RageTexture::RageTexture( LPRageScreen pScreen, CString sFilePath )
+RageTexture::RageTexture( RageScreen* pScreen, const CString &sFilePath )
 {
-//	RageLog( "RageTexture::RageTexture()" );
+//	HELPER.Log( "RageTexture::RageTexture()" );
 
 	// save a pointer to the D3D device
 	m_pd3dDevice = pScreen->GetDevice();
@@ -33,10 +33,10 @@ RageTexture::RageTexture( LPRageScreen pScreen, CString sFilePath )
 //	m_pd3dTexture = NULL;
 	m_iRefCount = 1;
 
-	m_uSourceWidth = m_uSourceHeight = 0;
-	m_uTextureWidth = m_uTextureHeight = 0;
-	m_uImageWidth = m_uImageHeight = 0;
-	m_uFramesWide = m_uFramesHigh = 1;
+	m_iSourceWidth = m_iSourceHeight = 0;
+	m_iTextureWidth = m_iTextureHeight = 0;
+	m_iImageWidth = m_iImageHeight = 0;
+	m_iFramesWide = m_iFramesHigh = 1;
 }
 
 RageTexture::~RageTexture()
@@ -47,30 +47,30 @@ RageTexture::~RageTexture()
 
 void RageTexture::CreateFrameRects()
 {
-	GetFrameDimensionsFromFileName( m_sFilePath, &m_uFramesWide, &m_uFramesHigh );
+	GetFrameDimensionsFromFileName( m_sFilePath, &m_iFramesWide, &m_iFramesHigh );
 
 	///////////////////////////////////
 	// Fill in the m_FrameRects with the bounds of each frame in the animation.
 	///////////////////////////////////
-	for( UINT j=0; j<m_uFramesHigh; j++ )		// traverse along Y
+	for( int j=0; j<m_iFramesHigh; j++ )		// traverse along Y
 	{
-		for( UINT i=0; i<m_uFramesWide; i++ )	// traverse along X (important that this is the inner loop)
+		for( int i=0; i<m_iFramesWide; i++ )	// traverse along X (important that this is the inner loop)
 		{
-			FRECT frect( (i+0)/(float)m_uFramesWide*m_uImageWidth /m_uTextureWidth,	// these will all be between 0.0 and 1.0
-						 (j+0)/(float)m_uFramesHigh*m_uImageHeight/m_uTextureHeight, 
-						 (i+1)/(float)m_uFramesWide*m_uImageWidth /m_uTextureWidth, 
-						 (j+1)/(float)m_uFramesHigh*m_uImageHeight/m_uTextureHeight );
-			m_TextureCoordRects.Add( frect );	// the index of this array element will be (i + j*m_uFramesWide)
+			FRECT frect( (i+0)/(float)m_iFramesWide*m_iImageWidth /(float)m_iTextureWidth,	// these will all be between 0.0 and 1.0
+						 (j+0)/(float)m_iFramesHigh*m_iImageHeight/(float)m_iTextureHeight, 
+						 (i+1)/(float)m_iFramesWide*m_iImageWidth /(float)m_iTextureWidth, 
+						 (j+1)/(float)m_iFramesHigh*m_iImageHeight/(float)m_iTextureHeight );
+			m_TextureCoordRects.Add( frect );	// the index of this array element will be (i + j*m_iFramesWide)
 			
-			//RageLog( "Adding frect%d %f %f %f %f", (i + j*m_uFramesWide), frect.left, frect.top, frect.right, frect.bottom );
+			//HELPER.Log( "Adding frect%d %f %f %f %f", (i + j*m_iFramesWide), frect.left, frect.top, frect.right, frect.bottom );
 		}
 	}
 }
 
 #include "string.h"
-void RageTexture::GetFrameDimensionsFromFileName( CString sPath, UINT* puFramesWide, UINT* puFramesHigh ) const
+void RageTexture::GetFrameDimensionsFromFileName( CString sPath, int* piFramesWide, int* piFramesHigh ) const
 {
-	*puFramesWide = *puFramesHigh = 1;	// set default values in case we don't find the dimension in the file name
+	*piFramesWide = *piFramesHigh = 1;	// set default values in case we don't find the dimension in the file name
 
 	sPath.MakeLower();
 
@@ -94,8 +94,8 @@ void RageTexture::GetFrameDimensionsFromFileName( CString sPath, UINT* puFramesW
 		else if( !IsAnInt(arrayDimensionsBits[0]) || !IsAnInt(arrayDimensionsBits[1]) )
 			continue;
 
-		*puFramesWide = atoi(arrayDimensionsBits[0]);
-		*puFramesHigh = atoi(arrayDimensionsBits[1]);
+		*piFramesWide = atoi(arrayDimensionsBits[0]);
+		*piFramesHigh = atoi(arrayDimensionsBits[1]);
 		return;
 	}
 

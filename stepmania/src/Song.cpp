@@ -10,13 +10,12 @@
 */
 
 
-#include "Util.h"
 #include "Pattern.h"
 #include "RageUtil.h"
 
 #include "Song.h"
-#include <assert.h>
 #include <math.h>	// for fmod
+#include "RageHelper.h"
 
 
 
@@ -78,7 +77,7 @@ Song::Song()
 
 void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut )
 {
-	RageLog( "GetBeatAndBPSFromElapsedTime( fElapsedTime = %f )", fElapsedTime );
+	HELPER.Log( "GetBeatAndBPSFromElapsedTime( fElapsedTime = %f )", fElapsedTime );
 	// This function is a nightmare.  Don't even try to understand it. :-)
 
 	fElapsedTime += m_fOffsetInSeconds;
@@ -152,7 +151,7 @@ void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, fl
 
 bool Song::LoadFromSongDir( CString sDir )
 {
-	RageLog( "Song::LoadFromSongDir(%s)", sDir );
+	HELPER.Log( "Song::LoadFromSongDir(%s)", sDir );
 
 	// make sure there is a trailing '\\' at the end of sDir
 	if( sDir.Right(1) != "\\" )
@@ -175,7 +174,7 @@ bool Song::LoadFromSongDir( CString sDir )
 
 	if( iNumDWIFiles > 1 )
 	{
-		RageError( ssprintf("There is more than one DWI file in '%s'.  Which one should I use?", sDir) );
+		HELPER.FatalError( ssprintf("There is more than one DWI file in '%s'.  Which one should I use?", sDir) );
 	}
 	else if( iNumDWIFiles == 1 )
 	{
@@ -187,7 +186,7 @@ bool Song::LoadFromSongDir( CString sDir )
 	}
 	else 
 	{
-		RageError( ssprintf("Couldn't find any BMS or MSD files in '%s'", sDir) );
+		HELPER.FatalError( ssprintf("Couldn't find any BMS or MSD files in '%s'", sDir) );
 	}
 
 	return TRUE;
@@ -197,7 +196,7 @@ bool Song::LoadFromSongDir( CString sDir )
 
 bool Song::LoadSongInfoFromBMSDir( CString sDir )
 {
-	RageLog( "Song::LoadSongInfoFromBMSDir(%s)", sDir );
+	HELPER.Log( "Song::LoadSongInfoFromBMSDir(%s)", sDir );
 
 	// make sure there is a trailing '\\' at the end of sDir
 	if( sDir.Right(1) != "\\" )
@@ -216,7 +215,7 @@ bool Song::LoadSongInfoFromBMSDir( CString sDir )
 	GetDirListing( sDir + CString("*.bms"), arrayBMSFileNames );
 
 	if( arrayBMSFileNames.GetSize() == 0 )
-		RageError( ssprintf("Couldn't find any BMS files in '%s'", sDir) );
+		HELPER.FatalError( ssprintf("Couldn't find any BMS files in '%s'", sDir) );
 
 
 	// Load the Song info from the first BMS file.  Silly BMS duplicates the song info in every
@@ -236,7 +235,7 @@ bool Song::LoadSongInfoFromBMSDir( CString sDir )
 	CStdioFile file;	
 	if( !file.Open( m_sSongFilePath, CFile::modeRead|CFile::shareDenyNone ) )
 	{
-		RageError( ssprintf("Failed to open %s.", m_sSongFilePath) );
+		HELPER.FatalError( ssprintf("Failed to open %s.", m_sSongFilePath) );
 		return false;
 	}
 
@@ -302,7 +301,7 @@ bool Song::LoadSongInfoFromBMSDir( CString sDir )
 			// add, then sort
 			m_BPMSegments.Add( new_seg );
 			SortBPMSegmentsArray( m_BPMSegments );
-			RageLog( "Inserting new BPM change at beat %f, BPM %f", new_seg.m_fStartBeat, new_seg.m_fBPM );
+			HELPER.Log( "Inserting new BPM change at beat %f, BPM %f", new_seg.m_fStartBeat, new_seg.m_fBPM );
 		}
 		else if( -1 != value_name.Find("#backbmp") ) 
 		{
@@ -331,7 +330,7 @@ bool Song::LoadSongInfoFromBMSDir( CString sDir )
 			}
 
 			const int iNumNotesInThisMeasure = arrayNotes.GetSize();
-			//RageLog( "%s:%s: iMeasureNo = %d, iTrackNum = %d, iNumNotesInThisMeasure = %d", 
+			//HELPER.Log( "%s:%s: iMeasureNo = %d, iTrackNum = %d, iNumNotesInThisMeasure = %d", 
 			//	valuename, sNoteData, iMeasureNo, iTrackNum, iNumNotesInThisMeasure );
 			for( int j=0; j<iNumNotesInThisMeasure; j++ )
 			{
@@ -351,7 +350,7 @@ bool Song::LoadSongInfoFromBMSDir( CString sDir )
 						float fBPS;
 						fBPS = m_BPMSegments[0].m_fBPM/60.0f;
 						m_fOffsetInSeconds = fBeatOffset / fBPS;
-						//RageLog( "Found offset to be index %d, beat %f", iStepIndex, NoteIndexToBeat(iStepIndex) );
+						//HELPER.Log( "Found offset to be index %d, beat %f", iStepIndex, NoteIndexToBeat(iStepIndex) );
 						break;
 					case 03:	// bpm
 						BPMSegment new_seg;
@@ -368,7 +367,7 @@ bool Song::LoadSongInfoFromBMSDir( CString sDir )
 	}
 
 	for( i=0; i<m_BPMSegments.GetSize(); i++ )
-		RageLog( "There is a BPM change at beat fd, BPM %f, index %d", 
+		HELPER.Log( "There is a BPM change at beat fd, BPM %f, index %d", 
 					m_BPMSegments[i].m_fStartBeat, m_BPMSegments[i].m_fBPM, i );
 
 
@@ -381,7 +380,7 @@ bool Song::LoadSongInfoFromBMSDir( CString sDir )
 
 bool Song::LoadSongInfoFromDWIFile( CString sPath )
 {
-	RageLog( "Song::LoadFromDWIFile(%s)", sPath );
+	HELPER.Log( "Song::LoadFromDWIFile(%s)", sPath );
 	
 	// save song file path
 	m_sSongFilePath = sPath;
@@ -422,7 +421,7 @@ bool Song::LoadSongInfoFromDWIFile( CString sPath )
 	
 	CStdioFile file;	
 	if( !file.Open( GetSongFilePath(), CFile::modeRead|CFile::shareDenyNone ) )
-		RageError( ssprintf("Error opening DWI file '%s'.", GetSongFilePath()) );
+		HELPER.FatalError( ssprintf("Error opening DWI file '%s'.", GetSongFilePath()) );
 
 
 //	MessageBox( NULL, sFName, sFName, MB_OK );
@@ -495,7 +494,7 @@ bool Song::LoadSongInfoFromDWIFile( CString sPath )
 				new_seg.m_fStartBeat = fFreezeBeat;
 				new_seg.m_fFreezeSeconds = fFreezeSeconds;
 
-				RageLog( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fFreezeSeconds );
+				HELPER.Log( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fFreezeSeconds );
 
 				m_FreezeSegments.Add( new_seg );	// add to back for now (we'll sort later)
 				SortFreezeSegmentsArray( m_FreezeSegments );
@@ -530,8 +529,13 @@ bool Song::LoadSongInfoFromDWIFile( CString sPath )
 		{
 			m_arrayPatterns.SetSize( m_arrayPatterns.GetSize()+1, 1 );
 			Pattern &new_pattern = m_arrayPatterns[ m_arrayPatterns.GetSize()-1 ];
-			new_pattern.LoadFromDWIValueTokens( arrayValueTokens );
-			int ksjfk = 0;
+			new_pattern.LoadFromDWIValueTokens( 
+				arrayValueTokens[0], 
+				arrayValueTokens[1], 
+				arrayValueTokens[2], 
+				arrayValueTokens[3], 
+				arrayValueTokens.GetSize() == 5 ? arrayValueTokens[4] : "" 
+				);
 		}
 		else
 			// do nothing.  We don't care about this value name
@@ -551,7 +555,7 @@ void Song::TidyUpData()
 	if( m_sArtist == "" )	m_sArtist = "Unknown artist";
 	if( m_sCreator == "" )	m_sCreator = "Unknown creator";
 	if( m_BPMSegments.GetSize() == 0 )
-		RageError( ssprintf("No #BPM specified in '%s.'", GetSongFilePath()) );
+		HELPER.FatalError( ssprintf("No #BPM specified in '%s.'", GetSongFilePath()) );
 
 	if( m_sMusicPath == "" || !DoesFileExist(GetMusicPath()) )
 	{
@@ -564,7 +568,7 @@ void Song::TidyUpData()
 			m_sMusicPath = m_sSongDir + arrayPossibleMusic[0];
 		else
 			m_sMusicPath = "";
-		//	RageError( ssprintf("Music could not be found.  Please check the Song file '%s' and verify the specified #MUSIC exists.", GetSongFilePath()) );
+		//	HELPER.FatalError( ssprintf("Music could not be found.  Please check the Song file '%s' and verify the specified #MUSIC exists.", GetSongFilePath()) );
 	}
 
 	if( !DoesFileExist(GetBannerPath()) )
@@ -595,7 +599,7 @@ void Song::TidyUpData()
 		else
 			m_sBannerPath = "";
 
-		//RageError( ssprintf("Banner could not be found.  Please check the Song file '%s' and verify the specified #BANNER exists.", GetSongFilePath()) );
+		//HELPER.FatalError( ssprintf("Banner could not be found.  Please check the Song file '%s' and verify the specified #BANNER exists.", GetSongFilePath()) );
 	}
 
 	if( !DoesFileExist(GetBackgroundPath()) )
@@ -705,7 +709,7 @@ void Song::SaveOffsetChangeToDisk()
 			CStringArray arrayLines;
 			CStdioFile fileIn;
 			if( !fileIn.Open( sPatternFileName, CFile::modeRead|CFile::shareDenyNone) )
-				RageError( ssprintf("Failed to open '%s' for reading", sPatternFileName) );
+				HELPER.FatalError( ssprintf("Failed to open '%s' for reading", sPatternFileName) );
 
 			// read the file into sFileContents
 			CString sLine;
@@ -718,7 +722,7 @@ void Song::SaveOffsetChangeToDisk()
 			// write the file back to disk with the changes
 			CStdioFile fileOut;
 			if( !fileOut.Open( sPatternFileName, CFile::modeWrite|CFile::shareDenyWrite) )
-				RageError( ssprintf("Failed to open '%s' for writing", sPatternFileName) );
+				HELPER.FatalError( ssprintf("Failed to open '%s' for writing", sPatternFileName) );
 			for( int j=0; j<arrayLines.GetSize(); j++ )
 			{
 				CString sLine = arrayLines[j];
@@ -755,7 +759,7 @@ void Song::SaveOffsetChangeToDisk()
 		CStringArray arrayLines;
 		CStdioFile fileIn;
 		if( !fileIn.Open( GetSongFilePath(), CFile::modeRead|CFile::shareDenyNone) )
-			RageError( ssprintf("Failed to open '%s' for reading", GetSongFilePath()) );
+			HELPER.FatalError( ssprintf("Failed to open '%s' for reading", GetSongFilePath()) );
 
 		// read the file into sFileContents
 		CString sLine;
@@ -769,7 +773,7 @@ void Song::SaveOffsetChangeToDisk()
 		// write the file back to disk with the changes
 		CStdioFile fileOut;
 		if( !fileOut.Open( GetSongFilePath(), CFile::modeWrite|CFile::shareDenyWrite) )
-			RageError( ssprintf("Failed to open '%s' for writing", GetSongFilePath()) );
+			HELPER.FatalError( ssprintf("Failed to open '%s' for writing", GetSongFilePath()) );
 		for( int i=0; i<arrayLines.GetSize(); i++ )
 		{
 			CString sLine = arrayLines[i];
@@ -794,7 +798,7 @@ void Song::SaveOffsetChangeToDisk()
 	}
 	else
 	{
-		RageError( ssprintf("Unrecognized extension '%s' on song file '%s'", sExt, GetSongFilePath()) );
+		HELPER.FatalError( ssprintf("Unrecognized extension '%s' on song file '%s'", sExt, GetSongFilePath()) );
 	}
 
 
@@ -822,7 +826,7 @@ int CompareSongPointersByTitle(const void *arg1, const void *arg2)
 	CString sCompareString1 = sTitle1 + sFilePath1;
 	CString sCompareString2 = sTitle2 + sFilePath2;
 
-	return CompareCStrings( (void*)&sCompareString1, (void*)&sCompareString2 );
+	return CompareCStringsAsc( (void*)&sCompareString1, (void*)&sCompareString2 );
 }
 
 void SortSongPointerArrayByTitle( CArray<Song*, Song*> &arraySongPointers )
@@ -845,7 +849,7 @@ int CompareSongPointersByBPM(const void *arg1, const void *arg2)
 	if( fMaxBPM1 < fMaxBPM2 )
 		return -1;
 	else if( fMaxBPM1 == fMaxBPM2 )
-		return CompareCStrings( (void*)&sFilePath1, (void*)&sFilePath2 );
+		return CompareCStringsAsc( (void*)&sFilePath1, (void*)&sFilePath2 );
 	else
 		return 1;
 }

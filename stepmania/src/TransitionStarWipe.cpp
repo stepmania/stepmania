@@ -37,7 +37,8 @@ void TransitionStarWipe::RenderPrimitives()
 		return;
 	}
 
-	float fPercentOpen;
+	float fPercentOpen = GetPercentageOpen();
+	/*
 	switch( m_TransitionState )
 	{
 	case opening_right:
@@ -49,6 +50,7 @@ void TransitionStarWipe::RenderPrimitives()
 		fPercentOpen = m_fPercentThroughTransition;
 		break;
 	}
+	*/
 
 
 	int iNumStars = SCREEN_HEIGHT/m_iStarHeight + 1;
@@ -69,6 +71,9 @@ void TransitionStarWipe::RenderPrimitives()
 			x_tilt = abs( y - SCREEN_HEIGHT/2 );
 			if( bIsAnEvenRow )	x_tilt *= -1; 
 			break;
+		default:
+			ASSERT( false );
+			x_tilt = 0;
 		}
 
 		int x_offset = (int)(fPercentOpen*(SCREEN_WIDTH+SCREEN_HEIGHT+m_iStarWidth));

@@ -46,7 +46,7 @@ void Judgement::RenderPrimitives()
 
 void Judgement::SetJudgement( TapNoteScore score )
 {
-	//RageLog( "Judgement::SetJudgement()" );
+	//HELPER.Log( "Judgement::SetJudgement()" );
 
 	switch( score )
 	{

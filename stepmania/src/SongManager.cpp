@@ -12,6 +12,7 @@
 
 #include "SongManager.h"
 #include "IniFile.h"
+#include "RageHelper.h"
 
 
 SongManager*	SONG = NULL;	// global and accessable from anywhere in our program
@@ -42,7 +43,7 @@ void SongManager::InitSongArrayFromDisk()
 {
 	LoadStepManiaSongDir( "Songs" );
 	LoadDWISongDir( "DWI Support" );
-	RageLog( "Found %d Songs.", m_pSongs.GetSize() );
+	HELPER.Log( "Found %d Songs.", m_pSongs.GetSize() );
 }
 
 void SongManager::LoadStepManiaSongDir( CString sDir )
@@ -67,7 +68,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir )
 		GetDirListing( ssprintf("%s\\%s\\*.mp3", sDir, sGroupDirName), arrayFiles );
 		GetDirListing( ssprintf("%s\\%s\\*.wav", sDir, sGroupDirName), arrayFiles );
 		if( arrayFiles.GetSize() > 0 )
-			RageError( 
+			HELPER.FatalError( 
 				ssprintf( "The song folder '%s' must be placed inside of a group folder.\n\n"
 					"All song folders must be placed below a group folder.  For example, 'Songs\\DDR 4th Mix\\B4U'.  See the StepMania readme for more info.",
 					ssprintf("%s\\%s", sDir, sGroupDirName ) )
@@ -82,7 +83,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir )
 		if( arrayGroupBanners.GetSize() > 0 )
 		{
 			m_mapGroupToBannerPath[sGroupDirName] = ssprintf("%s\\%s\\%s", sDir, sGroupDirName, arrayGroupBanners[0] );
-			RageLog( ssprintf("Group banner for '%s' is '%s'.", sGroupDirName, m_mapGroupToBannerPath[sGroupDirName]) );
+			HELPER.Log( ssprintf("Group banner for '%s' is '%s'.", sGroupDirName, m_mapGroupToBannerPath[sGroupDirName]) );
 		}
 
 		// Find all Song folders in this group directory
@@ -167,7 +168,7 @@ void SongManager::ReadStatisticsFromDisk()
 	IniFile ini;
 	ini.SetPath( g_sStatisticsFileName );
 	if( !ini.ReadFile() ) {
-		RageLog( "WARNING: Could not read config file '%s'.", g_sStatisticsFileName );
+		HELPER.Log( "WARNING: Could not read config file '%s'.", g_sStatisticsFileName );
 		return;		// load nothing
 	}
 

@@ -12,9 +12,7 @@
 #define _STEPMANIA_H_
 
 
-BOOL SwitchDisplayMode();//( BOOL bWindowed, DWORD dwWidth, DWORD dwHeight, DWORD dwBPP );
-
-
+void ApplyGraphicOptions();
 
 
 

@@ -100,6 +100,14 @@ SOURCE=.\RageBitmapTexture.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\RageHelper.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageHelper.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\RageInput.cpp
 # End Source File
 # Begin Source File
@@ -248,27 +256,11 @@ SOURCE=.\WindowGameOptions.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\WindowIdle.cpp
+SOURCE=.\WindowGraphicOptions.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\WindowIdle.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowIntroCovers.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowIntroCovers.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowLoading.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowLoading.h
+SOURCE=.\WindowGraphicOptions.h
 # End Source File
 # Begin Source File
 
@@ -293,22 +285,6 @@ SOURCE=.\WindowMenuResults.cpp
 # Begin Source File
 
 SOURCE=.\WindowMenuResults.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowMenuSelectMusic.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowMenuSelectMusic.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowMenuSelectStyle.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowMenuSelectStyle.h
 # End Source File
 # Begin Source File
 
@@ -348,6 +324,30 @@ SOURCE=.\WindowSandbox.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\WindowSelectDifficulty.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowSelectDifficulty.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowSelectMusic.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowSelectMusic.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowSelectStyle.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowSelectStyle.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\WindowSongOptions.cpp
 # End Source File
 # Begin Source File
@@ -382,6 +382,22 @@ SOURCE=.\WindowTitleMenu.h
 # Begin Group "Data Structures"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\Font.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Font.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\FontManager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\FontManager.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\GameConstants.h
@@ -576,19 +592,19 @@ SOURCE=.\TransitionFadeWipe.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\TransitionFadeWipeWithLogo.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\TransitionFadeWipeWithLogo.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\TransitionInvisible.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\TransitionInvisible.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\TransitionKeepAlive.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\TransitionKeepAlive.h
 # End Source File
 # Begin Source File
 
@@ -644,11 +660,11 @@ SOURCE=.\BitmapText.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Rectangle.cpp
+SOURCE=.\RectangleActor.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Rectangle.h
+SOURCE=.\RectangleActor.h
 # End Source File
 # Begin Source File
 
@@ -709,6 +725,14 @@ SOURCE=.\GranularityIndicator.cpp
 # Begin Source File
 
 SOURCE=.\GranularityIndicator.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\MenuElements.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\MenuElements.h
 # End Source File
 # Begin Source File
 
@@ -905,6 +929,54 @@ SOURCE=.\ScoreDisplayRollingWithFrame.cpp
 # Begin Source File
 
 SOURCE=.\ScoreDisplayRollingWithFrame.h
+# End Source File
+# End Group
+# Begin Group "exception"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\exception\AtlAux2.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\exception\debug_stream.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\exception\exception2.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\exception\exception_trap.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\exception\kbase.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\exception\se_translator.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\exception\se_translator.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\exception\StdAfx.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\exception\sym_engine.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\exception\sym_engine.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\exception\unhandled_report.h
 # End Source File
 # End Group
 # Begin Source File

@@ -40,13 +40,15 @@ public:
 	int				m_iCurrentStage;				// number of stages played +1
 
 	GameOptions		m_GameOptions;
+	GraphicOptions	m_GraphicOptions;
 	PlayerOptions	m_PlayerOptions[NUM_PLAYERS];
 	SongOptions		m_SongOptions;
 
 
-	// read and write to disk
 	void ReadPrefsFromDisk();
 	void SavePrefsToDisk();
+
+	void AfterPrefsChanged();		// this function puts all the changes into effect
 
 
 	// input mapping stuff
