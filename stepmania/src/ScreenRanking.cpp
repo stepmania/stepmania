@@ -320,13 +320,18 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 			for( unsigned c=0; c<asCoursePaths.size(); c++ )
 			{
 				PageToShow pts;
-				pts.type = PAGE_TYPE_COURSE;
+				pts.type = PAGE_TYPE_TRAIL;
 				pts.colorIndex = i;
 				pts.nt = aStepsTypesToShow[i];
 				pts.pCourse = SONGMAN->GetCourseFromPath( asCoursePaths[c] );
-				pts.cd = COURSE_DIFFICULTY_REGULAR;
-				if( pts.pCourse )
-					m_vPagesToShow.push_back( pts );
+				if( pts.pCourse == NULL )
+					continue;
+
+				pts.pTrail = pts.pCourse->GetTrail( pts.nt, COURSE_DIFFICULTY_REGULAR );
+				if( pts.pTrail == NULL )
+					continue;
+
+				m_vPagesToShow.push_back( pts );
 			}
 		}
 	}
@@ -436,7 +441,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 		bShowDifficulty = false;
 		bShowStepsScore = false;
 		break;
-	case PAGE_TYPE_COURSE:
+	case PAGE_TYPE_TRAIL:
 		bBanner = true; 
 		bBannerFrame = true;
 		bShowCategory = false;
@@ -715,15 +720,13 @@ float ScreenRanking::SetPage( PageToShow pts )
 			}
 		}
 		return SECONDS_PER_PAGE;
-	case PAGE_TYPE_COURSE:
+	case PAGE_TYPE_TRAIL:
 		{
 			m_textCourseTitle.SetText( pts.pCourse->m_sName );
 			m_Banner.LoadFromCourse( pts.pCourse );
 			m_textStepsType.SetText( GameManager::NotesTypeToThemedString(pts.nt) );
 
-			Trail *pTrail = pts.pCourse->GetTrail( pts.nt, pts.cd );
-			ASSERT( pTrail );
-			const HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList( pts.pCourse, pTrail );
+			const HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList( pts.pCourse, pts.pTrail );
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
 				HighScore hs;
@@ -825,9 +828,14 @@ float ScreenRanking::SetPage( PageToShow pts )
 				pCourseScoreRowItem->m_textSongTitle.SetText( pCourse->m_sName );
 				FOREACH_ShownCourseDifficulty( cd )
 				{
-					Trail *pTrail = pCourse->GetTrail( pts.nt, cd );
-					const HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList( pCourse, pTrail );
 					BitmapText* pTextStepsScore = &pCourseScoreRowItem->m_textStepsScore[cd];
+
+					Trail *pTrail = pCourse->GetTrail( pts.nt, cd );
+					pTextStepsScore->SetHidden( pTrail==NULL );
+					if( pTrail == NULL )
+						continue;
+
+					const HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList( pCourse, pTrail );
 
 					HighScore hs;
 					bool bRecentHighScore = false;

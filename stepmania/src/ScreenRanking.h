@@ -21,11 +21,12 @@
 
 class Course;
 class Song;
+class Trail;
 
 enum PageType
 {
 	PAGE_TYPE_CATEGORY, 
-	PAGE_TYPE_COURSE, 
+	PAGE_TYPE_TRAIL, 
 	PAGE_TYPE_ALL_STEPS, 
 	PAGE_TYPE_ALL_COURSES,
 	NUM_PAGE_TYPES
@@ -48,6 +49,7 @@ protected:
 		PageToShow()
 		{
 			pCourse = NULL;
+			pTrail = NULL;
 		}
 
 		PageType		type;
@@ -55,7 +57,7 @@ protected:
 		StepsType		nt;
 		RankingCategory	category;
 		Course*			pCourse;
-		CourseDifficulty	cd;
+		Trail*			pTrail;
 	};
 
 	float SetPage( PageToShow pts );
