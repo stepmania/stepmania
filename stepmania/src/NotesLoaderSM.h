@@ -15,8 +15,16 @@ class SMLoader: public NotesLoader  {
 		CString sNoteData,		
 		Notes &out);
 
+	bool FromCache;
+
 public:
+	SMLoader() { FromCache = false; }
 	bool LoadFromSMFile( CString sPath, Song &out );
+	bool LoadFromSMFile( CString sPath, Song &out, bool cache )
+	{
+		FromCache=cache;
+		return LoadFromSMFile( sPath, out );
+	}
 
 	void GetApplicableFiles( CString sPath, CStringArray &out );
 	bool LoadFromDir( CString sPath, Song &out );

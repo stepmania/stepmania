@@ -115,11 +115,27 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 		else if( 0==stricmp(sValueName,"MUSICLENGTH") )
 			out.m_fMusicLengthSeconds = (float)atof( sParams[1] );
 
+		/* We calculate these.  Some SMs in circulation have bogus values for
+		 * these, so make sure we always calculate it ourself. */
 		else if( 0==stricmp(sValueName,"FIRSTBEAT") )
+		{
+			if(!FromCache)
+			{
+				LOG->Trace("Ignored #FIRSTBEAT (cache only)");
+				continue;
+			}
 			out.m_fFirstBeat = (float)atof( sParams[1] );
+		}
 
 		else if( 0==stricmp(sValueName,"LASTBEAT") )
+		{
+			if(!FromCache)
+			{
+				LOG->Trace("Ignored #LASTBEAT (cache only)");
+				continue;
+			}
 			out.m_fLastBeat = (float)atof( sParams[1] );
+		}
 
 		else if( 0==stricmp(sValueName,"SAMPLESTART") )
 			out.m_fMusicSampleStartSeconds = TimeToSeconds( sParams[1] );

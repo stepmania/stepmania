@@ -313,7 +313,7 @@ bool Song::LoadFromSongDir( CString sDir )
 	{
 //		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir.GetString(), GetCacheFilePath().GetString() );
 		SMLoader ld;
-		ld.LoadFromSMFile( GetCacheFilePath(), *this );
+		ld.LoadFromSMFile( GetCacheFilePath(), *this, true );
 	}
 	else
 	{
