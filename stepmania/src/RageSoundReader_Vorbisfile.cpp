@@ -31,31 +31,28 @@
 #include "RageFile.h"
 static size_t OggRageFile_read_func( void *ptr, size_t size, size_t nmemb, void *datasource )
 {
-	RageFile *f = (RageFile *) datasource;
+	RageFileBasic *f = (RageFileBasic *) datasource;
 	return f->Read( ptr, size, nmemb );
 }
 
 static int OggRageFile_seek_func( void *datasource, ogg_int64_t offset, int whence )
 {
-	RageFile *f = (RageFile *) datasource;
+	RageFileBasic *f = (RageFileBasic *) datasource;
 	return f->Seek( (int) offset, whence );
 }
 
 static int OggRageFile_close_func( void *datasource )
 {
-	RageFile *f = (RageFile *) datasource;
+	RageFileBasic *f = (RageFileBasic *) datasource;
 	delete f;
 	return 0;
 }
 
 static long OggRageFile_tell_func( void *datasource )
 {
-	RageFile *f = (RageFile *) datasource;
+	RageFileBasic *f = (RageFileBasic *) datasource;
 	return f->Tell();
 }
-
-const int read_block_size = 1024;
-
 
 static CString ov_ssprintf( int err, const char *fmt, ...)
 {
@@ -89,19 +86,22 @@ SoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open(CString file
 {
 	filename=filename_;
 
-	vf = new OggVorbis_File;
-	memset( vf, 0, sizeof(*vf) );
-
 	RageFile *f = new RageFile;
 	
 	if( !f->Open( filename ) )
 	{
 		SetError( ssprintf("ogg: opening \"%s\" failed: %s", filename.c_str(), f->GetError().c_str()) );
 		delete f;
-		delete vf;
-		vf = NULL;
 		return OPEN_FATAL_ERROR;
 	}
+
+	return Open( f );
+}
+
+SoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open( RageFileBasic *f )
+{
+	vf = new OggVorbis_File;
+	memset( vf, 0, sizeof(*vf) );
 
 	ov_callbacks callbacks;
 	callbacks.read_func  = OggRageFile_read_func;
@@ -278,8 +278,11 @@ RageSoundReader_Vorbisfile::~RageSoundReader_Vorbisfile()
 
 SoundReader *RageSoundReader_Vorbisfile::Copy() const
 {
+	const RageFileBasic *pFrom = (RageFileBasic *) vf->datasource;
+	RageFileBasic *pFile = pFrom->Copy();
+	pFile->Seek(0);
 	RageSoundReader_Vorbisfile *ret = new RageSoundReader_Vorbisfile;
-	ret->Open(filename);
+	ret->Open( pFile );
 	return ret;
 }
 

@@ -6,11 +6,14 @@
 #include "RageSoundReader_FileReader.h"
 
 typedef struct OggVorbis_File OggVorbis_File;
+class RageFileBasic;
 
 class RageSoundReader_Vorbisfile: public SoundReader_FileReader
 {
 public:
 	OpenResult Open(CString filename);
+	OpenResult Open( RageFileBasic *f );
+
 	int GetLength() const;
 	int GetLength_Fast() const;
 	int SetPosition_Accurate(int ms) { return SetPosition( ms, true ); }
