@@ -34,16 +34,16 @@
 
 const float FADE_SECONDS = 1.0f;
 
-#define LEFT_EDGE			THEME->GetMetricI("Background","LeftEdge")
-#define TOP_EDGE			THEME->GetMetricI("Background","TopEdge")
-#define RIGHT_EDGE			THEME->GetMetricI("Background","RightEdge")
-#define BOTTOM_EDGE			THEME->GetMetricI("Background","BottomEdge")
+#define LEFT_EDGE			THEME->GetMetricF("Background","LeftEdge")
+#define TOP_EDGE			THEME->GetMetricF("Background","TopEdge")
+#define RIGHT_EDGE			THEME->GetMetricF("Background","RightEdge")
+#define BOTTOM_EDGE			THEME->GetMetricF("Background","BottomEdge")
 CachedThemeMetricB BLINK_DANGER_ALL("Background","BlinkDangerAll");
 CachedThemeMetricB DANGER_ALL_IS_OPAQUE("Background","DangerAllIsOpaque");
 
-#define RECT_BACKGROUND RectI(LEFT_EDGE,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE)
+#define RECT_BACKGROUND RectF(LEFT_EDGE,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE)
 
-
+static float g_fBackgroundCenterWidth = 40;
 const CString STATIC_BACKGROUND = "static background";
 
 Background::Background()
@@ -64,18 +64,6 @@ Background::Background()
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_DeadPlayer[p].LoadFromAniDir( THEME->GetPathToB(ssprintf("ScreenGameplay dead p%d",p+1)) );
 
-	m_quadBGBrightness.StretchTo( RECT_BACKGROUND );
-	m_quadBGBrightness.SetDiffuse( RageColor(0,0,0,1-PREFSMAN->m_fBGBrightness) );
-
-	m_quadBorder[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,LEFT_EDGE,SCREEN_BOTTOM) );
-	m_quadBorder[0].SetDiffuse( RageColor(0,0,0,1) );
-	m_quadBorder[1].StretchTo( RectI(LEFT_EDGE,SCREEN_TOP,RIGHT_EDGE,TOP_EDGE) );
-	m_quadBorder[1].SetDiffuse( RageColor(0,0,0,1) );
-	m_quadBorder[2].StretchTo( RectI(RIGHT_EDGE,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-	m_quadBorder[2].SetDiffuse( RageColor(0,0,0,1) );
-	m_quadBorder[3].StretchTo( RectI(LEFT_EDGE,BOTTOM_EDGE,RIGHT_EDGE,SCREEN_BOTTOM) );
-	m_quadBorder[3].SetDiffuse( RageColor(0,0,0,1) );
-
 	bool bOneOrMoreChars = false;
 	bool bShowingBeginnerHelper = false;
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -94,6 +82,8 @@ Background::Background()
 		m_pDancingCharacters = new DancingCharacters;
 	else
 		m_pDancingCharacters = NULL;
+
+	this->AddChild( &m_Brightness );
 }
 
 Background::~Background()
@@ -564,8 +554,6 @@ void Background::Update( float fDeltaTime )
 
 	if( m_pDancingCharacters )
 		m_pDancingCharacters->Update( fDeltaTime );
-
-	m_quadBGBrightness.Update( fDeltaTime );
 }
 
 void Background::DrawPrimitives()
@@ -573,8 +561,6 @@ void Background::DrawPrimitives()
 	if( PREFSMAN->m_fBGBrightness == 0 )
 		return;
 
-	ActorFrame::DrawPrimitives();
-	
 	if( IsDangerAllVisible() )
 	{
 		// Since this only shows when DANGER is visible, it will flash red on it's own accord :)
@@ -604,9 +590,7 @@ void Background::DrawPrimitives()
 	if( m_pDancingCharacters )
 		m_pDancingCharacters->Draw();
 
-	m_quadBGBrightness.Draw();
-	for( int i=0; i<4; i++ )
-		m_quadBorder[i].Draw();
+	ActorFrame::DrawPrimitives();
 }
 
 bool Background::IsDangerAllVisible()
@@ -647,15 +631,76 @@ bool Background::IsDeadPlayerVisible( PlayerNumber pn )
 }
 
 
-void Background::FadeIn()
+BrightnessOverlay::BrightnessOverlay()
 {
-	m_quadBGBrightness.BeginTweening( 0.5f );
-	m_quadBGBrightness.SetDiffuse( RageColor(0,0,0,1-PREFSMAN->m_fBGBrightness) );
+	float fQuadWidth = (RIGHT_EDGE-LEFT_EDGE)/2;
+	fQuadWidth -= g_fBackgroundCenterWidth/2;
+
+	m_quadBGBrightness[0].StretchTo( RectF(LEFT_EDGE,TOP_EDGE,LEFT_EDGE+fQuadWidth,BOTTOM_EDGE) );
+	m_quadBGBrightnessFade.StretchTo( RectF(LEFT_EDGE+fQuadWidth,TOP_EDGE,RIGHT_EDGE-fQuadWidth,BOTTOM_EDGE) );
+	m_quadBGBrightness[1].StretchTo( RectF(RIGHT_EDGE-fQuadWidth,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE) );
+
+	m_quadBorder[0].StretchTo( RectF(SCREEN_LEFT,SCREEN_TOP,LEFT_EDGE,SCREEN_BOTTOM) );
+	m_quadBorder[0].SetDiffuse( RageColor(0,0,0,1) );
+	m_quadBorder[1].StretchTo( RectF(LEFT_EDGE,SCREEN_TOP,RIGHT_EDGE,TOP_EDGE) );
+	m_quadBorder[1].SetDiffuse( RageColor(0,0,0,1) );
+	m_quadBorder[2].StretchTo( RectF(RIGHT_EDGE,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+	m_quadBorder[2].SetDiffuse( RageColor(0,0,0,1) );
+	m_quadBorder[3].StretchTo( RectF(LEFT_EDGE,BOTTOM_EDGE,RIGHT_EDGE,SCREEN_BOTTOM) );
+	m_quadBorder[3].SetDiffuse( RageColor(0,0,0,1) );
+
+	this->AddChild( &m_quadBGBrightness[0] );
+	this->AddChild( &m_quadBGBrightness[1] );
+	this->AddChild( &m_quadBGBrightnessFade );
+
+	this->AddChild( &m_quadBorder[0] );
+	this->AddChild( &m_quadBorder[1] );
+	this->AddChild( &m_quadBorder[2] );
+	this->AddChild( &m_quadBorder[3] );
+
+	SetBackgrounds();
 }
 
-void Background::FadeOut()
+void BrightnessOverlay::Update( float fDeltaTime )
 {
-	m_quadBGBrightness.BeginTweening( 0.5f );
-	m_quadBGBrightness.SetDiffuse( RageColor(0,0,0,1-0.5f) );
+	ActorFrame::Update( fDeltaTime );
+	SetBackgrounds();
+}
 
+void BrightnessOverlay::SetBackgrounds()
+{
+	float fLeftBrightness = 1-GAMESTATE->m_PlayerOptions[PLAYER_1].m_fCover;
+	float fRightBrightness = 1-GAMESTATE->m_PlayerOptions[PLAYER_2].m_fCover;
+
+	fLeftBrightness *= PREFSMAN->m_fBGBrightness;
+	fRightBrightness *= PREFSMAN->m_fBGBrightness;
+
+	if( !GAMESTATE->IsHumanPlayer(PLAYER_1) )
+		fLeftBrightness = fRightBrightness;
+	if( !GAMESTATE->IsHumanPlayer(PLAYER_2) )
+		fRightBrightness = fLeftBrightness;
+
+	RageColor LeftColor( 0,0,0,1-fLeftBrightness );
+	RageColor RightColor( 0,0,0,1-fRightBrightness );
+
+	m_quadBGBrightness[PLAYER_1].SetDiffuse( LeftColor );
+	m_quadBGBrightness[PLAYER_2].SetDiffuse( RightColor );
+	m_quadBGBrightnessFade.SetDiffuseLeftEdge( LeftColor );
+	m_quadBGBrightnessFade.SetDiffuseRightEdge( RightColor );
+}
+
+void BrightnessOverlay::FadeIn()
+{
+	FOREACH_PlayerNumber(pn)
+		m_quadBGBrightness[pn].BeginTweening( 0.5f );
+	SetBackgrounds();
+}
+
+void BrightnessOverlay::FadeOut()
+{
+	FOREACH_PlayerNumber(pn)
+	{
+		m_quadBGBrightness[pn].BeginTweening( 0.5f );
+		m_quadBGBrightness[pn].SetDiffuse( RageColor(0,0,0,1-0.5f) );
+	}
 }

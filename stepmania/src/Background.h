@@ -20,6 +20,20 @@
 #include <deque>
 class DancingCharacters;
 
+class BrightnessOverlay: public ActorFrame
+{
+	Quad m_quadBGBrightness[NUM_PLAYERS];
+	Quad m_quadBGBrightnessFade;
+	Quad m_quadBorder[4];	// l, t, r, b - cover up the edge of animations that might hang outside of the background rectangle
+	void SetBackgrounds();
+
+public:
+	BrightnessOverlay();
+	void Update( float fDeltaTime );
+
+	void FadeIn();
+	void FadeOut();
+};
 
 class Background : public ActorFrame
 {
@@ -33,8 +47,8 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
-	void FadeIn();
-	void FadeOut();
+	void FadeIn() { m_Brightness.FadeIn(); }
+	void FadeOut() { m_Brightness.FadeOut(); }
 	
 	DancingCharacters* GetDancingCharacters() { return m_pDancingCharacters; };
 
@@ -48,6 +62,7 @@ protected:
 	bool IsDangerAllVisible();
 	bool IsDeadPlayerVisible( PlayerNumber pn );
 	void UpdateCurBGChange( float fCurrentTime );
+	void SetBackgrounds();
 	
 	DancingCharacters*	m_pDancingCharacters;
 
@@ -68,8 +83,7 @@ protected:
 	float m_fSecsLeftInFade;
 	float m_fLastMusicSeconds;
 
-	Quad m_quadBGBrightness;
-	Quad m_quadBorder[4];	// l, t, r, b - cover up the edge of animations that might hang outside of the background rectangle
+	BrightnessOverlay m_Brightness;
 };
 
 

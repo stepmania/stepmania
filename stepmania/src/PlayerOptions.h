@@ -108,6 +108,7 @@ struct PlayerOptions
 	float		m_fScrolls[NUM_SCROLLS],m_SpeedfScrolls[NUM_SCROLLS];
 	float		m_fDark,				m_SpeedfDark;
 	float		m_fBlind,				m_SpeedfBlind;
+	float		m_fCover,				m_SpeedfCover;	// hide the background per-player--can't think of a good name
 	float		m_fPerspectiveTilt,		m_SpeedfPerspectiveTilt;		// -1 = near, 0 = overhead, +1 = space
 	float		m_fSkew,				m_SpeedfSkew;		// 0 = vanish point is in center of player, 1 = vanish point is in center of screen
 

@@ -35,6 +35,7 @@ void PlayerOptions::Init()
 	ZERO( m_fScrolls );			ONE( m_SpeedfScrolls );
 	m_fDark = 0;				m_SpeedfDark = 1.0f;
 	m_fBlind = 0;				m_SpeedfBlind = 1.0f;
+	m_fCover = 0;				m_SpeedfCover = 1.0f;
 	m_fPerspectiveTilt = 0;		m_SpeedfPerspectiveTilt = 1.0f;
 	m_fSkew = 0;				m_SpeedfSkew = 1.0f;
 	m_fPassmark = 0;			m_SpeedfPassmark = 1.0f;
@@ -62,6 +63,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	APP( fScrollSpeed );
 	APP( fDark );
 	APP( fBlind );
+	APP( fCover );
 	APP( fPerspectiveTilt );
 	APP( fSkew );
 	APP( fPassmark );
@@ -134,6 +136,7 @@ CString PlayerOptions::GetString() const
 	sReturn += AddPart( m_fDark, "Dark");
 
 	sReturn += AddPart( m_fBlind,	"Blind");
+	sReturn += AddPart( m_fCover,	"Cover");
 
 	sReturn += AddPart( m_fPassmark, "Passmark");
 
@@ -297,6 +300,7 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "nomines" )	m_bTransforms[TRANSFORM_NOMINES] = on;
 		else if( sBit == "dark" )		SET_FLOAT( fDark )
 		else if( sBit == "blind" )		SET_FLOAT( fBlind )
+		else if( sBit == "cover" )		SET_FLOAT( fCover )
 		else if( sBit == "passmark" )	SET_FLOAT( fPassmark )
 		else if( sBit == "protiming")	m_bProTiming = on;
 		else if( sBit == "overhead" )	{ m_fSkew = 0; m_fPerspectiveTilt = 0;				m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
@@ -516,6 +520,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fScrollBPM);
 	COMPARE(m_fDark);
 	COMPARE(m_fBlind);
+	COMPARE(m_fCover);
 	COMPARE(m_bProTiming);
 	COMPARE(m_fPerspectiveTilt);
 	COMPARE(m_fSkew);
@@ -561,6 +566,7 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps )
 	// This makes songs with sparse notes easier.
 	if( m_bTransforms[TRANSFORM_ECHO] )	return true;
 	
+	if( m_fCover )	return true;
 	return false;
 }
 
