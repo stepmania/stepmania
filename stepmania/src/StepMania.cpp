@@ -1099,18 +1099,29 @@ bool SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature )
 	//
 	FlushDirCache();
 
-	CString sScreenshotPath;
-	/* XXX slow? */
-	for( int i=0; i<10000; i++ )
-	{
-		sScreenshotPath = ssprintf( sDir+"screen%04d.%s", i, bSaveCompressed ? "jpg" : "bmp" );
-		if( !DoesFileExist(sScreenshotPath) )
+	vector<CString> files;
+	GetDirListing( sDir + "screen*", files, false, false );
+	sort( files.begin(), files.end() );
+
+	/* Files should be of the form "screen######.xxx".  Ignore the extension; find
+	 * the last file of this form, and use the next number.  This way, we don't
+	 * write the same screenshot number for different formats (screen0011.bmp,
+	 * screen0011.jpg), and we always increase from the end, so if screen0003.jpg
+	 * is deleted, we won't fill in the hole (which makes screenshots hard to find). */
+	int fileno = -1;
+	for( int i = files.size()-1; i >= 0; --i )
+		if( sscanf( files[i], "screen%d.%*s", &fileno ) == 1 )
 			break;
-	}
+
+	if( fileno == -1 )
+		fileno = 0;
+	else
+		++fileno;
 
 	//
 	// Save the screenshot
 	//
+	CString sScreenshotPath = ssprintf( sDir+"screen%04d.%s",fileno,bSaveCompressed ? "jpg" : "bmp" );
 	bool bResult = DISPLAY->SaveScreenshot( sScreenshotPath, bSaveCompressed ? RageDisplay::jpg : RageDisplay::bmp );
 	if( bResult )
 		SOUND->PlayOnce( THEME->GetPathToS("Common screenshot") );
