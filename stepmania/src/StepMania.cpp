@@ -97,12 +97,9 @@ static void ChangeToDirOfExecutable(const char *argv0)
 #endif
 }
 
-void ApplyGraphicOptions()
-{ 
-	bool bNeedReload = false;
-
-	bNeedReload |= DISPLAY->SetVideoMode( 
-		RageDisplay::VideoModeParams(
+static RageDisplay::VideoModeParams GetCurVideoModeParams()
+{
+	return RageDisplay::VideoModeParams(
 			PREFSMAN->m_bWindowed,
 			PREFSMAN->m_iDisplayWidth,
 			PREFSMAN->m_iDisplayHeight,
@@ -116,7 +113,15 @@ void ApplyGraphicOptions()
 			, PREFSMAN->m_bProgressive
 			, PREFSMAN->m_bPAL
 #endif
-			) );
+	);
+}
+
+void ApplyGraphicOptions()
+{ 
+	bool bNeedReload = false;
+
+	bNeedReload |= DISPLAY->SetVideoMode( GetCurVideoModeParams() );
+
 	bNeedReload |= TEXTUREMAN->SetPrefs( 
 		PREFSMAN->m_iTextureColorDepth, 
 		PREFSMAN->m_iMovieColorDepth,
@@ -370,22 +375,7 @@ RageDisplay *CreateDisplay()
 		}
 	}
 
-
-	RageDisplay::VideoModeParams params(
-			PREFSMAN->m_bWindowed,
-			PREFSMAN->m_iDisplayWidth,
-			PREFSMAN->m_iDisplayHeight,
-			PREFSMAN->m_iDisplayColorDepth,
-			PREFSMAN->m_iRefreshRate,
-			PREFSMAN->m_bVsync,
-			PREFSMAN->m_bAntiAliasing,
-			THEME->GetMetric("Common","WindowTitle"),
-			THEME->GetPathToG("Common window icon")
-#ifdef _XBOX
-			, PREFSMAN->m_bProgressive
-			, PREFSMAN->m_bPAL
-#endif
-			);
+	RageDisplay::VideoModeParams params(GetCurVideoModeParams());
 
 	CString error = "There was an error while initializing your video card.\n\n"
 		"   PLEASE DO NOT FILE THIS ERROR AS A BUG!\n\n"
