@@ -70,7 +70,11 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 		MenuRowInternal& line = m_Def.rows[i];
 		m_iCurAnswers[i] = 0;
 
-		float fY = SCALE( i, 0.f, m_Def.rows.size()-1.f, CENTER_Y-fHeightOfAll/2, CENTER_Y+fHeightOfAll/2 );
+		float fY;
+		if( m_Def.rows.size() > 1 )
+			fY = SCALE( i, 0.f, m_Def.rows.size()-1.f, CENTER_Y-fHeightOfAll/2, CENTER_Y+fHeightOfAll/2 );
+		else
+			fY = CENTER_Y;
 
 		m_textLabel[i].LoadFromFont( THEME->GetPathToF("Common normal") );
 		m_textLabel[i].SetText( line.name );
