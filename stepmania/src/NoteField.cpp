@@ -134,8 +134,9 @@ void NoteField::DrawBeatBar( const float fBeat )
 	{
 		m_textMeasureNumber.SetDiffuse( RageColor(1,1,1,1) );
 		m_textMeasureNumber.SetGlow( RageColor(1,1,1,0) );
+		m_textMeasureNumber.SetHorizAlign( Actor::align_right );
 		m_textMeasureNumber.SetText( ssprintf("%d", iMeasureNoDisplay) );
-		m_textMeasureNumber.SetXY( -fWidth/2.f + 10, fYPos );
+		m_textMeasureNumber.SetXY( -fWidth/2, fYPos );
 		m_textMeasureNumber.Draw();
 	}
 }

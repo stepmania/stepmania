@@ -342,7 +342,7 @@ void ScreenEdit::PlayPreviewMusic()
 
 void ScreenEdit::Update( float fDeltaTime )
 {
-	if(m_soundMusic.IsPlaying())
+	if( m_soundMusic.IsPlaying())
 		GAMESTATE->UpdateSongPosition(m_soundMusic.GetPositionSeconds());
 
 	if( m_EditMode == MODE_RECORDING  )	
@@ -375,7 +375,7 @@ void ScreenEdit::Update( float fDeltaTime )
 
 	if( m_EditMode == MODE_RECORDING  ||  m_EditMode == MODE_PLAYING )
 	{
-//		GAMESTATE->m_fSongBeat = fSongBeat;
+		// check for end of playback/record
 
 		if( GAMESTATE->m_fSongBeat > m_NoteFieldEdit.m_fEndMarker + 4 )		// give a one measure lead out
 		{
@@ -457,31 +457,31 @@ void ScreenEdit::Update( float fDeltaTime )
 	}
 
 
-	// Only update stats every 100 frames because it's slow
-	static int iNumTapNotes = 0, iNumHoldNotes = 0;
-	static int iCounter = 0;
-	iCounter++;
-	if( iCounter % 100 == 0 )
+	static float fUpdateCounter = 0.5;
+	fUpdateCounter -= fDeltaTime;
+	if( fUpdateCounter < 0 )
 	{
-		iNumTapNotes = m_NoteFieldEdit.GetNumTapNotes();
-		iNumHoldNotes = m_NoteFieldEdit.GetNumHoldNotes();
+		fUpdateCounter = 0.5;
+
+		int iNumTapNotes = m_NoteFieldEdit.GetNumTapNotes();
+		int iNumHoldNotes = m_NoteFieldEdit.GetNumHoldNotes();
+
+		CString sText;
+		sText += ssprintf( "Current Beat:\n     %.2f\n",		GAMESTATE->m_fSongBeat );
+		sText += ssprintf( "Snap to:\n     %s\n",				sNoteType.GetString() );
+		sText += ssprintf( "Selection begin:\n     %s\n",		m_NoteFieldEdit.m_fBeginMarker==-1 ? "not set" : ssprintf("%.2f",m_NoteFieldEdit.m_fBeginMarker).GetString() );
+		sText += ssprintf( "Selection end:\n     %s\n",			m_NoteFieldEdit.m_fEndMarker==-1 ? "not set" : ssprintf("%.2f",m_NoteFieldEdit.m_fEndMarker).GetString() );
+		sText += ssprintf( "Difficulty:\n     %s\n",			DifficultyToString( m_pNotes->GetDifficulty() ).GetString() );
+		sText += ssprintf( "Description:\n     %s\n",			GAMESTATE->m_pCurNotes[PLAYER_1] ? GAMESTATE->m_pCurNotes[PLAYER_1]->GetDescription().GetString() : "no description" );
+		sText += ssprintf( "Main title:\n     %s\n",			m_pSong->m_sMainTitle.GetString() );
+		sText += ssprintf( "Tap Notes:\n     %d\n",				iNumTapNotes );
+		sText += ssprintf( "Hold Notes:\n     %d\n",			iNumHoldNotes );
+		sText += ssprintf( "Beat 0 Offset:\n     %.2f secs\n",	m_pSong->m_fBeat0OffsetInSeconds );
+		sText += ssprintf( "Preview Start:\n     %.2f secs\n",	m_pSong->m_fMusicSampleStartSeconds );
+		sText += ssprintf( "Preview Length:\n     %.2f secs\n",m_pSong->m_fMusicSampleLengthSeconds );
+
+		m_textInfo.SetText( sText );
 	}
-
-	CString sText;
-	sText += ssprintf( "Current Beat:\n     %.2f\n",		GAMESTATE->m_fSongBeat );
-	sText += ssprintf( "Snap to:\n     %s\n",				sNoteType.GetString() );
-	sText += ssprintf( "Selection begin:\n     %s\n",		m_NoteFieldEdit.m_fBeginMarker==-1 ? "not set" : ssprintf("%.2f",m_NoteFieldEdit.m_fBeginMarker).GetString() );
-	sText += ssprintf( "Selection end:\n     %s\n",			m_NoteFieldEdit.m_fEndMarker==-1 ? "not set" : ssprintf("%.2f",m_NoteFieldEdit.m_fEndMarker).GetString() );
-	sText += ssprintf( "Difficulty:\n     %s\n",			DifficultyToString( m_pNotes->GetDifficulty() ).GetString() );
-	sText += ssprintf( "Description:\n     %s\n",			GAMESTATE->m_pCurNotes[PLAYER_1] ? GAMESTATE->m_pCurNotes[PLAYER_1]->GetDescription().GetString() : "no description" );
-	sText += ssprintf( "Main title:\n     %s\n",			m_pSong->m_sMainTitle.GetString() );
-	sText += ssprintf( "Tap Notes:\n     %d\n",				iNumTapNotes );
-	sText += ssprintf( "Hold Notes:\n     %d\n",			iNumHoldNotes );
-	sText += ssprintf( "Beat 0 Offset:\n     %.2f secs\n",	m_pSong->m_fBeat0OffsetInSeconds );
-	sText += ssprintf( "Preview Start:\n     %.2f secs\n",	m_pSong->m_fMusicSampleStartSeconds );
-	sText += ssprintf( "Preview Length:\n     %.2f secs\n",m_pSong->m_fMusicSampleLengthSeconds );
-
-	m_textInfo.SetText( sText );
 }
 
 
@@ -1324,7 +1324,6 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				LOG->Trace( "Starting playback at %f", fStartSeconds );
 				m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 				m_soundMusic.SetPositionSeconds( fStartSeconds );
-				m_soundMusic.StartPlaying();
 			}
 			break;
 		case record:

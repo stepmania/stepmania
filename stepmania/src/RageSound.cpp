@@ -726,7 +726,13 @@ bool RageSound::SetPositionSamples( int samples )
 	if( samples < 0 )
 		samples = 0;
 
-	int ms = int(float(samples) * 1000.f / samplerate);
+	/* RageSoundReader don't know about out playback rate and our notion of 
+	 * "logical samples" that are scaled by the playback rate.
+	 * So, we have to request the position NOT scaled by the playback rate.
+	 * To do this, we'll undo the muliply by the playback rate above.
+	 * Glenn:  Feel free to change this to whatever method is more elegant.
+	 * -Chris */
+	int ms = int(float(samples) * 1000.f / samplerate) * GetPlaybackRate();
 
 	if(!big) {
 		/* Just make sure the position is in range. */
