@@ -962,6 +962,10 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 	// new max combo
 	GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber] = max(GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber], iCurCombo);
 
+	const float beat = NoteRowToBeat(int(row));
+	GAMESTATE->m_CurStageStats.UpdateComboList( m_PlayerNumber, GAMESTATE->GetSongPercent(beat) );
+	GAMESTATE->m_CurStageStats.SetLifeRecord( m_PlayerNumber, m_pLifeMeter->GetLife(), GAMESTATE->GetSongPercent(beat) );
+
 	if (m_pScore)
 		m_pScore->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);
 
