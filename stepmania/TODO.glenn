@@ -221,11 +221,6 @@ I'll probably do this once I figure out a good place to display warnings.
 
 *********
 
- * use / as a filename separator, not \
-   Change this in song data at load time, too.
-
-*********
-
 An override file.  Some people put their data on CD; it'd be nice to
 be able to tweak song data without actually rewriting the whole thing.
 Also, some people may not want to modify the original data at all
@@ -242,16 +237,6 @@ UI is tricky.  Perhaps just the EditMenu song selector, with an icon
 or color showing songs that currently have overrides ...
 
 (Useful but I don't need it right now, so "some day".)
-
-********
-
-A single options menu; toggle "graphics", "game options", "key
-config", etc. as a separate option at the top to toggle which option
-set is visible.  Too much stuff on the main menu.
-
-Don't put the game toggle here; it's used too much.
-
-(Soon, but probably not for b6.)
 
 ********
 
@@ -308,37 +293,12 @@ be discouraged.
 
 ********
 
-Find a replacement for the CRC code.  It doesn't explicitly give
-permission to distribute or modify; only "use", which means we
-really can't even distribute it, much less link it against a GPL
-program.  (No doubt it was probably *intended* to allow modification
-and distribution, of course, but it doesn't say that.)
-
-********
-
 Make autogen go through combinations of arrows.
 
 That is, right now we just walk through consecutive arrows.  DDR
 to Pump results in DL, DR, C and UR being used or UL, C, UR, DR.
 Instead, walk through all combinations of 4; 11110, 11101, 11011,
 10111, 01111, so more patterns are possible.
-
-Fix the hold note strangeness first, though.
-
-********
-
-Texture cache.  Decompressing, resizing and occasionally dithering
-images takes a good amount of time (most of the load time).  Do all
-this and write the postprocessed data to disk; read it and load it
-in a simple block load later on.
-
-This is tricky; it's possible that reading uncompressed textures
-will be slower than reading compressed ones and porcessing them.
-I was hoping to use hardware compressed textures for this, but they're
-way too low quality.
-
-Also, some mechanism to cache song images during the song scan,
-so we don't spend time doing it in the music wheel or gameplay.
 
 ********
 
