@@ -83,7 +83,7 @@ protected:
 	Player				m_AutoPlayer;
 	PlayerState			m_PlayerState[NUM_MULTI_PLAYERS];
 	PlayerStageStats	m_PlayerStageStats[NUM_MULTI_PLAYERS];
-	PlayerMinus			m_HumanPlayer[NUM_MULTI_PLAYERS];
+	Player				m_HumanPlayer[NUM_MULTI_PLAYERS];
 
 	AutoKeysounds	m_AutoKeysounds;
 	RageSound		*m_pSoundMusic;

@@ -59,7 +59,7 @@ static const float StepSearchDistance = 1.0f;
 #define ADJUSTED_WINDOW( judge ) ((PREFSMAN->m_fJudgeWindowSeconds##judge * PREFSMAN->m_fJudgeWindowScale) + PREFSMAN->m_fJudgeWindowAdd)
 
 
-PlayerMinus::PlayerMinus()
+Player::Player()
 {
 	m_pPlayerState = NULL;
 	m_pPlayerStageStats = NULL;
@@ -85,13 +85,16 @@ PlayerMinus::PlayerMinus()
 
 
 	PlayerAI::InitFromDisk();
+
+	m_pNoteField = new NoteField;
 }
 
-PlayerMinus::~PlayerMinus()
+Player::~Player()
 {
+	delete m_pNoteField;
 }
 
-void PlayerMinus::Load( 
+void Player::Load( 
 	PlayerState* pPlayerState, 
 	const NoteData& noteData, 
 	PlayerStageStats* pPlayerStageStats,
@@ -101,8 +104,7 @@ void PlayerMinus::Load(
 	ScoreDisplay* pSecondaryScoreDisplay, 
 	Inventory* pInventory, 
 	ScoreKeeper* pPrimaryScoreKeeper, 
-	ScoreKeeper* pSecondaryScoreKeeper, 
-	NoteField* pNoteField )
+	ScoreKeeper* pSecondaryScoreKeeper )
 {
 	m_iDCState = AS2D_IDLE;
 
@@ -115,7 +117,6 @@ void PlayerMinus::Load(
 	m_pInventory = pInventory;
 	m_pPrimaryScoreKeeper = pPrimaryScoreKeeper;
 	m_pSecondaryScoreKeeper = pSecondaryScoreKeeper;
-	m_pNoteField = pNoteField;
 	m_iRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;	// why this?
 	m_iMineRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;	// why this?
 
@@ -270,9 +271,9 @@ void PlayerMinus::Load(
 	}
 }
 
-void PlayerMinus::Update( float fDeltaTime )
+void Player::Update( float fDeltaTime )
 {
-	//LOG->Trace( "PlayerMinus::Update(%f)", fDeltaTime );
+	//LOG->Trace( "Player::Update(%f)", fDeltaTime );
 
 	if( GAMESTATE->m_pCurSong==NULL )
 		return;
@@ -512,7 +513,7 @@ void PlayerMinus::Update( float fDeltaTime )
 	ActorFrame::Update( fDeltaTime );
 }
 
-void PlayerMinus::ApplyWaitingTransforms()
+void Player::ApplyWaitingTransforms()
 {
 	for( unsigned j=0; j<m_pPlayerState->m_ModsToApply.size(); j++ )
 	{
@@ -539,7 +540,7 @@ void PlayerMinus::ApplyWaitingTransforms()
 	m_pPlayerState->m_ModsToApply.clear();
 }
 
-void PlayerMinus::DrawPrimitives()
+void Player::DrawPrimitives()
 {
 	if( m_pNoteField == NULL )
 		return;
@@ -613,7 +614,7 @@ void PlayerMinus::DrawPrimitives()
 		DrawHoldJudgments();
 }
 
-void PlayerMinus::DrawTapJudgments()
+void Player::DrawTapJudgments()
 {
 	if( m_pPlayerState->m_PlayerOptions.m_fBlind > 0 )
 		return;
@@ -624,7 +625,7 @@ void PlayerMinus::DrawTapJudgments()
 		m_Judgment.Draw();
 }
 
-void PlayerMinus::DrawHoldJudgments()
+void Player::DrawHoldJudgments()
 {
 	if( m_pPlayerState->m_PlayerOptions.m_fBlind > 0 )
 		return;
@@ -642,7 +643,7 @@ void PlayerMinus::DrawHoldJudgments()
 	}
 }
 
-int PlayerMinus::GetClosestNoteDirectional( int col, int iStartRow, int iMaxRowsAhead, bool bAllowGraded, bool bForward ) const
+int Player::GetClosestNoteDirectional( int col, int iStartRow, int iMaxRowsAhead, bool bAllowGraded, bool bForward ) const
 {
 	/* Be sure to check iStartRow itself, too. */
 	int iRow = iStartRow;
@@ -667,7 +668,7 @@ int PlayerMinus::GetClosestNoteDirectional( int col, int iStartRow, int iMaxRows
 }
 
 /* Find the closest note to fBeat. */
-int PlayerMinus::GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind, bool bAllowGraded ) const
+int Player::GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind, bool bAllowGraded ) const
 {
 	// look for the closest matching step
 	const int iRow = BeatToNoteRow( fBeat );
@@ -693,7 +694,7 @@ int PlayerMinus::GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, flo
 }
 
 
-void PlayerMinus::Step( int col, RageTimer tm )
+void Player::Step( int col, RageTimer tm )
 {
 	bool bOniDead = 
 		GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  
@@ -702,7 +703,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 	if( bOniDead )
 		return;	// do nothing
 
-	//LOG->Trace( "PlayerMinus::HandlePlayerStep()" );
+	//LOG->Trace( "Player::HandlePlayerStep()" );
 
 	ASSERT_M( col >= 0  &&  col <= m_NoteData.GetNumTracks(), ssprintf("%i, %i", col, m_NoteData.GetNumTracks()) );
 
@@ -1025,7 +1026,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 	}
 }
 
-void PlayerMinus::HandleAutosync(float fNoteOffset)
+void Player::HandleAutosync(float fNoteOffset)
 {
 	if( !GAMESTATE->m_SongOptions.m_bAutoSync )
 		return;
@@ -1047,9 +1048,9 @@ void PlayerMinus::HandleAutosync(float fNoteOffset)
 }
 
 
-void PlayerMinus::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
+void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 {
-//	LOG->Trace( "PlayerMinus::OnRowCompletelyJudged" );
+//	LOG->Trace( "Player::OnRowCompletelyJudged" );
 	
 	/* Find the minimum score of the row.  This will never be TNS_NONE, since this
 	 * function is only called when a row is completed. */
@@ -1104,7 +1105,7 @@ void PlayerMinus::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 }
 
 
-void PlayerMinus::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
+void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 {
 	//LOG->Trace( "Steps::UpdateTapNotesMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
 	int iMissIfOlderThanThisIndex;
@@ -1172,7 +1173,7 @@ void PlayerMinus::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 }
 
 
-void PlayerMinus::CrossedRow( int iNoteRow )
+void Player::CrossedRow( int iNoteRow )
 {
 	// If we're doing random vanish, randomise notes on the fly.
 	if(m_pPlayerState->m_CurrentPlayerOptions.m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH]==1)
@@ -1191,7 +1192,7 @@ void PlayerMinus::CrossedRow( int iNoteRow )
 	}
 }
 
-void PlayerMinus::CrossedMineRow( int iNoteRow )
+void Player::CrossedMineRow( int iNoteRow )
 {
 	// Hold the panel while crossing a mine will cause the mine to explode
 	RageTimer now;
@@ -1220,7 +1221,7 @@ void PlayerMinus::CrossedMineRow( int iNoteRow )
 	}
 }
 
-void PlayerMinus::RandomizeNotes( int iNoteRow )
+void Player::RandomizeNotes( int iNoteRow )
 {
 	// change the row to look ahead from based upon their speed mod
 	/* This is incorrect: if m_fScrollSpeed is 0.5, we'll never change
@@ -1266,7 +1267,7 @@ void PlayerMinus::RandomizeNotes( int iNoteRow )
 	}
 }
 
-void PlayerMinus::HandleTapRowScore( unsigned row )
+void Player::HandleTapRowScore( unsigned row )
 {
 	TapNoteScore scoreOfLastTap = m_NoteData.LastTapNoteScore(row);
 	int iNumTapsInRow = m_NoteData.GetNumTracksWithTapOrHoldHead(row);
@@ -1396,7 +1397,7 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 }
 
 
-void PlayerMinus::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
+void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 {
 	bool NoCheating = true;
 #ifdef DEBUG
@@ -1436,43 +1437,15 @@ void PlayerMinus::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScor
 	}
 }
 
-float PlayerMinus::GetMaxStepDistanceSeconds()
+float Player::GetMaxStepDistanceSeconds()
 {
 	return GAMESTATE->m_SongOptions.m_fMusicRate * ADJUSTED_WINDOW(Boo);
 }
 
-void PlayerMinus::FadeToFail()
+void Player::FadeToFail()
 {
 	if( m_pNoteField )
 		m_pNoteField->FadeToFail();
-}
-
-/* XXX: Why's m_NoteField in a separate class, again?  Is that still needed? */
-/* It was used to have an invisible computer player in PLAY_MODE_BATTLE. -Chris */
-void Player::Load( 
-	PlayerState* pPlayerState, 
-	const NoteData& noteData, 
-	PlayerStageStats* pPlayerStageStats,
-	LifeMeter* pLM, 
-	CombinedLifeMeter* pCombinedLM, 
-	ScoreDisplay* pScoreDisplay, 
-	ScoreDisplay* pSecondaryScoreDisplay, 
-	Inventory* pInventory, 
-	ScoreKeeper* pPrimaryScoreKeeper, 
-	ScoreKeeper* pSecondaryScoreKeeper )
-{
-	PlayerMinus::Load( 
-		pPlayerState, 
-		noteData, 
-		pPlayerStageStats,
-		pLM, 
-		pCombinedLM, 
-		pScoreDisplay, 
-		pSecondaryScoreDisplay, 
-		pInventory, 
-		pPrimaryScoreKeeper, 
-		pSecondaryScoreKeeper, 
-		&m_NoteField );
 }
 
 /*

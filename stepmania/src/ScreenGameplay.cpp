@@ -1426,7 +1426,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		float fSecondsToStop = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( GAMESTATE->m_pCurSong->m_fLastBeat );
 
 		/* Make sure we keep going long enough to register a miss for the last note. */
-		fSecondsToStop += PlayerMinus::GetMaxStepDistanceSeconds();
+		fSecondsToStop += Player::GetMaxStepDistanceSeconds();
 
 		if( GAMESTATE->m_fMusicSeconds > fSecondsToStop && !m_SongFinished.IsTransitioning() && !m_NextSongOut.IsTransitioning() )
 			m_SongFinished.StartTransitioning( SM_NotesEnded );

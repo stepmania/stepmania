@@ -24,11 +24,11 @@ struct PlayerStageStats;
 
 #define	SAMPLE_COUNT	16
 
-class PlayerMinus : public ActorFrame
+class Player: public ActorFrame
 {
 public:
-	PlayerMinus();
-	~PlayerMinus();
+	Player();
+	~Player();
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -43,8 +43,7 @@ public:
 		ScoreDisplay* pSecondaryScoreDisplay, 
 		Inventory* pInventory, 
 		ScoreKeeper* pPrimaryScoreKeeper, 
-		ScoreKeeper* pSecondaryScoreKeeper, 
-		NoteField* pNoteField );
+		ScoreKeeper* pSecondaryScoreKeeper );
 	void CrossedRow( int iNoteRow );
 	void CrossedMineRow( int iNoteRow );
 	void Step( int col, RageTimer tm );
@@ -55,6 +54,8 @@ public:
 	void ApplyWaitingTransforms();
 
 	static float GetMaxStepDistanceSeconds();
+
+	void CacheAllUsedNoteSkins() { m_pNoteField->CacheAllUsedNoteSkins(); }
 
 	NoteDataWithScoring	m_NoteData;
 
@@ -106,28 +107,6 @@ protected:
 	RageSound	m_soundAttackEnding;
 
 	vector<RageSound> m_vKeysounds;
-};
-
-class Player : public PlayerMinus
-{
-public:
-	void Load( 
-		PlayerState* pPlayerState, 
-		const NoteData& noteData, 
-		PlayerStageStats* pPlayerStageStats,
-		LifeMeter* pLM, 
-		CombinedLifeMeter* pCombinedLM, 
-		ScoreDisplay* pScoreDisplay, 
-		ScoreDisplay* pSecondaryScoreDisplay, 
-		Inventory* pInventory, 
-		ScoreKeeper* pPrimaryScoreKeeper, 
-		ScoreKeeper* pSecondaryScoreKeeper );
-
-	void CacheAllUsedNoteSkins() { m_NoteField.CacheAllUsedNoteSkins(); }
-
-protected:
-	NoteField		m_NoteField;
-
 };
 
 #endif
