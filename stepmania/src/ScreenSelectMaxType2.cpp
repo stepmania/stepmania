@@ -52,7 +52,8 @@
 ScreenSelectMaxType2::ScreenSelectMaxType2() : ScreenSelect( "ScreenSelectMaxType2" )
 {
 	m_CurrentPage = PAGE_1;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_iChoiceOnPage[p] = 0;
 		m_bChosen[p] = false;
