@@ -361,11 +361,10 @@ void Background::LoadFromSong( const Song* pSong )
 	else	// pSong doesn't have an animation plan
 	{
 		LoadFromRandom( pSong->m_fFirstBeat, pSong->m_fLastBeat, pSong->m_Timing );
+
+		// end showing the static song background
+		m_aBGChanges.push_back( BackgroundChange(pSong->m_fLastBeat,STATIC_BACKGROUND) );
 	}
-
-
-	// end showing the static song background
-	m_aBGChanges.push_back( BackgroundChange(pSong->m_fLastBeat,STATIC_BACKGROUND) );
 
 		
 	// sort segments
