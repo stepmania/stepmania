@@ -24,7 +24,7 @@
 const float FADE_TIME	=	1.0f;
 
 const float SWITCH_MUSIC_TIME	=	0.15f;
-const float SAMPLE_MUSIC_DELAY	=	0.15f;
+const float SAMPLE_MUSIC_DELAY	=	0.20f;
 const float ROULETTE_SWITCH_MUSIC_TIME	=	SWITCH_MUSIC_TIME/2;
 const int ROULETTE_SWITCHES_IN_SLOWING_DOWN = 5;
 

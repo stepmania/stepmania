@@ -81,7 +81,6 @@ GameplayStatistics SongManager::GetLatestGameplayStatistics( PlayerNumber p )
 	return m_aGameplayStatistics[p][ m_aGameplayStatistics[p].GetSize()-1 ];
 }
 
-
 void SongManager::InitSongArrayFromDisk()
 {
 	LoadStepManiaSongDir( "Songs" );
@@ -407,6 +406,22 @@ CString SongManager::ShortenGroupName( const CString &sOrigGroupName )
 
 void SongManager::InitCoursesFromDisk()
 {
+	//
+	// Load courses from CRS files
+	//
+	CStringArray saCourseFiles;
+	GetDirListing( "Courses\\*.crs", saCourseFiles );
+	for( int i=0; i<saCourseFiles.GetSize(); i++ )
+	{
+		Course course;
+		course.LoadFromCRSFile( "Courses\\" + saCourseFiles[i], m_pSongs );
+		m_aCourses.Add( course );
+	}
+
+
+	//
+	// Create default courses
+	//
 	CStringArray saGroupNames;
 	this->GetGroupNames( saGroupNames );
 	for( int g=0; g<saGroupNames.GetSize(); g++ )	// foreach Group

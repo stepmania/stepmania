@@ -23,6 +23,7 @@ public:
 	{
 		m_NotesType	= NOTES_TYPE_INVALID;
 		m_iStages = 0;
+		m_bRepeat = false;
 		for( int i=0; i<MAX_COURSE_STAGES; i++ )
 		{
 			m_apSongs[i] = NULL;
@@ -37,6 +38,10 @@ public:
 	int			m_iStages;
 	Song*		m_apSongs[MAX_COURSE_STAGES];
 	Notes*		m_apNotes[MAX_COURSE_STAGES];
+	bool		m_bRepeat;	// repeat after last song?
+	PlayerOptions		m_PlayerOptions;
+
+	void LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs );
 
 	void AddStage( Song* pSong, Notes* pNotes )
 	{

@@ -414,12 +414,6 @@
 			<File
 				RelativePath=".\IniFile.h">
 			</File>
-			<File
-				RelativePath="MSDScanner.cpp">
-			</File>
-			<File
-				RelativePath="MSDScanner.h">
-			</File>
 		</Filter>
 		<Filter
 			Name="System"

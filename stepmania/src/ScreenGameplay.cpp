@@ -574,7 +574,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 
 
 	
-	if( MenuI.IsValid()  &&  MenuI.button == MENU_BUTTON_BACK  &&  type == IET_FAST_REPEAT &&  m_DancingState == STATE_DANCING  &&  !m_bBothHaveFailed )
+	if( MenuI.IsValid()  &&  MenuI.button == MENU_BUTTON_BACK  &&  type == IET_SLOW_REPEAT &&  m_DancingState == STATE_DANCING  &&  !m_bBothHaveFailed )
 	{
 		m_bBothHaveFailed = true;
 		SCREENMAN->SendMessageToTopScreen( SM_BeginFailed, 0 );
