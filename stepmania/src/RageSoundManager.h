@@ -34,6 +34,13 @@ class RageSoundManager
 public:
 	RageSoundManager();
 	~RageSoundManager();
+
+	/* This may be called when shutting down, in order to stop all sounds.  This
+	 * should be called before shutting down threads that may have running sounds,
+	 * in order to prevent DirectSound delays and glitches.  Further attempts to
+	 * start sounds will do nothing, and threads may be shut down. */
+	void Shutdown();
+
 	void Init( CString drivers );
 
 	float GetMixVolume() const { return MixVolume; }

@@ -17,21 +17,14 @@
 #endif
 
 /*
- * This mutex is locked before Update() deletes old sounds from owned_sounds.  Lock
- * this mutex if you want to ensure that sounds remain valid.  (Other threads may
- * still delete them; this only guarantees that RageSoundManager won't.)
- *
  * The lock ordering requirements are:
- * g_DeletionMutex before RageSound::Lock
  * RageSound::Lock before g_SoundManMutex
  * RageSound::Lock must not be locked when calling driver calls (since the driver
  * may lock a mutex and then make RageSound calls back)
  *
- * (This is important: you must not make RageSound calls that might lock while holding
- * g_SoundManMutex, but you can do so while holding g_DeletionMutex.)
+ * Do not make RageSound calls that might lock while holding g_SoundManMutex.
  */
 
-static RageMutex g_DeletionMutex("SoundDeletionMutex");
 static RageMutex g_SoundManMutex("SoundMan");
 
 RageSoundManager *SOUNDMAN = NULL;
@@ -64,18 +57,38 @@ RageSoundManager::~RageSoundManager()
 	delete driver;
 }
 
+/*
+ * Previously, we went to some lengths to shut down sounds before exiting threads.
+ * The only other thread that actually starts sounds is SOUND.  Doing this was ugly;
+ * instead, let's shut down the driver early, stopping all sounds.  We don't want
+ * to delete SOUNDMAN early, since those threads are still using it; just shut down
+ * the driver.
+ */
+void RageSoundManager::Shutdown()
+{
+	if( driver != NULL )
+	{
+		delete driver;
+		driver = NULL;
+	}
+}
+
 void RageSoundManager::StartMixing( RageSoundBase *snd )
 {
-	driver->StartMixing(snd);
+	if( driver != NULL )
+		driver->StartMixing(snd);
 }
 
 void RageSoundManager::StopMixing( RageSoundBase *snd )
 {
-	driver->StopMixing(snd);
+	if( driver != NULL )
+		driver->StopMixing(snd);
 }
 
 int64_t RageSoundManager::GetPosition( const RageSoundBase *snd ) const
 {
+	if( driver == NULL )
+		return 0;
 	return driver->GetPosition(snd);
 }
 
@@ -83,30 +96,28 @@ void RageSoundManager::Update(float delta)
 {
 	FlushPosMapQueue();
 
-	g_DeletionMutex.Lock();
-
 	/* Scan the owned_sounds list for sounds that are no longer playing, and delete them. */
-	g_SoundManMutex.Lock(); /* lock for access to owned_sounds and all_sounds */
-	set<RageSound *>::iterator it;
+	g_SoundManMutex.Lock(); /* lock for access to all_sounds */
 	set<RageSound *> ToDelete;
-	for( it = owned_sounds.begin(); it != owned_sounds.end(); ++it )
-		if( !(*it)->IsPlaying() )
-		{
-			LOG->Trace("XXX: deleting '%s'", (*it)->GetLoadedFilePath().c_str());
-			ToDelete.insert( *it );
-		}
+	for( set<RageSound *>::iterator it = owned_sounds.begin(); it != owned_sounds.end(); ++it )
+	{
+		if( (*it)->IsPlaying() )
+			continue;
 
-	for( it = ToDelete.begin(); it != ToDelete.end(); ++it )
+		LOG->Trace("XXX: deleting '%s'", (*it)->GetLoadedFilePath().c_str());
+		ToDelete.insert( (*it) );
+	}
+
+	for( set<RageSound *>::iterator it = ToDelete.begin(); it != ToDelete.end(); ++it )
 		owned_sounds.erase( *it );
 	g_SoundManMutex.Unlock(); /* finished with owned_sounds and all_sounds */
 
-	/* We can safely delete sounds while holding g_DeletionMutex, but not while
-	 * holding g_SoundManMutex (see the mutex ordering at the top of the file). */
+	/* Be sure to release g_SoundManMutex before deleting sounds. */
 	for( it = ToDelete.begin(); it != ToDelete.end(); ++it )
 		delete *it;
-	g_DeletionMutex.Unlock();
 
-	driver->Update(delta);
+	if( driver != NULL )
+		driver->Update(delta);
 }
 
 /* Register the given sound, and return a unique ID. */
@@ -179,11 +190,17 @@ void RageSoundManager::FlushPosMapQueue()
 
 float RageSoundManager::GetPlayLatency() const
 {
+	if( driver == NULL )
+		return 0;
+
 	return driver->GetPlayLatency();
 }
 
 int RageSoundManager::GetDriverSampleRate( int rate ) const
 {
+	if( driver == NULL )
+		return 44100;
+
 	return driver->GetSampleRate( rate );
 }
 
