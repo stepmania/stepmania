@@ -11,6 +11,11 @@
 
 #define SUPPORT_MOVIETEXTURE_FFMPEG
 
+/* Fix a compile problem in gcc 3.2: */
+#if defined(HAVE_INTTYPES_H)
+#include <inttypes.h>
+#endif
+
 namespace avcodec
 {
 #if defined(_WIN32)
