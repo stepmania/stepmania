@@ -31,8 +31,11 @@ static const TapNote TAP_HOLD_TAIL	= '3';
 /* In 4s mode, holds and TAP_HOLD_HEAD are deleted and TAP_HOLD is added: */
 static const TapNote TAP_HOLD		= '4';
 
-static const TapNote TAP_ADDITION	= '5';	// additional note added by a transform
+// additional note added by a transform
+static const TapNote TAP_ADDITION	= '5';
 
+// mine note - don't step!
+static const TapNote TAP_MINE		= '6';
 
 enum 
 {

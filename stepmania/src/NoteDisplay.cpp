@@ -46,13 +46,15 @@ Actor* MakeModelOrSprite( CString sFile )
 #define DRAW_HOLD_HEAD_FOR_TAPS_ON_SAME_ROW			NOTESKIN->GetMetricB(pn,name,"DrawHoldHeadForTapsOnSameRow")
 #define TAP_NOTE_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF(pn,name,"TapNoteAnimationLengthInBeats")
 #define TAP_ADDITION_ANIMATION_LENGTH_IN_BEATS		NOTESKIN->GetMetricF(pn,name,"TapAdditionAnimationLengthInBeats")
+#define TAP_MINE_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF(pn,name,"TapMineAnimationLengthInBeats")
 #define HOLD_HEAD_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF(pn,name,"HoldHeadAnimationLengthInBeats")
 #define HOLD_TOPCAP_ANIMATION_LENGTH_IN_BEATS		NOTESKIN->GetMetricF(pn,name,"HoldTopCapAnimationLengthInBeats")
 #define HOLD_BODY_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF(pn,name,"HoldBodyAnimationLengthInBeats")
 #define HOLD_BOTTOMCAP_ANIMATION_LENGTH_IN_BEATS	NOTESKIN->GetMetricF(pn,name,"HoldBottomCapAnimationLengthInBeats")
 #define HOLD_TAIL_ANIMATION_LENGTH_IN_BEATS			NOTESKIN->GetMetricF(pn,name,"HoldTailAnimationLengthInBeats")
 #define TAP_NOTE_ANIMATION_IS_VIVID					NOTESKIN->GetMetricB(pn,name,"TapNoteAnimationIsVivid")
-#define TAP_ADDITION_ANIMATION_IS_VIVID				NOTESKIN->GetMetricB(pn,name,"TapNoteAnimationIsVivid")
+#define TAP_ADDITION_ANIMATION_IS_VIVID				NOTESKIN->GetMetricB(pn,name,"TapAdditionAnimationIsVivid")
+#define TAP_MINE_ANIMATION_IS_VIVID					NOTESKIN->GetMetricB(pn,name,"TapMineAnimationIsVivid")
 #define HOLD_HEAD_ANIMATION_IS_VIVID				NOTESKIN->GetMetricB(pn,name,"HoldHeadAnimationIsVivid")
 #define HOLD_TOPCAP_ANIMATION_IS_VIVID				NOTESKIN->GetMetricB(pn,name,"HoldTopCapAnimationIsVivid")
 #define HOLD_BODY_ANIMATION_IS_VIVID				NOTESKIN->GetMetricB(pn,name,"HoldBodyAnimationIsVivid")
@@ -76,6 +78,7 @@ struct NoteMetricCache_t {
 	bool m_bDrawHoldHeadForTapsOnSameRow;
 	float m_fTapNoteAnimationLengthInBeats;
 	float m_fTapAdditionAnimationLengthInBeats;
+	float m_fTapMineAnimationLengthInBeats;
 	float m_fHoldHeadAnimationLengthInBeats;
 	float m_fHoldTopCapAnimationLengthInBeats;
 	float m_fHoldBodyAnimationLengthInBeats;
@@ -83,6 +86,7 @@ struct NoteMetricCache_t {
 	float m_fHoldTailAnimationLengthInBeats;
 	bool m_bTapNoteAnimationIsVivid;
 	bool m_bTapAdditionAnimationIsVivid;
+	bool m_bTapMineAnimationIsVivid;
 	bool m_bHoldHeadAnimationIsVivid;
 	bool m_bHoldTopCapAnimationIsVivid;
 	bool m_bHoldBodyAnimationIsVivid;
@@ -109,6 +113,7 @@ void NoteMetricCache_t::Load(PlayerNumber pn, const CString &name)
 	m_bDrawHoldHeadForTapsOnSameRow = DRAW_HOLD_HEAD_FOR_TAPS_ON_SAME_ROW;
 	m_fTapNoteAnimationLengthInBeats = TAP_NOTE_ANIMATION_LENGTH_IN_BEATS;
 	m_fTapAdditionAnimationLengthInBeats = TAP_ADDITION_ANIMATION_LENGTH_IN_BEATS;
+	m_fTapMineAnimationLengthInBeats = TAP_MINE_ANIMATION_LENGTH_IN_BEATS;
 	m_fHoldHeadAnimationLengthInBeats = HOLD_HEAD_ANIMATION_LENGTH_IN_BEATS;
 	m_fHoldTopCapAnimationLengthInBeats = HOLD_TOPCAP_ANIMATION_LENGTH_IN_BEATS;
 	m_fHoldBodyAnimationLengthInBeats = HOLD_BODY_ANIMATION_LENGTH_IN_BEATS;
@@ -116,6 +121,7 @@ void NoteMetricCache_t::Load(PlayerNumber pn, const CString &name)
 	m_fHoldTailAnimationLengthInBeats = HOLD_TAIL_ANIMATION_LENGTH_IN_BEATS;
 	m_bTapNoteAnimationIsVivid = TAP_NOTE_ANIMATION_IS_VIVID;
 	m_bTapAdditionAnimationIsVivid = TAP_ADDITION_ANIMATION_IS_VIVID;
+	m_bTapMineAnimationIsVivid = TAP_MINE_ANIMATION_IS_VIVID;
 	m_bHoldHeadAnimationIsVivid = HOLD_HEAD_ANIMATION_IS_VIVID;
 	m_bHoldTopCapAnimationIsVivid = HOLD_TOPCAP_ANIMATION_IS_VIVID;
 	m_bHoldBodyAnimationIsVivid = HOLD_BODY_ANIMATION_IS_VIVID;
@@ -144,6 +150,7 @@ NoteDisplay::NoteDisplay()
 		m_pHoldHeadInactive[i] = NULL;
 	}
 	m_pTapAddition = NULL;
+	m_pTapMine = NULL;
 
 	cache = new NoteMetricCache_t;
 }
@@ -157,6 +164,7 @@ NoteDisplay::~NoteDisplay()
 		delete m_pHoldHeadInactive[i];
 	}
 	delete m_pTapAddition;
+	delete m_pTapMine;
 
 	delete cache;
 }
@@ -189,6 +197,8 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn )
 	}
 
 	m_pTapAddition = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "tap addition") );
+
+	m_pTapMine = MakeModelOrSprite( NOTESKIN->GetPathTo(pn, Button, "tap mine") );
 
 	if( cache->m_bHoldHeadAnimationIsNoteColor )
 	{
@@ -302,13 +312,6 @@ Actor * NoteDisplay::GetTapNoteActor( float fNoteBeat )
 
 Actor * NoteDisplay::GetTapAdditionActor( float fNoteBeat )
 {
-	NoteType nt = NoteType(0);
-	if( cache->m_bTapNoteAnimationIsNoteColor )
-		nt = BeatToNoteType( fNoteBeat );
-	if( nt == NOTE_TYPE_INVALID )
-		nt = NOTE_TYPE_32ND;
-	Actor *pActorOut = m_pTapNote[nt];
-
 	SetActiveFrame( 
 		fNoteBeat, 
 		*m_pTapAddition,
@@ -317,6 +320,18 @@ Actor * NoteDisplay::GetTapAdditionActor( float fNoteBeat )
 		false );
 
 	return m_pTapAddition;
+}
+
+Actor * NoteDisplay::GetTapMineActor( float fNoteBeat )
+{
+	SetActiveFrame( 
+		fNoteBeat, 
+		*m_pTapMine,
+		cache->m_fTapMineAnimationLengthInBeats, 
+		cache->m_bTapMineAnimationIsVivid, 
+		false );
+
+	return m_pTapMine;
 }
 
 Sprite * NoteDisplay::GetHoldTopCapSprite( float fNoteBeat, bool bActive )
@@ -790,7 +805,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		DrawHold( hn, bActive, fLife, fPercentFadeToFail, true );
 }
 
-void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSameRowAsHoldStart, const bool bIsAddition, const float fPercentFadeToFail, const float fLife )
+void NoteDisplay::DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition, bool bIsMine, float fPercentFadeToFail, float fLife )
 {
 	const float fYOffset		= ArrowGetYOffset(	m_PlayerNumber, fBeat );
 	const float fYPos			= ArrowGetYPos(	m_PlayerNumber, fYOffset );
@@ -804,7 +819,9 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 	RageColor glow = RageColor(1,1,1,fGlow);
 
 	Actor* pActor = NULL;
-	if( bIsAddition )
+	if( bIsMine )
+		pActor = GetTapMineActor( fBeat );
+	else if( bIsAddition )
 		pActor = GetTapAdditionActor( fBeat );
 	else if( bOnSameRowAsHoldStart  &&  cache->m_bDrawHoldHeadForTapsOnSameRow )
 		pActor = GetHoldHeadActor( fBeat, false );

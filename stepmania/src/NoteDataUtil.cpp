@@ -876,3 +876,17 @@ void NoteDataUtil::ConvertAdditionsToRegular( NoteData &in )
 			if( in.GetTapNote(t,r) == TAP_ADDITION )
 				in.SetTapNote(t,r,TAP_TAP);
 }
+
+void NoteDataUtil::Mines( NoteData &in )
+{
+	int iTapCount = 0;
+
+	for( int r=0; r<=in.GetLastRow(); r++ )
+		for( int t=0; t<in.GetNumTracks(); t++ )
+			if( in.GetTapNote(t,r) == TAP_TAP )
+			{
+				iTapCount++;
+				if( (iTapCount%7) == 6 )
+					in.SetTapNote(t,r,TAP_MINE);
+			}
+}

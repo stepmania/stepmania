@@ -146,6 +146,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, Combine
 	case PlayerOptions::TRANSFORM_BIG:			NoteDataUtil::Big(*this);		break;
 	case PlayerOptions::TRANSFORM_QUICK:		NoteDataUtil::Quick(*this);		break;
 	case PlayerOptions::TRANSFORM_SKIPPY:		NoteDataUtil::Skippy(*this);	break;
+	case PlayerOptions::TRANSFORM_MINES:		NoteDataUtil::Mines(*this);		break;
 	default:		ASSERT(0);
 	}
 

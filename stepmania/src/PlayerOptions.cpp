@@ -125,6 +125,7 @@ CString PlayerOptions::GetString()
 	case TRANSFORM_BIG:		sReturn += "Big, ";		break;
 	case TRANSFORM_QUICK:	sReturn += "Quick, ";	break;
 	case TRANSFORM_SKIPPY:	sReturn += "Skippy, ";	break;
+	case TRANSFORM_MINES:	sReturn += "Mines, ";	break;
 	default:	ASSERT(0);	// invalid
 	}
 
@@ -229,6 +230,7 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "big" )		m_Transform = TRANSFORM_BIG;
 		else if( sBit == "quick" )		m_Transform = TRANSFORM_QUICK;
 		else if( sBit == "skippy" )		m_Transform = TRANSFORM_SKIPPY;
+		else if( sBit == "mines" )		m_Transform = TRANSFORM_MINES;
 		else if( sBit == "reverse" )	m_fReverseScroll = 1;
 		else if( sBit == "noholds" )	m_bHoldNotes = false;
 		else if( sBit == "nofreeze" )	m_bHoldNotes = false;

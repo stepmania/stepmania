@@ -438,8 +438,9 @@ void NoteField::DrawPrimitives()
 			}
 
 			bool bIsAddition = (tn == TAP_ADDITION);
+			bool bIsMine = (tn == TAP_MINE);
 
-			m_NoteDisplay[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail );
+			m_NoteDisplay[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsMine, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail );
 		}
 
 		g_NoteFieldMode[m_PlayerNumber].EndDrawTrack(c);

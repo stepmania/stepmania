@@ -46,6 +46,7 @@ namespace NoteDataUtil
 	void Big( NoteData &in );
 	void Quick( NoteData &in );
 	void Skippy( NoteData &in );
+	void Mines( NoteData &in );
 	void InsertIntelligentTaps( NoteData &in, float fBeatInterval, float fInsertBeatOffset, bool bNewTapSameAsBeginning );
 	void SuperShuffleTaps( NoteData &in );
 
