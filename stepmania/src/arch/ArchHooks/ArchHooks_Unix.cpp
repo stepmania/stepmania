@@ -111,7 +111,7 @@ void ArchHooks_Unix::DumpDebugInfo()
 
 void ArchHooks_Unix::SetTime( tm newtime )
 {
-	CString sCommand = ssprintf( "%02d%02d%02d%02d%04d.%02d",
+	CString sCommand = ssprintf( "date %02d%02d%02d%02d%04d.%02d",
 		newtime.tm_mon+1,
 		newtime.tm_mday,
 		newtime.tm_hour,
