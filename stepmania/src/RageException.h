@@ -20,7 +20,7 @@ public:
 	RageException( HRESULT hr, const char *fmt, ...);
 
 	virtual const char *what() const throw();
-	virtual ~RageException() throw();
+	virtual ~RageException() throw() { }
 
 protected:
 	CString m_sError;
