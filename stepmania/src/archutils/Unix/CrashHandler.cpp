@@ -20,6 +20,10 @@
 #include "CrashHandler.h"
 #include "CrashHandlerInternal.h"
 
+#if defined(DARWIN)
+# include "../Darwin/DarwinThreadHelpers.h"
+#endif
+
 extern const char *g_pCrashHandlerArgv0;
 
 static void safe_print(int fd, ...)
@@ -398,7 +402,6 @@ void ForceCrashHandler( const char *reason )
 	RunCrashHandler( &crash );
 }
 
-#if defined(LINUX)
 void ForceCrashHandlerDeadlock( const CString& reason, const BacktraceContext *ctx )
 {
 	CrashData crash;
@@ -415,9 +418,17 @@ void ForceCrashHandlerDeadlock( const CString& reason, const BacktraceContext *c
 }
 
 /* iCrashHandle comes from ThreadImpl_Pthreads::GetThreadId. */
-void ForceCrashHandlerDeadlock( const CString& reason, uint64_t iCrashHandle )
+void ForceCrashHandlerDeadlock( CString reason, uint64_t iCrashHandle )
 {
 	BacktraceContext ctx;
+	
+	/* How can this possibly work without suspending the thread first? What
+	 * stops the thread from returning from the function it was in when
+	 * GetThreadBacktraceContext was called and then changing the stack?
+	 */
+#if defined(DARWIN)
+	SuspendThread(iCrashHandle);
+#endif
 	if( !GetThreadBacktraceContext( iCrashHandle, &ctx ) )
 	{
 		reason += "; GetThreadBacktraceContext failed";
@@ -428,17 +439,6 @@ void ForceCrashHandlerDeadlock( const CString& reason, uint64_t iCrashHandle )
 
 	_exit(1);
 }
-#else
-void ForceCrashHandlerDeadlock( const CString& reason, const BacktraceContext *ctx )
-{
-	ForceCrashHandler( reason );
-}
-
-void ForceCrashHandlerDeadlock( const CString& reason, uint64_t iCrashHandle )
-{
-	ForceCrashHandler( reason );
-}
-#endif
 
 /* XXX test for recursive crashes here (eg. GetBacktrace crashing) */
 
