@@ -23,6 +23,10 @@ const int MAX_COURSE_STAGES = 300; // Increased since the user can place all Bem
 
 class Course
 {
+	CString		m_asDescriptions[MAX_COURSE_STAGES];
+	CString		m_asModifiers[MAX_COURSE_STAGES];	// set player and song options from these
+	Song*		m_apSongs[MAX_COURSE_STAGES];
+
 public:
 	Course();
 
@@ -30,15 +34,13 @@ public:
 	CString		m_sBannerPath;
 	CString		m_sCDTitlePath;
 	int			m_iStages;
-	Song*		m_apSongs[MAX_COURSE_STAGES];
-	CString		m_asDescriptions[MAX_COURSE_STAGES];
-	Notes*		GetNotesForStage( int iStage );
-	CString		m_asModifiers[MAX_COURSE_STAGES];	// set player and song options from these
+
 	bool		m_bRepeat;	// repeat after last song?
 	bool		m_bRandomize;	// play the songs in a random order
 	int			m_iLives;	// -1 means use bar life meter
 	int			m_iExtra;	// extra stage number...
 
+	Notes *GetNotesForStage( int iStage );
 	Song *GetSong( int iStage );
 	CString GetDescription( int iStage );
 	CString GetModifiers( int iStage );
