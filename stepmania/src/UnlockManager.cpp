@@ -152,8 +152,8 @@ static float GetArcadePoints( const Profile *pProfile )
 	{
 		switch(g)
 		{
-		case GRADE_TIER_01:
-		case GRADE_TIER_02:	fAP += 9 * pProfile->m_iNumStagesPassedByGrade[g]; break;
+		case GRADE_TIER01:
+		case GRADE_TIER02:	fAP += 9 * pProfile->m_iNumStagesPassedByGrade[g]; break;
 		default:			fAP += 1 * pProfile->m_iNumStagesPassedByGrade[g]; break;
 
 		case GRADE_FAILED:
@@ -187,13 +187,13 @@ static float GetSongPoints( const Profile *pProfile )
 	{
 		switch( g )
 		{
-		case GRADE_TIER_01:/*AAAA*/	fSP += 20 * pProfile->m_iNumStagesPassedByGrade[g];	break;
-		case GRADE_TIER_02:/*AAA*/	fSP += 10* pProfile->m_iNumStagesPassedByGrade[g];	break;
-		case GRADE_TIER_03:/*AA*/	fSP += 5* pProfile->m_iNumStagesPassedByGrade[g];	break;
-		case GRADE_TIER_04:/*A*/		fSP += 4* pProfile->m_iNumStagesPassedByGrade[g];	break;
-		case GRADE_TIER_05:/*B*/		fSP += 3* pProfile->m_iNumStagesPassedByGrade[g];	break;
-		case GRADE_TIER_06:/*C*/		fSP += 2* pProfile->m_iNumStagesPassedByGrade[g];	break;
-		case GRADE_TIER_07:/*D*/		fSP += 1* pProfile->m_iNumStagesPassedByGrade[g];	break;
+		case GRADE_TIER01:/*AAAA*/	fSP += 20 * pProfile->m_iNumStagesPassedByGrade[g];	break;
+		case GRADE_TIER02:/*AAA*/	fSP += 10* pProfile->m_iNumStagesPassedByGrade[g];	break;
+		case GRADE_TIER03:/*AA*/	fSP += 5* pProfile->m_iNumStagesPassedByGrade[g];	break;
+		case GRADE_TIER04:/*A*/		fSP += 4* pProfile->m_iNumStagesPassedByGrade[g];	break;
+		case GRADE_TIER05:/*B*/		fSP += 3* pProfile->m_iNumStagesPassedByGrade[g];	break;
+		case GRADE_TIER06:/*C*/		fSP += 2* pProfile->m_iNumStagesPassedByGrade[g];	break;
+		case GRADE_TIER07:/*D*/		fSP += 1* pProfile->m_iNumStagesPassedByGrade[g];	break;
 		case GRADE_FAILED:
 		case GRADE_NO_DATA:
 			;	// no points

@@ -96,7 +96,7 @@ void HighScore::LoadFromNode( const XNode* pNode )
 		radarValues.LoadFromNode( pRadarValues );
 
 	/* Validate input. */
-	grade = clamp( grade, GRADE_TIER_01, GRADE_FAILED );
+	grade = clamp( grade, GRADE_TIER01, GRADE_FAILED );
 }
 
 CString HighScore::GetDisplayName() const

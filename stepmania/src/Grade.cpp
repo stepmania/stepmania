@@ -6,6 +6,8 @@
 #include "EnumHelper.h"
 #include "LuaManager.h"
 
+LuaFunction_Int( GradeToString,			GradeToString((Grade)a1) )
+
 CString GradeToThemedString( Grade g )
 {
 	CString s = GradeToString(g);
@@ -19,13 +21,13 @@ CString GradeToOldString( Grade g )
 	// string is meant to be human readable
 	switch( g )
 	{
-	case GRADE_TIER_01:	return "AAAA";
-	case GRADE_TIER_02:	return "AAA";
-	case GRADE_TIER_03:	return "AA";
-	case GRADE_TIER_04:	return "A";
-	case GRADE_TIER_05:	return "B";
-	case GRADE_TIER_06:	return "C";
-	case GRADE_TIER_07:	return "D";
+	case GRADE_TIER01:	return "AAAA";
+	case GRADE_TIER02:	return "AAA";
+	case GRADE_TIER03:	return "AA";
+	case GRADE_TIER04:	return "A";
+	case GRADE_TIER05:	return "B";
+	case GRADE_TIER06:	return "C";
+	case GRADE_TIER07:	return "D";
 	case GRADE_FAILED:	return "E";
 	case GRADE_NO_DATA:	return "N";
 	default:			return "N";
@@ -38,13 +40,13 @@ Grade StringToGrade( const CString &sGrade )
 	s.MakeUpper();
 
 	// for backward compatibility
-	if	   ( s == "AAAA" )		return GRADE_TIER_01;
-	else if( s == "AAA" )		return GRADE_TIER_02;
-	else if( s == "AA" )		return GRADE_TIER_03;
-	else if( s == "A" )			return GRADE_TIER_04;
-	else if( s == "B" )			return GRADE_TIER_05;
-	else if( s == "C" )			return GRADE_TIER_06;
-	else if( s == "D" )			return GRADE_TIER_07;
+	if	   ( s == "AAAA" )		return GRADE_TIER01;
+	else if( s == "AAA" )		return GRADE_TIER02;
+	else if( s == "AA" )		return GRADE_TIER03;
+	else if( s == "A" )			return GRADE_TIER04;
+	else if( s == "B" )			return GRADE_TIER05;
+	else if( s == "C" )			return GRADE_TIER06;
+	else if( s == "D" )			return GRADE_TIER07;
 	else if( s == "E" )			return GRADE_FAILED;
 	else if( s == "N" )			return GRADE_NO_DATA;
 
