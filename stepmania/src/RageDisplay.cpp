@@ -48,7 +48,25 @@ RageVertex			g_vertQueue[MAX_NUM_VERTICIES];
 RageTimer			g_LastCheckTimer;
 int					g_iNumVerts;
 int					g_iFPS, g_iVPF, g_iDPF;
-int					g_glVersion;
+
+struct oglspecs_t {
+    /* OpenGL system information that generally doesn't change at runtime. */
+    
+	/* Range and granularity of points and lines: */
+	float line_range[2];
+	float line_granularity;
+	float point_range[2];
+	float point_granularity;
+
+	/* OpenGL version * 10: */
+	int glVersion;
+
+    /* Available extensions: */
+	set<string> glExts;
+
+	/* Which extensions we actually use are supported: */
+	bool EXT_texture_env_combine;
+} g_oglspecs;
 
 int					g_CurrentHeight, g_CurrentWidth;
 
@@ -59,8 +77,6 @@ int RageDisplay::GetDPF() const { return g_iDPF; }
 static int			g_iFramesRenderedSinceLastCheck,
 					g_iVertsRenderedSinceLastCheck,
 					g_iDrawsSinceLastCheck;
-set<string> g_glExts;
-static bool g_GL_EXT_texture_env_combine;
 
 typedef BOOL (APIENTRY * PWSWAPINTERVALEXTPROC) (int interval);
 PWSWAPINTERVALEXTPROC wglSwapIntervalEXT;
@@ -86,6 +102,17 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rat
 	SetVideoMode( windowed, width, height, bpp, rate, vsync );
 
 	SetupOpenGL();
+
+	/* Log this, so if people complain that the radar looks bad on their
+	 * system we can compare them: */
+	glGetFloatv(GL_LINE_WIDTH_RANGE, g_oglspecs.line_range);
+	LOG->Trace("Line width range: %f, %f", g_oglspecs.line_range[0], g_oglspecs.line_range[1]);
+	glGetFloatv(GL_LINE_WIDTH_GRANULARITY, &g_oglspecs.line_granularity);
+	LOG->Trace("Line width granularity: %f", g_oglspecs.line_granularity);
+	glGetFloatv(GL_POINT_SIZE_RANGE, g_oglspecs.point_range);
+	LOG->Trace("Point size range: %f-%f", g_oglspecs.point_range[0], g_oglspecs.point_range[1]);
+	glGetFloatv(GL_POINT_SIZE_GRANULARITY, &g_oglspecs.point_granularity);
+	LOG->Trace("Point size granularity: %f", g_oglspecs.point_granularity);
 }
 
 void RageDisplay::SetupOpenGL()
@@ -114,16 +141,16 @@ RageDisplay::~RageDisplay()
 void RageDisplay::SetupExtensions()
 {
 	double fGLVersion = atof( (const char *) glGetString(GL_VERSION) );
-	g_glVersion = int(roundf(fGLVersion * 10));
-	LOG->Trace( "OpenGL version %.1f", g_glVersion / 10.);
-	GetGLExtensions(g_glExts);
-	if(g_glExts.find("GL_EXT_texture_env_combine") != g_glExts.end())
-		g_GL_EXT_texture_env_combine = true;
+	g_oglspecs.glVersion = int(roundf(fGLVersion * 10));
+	LOG->Trace( "OpenGL version %.1f", g_oglspecs.glVersion / 10.);
+	GetGLExtensions(g_oglspecs.glExts);
+	if(g_oglspecs.glExts.find("GL_EXT_texture_env_combine") != g_oglspecs.glExts.end())
+		g_oglspecs.EXT_texture_env_combine = true;
 
 	glBlendFuncSeparate = (PFNGLBLENDFUNCSEPARATEPROC) SDL_GL_GetProcAddress ("glBlendFuncSeparate");
 
 	/* Windows vsync: */
-	if(g_glExts.find("WGL_EXT_swap_control") != g_glExts.end()) {
+	if(g_oglspecs.glExts.find("WGL_EXT_swap_control") != g_oglspecs.glExts.end()) {
 	    wglSwapIntervalEXT = (PWSWAPINTERVALEXTPROC) SDL_GL_GetProcAddress("wglSwapIntervalEXT");
 		if(wglSwapIntervalEXT)
 			LOG->Trace("Got wglSwapIntervalEXT");
@@ -216,16 +243,26 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 		SetupOpenGL();
 	}
 	
-	glViewport(0, 0, g_screen->w, g_screen->h);
+	g_CurrentWidth = g_screen->w;
+	g_CurrentHeight = g_screen->h;
+
+	SetViewport(0,0);
 
 	/* Clear any junk that's in the framebuffer. */
 	Clear();
 	Flip();
 
-	g_CurrentWidth = width;
-	g_CurrentHeight = height;
-
 	return need_reload;
+}
+
+void RageDisplay::SetViewport(int shift_left, int shift_down)
+{
+	/* left and down are on a 0..SCREEN_WIDTH, 0..SCREEN_HEIGHT scale.
+	 * Scale them to the actual viewport range. */
+	shift_left = int( shift_left * float(g_CurrentWidth) / SCREEN_WIDTH );
+	shift_down = int( shift_down * float(g_CurrentWidth) / SCREEN_WIDTH );
+
+	glViewport(shift_left, -shift_down, g_CurrentWidth, g_CurrentHeight);
 }
 
 int RageDisplay::GetMaxTextureSize() const
@@ -335,8 +372,12 @@ void RageDisplay::DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth
 
 	/* Round off the corners.  This isn't perfect; the point is sometimes a little
 	 * larger than the line, causing a small bump on the edge.  Not sure how to fix
-	 * that. */
-	glPointSize(LineWidth * factor);
+	 * that. 
+	 *
+	 * Fudged the point size down a little.  This fixes it in the radar with a
+	 * line size of 3 at 640x480 and 1024x768; I don't know what it would do at
+	 * other line sizes. */
+	glPointSize((LineWidth - .3f) * factor);
 	g_vertMode = GL_POINTS;
 	AddVerts( v, iNumVerts );
 	FlushQueue();
@@ -502,7 +543,7 @@ void RageDisplay::SetBlendMode(int src, int dst)
 
 void RageDisplay::SetTextureModeGlow()
 {
-	if(!g_GL_EXT_texture_env_combine) {
+	if(!g_oglspecs.EXT_texture_env_combine) {
 		SetBlendMode( GL_SRC_ALPHA, GL_ONE );
 		return;
 	}

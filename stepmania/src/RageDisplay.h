@@ -73,6 +73,8 @@ public:
 
 	int GetMaxTextureSize() const;
 
+	void SetViewport(int shift_left, int shift_down);
+
 	/* Statistics */
 	int GetFPS() const;
 	int GetVPF() const;
