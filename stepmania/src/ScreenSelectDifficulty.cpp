@@ -417,13 +417,19 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 			int iSwitchToIndex = -1;
 			int i;
 			for( i=m_iChoiceOnPage[p]+1; iSwitchToIndex == -1 && i < (int) m_ModeChoices[m_CurrentPage].size(); ++i )
-				if( m_ModeChoices[m_CurrentPage][i].IsPlayable() )
+			{
+				const ModeChoice &mc = m_ModeChoices[m_CurrentPage][i];
+				if( mc.IsPlayable() && !BothPlayersModeChoice(mc) )
 					iSwitchToIndex = i;
+			}
 			if( iSwitchToIndex == -1 ) /* couldn't find a spot looking up; look down */
 			{
 				for( i=m_iChoiceOnPage[p]-1; iSwitchToIndex == -1 && i >= 0; --i )
-					if( m_ModeChoices[m_CurrentPage][i].IsPlayable() )
+				{
+					const ModeChoice &mc = m_ModeChoices[m_CurrentPage][i];
+					if( mc.IsPlayable() && !BothPlayersModeChoice(mc) )
 						iSwitchToIndex = i;
+				}
 			}
 			/* We should always find a place to go--we should at least be able to choose
 			 * the same thing pn picked. */
