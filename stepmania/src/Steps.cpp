@@ -112,14 +112,39 @@ void Steps::GetSMNoteData( CString &notes_comp_out, CString &attacks_comp_out ) 
 
 float Steps::PredictMeter()
 {
-	//Define and Init Non-Radar Values
-	float SV;
-	float ChaosSquare;
-	float pMeter;
-	SV = this->GetRadarValues()[RADAR_STREAM] * this->GetRadarValues()[RADAR_VOLTAGE];
-	ChaosSquare = this->GetRadarValues()[RADAR_CHAOS] * this->GetRadarValues()[RADAR_CHAOS];
+	/* Tip: try this, instead:
+	const float RadarFactors[NUM_RADAR_CATEGORIES] =
+	{
+		10.1f, 5.27f,-0.905f, -1.10f, 2.86f,
+		0,0,0,0,0
+	};
+	for( int r = 0; r < NUM_RADAR_CATEGORIES; ++r )
+		pMeter += this->GetRadarValues()[r] * RadarFactors[r];
 
-	pMeter = BETA_ZERO;
+	const float DifficultyBias[NUM_DIFFICULTIES] =
+	{
+		-1, -0.877f, 0, 0.722f, 0.722f
+	};
+	pMeter += DifficultyBias[this->GetDifficulty()];
+	*/
+
+	// Coefficients
+	const float BETA_ZERO	=  0.775f;
+	const float STREAM		=  10.1f;
+	const float VOLTAGE		=  5.27f;
+	const float AIR			= -0.905f;
+	const float FREEZE		= -1.10f;
+	const float CHAOS		=  2.86f;
+	const float HEAVY		=  0.722f;
+	const float LIGHT		= -0.877f;
+	const float SXV			= -6.35f; // Square/Voltage Interaction Varible
+	const float CSQUARE		= -2.58f;
+
+	// Init non-radar values
+	const float SV = this->GetRadarValues()[RADAR_STREAM] * this->GetRadarValues()[RADAR_VOLTAGE];
+	const float ChaosSquare = this->GetRadarValues()[RADAR_CHAOS] * this->GetRadarValues()[RADAR_CHAOS];
+
+	float pMeter = BETA_ZERO;
 	pMeter += STREAM * this->GetRadarValues()[RADAR_STREAM];
 	pMeter += VOLTAGE * this->GetRadarValues()[RADAR_VOLTAGE];
 	pMeter += AIR * this->GetRadarValues()[RADAR_AIR];
@@ -127,8 +152,10 @@ float Steps::PredictMeter()
 	pMeter += CHAOS * this->GetRadarValues()[RADAR_CHAOS];
 	pMeter += SXV * SV;
 	pMeter += CSQUARE * ChaosSquare;
-	if (this->GetDifficulty() == DIFFICULTY_HARD) pMeter += HEAVY;
-	if (this->GetDifficulty() == DIFFICULTY_EASY) pMeter += LIGHT;
+	if( this->GetDifficulty() == DIFFICULTY_HARD )
+		pMeter += HEAVY;
+	if( this->GetDifficulty() == DIFFICULTY_EASY )
+		pMeter += LIGHT;
 	return pMeter;
 }
 
