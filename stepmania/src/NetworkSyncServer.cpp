@@ -82,8 +82,8 @@ void StepManiaLanServer::ServerUpdate()
 
 void StepManiaLanServer::UpdateClients()
 {
-	/* Go through all the clients and check to see if it is being used.
-		 If so then try to get a backet and parse the data. */
+	//Go through all the clients and check to see if it is being used.
+	//If so then try to get a backet and parse the data.
 	for (int x = 0; x < NUMBERCLIENTS; x++)
 		if (Client[x].Used == 1)
 			if (Client[x].GetData(Packet) >= 0)
@@ -266,7 +266,7 @@ void StepManiaLanServer::CheckReady()
 				if (Client[x].isStarting)
 				{
 					Client[x].clientSocket.blocking = true;
-					SendValue(131, x);
+					SendValue(NSCGSR + NSServerOffset, x);
 					Client[x].GotStartRequest = false;
 					if (Client[x].startPosition == 1)
 					{
@@ -301,7 +301,7 @@ void StepManiaLanServer::GameOver(PacketFunctions& Packet, int clientNum)
 	{
 		numPlayers = SortStats(playersPtr);
 		Reply.ClearPacket();
-		Reply.Write1( 4+128 );
+		Reply.Write1( NSCGON + NSServerOffset );
 		Reply.Write1( (uint8_t) numPlayers );
 		for (x = 0; x < numPlayers; ++x) 
 			Reply.Write1((uint8_t)playersPtr[x]->PlayerID);
@@ -394,7 +394,7 @@ void StepManiaLanServer::SendStatsToClients()
 	{
 		/* Write and Send name packet */
 		Reply.ClearPacket();
-		Reply.Write1(133);
+		Reply.Write1(NSCGSU + NSServerOffset);
 		Reply.Write1(0);
 		Reply.Write1( (uint8_t) numPlayers );
 		StatsNameColumn(Reply, playersPtr, numPlayers);
@@ -409,7 +409,7 @@ void StepManiaLanServer::SendStatsToClients()
 	/* Write and send Combo packet */
 	Reply.ClearPacket();
 
-	Reply.Write1(133);
+	Reply.Write1(NSCGSU + NSServerOffset);
 	Reply.Write1(1);
 	Reply.Write1( (uint8_t) numPlayers );
 	StatsComboColumn(Reply, playersPtr, numPlayers);
@@ -425,7 +425,7 @@ void StepManiaLanServer::SendStatsToClients()
 	//Probably not. Sends all everytime unless developer feelings change.
 	Reply.ClearPacket();
 
-	Reply.Write1(133);
+	Reply.Write1(NSCGSU + NSServerOffset);
 	Reply.Write1(2);
 	Reply.Write1( (uint8_t) numPlayers );
 	StatsProjgradeColumn(Reply, playersPtr, numPlayers);
@@ -524,7 +524,7 @@ void StepManiaLanServer::RelayChat(PacketFunctions& Packet, int clientNum)
 
 	message += ": ";
 	message += Packet.ReadNT();
-	Reply.Write1(135);
+	Reply.Write1(NSCCM + NSServerOffset);
 	Reply.WriteNT(message);
 
 	//Send to all clients
@@ -547,7 +547,7 @@ void StepManiaLanServer::SelectSong(PacketFunctions& Packet, int clientNum)
 			CurrentSongInfo.subtitle = Packet.ReadNT();
 
 			Reply.ClearPacket();
-			Reply.Write1(136);
+			Reply.Write1(NSCRSG + NSServerOffset);
 			Reply.Write1(1);
 			Reply.WriteNT(CurrentSongInfo.title);
 			Reply.WriteNT(CurrentSongInfo.artist);
@@ -583,7 +583,7 @@ void StepManiaLanServer::SelectSong(PacketFunctions& Packet, int clientNum)
 			message = servername;
 			message += ": You do not have permission to pick a song.";
 			Reply.ClearPacket();
-			Reply.Write1(135);
+			Reply.Write1(NSCCM + NSServerOffset);
 			Reply.WriteNT(message);
 			SendNetPacket(clientNum, Reply);
 		}
@@ -617,7 +617,7 @@ void StepManiaLanServer::SelectSong(PacketFunctions& Packet, int clientNum)
 	if ( CheckHasSongState() && SecondSameSelect && (clientNum == 0) )
 	{
 		Reply.ClearPacket();
-		Reply.Write1(136);
+		Reply.Write1(NSCRSG + NSServerOffset);
 		Reply.Write1(2);
 		Reply.WriteNT(CurrentSongInfo.title);
 		Reply.WriteNT(CurrentSongInfo.artist);
@@ -670,7 +670,7 @@ void StepManiaLanServer::SendToAllClients(PacketFunctions& Packet)
 void StepManiaLanServer::ServerChat(const CString& message)
 {
 	Reply.ClearPacket();
-	Reply.Write1(135);
+	Reply.Write1(NSCCM + NSServerOffset);
 	Reply.WriteNT(message);
 	SendToAllClients(Reply);
 }
@@ -710,7 +710,7 @@ void StepManiaLanServer::MoveClientToHost()
 void StepManiaLanServer::SendUserList()
 {
 	Reply.ClearPacket();
-	Reply.Write1(137);
+	Reply.Write1(NSCUUL + NSServerOffset);
 	Reply.Write1(NUMBERCLIENTS*2);
 	Reply.Write1(NUMBERCLIENTS*2);
 
