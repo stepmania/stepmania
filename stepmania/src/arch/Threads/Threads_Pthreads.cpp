@@ -1,5 +1,6 @@
 #include "global.h"
 #include "Threads_Pthreads.h"
+#include "RageTimer.h"
 #include "RageUtil.h"
 #include <sys/time.h>
 #include <errno.h>
@@ -215,6 +216,7 @@ EventImpl_Pthreads::~EventImpl_Pthreads()
 	pthread_cond_destroy( &m_Cond );
 }
 
+#if defined(HAVE_PTHREAD_COND_TIMEDWAIT)
 bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 {
 	if( pTimeout == NULL )
@@ -224,11 +226,19 @@ bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 	}
 
 	timespec abstime;
-	timeout.tv_sec = pTimeout->m_secs;
-	timeout.tv_nsec = pTimeout->m_us * 1000;
-	int iRet = pthread_cond_timedwait( &m_Cond, &m_pParent->mutex );
+	abstime.tv_sec = pTimeout->m_secs;
+	abstime.tv_nsec = pTimeout->m_us * 1000;
+	int iRet = pthread_cond_timedwait( &m_Cond, &m_pParent->mutex, &abstime );
 	return iRet != ETIMEDOUT;
 }
+#else
+sdf
+bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
+{
+	pthread_cond_wait( &m_Cond, &m_pParent->mutex );
+	return true;
+}
+#endif
 
 void EventImpl_Pthreads::Signal()
 {
