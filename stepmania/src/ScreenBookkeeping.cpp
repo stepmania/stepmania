@@ -27,7 +27,7 @@ ScreenBookkeeping::ScreenBookkeeping( CString sClassName ) : ScreenWithMenuEleme
 
 	for( int i=0; i<NUM_BOOKKEEPING_COLS; i++ )
 	{
-		float fX = SCALE( i, 0.f, NUM_BOOKKEEPING_COLS-1, SCREEN_LEFT+50, SCREEN_RIGHT-120 );
+		float fX = SCALE( i, 0.f, NUM_BOOKKEEPING_COLS-1, SCREEN_LEFT+50, SCREEN_RIGHT-160 );
 		float fY = CENTER_Y+16;
 		m_textCols[i].LoadFromFont( THEME->GetPathToF("Common normal") );
 		m_textCols[i].SetText( ssprintf("%d",i) );

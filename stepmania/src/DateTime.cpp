@@ -177,7 +177,7 @@ CString LastWeekToString( int iLastWeekIndex )
 	{
 	case 0:		return "ThisWeek";	break;
 	case 1:		return "LastWeek";	break;
-	default:	return ssprintf("Week%dAgo",iLastWeekIndex);	break;
+	default:	return ssprintf("Week%02dAgo",iLastWeekIndex);	break;
 	}
 }
 
