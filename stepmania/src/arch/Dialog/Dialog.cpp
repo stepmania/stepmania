@@ -18,7 +18,7 @@
 
 static DialogDriver *g_pImpl = NULL;
 static DialogDriver_Null g_NullDriver;
-static bool g_bWindowed = false;
+static bool g_bWindowed = true;		// Start out true so that we'll show errors before DISPLAY is init'd.
 static bool g_bIsShowingDialog = false;
 
 void Dialog::Init()
