@@ -269,11 +269,12 @@ bool DeviceInput::fromString( const CString &s )
 	return true;
 }
 
+/* FIXME: The main font doesn't have '`' (0x29), so that's disabled. */
 static const char dik_charmap[] = {
 	    /*   0   1   2   3   4   5   6   7   8    9    A   B   C   D   E  F */ 
 /* 0x0x */    0,  0,'1','2','3','4','5','6','7', '8','9', '0','-','=',  0,  0,
 /* 0x1x */	'q','w','e','r','t','y','u','i','u', 'p','[', ']',  0,  0,'a','s',
-/* 0x2x */	'd','f','g','h','j','k','l',';','\'','`',  0,'\\','z','x','c','v',
+/* 0x2x */	'd','f','g','h','j','k','l',';','\'',  0,  0,'\\','z','x','c','v',
 /* 0x3x */	'b','n','m',',','.','/',  0,'*',  0, ' ',  0,   0,  0,  0,  0,  0,
 /* 0x4x */	  0,  0,  0,  0,  0,  0,  0,'7','8', '9','-', '4','5','6','+','1',
 /* 0x5x */	'2','3','0','.',  0,  0,  0,  0,  0,   0,  0,   0,  0,  0,  0,  0,
@@ -639,7 +640,7 @@ HRESULT RageInput::Update()
 {
 // macros for reading DI state structures
 #define IS_PRESSED(b)	(b & 0x80) 
-#define AXIS_THRESHOLD	50		// joystick axis threshold
+#define AXIS_THRESHOLD	250		// joystick axis threshold
 #define IS_LEFT(a)		(a <= -AXIS_THRESHOLD)
 #define IS_RIGHT(a)		(a >=  AXIS_THRESHOLD)
 #define IS_UP(a)		IS_LEFT(a)
@@ -729,9 +730,9 @@ bool RageInput::IsBeingPressed( DeviceInput di )
 		case JOY_RIGHT:
 			return IS_RIGHT( m_joyState[joy_index].lX );
 		case JOY_UP:
-			return IS_UP( m_joyState[joy_index].lX );
+			return IS_UP( m_joyState[joy_index].lY );
 		case JOY_DOWN:
-			return IS_DOWN( m_joyState[joy_index].lX );
+			return IS_DOWN( m_joyState[joy_index].lY );
 		default:	// a joystick button
 			int button_index = di.button - JOY_1;
 			return 0 != IS_PRESSED( m_joyState[joy_index].rgbButtons[button_index] );
@@ -774,9 +775,9 @@ bool RageInput::WasBeingPressed( DeviceInput di )
 		case JOY_RIGHT:
 			return IS_RIGHT( m_oldJoyState[joy_index].lX );
 		case JOY_UP:
-			return IS_UP( m_oldJoyState[joy_index].lX );
+			return IS_UP( m_oldJoyState[joy_index].lY );
 		case JOY_DOWN:
-			return IS_DOWN( m_oldJoyState[joy_index].lX );
+			return IS_DOWN( m_oldJoyState[joy_index].lY );
 		default:	// a joystick button
 			int button_index = di.button - JOY_1;
 			return 0 != IS_PRESSED( m_oldJoyState[joy_index].rgbButtons[button_index] );
