@@ -676,7 +676,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 	bool bOneHasNewTopRecord = false;
 	for( p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsPlayerEnabled(p) && iMachineHighScoreIndex[p] != 0 || iPersonalHighScoreIndex[p] != 0 )
+		if( GAMESTATE->IsPlayerEnabled(p) && (iMachineHighScoreIndex[p] != -1 || iPersonalHighScoreIndex[p] != -1) )
 			bOneHasNewTopRecord = true;
 	
 	if( PREFSMAN->m_bAllowExtraStage && m_bTryExtraStage )
