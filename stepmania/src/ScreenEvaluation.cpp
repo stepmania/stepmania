@@ -826,16 +826,14 @@ void ScreenEvaluation::Update( float fDeltaTime )
 			continue;
 
 		// wait a few seconds before adding bonus
-		if ( RageTimer::GetTimeSinceStart() - m_fScreenCreateTime  < 3.0f)
+		if ( RageTimer::GetTimeSinceStart() - m_fScreenCreateTime  < 1.5f)
 			continue;
 
 		int increment = GAMESTATE->m_CurStageStats.iBonus[p]/10;
-
-		if (increment < 1) increment = min(1024, GAMESTATE->m_CurStageStats.iBonus[p]);
-//		if (GAMESTATE->m_CurStageStats.iBonus[p] > 5000000) increment = 499999;
+		if (increment < 1) 
+			increment = min(1024, GAMESTATE->m_CurStageStats.iBonus[p]);
 
 		GAMESTATE->m_CurStageStats.iBonus[p] -= increment;
-
 		GAMESTATE->m_CurStageStats.iScore[p] += increment;
 
 		m_textScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, GAMESTATE->m_CurStageStats.iScore[p]) );
