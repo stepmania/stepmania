@@ -61,7 +61,7 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 
 	if(PREVIEWMUSICMODE == 1)
 	{
-		SOUNDMAN->music->StopPlaying();
+		SOUNDMAN->StopMusic();
 		iConfirmSelection = 0;
 	}
 
@@ -273,7 +273,7 @@ void ScreenEz2SelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		}
 		else
 		{
-			SOUNDMAN->music->StopPlaying();
+			SOUNDMAN->StopMusic();
 			SCREENMAN->SetNewScreen( "ScreenStage" );
 		}
 		break;
@@ -294,7 +294,7 @@ void ScreenEz2SelectMusic::MenuRight( PlayerNumber pn, const InputEventType type
 
 void ScreenEz2SelectMusic::MenuBack( PlayerNumber pn )
 {
-	SOUNDMAN->music->StopPlaying();
+	SOUNDMAN->StopMusic();
 
 	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
 }
@@ -392,7 +392,7 @@ void ScreenEz2SelectMusic::EasierDifficulty( PlayerNumber pn )
 	if(PREVIEWMUSICMODE == 1 && iConfirmSelection == 1)
 	{
 		iConfirmSelection = 0;
-		SOUNDMAN->music->StopPlaying();
+		SOUNDMAN->StopMusic();
 	}
 
 	m_iSelection[pn]--;
@@ -424,7 +424,7 @@ void ScreenEz2SelectMusic::HarderDifficulty( PlayerNumber pn )
 	if(PREVIEWMUSICMODE == 1 && iConfirmSelection == 1)
 	{
 		iConfirmSelection = 0;
-		SOUNDMAN->music->StopPlaying();
+		SOUNDMAN->StopMusic();
 	}
 
 	m_iSelection[pn]++;
@@ -446,7 +446,7 @@ void ScreenEz2SelectMusic::MusicChanged()
 	if(PREVIEWMUSICMODE == 1 && iConfirmSelection == 1)
 	{
 		iConfirmSelection = 0;
-		SOUNDMAN->music->StopPlaying();
+		SOUNDMAN->StopMusic();
 	}
 
 	int pn;

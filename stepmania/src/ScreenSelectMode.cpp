@@ -216,7 +216,7 @@ void ScreenSelectMode::HandleScreenMessage( const ScreenMessage SM )
 		m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
 		break;
 	case SM_GoToPrevScreen:
-		SOUNDMAN->music->StopPlaying();
+		SOUNDMAN->StopMusic();
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	case SM_GoToNextScreen:
@@ -289,7 +289,7 @@ presses the button bound to back
 ************************************/
 void ScreenSelectMode::MenuBack( PlayerNumber pn )
 {
-	SOUNDMAN->music->StopPlaying();
+	SOUNDMAN->StopMusic();
 
 	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
 }

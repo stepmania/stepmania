@@ -150,7 +150,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		return;
 	}
 
-	SOUNDMAN->music->StopPlaying();
+	SOUNDMAN->StopMusic();
 
 
 	// get the style
@@ -168,7 +168,7 @@ void ScreenEditMenu::MenuBack( PlayerNumber pn )
 {	
 	m_Menu.TweenOffScreenToBlack( SM_None, true );
 
-	SOUNDMAN->music->StopPlaying();
+	SOUNDMAN->StopMusic();
 
 	m_Fade.CloseWipingLeft( SM_GoToPrevScreen );
 }

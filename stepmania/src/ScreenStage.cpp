@@ -56,7 +56,7 @@ enum StageMode
 
 ScreenStage::ScreenStage()
 {
-	SOUNDMAN->music->StopPlaying();
+	SOUNDMAN->StopMusic();
 
 	g_StageType = (StageType)STAGE_TYPE; 
 

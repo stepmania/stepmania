@@ -113,7 +113,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 
 	g_fTickEarlySecondsCache = TICK_EARLY_SECONDS;
 
-	SOUNDMAN->music->StopPlaying();
+	SOUNDMAN->StopMusic();
 
 
 		/* It's OK to operate on GAMESTATE here, but not in the constructor */

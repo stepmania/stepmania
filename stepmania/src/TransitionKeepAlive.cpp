@@ -95,7 +95,7 @@ void TransitionKeepAlive::OpenWipingRight( ScreenMessage send_when_done )
 void TransitionKeepAlive::OpenWipingLeft(  ScreenMessage send_when_done )
 {
 	if( STOP_MUSIC_ON_NEXT )
-		SOUNDMAN->music->StopPlaying();
+		SOUNDMAN->StopMusic();
 
 	this->SetTransitionTime( KEEP_ALIVE_BACKWARD_TRANSITION_TIME );
 

@@ -175,7 +175,7 @@ void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 		m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
 		break;
 	case SM_GoToPrevScreen:
-		SOUNDMAN->music->StopPlaying();
+		SOUNDMAN->StopMusic();
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	case SM_GoToNextScreen:
@@ -193,7 +193,7 @@ presses the button bound to back
 
 void ScreenEz2SelectPlayer::MenuBack( PlayerNumber pn )
 {
-	SOUNDMAN->music->StopPlaying();
+	SOUNDMAN->StopMusic();
 
 	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
 }

@@ -43,7 +43,7 @@ ScreenTest::ScreenTest()
 	current = NULL;
 	cur_screen = -1;
 
-	SOUNDMAN->music->StopPlaying();
+	SOUNDMAN->StopMusic();
 
 	SetScreen(0);
 }
