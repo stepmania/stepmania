@@ -23,6 +23,7 @@ Chris Danford
 #include "RageTimer.h"
 #include "GameState.h"
 #include "ThemeManager.h"
+#include "ActorUtil.h"
 
 /* Constants */
 
@@ -85,7 +86,6 @@ is terminated.
 ************************************/
 ScreenSelectMode::~ScreenSelectMode()
 {
-	m_ScrollingList.StopTweening();
 	LOG->Trace( "ScreenSelectMode::~ScreenSelectMode()" );
 }
 
@@ -131,7 +131,7 @@ void ScreenSelectMode::UpdateSelectableChoices()
 		(PREFSMAN->m_bJointPremium && INCLUDE_DOUBLE_IN_JP == 1 && ((GAMESTATE->GetNumSidesJoined() == 1 && mc.numSidesJoinedToPlay == 1) || (GAMESTATE->GetNumSidesJoined() == 2 && mc.numSidesJoinedToPlay == 2))) ||
 		(PREFSMAN->m_bJointPremium && INCLUDE_DOUBLE_IN_JP == 0 && 
 			(((modename.substr(0, 6) == "DOUBLE" || modename.substr(0, 13) == "ARCADE-DOUBLE")  && GAMESTATE->GetNumSidesJoined() != 2 ) || GAMESTATE->GetNumSidesJoined() == 1 && mc.numSidesJoinedToPlay == 1) || 
-			((modename.substr(0, 6) != "DOUBLE" || modename.substr(0, 13) != "ARCADE-DOUBLE") && GAMESTATE->GetNumSidesJoined() == 2 && mc.numSidesJoinedToPlay == 2)) ||
+			((modename.substr(0, 6) != "DOUBLE" && modename.substr(0, 13) != "ARCADE-DOUBLE") && GAMESTATE->GetNumSidesJoined() == 2 && mc.numSidesJoinedToPlay == 2)) ||
 		(!PREFSMAN->m_bJointPremium)
 		)
 		{
@@ -164,8 +164,11 @@ void ScreenSelectMode::MenuStart( PlayerNumber pn )
 		return;
 	}
 	SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, 0 );
-	m_ScrollingList.BeginTweening(1.0f);
-	m_ScrollingList.SetRotationZ(0.0f);
+	unsigned i;
+	for( i=0; i<m_SubActors.size(); i++ )
+		m_SubActors[i]->StopTweening();
+	OFF_COMMAND( m_ScrollingList );
+	OFF_COMMAND( m_Guide );
 }
 
 int ScreenSelectMode::GetSelectionIndex( PlayerNumber pn )
