@@ -44,6 +44,7 @@ const int NUM_SCORE_DIGITS	=	9;
 #define SHOW_RADAR							THEME->GetMetricB("ScreenSelectMusic","ShowRadar")
 #define SHOW_GRAPH							THEME->GetMetricB("ScreenSelectMusic","ShowGraph")
 
+#define CDTITLE_SPIN_SECONDS				THEME->GetMetricF("ScreenSelectMusic","CDTitleSpinSeconds")
 
 static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
 
@@ -110,7 +111,7 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 	m_sprCDTitleFront.Load( THEME->GetPathToG("ScreenSelectMusic fallback cdtitle") );
 	m_sprCDTitleFront.SetUseBackfaceCull(true);
 	m_sprCDTitleFront.SetDiffuse( RageColor(1,1,1,1) );
-	m_sprCDTitleFront.SetEffectSpin( RageVector3(0, 90, 0) );
+	m_sprCDTitleFront.SetEffectSpin( RageVector3(0, 360/CDTITLE_SPIN_SECONDS, 0) );
 	this->AddChild( &m_sprCDTitleFront );
 
 	m_sprCDTitleBack.SetName( "CDTitle" );
@@ -119,7 +120,7 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 	m_sprCDTitleBack.SetUseBackfaceCull(true);
 	m_sprCDTitleBack.SetDiffuse( RageColor(0.2f,0.2f,0.2f,1) );
 	m_sprCDTitleBack.SetRotationY( 180 );
-	m_sprCDTitleBack.SetEffectSpin( RageVector3(0, 90, 0) );
+	m_sprCDTitleBack.SetEffectSpin( RageVector3(0, 360/CDTITLE_SPIN_SECONDS, 0) );
 	this->AddChild( &m_sprCDTitleBack );
 
 	m_GrooveRadar.SetName( "Radar" );
