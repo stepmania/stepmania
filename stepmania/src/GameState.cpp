@@ -27,6 +27,7 @@
 #include "GameConstantsAndTypes.h"
 #include "StepMania.h"
 #include "CommonMetrics.h"
+#include "Actor.h"
 
 #include <ctime>
 #include <set>
