@@ -78,8 +78,8 @@ bool X11Helper::CloseMask(long mask)
 			pMasks.erase(i);
 			break;
 		}
+		if(i == pMasks.end() ) { return false; }
 		i++;
-		if(i-1 == pMasks.end() ) { return false; }
 	}
 
 	if(pHaveWin)
