@@ -267,30 +267,38 @@ void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 {
 	if( pn!=PLAYER_INVALID  && !GAMESTATE->m_bSideIsJoined[pn] )
 	{
-		if ( PREFSMAN->m_CoinMode == PrefsManager::COIN_HOME || PREFSMAN->m_CoinMode == PrefsManager::COIN_FREE )
-		{ /* Home and free do not require credits..fall thru */
-		}
-		else if( PREFSMAN->m_CoinMode == PrefsManager::COIN_PAY )
+		/* I think JP should allow playing two-pad singleplayer modes (doubles),
+		 * but not two-pad two-player modes (battle).  (Battle mode isn't "joint".)
+		 * That means we should leave player-entry logic alone and simply enable
+		 * couples mode if JP is on and only one person has clicked in.  (However,
+		 * that means we'll display couples even if we don't really know if we have
+		 * a second pad, which is a little annoying.) 
+		 *
+		 * Also, credit deduction should be handled in StepMania.cpp (along with
+		 * the coin logic) using GAMESTATE->m_bPlayersCanJoin, since there
+		 * are other screens you can join (eg ScreenCaution). -glenn */
+		if( PREFSMAN->m_CoinMode == PrefsManager::COIN_PAY )
 		{
-			if( !PREFSMAN->m_bJointPremium && GAMESTATE->m_iCoins >= PREFSMAN->m_iCoinsPerCredit )
-			{ /* Joint Premium is NOT enabled, but we have enough credits. Pay up! */
+			if( !PREFSMAN->m_bJointPremium )
+			{
+				if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
+				{
+					/* Joint Premium is NOT enabled, and we do not have enough credits */
+					return;
+				}
+
+				/* Joint Premium is NOT enabled, but we have enough credits. Pay up! */
 				GAMESTATE->m_iCoins -= PREFSMAN->m_iCoinsPerCredit;
 			}
-			else if( !PREFSMAN->m_bJointPremium && GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
-			{	/* Joint Premium is NOT enabled, and we do not enough credits */
-				return;
-			}
-			
 		}
-	/* If credits had to be used, it's already taken care of.. add the player */
+
+		/* If credits had to be used, it's already taken care of.. add the player */
 		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
 		GAMESTATE->m_bSideIsJoined[pn] = true;
 		SCREENMAN->RefreshCreditsMessages();
 		UpdateEnabledDisabled();
-		return;
+		return; // don't fall through
 	}
-
-
 
 	GAMESTATE->m_CurStyle = GetSelectedStyle();
 
