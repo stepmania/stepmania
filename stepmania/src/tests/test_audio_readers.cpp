@@ -19,7 +19,21 @@ void ReadData( SoundReader *snd,
 {
 	if( ms != -1 )
 		snd->SetPosition_Accurate( ms );
+	if( snd->GetNumChannels() == 1 )
+		bytes /= 2;
 	int got = snd->Read( buf, bytes );
+	if( got != -1 && snd->GetNumChannels() == 1 )
+	{
+		int16_t *pTemp = (int16_t *) alloca( got );
+		memcpy( pTemp, buf, got );
+		for( int i = 0; i < got/2; ++i )
+		{
+			int16_t *p = (int16_t *) buf;
+			p[i*2+0] = pTemp[i];
+			p[i*2+1] = pTemp[i];
+		}
+	}
+		
 	ASSERT( got == bytes );
 }
 	       
@@ -172,7 +186,7 @@ SoundReader *ApplyFilters( SoundReader *s, int filters )
 {
 	if( filters & FILTER_PRELOAD )
 	{
-		SoundReader_Preload *r = new SoundReader_Preload();
+		RageSoundReader_Preload *r = new RageSoundReader_Preload();
 		if( r->Open( s ) )
 			s = r;
 		else
@@ -536,12 +550,15 @@ int main( int argc, char *argv[] )
 		 * values are all similar but, unlike the header tests below, not identical. */
 /*		{ "test PCM 44100 stereo.wav",	0, {0xfb6b,0x0076,0xf82b,0x0028}, {0xf598,0xf630,0xf2bd,0xf11d} },
 		{ "test ADPCM 44100 stereo.wav",0, {0xfb6b,0x0076,0xf82b,0x0028}, {0xf6d7,0xf54f,0xf300,0xf19e} },
-		{ "test ADPCM 22050 mono.wav",	1, {0xfc2a,0xfc2a,0xf4a8,0xf4a8}, {0xf329,0xf329,0xf1c2,0xf1c2} },
+//		{ "test ADPCM 22050 mono.wav",	1, {0xfc2a,0xfc2a,0xf4a8,0xf4a8}, {0xf329,0xf329,0xf1c2,0xf1c2} },
+		{ "test PCM8bit 44100 stereo.wav",	0, {0xfb7b,0x0080,0xf878,0x0080}, {0xf575,0xf676,0xf272,0xf171} },
+		// XXX: add MP3-in-WAV test
 		{ "test OGG 44100 stereo.ogg",	0, {0xfb90,0x00b6,0xf84c,0x00ec}, {0xf794,0xf6c4,0xf34e,0xf2cd} },
 		{ "test MP3 first frame corrupt.mp3", 2343, {0x0001,0x0000,0x0001,0x0000}, {0xe12f,0xfe36,0xf337,0x0778} },
 		{ "test BASS first frame corrupt.wav", 2343, {0x0001,0x0000,0x0001,0x0000}, {0xe12f,0xfe36,0xf337,0x0778} },
 */
-		/* "BASS" is the results of decoding each MP3 with BASS's "writewav" program. */
+		/* "BASS" is the results of decoding each MP3 with BASS's "writewav" program, in
+		 * order to test compatibility with DWI. */
 
 		/* The following all contain the same data; they simply have different tags and headers. */
 		{ "test MP3 44100 stereo CBR.mp3", 592, {0x0000,0x0001,0x0000,0x0001}, {0xef22,0x0cd6,0xee84,0x0bb6} },
