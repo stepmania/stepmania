@@ -10,7 +10,6 @@
 #include "PrefsManager.h"
 #include "RageDisplay.h"
 #include "AnnouncerManager.h"
-#include "SDL_utils.h"
 
 RageSounds *SOUND = NULL;
 

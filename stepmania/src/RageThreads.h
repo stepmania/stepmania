@@ -1,8 +1,6 @@
 #ifndef RAGE_THREADS_H
 #define RAGE_THREADS_H
 
-struct SDL_Thread;
-
 struct ThreadSlot;
 class RageThread
 {

@@ -1,7 +1,6 @@
 #include "global.h"
 
 #include "RageUtil.h"
-#include "SDL_utils.h"
 #include "RageSoundReader_Vorbisfile.h"
 #include "RageLog.h"
 

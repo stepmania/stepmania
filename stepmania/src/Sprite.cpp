@@ -9,7 +9,6 @@
 #include "PrefsManager.h"
 #include "RageDisplay.h"
 #include "RageTexture.h"
-#include "SDL_utils.h"
 #include "ActorUtil.h"
 #include "arch/Dialog/Dialog.h"
 

@@ -41,7 +41,7 @@ const int framesize = 2 * channels; /* 16-bit */
  * as the largest hardware buffer. */
 const int internal_buffer_size = 1024*16;
 
-/* The amount of data to read from SDL_sound at once. */
+/* The amount of data to read at once. */
 const unsigned read_block_size = 1024;
 
 RageSoundParams::RageSoundParams():

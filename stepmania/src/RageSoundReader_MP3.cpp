@@ -4,7 +4,6 @@
 #include "RageSoundReader_MP3.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "SDL_utils.h"
 
 #include <cstdio>
 #include <cerrno>

@@ -546,7 +546,7 @@ int RageSoundReader_WAV::Read(char *buf, unsigned len)
 	if( Conversion == CONV_16LSB_TO_16SYS )
 	{
 		/* Do this in place. */
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+#if defined(ENDIAN_BIG)
 		const int cnt = len / sizeof(int16_t);
 		int16_t *tbuf = (int16_t *) buf;
 		for( int i = 0; i < cnt; ++i )
