@@ -55,7 +55,7 @@ protected:
 
 	Song* m_pSong;
 
-	enum BackgroundMode { MODE_STATIC_BG, MODE_MOVIE_BG, MODE_ANIMATIONS, MODE_MOVIE_VIS };
+	enum BackgroundMode { MODE_STATIC_BG, MODE_MOVIE_BG, MODE_ANIMATIONS, MODE_MOVIE_VIS, MODE_RANDOMMOVIES };
 	BackgroundMode	m_BackgroundMode;
 	
 	Sprite m_sprSongBackground;
@@ -69,20 +69,8 @@ protected:
 	// for animations
 	CArray<BackgroundAnimation*,BackgroundAnimation*> m_BackgroundAnimations;
 	CArray<AnimSeg,AnimSeg&> m_aAnimSegs;
-	BackgroundAnimation* GetCurBGA()
-	{
-		if( m_aAnimSegs.GetSize() == 0 )
-			return NULL;
-
-		if( m_fSongBeat < m_pSong->m_fFirstBeat  ||  m_fSongBeat > m_pSong->m_fLastBeat )
-			return NULL;
-
-		for( int i=0; i<m_aAnimSegs.GetSize()-1; i++ )
-			if( m_aAnimSegs[i+1].m_fStartBeat > m_fSongBeat )
-				break;
-		int iIndex = m_aAnimSegs[i].m_iAnimationIndex;
-		return m_BackgroundAnimations[iIndex];
-	};
+	BackgroundAnimation* m_pCurBGA;
+	int m_iCurAnimSegment;	// this increases as we move into new segments
 
 
 	// for movie vis

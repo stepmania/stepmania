@@ -1,11 +1,12 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: ScreenOptions.h
+ Class: ScreenOptions
 
- Desc: Select a song.
+ Desc: See header.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -23,16 +24,15 @@
 
 
 
-
-const float HEADER_X	=		CENTER_X;
-const float HEADER_Y	=		50;
-const float HELP_X		=		CENTER_X;
-const float HELP_Y		=		SCREEN_HEIGHT-35;
-const float ITEM_GAP_X	=		12;
-const float LABELS_X	=		80;
-const float LINE_START_Y=		80;
-const float LINE_GAP_Y	=		34;
-
+const float HEADER_X		= CENTER_X;
+const float HEADER_Y		= 50;
+const float HELP_X			= CENTER_X;
+const float HELP_Y			= SCREEN_HEIGHT-35;
+const float ITEM_GAP_X		= 14;
+const float LABELS_X		= 80;
+const float LINE_START_Y	= 80;
+const float LINE_GAP_Y		= 34;
+const float ITEMS_START_X	= 160;
 
 const ScreenMessage SM_PlaySample			= ScreenMessage(SM_User-4);
 const ScreenMessage SM_GoToPrevState		= ScreenMessage(SM_User-5);
@@ -152,7 +152,7 @@ void ScreenOptions::InitOptionsText()
 		this->AddSubActor( &title );
 
 		// init all text in this line and count the width of the line
-		float fX = 150;	// indent 70 pixels
+		float fX = ITEMS_START_X;	// indent 70 pixels
 		for( int j=0; j<optline.iNumOptions; j++ )	// for each option on this line
 		{
 			BitmapText &option = m_textOptions[i][j];
@@ -160,7 +160,7 @@ void ScreenOptions::InitOptionsText()
 			option.Load( THEME->GetPathTo(FONT_NORMAL) );
 			option.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 			option.SetText( optline.szOptionsText[j] );
-			option.SetZoom( 0.65f );
+			option.SetZoom( 0.5f );
 			option.SetShadowLength( 2 );
 			this->AddSubActor( &option );
 

@@ -21,6 +21,7 @@
 
 const CString BG_ANIMS_DIR = "BGAnimations\\";
 const CString VISUALIZATIONS_DIR = "Visualizations\\";
+const CString RANDOMMOVIES_DIR = "RandomMovies\\";
 
 
 int CompareAnimSegs(const void *arg1, const void *arg2)
@@ -65,6 +66,9 @@ Background::Background()
 
 	m_quadBGBrightness.StretchTo( CRect(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 	m_quadBGBrightness.SetDiffuseColor( D3DXCOLOR(0,0,0,1-0.5f) );
+
+	m_pCurBGA = NULL;
+	m_iCurAnimSegment = -1;
 }
 
 Background::~Background()
@@ -90,6 +94,8 @@ bool Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 		m_BackgroundMode = MODE_MOVIE_BG;
 	else if( PREFSMAN->m_BackgroundMode == PrefsManager::BGMODE_MOVIEVIS )
 		m_BackgroundMode = MODE_MOVIE_VIS;
+	else if( PREFSMAN->m_BackgroundMode == PrefsManager::BGMODE_RANDOMMOVIES )
+		m_BackgroundMode = MODE_RANDOMMOVIES;
 	else
 		m_BackgroundMode = MODE_ANIMATIONS;
 
@@ -197,6 +203,33 @@ bool Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 			}
 		}
 		break;
+	case MODE_RANDOMMOVIES:
+		{
+			CStringArray asMovieNames;
+			GetDirListing( RANDOMMOVIES_DIR + "*.avi", asMovieNames );
+			GetDirListing( RANDOMMOVIES_DIR + "*.mpg", asMovieNames );
+			GetDirListing( RANDOMMOVIES_DIR + "*.mpeg", asMovieNames );
+			for( int i=0; i<min(asMovieNames.GetSize(),8); i++ )	// only load up to 8 background because they take a long time to load
+			{
+				CString sMovieName = asMovieNames[rand()%asMovieNames.GetSize()];
+				m_BackgroundAnimations.Add( new BackgroundAnimation(RANDOMMOVIES_DIR+sMovieName, NULL) );
+			}
+
+			if( m_BackgroundAnimations.GetSize() == 0 ) 
+				break;
+
+			// Generate a plan.
+			for( int i=0; i<pSong->m_fLastBeat; i+=16 )
+				m_aAnimSegs.Add( AnimSeg((float)i,rand()%m_BackgroundAnimations.GetSize()) );	// change BG every 4 bars
+
+			for( i=0; i<pSong->m_BPMSegments.GetSize(); i++ )
+			{
+				const BPMSegment& bpmseg = pSong->m_BPMSegments[i];
+				m_aAnimSegs.Add( AnimSeg(bpmseg.m_fStartBeat,int(bpmseg.m_fBPM)%m_BackgroundAnimations.GetSize()) );	// change BG every BPM change
+			}
+			SortAnimSegArray( m_aAnimSegs );
+		}
+		break;
 	default:
 		ASSERT(0);
 	}
@@ -234,8 +267,33 @@ void Background::Update( float fDeltaTime )
 			m_sprMovieVis.Update( fDeltaTime );
 			break;
 		case MODE_ANIMATIONS:
-			if( GetCurBGA() )
-				GetCurBGA()->Update( fDeltaTime, m_fSongBeat );
+		case MODE_RANDOMMOVIES:
+			{
+				// Find the AnimSeg we're in
+				for( int i=0; i<m_aAnimSegs.GetSize()-1; i++ )
+					if( m_aAnimSegs[i+1].m_fStartBeat > m_fSongBeat )
+						break;
+				int iNewAnimationSegment = i;
+				if( iNewAnimationSegment > m_iCurAnimSegment )
+				{
+					m_iCurAnimSegment = iNewAnimationSegment;
+					if( m_pCurBGA )
+						m_pCurBGA->LosingFocus();
+					if( i > m_aAnimSegs.GetSize() )
+					{
+						m_pCurBGA = NULL;
+					}
+					else
+					{
+						int iNewAnimIndex = m_aAnimSegs[i].m_iAnimationIndex;
+						m_pCurBGA = m_BackgroundAnimations[iNewAnimIndex];
+						m_pCurBGA->GainingFocus();
+					}
+				}
+
+				if( m_pCurBGA )
+					m_pCurBGA->Update( fDeltaTime, m_fSongBeat );
+			}
 			break;
 		default:
 			ASSERT(0);
@@ -258,7 +316,6 @@ void Background::DrawPrimitives()
 {
 	ActorFrame::DrawPrimitives();
 
-
 	if( DangerVisible() )
 	{
 		m_sprDangerBackground.Draw();
@@ -273,19 +330,26 @@ void Background::DrawPrimitives()
 			m_sprSongBackground.Draw();
 			break;
 		case MODE_MOVIE_BG:
-			::Sleep(4);	// let the movie decode a frame
+			::Sleep(2);	// let the movie decode a frame
 			m_sprMovieBackground.Draw();
 			break;
 		case MODE_MOVIE_VIS:
 			m_sprSongBackground.Draw();
-			::Sleep(4);	// let the movie decode a frame
+			::Sleep(2);	// let the movie decode a frame
 			m_sprMovieVis.Draw();
 			break;
 		case MODE_ANIMATIONS:
-			if( GetCurBGA() )
-				GetCurBGA()->Draw();
+		case MODE_RANDOMMOVIES:
+			if( m_pCurBGA )
+			{
+				if( m_pCurBGA->IsAMovie() )
+					::Sleep(2);	// let the movie decode a frame
+				m_pCurBGA->Draw();
+			}
 			else
+			{
 				m_sprSongBackground.Draw();
+			}
 			break;
 		default:
 			ASSERT(0);

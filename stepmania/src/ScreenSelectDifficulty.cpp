@@ -65,7 +65,7 @@ const float DIFFICULTY_ARROW_X[NUM_DIFFICULTY_ITEMS][NUM_PLAYERS] = {
 
 const float ARROW_SHADOW_OFFSET = 10;
 
-const float LOCK_INPUT_TIME = 0.75f;	// lock input while waiting for tweening to complete
+const float LOCK_INPUT_TIME = 0.50f;	// lock input while waiting for tweening to complete
 
 
 const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);

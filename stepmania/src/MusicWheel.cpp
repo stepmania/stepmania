@@ -842,7 +842,7 @@ void MusicWheel::Update( float fDeltaTime )
 			{
 				if ( m_bUseRandomExtra )
 				{
-					MUSIC->Stop;
+					MUSIC->Stop();
 					m_soundExpand.Play();
 					m_WheelState = STATE_ROULETTE_SPINNING;
 					m_SortOrder = SORT_GROUP;

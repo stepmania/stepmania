@@ -99,6 +99,7 @@ public:
 	virtual void Play();
 	virtual void SetPosition( float fSeconds );
 	virtual void Pause();
+	virtual bool IsAMovie() { return true; };
 
 	LPDIRECT3DTEXTURE8  m_pd3dTexture[2];	// double buffered
 	int m_iIndexActiveTexture;	// either 0 or 1

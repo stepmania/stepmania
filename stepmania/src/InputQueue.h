@@ -12,6 +12,7 @@
 
 #include "GameConstantsAndTypes.h"
 #include "GameInput.h"
+#include "MenuInput.h"
 
 const int MAX_INPUT_QUEUE_LENGTH = 8;
 
@@ -22,7 +23,7 @@ public:
 
 	void RememberInput( GameInput );
 	bool MatchesPattern( const GameController c, const GameButton* button_sequence, const int iNumButtons, float fMaxSecondsBack = -1 );
-
+	bool MatchesPattern( const GameController c, const MenuButton* button_sequence, const int iNumButtons, float fMaxSecondsBack = -1 );
 
 protected:
 	struct GameButtonAndTime

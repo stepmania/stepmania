@@ -24,7 +24,7 @@ public:
 	PrefsManager();
 	~PrefsManager();
 
-	enum BackgroundMode { BGMODE_OFF, BGMODE_ANIMATIONS, BGMODE_MOVIEVIS };
+	enum BackgroundMode { BGMODE_OFF, BGMODE_ANIMATIONS, BGMODE_MOVIEVIS, BGMODE_RANDOMMOVIES };
 
 	// GameOptions (ARE saved between sessions)
 	bool	m_bWindowed;

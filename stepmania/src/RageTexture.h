@@ -63,6 +63,7 @@ public:
 	virtual void Play() {};
 	virtual void SetPosition( float fSeconds ) {};
 	virtual void Pause() {};
+	virtual bool IsAMovie() = 0;
 
 	int GetSourceWidth()	{return m_iSourceWidth;};
 	int GetSourceHeight()	{return m_iSourceHeight;};
