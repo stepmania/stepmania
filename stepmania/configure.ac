@@ -55,7 +55,7 @@ fi
 SM_OPENGL
 
 AM_PATH_SDL(1.2.6,enable_sdl=yes,enable_sdl=no)
-AM_CONDITIONAL(NHAVE_SDL, test x$enable_sdl = xno )
+AM_CONDITIONAL(NHAVE_SDL, test "$enable_sdl" = "no" )
 
 # sdl-config puts -L/usr/lib in the library search path, which reorders things
 # in a way that breaks some configurations.
@@ -64,7 +64,7 @@ AM_CONDITIONAL(NHAVE_SDL, test x$enable_sdl = xno )
 # SDL_LIBS="`echo $SDL_LIBS | sed 's_-L/usr/lib/\?[[ $]]__'`"
 
 AC_SEARCH_LIBS(IMG_Load, [SDL_image], have_SDL_image=yes,  have_SDL_image=no)
-if test "x$have_SDL_image" = "xno"; then
+if test "$have_SDL_image" = "no"; then
   echo
   echo "*** SDL_image is required to build StepMania; please"
   echo "*** make sure that SDL_image is installed to continue"
@@ -75,7 +75,7 @@ fi
 have_libjpeg=yes
 AC_SEARCH_LIBS(jpeg_read_scanlines, [jpeg], ,  have_libjpeg=no)
 AC_CHECK_HEADER(jpeglib.h, , have_libjpeg=no)
-if test "x$have_SDL_image" = "xno"; then
+if test "$have_libjpeg" = "no"; then
   echo
   echo "*** libjpeg is required to build StepMania; please"
   echo "*** make sure that libjpeg is installed to continue"
