@@ -435,6 +435,11 @@ void Profile::SetDefaultModifiers( const Game* pGameType, const CString &sModifi
 		m_sDefaultModifiers[pGameType->m_szName] = sModifiers;
 }
 
+bool Profile::IsCodeUnlocked( int iCode ) const
+{
+	return m_UnlockedSongs.find( iCode ) != m_UnlockedSongs.end();
+}
+
 //
 // Steps high scores
 //
@@ -1694,6 +1699,7 @@ public:
 	static int GetCaloriesBurnedToday( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetCaloriesBurnedToday() ); return 1; }
 	static int GetSaved( T* p, lua_State *L )				{ p->m_SavedLuaData.PushSelf(L); return 1; }
 	static int GetTotalNumSongsPlayed( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetTotalNumSongsPlayed() ); return 1; }
+	static int IsCodeUnlocked( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsCodeUnlocked(IArg(1)) ); return 1; }
 	
 
 	static void Register(lua_State *L)
@@ -1709,6 +1715,7 @@ public:
 		ADD_METHOD( GetCaloriesBurnedToday )
 		ADD_METHOD( GetSaved )
 		ADD_METHOD( GetTotalNumSongsPlayed )
+		ADD_METHOD( IsCodeUnlocked )
 		Luna<T>::Register( L );
 	}
 };

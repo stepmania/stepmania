@@ -79,6 +79,7 @@ public:
 	int GetSongNumTimesPlayed( const SongID& songID ) const;
 	bool GetDefaultModifiers( const Game* pGameType, CString &sModifiersOut ) const;
 	void SetDefaultModifiers( const Game* pGameType, const CString &sModifiers );
+	bool IsCodeUnlocked( int iCode ) const;
 	
 	void AddStepTotals( int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumMines, int iNumHands, float fCaloriesBurned );
 
