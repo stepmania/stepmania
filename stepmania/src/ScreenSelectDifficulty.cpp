@@ -83,7 +83,6 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 
 	// Reset the current PlayMode
 	GAMESTATE->m_PlayMode = PLAY_MODE_INVALID;
-	GAMESTATE->m_bPlayersCanJoin = false;
 
 
 	int p;

@@ -257,6 +257,8 @@ void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 	else if( -1!=sCurStyleName.Find("solo") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment solo") );
 
 	m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
+	GAMESTATE->m_bPlayersCanJoin = false;
+	SCREENMAN->RefreshCreditsMessages();
 
 	m_soundSelect.PlayRandom();
 

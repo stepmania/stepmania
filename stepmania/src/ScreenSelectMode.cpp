@@ -54,6 +54,8 @@ Desc: Sets up the screen display
 ScreenSelectMode::ScreenSelectMode()
 {
 	LOG->Trace( "ScreenSelectMode::ScreenSelectMode()" );
+	GAMESTATE->m_bPlayersCanJoin = true;
+	SCREENMAN->RefreshCreditsMessages();
 
 	
 	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;	// the only mode you can select on this screen
@@ -340,6 +342,8 @@ void ScreenSelectMode::MenuStart( PlayerNumber pn )
 
 		TweenOffScreen();
 		m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );
+		GAMESTATE->m_bPlayersCanJoin = false;
+		SCREENMAN->RefreshCreditsMessages();
 	}
 }
 

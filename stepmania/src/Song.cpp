@@ -518,7 +518,7 @@ void Song::TidyUpData()
 		GetDirListing( m_sSongDir + CString("*.avi"), arrayPossibleMovies );
 		GetDirListing( m_sSongDir + CString("*.mpg"), arrayPossibleMovies );
 		GetDirListing( m_sSongDir + CString("*.mpeg"), arrayPossibleMovies );
-		if( arrayPossibleMovies.GetSize() > 0 )
+		if( arrayPossibleMovies.GetSize() == 1 )
 		{
 			CString sBGMovieFile = arrayPossibleMovies[0];
 			
