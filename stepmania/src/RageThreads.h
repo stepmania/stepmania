@@ -1,7 +1,7 @@
 #ifndef RAGE_THREADS_H
 #define RAGE_THREADS_H
 
-#include "SDL_Thread.h"
+#include "SDL_thread.h"
 
 /* Mutex class that follows the behavior of Windows mutexes: if the same
  * thread locks the same mutex twice, we just increase a refcount; a mutex

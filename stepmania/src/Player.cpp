@@ -11,7 +11,7 @@
 */
 
 #include "GameConstantsAndTypes.h"
-#include "Math.h" // for fabs()
+#include <math.h> // for fabs()
 #include "Player.h"
 #include "RageUtil.h"
 #include "PrefsManager.h"
