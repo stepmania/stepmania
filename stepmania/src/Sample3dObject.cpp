@@ -70,8 +70,8 @@ void Sample3dObject::DrawPrimitives()
 	GLfloat sphere_diffuse[] = { 0.7f, 0.0f, 0.7f, 1.0f };
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, sphere_diffuse);
 	GLUquadricObj *quadObj = gluNewQuadric();
-	gluQuadricDrawStyle(quadObj, GLU_FILL);
-	gluQuadricNormals(quadObj, GLU_SMOOTH);
+	gluQuadricDrawStyle(quadObj, GLenum(GLU_FILL));
+	gluQuadricNormals(quadObj, GLenum(GLU_SMOOTH));
 
 	glRotatef (rot, 0.0, 1.0, 0.0);
 
