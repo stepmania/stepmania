@@ -15,6 +15,7 @@
 #include "RageLog.h"
 #include "PlayerOptions.h"
 #include "song.h"
+#include "GameState.h"
 
 NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &n, int iMeasureIndex )
 {
@@ -527,17 +528,32 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 	case NoteDataUtil::shuffle:
 	case NoteDataUtil::super_shuffle:		// use shuffle code to mix up HoldNotes without creating impossible patterns
 		{
+			// TRICKY: Shuffle so that both player get the same shuffle mapping
+			// in the same round.
+			int iShuffleSeed = GAMESTATE->m_iRoundSeed;
+reshuffle:
+			RandomGen rnd( iShuffleSeed );
+
 			vector<int> aiTracksLeftToMap;
 			for( t=0; t<NumTracks; t++ )
 				aiTracksLeftToMap.push_back( t );
 			
+			bool bIsIdentity = true;
 			for( t=0; t<NumTracks; t++ )
 			{
-				int iRandTrackIndex = rand()%aiTracksLeftToMap.size();
+				int iRandTrackIndex = rnd( aiTracksLeftToMap.size() );
 				int iRandTrack = aiTracksLeftToMap[iRandTrackIndex];
 				aiTracksLeftToMap.erase( aiTracksLeftToMap.begin()+iRandTrackIndex,
 										 aiTracksLeftToMap.begin()+iRandTrackIndex+1 );
 				iTakeFromTrack[t] = iRandTrack;
+				if( iTakeFromTrack[t] != t )
+					bIsIdentity = false;
+			}
+
+			if( bIsIdentity )
+			{
+				iShuffleSeed++;
+				goto reshuffle;
 			}
 		}
 		break;
