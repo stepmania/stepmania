@@ -55,9 +55,7 @@ class RageSound_Generic_Software: public RageSoundDriver
 		RageTimer start_time;
 		float volume;
 		CircBuf<sound_block> buffer;
-		int64_t frames_read, frames_written;
 
-		int64_t frames_buffered() const { return frames_written - frames_read; }
 		/* If true, this sound is in STOPPED and available for use. */
 		bool available;
 

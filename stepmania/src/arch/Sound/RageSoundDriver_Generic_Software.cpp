@@ -24,12 +24,11 @@ RageSound_Generic_Software::sound::sound()
 
 void RageSound_Generic_Software::sound::Init()
 {
-	/* Reserve enough blocks in the buffer to hold the buffer; plus some extra, since blocks
-	 * are partially read by Mix(); plus some more extra, since we can buffer one block
-	 * over frames_to_buffer (we buffer until filled >= frames_to_buffer). */
+	/* Reserve enough blocks in the buffer to hold the buffer.  Add one, to account for
+	 * the fact that we may have a partial block due to a previous Mix() call. */
 	const int frames_per_block = samples_per_block / channels;
 	const int blocks_to_prebuffer = frames_to_buffer / frames_per_block;
-	buffer.reserve( blocks_to_prebuffer + 4 );
+	buffer.reserve( blocks_to_prebuffer + 1 );
 }
 
 int RageSound_Generic_Software::DecodeThread_start( void *p )
@@ -124,12 +123,9 @@ void RageSound_Generic_Software::Mix( int16_t *buf, int frames, int64_t frameno,
 			p[0]->p += frames_to_read*channels;
 			p[0]->frames_in_buffer -= frames_to_read;
 			p[0]->position += frames_to_read;
-//			int OldFramesRead = (int) s.frames_read;
 
-			s.frames_read += frames_to_read;
-
-//			LOG->Trace( "incr fr rd %i += %i = %i (%i left) (state %i) (%p)",
-//				OldFramesRead, (int) frames_to_read, (int) s.frames_read, (int) s.frames_buffered(), s.state, s.snd );
+//			LOG->Trace( "incr fr rd += %i (state %i) (%p)",
+//				(int) frames_to_read, s.state, s.snd );
 
 			got_frames += frames_to_read;
 			frames_left -= frames_to_read;
@@ -174,14 +170,14 @@ void RageSound_Generic_Software::DecodeThread()
 		while( 1 )
 		{
 			sound *pSound = NULL;
-			int64_t frames_buffered = 0;
+			int64_t num_writable = 0;
 			for( i = 0; i < ARRAYSIZE(sounds); ++i )
 			{
 				if( sounds[i].state != sound::PLAYING )
 					continue;
-				if( pSound == NULL || sounds[i].frames_buffered() < frames_buffered )
+				if( pSound == NULL || sounds[i].buffer.num_writable() > num_writable )
 				{
-					frames_buffered = sounds[i].frames_buffered();
+					num_writable = sounds[i].buffer.num_writable();
 					pSound = &sounds[i];
 				}
 			}
@@ -189,7 +185,7 @@ void RageSound_Generic_Software::DecodeThread()
 			if( pSound == NULL )
 				break;
 
-			if( frames_buffered >= frames_to_buffer )
+			if( !num_writable )
 				break;
 
 			CHECKPOINT;
@@ -197,7 +193,7 @@ void RageSound_Generic_Software::DecodeThread()
 			{
 				/* This sound is finishing. */
 				pSound->state = sound::STOPPING;
-//				LOG->Trace("mixer: (#%i) eof (%i buffered) (%p)", i, (int) pSound->frames_buffered(), pSound->snd );
+//				LOG->Trace("mixer: (#%i) eof (%p)", i, pSound->snd );
 			}
 		}
 //		LOG->Trace("end mix");
@@ -213,7 +209,7 @@ bool RageSound_Generic_Software::GetDataForSound( sound &s )
 	s.buffer.get_write_pointers( p, psize );
 
 	/* If we have no open buffer slot, we have a buffer overflow. */
-	ASSERT_M( psize[0] > 0, ssprintf("%i", (int)s.frames_buffered()) );
+	ASSERT( psize[0] > 0 );
 
 	sound_block *b = p[0];
 	bool eof = !s.snd->GetDataToPlay( b->buf, ARRAYSIZE(b->buf)/channels, b->position, b->frames_in_buffer );
@@ -221,12 +217,8 @@ bool RageSound_Generic_Software::GetDataForSound( sound &s )
 
 	s.buffer.advance_write_pointer( 1 );
 
-//	int OldFramesWritten = (int) s.frames_written;
-
-	s.frames_written += b->frames_in_buffer;
-
-//	LOG->Trace( "incr fr wr %i += %i = %i (%i left) (state %i) (%p)",
-//		OldFramesWritten, (int) b->frames_in_buffer, (int) s.frames_written, (int) s.frames_buffered(), s.state, s.snd );
+//	LOG->Trace( "incr fr wr %i (state %i) (%p)",
+//		(int) b->frames_in_buffer, s.state, s.snd );
 
 	return !eof;
 }
@@ -299,7 +291,6 @@ void RageSound_Generic_Software::StartMixing( RageSoundBase *snd )
 
 	s.snd = snd;
 	s.start_time = snd->GetStartTime();
-	s.frames_read = s.frames_written = 0;
 	s.sound_id = snd->GetID();
 	s.volume = snd->GetVolume();
 	s.buffer.clear();
@@ -308,9 +299,11 @@ void RageSound_Generic_Software::StartMixing( RageSoundBase *snd )
 
 	/* Prebuffer some frames before changing the sound to PLAYING. */
 	bool ReachedEOF = false;
-	while( !ReachedEOF && s.frames_buffered() < frames_to_buffer )
+				if( !sounds[i].buffer.num_writable() )
+
+	while( !ReachedEOF && s.buffer.num_writable() )
 	{
-//		LOG->Trace("StartMixing: (#%i) buffered %i of %i (%i writable) (%p)", i, (int) s.frames_buffered(), (int) frames_to_buffer, s.buffer.num_writable(), s.snd );
+//		LOG->Trace("StartMixing: (#%i) buffering %i (%i writable) (%p)", i, (int) frames_to_buffer, s.buffer.num_writable(), s.snd );
 		if( !GetDataForSound( s ) )
 		{
 //		LOG->Trace("StartMixing: XXX hit EOF (%p)", s.snd );
