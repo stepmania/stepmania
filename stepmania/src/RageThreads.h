@@ -3,9 +3,10 @@
 
 struct SDL_Thread;
 
+struct ThreadSlot;
 class RageThread
 {
-	SDL_Thread *thr;
+	ThreadSlot *m_pSlot;
 	CString name;
 
 public:
@@ -22,12 +23,12 @@ public:
 	/* If HaltAllThreads was called (with Kill==false), resume. */
 	static void ResumeAllThreads();
 
-	static unsigned int GetCurrentThreadID();
+	static uint64_t GetCurrentThreadID();
 
 	static const char *GetCurThreadName();
-	static const char *GetThreadNameByID( unsigned int iID );
+	static const char *GetThreadNameByID( uint64_t iID );
 	int Wait();
-	bool IsCreated() const { return thr != NULL; }
+	bool IsCreated() const { return m_pSlot != NULL; }
 };
 
 namespace Checkpoints
@@ -45,16 +46,17 @@ namespace Checkpoints
  * is considered unlocked when the refcount reaches zero.  This is more
  * convenient, though much slower on some archs.  (We don't have any tightly-
  * coupled threads, so that's OK.) */
-struct RageMutexImpl;
+class MutexImpl;
 class RageMutex
 {
-	friend struct RageMutexImpl;
-
-	RageMutexImpl *mut;
+	MutexImpl *m_pMutex;
 	CString m_sName;
 
 	int m_UniqueID;
 	
+	uint64_t m_LockedBy;
+	int m_LockCnt;
+
 	void MarkLockedMutex();
 
 public:
