@@ -56,7 +56,7 @@ PrefsManager::PrefsManager()
 	m_bHowToPlay = true;
 	m_bArcadeOptionsNavigation = false;
 	m_iUnloadTextureDelaySeconds = 60*30;	// 30 mins
-	m_bCoinOpMode = true;
+	m_bCoinOpMode = false;
 
 	/* I'd rather get occasional people asking for support for this even though it's
 	 * already here than lots of people asking why songs aren't being displayed. */
