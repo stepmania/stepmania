@@ -1,5 +1,4 @@
 #include "global.h"
-#include "RageLog.h"
 #include "RageSoundDriver_CA.h"
 #include "CAHelpers.h"
 
@@ -16,7 +15,6 @@ AudioConverter::AudioConverter(CAAudioHardwareDevice *dev, RageSound_CA *driver)
     vector<Desc> physicalFormats;
     UInt32 numFormats = stream.GetNumberAvailableIOProcFormats();
     
-    LOG->Trace("%u IOProc formats.", unsigned(numFormats));
     for (UInt32 i=0; i<numFormats; ++i)
     {
         Desc desc;
@@ -29,7 +27,6 @@ AudioConverter::AudioConverter(CAAudioHardwareDevice *dev, RageSound_CA *driver)
     stream.SetCurrentIOProcFormat(procFormat);
     
     numFormats = stream.GetNumberAvailablePhysicalFormats();
-    LOG->Trace("%u physical formats.", unsigned(numFormats));
     for (UInt32 i=0; i<numFormats; ++i)
     {
         Desc desc;
@@ -45,7 +42,6 @@ AudioConverter::AudioConverter(CAAudioHardwareDevice *dev, RageSound_CA *driver)
                         kFramesPerPacket, kBytesPerFrame, kChannelsPerFrame,
                         kBitsPerChannel, kFormatFlags);
     
-    LOG->Trace("Initializing converter.");
     SMFormat.Print();
     procFormat.Print();
     if (this->Initialize(SMFormat, procFormat))
@@ -75,7 +71,6 @@ OSStatus AudioConverter::FormatConverterInputProc(UInt32& ioNumberDataPackets,
 
 Desc AudioConverter::FindClosestFormat(const vector<Desc>& formats)
 {
-    LOG->Trace("FindClosestFormat");
     vector<Desc> v;
     
     vector<Desc>::const_iterator i;
@@ -90,23 +85,19 @@ Desc AudioConverter::FindClosestFormat(const vector<Desc>& formats)
             (format.mFormatFlags & kAudioFormatFlagIsSignedInteger) ==
             kAudioFormatFlagIsSignedInteger)
         { // exact match
-            LOG->Trace("Exact match.");
             return format;
         }
         v.push_back(format);
     }
     
-    LOG->Trace("Failed exact match.");
     for (i = v.begin(); i != v.end(); ++i)
     {
         const Desc& format = *i;
         if (format.SampleWordSize() == 2)
         {
-            LOG->Trace("Close match.");
             return format; // close
         }
     }
-    LOG->Trace("Failed close match.");
     if (v.empty())
         RageException::ThrowNonfatal("Couldn't find a close format.");
     return v[0]; // something is better than nothing.

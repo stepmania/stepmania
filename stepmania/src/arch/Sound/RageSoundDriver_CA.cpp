@@ -1,6 +1,4 @@
 #include "global.h"
-#include "RageLog.h"
-#include "RageSoundManager.h"
 #include "RageSoundDriver_CA.h"
 #include "CAHelpers.h"
 
@@ -68,13 +66,8 @@ int64_t RageSound_CA::GetPosition(const RageSoundBase *sound) const
 
 void RageSound_CA::FillConverter(void *data, UInt32 dataByteSize)
 {
-    LOG->Trace("FillConverter called for %u bytes.", unsigned(dataByteSize));
     int frames = dataByteSize / gConverter->GetInputFormat().mBytesPerPacket;
-    LOG->Trace("Mix being called for %d frames.", frames);
-    LOG->Flush();
     this->Mix((int16_t *)data, frames, mDecodePos, GetPosition(NULL));
-    LOG->Trace("Mixed the data.");
-    LOG->Flush();
 }
 
 OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
@@ -89,7 +82,6 @@ OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
     UInt32 dataPackets = outOutputData->mBuffers[0].mDataByteSize;
     
     dataPackets /= gConverter->GetOutputFormat().mBytesPerPacket;
-    LOG->Trace("Calling FillComplexBuffer for %i packets.", int(dataPackets));
     
     This->mDecodePos = int64_t(inOutputTime->mSampleTime);
     gConverter->FillComplexBuffer(dataPackets, *outOutputData, NULL);
