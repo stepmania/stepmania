@@ -3,6 +3,10 @@
 
 #include "Threads.h"
 
+#if defined(LINUX)
+#define PID_BASED_THREADS
+#endif
+
 class ThreadImpl_Pthreads: public ThreadImpl
 {
 public:

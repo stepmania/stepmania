@@ -1,9 +1,9 @@
 #include "global.h"
 #include "Threads_Pthreads.h"
 #include <sys/time.h>
+#include <errno.h>
 
 #if defined(LINUX)
-#define PID_BASED_THREADS
 #include "archutils/Unix/LinuxThreadHelpers.h"
 #endif
 
@@ -63,7 +63,7 @@ int ThreadImpl_Pthreads::Wait()
 	return (int) val;
 }
 
-static ThreadImpl *MakeThisThread()
+ThreadImpl *MakeThisThread()
 {
 	ThreadImpl_Pthreads *thread = new ThreadImpl_Pthreads;
 
@@ -97,7 +97,7 @@ static void *StartThread( void *pData )
 
 ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData )
 {
-	ThreadImpl_Win32 *thread = new ThreadImpl_Pthreads;
+	ThreadImpl_Pthreads *thread = new ThreadImpl_Pthreads;
 	thread->m_pFunc = pFunc;
 	thread->m_pData = pData;
 
@@ -128,7 +128,7 @@ MutexImpl_Pthreads::~MutexImpl_Pthreads()
 
 bool MutexImpl_Pthreads::Lock()
 {
-	if( LockedBy == GetCurrentThreadId() )
+	if( LockedBy == (uint64_t) GetCurrentThreadId() )
 	{
 		++LockCnt;
 		return true;
