@@ -39,17 +39,19 @@ bool MsdFile::ReadFile( CString sNewPath )
 	int iBufferSize = GetFileSize( hFile, NULL ) + 1000; // +1000 just in case
 	CloseHandle( hFile );
 
-	// allocate a string to hold the file
-	char* szFileString = new char[iBufferSize];
-	char* szParams[MAX_VALUES][MAX_PARAMS_PER_VALUE];
-
 	FILE* fp = fopen(sNewPath, "r");
 	if( fp == NULL )
 		return false;
 
+	// allocate a string to hold the file
+	char* szFileString = new char[iBufferSize];
+	char* szParams[MAX_VALUES][MAX_PARAMS_PER_VALUE];
+
 	int iBytesRead = fread( szFileString, 1, iBufferSize, fp );
 
 	ASSERT( iBufferSize > iBytesRead );		// why are these not always =?
+	/* because iBufferSize is the filesize+1000.  why are we using Windows
+	 * API calls for simple file access, anyway? XXX -glenn */
 
 	m_iNumValues = 0;
 
