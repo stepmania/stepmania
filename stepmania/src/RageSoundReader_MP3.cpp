@@ -821,12 +821,9 @@ int RageSoundReader_MP3::Read( char *buf, unsigned len )
 
 bool RageSoundReader_MP3::MADLIB_rewind()
 {
-	if( fseek(this->rw, 0, SEEK_SET) == -1 )
-	{
-		SetError( strerror(errno) );
-		return 0;
-	}
-
+	int ret = fseek(this->rw, 0, SEEK_SET);
+	ASSERT( ret == 0 );
+			
 	mad_frame_mute(&mad->Frame);
 	mad_synth_mute(&mad->Synth);
 	mad_timer_reset(&mad->Timer);
@@ -862,8 +859,7 @@ bool RageSoundReader_MP3::MADLIB_rewind()
  * "precise" mode.
  */
 
-/* Returns 1 on success, 0 on error, -1 if we couldn't it (don't have
- * a Xing tag or a length). */
+/* Returns actual position on success, 0 if past EOF, -1 on error. */
 int RageSoundReader_MP3::SetPosition_toc( int ms, bool Xing )
 {
     int percent;
@@ -1028,11 +1024,19 @@ int RageSoundReader_MP3::SetPosition_estimate( int ms )
 int RageSoundReader_MP3::SetPosition_Accurate( int ms )
 {
 	/* Seek using our own internal (accurate) TOC. */
-	if( SetPosition_toc( ms, false ) == -1 )
-		return -1; /* error */
-
+	int ret = SetPosition_toc( ms, false );
+	if( ret <= 0 )
+	{
+		MADLIB_rewind();
+		return ret; /* it set the error */
+	}
+	
 	/* Align exactly. */
-	return SetPosition_hard( ms );
+	ret = SetPosition_hard( ms );
+	if( ret <= 0 )
+		MADLIB_rewind();
+
+	return ret;
 }
 
 int RageSoundReader_MP3::SetPosition_Fast( int ms )
@@ -1040,18 +1044,25 @@ int RageSoundReader_MP3::SetPosition_Fast( int ms )
 	/* Rewinding is always fast and accurate, and SetPosition_estimate is bad at 0. */
 	if( !ms )
 	{
-		if( !MADLIB_rewind() )
-			return -1; /* error */
-		return 0; /* error */
+		MADLIB_rewind();
+		return 0; /* ok */
 	}
 
 	/* We can do a fast jump in VBR with Xing with more accuracy than without Xing. */
 	if( mad->has_xing )
-		return SetPosition_toc( ms, true );
+	{
+		int ret = SetPosition_toc( ms, true );
+		if( ret <= 0 )
+			MADLIB_rewind();
+		return ret;
+	}
 
 	/* Guess.  This is only remotely accurate when we're not VBR, but also
 	 * do it if we have no Xing tag. */
-	return SetPosition_estimate( ms );
+	int ret = SetPosition_estimate( ms );
+	if( ret <= 0 )
+		MADLIB_rewind();
+	return ret;
 }
 
 int RageSoundReader_MP3::GetLengthInternal( bool fast )
