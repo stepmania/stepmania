@@ -55,7 +55,7 @@ void GhostArrowRow::Load( PlayerNumber pn, CString NoteSkin, float fYReverseOffs
 		m_GhostDim[c].Load( NoteSkin, Button, "tap explosion dim", false);
 		m_GhostBright[c].Load( NoteSkin, Button, "tap explosion bright", false );
 		m_GhostMine[c].Load( NoteSkin, Button, "tap explosion mine", true );
-		m_HoldGhost[c].Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin, Button, "hold explosion") );
+		m_HoldGhost[c].Load( NoteSkin, Button, "hold explosion" );
 	}
 }
 
@@ -115,10 +115,10 @@ void GhostArrowRow::DidTapNote( int iCol, TapNoteScore score, bool bBright )
 		m_GhostDim[iCol].Step( score );
 }
 
-void GhostArrowRow::DidHoldNote( int iCol )
+void GhostArrowRow::SetHoldIsActive( int iCol )
 {
 	ASSERT( iCol >= 0  &&  iCol < m_iNumCols );
-	m_HoldGhost[iCol].Step();
+	m_HoldGhost[iCol].SetHoldIsActive( true );
 }
 
 void GhostArrowRow::DidTapMine( int iCol, TapNoteScore score )

@@ -31,7 +31,7 @@ public:
 	
 	void DidTapNote( int iCol, TapNoteScore score, bool bBright );
 	void DidTapMine( int iCol, TapNoteScore score );
-	void DidHoldNote( int iCol );
+	void SetHoldIsActive( int iCol );
 	
 protected:
 	int m_iNumCols;

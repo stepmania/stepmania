@@ -26,18 +26,18 @@ GhostArrow::GhostArrow()
 	}
 }
 
-void GhostArrow::Load( CString sNoteSkin, CString sButton, CString sFile, bool bLoadJustOne )
+void GhostArrow::Load( CString sNoteSkin, CString sButton, CString sElement, bool bLoadJustOne )
 {
 	for( int i=0; i<NUM_TAP_NOTE_SCORES; i++ )
 	{
 		CString sJudge = TapNoteScoreToString( (TapNoteScore)i );
 		
-		CString sFullFile = bLoadJustOne ? sFile : sFile  + " " + sJudge;
+		CString sFullElement = bLoadJustOne ? sElement : sElement  + " " + sJudge;
 
 		// HACK: for backward noteskin compatibility
-		CString sPath = NOTESKIN->GetPathToFromNoteSkinAndButton(sNoteSkin, sButton, sFullFile, true);	// optional
+		CString sPath = NOTESKIN->GetPathToFromNoteSkinAndButton(sNoteSkin, sButton, sFullElement, true);	// optional
 		if( sPath.empty() )
-			sPath = NOTESKIN->GetPathToFromNoteSkinAndButton(sNoteSkin, sButton, sFile);	// not optional
+			sPath = NOTESKIN->GetPathToFromNoteSkinAndButton(sNoteSkin, sButton, sElement);	// not optional
 		m_spr[i].Load( sPath );
 	}
 }
