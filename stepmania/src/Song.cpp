@@ -374,6 +374,10 @@ bool Song::LoadFromSongDir( CString sDir )
 			return false;
 	}
 
+	/* Load the cached banner, if it's not loaded already. */
+	if( HasBanner() )
+		BANNERCACHE->LoadBanner( GetBannerPath() );
+
 	{
 		/* Generated filename; this doesn't always point to a loadable file,
 		 * but instead points to the file we should write changed files to,
@@ -687,7 +691,7 @@ void Song::TidyUpData()
 	}
 
 	if( HasBanner() )
-		BANNERCACHE->CacheSongBanner( GetBannerPath() );
+		BANNERCACHE->CacheBanner( GetBannerPath() );
 
 
 	// If no BGChanges are specified and there are movies in the song directory, then assume

@@ -99,7 +99,7 @@ bool FadingBanner::LoadFromCachedBanner( const CString &path )
 	}
 
 	/* It's not loaded.  Try to load the low quality version. */
-	RageTextureID ID = BANNERCACHE->LoadCachedSongBanner( path );
+	RageTextureID ID = BANNERCACHE->LoadCachedBanner( path );
 	if( !TEXTUREMAN->IsTextureRegistered(ID) )
 		return false;
 

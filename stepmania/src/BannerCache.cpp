@@ -12,28 +12,24 @@
 
 #include "Banner.h"
 
-/* Call CacheSongBanner to cache a song banner by path.  (Actually, this could be
- * a course banner, too.)  Currently, this will waste time if the banner is already
- * cached, but since we only do this during the initial cache phase of song loads
- * this is OK for now.
+/* Call CacheBanner to cache a banner by path.  If the banner is already
+ * cached, it'll be recreated.  This is efficient if the banner hasn't changed,
+ * but we still only do this in TidyUpData for songs.
  *
- * Call LoadAllBanners to load all precached song banners.
+ * Call LoadBanner to load a cached banner into main memory.  This will call
+ * CacheBanner only if needed.  This will not do a date/size check; call CacheBanner
+ * directly if you need that.
  *
- * Call LoadCachedSongBanner to load a banner into a texture and retrieve an ID
+ * Call LoadCachedBanner to load a banner into a texture and retrieve an ID
  * for it.  You can check if the banner was actually preloaded by calling
  * TEXTUREMAN->IsTextureRegistered() on the ID; it might not be if the banner cache
  * is missing or disabled.
- */
-
-/* TODO: A way to purge banners.  Right now, if you move songs around, their
- * banners will be re-cached with their new hash, but the old cache will never
- * be removed and will still be loaded.  I don't want loading to be dependent on
- * songs, since I want to be able to put banners into an archive easily later.
- * Instead, purge banners later, after we load songs.  We can do this fast, since
- * the banner hash is based only on the banner filename.
  *
- * We don't need to embed the banner modification time into the hash: it's already
- * in the main song cache, so if it changes, the whole song will be re-cached. */
+ * Note that each cache entries has two hashes.  The cache path is based soley
+ * on the pathname; this way, loading the cache doesn't have to do a stat on every
+ * banner.  The full hash includes the file size and date, and is used only by
+ * CacheBanner to avoid doing extra work.
+ */
 
 BannerCache *BANNERCACHE;
 
@@ -42,38 +38,49 @@ static map<CString,SDL_Surface *> m_BannerPathToImage;
 
 CString BannerCache::GetBannerCachePath( CString BannerPath )
 {
-	return ssprintf( "Cache/Banners/%u", GetHashForFile(BannerPath) );
+	/* Use GetHashForString, not ForFile, since we don't want to spend time
+	 * checking the file size and date. */
+	return ssprintf( "Cache/Banners/%u", GetHashForString(BannerPath) );
 }
 
-/* Load all banners that havn't been loaded already. */
-void BannerCache::LoadAllBanners()
+void BannerCache::LoadBanner( CString BannerPath )
 {
 	if( !PREFSMAN->m_bBannerCache )
 		return;
 
-	/* Load all banners. */
-	IniFile::const_iterator it = BannerData.begin();
-	for( ; it != BannerData.end(); ++it )
+	/* Load it. */
+	const CString CachePath = GetBannerCachePath(BannerPath);
+
+	for( int tries = 0; tries < 2; ++tries )
 	{
-		const CString &BannerPath = it->first;
 		if( m_BannerPathToImage.find(BannerPath) != m_BannerPathToImage.end() )
-			continue; /* already loaded */
+			return; /* already loaded */
 
-		const CString CachePath = GetBannerCachePath(BannerPath);
-
-		/* Load it. */
-		Checkpoint( ssprintf( "BannerCache::LoadAllBanners: %s", CachePath.c_str() ) );
+		Checkpoint( ssprintf( "BannerCache::LoadBanner: %s", CachePath.c_str() ) );
 		SDL_Surface *img = mySDL_LoadSurface( CachePath );
 		if( img == NULL )
 		{
-			LOG->Trace( "Cached banner load of '%s' ('%s') failed", BannerPath.c_str(), CachePath.c_str() );
-			continue;
+			if(tries == 0)
+			{
+				/* The file doesn't exist.  It's possible that the banner cache file is
+				 * missing, so try to create it.  Don't do this first, for efficiency. */
+				LOG->Trace( "Cached banner load of '%s' ('%s') failed, trying to cache ...", BannerPath.c_str(), CachePath.c_str() );
+				CacheBanner( BannerPath );
+				continue;
+			}
+			else
+			{
+				LOG->Trace( "Cached banner load of '%s' ('%s') failed", BannerPath.c_str(), CachePath.c_str() );
+				return;
+			}
 		}
 
 		m_BannerPathToImage[BannerPath] = img;
 	}
+}
 
-	
+void BannerCache::OutputStats() const
+{
 	map<CString,SDL_Surface *>::const_iterator ban;
 	int total_size = 0;
 	for( ban = m_BannerPathToImage.begin(); ban != m_BannerPathToImage.end(); ++ban )
@@ -99,8 +106,6 @@ BannerCache::BannerCache()
 	CreateDirectories("Cache/Banners/");
 	BannerData.SetPath( "Cache/banners.cache" );
 	BannerData.ReadFile();	// don't care if this fails
-	
-	LoadAllBanners();
 }
 
 BannerCache::~BannerCache()
@@ -194,13 +199,12 @@ struct BannerTexture: public RageTexture
 	}
 };
 
-RageTextureID BannerCache::LoadCachedSongBanner( CString BannerPath )
+RageTextureID BannerCache::LoadCachedBanner( CString BannerPath )
 {
-	/* XXX: unload first */
-
 	RageTextureID ID( GetBannerCachePath(BannerPath) );
 
-	LOG->Trace("BannerCache::LoadCachedSongBanner(%s): %s", BannerPath.c_str(), ID.filename.c_str() );
+	LOG->Trace("BannerCache::LoadCachedBanner(%s): %s", BannerPath.c_str(), ID.filename.c_str() );
+
 	/* Hack: make sure Banner::Load doesn't change our return value and end up
 	 * reloading. */
 	ID = Banner::BannerTex(ID);
@@ -256,7 +260,8 @@ static inline int closest( int num, int n1, int n2 )
 }
 
 /* Erase the cache for a path. UNTESTED */
-void BannerCache::UncacheSongBanner( CString BannerPath )
+#if 0
+void BannerCache::UncacheBanner( CString BannerPath )
 {
 	const CString CachePath = GetBannerCachePath( BannerPath );
 
@@ -271,18 +276,28 @@ void BannerCache::UncacheSongBanner( CString BannerPath )
 	/* Remove the image from the INI. */
 	BannerData.DeleteKey( BannerPath );
 	BannerData.WriteFile();
-
-	/* Erase the cache file. */
-	remove( CachePath.c_str() );
 }
+#endif
 
 /* We write the cache even if we won't use it, so we don't have to recache everything
  * if the memory or settings change. */
-void BannerCache::CacheSongBanner( CString BannerPath )
+void BannerCache::CacheBanner( CString BannerPath )
 {
+	const CString CachePath = GetBannerCachePath(BannerPath);
+
+	/* Check the full file hash.  If it's the same, don't recache. */
+	const unsigned FullHash = GetHashForFile( BannerPath );
+	if( DoesFileExist(CachePath) )
+	{
+		unsigned CurFullHash;
+		if( BannerData.GetValueU( BannerPath, "FullHash", CurFullHash ) &&
+			CurFullHash == FullHash )
+			return;
+	}
+
 	SDL_Surface *img = IMG_Load( BannerPath );
 	if(img == NULL)
-		RageException::Throw( "BannerCache::CacheSongBanner: Couldn't load %s: %s", BannerPath.c_str(), SDL_GetError() );
+		RageException::Throw( "BannerCache::CacheBanner: Couldn't load %s: %s", BannerPath.c_str(), SDL_GetError() );
 
 	bool WasRotatedBanner = false;
 
@@ -371,12 +386,21 @@ void BannerCache::CacheSongBanner( CString BannerPath )
 		img = dst;
 	}
 
-	CString CachePath = GetBannerCachePath(BannerPath);
-
 	mySDL_SaveSurface( img, CachePath );
 
 	if( PREFSMAN->m_bBannerCache )
+	{
+		/* If an old image is loaded, free it. */
+		if( m_BannerPathToImage.find(BannerPath) != m_BannerPathToImage.end() )
+		{
+			SDL_Surface *img = m_BannerPathToImage[BannerPath];
+			SDL_FreeSurface( img );
+			m_BannerPathToImage.erase(BannerPath);
+		}
+
+		/* Keep it; we're just going to load it anyway. */
 		m_BannerPathToImage[BannerPath] = img;
+	}
 	else
 		SDL_FreeSurface(img);
 
@@ -384,6 +408,7 @@ void BannerCache::CacheSongBanner( CString BannerPath )
 	BannerData.SetValue ( BannerPath, "Path", CachePath );
 	BannerData.SetValueI( BannerPath, "Width", src_width );
 	BannerData.SetValueI( BannerPath, "Height", src_height );
+	BannerData.SetValueU( BannerPath, "FullHash", FullHash );
 	/* Remember this, so we can hint CroppedSprite. */
 	BannerData.SetValueB( BannerPath, "Rotated", WasRotatedBanner );
 	BannerData.WriteFile();
