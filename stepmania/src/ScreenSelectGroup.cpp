@@ -70,16 +70,13 @@ ScreenSelectGroup::ScreenSelectGroup()
 	aAllSongs.Copy( SONGMAN->m_pSongs );
 
 	// Filter out Songs that can't be played by the current Style
+	for( i=aAllSongs.GetSize()-1; i>=0; i-- )		// foreach Song, back to front
 	{
-		NotesType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
-		for( i=aAllSongs.GetSize()-1; i>=0; i-- )		// foreach Song, back to front
-		{
-			if( aAllSongs[i]->SongHasNotesType(nt) && 
-				aAllSongs[i]->NormallyDisplayed() )
-				continue;
+		if( aAllSongs[i]->SongCompleteForStyle(GAMESTATE->GetCurrentStyleDef()) && 
+			aAllSongs[i]->NormallyDisplayed() )
+			continue;
 
-			aAllSongs.RemoveAt( i );
-		}
+		aAllSongs.RemoveAt( i );
 	}
 
 	// Get group names by thowing them into a hash

@@ -41,15 +41,25 @@ public:
 	
 	/* The name of the style.  (This is currently unused.) */
 	char		m_szName[60];
-	NotesType	m_NotesType;		// the notes format that this style reads.  
-									// For example, the "dance versus" reads the Notes with the tag "dance-single".
+	
+	/* m_NotesTypes[] defines the notes format used for each player.  For
+	 * example, the "dance versus" reads the Notes with the tag "dance-single".
+	 * For most modes, this will be the same for all styles; it's different
+	 * for each player in couples. */
+	NotesType	m_NotesTypes[NUM_PLAYERS];
+									
+	/* This type is used as a fallback; if, for any player, m_StyleType[p] isn't
+	* available, this type will be used.  Use NOTES_TYPE_INVALID for no fallback. */
+	NotesType	m_FallbackNotesType;
 	enum StyleType
 	{
 		ONE_PLAYER_ONE_CREDIT,	// e.g. single
 		TWO_PLAYERS_TWO_CREDITS,	// e.g. versus
 		ONE_PLAYER_TWO_CREDITS,	// e.g. double
 	};
-	StyleType	m_StyleType;		// Defines how many players are allowed to play this Style.
+
+	
+	StyleType	m_StyleType;
 	int			m_iCenterX[NUM_PLAYERS];	// center of the player
 	int			m_iColsPerPlayer;	// number of total tracks this style expects (e.g. 4 for versus, but 8 for double)
 	struct ColumnInfo 
@@ -68,5 +78,7 @@ public:
 	PlayerNumber ControllerToPlayerNumber( GameController controller ) const;
 
 	void GetTransformedNoteDataForStyle( PlayerNumber pn, NoteData* pOriginal, NoteData* pNoteDataOut ) const;
+
+	bool MatchesNotesType( NotesType type, int pn ) const;
 };
 

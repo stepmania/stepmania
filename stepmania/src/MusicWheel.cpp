@@ -184,10 +184,11 @@ void WheelItemDisplay::RefreshGrades()
 			continue;
 		}
 
+		/* XXX: Don't really want separate grades for each player in couples. */
 		if( m_pSong )	// this is a song display
 		{
 			const DifficultyClass dc = GAMESTATE->m_PreferredDifficultyClass[p];
-			const Grade grade = m_pSong->GetGradeForDifficultyClass( GAMESTATE->GetCurrentStyleDef()->m_NotesType, dc );
+			const Grade grade = m_pSong->GetGradeForDifficultyClass( GAMESTATE->GetCurrentStyleDef(), p, dc );
 			m_GradeDisplay[p].SetGrade( (PlayerNumber)p, grade );
 			//m_GradeDisplay[p].SetDiffuse( PlayerToColor((PlayerNumber)p) );
 		}
@@ -330,7 +331,7 @@ MusicWheel::MusicWheel()
 		SONGMAN->GetExtraStageInfo(
 			GAMESTATE->IsExtraStage2(),
 			GAMESTATE->m_sPreferredGroup,
-			GAMESTATE->GetCurrentStyleDef()->m_NotesType,
+			GAMESTATE->GetCurrentStyleDef(),
 			pSong,
 			pNotes,
 			po,
@@ -344,6 +345,7 @@ MusicWheel::MusicWheel()
 				GAMESTATE->m_PlayerOptions[p] = po;
 			}
 		}
+		/* XXX: Set up couples correctly */
 		GAMESTATE->m_SongOptions = so;
 	}
 
@@ -443,7 +445,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 				}
 
 				CArray<Notes*, Notes*> arraySteps;
-				pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, arraySteps );
+				pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef(), 0, arraySteps );
 
 				if( arraySteps.GetSize() > 0 )
 					arraySongs.Add( pSong );
@@ -577,7 +579,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 			continue;
 
 		WheelItemData& WID = arrayWheelItemDatas[i];
-		bool bIsEasy = pSong->IsEasy( GAMESTATE->GetCurrentStyleDef()->m_NotesType ); 
+		bool bIsEasy = pSong->IsEasy( GAMESTATE->GetCurrentStyleDef()->m_NotesTypes[0] ); 
 		WID.m_IconType = bIsEasy ? MusicStatusDisplay::easy : MusicStatusDisplay::none;
 	}
 

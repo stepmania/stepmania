@@ -1232,12 +1232,23 @@ void Song::TidyUpData()
 	}
 }
 
-
-void Song::GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo ) const
+/* Get Notes that match a given style and player. */
+void Song::GetNotesThatMatch( const StyleDef *s, int p, CArray<Notes*, Notes*>& arrayAddTo ) const
 {
 	for( int i=0; i<m_apNotes.GetSize(); i++ )	// for each of the Song's Notes
-		if( m_apNotes[i]->m_NotesType == nt )
+		if( m_apNotes[i]->m_NotesType == s->m_NotesTypes[p] )
 			arrayAddTo.Add( m_apNotes[i] );
+}
+
+/* Return whether the song is playable in the given style. */
+bool Song::SongCompleteForStyle( const StyleDef *st ) const
+{
+	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
+	{
+		if(st->m_NotesTypes[pn] == NOTES_TYPE_INVALID) continue; /* unused */
+		if(!SongHasNotesType(st->m_NotesTypes[pn])) return false;
+	}
+	return true;
 }
 
 bool Song::SongHasNotesType( NotesType nt ) const
@@ -1464,10 +1475,10 @@ void Song::AddAutoGenNotes()
 	}
 }
 
-Grade Song::GetGradeForDifficultyClass( NotesType nt, DifficultyClass dc ) const
+Grade Song::GetGradeForDifficultyClass( const StyleDef *st, int p, DifficultyClass dc ) const
 {
 	CArray<Notes*, Notes*> aNotes;
-	this->GetNotesThatMatch( nt, aNotes );
+	this->GetNotesThatMatch( st, p, aNotes );
 	SortNotesArrayByDifficulty( aNotes );
 
 	for( int i=0; i<aNotes.GetSize(); i++ )

@@ -298,8 +298,9 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_DANCE,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"Single",								// m_szName
-		NOTES_TYPE_DANCE_SINGLE,				// m_NotesType
+		"DDR Single",								// m_szName
+		{ NOTES_TYPE_DANCE_SINGLE,NOTES_TYPE_DANCE_SINGLE },	// m_NotesTypes
+		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		4,										// m_iColsPerPlayer
@@ -325,8 +326,9 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_DANCE,								// m_Game
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
-		"Versus",								// m_szName
-		NOTES_TYPE_DANCE_SINGLE,				// m_NotesType
+		"DDR Versus",							// m_szName
+		{ NOTES_TYPE_DANCE_SINGLE,NOTES_TYPE_DANCE_SINGLE }, // m_NotesTypes
+		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		4,										// m_iColsPerPlayer
@@ -352,8 +354,9 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_DANCE,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"Double",								// m_szName
-		NOTES_TYPE_DANCE_DOUBLE,				// m_NotesType
+		"DDR Double",							// m_szName
+		{ NOTES_TYPE_DANCE_DOUBLE,NOTES_TYPE_DANCE_DOUBLE },	// m_NotesTypes
+		NOTES_TYPE_INVALID,
 		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		8,										// m_iColsPerPlayer
@@ -387,8 +390,9 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_DANCE,							// m_Game
 		true,								// m_bUsedForGameplay
 		false,								// m_bUsedForEdit
-		"Couple",							// m_szName
-		NOTES_TYPE_DANCE_COUPLE,			// m_NotesType
+		"DDR Couple",						// m_szName
+		{ NOTES_TYPE_DANCE_COUPLE, NOTES_TYPE_DANCE_COUPLE },	// m_NotesTypes
+		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
 		{ 160, 480 },						// m_iCenterX
 		4,									// m_iColsPerPlayer
@@ -414,8 +418,9 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_DANCE,							// m_Game
 		true,								// m_bUsedForGameplay
 		true,								// m_bUsedForEdit
-		"Solo",								// m_szName
-		NOTES_TYPE_DANCE_SOLO,				// m_NotesType
+		"DDR Solo",							// m_szName
+		{ NOTES_TYPE_DANCE_SOLO,NOTES_TYPE_DANCE_SOLO },	// m_NotesTypes
+		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
 		{ 320, 320 },						// m_iCenterX
 		6,									// m_iColsPerPlayer
@@ -441,12 +446,13 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			0,1,2,3,4,5
 		},
 	},
-	{	// STYLE_DANCE_DOUBLE
+	{	// STYLE_DANCE_COUPLE
 		GAME_DANCE,								// m_Game
 		false,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"EditCouple",							// m_szName
-		NOTES_TYPE_DANCE_COUPLE,				// m_NotesType
+		"DDR Couple",							// m_szName
+		{ NOTES_TYPE_DANCE_COUPLE, NOTES_TYPE_DANCE_COUPLE }, // m_NotesTypes
+		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
 		{ 320, 320 },							// m_iCenterX
 		8,										// m_iColsPerPlayer
@@ -508,8 +514,9 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_PUMP,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"Single",								// m_szName
-		NOTES_TYPE_PUMP_SINGLE,					// m_NotesType
+		"Pump Single",							// m_szName
+		{ NOTES_TYPE_PUMP_SINGLE,NOTES_TYPE_PUMP_SINGLE },	// m_NotesTypes
+		NOTES_TYPE_INVALID,						// m_FallbackNotesType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
@@ -537,9 +544,10 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_PUMP,								// m_Game
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
-		"Versus",								// m_szName
-		NOTES_TYPE_PUMP_SINGLE,					// m_NotesType
-		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
+		"Pump Versus",							// m_szName
+		{ NOTES_TYPE_PUMP_SINGLE,NOTES_TYPE_PUMP_SINGLE },	// m_NotesTypes
+		NOTES_TYPE_INVALID,						// m_FallbackNotesType
+		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -566,9 +574,10 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_PUMP,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"Double",								// m_szName
-		NOTES_TYPE_PUMP_DOUBLE,					// m_NotesType
-		StyleDef::ONE_PLAYER_TWO_CREDITS,	// m_StyleType
+		"Pump Double",							// m_szName
+		{ NOTES_TYPE_PUMP_DOUBLE,NOTES_TYPE_PUMP_DOUBLE }, // m_NotesTypes
+		NOTES_TYPE_INVALID,						// m_FallbackNotesType
+		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
 		{ 320, 480 },							// m_iCenterX
 		10,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -606,8 +615,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
 		"pump-couple",							// m_szName
-		NOTES_TYPE_PUMP_COUPLE,					// m_NotesType
-		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
+		NOTES_TYPE_PUMP_COUPLE,					// m_NotesTypes
+		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -636,9 +645,10 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_EZ2,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"Single",								// m_szName
-		NOTES_TYPE_EZ2_SINGLE,					// m_NotesType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
+		"EZ2 Single",							// m_szName
+		{ NOTES_TYPE_EZ2_SINGLE,NOTES_TYPE_EZ2_SINGLE  },	 // m_NotesTypes
+		NOTES_TYPE_INVALID,						// m_FallbackNotesType
+		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -665,9 +675,10 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_EZ2,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"SingleHard",							// m_szName
-		NOTES_TYPE_EZ2_SINGLE_HARD,					// m_NotesType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
+		"EZ2 SingleHard",							// m_szName
+		{ NOTES_TYPE_EZ2_SINGLE_HARD,NOTES_TYPE_EZ2_SINGLE_HARD}, // m_NotesTypes
+		NOTES_TYPE_INVALID,						// m_FallbackNotesType
+		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -694,9 +705,10 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_EZ2,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"Double",								// m_szName
-		NOTES_TYPE_EZ2_DOUBLE,					// m_NotesType
-		StyleDef::ONE_PLAYER_TWO_CREDITS,	// m_StyleType
+		"EZ2Double",							// m_szName
+		{ NOTES_TYPE_EZ2_DOUBLE,NOTES_TYPE_EZ2_DOUBLE },	// m_NotesTypes
+		NOTES_TYPE_INVALID,						// m_FallbackNotesType
+		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		10,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -733,9 +745,10 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_EZ2,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"Real",								// m_szName
-		NOTES_TYPE_EZ2_REAL,					// m_NotesType
-		StyleDef::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
+		"EZ2 Real",								// m_szName
+		{ NOTES_TYPE_EZ2_REAL,NOTES_TYPE_EZ2_REAL },	// m_NotesTypes
+		NOTES_TYPE_INVALID,						// m_FallbackNotesType
+		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		7,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -766,9 +779,10 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_EZ2,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"Versus",								// m_szName
-		NOTES_TYPE_EZ2_SINGLE,					// m_NotesType
-		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
+		"EZ2 Versus",							// m_szName
+		{ NOTES_TYPE_EZ2_SINGLE,NOTES_TYPE_EZ2_SINGLE },	// m_NotesTypes
+		NOTES_TYPE_INVALID,						// m_FallbackNotesType
+		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -795,9 +809,10 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_EZ2,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"VersusHard",							// m_szName
-		NOTES_TYPE_EZ2_SINGLE_HARD,				// m_NotesType
-		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
+		"EZ2 VersusHard",						// m_szName
+		{ NOTES_TYPE_EZ2_SINGLE_HARD,NOTES_TYPE_EZ2_SINGLE_HARD },	// m_NotesTypes
+		NOTES_TYPE_INVALID,						// m_FallbackNotesType
+		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -824,9 +839,10 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_EZ2,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		"VersusReal",							// m_szName
-		NOTES_TYPE_EZ2_REAL,					// m_NotesType
-		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
+		"EZ2 VersusReal",						// m_szName
+		{ NOTES_TYPE_EZ2_REAL,NOTES_TYPE_EZ2_REAL },	// m_NotesTypes
+		NOTES_TYPE_INVALID,						// m_FallbackNotesType
+		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		7,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
@@ -873,34 +889,39 @@ const StyleDef* GameManager::GetStyleDefForStyle( Style s )
 	return &g_StyleDefs[ s ];
 }
 
-Style GameManager::GetEditStyleThatPlaysNotesType( NotesType nt )
+void GameManager::GetGameplayStylesForGame( Game game, CArray<Style,Style>& aStylesAddTo, bool editor )
 {
-	for( int i=0; i<NUM_STYLES; i++ )
-		if( g_StyleDefs[i].m_NotesType == nt  &&  g_StyleDefs[i].m_bUsedForEdit )
-			return (Style)i;
+	for( int s=0; s<NUM_STYLES; s++ ) {
+		if( g_StyleDefs[s].m_Game != game)
+			continue;
+		if( !editor && g_StyleDefs[s].m_bUsedForGameplay )	
+			continue;
+		if( editor && !g_StyleDefs[s].m_bUsedForEdit )	
+			continue;
 
-	return STYLE_NONE;
-}
-
-void GameManager::GetGameplayStylesForGame( Game game, CArray<Style,Style>& aStylesAddTo )
-{
-	for( int s=0; s<NUM_STYLES; s++ )
-		if( g_StyleDefs[s].m_Game == game  &&  g_StyleDefs[s].m_bUsedForGameplay )	
-			aStylesAddTo.Add( (Style)s );
+		aStylesAddTo.Add( (Style)s );
+	}
 }
 
 void GameManager::GetNotesTypesForGame( Game game, CArray<NotesType,NotesType>& aNotesTypeAddTo )
 {
 	for( int nt=0; nt<NUM_NOTES_TYPES; nt++ )
 	{
-		for( int s=0; s<NUM_STYLES; s++ )
+		bool found = false;
+		for( int s=0; !found && s<NUM_STYLES; s++ )
 		{
-			if( g_StyleDefs[s].m_Game == game  &&  g_StyleDefs[s].m_NotesType == nt )	
+			if( g_StyleDefs[s].m_Game != game )
+				continue;
+			for( int pl = 0; !found && pl < NUM_PLAYERS; ++pl)
 			{
-				aNotesTypeAddTo.Add( (NotesType)nt );
-				break;	// next NotesType
+				if( g_StyleDefs[s].m_NotesTypes[pl] != nt )	
+					continue;
+
+				found=true;
 			}
 		}
+		if(found)
+			aNotesTypeAddTo.Add( (NotesType)nt );
 	}
 }
 

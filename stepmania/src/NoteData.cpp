@@ -476,7 +476,8 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 	case PlayerOptions::TURN_LEFT:
 	case PlayerOptions::TURN_RIGHT:		// HACK: TurnRight does the same thing as TurnLeft.  I'll fix this later...
 		// Chris: Handling each NotesType case is a terrible way to do this, but oh well...
-		switch( GAMESTATE->GetCurrentStyleDef()->m_NotesType )
+		/* XXX: This assumes each NotesType in a style turns the same. */
+		switch( GAMESTATE->GetCurrentStyleDef()->m_NotesTypes[0] )
 		{
 		case NOTES_TYPE_DANCE_SINGLE:
 		case NOTES_TYPE_DANCE_DOUBLE:

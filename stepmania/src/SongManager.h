@@ -56,7 +56,7 @@ public:
 	void InitCoursesFromDisk();
 	void ReloadCourses();
 
-	void GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, NotesType nt, 
+	void GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, const StyleDef *s, 
 		Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out );
 
 	/* Choose a random song from the current style.  Return true

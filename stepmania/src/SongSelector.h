@@ -32,7 +32,7 @@ public:
 
 	CString		GetSelectedGroup()		{ return m_sGroups[m_iSelectedGroup]; };
 	Song*		GetSelectedSong()		{ return m_pSongs[m_iSelectedSong]; };
-	NotesType	GetSelectedNotesType()	{ return m_NotesTypes[m_iSelectedNotesType]; };
+	Style		GetSelectedStyle()		{ return m_Styles[m_iSelectedStyle]; };
 	Notes*		GetSelectedNotes()		{ return m_pNotess[m_iSelectedNotes]; };
 
 	/* not used yet */
@@ -40,7 +40,7 @@ public:
 	void AllowNewNotes(bool NewNotes_=true) { NewNotes = NewNotes; }
 
 private:
-	enum SelectedRow { ROW_GROUP, ROW_SONG, ROW_NOTES_TYPE, ROW_STEPS, NUM_ROWS };
+	enum SelectedRow { ROW_GROUP, ROW_SONG, ROW_STYLE, ROW_STEPS, NUM_ROWS };
 	SelectedRow m_SelectedRow;
 
 	CStringArray m_sGroups;
@@ -54,9 +54,10 @@ private:
 
 	Sprite		m_sprArrowLeft;
 	Sprite		m_sprArrowRight;
-	CArray<NotesType, NotesType> m_NotesTypes;
-	int			m_iSelectedNotesType;	// index into m_NotesTypes
-	BitmapText	m_textNotesType;
+
+	CArray<Style, Style> m_Styles;
+	int			m_iSelectedStyle;	// index into m_Styles
+	BitmapText	m_textStyle;
 
 	CArray<Notes*, Notes*> m_pNotess;
 	int			m_iSelectedNotes;	// index into m_pNotess

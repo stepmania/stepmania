@@ -106,8 +106,7 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 		//	Find the first Style that will play the selected notes type.
 		//  Set the current Style, then let ScreenEdit infer the desired
 		//  NotesType from that Style.
-		NotesType nt = Selector.GetSelectedNotesType();
-		Style style = GAMEMAN->GetEditStyleThatPlaysNotesType( nt );
+		Style style = Selector.GetSelectedStyle();
 		GAMESTATE->m_CurStyle = style;
 		GAMESTATE->m_CurGame = GAMEMAN->GetStyleDefForStyle(style)->m_Game;
 
@@ -144,7 +143,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 
 	// find the first style that matches this notes type
 	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
-	GAMESTATE->m_CurStyle = GAMEMAN->GetEditStyleThatPlaysNotesType( Selector.GetSelectedNotesType() );
+	GAMESTATE->m_CurStyle = Selector.GetSelectedStyle();
 	GAMESTATE->m_pCurNotes[PLAYER_1] = Selector.GetSelectedNotes();
 
 	m_soundSelect.PlayRandom();

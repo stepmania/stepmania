@@ -24,9 +24,8 @@ public:
 	GameDef*	GetGameDefForGame( Game g );
 	const StyleDef*	GetStyleDefForStyle( Style s );
 
-	void		GetGameplayStylesForGame( Game game, CArray<Style,Style>& aStylesAddTo );					// do not include edit-specific
+	void		GetGameplayStylesForGame( Game game, CArray<Style,Style>& aStylesAddTo, bool editor=false );
 	void		GetNotesTypesForGame( Game game, CArray<NotesType,NotesType>& aNotesTypeAddTo );	// only look at edit-specific styles
-	Style		GetEditStyleThatPlaysNotesType( NotesType nt );
 
 //	void GetGameNames( CStringArray &AddTo );
 //	bool DoesGameExist( CString sGameName );

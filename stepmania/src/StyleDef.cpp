@@ -80,3 +80,13 @@ PlayerNumber StyleDef::ControllerToPlayerNumber( GameController controller ) con
 		return PLAYER_INVALID;
 	}
 }
+
+bool StyleDef::MatchesNotesType( NotesType type, int pn ) const
+{
+	if(type == m_NotesTypes[pn]) return true;
+	if(type == m_FallbackNotesType) return true;
+
+	return false;
+
+}
+

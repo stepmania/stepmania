@@ -479,7 +479,7 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 	return true;
 }
 
-void SongManager::GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, NotesType nt, 
+void SongManager::GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, const StyleDef *sd, 
 								   Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out )
 {
 	if(GetExtraStageInfoFromCourse(bExtra2, sPreferredGroup,
@@ -499,7 +499,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, Note
 		Song* pSong = apSongs[s];
 
 		CArray<Notes*,Notes*> apNotes;
-		pSong->GetNotesThatMatch( nt, apNotes );
+		pSong->GetNotesThatMatch( sd, 0, apNotes );
 		for( int n=0; n<apNotes.GetSize(); n++ )	// foreach Notes
 		{
 			Notes* pNotes = apNotes[n];
@@ -571,8 +571,10 @@ bool SongManager::ChooseRandomSong()
 			if( pSong->m_apNotes.GetSize() == 0 )
 				continue;
 
+			/* XXX: This assumes we're set to a style that doesn't use separate
+			 * notes for each player, such as VERSUS. */
 			Notes* pNotes = pSong->m_apNotes[ rand()%pSong->m_apNotes.GetSize() ];
-			if( pNotes->m_NotesType != GAMESTATE->GetCurrentStyleDef()->m_NotesType )
+			if( pNotes->m_NotesType != GAMESTATE->GetCurrentStyleDef()->m_NotesTypes[0] )
 				continue;
 
 			// found something we can use!

@@ -14,6 +14,7 @@
 
 #include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
+#include "StyleDef.h"
 
 extern const int FILE_CACHE_VERSION;
 
@@ -174,9 +175,10 @@ public:
 	
 	CArray<Notes*, Notes*> m_apNotes;
 
+	bool SongCompleteForStyle( const StyleDef *st ) const;
 	bool SongHasNotesType( NotesType nt ) const;
 	bool SongHasNotesTypeAndDifficulty( NotesType nt, DifficultyClass dc ) const;
-	void GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo ) const;
+	void GetNotesThatMatch( const StyleDef *s, int p, CArray<Notes*, Notes*>& arrayAddTo ) const;
 	int GetNumTimesPlayed() const
 	{
 		int iTotalNumTimesPlayed = 0;
@@ -188,7 +190,7 @@ public:
 	}
 	bool IsNew() const;
 	bool IsEasy( NotesType nt ) const;
-	Grade GetGradeForDifficultyClass( NotesType nt, DifficultyClass dc ) const;
+	Grade GetGradeForDifficultyClass( const StyleDef *s, int p, DifficultyClass dc ) const;
 	bool NormallyDisplayed() const;
 	bool RouletteDisplayed() const;
 };

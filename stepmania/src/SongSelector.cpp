@@ -68,11 +68,11 @@ SongSelector::SongSelector()
 	m_sprArrowRight.SetDiffuse( D3DXCOLOR(1,1,1,0) );
 	this->AddChild( &m_sprArrowRight );
 
-	m_textNotesType.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
-	m_textNotesType.SetXY( GAME_STYLE_X, GAME_STYLE_Y );
-	m_textNotesType.SetDiffuse( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
-	m_textNotesType.SetText( "blah" );
-	this->AddChild( &m_textNotesType );
+	m_textStyle.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
+	m_textStyle.SetXY( GAME_STYLE_X, GAME_STYLE_Y );
+	m_textStyle.SetDiffuse( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
+	m_textStyle.SetText( "blah" );
+	this->AddChild( &m_textStyle );
 
 	m_textNotes.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textNotes.SetXY( STEPS_X, STEPS_Y );
@@ -84,8 +84,8 @@ SongSelector::SongSelector()
 	ChangeSelectedRow(ROW_GROUP);
 
 	SONGMAN->GetGroupNames( m_sGroups );
-	GAMEMAN->GetNotesTypesForGame( GAMESTATE->m_CurGame, m_NotesTypes );
-	m_iSelectedGroup = m_iSelectedSong = m_iSelectedNotesType = m_iSelectedNotes = 0;
+	GAMEMAN->GetGameplayStylesForGame( GAMESTATE->m_CurGame, m_Styles, true );
+	m_iSelectedGroup = m_iSelectedSong = m_iSelectedStyle = m_iSelectedNotes = 0;
 
 	if( GAMESTATE->m_pCurSong )
 	{
@@ -101,9 +101,11 @@ SongSelector::SongSelector()
 				m_iSelectedSong = i;
 		OnSongChange();
 
-		for( i=0; i<m_NotesTypes.GetSize(); i++ )
-			if( GAMESTATE->GetCurrentStyleDef()->m_NotesType == m_NotesTypes[i] )
-				m_iSelectedNotesType = i;
+		for( i=0; i<m_Styles.GetSize(); i++ )
+		{
+			if( GAMESTATE->GetCurrentStyleDef() == GAMEMAN->GetStyleDefForStyle(m_Styles[i]) )
+				m_iSelectedStyle = i;
+		}
 		OnNotesTypeChange();
 
 		for( i=0; i<m_pNotess.GetSize(); i++ )
@@ -160,10 +162,10 @@ void SongSelector::Left()
 		m_iSelectedSong--;
 		OnSongChange();
 		break;
-	case ROW_NOTES_TYPE:
-		if( m_iSelectedNotesType == 0 )	// can't go left any further
+	case ROW_STYLE:
+		if( m_iSelectedStyle == 0 )	// can't go left any further
 			return;
-		m_iSelectedNotesType--;
+		m_iSelectedStyle--;
 		OnNotesTypeChange();
 		break;
 	case ROW_STEPS:
@@ -193,10 +195,10 @@ void SongSelector::Right()
 		m_iSelectedSong++;
 		OnSongChange();
 		break;
-	case ROW_NOTES_TYPE:
-		if( m_iSelectedNotesType == m_NotesTypes.GetSize()-1 )	// can't go right any further
+	case ROW_STYLE:
+		if( m_iSelectedStyle == m_Styles.GetSize()-1 )	// can't go right any further
 			return;
-		m_iSelectedNotesType++;
+		m_iSelectedStyle++;
 		OnNotesTypeChange();
 		break;
 	case ROW_STEPS:
@@ -216,9 +218,8 @@ void SongSelector::ChangeSelectedRow( SelectedRow row )
 	m_textGroup.SetEffectNone();
 	m_sprArrowLeft.SetDiffuse( D3DXCOLOR(1,1,1,0) );
 	m_sprArrowRight.SetDiffuse( D3DXCOLOR(1,1,1,0) );
-	m_textNotesType.SetEffectNone();
+	m_textStyle.SetEffectNone();
 	m_textNotes.SetEffectNone();
-
 	m_SelectedRow = row;
 	
 	switch( m_SelectedRow )
@@ -228,7 +229,7 @@ void SongSelector::ChangeSelectedRow( SelectedRow row )
 		m_sprArrowLeft.SetDiffuse( D3DXCOLOR(1,1,1,1) );
 		m_sprArrowRight.SetDiffuse( D3DXCOLOR(1,1,1,1) );
 		break;
-	case ROW_NOTES_TYPE:	m_textNotesType.SetEffectGlowing();		break;
+	case ROW_STYLE:	m_textStyle.SetEffectGlowing(); 		break;
 	case ROW_STEPS:			m_textNotes.SetEffectGlowing();			break;
 	default:		ASSERT(false);
 	}
@@ -259,12 +260,13 @@ void SongSelector::OnSongChange()
 
 void SongSelector::OnNotesTypeChange()
 {
-	m_iSelectedNotesType = clamp( m_iSelectedNotesType, 0, m_NotesTypes.GetSize()-1 );
+	m_iSelectedStyle = clamp( m_iSelectedStyle, 0, m_Styles.GetSize()-1 );
 
-	m_textNotesType.SetText( GameManager::NotesTypeToString( GetSelectedNotesType() ) );
+	m_textStyle.SetText( GAMEMAN->GetStyleDefForStyle(GetSelectedStyle())->m_szName );
 
 	m_pNotess.RemoveAll();
-	GetSelectedSong()->GetNotesThatMatch( GetSelectedNotesType(), m_pNotess );
+	/* XXX. We should display couples if either side exists ... */
+	GetSelectedSong()->GetNotesThatMatch( GAMEMAN->GetStyleDefForStyle(GetSelectedStyle()), 0, m_pNotess );
 	SortNotesArrayByDifficulty( m_pNotess );
 	m_pNotess.Add( NULL );		// marker for "(NEW)"
 	m_iSelectedNotes = 0;

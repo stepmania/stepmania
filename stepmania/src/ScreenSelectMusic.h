@@ -57,7 +57,7 @@ protected:
 
 	void UpdateOptionsDisplays();
 
-	CArray<Notes*, Notes*> m_arrayNotes;
+	CArray<Notes*, Notes*> m_arrayNotes[NUM_PLAYERS];
 	int					m_iSelection[NUM_PLAYERS];
 
 	MenuElements		m_Menu;

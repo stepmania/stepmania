@@ -168,7 +168,8 @@ ScreenEdit::ScreenEdit()
 	{
 		m_pNotes = new Notes;
 		m_pNotes->m_DifficultyClass = CLASS_MEDIUM;
-		m_pNotes->m_NotesType = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
+		/* XXX: figure out how to handle second player couples in the editor */
+		m_pNotes->m_NotesType = GAMESTATE->GetCurrentStyleDef()->m_NotesTypes[0];
 		m_pNotes->m_sDescription = "Untitled";
 		// Dro Kulix: If m_pNotes->m_NotesType is not changed here,
 		// the edit mode is somehow stuck only being able to edit

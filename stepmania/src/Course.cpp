@@ -140,8 +140,10 @@ Notes* Course::GetNotesForStage( int iStage )
 	for( int i=0; i<pSong->m_apNotes.GetSize(); i++ )
 	{
 		Notes* pNotes = pSong->m_apNotes[i];
+		/* XXX: hmm. We need to match the first player, then set up other players
+		 * later ... */
 		if( 0==stricmp(pNotes->m_sDescription, sDescription)  &&
-			pNotes->m_NotesType == GAMESTATE->GetCurrentStyleDef()->m_NotesType )
+			GAMESTATE->GetCurrentStyleDef()->MatchesNotesType(pNotes->m_NotesType, 0) )
 			return pNotes;
 	}
 
@@ -152,7 +154,8 @@ Notes* Course::GetNotesForStage( int iStage )
 	for( i=0; i<pSong->m_apNotes.GetSize(); i++ )
 	{
 		Notes* pNotes = pSong->m_apNotes[i];
-		if( pNotes->m_DifficultyClass == dc  &&  pNotes->m_NotesType == GAMESTATE->GetCurrentStyleDef()->m_NotesType )
+		if( pNotes->m_DifficultyClass == dc  &&
+			GAMESTATE->GetCurrentStyleDef()->MatchesNotesType(pNotes->m_NotesType, 0) )
 			return pNotes;
 	}
 
