@@ -90,12 +90,12 @@ float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYPos )
 		float fMinX, fMaxX;
 		GAMESTATE->GetCurrentStyleDef()->GetMinAndMaxColX( pn, fMinX, fMaxX );
 
-		float fRealPixelOffset = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[pn][iColNum].fXOffset;
-		float fPositionBetween = SCALE( fRealPixelOffset, fMinX, fMaxX, -1, 1 );
+		const float fRealPixelOffset = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[pn][iColNum].fXOffset;
+		const float fPositionBetween = SCALE( fRealPixelOffset, fMinX, fMaxX, -1, 1 );
 		float fRads = acosf( fPositionBetween );
 		fRads += fYPos * 6 / SCREEN_HEIGHT;
 		
-		float fAdjustedPixelOffset = SCALE( cosf(fRads), -1, 1, fMinX, fMaxX );
+		const float fAdjustedPixelOffset = SCALE( cosf(fRads), -1, 1, fMinX, fMaxX );
 
 		fPixelOffsetFromCenter = fAdjustedPixelOffset - fRealPixelOffset;
 	}
@@ -103,7 +103,12 @@ float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYPos )
 	if( fEffects[PlayerOptions::EFFECT_DRUNK] > 0 )
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * ( cosf( RageTimer::GetTimeSinceStart() + iColNum*0.2f + fYPos*10/SCREEN_HEIGHT) * ARROW_SIZE*0.5f );
 	if( fEffects[PlayerOptions::EFFECT_FLIP] > 0 )
+	{
 		fPixelOffsetFromCenter *= SCALE(fEffects[PlayerOptions::EFFECT_FLIP], 0.f, 1.f, 1.f, -1.f);
+		const float fRealPixelOffset = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[pn][iColNum].fXOffset;
+		const float fDistance = -fRealPixelOffset * 2;
+		fPixelOffsetFromCenter += fDistance * fEffects[PlayerOptions::EFFECT_FLIP];
+	}
 
 	return fPixelOffsetFromCenter;
 }
