@@ -31,6 +31,7 @@ public:
 	virtual void MenuRight( PlayerNumber pn );
 	virtual void MenuStart( PlayerNumber pn );
 	virtual void Update( float fDelta );
+	virtual void HandleScreenMessage( const ScreenMessage SM );
 protected:
 	virtual int GetSelectionIndex( PlayerNumber pn );
 	virtual void UpdateSelectableChoices();

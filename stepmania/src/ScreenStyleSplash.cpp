@@ -43,7 +43,7 @@ ScreenStyleSplash::ScreenStyleSplash() : Screen("ScreenStyleSplash")
 	m_Background.LoadFromAniDir( THEME->GetPathToB(ssprintf("ScreenStyleSplash-%s-%s-%d",sGameName.c_str(),sStyleName.c_str(),iDifficulty) ) );
 	this->AddChild( &m_Background );
 	
-	m_Menu.Load( "ScreenStyleSplash" );
+	m_Menu.Load( "ScreenStyleSplash", false, false );
 	this->AddChild( &m_Menu );
 
 	this->PostScreenMessage( SM_StartClosing, 2 );

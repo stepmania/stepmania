@@ -153,6 +153,18 @@ void ScreenSelectMode::UpdateSelectableChoices()
 	m_ScrollingList.Load(GraphicPaths);
 }
 
+void ScreenSelectMode::HandleScreenMessage( const ScreenMessage SM )
+{
+	switch( SM )
+	{
+	case SM_MenuTimer:
+		{
+			m_bSelected = true;
+		}
+		break;
+	}
+	ScreenSelect::HandleScreenMessage(SM);
+}
 
 void ScreenSelectMode::MenuStart( PlayerNumber pn )
 {
@@ -163,12 +175,17 @@ void ScreenSelectMode::MenuStart( PlayerNumber pn )
 		m_bSelected = true;
 		return;
 	}
-	SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, 0 );
-	unsigned i;
-	for( i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->StopTweening();
-	OFF_COMMAND( m_ScrollingList );
-	OFF_COMMAND( m_Guide );
+
+	m_ScrollingList.BeginTweening(0.1f);
+	m_ScrollingList.SetZoomY(0.0f);
+	m_Guide.BeginTweening(0.1f);
+	m_Guide.SetY(550.0f); // off the bottom of the screen
+	m_ChoiceListFrame.BeginTweening(0.1f);
+	m_ChoiceListFrame.SetDiffuse(RageColor(0,0,0,0));
+	m_ChoiceListHighlight.BeginTweening(0.1f);
+	m_ChoiceListHighlight.SetDiffuse(RageColor(0,0,0,0));
+	
+	SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, 0.5f );
 }
 
 int ScreenSelectMode::GetSelectionIndex( PlayerNumber pn )
