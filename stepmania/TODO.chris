@@ -1,0 +1,114 @@
+/////////////////////////
+Fix
+/////////////////////////
+
+new phpwebhosting account
+
+call BrainStorm guy
+
+RMA phone
+
+RMA Kiko USB
+
+kitsappt photos
+
+100 flash on OK
+
+slower eval bar
+
+option lines wrap
+
+max style judge tween
+
+add turns to editor
+
+precise timing adjustment
+
+draw taps on same row as hold with hold head
+
+arrow under options titles
+
+wrap option title text
+
+texture cache
+
+max style lifemeter animation
+
+TICK_MELODY
+
+164 theme
+
+pause in course contents scroll
+
+scrollbar goofed up
+
+limit best to 30 songs
+
+ready, here we go between each stage of a course
+
+send disc to Penny Arcade
+
+danger BGA, danger movie
+
+difficulty colors
+
+different top bar frame for oni
+
+move NoteSkin to Theme
+
+/////////////////////
+Punt:
+/////////////////////
+
+texture cache
+
+groove radar smoothing and texture effects
+
+couple changes
+
+options tabs on Select Music. 
+
+Actor::TweenOffScreen/TweenOnScreen
+
+merge noteskins and themes
+
+couple data format
+
+way to select edits
+
+smoother music wheel scroll
+
+eval bar tick
+
+credits on song start
+
+lyrics
+
+fix result radar values
+
+sm2dwi / dwi2sm utils
+
+I think you're right in that it would be worth the effort to filter 
+certain difficulties.
+
+note shader
+
+This doesn't quite qualify as a "bug," but--tiled scrolling background 
+animations have very visible seams where the tiles meet; it'd look much much 
+better if it was seamless. 
+
+The "groove bar" reports at the results screen is broken. 
+Getting a nearly full voltage bar on a 
+song when I barely maitain combo (it should be max combo/max possible combo), 
+and chaos is always 
+empty unless you AAA a song.
+
+#LYRICS:
+e.g.   120=Hey Ho Captian Jack,
+   124=Bring Me Back to the railroad track,
+
+font alignment
+
+arcade style options navigation (only left/right/start)
+
+"ready", "here we go" between songs
