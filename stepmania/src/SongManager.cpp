@@ -407,7 +407,7 @@ void SongManager::ReadStepsMemCardDataFromFile( CString fn, int mc )
 {
 	RageFile f(fn);
 	if (!f.IsOpen() || f.GetError() != 0)
-		WARN_AND_RETURN;
+		return; /* don't warn if it just doesn't exist */
 
 	int version;
 	if( !FileRead(f, version) )
@@ -502,7 +502,7 @@ void SongManager::ReadCategoryRankingsFromFile( CString fn )
 {
 	RageFile f(fn);
 	if (!f.IsOpen() || f.GetError() != 0)
-		WARN_AND_RETURN;
+		return; /* don't warn if it just doesn't exist */
 	
 	int version;
 	if( !FileRead(f, version) )
@@ -534,7 +534,7 @@ void SongManager::ReadCourseMemCardDataFromFile( CString fn, int mc )
 {
 	RageFile f(fn);
 	if (!f.IsOpen() || f.GetError() != 0)
-		WARN_AND_RETURN;
+		return; /* don't warn if it just doesn't exist */
 	
 	int version;
 	if( !FileRead(f, version) )
