@@ -233,8 +233,7 @@ void Sprite::DrawPrimitives()
 		} 
 		else 
 		{
-			unsigned int uFrameNo = m_iStateToFrame[m_iCurState];
-			const RectF *pTexCoordRect = m_pTexture->GetTextureCoordRect( uFrameNo );
+			const RectF *pTexCoordRect = GetCurrentTextureCoordRect();
 
 			v[0].t = RageVector2( pTexCoordRect->left,	pTexCoordRect->top );		// top left
 			v[1].t = RageVector2( pTexCoordRect->left,	pTexCoordRect->bottom );	// bottom left
@@ -352,6 +351,12 @@ void Sprite::SetCustomImageCoords( float fImageCoords[8] )	// order: bottom left
 	}
 
 	SetCustomTextureCoords( fImageCoords );
+}
+
+const RectF *Sprite::GetCurrentTextureCoordRect() const
+{
+	unsigned int uFrameNo = m_iStateToFrame[m_iCurState];
+	return m_pTexture->GetTextureCoordRect( uFrameNo );
 }
 
 void Sprite::StopUsingCustomCoords()
