@@ -36,37 +36,18 @@ const float RECORD_HOLD_SECONDS = 0.3f;
 // Defines specific to ScreenEdit
 //
 
-#define DEBUG_X			(SCREEN_LEFT + 10)
-#define DEBUG_Y			(SCREEN_CENTER_Y-100)
-
-#define SHORTCUTS_X		(SCREEN_CENTER_X - 150)
-#define SHORTCUTS_Y		(SCREEN_CENTER_Y)
-
 #define HELP_TEXT_X		(SCREEN_LEFT + 4)
 #define HELP_TEXT_Y		(40)
 
 #define INFO_TEXT_X		(SCREEN_RIGHT - 114)
 #define INFO_TEXT_Y		(40)
 
-#define MENU_WIDTH		(110)
 #define EDIT_X			(SCREEN_CENTER_X)
-#define EDIT_GRAY_Y_STANDARD	(SCREEN_TOP+60)
-#define EDIT_GRAY_Y_REVERSE		(SCREEN_BOTTOM-60)
 
 #define PLAYER_X			(SCREEN_CENTER_X)
 #define PLAYER_Y			(SCREEN_CENTER_Y)
 #define PLAYER_HEIGHT		(360)
 #define PLAYER_Y_STANDARD	(PLAYER_Y-PLAYER_HEIGHT/2)
-#define PLAYER_Y_REVERSE	(PLAYER_Y+PLAYER_HEIGHT/2)
-
-
-#define ACTION_MENU_ITEM_X			(SCREEN_CENTER_X-200)
-#define ACTION_MENU_ITEM_START_Y	(SCREEN_TOP + 24)
-#define ACTION_MENU_ITEM_SPACING_Y	(18)
-
-#define NAMING_MENU_ITEM_X			(SCREEN_CENTER_X-200)
-#define NAMING_MENU_ITEM_START_Y	(SCREEN_TOP + 24)
-#define NAMING_MENU_ITEM_SPACING_Y	(18)
 
 ThemeMetric<float>	 TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
 
@@ -1936,7 +1917,6 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 			break;
 		case exit:
 			m_Out.StartTransitioning( SM_GoToNextScreen );
-			this->PlayCommand( "Off" );
 			break;
 		default:
 			ASSERT(0);
