@@ -265,7 +265,7 @@ static bool DeviceToEdit( DeviceInput DeviceI, EditButton &button )
 		}
 	}
 
-	e = EDIT_BUTTON_INVALID;
+	button = EDIT_BUTTON_INVALID;
 
 	return false;
 }
@@ -513,7 +513,6 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0) );
 
 	m_NoteFieldRecord.SetXY( EDIT_X, PLAYER_Y );
-	m_NoteFieldRecord.SetZoom( 1.0f );
 	m_NoteFieldRecord.Load( &noteData, GAMESTATE->m_pPlayerState[PLAYER_1], -150, 350, 350 );
 
 	m_Clipboard.SetNumTracks( m_NoteFieldEdit.GetNumTracks() );
@@ -743,28 +742,9 @@ void ScreenEdit::UpdateTextInfo()
 	int iNumTapNotes = m_NoteFieldEdit.GetNumTapNotes();
 	int iNumHoldNotes = m_NoteFieldEdit.GetNumHoldNotes();
 
-	CString sNoteType;
-	switch( m_SnapDisplay.GetNoteType() )
-	{
-	case NOTE_TYPE_4TH:		sNoteType = "4th notes";	break;
-	case NOTE_TYPE_8TH:		sNoteType = "8th notes";	break;
-	case NOTE_TYPE_12TH:	sNoteType = "12th notes";	break;
-	case NOTE_TYPE_16TH:	sNoteType = "16th notes";	break;
-	case NOTE_TYPE_24TH:	sNoteType = "24th notes";	break;
-	case NOTE_TYPE_32ND:	sNoteType = "32nd notes";	break;
-	case NOTE_TYPE_48TH:	sNoteType = "48th notes";	break;
-	case NOTE_TYPE_64TH:	sNoteType = "64th notes";	break;
-	default:  ASSERT(0);
-	}
+	CString sNoteType = NoteTypeToString(m_SnapDisplay.GetNoteType()) + " notes";
 
 	CString sText;
-	// check Editor.ini for a few of these
-	// entries used: CurBeatPlaces, CurSecPlaces, OffsetPlaces,
-	//               PreviewStartPlaces, PreviewLengthPlaces
-	/* No need for that (unneeded options is just a maintenance pain).  If you want
-	 * more precision here, add it.  I doubt there's a need for precise preview output,
-	 * though (it'd be nearly inaudible at the millisecond level, and it's approximate
-	 * anyway). */
 	sText += ssprintf( "Current Beat:\n     %.2f\n",		GAMESTATE->m_fSongBeat );
 	sText += ssprintf( "Current Second:\n     %.2f\n",		m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) );
 	sText += ssprintf( "Snap to:\n     %s\n",				sNoteType.c_str() );
@@ -1500,6 +1480,8 @@ void ScreenEdit::TransitionFromRecordToEdit()
 	m_NoteFieldEdit.ClearRange( rowBegin, rowEnd );
 
 	m_NoteFieldEdit.CopyRange( m_NoteFieldRecord, rowBegin, rowEnd, rowBegin );
+
+	m_NoteFieldEdit.ClearAll();
 }
 
 /* Helper for SM_DoReloadFromDisk */
