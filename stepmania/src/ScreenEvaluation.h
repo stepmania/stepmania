@@ -59,6 +59,7 @@ public:
 	virtual void MenuStart( PlayerNumber pn );
 
 protected:
+	void Init();
 	void CommitScores( const StageStats &stageStats, int iPersonalHighScoreIndex[NUM_PLAYERS], int iMachineHighScoreIndex[NUM_PLAYERS], RankingCategory rc[NUM_PLAYERS] );
 	void EndScreen();
 

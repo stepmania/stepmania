@@ -89,11 +89,13 @@ const ScreenMessage	SM_StopHereWeGo			= ScreenMessage(SM_User+41);
 
 ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen(sName)
 {
-	LOG->Trace( "ScreenGameplay::ScreenGameplay()" );
+        m_bDemonstration = bDemonstration;
+	Init(); // work around horrible gcc bug 3187
+}
 
+void ScreenGameplay::Init()
+{
 	int p;
-
-	m_bDemonstration = bDemonstration;
 
 	if( m_bDemonstration )
 		LIGHTSMAN->SetLightMode( LIGHTMODE_DEMONSTRATION );
@@ -297,7 +299,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen(sN
 	m_sprStaticBackground.SetZ( 2 );	// behind everything else
 	this->AddChild(&m_sprStaticBackground);
 
-	if( !bDemonstration )	// only load if we're going to use it
+	if( !m_bDemonstration )	// only load if we're going to use it
 	{
 		m_Toasty.Load( THEME->GetPathToB("ScreenGameplay toasty") );
 		this->AddChild( &m_Toasty );
@@ -612,7 +614,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen(sN
 	m_textAutoPlay.LoadFromFont( THEME->GetPathToF("ScreenGameplay autoplay") );
 	m_textAutoPlay.SetName( "AutoPlay" );
 	SET_XY( m_textAutoPlay );
-	if( !bDemonstration )	// only load if we're not in demonstration of jukebox
+	if( !m_bDemonstration )	// only load if we're not in demonstration of jukebox
 		this->AddChild( &m_textAutoPlay );
 	UpdateAutoPlayText();
 	
@@ -636,7 +638,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen(sN
 	}
 
 	
-	if( !bDemonstration )	// only load if we're going to use it
+	if( !m_bDemonstration )	// only load if we're going to use it
 	{
 		m_Ready.Load( THEME->GetPathToB("ScreenGameplay ready") );
 		this->AddChild( &m_Ready );
@@ -713,7 +715,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen(sN
 
 	this->SortByZ();
 
-	if( !bDemonstration )	// only load if we're going to use it
+	if( !m_bDemonstration )	// only load if we're going to use it
 	{
 		m_soundAssistTick.Load(			THEME->GetPathToS("ScreenGameplay assist tick"), true );
 

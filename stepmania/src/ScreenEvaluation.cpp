@@ -95,6 +95,11 @@ const ScreenMessage SM_PlayCheer				=	ScreenMessage(SM_User+6);
 
 ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 {
+	Init(); // work around horrible gcc bug 3187
+}
+
+void ScreenEvaluation::Init()
+{
 	//
 	// debugging
 	//
