@@ -1196,7 +1196,7 @@ CString XENTITYS::Ref2Entity( const char* estr )
 	{
 		int len = strlen(estr);
 //		char* esbuf = es.GetBufferSetLength( len+1 );
-		char* szTemp = new char[len+1];
+		char szTemp[len+1];
 		if( szTemp )
 			Ref2Entity( estr, szTemp, len );
 		es = szTemp;
@@ -1214,7 +1214,7 @@ CString XENTITYS::Entity2Ref( const char* str )
 			return CString(str);
 		int len = strlen(str) + nEntityCount*10 ;
 		//char* sbuf = s.GetBufferSetLength( len+1 );
-		char* szTemp = new char[len+1];
+		char szTemp[len+1];
 		if( szTemp )
 			Entity2Ref( str, szTemp, len );
 		s = szTemp;
