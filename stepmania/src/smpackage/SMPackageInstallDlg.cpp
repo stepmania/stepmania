@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "smpackage.h"
 #include "SMPackageInstallDlg.h"
-#include "../RageUtil.h"
+#include "RageUtil.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

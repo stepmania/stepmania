@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "smpackage.h"
 #include "smpackageDlg.h"
-#include "../RageUtil.h"
+#include "RageUtil.h"
 #include "ZipArchive\ZipArchive.h"	
 
 

@@ -5,7 +5,7 @@
 #include "smpackage.h"
 #include "smpackageDlg.h"
 #include "smpackageInstallDlg.h"
-#include "../RageUtil.h"
+#include "RageUtil.h"
 
 
 #ifdef _DEBUG
