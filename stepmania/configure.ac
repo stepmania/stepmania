@@ -46,6 +46,11 @@ case $compile in
 	;;
 esac
 
+AC_C_BIGENDIAN( 
+	AC_DEFINE(ENDIAN_BIG, 1, [Big endian]),
+	AC_DEFINE(ENDIAN_LITTLE, 1, [Little endian]),
+	AC_MSG_ERROR([Can't determine endianness]) )
+
 AC_ARG_WITH(prof, AC_HELP_STRING([--with-prof], [Enable profiling]), with_prof=$withval, with_prof=no)
 if test "$with_prof" = "yes"; then
 	test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="$CFLAGS -pg"
