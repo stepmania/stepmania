@@ -572,19 +572,19 @@ void NoteData::EliminateAllButOneTap(int row)
 	}
 }
 
-// MD 10/29/03 - This is necessary, for whatever reason.
 void NoteData::CombineTracks( int iTrackTo, int iTrackFrom )
 {
 	LOG->Trace("NoteData::CombineTracks( %i , %i )", iTrackTo, iTrackFrom);
-	if(iTrackFrom < 0 || iTrackTo < 0) return;
-	int iLastRow = GetMaxRow();
+	if( iTrackFrom < 0 || iTrackTo < 0 )
+		return;
+
+	const int iLastRow = GetMaxRow();
 	LOG->Trace("NoteData::CombineTracks - %i rows", iLastRow);
 
-	for (int row = 0; row < iLastRow; ++row)
+	for( int row = 0; row < iLastRow; ++row )
 	{
-		LOG->Trace("NoteData::CombineTracks - row %i", row);
-		int iStepFrom = m_TapNotes[iTrackFrom][row];
-		int iStepTo = m_TapNotes[iTrackTo][row];
+		const TapNote iStepFrom = m_TapNotes[iTrackFrom][row];
+		const TapNote iStepTo = m_TapNotes[iTrackTo][row];
 
 		if( iStepFrom == iStepTo )
 		{
