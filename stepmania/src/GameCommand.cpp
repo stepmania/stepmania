@@ -139,255 +139,258 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 void GameCommand::Load( int iIndex, const Commands& cmds )
 {
 	m_iIndex = iIndex;
-
 	m_bInvalid = false;
+	m_Commands = cmds;
 
-	FOREACH_CONST( Command, cmds.v, command )
+	FOREACH_CONST( Command, cmds.v, cmd )
+		LoadOne( *cmd );
+}
+
+void GameCommand::LoadOne( const Command& cmd )
+{
+	CString sName = cmd.GetName();
+	if( sName.empty() )
+		return;
+	
+	CString sValue;
+	for( unsigned i = 1; i < cmd.m_vsArgs.size(); ++i )
 	{
-		CString sName = command->GetName();
-		if( sName.empty() )
-			continue;
-		
-		CString sValue;
-		for( unsigned i = 1; i < command->m_vsArgs.size(); ++i )
-		{
-			if( i > 1 )
-				sValue += ",";
-			sValue += (CString) command->GetArg(i);
-		}
+		if( i > 1 )
+			sValue += ",";
+		sValue += (CString) cmd.GetArg(i);
+	}
 
-		if( sName == "game" )
-		{
-			const Game* pGame = GAMEMAN->StringToGameType( sValue );
-			if( pGame != NULL )
-				m_pGame = pGame;
-			else
-				m_bInvalid |= true;
-		}
-
-		else if( sName == "style" )
-		{
-			const Style* style = GAMEMAN->GameAndStringToStyle( GAMESTATE->m_pCurGame, sValue );
-			if( style )
-				m_pStyle = style;
-			else
-				m_bInvalid |= true;
-		}
-
-		else if( sName == "playmode" )
-		{
-			PlayMode pm = StringToPlayMode( sValue );
-			if( pm != PLAY_MODE_INVALID )
-				m_pm = pm;
-			else
-				m_bInvalid |= true;
-		}
-
-		else if( sName == "difficulty" )
-		{
-			Difficulty dc = StringToDifficulty( sValue );
-			if( dc != DIFFICULTY_INVALID )
-				m_dc = dc;
-			else
-				m_bInvalid |= true;
-		}
-
-		else if( sName == "announcer" )
-		{
-			m_sAnnouncer = sValue;
-		}
-		
-		else if( sName == "name" )
-		{
-			m_sName = sValue;
-		}
-
-		else if( sName == "mod" )
-		{
-			if( m_sModifiers != "" )
-				m_sModifiers += ",";
-			m_sModifiers += sValue;
-		}
-		
-		else if( sName == "lua" )
-		{
-			m_LuaFunction.SetFromExpression( sValue );
-			ASSERT_M( !m_LuaFunction.IsNil(), ssprintf("\"%s\" evaluated to nil", sValue.c_str()) );
-		}
-		
-		else if( sName == "screen" )
-		{
-			m_sScreen = sValue;
-		}
-		
-		else if( sName == "song" )
-		{
-			m_pSong = SONGMAN->FindSong( sValue );
-			if( m_pSong == NULL )
-			{
-				m_sInvalidReason = ssprintf( "Song \"%s\" not found", sValue.c_str() );
-				m_bInvalid |= true;
-			}
-		}
-
-		else if( sName == "steps" )
-		{
-			CString sSteps = sValue;
-
-			/* This must be processed after "song" and "style" commands. */
-			if( !m_bInvalid )
-			{
-				Song *pSong = (m_pSong != NULL)? m_pSong:GAMESTATE->m_pCurSong;
-				const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->m_pCurStyle;
-				if( pSong == NULL || pStyle == NULL )
-					RageException::Throw( "Must set Song and Style to set Steps" );
-
-				Difficulty dc = StringToDifficulty( sSteps );
-				if( dc != DIFFICULTY_EDIT )
-					m_pSteps = pSong->GetStepsByDifficulty( pStyle->m_StepsType, dc );
-				else
-					m_pSteps = pSong->GetStepsByDescription( pStyle->m_StepsType, sSteps );
-				if( m_pSteps == NULL )
-				{
-					m_sInvalidReason = "steps not found";
-					m_bInvalid |= true;
-				}
-			}
-		}
-
-		else if( sName == "course" )
-		{
-			m_pCourse = SONGMAN->FindCourse( sValue );
-			if( m_pCourse == NULL )
-			{
-				m_sInvalidReason = ssprintf( "Course \"%s\" not found", sValue.c_str() );
-				m_bInvalid |= true;
-			}
-		}
-		
-		else if( sName == "trail" )
-		{
-			CString sTrail = sValue;
-
-			/* This must be processed after "course" and "style" commands. */
-			if( !m_bInvalid )
-			{
-				Course *pCourse = (m_pCourse != NULL)? m_pCourse:GAMESTATE->m_pCurCourse;
-				const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->m_pCurStyle;
-				if( pCourse == NULL || pStyle == NULL )
-					RageException::Throw( "Must set Course and Style to set Steps" );
-
-				const CourseDifficulty cd = StringToCourseDifficulty( sTrail );
-				ASSERT_M( cd != DIFFICULTY_INVALID, ssprintf("Invalid difficulty '%s'", sTrail.c_str()) );
-
-				m_pTrail = pCourse->GetTrail( pStyle->m_StepsType, cd );
-				if( m_pTrail == NULL )
-				{
-					m_sInvalidReason = "trail not found";
-					m_bInvalid |= true;
-				}
-			}
-		}
-		
-		else if( sName == "setenv" )
-		{
-			if( command->m_vsArgs.size() == 3 )
-				m_SetEnv[ command->m_vsArgs[1] ] = command->m_vsArgs[2];
-		}
-		
-		else if( sName == "songgroup" )
-		{
-			m_sSongGroup = sValue;
-		}
-
-		else if( sName == "sort" )
-		{
-			m_SortOrder = StringToSortOrder( sValue );
-			if( m_SortOrder == SORT_INVALID )
-			{
-				m_sInvalidReason = ssprintf( "SortOrder \"%s\" is not valid.", sValue.c_str() );
-				m_bInvalid |= true;
-			}
-		}
-		
-		else if( sName == "weight" )
-		{
-			m_iWeightPounds = atoi( sValue );
-		}
-
-		else if( sName == "goalcalories" )
-		{
-			m_iGoalCalories = atoi( sValue );
-		}
-
-		else if( sName == "goaltype" )
-		{
-			m_GoalType = StringToGoalType( sValue );
-		}
-
-		else if( sName == "unlock" )
-		{
-			m_iUnlockIndex = atoi( sValue );
-		}
-		
-		else if( sName == "sound" )
-		{
-			m_sSoundPath = sValue;
-		}
-
-		else if( sName == "preparescreen" )
-		{
-			m_vsScreensToPrepare.push_back( sValue );
-		}
-		
-		else if( sName == "deletepreparedscreens" )
-		{
-			m_bDeletePreparedScreens = true;
-		}
-		
-		else if( sName == "clearbookkeepingdata" )
-		{
-			m_bClearBookkeepingData = true;
-		}
-		else if( sName == "clearmachinestats" )
-		{
-			m_bClearMachineStats = true;
-		}
-		else if( sName == "fillmachinestats" )
-		{
-			m_bFillMachineStats = true;
-		}
-		else if( sName == "transferstatsfrommachine" )
-		{
-			m_bTransferStatsFromMachine = true;
-		}
-		else if( sName == "transferstatstomachine" )
-		{
-			m_bTransferStatsToMachine = true;
-		}
-		else if( sName == "insertcredit" )
-		{
-			m_bInsertCredit = true;
-		}
-		else if( sName == "resettofactorydefaults" )
-		{
-			m_bResetToFactoryDefaults = true;
-		}
-		else if( sName == "stopmusic" )
-		{
-			m_bStopMusic = true;
-		}
-		else if( sName == "applydefaultoptions" )
-		{
-			m_bApplyDefaultOptions = true;
-		}
-
+	if( sName == "game" )
+	{
+		const Game* pGame = GAMEMAN->StringToGameType( sValue );
+		if( pGame != NULL )
+			m_pGame = pGame;
 		else
+			m_bInvalid |= true;
+	}
+
+	else if( sName == "style" )
+	{
+		const Style* style = GAMEMAN->GameAndStringToStyle( GAMESTATE->m_pCurGame, sValue );
+		if( style )
+			m_pStyle = style;
+		else
+			m_bInvalid |= true;
+	}
+
+	else if( sName == "playmode" )
+	{
+		PlayMode pm = StringToPlayMode( sValue );
+		if( pm != PLAY_MODE_INVALID )
+			m_pm = pm;
+		else
+			m_bInvalid |= true;
+	}
+
+	else if( sName == "difficulty" )
+	{
+		Difficulty dc = StringToDifficulty( sValue );
+		if( dc != DIFFICULTY_INVALID )
+			m_dc = dc;
+		else
+			m_bInvalid |= true;
+	}
+
+	else if( sName == "announcer" )
+	{
+		m_sAnnouncer = sValue;
+	}
+	
+	else if( sName == "name" )
+	{
+		m_sName = sValue;
+	}
+
+	else if( sName == "mod" )
+	{
+		if( m_sModifiers != "" )
+			m_sModifiers += ",";
+		m_sModifiers += sValue;
+	}
+	
+	else if( sName == "lua" )
+	{
+		m_LuaFunction.SetFromExpression( sValue );
+		ASSERT_M( !m_LuaFunction.IsNil(), ssprintf("\"%s\" evaluated to nil", sValue.c_str()) );
+	}
+	
+	else if( sName == "screen" )
+	{
+		m_sScreen = sValue;
+	}
+	
+	else if( sName == "song" )
+	{
+		m_pSong = SONGMAN->FindSong( sValue );
+		if( m_pSong == NULL )
 		{
-			CString sWarning = ssprintf( "Command '%s' is not valid.", command->GetOriginalCommandString().c_str() );
-			LOG->Warn( sWarning );
-			Dialog::OK( sWarning, "INVALID_GAME_COMMAND" );
+			m_sInvalidReason = ssprintf( "Song \"%s\" not found", sValue.c_str() );
+			m_bInvalid |= true;
 		}
+	}
+
+	else if( sName == "steps" )
+	{
+		CString sSteps = sValue;
+
+		/* This must be processed after "song" and "style" commands. */
+		if( !m_bInvalid )
+		{
+			Song *pSong = (m_pSong != NULL)? m_pSong:GAMESTATE->m_pCurSong;
+			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->m_pCurStyle;
+			if( pSong == NULL || pStyle == NULL )
+				RageException::Throw( "Must set Song and Style to set Steps" );
+
+			Difficulty dc = StringToDifficulty( sSteps );
+			if( dc != DIFFICULTY_EDIT )
+				m_pSteps = pSong->GetStepsByDifficulty( pStyle->m_StepsType, dc );
+			else
+				m_pSteps = pSong->GetStepsByDescription( pStyle->m_StepsType, sSteps );
+			if( m_pSteps == NULL )
+			{
+				m_sInvalidReason = "steps not found";
+				m_bInvalid |= true;
+			}
+		}
+	}
+
+	else if( sName == "course" )
+	{
+		m_pCourse = SONGMAN->FindCourse( sValue );
+		if( m_pCourse == NULL )
+		{
+			m_sInvalidReason = ssprintf( "Course \"%s\" not found", sValue.c_str() );
+			m_bInvalid |= true;
+		}
+	}
+	
+	else if( sName == "trail" )
+	{
+		CString sTrail = sValue;
+
+		/* This must be processed after "course" and "style" commands. */
+		if( !m_bInvalid )
+		{
+			Course *pCourse = (m_pCourse != NULL)? m_pCourse:GAMESTATE->m_pCurCourse;
+			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->m_pCurStyle;
+			if( pCourse == NULL || pStyle == NULL )
+				RageException::Throw( "Must set Course and Style to set Steps" );
+
+			const CourseDifficulty cd = StringToCourseDifficulty( sTrail );
+			ASSERT_M( cd != DIFFICULTY_INVALID, ssprintf("Invalid difficulty '%s'", sTrail.c_str()) );
+
+			m_pTrail = pCourse->GetTrail( pStyle->m_StepsType, cd );
+			if( m_pTrail == NULL )
+			{
+				m_sInvalidReason = "trail not found";
+				m_bInvalid |= true;
+			}
+		}
+	}
+	
+	else if( sName == "setenv" )
+	{
+		if( cmd.m_vsArgs.size() == 3 )
+			m_SetEnv[ cmd.m_vsArgs[1] ] = cmd.m_vsArgs[2];
+	}
+	
+	else if( sName == "songgroup" )
+	{
+		m_sSongGroup = sValue;
+	}
+
+	else if( sName == "sort" )
+	{
+		m_SortOrder = StringToSortOrder( sValue );
+		if( m_SortOrder == SORT_INVALID )
+		{
+			m_sInvalidReason = ssprintf( "SortOrder \"%s\" is not valid.", sValue.c_str() );
+			m_bInvalid |= true;
+		}
+	}
+	
+	else if( sName == "weight" )
+	{
+		m_iWeightPounds = atoi( sValue );
+	}
+
+	else if( sName == "goalcalories" )
+	{
+		m_iGoalCalories = atoi( sValue );
+	}
+
+	else if( sName == "goaltype" )
+	{
+		m_GoalType = StringToGoalType( sValue );
+	}
+
+	else if( sName == "unlock" )
+	{
+		m_iUnlockIndex = atoi( sValue );
+	}
+	
+	else if( sName == "sound" )
+	{
+		m_sSoundPath = sValue;
+	}
+
+	else if( sName == "preparescreen" )
+	{
+		m_vsScreensToPrepare.push_back( sValue );
+	}
+	
+	else if( sName == "deletepreparedscreens" )
+	{
+		m_bDeletePreparedScreens = true;
+	}
+	
+	else if( sName == "clearbookkeepingdata" )
+	{
+		m_bClearBookkeepingData = true;
+	}
+	else if( sName == "clearmachinestats" )
+	{
+		m_bClearMachineStats = true;
+	}
+	else if( sName == "fillmachinestats" )
+	{
+		m_bFillMachineStats = true;
+	}
+	else if( sName == "transferstatsfrommachine" )
+	{
+		m_bTransferStatsFromMachine = true;
+	}
+	else if( sName == "transferstatstomachine" )
+	{
+		m_bTransferStatsToMachine = true;
+	}
+	else if( sName == "insertcredit" )
+	{
+		m_bInsertCredit = true;
+	}
+	else if( sName == "resettofactorydefaults" )
+	{
+		m_bResetToFactoryDefaults = true;
+	}
+	else if( sName == "stopmusic" )
+	{
+		m_bStopMusic = true;
+	}
+	else if( sName == "applydefaultoptions" )
+	{
+		m_bApplyDefaultOptions = true;
+	}
+
+	else
+	{
+		CString sWarning = ssprintf( "Command '%s' is not valid.", cmd.GetOriginalCommandString().c_str() );
+		LOG->Warn( sWarning );
+		Dialog::OK( sWarning, "INVALID_GAME_COMMAND" );
 	}
 }
 
@@ -606,6 +609,17 @@ static HighScore MakeRandomHighScore()
 }
 
 void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
+{
+	FOREACH_CONST( Command, m_Commands.v, cmd )
+	{
+		GameCommand gc;
+		gc.m_bInvalid = false;
+		gc.LoadOne( *cmd );
+		gc.ApplySelf( vpns );
+	}
+}
+
+void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 {
 	const PlayMode OldPlayMode = GAMESTATE->m_PlayMode;
 

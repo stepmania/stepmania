@@ -7,6 +7,7 @@
 #include "PlayerNumber.h"
 #include "Difficulty.h"
 #include "LuaReference.h"
+#include "Command.h"
 #include <map>
 
 class Song;
@@ -16,25 +17,30 @@ class Trail;
 class Character;
 class Style;
 class Game;
-class Commands;
 
 struct GameCommand		// used in SelectMode
 {
 	GameCommand() { Init(); }
 	void Init();
 
-	void Load( int iIndex, const Commands& acs );
+	void Load( int iIndex, const Commands& cmds );
+	void LoadOne( const Command& cmd );
 	
 	void ApplyToAllPlayers() const;
 	void Apply( PlayerNumber pn ) const;
 private:
 	void Apply( const vector<PlayerNumber> &vpns ) const;
+	void ApplySelf( const vector<PlayerNumber> &vpns ) const;
 public:
 
 	bool DescribesCurrentMode( PlayerNumber pn ) const;
 	bool DescribesCurrentModeForAllPlayers() const;
 	bool IsPlayable( CString *why = NULL ) const;
 	bool IsZero() const;
+
+	// Same as what was passed to Load.  We need to keep the original commands
+	// so that we know the order of commands when it comes time to Apply.
+	Commands	m_Commands;
 
 	CString		m_sName;	// display name
 	bool		m_bInvalid;
