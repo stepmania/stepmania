@@ -451,6 +451,20 @@ int main(int argc, char* argv[])
 		{
 			DeviceInput DeviceI = (DeviceInput)ieArray[i];
 			InputEventType type = ieArray[i].type;
+
+			/* ALT-F4 -> quit (better place for this? in ScreenManager perhaps?) */
+			if(type == IET_FIRST_PRESS &&
+			   DeviceI == DeviceInput(DEVICE_KEYBOARD, DIK_F4) &&
+			   (INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_RMENU)) ||
+			    INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_LMENU)) ) )
+			{
+				SDL_Event *event;
+				event = (SDL_Event *) malloc(sizeof(event));
+				event->type = SDL_QUIT;
+				SDL_PushEvent(event);
+				continue;
+			}
+
 			GameInput GameI;
 			MenuInput MenuI;
 			StyleInput StyleI;
