@@ -37,8 +37,6 @@
 //
 // Defines
 //
-#define LYRICS_X						THEME->GetMetricF("ScreenGameplay","LyricsX")
-#define LYRICS_Y						THEME->GetMetricF("ScreenGameplay","LyricsY")
 #define SONGSEL_SCREEN					THEME->GetMetric("ScreenGameplay","SongSelectScreen")
 #define MAXCOMBO_X						THEME->GetMetricF("ScreenGameplay","MaxComboX")
 #define MAXCOMBO_Y						THEME->GetMetricF("ScreenGameplay","MaxComboY")
@@ -70,6 +68,8 @@
 #define SONG_OPTIONS_Y( e )				THEME->GetMetricF("ScreenGameplay",ssprintf("SongOptions%sY",e?"Extra":""))
 #define DIFFICULTY_X( p )				THEME->GetMetricF("ScreenGameplay",ssprintf("DifficultyP%dX",p+1))
 #define DIFFICULTY_Y( p, e, r )			THEME->GetMetricF("ScreenGameplay",ssprintf("DifficultyP%d%s%sY",p+1,e?"Extra":"",r?"Reverse":""))
+#define LYRICS_X						THEME->GetMetricF("ScreenGameplay",ssprintf("LyricsX"))
+#define LYRICS_Y( e, r )				THEME->GetMetricF("ScreenGameplay",ssprintf("Lyrics%s%sY",e?"Extra":"",r?"Reverse":""))
 #define ACTIVE_ITEMS_X( p )				THEME->GetMetricF("ScreenGameplay",ssprintf("ActiveItemsP%dX",p+1))
 #define ACTIVE_ITEMS_Y( p, e, r )		THEME->GetMetricF("ScreenGameplay",ssprintf("ActiveItemsP%d%s%sY",p+1,e?"Extra":"",r?"Reverse":""))
 #define DEBUG_X							THEME->GetMetricF("ScreenGameplay","DebugX")
@@ -402,7 +402,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	}
 
 
-	m_LyricDisplay.SetXY( LYRICS_X,LYRICS_Y );
 	this->AddChild(&m_LyricDisplay);
 	
 
@@ -650,6 +649,10 @@ void ScreenGameplay::LoadNextSong()
 		m_ActiveItemList[p].SetXY( ACTIVE_ITEMS_X(p), ACTIVE_ITEMS_Y(p,bExtra,bReverse[p]) );
 		m_DifficultyIcon[p].SetXY( DIFFICULTY_X(p), DIFFICULTY_Y(p,bExtra,bReverse[p]) );
 	}
+
+	/* XXX: We want to put the lyrics out of the way, but it's likely that one
+	 * player is in reverse and the other isn't.  What to do? */
+	m_LyricDisplay.SetXY( LYRICS_X, LYRICS_Y(bExtra,bReverse[GAMESTATE->m_MasterPlayerNumber]) );
 
 	m_soundMusic.Load( GAMESTATE->m_pCurSong->GetMusicPath() );
 
