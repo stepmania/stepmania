@@ -26,7 +26,6 @@
 #include "ScoreDisplay.h"
 #include "DifficultyIcon.h"
 #include "BPMDisplay.h"
-#include "FocusingSprite.h"
 #include "Inventory.h"
 #include "ActiveItemList.h"
 //#include "BeginnerHelper.h"	// uncomment once it's checked in

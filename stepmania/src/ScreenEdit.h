@@ -15,7 +15,6 @@
 #include "BitmapText.h"
 #include "Player.h"
 #include "RandomSample.h"
-#include "FocusingSprite.h"
 #include "RageSoundManager.h"
 #include "RageSound.h"
 #include "MotionBlurSprite.h"
