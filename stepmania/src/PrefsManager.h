@@ -51,6 +51,7 @@ public:
 	bool			m_bShowDanger;
 
 	float			m_fJudgeWindowScale;
+	float			m_fJudgeWindowAdd;		// this is useful for compensating for changes in sampling rate between devices
 	float			m_fJudgeWindowSecondsMarvelous;
 	float			m_fJudgeWindowSecondsPerfect;
 	float			m_fJudgeWindowSecondsGreat;

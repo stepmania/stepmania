@@ -57,6 +57,7 @@ void PrefsManager::Init()
 	m_bEventMode = false;
 	m_bAutoPlay = false;
 	m_fJudgeWindowScale = 1.0f;
+	m_fJudgeWindowAdd = 0;
 	m_fLifeDifficultyScale = 1.0f;
 	m_fJudgeWindowSecondsMarvelous =	0.0225f;
 	m_fJudgeWindowSecondsPerfect =		0.045f;
@@ -352,7 +353,7 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Options", "EventMode",						m_bEventMode );
 	ini.GetValue( "Options", "AutoPlay",						m_bAutoPlay );
 	ini.GetValue( "Options", "JudgeWindowScale",				m_fJudgeWindowScale );
-	ini.GetValue( "Options", "LifeDifficultyScale",				m_fLifeDifficultyScale );
+	ini.GetValue( "Options", "JudgeWindowAdd",					m_fJudgeWindowAdd );
 	ini.GetValue( "Options", "JudgeWindowSecondsMarvelous",		m_fJudgeWindowSecondsMarvelous );
 	ini.GetValue( "Options", "JudgeWindowSecondsPerfect",		m_fJudgeWindowSecondsPerfect );
 	ini.GetValue( "Options", "JudgeWindowSecondsGreat",			m_fJudgeWindowSecondsGreat );
@@ -361,6 +362,7 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Options", "JudgeWindowSecondsOK",			m_fJudgeWindowSecondsOK );
 	ini.GetValue( "Options", "JudgeWindowSecondsMine",			m_fJudgeWindowSecondsMine );
 	ini.GetValue( "Options", "JudgeWindowSecondsAttack",		m_fJudgeWindowSecondsAttack );
+	ini.GetValue( "Options", "LifeDifficultyScale",				m_fLifeDifficultyScale );
 	ini.GetValue( "Options", "LifeDeltaPercentChangeMarvelous",	m_fLifeDeltaPercentChangeMarvelous );
 	ini.GetValue( "Options", "LifeDeltaPercentChangePerfect",	m_fLifeDeltaPercentChangePerfect );
 	ini.GetValue( "Options", "LifeDeltaPercentChangeGreat",		m_fLifeDeltaPercentChangeGreat );
@@ -584,7 +586,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "EventMode",						m_bEventMode );
 	ini.SetValue( "Options", "AutoPlay",						m_bAutoPlay );
 	ini.SetValue( "Options", "JudgeWindowScale",				m_fJudgeWindowScale );
-	ini.SetValue( "Options", "LifeDifficultyScale",				m_fLifeDifficultyScale );
+	ini.SetValue( "Options", "JudgeWindowAdd",					m_fJudgeWindowAdd );
 	ini.SetValue( "Options", "JudgeWindowSecondsMarvelous",		m_fJudgeWindowSecondsMarvelous );
 	ini.SetValue( "Options", "JudgeWindowSecondsPerfect",		m_fJudgeWindowSecondsPerfect );
 	ini.SetValue( "Options", "JudgeWindowSecondsGreat",			m_fJudgeWindowSecondsGreat );
@@ -593,6 +595,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "JudgeWindowSecondsOK",			m_fJudgeWindowSecondsOK );
 	ini.SetValue( "Options", "JudgeWindowSecondsMine",			m_fJudgeWindowSecondsMine );
 	ini.SetValue( "Options", "JudgeWindowSecondsAttack",		m_fJudgeWindowSecondsAttack );
+	ini.SetValue( "Options", "LifeDifficultyScale",				m_fLifeDifficultyScale );
 	ini.SetValue( "Options", "LifeDeltaPercentChangeMarvelous",	m_fLifeDeltaPercentChangeMarvelous );
 	ini.SetValue( "Options", "LifeDeltaPercentChangePerfect",	m_fLifeDeltaPercentChangePerfect );
 	ini.SetValue( "Options", "LifeDeltaPercentChangeGreat",		m_fLifeDeltaPercentChangeGreat );
