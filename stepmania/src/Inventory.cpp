@@ -54,11 +54,12 @@ void ReloadItems()
 
 Inventory::Inventory()
 {
-	ITEM_USE_RATE_SECONDS.Refresh();
 }
 
 void Inventory::Load( PlayerNumber pn )
 {
+	ITEM_USE_RATE_SECONDS.Refresh();
+
 	ReloadItems();
 
 	m_PlayerNumber = pn;
