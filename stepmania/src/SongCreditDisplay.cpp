@@ -31,8 +31,13 @@ SongCreditDisplay::SongCreditDisplay()
 	vector<Steps*> vpStepsToShow;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( GAMESTATE->IsHumanPlayer(p) )
-			vpStepsToShow.push_back( GAMESTATE->m_pCurNotes[p] );
+		if( !GAMESTATE->IsHumanPlayer(p) )
+			continue;	// skip
+		
+		Steps* pSteps = GAMESTATE->m_pCurNotes[p];
+		bool bAlreadyAdded = find( vpStepsToShow.begin(), vpStepsToShow.end(), pSteps ) != vpStepsToShow.end();
+		if( !bAlreadyAdded )
+			vpStepsToShow.push_back( pSteps );
 	}
 	for( unsigned i=0; i<vpStepsToShow.size(); i++ )
 	{
