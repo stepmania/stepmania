@@ -1153,7 +1153,7 @@ bool MusicWheel::NextSort()		// return true if change successful
 
 	// find the index of the current sort
 	int cur = 0;
-	while( cur < ARRAYSIZE(SortOrder) && SortOrder[cur] != GAMESTATE->m_SongSortOrder )
+	while( cur < int(ARRAYSIZE(SortOrder)) && SortOrder[cur] != GAMESTATE->m_SongSortOrder )
 		++cur;
 
 	// move to the next sort with wrapping
