@@ -512,6 +512,7 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 	
 	/* Set up m_vpBones, just in case we're drawn without being Update()d. */
 	SetBones( m_pCurAnimation, m_fCurFrame, m_vpBones );
+	UpdateTempGeometry();
 }
 
 void Model::AdvanceFrame( float fDeltaTime )
@@ -539,6 +540,7 @@ void Model::AdvanceFrame( float fDeltaTime )
 	}
 
 	SetBones( m_pCurAnimation, m_fCurFrame, m_vpBones );
+	UpdateTempGeometry();
 }
 
 void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone_t> &vpBones )
@@ -635,6 +637,42 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 	}
 }
 
+void Model::UpdateTempGeometry()
+{
+	if( m_pGeometry == NULL || m_pTempGeometry == NULL )
+		return;
+
+	for( unsigned i = 0; i < m_pGeometry->m_Meshes.size(); ++i )
+	{
+		const msMesh &origMesh = m_pGeometry->m_Meshes[i];
+		msMesh &tempMesh = m_vTempMeshes[i];
+		const vector<RageModelVertex> &origVertices = origMesh.Vertices;
+		vector<RageModelVertex> &tempVertices = tempMesh.Vertices;
+		for( unsigned j = 0; j < origVertices.size(); j++ )
+		{
+			RageVector3& tempPos =				tempVertices[j].p;
+			RageVector3& tempNormal =			tempVertices[j].n;
+			const RageVector3& originalPos =	origVertices[j].p;
+			const RageVector3& originalNormal =	origVertices[j].n;
+			int8_t bone =						origVertices[j].bone;
+
+			if( bone == -1 )
+			{
+				tempNormal = originalNormal;
+				tempPos = originalPos;
+			}
+			else
+			{
+				RageVec3TransformNormal( &tempNormal, &originalNormal, &m_vpBones[bone].mFinal );
+				RageVec3TransformCoord( &tempPos, &originalPos, &m_vpBones[bone].mFinal );
+			}
+		}
+	}
+
+	// send the new vertices to the graphics card
+	m_pTempGeometry->Change( m_vTempMeshes );
+}
+
 void Model::Update( float fDelta )
 {
 	Actor::Update( fDelta );
@@ -644,42 +682,6 @@ void Model::Update( float fDelta )
 	{
 		m_Materials[i].diffuse.Update( fDelta );
 		m_Materials[i].alpha.Update( fDelta );
-	}
-
-	//
-	// process per-vertex bones
-	//
-	if( m_pGeometry && m_pTempGeometry )
-	{
-		for( unsigned i = 0; i < m_pGeometry->m_Meshes.size(); ++i )
-		{
-			const msMesh &origMesh = m_pGeometry->m_Meshes[i];
-			msMesh &tempMesh = m_vTempMeshes[i];
-			const vector<RageModelVertex> &origVertices = origMesh.Vertices;
-			vector<RageModelVertex> &tempVertices = tempMesh.Vertices;
-			for( unsigned j = 0; j < origVertices.size(); j++ )
-			{
-				RageVector3& tempPos =				tempVertices[j].p;
-				RageVector3& tempNormal =			tempVertices[j].n;
-				const RageVector3& originalPos =	origVertices[j].p;
-				const RageVector3& originalNormal =	origVertices[j].n;
-				int8_t bone =						origVertices[j].bone;
-
-				if( bone == -1 )
-				{
-					tempNormal = originalNormal;
-					tempPos = originalPos;
-				}
-				else
-				{
-					RageVec3TransformNormal( &tempNormal, &originalNormal, &m_vpBones[bone].mFinal );
-					RageVec3TransformCoord( &tempPos, &originalPos, &m_vpBones[bone].mFinal );
-				}
-			}
-		}
-
-		// send the new vertices to the graphics card
-		m_pTempGeometry->Change( m_vTempMeshes );
 	}
 }
 
