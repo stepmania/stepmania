@@ -39,12 +39,7 @@ const int MAX_BOTTOM_RANGE = 10;
 
 Course::Course()
 {
-	m_bIsAutogen = false;
-	m_bRepeat = false;
-	m_bRandomize = false;
-//	m_bDifficult = false;
-	m_iLives = -1;
-	m_iMeter = -1;
+	Unload();
 }
 
 PlayMode Course::GetPlayMode() const
@@ -105,6 +100,8 @@ float Course::GetMeter( CourseDifficulty cd ) const
 void Course::LoadFromCRSFile( CString sPath )
 {
 	LOG->Trace( "Course::LoadFromCRSFile( '%s' )", sPath.c_str() );
+
+	Unload();
 
 	m_sPath = sPath;	// save path
 
@@ -299,6 +296,16 @@ void Course::LoadFromCRSFile( CString sPath )
 				ignore, ignore, ignore);
 }
 
+void Course::Unload()
+{
+	m_bIsAutogen = false;
+	m_bRepeat = false;
+	m_bRandomize = false;
+	m_iLives = -1;
+	m_iMeter = -1;
+	m_entries.clear();
+	m_sPath = m_sName = m_sTranslitName = m_sBannerPath = m_sCDTitlePath = "";
+}
 
 void Course::Save()
 {

@@ -133,6 +133,7 @@ public:
 	bool IsFixed() const;
 
 	void LoadFromCRSFile( CString sPath );
+	void Unload();
 	void Save();
 	void AutogenEndlessFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup );
 	void AutogenNonstopFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup );
