@@ -126,7 +126,7 @@ void GLExt_t::Load( LowLevelWindow *pWind )
 			F( glEnableVertexAttribArrayARB ),
 			F( glDisableVertexAttribArrayARB ),
 			F( glVertexAttribPointerARB ),
-			NULL
+			{ NULL, NULL }
 		};
 
 		if( !LoadAllOrNothing(funcs, pWind) )
@@ -139,7 +139,7 @@ void GLExt_t::Load( LowLevelWindow *pWind )
 		func_t funcs[] =
 		{
 			F( glBindAttribLocationARB ),
-			NULL
+			{ NULL, NULL }
 		};
 		if( !LoadAllOrNothing(funcs, pWind) )
 			m_bGL_ARB_vertex_shader = false;
