@@ -485,23 +485,22 @@ void ScreenSelectMusic::AdjustOptions()
 		dc = min(dc, GAMESTATE->m_pCurNotes[p]->GetDifficulty());
 	}
 
-	/* In event mode, switch to fail-end-of-stage if either chose beginner or easy. */
-	if(PREFSMAN->m_bEventMode && dc <= DIFFICULTY_EASY)
-		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_END_OF_SONG;
+	/* This can still interfere a bit with the song options menu; eg. if a
+	 * player changes to a mode easier than the preference setting, we might
+	 * reset it to the preference later. XXX */
+
+	SongOptions::FailType ft = SongOptions::FailType(-1);
+
+	/* Easy and beginner are never harder than FAIL_END_OF_SONG. */
+	if(dc <= DIFFICULTY_EASY)
+		ft = SongOptions::FAIL_END_OF_SONG;
 	
-	/* Otherwise, if either chose beginner's steps, and this is the first stage,
-	 * turn off failure completely (always give a second shot). */
-	else if(dc == DIFFICULTY_BEGINNER)
-	{
-		/* Beginners get a freebie and then end-of-song. */
-		if(GAMESTATE->m_iCurrentStageIndex == 0)
-			GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
-		else if(!GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2())
-			GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_END_OF_SONG;
-	}
-	/* Easy is always end-of-song. */
-	else if(dc == DIFFICULTY_EASY && !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2())
-		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_END_OF_SONG;
+	/* If beginner's steps were chosen, and this is the first stage,
+	 * turn off failure completely--always give a second try. */
+	if(dc == DIFFICULTY_BEGINNER &&
+		!PREFSMAN->m_bEventMode && /* stage index is meaningless in event mode */
+		GAMESTATE->m_iCurrentStageIndex == 0)
+		ft = SongOptions::FAIL_OFF;
 
 	if(GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2())
 	{
@@ -512,7 +511,15 @@ void ScreenSelectMusic::AdjustOptions()
 		 *
 		 * Besides, extra stage should probably always be FAIL_ARCADE anyway,
 		 * unless the extra stage course says otherwise. */
-		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_ARCADE;
+		ft = SongOptions::FAIL_ARCADE;
+	}
+
+	if(ft != SongOptions::FailType(-1))
+	{
+		/* Never make the difficulty harder than the default.  (If the main options
+		 * are set to FAIL_END_OF_SONG, we should never set it to ARCADE.) */
+	   ft = max(ft, PREFSMAN->m_DefaultFailType);
+	   GAMESTATE->m_SongOptions.m_FailType = ft;
 	}
 }
 
