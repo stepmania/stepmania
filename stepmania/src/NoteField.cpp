@@ -140,10 +140,14 @@ void NoteField::DrawMarkerBar( const float fBeat )
 
 void NoteField::DrawAreaHighlight( const float fStartBeat, const float fEndBeat )
 {
-	const float fYStartOffset	= ArrowGetYOffset( m_PlayerNumber, fStartBeat );
-	const float fYStartPos		= ArrowGetYPos(	m_PlayerNumber, fYStartOffset );
-	const float fYEndOffset		= ArrowGetYOffset( m_PlayerNumber, fEndBeat );
-	const float fYEndPos		= ArrowGetYPos(	m_PlayerNumber, fYEndOffset );
+	float fYStartOffset	= ArrowGetYOffset( m_PlayerNumber, fStartBeat );
+	float fYStartPos	= ArrowGetYPos(	m_PlayerNumber, fYStartOffset );
+	float fYEndOffset	= ArrowGetYOffset( m_PlayerNumber, fEndBeat );
+	float fYEndPos		= ArrowGetYPos(	m_PlayerNumber, fYEndOffset );
+
+	// Something in OpenGL crashes if this is values are too large.  Strange.  -Chris
+	fYStartPos = max( fYStartPos, -1000 );	
+	fYEndPos = min( fYEndPos, +5000 );	
 
 	m_rectAreaHighlight.StretchTo( RectI(0, (int)fYStartPos-ARROW_SIZE/2, 1, (int)fYEndPos+ARROW_SIZE/2) );
 	m_rectAreaHighlight.SetZoomX( (float)(GetNumTracks()+1) * ARROW_SIZE );

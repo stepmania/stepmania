@@ -231,7 +231,7 @@ ScreenEdit::ScreenEdit()
 
 	m_NoteFieldEdit.SetXY( EDIT_X, EDIT_GRAY_Y );
 	m_NoteFieldEdit.SetZoom( 0.5f );
-	m_NoteFieldEdit.Load( &noteData, PLAYER_1, -200, 800 );
+	m_NoteFieldEdit.Load( &noteData, PLAYER_1, -220, 800 );
 
 	m_rectRecordBack.StretchTo( RectI(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 	m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0) );

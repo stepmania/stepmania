@@ -45,7 +45,8 @@ float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )
 	switch( GAMESTATE->m_PlayerOptions[pn].m_AccelType )
 	{
 	case PlayerOptions::ACCEL_BOOST:
-		fYOffset *= 1.5f / ((fYOffset+SCREEN_HEIGHT/1.2f)/SCREEN_HEIGHT); 
+		if( fYOffset > 0 )	// speed the arrows back to normal after they cross 0
+			fYOffset *= 1.5f / ((fYOffset+SCREEN_HEIGHT/1.2f)/SCREEN_HEIGHT); 
 		break;
 	case PlayerOptions::ACCEL_LAND:
 		if( fYOffset > 0 )	// speed the arrows back to normal after they cross 0
