@@ -22,6 +22,7 @@
 #include "RageSoundManager.h"
 #include "ThemeManager.h"
 #include "ScreenRanking.h"
+#include "Course.h"
 #include <math.h>
 
 

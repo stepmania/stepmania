@@ -26,6 +26,7 @@
 #include "ThemeManager.h"
 #include "Notes.h"
 #include "song.h"
+#include "Course.h"
 
 
 // WheelItem stuff

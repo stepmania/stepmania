@@ -27,6 +27,7 @@
 #include "ActorUtil.h"
 #include "RageTimer.h"
 #include "UnlockSystem.h"
+#include "Course.h"
 
 const int NUM_SCORE_DIGITS	=	9;
 

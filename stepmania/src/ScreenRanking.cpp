@@ -15,6 +15,7 @@
 #include "SongManager.h"
 #include "GameState.h"
 #include "GameManager.h"
+#include "Course.h"
 
 
 #define CATEGORY_X				THEME->GetMetricF("ScreenRanking","CategoryX")

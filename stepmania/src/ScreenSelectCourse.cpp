@@ -25,6 +25,7 @@
 #include "RageSoundManager.h"
 #include "CodeDetector.h"
 #include "ThemeManager.h"
+#include "Course.h"
 
 
 #define EXPLANATION_X		THEME->GetMetricF("ScreenSelectCourse","ExplanationX")

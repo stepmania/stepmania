@@ -41,6 +41,7 @@
 #include "CombinedLifeMeterEnemy.h"
 #include "CombinedLifeMeterTug.h"
 #include "Inventory.h"
+#include "Course.h"
 
 //
 // Defines
