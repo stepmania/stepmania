@@ -257,7 +257,7 @@ bool UnlockSystem::LoadFromDATFile( CString sPath )
 
 		if( stricmp(sParams[0],"UNLOCK") )
 		{
-			LOG->Warn("Unrecognized unlock tag \"%s\", ignored.", sValueName);
+			LOG->Warn("Unrecognized unlock tag \"%s\", ignored.", sValueName.c_str());
 			continue;
 		}
 
