@@ -27,8 +27,6 @@ public:
 
 	virtual void Update( float fDeltaTime );
 
-	virtual void ScaleToClipped( float fWidth, float fHeight );
-
 	void LoadFromSong( Song* pSong );		// NULL means no song
 	void LoadAllMusic();
 	void LoadFromGroup( CString sGroupName );

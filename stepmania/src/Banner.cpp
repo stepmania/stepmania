@@ -129,9 +129,3 @@ void Banner::LoadRandom()
 	Load( THEME->GetPathToG("Banner random") );
 	m_bScrolling = true;
 }
-
-void Banner::ScaleToClipped( float fWidth, float fHeight )
-{
-	m_fRememberedClipWidth = fWidth;
-	m_fRememberedClipHeight = fHeight;
-}
