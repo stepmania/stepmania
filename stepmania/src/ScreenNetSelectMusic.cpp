@@ -198,12 +198,10 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( CString sName ) : ScreenWithMenuElem
 	UpdateGroupsListPos();
 	UpdateSongsList();
 	
-	int i = 0;
 	if (GAMESTATE->m_pCurSong != NULL)
-		for ( i = 0 ; i<m_vSongs.size() ; i++ )
+		for ( unsigned i = 0 ; i<m_vSongs.size() ; ++i )
 			if (m_vSongs[i]->GetFullDisplayTitle() == GAMESTATE->m_pCurSong->GetFullDisplayTitle())
-
-	m_iSongNum = i;
+				m_iSongNum = i;
 
 	UpdateSongsListPos();
 
@@ -330,10 +328,12 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			CString OutText = "";
 			m_vChatText.push_back ( NSMAN->m_WaitingChat );
 			NSMAN->m_WaitingChat = "";
-			int i;
-			for ( i= max( (int) m_vChatText.size() - SHOW_CHAT_LINES, 0 );
-				i<m_vChatText.size() ; i++ )
+
+			for ( unsigned i= max( m_vChatText.size() - SHOW_CHAT_LINES, unsigned(0) );
+				  i<m_vChatText.size() ; ++i )
+			{
 				OutText+=m_vChatText[i]+'\n';
+			}
 			m_textChatOutput.SetText( OutText );
 			break;
 		}
