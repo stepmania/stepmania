@@ -4,7 +4,6 @@
 #include "GameState.h"
 #include "IniFile.h"
 #include "RageMath.h"
-#include "SDL_utils.h"
 #include "RageTimer.h"
 #include "RageLog.h"
 #include "song.h"
