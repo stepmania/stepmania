@@ -243,9 +243,16 @@ struct char_traits_char_nocase: public char_traits<char>
     static bool lt( char c1, char c2 )
     { return toupper(c1) <  toupper(c2); }
 
-    static int compare( const char* s1, const char* s2, size_t n ) {
-    return memicmp( s1, s2, n );
-    //return strncasecmp( s1, s2, n );
+    static int compare( const char* s1, const char* s2, size_t n )
+	{
+		for(size_t i = 0; i < n; ++i)
+		{
+			const char c1 = (char) tolower(s1[i]);
+			const char c2 = (char) tolower(s2[i]);
+			if(c1 < c2) return -1;
+			if(c1 > c2) return 1;
+		}
+		return 0;
     }
 
 	static inline char fasttoupper(char a)
@@ -255,14 +262,15 @@ struct char_traits_char_nocase: public char_traits<char>
 		return a+('A'-'a');
 	}
 	
-    static const char *find( const char* s, int n, char a ) {
-	  a = fasttoupper(a);
-      while( n-- > 0 && fasttoupper(*s) != a ) {
-          ++s;
-      }
-	  if(fasttoupper(*s) == a)
-		return s;
-	  return NULL;
+    static const char *find( const char* s, int n, char a )
+	{
+		a = fasttoupper(a);
+		while( n-- > 0 && fasttoupper(*s) != a )
+			++s;
+
+		if(fasttoupper(*s) == a)
+			return s;
+		return NULL;
     }
 };
 typedef basic_string<char,char_traits_char_nocase> istring;

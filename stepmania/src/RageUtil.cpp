@@ -822,20 +822,6 @@ CString WcharToUTF8( wchar_t c )
 	return CString(buf, cnt);
 }
 
-#if !defined(WIN32)
-/* XXX autoconf this */
-int memicmp(const char *s1, const char *s2, size_t n)
-{
-	for(size_t i = 0; i < n; ++i)
-	{
-		char c1 = tolower(s1[i]);
-		char c2 = tolower(s2[i]);
-		if(c1 < c2) return -1;
-		if(c1 > c2) return 1;
-	}
-	return 0;
-}
-#endif
 
 /* Replace &#nnnn; (decimal) &xnnnn; (hex) with corresponding UTF-8 characters. */
 void Replace_Unicode_Markers( CString &Text )
