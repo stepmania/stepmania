@@ -27,6 +27,7 @@
 #include "song.h"
 #include "Course.h"
 #include "ProfileManager.h"
+#include "ActorUtil.h"
 
 
 // WheelItem stuff
@@ -36,8 +37,6 @@
 #define SECTION_ZOOM	THEME->GetMetricF("MusicWheelItem","SectionZoom")
 #define ROULETTE_X		THEME->GetMetricF("MusicWheelItem","RouletteX")
 #define ROULETTE_ZOOM	THEME->GetMetricF("MusicWheelItem","RouletteZoom")
-#define COURSE_X		THEME->GetMetricF("MusicWheelItem","CourseX")
-#define COURSE_ZOOM		THEME->GetMetricF("MusicWheelItem","CourseZoom")
 #define GRADE_X( p )	THEME->GetMetricF("MusicWheelItem",ssprintf("GradeP%dX",p+1))
 
 
@@ -58,6 +57,8 @@ WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, CString sSectionNa
 MusicWheelItem::MusicWheelItem()
 {
 	data = NULL;
+
+	SetName( "MusicWheelItem" );
 
 	m_fPercentGray = 0;
 	m_WheelNotifyIcon.SetXY( ICON_X, 0 );
@@ -91,17 +92,13 @@ MusicWheelItem::MusicWheelItem()
 		m_GradeDisplay[p].SetXY( GRADE_X(p), 0 );
 	}
 
+	m_textCourse.SetName( "CourseName" );
 	m_textCourse.LoadFromFont( THEME->GetPathToF("MusicWheelItem course") );
-	m_textCourse.EnableShadow( false );
-	m_textCourse.SetZoom( COURSE_ZOOM );
-	m_textCourse.SetHorizAlign( align_left );
-	m_textCourse.SetXY( COURSE_X, 0 );
+	SET_XY_AND_ON_COMMAND( &m_textCourse );
 
+	m_textSort.SetName( "Sort" );
 	m_textSort.LoadFromFont( THEME->GetPathToF("MusicWheelItem sort") );
-	m_textSort.EnableShadow( false );
-	m_textSort.SetZoom( COURSE_ZOOM );
-	m_textSort.SetHorizAlign( align_left );
-	m_textSort.SetXY( COURSE_X, 0 );
+	SET_XY_AND_ON_COMMAND( &m_textSort );
 }
 
 
