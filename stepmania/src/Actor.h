@@ -244,7 +244,7 @@ public:
 		float fEffectPeriodSeconds = 2.0f );
 	void SetEffectWag( 
 		float fPeriod = 2.f, 
-		RageVector3 vect = RageVector3(0,0,0.2f) );
+		RageVector3 vect = RageVector3(0,0,20) );
 	void SetEffectBounce( 
 		float fPeriod = 2.f, 
 		RageVector3 vect = RageVector3(0,0,20) );
