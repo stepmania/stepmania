@@ -197,6 +197,8 @@ bool regex(CString str, CString pattern, vector<CString> &matches);
 bool regex(CString str, CString pattern);
 void regex_flags(int flags);
 
+wstring CStringToWstring(const CString &str);
+
 #ifndef WIN32
 #include <unistd.h> /* correct place with correct definitions */
 #endif

@@ -854,3 +854,77 @@ bool regex(CString pattern, CString str)
     vector<CString> matches;
     return regex(pattern, str, matches);
 }
+
+/* UTF-8 decoding code from glib. */
+char *utf8_find_next_char (const char *p, const char *end)
+{
+  if (*p) {
+      if (end)
+        for (++p; p < end && (*p & 0xc0) == 0x80; ++p)
+          ;
+      else
+        for (++p; (*p & 0xc0) == 0x80; ++p)
+          ;
+  }
+  return (p == end) ? NULL : (char *)p;
+}
+
+#define UTF8_GET                             \
+
+wchar_t utf8_get_char (const char *p)
+{
+  int i, mask = 0, len;
+  wchar_t result;
+  unsigned char c = (unsigned char) *p;
+
+  if (c < 128) {
+      len = 1;
+      mask = 0x7f;
+  } else if ((c & 0xe0) == 0xc0) {
+      len = 2;
+      mask = 0x1f;
+  } else if ((c & 0xf0) == 0xe0) {
+      len = 3;
+      mask = 0x0f;
+  } else if ((c & 0xf8) == 0xf0) {
+      len = 4;
+      mask = 0x07;
+  } else if ((c & 0xfc) == 0xf8) {
+      len = 5;
+      mask = 0x03;
+  } else if ((c & 0xfe) == 0xfc) {
+      len = 6;
+      mask = 0x01;
+  } else
+    return (wchar_t)-1;
+
+  result = wchar_t(p[0] & mask);
+  for (i = 1; i < len; ++i) {
+      if ((p[i] & 0xc0) != 0x80)
+          return (wchar_t) -1;
+
+	  result <<= 6;
+      result |= p[i] & 0x3f;
+  }
+
+  return result;
+}
+
+wstring CStringToWstring(const CString &str)
+{
+	const char *ptr = str.c_str(), *end = str.c_str()+str.size();
+
+	wstring ret;
+
+	while(ptr)
+	{
+		wchar_t c = utf8_get_char (ptr);
+		if(c != wchar_t(-1))
+			ret.push_back(c);
+
+		ptr = utf8_find_next_char (ptr, end);
+
+	}
+
+	return ret;
+}
