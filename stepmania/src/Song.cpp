@@ -662,13 +662,18 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 		ttab.push_back(TitleTrans("^Kakumei$", "", "", "&kakumei1;&kakumei2;", "", "") );
 		ttab.push_back(TitleTrans("^Sweet Sweet Love Magic$", "", "", "Sweet Sweet &whiteheart; Magic", "", "") );
 		ttab.push_back(TitleTrans("^Breakdown$", "", "", "Bre&flipped-a;kdown", "", "") );
-		/* サナ・モレッテ・ネ・エンテ */
-		ttab.push_back(TitleTrans("^Sana Mollete Ne Ente", "", "", 
+		/* サナ・モレッテ・ネ・エンテ 
+		 * People can't decide how they want to spell this, so cope with
+		 * both l or r, and one or two l/r and t. */
+		ttab.push_back(TitleTrans("^Sana Mo((ll?)|(rr?))et(t?)e Ne Ente", "", "", 
 			"&ksa;&kna;&kdot;&kmo;&kre;&kq;&kte;&kdot;&kne;&kdot;&ke;&kn;&kte;", "", ""));
 		ttab.push_back(TitleTrans("^Sobakasu$", "", "", "&hso;&hba;&hka;&hsu;", "", "") );
 
 		/* 夜空ノムコウ */
 		ttab.push_back(TitleTrans("^Yozora no Muko$", "", "", "&yozora1;&yozora2;&hno;&kmu;&kko;", "", "") );
+
+		/* 17才 */
+		ttab.push_back(TitleTrans("^17 ?(Sai)?$", "", "", "17&sai;", "", "") );
 
 		/* XXX blackstar or whitestar?  Is this supposed to be capped? */
 		ttab.push_back(TitleTrans("^Mobo Moga$", "", "", "Mobo&whitestar;Moga", "", "") );
