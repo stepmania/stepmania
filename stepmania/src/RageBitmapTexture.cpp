@@ -12,6 +12,7 @@
 */
 
 #include "RageBitmapTexture.h"
+#include "RageTextureManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
@@ -137,7 +138,7 @@ void RageBitmapTexture::Create()
 	/* Figure out which texture format to use. */
 	GLenum fmtTexture;
 
-	if( m_prefs.iTextureColorDepth == 16 )	
+	if( TEXTUREMAN->GetTextureColorDepth() == 16 )	
 	{
 		/* Bits of alpha in the source: */
 		int src_alpha_bits = 8 - img->format->Aloss;
@@ -166,10 +167,10 @@ void RageBitmapTexture::Create()
 			break;
 		}
 	} 
-	else if( m_prefs.iTextureColorDepth == 32 )
+	else if( TEXTUREMAN->GetTextureColorDepth() == 32 )
 		fmtTexture = GL_RGBA8;
 	else
-		throw RageException( "Invalid color depth: %d bits", m_prefs.iTextureColorDepth );
+		throw RageException( "Invalid color depth: %d bits", TEXTUREMAN->GetTextureColorDepth() );
 
 	/* Cap the max texture size to the hardware max. */
 	m_prefs.iMaxSize = min( m_prefs.iMaxSize, DISPLAY->GetMaxTextureSize() );
@@ -253,6 +254,8 @@ void RageBitmapTexture::Create()
 	 * We don't want anything else to be linearly filtered in on the
 	 * edge of the texture ...
 	 */
+	/* We could check to see if we happen to simply be in a reversed
+	 * pixel order, and tell OpenGL to do the switch for us. */
 	ConvertSDLSurface(img, m_iTextureWidth, m_iTextureHeight, 32,
 		0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000 );
 
