@@ -16,6 +16,9 @@
 #include "BannerCache.h"
 #include "song.h"
 #include "RageLog.h"
+#include "course.h"
+#include "PrefsManager.h"
+#include "ThemeManager.h"
 
 /* XXX: metric */
 static const float FadeTime = 0.25;
@@ -34,8 +37,6 @@ void FadingBanner::SetCroppedSize( float fWidth, float fHeight )
 		m_Banner[i].SetCroppedSize( fWidth, fHeight );
 }
 
-#include "PrefsManager.h"
-#include "ThemeManager.h"
 void FadingBanner::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
@@ -150,9 +151,9 @@ void FadingBanner::LoadFromGroup( CString sGroupName )
 
 void FadingBanner::LoadFromCourse( Course* pCourse )
 {
-//	LoadFromCachedBanner( pCourse->GetBannerPath() );
-	BeforeChange();
-	m_Banner[GetBackIndex()].LoadFromCourse( pCourse );
+	LoadFromCachedBanner( pCourse->m_sBannerPath );
+//	BeforeChange();
+//	m_Banner[GetBackIndex()].LoadFromCourse( pCourse );
 }
 
 void FadingBanner::LoadRoulette()

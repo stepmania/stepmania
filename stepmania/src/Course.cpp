@@ -24,6 +24,7 @@
 #include "TitleSubstitution.h"
 #include "Notes.h"
 #include "GameState.h"
+#include "BannerCache.h"
 
 
 Course::Course()
@@ -121,7 +122,12 @@ void Course::LoadFromCRSFile( CString sPath )
 	GetDirListing( sFName + ".bmp", arrayPossibleBanners, false, true );
 	GetDirListing( sFName + ".gif", arrayPossibleBanners, false, true );
 	if( !arrayPossibleBanners.empty() )
+	{
 		m_sBannerPath = arrayPossibleBanners[0];
+
+		/* Cache and load the course banner. */
+		BANNERCACHE->CacheBanner( m_sBannerPath );
+	}
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
