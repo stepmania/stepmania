@@ -497,15 +497,10 @@ bool GameState::HasEarnedExtraStage()
 
 PlayerNumber GameState::GetBestPlayer()
 {
-	PlayerNumber winner = PLAYER_1;
-	for( int p=PLAYER_1+1; p<NUM_PLAYERS; p++ )
-	{
-		if( GAMESTATE->m_CurStageStats.iActualDancePoints[p] == GAMESTATE->m_CurStageStats.iActualDancePoints[winner] )
-			return PLAYER_INVALID;	// draw
-		else if( GAMESTATE->m_CurStageStats.iActualDancePoints[p] > GAMESTATE->m_CurStageStats.iActualDancePoints[winner] )
-			winner = (PlayerNumber)p;
-	}
-	return winner;
+	for( int p=PLAYER_1; p<NUM_PLAYERS; p++ )
+		if( GetStageResult( (PlayerNumber)p ) == RESULT_WIN )
+			return (PlayerNumber)p;
+	return PLAYER_INVALID;	// draw
 }
 
 StageResult GameState::GetStageResult( PlayerNumber pn )
@@ -514,15 +509,31 @@ StageResult GameState::GetStageResult( PlayerNumber pn )
 	{
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
+		if( fabsf(m_fTugLifePercentP1 - 0.5f) < 0.0001f )
+			return RESULT_DRAW;
 		switch( pn )
 		{
 		case PLAYER_1:	return (m_fTugLifePercentP1>=0.5f)?RESULT_WIN:RESULT_LOSE;
 		case PLAYER_2:	return (m_fTugLifePercentP1<0.5f)?RESULT_WIN:RESULT_LOSE;
 		default:	ASSERT(0); return RESULT_LOSE;
 		}
-	default:
-		return (GetBestPlayer()==pn)?RESULT_WIN:RESULT_LOSE;
 	}
+
+	StageResult win = RESULT_WIN;
+	for( int p=PLAYER_1; p<NUM_PLAYERS; p++ )
+	{
+		if( p == pn )
+			continue;
+
+		/* If anyone did just as well, at best it's a draw. */
+		if( GAMESTATE->m_CurStageStats.iActualDancePoints[p] == GAMESTATE->m_CurStageStats.iActualDancePoints[pn] )
+			win = RESULT_DRAW;
+
+		/* If anyone did better, we lost. */
+		if( GAMESTATE->m_CurStageStats.iActualDancePoints[p] > GAMESTATE->m_CurStageStats.iActualDancePoints[pn] )
+			return RESULT_LOSE;
+	}
+	return win;
 }
 
 void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& vSongsOut )
