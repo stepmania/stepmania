@@ -218,38 +218,6 @@ static void parent_process( int to_child, const CrashData *crash )
  * signal trampolines.  The result is that it doesn't properly show the
  * function that actually caused the signal--which is the most important
  * one!  So, we have to do it all ourself. */
-#if defined(DARWIN)
-const char *ExceptionName( int signo )
-{
-#define X(code) case k##code: return #code;
-	switch( signo )
-	{
-	X(UnknownException)
-	X(IllegalInstructionException)
-	X(TrapException)
-	X(AccessException)
-	X(UnmappedMemoryException)
-	X(ExcludedMemoryException)
-	X(ReadOnlyMemoryException)
-	X(UnresolvablePageFaultException)
-	X(PrivilegeViolationException)
-	X(TraceException)
-	X(InstructionBreakpointException)
-	X(DataBreakpointException)
-	X(FloatingPointException)
-	X(StackOverflowException)
-	default:
-	{
-		static char buf[128];
-		strcpy( buf, "Unknown exception " );
-		strcat( buf, itoa(signo) );
-		return buf;
-	}
-	}
-#undef X
-}
-#endif
-
 const char *SignalName( int signo )
 {
 #define X(a) case a: return #a;
@@ -316,11 +284,6 @@ static void RunCrashHandler( const CrashData *crash )
 			safe_print( fileno(stderr), "Deadlock (", crash->reason, ")", NULL );
 			break;
 
-#if defined(DARWIN)
-		case CrashData::OSX_EXCEPTION:
-			safe_print( fileno(stderr), "Fatal exception (", ExceptionName( crash->kind ), ")", NULL );
-			break;
-#endif
 		case CrashData::FORCE_CRASH_THIS_THREAD:
 			safe_print( fileno(stderr), "Crash handler failed an assertion: \"", crash->reason, "\"", NULL );
 			break;
@@ -464,24 +427,6 @@ void CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 
 	RunCrashHandler( &crash );
 }
-
-#if defined(DARWIN)
-OSStatus CrashExceptionHandler( ExceptionInformation *e )
-{
-	CrashData crash;
-	memset( &crash, 0, sizeof(crash) );
-
-	crash.type = CrashData::OSX_EXCEPTION;
-	crash.kind = e->theKind;
-
-	BacktraceContext ctx;
-	GetExceptionBacktraceContext( &ctx, e );
-	GetBacktrace( crash.BacktracePointers, BACKTRACE_MAX_SIZE, &ctx );
-
-	RunCrashHandler( &crash );
-	_exit(1);
-}
-#endif
 
 void InitializeCrashHandler()
 {

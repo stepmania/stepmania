@@ -12,11 +12,6 @@ void InitializeCrashHandler();
 #include <ucontext.h>
 void CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc );
 
-#if defined(DARWIN)
-#include <MachineExceptions.h>
-OSStatus CrashExceptionHandler( ExceptionInformation *e );
-#endif
-
 #endif
 
 /*

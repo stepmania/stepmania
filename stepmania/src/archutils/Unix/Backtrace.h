@@ -36,14 +36,6 @@ bool GetThreadBacktraceContext( uint64_t ThreadID, BacktraceContext *ctx );
 #include <ucontext.h>
 void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc );
 
-#if defined(DARWIN)
-#include <MachineExceptions.h>
-
-/* Set up a BacktraceContext to get a backtrace after receiving an exception, given
- * an ExceptionInformation*. */
-void GetExceptionBacktraceContext( BacktraceContext *ctx, const ExceptionInformation *exception );
-#endif
-
 #define BACKTRACE_METHOD_NOT_AVAILABLE ((void*) -1)
 
 #endif

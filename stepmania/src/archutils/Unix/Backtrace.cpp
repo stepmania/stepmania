@@ -385,12 +385,6 @@ typedef struct Frame
     void *linkReg;
 } *FramePtr;
 
-void GetExceptionBacktraceContext( BacktraceContext *ctx, const ExceptionInformation *exception )
-{
-	ctx->PC = (void *) exception->machineState->PC.lo;
-	ctx->FramePtr = (void *) exception->registerImage->R1.lo;
-}
-
 void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
 {
 	ctx->PC = (void *) uc->uc_mcontext->ss.srr0;

@@ -307,13 +307,6 @@ static void child_process()
 	}
 	break;
     }
-
-#if defined(DARWIN)
-    case CrashData::OSX_EXCEPTION:
-	reason = ExceptionName( crash.kind );
-	break;
-#endif
-
     case CrashData::FORCE_CRASH_THIS_THREAD:
     case CrashData::FORCE_CRASH_DEADLOCK:
 	crash.reason[ sizeof(crash.reason)-1] = 0;
