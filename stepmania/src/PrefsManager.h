@@ -59,6 +59,7 @@ public:
 	int				m_iRegenComboAfterMiss;
 	int				m_iMaxRegenComboAfterFail;
 	int				m_iMaxRegenComboAfterMiss;
+	bool			m_bTwoPlayerRecovery;
 	bool			m_bAutoPlay;
 	bool			m_bDelayedEscape;
 	bool			m_bInstructions, m_bShowDontDie, m_bShowSelectGroup;

@@ -66,6 +66,7 @@ PrefsManager::PrefsManager()
 	m_iRegenComboAfterMiss = 5; // cumulative
 	m_iMaxRegenComboAfterFail = 10;
 	m_iMaxRegenComboAfterMiss = 10;
+	m_bTwoPlayerRecovery = true;
 	m_bDelayedEscape = true;
 	m_bInstructions = true;
 	m_bShowDontDie = true;
@@ -225,6 +226,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "RegenComboAfterMiss",				m_iRegenComboAfterMiss );
 	ini.GetValue( "Options", "MaxRegenComboAfterFail",			m_iMaxRegenComboAfterFail );
 	ini.GetValue( "Options", "MaxRegenComboAfterMiss",			m_iMaxRegenComboAfterMiss );
+	ini.GetValue( "Options", "TwoPlayerRecovery",				m_bTwoPlayerRecovery );
 	ini.GetValue( "Options", "DelayedEscape",					m_bDelayedEscape );
 	ini.GetValue( "Options", "HiddenSongs",						m_bHiddenSongs );
 	ini.GetValue( "Options", "Vsync",							m_bVsync );
@@ -352,6 +354,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "RegenComboAfterMiss",				m_iRegenComboAfterMiss );
 	ini.SetValue( "Options", "MaxRegenComboAfterFail",			m_iMaxRegenComboAfterFail );
 	ini.SetValue( "Options", "MaxRegenComboAfterMiss",			m_iMaxRegenComboAfterMiss );
+	ini.SetValue( "Options", "TwoPlayerRecovery",				m_bTwoPlayerRecovery );
 	ini.SetValue( "Options", "DelayedEscape",					m_bDelayedEscape );
 	ini.SetValue( "Options", "HiddenSongs",						m_bHiddenSongs );
 	ini.SetValue( "Options", "Vsync",							m_bVsync );
