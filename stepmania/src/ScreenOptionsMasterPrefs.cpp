@@ -34,32 +34,63 @@ static void SetDefaultModifiers( const PlayerOptions &po, const SongOptions &so 
 }
 
 template<class T>
+int FindClosestEntry( T value, const T *mapping, unsigned cnt )
+{
+	int iBestIndex = 0;
+	T best_dist = T();
+	bool have_best = false;
+
+	for( unsigned i = 0; i < cnt; ++i )
+	{
+		const T val = mapping[i];
+		T dist = value < val? (T)(val-value):(T)(value-val);
+		if( have_best && best_dist < dist )
+			continue;
+
+		have_best = true;
+		best_dist = dist;
+
+		iBestIndex = i;
+	}
+
+	if( have_best )
+		return iBestIndex;
+	else
+		return 0;
+}
+
+template<class T>
 static void MoveMap( int &sel, T &opt, bool ToSel, const T *mapping, unsigned cnt )
 {
 	if( ToSel )
 	{
 		/* opt -> sel.  Find the closest entry in mapping. */
-		T best_dist = T();
-		bool have_best = false;
-
-		for( unsigned i = 0; i < cnt; ++i )
-		{
-			const T val = mapping[i];
-			T dist = opt < val? (T)(val-opt):(T)(opt-val);
-			if( have_best && best_dist < dist )
-				continue;
-
-			have_best = true;
-			best_dist = dist;
-
-			sel = i;
-		}
+		sel = FindClosestEntry( opt, mapping, cnt );
 	} else {
 		/* sel -> opt */
 		opt = mapping[sel];
 	}
 }
 
+/*
+ * MoveMap for a generic preference.  We don't know its type, but MoveMap is only used on numeric
+ * values, so pretend it's a float.
+ */
+static void MoveMap( int &sel, IPreference *pOption, bool ToSel, const float *mapping, unsigned cnt )
+{
+	if( ToSel )
+	{
+		/* opt -> sel.  Find the closest entry in mapping. */
+		CString sStr = pOption->ToString();
+		float fValue = strtof( sStr, NULL );
+			
+		sel = FindClosestEntry( fValue, mapping, cnt );
+	} else {
+		/* sel -> opt */
+		CString sStr = ssprintf( "%f", mapping[sel] );
+		pOption->FromString( sStr );
+	}
+}
 
 /* "sel" is the selection in the menu. */
 static void MoveData( int &sel, int &opt, bool ToSel )
