@@ -1,0 +1,133 @@
+This is mostly a scrap pad for my TODO's, in a place others can see them.
+Feel free to add--preferably signed--comments, though actual discussion
+is better held on the list than in a CVS document. :)
+
+Some of this is stuff I'm not quite sure how to deal with, but too
+low-pri to bother bringing up on the list.
+
+********
+We have different kinds of things we want to trace, and different
+places to put them.
+
+We have normal debug traces.  There are lots of these, and they go to
+the console and log.txt.  Since there are so many, we only want to
+include recent ones in crash dumps.  (All other types of output should
+also go here.)
+
+We have at least two kinds of warnings:
+1. Things that are possibly our fault, that we want to receive bug
+reports about, but that aren't fatal.  DirectShow failing to start
+for an unknown reason (this does not include missing codecs), unexpected
+data from a USB device (eg. requesting 3 bytes from a Pump pad and only
+getting 2).
+2. Errors that probably aren't our fault (that we don't want bug reports
+about).  These are predictable problems, that we expect to happen, but
+also aren't fatal.  MSD parse errors, missing song files, missing
+announcer directories (except in Empty; that'd be our fault = #1);
+DS failing due to a missing codec.  Since we expect these to happen,
+we can also include a "tip" section for the warnings; for example, if
+an AVI is missing a codec we know about, we can point the user to the
+codec's website.
+
+Some users won't want to see one or both of these at all.  ("Okay, it
+can't load the doubles steps; I don't want to have to edit the song
+to fix it, so stop bugging me about it."  "Okay, I've reported that bug;
+stop bugging me.")
+
+We have important debug traces; these are normal (unlike Warn), but
+should always be included in crash dumps.  This includes things like
+video card info and which input devices were found.  All of these
+should go to the debug log.
+
+A place in the loading screen to put warnings, where they can be seen.
+Right now, warnings are easily lost in the debug flood, and aren't seen by
+non-developers running release builds.  Put it somewhere on the loading dialog,
+but try not to change the dialog at all unless there are actually
+warnings to show, so we can keep the nice compact banner dialog
+normally.  (Maybe have a separate dialog resource, and replace the
+regular one with it once there are warnings?)  If (and only if) there
+are warnings, have an OK/CANCEL button pair; make the user click OK
+to continue loading (before changing display mode) if there were warnings.
+(Optional; some people will want to ignore warnings.)  Put warnings
+in a grayed-out edit box, so they can be easily copied.
+ - what about warnings during the game? eg. directshow failing should
+   be a warning, not a fatal error
+
+I'll probably do this once I figure out a good place to display warnings.
+
+*********
+
+We have lots of big things that need to be portable; most of those
+are obvious (renderer, joysticks, keyboard, sound, etc.)  Less
+obvious, minor ones here that nonetheless need to be done: 
+ * use / as a filename separator, not \
+   Change this in song data at load time, too.
+ * no #pragma once
+ * MFC->STL is hard, because most STL implementations aren't very STL.
+   g++ 3.1 is much better, but VC6 isn't.  (How is VC7?)
+
+(This is long-term.)
+
+*********
+
+An override file.  Some people put their data on CD; it'd be nice to
+be able to tweak song data without actually rewriting the whole thing.
+Also, some people may not want to modify the original data at all
+("keep the source data prestine!").  I'm not sure if this should be
+done with internal data (eg. specific to given song options) or
+generic, applying to given .SM #OPTIONs.  The latter is cleaner, but
+we don't always load from .SM's.  (Hmm, maybe a way to apply SM
+options on top of a loaded song?)
+
+This shouldn't allow changing steps at all (but it should allow changing
+difficulty for existing steps).
+
+UI is tricky.  Perhaps just the EditMenu song selector, with an icon
+or color showing songs that currently have overrides ...
+
+(Useful but I don't need it right now, so "some day".)
+
+********
+
+A single options menu; toggle "graphics", "game options", "key
+config", etc. as a separate option at the top to toggle which option
+set is visible.  Too much stuff on the main menu.
+
+Don't put the game toggle here; it's used too much.
+
+(Soon, but probably not for b6.)
+
+********
+
+Debug options.  Options that most users don't need, but I don't want
+to edit .INIs manually.  I'll be adding a vsync toggle soon; most
+users should never want to disable it (most people who think they
+want to really don't :) so it's just clutter the main graphics menu.
+Show FPS can go here, too.
+
+********
+
+I don't like needing to use the keyboard to configure my pad; it's
+awkward.  A mode to simply scan through inputs isn't good; it'll be
+too easy to make false inputs.  Delayed inputs suck (eg. bmdx).
+
+Not sure how to deal with this, but it's minor.  If we get BM support,
+configuring two controllers one key at a time would be a pain.  (KM
+even more so.)  In that case, we can just scan, though.
+
+Low-pri; I'll do this if I figure out a good way.
+
+********
+
+Also, we have special cases for different hardware, and we'll only
+be getting more of these (such as the converter that toggles on the
+axis when opposite pad buttons are pressed); an autodetection mode
+would be useful, so the user doesn't have to play with options.
+"configure DDR pad via USB converter" -> "press up"; we know if we
+need to ignore the axis; if not, "press up and down"; we know if we
+need the toggle axis workaround.
+
+This is probably difficult to implement reliably without having
+access to all of the distinct adapter types, since this is very
+special-cased.
+
