@@ -78,16 +78,12 @@ unsigned int RageFileStore::CopyRangeTo2(BufferedTransformation &target, unsigne
 		byte result;
 		m_file.Read( &result, 1 );
 		m_file.Seek( current );
-		if (m_file.AtEOF())
-		{
+		if( m_file.AtEOF() )
 			return 0;
-		}
-		else
-		{
-			unsigned int blockedBytes = target.ChannelPut(channel, byte(result), blocking);
-			begin += 1-blockedBytes;
-			return blockedBytes;
-		}
+
+		unsigned int blockedBytes = target.ChannelPut(channel, byte(result), blocking);
+		begin += 1-blockedBytes;
+		return blockedBytes;
 	}
 	
 	// TODO: figure out what happens on cin
