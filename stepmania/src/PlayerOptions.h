@@ -77,21 +77,25 @@ struct PlayerOptions
 
 	
 	bool		m_bTimeSpacing;	// instead of Beat spacing
-	float		m_fScrollSpeed;		// used if !m_bTimeSpacing
-	float		m_fScrollBPM;		// used if m_bTimeSpacing
-	float		m_fAccels[NUM_ACCELS];
-	float		m_fEffects[NUM_EFFECTS];
-	float		m_fAppearances[NUM_APPEARANCES];
-	float		m_fScrolls[NUM_SCROLLS];
-	float		m_fDark;
-	float		m_fBlind;
+
+	/* All floats have a corresponding speed setting, which determines how fast
+	 * PlayerOptions::Approach approaches. */
+	float		m_fScrollSpeed,			m_SpeedfScrollSpeed;		// used if !m_bTimeSpacing
+	float		m_fScrollBPM,			m_SpeedfScrollBPM;		// used if m_bTimeSpacing
+	float		m_fAccels[NUM_ACCELS],	m_SpeedfAccels[NUM_ACCELS];
+	float		m_fEffects[NUM_EFFECTS],m_SpeedfEffects[NUM_EFFECTS];
+	float		m_fAppearances[NUM_APPEARANCES],m_SpeedfAppearances[NUM_APPEARANCES];
+	float		m_fScrolls[NUM_SCROLLS],m_SpeedfScrolls[NUM_SCROLLS];
+	float		m_fDark,				m_SpeedfDark;
+	float		m_fBlind,				m_SpeedfBlind;
+	float		m_fPerspectiveTilt,		m_SpeedfPerspectiveTilt;		// -1 = near, 0 = overhead, +1 = space
+	float		m_fSkew,				m_SpeedfSkew;		// 0 = vanish point is in center of player, 1 = vanish point is in center of screen
+
 	Turn		m_Turn;
 	Transform	m_Transform;
 	bool		m_bHoldNotes;
 	bool		m_bTimingAssist;
 	bool		m_bProTiming;
-	float		m_fPerspectiveTilt;		// -1 = near, 0 = overhead, +1 = space
-	float		m_fSkew;		// 0 = vanish point is in center of player, 1 = vanish point is in center of screen
 	CString		m_sPositioning;	/* The current positioning mode, or empty to use the normal positions. */
 	CString		m_sNoteSkin;
 

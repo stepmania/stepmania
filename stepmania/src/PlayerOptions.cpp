@@ -19,45 +19,49 @@
 #include "NoteFieldPositioning.h"
 #include "NoteSkinManager.h"
 
+#define ONE( arr ) { for( unsigned Z = 0; Z < ARRAYSIZE(arr); ++Z ) arr[Z]=1.0f; }
+
 void PlayerOptions::Init()
 {
 	m_bTimeSpacing = false;
-	m_fScrollSpeed = 1.0f;
-	m_fScrollBPM = 200;
-	ZERO( m_fAccels );
-	ZERO( m_fEffects );
-	ZERO( m_fAppearances );
-	ZERO( m_fScrolls );
-	m_fDark = 0;
-	m_fBlind = 0;
+	m_fScrollSpeed = 1.0f;		m_SpeedfScrollSpeed = 1.0f;
+	m_fScrollBPM = 200;			m_SpeedfScrollBPM = 1.0f;
+	ZERO( m_fAccels );			ONE( m_SpeedfAccels );
+	ZERO( m_fEffects );			ONE( m_SpeedfEffects );
+	ZERO( m_fAppearances );		ONE( m_SpeedfAppearances );
+	ZERO( m_fScrolls );			ONE( m_SpeedfScrolls );
+	m_fDark = 0;				m_SpeedfDark = 1.0f;
+	m_fBlind = 0;				m_SpeedfBlind = 1.0f;
+	m_fPerspectiveTilt = 0;		m_SpeedfPerspectiveTilt = 1.0f;
+	m_fSkew = 0;				m_SpeedfSkew = 1.0f;
 	m_Turn = TURN_NONE;
 	m_Transform = TRANSFORM_NONE;
 	m_bHoldNotes = true;
 	m_bTimingAssist = false;
 	m_bProTiming = false;
-	m_fPerspectiveTilt = 0;
-	m_fSkew = 0;
 	m_sPositioning = "";	// "null"
 	m_sNoteSkin = "default";
 }
 
 void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 {
-	int i;
+#define APP( opt ) \
+	fapproach( m_ ## opt, other.m_ ## opt, fDeltaSeconds * other.m_Speed ## opt );
 
-	fapproach( m_fScrollSpeed, other.m_fScrollSpeed, fDeltaSeconds*(0.2f+fabsf(m_fScrollSpeed-other.m_fScrollSpeed)) );	// make big jumps in scroll speed move faster
+	int i;
 	for( i=0; i<NUM_ACCELS; i++ )
-		fapproach( m_fAccels[i], other.m_fAccels[i], fDeltaSeconds );
+		APP( fAccels[i] );
 	for( i=0; i<NUM_EFFECTS; i++ )
-		fapproach( m_fEffects[i], other.m_fEffects[i], fDeltaSeconds );
+		APP( fEffects[i] );
 	for( i=0; i<NUM_APPEARANCES; i++ )
-		fapproach( m_fAppearances[i], other.m_fAppearances[i], fDeltaSeconds );
+		APP( fAppearances[i] );
 	for( i=0; i<NUM_SCROLLS; i++ )
-		fapproach( m_fScrolls[i], other.m_fScrolls[i], fDeltaSeconds );
-	fapproach( m_fDark, other.m_fDark, fDeltaSeconds );
-	fapproach( m_fBlind, other.m_fBlind, fDeltaSeconds );
-	fapproach( m_fPerspectiveTilt, other.m_fPerspectiveTilt, fDeltaSeconds );
-	fapproach( m_fSkew, other.m_fSkew, fDeltaSeconds );
+		APP( fScrolls[i] );
+	APP( fScrollSpeed );
+	APP( fDark );
+	APP( fBlind );
+	APP( fPerspectiveTilt );
+	APP( fSkew );
 }
 
 static CString AddPart( float level, CString name )
@@ -210,44 +214,54 @@ void PlayerOptions::FromString( CString sOptions )
 
 		/* "drunk"
 		 * "no drunk"
-		 * "150% drunk" */
+		 * "150% drunk"
+		 * "*2 100% drunk": approach at 2x normal speed */
 
 		float level = 1;
+		float speed = 1;
 		CStringArray asParts;
 		split( sBit, " ", asParts, true );
 
-		if( asParts.size() > 1 )
+		for( unsigned j = 0; j < asParts.size()-1; ++j )
 		{
-			sBit = asParts[1];
-
-			if( asParts[0] == "no" )
+			if( asParts[j] == "no" )
 				level = 0;
-			else
+			else if( isdigit(asParts[j][0]) )
 			{
-				sscanf( asParts[0], "%f", &level );
+				/* If the last character is a *, they probably said "123*" when
+				 * they meant "*123". */
+				if( asParts[j].Right(1) == "*" )
+					RageException::Throw("Invalid player options '%i*'; did you mean '*%i'?", 
+						atoi(asParts[j]), atoi(asParts[j]) );
+				sscanf( asParts[j], "%f", &level );
 				level /= 100.0f;
 			}
+			else if( asParts[j][0]=='*' )
+				sscanf( asParts[j], "*%f", &speed );
 		}
+		sBit = asParts[asParts.size()-1];
 
+#define SET_FLOAT( opt ) \
+		{ m_ ## opt = level; m_Speed ## opt = speed; }
 		const bool on = (level > 0.5f);
-			if( sBit == "boost" )		m_fAccels[ACCEL_BOOST] = level;
-		else if( sBit == "brake" || sBit == "land" )		m_fAccels[ACCEL_BRAKE] = level;
-		else if( sBit == "wave" )		m_fAccels[ACCEL_WAVE] = level;
-		else if( sBit == "expand" )		m_fAccels[ACCEL_EXPAND] = level;
-		else if( sBit == "boomerang" )	m_fAccels[ACCEL_BOOMERANG] = level;
-		else if( sBit == "drunk" )		m_fEffects[EFFECT_DRUNK] = level;
-		else if( sBit == "dizzy" )		m_fEffects[EFFECT_DIZZY] = level;
-		else if( sBit == "mini" )		m_fEffects[EFFECT_MINI] = level;
-		else if( sBit == "flip" )		m_fEffects[EFFECT_FLIP] = level;
-		else if( sBit == "tornado" )	m_fEffects[EFFECT_TORNADO] = level;
-		else if( sBit == "tipsy" )		m_fEffects[EFFECT_TIPSY] = level;
-		else if( sBit == "bumpy" )		m_fEffects[EFFECT_BUMPY] = level;
-		else if( sBit == "beat" )		m_fEffects[EFFECT_BEAT] = level;
-		else if( sBit == "hidden" )		m_fAppearances[APPEARANCE_HIDDEN] = level;
-		else if( sBit == "sudden" )		m_fAppearances[APPEARANCE_SUDDEN] = level;
-		else if( sBit == "stealth" )	m_fAppearances[APPEARANCE_STEALTH] = level;
-		else if( sBit == "blink" )		m_fAppearances[APPEARANCE_BLINK] = level;
-		else if( sBit == "randomvanish" ) m_fAppearances[APPEARANCE_RANDOMVANISH] = level;
+			 if( sBit == "boost" )		SET_FLOAT( fAccels[ACCEL_BOOST] )
+		else if( sBit == "brake" || sBit == "land" ) SET_FLOAT( fAccels[ACCEL_BRAKE] )
+		else if( sBit == "wave" )		SET_FLOAT( fAccels[ACCEL_WAVE] )
+		else if( sBit == "expand" )		SET_FLOAT( fAccels[ACCEL_EXPAND] )
+		else if( sBit == "boomerang" )	SET_FLOAT( fAccels[ACCEL_BOOMERANG] )
+		else if( sBit == "drunk" )		SET_FLOAT( fEffects[EFFECT_DRUNK] )
+		else if( sBit == "dizzy" )		SET_FLOAT( fEffects[EFFECT_DIZZY] )
+		else if( sBit == "mini" )		SET_FLOAT( fEffects[EFFECT_MINI] )
+		else if( sBit == "flip" )		SET_FLOAT( fEffects[EFFECT_FLIP] )
+		else if( sBit == "tornado" )	SET_FLOAT( fEffects[EFFECT_TORNADO] )
+		else if( sBit == "tipsy" )		SET_FLOAT( fEffects[EFFECT_TIPSY] )
+		else if( sBit == "bumpy" )		SET_FLOAT( fEffects[EFFECT_BUMPY] )
+		else if( sBit == "beat" )		SET_FLOAT( fEffects[EFFECT_BEAT] )
+		else if( sBit == "hidden" )		SET_FLOAT( fAppearances[APPEARANCE_HIDDEN] )
+		else if( sBit == "sudden" )		SET_FLOAT( fAppearances[APPEARANCE_SUDDEN] )
+		else if( sBit == "stealth" )	SET_FLOAT( fAppearances[APPEARANCE_STEALTH] )
+		else if( sBit == "blink" )		SET_FLOAT( fAppearances[APPEARANCE_BLINK] )
+		else if( sBit == "randomvanish" ) SET_FLOAT( fAppearances[APPEARANCE_RANDOMVANISH] )
 		else if( sBit == "turn" && !on )m_Turn = TURN_NONE; /* "no turn" */
 		else if( sBit == "mirror" )		m_Turn = TURN_MIRROR;
 		else if( sBit == "left" )		m_Turn = TURN_LEFT;
@@ -261,20 +275,20 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "quick" )		m_Transform = TRANSFORM_QUICK;
 		else if( sBit == "skippy" )		m_Transform = TRANSFORM_SKIPPY;
 		else if( sBit == "mines" )		m_Transform = TRANSFORM_MINES;
-		else if( sBit == "reverse" )	m_fScrolls[SCROLL_REVERSE] = level;
-		else if( sBit == "split" )		m_fScrolls[SCROLL_SPLIT] = level;
-		else if( sBit == "alternate" )	m_fScrolls[SCROLL_ALTERNATE] = level;
+		else if( sBit == "reverse" )	SET_FLOAT( fScrolls[SCROLL_REVERSE] )
+		else if( sBit == "split" )		SET_FLOAT( fScrolls[SCROLL_SPLIT] )
+		else if( sBit == "alternate" )	SET_FLOAT( fScrolls[SCROLL_ALTERNATE] )
 		else if( sBit == "noholds" )	m_bHoldNotes = !on;
 		else if( sBit == "nofreeze" )	m_bHoldNotes = !on;
-		else if( sBit == "dark" )		m_fDark = level;
-		else if( sBit == "blind" )		m_fBlind = level;
+		else if( sBit == "dark" )		SET_FLOAT( fDark )
+		else if( sBit == "blind" )		SET_FLOAT( fBlind )
 		else if( sBit == "timingassist")m_bTimingAssist = on;
 		else if( sBit == "protiming")	m_bProTiming = on;
-		else if( sBit == "overhead" )	{ m_fSkew = 0; m_fPerspectiveTilt = 0; }
-		else if( sBit == "incoming" )	{ m_fSkew = 1; m_fPerspectiveTilt = -1; }
-		else if( sBit == "space" )		{ m_fSkew = 1; m_fPerspectiveTilt = +1; }
-		else if( sBit == "hallway" )	{ m_fSkew = 0; m_fPerspectiveTilt = -1; }
-		else if( sBit == "distant" )	{ m_fSkew = 0; m_fPerspectiveTilt = +1; }
+		else if( sBit == "overhead" )	{ m_fSkew = 0; m_fPerspectiveTilt = 0;				m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+		else if( sBit == "incoming" )	{ m_fSkew = level; m_fPerspectiveTilt = -level;		m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+		else if( sBit == "space" )		{ m_fSkew = level; m_fPerspectiveTilt = +level;		m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+		else if( sBit == "hallway" )	{ m_fSkew = 1-level; m_fPerspectiveTilt = -level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+		else if( sBit == "distant" )	{ m_fSkew = 1-level; m_fPerspectiveTilt = +level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
 		else if( GAMESTATE->m_pPosition->IsValidModeForAnyStyle(sBit) )
 			m_sPositioning = sBit;
 		else if( sBit == "nopositioning" )
