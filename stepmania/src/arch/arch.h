@@ -11,7 +11,6 @@ class LightsDriver;
 class MemoryCardDriver;
 
 LoadingWindow *MakeLoadingWindow();
-ArchHooks *MakeArchHooks();
 LowLevelWindow *MakeLowLevelWindow();
 
 void MakeInputHandlers(vector<InputHandler *> &Add);

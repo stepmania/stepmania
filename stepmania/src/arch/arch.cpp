@@ -57,7 +57,6 @@ LoadingWindow *MakeLoadingWindow()
 	return ret;
 }
 
-ArchHooks *MakeArchHooks() { return new ARCH_HOOKS; }
 #if defined(SUPPORT_OPENGL)
 LowLevelWindow *MakeLowLevelWindow() { return new ARCH_LOW_LEVEL_WINDOW; }
 #endif

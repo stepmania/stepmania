@@ -3,6 +3,9 @@
 
 ArchHooks *HOOKS = NULL;
 
+#include "../arch_platform.h"
+ArchHooks *MakeArchHooks() { return new ARCH_HOOKS; }
+
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford
  * All rights reserved.
