@@ -518,29 +518,9 @@ float UnlockSystem::UnlockAddSP(float credit)
 float UnlockSystem::UnlockAddSP(Grade credit)
 {
 	ReadValues("Data/MemCard.ini");
-	switch (credit)
-	{
-	case GRADE_AAAA:
-		SongPoints += 20;
-		break;
-	case GRADE_AAA:
-		SongPoints += 10;
-		break;
-	case GRADE_AA:
-		SongPoints += 5;
-		break;
-	case GRADE_A:
-		SongPoints += 4;
-		break;
-	case GRADE_B:
-		SongPoints += 3;
-		break;
-	case GRADE_C:
-		SongPoints += 2;
-		break;
-	case GRADE_D:
-		SongPoints += 1;
-	}
+	const float SongPointsVals[NUM_GRADES] = { -1 /* unused */, 0, 1, 2, 3, 4, 5, 10, 20 };
+
+	SongPoints += SongPointsVals[credit];
 	WriteValues("Data/MemCard.ini");
 
 	return SongPoints;
