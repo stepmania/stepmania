@@ -1761,12 +1761,9 @@ void ScreenGameplay::TweenOffScreen()
 	if( m_pEnemyHealth )
 		OFF_COMMAND( *m_pEnemyHealth );
 
-	if(m_textDebug.GetTweenTimeLeft() > 1/8.f)
-	{
-		m_textDebug.StopTweening();
-		m_textDebug.BeginTweening( 1/8.f );
-		m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
-	}
+	m_textDebug.StopTweening();
+	m_textDebug.BeginTweening( 1/8.f );
+	m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
 }
 
 void ScreenGameplay::ShowOniGameOver( PlayerNumber pn )
