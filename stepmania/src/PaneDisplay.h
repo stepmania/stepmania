@@ -72,7 +72,6 @@ public:
 
 	void Load( PlayerNumber pn );
 	void SetFromGameState( SortOrder so );
-	void Move( int dir );
 
 	void Update( float fDeltaTime );
 
