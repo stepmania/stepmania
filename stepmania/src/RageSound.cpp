@@ -238,8 +238,9 @@ int RageSound::stream_t::FillBuf(int bytes)
 {
 	ASSERT(Sample);
 
+	bool got_something = false;
 	if(Sample->flags & SOUND_SAMPLEFLAG_EOF)
-		return false; /* EOF */
+		return got_something; /* EOF */
 
 	while(bytes > 0)
 	{
@@ -247,7 +248,10 @@ int RageSound::stream_t::FillBuf(int bytes)
 			break; /* full */
 
 		int cnt = Sound_Decode(Sample);
-		if(cnt == -1)
+		if(Sample->flags & SOUND_SAMPLEFLAG_EOF)
+			return got_something; /* EOF */
+
+		if(Sample->flags & SOUND_SAMPLEFLAG_ERROR)
 		{
 			/* There was a fatal error; get it with Sound_GetError().
 			 * XXX: How should we handle sound errors?  We can't
@@ -262,11 +266,11 @@ int RageSound::stream_t::FillBuf(int bytes)
 		}
 
 		buf.write((const char *)Sample->buffer, cnt);
-		
 		bytes -= cnt;
+		got_something = true;
 	}
 
-	return true;
+	return got_something;
 }
 
 /* Called by the mixer: return a block of sound data. 
