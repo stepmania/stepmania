@@ -237,6 +237,170 @@ void SongManager::ReloadSongArray()
 }
 
 
+void SongManager::ReadNoteScoresFromFile( CString fn, int c )
+{
+	ifstream f(fn);
+	if( !f.good() )
+		return;
+	CString line;
+
+	getline(f, line);
+	int version;
+	sscanf(line.c_str(), "%i", &version);
+
+	if( version != NOTES_SCORES_VERSION )
+		return;
+
+	while( f && !f.eof() )
+	{
+		CString sSongDir;
+		getline(f, sSongDir);
+
+		getline(f, line);
+		unsigned uNumNotes;
+		sscanf(line.c_str(), "%u", &uNumNotes);
+
+		Song* pSong = this->GetSongFromDir( sSongDir );
+
+		for( unsigned i=0; i<uNumNotes; i++ )
+		{
+			NotesType nt;
+			Difficulty dc;
+
+			getline(f, line);
+			if( sscanf(line.c_str(), "%d %d", &nt, &dc) != 2 )
+				break;
+
+			CString sDescription;
+			getline(f, sDescription);
+
+			Notes* pNotes = NULL;
+			if( pSong )
+			{
+				if( dc==DIFFICULTY_INVALID )
+					pNotes = pSong->GetNotes( nt, sDescription );
+				else
+					pNotes = pSong->GetNotes( nt, dc );
+			}
+			
+			getline(f, line);
+			
+			int iNumTimesPlayed;
+			Grade grade;
+			int iScore;
+			if( sscanf(line.c_str(), "%d %d %i\n", &iNumTimesPlayed, &grade, &iScore) != 3 )
+				break;
+			if( pNotes )
+			{
+				pNotes->m_MemCardScores[c].iNumTimesPlayed = iNumTimesPlayed;
+				pNotes->m_MemCardScores[c].grade = grade;
+				pNotes->m_MemCardScores[c].iScore = iScore;
+			}
+		}
+	}
+}
+
+void SongManager::ReadCourseScoresFromFile( CString fn, int c )
+{
+	FILE* fp = fopen( fn, "r" );
+
+	if( !fp )
+		return;
+
+	int version;
+	fscanf(fp, "%d\n", &version );
+
+	if( version == COURSE_SCORES_VERSION )
+	{			
+		while( fp && !feof(fp) )
+		{
+			char szPath[256];
+			fscanf(fp, "%[^\n]\n", szPath);
+			Course* pCourse = GetCourseFromPath( szPath );
+			if( pCourse == NULL )
+				pCourse = GetCourseFromName( szPath );
+		
+			for( int i=0; i<NUM_NOTES_TYPES; i++ )
+				if( !feof(fp) )
+				{
+					int iNumTimesPlayed;
+					int iDancePoints;
+					float fSurviveTime;
+					fscanf(fp, "%d %d %f\n", &iNumTimesPlayed, &iDancePoints, &fSurviveTime);
+					if( pCourse )
+					{
+						pCourse->m_MemCardScores[c][i].iNumTimesPlayed = iNumTimesPlayed;
+						pCourse->m_MemCardScores[c][i].iDancePoints = iDancePoints;
+						pCourse->m_MemCardScores[c][i].fSurviveTime = fSurviveTime;
+					}
+				}
+		}
+	}
+
+	fclose(fp);
+}
+
+void SongManager::ReadCategoryRankingsFromFile( CString fn )
+{
+	FILE* fp = fopen( fn, "r" );
+	if( !fp )
+		return;
+
+	int version;
+	fscanf(fp, "%d\n", &version );
+	if( version == CATEGORY_RANKING_VERSION )
+	{			
+		for( int i=0; i<NUM_NOTES_TYPES; i++ )
+			for( int j=0; j<NUM_RANKING_CATEGORIES; j++ )
+				for( int k=0; k<NUM_RANKING_LINES; k++ )
+					if( !feof(fp) )
+					{
+						char szName[256];
+						fscanf(fp, "%i %[^\n]\n", &m_MachineScores[i][j][k].iScore, szName);
+						m_MachineScores[i][j][k].sName = szName;
+					}
+	}
+	fclose(fp);
+}
+
+void SongManager::ReadCourseRankingsFromFile( CString fn )
+{
+	FILE* fp = fopen( fn, "r" );
+
+	if( !fp )
+		return;
+	int version;
+	fscanf(fp, "%i\n", &version );
+	if( version == COURSE_RANKING_VERSION )
+	{			
+		while( fp && !feof(fp) )
+		{
+			char szPath[256];
+			fscanf(fp, "%[^\n]\n", szPath);
+			Course* pCourse = GetCourseFromPath( szPath );
+			if( pCourse == NULL )
+				pCourse = GetCourseFromName( szPath );
+		
+				for( int i=0; i<NUM_NOTES_TYPES; i++ )
+				for( int j=0; j<NUM_RANKING_LINES; j++ )
+					if( !feof(fp) )
+					{
+						int iDancePoints;
+						float fSurviveTime;
+						char szName[256];
+						fscanf(fp, "%d %f %[^\n]\n", &iDancePoints, &fSurviveTime, szName);
+						if( pCourse )
+						{
+							pCourse->m_RankingScores[i][j].iDancePoints = iDancePoints;
+							pCourse->m_RankingScores[i][j].fSurviveTime = fSurviveTime;
+							pCourse->m_RankingScores[i][j].sName = szName;
+						}
+					}
+		}
+	}
+
+	fclose(fp);
+}
 
 void SongManager::InitMachineScoresFromDisk()
 {
@@ -253,172 +417,18 @@ void SongManager::InitMachineScoresFromDisk()
 	}
 
 	// category ranking
-	{
-		FILE* fp = fopen( CATEGORY_RANKING_FILE, "r" );
-		if( fp )
-		{
-			int version;
-			fscanf(fp, "%d\n", &version );
-			if( version == CATEGORY_RANKING_VERSION )
-			{			
-				for( int i=0; i<NUM_NOTES_TYPES; i++ )
-					for( int j=0; j<NUM_RANKING_CATEGORIES; j++ )
-						for( int k=0; k<NUM_RANKING_LINES; k++ )
-							if( fp && !feof(fp) )
-							{
-								char szName[256];
-								fscanf(fp, "%f %[^\n]\n", &m_MachineScores[i][j][k].iScore, szName);
-								m_MachineScores[i][j][k].sName = szName;
-							}
-			}
-			fclose(fp);
-		}
-	}
+	ReadCategoryRankingsFromFile( CATEGORY_RANKING_FILE );
 
 	// course ranking
-	{
-		FILE* fp = fopen( COURSE_RANKING_FILE, "r" );
-
-		if( fp )
-		{
-			int version;
-			fscanf(fp, "%i\n", &version );
-			if( version == COURSE_RANKING_VERSION )
-			{			
-				while( fp && !feof(fp) )
-				{
-					char szPath[256];
-					fscanf(fp, "%s\n", szPath);
-					Course* pCourse = GetCourseFromPath( szPath );
-					if( pCourse == NULL )
-						pCourse = GetCourseFromName( szPath );
-				
-						for( int i=0; i<NUM_NOTES_TYPES; i++ )
-						for( int j=0; j<NUM_RANKING_LINES; j++ )
-							if( fp && !feof(fp) )
-							{
-								int iDancePoints;
-								float fSurviveTime;
-								char szName[256];
-								fscanf(fp, "%d %f %[^\n]\n", &iDancePoints, &fSurviveTime, szName);
-								if( pCourse )
-								{
-									pCourse->m_RankingScores[i][j].iDancePoints = iDancePoints;
-									pCourse->m_RankingScores[i][j].fSurviveTime = fSurviveTime;
-									pCourse->m_RankingScores[i][j].sName = szName;
-								}
-							}
-				}
-			}
-			fclose(fp);
-		}
-	}
+	ReadCourseRankingsFromFile( COURSE_RANKING_FILE );
 
 	// notes scores
 	for( int c=0; c<NUM_MEMORY_CARDS; c++ )
-	{
-		ifstream f(NOTES_SCORES_FILE[c]);
-		if( f.good() )
-		{
-			CString line;
-
-			getline(f, line);
-			int version;
-			sscanf(line.c_str(), "%i", &version);
-
-			if( version == NOTES_SCORES_VERSION )
-			{			
-				while( f && !f.eof() )
-				{
-					CString sSongDir;
-					getline(f, sSongDir);
-
-					getline(f, line);
-					unsigned uNumNotes;
-					sscanf(line.c_str(), "%u", &uNumNotes);
-
-					Song* pSong = this->GetSongFromDir( sSongDir );
-
-					for( unsigned i=0; i<uNumNotes; i++ )
-					{
-						NotesType nt;
-						Difficulty dc;
-	
-						getline(f, line);
-						if( sscanf(line.c_str(), "%d %d", &nt, &dc) != 2 )
-							break;
-
-						CString sDescription;
-						getline(f, sDescription);
-
-						Notes* pNotes = NULL;
-						if( pSong )
-						{
-							if( dc==DIFFICULTY_INVALID )
-								pNotes = pSong->GetNotes( nt, sDescription );
-							else
-								pNotes = pSong->GetNotes( nt, dc );
-						}
-						
-						getline(f, line);
-						
-						int iNumTimesPlayed;
-						Grade grade;
-						int iScore;
-						if( sscanf(line.c_str(), "%d %d %i\n", &iNumTimesPlayed, &grade, &iScore) != 3 )
-							break;
-						if( pNotes )
-						{
-							pNotes->m_MemCardScores[c].iNumTimesPlayed = iNumTimesPlayed;
-							pNotes->m_MemCardScores[c].grade = grade;
-							pNotes->m_MemCardScores[c].iScore = iScore;
-						}
-					}
-				}
-			}
-		}
-	}
+		ReadNoteScoresFromFile( NOTES_SCORES_FILE[c], c );
 
 	// course scores
-	{
-		for( int c=0; c<NUM_MEMORY_CARDS; c++ )
-		{
-			FILE* fp = fopen( COURSE_SCORES_FILE[c], "r" );
-
-			if( fp )
-			{
-				int version;
-				fscanf(fp, "%d\n", &version );
-				if( version == COURSE_SCORES_VERSION )
-				{			
-					while( fp && !feof(fp) )
-					{
-						char szPath[256];
-						fscanf(fp, "%[^\n]\n", szPath);
-						Course* pCourse = GetCourseFromPath( szPath );
-						if( pCourse == NULL )
-							pCourse = GetCourseFromName( szPath );
-					
-						for( int i=0; i<NUM_NOTES_TYPES; i++ )
-							if( fp && !feof(fp) )
-							{
-								int iNumTimesPlayed;
-								int iDancePoints;
-								float fSurviveTime;
-								fscanf(fp, "%d %d %f\n", &iNumTimesPlayed, &iDancePoints, &fSurviveTime);
-								if( pCourse )
-								{
-									pCourse->m_MemCardScores[c][i].iNumTimesPlayed = iNumTimesPlayed;
-									pCourse->m_MemCardScores[c][i].iDancePoints = iDancePoints;
-									pCourse->m_MemCardScores[c][i].fSurviveTime = fSurviveTime;
-								}
-							}
-					}
-				}
-				fclose(fp);
-			}
-		}
-	}
+	for( int c=0; c<NUM_MEMORY_CARDS; c++ )
+		ReadCourseScoresFromFile( COURSE_SCORES_FILE[c], c );
 }
 
 void SongManager::SaveMachineScoresToDisk()

@@ -105,6 +105,11 @@ protected:
 	void SanityCheckGroupDir( CString sDir ) const;
 	void AddGroup( CString sDir, CString sGroupDirName );
 
+	void ReadNoteScoresFromFile( CString fn, int c );
+	void ReadCourseScoresFromFile( CString fn, int c );
+	void ReadCategoryRankingsFromFile( CString fn );
+	void ReadCourseRankingsFromFile( CString fn );
+
 	vector<Song*>		m_pSongs;	// all songs that can be played
 	CStringArray		m_arrayGroupNames;
 	CStringArray		m_GroupBannerPaths;		// each song group has a banner associated with it
