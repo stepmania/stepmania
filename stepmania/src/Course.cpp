@@ -182,9 +182,11 @@ void Course::LoadFromCRSFile( CString sPath )
 								m_sPath.c_str(), sSong.c_str());
 				if( !SONGMAN->DoesGroupExist(new_entry.group_name) )
 				{
-					LOG->Warn( "Course file '%s' random_within_group entry '%s' specifies a group that doesn't exist. "
-								"This entry will be ignored.",
-								m_sPath.c_str(), sSong.c_str());
+					/* XXX: We need a place to put "user warnings".  This is too loud for info.txt--
+				     * it obscures important warnings--and regular users never look there, anyway. */
+					//LOG->Warn( "Course file '%s' random_within_group entry '%s' specifies a group that doesn't exist. "
+					//			"This entry will be ignored.",
+					//			m_sPath.c_str(), sSong.c_str());
 					continue;	// skip this #SONG
 				}
 			}
@@ -209,9 +211,11 @@ void Course::LoadFromCRSFile( CString sPath )
 				}
 				if( !new_entry.pSong )
 				{
-					LOG->Warn( "Course file '%s' contains a fixed song entry '%s' that does not exist. "
-								"This entry will be ignored.",
-								m_sPath.c_str(), sSong.c_str());
+					/* XXX: We need a place to put "user warnings".  This is too loud for info.txt--
+				     * it obscures important warnings--and regular users never look there, anyway. */
+					//LOG->Warn( "Course file '%s' contains a fixed song entry '%s' that does not exist. "
+					//			"This entry will be ignored.",
+					//			m_sPath.c_str(), sSong.c_str());
 					continue;	// skip this #SONG
 				}
 			}
