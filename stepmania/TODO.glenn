@@ -6,6 +6,33 @@ Some of this is stuff I'm not quite sure how to deal with, but too
 low-pri to bother bringing up on the list.
 ********
 
+Resizing tiled textures is a pain: if we scale down a tiled 1024x1024
+texture to 256x256, then we need *four pixels* of buffer between each
+tile to ensure they don't bleed into each other.  Splitting all tiled
+bitmaps into lots of smaller textures sounds good (for other reasons,
+too).  But for fonts, this would create hundreds of tiny textures; that
+would be a performance hit (four fonts could mean over 1000 textures,
+and we'd have to flush the render queue *every character*--ack.)  Maybe
+BitmapTexts could pre-render their text; then they'd be nearly free,
+but changing text would be more expensive.  Maybe too expensive; eg.
+the Oni timer changes every frame.  But we might have to do that anyway
+with fallback fonts; how is Jared implementing that?
+
+If we split tiled sprites apart, we can also tile BGAs with only one
+render, by using the texture matrix (I think--maybe we'd just have to
+stretch.)  Then we might be able to use multitexturing (if available)
+for BGAs, to render multiple BGALayers in one pass; they get slow.  Tricky
+to interface, though.
+
+Even with texture wrapping off, I'm still seeing borders.  With my new
+texture loader, the bottom gameplay frame has a black border instead of
+a gray one.  Is that the border color or is it still wrapping?  Either
+is a problem; even if it *is* the border color, it shouldn't render anything
+there.  (Can the border be set transparent?  But that would cause transparent
+borders, which might cause seaming ...)
+
+********
+
 Abstract NoteData completely, and then make the arrays vectors, so they
 don't have arbitrary limits and don't take lots of extra memory.
  
@@ -237,6 +264,8 @@ obvious, minor ones here that nonetheless need to be done:
  * no #pragma once
  * MFC->STL is hard, because most STL implementations aren't very STL.
    g++ 3.1 is much better, but VC6 isn't.  (How is VC7?)
+   Hmm. Things aren't as bad as they seemed a while back; we should be
+   careful, but maybe it's not hopeless.
 
 (This is long-term.)
 
@@ -302,4 +331,8 @@ need the toggle axis workaround.
 This is probably difficult to implement reliably without having
 access to all of the distinct adapter types, since this is very
 special-cased.
+
+********
+
+Option to skip the music select screen and always pick all music.
 
