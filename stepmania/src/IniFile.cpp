@@ -124,67 +124,29 @@ bool IniFile::GetValue( const CString &keyname, const CString &valuename, CStrin
 	return true;
 }
 
-bool IniFile::GetValue(const CString &keyname, const CString &valuename, int& value) const
-{
-	CString sValue;
-	if( !GetValue(keyname,valuename,sValue) )
-		return false;
-	sscanf( sValue.c_str(), "%d", &value );
-	return true;
-}
-
-bool IniFile::GetValue(const CString &keyname, const CString &valuename, unsigned &value) const
-{
-	CString sValue;
-	if( !GetValue(keyname,valuename,sValue) )
-		return false;
-	sscanf( sValue.c_str(), "%u", &value );
-	return true;
-}
-
-bool IniFile::GetValue(const CString &keyname, const CString &valuename, float& value) const
-{
-	CString sValue;
-	if( !GetValue(keyname,valuename,sValue) )
-		return false;
-	value = strtof( sValue, NULL );
-	return true;
-}
-
-bool IniFile::GetValue( const CString &keyname, const CString &valuename, bool& value ) const
-{
-	CString sValue;
-	if( !GetValue(keyname,valuename,sValue) )
-		return false;
-	value = atoi(sValue) != 0;
-	return true;
-}
-
 bool IniFile::SetValue( const CString &keyname, const CString &valuename, const CString &value )
 {
 	keys[keyname][valuename] = value;
 	return true;
 }
 
-bool IniFile::SetValue( const CString &keyname, const CString &valuename, int value )
-{
-	return SetValue( keyname, valuename, ssprintf("%d",value) );
-}
+#define TYPE(T) \
+	bool IniFile::GetValue( const CString &keyname, const CString &valuename, T &value ) const \
+	{ \
+		CString sValue; \
+		if( !GetValue(keyname,valuename,sValue) ) \
+			return false; \
+		return FromString( sValue, value ); \
+	} \
+	bool IniFile::SetValue( const CString &keyname, const CString &valuename, T value ) \
+	{ \
+		return SetValue( keyname, valuename, ToString(value) ); \
+	}
 
-bool IniFile::SetValue( const CString &keyname, const CString &valuename, unsigned value )
-{
-	return SetValue( keyname, valuename, ssprintf("%u",value) );
-}
-
-bool IniFile::SetValue( const CString &keyname, const CString &valuename, float value )
-{
-	return SetValue( keyname, valuename, ssprintf("%f",value) );
-}
-
-bool IniFile::SetValue( const CString &keyname, const CString &valuename, bool value )
-{
-	return SetValue( keyname, valuename, ssprintf("%d",value) );
-}
+TYPE(int);
+TYPE(unsigned);
+TYPE(float);
+TYPE(bool);
 
 bool IniFile::DeleteValue(const CString &keyname, const CString &valuename)
 {

@@ -1282,6 +1282,61 @@ void CollapsePath( CString &sPath, bool bRemoveLeadingDot )
 }
 
 
+bool FromString( const CString &sValue, int &out )
+{
+	if( sscanf( sValue.c_str(), "%d", &out ) == 1 )
+		return true;
+
+	out = 0;
+	return false;
+}
+
+bool FromString( const CString &sValue, unsigned  &out )
+{
+	if( sscanf( sValue.c_str(), "%u", &out ) == 1 )
+		return true;
+
+	out = 0;
+	return false;
+}
+
+bool FromString( const CString &sValue, float &out )
+{
+	const char *endptr = sValue.data() + sValue.size();
+	out = strtof( sValue, (char **) &endptr );
+	return endptr != sValue.data();
+}
+
+bool FromString( const CString &sValue, bool &out )
+{
+	if( sValue.size() == 0 )
+		return false;
+
+	out = (atoi(sValue) != 0);
+	return true;
+}
+
+CString ToString( int value )
+{
+	return ssprintf( "%i", value );
+}
+
+CString ToString( unsigned value )
+{
+	return ssprintf( "%u", value );
+}
+
+CString ToString( float value )
+{
+	return ssprintf( "%f", value );
+}
+
+CString ToString( bool value )
+{
+	return ssprintf( "%i", value );
+}
+
+
 //
 // Helper function for reading/writing scores
 //

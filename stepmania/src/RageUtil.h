@@ -352,6 +352,17 @@ void FixSlashesInPlace( CString &sPath );
 CString FixSlashes( CString sPath );
 void CollapsePath( CString &sPath, bool bRemoveLeadingDot=false );
 
+bool FromString( const CString &sValue, int &out );
+bool FromString( const CString &sValue, unsigned  &out );
+bool FromString( const CString &sValue, float &out );
+bool FromString( const CString &sValue, bool &out );
+
+CString ToString( int value );
+CString ToString( unsigned value );
+CString ToString( float value );
+CString ToString( bool value );
+
+
 // helper file functions used by Bookkeeper and ProfileManager
 //
 // Helper function for reading/writing scores
