@@ -594,14 +594,14 @@ struct StripBuffer
 	int Free() const { return size - Used(); }
 };
 
-void NoteDisplay::DrawHoldTopCap( const HoldNote& hn, const bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow )
+void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, int iBeat, const bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow )
 {
 	//
 	// Draw the top cap (always wavy)
 	//
 	StripBuffer queue;
 
-	Sprite* pSprTopCap = GetHoldTopCapSprite( hn.GetStartBeat(), bIsBeingHeld );
+	Sprite* pSprTopCap = GetHoldTopCapSprite( NoteRowToBeat(iBeat), bIsBeingHeld );
 
 	pSprTopCap->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
@@ -669,14 +669,14 @@ void NoteDisplay::DrawHoldTopCap( const HoldNote& hn, const bool bIsBeingHeld, f
 }
 
 
-void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow )
+void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iBeat, const bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow )
 {
 	//
 	// Draw the body (always wavy)
 	//
 	StripBuffer queue;
 
-	Sprite* pSprBody = GetHoldBodySprite( hn.GetStartBeat(), bIsBeingHeld );
+	Sprite* pSprBody = GetHoldBodySprite( NoteRowToBeat(iBeat), bIsBeingHeld );
 
 	pSprBody->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
@@ -747,14 +747,14 @@ void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bIsBeingHeld, flo
 		queue.Draw();
 }
 
-void NoteDisplay::DrawHoldBottomCap( const HoldNote& hn, const bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow )
+void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, int iBeat, const bool bIsBeingHeld, float fYHead, float fYTail, int	fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow )
 {
 	//
 	// Draw the bottom cap (always wavy)
 	//
 	StripBuffer queue;
 
-	Sprite* pBottomCap = GetHoldBottomCapSprite( hn.GetStartBeat(), bIsBeingHeld );
+	Sprite* pBottomCap = GetHoldBottomCapSprite( NoteRowToBeat(iBeat), bIsBeingHeld );
 
 	pBottomCap->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
@@ -820,12 +820,12 @@ void NoteDisplay::DrawHoldBottomCap( const HoldNote& hn, const bool bIsBeingHeld
 		queue.Draw();
 }
 
-void NoteDisplay::DrawHoldTail( const HoldNote& hn, bool bIsBeingHeld, float fYTail, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow )
+void NoteDisplay::DrawHoldTail( const TapNote& tn, int iCol, int iBeat, const bool bIsBeingHeld, float fYTail, float fPercentFadeToFail, float fColorScale, bool bGlow )
 {
 	//
 	// Draw the tail
 	//
-	Actor* pSprTail = GetHoldTailActor( hn.GetStartBeat(), bIsBeingHeld );
+	Actor* pSprTail = GetHoldTailActor( NoteRowToBeat(iBeat), bIsBeingHeld );
 
 	pSprTail->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
@@ -872,12 +872,12 @@ void NoteDisplay::DrawHoldTail( const HoldNote& hn, bool bIsBeingHeld, float fYT
 	}
 }
 
-void NoteDisplay::DrawHoldHead( const HoldNote& hn, bool bIsBeingHeld, float fYHead, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow )
+void NoteDisplay::DrawHoldHead( const TapNote& tn, int iCol, int iBeat, const bool bIsBeingHeld, float fYHead, float fPercentFadeToFail, float fColorScale, bool bGlow )
 {
 	//
 	// Draw the head
 	//
-	Actor* pActor = GetHoldHeadActor( hn.GetStartBeat(), bIsBeingHeld );
+	Actor* pActor = GetHoldHeadActor( NoteRowToBeat(iBeat), bIsBeingHeld );
 
 	pActor->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
@@ -926,13 +926,14 @@ void NoteDisplay::DrawHoldHead( const HoldNote& hn, bool bIsBeingHeld, float fYH
 	}
 }
 
-void NoteDisplay::DrawHold( const HoldNote& hn, bool bIsBeingHeld, bool bIsActive, const HoldNoteResult &Result, float fPercentFadeToFail, bool bDrawGlowOnly, float fReverseOffsetPixels )
+void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iBeat, bool bIsBeingHeld, bool bIsActive, const HoldNoteResult &Result, float fPercentFadeToFail, bool bDrawGlowOnly, float fReverseOffsetPixels )
 {
+	int iEndBeat = iBeat + tn.iDuration;
+
 	// bDrawGlowOnly is a little hacky.  We need to draw the diffuse part and the glow part one pass at a time to minimize state changes
 
-	int	iCol = hn.iTrack;
 	bool bReverse = m_pPlayerState->m_CurrentPlayerOptions.GetReversePercentForColumn(iCol) > 0.5;
-	float fStartBeat = NoteRowToBeat( max(hn.result.iLastHeldRow, hn.iStartRow) );
+	float fStartBeat = NoteRowToBeat( max(tn.HoldResult.iLastHeldRow, iBeat) );
 	float fStartYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, iCol, fStartBeat );
 	
 	// HACK: If active, don't allow the top of the hold to go above the receptor
@@ -940,7 +941,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, bool bIsBeingHeld, bool bIsActiv
 		fStartYOffset = 0;
 
 	float fStartYPos	= ArrowEffects::GetYPos( m_pPlayerState, iCol, fStartYOffset, fReverseOffsetPixels );
-	float fEndYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, iCol, hn.GetEndBeat() );
+	float fEndYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, iCol, NoteRowToBeat(iEndBeat) );
 	float fEndYPos		= ArrowEffects::GetYPos( m_pPlayerState, iCol, fEndYOffset, fReverseOffsetPixels );
 
 	const float fYHead = bReverse ? fEndYPos : fStartYPos;		// the center of the head
@@ -951,16 +952,16 @@ void NoteDisplay::DrawHold( const HoldNote& hn, bool bIsBeingHeld, bool bIsActiv
 	/* Hack: Z effects need a finer grain step. */
 	const int	fYStep = WavyPartsNeedZBuffer? 4: 16; //bWavy ? 16 : 128;	// use small steps only if wavy
 
-	const float fColorScale		= 1*hn.result.fLife + (1-hn.result.fLife)*cache->m_fHoldNGGrayPercent;
+	const float fColorScale		= tn.HoldResult.fLife + (1-tn.HoldResult.fLife)*cache->m_fHoldNGGrayPercent;
 
 	bool bFlipHeadAndTail = bReverse && cache->m_bFlipHeadAndTailWhenReverse;
 
 	/* The body and caps should have no overlap, so their order doesn't matter.
 	 * Draw the head last, so it appears on top. */
 	if( !cache->m_bHoldHeadIsAboveWavyParts )
-		DrawHoldHead( hn, bIsBeingHeld, bFlipHeadAndTail ? fYTail : fYHead, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+		DrawHoldHead( tn, iCol, iBeat, bIsBeingHeld, bFlipHeadAndTail ? fYTail : fYHead, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
 	if( !cache->m_bHoldTailIsAboveWavyParts )
-		DrawHoldTail( hn, bIsBeingHeld, bFlipHeadAndTail ? fYHead : fYTail, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+		DrawHoldTail( tn, iCol, iBeat, bIsBeingHeld, bFlipHeadAndTail ? fYHead : fYTail, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
 
 	if( bDrawGlowOnly )
 		DISPLAY->SetTextureModeGlow();
@@ -970,20 +971,20 @@ void NoteDisplay::DrawHold( const HoldNote& hn, bool bIsBeingHeld, bool bIsActiv
 	DISPLAY->SetZWrite( WavyPartsNeedZBuffer );
 	
 	if( !bFlipHeadAndTail )
-		DrawHoldBottomCap( hn, bIsBeingHeld, fYHead, fYTail, fYStep, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
-	DrawHoldBody( hn, bIsBeingHeld, fYHead, fYTail, fYStep, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+		DrawHoldBottomCap( tn, iCol, iBeat, bIsBeingHeld, fYHead, fYTail, fYStep, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+	DrawHoldBody( tn, iCol, iBeat, bIsBeingHeld, fYHead, fYTail, fYStep, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
 	if( bFlipHeadAndTail )
-		DrawHoldTopCap( hn, bIsBeingHeld, fYHead, fYTail, fYStep, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+		DrawHoldTopCap( tn, iCol, iBeat, bIsBeingHeld, fYHead, fYTail, fYStep, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
 
 	/* These set the texture mode themselves. */
 	if( cache->m_bHoldTailIsAboveWavyParts )
-		DrawHoldTail( hn, bIsBeingHeld, bFlipHeadAndTail ? fYHead : fYTail, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+		DrawHoldTail( tn, iCol, iBeat, bIsBeingHeld, bFlipHeadAndTail ? fYHead : fYTail, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
 	if( cache->m_bHoldHeadIsAboveWavyParts )
-		DrawHoldHead( hn, bIsBeingHeld, bFlipHeadAndTail ? fYTail : fYHead, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+		DrawHoldHead( tn, iCol, iBeat, bIsBeingHeld, bFlipHeadAndTail ? fYTail : fYHead, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
 
 	// now, draw the glow pass
 	if( !bDrawGlowOnly )
-		DrawHold( hn, bIsBeingHeld, bIsActive, Result, fPercentFadeToFail, true, fReverseOffsetPixels );
+		DrawHold( tn, iCol, iBeat, bIsBeingHeld, bIsActive, Result, fPercentFadeToFail, true, fReverseOffsetPixels );
 }
 
 void NoteDisplay::DrawActor( Actor* pActor, int iCol, float fBeat, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels, bool bUseLighting )

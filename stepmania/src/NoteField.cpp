@@ -601,10 +601,7 @@ void NoteField::DrawPrimitives()
 					bIsInSelectionRange = (m_iBeginMarker <= iStartRow && iEndRow < m_iEndMarker);
 
 				NoteDisplayCols *nd = CurDisplay->second;
-				HoldNote hn(c, iStartRow, iEndRow);
-				hn.result = tn.HoldResult;
-
-				nd->display[c].DrawHold( hn, bIsHoldingNote, bIsActive, Result, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_fYReverseOffsetPixels );
+				nd->display[c].DrawHold( tn, c, iStartRow, bIsHoldingNote, bIsActive, Result, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_fYReverseOffsetPixels );
 			}
 
 		}
