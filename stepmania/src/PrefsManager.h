@@ -34,6 +34,10 @@ public:
 	int 			m_iMovieDecodeMS;
 	bool			m_bHiddenSongs;
 	bool			m_bVsync;
+#ifdef _XBOX
+	bool			m_bProgressive;
+	bool			m_bPAL;
+#endif
 	bool			m_bDelayedTextureDelete;
 	bool			m_bDelayedScreenLoad;
 	bool			m_bBannerCache;

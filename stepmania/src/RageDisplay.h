@@ -78,7 +78,12 @@ public:
 			bool _vsync,
 			bool _bAntiAliasing,
 			CString _sWindowTitle,
-			CString _sIconFile )
+			CString _sIconFile
+#ifdef _XBOX
+			, bool _progressive
+			, bool _PAL
+#endif
+		)
 		{
 			windowed = _windowed;
 			width = _width;
@@ -89,6 +94,10 @@ public:
 			bAntiAliasing = _bAntiAliasing;
 			sWindowTitle = _sWindowTitle;
 			sIconFile = _sIconFile;
+#ifdef _XBOX
+			progressive = _progressive;
+			PAL = _PAL;
+#endif
 		}
 		VideoModeParams() {}
 
@@ -99,6 +108,10 @@ public:
 		int rate;
 		bool vsync;
 		bool bAntiAliasing;
+#ifdef _XBOX
+		bool progressive;
+		bool PAL;
+#endif
 		CString sWindowTitle;
 		CString sIconFile;
 	};

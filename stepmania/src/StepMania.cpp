@@ -111,7 +111,12 @@ void ApplyGraphicOptions()
 			PREFSMAN->m_bVsync,
 			PREFSMAN->m_bAntiAliasing,
 			THEME->GetMetric("Common","WindowTitle"),
-			THEME->GetPathToG("Common window icon") ) );
+			THEME->GetPathToG("Common window icon")
+#ifdef _XBOX
+			, PREFSMAN->m_bProgressive
+			, PREFSMAN->m_bPAL
+#endif
+			) );
 	bNeedReload |= TEXTUREMAN->SetPrefs( 
 		PREFSMAN->m_iTextureColorDepth, 
 		PREFSMAN->m_iMovieColorDepth,
@@ -371,7 +376,12 @@ RageDisplay *CreateDisplay()
 			PREFSMAN->m_bVsync,
 			PREFSMAN->m_bAntiAliasing,
 			THEME->GetMetric("Common","WindowTitle"),
-			THEME->GetPathToG("Common window icon") );
+			THEME->GetPathToG("Common window icon")
+#ifdef _XBOX
+			, PREFSMAN->m_bProgressive
+			, PREFSMAN->m_bPAL
+#endif
+			);
 
 	CString error = "There was an error while initializing your video card.\n\n"
 		"   PLEASE DO NOT FILE THIS ERROR AS A BUG!\n\n"

@@ -124,6 +124,10 @@ PrefsManager::PrefsManager()
 	 * already here than lots of people asking why songs aren't being displayed. */
 	m_bHiddenSongs = false;
 	m_bVsync = true;
+#ifdef _XBOX
+	m_bProgressive = false;
+	m_bPAL = false;
+#endif
 	m_sSoundDrivers = DEFAULT_SOUND_DRIVER_LIST;
 	
 	// StepMania.cpp sets these on first run:
@@ -156,6 +160,10 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 		return;		// could not read config file, load nothing
 
 	ini.GetValueB( "Options", "Windowed",					m_bWindowed );
+#ifdef _XBOX
+	ini.GetValueB( "Options", "Progressive",				m_bProgressive );
+	ini.GetValueB( "Options", "PAL",						m_bPAL );
+#endif
 	ini.GetValueI( "Options", "DisplayWidth",				m_iDisplayWidth );
 	ini.GetValueI( "Options", "DisplayHeight",				m_iDisplayHeight );
 	ini.GetValueI( "Options", "DisplayColorDepth",			m_iDisplayColorDepth );
@@ -291,6 +299,10 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "DelayedEscape",				m_bDelayedEscape );
 	ini.SetValueB( "Options", "HiddenSongs",				m_bHiddenSongs );
 	ini.SetValueB( "Options", "Vsync",						m_bVsync );
+#ifdef _XBOX
+	ini.SetValueB( "Options", "Progressive",				m_bProgressive );
+	ini.SetValueB( "Options", "PAL",						m_bPAL );
+#endif
 	ini.SetValueB( "Options", "HowToPlay",					m_bInstructions );
 	ini.SetValueB( "Options", "Caution",					m_bShowDontDie );
 	ini.SetValueB( "Options", "SelectGroup",				m_bShowSelectGroup );
