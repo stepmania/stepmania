@@ -111,7 +111,6 @@ bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile )
 		return false;
 
 	try {
-		/* XXX: This is opening sPubFilename for RageFile::WRITE instead of READ. */
 		RageFileSource pubFile(sPubFilename, true);
 		RSASSA_PKCS1v15_SHA_Verifier pub(pubFile);
 
@@ -141,9 +140,6 @@ bool CryptManager::Verify( CString sPath, CString sSignature )
 
 	if( !IsAFile(sPubFilename) )
 		return false;
-
-	// CAREFUL: These classes can throw all kinds of exceptions.  Should this
-	// be wrapped in a try catch?
 
 	try {
 		RageFileSource pubFile(sPubFilename, true);
