@@ -51,6 +51,7 @@
 #include "ThemeManager.h"
 #include "MemoryCardManager.h"
 #include "CodeDetector.h"
+#include "StepMania.h"
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -487,8 +488,7 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 	// check back in event mode
 	if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_BACK_IN_EVENT_MODE) )
 	{
-		MenuInput mi(MenuI.player,MENU_BUTTON_BACK);
-		m_ScreenStack.back()->Input( DeviceI, type, GameI, mi, StyleI );
+		ResetGame( true );
 		return;
 	}
 
