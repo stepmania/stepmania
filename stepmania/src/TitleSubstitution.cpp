@@ -167,6 +167,12 @@ TitleSubst::TitleSubst()
 	/* くにたけみゆき */
 	AddTrans("", "", "Miyuki Kunitake", "", "", "&hku;&hni;&hta;&hke;&hmi;&hyu;&hki;");
 	AddTrans("", "", "Kunitake Miyuki", "", "", "&hku;&hni;&hta;&hke;&hmi;&hyu;&hki;");
+
+	/* Courses: */
+	AddTrans("^Kidou$", "", "", "&oni;&michi;", "", "");
+	AddTrans("^Demon Road$", "", "", "&oni;&michi;", "", "");
+	AddTrans("^Kidou 2$", "", "", "&oni;&michi; 2", "", "");
+	AddTrans("^Demon Road 2$", "", "", "&oni;&michi; 2", "", "");
 }
 
 TitleSubst::~TitleSubst()
