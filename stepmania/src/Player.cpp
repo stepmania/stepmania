@@ -186,16 +186,7 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 
 	float fNoteFieldMidde = (GRAY_ARROWS_Y_STANDARD+GRAY_ARROWS_Y_REVERSE)/2;
 	
-#if defined(XBOX)
-	/* HACK: The receptor arrows are offset down and to the right. This sets them back.
-	 * It doesn't look perfect but its better than having player 2's arrows of the screen.
-	 */
-	m_pNoteField->SetY( fNoteFieldMidde - 20 );
-	m_pNoteField->SetX( m_pNoteField->GetX() - 55);
-#else
 	m_pNoteField->SetY( fNoteFieldMidde );
-#endif
-
 	m_fNoteFieldHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
 	m_pNoteField->Load( this, pn, iStartDrawingAtPixels, iStopDrawingAtPixels, m_fNoteFieldHeight );
 	m_ArrowBackdrop.SetPlayer( pn );
