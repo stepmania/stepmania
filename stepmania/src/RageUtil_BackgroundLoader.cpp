@@ -166,14 +166,12 @@ void BackgroundLoader::CacheFile( const CString &sFile )
 	if( !g_bEnableBackgroundLoading )
 		return;
 
-	LockMut( m_Mutex );
 	if( sFile == "" )
-		++m_FinishedRequests[sFile];
-	else
-	{
-		m_CacheRequests.push_back( sFile );
-		m_StartSem.Post();
-	}
+		return;
+
+	LockMut( m_Mutex );
+	m_CacheRequests.push_back( sFile );
+	m_StartSem.Post();
 }
 
 bool BackgroundLoader::IsCacheFileFinished( const CString &sFile, CString &sActualPath )
