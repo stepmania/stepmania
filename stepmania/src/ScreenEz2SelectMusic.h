@@ -18,7 +18,6 @@
 #include "HelpDisplay.h"
 #include "MusicBannerWheel.h"
 #include "MenuElements.h"
-#include "DifficultyMeter.h"
 #include "DifficultyRating.h"
 #include "ModeSwitcher.h"
 
@@ -80,7 +79,6 @@ protected:
 	MusicBannerWheel			m_MusicBannerWheel;
 	MenuElements		m_Menu;
 	DifficultyRating	m_DifficultyRating;
-//	DifficultyMeter			m_DifficultyMeter[NUM_PLAYERS];
 	vector<Steps*>		m_arrayNotes[NUM_PLAYERS];
 
 	int					m_iSelection[NUM_PLAYERS];
