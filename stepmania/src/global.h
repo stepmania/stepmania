@@ -23,6 +23,11 @@
 #pragma once
 #endif // _MSC_VER >= 1000
 
+// HACK: Get correct for scoping rules for VC6.
+#if _MSC_VER == 1200 
+#define for if(0); else for
+#endif // _MSC_VER == 1200
+
 #define VC_EXTRALEAN		// Exclude rarely-used stuff
 
 /* Platform-specific fixes. */
