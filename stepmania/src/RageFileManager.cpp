@@ -71,6 +71,7 @@ RageFileManager::RageFileManager()
 	MountInitialFilesystems();
 }
 
+#ifndef HAVE_EXTRA // set for custom initial mount rules
 void RageFileManager::MountInitialFilesystems()
 {
 	/* Add file search paths, higher priority first. */
@@ -131,6 +132,7 @@ void RageFileManager::MountInitialFilesystems()
 	RageFileManager::Mount( "dir", ".", "" );
 #endif
 }
+#endif
 
 RageFileManager::~RageFileManager()
 {
