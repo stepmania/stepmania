@@ -42,6 +42,7 @@ public:
 	bool PathIsMemCard( CString sDir ) const;
 	
 	CString GetName( PlayerNumber pn ) const;
+	void RefreshNames();
 
 protected:
 	void AssignUnassignedCards();	// do our best to assign a Device to each player

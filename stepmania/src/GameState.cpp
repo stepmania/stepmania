@@ -179,6 +179,8 @@ void GameState::BeginGame()
 	// play attract on the ending screen, then in one more whole attract 
 	// sequence after the game is over (even if attract sounds are set to off)
 	m_iNumTimesThroughAttract = -2;
+
+	MEMCARDMAN->RefreshNames();
 }
 
 void CheckStageStats( const StageStats &ss, int p )
@@ -230,6 +232,8 @@ void GameState::PlayersFinalized()
 		if( m_pCurSong == NULL && pProfile->m_pLastSong )
 			m_pCurSong = pProfile->m_pLastSong;
 	}
+
+
 }
 
 /* This data is added to each player profile, and to the machine profile per-player. */
