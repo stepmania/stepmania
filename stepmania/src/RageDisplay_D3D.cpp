@@ -30,7 +30,11 @@
 
 #include "arch/arch.h"
 
+#ifdef _XBOX
 #pragma comment(lib, "D3d8.lib")
+#endif
+
+/* This is a static library. */
 #pragma comment(lib, "D3dx8.lib")
 
 #include <math.h>
@@ -40,6 +44,7 @@ RageDisplay*		DISPLAY	= NULL;
 //
 // Globals
 //
+HMODULE					g_D3D8_Module = NULL;
 LPDIRECT3D8				g_pd3d = NULL;
 LPDIRECT3DDEVICE8		g_pd3dDevice = NULL;
 D3DCAPS8				g_DeviceCaps;
@@ -142,7 +147,15 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rat
 	g_Windowed = false;
 
 
-	g_pd3d = Direct3DCreate8( D3D_SDK_VERSION );
+	g_D3D8_Module = LoadLibrary("D3D8.dll");
+	if(!g_D3D8_Module)
+		RageException::Throw("Couldn't load D3D8.");
+
+	typedef IDirect3D8 * (WINAPI * Direct3DCreate8_t) (UINT SDKVersion);
+	Direct3DCreate8_t pDirect3DCreate8;
+	pDirect3DCreate8 = (Direct3DCreate8_t) GetProcAddress(g_D3D8_Module, "Direct3DCreate8");
+
+	g_pd3d = pDirect3DCreate8( D3D_SDK_VERSION );
 
 	if( FAILED( g_pd3d->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &g_DeviceCaps) ) )
 		throw RageException( 
