@@ -392,7 +392,7 @@ void Background::Update( float fDeltaTime )
 		m_BGADanger.Update( fDeltaTime );
 	}
 	else
-	{			
+	{
 		if( GAMESTATE->m_fMusicSeconds == GameState::MUSIC_SECONDS_INVALID )
 			return; /* hasn't been updated yet */
 
@@ -463,10 +463,13 @@ void Background::DrawPrimitives()
 	
 	if( IsDangerVisible() )
 	{
+		// Since this only shows when DANGER is visible, it will flash red on it's own accord :)
+		m_pDancingCharacters->m_bDrawDangerLight = true;
 		m_BGADanger.Draw();
 	}
 	else
 	{	
+		m_pDancingCharacters->m_bDrawDangerLight = false;
 		if( m_pCurrentBGA )
 			m_pCurrentBGA->Draw();
 		if( m_pFadingBGA )
@@ -474,7 +477,9 @@ void Background::DrawPrimitives()
 	}
 
 	if( m_pDancingCharacters )
+	{
 		m_pDancingCharacters->Draw();
+	}
 
 	m_quadBGBrightness.Draw();
 	for( int i=0; i<4; i++ )

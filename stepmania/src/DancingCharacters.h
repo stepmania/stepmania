@@ -25,7 +25,8 @@ public:
 
 	virtual void Update( float fDelta );
 	virtual void DrawPrimitives();
-	
+	bool	m_bDrawDangerLight;
+
 protected:
 
 	Model	m_Character[NUM_PLAYERS];

@@ -42,6 +42,7 @@ const float MODEL_X_TWO_PLAYERS[NUM_PLAYERS] = { +8, -8 };
 
 DancingCharacters::DancingCharacters()
 {
+	m_bDrawDangerLight = false;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
@@ -190,11 +191,16 @@ void DancingCharacters::DrawPrimitives()
 		m_LookAt,
 		RageVector3(0,1,0) );
 
+	RageColor	DL;
+	DL = RageColor(0.8f,0.8f,0.8f,0.8f);
+	if( m_bDrawDangerLight )
+		DL = RageColor(1,0,0,1);
+
 	DISPLAY->SetLighting( true );
 	DISPLAY->SetLightDirectional( 
 		0, 
 		RageColor(0.4f,0.4f,0.4f,1), 
-		RageColor(0.8f,0.8f,0.8f,0.8f),
+		DL,
 		RageColor(0.8f,0.8f,0.8f,0.8f),
 		RageVector3(+1, 0, +1) );
 
