@@ -696,16 +696,6 @@ float ThemeManager::GetMetricF( const CString &sClassName, const CString &sValue
 {
 	CString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
 
-#if defined(DEBUG)
-	if( sValueName.Right(1) == "X" || sValueName.Right(1) == "Y" )	// an absolute X or Y position
-	{
-		if( isdigit(sValue[0]) && sValue.Find('-') == -1 && sValue.Find('+') == -1 )
-		{
-			LOG->Warn( "Absolute position metric '%s'-'%s' should contain a SCREEN_* constant", sClassName.c_str(), sValueName.c_str() );
-		}
-	}
-#endif
-
 	LUA->PrepareExpression( sValue );
 
 	return LUA->RunExpressionF( sValue );
