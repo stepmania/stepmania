@@ -427,7 +427,7 @@ static void DeleteDuplicateSteps( Song *song, vector<Steps*> &vSteps )
 		}
 	}
 }
-
+/*
 static bool ImageIsLoadable( const CString &sPath )
 {
 	SDL_Surface *img = SDL_LoadImage( sPath );
@@ -440,7 +440,7 @@ static bool ImageIsLoadable( const CString &sPath )
 	SDL_FreeSurface( img );
 	return true;
 }
-
+*/
 /* Fix up song paths.  If there's a leading "./", be sure to keep it: it's
  * a signal that the path is from the root directory, not the song directory. */
 void FixupPath( CString &path )
@@ -646,24 +646,20 @@ void Song::TidyUpData()
 			m_sLyricsFile = arrayLyricFiles[0];
 	}
 
-	/* For any images we have now, make sure they're loadable, so we don't throw with
-	 * "can't load image" later.  Do this before the image search below, to avoid redundant
-	 * image decodes.
-	 * XXX: Images in BGA scripts? 
-	 * Should we do this?  It's not very good to wipe out metadata like this if files don't
-	 * exist; for example, the file might be in a different directory that may not be available
-	 * (eg. a CDTitle in the global directory that doesn't exist yet); if we do this and the file
-	 * is saved to disk in the editor, we'll wipe out the data when it was legitimate.  However,
-	 * it's possible that there might be a valid banner, etc. and the metadata is simply meaningless,
-	 * in which case it's often better (for the average user) to wipe it out and use the file.
-	 */
+	/* This takes a long time--sometimes as much as half of load time.  This only matters
+	 * if there is both a corrupt image pointed to by the metadata *and* another valid file
+	 * for the image, which is very rare.  Let's just tolerate failed images.
+	 *
+	 * We may still have to poke at the image below, but that's not always needed, and that
+	 * can be optimized. */
+	/*
 	if( HasBanner() && !ImageIsLoadable( GetBannerPath() ) )
 		m_sBannerFile = "";
 	if( HasBackground() && !ImageIsLoadable( GetBackgroundPath() ) )
 		m_sBackgroundFile = "";
 	if( HasCDTitle() && !ImageIsLoadable( GetCDTitlePath() ) )
 		m_sCDTitleFile = "";
-
+	*/
 	//
 	// Now, For the images we still haven't found, look at the image dimensions of the remaining unclassified images.
 	//
