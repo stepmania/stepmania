@@ -2,11 +2,20 @@
 // Miryokuteki's Todo/Done Record //
 ////////////////////////////////////
 
-// Last Updated February 21th, 2003
+// Last Updated February 27th, 2003
 
 Todo List:
   ** Find a way to get the length of a movie being played, so ScreenIntroMovie does not have to have a pre-determined length (I.e: exits when the movie is finished playing)
   ** Adding support for "BEGINNER HELP".. The thing that has a character showing where to step during the song, only on beginner mode. IE: Replaces the BG with this dynamic image sequence, showing what arrow to hit as it comes up on screen. You can see this in the BG of a DDRExtreme song if you pick "beginner" difficulty.
+
+
+Done as of 02/27/03:
+    FEATURE FIX** Enhanced ScreenSelectDifficultyEX, for more arcade accuracy
+    NEW PICTURE** Created a new image for Battle mode
+    NEW FEATURE** Added an option for "Solo Singles", to allow 4-panel solo mode like 4th mix
+
+
+
 
 
 Done as of 02/21/03:
