@@ -36,15 +36,12 @@ const float FOOT_Y			= 8;
 const float DIFFICULTY_X	= FOOT_X+18;
 const float DIFFICULTY_Y	= FOOT_Y;
 
-const float CONTENTS_BAR_WIDTH	= 270;
-const float CONTENTS_BAR_HEIGHT = 44;
-
 
 CourseContentDisplay::CourseContentDisplay()
 {
 	m_sprFrame.Load( THEME->GetPathTo("Graphics","select course content bar") );
 	this->AddChild( &m_sprFrame );
-	
+
 	m_textNumber.LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
 	m_textNumber.SetXY( NUMBER_X, NUMBER_Y );
 	m_textNumber.TurnShadowOff();
@@ -91,6 +88,10 @@ CourseContentsFrame::CourseContentsFrame()
 
 	m_fTimeUntilScroll = 0;
 	m_fItemAtTopOfList = 0;
+
+	/* These are all the same; grab the dimensions. */
+	ContentsBarHeight = m_CourseContentDisplays[0].m_sprFrame.GetTexture()->GetSourceFrameHeight();
+	ContentsBarWidth = m_CourseContentDisplays[0].m_sprFrame.GetTexture()->GetSourceFrameWidth();
 }
 
 void CourseContentsFrame::SetFromCourse( Course* pCourse )
@@ -112,10 +113,10 @@ void CourseContentsFrame::SetFromCourse( Course* pCourse )
 
 		printf( "Adding song '%s'\n", pSong->m_sMainTitle.GetString() );
 		m_CourseContentDisplays[m_iNumContents].Load( m_iNumContents+1, pSong, pNotes );
-		m_CourseContentDisplays[m_iNumContents].SetXY( 0, -((MAX_VISIBLE_CONTENTS-1)/2) * CONTENTS_BAR_HEIGHT );
+		m_CourseContentDisplays[m_iNumContents].SetXY( 0, -((MAX_VISIBLE_CONTENTS-1)/2) * float(ContentsBarHeight) );
 		m_CourseContentDisplays[m_iNumContents].StopTweening();
 		m_CourseContentDisplays[m_iNumContents].BeginTweening( m_iNumContents*0.1f );
-		m_CourseContentDisplays[m_iNumContents].SetTweenY( (-(MAX_VISIBLE_CONTENTS-1)/2 + m_iNumContents) * CONTENTS_BAR_HEIGHT );
+		m_CourseContentDisplays[m_iNumContents].SetTweenY( (-(MAX_VISIBLE_CONTENTS-1)/2 + m_iNumContents) * float(ContentsBarHeight) );
 		
 		m_iNumContents ++;
 	}
@@ -145,13 +146,14 @@ void CourseContentsFrame::DrawPrimitives()
 	// write to z buffer so that top and bottom are clipped
 	m_quad.SetZ( 1 );
 
-	RectI rectBarSize(-(int)CONTENTS_BAR_WIDTH/2, -(int)CONTENTS_BAR_HEIGHT/2, (int)CONTENTS_BAR_WIDTH/2, (int)CONTENTS_BAR_HEIGHT/2);
+	RectI rectBarSize(-ContentsBarWidth/2, -ContentsBarHeight/2,
+						ContentsBarWidth/2, ContentsBarHeight/2);
 	m_quad.StretchTo( rectBarSize );
 
-	m_quad.SetY( (-(MAX_VISIBLE_CONTENTS-1)/2 - 1) * CONTENTS_BAR_HEIGHT );
+	m_quad.SetY( (-(MAX_VISIBLE_CONTENTS-1)/2 - 1) * float(ContentsBarHeight) );
 	m_quad.Draw();
 
-	m_quad.SetY( ((MAX_VISIBLE_CONTENTS-1)/2 + 1) * CONTENTS_BAR_HEIGHT );
+	m_quad.SetY( ((MAX_VISIBLE_CONTENTS-1)/2 + 1) * float(ContentsBarHeight) );
 	m_quad.Draw();
 
 	int iItemToDraw = (int)m_fItemAtTopOfList;
@@ -160,12 +162,12 @@ void CourseContentsFrame::DrawPrimitives()
 	float fRemainder = m_fItemAtTopOfList - (int)m_fItemAtTopOfList;
 	fRemainder = min( fRemainder*1.5f, 1 );
 
-	const float fY = (-fRemainder-(MAX_VISIBLE_CONTENTS-1)/2) * CONTENTS_BAR_HEIGHT;
+	const float fY = (-fRemainder-(MAX_VISIBLE_CONTENTS-1)/2) * ContentsBarHeight;
 
 	for( int i=0; i<min(MAX_VISIBLE_CONTENTS+1, m_iNumContents); i++ )
 	{
 		if( m_fTimeUntilScroll <= 0 )
-			m_CourseContentDisplays[iItemToDraw].SetY( fY + i*CONTENTS_BAR_HEIGHT);
+			m_CourseContentDisplays[iItemToDraw].SetY( fY + i*ContentsBarHeight);
 		m_CourseContentDisplays[iItemToDraw].Draw();
 		iItemToDraw = (iItemToDraw+1) % m_iNumContents;
 	}
