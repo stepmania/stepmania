@@ -50,10 +50,8 @@ CachedThemeMetricB	HOLD_JUDGMENTS_UNDER_FIELD	("Player","HoldJudgmentsUnderField
 #define STOP_DRAWING_AT_PIXELS					THEME->GetMetricI("Player","StopDrawingAtPixels")
 #define MAX_PRO_TIMING_ERROR					THEME->GetMetricI("Player","MaxProTimingError")
 
-/* Distance to search for a note in Step(). */
-/* Units? */
-static const float StepSearchDistanceBackwards = 1.0f;
-static const float StepSearchDistanceForwards = 1.0f;
+/* Distance to search for a note in Step(), in seconds. */
+static const float StepSearchDistance = 1.0f;
 
 #define ADJUSTED_WINDOW( judge ) ((PREFSMAN->m_fJudgeWindowSeconds##judge * PREFSMAN->m_fJudgeWindowScale) + PREFSMAN->m_fJudgeWindowAdd)
 
@@ -674,8 +672,8 @@ void PlayerMinus::Step( int col, RageTimer tm )
 	// Check for step on a TapNote
 	//
 	int iIndexOverlappingNote = GetClosestNote( col, fSongBeat, 
-						   StepSearchDistanceForwards * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate,
-						   StepSearchDistanceBackwards * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate,
+						   StepSearchDistance * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate,
+						   StepSearchDistance * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate,
 						   false );
 	
 	//LOG->Trace( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
