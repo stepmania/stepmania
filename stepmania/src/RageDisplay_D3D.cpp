@@ -731,9 +731,12 @@ RageDisplay::VideoModeParams RageDisplay_D3D::GetVideoModeParams() const { retur
 void RageDisplay_D3D::SendCurrentMatrices()
 {
 	g_pd3dDevice->SetTransform( D3DTS_PROJECTION, (D3DMATRIX*)GetProjectionTop() );
-	g_pd3dDevice->SetTransform( D3DTS_VIEW, (D3DMATRIX*)GetViewTop() );
-	RageMatrix m;
+	RageMatrix modelView;
+	RageMatrixMultiply( &modelView, GetCentering(), GetViewTop() );
+	g_pd3dDevice->SetTransform( D3DTS_VIEW, (D3DMATRIX*)&modelView );
+
 	/* Convert to OpenGL-style "pixel-centered" coords */
+	RageMatrix m;
 	RageMatrixTranslation( &m, -0.5f, -0.5f, 0 );
 	RageMatrixMultiply( &m, &m, GetWorldTop() );
 	g_pd3dDevice->SetTransform( D3DTS_WORLD, (D3DMATRIX*)&m );
