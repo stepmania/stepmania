@@ -15,6 +15,10 @@
 #include "Steps.h"
 class Steps;	// why is this needed?
 
+#include "GameInfo.h"	// for definition of GameMode
+enum GameMode;	// why is this needed?
+
+
 
 class Song
 {
@@ -62,8 +66,6 @@ public:
 	};
 	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut )
 	{
-		if( fElapsedTime > 50 )
-			fElapsedTime = fElapsedTime;
 		fElapsedTime += m_fOffsetInSeconds;
 
 		for( int i=0; i<m_BPMSegments.GetSize(); i++ ) {
@@ -83,6 +85,9 @@ public:
 			}
 		}
 	};
+
+	void GetStepsThatMatchGameMode( GameMode gm, CArray<Steps*, Steps*&>& arrayAddTo );
+	void GetNumFeet( GameMode gm, int& iDiffEasy, int& iDiffMedium, int& iDiffHard );
 
 public:
 

@@ -82,7 +82,7 @@ void BitmapText::Draw()
 		float fCharWidthZoomed = m_fCharWidthsInSourcePixels[c] * GetZoom();
 		SetState( c );
 		fX += fCharWidthZoomed/2;
-		SetX( fX );		// set X acording to offset
+		SetX( roundf(fX) );		// set X acording to offset and round to help blurring
 		Sprite::Draw();
 		fX += fCharWidthZoomed/2;
 	}

@@ -22,7 +22,7 @@ const CString g_sLogFileName = "debug.log";
 // Name: randomf()
 // Desc:
 //-----------------------------------------------------------------------------
-FLOAT randomf( FLOAT low, FLOAT high )
+float randomf( float low, float high )
 {
     return low + ( high - low ) * ( (FLOAT)rand() ) / RAND_MAX;
 }
@@ -31,14 +31,14 @@ FLOAT randomf( FLOAT low, FLOAT high )
 // Name: roundf()
 // Desc:
 //-----------------------------------------------------------------------------
-int roundf( FLOAT f )
+int roundf( float f )
 {
     return (int)((f)+0.5f);
 }
 
 int roundf( double f )
 {
-    return (int)((f)+0.5f);
+    return (int)((f)+0.5);
 }
 
 //-----------------------------------------------------------------------------
@@ -271,9 +271,9 @@ int CompareCStrings(const void *arg1, const void *arg2)
 	return str1.CompareNoCase( str2 );
 }
 
-void SortCStringArray( CStringArray &AddTo, BOOL bSortAcsending )
+void SortCStringArray( CStringArray &arrayCStrings, BOOL bSortAcsending )
 {
-	qsort( AddTo.GetData(), AddTo.GetSize(), sizeof(CString), CompareCStrings );
+	qsort( arrayCStrings.GetData(), arrayCStrings.GetSize(), sizeof(CString), CompareCStrings );
 }
 
 //-----------------------------------------------------------------------------

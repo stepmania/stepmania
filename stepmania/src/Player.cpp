@@ -325,9 +325,12 @@ void Player::OnCompleteStep( float fSongBeat, Step player_step, float fMaxBeatDi
 	float fStepBeat = StepIndexToBeat( iIndexThatWasSteppedOn );
 
 	// show the gray arrow ghost
-	int iColumnNum = m_StepToColumnNumber[player_step];
-	GrayArrowGhostStep( iColumnNum );
-
+	for( int c=0; c < m_iNumColumns; c++ ) {	// for each arrow column
+		if( m_OriginalStep[iIndexThatWasSteppedOn] & m_ColumnNumberToStep[c] ) {	// this column is still unstepped on?
+			GrayArrowGhostStep( c );
+		}
+	}
+ 
 	float fBeatsUntilStep = fStepBeat - fSongBeat;
 	float fPercentFromPerfect = (float)fabs( fBeatsUntilStep / fMaxBeatDiff );
 

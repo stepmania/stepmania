@@ -385,3 +385,71 @@ void Song::TidyUpData()
         RageErrorHr( ssprintf("D3DXGetImageInfoFromFile() failed for file '%s'.", m_sFilePath), hr );
 	}
 */
+
+
+void Song::GetStepsThatMatchGameMode( GameMode gm, CArray<Steps*, Steps*&>& arrayAddTo )
+{
+	for( int i=0; i<arraySteps.GetSize(); i++ )	// for each of the Song's Steps
+	{
+		Steps* pCurrentSteps = &arraySteps[i];
+		Steps::StepsMode sm = pCurrentSteps->m_StepsMode;
+
+		switch( gm )	// different logic for different game modes
+		{
+		case single4:
+			if( sm == Steps::SMsingle4 )
+				arrayAddTo.Add( pCurrentSteps );
+			break;
+		case single6:
+			if( sm == Steps::SMsingle6 )
+				arrayAddTo.Add( pCurrentSteps );
+			break;
+		case versus4:
+			if( sm == Steps::SMsingle4  ||  sm == Steps::SMcouple  ||  sm == Steps::SMbattle )
+				arrayAddTo.Add( pCurrentSteps );
+			break;
+		case double4:
+			if( sm == Steps::SMdouble4 )
+				arrayAddTo.Add( pCurrentSteps );
+			break;
+		}
+	}
+
+}
+
+void Song::GetNumFeet( GameMode gm, int& iDiffEasyOut, int& iDiffMediumOut, int& iDiffHardOut )
+{
+	iDiffEasyOut = iDiffMediumOut = iDiffHardOut = -1;
+	CArray<Steps*, Steps*&> arrayMatchingSteps;
+	GetStepsThatMatchGameMode( gm, arrayMatchingSteps );
+
+	//bool bFoundEasy, bFoundMedium, bFoundHard;
+	//bFoundEasy = bFoundMedium = bFoundHard = false;
+
+	for( int i=0; i<arrayMatchingSteps.GetSize(); i++ )
+	{
+		int iNumFeet = arrayMatchingSteps[i]->m_iNumFeet;
+
+		switch( arrayMatchingSteps[i]->m_difficulty )
+		{
+		case Steps::easy:
+			iDiffEasyOut = iNumFeet;
+			break;
+		case Steps::medium:
+			iDiffMediumOut = iNumFeet;
+			break;
+		case Steps::hard:
+			iDiffHardOut = iNumFeet;
+			break;
+		case Steps::other:
+			// should do something intelligent to fill in the missing spots...
+			if( iDiffEasyOut < 0  &&  iNumFeet <= 4 )
+				iDiffEasyOut = iNumFeet;
+			else if( iDiffHardOut < 0  &&  iNumFeet >= 7 )
+				iDiffHardOut = iNumFeet;
+			else
+				iDiffMediumOut = iNumFeet;
+			break;
+		}
+	}
+}
