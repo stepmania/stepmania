@@ -143,9 +143,13 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 	DISPLAY->Translate( m_temp.pos.x, m_temp.pos.y, m_temp.pos.z );
 	DISPLAY->Scale( m_temp.scale.x, m_temp.scale.y, m_temp.scale.z );
 
-	if( m_temp.rotation.x != 0 )	DISPLAY->RotateX( m_temp.rotation.x );
-	if( m_temp.rotation.y != 0 )	DISPLAY->RotateY( m_temp.rotation.y );
-	if( m_temp.rotation.z != 0 )	DISPLAY->RotateZ( m_temp.rotation.z );
+
+	if( m_temp.rotation.x != 0 )	
+		DISPLAY->RotateX( m_temp.rotation.x );
+	if( m_temp.rotation.y != 0 )	
+		DISPLAY->RotateY( m_temp.rotation.y );
+	if( m_temp.rotation.z != 0 )	
+		DISPLAY->RotateZ( m_temp.rotation.z );
 }
 
 void Actor::EndDraw()

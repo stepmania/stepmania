@@ -27,7 +27,7 @@ DSound::DSound()
 	HRESULT hr;
 
     // Initialize COM
-    if( hr = CoInitialize( NULL ) )
+    if( FAILED( hr = CoInitialize( NULL ) ) )
 		RageException::ThrowNonfatal(hr_ssprintf(hr, "CoInitialize"));
 
     // Create IDirectSound using the primary sound device

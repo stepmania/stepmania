@@ -780,7 +780,10 @@ void RageDisplay::RotateY( float r )
 
 void RageDisplay::RotateZ( float r )
 {
-	glRotatef(r* 180/PI, 0, 0, 1);
+	// HACK:  Rotation about (0,0,1) seems to be broken in many Voodoo3 drivers,
+	// but only while using orthographic projections.  Strange...
+	// Adding a tiny X component fixes the problem.   -Chris
+	glRotatef(r* 180/PI, 0.00001f, 0, 1);
 }
 
 void RageDisplay::smPostMultMatrixf( const RageMatrix &f )

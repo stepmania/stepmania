@@ -2,56 +2,134 @@
 #include "DebugInfoHunt.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "../../archutils/Win32/GotoURL.h"
 
 
-void PrintDebugInfoWin9x()
+struct VideoDriverInfo
+{
+	CString sProvider;
+	CString sDescription;
+	CString sVersion;
+	CString sDate;
+	CString sDeviceID;
+};
+
+CString GetRegValue( HKEY hKey, CString sName )
+{
+	char    szBuffer[MAX_PATH];
+	DWORD   nSize = sizeof(szBuffer)-1;
+	if( RegQueryValueEx(hKey, sName, NULL, NULL, (LPBYTE)szBuffer, &nSize) == ERROR_SUCCESS ) 
+		return szBuffer;
+	else
+		return "";
+}
+
+bool GetDebugInfoWin9x( VideoDriverInfo& infoOut )
 {
 	HKEY    hkey;
 	if (RegOpenKey(HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Services\\Class\\Display\\0000", &hkey) !=  ERROR_SUCCESS)
-		return;
+		return false;
 
-	char    szBuffer[MAX_PATH];
-	DWORD   nSize;
-
-#define GETSZ2(a) 	nSize = sizeof(szBuffer)-1;	if( RegQueryValueEx(hkey, a, NULL, NULL, (LPBYTE)szBuffer, &nSize) == ERROR_SUCCESS ) LOG->Info("%-15s:\t%s", a, szBuffer);
-
-	LOG->Info("Video Driver Information (win9x):");
-    GETSZ2("DriverDate");
-    GETSZ2("DriverDesc");
-    GETSZ2("MatchingDeviceId");
-    GETSZ2("ProviderName");
-    GETSZ2("Ver");
+	infoOut.sDate =			GetRegValue( hkey, "DriverDate");
+	infoOut.sDescription =	GetRegValue( hkey, "DriverDesc");
+	infoOut.sDeviceID =		GetRegValue( hkey, "MatchingDeviceId");
+	infoOut.sProvider =		GetRegValue( hkey, "ProviderName");
+	infoOut.sVersion =		GetRegValue( hkey, "Ver");
 
 	RegCloseKey(hkey);
+	return true;
 }
 
 
-void PrintDebugInfoWinNT()
+bool GetDebugInfoWinNT( VideoDriverInfo& infoOut )
 {
 	HKEY    hkey;
 	if (RegOpenKey(HKEY_LOCAL_MACHINE, "SYSTEM\\CurrentControlSet\\Control\\Class\\{4D36E968-E325-11CE-BFC1-08002BE10318}\\0000", &hkey) !=  ERROR_SUCCESS)
-		return;
+		return false;
 
-	char    szBuffer[MAX_PATH];
-	DWORD   nSize;
-
-#define GETSZ2(a) 	nSize = sizeof(szBuffer)-1;	if( RegQueryValueEx(hkey, a, NULL, NULL, (LPBYTE)szBuffer, &nSize) == ERROR_SUCCESS ) LOG->Info("%-15s:\t%s", a, szBuffer);
-
-	LOG->Info("Video Driver Information (winnt):");
-    GETSZ2("DriverDate");
-    GETSZ2("DriverDesc");
-    GETSZ2("DriverVersion");
-    GETSZ2("InfSection");
-    GETSZ2("ProviderName");
-    GETSZ2("MatchingDeviceId");
+	infoOut.sDate =			GetRegValue( hkey, "DriverDate");
+	infoOut.sDescription =	GetRegValue( hkey, "DriverDesc");
+	infoOut.sDeviceID =		GetRegValue( hkey, "MatchingDeviceId");
+	infoOut.sProvider =		GetRegValue( hkey, "ProviderName");
+	infoOut.sVersion =		GetRegValue( hkey, "DriverVersion");
 
 	RegCloseKey(hkey);
+	return true;
 }
+
+void HandleKnownTerribleDriver( VideoDriverInfo info )
+{
+	struct ProblemAndBookmark
+	{
+		char szProblemProvider[1024];
+		char szProblemDescription[1024];
+		char szReadMeBookmark[64];
+	};
+	ProblemAndBookmark ENTRIES[] =
+	{
+		// Hacked around the bug in the V3 driver.   -Chris
+//		{"3dfx Interactive, Inc. (Optimized by Amigamerlin)", "Voodoo3 PCI", "Voodoo3"},
+		{"blah", "blah", "Voodoo3"},
+	};
+	const int NUM_ENTRIES = sizeof(ENTRIES) / sizeof(ENTRIES[0]);
+
+	for( int i=0; i<NUM_ENTRIES; i++ )
+	{
+		if( info.sProvider == ENTRIES[i].szProblemProvider  &&
+			info.sDescription == ENTRIES[i].szProblemDescription )
+		{
+			CString sQuestion = ssprintf(
+				"Video Driver Information:\n\n"
+				"Provider: %s\n"
+				"Description: %s\n"
+				"Version: %s\n"
+				"Date: %s\n"
+				"DeviceID: %s\n"
+				"\n"
+				"This video driver is known to have bugs that make StepMania unplayable.\n"
+				"Click OK to see information on where to find a newer driver.\n"
+				"Click Cancel to dismiss this warning and continue playing.",
+				info.sProvider.GetString(),
+				info.sDescription.GetString(),
+				info.sVersion.GetString(),
+				info.sDate.GetString(),
+				info.sDeviceID.GetString() );
+			if( IDOK == MessageBox(NULL, sQuestion, "Known problem driver", MB_ICONHAND|MB_OKCANCEL) )
+			{
+				char szBuffer[MAX_PATH];
+				GetCurrentDirectory( MAX_PATH, szBuffer );
+				GotoURL( ssprintf("%s/README-FIRST.html#%s", szBuffer, ENTRIES[i].szReadMeBookmark) );
+				exit(1);	// Is there a better way to clean up? -Chris
+			}
+			else
+				return;
+		}
+	}
+}
+
 
 static void GetDisplayDriverDebugInfo()
 {
-	PrintDebugInfoWin9x();	// will print nothing if not 9x
-	PrintDebugInfoWinNT();  // will print nothing if not NT
+	VideoDriverInfo info;
+
+	if( GetDebugInfoWin9x(info) )
+		goto got_debug_info;
+	if( GetDebugInfoWinNT(info) )
+		goto got_debug_info;
+	
+	LOG->Warn( "Failed to get video card driver info." );
+	return;
+
+got_debug_info:
+
+	LOG->Info("Video Driver Information:");
+	LOG->Info("%-15s:\t%s", "Provider", info.sProvider.GetString());
+	LOG->Info("%-15s:\t%s", "Description", info.sDescription.GetString());
+	LOG->Info("%-15s:\t%s", "Version", info.sVersion.GetString());
+	LOG->Info("%-15s:\t%s", "Date", info.sDate.GetString());
+	LOG->Info("%-15s:\t%s", "DeviceID", info.sDeviceID.GetString());
+
+	HandleKnownTerribleDriver( info );
 }
 
 static CString wo_ssprintf( MMRESULT err, const char *fmt, ...)

@@ -284,6 +284,8 @@ void Player::DrawPrimitives()
 
 		DISPLAY->LookAt(Eye, At, Up);
 	}
+	else
+		DISPLAY->PushMatrix();
 
 	m_GrayArrowRow.Draw();
 	m_NoteField.Draw();
@@ -294,6 +296,8 @@ void Player::DrawPrimitives()
 		DISPLAY->ExitPerspective();
 		DISPLAY->PopMatrix();
 	}
+	else
+		DISPLAY->PopMatrix();
 
 	m_Judgment.Draw();
 
