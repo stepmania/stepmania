@@ -26,8 +26,8 @@ const unsigned buffersize = samples*samplesize/8;
 
 namespace
 {
-    volatile UInt32 fill_me = 0;
-    UInt8  *buffer[2];
+    volatile uint32_t fill_me = 0;
+    uint8_t  *buffer[2];
     CmpSoundHeader header;
 }
 
@@ -42,8 +42,8 @@ RageSound_QT1::RageSound_QT1()
     header.numFrames = samples;
     header.encode = cmpSH;
 
-    buffer[0] = new UInt8[buffersize];
-    buffer[1] = new UInt8[buffersize];
+    buffer[0] = new uint8_t[buffersize];
+    buffer[1] = new uint8_t[buffersize];
     memset(buffer[0], 0, buffersize);
     memset(buffer[1], 0, buffersize);
 
@@ -104,7 +104,7 @@ void RageSound_QT1::GetData(SndChannelPtr chan, SndCommand *cmd_passed)
     LOG->Flush();
 
     fill_me = cmd_passed->param2;
-    UInt32 play_me = !fill_me;
+    uint32_t play_me = !fill_me;
 
     if (!P->last_pos)
     {
@@ -154,7 +154,7 @@ int64_t RageSound_QT1::GetPosition(const RageSoundBase *snd) const
 #pragma unused (snd)
     TimeRecord tr;
     ClockGetTime(clock, &tr);
-    UInt64 temp = tr.value.hi;
+    uint64_t temp = tr.value.hi;
     temp <<= 32;
     temp |= tr.value.lo;
     double d = static_cast<double>(temp)/tr.scale*freq;
