@@ -590,6 +590,9 @@ void ScreenOptions::TweenCursor( PlayerNumber player_no )
 	highlight.TweenBarWidth( iWidth );
 	highlight.SetXY( (float)iX, (float)iY );
 
+	UtilCommand( m_sprLineHighlight[player_no], "ScreenOptions", "Change" );
+	if( m_Rows[iCurRow]->Type == Row::ROW_EXIT )
+		UtilCommand( m_sprLineHighlight[player_no], "ScreenOptions", "ChangeToExit" );
 	m_sprLineHighlight[player_no].SetY( (float)iY );
 }
 
