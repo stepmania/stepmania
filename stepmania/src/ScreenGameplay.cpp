@@ -149,6 +149,11 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	//
 	if( GAMESTATE->IsCourseMode() )
 	{
+		const StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+		/* Increment the play count. */
+		for( int mc = 0; mc < NUM_MEMORY_CARDS; ++mc )
+			++GAMESTATE->m_pCurCourse->m_MemCardDatas[st][mc].iNumTimesPlayed;
+
 		vector<Course::Info> ci;
 		GAMESTATE->m_pCurCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci );
 		for( int p=0; p<NUM_PLAYERS; p++ )
