@@ -19,6 +19,22 @@
 #include <math.h>
 #include "arch/ArchHooks/ArchHooks.h"
 
+void RageVec3ClearBounds( RageVector3 &mins, RageVector3 &maxs )
+{
+	mins = RageVector3( 999999, 999999, 999999 );
+	maxs = mins * -1;
+}
+
+void RageVec3AddToBounds( const RageVector3 &p, RageVector3 &mins, RageVector3 &maxs )
+{
+	mins.x = min( mins.x, p.x );
+	mins.y = min( mins.y, p.y );
+	mins.z = min( mins.z, p.z );
+	maxs.x = max( maxs.x, p.x );
+	maxs.y = max( maxs.y, p.y );
+	maxs.z = max( maxs.z, p.z );
+}
+
 void RageVec2Normalize( RageVector2* pOut, const RageVector2* pV )
 {
 	float scale = 1.0f / sqrtf( pV->x*pV->x + pV->y*pV->y );
@@ -325,35 +341,52 @@ RageVector4 RageQuatFromR(float theta )
 }
 
 
-/* From http://www.gamasutra.com/features/19980703/quaternions_01.htm .
- *
- * The math on this page treats HPR as if Z is up and we're looking down Y; that
- * is, if you're in a room, the floor is on the XY plane and Z is height.
- * However, we treat the floor as the XZ plane, and Y is height; in other
- * words, as if the screen is the XY plane and negative Z goes into it.
- * So, instead of HPR.xyz being heading, pitch, roll, it's pitch, roll, heading. */
+/* Math from http://www.gamasutra.com/features/19980703/quaternions_01.htm . */
+
+/* prh.xyz -> heading, pitch, roll */
 void RageQuatFromHPR(RageVector4* pOut, RageVector3 hpr )
 {
 	hpr *= PI;
 	hpr /= 180.0f;
 	hpr /= 2.0f;
 
+	const float sX = sinf(hpr.x);
+	const float cX = cosf(hpr.x);
+	const float sY = sinf(hpr.y);
+	const float cY = cosf(hpr.y);
+	const float sZ = sinf(hpr.z);
+	const float cZ = cosf(hpr.z);
+
+	pOut->w = cX * cY * cZ + sX * sY * sZ;
+	pOut->x = sX * cY * cZ - cX * sY * sZ;
+	pOut->y = cX * sY * cZ + sX * cY * sZ;
+	pOut->z = cX * cY * sZ - sX * sY * cZ;
+}
+
+/*
+ * Screen orientatoin:  the "floor" is the XZ plane, and Y is height; in other
+ * words, the screen is the XY plane and negative Z goes into it.
+ */
+
+/* prh.xyz -> pitch, roll, heading */
+void RageQuatFromPRH(RageVector4* pOut, RageVector3 prh )
+{
+	prh *= PI;
+	prh /= 180.0f;
+	prh /= 2.0f;
+
 	/* Set cX to the cosine of the angle we want to rotate on the X axis,
 	 * and so on.  Here, hpr.z (roll) rotates on the Z axis, hpr.x (heading)
 	 * on Y, and hpr.y (pitch) on X. */
-	const float cZ = cosf(hpr.z);
-	const float cY = cosf(hpr.x);
-	const float cX = cosf(hpr.y);
+	const float sX = sinf(prh.y);
+	const float cX = cosf(prh.y);
+	const float sY = sinf(prh.x);
+	const float cY = cosf(prh.x);
+	const float sZ = sinf(prh.z);
+	const float cZ = cosf(prh.z);
 
-	const float sZ = sinf(hpr.z);
-	const float sY = sinf(hpr.x);
-	const float sX = sinf(hpr.y);
-
-	const float cYcZ = cY * cZ;
-	const float sYsZ = sY * sZ;
-
-	pOut->w = cX * cYcZ + sX * sYsZ;
-	pOut->x = sX * cYcZ - cX * sYsZ;
+	pOut->w = cX * cY * cZ + sX * sY * sZ;
+	pOut->x = sX * cY * cZ - cX * sY * sZ;
 	pOut->y = cX * sY * cZ + sX * cY * sZ;
 	pOut->z = cX * cY * sZ - sX * sY * cZ;
 }

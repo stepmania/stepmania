@@ -16,6 +16,8 @@ struct RageVector3;
 struct RageVector4;
 struct RageMatrix;
 
+void RageVec3ClearBounds( RageVector3 &mins, RageVector3 &maxs );
+void RageVec3AddToBounds( const RageVector3 &p, RageVector3 &mins, RageVector3 &maxs );
 
 void RageVec2Normalize( RageVector2* pOut, const RageVector2* pV );
 void RageVec3Normalize( RageVector3* pOut, const RageVector3* pV );
@@ -34,6 +36,7 @@ RageMatrix RageMatrixRotationY( float fTheta );
 RageMatrix RageMatrixRotationZ( float fTheta );
 void RageMatrixCommand( CString sCommandString, RageMatrix &mat );
 void RageQuatFromHPR(RageVector4* pOut, RageVector3 hpr );
+void RageQuatFromPRH(RageVector4* pOut, RageVector3 prh );
 void RageMatrixFromQuat( RageMatrix* pOut, const RageVector4 q );
 void RageQuatSlerp(RageVector4 *pOut, const RageVector4 &from, const RageVector4 &to, float t);
 RageVector4 RageQuatFromH(float theta);
