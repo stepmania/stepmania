@@ -541,7 +541,7 @@ void ScreenSelectDifficultyEX::TweenOnScreen()
 		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
 			continue;
 
-		int iSelection = m_Choice[p];
+//		int iSelection = m_Choice[p];
 /*		if( NUM_ENABLED_PLAYERS == 1 )
 		{
 			m_sprCursor[p].SetXY( CURSOR_EX_SINGLE_X((PlayerNumber)p), CURSOR_EX_SINGLE_Y((PlayerNumber)p) );
