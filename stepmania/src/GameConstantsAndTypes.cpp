@@ -2,7 +2,7 @@
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
 #include "RageUtil.h"
-#include "ThemeManager.h"
+#include "ThemeMetric.h"
 #include "EnumHelper.h"
 #include "Foreach.h"
 #include "PrefsManager.h"
@@ -21,7 +21,7 @@ static const CString RadarCategoryNames[NUM_RADAR_CATEGORIES] = {
 	"Hands",
 };
 XToString( RadarCategory );
-XToThemedString( RadarCategory );
+XToThemedString( RadarCategory, NUM_RADAR_CATEGORIES );
 
 
 static const CString PlayModeNames[NUM_PLAY_MODES] = {
@@ -33,7 +33,7 @@ static const CString PlayModeNames[NUM_PLAY_MODES] = {
 	"Rave",
 };
 XToString( PlayMode );
-XToThemedString( PlayMode );
+XToThemedString( PlayMode, NUM_PLAY_MODES );
 StringToX( PlayMode );
 
 
@@ -107,7 +107,7 @@ static const CString TapNoteScoreNames[NUM_TAP_NOTE_SCORES] = {
 };
 XToString( TapNoteScore );
 StringToX( TapNoteScore );
-XToThemedString( TapNoteScore );
+XToThemedString( TapNoteScore, NUM_TAP_NOTE_SCORES );
 
 
 static const CString HoldNoteScoreNames[NUM_HOLD_NOTE_SCORES] = {
@@ -117,7 +117,7 @@ static const CString HoldNoteScoreNames[NUM_HOLD_NOTE_SCORES] = {
 };
 XToString( HoldNoteScore );
 StringToX( HoldNoteScore );
-XToThemedString( HoldNoteScore );
+XToThemedString( HoldNoteScore, NUM_HOLD_NOTE_SCORES );
 
 
 static const CString MemoryCardStateNames[NUM_MEMORY_CARD_STATES] = {
@@ -142,7 +142,7 @@ static const CString PerDifficultyAwardNames[NUM_PER_DIFFICULTY_AWARDS] = {
 	"Greats100Percent",
 };
 XToString( PerDifficultyAward );
-XToThemedString( PerDifficultyAward );
+XToThemedString( PerDifficultyAward, NUM_PER_DIFFICULTY_AWARDS );
 StringToX( PerDifficultyAward );
 
 
@@ -163,7 +163,7 @@ static const CString PeakComboAwardNames[NUM_PEAK_COMBO_AWARDS] = {
 	"Peak10000Combo",
 };
 XToString( PeakComboAward );
-XToThemedString( PeakComboAward );
+XToThemedString( PeakComboAward, NUM_PEAK_COMBO_AWARDS );
 StringToX( PeakComboAward );
 
 

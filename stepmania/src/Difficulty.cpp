@@ -1,7 +1,7 @@
 #include "global.h"
 #include "Difficulty.h"
 #include "GameState.h"
-#include "ThemeManager.h"
+#include "ThemeMetric.h"
 
 
 static const CString DifficultyNames[NUM_DIFFICULTIES] = {
@@ -13,7 +13,7 @@ static const CString DifficultyNames[NUM_DIFFICULTIES] = {
 	"Edit",
 };
 XToString( Difficulty );
-XToThemedString( Difficulty );
+XToThemedString( Difficulty, NUM_DIFFICULTIES );
 
 /* We prefer the above names; recognize a number of others, too.  (They'l
  * get normalized when written to SMs, etc.) */
@@ -52,7 +52,7 @@ static const CString CourseDifficultyNames[NUM_DIFFICULTIES] =
 	"(not used)",
 };
 XToString( CourseDifficulty );
-XToThemedString( CourseDifficulty );
+XToThemedString( CourseDifficulty, NUM_DIFFICULTIES );
 StringToX( CourseDifficulty );
 
 CourseDifficulty GetNextShownCourseDifficulty( CourseDifficulty cd )

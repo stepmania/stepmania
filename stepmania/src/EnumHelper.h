@@ -46,10 +46,17 @@ static const CString EMPTY_STRING;
 		return X##Names[x];	\
 	}
 
-#define XToThemedString(X)	\
+#define XToThemedString(X, CNT)      \
+	static ThemeMetric<CString> g_##X##Name[CNT]; \
 	CString X##ToThemedString( X x ) \
-	{	\
-		return THEME->GetMetric( #X, X##ToString(x) );	\
+	{       \
+		static bool bInitted = false; \
+		if( !bInitted ) { \
+			bInitted = true; \
+			for( unsigned i = 0; i < CNT; ++i ) \
+			g_##X##Name[i].Load( #X, X##ToString((X)i) ); \
+		} \
+		return g_##X##Name[x];  \
 	}
 
 #define StringToX(X)	\
