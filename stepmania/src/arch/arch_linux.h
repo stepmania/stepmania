@@ -21,6 +21,8 @@
 
 #include "Lights/LightsDriver_LinuxSerial.h"
 
+#include "Lights/MemoryCardEnumerator_Linux.h"
+
 #endif
 /*
  * Copyright (c) 2002-2003 by the person(s) listed below.  All rights reserved.

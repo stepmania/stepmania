@@ -35,6 +35,7 @@
 #include "Sound/RageSoundDriver_Null.h"
 #include "Lights/LightsDriver_Null.h"
 #include "Lights/LightsDriver_SystemMessage.h"
+#include "MemoryCard/MemoryCardDriver_Null.h"
 
 #if defined(SUPPORT_OPENGL)
 #include "LowLevelWindow/LowLevelWindow_SDL.h"

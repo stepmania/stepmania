@@ -165,6 +165,20 @@ LightsDriver *MakeLightsDriver(CString driver)
 	return ret;
 }
 
+/* Err, this is ugly--breaks arch encapsulation. Hmm. */
+MemoryCardDriver *MakeMemoryCardDriver()
+{
+	MemoryCardDriver *ret = NULL;
+
+#ifdef LINUX
+	ret = new MemoryCardDriver_Linux;
+#endif
+	if( !ret )
+		ret = new MemoryCardDriver_Null;
+	
+	return ret;
+}
+
 /*
  * Copyright (c) 2002 by the person(s) listed below.  All rights reserved.
  *
