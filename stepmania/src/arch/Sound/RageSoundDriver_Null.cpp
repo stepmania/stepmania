@@ -5,6 +5,7 @@
 #include "RageLog.h"
 #include "RageSound.h"
 #include "RageUtil.h"
+#include "RageSoundManager.h"
 
 #include "SDL_utils.h"
 
