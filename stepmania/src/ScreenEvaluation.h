@@ -38,6 +38,8 @@ public:
 
 	virtual void TweenOnScreen();
 	virtual void TweenOffScreen();
+	virtual void MenuLeft( PlayerNumber pn );
+	virtual void MenuRight( PlayerNumber pn );
 	virtual void MenuBack( PlayerNumber pn );
 	virtual void MenuStart( PlayerNumber pn );
 

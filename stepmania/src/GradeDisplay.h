@@ -28,15 +28,17 @@ public:
 	void SetGrade( PlayerNumber pn, Grade g );
 	void SpinAndSettleOn( Grade g );
 	void SettleImmediately();
+	void SettleQuickly();
 
 protected:
 	
 	Grade m_Grade;
 
-	// for scrolling
-	bool  m_bDoScrolling;
+	// for scrolling; 0 = no, 1 = normal, 2 = quick
+	int  m_bDoScrolling;
 	RectF m_frectStartTexCoords;
 	RectF m_frectDestTexCoords;
+	RectF m_frectCurTexCoords;
 	float m_fTimeLeftInScroll;
 };
 

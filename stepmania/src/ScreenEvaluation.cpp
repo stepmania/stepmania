@@ -837,6 +837,16 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
+void ScreenEvaluation::MenuLeft( PlayerNumber pn )
+{
+	m_Grades[pn].SettleQuickly();
+}
+
+void ScreenEvaluation::MenuRight( PlayerNumber pn )
+{
+	m_Grades[pn].SettleQuickly();
+}
+
 void ScreenEvaluation::MenuBack( PlayerNumber pn )
 {
 	MenuStart( pn );
