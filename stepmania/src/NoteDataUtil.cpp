@@ -917,7 +917,7 @@ const ValidRow g_ValidRows[] =
 void NoteDataUtil::FixImpossibleRows( NoteData &in, StepsType st )
 {
 	vector<const ValidRow*> vpValidRowsToCheck;
-	for( int i=0; i<ARRAYSIZE(g_ValidRows); i++ )
+	for( unsigned i=0; i<ARRAYSIZE(g_ValidRows); i++ )
 	{
 		if( g_ValidRows[i].st == st )
 			vpValidRowsToCheck.push_back( &g_ValidRows[i] );
