@@ -72,6 +72,11 @@ Background::Background()
 		m_pDancingCharacters = new DancingCharacters;
 	else
 		m_pDancingCharacters = NULL;
+
+	if( PREFSMAN->m_bShowBeginnerHelper )	//Disable dancing characters if BH will be showing.
+		for( int pc=0; pc<NUM_PLAYERS; pc++ )
+			if( GAMESTATE->m_PreferredDifficulty[pc] == DIFFICULTY_BEGINNER )
+				m_pDancingCharacters = NULL;
 }
 
 Background::~Background()
