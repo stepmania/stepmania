@@ -11,27 +11,73 @@
 
 const RageZeroTimer_t RageZeroTimer;
 
+void mySDL_GetTicks( unsigned &secs, unsigned &us )
+{
+	/* Ticks may be less than last for at least two reasons: the time may have wrapped (after
+	 * about 49 days), or the system clock may have moved backwards.  If the system clock moves
+	 * backwards, we can't just clamp the time; if it moved back an hour, we'll sit around for
+	 * an hour until it catches up.
+	 *
+	 * Keep track of an offset: the amount of time to add to the result of SDL_GetTicks.
+	 * If we move back by 100ms, the offset will be increased by 100ms.  If we loop, the
+	 * offset will be increased by the duration 2^32 ticks.  This is stored in the same
+	 * notation as RageTimer: one 32-bit int for seconds and another for microseconds, so
+	 * wrapping isn't a problem.
+	 */
+
+	static Uint32 last = 0;
+	static Uint32 offset_secs = 0, offset_us = 0;
+
+	const Uint32 millisecs = SDL_GetTicks();
+
+	/* The time has wrapped if the last time was very high and the current time is very low. */
+	const Uint32 one_day = 24*60*60*1000;
+	if( last > (0-one_day) && millisecs < one_day )
+	{
+		const Uint32 wraparound_secs = 4294967; /* (2^32 / 1000) */
+		const Uint32 wraparound_us = 296000;    /* (2^32 % 1000) * 1000 */
+		offset_secs += wraparound_secs;
+		offset_us += wraparound_us;
+	}
+	else if( millisecs < last )
+	{
+		/* The time has moved backwards.  Increase the offset by the amount we moved. */
+		const Uint32 offset_ms = last - millisecs;
+		offset_secs +=  offset_ms/1000;
+		offset_us   += (offset_ms%1000) * 1000;
+	}
+
+	last = millisecs;
+
+	secs = millisecs / 1000;
+	us =  (millisecs % 1000)*1000;
+
+	secs += offset_secs;
+	us += offset_us;
+
+	if( us >= TIMESTAMP_RESOLUTION )
+	{
+		us -= TIMESTAMP_RESOLUTION;
+		++secs;
+	}
+}
+
 float RageTimer::GetTimeSinceStart()
 {
-	return SDL_GetTicks() / 1000.0f;
+	unsigned secs, us;
+	mySDL_GetTicks( secs, us );
+	return secs + us / 1000000.0f;
 }
 
 void RageTimer::Touch()
 {
-	unsigned ms = SDL_GetTicks();
-	this->m_secs = ms / 1000;
-	ms %= 1000;
-
-	unsigned mult = TIMESTAMP_RESOLUTION / 1000;
-	this->m_us = ms*mult;
+	mySDL_GetTicks( this->m_secs, this->m_us );
 }
 
 float RageTimer::Ago() const
 {
 	const RageTimer Now;
-
-	/* If the system clock has moved backwards (for example, ntpd), don't return negative values. */
-	return max( 0.0f, Now - *this );
+	return Now - *this;
 }
 
 float RageTimer::GetDeltaTime()
@@ -39,9 +85,7 @@ float RageTimer::GetDeltaTime()
 	const RageTimer Now;
 	const float diff = Difference( Now, *this );
 	*this = Now;
-
-	/* If the system clock has moved backwards (for example, ntpd), don't return negative values. */
-	return max( 0.0f, diff );
+	return diff;
 }
 
 /* Get a timer representing half of the time ago as this one.  This is
