@@ -564,9 +564,10 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 		m_Fade.CloseWipingRight( SM_GoToNextScreen );
 		break;
 	case SM_DoneFadingIn:
+		SCREENMAN->PrepNewScreen( "ScreenGameplay" );
 		break;
 	case SM_GoToNextScreen:
-		SCREENMAN->SetNewScreen( "ScreenGameplay" );
+		SCREENMAN->PrepNewScreen( "" ); /* use prepped */
 		break;
 	}
 }
