@@ -171,6 +171,8 @@ protected:
 
 	NoteData			m_Clipboard;
 
+	RageSound			m_soundAddNote;
+	RageSound			m_soundRemoveNote;
 	RageSound			m_soundChangeLine;
 	RageSound			m_soundChangeSnap;
 	RageSound			m_soundMarker;

@@ -578,6 +578,8 @@ void ScreenEdit::Init()
 	this->SortByDrawOrder();
 
 
+	m_soundAddNote.Load(		THEME->GetPathS("ScreenEdit","AddNote"), true );
+	m_soundRemoveNote.Load(	THEME->GetPathS("ScreenEdit","RemoveNote"), true );
 	m_soundChangeLine.Load( THEME->GetPathS("ScreenEdit","line"), true );
 	m_soundChangeSnap.Load( THEME->GetPathS("ScreenEdit","snap"), true );
 	m_soundMarker.Load(		THEME->GetPathS("ScreenEdit","marker"), true );
@@ -835,23 +837,21 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				break;
 
 			// check for to see if the user intended to remove a HoldNote
+			int iHeadRow;
+			if( m_NoteDataEdit.IsHoldNoteAtBeat( iCol, iSongIndex, &iHeadRow ) )
 			{
-				int iHeadRow;
-				if( m_NoteDataEdit.IsHoldNoteAtBeat( iCol, iSongIndex, &iHeadRow ) )
-				{
-					m_NoteDataEdit.SetTapNote( iCol, iHeadRow, TAP_EMPTY );
-					return;
-				}
+				m_NoteDataEdit.SetTapNote( iCol, iHeadRow, TAP_EMPTY );
+				m_soundRemoveNote.Play();
 			}
-
-			if( m_NoteDataEdit.GetTapNote(iCol, iSongIndex).type != TapNote::empty )
+			else if( m_NoteDataEdit.GetTapNote(iCol, iSongIndex).type != TapNote::empty )
 			{
 				m_NoteDataEdit.SetTapNote( iCol, iSongIndex, TAP_EMPTY );
-				return;
+				m_soundRemoveNote.Play();
 			}
 			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE) )
 			{
 				m_NoteDataEdit.SetTapNote(iCol, iSongIndex, TAP_ORIGINAL_MINE );
+				m_soundAddNote.Play();
 			}
 			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_ATTACK) )
 			{
@@ -861,6 +861,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			else
 			{
 				m_NoteDataEdit.SetTapNote(iCol, iSongIndex, TAP_ORIGINAL_TAP );
+				m_soundAddNote.Play();
 			}
 		}
 		break;
