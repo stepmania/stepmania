@@ -237,11 +237,19 @@ void Background::LoadFromSong( Song* pSong )
 				GetDirListing( VISUALIZATIONS_DIR + "*.mpg", arrayPossibleMovies, false, true );
 				GetDirListing( VISUALIZATIONS_DIR + "*.mpeg", arrayPossibleMovies, false, true );
 
-				int index = rand() % arrayPossibleMovies.GetSize();
-				pTempBGA = new BGAnimation;
-				pTempBGA->LoadFromVisualization( arrayPossibleMovies[index], sSongBackgroundPath );
-				m_BGAnimations.Add( pTempBGA );
-				arrayPossibleMovies.RemoveAt( index );
+				if( arrayPossibleMovies.GetSize() > 0 )
+				{
+					int index = rand() % arrayPossibleMovies.GetSize();
+					pTempBGA = new BGAnimation;
+					pTempBGA->LoadFromVisualization( arrayPossibleMovies[index], sSongBackgroundPath );
+					m_BGAnimations.Add( pTempBGA );
+				}
+				else
+				{
+					pTempBGA = new BGAnimation;
+					pTempBGA->LoadFromStaticGraphic( sSongBackgroundPath );
+					m_BGAnimations.Add( pTempBGA );
+				}
 			}
 			break;
 		case MODE_ANIMATIONS:

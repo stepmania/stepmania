@@ -33,6 +33,9 @@ enum
 	TRACK_8,
 	TRACK_9,
 	TRACK_10,
+	TRACK_11,
+	TRACK_12,
+	TRACK_13,	// BMS reader needs 13 tracks
 	MAX_NOTE_TRACKS		// leave this at the end
 };
 
