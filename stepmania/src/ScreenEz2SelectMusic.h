@@ -42,7 +42,10 @@ protected:
 	void EasierDifficulty( PlayerNumber pn );
 	void HarderDifficulty( PlayerNumber pn );
 
-	void UpdateOptions( PlayerNumber pn );
+	void UpdateOptions( PlayerNumber pn, int nosound );
+
+	CString sOptions;
+	CStringArray asOptions;
 
 	void TweenOffScreen();
 
@@ -53,6 +56,11 @@ protected:
 	Sprite  m_PumpDifficultyCircle;
 	Sprite	m_SpeedIcon[NUM_PLAYERS];
 	BitmapText	m_PumpDifficultyRating;
+
+	RageSound			m_soundOptionsChange;
+	RageSound			m_soundMusicChange;
+	RageSound			m_soundMusicCycle;
+
 	MusicBannerWheel			m_MusicBannerWheel;
 	MenuElements		m_Menu;
 	FootMeter			m_FootMeter[NUM_PLAYERS];
@@ -62,6 +70,12 @@ protected:
 	bool m_bMadeChoice;
 
 	int i_ErrorDetected;
+
+	#ifdef _DEBUG
+		BitmapText	m_debugtext;
+	#endif
+
+	int iConfirmSelection;
 
 	RageSound			m_soundSelect;
 };

@@ -30,6 +30,7 @@ enum
 };
 
 #define DEFAULT_SCROLL_DIRECTION		THEME->GetMetricI("Notes","DefaultScrollDirection")
+#define PREVIEWMUSICMODE		THEME->GetMetricI("ScreenEz2SelectMusic","PreviewMusicMode")
 
 MusicBannerWheel::MusicBannerWheel() 
 { 
@@ -184,7 +185,8 @@ void MusicBannerWheel::InsertNewBanner(int direction)
 	{
 		ASSERT(0); // we should be going in some sort of direction.
 	}
-	PlayMusicSample();
+	if(PREVIEWMUSICMODE == 0)
+		PlayMusicSample();
 }
 
 /****************************
@@ -274,7 +276,8 @@ void MusicBannerWheel::LoadSongData()
 		m_ScrollingList.Load( asGraphicPaths );
 	if(SingleLoad == 2)
 		SingleLoad = 1;
-	PlayMusicSample();
+	if(PREVIEWMUSICMODE == 0)
+		PlayMusicSample();
 }
 
 

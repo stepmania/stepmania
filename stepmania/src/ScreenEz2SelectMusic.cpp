@@ -40,8 +40,9 @@
 #define METER_Y( p )			THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("MeterP%dY",p+1))
 #define GUIDE_X					THEME->GetMetricF("ScreenSelectMode","GuideX")
 #define GUIDE_Y					THEME->GetMetricF("ScreenSelectMode","GuideY")
-#define SPEEDICON_X( p )			THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("SpeedIconP%dX",p+1))
-#define SPEEDICON_Y( p )			THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("SpeedIconP%dY",p+1))
+#define SPEEDICON_X( p )		THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("SpeedIconP%dX",p+1))
+#define SPEEDICON_Y( p )		THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("SpeedIconP%dY",p+1))
+#define PREVIEWMUSICMODE		THEME->GetMetricI("ScreenEz2SelectMusic","PreviewMusicMode")
 
 const float TWEEN_TIME		= 0.5f;
 
@@ -54,6 +55,12 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 	i_ErrorDetected=0;
 	CodeDetector::RefreshCacheItems();
 
+	if(PREVIEWMUSICMODE == 1)
+	{
+		SOUNDMAN->music->StopPlaying();
+		iConfirmSelection = 0;
+	}
+
 
 	m_Menu.Load(
 		THEME->GetPathTo("BGAnimations","select music"), 
@@ -62,6 +69,8 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 		);
 	this->AddChild( &m_Menu );
 
+	m_soundMusicChange.Load( THEME->GetPathTo("Sounds","select music change song"));
+	m_soundMusicCycle.Load( THEME->GetPathTo("Sounds","select music cycle songs"));
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 
 	m_ChoiceListFrame.Load( THEME->GetPathTo("Graphics","select mode list frame"));
@@ -72,15 +81,24 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 	m_Guide.SetXY( GUIDE_X, GUIDE_Y );
 	this->AddChild( &m_Guide );
 
+
 	m_MusicBannerWheel.SetX(SCROLLING_LIST_X);
 	m_MusicBannerWheel.SetY(SCROLLING_LIST_Y);
+
 	if(m_MusicBannerWheel.CheckSongsExist() != 0)
 	{
 		this->AddChild( &m_MusicBannerWheel );
 
+
 		m_ChoiceListHighlight.Load( THEME->GetPathTo("Graphics","select mode list highlight"));
 		m_ChoiceListHighlight.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y);
 		this->AddChild( &m_ChoiceListHighlight );	
+
+		#ifdef _DEBUG
+		m_debugtext.LoadFromFont( THEME->GetPathTo("Fonts","small titles") );
+		m_debugtext.SetXY( CENTER_X, CENTER_Y );
+		this->AddChild(&m_debugtext);
+		#endif
 
 		for(int p=0; p<NUM_PLAYERS; p++ )
 		{
@@ -92,6 +110,8 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 			m_SpeedIcon[p].SetXY( SPEEDICON_X(p), SPEEDICON_Y(p) );
 			m_SpeedIcon[p].SetDiffuse( RageColor(0,0,0,0) );
 			this->AddChild(&m_SpeedIcon[p] );
+
+			UpdateOptions((PlayerNumber) p,0);
 
 			m_iSelection[p] = 0;
 		}
@@ -111,6 +131,8 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 		m_sprOptionsMessage.SetZoom( 1 );
 		m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
 		this->AddChild( &m_sprOptionsMessage );
+
+		m_soundOptionsChange.Load( THEME->GetPathTo("Sounds","select music change options") );
 
 		m_bGoToOptions = false;
 		m_bMadeChoice = false;
@@ -158,26 +180,50 @@ void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 	}
 	if( CodeDetector::DetectAndAdjustOptions(GameI.controller) )
 	{
-		UpdateOptions( pn );
+		UpdateOptions(pn,1);
 	}
+	if( type != IET_FIRST_PRESS )
+	{
+		m_soundMusicCycle.Play();
+	}
+	else
+	{
+		m_soundMusicChange.Play();
+	}
+
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
-void ScreenEz2SelectMusic::UpdateOptions(PlayerNumber pn)
+void ScreenEz2SelectMusic::UpdateOptions(PlayerNumber pn, int nosound)
 {
-	CString sOptions = GAMESTATE->m_PlayerOptions[pn].GetString();
-	CStringArray asOptions;
+	sOptions = GAMESTATE->m_PlayerOptions[pn].GetString();
+
+	#ifdef _DEBUG
+		m_debugtext.SetText( "DEBUG: " + sOptions );
+	#endif
+
+	asOptions.clear();
 	split( sOptions, ", ", asOptions, true );
 
-	if(asOptions[0] != "1.0X")
+
+	if(asOptions.size() > 0) // check it's not empty!
 	{
-		m_SpeedIcon[pn].SetDiffuse( RageColor(1,1,1,1) );	
+		if(asOptions[0] != "1.0X" && asOptions[0] != "" && asOptions[0] != NULL)
+		{
+			m_SpeedIcon[pn].SetDiffuse( RageColor(1,1,1,1) );	
+		}
+		else
+		{
+			m_SpeedIcon[pn].SetDiffuse( RageColor(0,0,0,0) );	
+		}
 	}
 	else
 	{
 		m_SpeedIcon[pn].SetDiffuse( RageColor(0,0,0,0) );	
 	}
+	if(nosound !=0)
+		m_soundOptionsChange.Play();
 }
 
 void ScreenEz2SelectMusic::HandleScreenMessage( const ScreenMessage SM )
@@ -250,6 +296,15 @@ void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 		return;
 	}
 
+	m_soundSelect.Play();
+
+	if(PREVIEWMUSICMODE == 1 && iConfirmSelection == 0)
+	{
+		iConfirmSelection = 1;
+		m_MusicBannerWheel.PlayMusicSample();
+		return;
+	}
+
 	m_bMadeChoice = true;
 
 	TweenOffScreen();
@@ -264,8 +319,6 @@ void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 	m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,0) );
 	m_sprOptionsMessage.SetTweenZoomY( 0 );
 	
-	m_soundSelect.Play();
-
 	m_Menu.TweenOffScreenToBlack( SM_None, false );
 
 	m_Menu.StopTimer();
@@ -304,6 +357,12 @@ void ScreenEz2SelectMusic::EasierDifficulty( PlayerNumber pn )
 	if( m_iSelection[pn] == 0 )
 		return;
 
+	if(PREVIEWMUSICMODE == 1 && iConfirmSelection == 1)
+	{
+		iConfirmSelection = 0;
+		SOUNDMAN->music->StopPlaying();
+	}
+
 	m_iSelection[pn]--;
 	// the user explicity switched difficulties.  Update the preferred difficulty
 	GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[pn][ m_iSelection[pn] ]->GetDifficulty();
@@ -324,6 +383,18 @@ void ScreenEz2SelectMusic::HarderDifficulty( PlayerNumber pn )
 	if( m_iSelection[pn] == int(m_arrayNotes[pn].size()-1) )
 		return;
 
+	if( m_iSelection[pn] > int(m_arrayNotes[pn].size() - 1) )
+	{
+		m_iSelection[pn] = int(m_arrayNotes[pn].size()-1 );
+		return;
+	}
+
+	if(PREVIEWMUSICMODE == 1 && iConfirmSelection == 1)
+	{
+		iConfirmSelection = 0;
+		SOUNDMAN->music->StopPlaying();
+	}
+
 	m_iSelection[pn]++;
 	// the user explicity switched difficulties.  Update the preferred difficulty
 	GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[pn][ m_iSelection[pn] ]->GetDifficulty();
@@ -339,6 +410,12 @@ void ScreenEz2SelectMusic::MusicChanged()
 {
 	Song* pSong = m_MusicBannerWheel.GetSelectedSong();
 	GAMESTATE->m_pCurSong = pSong;
+
+	if(PREVIEWMUSICMODE == 1 && iConfirmSelection == 1)
+	{
+		iConfirmSelection = 0;
+		SOUNDMAN->music->StopPlaying();
+	}
 
 	int pn;
 	for( pn = 0; pn < NUM_PLAYERS; ++pn)

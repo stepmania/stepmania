@@ -31,9 +31,9 @@ public:
 	void BannersRight();
 	Song* GetSelectedSong();
 	int CheckSongsExist() { return SongsExist; }
+	void PlayMusicSample();
 private:
 	void SetNewPos(int NewPos);
-	void PlayMusicSample();
 	void LoadSongData();
 	void ChangeNotes();
 	void InsertNewBanner(int direction);
