@@ -2,7 +2,6 @@
 #include "Background.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
-#include "RageBitmapTexture.h"
 #include "RageException.h"
 #include "RageTimer.h"
 #include "RageLog.h"

@@ -1,6 +1,5 @@
 #include "global.h"
 #include "ModelManager.h"
-#include "RageBitmapTexture.h"
 #include "arch/MovieTexture/MovieTexture.h"
 #include "RageUtil.h"
 #include "RageLog.h"

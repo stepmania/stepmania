@@ -2,7 +2,6 @@
 #include "GrooveGraph.h"
 #include "RageUtil.h"
 #include "PrefsManager.h"
-#include "RageBitmapTexture.h"
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 #include "Steps.h"
