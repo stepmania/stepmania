@@ -5,24 +5,27 @@ AM_CXXFLAGS =
 AM_CFLAGS = 
 
 if NHAVE_SDL
-AM_CXXFLAGS += -ISDL-1.2.6/include
-endif
+# We use our own copy of SDL if the one on the system isn't new enough.  (Most
+# systems have 1.2.5; we need 1.2.6.)  We still end up linking dynamically to
+# the shared system library through SDL_image, but that shouldn't cause problems.
 
-if NHAVE_SDL
-# This is a little hacky; we statically link SDL if it isn't present on the system already, and I don't
-# want to have to integrate the entire build system.
-
-# XXX Both of these should really be linked dynamically.
-# XXX honor vpath
-SDL-1.2.6/src/.libs/libSDL.a:
-	cd SDL-1.2.6 && sh ./configure \
+SDL-1.2.6/Makefile:
+	test -d SDL-1.2.6 || mkdir SDL-1.2.6
+	cd SDL-1.2.6 && sh ../$(srcdir)/SDL-1.2.6/configure
 		--disable-nasm --disable-arts --disable-esd --enable-static --disable-shared \
 		--disable-debug --disable-alsa --disable-oss --disable-video-directfb
+
+SDL-1.2.6/src/.libs/libSDL.a: SDL-1.2.6/Makefile
 	make -C SDL-1.2.6
+
+USE_SDL_LIBS = SDL-1.2.6/src/.libs/libSDL.a
+AM_CXXFLAGS += -ISDL-1.2.6/include
+else
+USE_SDL_LIBS = $(SDL_LIBS)
 endif
 
 $(srcdir)/libresample/libresample.a:
-	cd $(srcdir)/libresample && autoconf && ./configure && make
+	cd $(srcdir)/libresample && autoconf && sh ./configure && make
 
 Screens = \
 Screen.cpp Screen.h ScreenAttract.cpp ScreenAttract.h ScreenBookkeeping.h ScreenBookkeeping.cpp \
@@ -183,17 +186,6 @@ UnlockSystem.cpp UnlockSystem.h
 stepmania_SOURCES = $(Screens) $(DataStructures) $(FileTypes) $(StepMania) $(Arch) \
 					$(ActorsInGameplayAndMenus) $(ActorsInMenus) $(ActorsInGameplay) \
 					$(Rage) $(Actors) $(GlobalSingletons)
-
-# Note that we still end up linking dynamically to the shared system library
-# for SDL_image.  This is annoying, but it's not a major problem.  The
-# "fix" would be to statically link SDL_image, but that would mean
-# dealing with its build and libjpeg, png, etc--not worth it.
-
-if NHAVE_SDL
-USE_SDL_LIBS = $(srcdir)/SDL-1.2.6/src/.libs/libSDL.a
-else
-USE_SDL_LIBS = $(SDL_LIBS)
-endif
 
 stepmania_LDADD = \
 		  $(GL_LIBS) \
