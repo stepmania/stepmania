@@ -53,6 +53,7 @@
 				AA4B4737057396D3005FB5DB,
 				AA4B4783057396F8005FB5DB,
 				AA4B4784057396F8005FB5DB,
+				AA251D520584329A00027ACB,
 			);
 			isa = PBXGroup;
 			name = "Linked Frameworks";
@@ -151,7 +152,6 @@
 				AAAE28D60522523F00D02EE9,
 				29B97317FDCFA39411CA2CEA,
 				29B97323FDCFA39411CA2CEA,
-				AA14ED150509F94C00E3FAD7,
 				19C28FACFE9D520D11CA2CBB,
 				AAC6230005389A3C00D02EE9,
 				AA29CE570558741A00961A51,
@@ -319,42 +319,6 @@
 			sourceTree = "<group>";
 			usesTabs = 1;
 		};
-		AA14ED150509F94C00E3FAD7 = {
-			children = (
-				AA170D2905549C160068A894,
-				AA170D2405549B3E0068A894,
-				AA170D2205549B340068A894,
-				AA14ED160509F98600E3FAD7,
-				AA14ED170509F98600E3FAD7,
-				AA25D882051B114700D02EE9,
-				AA25D884051B11C700D02EE9,
-				AA25D886051B121C00D02EE9,
-				AA25D887051B121C00D02EE9,
-				AA25D888051B121C00D02EE9,
-				AA25D889051B121C00D02EE9,
-			);
-			isa = PBXGroup;
-			name = Libaries;
-			path = "";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AA14ED160509F98600E3FAD7 = {
-			expectedFileType = archive.ar;
-			isa = PBXFileReference;
-			name = libavcodec.a;
-			path = /usr/local/lib/libavcodec.a;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		AA14ED170509F98600E3FAD7 = {
-			expectedFileType = archive.ar;
-			isa = PBXFileReference;
-			name = libavformat.a;
-			path = /usr/local/lib/libavformat.a;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
 		AA157B31051677F000D02EE9 = {
 			expectedFileType = sourcecode.c.h;
 			fileEncoding = 4;
@@ -381,30 +345,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = AAAE28D40522521300D02EE9;
 			remoteInfo = libresample.a;
-		};
-		AA170D2205549B340068A894 = {
-			expectedFileType = "compiled.mach-o.dylib";
-			isa = PBXFileReference;
-			name = libz.1.1.3.dylib;
-			path = /usr/lib/libz.1.1.3.dylib;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		AA170D2405549B3E0068A894 = {
-			expectedFileType = "compiled.mach-o.dylib";
-			isa = PBXFileReference;
-			name = libz.1.dylib;
-			path = /usr/lib/libz.1.dylib;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		AA170D2905549C160068A894 = {
-			expectedFileType = archive.ar;
-			isa = PBXFileReference;
-			name = libz.a;
-			path = /usr/local/lib/libz.a;
-			refType = 0;
-			sourceTree = "<absolute>";
 		};
 		AA1C653A050C00CF0073A143 = {
 			expectedFileType = sourcecode.c.h;
@@ -708,53 +648,55 @@
 			tabWidth = 4;
 			usesTabs = 1;
 		};
-		AA25D882051B114700D02EE9 = {
-			expectedFileType = "compiled.mach-o.dylib";
+		AA251B7505841FCE00027ACB = {
+			expectedFileType = sourcecode.cpp.cpp;
+			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = libmad.dylib;
-			path = /usr/local/lib/libmad.dylib;
-			refType = 0;
-			sourceTree = "<absolute>";
+			name = RageFileDriverZip.cpp;
+			path = ../src/RageFileDriverZip.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
-		AA25D884051B11C700D02EE9 = {
-			expectedFileType = "compiled.mach-o.dylib";
+		AA251B7605841FCE00027ACB = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = libogg.dylib;
-			path = /usr/local/lib/libogg.dylib;
-			refType = 0;
-			sourceTree = "<absolute>";
+			name = RageFileDriverZip.h;
+			path = ../src/RageFileDriverZip.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
-		AA25D886051B121C00D02EE9 = {
-			expectedFileType = "compiled.mach-o.dylib";
-			isa = PBXFileReference;
-			name = libpng.3.1.2.5.dylib;
-			path = /usr/local/lib/libpng.3.1.2.5.dylib;
-			refType = 0;
-			sourceTree = "<absolute>";
+		AA251B7705841FCE00027ACB = {
+			fileRef = AA251B7505841FCE00027ACB;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
-		AA25D887051B121C00D02EE9 = {
-			expectedFileType = archive.ar;
-			isa = PBXFileReference;
-			name = libSDLmain.a;
-			path = /usr/local/lib/libSDLmain.a;
-			refType = 0;
-			sourceTree = "<absolute>";
+		AA251B7805841FCE00027ACB = {
+			fileRef = AA251B7605841FCE00027ACB;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
-		AA25D888051B121C00D02EE9 = {
-			expectedFileType = "compiled.mach-o.dylib";
+		AA251D520584329A00027ACB = {
+			expectedFileType = wrapper.framework;
 			isa = PBXFileReference;
-			name = libvorbis.dylib;
-			path = /usr/local/lib/libvorbis.dylib;
-			refType = 0;
-			sourceTree = "<absolute>";
+			name = zzip.framework;
+			path = Frameworks/zzip.framework;
+			refType = 4;
+			sourceTree = "<group>";
 		};
-		AA25D889051B121C00D02EE9 = {
-			expectedFileType = "compiled.mach-o.dylib";
-			isa = PBXFileReference;
-			name = libvorbisfile.dylib;
-			path = /usr/local/lib/libvorbisfile.dylib;
-			refType = 0;
-			sourceTree = "<absolute>";
+		AA251D530584329A00027ACB = {
+			fileRef = AA251D520584329A00027ACB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA251DA2058433C900027ACB = {
+			fileRef = AA251D520584329A00027ACB;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		AA272BF704C7B37A00D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
@@ -809,6 +751,7 @@
 			path = ../src/RageFile.cpp;
 			refType = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA272C3104CD757100D02EE9 = {
@@ -819,6 +762,7 @@
 			path = ../src/RageFile.h;
 			refType = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
 			usesTabs = 1;
 		};
 		AA29CC240558741A00961A51 = {
@@ -834,7 +778,7 @@
 				AA4B42D905736AB5005FB5DB,
 			);
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks\" Frameworks";
+				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks\" Frameworks /Users/steve/stepmania/PBProject/Frameworks";
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = s;
@@ -1154,6 +1098,10 @@
 				AAC6DDE90569C80900B5D56F,
 				AAB691F505704FA50078BED4,
 				AAB005F30579B8CB000BBA58,
+				AAB00862057F4F7A000BBA58,
+				AAB00864057F4F7A000BBA58,
+				AAB00866057F4F7A000BBA58,
+				AA251B7805841FCE00027ACB,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3088,6 +3036,10 @@
 				AA4B59EF0573AA5B005FB5DB,
 				AA4B5DD1057421F4005FB5DB,
 				AAB005F20579B8CB000BBA58,
+				AAB00861057F4F7A000BBA58,
+				AAB00863057F4F7A000BBA58,
+				AAB00865057F4F7A000BBA58,
+				AA251B7705841FCE00027ACB,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4601,6 +4553,7 @@
 				AA4B47AC05739708005FB5DB,
 				AA4B47AD0573970A005FB5DB,
 				AA4B47AE0573970C005FB5DB,
+				AA251D530584329A00027ACB,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4758,6 +4711,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				AA251DA2058433C900027ACB,
 				AA4B47AF05739711005FB5DB,
 				AA4B47B005739711005FB5DB,
 				AA4B47B105739711005FB5DB,
@@ -5132,9 +5086,6 @@
 		AA590A3A0541CD2A00D02EE9 = {
 			buildActionMask = 2147483647;
 			files = (
-				AA590A4B0541CF5800D02EE9,
-				AA590A4C0541CFE100D02EE9,
-				AA590A4D0541CFE100D02EE9,
 				AA590A6C0541D25E00D02EE9,
 			);
 			isa = PBXFrameworksBuildPhase;
@@ -5243,24 +5194,6 @@
 		};
 		AA590A490541CF1900D02EE9 = {
 			fileRef = AA6EFD9304770A7C005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA590A4B0541CF5800D02EE9 = {
-			fileRef = AA25D882051B114700D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA590A4C0541CFE100D02EE9 = {
-			fileRef = AA25D889051B121C00D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA590A4D0541CFE100D02EE9 = {
-			fileRef = AA25D888051B121C00D02EE9;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -7360,6 +7293,14 @@
 				AA6E010E0477128A005F316C,
 				AA1C6556050D234B0073A143,
 				AA1C6557050D234B0073A143,
+				AAB0085F057F4F7A000BBA58,
+				AAB00860057F4F7A000BBA58,
+				AA6EFD7804770A7C005F316C,
+				AA6EFD7904770A7C005F316C,
+				AA6EFD7E04770A7C005F316C,
+				AA6EFD7F04770A7C005F316C,
+				AA6EFD8B04770A7C005F316C,
+				AA6EFD8C04770A7C005F316C,
 				AA6E003F047711F3005F316C,
 				AA6E0040047711F3005F316C,
 				AA6E010F0477128A005F316C,
@@ -8386,18 +8327,20 @@
 				AA6EFD7304770A7C005F316C,
 				AA272C3004CD757100D02EE9,
 				AA272C3104CD757100D02EE9,
+				AAB0085B057F4F7A000BBA58,
+				AAB0085C057F4F7A000BBA58,
+				AAB0085D057F4F7A000BBA58,
+				AAB0085E057F4F7A000BBA58,
+				AA251B7505841FCE00027ACB,
+				AA251B7605841FCE00027ACB,
 				AA6EFD7404770A7C005F316C,
 				AA6EFD7504770A7C005F316C,
 				AA6EFD7604770A7C005F316C,
 				AA6EFD7704770A7C005F316C,
-				AA6EFD7804770A7C005F316C,
-				AA6EFD7904770A7C005F316C,
 				AA6EFD7A04770A7C005F316C,
 				AA6EFD7B04770A7C005F316C,
 				AA6EFD7C04770A7C005F316C,
 				AA6EFD7D04770A7C005F316C,
-				AA6EFD7E04770A7C005F316C,
-				AA6EFD7F04770A7C005F316C,
 				AA6EFD8604770A7C005F316C,
 				AAFC7FF00513A67700D02EE9,
 				AADB4E7A04D4FE5D00D02EE9,
@@ -8425,8 +8368,6 @@
 				AA6EFD8A04770A7C005F316C,
 				AA9EC2F0055F5126007E5098,
 				AA9EC2F1055F5126007E5098,
-				AA6EFD8B04770A7C005F316C,
-				AA6EFD8C04770A7C005F316C,
 				AA6EFD8D04770A7C005F316C,
 				AA6EFD8E04770A7C005F316C,
 				AA6EFD8F04770A7C005F316C,
@@ -11929,6 +11870,97 @@
 			settings = {
 			};
 		};
+		AAB0085B057F4F7A000BBA58 = {
+			expectedFileType = sourcecode.cpp.cpp;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = RageFileDriver.cpp;
+			path = ../src/RageFileDriver.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAB0085C057F4F7A000BBA58 = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = RageFileDriver.h;
+			path = ../src/RageFileDriver.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAB0085D057F4F7A000BBA58 = {
+			expectedFileType = sourcecode.cpp.cpp;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = RageFileDriverDirect.cpp;
+			path = ../src/RageFileDriverDirect.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAB0085E057F4F7A000BBA58 = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = RageFileDriverDirect.h;
+			path = ../src/RageFileDriverDirect.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAB0085F057F4F7A000BBA58 = {
+			expectedFileType = sourcecode.cpp.cpp;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = RageFileManager.cpp;
+			path = ../src/RageFileManager.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+			tabWidth = 4;
+		};
+		AAB00860057F4F7A000BBA58 = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = RageFileManager.h;
+			path = ../src/RageFileManager.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAB00861057F4F7A000BBA58 = {
+			fileRef = AAB0085B057F4F7A000BBA58;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAB00862057F4F7A000BBA58 = {
+			fileRef = AAB0085C057F4F7A000BBA58;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAB00863057F4F7A000BBA58 = {
+			fileRef = AAB0085D057F4F7A000BBA58;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAB00864057F4F7A000BBA58 = {
+			fileRef = AAB0085E057F4F7A000BBA58;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAB00865057F4F7A000BBA58 = {
+			fileRef = AAB0085F057F4F7A000BBA58;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAB00866057F4F7A000BBA58 = {
+			fileRef = AAB00860057F4F7A000BBA58;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		AAB3B36B04C38B4600D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
@@ -12393,18 +12425,18 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = LightsManager.cpp;
-			path = /Users/steve/stepmania/src/LightsManager.cpp;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/LightsManager.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAC6DCE40567660A00B5D56F = {
 			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = LightsManager.h;
-			path = /Users/steve/stepmania/src/LightsManager.h;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/LightsManager.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAC6DCE50567660A00B5D56F = {
 			fileRef = AAC6DCE30567660A00B5D56F;
