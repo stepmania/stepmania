@@ -315,6 +315,8 @@ bool ScreenSelectStyle::IsEnabled( int iStyleIndex )
 void ScreenSelectStyle::UpdateEnabledDisabled()
 {
 	int i;
+	/* XXX: If a player joins during the tween-in, this diffuse change
+	 * will be undone by the tween.  Hmm. */
 	for( i=0; i<m_aPossibleStyles.GetSize(); i++ )
 	{
 		if( IsEnabled(i) )
