@@ -374,8 +374,6 @@ void GameState::EndGame()
 		if( !PROFILEMAN->IsUsingProfile(pn) )
 			continue;
 
-		Profile* pProfile = PROFILEMAN->GetProfile(pn);
-
 		PROFILEMAN->SaveProfile( pn );
 		PROFILEMAN->UnloadProfile( pn );
 	}
