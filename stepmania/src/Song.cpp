@@ -957,6 +957,8 @@ bool Song::IsEasy( NotesType nt ) const
 		Notes* pNotes = m_apNotes[i];
 		if( pNotes->m_NotesType != nt )
 			continue;
+		if( pNotes->GetDifficulty() == DIFFICULTY_BEGINNER )
+			continue; // ignore beginner steps for marking songs easy; very bizarre to see the beginner mark by Legend of MAX
 		if( pNotes->GetMeter() <= 2 )
 			return true;
 	}
