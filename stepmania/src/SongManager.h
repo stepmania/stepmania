@@ -64,8 +64,8 @@ public:
 	const vector<Song*> &GetBestSongs( ProfileSlot slot=PROFILE_SLOT_MACHINE ) const { return m_pBestSongs[slot]; }
 	const vector<Course*> &GetBestCourses( ProfileSlot slot=PROFILE_SLOT_MACHINE ) const { return m_pBestCourses[slot]; }
 	void GetSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages = 100000 /*inf*/ ) const;
-	void GetSongs( vector<Song*> &AddTo, int iMaxStages ) const { GetSongs(AddTo,"",iMaxStages); }
-	void GetSongs( vector<Song*> &AddTo ) const { GetSongs(AddTo,"",100000 /*inf*/ ); }
+	void GetSongs( vector<Song*> &AddTo, int iMaxStages ) const { GetSongs(AddTo,GROUP_ALL_MUSIC,iMaxStages); }
+	void GetSongs( vector<Song*> &AddTo ) const { GetSongs(AddTo,GROUP_ALL_MUSIC,100000 /*inf*/ ); }
 	Song *FindSong( CString sPath );
 	Course *FindCourse( CString sName );
 	int GetNumSongs() const;
