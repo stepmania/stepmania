@@ -140,6 +140,7 @@ void StartPlayingMusic( const RageTimer &when, const MusicToPlay &ToPlay, MusicP
 	p.StartTime = when;
 	if( ToPlay.force_loop )
 		p.StopMode = RageSoundParams::M_LOOP;
+	Playing.m_Music->SetParams( p );
 
 	Playing.m_Music->SetPositionSeconds( p.m_StartSecond );
 	Playing.m_Music->StartPlaying();
