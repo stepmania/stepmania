@@ -18,9 +18,11 @@
 #include "ThemeManager.h"
 #include "GameState.h"
 #include "GameManager.h"
+#include "RageLog.h"
 
 #define NEXT_SCREEN				THEME->GetMetric("ScreenStyleSplash","NextScreen")
-
+#define NONSTOP_SCREEN				THEME->GetMetric("ScreenStyleSplash","NonstopScreen")
+#define ONI_SCREEN				THEME->GetMetric("ScreenStyleSplash","OniScreen")
 
 const ScreenMessage SM_DoneOpening		= ScreenMessage(SM_User-7);
 const ScreenMessage SM_StartClosing		= ScreenMessage(SM_User-8);
@@ -30,15 +32,20 @@ ScreenStyleSplash::ScreenStyleSplash() : Screen("ScreenStyleSplash")
 {
 	SOUNDMAN->StopMusic();
 
-	if(!PREFSMAN->m_bShowDontDie)
-	{
-		this->PostScreenMessage( SM_GoToNextScreen, 0.f );
-		return;
-	}
-
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;	
 	CString sStyleName = GAMESTATE->GetCurrentStyleDef()->m_szName;
+
+	LOG->Trace( ssprintf("ScreenStyleSplash: Displaying Splash for style: %s", sStyleName));
+
 	int iDifficulty = GAMESTATE->m_PreferredDifficulty[0];
+	if( GAMESTATE->m_bSideIsJoined[PLAYER_1] )
+	{
+		iDifficulty = GAMESTATE->m_PreferredDifficulty[PLAYER_1];
+	}
+	else
+	{
+		iDifficulty = GAMESTATE->m_PreferredDifficulty[PLAYER_2];
+	}
 
 	m_Background.LoadFromAniDir( THEME->GetPathToB(ssprintf("ScreenStyleSplash-%s-%s-%d",sGameName.c_str(),sStyleName.c_str(),iDifficulty) ) );
 	this->AddChild( &m_Background );
