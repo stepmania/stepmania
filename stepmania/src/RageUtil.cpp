@@ -130,20 +130,12 @@ CString SecondsToTime( float fSecs )
 	return sReturn;
 }
 
-int MonthOfYear()
+struct tm GetLocalTime()
 {
 	const time_t t = time(NULL);
 	struct tm tm;
 	localtime_r( &t, &tm );
-	return tm.tm_mon;
-}
-
-int DayOfMonth()
-{
-	const time_t t = time(NULL);
-	struct tm tm;
-	localtime_r( &t, &tm );
-	return tm.tm_mday;
+	return tm;
 }
 
 
