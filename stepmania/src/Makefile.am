@@ -19,13 +19,11 @@ SDL_sound-1.0.0/.libs/libSDL_sound.a:
 		--disable-mikmod \
 		--disable-modplug \
 		--enable-static --disable-shared
-		#--enable-debug
 	make -C SDL_sound-1.0.0
 	
+#--enable-debug
 
 RageHelpers = SDL_dither.cpp SDL_dither.h SDL_rotozoom.cpp SDL_rotozoom.h SDL_utils.cpp SDL_utils.h
-
-# RageMovieTexture.cpp RageMovieTexture.h 
 
 Rage = $(RageHelpers) \
 RageBitmapTexture.cpp RageBitmapTexture.h RageDisplay.cpp RageDisplay.h RageDisplayInternal.h \
@@ -102,7 +100,7 @@ ScreenSelectMusic.cpp ScreenSelectMusic.h ScreenSelectStyle.cpp ScreenSelectStyl
 ScreenSelectStyle5th.h ScreenSongOptions.cpp ScreenSongOptions.h ScreenStage.cpp ScreenStage.h \
 ScreenStyleSplash.cpp ScreenStyleSplash.h ScreenTest.cpp ScreenTest.h ScreenTestFonts.cpp ScreenTestFonts.h \
 ScreenTestSound.cpp ScreenTestSound.h ScreenTextEntry.cpp ScreenTextEntry.h ScreenTitleMenu.cpp ScreenTitleMenu.h \
-ScreenUnlock.h ScreenWarning.h
+ScreenUnlock.h ScreenWarning.h ScreenMiniMenu.cpp ScreenMiniMenu.h ScreenSoundOptions.cpp ScreenSoundOptions.h
 
 GlobalSingletons = \
 AnnouncerManager.cpp AnnouncerManager.h FontManager.cpp FontManager.h GameManager.cpp GameManager.h \
@@ -114,7 +112,8 @@ stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transi
 		    $(Actors) $(ActorsInMenus) $(ActorsInGameplay) $(Screens) $(GlobalSingletons) \
 		    arch/arch.cpp \
 		    arch/LoadingWindow/LoadingWindow_SDL.cpp \
-		    arch/LoadingWindow/LoadingWindow_SDL.h
+		    arch/LoadingWindow/LoadingWindow_SDL.h \
+		    arch/MovieTexture/MovieTexture.cpp
 stepmania_LDADD = $(SDL_LIBS) $(GL_LIBS) SDL_sound-1.0.0/.libs/libSDL_sound.a
 INCLUDES = $(SDL_CFLAGS) -O0 -g
 
