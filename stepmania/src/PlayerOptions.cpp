@@ -29,6 +29,7 @@ void PlayerOptions::Init()
 	m_fPerspectiveTilt = 0;		m_SpeedfPerspectiveTilt = 1.0f;
 	m_fSkew = 0;				m_SpeedfSkew = 1.0f;
 	m_fPassmark = 0;			m_SpeedfPassmark = 1.0f;
+	m_fRandomSpeed = 1.0f;      m_SpeedfRandomSpeed = 1.0f;
 	ZERO( m_bTurns );
 	ZERO( m_bTransforms );
 	m_bProTiming = false;
@@ -57,6 +58,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	APP( fPerspectiveTilt );
 	APP( fSkew );
 	APP( fPassmark );
+	APP( fRandomSpeed );
 }
 
 static CString AddPart( float level, CString name )
@@ -170,6 +172,8 @@ CString PlayerOptions::GetString() const
 	if( !m_sNoteSkin.empty()  &&  m_sNoteSkin.CompareNoCase("default")!=0 )
 		sReturn += m_sNoteSkin + ", ";
 
+	if( m_fRandomSpeed > 1 )
+		sReturn += "RandomSpeed, ";
 	if( sReturn.GetLength() > 2 )
 		sReturn.erase( sReturn.GetLength()-2 );	// delete the trailing ", "
 	return sReturn;
@@ -309,6 +313,8 @@ void PlayerOptions::FromString( CString sOptions )
 			m_sNoteSkin = sBit;
 		else if( sBit == "noteskin" && !on ) /* "no noteskin" */
 			m_sNoteSkin = "default";
+		else if ( sBit == "randomspeed" ) SET_FLOAT( fRandomSpeed )
+
 	}
 }
 

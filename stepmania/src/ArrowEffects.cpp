@@ -83,6 +83,17 @@ float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat )
 		fYOffset +=	fAccels[PlayerOptions::ACCEL_BOOMERANG] * (fYOffset * SCALE( fYOffset, 0.f, SCREEN_HEIGHT, 1.5f, 0.5f )- fYOffset);
 
 	float fScrollSpeed = GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
+	if ( GAMESTATE->m_CurrentPlayerOptions[pn].m_fRandomSpeed > 1.0f )
+	{
+		int seed = GAMESTATE->m_iRoundSeed + ( BeatToNoteRow( fNoteBeat ) << 8 ) + (iCol * 100);
+		float soRandom = RandomFloat( seed );
+
+		fScrollSpeed = GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed * 
+							SCALE( soRandom,
+								   0.0f, 1.0f,
+								   1.0f, GAMESTATE->m_CurrentPlayerOptions[pn].m_fRandomSpeed ); // min. scale shold be defined as a constatnt somewhere
+	}	
+
 
 	if( fAccels[PlayerOptions::ACCEL_EXPAND] > 0 )
 	{
