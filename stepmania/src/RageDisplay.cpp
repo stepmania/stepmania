@@ -54,7 +54,6 @@ int					g_glVersion;
 int RageDisplay::GetFPS() const { return g_iFPS; }
 int RageDisplay::GetVPF() const { return g_iVPF; }
 int RageDisplay::GetDPF() const { return g_iDPF; }
-DEVMODE SMGfx;
 
 static int			g_iFramesRenderedSinceLastCheck,
 					g_iVertsRenderedSinceLastCheck,
@@ -371,7 +370,7 @@ void RageDisplay::Translate( float x, float y, float z )
 	RageMatrix matTemp;
 	RageMatrixTranslation( &matTemp, x, y, z );
 	RageMatrix& matTop = GetTopModelMatrix();
-	RageMatrixMultiply( &matTop, &matTemp, &matTop );
+	sgPreMultMat4( matTop.m, matTemp.m );
 }
 
 void RageDisplay::TranslateLocal( float x, float y, float z )
@@ -379,7 +378,7 @@ void RageDisplay::TranslateLocal( float x, float y, float z )
 	RageMatrix matTemp;
 	RageMatrixTranslation( &matTemp, x, y, z );
 	RageMatrix& matTop = GetTopModelMatrix();
-	RageMatrixMultiply( &matTop, &matTop, &matTemp );
+	sgPostMultMat4( matTop.m, matTemp.m );
 }
 
 void RageDisplay::Scale( float x, float y, float z )
@@ -387,7 +386,7 @@ void RageDisplay::Scale( float x, float y, float z )
 	RageMatrix matTemp;
 	RageMatrixScaling( &matTemp, x, y, z );
 	RageMatrix& matTop = GetTopModelMatrix();
-	RageMatrixMultiply( &matTop, &matTemp, &matTop );
+	sgPreMultMat4( matTop.m, matTemp.m );
 }
 
 void RageDisplay::RotateX( float r )
@@ -395,7 +394,7 @@ void RageDisplay::RotateX( float r )
 	RageMatrix matTemp;
 	RageMatrixRotationX( &matTemp, r );
 	RageMatrix& matTop = GetTopModelMatrix();
-	RageMatrixMultiply( &matTop, &matTemp, &matTop );
+	sgPreMultMat4( matTop.m, matTemp.m );
 }
 
 void RageDisplay::RotateY( float r )
@@ -403,7 +402,7 @@ void RageDisplay::RotateY( float r )
 	RageMatrix matTemp;
 	RageMatrixRotationY( &matTemp, r );
 	RageMatrix& matTop = GetTopModelMatrix();
-	RageMatrixMultiply( &matTop, &matTemp, &matTop );
+	sgPreMultMat4( matTop.m, matTemp.m );
 }
 
 void RageDisplay::RotateZ( float r )
@@ -411,7 +410,7 @@ void RageDisplay::RotateZ( float r )
 	RageMatrix matTemp;
 	RageMatrixRotationZ( &matTemp, r );
 	RageMatrix& matTop = GetTopModelMatrix();
-	RageMatrixMultiply( &matTop, &matTemp, &matTop );
+	sgPreMultMat4( matTop.m, matTemp.m );
 }
 
 void RageDisplay::SetTexture( RageTexture* pTexture )

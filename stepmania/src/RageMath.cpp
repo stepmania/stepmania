@@ -15,55 +15,89 @@
 #include "RageTypes.h"
 #include "D3DX8Math.h"
 
+#ifdef _DEBUG
+#pragma comment(lib, "plib-1.6.0/sg_d.lib")
+#pragma comment(lib, "plib-1.6.0/ul_d.lib")
+#else
+#pragma comment(lib, "plib-1.6.0/sg.lib")
+#pragma comment(lib, "plib-1.6.0/ul.lib")
+#endif
 
 void RageVec2Normalize( RageVector2* pOut, const RageVector2* pV )
 {
-	D3DXVec2Normalize( (D3DXVECTOR2*)pOut, (const D3DXVECTOR2*)pV );
+	sgNormalizeVec2( (float*)pOut, (const float*)pV );
 }
 
 void RageVec3TransformCoord( RageVector3* pOut, const RageVector3* pV, const RageMatrix* pM )
 {
-	D3DXVec3TransformCoord( (D3DXVECTOR3*)pOut, (const D3DXVECTOR3*)pV, (const D3DXMATRIX*)pM );
+	sgFullXformPnt3 ( (float*)pOut, (float*)pV, pM->m );
 }
 
 void RageMatrixIdentity( RageMatrix* pOut )
 {
-	D3DXMatrixIdentity( (D3DXMATRIX*)pOut );
+	sgMakeIdentMat4( pOut->m );
 }
 
 void RageMatrixMultiply( RageMatrix* pOut, const RageMatrix* pA, const RageMatrix* pB )
 {
-	D3DXMatrixMultiply( (D3DXMATRIX*)pOut, (const D3DXMATRIX*)pA, (const D3DXMATRIX*)pB );
+	sgMultMat4( pOut->m, pB->m, pA->m );
 }
 
 void RageMatrixTranslation( RageMatrix* pOut, float x, float y, float z )
 {
-	D3DXMatrixTranslation( (D3DXMATRIX*)pOut, x, y, z );
+	RageMatrixIdentity(pOut);
+	pOut->m[3][0] = x;
+	pOut->m[3][1] = y;
+	pOut->m[3][2] = z;
 }
 
 void RageMatrixScaling( RageMatrix* pOut, float x, float y, float z )
 {
-	D3DXMatrixScaling( (D3DXMATRIX*)pOut, x, y, z );
+	RageMatrixIdentity(pOut);
+	pOut->m[0][0] = x;
+	pOut->m[1][1] = y;
+	pOut->m[2][2] = z;
 }
 
 void RageMatrixRotationX( RageMatrix* pOut, float theta )
-{
-	D3DXMatrixRotationX( (D3DXMATRIX*)pOut, theta );
+{ /* UNTESTED */
+	RageMatrixIdentity(pOut);
+	pOut->m[1][1] = cosf(theta);
+	pOut->m[2][2] = pOut->m[1][1];
+
+	pOut->m[2][1] = sinf(theta);
+	pOut->m[1][2] = -pOut->m[2][1];
 }
 
 void RageMatrixRotationY( RageMatrix* pOut, float theta )
-{
-	D3DXMatrixRotationY( (D3DXMATRIX*)pOut, theta );
+{ /* UNTESTED */
+	RageMatrixIdentity(pOut);
+	pOut->m[0][0] = cosf(theta);
+	pOut->m[2][2] = pOut->m[0][0];
+
+	pOut->m[0][2] = sinf(theta);
+	pOut->m[2][0] = -pOut->m[0][2];
 }
 
 void RageMatrixRotationZ( RageMatrix* pOut, float theta )
 {
-	D3DXMatrixRotationZ( (D3DXMATRIX*)pOut, theta );
+	RageMatrixIdentity(pOut);
+	pOut->m[0][0] = cosf(theta);
+	pOut->m[1][1] = pOut->m[0][0];
+
+	pOut->m[0][1] = sinf(theta);
+	pOut->m[1][0] = -pOut->m[0][1];
 }
 
 void RageMatrixOrthoOffCenterLH( RageMatrix* pOut, float l, float r, float b, float t, float zn, float zf )
 {
-	D3DXMatrixOrthoOffCenterLH( (D3DXMATRIX*)pOut, l, r, b, t, zn, zf );
+	RageMatrixIdentity(pOut);
+	pOut->m[0][0] = 2 / (r-l);
+	pOut->m[1][1] = 2 / (t-b);
+	pOut->m[2][2] = -2 / (zn-zf);
+	pOut->m[3][0] = -(r+l)/(r-l);
+	pOut->m[3][1] = -(t+b)/(t-b);
+	pOut->m[3][2] = -(zf+zn)/(zn-zf);
 }
 
 void RageMatrixLookAtLH( RageMatrix* pOut, const RageVector3* pEye, const RageVector3* pAt, const RageVector3* pUp )
@@ -75,5 +109,3 @@ void RageMatrixPerspectiveFovLH( RageMatrix* pOut, float fovy, float Aspect, flo
 {
 	D3DXMatrixPerspectiveFovLH( (D3DXMATRIX*)pOut, fovy, Aspect, zn, zf );
 }
-
-
