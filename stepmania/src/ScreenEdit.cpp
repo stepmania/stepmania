@@ -180,7 +180,7 @@ static Menu g_AreaMenu( "Area Menu", g_AreaMenuItems );
 
 static const MenuRow g_EditNotesStatisticsItems[] =
 {
-	{ "Difficulty",					true,  0, { "BEGINNER","EASY","MEDIUM","HARD","CHALLENGE" } },
+	{ "Difficulty",					true,  0, { "BEGINNER","EASY","MEDIUM","HARD","CHALLENGE","EDIT" } },
 	{ "Meter",						true,  0, { "1","2","3","4","5","6","7","8","9","10","11","12","13","14","15" } },
 	{ "Predicted Meter",			true,  0, { NULL } },
 	{ "Description",				true,  0, { NULL } },
@@ -1527,6 +1527,8 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 	{
 		case edit_notes_statistics:
 			{
+				/* XXX: If the difficulty is changed from EDIT, and pNotes->WasLoadedFromProfile()
+				 * is true, we should warn that the steps will no longer be saved to the profile. */
 				Steps* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
 				float fMusicSeconds = m_soundMusic.GetLengthSeconds();
 
