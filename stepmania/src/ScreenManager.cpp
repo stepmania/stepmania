@@ -359,6 +359,12 @@ void ScreenManager::Update( float fDeltaTime )
 		m_ScreensToDelete.insert(m_ScreensToDelete.end(), m_ScreenStack.begin(), m_ScreenStack.end());
 		m_ScreenStack.clear();
 		EmptyDeleteQueue();
+
+		/* This is the purpose of delayed screen loads: clear out the texture cache
+		 * now, while there's (mostly) nothing loaded. */
+		TEXTUREMAN->DeleteCachedTextures();
+		TEXTUREMAN->DiagnosticOutput();
+
 		LoadDelayedScreen();
 
 		/* Ack.  We can't Update(0), since we want to skip the *next* update
