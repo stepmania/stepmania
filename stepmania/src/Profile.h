@@ -63,6 +63,10 @@ public:
 	CString GetDisplayTotalCaloriesBurnedToday() const;
 	int GetTotalNumSongsPlayed() const;
 	int GetTotalNumSongsPassed() const;
+	float GetSongsPossible( StepsType st, Difficulty dc ) const;
+	float GetCoursesPossible( StepsType st, CourseDifficulty cd ) const;
+	float GetSongsActual( StepsType st, Difficulty dc ) const;
+	float GetCoursesActual( StepsType st, CourseDifficulty cd ) const;
 	float GetSongsPercentComplete( StepsType st, Difficulty dc ) const;
 	float GetCoursesPercentComplete( StepsType st, CourseDifficulty cd ) const;
 	static CString GetProfileDisplayNameFromDir( CString sDir );

@@ -195,7 +195,7 @@ int Profile::GetTotalNumSongsPassed() const
 	return iTotal;
 }
 
-float Profile::GetSongsPercentComplete( StepsType st, Difficulty dc ) const
+float Profile::GetSongsPossible( StepsType st, Difficulty dc ) const
 {
 	int iTotalSteps = 0;
 
@@ -223,7 +223,11 @@ float Profile::GetSongsPercentComplete( StepsType st, Difficulty dc ) const
 		}
 	}
 
+	return iTotalSteps;
+}
 
+float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
+{
 	float fTotalPercents = 0;
 	
 	// add steps high scores
@@ -269,10 +273,15 @@ float Profile::GetSongsPercentComplete( StepsType st, Difficulty dc ) const
 		}
 	}
 
-	return fTotalPercents / iTotalSteps;
+	return fTotalPercents;
 }
 
-float Profile::GetCoursesPercentComplete( StepsType st, CourseDifficulty cd ) const
+float Profile::GetSongsPercentComplete( StepsType st, Difficulty dc ) const
+{
+	return GetSongsActual(st,dc) / GetSongsPossible(st,dc);
+}
+
+float Profile::GetCoursesPossible( StepsType st, CourseDifficulty cd ) const
 {
 	int iTotalTrails = 0;
 
@@ -293,8 +302,12 @@ float Profile::GetCoursesPercentComplete( StepsType st, CourseDifficulty cd ) co
 
 		iTotalTrails++;
 	}
-
 	
+	return iTotalTrails;
+}
+	
+float Profile::GetCoursesActual( StepsType st, CourseDifficulty cd ) const
+{
 	float fTotalPercents = 0;
 	
 	// add course high scores
@@ -341,7 +354,12 @@ float Profile::GetCoursesPercentComplete( StepsType st, CourseDifficulty cd ) co
 		}
 	}
 
-	return fTotalPercents / iTotalTrails;
+	return fTotalPercents;
+}
+
+float Profile::GetCoursesPercentComplete( StepsType st, CourseDifficulty cd ) const
+{
+	return GetCoursesActual(st,cd) / GetCoursesPossible(st,cd);
 }
 
 CString Profile::GetProfileDisplayNameFromDir( CString sDir )

@@ -30,29 +30,30 @@ CString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
 	{
 	case CALORIES_TODAY:	return "Calories Today";
 	case CURRENT_COMBO:		return "Current Combo";
+	case PERCENT_COMPLETE:
+		{
+			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+			CString sStepsType = GAMEMAN->StepsTypeToThemedString(st);
+			return ssprintf( "%s %% Complete", sStepsType.c_str() );
+		}
 	case PERCENT_COMPLETE_EASY:
 	case PERCENT_COMPLETE_MEDIUM:
 	case PERCENT_COMPLETE_HARD:
 	case PERCENT_COMPLETE_CHALLENGE:
-		// Ugly...
 		{
-			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-			CString sStepsType = GAMEMAN->StepsTypeToThemedString(st);
 			if( GAMESTATE->IsCourseMode() )
 			{
 				CourseDifficulty cd = (CourseDifficulty)(DIFFICULTY_EASY+line-PERCENT_COMPLETE_EASY);
 				ASSERT( cd >= 0 && cd < NUM_COURSE_DIFFICULTIES );
 				if( !GAMESTATE->IsCourseDifficultyShown(cd) )
 					return "";
-				CString sDifficulty = CourseDifficultyToThemedString(cd);
-				return ssprintf( "%s %% Complete", sStepsType.c_str() );
+				return CourseDifficultyToThemedString(cd);
 			}
 			else
 			{
 				Difficulty dc = (Difficulty)(DIFFICULTY_EASY+line-PERCENT_COMPLETE_EASY);
 				ASSERT( dc >= 0 && dc < NUM_DIFFICULTIES );
-				CString sDifficulty = DifficultyToThemedString(dc);
-				return ssprintf( "%s %% Complete", sStepsType.c_str() );
+				return DifficultyToThemedString(dc);
 			}
 		}
 	default:	ASSERT(0);	return "";
@@ -64,18 +65,49 @@ CString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
 	Profile* pProfile = PROFILEMAN->GetProfile( pn );
 	ASSERT( pProfile );
 
+	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+
 	switch( line )
 	{
 	case CALORIES_TODAY:		return pProfile->GetDisplayTotalCaloriesBurned();
 	case CURRENT_COMBO:			return Commify( pProfile->m_iCurrentCombo );
+	case PERCENT_COMPLETE:
+		{
+			float fActual = 0;
+			float fPossible = 0;
+
+			if( GAMESTATE->IsCourseMode() )
+			{
+				set<CourseDifficulty> vDiffs;
+				GAMESTATE->GetCourseDifficultiesToShow( vDiffs );
+				for( set<CourseDifficulty>::iterator iter = vDiffs.begin(); iter != vDiffs.end(); iter++ )
+				{
+					fActual += pProfile->GetCoursesActual(st,*iter);
+					fPossible += pProfile->GetCoursesPossible(st,*iter);
+				}
+			}
+			else
+			{
+				set<Difficulty> vDiffs;
+				GAMESTATE->GetDifficultiesToShow( vDiffs );
+				for( set<Difficulty>::iterator iter = vDiffs.begin(); iter != vDiffs.end(); iter++ )
+				{
+					fActual += pProfile->GetSongsActual(st,*iter);
+					fPossible += pProfile->GetSongsPossible(st,*iter);
+				}
+			}
+
+			return ssprintf( "%05.2f%%", fActual/fPossible*100 );
+		}
 	case PERCENT_COMPLETE_EASY:
 	case PERCENT_COMPLETE_MEDIUM:
 	case PERCENT_COMPLETE_HARD:
 	case PERCENT_COMPLETE_CHALLENGE:
 		// Ugly...
 		{
-			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 			CString sStepsType = GAMEMAN->StepsTypeToThemedString(st);
+			float fPercent = 0;
+			float fPossible = 0;
 			if( GAMESTATE->IsCourseMode() )
 			{
 				CourseDifficulty cd = (CourseDifficulty)(DIFFICULTY_EASY+line-PERCENT_COMPLETE_EASY);
@@ -83,15 +115,16 @@ CString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
 				if( !GAMESTATE->IsCourseDifficultyShown(cd) )
 					return "";
 				CString sDifficulty = CourseDifficultyToThemedString(cd);
-				return ssprintf( "%06.3f%%", pProfile->GetCoursesPercentComplete(st,cd)*100 );
+				fPercent = pProfile->GetCoursesPercentComplete(st,cd);
 			}
 			else
 			{
 				Difficulty dc = (Difficulty)(DIFFICULTY_EASY+line-PERCENT_COMPLETE_EASY);
 				ASSERT( dc >= 0 && dc < NUM_DIFFICULTIES );
 				CString sDifficulty = DifficultyToThemedString(dc);
-				return ssprintf( "%06.3f%%", pProfile->GetSongsPercentComplete(st,dc)*100 );
+				fPercent = pProfile->GetSongsPercentComplete(st,dc);
 			}
+			return ssprintf( "%05.2f%%", fPercent*100 );
 		}
 	default:	ASSERT(0);	return "";
 	}
