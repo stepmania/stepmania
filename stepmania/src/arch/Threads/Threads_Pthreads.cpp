@@ -111,12 +111,12 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 
 	int ret = pthread_create( &thread->thread, NULL, StartThread, thread );
 	if( ret )
-		FAIL_M( ssprintf( "pthread_create: %s", strerror(ret)) );
+		FAIL_M( ssprintf( "pthread_create: %s", strerror(errno)) );
 
 	/* Don't return until StartThread sets m_piThreadID. */
 	ret = sem_wait( &thread->m_StartFinishedSem );
 	if( ret )
-		FAIL_M( ssprintf( "pthread_create: %s", strerror(ret)) );
+		FAIL_M( ssprintf( "pthread_create: %s", strerror(errno)) );
 	sem_destroy( &thread->m_StartFinishedSem );
 	
 	return thread;
