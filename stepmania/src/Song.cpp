@@ -1091,6 +1091,10 @@ void Song::AddAutoGenNotes()
 		if( HasNotes[stMissing] )
 			continue;
 
+		/* If m_bAutogenSteps is disabled, only autogen lights. */
+		if( !PREFSMAN->m_bAutogenSteps && stMissing != STEPS_TYPE_LIGHTS_CABINET )
+			continue;
+
 		// missing Steps of this type
 		int iNumTracksOfMissing = GAMEMAN->NotesTypeToNumTracks(stMissing);
 
