@@ -56,7 +56,7 @@ GameState::GameState()
 
 	ReloadCharacters();
 
-	m_iNumTimesThroughAttract = -1;	// initial screen will bump this up to 0
+	m_iNumTimesThroughAttract = 0;
 
 	/* Don't reset yet; let the first screen do it, so we can
 	 * use PREFSMAN and THEME. */
@@ -1398,10 +1398,20 @@ bool GameState::OneIsHot() const
 
 bool GameState::IsTimeToPlayAttractSounds()
 {
-	if( PREFSMAN->m_iAttractSoundFrequency == 0 )	// never
+	// always play attract sounds the first time through after a game over - 
+	// even if attract sounds are set to "never".
+	if( m_iNumTimesThroughAttract==0 )
+		return true;
+
+	// 0 means "never play sound".  Avoid a divide by 0 below.
+	if( PREFSMAN->m_iAttractSoundFrequency == 0 )
 		return false;
-	m_iNumTimesThroughAttract %= PREFSMAN->m_iAttractSoundFrequency;
-	return m_iNumTimesThroughAttract==0;
+
+	// play attract sounds once every m_iAttractSoundFrequency times through
+	if( (m_iNumTimesThroughAttract % PREFSMAN->m_iAttractSoundFrequency)==0 )
+		return true;
+
+	return false;
 }
 
 bool GameState::ChangeCourseDifficulty( PlayerNumber pn, int dir )
