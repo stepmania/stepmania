@@ -27,7 +27,7 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 	split(drivers, ",", DriversToTry, true);
 
 	CString Driver;
-RageSoundDriver *ret = NULL;
+	RageSoundDriver *ret = NULL;
 
 	for(unsigned i = 0; ret == NULL && i < DriversToTry.size(); ++i)
 	{
