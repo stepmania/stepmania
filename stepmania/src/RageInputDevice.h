@@ -1,7 +1,6 @@
 #ifndef RAGEINPUTDEVICE_H
 #define RAGEINPUTDEVICE_H 1
 
-// #include "SDL_keysym.h"
 #include "RageTimer.h"
 
 /* Only raw, unshifted keys go in this table; this doesn't include internationalized
