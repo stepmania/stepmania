@@ -13,8 +13,6 @@ public:
 	RageThread();
 	~RageThread();
 
-	static void RegisterMainThread();
-
 	void SetName( const CString &n ) { name = n; }
 	void Create( int (*fn)(void *), void *data );
 
