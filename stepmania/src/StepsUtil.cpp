@@ -157,11 +157,11 @@ Steps *StepsID::ToSteps( const Song *p, bool bAllowNull, bool bUseCache ) const
 	Steps *ret = NULL;
 	if( dc == DIFFICULTY_EDIT )
 	{
-		ret = p->GetSteps( st, dc, -1, -1, sDescription, true );
+		ret = p->GetSteps( st, dc, -1, -1, sDescription, uHash, true );
 	}
 	else
 	{
-		ret = p->GetSteps( st, dc, -1, -1, "", true );
+		ret = p->GetSteps( st, dc, -1, -1, "", 0, true );
 	}
 	
 	if( !bAllowNull )

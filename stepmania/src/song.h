@@ -181,6 +181,7 @@ public:
 		int iMeterHigh = -1, 
 		const CString &sDescription = "", 
 		bool bIncludeAutoGen = true, 
+		unsigned uHash = 0,
 		int iMaxToGet = -1 
 		) const;
 	Steps* GetSteps( 
@@ -189,6 +190,7 @@ public:
 		int iMeterLow = -1, 
 		int iMeterHigh = -1, 
 		const CString &sDescription = "", 
+		unsigned uHash = 0,
 		bool bIncludeAutoGen = true
 		) const;
 	Steps* GetStepsByDifficulty( StepsType st, Difficulty dc, bool bIncludeAutoGen = true ) const;

@@ -833,6 +833,7 @@ void Song::GetSteps(
 	int iMeterHigh, 
 	const CString &sDescription, 
 	bool bIncludeAutoGen, 
+	unsigned uHash,
 	int iMaxToGet 
 	) const
 {
@@ -851,6 +852,8 @@ void Song::GetSteps(
 		if( iMeterHigh != -1 && iMeterHigh < pSteps->GetMeter() )
 			continue;
 		if( sDescription.size() && sDescription != pSteps->GetDescription() )
+			continue;
+		if( uHash != 0 && uHash != pSteps->GetHash() )
 			continue;
 		if( !bIncludeAutoGen && pSteps->IsAutogen() )
 			continue;
@@ -872,11 +875,12 @@ Steps* Song::GetSteps(
 	int iMeterLow, 
 	int iMeterHigh, 
 	const CString &sDescription, 
+	unsigned uHash,
 	bool bIncludeAutoGen
 	) const
 {
 	vector<Steps*> vpSteps;
-	GetSteps( vpSteps, st, dc, iMeterLow, iMeterHigh, sDescription, bIncludeAutoGen, 1 );	// get max 1
+	GetSteps( vpSteps, st, dc, iMeterLow, iMeterHigh, sDescription, bIncludeAutoGen, uHash, 1 );	// get max 1
 	if( vpSteps.empty() )
 		return NULL;
 	else
