@@ -11,7 +11,7 @@
 class LanPlayer
 {
 public:
-	string name;
+	CString name;
 	long score;
 	int health;
 	int feet;
@@ -24,7 +24,7 @@ public:
 	int offset;
 	int PlayerID;
 	int diff;
-	string options;
+	CString options;
 	LanPlayer();
 };
 
@@ -52,6 +52,7 @@ public:
 	void CheckConnection();
 	bool IsPlaying(int Player);
 	void StyleUpdate(PacketFunctions &Packet);
+	void Disconnect();
 	bool InGame;
 	int twoPlayers;
 	bool hasSong;
@@ -95,6 +96,7 @@ private:
 	bool StatsNameChange;
 	bool SecondSameSelect;
 	int numPlayers;
+	vector<in_addr> bannedIPs;
 
 	void Hello(PacketFunctions& Packet, int clientNum);
 	void UpdateClients();
@@ -111,7 +113,7 @@ private:
 	void StatsNameColumn(PacketFunctions& data, LanPlayer *playersPtr[], int numPlayers);
 	void SendNetPacket(int client, PacketFunctions &Packet);
 	int SortStats(LanPlayer *playersPtr[]);
-	void RelayChat(PacketFunctions& Packet, int clientNum);
+	void RelayChat(CString &passedmessage, int clientNum);
 	void SelectSong(PacketFunctions& Packet, int clientNum);
 	void ServerChat(const CString& message);
 	void SendToAllClients(PacketFunctions& Packet);
@@ -121,8 +123,15 @@ private:
 	void SendUserList();
 	void GameOver(PacketFunctions& Packet, int clientNum);
 	void ScreenNetMusicSelectStatus(PacketFunctions& Packet, int clientNum);
-#endif
+	void AnalizeChat(PacketFunctions &Packet, int clientNum);
+	CString StepManiaLanServer::ListPlayers();
+	void Kick(CString &name);
+	void Ban(CString &name);
+	bool IsBanned(in_addr &ip);
+	void ForceStart();
 };
+
+#endif
 
 #endif
 

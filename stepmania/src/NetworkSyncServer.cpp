@@ -62,7 +62,8 @@ bool StepManiaLanServer::ServerStart()
 
 void StepManiaLanServer::ServerStop()
 {
-	for (int x = 0; x < NUMBERCLIENTS; ++x) {
+	for (int x = 0; x < NUMBERCLIENTS; ++x)
+	{
 		Client[x].clientSocket.close();
 		Client[x].Used = false;
 	}
@@ -90,7 +91,7 @@ void StepManiaLanServer::UpdateClients()
 {
 	//Go through all the clients and check to see if it is being used.
 	//If so then try to get a backet and parse the data.
-	for (int x = 0; x < NUMBERCLIENTS; x++)
+	for (int x = 0; x < NUMBERCLIENTS; ++x)
 		if (Client[x].Used == 1)
 			if (Client[x].GetData(Packet) >= 0)
 				ParseData(Packet, x);
@@ -109,6 +110,12 @@ GameClient::GameClient()
 	inNetMusicSelect = false;
 	isStarting = false;  //Used for after ScreenNetMusicSelect but before InGame
 	wasIngame = false;
+}
+
+void GameClient::Disconnect()
+{
+	clientSocket.close();
+	GameClient();
 }
 
 int GameClient::GetData(PacketFunctions& Packet)
@@ -156,7 +163,7 @@ void StepManiaLanServer::ParseData(PacketFunctions& Packet, int clientNum)
 		break;
 	case NSCCM:
 		// Chat message
-		RelayChat(Packet, clientNum);
+		AnalizeChat(Packet, clientNum);
 		break;
 	case NSCRSG:
 		SelectSong(Packet, clientNum);
@@ -197,7 +204,7 @@ void GameClient::StyleUpdate(PacketFunctions& Packet)
 	int playernumber = 0;
 	Player[0].name = Player[1].name = "";
 	twoPlayers = Packet.Read1()-1;
-	for (int x = 0; x < twoPlayers+1; x++)
+	for (int x = 0; x < twoPlayers+1; ++x)
 	{
 		playernumber = Packet.Read1();
 		Player[playernumber].name = Packet.ReadNT();
@@ -510,6 +517,9 @@ void StepManiaLanServer::NewClientCheck()
 		if (server.accept(Client[CurrentEmptyClient].clientSocket) == 1)
 			Client[CurrentEmptyClient].Used = 1;
 
+	if (IsBanned(Client[CurrentEmptyClient].clientSocket.GetIn_addr()))
+		Client[CurrentEmptyClient].Disconnect();
+
 }
 
 void StepManiaLanServer::SendValue(uint8_t value, int clientNum)
@@ -517,7 +527,58 @@ void StepManiaLanServer::SendValue(uint8_t value, int clientNum)
 	Client[clientNum].clientSocket.SendPack((char*)&value, sizeof(uint8_t));
 }
 
-void StepManiaLanServer::RelayChat(PacketFunctions& Packet, int clientNum)
+void StepManiaLanServer::AnalizeChat(PacketFunctions &Packet, int clientNum)
+{
+	CString message = Packet.ReadNT();
+	char firstc = message.at(0);
+	if (message.at(0) == '/')
+	{
+		CString command = message.substr(1, message.find(" ")-1);
+		if ((command.compare("list") == 0)||(command.compare("have") == 0))
+		{
+			if (command.compare("list") == 0)
+			{
+				Reply.ClearPacket();
+				Reply.Write1(NSCCM + NSServerOffset);
+				Reply.WriteNT(ListPlayers());
+				SendNetPacket(clientNum, Reply);
+			}
+			else
+				Client[clientNum].hasSong = true;
+		}
+		else
+		{
+			if (clientNum == 0)
+			{
+				if (command.compare("force_start") == 0)
+					ForceStart();
+				if (command.compare("kick") == 0)
+				{
+					CString name = message.substr(message.find(" ")+1);
+					Kick(name);
+				}
+				if (command.compare("ban") == 0)
+				{
+					CString name = message.substr(message.find(" ")+1);
+					Ban(name);
+				}
+			}
+			else
+			{
+				Reply.ClearPacket();
+				Reply.Write1(NSCCM + NSServerOffset);
+				Reply.WriteNT("You do not have permission to use server commands.");
+				SendNetPacket(clientNum, Reply);
+			}
+		}
+	}
+	else
+	{
+		RelayChat((CString&)message, clientNum);
+	}
+}
+
+void StepManiaLanServer::RelayChat(CString &passedmessage, int clientNum)
 {
 	Reply.ClearPacket();
 	CString message = "";
@@ -530,7 +591,7 @@ void StepManiaLanServer::RelayChat(PacketFunctions& Packet, int clientNum)
 	message += Client[clientNum].Player[1].name;
 
 	message += ": ";
-	message += Packet.ReadNT();
+	message += passedmessage;
 	Reply.Write1(NSCCM + NSServerOffset);
 	Reply.WriteNT(message);
 
@@ -577,9 +638,8 @@ void StepManiaLanServer::SelectSong(PacketFunctions& Packet, int clientNum)
 				LastSongInfo.title = CurrentSongInfo.title;
 				LastSongInfo.artist = CurrentSongInfo.artist;
 				LastSongInfo.subtitle = CurrentSongInfo.subtitle;
-				message = servername;
-				message += ":Play \"";
-				message += CurrentSongInfo.title;
+				message = "Play \"";
+				message += CurrentSongInfo.title + " " + CurrentSongInfo.subtitle;
 				message += "\"?";
 				ServerChat(message);
 			}
@@ -600,9 +660,7 @@ void StepManiaLanServer::SelectSong(PacketFunctions& Packet, int clientNum)
 	{
 		//If user dosn't have song
 		Client[clientNum].hasSong = false;
-		message = servername;
-		message += ": ";
-		message += Client[clientNum].Player[0].name;
+		message = Client[clientNum].Player[0].name;
 
 		if (Client[clientNum].twoPlayers)
 		{
@@ -636,7 +694,7 @@ void StepManiaLanServer::SelectSong(PacketFunctions& Packet, int clientNum)
 		LastSongInfo.subtitle = "";
 
 		//Only send data to clients currently in ScreenNetMusicSelect
-		for (int x = 0; x < NUMBERCLIENTS; x++)
+		for (int x = 0; x < NUMBERCLIENTS; ++x)
 			if (Client[x].inNetMusicSelect)
 			{
 				SendNetPacket(x, Reply);
@@ -676,9 +734,10 @@ void StepManiaLanServer::SendToAllClients(PacketFunctions& Packet)
 }
 void StepManiaLanServer::ServerChat(const CString& message)
 {
+	CString x = servername + ": " + message;
 	Reply.ClearPacket();
 	Reply.Write1(NSCCM + NSServerOffset);
-	Reply.WriteNT(message);
+	Reply.WriteNT(x);
 	SendToAllClients(Reply);
 }
 
@@ -738,8 +797,7 @@ void StepManiaLanServer::SendUserList()
 
 void StepManiaLanServer::ScreenNetMusicSelectStatus(PacketFunctions& Packet, int clientNum)
 {
-	CString message = servername;
-	message += ": ";
+	CString message = "";
 	int EntExitCode = Packet.Read1();
 
 	message += Client[clientNum].Player[0].name;
@@ -769,8 +827,77 @@ void StepManiaLanServer::ScreenNetMusicSelectStatus(PacketFunctions& Packet, int
 	}
 	ServerChat(message);
 }
-#endif
 
+CString StepManiaLanServer::ListPlayers()
+{
+	CString list= "Player List:\n";
+	for (int x = 0; x < NUMBERCLIENTS; ++x)
+		if ((Client[x].Used)&&(Client[x].inNetMusicSelect))
+			for (int y = 0; y < 2; ++y)
+				if (Client[x].Player[y].name.length() > 0)
+					list += Client[x].Player[y].name + "\n";
+	return list;
+}
+
+void StepManiaLanServer::Kick(CString &name)
+{
+	for (int x = 0; x < NUMBERCLIENTS; ++x)
+		if (Client[x].Used)
+			for (int y = 0; y < 2; ++y)
+				if (name == Client[x].Player[y].name)
+				{
+					ServerChat("Kicked " + name + ".");
+					Client[x].Disconnect();
+				}
+}
+
+void StepManiaLanServer::Ban(CString &name)
+{
+	for (int x = 0; x < NUMBERCLIENTS; ++x)
+		if (Client[x].Used)
+			for (int y = 0; y < 2; y++)
+				if (name == Client[x].Player[y].name)
+				{
+					ServerChat("Banned " + name + ".");
+					bannedIPs.push_back(Client[x].clientSocket.GetIn_addr());
+					Client[x].Disconnect();
+				}
+}
+
+bool StepManiaLanServer::IsBanned(in_addr &ip)
+{
+	for (unsigned int x = 0; x < bannedIPs.size(); ++x)
+		if (ip.S_un.S_addr == bannedIPs[x].S_un.S_addr)
+			return true;
+	return false;
+}
+
+void StepManiaLanServer::ForceStart()
+{
+		Reply.ClearPacket();
+		Reply.Write1(NSCRSG + NSServerOffset);
+		Reply.Write1(2);
+		Reply.WriteNT(CurrentSongInfo.title);
+		Reply.WriteNT(CurrentSongInfo.artist);
+		Reply.WriteNT(CurrentSongInfo.subtitle);
+
+		//Reset last song in case host picks same song again (otherwise dual select is bypassed)
+		LastSongInfo.title = "";
+		LastSongInfo.artist = "";
+		LastSongInfo.subtitle = "";
+
+		//Only send data to clients currently in ScreenNetMusicSelect
+		for (int x = 0; x < NUMBERCLIENTS; ++x)
+			if (Client[x].inNetMusicSelect)
+				if(Client[x].hasSong)
+				{
+					SendNetPacket(x, Reply);
+					//Designate the client is starting,
+					//after ScreenNetMusicSelect but before game play (InGame).
+					Client[x].isStarting = true;
+				}
+}
+#endif
 /*
  * (c) 2003-2004 Joshua Allen
  * All rights reserved.
