@@ -113,9 +113,6 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 		else if( 0==stricmp(sValueName,"MUSIC") )
 			out.m_sMusicFile = sParams[1];
 
-		else if( 0==stricmp(sValueName,"MUSICBYTES") )
-			out.m_iMusicBytes = atoi( sParams[1] );
-
 		else if( 0==stricmp(sValueName,"MUSICLENGTH") )
 			out.m_fMusicLengthSeconds = (float)atof( sParams[1] );
 

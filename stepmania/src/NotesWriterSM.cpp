@@ -22,7 +22,6 @@ void NotesWriterSM::WriteGlobalTags(FILE *fp, const Song &out)
 	fprintf( fp, "#LYRICSPATH:%s;\n", out.m_sLyricsFile.c_str() );
 	fprintf( fp, "#CDTITLE:%s;\n", out.m_sCDTitleFile.c_str() );
 	fprintf( fp, "#MUSIC:%s;\n", out.m_sMusicFile.c_str() );
-	fprintf( fp, "#MUSICBYTES:%u;\n", out.m_iMusicBytes );
 	fprintf( fp, "#MUSICLENGTH:%.3f;\n", out.m_fMusicLengthSeconds );
 	fprintf( fp, "#OFFSET:%.3f;\n", out.m_fBeat0OffsetInSeconds );
 	fprintf( fp, "#SAMPLESTART:%.3f;\n", out.m_fMusicSampleStartSeconds );
