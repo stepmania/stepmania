@@ -68,6 +68,7 @@
 #pragma comment(lib, "SDL-1.2.5/lib/SDLmain.lib")
 #endif
 #pragma comment(lib, "opengl32.lib")
+#pragma comment(lib, "glu32.Lib")
 #pragma comment(lib, "d3dx8.lib")
 
 
@@ -268,6 +269,8 @@ void ApplyGraphicOptions()
 }
 
 
+void GameLoop();
+
 //-----------------------------------------------------------------------------
 // Name: WinMain()
 // Desc: Application entry point
@@ -402,8 +405,67 @@ int main(int argc, char* argv[])
 //		SCREENMAN->SetNewScreen( "ScreenSandbox" );
 	}
 
+	/* Run the main loop. */
+	GameLoop();
 
-	// Do game loop
+#ifndef _DEBUG
+	}
+	catch( RageException e )
+	{
+		g_sErrorString = e.what();
+
+		LOG->Trace( 
+			"\n"
+			"//////////////////////////////////////////////////////\n"
+			"Exception: %s\n"
+			"//////////////////////////////////////////////////////\n"
+			"\n",
+			g_sErrorString.GetString()
+			);
+
+		LOG->Flush();
+	}
+#endif
+
+	SAFE_DELETE( SCREENMAN );
+	SAFE_DELETE( NETWORK );
+	SAFE_DELETE( INPUTQUEUE );
+	SAFE_DELETE( INPUTMAPPER );
+	SAFE_DELETE( INPUTFILTER );
+	SAFE_DELETE( SONGMAN );
+	SAFE_DELETE( SONGINDEX );
+	SAFE_DELETE( PREFSMAN );
+	SAFE_DELETE( GAMESTATE );
+	SAFE_DELETE( GAMEMAN );
+	SAFE_DELETE( THEME );
+	SAFE_DELETE( ANNOUNCER );
+	SAFE_DELETE( INPUTMAN );
+	SAFE_DELETE( MUSIC );
+	SAFE_DELETE( SOUND );
+//	SAFE_DELETE( SOUNDMAN );
+	SAFE_DELETE( TIMER );
+	SAFE_DELETE( FONT );
+	SAFE_DELETE( TEXTUREMAN );
+	SAFE_DELETE( DISPLAY );
+	SAFE_DELETE( LOG );
+
+
+	if( g_sErrorString != "" )
+	{
+		// throw up a pretty error dialog
+		DialogBox(
+			NULL,
+			MAKEINTRESOURCE(IDD_ERROR_DIALOG),
+			NULL,
+			ErrorWndProc
+			);
+	}
+
+	return 0;
+}
+
+void GameLoop()
+{
 	bool do_exit = false;
 	SDL_Event	event;
 	while(!do_exit)
@@ -499,6 +561,17 @@ int main(int argc, char* argv[])
 	
 			}
 
+			if(type == IET_FIRST_PRESS && DeviceI == DeviceInput(DEVICE_KEYBOARD, DIK_RETURN))
+			{
+				if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_RMENU)) ||
+					INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_LMENU)) )
+				{
+					/* alt-enter */
+					PREFSMAN->m_bWindowed = !PREFSMAN->m_bWindowed;
+					ApplyGraphicOptions();
+					continue;
+				}
+			}
 
 			GameInput GameI;
 			MenuInput MenuI;
@@ -524,7 +597,7 @@ int main(int argc, char* argv[])
 		DISPLAY->ResetMatrixStack();
 
 		RageMatrix mat;
-		
+
 		RageMatrixOrthoOffCenterLH( &mat, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, SCREEN_NEAR, SCREEN_FAR );
 		DISPLAY->SetProjectionTransform( &mat );
 
@@ -539,59 +612,5 @@ int main(int argc, char* argv[])
 		if( DISPLAY  &&  DISPLAY->IsWindowed() )
 			::Sleep( 0 );	// give some time to other processes
 	}
-
-#ifndef _DEBUG
-	}
-	catch( RageException e )
-	{
-		g_sErrorString = e.what();
-
-		LOG->Trace( 
-			"\n"
-			"//////////////////////////////////////////////////////\n"
-			"Exception: %s\n"
-			"//////////////////////////////////////////////////////\n"
-			"\n",
-			g_sErrorString.GetString()
-			);
-
-		LOG->Flush();
-	}
-#endif
-
-	SAFE_DELETE( SCREENMAN );
-	SAFE_DELETE( NETWORK );
-	SAFE_DELETE( INPUTQUEUE );
-	SAFE_DELETE( INPUTMAPPER );
-	SAFE_DELETE( INPUTFILTER );
-	SAFE_DELETE( SONGMAN );
-	SAFE_DELETE( SONGINDEX );
-	SAFE_DELETE( PREFSMAN );
-	SAFE_DELETE( GAMESTATE );
-	SAFE_DELETE( GAMEMAN );
-	SAFE_DELETE( THEME );
-	SAFE_DELETE( ANNOUNCER );
-	SAFE_DELETE( INPUTMAN );
-	SAFE_DELETE( MUSIC );
-	SAFE_DELETE( SOUND );
-//	SAFE_DELETE( SOUNDMAN );
-	SAFE_DELETE( TIMER );
-	SAFE_DELETE( FONT );
-	SAFE_DELETE( TEXTUREMAN );
-	SAFE_DELETE( DISPLAY );
-	SAFE_DELETE( LOG );
-
-
-	if( g_sErrorString != "" )
-	{
-		// throw up a pretty error dialog
-		DialogBox(
-			NULL,
-			MAKEINTRESOURCE(IDD_ERROR_DIALOG),
-			NULL,
-			ErrorWndProc
-			);
-	}
-
-	return 0;
 }
+
