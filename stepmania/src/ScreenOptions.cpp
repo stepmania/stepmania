@@ -570,7 +570,6 @@ void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType type
 	// check to see if MENU_BUTTON_LEFT and MENU_BUTTON_RIGHT are being held
 	if( MenuI.IsValid() && MenuI.button == MENU_BUTTON_START &&
 		PREFSMAN->m_bArcadeOptionsNavigation &&
-		PREFSMAN->m_bOnlyDedicatedMenuButtons &&
 		GAMESTATE->m_CurStyle != STYLE_INVALID &&
 		INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) ) &&
 		INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_LEFT) ) )
