@@ -74,7 +74,7 @@ static void DumpAVIDebugInfo( CString fn )
 	if( !RageMovieTexture::GetFourCC( fn, handler, type ) )
 		return;
 
-	LOG->Info("Movie %s has handler '%s', type '%s'", fn.c_str(), handler.c_str(), type.c_str());
+	LOG->Trace("Movie %s has handler '%s', type '%s'", fn.c_str(), handler.c_str(), type.c_str());
 }
 
 /* Try drivers in order of preference until we find one that works. */
