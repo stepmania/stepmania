@@ -55,6 +55,7 @@
 #define NEXT_SCREEN( play_mode )				THEME->GetMetric ("ScreenGameplay","NextScreen"+Capitalize(PlayModeToString(play_mode)))
 #define SHOW_LIFE_METER_FOR_DISABLED_PLAYERS	THEME->GetMetricB("ScreenGameplay","ShowLifeMeterForDisabledPlayers")
 #define EVAL_ON_FAIL							THEME->GetMetricB("ScreenGameplay","ShowEvaluationOnFail")
+#define SHOW_SCORE_IN_RAVE						THEME->GetMetricB("ScreenGameplay","ShowScoreInRave")
 
 CachedThemeMetricF SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
 CachedThemeMetricF G_TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
@@ -442,7 +443,8 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		m_pPrimaryScoreDisplay[p]->Init( (PlayerNumber)p );
 		m_pPrimaryScoreDisplay[p]->SetName( ssprintf("ScoreP%d%s",p+1,bExtra?"Extra":"") );
 		SET_XY( *m_pPrimaryScoreDisplay[p] );
-		this->AddChild( m_pPrimaryScoreDisplay[p] );
+		if( GAMESTATE->m_PlayMode != PLAY_MODE_RAVE || SHOW_SCORE_IN_RAVE ) /* XXX: ugly */
+			this->AddChild( m_pPrimaryScoreDisplay[p] );
 
 	
 		//
