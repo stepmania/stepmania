@@ -226,7 +226,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 			m_Sprites.push_back(new Sprite);
 			m_Sprites.back()->LoadBG( sPath );
 			m_Sprites.back()->ScaleToCover( RectI(SCREEN_LEFT-200,SCREEN_TOP-200,SCREEN_RIGHT+200,SCREEN_BOTTOM+200) );
-			m_Sprites.back()->SetEffectSpin( RageVector3(0,0,1) );
+			m_Sprites.back()->SetEffectSpin( RageVector3(0,0,60) );
 		}
 		break;
 	case EFFECT_PARTICLES_SPIRAL_OUT:
@@ -609,7 +609,7 @@ void BGAnimationLayer::Update( float fDeltaTime )
 		for( i=0; i<m_Sprites.size(); i++ )
 		{
 			float fTexCoords[8];
-			m_Sprites[i]->GetCustomTextureCoords( fTexCoords );
+			m_Sprites[i]->GetActiveTexCoords( fTexCoords );
 
 			for( int j=0; j<8; j+=2 )
 			{
