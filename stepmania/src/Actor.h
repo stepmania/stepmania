@@ -219,7 +219,8 @@ public:
 	void SetEffectColor1( RageColor c )			{ m_effectColor1 = c; }
 	void SetEffectColor2( RageColor c )			{ m_effectColor2 = c; }
 	void SetEffectPeriod( float fSecs )			{ m_fEffectPeriodSeconds = fSecs; } 
-	void SetEffectOffset( float fPercent )		{ m_fEffectPerfectOffset = fPercent; }
+	void SetEffectDelay( float fTime )			{ m_fEffectDelay = fTime; }
+	void SetEffectOffset( float fPercent )		{ m_fEffectOffset = fPercent; }
 	void SetEffectClock( EffectClock c )		{ m_EffectClock = c; }
 	void SetEffectClock( CString s );
 
@@ -344,7 +345,8 @@ protected:
 	Effect m_Effect;
 	float m_fSecsIntoEffect;
 	float m_fEffectPeriodSeconds;
-	float m_fEffectPerfectOffset;
+	float m_fEffectDelay;
+	float m_fEffectOffset;
 	EffectClock m_EffectClock;
 
 	RageColor   m_effectColor1;

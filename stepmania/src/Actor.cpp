@@ -44,7 +44,8 @@ void Actor::Reset()
 	m_Effect =  no_effect;
 	m_fSecsIntoEffect = 0;
 	m_fEffectPeriodSeconds = 1;
-	m_fEffectPerfectOffset = 0;
+	m_fEffectDelay = 0;
+	m_fEffectOffset = 0;
 	m_EffectClock = CLOCK_TIMER;
 	m_vEffectMagnitude = RageVector3(0,0,10);
 	m_effectColor1 = RageColor(1,1,1,1);
@@ -99,11 +100,18 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		m_pTempState = &m_tempState;
 		m_tempState = m_current;
 
-		float fPercentThroughEffect = m_fSecsIntoEffect / m_fEffectPeriodSeconds;
-		fPercentThroughEffect += m_fEffectPerfectOffset;
-		fPercentThroughEffect = fmodfp( fPercentThroughEffect, 1 );
+		/* EffectPeriodSeconds is the total time of the effect (including delay).
+		 * m_fEffectDelay is the amount of time to stick on 0%.  Offset shifts the
+		 * entire thing forwards.  For example, if m_fEffectPeriodSeconds is 1,
+		 * the effect can happen from .40 to .55 by setting offset to .40 and
+		 * delay to .85. */
+		const float fTotalPeriod = m_fEffectPeriodSeconds + m_fEffectDelay;
+		const float fSecsIntoPeriod = fmodfp( m_fSecsIntoEffect+m_fEffectOffset, fTotalPeriod );
 
-		bool bBlinkOn = fPercentThroughEffect < 0.5f;
+		float fPercentThroughEffect = SCALE( fSecsIntoPeriod, 0, m_fEffectPeriodSeconds, 0, 1 );
+		fPercentThroughEffect = clamp( fPercentThroughEffect, 0, 1 );
+
+		bool bBlinkOn = fPercentThroughEffect > 0.5f;
 		float fPercentBetweenColors = sinf( (fPercentThroughEffect + 0.25f) * 2 * PI ) / 2 + 0.5f;
 		ASSERT( fPercentBetweenColors >= 0  &&  fPercentBetweenColors <= 1 );
 		float fOriginalAlpha = m_tempState.diffuse[0].a;
@@ -305,7 +313,7 @@ void Actor::Update( float fDeltaTime )
 		{
 		case CLOCK_TIMER:
 			m_fSecsIntoEffect += fDeltaTime;
-			m_fSecsIntoEffect = fmodfp( m_fSecsIntoEffect, m_fEffectPeriodSeconds );
+			m_fSecsIntoEffect = fmodfp( m_fSecsIntoEffect, m_fEffectPeriodSeconds + m_fEffectDelay );
 			break;
 
 		case CLOCK_BGM:
@@ -795,6 +803,7 @@ void Actor::HandleCommand( const ParsedCommand &command )
 	else if( sName=="effectcolor2" )	SetEffectColor2( cParam(1) );
 	else if( sName=="effectperiod" )	SetEffectPeriod( fParam(1) );
 	else if( sName=="effectoffset" )	SetEffectOffset( fParam(1) );
+	else if( sName=="effectdelay" )		SetEffectDelay( fParam(1) );
 	else if( sName=="effectclock" )		SetEffectClock( sParam(1) );
 	else if( sName=="effectmagnitude" )	SetEffectMagnitude( RageVector3(fParam(1),fParam(2),fParam(3)) );
 	else if( sName=="scaletocover" )	{ RectI R(iParam(1), iParam(2), iParam(3), iParam(4));  ScaleToCover(R); }
