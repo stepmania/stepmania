@@ -305,7 +305,7 @@ char DeviceInput::ToChar() const
 // Desc: Called once for each enumerated joystick. If we find one, create a
 //       device interface on it so we can play with it.
 //-----------------------------------------------------------------------------
-BOOL CALLBACK	EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance,
+BOOL CALLBACK	RageInput::EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance,
 										       VOID* pContext )
 {
 	RageInput* pInput = (RageInput*)pContext;
@@ -334,7 +334,7 @@ BOOL CALLBACK	EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance,
 // Name: EnumAxesCallMenuBack( const PlayerNumber p )
 // Desc: Callback function for enumerating the axes on a joystick
 //-----------------------------------------------------------------------------
-BOOL CALLBACK	EnumAxesCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,
+BOOL CALLBACK	RageInput::EnumAxesCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,
 									      VOID* pContext )
 {
     LPDIRECTINPUTDEVICE8 pJoystick = (LPDIRECTINPUTDEVICE8)pContext;
@@ -656,7 +656,7 @@ HRESULT RageInput::UpdatePump()
 	return S_OK;
 }
 
-HRESULT RageInput::Update()
+void RageInput::Update()
 {
 // macros for reading DI state structures
 #define IS_PRESSED(b)	(b & 0x80) 
@@ -698,35 +698,33 @@ HRESULT RageInput::Update()
 	for( BYTE i=0; i<4; i++ )	// foreach joystick
 	{
 		// read joystick states
-		if ( m_pJoystick[i] )
+		if ( !m_pJoystick[i] )
+			continue;
+
+		// Poll the device to read the current state
+		hr = m_pJoystick[i]->Poll(); 
+		if( FAILED(hr) )  
 		{
-			// Poll the device to read the current state
-			hr = m_pJoystick[i]->Poll(); 
-			if( FAILED(hr) )  
-			{
-				// DInput is telling us that the input stream has been
-				// interrupted. We aren't tracking any state between polls, so
-				// we don't have any special reset that needs to be done. We
-				// just re-acquire and try again.
+			// DInput is telling us that the input stream has been
+			// interrupted. We aren't tracking any state between polls, so
+			// we don't have any special reset that needs to be done. We
+			// just re-acquire and try again.
+			hr = m_pJoystick[i]->Acquire();
+			while( hr == DIERR_INPUTLOST ) 
 				hr = m_pJoystick[i]->Acquire();
-				while( hr == DIERR_INPUTLOST ) 
-					hr = m_pJoystick[i]->Acquire();
 
-				// hr may be DIERR_OTHERAPPHASPRIO or other errors.  This
-				// may occur when the app is minimized or in the process of 
-				// switching, so just try again later 
-				return E_FAIL; 
-			}
-
-			// Get the input's device state
-			if( FAILED( hr = m_pJoystick[i]->GetDeviceState( sizeof(DIJOYSTATE2), &m_joyState[i] ) ) )
-				return hr; // The device should have been acquired during the Poll()
+			// hr may be DIERR_OTHERAPPHASPRIO or other errors.  This
+			// may occur when the app is minimized or in the process of 
+			// switching, so just try again later 
+			break;
 		}
+
+		// Get the input's device state
+		if( FAILED( hr = m_pJoystick[i]->GetDeviceState( sizeof(DIJOYSTATE2), &m_joyState[i] ) ) )
+			LOG->Trace(hr, "Failed to read joystick %i\n", i);
 	}
 
 	UpdatePump();
-
-	return S_OK;
 }
 
 

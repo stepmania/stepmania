@@ -86,12 +86,8 @@ class RageInput
 	LPDIRECTINPUTDEVICE8	m_pKeyboard;
 	// Mouse Device
 	LPDIRECTINPUTDEVICE8    m_pMouse;
-public:
-	// hack: make them public to allow the callbacks access to the pointers
 	// Joystick Devices
 	LPDIRECTINPUTDEVICE8	m_pJoystick[NUM_JOYSTICKS];
-
-private:
 
 	// Arrays for Keyboard Data
 	byte m_keys[NUM_KEYBOARD_BUTTONS];
@@ -127,9 +123,17 @@ private:
 	INT m_RelPosition_x;
 	INT m_RelPosition_y;
 
+	static BOOL CALLBACK EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance,
+										       VOID* pContext );
+
+	static BOOL CALLBACK EnumAxesCallback( const DIDEVICEOBJECTINSTANCE* pdidoi,
+									       VOID* pContext );
+
 	HRESULT UpdateMouse();
 	HRESULT UpdateKeyboard();
 	HRESULT UpdatePump();
+
+	LPDIRECTINPUT8		 GetDirectInput() { return m_pDI; }
 
 public:
 	RageInput(HWND hWnd);
@@ -140,18 +144,12 @@ public:
 	// Release all DirectInput Resources
 	void Release();
 	// Get our Devices State
-	HRESULT Update();
+	void Update();
 	bool IsBeingPressed( DeviceInput di );
 	bool WasBeingPressed( DeviceInput di );
 
-	LPDIRECTINPUT8		 GetDirectInput() { return m_pDI; }
-	LPDIRECTINPUTDEVICE8 GetMouseDevice() { return m_pMouse; }
-	LPDIRECTINPUTDEVICE8 GetKeyboardDevice() { return m_pKeyboard; }
-	LPDIRECTINPUTDEVICE8 GetJoystickDevice( int i ) { return m_pJoystick[i]; }
-
 //	DIMOUSESTATE2		 GetMouseState() { return dimMouseState; }
-	VOID GetAbsPosition( DWORD &x, DWORD &y ) { x = m_AbsPosition_x; y = m_AbsPosition_y; }
-
+	void GetAbsPosition( DWORD &x, DWORD &y ) const { x = m_AbsPosition_x; y = m_AbsPosition_y; }
 };
 
 namespace USB {
