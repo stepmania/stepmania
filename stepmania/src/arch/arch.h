@@ -15,6 +15,8 @@ ArchHooks *MakeArchHooks();
 /* Define the default list of sound drivers for each arch. */
 #if defined(WIN32)
 #define DEFAULT_SOUND_DRIVER_LIST "DirectSound,DirectSound-sw,WaveOut"
+#else
+#define DEFAULT_SOUND_DRIVER_LIST "Null"
 #endif
 
 #endif
