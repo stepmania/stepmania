@@ -654,6 +654,24 @@ CString PlayerOptions::GetSavedPrefsString() const
 	return po_prefs.GetString();
 }
 
+void PlayerOptions::ResetSavedPrefs()
+{
+	PlayerOptions defaults;
+#define CPY(x) this->x = defaults.x;
+	CPY( m_fTimeSpacing );
+	CPY( m_fScrollSpeed );
+	CPY( m_fScrollBPM );
+	CPY( m_fScrolls[SCROLL_REVERSE] );
+	CPY( m_fPerspectiveTilt );
+	CPY( m_bTransforms[TRANSFORM_NOHOLDS] );
+	CPY( m_bTransforms[TRANSFORM_NOMINES] );
+	CPY( m_bTransforms[TRANSFORM_NOJUMPS] );
+	CPY( m_bTransforms[TRANSFORM_NOHANDS] );
+	CPY( m_bTransforms[TRANSFORM_NOQUADS] );
+	CPY( m_sNoteSkin );
+#undef CPY
+}
+
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
