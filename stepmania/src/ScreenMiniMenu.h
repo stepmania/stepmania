@@ -94,7 +94,8 @@ protected:
 	int					m_iCurLine;
 	int					m_iCurAnswers[MAX_MENU_ROWS];
 	ScreenMessage		m_SMSendOnOK, m_SMSendOnCancel;
-	RageSound		m_sndRow;
+	RageSound		m_sndChangeRow;
+	RageSound		m_sndChangeValue;
 	Transition		m_In;
 	Transition		m_Out;
 
