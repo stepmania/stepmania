@@ -15,22 +15,22 @@ public:
 	float RunExpressionF( const CString &str );
 	bool RunExpressionS( const CString &str, CString &sOut );
 
-	void Fail( lua_State *L, const CString &err );
+	void Fail( const CString &err );
 
-	/* Add all registered functions into L. */
-	void RegisterFunctions( lua_State *L );
+	void SetGlobal( const CString &sName, int val ) { PushStack(val); SetGlobal( sName ); }
 
-	void PushStack( lua_State *L, bool out );
-	void PushStack( lua_State *L, int out );
-	void PushStack( lua_State *L, void *out );
-	void PushStack( lua_State *L, const CString &out );
-	void PopStack( lua_State *L, CString &out );
-	bool GetStack( lua_State *L, int pos, int &out );
-	void SetGlobal( lua_State *L, const CString &sName );
-
-	lua_State *Get() { return L; }
+	void PushStack( bool val );
+	void PushStack( int val );
+	void PushStack( void *val );
+	void PushStack( const CString &val );
+	void PopStack( CString &out );
+	bool GetStack( int pos, int &out );
+	void SetGlobal( const CString &sName );
 
 private:
+	/* Register all functions in g_LuaFunctionList. */
+	void RegisterFunctions();
+
 	/* Run an expression.  The result is left on the Lua stack. */
 	bool RunExpression( const CString &str );
 	lua_State *L;

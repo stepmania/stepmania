@@ -280,24 +280,14 @@ void ThemeManager::UpdateLuaGlobals()
 	THEME_SCREEN_WIDTH.Read();
 	THEME_SCREEN_HEIGHT.Read();
 
-	lua_State *L = Lua::GetGlobalState();
-
-	Lua::PushStack( L, (int) SCREEN_WIDTH );
-	Lua::SetGlobal( L, "SCREEN_WIDTH" );
-	Lua::PushStack( L, (int) SCREEN_HEIGHT );
-	Lua::SetGlobal( L, "SCREEN_HEIGHT" );
-	Lua::PushStack( L, (int) SCREEN_LEFT );
-	Lua::SetGlobal( L, "SCREEN_LEFT" );
-	Lua::PushStack( L, (int) SCREEN_RIGHT );
-	Lua::SetGlobal( L, "SCREEN_RIGHT" );
-	Lua::PushStack( L, (int) SCREEN_TOP );
-	Lua::SetGlobal( L, "SCREEN_TOP" );
-	Lua::PushStack( L, (int) SCREEN_BOTTOM );
-	Lua::SetGlobal( L, "SCREEN_BOTTOM" );
-	Lua::PushStack( L, (int) SCREEN_CENTER_X );
-	Lua::SetGlobal( L, "SCREEN_CENTER_X" );
-	Lua::PushStack( L, (int) SCREEN_CENTER_Y );
-	Lua::SetGlobal( L, "SCREEN_CENTER_Y" );
+	LUA->SetGlobal( "SCREEN_WIDTH", (int) SCREEN_WIDTH );
+	LUA->SetGlobal( "SCREEN_HEIGHT", (int) SCREEN_HEIGHT );
+	LUA->SetGlobal( "SCREEN_LEFT", (int) SCREEN_LEFT );
+	LUA->SetGlobal( "SCREEN_RIGHT", (int) SCREEN_RIGHT );
+	LUA->SetGlobal( "SCREEN_TOP", (int) SCREEN_TOP );
+	LUA->SetGlobal( "SCREEN_BOTTOM", (int) SCREEN_BOTTOM );
+	LUA->SetGlobal( "SCREEN_CENTER_X", (int) SCREEN_CENTER_X );
+	LUA->SetGlobal( "SCREEN_CENTER_Y", (int) SCREEN_CENTER_Y );
 }
 
 CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
@@ -665,7 +655,7 @@ void ThemeManager::EvaluateString( CString &sText )
 		sText.erase( 0, 1 );
 
 		CString sOut;
-		Lua::RunExpressionS( sText, sOut );
+		LUA->RunExpressionS( sText, sOut );
 		sText = sOut;
 		return;
 	}
@@ -696,9 +686,9 @@ float ThemeManager::GetMetricF( const CString &sClassName, const CString &sValue
 	}
 #endif
 
-	Lua::PrepareExpression( sValue );
+	LUA->PrepareExpression( sValue );
 
-	return Lua::RunExpressionF( sValue );
+	return LUA->RunExpressionF( sValue );
 }
 
 // #include "LuaHelpers.h"
@@ -716,9 +706,9 @@ bool ThemeManager::GetMetricB( const CString &sClassName, const CString &sValueN
 	if( sValue.Left(1) == "1" )
 		return true; /* optimization */
 
-	Lua::PrepareExpression( sValue );
+	LUA->PrepareExpression( sValue );
 	
-	return Lua::RunExpressionB( sValue );
+	return LUA->RunExpressionB( sValue );
 }
 
 RageColor ThemeManager::GetMetricC( const CString &sClassName, const CString &sValueName )

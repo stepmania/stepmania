@@ -11,7 +11,7 @@ extern "C"
 }
 
 /* Argument helpers: */
-#define LUA_ASSERT( expr, err ) if( !(expr) ) { LUA->Fail( L, err ); }
+#define LUA_ASSERT( expr, err ) if( !(expr) ) { LUA->Fail( err ); }
 
 /* Require exactly "need" arguments. */
 #define REQ_ARGS(func, need) { \
@@ -35,7 +35,7 @@ extern "C"
 	const int val = (int) lua_tonumber( L, n ); \
 	LUA_ASSERT( val >= minimum && val <= maximum, ssprintf("Argument %i to " func " must be an integer between %i and %i (got %i)", n,  minimum, maximum, val) ); \
 }
-#define LUA_RETURN( expr ) { LUA->PushStack( L, expr ); return 1; }
+#define LUA_RETURN( expr ) { LUA->PushStack( expr ); return 1; }
 
 /* Helpers to create common functions: */
 /* Functions that take no arguments: */
@@ -71,7 +71,7 @@ int LuaFunc_##func( lua_State *L ) { \
 	REQ_ARGS( #func, 1 ); \
 	REQ_ARG( #func, 1, string ); \
 	CString str; \
-	LUA->PopStack( L, str ); \
+	LUA->PopStack( str ); \
 	LUA_RETURN( call ); \
 } \
 LuaFunction( func ); /* register it */
@@ -83,8 +83,8 @@ int LuaFunc_##func( lua_State *L ) { \
 	REQ_ARG( #func, 2, string ); \
 	CString str1; \
 	CString str2; \
-	LUA->PopStack( L, str2 ); \
-	LUA->PopStack( L, str1 ); \
+	LUA->PopStack( str2 ); \
+	LUA->PopStack( str1 ); \
 	LUA_RETURN( call ); \
 } \
 LuaFunction( func ); /* register it */
