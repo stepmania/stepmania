@@ -57,6 +57,7 @@ public:
 	void ReleaseFileDriver( RageFileDriver *pDriver );
 
 private:
+	RageFileBasic *OpenForReading( CString sPath, int mode, int &err );
 	RageFileBasic *OpenForWriting( CString sPath, int mode, int &err );
 };
 

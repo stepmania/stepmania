@@ -709,7 +709,28 @@ RageFileBasic *RageFileManager::Open( CString sPath, int mode, int &err )
 	 * may be several that will work. */
 	if( mode & RageFile::WRITE )
 		return OpenForWriting( sPath, mode, err );
+	else
+		return OpenForReading( sPath, mode, err );
+}
 
+/* Copy a RageFileBasic for a new RageFile. */
+RageFileBasic *RageFileManager::CopyFileObj( const RageFileBasic *cpy )
+{
+	LockMut( *g_Mutex );
+
+	FileReferences::const_iterator it = g_Refs.find( cpy );
+	ASSERT_M( it != g_Refs.end(), ssprintf( "CopyFileObj: Missing reference (%s)", cpy->GetDisplayPath().c_str() ) );
+
+	RageFileBasic *ret = cpy->Copy();
+
+	/* It's from the same driver as the original. */
+	AddReference( ret, it->second );
+
+	return ret;	
+}
+
+RageFileBasic *RageFileManager::OpenForReading( CString sPath, int mode, int &err )
+{
 	NormalizePath( sPath );
 
 	vector<LoadedDriver> aDriverList;
@@ -738,22 +759,6 @@ RageFileBasic *RageFileManager::Open( CString sPath, int mode, int &err )
 	UnreferenceAllDrivers( aDriverList );
 
 	return NULL;
-}
-
-/* Copy a RageFileBasic for a new RageFile. */
-RageFileBasic *RageFileManager::CopyFileObj( const RageFileBasic *cpy )
-{
-	LockMut( *g_Mutex );
-
-	FileReferences::const_iterator it = g_Refs.find( cpy );
-	ASSERT_M( it != g_Refs.end(), ssprintf( "CopyFileObj: Missing reference (%s)", cpy->GetDisplayPath().c_str() ) );
-
-	RageFileBasic *ret = cpy->Copy();
-
-	/* It's from the same driver as the original. */
-	AddReference( ret, it->second );
-
-	return ret;	
 }
 
 RageFileBasic *RageFileManager::OpenForWriting( CString sPath, int mode, int &err )
