@@ -395,7 +395,8 @@ static Menu g_AreaMenu(
 	MenuRow( ScreenEdit::shift_pauses_forward,	"Shift pauses and BPM changes down",true, false, 0, NULL ),
 	MenuRow( ScreenEdit::shift_pauses_backward,	"Shift pauses and BPM changes up",	true, false, 0, NULL ),
 	MenuRow( ScreenEdit::convert_beat_to_pause,	"Convert beats to pause",			true, false, 0, NULL ),
-	MenuRow( ScreenEdit::convert_pause_to_beat,	"Convert pause to beats",			true, false, 0, NULL )
+	MenuRow( ScreenEdit::convert_pause_to_beat,	"Convert pause to beats",			true, false, 0, NULL ),
+	MenuRow( ScreenEdit::undo,					"Undo",								true, true, 0, NULL )
 );
 
 static Menu g_StepsInformation(
@@ -547,6 +548,8 @@ void ScreenEdit::Init()
 
 	m_Clipboard.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 
+	m_Undo.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
+
 
 	/* XXX: Do we actually have to send real note data here, and to m_NoteFieldRecord? 
 	 * (We load again on play/record.) */
@@ -578,7 +581,7 @@ void ScreenEdit::Init()
 	this->SortByDrawOrder();
 
 
-	m_soundAddNote.Load(		THEME->GetPathS("ScreenEdit","AddNote"), true );
+	m_soundAddNote.Load(	THEME->GetPathS("ScreenEdit","AddNote"), true );
 	m_soundRemoveNote.Load(	THEME->GetPathS("ScreenEdit","RemoveNote"), true );
 	m_soundChangeLine.Load( THEME->GetPathS("ScreenEdit","line"), true );
 	m_soundChangeSnap.Load( THEME->GetPathS("ScreenEdit","snap"), true );
@@ -840,18 +843,24 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			int iHeadRow;
 			if( m_NoteDataEdit.IsHoldNoteAtBeat( iCol, iSongIndex, &iHeadRow ) )
 			{
-				m_NoteDataEdit.SetTapNote( iCol, iHeadRow, TAP_EMPTY );
 				m_soundRemoveNote.Play();
+				SaveUndo();
+				m_NoteDataEdit.SetTapNote( iCol, iHeadRow, TAP_EMPTY );
+				// Don't CheckNumberOfNotesAndUndo.  We don't want to revert any change that removes notes.
 			}
 			else if( m_NoteDataEdit.GetTapNote(iCol, iSongIndex).type != TapNote::empty )
 			{
-				m_NoteDataEdit.SetTapNote( iCol, iSongIndex, TAP_EMPTY );
 				m_soundRemoveNote.Play();
+				SaveUndo();
+				m_NoteDataEdit.SetTapNote( iCol, iSongIndex, TAP_EMPTY );
+				// Don't CheckNumberOfNotesAndUndo.  We don't want to revert any change that removes notes.
 			}
 			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE) )
 			{
-				m_NoteDataEdit.SetTapNote(iCol, iSongIndex, TAP_ORIGINAL_MINE );
 				m_soundAddNote.Play();
+				SaveUndo();
+				m_NoteDataEdit.SetTapNote(iCol, iSongIndex, TAP_ORIGINAL_MINE );
+				CheckNumberOfNotesAndUndo();
 			}
 			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_ATTACK) )
 			{
@@ -860,8 +869,10 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 			else
 			{
-				m_NoteDataEdit.SetTapNote(iCol, iSongIndex, TAP_ORIGINAL_TAP );
 				m_soundAddNote.Play();
+				SaveUndo();
+				m_NoteDataEdit.SetTapNote(iCol, iSongIndex, TAP_ORIGINAL_TAP );
+				CheckNumberOfNotesAndUndo();
 			}
 		}
 		break;
@@ -954,6 +965,9 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				iStartRow = max( iStartRow, 0 );
 				iEndRow = max( iEndRow, 0 );
 
+				// Don't SaveUndo.  We want to undo the whole hold, not just the last segment
+				// that the user made.  Dragging the hold bigger can only absorb and remove
+				// other taps, so dragging won't cause us to exceed the note limit.
 				m_NoteDataEdit.AddHoldNote( iCol, iStartRow, iEndRow, TAP_ORIGINAL_HOLD_HEAD );
 			}
 
@@ -1023,8 +1037,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			bool bAreaSelected = m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1;
 			g_AreaMenu.rows[cut].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[copy].bEnabled = bAreaSelected;
-			g_AreaMenu.rows[paste_at_current_beat].bEnabled = this->m_Clipboard.GetLastBeat() != 0;
-			g_AreaMenu.rows[paste_at_begin_marker].bEnabled = this->m_Clipboard.GetLastBeat() != 0 && m_NoteFieldEdit.m_iBeginMarker!=-1;
+			g_AreaMenu.rows[paste_at_current_beat].bEnabled = m_Clipboard.GetLastBeat() != 0;
+			g_AreaMenu.rows[paste_at_begin_marker].bEnabled = m_Clipboard.GetLastBeat() != 0 && m_NoteFieldEdit.m_iBeginMarker!=-1;
 			g_AreaMenu.rows[clear].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[quantize].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[turn].bEnabled = bAreaSelected;
@@ -1034,6 +1048,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			g_AreaMenu.rows[play].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[record].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[convert_beat_to_pause].bEnabled = bAreaSelected;
+			g_AreaMenu.rows[undo].bEnabled = m_Undo.GetLastBeat() != 0;
 			SCREENMAN->MiniMenu( &g_AreaMenu, SM_BackFromAreaMenu );
 		}
 		break;
@@ -1049,6 +1064,9 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case EDIT_BUTTON_OPEN_NEXT_STEPS:
 	case EDIT_BUTTON_OPEN_PREV_STEPS:
 		{
+			// don't keep undo when changing Steps
+			m_Undo.ClearAll();
+
 			// save current steps
 			Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 			ASSERT( pSteps );
@@ -1413,10 +1431,14 @@ void ScreenEdit::TransitionEditMode( EditMode em )
 
 		if( old == MODE_RECORDING )
 		{
+			SaveUndo();
+
 			// delete old TapNotes in the range
 			m_NoteDataEdit.ClearRange( m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
 			m_NoteDataEdit.CopyRange( m_NoteDataRecord, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker, m_NoteFieldEdit.m_iBeginMarker );
 			m_NoteDataRecord.ClearAll();
+
+			CheckNumberOfNotesAndUndo();
 		}
 		break;
 	case MODE_RECORDING:
@@ -1539,7 +1561,11 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			g_fLastInsertAttackDurationSeconds, 
 			false,
 			0 );
+		
+		SaveUndo();
 		m_NoteDataEdit.SetTapNote( g_iLastInsertAttackTrack, row, tn );
+		CheckNumberOfNotesAndUndo();
+
 		GAMESTATE->RestoreSelectedOptions();	// restore the edit and playback options
 	}
 	else if( SM == SM_DoRevertToLastSave )
@@ -1548,6 +1574,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		{
 			CopyFromLastSave();
 			m_pSteps->GetNoteData( m_NoteDataEdit );
+			m_Undo.ClearAll();
 		}
 	}
 	else if( SM == SM_DoUpdateTextInfo )
@@ -1951,8 +1978,46 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 	};
 }
 
-void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAnswers )
+void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAnswers, bool bAllowUndo )
 {
+	bool bSaveUndo = false;
+	switch( c )
+	{
+		case cut:
+		case copy:
+		case play:
+		case record:
+		case undo:			
+			bSaveUndo = false;
+			break;
+		case paste_at_current_beat:
+		case paste_at_begin_marker:
+		case clear:
+		case quantize:
+		case turn:
+		case transform:
+		case alter:
+		case tempo:
+		case insert_and_shift:
+		case delete_and_shift:
+		case shift_pauses_forward:
+		case shift_pauses_backward:
+		case convert_beat_to_pause:
+		case convert_pause_to_beat:
+			bSaveUndo = true;
+			break;
+		default:
+			ASSERT(0);
+	}
+
+	// We call HandleAreaMenuChoice recursively.  Only the outermost HandleAreaMenuChoice
+	// should allow Undo so that the inner calls don't also save Undo and mess up the outermost
+	if( !bAllowUndo )
+		bSaveUndo = false;
+
+	if( bSaveUndo )
+		SaveUndo();
+
 	switch( c )
 	{
 		case cut:
@@ -2296,13 +2361,17 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 					NoteDataUtil::ShiftRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_fSongBeat) + 1, BeatToNoteRow(fStopLength) );
 					m_pSong->m_Timing.ShiftRows( BeatToNoteRow(GAMESTATE->m_fSongBeat) + 1, BeatToNoteRow(fStopLength) );
 				}
-			// Hello and welcome to I FEEL STUPID :-)
-			break;
 			}
+			break;
+		case undo:
+			Undo();
+			break;
 		default:
 			ASSERT(0);
 	};
 
+	if( bSaveUndo )
+		CheckNumberOfNotesAndUndo();
 }
 
 void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const vector<int> &iAnswers )
@@ -2449,10 +2518,36 @@ void ScreenEdit::CopyToLastSave()
 
 void ScreenEdit::CopyFromLastSave()
 {
-
 	*GAMESTATE->m_pCurSong = m_songLastSave;
 	if( GAMESTATE->m_pCurSteps[PLAYER_1] )
 		*GAMESTATE->m_pCurSteps[PLAYER_1] = m_stepsLastSave;
+}
+
+void ScreenEdit::SaveUndo()
+{
+	m_Undo.CopyAll( m_NoteDataEdit );
+}
+
+void ScreenEdit::Undo()
+{
+	m_NoteDataEdit.CopyAll( m_Undo );
+	m_Undo.ClearAll();
+}
+
+void ScreenEdit::CheckNumberOfNotesAndUndo()
+{
+	for( int row=0; row<=m_NoteDataEdit.GetLastRow(); row+=ROWS_PER_MEASURE )
+	{
+		int iNumNotesThisMeasure = 0;
+		FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteDataEdit, r, row, row+ROWS_PER_MEASURE )
+			iNumNotesThisMeasure += m_NoteDataEdit.GetNumTapNonEmptyTracks( r );
+		if( iNumNotesThisMeasure > MAX_NOTES_PER_MEASURE )
+		{
+			Undo();
+			SCREENMAN->Prompt( SM_None, "This change creates more than 50 notes in a measure.  The change has been reverted." );
+			return;
+		}
+	}
 }
 
 /*

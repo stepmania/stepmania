@@ -144,6 +144,14 @@ protected:
 	void PlayTicks();
 	void PlayPreviewMusic();
 	void UpdateTextInfo();
+	
+	// Call this before modifying m_NoteDataEdit.
+	void SaveUndo();
+	// Revert m_NoteDataEdit using m_Undo.
+	void Undo();
+	// Call this after modifying m_NoteDataEdit.  It will Undo() if 
+	// MAX_NOTES_PER_MEASURE was exceeded.
+	void CheckNumberOfNotesAndUndo();
 
 	void OnSnapModeChange();
 	void MenuItemGainFocus( BitmapText* menuitem );
@@ -170,6 +178,7 @@ protected:
 	int g_iShiftAnchor;
 
 	NoteData			m_Clipboard;
+	NoteData			m_Undo;
 
 	RageSound			m_soundAddNote;
 	RageSound			m_soundRemoveNote;
@@ -249,10 +258,11 @@ public:
 		shift_pauses_backward,
 		convert_beat_to_pause,
 		convert_pause_to_beat,
+		undo,
 		NUM_AREA_MENU_CHOICES
 	};
-	void HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAnswers );
-	void HandleAreaMenuChoice( AreaMenuChoice c ) { const vector<int> v; HandleAreaMenuChoice( c, v ); }
+	void HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAnswers, bool bAllowUndo = true );
+	void HandleAreaMenuChoice( AreaMenuChoice c, bool bAllowUndo = true ) { const vector<int> v; HandleAreaMenuChoice( c, v, bAllowUndo ); }
 	enum TurnType
 	{
 		left,

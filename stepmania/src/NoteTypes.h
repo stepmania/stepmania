@@ -145,6 +145,9 @@ const int MAX_NOTE_TRACKS = 16;
  * by 2, 3, and 4, to exactly represent 8th, 12th and 16th notes. */
 const int ROWS_PER_BEAT	= 48;
 
+/* In the editor, enforce a reasonable limit on the number of notes. */
+const int MAX_NOTES_PER_MEASURE = 50;
+
 const int BEATS_PER_MEASURE = 4;
 const int ROWS_PER_MEASURE = ROWS_PER_BEAT * BEATS_PER_MEASURE;
 const int MAX_NOTE_ROW = (1<<30);
