@@ -453,8 +453,19 @@ bool HasExtension(CString ext)
 
 static void CheckPalettedTextures( bool LowColor )
 {
-	if( !GLExt::glColorTableEXT || !GLExt::glGetColorTableParameterivEXT )
-		return;
+	CString error;
+
+	if( GLExt::glColorTableEXT == NULL )
+	{
+		error = "glColorTableEXT missing";
+		goto fail;
+	}
+
+	if( GLExt::glGetColorTableParameterivEXT == NULL )
+	{
+		error = "glGetColorTableParameterivEXT missing";
+		goto fail;
+	}
 
 	/* Check to see if paletted textures really work. */
 	GLenum glTexFormat = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].internalfmt;
@@ -470,7 +481,6 @@ static void CheckPalettedTextures( bool LowColor )
 	}
 
 	FlushGLErrors();
-	CString error;
 #define GL_CHECK_ERROR(f) \
 		{ \
 			GLenum glError = glGetError(); \
@@ -506,6 +516,7 @@ static void CheckPalettedTextures( bool LowColor )
 	{	// in brackets to hush VC6 error
 		GLint size = 0;
 		glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INDEX_SIZE_EXT), &size);
+		GL_CHECK_ERROR( "glGetTexLevelParameteriv(GL_TEXTURE_INDEX_SIZE_EXT)" );
 		if( bits > size || size > 8 )
 		{
 			error = ssprintf("Expected %i-bit palette, got a %i-bit one instead", bits, int(size));
