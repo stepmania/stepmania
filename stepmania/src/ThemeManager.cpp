@@ -32,11 +32,11 @@ ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the pro
 
 
 const CString BASE_THEME_NAME = "default";
+const CString FALLBACK_THEME_NAME = "fallback";
 const CString LANGUAGES_SUBDIR = "Languages" SLASH;
 const CString BASE_LANGUAGE = "english";
 const CString THEMES_DIR  = BASE_PATH "Themes" SLASH;
 const CString METRICS_FILE = "metrics.ini";
-const CString FALLBACK_METRICS_FILE = "fallback.ini";
 const CString ELEMENT_CATEGORY_STRING[NUM_ELEMENT_CATEGORIES] =
 {
 	"BGAnimations",
@@ -145,15 +145,19 @@ void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage
 
 	// read new metrics.  First read base metrics, then read cur theme's metrics, overriding base theme
 	m_pIniMetrics->Reset();
-	m_pIniMetrics->SetPath( GetThemeDirFromName(BASE_THEME_NAME) + FALLBACK_METRICS_FILE );
+	m_pIniMetrics->SetPath( GetMetricsIniPath(FALLBACK_THEME_NAME) );
 	m_pIniMetrics->ReadFile();
 	m_pIniMetrics->SetPath( GetMetricsIniPath(BASE_THEME_NAME) );
 	m_pIniMetrics->ReadFile();
 	m_pIniMetrics->SetPath( GetMetricsIniPath(m_sCurThemeName) );
 	m_pIniMetrics->ReadFile();
+	m_pIniMetrics->SetPath( GetLanguageIniPath(FALLBACK_THEME_NAME,BASE_LANGUAGE) );
+	m_pIniMetrics->ReadFile();
 	m_pIniMetrics->SetPath( GetLanguageIniPath(BASE_THEME_NAME,BASE_LANGUAGE) );
 	m_pIniMetrics->ReadFile();
 	m_pIniMetrics->SetPath( GetLanguageIniPath(m_sCurThemeName,BASE_LANGUAGE) );
+	m_pIniMetrics->ReadFile();
+	m_pIniMetrics->SetPath( GetLanguageIniPath(FALLBACK_THEME_NAME,m_sCurLanguage) );
 	m_pIniMetrics->ReadFile();
 	m_pIniMetrics->SetPath( GetLanguageIniPath(BASE_THEME_NAME,m_sCurLanguage) );
 	m_pIniMetrics->ReadFile();
