@@ -102,10 +102,14 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : ScreenWithMenuElement
 
 		GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
 		GAMESTATE->m_pCurStyle = GAMEMAN->GameAndStringToStyle( GAMEMAN->GetDefaultGame(), "versus" );
+		STATSMAN->m_CurStageStats.playMode = GAMESTATE->m_PlayMode;
+		STATSMAN->m_CurStageStats.pStyle = GAMESTATE->m_pCurStyle;
+		STATSMAN->m_CurStageStats.StageType = StageStats::STAGE_NORMAL;
 		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
 		GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 		GAMESTATE->m_pCurSong = SONGMAN->GetRandomSong();
+		STATSMAN->m_CurStageStats.vpSongs.push_back( GAMESTATE->m_pCurSong );
 		GAMESTATE->m_pCurCourse = SONGMAN->GetRandomCourse();
 		GAMESTATE->m_pCurSteps[PLAYER_1] = GAMESTATE->m_pCurSong->GetAllSteps()[0];
 		GAMESTATE->m_pCurSteps[PLAYER_2] = GAMESTATE->m_pCurSong->GetAllSteps()[0];
@@ -1264,7 +1268,7 @@ void ScreenEvaluation::TweenOffScreen()
 
 void ScreenEvaluation::Update( float fDeltaTime )
 {
-	Screen::Update( fDeltaTime );
+	ScreenWithMenuElements::Update( fDeltaTime );
 
 	m_bgCondBga.Update(fDeltaTime);
 	if( !m_bPassFailTriggered )
