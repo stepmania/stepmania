@@ -644,39 +644,6 @@ void BGAnimationLayer::Update( float fDeltaTime )
 			}
 		}
 		break;
-	case EFFECT_PARTICLES_SPIRAL_OUT:
-		for( unsigned i=0; i<m_SubActors.size(); i++ )
-		{
-			m_SubActors[i]->SetZoom( m_SubActors[i]->GetZoom() + fDeltaTime );
-			if( m_SubActors[i]->GetZoom() > SPIRAL_MAX_ZOOM )
-				m_SubActors[i]->SetZoom( SPIRAL_MIN_ZOOM );
-
-			m_SubActors[i]->SetRotationZ( m_SubActors[i]->GetRotationZ() + fDeltaTime );
-
-			float fRadius = (m_SubActors[i]->GetZoom()-SPIRAL_MIN_ZOOM);
-			fRadius *= fRadius;
-			fRadius *= 200;
-			m_SubActors[i]->SetX( SCREEN_CENTER_X + cosf(m_SubActors[i]->GetRotationZ())*fRadius );
-			m_SubActors[i]->SetY( SCREEN_CENTER_Y + sinf(m_SubActors[i]->GetRotationZ())*fRadius );
-		}
-		break;
-	case EFFECT_PARTICLES_SPIRAL_IN:
-		for( unsigned i=0; i<m_SubActors.size(); i++ )
-		{
-			m_SubActors[i]->SetZoom( m_SubActors[i]->GetZoom() - fDeltaTime );
-			if( m_SubActors[i]->GetZoom() < SPIRAL_MIN_ZOOM )
-				m_SubActors[i]->SetZoom( SPIRAL_MAX_ZOOM );
-
-			m_SubActors[i]->SetRotationZ( m_SubActors[i]->GetRotationZ() - fDeltaTime );
-
-			float fRadius = (m_SubActors[i]->GetZoom()-SPIRAL_MIN_ZOOM);
-			fRadius *= fRadius;
-			fRadius *= 200;
-			m_SubActors[i]->SetX( SCREEN_CENTER_X + cosf(m_SubActors[i]->GetRotationZ())*fRadius );
-			m_SubActors[i]->SetY( SCREEN_CENTER_Y + sinf(m_SubActors[i]->GetRotationZ())*fRadius );
-		}
-		break;
-
 	case TYPE_PARTICLES:
 		for( unsigned i=0; i<m_SubActors.size(); i++ )
 		{
