@@ -228,7 +228,6 @@ void NextFloat( float fValues[], int size )
 	for( i=0; i<size; i++ )
 		fValues[i] = 0;
 
-	index;
 	if( index == size-1 )	// if true, then the last float in the list was selected
 		;	// leave all off
 	else
