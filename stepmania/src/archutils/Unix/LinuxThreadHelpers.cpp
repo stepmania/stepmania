@@ -121,15 +121,21 @@ int GetCurrentThreadId()
 {
 	InitializePidThreadHelpers(); // for g_bUsingNPTL
 
-	pid_t ret = gettid();
+	/* Don't keep calling gettid() if it's not supported; it'll make valgrind spam us. */
+	static bool GetTidUnsupported = 0;
+	if( !GetTidUnsupported )
+	{
+		pid_t ret = gettid();
 
-	/* If this fails with ENOSYS, we're on a kernel before gettid.  If we
-	 * don't have NPTL, then just use getpid().  If we're on NPTL and don't
-	 * have gettid(), something's wrong. */
-	if( ret != -1 )
-		return ret;
+		/* If this fails with ENOSYS, we're on a kernel before gettid, or we're
+		 * under valgrind.  If we don't have NPTL, then just use getpid().  If
+		 * we're on NPTL and don't have gettid(), something's wrong. */
+		if( ret != -1 )
+			return ret;
 
-	ASSERT( !g_bUsingNPTL );
+		ASSERT( !g_bUsingNPTL );
+		GetTidUnsupported = true;
+	}
 
 	return getpid();
 }
