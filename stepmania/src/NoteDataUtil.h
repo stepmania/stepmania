@@ -40,6 +40,8 @@ namespace NoteDataUtil
 	float GetRadarValue( const NoteData &in, RadarCategory rv, float fSongSeconds );
 
 	void RemoveHoldNotes( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
+	void RemoveSimultaneousNotes( NoteData &in, int iMaxSimultaneous, float fStartBeat = 0, float fEndBeat = 99999 );
+	void RemoveJumps( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void RemoveHands( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void RemoveMines( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	enum TrackMapping { left, right, mirror, shuffle, super_shuffle, stomp, NUM_TRACK_MAPPINGS };

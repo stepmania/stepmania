@@ -586,8 +586,8 @@ void ScreenOptionsMaster::ExportOptions()
 		const OptionRowHandler &hand = OptionRowHandlers[row];
 		if( hand.type == ROW_LIST )
 		{
-			const int sel = m_Rows[row]->GetOneSharedSelection();
-			const ModeChoice &mc = hand.ListEntries[sel];
+			const int choice = m_Rows[row]->m_iChoiceWithFocus[0];
+			const ModeChoice &mc = hand.ListEntries[choice];
 			if( mc.m_sScreen != "" )
 				m_NextScreen = mc.m_sScreen;
 		}

@@ -161,7 +161,7 @@ static const MenuRow g_AreaMenuItems[] =
 	{ "Clear",						true, 0, { NULL } },
 	{ "Quantize",					true, 0, { "4TH","8TH","12TH","16TH","24TH","32ND","48TH","64TH" } },
 	{ "Turn",						true, 0, { "Left","Right","Mirror","Shuffle","Super Shuffle" } },
-	{ "Transform",					true, 0, { "NoHolds","NoMines","Little","Wide","Big","Quick","Skippy","Mines","Echo","Planted","Stomp","Twister","NoHands" } },
+	{ "Transform",					true, 0, { "NoHolds","NoMines","Little","Wide","Big","Quick","Skippy","Mines","Echo","Planted","Stomp","Twister","NoJumps","NoHands" } },
 	{ "Alter",						true, 0, { "Backwards","Swap Sides","Copy Left To Right","Copy Right To Left","Clear Left","Clear Right","Collapse To One","Collapse Left","Shift Left","Shift Right" } },
 	{ "Tempo",						true, 0, { "Compress 2x","Compress 3->2","Compress 4->3","Expand 3->4","Expand 2->3","Expand 2x" } },
 	{ "Play selection",				true, 0, { NULL } },
@@ -1588,6 +1588,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				case planted:	NoteDataUtil::Planted( m_NoteFieldEdit, fBeginBeat, fEndBeat );	break;
 				case stomp:		NoteDataUtil::Stomp( m_NoteFieldEdit, st, fBeginBeat, fEndBeat );	break;
 				case twister:	NoteDataUtil::Twister( m_NoteFieldEdit, fBeginBeat, fEndBeat );	break;
+				case nojumps:	NoteDataUtil::RemoveJumps( m_NoteFieldEdit, fBeginBeat, fEndBeat );	break;
 				case nohands:	NoteDataUtil::RemoveHands( m_NoteFieldEdit, fBeginBeat, fEndBeat );	break;
 				default:		ASSERT(0);
 				}

@@ -369,7 +369,7 @@ void NoteDataUtil::RemoveHoldNotes(NoteData &in, float fStartBeat, float fEndBea
 }
 
 
-void NoteDataUtil::RemoveHands(NoteData &in, float fStartBeat, float fEndBeat)
+void NoteDataUtil::RemoveSimultaneousNotes(NoteData &in, int iMaxSimultaneous, float fStartBeat, float fEndBeat)
 {
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
@@ -385,7 +385,7 @@ void NoteDataUtil::RemoveHands(NoteData &in, float fStartBeat, float fEndBeat)
 
 		// remove the first tap note or the first hold note that starts on this row
 		int iTotalTracksPressed = in.GetNumTracksWithTap(r) + viTracksHeld.size();
-		int iTracksToRemove = max( 0, iTotalTracksPressed - 2 );
+		int iTracksToRemove = max( 0, iTotalTracksPressed - iMaxSimultaneous );
 		for( int t=0; iTracksToRemove>0 && t<in.GetNumTracks(); t++ )
 		{
 			if( in.GetTapNote(t,r) == TAP_TAP )
@@ -410,6 +410,15 @@ void NoteDataUtil::RemoveHands(NoteData &in, float fStartBeat, float fEndBeat)
 	}
 }
 
+void NoteDataUtil::RemoveJumps( NoteData &in, float fStartBeat, float fEndBeat )
+{
+	RemoveSimultaneousNotes(in,1);
+}
+
+void NoteDataUtil::RemoveHands( NoteData &in, float fStartBeat, float fEndBeat )
+{
+	RemoveSimultaneousNotes(in,2);
+}
 
 void NoteDataUtil::RemoveMines(NoteData &in, float fStartBeat, float fEndBeat )
 {
@@ -1342,6 +1351,7 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, Ste
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_PLANTED] )	NoteDataUtil::Planted(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_STOMP] )		NoteDataUtil::Stomp(nd, st, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_TWISTER] )	NoteDataUtil::Twister(nd, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOJUMPS] )	NoteDataUtil::RemoveJumps(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHANDS] )	NoteDataUtil::RemoveHands(nd, fStartBeat, fEndBeat);
 }
 
