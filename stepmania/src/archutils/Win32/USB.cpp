@@ -3,13 +3,13 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 
-#pragma comment(lib, "ddk/setupapi.lib") 
-#pragma comment(lib, "ddk/hid.lib") 
+#pragma comment(lib, "archutils/Win32/ddk/setupapi.lib") 
+#pragma comment(lib, "archutils/Win32/ddk/hid.lib") 
 
 extern "C" {
-#include "ddk/setupapi.h"
+#include "archutils/Win32/ddk/setupapi.h"
 /* Quiet header warning: */
-#include "ddk/hidsdi.h"
+#include "archutils/Win32/ddk/hidsdi.h"
 }
 
 static CString GetUSBDevicePath (int num)
