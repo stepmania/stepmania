@@ -64,6 +64,18 @@ RageFile::RageFile( const CString& path, RageFile::OpenMode mode )
 	Open(path, mode);
 }
 
+RageFile::RageFile( const RageFile &cpy )
+{
+	m_File = cpy.m_File->Copy( *this );
+	m_Path = cpy.m_Path;
+	m_Mode = cpy.m_Mode;
+	m_Error = cpy.m_Error;
+	m_EOF = cpy.m_EOF;
+	m_FilePos = cpy.m_FilePos;
+
+	ResetBuf();
+}
+
 CString RageFile::GetPath() const
 {
     if ( !IsOpen() )
@@ -354,9 +366,19 @@ void RageFile::Rewind()
 
 	m_EOF = false;
 
+	m_FilePos = 0;
 	m_File->Rewind();
 }
 
+int RageFile::Read( CString &buffer, size_t bytes )
+{
+	char *buf = new char[bytes];
+	int ret = Read( buf, bytes );
+	if( ret != -1 )
+		buffer.assign( buf, buf+ret );
+	delete [] buf;
+	return ret;
+}
 
 int RageFile::Write( const void *buffer, size_t bytes, int nmemb )
 {

@@ -30,7 +30,14 @@ public:
     RageFile();
     RageFile( const CString& path, OpenMode mode = READ );
     ~RageFile() { Close(); }
+	RageFile( const RageFile &cpy );
 
+	/* Use GetRealPath to get the path this file was opened with; use that if you
+	 * want a path that will probably get you the same file again.
+	 *
+	 * GetPath can be overridden by drivers.  Use it to get a path for display;
+	 * it may give more information, such as the name of the archive the file
+	 * is in.  It has no parsable meaning. */
 	const CString &GetRealPath() const { return m_Path; }
 	CString GetPath() const;
     
@@ -38,10 +45,11 @@ public:
     void Close();
     
 	bool IsOpen() const { return m_File != NULL; }
+	OpenMode GetOpenMode() const { return m_Mode; }
 	bool AtEOF() const { return m_EOF; }
 	CString GetError() const { return m_Error; }
 	void ClearError() { m_Error = ""; }
-    
+
 	int Tell() const { return m_FilePos; }
 	int Seek( int offset );
 	int SeekCur( int offset );
@@ -52,7 +60,7 @@ public:
 	int Write( const void *buffer, size_t bytes );
 	int Write( const CString& string ) { return Write( string.data(), string.size() ); }
 	int Read( void *buffer, size_t bytes );
-	int Read( const CString &buffer, size_t bytes );
+	int Read( CString &buffer, size_t bytes );
 
 	/* These are just here to make wrappers (eg. vorbisfile, SDL_rwops) easier. */
 	int Write( const void *buffer, size_t bytes, int nmemb );
