@@ -500,7 +500,7 @@ void NoteField::DrawPrimitives()
 		{
 			if(aStopSegments[i].m_iStartRow >= iFirstIndexToDraw &&
 			   aStopSegments[i].m_iStartRow <= iLastIndexToDraw)
-			DrawFreezeText( NoteRowToBeat(aStopSegments[i].m_iStartRow), NoteRowToBeat(aStopSegments[i].m_iStartRow) );
+			DrawFreezeText( NoteRowToBeat(aStopSegments[i].m_iStartRow), aStopSegments[i].m_fStopSeconds );
 		}
 
 		//
