@@ -211,7 +211,7 @@ apply_color_key:
 		img = dst;
 	}
 	
-	if( img->format->BitsPerPixel == 8 && actualID.iGrayscaleBits == -1 )
+	if( img->format->BitsPerPixel == 8 && actualID.iGrayscaleBits == -1 && !(img->unused1 & ALPHA_PALETTE) )
 	{
 		/* Unless we set up the palette ourself, assume the "unused" bit is undefined,
 		 * and set it to 255.  We use it for alpha. */

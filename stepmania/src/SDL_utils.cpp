@@ -430,6 +430,18 @@ int FindSurfaceTraits( const SDL_Surface *img )
 	const int NEEDS_NO_ALPHA=0, NEEDS_BOOL_ALPHA=1, NEEDS_FULL_ALPHA=2;
 	int alpha_type = NEEDS_NO_ALPHA;
 
+	/* If 8bpp and neither SDL_SRCCOLORKEY nor ALPHA_PALETTE, there is no transparency
+	 * to search for. */
+	if( img->format->BitsPerPixel == 8 &&
+		!(img->flags & SDL_SRCCOLORKEY) && !(img->unused1 & ALPHA_PALETTE) )
+		return TRAIT_NO_TRANSPARENCY;
+
+	Uint32 max_alpha;
+	if( img->format->BitsPerPixel == 8 )
+		max_alpha = 0xFF;
+	else
+		max_alpha = img->format->Amask;
+
 	for(int y = 0; y < img->h; ++y)
 	{
 		Uint8 *row = (Uint8 *)img->pixels + img->pitch*y;
@@ -438,16 +450,18 @@ int FindSurfaceTraits( const SDL_Surface *img )
 		{
 			Uint32 val = decodepixel(row, img->format->BytesPerPixel);
 
-			if( img->format->BitsPerPixel == 8 ) {
-				if(img->flags & SDL_SRCCOLORKEY && val == img->format->colorkey )
-					alpha_type = max( alpha_type, NEEDS_BOOL_ALPHA );
-			} else if(img->format->Amask) {
-				Uint32 masked_alpha = val & img->format->Amask;
-				if(masked_alpha == 0) 
-					alpha_type = max( alpha_type, NEEDS_BOOL_ALPHA );
-				else if(masked_alpha != img->format->Amask)
-					alpha_type = max( alpha_type, NEEDS_FULL_ALPHA );
-			}
+			Uint32 alpha;
+			if( img->flags & SDL_SRCCOLORKEY )
+				alpha = (val == img->format->colorkey)? 0x00:0xFF;
+			if( img->unused1 & ALPHA_PALETTE )
+				alpha = img->format->palette->colors[val].unused;
+			else
+				alpha = (val & img->format->Amask);
+
+			if( alpha == 0 )
+				alpha_type = max( alpha_type, NEEDS_BOOL_ALPHA );
+			else if( alpha != max_alpha )
+				alpha_type = max( alpha_type, NEEDS_FULL_ALPHA );
 
 			row += img->format->BytesPerPixel;
 		}
