@@ -139,7 +139,7 @@ if test x$enable_gtk2 = xyes; then
 fi
 
 AC_CHECK_HEADER(sys/soundcard.h, [AC_DEFINE(HAVE_OSS, 1, [OSS support available])])
-AC_ARG_ENABLE(force-oss, AC_HELP_STRING([--enable-force-oss], [Force OSS]), force_oss=$enableval, force_oss=yes)
+AC_ARG_ENABLE(force-oss, AC_HELP_STRING([--enable-force-oss], [Force OSS]), force_oss=$enableval, force_oss=no)
 AC_CHECK_HEADER(stdint.h, , [AC_DEFINE(MISSING_STDINT_H, 1, [stdint.h is missing])])
 AC_CHECK_HEADERS([inttypes.h])
 
