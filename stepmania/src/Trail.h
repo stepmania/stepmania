@@ -23,7 +23,8 @@ struct TrailEntry
 		pSteps(NULL),
 		bMystery(false),
 		iLowMeter(-1),
-		iHighMeter(-1)
+		iHighMeter(-1),
+		dc(DIFFICULTY_INVALID)
 	{
 	}
 	void GetAttackArray( AttackArray &out ) const;
@@ -33,8 +34,12 @@ struct TrailEntry
 	CString		Modifiers;
 	AttackArray Attacks;
 	bool		bMystery;
+
+	/* These represent the meter and difficulty used by the course to pick the
+	 * steps; if you want the real difficulty and meter, look at pSteps. */
 	int			iLowMeter;
 	int			iHighMeter;
+	Difficulty	dc;
 };
 
 class Trail

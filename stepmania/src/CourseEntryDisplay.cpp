@@ -96,7 +96,7 @@ void CourseEntryDisplay::LoadFromTrailEntry( int iNum, const Course *pCourse, Tr
 		FOREACH_EnabledPlayer(pn)
 		{
 			TrailEntry *te = tes[pn];
-			Difficulty dc = te->pSteps->GetDifficulty();
+			Difficulty dc = te->dc;
 			if( dc == DIFFICULTY_INVALID )
 			{
 				int iLow = te->iLowMeter;

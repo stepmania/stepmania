@@ -775,6 +775,7 @@ void Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		te.bMystery = e.mystery;
 		te.iLowMeter = low_meter;
 		te.iHighMeter = high_meter;
+		te.dc = e.difficulty;
 		trail.m_vEntries.push_back( te ); 
 	}
 }
