@@ -17,7 +17,6 @@
 #include "BitmapText.h"
 #include "Player.h"
 #include "RandomSample.h"
-#include "RageSoundManager.h"
 #include "RageSound.h"
 #include "Background.h"
 #include "LifeMeter.h"
