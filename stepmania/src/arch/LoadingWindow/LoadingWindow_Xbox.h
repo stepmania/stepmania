@@ -16,8 +16,10 @@ public:
 	void Paint();
 	void SetText(CString str);
 
+protected:
 	CString text ;
 	XFONT* font;
+	bool useImage;
 };
 
 #endif

@@ -1,5 +1,6 @@
 #include "global.h"
 #include "LoadingWindow_Xbox.h"
+#include "RageLog.h"
 
 #include "ProductInfo.h"
 
@@ -13,7 +14,7 @@ LoadingWindow_Xbox::LoadingWindow_Xbox()
 	// Initialise Direct3D
 	g_pD3D = Direct3DCreate8(D3D_SDK_VERSION);
 	
-    //Create a structure to hold the settings for our device
+    // Create a structure to hold the settings for our device
     D3DPRESENT_PARAMETERS d3dpp;
     ZeroMemory(&d3dpp, sizeof(d3dpp));
 
@@ -45,32 +46,11 @@ LoadingWindow_Xbox::LoadingWindow_Xbox()
 
 	// Load the splash.png
 
-	/* XXX: if this is uncommented, it fails to link due to multiply defined symbols
-	 * in jpeg.lib conflicting with d3dx8.lib. Can't load the texture */
-	//D3DXCreateTextureFromFileA(g_pD3DDevice, "Data/splash.png", &splash);
+	HRESULT result = D3DXCreateTextureFromFileA(g_pD3DDevice, "D:\\Data\\splash.png", &splash);
+	useImage = (result == D3D_OK);
 
-	/* XXX: Here is a failed attempt at loading the texture using Rage. This code builds but
-	 * crashes. The only other way I can think of doing is using a new instance of
-	 * RageDisplay_D3D. Code is left here in case someone works out what I did wrong. */
-	/*CString error;
-	RageSurface *s = RageSurfaceUtils::LoadFile( "Data/splash.png", error );
-	
-	g_pD3DDevice->CreateTexture( s->w, s->h, 1, 0, D3DFMT_P8, D3DPOOL_MANAGED, &splash );
-
-	D3DLOCKED_RECT lr;
-	splash->LockRect( 0, &lr, NULL, 0 );
-
-	XGSwizzleRect(
-		s->pixels,	// pSource, 
-		s->pitch,		// Pitch,
-		NULL,	// pRect,
-		lr.pBits,	// pDest,
-		s->w,	// Width,
-		s->h,	// Height,
-		NULL,	// pPoint,
-		s->format->BytesPerPixel ); //BytesPerPixel
-	
-	splash->UnlockRect( 0 );*/
+	if(!useImage)
+		LOG->Trace("Error loading splash.png - %i", result);
 	
 	SetText(CString("Loading songs"));
 }
@@ -94,29 +74,34 @@ void LoadingWindow_Xbox::Paint()
 	g_pD3DDevice->BeginScene();
 	g_pD3DDevice->GetBackBuffer(0,D3DBACKBUFFER_TYPE_MONO,&g_pFrontBuffer);
 
-	// Draw the splash image
-	// Uncomment this if the splash texture is successfully loaded
-	/*D3DXVECTOR2 pos;
-	pos.x = 0.0f;
-	pos.y = 0.0f;
-	
-	g_sprite->Begin();
-	g_sprite->Draw(splash, NULL, NULL, NULL, NULL, &pos, 0xFFFFFFFF);
-	g_sprite->End();*/
+	if(useImage)
+	{
+		// Draw the splash image
+		// Only draw if the splash texture is successfully loaded
+		D3DXVECTOR2 pos;
+		pos.x = 70.0f;
+		pos.y = 30.0f;
+		
+		g_sprite->Begin();
+		g_sprite->Draw(splash, NULL, NULL, NULL, NULL, &pos, 0xFFFFFFFF);
+		g_sprite->End();
+	}
+	else
+	{
+		// Lo-fi version: print the product name and version at the top of the screen
+		font->SetTextColor(D3DCOLOR_XRGB(255, 0, 0));
+		CString title = "Version ";
+		title = title + PRODUCT_VER;
+		WCHAR wc_title[200] = {0};
+		swprintf(wc_title, L"%S", title.c_str());
 
-	// Lo-fi version: print the product name and version at the top of the screen
-	font->SetTextColor(D3DCOLOR_XRGB(255, 0, 0));
-	CString title = "Version ";
-	title = title + PRODUCT_VER;
-	WCHAR wc_title[200] = {0};
-	swprintf(wc_title, L"%S", title.c_str());
-
-	font->TextOut(g_pFrontBuffer, L"StepManiaX", -1, 320, 30);
-	font->SetTextColor(D3DCOLOR_XRGB(255, 255, 0));
-	font->TextOut(g_pFrontBuffer, wc_title, -1, 320, 40 + font->GetTextHeight());
-	font->SetTextColor(D3DCOLOR_XRGB(255, 255, 255));
+		font->TextOut(g_pFrontBuffer, L"StepMania", -1, 320, 30);
+		font->SetTextColor(D3DCOLOR_XRGB(255, 255, 0));
+		font->TextOut(g_pFrontBuffer, wc_title, -1, 320, 40 + font->GetTextHeight());
+	}
 
 	// Draw the text on the screen
+	font->SetTextColor(D3DCOLOR_XRGB(255, 255, 255));
 	basic_string <char>::size_type newLineIndex = text.find("\n", 0);
 	int y = 240;
 
