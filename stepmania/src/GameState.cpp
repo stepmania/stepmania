@@ -271,10 +271,8 @@ bool GameState::HasEarnedExtraStage()
 				GAMESTATE->m_pCurNotes[p]->GetDifficulty() != DIFFICULTY_CHALLENGE )
 				continue; /* not hard enough! */
 
-			/* XXX: if "choose EX" is enabled, then we should only grant EX2
-			 * if the chosen stage was the EX we would have chosen (the hardest
-			 * song or extra1.crs).  Also, that song should be highlighted in the
-			 * music wheel. */
+			/* If "choose EX" is enabled, then we should only grant EX2 if the chosen
+			 * stage was the EX we would have chosen (m_bAllow2ndExtraStage is true). */
 			if( PREFSMAN->m_bPickExtraStage && GAMESTATE->IsExtraStage() && !GAMESTATE->m_bAllow2ndExtraStage )
 				continue;
 
@@ -315,7 +313,6 @@ void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& 
 }
 
 
-/* XXX: Should we store song options, too? */
 /* Store the player's preferred options.  This is called at the very beginning
  * of gameplay. */
 void GameState::StoreSelectedOptions()
@@ -333,11 +330,5 @@ void GameState::RestoreSelectedOptions()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		GAMESTATE->m_PlayerOptions[p] = GAMESTATE->m_StoredPlayerOptions[p];
-	/* Oops.  We can't do this; it'll reset lives back to 4, and we need it
-	 * to stick around for the length of the course (for regaining).  Let's
-	 * just reset the options that can actually be set per-song. XXX */
-//	GAMESTATE->m_SongOptions.Init();
 	m_SongOptions = m_StoredSongOptions;
-//	GAMESTATE->m_SongOptions.m_DrainType = SongOptions::DRAIN_NORMAL;
-//	GAMESTATE->m_SongOptions.m_fMusicRate = 1.0f;
 }
