@@ -375,7 +375,7 @@ void Background::LoadFromSong( Song* pSong )
 	for( i=0; i<m_aBGChanges.size(); i++ )
 	{
 		BackgroundChange &change = m_aBGChanges[i];
-		if( change.m_sBGName.CompareNoCase("random") )
+		if( change.m_sBGName.CompareNoCase("-random-") )
 			continue;
 
 		const float fStartBeat = change.m_fStartBeat;
