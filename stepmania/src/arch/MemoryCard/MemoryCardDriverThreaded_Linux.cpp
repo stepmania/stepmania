@@ -150,7 +150,11 @@ void MemoryCardDriverThreaded_Linux::MountThreadMain()
       bool bChanged = st.st_mtime != lastModTime;
       lastModTime = st.st_mtime;
 
-      if( bChanged )
+      // TRICKY: The file time only has a resolution of one second.  So, if the file
+      // changes more than one time in one second, we'll only pick up the first change.
+      // Hack around this by continually scanning for changes in any second that we detect
+      // a change.
+      if( bChanged || time(NULL)+1 <= lastModTime )
 	{
 	  // TRICKY: We're waiting for a change in the USB device list, but 
 	  // the usb-storage descriptors take a bit longer to update.  It's more convenient to wait
@@ -304,7 +308,7 @@ void GetNewStorageDevices( vector<UsbStorageDeviceEx>& vDevicesOut )
 
 	{
 		// Find all attached USB devices.  Output looks like:
-
+	  /*
 		// T:  Bus=02 Lev=00 Prnt=00 Port=00 Cnt=00 Dev#=  1 Spd=12  MxCh= 2
 		// B:  Alloc=  0/900 us ( 0%), #Int=  0, #Iso=  0
 		// D:  Ver= 1.00 Cls=09(hub  ) Sub=00 Prot=00 MxPS= 8 #Cfgs=  1
@@ -375,6 +379,62 @@ void GetNewStorageDevices( vector<UsbStorageDeviceEx>& vDevicesOut )
 				continue;	// stop processing this line
 			}
 		}
+	  */
+
+	  // Bus 002 Device 001: ID 0000:0000
+	  //   iSerial                 3 1125198948886
+	  //       bInterfaceClass         8 Mass Storage
+
+	  CString sCommand = "/usr/sbin/lsusb";
+	  char *szParams[] = { "/usr/sbin/lsusb", "-v", NULL }; 
+	  CString sOutput;
+	  LOG->Trace( sCommand );
+	  RunProgram( sCommand, szParams, sOutput );
+
+	  CStringArray vsLines;
+	  split( sOutput, "\n", vsLines );
+
+	  UsbStorageDeviceEx usbd;
+	  for( unsigned i=0; i<vsLines.size(); i++ )
+	    {
+	      CString &sLine = vsLines[i];
+
+	      int iRet, iThrowAway;
+
+	      // Bus 002 Device 001: ID 0000:0000
+	      int iBus;
+	      iRet = sscanf( sLine.c_str(), "Bus %d", &iBus );
+	      if( iRet == 1 )
+		{
+		  usbd.iBus = iBus;
+		  LOG->Trace( "iBus = %d", iBus );
+		  continue;       // stop processing this line
+		}
+
+	      //   iSerial                 3 1125198948886
+	      char szSerial[1024];
+	      iRet = sscanf( sLine.c_str(), "  iSerial %d %[^\n]", &iThrowAway, szSerial );
+	      if( iRet == 2 )
+		{
+		  usbd.sSerial = szSerial;
+		  LOG->Trace( "sSerial = %s", szSerial );
+		  continue;       // stop processing this line
+		}
+
+	      //       bInterfaceClass         8 Mass Storage
+	      int iClass;
+	      iRet = sscanf( sLine.c_str(), "      bInterfaceClass %d", &iClass );
+	      if( iRet == 1 )
+		{
+		  if( iClass == 8 )       // storage class
+		    {		      
+		      vDevicesOut.push_back( usbd );
+		      LOG->Trace( "iScsiIndex: %d, iBus: %d, iLevel: %d, iPort: %d",
+				  usbd.iScsiIndex, usbd.iBus, usbd.iLevel, usbd.iPort );
+		    }
+		  continue;       // stop processing this line
+		}
+	    }
 	}
 
 	{
