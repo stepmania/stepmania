@@ -320,12 +320,12 @@ bool UnlockSystem::Load()
 			if( m_SongEntries[i].m_fRequired[j] )
 				str += ssprintf( "%s = %f; ", g_UnlockNames[j], m_SongEntries[i].m_fRequired[j] );
 
-		str += ssprintf( "code = %i", m_SongEntries[i].m_iCode );
+		str += ssprintf( "code = %i ", m_SongEntries[i].m_iCode );
 		str += m_SongEntries[i].IsLocked()? "locked":"unlocked";
 		if( m_SongEntries[i].m_pSong )
-			str += ( "(found song)" );
+			str += ( " (found song)" );
 		if( m_SongEntries[i].m_pCourse )
-			str += ( "(found course)" );
+			str += ( " (found course)" );
 		LOG->Trace( "%s", str.c_str() );
 	}
 	
