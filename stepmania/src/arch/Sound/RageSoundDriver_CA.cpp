@@ -4,14 +4,76 @@
 
 #include "CAAudioHardwareSystem.h"
 #include "CAAudioHardwareDevice.h"
+#include "CAAudioHardwareStream.h"
 #include "CAStreamBasicDescription.h"
 #include "CAException.h"
 #include "archutils/Unix/CrashHandler.h"
-
+#include <mach/thread_act.h>
+#include <mach/mach_init.h>
 
 namespace
 {
     AudioConverter *gConverter;
+}
+
+
+static Desc FindClosestFormat(const vector<Desc>& formats)
+{
+	vector<Desc> v;
+
+	vector<Desc>::const_iterator i;
+	for (i = formats.begin(); i != formats.end(); ++i)
+	{
+		const Desc& format = *i;
+
+		if (!format.IsPCM() || format.mSampleRate != 44100.0)
+			continue;
+
+		if (format.SampleWordSize() == 2 &&
+				(format.mFormatFlags & kAudioFormatFlagIsSignedInteger) ==
+				kAudioFormatFlagIsSignedInteger)
+		{ // exact match
+			return format;
+		}
+		v.push_back(format);
+	}
+
+	for (i = v.begin(); i != v.end(); ++i)
+	{
+		const Desc& format = *i;
+		if (format.SampleWordSize() == 2)
+		{
+			return format; // close
+		}
+	}
+	if (v.empty())
+		RageException::ThrowNonfatal("Couldn't find a close format.");
+	return v[0]; // something is better than nothing.
+}
+
+static void GetIOProcFormats( CAAudioHardwareStream stream, vector<Desc> &procFormats )
+{
+	UInt32 numFormats = stream.GetNumberAvailableIOProcFormats();
+
+	for( UInt32 i=0; i<numFormats; ++i )
+	{
+		Desc desc;
+
+		stream.GetAvailableIOProcFormatByIndex( i, desc );
+		procFormats.push_back( desc );
+	}
+}
+
+static void GetPhysicalFormats( CAAudioHardwareStream stream, vector<Desc> &physicalFormats )
+{
+	UInt32 numFormats = stream.GetNumberAvailablePhysicalFormats();
+	for( UInt32 i=0; i<numFormats; ++i )
+	{
+		Desc desc;
+
+		stream.GetAvailablePhysicalFormatByIndex( i, desc );
+		physicalFormats.push_back( desc );
+	}
 }
 
 RageSound_CA::RageSound_CA()
@@ -36,7 +98,22 @@ RageSound_CA::RageSound_CA()
         RageException::ThrowNonfatal("Couldn't get Latency.");
     }
     
-    gConverter = new AudioConverter(mOutputDevice, this);
+    AudioStreamID sID = mOutputDevice->GetStreamByIndex( kAudioDeviceSectionOutput, 0 );
+    CAAudioHardwareStream stream( sID );
+
+    vector<Desc> procFormats;
+    GetIOProcFormats( sID, procFormats );
+
+    vector<Desc> physicalFormats;
+    GetPhysicalFormats( sID, physicalFormats );
+
+    const Desc& procFormat = FindClosestFormat( procFormats );
+    stream.SetCurrentIOProcFormat( procFormat );
+
+    const Desc& physicalFormat = FindClosestFormat( physicalFormats );
+    stream.SetCurrentPhysicalFormat( physicalFormat );
+
+    gConverter = new AudioConverter( this, procFormat );
     
     try
     {
@@ -45,6 +122,7 @@ RageSound_CA::RageSound_CA()
     }
     catch(const CAException& e)
     {
+	delete gConverter;
         RageException::Throw("Couldn't start the IOProc.");
     }
 }
@@ -87,3 +165,12 @@ OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
     gConverter->FillComplexBuffer(dataPackets, *outOutputData, NULL);
     return noErr;
 }
+
+void RageSound_CA::SetupDecodingThread()
+{
+	/* Increase the scheduling precedence of the decoder thread. */
+	thread_precedence_policy po;
+	po.importance = 5;
+	thread_policy_set( mach_thread_self(), THREAD_PRECEDENCE_POLICY, (int *)&po, THREAD_PRECEDENCE_POLICY_COUNT );
+}
+

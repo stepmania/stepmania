@@ -32,7 +32,7 @@ public:
     ~RageSound_CA();
     float GetPlayLatency() const { return mLatency; }
     int64_t GetPosition(const RageSoundBase *sound) const;
-    //void VolumeChanged();
+    void SetupDecodingThread();
 };
 
 #define RAGE_SOUND_CA
