@@ -62,15 +62,18 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	m_LifeMeterBar.Command( LIFEBARONCOMMAND );
 	m_LifeMeterBar.FillForHowToPlay( NUM_PERFECTS, NUM_MISSES );
 
-	if( USEPAD )
+	m_bUsingPad = (USEPAD && DoesFileExist("Characters" SLASH "DancePad-DDR.txt"));
+
+	if( m_bUsingPad )
 	{
 		m_mDancePad.LoadMilkshapeAscii("Characters" SLASH "DancePad-DDR.txt");
 		m_mDancePad.SetRotationX( 35 );
 		m_mDancePad.Command( PADONCOMMAND );
 	}
 
-	// Display random character+pad
-	if( USECHARACTER && GAMESTATE->m_pCharacters.size() )
+	// Display random character
+	m_bUsingCharacter = (USECHARACTER && GAMESTATE->m_pCharacters.size());
+	if( m_bUsingCharacter )
 	{
 		Character* rndchar = GAMESTATE->GetRandomCharacter();
 
@@ -161,69 +164,76 @@ ScreenHowToPlay::~ScreenHowToPlay()
 
 void ScreenHowToPlay::Update( float fDelta )
 {
-	float rate = 1;
 	if(GAMESTATE->m_pCurSong != NULL)
 	{
+		float rate = 1;
+
 		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong );
 		m_fFakeSecondsIntoSong += fDelta;
 
-		if( GAMESTATE->m_bFreeze )
-		{
-			switch(int(GAMESTATE->m_fSongBeat))
-			{
-			case 16: m_mCharacter.SetFrame(30); break;
-			case 18: m_mCharacter.SetFrame(85); break;
-			case 20: m_mCharacter.SetFrame(150); break;
-			case 22: m_mCharacter.SetFrame(270); break;
-			};
-			rate = 0;
-		}
-		else
-		{
-			/* HowToPlay animations.. This will be retimed soon to be a reasonable speed.
-			   This was just a quick'n'dirty way of showing this screen correctly. */
-			// Until we get a better HowToPlay animation done, it has to be this way..
-			if( (GAMESTATE->m_fSongBeat >= 15.0f && GAMESTATE->m_fSongBeat <= 15.2f) )
-			{
-				m_mCharacter.SetFrame(1);
-			}
-			if( (GAMESTATE->m_fSongBeat >= 17.0f && GAMESTATE->m_fSongBeat <= 17.2f) )
-			{ 
-				m_mCharacter.SetFrame(55);
-			}
-			if( (GAMESTATE->m_fSongBeat >= 19.0f && GAMESTATE->m_fSongBeat <= 19.2f) )
-			{ 
-				m_mCharacter.SetFrame(120);
-			}
-			if( (GAMESTATE->m_fSongBeat >= 21.0f && GAMESTATE->m_fSongBeat <= 21.2f) )
-			{ 
-				m_mCharacter.SetFrame(240);
-			}
-			// ----------------------------------------------------------------------- */
+		// we want misses from beat 22.8 on out, so change to a HUMAN controller.
+		// since we aren't taking input from the user, the steps are always missed.
+		if(GAMESTATE->m_fSongBeat > 22.8f)
+			GAMESTATE->m_PlayerController[PLAYER_1] = PC_HUMAN;
 
-			// we want misses from here on out, so change to a HUMAN controller.
-			// since we aren't taking input from the user, the steps are always missed.
-			if(GAMESTATE->m_fSongBeat > 22.8f)
-				GAMESTATE->m_PlayerController[PLAYER_1] = PC_HUMAN;
-
-			if( (GAMESTATE->m_fSongBeat >= 0.0f && GAMESTATE->m_fSongBeat <= 15.0f) ||
-				(GAMESTATE->m_fSongBeat >= 16.8f && GAMESTATE->m_fSongBeat <= 17.0f) ||
-				(GAMESTATE->m_fSongBeat >= 18.8f && GAMESTATE->m_fSongBeat <= 19.0f) ||
-				(GAMESTATE->m_fSongBeat >= 20.8f && GAMESTATE->m_fSongBeat <= 21.0f) ||
-				(GAMESTATE->m_fSongBeat >= 22.8f) )
+		if ( m_bUsingCharacter )
+		{
+			if( GAMESTATE->m_bFreeze )
 			{
-				if( (m_mCharacter.GetCurFrame() >=243) || (m_mCharacter.GetCurFrame() <=184) )
-					m_mCharacter.SetFrame(184);
-				//Loop for HowToPlay static movement is 184~243
-			} else
-				// if we update at normal speed during a step animation, it is too slow and
-				// doesn't finish in time.
-				rate = 1.8f;
+				switch(int(GAMESTATE->m_fSongBeat))
+				{
+				case 16: m_mCharacter.SetFrame(30); break;
+				case 18: m_mCharacter.SetFrame(85); break;
+				case 20: m_mCharacter.SetFrame(150); break;
+				case 22: m_mCharacter.SetFrame(270); break;
+				};
+				rate = 0;
+			}
+			else
+			{
+				/* HowToPlay animations.. This will be retimed soon to be a reasonable speed.
+				   This was just a quick'n'dirty way of showing this screen correctly. */
+				// Until we get a better HowToPlay animation done, it has to be this way..
+				if( (GAMESTATE->m_fSongBeat >= 15.0f && GAMESTATE->m_fSongBeat <= 15.2f) )
+				{
+					m_mCharacter.SetFrame(1);
+				}
+				if( (GAMESTATE->m_fSongBeat >= 17.0f && GAMESTATE->m_fSongBeat <= 17.2f) )
+				{ 
+					m_mCharacter.SetFrame(55);
+				}
+				if( (GAMESTATE->m_fSongBeat >= 19.0f && GAMESTATE->m_fSongBeat <= 19.2f) )
+				{ 
+					m_mCharacter.SetFrame(120);
+				}
+				if( (GAMESTATE->m_fSongBeat >= 21.0f && GAMESTATE->m_fSongBeat <= 21.2f) )
+				{ 
+					m_mCharacter.SetFrame(240);
+				}
+				// ----------------------------------------------------------------------- */
+
+				if( (GAMESTATE->m_fSongBeat >= 0.0f && GAMESTATE->m_fSongBeat <= 15.0f) ||
+					(GAMESTATE->m_fSongBeat >= 16.8f && GAMESTATE->m_fSongBeat <= 17.0f) ||
+					(GAMESTATE->m_fSongBeat >= 18.8f && GAMESTATE->m_fSongBeat <= 19.0f) ||
+					(GAMESTATE->m_fSongBeat >= 20.8f && GAMESTATE->m_fSongBeat <= 21.0f) ||
+					(GAMESTATE->m_fSongBeat >= 22.8f) )
+				{
+					if( (m_mCharacter.GetCurFrame() >=243) || (m_mCharacter.GetCurFrame() <=184) )
+						m_mCharacter.SetFrame(184);
+					//Loop for HowToPlay static movement is 184~243
+				} else
+					// if we update at normal speed during a step animation, it is too slow and
+					// doesn't finish in time.
+					rate = 1.8f;
+			}
+
+			m_mCharacter.Update( fDelta * rate );
 		}
 	}
 
-	m_mCharacter.Update( fDelta * rate );
-	m_mDancePad.Update( fDelta );
+	if( m_bUsingPad )
+		m_mDancePad.Update( fDelta );
+
 	ScreenAttract::Update( fDelta );
 }
 
@@ -242,19 +252,24 @@ void ScreenHowToPlay::DrawPrimitives()
 {
 	Screen::DrawPrimitives();
 
-	DISPLAY->SetLighting( true );
-	DISPLAY->SetLightDirectional( 
-		0, 
-		RageColor(0.5,0.5,0.5,1), 
-		RageColor(1,1,1,1),
-		RageColor(0,0,0,1),
-		RageVector3(0, 0, 1) );
+	if( m_bUsingPad || m_bUsingCharacter )
+	{
+		DISPLAY->SetLighting( true );
+		DISPLAY->SetLightDirectional( 
+			0, 
+			RageColor(0.5,0.5,0.5,1), 
+			RageColor(1,1,1,1),
+			RageColor(0,0,0,1),
+			RageVector3(0, 0, 1) );
 
-	m_mCharacter.Draw();
-	m_mDancePad.Draw();
+		if( m_bUsingCharacter )
+			m_mCharacter.Draw();
+		if( m_bUsingPad )
+			m_mDancePad.Draw();
 
-	DISPLAY->SetLightOff( 0 );
-	DISPLAY->SetLighting( false );
+		DISPLAY->SetLightOff( 0 );
+		DISPLAY->SetLighting( false );
+	}
 
 	m_Overlay.DrawPrimitives();
 	m_In.DrawPrimitives();

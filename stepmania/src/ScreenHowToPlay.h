@@ -32,6 +32,8 @@ protected:
 	Player			m_Player;
 	Model			m_mCharacter;
 	Model			m_mDancePad;
+	bool			m_bUsingCharacter;
+	bool			m_bUsingPad;
 
 	Song*			m_pSong;
 	float			m_fFakeSecondsIntoSong;
