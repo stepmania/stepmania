@@ -360,7 +360,7 @@ static const MenuRow g_KeyboardShortcutsItems[] =
 	{ -1, "R + button: Lay mine",							false, true, 0, { NULL } },
 	{ -1, "L + button: Add to/remove from right half",		false, true, 0, { NULL } },
 #endif
-	{ -1, NULL, true, 0, { NULL } }
+	{ -1, NULL, true, true, 0, { NULL } }
 };
 static Menu g_KeyboardShortcuts( "Keyboard Shortcuts", g_KeyboardShortcutsItems );
 
@@ -380,7 +380,7 @@ static const MenuRow g_MainMenuItems[] =
 	{ ScreenEdit::play_preview_music,		"Play preview music",		true, false, 0, { NULL } },
 	{ ScreenEdit::preferences,				"Preferences",				true, false, 0, { NULL } },
 	{ ScreenEdit::exit,						"Exit",						true, true, 0, { NULL } },
-	{ -1, NULL, true, 0, { NULL } }
+	{ -1, NULL, true, true, 0, { NULL } }
 };
 static Menu g_MainMenu( "Main Menu", g_MainMenuItems );
 
@@ -404,7 +404,7 @@ static const MenuRow g_AreaMenuItems[] =
 	{ ScreenEdit::shift_pauses_backward,	"Shift pauses and BPM changes up",	true, false, 0, { NULL } },
 	{ ScreenEdit::convert_beat_to_pause,	"Convert beats to pause",			true, false, 0, { NULL } },
 	{ ScreenEdit::convert_pause_to_beat,	"Convert pause to beats",			true, false, 0, { NULL } },
-	{ -1, NULL, true, 0, { NULL } }
+	{ -1, NULL, true, true, 0, { NULL } }
 };
 static Menu g_AreaMenu( "Area Menu", g_AreaMenuItems );
 
@@ -421,7 +421,7 @@ static const MenuRow g_EditNotesStatisticsItems[] =
 	{ ScreenEdit::air,				"Air",				false, true, 0, { NULL } },
 	{ ScreenEdit::freeze,			"Freeze",			false, true, 0, { NULL } },
 	{ ScreenEdit::chaos,			"Chaos",			false, true, 0, { NULL } },
-	{ -1, NULL, true, 0, { NULL } }
+	{ -1, NULL, true, true, 0, { NULL } }
 };
 static Menu g_EditNotesStatistics( "Statistics", g_EditNotesStatisticsItems );
 
@@ -434,7 +434,7 @@ static const MenuRow g_EditSongInfoItems[] =
 	{ ScreenEdit::main_title_transliteration,	"Main title transliteration",	true, true, 0, { NULL } },
 	{ ScreenEdit::sub_title_transliteration,	"Sub title transliteration",	true, true, 0, { NULL } },
 	{ ScreenEdit::artist_transliteration,		"Artist transliteration",		true, true, 0, { NULL } },
-	{ -1, NULL, true, 0, { NULL } }
+	{ -1, NULL, true, true, 0, { NULL } }
 };
 static Menu g_EditSongInfo( "Edit Song Info", g_EditSongInfoItems );
 
@@ -452,14 +452,14 @@ static const MenuRow g_BGChangeItems[] =
 	{ ScreenEdit::add_global_bganimation,	"Add Change to global BGAnimation",		true, true, 0, { NULL } },
 	{ ScreenEdit::add_global_visualization, "Add Change to global Visualization",	true, true, 0, { NULL } },
 	{ ScreenEdit::delete_change,			"Remove Change",						true, true, 0, { NULL } },
-	{ -1, NULL, true, 0, { NULL } }
+	{ -1, NULL, true, true, 0, { NULL } }
 };
 static Menu g_BGChange( "Background Change", g_BGChangeItems );
 
 static const MenuRow g_PrefsItems[] =
 {
 	{ ScreenEdit::pref_show_bgs_play,		"Show BGChanges during Play/Record",	true, true, 0, { "NO","YES" } },
-	{ -1, NULL, true, 0, { NULL } }
+	{ -1, NULL, true, true, 0, { NULL } }
 };
 static Menu g_Prefs( "Preferences", g_PrefsItems );
 
@@ -467,14 +467,14 @@ static const MenuRow g_InsertAttackItems[] =
 {
 	{ -1, "Duration seconds",			true, true, 3, { "5","10","15","20","25","30","35","40","45" } },
 	{ -1, "Set modifiers",				true, true, 0, { "PRESS START" } },
-	{ -1, NULL, true, 0, { NULL } }
+	{ -1, NULL, true, true, 0, { NULL } }
 };
 static Menu g_InsertAttack( "Insert Attack", g_InsertAttackItems );
 
 static const MenuRow g_CourseModeItems[] =
 {
 	{ -1, "Play mods from course",		true, true, 0, { NULL } },
-	{ -1, NULL, true, 0, { NULL } }
+	{ -1, NULL, true, true, 0, { NULL } }
 };
 static Menu g_CourseMode( "Course Display", g_CourseModeItems );
 
