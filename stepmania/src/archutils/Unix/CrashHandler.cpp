@@ -342,7 +342,7 @@ static void do_backtrace( void **buf, size_t size, bool ignore_before_sig = true
 
 		for( unsigned pos = 0; is_signal_return && pos < sizeof(comp); ++pos )
 			if(frame->return_address[pos] != comp[pos])
-					is_signal_return = false;
+				is_signal_return = false;
 
 		void *to_add = NULL;
 		if( is_signal_return )
