@@ -52,7 +52,7 @@ void Actor::Reset()
 	m_effectColor1 = RageColor(1,1,1,1);
 	m_effectColor2 = RageColor(1,1,1,1);
 
-	m_bHidden = false;
+	m_bVisible = true;
 	m_fShadowLength = 0;
 	m_bIsAnimating = true;
 	m_fHibernateSecondsLeft = 0;
@@ -145,7 +145,7 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 
 void Actor::Draw()
 {
-	if( m_bHidden )
+	if( !m_bVisible )
 		return;	// early abort
 	if( m_fHibernateSecondsLeft > 0 )
 		return;	// early abort
@@ -769,148 +769,6 @@ void Actor::RunCommands2( const LuaReference& cmds, Actor *pParent )
 	// call function with 1 argument and 0 results
 	lua_call(LUA->L, 2, 0); 
 }
-
-/*
-void Actor::HandleCommand( const Command &command )
-{
-	BeginHandleArgs;
-
-	const CString &sName = command.GetName();
-
-#if defined(DEBUG)
-	if( sName == "x" || sName == "y" )	// an absolute X or Y position
-	{
-		if( isdigit(sArg(1)[0]) && sArg(1).Find('-') == -1 && sArg(1).Find('+') == -1 )
-		{
-			LOG->Warn( "Command '%s' should contain a SCREEN_* constant", command.GetOriginalCommandString().c_str() );
-		}
-	}
-#endif
-
-	// Commands that go in the tweening queue:
-	if     ( sName=="sleep" )			Sleep( fArg(1) );
-	else if( sName=="linear" )			BeginTweening( fArg(1), TWEEN_LINEAR );
-	else if( sName=="accelerate" )		BeginTweening( fArg(1), TWEEN_ACCELERATE );
-	else if( sName=="decelerate" )		BeginTweening( fArg(1), TWEEN_DECELERATE );
-	else if( sName=="bouncebegin" )		BeginTweening( fArg(1), TWEEN_BOUNCE_BEGIN );
-	else if( sName=="bounceend" )		BeginTweening( fArg(1), TWEEN_BOUNCE_END );
-	else if( sName=="spring" )			BeginTweening( fArg(1), TWEEN_SPRING );
-	else if( sName=="stoptweening" )	{ StopTweening(); BeginTweening( 0.0001f, TWEEN_LINEAR ); }	// Why BeginT again? -Chris
-	else if( sName=="finishtweening" )	FinishTweening();
-	else if( sName=="hurrytweening" )	HurryTweening( fArg(1) );
-	else if( sName=="x" )				SetX( fArg(1) );
-	else if( sName=="y" )				SetY( fArg(1) );
-	else if( sName=="z" )				SetZ( fArg(1) );
-	else if( sName=="addx" )			AddX( fArg(1) );
-	else if( sName=="addy" )			AddY( fArg(1) );
-	else if( sName=="addz" )			AddZ( fArg(1) );
-	else if( sName=="zoom" )			SetZoom( fArg(1) );
-	else if( sName=="zoomx" )			SetZoomX( fArg(1) );
-	else if( sName=="zoomy" )			SetZoomY( fArg(1) );
-	else if( sName=="zoomz" )			SetZoomZ( fArg(1) );
-	else if( sName=="zoomtowidth" )		ZoomToWidth( fArg(1) );
-	else if( sName=="zoomtoheight" )	ZoomToHeight( fArg(1) );
-	else if( sName=="stretchto" )		StretchTo( RectF( fArg(1), fArg(2), fArg(3), fArg(4) ) );
-	else if( sName=="cropleft" )		SetCropLeft( fArg(1) );
-	else if( sName=="croptop" )			SetCropTop( fArg(1) );
-	else if( sName=="cropright" )		SetCropRight( fArg(1) );
-	else if( sName=="cropbottom" )		SetCropBottom( fArg(1) );
-	else if( sName=="fadeleft" )		SetFadeLeft( fArg(1) );
-	else if( sName=="fadetop" )			SetFadeTop( fArg(1) );
-	else if( sName=="faderight" )		SetFadeRight( fArg(1) );
-	else if( sName=="fadebottom" )		SetFadeBottom( fArg(1) );
-	else if( sName=="diffuse" )			SetDiffuse( cArg(1) );
-	else if( sName=="diffuseleftedge" )		SetDiffuseLeftEdge( cArg(1) );
-	else if( sName=="diffuserightedge" )	SetDiffuseRightEdge( cArg(1) );
-	else if( sName=="diffusetopedge" )		SetDiffuseTopEdge( cArg(1) );
-	else if( sName=="diffusebottomedge" )	SetDiffuseBottomEdge( cArg(1) );
-	// Add left/right/top/bottom for alpha if needed.
-	else if( sName=="diffusealpha" )	SetDiffuseAlpha( fArg(1) );
-	else if( sName=="diffusecolor" )	SetDiffuseColor( cArg(1) );
-	else if( sName=="glow" )			SetGlow( cArg(1) );
-	else if( sName=="rotationx" )		SetRotationX( fArg(1) );
-	else if( sName=="rotationy" )		SetRotationY( fArg(1) );
-	else if( sName=="rotationz" )		SetRotationZ( fArg(1) );
-	else if( sName=="heading" )			AddRotationH( fArg(1) );
-	else if( sName=="pitch" )			AddRotationP( fArg(1) );
-	else if( sName=="roll" ) 			AddRotationR( fArg(1) );
-	else if( sName=="shadowlength" )	SetShadowLength( fArg(1) );
-	else if( sName=="horizalign" )		SetHorizAlign( sArg(1) );
-	else if( sName=="vertalign" )		SetVertAlign( sArg(1) );
-	else if( sName=="diffuseblink" )	SetEffectDiffuseBlink();
-	else if( sName=="diffuseshift" )	SetEffectDiffuseShift();
-	else if( sName=="glowblink" )		SetEffectGlowBlink();
-	else if( sName=="glowshift" )		SetEffectGlowShift();
-	else if( sName=="rainbow" )			SetEffectRainbow();
-	else if( sName=="wag" )				SetEffectWag();
-	else if( sName=="bounce" )			SetEffectBounce();
-	else if( sName=="bob" )				SetEffectBob();
-	else if( sName=="pulse" )			SetEffectPulse();
-	else if( sName=="spin" )			SetEffectSpin();
-	else if( sName=="vibrate" )			SetEffectVibrate();
-	else if( sName=="stopeffect" )		SetEffectNone();
-	else if( sName=="effectcolor1" )	SetEffectColor1( cArg(1) );
-	else if( sName=="effectcolor2" )	SetEffectColor2( cArg(1) );
-	else if( sName=="effectperiod" )	SetEffectPeriod( fArg(1) );
-	else if( sName=="effectoffset" )	SetEffectOffset( fArg(1) );
-	else if( sName=="effectdelay" )		SetEffectDelay( fArg(1) );
-	else if( sName=="effectclock" )		SetEffectClock( sArg(1) );
-	else if( sName=="effectmagnitude" )	SetEffectMagnitude( RageVector3(fArg(1),fArg(2),fArg(3)) );
-	else if( sName=="scaletocover" )	{ RectF R(fArg(1), fArg(2), fArg(3), fArg(4));  ScaleToCover(R); }
-	else if( sName=="scaletofit" )		{ RectF R(fArg(1), fArg(2), fArg(3), fArg(4));  ScaleToFitInside(R); }
-	// Commands that take effect immediately (ignoring the tweening queue):
-	else if( sName=="animate" )			EnableAnimation( bArg(1) );
-	else if( sName=="play" )			EnableAnimation( true );
-	else if( sName=="pause" )			EnableAnimation( false );
-	else if( sName=="setstate" )		SetState( iArg(1) );
-	else if( sName=="texturewrapping" )	SetTextureWrapping( bArg(1) );
-	else if( sName=="additiveblend" )	SetBlendMode( bArg(1) ? BLEND_ADD : BLEND_NORMAL );
-	else if( sName=="blend" )			SetBlendMode( sArg(1) );
-	else if( sName=="zbuffer" )			SetUseZBuffer( bArg(1) );
-	else if( sName=="ztest" )			SetZTestMode( bArg(1)?ZTEST_WRITE_ON_PASS:ZTEST_OFF );
-	else if( sName=="ztestmode" )		SetZTestMode( sArg(1) );
-	else if( sName=="zwrite" )			SetZWrite( bArg(1) );
-	else if( sName=="clearzbuffer" )	SetClearZBuffer( bArg(1) );
-	else if( sName=="backfacecull" )	SetCullMode( bArg(1) ? CULL_BACK : CULL_NONE );
-	else if( sName=="cullmode" )		SetCullMode( sArg(1) );
-	else if( sName=="hidden" )			SetHidden( bArg(1) );
-	else if( sName=="hibernate" )		SetHibernate( fArg(1) );
-	else if( sName=="draworder" )		SetDrawOrder( iArg(1) );
-	else if( sName=="playcommand" )		PlayCommand( sArg(1) );
-	else if( sName=="queuecommand" )	
-	{
-		Command newcommand = command;
-		newcommand.m_vsArgs.erase( newcommand.m_vsArgs.begin() );
-		QueueCommand( newcommand );
-		return;	// don't do argument count checking
-	}
-
-	// These are commands intended for a Sprite commands, but they will get 
-	// sent to all sub-actors (which aren't necessarily Sprites) on 
-	// GainFocus and LoseFocus.  So, don't run EndHandleArgs 
-	// on these commands.
-	else if( 
-		sName=="customtexturerect" || 
-		sName=="texcoordvelocity" || 
-		sName=="scaletoclipped" ||
-		sName=="stretchtexcoords" || 
-		sName=="position" || 
-		sName=="loop" ||
-		sName=="rate" || 
-		sName=="propagate" )
-	{
-		return;
-	}
-	else
-	{
-		CString sError = ssprintf( "Actor::HandleCommand: Unrecognized command name '%s'.", sName.c_str() );
-		LOG->Warn( sError );
-		Dialog::OK( sError );
-	}
-
-	EndHandleArgs;
-}
-*/
 
 float Actor::GetCommandsLengthSeconds( const LuaReference& cmds )
 {

@@ -289,8 +289,10 @@ public:
 	//
 	// other properties
 	//
-	bool GetHidden() const				{ return m_bHidden; }
-	void SetHidden( bool b )			{ m_bHidden = b; }
+	bool GetVisible() const				{ return m_bVisible; }
+	bool GetHidden() const				{ return !m_bVisible; }
+	void SetVisible( bool b )			{ m_bVisible = b; }
+	void SetHidden( bool b )			{ m_bVisible = !b; }
 	void SetShadowLength( float fLength );
 	// TODO: Implement hibernate as a tween type?
 	void SetHibernate( float fSecs )	{ m_fHibernateSecondsLeft = fSecs; }
@@ -416,7 +418,7 @@ protected:
 	//
 	// other properties
 	//
-	bool	m_bHidden;
+	bool	m_bVisible;
 	float	m_fHibernateSecondsLeft;
 	float	m_fShadowLength;	// 0 == no shadow
 	bool	m_bIsAnimating;
@@ -535,6 +537,7 @@ public:
 	static int clearzbuffer( T* p, lua_State *L )		{ p->SetClearZBuffer(!!IArg(1)); return 0; }
 	static int backfacecull( T* p, lua_State *L )		{ p->SetCullMode((!!IArg(1)) ? CULL_BACK : CULL_NONE); return 0; }
 	static int cullmode( T* p, lua_State *L )			{ p->SetCullModeString(SArg(1)); return 0; }
+	static int visible( T* p, lua_State *L )			{ p->SetVisible(!!IArg(1)); return 0; }
 	static int hidden( T* p, lua_State *L )				{ p->SetHidden(!!IArg(1)); return 0; }
 	static int hibernate( T* p, lua_State *L )			{ p->SetHibernate(FArg(1)); return 0; }
 	static int draworder( T* p, lua_State *L )			{ p->SetDrawOrder(IArg(1)); return 0; }
@@ -634,6 +637,7 @@ public:
 		ADD_METHOD( clearzbuffer )
 		ADD_METHOD( backfacecull )
 		ADD_METHOD( cullmode )
+		ADD_METHOD( visible )
 		ADD_METHOD( hidden )
 		ADD_METHOD( hibernate )
 		ADD_METHOD( draworder )
