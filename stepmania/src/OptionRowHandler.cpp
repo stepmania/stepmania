@@ -89,7 +89,7 @@ public:
 		/* Parse the basic configuration metric. */
 		Commands cmds = ParseCommands( ENTRY(sParam) );
 		if( cmds.v.size() < 1 )
-			RageException::Throw( "Parse error in OptionRowHandlerUtilEntries::ListName%s", sParam.c_str() );
+			RageException::Throw( "Parse error in OptionRowHandler::%s", sParam.c_str() );
 
 		defOut.bOneChoiceForAllPlayers = false;
 		const int NumCols = atoi( cmds.v[0].m_vsArgs[0] );
@@ -131,6 +131,10 @@ public:
 		{
 			GameCommand mc;
 			mc.Load( 0, ParseCommands(ENTRY_MODE(sParam, col)) );
+			/* If the row has just one entry, use the name of the row as the name of the
+			 * entry.  If it has more than one, each one must be specified explicitly. */
+			if( mc.m_sName == "" && NumCols == 1 )
+				mc.m_sName = sParam;
 			if( mc.m_sName == "" )
 				RageException::Throw( "List \"%s\", col %i has no name", sParam.c_str(), col );
 
