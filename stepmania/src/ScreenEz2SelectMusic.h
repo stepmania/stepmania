@@ -14,7 +14,6 @@
 #include "Screen.h"
 #include "Sprite.h"
 #include "BitmapText.h"
-#include "TransitionStarWipe.h"
 #include "MenuElements.h"
 #include "TipDisplay.h"
 #include "MusicBannerWheel.h"

@@ -910,14 +910,6 @@ SOURCE=.\TransitionOniFade.cpp
 
 SOURCE=.\TransitionOniFade.h
 # End Source File
-# Begin Source File
-
-SOURCE=.\TransitionStarWipe.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\TransitionStarWipe.h
-# End Source File
 # End Group
 # Begin Group "Actors"
 

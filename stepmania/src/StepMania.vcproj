@@ -971,12 +971,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			<File
 				RelativePath="TransitionOniFade.h">
 			</File>
-			<File
-				RelativePath=".\TransitionStarWipe.cpp">
-			</File>
-			<File
-				RelativePath=".\TransitionStarWipe.h">
-			</File>
 		</Filter>
 		<Filter
 			Name="Actors used in Menus"
