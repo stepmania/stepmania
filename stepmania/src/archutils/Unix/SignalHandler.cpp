@@ -3,7 +3,6 @@
 #include "RageLog.h"
 #include "SignalHandler.h"
 #include "GetSysInfo.h"
-#include "StepMania.h"
 
 #include <unistd.h>
 #include <sys/mman.h>
@@ -49,18 +48,8 @@ SaveSignals::~SaveSignals()
 
 static void SigHandler(int sig)
 {
-	if( sig == SIGINT || sig == SIGQUIT )
-	{
-		/* ^C. */
-		ExitGame();
-		return;
-	}
-	
 	for(unsigned i = 0; i < handlers.size(); ++i)
 		handlers[i](sig);
-
-	kill( 0, SIGKILL );
-	// _exit(1);
 }
 
 /* Hook up events to fatal signals, so we can clean up if we're killed. */

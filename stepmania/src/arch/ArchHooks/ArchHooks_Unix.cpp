@@ -12,17 +12,62 @@
 
 #include "SDL_utils.h"
 
+static bool IsFatalSignal( int signal )
+{
+	switch( signal )
+	{
+	case SIGINT:
+	case SIGTERM:
+	case SIGHUP:
+		return true;
+	default:
+		return false;
+	}
+}
+
+static void DoCleanShutdown( int signal )
+{
+	if( IsFatalSignal(signal) )
+		return;
+
+	/* ^C. */
+	ExitGame();
+}
+
+static void DoCrashSignalHandler( int signal )
+{
+        /* Don't dump a debug file if the user just hit ^C. */
+	if( !IsFatalSignal(signal) )
+		return;
+
+	CrashSignalHandler( signal );
+}
+
 static void EmergencyShutdown( int signal )
 {
+	if( !IsFatalSignal(signal) )
+		return;
+
 	/* If we don't actually use SDL for video, this should be a no-op.  Only
 	 * do this if the main thread crashes; trying to shut down from
 	 * another thread causes crashes (eg. GL may be using TLS). */
 	if( !strcmp(RageThread::GetCurThreadName(), "Main thread") && SDL_WasInit(SDL_INIT_VIDEO) )
 		SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
+
+static void KillSelf( int signal )
+{
+	if( !IsFatalSignal(signal) )
+		return;
+
+	kill( 0, SIGKILL );
+}
 	
 ArchHooks_Unix::ArchHooks_Unix()
 {
+	/* First, handle non-fatal termination signals. */
+	SignalHandler::OnClose( DoCleanShutdown );
+
 #if defined(CRASH_HANDLER)
 	CrashHandlerHandleArgs( g_argc, g_argv );
 	InitializeCrashHandler();
@@ -32,6 +77,9 @@ ArchHooks_Unix::ArchHooks_Unix()
 	/* Set up EmergencyShutdown, to try to shut down the window if we crash.
 	 * This might blow up, so be sure to do it after the crash handler. */
 	SignalHandler::OnClose( EmergencyShutdown );
+
+	/* On fatal crashes, after the above, kill ourself so we don't return. */
+	SignalHandler::OnClose( KillSelf );
 }
 
 void ArchHooks_Unix::DumpDebugInfo()
