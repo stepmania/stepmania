@@ -142,6 +142,9 @@ public:
 
 	void ReadGamePrefsFromDisk();
 	void SaveGamePrefsToDisk();
+
+private:
+	void ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame, CString fn );
 };
 
 

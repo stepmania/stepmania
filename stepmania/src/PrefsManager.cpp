@@ -168,10 +168,10 @@ PrefsManager::~PrefsManager()
 {
 }
 
-void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
+void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame, CString fn )
 {
 	IniFile ini;
-	ini.SetPath( STEPMANIA_INI_PATH );
+	ini.SetPath( fn );
 	if( !ini.ReadFile() )
 		return;		// could not read config file, load nothing
 
@@ -284,12 +284,18 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 		ini.GetValue( "Options", ssprintf("DefaultProfileP%d",p+1),	m_sDefaultProfile[p] );
 
 
-	m_asAdditionalSongFolders.clear();
 	CString sAdditionalSongFolders;
-	ini.GetValue( "Options", "AdditionalSongFolders",			sAdditionalSongFolders );
-	split( sAdditionalSongFolders, ",", m_asAdditionalSongFolders, true );
+	if( ini.GetValue( "Options", "AdditionalSongFolders",			sAdditionalSongFolders ) )
+	{
+		m_asAdditionalSongFolders.clear();
+		split( sAdditionalSongFolders, ",", m_asAdditionalSongFolders, true );
+	}
 }
 
+void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
+{
+	ReadGlobalPrefsFromDisk( bSwitchToLastPlayedGame, STEPMANIA_INI_PATH );
+}
 
 void PrefsManager::SaveGlobalPrefsToDisk() const
 {
@@ -334,7 +340,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "ShowSelectGroup",					m_bShowSelectGroup );
 	ini.SetValue( "Options", "ShowNative",						m_bShowNative );
 	ini.SetValue( "Options", "ArcadeOptionsNavigation",			m_bArcadeOptionsNavigation );
-	ini.SetValue ( "Options", "DWIPath",						m_DWIPath );
+	ini.SetValue( "Options", "DWIPath",							m_DWIPath );
 	ini.SetValue( "Options", "DelayedTextureDelete",			m_bDelayedTextureDelete );
 	ini.SetValue( "Options", "DelayedScreenLoad",				m_bDelayedScreenLoad );
 	ini.SetValue( "Options", "BannerCache",						m_bBannerCache );
@@ -368,13 +374,13 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "UseUnlockSystem",					m_bUseUnlockSystem );
 	ini.SetValue( "Options", "FirstRun",						m_bFirstRun );
 	ini.SetValue( "Options", "AutoMapJoysticks",				m_bAutoMapOnJoyChange );
-	ini.SetValue ( "Options", "VideoRenderers",					m_sVideoRenderers );
-	ini.SetValue ( "Options", "LastSeenVideoDriver",			m_sLastSeenVideoDriver );
-	ini.SetValue ( "Options", "LastSeenInputDevices",			m_sLastSeenInputDevices );
+	ini.SetValue( "Options", "VideoRenderers",					m_sVideoRenderers );
+	ini.SetValue( "Options", "LastSeenVideoDriver",				m_sLastSeenVideoDriver );
+	ini.SetValue( "Options", "LastSeenInputDevices",			m_sLastSeenInputDevices );
 #if defined(WIN32)
-	ini.SetValue ( "Options", "LastSeenMemory",					m_iLastSeenMemory );
+	ini.SetValue( "Options", "LastSeenMemory",					m_iLastSeenMemory );
 #endif
-	ini.SetValue ( "Options", "CoursesToShowRanking",			m_sCoursesToShowRanking );
+	ini.SetValue( "Options", "CoursesToShowRanking",			m_sCoursesToShowRanking );
 	ini.SetValue( "Options", "AntiAliasing",					m_bAntiAliasing );
 	ini.SetValue( "Options", "GlobalOffsetSeconds",				m_fGlobalOffsetSeconds );
 	ini.SetValue( "Options", "ForceLogFlush",					m_bForceLogFlush );
@@ -391,7 +397,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "ProgressiveStageLifebar",			m_iProgressiveStageLifebar );
 	ini.SetValue( "Options", "ProgressiveNonstopLifebar",		m_iProgressiveNonstopLifebar );
 	ini.SetValue( "Options", "ShowBeginnerHelper",				m_bShowBeginnerHelper );
-	ini.SetValue ( "Options", "Language",						m_sLanguage );
+	ini.SetValue( "Options", "Language",						m_sLanguage );
 	ini.SetValue( "Options", "EndlessBreakEnabled",				m_bEndlessBreakEnabled );
 	ini.SetValue( "Options", "EndlessStagesUntilBreak",			m_iEndlessNumStagesUntilBreak );
 	ini.SetValue( "Options", "EndlessBreakLength",				m_iEndlessBreakLength );
