@@ -65,7 +65,7 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 			mc.Load( c, sChoice );
 			m_aModeChoices.push_back( mc );
 		
-			CString sBGAnimationDir = THEME->GetPathTo(BGAnimations, m_sName, mc.m_sName, true);	// true="optional"
+			CString sBGAnimationDir = THEME->GetPath(BGAnimations, m_sName, mc.m_sName, true);	// true="optional"
 			if( sBGAnimationDir == "" )
 				sBGAnimationDir = THEME->GetPathToB(m_sName+" background");
 			BGAnimation *pBGA = new BGAnimation;

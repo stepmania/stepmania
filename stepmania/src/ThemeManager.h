@@ -37,13 +37,16 @@ public:
 	void ReloadMetrics();
 	void ReloadMetricsIfNecessary();
 
-	CString GetPathTo( ElementCategory category, CString sClassName, CString sElement, bool bOptional=false );
-	CString GetPathToB( CString sClassName, CString sElement, bool bOptional=false ) { return GetPathTo(BGAnimations,sClassName,sElement,bOptional); };
-	CString GetPathToF( CString sClassName, CString sElement, bool bOptional=false ) { return GetPathTo(Fonts,sClassName,sElement,bOptional); };
-	CString GetPathToG( CString sClassName, CString sElement, bool bOptional=false ) { return GetPathTo(Graphics,sClassName,sElement,bOptional); };
-	CString GetPathToN( CString sClassName, CString sElement, bool bOptional=false ) { return GetPathTo(Numbers,sClassName,sElement,bOptional); };
-	CString GetPathToS( CString sClassName, CString sElement, bool bOptional=false ) { return GetPathTo(Sounds,sClassName,sElement,bOptional); };
-	CString GetPathToO( CString sClassName, CString sElement, bool bOptional=false ) { return GetPathTo(Other,sClassName,sElement,bOptional); };
+	/* I renamed these for two reasons.  The overload conflicts with the ones below:
+	 * GetPathToB( str, str ) was matching the ones below instead of these.  It's also
+	 * easier to search for uses of obsolete functions if they have a different name. */
+	CString GetPath( ElementCategory category, CString sClassName, CString sElement, bool bOptional=false );
+	CString GetPathB( CString sClassName, CString sElement, bool bOptional=false ) { return GetPath(BGAnimations,sClassName,sElement,bOptional); };
+	CString GetPathF( CString sClassName, CString sElement, bool bOptional=false ) { return GetPath(Fonts,sClassName,sElement,bOptional); };
+	CString GetPathG( CString sClassName, CString sElement, bool bOptional=false ) { return GetPath(Graphics,sClassName,sElement,bOptional); };
+	CString GetPathN( CString sClassName, CString sElement, bool bOptional=false ) { return GetPath(Numbers,sClassName,sElement,bOptional); };
+	CString GetPathS( CString sClassName, CString sElement, bool bOptional=false ) { return GetPath(Sounds,sClassName,sElement,bOptional); };
+	CString GetPathO( CString sClassName, CString sElement, bool bOptional=false ) { return GetPath(Other,sClassName,sElement,bOptional); };
 
 	// TODO: remove these and update the places that use them
 	CString GetPathToB( CString sFileName, bool bOptional=false );

@@ -168,7 +168,7 @@ void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
 		 * music, it will constantly loop even after the screen has gone on
 		 * to the next attract screen. -- Miryokuteki */
 		bool bGoingToPlayTheSameMusic =
-			THEME->GetPathToS( NEXT_SCREEN, "music", false) == THEME->GetPathToS( m_sName, "music", false);
+			THEME->GetPathS( NEXT_SCREEN, "music", false) == THEME->GetPathS( m_sName, "music", false);
 		if( bGoingToPlayTheSameMusic )
 			; // do nothing
 		else

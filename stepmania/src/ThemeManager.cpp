@@ -342,7 +342,7 @@ try_element_again:
 		* up resolving to the overridden background. */
 		/* Use GetPathToOptional because we don't want report that there's an element
 		 * missing.  Instead we want to report that the redirect is invalid. */
-		CString sNewPath = GetPathTo(category, sNewClassName, sNewFile, true);
+		CString sNewPath = GetPath(category, sNewClassName, sNewFile, true);
 
 		if( !sNewPath.empty() )
 			return sNewPath;
@@ -365,7 +365,7 @@ try_element_again:
 	}
 }
 
-CString ThemeManager::GetPathTo( ElementCategory category, CString sClassName, CString sElement, bool bOptional ) 
+CString ThemeManager::GetPath( ElementCategory category, CString sClassName, CString sElement, bool bOptional ) 
 {
 	CString sFileName = ClassAndElementToFileName( sClassName, sElement );
 
@@ -430,7 +430,7 @@ try_element_again:
 		if(sFileName == "_missing")
 			RageException::Throw("'_missing' isn't present in '%s%s'", GetThemeDirFromName(BASE_THEME_NAME).c_str(), sCategory.c_str() );
 
-		Cache[sFileName] = GetPathTo( category, "", "_missing" );
+		Cache[sFileName] = GetPath( category, "", "_missing" );
 		return Cache[sFileName];
 	/* XXX: "abort" and "cancel" are synonyms; merge */
 	case ArchHooks::abort:
@@ -599,9 +599,9 @@ CString ThemeManager::GetLanguageIniPath( CString sThemeName, CString sLanguage 
 }
 
 // TODO: remove these and update the places that use them
-CString ThemeManager::GetPathToB( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathToB(sClassName,sElement,bOptional); }
-CString ThemeManager::GetPathToF( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathToF(sClassName,sElement,bOptional); }
-CString ThemeManager::GetPathToG( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathToG(sClassName,sElement,bOptional); }
-CString ThemeManager::GetPathToN( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathToN(sClassName,sElement,bOptional); }
-CString ThemeManager::GetPathToS( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathToS(sClassName,sElement,bOptional); }
-CString ThemeManager::GetPathToO( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathToO(sClassName,sElement,bOptional); }
+CString ThemeManager::GetPathToB( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathB(sClassName,sElement,bOptional); }
+CString ThemeManager::GetPathToF( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathF(sClassName,sElement,bOptional); }
+CString ThemeManager::GetPathToG( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathG(sClassName,sElement,bOptional); }
+CString ThemeManager::GetPathToN( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathN(sClassName,sElement,bOptional); }
+CString ThemeManager::GetPathToS( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathS(sClassName,sElement,bOptional); }
+CString ThemeManager::GetPathToO( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathO(sClassName,sElement,bOptional); }
