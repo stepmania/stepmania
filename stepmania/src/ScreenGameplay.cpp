@@ -1135,10 +1135,6 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 	p.StopMode = RageSoundParams::M_CONTINUE;
 	p.m_StartSecond = fStartSecond;
 
-	//Secondary (Precice) start request 
-	//used for syncing up songs.
-	NSMAN->StartRequest(1); 
-
 	m_pSoundMusic->Play( &p );
 
 	/* Make sure GAMESTATE->m_fMusicSeconds is set up. */
@@ -1251,6 +1247,30 @@ void ScreenGameplay::Update( float fDeltaTime )
 		if( GAMESTATE->m_bDemonstrationOrJukebox )
 		{
 			StartPlayingSong( 0, 0 );	// *kick* (no transitions)
+		}
+		else if ( NSMAN->useSMserver )
+		{
+			//If we're using networking, we must not have any
+			//delay.  If we do this can cause inconsistancy
+			//on different computers and differet themes
+
+			StartPlayingSong( 0, 0 );
+			m_pSoundMusic->Stop();
+
+			NSMAN->StartRequest(1); 
+
+			RageSoundParams p;
+			p.AccurateSync = true;
+			p.SetPlaybackRate( 1.0 );	//Force 1.0 playback speed
+			p.StopMode = RageSoundParams::M_CONTINUE;
+			p.m_StartSecond = 0.0;
+			m_pSoundMusic->Play( &p );
+
+			UpdateSongPosition(0);
+
+			//We need to artifically trigger the sm_playeready so we can end game
+			//We want to post so this happens only after we're done what we're doing.
+			SCREENMAN->PostMessageToTopScreen( SM_PlayReady, 0.0 );
 		}
 		else
 		{
