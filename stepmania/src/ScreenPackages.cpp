@@ -447,7 +447,7 @@ void ScreenPackages::UpdateProgress()
 
 	float dLY = DownloadedRatio / 2 * m_sprDLBG.GetUnzoomedWidth();
 
-	m_sprDL.SetX( m_sprDLBG.GetX() - m_sprDLBG.GetUnzoomedWidth() / 2.0 + dLY );
+	m_sprDL.SetX( m_sprDLBG.GetX() - m_sprDLBG.GetUnzoomedWidth() / 2.0f + dLY );
 	m_sprDL.SetWidth( dLY * 2 );
 
 	m_textStatus.SetText( m_sStatus );
