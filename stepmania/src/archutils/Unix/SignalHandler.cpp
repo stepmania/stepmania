@@ -71,6 +71,6 @@ void SignalHandler::OnClose(handler h)
 }
 
 
-/* Written by Glenn Myanard.  Public domain, copyrighting a simple signal handler
+/* Written by Glenn Maynard.  Public domain, copyrighting a simple signal handler
  * is dumb. */
 
