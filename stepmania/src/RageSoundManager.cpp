@@ -242,7 +242,7 @@ void RageSoundManager::MixAudio(Sint16 *dst, const Sint16 *src, Uint32 len, floa
 	}
 }
 
-void RageSoundManager::PlayMusic(CString file, bool loop, float start_sec, float length_sec)
+void RageSoundManager::PlayMusic(CString file, bool loop, float start_sec, float length_sec, float fade_len)
 {
 //	LOG->Trace("play '%s' (current '%s')", file.GetString(), music->GetLoadedFilePath().GetString());
 	if(music->IsPlaying())
@@ -270,7 +270,8 @@ void RageSoundManager::PlayMusic(CString file, bool loop, float start_sec, float
 		music->SetLengthSeconds();
 	else
 		music->SetLengthSeconds(length_sec);
-	
+
+	music->SetFadeLength(fade_len);
 	music->SetPositionSeconds();
 	music->StartPlaying();
 }

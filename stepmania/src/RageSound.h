@@ -77,6 +77,8 @@ public:
 	bool SetPositionSeconds( float fSeconds = -1);
 	void SetAccurateSync(bool yes=true) { AccurateSync = yes; }
 	void SetPlaybackRate( float fScale );
+	void SetFadeLength( float fSeconds );
+	void SetNoFade() { SetFadeLength(0); }
 	float GetPlaybackRate() const { return float(speed_input_samples) / speed_output_samples; }
 	bool IsPlaying() const { return playing; }
 	CString GetLoadedFilePath() const { return m_sFilePath; }
@@ -127,6 +129,9 @@ private:
 	/* Current position of the output sound; if < 0, nothing will play until it
 	 * becomes positive.  This is recorded in samples, to avoid rounding error. */
 	int		position;
+
+	/* Amount of time to fade out at the end. */
+	float fade_length;
 
 	/* Hack: When we stop a playing sound, we can't ask the driver the position
 	 * (we're not playing); and we can't seek back to the current playing position

@@ -76,6 +76,7 @@ RageSound::RageSound()
 	m_StartSample = 0;
 	m_LengthSamples = -1;
 	AccurateSync = false;
+	fade_length = 0;
 	/* Register ourselves, so we receive Update()s. */
 	SOUNDMAN->all_sounds.insert(this);
 }
@@ -109,6 +110,7 @@ RageSound::RageSound(const RageSound &cpy)
 	position = cpy.position;
 	playing = false;
 	AccurateSync = cpy.AccurateSync;
+	fade_length = cpy.fade_length;
 	speed_input_samples = cpy.speed_input_samples;
 	speed_output_samples = cpy.speed_output_samples;
 
@@ -530,22 +532,18 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 		/* Save this sampleno/position map. */
 		pos_map.push_back(pos_map_t(sampleno, position, got_samples));
 
-		const float FADE_TIME = 1.5f;
-
-		/* XXX: Loop shouldn't set fading; add a Fade_Time member?
-		 * 
-		 * We want to fade when there's FADE_TIME seconds left, but if
+		/* We want to fade when there's FADE_TIME seconds left, but if
 		 * m_LengthSamples is -1, we don't know the length we're playing.
 		 * (m_LengthSamples is the length to play, not the length of the
 		 * source.)  If we don't know the length, don't fade. */
-		if(StopMode == M_LOOP && m_LengthSamples != -1) {
+		if(fade_length != 0 && m_LengthSamples != -1) {
 			Sint16 *p = (Sint16 *) buffer;
 			int this_position = position;
 
 			for(int samp = 0; samp < got_samples; ++samp)
 			{
 				float fSecsUntilSilent = float(m_StartSample + m_LengthSamples - this_position) / samplerate;
-				float fVolPercent = fSecsUntilSilent / FADE_TIME;
+				float fVolPercent = fSecsUntilSilent / fade_length;
 
 				fVolPercent = clamp(fVolPercent, 0.f, 1.f);
 				for(int i = 0; i < channels; ++i) {
@@ -582,6 +580,9 @@ void RageSound::StartPlaying()
 
 void RageSound::StopPlaying()
 {
+	if(!playing)
+		return;
+
 	stopped_position = GetPositionSeconds();
 
 	/* Tell the sound manager to stop mixing this sound. */
@@ -777,6 +778,11 @@ void RageSound::SetPlaybackRate( float NewSpeed )
 		speed_input_samples = int(NewSpeed * 10);
 		speed_output_samples = 10;
 	}
+}
+
+void RageSound::SetFadeLength( float fSeconds )
+{
+	fade_length = fSeconds;
 }
 
 void CircBuf::reserve(unsigned n)
