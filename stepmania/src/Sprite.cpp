@@ -22,6 +22,7 @@
 #include "RageDisplay.h"
 #include "GameConstantsAndTypes.h"
 
+#include "RageDisplayInternal.h"
 
 Sprite::Sprite()
 {
@@ -258,6 +259,12 @@ void Sprite::DrawPrimitives()
 			DISPLAY->PopMatrix();
 		}
 
+		/* If the texture doesn't have alpha, and we're not changing alpha in diffuse,
+		 * don't bother to blend when doing the diffuse pass. */
+		if(m_pTexture && !m_bBlendAdd && m_pTexture->GetActualID().iAlphaBits == 0 &&
+			m_temp.diffuse[0].a + m_temp.diffuse[1].a + m_temp.diffuse[2].a + m_temp.diffuse[3].a == 4)
+			glDisable(GL_BLEND);
+
 		//////////////////////
 		// render the diffuse pass
 		//////////////////////
@@ -266,6 +273,7 @@ void Sprite::DrawPrimitives()
 		v[2].c = m_temp.diffuse[3];	// bottom right
 		v[3].c = m_temp.diffuse[1];	// top right
 		DISPLAY->DrawQuad( v );
+		glEnable(GL_BLEND);
 	}
 
 	//////////////////////
