@@ -1,9 +1,8 @@
 #ifndef RAGE_SURFACE_LOAD_PNG_H
 #define RAGE_SURFACE_LOAD_PNG_H
 
-#include "SDL_utils.h"
-
-SDL_Surface *RageSurface_Load_PNG( const CString &sPath, bool bHeaderOnly, CString &error );
+#include "RageSurface_Load.h"
+RageSurface::OpenResult RageSurface_Load_PNG( const CString &sPath, SDL_Surface *&ret, bool bHeaderOnly, CString &error );
 
 #endif
 

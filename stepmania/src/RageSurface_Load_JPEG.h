@@ -1,8 +1,8 @@
 #ifndef RAGE_SURFACE_LOAD_JPEG_H
 #define RAGE_SURFACE_LOAD_JPEG_H
 
-struct SDL_Surface;
-SDL_Surface *RageSurface_Load_JPEG( const CString &sPath, CString &error );
+#include "RageSurface_Load.h"
+RageSurface::OpenResult RageSurface_Load_JPEG( const CString &sPath, SDL_Surface *&ret, bool bHeaderOnly, CString &error );
 
 #endif
 

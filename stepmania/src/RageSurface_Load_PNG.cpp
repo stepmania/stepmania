@@ -237,24 +237,24 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 }
 
 
-SDL_Surface *RageSurface_Load_PNG( const CString &sPath, bool bHeaderOnly, CString &error )
+RageSurface::OpenResult RageSurface_Load_PNG( const CString &sPath, SDL_Surface *&ret, bool bHeaderOnly, CString &error )
 {
 	RageFile f;
 	if( !f.Open( sPath ) )
 	{
 		error = f.GetError();
-		return NULL;
+		return RageSurface::OPEN_FATAL_ERROR;
 	}
 
 	char errorbuf[1024];
-	SDL_Surface *ret = RageSurface_Load_PNG( &f, sPath, errorbuf, bHeaderOnly );
+	ret = RageSurface_Load_PNG( &f, sPath, errorbuf, bHeaderOnly );
 	if( ret == NULL )
 	{
 		error = errorbuf;
-		return ret;
+		return RageSurface::OPEN_UNKNOWN_FILE_FORMAT; // XXX
 	}
 
-	return ret;
+	return RageSurface::OPEN_OK;
 }
 
 /*

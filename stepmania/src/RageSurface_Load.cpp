@@ -5,45 +5,139 @@
 #include "RageSurface_Load_GIF.h"
 #include "RageUtil.h"
 #include "RageFile.h"
+#include "RageLog.h"
+#include "SDL_utils.h"
+#include <set>
+
+static RageSurface::OpenResult RageSurface_Load_BMP( const CString &sPath, SDL_Surface *&ret, bool bHeaderOnly, CString &error )
+{
+	RageFile f;
+	if( !f.Open(sPath) )
+	{
+		error = f.GetError();
+		return RageSurface::OPEN_FATAL_ERROR;
+	}
+
+	SDL_RWops rw;
+	OpenRWops( &rw, &f );
+	ret = SDL_LoadBMP_RW( &rw, false );
+	SDL_RWclose( &rw );
+
+	if( ret == NULL )
+	{
+		error = SDL_GetError();
+		return RageSurface::OPEN_UNKNOWN_FILE_FORMAT;
+	}
+
+	mySDL_FixupPalettedAlpha( ret );
+	return RageSurface::OPEN_OK;
+}
+
+
+static SDL_Surface *TryOpenFile( CString sPath, bool bHeaderOnly, CString &error, CString format, bool &bKeepTrying )
+{
+	SDL_Surface *ret = NULL;
+	RageSurface::OpenResult result;
+	if( !format.CompareNoCase("png") )
+		result = RageSurface_Load_PNG( sPath, ret, bHeaderOnly, error );
+	else if( !format.CompareNoCase("gif") )
+		result = RageSurface_Load_GIF( sPath, ret, bHeaderOnly, error );
+	else if( !format.CompareNoCase("jpg") )
+		result = RageSurface_Load_JPEG( sPath, ret, bHeaderOnly, error );
+	else if( !format.CompareNoCase("bmp") )
+		result = RageSurface_Load_BMP( sPath, ret, bHeaderOnly, error );
+	else
+	{
+		error = "Unsupported format";
+		bKeepTrying = true;
+		return NULL;
+	}
+
+	if( result == RageSurface::OPEN_OK )
+		return ret;
+
+	LOG->Trace( "Format %s failed: %s", format.c_str(), error.c_str() );
+
+	/*
+	 * The file failed to open, or failed to read.  This indicates a problem that will
+	 * affect all readers, so don't waste time trying more readers. (OPEN_IO_ERROR)
+	 *
+	 * Errors fall in two categories:
+	 * OPEN_UNKNOWN_FILE_FORMAT: Data was successfully read from the file, but it's the
+	 * wrong file format.  The error message always looks like "unknown file format" or
+	 * "Not Vorbis data"; ignore it so we always give a consistent error message, and
+	 * continue trying other file formats.
+	 * 
+	 * OPEN_FATAL_ERROR: Either the file was opened successfully and appears to be the
+	 * correct format, but a fatal format-specific error was encountered that will probably
+	 * not be fixed by using a different reader (for example, an Ogg file that doesn't
+	 * actually contain any audio streams); or the file failed to open or read ("I/O
+	 * error", "permission denied"), in which case all other readers will probably fail,
+	 * too.  The returned error is used, and no other formats will be tried.
+	 */
+	bKeepTrying = (result != RageSurface::OPEN_FATAL_ERROR);
+	switch( result )
+	{
+	case RageSurface::OPEN_UNKNOWN_FILE_FORMAT:
+		bKeepTrying = true;
+		error = "Unknown file format";
+		break;
+
+	case RageSurface::OPEN_FATAL_ERROR:
+		/* The file matched, but failed to load.  We know it's this type of data;
+		 * don't bother trying the other file types. */
+		bKeepTrying = false;
+		break;
+	}
+
+	return NULL;
+}
 
 SDL_Surface *RageSurface::LoadFile( const CString &sPath, bool bHeaderOnly )
 {
-	const CString ext = GetExtension( sPath );
-
-	CString error;
-	SDL_Surface *ret = NULL;
-	if( !ext.CompareNoCase("png") )
-		ret = RageSurface_Load_PNG( sPath, bHeaderOnly, error );
-	else if( !ext.CompareNoCase("gif") )
-		ret = RageSurface_Load_GIF( sPath, error );
-	else if( !ext.CompareNoCase("jpg") )
-		ret = RageSurface_Load_JPEG( sPath, error );
-	else if( !ext.CompareNoCase("bmp") )
 	{
-		RageFile f;
-		if( !f.Open(sPath) )
+		RageFile TestOpen;
+		if( !TestOpen.Open( sPath ) )
 		{
-			SDL_SetError( "%s", f.GetError().c_str() );
+			SDL_SetError( "%s", TestOpen.GetError() );
 			return NULL;
 		}
-
-		SDL_RWops rw;
-		OpenRWops( &rw, &f );
-		ret = SDL_LoadBMP_RW( &rw, false );
-		SDL_RWclose( &rw );
-
-		if( ret )
-			mySDL_FixupPalettedAlpha( ret );
 	}
-	else
+
+	set<CString> FileTypes;
+	FileTypes.insert("png");
+	FileTypes.insert("jpg");
+	FileTypes.insert("gif");
+	FileTypes.insert("bmp");
+
+	CString format = GetExtension(sPath);
+	format.MakeLower();
+
+	CString error = "";
+
+	bool bKeepTrying = true;
+
+	/* If the extension matches a format, try that first. */
+	if( FileTypes.find(format) != FileTypes.end() )
 	{
-		error = ssprintf( "Unsupported file type \"%s\"", ext.c_str() );
+	    SDL_Surface *ret = TryOpenFile( sPath, bHeaderOnly, error, format, bKeepTrying );
+		if( ret )
+			return ret;
+		FileTypes.erase( format );
 	}
 
-	if( ret == NULL )
-		SDL_SetError( "%s", error.c_str() );
+	for( set<CString>::iterator it = FileTypes.begin(); bKeepTrying && it != FileTypes.end(); ++it )
+	{
+	    SDL_Surface *ret = TryOpenFile( sPath, bHeaderOnly, error, *it, bKeepTrying );
+		if( ret )
+		{
+			LOG->Warn("File \"%s\" is really %s", sPath.c_str(), it->c_str());
+			return ret;
+		}
+	}
 
-	return ret;
+	SDL_SetError( "%s", error.c_str() );
+	return NULL;
 }
 
 /*

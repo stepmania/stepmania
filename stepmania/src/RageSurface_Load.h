@@ -4,6 +4,13 @@
 struct SDL_Surface;
 namespace RageSurface
 {
+	enum OpenResult
+	{
+		OPEN_OK,
+		OPEN_UNKNOWN_FILE_FORMAT=1,
+		OPEN_FATAL_ERROR=2,
+	};
+
 	/* If bHeaderOnly is true, the loader is only required to return a surface
 	 * with the width and height set (but may return a complete surface). */
 	SDL_Surface *LoadFile( const CString &sPath, bool bHeaderOnly=false );

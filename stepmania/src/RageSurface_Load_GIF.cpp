@@ -3,6 +3,7 @@
 #include "RageFile.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "SDL_utils.h"
 
 #define	MAXCOLORMAPSIZE		256
 
@@ -57,7 +58,7 @@ static int GetDataBlock( RageFile &f, unsigned char *buf )
 }
 
 
-SDL_Surface *RageSurface_Load_GIF( const CString &sPath, CString &error )
+RageSurface::OpenResult RageSurface_Load_GIF( const CString &sPath, SDL_Surface *&ret, bool bHeaderOnly, CString &error )
 {
 	unsigned char buf[256];
 	int imageCount = 0;
@@ -67,18 +68,18 @@ SDL_Surface *RageSurface_Load_GIF( const CString &sPath, CString &error )
 	if( !f.Open( sPath ) )
 	{
 		error = f.GetError();
-		return NULL;
+		return RageSurface::OPEN_FATAL_ERROR;
 	}
 	
 	if( !ReadOK(f, buf, 6) )
 	{
 		error = "error reading magic number";
-		return NULL;
+		return RageSurface::OPEN_FATAL_ERROR;
 	}
 	if( strncmp((char *) buf, "GIF", 3) != 0 )
 	{
 		error = "not a GIF file";
-		return NULL;
+		return RageSurface::OPEN_UNKNOWN_FILE_FORMAT;
 	}
 
 	{
@@ -89,14 +90,14 @@ SDL_Surface *RageSurface_Load_GIF( const CString &sPath, CString &error )
 		if( (strcmp(version, "87a") != 0) && (strcmp(version, "89a") != 0) )
 		{
 			error = "bad version number, not '87a' or '89a'";
-			return NULL;
+			return RageSurface::OPEN_FATAL_ERROR;
 		}
 	}
 
 	if( !ReadOK(f, buf, 7) )
 	{
 		error = "failed to read screen descriptor";
-		return NULL;
+		return RageSurface::OPEN_FATAL_ERROR;
 	}
 
 	SDL_Color GlobalColorMap[MAXCOLORMAPSIZE];
@@ -110,7 +111,7 @@ SDL_Surface *RageSurface_Load_GIF( const CString &sPath, CString &error )
 		if( !ReadPalette(f, GlobalBitPixel, GlobalColorMap ) )
 		{
 			error = "error reading global colormap";
-			return NULL;
+			return RageSurface::OPEN_FATAL_ERROR;
 		}
     }
 
@@ -122,7 +123,7 @@ SDL_Surface *RageSurface_Load_GIF( const CString &sPath, CString &error )
 		if( !ReadOK(f, &type, 1) )
 		{
 			error = "EOF / read error on image data";
-			return NULL;
+			return RageSurface::OPEN_FATAL_ERROR;
 		}
 		switch( type )
 		{
@@ -133,7 +134,7 @@ SDL_Surface *RageSurface_Load_GIF( const CString &sPath, CString &error )
 			{
 				error = ssprintf( "only %d image%s found in file",
 					imageCount, imageCount > 1 ? "s" : "");
-				return NULL;
+				return RageSurface::OPEN_FATAL_ERROR;
 			}
 		}
 
@@ -144,7 +145,7 @@ SDL_Surface *RageSurface_Load_GIF( const CString &sPath, CString &error )
 			if( !ReadOK(f, &label, 1) )
 			{
 				error = "EOF / read error on extention function code";
-				return NULL;
+				return RageSurface::OPEN_FATAL_ERROR;
 			}
 
 			switch( label )
@@ -167,7 +168,7 @@ SDL_Surface *RageSurface_Load_GIF( const CString &sPath, CString &error )
 			if( !ReadOK(f, buf, 9) )
 			{
 				error = "couldn't read left/top/width/height";
-				return NULL;
+				return RageSurface::OPEN_FATAL_ERROR;
 			}
 
 			int bitPixel = 1 << ((buf[8] & 0x07) + 1);
@@ -178,7 +179,7 @@ SDL_Surface *RageSurface_Load_GIF( const CString &sPath, CString &error )
 				if( !ReadPalette(f, bitPixel, LocalColorMap) )
 				{
 					error = "error reading local colormap";
-					return NULL;
+					return RageSurface::OPEN_FATAL_ERROR;
 				}
 			} else {
 				bitPixel = GlobalBitPixel;
@@ -195,13 +196,13 @@ SDL_Surface *RageSurface_Load_GIF( const CString &sPath, CString &error )
 			if( transparency != -1 )
 				mySDL_AddColorKey( image, transparency );
 
-			return image;
+			return RageSurface::OPEN_OK;
 		}
 		default: continue; /* Not a valid start character */
 		}
 	}
 
-    return NULL;
+    return RageSurface::OPEN_FATAL_ERROR;
 }
 
 struct LWZState
