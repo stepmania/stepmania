@@ -88,13 +88,13 @@ namespace Checkpoints
 #define NORETURN
 #endif
 
-void NORETURN sm_crash();
+void NORETURN sm_crash( const char *reason = "Internal error" );
 
 /* Assertion that sets an optional message and brings up the crash handler, so
  * we get a backtrace.  This should probably be used instead of throwing an
  * exception in most cases we expect never to happen (but not in cases that
  * we do expect, such as DSound init failure.) */
-#define FAIL_M(MESSAGE) { CHECKPOINT_M(MESSAGE); sm_crash(); }
+#define FAIL_M(MESSAGE) { CHECKPOINT_M(MESSAGE); sm_crash(MESSAGE); }
 #define ASSERT_M(COND, MESSAGE) { if(!(COND)) { FAIL_M(MESSAGE); } }
 #define ASSERT(COND) ASSERT_M((COND), "Assertion '" #COND "' failed")
 

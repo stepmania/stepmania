@@ -2,7 +2,7 @@
 
 #if defined(_WINDOWS)
 #include "windows.h"
-void NORETURN sm_crash()
+void NORETURN sm_crash( const char *reason )
 {
 	// throws an exception that gets caught by the exception handler
 	DebugBreak();
@@ -14,13 +14,13 @@ void NORETURN sm_crash()
 #elif defined(LINUX) || defined(DARWIN)
 #include "archutils/Unix/CrashHandler.h"
 #include <unistd.h>
-void NORETURN sm_crash()
+void NORETURN sm_crash( const char *reason )
 {
-	ForceCrashHandler( "Internal error" );
+	ForceCrashHandler( reason );
 	_exit( 1 );
 }
 #else
-void NORETURN sm_crash()
+void NORETURN sm_crash( const char *reason )
 {
 	*(char*)0=0;
 
