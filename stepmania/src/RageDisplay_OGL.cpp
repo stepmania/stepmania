@@ -1714,6 +1714,19 @@ unsigned RageDisplay_OGL::CreateTexture(
 
 
 	
+	{
+		ostringstream s;
+		
+		s << bGenerateMipMaps? "gluBuild2DMipmaps":"glTexImage2D";
+		s << "(format " << GLToString(glTexFormat) <<
+				", " << img->w << "x" <<  img->h <<
+				", format " << GLToString(glImageFormat) <<
+				", type " << GLToString(glImageType) <<
+				", pixfmt " << pixfmt <<
+				", imgpixfmt " << imgpixfmt;
+		LOG->Trace( "%s", s.str().c_str() );
+	}
+
 	FlushGLErrors();
 
 	if( bGenerateMipMaps )
@@ -1722,19 +1735,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 			GL_TEXTURE_2D, glTexFormat, 
 			img->w, img->h,
 			glImageFormat, glImageType, img->pixels );
-
-		if( error != 0 )
-		{
-			ostringstream s;
-			s << "gluBuild2DMipmaps(format " << GLToString(glTexFormat) <<
-				 ", w " << img->w << ", h " <<  img->h <<
-				 ", format " << GLToString(glImageFormat) <<
-				 ", type " << GLToString(glImageType) <<
-				 "): " << gluErrorString(error);
-			LOG->Trace( s.str().c_str() );
-
-			ASSERT(0);
-		}
+		ASSERT_M( error == 0, (char *) gluErrorString(error) );
 	}
 	else
 	{
@@ -1743,33 +1744,9 @@ unsigned RageDisplay_OGL::CreateTexture(
 			img->w, img->h, 0,
 			glImageFormat, glImageType, img->pixels);
 		
-		{
-			ostringstream s;
-			s << "glTexImage2D(format " << GLToString(glTexFormat) <<
-					", " << img->w << "x" <<  img->h <<
-					", format " << GLToString(glImageFormat) <<
-					", type " << GLToString(glImageType) <<
-					", pixfmt " << pixfmt <<
-					", imgpixfmt " << imgpixfmt;
-			LOG->Trace( s.str().c_str() );
-		}
 		GLenum error = glGetError();
-		if( error != GL_NO_ERROR )
-		{
-			ostringstream s;
-			s << "glTexImage2D(format " << GLToString(glTexFormat) <<
-				 ", " << img->w << "x" <<  img->h <<
-				 ", format " << GLToString(glImageFormat) <<
-				 ", type " << GLToString(glImageType) <<
-				 ", pixfmt " << pixfmt <<
-				 ", imgpixfmt " << imgpixfmt <<
-				 "): " << GLToString(error);
-			LOG->Trace( s.str().c_str() );
-
-			ASSERT(0);
-		}
+		ASSERT_M( error == GL_NO_ERROR, GLToString(error) );
 	}
-
 
 
 	/* Sanity check: */
