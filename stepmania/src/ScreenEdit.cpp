@@ -528,7 +528,6 @@ void ScreenEdit::Init()
 	m_pSteps->GetNoteData( noteData );
 
 
-	TransitionEditMode( MODE_EDITING );
 	GAMESTATE->m_bPastHereWeGo = false;
 
 	GAMESTATE->m_bEditing = true;
@@ -536,16 +535,20 @@ void ScreenEdit::Init()
 	GAMESTATE->m_fSongBeat = 0;
 	m_fTrailingBeat = GAMESTATE->m_fSongBeat;
 
-	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fScrollSpeed = 1;
-	GAMESTATE->m_SongOptions.m_fMusicRate = 1;
 	/* Not all games have a noteskin named "note" ... */
 	if( NOTESKIN->DoesNoteSkinExist("note") )
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_sNoteSkin = "note";	// change noteskin before loading all of the edit Actors
+	// Reset player options, but don't reset the current NoteSkin
+	CString sNoteSkin = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_sNoteSkin;
+	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.Init();	// don't allow weird options in editor.  It doesn't handle reverse well.
+	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_sNoteSkin = sNoteSkin;
+
 	GAMESTATE->ResetNoteSkins();
 	GAMESTATE->StoreSelectedOptions();
 
 	g_iShiftAnchor = -1;
 
+	TransitionEditMode( MODE_EDITING );
 	
 	this->AddChild( &m_Background );
 
@@ -571,11 +574,6 @@ void ScreenEdit::Init()
 
 	m_Clipboard.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 
-
-	// Reset player options, but don't reset the current NoteSkin
-	CString sNoteSkin = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_sNoteSkin;
-	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.Init();	// don't allow weird options in editor.  It doesn't handle reverse well.
-	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_sNoteSkin = sNoteSkin;
 
 	/* XXX: Do we actually have to send real note data here, and to m_NoteFieldRecord? 
 	 * (We load again on play/record.) */
