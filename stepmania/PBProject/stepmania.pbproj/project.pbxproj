@@ -106,7 +106,6 @@
 				17587328FF379C6511CA2CBB,
 				AA507E55050BA28F00F96139,
 				AA1C6544050D1FD00073A143,
-				AA1C68CB05116C7C0073A143,
 			);
 			isa = PBXGroup;
 			name = Products;
@@ -135,30 +134,29 @@
 				29B97326FDCFA39411CA2CEA,
 				AA507E54050BA28F00F96139,
 				AA1C6543050D1FD00073A143,
-				AA1C68CA05116C7C0073A143,
 			);
 		};
 		29B97314FDCFA39411CA2CEA = {
 			children = (
-				AA1C6595050EE6390073A143,
-				AA52E9BD04DBBCF400D02EE9,
-				AA6E00FE047711FF005F316C,
 				AA6EFF7404770F8B005F316C,
-				AA6EFE6D04770D3E005F316C,
 				AA6EFEFA04770E84005F316C,
-				AA6E00090477103E005F316C,
-				AA6EFF6F04770F6A005F316C,
-				AA6EFE6A04770D01005F316C,
-				AA6EFE5704770C7E005F316C,
+				AA6EFE6D04770D3E005F316C,
 				AA6EFDC804770AF1005F316C,
-				AA6EFDBB04770A83005F316C,
-				29B97315FDCFA39411CA2CEA,
-				AAFC803F0513A6EB00D02EE9,
-				AA507E4F050BA1A000F96139,
-				29B97317FDCFA39411CA2CEA,
-				AA14ED150509F94C00E3FAD7,
+				AA6EFE5704770C7E005F316C,
 				29B97323FDCFA39411CA2CEA,
+				AA6E00FE047711FF005F316C,
+				AA507E4F050BA1A000F96139,
+				AA14ED150509F94C00E3FAD7,
+				29B97315FDCFA39411CA2CEA,
 				19C28FACFE9D520D11CA2CBB,
+				AA6EFDBB04770A83005F316C,
+				29B97317FDCFA39411CA2CEA,
+				AA1C6595050EE6390073A143,
+				AA6E00090477103E005F316C,
+				AA6EFE6A04770D01005F316C,
+				AA6EFF6F04770F6A005F316C,
+				AA52E9BD04DBBCF400D02EE9,
+				AAFC803F0513A6EB00D02EE9,
 			);
 			isa = PBXGroup;
 			name = "SDL App";
@@ -223,13 +221,13 @@
 				AAF4310104DCC5F800D02EE9,
 			);
 			buildSettings = {
+				DEBUGGING_SYMBOLS = NO;
 				FRAMEWORK_SEARCH_PATHS = "\"$(HOME)/Library/Frameworks\"";
 				HEADER_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers\" ../src \"$(SYSTEM_LIBRARY_DIR)/Frameworks/SDL_image.framework/Versions/A/Headers\" \"$(SYSTEM_LIBRARY_DIR)/SDL.framework/Headers\"";
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "/Users/steve/stepmania/src/vorbis/win32 /Users/steve/stepmania/src/vorbis/xbox";
+				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				OPTIMIZATION_CFLAGS = "-O0";
-				OTHER_CFLAGS = "-I../src -I/usr/local/include/SDL -DPBBUILD  -Wno-switch -Wno-missing-braces -fcoalesce-templates -fno-rtti -Wnewline-eof -DSOUND_SUPPORTS_MADLIB -DSOUND_SUPPORTS_WAV -DSOUND_SUPPORTS_OGG";
+				OTHER_CFLAGS = "-I../src -I/usr/local/include/SDL -DPBBUILD  -Wno-switch -Wno-missing-braces -fcoalesce-templates -fno-rtti -Wnewline-eof -DSOUND_SUPPORTS_MADLIB -DSOUND_SUPPORTS_WAV -DSOUND_SUPPORTS_OGG -Os";
 				OTHER_LDFLAGS = "-lSDLmain -lpng -lmad -logg -lvorbisfile -lvorbis";
 				PRODUCT_NAME = StepMania;
 				SECTORDER_FLAGS = "";
@@ -508,7 +506,6 @@
 				AA1DCB6B04A4877900D02EE9,
 				AA1DCB6C04A487DD00D02EE9,
 				AA1DCB6D04A4885E00D02EE9,
-				AA45219004A83D6100D02EE9,
 				AAE443EE04B0F9F600D02EE9,
 				AAE443F004B0F9F600D02EE9,
 				AAE443F604B0FEB700D02EE9,
@@ -779,7 +776,6 @@
 				AABE35F104967E6F005F316C,
 				AA8F118404A04F9B00D02EE9,
 				AA1DC47604A4861700D02EE9,
-				AA45218F04A83D6000D02EE9,
 				AAE443ED04B0F9F600D02EE9,
 				AAE443EF04B0F9F600D02EE9,
 				AAE443F504B0FEB700D02EE9,
@@ -958,6 +954,7 @@
 		};
 		AA14ED150509F94C00E3FAD7 = {
 			children = (
+				AA1C654B050D212D0073A143,
 				AA14ED160509F98600E3FAD7,
 				AA14ED170509F98600E3FAD7,
 				AA14ED1A0509FA1F00E3FAD7,
@@ -1003,6 +1000,44 @@
 			settings = {
 			};
 		};
+		AA157B31051677F000D02EE9 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			name = Util.h;
+			path = Installer/Util.h;
+			refType = 4;
+		};
+		AA157B32051677F000D02EE9 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			name = Util.cpp;
+			path = Installer/Util.cpp;
+			refType = 4;
+		};
+		AA157B33051677F000D02EE9 = {
+			fileRef = AA157B31051677F000D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA157B34051677F000D02EE9 = {
+			fileRef = AA157B32051677F000D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA157B35051677F000D02EE9 = {
+			fileRef = AA157B31051677F000D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA157B36051677F000D02EE9 = {
+			fileRef = AA157B32051677F000D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		AA1C653A050C00CF0073A143 = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -1037,7 +1072,7 @@
 				AA1C6567050D2D0D0073A143,
 				AA1C6569050D2D710073A143,
 				AA1C656B050D2D740073A143,
-				AAECB37805127994001B792B,
+				AA157B33051677F000D02EE9,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1048,7 +1083,6 @@
 				AA1C6549050D20D30073A143,
 				AA1C654A050D20E20073A143,
 				AA1C6551050D21AB0073A143,
-				AAECB370051274B7001B792B,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1061,6 +1095,7 @@
 				AA1C6568050D2D0D0073A143,
 				AA1C656A050D2D720073A143,
 				AA1C656C050D2D740073A143,
+				AA157B34051677F000D02EE9,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1069,6 +1104,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA1C6546050D20A70073A143,
+				AACC9BB10513BEA000D02EE9,
+				AACC9BB20513BEA300D02EE9,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1089,8 +1126,9 @@
 				AA1C6542050D1FD00073A143,
 			);
 			buildSettings = {
+				DEBUGGING_SYMBOLS = NO;
 				HEADER_SEARCH_PATHS = "../src Installer";
-				OTHER_CFLAGS = "";
+				OTHER_CFLAGS = "-Wwrite-strings -Os";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = Installer;
@@ -1099,7 +1137,6 @@
 				WRAPPER_EXTENSION = app;
 			};
 			dependencies = (
-				AAECB36D0512749E001B792B,
 			);
 			isa = PBXApplicationTarget;
 			name = Installer;
@@ -1421,67 +1458,6 @@
 			settings = {
 			};
 		};
-		AA1C68C605116C7C0073A143 = {
-			buildActionMask = 2147483647;
-			files = (
-				AAECB37705127994001B792B,
-			);
-			isa = PBXHeadersBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AA1C68C705116C7C0073A143 = {
-			buildActionMask = 2147483647;
-			files = (
-				AAECB372051278EF001B792B,
-			);
-			isa = PBXSourcesBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AA1C68C805116C7C0073A143 = {
-			buildActionMask = 2147483647;
-			files = (
-				AAECB3740512794D001B792B,
-				AAECB37505127950001B792B,
-			);
-			isa = PBXFrameworksBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AA1C68C905116C7C0073A143 = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			isa = PBXRezBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AA1C68CA05116C7C0073A143 = {
-			buildPhases = (
-				AA1C68C605116C7C0073A143,
-				AA1C68C705116C7C0073A143,
-				AA1C68C805116C7C0073A143,
-				AA1C68C905116C7C0073A143,
-			);
-			buildSettings = {
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = installtool;
-				REZ_EXECUTABLE = YES;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
-			};
-			dependencies = (
-			);
-			isa = PBXToolTarget;
-			name = installtool;
-			productInstallPath = /usr/local/bin;
-			productName = installtool;
-			productReference = AA1C68CB05116C7C0073A143;
-		};
-		AA1C68CB05116C7C0073A143 = {
-			isa = PBXExecutableFileReference;
-			path = installtool;
-			refType = 3;
-		};
 		AA1DC47204A485E900D02EE9 = {
 			fileEncoding = 30;
 			indentWidth = 4;
@@ -1770,18 +1746,6 @@
 			settings = {
 			};
 		};
-		AA45218F04A83D6000D02EE9 = {
-			fileRef = AA6EFD8404770A7C005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA45219004A83D6100D02EE9 = {
-			fileRef = AA6EFD8504770A7C005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AA4F38C004E2D0B700D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -1831,9 +1795,8 @@
 				AA1C6560050D2ABC0073A143,
 				AA1C653B050C00CF0073A143,
 				AA1C653A050C00CF0073A143,
-				AA1C654B050D212D0073A143,
-				AAECB371051278EF001B792B,
-				AAECB37605127994001B792B,
+				AA157B32051677F000D02EE9,
+				AA157B31051677F000D02EE9,
 			);
 			isa = PBXGroup;
 			name = Installer;
@@ -1845,6 +1808,7 @@
 				AA507E63050BA42800F96139,
 				AA507E66050BA55B00F96139,
 				AA1C653C050C00CF0073A143,
+				AA157B35051677F000D02EE9,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1855,6 +1819,7 @@
 				AA507E67050BA55B00F96139,
 				AA507E69050BC69000F96139,
 				AA1C653D050C00CF0073A143,
+				AA157B36051677F000D02EE9,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -10035,6 +10000,18 @@
 			settings = {
 			};
 		};
+		AACC9BB10513BEA000D02EE9 = {
+			fileRef = AAF33F2A04FF213100F93C24;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AACC9BB20513BEA300D02EE9 = {
+			fileRef = AAECB3730512794D001B792B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		AADB4E7A04D4FE5D00D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -10372,65 +10349,11 @@
 			settings = {
 			};
 		};
-		AAECB36D0512749E001B792B = {
-			isa = PBXTargetDependency;
-			target = AA1C68CA05116C7C0073A143;
-		};
-		AAECB370051274B7001B792B = {
-			fileRef = AA1C68CB05116C7C0073A143;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AAECB371051278EF001B792B = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			name = installtool.c;
-			path = Installer/installtool.c;
-			refType = 4;
-		};
-		AAECB372051278EF001B792B = {
-			fileRef = AAECB371051278EF001B792B;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AAECB3730512794D001B792B = {
 			isa = PBXFrameworkReference;
 			name = Security.framework;
 			path = /System/Library/Frameworks/Security.framework;
 			refType = 0;
-		};
-		AAECB3740512794D001B792B = {
-			fileRef = AAECB3730512794D001B792B;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AAECB37505127950001B792B = {
-			fileRef = AAF33F2A04FF213100F93C24;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AAECB37605127994001B792B = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			name = install.h;
-			path = Installer/install.h;
-			refType = 4;
-		};
-		AAECB37705127994001B792B = {
-			fileRef = AAECB37605127994001B792B;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AAECB37805127994001B792B = {
-			fileRef = AAECB37605127994001B792B;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		AAEF3D0C04B533CC00D02EE9 = {
 			fileEncoding = 4;
