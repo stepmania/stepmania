@@ -723,10 +723,20 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 			GAMESTATE->m_pCurGame = GAMEMAN->StringToGameType( sGame );
 	}
 
-	if( GAMESTATE->m_pCurGame == NULL )
+	/* If the active game type isn't actually available, revert to the default. */
+	if( GAMESTATE->m_pCurGame == NULL || !GAMEMAN->IsGameEnabled( GAMESTATE->m_pCurGame ) )
+	{
+		if( GAMESTATE->m_pCurGame != NULL )
+			LOG->Warn( "Default note skin for \"%s\" missing, reverting to \"%s\"",
+				GAMESTATE->m_pCurGame->m_szName, GAMEMAN->GetDefaultGame()->m_szName );
 		GAMESTATE->m_pCurGame = GAMEMAN->GetDefaultGame();
-	CString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
+	}
 
+	/* If the default isn't available, our default note skin is messed up. */
+	if( !GAMEMAN->IsGameEnabled( GAMESTATE->m_pCurGame ) )
+		RageException::Throw( "Default note skin for \"%s\" missing", GAMESTATE->m_pCurGame->m_szName );
+
+	CString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
 	CString sAnnouncer = sGameName, sTheme = sGameName, sNoteSkin = sGameName;
 
 	// if these calls fail, the three strings will keep the initial values set above.
