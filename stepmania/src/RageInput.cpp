@@ -51,8 +51,12 @@ RageInput::RageInput()
 			SDL_JoystickNumAxes(pJoystick),
 			SDL_JoystickNumHats(pJoystick),
 			SDL_JoystickNumButtons(pJoystick) );
-		SDL_JoystickClose(pJoystick);
+		/* For some weird reason, we won't get any joystick events at all
+		 * if we don't keep the joystick open.  (Why?  The joystick event
+		 * API is completely separate from the SDL_Joystick polling API ...) */
+		Joysticks.push_back(pJoystick);
 	}
+
 	SDL_JoystickEventState( SDL_ENABLE );
 
 	/* Init optional devices. */
@@ -62,8 +66,12 @@ RageInput::RageInput()
 RageInput::~RageInput()
 {
 	/* Delete optional devices. */
-	for(unsigned i = 0; i < Devices.size(); ++i)
+	unsigned i;
+	for(i = 0; i < Devices.size(); ++i)
 		delete Devices[i];
+
+	for(i = 0; i < Joysticks.size(); ++i)
+		SDL_JoystickClose(Joysticks[i]);
 
 	SDL_QuitSubSystem( SDL_INIT_JOYSTICK );
 }

@@ -12,9 +12,14 @@
 #include "SDL_utils.h"
 #include "arch/arch.h"
 
+struct _SDL_Joystick;
+typedef struct _SDL_Joystick SDL_Joystick;
+
 class RageInput
 {
 	vector<InputHandler *> Devices;
+
+	vector<SDL_Joystick *> Joysticks;
 
 public:
 	RageInput();
