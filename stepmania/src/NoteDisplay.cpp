@@ -741,6 +741,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iBeat, const bo
 	// top to bottom
 	bool bAllAreTransparent = true;
 	bool bLast = false;
+	float fVertTexCoordOffset = 0;
 	for( float fY = fDrawYBodyTop; !bLast; fY += fYStep )
 	{
 		if( fY >= fDrawYBodyBottom )
@@ -756,7 +757,12 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iBeat, const bo
 		const float fXRight				= fX + fFrameWidth/2;
 		const float fDistFromBodyBottom	= fYBodyBottom - fY;
 		const float fDistFromBodyTop	= fY - fYBodyTop;
-		const float fTexCoordTop		= SCALE( bAnchorToBottom ? fDistFromBodyTop : fDistFromBodyBottom,    0, fFrameHeight, pRect->bottom, pRect->top );
+		float fTexCoordTop		= SCALE( bAnchorToBottom ? fDistFromBodyTop : fDistFromBodyBottom,    0, fFrameHeight, pRect->bottom, pRect->top );
+		/* For very large hold notes, shift the texture coordinates to be near 0, so we
+		 * don't send very large values to the renderer. */
+		if( fY == fDrawYBodyTop ) // first
+				fVertTexCoordOffset = floorf( fTexCoordTop );
+		fTexCoordTop -= fVertTexCoordOffset;
 		const float fTexCoordLeft		= pRect->left;
 		const float fTexCoordRight		= pRect->right;
 		const float	fAlpha				= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
@@ -868,7 +874,7 @@ void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, int iBeat, con
 		queue.Draw();
 }
 
-void NoteDisplay::DrawHoldTail( const TapNote& tn, int iCol, int iBeat, const bool bIsBeingHeld, float fYTail, float fPercentFadeToFail, float fColorScale, bool bGlow )
+void NoteDisplay::DrawHoldTail( const TapNote& tn, int iCol, int iBeat, const bool bIsBeingHeld, float fYTail, float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset )
 {
 	//
 	// Draw the tail
@@ -879,6 +885,8 @@ void NoteDisplay::DrawHoldTail( const TapNote& tn, int iCol, int iBeat, const bo
 
 	const float fY				= fYTail;
 	const float fYOffset		= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
+	if( fYOffset < fYStartOffset || fYOffset > fYEndOffset )
+			return;
 	const float fX				= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
 	const float fZ				= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
 	const float	fAlpha			= ArrowEffects::GetAlpha( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
@@ -920,7 +928,7 @@ void NoteDisplay::DrawHoldTail( const TapNote& tn, int iCol, int iBeat, const bo
 	}
 }
 
-void NoteDisplay::DrawHoldHead( const TapNote& tn, int iCol, int iBeat, const bool bIsBeingHeld, float fYHead, float fPercentFadeToFail, float fColorScale, bool bGlow )
+void NoteDisplay::DrawHoldHead( const TapNote& tn, int iCol, int iBeat, const bool bIsBeingHeld, float fYHead, float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset )
 {
 	//
 	// Draw the head
@@ -932,6 +940,8 @@ void NoteDisplay::DrawHoldHead( const TapNote& tn, int iCol, int iBeat, const bo
 	// draw with normal Sprite
 	const float fY				= fYHead;
 	const float fYOffset		= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
+	if( fYOffset < fYStartOffset || fYOffset > fYEndOffset )
+			return;
 	const float fX				= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
 	const float fZ				= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
 	const float	fAlpha			= ArrowEffects::GetAlpha( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
@@ -1007,9 +1017,9 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iBeat, bool bIsBein
 	/* The body and caps should have no overlap, so their order doesn't matter.
 	 * Draw the head last, so it appears on top. */
 	if( !cache->m_bHoldHeadIsAboveWavyParts )
-		DrawHoldHead( tn, iCol, iBeat, bIsBeingHeld, bFlipHeadAndTail ? fYTail : fYHead, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+		DrawHoldHead( tn, iCol, iBeat, bIsBeingHeld, bFlipHeadAndTail ? fYTail : fYHead, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fYStartOffset, fYEndOffset );
 	if( !cache->m_bHoldTailIsAboveWavyParts )
-		DrawHoldTail( tn, iCol, iBeat, bIsBeingHeld, bFlipHeadAndTail ? fYHead : fYTail, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+		DrawHoldTail( tn, iCol, iBeat, bIsBeingHeld, bFlipHeadAndTail ? fYHead : fYTail, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fYStartOffset, fYEndOffset );
 
 	if( bDrawGlowOnly )
 		DISPLAY->SetTextureModeGlow();
@@ -1026,9 +1036,9 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iBeat, bool bIsBein
 
 	/* These set the texture mode themselves. */
 	if( cache->m_bHoldTailIsAboveWavyParts )
-		DrawHoldTail( tn, iCol, iBeat, bIsBeingHeld, bFlipHeadAndTail ? fYHead : fYTail, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+		DrawHoldTail( tn, iCol, iBeat, bIsBeingHeld, bFlipHeadAndTail ? fYHead : fYTail, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fYStartOffset, fYEndOffset );
 	if( cache->m_bHoldHeadIsAboveWavyParts )
-		DrawHoldHead( tn, iCol, iBeat, bIsBeingHeld, bFlipHeadAndTail ? fYTail : fYHead, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+		DrawHoldHead( tn, iCol, iBeat, bIsBeingHeld, bFlipHeadAndTail ? fYTail : fYHead, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fYStartOffset, fYEndOffset );
 
 	// now, draw the glow pass
 	if( !bDrawGlowOnly )
