@@ -230,9 +230,19 @@ RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
 			throw RageException_D3DNotInstalled();
 
 		pDirect3DCreate8 = (Direct3DCreate8_t) GetProcAddress(g_D3D8_Module, "Direct3DCreate8");
+		if(!pDirect3DCreate8)
+		{
+			LOG->Trace( "Direct3DCreate8 not found" );
+			throw RageException_D3DNotInstalled();
+		}
 #endif
 
 		g_pd3d = pDirect3DCreate8( D3D_SDK_VERSION );
+		if(!g_pd3d)
+		{
+			LOG->Trace( "Direct3DCreate8 failed" );
+			throw RageException_D3DNotInstalled();
+		}
 
 		if( FAILED( g_pd3d->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &g_DeviceCaps) ) )
 			throw RageException_D3DNoAcceleration();
