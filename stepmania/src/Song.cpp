@@ -1036,31 +1036,54 @@ void SortSongPointerArrayByTitle( vector<Song*> &arraySongPointers )
 	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByTitle );
 }
 
-int CompareSongPointersByDifficulty(const Song *pSong1, const Song *pSong2)
+static int GetSongSortDifficulty(const Song *pSong)
 {
-	vector<Notes*> aNotes1;
-	vector<Notes*> aNotes2;
+	vector<Notes*> aNotes;
+	pSong->GetNotes( aNotes, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
 
-	pSong1->GetNotes( aNotes1, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
-	pSong2->GetNotes( aNotes2, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
+	// sort by anything but beginner
+	/* This makes the sort a little odd; songs can end up in unintuitive places because,
+	 * for example, of a HARD difficulty with an incorrectly-set meter of 1, or because
+	 * of challenge steps. */
+/*
+	int iEasiestMeter = 1000;	// infinity
+	for( unsigned i=0; i<aNotes.size(); i++ )
+	{
+		if(aNotes[i]->GetDifficulty() == DIFFICULTY_BEGINNER)
+			continue;
 
-	int iEasiestMeter1 = 1000;	// infinity
-	int iEasiestMeter2 = 1000;	// infinity
-
-	unsigned i;
-	for( i=0; i<aNotes1.size(); i++ )
-		if(aNotes1[i]->GetDifficulty() != DIFFICULTY_BEGINNER) //sort by anything but beginner
-			iEasiestMeter1 = min( iEasiestMeter1, aNotes1[i]->GetMeter() );
-	for( i=0; i<aNotes2.size(); i++ )
-		if(aNotes2[i]->GetDifficulty() != DIFFICULTY_BEGINNER)
-			iEasiestMeter2 = min( iEasiestMeter2, aNotes2[i]->GetMeter() );
-
+		iEasiestMeter = min( iEasiestMeter, aNotes[i]->GetMeter() );
+	}
 	// odd case where there are only beginner steps... what to do? should probably
 	// act just like it was a 1-footer, even if the beginner steps aren't	
 	if( iEasiestMeter1 == 1000 )
 		iEasiestMeter1 = 1;
 	if( iEasiestMeter2 == 1000 )
 		iEasiestMeter2 = 1;
+*/
+
+	/* Instead, always sort by the first difficulty found in the following order: */
+	const Difficulty d[] = { DIFFICULTY_EASY, DIFFICULTY_MEDIUM, DIFFICULTY_HARD,
+		DIFFICULTY_CHALLENGE, DIFFICULTY_INVALID };
+
+	for(int i = 0; d[i] != DIFFICULTY_INVALID; ++i)
+	{
+		for( unsigned j = 0; j < aNotes.size(); ++j)
+		{
+			if(aNotes[j]->GetDifficulty() != d[i])
+				continue;
+
+			return aNotes[j]->GetMeter();
+		}
+	}
+
+	return 1;
+}
+
+int CompareSongPointersByDifficulty(const Song *pSong1, const Song *pSong2)
+{
+	int iEasiestMeter1 = GetSongSortDifficulty(pSong1);
+	int iEasiestMeter2 = GetSongSortDifficulty(pSong2);
 
 	if( iEasiestMeter1 < iEasiestMeter2 )
 		return true;
