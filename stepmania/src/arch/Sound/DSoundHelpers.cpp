@@ -3,7 +3,7 @@
 #include "../../RageUtil.h"
 #include "../../RageLog.h"
 
-#define DIRECTSOUND_VERSION 0x0800
+#define DIRECTSOUND_VERSION 0x0700
 #include <mmsystem.h>
 #include <dsound.h>
 
