@@ -175,6 +175,7 @@ public:
 	bool			m_bEndlessBreakEnabled;
 	int				m_iEndlessNumStagesUntilBreak;
 	int				m_iEndlessBreakLength;
+	bool			m_bDisableScreenSaver;
 	CString			m_sLanguage;
 	CString			m_sMemoryCardProfileSubdir;	// if set, always use the device that mounts to this point
 	CString			m_sDefaultLocalProfileID[NUM_PLAYERS];

@@ -176,6 +176,7 @@ PrefsManager::PrefsManager()
 	m_bEndlessBreakEnabled = true;
 	m_iEndlessNumStagesUntilBreak = 5;
 	m_iEndlessBreakLength = 5;
+	m_bDisableScreenSaver = true; // may be causing flickering in X
 
 	// set to 0 so people aren't shocked at first
 	m_iProgressiveLifebar = 0;
@@ -474,6 +475,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "EndlessBreakEnabled",				m_bEndlessBreakEnabled );
 	ini.GetValue( "Options", "EndlessStagesUntilBreak",			m_iEndlessNumStagesUntilBreak );
 	ini.GetValue( "Options", "EndlessBreakLength",				m_iEndlessBreakLength );
+	ini.GetValue( "Options", "DisableScreenSaver",				m_bDisableScreenSaver );
 
 	ini.GetValue( "Options", "MemoryCardProfileSubdir",			m_sMemoryCardProfileSubdir );
 	for( int p=0; p<NUM_PLAYERS; p++ )
@@ -690,6 +692,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "EndlessBreakEnabled",				m_bEndlessBreakEnabled );
 	ini.SetValue( "Options", "EndlessStagesUntilBreak",			m_iEndlessNumStagesUntilBreak );
 	ini.SetValue( "Options", "EndlessBreakLength",				m_iEndlessBreakLength );
+	ini.SetValue( "Options", "DisableScreenSaver",				m_bDisableScreenSaver );
 
 	ini.SetValue( "Options", "MemoryCardProfileSubdir",			m_sMemoryCardProfileSubdir );
 	for( int p=0; p<NUM_PLAYERS; p++ )
