@@ -11,15 +11,12 @@
 #include "PrefsManager.h"
 #include "ArchHooks_darwin.h"
 #include "RageLog.h"
+#include "archutils/Darwin/Crash.h"
+#include "archutils/Unix/CrashHandler.h"
 #include <Carbon/Carbon.h>
 #if 0
 #include <QuickTime/QuickTime.h>
 #endif
-#include <sys/param.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/uio.h>
-#include <unistd.h>
 
 /* You would think that these would be defined somewhere. */
 enum {
@@ -28,11 +25,15 @@ enum {
 };
 
 OSStatus HandleException(ExceptionInformation *theException);
+#if 0
 static int TaskMovies(void *data);
 static bool shutdown;
+#endif
 
 ArchHooks_darwin::ArchHooks_darwin()
 {
+    CrashHandlerHandleArgs();
+    
     long response;
     CString error = "";
     OSErr err = Gestalt(gestaltSystemVersion, &response);
@@ -298,87 +299,6 @@ ArchHooks::MessageBoxResult ArchHooks_darwin::MessageBoxAbortRetryIgnore(CString
     CFRelease(i);
     CFRelease(r);
     return result;
-}
-
-#define CASE_CODE(code,addr) case k##code: strcpy((addr),#code); break
-
-OSStatus HandleException(ExceptionInformation *theException)
-{
-    InstallExceptionHandler(NULL); /* Remove this handler */
-
-#if 0
-    
-    //FILE *fp = fopen("crashinfo.txt", "w");
-    int fd = open("crashinfo.txt", O_WRONLY | O_CREAT | O_TRUNC, 0x777);
-    ASSERT(fd != -1);
-    char code[32];
-
-    switch (theException->theKind)
-	{
-        CASE_CODE(UnknownException, code);
-        CASE_CODE(IllegalInstructionException, code);
-        CASE_CODE(TrapException, code);
-        CASE_CODE(AccessException, code);
-        CASE_CODE(UnmappedMemoryException, code);
-        CASE_CODE(ExcludedMemoryException, code);
-        CASE_CODE(ReadOnlyMemoryException, code);
-        CASE_CODE(UnresolvablePageFaultException, code);
-        CASE_CODE(PrivilegeViolationException, code);
-        CASE_CODE(TraceException, code);
-        CASE_CODE(InstructionBreakpointException, code);
-        CASE_CODE(DataBreakpointException, code);
-        CASE_CODE(FloatingPointException, code);
-        CASE_CODE(StackOverflowException, code);
-    }
- /* ***FIXME*** we need to track build number somehow */
-    /*fprintf(fp,
-            "StepMania crash report -- build unknown\n"
-            "---------------------------------------\n\n"
-            "Crash reason: %s\n\n"
-            "************************\n"
-            "All stack trace information in ~/Library/Logs/CrashReporter/stepmania.crash.log\n"
-            "Please enable crash reporting (if you haven't done so already) in Console.app. "
-            "Preferences->Crashes->Enable crash reporting.\n"
-            "************************\n\n"
-            "Static log:\n", code);*/
-    const char *buf1 = "StepMania crash report -- build unknown\n"
-        "---------------------------------------\n\n"
-        "Crash reason: ";
-    const char *buf2 = "";
-    write(fd, buf1, strlen(buf1));
-    write(fd, code, strlen(code));
-
-	unsigned size = staticLog.size();
-    for (unsigned i=0; i<size; ++i)
-        fprintf(fp, "%s\n", staticLog[i].c_str());
-    fprintf(fp, "\nPartial log:\n");
-    while (!crashLog.empty())
-	{
-        CString s = crashLog.front();
-        fprintf(fp, "%s\n", s.c_str());
-        crashLog.pop();
-    }
-    fprintf(fp, "\nAdditionalLog:\n%s\n\n-- End of report\n", additionalLog.c_str());
-    fclose(fp);
-
-    /* Check for sh */
-    if (system(NULL))
-	{
-        char path[MAXPATHLEN];
-        if (getcwd(path, MAXPATHLEN))
-		{
-            int pos = strlen(path);
-            strcpy(&path[pos], "/crashinfo.txt");
-        } else
-            path[0] = '\0';
-        char *cmd;
-        asprintf(&cmd, "touch ~/Library/Logs/CrashReporter/stepmania.crash.log;"
-                 "open ~/Library/Logs/CrashReporter/stepmania.crash.log %s", path);
-        system(cmd);
-        free(cmd);
-    }
-#endif
-    return -1;
 }
 
 #if 0
