@@ -57,6 +57,7 @@ public:
 	void RegisterTexture( RageTextureID ID, RageTexture *p );
 	void CacheTexture( RageTextureID ID );
 	void VolatileTexture( RageTextureID ID );
+	void PermanentTexture( RageTextureID ID );
 	void UnloadTexture( RageTexture *t );
 	void ReloadAll();
 
