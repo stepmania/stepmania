@@ -297,6 +297,7 @@ bool Actor::IsFirstUpdate()
 void Actor::Update( float fDeltaTime )
 {
 //	LOG->Trace( "Actor::Update( %f )", fDeltaTime );
+	ASSERT_M( fDeltaTime >= 0, ssprintf("%f",fDeltaTime) );
 
 	m_fHibernateSecondsLeft -= fDeltaTime;
 	m_fHibernateSecondsLeft = max( 0, m_fHibernateSecondsLeft );
