@@ -187,19 +187,16 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 		out.m_NotesType == NOTES_TYPE_DANCE_DOUBLE  || 
 		out.m_NotesType == NOTES_TYPE_DANCE_COUPLE)	// if there are 4 panels, then the Up+Right track really contains the notes for Up
 	{
-		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )	// for each TapNote
-		{
-			memcpy( 
-				pNoteData->m_TapNotes[DANCE_NOTE_PAD1_UP], 
-				pNoteData->m_TapNotes[DANCE_NOTE_PAD1_UPRIGHT],
-				MAX_TAP_NOTE_ROWS*sizeof(pNoteData->m_TapNotes[0][0]) 
-				);
-			memcpy( 
-				pNoteData->m_TapNotes[DANCE_NOTE_PAD2_UP], 
-				pNoteData->m_TapNotes[DANCE_NOTE_PAD2_UPRIGHT],
-				MAX_TAP_NOTE_ROWS*sizeof(pNoteData->m_TapNotes[0][0]) 
-				);
-		}
+		memcpy( 
+			pNoteData->m_TapNotes[DANCE_NOTE_PAD1_UP], 
+			pNoteData->m_TapNotes[DANCE_NOTE_PAD1_UPRIGHT],
+			MAX_TAP_NOTE_ROWS*sizeof(pNoteData->m_TapNotes[0][0]) 
+			);
+		memset( 
+			pNoteData->m_TapNotes[DANCE_NOTE_PAD2_UPRIGHT],
+			'0',
+			MAX_TAP_NOTE_ROWS*sizeof(pNoteData->m_TapNotes[0][0]) 
+			);
 	}
 
 	// we're done reading in all of the BMS values
@@ -562,7 +559,6 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 					out.m_BPMSegments[i].m_fStartBeat, out.m_BPMSegments[i].m_fBPM, i );
 
 	file.Close();
-
-	return TRUE;
+	return true;
 }
 
