@@ -28,16 +28,12 @@ void RageVec3TransformCoord( RageVector3* pOut, const RageVector3* pV, const Rag
 void RageVec3TransformNormal( RageVector3* pOut, const RageVector3* pV, const RageMatrix* pM );
 void RageVec4TransformCoord( RageVector4* pOut, const RageVector4* pV, const RageMatrix* pM );
 void RageMatrixIdentity( RageMatrix* pOut );
-RageMatrix RageMatrixIdentity();
 void RageMatrixMultiply( RageMatrix* pOut, const RageMatrix* pA, const RageMatrix* pB );
 void RageMatrixTranslation( RageMatrix* pOut, float x, float y, float z );
 void RageMatrixScaling( RageMatrix* pOut, float x, float y, float z );
 void RageMatrixRotationX( RageMatrix* pOut, float fTheta );
 void RageMatrixRotationY( RageMatrix* pOut, float fTheta );
 void RageMatrixRotationZ( RageMatrix* pOut, float fTheta );
-RageMatrix RageMatrixRotationX( float fTheta );
-RageMatrix RageMatrixRotationY( float fTheta );
-RageMatrix RageMatrixRotationZ( float fTheta );
 void RageMatrixCommand( CString sCommandString, RageMatrix &mat );
 void RageQuatFromHPR(RageVector4* pOut, RageVector3 hpr );
 void RageQuatFromPRH(RageVector4* pOut, RageVector3 prh );
