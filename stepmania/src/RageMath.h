@@ -36,7 +36,6 @@ void RageMatrixRotationX( RageMatrix* pOut, float fTheta );
 void RageMatrixRotationY( RageMatrix* pOut, float fTheta );
 void RageMatrixRotationZ( RageMatrix* pOut, float fTheta );
 void RageMatrixRotationXYZ( RageMatrix* pOut, float rX, float rY, float rZ );
-void RageMatrixCommand( CString sCommandString, RageMatrix &mat );
 void RageQuatFromHPR(RageVector4* pOut, RageVector3 hpr );
 void RageQuatFromPRH(RageVector4* pOut, RageVector3 prh );
 void RageMatrixFromQuat( RageMatrix* pOut, const RageVector4 q );
