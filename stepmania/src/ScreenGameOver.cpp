@@ -19,6 +19,7 @@
 #include "ScreenManager.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
+#include "RageMusic.h"
 
 
 const ScreenMessage SM_StartFadingOut	=	ScreenMessage(SM_User + 1);
@@ -47,8 +48,7 @@ ScreenGameOver::ScreenGameOver()
 	m_sprGameOver.BeginTweeningQueued( 0.5f );		// fade to color
 	m_sprGameOver.SetTweenAddColor( D3DXCOLOR(1,1,1,0) );
 
-	// BUGFIX by ANDY: Stage will now reset back to 0 when game ends.
-	GAMESTATE->m_iCurrentStageIndex = 0;
+	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","game over music") );
 
 	this->SendScreenMessage( SM_PlayAnnouncer, 0.5 );
 	this->SendScreenMessage( SM_StartFadingOut, 5 );

@@ -59,6 +59,7 @@ const CString CREDIT_LINES[] =
 	"PROGRAMMING:",
 	"Chris Danford",
 	"Lord Frieza (Andrew Livy)",
+	"Glenn Maynard",
 	"Bruno Figueiredo",
 	"Dro Kulix (Peter S. May)",
 	"Mantis (Ben Nordstrom)",
@@ -170,10 +171,9 @@ ScreenMusicScroll::ScreenMusicScroll()
 
 	this->AddSubActor( &m_Fade );
 
-	m_soundMusic.Load( THEME->GetPathTo("Sounds","music scroll music") );
-	m_soundMusic.Play( true );
-
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_MUSIC_SCROLL) );
+
+	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","music scroll music") );
 
 	m_Fade.OpenWipingRight();
 }

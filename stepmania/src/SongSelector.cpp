@@ -114,17 +114,8 @@ SongSelector::SongSelector()
 	else
 		OnGroupChange();
 
-	m_Menu.Load( 
-		THEME->GetPathTo("Graphics","edit background"), 
-		THEME->GetPathTo("Graphics","edit top edge"),
-		ssprintf("%c %c change line    %c %c change value    START to continue", char(3), char(4), char(1), char(2) ),
-		false, false, 40 
-		);
-	this->AddSubActor( &m_Menu );
 
 	m_soundChangeMusic.Load( THEME->GetPathTo("Sounds","select music change music") );
-
-	m_Menu.TweenOnScreenFromBlack( SM_None );
 }
 
 SongSelector::~SongSelector()
@@ -134,9 +125,7 @@ SongSelector::~SongSelector()
 
 void SongSelector::DrawPrimitives()
 {
-	m_Menu.DrawBottomLayer();
 	ActorFrame::DrawPrimitives();
-	m_Menu.DrawTopLayer();
 }
 
 void SongSelector::Up()
@@ -288,15 +277,8 @@ void SongSelector::OnNotesChange()
 	m_iSelectedNotes = clamp( m_iSelectedNotes, 0, m_pNotess.GetSize()-1 );
 
 	if( GetSelectedNotes() == NULL )
-	{
 		m_textNotes.SetText( "(NEW)" );
-	}
 	else
 		m_textNotes.SetText( GetSelectedNotes()->m_sDescription!="" ? GetSelectedNotes()->m_sDescription : "[no name]" );
-}
-
-void SongSelector::TweenOffScreenToBlack( ScreenMessage smSendWhenDone, bool bPlayBackSound )
-{
-	m_Menu.TweenOffScreenToBlack( smSendWhenDone, bPlayBackSound  );
 }
 

@@ -137,7 +137,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 	m_Menu.Load(
 		THEME->GetPathTo("Graphics","select difficulty background"), 
 		THEME->GetPathTo("Graphics","select difficulty top edge"),
-		HELP_TEXT, false, true, TIMER_SECONDS
+		HELP_TEXT, true, TIMER_SECONDS
 		);
 	this->AddSubActor( &m_Menu );
 

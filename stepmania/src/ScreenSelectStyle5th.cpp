@@ -22,6 +22,9 @@
 #include "GameState.h"
 #include "PrefsManager.h"
 
+#define HELP_TEXT			THEME->GetMetric("ScreenSelectStyle5th","HelpText")
+#define TIMER_SECONDS		THEME->GetMetricI("ScreenSelectStyle5th","TimerSeconds")
+#define NEXT_SCREEN			THEME->GetMetric("ScreenSelectStyle5th","NextScreen")
 
 const CString DANCE_STYLES[] = {
 	"single",
@@ -165,8 +168,7 @@ ScreenSelectStyle5th::ScreenSelectStyle5th()
 	m_Menu.Load( 	
 		THEME->GetPathTo("Graphics","select style background"), 
 		THEME->GetPathTo("Graphics","select style top edge"),
-		ssprintf("Use %c %c to select, then press START", char(1), char(2)),
-		false, true, 40 
+		HELP_TEXT, true, TIMER_SECONDS
 		);
 	this->AddSubActor( &m_Menu );
 

@@ -34,7 +34,7 @@ public:
 
 	virtual void DrawPrimitives();
 
-	void Load( CString sBackgroundPath, CString sTopEdgePath, CString sHelpText, bool bShowStyleIcon, bool bTimerEnabled, int iTimerSeconds );
+	void Load( CString sBackgroundPath, CString sTopEdgePath, CString sHelpText, bool bTimerEnabled, int iTimerSeconds );
 	void StallTimer();
 	void SetTimer( int iTimerSeconds );
 	void StopTimer();
@@ -58,23 +58,16 @@ protected:
 	void TweenBottomLayerOffScreen();
 
 
-	// stuff in the top bar
-	ActorFrame	m_frameTopBar;
 	Sprite		m_sprTopEdge;
 	Sprite		m_sprStyleIcon;
 	MenuTimer	m_MenuTimer;
-	
-	// stuff in the bottom bar
-	ActorFrame	m_frameBottomBar;
 	Sprite		m_sprBottomEdge;
-
-	// stuff in the main frame
 	Sprite		m_sprBG;
 	TipDisplay	m_textHelp;
 
-	TransitionFadeWipe	m_Wipe;
-	TransitionKeepAlive	m_KeepAlive;
-	TransitionInvisible	m_Invisible;
+	TransitionFadeWipe	m_Wipe;			// for going back
+	TransitionKeepAlive	m_KeepAlive;	// going back and forward
+	TransitionInvisible	m_Invisible;	// for going forward to Menu
 
 	RageSoundSample m_soundSwoosh;
 	RageSoundSample m_soundBack;

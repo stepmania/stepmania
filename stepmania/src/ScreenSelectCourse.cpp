@@ -82,7 +82,7 @@ ScreenSelectCourse::ScreenSelectCourse()
 	m_Menu.Load(
 		THEME->GetPathTo("Graphics","select course background"), 
 		THEME->GetPathTo("Graphics","select course top edge"),
-		HELP_TEXT, false, true, TIMER_SECONDS 
+		HELP_TEXT, true, TIMER_SECONDS 
 		);
 	this->AddSubActor( &m_Menu );
 
@@ -139,6 +139,7 @@ ScreenSelectCourse::ScreenSelectCourse()
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_COURSE_INTRO) );
 
+	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select course music") );
 
 	AfterCourseChange();
 	TweenOnScreen();

@@ -59,15 +59,15 @@ ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool b
 
 	if( m_bYesNoPrompt )
 	{
-		m_textAnswer[0].SetText( "OK" );
-		m_textAnswer[0].SetX( PROMPT_X );
-	}
-	else
-	{
 		m_textAnswer[0].SetText( "NO" );
 		m_textAnswer[1].SetText( "YES" );
 		m_textAnswer[0].SetX( PROMPT_X+50 );
 		m_textAnswer[1].SetX( PROMPT_X-50 );
+	}
+	else
+	{
+		m_textAnswer[0].SetText( "OK" );
+		m_textAnswer[0].SetX( PROMPT_X );
 	}
 
 	m_rectAnswerBox.SetXY( m_textAnswer[m_bAnswer].GetX(), m_textAnswer[m_bAnswer].GetY() );

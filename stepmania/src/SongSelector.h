@@ -35,8 +35,6 @@ public:
 	NotesType	GetSelectedNotesType()	{ return m_NotesTypes[m_iSelectedNotesType]; };
 	Notes*		GetSelectedNotes()		{ return m_pNotess[m_iSelectedNotes]; };
 
-	void TweenOffScreenToBlack( ScreenMessage smSendWhenDone, bool bPlayBackSound );
-
 	/* not used yet */
 	bool NewNotes;
 	void AllowNewNotes(bool NewNotes_=true) { NewNotes = NewNotes; }
@@ -44,8 +42,6 @@ public:
 private:
 	enum SelectedRow { ROW_GROUP, ROW_SONG, ROW_NOTES_TYPE, ROW_STEPS, NUM_ROWS };
 	SelectedRow m_SelectedRow;
-
-	MenuElements m_Menu;
 
 	CStringArray m_sGroups;
 	int			m_iSelectedGroup;		// index into m_sGroups

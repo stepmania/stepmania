@@ -28,6 +28,8 @@ const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User + 2);
 const ScreenMessage SM_PlayersChosen		=	ScreenMessage(SM_User + 3);
 
 
+#define HELP_TEXT				THEME->GetMetric("ScreenEz2SelectPlayer","HelpText")
+#define TIMER_SECONDS			THEME->GetMetricI("ScreenEz2SelectPlayer","TimerSeconds")
 #define NEXT_SCREEN				THEME->GetMetric("ScreenEz2SelectPlayer","NextScreen")
 
 
@@ -83,8 +85,7 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 	m_Menu.Load( 	
 		THEME->GetPathTo("Graphics","select style background"), 
 		THEME->GetPathTo("Graphics","select style top edge"),
-		ssprintf("Press %c on the pad you wish to play on", char(4) ),
-		false, true, 40 
+		HELP_TEXT, true, TIMER_SECONDS
 		);
 	this->AddSubActor( &m_Menu );
 

@@ -142,7 +142,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_Menu.Load(
 		THEME->GetPathTo("Graphics","select music background"), 
 		THEME->GetPathTo("Graphics","select music top edge"),
-		HELP_TEXT, false, true, TIMER_SECONDS 
+		HELP_TEXT, true, TIMER_SECONDS 
 		);
 	this->AddSubActor( &m_Menu );
 
@@ -825,7 +825,11 @@ void ScreenSelectMusic::PlayMusicSample()
 
 	Song* pSong = m_MusicWheel.GetSelectedSong();
 	if( pSong )
-		MUSIC->LoadAndPlayIfNotAlready( pSong->GetMusicPath() );
+	{
+		MUSIC->Stop();
+		MUSIC->Load( pSong->GetMusicPath() );
+		MUSIC->Play( true, pSong->m_fMusicSampleStartSeconds, pSong->m_fMusicSampleLengthSeconds );
+	}
 	else
 		MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select music music") );
 }

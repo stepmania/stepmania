@@ -174,7 +174,7 @@ ScreenStage::ScreenStage()
 
 			for( i=0; i<iNumChars; i++ )
 			{
-				float fOffsetX = SCALE(i, 0, iNumChars-1, -(iNumChars-1)/2.0f*fFrameWidth, (iNumChars-1)/2.0f*fFrameWidth);
+				float fOffsetX = SCALE((float)i, 0, iNumChars-1, -(iNumChars-1)/2.0f*fFrameWidth, (iNumChars-1)/2.0f*fFrameWidth);
 				m_sprNumbers[i].SetX( fCharsCenterX + fOffsetX );
 			}
 			m_sprStage.SetX( fStageCenterX );

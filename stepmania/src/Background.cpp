@@ -220,7 +220,7 @@ void Background::LoadFromSong( Song* pSong )
 		case MODE_MOVIE_BG:
 			{
 				pTempBGA = new BackgroundAnimation;
-				pTempBGA->LoadFromMovie( pSong->GetMovieBackgroundPath(), false, true );
+				pTempBGA->LoadFromMovie( pSong->GetMovieBackgroundPath(), false, true, true, sSongBackgroundPath );
 				m_BackgroundAnimations.Add( pTempBGA );
 			}
 			break;
@@ -230,21 +230,19 @@ void Background::LoadFromSong( Song* pSong )
 				GetDirListing( VISUALIZATIONS_DIR + "*.avi", arrayPossibleMovies, false, true );
 				GetDirListing( VISUALIZATIONS_DIR + "*.mpg", arrayPossibleMovies, false, true );
 				GetDirListing( VISUALIZATIONS_DIR + "*.mpeg", arrayPossibleMovies, false, true );
-				while( arrayPossibleMovies.GetSize() > 0  &&  m_BackgroundAnimations.GetSize() < 2 )
-				{
-					int index = rand() % arrayPossibleMovies.GetSize();
-					pTempBGA = new BackgroundAnimation;
-					pTempBGA->LoadFromVisualization( arrayPossibleMovies[index], sSongBackgroundPath );
-					m_BackgroundAnimations.Add( pTempBGA );
-					arrayPossibleMovies.RemoveAt( index );
-				}	
+
+				int index = rand() % arrayPossibleMovies.GetSize();
+				pTempBGA = new BackgroundAnimation;
+				pTempBGA->LoadFromVisualization( arrayPossibleMovies[index], sSongBackgroundPath );
+				m_BackgroundAnimations.Add( pTempBGA );
+				arrayPossibleMovies.RemoveAt( index );
 			}
 			break;
 		case MODE_ANIMATIONS:
 			{
 				CStringArray arrayPossibleAnims;
 				GetDirListing( BG_ANIMS_DIR+"*.*", arrayPossibleAnims, true, true );
-				while( arrayPossibleAnims.GetSize() > 0  &&  m_BackgroundAnimations.GetSize() < 5 )
+				for( int i=0; i<4 && arrayPossibleAnims.GetSize()>0; i++ )
 				{
 					int index = rand() % arrayPossibleAnims.GetSize();
 					pTempBGA = new BackgroundAnimation;
@@ -260,11 +258,11 @@ void Background::LoadFromSong( Song* pSong )
 				GetDirListing( RANDOMMOVIES_DIR + "*.avi", arrayPossibleMovies, false, true );
 				GetDirListing( RANDOMMOVIES_DIR + "*.mpg", arrayPossibleMovies, false, true );
 				GetDirListing( RANDOMMOVIES_DIR + "*.mpeg", arrayPossibleMovies, false, true );
-				while( arrayPossibleMovies.GetSize() > 0  &&  m_BackgroundAnimations.GetSize() < 5 )
+				for( int i=0; i<4 && arrayPossibleMovies.GetSize()>0; i++ )
 				{
 					int index = rand() % arrayPossibleMovies.GetSize();
 					pTempBGA = new BackgroundAnimation;
-					pTempBGA->LoadFromMovie( arrayPossibleMovies[index], true, false, false, "" );
+					pTempBGA->LoadFromMovie( arrayPossibleMovies[index], true, false, i==0, sSongBackgroundPath );
 					m_BackgroundAnimations.Add( pTempBGA );
 					arrayPossibleMovies.RemoveAt( index );
 				}	
@@ -297,6 +295,8 @@ void Background::LoadFromSong( Song* pSong )
 			int index;
 			if( m_BackgroundAnimations.GetSize()==1 )
 				index = 0;
+			else if( f == fFirstBeat )
+				index = 1;	// force the first random background to play first
 			else
 				index = 1 + rand()%(m_BackgroundAnimations.GetSize()-1);
 			m_aBGSegments.Add( BGSegment(f,index) );

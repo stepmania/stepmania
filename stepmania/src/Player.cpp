@@ -349,6 +349,9 @@ void Player::Step( int col )
 		else if( fPercentFromPerfect < 0.75f )	score = TNS_GOOD;
 		else									score = TNS_BOO;
 
+		if( GAMESTATE->m_bDemonstration  ||  PREFSMAN->m_bAutoPlay )
+			score = TNS_PERFECT;
+
 		bDestroyedNote = score >= TNS_GOOD;
 
 

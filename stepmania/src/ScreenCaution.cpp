@@ -10,12 +10,12 @@
 -----------------------------------------------------------------------------
 */
 
-
 #include "ScreenCaution.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
+#include "RageMusic.h"
 
 
 #define NEXT_SCREEN				THEME->GetMetric("ScreenCaution","NextScreen")
@@ -42,6 +42,8 @@ ScreenCaution::ScreenCaution()
 	this->AddSubActor( &m_FadeWipe );
 
 	this->SendScreenMessage( SM_StartClosing, 3 );
+
+	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","caution music") );
 }
 
 

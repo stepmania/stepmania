@@ -60,9 +60,7 @@ const ScreenMessage SM_GoToDemonstration	=	ScreenMessage(SM_User+14);
 
 ScreenTitleMenu::ScreenTitleMenu()
 {
-	MUSIC->Stop();
 	LOG->Trace( "ScreenTitleMenu::ScreenTitleMenu()" );
-
 
 	//
 	// I think it's better to do all the initialization here rather than have it scattered
@@ -164,7 +162,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	m_TitleMenuChoice = CHOICE_GAME_START;
 	GainFocus( m_TitleMenuChoice );
 	
-	MUSIC->Stop();
+	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","title menu music") );
 
 	this->SendScreenMessage( SM_PlayAttract, SECONDS_BETWEEN_ATTRACT );
 	this->SendScreenMessage( SM_FadeToDemonstration, SECONDS_BEFORE_DEMONSTRATION );

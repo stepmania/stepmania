@@ -303,8 +303,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	m_Menu.Load(
 		THEME->GetPathTo("Graphics","evaluation background"), 
 		THEME->GetPathTo("Graphics",m_ResultMode==RM_ARCADE_SUMMARY?"evaluation summary top edge":"evaluation top edge"),
-		HELP_TEXT,
-		false, true, TIMER_SECONDS 
+		HELP_TEXT, true, TIMER_SECONDS 
 		);
 	this->AddSubActor( &m_Menu );
 
@@ -360,13 +359,13 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		max_grade = max( max_grade, grade[p] ); 
 
 
+	////////////////////////
+	// update persistent statistics
+	////////////////////////
 	bool bNewRecord[NUM_PLAYERS];
 	for( p=0; p<NUM_PLAYERS; p++ )
 		bNewRecord[p] = false;
 
-	////////////////////////
-	// update persistent statistics
-	////////////////////////
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
@@ -661,6 +660,8 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	}
 
 	m_Menu.TweenOnScreenFromBlack( SM_None );
+
+	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","evaluation music") );
 }
 
 

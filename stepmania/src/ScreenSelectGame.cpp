@@ -71,6 +71,8 @@ ScreenSelectGame::ScreenSelectGame() :
 		g_SelectGameLines, 
 		NUM_SELECT_GAME_LINES
 		);
+
+	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select game music") );
 }
 
 void ScreenSelectGame::ImportOptions()

@@ -43,6 +43,15 @@ ScreenEditMenu::ScreenEditMenu()
 //	Selector.AllowNewNotes();
 	this->AddSubActor( &Selector );
 
+	m_Menu.Load( 
+		THEME->GetPathTo("Graphics","edit background"), 
+		THEME->GetPathTo("Graphics","edit top edge"),
+		ssprintf("%c %c change line    %c %c change value    START to continue", char(3), char(4), char(1), char(2) ),
+		false, 99 
+		);
+	this->AddSubActor( &m_Menu );
+
+
 	m_textExplanation.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
 	m_textExplanation.SetText( EXPLANATION_TEXT );
@@ -55,6 +64,8 @@ ScreenEditMenu::ScreenEditMenu()
 	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","edit menu music") );
 
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
+
+	m_Menu.TweenOnScreenFromBlack( SM_None );
 }
 
 
@@ -63,11 +74,17 @@ ScreenEditMenu::~ScreenEditMenu()
 	LOG->Trace( "ScreenEditMenu::~ScreenEditMenu()" );
 }
 
+void ScreenEditMenu::DrawPrimitives()
+{
+	m_Menu.DrawBottomLayer();
+	Screen::DrawPrimitives();
+	m_Menu.DrawTopLayer();
+}
+
 void ScreenEditMenu::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	LOG->Trace( "ScreenEditMenu::Input()" );
 
-	
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
@@ -121,8 +138,6 @@ void ScreenEditMenu::MenuRight( const PlayerNumber p, const InputEventType type 
 
 void ScreenEditMenu::MenuStart( const PlayerNumber p )
 {
-	Selector.TweenOffScreenToBlack( SM_None, false );
-
 	MUSIC->Stop();
 
 	GAMESTATE->m_pCurSong = Selector.GetSelectedSong();
@@ -134,12 +149,14 @@ void ScreenEditMenu::MenuStart( const PlayerNumber p )
 
 	m_soundSelect.PlayRandom();
 
+	m_Menu.TweenOffScreenToBlack( SM_None, false  );
+
 	m_Fade.CloseWipingRight( SM_GoToNextState );
 }
 
 void ScreenEditMenu::MenuBack( const PlayerNumber p )
 {	
-	Selector.TweenOffScreenToBlack( SM_None, true );
+	m_Menu.TweenOffScreenToBlack( SM_None, true );
 
 	MUSIC->Stop();
 

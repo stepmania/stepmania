@@ -21,6 +21,7 @@ public:
 	ScreenEditMenu();
 	virtual ~ScreenEditMenu();
 
+	virtual void DrawPrimitives();
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
@@ -36,6 +37,8 @@ private:
 	SongSelector Selector;
 
 	BitmapText		m_textExplanation;
+
+	MenuElements m_Menu;
 
 	TransitionFade	m_Fade;
 

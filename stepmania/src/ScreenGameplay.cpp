@@ -196,6 +196,7 @@ ScreenGameplay::ScreenGameplay()
 {
 	LOG->Trace( "ScreenGameplay::ScreenGameplay()" );
 
+	MUSIC->Stop();
 
 	GAMESTATE->ResetStageStatistics();	// clear values
 
@@ -881,7 +882,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	// fPositionSeconds ahead
 	if( GAMESTATE->m_SongOptions.m_AssistType == SongOptions::ASSIST_TICK )
 	{
-		fPositionSeconds += (SOUND->GetPlayLatency()+0.015f) * m_soundMusic.GetPlaybackRate();	// HACK:  Add 0.015 seconds to account for the fact that the middle of the tick sounds occurs 0.015 seconds into playing.
+		fPositionSeconds += (SOUND->GetPlayLatency()+0.018f) * m_soundMusic.GetPlaybackRate();	// HACK:  Add 0.015 seconds to account for the fact that the middle of the tick sounds occurs 0.015 seconds into playing.
 		GAMESTATE->m_pCurSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS, bFreeze );
 
 		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
@@ -1353,7 +1354,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SendMessageToTopScreen( SM_HideCleared, 2.5 );
 		break;
 	case SM_HideCleared:
-		m_sprCleared.BeginTweening(1.0f);
+		m_sprCleared.BeginTweening(0.7f);
 		m_sprCleared.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
 		SCREENMAN->SendMessageToTopScreen( SM_GoToStateAfterCleared, 1 );
 		break;

@@ -21,6 +21,8 @@
 #include "GameState.h"
 
 
+#define HELP_TEXT			THEME->GetMetric("ScreenOptions","HelpText")
+#define TIMER_SECONDS		THEME->GetMetricI("ScreenOptions","TimerSeconds")
 
 const float HEADER_X		= CENTER_X;
 const float HEADER_Y		= 50;
@@ -48,8 +50,7 @@ ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sPagePath, CStrin
 	m_Menu.Load(
 		sBackgroundPath, 
 		sTopEdgePath, 
-		ssprintf("%s %s to change line   %s %s to select between options      then press START", CString(char(3)), CString(char(4)), CString(char(1)), CString(char(2)) ),
-		false, true, 40 
+		HELP_TEXT, true, TIMER_SECONDS
 		);
 	this->AddSubActor( &m_Menu );
 
@@ -167,6 +168,7 @@ void ScreenOptions::InitOptionsText()
 		title.SetXY( LABELS_X, fY );
 		title.SetZoom( 0.7f );
 		title.SetVertAlign( Actor::align_middle );		
+		title.TurnShadowOff();		
 		m_framePage.AddSubActor( &title );
 
 		// init all text in this line and count the width of the line

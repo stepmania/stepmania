@@ -53,7 +53,7 @@ void ThemeManager::GetAllThemeNames( CStringArray& AddTo )
 	
 	// strip out the folder called "CVS"
 	for( int i=AddTo.GetSize()-1; i>=0; i-- )
-		if( 0 == stricmp( AddTo[i], "cvs" ) )
+		if( 0 == stricmp(AddTo[i],"cvs") )
 			AddTo.RemoveAt(i);
 }
 
@@ -61,6 +61,7 @@ void ThemeManager::GetThemeNamesForCurGame( CStringArray& AddTo )
 {
 	GetAllThemeNames( AddTo );
 
+	/*
 	// strip out announcers that don't have the current game name in them
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 	sGameName.MakeLower();
@@ -71,6 +72,7 @@ void ThemeManager::GetThemeNamesForCurGame( CStringArray& AddTo )
 		if( sLowercaseVer.Find(sGameName)==-1 )
 			AddTo.RemoveAt(i);
 	}
+	*/
 }
 
 bool ThemeManager::DoesThemeExist( CString sThemeName )

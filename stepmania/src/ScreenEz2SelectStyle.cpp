@@ -28,6 +28,8 @@ a polish :)
 
 /* Constants */
 
+#define HELP_TEXT				THEME->GetMetric("ScreenEz2SelectStyle","HelpText")
+#define TIMER_SECONDS			THEME->GetMetricI("ScreenEz2SelectStyle","TimerSeconds")
 #define NEXT_SCREEN				THEME->GetMetric("ScreenEz2SelectStyle","NextScreen")
 
 
@@ -90,14 +92,15 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 	m_Menu.Load( 	
 		THEME->GetPathTo("Graphics","select style background"), 
 		THEME->GetPathTo("Graphics","select style top edge"),
-		ssprintf("Press %c on the pad you wish to play on", char(4) ),
-		false, true, 40 
+		HELP_TEXT, true, TIMER_SECONDS
 		);
 	this->AddSubActor( &m_Menu );
 
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 
 	GAMESTATE->m_bPlayersCanJoin = true;
+
+	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select style music") );
 
 	m_Menu.TweenOnScreenFromBlack( SM_None );
 }

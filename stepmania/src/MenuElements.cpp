@@ -23,42 +23,37 @@
 #include "GameState.h"
 
 
-const float HELP_X		=	CENTER_X;
-const float HELP_Y		=	SCREEN_BOTTOM-28;
-
-const float STYLE_ICON_LOCAL_X	=	130;
-const float STYLE_ICON_LOCAL_Y	=	6;
-
-const float TIMER_LOCAL_X	=	270;
-const float TIMER_LOCAL_Y	=	0;
-
+#define TOP_EDGE_X			THEME->GetMetricF("MenuElements","TopEdgeX")
+#define TOP_EDGE_Y			THEME->GetMetricF("MenuElements","TopEdgeY")
+#define BOTTOM_EDGE_X		THEME->GetMetricF("MenuElements","BottomEdgeX")
+#define BOTTOM_EDGE_Y		THEME->GetMetricF("MenuElements","BottomEdgeY")
+#define STYLE_ICON_X		THEME->GetMetricF("MenuElements","StyleIconX")
+#define STYLE_ICON_Y		THEME->GetMetricF("MenuElements","StyleIconY")
+#define TIMER_X				THEME->GetMetricF("MenuElements","TimerX")
+#define TIMER_Y				THEME->GetMetricF("MenuElements","TimerY")
+#define HELP_X				THEME->GetMetricF("MenuElements","HelpX")
+#define HELP_Y				THEME->GetMetricF("MenuElements","HelpY")
 
 
 MenuElements::MenuElements()
 {
-	m_frameTopBar.AddSubActor( &m_sprTopEdge );
-	m_frameTopBar.AddSubActor( &m_sprStyleIcon );
-	m_frameTopBar.AddSubActor( &m_MenuTimer );
-
-	m_frameBottomBar.AddSubActor( &m_sprBottomEdge );
-
+	this->AddSubActor( &m_sprTopEdge );
+	this->AddSubActor( &m_sprStyleIcon );
+	this->AddSubActor( &m_MenuTimer );
+	this->AddSubActor( &m_sprBottomEdge );
 	this->AddSubActor( &m_sprBG );
-	this->AddSubActor( &m_frameTopBar );
-	this->AddSubActor( &m_frameBottomBar );
 	this->AddSubActor( &m_textHelp );
 
-	m_KeepAlive.SetZ( -2 );
 	m_KeepAlive.SetOpened();
 	this->AddSubActor( &m_KeepAlive );
 
-	m_Wipe.SetZ( -2 );
 	m_Wipe.SetOpened();
 	this->AddSubActor( &m_Wipe );
 
 	this->AddSubActor( &m_Invisible );
 }
 
-void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString sHelpText, bool bShowStyleIcon, bool bTimerEnabled, int iTimerSeconds )
+void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString sHelpText, bool bTimerEnabled, int iTimerSeconds )
 {
 	LOG->Trace( "MenuElements::MenuElements()" );
 
@@ -67,22 +62,18 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	m_sprBG.StretchTo( CRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT) );
 	m_sprBG.TurnShadowOff();
 
-	m_frameTopBar.SetZ( -1 );
-
 	m_sprTopEdge.Load( sTopEdgePath );
-	m_sprTopEdge.TurnShadowOff();
+	m_sprTopEdge.SetXY( TOP_EDGE_X, TOP_EDGE_Y );
 	
-	m_sprStyleIcon.Load( THEME->GetPathTo("Graphics","menu style icons") );
+	m_sprStyleIcon.Load( THEME->GetPathTo("Graphics",ssprintf("menu style icons game %d",GAMESTATE->m_CurGame)) );
 	m_sprStyleIcon.StopAnimating();
-	m_sprStyleIcon.SetXY( STYLE_ICON_LOCAL_X, STYLE_ICON_LOCAL_Y );
-	m_sprStyleIcon.SetZ( -1 );
-	if( GAMESTATE->m_CurStyle == STYLE_NONE  ||  !bShowStyleIcon )
+	m_sprStyleIcon.SetXY( STYLE_ICON_X, STYLE_ICON_Y );
+	if( GAMESTATE->m_CurStyle == STYLE_NONE )
 		m_sprStyleIcon.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	else
-		m_sprStyleIcon.SetState( GAMESTATE->m_CurStyle );
+		m_sprStyleIcon.SetState( GAMESTATE->m_CurStyle*2+GAMESTATE->m_MasterPlayerNumber );
 
-	m_MenuTimer.SetXY( TIMER_LOCAL_X, TIMER_LOCAL_Y );
-	m_MenuTimer.SetZ( -1 );
+	m_MenuTimer.SetXY( TIMER_X, TIMER_Y );
 	if( !bTimerEnabled  ||  !PREFSMAN->m_bMenuTimer )
 	{
 		m_MenuTimer.SetTimer( 99 );
@@ -92,10 +83,8 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	else
 		m_MenuTimer.SetTimer( iTimerSeconds );
 
-	m_frameBottomBar.SetZ( -1 );
-
 	m_sprBottomEdge.Load( THEME->GetPathTo("Graphics","menu bottom edge") );
-	m_sprBottomEdge.TurnShadowOff();
+	m_sprBottomEdge.SetXY( BOTTOM_EDGE_X, BOTTOM_EDGE_Y );
 
 	m_textHelp.SetXY( HELP_X, HELP_Y );
 	CStringArray asHelpTips;
@@ -106,18 +95,21 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 
 	m_soundSwoosh.Load( THEME->GetPathTo("Sounds","menu swoosh") );
 	m_soundBack.Load( THEME->GetPathTo("Sounds","menu back") );
-
-
-	m_frameTopBar.SetXY( CENTER_X, m_sprTopEdge.GetZoomedHeight()/2 );
-
-	m_frameBottomBar.SetXY( CENTER_X, SCREEN_HEIGHT - m_sprBottomEdge.GetZoomedHeight()/2 );
 }
 
 void MenuElements::TweenTopLayerOnScreen()
 {
-	m_frameTopBar.SetXY( CENTER_X+SCREEN_WIDTH, m_sprTopEdge.GetZoomedHeight()/2 );
-	m_frameTopBar.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, TWEEN_SPRING );
-	m_frameTopBar.SetTweenX( CENTER_X );
+	CArray<Actor*,Actor*> apActorsInTopFrame;
+	apActorsInTopFrame.Add( &m_sprTopEdge );
+	apActorsInTopFrame.Add( &m_sprStyleIcon );
+	apActorsInTopFrame.Add( &m_MenuTimer );
+	for( int i=0; i<apActorsInTopFrame.GetSize(); i++ )
+	{
+		float fOriginalX = apActorsInTopFrame[i]->GetX();
+		apActorsInTopFrame[i]->SetX( fOriginalX+SCREEN_WIDTH );
+		apActorsInTopFrame[i]->BeginTweening( MENU_ELEMENTS_TWEEN_TIME, TWEEN_SPRING );
+		apActorsInTopFrame[i]->SetTweenX( fOriginalX );
+	}
 
 	float fOriginalZoom = m_textHelp.GetZoomY();
 	m_textHelp.SetZoomY( 0 );
@@ -134,8 +126,16 @@ void MenuElements::TweenOnScreenFromMenu( ScreenMessage smSendWhenDone )
 
 void MenuElements::TweenTopLayerOffScreen()
 {
-	m_frameTopBar.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, TWEEN_BIAS_END );
-	m_frameTopBar.SetTweenX( SCREEN_WIDTH*1.5f );
+	CArray<Actor*,Actor*> apActorsInTopFrame;
+	apActorsInTopFrame.Add( &m_sprTopEdge );
+	apActorsInTopFrame.Add( &m_sprStyleIcon );
+	apActorsInTopFrame.Add( &m_MenuTimer );
+	for( int i=0; i<apActorsInTopFrame.GetSize(); i++ )
+	{
+		float fOriginalX = apActorsInTopFrame[i]->GetX();
+		apActorsInTopFrame[i]->BeginTweening( MENU_ELEMENTS_TWEEN_TIME, TWEEN_BOUNCE_BEGIN );
+		apActorsInTopFrame[i]->SetTweenX( fOriginalX+SCREEN_WIDTH );
+	}
 
 	m_textHelp.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
 	m_textHelp.SetTweenZoomY( 0 );
@@ -151,20 +151,21 @@ void MenuElements::TweenOffScreenToMenu( ScreenMessage smSendWhenDone )
 
 void MenuElements::TweenBottomLayerOnScreen()
 {
-	m_frameBottomBar.SetXY( CENTER_X, SCREEN_HEIGHT + m_sprBottomEdge.GetZoomedHeight()/2 );
-	m_frameBottomBar.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
-	m_frameBottomBar.SetTweenY( SCREEN_HEIGHT - m_sprBottomEdge.GetZoomedHeight()/2 );
+	float fOriginalY = m_sprBottomEdge.GetY();
+	m_sprBottomEdge.SetY( fOriginalY + 100 );
+	m_sprBottomEdge.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
+	m_sprBottomEdge.SetTweenY( fOriginalY );
 
 	m_sprBG.SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
 	m_sprBG.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
 	m_sprBG.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
-
 }
 
 void MenuElements::TweenBottomLayerOffScreen()
 {
-	m_frameBottomBar.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
-	m_frameBottomBar.SetTweenY( SCREEN_HEIGHT + m_sprTopEdge.GetZoomedHeight() );
+	float fOriginalY = m_sprBottomEdge.GetY();
+	m_sprBottomEdge.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
+	m_sprBottomEdge.SetTweenY( fOriginalY + 100 );
 
 	m_sprBG.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 	m_sprBG.StopTweening();
@@ -205,18 +206,24 @@ void MenuElements::DrawPrimitives()
 void MenuElements::DrawTopLayer()
 {
 	BeginDraw();
-	m_frameTopBar.Draw();
-	m_frameBottomBar.Draw();
+
+	m_sprTopEdge.Draw();
+	m_sprStyleIcon.Draw();
+	m_MenuTimer.Draw();
+	m_sprBottomEdge.Draw();
 	m_textHelp.Draw();
 	m_KeepAlive.Draw();
 	m_Wipe.Draw();
+
 	EndDraw();
 }
 
 void MenuElements::DrawBottomLayer()
 {
 	BeginDraw();
+
 	m_sprBG.Draw();
+
 	EndDraw();
 }
 
