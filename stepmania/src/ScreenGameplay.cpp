@@ -1114,7 +1114,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				}
 			}
 
-			GAMESTATE->m_apSongsPlayed.Add( GAMESTATE->m_pCurSong );
+			GAMESTATE->m_apSongsPlayed.push_back( GAMESTATE->m_pCurSong );
 			GAMESTATE->m_iSongsIntoCourse++;
 			for( p=0; p<NUM_PLAYERS; p++ )
 				if( GAMESTATE->IsPlayerEnabled(p) )
@@ -1448,12 +1448,12 @@ void ScreenGameplay::TweenOnScreen()
 	unsigned i, p;
 
 	CArray<Actor*,Actor*> apActorsInLifeFrame;
-	apActorsInLifeFrame.Add(	&m_sprLifeFrame );
+	apActorsInLifeFrame.push_back(	&m_sprLifeFrame );
 	for( p=0; p<NUM_PLAYERS; p++ )
-		apActorsInLifeFrame.Add(	m_pLifeMeter[p] );
-	apActorsInLifeFrame.Add(	&m_textStageNumber );
+		apActorsInLifeFrame.push_back(	m_pLifeMeter[p] );
+	apActorsInLifeFrame.push_back(	&m_textStageNumber );
 	for( p=0; p<NUM_PLAYERS; p++ )
-		apActorsInLifeFrame.Add(	&m_textCourseSongNumber[p] );
+		apActorsInLifeFrame.push_back(	&m_textCourseSongNumber[p] );
 	for( i=0; i<apActorsInLifeFrame.size(); i++ )
 	{
 		float fOriginalY = apActorsInLifeFrame[i]->GetY();
@@ -1466,15 +1466,15 @@ void ScreenGameplay::TweenOnScreen()
 
 
 	CArray<Actor*,Actor*> apActorsInScoreFrame;
-	apActorsInScoreFrame.Add( &m_sprScoreFrame );
+	apActorsInScoreFrame.push_back( &m_sprScoreFrame );
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
-		apActorsInScoreFrame.Add( m_pScoreDisplay[p] );
-		apActorsInScoreFrame.Add( &m_textPlayerOptions[p] );
+		apActorsInScoreFrame.push_back( m_pScoreDisplay[p] );
+		apActorsInScoreFrame.push_back( &m_textPlayerOptions[p] );
 	}
-	apActorsInScoreFrame.Add( &m_textSongOptions );
+	apActorsInScoreFrame.push_back( &m_textSongOptions );
 	for( i=0; i<apActorsInScoreFrame.size(); i++ )
 	{
 		float fOriginalY = apActorsInScoreFrame[i]->GetY();

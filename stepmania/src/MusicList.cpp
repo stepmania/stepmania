@@ -31,7 +31,7 @@ MusicList::MusicList()
 
 void MusicList::AddGroup()
 {
-	m_ContentsText.Add(group());
+	m_ContentsText.push_back(group());
 }
 
 void MusicList::AddSongsToGroup(const CArray<Song*,Song*> &Songs)

@@ -241,7 +241,7 @@ void ScreenSelectMode::RefreshModeChoices()
 	for( unsigned j=0; j<m_aPossibleModeChoices.size(); j++ )
 	{
 		const ModeChoice& choice = m_aPossibleModeChoices[j];
-		asGraphicPaths.Add( THEME->GetPathTo("Graphics", ssprintf("select mode choice %s %s", sGameName.GetString(), choice.name) ) );
+		asGraphicPaths.push_back( THEME->GetPathTo("Graphics", ssprintf("select mode choice %s %s", sGameName.GetString(), choice.name) ) );
 	}
 
 	m_ScrollingList.Load( asGraphicPaths );

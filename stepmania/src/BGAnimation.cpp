@@ -41,7 +41,7 @@ void BGAnimation::LoadFromStaticGraphic( CString sPath )
 
 	BGAnimationLayer* pLayer = new BGAnimationLayer;
 	pLayer->LoadFromStaticGraphic( sPath );
-	m_Layers.Add( pLayer );
+	m_Layers.push_back( pLayer );
 
 	m_fFadeSeconds = 0.5f;
 }
@@ -73,7 +73,7 @@ void BGAnimation::LoadFromAniDir( CString sAniDir, CString sSongBGPath )
 			continue;	// don't directly load files starting with an underscore
 		BGAnimationLayer* pLayer = new BGAnimationLayer;
 		pLayer->LoadFromAniLayerFile( asImagePaths[i], sSongBGPath );
-		m_Layers.Add( pLayer );
+		m_Layers.push_back( pLayer );
 	}
 
 	m_fFadeSeconds = 0;
@@ -85,7 +85,7 @@ void BGAnimation::LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewind )
 
 	BGAnimationLayer* pLayer = new BGAnimationLayer;
 	pLayer->LoadFromMovie( sMoviePath, bLoop, bRewind );
-	m_Layers.Add( pLayer );
+	m_Layers.push_back( pLayer );
 
 	m_fFadeSeconds = 0.5f;
 }
@@ -97,11 +97,11 @@ void BGAnimation::LoadFromVisualization( CString sVisPath, CString sSongBGPath )
 	
 	pLayer = new BGAnimationLayer;
 	pLayer->LoadFromStaticGraphic( sSongBGPath );
-	m_Layers.Add( pLayer );
+	m_Layers.push_back( pLayer );
 
 	pLayer = new BGAnimationLayer;
 	pLayer->LoadFromVisualization( sVisPath );
-	m_Layers.Add( pLayer );	
+	m_Layers.push_back( pLayer );	
 
 	m_fFadeSeconds = 0.5f;
 }

@@ -137,7 +137,7 @@ void RageDisplay::GetHzAtResolution(unsigned width, unsigned height, unsigned bp
 		if(mode.Height != height) continue;
 		if(GetBPP(mode.Format) != bpp) continue;
 
-		add.Add(mode.RefreshRate);
+		add.push_back(mode.RefreshRate);
 	}
 }
 
@@ -192,15 +192,15 @@ D3DFORMAT RageDisplay::FindBackBufferType(bool bWindowed, int iBPP)
 	/* When windowed, add all formats; otherwise add only formats that match dwBPP. */
 	if( iBPP == 16 || bWindowed )
 	{
-		arrayBackBufferFormats.Add( D3DFMT_R5G6B5 );
-		arrayBackBufferFormats.Add( D3DFMT_X1R5G5B5 );
-		arrayBackBufferFormats.Add( D3DFMT_A1R5G5B5 );
+		arrayBackBufferFormats.push_back( D3DFMT_R5G6B5 );
+		arrayBackBufferFormats.push_back( D3DFMT_X1R5G5B5 );
+		arrayBackBufferFormats.push_back( D3DFMT_A1R5G5B5 );
 	}
 	if( iBPP == 32 || bWindowed )
 	{
-		arrayBackBufferFormats.Add( D3DFMT_R8G8B8 );
-		arrayBackBufferFormats.Add( D3DFMT_X8R8G8B8 );
-		arrayBackBufferFormats.Add( D3DFMT_A8R8G8B8 );
+		arrayBackBufferFormats.push_back( D3DFMT_R8G8B8 );
+		arrayBackBufferFormats.push_back( D3DFMT_X8R8G8B8 );
+		arrayBackBufferFormats.push_back( D3DFMT_A8R8G8B8 );
 	}
 	if( !bWindowed && iBPP != 16 && iBPP != 32 )
 		throw RageException( ssprintf("Invalid BPP '%u' specified", iBPP) );
@@ -618,7 +618,7 @@ void RageDisplay::ResetMatrixStack()
 
 void RageDisplay::PushMatrix() 
 { 
-	m_MatrixStack.Add( GetTopMatrix() );	
+	m_MatrixStack.push_back( GetTopMatrix() );	
 	ASSERT(m_MatrixStack.size()<20);		// check for infinite loop
 }
 

@@ -159,7 +159,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 			for( int i=0; i<sNoteData.GetLength(); i+=2 )
 			{
 				bool bThisIsANote = sNoteData.Mid(i,2) != "00";
-				arrayNotes.Add( bThisIsANote );
+				arrayNotes.push_back( bThisIsANote );
 			}
 
 			const unsigned iNumNotesInThisMeasure = arrayNotes.size();
@@ -270,7 +270,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		LoadFromBMSFile( out.m_sSongDir + arrayBMSFileNames[i],
 			*pNewNotes );
 		if(pNewNotes->m_NotesType != NOTES_TYPE_INVALID)
-			out.m_apNotes.Add( pNewNotes );
+			out.m_apNotes.push_back( pNewNotes );
 		else
 			delete pNewNotes;
 	}
@@ -362,7 +362,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 				CString sNote = sNoteData.Mid(i,2);
 				int iNote;
 				sscanf( sNote, "%x", &iNote );	// data is in hexadecimal
-				arrayNotes.Add( iNote );
+				arrayNotes.push_back( iNote );
 			}
 
 			const unsigned iNumNotesInThisMeasure = arrayNotes.size();

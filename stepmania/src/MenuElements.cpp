@@ -121,9 +121,9 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 void MenuElements::TweenTopLayerOnScreen()
 {
 	CArray<Actor*,Actor*> apActorsInTopFrame;
-	apActorsInTopFrame.Add( &m_sprTopEdge );
-	apActorsInTopFrame.Add( &m_sprStyleIcon );
-	apActorsInTopFrame.Add( &m_MenuTimer );
+	apActorsInTopFrame.push_back( &m_sprTopEdge );
+	apActorsInTopFrame.push_back( &m_sprStyleIcon );
+	apActorsInTopFrame.push_back( &m_MenuTimer );
 	for( unsigned i=0; i<apActorsInTopFrame.size(); i++ )
 	{
 		float fOriginalX = apActorsInTopFrame[i]->GetX();
@@ -159,9 +159,9 @@ void MenuElements::TweenTopLayerOffScreen()
  will make each component tween off at a different rate ...
  -glenn
 	CArray<Actor*,Actor*> apActorsInTopFrame;
-	apActorsInTopFrame.Add( &m_sprTopEdge );
-	apActorsInTopFrame.Add( &m_sprStyleIcon );
-	apActorsInTopFrame.Add( &m_MenuTimer );
+	apActorsInTopFrame.push_back( &m_sprTopEdge );
+	apActorsInTopFrame.push_back( &m_sprStyleIcon );
+	apActorsInTopFrame.push_back( &m_MenuTimer );
 	for( unsigned i=0; i<apActorsInTopFrame.size(); i++ )
 	{
 		float fOriginalX = apActorsInTopFrame[i]->GetX();

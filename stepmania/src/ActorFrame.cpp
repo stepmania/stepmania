@@ -16,7 +16,7 @@ void ActorFrame::AddChild( Actor* pActor)
 {
 	ASSERT( pActor );
 	ASSERT( (void*)pActor != (void*)0xC0000005 );
-	m_SubActors.Add( pActor );
+	m_SubActors.push_back( pActor );
 }
 
 void ActorFrame::DrawPrimitives()

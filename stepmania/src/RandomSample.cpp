@@ -57,7 +57,7 @@ bool RandomSample::LoadSound( CString sSoundFilePath )
 	pSS->Load( sSoundFilePath );
 
 
-	m_pSamples.Add( pSS );
+	m_pSamples.push_back( pSS );
 	
 	return true;
 }

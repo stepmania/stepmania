@@ -71,7 +71,7 @@ void RageTexture::CreateFrameRects()
 						 (j+0)/(float)m_iFramesHigh*m_iImageHeight/(float)m_iTextureHeight, 
 						 (i+1)/(float)m_iFramesWide*m_iImageWidth /(float)m_iTextureWidth, 
 						 (j+1)/(float)m_iFramesHigh*m_iImageHeight/(float)m_iTextureHeight );
-			m_TextureCoordRects.Add( frect );	// the index of this array element will be (i + j*m_iFramesWide)
+			m_TextureCoordRects.push_back( frect );	// the index of this array element will be (i + j*m_iFramesWide)
 			
 			//LOG->Trace( "Adding frect%d %f %f %f %f", (i + j*m_iFramesWide), frect.left, frect.top, frect.right, frect.bottom );
 		}

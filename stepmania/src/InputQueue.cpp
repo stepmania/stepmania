@@ -33,8 +33,8 @@ void InputQueue::RememberInput( const GameInput GameI )
 	/* XXX: this should be a deque, and just pop_back */
 	if( m_aQueue[c].size() >= MAX_INPUT_QUEUE_LENGTH )	// full
 		m_aQueue[c].erase( m_aQueue[c].begin(), m_aQueue[c].begin() + (m_aQueue[c].size()-MAX_INPUT_QUEUE_LENGTH+1) );
-	m_aQueue[c].Add( GameButtonAndTime(GameI.button,TIMER->GetTimeSinceStart()) );
-};
+	m_aQueue[c].push_back( GameButtonAndTime(GameI.button,TIMER->GetTimeSinceStart()) );
+}
 
 bool InputQueue::MatchesPattern( const GameController c, const MenuButton* button_sequence, const int iNumButtons, float fMaxSecondsBack )
 {

@@ -127,7 +127,7 @@ void split( const CString &Source, const CString &Deliminator, CStringArray& Add
 		if( AddCString.IsEmpty() && bIgnoreEmpty )
 			; // do nothing
 		else
-			AddIt.Add(AddCString);
+			AddIt.push_back(AddCString);
 
 		startpos=pos+Deliminator.GetLength();
 	} while ( startpos <= Source.GetLength() );
@@ -291,9 +291,9 @@ void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bRe
 			continue;
 
 		if( bReturnPathToo )
-			AddTo.Add( sDir + sDirName );
+			AddTo.push_back( sDir + sDirName );
 		else
-			AddTo.Add( sDirName );
+			AddTo.push_back( sDirName );
 
 
 	} while( ::FindNextFile( hFind, &fd ) );
@@ -376,11 +376,11 @@ DirCache::CacheEntry *DirCache::LoadDirCache( const CString &sPath )
 		CString sExt, sThrowAway;
 		splitrelpath( fd.cFileName, sThrowAway, sThrowAway, sExt );
 
-		dir->files.Add(fd.cFileName);
-		dir->exts.Add(sExt);
-		dir->Attributes.Add(fd.dwFileAttributes);
+		dir->files.push_back(fd.cFileName);
+		dir->exts.push_back(sExt);
+		dir->Attributes.push_back(fd.dwFileAttributes);
 	} while( ::FindNextFile( hFind, &fd ) );
-	directory_cache.Add(dir);
+	directory_cache.push_back(dir);
 
 	chdir(oldpath);
 	return dir;
@@ -455,9 +455,9 @@ bool GetExtDirListingV( const CString &sPath, CStringArray &AddTo, bool bOnlyDir
 		if(!matched) continue;
 
 		if( bReturnPathToo )
-			AddTo.Add( sDir + cache->files[i] );
+			AddTo.push_back( sDir + cache->files[i] );
 		else
-			AddTo.Add( cache->files[i] );
+			AddTo.push_back( cache->files[i] );
 	}
 
 	return true;

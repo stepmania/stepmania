@@ -98,21 +98,21 @@ Song::~Song()
 
 void Song::AddBPMSegment( BPMSegment seg )
 {
-	m_BPMSegments.Add( seg );
+	m_BPMSegments.push_back( seg );
 	SortBPMSegmentsArray( m_BPMSegments );
 }
 
 
 void Song::AddStopSegment( StopSegment seg )
 {
-	m_StopSegments.Add( seg );
+	m_StopSegments.push_back( seg );
 	SortStopSegmentsArray( m_StopSegments );
 }
 
 
 void Song::AddBackgroundChange( BackgroundChange seg )
 {
-	m_BackgroundChanges.Add( seg );
+	m_BackgroundChanges.push_back( seg );
 	SortBackgroundChangesArray( m_BackgroundChanges );
 }
 
@@ -572,7 +572,7 @@ void Song::GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo )
 	for( unsigned i=0; i<m_apNotes.size(); i++ )	// for each of the Song's Notes
 	{
 		if( m_apNotes[i]->m_NotesType == nt )
-			arrayAddTo.Add( m_apNotes[i] );
+			arrayAddTo.push_back( m_apNotes[i] );
 	}
 }
 
@@ -746,11 +746,11 @@ void Song::AddAutoGenNotes()
 
 //	// This is way too slow.  Only autogen dance->pump and pump->dance
 //	CArray<NotesType,NotesType> aMissingNotesTypes;
-//	if( !SongHasNotesType(NOTES_TYPE_DANCE_SINGLE) )	aMissingNotesTypes.Add( NOTES_TYPE_DANCE_SINGLE );
-//	if( !SongHasNotesType(NOTES_TYPE_DANCE_DOUBLE) )	aMissingNotesTypes.Add( NOTES_TYPE_DANCE_DOUBLE );
-//	if( !SongHasNotesType(NOTES_TYPE_DANCE_SOLO) )		aMissingNotesTypes.Add( NOTES_TYPE_DANCE_SOLO );
-//	if( !SongHasNotesType(NOTES_TYPE_PUMP_SINGLE) )		aMissingNotesTypes.Add( NOTES_TYPE_PUMP_SINGLE );
-//	if( !SongHasNotesType(NOTES_TYPE_PUMP_DOUBLE) )		aMissingNotesTypes.Add( NOTES_TYPE_PUMP_DOUBLE );
+//	if( !SongHasNotesType(NOTES_TYPE_DANCE_SINGLE) )	aMissingNotesTypes.push_back( NOTES_TYPE_DANCE_SINGLE );
+//	if( !SongHasNotesType(NOTES_TYPE_DANCE_DOUBLE) )	aMissingNotesTypes.push_back( NOTES_TYPE_DANCE_DOUBLE );
+//	if( !SongHasNotesType(NOTES_TYPE_DANCE_SOLO) )		aMissingNotesTypes.push_back( NOTES_TYPE_DANCE_SOLO );
+//	if( !SongHasNotesType(NOTES_TYPE_PUMP_SINGLE) )		aMissingNotesTypes.push_back( NOTES_TYPE_PUMP_SINGLE );
+//	if( !SongHasNotesType(NOTES_TYPE_PUMP_DOUBLE) )		aMissingNotesTypes.push_back( NOTES_TYPE_PUMP_DOUBLE );
 //
 //	for( unsigned i=0; i<aMissingNotesTypes.size(); i++ )
 //	{
@@ -782,7 +782,7 @@ next_notes_type:
 			pNewNotes->m_sDescription	= pOriginalNotes->m_sDescription + " (autogen)";
 			pNewNotes->m_NotesType		= ntMissing;
 			pNewNotes->m_sSMNoteData	= pOriginalNotes->m_sSMNoteData;
-			this->m_apNotes.Add( pNewNotes );
+			this->m_apNotes.push_back( pNewNotes );
 			goto next_notes_type;
 		}
 
@@ -824,7 +824,7 @@ next_notes_type:
 			pOriginalNotes->GetNoteData( &originalNoteData );
 			newNoteData.LoadTransformedSlidingWindow( &originalNoteData, iNumTracksOfMissing );
 			pNewNotes->SetNoteData( &newNoteData );
-			this->m_apNotes.Add( pNewNotes );
+			this->m_apNotes.push_back( pNewNotes );
 			goto next_notes_type;
 		}
 	}

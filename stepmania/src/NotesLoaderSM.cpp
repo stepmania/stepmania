@@ -195,7 +195,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 		{
 			Notes* pNewNotes = new Notes;
 			ASSERT( pNewNotes );
-			out.m_apNotes.Add( pNewNotes );
+			out.m_apNotes.push_back( pNewNotes );
 
 			if( iNumParams != 7 )
 			{

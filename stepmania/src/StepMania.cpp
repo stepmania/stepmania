@@ -158,7 +158,7 @@ void SplitCommandLine(const char *lpCmdLine, CStringArray &aCmds) {
 		}
 
 		if(cmd.GetLength())
-			aCmds.Add(cmd);
+			aCmds.push_back(cmd);
 	}
 }
 
@@ -432,7 +432,7 @@ BOOL CALLBACK LoadingWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam 
 			if( GAMESTATE  &&  GAMESTATE->m_sLoadingMessage != "" )
 				split( GAMESTATE->m_sLoadingMessage, "\n", asMessageLines, false );
 			else
-				asMessageLines.Add( "Initializing hardware..." );
+				asMessageLines.push_back( "Initializing hardware..." );
 
 			SendDlgItemMessage( 
 				hWnd, 

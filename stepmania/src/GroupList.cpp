@@ -109,7 +109,7 @@ void GroupList::Down()
 
 void GroupList::AddGroup(CString name)
 {
-	m_textLabels.Add(name);
+	m_textLabels.push_back(name);
 }
 
 void GroupList::SetSelection( unsigned sel )

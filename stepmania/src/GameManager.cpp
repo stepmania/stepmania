@@ -1189,7 +1189,7 @@ void GameManager::GetGameplayStylesForGame( Game game, CArray<Style,Style>& aSty
 		if( editor && !g_StyleDefs[s].m_bUsedForEdit )	
 			continue;
 
-		aStylesAddTo.Add( (Style)s );
+		aStylesAddTo.push_back( (Style)s );
 	}
 }
 
@@ -1197,7 +1197,7 @@ void GameManager::GetModesChoicesForGame( Game game, CArray<ModeChoice,ModeChoic
 {
 	for( int s=0; s<NUM_MODE_CHOICES; s++ )
 		if( g_ModeChoices[s].game == game)
-			aChoicesAddTo.Add( g_ModeChoices[s] );
+			aChoicesAddTo.push_back( g_ModeChoices[s] );
 }
 
 void GameManager::GetNotesTypesForGame( Game game, CArray<NotesType,NotesType>& aNotesTypeAddTo )
@@ -1218,7 +1218,7 @@ void GameManager::GetNotesTypesForGame( Game game, CArray<NotesType,NotesType>& 
 			}
 		}
 		if(found)
-			aNotesTypeAddTo.Add( (NotesType)nt );
+			aNotesTypeAddTo.push_back( (NotesType)nt );
 	}
 }
 
@@ -1332,7 +1332,7 @@ void GameManager::GetEnabledGames( CArray<Game,Game>& aGamesOut )
 		CStringArray asNoteSkins;
 		GetNoteSkinNames( game, asNoteSkins );
 		if( !asNoteSkins.empty() )
-			aGamesOut.Add( game );
+			aGamesOut.push_back( game );
 	}
 }
 

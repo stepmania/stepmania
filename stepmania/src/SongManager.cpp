@@ -106,8 +106,8 @@ void SongManager::AddGroup( CString sDir, CString sGroupDirName )
 		LOG->Trace( "Group banner for '%s' is '%s'.", sGroupDirName.GetString(), sBannerPath.GetString() );
 	}
 
-	m_arrayGroupNames.Add( sGroupDirName );
-	m_GroupBannerPaths.Add(sBannerPath);
+	m_arrayGroupNames.push_back( sGroupDirName );
+	m_GroupBannerPaths.push_back(sBannerPath);
 }
 
 void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
@@ -155,7 +155,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 				continue;
 			}
 			
-            m_pSongs.Add( pNewSong );
+            m_pSongs.push_back( pNewSong );
 			loaded++;
 		}
 
@@ -221,7 +221,7 @@ void SongManager::LoadDWISongDir( CString DWIHome )
 				ld.LoadFromDWIFile(
 					ssprintf("%s\\Songs\\%s\\%s\\%s", DWIHome.GetString(), MixDirs[i].GetString(), arrayDirs[b].GetString(), sDWIFileName.GetString()),
 					*pNewSong);
-				m_pSongs.Add( pNewSong );
+				m_pSongs.push_back( pNewSong );
 			}
 		}
 	}
@@ -416,7 +416,7 @@ void SongManager::GetSongsInGroup( const CString sGroupName, CArray<Song*, Song*
 	{
 		Song* pSong = m_pSongs[i];
 		if( sGroupName == m_pSongs[i]->m_sGroupName )
-			AddTo.Add( pSong );
+			AddTo.push_back( pSong );
 	}
 }
 
@@ -453,7 +453,7 @@ void SongManager::InitCoursesFromDisk()
 		Course course;
 		course.LoadFromCRSFile( "Courses\\" + saCourseFiles[i], m_pSongs );
 		if( course.m_iStages > 0 )
-			m_aOniCourses.Add( course );
+			m_aOniCourses.push_back( course );
 	}
 	
 	//
@@ -474,7 +474,7 @@ void SongManager::InitCoursesFromDisk()
 			course.CreateEndlessCourseFromGroupAndDifficulty( sGroupName, dc, apGroupSongs );
 
 			if( course.m_iStages > 0 )
-				m_aEndlessCourses.Add( course );
+				m_aEndlessCourses.push_back( course );
 		}
 	}
 
@@ -492,7 +492,7 @@ void SongManager::InitCoursesFromDisk()
 			Course course;
 			course.LoadFromCRSFile( saCoursePaths[i], m_pSongs );
 			if( course.m_iStages > 0 )
-				m_aExtraCourses.Add( course );
+				m_aExtraCourses.push_back( course );
 		}
 	}
 

@@ -130,7 +130,7 @@ CString NoteData::GetSMNoteDataString()
 			iRowSpacing = int(roundf( NoteTypeToBeat(nt) * ROWS_PER_BEAT ));
 
 		CStringArray asMeasureLines;
-		asMeasureLines.Add( ssprintf("  // measure %d", m+1) );
+		asMeasureLines.push_back( ssprintf("  // measure %d", m+1) );
 
 		const int iMeasureStartRow = m * ROWS_PER_MEASURE;
 		const int iMeasureLastRow = (m+1) * ROWS_PER_MEASURE - 1;
@@ -143,12 +143,12 @@ CString NoteData::GetSMNoteDataString()
 			for( int t=0; t<m_iNumTracks; t++ )
 				szLineString[t] = GetTapNote(t, r);
 			szLineString[t] = '\0';
-			asMeasureLines.Add( szLineString );
+			asMeasureLines.push_back( szLineString );
 		}
 
 		CString sMeasureString = join( "\n", asMeasureLines );
 
-		asMeasureStrings.Add( sMeasureString );
+		asMeasureStrings.push_back( sMeasureString );
 	}
 
 	this->Convert2sAnd3sToHoldNotes();
@@ -567,7 +567,7 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 		{
 			CArray<int,int> aiTracksLeftToMap;
 			for( t=0; t<m_iNumTracks; t++ )
-				aiTracksLeftToMap.Add( t );
+				aiTracksLeftToMap.push_back( t );
 			
 			for( t=0; t<m_iNumTracks; t++ )
 			{
@@ -627,7 +627,7 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 			CArray<int,int> aiTracksThatCouldHaveTapNotes;
 			for( t=0; t<m_iNumTracks; t++ )
 				if( GetTapNote(t, r) != TAP_HOLD )	// any point that isn't part of a hold
-					aiTracksThatCouldHaveTapNotes.Add( t );
+					aiTracksThatCouldHaveTapNotes.push_back( t );
 
 			for( t=0; t<m_iNumTracks; t++ )
 			{

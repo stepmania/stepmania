@@ -91,18 +91,18 @@ void InputFilter::GetInputEvents( InputEventArray &array, float fDeltaTime )
 							iet = IET_SLOW_REPEAT;
 						}
 						if( int(fOldHoldTime/fTimeBetweenRepeats) != int(fNewHoldTime/fTimeBetweenRepeats) )
-							array.Add( InputEvent(di,iet) );
+							array.push_back( InputEvent(di,iet) );
 					}
 				}
 				else {	// !IsBeingPressed(di)
 					m_fSecsHeld[d][b] = 0;
-					array.Add( InputEvent(di,IET_RELEASE) );
+					array.push_back( InputEvent(di,IET_RELEASE) );
 				}
 			}
 			else	// !WasBeingPressed(di)
 			{
 				if( IsBeingPressed(di) )
-					array.Add( InputEvent(di,IET_FIRST_PRESS) );
+					array.push_back( InputEvent(di,IET_FIRST_PRESS) );
 				else	// !IsBeingPressed(di)
 					;	// don't care
 			}

@@ -355,7 +355,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 				*pNewNotes
 				);
 			if(pNewNotes->m_NotesType != NOTES_TYPE_INVALID)
-				out.m_apNotes.Add( pNewNotes );
+				out.m_apNotes.push_back( pNewNotes );
 			else
 				delete pNewNotes;
 		}

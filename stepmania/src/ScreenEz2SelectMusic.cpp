@@ -261,8 +261,8 @@ void ScreenEz2SelectMusic::TweenOffScreen()
 	CArray<Actor*,Actor*> apActorsInScore;
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		apActorsInScore.Add( &m_sprHighScoreFrame[p] );
-		apActorsInScore.Add( &m_HighScore[p] );
+		apActorsInScore.push_back( &m_sprHighScoreFrame[p] );
+		apActorsInScore.push_back( &m_HighScore[p] );
 	}
 	for( i=0; i<apActorsInScore.size(); i++ )
 	{
@@ -281,8 +281,8 @@ void ScreenEz2SelectMusic::TweenScoreOnAndOffAfterChangeSort()
 	CArray<Actor*,Actor*> apActorsInScore;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		apActorsInScore.Add( &m_sprHighScoreFrame[p] );
-		apActorsInScore.Add( &m_HighScore[p] );
+		apActorsInScore.push_back( &m_sprHighScoreFrame[p] );
+		apActorsInScore.push_back( &m_HighScore[p] );
 	}
 	for( unsigned i=0; i<apActorsInScore.size(); i++ )
 	{

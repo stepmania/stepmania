@@ -199,7 +199,7 @@ ScreenEdit::ScreenEdit()
 		// of the current edit. Naturally, this is where we'll
 		// want to extract the NotesType for a (NEW) sequence.
 
-		m_pSong->m_apNotes.Add( m_pNotes );
+		m_pSong->m_apNotes.push_back( m_pNotes );
 
 		GAMESTATE->m_pCurNotes[PLAYER_1] = m_pNotes;
 	}

@@ -61,7 +61,7 @@ void ScrollingList::Load( const CStringArray& asGraphicPaths )
 	{
 		Sprite* pNewSprite = new Sprite;
 		pNewSprite->Load( asGraphicPaths[i] );
-		m_apSprites.Add( pNewSprite );
+		m_apSprites.push_back( pNewSprite );
 	}
 }
 

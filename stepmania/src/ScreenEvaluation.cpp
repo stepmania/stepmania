@@ -688,15 +688,15 @@ void ScreenEvaluation::TweenOnScreen()
 		unsigned i;
 
 		CArray<Actor*,Actor*> apActorsInBonusOrStageInfo;
-		apActorsInBonusOrStageInfo.Add( &m_sprBonusFrame[p] );
+		apActorsInBonusOrStageInfo.push_back( &m_sprBonusFrame[p] );
 		for( i=0; i<NUM_RADAR_VALUES; i++ )
 		{
-			apActorsInBonusOrStageInfo.Add( &m_sprPossibleBar[p][i] );
-			apActorsInBonusOrStageInfo.Add( &m_sprActualBar[p][i] );
+			apActorsInBonusOrStageInfo.push_back( &m_sprPossibleBar[p][i] );
+			apActorsInBonusOrStageInfo.push_back( &m_sprActualBar[p][i] );
 		}
-		apActorsInBonusOrStageInfo.Add( &m_sprCourseFrame[p] );
-		apActorsInBonusOrStageInfo.Add( &m_textTime[p] );
-		apActorsInBonusOrStageInfo.Add( &m_textSongsSurvived[p] );
+		apActorsInBonusOrStageInfo.push_back( &m_sprCourseFrame[p] );
+		apActorsInBonusOrStageInfo.push_back( &m_textTime[p] );
+		apActorsInBonusOrStageInfo.push_back( &m_textSongsSurvived[p] );
 		for( i=0; i<apActorsInBonusOrStageInfo.size(); i++ )
 		{
 			fOriginalX = apActorsInBonusOrStageInfo[i]->GetX();
@@ -707,13 +707,13 @@ void ScreenEvaluation::TweenOnScreen()
 		}
 
 		CArray<Actor*,Actor*> apActorsInGradeOrPercentFrame;
-		apActorsInGradeOrPercentFrame.Add( &m_sprBonusFrame[p] );
-		apActorsInGradeOrPercentFrame.Add( &m_sprGradeFrame[p] );
-		apActorsInGradeOrPercentFrame.Add( &m_Grades[p] );
-		apActorsInGradeOrPercentFrame.Add( &m_sprPercentFrame[p] );
-		apActorsInGradeOrPercentFrame.Add( &m_textOniPercentLarge[p] );
-		apActorsInGradeOrPercentFrame.Add( &m_textOniPercentSmall[p] );
-		apActorsInGradeOrPercentFrame.Add( &m_sprNewRecord[p] );
+		apActorsInGradeOrPercentFrame.push_back( &m_sprBonusFrame[p] );
+		apActorsInGradeOrPercentFrame.push_back( &m_sprGradeFrame[p] );
+		apActorsInGradeOrPercentFrame.push_back( &m_Grades[p] );
+		apActorsInGradeOrPercentFrame.push_back( &m_sprPercentFrame[p] );
+		apActorsInGradeOrPercentFrame.push_back( &m_textOniPercentLarge[p] );
+		apActorsInGradeOrPercentFrame.push_back( &m_textOniPercentSmall[p] );
+		apActorsInGradeOrPercentFrame.push_back( &m_sprNewRecord[p] );
 		for( i=0; i<apActorsInGradeOrPercentFrame.size(); i++ )
 		{
 			float fOriginalZoomY = apActorsInGradeOrPercentFrame[i]->GetZoomY();

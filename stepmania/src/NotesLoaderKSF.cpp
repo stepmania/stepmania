@@ -159,7 +159,7 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 	{
 		Notes* pNewNotes = new Notes;
 		LoadFromKSFFile( out.m_sSongDir + arrayKSFFileNames[i], *pNewNotes );
-		out.m_apNotes.Add( pNewNotes );
+		out.m_apNotes.push_back( pNewNotes );
 	}
 
 	CString sPath = out.m_sSongDir + arrayKSFFileNames[0];

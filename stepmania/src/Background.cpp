@@ -90,7 +90,7 @@ void Background::LoadFromAniDir( CString sAniDir )
 	BGAnimation* pTempBGA;
 	pTempBGA = new BGAnimation;
 	pTempBGA->LoadFromAniDir( sAniDir );
-	m_BGAnimations.Add( pTempBGA );
+	m_BGAnimations.push_back( pTempBGA );
 }
 
 BGAnimation *Background::GetBGA(const Song *pSong, const BackgroundChange &aniseg, const CString &bgpath) const
@@ -179,13 +179,13 @@ void Background::LoadFromSong( Song* pSong )
 	{
 		BGAnimation *pTempBGA = new BGAnimation;
 		pTempBGA->LoadFromStaticGraphic( sSongBackgroundPath );
-		m_BGAnimations.Add( pTempBGA );
+		m_BGAnimations.push_back( pTempBGA );
 	}
 
 	if( pSong->HasBGChanges() )
 	{
 		// start off showing the static song background
-		m_aBGSegments.Add( BGSegment(-10000,0,false) );
+		m_aBGSegments.push_back( BGSegment(-10000,0,false) );
 
 		// Load the animations used by the song's pre-defined animation plan.
 		// the song has a plan.  Use it.
@@ -198,14 +198,14 @@ void Background::LoadFromSong( Song* pSong )
 
 			if(pTempBGA != NULL)
 			{
-				m_BGAnimations.Add( pTempBGA );
+				m_BGAnimations.push_back( pTempBGA );
 				// add to the plan
-				m_aBGSegments.Add( BGSegment(aniseg.m_fStartBeat, m_BGAnimations.size()-1, bFade) );
+				m_aBGSegments.push_back( BGSegment(aniseg.m_fStartBeat, m_BGAnimations.size()-1, bFade) );
 			}
 		}
 
 		// end showing the static song background
-		m_aBGSegments.Add( BGSegment(pSong->m_fLastBeat,0,false) );
+		m_aBGSegments.push_back( BGSegment(pSong->m_fLastBeat,0,false) );
 
 		SortBGSegmentArray( m_aBGSegments );	// Need to sort in case there is a background change after the last beat (not likely)
 	}
@@ -254,7 +254,7 @@ void Background::LoadFromSong( Song* pSong )
 					pTempBGA = new BGAnimation;
 					pTempBGA->LoadFromStaticGraphic( sSongBackgroundPath );
 				}
-				m_BGAnimations.Add( pTempBGA );
+				m_BGAnimations.push_back( pTempBGA );
 			}
 			break;
 		case MODE_ANIMATIONS:
@@ -271,7 +271,7 @@ void Background::LoadFromSong( Song* pSong )
 					unsigned index = rand() % arrayPossibleAnims.size();
 					BGAnimation *pTempBGA = new BGAnimation;
 					pTempBGA->LoadFromAniDir( arrayPossibleAnims[index], sSongBackgroundPath );
-					m_BGAnimations.Add( pTempBGA );
+					m_BGAnimations.push_back( pTempBGA );
 					arrayPossibleAnims.erase( arrayPossibleAnims.begin()+index,
 												 arrayPossibleAnims.begin()+index+1 );
 				}
@@ -288,7 +288,7 @@ void Background::LoadFromSong( Song* pSong )
 					unsigned index = rand() % arrayPossibleMovies.size();
 					BGAnimation *pTempBGA = new BGAnimation;
 					pTempBGA->LoadFromMovie( arrayPossibleMovies[index], true, false );
-					m_BGAnimations.Add( pTempBGA );
+					m_BGAnimations.push_back( pTempBGA );
 					arrayPossibleMovies.erase( arrayPossibleMovies.begin()+index,
 												  arrayPossibleMovies.begin()+index+1 );
 				}	
@@ -306,13 +306,13 @@ void Background::LoadFromSong( Song* pSong )
 		//
 		if( backgroundMode == MODE_MOVIE_VIS )
 		{
-			m_aBGSegments.Add( BGSegment(-10000,1,false) );
+			m_aBGSegments.push_back( BGSegment(-10000,1,false) );
 			return;
 		}
 		else
 		{
 			// start off showing the static song background
-			m_aBGSegments.Add( BGSegment(-10000,0,false) );
+			m_aBGSegments.push_back( BGSegment(-10000,0,false) );
 		}
 
 		const float fFirstBeat = pSong->m_fFirstBeat;
@@ -322,7 +322,7 @@ void Background::LoadFromSong( Song* pSong )
 		 * whole song.  Otherwise, if it's a movie, it'll loop every four measures; we
 		 * want it to play continuously. */
 		if( m_BGAnimations.size() == 2) {
-			m_aBGSegments.Add( BGSegment(fFirstBeat,1,bFade) );
+			m_aBGSegments.push_back( BGSegment(fFirstBeat,1,bFade) );
 		} else {
 			// change BG every 4 bars
 			for( float f=fFirstBeat; f<fLastBeat; f+=16 )
@@ -334,7 +334,7 @@ void Background::LoadFromSong( Song* pSong )
 					index = 1;	// force the first random background to play first
 				else
 					index = 1 + rand()%(m_BGAnimations.size()-1);
-				m_aBGSegments.Add( BGSegment(f,index,bFade) );
+				m_aBGSegments.push_back( BGSegment(f,index,bFade) );
 			}
 
 			// change BG every BPM change
@@ -350,12 +350,12 @@ void Background::LoadFromSong( Song* pSong )
 					index = 0;
 				else
 					index = 1 + int(bpmseg.m_fBPM)%(m_BGAnimations.size()-1);
-				m_aBGSegments.Add( BGSegment(bpmseg.m_fStartBeat,index,bFade) );
+				m_aBGSegments.push_back( BGSegment(bpmseg.m_fStartBeat,index,bFade) );
 			}
 		}
 
 		// end showing the static song background
-		m_aBGSegments.Add( BGSegment(pSong->m_fLastBeat,0,bFade) );
+		m_aBGSegments.push_back( BGSegment(pSong->m_fLastBeat,0,bFade) );
 		
 		// sort segments
 		SortBGSegmentArray( m_aBGSegments );

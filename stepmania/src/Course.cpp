@@ -226,9 +226,9 @@ void Course::GetSongAndNotesForCurrentStyle(
 		if( pNotes == NULL )
 			continue;	// skip
 
-		apSongsOut.Add( pSong );
-		apNotesOut.Add( pNotes );
-		asModifiersOut.Add( sModifiers );
+		apSongsOut.push_back( pSong );
+		apNotesOut.push_back( pNotes );
+		asModifiersOut.push_back( sModifiers );
 	}
 }
 

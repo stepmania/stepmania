@@ -247,7 +247,7 @@ void ScreenManager::SetNewScreen( Screen *pNewScreen )
 	m_ScreensToDelete.insert(m_ScreensToDelete.end(), m_ScreenStack.begin(), m_ScreenStack.end());
 
 	m_ScreenStack.clear();
-	m_ScreenStack.Add( pNewScreen );
+	m_ScreenStack.push_back( pNewScreen );
 }
 
 void ScreenManager::SetNewScreen( CString sClassName )
@@ -274,7 +274,7 @@ void ScreenManager::Prompt( ScreenMessage SM_SendWhenDone, CString sText, bool b
 	FlushDirCache();
 
 	// add the new state onto the back of the array
-	m_ScreenStack.Add( new ScreenPrompt(SM_SendWhenDone, sText, bYesNo, bDefaultAnswer, OnYes, OnNo) );
+	m_ScreenStack.push_back( new ScreenPrompt(SM_SendWhenDone, sText, bYesNo, bDefaultAnswer, OnYes, OnNo) );
 }
 
 void ScreenManager::TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer), void(*OnCanel)() )
@@ -282,7 +282,7 @@ void ScreenManager::TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion,
 	FlushDirCache();
 
 	// add the new state onto the back of the array
-	m_ScreenStack.Add( new ScreenTextEntry(SM_SendWhenDone, sQuestion, sInitialAnswer, OnOK, OnCanel) );
+	m_ScreenStack.push_back( new ScreenTextEntry(SM_SendWhenDone, sQuestion, sInitialAnswer, OnOK, OnCanel) );
 }
 
 void ScreenManager::PopTopScreen( ScreenMessage SM )
@@ -290,7 +290,7 @@ void ScreenManager::PopTopScreen( ScreenMessage SM )
 	Screen* pScreenToPop = m_ScreenStack.back();	// top menu
 	//pScreenToPop->HandleScreenMessage( SM_LosingInputFocus );
 	m_ScreenStack.erase(m_ScreenStack.end()-1, m_ScreenStack.end());
-	m_ScreensToDelete.Add( pScreenToPop );
+	m_ScreensToDelete.push_back( pScreenToPop );
 	
 	Screen* pNewTopScreen = m_ScreenStack[m_ScreenStack.size()-1];
 	pNewTopScreen->HandleScreenMessage( SM );

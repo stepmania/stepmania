@@ -449,7 +449,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 				pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, arraySteps );
 
 				if( !arraySteps.empty() )
-					arraySongs.Add( pSong );
+					arraySongs.push_back( pSong );
 			}
 
 
@@ -514,11 +514,11 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 					{
 						colorSection = (so==SORT_GROUP) ? SONGMAN->GetGroupColor(pSong->m_sGroupName) : SECTION_COLORS(iSectionColorIndex);
 						iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
-						arrayWheelItemDatas.Add( WheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, colorSection) );
+						arrayWheelItemDatas.push_back( WheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, colorSection) );
 						sLastSection = sThisSection;
 					}
 
-					arrayWheelItemDatas.Add( WheelItemData( TYPE_SONG, pSong, sThisSection, NULL, SONGMAN->GetSongColor(pSong)) );
+					arrayWheelItemDatas.push_back( WheelItemData( TYPE_SONG, pSong, sThisSection, NULL, SONGMAN->GetSongColor(pSong)) );
 				}
 			}
 			else
@@ -528,7 +528,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 					Song* pSong = arraySongs[i];
 					if( GAMESTATE->m_sPreferredGroup != "ALL MUSIC"  &&  pSong->m_sGroupName != GAMESTATE->m_sPreferredGroup )
 						continue;	// skip
-					arrayWheelItemDatas.Add( WheelItemData(TYPE_SONG, pSong, "", NULL, SONGMAN->GetSongColor(pSong)) );
+					arrayWheelItemDatas.push_back( WheelItemData(TYPE_SONG, pSong, "", NULL, SONGMAN->GetSongColor(pSong)) );
 				}
 			}
 		}
@@ -536,7 +536,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 
 		if( !bRoulette )
 		{
-			arrayWheelItemDatas.Add( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, RageColor(1,0,0,1)) );
+			arrayWheelItemDatas.push_back( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, RageColor(1,0,0,1)) );
 		}
 
 		// HACK:  Add extra stage item if it isn't already present on the music wheel
@@ -560,7 +560,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 			}
 			
 			if( !bFoundExtraSong )
-				arrayWheelItemDatas.Add( WheelItemData(TYPE_SONG, pSong, "", NULL, GAMESTATE->GetStageColor()) );
+				arrayWheelItemDatas.push_back( WheelItemData(TYPE_SONG, pSong, "", NULL, GAMESTATE->GetStageColor()) );
 		}
 
 		break;
@@ -574,12 +574,12 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 			{
 			case PLAY_MODE_ONI:
 				for( i=0; i<SONGMAN->m_aOniCourses.size(); i++ )
-					apCourses.Add( &SONGMAN->m_aOniCourses[i] );
+					apCourses.push_back( &SONGMAN->m_aOniCourses[i] );
 				SortCoursePointerArrayByDifficulty( apCourses );
 				break;
 			case PLAY_MODE_ENDLESS:
 				for( i=0; i<SONGMAN->m_aEndlessCourses.size(); i++ )
-					apCourses.Add( &SONGMAN->m_aEndlessCourses[i] );
+					apCourses.push_back( &SONGMAN->m_aEndlessCourses[i] );
 				break;
 			}
 
@@ -594,7 +594,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 				pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers, false );
 
 				if( !apNotes.empty() )
-					arrayWheelItemDatas.Add( WheelItemData(TYPE_COURSE, NULL, "", pCourse, pCourse->GetColor()) );
+					arrayWheelItemDatas.push_back( WheelItemData(TYPE_COURSE, NULL, "", pCourse, pCourse->GetColor()) );
 			}
 		}
 		break;
@@ -626,7 +626,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 
 	if( arrayWheelItemDatas.empty() )
 	{
-		arrayWheelItemDatas.Add( WheelItemData(TYPE_SECTION, NULL, "- EMPTY -", NULL, RageColor(1,0,0,1)) );
+		arrayWheelItemDatas.push_back( WheelItemData(TYPE_SECTION, NULL, "- EMPTY -", NULL, RageColor(1,0,0,1)) );
 	}
 }
 

@@ -267,7 +267,7 @@ void SongSelector::OnNotesTypeChange()
 	m_pNotess.clear();
 	GetSelectedSong()->GetNotesThatMatch( GAMEMAN->GetStyleDefForStyle(GetSelectedStyle())->m_NotesType, m_pNotess );
 	SortNotesArrayByDifficulty( m_pNotess );
-	m_pNotess.Add( NULL );		// marker for "(NEW)"
+	m_pNotess.push_back( NULL );		// marker for "(NEW)"
 	m_iSelectedNotes = 0;
 
 	OnNotesChange();

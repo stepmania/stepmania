@@ -103,7 +103,7 @@ void Screen::SendScreenMessage( ScreenMessage SM, float fDelay )
 	QueuedScreenMessage QSM;
 	QSM.SM = SM;
 	QSM.fDelayRemaining = fDelay;
-	m_QueuedMessages.Add( QSM );
+	m_QueuedMessages.push_back( QSM );
 }
 
 bool Screen::FirstUpdate()

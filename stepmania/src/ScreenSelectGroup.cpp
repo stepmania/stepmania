@@ -80,7 +80,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 
 	CStringArray asGroupNames;
 	for( i=0; i<aAllSongs.size(); i++ ) {
-		asGroupNames.Add( aAllSongs[i]->m_sGroupName );
+		asGroupNames.push_back( aAllSongs[i]->m_sGroupName );
 	}
 
 	/* Remove duplicate groups. */
@@ -104,7 +104,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 			if( j != 0 && aAllSongs[i]->m_sGroupName != asGroupNames[j] )
 				continue;
 
-			aSongsInGroup.Add( aAllSongs[i] );
+			aSongsInGroup.push_back( aAllSongs[i] );
 		}
 
 		SortSongPointerArrayByTitle( aSongsInGroup );

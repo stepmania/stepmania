@@ -69,11 +69,11 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn )
 		int retval = fscanf( fp, "%f,%f,%f,%f\n", &color.r, &color.g, &color.b, &color.a );
 		bSuccess = (retval == 4);
 		if( bSuccess )
-			m_colorTapTweens.Add( color );
+			m_colorTapTweens.push_back( color );
 	} while( bSuccess );
 
 	if( m_colorTapTweens.empty() )
-		m_colorTapTweens.Add( RageColor(1,1,1,1) );
+		m_colorTapTweens.push_back( RageColor(1,1,1,1) );
 
 	fclose( fp );
 	return;
