@@ -1,3 +1,5 @@
+/* RageTextureID - An identifier for a texture and associated loading parameters. */
+
 #ifndef RAGE_TEXTURE_ID_H
 #define RAGE_TEXTURE_ID_H
 

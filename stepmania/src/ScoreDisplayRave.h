@@ -1,3 +1,5 @@
+/* ScoreDisplayRave - ScoreDisplay implementation for PLAY_MODE_RAVE. */
+
 #ifndef SCORE_DISPLAY_RAVE_H
 #define SCORE_DISPLAY_RAVE_H
 

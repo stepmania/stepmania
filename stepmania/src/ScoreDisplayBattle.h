@@ -1,3 +1,5 @@
+/* ScoreDisplayRave - ScoreDisplay implementation for PLAY_MODE_BATTLE. */
+
 #ifndef SCORE_DISPLAY_BATTLE_H
 #define SCORE_DISPLAY_BATTLE_H
 

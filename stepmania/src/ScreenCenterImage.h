@@ -1,3 +1,5 @@
+/* ScreenCenterImage - Allows the user to adjust screen centering. */
+
 #ifndef SCREEN_CENTER_IMAGE_H
 #define SCREEN_CENTER_IMAGE_H
 

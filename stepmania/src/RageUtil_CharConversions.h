@@ -1,3 +1,5 @@
+/* ConvertString - Convert a string to UTF-8. */
+
 #ifndef RAGEUTIL_CHAR_CONVERSIONS_H
 #define RAGEUTIL_CHAR_CONVERSIONS_H
 

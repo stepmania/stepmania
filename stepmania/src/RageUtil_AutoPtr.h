@@ -1,3 +1,5 @@
+/* AutoPtrCopyOnWrite - Simple smart pointer template. */
+
 #ifndef RAGE_UTIL_AUTO_PTR_H
 #define RAGE_UTIL_AUTO_PTR_H
 

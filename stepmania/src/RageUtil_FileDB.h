@@ -1,5 +1,7 @@
+/* FilenameDB - A container for a file listing. */
+
 #ifndef RAGE_UTIL_FILEDB
-#define RAGE_UTIL_FILEDB 1
+#define RAGE_UTIL_FILEDB
 
 #include <set>
 #include <map>

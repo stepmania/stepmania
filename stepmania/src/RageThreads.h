@@ -1,3 +1,5 @@
+/* RageThread - Thread, mutex, semaphore and event classes. */
+
 #ifndef RAGE_THREADS_H
 #define RAGE_THREADS_H
 

@@ -1,3 +1,5 @@
+/* ScreenDemonstration - Jukebox adapter for the attract sequence. */
+
 #ifndef SCREEN_DEMONSTRATION_H
 #define SCREEN_DEMONSTRATION_H
 

@@ -1,3 +1,5 @@
+/* Judgment - An Actor that displays a tap judgement. */
+
 #ifndef JUDGMENT_H
 #define JUDGMENT_H
 

@@ -1,3 +1,5 @@
+/* CircBuf - A fast, thread-safe, lockless circular buffer. */
+
 #ifndef RAGE_UTIL_CIRCULAR_BUFFER
 #define RAGE_UTIL_CIRCULAR_BUFFER
 
