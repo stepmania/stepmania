@@ -1508,6 +1508,9 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		m_pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 
 		SCREENMAN->SetNewScreen( "ScreenEditMenu" );
+
+		GAMESTATE->m_bEditing = false;
+
 		break;
 	case SM_BackFromMainMenu:
 		HandleMainMenuChoice( (MainMenuChoice)ScreenMiniMenu::s_iLastLine, ScreenMiniMenu::s_iLastAnswers );

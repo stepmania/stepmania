@@ -79,8 +79,6 @@ EditCoursesMenu::EditCoursesMenu()
 {
 	LOG->Trace( "ScreenEditCoursesMenu::ScreenEditCoursesMenu()" );
 
-	GAMESTATE->m_bEditing = true;
-
 	m_bInSongMenu = false;
 
 	for( int i=0; i<2; i++ )
