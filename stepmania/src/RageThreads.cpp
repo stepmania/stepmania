@@ -79,11 +79,13 @@ LockMutex::LockMutex(RageMutex &mut, const char *file_, int line_):
 	locked_at(RageTimer::GetTimeSinceStart())
 {
 	mutex.Lock();
+	locked = true;
 }
 
 LockMutex::~LockMutex()
 {
-	mutex.Unlock();
+	if(locked)
+		mutex.Unlock();
 
 	if(file)
 	{
@@ -92,6 +94,15 @@ LockMutex::~LockMutex()
 			LOG->Trace(ssprintf("Lock at %s:%i took %f", file, line, dur));
 	}
 }
+
+void LockMutex::Unlock()
+{
+	ASSERT(locked);
+	locked = false;
+
+	mutex.Unlock();
+}
+
 
 /*
 -----------------------------------------------------------------------------
