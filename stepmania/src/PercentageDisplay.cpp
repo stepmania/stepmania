@@ -5,8 +5,9 @@
 #include "ThemeManager.h"
 #include "PrefsManager.h"
 #include "ActorUtil.h"
-
 #include "RageLog.h"
+#include "StageStats.h"
+
 #define DANCE_POINT_DIGITS			THEME->GetMetricI(m_sName,"DancePointsDigits")
 #define PERCENT_DECIMAL_PLACES		THEME->GetMetricI(m_sName,"PercentDecimalPlaces")
 #define PERCENT_TOTAL_SIZE			THEME->GetMetricI(m_sName,"PercentTotalSize")
@@ -59,7 +60,7 @@ void PercentageDisplay::Update( float fDeltaTime )
 
 void PercentageDisplay::Refresh()
 {
-	const int iActualDancePoints = GAMESTATE->m_CurStageStats.iActualDancePoints[m_PlayerNumber];
+	const int iActualDancePoints = g_CurStageStats.iActualDancePoints[m_PlayerNumber];
 	if( iActualDancePoints == m_Last )
 		return;
 
@@ -68,7 +69,7 @@ void PercentageDisplay::Refresh()
 	CString sNumToDisplay;
 	if( !PREFSMAN->m_bDancePointsForOni )
 	{
-		float fPercentDancePoints = GAMESTATE->m_CurStageStats.GetPercentDancePoints( m_PlayerNumber );
+		float fPercentDancePoints = g_CurStageStats.GetPercentDancePoints( m_PlayerNumber );
 		if( PERCENT_USE_REMAINDER )
 		{
 			int iPercentWhole = int(fPercentDancePoints*100);

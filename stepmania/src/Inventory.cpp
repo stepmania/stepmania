@@ -19,6 +19,7 @@
 #include "song.h"
 #include "ScreenManager.h"
 #include "ScreenGameplay.h"
+#include "StageStats.h"
 
 
 #define NUM_ITEM_TYPES			THEME->GetMetricF("Inventory","NumItemTypes")
@@ -104,10 +105,10 @@ void Inventory::Update( float fDelta )
 	PlayerNumber pn = m_PlayerNumber;
 
 	// check to see if they deserve a new item
-	if( GAMESTATE->m_CurStageStats.iCurCombo[pn] != m_iLastSeenCombo )
+	if( g_CurStageStats.iCurCombo[pn] != m_iLastSeenCombo )
 	{
 		int iOldCombo = m_iLastSeenCombo;
-		m_iLastSeenCombo = GAMESTATE->m_CurStageStats.iCurCombo[pn];
+		m_iLastSeenCombo = g_CurStageStats.iCurCombo[pn];
 		int iNewCombo = m_iLastSeenCombo;
 		
 #define CROSSED(i) (iOldCombo<i)&&(iNewCombo>=i)

@@ -14,6 +14,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "Steps.h"
+#include "StageStats.h"
 
 
 const float	BATTERY_X[NUM_PLAYERS]	=	{ -92, +92 };
@@ -74,7 +75,7 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 
 void LifeMeterBattery::OnSongEnded()
 {
-	if( GAMESTATE->m_CurStageStats.bFailedEarlier[m_PlayerNumber] )
+	if( g_CurStageStats.bFailedEarlier[m_PlayerNumber] )
 		return;
 
 	if( m_iLivesLeft < GAMESTATE->m_SongOptions.m_iBatteryLives )
@@ -91,7 +92,7 @@ void LifeMeterBattery::OnSongEnded()
 
 void LifeMeterBattery::ChangeLife( TapNoteScore score )
 {
-	if( GAMESTATE->m_CurStageStats.bFailedEarlier[m_PlayerNumber] )
+	if( g_CurStageStats.bFailedEarlier[m_PlayerNumber] )
 		return;
 
 	switch( score )
@@ -118,7 +119,7 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 		ASSERT(0);
 	}
 	if( m_iLivesLeft == 0 )
-		GAMESTATE->m_CurStageStats.bFailedEarlier[m_PlayerNumber] = true;
+		g_CurStageStats.bFailedEarlier[m_PlayerNumber] = true;
 }
 
 void LifeMeterBattery::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
@@ -161,7 +162,7 @@ bool LifeMeterBattery::IsHot() const
 
 bool LifeMeterBattery::IsFailing() const
 {
-	return GAMESTATE->m_CurStageStats.bFailedEarlier[m_PlayerNumber];
+	return g_CurStageStats.bFailedEarlier[m_PlayerNumber];
 }
 
 float LifeMeterBattery::GetLife() const

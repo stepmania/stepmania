@@ -47,6 +47,7 @@
 #include "UnlockSystem.h"
 #include "LightsManager.h"
 #include "ProfileManager.h"
+#include "StageStats.h"
 
 //
 // Defines
@@ -201,9 +202,9 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	}
 
 
-	GAMESTATE->m_CurStageStats.pSong = NULL; // set in LoadNextSong
-	GAMESTATE->m_CurStageStats.playMode = GAMESTATE->m_PlayMode;
-	GAMESTATE->m_CurStageStats.style = GAMESTATE->m_CurStyle;
+	g_CurStageStats.pSong = NULL; // set in LoadNextSong
+	g_CurStageStats.playMode = GAMESTATE->m_PlayMode;
+	g_CurStageStats.style = GAMESTATE->m_CurStyle;
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -211,16 +212,16 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 			continue;	// skip
 
 		ASSERT( !m_apNotesQueue[p].empty() );
-		GAMESTATE->m_CurStageStats.pSteps[p] = m_apNotesQueue[p][0];
-		GAMESTATE->m_CurStageStats.iMeter[p] = m_apNotesQueue[p][0]->GetMeter();
+		g_CurStageStats.pSteps[p] = m_apNotesQueue[p][0];
+		g_CurStageStats.iMeter[p] = m_apNotesQueue[p][0]->GetMeter();
 	}
 
 	if( GAMESTATE->IsExtraStage() )
-		GAMESTATE->m_CurStageStats.StageType = StageStats::STAGE_EXTRA;
+		g_CurStageStats.StageType = StageStats::STAGE_EXTRA;
 	else if( GAMESTATE->IsExtraStage2() )
-		GAMESTATE->m_CurStageStats.StageType = StageStats::STAGE_EXTRA2;
+		g_CurStageStats.StageType = StageStats::STAGE_EXTRA2;
 	else
-		GAMESTATE->m_CurStageStats.StageType = StageStats::STAGE_NORMAL;
+		g_CurStageStats.StageType = StageStats::STAGE_NORMAL;
 	
 	//
 	// Init ScoreKeepers
@@ -410,7 +411,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	m_MaxCombo.LoadFromNumbers( THEME->GetPathToN("ScreenGameplay max combo") );
 	m_MaxCombo.SetName( "MaxCombo" );
 	SET_XY( m_MaxCombo );
-	m_MaxCombo.SetText( ssprintf("%d", GAMESTATE->m_CurStageStats.iMaxCombo[GAMESTATE->m_MasterPlayerNumber]) ); // TODO: Make this work for both players
+	m_MaxCombo.SetText( ssprintf("%d", g_CurStageStats.iMaxCombo[GAMESTATE->m_MasterPlayerNumber]) ); // TODO: Make this work for both players
 	this->AddChild( &m_MaxCombo );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -743,8 +744,8 @@ void ScreenGameplay::LoadNextSong()
 	for( p=0; p<NUM_PLAYERS; p++ )
 		if( GAMESTATE->IsPlayerEnabled(p) )
 		{
-			GAMESTATE->m_CurStageStats.iSongsPlayed[p]++;
-			m_textCourseSongNumber[p].SetText( ssprintf("%d", GAMESTATE->m_CurStageStats.iSongsPlayed[p]) );
+			g_CurStageStats.iSongsPlayed[p]++;
+			m_textCourseSongNumber[p].SetText( ssprintf("%d", g_CurStageStats.iSongsPlayed[p]) );
 		}
 
 	if( GAMESTATE->IsCourseMode() )
@@ -752,7 +753,7 @@ void ScreenGameplay::LoadNextSong()
 		int SongNumber = 0;
 		for( p=0; p<NUM_PLAYERS; p++ )
 			if( GAMESTATE->IsPlayerEnabled(p) )
-				SongNumber = max( SongNumber, GAMESTATE->m_CurStageStats.iSongsPlayed[p] );
+				SongNumber = max( SongNumber, g_CurStageStats.iSongsPlayed[p] );
 		CString path = THEME->GetPathToG( ssprintf("ScreenGameplay course song %i", SongNumber), true );
 		if( path != "" )
 			m_sprCourseSongNumber.Load( path );
@@ -764,7 +765,7 @@ void ScreenGameplay::LoadNextSong()
 	iPlaySongIndex %= m_apSongsQueue.size();
 	GAMESTATE->m_pCurSong = m_apSongsQueue[iPlaySongIndex];
 
-	GAMESTATE->m_CurStageStats.pSong = GAMESTATE->m_pCurSong;
+	g_CurStageStats.pSong = GAMESTATE->m_pCurSong;
 
 	// Restore the player's originally selected options.
 	GAMESTATE->RemoveAllActiveAttacks();
@@ -813,7 +814,7 @@ void ScreenGameplay::LoadNextSong()
 		m_sprOniGameOver[p].SetY( SCREEN_TOP - m_sprOniGameOver[p].GetZoomedHeight()/2 );
 		m_sprOniGameOver[p].SetDiffuse( RageColor(1,1,1,0) );	// 0 alpha so we don't waste time drawing while not visible
 
-		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BATTERY && GAMESTATE->m_CurStageStats.bFailed[p] )	// already failed
+		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BATTERY && g_CurStageStats.bFailed[p] )	// already failed
 			ShowOniGameOver((PlayerNumber)p);
 
 		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BAR && GAMESTATE->m_PlayMode == PLAY_MODE_ARCADE && !PREFSMAN->m_bEventMode && !m_bDemonstration)
@@ -994,7 +995,7 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 bool ScreenGameplay::AllFailedEarlier() const
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsPlayerEnabled(p) && !GAMESTATE->m_CurStageStats.bFailedEarlier[p] )
+		if( GAMESTATE->IsPlayerEnabled(p) && !g_CurStageStats.bFailedEarlier[p] )
 			return false;
 	return true;
 }
@@ -1102,7 +1103,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		return;
 
 	if( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID )
-		m_MaxCombo.SetText( ssprintf("%d", GAMESTATE->m_CurStageStats.iMaxCombo[GAMESTATE->m_MasterPlayerNumber]) ); /* MAKE THIS WORK FOR BOTH PLAYERS! */
+		m_MaxCombo.SetText( ssprintf("%d", g_CurStageStats.iMaxCombo[GAMESTATE->m_MasterPlayerNumber]) ); /* MAKE THIS WORK FOR BOTH PLAYERS! */
 	
 	//LOG->Trace( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
 
@@ -1149,11 +1150,11 @@ void ScreenGameplay::Update( float fDeltaTime )
 		// Update living players' alive time
 		//
 		for( pn=0; pn<NUM_PLAYERS; pn++ )
-			if( GAMESTATE->IsPlayerEnabled(pn) && !GAMESTATE->m_CurStageStats.bFailed[pn])
-				GAMESTATE->m_CurStageStats.fAliveSeconds [pn] += fDeltaTime * GAMESTATE->m_SongOptions.m_fMusicRate;
+			if( GAMESTATE->IsPlayerEnabled(pn) && !g_CurStageStats.bFailed[pn])
+				g_CurStageStats.fAliveSeconds [pn] += fDeltaTime * GAMESTATE->m_SongOptions.m_fMusicRate;
 
 		// update fGameplaySeconds
-		GAMESTATE->m_CurStageStats.fGameplaySeconds += fDeltaTime;
+		g_CurStageStats.fGameplaySeconds += fDeltaTime;
 
 		//
 		// Check for end of song
@@ -1276,7 +1277,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		case SongOptions::FAIL_ARCADE:
 		case SongOptions::FAIL_END_OF_SONG:
 			for ( pn=0; pn<NUM_PLAYERS; pn++ )
-				GAMESTATE->m_CurStageStats.bFailed[pn] = true;	// fail
+				g_CurStageStats.bFailed[pn] = true;	// fail
 		}
 
 		this->PostScreenMessage( SM_NotesEnded, 0 );
@@ -1308,7 +1309,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		LIGHTSMAN->SetAllUpperLights( false );
 }
 
-/* Set m_CurStageStats.bFailed for failed players.  In, FAIL_ARCADE, send
+/* Set g_CurStageStats.bFailed for failed players.  In, FAIL_ARCADE, send
  * SM_BeginFailed if all players failed, and kill dead Oni players. */
 void ScreenGameplay::UpdateCheckFail()
 {
@@ -1323,7 +1324,7 @@ void ScreenGameplay::UpdateCheckFail()
 		if( (m_pLifeMeter[pn] && !m_pLifeMeter[pn]->IsFailing()) || 
 			(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsFailing((PlayerNumber)pn)) )
 			continue; /* isn't failing */
-		if( GAMESTATE->m_CurStageStats.bFailed[pn] )
+		if( g_CurStageStats.bFailed[pn] )
 			continue; /* failed and is already dead */
 		
 		/* If recovery is enabled, only set fail if both are failing.
@@ -1333,7 +1334,7 @@ void ScreenGameplay::UpdateCheckFail()
 			continue;
 
 		LOG->Trace("Player %d failed", (int)pn);
-		GAMESTATE->m_CurStageStats.bFailed[pn] = true;	// fail
+		g_CurStageStats.bFailed[pn] = true;	// fail
 
 		if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY &&
 			GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_ARCADE )
@@ -1681,14 +1682,14 @@ void ScreenGameplay::SongFinished()
 		for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
 		{
 			RadarCategory rc = (RadarCategory)r;
-			GAMESTATE->m_CurStageStats.fRadarPossible[p][r] = NoteDataUtil::GetRadarValue( m_Player[p], rc, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
-			GAMESTATE->m_CurStageStats.fRadarActual[p][r] = m_Player[p].GetActualRadarValue( rc, (PlayerNumber)p, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
+			g_CurStageStats.fRadarPossible[p][r] = NoteDataUtil::GetRadarValue( m_Player[p], rc, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
+			g_CurStageStats.fRadarActual[p][r] = m_Player[p].GetActualRadarValue( rc, (PlayerNumber)p, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
 		}
 	}
 
 
 	// save current stage stats
-	GAMESTATE->m_vPlayedStageStats.push_back( GAMESTATE->m_CurStageStats );
+	g_vPlayedStageStats.push_back( g_CurStageStats );
 }
 
 void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
@@ -1729,28 +1730,28 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				{
 					LOG->Trace("Player %i failed: life %f is under %f",
 						p+1, m_pLifeMeter[p]->GetLife(), GAMESTATE->m_PlayerOptions[p].m_fPassmark );
-					GAMESTATE->m_CurStageStats.bFailed[p] = true;
+					g_CurStageStats.bFailed[p] = true;
 				}
 
 				/* Mark failure.  This hasn't been done yet if m_bTwoPlayerRecovery is set. */
 				if( GAMESTATE->m_SongOptions.m_FailType != SongOptions::FAIL_OFF &&
 					(m_pLifeMeter[p] && m_pLifeMeter[p]->IsFailing()) || 
 					(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsFailing((PlayerNumber)p)) )
-					GAMESTATE->m_CurStageStats.bFailed[p] = true;
+					g_CurStageStats.bFailed[p] = true;
 
-				if( !GAMESTATE->m_CurStageStats.bFailed[p] )
-					GAMESTATE->m_CurStageStats.iSongsPassed[p]++;
+				if( !g_CurStageStats.bFailed[p] )
+					g_CurStageStats.iSongsPassed[p]++;
 			}
 
 			/* If all players have *really* failed (bFailed, not the life meter or
 			 * bFailedEarlier): */
-			const bool bAllReallyFailed = GAMESTATE->m_CurStageStats.AllFailed();
+			const bool bAllReallyFailed = g_CurStageStats.AllFailed();
 
 			if( !bAllReallyFailed && !IsLastSong() )
 			{
 				/* Next song. */
 				for( p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsPlayerEnabled(p) && !GAMESTATE->m_CurStageStats.bFailed[p] )
+				if( GAMESTATE->IsPlayerEnabled(p) && !g_CurStageStats.bFailed[p] )
 				{
 					// give a little life back between stages
 					if( m_pLifeMeter[p] )
@@ -1783,7 +1784,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 						continue;
 
 					/* XXX: In battle modes, switch( GAMESTATE->GetStageResult(p) ). */
-					if( GAMESTATE->m_CurStageStats.bFailed[p] )
+					if( g_CurStageStats.bFailed[p] )
 						Dancers->Change2DAnimState( p, AS2D_FAIL ); // fail anim
 					else if( m_pLifeMeter[p] && m_pLifeMeter[p]->GetLife() == 1.0f ) // full life
 						Dancers->Change2DAnimState( p, AS2D_WINFEVER ); // full life pass anim
@@ -2045,7 +2046,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			float fMaxSurviveSeconds = 0;
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				if( GAMESTATE->IsPlayerEnabled(p) )
-					fMaxSurviveSeconds = max( fMaxSurviveSeconds, GAMESTATE->m_CurStageStats.fAliveSeconds[p] );
+					fMaxSurviveSeconds = max( fMaxSurviveSeconds, g_CurStageStats.fAliveSeconds[p] );
 			ASSERT( fMaxSurviveSeconds > 0 );
 			m_textSurviveTime.SetText( "TIME: " + SecondsToTime(fMaxSurviveSeconds) );
 			SET_XY_AND_ON_COMMAND( m_textSurviveTime );

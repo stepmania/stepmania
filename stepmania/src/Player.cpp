@@ -34,6 +34,7 @@
 #include "NoteDataUtil.h"
 #include "ScreenGameplay.h" /* for SM_ComboStopped */
 #include "ScreenManager.h"
+#include "StageStats.h"
 
 CachedThemeMetricF GRAY_ARROWS_Y_STANDARD		("Player","ReceptorArrowsYStandard");
 CachedThemeMetricF GRAY_ARROWS_Y_REVERSE		("Player","ReceptorArrowsYReverse");
@@ -129,7 +130,7 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 
 	// copy note data
 	this->CopyAll( pNoteData );
-	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  GAMESTATE->m_CurStageStats.bFailed[pn] )	// Oni dead
+	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  g_CurStageStats.bFailed[pn] )	// Oni dead
 		this->ClearAll();
 
 	/* The editor reuses Players ... so we really need to make sure everything
@@ -138,7 +139,7 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	m_Judgment.StopTweening();
 //	m_Combo.Reset();				// don't reset combos between songs in a course!
 	m_Combo.Init( pn );
-	m_Combo.SetCombo( GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] );	// combo can persist between songs and games
+	m_Combo.SetCombo( g_CurStageStats.iCurCombo[m_PlayerNumber] );	// combo can persist between songs and games
 	m_AttackDisplay.Init( pn );
 	m_Judgment.Reset();
 
@@ -366,7 +367,7 @@ void PlayerMinus::Update( float fDeltaTime )
 
 			int ms_error = (hns == HNS_OK)? 0:MAX_PRO_TIMING_ERROR;
 
-			GAMESTATE->m_CurStageStats.iTotalError[m_PlayerNumber] += ms_error;
+			g_CurStageStats.iTotalError[m_PlayerNumber] += ms_error;
 			if( hns == HNS_NG ) /* don't show a 0 for an OK */
 				m_ProTimingDisplay.SetJudgment( ms_error, TNS_MISS );
 		}
@@ -554,7 +555,7 @@ int PlayerMinus::GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, flo
 
 void PlayerMinus::Step( int col, RageTimer tm )
 {
-	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  GAMESTATE->m_CurStageStats.bFailed[m_PlayerNumber] )	// Oni dead
+	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  g_CurStageStats.bFailed[m_PlayerNumber] )	// Oni dead
 		return;	// do nothing
 
 	//LOG->Trace( "PlayerMinus::HandlePlayerStep()" );
@@ -811,7 +812,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			int ms_error = (int) roundf( fSecondsFromPerfect * 1000 );
 			ms_error = min( ms_error, MAX_PRO_TIMING_ERROR );
 
-			GAMESTATE->m_CurStageStats.iTotalError[m_PlayerNumber] += ms_error;
+			g_CurStageStats.iTotalError[m_PlayerNumber] += ms_error;
 			if (!GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind)
 				m_ProTimingDisplay.SetJudgment( ms_error, score );
 		}
@@ -926,7 +927,7 @@ void PlayerMinus::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 			case TNS_PERFECT:
 			case TNS_MARVELOUS:
 				{
-					bool bBright = GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber]>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+					bool bBright = g_CurStageStats.iCurCombo[m_PlayerNumber]>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
 					m_pNoteField->DidTapNote( c, score, bBright );
 				}
 				break;
@@ -981,7 +982,7 @@ void PlayerMinus::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 				// A normal note.  Penalize for not stepping on it.
 				MissedNoteOnThisRow = true;
 				SetTapNoteScore(t, r, TNS_MISS);
-				GAMESTATE->m_CurStageStats.iTotalError[m_PlayerNumber] += MAX_PRO_TIMING_ERROR;
+				g_CurStageStats.iTotalError[m_PlayerNumber] += MAX_PRO_TIMING_ERROR;
 				m_ProTimingDisplay.SetJudgment( MAX_PRO_TIMING_ERROR, TNS_MISS );
 			}
 		}
@@ -1081,18 +1082,18 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 		return;
 
 	/* Update miss combo, and handle "combo stopped" messages. */
-	int &iCurCombo = GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber];
+	int &iCurCombo = g_CurStageStats.iCurCombo[m_PlayerNumber];
 	switch( scoreOfLastTap )
 	{
 	case TNS_MARVELOUS:
 	case TNS_PERFECT:
 	case TNS_GREAT:
-		GAMESTATE->m_CurStageStats.iCurMissCombo[m_PlayerNumber] = 0;
+		g_CurStageStats.iCurMissCombo[m_PlayerNumber] = 0;
 		SCREENMAN->PostMessageToTopScreen( SM_MissComboAborted, 0 );
 		break;
 
 	case TNS_MISS:
-		++GAMESTATE->m_CurStageStats.iCurMissCombo[m_PlayerNumber];
+		++g_CurStageStats.iCurMissCombo[m_PlayerNumber];
 		m_iDCState = AS2D_MISS; // update dancing 2d characters that may have missed a note
 	case TNS_GOOD:
 	case TNS_BOO:
@@ -1104,7 +1105,7 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 	}
 
 	/* The score keeper updates the hit combo.  Remember the old combo for handling announcers. */
-	const int iOldCombo = GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber];
+	const int iOldCombo = g_CurStageStats.iCurCombo[m_PlayerNumber];
 
 	if(m_pPrimaryScoreKeeper)
 		m_pPrimaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow, iNumAdditions );
@@ -1112,7 +1113,7 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 	if(m_pSecondaryScoreKeeper)
 		m_pSecondaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow, iNumAdditions );
 
-	m_Combo.SetCombo( GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] );
+	m_Combo.SetCombo( g_CurStageStats.iCurCombo[m_PlayerNumber] );
 
 #define CROSSED( x ) (iOldCombo<x && iCurCombo>=x)
 	if ( CROSSED(100) )	
@@ -1140,12 +1141,12 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 #undef CROSSED
 
 	// new max combo
-	GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber] = max(GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber], iCurCombo);
+	g_CurStageStats.iMaxCombo[m_PlayerNumber] = max(g_CurStageStats.iMaxCombo[m_PlayerNumber], iCurCombo);
 
 	/* Use the real current beat, not the beat we've been passed.  That's because we
 	 * want to record the current life/combo to the current time; eg. if it's a MISS,
 	 * the beat we're registering is in the past, but the life is changing now. */
-	GAMESTATE->m_CurStageStats.UpdateComboList( m_PlayerNumber, GAMESTATE->m_fSongBeat );
+	g_CurStageStats.UpdateComboList( m_PlayerNumber, GAMESTATE->m_fSongBeat );
 
 	float life = -1;
 	if( m_pLifeMeter )
@@ -1157,12 +1158,12 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 			life = 1.0f - life;
 	}
 	if( life != -1 )
-		GAMESTATE->m_CurStageStats.SetLifeRecord( m_PlayerNumber, life, GAMESTATE->m_fSongBeat );
+		g_CurStageStats.SetLifeRecord( m_PlayerNumber, life, GAMESTATE->m_fSongBeat );
 
 	if (m_pScoreDisplay)
-		m_pScoreDisplay->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);
+		m_pScoreDisplay->SetScore(g_CurStageStats.iScore[m_PlayerNumber]);
 	if (m_pSecondaryScoreDisplay)
-		m_pSecondaryScoreDisplay->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);
+		m_pSecondaryScoreDisplay->SetScore(g_CurStageStats.iScore[m_PlayerNumber]);
 
 	if( m_pLifeMeter ) {
 		m_pLifeMeter->ChangeLife( scoreOfLastTap );
@@ -1194,9 +1195,9 @@ void PlayerMinus::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScor
 		m_pSecondaryScoreKeeper->HandleHoldScore(holdScore, tapScore );
 
 	if (m_pScoreDisplay)
-		m_pScoreDisplay->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);
+		m_pScoreDisplay->SetScore(g_CurStageStats.iScore[m_PlayerNumber]);
 	if (m_pSecondaryScoreDisplay)
-		m_pSecondaryScoreDisplay->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);
+		m_pSecondaryScoreDisplay->SetScore(g_CurStageStats.iScore[m_PlayerNumber]);
 
 	if( m_pLifeMeter ) {
 		m_pLifeMeter->ChangeLife( holdScore, tapScore );

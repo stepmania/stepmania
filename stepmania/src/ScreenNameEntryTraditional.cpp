@@ -31,6 +31,7 @@
 #include "Steps.h"
 #include <math.h>
 #include "ProfileManager.h"
+#include "StageStats.h"
 
 
 //
@@ -95,7 +96,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 				}
 			}
 
-			GAMESTATE->m_vPlayedStageStats.push_back( st );
+			g_vPlayedStageStats.push_back( st );
 		}
 
 	}

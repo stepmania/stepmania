@@ -31,6 +31,7 @@
 #include "LightsManager.h"
 #include "ProfileManager.h"
 #include "song.h"
+#include "StageStats.h"
 
 const int NUM_SCORE_DIGITS	=	9;
 
@@ -109,18 +110,18 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		for( float f = 0; f < 100.0f; f += 1.0f )
 		{
 			float fP1 = fmodf(f/100*4+.3f,1);
-			GAMESTATE->m_CurStageStats.SetLifeRecord( PLAYER_1, fP1, f );
-			GAMESTATE->m_CurStageStats.SetLifeRecord( PLAYER_2, 1-fP1, f );
+			g_CurStageStats.SetLifeRecord( PLAYER_1, fP1, f );
+			g_CurStageStats.SetLifeRecord( PLAYER_2, 1-fP1, f );
 		}
 	
-		GAMESTATE->m_CurStageStats.iCurCombo[PLAYER_1] = 0;
-		GAMESTATE->m_CurStageStats.UpdateComboList( PLAYER_1, 0 );
-		GAMESTATE->m_CurStageStats.iCurCombo[PLAYER_1] = 1;
-		GAMESTATE->m_CurStageStats.UpdateComboList( PLAYER_1, 1 );
-		GAMESTATE->m_CurStageStats.iCurCombo[PLAYER_1] = 50;
-		GAMESTATE->m_CurStageStats.UpdateComboList( PLAYER_1, 25 );
-		GAMESTATE->m_CurStageStats.iCurCombo[PLAYER_1] = 250;
-		GAMESTATE->m_CurStageStats.UpdateComboList( PLAYER_1, 100 );
+		g_CurStageStats.iCurCombo[PLAYER_1] = 0;
+		g_CurStageStats.UpdateComboList( PLAYER_1, 0 );
+		g_CurStageStats.iCurCombo[PLAYER_1] = 1;
+		g_CurStageStats.UpdateComboList( PLAYER_1, 1 );
+		g_CurStageStats.iCurCombo[PLAYER_1] = 50;
+		g_CurStageStats.UpdateComboList( PLAYER_1, 25 );
+		g_CurStageStats.iCurCombo[PLAYER_1] = 250;
+		g_CurStageStats.UpdateComboList( PLAYER_1, 100 );
 	}
 
 	LOG->Trace( "ScreenEvaluation::ScreenEvaluation()" );
@@ -158,7 +159,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		break;
 	case stage:
 	case course:
-		stageStats = GAMESTATE->m_CurStageStats;
+		stageStats = g_CurStageStats;
 		break;
 	default:
 		ASSERT(0);
@@ -194,7 +195,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		if (PREFSMAN->m_iScoringType == PrefsManager::SCORING_5TH)
 		{
 			int ScoreBonuses[9] = {0, 0, 100, 1000, 10000, 100000, 1000000, 10000000, 10000000};
-			GAMESTATE->m_CurStageStats.iBonus[p] += ScoreBonuses[(int)grade[p] ];
+			g_CurStageStats.iBonus[p] += ScoreBonuses[(int)grade[p] ];
 			stageStats.iBonus[p] += ScoreBonuses[(int)grade[p] ];
 		}
 	}
@@ -685,8 +686,8 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 				continue;	// skip
 
 			int iTotalScore=0;
-			for( unsigned i=0; i<GAMESTATE->m_vPlayedStageStats.size(); i++ )
-				iTotalScore += GAMESTATE->m_vPlayedStageStats[i].iScore[p];
+			for( unsigned i=0; i<g_vPlayedStageStats.size(); i++ )
+				iTotalScore += g_vPlayedStageStats[i].iScore[p];
 
 			iTotalScore += stageStats.iScore[p];
 
@@ -1193,7 +1194,7 @@ void ScreenEvaluation::Update( float fDeltaTime )
 
 	for( int p=0; p<NUM_PLAYERS; p++)
 	{
-		if (GAMESTATE->m_CurStageStats.iBonus[p] == 0)
+		if (g_CurStageStats.iBonus[p] == 0)
 			continue;
 
 		if (GAMESTATE->IsCourseMode())
@@ -1203,15 +1204,15 @@ void ScreenEvaluation::Update( float fDeltaTime )
 		if ( RageTimer::GetTimeSinceStart() - m_fScreenCreateTime  < 1.5f)
 			continue;
 
-		int increment = GAMESTATE->m_CurStageStats.iBonus[p]/10;
+		int increment = g_CurStageStats.iBonus[p]/10;
 		if (increment < 1) 
-			increment = min(1024, GAMESTATE->m_CurStageStats.iBonus[p]);
+			increment = min(1024, g_CurStageStats.iBonus[p]);
 
-		GAMESTATE->m_CurStageStats.iBonus[p] -= increment;
-		GAMESTATE->m_CurStageStats.iScore[p] += increment;
+		g_CurStageStats.iBonus[p] -= increment;
+		g_CurStageStats.iScore[p] += increment;
 
 		if( SHOW_SCORE_AREA )
-			m_textScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, GAMESTATE->m_CurStageStats.iScore[p]) );
+			m_textScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, g_CurStageStats.iScore[p]) );
 	}
 }
 

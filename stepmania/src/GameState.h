@@ -17,7 +17,6 @@
 #include "Game.h"
 #include "Style.h"
 #include "Grade.h"
-#include "StageStats.h"
 #include "Attack.h"
 
 #include <map>
@@ -31,6 +30,7 @@ class NoteFieldPositioning;
 class Character;
 class UnlockSystem;
 class TimingData;
+struct StageStats;
 
 class GameState
 {
@@ -158,14 +158,6 @@ public:
 	void ResetMusicStatistics();	// Call this when it's time to play a new song.  Clears the values above.
 	void UpdateSongPosition( float fPositionSeconds, const TimingData &timing );
 	float GetSongPercent( float beat ) const;
-
-	//
-	// Stage Statistics: 
-	// Arcade:	for the current stage (one song).  
-	// Nonstop/Oni/Endless:	 for current course (which usually contains multiple songs)
-	//
-	StageStats	m_CurStageStats;				// current stage (not necessarily passed if Extra Stage)
-	vector<StageStats>	m_vPlayedStageStats;
 
 	enum HealthState { HOT, ALIVE, DANGER, DEAD };
 	HealthState	m_HealthState[NUM_PLAYERS];

@@ -17,6 +17,9 @@
 #include "SongManager.h"
 #include "RageUtil.h"
 
+StageStats	g_CurStageStats;
+vector<StageStats>	g_vPlayedStageStats;
+
 StageStats::StageStats()
 {
 	playMode = PLAY_MODE_INVALID;
@@ -216,7 +219,7 @@ bool StageStats::AllFailed() const
 {
 	for( int pn=0; pn<NUM_PLAYERS; pn++ )
 		if( GAMESTATE->IsPlayerEnabled(PlayerNumber(pn)) )
-			if( !GAMESTATE->m_CurStageStats.bFailed[pn] )
+			if( !bFailed[pn] )
 				return false;
 	return true;
 }

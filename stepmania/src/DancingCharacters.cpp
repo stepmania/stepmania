@@ -18,6 +18,7 @@
 #include "GameState.h"
 #include "song.h"
 #include "Character.h"
+#include "StageStats.h"
 
 #define DC_X( choice )	THEME->GetMetricF("DancingCharacters",ssprintf("2DCharacterXP%d",choice+1))
 #define DC_Y( choice )	THEME->GetMetricF("DancingCharacters",ssprintf("2DCharacterYP%d",choice+1))
@@ -332,7 +333,7 @@ void DancingCharacters::DrawPrimitives()
 	{
 		if( GAMESTATE->IsPlayerEnabled(p) )
 		{
-			bool bFailed = GAMESTATE->m_CurStageStats.bFailed[p];
+			bool bFailed = g_CurStageStats.bFailed[p];
 			bool bDanger = m_bDrawDangerLight;
 
 			DISPLAY->SetLighting( true );

@@ -98,5 +98,16 @@ struct StageStats
 	Combo_t GetMaxCombo( PlayerNumber pn ) const;
 };
 
+/*
+ * This was in GameState, but GameState.h is used by tons of files, and this object
+ * is only used by 20 or so.
+ *
+ * Stage Statistics: 
+ * Arcade:	for the current stage (one song).  
+ * Nonstop/Oni/Endless:	 for current course (which usually contains multiple songs)
+ */
+extern StageStats	g_CurStageStats;				// current stage (not necessarily passed if Extra Stage)
+extern vector<StageStats>	g_vPlayedStageStats;
+
 
 #endif

@@ -105,8 +105,12 @@ bool TryToStartQueuedMusic( float fOldSeconds, float fNewSeconds )
 
 	if( g_UpdatingTimer )
 	{
-		fOldSeconds += SOUND->GetPlayLatency();
-		fNewSeconds += SOUND->GetPlayLatency();
+		/* GetPlayLatency returns the minimum time until a sound starts.  That's
+		 * common when starting a precached sound, but our sound isn't, so it'll
+		 * probably take a little longer.  Nudge the latency up. */
+		float Latency = SOUND->GetPlayLatency() + 0.040f;
+		fOldSeconds += Latency;
+		fNewSeconds += Latency;
 
 		const float fOldBeat = g_Timing.GetBeatFromElapsedTime( fOldSeconds );
 		const float fNewBeat = g_Timing.GetBeatFromElapsedTime( fNewSeconds );

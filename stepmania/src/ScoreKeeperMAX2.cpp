@@ -23,6 +23,7 @@
 #include "SongManager.h"
 #include "NoteDataUtil.h"
 #include "RageLog.h"
+#include "StageStats.h"
 
 
 ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Steps*>& apNotes_, const vector<AttackArray> &asModifiers, PlayerNumber pn_ ):
@@ -31,7 +32,7 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Ste
 	ASSERT( apSongs.size() == apNotes_.size() );
 	ASSERT( apSongs.size() == asModifiers.size() );
 	//
-	// Fill in m_CurStageStats, calculate multiplier
+	// Fill in g_CurStageStats, calculate multiplier
 	//
 	int iTotalPossibleDancePoints = 0;
 	for( unsigned i=0; i<apNotes.size(); i++ )
@@ -71,7 +72,7 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Ste
 		 
 		iTotalPossibleDancePoints += this->GetPossibleDancePoints( playerNoteData, playerNoteDataPostModifiers );
 	}
-	GAMESTATE->m_CurStageStats.iPossibleDancePoints[pn_] = iTotalPossibleDancePoints;
+	g_CurStageStats.iPossibleDancePoints[pn_] = iTotalPossibleDancePoints;
 
 
 	m_iScoreRemainder = 0;
@@ -208,7 +209,7 @@ static int GetScore(int p, int B, int S, int n)
 
 void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 {
-	int &iScore = GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber];
+	int &iScore = g_CurStageStats.iScore[m_PlayerNumber];
 /*
   http://www.aaroninjapan.com/ddr2.html
 
@@ -239,7 +240,7 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 
 	// What does this do?  "Don't use a multiplier if 
 	// the player has failed"?
-	if( GAMESTATE->m_CurStageStats.bFailedEarlier[m_PlayerNumber] )
+	if( g_CurStageStats.bFailedEarlier[m_PlayerNumber] )
 	{
 		iScore += p;
 		// make score evenly divisible by 5
@@ -252,8 +253,8 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 	else
 	{
 		iScore += GetScore(p, B, sum, m_iTapNotesHit);
-		const int &iCurrentCombo = GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber];
-		GAMESTATE->m_CurStageStats.iBonus[m_PlayerNumber] += m_ComboBonusFactor[score] * iCurrentCombo;
+		const int &iCurrentCombo = g_CurStageStats.iCurCombo[m_PlayerNumber];
+		g_CurStageStats.iBonus[m_PlayerNumber] += m_ComboBonusFactor[score] * iCurrentCombo;
 	}
 
 	/* Subtract the maximum this step could have been worth from the bonus. */
@@ -261,7 +262,7 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 
 	if ( m_iTapNotesHit == m_iNumTapsAndHolds && score >= TNS_PERFECT )
 	{
-		if (!GAMESTATE->m_CurStageStats.bFailedEarlier[m_PlayerNumber])
+		if (!g_CurStageStats.bFailedEarlier[m_PlayerNumber])
 			iScore += m_iPointBonus;
 		if ( m_bIsLastSongInCourse )
 		{
@@ -294,11 +295,11 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	// (yes they do)
 	if( iNumTapsToScore > 0 )
 	{
-		GAMESTATE->m_CurStageStats.iActualDancePoints[m_PlayerNumber] += TapNoteScoreToDancePoints( scoreOfLastTap );
+		g_CurStageStats.iActualDancePoints[m_PlayerNumber] += TapNoteScoreToDancePoints( scoreOfLastTap );
 	}
 
 	// Do count additions in judge totals.
-	GAMESTATE->m_CurStageStats.iTapNoteScores[m_PlayerNumber][scoreOfLastTap] += 1;
+	g_CurStageStats.iTapNoteScores[m_PlayerNumber][scoreOfLastTap] += 1;
 
 	//
 	// Regular combo
@@ -329,7 +330,7 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	TapNoteScore MinScoreToContinueCombo = GAMESTATE->m_PlayMode == PLAY_MODE_ONI? TNS_PERFECT:TNS_GREAT;
 
 	if( scoreOfLastTap >= MinScoreToContinueCombo )
-		GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] += ComboCountIfHit;
+		g_CurStageStats.iCurCombo[m_PlayerNumber] += ComboCountIfHit;
 
 /*
   http://www.aaroninjapan.com/ddr2.html
@@ -407,8 +408,8 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 void ScoreKeeperMAX2::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 {
 	// update dance points totals
-	GAMESTATE->m_CurStageStats.iHoldNoteScores[m_PlayerNumber][holdScore] ++;
-	GAMESTATE->m_CurStageStats.iActualDancePoints[m_PlayerNumber] += HoldNoteScoreToDancePoints( holdScore );
+	g_CurStageStats.iHoldNoteScores[m_PlayerNumber][holdScore] ++;
+	g_CurStageStats.iActualDancePoints[m_PlayerNumber] += HoldNoteScoreToDancePoints( holdScore );
 
 	if( holdScore == HNS_OK )
 		AddScore( TNS_MARVELOUS );

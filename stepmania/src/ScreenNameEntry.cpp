@@ -27,6 +27,7 @@
 #include <math.h>
 #include "ProfileManager.h"
 #include "NoteFieldPositioning.h"
+#include "StageStats.h"
 
 
 //

@@ -14,6 +14,7 @@
 #include "NoteDataWithScoring.h"
 #include "GameState.h"
 #include "RageUtil.h"
+#include "StageStats.h"
 
 NoteDataWithScoring::NoteDataWithScoring()
 {
@@ -280,11 +281,11 @@ float NoteDataWithScoring::GetActualStreamRadarValue( float fSongSeconds, Player
 
 float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds, PlayerNumber pn ) const
 {
-	/* m_CurStageStats.iMaxCombo is unrelated to GetNumTapNotes: m_bComboContinuesBetweenSongs
+	/* g_CurStageStats.iMaxCombo is unrelated to GetNumTapNotes: m_bComboContinuesBetweenSongs
 	 * might be on, and the way combo is counted varies depending on the mode and score
 	 * keeper.  Instead, let's use the length of the longest recorded combo.  This is
 	 * only subtly different: it's the percent of the song the longest combo took to get. */
-	const StageStats::Combo_t MaxCombo = GAMESTATE->m_CurStageStats.GetMaxCombo( pn );
+	const StageStats::Combo_t MaxCombo = g_CurStageStats.GetMaxCombo( pn );
 	return clamp( MaxCombo.size, 0.0f, 1.0f );
 }
 
@@ -301,11 +302,11 @@ float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds, PlayerNum
 
 float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds, PlayerNumber pn ) const
 {
-	const int PossibleDP = GAMESTATE->m_CurStageStats.iPossibleDancePoints[pn];
+	const int PossibleDP = g_CurStageStats.iPossibleDancePoints[pn];
 	if ( PossibleDP == 0 )
 		return 1;
 
-	const int ActualDP = GAMESTATE->m_CurStageStats.iActualDancePoints[pn];
+	const int ActualDP = g_CurStageStats.iActualDancePoints[pn];
 	return clamp( float(ActualDP)/PossibleDP, 0.0f, 1.0f );
 }
 

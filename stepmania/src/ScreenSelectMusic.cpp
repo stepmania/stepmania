@@ -36,6 +36,7 @@
 #include "ProfileManager.h"
 #include "MenuTimer.h"
 #include "LightsManager.h"
+#include "StageStats.h"
 
 
 const int NUM_SCORE_DIGITS	=	9;
@@ -896,9 +897,9 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		bool bIsRepeat = false;
 		int i = 0;
 		if( PREFSMAN->m_bEventMode )
-			i = max( 0, int(GAMESTATE->m_vPlayedStageStats.size())-5 );
-		for( ; i < (int)GAMESTATE->m_vPlayedStageStats.size(); ++i )
-			if( GAMESTATE->m_vPlayedStageStats[i].pSong == m_MusicWheel.GetSelectedSong() )
+			i = max( 0, int(g_vPlayedStageStats.size())-5 );
+		for( ; i < (int)g_vPlayedStageStats.size(); ++i )
+			if( g_vPlayedStageStats[i].pSong == m_MusicWheel.GetSelectedSong() )
 				bIsRepeat = true;
 
 		/* Don't complain about repeats if the user didn't get to pick. */
