@@ -253,7 +253,6 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		);
 	this->AddChild( &m_Menu );
 
-
 	for( p=0; p<NUM_PLAYERS; p++ ) 
 	{
 		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )	// If EZ2 wants to hide this graphic, place it somewhere off screen using theme metrics
@@ -619,7 +618,10 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		break;
 	}
 
-	m_Menu.TweenOnScreenFromBlack( SM_None );
+	if( bSummary )
+		m_Menu.ImmedOnScreenFromMenu();
+	else
+		m_Menu.TweenOnScreenFromBlack( SM_None );
 
 	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","evaluation music") );
 }
@@ -865,9 +867,12 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 			m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
 		else if( m_ResultMode == RM_ARCADE_STAGE  &&  GAMESTATE->m_iCurrentStageIndex == PREFSMAN->m_iNumArcadeStages-1  )
 		{
-			//Disable "Lets Move On Graphic"
-			m_Menu.m_KeepAlive.SetHidden();
-			m_Menu.TweenOffScreenToMenu( SM_GoToFinalEvaluation );
+			/* Tween the screen out, but leave the MenuElements where they are.
+			 * Play the "swoosh" sound manually (would normally be played by the ME
+			 * tween out). */
+			SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu swoosh") );
+			TweenOffScreen();
+			SCREENMAN->SendMessageToTopScreen( SM_GoToFinalEvaluation, MENU_ELEMENTS_TWEEN_TIME );
 		}
 		else if( m_ResultMode == RM_ARCADE_STAGE  &&  GAMESTATE->m_iCurrentStageIndex < PREFSMAN->m_iNumArcadeStages-1  )
 			m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
