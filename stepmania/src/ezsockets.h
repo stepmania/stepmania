@@ -9,7 +9,9 @@
 #ifndef EZSOCKETS_H
 #define EZSOCKETS_H
 
-#if !defined(WITHOUT_NETWORKING)
+#if defined(WITHOUT_NETWORKING)
+#error do not include ezsockets.h when WITHOUT_NETWORKING
+#endif
 
 #include <sstream>
 #include <string>
@@ -145,7 +147,6 @@ private:
 istream& operator>>(istream& is, EzSockets& obj);
 ostream& operator<<(ostream& os, EzSockets& obj);
 
-#endif
 
 #endif
 

@@ -1,13 +1,13 @@
 #ifndef NetworkSyncServer_H
 #define NetworkSyncServer_H
 
-#include "ezsockets.h"
 #include "NetworkSyncManager.h"
 
+#if !defined(WITHOUT_NETWORKING)
+#include "ezsockets.h"
 #define NETMAXBUFFERSIZE 1020
 #define NUMBERCLIENTS 16
 
-#if !defined(WITHOUT_NETWORKING)
 class LanPlayer
 {
 public:
