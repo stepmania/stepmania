@@ -70,11 +70,13 @@ void RecursiveRename( CString sDirStart, CString sOld, CString sNew )
 	GetDirListing( sDirStart+"*.*", asFilesAndDirs, false, false );
 	for( int i=0; i<asFilesAndDirs.GetSize(); i++ )
 	{
-		CString sName = asFilesAndDirs[i];
 		CString sOldFilePath = sDirStart+asFilesAndDirs[i];
 		CString sNewFilePath = sOldFilePath;
+		sNewFilePath.MakeLower();
+		sOld.MakeLower();
 		sNewFilePath.Replace( sOld, sNew );
-		int ret = MoveFile( sOldFilePath, sNewFilePath );
+		if( sOldFilePath.CompareNoCase(sNewFilePath) != 0 )
+			MoveFile( sOldFilePath, sNewFilePath );
 	}
 
 	CStringArray asDirs;
@@ -92,6 +94,16 @@ void ConvertThemeDlg::OnButtonConvert()
 	m_listThemes.GetText( iSel, sThemeDir );
 	sThemeDir = "Themes\\" + sThemeDir;
 
+	RecursiveRename( sThemeDir, "gameplay cleared", "______OBSOLETE gameplay cleared" );
+	RecursiveRename( sThemeDir, "gameplay closing star", "______OBSOLETE gameplay closing star" );
+	RecursiveRename( sThemeDir, "gameplay opening star", "______OBSOLETE gameplay opening star" );
+	RecursiveRename( sThemeDir, "gameplay here we go", "______OBSOLETE gameplay here we go" );
+	RecursiveRename( sThemeDir, "gameplay failed", "______OBSOLETE gameplay failed" );
+	RecursiveRename( sThemeDir, "gameplay toasty", "______OBSOLETE gameplay toasty" );
+	RecursiveRename( sThemeDir, "gameplay ready", "______OBSOLETE gameplay ready" );
+	RecursiveRename( sThemeDir, "keep alive", "______OBSOLETE keep alive" );
+	RecursiveRename( sThemeDir, "menu style icons 1x9", "______OBSOLETE menu style icons 1x9" );
+	RecursiveRename( sThemeDir, "title menu logo", "______OBSOLETE title menu logo" );
 	RecursiveRename( sThemeDir, "BGAnimations\\appearance options", "BGAnimations\\ScreenAppearanceOptions background" );
 	RecursiveRename( sThemeDir, "BGAnimations\\caution",			"BGAnimations\\ScreenGameplay caution" );
 	RecursiveRename( sThemeDir, "BGAnimations\\game over",			"BGAnimations\\ScreenGameOver background" );
@@ -101,16 +113,17 @@ void ConvertThemeDlg::OnButtonConvert()
 	RecursiveRename( sThemeDir, "BGAnimations\\gameplay options",	"BGAnimations\\ScreenGameplayOptions background" );
 	RecursiveRename( sThemeDir, "evaluation summary top edge",		"ScreenEvaluationSummary header" );
 	RecursiveRename( sThemeDir, "top edge", "header" );
-	RecursiveRename( sThemeDir, "\\edit menu", "ScreenEditMenu" );
-	RecursiveRename( sThemeDir, "\\evaluation", "ScreenEvaluation" );
+	RecursiveRename( sThemeDir, "\\edit menu", "\\ScreenEditMenu" );
+	RecursiveRename( sThemeDir, "\\evaluation", "\\ScreenEvaluation" );
 	RecursiveRename( sThemeDir, "fallback banner", "Banner fallback" );
+	RecursiveRename( sThemeDir, "all music banner", "Banner all" );
 	RecursiveRename( sThemeDir, "try extra stage", "try extra" );
 	RecursiveRename( sThemeDir, "fallback cd title", "ScreenSelectMusic fallback cdtitle" );
 	RecursiveRename( sThemeDir, "game options", "ScreenGameOptions" );
 	RecursiveRename( sThemeDir, "gameplay combo label", "Combo label" );
 	RecursiveRename( sThemeDir, "gameplay difficulty icons", "ScreenGameplay difficulty icons" );
-	RecursiveRename( sThemeDir, "gameplay extra life frame", "blah" );
-	RecursiveRename( sThemeDir, "gameplay extra lifemeter bar", "LifeMeterBar extra frame.png" );
+	RecursiveRename( sThemeDir, "gameplay extra life frame", "ScreenGameplay extra life frame" );
+	RecursiveRename( sThemeDir, "gameplay extra lifemeter bar", "LifeMeterBar extra frame" );
 	RecursiveRename( sThemeDir, "gameplay extra lifemeter stream hot", "LifeMeterBar extra hot" );
 	RecursiveRename( sThemeDir, "gameplay extra lifemeter stream normal", "LifeMeterBar extra normal" );
 	RecursiveRename( sThemeDir, "gameplay lifemeter bar", "LifeMeterBar frame" );
@@ -164,8 +177,9 @@ void ConvertThemeDlg::OnButtonConvert()
 	RecursiveRename( sThemeDir, "preview dance", "preview" );
 	RecursiveRename( sThemeDir, "select style", "ScreenSelectStyle" );
 	RecursiveRename( sThemeDir, "song options", "ScreenSongOptions" );
-
 	RecursiveRename( sThemeDir, "menu timer", "MenuTimer" );
+	RecursiveRename( sThemeDir, "appearance options", "ScreenAppearanceOptions" );
+	RecursiveRename( sThemeDir, "music scroll", "ScreenMusicScroll" );
 
 	AfxMessageBox( "Conversion Complete!" );
 }
