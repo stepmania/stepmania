@@ -88,7 +88,6 @@ void ScreenEditMenu::MenuLeft( PlayerNumber pn, const InputEventType type )
 	if( m_Selector.CanGoLeft() )
 	{
 		m_Selector.Left();
-		RefreshExplanationText();
 	}
 }
 
@@ -97,7 +96,6 @@ void ScreenEditMenu::MenuRight( PlayerNumber pn, const InputEventType type )
 	if( m_Selector.CanGoRight() )
 	{
 		m_Selector.Right();
-		RefreshExplanationText();
 	}
 }
 
@@ -126,6 +124,13 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 {
 	if( IsTransitioning() )
 		return;
+
+	if( m_Selector.CanGoDown() )
+	{
+		m_Selector.Down();
+		RefreshExplanationText();
+		return;
+	}
 
 	Song* pSong				= m_Selector.GetSelectedSong();
 	StepsType st			= m_Selector.GetSelectedStepsType();
