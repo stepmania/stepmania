@@ -27,30 +27,17 @@ private:
     int64_t mDecodePos;
     float mLatency;
     CAAudioHardwareDevice *mOutputDevice;
-	const AudioTimeStamp *mNow;
+	int64_t mNow;
 	format mFormat;
+	
+	static OSStatus GetData(AudioDeviceID inDevice,
+							const AudioTimeStamp *inNow,
+							const AudioBufferList *inInputData,
+							const AudioTimeStamp *inInputTime,
+							AudioBufferList *outOutputData,
+							const AudioTimeStamp *inOutputTime,
+							void *inClientData);	
     
-    static OSStatus GetDataExact(AudioDeviceID inDevice,
-								 const AudioTimeStamp *inNow,
-								 const AudioBufferList *inInputData,
-								 const AudioTimeStamp *inInputTime,
-								 AudioBufferList *outOutputData,
-								 const AudioTimeStamp *inOutputTime,
-								 void *inClientData);
-    static OSStatus GetDataCanonical(AudioDeviceID inDevice,
-									 const AudioTimeStamp *inNow,
-									 const AudioBufferList *inInputData,
-									 const AudioTimeStamp *inInputTime,
-									 AudioBufferList *outOutputData,
-									 const AudioTimeStamp *inOutputTime,
-									 void *inClientData);
-    static OSStatus GetDataOther(AudioDeviceID inDevice,
-								 const AudioTimeStamp *inNow,
-								 const AudioBufferList *inInputData,
-								 const AudioTimeStamp *inInputTime,
-								 AudioBufferList *outOutputData,
-								 const AudioTimeStamp *inOutputTime,
-								 void *inClientData);
     static OSStatus OverloadListener(AudioDeviceID inDevice,
                                      UInt32 inChannel,
                                      Boolean isInput,

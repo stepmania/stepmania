@@ -228,21 +228,8 @@ RageSound_CA::RageSound_CA()
     
 	try
 	{
-		switch (mFormat)
-		{
-		case EXACT:
-			mOutputDevice->AddIOProc(GetDataExact, this);
-			mOutputDevice->StartIOProc(GetDataExact);
-			break;
-		case CANONICAL:
-			mOutputDevice->AddIOProc(GetDataCanonical, this);
-			mOutputDevice->StartIOProc(GetDataCanonical);
-			break;
-		case OTHER:
-			mOutputDevice->AddIOProc(GetDataOther, this);
-			mOutputDevice->StartIOProc(GetDataOther);
-			break;
-		}
+		mOutputDevice->AddIOProc(GetData, this);
+		mOutputDevice->StartIOProc(GetData);
 	}
 	catch(const CAException& e)
 	{
@@ -254,20 +241,9 @@ RageSound_CA::RageSound_CA()
 
 RageSound_CA::~RageSound_CA()
 {
-	switch (mFormat)
-	{
-	case EXACT:
-		mOutputDevice->StopIOProc(GetDataExact);
-		break;
-	case CANONICAL:
-		mOutputDevice->StopIOProc(GetDataCanonical);
-		break;
-	case OTHER:
-		mOutputDevice->StopIOProc(GetDataOther);
-		delete gConverter;
-		break;
-	}
+	mOutputDevice->StopIOProc(GetData);
 	delete mOutputDevice;
+	delete gConverter;
 }
 
 int64_t RageSound_CA::GetPosition(const RageSoundBase *sound) const
@@ -278,102 +254,77 @@ int64_t RageSound_CA::GetPosition(const RageSoundBase *sound) const
 	return int64_t(time.mSampleTime);
 }
 
-OSStatus RageSound_CA::GetDataExact(AudioDeviceID inDevice,
-									const AudioTimeStamp *inNow,
-									const AudioBufferList *inInputData,
-									const AudioTimeStamp *inInputTime,
-									AudioBufferList *outOutputData,
-									const AudioTimeStamp *inOutputTime,
-									void *inClientData)
-{
-	RageTimer tm;
-	RageSound_CA *This = (RageSound_CA *)inClientData;
-	AudioBuffer& buf = outOutputData->mBuffers[0];
-	UInt32 dataPackets = buf.mDataByteSize / kBytesPerPacket;
-	int64_t decodePos = int64_t(inOutputTime->mSampleTime);
-	RageTimer mixTM;
-
-	This->Mix((int16_t *)buf.mData, dataPackets, decodePos,
-			  int64_t(inNow->mSampleTime));
-	g_fLastMixTimes[g_fLastMixTimePos] = tm.GetDeltaTime();
-	++g_fLastMixTimePos;
-	wrap(g_fLastMixTimePos, NUM_MIX_TIMES);
-
-	g_fLastIOProcTime = tm.GetDeltaTime();
-	++g_iNumIOProcCalls;
-
-	return noErr;
-}
-
-OSStatus RageSound_CA::GetDataCanonical(AudioDeviceID inDevice,
-										const AudioTimeStamp *inNow,
-										const AudioBufferList *inInputData,
-										const AudioTimeStamp *inInputTime,
-										AudioBufferList *outOutputData,
-										const AudioTimeStamp *inOutputTime,
-										void *inClientData)
-{
-	RageTimer tm;
-	RageSound_CA *This = (RageSound_CA *)inClientData;
-	AudioBuffer& buf = outOutputData->mBuffers[0];
-	UInt32 dataPackets = buf.mDataByteSize / 8;
-	int64_t decodePos = int64_t(inOutputTime->mSampleTime);
-	int16_t buffer[dataPackets * kBytesPerPacket];
-	RageTimer mixTM;
-
-	This->Mix(buffer, dataPackets, decodePos, int64_t(inNow->mSampleTime));
-	g_fLastMixTimes[g_fLastMixTimePos] = tm.GetDeltaTime();
-	++g_fLastMixTimePos;
-	wrap(g_fLastMixTimePos, NUM_MIX_TIMES);
-
-	int16_t *ip = buffer;
-	float *fp = (float *)buf.mData;
-
-	for (unsigned i = 0; i < dataPackets; ++i)
-	{
-		int16_t val = *(++ip);
-
-		*(++fp) = val < 0 ? val / 32768.0 : val / 32767.0;
-	}
-
-	return noErr;
-}
-
 void RageSound_CA::FillConverter( void *data, UInt32 frames )
 {
 	RageTimer tm;
 	
-	Mix( (int16_t *)data, frames, mDecodePos, int64_t(mNow->mSampleTime) );
+	Mix( (int16_t *)data, frames, mDecodePos, mNow );
 
 	g_fLastMixTimes[g_fLastMixTimePos] = tm.GetDeltaTime();
 	++g_fLastMixTimePos;
 	wrap( g_fLastMixTimePos, NUM_MIX_TIMES );
 }
 
-OSStatus RageSound_CA::GetDataOther(AudioDeviceID inDevice,
-									const AudioTimeStamp *inNow,
-									const AudioBufferList *inInputData,
-									const AudioTimeStamp *inInputTime,
-									AudioBufferList *outOutputData,
-									const AudioTimeStamp *inOutputTime,
-									void *inClientData)
+OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
+							   const AudioTimeStamp *inNow,
+							   const AudioBufferList *inInputData,
+							   const AudioTimeStamp *inInputTime,
+							   AudioBufferList *outOutputData,
+							   const AudioTimeStamp *inOutputTime,
+							   void *inClientData)
 {
 	RageTimer tm;
-
 	RageSound_CA *This = (RageSound_CA *)inClientData;
-	UInt32 dataPackets = outOutputData->mBuffers[0].mDataByteSize;
-    
-	dataPackets /= gConverter->GetOutputFormat().mBytesPerPacket;
-   
-	This->mDecodePos = int64_t(inOutputTime->mSampleTime);
-	This->mNow = inNow;
-	gConverter->FillComplexBuffer(dataPackets, *outOutputData, NULL);
-
+	AudioBuffer& buf = outOutputData->mBuffers[0];
+	UInt32 dataPackets = buf.mDataByteSize;
+	int64_t decodePos = int64_t(inOutputTime->mSampleTime);
+	int64_t now = int64_t(inNow->mSampleTime);
+	
+	if (This->mFormat == OTHER)
+	{
+		dataPackets /= gConverter->GetOutputFormat().mBytesPerPacket;
+		This->mDecodePos = decodePos;
+		This->mNow = now;
+		gConverter->FillComplexBuffer(dataPackets, *outOutputData, NULL);
+	}
+	else
+	{
+		RageTimer mixTM;
+		
+		if (This->mFormat == EXACT)
+		{
+			dataPackets /= kBytesPerPacket;
+			This->Mix((int16_t *)buf.mData, dataPackets, decodePos, now);
+		}
+		else // This->mFormat == CANONICAL
+		{
+			int16_t buffer[dataPackets * kBytesPerPacket];
+			int16_t *ip = buffer;
+			float *fp = (float *)buf.mData;
+			
+			dataPackets >>= 3;
+			This->Mix(buffer, dataPackets, decodePos, now);
+			
+			// Convert from signed 16 bit int to signed 32 bit float
+			for (unsigned i = 0; i < dataPackets; ++i)
+			{
+				int16_t val = *(++ip);
+				
+				*(++fp) = val / (val < 0 ? 32768.0f : 32767.0f);
+			}
+		}
+		
+		g_fLastMixTimes[g_fLastMixTimePos] = tm.GetDeltaTime();
+		++g_fLastMixTimePos;
+		wrap(g_fLastMixTimePos, NUM_MIX_TIMES);
+	}
+	
 	g_fLastIOProcTime = tm.GetDeltaTime();
 	++g_iNumIOProcCalls;
-
+	
 	return noErr;
 }
+		
 
 OSStatus RageSound_CA::OverloadListener(AudioDeviceID inDevice,
 										UInt32 inChannel,
@@ -388,8 +339,7 @@ OSStatus RageSound_CA::OverloadListener(AudioDeviceID inDevice,
 		Output += ssprintf( "%.3f ", g_fLastMixTimes[pos] );
 	}
 
-	//if( g_iNumIOProcCalls >= 100 )
-		LOG->Warn( "Audio overload.  Last IOProc time: %f IOProc calls: %i (%s)",
+	LOG->Warn( "Audio overload.  Last IOProc time: %f IOProc calls: %i (%s)",
 			   g_fLastIOProcTime, g_iNumIOProcCalls, Output.c_str() );
 	g_iNumIOProcCalls = 0;
 	return noErr;
