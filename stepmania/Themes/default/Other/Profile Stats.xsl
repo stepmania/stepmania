@@ -917,41 +917,43 @@
 					</xsl:with-param>
 				</xsl:call-template>
 				
-				<hr/>
+				<xsl:if test="count(/Stats/CalorieData/CaloriesBurned) > 0">
+					<hr/>
 
-				<h2>By Week</h2>
-				<xsl:variable name="firstDateJulian">
-					<xsl:call-template name="calculate-julian-day2">
-						<xsl:with-param name="date" select="/Stats/CalorieData/CaloriesBurned[1]/@Date" />
-					</xsl:call-template>
-				</xsl:variable>
-				<xsl:variable name="lastDateJulian">
-					<xsl:call-template name="calculate-julian-day2">
-						<xsl:with-param name="date" select="/Stats/CalorieData/CaloriesBurned[last()]/@Date" />
-					</xsl:call-template>
-				</xsl:variable>
-				<xsl:variable name="lastDateDayOfWeek">
-					<xsl:call-template name="calculate-day-of-the-week2">
-						<xsl:with-param name="date" select="/Stats/CalorieData/CaloriesBurned[last()]/@Date" />
-					</xsl:call-template>
-				</xsl:variable>
-				<xsl:variable name="lastDateJulianRoundedToWeek" select="$lastDateJulian - $lastDateDayOfWeek" />
-				<table>
-					<tr>
-						<td></td>
-						<td>Sun</td>
-						<td>Mon</td>
-						<td>Tue</td>
-						<td>Wed</td>
-						<td>Thu</td>
-						<td>Fri</td>
-						<td>Sat</td>
-					</tr>	
-					<xsl:call-template name="PrintWeeksRecursive">
-						<xsl:with-param name="beginDayJulian" select="$lastDateJulianRoundedToWeek" />
-						<xsl:with-param name="stopDayJulian" select="$firstDateJulian" />
-					</xsl:call-template>
-				</table>
+					<h2>By Week</h2>
+					<xsl:variable name="firstDateJulian">
+						<xsl:call-template name="calculate-julian-day2">
+							<xsl:with-param name="date" select="/Stats/CalorieData/CaloriesBurned[1]/@Date" />
+						</xsl:call-template>
+					</xsl:variable>
+					<xsl:variable name="lastDateJulian">
+						<xsl:call-template name="calculate-julian-day2">
+							<xsl:with-param name="date" select="/Stats/CalorieData/CaloriesBurned[last()]/@Date" />
+						</xsl:call-template>
+					</xsl:variable>
+					<xsl:variable name="lastDateDayOfWeek">
+						<xsl:call-template name="calculate-day-of-the-week2">
+							<xsl:with-param name="date" select="/Stats/CalorieData/CaloriesBurned[last()]/@Date" />
+						</xsl:call-template>
+					</xsl:variable>
+					<xsl:variable name="lastDateJulianRoundedToWeek" select="$lastDateJulian - $lastDateDayOfWeek" />
+					<table>
+						<tr>
+							<td></td>
+							<td>Sun</td>
+							<td>Mon</td>
+							<td>Tue</td>
+							<td>Wed</td>
+							<td>Thu</td>
+							<td>Fri</td>
+							<td>Sat</td>
+						</tr>	
+						<xsl:call-template name="PrintWeeksRecursive">
+							<xsl:with-param name="beginDayJulian" select="$lastDateJulianRoundedToWeek" />
+							<xsl:with-param name="stopDayJulian" select="$firstDateJulian" />
+						</xsl:call-template>
+					</table>
+				</xsl:if>
 
 			</xsl:with-param>
 		</xsl:call-template>
