@@ -586,8 +586,7 @@ struct TitleTrans
 
 void Song::TranslateTitles()
 {
-	/* XXX make theme metrics for these or something.  Candy makes it
-	 * a little annoying ...*/
+	/* XXX make theme metrics for these or something. */
 
 	static vector<TitleTrans> ttab;
 	/* These REs aren't completely tested. XXX */
@@ -612,12 +611,12 @@ void Song::TranslateTitles()
 		ttab.push_back(TitleTrans("^Bre=kdown$", "", "", "Bre&flipped-a;kdown", "", "") );
 		ttab.push_back(TitleTrans("^Candy #$", "", "", "Candy &whitestar;", "", "") );
 		ttab.push_back(TitleTrans("^Candy \\$$", "", "", "Candy &whiteheart;", "", "") );
-		ttab.push_back(TitleTrans("^} JAPAN$", "", "", "&matsuri; Japan", "", "") );
+		ttab.push_back(TitleTrans("^} JAPAN$", "", "", "&matsuri; JAPAN", "", "") );
 		ttab.push_back(TitleTrans("^\\+\\{$", "", "", "&kakumei1;&kakumei2;", "", "") );
 		ttab.push_back(TitleTrans("^Sweet Sweet \\$ Magic$", "", "", "Sweet Sweet &whiteheart; Magic", "", "") );
 
 		/* Special stuff is done.  Titles: */
-		ttab.push_back(TitleTrans("^Matsuri Japan$", "", "", "&matsuri; Japan", "", "") );
+		ttab.push_back(TitleTrans("^Matsuri Japan$", "", "", "&matsuri; JAPAN", "", "") );
 		ttab.push_back(TitleTrans("^Kakumei$", "", "", "&kakumei1;&kakumei2;", "", "") );
 		ttab.push_back(TitleTrans("^Sweet Sweet (Love )?Magic$", "", "", "Sweet Sweet &whiteheart; Magic", "", "") );
 		ttab.push_back(TitleTrans("^Break ?Down!?$", "", "", "BRE&flipped-a;K DOWN!", "", "") );
@@ -635,10 +634,9 @@ void Song::TranslateTitles()
 		/* 17才 */
 		ttab.push_back(TitleTrans("^17 ?(Sai)?$", "", "", "17&sai;", "", "") );
 
-		/* Handle "Mobo Moga", "Mobo * Moga"; spaces optional. XXX blackstar or whitestar?  Is this supposed to be capped? */
-		ttab.push_back(TitleTrans("^Mobo ?\\*? ?Moga$", "", "", "Mobo&whitestar;Moga", "", "") );
+		/* Handle "Mobo Moga", "Mobo * Moga"; spaces optional. */
+		ttab.push_back(TitleTrans("^Mobo ?\\*? ?Moga$", "", "", "MOBO&whitestar;MOGA", "", "") );
 
-		/* XXX whiteheart or blackheart? */
 		ttab.push_back(TitleTrans("^Love (Love )?Shine$", "", "", "LOVE &whiteheart; SHINE", "", "") );
 
 		/* ロマンスの神様 */
@@ -665,7 +663,7 @@ void Song::TranslateTitles()
 		/* 桜 */
 		ttab.push_back(TitleTrans("^Sakura$", "", "", "&sakura;", "", "") );
 
-		/* 魔法の扉, スペース★マコのテーマ  (handle Door and Doors) */
+		/* 魔法の扉, スペース☆マコのテーマ  (handle Door and Doors) */
         ttab.push_back(TitleTrans("^(Doors? of Magic)|(Mahou no Tobira)$", "", "", "&mahou1;&mahou2;&hno;&tobira;", "&ksu;&kpe;&kdash;&ksu;&whitestar;&kma;&kko;&hno;&kti;&kdash;&kmu;", "") ); 
 
 		/* Subtitles: */
