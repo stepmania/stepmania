@@ -82,7 +82,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="./../../itg/Program"
+			OutputDirectory="./../Program"
 			IntermediateDirectory="./../Release"
 			ConfigurationType="1"
 			UseOfMFC="0"
