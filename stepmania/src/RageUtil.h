@@ -385,7 +385,7 @@ CString ToString( int value );
 CString ToString( unsigned value );
 CString ToString( float value );
 CString ToString( bool value );
-CString ToString( const CString &value ) { return value; }
+inline CString ToString( const CString &value ) { return value; }
 
 // helper file functions used by Bookkeeper and ProfileManager
 //
