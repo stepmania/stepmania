@@ -19,7 +19,8 @@ public:
 	RageException( const char *fmt, ...);
 	RageException( HRESULT hr, const char *fmt, ...);
 
-	virtual const char *what() const;
+	virtual const char *what() const throw();
+	virtual ~RageException() throw();
 
 protected:
 	CString m_sError;
