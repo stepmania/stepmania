@@ -16,7 +16,7 @@
 #include "GameState.h"
 #include "RageTimer.h"
 #include "PrefsManager.h"
-#include "Song.h"
+#include "song.h"
 
 
 #define NUM_ITEM_TYPES			THEME->GetMetricF("Inventory","NumItemTypes")
