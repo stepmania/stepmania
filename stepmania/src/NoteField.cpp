@@ -605,9 +605,13 @@ void NoteField::DrawPrimitives()
 		NextDisplay = CurDisplay; ++NextDisplay;
 
 		// draw notes from furthest to closest
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE_REVERSE( *m_pNoteData, c, i, iFirstIndexToDraw, iLastIndexToDraw )
+
+		NoteData::TrackMap::const_iterator begin, end;
+		m_pNoteData->GetTapNoteRange( c, iFirstIndexToDraw, iLastIndexToDraw, begin, end );
+		for( ; begin != end; ++begin )
 		{	
-			const TapNote &tn = m_pNoteData->GetTapNote(c, i);
+			int i = begin->first;
+			const TapNote &tn = begin->second; //m_pNoteData->GetTapNote(c, i);
 			if( tn.type == TapNote::empty )	// no note here
 				continue;	// skip
 			

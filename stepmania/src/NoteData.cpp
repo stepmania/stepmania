@@ -772,6 +772,21 @@ bool NoteData::GetPrevTapNoteRowForTrack( int track, int &rowInOut ) const
 	return true;
 }
 
+/* Return an iterator range.  This can be used to iterate trackwise over a range of
+ * notes.  It's like FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE, except it only requires
+ * two map searches (iterating is O(1)), but the iterators will become invalid if
+ * the notes they represent disappear, so you need to pay attention to how you modify
+ * the data. */
+void NoteData::GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, TrackMap::const_iterator &begin, TrackMap::const_iterator &end ) const
+{
+	ASSERT_M( iTrack < GetNumTracks(), ssprintf("%i,%i", iTrack, GetNumTracks())  );
+	ASSERT_M( iStartRow <= iEndRow, ssprintf("%i > %i", iStartRow, iEndRow)  );
+
+	const TrackMap &mapTrack = m_TapNotes[iTrack];
+	begin = mapTrack.lower_bound( iStartRow );
+	end = mapTrack.upper_bound( iEndRow );
+}
+
 bool NoteData::GetNextTapNoteRowForAllTracks( int &rowInOut ) const
 {
 	int iClosestNextRow = 999999;

@@ -21,9 +21,12 @@
 
 class NoteData
 {
+public:
+	typedef map<int,TapNote> TrackMap;
+
+private:
 	// There's no point in inserting empty notes into the map.
 	// Any blank space in the map is defined to be empty.
-	typedef map<int,TapNote> TrackMap;
 	vector<TrackMap> m_TapNotes;
 
 	vector<HoldNote>	m_HoldNotes;
@@ -60,6 +63,8 @@ public:
 	bool GetNextTapNoteRowForAllTracks( int &rowInOut ) const;
 	bool GetPrevTapNoteRowForTrack( int track, int &rowInOut ) const;
 	
+	void GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, TrackMap::const_iterator &begin, TrackMap::const_iterator &end ) const;
+
 	void MoveTapNoteTrack( int dest, int src );
 	void SetTapNote( int track, int row, const TapNote& tn );
 	
