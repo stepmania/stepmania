@@ -278,6 +278,7 @@ bool CreateDirectories( CString Path )
 	return true;
 }
 
+#if 0
 void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
 	CString sDir, sThrowAway;
@@ -311,6 +312,7 @@ void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bRe
 	} while( ::FindNextFile( hFind, &fd ) );
 	::FindClose( hFind );
 }
+#endif
 
 void GetCwd(CString &s)
 {
@@ -891,6 +893,257 @@ CString WcharDisplayText(wchar_t c)
 
 
 
+
+
+typedef basic_string<char,char_traits_char_nocase> istring;
+struct File {
+	istring name;
+	bool dir;
+	
+	File() { dir=false; }
+	File(istring fn, bool dir_=false): name(fn), dir(dir) { }
+	
+	bool operator== (const File &rhs) const { return name==rhs.name; }
+	bool operator< (const File &rhs) const { return name<rhs.name; }
+
+	bool FilenameBeginsWith(const CString &txt) const
+	{
+		if(txt.empty()) return true;
+		if(txt.size() > name.size()) return false;
+		return !strnicmp(name.c_str(), txt.c_str(), txt.size());
+	}
+
+	bool FilenameEndsWith(const CString &ext) const
+	{
+		if(ext.empty()) return true;
+		int ignore = int(name.size())-int(ext.size());
+		if(ignore < 0) return false;
+
+		return !stricmp(name.c_str()+ignore, ext.c_str());
+	}
+
+	bool equal(const File &rhs) const { return name == rhs.name; }
+	bool equal(const CString &rhs) const {
+		return !stricmp(name.c_str(), rhs.c_str());
+	}
+};
+
+#include "RageTimer.h"
+#include "RageLog.h"
+
+struct FileSet
+{
+	set<File> files;
+	RageTimer age;
+	void LoadFromDir(const CString &dir);
+	void GetFilesStartingAndEndingWith(const CString &beginning, const CString &ending, vector<CString> &out, bool bOnlyDirs) const;
+	void GetFilesEqualTo(const CString &pat, vector<CString> &out, bool bOnlyDirs) const;
+};
+
+void FileSet::LoadFromDir(const CString &dir)
+{
+	age.GetDeltaTime(); /* reset */
+	files.clear();
+
+	CString oldpath;
+	GetCwd(oldpath);
+	if(chdir(dir) == -1) return;
+
+	WIN32_FIND_DATA fd;
+	HANDLE hFind = FindFirstFile( "*", &fd );
+
+	if( hFind == INVALID_HANDLE_VALUE )
+	{
+		chdir(oldpath);
+		return;
+	}
+
+	do {
+		if(!strcmp(fd.cFileName, ".") || !strcmp(fd.cFileName, ".."))
+			continue;
+
+		File f;
+		if(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+			f.dir = true;
+		f.name=fd.cFileName;
+
+		files.insert(f);
+	} while( FindNextFile( hFind, &fd ) );
+	FindClose(hFind);
+
+	chdir(oldpath);
+}
+
+void FileSet::GetFilesStartingAndEndingWith(const CString &beginning, const CString &ending, vector<CString> &out, bool bOnlyDirs) const
+{
+	set<File>::const_iterator i = files.lower_bound(File(beginning.c_str()));
+//	set<File>::const_iterator end = files.upper_bound(File(beginning.c_str()));
+	for( ; i != files.end(); ++i)
+	{
+		if(bOnlyDirs && !i->dir) continue;
+		if(!i->FilenameBeginsWith(beginning)) return;
+		if(!i->FilenameEndsWith(ending)) continue;
+
+		out.push_back(i->name.c_str());
+	}
+}
+
+void FileSet::GetFilesEqualTo(const CString &str, vector<CString> &out, bool bOnlyDirs) const
+{
+	set<File>::const_iterator i = files.find(File(str.c_str()));
+	if(i == files.end())
+		return;
+
+	if(bOnlyDirs && !i->dir)
+		return;
+
+	out.push_back(i->name.c_str());
+}
+
+/* XXX: this won't work right for URIs, eg \\foo\bar */
+bool FilenameDB::ResolvePath(CString &path)
+{
+	if(path == ".") return true;
+	if(path == "") return true;
+
+	path.Replace("\\", "/");
+
+	/* Split path into components. */
+	vector<CString> p;
+	split(path, "/", p, true);
+
+	/* Resolve each component.  Assume the first component is correct. */
+	CString ret = p[0];
+	for(unsigned i = 1; i < p.size(); ++i)
+	{
+		ret += "/";
+
+		vector<CString> lst;
+		FileSet &fs = GetFileSet(ret);
+		fs.GetFilesEqualTo(p[i], lst, false);
+
+		/* If there were no matches, the path isn't found. */
+		if(lst.empty()) return false;
+
+		if(lst.size() > 1)
+			LOG->Warn("Ambiguous filenames \"%s\" and \"%s\"",
+				lst[0].GetString(), lst[1].GetString());
+
+		ret += lst[0];
+	}
+
+	if(path[path.size()-1] == '/')
+		path = ret + "/";
+	else
+		path = ret;
+	return true;
+}
+
+void FilenameDB::GetFilesStartingAndEndingWith(const CString &dir, const CString &beginning, const CString &ending, vector<CString> &out, bool bOnlyDirs)
+{
+	FileSet &fs = GetFileSet(dir);
+	fs.GetFilesStartingAndEndingWith(beginning, ending, out, bOnlyDirs);
+}
+
+void FilenameDB::GetFilesEqualTo(const CString &dir, const CString &fn, vector<CString> &out, bool bOnlyDirs)
+{
+	FileSet &fs = GetFileSet(dir);
+	fs.GetFilesEqualTo(fn, out, bOnlyDirs);
+}
+
+
+void FilenameDB::GetFilesSimpleMatch(const CString &dir, const CString &fn, vector<CString> &out, bool bOnlyDirs)
+{
+	/* Does this contain a wildcard? */
+	unsigned pos = fn.find_first_of('*');
+	if(pos == fn.npos)
+	{
+		/* No; just do a regular search. */
+		GetFilesEqualTo(dir, fn, out, bOnlyDirs);
+	} else {
+		/* Only one *! */
+		if(pos)
+			ASSERT(fn.find_first_of('*', pos+1) == fn.npos);
+		GetFilesStartingAndEndingWith(dir, fn.substr(0, pos), fn.substr(pos+1), out, bOnlyDirs);
+	}
+}
+
+FileSet &FilenameDB::GetFileSet(CString dir, bool ResolveCase)
+{
+	/* Normalize the path. */
+	dir.Replace("\\", "/"); /* foo\bar -> foo/bar */
+	dir.Replace("//", "/"); /* foo//bar -> foo/bar */
+
+	FileSet *ret;
+	map<CString, FileSet *>::iterator i = dirs.find(dir);
+	bool reload = false;
+	if(i == dirs.end())
+	{
+		ret = new FileSet;
+		dirs[dir] = ret;
+		reload = true;
+	}
+	else
+	{
+		ret = i->second;
+		if(ret->age.PeekDeltaTime() > 30)
+			reload = true;
+	}
+
+	if(reload)
+	{
+		CString RealDir = dir;
+		if(ResolveCase)
+		{
+			/* Resolve path cases (path/Path -> PATH/path). */
+			ResolvePath(RealDir);
+
+			/* Alias this name, too. */
+			dirs[RealDir] = ret;
+		}
+
+		ret->LoadFromDir(RealDir);
+	}
+	return *ret;
+}
+
+FilenameDB FDB;
+
+void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
+{
+	/* If you want the CWD, use ".". */
+	ASSERT(!sPath.empty());
+
+	/* XXX: for case-insensitive resolving, we assume the first element is
+	 * correct (we need a place to start from); so if sPath is relative,
+	 * prepend "./" */
+
+	unsigned pos = sPath.find_last_of("/\\");
+	CString fn="*";
+	if(pos != sPath.npos)
+	{
+		fn = sPath.substr(pos+1);
+		sPath = sPath.substr(0, pos+1);
+	}
+
+	unsigned start = AddTo.size();
+	FDB.GetFilesSimpleMatch(sPath, fn, AddTo, bOnlyDirs);
+
+	if(bReturnPathToo && start < AddTo.size())
+	{
+		FDB.ResolvePath(sPath);
+		while(start < AddTo.size())
+		{
+			AddTo[start] = sPath + AddTo[start];
+			start++;
+		}
+	}
+}
+
+void FilenameDB::FlushDirCache()
+{
+	dirs.clear();
+}
 
 /* Return the last named component of dir:
  * a/b/c -> c
