@@ -763,4 +763,20 @@ float calc_stddev(const float *start, const float *end)
 	return dev;
 }
 
+void TrimLeft(string &str, const char *s)
+{
+	int n = 0;
+	while(n < int(str.size()) && strchr(s, str[n]))
+		n++;
 
+	str.erase(str.begin(), str.begin()+n);
+}
+
+void TrimRight(string &str, const char *s)
+{
+	int n = str.size();
+	while(n >= 0 && strchr(s, str[n-1]))
+		n--;
+
+	str.erase(str.begin()+n, str.end());
+}

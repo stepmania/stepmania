@@ -184,6 +184,9 @@ HINSTANCE GotoURL(const char *url);
 float calc_mean(const float *start, const float *end);
 float calc_stddev(const float *start, const float *end);
 
+void TrimLeft(string &str, const char *s = "\r\n\t ");
+void TrimRight(string &str, const char *s = "\r\n\t ");
+
 /* Fix Windows breakage ... */
 #ifdef WIN32
 #define getcwd _getcwd
