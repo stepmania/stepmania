@@ -325,10 +325,6 @@ void FilenameDB::GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDi
 	/* If you want the CWD, use ".". */
 	ASSERT(!sPath.empty());
 
-	/* XXX: for case-insensitive resolving, we assume the first element is
-	 * correct (we need a place to start from); so if sPath is relative,
-	 * prepend "./" */
-
 	/* Strip off the last path element and use it as a mask. */
 	unsigned pos = sPath.find_last_of( '/' );
 	CString fn;
