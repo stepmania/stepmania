@@ -124,7 +124,9 @@ void InputFilter::Update(float fDeltaTime)
 	// the slowness.  DeviceInput is a very small and simple structure, but
 	// it's constructor was being called NUM_INPUT_DEVICES*NUM_DEVICE_BUTTONS
 	// (>2000) times per Update().
-	DeviceInput di( (InputDevice)0,0,now);
+	/* This should be fixed: DeviceInput's ctor uses an init list, so RageTimer
+	 * isn't initialized each time. */
+//	DeviceInput di( (InputDevice)0,0,now);
 
 	INPUTMAN->Update( fDeltaTime );
 
@@ -136,8 +138,7 @@ void InputFilter::Update(float fDeltaTime)
 	{
 		for( int b=0; b < NUM_DEVICE_BUTTONS; b++ )	// foreach button
 		{
-			di.device = (InputDevice)d;
-			di.button = b;
+			DeviceInput di( (InputDevice)d,b,now);
 
 			if( m_fSecsToForce[d][b] > 0 )
 			{
