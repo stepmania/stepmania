@@ -11,7 +11,7 @@ ClassCount=11
 Class1=CSmpackageApp
 Class2=CSmpackageDlg
 
-ResourceCount=11
+ResourceCount=12
 Resource1=IDR_MAINFRAME
 Resource2=IDD_ENTER_STRING
 Class3=CSMPackageInstallDlg
@@ -24,14 +24,15 @@ Resource5=IDD_EDIT_METRICS
 Class7=MainMenuDlg
 Resource6=IDD_DIALOG_NAME
 Class8=ConvertThemeDlg
-Resource7=IDD_INSTALL
+Resource7=IDD_SHOW_COMMENT
 Class9=EditMetricsDlg
 Resource8=IDD_CONVERT_THEME
 Resource9=IDD_ENTER_COMMENT
 Class10=EnterComment
 Resource10=IDD_EXPORTER
 Class11=ShowComment
-Resource11=IDD_SHOW_COMMENT
+Resource11=IDD_INSTALL
+Resource12=IDD_UNINSTALL_OLD_PACKAGES
 
 [CLS:CSmpackageApp]
 Type=0
@@ -56,7 +57,7 @@ VirtualFilter=dWC
 [DLG:IDD_INSTALL]
 Type=1
 Class=CSMPackageInstallDlg
-ControlCount=9
+ControlCount=10
 Control1=IDC_EDIT_MESSAGE1,edit,1342179460
 Control2=IDOK,button,1342242817
 Control3=IDCANCEL,button,1342242816
@@ -66,6 +67,7 @@ Control6=IDC_EDIT_MESSAGE3,edit,1342179460
 Control7=IDC_EDIT_MESSAGE2,edit,1352665220
 Control8=IDC_COMBO_DIR,combobox,1344339971
 Control9=IDC_BUTTON_EDIT,button,1342242816
+Control10=IDC_PROGRESS1,msctls_progress32,1082130432
 
 [CLS:CSMPackageInstallDlg]
 Type=0
@@ -222,11 +224,12 @@ Control4=IDCANCEL,button,1342242816
 [DLG:IDD_ENTER_COMMENT]
 Type=1
 Class=EnterComment
-ControlCount=4
+ControlCount=5
 Control1=65535,static,1342308352
 Control2=IDC_EDIT,edit,1350631556
 Control3=IDOK,button,1342242817
 Control4=IDCANCEL,button,1342242816
+Control5=IDC_DONTASK,button,1342242819
 
 [DLG:IDD_DIALOG_NAME]
 Type=1
@@ -250,10 +253,11 @@ VirtualFilter=dWC
 [DLG:IDD_SHOW_COMMENT]
 Type=1
 Class=ShowComment
-ControlCount=3
+ControlCount=4
 Control1=IDC_EDIT,edit,1350633604
 Control2=IDOK,button,1342242817
 Control3=IDCANCEL,button,1342242816
+Control4=IDC_DONTSHOW,button,1342242819
 
 [CLS:ShowComment]
 Type=0
@@ -263,4 +267,14 @@ BaseClass=CDialog
 Filter=D
 VirtualFilter=dWC
 LastObject=ShowComment
+
+[DLG:IDD_UNINSTALL_OLD_PACKAGES]
+Type=1
+ControlCount=6
+Control1=IDOK,button,1342242817
+Control2=IDCANCEL,button,1342242816
+Control3=IDC_STATIC,static,1342308352
+Control4=IDC_PACKAGES,edit,1342244992
+Control5=IDC_BUTTON1,button,1342242816
+Control6=IDC_STATIC,static,1342308352
 

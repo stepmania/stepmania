@@ -276,5 +276,9 @@ SOURCE=.\res\smpackage.rc2
 SOURCE=.\res\StepMania.ICO
 # End Source File
 # End Group
+# Begin Source File
+
+SOURCE=..\zlib\zdll.lib
+# End Source File
 # End Target
 # End Project
