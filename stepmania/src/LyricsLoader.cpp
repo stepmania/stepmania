@@ -7,10 +7,13 @@
 #include "RageException.h"
 #include "RageUtil.h"
 #include "LyricsLoader.h"
+#include "ThemeManager.h"
 
 #include "RageFile.h"
 #include <map>
 using namespace std;
+
+#define LYRICS_DEFAULT_COLOR      THEME->GetMetricC("ScreenGameplay","LyricsDefaultColor")
 
 static int CompareLyricSegments(const LyricSegment &seg1, const LyricSegment &seg2)
 {
@@ -30,7 +33,7 @@ bool LyricsLoader::LoadFromLRCFile( CString sPath, Song &out )
 
 	string line;
 
-	RageColor CurrentColor(0,1,0,1);
+	RageColor CurrentColor = LYRICS_DEFAULT_COLOR;
 
 	out.m_LyricSegments.clear();
 
