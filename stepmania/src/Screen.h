@@ -18,7 +18,7 @@
 	public: \
 		Register##className() { SCREENMAN->Register(#className,Create##className); } \
 	}; \
-	static Register##className registera;
+	static Register##className register_##className;
 
 class Screen : public ActorFrame
 {
