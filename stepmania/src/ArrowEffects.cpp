@@ -47,7 +47,7 @@ float ArrowGetXPos( const PlayerOptions& po, const StyleDef &StyleDef, int iColN
 
 float ArrowGetRotation( const PlayerOptions& po, const StyleDef &StyleDef, int iColNum, float fYOffset ) 
 {
-	float fRotation = StyleDef.m_ColumnToRotation[iColNum];
+	float fRotation = 0; //StyleDef.m_ColumnToRotation[iColNum];
 
 	switch( po.m_EffectType )
 	{

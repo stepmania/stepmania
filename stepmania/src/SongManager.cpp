@@ -288,3 +288,30 @@ CString SongManager::GetGroupBannerPath( CString sGroupName )
 	else
 		return "";
 }
+
+void SongManager::GetGroupNames( CStringArray &AddTo )
+{
+	CArray<Song*, Song*> arraySongs;
+	arraySongs.Copy( m_pSongs );
+	SortSongPointerArrayByGroup( arraySongs );
+
+	for( int i=0; i<m_pSongs.GetSize(); i++ )
+	{
+		Song* pSong = m_pSongs[i];
+		const CString sGroupName = m_pSongs[i]->GetGroupName();
+
+		if( AddTo.GetSize() == 0  ||  AddTo[AddTo.GetSize()-1] != sGroupName )
+			AddTo.Add( sGroupName );
+	}
+}
+
+void SongManager::GetSongsInGroup( const CString sGroupName, CArray<Song*, Song*> &AddTo )
+{
+	for( int i=0; i<m_pSongs.GetSize(); i++ )
+	{
+		Song* pSong = m_pSongs[i];
+		if( sGroupName == m_pSongs[i]->GetGroupName() )
+			AddTo.Add( pSong );
+	}
+	SortSongPointerArrayByGroup( AddTo );
+}

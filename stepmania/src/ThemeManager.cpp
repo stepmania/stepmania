@@ -99,12 +99,6 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case GRAPHIC_RESULT_TOP_EDGE:			sAssetPath = "Graphics\\result top edge";			break;
 		case GRAPHIC_FALLBACK_BANNER:			sAssetPath = "Graphics\\Fallback Banner";			break;
 		case GRAPHIC_FALLBACK_BACKGROUND:		sAssetPath = "Graphics\\Fallback Background";		break;
-		case GRAPHIC_COLOR_ARROW_GRAY_PART:		sAssetPath = "Graphics\\Color Arrow gray part 2x2";	break;
-		case GRAPHIC_COLOR_ARROW_COLOR_PART:	sAssetPath = "Graphics\\Color Arrow color part";	break;
-		case GRAPHIC_GHOST_ARROW:				sAssetPath = "Graphics\\ghost arrow";				break;
-		case GRAPHIC_BRIGHT_GHOST_ARROW:		sAssetPath = "Graphics\\bright ghost arrow";		break;
-		case GRAPHIC_HOLD_GHOST_ARROW:			sAssetPath = "Graphics\\hold ghost arrow";			break;
-		case GRAPHIC_GRAY_ARROW:				sAssetPath = "Graphics\\gray arrow";				break;
 		case GRAPHIC_JUDGEMENT:					sAssetPath = "Graphics\\judgement 1x9";				break;
 		case GRAPHIC_MENU_BOTTOM_EDGE:			sAssetPath = "Graphics\\menu bottom edge";			break;
 		case GRAPHIC_SCORE_FRAME:				sAssetPath = "Graphics\\score frame";				break;
@@ -144,13 +138,15 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case GRAPHIC_SYNCHRONIZE_BACKGROUND:	sAssetPath = "Graphics\\synchronize background";	break;
 		case GRAPHIC_SYNCHRONIZE_TOP_EDGE:		sAssetPath = "Graphics\\synchronize top edge";		break;
 		case GRAPHIC_TITLE_MENU_LOGO:			sAssetPath = "Graphics\\title menu logo";			break;
-		case GRAPHIC_TITLE_MENU_HELP:			sAssetPath = "Graphics\\title menu help";			break;
-		case GRAPHIC_SELECT_DIFFICULTY_BACKGROUND:	sAssetPath = "Graphics\\select difficulty background";		break;
-		case GRAPHIC_SELECT_DIFFICULTY_TOP_EDGE:	sAssetPath = "Graphics\\select difficulty top edge";		break;
-		case GRAPHIC_SELECT_DIFFICULTY_EXPLANATION:	sAssetPath = "Graphics\\select difficulty explanation";		break;
-		case GRAPHIC_SELECT_DIFFICULTY_EASY:		sAssetPath = "Graphics\\select difficulty easy";			break;
-		case GRAPHIC_SELECT_DIFFICULTY_MEDIUM:		sAssetPath = "Graphics\\select difficulty medium";			break;
-		case GRAPHIC_SELECT_DIFFICULTY_HARD:		sAssetPath = "Graphics\\select difficulty hard";			break;
+		case GRAPHIC_SELECT_DIFFICULTY_BACKGROUND:	sAssetPath = "Graphics\\select difficulty background";			break;
+		case GRAPHIC_SELECT_DIFFICULTY_TOP_EDGE:	sAssetPath = "Graphics\\select difficulty top edge";			break;
+		case GRAPHIC_SELECT_DIFFICULTY_EXPLANATION:	sAssetPath = "Graphics\\select difficulty explanation";			break;
+		case GRAPHIC_SELECT_DIFFICULTY_EASY_HEADER:		sAssetPath = "Graphics\\select difficulty easy header";		break;
+		case GRAPHIC_SELECT_DIFFICULTY_MEDIUM_HEADER:	sAssetPath = "Graphics\\select difficulty medium header";	break;
+		case GRAPHIC_SELECT_DIFFICULTY_HARD_HEADER:		sAssetPath = "Graphics\\select difficulty hard header";		break;
+		case GRAPHIC_SELECT_DIFFICULTY_EASY_PICTURE:	sAssetPath = "Graphics\\select difficulty easy picture";	break;
+		case GRAPHIC_SELECT_DIFFICULTY_MEDIUM_PICTURE:	sAssetPath = "Graphics\\select difficulty medium picture";	break;
+		case GRAPHIC_SELECT_DIFFICULTY_HARD_PICTURE:	sAssetPath = "Graphics\\select difficulty hard picture";	break;
 		case GRAPHIC_SELECT_DIFFICULTY_ARROW:		sAssetPath = "Graphics\\select difficulty arrow";			break;
 		case GRAPHIC_SELECT_DIFFICULTY_OK:			sAssetPath = "Graphics\\select difficulty ok";				break;
 		case GRAPHIC_SELECT_MUSIC_INFO_FRAME:		sAssetPath = "Graphics\\select music info frame";			break;
@@ -172,6 +168,7 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case SOUND_INVALID:						sAssetPath = "Sounds\\invalid";						break;
 		case SOUND_EDIT_CHANGE_LINE:			sAssetPath = "Sounds\\edit change line";			break;
 		case SOUND_EDIT_CHANGE_SNAP:			sAssetPath = "Sounds\\edit change snap";			break;
+		case SOUND_SELECT_DIFFICULTY_CHANGE:	sAssetPath = "Sounds\\select difficulty change";	break;
 
 		case FONT_BOLD:							sAssetPath = "Fonts\\Bold";							break;
 		case FONT_COMBO_NUMBERS:				sAssetPath = "Fonts\\Combo Numbers";				break;

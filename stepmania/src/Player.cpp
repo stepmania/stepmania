@@ -74,7 +74,7 @@ void Player::Load( const StyleDef& StyleDef, PlayerNumber player_no, const Patte
 	if( po.m_bLittle )
 		pattern2.MakeLittle();
 
-	m_ColorArrowField.Load( StyleDef, pattern2, po, 1.5f, 5.5f );
+	m_ColorArrowField.Load( StyleDef, pattern2, po, 1.5f, 5.5f, ColorArrowField::MODE_DANCING );
 	m_GrayArrows.Load( po, StyleDef );
 	m_GhostArrows.Load( po, StyleDef );
 

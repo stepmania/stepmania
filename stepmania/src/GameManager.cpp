@@ -56,9 +56,10 @@ bool GameManager::IsPlayerEnabled( PlayerNumber PlayerNo )
 
 StyleDef GameManager::GetStyleDef( DanceStyle mode )
 {
-	StyleDef StyleDef;
+	StyleDef sd;
 
 
+	/*
 	CMap<TapNote, TapNote, float, float> mapTapNoteToRotation;	// arrow facing left is rotation 0
 	mapTapNoteToRotation[NOTE_PAD1_LEFT]	= 0;
 	mapTapNoteToRotation[NOTE_PAD1_UPLEFT]	= D3DX_PI/4.0f;
@@ -72,18 +73,18 @@ StyleDef GameManager::GetStyleDef( DanceStyle mode )
 	mapTapNoteToRotation[NOTE_PAD2_UP]		= mapTapNoteToRotation[NOTE_PAD1_UP];
 	mapTapNoteToRotation[NOTE_PAD2_UPRIGHT]	= mapTapNoteToRotation[NOTE_PAD1_UPRIGHT];
 	mapTapNoteToRotation[NOTE_PAD2_RIGHT]	= mapTapNoteToRotation[NOTE_PAD1_RIGHT];
-
+	*/
 
 	switch( mode )
 	{
 	case STYLE_SINGLE:
 	case STYLE_DOUBLE:
 	case STYLE_SOLO:
-		StyleDef.m_iNumPlayers = 1;
+		sd.m_iNumPlayers = 1;
 		break;
 	case STYLE_VERSUS:
 	case STYLE_COUPLE:
-		StyleDef.m_iNumPlayers = 2;
+		sd.m_iNumPlayers = 2;
 		break;
 	default:
 		ASSERT( false );	// invalid GameMode
@@ -95,65 +96,85 @@ StyleDef GameManager::GetStyleDef( DanceStyle mode )
 	case STYLE_SINGLE:
 	case STYLE_VERSUS:
 	case STYLE_COUPLE:
-		StyleDef.m_iNumColumns = 4;		// LEFT, DOWN, UP, RIGHT
-		StyleDef.m_ColumnToTapNote[0]		= NOTE_PAD1_LEFT;
-		StyleDef.m_ColumnToTapNote[1]		= NOTE_PAD1_DOWN;
-		StyleDef.m_ColumnToTapNote[2]		= NOTE_PAD1_UP;
-		StyleDef.m_ColumnToTapNote[3]		= NOTE_PAD1_RIGHT;
-		StyleDef.m_ColumnToTapNote[4]		= NOTE_PAD1_UPLEFT; // Even though this isn't used, Need them here so
-		StyleDef.m_ColumnToTapNote[5]		= NOTE_PAD1_UPRIGHT; // TapNoteToColumnNumber doesn't get confused by them
-		StyleDef.m_ColumnToRotation[0] = mapTapNoteToRotation[NOTE_PAD1_LEFT];
-		StyleDef.m_ColumnToRotation[1] = mapTapNoteToRotation[NOTE_PAD1_DOWN];
-		StyleDef.m_ColumnToRotation[2] = mapTapNoteToRotation[NOTE_PAD1_UP];
-		StyleDef.m_ColumnToRotation[3] = mapTapNoteToRotation[NOTE_PAD1_RIGHT];
-		StyleDef.m_ColumnToRotation[4] = mapTapNoteToRotation[NOTE_PAD1_UPLEFT];
-		StyleDef.m_ColumnToRotation[5] = mapTapNoteToRotation[NOTE_PAD1_UPRIGHT];
-		break;
+		sd.m_iNumColumns = 4;
+		sd.m_ColumnToTapNote[0]		= NOTE_PAD1_LEFT;
+		sd.m_ColumnToTapNote[1]		= NOTE_PAD1_DOWN;
+		sd.m_ColumnToTapNote[2]		= NOTE_PAD1_UP;
+		sd.m_ColumnToTapNote[3]		= NOTE_PAD1_RIGHT;
+		sd.m_sColumnToNoteName[0] = "left";
+		sd.m_sColumnToNoteName[1] = "down";
+		sd.m_sColumnToNoteName[2] = "up";
+		sd.m_sColumnToNoteName[3] = "right";
+/*		sd.m_ColumnToRotation[0] = mapTapNoteToRotation[NOTE_PAD1_LEFT];
+		sd.m_ColumnToRotation[1] = mapTapNoteToRotation[NOTE_PAD1_DOWN];
+		sd.m_ColumnToRotation[2] = mapTapNoteToRotation[NOTE_PAD1_UP];
+		sd.m_ColumnToRotation[3] = mapTapNoteToRotation[NOTE_PAD1_RIGHT];
+*/		break;
 	case STYLE_SOLO:
-		StyleDef.m_iNumColumns = 6;		// LEFT, UP+LEFT, DOWN, UP, UP+RIGHT, RIGHT
-		StyleDef.m_ColumnToTapNote[0]		= NOTE_PAD1_LEFT;
-		StyleDef.m_ColumnToTapNote[1]		= NOTE_PAD1_UPLEFT;
-		StyleDef.m_ColumnToTapNote[2]		= NOTE_PAD1_DOWN;
-		StyleDef.m_ColumnToTapNote[3]		= NOTE_PAD1_UP;
-		StyleDef.m_ColumnToTapNote[4]		= NOTE_PAD1_UPRIGHT;
-		StyleDef.m_ColumnToTapNote[5]		= NOTE_PAD1_RIGHT;
-		StyleDef.m_ColumnToRotation[0] = mapTapNoteToRotation[NOTE_PAD1_LEFT];
-		StyleDef.m_ColumnToRotation[1] = mapTapNoteToRotation[NOTE_PAD1_UPLEFT];
-		StyleDef.m_ColumnToRotation[2] = mapTapNoteToRotation[NOTE_PAD1_DOWN];
-		StyleDef.m_ColumnToRotation[3] = mapTapNoteToRotation[NOTE_PAD1_UP];
-		StyleDef.m_ColumnToRotation[4] = mapTapNoteToRotation[NOTE_PAD1_UPRIGHT];
-		StyleDef.m_ColumnToRotation[5] = mapTapNoteToRotation[NOTE_PAD1_RIGHT];
-		break;
+		sd.m_iNumColumns = 6;		// LEFT, UP+LEFT, DOWN, UP, UP+RIGHT, RIGHT
+		sd.m_ColumnToTapNote[0]		= NOTE_PAD1_LEFT;
+		sd.m_ColumnToTapNote[1]		= NOTE_PAD1_UPLEFT;
+		sd.m_ColumnToTapNote[2]		= NOTE_PAD1_DOWN;
+		sd.m_ColumnToTapNote[3]		= NOTE_PAD1_UP;
+		sd.m_ColumnToTapNote[4]		= NOTE_PAD1_UPRIGHT;
+		sd.m_ColumnToTapNote[5]		= NOTE_PAD1_RIGHT;
+		sd.m_sColumnToNoteName[0] = "left";
+		sd.m_sColumnToNoteName[1] = "upleft";
+		sd.m_sColumnToNoteName[2] = "down";
+		sd.m_sColumnToNoteName[3] = "up";
+		sd.m_sColumnToNoteName[4] = "upright";
+		sd.m_sColumnToNoteName[5] = "right";
+/*		sd.m_ColumnToRotation[0] = mapTapNoteToRotation[NOTE_PAD1_LEFT];
+		sd.m_ColumnToRotation[1] = mapTapNoteToRotation[NOTE_PAD1_UPLEFT];
+		sd.m_ColumnToRotation[2] = mapTapNoteToRotation[NOTE_PAD1_DOWN];
+		sd.m_ColumnToRotation[3] = mapTapNoteToRotation[NOTE_PAD1_UP];
+		sd.m_ColumnToRotation[4] = mapTapNoteToRotation[NOTE_PAD1_UPRIGHT];
+		sd.m_ColumnToRotation[5] = mapTapNoteToRotation[NOTE_PAD1_RIGHT];
+*/		break;
 	case STYLE_DOUBLE:
-		StyleDef.m_iNumColumns = 8;		// 1_LEFT, 1_DOWN, 1_UP, 1_RIGHT, 2_LEFT, 2_DOWN, 2_UP, 2_RIGHT
-		StyleDef.m_ColumnToTapNote[0]		= NOTE_PAD1_LEFT;
-		StyleDef.m_ColumnToTapNote[1]		= NOTE_PAD1_DOWN;
-		StyleDef.m_ColumnToTapNote[2]		= NOTE_PAD1_UP;
-		StyleDef.m_ColumnToTapNote[3]		= NOTE_PAD1_RIGHT;
-		StyleDef.m_ColumnToTapNote[4]		= NOTE_PAD2_LEFT;
-		StyleDef.m_ColumnToTapNote[5]		= NOTE_PAD2_DOWN;
-		StyleDef.m_ColumnToTapNote[6]		= NOTE_PAD2_UP;
-		StyleDef.m_ColumnToTapNote[7]		= NOTE_PAD2_RIGHT;
-		StyleDef.m_ColumnToTapNote[8]		= NOTE_PAD1_UPLEFT;// Even though this isn't used, Need them here so
-		StyleDef.m_ColumnToTapNote[9]		= NOTE_PAD1_UPRIGHT;// TapNoteToColumnNumber doesn't get confused by them
-		StyleDef.m_ColumnToTapNote[10]		= NOTE_PAD2_UPLEFT;
-		StyleDef.m_ColumnToTapNote[11]		= NOTE_PAD2_UPRIGHT;
-		StyleDef.m_ColumnToRotation[0] = mapTapNoteToRotation[NOTE_PAD1_LEFT];
-		StyleDef.m_ColumnToRotation[1] = mapTapNoteToRotation[NOTE_PAD1_DOWN];
-		StyleDef.m_ColumnToRotation[2] = mapTapNoteToRotation[NOTE_PAD1_UP];
-		StyleDef.m_ColumnToRotation[3] = mapTapNoteToRotation[NOTE_PAD1_RIGHT];
-		StyleDef.m_ColumnToRotation[4] = mapTapNoteToRotation[NOTE_PAD2_LEFT];
-		StyleDef.m_ColumnToRotation[5] = mapTapNoteToRotation[NOTE_PAD2_DOWN];
-		StyleDef.m_ColumnToRotation[6] = mapTapNoteToRotation[NOTE_PAD2_UP];
-		StyleDef.m_ColumnToRotation[7] = mapTapNoteToRotation[NOTE_PAD2_RIGHT];
-		StyleDef.m_ColumnToRotation[8] = mapTapNoteToRotation[NOTE_PAD1_UPLEFT];
-		StyleDef.m_ColumnToRotation[9] = mapTapNoteToRotation[NOTE_PAD1_UPRIGHT];
-		StyleDef.m_ColumnToRotation[10] = mapTapNoteToRotation[NOTE_PAD2_UPLEFT];
-		StyleDef.m_ColumnToRotation[11] = mapTapNoteToRotation[NOTE_PAD2_UPRIGHT];
+		sd.m_iNumColumns = 8;		// 1_LEFT, 1_DOWN, 1_UP, 1_RIGHT, 2_LEFT, 2_DOWN, 2_UP, 2_RIGHT
+		sd.m_ColumnToTapNote[0]		= NOTE_PAD1_LEFT;
+		sd.m_ColumnToTapNote[1]		= NOTE_PAD1_DOWN;
+		sd.m_ColumnToTapNote[2]		= NOTE_PAD1_UP;
+		sd.m_ColumnToTapNote[3]		= NOTE_PAD1_RIGHT;
+		sd.m_ColumnToTapNote[4]		= NOTE_PAD2_LEFT;
+		sd.m_ColumnToTapNote[5]		= NOTE_PAD2_DOWN;
+		sd.m_ColumnToTapNote[6]		= NOTE_PAD2_UP;
+		sd.m_ColumnToTapNote[7]		= NOTE_PAD2_RIGHT;
+		sd.m_ColumnToTapNote[8]		= NOTE_PAD1_UPLEFT;// Even though this isn't used, Need them here so
+		sd.m_ColumnToTapNote[9]		= NOTE_PAD1_UPRIGHT;// TapNoteToColumnNumber doesn't get confused by them
+		sd.m_ColumnToTapNote[10]		= NOTE_PAD2_UPLEFT;
+		sd.m_ColumnToTapNote[11]		= NOTE_PAD2_UPRIGHT;
+		sd.m_sColumnToNoteName[0] = "left";
+		sd.m_sColumnToNoteName[1] = "upleft";
+		sd.m_sColumnToNoteName[2] = "down";
+		sd.m_sColumnToNoteName[3] = "up";
+		sd.m_sColumnToNoteName[4] = "upright";
+		sd.m_sColumnToNoteName[5] = "right";
+		sd.m_sColumnToNoteName[6] = "left";
+		sd.m_sColumnToNoteName[7] = "upleft";
+		sd.m_sColumnToNoteName[8] = "down";
+		sd.m_sColumnToNoteName[9] = "up";
+		sd.m_sColumnToNoteName[10] = "upright";
+		sd.m_sColumnToNoteName[11] = "right";
+		/*
+		sd.m_ColumnToRotation[0] = mapTapNoteToRotation[NOTE_PAD1_LEFT];
+		sd.m_ColumnToRotation[1] = mapTapNoteToRotation[NOTE_PAD1_DOWN];
+		sd.m_ColumnToRotation[2] = mapTapNoteToRotation[NOTE_PAD1_UP];
+		sd.m_ColumnToRotation[3] = mapTapNoteToRotation[NOTE_PAD1_RIGHT];
+		sd.m_ColumnToRotation[4] = mapTapNoteToRotation[NOTE_PAD2_LEFT];
+		sd.m_ColumnToRotation[5] = mapTapNoteToRotation[NOTE_PAD2_DOWN];
+		sd.m_ColumnToRotation[6] = mapTapNoteToRotation[NOTE_PAD2_UP];
+		sd.m_ColumnToRotation[7] = mapTapNoteToRotation[NOTE_PAD2_RIGHT];
+		sd.m_ColumnToRotation[8] = mapTapNoteToRotation[NOTE_PAD1_UPLEFT];
+		sd.m_ColumnToRotation[9] = mapTapNoteToRotation[NOTE_PAD1_UPRIGHT];
+		sd.m_ColumnToRotation[10] = mapTapNoteToRotation[NOTE_PAD2_UPLEFT];
+		sd.m_ColumnToRotation[11] = mapTapNoteToRotation[NOTE_PAD2_UPRIGHT];
+		*/
 		break;
 	default:
 		ASSERT( false );	// invalid GameMode
 	}
 
-	return StyleDef;
+	return sd;
 }

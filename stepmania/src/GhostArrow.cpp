@@ -16,7 +16,7 @@ const float  GRAY_ARROW_TWEEN_TIME = 0.5f;
 
 GhostArrow::GhostArrow()
 {
-	Load( THEME->GetPathTo(GRAPHIC_GHOST_ARROW) );
+//	Load( THEME->GetPathTo(GRAPHIC_GHOST_ARROW) );
 	SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	TurnShadowOff();
 }

@@ -1,0 +1,2497 @@
+log.txt: last compiled on Sun Mar 31 15:28:53 2002.
+Log starting 2002-03-31 17:32:40
+
+
+RageSound::RageSound()
+Sound card info:
+ - play latency is 3 ms
+ - total device hardware memory is 0 bytes
+ - free device hardware memory is 0 bytes
+ - number of free sample slots in the hardware is 94
+ - number of free 3D sample slots in the hardware is 94
+ - min sample rate supported by the hardware is 8000
+ - max sample rate supported by the hardware is 48000
+This display adaptor supports the following modes:
+  640x480 60Hz, format 23
+  640x480 75Hz, format 23
+  640x480 85Hz, format 23
+  640x480 100Hz, format 23
+  640x480 120Hz, format 23
+  320x200 60Hz, format 23
+  320x200 70Hz, format 23
+  320x200 72Hz, format 23
+  320x200 75Hz, format 23
+  320x240 60Hz, format 23
+  320x240 70Hz, format 23
+  320x240 72Hz, format 23
+  320x240 75Hz, format 23
+  400x300 60Hz, format 23
+  400x300 70Hz, format 23
+  400x300 72Hz, format 23
+  400x300 75Hz, format 23
+  512x384 60Hz, format 23
+  512x384 70Hz, format 23
+  512x384 72Hz, format 23
+  512x384 75Hz, format 23
+  640x400 60Hz, format 23
+  640x400 70Hz, format 23
+  640x400 72Hz, format 23
+  640x400 75Hz, format 23
+  640x400 85Hz, format 23
+  800x600 60Hz, format 23
+  800x600 75Hz, format 23
+  800x600 85Hz, format 23
+  800x600 100Hz, format 23
+  800x600 120Hz, format 23
+  1024x768 60Hz, format 23
+  1024x768 75Hz, format 23
+  1024x768 85Hz, format 23
+  1024x768 100Hz, format 23
+  1024x768 120Hz, format 23
+  1152x864 75Hz, format 23
+  1152x864 85Hz, format 23
+  1280x800 75Hz, format 23
+  1280x800 85Hz, format 23
+  1280x800 100Hz, format 23
+  1280x1024 60Hz, format 23
+  1280x1024 75Hz, format 23
+  1280x1024 85Hz, format 23
+  1280x1024 100Hz, format 23
+  1600x1000 75Hz, format 23
+  1600x1000 85Hz, format 23
+  1600x1200 60Hz, format 23
+  1600x1200 75Hz, format 23
+  1600x1200 85Hz, format 23
+  1800x1440 75Hz, format 23
+  1920x1200 75Hz, format 23
+  640x480 60Hz, format 22
+  640x480 75Hz, format 22
+  640x480 85Hz, format 22
+  640x480 100Hz, format 22
+  640x480 120Hz, format 22
+  320x200 60Hz, format 22
+  320x200 70Hz, format 22
+  320x200 72Hz, format 22
+  320x200 75Hz, format 22
+  320x240 60Hz, format 22
+  320x240 70Hz, format 22
+  320x240 72Hz, format 22
+  320x240 75Hz, format 22
+  400x300 60Hz, format 22
+  400x300 70Hz, format 22
+  400x300 72Hz, format 22
+  400x300 75Hz, format 22
+  512x384 60Hz, format 22
+  512x384 70Hz, format 22
+  512x384 72Hz, format 22
+  512x384 75Hz, format 22
+  640x400 60Hz, format 22
+  640x400 70Hz, format 22
+  640x400 72Hz, format 22
+  640x400 75Hz, format 22
+  640x400 85Hz, format 22
+  800x600 60Hz, format 22
+  800x600 75Hz, format 22
+  800x600 85Hz, format 22
+  800x600 100Hz, format 22
+  800x600 120Hz, format 22
+  1024x768 60Hz, format 22
+  1024x768 75Hz, format 22
+  1024x768 85Hz, format 22
+  1024x768 100Hz, format 22
+  1024x768 120Hz, format 22
+  1152x864 75Hz, format 22
+  1152x864 85Hz, format 22
+  1280x800 75Hz, format 22
+  1280x800 85Hz, format 22
+  1280x800 100Hz, format 22
+  1280x1024 60Hz, format 22
+  1280x1024 75Hz, format 22
+  1280x1024 85Hz, format 22
+  1280x1024 100Hz, format 22
+  1600x1000 75Hz, format 22
+  1600x1000 85Hz, format 22
+  1600x1200 60Hz, format 22
+  1600x1200 75Hz, format 22
+  1600x1200 85Hz, format 22
+  1800x1440 75Hz, format 22
+  1920x1200 75Hz, format 22
+Group banner for 'Dance Dance Revolution 1st Mix' is 'Songs\Dance Dance Revolution 1st Mix\banner.png'.
+Group banner for 'Dance Dance Revolution 2nd Mix' is 'Songs\Dance Dance Revolution 2nd Mix\banner.png'.
+Group banner for 'Dance Dance Revolution 3rd Mix' is 'Songs\Dance Dance Revolution 3rd Mix\banner.png'.
+Group banner for 'Dance Dance Revolution 3rd Mix Plus' is 'Songs\Dance Dance Revolution 3rd Mix Plus\banner.png'.
+Group banner for 'Dance Dance Revolution 4th Mix' is 'Songs\Dance Dance Revolution 4th Mix\banner.png'.
+Group banner for 'Dance Dance Revolution 4th Mix Plus' is 'Songs\Dance Dance Revolution 4th Mix Plus\banner.png'.
+Group banner for 'Dance Dance Revolution 5th Mix' is 'Songs\Dance Dance Revolution 5th Mix\banner.png'.
+Group banner for 'Dance Dance Revolution 6th Mix' is 'Songs\Dance Dance Revolution 6th Mix\banner.png'.
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Bye Bye Baby Balloon)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Bye Bye Baby Balloon\balloon.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Candy)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Candy\candy.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Cowgirl)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Cowgirl\cowgirl.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Do You Remember Me)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Do You Remember Me\doremember.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Exotic Ethnic)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Exotic Ethnic\exotic.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Fantasy)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Fantasy\fantasy.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\FireFly)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\FireFly\firefly.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Flash In The Night)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Flash In The Night\flashnight.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Follow Me)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Follow Me\followme.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Freckles)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Freckles\freckles.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Ghosts)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Ghosts\ghosts.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Healing Vision Angelic Mix)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Healing Vision Angelic Mix\healingvisionam.dwi)
+Adding a freeze segment: beat: 230.000000, seconds = 0.380000
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Highs Off U)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Highs Off U\highsoffu.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\I'm In The Mood For Dancin')
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\I'm In The Mood For Dancin'\imdancin.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Justify My Love)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Justify My Love\justify.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Let's Groove)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Let's Groove\letsgroove.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Lovin' You)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Lovin' You\lovinyou.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Max300)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Max300\max300.dwi)
+Adding a freeze segment: beat: 298.000000, seconds = 0.635000
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Miracle)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Miracle\miracle.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\My Sweet Darlin')
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\My Sweet Darlin'\mydarlin.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Nori Nori Nori)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Nori Nori Nori\nori.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Ordinary World)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Ordinary World\ordinary.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Orion 78 Civilization Mix)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Orion 78 Civilization Mix\orion78civ.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\So Deep)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\So Deep\sodeep.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Somewhere Over The Rainbow)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Somewhere Over The Rainbow\somewhere.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\The Centre of the Heart)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\The Centre of the Heart\centreheart.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\True)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\True\true.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\True (Trance Sunrise Mix))
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\True (Trance Sunrise Mix)\truetrance.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Twilight Zone)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Twilight Zone\twilightzone.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Witch Doctor)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Witch Doctor\witchdoctor.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\www Blonde Girl)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\www Blonde Girl\wwwblonde.dwi)
+Song::LoadFromSongDir(Songs\Dance Dance Revolution 6th Mix\Yozora No Muko)
+Song::LoadFromDWIFile(Songs\Dance Dance Revolution 6th Mix\Yozora No Muko\yozoranomuko.dwi)
+Found 32 Songs.
+RageScreen::SwitchDisplayModes( 1, 640, 480, 16 )
+Testing format: display 22, back buffer 23, windowed 1...
+This won't work.  Keep searching.
+Testing format: display 22, back buffer 24, windowed 1...
+This won't work.  Keep searching.
+Testing format: display 22, back buffer 25, windowed 1...
+This won't work.  Keep searching.
+Testing format: display 22, back buffer 20, windowed 1...
+This won't work.  Keep searching.
+Testing format: display 22, back buffer 22, windowed 1...
+This will work.
+Present Parameters: 640, 480, 22, 1, 0, 1, 0, 1, 1, 80, 0, 0, 0
+Mode change was successful.
+RageScreen::SwitchDisplayModes( 1, 640, 480, 16 )
+Testing format: display 22, back buffer 23, windowed 1...
+This won't work.  Keep searching.
+Testing format: display 22, back buffer 24, windowed 1...
+This won't work.  Keep searching.
+Testing format: display 22, back buffer 25, windowed 1...
+This won't work.  Keep searching.
+Testing format: display 22, back buffer 20, windowed 1...
+This won't work.  Keep searching.
+Testing format: display 22, back buffer 22, windowed 1...
+This will work.
+Present Parameters: 640, 480, 22, 1, 0, 1, 0, 1, 1, 80, 0, 0, 0
+Mode change was successful.
+BitmapText::LoadFromFontName(Themes\default\Fonts\Normal.font)
+RageTextureManager: Loading 'themes\default\fonts\normal 16x16.png' (512x512) from disk.  It has 1 references
+FontManager: Loading 'themes\default\fonts\normal.font' from disk.
+BitmapText::LoadFromFontName(Themes\default\Fonts\Normal.font)
+FontManager: The Font 'themes\default\fonts\normal.font' now has 1 references.
+BitmapText::LoadFromFontName(Themes\default\Fonts\Normal.font)
+FontManager: The Font 'themes\default\fonts\normal.font' now has 2 references.
+BitmapText::LoadFromFontName(Themes\default\Fonts\Normal.font)
+FontManager: The Font 'themes\default\fonts\normal.font' now has 3 references.
+BitmapText::LoadFromFontName(Themes\default\Fonts\Normal.font)
+FontManager: The Font 'themes\default\fonts\normal.font' now has 4 references.
+BitmapText::LoadFromFontName(Themes\default\Fonts\Normal.font)
+FontManager: The Font 'themes\default\fonts\normal.font' now has 5 references.
+RageScreen::SwitchDisplayModes( 1, 640, 480, 16 )
+Testing format: display 22, back buffer 23, windowed 1...
+This won't work.  Keep searching.
+Testing format: display 22, back buffer 24, windowed 1...
+This won't work.  Keep searching.
+Testing format: display 22, back buffer 25, windowed 1...
+This won't work.  Keep searching.
+Testing format: display 22, back buffer 20, windowed 1...
+This won't work.  Keep searching.
+Testing format: display 22, back buffer 22, windowed 1...
+This will work.
+Present Parameters: 640, 480, 22, 1, 0, 1, 0, 1, 1, 80, 0, 0, 0
+Mode change was successful.
+WindowTitleMenu::WindowTitleMenu()
+Sprite::LoadFromTexture(Themes\default\Graphics\title menu background (no alpha).png)
+RageTextureManager: Loading 'themes\default\graphics\title menu background (no alpha).png' (1024x512) from disk.  It has 1 references
+Sprite::LoadFromTexture(Themes\default\Graphics\title menu logo (1 alpha).png)
+RageTextureManager: Loading 'themes\default\graphics\title menu logo (1 alpha).png' (512x512) from disk.  It has 1 references
+BitmapText::LoadFromFontName(Themes\default\Fonts\Normal.font)
+FontManager: The Font 'themes\default\fonts\normal.font' now has 6 references.
+BitmapText::LoadFromFontName(Themes\default\Fonts\Normal.font)
+FontManager: The Font 'themes\default\fonts\normal.font' now has 7 references.
+BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
+RageTextureManager: Loading 'themes\default\fonts\bold 8x8.png' (256x256) from disk.  It has 1 references
+FontManager: Loading 'themes\default\fonts\bold.font' from disk.
+BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
+FontManager: The Font 'themes\default\fonts\bold.font' now has 1 references.
+BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
+FontManager: The Font 'themes\default\fonts\bold.font' now has 2 references.
+BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
+FontManager: The Font 'themes\default\fonts\bold.font' now has 3 references.
+BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
+FontManager: The Font 'themes\default\fonts\bold.font' now has 4 references.
+BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
+FontManager: The Font 'themes\default\fonts\bold.font' now has 5 references.
+BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
+FontManager: The Font 'themes\default\fonts\bold.font' now has 6 references.
+BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
+FontManager: The Font 'themes\default\fonts\bold.font' now has 7 references.
+BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
+FontManager: The Font 'themes\default\fonts\bold.font' now has 8 references.
+BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
+FontManager: The Font 'themes\default\fonts\bold.font' now has 9 references.
+BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
+FontManager: The Font 'themes\default\fonts\bold.font' now has 10 references.
+RandomStream::LoadSound( Themes\default\Announcer\title\Dance Dance Revolution.mp3 )
+Made it here - A
+Made it here - B
+RageSound::LoadSound( 'Themes\default\Announcer\title\Dance Dance Revolution.mp3' )
+Made it here - C
+RandomSample::LoadSound( Themes\default\Sounds\title change.mp3 )
+Made it here - A
+Made it here - B
+RageSoundSample::Load( Themes\default\Sounds\title change.mp3 )
+Made it here - a
+Made it here - b
+Made it here - c
+Made it here - C
+RandomSample::LoadSound( Themes\default\Sounds\select.mp3 )
+Made it here - A
+Made it here - B
+RageSoundSample::Load( Themes\default\Sounds\select.mp3 )
+Made it here - a
+Made it here - b
+Made it here - c
+Made it here - C
+RandomSample::LoadSound( Themes\default\Sounds\invalid.mp3 )
+Made it here - A
+Made it here - B
+RageSoundSample::Load( Themes\default\Sounds\invalid.mp3 )
+Made it here - a
+Made it here - b
+Made it here - c
+Made it here - C
+FPS: 4
+FPS: 367
+FPS: 324
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowTitleMenu::Input()
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowTitleMenu::Input()
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowTitleMenu::Input()
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowTitleMenu::Input()
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowTitleMenu::Input()
+FPS: 325
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowTitleMenu::Input()
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowTitleMenu::Input()
+WindowManager::Input( 0-28, 0-7, 0-0 )
+WindowTitleMenu::Input()
+WindowMenu::WindowMenu()
+Sprite::LoadFromSpriteFile(Themes\default\Graphics\edit background.sprite)
+RageTextureManager: Loading 'themes\default\graphics\_shared background.png' (1024x512) from disk.  It has 1 references
+Sprite::LoadFromTexture(Themes\default\Graphics\select music top edge (1 alpha).png)
+RageTextureManager: Loading 'themes\default\graphics\select music top edge (1 alpha).png' (1024x64) from disk.  It has 1 references
+Middle of WindowMenu()
+Sprite::LoadFromTexture(Themes\default\Graphics\menu bottom edge.png)
+RageTextureManager: Loading 'themes\default\graphics\menu bottom edge.png' (1024x64) from disk.  It has 1 references
+BitmapText::LoadFromFontName(Themes\default\Fonts\Normal.font)
+FontManager: The Font 'themes\default\fonts\normal.font' now has 8 references.
+RandomSample::LoadSound( Themes\default\Sounds\menu swoosh.mp3 )
+Made it here - A
+Made it here - B
+RageSoundSample::Load( Themes\default\Sounds\menu swoosh.mp3 )
+Made it here - a
+Made it here - b
+Made it here - c
+Made it here - C
+RandomSample::LoadSound( Themes\default\Sounds\menu back.mp3 )
+Made it here - A
+Made it here - B
+RageSoundSample::Load( Themes\default\Sounds\menu back.mp3 )
+Made it here - a
+Made it here - b
+Made it here - c
+Made it here - C
+End of WindowMenu()
+WindowEditMenu::WindowEditMenu()
+BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
+FontManager: The Font 'themes\default\fonts\bold.font' now has 11 references.
+BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
+FontManager: The Font 'themes\default\fonts\bold.font' now has 12 references.
+BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
+FontManager: The Font 'themes\default\fonts\bold.font' now has 13 references.
+BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
+FontManager: The Font 'themes\default\fonts\bold.font' now has 14 references.
+BitmapText::LoadFromFontName(Themes\default\Fonts\Normal.font)
+FontManager: The Font 'themes\default\fonts\normal.font' now has 9 references.
+RandomSample::LoadSound( Themes\default\Sounds\switch music.mp3 )
+Made it here - A
+Made it here - B
+RageSoundSample::Load( Themes\default\Sounds\switch music.mp3 )
+Made it here - a
+Made it here - b
+Made it here - c
+Made it here - C
+RandomSample::LoadSound( Themes\default\Sounds\select.mp3 )
+Made it here - A
+Made it here - B
+RageSoundSample::Load( Themes\default\Sounds\select.mp3 )
+Made it here - a
+Made it here - b
+Made it here - c
+Made it here - C
+RageSound::LoadSound( 'Themes\default\Sounds\training music.mp3' )
+FPS: 293
+WindowTitleMenu::~WindowTitleMenu()
+FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 14 references.
+FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 13 references.
+FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 12 references.
+FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 11 references.
+FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 10 references.
+FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 9 references.
+FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 8 references.
+FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 7 references.
+FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 6 references.
+FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 5 references.
+FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 4 references.
+FontManager: 'themes\default\fonts\normal.font' will not be deleted.  It still has 9 references.
+FontManager: 'themes\default\fonts\normal.font' will not be deleted.  It still has 8 references.
+RageTextureManager: 'themes\default\graphics\title menu logo (1 alpha).png' will be deleted.  It has 0 references.
+RageTextureManager: 'themes\default\graphics\title menu background (no alpha).png' will be deleted.  It has 0 references.
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowEditMenu::Input()
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowEditMenu::Input()
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowEditMenu::Input()
+WindowManager::Input( 0-28, 0-7, 0-0 )
+WindowEditMenu::Input()
+FPS: 401
+BitmapText::LoadFromFontName(Themes\default\Fonts\Normal.font)
+FontManager: The Font 'themes\default\fonts\normal.font' now has 8 references.
+Sprite::LoadFromTexture(Themes\default\Graphics\edit snap indicator.png)
+RageTextureManager: Loading 'themes\default\graphics\edit snap indicator.png' (32x64) from disk.  It has 1 references
+Sprite::LoadFromTexture(Themes\default\Graphics\edit snap indicator.png)
+RageTextureManager: 'themes\default\graphics\edit snap indicator.png' now has 2 references.
+WindowEdit::WindowEdit()
+Sprite::LoadFromSpriteFile(Themes\default\Graphics\edit background.sprite)
+RageTextureManager: 'themes\default\graphics\_shared background.png' now has 2 references.
+Sprite::LoadFromTexture(Game\Dance\Left Receptor 1x4.png)
+RageTextureManager: Loading 'game\dance\left receptor 1x4.png' (64x256) from disk.  It has 1 references
+Sprite::LoadFromTexture(Game\Dance\Down Receptor 4x1.png)
+RageTextureManager: Loading 'game\dance\down receptor 4x1.png' (256x64) from disk.  It has 1 references
+Sprite::LoadFromTexture(Game\Dance\Up Receptor 4x1.png)
+RageTextureManager: Loading 'game\dance\up receptor 4x1.png' (256x64) from disk.  It has 1 references
+Sprite::LoadFromTexture(Game\Dance\Right Receptor 1x4.png)
+RageTextureManager: Loading 'game\dance\right receptor 1x4.png' (64x256) from disk.  It has 1 references
+Sprite::LoadFromTexture(Game\Dance\Left Note color part.png)
+RageTextureManager: Loading 'game\dance\left note color part.png' (64x64) from disk.  It has 1 references
+Sprite::LoadFromTexture(Game\Dance\Left Note gray part 1x4.png)
+RageTextureManager: Loading 'game\dance\left note gray part 1x4.png' (64x256) from disk.  It has 1 references
+Sprite::LoadFromTexture(Game\Dance\Down Note color part.png)
+RageTextureManager: Loading 'game\dance\down note color part.png' (64x64) from disk.  It has 1 references
+Sprite::LoadFromTexture(Game\Dance\Down Note gray part 4x1.png)
+RageTextureManager: Loading 'game\dance\down note gray part 4x1.png' (256x64) from disk.  It has 1 references
+Sprite::LoadFromTexture(Game\Dance\Up Note color part.png)
+RageTextureManager: Loading 'game\dance\up note color part.png' (64x64) from disk.  It has 1 references
+Sprite::LoadFromTexture(Game\Dance\Up Note gray part 4x1.png)
+RageTextureManager: Loading 'game\dance\up note gray part 4x1.png' (256x64) from disk.  It has 1 references
+Sprite::LoadFromTexture(Game\Dance\Right Note color part.png)
+RageTextureManager: Loading 'game\dance\right note color part.png' (64x64) from disk.  It has 1 references
+Sprite::LoadFromTexture(Game\Dance\Right Note gray part 1x4.png)
+RageTextureManager: Loading 'game\dance\right note gray part 1x4.png' (64x256) from disk.  It has 1 references
+RandomSample::LoadSound( Themes\default\Sounds\edit change line.mp3 )
+Made it here - A
+Made it here - B
+RageSoundSample::Load( Themes\default\Sounds\edit change line.mp3 )
+Made it here - a
+Made it here - b
+Made it here - c
+Made it here - C
+RandomSample::LoadSound( Themes\default\Sounds\edit change snap.mp3 )
+Made it here - A
+Made it here - B
+RageSoundSample::Load( Themes\default\Sounds\edit change snap.mp3 )
+Made it here - a
+Made it here - b
+Made it here - c
+Made it here - C
+WindowEditMenu::~WindowEditMenu()
+FontManager: 'themes\default\fonts\normal.font' will not be deleted.  It still has 8 references.
+FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 3 references.
+FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 2 references.
+FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 1 references.
+FontManager: 'themes\default\fonts\bold.font' will be deleted.  It has 0 references.
+RageTextureManager: 'themes\default\fonts\bold 8x8.png' will be deleted.  It has 0 references.
+FontManager: 'themes\default\fonts\normal.font' will not be deleted.  It still has 7 references.
+RageTextureManager: 'themes\default\graphics\menu bottom edge.png' will be deleted.  It has 0 references.
+RageTextureManager: 'themes\default\graphics\select music top edge (1 alpha).png' will be deleted.  It has 0 references.
+RageTextureManager: 'themes\default\graphics\_shared background.png' will not be deleted.  It still has 1 references.
+FPS: 300
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 454
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 451
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 440
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 400
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 313
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 287
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 308
+FPS: 281
+FPS: 272
+FPS: 298
+FPS: 281
+FPS: 304
+FPS: 306
+FPS: 293
+FPS: 302
+FPS: 257
+FPS: 257
+FPS: 310
+FPS: 301
+FPS: 273
+FPS: 294
+FPS: 291
+FPS: 269
+FPS: 302
+FPS: 308
+FPS: 308
+FPS: 307
+FPS: 310
+FPS: 309
+FPS: 308
+FPS: 310
+FPS: 310
+FPS: 307
+FPS: 309
+FPS: 309
+FPS: 308
+FPS: 310
+FPS: 307
+FPS: 307
+FPS: 303
+FPS: 307
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 322
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 339
+FPS: 339
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+FPS: 338
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 340
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 380
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+FPS: 404
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+FPS: 407
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 389
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 407
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 441
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+FPS: 445
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+FPS: 444
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-200, 0-3, 0-8 )
+FPS: 443
+FPS: 444
+WindowManager::Input( 0-209, 3-9, 3-0 )
+WindowManager::Input( 0-200, 0-3, 0-8 )
+FPS: 445
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-200, 0-3, 0-8 )
+FPS: 441
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-200, 0-3, 0-8 )
+FPS: 437
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+FPS: 433
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-200, 0-3, 0-8 )
+FPS: 423
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 414
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 413
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-209, 3-9, 3-0 )
+FPS: 425
+WindowManager::Input( 0-4, 3-9, 3-0 )
+FPS: 430
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+FPS: 411
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 393
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 395
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 395
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 411
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 420
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+FPS: 409
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 391
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+FPS: 368
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+FPS: 368
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-209, 3-9, 3-0 )
+FPS: 375
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 378
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+FPS: 374
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+FPS: 353
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+FPS: 338
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+FPS: 325
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+FPS: 304
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-209, 3-9, 3-0 )
+FPS: 288
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 290
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+FPS: 282
+WindowManager::Input( 0-209, 3-9, 3-0 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-201, 3-9, 3-0 )
+FPS: 283
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+FPS: 281
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+FPS: 268
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 261
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 251
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+FPS: 249
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+FPS: 240
+FPS: 237
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 235
+WindowManager::Input( 0-200, 0-3, 0-8 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 234
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-4, 3-9, 3-0 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 234
+WindowManager::Input( 0-200, 0-3, 0-8 )
+FPS: 234
+FPS: 230
+FPS: 232
+FPS: 232
+FPS: 231
+FPS: 231
+FPS: 232
+FPS: 231
+FPS: 229
+FPS: 231
+FPS: 231
+FPS: 231
+FPS: 232
+FPS: 231
+FPS: 231
+FPS: 231
+FPS: 229
+FPS: 233
+FPS: 231
+FPS: 230
+FPS: 231
+FPS: 231
+FPS: 229
+FPS: 232
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 231
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 246
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 253
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 263
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 262
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 267
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+WindowManager::Input( 0-208, 0-2, 0-4 )
+FPS: 263
+FPS: 260
+FPS: 234
+FPS: 253
+FPS: 256
+FPS: 258
+FPS: 258
+FPS: 224
+FPS: 260
+FPS: 256
+FPS: 247
+FPS: 249
+FPS: 257
+FPS: 263
+FPS: 262
+FPS: 263
+FPS: 252
+FPS: 226
+FPS: 263
+FPS: 260
+FPS: 246
+FPS: 258
+FPS: 245
+FPS: 253
+FPS: 255
+FPS: 260
+FPS: 268
+FPS: 276
+FPS: 264
+FPS: 238
+FPS: 260
+FPS: 256
+FPS: 249
+FPS: 262
+FPS: 261
+FPS: 263
+FPS: 201
+FPS: 254
+FPS: 251
+FPS: 249
+FPS: 256
+FPS: 203
+FPS: 249
+FPS: 253
+FPS: 248
+FPS: 253
+FPS: 249
+FPS: 253
+FPS: 250
+FPS: 263
+FPS: 263
+FPS: 254
+FPS: 268
+FPS: 276
+FPS: 272
+FPS: 273
+FPS: 273
+FPS: 267
+FPS: 272
+FPS: 270
+FPS: 267
+FPS: 269
+FPS: 274
+FPS: 276
+FPS: 276
+FPS: 267
+FPS: 270
+FPS: 276
+FPS: 275
+FPS: 271
+FPS: 274
+FPS: 271
+FPS: 274
+FPS: 271
+FPS: 277
+FPS: 275
+FPS: 278
+FPS: 270
+FPS: 272
+FPS: 269
+FPS: 275
+FPS: 281
+FPS: 277
+FPS: 274
+FPS: 275
+FPS: 275
+FPS: 276
+FPS: 272
+FPS: 273
+FPS: 270
+FPS: 279
+FPS: 277
+FPS: 270
+FPS: 271
+FPS: 281
+FPS: 281
+FPS: 274
+FPS: 274
+FPS: 278
+FPS: 272
+FPS: 277
+FPS: 272
+FPS: 273
+FPS: 277
+FPS: 271
+FPS: 275
+FPS: 280
+FPS: 275
+FPS: 275
+FPS: 282
+FPS: 276
+FPS: 273
+FPS: 273
+FPS: 273
+FPS: 276
+FPS: 274
+FPS: 277
+FPS: 275
+FPS: 274
+FPS: 272
+FPS: 274
+FPS: 276
+FPS: 291
+FPS: 282
+FPS: 269
+FPS: 269
+FPS: 270
+FPS: 272
+FPS: 268
+FPS: 269
+FPS: 272
+FPS: 272
+FPS: 273
+FPS: 269
+FPS: 271
+FPS: 263
+FPS: 275
+FPS: 273
+FPS: 272
+FPS: 275
+FPS: 275
+FPS: 270
+FPS: 275
+FPS: 273
+FPS: 271
+FPS: 271
+FPS: 285
+FPS: 275
+FPS: 275
+FPS: 273
+FPS: 274
+FPS: 272
+FPS: 271
+FPS: 274
+FPS: 268
+FPS: 271
+FPS: 267
+FPS: 280
+FPS: 273
+FPS: 279
+FPS: 272
+FPS: 274
+FPS: 271
+FPS: 275
+FPS: 277
+FPS: 281
+FPS: 273
+FPS: 283
+FPS: 276
+FPS: 272
+FPS: 271
+FPS: 273
+FPS: 273
+FPS: 269
+FPS: 269
+FPS: 273
+FPS: 271
+FPS: 269
+FPS: 270
+FPS: 270
+FPS: 268
+FPS: 269
+FPS: 270
+FPS: 268
+FPS: 270
+FPS: 270
+FPS: 268
+FPS: 269
+FPS: 272
+FPS: 270
+FPS: 276
+FPS: 274
+FPS: 272
+FPS: 273
+FPS: 275
+FPS: 272
+FPS: 275
+FPS: 268
+FPS: 269
+FPS: 270
+FPS: 272
+FPS: 269
+FPS: 270
+FPS: 271
+FPS: 273
+FPS: 276
+FPS: 276
+FPS: 280
+FPS: 275
+FPS: 277
+FPS: 272
+FPS: 270
+FPS: 271
+FPS: 274
+FPS: 274
+FPS: 273
+FPS: 271
+FPS: 263
+FPS: 270
+FPS: 269
+FPS: 279
+FPS: 270
+FPS: 265
+FPS: 272
+FPS: 270
+FPS: 270
+FPS: 269
+FPS: 269
+FPS: 270
+FPS: 270
+FPS: 270
+FPS: 275
+FPS: 274
+FPS: 270
+FPS: 273
+FPS: 276
+FPS: 275
+FPS: 277
+FPS: 274
+FPS: 268
+FPS: 270
+FPS: 273
+FPS: 277
+FPS: 274
+FPS: 270
+FPS: 288
+FPS: 271
+FPS: 270
+FPS: 270
+FPS: 270
+FPS: 273
+FPS: 295
+FPS: 287
+FPS: 295
+FPS: 296
+FPS: 276
+FPS: 269
+FPS: 279
+FPS: 267
+FPS: 274
+FPS: 271
+FPS: 271
+FPS: 275
+FPS: 272
+FPS: 270
+FPS: 271
+FPS: 272
+FPS: 270
+FPS: 271
+FPS: 272
+FPS: 271
+FPS: 273
+FPS: 272
+FPS: 275
+FPS: 271
+FPS: 272
+FPS: 270
+FPS: 274
+FPS: 276
+FPS: 271
+FPS: 270
+FPS: 270
+FPS: 270
+FPS: 272
+FPS: 270
+FPS: 271
+FPS: 272
+FPS: 268
+FPS: 271
+FPS: 270
+FPS: 272
+FPS: 270
+FPS: 269
+FPS: 274
+FPS: 276
+FPS: 273
+FPS: 271
+FPS: 271
+FPS: 276
+FPS: 276
+FPS: 274
+FPS: 271
+FPS: 274
+FPS: 279
+FPS: 278
+FPS: 276
+FPS: 274
+FPS: 270
+FPS: 268
+FPS: 276
+FPS: 275
+FPS: 276
+FPS: 275
+FPS: 277
+FPS: 277
+FPS: 278
+FPS: 271
+FPS: 278
+FPS: 272
+FPS: 276
+FPS: 271
+FPS: 267
+FPS: 273
+FPS: 277
+FPS: 272
+FPS: 274
+FPS: 277
+FPS: 278
+FPS: 280
+FPS: 268
+FPS: 275
+FPS: 271
+FPS: 269
+FPS: 270
+FPS: 271
+FPS: 269
+FPS: 271
+FPS: 277
+FPS: 270
+FPS: 270
+FPS: 269
+FPS: 272
+FPS: 274
+FPS: 270
+FPS: 269
+FPS: 270
+FPS: 273
+FPS: 271
+FPS: 271
+FPS: 273
+FPS: 276
+FPS: 275
+FPS: 272
+FPS: 270
+FPS: 269
+FPS: 270
+FPS: 274
+FPS: 271
+FPS: 275
+FPS: 275
+FPS: 276
+FPS: 278
+FPS: 278
+FPS: 284
+FPS: 277
+FPS: 277
+FPS: 273
+FPS: 270
+FPS: 270
+FPS: 274
+FPS: 270
+FPS: 275
+FPS: 272
+FPS: 269
+FPS: 270
+FPS: 270
+FPS: 270
+FPS: 271
+FPS: 275
+FPS: 275
+FPS: 267
+FPS: 274
+FPS: 271
+FPS: 274
+FPS: 272
+FPS: 275
+FPS: 271
+FPS: 272
+FPS: 279
+FPS: 270
+FPS: 275
+FPS: 272
+FPS: 278
+FPS: 274
+FPS: 268
+FPS: 269
+FPS: 269
+FPS: 270
+FPS: 269
+FPS: 269
+FPS: 271
+FPS: 272
+FPS: 277
+FPS: 271
+FPS: 268
+FPS: 271
+FPS: 270
+FPS: 270
+FPS: 269
+FPS: 271
+FPS: 269
+FPS: 270
+FPS: 270
+FPS: 269
+FPS: 271
+FPS: 271
+FPS: 269
+FPS: 277
+FPS: 277
+FPS: 285
+FPS: 276
+FPS: 274
+FPS: 276
+FPS: 277
+FPS: 276
+FPS: 274
+FPS: 269
+FPS: 269
+FPS: 272
+FPS: 275
+FPS: 270
+FPS: 270
+FPS: 272
+FPS: 277
+FPS: 271
+FPS: 271
+FPS: 270
+FPS: 274
+FPS: 279
+FPS: 276
+FPS: 276
+FPS: 273
+FPS: 270
+FPS: 267
+FPS: 270
+FPS: 277
+FPS: 277
+FPS: 273
+FPS: 270
+FPS: 275
+FPS: 271
+FPS: 274
+FPS: 277
+FPS: 277
+FPS: 275
+FPS: 268
+FPS: 270
+FPS: 270
+FPS: 270
+FPS: 275
+FPS: 275
+FPS: 274
+FPS: 271
+FPS: 271
+FPS: 270
+FPS: 273
+FPS: 277
+FPS: 276
+FPS: 277
+FPS: 274
+FPS: 274
+FPS: 271
+FPS: 273
+FPS: 277
+FPS: 272
+FPS: 269
+FPS: 269
+FPS: 275
+FPS: 277
+FPS: 279
+FPS: 277
+FPS: 277
+FPS: 276
+FPS: 271
+FPS: 276
+FPS: 272
+FPS: 270
+FPS: 270
+FPS: 267
+FPS: 269
+FPS: 268
+FPS: 274
+FPS: 276
+FPS: 275
+FPS: 277
+FPS: 271
+FPS: 269
+FPS: 269
+FPS: 274
+FPS: 273
+FPS: 269
+FPS: 272
+FPS: 276
+FPS: 270
+FPS: 272
+FPS: 268
+FPS: 269
+FPS: 270
+FPS: 275
+FPS: 277
+FPS: 277
+FPS: 272
+FPS: 274
+FPS: 275
+FPS: 275
+FPS: 274
+FPS: 271
+FPS: 277
+FPS: 275
+FPS: 277
+FPS: 267
+FPS: 271
+FPS: 271
+FPS: 278
+FPS: 267
+FPS: 271
+FPS: 269
+FPS: 269
+FPS: 274
+FPS: 277
+FPS: 276
+FPS: 279
+FPS: 272
+FPS: 272
+FPS: 277
+FPS: 276
+FPS: 272
+FPS: 277
+FPS: 274
+FPS: 272
+FPS: 273
+FPS: 275
+FPS: 270
+FPS: 276
+FPS: 274
+FPS: 277
+FPS: 270
+FPS: 272
+FPS: 274
+FPS: 272
+FPS: 273
+FPS: 270
+FPS: 271
+FPS: 269
+FPS: 270
+FPS: 271
+FPS: 275
+FPS: 273
+FPS: 271
+FPS: 275
+FPS: 272
+FPS: 275
+FPS: 271
+FPS: 270
+FPS: 275
+FPS: 277
+FPS: 271
+FPS: 273
+FPS: 273
+FPS: 277
+FPS: 276
+FPS: 277
+FPS: 277
+FPS: 274
+FPS: 280
+FPS: 271
+FPS: 274
+FPS: 276
+FPS: 274
+FPS: 274
+FPS: 270
+FPS: 270
+FPS: 270
+FPS: 272
+FPS: 272
+FPS: 272
+FPS: 271
+FPS: 276
+FPS: 274
+FPS: 272
+FPS: 270
+FPS: 271
+FPS: 276
+FPS: 277
+FPS: 277
+FPS: 270
+FPS: 274
+FPS: 285
+FPS: 278
+FPS: 281
+FPS: 275
+FPS: 272
+FPS: 271
+FPS: 272
+FPS: 270
+FPS: 271
+FPS: 272
+FPS: 272
+FPS: 274
+FPS: 279
+FPS: 278
+FPS: 272
+FPS: 273
+FPS: 270
+FPS: 270
+FPS: 271
+FPS: 268
+FPS: 272
+FPS: 272
+FPS: 276
+FPS: 273
+FPS: 271
+FPS: 278
+FPS: 277
+FPS: 277
+FPS: 278
+FPS: 275
+FPS: 269
+FPS: 272
+FPS: 271
+FPS: 271
+FPS: 272
+FPS: 272
+FPS: 277
+FPS: 278
+FPS: 276
+FPS: 270
+FPS: 276
+FPS: 271
+FPS: 270
+FPS: 271
+FPS: 270
+FPS: 272
+FPS: 273
+FPS: 272
+FPS: 272
+FPS: 272
+FPS: 271
+FPS: 281
+FPS: 286
+FPS: 273
+FPS: 278
+FPS: 281
+FPS: 278
+FPS: 279
+FPS: 280
+FPS: 279
+FPS: 279
+FPS: 282
+FPS: 279
+FPS: 282
+FPS: 279
+FPS: 276
+FPS: 273
+FPS: 274
+FPS: 267
+FPS: 274
+FPS: 280
+FPS: 276
+FPS: 278
+FPS: 276
+FPS: 278
+FPS: 280
+FPS: 279
+FPS: 280
+FPS: 272
+FPS: 275
+FPS: 279
+FPS: 274
+FPS: 278
+FPS: 279
+FPS: 279
+FPS: 277
+FPS: 284
+FPS: 279
+FPS: 278
+FPS: 274
+FPS: 273
+FPS: 278
+FPS: 282
+FPS: 274
+FPS: 272
+FPS: 273
+FPS: 272
+FPS: 281
+FPS: 278
+FPS: 277
+FPS: 273
+FPS: 273
+FPS: 271
+FPS: 272
+FPS: 271
+FPS: 271
+FPS: 276
+FPS: 279
+FPS: 278
+FPS: 279
+FPS: 278
+FPS: 276
+FPS: 273
+FPS: 280
+FPS: 277
+FPS: 271
+FPS: 277
+FPS: 277
+FPS: 276
+FPS: 275
+FPS: 273
+FPS: 280
+FPS: 276
+FPS: 271
+FPS: 275
+FPS: 277
+FPS: 279
+FPS: 273
+FPS: 272
+FPS: 276
+FPS: 277
+FPS: 279
+FPS: 271
+FPS: 271
+FPS: 274
+FPS: 271
+FPS: 271
+FPS: 273
+FPS: 272
+FPS: 272
+FPS: 273
+FPS: 269
+FPS: 271
+FPS: 279
+FPS: 274
+FPS: 271
+FPS: 272
+FPS: 278
+FPS: 271
+FPS: 271
+FPS: 273
+FPS: 275
+FPS: 277
+FPS: 269
+FPS: 276
+FPS: 277
+FPS: 276
+FPS: 273
+FPS: 277
+FPS: 277
+FPS: 277
+FPS: 272
+FPS: 272
+FPS: 272
+FPS: 278
+FPS: 276
+FPS: 276
+FPS: 272
+FPS: 273
+FPS: 270
+FPS: 272
+FPS: 273
+FPS: 276
+FPS: 274
+FPS: 273
+FPS: 273
+FPS: 272
+FPS: 273
+FPS: 276
+FPS: 274
+FPS: 278
+FPS: 277
+FPS: 279
+FPS: 291
+FPS: 279
+FPS: 277
+FPS: 275
+FPS: 276
+FPS: 279
+FPS: 277
+FPS: 277
+FPS: 271
+FPS: 271
+FPS: 276
+FPS: 274
+FPS: 279
+FPS: 274
+FPS: 272
+FPS: 272
+FPS: 271
+FPS: 270
+FPS: 273
+FPS: 271
+FPS: 274
+FPS: 272
+FPS: 272
+FPS: 269
+FPS: 273
+FPS: 272
+FPS: 270
+FPS: 280
+FPS: 272
+FPS: 272
+FPS: 273
+FPS: 271
+FPS: 267
+FPS: 274
+FPS: 277
+FPS: 276
+FPS: 278
+FPS: 278
+FPS: 271
+FPS: 271
+FPS: 271
+FPS: 277
+FPS: 284
+FPS: 276
+FPS: 280
+FPS: 277
+FPS: 269
+FPS: 276
+FPS: 272
+FPS: 271
+FPS: 271
+FPS: 271
+FPS: 274
+FPS: 275
+FPS: 278
+FPS: 272
+FPS: 269
+FPS: 276
+FPS: 277
+FPS: 277
+FPS: 277
+FPS: 277
+FPS: 269
+FPS: 271
+FPS: 273
+FPS: 271
+FPS: 271
+FPS: 272
+FPS: 271
+FPS: 270
+FPS: 272
+FPS: 271
+FPS: 270
+FPS: 275
+FPS: 277
+FPS: 278
+FPS: 272
+FPS: 272
+FPS: 275
+FPS: 272
+FPS: 269
+FPS: 271
+FPS: 273
+FPS: 271
+FPS: 270
+FPS: 272
+FPS: 272
+FPS: 270
+FPS: 272
+FPS: 271
+FPS: 271
+FPS: 272
+FPS: 272
+FPS: 272
+FPS: 267
+FPS: 271
+FPS: 275
+FPS: 277
+FPS: 279
+FPS: 278
+FPS: 276
+FPS: 273
+FPS: 277
+FPS: 279
+FPS: 279
+FPS: 275
+FPS: 271
+FPS: 271
+FPS: 272
+FPS: 272
+FPS: 280
+FPS: 277
+FPS: 277
+FPS: 278
+FPS: 279
+FPS: 279
+FPS: 278
+FPS: 278
+FPS: 278
+FPS: 278
+FPS: 279
+FPS: 278
+FPS: 278
+FPS: 278
+FPS: 278
+FPS: 273
+FPS: 275
+FPS: 275
+FPS: 278
+FPS: 279
+FPS: 277
+FPS: 274
+FPS: 278
+FPS: 278
+FPS: 280
+FPS: 277
+FPS: 279
+FPS: 278
+FPS: 279
+FPS: 277
+FPS: 279
+FPS: 275
+FPS: 276
+FPS: 281
+FPS: 274
+FPS: 274
+FPS: 272
+FPS: 270
+FPS: 274
+FPS: 278
+FPS: 279
+FPS: 273
+FPS: 272
+FPS: 275
+FPS: 272
+FPS: 267
+FPS: 271
+FPS: 272
+FPS: 272
+FPS: 278
+FPS: 279
+FPS: 279
+FPS: 276
+FPS: 273
+FPS: 272
+FPS: 278
+FPS: 279
+FPS: 276
+FPS: 279
+FPS: 278
+FPS: 275
+FPS: 273
+FPS: 273
+FPS: 272
+FPS: 272
+FPS: 275
+FPS: 272
+FPS: 272
+FPS: 271
+FPS: 272
+FPS: 271
+FPS: 278
+FPS: 275
+FPS: 273
+FPS: 272
+FPS: 272
+FPS: 272
+FPS: 280
+FPS: 278
+FPS: 279
+FPS: 278
+FPS: 272
+FPS: 276
+FPS: 271
+FPS: 273
+FPS: 272
+FPS: 271
+FPS: 279
+FPS: 296
+FPS: 297
+FPS: 297
+FPS: 286
+FPS: 278
+FPS: 278
+FPS: 277
+FPS: 273
+FPS: 271
+FPS: 272
+FPS: 274
+FPS: 273
+FPS: 273
+FPS: 273
+FPS: 271
+FPS: 270
+FPS: 273
+FPS: 272
+FPS: 272
+FPS: 273
+FPS: 273
+FPS: 278
+FPS: 271
+FPS: 279
+FPS: 274
+FPS: 278
+FPS: 278
+FPS: 274
+FPS: 278
+FPS: 279
+FPS: 278
+FPS: 277
+FPS: 272
+FPS: 271
+FPS: 271
+FPS: 272
+FPS: 271
+FPS: 272
+FPS: 271
+FPS: 273
+FPS: 264
+FPS: 291
+FPS: 279
+FPS: 272
+FPS: 271
+FPS: 275
+FPS: 272
+FPS: 272
+FPS: 271
+FPS: 272
+FPS: 278
+FPS: 279
+FPS: 275
+FPS: 272
+FPS: 267
+FPS: 270
+FPS: 270
+FPS: 274
+FPS: 267
+FPS: 268
+FPS: 271
+FPS: 275
+FPS: 271
+FPS: 276
+FPS: 278
+FPS: 276
+FPS: 277
+FPS: 275
+FPS: 262
+FPS: 269
+FPS: 274
+FPS: 271
+FPS: 269
+FPS: 274
+FPS: 274
+FPS: 276
+FPS: 273
+FPS: 271
+FPS: 273
+FPS: 273
+FPS: 267
+FPS: 271
+FPS: 275
+FPS: 273
+FPS: 277
+FPS: 275
+FPS: 272
+FPS: 273
+FPS: 289
+FPS: 272
+FPS: 274
+FPS: 276
+FPS: 278
+FPS: 280
+FPS: 278
+FPS: 267
+FPS: 275
+FPS: 275
+FPS: 275
+FPS: 278
+FPS: 268
+FPS: 276
+FPS: 274
+FPS: 271
+FPS: 278
+FPS: 274
+FPS: 268
+FPS: 273
+FPS: 272
+FPS: 271
+FPS: 274
+FPS: 264
+FPS: 274
+FPS: 274
+FPS: 274
+FPS: 294
+FPS: 275
+FPS: 278
+FPS: 272
+FPS: 273
+FPS: 275
+FPS: 271
+FPS: 273
+FPS: 265
+FPS: 270
+FPS: 273
+FPS: 273
+FPS: 273
+FPS: 274
+FPS: 271
+FPS: 272
+FPS: 270
+FPS: 270
+FPS: 273
+FPS: 270
+FPS: 277
+FPS: 273
+FPS: 275
+FPS: 278
+FPS: 274
+FPS: 272
+FPS: 273
+FPS: 266
+FPS: 275
+FPS: 278
+FPS: 269
+FPS: 275
+FPS: 276
+FPS: 276
+FPS: 274
+FPS: 272
+FPS: 274
+FPS: 267
+FPS: 271
+FPS: 283
+FPS: 273
+FPS: 264
+FPS: 266
+FPS: 270
+FPS: 265
+FPS: 276
+FPS: 274
+FPS: 280
+FPS: 275
+FPS: 272
+FPS: 274
+FPS: 273
+FPS: 271
+FPS: 277
+FPS: 280
+FPS: 269
+FPS: 275
+FPS: 277
+FPS: 276
+FPS: 282
+FPS: 271
+FPS: 275
+FPS: 272
+FPS: 270
+FPS: 270
+FPS: 271
+FPS: 269
+FPS: 271
+FPS: 276
+FPS: 272
+FPS: 272
+FPS: 270
+FPS: 270
+FPS: 276
+FPS: 277
+FPS: 269
+FPS: 272
+FPS: 276
+FPS: 281
+FPS: 280
+FPS: 275
+FPS: 274
+FPS: 272
+FPS: 278
+FPS: 278
+FPS: 274
+FPS: 273
+FPS: 271
+FPS: 269
+FPS: 272
+FPS: 269
+FPS: 275
+FPS: 279
+FPS: 278
+FPS: 276
+FPS: 276
+FPS: 271
+FPS: 272
+FPS: 274
+FPS: 271
+FPS: 272
+FPS: 272
+FPS: 274
+FPS: 277
+FPS: 271
+FPS: 277
+FPS: 277
+FPS: 274
+FPS: 274
+FPS: 273
+FPS: 277
+FPS: 271
+FPS: 274
+FPS: 279
+FPS: 271
+FPS: 272
+FPS: 273
+FPS: 275
+FPS: 272
+FPS: 273
+FPS: 277
+FPS: 275
+FPS: 280
+FPS: 277
+FPS: 271
+FPS: 279
+FPS: 278
+FPS: 271
+FPS: 272
+FPS: 279
+FPS: 279
+FPS: 272
+FPS: 273
+FPS: 279
+FPS: 275
+FPS: 279
+FPS: 280
+FPS: 278
+FPS: 274
+FPS: 270
+FPS: 277
+FPS: 278
+FPS: 277
+FPS: 274
+FPS: 278
+FPS: 277
+FPS: 276
+FPS: 273
+FPS: 273
+FPS: 273
+FPS: 275
+FPS: 281
+FPS: 280
+FPS: 272
+FPS: 275
+FPS: 281
+FPS: 277
+FPS: 273
+FPS: 275
+FPS: 272
+FPS: 273
+FPS: 271
+FPS: 273
+FPS: 275
+FPS: 278
+FPS: 278
+FPS: 279
+FPS: 279
+FPS: 275
+FPS: 271
+FPS: 273
+FPS: 270
+FPS: 272
+FPS: 279
+FPS: 279
+FPS: 276
+FPS: 272
+FPS: 274
+FPS: 273
+FPS: 272
+FPS: 273
+FPS: 279
+FPS: 276
+FPS: 278
+FPS: 276
+FPS: 278
+FPS: 280
+FPS: 270
+FPS: 271
+FPS: 272
+FPS: 272
+FPS: 272
+FPS: 270
+FPS: 268
+FPS: 276
+FPS: 278
+FPS: 279
+FPS: 277
+FPS: 277
+FPS: 274
+FPS: 274
+FPS: 271
+FPS: 274
+FPS: 273
+FPS: 272
+FPS: 272
+FPS: 272
+FPS: 272
+FPS: 271
+FPS: 272
+FPS: 273
+FPS: 272
+FPS: 267
+FPS: 270
+FPS: 272
+FPS: 273
+FPS: 276
+FPS: 276
+FPS: 273
+FPS: 273
+FPS: 272
+FPS: 273
+FPS: 272
+FPS: 272
+FPS: 273
+FPS: 274
+FPS: 272
+FPS: 278
+FPS: 272
+FPS: 269
+FPS: 270
+FPS: 275
+FPS: 277
+FPS: 270
+FPS: 277
+FPS: 273
+FPS: 270
+FPS: 270
+FPS: 271
+FPS: 272
+FPS: 270
+FPS: 277
+FPS: 276
+FPS: 272
+FPS: 271
+FPS: 269
+FPS: 272
+FPS: 274
+FPS: 291
+FPS: 271
+FPS: 275
+FPS: 284
+FPS: 271
+FPS: 271
+FPS: 272
+FPS: 271
+FPS: 277
+FPS: 275
+FPS: 274
+FPS: 276
+FPS: 276
+FPS: 271
+FPS: 272
+FPS: 277
+FPS: 274
+FPS: 278
+FPS: 278
+FPS: 273
+FPS: 279
+FPS: 277
+FPS: 278
+FPS: 274
+FPS: 273
+FPS: 272
+FPS: 282
+FPS: 278
+FPS: 276
+FPS: 274
+FPS: 273
+FPS: 271
+FPS: 274
+FPS: 273
+FPS: 268
+FPS: 272
+FPS: 274
+FPS: 278
+FPS: 275
+FPS: 274
+FPS: 278
+FPS: 272
+FPS: 272
+FPS: 273
+FPS: 272
+FPS: 275
+FPS: 280
+FPS: 279
+FPS: 273
+FPS: 272
+FPS: 278
+FPS: 274
+FPS: 277
+FPS: 275
+FPS: 273
+FPS: 272
+FPS: 273
+FPS: 274
+FPS: 274
+FPS: 278
+FPS: 280
+FPS: 274
+FPS: 272
+FPS: 273
+FPS: 278
+FPS: 279
+FPS: 279
+FPS: 271
+FPS: 280
+FPS: 279
+FPS: 271
+FPS: 276
+FPS: 271
+FPS: 271
+FPS: 273
+FPS: 273
+FPS: 276
+FPS: 273
+FPS: 273
+FPS: 278
+FPS: 279
+FPS: 278
+FPS: 280
+FPS: 275
+FPS: 274
+FPS: 277
+FPS: 279
+FPS: 268
+FPS: 271
+FPS: 280
+FPS: 279
+FPS: 277
+FPS: 279
+FPS: 278
+FPS: 278
+FPS: 276
+FPS: 278
+FPS: 278
+FPS: 271
+FPS: 272
+FPS: 272
+FPS: 273
+FPS: 276
+FPS: 278
+FPS: 278
+FPS: 280
+FPS: 280
+FPS: 279
+FPS: 279
+FPS: 279
+FPS: 280
+FPS: 280
+FPS: 277
+FPS: 276
+FPS: 277
+FPS: 279
+FPS: 279
+FPS: 282
+FPS: 275
+FPS: 276
+FPS: 273
+FPS: 272
+FPS: 268
+FPS: 272
+FPS: 273
+FPS: 274
+FPS: 272
+FPS: 270
+FPS: 272
+FPS: 276
+FPS: 277
+FPS: 275
+FPS: 272
+FPS: 270
+FPS: 274
+FPS: 274
+FPS: 271
+FPS: 273
+FPS: 276
+FPS: 281
+FPS: 276
+FPS: 273
+FPS: 271
+FPS: 277
+FPS: 275
+FPS: 272
+FPS: 273
+FPS: 273
+FPS: 281
+FPS: 275
+FPS: 278
+FPS: 278
+FPS: 278
+FPS: 280
+FPS: 279
+FPS: 281
+FPS: 278
+FPS: 278
+FPS: 277
+FPS: 276
+FPS: 273
+FPS: 273
+FPS: 273
+FPS: 271
+FPS: 273
+FPS: 274
+FPS: 272
+FPS: 271
+FPS: 275
+FPS: 272
+FPS: 270
+FPS: 274
+FPS: 273
+FPS: 272
+FPS: 273
+FPS: 274
+FPS: 279
+FPS: 279
+FPS: 276
+FPS: 273
+FPS: 276
+FPS: 274
+FPS: 273
+FPS: 279
+FPS: 279
+FPS: 281
+FPS: 277
+FPS: 274
+FPS: 279
+FPS: 279
+FPS: 276
+FPS: 277
+FPS: 281
+FPS: 296
+FPS: 280
+FPS: 270
+FPS: 277
+FPS: 279
+FPS: 282
+FPS: 279
+FPS: 277
+FPS: 272
+FPS: 281
+FPS: 276
+FPS: 273
+FPS: 277
+FPS: 270
+FPS: 276
+WindowManager::~WindowManager()
+WindowEdit::~WindowEdit()
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager: 'game\dance\right receptor 1x4.png' will be deleted.  It has 0 references.
+RageTextureManager: 'game\dance\up receptor 4x1.png' will be deleted.  It has 0 references.
+RageTextureManager: 'game\dance\down receptor 4x1.png' will be deleted.  It has 0 references.
+RageTextureManager: 'game\dance\left receptor 1x4.png' will be deleted.  It has 0 references.
+RageTextureManager: 'themes\default\graphics\edit snap indicator.png' will not be deleted.  It still has 1 references.
+RageTextureManager: 'themes\default\graphics\edit snap indicator.png' will be deleted.  It has 0 references.
+FontManager: 'themes\default\fonts\normal.font' will not be deleted.  It still has 6 references.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager::UnloadTexture(): tried to Unload a blank texture.
+RageTextureManager: 'game\dance\right note color part.png' will be deleted.  It has 0 references.
+RageTextureManager: 'game\dance\right note gray part 1x4.png' will be deleted.  It has 0 references.
+RageTextureManager: 'game\dance\up note color part.png' will be deleted.  It has 0 references.
+RageTextureManager: 'game\dance\up note gray part 4x1.png' will be deleted.  It has 0 references.
+RageTextureManager: 'game\dance\down note color part.png' will be deleted.  It has 0 references.
+RageTextureManager: 'game\dance\down note gray part 4x1.png' will be deleted.  It has 0 references.
+RageTextureManager: 'game\dance\left note color part.png' will be deleted.  It has 0 references.
+RageTextureManager: 'game\dance\left note gray part 1x4.png' will be deleted.  It has 0 references.
+RageTextureManager: 'themes\default\graphics\_shared background.png' will be deleted.  It has 0 references.
+FontManager: 'themes\default\fonts\normal.font' will not be deleted.  It still has 5 references.
+FontManager: 'themes\default\fonts\normal.font' will not be deleted.  It still has 4 references.
+FontManager: 'themes\default\fonts\normal.font' will not be deleted.  It still has 3 references.
+FontManager: 'themes\default\fonts\normal.font' will not be deleted.  It still has 2 references.
+FontManager: 'themes\default\fonts\normal.font' will not be deleted.  It still has 1 references.
+FontManager: 'themes\default\fonts\normal.font' will be deleted.  It has 0 references.
+RageTextureManager: 'themes\default\fonts\normal 16x16.png' will be deleted.  It has 0 references.

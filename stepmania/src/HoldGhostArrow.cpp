@@ -20,7 +20,7 @@ HoldGhostArrow::HoldGhostArrow()
 	m_bWasSteppedOnLastFrame = false;
 	m_fHeatLevel = 0;
 
-	LoadFromSpriteFile( THEME->GetPathTo(GRAPHIC_HOLD_GHOST_ARROW) );
+//	LoadFromSpriteFile( THEME->GetPathTo(GRAPHIC_HOLD_GHOST_ARROW) );
 	SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 	SetZoom( 1.1f );
 }

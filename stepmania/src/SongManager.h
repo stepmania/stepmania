@@ -40,6 +40,11 @@ public:
 
 
 	CString GetGroupBannerPath( CString sGroupName );
+	
+	void GetGroupNames( CStringArray &AddTo );
+
+	void GetSongsInGroup( const CString sGroupName, CArray<Song*,Song*> &AddTo );
+
 
 protected:
 	void LoadStepManiaSongDir( CString sDir );

@@ -77,7 +77,9 @@ void Actor::Draw()		// set the world matrix and calculate actor properties, the 
 			m_temp_colorDiffuse[i] = m_effect_colorDiffuse1*m_fPercentBetweenColors + m_effect_colorDiffuse2*(1.0f-m_fPercentBetweenColors);
 		break;
 	case glowing:
-		m_temp_colorAdd = m_effect_colorAdd1*m_fPercentBetweenColors + m_effect_colorAdd2*(1.0f-m_fPercentBetweenColors);
+		float fCurvedPercent;
+		fCurvedPercent = sinf( m_fPercentBetweenColors * D3DX_PI );
+		m_temp_colorAdd = m_effect_colorAdd1*fCurvedPercent + m_effect_colorAdd2*(1.0f-fCurvedPercent);
 		break;
 	case wagging:
 		m_temp_rotation.z = m_fWagRadians * sinf( 
@@ -223,25 +225,42 @@ void Actor::Update( float fDeltaTime )
 		}
 		else		// in the middle of tweening.  Recalcute the curent position.
 		{
-			float fPercentThroughTween = 1-(TS.m_fTimeLeftInTween / TS.m_fTweenTime);
+			const float fPercentThroughTween = 1-(TS.m_fTimeLeftInTween / TS.m_fTweenTime);
+
+			float fPercentAlongPath;
 
 			// distort the percentage if appropriate
 			switch( TS.m_TweenType )
 			{
+			case TWEEN_LINEAR:
+				fPercentAlongPath = fPercentThroughTween;
+				break;
 			case TWEEN_BIAS_BEGIN:
-				fPercentThroughTween = (float) sqrt( fPercentThroughTween );
+				fPercentAlongPath = (float) sqrt( fPercentThroughTween );
 				break;
 			case TWEEN_BIAS_END:
-				fPercentThroughTween = fPercentThroughTween * fPercentThroughTween;
+				fPercentAlongPath = fPercentThroughTween * fPercentThroughTween;
+				break;
+			case TWEEN_BOUNCE_BEGIN:
+				fPercentAlongPath = 1 - sinf( 1.1f + fPercentThroughTween*(D3DX_PI-1.1f) ) / 0.89f;
+				break;
+			case TWEEN_BOUNCE_END:
+				fPercentAlongPath = sinf( 1.1f + (1-fPercentThroughTween)*(D3DX_PI-1.1f) ) / 0.89f;
+				break;
+			case TWEEN_SPRING:
+				fPercentAlongPath = 1 - cosf( fPercentThroughTween*D3DX_PI*2.5f )/(1+fPercentThroughTween*3);
+				break;
+			default:
+				ASSERT( false );
 				break;
 			}
 
 
-			m_pos			= m_start_pos	  + (TS.m_end_pos		- m_start_pos	  )*fPercentThroughTween;
-			m_scale			= m_start_scale	  + (TS.m_end_scale		- m_start_scale	  )*fPercentThroughTween;
-			m_rotation		= m_start_rotation+ (TS.m_end_rotation	- m_start_rotation)*fPercentThroughTween;
-			for(int i=0; i<4; i++) m_colorDiffuse[i]	= m_start_colorDiffuse[i]*(1.0f-fPercentThroughTween) + TS.m_end_colorDiffuse[i]*(fPercentThroughTween);
-			m_colorAdd		= m_start_colorAdd    *(1.0f-fPercentThroughTween) + TS.m_end_colorAdd    *(fPercentThroughTween);
+			m_pos			= m_start_pos	  + (TS.m_end_pos		- m_start_pos	  )*fPercentAlongPath;
+			m_scale			= m_start_scale	  + (TS.m_end_scale		- m_start_scale	  )*fPercentAlongPath;
+			m_rotation		= m_start_rotation+ (TS.m_end_rotation	- m_start_rotation)*fPercentAlongPath;
+			for(int i=0; i<4; i++) m_colorDiffuse[i]	= m_start_colorDiffuse[i]*(1.0f-fPercentAlongPath) + TS.m_end_colorDiffuse[i]*(fPercentAlongPath);
+			m_colorAdd		= m_start_colorAdd    *(1.0f-fPercentAlongPath) + TS.m_end_colorAdd    *(fPercentAlongPath);
 		}
 		
 

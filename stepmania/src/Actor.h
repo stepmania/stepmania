@@ -29,7 +29,14 @@ public:
 
 
 
-	enum TweenType { TWEEN_LINEAR, TWEEN_BIAS_BEGIN, TWEEN_BIAS_END };
+	enum TweenType { 
+		TWEEN_LINEAR, 
+		TWEEN_BIAS_BEGIN, 
+		TWEEN_BIAS_END, 
+		TWEEN_BOUNCE_BEGIN, 
+		TWEEN_BOUNCE_END,
+		TWEEN_SPRING,
+	};
 	enum Effect { no_effect,
 				blinking,	camelion,   glowing,
 				wagging,	spinning,

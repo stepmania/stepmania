@@ -1,8 +1,8 @@
 /*
 -----------------------------------------------------------------------------
- File: TransitionKeepAlive.cpp
+ Class: TransitionKeepAlive
 
- Desc: Fades out or in.
+ Desc: The transition between menu screens. "Let's Move On"
 
  Copyright (c) 2001 Chris Danford.  All rights reserved.
 -----------------------------------------------------------------------------

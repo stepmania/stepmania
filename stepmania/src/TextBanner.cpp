@@ -51,7 +51,7 @@ bool TextBanner::LoadFromSong( Song* pSong )
 
 	m_textTitle.SetText( sTitle );
 	m_textSubTitle.SetText( sSubTitle );
-	m_textArtist.SetText( "/" + pSong->GetArtist() );
+	m_textArtist.SetText( "/ " + pSong->GetArtist() );
 
 	
 	float fTitleZoom, fSubTitleZoom, fArtistZoom;
