@@ -700,8 +700,8 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 
 	Notes* m_pNotes = GAMESTATE->m_pCurNotes[pn];
 	
-	if( m_pNotes )
-		m_HighScore[pn].SetScore( (float)m_pNotes->m_iTopScore );
+	if( m_pNotes && SONGMAN->IsUsingMemoryCard(pn) )
+		m_HighScore[pn].SetScore( (float)m_pNotes->m_MemCardScores[pn].iScore );
 
 	m_DifficultyIcon[pn].SetFromNotes( pn, pNotes );
 	if( pNotes && pNotes->IsAutogen() )

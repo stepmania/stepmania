@@ -45,12 +45,15 @@ Notes::Notes()
 		m_fRadarValues[i] = -1; /* unknown */
 
 	m_iNumTimesPlayed = 0;
-	m_iMaxCombo = 0;
-	m_iTopScore = 0;
-	m_TopGrade = GRADE_NO_DATA;
 	notes = NULL;
 	notes_comp = NULL;
 	parent = NULL;
+
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_MemCardScores[p].grade = GRADE_NO_DATA;
+		m_MemCardScores[p].iScore = 0;
+	}
 }
 
 Notes::~Notes()
@@ -310,3 +313,13 @@ void Notes::SetRadarValue(int r, float val)
 	m_fRadarValues[r] = val;
 }
 
+bool Notes::AddMemCardScore( PlayerNumber pn, Grade grade, int iScore )	// return true if new high score
+{
+	if( iScore > m_MemCardScores[pn].iScore )
+	{
+		m_MemCardScores[pn].iScore = iScore;
+		m_MemCardScores[pn].grade = grade;
+		return true;
+	}
+	return false;
+}

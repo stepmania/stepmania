@@ -48,11 +48,19 @@ public:
 	void AutogenFrom( Notes *parent, NotesType ntTo );
 	RageColor		GetColor() const;	// a function of difficulty
 	
-	// Statistics
-	Grade m_TopGrade;
-	int m_iTopScore;
-	int m_iMaxCombo;
+
+	// High scores;
 	int m_iNumTimesPlayed;
+
+	struct HighScore
+	{
+		Grade grade;
+		int iScore;
+	};
+	HighScore m_MemCardScores[NUM_PLAYERS];
+
+	bool AddMemCardScore( PlayerNumber pn, Grade grade, int iScore );	// return true if new high score
+
 
 	void TidyUpData();
 

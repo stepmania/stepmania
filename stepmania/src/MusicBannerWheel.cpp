@@ -338,7 +338,7 @@ void MusicBannerWheel::BannersLeft()
 void MusicBannerWheel::BannersRight()
 {
 	StopBouncing();
-	if(currentPos>=arraySongs.size()-1)
+	if((unsigned)currentPos>=arraySongs.size()-1)
 		currentPos=0;
 	else
 		currentPos++;

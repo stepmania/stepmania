@@ -172,6 +172,18 @@ inline int HoldNoteScoreToDancePoints( HoldNoteScore hns )
 	}
 }
 
+
+//
+// High Score types
+//
+enum SongHighScoreCategory
+{
+	CATEGORY_A,	// 1-3 meter per song avg.
+	CATEGORY_B,	// 4-6 meter per song avg.
+	CATEGORY_C,	// 7-9 meter per song avg.
+	CATEGORY_D,	// 10+ meter per song avg.
+	NUM_HIGH_SCORE_CATEGORIES
+};
 const int NUM_HIGH_SCORE_LINES	= 5;
 
 #endif

@@ -897,7 +897,7 @@ void Song::AutoGen( NotesType ntTo, NotesType ntFrom )
 	}
 }
 
-Grade Song::GetGradeForDifficulty( const StyleDef *st, int p, Difficulty dc ) const
+Grade Song::GetGradeForDifficulty( const StyleDef *st, PlayerNumber pn, Difficulty dc ) const
 {
 	// return max grade of notes in difficulty class
 	vector<Notes*> aNotes;
@@ -910,7 +910,7 @@ Grade Song::GetGradeForDifficulty( const StyleDef *st, int p, Difficulty dc ) co
 	{
 		const Notes* pNotes = aNotes[i];
 		if( pNotes->GetDifficulty() == dc )
-			grade = max( grade, pNotes->m_TopGrade );
+			grade = max( grade, pNotes->m_MemCardScores[pn].grade );
 	}
 	return grade;
 }

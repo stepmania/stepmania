@@ -198,7 +198,7 @@ public:
 	int GetNumTimesPlayed() const;
 	bool IsNew() const;
 	bool IsEasy( NotesType nt ) const;
-	Grade GetGradeForDifficulty( const StyleDef *s, int p, Difficulty dc ) const;
+	Grade GetGradeForDifficulty( const StyleDef *s, PlayerNumber pn, Difficulty dc ) const;
 	bool NormallyDisplayed() const;
 	bool RouletteDisplayed() const;
 };

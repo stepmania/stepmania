@@ -28,7 +28,9 @@
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
 
-const CString g_sStatisticsFileName = "statistics.ini";
+const CString CATEGORY_TOP_SCORE_FILE = "CategoryTopScores.dat";
+const CString COURSE_TOP_SCORE_FILE = "CourseTopScores.dat";
+
 
 #define NUM_GROUP_COLORS	THEME->GetMetricI("SongManager","NumGroupColors")
 #define GROUP_COLOR( i )	THEME->GetMetricC("SongManager",ssprintf("GroupColor%d",i+1))
@@ -45,14 +47,14 @@ SongManager::SongManager( LoadingWindow *ld )
 	g_ExtraColor = EXTRA_COLOR;
 
 	InitSongArrayFromDisk( ld );
-	ReadStatisticsFromDisk();
+	InitMachineScoresFromDisk();
 
 	InitCoursesFromDisk();
 }
 
 SongManager::~SongManager()
 {
-	SaveStatisticsToDisk();
+	SaveMachineScoresToDisk();
 	FreeSongArray();
 }
 
@@ -178,64 +180,6 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 	}
 }
 
-/*
-
-void SongManager::LoadDWISongDir( CString DWIHome )
-{
-	// trim off the trailing slash if any
-	TrimRight( DWIHome, "/\\" );
-
-	// this has to be fixed, DWI doesn't put files
-	// in it's DWI folder.  It puts them in Songs/<MIX>/<SONGNAME>
-	// so what we have to do, is go to the DWI directory (which will
-	// be changeable by the user so they don't have to copy everything
-	// over and have two copies of everything
-	// Find all directories in "DWIs" folder
-	CStringArray arrayDirs;
-	CStringArray MixDirs;
-	// now we've got the listing of the mix directories
-	// and we need to use THOSE directories to find our
-	// dwis
-	GetDirListing( ssprintf("%s\\Songs\\*.*", DWIHome ), MixDirs.GetString(), true );
-	SortCStringArray( MixDirs );
-	
-	for( unsigned i=0; i< MixDirs.size(); i++ )	// for each dir in /Songs/
-	{
-		// the dir name will most likely be something like
-		// Dance Dance Revolution 4th Mix, etc.
-		CString sDirName = MixDirs[i];
-		sDirName.MakeLower();
-		if( sDirName == "cvs" )	// ignore the directory called "CVS"
-			continue;
-		GetDirListing( ssprintf("%s\\Songs\\%s\\*.*", DWIHome.GetString(), MixDirs[i].GetString()), arrayDirs,  true);
-		SortCStringArray(arrayDirs, true);
-
-		for( unsigned b = 0; b < arrayDirs.size(); b++)
-		{
-			// Find all DWIs in this directory
-			CStringArray arrayDWIFiles;
-			GetDirListing( ssprintf("%s\\Songs\\%s\\%s\\*.dwi", DWIHome.GetString(), MixDirs[i].GetString(), arrayDirs[b].GetString()), arrayDWIFiles, false);
-			SortCStringArray( arrayDWIFiles );
-
-			for( unsigned j=0; j< arrayDWIFiles.size(); j++ )	// for each DWI file
-			{
-				CString sDWIFileName = arrayDWIFiles[j];
-				sDWIFileName.MakeLower();
-
-				// load DWIs from the sub dirs
-				DWILoader ld;
-				Song* pNewSong = new Song;
-				ld.LoadFromDWIFile(
-					ssprintf("%s\\Songs\\%s\\%s\\%s", DWIHome.GetString(), MixDirs[i].GetString(), arrayDirs[b].GetString(), sDWIFileName.GetString()),
-					*pNewSong);
-				m_pSongs.push_back( pNewSong );
-			}
-		}
-	}
-}
-*/
-
-
 void SongManager::FreeSongArray()
 {
 	for( unsigned i=0; i<m_pSongs.size(); i++ )
@@ -254,159 +198,112 @@ void SongManager::ReloadSongArray()
 
 
 
-void SongManager::ReadStatisticsFromDisk()
+void SongManager::InitMachineScoresFromDisk()
 {
-	IniFile ini;
-	ini.SetPath( g_sStatisticsFileName );
-	if( !ini.ReadFile() ) {
-		LOG->Trace( "WARNING: Could not read config file '%s'.", g_sStatisticsFileName.GetString() );
-		return;		// load nothing
-	}
-
-
-	// load song statistics
-	const IniFile::key *pSongsKey = ini.GetKey( "Statistics" );
-	if( pSongsKey )
-	{
-		for( IniFile::key::const_iterator i = pSongsKey->begin(); i != pSongsKey->end(); ++i )
-		{
-			CString name = i->first;
-			CString value = i->second;
-
-			// Each value has the format "SongName::StepsName=TimesPlayed::TopGrade::TopScore::MaxCombo".
-			char szSongDir[256];
-			char szNotesType[256];
-			char szNotesDescription[256];
-			int iRetVal;
-			unsigned i;
-
-			// Parse for Song name and Notes name
-			iRetVal = sscanf( name.c_str(), "%[^:]::%[^:]::%[^\n]", szSongDir, szNotesType, szNotesDescription );
-			if( iRetVal != 3 )
-				continue;	// this line doesn't match what is expected
 	
-			NotesType notesType = GameManager::StringToNotesType( szNotesType );
-			
-			// Search for the corresponding Song pointer.
-			Song* pSong = NULL;
-			for( i=0; i<m_pSongs.size(); i++ )
-			{
-				if( m_pSongs[i]->GetSongDir() == szSongDir )	// match!
-				{
-					pSong = m_pSongs[i];
-					break;
-				}
-			}
-			if( pSong == NULL )	// didn't find a match
-				continue;	// skip this entry
-
-
-			// Search for the corresponding Notes pointer.
-			Notes* pNotes = NULL;
-			for( i=0; i<pSong->m_apNotes.size(); i++ )
-			{
-				if( pSong->m_apNotes[i]->m_NotesType == notesType  &&
-					pSong->m_apNotes[i]->GetDescription() == szNotesDescription )	// match!
-				{
-					pNotes = pSong->m_apNotes[i];
-					break;
-				}
-			}
-			if( pNotes == NULL )	// didn't find a match
-				continue;	// skip this entry
-
-
-			// Parse the Notes statistics.
-			char szGradeLetters[10];	// longest possible string is "AAA"
-
-			iRetVal = sscanf( 
-				value.c_str(), 
-				"%d::%[^:]::%d::%d", 
-				&pNotes->m_iNumTimesPlayed,
-				szGradeLetters,
-				&pNotes->m_iTopScore,
-				&pNotes->m_iMaxCombo
-			);
-			if( iRetVal != 4 )
-				continue;
-
-			pNotes->m_TopGrade = StringToGrade( szGradeLetters );
-		}
-	}
-
-	// load course statistics
-	const IniFile::key *pCoursesKey = ini.GetKey( "Courses" );
-	if( pCoursesKey )
+	// Init category top scores
 	{
-		for( IniFile::key::const_iterator i = pCoursesKey->begin(); i != pCoursesKey->end(); ++i )
-		{
-			CString name = i->first;
-			CString value = i->second;
-
-			// Each value has the format "CoursePath,Difficulty,Slot=DancePoints,SurviveTime,sName"
-
-			// Parse left hand side
-			char szCoursePath[256];
-			Difficulty difficulty;
-			int iSlot;
-			int iDancePoints;
-			float fSurviveTime;
-			char szName[256];
-
-			int iRetVal;
-			iRetVal = sscanf( name.c_str(), "%[^,],%d,%d", szCoursePath, &difficulty, &iSlot );
-			if( iRetVal != 3 )
-				continue;	// line doesn't match what is expected
-			iRetVal = sscanf( value.c_str(), "%d,%f,%d[^\n]", &iDancePoints, &fSurviveTime, &szName );
-			if( iRetVal != 3 )
-				continue;	// line doesn't match what is expected
-
-			
-			// Search for the corresponding Course pointer.
-			Course* pCourse = SONGMAN->GetCourseFromPath( szCoursePath );
-			if( pCourse == NULL )	// didn't find a match
-				continue;	// skip this entry
-
-//			pCourse->m_TopGrade = StringToGrade( szGradeLetters );
-		}
+		for( int i=0; i<NUM_STYLES; i++ )
+			for( int j=0; j<NUM_HIGH_SCORE_CATEGORIES; j++ )
+				for( int k=0; k<NUM_HIGH_SCORE_LINES; k++ )
+				{
+					m_MachineScores[i][j][k].iScore = 573000;
+					m_MachineScores[i][j][k].sName = "STEP";
+				}
 	}
 
+	// Read category top scores
+	{
+		FILE* fp = fopen( CATEGORY_TOP_SCORE_FILE, "r" );
 
+		for( int i=0; i<NUM_STYLES; i++ )
+			for( int j=0; j<NUM_HIGH_SCORE_CATEGORIES; j++ )
+				for( int k=0; k<NUM_HIGH_SCORE_LINES; k++ )
+					if( fp && !feof(fp) )
+					{
+						char szName[256];
+						fscanf(fp, "%d %[^\n]\n", &m_MachineScores[i][j][k].iScore, szName);
+						m_MachineScores[i][j][k].sName = szName;
+					}
+
+		if( fp )
+			fclose(fp);
+	}
+
+	// Read course top scores
+	{
+		FILE* fp = fopen( COURSE_TOP_SCORE_FILE, "r" );
+
+		while( fp && !feof(fp) )
+		{
+			char szPath[256];
+			fscanf(fp, "%s\n", szPath);
+			Course* pCourse = GetCourseFromPath( szPath );
+			
+			for( int i=0; i<NUM_STYLES; i++ )
+				for( int j=0; j<NUM_HIGH_SCORE_CATEGORIES; j++ )
+					for( int k=0; k<NUM_HIGH_SCORE_LINES; k++ )
+						if( fp && !feof(fp) )
+						{
+							int iDancePoints;
+							float fSurviveTime;
+							char szName[256];
+							fscanf(fp, "%d %f %[^\n]\n", &iDancePoints, &fSurviveTime, szName);
+							if( pCourse )
+							{
+								pCourse->m_MachineScores[i][j][k].iDancePoints = iDancePoints;
+								pCourse->m_MachineScores[i][j][k].fSurviveTime = fSurviveTime;
+								pCourse->m_MachineScores[i][j][k].sName = szName;
+							}
+						}
+		}
+
+		if( fp )
+			fclose(fp);
+	}
 }
 
-void SongManager::SaveStatisticsToDisk()
+void SongManager::SaveMachineScoresToDisk()
 {
-	IniFile ini;
-	ini.SetPath( g_sStatisticsFileName );
-
-	// save song statistics
-	for( unsigned i=0; i<m_pSongs.size(); i++ )		// for each Song
+	// Write category top scores
 	{
-		Song* pSong = m_pSongs[i];
+		FILE* fp = fopen( CATEGORY_TOP_SCORE_FILE, "w" );
 
-		for( unsigned j=0; j<pSong->m_apNotes.size(); j++ )		// for each Notes
-		{
-			Notes* pNotes = pSong->m_apNotes[j];
+		for( int i=0; i<NUM_STYLES; i++ )
+			for( int j=0; j<NUM_HIGH_SCORE_CATEGORIES; j++ )
+				for( int k=0; k<NUM_HIGH_SCORE_LINES; k++ )
+					if( fp )
+						fprintf(fp, "%d %s\n", m_MachineScores[i][j][k].iScore, m_MachineScores[i][j][k].sName.c_str());
 
-			if( pNotes->m_TopGrade == GRADE_NO_DATA )
-				continue;		// skip
-
-			// Each value has the format "SongName::NotesName=TimesPlayed::TopGrade::TopScore::MaxCombo".
-
-			CString sName = ssprintf( "%s::%s::%s", pSong->GetSongDir().GetString(), GameManager::NotesTypeToString(pNotes->m_NotesType).GetString(), pNotes->GetDescription().GetString() );
-			CString sValue = ssprintf( 
-				"%d::%s::%d::%d",
-				pNotes->m_iNumTimesPlayed,
-				GradeToString( pNotes->m_TopGrade ).GetString(),
-				pNotes->m_iTopScore, 
-				pNotes->m_iMaxCombo
-			);
-
-			ini.SetValue( "Statistics", sName, sValue );
-		}
+		if( fp )
+			fclose(fp);
 	}
 
-	ini.WriteFile();
+	// Write course top scores
+	{
+		FILE* fp = fopen( COURSE_TOP_SCORE_FILE, "w" );
+
+		if( fp )
+		{
+			for( unsigned i=0; i<m_pCourses.size(); i++ )	// foreach course
+			{
+				Course* pCourse = m_pCourses[i];
+
+				fprintf(fp, "%s\n", pCourse->m_sPath.c_str());
+				
+				for( int i=0; i<NUM_STYLES; i++ )
+					for( int j=0; j<NUM_DIFFICULTIES; j++ )
+						for( int k=0; k<NUM_HIGH_SCORE_LINES; k++ )
+							fprintf(fp, "%d %f %s\n", 
+								pCourse->m_MachineScores[i][j][k].iDancePoints, 
+								pCourse->m_MachineScores[i][j][k].fSurviveTime, 
+								pCourse->m_MachineScores[i][j][k].sName.c_str());
+			}
+		}
+
+		if( fp )
+			fclose(fp);
+	}
 }
 
 
@@ -495,10 +392,12 @@ void SongManager::InitCoursesFromDisk()
 	GetDirListing( "Courses\\*.crs", saCourseFiles );
 	for( unsigned i=0; i<saCourseFiles.size(); i++ )
 	{
-		Course course;
-		course.LoadFromCRSFile( "Courses\\" + saCourseFiles[i], m_pSongs );
-		if( course.GetNumStages() > 0 )
-			m_Courses.push_back( course );
+		Course* pCourse = new Course;
+		pCourse->LoadFromCRSFile( "Courses\\" + saCourseFiles[i], m_pSongs );
+		if( pCourse->GetNumStages() > 0 )
+			m_pCourses.push_back( pCourse );
+		else
+			delete pCourse;
 	}
 	
 	//
@@ -515,18 +414,22 @@ void SongManager::InitCoursesFromDisk()
 
 		for( Difficulty dc=DIFFICULTY_EASY; dc<=DIFFICULTY_HARD; dc=Difficulty(dc+1) )	// foreach Difficulty
 		{
-			Course course;
-			course.CreateEndlessCourseFromGroupAndDifficulty( sGroupName, dc, apGroupSongs );
+			Course* pCourse = new Course;
+			pCourse->CreateEndlessCourseFromGroupAndDifficulty( sGroupName, dc, apGroupSongs );
 
-			if( course.GetNumStages() > 0 )
-				m_Courses.push_back( course );
+			if( pCourse->GetNumStages() > 0 )
+				m_pCourses.push_back( pCourse );
+			else
+				delete pCourse;
 		}
 	}
 }
 
-void SongManager::ReloadCourses()
+void SongManager::FreeCourses()
 {
-
+	for( unsigned i=0; i<m_pCourses.size(); i++ )
+		delete m_pCourses[i];
+	m_pCourses.clear();
 }
 
 /* Called periodically to wipe out cached NoteData.  This is called when we change
@@ -545,37 +448,37 @@ void SongManager::CleanCourses()
 void SongManager::GetNonstopCourses( vector<Course*> AddTo )
 {
 	PlayerOptions po;
-	for( unsigned i=0; i<m_Courses.size(); i++ )
+	for( unsigned i=0; i<m_pCourses.size(); i++ )
 	{
-		if( m_Courses[i].m_bRepeat )
+		if( m_pCourses[i]->m_bRepeat )
 			continue;	// skip
-		if( m_Courses[i].m_iLives > 0 )	// use battery life meter
+		if( m_pCourses[i]->m_iLives > 0 )	// use battery life meter
 			continue;
 		
-		AddTo.push_back( &m_Courses[i] );
+		AddTo.push_back( m_pCourses[i] );
 	}
 }
 
 void SongManager::GetOniCourses( vector<Course*> AddTo )
 {
 	PlayerOptions po;
-	for( unsigned i=0; i<m_Courses.size(); i++ )
+	for( unsigned i=0; i<m_pCourses.size(); i++ )
 	{
-		if( m_Courses[i].m_bRepeat )
+		if( m_pCourses[i]->m_bRepeat )
 			continue;	// skip
-		if( m_Courses[i].m_iLives <= 0 )	// use bar life meter
+		if( m_pCourses[i]->m_iLives <= 0 )	// use bar life meter
 			continue;
 		
-		AddTo.push_back( &m_Courses[i] );
+		AddTo.push_back( m_pCourses[i] );
 	}
 }
 
 void SongManager::GetEndlessCourses( vector<Course*> AddTo )
 {
-	for( unsigned i=0; i<m_Courses.size(); i++ )
+	for( unsigned i=0; i<m_pCourses.size(); i++ )
 	{
-		if( m_Courses[i].m_bRepeat )
-			AddTo.push_back( &m_Courses[i] );
+		if( m_pCourses[i]->m_bRepeat )
+			AddTo.push_back( m_pCourses[i] );
 	}	
 }
 
@@ -699,9 +602,14 @@ Song* SongManager::GetSongFromDir( CString sDir )
 
 Course* SongManager::GetCourseFromPath( CString sPath )
 {
-	for( unsigned int i=0; i<m_Courses.size(); i++ )
-		if( sPath.CompareNoCase(m_Courses[i].m_sPath) == 0 )
-			return &m_Courses[i];
+	for( unsigned int i=0; i<m_pCourses.size(); i++ )
+		if( sPath.CompareNoCase(m_pCourses[i]->m_sPath) == 0 )
+			return m_pCourses[i];
 
 	return NULL;
+}
+
+bool SongManager::IsUsingMemoryCard( PlayerNumber pn )
+{
+	return true;
 }

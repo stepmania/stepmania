@@ -294,25 +294,12 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		switch( m_ResultMode )
 		{
 		case RM_ARCADE_STAGE:
-
 			Notes* pNotes = GAMESTATE->m_pCurNotes[p];
-			pNotes->m_iNumTimesPlayed++;
-
-			if( iMaxCombo[p] > pNotes->m_iMaxCombo )
-				pNotes->m_iMaxCombo = iMaxCombo[p];
-
-			if( fScore[p] > pNotes->m_iTopScore )
-			{
-				pNotes->m_iTopScore = (int)fScore[p];
-				bNewRecord[p] = true;
-			}
-
-			if( grade[p] > pNotes->m_TopGrade )
-				pNotes->m_TopGrade = grade[p];
+			if( SONGMAN->IsUsingMemoryCard((PlayerNumber)p) )
+				bNewRecord[p] = pNotes->AddMemCardScore( (PlayerNumber)p, grade[p], (int)fScore[p] );
 			break;
 		}
 	}
-	SONGMAN->SaveStatisticsToDisk();
 
 
 	

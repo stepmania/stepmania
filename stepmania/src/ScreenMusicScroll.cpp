@@ -238,6 +238,7 @@ void ScreenMusicScroll::HandleScreenMessage( const ScreenMessage SM )
 		m_Fade.CloseWipingRight( SM_GoToNextScreen );
 		break;
 	case SM_GoToNextScreen:
+		SONGMAN->SaveMachineScoresToDisk();
 		SCREENMAN->SetNewScreen( "ScreenCompany" );
 		break;
 	}

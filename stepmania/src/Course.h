@@ -12,6 +12,7 @@
 */
 
 #include "GameConstantsAndTypes.h"
+#include "Style.h"	// for NUM_STYLES
 
 struct PlayerOptions;
 struct SongOptions;
@@ -20,8 +21,6 @@ struct Notes;
 
 class Course
 {
-	int			m_iStages;
-
 	struct course_entry {
 		CString description;	// the Notes description
 		CString modifiers; // set player and song options from these
@@ -59,14 +58,16 @@ public:
 	RageColor	GetColor();
 
 	// Statistics
+	int m_iNumTimesPlayed;
+
 	struct HighScore
 	{
 		int iDancePoints;
 		float fSurviveTime;
 		CString	sName;
 	};
-	HighScore m_MachineScores[NUM_DIFFICULTIES][NUM_HIGH_SCORE_LINES];	// sorted highest to lowest by iDancePoints
-	HighScore m_MemCardScores[NUM_DIFFICULTIES][NUM_PLAYERS];
+	HighScore m_MachineScores[NUM_STYLES][NUM_DIFFICULTIES][NUM_HIGH_SCORE_LINES];	// sorted highest to lowest by iDancePoints
+	HighScore m_MemCardScores[NUM_STYLES][NUM_DIFFICULTIES][NUM_PLAYERS];
 
 private:
 	void Shuffle();

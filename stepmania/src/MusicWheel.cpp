@@ -185,30 +185,21 @@ void WheelItemDisplay::RefreshGrades()
 	// Refresh Grades
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
+		if( !data->m_pSong  ||	// this isn't a song display
+			!GAMESTATE->IsPlayerEnabled(p)  ||
+			!SONGMAN->IsUsingMemoryCard((PlayerNumber)p) )
 		{
 			m_GradeDisplay[p].SetDiffuse( RageColor(1,1,1,0) );
 			continue;
 		}
 
-		if( data->m_pSong )	// this is a song display
-		{
-			if( data->m_pSong == GAMESTATE->m_pCurSong )
-			{
-				Notes* pNotes = GAMESTATE->m_pCurNotes[p];
-				m_GradeDisplay[p].SetGrade( (PlayerNumber)p, pNotes ? pNotes->m_TopGrade : GRADE_NO_DATA );
-			}
-			else
-			{
-				const Difficulty dc = GAMESTATE->m_PreferredDifficulty[p];
-				const Grade grade = data->m_pSong->GetGradeForDifficulty( GAMESTATE->GetCurrentStyleDef(), p, dc );
-				m_GradeDisplay[p].SetGrade( (PlayerNumber)p, grade );
-			}
-		}
-		else	// this is a section display
-		{
-			m_GradeDisplay[p].SetGrade( (PlayerNumber)p, GRADE_NO_DATA );
-		}
+		Difficulty dc;
+		if( GAMESTATE->m_pCurNotes[p] )
+			dc = GAMESTATE->m_pCurNotes[p]->GetDifficulty();
+		else
+			dc = GAMESTATE->m_PreferredDifficulty[p];
+		const Grade grade = data->m_pSong->GetGradeForDifficulty( GAMESTATE->GetCurrentStyleDef(), (PlayerNumber)p, dc );
+		m_GradeDisplay[p].SetGrade( (PlayerNumber)p, grade );
 	}
 
 }

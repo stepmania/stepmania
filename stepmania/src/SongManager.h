@@ -32,9 +32,6 @@ public:
 	void FreeSongArray();
 	void ReloadSongArray();
 
-	void ReadStatisticsFromDisk();
-	void SaveStatisticsToDisk();
-
 
 	CString GetGroupBannerPath( CString sGroupName );
 	void GetGroupNames( CStringArray &AddTo );
@@ -43,30 +40,48 @@ public:
 
 	static CString ShortenGroupName( const CString &sOrigGroupName );
 
-	void GetSongsInGroup( const CString sGroupName, vector<Song*> &AddTo );
 
 
 	//
 	// Courses for Nonstop, Oni, and Endless
 	//
-	vector<Course> m_Courses;
+	vector<Course*> m_pCourses;
 
 	void InitCoursesFromDisk();
-	void ReloadCourses();
+	void FreeCourses();
 	void CleanCourses();
+
+
+
+	// Lookup
+	void GetSongsInGroup( const CString sGroupName, vector<Song*> &AddTo );
+	Song* GetRandomSong();
 
 	void GetNonstopCourses( vector<Course*> AddTo );	// add to if life meter type is BAR.
 	void GetOniCourses( vector<Course*> AddTo );		// add to if life meter type is BATTERY.
 	void GetEndlessCourses( vector<Course*> AddTo );	// add to if set to REPEAT.
 
-
 	void GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, const StyleDef *s, 
 		Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out );
 
-	Song* GetRandomSong();
-
 	Song* GetSongFromDir( CString sDir );
 	Course* GetCourseFromPath( CString sPath );	// path to .crs file, or path to song group dir
+
+
+	//
+	// High scores
+	//
+	struct HighScore
+	{
+		int iScore;
+		CString	sName;
+	};
+	HighScore m_MachineScores[NUM_STYLES][NUM_HIGH_SCORE_CATEGORIES][NUM_HIGH_SCORE_LINES];
+
+	void InitMachineScoresFromDisk();
+	void SaveMachineScoresToDisk();
+
+	bool IsUsingMemoryCard( PlayerNumber pn );
 
 protected:
 	void LoadStepManiaSongDir( CString sDir, LoadingWindow *ld );

@@ -29,6 +29,29 @@ Course::Course()
 	m_bRandomize = false;
 	m_iLives = 4;
 	m_iExtra = 0;
+
+
+	//
+	// Init high scores
+	//
+	unsigned i, j, k;
+	for( i=0; i<NUM_STYLES; i++ )
+		for( j=0; j<NUM_DIFFICULTIES; j++ )
+			for( k=0; k<NUM_HIGH_SCORE_LINES; k++ )
+			{
+				m_MachineScores[i][j][k].iDancePoints = 0;
+				m_MachineScores[i][j][k].fSurviveTime = 0;
+				m_MachineScores[i][j][k].sName = "STEP";
+			}
+
+	for( i=0; i<NUM_STYLES; i++ )
+		for( j=0; j<NUM_DIFFICULTIES; j++ )
+			for( k=0; k<NUM_PLAYERS; k++ )
+			{
+				m_MemCardScores[i][j][k].iDancePoints = 0;
+				m_MemCardScores[i][j][k].fSurviveTime = 0;
+				m_MemCardScores[i][j][k].sName = "STEP";
+			}
 }
 
 void Course::LoadFromCRSFile( CString sPath, vector<Song*> &apSongs )
