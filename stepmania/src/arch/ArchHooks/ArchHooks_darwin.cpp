@@ -15,6 +15,7 @@
 #include "RageTimer.h"
 #include "archutils/Darwin/Crash.h"
 #include "archutils/Unix/CrashHandler.h"
+#include "archutils/Unix/SignalHandler.h"
 #include "StepMania.h"
 #define Random Random_ // work around namespace pollution
 #include <Carbon/Carbon.h>
@@ -49,10 +50,22 @@ SInt16 ShowAlert(int type, CFStringRef message, CFStringRef OK, CFStringRef canc
     return result;
 }
 
+/* The signal handler is only used to trap SIGABRT; for other signals, just return
+ * and the exceptoin handler will take care of it. */
+static void DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
+{
+	if( signal != SIGABRT )
+		return;
+
+	CrashSignalHandler( signal, si, uc );
+	/* not reached */
+}
+
 ArchHooks_darwin::ArchHooks_darwin()
 {
     CrashHandlerHandleArgs(g_argc, g_argv);
     InstallExceptionHandler(CrashExceptionHandler);
+    SignalHandler::OnClose( DoCrashSignalHandler );
     TimeCritMutex = new RageMutex("TimeCritMutex");
 }
 
