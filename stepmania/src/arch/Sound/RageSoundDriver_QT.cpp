@@ -28,14 +28,10 @@ const unsigned freq = 44100;
 const unsigned buffersize = samples * samplesize;
 const unsigned initialSounds = 10;
 
-#if defined(DEBUG)
 #define TEST_ERR(err, func) \
 CHECKPOINT; \
 if (__builtin_expect(err, noErr)) \
 RageException::Throw(#func " failed with error: %d at %s:%d", err, __FILE__, __LINE__)
-#else
-#define TEST_ERR(err, func) CHECKPOINT
-#endif
 
 typedef struct soundInfo
 {
@@ -329,6 +325,8 @@ static void CallBack(QTCallBack cb, long refCon)
     if (!cb)
     {
         StartMovie(movie);
+        err = GetMoviesError();
+        TEST_ERR(err, StartMovie);
         cb = NewCallBack(GetMovieTimeBase(movie), callBackAtTime);
         timeToCall = halfsamples;
     }
@@ -358,7 +356,8 @@ RageSound_QT::RageSound_QT()
     track = NewMovieTrack(movie, 0, 0, kFullVolume);
     err = GetMoviesError();
     TEST_ERR(err, NewMovieTrack);    
-    
+
+    sndDescHdl = (SoundDescriptionHandle)NewHandleClear(sizeof(SoundDescription));
     HLock(Handle(sndDescHdl));
     err = MemError();
     TEST_ERR(err, HLock);
