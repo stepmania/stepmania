@@ -127,7 +127,6 @@ struct PlayerOptions
 	bool		m_bProTiming;
 	ScoreDisplay m_ScoreDisplay;
 
-	CString		m_sPositioning;	/* The current positioning mode, or empty to use the normal positions. */
 	CString		m_sNoteSkin;
 
 	void NextAccel();

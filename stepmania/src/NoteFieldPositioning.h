@@ -12,16 +12,9 @@ struct NoteFieldMode
 {
 	NoteFieldMode();
 	bool MatchesCurrentGame() const;
-	void Load(const XNode* pNode, int pn = -1);
 
 	void BeginDrawTrack(int tn);
 	void EndDrawTrack(int tn);
-
-	/* Visual name. */
-	CString m_Name;
-
-	/* Unique ID from the INI. */
-	CString m_Id;
 
 	float m_fPositionTrackX[MAX_NOTE_TRACKS];
 };
@@ -32,14 +25,8 @@ public:
 	NoteFieldPositioning(CString fn);
 	void Load(PlayerNumber pn);
 
-	void GetNamesForCurrentGame(vector<CString> &IDs);
-	bool IsValidModeForCurrentStyle(CString mode) const;
-	bool IsValidModeForAnyStyle(CString mode) const;
-
 private:
-	CString m_Filename;
 	vector<NoteFieldMode> Modes;
-	int GetID(const CString &name) const;
 };
 
 extern NoteFieldMode g_NoteFieldMode[NUM_PLAYERS];

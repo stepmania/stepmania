@@ -34,7 +34,6 @@ void PlayerOptions::Init()
 	ZERO( m_bTransforms );
 	m_bProTiming = false;
 	m_ScoreDisplay = SCORING_ADD;
-	m_sPositioning = "";	// "null"
 	m_sNoteSkin = "default";
 }
 
@@ -170,8 +169,6 @@ CString PlayerOptions::GetString() const
 	else if( m_fSkew==0 && m_fPerspectiveTilt==+1 )
 		sReturn += "Distant, ";
 
-	if( !m_sPositioning.empty() )
-		sReturn += m_sPositioning + ", ";
 	if( !m_sNoteSkin.empty()  &&  m_sNoteSkin.CompareNoCase("default")!=0 )
 		sReturn += m_sNoteSkin + ", ";
 
@@ -304,12 +301,6 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "space" )		{ m_fSkew = level; m_fPerspectiveTilt = +level;		m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
 		else if( sBit == "hallway" )	{ m_fSkew = 0; m_fPerspectiveTilt = -level;			m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
 		else if( sBit == "distant" )	{ m_fSkew = 0; m_fPerspectiveTilt = +level;			m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
-		else if( GAMESTATE->m_pPosition && GAMESTATE->m_pPosition->IsValidModeForAnyStyle(sBit) )
-			// The only time we'll be in this function and NOTESKIN isn't created is 
-			// when calculating RadarValues for courses with transform mods.
-			m_sPositioning = sBit;
-		else if( sBit == "nopositioning" )
-			m_sPositioning = "";
 		else if( NOTESKIN && NOTESKIN->DoesNoteSkinExist(sBit) )
 			m_sNoteSkin = sBit;
 		else if( sBit == "noteskin" && !on ) /* "no noteskin" */
@@ -530,7 +521,6 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_bProTiming);
 	COMPARE(m_fPerspectiveTilt);
 	COMPARE(m_fSkew);
-	COMPARE(m_sPositioning);
 	COMPARE(m_sNoteSkin);
 	for( int i = 0; i < PlayerOptions::NUM_ACCELS; ++i )
 		COMPARE(m_fAccels[i]);

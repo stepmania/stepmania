@@ -40,36 +40,8 @@ void NoteFieldMode::EndDrawTrack(int tn)
 	DISPLAY->CameraPopMatrix();
 }
 
-template <class T>
-static bool GetValue(const XNode *pNode, int pn, const CString &valuename, T &value )
-{
-	if(pn != -1 && pNode->GetAttrValue( ssprintf("P%i%s", pn+1, valuename.c_str()), value))
-		return true;
-	return pNode->GetAttrValue( valuename, value );
-}
-
-void NoteFieldMode::Load(const XNode *pNode, int pn)
-{
-	m_Id = pNode->m_sName;
-
-	/* Required: */
-	ASSERT( pNode->GetAttrValue("Name",			m_Name ) );
-}
-
 NoteFieldPositioning::NoteFieldPositioning(CString fn)
 {
-	m_Filename = fn;
-	IniFile ini;
-	if( !ini.ReadFile(fn) )
-		return;
-
-	FOREACH_CONST_Child( &ini, i )
-	{
-		NoteFieldMode m;
-		m.Load( i );
-
-		Modes.push_back(m);
-	}
 }
 
 bool NoteFieldMode::MatchesCurrentGame() const
@@ -91,64 +63,8 @@ void NoteFieldPositioning::Load(PlayerNumber pn)
 		const float fPixelXOffsetFromCenter = s->m_ColumnInfo[pn][tn].fXOffset;
 		mode.m_fPositionTrackX[tn] = fPixelXOffsetFromCenter;
 	}
-
-	/* Is there a custom mode with the current name that fits the current game? */
-	const int ModeNum = GetID(GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_sPositioning);
-	if(ModeNum == -1)
-		return; /* No, only use the style table settings. */
-
-	/* We have a custom mode.  Reload the mode on top of the default style
-	 * table settings. */
-	IniFile ini;
-	if( !ini.ReadFile(m_Filename) )
-		return;
-
-	XNode* pNode = ini.GetChild( Modes[ModeNum].m_Id );
-	ASSERT( pNode );
-	mode.Load( pNode, pn );
 }
 
-
-/* Get the unique ID of the given name, for the current game/style.  If it
- * doesn't exist, return "". */
-int NoteFieldPositioning::GetID(const CString &name) const
-{
-	for(unsigned i = 0; i < Modes.size(); ++i)
-	{
-		if(Modes[i].m_Name.CompareNoCase(name))
-			continue;
-
-		if(!Modes[i].MatchesCurrentGame())
-			continue;
-
-		return i;
-	}
-
-	return -1;
-}
-
-
-/* Get all arrow modifier names for the current game. */
-void NoteFieldPositioning::GetNamesForCurrentGame(vector<CString> &IDs)
-{ // XXX dupes
-	/* Iterate over all keys. */
-	for(unsigned i = 0; i < Modes.size(); ++i)
-	{
-		if(!Modes[i].MatchesCurrentGame())
-			continue;
-		
-		IDs.push_back(Modes[i].m_Name);
-	}
-}
-
-bool NoteFieldPositioning::IsValidModeForAnyStyle(CString mode) const
-{
-	for(unsigned i = 0; i < Modes.size(); ++i)
-		if(Modes[i].m_Name.CompareNoCase(mode)==0)
-			return true;
-
-	return false;
-}
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
