@@ -143,11 +143,11 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 	pNoteData->SetNumTracks( MAX_NOTE_TRACKS );
 	ResetTracksMagic();
 
-	RageFile file(sPath);
+	RageFile file;
+	if( !file.Open(sPath) )
+		RageException::Throw( "Failed to open \"%s\": %s", sPath.c_str(), file.GetError().c_str() );
 
-	if (!file.IsOpen())
-        RageException::Throw("Failed to open %s for reading.", sPath.c_str());
-	while (!file.AtEOF())
+	while( !file.AtEOF() )
 	{
 		CString line = file.GetLine();
 		StripCrnl(line);
@@ -195,7 +195,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 				out.m_StepsType = STEPS_TYPE_DANCE_DOUBLE;
 				break;
 			default:
-				LOG->Warn( "Invalid value '%d' for '#player'", atoi(value_data) );
+				LOG->Warn( "Invalid #PLAYER in \"%s\": \"%s\"", sPath.c_str(), value_data.c_str() );
 				delete pNoteData;
 				return false;
 			}
@@ -278,7 +278,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 	// we're done reading in all of the BMS values
 	if( out.m_StepsType == STEPS_TYPE_INVALID )
 	{
-		LOG->Warn("Couldn't determine note types of file '%s'", sPath.c_str() );
+		LOG->Warn( "Couldn't determine note type of file '%s'", sPath.c_str() );
 		delete pNoteData;
 		return false;
 	}
@@ -603,7 +603,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 					}
 
 					if( fBPM == -1 )	// we didn't find the line we were looking for
-						LOG->Trace( "WARNING:  Couldn't find tag '%s' in '%s'.", sTagToLookFor.c_str(), sPath.c_str() );
+						LOG->Warn( "Couldn't find tag '%s' in '%s'.", sTagToLookFor.c_str(), sPath.c_str() );
 					else
 					{
 						BPMSegment newSeg( NoteRowToBeat(iStepIndex), fBPM );
@@ -679,7 +679,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 					if( fFreezeSecs == -1 )	// we didn't find the line we were looking for
 					{
-						LOG->Trace( "WARNING:  Couldn't find tag '%s' in '%s'.", sTagToLookFor.c_str(), sPath.c_str() );
+						LOG->Warn( "Couldn't find tag '%s' in '%s'.", sTagToLookFor.c_str(), sPath.c_str() );
 					}
 					else
 					{
