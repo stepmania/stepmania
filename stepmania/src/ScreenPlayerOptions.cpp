@@ -132,6 +132,7 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 
 		this->ImportOptionsForPlayer( pn );
 		this->PositionUnderlines();
+		this->UpdateDisqualified();
 	}
 
 	ScreenOptionsMaster::Input( DeviceI, type, GameI, MenuI, StyleI );
