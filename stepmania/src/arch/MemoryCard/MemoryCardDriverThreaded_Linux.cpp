@@ -337,7 +337,8 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 static const int g_iAllowedVendorIds[] = 
   {
     0x0781, // SanDisk Corp.
-    0x045a, // Diamond Multimedia Systems (Rio)
+    //0x045a, // Diamond Multimedia Systems (Rio)  
+    // Disallow the Rio Carbon.  After several mounts, usb-storage gets into a state where mounting will fail.
     0x04e8, // Samsung Electronics Co., Ltd. (Kingston)
     0x05dc, // Lexar Media, Inc.
   };
