@@ -40,9 +40,75 @@ SongManager::~SongManager()
 
 void SongManager::InitSongArrayFromDisk()
 {
-	/////////////////////////////
-	// Handle DWI support
-	/////////////////////////////
+	LoadStepManiaSongDir( "Songs" );
+	LoadDWISongDir( "DWI Support" );
+	RageLog( "Found %d Songs.", m_pSongs.GetSize() );
+}
+
+void SongManager::LoadStepManiaSongDir( CString sDir )
+{
+	// trim off the trailing slash if any
+	sDir.TrimRight( "/\\" );
+
+	// Find all group directories in "Songs" folder
+	CStringArray arrayGroupDirs;
+	GetDirListing( sDir+"\\*.*", arrayGroupDirs, true );
+	SortCStringArray( arrayGroupDirs );
+	
+	for( int i=0; i< arrayGroupDirs.GetSize(); i++ )	// for each dir in /Songs/
+	{
+		CString sGroupDirName = arrayGroupDirs[i];
+
+		if( 0 == stricmp( sGroupDirName, "cvs" ) )	// the directory called "CVS"
+			continue;		// ignore it
+
+		// Check to see if they put a song directly inside of the group folder
+		CStringArray arrayFiles;
+		GetDirListing( ssprintf("%s\\%s\\*.mp3", sDir, sGroupDirName), arrayFiles );
+		GetDirListing( ssprintf("%s\\%s\\*.wav", sDir, sGroupDirName), arrayFiles );
+		if( arrayFiles.GetSize() > 0 )
+			RageError( 
+				ssprintf( "The song folder '%s' must be placed inside of a group folder.\n\n"
+					"All song folders must be placed below a group folder.  For example, 'Songs\\DDR 4th Mix\\B4U'.  See the StepMania readme for more info.",
+					ssprintf("%s\\%s", sDir, sGroupDirName ) )
+			);
+		
+		// Look for a group banner in this group folder
+		CStringArray arrayGroupBanners;
+		GetDirListing( ssprintf("%s\\%s\\*.png", sDir, sGroupDirName), arrayGroupBanners );
+		GetDirListing( ssprintf("%s\\%s\\*.jpg", sDir, sGroupDirName), arrayGroupBanners );
+		GetDirListing( ssprintf("%s\\%s\\*.gif", sDir, sGroupDirName), arrayGroupBanners );
+		GetDirListing( ssprintf("%s\\%s\\*.bmp", sDir, sGroupDirName), arrayGroupBanners );
+		if( arrayGroupBanners.GetSize() > 0 )
+		{
+			m_mapGroupToBannerPath[sGroupDirName] = ssprintf("%s\\%s\\%s", sDir, sGroupDirName, arrayGroupBanners[0] );
+			RageLog( ssprintf("Group banner for '%s' is '%s'.", sGroupDirName, m_mapGroupToBannerPath[sGroupDirName]) );
+		}
+
+		// Find all Song folders in this group directory
+		CStringArray arraySongDirs;
+		GetDirListing( ssprintf("%s\\%s\\*.*", sDir, sGroupDirName), arraySongDirs, true );
+		SortCStringArray( arraySongDirs );
+
+		for( int j=0; j< arraySongDirs.GetSize(); j++ )	// for each song dir
+		{
+			CString sSongDirName = arraySongDirs[j];
+
+			if( 0 == stricmp( sSongDirName, "cvs" ) )	// the directory called "CVS"
+				continue;		// ignore it
+
+			// this is a song directory.  Load a new song!
+			Song* pNewSong = new Song;
+			pNewSong->LoadFromSongDir( ssprintf("%s\\%s\\%s", sDir, sGroupDirName, sSongDirName) );
+			m_pSongs.Add( pNewSong );
+		}
+	}
+}
+
+void SongManager::LoadDWISongDir( CString sDir )
+{
+	// trim off the trailing slash if any
+	sDir.TrimRight( "/\\" );
 
 	// Find all directories in "DWIs" folder
 	CStringArray arrayDirs;
@@ -72,49 +138,8 @@ void SongManager::InitSongArrayFromDisk()
 			m_pSongs.Add( pNewSong );
 		}
 	}
-
-
-	/////////////////////////////
-	// Load songs from StepMania's directory structure in Songs
-	/////////////////////////////
-
-	// Find all group directories in "Songs" folder
-	CStringArray arrayGroupDirs;
-	GetDirListing( "Songs\\*.*", arrayGroupDirs, true );
-	SortCStringArray( arrayGroupDirs );
-	
-	for( i=0; i< arrayGroupDirs.GetSize(); i++ )	// for each dir in /Songs/
-	{
-		CString sGroupDirName = arrayGroupDirs[i];
-		sGroupDirName.MakeLower();
-
-		if( sGroupDirName == "cvs" )	// ignore the directory called "CVS"
-			continue;
-		
-		// Find all Song folders in this group directory
-		CStringArray arraySongDirs;
-		GetDirListing( ssprintf("Songs\\%s\\*.*", sGroupDirName, true), arraySongDirs );
-		SortCStringArray( arraySongDirs );
-
-		for( int j=0; j< arraySongDirs.GetSize(); j++ )	// for each song dir
-		{
-			CString sSongDirName = arraySongDirs[j];
-			sSongDirName.MakeLower();
-
-			if( sSongDirName == "cvs" )	// ignore the directory called "CVS"
-				continue;
-
-			// load DWIs from the sub dirs
-			Song* pNewSong = new Song;
-			pNewSong->LoadFromSongDir( ssprintf("Songs\\%s\\%s", sGroupDirName, sSongDirName) );
-			m_pSongs.Add( pNewSong );
-		}
-	}
-
-
-
-	RageLog( "Found %d Songs.", m_pSongs.GetSize() );
 }
+
 
 
 void SongManager::CleanUpSongArray()
@@ -125,6 +150,7 @@ void SongManager::CleanUpSongArray()
 	}
 
 	m_pSongs.RemoveAll();
+	m_mapGroupToBannerPath.RemoveAll();
 }
 
 
@@ -141,8 +167,8 @@ void SongManager::ReadStatisticsFromDisk()
 	IniFile ini;
 	ini.SetPath( g_sStatisticsFileName );
 	if( !ini.ReadFile() ) {
+		RageLog( "WARNING: Could not read config file '%s'.", g_sStatisticsFileName );
 		return;		// load nothing
-		//RageError( "could not read config file" );
 	}
 
 
@@ -253,4 +279,15 @@ void SongManager::SaveStatisticsToDisk()
 	}
 
 	ini.WriteFile();
+}
+
+
+CString SongManager::GetBannerPathFromGroup( CString sGroupName )
+{
+	CString sPath;
+
+	if( m_mapGroupToBannerPath.Lookup( sGroupName, sPath ) )
+		return sPath;
+	else
+		return "";
 }

@@ -291,29 +291,28 @@ void splitrelpath( CString Path, CString& Dir, CString& FName, CString& Ext )
 }
 
 
-void GetDirListing( CString sPath, CStringArray &AddTo, BOOL bOnlyDirs )
+void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs )
 {
 	WIN32_FIND_DATA fd;
 	HANDLE hFind = ::FindFirstFile( sPath, &fd );
 
-	if( INVALID_HANDLE_VALUE != hFind )
+	if( INVALID_HANDLE_VALUE == hFind )		// no files found
+		return;
+
+	do
 	{
-		do
-		{
-			if( bOnlyDirs  &&  !(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
-			{
-				;	// do nothing
-			}
-			else
-			{
-				// add it
-				CString sDirName( fd.cFileName );
-				if( sDirName != "."  &&  sDirName != ".." )
-					AddTo.Add( sDirName );
-			}
-		} while( ::FindNextFile( hFind, &fd ) );
-		::FindClose( hFind );
-	}
+		if( bOnlyDirs  &&  !(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
+			continue;	// skip
+
+		CString sDirName( fd.cFileName );
+
+		if( sDirName == "."  ||  sDirName == ".." )
+			continue;
+		
+		AddTo.Add( sDirName );
+
+	} while( ::FindNextFile( hFind, &fd ) );
+	::FindClose( hFind );
 }
 
 DWORD GetFileSizeInBytes( CString sFilePath )
@@ -363,34 +362,20 @@ void SortCStringArray( CStringArray &arrayCStrings, BOOL bSortAcsending )
 
 VOID DisplayErrorAndDie( CString sError )
 {
-	/*
-	////////////////////////
-	// get a stack trace
-	////////////////////////
-	AfxDumpStack( AFX_STACK_DUMP_TARGET_CLIPBOARD );
-
-	//open the clipboard
-	CString fromClipboard;
-	if( OpenClipboard(NULL) ) 
-	{
-		HANDLE hData = GetClipboardData( CF_TEXT );
-		char *buffer = (char*)GlobalLock( hData );
-		fromClipboard = buffer;
-		GlobalUnlock( hData );
-		CloseClipboard();
-	}
-	sError += "\n\n" + fromClipboard;
-	*/
-#ifdef DEBUG	// don't use error handler in Release mode
+#ifdef DEBUG
+	// display a message box, then break so we can see a stack trace in the debugger
 	AfxMessageBox( sError );
 	AfxDebugBreak();
 	exit(1);
-#else
+
+#else	// RELEASE
+	// write the error to a file so our pretty error dialog can display what happened.
 	FILE* fp = fopen( g_sErrorFileName, "w" );
 	fprintf( fp, sError );
 	fclose( fp );
 	// generate an exception so the error handler shows
 	throw(1);
+
 #endif
 }
 
@@ -446,3 +431,5 @@ HINSTANCE GotoURL(LPCTSTR url)
 
 	return result;
 }
+
+

@@ -107,6 +107,7 @@ public:
 
 	bool Select();	// return true if the selected item is a music, otherwise false
 	Song* GetSelectedSong() { return GetCurWheelItemDatas()[m_iSelection].m_pSong; };
+	CString GetSelectedSection() { return GetCurWheelItemDatas()[m_iSelection].m_sSectionName; };
 
 
 protected:

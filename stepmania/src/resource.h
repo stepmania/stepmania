@@ -4,6 +4,7 @@
 //
 #define IDD_ERROR_DIALOG                111
 #define BITMAP_ERROR                    129
+#define IDC_SHOCKWAVEFLASH1             1000
 #define IDR_MAIN_ACCEL                  1001
 #define IDC_BUTTON_RESTART              1001
 #define IDM_TOGGLEFULLSCREEN            1002
@@ -22,7 +23,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        112
+#define _APS_NEXT_RESOURCE_VALUE        113
 #define _APS_NEXT_COMMAND_VALUE         40009
 #define _APS_NEXT_CONTROL_VALUE         1009
 #define _APS_NEXT_SYMED_VALUE           101

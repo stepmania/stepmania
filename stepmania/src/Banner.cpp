@@ -19,11 +19,24 @@
 
 bool Banner::LoadFromSong( Song* pSong )		// NULL means no song
 {
-	if( pSong == NULL )					Sprite::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER), HINT_NOMIPMAPS );
-	else if( pSong->HasBanner() )		Sprite::Load( pSong->GetBannerPath(), HINT_NOMIPMAPS );
-	else if( pSong->HasBackground() )	Sprite::Load( pSong->GetBackgroundPath(), HINT_NOMIPMAPS );
-	else								Sprite::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER), HINT_NOMIPMAPS );
+	if( pSong == NULL )					Banner::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER), HINT_NOMIPMAPS );
+	else if( pSong->HasBanner() )		Banner::Load( pSong->GetBannerPath(), HINT_NOMIPMAPS );
+	else if( pSong->HasBackground() )	Banner::Load( pSong->GetBackgroundPath(), HINT_NOMIPMAPS );
+	else								Banner::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER), HINT_NOMIPMAPS );
 
+	return true;
+}
+
+bool Banner::Load( CString sFilePath, DWORD dwHints, bool bForceReload )
+{
+	Sprite::Load( sFilePath, dwHints, bForceReload );
+	CropToRightSize();
+
+	return true;
+}
+
+void Banner::CropToRightSize()
+{
 	Sprite::TurnShadowOff();
 
 	int iImageWidth		= m_pTexture->GetImageWidth();
@@ -93,7 +106,4 @@ bool Banner::LoadFromSong( Song* pSong )		// NULL means no song
 
 	// restore original XY
 	SetXY( fOriginalX, fOriginalY );
-
-
-	return true;
 }

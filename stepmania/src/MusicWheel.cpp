@@ -89,8 +89,9 @@ WheelItemDisplay::WheelItemDisplay()
 
 	m_textSectionName.Load( THEME->GetPathTo(FONT_OUTLINE) );
 	m_textSectionName.TurnShadowOff();
-	m_textSectionName.SetHorizAlign( align_left );
-	m_textSectionName.SetXY( -85, 0 );
+	m_textSectionName.SetHorizAlign( align_center );
+	m_textSectionName.SetVertAlign( align_middle );
+	m_textSectionName.SetXY( m_sprSectionBackground.GetX(), 0 );
 	m_textSectionName.SetZoom( 1.5f );
 	m_textSectionName.SetDiffuseColor( COLOR_SECTION_LETTER );
 }
@@ -114,7 +115,20 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 	{
 
 	case TYPE_SECTION:
-		m_textSectionName.SetText( m_sSectionName );
+		if( m_sSectionName.GetLength() > 15  && 
+			-1 != m_sSectionName.Find(' ', m_sSectionName.GetLength()/3) )	// this is space in the name
+		{
+			int iIndexSplit = m_sSectionName.Find( ' ', m_sSectionName.GetLength()/3 );
+			m_sSectionName.SetAt( iIndexSplit, '\n' );
+
+			m_textSectionName.SetZoom( 0.75f );
+			m_textSectionName.SetText( m_sSectionName );
+		}
+		else	// this is a short name
+		{
+			m_textSectionName.SetZoom( 1.5f );
+			m_textSectionName.SetText( m_sSectionName );
+		}
 		m_sprSectionBackground.SetDiffuseColor( m_colorTint );
 		break;
 	case TYPE_MUSIC:

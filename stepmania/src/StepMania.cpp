@@ -34,6 +34,7 @@
 #include "ScreenDimensions.h"
 
 #include "DXUtil.h"
+#include <Afxdisp.h>
 
 //-----------------------------------------------------------------------------
 // Links
@@ -86,6 +87,7 @@ BOOL SwitchDisplayMode();// BOOL bWindowed, DWORD dwWidth, DWORD dwHeight, DWORD
 //-----------------------------------------------------------------------------
 int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 {
+	AfxEnableControlContainer();
 
 #ifndef DEBUG	// don't use error handler in Release mode
 	try
@@ -198,14 +200,17 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 		UnregisterClass( g_sAppClassName, hInstance );
 		CoUninitialize();			// Uninitialize COM
 
-#ifndef DEBUG	// don't use error handler in Release mode
-	}	
+
+
+#ifndef DEBUG	// only use pretty error handler in RELEASE build
+	}
 	catch(...)	// catch all exceptions
 	{
 		CloseHandle( g_hMutex );
 		DestroyObjects();			// deallocate our game objects and leave fullscreen
 		ShowWindow( g_hWndMain, SW_HIDE );
 
+		// throw up a pretty error dialog
 		DialogBox(
 			hInstance,
 			MAKEINTRESOURCE(IDD_ERROR_DIALOG),
@@ -213,12 +218,10 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 			ErrorWndProc
 			);
 		exit( 1 );
-
-		DestroyWindow( g_hWndMain );
-		UnregisterClass( g_sAppClassName, hInstance );
-		CoUninitialize();			// Uninitialize COM
 	}
 #endif
+
+
 
 	return 0L;
 }
@@ -352,7 +355,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 
 		case WM_SETCURSOR:
 			// Turn off Windows cursor in fullscreen mode
-			if( !SCREEN->IsWindowed() )
+			if( SCREEN && !SCREEN->IsWindowed() )
             {
                 SetCursor( NULL );
                 return TRUE; // prevent Windows from setting the cursor
@@ -411,7 +414,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 		}
         case WM_NCHITTEST:
             // Prevent the user from selecting the menu in fullscreen mode
-            if( !SCREEN->IsWindowed() )
+            if( SCREEN && !SCREEN->IsWindowed() )
                 return HTCLIENT;
             break;
 

@@ -190,11 +190,7 @@ bool Song::LoadFromSongDir( CString sDir )
 		RageError( ssprintf("Couldn't find any BMS or MSD files in '%s'", sDir) );
 	}
 
-	RageLog( "m_fOffsetInSeconds is %f", m_fOffsetInSeconds );
-
-
 	return TRUE;
-
 }
 
 

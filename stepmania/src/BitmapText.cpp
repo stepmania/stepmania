@@ -213,12 +213,12 @@ void BitmapText::RebuildVertexBuffer()
 	m_iNumV = 0;	// the current vertex number
 
 	float fHeight = GetUnzoomedHeight();
-	float fY;
+	float fY;	//	 the center of the first line
 	switch( m_VertAlign )
 	{
-	case align_top:		fY = -(m_sTextLines.GetSize()) * fHeight / 2;	break;
-	case align_middle:	fY = 0;											break;
-	case align_bottom:	fY = (m_sTextLines.GetSize()) * fHeight / 2;	break;
+	case align_top:		fY = -(m_sTextLines.GetSize()-1) * fHeight;		break;
+	case align_middle:	fY = -(m_sTextLines.GetSize()-1) * fHeight / 2;	break;
+	case align_bottom:	fY = 0;											break;
 	default:		ASSERT( false );
 	}
 

@@ -61,41 +61,21 @@ CString ssprintf( LPCTSTR fmt, ...);
 CString vssprintf( LPCTSTR fmt, va_list argList );
 
 
-/*
- @FUNCTION: Splits a Path into 4 parts (Directory, Drive, Filename, Extention).
-      NOTE: Supports UNC path names.
-   @PARAM1: Whether the Supplied Path (PARAM2) contains a directory name only
-            or a file name (Reason: some directories will end with "xxx.xxx"
-            which is like a file name).
-   @PARAM2: Path to Split.
-   @PARAM3: (Referenced) Directory.
-   @PARAM4: (Referenced) Drive.
-   @PARAM5: (Referenced) Filename.
-   @PARAM6: (Referenced) Extention.
-*/
+// Splits a Path into 4 parts (Directory, Drive, Filename, Extention).  Supports UNC path names.
+// param1: Whether the Supplied Path (PARAM2) contains a directory name only
+//            or a file name (Reason: some directories will end with "xxx.xxx"
+//            which is like a file name).
 void splitpath(BOOL UsingDirsOnly, CString Path, CString& Drive, CString& Dir, CString& FName, CString& Ext);
-
 
 void splitrelpath( CString Path, CString& Dir, CString& FName, CString& Ext );
 
-
-/*
- @FUNCTION: Splits a CString into an CStringArray according the Deliminator.
-	  NOTE: Supports UNC path names.
-   @PARAM1: Source string to be Split.
-   @PARAM2: Deliminator.
-   @PARAM3: (Referenced) CStringArray to Add to.
-*/
+// Splits a CString into an CStringArray according the Deliminator.  Supports UNC path names.
 void split(CString Source, CString Deliminator, CStringArray& AddIt, bool bIgnoreEmpty = true );
 
-/*
- @FUNCTION: Joins a CStringArray to create a CString according the Deliminator.
-   @PARAM1: Deliminator.
-   @PARAM2: (Referenced) CStringArray to Add to.
-*/
+// Joins a CStringArray to create a CString according the Deliminator.
 CString join(CString Deliminator, CStringArray& Source);
 
-void GetDirListing( CString sPath, CStringArray &AddTo, BOOL bOnlyDirs=FALSE );
+void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs=false );
 
 bool DoesFileExist( CString sPath );
 DWORD GetFileSizeInBytes( CString sFilePath );
@@ -113,11 +93,11 @@ void RageLogHr( HRESULT hr, LPCTSTR fmt, ...);
 //-----------------------------------------------------------------------------
 // Error helpers
 //-----------------------------------------------------------------------------
-VOID DisplayErrorAndDie( CString sError );
-
+void DisplayErrorAndDie( CString sError );
 
 #define RageError(str)		DisplayErrorAndDie( ssprintf(     "%s\n\n%s(%d)", str,						 __FILE__, (DWORD)__LINE__) )
 #define RageErrorHr(str,hr)	DisplayErrorAndDie( ssprintf("%s (%s)\n\n%s(%d)", str, DXGetErrorString8(hr), __FILE__, (DWORD)__LINE__) )
+
 
 
 LONG GetRegKey(HKEY key, LPCTSTR subkey, LPTSTR retdata);

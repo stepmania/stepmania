@@ -23,9 +23,11 @@ const float BANNER_HEIGHT	= 86;
 class Banner : public Sprite
 {
 public:
-
 	bool LoadFromSong( Song* pSong );	// NULL means no Song
+	virtual bool Load( CString sFilePath, DWORD dwHints = 0, bool bForceReload = false );
 
+protected:
+	void CropToRightSize();
 };
 
 

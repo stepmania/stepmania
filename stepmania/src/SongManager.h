@@ -29,13 +29,21 @@ public:
 	Steps*					m_pStepsPlayer[NUM_PLAYERS];
 
 	void InitSongArrayFromDisk();
+
 	void CleanUpSongArray();
 	void ReloadSongArray();
+
 
 	void ReadStatisticsFromDisk();
 	void SaveStatisticsToDisk();
 
+
+	CString GetBannerPathFromGroup( CString sGroupName );
+
 protected:
+	void LoadStepManiaSongDir( CString sDir );
+	void LoadDWISongDir( CString sDir );
+	CMapStringToString	m_mapGroupToBannerPath;		// each song group has a banner associated with it
 
 };
 
