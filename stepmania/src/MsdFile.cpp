@@ -95,6 +95,10 @@ void MsdFile::ReadBuf( char *buf, int len )
 				continue;
 			}
 
+			/* Skip newlines and whitespace before adding the value. */
+			while( j >= 1 && strchr("\r\n", buf[j-1]) )
+				--j;
+
 			AddParam(buf+value_start, j - value_start);
 			ReadingValue=false;
 		}
