@@ -106,6 +106,9 @@ EditMenu::EditMenu()
 	SONGMAN->GetGroupNames( m_sGroups );
 	GAMEMAN->GetNotesTypesForGame( GAMESTATE->m_CurGame, m_NotesTypes );
 	
+	ChangeToRow( (Row)0 );
+	OnRowValueChanged( (Row)0 );
+
 	// Select the current song if any
 	if( GAMESTATE->m_pCurSong )
 	{
@@ -121,9 +124,6 @@ EditMenu::EditMenu()
 				m_iSelection[ROW_SONG] = i;
 		OnRowValueChanged( ROW_SONG );
 	}
-
-	ChangeToRow( (Row)0 );
-	OnRowValueChanged( (Row)0 );
 }
 
 EditMenu::~EditMenu()
