@@ -64,7 +64,7 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 
 		if(!vinfo) { return "No visual available for that depth."; }
 
-		
+		X11Helper::OpenMask(StructureNotifyMask);
 
 		if(!X11Helper::MakeWindow(xvi->screen, xvi->depth, xvi->visual,
 							p.width, p.height) )
@@ -89,6 +89,8 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 			XPutBackEvent(X11Helper::Dpy(), otherEvs.top() );
 			otherEvs.pop();
 		}
+
+		X11Helper::CloseMask(StructureNotifyMask);
 
 		glXMakeCurrent(X11Helper::Dpy(), X11Helper::Win(), ctxt);
 
