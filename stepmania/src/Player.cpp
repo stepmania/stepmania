@@ -422,7 +422,7 @@ void Player::Step( int col )
 				for( i=0; i<SAMPLE_COUNT; i++ )
 					stddev += (m_fOffset[i] - mean) * (m_fOffset[i] - mean);
 				stddev /= SAMPLE_COUNT + 1; //yes, N+1. Really.
-				stddev = sqrt(stddev);
+				stddev = sqrtf(stddev);
 
 				if (stddev < .03 && stddev < fabsf(mean)) { //If they stepped with less than .025 error
 					GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds += mean;

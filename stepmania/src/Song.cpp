@@ -796,6 +796,28 @@ bool Song::IsEasy( NotesType nt ) const
 // Sorting
 /////////////////////////////////////
 
+int CompareSongPointersByTitle(const void *arg1, const void *arg2)
+{
+	const Song* pSong1 = *(const Song**)arg1;
+	const Song* pSong2 = *(const Song**)arg2;
+	
+	//Prefer transliterations to full titles
+	CString sTitle1 = pSong1->GetSortTitle();
+	CString sTitle2 = pSong2->GetSortTitle();
+
+	int ret = sTitle1.CompareNoCase(sTitle2);
+	if(ret != 0) return ret;
+
+	/* The titles are the same.  Ensure we get a consistent ordering
+	 * by comparing the unique SongFilePaths. */
+	return pSong1->GetSongFilePath().CompareNoCase(pSong2->GetSongFilePath());
+}
+
+void SortSongPointerArrayByTitle( CArray<Song*, Song*> &arraySongPointers )
+{
+	qsort( arraySongPointers.GetData(), arraySongPointers.GetSize(), sizeof(Song*), CompareSongPointersByTitle );
+}
+
 int CompareSongPointersByDifficulty(const void *arg1, const void *arg2)
 {
 	const Song* pSong1 = *(const Song**)arg1;
@@ -819,7 +841,7 @@ int CompareSongPointersByDifficulty(const void *arg1, const void *arg2)
 	if( iEasiestMeter1 < iEasiestMeter2 )
 		return -1;
 	else if( iEasiestMeter1 == iEasiestMeter2 )
-		return 0;
+		return CompareSongPointersByTitle( arg1, arg2 );
 	else 
 		return +1;
 }
@@ -827,28 +849,6 @@ int CompareSongPointersByDifficulty(const void *arg1, const void *arg2)
 void SortSongPointerArrayByDifficulty( CArray<Song*, Song*> &arraySongPointers )
 {
 	qsort( arraySongPointers.GetData(), arraySongPointers.GetSize(), sizeof(Song*), CompareSongPointersByDifficulty );
-}
-
-int CompareSongPointersByTitle(const void *arg1, const void *arg2)
-{
-	const Song* pSong1 = *(const Song**)arg1;
-	const Song* pSong2 = *(const Song**)arg2;
-	
-	//Prefer transliterations to full titles
-	CString sTitle1 = pSong1->GetSortTitle();
-	CString sTitle2 = pSong2->GetSortTitle();
-
-	int ret = sTitle1.CompareNoCase(sTitle2);
-	if(ret != 0) return ret;
-
-	/* The titles are the same.  Ensure we get a consistent ordering
-	 * by comparing the unique SongFilePaths. */
-	return pSong1->GetSongFilePath().CompareNoCase(pSong2->GetSongFilePath());
-}
-
-void SortSongPointerArrayByTitle( CArray<Song*, Song*> &arraySongPointers )
-{
-	qsort( arraySongPointers.GetData(), arraySongPointers.GetSize(), sizeof(Song*), CompareSongPointersByTitle );
 }
 
 int CompareSongPointersByBPM(const void *arg1, const void *arg2)
