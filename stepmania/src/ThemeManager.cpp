@@ -327,7 +327,7 @@ RageColor ThemeManager::GetMetricC( CString sClassName, CString sValueName )
 	int result = sscanf( GetMetric(sClassName,sValueName), "%f,%f,%f,%f", &r, &g, &b, &a );
 	if( result != 4 )
 	{
-		LOG->Warn( "The color value '%s' for NoteSkin metric '%s : %s' is invalid.", GetMetric(sClassName,sValueName), sClassName.GetString(), sValueName.GetString() );
+		LOG->Warn( "The color value '%s' for NoteSkin metric '%s : %s' is invalid.", GetMetric(sClassName,sValueName).GetString(), sClassName.GetString(), sValueName.GetString() );
 		ASSERT(0);
 	}
 
