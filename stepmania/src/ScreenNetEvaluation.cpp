@@ -64,7 +64,7 @@ ScreenNetEvaluation::ScreenNetEvaluation (const CString & sClassName) : ScreenEv
 		cx+=USERDX;
 		cy+=USERDY;
 	}
-	NSMAN->ReportNSSOnOff( 5 );
+	NSMAN->ReportNSSOnOff( 1 );
 }
 
 void ScreenNetEvaluation::MenuLeft( PlayerNumber pn, const InputEventType type )
@@ -114,7 +114,7 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 		}
 		return;	//no need to let ScreenEvaluation get ahold of this.
 	case SM_GoToNextScreen:
-		NSMAN->ReportNSSOnOff( 4 );
+		NSMAN->ReportNSSOnOff( 0 );
 		break;
 	}
 	ScreenEvaluation::HandleScreenMessage( SM );

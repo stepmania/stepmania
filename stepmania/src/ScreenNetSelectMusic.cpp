@@ -26,6 +26,7 @@
 #define CHATOUTPUT_COLOR			THEME->GetMetricC("ScreenNetSelectMusic","ChatOutputBoxColor")
 #define SHOW_CHAT_LINES				THEME->GetMetricI("ScreenNetSelectMusic","ChatOutputLines")
 
+
 #define GROUPSBG_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","GroupsBGWidth")
 #define GROUPSBG_HEIGHT				THEME->GetMetricF("ScreenNetSelectMusic","GroupsBGHeight")
 #define GROUPSBG_COLOR				THEME->GetMetricC("ScreenNetSelectMusic","GroupsBGColor")
@@ -42,14 +43,6 @@
 #define EXINFOBG_HEIGHT				THEME->GetMetricF("ScreenNetSelectMusic","ExInfoBGHeight")
 #define EXINFOBG_COLOR				THEME->GetMetricC("ScreenNetSelectMusic","ExInfoBGColor")
 
-#define USERSBG_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","UsersBGWidth")
-#define USERSBG_HEIGHT				THEME->GetMetricF("ScreenNetSelectMusic","UsersBGHeight")
-#define USERSBG_COLOR				THEME->GetMetricC("ScreenNetSelectMusic","UsersBGColor")
-#define USERSALT_Y					THEME->GetMetricF("ScreenNetSelectMusic","UsersAY")
-#define USERSDELT_X					THEME->GetMetricF("ScreenNetSelectMusic","UsersDX")
-#define USERS_Y						THEME->GetMetricF("ScreenNetSelectMusic","UsersY")
-#define USERS_X						THEME->GetMetricF("ScreenNetSelectMusic","UsersX")
-
 #define	NUM_GROUPS_SHOW				THEME->GetMetricI("ScreenNetSelectMusic","NumGroupsShow");
 #define	NUM_SONGS_SHOW				THEME->GetMetricI("ScreenNetSelectMusic","NumSongsShow");
 
@@ -59,14 +52,11 @@
 
 #define SUBTITLE_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","SongsSubtitleWidth")
 #define ARTIST_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","SongsArtistWidth")
-#define GROUP_WIDTH					THEME->GetMetricF("ScreenNetSelectMusic","SongsGroupWidth")
 
 const ScreenMessage SM_NoSongs		= ScreenMessage(SM_User+3);
 const ScreenMessage	SM_AddToChat	= ScreenMessage(SM_User+4);
 const ScreenMessage SM_ChangeSong	= ScreenMessage(SM_User+5);
 const ScreenMessage SM_BackFromOpts	= ScreenMessage(SM_User+6);
-const ScreenMessage SM_UsersUpdate	= ScreenMessage(SM_User+7);
-const ScreenMessage SM_SMOnlinePack	= ScreenMessage(SM_User+8);	//Unused, but should be known
 
 const CString AllGroups			= "[ALL MUSIC]";
 
@@ -128,7 +118,7 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenWithM
 	SET_XY_AND_ON_COMMAND( m_rectGroupsBackground );
 	this->AddChild( &m_rectGroupsBackground );
 
-	m_textGroups.LoadFromFont( THEME->GetPathF(m_sName,"wheel") );
+	m_textGroups.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
 	m_textGroups.SetShadowLength( 0 );
 	m_textGroups.SetName( "GroupsList" );
 	m_textGroups.SetMaxWidth( GROUPSBG_WIDTH );
@@ -143,7 +133,7 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenWithM
 	SET_XY_AND_ON_COMMAND( m_rectSongsBackground );
 	this->AddChild( &m_rectSongsBackground );
 
-	m_textSongs.LoadFromFont( THEME->GetPathF(m_sName,"wheel") );
+	m_textSongs.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
 	m_textSongs.SetShadowLength( 0 );
 	m_textSongs.SetName( "SongsList" );
 	m_textSongs.SetMaxWidth( SONGSBG_WIDTH );
@@ -157,21 +147,14 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenWithM
 	SET_XY_AND_ON_COMMAND( m_rectExInfo );
 	this->AddChild( &m_rectExInfo );
 
-	m_textArtist.LoadFromFont( THEME->GetPathF(m_sName,"song") );
+	m_textArtist.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
 	m_textArtist.SetShadowLength( 0 );
 	m_textArtist.SetName( "SongsArtist" );
 	m_textArtist.SetMaxWidth( ARTIST_WIDTH );
 	SET_XY_AND_ON_COMMAND( m_textArtist );
 	this->AddChild( &m_textArtist);
 
-	m_textGroup.LoadFromFont( THEME->GetPathF(m_sName,"song") );
-	m_textGroup.SetShadowLength( 0 );
-	m_textGroup.SetName( "SongsGroup" );
-	m_textGroup.SetMaxWidth( GROUP_WIDTH );
-	SET_XY_AND_ON_COMMAND( m_textGroup );
-	this->AddChild( &m_textGroup );
-
-	m_textSubtitle.LoadFromFont( THEME->GetPathF(m_sName,"song") );
+	m_textSubtitle.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
 	m_textSubtitle.SetShadowLength( 0 );
 	m_textSubtitle.SetName( "SongsSubtitle" );
 	m_textSubtitle.SetMaxWidth( SUBTITLE_WIDTH );
@@ -191,18 +174,6 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenWithM
 	m_rectDiff.SetHeight( DIFFBG_HEIGHT );
 	SET_XY_AND_ON_COMMAND( m_rectDiff );
 	this->AddChild( &m_rectDiff );
-
-	//Users' Background
-	
-	m_rectUsersBG.SetDiffuse( USERSBG_COLOR );
-	m_rectUsersBG.SetName( "UsersBG" );
-	m_rectUsersBG.SetWidth( USERSBG_WIDTH );
-	m_rectUsersBG.SetHeight( USERSBG_HEIGHT );
-	SET_XY_AND_ON_COMMAND( m_rectUsersBG );
-	this->AddChild( &m_rectUsersBG );
-
-	//Display users list
-	UpdateUsers();
 
 
 	FOREACH_EnabledPlayer (p)
@@ -391,28 +362,6 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		}
 	case SM_ChangeSong:
 		{
-			//First check to see if this song is already selected.
-			//This is so that if you multiple copies of the "same" song
-			//you can chose which copy to play.
-			if ( ( !m_vSongs[m_iSongNum % m_vSongs.size()]->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) ) &&
-				 ( !m_vSongs[m_iSongNum % m_vSongs.size()]->GetTranslitMainTitle().CompareNoCase( NSMAN->m_sMainTitle ) ) &&
-				 ( !m_vSongs[m_iSongNum % m_vSongs.size()]->GetTranslitSubTitle().CompareNoCase( NSMAN->m_sSubTitle ) ) )
-			{
-				switch ( NSMAN->m_iSelectMode )
-				{
-				case 0:
-				case 1:
-					NSMAN->m_iSelectMode = 0;
-					NSMAN->SelectUserSong();
-					break;
-				case 2:	//Proper starting of song
-				case 3:	//Blind starting of song
-					StartSelectedSong();
-					break;
-				}
-				break;
-			}
-
 			//We always need to find the song
 			m_iGroupNum=m_vGroups.size()-1;	//Alphabetical
 
@@ -420,6 +369,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			UpdateSongsList();
 			
 			unsigned i;
+
 			for ( i = 0; i < m_vSongs.size(); ++i)
 				if ( ( !m_vSongs[i]->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) ) &&
 					 ( !m_vSongs[i]->GetTranslitMainTitle().CompareNoCase( NSMAN->m_sMainTitle ) ) &&
@@ -459,20 +409,17 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_BackFromOpts:
 		//XXX: HACK: This will causes ScreenSelectOptions to go back here.
-		NSMAN->ReportNSSOnOff(1);
+		NSMAN->ReportNSSOnOff(3);
 		GAMESTATE->m_bEditing = false;
 		NSMAN->ReportPlayerOptions();
 		break;
-	case SM_UsersUpdate:
-		UpdateUsers();
-		break;
-
 	}
 
 }
 
 void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type )
 {
+	int i;
 	m_soundChangeOpt.Play();
 	switch (m_SelectMode)
 	{
@@ -495,21 +442,15 @@ void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type 
 				m_DC[pn] = NUM_DIFFICULTIES;
 			else
 			{
-				int i;
-				bool dcs[NUM_DIFFICULTIES];
-
-				for ( i=0; i<NUM_DIFFICULTIES; ++i )
-					dcs[i] = false;
-
 				for ( i=0; i<(int)MultiSteps.size(); ++i )
-					dcs[MultiSteps[i]->GetDifficulty()] = true;
-
-				for ( i=NUM_DIFFICULTIES-1; i>=0; --i )
-					if ( (dcs[i]) && (i < m_DC[pn]) )
-					{
-						m_DC[pn] = (Difficulty)i;
+					if ( MultiSteps[i]->GetDifficulty() >= m_DC[pn] )
 						break;
-					}
+
+				if ( i == (int)MultiSteps.size() )
+					m_DC[pn] = MultiSteps[i-1]->GetDifficulty();
+				else
+					if (i > 0)	//If we are at the easiest difficulty, do nothign
+						m_DC[pn] = MultiSteps[i-1]->GetDifficulty();
 			}
 			UpdateDifficulties( pn );
 			GAMESTATE->m_PreferredDifficulty[pn] = m_DC[pn];
@@ -517,7 +458,7 @@ void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type 
 		break;
 	case SelectOptions:
 		//XXX: HACK: This will causes ScreenSelectOptions to go back here.
-		NSMAN->ReportNSSOnOff(3);
+		NSMAN->ReportNSSOnOff(2);
 		GAMESTATE->m_bEditing = true;
 		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromOpts );
 		break;
@@ -526,6 +467,7 @@ void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type 
 
 void ScreenNetSelectMusic::MenuRight( PlayerNumber pn, const InputEventType type )
 {
+	int i;
 	m_soundChangeOpt.Play();
 	switch (m_SelectMode)
 	{
@@ -548,26 +490,15 @@ void ScreenNetSelectMusic::MenuRight( PlayerNumber pn, const InputEventType type
 				m_DC[pn] = NUM_DIFFICULTIES;
 			else
 			{
-				int i;
-
-				bool dcs[NUM_DIFFICULTIES];
-
-				for ( i=0; i<NUM_DIFFICULTIES; ++i )
-					dcs[i] = false;
-
 				for ( i=0; i<(int)MultiSteps.size(); ++i )
-					dcs[MultiSteps[i]->GetDifficulty()] = true;
-
-				for ( i=0; i<NUM_DIFFICULTIES; ++i )
-				{
-					if ( (dcs[i]) && (i > m_DC[pn]) )
-					{
-						m_DC[pn] = (Difficulty)i;
+					if ( MultiSteps[i]->GetDifficulty() >= m_DC[pn] )
 						break;
-					}
-				}
 
-				
+				if ( i == (int)MultiSteps.size() )
+					m_DC[pn] = MultiSteps[i-1]->GetDifficulty();
+				else
+					if (i < (int)MultiSteps.size() - 1 )	//If we are at the hardest difficulty, do nothign
+						m_DC[pn] = MultiSteps[i+1]->GetDifficulty();
 			}
 			UpdateDifficulties( pn );
 			GAMESTATE->m_PreferredDifficulty[pn] = m_DC[pn];
@@ -575,7 +506,7 @@ void ScreenNetSelectMusic::MenuRight( PlayerNumber pn, const InputEventType type
 		break;
 	case SelectOptions:
 		//XXX: HACK: This will causes ScreenSelectOptions to go back here.
-		NSMAN->ReportNSSOnOff(3);
+		NSMAN->ReportNSSOnOff(2);
 		GAMESTATE->m_bEditing = true;
 		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromOpts );
 		break;
@@ -588,7 +519,6 @@ void ScreenNetSelectMusic::MenuUp( PlayerNumber pn, const InputEventType type )
 	m_SelectMode = (NetScreenSelectModes) ( ( (int)m_SelectMode - 1) % (int)SelectModes);
 	if ( (int) m_SelectMode < 0) 
 		m_SelectMode = (NetScreenSelectModes) (SelectModes - 1);
-	m_rectSelection.FinishTweening( );
 	COMMAND( m_rectSelection,  ssprintf("To%d", m_SelectMode+1 ) );
 }
 
@@ -596,7 +526,6 @@ void ScreenNetSelectMusic::MenuDown( PlayerNumber pn, const InputEventType type 
 {
 	m_soundChangeSel.Play();
 	m_SelectMode = (NetScreenSelectModes) ( ( (int)m_SelectMode + 1) % (int)SelectModes);
-	m_rectSelection.FinishTweening( );
 	COMMAND( m_rectSelection,  ssprintf("To%d", m_SelectMode+1 ) );
 }
 
@@ -640,18 +569,11 @@ void ScreenNetSelectMusic::TweenOffScreen()
 
 	OFF_COMMAND( m_textArtist );
 	OFF_COMMAND( m_textSubtitle );
-	OFF_COMMAND( m_textGroup );
 
 	OFF_COMMAND( m_rectExInfo );
 	OFF_COMMAND( m_rectDiff );
 
 	OFF_COMMAND( m_sprSelOptions );
-
-	for( unsigned i=0; i<m_textUsers.size(); i++ )
-		OFF_COMMAND( m_textUsers[i] );
-
-	OFF_COMMAND( m_rectUsersBG );
-
 
 	FOREACH_EnabledPlayer (pn)
 	{
@@ -726,7 +648,6 @@ void ScreenNetSelectMusic::UpdateSongsListPos()
 
 	m_textArtist.SetText( m_vSongs[j]->GetTranslitArtist() );
 	m_textSubtitle.SetText( m_vSongs[j]->GetTranslitSubTitle() );
-	m_textGroup.SetText( m_vSongs[j]->m_sGroupName );
 	GAMESTATE->m_pCurSong = m_vSongs[j];
 
 	//Update the difficulty Icons
@@ -741,30 +662,14 @@ void ScreenNetSelectMusic::UpdateSongsListPos()
 			m_DC[pn] = NUM_DIFFICULTIES;
 		else
 		{
-			int i;
-			Difficulty Target;
-
-			bool dcs[NUM_DIFFICULTIES];
-
-			for ( i=0; i<NUM_DIFFICULTIES; ++i )
-				dcs[i] = false;
-
 			for ( i=0; i<(int)MultiSteps.size(); ++i )
-				dcs[MultiSteps[i]->GetDifficulty()] = true;
+				if ( MultiSteps[i]->GetDifficulty() >= m_DC[pn] )
+					break;
 
-			for ( i=0; i<NUM_DIFFICULTIES; ++i )
-				if ( dcs[i] )
-				{
-					Target = (Difficulty)i;
-					if ( i >= m_DC[pn] )
-					{
-						m_DC[pn] = (Difficulty)i;
-						break;
-					}
-				}
-
-			if ( i == NUM_DIFFICULTIES )
-				m_DC[pn] = Target;
+			if ( i == (int)MultiSteps.size() )
+				m_DC[pn] = MultiSteps[i-1]->GetDifficulty();
+			else
+				m_DC[pn] = MultiSteps[i]->GetDifficulty();
 		}
 		UpdateDifficulties( pn );
 	}
@@ -813,44 +718,6 @@ void ScreenNetSelectMusic::UpdateSongsList()
 		SONGMAN->GetSongs( m_vSongs );	//this gets it alphabetically
 	else
 		SONGMAN->GetSongs( m_vSongs, m_vGroups[j] );
-}
-
-void ScreenNetSelectMusic::UpdateUsers()
-{
-	float tX = USERS_X - USERSDELT_X;
-	float tY = USERS_Y;
-
-	for( unsigned i=0; i< m_textUsers.size(); i++)
-		this->RemoveChild( &m_textUsers[i] );
-
-	m_textUsers.clear();
-
-	m_textUsers.resize( NSMAN->m_ActivePlayer.size() );
-
-	for( unsigned i=0; i < NSMAN->m_ActivePlayer.size(); i++)
-	{
-		m_textUsers[i].LoadFromFont( THEME->GetPathF(m_sName,"chat") );
-		m_textUsers[i].SetHorizAlign( align_center );
-		m_textUsers[i].SetVertAlign( align_top );
-		m_textUsers[i].SetShadowLength( 0 );
-		m_textUsers[i].SetName( "Users" );
-		
-		tX += USERSDELT_X;
-
-		if ( (i % 2) == 1)
-			tY = USERSALT_Y + USERS_Y;
-		else
-			tY = USERS_Y;
-		m_textUsers[i].SetXY( tX, tY );
-
-		ON_COMMAND( m_textUsers[i] );
-	
-		m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_ActivePlayer[i]] );
-		m_textUsers[i].SetDiffuseColor ( THEME->GetMetricC("ScreenNetSelectMusic",
-			ssprintf("Users%dColor", NSMAN->m_PlayerStatus[NSMAN->m_ActivePlayer[i]] ) ) );
-
-		this->AddChild( &m_textUsers[i] );
-	}
 }
 
 #endif

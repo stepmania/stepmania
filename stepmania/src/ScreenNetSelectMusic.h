@@ -62,7 +62,6 @@ protected:
 
 	void TweenOffScreen();
 
-	void UpdateUsers();
 private:
 	//Chatting
 	BitmapText		m_textChatInput;
@@ -72,6 +71,7 @@ private:
 	Quad			m_rectChatOutputBox;
 	CString			m_sTextInput;
 	CString			m_actualText;
+
 
 	//Selection
 	Quad			m_rectSelection;
@@ -91,11 +91,6 @@ private:
 
 	BitmapText		m_textArtist;
 	BitmapText		m_textSubtitle;
-	BitmapText		m_textGroup;
-
-	//Users Rect
-	Quad			m_rectUsersBG;
-	vector <BitmapText>	m_textUsers;
 
 	//Difficulty Icon(s)
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];

@@ -12,14 +12,16 @@
 #include "ScreenPrompt.h"
 #include "NetworkSyncServer.h"
 
-#if defined(XBOX)
-#include "archutils/Xbox/VirtualKeyboard.h"
-#endif
 
 enum {
 	PO_CONNECTION,
 	PO_SERVER,
 	NUM_NETWORK_OPTIONS_LINES
+};
+
+enum {
+	NO_DISCONNECT=0,
+	NO_CONNECT
 };
 
 enum {
@@ -39,17 +41,14 @@ ScreenNetworkOptions::ScreenNetworkOptions( CString sClassName ) : ScreenOptions
 {
 	LOG->Trace( "ScreenNetworkOptions::ScreenNetworkOptions()" );
 
-	m_sClassName = sClassName;
-
 	g_NetworkOptionsLines[PO_CONNECTION].choices.clear();
-	if ( NSMAN->useSMserver )
-		g_NetworkOptionsLines[PO_CONNECTION].choices.push_back("Disconnect from "+NSMAN->GetServerName());
-	else
-		g_NetworkOptionsLines[PO_CONNECTION].choices.push_back("Connect...");
+	g_NetworkOptionsLines[PO_CONNECTION].choices.push_back("Disconnect");
+	g_NetworkOptionsLines[PO_CONNECTION].choices.push_back("Connect...");
 
 	g_NetworkOptionsLines[PO_SERVER].choices.clear();
 	g_NetworkOptionsLines[PO_SERVER].choices.push_back("Stop");
 	g_NetworkOptionsLines[PO_SERVER].choices.push_back("Start...");
+	
 	
 	Init( 
 		INPUTMODE_SHARE_CURSOR, 
@@ -80,11 +79,6 @@ void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 			CString sNewName = ScreenTextEntry::s_sLastAnswer;
 			NSMAN->PostStartUp(sNewName);
 			NSMAN->DisplayStartupStatus();
-			UpdateConnectStatus( );
-#if defined( WITHOUT_NETWORKING )
-#else
-			PREFSMAN->m_sLastServer = ScreenTextEntry::s_sLastAnswer;
-#endif
 		}
 		break;
 	case SM_ServerNameEnter:
@@ -109,24 +103,18 @@ void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenNetworkOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 {
-#if defined( WITHOUT_NETWORKING )
-#else
 	switch( GetCurrentRow() )
 	{
 	case PO_CONNECTION:
-		if ( !NSMAN->useSMserver )
+		switch (m_Rows[GetCurrentRow()]->GetOneSharedSelection())
 		{
-
-#if defined(XBOX)
-			XBOX_VKB.Reset(VKMODE_IP);
-#endif
-
-			SCREENMAN->TextEntry( SM_DoneConnecting, "Enter a Network Address\n127.0.0.1 to connect to yourself", PREFSMAN->m_sLastServer );
-		}
-		else {
+		case NO_CONNECT:
+			SCREENMAN->TextEntry( SM_DoneConnecting, "Enter a Network Address\n127.0.0.1 to connect to yourself", "", NULL );
+			break;
+		case NO_DISCONNECT:
 			NSMAN->CloseConnection();
 			SCREENMAN->SystemMessage("Disconnected from server.");
-			UpdateConnectStatus( );
+			break;
 		}
 		break;
 	case PO_SERVER:
@@ -134,10 +122,6 @@ void ScreenNetworkOptions::MenuStart( PlayerNumber pn, const InputEventType type
 		{
 		case NO_START_SERVER:
 			if (!NSMAN->isLanServer)
-#if defined(XBOX)
-				XBOX_VKB.Reset(VKMODE_PROFILE);
-#endif
-
 				SCREENMAN->TextEntry( SM_ServerNameEnter, "Enter a server name...", "", NULL );
 			break;
 		case NO_STOP_SERVER:
@@ -151,16 +135,17 @@ void ScreenNetworkOptions::MenuStart( PlayerNumber pn, const InputEventType type
 	default:
 		ScreenOptions::MenuStart( pn, type );
 	}
-#endif
 }
 
-void ScreenNetworkOptions::ImportOptions() { }
-void ScreenNetworkOptions::ExportOptions() { }
-
-void ScreenNetworkOptions::UpdateConnectStatus( )
+void ScreenNetworkOptions::ImportOptions()
 {
-	SCREENMAN->SetNewScreen( m_sClassName );
+
 }
+void ScreenNetworkOptions::ExportOptions()
+{
+
+}
+
 #endif
 
 /*
