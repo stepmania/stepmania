@@ -22,13 +22,7 @@ bool ReceptorArrow::Load( CString NoteSkin, const PlayerState* pPlayerState, int
 	m_pPlayerState = pPlayerState;
 	m_iColNo = iColNo;
 
-	// TODO: Remove use of PlayerNumber.
-	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
-    NoteFieldMode &mode = g_NoteFieldMode[pn];
-	CString sButton = mode.GrayButtonNames[iColNo];
-	if( sButton == "" )
-		sButton = GAMESTATE->GetCurrentGame()->ColToButtonName( iColNo );
+	CString sButton = GAMESTATE->GetCurrentGame()->ColToButtonName( iColNo );
 
 	CString sPath;
 	m_pReceptorWaiting.Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin,sButton,"receptor waiting") );

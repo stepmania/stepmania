@@ -27,6 +27,7 @@
 #include "ThemeMetric.h"
 #include "PlayerState.h"
 #include "ScreenTextEntry.h"
+#include "Style.h"
 
 const float RECORD_HOLD_SECONDS = 0.3f;
 

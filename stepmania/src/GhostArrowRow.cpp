@@ -10,6 +10,7 @@
 #include "NoteFieldPositioning.h"
 #include "Game.h"
 #include "PlayerState.h"
+#include "Style.h"
 
 
 GhostArrowRow::GhostArrowRow()
@@ -108,13 +109,13 @@ void GhostArrowRow::DrawPrimitives()
 		// TODO: Remove indexing by PlayerNumber.
 		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
-		g_NoteFieldMode[pn].BeginDrawTrack(c);
+		NoteFieldMode::BeginDrawTrack( pn, c );
 
 		m_GhostDim[c]->Draw();
 		m_GhostBright[c]->Draw();
 		m_HoldGhost[c]->Draw();
 
-		g_NoteFieldMode[pn].EndDrawTrack(c);
+		NoteFieldMode::EndDrawTrack( c );
 	}
 }
 

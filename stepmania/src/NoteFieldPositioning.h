@@ -2,34 +2,12 @@
 #define NOTEFIELD_POSITIONING_H
 
 #include "PlayerNumber.h"
-#include "Style.h"
-#include "Command.h"
 
-class IniFile;
-struct XNode;
-
-struct NoteFieldMode
+namespace NoteFieldMode
 {
-	NoteFieldMode();
-	bool MatchesCurrentGame() const;
-
-	void BeginDrawTrack(int tn);
-	void EndDrawTrack(int tn);
-
-	float m_fPositionTrackX[MAX_NOTE_TRACKS];
+	void BeginDrawTrack( PlayerNumber pn, int iTrack );
+	void EndDrawTrack( int iTrack );
 };
-
-class NoteFieldPositioning
-{
-public:
-	NoteFieldPositioning(CString fn);
-	void Load(PlayerNumber pn);
-
-private:
-	vector<NoteFieldMode> Modes;
-};
-
-extern NoteFieldMode g_NoteFieldMode[NUM_PLAYERS];
 
 #endif
 

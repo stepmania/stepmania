@@ -29,6 +29,7 @@
 #include "CommonMetrics.h"
 #include "Actor.h"
 #include "PlayerState.h"
+#include "Style.h"
 
 #include <ctime>
 #include <set>
@@ -41,7 +42,6 @@ GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our progr
 
 GameState::GameState()
 {
-	m_pPosition = NULL;
 	m_pCurStyle = NULL;
 
 	m_pCurGame = NULL;
@@ -71,7 +71,6 @@ GameState::GameState()
 
 GameState::~GameState()
 {
-	SAFE_DELETE( m_pPosition );
 	for( unsigned i=0; i<m_pCharacters.size(); i++ )
 		SAFE_DELETE( m_pCharacters[i] );
 
@@ -151,9 +150,6 @@ void GameState::Reset()
 	m_pPreferredCourse = NULL;
 	FOREACH_PlayerNumber( p )
 		m_pCurTrail[p] = NULL;
-
-	SAFE_DELETE( m_pPosition );
-	m_pPosition = new NoteFieldPositioning("Positioning.ini");
 
 	FOREACH_PlayerNumber( p )
 		m_pPlayerState[p]->Reset();

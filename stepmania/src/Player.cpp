@@ -33,6 +33,7 @@
 #include "PlayerState.h"
 #include "GameplayMessages.h"
 #include "GameSoundManager.h"
+#include "Style.h"
 
 ThemeMetric<float> GRAY_ARROWS_Y_STANDARD		("Player","ReceptorArrowsYStandard");
 ThemeMetric<float> GRAY_ARROWS_Y_REVERSE		("Player","ReceptorArrowsYReverse");
@@ -156,9 +157,6 @@ void Player::Load( const NoteData& noteData )
 
 	GAMESTATE->ResetNoteSkinsForPlayer( pn );
 
-	/* Ensure that this is up-to-date. */
-	GAMESTATE->m_pPosition->Load(pn);
-	
 	// init steps
 	m_NoteData.Init();
 	bool bOniDead = GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  
@@ -617,11 +615,11 @@ void Player::DrawHoldJudgments()
 
 	for( int c=0; c<m_NoteData.GetNumTracks(); c++ )
 	{
-		g_NoteFieldMode[pn].BeginDrawTrack(c);
+		NoteFieldMode::BeginDrawTrack( pn, c );
 
 		m_HoldJudgment[c].Draw();
 
-		g_NoteFieldMode[pn].EndDrawTrack(c);
+		NoteFieldMode::EndDrawTrack(c);
 	}
 }
 

@@ -16,6 +16,7 @@
 #include "song.h"
 #include "ScreenDimensions.h"
 #include "PlayerState.h"
+#include "Style.h"
 
 NoteField::NoteField()
 {	
@@ -527,7 +528,7 @@ void NoteField::DrawPrimitives()
 	{
 		// TODO: Remove use of PlayerNumber.
 		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-		g_NoteFieldMode[pn].BeginDrawTrack(c);
+		NoteFieldMode::BeginDrawTrack( pn, c );
 
 		//
 		// Draw all HoldNotes in this column (so that they appear under the tap notes)
@@ -642,7 +643,7 @@ void NoteField::DrawPrimitives()
 		}
 
 
-		g_NoteFieldMode[pn].EndDrawTrack(c);
+		NoteFieldMode::EndDrawTrack( c );
 	}
 
 	cur->m_GhostArrowRow.Draw();

@@ -19,6 +19,7 @@
 #include "Game.h"
 #include "ScreenDimensions.h"
 #include "PlayerState.h"
+#include "Style.h"
 
 
 //
@@ -177,9 +178,6 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 		GAMESTATE->m_pPlayerState[p]->m_PlayerOptions = PlayerOptions();
 
 		ASSERT( GAMESTATE->IsHumanPlayer(p) );	// they better be enabled if they made a high score!
-
-		/* Ensure that this is up-to-date. */
-		GAMESTATE->m_pPosition->Load( (PlayerNumber)p );
 
 		float fPlayerX = PLAYER_X(p,GAMESTATE->GetCurrentStyle()->m_StyleType);
 

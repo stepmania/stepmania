@@ -44,6 +44,7 @@
 #include "ThemeMetric.h"
 #include "PlayerState.h"
 #include "GameplayMessages.h"
+#include "Style.h"
 
 //
 // Defines

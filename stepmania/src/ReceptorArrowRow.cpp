@@ -8,6 +8,7 @@
 #include "PrefsManager.h"
 #include "NoteFieldPositioning.h"
 #include "PlayerState.h"
+#include "Style.h"
 
 
 ReceptorArrowRow::ReceptorArrowRow()
@@ -58,9 +59,9 @@ void ReceptorArrowRow::DrawPrimitives()
 
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
-		g_NoteFieldMode[pn].BeginDrawTrack(c);
+		NoteFieldMode::BeginDrawTrack( pn, c );
 		m_ReceptorArrow[c].Draw();
-		g_NoteFieldMode[pn].EndDrawTrack(c);
+		NoteFieldMode::EndDrawTrack(c);
 	}
 }
 

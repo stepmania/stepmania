@@ -19,7 +19,6 @@ class Course;
 class Trail;
 class Game;
 class Style;
-class NoteFieldPositioning;
 class Character;
 class TimingData;
 struct StageStats;
@@ -248,11 +247,6 @@ public:
 	deque<PerDifficultyAward> m_vLastPerDifficultyAwards[NUM_PLAYERS];
 	deque<PeakComboAward> m_vLastPeakComboAwards[NUM_PLAYERS];
 
-
-	//
-	// Arrow positioning
-	//
-	NoteFieldPositioning *m_pPosition;
 
 	//
 	// Attract stuff

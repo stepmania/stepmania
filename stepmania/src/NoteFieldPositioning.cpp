@@ -2,67 +2,29 @@
 #include "NoteFieldPositioning.h"
 
 #include "RageDisplay.h"
-#include "RageUtil.h"
 #include "RageLog.h"
-#include "RageMath.h"
-
 #include "GameState.h"
-#include "GameManager.h"
-#include "IniFile.h"
-#include "Game.h"
-#include "ScreenDimensions.h"
-#include "PlayerState.h"
-#include "XmlFile.h"
+#include "Style.h"
 
-/* Copies of the current mode.  Update this by calling Load. */
-NoteFieldMode g_NoteFieldMode[NUM_PLAYERS];
-
-NoteFieldMode::NoteFieldMode()
-{
-}
-
-void NoteFieldMode::BeginDrawTrack(int tn)
+void NoteFieldMode::BeginDrawTrack( PlayerNumber pn, int iTrack )
 {
 	DISPLAY->CameraPushMatrix();
 
-	if(tn != -1)
-	{
-		DISPLAY->PushMatrix();
-		DISPLAY->Translate( m_fPositionTrackX[tn], 0, 0 );
-	}
-}
+	ASSERT( iTrack != -1 );
 
-void NoteFieldMode::EndDrawTrack(int tn)
-{
-	if(tn != -1)
-		DISPLAY->PopMatrix();
-
-	DISPLAY->CameraPopMatrix();
-}
-
-NoteFieldPositioning::NoteFieldPositioning(CString fn)
-{
-}
-
-bool NoteFieldMode::MatchesCurrentGame() const
-{
-	return true;
-}
-
-void NoteFieldPositioning::Load(PlayerNumber pn)
-{
-	NoteFieldMode &mode = g_NoteFieldMode[pn];
-
-	mode = NoteFieldMode(); /* reset */
+	DISPLAY->PushMatrix();
 
 	const Style *s = GAMESTATE->GetCurrentStyle();
+	const float fPixelXOffsetFromCenter = s->m_ColumnInfo[pn][iTrack].fXOffset;
+	DISPLAY->Translate( fPixelXOffsetFromCenter, 0, 0 );
+}
 
-	/* Load the settings in the style table by default. */
-	for(int tn = 0; tn < MAX_NOTE_TRACKS; ++tn)
-	{
-		const float fPixelXOffsetFromCenter = s->m_ColumnInfo[pn][tn].fXOffset;
-		mode.m_fPositionTrackX[tn] = fPixelXOffsetFromCenter;
-	}
+void NoteFieldMode::EndDrawTrack( int iTrack )
+{
+	ASSERT( iTrack != -1 );
+
+	DISPLAY->PopMatrix();
+	DISPLAY->CameraPopMatrix();
 }
 
 

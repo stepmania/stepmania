@@ -14,6 +14,7 @@
 #include "Model.h"
 #include "ThemeMetric.h"
 #include "PlayerState.h"
+#include "Style.h"
 
 static const ThemeMetric<float>			SECONDS_TO_SHOW		("ScreenHowToPlay","SecondsToShow");
 static const ThemeMetric<CString>		STEPFILE			("ScreenHowToPlay","Stepfile");
