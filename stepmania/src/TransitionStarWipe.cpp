@@ -45,7 +45,7 @@ void TransitionStarWipe::DrawPrimitives()
 
 	for( int row=0; row<iNumStars; row++ )	// foreach row of stars
 	{
-		BOOL bIsAnEvenRow = row % 2;
+		bool bIsAnEvenRow = !!(row % 2);
 		int y = m_iStarHeight*row + m_iStarHeight/2;
 		int x_tilt;
 		switch( m_TransitionState )

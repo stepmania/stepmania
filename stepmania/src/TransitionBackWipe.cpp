@@ -34,8 +34,8 @@ void TransitionBackWipe::DrawPrimitives()
 	/////////////////////////
 	// draw rectangles that get progressively smaller at the edge of the wipe
 	/////////////////////////
-	BOOL bLeftEdgeIsDarker = m_TransitionState == opening_left || m_TransitionState == closing_right;
-	BOOL bFadeIsMovingLeft = m_TransitionState == opening_left || m_TransitionState == closing_left;
+	bool bLeftEdgeIsDarker = m_TransitionState == opening_left || m_TransitionState == closing_right;
+	bool bFadeIsMovingLeft = m_TransitionState == opening_left || m_TransitionState == closing_left;
 
 	double	fPercentComplete = m_fPercentThroughTransition;
 	double  fPercentAlongScreen = bFadeIsMovingLeft ? 1-fPercentComplete : fPercentComplete;
