@@ -288,6 +288,46 @@ VOID RageMovieTexture::Create()
 }
 
 
+void HandleDivXError()
+{
+		int iRetVal = MessageBox( NULL, "Could not locate the DivX video codec. \n\
+DivX is required to play the animations in this game and must \n\
+be installed before running the application.\n\n\
+If you'd like, we can install the DivX codec version 3.11 \n\
+automatically for you.  Would you like to do this?", "Error - DivX missing", MB_YESNO|MB_ICONSTOP );
+		if( iRetVal == IDYES )
+		{
+			STARTUPINFO si;
+			ZeroMemory( &si, sizeof(si) );
+			si.cb = sizeof(si);
+			PROCESS_INFORMATION pi;
+
+
+			CreateProcess(
+				NULL,
+				"divx/Register_DivX.exe",  // pointer to command line string
+				NULL,  // process security attributes
+				NULL,   // thread security attributes
+				FALSE,  // handle inheritance flag
+				0, // creation flags
+				NULL,  // pointer to new environment block
+				"divx",   // pointer to current directory name
+				&si,  // pointer to STARTUPINFO
+				&pi  // pointer to PROCESS_INFORMATION
+			);
+			exit(1);
+		}
+		else
+		{
+			int iRetVal = MessageBox( NULL, "We're sorry, but you must install DivX before using this application.\n\
+Would you like to visit www.divx.com for more information on DivX codec?", "Sorry", MB_YESNO|MB_ICONSTOP );
+			if( iRetVal == IDYES )
+			{
+				GotoURL("http://www.divx.com");
+				exit(1);
+			}
+		}
+}
 
 //-----------------------------------------------------------------------------
 // InitDShowTextureRenderer : Create DirectShow filter graph and run the graph
@@ -325,46 +365,9 @@ HRESULT RageMovieTexture::InitDShowTextureRenderer()
 
 
     // Add the source filter
-    if( FAILED( hr = m_pGB->AddSourceFilter( wFileName, L"SOURCE", &pFSrc ) ) )
+    if( FAILED( hr = m_pGB->AddSourceFilter( wFileName, L"SOURCE", &pFSrc ) ) )		// if this fails, it's probably because the user doesn't have DivX installed
 	{
-		int iRetVal = MessageBox( NULL, "Could not locate the DivX video codec. \n\
-DivX is required to play the animations in this game and must \n\
-be installed before running the application.\n\n\
-If you'd like, we can install the DivX codec version 3.11 \n\
-automatically for you.  Would you like to do this?", "Error - DivX missing", MB_YESNO|MB_ICONSTOP );
-		if( iRetVal == IDYES )
-		{
-			STARTUPINFO si;
-			ZeroMemory( &si, sizeof(si) );
-			si.cb = sizeof(si);
-			PROCESS_INFORMATION pi;
-
-
-			CreateProcess(
-				NULL,
-				"divx/Register_DivX.exe",  // pointer to command line string
-				NULL,  // process security attributes
-				NULL,   // thread security attributes
-				FALSE,  // handle inheritance flag
-				0, // creation flags
-				NULL,  // pointer to new environment block
-				"divx",   // pointer to current directory name
-				&si,  // pointer to STARTUPINFO
-				&pi  // pointer to PROCESS_INFORMATION
-			);
-
-		}
-		else
-		{
-			int iRetVal = MessageBox( NULL, "We're sorry, but you must install DivX before using this application.\n\
-Would you like to visit www.divx.com for more information on DivX codec?", "Sorry", MB_YESNO|MB_ICONSTOP );
-			if( iRetVal == IDYES )
-			{
-				GotoURL("http://www.divx.com");
-			}
-		}
-		exit(1);
-		// if this fails, it's probably because the user doesn't have DivX installed
+		HandleDivXError();
         RageErrorHr( "Could not create source filter to graph!", hr );
 	}
     
@@ -377,7 +380,10 @@ Would you like to visit www.divx.com for more information on DivX codec?", "Sorr
     
     // Connect these two filters
     if( FAILED( hr = m_pGB->Connect( pFSrcPinOut, pFTRPinIn ) ) )
-        RageErrorHr( "Could not connect pins!", hr );
+	{
+ 		HandleDivXError();
+		RageErrorHr( "Could not connect pins!", hr );
+	}
     
     // Get the graph's media control, event & position interfaces
     m_pGB.QueryInterface(&m_pMC);

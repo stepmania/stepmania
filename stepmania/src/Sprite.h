@@ -29,19 +29,15 @@ public:
 	virtual ~Sprite();
 
 
-	
-
-	bool LoadFromTexture( CString sTexturePath );
-	bool LoadFromSpriteFile( CString sSpritePath );
-
-	void PrintDebugInfo();
+	virtual bool LoadFromTexture( CString sTexturePath );
+	virtual bool LoadFromSpriteFile( CString sSpritePath );
 
 	virtual void Draw();
-	virtual void Update( const float &fDeltaTime );
+	virtual void Update( float fDeltaTime );
 
-	void StartAnimating()	{ m_bIsAnimating = TRUE; };
-	void StopAnimating()	{ m_bIsAnimating = FALSE; };
-	void SetState( UINT uNewState );
+	virtual void StartAnimating()	{ m_bIsAnimating = TRUE; };
+	virtual void StopAnimating()	{ m_bIsAnimating = FALSE; };
+	virtual void SetState( UINT uNewState );
 	
 	UINT	GetNumStates()		{ return m_uNumStates; };
 	CString	GetTexturePath()	{ return m_sTexturePath; };

@@ -239,7 +239,7 @@ void Player::SetSteps( const Steps& newSteps, bool bLoadOnlyLeftSide, bool bLoad
 
 }
 
-void Player::Update( const float &fDeltaTime, float fSongBeat, float fMaxBeatDifference )
+void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference )
 {
 	//RageLog( "Player::Update(%f, %f, %f)", fDeltaTime, fSongBeat, fMaxBeatDifference );
 
@@ -439,14 +439,14 @@ float Player::GetArrowColumnX( int iColNum )
 	return m_fArrowsCenterX + fColOffsetFromCenter * ARROW_SIZE;
 }
 
-void Player::UpdateGrayArrows( const float &fDeltaTime )
+void Player::UpdateGrayArrows( float fDeltaTime )
 {
 	for( int i=0; i < m_iNumColumns; i++ ) {
 		m_GrayArrow[i].Update( fDeltaTime );
 	}
 }
 
-void Player::UpdateGhostArrows( const float &fDeltaTime )
+void Player::UpdateGhostArrows( float fDeltaTime )
 {
 	for( int i=0; i < m_iNumColumns; i++ ) {
 		m_GhostArrow[i].Update( fDeltaTime );
@@ -499,7 +499,7 @@ void Player::GhostArrowStep( int index, StepScore score )
 	m_GhostArrow[index].Step( score );		
 }
 
-void Player::UpdateColorArrows( const float &fDeltaTime )
+void Player::UpdateColorArrows( float fDeltaTime )
 {
 	int iIndexFirstArrowToDraw = BeatToStepIndex( m_fSongBeat - 2.0f );	// 2 beats earlier
 	if( iIndexFirstArrowToDraw < 0 ) iIndexFirstArrowToDraw = 0;
@@ -568,7 +568,7 @@ void Player::SetJudgementX( int iNewX )
 	m_sprJudgement.SetXY(  iNewX,  JUDGEMENT_Y );
 }
 
-void Player::UpdateJudgement( const float &fDeltaTime )
+void Player::UpdateJudgement( float fDeltaTime )
 {
 	if( m_fJudgementDisplayCountdown > 0.0 )
 		m_fJudgementDisplayCountdown -= fDeltaTime;
@@ -615,7 +615,7 @@ void Player::SetComboX( int iNewX )
 	m_ComboNumber.SetXY(  iNewX-50, COMBO_Y );
 }
 
-void Player::UpdateCombo( const float &fDeltaTime )
+void Player::UpdateCombo( float fDeltaTime )
 {
 	m_sprCombo.Update( fDeltaTime );
 	m_ComboNumber.Update( fDeltaTime );
@@ -663,7 +663,7 @@ void Player::SetLifeMeterX( int iNewX )
 	m_sprLifeMeterPills.SetXY( iNewX, LIFEMETER_PILLS_Y );
 }
 
-void Player::UpdateLifeMeter( const float &fDeltaTime )
+void Player::UpdateLifeMeter( float fDeltaTime )
 {
 	m_sprLifeMeterFrame.Update( fDeltaTime );
 	m_sprLifeMeterPills.Update( fDeltaTime );
@@ -728,7 +728,7 @@ void Player::SetScoreX( int iNewX )
 	m_ScoreNumber.SetXY(  iNewX, SCORE_Y );
 }
 
-void Player::UpdateScore( const float &fDeltaTime )
+void Player::UpdateScore( float fDeltaTime )
 {
 	m_sprScoreFrame.Update( fDeltaTime );
 	m_ScoreNumber.Update( fDeltaTime );

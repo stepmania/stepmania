@@ -113,7 +113,7 @@ void Actor::Update( const float &fDeltaTime )
 				m_bTweeningTowardEndColor = TRUE;
 			}
 		}
-		RageLog( "Actor::m_fPercentBetweenColors %f", m_fPercentBetweenColors );
+		//RageLog( "Actor::m_fPercentBetweenColors %f", m_fPercentBetweenColors );
 		break;
 	case wagging:
 		m_fWagTimer += fDeltaTime;

@@ -342,7 +342,6 @@ void Song::TidyUpData()
 	if( m_sMusic == "" || !DoesFileExist(GetMusicPath()) )
 	{
 		CStringArray arrayPossibleMusic;
-		GetDirListing( m_sSongDir + CString("*.wma"), arrayPossibleMusic );
 		GetDirListing( m_sSongDir + CString("*.mp3"), arrayPossibleMusic );
 		GetDirListing( m_sSongDir + CString("*.wav"), arrayPossibleMusic );
 

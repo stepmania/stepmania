@@ -25,6 +25,7 @@
 
 #include "WindowTitleMenu.h"
 #include "WindowSandbox.h"
+#include "WindowLoading.h"
 
 #include <DXUtil.h>
 
@@ -67,7 +68,6 @@ void Update();			// Update the game logic
 void Render();			// Render a frame
 void ShowFrame();		// Display the contents of the back buffer to the screen
 void SetFullscreen( BOOL bFullscreen );	// Switch between fullscreen and windowed modes.
-void TestForDirectX();	// check for DirectX 8
 
 // Functions that work with game objects
 HRESULT		CreateObjects( HWND hWnd );	// allocate and initialize game objects
@@ -82,6 +82,17 @@ VOID		DestroyObjects();			// deallocate game objects when we're done with them
 //-----------------------------------------------------------------------------
 int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 {
+	if( !DoesFileExist("Songs") )
+	{
+		// change dir to path of the execuctable
+		TCHAR szFullAppPath[MAX_PATH];
+		GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
+		LPSTR pLastBackslash = strrchr(szFullAppPath, '\\');
+		*pLastBackslash = '\0';	// terminate the string
+		//MessageBox(NULL, szFullAppPath, szFullAppPath, MB_OK);
+		SetCurrentDirectory(szFullAppPath);
+	}
+
     CoInitialize (NULL);    // Initialize COM
 
     // Register the window class
@@ -123,9 +134,6 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
  	if( NULL == g_hWndMain )
 		exit(1);
 
-	
-	TestForDirectX();
-
 
 	// Load keyboard accelerators
 	HACCEL hAccel = LoadAccelerators( NULL, MAKEINTRESOURCE(IDR_MAIN_ACCEL) );
@@ -158,7 +166,6 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 		{
 			Update();
 			Render();
-			ShowFrame();
 			//if( !g_bFullscreen )
 			::Sleep(16);	// give some time for the movie
 		}
@@ -294,12 +301,20 @@ HRESULT CreateObjects( HWND hWnd )
 
 	SCREEN	= new RageScreen( hWnd );
 	TM		= new RageTextureManager( SCREEN );
+	WM		= new WindowManager;
+
+	// throw something up on the screen while the game resources are loading
+	WM->SetNewWindow( new WindowLoading );
+	Render();
+	ShowFrame();
+
+	
 	SOUND	= new RageSound( hWnd );
 	MUSIC	= new RageMusic;
 	INPUT	= new RageInput( hWnd );
 	
 	GAMEINFO	= new GameInfo;
-	WM			= new WindowManager;
+
 
 	//WM->SetNewWindow( new WindowSandbox );
 	WM->SetNewWindow( new WindowTitleMenu );
@@ -472,6 +487,8 @@ void Render()
 			}
 			break;
 	}
+
+	ShowFrame();
 }
 
 
@@ -508,21 +525,5 @@ void SetFullscreen( BOOL bFullscreen )
 //-----------------------------------------------------------------------------
 #include "getdxver.h"
 
-void TestForDirectX()
-{
-	if( GetDXVersion() < 0x0800 )
-	{
-		int iRetVal = MessageBox( NULL, "We're sorry, but you have an old version of the Microsoft DirectX drivers.\n\
-This application requires DirectX version 8.1 or higher.\n\n\
-Would you like to visit the Microsoft DirectX site to download the latest version?", "Sorry", MB_YESNO|MB_ICONSTOP );
-		if( iRetVal == IDYES )
-		{
-			GotoURL("http://www.microsoft.com/directx/homeuser/downloads/default.asp");
-		}
-
-		exit(1);
-	}
-
-}
 
 

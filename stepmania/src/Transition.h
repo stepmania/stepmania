@@ -29,7 +29,7 @@ public:
 	Transition();
 	~Transition();
 
-	void Update( const FLOAT &fDeltaTime );
+	void Update( float fDeltaTime );
 	virtual void Draw() PURE;
 
 	virtual void SetOpened();

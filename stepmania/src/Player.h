@@ -34,7 +34,7 @@ public:
 
 	void SetSteps( const Steps& newSteps, bool bLoadOnlyLeftSide = false, bool bLoadOnlyRightSide = false );
 	void SetX( float fX );
-	void Update( const float &fDeltaTime, float fSongBeat, float fMaxBeatDifference );
+	void Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference );
 	void Draw();
 
 
@@ -68,7 +68,7 @@ protected:
 
 	// color arrows
 	void SetColorArrowsX( int iX );
-	void UpdateColorArrows( const float& fDeltaTime );
+	void UpdateColorArrows( float fDeltaTime );
 	float GetColorArrowYPos( int iStepIndex, float fSongBeat );
 	void DrawColorArrows();
 	int			m_iColorArrowFrameOffset[MAX_STEP_ELEMENTS];
@@ -76,14 +76,14 @@ protected:
 
 	// gray arrows
 	void SetGrayArrowsX( int iX );
-	void UpdateGrayArrows( const float& fDeltaTime );
+	void UpdateGrayArrows( float fDeltaTime );
 	void DrawGrayArrows();
 	void GrayArrowStep( int index, StepScore score );
 	GrayArrow	m_GrayArrow[MAX_NUM_COLUMNS];
 
 	// ghost arrows
 	void SetGhostArrowsX( int iX );
-	void UpdateGhostArrows( const float& fDeltaTime );
+	void UpdateGhostArrows( float fDeltaTime );
 	void DrawGhostArrows();
 	void GhostArrowStep( int index, StepScore score );
 	GhostArrow	m_GhostArrow[MAX_NUM_COLUMNS];
@@ -91,7 +91,7 @@ protected:
 
 	// judgement
 	void SetJudgementX( int iX );
-	void UpdateJudgement( const float& fDeltaTime );
+	void UpdateJudgement( float fDeltaTime );
 	void DrawJudgement();
 	void SetJudgement( StepScore score );
 	float		m_fJudgementDisplayCountdown;
@@ -99,7 +99,7 @@ protected:
 
 	// combo
 	void SetComboX( int iX );
-	void UpdateCombo( const float& fDeltaTime );
+	void UpdateCombo( float fDeltaTime );
 	void DrawCombo();
 	void SetCombo( int iNum );
 	bool		m_bComboVisible;
@@ -108,7 +108,7 @@ protected:
 
 	// life meter
 	void SetLifeMeterX( int iX );
-	void UpdateLifeMeter( const float& fDeltaTime );
+	void UpdateLifeMeter( float fDeltaTime );
 	void DrawLifeMeter();
 	void ChangeLife( StepScore score );
 public:
@@ -120,7 +120,7 @@ private:
 
 	// score
 	void SetScoreX( int iX );
-	void UpdateScore( const float& fDeltaTime );
+	void UpdateScore( float fDeltaTime );
 	void DrawScore();
 	void ChangeScore( StepScore stepscore, int iCurCombo );
 	float		m_fScore;

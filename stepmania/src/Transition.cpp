@@ -25,17 +25,17 @@ Transition::Transition() :
 {
 	m_bPlayCloseWipingRightSound = TRUE;
 	m_bPlayCloseWipingLeftSound = TRUE;
-	m_hCloseWipingRightSound  = SOUND->LoadSound( SOUND_NEXT );
-	m_hCloseWipingLeftSound = SOUND->LoadSound( SOUND_BACK );	
+	m_hCloseWipingRightSound  = SOUND->LoadSample( SOUND_NEXT );
+	m_hCloseWipingLeftSound = SOUND->LoadSample( SOUND_BACK );	
 }
 
 Transition::~Transition()
 {
-	SOUND->UnloadSound( m_hCloseWipingRightSound );
-	SOUND->UnloadSound( m_hCloseWipingLeftSound );
+	SOUND->UnloadSample( m_hCloseWipingRightSound );
+	SOUND->UnloadSample( m_hCloseWipingLeftSound );
 }
 
-void Transition::Update( const FLOAT &fDeltaTime )
+void Transition::Update( float fDeltaTime )
 {
 	switch( m_TransitionState )
 	{ 
@@ -96,7 +96,7 @@ void Transition::CloseWipingRight( WindowMessage send_when_done )
 	m_TransitionState = closing_right;
 	m_fPercentThroughTransition = 0.0;
 	if( m_bPlayCloseWipingRightSound )
-		SOUND->Play( m_hCloseWipingRightSound );
+		SOUND->PlaySample( m_hCloseWipingRightSound );
 }
 
 void Transition::CloseWipingLeft( WindowMessage send_when_done )
@@ -105,7 +105,7 @@ void Transition::CloseWipingLeft( WindowMessage send_when_done )
 	m_TransitionState = closing_left;
 	m_fPercentThroughTransition = 0.0;
 	if( m_bPlayCloseWipingLeftSound )
-		SOUND->Play( m_hCloseWipingLeftSound );
+		SOUND->PlaySample( m_hCloseWipingLeftSound );
 }
 
 
@@ -113,13 +113,13 @@ void Transition::SetCloseWipingRightSound( CString sSoundPath )
 { 
 	if( sSoundPath == "" )
 	{
-		SOUND->UnloadSound( m_hCloseWipingRightSound );
+		SOUND->UnloadSample( m_hCloseWipingRightSound );
 		m_bPlayCloseWipingRightSound = FALSE;
 	}
 	else
 	{
-		SOUND->UnloadSound( m_hCloseWipingRightSound );
-		m_hCloseWipingRightSound  = SOUND->LoadSound( SOUND_NEXT );
+		SOUND->UnloadSample( m_hCloseWipingRightSound );
+		m_hCloseWipingRightSound  = SOUND->LoadSample( SOUND_NEXT );
 		m_bPlayCloseWipingRightSound = TRUE;
 	}
 }
@@ -128,13 +128,13 @@ void Transition::SetCloseWipingLeftSound( CString sSoundPath )
 { 
 	if( sSoundPath == "" )
 	{
-		SOUND->UnloadSound( m_hCloseWipingRightSound );
+		SOUND->UnloadSample( m_hCloseWipingRightSound );
 		m_bPlayCloseWipingLeftSound = FALSE;
 	}
 	else
 	{
-		SOUND->UnloadSound( m_hCloseWipingLeftSound );
-		m_hCloseWipingLeftSound  = SOUND->LoadSound( SOUND_NEXT );
+		SOUND->UnloadSample( m_hCloseWipingLeftSound );
+		m_hCloseWipingLeftSound  = SOUND->LoadSample( SOUND_NEXT );
 		m_bPlayCloseWipingLeftSound = TRUE;
 	}
 };

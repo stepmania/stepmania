@@ -22,6 +22,7 @@ typedef RageTexture* LPRageTexture;
 //#include <d3d8types.h>
 	
 
+
 struct FRECT
 {	
 public:
@@ -32,6 +33,7 @@ public:
 
 	float    left, top, right, bottom;
 };
+
 
 
 //-----------------------------------------------------------------------------

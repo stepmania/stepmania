@@ -18,15 +18,6 @@
 
 #define NUM_STREAMS		16
 
-#define EFFECT_CHANNEL_1	0
-#define EFFECT_CHANNEL_2	1
-#define EFFECT_CHANNEL_3	2
-#define EFFECT_CHANNEL_4	3
-#define EFFECT_CHANNEL_5	4
-#define ANOUNCER_CHANNEL	13
-#define CROWD_CHANNEL		14
-#define MUSIC_CHANNEL		15
-
 
 class RageSound
 {
@@ -34,10 +25,19 @@ public:
 	RageSound( HWND hWnd );
 	~RageSound();
 	
-	HSAMPLE LoadSound( const CString sFileName );
-	VOID	UnloadSound( HSAMPLE hSample );
-	VOID	Play( HSAMPLE hSample );
-	VOID	Stop( HSAMPLE hSample );
+	HSAMPLE LoadSample( const CString sFileName );
+	void	UnloadSample( HSAMPLE hSample );
+	void	PlaySample( HSAMPLE hSample );
+	void	StopSample( HSAMPLE hSample );
+
+	HSTREAM LoadStream( const CString sFileName );
+	void	UnloadStream( HSTREAM hStream);
+	void	PlayStream( HSTREAM hStream);
+	void	PauseStream( HSTREAM hStream);
+	void	StopStream( HSTREAM hStream);
+	float GetStreamLength( HSTREAM hStream);
+	float GetStreamPosition( HSTREAM hStream);
+	BOOL	IsPlaying(DWORD handle);
 
 private:
 	HWND		m_hWndApp;	// this is set on GRAPHICS_Create()

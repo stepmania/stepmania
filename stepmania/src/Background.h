@@ -22,7 +22,7 @@ class Background : public Sprite
 public:
 	void LoadFromSong( Song& song );
 
-	void Update( const FLOAT& fDeltaTime);
+	void Update( float fDeltaTime);
 	void Draw();
 
 	Sprite m_sprVis;

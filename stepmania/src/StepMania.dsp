@@ -200,6 +200,14 @@ SOURCE=.\WindowIntroCovers.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\WindowLoading.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowLoading.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\WindowManager.cpp
 # End Source File
 # Begin Source File
@@ -265,6 +273,14 @@ SOURCE=.\Actor.cpp
 # Begin Source File
 
 SOURCE=.\Actor.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ActorFrame.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ActorFrame.h
 # End Source File
 # Begin Source File
 
@@ -389,6 +405,14 @@ SOURCE=.\Steps.cpp
 # Begin Source File
 
 SOURCE=.\Steps.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\TextBanner.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\TextBanner.h
 # End Source File
 # End Group
 # Begin Group "File Types"
