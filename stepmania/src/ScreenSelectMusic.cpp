@@ -180,8 +180,6 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 		
 		m_sprHighScoreFrame[p].SetName( ssprintf("ScoreFrameP%d",p+1) );
 		m_sprHighScoreFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenSelectMusic score frame p%d",p+1)) );
-		m_sprHighScoreFrame[p].StopAnimating();
-		m_sprHighScoreFrame[p].SetState( p );
 		this->AddChild( &m_sprHighScoreFrame[p] );
 
 		m_textHighScore[p].SetName( ssprintf("ScoreP%d",p+1) );
