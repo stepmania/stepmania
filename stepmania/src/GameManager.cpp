@@ -160,7 +160,12 @@ GameDef g_GameDefs[NUM_GAMES] =
 				NO_DEFAULT_KEY,			// DANCE_BUTTON_COIN
 				NO_DEFAULT_KEY			// DANCE_BUTTON_OPERATOR
 			},
-		}
+		},
+		TNS_MARVELOUS,	// m_mapMarvelousTo
+		TNS_PERFECT,	// m_mapPerfectTo
+		TNS_GREAT,		// m_mapGreatTo
+		TNS_GOOD,		// m_mapGoodTo
+		TNS_BOO,		// m_mapBooTo
 	},
 	{	// GAME_PUMP
 		"pump",				// m_szName
@@ -248,7 +253,12 @@ GameDef g_GameDefs[NUM_GAMES] =
 				NO_DEFAULT_KEY,						// PUMP_BUTTON_COIN
 				NO_DEFAULT_KEY						// PUMP_BUTTON_OPERATOR
 			},
-		}
+		},
+		TNS_MARVELOUS,	// m_mapMarvelousTo
+		TNS_PERFECT,	// m_mapPerfectTo
+		TNS_GREAT,		// m_mapGreatTo
+		TNS_GOOD,		// m_mapGoodTo
+		TNS_BOO,		// m_mapBooTo
 	},
 	{
 		"ez2",						// m_szName
@@ -345,6 +355,11 @@ GameDef g_GameDefs[NUM_GAMES] =
 				NO_DEFAULT_KEY						// EZ2_BUTTON_OPERATOR
 			},
 		},
+		TNS_PERFECT,	// m_mapMarvelousTo
+		TNS_PERFECT,	// m_mapPerfectTo
+		TNS_PERFECT,	// m_mapGreatTo
+		TNS_GOOD,		// m_mapGoodTo
+		TNS_MISS,		// m_mapBooTo
 	},
 	{	// GAME_PARA
 		"para",					// m_szName
@@ -432,7 +447,12 @@ GameDef g_GameDefs[NUM_GAMES] =
 				NO_DEFAULT_KEY,						// PARA_BUTTON_COIN
 				NO_DEFAULT_KEY						// PARA_BUTTON_OPERATOR
 			},
-		}
+		},
+		TNS_MARVELOUS,	// m_mapMarvelousTo
+		TNS_PERFECT,	// m_mapPerfectTo
+		TNS_GREAT,		// m_mapGreatTo
+		TNS_GOOD,		// m_mapGoodTo
+		TNS_BOO,		// m_mapBooTo
 	},
 	{	// GAME_DS3DDX
 		"ds3ddx",					// m_szName
@@ -532,7 +552,12 @@ GameDef g_GameDefs[NUM_GAMES] =
 				NO_DEFAULT_KEY,						// DS3DDX_BUTTON_COIN
 				NO_DEFAULT_KEY						// DS3DDX_BUTTON_OPERATOR
 			},
-		}
+		},
+		TNS_MARVELOUS,	// m_mapMarvelousTo
+		TNS_PERFECT,	// m_mapPerfectTo
+		TNS_GREAT,		// m_mapGreatTo
+		TNS_GOOD,		// m_mapGoodTo
+		TNS_BOO,		// m_mapBooTo
 	},
 	{	// GAME_BM
 		"bm",				// m_szName
@@ -629,7 +654,12 @@ GameDef g_GameDefs[NUM_GAMES] =
 				NO_DEFAULT_KEY,					// BM_BUTTON_COIN
 				NO_DEFAULT_KEY					// BM_BUTTON_OPERATOR
 			},
-		}
+		},
+		TNS_MARVELOUS,	// m_mapMarvelousTo
+		TNS_PERFECT,	// m_mapPerfectTo
+		TNS_GREAT,		// m_mapGreatTo
+		TNS_GOOD,		// m_mapGoodTo
+		TNS_BOO,		// m_mapBooTo
 	},
 	{	// GAME_IIDX
 		"iidx",				// m_szName
@@ -734,7 +764,12 @@ GameDef g_GameDefs[NUM_GAMES] =
 				NO_DEFAULT_KEY,					// IIDX_BUTTON_COIN
 				NO_DEFAULT_KEY					// IIDX_BUTTON_OPERATOR
 			},
-		}
+		},
+		TNS_MARVELOUS,	// m_mapMarvelousTo
+		TNS_PERFECT,	// m_mapPerfectTo
+		TNS_GREAT,		// m_mapGreatTo
+		TNS_GOOD,		// m_mapGoodTo
+		TNS_BOO,		// m_mapBooTo
 	},
 	{	// GAME_MANIAX
 		"maniax",					// m_szName
@@ -818,7 +853,12 @@ GameDef g_GameDefs[NUM_GAMES] =
 				NO_DEFAULT_KEY,					// MANIAX_BUTTON_COIN
 				NO_DEFAULT_KEY					// MANIAX_BUTTON_OPERATOR
 			},
-		}
+		},
+		TNS_MARVELOUS,	// m_mapMarvelousTo
+		TNS_PERFECT,	// m_mapPerfectTo
+		TNS_GREAT,		// m_mapGreatTo
+		TNS_GOOD,		// m_mapGoodTo
+		TNS_BOO,		// m_mapBooTo
 	},
 	{	// GAME_TECHNO
 		"techno",					// m_szName
@@ -920,7 +960,12 @@ GameDef g_GameDefs[NUM_GAMES] =
 				NO_DEFAULT_KEY,					// TECHNO_BUTTON_COIN
 				NO_DEFAULT_KEY					// TECHNO_BUTTON_OPERATOR
 			},
-		}
+		},
+		TNS_MARVELOUS,	// m_mapMarvelousTo
+		TNS_PERFECT,	// m_mapPerfectTo
+		TNS_GREAT,		// m_mapGreatTo
+		TNS_GOOD,		// m_mapGoodTo
+		TNS_BOO,		// m_mapBooTo
 	},
 	{	// GAME_PNM
 		"pnm",				// m_szName
@@ -1025,7 +1070,12 @@ GameDef g_GameDefs[NUM_GAMES] =
 				NO_DEFAULT_KEY,					// BM_BUTTON_COIN
 				NO_DEFAULT_KEY					// BM_BUTTON_OPERATOR
 			},
-		}
+		},
+		TNS_PERFECT,	// m_mapMarvelousTo
+		TNS_PERFECT,	// m_mapPerfectTo
+		TNS_GREAT,		// m_mapGreatTo
+		TNS_GREAT,		// m_mapGoodTo
+		TNS_MISS,		// m_mapBooTo
 	},
 	{	// GAME_LIGHTS
 		"lights",					// m_szName
@@ -1125,7 +1175,12 @@ GameDef g_GameDefs[NUM_GAMES] =
 				NO_DEFAULT_KEY		// LIGHTS_BUTTON_COIN
 				NO_DEFAULT_KEY		// LIGHTS_BUTTON_OPERATOR
 			},
-		}
+		},
+		TNS_MARVELOUS,	// m_mapMarvelousTo
+		TNS_PERFECT,	// m_mapPerfectTo
+		TNS_GREAT,		// m_mapGreatTo
+		TNS_GOOD,		// m_mapGoodTo
+		TNS_BOO,		// m_mapBooTo
 	},
 };
 

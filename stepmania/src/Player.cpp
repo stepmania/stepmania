@@ -675,30 +675,6 @@ void PlayerMinus::Step( int col, RageTimer tm )
 		{
 		case PC_HUMAN: {
 
-			// TODO: move the judgments into flags in PrefsManager so we don't need logic like this per-game.
-			if(GAMESTATE->m_CurGame == GAME_EZ2)
-			{
-				/* 1 is normal.  2 means scoring is half as hard; .5 means it's twice as hard. */
-				/* Ez2 is only perfect / good / miss */
-				if(		 fSecondsFromPerfect <= ADJUSTED_WINDOW(Marvelous) )	score = TNS_PERFECT; 
-				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Perfect) )		score = TNS_PERFECT;
-				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Great) )		score = TNS_PERFECT;
-				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Good) )			score = TNS_GOOD;
-				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Boo) )			score = TNS_MISS;
-				else	score = TNS_NONE;
-			}
-			else if(GAMESTATE->m_CurGame == GAME_PNM)
-			{
-				/* PNM Goods = Great / Boo = Miss */
-				if(		 fSecondsFromPerfect <= ADJUSTED_WINDOW(Marvelous) )	score = TNS_MARVELOUS; 
-				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Perfect) )		score = TNS_PERFECT;
-				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Great) )		score = TNS_GREAT;
-				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Good) )			score = TNS_GREAT;
-				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Boo) )			score = TNS_MISS;
-				else	score = TNS_NONE;
-			}
-
-
 			switch( tn )
 			{
 			case TAP_MINE:
@@ -742,28 +718,12 @@ void PlayerMinus::Step( int col, RageTimer tm )
 				}
 				else	// !IsTapAttack
 				{
-					// TODO: move the judgments into flags in PrefsManager so we don't need logic like this per-game.
-					if(GAMESTATE->m_CurGame == GAME_EZ2)
-					{
-						/* 1 is normal.  2 means scoring is half as hard; .5 means it's twice as hard. */
-						/* Ez2 is only perfect / good / miss */
-						if(		 fSecondsFromPerfect <= ADJUSTED_WINDOW(Marvelous) )	score = TNS_PERFECT; 
-						else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Perfect) )	score = TNS_PERFECT;
-						else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Great) )		score = TNS_PERFECT;
-						else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Good) )		score = TNS_GOOD;
-						else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Boo) )		score = TNS_MISS;
-						else	score = TNS_NONE;
-					}
-					else
-					{
-						/* 1 is normal.  2 means scoring is half as hard; .5 means it's twice as hard. */
-						if(		 fSecondsFromPerfect <= ADJUSTED_WINDOW(Marvelous) )	score = TNS_MARVELOUS;
-						else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Perfect) )	score = TNS_PERFECT;
-						else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Great) )		score = TNS_GREAT;
-						else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Good) )		score = TNS_GOOD;
-						else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Boo) )		score = TNS_BOO;
-						else	score = TNS_NONE;
-					}
+					if(		 fSecondsFromPerfect <= ADJUSTED_WINDOW(Marvelous) )	score = TNS_MARVELOUS;
+					else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Perfect) )	score = TNS_PERFECT;
+					else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Great) )		score = TNS_GREAT;
+					else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Good) )		score = TNS_GOOD;
+					else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Boo) )		score = TNS_BOO;
+					else	score = TNS_NONE;
 				}
 				break;
 			}
@@ -779,25 +739,6 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			case PC_AUTOPLAY:
 				score = TNS_MARVELOUS;
 				break;
-			}
-
-			if( GAMESTATE->m_CurGame == GAME_EZ2 ) // scores are only perfect/good/miss on ez2 adjust accordingly
-			{
-				if(score == TNS_GREAT || score == TNS_MARVELOUS)
-					score = TNS_PERFECT;
-				if(score == TNS_BOO)
-					score = TNS_MISS;
-			}
-			if ( GAMESTATE->m_CurGame == GAME_PNM ) // a boo is really miss on pnm, a good is really a great!
-			{
-				if(score == TNS_MARVELOUS) // in demo mode PC shouldnt hit marvelous
-					score = TNS_PERFECT;
-
-				if(score == TNS_GOOD)
-					score = TNS_GREAT;
-				
-				if(score == TNS_BOO)
-					score = TNS_MISS;
 			}
 
 			// TRICKY:  We're asking the AI to judge mines.  consider TNS_GOOD and below
@@ -872,6 +813,16 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			break;
 		}
 		
+
+		// Do game-specific score mapping.
+		const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+		if( score == TNS_MARVELOUS )	score = pGameDef->m_mapMarvelousTo;
+		if( score == TNS_PERFECT )		score = pGameDef->m_mapPerfectTo;
+		if( score == TNS_GREAT )		score = pGameDef->m_mapGreatTo;
+		if( score == TNS_GOOD )			score = pGameDef->m_mapGoodTo;
+		if( score == TNS_BOO )			score = pGameDef->m_mapBooTo;
+
+
 
 		if( score != TNS_NONE && score != TNS_MISS )
 		{
