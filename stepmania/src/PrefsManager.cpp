@@ -18,6 +18,7 @@
 #include "RageUtil.h"
 #include "arch/arch.h" /* for default driver specs */
 #include "RageSoundReader_Resample.h" /* for ResampleQuality */
+#include "RageFile.h"
 
 #define STEPMANIA_INI_PATH BASE_PATH "Data" SLASH "StepMania.ini"
 #define STATIC_INI_PATH BASE_PATH "Data" SLASH "Static.ini"
@@ -309,7 +310,11 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "EndlessBreakLength",				m_iEndlessBreakLength );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		ini.GetValue( "Options", ssprintf("DefaultProfileP%d",p+1),	m_sDefaultProfile[p] );
+	{
+		ini.GetValue( "Options", ssprintf("DefaultMachineProfileIDP%d",p+1),	m_sDefaultMachineProfileID[p] );
+		ini.GetValue( "Options", ssprintf("MemoryCardDirP%d",p+1),				m_sMemoryCardDir[p] );
+		FixSlashesInPlace( m_sMemoryCardDir[p] );
+	}
 
 	ini.GetValue( "Options", "CenterImageTranslateX",			m_iCenterImageTranslateX );
 	ini.GetValue( "Options", "CenterImageTranslateY",			m_iCenterImageTranslateY );
@@ -323,6 +328,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	CString sAdditionalSongFolders;
 	if( ini.GetValue( "Options", "AdditionalSongFolders",			sAdditionalSongFolders ) )
 	{
+		FixSlashesInPlace( sAdditionalSongFolders );
 		m_asAdditionalSongFolders.clear();
 		split( sAdditionalSongFolders, ",", m_asAdditionalSongFolders, true );
 	}
@@ -440,7 +446,10 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "EndlessBreakLength",				m_iEndlessBreakLength );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		ini.SetValue ( "Options", ssprintf("DefaultProfileP%d",p+1),	m_sDefaultProfile[p] );
+	{
+		ini.SetValue( "Options", ssprintf("DefaultMachineProfileIDP%d",p+1),	m_sDefaultMachineProfileID[p] );
+		ini.SetValue( "Options", ssprintf("MemoryCardDirP%d",p+1),				m_sMemoryCardDir[p] );
+	}
 
 	ini.SetValue( "Options", "CenterImageTranslateX",			m_iCenterImageTranslateX );
 	ini.SetValue( "Options", "CenterImageTranslateY",			m_iCenterImageTranslateY );

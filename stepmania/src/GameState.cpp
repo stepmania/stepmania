@@ -134,7 +134,10 @@ void GameState::Reset()
 	}
 
 	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		PROFILEMAN->SaveProfile( (PlayerNumber)p );
 		PROFILEMAN->UnloadProfile( (PlayerNumber)p );
+	}
 
 	// save stats info intermitently in case of crash
 	BOOKKEEPER->WriteToDisk();

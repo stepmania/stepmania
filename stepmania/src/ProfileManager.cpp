@@ -26,6 +26,7 @@ ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our
 
 #define STEPS_MEM_CARD_DATA_FILE	"StepsMemCardData.dat"
 #define COURSE_MEM_CARD_DATA_FILE	"CourseMemCardData.dat"
+#define NEW_PROFILE_NAME			"NewProfile"
 
 ProfileManager::ProfileManager()
 {
@@ -58,22 +59,18 @@ void ProfileManager::GetMachineProfileNames( vector<CString> &asNamesOut )
 }
 
 
-bool ProfileManager::LoadDefaultProfileFromMachine( PlayerNumber pn )
+bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard )
 {
-	m_bUsingMemoryCard[pn] = false;
-	CString sProfileID = PREFSMAN->m_sDefaultProfile[pn];
-	if( sProfileID.empty() )
-	{
-		m_sProfileDir[pn] = "";
-		return false;
-	}
+	ASSERT( !sProfileDir.empty() );
+	ASSERT( sProfileDir.Right(1) == SLASH );
 
-	m_sProfileDir[pn] = PROFILES_DIR + sProfileID + SLASH;
+	m_sProfileDir[pn] = sProfileDir;
+	m_bUsingMemoryCard[pn] = bIsMemCard;
 
 	bool bResult = m_Profile[pn].LoadFromIni( m_sProfileDir[pn]+PROFILE_FILE );
 	if( !bResult )
 	{
-		LOG->Warn( "Default profile '%s' does not exist", sProfileID.c_str() );
+		LOG->Warn( "Attempting to load profile from '%s' and does not exist", sProfileDir.c_str() );
 		UnloadProfile( pn );
 		return false;
 	}
@@ -85,6 +82,94 @@ bool ProfileManager::LoadDefaultProfileFromMachine( PlayerNumber pn )
 	SONGMAN->ReadCourseMemCardDataFromFile( m_sProfileDir[pn]+COURSE_MEM_CARD_DATA_FILE, (MemoryCard)pn );
 
 	return true;
+}
+
+bool ProfileManager::CreateProfile( CString sProfileDir, CString sName )
+{
+	bool bResult;
+
+	CreateDirectories( sProfileDir );
+	
+	Profile pro;
+	pro.m_sName = sName;
+	bResult = pro.SaveToIni( sProfileDir + PROFILE_FILE );
+	if( !bResult )
+		return false;
+
+	FlushDirCache();
+	return true;	
+}
+
+bool ProfileManager::LoadDefaultProfileFromMachine( PlayerNumber pn )
+{
+	CString sProfileID = PREFSMAN->m_sDefaultMachineProfileID[pn];
+	if( sProfileID.empty() )
+	{
+		m_sProfileDir[pn] = "";
+		return false;
+	}
+
+	CString sDir = PROFILES_DIR + sProfileID + SLASH;
+
+	return LoadProfile( pn, sDir, false );
+}
+
+bool ProfileManager::IsMemoryCardInserted( PlayerNumber pn )
+{
+	CString sDir = PREFSMAN->m_sMemoryCardDir[pn];
+	if( sDir.empty() )
+		return false;
+	if( sDir.Right(1) != SLASH )
+		sDir += SLASH;
+
+	//
+	// Test whether a memory card is available by trying to write a file.
+	//
+	CString sFile = sDir + "temp";
+	FILE* fp = fopen( sFile, "w" );
+	if( fp )
+	{
+		fclose( fp );
+		remove( sFile );
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
+{
+	CString sDir = PREFSMAN->m_sMemoryCardDir[pn];
+	if( sDir.empty() )
+		return false;
+	if( sDir.Right(1) != SLASH )
+		sDir += SLASH;
+	
+	m_bUsingMemoryCard[pn] = true;
+	bool bResult;
+	bResult = LoadProfile( pn, sDir, false );
+	if( bResult )
+	{
+		return true;
+	}
+	else
+	{
+		// silently create memory card data here
+		bResult = CreateProfile( sDir, NEW_PROFILE_NAME );
+		return bResult;
+	}
+}
+
+bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn )
+{
+	if( IsMemoryCardInserted(pn) && LoadProfileFromMemoryCard(pn) )
+		return true;
+	else if( LoadDefaultProfileFromMachine(pn) )
+		return true;
+	else
+		return false;
 }
 
 bool ProfileManager::SaveProfile( PlayerNumber pn )
@@ -128,7 +213,7 @@ bool Profile::LoadFromIni( CString sIniPath )
 	CString sLastDir = asBits.back();	// this is a number name, e.g. "0000001"
 
 	// Fill in a default value in case ini doesn't have it.
-	m_sName = "NewProfile";	
+	m_sName = NEW_PROFILE_NAME;	
 
 
 	//
@@ -154,6 +239,9 @@ bool Profile::SaveToIni( CString sIniPath )
 
 bool ProfileManager::CreateMachineProfile( CString sName )
 {
+	if( sName.empty() )
+		sName = NEW_PROFILE_NAME;
+
 	//
 	// Find a free directory name in the profiles directory
 	//
@@ -168,18 +256,21 @@ bool ProfileManager::CreateMachineProfile( CString sName )
 	}
 	if( i == MAX_TRIES )
 		return false;
-
-	CreateDirectories( sProfileDir );
-
 	sProfileDir += SLASH;
-	
+
+	bool bResult;
+	bResult = CreateDirectories( sProfileDir );
+	if( !bResult )
+		return false;
+
 	Profile pro;
 	pro.m_sName = sName;
-	pro.SaveToIni( sProfileDir + PROFILE_FILE );
+	bResult = pro.SaveToIni( sProfileDir + PROFILE_FILE );
+	if( !bResult )
+		return false;
 
 	FlushDirCache();
 	return true;
-	// TODO: Handle error cases
 }
 
 bool ProfileManager::RenameMachineProfile( CString sProfileID, CString sNewName )

@@ -28,6 +28,8 @@ enum {
 	PO_CREATE_NEW,
 	PO_DELETE_,
 	PO_RENAME_,
+	PO_CARD_DIR_1,
+	PO_CARD_DIR_2,
 	NUM_PROFILE_OPTIONS_LINES
 };
 
@@ -37,6 +39,8 @@ OptionRow g_ProfileOptionsLines[NUM_PROFILE_OPTIONS_LINES] = {
 	OptionRow( "Create\nNew",		true, "PRESS START" ),
 	OptionRow( "Delete",			true ),
 	OptionRow( "Rename",			true ),
+	OptionRow( "Card Dir\nPlayer1",	true, "" ),
+	OptionRow( "Card Dir\nPlayer2",	true, "" ),
 };
 
 const ScreenMessage	SM_DoneCreating		= ScreenMessage(SM_User+1);
@@ -63,6 +67,16 @@ ScreenProfileOptions::ScreenProfileOptions( CString sClassName ) : ScreenOptions
 	g_ProfileOptionsLines[PO_RENAME_].choices.push_back( "-NONE-" );
 	PROFILEMAN->GetMachineProfileNames( g_ProfileOptionsLines[PO_RENAME_].choices );
 
+	if( PREFSMAN->m_sMemoryCardDir[PLAYER_1].empty() )
+		g_ProfileOptionsLines[PO_CARD_DIR_1].choices[0] = "-NONE. SPECIFY IN INI-";
+	else
+		g_ProfileOptionsLines[PO_CARD_DIR_1].choices[0] = PREFSMAN->m_sMemoryCardDir[PLAYER_1];
+
+	if( PREFSMAN->m_sMemoryCardDir[PLAYER_2].empty() )
+		g_ProfileOptionsLines[PO_CARD_DIR_2].choices[0] = "-NONE. SPECIFY IN INI-";
+	else
+		g_ProfileOptionsLines[PO_CARD_DIR_2].choices[0] = PREFSMAN->m_sMemoryCardDir[PLAYER_2];
+
 	Init( 
 		INPUTMODE_TOGETHER, 
 		g_ProfileOptionsLines, 
@@ -83,14 +97,14 @@ void ScreenProfileOptions::ImportOptions()
 	iter = find( 
 		vsProfiles.begin(),
 		vsProfiles.end(),
-		PREFSMAN->m_sDefaultProfile[PLAYER_1] );
+		PREFSMAN->m_sDefaultMachineProfileID[PLAYER_1] );
 	if( iter != vsProfiles.end() )
 		m_iSelectedOption[0][PO_PLAYER1] = iter - vsProfiles.begin() + 1;
 
 	iter = find( 
 		vsProfiles.begin(),
 		vsProfiles.end(),
-		PREFSMAN->m_sDefaultProfile[PLAYER_2] );
+		PREFSMAN->m_sDefaultMachineProfileID[PLAYER_2] );
 	if( iter != vsProfiles.end() )
 		m_iSelectedOption[0][PO_PLAYER2] = iter - vsProfiles.begin() + 1;
 }
@@ -101,14 +115,14 @@ void ScreenProfileOptions::ExportOptions()
 	PROFILEMAN->GetMachineProfileIDs( vsProfiles );
 
 	if( m_iSelectedOption[0][PO_PLAYER1] > 0 )
-		PREFSMAN->m_sDefaultProfile[PLAYER_1] = vsProfiles[m_iSelectedOption[0][PO_PLAYER1]-1];
+		PREFSMAN->m_sDefaultMachineProfileID[PLAYER_1] = vsProfiles[m_iSelectedOption[0][PO_PLAYER1]-1];
 	else
-		PREFSMAN->m_sDefaultProfile[PLAYER_1] = "";
+		PREFSMAN->m_sDefaultMachineProfileID[PLAYER_1] = "";
 
 	if( m_iSelectedOption[0][PO_PLAYER2] > 0 )
-		PREFSMAN->m_sDefaultProfile[PLAYER_2] = vsProfiles[m_iSelectedOption[0][PO_PLAYER2]-1];
+		PREFSMAN->m_sDefaultMachineProfileID[PLAYER_2] = vsProfiles[m_iSelectedOption[0][PO_PLAYER2]-1];
 	else
-		PREFSMAN->m_sDefaultProfile[PLAYER_2] = "";
+		PREFSMAN->m_sDefaultMachineProfileID[PLAYER_2] = "";
 }
 
 void ScreenProfileOptions::GoToPrevState()
@@ -132,12 +146,12 @@ void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 	case SM_DoneCreating:
 		if( !ScreenTextEntry::s_bCancelledLast )
 		{
-			CString sNewProfileID = ScreenTextEntry::s_sLastAnswer;
-			bool bResult = PROFILEMAN->CreateMachineProfile( sNewProfileID );
+			CString sNewName = ScreenTextEntry::s_sLastAnswer;
+			bool bResult = PROFILEMAN->CreateMachineProfile( sNewName );
 			if( bResult )
 				SCREENMAN->SetNewScreen( "ScreenProfileOptions" );	// reload
 			else
-				SCREENMAN->Prompt( SM_None, ssprintf("Error creating profile '%s'.", sNewProfileID.c_str()) );
+				SCREENMAN->Prompt( SM_None, ssprintf("Error creating profile '%s'.", sNewName.c_str()) );
 		}
 		break;
 	case SM_DoneRenaming:

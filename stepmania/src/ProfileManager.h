@@ -40,11 +40,13 @@ public:
 	bool RenameMachineProfile( CString sProfileID, CString sNewName );
 	bool DeleteMachineProfile( CString sProfileID );
 
+	bool CreateMemoryCardProfile( CString sName );
+
 	void GetMachineProfileIDs( vector<CString> &asProfileIDsOut );
 	void GetMachineProfileNames( vector<CString> &asNamesOut );
 
-	bool LoadDefaultProfileFromMachine( PlayerNumber pn );
-	bool LoadProfileFromMemoryCard( PlayerNumber pn );
+	bool LoadFirstAvailableProfile( PlayerNumber pn );
+	bool IsMemoryCardInserted( PlayerNumber pn );
 	bool SaveProfile( PlayerNumber pn );
 	void UnloadProfile( PlayerNumber pn );
 
@@ -52,10 +54,14 @@ public:
 	Profile* GetProfile( PlayerNumber pn );
 
 
-	bool IsMemoryCardInserted( PlayerNumber pn );
 	bool IsUsingMemoryCard( PlayerNumber pn ) { return m_bUsingMemoryCard[pn]; }
 
 private:
+	bool LoadDefaultProfileFromMachine( PlayerNumber pn );
+	bool LoadProfileFromMemoryCard( PlayerNumber pn );
+	bool LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard );
+	bool CreateProfile( CString sProfileDir, CString sName );
+
 	// Directory that contains the profile.  Either on local machine or
 	// on a memory card.
 	CString m_sProfileDir[NUM_PLAYERS];
