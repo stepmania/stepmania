@@ -7,7 +7,7 @@
 #include "PrefsManager.h"
 #include "Foreach.h"
 #include "Steps.h"
-#include "Song.h"
+#include "song.h"
 
 StageStats	g_CurStageStats;
 vector<StageStats>	g_vPlayedStageStats;
