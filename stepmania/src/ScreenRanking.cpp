@@ -165,7 +165,7 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 			m_sprDifficulty[d].SetHidden( true );
 			this->AddChild( &m_sprDifficulty[d] );
 		}
-		for( int s=0; s<num_songs; s++ )
+		for( unsigned s=0; s<num_songs; s++ )
 		{
 			StepsScoreRowItem* pStepsScoreRowItem = new StepsScoreRowItem;
 
@@ -283,7 +283,7 @@ ScreenRanking::~ScreenRanking()
 	const unsigned num_songs = SONGMAN->GetAllSongs().size();
 
 	// delete dynamically allocated members
-	for( int s=0; s<num_songs; s++ )
+	for( unsigned s=0; s<num_songs; s++ )
 		delete m_vpStepsScoreRowItem[s];
 }
 
@@ -473,11 +473,11 @@ float ScreenRanking::SetPage( PageToShow pts )
 			SET_XY_AND_ON_COMMAND( m_ListScoreRowItems );
 
 			vector<Actor*> vpActors;
-			for( int i=0; i<m_vpStepsScoreRowItem.size(); i++ )
+			for( unsigned i=0; i<m_vpStepsScoreRowItem.size(); i++ )
 				vpActors.push_back( m_vpStepsScoreRowItem[i] );
 			m_ListScoreRowItems.Load( vpActors, NUM_ROW_ITEMS_TO_SHOW, SCREEN_WIDTH, ROW_SPACING_Y, false, 1, 0, false );
 
-			for( int s=0; s<num_songs; s++ )
+			for( unsigned s=0; s<num_songs; s++ )
 			{
 				StepsScoreRowItem *pStepsScoreRowItems = m_vpStepsScoreRowItem[s];
 				pStepsScoreRowItems->m_sprSongFrame.Reset();
@@ -606,7 +606,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 			m_textStepsType.SetText( GameManager::NotesTypeToString(pts.nt) );
 
 			const unsigned num_songs = SONGMAN->GetAllSongs().size();
-			for( int s=0; s<num_songs; s++ )
+			for( unsigned s=0; s<num_songs; s++ )
 			{
 				Song* pSong = SONGMAN->GetAllSongs()[s];
 				StepsScoreRowItem *pStepsScoreRowItem = m_vpStepsScoreRowItem[s];
@@ -673,7 +673,7 @@ void ScreenRanking::TweenPageOffScreen()
 	for( vector<Difficulty>::iterator dc_iter=m_vDiffsToShow.begin(); dc_iter!=m_vDiffsToShow.end(); dc_iter++ )
 	{
 		OFF_COMMAND( m_sprDifficulty[*dc_iter] );
-		for( int s=0; s<num_songs; s++ )
+		for( unsigned s=0; s<num_songs; s++ )
 		{
 			// m_vpTextStepsScore[*dc_iter][s];			
 		}
