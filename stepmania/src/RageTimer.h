@@ -42,7 +42,14 @@ public:
 	/* deprecated: */
 	static float GetTimeSinceStart();	// seconds since the program was started
 
+	/* Add (or subtract) a duration from a timestamp.  The result is another timestamp. */
+	RageTimer operator+(float tm) const;
+
+	/* Find the amount of time between two timestamps.  The result is a duration. */
+	float operator-(const RageTimer &rhs) const;
+
 private:
+	static RageTimer Sum(const RageTimer &lhs, float tm);
 	static float Difference(const RageTimer &lhs, const RageTimer &rhs);
 
 	/* "float" is bad for a "time since start" RageTimer.  If the game is running for

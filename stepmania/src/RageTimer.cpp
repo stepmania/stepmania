@@ -40,6 +40,36 @@ float RageTimer::GetDeltaTime()
 	return diff;
 }
 
+RageTimer RageTimer::operator+(float tm) const
+{
+	return Sum(*this, tm);
+}
+
+float RageTimer::operator-(const RageTimer &rhs) const
+{
+	return Difference(*this, rhs);
+}
+
+RageTimer RageTimer::Sum(const RageTimer &lhs, float tm)
+{
+	/* tm == 5.25  -> secs =  5, us = 5.25  - ( 5) = .25
+	 * tm == -1.25 -> secs = -2, us = -1.25 - (-2) = .75 */
+	int seconds = (int) floorf(tm);
+	int us = int( (tm - seconds) * TIMESTAMP_RESOLUTION );
+
+	RageTimer ret;
+	ret.m_secs = seconds + lhs.m_secs;
+	ret.m_us = us + lhs.m_us;
+
+	if( ret.m_us >= TIMESTAMP_RESOLUTION )
+	{
+		ret.m_us -= TIMESTAMP_RESOLUTION;
+		++ret.m_secs;
+	}
+
+	return ret;
+}
+
 float RageTimer::Difference(const RageTimer &lhs, const RageTimer &rhs)
 {
 	int secs = lhs.m_secs - rhs.m_secs;
