@@ -15,12 +15,12 @@ public:
 	virtual bool Load( RageTextureID ID );
 	void ScaleToClipped( float fWidth, float fHeight );
 
-	void LoadFromSong( Song* pSong );		// NULL means no song
+	void LoadFromSong( const Song* pSong );		// NULL means no song
 	void LoadAllMusic();
 	void LoadSort();
 	void LoadMode();
 	void LoadFromGroup( CString sGroupName );
-	void LoadFromCourse( Course* pCourse );
+	void LoadFromCourse( const Course* pCourse );
 	void LoadRoulette();
 	void LoadRandom();
 	void LoadFallback();

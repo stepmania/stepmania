@@ -155,7 +155,7 @@ void FadingBanner::LoadFromCachedBanner( const CString &path )
 	return;
 }
 
-void FadingBanner::LoadFromSong( Song* pSong )
+void FadingBanner::LoadFromSong( const Song* pSong )
 {
 	/* Don't call HasBanner.  That'll do disk access and cause the music wheel
 	 * to skip. */
@@ -188,7 +188,7 @@ void FadingBanner::LoadFromGroup( CString sGroupName )
 //	m_Banner[GetBackIndex()].LoadFromGroup( sGroupName );
 }
 
-void FadingBanner::LoadFromCourse( Course* pCourse )
+void FadingBanner::LoadFromCourse( const Course* pCourse )
 {
 	LoadFromCachedBanner( pCourse->m_sBannerPath );
 //	BeforeChange();
