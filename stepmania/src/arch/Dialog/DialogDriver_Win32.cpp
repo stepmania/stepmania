@@ -41,6 +41,10 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 			CString sMessage = g_sMessage;
 			sMessage.Replace( "\n", "\r\n" );
 			SetWindowText( GetDlgItem(hWnd, IDC_MESSAGE), sMessage );
+			
+			// Focus is on any of the controls in the dialog by default.
+			// I'm not sure why.  Set focus to the button manually. -Chris
+			SetFocus( GetDlgItem(hWnd, IDOK) );
 		}
 		break;
 	case WM_DESTROY:
