@@ -227,6 +227,8 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 	fprintf( fp, "#GAP:%d;\n", int(-roundf( out.m_fBeat0OffsetInSeconds*1000 )) );
 	fprintf( fp, "#SAMPLESTART:%.3f;\n", out.m_fMusicSampleStartSeconds );
 	fprintf( fp, "#SAMPLELENGTH:%.3f;\n", out.m_fMusicSampleLengthSeconds );
+	if( out.m_sCDTitleFile.size() )
+		fprintf( fp, "#CDTITLE:%s;\n", out.m_sCDTitleFile.GetString() );
 
 	if( !out.m_StopSegments.empty() )
 	{
