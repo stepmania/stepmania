@@ -20,11 +20,9 @@
 #include <sys/types.h>
 
 const unsigned numchannels = 2;
-//const unsigned samplesize = 2 * numchannels;
 const unsigned samplesize = 16 * numchannels;
-const unsigned samples = 4096;
+const unsigned samples = 40960;
 const unsigned freq = 44100;
-//const unsigned buffersize = samples * samplesize;
 const unsigned buffersize = samples * samplesize / 8;
 
 #if defined(DEBUG)
@@ -183,13 +181,11 @@ int RageSound_QT::GetPosition(const RageSound *snd) const {
             HUnlock(Handle(sHdl));
             return 0; /* It hasn't started yet. */
         }
-        int ret = s->finishedBuffers * samples + GetMovieTime(s->movie[!s->fillme], NULL);
+        int ret = s->finishedBuffers * samples + GetMovieTime(s->movie[s->fillme], NULL);
         HUnlock(Handle(sHdl));
-        LOG->Trace("GetPostion is returning: %d", ret);
         return ret;
     }
     RageException::Throw("Can't get the position of a sound that isn't playing");
-    //return 0; /* unrechable statement */
 }
 
 
@@ -205,6 +201,8 @@ void CallBack(QTCallBack cb, long refCon) {
     s->finishedBuffers++;
     if (!cb)
         GetData(s);
+    else
+        DisposeCallBack(cb);
     long playme = !s->fillme;
     ASSERT(s->movie[playme]);
     GoToBeginningOfMovie(s->movie[playme]);
@@ -215,12 +213,11 @@ void CallBack(QTCallBack cb, long refCon) {
         /* Not stopping */
         GetData(s);
         QTCallBack callBack = NewCallBack(GetMovieTimeBase(s->movie[playme]), callBackAtExtremes);
-        CallMeWhen(callBack, CallBack, long(sHdl), 0, 0, 0);
+        CallMeWhen(callBack, CallBack, long(sHdl), triggerAtStop, triggerAtStop, triggerAtStop);
     }
     HUnlock(Handle(sHdl));
     err = MemError();
     TEST_ERR(err, HUnlock);
-    DisposeCallBack(cb);
     
 }
 
