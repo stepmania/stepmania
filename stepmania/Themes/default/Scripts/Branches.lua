@@ -1,3 +1,8 @@
+function SelectGameplayScreen()
+	if IsExtraStage() or IsExtraStage2() then return "ScreenGameplay" end
+	return "ScreenGameplay"
+end
+
 function SelectEvaluationScreen()
 	if IsNetConnected() then return "ScreenNetEvaluation" end
 	Mode = PlayModeName()
