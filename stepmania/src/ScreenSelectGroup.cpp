@@ -47,13 +47,145 @@ const ScreenMessage SM_StartFadingOut		 =	ScreenMessage(SM_User + 3);
 
 ScreenSelectGroup::ScreenSelectGroup()
 {
+	
 	LOG->WriteLine( "ScreenSelectGroup::ScreenSelectGroup()" );
+
+#define CSKEY(s) GetCrc32ForString(s) // Allows (indirect) use of strings as map keys
+#define CSKEY_TYPE unsigned int 
+	
+
 
 	int i;
 
-	SONGMAN->GetGroupNames( m_arrayGroupNames );
-	m_arrayGroupNames.InsertAt( 0, "ALL MUSIC" );
+
+	// The new process by which the group and song lists are formed
+	// is bizarre and complex but yields the end result that songs
+	// and groups that do not contain any steps for the current
+	// style (such as solo) are omitted. Bear with me!
+	// -- dro kulix
 	
+	// m_arrayGroupNames will contain all relevant group names
+	CMap<CSKEY_TYPE, CSKEY_TYPE, CArray<Song*, Song*>*, CArray<Song*, Song*>*>
+		mapGroupToSongArray; // Will contain all relevant songs
+
+	{	// Let's get local!
+		// (There are some variables we want deallocated before continuing.)
+
+		// Retrieve list of ALL song groups and ALL songs
+
+		SONGMAN->GetGroupNames( m_arrayGroupNames );
+
+		CArray<Song*, Song*> arrayAllSongs;
+		arrayAllSongs.Copy( SONGMAN->m_pSongs );
+
+		// Retrieve the identities (Song*) of all songs under these groups
+
+		for( i=0; i<min(m_arrayGroupNames.GetSize(), MAX_GROUPS); i++ )
+		{
+			CArray<Song*, Song*> *p_arrayGroupSongs = new CArray<Song*, Song*>;
+			// WARNING! We are creating new objects that must be destroyed.
+			const CString &sCurGroupName = m_arrayGroupNames[i];
+			
+			SONGMAN->GetSongsInGroup( sCurGroupName, *p_arrayGroupSongs );
+			mapGroupToSongArray.SetAt(CSKEY(sCurGroupName), p_arrayGroupSongs);
+		}
+
+		{
+			// Add "ALL MUSIC" group
+			CArray<Song*, Song*> *p_arrayGroupSongs = new CArray<Song*, Song*>;
+			// WARNING! (Same as last.)
+			m_arrayGroupNames.InsertAt(0, "ALL MUSIC");
+			
+			p_arrayGroupSongs->Copy( arrayAllSongs );
+			mapGroupToSongArray.SetAt(CSKEY("ALL MUSIC"), p_arrayGroupSongs);
+		}
+
+		// Now, create a map of all songs to their support for the current style.
+		// (Song *) -> (Support current style?)
+		CMap<Song*, Song*, bool, bool> mapStyleSupport;
+		mapStyleSupport.InitHashTable(arrayAllSongs.GetSize());
+
+		// The following loop is functionally identical to one used in MusicWheel
+		NotesType curNotesType = GAMEMAN->GetCurrentStyleDef()->m_NotesType;
+		for( i=0; i < arrayAllSongs.GetSize(); i++ )
+		{
+			CArray<Notes*, Notes*> arraySteps;
+
+			arrayAllSongs.GetAt(i)->GetNotesThatMatch( curNotesType, arraySteps );
+
+				if( arraySteps.GetSize() > 0 )
+					mapStyleSupport.SetAt(arrayAllSongs.GetAt(i), true);
+				else
+					mapStyleSupport.SetAt(arrayAllSongs.GetAt(i), false);
+		}
+
+		// Here's the fun part!
+
+		// Recurse each group of songs, removing the ones unsupported by this style.
+		// If a group ends up empty, remove it from the list.
+
+		{
+			int gi = 0;
+
+			// Group iteration
+			while (gi < m_arrayGroupNames.GetSize())
+			{
+
+				int si = 0;
+
+				CSKEY_TYPE curKey = CSKEY(m_arrayGroupNames.GetAt(gi));
+				CArray <Song*, Song*>* p_arrayGroupSongs = 0;
+				mapGroupToSongArray.Lookup(curKey, p_arrayGroupSongs);
+
+				// Song iteration
+				while (si < p_arrayGroupSongs->GetSize())
+				{
+					Song* curSong = p_arrayGroupSongs->GetAt(si);
+					bool bSongSupported = false;
+
+					mapStyleSupport.Lookup(curSong, bSongSupported);
+
+					if (bSongSupported)
+					{
+						// Increment only if no remove
+						si++;
+					}
+					else
+					{
+						// Remove
+						p_arrayGroupSongs->RemoveAt(si);
+					}
+				}
+
+
+				// Do we remove group?
+				// Never remove "ALL MUSIC".
+				if ( (gi > 0) && (p_arrayGroupSongs->GetSize() <= 0) )
+				{
+					// Yes, remove group, since it is empty and is not "ALL MUSIC".
+					// Deallocate empty song array
+					delete p_arrayGroupSongs;
+					// Remove from groups array and map
+					mapGroupToSongArray.RemoveKey(curKey);
+					m_arrayGroupNames.RemoveAt(gi);
+				}
+				else
+				{
+					// Keep this group; move on.
+					gi++;
+				}
+
+			}
+		}	// End recurse
+	}	// Ends local song-paring block.
+
+
+	// Retrieve list of song groups
+	//SONGMAN->GetGroupNames( m_arrayGroupNames );
+	//m_arrayGroupNames.InsertAt( 0, "ALL MUSIC" );
+
+	
+
 	m_iSelection = 0;
 	m_bChosen = false;
 
@@ -90,6 +222,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 	}
 	
 
+	// This part is still compatible with the new pare routine.
 	for( i=0; i<min(m_arrayGroupNames.GetSize(), MAX_GROUPS); i++ )
 	{
 		CString sGroupName = m_arrayGroupNames[i];
@@ -110,10 +243,11 @@ ScreenSelectGroup::ScreenSelectGroup()
 		this->AddActor( &m_textGroup[i] );
 	}
 
-
 	//
 	// Generate what text will show in the contents for each group
 	//
+
+	/*
 	for( i=0; i<min(m_arrayGroupNames.GetSize(), MAX_GROUPS); i++ )
 	{
 		CArray<Song*, Song*> arraySongs;
@@ -142,7 +276,39 @@ ScreenSelectGroup::ScreenSelectGroup()
 			m_sContentsText[i][c] = sText;
 		}
 	}
+	*/
 
+	//
+	// Generate what text will show in the contents for each group
+	//
+	// This block is modified for the new paring routine
+	for( i=0; i<min(m_arrayGroupNames.GetSize(), MAX_GROUPS); i++ )
+	{
+		CArray<Song*, Song*>* p_arraySongs;
+		const CString &sCurGroupName = m_arrayGroupNames[i];
+		
+		mapGroupToSongArray.Lookup(CSKEY(sCurGroupName), p_arraySongs);
+
+		m_iNumSongsInGroup[i] = p_arraySongs->GetSize();
+
+		SortSongPointerArrayByTitle( *p_arraySongs );
+
+		for( int c=0; c<NUM_CONTENTS_COLUMNS; c++ )
+		{
+			CString sText;
+			for( int j=c*TITLES_PER_COLUMN; j<(c+1)*TITLES_PER_COLUMN; j++ )
+			{
+				if( j < p_arraySongs->GetSize() )
+				{
+					if( j == NUM_CONTENTS_COLUMNS * TITLES_PER_COLUMN - 1 )
+						sText += ssprintf( "%d more.....", p_arraySongs->GetSize() - NUM_CONTENTS_COLUMNS * TITLES_PER_COLUMN - 1 );
+					else
+						sText += (*p_arraySongs)[j]->GetFullTitle() + "\n";
+				}
+			}
+			m_sContentsText[i][c] = sText;
+		}
+	}
 
 	m_soundChange.Load( THEME->GetPathTo(SOUND_SELECT_GROUP_CHANGE) );
 	m_soundSelect.Load( THEME->GetPathTo(SOUND_MENU_START) );
@@ -159,6 +325,26 @@ ScreenSelectGroup::ScreenSelectGroup()
 	m_Menu.TweenOnScreenFromMenu( SM_None );
 	TweenOnScreen();
 	AfterChange();
+
+
+	// Deallocate remaining song arrays in map
+	{
+		CSKEY_TYPE csKey;
+		CArray<Song*, Song*>* pSongArray;
+
+		POSITION Pos;
+		Pos = mapGroupToSongArray.GetStartPosition();
+
+
+		while (Pos)
+		{
+			mapGroupToSongArray.GetNextAssoc(Pos, csKey, pSongArray);
+			delete pSongArray;
+		}
+	}
+			
+#undef CSKEY_TYPE
+#undef CSKEY
 }
 
 
