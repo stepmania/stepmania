@@ -191,6 +191,8 @@ stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transi
 		    $(Loading) \
 	            arch/arch.cpp \
 		    arch/arch.h \
+		    arch/InputHandler/InputHandler.cpp \
+		    arch/InputHandler/InputHandler.h \
 		    arch/InputHandler/InputHandler_SDL.cpp \
 		    arch/InputHandler/InputHandler_SDL.h \
 		    arch/MovieTexture/MovieTexture.cpp \
