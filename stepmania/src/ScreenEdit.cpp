@@ -613,7 +613,10 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			if( type != IET_FIRST_PRESS )
 				break;	// We only care about first presses
 
-			int iCol = DeviceI.button - SDLK_1;
+			/* Why was this changed back to just "DeviceI.button - SDLK_1"?  That causes
+			 * crashes when 0 is pressed (0 - 1 = -1). -glenn */
+//			int iCol = DeviceI.button - SDLK_1;
+			int iCol = DeviceI.button == SDLK_0? 9: DeviceI.button - SDLK_1;
 
 
 			// Alt + number = input to right half
