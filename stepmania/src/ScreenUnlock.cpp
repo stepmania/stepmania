@@ -296,10 +296,16 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 		}
 	}
 
-	for(i = item.size() - 1; i >= 0; i--)
+	// NOTE: the following two loops require the iterator to 
+	// be ints because if you decrement an unsigned when it
+	// equals zero, you get the maximum value of an unsigned,
+	// which is still greater than 0.  By typecasting it as
+	// an integer, you can achieve -1, which exits the loop.
+
+	for(i = item.size() - 1; (int)i >= 0; i--)
 		this->AddChild(item[i]);
 
-	for(i = ItemIcons.size() - 1; i >= 0; i--)
+	for(i = ItemIcons.size() - 1; (int)i >= 0; i--)
 		this->AddChild(ItemIcons[i]);
 
 	PointsUntilNextUnlock.SetName( "PointsDisplay" );
