@@ -634,7 +634,7 @@ void Actor::HandleCommand( const ParsedCommand &command )
 #if defined(DEBUG)
 	if( sName == "x" || sName == "y" )	// an absolute X or Y position
 	{
-		if( sParam(1).Find('-') == -1 && sParam(1).Find('+') == -1 )
+		if( isdigit(sParam(1)[0]) && sParam(1).Find('-') == -1 && sParam(1).Find('+') == -1 )
 		{
 			LOG->Warn( "Command '%s' should contain a SCREEN_* constant", command.GetOriginalCommandString().c_str() );
 		}

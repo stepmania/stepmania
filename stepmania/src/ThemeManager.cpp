@@ -624,7 +624,7 @@ float ThemeManager::GetMetricF( const CString &sClassName, const CString &sValue
 #if defined(DEBUG)
 	if( sValueName.Right(1) == "X" || sValueName.Right(1) == "Y" )	// an absolute X or Y position
 	{
-		if( sValue.Find('-') == -1 && sValue.Find('+') == -1 )
+		if( isdigit(sValue[0]) && sValue.Find('-') == -1 && sValue.Find('+') == -1 )
 		{
 			LOG->Warn( "Absolute position metric '%s'-'%s' should contain a SCREEN_* constant", sClassName.c_str(), sValueName.c_str() );
 		}
