@@ -88,14 +88,18 @@ float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat )
 }
 
 
-static void ArrowGetReverseShiftAndScale( PlayerNumber pn, int iCol, float fYReverseOffsetPixels, float &fShift, float &fScale )
+static void ArrowGetReverseShiftAndScale( PlayerNumber pn, int iCol, float fYReverseOffsetPixels, float &fShiftOut, float &fScaleOut )
 {
 	/* XXX: Hack: we need to scale the reverse shift by the zoom. */
 	float fMiniPercent = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_MINI];
 	float fZoom = 1 - fMiniPercent*0.5f;
 
-	fShift = SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, -fYReverseOffsetPixels/fZoom/2, fYReverseOffsetPixels/fZoom/2 );
-	fScale = SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, 1.f, -1.f);
+	float fPercentReverse = GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol);
+	fShiftOut = SCALE( fPercentReverse, 0.f, 1.f, -fYReverseOffsetPixels/fZoom/2, fYReverseOffsetPixels/fZoom/2 );
+	float fPercentConverge = GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrolls[PlayerOptions::SCROLL_CONVERGE];
+	fShiftOut = SCALE( fPercentConverge, 0.f, 1.f, fShiftOut, 0.5f );
+
+	fScaleOut = SCALE( fPercentReverse, 0.f, 1.f, 1.f, -1.f);
 }
 
 float ArrowGetYPos( PlayerNumber pn, int iCol, float fYOffset, float fYReverseOffsetPixels, bool WithReverse )

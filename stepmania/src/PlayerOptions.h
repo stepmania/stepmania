@@ -84,6 +84,7 @@ struct PlayerOptions
 		SCROLL_SPLIT,
 		SCROLL_ALTERNATE,
 		SCROLL_CROSS,
+		SCROLL_CONVERGE,
 		NUM_SCROLLS
 	};
 	float GetReversePercentForColumn( int iCol ); // accounts for all Directions
