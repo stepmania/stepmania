@@ -60,7 +60,11 @@ EzSockets::~EzSockets()
 //Check to see if the socket has been created
 bool EzSockets::check()
 {
+#if !defined(XBOX)
 	return sock > SOCKET_NONE;
+#else
+	return sock != INVALID_SOCKET;
+#endif
 }
 
 bool EzSockets::create()
@@ -94,7 +98,11 @@ bool EzSockets::create(int Protocol, int Type)
 	state = skDISCONNECTED;
 	sock = socket(AF_INET, Type, Protocol);
 	lastCode = sock;
+#if !defined(XBOX)
 	return sock > SOCKET_NONE;	//Socket must be Greater than 0
+#else
+	return sock != INVALID_SOCKET;
+#endif
 }
 
 
