@@ -1988,7 +1988,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			SCREENMAN->Prompt(
 				SM_DoSaveAndExit,
 				"Do you want to save changes before exiting?",
-				PROMPT_YES_NO_CANCEL, ANSWER_NO );
+				PROMPT_YES_NO_CANCEL, ANSWER_CANCEL );
 			break;
 		default:
 			ASSERT(0);
