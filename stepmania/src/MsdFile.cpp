@@ -35,6 +35,9 @@
 #if defined(WIN32)
 #include <io.h>
 #endif
+#if !defined(O_BINARY)
+#define O_BINARY 0
+#endif
 #include <string.h>
 #include <errno.h>
 
