@@ -483,7 +483,7 @@ void BGAnimationLayer::LoadFromIni( const CString& sAniDir_, const IniKey& layer
 			m_Type = TYPE_SPRITE;
 		}
 	}
-
+#if 0
 	{
 		for( IniKey::const_iterator i = layer.begin();
 			 i != layer.end(); ++i)
@@ -505,7 +505,7 @@ void BGAnimationLayer::LoadFromIni( const CString& sAniDir_, const IniKey& layer
 			m_mapNameToCommands[sCmdName] = cmds;
 		}
 	}
-		
+#endif
 
 	layer.GetValue( "CommandRepeatSeconds", m_fRepeatCommandEverySeconds );
 	m_fSecondsUntilNextCommand = m_fRepeatCommandEverySeconds;
@@ -1006,9 +1006,9 @@ void BGAnimationLayer::LoseFocus()
 
 void BGAnimationLayer::PlayCommand( const CString &sCommandName )
 {
-	// Don't call base version.
-	//Actor::PlayCommand( sCommandName );
-	
+	ActorFrame::PlayCommand( sCommandName );
+
+#if 0
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->RunCommands( ParseCommands("playcommand,"+sCommandName) );
 
@@ -1021,6 +1021,7 @@ void BGAnimationLayer::PlayCommand( const CString &sCommandName )
 
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->RunCommands( it->second );
+#endif
 }
 
 /*
