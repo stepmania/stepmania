@@ -81,26 +81,21 @@ protected:
 	BitmapText m_textScores[NUM_RANKING_LINES];	// for category and course
 	BitmapText m_textPoints[NUM_RANKING_LINES];	// for course
 	BitmapText m_textTime[NUM_RANKING_LINES];	// for course
+	
 	AutoActor  m_sprDifficulty[NUM_DIFFICULTIES];	// for all_steps
-	struct StepsScoreRowItem : public ActorFrame	// for all_steps
-	{
-		Song *m_pSong;
-		Sprite	m_sprSongFrame;
-		BitmapText	m_textSongTitle;
-		BitmapText m_textStepsScore[NUM_DIFFICULTIES];
-	};
-	vector<StepsScoreRowItem*> m_vpStepsScoreRowItem;	// for all_steps
-	ListDisplay m_ListScoreRowItems;
 	AutoActor m_sprCourseDifficulty[NUM_DIFFICULTIES];	// for all_courses
-	struct CourseScoreRowItem : public ActorFrame	// for all_steps
+	struct ScoreRowItem : public ActorFrame		// for all_steps and all_courses
 	{
+		ScoreRowItem() { m_pSong = NULL; m_pCourse = NULL; }
+
+		Song *m_pSong;
 		Course *m_pCourse;
-		Sprite	m_sprSongFrame;
-		BitmapText	m_textSongTitle;
-		BitmapText m_textStepsScore[NUM_DIFFICULTIES];
+		AutoActor	m_sprFrame;
+		BitmapText	m_textTitle;
+		BitmapText m_textScore[NUM_DIFFICULTIES];
 	};
-	vector<CourseScoreRowItem*> m_vpCourseScoreRowItem;	// for all_courses
-	ListDisplay m_ListCourseRowItems;
+	vector<ScoreRowItem> m_vScoreRowItem;	// for all_steps
+	ListDisplay m_ListScoreRowItems;
 
 	vector<PageToShow>	m_vPagesToShow;
 
