@@ -15,8 +15,8 @@ test -z "$LDFLAGS"   && DEFAULT_LDFLAGS=yes
 AC_PROG_CC
 AC_PROG_CXX
 
-test "$DEFAULT_CFLAGS" = "yes" && CFLAGS=""
-test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS=""
+test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="-Wall -W"
+test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="-Wall -W"
 test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS=""
 
 SM_OPENGL
