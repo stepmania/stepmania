@@ -625,6 +625,8 @@ CString DerefRedir(const CString &path)
 		getline(file, sNewFileName);
 	}
 
+	StripCrnl(sNewFileName);
+
 	/* Empty is invalid. */
 	if(sNewFileName == "")
 		return "";
