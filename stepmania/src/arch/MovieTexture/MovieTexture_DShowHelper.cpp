@@ -17,13 +17,14 @@ CTextureRenderer::CTextureRenderer()
     if( FAILED(CBV_ret) )
         RageException::Throw( hr_ssprintf(CBV_ret, "Could not create texture renderer object!") );
 
-    // Store and ARageef the texture for our use.
 	m_pTexture = NULL;
+
+	m_OneFrameDecoded = SDL_CreateSemaphore(0);
 }
 
 CTextureRenderer::~CTextureRenderer()
 {
-    // Do nothing
+	SDL_DestroySemaphore( m_OneFrameDecoded );
 }
 
 
@@ -88,5 +89,9 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 
 void CTextureRenderer::OnReceiveFirstSample( IMediaSample * pSample )
 {
+	/* If the main thread is in MovieTexture_DShow::Create, kick: */
+	if( SDL_SemValue(m_OneFrameDecoded) == 0 )
+		SDL_SemPost( m_OneFrameDecoded );
+
 	DoRenderSample( pSample );
 }

@@ -307,6 +307,17 @@ void MovieTexture_DShow::Create()
 	 * up the texture. */
 	CreateTexture();
 
+	/* Pausing the graph will cause only one frame to be rendered.  Do that, then
+	 * wait for the frame to be rendered, to guarantee that the texture is set
+	 * when this function returns. */
+	Pause();
+
+	CHECKPOINT;
+	SDL_SemWait( pCTR->m_OneFrameDecoded );
+	CHECKPOINT;
+	CheckFrame();
+	CHECKPOINT;
+
 	// Start the graph running
     Play();
 }
