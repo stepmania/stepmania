@@ -2037,10 +2037,22 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageSurfaceUtils.h">
 			</File>
 			<File
+				RelativePath="RageSurfaceUtils_Dither.cpp">
+			</File>
+			<File
+				RelativePath="RageSurfaceUtils_Dither.h">
+			</File>
+			<File
 				RelativePath="RageSurfaceUtils_Palettize.cpp">
 			</File>
 			<File
 				RelativePath="RageSurfaceUtils_Palettize.h">
+			</File>
+			<File
+				RelativePath="RageSurfaceUtils_Zoom.cpp">
+			</File>
+			<File
+				RelativePath="RageSurfaceUtils_Zoom.h">
 			</File>
 			<File
 				RelativePath="RageSurface_Load.cpp">
@@ -2083,6 +2095,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="RageSurface_Save_BMP.h">
+			</File>
+			<File
+				RelativePath="RageSurface_Save_JPEG.cpp">
+			</File>
+			<File
+				RelativePath="RageSurface_Save_JPEG.h">
 			</File>
 			<File
 				RelativePath=".\RageTexture.cpp">
@@ -2147,24 +2165,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<Filter
 				Name="Helpers"
 				Filter="">
-				<File
-					RelativePath="SDL_SaveJPEG.cpp">
-				</File>
-				<File
-					RelativePath="SDL_SaveJPEG.h">
-				</File>
-				<File
-					RelativePath="SDL_dither.cpp">
-				</File>
-				<File
-					RelativePath="SDL_dither.h">
-				</File>
-				<File
-					RelativePath="SDL_rotozoom.cpp">
-				</File>
-				<File
-					RelativePath="SDL_rotozoom.h">
-				</File>
 				<File
 					RelativePath="ezsockets.cpp">
 				</File>
