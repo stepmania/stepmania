@@ -283,7 +283,8 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 #elif defined(BACKTRACE_METHOD_POWERPC_DARWIN)
 
 #include "archutils/Darwin/Crash.h"
-typedef struct Frame {
+typedef struct Frame
+{
     Frame *stackPointer;
     long conditionReg;
     void *linkReg;
@@ -293,12 +294,18 @@ void InitializeBacktrace() { }
 
 void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 {
-    FramePtr frame = FramePtr(GetCrashedFramePtr());
-    unsigned i;
-    for (i=0; frame && frame->linkReg && i<size; ++i, frame=frame->stackPointer)
-        buf[i] = frame->linkReg;
-    i = (i == size ? size - 1 : i);
-    buf[i] = NULL;
+	Frame *frame = (Frame *) GetCrashedFramePtr();
+
+	unsigned i = 0;
+	while( frame && i < size-1 ) // -1 for NULL
+	{
+		if( frame->linkReg )
+			buf[i++] = frame->linkReg;
+		
+		frame = frame->stackPointer;
+	}
+
+	buf[i] = NULL;
 }
 
 #else
