@@ -9,7 +9,7 @@
 #ifndef RAGE_MATH_H
 #define RAGE_MATH_H
 
-#define PI		((float)3.1415926535897932384626433832795)
+#define PI		(3.141592653589793f)
 #define DegreeToRadian( degree ) ((degree) * (PI / 180.0f))
 #define RadianToDegree( radian ) ((radian) * (180.0f / PI))
 
