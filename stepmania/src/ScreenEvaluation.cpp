@@ -821,12 +821,18 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 				SCREENMAN->SendMessageToTopScreen( SM_GoToFinalEvaluation, MENU_ELEMENTS_TWEEN_TIME );
 			}
 		}
+		else if( m_ResultMode == RM_ARCADE_SUMMARY )
+		{
+			m_Menu.TweenOffScreenToBlack( SM_GoToGameFinished, false );
+			//Don't want to update song stats again.... If the else case is supposed to handle this, then add
+			//the return to the else case, and remove this case. 
+			return;
+		}
 		else
 			m_Menu.TweenOffScreenToBlack( SM_GoToGameFinished, false );
 	}
 
 	GAMESTATE->m_iCurrentStageIndex++;		// Increment the stage counter.
-
 	GAMESTATE->m_vPassedStageStats.push_back( GAMESTATE->m_CurStageStats );	// Save this stage's stats
 }
 

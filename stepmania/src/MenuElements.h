@@ -54,7 +54,7 @@ public:
 	void TweenOnScreenFromBlack( ScreenMessage smSendWhenDone );
 	void TweenOffScreenToBlack( ScreenMessage smSendWhenDone, bool bPlayBackSound );
 
-	bool IsClosing() { return m_Wipe.IsClosing() || m_KeepAlive.IsClosing(); };
+	bool IsClosing() { return m_Wipe.IsClosing() || m_KeepAlive.IsClosing() || m_Invisible.IsClosing(); };
 
 protected:
 	void TweenTopLayerOnScreen(float tm=-1);
