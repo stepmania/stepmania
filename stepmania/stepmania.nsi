@@ -343,8 +343,9 @@ Delete "$INSTDIR\crashinfo.txt"
 RMDir "$INSTDIR"	; will delete only if empty
 
 SetShellVarContext all	; delete from "All Users" if NT
-# These two versions didn't uninstall their desktop icon correctly.
+# These versions didn't uninstall their desktop icon correctly.
 # Let's do this until, say, alpha 5 or so.
+Delete "$DESKTOP\Play StepMania CVS.lnk"
 Delete "$DESKTOP\Play StepMania 3.9 alpha 2.lnk"
 Delete "$DESKTOP\Play StepMania 3.9 alpha 3.lnk"
 Delete "$DESKTOP\Play ${PRODUCT_NAME_VER}.lnk"
