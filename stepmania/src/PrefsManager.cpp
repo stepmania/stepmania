@@ -93,6 +93,8 @@ PrefsManager::PrefsManager()
 	m_bBreakComboToGetItem = false;
 	m_bShowDancingCharacters = false;
 	m_BannerCacheType = preload_none;
+	m_fDancePointsAccumulated = 0;
+	m_bUseUnlockSystem = false;
 	
 	/* DDR Extreme-style extra stage support.
 	 * Default off so people used to the current behavior (or those with extra
@@ -196,6 +198,8 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "BreakComboToGetItem",		m_bBreakComboToGetItem );
 	ini.GetValueB( "Options", "ShowDancingCharacters",		m_bShowDancingCharacters );
 	ini.GetValueI( "Options", "BannerCacheType",			(int&)m_BannerCacheType );
+	ini.GetValueF( "Misc", "DancePointsAccumulated",		m_fDancePointsAccumulated );
+	ini.GetValueB( "Misc", "UseUnlockSystem",				m_bUseUnlockSystem );
 
 	m_asAdditionalSongFolders.clear();
 	CString sAdditionalSongFolders;
@@ -279,6 +283,8 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "BreakComboToGetItem",		m_bBreakComboToGetItem );
 	ini.SetValueB( "Options", "ShowDancingCharacters",		m_bShowDancingCharacters );
 	ini.SetValueI( "Options", "BannerCacheType",			m_BannerCacheType );
+	ini.SetValueF( "Misc", "DancePointsAccumulated",		m_fDancePointsAccumulated );
+	ini.SetValueB( "Misc", "UseUnlockSystem",				m_bUseUnlockSystem );
 
 
 	/* Only write these if they aren't the default.  This ensures that we can change

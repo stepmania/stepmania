@@ -163,6 +163,7 @@ public:
 	bool HasMovieBackground() const;
 	bool HasBGChanges() const;
 	bool HasLyrics() const;
+	bool m_bIsLocked;
 
 	vector<BPMSegment>			m_BPMSegments;	// this must be sorted before gameplay
 	vector<StopSegment>			m_StopSegments;	// this must be sorted before gameplay

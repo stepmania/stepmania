@@ -347,6 +347,9 @@ int main(int argc, char* argv[])
 			"(Advanced:  To allow use of the software renderer, set 'AllowSoftwareRenderer=1' "
 			"in StepMania.ini)" );
 
+	/* Load the unlocks into memory */
+	GAMESTATE->UnlockingSys.LoadFromDATFile("Data/Unlocks.dat");
+
 	/* Run the main loop. */
 	GameLoop();
 

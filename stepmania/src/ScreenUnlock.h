@@ -8,15 +8,18 @@
 	Chris Danford
 -----------------------------------------------------------------------------
 */
-
 #include "ScreenAttract.h"
+#include "GameConstantsAndTypes.h"	// for NUM_RANKING_LINES
+#include "Style.h"
+
+
+class Course;
 
 
 class ScreenUnlock : public ScreenAttract
 {
 public:
-	ScreenUnlock() : ScreenAttract("ScreenUnlock") { };
+	ScreenUnlock();
+protected:
+	BitmapText PointsUntilNextUnlock;
 };
-
-
-

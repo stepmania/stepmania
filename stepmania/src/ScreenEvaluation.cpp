@@ -195,8 +195,12 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 	case stage:
 		{
 			for( int p=0; p<NUM_PLAYERS; p++ )
+			{
 				if( GAMESTATE->IsHumanPlayer(p) )
+				{
 					GAMESTATE->m_pCurNotes[p]->AddScore( (PlayerNumber)p, grade[p], stageStats.fScore[p], bNewRecord[p] );
+				}
+			}
 		}
 		break;
 	case summary:
@@ -208,10 +212,12 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 
 			RankingCategory cat[NUM_PLAYERS];
 			int iRankingIndex[NUM_PLAYERS];
+			float	fTotalDP;
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
 				float fAverageMeter = stageStats.iMeter[p] / (float)PREFSMAN->m_iNumArcadeStages;
 				cat[p] = AverageMeterToRankingCategory( fAverageMeter );
+				fTotalDP += stageStats.iActualDancePoints[p];
 			}
 
 			SONGMAN->AddScores( nt, bIsHumanPlayer, cat, stageStats.fScore, iRankingIndex );
@@ -219,6 +225,13 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			COPY( GAMESTATE->m_RankingCategory, cat );
 			COPY( GAMESTATE->m_iRankingIndex, iRankingIndex );
 			GAMESTATE->m_RankingNotesType = nt;
+
+			// If unlocking is enabled, save the dance points
+			if( PREFSMAN->m_bUseUnlockSystem )
+			{
+				PREFSMAN->m_fDancePointsAccumulated += fTotalDP;
+				PREFSMAN->SaveGlobalPrefsToDisk();
+			}
 		}
 		break;
 	case course:

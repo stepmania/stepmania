@@ -63,6 +63,7 @@ protected:
 	GradeDisplay		m_Grades[NUM_PLAYERS];
 
 	// points area
+	bool				m_bNewSongsUnlocked;
 	Sprite				m_sprPercentFrame[NUM_PLAYERS];
 	BitmapText			m_textPercentWhole[NUM_PLAYERS];
 	BitmapText			m_textPercentRemainder[NUM_PLAYERS];

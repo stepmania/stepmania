@@ -18,6 +18,7 @@
 #include "Style.h"
 #include "Grade.h"
 #include "StageStats.h"
+#include "UnlockSystem.h"
 
 class Song;
 class Notes;
@@ -41,6 +42,7 @@ public:
 	//
 	// Main State Info
 	//
+	UnlockSystem	UnlockingSys;
 	Game			m_CurGame;
 	Style			m_CurStyle;
 	bool			m_bPlayersCanJoin;	// true if it's not too late for a player to join - this only has an effect on the credits message
