@@ -570,7 +570,6 @@ bool BMSLoader::GetCommonTagFromMapList( const vector<NameToData_t> &aBMSData, c
 		if( !GetTagFromMap( aBMSData[i], sName, sTag ) )
 			continue;
 
-		LOG->Trace("foo: '%s'", sTag.c_str());
 		if( !bFoundOne )
 		{
 			bFoundOne = true;
