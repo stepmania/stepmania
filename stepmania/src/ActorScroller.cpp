@@ -76,6 +76,8 @@ void ActorScroller::Update( float fDeltaTime )
 		fX = roundf( fX );
 		fY = roundf( fY );
 		m_vActors[i]->SetXY( fX, fY );
+
+		m_vActors[i]->Update( fDeltaTime );
 	}
 }
 
