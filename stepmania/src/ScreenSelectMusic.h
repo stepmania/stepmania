@@ -61,7 +61,7 @@ protected:
 	void ChangeDifficulty( PlayerNumber pn, int dir );
 
 	void AfterNotesChange( PlayerNumber pn );
-	void SwitchToPreferredDifficulty();
+	void SwitchToPreferredSongDifficulty();
 	void AfterMusicChange();
 	void SortOrderChanged();
 

@@ -949,6 +949,9 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 	case TYPE_RANDOM:
 	case TYPE_ROULETTE:
 	case TYPE_LEAP:
+		/* XXX: We could be on a music or course sort, or even one with both; we don't
+		 * really know which difficulty to change.  Maybe the two difficulties should be
+		 * linked ... */
 		if( GAMESTATE->ChangeDifficulty( pn, dir ) )
 		{
 			if( dir < 0 )
@@ -1228,13 +1231,10 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 		m_PaneDisplay[pn].SetFromGameState();
 }
 
-void ScreenSelectMusic::SwitchToPreferredDifficulty()
+void ScreenSelectMusic::SwitchToPreferredSongDifficulty()
 {
-	FOREACH_PlayerNumber( p )
+	FOREACH_HumanPlayer( p )
 	{
-		if( !GAMESTATE->IsHumanPlayer( PlayerNumber(p) ) )
-			continue;
-
 		/* Find the closest match to the user's preferred difficulty. */
 		int CurDifference = -1;
 		for( unsigned i=0; i<m_arrayNotes.size(); i++ )
@@ -1404,7 +1404,7 @@ void ScreenSelectMusic::AfterMusicChange()
 
 			m_DifficultyDisplay.SetDifficulties( pSong, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 
-			SwitchToPreferredDifficulty();
+			SwitchToPreferredSongDifficulty();
 
 			/* Short delay before actually showing these, so they don't show
 			 * up when scrolling fast.  It'll still show up in "slow" scrolling,
