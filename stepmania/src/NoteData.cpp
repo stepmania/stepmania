@@ -499,7 +499,7 @@ int NoteData::RowNeedsHands( const int row ) const
 	for( int t=0; t<m_iNumTracks; t++ )
 	{
 		TapNote tn = GetTapNoteX(t, row);
-		if( tn == TAP_MINE || tn == TAP_EMPTY ) // mines don't count
+		if( tn == TAP_MINE || tn == TAP_EMPTY || tn == TAP_HOLD_TAIL ) // mines don't count
 			continue;
 		++iNumNotesThisIndex;
 	}
