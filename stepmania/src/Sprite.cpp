@@ -582,10 +582,17 @@ void Sprite::SetState( int iNewState )
 	// This assert will likely trigger if the "missing" theme element graphic 
 	// is loaded in place of a multi-frame sprite.  We want to know about these
 	// problems in debug builds, but they're not fatal.
-#ifdef DEBUG
-	RAGE_ASSERT_M( iNewState >= 0  &&  iNewState < (int)m_States.size(),
-		ssprintf("iNewState=%d, numStates=%u", iNewState, m_States.size()) );
-#endif
+	if( iNewState < 0  ||  iNewState >= (int)m_States.size() )
+	{
+		CString sError;
+		if( m_pTexture )
+			sError = ssprintf("The Sprite '%s' tried to set state index %d, but it has only %u states", 
+				m_pTexture->GetID().filename.c_str(), iNewState, m_States.size());
+		else
+			sError = ssprintf("A Sprite tried to set state index %d but no texture is loaded.", 
+				iNewState );
+		HOOKS->MessageBoxOK( sError );
+	}
 
 	CLAMP(iNewState, 0, (int)m_States.size()-1);
 	m_iCurState = iNewState;
