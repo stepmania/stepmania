@@ -903,11 +903,14 @@ static void ProcessArgsSecond()
 		NSMAN->DisplayStartupStatus();	//If we're using networking show what happend
 }
 
+#ifdef _XBOX
+void __cdecl main(char* argv[])
+#else
 int main(int argc, char* argv[])
+#endif
 {
 #ifdef _XBOX
-	argc = 1;
-	argv = xboxargv;
+	int argc = 1;
 	XGetCustomLaunchData();
 #endif
 
@@ -918,7 +921,6 @@ int main(int argc, char* argv[])
 	HOOKS = MakeArchHooks();
 
 	CString  g_sErrorString = "";
-
 #if !defined(DEBUG)
 	/* Always catch RageExceptions; they should always have distinct strings. */
 	try { /* RageException */
@@ -935,6 +937,8 @@ int main(int argc, char* argv[])
 
 #endif
 
+	// Xbox : bug in the following
+	// Xbox : Detected with an endless loop placed to test if anything is reached.
 	/* Almost everything uses this to read and write files.  Load this early. */
 	FILEMAN = new RageFileManager( argv[0] );
 	FILEMAN->MountInitialFilesystems();
@@ -985,6 +989,7 @@ int main(int argc, char* argv[])
 	//
 	// Create game objects
 	//
+
 	GAMESTATE	= new GameState;
 
 	/* This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow. */
@@ -1099,7 +1104,7 @@ int main(int argc, char* argv[])
 	PREFSMAN->SaveGlobalPrefsToDisk();
 	SaveGamePrefsToDisk();
 
-#ifndef DEBUG
+#if !defined(DEBUG)
 	}
 	catch( const RageException &e )
 	{
@@ -1159,9 +1164,9 @@ int main(int argc, char* argv[])
 
 #ifdef _XBOX
 	XReturnToLaunchingXBE();
-#endif
-
+#else
 	return 0;
+#endif
 }
 
 CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature, int iIndex )
