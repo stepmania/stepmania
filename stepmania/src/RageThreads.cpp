@@ -558,6 +558,7 @@ struct RageMutexImpl
 RageMutexImpl::RageMutexImpl( RageMutex *parent )
 {
 	mutex = CreateMutex( NULL, false, NULL );
+	ASSERT_M( mutex != NULL, werr_ssprintf(GetLastError(), "CreateMutex") );
 	LockedBy = NULL;
 	LockCnt = 0;
 	m_Parent = parent;
@@ -610,6 +611,9 @@ void RageMutexImpl::Lock()
 			 * on the mutex. */
 			len = 1000;
 			break;
+
+		case WAIT_FAILED:
+			FAIL_M( werr_ssprintf(GetLastError(), "WaitForSingleObject(%s)", this->m_Parent->GetName().c_str()) );
 		}
 	}
 
