@@ -3,6 +3,7 @@
 
 #include "SDL_utils.h"
 #include "RageSoundReader_FileReader.h"
+#include "RageFile.h"
 
 struct madlib_t;
 
@@ -14,7 +15,7 @@ public:
 	float OffsetFix;
 
 	CString filename;
-    FILE *rw;
+    RageFile file;
     madlib_t *mad;
 
 

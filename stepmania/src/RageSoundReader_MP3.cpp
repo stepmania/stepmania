@@ -318,7 +318,7 @@ int RageSoundReader_MP3::fill_buffer()
 		mad->inbytes = 0;
 	}
 
-	int rc = fread( mad->inbuf + mad->inbytes, 1, sizeof (mad->inbuf)-mad->inbytes, this->rw );
+	int rc = file.Read( mad->inbuf + mad->inbytes, sizeof (mad->inbuf)-mad->inbytes );
 	if ( rc <= 0 )
 		return rc;
 	if ( rc == 0 )
@@ -450,11 +450,7 @@ int RageSoundReader_MP3::do_mad_frame_decode( bool headers_only )
 int RageSoundReader_MP3::FindOffsetFix()
 {
 	/* Do a fake rewind. */
-	if( fseek(this->rw, 0, SEEK_SET) == -1 )
-	{
-		SetError( strerror(errno) );
-		return 0;
-	}
+	file.Rewind();
 
 	mad_frame_mute(&mad->Frame);
 	mad_synth_mute(&mad->Synth);
@@ -584,7 +580,7 @@ void RageSoundReader_MP3::synth_output()
  * to use this. */
 int RageSoundReader_MP3::seek_stream_to_byte( int byte )
 {
-	if( fseek(this->rw, byte, SEEK_SET) == -1 )
+	if( file.Seek(byte) == -1 )
 	{
 		SetError( strerror(errno) );
 		return 0;
@@ -682,8 +678,6 @@ RageSoundReader_MP3::~RageSoundReader_MP3()
     mad_synth_finish( &mad->Synth );
     mad_frame_finish( &mad->Frame );
     mad_stream_finish( &mad->Stream );
-	if( rw )
-		fclose( rw );
 
 	delete mad;
 }
@@ -691,23 +685,19 @@ RageSoundReader_MP3::~RageSoundReader_MP3()
 SoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( CString filename_ )
 {
 	filename = filename_;
-    rw = fopen(filename, "rb");
-	if( !rw )
+	if( !file.Open( filename ) )
 	{
-		SetError( ssprintf("Couldn't open file: %s", strerror(errno)) );
+		SetError( ssprintf("Couldn't open file: %s", file.GetError().c_str()) );
 		return OPEN_NO_MATCH;
 	}
 
-	int ret = fseek( this->rw, 0, SEEK_END );
-	ASSERT( ret != -1 );
-	mad->filesize = ftell( this->rw );
+	mad->filesize = file.GetFileSize();
 	ASSERT( mad->filesize != -1 );
-	fseek( this->rw, 0, SEEK_SET );
 
 	/* Make sure we can decode at least one frame.  This will also fill in header info. */
 	mad->outpos = 0;
 
-	ret = do_mad_frame_decode();
+	int ret = do_mad_frame_decode();
 	switch(ret)
 	{
 	case 0:
@@ -750,8 +740,8 @@ SoundReader *RageSoundReader_MP3::Copy() const
 	RageSoundReader_MP3 *ret = new RageSoundReader_MP3;
 
 	ret->filename = filename;
-	ret->rw = fopen(filename, "rb");
-	ASSERT( rw );
+	bool b = ret->file.Open( filename );
+	ASSERT( b );
 
 	ret->mad->filesize = mad->filesize;
 	ret->mad->bitrate = mad->bitrate;
@@ -828,8 +818,7 @@ int RageSoundReader_MP3::Read( char *buf, unsigned len )
 
 bool RageSoundReader_MP3::MADLIB_rewind()
 {
-	int ret = fseek(this->rw, 0, SEEK_SET);
-	ASSERT( ret == 0 );
+	this->file.Rewind();
 			
 	mad_frame_mute(&mad->Frame);
 	mad_synth_mute(&mad->Synth);
