@@ -185,11 +185,10 @@ void ExitGame()
 
 void ResetGame( bool ReturnToFirstScreen )
 {
-	GAMESTATE->Reset();
 	ReadGamePrefsFromDisk();
 	INPUTMAPPER->ReadMappingsFromDisk();
 
-	NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_pCurGame );
+	GAMESTATE->Reset();
 	
 	if( !THEME->DoesThemeExist( THEME->GetCurThemeName() ) )
 	{
