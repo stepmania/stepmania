@@ -129,9 +129,6 @@ void Screen::Input( const DeviceInput& DeviceI, const InputEventType type, const
 	if( !MenuI.IsValid() )
 		return;
 
-	if( !GAMESTATE->IsHumanPlayer(MenuI.player) )
-		return;
-
 	switch( MenuI.button )
 	{
 	case MENU_BUTTON_UP:	this->MenuUp( MenuI.player, type );		return;
