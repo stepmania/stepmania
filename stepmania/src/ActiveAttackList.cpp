@@ -32,10 +32,11 @@ void ActiveAttackList::Update( float fDelta )
 	BitmapText::Update( fDelta ); 
 
 	// refresh text only once every 1/2 second
-	float fNowSeconds = RageTimer::GetTimeSinceStart()*2;
-	float fLastSeconds = RageTimer::GetTimeSinceStart()*2 - fDelta;
+	float fNowSeconds = RageTimer::GetTimeSinceStart();
+	float fLastSeconds = RageTimer::GetTimeSinceStart() - fDelta;
+	bool bTimeToUpdate = froundf(fNowSeconds,0.5f) != froundf(fLastSeconds,0.5f);
 
-	if( (int)fNowSeconds != (int)fLastSeconds )
+	if( bTimeToUpdate )
 	{
 		CString s;
 
