@@ -9,9 +9,9 @@
 #include "RageLog.h"
 
 #if defined(INTEGER_OGG)
-#include "tremor/ivorbisfile.h"
+#include <tremor/ivorbisfile.h>
 #else
-#include "vorbis/vorbis/vorbisfile.h"
+#include <vorbis/vorbisfile.h>
 #endif
 
 #if defined(_XBOX)
