@@ -290,7 +290,7 @@ void ScreenEz2SelectMusic::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenEz2SelectMusic::MenuRight( PlayerNumber pn, const InputEventType type )
 {
-	m_Menu.m_MenuTimer.StallTimer();
+	m_Menu.m_MenuTimer.Stall();
 	m_MusicBannerWheel.BannersRight();
 	MusicChanged();
 }
@@ -317,7 +317,7 @@ void ScreenEz2SelectMusic::TweenOffScreen()
 
 void ScreenEz2SelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type )
 {
-	m_Menu.m_MenuTimer.StallTimer();
+	m_Menu.m_MenuTimer.Stall();
 	m_MusicBannerWheel.BannersLeft();
 	MusicChanged();
 }

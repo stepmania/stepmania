@@ -25,18 +25,20 @@ public:
 	
 	virtual void Update( float fDeltaTime ); 
 
-	void SetTimer( int iTimerSeconds );
-	void StartTimer();
-	void StopTimer();
-	void StallTimer();
-
-	void StealthTimer(int iActive);
+	void SetSeconds( int iTimerSeconds );
+	void Start();		// resume countdown from paused
+	void Pause();		// don't count down
+	void Stop();		// set to "00" and pause
+	void Disable();		// set to "99" and pause
+	void Stall();		// pause countdown for a sec
+	void EnableStealth( bool bStealth );	// make timer invisible and silent
 
 protected:
 	float m_fSecondsLeft;
 	float m_fStallSeconds;
+	bool m_bPaused;
 
-	bool m_bTimerStopped;
+	void SetText( int iSeconds );
 
 	BitmapText m_textDigit1;
 	BitmapText m_textDigit2;

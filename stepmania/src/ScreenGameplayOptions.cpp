@@ -68,7 +68,7 @@ ScreenGameplayOptions::ScreenGameplayOptions() :
 		g_GameplayOptionsLines, 
 		NUM_GAMEPLAY_OPTIONS_LINES,
 		false );
-	m_Menu.m_MenuTimer.StopTimer();
+	m_Menu.m_MenuTimer.Disable();
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenMachineOptions music") );
 }

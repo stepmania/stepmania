@@ -25,7 +25,7 @@ MenuTimer::MenuTimer()
 {
 	m_fSecondsLeft = TIMER_SECONDS;
 	m_fStallSeconds = 0;
-	m_bTimerStopped = false;
+	m_bPaused = false;
 
 	m_textDigit1.LoadFromNumbers( THEME->GetPathTo("Numbers","MenuTimer numbers") );
 	m_textDigit2.LoadFromNumbers( THEME->GetPathTo("Numbers","MenuTimer numbers") );
@@ -45,35 +45,31 @@ MenuTimer::MenuTimer()
 	m_soundBeep.Load( THEME->GetPathTo("Sounds","MenuTimer tick") );
 }
 
-void MenuTimer::StealthTimer( int iActive )
+void MenuTimer::EnableStealth( bool bStealth )
 {
-	if ( iActive == 0 ) // we wanna keep everything as it is...
-	{
-		m_soundBeep.Load( THEME->GetPathTo("Sounds","menu timer") ); // reload the sound
-	}
-	else if ( iActive == 1 ) // otherwise we wanna make the timer invisible and silent....
+	if( bStealth )
 	{
 		m_soundBeep.Unload(); // unload the sound
+		// HACK:  this is not a good way to keep the numbers from drawing...
+		m_textDigit1.SetZoomY( 0 );	
+		m_textDigit2.SetZoomY( 0 );
 	}
-	// else take no action
+	else
+	{
+		m_soundBeep.Load( THEME->GetPathTo("Sounds","MenuTimer tick") ); // reload the sound
+		m_textDigit1.SetZoomY( 1 );	
+		m_textDigit2.SetZoomY( 1 );
+	}
 }
 
 void MenuTimer::Update( float fDeltaTime ) 
 { 
 	ActorFrame::Update( fDeltaTime );
 
-	if( m_bTimerStopped )
-	{
-		m_textDigit1.SetText( ssprintf("%d", ((int)m_fSecondsLeft)/10) ); 
-		m_textDigit2.SetText( ssprintf("%d", ((int)m_fSecondsLeft)%10) ); 
-
-		m_textDigit1.SetZoomX( 1 ); 
-		m_textDigit2.SetZoomX( 1 ); 
-
+	if( m_bPaused )
 		return;
-	}
 
-
+	// run down the stall time if any
 	if( m_fStallSeconds > 0 )
 	{
 		m_fStallSeconds -= fDeltaTime;
@@ -81,76 +77,111 @@ void MenuTimer::Update( float fDeltaTime )
 	}
 
 	float fOldSecondsLeft = m_fSecondsLeft;
-	float fNewSecondsLeft = fOldSecondsLeft - fDeltaTime;
+	m_fSecondsLeft -= fDeltaTime;
+	CLAMP( m_fSecondsLeft, 0, 99 );
+	float fNewSecondsLeft = m_fSecondsLeft;
+
+	int iOldDisplay = (int)(fOldSecondsLeft + 0.99f);
+	int iNewDisplay = (int)(fNewSecondsLeft + 0.99f);
 
 	if( fOldSecondsLeft > 5.5  &&  fNewSecondsLeft < 5.5 )	// transition to below 5.5
 		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("hurry up") );
-	else if( fOldSecondsLeft > 5  &&  fNewSecondsLeft < 5 )	// transition to below 5
+
+	if( iOldDisplay != iNewDisplay )
 	{
-		m_textDigit1.SetEffectGlowShift( 0.15f, RageColor(1,0,0,0), RageColor(1,0,0,1) );
-		m_textDigit2.SetEffectGlowShift( 0.15f, RageColor(1,0,0,0), RageColor(1,0,0,1) );
-		m_soundBeep.Play();
-	}
-	else if( fOldSecondsLeft > 4  &&  fNewSecondsLeft < 4 )	// transition to below 4
-		m_soundBeep.Play();
-	else if( fOldSecondsLeft > 3  &&  fNewSecondsLeft < 3 )	// transition to below 3
-		m_soundBeep.Play();
-	else if( fOldSecondsLeft > 2  &&  fNewSecondsLeft < 2 )	// transition to below 2
-		m_soundBeep.Play();
-	else if( fOldSecondsLeft > 1  &&  fNewSecondsLeft < 1 )	// transition to below 1
-		m_soundBeep.Play();
-	else if( fOldSecondsLeft > 0  &&  fNewSecondsLeft < 0 )	// transition to below 0
-		SCREENMAN->SendMessageToTopScreen( SM_MenuTimer, 0 );
+		SetText( iNewDisplay );
 
-	m_fSecondsLeft = fNewSecondsLeft;
-	m_fSecondsLeft = max( 0, m_fSecondsLeft );
+		switch( iNewDisplay )
+		{
+		case 6:		// transition to below 6
+			m_textDigit1.StopTweening(); 
+			m_textDigit1.BeginTweening( 0.8f );	// sleep
+			m_textDigit1.BeginTweening( 0.2f );
+			m_textDigit1.SetTweenZoomX( 0 );
+			m_textDigit2.StopTweening(); 
+			m_textDigit2.BeginTweening( 0.8f );	// sleep
+			m_textDigit2.BeginTweening( 0.2f );
+			m_textDigit2.SetTweenZoomX( 0 );
+			break;
+		case 5:		// transition to below 5
+			m_textDigit1.SetEffectGlowShift( 0.15f, RageColor(1,0,0,0), RageColor(1,0,0,1) );
+			m_textDigit2.SetEffectGlowShift( 0.15f, RageColor(1,0,0,0), RageColor(1,0,0,1) );
+			// fall through
+		case 4:
+		case 3:
+		case 2:
+		case 1:
+			m_textDigit1.StopTweening(); 
+			m_textDigit1.BeginTweening( 0.2f );
+			m_textDigit1.SetTweenZoomX( 1 );
+			m_textDigit1.BeginTweening( 0.6f );	// sleep
+			m_textDigit1.BeginTweening( 0.2f );
+			m_textDigit1.SetTweenZoomX( 0 );
+			m_textDigit2.StopTweening(); 
+			m_textDigit2.BeginTweening( 0.2f );
+			m_textDigit2.SetTweenZoomX( 1 );
+			m_textDigit2.BeginTweening( 0.6f );	// sleep
+			m_textDigit2.BeginTweening( 0.2f );
+			m_textDigit2.SetTweenZoomX( 0 );
 
-	m_textDigit1.SetText( ssprintf("%d", ((int)m_fSecondsLeft+1)/10) ); 
-	m_textDigit2.SetText( ssprintf("%d", ((int)m_fSecondsLeft+1)%10) ); 
-
-	// "flip" the numbers
-	float fRemainder = m_fSecondsLeft - (int)m_fSecondsLeft;
-	float fDistFromNearestNumber = min( fRemainder, 1-fRemainder );	// this is between 0 and 0.5;
-
-	if( m_fSecondsLeft == 0 )
-	{
-		m_textDigit1.SetZoomX( 1 ); 
-		m_textDigit2.SetZoomX( 1 ); 
-	}
-	else if( m_fSecondsLeft < 4.5f )
-	{
-		m_textDigit1.SetZoomX( min(1, fDistFromNearestNumber*8) ); 
-		m_textDigit2.SetZoomX( min(1, fDistFromNearestNumber*8) ); 
+			m_soundBeep.Play();
+			break;
+		case 0:
+			SCREENMAN->SendMessageToTopScreen( SM_MenuTimer, 0 );
+			Stop();
+			break;
+		}
 	}
 }
 
 
-void MenuTimer::StopTimer()
+void MenuTimer::Pause()
 {
-	SetTimer( 0 );
-	m_bTimerStopped = true;
+	m_bPaused = true;
 }
 
-void MenuTimer::StallTimer()
+void MenuTimer::Stop()
+{
+	SetSeconds( 0 );
+	Pause();
+}
+
+void MenuTimer::Disable()
+{
+	SetSeconds( 99 );
+	Pause();
+}
+
+void MenuTimer::Stall()
 {
 	m_fStallSeconds = 0.5f;
 }
 
-void MenuTimer::SetTimer( int iSeconds )
+void MenuTimer::SetSeconds( int iSeconds )
 {
 	m_fSecondsLeft = (float)iSeconds;
 	CLAMP( m_fSecondsLeft, 0, 99 );
 
+	m_textDigit1.StopTweening(); 
+	m_textDigit2.StopTweening(); 
 	m_textDigit1.SetZoomX( 1 ); 
 	m_textDigit2.SetZoomX( 1 ); 
 	m_textDigit1.SetEffectNone();
 	m_textDigit2.SetEffectNone();
 
-	m_textDigit1.SetText( ssprintf("%d", ((int)m_fSecondsLeft+1)/10) ); 
-	m_textDigit2.SetText( ssprintf("%d", ((int)m_fSecondsLeft+1)%10) ); 
+	SetText( iSeconds );
 }
 
-void MenuTimer::StartTimer()
+void MenuTimer::Start()
 {
-	m_bTimerStopped = false;
+	m_bPaused = false;
+}
+
+void MenuTimer::SetText( int iSeconds )
+{
+	int iDigit1 = (int)(iSeconds)/10;
+	int iDigit2 = (int)(iSeconds)%10;
+
+	m_textDigit1.SetText( ssprintf("%d",iDigit1) ); 
+	m_textDigit2.SetText( ssprintf("%d",iDigit2) ); 
 }

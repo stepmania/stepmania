@@ -33,7 +33,7 @@ Andrew Livy
 #define HELP_TEXT				THEME->GetMetric("ScreenEz2SelectPlayer","HelpText")
 #define TIMER_SECONDS			THEME->GetMetricI("ScreenEz2SelectPlayer","TimerSeconds")
 #define NEXT_SCREEN				THEME->GetMetric("ScreenEz2SelectPlayer","NextScreen")
-#define SILENT_WAIT				THEME->GetMetricI("ScreenEz2SelectPlayer","SilentWait")
+#define SILENT_WAIT				THEME->GetMetricB("ScreenEz2SelectPlayer","SilentWait")
 #define BOUNCE_JOIN_MESSAGE		THEME->GetMetricB("ScreenEz2SelectPlayer","BounceJoinMessage")
 #define FOLD_ON_JOIN			THEME->GetMetricB("ScreenEz2SelectPlayer","FoldOnJoin")
 
@@ -161,7 +161,6 @@ void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 		if( GAMESTATE->GetNumSidesJoined() == 0 )
 		{
 			MenuStart(PLAYER_1);
-			m_Menu.m_MenuTimer.StopTimer();
 		}
 
 		TweenOffScreen();
@@ -238,9 +237,9 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber pn )
 	else
 	{
 		// give the other player a little time to join
-		m_Menu.m_MenuTimer.SetTimer( 1 );
-		m_Menu.m_MenuTimer.StartTimer();
-		m_Menu.m_MenuTimer.StealthTimer( SILENT_WAIT ); // do we wanna make the timer 'quiet' ?
+		m_Menu.m_MenuTimer.SetSeconds( 1 );
+		m_Menu.m_MenuTimer.Start();
+		m_Menu.m_MenuTimer.EnableStealth( SILENT_WAIT ); // do we wanna make the timer 'quiet' ?
 	}
 }
 

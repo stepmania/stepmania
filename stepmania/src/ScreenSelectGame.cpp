@@ -66,7 +66,7 @@ ScreenSelectGame::ScreenSelectGame() :
 		g_SelectGameLines, 
 		NUM_SELECT_GAME_LINES,
 		false );
-	m_Menu.m_MenuTimer.StopTimer();
+	m_Menu.m_MenuTimer.Disable();
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSelectGame music") );
 }

@@ -40,22 +40,6 @@ MenuElements::MenuElements()
 {
 }
 
-void MenuElements::StealthTimer( int iActive )
-{
-	m_MenuTimer.StealthTimer( iActive ); // go a bit deeper... get rid of the sound...
-
-	if (iActive == 0) // leave it on screen
-	{
-//		m_MenuTimer.SetXY( MENU_TIMER_X, MENU_TIMER_Y ); // set it on-screen
-	}
-	else if (iActive == 1) // hide the timer
-	{
-		// otherwise position it off-screen
-		m_MenuTimer.StopTweening();
-		m_MenuTimer.SetXY( 1000, 1000 );
-	}
-}
-
 void MenuElements::Load( CString sClassName, bool bEnableTimer, bool bLoadStyleIcon )
 {
 	LOG->Trace( "MenuElements::MenuElements()" );
@@ -82,15 +66,9 @@ void MenuElements::Load( CString sClassName, bool bEnableTimer, bool bLoadStyleI
 	
 	m_MenuTimer.Command( TIMER_ON_COMMAND );
 	if( bEnableTimer  &&  PREFSMAN->m_bMenuTimer  &&  !GAMESTATE->m_bEditing )
-	{
-		m_MenuTimer.SetTimer( THEME->GetMetricI(m_sClassName,"TimerSeconds") );
-	}
+		m_MenuTimer.SetSeconds( THEME->GetMetricI(m_sClassName,"TimerSeconds") );
 	else
-	{
-		m_MenuTimer.SetTimer( 99 );
-		m_MenuTimer.Update( 0 );
-		m_MenuTimer.StopTimer();
-	}
+		m_MenuTimer.Disable();
 	this->AddChild( &m_MenuTimer );
 
 	m_sprFooter.Load( THEME->GetPathTo("Graphics",m_sClassName+" footer") );
@@ -122,8 +100,8 @@ void MenuElements::Load( CString sClassName, bool bEnableTimer, bool bLoadStyleI
 
 void MenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
 {
-	m_MenuTimer.SetTimer( 0 );
-	m_MenuTimer.StopTimer();
+	m_MenuTimer.SetSeconds( 0 );
+	m_MenuTimer.Stop();
 
 	m_sprHeader.Command( HEADER_OFF_COMMAND );
 	m_sprStyleIcon.Command( STYLE_ICON_OFF_COMMAND );
@@ -139,7 +117,7 @@ void MenuElements::Back( ScreenMessage smSendWhenDone )
 	if( m_Back.IsTransitioning() )
 		return;	// ignore
 
-	m_MenuTimer.StopTimer();
+	m_MenuTimer.Stop();
 	m_Back.StartTransitioning( smSendWhenDone );
 	m_soundBack.Play();
 }

@@ -393,10 +393,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	}
 
 
-	m_textDebug.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-	m_textDebug.SetXY( DEBUG_X, DEBUG_Y );
-	m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
-	this->AddChild( &m_textDebug );
 	//this->AddChild( &m_textLyrics ); -- THIS IS NOT DONE YET!! (Miryokuteki)
 	
 
@@ -454,6 +450,13 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 			this->AddChild( &m_textSurviveTime );
 		}
 	}
+
+
+	// Debug is drawn on top of all these things
+	m_textDebug.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textDebug.SetXY( DEBUG_X, DEBUG_Y );
+	m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
+	this->AddChild( &m_textDebug );
 
 
 	/* LoadNextSong first, since that positions some elements which need to be

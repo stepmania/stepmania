@@ -610,12 +610,12 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		if( m_MusicWheel.IsRouletting() )
 		{
 			MenuStart(PLAYER_INVALID);
-			m_Menu.m_MenuTimer.SetTimer( 15 );
+			m_Menu.m_MenuTimer.SetSeconds( 15 );
 		}
 		else if( m_MusicWheel.GetSelectedType() != TYPE_SONG )
 		{
 			m_MusicWheel.StartRoulette();
-			m_Menu.m_MenuTimer.SetTimer( 15 );
+			m_Menu.m_MenuTimer.SetSeconds( 15 );
 		}
 		else
 		{
@@ -811,7 +811,7 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 
 void ScreenSelectMusic::AfterMusicChange()
 {
-	m_Menu.m_MenuTimer.StallTimer();
+	m_Menu.m_MenuTimer.Stall();
 
 	Song* pSong = m_MusicWheel.GetSelectedSong();
 	GAMESTATE->m_pCurSong = pSong;

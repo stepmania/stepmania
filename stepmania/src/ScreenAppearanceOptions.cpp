@@ -72,8 +72,7 @@ ScreenAppearanceOptions::ScreenAppearanceOptions() :
 		g_AppearanceOptionsLines, 
 		NUM_APPEARANCE_OPTIONS_LINES,
 		false );
-	m_Menu.m_MenuTimer.SetTimer( 99 );
-	m_Menu.m_MenuTimer.StopTimer();
+	m_Menu.m_MenuTimer.Disable();
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenAppearanceOptions music") );
 }

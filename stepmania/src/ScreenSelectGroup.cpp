@@ -255,6 +255,7 @@ void ScreenSelectGroup::MenuDown( PlayerNumber pn )
 void ScreenSelectGroup::MenuStart( PlayerNumber pn )
 {
 	m_soundSelect.PlayRandom();
+	m_Menu.m_MenuTimer.Stop();
 	m_bChosen = true;
 
 	GAMESTATE->m_pCurSong = NULL;

@@ -36,8 +36,6 @@ public:
 
 	void Load( CString sClassName, bool bEnableTimer = true, bool bLoadStyleIcon = true );
 
-	void StealthTimer( int iActive );
-
 	void DrawTopLayer();
 	void DrawBottomLayer();
 
