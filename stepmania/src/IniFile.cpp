@@ -44,7 +44,7 @@ bool IniFile::ReadFile()
 
 	if (f == NULL)
 	{
-		LOG->Trace("INI: FAILED: %s", strerror(errno));
+		LOG->Trace("Reading '%s' failed: %s", path.c_str(), strerror(errno));
 		error = ssprintf("Unable to open ini file: %s", strerror(errno));
 		return 0;
 	}
