@@ -14,6 +14,7 @@ LanPlayer::LanPlayer() {
 	maxCombo = 0;
 	Grade = 0;
 	offset = 0;
+	options = "";
 }
 
 StepManiaLanServer::StepManiaLanServer() {
@@ -128,6 +129,10 @@ void StepManiaLanServer::ParseData(PacketFunctions &Packet, int clientNum) {
 		break;
 	case 8:
 		SelectSong(Packet, clientNum);
+		break;
+	case 11:
+		Client[clientNum].Player[0].options = Packet.ReadNT();		
+		Client[clientNum].Player[1].options = Packet.ReadNT();		
 		break;
 	default:
 		break;
@@ -253,6 +258,8 @@ void StepManiaLanServer::GameOver(PacketFunctions &Packet, int clientNum) {
 			Reply.Write2( (uint16_t) playersPtr[x]->steps[8] );  //Tack on OK
 		for (int x = 0; x < numPlayers; x++) 
 			Reply.Write2( (uint16_t) playersPtr[x]->maxCombo );
+		for (int x = 0; x < numPlayers; x++)
+			Reply.WriteNT( playersPtr[x]->options );
 		SendToAllClients(Reply);
 	}
 }

@@ -137,5 +137,5 @@ void ScreenNetEvaluation::UpdateStats()
 		m_textJudgeNumbers[j][m_pActivePlayer].SetText( ssprintf( "%*d", iNumDigits, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].tapScores[j] ) );
 	}
 
-	m_textPlayerOptions[NUM_PLAYERS].SetText( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].playerOptions );
+	m_textPlayerOptions[m_pActivePlayer].SetText( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].playerOptions );
 }

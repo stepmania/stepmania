@@ -228,6 +228,7 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenWithM
 	m_soundChangeSel.Load( THEME->GetPathToS("ScreenNetSelectMusic change sel"));
 
 	NSMAN->ReportNSSOnOff(1);
+	NSMAN->ReportPlayerOptions();
 
 	return;
 }

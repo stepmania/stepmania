@@ -668,6 +668,7 @@ void NetworkSyncManager::ReportPlayerOptions()
 	m_packet.Write1( 11 );
 	FOREACH_PlayerNumber (pn)
 		m_packet.WriteNT( GAMESTATE->m_PlayerOptions[pn].GetString() );
+	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
 }
 
 void NetworkSyncManager::SelectUserSong()

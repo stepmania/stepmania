@@ -31,6 +31,7 @@ class LanPlayer {
 		int offset;
 		int PlayerID;
 		int diff;
+		string options;
 		LanPlayer();
 	private:
 };
