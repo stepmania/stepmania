@@ -2319,7 +2319,6 @@
 				AA96881D05DE34B600478B95,
 				AABD0B3B05DF3F22004F7929,
 				AAEA090905E23DF900D38622,
-				AAEA090B05E23DF900D38622,
 				AAED6F2D0601C528002D2DEE,
 				AAED6F2F0601C528002D2DEE,
 				AA0A3DE9060513A00044E6B1,
@@ -2434,6 +2433,9 @@
 				AAEBC6CD07A20AFE00793F0E,
 				AAEBC6CF07A20AFE00793F0E,
 				AAEBC6D107A20AFE00793F0E,
+				AAEBC79007A4FF5600793F0E,
+				AAEBC79207A4FF5600793F0E,
+				AAEBC79307A4FF5600793F0E,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4215,7 +4217,6 @@
 				AABBD80805D8E9FC00B44FC2,
 				AA96881C05DE34B600478B95,
 				AABD0B3A05DF3F22004F7929,
-				AAEA090A05E23DF900D38622,
 				AAA71EA105EE154E00D2E8FF,
 				AAED6F2C0601C528002D2DEE,
 				AAED6F2E0601C528002D2DEE,
@@ -4311,6 +4312,7 @@
 				AAEBC6CC07A20AFE00793F0E,
 				AAEBC6CE07A20AFE00793F0E,
 				AAEBC6D007A20AFE00793F0E,
+				AAEBC79107A4FF5600793F0E,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8379,6 +8381,9 @@
 				AA6E010A0477128A005F316C,
 				AAC6DCE30567660A00B5D56F,
 				AAC6DCE40567660A00B5D56F,
+				AAEBC78C07A4FF5600793F0E,
+				AAEBC78D07A4FF5600793F0E,
+				AAEBC78E07A4FF5600793F0E,
 				AA28B47A058F2F5D0097C109,
 				AA28B47B058F2F5D0097C109,
 				AA1DCB6304A4872700D02EE9,
@@ -8391,6 +8396,7 @@
 				AA75DA1F06E0A1B500EF13B5,
 				AA6E010B0477128A005F316C,
 				AA6E010C0477128A005F316C,
+				AAEBC78F07A4FF5600793F0E,
 				AA6E010D0477128A005F316C,
 				AA6E010E0477128A005F316C,
 				AA1C6556050D234B0073A143,
@@ -9595,8 +9601,6 @@
 				AA6EFDE104770C79005F316C,
 				AA6EFDE204770C79005F316C,
 				AAEA090605E23DF900D38622,
-				AAEA090705E23DF900D38622,
-				AAEA090805E23DF900D38622,
 				AA6EFDE304770C79005F316C,
 				AA6EFDE404770C79005F316C,
 				AA6EFDE504770C79005F316C,
@@ -15792,40 +15796,8 @@
 			sourceTree = "<group>";
 			usesTabs = 1;
 		};
-		AAEA090705E23DF900D38622 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = LuaHelpers.cpp;
-			path = ../src/LuaHelpers.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			usesTabs = 1;
-		};
-		AAEA090805E23DF900D38622 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = LuaHelpers.h;
-			path = ../src/LuaHelpers.h;
-			refType = 4;
-			sourceTree = "<group>";
-			usesTabs = 1;
-		};
 		AAEA090905E23DF900D38622 = {
 			fileRef = AAEA090605E23DF900D38622;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AAEA090A05E23DF900D38622 = {
-			fileRef = AAEA090705E23DF900D38622;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AAEA090B05E23DF900D38622 = {
-			fileRef = AAEA090805E23DF900D38622;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -15916,6 +15888,66 @@
 		};
 		AAEBC6D107A20AFE00793F0E = {
 			fileRef = AAEBC6CB07A20AFE00793F0E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAEBC78C07A4FF5600793F0E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = LuaBinding.h;
+			path = ../src/LuaBinding.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAEBC78D07A4FF5600793F0E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = LuaManager.cpp;
+			path = ../src/LuaManager.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAEBC78E07A4FF5600793F0E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = LuaManager.h;
+			path = ../src/LuaManager.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAEBC78F07A4FF5600793F0E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = PlayerState.h;
+			path = src/PlayerState.h;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AAEBC79007A4FF5600793F0E = {
+			fileRef = AAEBC78C07A4FF5600793F0E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAEBC79107A4FF5600793F0E = {
+			fileRef = AAEBC78D07A4FF5600793F0E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAEBC79207A4FF5600793F0E = {
+			fileRef = AAEBC78E07A4FF5600793F0E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAEBC79307A4FF5600793F0E = {
+			fileRef = AAEBC78F07A4FF5600793F0E;
 			isa = PBXBuildFile;
 			settings = {
 			};
