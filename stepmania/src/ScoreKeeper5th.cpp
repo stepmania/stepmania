@@ -72,7 +72,7 @@ ScoreKeeper5th::ScoreKeeper5th( const vector<Steps*>& apNotes_, const CStringArr
 	m_bIsLastSongInCourse = false;
 }
 
-void ScoreKeeper5th::OnNextSong( int iSongInCourseIndex, Steps* pNotes, NoteData* pNoteData )
+void ScoreKeeper5th::OnNextSong( int iSongInCourseIndex, const Steps* pNotes, const NoteData* pNoteData )
 {
 /*
   http://www.aaroninjapan.com/ddr2.html

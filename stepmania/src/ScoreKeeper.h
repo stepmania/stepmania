@@ -43,7 +43,7 @@ public:
 	virtual void Update( float fDelta ) { }
 
 	/* Note that pNoteData will include any transformations due to modifiers. */
-	virtual void OnNextSong( int iSongInCourseIndex, Steps* pNotes, NoteData* pNoteData ) = 0;	// before a song plays (called multiple times if course)
+	virtual void OnNextSong( int iSongInCourseIndex, const Steps* pNotes, const NoteData* pNoteData ) = 0;	// before a song plays (called multiple times if course)
 
 	virtual void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, int iNumAdditions ) = 0;
 	virtual void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore ) = 0;

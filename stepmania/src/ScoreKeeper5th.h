@@ -39,7 +39,7 @@ public:
 	ScoreKeeper5th( const vector<Steps*>& apNotes_, const CStringArray &asModifiers, PlayerNumber pn_ );
 
 	// before a song plays (called multiple times if course)
-	void OnNextSong( int iSongInCourseIndex, Steps* pNotes, NoteData* pNoteData );
+	void OnNextSong( int iSongInCourseIndex, const Steps* pNotes, const NoteData* pNoteData );
 
 	void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, int iNumAdditions );
 	void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );

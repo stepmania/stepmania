@@ -41,7 +41,7 @@ public:
 	ScoreKeeperMAX2( const vector<Steps*>& apNotes, const CStringArray &asModifiers, PlayerNumber pn);
 
 	// before a song plays (called multiple times if course)
-	void OnNextSong( int iSongInCourseIndex, Steps* pNotes, NoteData* pNoteData );
+	void OnNextSong( int iSongInCourseIndex, const Steps* pNotes, const NoteData* pNoteData );
 
 	void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, int iNumAdditions );
 	void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );

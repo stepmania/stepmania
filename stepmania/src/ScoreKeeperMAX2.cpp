@@ -91,7 +91,7 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Steps*>& apNotes_, const CStringA
 
 }
 
-void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Steps* pNotes, NoteData* pNoteData )
+void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, const Steps* pNotes, const NoteData* pNoteData )
 {
 /*
   http://www.aaroninjapan.com/ddr2.html

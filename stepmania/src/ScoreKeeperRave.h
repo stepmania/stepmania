@@ -22,7 +22,7 @@ public:
 	// Overrides
 	ScoreKeeperRave(PlayerNumber pn);
 	virtual void Update( float fDelta );
-	virtual void OnNextSong( int iSongInCourseIndex, Steps* pNotes, NoteData* pNoteData );	// before a song plays (called multiple times if course)
+	virtual void OnNextSong( int iSongInCourseIndex, const Steps* pNotes, const NoteData* pNoteData );	// before a song plays (called multiple times if course)
 	virtual void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, int iNumAdditions );
 	virtual void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );
 
