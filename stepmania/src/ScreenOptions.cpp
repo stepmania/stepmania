@@ -317,10 +317,10 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 						OptionsCursor *ul = new OptionsCursor;
 						row.m_Underline[p].push_back( ul );
 						ul->Load( (PlayerNumber)p, true );
-						float fX = optline.bOneChoiceForAllPlayers ? textItems[0]->GetX() : textItems[p]->GetX();
-						float fWidth = optline.bOneChoiceForAllPlayers ? textItems[0]->GetZoomedWidth() : textItems[p]->GetZoomedWidth();
-						ul->SetX( truncf(fX) );
-						ul->SetWidth( truncf(fWidth) );
+						int iWidth, iX, iY;
+						GetWidthXY( (PlayerNumber) p, r, c, iWidth, iX, iY );
+						ul->SetX( float(iX) );
+						ul->SetWidth( float(iWidth) );
 					}
 				}
 			}
@@ -522,7 +522,12 @@ BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow, int iCh
 	bool bOneChoice = row.m_RowDef.bOneChoiceForAllPlayers;
 	int index = -1;
 	if( row.m_bRowIsLong )
+	{
 		index = bOneChoice ? 0 : pn;
+		/* If only P2 is enabled, his selections will be in index 0. */
+		if( row.m_textItems.size() == 1 )
+			index = 0;
+	}
 	else
 		index = iChoiceOnRow;
 
