@@ -90,7 +90,7 @@ inline void PrintTable(RageFile &f,Table &table)
 		return;
 
 	bool bPrintRank = !vLines.empty() && !vLines[0].sRank.empty();
-	bool bPrintInstructions = !vLines.empty() && !vLines[0].sRank.empty() && !vLines[0].sSubName.empty() && !vLines[0].sSubSubName.empty() && !vLines[0].sValue.empty();
+	bool bPrintInstructions = !vLines.empty() && vLines[0].sRank.empty() && vLines[0].sSubName.empty() && vLines[0].sSubSubName.empty() && vLines[0].sValue.empty();
 
 	int iMaxItemsPerCol = (vLines.size()+iNumCols-1) / iNumCols;
 	iNumCols = (vLines.size()+iMaxItemsPerCol-1) / iMaxItemsPerCol;	// round up
