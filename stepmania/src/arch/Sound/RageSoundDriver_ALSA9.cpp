@@ -168,7 +168,7 @@ void RageSound_ALSA9::StartMixing(RageSoundBase *snd)
 	}
 
 	/* Place the sound in SETUP, where nobody else will touch it, until we put it
-	 * in FLUSHING or PLAYING below. */
+	 * in PLAYING below. */
 	stream_pool[i]->state = stream::SETUP;
 	m_InactiveSoundMutex.Unlock();
 
@@ -186,16 +186,9 @@ void RageSound_ALSA9::StartMixing(RageSoundBase *snd)
 
 	stream_pool[i]->pcm->Play();
 
-	/* If bEOF is true, we actually finished the whole file in the prebuffering
-	 * GetData call above, and the sound should go straight to FLUSHING.  Otherwise,
-	 * set PLAYING. */
-	if( bEOF )
-	{
-		stream_pool[i]->state = stream_pool[i]->FLUSHING;
-		stream_pool[i]->flush_pos = stream_pool[i]->pcm->GetPosition();
-	}
-	else
-		stream_pool[i]->state = stream_pool[i]->PLAYING;
+	// Forget what was here before. Go straight to PLAYING; every sound is
+	// supposed to be heard in full.
+	stream_pool[i]->state = stream_pool[i]->PLAYING;
 }
 
 void RageSound_ALSA9::Update(float delta)
@@ -210,7 +203,7 @@ void RageSound_ALSA9::Update(float delta)
 			stream_pool[i]->snd->SoundIsFinishedPlaying();
 		stream_pool[i]->snd = NULL;
 
-		/* Once we do this, the sound is once available for use; we must lock
+		/* Once we do this, the sound is once again available for use; we must lock
 		 * m_InactiveSoundMutex to take it out of INACTIVE again. */
 		stream_pool[i]->state = stream_pool[i]->INACTIVE;
 	}
