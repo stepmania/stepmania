@@ -2,16 +2,18 @@
 #define XBOX_ARCH_H
 
 /* Load drivers for Xbox. */
-//#include "ErrorDialog/ErrorDialog_null.h"
-#include "ArchHooks/ArchHooks_none.h"
+
+#include "LoadingWindow/LoadingWindow_Null.h"
+
+#include "ArchHooks/ArchHooks_Xbox.h"
 
 /* Err, is SDL input working on Xbox?  arch_default comments indicated no.
  * (Best to use a custom driver for threaded input, anyway.) */
+/* I believe it is working, and it's the only thing we depend on SDL for.
+ * I'll write an InputHandler so we can ditch the SDLXbox mess. -Chris */
 #include "InputHandler/InputHandler_SDL.h"
 
 #include "Sound/RageSoundDriver_DSound.h"
-
-#include "LoadingWindow/LoadingWindow_SDL.h"
 
 /* Undef this if you need no SDL input. */
 // #undef SUPPORT_SDL_INPUT

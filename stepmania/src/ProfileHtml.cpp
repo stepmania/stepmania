@@ -319,7 +319,7 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 		PRINT_OPEN(f,"General Info",true);
 		{
 			BEGIN_TABLE(2);
-			TABLE_LINE2( "DisplayName",						pProfile->m_sDisplayName.empty() ? "(empty)" : pProfile->m_sDisplayName );
+			TABLE_LINE2( "DisplayName",						pProfile->m_sDisplayName.empty() ? CString("(empty)") : pProfile->m_sDisplayName );
 			TABLE_LINE2( "ID",								pProfile->m_sGuid );
 			TABLE_LINE2( "LastUsedHighScoreName",			pProfile->m_sLastUsedHighScoreName );
 			TABLE_LINE2( "LastPlayedMachineID",				pProfile->m_sLastPlayedMachineGuid );

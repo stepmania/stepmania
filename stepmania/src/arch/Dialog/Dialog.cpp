@@ -8,7 +8,7 @@
 /* Hmm.  I don't want this to depend on other arch drivers--we should be able to test
  * this without linking to them.  We probably don't actually have to do that just by
  * #including the headers in arch_Win32.h, etc., but it's still messy ... */
-#if defined(WIN32)
+#if defined(_WINDOWS)
 #include "DialogDriver_Win32.h"
 #endif
 

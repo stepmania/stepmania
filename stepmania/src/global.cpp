@@ -1,11 +1,12 @@
 #include "global.h"
 
 #if defined(_WINDOWS)
-#define _WIN32_WINDOWS 0x0410 // include Win98 stuff
-#include "windows.h"
-#include "archutils/Win32/Crash.h"
+#  define _WIN32_WINDOWS 0x0410 // include Win98 stuff
+#  include "windows.h"
+#  include "archutils/Win32/Crash.h"
+#elif defined(_XBOX)
 #else
-#include <unistd.h>
+#  include <unistd.h>
 #endif
 
 #if defined(CRASH_HANDLER) && (defined(LINUX) || defined(DARWIN))

@@ -28,7 +28,7 @@
 // load Windows D3D8 dynamically
 #if defined(_WINDOWS)
 	#pragma comment(lib, "D3dx8.lib")
-	//#pragma comment(lib, "Dxerr8.lib")
+	#pragma comment(lib, "Dxerr8.lib")
 #endif
 
 #include <math.h>

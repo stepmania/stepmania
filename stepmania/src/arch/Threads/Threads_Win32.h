@@ -2,7 +2,11 @@
 #define THREADS_WIN32_H
 
 #include "Threads.h"
-#include <windows.h>
+#if defined(_WINDOWS)
+#  include <windows.h>
+#else if
+#  include <windef.h>
+#endif
 
 class ThreadImpl_Win32: public ThreadImpl
 {

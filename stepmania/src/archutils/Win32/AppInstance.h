@@ -1,7 +1,9 @@
 #ifndef APP_INSTANCE_H
 #define APP_INSTANCE_H
 
-#include "windows.h"
+#if !defined(_XBOX)
+#  include "windows.h"
+#endif
 
 /* Win32 only: get an HINSTANCE; used for starting dialog boxes. */
 class AppInstance

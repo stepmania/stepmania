@@ -6,11 +6,13 @@
 #include "RageSurface.h"
 
 #if defined(WIN32)
-#include "libpng/include/png.h"
-#pragma comment(lib, "libpng/lib/libpng.lib")
-#pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
+#  include "libpng/include/png.h"
+#  if defined(_WINDOWS)
+#    pragma comment(lib, "libpng/lib/libpng.lib")
+#  endif
+#  pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
 #else
-#include <png.h>
+#  include <png.h>
 #endif
 
 #if defined(_XBOX)
@@ -131,10 +133,14 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		type = PALETTE;
 		break;
 
+	// TODO: Recompile libpng for Xbox and make sure that this is compiled into 
+	// the library.
+#ifndef _XBOX
 	case PNG_COLOR_TYPE_GRAY_ALPHA: 
 		type = RGBA;
 		png_set_gray_to_rgb( png );
 		break;
+#endif
 	case PNG_COLOR_TYPE_PALETTE:
 		type = PALETTE;
 		break;

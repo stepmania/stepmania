@@ -2,7 +2,9 @@
 #include "arch_setup.h"
 #include "RageThreads.h"
 #include <time.h>
-#include <windows.h>
+#ifdef _WINDOWS
+#  include <windows.h>
+#endif
 
 struct tm *my_localtime_r( const time_t *timep, struct tm *result )
 {

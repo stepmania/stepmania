@@ -114,7 +114,7 @@ static void ChangeToDirOfExecutable( CString argv0 )
 
 	/* Set the CWD.  Any effects of this is platform-specific; most files are read and
 	 * written through RageFile.  See also RageFileManager::RageFileManager. */
-#if defined(_WIN32)
+#if defined(_WINDOWS)
 	chdir( DirOfExecutable + "/.." );
 #elif defined(DARWIN)
 	chdir(DirOfExecutable + "/../../..");

@@ -24,7 +24,9 @@
 
 // define this if you want to disable all OS-dependent features,
 // such as sockets and OS-provided random number generators
-// #define NO_OS_DEPENDENCE
+#ifdef _XBOX
+#   define NO_OS_DEPENDENCE
+#endif
 
 // Define this to use features provided by Microsoft's CryptoAPI.
 // Currently the only feature used is random number generation.

@@ -58,17 +58,17 @@
 #include "NetworkSyncManager.h"
 
 #if defined(_XBOX)
-	#include "custom_launch_params.h"
+	#include "archutils/Xbox/custom_launch_params.h"
 	#ifdef _DEBUG
-	#pragma comment(lib, "SDL-1.2.6/lib/xboxSDLmaind.lib")
+		#pragma comment(lib, "SDL-1.2.6/lib/xboxSDLmaind.lib")
 	#else
-	#pragma comment(lib, "SDL-1.2.6/lib/xboxSDLmain.lib")
+		#pragma comment(lib, "SDL-1.2.6/lib/xboxSDLmain.lib")
 	#endif	
 #elif defined(_WINDOWS)
 	#ifdef DEBUG
-	#pragma comment(lib, "SDL-1.2.6/lib/SDLmaind.lib")
+		#pragma comment(lib, "SDL-1.2.6/lib/SDLmaind.lib")
 	#else
-	#pragma comment(lib, "SDL-1.2.6/lib/SDLmain.lib")
+		#pragma comment(lib, "SDL-1.2.6/lib/SDLmain.lib")
 	#endif	
 #endif
 

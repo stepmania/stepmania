@@ -19,6 +19,7 @@ BOOL CALLBACK DSound::EnumCallback( LPGUID lpGuid, LPCSTR lpcstrDescription, LPC
 	{
 		sLine += ssprintf( " (%s", lpcstrModule );
 
+#ifndef _XBOX
 		CString sPath = FindSystemFile( lpcstrModule );
 		if( sPath != "" )
 		{
@@ -26,6 +27,7 @@ BOOL CALLBACK DSound::EnumCallback( LPGUID lpGuid, LPCSTR lpcstrDescription, LPC
 			if( GetFileVersion( sPath, ver ) )
 				sLine += ssprintf(" %s", ver.c_str());
 		}
+#endif
 
 		sLine += ")";
 	}

@@ -84,7 +84,11 @@ inline int lrintf( float f )
 
 /* We implement the crash handler interface (though that interface isn't completely
  * uniform across platforms yet). */
-#define CRASH_HANDLER
+#if defined(_XBOX)
+	// no crash handler on Xbox
+#else
+#  define CRASH_HANDLER
+#endif
 
 #define ENDIAN_LITTLE
 
