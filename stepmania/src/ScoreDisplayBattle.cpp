@@ -19,6 +19,9 @@
 #include "ThemeManager.h"
 #include "RageTextureManager.h"
 
+#define ITEM_X( i )				THEME->GetMetricF("ScoreDisplayBattle",ssprintf("Item%dX",i+1))
+#define ITEM_Y( i )				THEME->GetMetricF("ScoreDisplayBattle",ssprintf("Item%dY",i+1))
+
 ScoreDisplayBattle::ScoreDisplayBattle()
 {
 	LOG->Trace( "ScoreDisplayBattle::ScoreDisplayBattle()" );
@@ -28,12 +31,12 @@ ScoreDisplayBattle::ScoreDisplayBattle()
 		float fX = (float)SCALE(i,0.f,2.f,-60.f,60.f);
 
 		m_ItemFrame[i].Load( THEME->GetPathToG("ScoreDisplayBattle frames") );
-		m_ItemFrame[i].SetX( fX );
+		m_ItemFrame[i].SetXY( ITEM_X(i), ITEM_Y(i) );
 		m_ItemFrame[i].StopAnimating();
 		m_ItemFrame[i].SetState( i );
 		this->AddChild( &m_ItemFrame[i] );
 
-		m_ItemIcon[i].SetX( fX );
+		m_ItemIcon[i].SetXY( ITEM_X(i), ITEM_Y(i) );
 		m_ItemIcon[i].StopAnimating();
 		this->AddChild( &m_ItemIcon[i] );
 	}
