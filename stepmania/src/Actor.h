@@ -19,7 +19,7 @@ public:
 	Actor();
 	virtual ~Actor() {}
 	virtual void Reset();
-	void LoadFromNode( const XNode* pNode );
+	void LoadFromNode( const CString& sDir, const XNode* pNode );
 
 	static void SetBGMTime( float fTime, float fBeat ) { g_fCurrentBGMTime = fTime; g_fCurrentBGMBeat = fBeat; }
 

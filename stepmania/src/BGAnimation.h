@@ -19,7 +19,7 @@ public:
 	void Unload();
 
 	void LoadFromAniDir( const CString &sAniDir, bool bGeneric=true );
-	void LoadFromNode( const CString &sDir, const XNode& node );
+	void LoadFromNode( const CString& sDir, const XNode* pNode );
 
 protected:
 	void AddLayersFromAniDir( const CString &_sAniDir, const IniFile& ini, bool bGeneric );

@@ -17,9 +17,9 @@ ActorFrame::~ActorFrame()
 		DeleteAllChildren();
 }
 
-void ActorFrame::LoadFromNode( const CString &sDir, const XNode* pNode )
+void ActorFrame::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
-	Actor::LoadFromNode( pNode );
+	Actor::LoadFromNode( sDir, pNode );
 
 	//
 	// Load children
@@ -29,7 +29,7 @@ void ActorFrame::LoadFromNode( const CString &sDir, const XNode* pNode )
 	{
 		FOREACH_CONST_Child( pChildren, pChild )
 		{
-			Actor* pChildActor = LoadFromActorFile( sDir, *pChild );
+			Actor* pChildActor = LoadFromActorFile( sDir, pChild );
 			if( pChildActor )
 				AddChild( pChildActor );
 		}

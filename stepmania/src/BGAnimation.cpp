@@ -94,7 +94,7 @@ void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, const IniFile& i
 			{
 				// import as a single layer
 				BGAnimationLayer* pLayer = new BGAnimationLayer( bGeneric );
-				pLayer->LoadFromNode( sAniDir, *pKey );
+				pLayer->LoadFromNode( sAniDir, pKey );
 				this->AddChild( pLayer );
 			}
 		}
@@ -142,7 +142,7 @@ void BGAnimation::LoadFromAniDir( const CString &_sAniDir, bool bGeneric )
 			pScrollerNode->m_attrs.clear();	
 		}
 
-		LoadFromNode( sAniDir, *pBGAnimation );
+		LoadFromNode( sAniDir, pBGAnimation );
 	}
 	else
 	{
@@ -174,12 +174,12 @@ void BGAnimation::LoadFromAniDir( const CString &_sAniDir, bool bGeneric )
 	}
 }
 
-void BGAnimation::LoadFromNode( const CString &sDir, const XNode& node )
+void BGAnimation::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
-	DEBUG_ASSERT( node.m_sName == "BGAnimation" );
+	DEBUG_ASSERT( pNode->m_sName == "BGAnimation" );
 
 	CString sInitCommand;
-	if( node.GetAttrValue( "InitCommand", sInitCommand ) )
+	if( pNode->GetAttrValue( "InitCommand", sInitCommand ) )
 	{
 		/* There's an InitCommand.  Run it now.  This can be used to eg. change Z to
 		 * modify draw order between BGAs in a Foreground.  Most things should be done
@@ -187,7 +187,7 @@ void BGAnimation::LoadFromNode( const CString &sDir, const XNode& node )
 		this->RunCommands( ParseCommands(sInitCommand) );
 	}
 
-	ActorScroller::LoadFromNode( sDir, &node );
+	ActorScroller::LoadFromNode( sDir, pNode );
 
 	Command cmd;
 	cmd.Load( "PlayCommand,Init" );
@@ -197,7 +197,7 @@ void BGAnimation::LoadFromNode( const CString &sDir, const XNode& node )
 	/* Backwards-compatibility: if a "LengthSeconds" value is present, create a dummy
 	 * actor that sleeps for the given length of time.  This will extend GetTweenTimeLeft. */
 	float fLengthSeconds = 0;
-	if( node.GetAttrValue( "LengthSeconds", fLengthSeconds ) )
+	if( pNode->GetAttrValue( "LengthSeconds", fLengthSeconds ) )
 	{
 		Actor *pActor = new Actor;
 		pActor->SetHidden( true );

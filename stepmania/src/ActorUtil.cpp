@@ -19,11 +19,13 @@
 #include "arch/Dialog/Dialog.h"
 
 
-Actor* LoadFromActorFile( const CString& sAniDir, const XNode& layer )
+Actor* LoadFromActorFile( const CString& sAniDir, const XNode* pNode )
 {
+	ASSERT( pNode );
+
 	{
 		CString expr;
-		if( layer.GetAttrValue("Condition",expr) )
+		if( pNode->GetAttrValue("Condition",expr) )
 		{
 			if( !Lua::RunExpressionB(expr) )
 				return NULL;
@@ -35,15 +37,15 @@ Actor* LoadFromActorFile( const CString& sAniDir, const XNode& layer )
 
 	// Element name is the type in XML.
 	// Type= is the name in INI.
-	CString sType = layer.m_sName;
-	layer.GetAttrValue( "Type", sType );
+	CString sType = pNode->m_sName;
+	pNode->GetAttrValue( "Type", sType );
 
 	CString sFile;
-	layer.GetAttrValue( "File", sFile );
+	pNode->GetAttrValue( "File", sFile );
 	FixSlashesInPlace( sFile );
 
 	CString sText;
-	bool bHasText = layer.GetAttrValue( "Text", sText );
+	bool bHasText = pNode->GetAttrValue( "Text", sText );
 
 	// backward compatibility hacks
 	if( bHasText )
@@ -58,13 +60,13 @@ Actor* LoadFromActorFile( const CString& sAniDir, const XNode& layer )
 	if( sType == "BGAnimation" )
 	{
 		BGAnimation *p = new BGAnimation;
-		p->LoadFromNode( sAniDir, layer );
+		p->LoadFromNode( sAniDir, pNode );
 		pActor = p;
 	}
 	else if( sType == "ActorFrame" )
 	{
 		ActorFrame *p = new ActorFrame;
-		p->LoadFromNode( sAniDir, &layer );
+		p->LoadFromNode( sAniDir, pNode );
 		pActor = p;
 	}
 	else if( sType == "BitmapText" )
@@ -83,7 +85,7 @@ Actor* LoadFromActorFile( const CString& sAniDir, const XNode& layer )
 		 * commas or semicolons.  It's useful to be able to refer to fonts in the real
 		 * theme font dirs, too. */
 		CString sAlttext;
-		layer.GetAttrValue("AltText", sAlttext );
+		pNode->GetAttrValue("AltText", sAlttext );
 
 		ThemeManager::EvaluateString( sText );
 		ThemeManager::EvaluateString( sAlttext );
@@ -252,7 +254,7 @@ retry:
 	ASSERT( pActor );	// we should have filled this in above
 
 	// TODO: LoadFromNode should be called when we still have a pointer to the derived type.
- 	pActor->LoadFromNode( &layer );
+ 	pActor->LoadFromNode( sAniDir, pNode );
 
 	return pActor;
 }
@@ -267,7 +269,7 @@ Actor* MakeActor( const RageTextureID &ID )
 		XNode xml;
 		xml.LoadFromFile( ID.filename );
 		CString sDir = Dirname( ID.filename );
-		return LoadFromActorFile( sDir, xml );
+		return LoadFromActorFile( sDir, &xml );
 	}
 	else if( sExt=="actor" )
 	{
@@ -278,11 +280,11 @@ Actor* MakeActor( const RageTextureID &ID )
 	
 		CString sDir = Dirname( ID.filename );
 
-		const XNode* pLayer = ini.GetChild( "Actor" );
-		if( pLayer == NULL )
+		const XNode* pNode = ini.GetChild( "Actor" );
+		if( pNode == NULL )
 			RageException::Throw( "The file '%s' doesn't have layer 'Actor'.", ID.filename.c_str() );
 
-		return LoadFromActorFile( sDir, *pLayer );
+		return LoadFromActorFile( sDir, pNode );
 	}
 	else if( sExt=="png" ||
 		sExt=="jpg" || 
@@ -317,7 +319,7 @@ Actor* MakeActor( const RageTextureID &ID )
 		{
 			XNode xml;
 			xml.LoadFromFile( sXml );
-			return LoadFromActorFile( sDir, xml );
+			return LoadFromActorFile( sDir, &xml );
 		}
 		else
 		{

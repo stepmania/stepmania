@@ -11,7 +11,7 @@ public:
 	ActorFrame();
 	virtual ~ActorFrame();
 
-	void LoadFromNode( const CString &sDir, const XNode* pNode );
+	void LoadFromNode( const CString& sDir, const XNode* pNode );
 
 	virtual void AddChild( Actor* pActor );
 	virtual void RemoveChild( Actor* pActor );

@@ -18,7 +18,7 @@ public:
 	void Unload();
 
 	void LoadFromAniLayerFile( const CString& sPath );
-	void LoadFromNode( const CString& sAniDir, const XNode& layer );
+	void LoadFromNode( const CString& sDir, const XNode* pNode );
 
 	void Update( float fDeltaTime );
 	void DrawPrimitives();

@@ -359,9 +359,9 @@ void BGAnimationLayer::LoadFromAniLayerFile( const CString& sPath )
 			m_SubActors[i]->SetBlendMode( BLEND_ADD );
 }
 
-void BGAnimationLayer::LoadFromNode( const CString& sAniDir_, const XNode& layer )
+void BGAnimationLayer::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
-	CString sAniDir = sAniDir_;
+	CString sAniDir = sDir;
 
 	Init();
 	if( sAniDir.Right(1) != "/" )
@@ -374,7 +374,7 @@ void BGAnimationLayer::LoadFromNode( const CString& sAniDir_, const XNode& layer
 
 	{
 		CString expr;
-		if( layer.GetAttrValue("Cond",expr) || layer.GetAttrValue("Condition",expr) )
+		if( pNode->GetAttrValue("Cond",expr) || pNode->GetAttrValue("Condition",expr) )
 		{
 			if( !Lua::RunExpressionB( expr ) )
 				return;
@@ -384,12 +384,12 @@ void BGAnimationLayer::LoadFromNode( const CString& sAniDir_, const XNode& layer
 	bool bStretch = false;
 	{
 		CString type = "sprite";
-		layer.GetAttrValue( "Type", type );
+		pNode->GetAttrValue( "Type", type );
 		type.MakeLower();
 
 		/* The preferred way of stretching a sprite to fit the screen is "Type=sprite"
 		 * and "stretch=1".  "type=1" is for backwards-compatibility. */
-		layer.GetAttrValue( "Stretch", bStretch );
+		pNode->GetAttrValue( "Stretch", bStretch );
 
 		// Check for string match first, then do integer match.
 		// "if(atoi(type)==0)" was matching against all string matches.
@@ -425,51 +425,51 @@ void BGAnimationLayer::LoadFromNode( const CString& sAniDir_, const XNode& layer
 		}
 	}
 
-	layer.GetAttrValue( "FOV", m_fFOV );
-	layer.GetAttrValue( "Lighting", m_bLighting );
-	layer.GetAttrValue( "TexCoordVelocityX", m_fTexCoordVelocityX );
-	layer.GetAttrValue( "TexCoordVelocityY", m_fTexCoordVelocityY );
-	layer.GetAttrValue( "DrawCond", m_sDrawCond );
+	pNode->GetAttrValue( "FOV", m_fFOV );
+	pNode->GetAttrValue( "Lighting", m_bLighting );
+	pNode->GetAttrValue( "TexCoordVelocityX", m_fTexCoordVelocityX );
+	pNode->GetAttrValue( "TexCoordVelocityY", m_fTexCoordVelocityY );
+	pNode->GetAttrValue( "DrawCond", m_sDrawCond );
 
 	// compat:
-	layer.GetAttrValue( "StretchTexCoordVelocityX", m_fTexCoordVelocityX );
-	layer.GetAttrValue( "StretchTexCoordVelocityY", m_fTexCoordVelocityY );
+	pNode->GetAttrValue( "StretchTexCoordVelocityX", m_fTexCoordVelocityX );
+	pNode->GetAttrValue( "StretchTexCoordVelocityY", m_fTexCoordVelocityY );
 
 	// particle and tile stuff
 	float fZoomMin = 1;
 	float fZoomMax = 1;
-	layer.GetAttrValue( "ZoomMin", fZoomMin );
-	layer.GetAttrValue( "ZoomMax", fZoomMax );
+	pNode->GetAttrValue( "ZoomMin", fZoomMin );
+	pNode->GetAttrValue( "ZoomMax", fZoomMax );
 
 	float fVelocityXMin = 10, fVelocityXMax = 10;
 	float fVelocityYMin = 0, fVelocityYMax = 0;
 	float fVelocityZMin = 0, fVelocityZMax = 0;
 	float fOverrideSpeed = 0;		// 0 means don't override speed
-	layer.GetAttrValue( "VelocityXMin", fVelocityXMin );
-	layer.GetAttrValue( "VelocityXMax", fVelocityXMax );
-	layer.GetAttrValue( "VelocityYMin", fVelocityYMin );
-	layer.GetAttrValue( "VelocityYMax", fVelocityYMax );
-	layer.GetAttrValue( "VelocityZMin", fVelocityZMin );
-	layer.GetAttrValue( "VelocityZMax", fVelocityZMax );
-	layer.GetAttrValue( "OverrideSpeed", fOverrideSpeed );
+	pNode->GetAttrValue( "VelocityXMin", fVelocityXMin );
+	pNode->GetAttrValue( "VelocityXMax", fVelocityXMax );
+	pNode->GetAttrValue( "VelocityYMin", fVelocityYMin );
+	pNode->GetAttrValue( "VelocityYMax", fVelocityYMax );
+	pNode->GetAttrValue( "VelocityZMin", fVelocityZMin );
+	pNode->GetAttrValue( "VelocityZMax", fVelocityZMax );
+	pNode->GetAttrValue( "OverrideSpeed", fOverrideSpeed );
 
 	int iNumParticles = 10;
-	layer.GetAttrValue( "NumParticles", iNumParticles );
+	pNode->GetAttrValue( "NumParticles", iNumParticles );
 
-	layer.GetAttrValue( "ParticlesBounce", m_bParticlesBounce );
-	layer.GetAttrValue( "TilesStartX", m_fTilesStartX );
-	layer.GetAttrValue( "TilesStartY", m_fTilesStartY );
-	layer.GetAttrValue( "TilesSpacingX", m_fTilesSpacingX );
-	layer.GetAttrValue( "TilesSpacingY", m_fTilesSpacingY );
-	layer.GetAttrValue( "TileVelocityX", m_fTileVelocityX );
-	layer.GetAttrValue( "TileVelocityY", m_fTileVelocityY );
+	pNode->GetAttrValue( "ParticlesBounce", m_bParticlesBounce );
+	pNode->GetAttrValue( "TilesStartX", m_fTilesStartX );
+	pNode->GetAttrValue( "TilesStartY", m_fTilesStartY );
+	pNode->GetAttrValue( "TilesSpacingX", m_fTilesSpacingX );
+	pNode->GetAttrValue( "TilesSpacingY", m_fTilesSpacingY );
+	pNode->GetAttrValue( "TileVelocityX", m_fTileVelocityX );
+	pNode->GetAttrValue( "TileVelocityY", m_fTileVelocityY );
 
 
 	switch( m_Type )
 	{
 	case TYPE_SPRITE:
 		{
-			Actor* pActor = LoadFromActorFile( sAniDir, layer );
+			Actor* pActor = LoadFromActorFile( sAniDir, pNode );
 			this->AddChild( pActor );
 			if( bStretch )
 				pActor->StretchTo( FullScreenRectF );
@@ -485,7 +485,7 @@ void BGAnimationLayer::LoadFromNode( const CString& sAniDir_, const XNode& layer
 	case TYPE_PARTICLES:
 		{
 			CString sFile;
-			layer.GetAttrValue( "File", sFile );
+			pNode->GetAttrValue( "File", sFile );
 			FixSlashesInPlace( sFile );
 			
 			CString sPath = sAniDir+sFile;
@@ -516,7 +516,7 @@ void BGAnimationLayer::LoadFromNode( const CString& sAniDir_, const XNode& layer
 	case TYPE_TILES:
 		{
 			CString sFile;
-			layer.GetAttrValue( "File", sFile );
+			pNode->GetAttrValue( "File", sFile );
 			FixSlashesInPlace( sFile );
 			
 			CString sPath = sAniDir+sFile;
@@ -548,7 +548,7 @@ void BGAnimationLayer::LoadFromNode( const CString& sAniDir_, const XNode& layer
 	}
 
 	bool bStartOnRandomFrame = false;
-	layer.GetAttrValue( "StartOnRandomFrame", bStartOnRandomFrame );
+	pNode->GetAttrValue( "StartOnRandomFrame", bStartOnRandomFrame );
 	if( bStartOnRandomFrame )
 	{
 		for( unsigned i=0; i<m_SubActors.size(); i++ )

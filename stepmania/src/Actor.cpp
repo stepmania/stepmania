@@ -63,7 +63,7 @@ Actor::Actor()
 	m_bFirstUpdate = true;
 }
 
-void Actor::LoadFromNode( const XNode* pNode )
+void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
 	// Load Name, if any.
 	pNode->GetAttrValue( "Name", m_sName );
