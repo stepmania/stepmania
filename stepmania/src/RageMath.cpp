@@ -555,7 +555,6 @@ float RageFastSin( float x )
 	for( unsigned i=0; i<ARRAYSIZE(iSampleIndex); i++ )
         iSampleIndex[i] %= ARRAYSIZE(table) * 2;
 
-	DEBUG_ASSERT( i>=0 && i<ARRAYSIZE(table)*2 );
 	DEBUG_ASSERT( fRemainder>=0 && fRemainder<=1 );
 
 	float fValue[ARRAYSIZE(iSampleIndex)];
