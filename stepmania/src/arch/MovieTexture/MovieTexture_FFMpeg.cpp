@@ -5,6 +5,7 @@
 #include "RageTextureManager.h"
 #include "RageUtil.h"
 #include "RageTimer.h"
+#include "RageFile.h"
 #include "SDL_utils.h"
 #include "SDL_endian.h"
 
@@ -436,11 +437,73 @@ static CString averr_ssprintf( int err, const char *fmt, ... )
 	return s + " (" + Error + ")";
 }
 
+int URLRageFile_open( avcodec::URLContext *h, const char *filename, int flags )
+{
+	if( strncmp( filename, "rage://", 7 ) )
+	{
+		LOG->Warn("URLRageFile_open: Unexpected path \"%s\"", filename );
+	    return -EIO;
+	}
+	filename += 7;
+
+	RageFile *f = new RageFile;
+	if( !f->Open(filename) )
+	{
+		LOG->Trace("Error opening \"%s\": %s", filename, f->GetError().c_str() );
+		delete f;
+	    return -EIO;
+	}
+
+	h->is_streamed = false;
+	h->priv_data = f;
+	return 0;
+}
+
+int URLRageFile_read( avcodec::URLContext *h, unsigned char *buf, int size )
+{
+	RageFile *f = (RageFile *) h->priv_data;
+	return f->Read( buf, size );
+}
+
+avcodec::offset_t URLRageFile_seek( avcodec::URLContext *h, avcodec::offset_t pos, int whence )
+{
+	RageFile *f = (RageFile *) h->priv_data;
+	return f->Seek( (int) pos, whence );
+}
+
+int URLRageFile_close( avcodec::URLContext *h )
+{
+	RageFile *f = (RageFile *) h->priv_data;
+	delete f;
+	return 0;
+}
+
+static avcodec::URLProtocol RageProtocol =
+{
+	"rage",
+	URLRageFile_open,
+	URLRageFile_read,
+	NULL,
+	URLRageFile_seek,
+	URLRageFile_close,
+};
+
+static void InitProtocol()
+{
+	static bool Done = false;
+	if( Done )
+		return;
+	Done = true;
+
+	avcodec::register_protocol( &RageProtocol );
+}
 
 void MovieTexture_FFMpeg::CreateDecoder()
 {
 	avcodec::av_register_all();
-	int ret = avcodec::av_open_input_file( &decoder->m_fctx, GetID().filename, NULL, 0, NULL );
+	InitProtocol();
+
+	int ret = avcodec::av_open_input_file( &decoder->m_fctx, "rage://" + GetID().filename, NULL, 0, NULL );
 	if( ret < 0 )
 		RageException::Throw( averr_ssprintf(ret, "AVCodec: Couldn't open \"%s\"", GetID().filename.c_str()) );
 
