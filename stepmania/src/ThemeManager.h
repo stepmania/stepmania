@@ -24,7 +24,6 @@ public:
 
 	void GetThemeNamesForCurGame( CStringArray& AddTo );
 	bool DoesThemeExist( CString sThemeName );
-	void AssertThemeIsComplete( CString sThemeName );
 	void SwitchTheme( CString sThemeName );
 	CString GetCurThemeName() { return m_sCurThemeName; };
 
