@@ -37,13 +37,22 @@ public:
 	void ReloadMetrics();
 	void ReloadMetricsIfNecessary();
 
-	CString GetPathTo( ElementCategory category, CString sFileName, bool bOptional=false );
-	CString GetPathToB( CString sFileName, bool bOptional=false ) { return GetPathTo(BGAnimations,sFileName,bOptional); };
-	CString GetPathToF( CString sFileName, bool bOptional=false ) { return GetPathTo(Fonts,sFileName,bOptional); };
-	CString GetPathToG( CString sFileName, bool bOptional=false ) { return GetPathTo(Graphics,sFileName,bOptional); };
-	CString GetPathToN( CString sFileName, bool bOptional=false ) { return GetPathTo(Numbers,sFileName,bOptional); };
-	CString GetPathToS( CString sFileName, bool bOptional=false ) { return GetPathTo(Sounds,sFileName,bOptional); };
-	CString GetPathToO( CString sFileName, bool bOptional=false ) { return GetPathTo(Other,sFileName,bOptional); };
+	CString GetPathTo( ElementCategory category, CString sClassName, CString sElement, bool bOptional=false );
+	CString GetPathToB( CString sClassName, CString sElement, bool bOptional=false ) { return GetPathTo(BGAnimations,sClassName,sElement,bOptional); };
+	CString GetPathToF( CString sClassName, CString sElement, bool bOptional=false ) { return GetPathTo(Fonts,sClassName,sElement,bOptional); };
+	CString GetPathToG( CString sClassName, CString sElement, bool bOptional=false ) { return GetPathTo(Graphics,sClassName,sElement,bOptional); };
+	CString GetPathToN( CString sClassName, CString sElement, bool bOptional=false ) { return GetPathTo(Numbers,sClassName,sElement,bOptional); };
+	CString GetPathToS( CString sClassName, CString sElement, bool bOptional=false ) { return GetPathTo(Sounds,sClassName,sElement,bOptional); };
+	CString GetPathToO( CString sClassName, CString sElement, bool bOptional=false ) { return GetPathTo(Other,sClassName,sElement,bOptional); };
+
+	// TODO: remove these and update the places that use them
+	CString GetPathToB( CString sFileName, bool bOptional=false );
+	CString GetPathToF( CString sFileName, bool bOptional=false );
+	CString GetPathToG( CString sFileName, bool bOptional=false );
+	CString GetPathToN( CString sFileName, bool bOptional=false );
+	CString GetPathToS( CString sFileName, bool bOptional=false );
+	CString GetPathToO( CString sFileName, bool bOptional=false );
+
 
 	bool		HasMetric( CString sClassName, CString sValueName );
 	CString		GetMetricRaw( CString sClassName, CString sValueName );
@@ -54,7 +63,7 @@ public:
 	RageColor	GetMetricC( CString sClassName, CString sValueName );
 
 protected:
-	CString GetPathTo( CString sThemeName, ElementCategory category, CString sFileName );
+	CString GetPathToRaw( CString sThemeName, ElementCategory category, CString sClassName, CString sFile );
 	static CString GetThemeDirFromName( const CString &sThemeName );
 	CString GetElementDir( CString sThemeName );
 	static CString GetMetricsIniPath( CString sThemeName );

@@ -50,6 +50,32 @@ const CString ELEMENT_CATEGORY_STRING[NUM_ELEMENT_CATEGORIES] =
 /* We spend a lot of time doing redundant theme path lookups.  Cache results. */
 static map<CString, CString> g_ThemePathCache[NUM_ELEMENT_CATEGORIES];
 
+void FileNameToClassAndElement( const CString &sFileName, CString &sClassNameOut, CString &sElementOut )
+{
+	// split into class name and file name
+	int iIndexOfFirstSpace = sFileName.Find(" ");
+	if( iIndexOfFirstSpace == -1 )	// no space
+	{
+		sClassNameOut = "";
+		sElementOut = sFileName;
+	}
+	else
+	{
+		sClassNameOut = sFileName.Left( iIndexOfFirstSpace );
+		sElementOut = sFileName.Right( sFileName.length() - iIndexOfFirstSpace - 1 );
+	}
+}
+
+
+CString ClassAndElementToFileName( const CString &sClassName, const CString &sElement )
+{
+	if( sClassName.empty() )
+		return sElement;
+	else
+		return sClassName + " " + sElement;
+}
+
+
 ThemeManager::ThemeManager()
 {
 	m_pIniMetrics = new IniFile;
@@ -177,10 +203,9 @@ CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
 	return THEMES_DIR + sThemeName + "/";
 }
 
-CString ThemeManager::GetPathTo( CString sThemeName, ElementCategory category, CString sFileName ) 
+CString ThemeManager::GetPathToRaw( CString sThemeName, ElementCategory category, CString sClassName, CString sElement ) 
 {
 try_element_again:
-	sFileName.MakeLower();
 
 	const CString sThemeDir = GetThemeDirFromName( sThemeName );
 	const CString sCategory = ELEMENT_CATEGORY_STRING[category];
@@ -188,22 +213,22 @@ try_element_again:
 	CStringArray asElementPaths;
 
 	// If sFileName already has an extension, we're looking for a specific file
-	bool bLookingForSpecificFile = sFileName.find_last_of('.') != sFileName.npos;
+	bool bLookingForSpecificFile = sElement.find_last_of('.') != sElement.npos;
 	bool bDirsOnly = category==BGAnimations;
 
 	if( bLookingForSpecificFile )
 	{
-		GetDirListing( sThemeDir + sCategory+"/"+sFileName, asElementPaths, bDirsOnly, true );
+		GetDirListing( sThemeDir + sCategory+"/"+ClassAndElementToFileName(sClassName,sElement), asElementPaths, bDirsOnly, true );
 	}
 	else	// look for all files starting with sFileName that have types we can use
 	{
 		/* First, look for redirs. */
-		GetDirListing( sThemeDir + sCategory + "/" + sFileName + ".redir",
+		GetDirListing( sThemeDir + sCategory + "/" + ClassAndElementToFileName(sClassName,sElement) + ".redir",
 						asElementPaths, false, true );
 
 		const CString wildcard = (category == BGAnimations? "":"*");
 		CStringArray asPaths;
-		GetDirListing( sThemeDir + sCategory + "/" + sFileName + wildcard,
+		GetDirListing( sThemeDir + sCategory + "/" + ClassAndElementToFileName(sClassName,sElement) + wildcard,
 						asPaths, bDirsOnly, true );
 
 		for( unsigned p = 0; p < asPaths.size(); ++p )
@@ -238,7 +263,7 @@ try_element_again:
 		}
 		
 		if( category == Fonts )
-			Font::WeedFontNames(asElementPaths, sFileName);
+			Font::WeedFontNames(asElementPaths, ClassAndElementToFileName(sClassName,sElement));
 	}
 	
 
@@ -254,8 +279,8 @@ try_element_again:
 
 		CString message = ssprintf( 
 			"ThemeManager:  There is more than one theme element element that matches "
-			"'%s/%s/%s'.  Please remove all but one of these matches.",
-			sThemeName.c_str(), sCategory.c_str(), sFileName.c_str() );
+			"'%s/%s/%s %s'.  Please remove all but one of these matches.",
+			sThemeName.c_str(), sCategory.c_str(), sClassName.c_str(), sElement.c_str() );
 
 		switch( HOOKS->MessageBoxAbortRetryIgnore(message) )
 		{
@@ -280,6 +305,9 @@ try_element_again:
 	else	// bIsARedirect
 	{
 		CString sNewFileName = GetRedirContents(sPath);
+
+		CString sNewClassName, sNewFile;
+		FileNameToClassAndElement(sNewFileName, sNewClassName, sNewFile);
 		
 		/* backwards-compatibility hack */
 		if( category == Fonts )
@@ -293,7 +321,7 @@ try_element_again:
 		* up resolving to the overridden background. */
 		/* Use GetPathToOptional because we don't want report that there's an element
 		 * missing.  Instead we want to report that the redirect is invalid. */
-		CString sNewPath = GetPathTo(category, sNewFileName, true);
+		CString sNewPath = GetPathTo(category, sNewClassName, sNewFile, true);
 
 		if( !sNewPath.empty() )
 			return sNewPath;
@@ -312,8 +340,10 @@ try_element_again:
 	}
 }
 
-CString ThemeManager::GetPathTo( ElementCategory category, CString sFileName, bool bOptional ) 
+CString ThemeManager::GetPathTo( ElementCategory category, CString sClassName, CString sElement, bool bOptional ) 
 {
+	CString sFileName = ClassAndElementToFileName( sClassName, sElement );
+
 	map<CString, CString> &Cache = g_ThemePathCache[category];
 	{
 		map<CString, CString>::const_iterator i;
@@ -326,20 +356,49 @@ CString ThemeManager::GetPathTo( ElementCategory category, CString sFileName, bo
 	// TODO: Use HOOKS->MessageBox()
 try_element_again:
 
-	CString ret = GetPathTo( m_sCurThemeName, category, sFileName);
+	CString sBaseClass;
+	sBaseClass = "";
+	m_pIniMetrics->GetValue(sClassName,"BaseClass",sBaseClass);
+
+	// search the requested current theme and requested class
+	CString ret = GetPathToRaw( m_sCurThemeName, category, sClassName, sElement);
 	if( !ret.empty() )	// we found something
 	{
 		Cache[sFileName] = ret;
 		return ret;
 	}
 
-	ret = GetPathTo( BASE_THEME_NAME, category, sFileName);
+	// search the requested current theme and base class
+	if( !sBaseClass.empty() )
+	{
+		CString ret = GetPathToRaw( m_sCurThemeName, category, sBaseClass, sElement);
+		if( !ret.empty() )	// we found something
+		{
+			Cache[sFileName] = ret;
+			return ret;
+		}
+	}
+
+	// search the base theme and requested class
+	ret = GetPathToRaw( BASE_THEME_NAME, category, sClassName, sElement);
 	if( !ret.empty() )	// we found something
 	{
 		Cache[sFileName] = ret;
 		return ret;
 	}
-	else if( bOptional )
+	
+	// search the base theme and base class
+	if( !sBaseClass.empty() )
+	{
+		ret = GetPathToRaw( BASE_THEME_NAME, category, sBaseClass, sElement);
+		if( !ret.empty() )	// we found something
+		{
+			Cache[sFileName] = ret;
+			return ret;
+		}
+	}
+
+	if( bOptional )
 	{
 		Cache[sFileName] = "";
 		return "";
@@ -372,7 +431,7 @@ try_element_again:
 		if(sFileName == "_missing")
 			RageException::Throw("'_missing' isn't present in '%s%s'", GetThemeDirFromName(BASE_THEME_NAME).c_str(), sCategory.c_str() );
 
-		Cache[sFileName] = GetPathTo( category, "_missing" );
+		Cache[sFileName] = GetPathTo( category, "Common", "missing" );
 		return Cache[sFileName];
 	/* XXX: "abort" and "cancel" are synonyms; merge */
 	case ArchHooks::abort:
@@ -439,6 +498,10 @@ try_metric_again:
 	CString sValue;
 	if( m_pIniMetrics->GetValue(sClassName,sValueName,sValue) )
 		return sValue;
+
+	CString sBaseClass;
+	if( m_pIniMetrics->GetValue(sClassName,"BaseClass",sBaseClass) )
+		return GetMetricRaw( sBaseClass, sValueName );
 
 	CString sMessage = ssprintf( "The theme metric '%s-%s' is missing.  Correct this and click Retry, or Cancel to break.",sClassName.c_str(),sValueName.c_str() );
 	switch( HOOKS->MessageBoxAbortRetryIgnore(sMessage) )
@@ -535,3 +598,11 @@ CString ThemeManager::GetLanguageIniPath( CString sThemeName, CString sLanguage 
 {
 	return GetThemeDirFromName(sThemeName) + LANGUAGES_SUBDIR + sLanguage + ".ini";
 }
+
+// TODO: remove these and update the places that use them
+CString ThemeManager::GetPathToB( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathToB(sClassName,sElement,bOptional); }
+CString ThemeManager::GetPathToF( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathToF(sClassName,sElement,bOptional); }
+CString ThemeManager::GetPathToG( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathToG(sClassName,sElement,bOptional); }
+CString ThemeManager::GetPathToN( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathToN(sClassName,sElement,bOptional); }
+CString ThemeManager::GetPathToS( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathToS(sClassName,sElement,bOptional); }
+CString ThemeManager::GetPathToO( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathToO(sClassName,sElement,bOptional); }
