@@ -1273,20 +1273,32 @@ void MusicWheel::StartRoulette()
 
 void MusicWheel::StartRandom()
 {
-	/* Shuffle the roulette wheel. */
-	RandomGen rnd;
-	random_shuffle( m_WheelItemDatas[SORT_ROULETTE].begin(), m_WheelItemDatas[SORT_ROULETTE].end(), rnd );
+	if( PREFSMAN->m_bLockWheelAfterRandom )
+	{
+		/* Shuffle the roulette wheel. */
+		RandomGen rnd;
+		random_shuffle( m_WheelItemDatas[SORT_ROULETTE].begin(), m_WheelItemDatas[SORT_ROULETTE].end(), rnd );
 
-	SetOpenGroup("", SongSortOrder(SORT_ROULETTE));
+		SetOpenGroup("", SongSortOrder(SORT_ROULETTE));
 
-	m_Moving = -1;
-	m_TimeBeforeMovingBegins = 0;
-	m_SpinSpeed = 1.0f/ROULETTE_SWITCH_SECONDS;
-	m_SpinSpeed *= 20.0f; /* faster! */
-	m_WheelState = STATE_RANDOM_SPINNING;
+		m_Moving = -1;
+		m_TimeBeforeMovingBegins = 0;
+		m_SpinSpeed = 1.0f/ROULETTE_SWITCH_SECONDS;
+		m_SpinSpeed *= 20.0f; /* faster! */
+		m_WheelState = STATE_RANDOM_SPINNING;
 
-	this->Select();
-	RebuildMusicWheelItems();
+		this->Select();
+		RebuildMusicWheelItems();
+	}
+	else
+	{
+		m_iSelection = rand() % m_CurWheelItemData.size();
+		m_fPositionOffsetFromSelection = 0;
+		m_WheelState = STATE_SELECTING_MUSIC;
+		m_soundStart.Play();
+		SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
+		RebuildMusicWheelItems();
+	}
 }
 
 void MusicWheel::SetOpenGroup(CString group, SongSortOrder so)
