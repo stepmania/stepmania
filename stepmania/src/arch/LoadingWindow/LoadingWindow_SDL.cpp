@@ -11,7 +11,7 @@ LoadingWindow_SDL::LoadingWindow_SDL()
 {
     /* Initialize the SDL library */
     if( SDL_InitSubSystem(SDL_INIT_VIDEO) < 0 )
-        RageException::Throw( "Couldn't initialize SDL: %s\n", SDL_GetError() );
+        RageException::Throw( "Couldn't initialize SDL: %s", SDL_GetError() );
 
 	/* Set window title and icon */
 	SDL_WM_SetCaption("Loading StepMania", "");
@@ -36,12 +36,12 @@ LoadingWindow_SDL::LoadingWindow_SDL()
 	/* Load the BMP - we need it's dimensions */
     SDL_Surface *image = IMG_ReadXPMFromArray(loading);
     if( image == NULL )
-        RageException::Throw("Couldn't load loading.bmp: %s\n",SDL_GetError());
+        RageException::Throw("Couldn't load loading.bmp: %s",SDL_GetError());
 
     /* Initialize the window */
     loading_screen = SDL_SetVideoMode(image->w, image->h, 16, SDL_SWSURFACE|SDL_ANYFORMAT|SDL_NOFRAME);
     if( loading_screen == NULL )
-        RageException::Throw( "Couldn't initialize loading window: %s\n", SDL_GetError() );
+        RageException::Throw( "Couldn't initialize loading window: %s", SDL_GetError() );
 
     SDL_BlitSurface(image, NULL, loading_screen, NULL);
 
