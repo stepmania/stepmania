@@ -38,7 +38,7 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM ) {};
 
 	void SendScreenMessage( const ScreenMessage SM, const float fDelay );
-	void ClearMessageQueue() { m_QueuedMessages.SetSize(0,5); };
+	void ClearMessageQueue() { m_QueuedMessages.clear(); }
 
 	/* Used only by ScreenManager::Update. */
 	bool FirstUpdate();
