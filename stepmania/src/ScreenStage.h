@@ -22,7 +22,7 @@ public:
 	ScreenStage( CString sName );
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
-	
+	virtual void Update( float fDeltaTime );
 	virtual void MenuBack( PlayerNumber pn );
 
 private:
@@ -35,8 +35,8 @@ private:
 
 	// elements that cannot be created with BGAnimation
 	Sprite m_sprCharacterIcon[NUM_PLAYERS];
-protected:
 
+	bool			m_bZeroDeltaOnNextUpdate;
 };
 
 

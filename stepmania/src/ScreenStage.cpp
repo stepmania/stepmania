@@ -33,6 +33,8 @@ const ScreenMessage	SM_PrepScreen		= (ScreenMessage)(SM_User+0);
 
 ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 {
+	m_bZeroDeltaOnNextUpdate = false;
+
 	SOUND->StopMusic();
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_STAGE );
@@ -146,6 +148,17 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
+void ScreenStage::Update( float fDeltaTime )
+{
+	if( m_bZeroDeltaOnNextUpdate )
+	{
+		m_bZeroDeltaOnNextUpdate = false;
+		fDeltaTime = 0;
+	}
+
+	Screen::Update( fDeltaTime );
+}
+
 void ScreenStage::MenuBack( PlayerNumber pn )
 {
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() || m_Back.IsTransitioning() )
@@ -153,4 +166,11 @@ void ScreenStage::MenuBack( PlayerNumber pn )
 
 	this->ClearMessageQueue();
 	m_Back.StartTransitioning( SM_GoToPrevScreen );
+	SOUND->PlayOnce( THEME->GetPathToS("Common back") );
+
+	/* If a Back is buffered while we're prepping the screen (very common), we'll
+	 * get it right after the prep finishes.  However, the next update will contain
+	 * the time spent prepping the screen.  Zero the next delta, so the update is
+	 * seen. */
+	m_bZeroDeltaOnNextUpdate = true;
 }
