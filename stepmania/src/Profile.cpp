@@ -485,8 +485,14 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 			/* Don't save unplayed styles. */
 			if( !m_iNumSongsPlayedByStyle[i] )
 				continue;
-			CString sStyle = GAMEMAN->GetStyleDefForStyle((Style)i)->m_szName;
-			pNumSongsPlayedByStyle->AppendChild( sStyle, m_iNumSongsPlayedByStyle[i] );
+			
+			XNode *pStyleNode = pNumSongsPlayedByStyle->AppendChild( "Style", m_iNumSongsPlayedByStyle[i] );
+
+			const StyleDef *pStyle = GAMEMAN->GetStyleDefForStyle((Style)i);
+			const GameDef *g = GAMEMAN->GetGameDefForGame( pStyle->m_Game );
+			ASSERT( g );
+			pStyleNode->AppendAttr( "Game", g->m_szName );
+			pStyleNode->AppendAttr( "Style", pStyle->m_szName );
 		}
 	}
 
@@ -568,10 +574,27 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	{
 		XNode* pNumSongsPlayedByStyle = pNode->GetChild("NumSongsPlayedByStyle");
 		if( pNumSongsPlayedByStyle )
-			for( int i=0; i<NUM_STYLES; i++ )
+			for( XNodes::const_iterator style = pNumSongsPlayedByStyle->childs.begin(); 
+				style != pNumSongsPlayedByStyle->childs.end(); 
+				style++ )
 			{
-				CString sStyle = GAMEMAN->GetStyleDefForStyle((Style)i)->m_szName;
-				pNumSongsPlayedByStyle->GetChildValue( sStyle, m_iNumSongsPlayedByStyle[i] );
+				if( (*style)->name != "Style" )
+					continue;
+
+				XAttr *TypeAttr = (*style)->GetAttr( "Game" );
+				if( TypeAttr == NULL )
+					WARN_AND_CONTINUE;
+				Game g = GAMEMAN->StringToGameType( TypeAttr->value );
+				if( g == GAME_INVALID )
+					WARN_AND_CONTINUE;
+
+				TypeAttr = (*style)->GetAttr( "Style" );
+				if( TypeAttr == NULL )
+					WARN_AND_CONTINUE;
+
+				Style s = GAMEMAN->GameAndStringToStyle( g, TypeAttr->value );
+
+				(*style)->GetValue( m_iNumSongsPlayedByStyle[s] );
 			}
 	}
 
