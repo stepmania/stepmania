@@ -9,7 +9,7 @@
 StageStats	g_CurStageStats;
 vector<StageStats>	g_vPlayedStageStats;
 
-StageStats::StageStats()
+void StageStats::Init()
 {
 	playMode = PLAY_MODE_INVALID;
 	style = STYLE_INVALID;

@@ -280,20 +280,24 @@ bool Song::LoadFromSongDir( CString sDir )
 void Song::RevertFromDisk( bool bAllowNotesLoss )
 {
 	// Ugly:  When we re-load the song, the Steps* will change.
-	// Fix GAMESTATE->m_CurNotes, g_CurStageStats, g_vPlayedStageStats[] after reloading.
+	// Fix GAMESTATE->m_CurSteps, g_CurStageStats, g_vPlayedStageStats[] after reloading.
 	/* XXX: This is very brittle.  However, we must know about all globals uses of Steps*,
 	 * so we can check to make sure we didn't lose any steps which are referenced ... */
-	StepsID OldCurNotes[NUM_PLAYERS];
+	StepsID OldCurSteps[NUM_PLAYERS];
 	StepsID OldCurStageStats[NUM_PLAYERS];
 	vector<StepsID> OldPlayedStageStats[NUM_PLAYERS];
 	FOREACH_PlayerNumber( p )
 	{
-		OldCurNotes[p].FromSteps( GAMESTATE->m_pCurSteps[p] );
-		OldCurStageStats[p].FromSteps( g_CurStageStats.pSteps[p] );
+		Steps* pCurSteps = GAMESTATE->m_pCurSteps[p];
+		Steps* pCurStageStats = g_CurStageStats.pSteps[p];
+
+		OldCurSteps[p].FromSteps( pCurSteps );
+		OldCurStageStats[p].FromSteps( pCurStageStats );
 		for( unsigned i = 0; i < g_vPlayedStageStats.size(); ++i )
 		{
+			const StageStats &ss = g_vPlayedStageStats[i];;
 			OldPlayedStageStats[p].push_back( StepsID() );
-			OldPlayedStageStats[p][i].FromSteps( g_vPlayedStageStats[i].pSteps[p] );
+			OldPlayedStageStats[p][i].FromSteps( ss.pSteps[p] );
 		}
 	}
 
@@ -316,14 +320,14 @@ void Song::RevertFromDisk( bool bAllowNotesLoss )
 	{
 		CHECKPOINT;
 		if( GAMESTATE->m_pCurSong == this )
-			GAMESTATE->m_pCurSteps[p] = OldCurNotes[p].ToSteps( this, bAllowNotesLoss );
+			GAMESTATE->m_pCurSteps[p] = OldCurSteps[p].ToSteps( this, bAllowNotesLoss );
 		CHECKPOINT;
 		if( g_CurStageStats.pSong == this )
 			g_CurStageStats.pSteps[p] = OldCurStageStats[p].ToSteps( this, bAllowNotesLoss );
 		CHECKPOINT;
 		for( unsigned i = 0; i < g_vPlayedStageStats.size(); ++i )
 		{
-		CHECKPOINT_M(ssprintf("%i", i));
+			CHECKPOINT_M(ssprintf("%i", i));
 			if( g_vPlayedStageStats[i].pSong == this )
 				g_vPlayedStageStats[i].pSteps[p] = OldPlayedStageStats[p][i].ToSteps( this, bAllowNotesLoss );
 		}

@@ -838,12 +838,10 @@ void ScreenGameplay::LoadNextSong()
 {
 	GAMESTATE->ResetMusicStatistics();
 
+	FOREACH_EnabledPlayer( p )
 	{
-		FOREACH_EnabledPlayer( p )
-		{
-			g_CurStageStats.iSongsPlayed[p]++;
-			m_textCourseSongNumber[p].SetText( ssprintf("%d", g_CurStageStats.iSongsPlayed[p]) );
-		}
+		g_CurStageStats.iSongsPlayed[p]++;
+		m_textCourseSongNumber[p].SetText( ssprintf("%d", g_CurStageStats.iSongsPlayed[p]) );
 	}
 
 	LoadCourseSongNumber( GetMaxSongsPlayed() );
@@ -851,7 +849,6 @@ void ScreenGameplay::LoadNextSong()
 	int iPlaySongIndex = GAMESTATE->GetCourseSongIndex();
 	iPlaySongIndex %= m_apSongsQueue.size();
 	GAMESTATE->m_pCurSong = m_apSongsQueue[iPlaySongIndex];
-
 	g_CurStageStats.pSong = GAMESTATE->m_pCurSong;
 
 	// Restore the player's originally selected options.
@@ -861,76 +858,75 @@ void ScreenGameplay::LoadNextSong()
 	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );
 
 
+	FOREACH_EnabledPlayer( p )
 	{
-		FOREACH_EnabledPlayer( p )
+		SetupSong( p, iPlaySongIndex );
+
+		Song* pSong = GAMESTATE->m_pCurSong;
+		Steps* pSteps = GAMESTATE->m_pCurSteps[p];
+		g_CurStageStats.pSteps[p] = pSteps;
+
+		ASSERT( GAMESTATE->m_pCurSteps[p] );
+		m_textStepsDescription[p].SetText( GAMESTATE->m_pCurSteps[p]->GetDescription() );
+
+		/* Increment the play count even if the player fails.  (It's still popular,
+		 * even if the people playing it aren't good at it.) */
+		if( !m_bDemonstration )
+			PROFILEMAN->IncrementStepsPlayCount( pSong, pSteps, p );
+
+		m_textPlayerOptions[p].SetText( GAMESTATE->m_PlayerOptions[p].GetString() );
+
+		// reset oni game over graphic
+		m_sprOniGameOver[p].SetY( SCREEN_TOP - m_sprOniGameOver[p].GetZoomedHeight()/2 );
+		m_sprOniGameOver[p].SetDiffuse( RageColor(1,1,1,0) );	// 0 alpha so we don't waste time drawing while not visible
+
+		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BATTERY && g_CurStageStats.bFailed[p] )	// already failed
+			ShowOniGameOver((PlayerNumber)p);
+
+		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BAR && GAMESTATE->m_PlayMode == PLAY_MODE_ARCADE && !PREFSMAN->m_bEventMode && !m_bDemonstration)
 		{
-			SetupSong( p, iPlaySongIndex );
-
-			Song* pSong = GAMESTATE->m_pCurSong;
-			Steps* pSteps = GAMESTATE->m_pCurSteps[p];
-
-			ASSERT( GAMESTATE->m_pCurSteps[p] );
-			m_textStepsDescription[p].SetText( GAMESTATE->m_pCurSteps[p]->GetDescription() );
-
-			/* Increment the play count even if the player fails.  (It's still popular,
-			 * even if the people playing it aren't good at it.) */
-			if( !m_bDemonstration )
-				PROFILEMAN->IncrementStepsPlayCount( pSong, pSteps, p );
-
-			m_textPlayerOptions[p].SetText( GAMESTATE->m_PlayerOptions[p].GetString() );
-
-			// reset oni game over graphic
-			m_sprOniGameOver[p].SetY( SCREEN_TOP - m_sprOniGameOver[p].GetZoomedHeight()/2 );
-			m_sprOniGameOver[p].SetDiffuse( RageColor(1,1,1,0) );	// 0 alpha so we don't waste time drawing while not visible
-
-			if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BATTERY && g_CurStageStats.bFailed[p] )	// already failed
-				ShowOniGameOver((PlayerNumber)p);
-
-			if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BAR && GAMESTATE->m_PlayMode == PLAY_MODE_ARCADE && !PREFSMAN->m_bEventMode && !m_bDemonstration)
-			{
-				m_pLifeMeter[p]->UpdateNonstopLifebar(
-					GAMESTATE->GetStageIndex(), 
-					PREFSMAN->m_iNumArcadeStages, 
-					PREFSMAN->m_iProgressiveStageLifebar);
-			}
-			if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BAR && GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP )
-			{
-				m_pLifeMeter[p]->UpdateNonstopLifebar(
-					GAMESTATE->GetCourseSongIndex(), 
-					GAMESTATE->m_pCurCourse->GetEstimatedNumStages(),
-					PREFSMAN->m_iProgressiveNonstopLifebar);
-			}
-
-			m_DifficultyIcon[p].SetFromSteps( p, GAMESTATE->m_pCurSteps[p] );
-
-			m_DifficultyMeter[p].SetName( m_sName + ssprintf(" DifficultyMeterP%d",p+1) );
-			m_DifficultyMeter[p].SetFromSteps( GAMESTATE->m_pCurSteps[p] );
-
-			/* The actual note data for scoring is the base class of Player.  This includes
-			 * transforms, like Wide.  Otherwise, the scoring will operate on the wrong data. */
-			m_pPrimaryScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurSteps[p], &m_Player[p] );
-			if( m_pSecondaryScoreKeeper[p] )
-				m_pSecondaryScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurSteps[p], &m_Player[p] );
-
-			if( m_bDemonstration )
-			{
-				GAMESTATE->m_PlayerController[p] = PC_CPU;
-				GAMESTATE->m_iCpuSkill[p] = 5;
-			}
-			else if( GAMESTATE->IsCpuPlayer(p) )
-			{
-				GAMESTATE->m_PlayerController[p] = PC_CPU;
-				int iMeter = GAMESTATE->m_pCurSteps[p]->GetMeter();
-				int iNewSkill = SCALE( iMeter, MIN_METER, MAX_METER, 0, NUM_SKILL_LEVELS-1 );
-				/* Watch out: songs aren't actually bound by MAX_METER. */
-				iNewSkill = clamp( iNewSkill, 0, NUM_SKILL_LEVELS-1 );
-				GAMESTATE->m_iCpuSkill[p] = iNewSkill;
-			}
-			else if( PREFSMAN->m_bAutoPlay )
-				GAMESTATE->m_PlayerController[p] = PC_AUTOPLAY;
-			else
-				GAMESTATE->m_PlayerController[p] = PC_HUMAN;
+			m_pLifeMeter[p]->UpdateNonstopLifebar(
+				GAMESTATE->GetStageIndex(), 
+				PREFSMAN->m_iNumArcadeStages, 
+				PREFSMAN->m_iProgressiveStageLifebar);
 		}
+		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BAR && GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP )
+		{
+			m_pLifeMeter[p]->UpdateNonstopLifebar(
+				GAMESTATE->GetCourseSongIndex(), 
+				GAMESTATE->m_pCurCourse->GetEstimatedNumStages(),
+				PREFSMAN->m_iProgressiveNonstopLifebar);
+		}
+
+		m_DifficultyIcon[p].SetFromSteps( p, GAMESTATE->m_pCurSteps[p] );
+
+		m_DifficultyMeter[p].SetName( m_sName + ssprintf(" DifficultyMeterP%d",p+1) );
+		m_DifficultyMeter[p].SetFromSteps( GAMESTATE->m_pCurSteps[p] );
+
+		/* The actual note data for scoring is the base class of Player.  This includes
+		 * transforms, like Wide.  Otherwise, the scoring will operate on the wrong data. */
+		m_pPrimaryScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurSteps[p], &m_Player[p] );
+		if( m_pSecondaryScoreKeeper[p] )
+			m_pSecondaryScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurSteps[p], &m_Player[p] );
+
+		if( m_bDemonstration )
+		{
+			GAMESTATE->m_PlayerController[p] = PC_CPU;
+			GAMESTATE->m_iCpuSkill[p] = 5;
+		}
+		else if( GAMESTATE->IsCpuPlayer(p) )
+		{
+			GAMESTATE->m_PlayerController[p] = PC_CPU;
+			int iMeter = GAMESTATE->m_pCurSteps[p]->GetMeter();
+			int iNewSkill = SCALE( iMeter, MIN_METER, MAX_METER, 0, NUM_SKILL_LEVELS-1 );
+			/* Watch out: songs aren't actually bound by MAX_METER. */
+			iNewSkill = clamp( iNewSkill, 0, NUM_SKILL_LEVELS-1 );
+			GAMESTATE->m_iCpuSkill[p] = iNewSkill;
+		}
+		else if( PREFSMAN->m_bAutoPlay )
+			GAMESTATE->m_PlayerController[p] = PC_AUTOPLAY;
+		else
+			GAMESTATE->m_PlayerController[p] = PC_HUMAN;
 	}
 
 	m_textSongTitle.SetText( GAMESTATE->m_pCurSong->m_sMainTitle );
