@@ -20,7 +20,7 @@ class PlayerAI
 public:
 
 	static void InitFromDisk();
-	static TapNoteScore PlayerAI::GetTapNoteScore( int iCpuSkill, int iSumOfAttackLevels );
+	static TapNoteScore GetTapNoteScore( int iCpuSkill, int iSumOfAttackLevels );
 
 };
 
