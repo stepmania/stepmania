@@ -1257,34 +1257,6 @@ unsigned RageDisplay_OGL::CreateTexture(
 	bool FreeImg;
 	PixelFormat imgpixfmt = GetImgPixelFormat( img, FreeImg, img->w, img->h );
 
-	if(pixfmt == FMT_PAL)
-	{
-		/* The image is paletted.  Let's try to set up a paletted texture. */
-		GLubyte palette[256*4];
-		memset(palette, 0, sizeof(palette));
-		int p = 0;
-		/* Copy the palette to the simple, unpacked data OGL expects. If
-		 * we're color keyed, change it over as we go. */
-		for(int i = 0; i < img->format->palette->ncolors; ++i)
-		{
-			palette[p++] = img->format->palette->colors[i].r;
-			palette[p++] = img->format->palette->colors[i].g;
-			palette[p++] = img->format->palette->colors[i].b;
-
-			if(img->flags & SDL_SRCCOLORKEY && i == int(img->format->colorkey))
-				palette[p++] = 0;
-			else
-				palette[p++] = img->format->palette->colors[i].unused;
-		}
-
-		/* Set the palette. */
-		GLExt::glColorTableEXT(GL_TEXTURE_2D, GL_RGBA8, 256, GL_RGBA, GL_UNSIGNED_BYTE, palette);
-
-		GLint RealFormat = 0;
-		GLExt::glGetColorTableParameterivEXT(GL_TEXTURE_2D, GL_COLOR_TABLE_FORMAT, &RealFormat);
-		ASSERT( RealFormat == GL_RGBA8);	/* This is a case I don't expect to happen. */
-	}
-
 	GLenum glTexFormat = GL_PIXFMT_INFO[pixfmt].internalfmt;
 	GLenum glImageFormat = GL_PIXFMT_INFO[imgpixfmt].format;
 	GLenum glImageType = GL_PIXFMT_INFO[imgpixfmt].type;
@@ -1333,6 +1305,36 @@ unsigned RageDisplay_OGL::CreateTexture(
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
 
 
+	if(pixfmt == FMT_PAL)
+	{
+		/* The image is paletted.  Let's try to set up a paletted texture. */
+		GLubyte palette[256*4];
+		memset(palette, 0, sizeof(palette));
+		int p = 0;
+		/* Copy the palette to the simple, unpacked data OGL expects. If
+		 * we're color keyed, change it over as we go. */
+		for(int i = 0; i < img->format->palette->ncolors; ++i)
+		{
+			palette[p++] = img->format->palette->colors[i].r;
+			palette[p++] = img->format->palette->colors[i].g;
+			palette[p++] = img->format->palette->colors[i].b;
+
+			if(img->flags & SDL_SRCCOLORKEY && i == int(img->format->colorkey))
+				palette[p++] = 0;
+			else
+				palette[p++] = img->format->palette->colors[i].unused;
+		}
+
+		/* Set the palette. */
+		GLExt::glColorTableEXT(GL_TEXTURE_2D, GL_RGBA8, 256, GL_RGBA, GL_UNSIGNED_BYTE, palette);
+
+		GLint RealFormat = 0;
+		GLExt::glGetColorTableParameterivEXT(GL_TEXTURE_2D, GL_COLOR_TABLE_FORMAT, &RealFormat);
+		ASSERT( RealFormat == GL_RGBA8);	/* This is a case I don't expect to happen. */
+	}
+
+
+	
 	FlushGLErrors();
 
 	if( bGenerateMipMaps )
