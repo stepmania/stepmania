@@ -40,7 +40,9 @@ AC_DEFUN(SM_CHECK_CRASH_HANDLER,
 [
     # See if we have a custom backtrace():
     case $host in
-	*86-pc-linux*)
+    	# RedHat kindly changes the standard "pc-linux-gnu" to "redhat-linux-gnu",
+	# soley for the purpose of breaking lots of scripts.  Ugh.
+	*86-*-linux*)
 	    AC_DEFINE([BACKTRACE_METHOD_X86_LINUX],[1],[Define backtrace type])
 	    AC_DEFINE([BACKTRACE_METHOD_TEXT],["x86 custom backtrace"],[Define backtrace type])
 	    have_backtrace=yes
