@@ -158,7 +158,6 @@ protected:
 
 //	bool				m_bUseRandomExtra;
 
-	// having sounds here causes a crash in BASS.  What the heck!?!?!
 	RageSoundSample m_soundChangeMusic;
 	RageSoundSample m_soundChangeSort;
 	RageSoundSample m_soundExpand;
