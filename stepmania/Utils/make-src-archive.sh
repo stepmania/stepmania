@@ -46,6 +46,8 @@ rm -rf BaseClasses
 rm -rf ddk
 rm -rf smpackage
 rm -rf sdl_xbox_includes
+rm -rf SDL_net-1.2.5
+rm -rf SDLx-0.02.rar
 
 find -type d -name 'CVS' | xargs rm -rf
 find -type f -name '*.lib' | xargs rm -rf
