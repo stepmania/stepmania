@@ -164,9 +164,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			Name="Screens"
 			Filter="">
 			<File
-				RelativePath="Game.cpp">
-			</File>
-			<File
 				RelativePath="Screen.cpp">
 			</File>
 			<File
@@ -643,6 +640,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="FontCharmaps.h">
+			</File>
+			<File
+				RelativePath="Game.cpp">
+			</File>
+			<File
+				RelativePath="Game.h">
 			</File>
 			<File
 				RelativePath="GameConstantsAndTypes.cpp">
