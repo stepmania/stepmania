@@ -197,57 +197,58 @@ float TimingData::GetElapsedTimeFromBeat( float fBeat ) const
 	return fElapsedTime;
 }
 
-void TimingData::ScaleRegion( float fScale, float fStartBeat, float fEndBeat ) {
+void TimingData::ScaleRegion( float fScale, float fStartBeat, float fEndBeat )
+{
 	ASSERT( fScale > 0 );
 	ASSERT( fStartBeat >= 0 );
 	ASSERT( fStartBeat < fEndBeat );
 
-	int ix = 0;
+	unsigned ix = 0;
 
-	for (ix = 0; ix < m_BPMSegments.size(); ix++) {
+	for ( ix = 0; ix < m_BPMSegments.size(); ix++ )
+	{
 		const float fSegStart = m_BPMSegments[ix].m_fStartBeat;
-		if (fSegStart < fStartBeat)
+		if( fSegStart < fStartBeat )
 			continue;
-		else if (fSegStart > fEndBeat)
+		else if( fSegStart > fEndBeat )
 			m_BPMSegments[ix].m_fStartBeat += (fEndBeat - fStartBeat) * (fScale - 1);
 		else
 			m_BPMSegments[ix].m_fStartBeat = (fSegStart - fStartBeat) * fScale + fStartBeat;
 	}
 
-	for (ix = 0; ix < m_StopSegments.size(); ix++) {
+	for( ix = 0; ix < m_StopSegments.size(); ix++ )
+	{
 		const float fSegStart = m_StopSegments[ix].m_fStartBeat;
-		if (fSegStart < fStartBeat)
+		if( fSegStart < fStartBeat )
 			continue;
-		else if (fSegStart > fEndBeat)
+		else if( fSegStart > fEndBeat )
 			m_StopSegments[ix].m_fStartBeat += (fEndBeat - fStartBeat) * (fScale - 1);
 		else
 			m_StopSegments[ix].m_fStartBeat = (fSegStart - fStartBeat) * fScale + fStartBeat;
 	}
 }
 
-void TimingData::ShiftRows( float fStartBeat, float fBeatsToShift ) {
-	int ix = 0;
+void TimingData::ShiftRows( float fStartBeat, float fBeatsToShift )
+{
+	unsigned ix = 0;
 
-	for (ix = 0; ix < m_BPMSegments.size(); ix++) {
+	for( ix = 0; ix < m_BPMSegments.size(); ix++ )
+	{
 		const float fSegStart = m_BPMSegments[ix].m_fStartBeat;
-		if (fSegStart < fStartBeat)
+		if( fSegStart < fStartBeat )
 			continue;
-		else {
-			m_BPMSegments[ix].m_fStartBeat += fBeatsToShift;
-			if (m_BPMSegments[ix].m_fStartBeat < fStartBeat)
-				m_BPMSegments[ix].m_fStartBeat = fStartBeat;
-		}
+
+		m_BPMSegments[ix].m_fStartBeat += fBeatsToShift;
+		m_BPMSegments[ix].m_fStartBeat = max( m_BPMSegments[ix].m_fStartBeat, fStartBeat );
 	}
 
-	for (ix = 0; ix < m_StopSegments.size(); ix++) {
+	for( ix = 0; ix < m_StopSegments.size(); ix++ )
+	{
 		const float fSegStart = m_StopSegments[ix].m_fStartBeat;
-		if (fSegStart < fStartBeat)
+		if( fSegStart < fStartBeat )
 			continue;
-		else {
-			m_StopSegments[ix].m_fStartBeat += fBeatsToShift;
-			if (m_StopSegments[ix].m_fStartBeat < fStartBeat)
-				m_StopSegments[ix].m_fStartBeat = fStartBeat;
-		}
+		m_StopSegments[ix].m_fStartBeat += fBeatsToShift;
+		m_StopSegments[ix].m_fStartBeat = max( m_StopSegments[ix].m_fStartBeat, fStartBeat );
 	}
 }
 
