@@ -381,7 +381,7 @@ void NoteDataUtil::RemoveSimultaneousNotes(NoteData &in, int iMaxSimultaneous, f
 		if( in.IsRowEmpty(r) )
 			continue;	// skip
 
-		vector<int> viTracksHeld;
+		set<int> viTracksHeld;
 		in.GetTracksHeldAtRow( r, viTracksHeld );
 
 		// remove the first tap note or the first hold note that starts on this row
@@ -993,7 +993,7 @@ void NoteDataUtil::Echo( NoteData &in, float fStartBeat, float fEndBeat )
 
 		const int iRowEcho = r + rows_per_interval;
 		{
-			vector<int> viTracks;
+			set<int> viTracks;
 			in.GetTracksHeldAtRow( iRowEcho, viTracks );
 
 			// don't lay if holding 2 already
@@ -1024,38 +1024,54 @@ void NoteDataUtil::ConvertTapsToHolds( NoteData &in, int iSimultaneousHolds, flo
 	const int last_row = min( BeatToNoteRow(fEndBeat), in.GetLastRow() );
 	for( int r=first_row; r<=last_row; r++ )
 	{
+		int iTrackAddedThisRow = 0;
 		for( int t=0; t<in.GetNumTracks(); t++ )
 		{
+			if( iTrackAddedThisRow > iSimultaneousHolds )
+				break;
+
 			if( in.GetTapNote(t,r) == TAP_TAP )
 			{
-				// search for row of next TAP_TAP
+				// Find the ending row for this hold
 				int iTapsLeft = iSimultaneousHolds;
-			        int r2;
-				for( r2=r+1; r2<=last_row; r2++ )
+
+				int r2 = r+1;
+				for( ; r2<=last_row; r2++ )
 				{
-					if( !in.IsRowEmpty(r2) )
-					{
-						// If there are two taps in a row on the same track, 
-						// don't convert the earlier one to a hold.
-						if( in.GetFirstTrackWithTapOrHoldHead(r2) == t )
-							goto dont_add_hold;
-						iTapsLeft--;
-						if( iTapsLeft == 0 )
-							break;	// stop searching
-					}
+					// quick test
+					if( in.IsRowEmpty(r2) )
+						continue;
+
+					// If there are two taps in a row on the same track, 
+					// don't convert the earlier one to a hold.
+					if( in.GetTapNote(t,r2) != TAP_EMPTY )
+						goto dont_add_hold;
+
+					set<int> tracksDown;
+					in.GetTracksHeldAtRow( r2, tracksDown );
+					in.GetTapNonEmptyTracks( r2, tracksDown );
+					iTapsLeft -= tracksDown.size();
+					if( iTapsLeft == 0 )
+						break;	// we found the ending row for this hold
+					else if( iTapsLeft < 0 )
+						goto dont_add_hold;
 				}
 				float fStartBeat = NoteRowToBeat(r);
 				float fEndBeat = NoteRowToBeat(r2);
+
 				// If the steps end in a tap, convert that tap
 				// to a hold that lasts for at least one beat.
 				if( r2==r+1 )
 					fEndBeat = fStartBeat+1;
+
 				in.AddHoldNote( HoldNote(t,BeatToNoteRow(fStartBeat),BeatToNoteRow(fEndBeat)) );
+				iTrackAddedThisRow++;
 			}
 dont_add_hold:
 			;
 		}
 	}
+
 }
 
 void NoteDataUtil::Stomp( NoteData &in, StepsType st, float fStartBeat, float fEndBeat )

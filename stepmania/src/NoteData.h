@@ -16,6 +16,7 @@
 
 #include "NoteTypes.h"
 #include <map>
+#include <set>
 #include "Attack.h"
 
 
@@ -77,6 +78,7 @@ public:
 	bool IsRowEmpty( int index ) const;
 	bool IsRangeEmpty( int track, int iIndexBegin, int iIndexEnd ) const;
 	int GetNumTapNonEmptyTracks( int index ) const;
+	void GetTapNonEmptyTracks( int index, set<int>& addTo ) const;
 	int GetFirstNonEmptyTrack( int index ) const;
 	int GetNumTracksWithTap( int index ) const;
 	int GetNumTracksWithTapOrHoldHead( int index ) const;
@@ -91,7 +93,7 @@ public:
 	{
 		return GetFirstTrackWithTapOrHoldHead( index ) != -1;
 	}
-	void GetTracksHeldAtRow( int row, vector<int>& viTracksOut );
+	void GetTracksHeldAtRow( int row, set<int>& addTo );
 	int GetNumTracksHeldAtRow( int row );
 
 	//

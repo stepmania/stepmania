@@ -163,6 +163,13 @@ int NoteData::GetNumTapNonEmptyTracks( int index ) const
 	return iNum;
 }
 
+void NoteData::GetTapNonEmptyTracks( int index, set<int>& addTo ) const
+{
+	for( int t=0; t<m_iNumTracks; t++ )
+		if( GetTapNote(t, index) != TAP_EMPTY )
+			addTo.insert(t);
+}
+
 int NoteData::GetFirstNonEmptyTrack( int index ) const
 {
 	/* If this is out of range, we don't have any notes there, so all tracks are empty. */
@@ -939,20 +946,19 @@ void NoteData::EliminateAllButOneTap(int row)
 	}
 }
 
-void NoteData::GetTracksHeldAtRow( int row, vector<int>& viTracksOut )
+void NoteData::GetTracksHeldAtRow( int row, set<int>& addTo )
 {
 	for( unsigned i=0; i<m_HoldNotes.size(); i++ )
 	{
 		const HoldNote& hn = m_HoldNotes[i];
-		
 		if( hn.RowIsInRange(row) )
-			viTracksOut.push_back( hn.iTrack );
+			addTo.insert( hn.iTrack );
 	}
 }
 
 int NoteData::GetNumTracksHeldAtRow( int row )
 {
-	static vector<int> viTracks;
+	static set<int> viTracks;
 	viTracks.clear();
 	GetTracksHeldAtRow( row, viTracks );
 	return viTracks.size();
