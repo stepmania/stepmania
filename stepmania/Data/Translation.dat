@@ -664,93 +664,6 @@ ArtistTo: 타샤니
 ArtistFrom: Hans Band
 ArtistTo: 한스밴드
 *
-# TM4:
-TitleFrom: Akumajo Dracula MEDLEY
-TitleTo: 悪魔城ドラキュラMEDLEY
-*
-ArtistFrom: Kukeihakurabu
-ArtistTo: 矩形波倶楽部
-*
-ArtistFrom: Yuji Ueda & Yui Horie
-ArtistTo: 上田祐司＆堀江由衣
-*
-ArtistFrom: Atsuko Enomoto
-ArtistTo: 榎本温子
-*
-TitleFrom: Hareta Hi no Marine
-TitleTo: 晴れた日のマリーン
-*
-ArtistFrom: Gotou? Maki
-ArtistTo: 後藤真希
-*
-TitleFrom: La Duena del Swing
-TitleTo: La Dueña del Swing
-*
-TitleFrom: Pokemon Trainer Theme
-TitleTo: Pokémon Trainer Theme
-*
-ArtistFrom: Pokemon Jhoto
-ArtistTo: Pokémon Jhoto
-DontTransliterate
-*
-TitleFrom: Watashi No Tamagoyaki
-TitleTo: 私の卵焼き
-*
-TitleFrom: soramimi keeki
-TitleTo: そらみみけーき
-*
-TitleFrom: The Peace!
-TitleTo: THE☆PEACE!
-*
-TitleFrom: tentaikansoku
-TitleTo: 天体観測
-ArtistTo: 入尾信充
-*
-SubtitleFrom: \(e=mc2 mix\)
-SubtitleTo: (e=mc² mix)
-*
-ArtistFrom: Taku Iwa[sz]aki
-ArtistTransTo: Taku Iwasaki
-ArtistTo: 岩崎琢
-*
-ArtistFrom: Hideki Naganuma
-ArtistTo: 長沼英樹
-*
-TitleFrom: Under Star\(Hajime no Ippo Opening 2\)
-TitleTo: Under Star
-# Note that these are double-width parentheses.
-SubtitleTo: （はじめの一歩 Opening 2）
-SubtitleTransTo: (Hajime no Ippo Opening 2)
-*
-# This song had the game title in the artist field, instead of the
-# actual artist.
-TitleTo: Meridian Dance
-ArtistFrom: Seiken Densetsu 2 OST
-
-SubtitleTo: 聖剣伝説2OST
-SubtitleTransTo: Seiken Densetsu 2 OST
-
-ArtistTo: 菊田裕樹
-ArtistTransTo: Hiroki Kikuta
-*
-ArtistFrom: Ayumi and Vincent de Moor
-ArtistTo: あゆみ and Vincent de Moor
-*
-ArtistFrom: Toshio Sakurai
-ArtistTo: 桜井敏郎
-*
-ArtistFrom: Yasunori Mitsuda
-ArtistTo: 光田康典
-*
-ArtistFrom: Tamaki Nami
-ArtistTo: 玉置成実
-*
-ArtistFrom: Tomoe Shinohara
-ArtistTo: 篠原ともえ
-*
-ArtistFrom: Maaya Sakamoto
-ArtistTo: 坂本真綾
-*
 
 # Miscellaneous Unofficial
 
@@ -861,6 +774,7 @@ TitleTo: Dancemania 鬼
 *
 TitleFrom: (TaQ( Oni)?)|(Road of TaQ)
 TitleTo: TaQ道
+*
 TitleFrom: (Legend(ary)? Road)|(Road of Legend)
 TitleTo: 伝説道
 *
@@ -877,9 +791,7 @@ TitleTo: 家庭用DDRコース
 TitleFrom: Four Seasons
 TitleTo: 春夏秋冬
 *
-TitleFrom: Dancemania Nonstop
 TitleFrom: DanceMania Nonstop
-TitleTo: Dancemania 連
 TitleTo: DanceMania 連
 *
 TitleFrom: (Otome no Michi|Maiden Star Road)
