@@ -240,6 +240,10 @@ void GameState::PlayersFinalized()
 
 		PROFILEMAN->LoadFirstAvailableProfile( pn );	// load full profile
 
+		SONGMAN->LoadAllFromProfile( (ProfileSlot) pn );
+
+		MEMCARDMAN->UnmountCard( pn );
+
 		if( !PROFILEMAN->IsUsingProfile(pn) )
 			continue;	// skip
 
@@ -266,9 +270,6 @@ void GameState::PlayersFinalized()
 			m_pPreferredSong = pProfile->m_lastSong.ToSong();
 		if( m_pPreferredCourse == NULL )
 			m_pPreferredCourse = pProfile->m_lastCourse.ToCourse();
-
-		SONGMAN->LoadAllFromProfile( (ProfileSlot) pn );
-		MEMCARDMAN->UnmountCard( pn );
 	}
 
 	SONGMAN->LoadAllFromProfile( PROFILE_SLOT_MACHINE );
