@@ -39,14 +39,6 @@ void TransitionFade::DrawPrimitives()
 	colorTemp.a = fPercentageOpaque;
 	m_rect.SetDiffuse( colorTemp );
 	m_rect.Draw();
-
-// SUPER HACK!  For some reason, this does not draw in release mode.  I've looked for
-// hours and can't figure out why.  It appears though if you draw it twice, so that's
-// what we'll do for now.  Aye...
-//#ifndef _DEBUG
-//	m_rect.SetDiffuse( colorTemp );
-//	m_rect.Draw();
-//#endif
 }
 
 

@@ -2,6 +2,8 @@
 Fix
 /////////////////////////
 
+rename Notes to Pattern
+
 You'll notice that if you add up the Perfects and Greats, they are far less than the max combo. Where did they go? Apparently Jumps count for 2 steps during normal game play, but ONLY for max combo. 
 
 test BGChange grabbing from random movies

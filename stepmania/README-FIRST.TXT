@@ -431,13 +431,17 @@ and can load sounds in ogg, mp3, or wav format.)
 	by separating them with commas.  e.g. "60=2.23,80=1.12".
 #BGCHANGE:...;   - A value of the format "beat=bg name".  Indicates that at 
 	'beat', the background should begin playing a new background named 'bg name'.  
-	'beat' is a fractional value value and 'anim name' is a string.  Different 
-	animation change are separated by commas.  e.g. "60=falling,80=flower".
+	'beat' is a fractional value value and 'bg name' is a string.  Different 
+	bg changes are separated by commas.  e.g. "60=falling,80=flower".
 	When StepMania looks for a backgound, it searches in this order:
-	  - Looks for a movie with file name "bg name" in the song folder
+	  - Looks for a movie with file name = "bg name" in the song folder.
+                You must include the file extension in "bg name".  e.g. 
+                "60=falling.avi,80=flower.mpg".
 	  - Looks for a BGAnimation folder with the name "bg name" in the song 
 		folder.
 	  - Looks for a movie with file name "bg name" in the RandomMovies folder.
+                You must include the file extension in "bg name".  e.g. 
+                "60=falling.avi,80=flower.mpg".
 	  - Looks for a BGAnimation with file name "bg name" in the BGAnimations 
 		folder.
 	  - Looks for a Visualization with the file name "bg name" in the
