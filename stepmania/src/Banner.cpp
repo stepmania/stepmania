@@ -18,6 +18,12 @@
 #include "Song.h"
 #include "RageTextureManager.h"
 
+RageTextureID Banner::BannerTex( RageTextureID ID )
+{
+	ID.bHotPinkColorKey = true;
+	ID.bDither = true;
+	return ID;
+}
 
 Banner::Banner()
 {
@@ -29,12 +35,12 @@ Banner::Banner()
 	TEXTUREMAN->CacheTexture( THEME->GetPathToG("Banner roulette") );
 	TEXTUREMAN->CacheTexture( THEME->GetPathToG("Banner random") );
 }
+#include "RageLog.h"
 
 bool Banner::Load( RageTextureID ID )
 {
 	/* Song banners often have HOT PINK color keys. */
-	ID.bHotPinkColorKey = true;
-	ID.bDither = true;
+	ID = BannerTex(ID);
 
 	m_fPercentScrolling = 0;
 	m_bScrolling = false;
