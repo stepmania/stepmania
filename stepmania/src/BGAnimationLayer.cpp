@@ -388,25 +388,26 @@ void BGAnimationLayer::LoadFromAniLayerFile( const CString& sPath )
 	}
 
 
-	sPath.MakeLower();
+	CString sHint = sPath;
+	sHint.MakeLower();
 
-	if( sPath.Find("cyclecolor") != -1 )
+	if( sHint.Find("cyclecolor") != -1 )
 		for( unsigned i=0; i<m_SubActors.size(); i++ )
 			m_SubActors[i]->SetEffectRainbow( 5 );
 
-	if( sPath.Find("cyclealpha") != -1 )
+	if( sHint.Find("cyclealpha") != -1 )
 		for( unsigned i=0; i<m_SubActors.size(); i++ )
 			m_SubActors[i]->SetEffectDiffuseShift( 2, RageColor(1,1,1,1), RageColor(1,1,1,0) );
 
-	if( sPath.Find("startonrandomframe") != -1 )
+	if( sHint.Find("startonrandomframe") != -1 )
 		for( unsigned i=0; i<m_SubActors.size(); i++ )
 			m_SubActors[i]->SetState( rand()%m_SubActors[i]->GetNumStates() );
 
-	if( sPath.Find("dontanimate") != -1 )
+	if( sHint.Find("dontanimate") != -1 )
 		for( unsigned i=0; i<m_SubActors.size(); i++ )
 			m_SubActors[i]->StopAnimating();
 
-	if( sPath.Find("add") != -1 )
+	if( sHint.Find("add") != -1 )
 		for( unsigned i=0; i<m_SubActors.size(); i++ )
 			m_SubActors[i]->SetBlendMode( BLEND_ADD );
 }
