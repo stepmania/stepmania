@@ -91,20 +91,9 @@ void RageBitmapTexture::Create()
 
 	if(actualID.bHotPinkColorKey)
 	{
-		/* Annoying: SDL will do a nearest-match on paletted images if
-		 * they don't have the color we ask for, so images without HOT PINK
-		 * will get some other random color transparent.  We have to make
-		 * sure the value returned for paletted images is exactly #FF00FF. */
-		int color = SDL_MapRGB(img->format, 0xFF, 0, 0xFF);
-		if( img->format->BitsPerPixel == 8 ) {
-			if(img->format->palette->colors[color].r != 0xFF ||
-			   img->format->palette->colors[color].g != 0x00 ||
-			   img->format->palette->colors[color].b != 0xFF )
-			   color = -1;
-		}
-
+		int color = mySDL_MapRGBExact(img->format, 0xFF, 0, 0xFF);
 		if( color != -1 )
-			SDL_SetColorKey( img, SDL_SRCCOLORKEY, color);
+			SDL_SetColorKey( img, SDL_SRCCOLORKEY, color );
 	}
 
 	{
