@@ -373,12 +373,6 @@ void BGAnimationLayer::LoadFromNode( const CString& sAniDir_, const XNode& layer
 		sAniDir.c_str(), m_bGeneric? "(generic) ":"" ) );
 
 	{
-		CString sPlayer;
-		if( layer.GetAttrValue("Player", sPlayer) )
-			ASSERT_M( 0, "The BGAnimation parameter 'Player' is deprecated.  Please use 'Condition=IsPlayerEnabled(p)'." );
-	}
-
-	{
 		CString expr;
 		if( layer.GetAttrValue("Cond",expr) || layer.GetAttrValue("Condition",expr) )
 		{
