@@ -20,9 +20,6 @@
 #define CHATOUTPUT_COLOR			THEME->GetMetricC(m_sName,"ChatOutputBoxColor")
 #define SHOW_CHAT_LINES				THEME->GetMetricI(m_sName,"ChatOutputLines")
 
-#define USERSBG_WIDTH				THEME->GetMetricF(m_sName,"UsersBGWidth")
-#define USERSBG_HEIGHT				THEME->GetMetricF(m_sName,"UsersBGHeight")
-#define USERSBG_COLOR				THEME->GetMetricC(m_sName,"UsersBGColor")
 #define USERSALT_Y					THEME->GetMetricF(m_sName,"UsersAY")
 #define USERSDELT_X					THEME->GetMetricF(m_sName,"UsersDX")
 #define USERS_Y						THEME->GetMetricF(m_sName,"UsersY")
@@ -80,11 +77,8 @@ ScreenNetSelectBase::ScreenNetSelectBase( const CString& sName ) : ScreenWithMen
 
 	//Users' Background
 	
-	m_rectUsersBG.SetDiffuse( USERSBG_COLOR );
 	m_rectUsersBG.SetName( "UsersBG" );
-	m_rectUsersBG.SetWidth( USERSBG_WIDTH );
-	m_rectUsersBG.SetHeight( USERSBG_HEIGHT );
-	SET_XY_AND_ON_COMMAND( m_rectUsersBG );
+	SET_QUAD_INIT( m_rectUsersBG );
 	this->AddChild( &m_rectUsersBG );
 
 	//Display users list

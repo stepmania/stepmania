@@ -8,19 +8,9 @@
 #include "ThemeManager.h"
 
 #define TITLEBG_WIDTH				THEME->GetMetricF(m_sName,"TitleBGWidth")
-#define TITLEBG_HEIGHT				THEME->GetMetricF(m_sName,"TitleBGHeight")
-#define TITLEBG_COLOR				THEME->GetMetricC(m_sName,"TitleBGColor")
-
 #define ROOMSBG_WIDTH				THEME->GetMetricF(m_sName,"RoomsBGWidth")
-#define ROOMSBG_HEIGHT				THEME->GetMetricF(m_sName,"RoomsBGHeight")
-#define ROOMSBG_COLOR				THEME->GetMetricC(m_sName,"RoomsBGColor")
 
 #define	NUM_ROOMS_SHOW				THEME->GetMetricI(m_sName,"NumRoomsShow");
-
-#define SEL_WIDTH					THEME->GetMetricF(m_sName,"SelWidth")
-#define SEL_HEIGHT					THEME->GetMetricF(m_sName,"SelHeight")
-#define SEL_COLOR					THEME->GetMetricC(m_sName,"SelColor")
-
 
 const ScreenMessage SM_SMOnlinePack	= ScreenMessage(SM_User+8);	//Unused, but should be known
 
@@ -32,11 +22,8 @@ ScreenNetRoom::ScreenNetRoom( const CString& sName ) : ScreenNetSelectBase( sNam
 
 	m_iRoomPlace = 0;
 
-	m_rectTitleBG.SetDiffuse( TITLEBG_COLOR );
 	m_rectTitleBG.SetName( "TitleBG" );
-	m_rectTitleBG.SetWidth( TITLEBG_WIDTH );
-	m_rectTitleBG.SetHeight( TITLEBG_HEIGHT );
-	SET_XY_AND_ON_COMMAND( m_rectTitleBG );
+	SET_QUAD_INIT( m_rectTitleBG );
 	this->AddChild( &m_rectTitleBG);
 
 	m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"wheel") );
@@ -46,11 +33,8 @@ ScreenNetRoom::ScreenNetRoom( const CString& sName ) : ScreenNetSelectBase( sNam
 	SET_XY_AND_ON_COMMAND( m_textTitle );
 	this->AddChild( &m_textTitle);
 
-	m_rectRoomsBG.SetDiffuse( ROOMSBG_COLOR );
 	m_rectRoomsBG.SetName( "RoomsBG" );
-	m_rectRoomsBG.SetWidth( ROOMSBG_WIDTH );
-	m_rectRoomsBG.SetHeight( ROOMSBG_HEIGHT );
-	SET_XY_AND_ON_COMMAND( m_rectRoomsBG );
+	SET_QUAD_INIT( m_rectRoomsBG );
 	this->AddChild( &m_rectRoomsBG);
 
 	m_textRooms.LoadFromFont( THEME->GetPathF(m_sName,"wheel") );
@@ -60,11 +44,8 @@ ScreenNetRoom::ScreenNetRoom( const CString& sName ) : ScreenNetSelectBase( sNam
 	SET_XY_AND_ON_COMMAND( m_textRooms );
 	this->AddChild( &m_textRooms );
 
-	m_rectRoomsSel.SetDiffuse( SEL_COLOR );
 	m_rectRoomsSel.SetName( "Sel" );
-	m_rectRoomsSel.SetWidth( SEL_WIDTH );
-	m_rectRoomsSel.SetHeight( SEL_HEIGHT );
-	SET_XY_AND_ON_COMMAND( m_rectRoomsSel );
+	SET_QUAD_INIT( m_rectRoomsSel );
 	this->AddChild( &m_rectRoomsSel );
 	
 	NSMAN->ReportNSSOnOff(7);

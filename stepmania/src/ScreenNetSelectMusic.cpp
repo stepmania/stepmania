@@ -18,32 +18,15 @@
 #include "StepsUtil.h"
 #include "RageUtil.h"
 
-#define GROUPSBG_WIDTH				THEME->GetMetricF(m_sName,"GroupsBGWidth")
-#define GROUPSBG_HEIGHT				THEME->GetMetricF(m_sName,"GroupsBGHeight")
-#define GROUPSBG_COLOR				THEME->GetMetricC(m_sName,"GroupsBGColor")
-
-#define SONGSBG_WIDTH				THEME->GetMetricF(m_sName,"SongsBGWidth")
-#define SONGSBG_HEIGHT				THEME->GetMetricF(m_sName,"SongsBGHeight")
-#define SONGSBG_COLOR				THEME->GetMetricC(m_sName,"SongsBGColor")
-
-#define DIFFBG_WIDTH				THEME->GetMetricF(m_sName,"DiffBGWidth")
-#define DIFFBG_HEIGHT				THEME->GetMetricF(m_sName,"DiffBGHeight")
-#define DIFFBG_COLOR				THEME->GetMetricC(m_sName,"DiffBGColor")
-
-#define EXINFOBG_WIDTH				THEME->GetMetricF(m_sName,"ExInfoBGWidth")
-#define EXINFOBG_HEIGHT				THEME->GetMetricF(m_sName,"ExInfoBGHeight")
-#define EXINFOBG_COLOR				THEME->GetMetricC(m_sName,"ExInfoBGColor")
-
 #define	NUM_GROUPS_SHOW				THEME->GetMetricI(m_sName,"NumGroupsShow");
 #define	NUM_SONGS_SHOW				THEME->GetMetricI(m_sName,"NumSongsShow");
-
-#define SEL_WIDTH					THEME->GetMetricF(m_sName,"SelWidth")
-#define SEL_HEIGHT					THEME->GetMetricF(m_sName,"SelHeight")
-#define SEL_COLOR					THEME->GetMetricC(m_sName,"SelColor")
 
 #define SUBTITLE_WIDTH				THEME->GetMetricF(m_sName,"SongsSubtitleWidth")
 #define ARTIST_WIDTH				THEME->GetMetricF(m_sName,"SongsArtistWidth")
 #define GROUP_WIDTH					THEME->GetMetricF(m_sName,"SongsGroupWidth")
+
+#define GROUPSBG_WIDTH				THEME->GetMetricF(m_sName,"GroupsBGWidth")
+#define SONGSBG_WIDTH				THEME->GetMetricF(m_sName,"SongsBGWidth")
 
 const ScreenMessage SM_NoSongs		= ScreenMessage(SM_User+3);
 const ScreenMessage SM_ChangeSong	= ScreenMessage(SM_User+5);
@@ -58,11 +41,8 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenNetSe
 	GAMESTATE->FinishStage();
 
 	//Groups
-	m_rectGroupsBackground.SetDiffuse( GROUPSBG_COLOR );
 	m_rectGroupsBackground.SetName( "GroupsBG" );
-	m_rectGroupsBackground.SetWidth( GROUPSBG_WIDTH );
-	m_rectGroupsBackground.SetHeight( GROUPSBG_HEIGHT );
-	SET_XY_AND_ON_COMMAND( m_rectGroupsBackground );
+	SET_QUAD_INIT( m_rectGroupsBackground );
 	this->AddChild( &m_rectGroupsBackground );
 
 	m_textGroups.LoadFromFont( THEME->GetPathF(m_sName,"wheel") );
@@ -73,11 +53,8 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenNetSe
 	this->AddChild( &m_textGroups);
 
 	//Songs
-	m_rectSongsBackground.SetDiffuse( SONGSBG_COLOR );
-	m_rectSongsBackground.SetName( "SongsBackground" );
-	m_rectSongsBackground.SetWidth( SONGSBG_WIDTH );
-	m_rectSongsBackground.SetHeight( SONGSBG_HEIGHT );
-	SET_XY_AND_ON_COMMAND( m_rectSongsBackground );
+	m_rectSongsBackground.SetName( "SongsBG" );
+	SET_QUAD_INIT( m_rectSongsBackground );
 	this->AddChild( &m_rectSongsBackground );
 
 	m_textSongs.LoadFromFont( THEME->GetPathF(m_sName,"wheel") );
@@ -87,11 +64,8 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenNetSe
 	SET_XY_AND_ON_COMMAND( m_textSongs );
 	this->AddChild( &m_textSongs);
 
-	m_rectExInfo.SetDiffuse( EXINFOBG_COLOR );
 	m_rectExInfo.SetName( "ExInfoBG" );
-	m_rectExInfo.SetWidth( EXINFOBG_WIDTH );
-	m_rectExInfo.SetHeight( EXINFOBG_HEIGHT );
-	SET_XY_AND_ON_COMMAND( m_rectExInfo );
+	SET_QUAD_INIT( m_rectExInfo );
 	this->AddChild( &m_rectExInfo );
 
 	m_textArtist.LoadFromFont( THEME->GetPathF(m_sName,"song") );
@@ -122,11 +96,8 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenNetSe
 	this->AddChild( &m_sprSelOptions );
 
 	//Diff Icon background
-	m_rectDiff.SetDiffuse( DIFFBG_COLOR );
 	m_rectDiff.SetName( "DiffBG" );
-	m_rectDiff.SetWidth( DIFFBG_WIDTH );
-	m_rectDiff.SetHeight( DIFFBG_HEIGHT );
-	SET_XY_AND_ON_COMMAND( m_rectDiff );
+	SET_QUAD_INIT( m_rectDiff );
 	this->AddChild( &m_rectDiff );
 
 	FOREACH_EnabledPlayer (p)
@@ -148,11 +119,8 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenNetSe
 	}
 
 	m_SelectMode = SelectGroup;
-	m_rectSelection.SetDiffuse( SEL_COLOR );
 	m_rectSelection.SetName( "Sel" );
-	m_rectSelection.SetWidth( SEL_WIDTH );
-	m_rectSelection.SetHeight( SEL_HEIGHT );
-	SET_XY_AND_ON_COMMAND( m_rectSelection );
+	SET_QUAD_INIT( m_rectSelection );
 	this->AddChild( &m_rectSelection );
 
 

@@ -322,6 +322,14 @@ void AutoActor::LoadAndSetName( const CString &sScreenName, const CString &sActo
 	m_pActor->SetName( sActorName );
 }
 
+void UtilSetQuadInit( Actor& actor, const CString &sClassName )
+{
+	UtilSetXYAndOnCommand( actor, sClassName );
+	actor.SetDiffuse( THEME->GetMetricC( sClassName, actor.m_sName + "Color" ) );
+	actor.SetWidth( THEME->GetMetricF( sClassName, actor.m_sName + "Width" ) );
+	actor.SetHeight( THEME->GetMetricF( sClassName, actor.m_sName + "Height" ) );
+}
+
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.

@@ -10,6 +10,7 @@
 #define OFF_COMMAND( actor )	UtilOffCommand( actor, m_sName )
 #define SET_XY_AND_ON_COMMAND( actor )		UtilSetXYAndOnCommand( actor, m_sName )
 #define COMMAND( actor, command_name )		UtilCommand( actor, m_sName, command_name )
+#define SET_QUAD_INIT( actor )	UtilSetQuadInit( actor, m_sName );
 
 
 void UtilSetXY( Actor& actor, const CString &sClassName );
@@ -25,6 +26,7 @@ inline void UtilSetXYAndOnCommand( Actor& actor, const CString &sClassName )
 	UtilSetXY( actor, sClassName );
 	UtilOnCommand( actor, sClassName );
 }
+void UtilSetQuadInit( Actor& actor, const CString &sClassName );
 
 /* convenience */
 inline void UtilCommand( Actor* pActor, const CString &sClassName, const CString &sCommandName ) { if(pActor) UtilCommand( *pActor, sClassName, sCommandName ); }
