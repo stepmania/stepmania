@@ -510,11 +510,23 @@ void NoteField::DrawPrimitives()
 		// Draw marker bars
 		//
 		if( m_iBeginMarker != -1  &&  m_iEndMarker != -1 )
-			DrawAreaHighlight( m_iBeginMarker, m_iEndMarker );
+		{
+			int iBegin = max( m_iBeginMarker, iFirstIndexToDraw );
+			int iEnd = min( m_iEndMarker, iLastIndexToDraw );
+			DrawAreaHighlight( iBegin, iEnd );
+		}
 		else if( m_iBeginMarker != -1 )
-			DrawMarkerBar( m_iBeginMarker );
+		{
+			if( m_iBeginMarker >= iFirstIndexToDraw &&
+				m_iBeginMarker <= iLastIndexToDraw )
+				DrawMarkerBar( m_iBeginMarker );
+		}
 		else if( m_iEndMarker != -1 )
+		{
+			if( m_iEndMarker >= iFirstIndexToDraw &&
+				m_iEndMarker <= iLastIndexToDraw )
 			DrawMarkerBar( m_iEndMarker );
+		}
 	}
 
 
