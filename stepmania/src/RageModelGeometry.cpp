@@ -19,17 +19,12 @@
 RageModelGeometry::RageModelGeometry ()
 {
 	m_iRefCount = 1;
+	m_pGeometry = DISPLAY->CreateCompiledGeometry();
 }
 
 RageModelGeometry::~RageModelGeometry ()
 {
-    for (unsigned i = 0; i < m_Meshes.size(); i++)
-    {
-		msMesh& mesh = m_Meshes[i];
-		RageModelVertexArray *&pVertices = mesh.Vertices;
-		DISPLAY->DeleteRageModelVertexArray( pVertices );
-		pVertices = NULL;
-	}
+	DISPLAY->DeleteCompiledGeometry( m_pGeometry );
 }
 
 void RageModelGeometry::OptimizeBones()
@@ -40,12 +35,18 @@ void RageModelGeometry::OptimizeBones()
 
 		// check to see if all vertices have the same bone index
 		bool bAllVertsUseSameBone = true;
-		char nBoneIndex = !mesh.Vertices->sizeVerts()==0 ? mesh.Vertices->Bone(0) : (char) -1;
+		
+		char nBoneIndex;
+		if( !mesh.Vertices.empty() )
+			nBoneIndex = mesh.Vertices[0].bone;
+		else
+			nBoneIndex = (char)-1;
+
 		if( nBoneIndex != -1 )
 		{
-			for (unsigned j = 1; j < mesh.Vertices->sizeVerts(); j++)
+			for (unsigned j = 1; j < mesh.Vertices.size(); j++)
 			{
-				if( mesh.Vertices->Bone(j) != nBoneIndex )
+				if( mesh.Vertices[j].bone != nBoneIndex )
 				{
 					bAllVertsUseSameBone = false;
 					break;
@@ -57,9 +58,9 @@ void RageModelGeometry::OptimizeBones()
 			mesh.nBoneIndex = nBoneIndex;
 
 			// clear all vertex/bone associations;
-			for (unsigned j = 0; j < mesh.Vertices->sizeVerts(); j++)
+			for (unsigned j = 0; j < mesh.Vertices.size(); j++)
 			{
-				mesh.Vertices->Bone(j) = -1;
+				mesh.Vertices[j].bone = -1;
 			}
 		}
 	}
@@ -110,9 +111,9 @@ void RageModelGeometry::LoadMilkshapeAscii( CString sPath )
 
             for (i = 0; i < nNumMeshes; i++)
             {
-				msMesh& mesh = m_Meshes[i];
-				RageModelVertexArray *&pVertices = mesh.Vertices;
-				pVertices = DISPLAY->CreateRageModelVertexArray();
+				msMesh &mesh = m_Meshes[i];
+				vector<RageModelVertex> &Vertices = mesh.Vertices;
+				vector<msTriangle> &Triangles = mesh.Triangles;
 
 			    if( f.GetLine( sLine ) <= 0 )
 					THROW
@@ -137,19 +138,19 @@ void RageModelGeometry::LoadMilkshapeAscii( CString sPath )
                 if (sscanf (sLine, "%d", &nNumVertices) != 1)
 					THROW
 
-				pVertices->resizeVerts( nNumVertices );
+				Vertices.resize( nNumVertices );
 
                 for (j = 0; j < nNumVertices; j++)
                 {
+					RageModelVertex &v = Vertices[j];
+
 				    if( f.GetLine( sLine ) <= 0 )
 						THROW
 
-                    RageVector3 pos;
-                    RageVector2 uv;
                     if (sscanf (sLine, "%d %f %f %f %f %f %d",
                         &nFlags,
-                        &pos[0], &pos[1], &pos[2],
-                        &uv[0], &uv[1],
+                        &v.p[0], &v.p[1], &v.p[2],
+                        &v.t[0], &v.t[1],
                         &nIndex
                         ) != 7)
                     {
@@ -157,10 +158,8 @@ void RageModelGeometry::LoadMilkshapeAscii( CString sPath )
                     }
 
 //                  vertex.nFlags = nFlags;
-                    pVertices->Position(j) = pos;
-                    pVertices->TexCoord(j) = uv;
-                    pVertices->Bone(j) = (byte)nIndex;
-					RageVec3AddToBounds( RageVector3(pos), m_vMins, m_vMaxs );
+                    v.bone = (byte)nIndex;
+					RageVec3AddToBounds( v.p, m_vMins, m_vMaxs );
                 }
 
 
@@ -201,7 +200,7 @@ void RageModelGeometry::LoadMilkshapeAscii( CString sPath )
                 if (sscanf (sLine, "%d", &nNumTriangles) != 1)
 					THROW
 
-				pVertices->resizeTriangles( nNumTriangles );
+				Triangles.resize( nNumTriangles );
 
                 for (j = 0; j < nNumTriangles; j++)
                 {
@@ -223,13 +222,13 @@ void RageModelGeometry::LoadMilkshapeAscii( CString sPath )
 					// deflate the normals into vertices
 					for( int k=0; k<3; k++ )
 					{
-						//RageModelVertex& vertex = mesh.Vertices[ nIndices[k] ];
-						//RageVector3& normal = Normals[ nNormalIndices[k] ];
-						//vertex.n = normal;
-						mesh.Vertices->Normal( nIndices[k] ) = Normals[ nNormalIndices[k] ];
+						RageModelVertex& vertex = Vertices[ nIndices[k] ];
+						RageVector3& normal = Normals[ nNormalIndices[k] ];
+						vertex.n = normal;
+						//mesh.Vertices[nIndices[k]].n = Normals[ nNormalIndices[k] ];
 					}
 
-					msTriangle& Triangle = pVertices->Triangle(j);
+					msTriangle& Triangle = Triangles[j];
 //                  Triangle.nFlags = nFlags;
                     memcpy( &Triangle.nVertexIndices, nIndices, sizeof(Triangle.nVertexIndices) );
 //                  Triangle.nSmoothingGroup = nIndex;
@@ -241,14 +240,7 @@ void RageModelGeometry::LoadMilkshapeAscii( CString sPath )
 	OptimizeBones();
 
 	// send the finalized vertices to the graphics card
-	{
-		for( unsigned i = 0; i < m_Meshes.size(); i++ )
-		{
-			msMesh& mesh = m_Meshes[i];
-			RageModelVertexArray *&pVertices = mesh.Vertices;
-			pVertices->OnChanged();
-		}
-	}
+	m_pGeometry->Set( m_Meshes );
 
 	f.Close();
 }

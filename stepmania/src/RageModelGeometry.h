@@ -17,8 +17,7 @@
 #include <vector>
 #include <map>
 
-struct msRageModelGeometry;
-
+class RageCompiledGeometry;
 
 class RageModelGeometry
 {
@@ -32,7 +31,8 @@ public:
 
 	int m_iRefCount;
 
-    vector<msMesh> m_Meshes;
+	vector<msMesh> m_Meshes;
+    RageCompiledGeometry* m_pGeometry;	// video memory copy of geometry shared by all meshes
 
 	RageVector3 m_vMins, m_vMaxs;
 };

@@ -75,8 +75,8 @@ public:
 
 	void SetSphereEnironmentMapping( bool b );
 
-	RageModelVertexArray* CreateRageModelVertexArray();
-	void DeleteRageModelVertexArray( RageModelVertexArray* p );
+	RageCompiledGeometry* CreateCompiledGeometry();
+	void DeleteCompiledGeometry( RageCompiledGeometry* p );
 
 protected:
 	void DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts );
@@ -84,7 +84,7 @@ protected:
 	void DrawFanInternal( const RageSpriteVertex v[], int iNumVerts );
 	void DrawStripInternal( const RageSpriteVertex v[], int iNumVerts );
 	void DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts );
-	void DrawIndexedTrianglesInternal( const RageModelVertexArray *p );
+	void DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex );
 
 	CString TryVideoMode( VideoModeParams params, bool &bNewDeviceOut );
 	SDL_Surface* CreateScreenshot();

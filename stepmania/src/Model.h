@@ -54,7 +54,7 @@ public:
 
 	virtual void HandleCommand( const ParsedCommand &command );
 
-	int m_iRefCount;
+//	int m_iRefCount;
 
 private:
     RageModelGeometry	*m_pGeometry;
@@ -65,12 +65,10 @@ private:
 
 	vector<myBone_t>	m_vpBones;
 
-	// true if any vertex has a bone weight.
-	// If true, then render from m_vTempVerticesByBone.  
-	// Otherwise, render directly from the mesh's vertices
-	bool m_bUseTempVertices;
-
-	vector<RageModelVertexArray*>	m_vpTempVerticesByMesh;
+	// If any vertex has a bone weight, then then render from m_pTempGeometry.  
+	// Otherwise, render directly from m_pGeometry.
+	vector<msMesh>	m_vTempMeshes;
+	RageCompiledGeometry* m_pTempGeometry;
 	
 	float		m_fCurrFrame;
 	CString		m_sDefaultAnimation;

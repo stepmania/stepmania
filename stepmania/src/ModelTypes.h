@@ -67,8 +67,6 @@ typedef struct
 } msTriangle;
 
 
-class RageModelVertexArray;
-
 /* msMesh */
 typedef struct msMesh
 {
@@ -78,9 +76,8 @@ typedef struct msMesh
 //  byte        nFlags;	// we don't care about saving this flag
     char        szName[MS_MAX_NAME];
     char        nMaterialIndex;
-    
-    RageModelVertexArray* Vertices;
-//  vector<msVertex>   Vertices;
+
+	vector<RageModelVertex>   Vertices;
 
 //  vector<msVec3>     Normals;	// each vertex holds its own normal
 
@@ -89,7 +86,7 @@ typedef struct msMesh
 	// of transforming each vertex on the CPU;
 	char        nBoneIndex;	// -1 = no bone
 
-//    vector<msTriangle> Triangles;
+    vector<msTriangle> Triangles;
 } msMesh;
 
 /* msMaterial */
@@ -188,12 +185,12 @@ typedef struct msBone
 } msBone;
 
 /* msModel */
-typedef struct msModel
-{
-    vector<msMesh>     Meshes;
-
-    vector<msMaterial> Materials;
-} msModel;
+//typedef struct msModel
+//{
+//    vector<msMesh>     Meshes;
+//
+//    vector<msMaterial> Materials;
+//} msModel;
 
 struct msAnimation
 {

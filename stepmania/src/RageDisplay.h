@@ -19,30 +19,58 @@ const int REFRESH_DEFAULT = 0;
 struct SDL_Surface;
 const int MAX_TEXTURE_UNITS = 2;
 
-// VertexArray holds vertex data in a format that is most efficient for
-// the graphics API.
-class RageModelVertexArray
+// RageCompiledGeometry holds vertex data in a format that is most efficient 
+// for the graphics API.
+class RageCompiledGeometry
 {
 public:
-	virtual ~RageModelVertexArray() { }
+	virtual ~RageCompiledGeometry() { }
+
+	void Set( const vector<msMesh> &vMeshes )
+	{
+		size_t totalVerts = 0;
+		size_t totalTriangles = 0;
+
+		m_vMeshInfo.resize( vMeshes.size() );
+		for( unsigned i=0; i<vMeshes.size(); i++ )
+		{
+			const msMesh& mesh = vMeshes[i];
+			const vector<RageModelVertex> &Vertices = mesh.Vertices;
+			const vector<msTriangle> &Triangles = mesh.Triangles;
+
+			MeshInfo& meshInfo = m_vMeshInfo[i];
+
+			meshInfo.iVertexStart = totalVerts;
+			meshInfo.iVertexCount = Vertices.size();
+			meshInfo.iTriangleStart = totalTriangles;
+			meshInfo.iTriangleCount = Triangles.size();
+
+			totalVerts += Vertices.size();
+			totalTriangles += Triangles.size();
+		}
+
+		this->Allocate( vMeshes );
+
+		Change( vMeshes );
+	}
+
+	virtual void Allocate( const vector<msMesh> &vMeshes ) = 0;	// allocate space
+	virtual void Change( const vector<msMesh> &vMeshes ) = 0;	// new data must be the same size as was passed to Set()
+	virtual void Draw( int iMeshIndex ) const = 0;
+
+protected:
+	size_t GetTotalVertices()  { return m_vMeshInfo.back().iVertexStart + m_vMeshInfo.back().iVertexCount; }
+	size_t GetTotalTriangles() { return m_vMeshInfo.back().iTriangleStart + m_vMeshInfo.back().iTriangleCount; }
 	
-	virtual size_t sizeVerts() const = 0;
-	virtual void resizeVerts( size_t size ) = 0;
-	
-	virtual size_t sizeTriangles() const = 0;
-	virtual void resizeTriangles( size_t size ) = 0;
-
-	virtual RageVector3&	Position( int index ) = 0;
-	virtual RageVector3&	Normal	( int index ) = 0;
-	virtual RageVector2&	TexCoord( int index ) = 0;
-	virtual Sint8&			Bone	( int index ) = 0;
-
-	virtual msTriangle&		Triangle( int index ) = 0;
-
-	virtual void OnChanged() const = 0;	// call this to re-send data to the video card
-	virtual void Draw() const = 0;	// call this to make the video card draw the vertices
+	struct MeshInfo
+	{
+		int iVertexStart;
+		int iVertexCount;
+		int iTriangleStart;
+		int iTriangleCount;
+	};
+	vector<MeshInfo>	m_vMeshInfo;
 };
-
 
 class RageDisplay
 {
@@ -206,15 +234,15 @@ public:
 
 	virtual void SetSphereEnironmentMapping( bool b ) = 0;
 
-	virtual RageModelVertexArray* CreateRageModelVertexArray() = 0;
-	virtual void DeleteRageModelVertexArray( RageModelVertexArray* p ) = 0;
+	virtual RageCompiledGeometry* CreateCompiledGeometry() = 0;
+	virtual void DeleteCompiledGeometry( RageCompiledGeometry* p ) = 0;
 
 	void DrawQuads( const RageSpriteVertex v[], int iNumVerts );
 	void DrawQuadStrip( const RageSpriteVertex v[], int iNumVerts );
 	void DrawFan( const RageSpriteVertex v[], int iNumVerts );
 	void DrawStrip( const RageSpriteVertex v[], int iNumVerts );
 	void DrawTriangles( const RageSpriteVertex v[], int iNumVerts );
-	void DrawIndexedTriangles( const RageModelVertexArray *p );
+	void DrawCompiledGeometry( const RageCompiledGeometry *p, int iMeshIndex, const vector<msMesh> &vMeshes );
 	void DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
 	void DrawCircle( const RageSpriteVertex &v, float radius );
 
@@ -236,7 +264,7 @@ protected:
 	virtual void DrawFanInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;
 	virtual void DrawStripInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;
 	virtual void DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;
-	virtual void DrawIndexedTrianglesInternal( const RageModelVertexArray *p ) = 0;
+	virtual void DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex ) = 0;
 	virtual void DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
 	virtual void DrawCircleInternal( const RageSpriteVertex &v, float radius );
 

@@ -50,6 +50,7 @@ namespace GLExt {
 	extern PFNGLGENBUFFERSARBPROC glGenBuffersARB;
 	extern PFNGLBINDBUFFERARBPROC glBindBufferARB;
 	extern PFNGLBUFFERDATAARBPROC glBufferDataARB;
+	extern PFNGLBUFFERSUBDATAARBPROC glBufferSubDataARB;
 	extern PFNGLDELETEBUFFERSARBPROC glDeleteBuffersARB;
 	extern PFNGLDRAWRANGEELEMENTSPROC glDrawRangeElements;
 };
@@ -92,6 +93,7 @@ PFNGLACTIVETEXTUREARBPROC GLExt::glActiveTextureARB = NULL;
 PFNGLGENBUFFERSARBPROC GLExt::glGenBuffersARB = NULL;
 PFNGLBINDBUFFERARBPROC GLExt::glBindBufferARB = NULL;
 PFNGLBUFFERDATAARBPROC GLExt::glBufferDataARB = NULL;
+PFNGLBUFFERSUBDATAARBPROC GLExt::glBufferSubDataARB = NULL;
 PFNGLDELETEBUFFERSARBPROC GLExt::glDeleteBuffersARB = NULL;
 PFNGLDRAWRANGEELEMENTSPROC GLExt::glDrawRangeElements = NULL;
 static bool g_bEXT_texture_env_combine = true;
@@ -660,6 +662,7 @@ void SetupExtensions()
 	GLExt::glGenBuffersARB = (PFNGLGENBUFFERSARBPROC) wind->GetProcAddress("glGenBuffersARB");
 	GLExt::glBindBufferARB = (PFNGLBINDBUFFERARBPROC) wind->GetProcAddress("glBindBufferARB");
 	GLExt::glBufferDataARB = (PFNGLBUFFERDATAARBPROC) wind->GetProcAddress("glBufferDataARB");
+	GLExt::glBufferSubDataARB = (PFNGLBUFFERSUBDATAARBPROC) wind->GetProcAddress("glBufferSubDataARB");
 	GLExt::glDeleteBuffersARB = (PFNGLDELETEBUFFERSARBPROC) wind->GetProcAddress("glDeleteBuffersARB");
 	GLExt::glDrawRangeElements = (PFNGLDRAWRANGEELEMENTSPROC) wind->GetProcAddress("glDrawRangeElements");
 	g_bEXT_texture_env_combine = HasExtension("GL_EXT_texture_env_combine");
@@ -920,97 +923,75 @@ void RageDisplay_OGL::SendCurrentMatrices()
 	glLoadMatrixf( (const float*)&modelView );
 }
 
-class RageModelVertexArraySWOGL : public RageModelVertexArray
+class RageCompiledGeometrySWOGL : public RageCompiledGeometry
 {
 public:
-	RageModelVertexArraySWOGL()
-	{
-		m_sizeVerts = 0;
-		m_sizeTriangles = 0;
-		m_pPosition = NULL;
-		m_pTexture = NULL;
-		m_pNormal = NULL;
-		m_pBone = NULL;
-		m_pTriangles = NULL;
-	}
-
-	~RageModelVertexArraySWOGL()
-	{
-		m_sizeVerts = 0;
-		m_sizeTriangles = 0;
-		SAFE_DELETE( m_pPosition );
-		SAFE_DELETE( m_pTexture );
-		SAFE_DELETE( m_pNormal );
-		SAFE_DELETE( m_pBone );
-		SAFE_DELETE( m_pTriangles );
-	}
 	
-	size_t sizeVerts() const
+	void Allocate( const vector<msMesh> &vMeshes )
 	{
-		return m_sizeVerts;
+		m_vPosition.resize( GetTotalVertices() );
+		m_vTexture.resize( GetTotalVertices() );
+		m_vNormal.resize( GetTotalVertices() );
+		m_vTriangles.resize( GetTotalTriangles() );
 	}
-	void resizeVerts( size_t size )
+	void Change( const vector<msMesh> &vMeshes )
 	{
-		SAFE_DELETE( m_pPosition );
-		SAFE_DELETE( m_pTexture );
-		SAFE_DELETE( m_pNormal );
-		SAFE_DELETE( m_pBone );
+		for( unsigned i=0; i<vMeshes.size(); i++ )
+		{
+			const MeshInfo& meshInfo = m_vMeshInfo[i];
+			const msMesh& mesh = vMeshes[i];
+			const vector<RageModelVertex> &Vertices = mesh.Vertices;
+			const vector<msTriangle> &Triangles = mesh.Triangles;
 
-		m_sizeVerts = size;
-		m_pPosition = new RageVector3[size];
-		m_pTexture = new RageVector2[size];
-		m_pNormal = new RageVector3[size];
-		m_pBone = new Sint8[size];
+			{
+				for( unsigned j=0; j<Vertices.size(); j++ )
+				{
+					m_vPosition[meshInfo.iVertexStart+j] = Vertices[j].p;
+					m_vTexture[meshInfo.iVertexStart+j] = Vertices[j].t;
+					m_vNormal[meshInfo.iVertexStart+j] = Vertices[j].n;
+				}
+			}
+
+			{
+				for( unsigned j=0; j<Triangles.size(); j++ )
+					for( unsigned k=0; k<3; k++ )
+					{
+						int iVertexIndexInVBO = meshInfo.iVertexStart + Triangles[j].nVertexIndices[k];
+						m_vTriangles[meshInfo.iTriangleStart+j].nVertexIndices[k] = iVertexIndexInVBO;
+					}
+			}
+		}
 	}
-
-	size_t sizeTriangles() const
+	void Draw( int iMeshIndex ) const
 	{
-		return m_sizeTriangles;
-	}
-	void resizeTriangles( size_t size )
-	{
-		SAFE_DELETE( m_pTriangles );
+		const MeshInfo& meshInfo = m_vMeshInfo[iMeshIndex];
 
-		m_sizeTriangles = size;
-		m_pTriangles = new msTriangle[size];
-	}
-
-	RageVector3&	Position	( int index ) { return m_pPosition[index]; }
-	RageVector2&	TexCoord	( int index ) { return m_pTexture[index]; }
-	RageVector3&	Normal		( int index ) { return m_pNormal[index]; }
-	Sint8&			Bone		( int index ) { return m_pBone[index]; }
-	msTriangle&		Triangle	( int index ) { return m_pTriangles[index]; }
-
-	void OnChanged() const
-	{
-		// nothing to do.  We send all of the vertices every time we draw.
-	}
-	void Draw() const
-	{
 		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, 0, m_pPosition);
+		glVertexPointer(3, GL_FLOAT, 0, &m_vPosition[0]);
 
 		glDisableClientState(GL_COLOR_ARRAY);
 
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glTexCoordPointer(2, GL_FLOAT, 0, m_pTexture);
+		glTexCoordPointer(2, GL_FLOAT, 0, &m_vTexture[0]);
 
 		glEnableClientState(GL_NORMAL_ARRAY);
-		glNormalPointer(GL_FLOAT, 0, m_pNormal);
+		glNormalPointer(GL_FLOAT, 0, &m_vNormal[0]);
 
-		glDrawElements( GL_TRIANGLES, m_sizeTriangles*3, GL_UNSIGNED_SHORT, m_pTriangles );
+		glDrawElements( 
+			GL_TRIANGLES, 
+			meshInfo.iTriangleCount*3, 
+			GL_UNSIGNED_SHORT, 
+			&m_vTriangles[0]+meshInfo.iTriangleStart );
 	}
+
 protected:
-	size_t		m_sizeVerts;
-	size_t		m_sizeTriangles;
-	RageVector3 *m_pPosition;
-	RageVector2 *m_pTexture;
-	RageVector3 *m_pNormal;
-	Sint8		*m_pBone;
-	msTriangle	*m_pTriangles;
+	vector<RageVector3> m_vPosition;
+	vector<RageVector2> m_vTexture;
+	vector<RageVector3> m_vNormal;
+	vector<msTriangle>	m_vTriangles;
 };
 
-class RageModelVertexArrayHWOGL : public RageModelVertexArraySWOGL
+class RageCompiledGeometryHWOGL : public RageCompiledGeometrySWOGL
 {
 protected:
 	// vertex buffer object names
@@ -1019,7 +1000,7 @@ protected:
 	GLuint m_nNormals;
 	GLuint m_nTriangles;
 public:
-	RageModelVertexArrayHWOGL()
+	RageCompiledGeometryHWOGL()
 	{
 		m_nPositions = 0;
 		m_nTextureCoords = 0;
@@ -1029,26 +1010,19 @@ public:
 		FlushGLErrors();
 
 		GLExt::glGenBuffersARB( 1, &m_nPositions );
-		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
 		AssertNoGLError();
 
 		GLExt::glGenBuffersARB( 1, &m_nTextureCoords );
-		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
 		AssertNoGLError();
 
 		GLExt::glGenBuffersARB( 1, &m_nNormals );
-		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
 		AssertNoGLError();
 
 		GLExt::glGenBuffersARB( 1, &m_nTriangles );
-		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTriangles );
 		AssertNoGLError();
-
-		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
-		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, 0 );
 	}
 
-	~RageModelVertexArrayHWOGL()
+	~RageCompiledGeometryHWOGL()
 	{
 		FlushGLErrors();
 
@@ -1062,86 +1036,147 @@ public:
 		AssertNoGLError();
 	}
 	
-	void OnChanged() const
+	void Allocate( const vector<msMesh> &vMeshes )
 	{
-		// some implementations don't handle buffers of size 0.
-		if( m_sizeVerts == 0  ||  m_nTriangles == 0 )
-			return;
-
+		RageCompiledGeometrySWOGL::Allocate( vMeshes );
+		
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
-		GLExt::glBufferDataARB( GL_ARRAY_BUFFER_ARB, m_sizeVerts*sizeof(RageVector3), m_pPosition, GL_STATIC_DRAW_ARB );
-//		AssertNoGLError();
+		GLExt::glBufferDataARB( 
+			GL_ARRAY_BUFFER_ARB, 
+			GetTotalVertices()*sizeof(RageVector3), 
+			NULL, 
+			GL_STATIC_DRAW_ARB );
+		AssertNoGLError();
 
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
-		GLExt::glBufferDataARB( GL_ARRAY_BUFFER_ARB, m_sizeVerts*sizeof(RageVector2), m_pTexture, GL_STATIC_DRAW_ARB );
-//		AssertNoGLError();
+		GLExt::glBufferDataARB( 
+			GL_ARRAY_BUFFER_ARB, 
+			GetTotalVertices()*sizeof(RageVector2), 
+			NULL, 
+			GL_STATIC_DRAW_ARB );
+		AssertNoGLError();
 
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
-		GLExt::glBufferDataARB( GL_ARRAY_BUFFER_ARB, m_sizeVerts*sizeof(RageVector3), m_pNormal, GL_STATIC_DRAW_ARB );
-//		AssertNoGLError();
+		GLExt::glBufferDataARB( 
+			GL_ARRAY_BUFFER_ARB, 
+			GetTotalVertices()*sizeof(RageVector3), 
+			NULL, 
+			GL_STATIC_DRAW_ARB );
+		AssertNoGLError();
 
 		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
-		GLExt::glBufferDataARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_sizeTriangles*sizeof(msTriangle), m_pTriangles, GL_STATIC_DRAW_ARB );
-//		AssertNoGLError();
+		GLExt::glBufferDataARB( 
+			GL_ELEMENT_ARRAY_BUFFER_ARB, 
+			GetTotalTriangles()*sizeof(msTriangle), 
+			NULL, 
+			GL_STATIC_DRAW_ARB );
+		AssertNoGLError();
 
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
 		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, 0 );
 	}
-	void Draw() const
-	{
-		if( m_sizeVerts == 0  ||  m_nTriangles == 0 )
-			return;
 
+	void Change( const vector<msMesh> &vMeshes )
+	{
+		RageCompiledGeometrySWOGL::Change( vMeshes );
+
+		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
+		GLExt::glBufferDataARB( 
+			GL_ARRAY_BUFFER_ARB, 
+			GetTotalVertices()*sizeof(RageVector3), 
+			&m_vPosition[0], 
+			GL_STATIC_DRAW_ARB );
+		AssertNoGLError();
+
+		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
+		GLExt::glBufferDataARB( 
+			GL_ARRAY_BUFFER_ARB, 
+			GetTotalVertices()*sizeof(RageVector2), 
+			&m_vTexture[0], 
+			GL_STATIC_DRAW_ARB );
+		AssertNoGLError();
+
+		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
+		GLExt::glBufferDataARB( 
+			GL_ARRAY_BUFFER_ARB, 
+			GetTotalVertices()*sizeof(RageVector3), 
+			&m_vNormal[0], 
+			GL_STATIC_DRAW_ARB );
+		AssertNoGLError();
+
+		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
+		GLExt::glBufferDataARB( 
+			GL_ELEMENT_ARRAY_BUFFER_ARB, 
+			GetTotalTriangles()*sizeof(msTriangle), 
+			&m_vTriangles[0], 
+			GL_STATIC_DRAW_ARB );
+		AssertNoGLError();
+
+		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
+		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, 0 );
+	}
+	
+	void Draw( int iMeshIndex ) const
+	{
 		FlushGLErrors();
+
+		const MeshInfo& meshInfo = m_vMeshInfo[iMeshIndex];
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
-//		AssertNoGLError();
+		AssertNoGLError();
 		glVertexPointer(3, GL_FLOAT, 0, NULL );
-//		AssertNoGLError();
+		AssertNoGLError();
 
 		glDisableClientState(GL_COLOR_ARRAY);
 
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
-//		AssertNoGLError();
+		AssertNoGLError();
 		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
-//		AssertNoGLError();
+		AssertNoGLError();
 
 		glEnableClientState(GL_NORMAL_ARRAY);
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
-//		AssertNoGLError();
+		AssertNoGLError();
 		glNormalPointer(GL_FLOAT, 0, NULL);
-//		AssertNoGLError();
+		AssertNoGLError();
 
 		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
-//		AssertNoGLError();
+		AssertNoGLError();
 
-#define BUFFER_OFFSET(o) o
+#define BUFFER_OFFSET(o) ((char*)(o))
 
-		GLExt::glDrawRangeElements( 
+		glDrawElements( 
 			GL_TRIANGLES, 
-			0,					// minimum array index contained in indices
-			m_sizeVerts-1,		// maximum array index contained in indices
-			m_sizeTriangles*3,	// number of elements to be rendered
-			GL_UNSIGNED_SHORT,	//
-			0 );
-//		AssertNoGLError();
+			meshInfo.iTriangleCount*3, 
+			GL_UNSIGNED_SHORT, 
+			BUFFER_OFFSET(meshInfo.iTriangleStart*sizeof(msTriangle)) );
+
+//		GLExt::glDrawRangeElements( 
+//			GL_TRIANGLES, 
+//			meshInfo.iVertexStart,	// minimum array index contained in indices
+//			meshInfo.iVertexStart+meshInfo.iVertexCount-1,
+//						// maximum array index contained in indices
+//			meshInfo.iTriangleCount*3,	// number of elements to be rendered
+//			GL_UNSIGNED_SHORT,
+//			BUFFER_OFFSET(0) );
+		AssertNoGLError();
 
 		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, 0 );
 		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, 0 );
 	}
 };
 
-RageModelVertexArray* RageDisplay_OGL::CreateRageModelVertexArray()
+RageCompiledGeometry* RageDisplay_OGL::CreateCompiledGeometry()
 {
 	if( GLExt::glGenBuffersARB )
-		return new RageModelVertexArrayHWOGL;
+		return new RageCompiledGeometryHWOGL;
 	else
-		return new RageModelVertexArraySWOGL;
+		return new RageCompiledGeometrySWOGL;
 }
 
-void RageDisplay_OGL::DeleteRageModelVertexArray( RageModelVertexArray* p )
+void RageDisplay_OGL::DeleteCompiledGeometry( RageCompiledGeometry* p )
 {
 	delete p;
 }
@@ -1188,11 +1223,11 @@ void RageDisplay_OGL::DrawTrianglesInternal( const RageSpriteVertex v[], int iNu
 	glDrawArrays( GL_TRIANGLES, 0, iNumVerts );
 }
 
-void RageDisplay_OGL::DrawIndexedTrianglesInternal( const RageModelVertexArray *p )
+void RageDisplay_OGL::DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex )
 {
 	SendCurrentMatrices();
 
-	p->Draw();
+	p->Draw( iMeshIndex );
 }
 
 void RageDisplay_OGL::DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth )

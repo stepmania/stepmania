@@ -734,94 +734,63 @@ RageDisplay::VideoModeParams RageDisplay_D3D::GetVideoModeParams() const { retur
 	g_pd3dDevice->SetTransform( D3DTS_WORLD, (D3DMATRIX*)&m );
 
 
-class RageModelVertexArraySWD3D : public RageModelVertexArray
+class RageCompiledGeometrySWD3D : public RageCompiledGeometry
 {
 public:
-	RageModelVertexArraySWD3D()
+	void Allocate( const vector<msMesh> &vMeshes )
 	{
-		m_sizeVerts = 0;
-		m_sizeTriangles = 0;
-		m_pVertex = NULL;
-		m_pTriangles = NULL;
+		m_vVertex.resize( GetTotalVertices() );
+		m_vTriangles.resize( GetTotalTriangles() );
 	}
+	void Change( const vector<msMesh> &vMeshes )
+	{
+		for( unsigned i=0; i<vMeshes.size(); i++ )
+		{
+			const MeshInfo& meshInfo = m_vMeshInfo[i];
+			const msMesh& mesh = vMeshes[i];
+			const vector<RageModelVertex> &Vertices = mesh.Vertices;
+			const vector<msTriangle> &Triangles = mesh.Triangles;
 
-	~RageModelVertexArraySWD3D()
-	{
-		m_sizeVerts = 0;
-		m_sizeTriangles = 0;
-		SAFE_DELETE( m_pVertex );
-		SAFE_DELETE( m_pTriangles );
-	}
-	
-	size_t sizeVerts() const
-	{
-		return m_sizeVerts;
-	}
-	void resizeVerts( size_t size )
-	{
-		SAFE_DELETE( m_pVertex );
+			{
+				for( unsigned j=0; j<Vertices.size(); j++ )
+					m_vVertex[meshInfo.iVertexStart+j] = Vertices[j];
+			}
 
-		m_sizeVerts = size;
-		m_pVertex = new Vertex[size];
+			{
+				for( unsigned j=0; j<Triangles.size(); j++ )
+					for( unsigned k=0; k<3; k++ )
+						m_vTriangles[meshInfo.iTriangleStart+j].nVertexIndices[k] = meshInfo.iVertexStart + Triangles[j].nVertexIndices[k];
+			}
+		}
 	}
-
-	size_t sizeTriangles() const
+	void Draw( int iMeshIndex ) const
 	{
-		return m_sizeTriangles;
-	}
-	void resizeTriangles( size_t size )
-	{
-		SAFE_DELETE( m_pTriangles );
+		const MeshInfo& meshInfo = m_vMeshInfo[iMeshIndex];
 
-		m_sizeTriangles = size;
-		m_pTriangles = new msTriangle[size];
-	}
-
-	RageVector3&	Position	( int index ) { return m_pVertex[index].p; }
-	RageVector2&	TexCoord	( int index ) { return m_pVertex[index].t; }
-	RageVector3&	Normal		( int index ) { return m_pVertex[index].n; }
-	Sint8&			Bone		( int index ) { return m_pVertex[index].bone; }
-	msTriangle&		Triangle	( int index ) { return m_pTriangles[index]; }
-
-	void OnChanged() const
-	{
-		// nothing to do.  We send all of the vertices every time we draw.
-	}
-	void Draw() const
-	{
 		g_pd3dDevice->SetVertexShader( D3DFVF_RageModelVertex );
 		g_pd3dDevice->DrawIndexedPrimitiveUP(
-			D3DPT_TRIANGLELIST, // PrimitiveType
-			0,					// MinIndex
-			m_sizeVerts,		// NumVertices
-			m_sizeTriangles,	// PrimitiveCount,
-			m_pTriangles,		// pIndexData,
-			D3DFMT_INDEX16,		// IndexDataFormat,
-			m_pVertex,			// pVertexStreamZeroData,
-			sizeof(Vertex)		// VertexStreamZeroStride
+			D3DPT_TRIANGLELIST,			// PrimitiveType
+			meshInfo.iVertexStart,		// MinIndex
+			meshInfo.iVertexCount,		// NumVertices
+			meshInfo.iTriangleCount,	// PrimitiveCount,
+			&m_vTriangles[0]+meshInfo.iTriangleStart,// pIndexData,
+			D3DFMT_INDEX16,				// IndexDataFormat,
+			&m_vVertex[0],				// pVertexStreamZeroData,
+			sizeof(m_vVertex[0])		// VertexStreamZeroStride
 		);
 	}
+
 protected:
-	size_t		m_sizeVerts;
-	size_t		m_sizeTriangles;
-	
-	struct Vertex
-	{
-		RageVector3		p;	// position
-		RageVector3		n;	// normal
-		RageVector2		t;	// texture coordinates
-		Sint8			bone;
-	} *m_pVertex;
-	
-	msTriangle	*m_pTriangles;
+	vector<RageModelVertex> m_vVertex;
+	vector<msTriangle>		m_vTriangles;
 };
 
-RageModelVertexArray* RageDisplay_D3D::CreateRageModelVertexArray()
+RageCompiledGeometry* RageDisplay_D3D::CreateCompiledGeometry()
 {
-	return new RageModelVertexArraySWD3D;
+	return new RageCompiledGeometrySWD3D;
 }
 
-void RageDisplay_D3D::DeleteRageModelVertexArray( RageModelVertexArray* p )
+void RageDisplay_D3D::DeleteCompiledGeometry( RageCompiledGeometry* p )
 {
 	delete p;
 }
@@ -934,11 +903,11 @@ void RageDisplay_D3D::DrawTrianglesInternal( const RageSpriteVertex v[], int iNu
 	);
 }
 
-void RageDisplay_D3D::DrawIndexedTrianglesInternal( const RageModelVertexArray *p )
+void RageDisplay_D3D::DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex )
 {
 	SEND_CURRENT_MATRICES;
 
-	p->Draw();
+	p->Draw( iMeshIndex );
 }
 
 /* Use the default poly-based implementation.  D3D lines apparently don't support

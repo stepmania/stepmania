@@ -128,12 +128,10 @@ void AnimatedTexture::Unload()
 msMesh::msMesh()
 {
 	ZERO( szName );
-	Vertices = NULL;
 }
 
 msMesh::~msMesh()
 {
-	Vertices = NULL;
 }
 
 

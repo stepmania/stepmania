@@ -733,11 +733,11 @@ void RageDisplay::DrawTriangles( const RageSpriteVertex v[], int iNumVerts )
 	StatsAddVerts(iNumVerts);
 }
 
-void RageDisplay::DrawIndexedTriangles( const RageModelVertexArray *p )
+void RageDisplay::DrawCompiledGeometry( const RageCompiledGeometry *p, int iMeshIndex, const vector<msMesh> &vMeshes )
 {
-	this->DrawIndexedTrianglesInternal(p);
+	this->DrawCompiledGeometryInternal( p, iMeshIndex );
 
-	StatsAddVerts(p->sizeTriangles()*3);
+	StatsAddVerts( vMeshes[iMeshIndex].Triangles.size() );	
 }
 
 void RageDisplay::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth )
