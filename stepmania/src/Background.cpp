@@ -22,6 +22,7 @@
 #include "ThemeManager.h"
 #include "PrefsManager.h"
 #include "NoteTypes.h"
+#include "Steps.h"
 #include <math.h>	// for fmodf
 #include "DancingCharacters.h"
 #include "arch/arch.h"
@@ -65,21 +66,23 @@ Background::Background()
 	m_quadBorder[3].SetDiffuse( RageColor(0,0,0,1) );
 
 	bool bOneOrMoreChars = false;
+	bool bShowingBeginnerHelper = false;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		if( GAMESTATE->IsPlayerEnabled(p) )
+		{
 			bOneOrMoreChars = true;
-	if( bOneOrMoreChars )
+			//Disable dancing characters if BH will be showing.
+			if( (PREFSMAN->m_bShowBeginnerHelper) || (GAMESTATE->m_pCurNotes[p]->GetDifficulty() == DIFFICULTY_BEGINNER ) )
+				bShowingBeginnerHelper = true;
+		}
+
+	if( bOneOrMoreChars && !bShowingBeginnerHelper )
 	{
 		m_pDancingCharacters = new DancingCharacters;
 		m_pDancingCharacters->LoadNextSong();
 	}
 	else
 		m_pDancingCharacters = NULL;
-
-	if( PREFSMAN->m_bShowBeginnerHelper )	//Disable dancing characters if BH will be showing.
-		for( int pc=0; pc<NUM_PLAYERS; pc++ )
-			if( GAMESTATE->m_PreferredDifficulty[pc] == DIFFICULTY_BEGINNER )
-				m_pDancingCharacters = NULL;
 }
 
 Background::~Background()
@@ -379,7 +382,8 @@ void Background::LoadFromSong( Song* pSong )
 
 	TEXTUREMAN->EnableOddDimensionWarning();
 
-	m_pDancingCharacters->LoadNextSong();
+	if( m_pDancingCharacters )
+		m_pDancingCharacters->LoadNextSong();
 }
 
 
@@ -479,9 +483,7 @@ void Background::DrawPrimitives()
 	}
 
 	if( m_pDancingCharacters )
-	{
 		m_pDancingCharacters->Draw();
-	}
 
 	m_quadBGBrightness.Draw();
 	for( int i=0; i<4; i++ )
