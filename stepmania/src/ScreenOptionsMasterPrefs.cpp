@@ -128,16 +128,16 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const CStringArray &choices )
 }
 
 /* Appearance options */
-MOVE( Instructions,		PREFSMAN->m_bInstructions );
-MOVE( Caution,			PREFSMAN->m_bShowDontDie );
-MOVE( OniScoreDisplay,	PREFSMAN->m_bDancePointsForOni );
-MOVE( SongGroup,		PREFSMAN->m_bShowSelectGroup );
-MOVE( WheelSections,	PREFSMAN->m_MusicWheelUsesSections );
-MOVE( TenFootInRed,		PREFSMAN->m_bTenFooterInRed );
-MOVE( CourseSort,		PREFSMAN->m_iCourseSortOrder );
-MOVE( RandomAtEnd,		PREFSMAN->m_bMoveRandomToEnd );
-MOVE( Translations,		PREFSMAN->m_bShowNative );
-MOVE( Lyrics,			PREFSMAN->m_bShowLyrics );
+MOVE( Instructions,			PREFSMAN->m_bInstructions );
+MOVE( Caution,				PREFSMAN->m_bShowDontDie );
+MOVE( OniScoreDisplay,		PREFSMAN->m_bDancePointsForOni );
+MOVE( SongGroup,			PREFSMAN->m_bShowSelectGroup );
+MOVE( WheelSections,		PREFSMAN->m_MusicWheelUsesSections );
+MOVE( TenFootInRed,			PREFSMAN->m_bTenFooterInRed );
+MOVE( CourseSort,			PREFSMAN->m_iCourseSortOrder );
+MOVE( RandomAtEnd,			PREFSMAN->m_bMoveRandomToEnd );
+MOVE( Translations,			PREFSMAN->m_bShowNative );
+MOVE( Lyrics,				PREFSMAN->m_bShowLyrics );
 
 /* Autogen options */
 MOVE( AutogenMissingTypes,	PREFSMAN->m_bAutogenMissingTypes );
@@ -165,9 +165,41 @@ static void NumBackgrounds( int &sel, bool ToSel, const CStringArray &choices )
 		PREFSMAN->m_iNumBackgrounds = (sel+1) * 5;
 }
 
+/* Input options */
+MOVE( AutoMapJoysticks,		PREFSMAN->m_bAutoMapJoysticks );
+MOVE( MenuButtons,			PREFSMAN->m_bOnlyDedicatedMenuButtons );
+MOVE( AutoPlay,				PREFSMAN->m_bAutoPlay );
+MOVE( BackDelayed,			PREFSMAN->m_bDelayedEscape );
+MOVE( OptionsNavigation,	PREFSMAN->m_bArcadeOptionsNavigation );
+
+static void WheelSpeed( int &sel, bool ToSel, const CStringArray &choices )
+{
+	if( ToSel )
+	{
+		sel =
+			(PREFSMAN->m_iMusicWheelSwitchSpeed <= 5)? 0:
+			(PREFSMAN->m_iMusicWheelSwitchSpeed <= 10)? 1:
+			(PREFSMAN->m_iMusicWheelSwitchSpeed <= 15)? 2:3;
+	}
+	else
+	{
+		int map[] = { 5, 10, 15, 25 };
+		ASSERT( sel >= 0 && sel < 4 );
+		PREFSMAN->m_iMusicWheelSwitchSpeed = map[sel];
+	}
+}
+
+/* Gameplay options */
+MOVE( SoloSingles,			PREFSMAN->m_bSoloSingle );
+MOVE( HiddenSongs,			PREFSMAN->m_bHiddenSongs );
+MOVE( EasterEggs,			PREFSMAN->m_bEasterEggs );
+MOVE( MarvelousTiming,		PREFSMAN->m_iMarvelousTiming );
+MOVE( PickExtraStage,		PREFSMAN->m_bPickExtraStage );
+MOVE( UnlockSystem,			PREFSMAN->m_bUseUnlockSystem );
+
 /* Sound options */
-MOVE( PreloadSounds,	PREFSMAN->m_bSoundPreloadAll );
-MOVE( ResamplingQuality,PREFSMAN->m_iSoundResampleQuality );
+MOVE( PreloadSounds,		PREFSMAN->m_bSoundPreloadAll );
+MOVE( ResamplingQuality,	PREFSMAN->m_iSoundResampleQuality );
 
 
 static const ConfOption g_ConfOptions[] =
@@ -199,6 +231,22 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Dancing\nCharacters",	DancingCharacters,	"DEFAULT TO OFF","DEFAULT TO RANDOM","SELECT" ),
 	ConfOption( "Beginner\nHelper",		BeginnerHelper,		"OFF","ON" ),
 	ConfOption( "Random\nBackgrounds",	NumBackgrounds,		"5","10","15","20" ),
+
+	/* Input options */
+	ConfOption( "Auto Map\nJoysticks",	AutoMapJoysticks,	"OFF","ON (recommended)" ),
+	ConfOption( "MenuButtons",			MenuButtons,		"USE GAMEPLAY BUTTONS","ONLY DEDICATED BUTTONS" ),
+	ConfOption( "AutoPlay",				AutoPlay,			"OFF","ON" ),
+	ConfOption( "Back\nDelayed",		BackDelayed,		"INSTANT","HOLD" ),
+	ConfOption( "Options\nNavigation",	OptionsNavigation,	"SM STYLE","ARCADE STYLE" ),
+	ConfOption( "Wheel\nSpeed",			WheelSpeed,			"SLOW","NORMAL","FAST","REALLY FAST" ),
+
+	/* Gameplay options */
+	ConfOption( "Solo\nSingles",		SoloSingles,		"OFF","ON" ),
+	ConfOption( "Hidden\nSongs",		HiddenSongs,		"OFF","ON" ),
+	ConfOption( "Easter\nEggs",			EasterEggs,			"OFF","ON" ),
+	ConfOption( "Marvelous\nTiming",	MarvelousTiming,	"NEVER","COURSES ONLY","ALWAYS" ),
+	ConfOption( "Pick Extra\nStage",	PickExtraStage,		"OFF","ON" ),
+	ConfOption( "Unlock\nSystem",		UnlockSystem,		"OFF","ON" ),
 
 	/* Sound options */
 	ConfOption( "Preload\nSounds",		PreloadSounds, "NO","YES" ),
