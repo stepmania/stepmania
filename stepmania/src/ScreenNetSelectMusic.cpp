@@ -17,6 +17,7 @@
 #include "NetworkSyncManager.h"
 #include "StepsUtil.h"
 #include "RageUtil.h"
+#include "RageLog.h"
 
 #define CHATINPUT_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","ChatInputBoxWidth")
 #define CHATINPUT_HEIGHT			THEME->GetMetricF("ScreenNetSelectMusic","ChatInputBoxHeight")
@@ -43,6 +44,14 @@
 #define EXINFOBG_HEIGHT				THEME->GetMetricF("ScreenNetSelectMusic","ExInfoBGHeight")
 #define EXINFOBG_COLOR				THEME->GetMetricC("ScreenNetSelectMusic","ExInfoBGColor")
 
+#define USERSBG_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","UsersBGWidth")
+#define USERSBG_HEIGHT				THEME->GetMetricF("ScreenNetSelectMusic","UsersBGHeight")
+#define USERSBG_COLOR				THEME->GetMetricC("ScreenNetSelectMusic","UsersBGColor")
+#define USERSALT_Y					THEME->GetMetricF("ScreenNetSelectMusic","UsersAY")
+#define USERSDELT_X					THEME->GetMetricF("ScreenNetSelectMusic","UsersDX")
+#define USERS_Y						THEME->GetMetricF("ScreenNetSelectMusic","UsersY")
+#define USERS_X						THEME->GetMetricF("ScreenNetSelectMusic","UsersX")
+
 #define	NUM_GROUPS_SHOW				THEME->GetMetricI("ScreenNetSelectMusic","NumGroupsShow");
 #define	NUM_SONGS_SHOW				THEME->GetMetricI("ScreenNetSelectMusic","NumSongsShow");
 
@@ -58,6 +67,8 @@ const ScreenMessage SM_NoSongs		= ScreenMessage(SM_User+3);
 const ScreenMessage	SM_AddToChat	= ScreenMessage(SM_User+4);
 const ScreenMessage SM_ChangeSong	= ScreenMessage(SM_User+5);
 const ScreenMessage SM_BackFromOpts	= ScreenMessage(SM_User+6);
+const ScreenMessage SM_UsersUpdate	= ScreenMessage(SM_User+7);
+const ScreenMessage SM_SMOnlinePack	= ScreenMessage(SM_User+8);	//Unused, but should be known
 
 const CString AllGroups			= "[ALL MUSIC]";
 
@@ -182,6 +193,18 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenWithM
 	m_rectDiff.SetHeight( DIFFBG_HEIGHT );
 	SET_XY_AND_ON_COMMAND( m_rectDiff );
 	this->AddChild( &m_rectDiff );
+
+	//Users' Background
+	
+	m_rectUsersBG.SetDiffuse( USERSBG_COLOR );
+	m_rectUsersBG.SetName( "UsersBG" );
+	m_rectUsersBG.SetWidth( USERSBG_WIDTH );
+	m_rectUsersBG.SetHeight( USERSBG_HEIGHT );
+	SET_XY_AND_ON_COMMAND( m_rectUsersBG );
+	this->AddChild( &m_rectUsersBG );
+
+	//Display users list
+	UpdateUsers();
 
 
 	FOREACH_EnabledPlayer (p)
@@ -442,6 +465,10 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		GAMESTATE->m_bEditing = false;
 		NSMAN->ReportPlayerOptions();
 		break;
+	case SM_UsersUpdate:
+		UpdateUsers();
+		break;
+
 	}
 
 }
@@ -605,6 +632,12 @@ void ScreenNetSelectMusic::TweenOffScreen()
 
 	OFF_COMMAND( m_sprSelOptions );
 
+	for ( int i=0; i<m_textUsers.size(); i++ )
+		OFF_COMMAND( m_textUsers[i] );
+
+	OFF_COMMAND( m_rectUsersBG );
+
+
 	FOREACH_EnabledPlayer (pn)
 	{
 		OFF_COMMAND( m_DifficultyMeters[pn] );
@@ -749,6 +782,44 @@ void ScreenNetSelectMusic::UpdateSongsList()
 		SONGMAN->GetSongs( m_vSongs );	//this gets it alphabetically
 	else
 		SONGMAN->GetSongs( m_vSongs, m_vGroups[j] );
+}
+
+void ScreenNetSelectMusic::UpdateUsers()
+{
+	float tX = USERS_X - USERSDELT_X;
+	float tY = USERS_Y;
+
+	for ( int i=0; i< m_textUsers.size(); i++)
+		this->RemoveChild( &m_textUsers[i] );
+
+	m_textUsers.clear();
+
+	m_textUsers.resize( NSMAN->m_ActivePlayer.size() );
+
+	for ( int i=0; i < NSMAN->m_ActivePlayer.size(); i++)
+	{
+		m_textUsers[i].LoadFromFont( THEME->GetPathF(m_sName,"chat") );
+		m_textUsers[i].SetHorizAlign( align_center );
+		m_textUsers[i].SetVertAlign( align_top );
+		m_textUsers[i].SetShadowLength( 0 );
+		m_textUsers[i].SetName( "Users" );
+		
+		tX += USERSDELT_X;
+
+		if ( (i % 2) == 1)
+			tY = USERSALT_Y + USERS_Y;
+		else
+			tY = USERS_Y;
+		m_textUsers[i].SetXY( tX, tY );
+
+		ON_COMMAND( m_textUsers[i] );
+	
+		m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_ActivePlayer[i]] );
+		m_textUsers[i].SetDiffuseColor ( THEME->GetMetricC("ScreenNetSelectMusic",
+			ssprintf("Users%dColor", NSMAN->m_PlayerStatus[NSMAN->m_ActivePlayer[i]] ) ) );
+
+		this->AddChild( &m_textUsers[i] );
+	}
 }
 
 #endif
