@@ -1,9 +1,49 @@
 #ifndef LUA_MANAGER_H
 #define LUA_MANAGER_H
 
+#include "LuaFunctions.h"
+
 struct lua_State;
 typedef void (*RegisterWithLuaFn)(lua_State*);
 
+namespace LuaHelpers
+{
+	template<class T>
+	void Push( T *pObject, lua_State *L );
+
+	void Push( const bool &Object, lua_State *L );
+	void Push( const float &Object, lua_State *L );
+	void Push( const int &Object, lua_State *L );
+	void Push( void *Object, lua_State *L );
+	void Push( const CString &Object, lua_State *L );
+
+
+	bool FromStack( bool &Object, int iOffset, lua_State *L );
+	bool FromStack( float &Object, int iOffset, lua_State *L );
+	bool FromStack( int &Object, int iOffset, lua_State *L );
+	bool FromStack( void *&Object, int iOffset, lua_State *L );
+	bool FromStack( CString &Object, int iOffset, lua_State *L );
+
+	template<class T>
+	void ReadArrayFromTable( vector<T> aOut, lua_State *L )
+	{
+		if( L == NULL )
+			L = LUA->L;
+
+		luaL_checktype( L, -1, LUA_TTABLE );
+
+		unsigned iCount = luaL_getn( L, -1 );
+
+		for( unsigned i = 0; i < iCount; ++i )
+		{
+			lua_rawgeti( L, -1, i+1 );
+			T value = T();
+			LuaHelpers::FromStack( value, -1, L );
+			aOut.push_back( value );
+			lua_pop( L, 1 );
+		}
+	}
+};
 
 class LuaManager
 {
@@ -48,19 +88,25 @@ public:
 	void SetGlobal( const CString &sName, bool val ) { PushStack(val); SetGlobal( sName ); }
 	void UnsetGlobal( const CString &sName ) { PushStackNil(); SetGlobal( sName ); }
 
-	// XXX: yuck
 	void PushStackNil();
 	void PushNopFunction();
-	static void PushStack( bool val, lua_State *L = NULL );
-	static void PushStack( float val, lua_State *L = NULL );
-	static void PushStack( int val, lua_State *L = NULL );
-	static void PushStack( void *val, lua_State *L = NULL );
-	static void PushStack( const CString &val, lua_State *L = NULL );
-	static bool PopStack( bool &val, lua_State *L = NULL );
-	static bool PopStack( float &val, lua_State *L = NULL );
-	static bool PopStack( int &val, lua_State *L = NULL );
-	static bool PopStack( void *&val, lua_State *L = NULL );
-	static bool PopStack( CString &val, lua_State *L = NULL );
+	template<class T>
+	static void PushStack( const T &val, lua_State *L = NULL )
+	{
+		if( L == NULL )
+			L = LUA->L;
+		LuaHelpers::Push( val, L );
+	}
+
+	template<class T>
+	static bool PopStack( T &val, lua_State *L = NULL )
+	{
+		if( L == NULL )
+			L = LUA->L;
+		bool bRet = LuaHelpers::FromStack( val, -1, L );
+		lua_pop( L, 1 );
+		return bRet;
+	}
 	bool GetStack( int pos, int &out );
 	void SetGlobal( const CString &sName );
 

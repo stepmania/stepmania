@@ -140,7 +140,9 @@ private:
 	template<> const char Luna<T>::s_className[] = #T; \
 	template<> Luna<T>::RegTypeVector* Luna<T>::s_pvMethods = NULL; \
 	static Luna##T<T> registera; \
-void T::PushSelf( lua_State *L ) { Luna##T<T>::Push( L, this ); }
+void T::PushSelf( lua_State *L ) { Luna##T<T>::Push( L, this ); } \
+/* Call PushSelf, so we always call the derived Luna<T>::Push. */ \
+namespace LuaHelpers { template<> void Push( T *pObject, lua_State *L ) { pObject->PushSelf( L ); } }
 
 #define ADD_METHOD( method_name ) \
 	{ Luna<T>::CreateMethodsVector(); RegType<T> r = {#method_name,method_name}; Luna<T>::s_pvMethods->push_back(r); }

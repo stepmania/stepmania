@@ -1,7 +1,6 @@
 #ifndef LUA_FUNCTIONS_H
 #define LUA_FUNCTIONS_H
 
-#include "LuaManager.h"
 #include "RageUtil.h" /* for ssprintf */
 
 extern "C"
@@ -36,7 +35,7 @@ extern "C"
 	const int val = (int) lua_tonumber( L, n ); \
 	LUA_ASSERT( val >= minimum && val <= maximum, ssprintf("Argument %i to " func " must be an integer between %i and %i (got %i)", n,  minimum, maximum, val) ); \
 }
-#define LUA_RETURN( expr, L ) { LUA->PushStack( expr, L ); return 1; }
+#define LUA_RETURN( expr, L ) { LuaHelpers::Push( expr, L ); return 1; }
 
 /* Helpers to create common functions: */
 /* Functions that take no arguments: */

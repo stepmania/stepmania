@@ -10,7 +10,14 @@
 
 #include <csetjmp>
 #include <cassert>
-
+/*
+#include "Actor.h"
+void foo()
+{
+	Actor *p = NULL;
+	LuaHelpers::Push( p, NULL );
+}
+*/
 LuaManager *LUA = NULL;
 static LuaFunctionList *g_LuaFunctions = NULL;
 
@@ -59,101 +66,29 @@ void LuaManager::PushStackNil()
 	lua_pushnil( L );
 }
 
-void LuaManager::PushStack( int out, lua_State *L )
+
+void LuaHelpers::Push( const bool &Object, lua_State *L ) { lua_pushboolean( L, Object ); }
+void LuaHelpers::Push( const float &Object, lua_State *L ) { lua_pushnumber( L, Object ); }
+void LuaHelpers::Push( const int &Object, lua_State *L ) { lua_pushnumber( L, Object ); }
+void LuaHelpers::Push( void *Object, lua_State *L )
 {
-	if( L == NULL )
-		L = LUA->L;
-
-	/* XXX: stack bounds */
-	lua_pushnumber( L, out );
-}
-
-void LuaManager::PushStack( bool out, lua_State *L )
-{
-	if( L == NULL )
-		L = LUA->L;
-
-	/* XXX: stack bounds */
-	lua_pushboolean( L, out );
-}
-
-void LuaManager::PushStack( float val, lua_State *L )
-{
-	if( L == NULL )
-		L = LUA->L;
-
-	/* XXX: stack bounds */
-	lua_pushnumber( L, val );
-}
-
-void LuaManager::PushStack( void *out, lua_State *L )
-{
-	if( L == NULL )
-		L = LUA->L;
-
-	if( out )
-		lua_pushlightuserdata( L, out );
+	if( Object != NULL )
+		lua_pushlightuserdata( L, Object );
 	else
 		lua_pushnil( L );
 }
+void LuaHelpers::Push( const CString &Object, lua_State *L ) { lua_pushstring( L, Object ); }
 
-void LuaManager::PushStack( const CString &out, lua_State *L )
+bool LuaHelpers::FromStack( bool &Object, int iOffset, lua_State *L ) { Object = !!lua_toboolean( L, iOffset ); return true; }
+bool LuaHelpers::FromStack( float &Object, int iOffset, lua_State *L ) { Object = (float)lua_tonumber( L, iOffset ); return true; }
+bool LuaHelpers::FromStack( int &Object, int iOffset, lua_State *L ) { Object = (int) lua_tonumber( L, iOffset ); return true; }
+bool LuaHelpers::FromStack( void *&Object, int iOffset, lua_State *L ) { Object = lua_touserdata( L, iOffset ); return true; }
+bool LuaHelpers::FromStack( CString &Object, int iOffset, lua_State *L )
 {
-	if( L == NULL )
-		L = LUA->L;
-	lua_pushstring( L, out );
-}
-
-bool LuaManager::PopStack( int &out, lua_State *L )
-{
-	if( L == NULL )
-		L = LUA->L;
-
-	out = (int) lua_tonumber( L, -1 );
-	lua_pop( L, 1 );
-	return true;
-}
-
-bool LuaManager::PopStack( bool &out, lua_State *L )
-{
-	if( L == NULL )
-		L = LUA->L;
-
-	out = !!lua_toboolean( L, -1 );
-	lua_pop( L, 1 );
-	return true;
-}
-
-bool LuaManager::PopStack( float &val, lua_State *L )
-{
-	if( L == NULL )
-		L = LUA->L;
-
-	val = (float)lua_tonumber( L, -1 );
-	lua_pop( L, 1 );
-	return true;
-}
-
-bool LuaManager::PopStack( void *&out, lua_State *L )
-{
-	if( L == NULL )
-		L = LUA->L;
-
-	out = lua_touserdata( L, -1 );
-	lua_pop( L, 1 );
-	return true;
-}
-
-bool LuaManager::PopStack( CString &out, lua_State *L )
-{
-	if( L == NULL )
-		L = LUA->L;
-
-	const char *pStr = lua_tostring( L, -1 );
+	const char *pStr = lua_tostring( L, iOffset );
 	if( pStr != NULL )
-		out = pStr;
+		Object = pStr;
 
-	lua_pop( L, 1 );
 	return pStr != NULL;
 }
 
