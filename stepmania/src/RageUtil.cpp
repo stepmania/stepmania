@@ -95,7 +95,7 @@ bool IsHexVal( const CString &s )
 	return true;
 }
 
-float TimeToSeconds( CString sHMS )
+float TimeToSeconds( const CString &sHMS )
 {
 	CStringArray arrayBits;
 	split( sHMS, ":", arrayBits, false );
@@ -206,6 +206,23 @@ CString join( const CString &Deliminator, const CStringArray& Source)
 	return csTmp;
 }
 
+CString join( const CString &Delimitor, CStringArray::const_iterator begin, CStringArray::const_iterator end )
+{
+	if( begin == end )
+		return "";
+
+	CString ret;
+	while( begin != end )
+	{
+		ret += *begin;
+		++begin;
+		if( begin != end )
+			ret += Delimitor;
+	}
+
+	return ret;
+}
+
 
 template <class S>
 void do_split( const S &Source, const S &Delimitor, vector<S> &AddIt, const bool bIgnoreEmpty )
@@ -285,7 +302,7 @@ CString SetExtension( const CString &path, const CString &ext )
 	return Dir + FName + (ext.size()? ".":"") + ext;
 }
 
-CString GetExtension( CString sPath )
+CString GetExtension( const CString &sPath )
 {
 	unsigned pos = sPath.rfind( '.' );
 	if( pos == sPath.npos )
@@ -312,7 +329,7 @@ CString GetCwd()
 
 /* Reference: http://www.theorem.com/java/CRC32.java, rewritten by Glenn Maynard.
  * Public domain. */
-unsigned int GetHashForString ( CString s )
+unsigned int GetHashForString ( const CString &s )
 {
 	static unsigned tab[256];
 	static bool initted = false;
@@ -338,7 +355,7 @@ unsigned int GetHashForString ( CString s )
 	return crc;
 }
 
-unsigned int GetHashForFile( CString sPath )
+unsigned int GetHashForFile( const CString &sPath )
 {
 	unsigned int hash = 0;
 
@@ -349,7 +366,7 @@ unsigned int GetHashForFile( CString sPath )
 	return hash;
 }
 
-unsigned int GetHashForDirectory( CString sDir )
+unsigned int GetHashForDirectory( const CString &sDir )
 {
 	unsigned int hash = 0;
 
@@ -364,6 +381,19 @@ unsigned int GetHashForDirectory( CString sDir )
 	}
 
 	return hash; 
+}
+
+/* Return true if "dir" is empty or does not exist. */
+bool DirectoryIsEmpty( const CString &dir )
+{
+	if(dir == "")
+		return true;
+	if(!DoesFileExist(dir))
+		return true;
+
+	CStringArray asFileNames;
+	GetDirListing( dir, asFileNames );
+	return asFileNames.empty();
 }
 
 bool CompareCStringsAsc(const CString &str1, const CString &str2)
@@ -906,7 +936,7 @@ CString Dirname( const CString &dir )
         return dir.substr(0, pos+1);
 }
 
-CString Capitalize( CString s )	
+CString Capitalize( const CString &s )	
 {
 	if( s.GetLength()==0 )
 		return "";

@@ -132,7 +132,7 @@ float fmodfp(float x, float y);
 int power_of_two(int input);
 bool IsAnInt( const CString &s );
 bool IsHexVal( const CString &s );
-float TimeToSeconds( CString sHMS );
+float TimeToSeconds( const CString &sHMS );
 CString SecondsToTime( float fSecs );
 
 CString ssprintf( const char *fmt, ...);
@@ -149,7 +149,7 @@ CString werr_ssprintf( int err, const char *fmt, ...);
 void splitpath( const CString &Path, CString &Dir, CString &Filename, CString &Ext );
 
 CString SetExtension( const CString &path, const CString &ext );
-CString GetExtension( CString sPath );
+CString GetExtension( const CString &sPath );
 
 typedef int longchar;
 extern const wchar_t INVALID_CHAR;
@@ -162,26 +162,23 @@ int utf8_get_char_len (const char *p);
 bool utf8_is_valid(const CString &str);
 
 // Splits a CString into an CStringArray according the Deliminator.
-void split(
-	const CString &Source, 
-	const CString &Deliminator, 
-	CStringArray& AddIt, 
-	const bool bIgnoreEmpty = true 
-);
+void split( const CString &Source, const CString &Delimitor, CStringArray& AddIt, const bool bIgnoreEmpty = true );
 void split( const wstring &Source, const wstring &Deliminator, vector<wstring> &AddIt, const bool bIgnoreEmpty = true );
 
 // Joins a CStringArray to create a CString according the Deliminator.
-CString join(const CString &Deliminator, const CStringArray& Source);
+CString join( const CString &Delimitor, const CStringArray& Source );
+CString join( const CString &Delimitor, CStringArray::const_iterator begin, CStringArray::const_iterator end );
 
 CString GetCwd();
 
-unsigned int GetHashForString( CString s );
-unsigned int GetHashForFile( CString sPath );
-unsigned int GetHashForDirectory( CString sDir );	// a hash value that remains the same as long as nothing in the directory has changed
+unsigned int GetHashForString( const CString &s );
+unsigned int GetHashForFile( const CString &sPath );
+unsigned int GetHashForDirectory( const CString &sDir );	// a hash value that remains the same as long as nothing in the directory has changed
+bool DirectoryIsEmpty( const CString &dir );
 
 bool CompareCStringsAsc(const CString &str1, const CString &str2);
 bool CompareCStringsDesc(const CString &str1, const CString &str2);
-void SortCStringArray( CStringArray &AddTo, const bool bSortAcsending = true );
+void SortCStringArray( CStringArray &AddTo, const bool bSortAscending = true );
 
 /* Find the mean and standard deviation of all numbers in [start,end). */
 float calc_mean(const float *start, const float *end);
@@ -226,7 +223,7 @@ CString WcharDisplayText(wchar_t c);
 
 CString Basename( const CString &dir );
 CString Dirname( const CString &dir );
-CString Capitalize( CString s );
+CString Capitalize( const CString &s );
 
 #ifndef WIN32
 #include <unistd.h> /* correct place with correct definitions */
@@ -278,7 +275,7 @@ typedef basic_string<char,char_traits_char_nocase> istring;
 
 /* Compatibility/convenience shortcuts.  These are actually defined in RageFileManager.h, but
  * declared here since they're used in many places. */
-void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
+void GetDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
 bool DoesFileExist( const CString &sPath );
 bool IsAFile( const CString &sPath );
 bool IsADirectory( const CString &sPath );

@@ -22,20 +22,6 @@ AnnouncerManager*	ANNOUNCER = NULL;	// global object accessable from anywhere in
 const CString EMPTY_ANNOUNCER_NAME = "Empty";
 const CString ANNOUNCERS_DIR  = BASE_PATH "Announcers" SLASH;
 
-/* XXX: move to RageUtil when I feel like spending 20 minutes recompiling */
-/* Return true if "dir" is empty or does not exist. */
-static bool DirectoryIsEmpty( CString dir )
-{
-	if(dir == "")
-		return true;
-	if(!DoesFileExist(dir))
-		return true;
-
-	CStringArray asFileNames;
-	GetDirListing( dir, asFileNames );
-	return asFileNames.empty();
-}
-
 AnnouncerManager::AnnouncerManager()
 {
 	LOG->Trace("AnnouncerManager::AnnouncerManager()");
