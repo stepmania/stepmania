@@ -906,6 +906,9 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 	for( unsigned i=0; i<m_apNotes.size(); i++ )
 	{
 		Steps* pNotes = m_apNotes[i];
+		if( pNotes->IsAutogen() )
+			continue;
+
 		NoteData tempNoteData;
 		pNotes->GetNoteData( &tempNoteData );
 
