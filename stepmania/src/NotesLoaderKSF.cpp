@@ -90,9 +90,15 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 				iHoldStartRow[t] = -1;
 			}
 
-			/* XXXXX: don't do this, translate explicitly, so the TAP_* constants
-			 * can be changed */
-			notedata.SetTapNote(t, row, sRowString[t]);
+			TapNote tap;
+			switch(sRowString[t])
+			{
+			case '0': tap = TAP_EMPTY; break;
+			case '1': tap = TAP_TAP; break;
+			default: ASSERT(0); tap = TAP_EMPTY; break;
+			}
+
+			notedata.SetTapNote(t, row, tap);
 		}
 	}
 
