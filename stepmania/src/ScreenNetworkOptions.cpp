@@ -91,7 +91,7 @@ void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 				SCREENMAN->SystemMessage( "Server Started." );
 			}
 			else
-				SCREENMAN->SystemMessage( "Server FAILED to start." );
+				SCREENMAN->SystemMessage( "Server failed: " + NSMAN->LANserver->lastError + ssprintf(" Code:%d",NSMAN->LANserver->lastErrorCode) );
 		}
 	}
 

@@ -81,6 +81,8 @@ class StepManiaLanServer {
 		StepManiaLanServer();
 		~StepManiaLanServer();
 		CString servername;
+		CString lastError;
+		int lastErrorCode;
 	private:
 		bool stop;
 		PacketFunctions Packet;

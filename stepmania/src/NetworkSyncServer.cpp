@@ -36,7 +36,14 @@ bool StepManiaLanServer::ServerStart() {
 				statsTime = time(NULL);
 				return true;
 			}
+			else
+				lastError = "Failed to make socket listen.";
+		else
+			lastError = "Failed to bind socket";
+	else
+		lastError = "Failed to create socket";
 
+	lastErrorCode = server.lastCode;
 	//Hopefully we will not get here. If we did, something went wrong above.
 	return false;
 }

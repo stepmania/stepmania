@@ -81,6 +81,7 @@ bool EzSockets::create(int Protocol, int Type)
 {
 	state = skDISCONNECTED;
 	sock = socket(AF_INET, Type, Protocol);
+	lastCode = sock;
 	return sock > 0;
 }
 
@@ -93,13 +94,14 @@ bool EzSockets::bind(unsigned short port)
 	addr.sin_family      = AF_INET;
 	addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	addr.sin_port        = htons(port);
-	
-	return !::bind(sock,(struct sockaddr*)&addr, sizeof(addr));
+	lastCode = ::bind(sock,(struct sockaddr*)&addr, sizeof(addr));
+	return !lastCode;
 }
 
 bool EzSockets::listen()
 {
-	if (::listen(sock, MAXCON))
+	lastCode = ::listen(sock, MAXCON);
+	if (lastCode)
 		return false;
 	
 	state = skLISTENING;
@@ -120,6 +122,8 @@ bool EzSockets::accept(EzSockets& socket)
 	socket.sock = ::accept(sock,(struct sockaddr*) &socket.addr, 
 						   (socklen_t*) &length);
 	
+	lastCode = socket.sock;
+
 	if (socket.sock <= 0)
 		return false;
 	

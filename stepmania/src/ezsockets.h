@@ -119,6 +119,8 @@ public:
 
 	SockState state;
 
+	int lastCode;	//Used for debugging purposes
+
 private:
 
 	//Only necessiary in windows, xbox
