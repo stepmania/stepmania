@@ -362,9 +362,12 @@ void NoteDisplay::Update( float fDeltaTime )
 
 void NoteDisplay::SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAnimationLengthInBeats, bool bVivid, bool bNoteColor )
 {
-
+	/* -inf ... inf */
 	float fSongBeat = GAMESTATE->m_fSongBeat;
-	float fPercentIntoAnimation = fmodf(fSongBeat,fAnimationLengthInBeats) / fAnimationLengthInBeats;
+	/* -len ... +len */
+	float fPercentIntoAnimation = fmodf( fSongBeat, fAnimationLengthInBeats );
+	/* -1 ... 1 */
+	fPercentIntoAnimation /= fAnimationLengthInBeats;
 
 	if( bVivid )
 	{
@@ -374,10 +377,16 @@ void NoteDisplay::SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAni
 		const float fFraction = fNoteBeatFraction - 0.25f/fAnimationLengthInBeats;
 		const float fInterval = 1.f / fAnimationLengthInBeats;
 		fPercentIntoAnimation += Quantize(fFraction,fInterval);
-	}
 
-	// just in case somehow we're majorly negative with the subtraction
-	wrap( fPercentIntoAnimation, 1.f );
+		// just in case somehow we're majorly negative with the subtraction
+		wrap( fPercentIntoAnimation, 1.f );
+	}
+	else
+	{
+		/* 0 ... 1, wrapped */
+		if( fPercentIntoAnimation < 0 )
+			fPercentIntoAnimation += 1.0f;
+	}
 
 	float fLengthSeconds = actorToSet.GetAnimationLengthSeconds();
 	actorToSet.SetSecondsIntoAnimation( fPercentIntoAnimation*fLengthSeconds );
