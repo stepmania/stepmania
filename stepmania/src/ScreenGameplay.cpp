@@ -397,6 +397,16 @@ void ScreenGameplay::Init()
 	}
 
 	//
+	// Before the lifemeter loads, if Networking is required
+	// we need to wait, so that there is no Dead On Start issues.
+	// if you wait too long at the second checkpoint, you will
+	// appear dead when you begin your game.
+	//
+	NSMAN->StartRequest(); 
+
+
+
+	//
 	// Add individual life meter
 	//
 	switch( GAMESTATE->m_PlayMode )
@@ -1057,7 +1067,9 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 	p.StopMode = RageSoundParams::M_CONTINUE;
 	p.m_StartSecond = fStartSecond;
 
-	NSMAN->StartRequest(); //Network Code.
+	//Secondary (Precice) start request 
+	//used for syncing up songs.
+	NSMAN->StartRequest(); 
 
 	m_soundMusic->Play( &p );
 
