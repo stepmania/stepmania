@@ -28,7 +28,7 @@ public:
 	int resync();
 	void synth_output();
 	int seek_stream_to_byte( int byte );
-	int handle_first_frame();
+	bool handle_first_frame();
 	int GetLengthInternal( bool fast );
 	int GetLengthConst( bool fast ) const;
 

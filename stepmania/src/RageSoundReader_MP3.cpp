@@ -272,21 +272,35 @@ static int get_this_frame_byte( const madlib_t *mad )
 
 /* Called on the first frame decoded.  Returns true if this frame
  * should be ignored. */
-int RageSoundReader_MP3::handle_first_frame()
+bool RageSoundReader_MP3::handle_first_frame()
 {
-	int ret = 0;
+	bool ret = false;
 
 	/* Check for a XING tag. */
 	xing_init( &mad->xingtag );
 	if( xing_parse(&mad->xingtag, mad->Stream.anc_ptr, mad->Stream.anc_bitlen) == 0 )
 	{
-		mad_timer_t tm;
+		/*
+		 * "Info" tags are written by some tools.  They're just Xing tags, but for
+		 * CBR files.
+		 * 
+		 * However, DWI's decoder, BASS, doesn't understand this, and treats it as a
+		 * corrupt frame, outputting a frame of silence.  Let's ignore the tag, so
+		 * it'll be treated as an invalid frame, so we match DWI sync.
+		 *
+		 * The information in it isn't very useful to us.  The TOC is less accurate
+		 * then * computing it ourself (lwo resolution).  The file length computation
+		 * might be * wrong, if the tag is incorrect, and we can compute that accurately
+		 * ourself for CBR files.
+		 */
+		if( mad->xingtag.type == xing::INFO )
+			return false;
 
 		mad->header_bytes = max( mad->header_bytes, get_this_frame_byte(mad) );
 
 		mad->has_xing = true;
 
-		tm = mad->Frame.header.duration;
+		mad_timer_t tm = mad->Frame.header.duration;
 		/* XXX: does this include the Xing header itself? */
 		mad_timer_multiply( &tm, mad->xingtag.frames );
 		mad->length = mad_timer_count( tm, MAD_UNITS_MILLISECONDS );
@@ -296,22 +310,6 @@ int RageSoundReader_MP3::handle_first_frame()
 		int bytes = mad->filesize - mad->header_bytes;
 		mad->bitrate = (int)(bytes * 8 / (mad->length/1000.f));
 
-		/* "Info" tags are written by some tools: LAME in CBR, Fb2k.  They're just
-		 * Xing tags.  I suspect LAME does this to avoid confsing decoders that
-		 * assume files with Xing tags are VBR.
-		 * 
-		 * However, DWI's decoder, BASS, doesn't understand this, and treats it as
-		 * a corrupt frame, outputting a frame of silence.
-		 *
-		 * I can't quite decide.  We can decode correctly, which means sync won't change
-		 * if a Xing tag is rewritten to an Info tag (eg. "Fix MP3 headers..." in FB2k.)
-		 *
-		 * However, that'll result in different sync than DWI.
-		 *
-		 * Let's be compatible with DWI in this; different sync is annoying, and most
-		 * people probably aren't changing header types.  However, decode the header
-		 * anyway, so we can use the data in it.
-		 */
 		if( mad->xingtag.type == xing::XING )
 			ret = 1;
 	}
