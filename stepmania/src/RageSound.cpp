@@ -17,11 +17,21 @@
 #include "RageException.h"
 
 
-#include "bass/bass.h"
-#pragma comment(lib, "bass/bass.lib") 
- 
-
 RageSound*		SOUND	= NULL;
+
+/* I use this to turn off sound, since Bass doesn't want to work under
+ * VTune.  -glenn */
+#if 0
+RageSound::RageSound( HWND hWnd ) { }
+RageSound::~RageSound() { }
+void RageSound::PlayOnceStreamed( CString sPath ) { }
+void RageSound::PlayOnceStreamedFromDir( CString sDir ) { }
+#else
+
+#pragma comment(lib, "bass/bass.lib") 
+
+#include "bass/bass.h"
+
 
 
 RageSound::RageSound( HWND hWnd )
@@ -113,3 +123,4 @@ void RageSound::PlayOnceStreamedFromDir( CString sDir )
 		PlayOnceStreamed( sDir + arraySoundFiles[index] );
 	}
 }
+#endif
