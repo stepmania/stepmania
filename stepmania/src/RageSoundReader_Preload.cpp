@@ -72,7 +72,10 @@ int SoundReader_Preload::SetPosition_Accurate(int ms)
 	position = sample * samplesize;
 
 	if(position >= int(buf.get().size()))
-		position = 0;
+	{
+		position = buf.get().size();
+		return 0;
+	}
 
 	return position;
 }
