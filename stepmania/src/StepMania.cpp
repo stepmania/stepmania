@@ -253,7 +253,7 @@ int main(int argc, char* argv[])
 
 	/* Initialize the SDL library. */
     if( SDL_InitSubSystem(SDL_INIT_VIDEO) < 0 )
-        RageException::Throw( "Couldn't initialize SDL: %s\n", SDL_GetError() );
+        RageException::Throw( "Couldn't initialize SDL: %s", SDL_GetError() );
 
 	SetIcon();
 
