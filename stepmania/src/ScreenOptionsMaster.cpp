@@ -19,21 +19,21 @@
 #define OPTION_MENU_FLAGS		THEME->GetMetric (m_sName,"OptionMenuFlags")
 #define ROW_LINE(i)				THEME->GetMetric (m_sName,ssprintf("Line%i",(i+1)))
 
-#define ENTRY(s)				THEME->GetMetric ("ScreenOptionsMasterEntries",s)
-#define ENTRY_MODE(s,i)			THEME->GetMetric ("ScreenOptionsMasterEntries",ssprintf("%s,%i",(s).c_str(),(i+1)))
-#define ENTRY_NAME(s,i)			THEME->GetMetric ("ScreenOptionsMasterEntries",ssprintf("%sName,%i",(s).c_str(),(i+1)))
-#define ENTRY_DEFAULT(s)		THEME->GetMetric ("ScreenOptionsMasterEntries",(s) + "Default")
+#define ENTRY(s)				THEME->GetMetric ("ScreenOptionsMaster",s)
+#define ENTRY_MODE(s,i)			THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
+#define ENTRY_NAME(s,i)			THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%sName,%i",(s).c_str(),(i+1)))
+#define ENTRY_DEFAULT(s)		THEME->GetMetric ("ScreenOptionsMaster",(s) + "Default")
 #define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
 
 // #define NEXT_SCREEN( play_mode )		THEME->GetMetric (m_sName,"NextScreen"+Capitalize(PlayModeToString(play_mode)))
 #define PREV_SCREEN				THEME->GetMetric (m_sName,"PrevScreen")
 // #define PREV_SCREEN( play_mode )		THEME->GetMetric (m_sName,"PrevScreen"+Capitalize(PlayModeToString(play_mode)))
 
-#define BEGINNER_DESCRIPTION	THEME->GetMetric ("ScreenOptionsMasterEntries","Beginner")
-#define EASY_DESCRIPTION		THEME->GetMetric ("ScreenOptionsMasterEntries","Easy")
-#define MEDIUM_DESCRIPTION		THEME->GetMetric ("ScreenOptionsMasterEntries","Medium")
-#define HARD_DESCRIPTION		THEME->GetMetric ("ScreenOptionsMasterEntries","Hard")
-#define CHALLENGE_DESCRIPTION	THEME->GetMetric ("ScreenOptionsMasterEntries","Challenge")
+#define BEGINNER_DESCRIPTION	THEME->GetMetric ("ScreenOptionsMaster","Beginner")
+#define EASY_DESCRIPTION		THEME->GetMetric ("ScreenOptionsMaster","Easy")
+#define MEDIUM_DESCRIPTION		THEME->GetMetric ("ScreenOptionsMaster","Medium")
+#define HARD_DESCRIPTION		THEME->GetMetric ("ScreenOptionsMaster","Hard")
+#define CHALLENGE_DESCRIPTION	THEME->GetMetric ("ScreenOptionsMaster","Challenge")
 
 CString ScreenOptionsMaster::ConvertParamToThemeDifficulty( const CString &in ) const
 {
@@ -246,7 +246,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 			else if( !name.CompareNoCase("characters") )
 			{
 				SetCharacter( row, hand );
-				Title = "Charac::-ter";
+				Title = "Characters";
 			}
 			else
 				RageException::Throw( "Unexpected type '%s' in %s::Line%i", name.c_str(), m_sName.c_str(), i );
@@ -312,8 +312,8 @@ int ScreenOptionsMaster::ImportOption( const OptionRow &row, const OptionRowHand
 					return i;
 			}
 		}
-
 		return 0;
+
 	case ROW_CHARACTER:
 	{
 		vector<Character*> apCharacters;
