@@ -17,6 +17,9 @@
 #endif
 
 
+int64_t ArchHooks_Unix::iStartTime = 0;
+bool ArchHooks_Unix::bTimerInitialized = false;
+
 static bool IsFatalSignal( int signal )
 {
 	switch( signal )
@@ -95,6 +98,26 @@ static void TestTLS()
 }
 #endif
 
+static int64_t GetMicrosecondsSinceEpoch()
+{
+	struct timeval tv;
+	gettimeofday( &tv, NULL );
+
+	return int64_t(tv.tv_sec) * 1000000 + int64_t(tv.tv_usec);
+}
+
+int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
+{
+	if (!ArchHooks_Unix::bTimerInitialized) {
+		ArchHooks_Unix::bTimerInitialized = true;
+    	        ArchHooks_Unix::iStartTime = GetMicrosecondsSinceEpoch();
+	}
+	int64_t ret = GetMicrosecondsSinceEpoch() - ArchHooks_Unix::iStartTime;
+	if( bAccurate )
+		ret = FixupTimeIfBackwards( ret );
+	return ret;
+}
+
 ArchHooks_Unix::ArchHooks_Unix()
 {
 	/* First, handle non-fatal termination signals. */
@@ -164,23 +187,6 @@ void ArchHooks_Unix::SetTime( tm newtime )
 	system( sCommand );
 
 	system( "hwclock --systohc" );
-}
-
-static int64_t GetMicrosecondsSinceEpoch()
-{
-	struct timeval tv;
-	gettimeofday( &tv, NULL );
-
-	return int64_t(tv.tv_sec) * 1000000 + int64_t(tv.tv_usec);
-}
-
-int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
-{
-	static int64_t iStartTime = GetMicrosecondsSinceEpoch();
-	int64_t ret = GetMicrosecondsSinceEpoch() - iStartTime;
-	if( bAccurate )
-		ret = FixupTimeIfBackwards( ret );
-	return ret;
 }
 
 /*

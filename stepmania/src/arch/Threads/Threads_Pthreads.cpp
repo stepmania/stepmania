@@ -4,6 +4,7 @@
 #include "RageUtil.h"
 #include <sys/time.h>
 #include <errno.h>
+#include "arch/ArchHooks/ArchHooks_Unix.h"
 
 #if defined(LINUX)
 #include "archutils/Unix/LinuxThreadHelpers.h"
@@ -226,8 +227,8 @@ bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 	}
 
 	timespec abstime;
-	abstime.tv_sec = pTimeout->m_secs;
-	abstime.tv_nsec = pTimeout->m_us * 1000;
+	abstime.tv_sec = pTimeout->m_secs + ArchHooks_Unix::iStartTime/1000000;
+	abstime.tv_nsec = (pTimeout->m_us + ArchHooks_Unix::iStartTime%1000000) * 1000;
 	int iRet = pthread_cond_timedwait( &m_Cond, &m_pParent->mutex, &abstime );
 	return iRet != ETIMEDOUT;
 }

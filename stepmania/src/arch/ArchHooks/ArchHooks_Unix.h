@@ -5,6 +5,8 @@
 class ArchHooks_Unix: public ArchHooks
 {
 public:
+    static int64_t iStartTime;
+    static bool bTimerInitialized;
     ArchHooks_Unix();
     void DumpDebugInfo();
 
