@@ -28,6 +28,8 @@ ScoreDisplayRave::ScoreDisplayRave()
 
 	m_lastLevelSeen = ATTACK_LEVEL_1;
 
+	this->AddChild( &m_sprFrameBase );
+
 	for( int i=0; i<NUM_ATTACK_LEVELS; i++ )	
 	{
 		m_sprMeter[i].Load( THEME->GetPathToG(ssprintf("ScoreDisplayRave stream level%d",i+1)) ); 
@@ -39,14 +41,15 @@ ScoreDisplayRave::ScoreDisplayRave()
 	m_textLevel.SetText( "1" );
 	this->AddChild( &m_textLevel );
 
-	this->AddChild( &m_sprFrame );
+	this->AddChild( &m_sprFrameOverlay );
 }
 
 void ScoreDisplayRave::Init( PlayerNumber pn )
 {
 	ScoreDisplay::Init( pn );
 
-	m_sprFrame.Load( THEME->GetPathToG(ssprintf("ScoreDisplayRave frame p%d",pn+1)) );
+	m_sprFrameBase.Load( THEME->GetPathToG(ssprintf("ScoreDisplayRave frame base p%d",pn+1)) );
+	m_sprFrameOverlay.Load( THEME->GetPathToG(ssprintf("ScoreDisplayRave frame overlay p%d",pn+1)) );
 
 	for( int i=0; i<NUM_ATTACK_LEVELS; i++ )	
 	{

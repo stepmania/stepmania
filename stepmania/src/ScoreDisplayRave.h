@@ -27,8 +27,9 @@ public:
 	virtual void Update( float fDelta );
 
 protected:
+	Sprite m_sprFrameBase;
 	Sprite m_sprMeter[NUM_ATTACK_LEVELS];
-	Sprite m_sprFrame;
+	Sprite m_sprFrameOverlay;
 	BitmapText	m_textLevel;
 
 	AttackLevel	m_lastLevelSeen;
