@@ -603,68 +603,6 @@ void mySDL_WM_SetIcon( CString sIconFile )
 }
 
 
-void mySDL_BlitSurfaceSmartBlend( 
-	SDL_Surface* src, SDL_Rect *srcrect,
-	SDL_Surface* dst, SDL_Rect *dstrect )
-{
-	/* Can't blit to paletted surfaces. */
-	ASSERT(dst->format->BytesPerPixel > 1);
-
-	/* Rects must be same dimensions. */
-	ASSERT( srcrect->w==dstrect->w && srcrect->h==dstrect->h );
-
-	/* TODO:  Add clipping. 
-	 * For now, just ASSERT if out of bounds. */
-	ASSERT( 
-		srcrect->x >= 0 &&
-		srcrect->x+srcrect->w <= src->w &&
-		srcrect->y >= 0 &&
-		srcrect->y+srcrect->h <= src->h );
-	ASSERT( 
-		dstrect->x >= 0 &&
-		dstrect->x+dstrect->w <= dst->w &&
-		dstrect->y >= 0 &&
-		dstrect->y+dstrect->h <= dst->h );
-
-	/* For each row: */
-	for(int row = 0; row < srcrect->h; ++row) 
-	{
-		const Uint8 *srcp = (const Uint8 *)src->pixels;
-		srcp += (srcrect->y+row) * src->pitch;
-		srcp += srcrect->x * src->format->BytesPerPixel;
-		Uint8 *dstp = (Uint8 *)dst->pixels;
-		dstp += (dstrect->y+row) * dst->pitch;
-		dstp += dstrect->x * dst->format->BytesPerPixel;
-
-		/* For each pixel in row: */
-		for(int col = 0; col < srcrect->w; ++col)
-		{
-			Uint8 srcColors[4];
-			mySDL_GetRGBAV(srcp, src, srcColors);
-
-			Uint8 dstColors[4];
-			mySDL_GetRGBAV(dstp, dst, dstColors);
-
-			float fColorWeightSrc = srcColors[3] / (float)(srcColors[3]+dstColors[3]);
-			float fColorWeightDst = dstColors[3] / (float)(srcColors[3]+dstColors[3]);
-
-			Uint32 temp[4];
-			temp[0] = srcColors[0] * fColorWeightSrc + dstColors[0] * fColorWeightDst;
-			temp[1] = srcColors[1] * fColorWeightSrc + dstColors[1] * fColorWeightDst;
-			temp[2] = srcColors[2] * fColorWeightSrc + dstColors[2] * fColorWeightDst;
-			temp[3] = srcColors[3] + (dstColors[3] * (255-srcColors[3]))/255;
-	
-			Uint8 blendedColors[4] = { temp[0], temp[1], temp[2], temp[3] };
-			mySDL_SetRGBAV(dstp, dst, blendedColors);
-
-			/* Next column */
-			srcp += src->format->BytesPerPixel;
-			dstp += dst->format->BytesPerPixel;
-		}
-	}
-}
-
-
 struct SurfaceHeader
 {
 	int width, height, pitch;

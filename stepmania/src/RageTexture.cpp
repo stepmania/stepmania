@@ -49,7 +49,6 @@ bool RageTextureID::operator<(const RageTextureID &rhs) const
 {
 #define COMP(a) if(a<rhs.a) return true; if(a>rhs.a) return false;
 	COMP(filename);
-	COMP(text);
 	COMP(iMaxSize);
 	COMP(iMipMaps);
 	COMP(iAlphaBits);
@@ -67,7 +66,6 @@ bool RageTextureID::operator==(const RageTextureID &rhs) const
 #define EQUAL(a) (a==rhs.a)
 	return 
 		EQUAL(filename) &&
-		EQUAL(text) &&
 		EQUAL(iMaxSize) &&
 		EQUAL(iMipMaps) &&
 		EQUAL(iAlphaBits) &&

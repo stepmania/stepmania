@@ -48,13 +48,6 @@ ScreenSandbox::ScreenSandbox() : Screen("ScreenSandbox")
 //	this->AddChild(&m_model);
 //	m_model.SetEffectSpin( RageVector3(0,90,90) );
 
-	RageTextureID ID;
-	ID.filename = THEME->GetPathToF("MusicWheelItem roulette");
-	ID.text = "testing,\ntesting,\n1\n2\n3\n\n\n";
-	m_text.Load( ID );
-	m_text.SetXY( CENTER_X, CENTER_Y );
-	this->AddChild( &m_text );
-
 	this->AddChild( &m_In );
 
 	this->AddChild( &m_Out );

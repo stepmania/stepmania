@@ -16,6 +16,7 @@
 #include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "SongManager.h"
+#include "RageTextureManager.h"
 
 
 #define WIDTH						THEME->GetMetricF("TextBanner","Width")
@@ -104,14 +105,6 @@ void TextBanner::LoadFromString(
 	m_textSubTitle.SetZoom( fSubTitleZoom );
 	m_textArtist.SetZoom( fArtistZoom );
 
-//	RageTextureID ID;
-//	ID.filename = THEME->GetPathToF("TextBanner");
-//	ID.text = sDisplayTitle;
-//	m_textTitle.Load( ID );
-//	ID.text = sDisplaySubTitle;
-//	m_textSubTitle.Load( ID );
-//	ID.text = sDisplayArtist;
-//	m_textArtist.Load( ID );
 	m_textTitle.SetTextMaxWidth( g_fWidth, sDisplayTitle, sTranslitTitle );
 	m_textSubTitle.SetTextMaxWidth( g_fWidth, sDisplaySubTitle, sTranslitSubTitle );
 	m_textArtist.SetTextMaxWidth( g_fWidth, sDisplayArtist, sTranslitArtist );

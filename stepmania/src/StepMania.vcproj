@@ -1662,12 +1662,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\BitmapText.h">
 			</File>
 			<File
-				RelativePath="CompositedText.cpp">
-			</File>
-			<File
-				RelativePath="CompositedText.h">
-			</File>
-			<File
 				RelativePath="Milkshape.h">
 			</File>
 			<File

@@ -56,12 +56,6 @@ int FindSurfaceTraits(const SDL_Surface *img);
 
 void mySDL_WM_SetIcon( CString sIconFile );
 
-
-void mySDL_BlitSurfaceSmartBlend( 
-	SDL_Surface* src, SDL_Rect *srcrect,
-	SDL_Surface* dst, SDL_Rect *dstrect );
-
-
 bool mySDL_SaveSurface( SDL_Surface *img, CString file );
 SDL_Surface *mySDL_LoadSurface( CString file );
 

@@ -21,8 +21,7 @@
  * of these. */
 struct RageTextureID
 {
-	CString filename;	// font file name if !text.empty()
-	CString text;
+	CString filename;
 	int iMaxSize;
 	int iMipMaps;
 	int iAlphaBits;
