@@ -30,49 +30,14 @@
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 #include "Notes.h"
+#include "ActorUtil.h"
  
+
 const int NUM_SCORE_DIGITS	=	9;
 
-#define BANNER_FRAME_ON_COMMAND				THEME->GetMetric ("ScreenSelectMusic","BannerFrameOnCommand")
-#define BANNER_FRAME_OFF_COMMAND			THEME->GetMetric ("ScreenSelectMusic","BannerFrameOffCommand")
-#define BANNER_ON_COMMAND					THEME->GetMetric ("ScreenSelectMusic","BannerOnCommand")
-#define BANNER_OFF_COMMAND					THEME->GetMetric ("ScreenSelectMusic","BannerOffCommand")
 #define BANNER_WIDTH						THEME->GetMetricF("ScreenSelectMusic","BannerWidth")
 #define BANNER_HEIGHT						THEME->GetMetricF("ScreenSelectMusic","BannerHeight")
-#define BPM_ON_COMMAND						THEME->GetMetric ("ScreenSelectMusic","BPMOnCommand")
-#define BPM_OFF_COMMAND						THEME->GetMetric ("ScreenSelectMusic","BPMOffCommand")
-#define STAGE_ON_COMMAND					THEME->GetMetric ("ScreenSelectMusic","StageOnCommand")
-#define STAGE_OFF_COMMAND					THEME->GetMetric ("ScreenSelectMusic","StageOffCommand")
-#define CD_TITLE_ON_COMMAND					THEME->GetMetric ("ScreenSelectMusic","CDTitleOnCommand")
-#define CD_TITLE_OFF_COMMAND				THEME->GetMetric ("ScreenSelectMusic","CDTitleOffCommand")
-#define DIFFICULTY_FRAME_ON_COMMAND( p )	THEME->GetMetric ("ScreenSelectMusic",ssprintf("DifficultyFrameP%dOnCommand",p+1))
-#define DIFFICULTY_FRAME_OFF_COMMAND( p )	THEME->GetMetric ("ScreenSelectMusic",ssprintf("DifficultyFrameP%dOffCommand",p+1))
-#define DIFFICULTY_ICON_ON_COMMAND( p )		THEME->GetMetric ("ScreenSelectMusic",ssprintf("DifficultyIconP%dOnCommand",p+1))
-#define DIFFICULTY_ICON_OFF_COMMAND( p )	THEME->GetMetric ("ScreenSelectMusic",ssprintf("DifficultyIconP%dOffCommand",p+1))
-#define AUTOGEN_ICON_ON_COMMAND( p )		THEME->GetMetric ("ScreenSelectMusic",ssprintf("AutogenIconP%dOnCommand",p+1))
-#define AUTOGEN_ICON_OFF_COMMAND( p )		THEME->GetMetric ("ScreenSelectMusic",ssprintf("AutogenIconP%dOffCommand",p+1))
-#define RADAR_ON_COMMAND					THEME->GetMetric ("ScreenSelectMusic","RadarOnCommand")
-#define RADAR_OFF_COMMAND					THEME->GetMetric ("ScreenSelectMusic","RadarOffCommand")
-#define SORT_ICON_ON_COMMAND				THEME->GetMetric ("ScreenSelectMusic","SortIconOnCommand")
-#define SORT_ICON_OFF_COMMAND				THEME->GetMetric ("ScreenSelectMusic","SortIconOffCommand")
-#define SCORE_FRAME_ON_COMMAND( p )			THEME->GetMetric ("ScreenSelectMusic",ssprintf("ScoreFrameP%dOnCommand",p+1))
-#define SCORE_FRAME_OFF_COMMAND( p )		THEME->GetMetric ("ScreenSelectMusic",ssprintf("ScoreFrameP%dOffCommand",p+1))
-#define SCORE_ON_COMMAND( p )				THEME->GetMetric ("ScreenSelectMusic",ssprintf("ScoreP%dOnCommand",p+1))
-#define SCORE_OFF_COMMAND( p )				THEME->GetMetric ("ScreenSelectMusic",ssprintf("ScoreP%dOffCommand",p+1))
-#define METER_FRAME_ON_COMMAND( p )			THEME->GetMetric ("ScreenSelectMusic",ssprintf("MeterFrameP%dOnCommand",p+1))
-#define METER_FRAME_OFF_COMMAND( p )		THEME->GetMetric ("ScreenSelectMusic",ssprintf("MeterFrameP%dOffCommand",p+1))
-#define METER_ON_COMMAND( p )				THEME->GetMetric ("ScreenSelectMusic",ssprintf("MeterP%dOnCommand",p+1))
-#define METER_OFF_COMMAND( p )				THEME->GetMetric ("ScreenSelectMusic",ssprintf("MeterP%dOffCommand",p+1))
-#define WHEEL_ON_COMMAND					THEME->GetMetric ("ScreenSelectMusic","WheelOnCommand")
-#define WHEEL_OFF_COMMAND					THEME->GetMetric ("ScreenSelectMusic","WheelOffCommand")
-#define SONG_OPTIONS_ON_COMMAND				THEME->GetMetric ("ScreenSelectMusic","SongOptionsOnCommand")
-#define SONG_OPTIONS_OFF_COMMAND			THEME->GetMetric ("ScreenSelectMusic","SongOptionsOffCommand")
 #define SONG_OPTIONS_EXTRA_COMMAND			THEME->GetMetric ("ScreenSelectMusic","SongOptionsExtraCommand")
-#define OPTION_ICONS_ON_COMMAND( p )		THEME->GetMetric ("ScreenSelectMusic",ssprintf("OptionIconsP%dOnCommand",p+1))
-#define OPTION_ICONS_OFF_COMMAND( p )		THEME->GetMetric ("ScreenSelectMusic",ssprintf("OptionIconsP%dOffCommand",p+1))
-#define BALLOON_ON_COMMAND					THEME->GetMetric ("ScreenSelectMusic","BalloonOnCommand")
-#define BALLOON_OFF_COMMAND					THEME->GetMetric ("ScreenSelectMusic","BalloonOffCommand")
-#define OPTIONS_MESSAGE_SHOW_COMMAND		THEME->GetMetric ("ScreenSelectMusic","OptionsMessageShowCommand")
 #define SAMPLE_MUSIC_DELAY					THEME->GetMetricF("ScreenSelectMusic","SampleMusicDelay")
 
 
@@ -98,26 +63,34 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 	m_Menu.Load( "ScreenSelectMusic" );
 	this->AddChild( &m_Menu );
 
-	// these guys get loaded SetSong and TweenToSong
+	// this is loaded SetSong and TweenToSong
+	m_Banner.SetName( "Banner" );
 	m_Banner.SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
 	this->AddChild( &m_Banner );
 
+	m_sprBannerFrame.SetName( "BannerFrame" );
 	m_sprBannerFrame.Load( THEME->GetPathToG("ScreenSelectMusic banner frame") );
 	this->AddChild( &m_sprBannerFrame );
 
+	m_BPMDisplay.SetName( "BPM" );
 	this->AddChild( &m_BPMDisplay );
 
+	m_sprStage.SetName( "Stage" );
 	m_sprStage.Load( THEME->GetPathToG("ScreenSelectMusic stage "+GAMESTATE->GetStageText()) );
 	this->AddChild( &m_sprStage );
 
+	m_sprCDTitle.SetName( "CDTitle" );
 	m_sprCDTitle.Load( THEME->GetPathToG("ScreenSelectMusic fallback cdtitle") );
 	this->AddChild( &m_sprCDTitle );
 
+	m_GrooveRadar.SetName( "Radar" );
 	this->AddChild( &m_GrooveRadar );
 
+	m_textSongOptions.SetName( "SongOptions" );
 	m_textSongOptions.LoadFromFont( THEME->GetPathToF("Common normal") );
 	this->AddChild( &m_textSongOptions );
 
+	m_MusicWheel.SetName( "Wheel" );
 	this->AddChild( &m_MusicWheel );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -125,50 +98,62 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
 
+		m_sprDifficultyFrame[p].SetName( ssprintf("DifficultyFrameP%d",p+1) );
 		m_sprDifficultyFrame[p].Load( THEME->GetPathToG("ScreenSelectMusic difficulty frame 2x1") );
 		m_sprDifficultyFrame[p].StopAnimating();
 		m_sprDifficultyFrame[p].SetState( p );
 		this->AddChild( &m_sprDifficultyFrame[p] );
 
+		m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
 		m_DifficultyIcon[p].Load( THEME->GetPathToG("ScreenSelectMusic difficulty icons 1x5") );
 		this->AddChild( &m_DifficultyIcon[p] );
 
+		m_AutoGenIcon[p].SetName( ssprintf("AutogenIconP%d",p+1) );
 		m_AutoGenIcon[p].Load( THEME->GetPathToG("ScreenSelectMusic autogen") );
 		this->AddChild( &m_AutoGenIcon[p] );
 
+		m_OptionIconRow[p].SetName( ssprintf("OptionIconsP%d",p+1) );
 		m_OptionIconRow[p].Refresh( (PlayerNumber)p );
 		this->AddChild( &m_OptionIconRow[p] );
 
+		m_sprMeterFrame[p].SetName( ssprintf("MeterFrameP%d",p+1) );
 		m_sprMeterFrame[p].Load( THEME->GetPathToG("ScreenSelectMusic meter frame") );
 		m_sprMeterFrame[p].StopAnimating();
 		m_sprMeterFrame[p].SetState( p );
 		this->AddChild( &m_sprMeterFrame[p] );
 
+		m_DifficultyMeter[p].SetName( ssprintf("MeterP%d",p+1) );
 		m_DifficultyMeter[p].SetShadowLength( 2 );
 		this->AddChild( &m_DifficultyMeter[p] );
 		
+		m_sprHighScoreFrame[p].SetName( ssprintf("ScoreFrameP%d",p+1) );
 		m_sprHighScoreFrame[p].Load( THEME->GetPathToG("ScreenSelectMusic score frame 1x2") );
 		m_sprHighScoreFrame[p].StopAnimating();
 		m_sprHighScoreFrame[p].SetState( p );
 		this->AddChild( &m_sprHighScoreFrame[p] );
 
+		m_textHighScore[p].SetName( ssprintf("ScoreP%d",p+1) );
 		m_textHighScore[p].LoadFromNumbers( THEME->GetPathToN("ScreenSelectMusic score") );
 		m_textHighScore[p].EnableShadow( false );
 		m_textHighScore[p].SetDiffuse( PlayerToColor(p) );
 		this->AddChild( &m_textHighScore[p] );
 	}	
 
+	m_MusicSortDisplay.SetName( "SortIcon" );
 	m_MusicSortDisplay.Set( GAMESTATE->m_SongSortOrder );
 	this->AddChild( &m_MusicSortDisplay );
 
+	m_sprMarathonBalloon.SetName( "Balloon" );
 	m_sprMarathonBalloon.Load( THEME->GetPathToG("ScreenSelectMusic marathon") );
 	m_sprMarathonBalloon.SetDiffuse( RageColor(1,1,1,0) );
 	this->AddChild( &m_sprMarathonBalloon );
 
+	m_sprLongBalloon.SetName( "Balloon" );
 	m_sprLongBalloon.Load( THEME->GetPathToG("ScreenSelectMusic long") );
 	m_sprLongBalloon.SetDiffuse( RageColor(1,1,1,0) );
 	this->AddChild( &m_sprLongBalloon );
 
+	m_sprOptionsMessage.SetName( "OptionsMessage" );
 	m_sprOptionsMessage.Load( THEME->GetPathToG("ScreenSelectMusic options message 1x2") );
 	m_sprOptionsMessage.StopAnimating();
 	m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );	// invisible
@@ -210,28 +195,31 @@ void ScreenSelectMusic::DrawPrimitives()
 
 void ScreenSelectMusic::TweenOnScreen()
 {
-	m_sprBannerFrame.Command( BANNER_FRAME_ON_COMMAND );
-	m_Banner.Command( BANNER_ON_COMMAND );
-	m_BPMDisplay.Command( BPM_ON_COMMAND );
-	m_sprStage.Command( STAGE_ON_COMMAND );
-	m_sprCDTitle.Command( CD_TITLE_ON_COMMAND );
+	SET_XY_AND_ON_COMMAND( m_sprBannerFrame );
+	SET_XY_AND_ON_COMMAND( m_Banner );
+	SET_XY_AND_ON_COMMAND( m_BPMDisplay );
+	SET_XY_AND_ON_COMMAND( m_sprStage );
+	SET_XY_AND_ON_COMMAND( m_sprCDTitle );
 	m_GrooveRadar.TweenOnScreen();
-	m_GrooveRadar.Command( RADAR_ON_COMMAND );
-	m_textSongOptions.Command( SONG_OPTIONS_ON_COMMAND );
-	m_MusicSortDisplay.Command( SORT_ICON_ON_COMMAND );
+	SET_XY_AND_ON_COMMAND( m_GrooveRadar );
+	SET_XY_AND_ON_COMMAND( m_textSongOptions );
+	SET_XY_AND_ON_COMMAND( m_MusicSortDisplay );
 	m_MusicWheel.TweenOnScreen();
-	m_MusicWheel.Command( WHEEL_ON_COMMAND );
+	SET_XY_AND_ON_COMMAND( m_MusicWheel );
 	
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{		
-		m_sprDifficultyFrame[p].Command( DIFFICULTY_FRAME_ON_COMMAND(p) );
-		m_sprMeterFrame[p].Command( METER_FRAME_ON_COMMAND(p) );
-		m_OptionIconRow[p].Command( OPTION_ICONS_ON_COMMAND(p) );
-		m_DifficultyIcon[p].Command( DIFFICULTY_ICON_ON_COMMAND(p) );
-		m_AutoGenIcon[p].Command( AUTOGEN_ICON_ON_COMMAND(p) );
-		m_DifficultyMeter[p].Command( METER_ON_COMMAND(p) );
-		m_sprHighScoreFrame[p].Command( SCORE_FRAME_ON_COMMAND(p) );
-		m_textHighScore[p].Command( SCORE_ON_COMMAND(p) );
+		if( !GAMESTATE->IsHumanPlayer(p) )
+			continue;	// skip
+
+		SET_XY_AND_ON_COMMAND( m_sprDifficultyFrame[p] );
+		SET_XY_AND_ON_COMMAND( m_sprMeterFrame[p] );
+		SET_XY_AND_ON_COMMAND( m_OptionIconRow[p] );
+		SET_XY_AND_ON_COMMAND( m_DifficultyIcon[p] );
+		SET_XY_AND_ON_COMMAND( m_AutoGenIcon[p] );
+		SET_XY_AND_ON_COMMAND( m_DifficultyMeter[p] );
+		SET_XY_AND_ON_COMMAND( m_sprHighScoreFrame[p] );
+		SET_XY_AND_ON_COMMAND( m_textHighScore[p] );
 	}
 
 	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
@@ -240,28 +228,31 @@ void ScreenSelectMusic::TweenOnScreen()
 
 void ScreenSelectMusic::TweenOffScreen()
 {
-	m_sprBannerFrame.Command( BANNER_FRAME_OFF_COMMAND );
-	m_Banner.Command( BANNER_OFF_COMMAND );
-	m_BPMDisplay.Command( BPM_OFF_COMMAND );
-	m_sprStage.Command( STAGE_OFF_COMMAND );
-	m_sprCDTitle.Command( CD_TITLE_OFF_COMMAND );
+	OFF_COMMAND( m_sprBannerFrame );
+	OFF_COMMAND( m_Banner );
+	OFF_COMMAND( m_BPMDisplay );
+	OFF_COMMAND( m_sprStage );
+	OFF_COMMAND( m_sprCDTitle );
 	m_GrooveRadar.TweenOffScreen();
-	m_GrooveRadar.Command( RADAR_OFF_COMMAND );
-	m_textSongOptions.Command( SONG_OPTIONS_OFF_COMMAND );
-	m_MusicSortDisplay.Command( SORT_ICON_OFF_COMMAND );
+	OFF_COMMAND( m_GrooveRadar );
+	OFF_COMMAND( m_textSongOptions );
+	OFF_COMMAND( m_MusicSortDisplay );
 	m_MusicWheel.TweenOffScreen();
-	m_MusicWheel.Command( WHEEL_OFF_COMMAND );
+	OFF_COMMAND( m_MusicWheel );
 	
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{		
-		m_sprDifficultyFrame[p].Command( DIFFICULTY_FRAME_OFF_COMMAND(p) );
-		m_sprMeterFrame[p].Command( METER_FRAME_OFF_COMMAND(p) );
-		m_OptionIconRow[p].Command( OPTION_ICONS_OFF_COMMAND(p) );
-		m_DifficultyIcon[p].Command( DIFFICULTY_ICON_OFF_COMMAND(p) );
-		m_AutoGenIcon[p].Command( AUTOGEN_ICON_OFF_COMMAND(p) );
-		m_DifficultyMeter[p].Command( METER_OFF_COMMAND(p) );
-		m_sprHighScoreFrame[p].Command( SCORE_FRAME_OFF_COMMAND(p) );
-		m_textHighScore[p].Command( SCORE_OFF_COMMAND(p) );
+		if( !GAMESTATE->IsHumanPlayer(p) )
+			continue;	// skip
+
+		OFF_COMMAND( m_sprDifficultyFrame[p] );
+		OFF_COMMAND( m_sprMeterFrame[p] );
+		OFF_COMMAND( m_OptionIconRow[p] );
+		OFF_COMMAND( m_DifficultyIcon[p] );
+		OFF_COMMAND( m_AutoGenIcon[p] );
+		OFF_COMMAND( m_DifficultyMeter[p] );
+		OFF_COMMAND( m_sprHighScoreFrame[p] );
+		OFF_COMMAND( m_textHighScore[p] );
 	}
 }
 
@@ -640,7 +631,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 
 			// show "hold START for options"
 			m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,1) );	// visible
-			m_sprOptionsMessage.Command( OPTIONS_MESSAGE_SHOW_COMMAND );
+			SET_XY_AND_ON_COMMAND( m_sprOptionsMessage );
 /*			m_sprOptionsMessage.BeginTweening( 0.15f );	// fade in
 			m_sprOptionsMessage.SetZoomY( 1 );
 			m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,1) );
@@ -756,8 +747,8 @@ void ScreenSelectMusic::AfterMusicChange()
 			no_banner_change = true;
 	}
 
-	m_sprMarathonBalloon.Command( BALLOON_OFF_COMMAND );
-	m_sprLongBalloon.Command( BALLOON_OFF_COMMAND );
+	OFF_COMMAND( m_sprMarathonBalloon );
+	OFF_COMMAND( m_sprLongBalloon );
 
 	switch( m_MusicWheel.GetSelectedType() )
 	{
@@ -832,11 +823,13 @@ void ScreenSelectMusic::AfterMusicChange()
 			 * like the effect with a lot of delay. */
 			if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds )
 			{
-				m_sprMarathonBalloon.Command( BALLOON_ON_COMMAND );
+				m_sprMarathonBalloon.StopTweening();
+				SET_XY_AND_ON_COMMAND( m_sprMarathonBalloon );
 			}
 			else if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds )
 			{
-				m_sprLongBalloon.Command( BALLOON_ON_COMMAND );
+				m_sprLongBalloon.StopTweening();
+				SET_XY_AND_ON_COMMAND( m_sprLongBalloon );
 			}
 		}
 		break;

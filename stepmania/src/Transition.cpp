@@ -74,8 +74,8 @@ void Transition::DrawPrimitives()
 	// that aren't visible.  -Chris
 	switch( m_State )
 	{
-//	case waiting:
-//		return;
+	case waiting:
+		return;
 	case finished:
 		return;
 	}

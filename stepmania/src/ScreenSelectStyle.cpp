@@ -17,11 +17,8 @@
 #include "ScreenManager.h"
 #include "GameState.h"
 #include "AnnouncerManager.h"
+#include "ActorUtil.h"
 
-#define SET_XY( actor )			actor.SetXY( THEME->GetMetricF(m_sName,actor.GetName()+"X"), THEME->GetMetricF(m_sName,actor.GetName()+"Y") )
-#define ON_COMMAND( actor )		actor.Command( THEME->GetMetric(m_sName,actor.GetName()+"OnCommand") )
-#define OFF_COMMAND( actor )	actor.Command( THEME->GetMetric(m_sName,actor.GetName()+"OffCommand") )
-#define SET_XY_AND_ON_COMMAND( actor )		SET_XY(actor);	ON_COMMAND(actor)
 
 #define ICON_GAIN_FOCUS_COMMAND		THEME->GetMetric ("ScreenSelectStyle","IconGainFocusCommand")
 #define ICON_LOSE_FOCUS_COMMAND		THEME->GetMetric ("ScreenSelectStyle","IconLoseFocusCommand")

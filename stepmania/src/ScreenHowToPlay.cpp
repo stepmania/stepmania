@@ -69,7 +69,6 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 ScreenHowToPlay::~ScreenHowToPlay()
 {
 	delete m_pSong;
-	GAMESTATE->m_pCurSong = NULL;
 }
 
 void ScreenHowToPlay::Update( float fDelta )

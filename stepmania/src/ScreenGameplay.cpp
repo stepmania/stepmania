@@ -33,13 +33,20 @@
 #include "RageTimer.h"
 #include "ScoreKeeperMAX2.h"
 #include "NoteFieldPositioning.h"
-
 #include "LyricsLoader.h"
+#include "ActorUtil.h"
+
 
 //
 // Defines
 //
-#define SONGSEL_SCREEN					THEME->GetMetric("ScreenGameplay","SongSelectScreen")
+#define PREV_SCREEN( play_mode )		THEME->GetMetric ("ScreenGameplay","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
+#define NEXT_SCREEN( play_mode )		THEME->GetMetric ("ScreenGameplay","NextScreen"+Capitalize(PlayModeToString(play_mode)))
+CachedThemeMetricF SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
+CachedThemeMetricF G_TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
+
+
+/*
 #define MAXCOMBO_X						THEME->GetMetricF("ScreenGameplay","MaxComboX")
 #define MAXCOMBO_Y						THEME->GetMetricF("ScreenGameplay","MaxComboY")
 #define MAXCOMBO_ZOOM					THEME->GetMetricF("ScreenGameplay","MaxComboZoom")
@@ -80,8 +87,7 @@
 #define AUTOPLAY_Y						THEME->GetMetricF("ScreenGameplay","AutoPlayY")
 #define SURVIVE_TIME_X					THEME->GetMetricF("ScreenGameplay","SurviveTimeX")
 #define SURVIVE_TIME_Y					THEME->GetMetricF("ScreenGameplay","SurviveTimeY")
-CachedThemeMetricF SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
-CachedThemeMetricF G_TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
+*/
 
 
 const ScreenMessage	SM_PlayReady			= ScreenMessage(SM_User+0);
@@ -205,6 +211,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 
 
 
+	const bool bExtra = GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2();
 
 
 	m_Background.SetDiffuse( RageColor(0.4f,0.4f,0.4f,1) );
@@ -251,7 +258,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	this->AddChild( &m_NextSongOut );
 
 
-	const bool bExtra = GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2();
 
 	// LifeFrame goes below LifeMeter
 	CString sLifeFrameName;
@@ -262,7 +268,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	else 
 		sLifeFrameName = "ScreenGameplay life frame";
 	m_sprLifeFrame.Load( THEME->GetPathToG(sLifeFrameName) );
-	m_sprLifeFrame.SetXY( LIFE_FRAME_X, LIFE_FRAME_Y(bExtra) );
+	m_sprLifeFrame.SetName( bExtra?"LifeFrameExtra":"LifeFrame" );
+	SET_XY( m_sprLifeFrame );
 	this->AddChild( &m_sprLifeFrame );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -280,7 +287,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		}
 
 		m_pLifeMeter[p]->Load( (PlayerNumber)p );
-		m_pLifeMeter[p]->SetXY( LIFE_X(p), LIFE_Y(p,bExtra) );
+		m_pLifeMeter[p]->SetName( ssprintf("LifeP%d%s",p+1,bExtra?"Extra":"") );
+		SET_XY( *m_pLifeMeter[p] );
 		this->AddChild( m_pLifeMeter[p] );		
 	}
 
@@ -289,7 +297,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	{
 		m_textCourseSongNumber[p].LoadFromNumbers( THEME->GetPathToN("ScreenGameplay song num") );
 		m_textCourseSongNumber[p].EnableShadow( false );
-		m_textCourseSongNumber[p].SetXY( SONG_NUMBER_X(p), SONG_NUMBER_Y(p,bExtra) );
+		m_textCourseSongNumber[p].SetName( ssprintf("SongNumberP%d%s",p+1,bExtra?"Extra":"") );
+		SET_XY( m_textCourseSongNumber[p] );
 		m_textCourseSongNumber[p].SetText( "" );
 		m_textCourseSongNumber[p].SetDiffuse( RageColor(0,0.5f,1,1) );	// light blue
 	}
@@ -300,7 +309,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
 		m_sprStage.Load( THEME->GetPathToG("ScreenGameplay stage "+GAMESTATE->GetStageText()) );
-		m_sprStage.SetXY( STAGE_X, STAGE_Y(bExtra) );
+		m_sprStage.SetName( ssprintf("Stage%s",bExtra?"Extra":"") );
+		SET_XY( m_sprStage );
 		this->AddChild( &m_sprStage );
 		break;
 	case PLAY_MODE_NONSTOP:
@@ -308,7 +318,9 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	case PLAY_MODE_ENDLESS:
 		for( p=0; p<NUM_PLAYERS; p++ )
 			if( GAMESTATE->IsPlayerEnabled(p) )
+			{
 				this->AddChild( &m_textCourseSongNumber[p] );
+			}
 		break;
 	default:
 		ASSERT(0);	// invalid GameMode
@@ -326,19 +338,20 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	else 
 		sScoreFrameName = "ScreenGameplay score frame";
 	m_sprScoreFrame.Load( THEME->GetPathToG(sScoreFrameName) );
-	m_sprScoreFrame.SetXY( SCORE_FRAME_X, SCORE_FRAME_Y(bExtra) );
+	m_sprScoreFrame.SetName( ssprintf("ScoreFrame%s",bExtra?"Extra":"") );
+	SET_XY( m_sprScoreFrame );
 	this->AddChild( &m_sprScoreFrame );
 
 	m_textSongTitle.LoadFromFont( THEME->GetPathToF("ScreenGameplay song title") );
 	m_textSongTitle.EnableShadow( false );
-	m_textSongTitle.SetXY( STAGENAME_X, STAGENAME_Y );
-	m_textSongTitle.SetZoom( STAGENAME_ZOOM );
+	m_textSongTitle.SetName( "SongTitle" );
+	SET_XY( m_textSongTitle );
 	this->AddChild( &m_textSongTitle );
 
 	m_MaxCombo.LoadFromNumbers( THEME->GetPathToN("ScreenGameplay max combo") );
-	m_MaxCombo.SetXY( MAXCOMBO_X, MAXCOMBO_Y );
-	m_MaxCombo.SetZoom( MAXCOMBO_ZOOM );
-	m_MaxCombo.SetText( ssprintf("%d", GAMESTATE->m_CurStageStats.iCurCombo[GAMESTATE->m_MasterPlayerNumber]) ); /* TODO: Make this work for both players */
+	m_MaxCombo.SetName( "MaxCombo" );
+	SET_XY( m_MaxCombo );
+	m_MaxCombo.SetText( ssprintf("%d", GAMESTATE->m_CurStageStats.iCurCombo[GAMESTATE->m_MasterPlayerNumber]) ); // TODO: Make this work for both players
 	this->AddChild( &m_MaxCombo );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -367,23 +380,21 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		}
 
 		m_pScoreDisplay[p]->Init( (PlayerNumber)p );
-		m_pScoreDisplay[p]->SetXY( SCORE_X(p), SCORE_Y(p,bExtra) );
-		m_pScoreDisplay[p]->SetZoom( SCORE_ZOOM );
+		m_pScoreDisplay[p]->SetName( ssprintf("ScoreP%d%s",p+1,bExtra?"Extra":"") );
+		SET_XY( *m_pScoreDisplay[p] );
 		this->AddChild( m_pScoreDisplay[p] );
 		
 		m_textPlayerOptions[p].LoadFromFont( THEME->GetPathToF("Common normal") );
 		m_textPlayerOptions[p].EnableShadow( false );
-		m_textPlayerOptions[p].SetXY( PLAYER_OPTIONS_X(p), PLAYER_OPTIONS_Y(p,bExtra) );
-		m_textPlayerOptions[p].SetZoom( 0.5f );
-		m_textPlayerOptions[p].SetDiffuse( RageColor(1,1,1,1) );
+		m_textPlayerOptions[p].SetName( ssprintf("PlayerOptionsP%d%s",p+1,bExtra?"Extra":"") );
+		SET_XY( m_textPlayerOptions[p] );
 		this->AddChild( &m_textPlayerOptions[p] );
 	}
 
 	m_textSongOptions.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textSongOptions.EnableShadow( false );
-	m_textSongOptions.SetXY( SONG_OPTIONS_X, SONG_OPTIONS_Y(bExtra) );
-	m_textSongOptions.SetZoom( 0.5f );
-	m_textSongOptions.SetDiffuse( RageColor(1,1,1,1) );
+	m_textSongOptions.SetName( ssprintf("SongOptions%s",bExtra?"Extra":"") );
+	SET_XY( m_textSongOptions );
 	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );
 	this->AddChild( &m_textSongOptions );
 
@@ -404,14 +415,15 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	
 
 	m_textAutoPlay.LoadFromFont( THEME->GetPathToF("ScreenGameplay autoplay") );
-	m_textAutoPlay.SetXY( AUTOPLAY_X, AUTOPLAY_Y );
+	m_textAutoPlay.SetName( "AutoPlay" );
+	SET_XY( m_textAutoPlay );
 	if( !bDemonstration )	// only load if we're not in demonstration of jukebox
 		this->AddChild( &m_textAutoPlay );
 	UpdateAutoPlayText();
 	
 
-	m_BPMDisplay.SetXY( BPM_X, BPM_Y );
-	m_BPMDisplay.SetZoom( BPM_ZOOM );
+	m_BPMDisplay.SetName( "BPM" );
+	SET_XY( m_BPMDisplay );
 	this->AddChild( &m_BPMDisplay );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -458,8 +470,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 
 
 		m_textDebug.LoadFromFont( THEME->GetPathToF("Common normal") );
-		m_textDebug.SetXY( DEBUG_X, DEBUG_Y );
-		m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
+		m_textDebug.SetName( "Debug" );
+		SET_XY( m_textDebug );
 		this->AddChild( &m_textDebug );
 
 
@@ -471,8 +483,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		{
 			m_textSurviveTime.LoadFromFont( THEME->GetPathToF("ScreenGameplay survive time") );
 			m_textSurviveTime.EnableShadow( false );
-			m_textSurviveTime.SetXY( SURVIVE_TIME_X, SURVIVE_TIME_Y );
-			m_textSurviveTime.SetText( "" );
+			m_textSurviveTime.SetName( "SurviveTime" );
+			SET_XY( m_textSurviveTime );
 			m_textSurviveTime.SetDiffuse( RageColor(1,1,1,0) );
 			this->AddChild( &m_textSurviveTime );
 		}
@@ -550,10 +562,10 @@ void ScreenGameplay::LoadNextSong()
 	int p;
 	for( p=0; p<NUM_PLAYERS; p++ )
 		if( GAMESTATE->IsPlayerEnabled(p) )
+		{
 			GAMESTATE->m_CurStageStats.iSongsPlayed[p]++;
-
-	for( p=0; p<NUM_PLAYERS; p++ )
-		m_textCourseSongNumber[p].SetText( ssprintf("%d", GAMESTATE->m_CurStageStats.iSongsPlayed[p]) );
+			m_textCourseSongNumber[p].SetText( ssprintf("%d", GAMESTATE->m_CurStageStats.iSongsPlayed[p]) );
+		}
 
 	int iPlaySongIndex = GAMESTATE->GetCourseSongIndex();
 	iPlaySongIndex %= m_apSongsQueue.size();
@@ -642,8 +654,11 @@ void ScreenGameplay::LoadNextSong()
 		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
 
-		m_ActiveItemList[p].SetXY( ACTIVE_ITEMS_X(p), ACTIVE_ITEMS_Y(p,bExtra,bReverse[p]) );
-		m_DifficultyIcon[p].SetXY( DIFFICULTY_X(p), DIFFICULTY_Y(p,bExtra,bReverse[p]) );
+		m_ActiveItemList[p].SetName( ssprintf("ActiveItemsP%d%s%s",p+1,bExtra?"Extra":"",bReverse[p]?"Reverse":"") );
+		SET_XY( m_ActiveItemList[p] );
+
+		m_DifficultyIcon[p].SetName( ssprintf("DifficultyP%d%s%s",p+1,bExtra?"Extra":"",bReverse[p]?"Reverse":"") );
+		SET_XY( m_DifficultyIcon[p] );
 	}
 
 	/* Load the Oni transitions */
@@ -653,7 +668,8 @@ void ScreenGameplay::LoadNextSong()
 
 	/* XXX: We want to put the lyrics out of the way, but it's likely that one
 	 * player is in reverse and the other isn't.  What to do? */
-	m_LyricDisplay.SetXY( LYRICS_X, LYRICS_Y(bExtra,bReverse[GAMESTATE->m_MasterPlayerNumber]) );
+	m_LyricDisplay.SetName( "Lyrics" );
+	SET_XY( m_LyricDisplay );
 
 	// Load lyrics
 	// XXX: don't load this here
@@ -1326,11 +1342,13 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 					// do they deserve an extra stage?
 					if( GAMESTATE->HasEarnedExtraStage() )
 					{
+						TweenOffScreen();
 						m_Extra.StartTransitioning( SM_GoToStateAfterCleared );
 						SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay extra") );
 					}
 					else
 					{
+						TweenOffScreen();
 						m_Cleared.StartTransitioning( SM_GoToStateAfterCleared );
 						SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay cleared") );
 					}
@@ -1445,23 +1463,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToScreenAfterBack:
 		/* Reset options.  (Should this be done in ScreenSelect*?) */
 		GAMESTATE->RestoreSelectedOptions();
-
-		switch( GAMESTATE->m_PlayMode )
-		{
-		case PLAY_MODE_ARCADE:	
-		case PLAY_MODE_BATTLE:	
-		case PLAY_MODE_RAVE:
-			// SCREENMAN->SetNewScreen( "ScreenSelectMusic" );
-			SCREENMAN->SetNewScreen( SONGSEL_SCREEN );
-			break;
-		case PLAY_MODE_NONSTOP:
-		case PLAY_MODE_ONI:
-		case PLAY_MODE_ENDLESS:
-			SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
-			break;
-		default:
-			ASSERT(0);
-		}
+		SCREENMAN->SetNewScreen( PREV_SCREEN(GAMESTATE->m_PlayMode) );
 		break;
 
 	case SM_GoToStateAfterCleared:
@@ -1474,30 +1476,13 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			ShowSavePrompt( SM_GoToStateAfterCleared );
 			break;
 		}
-		switch( GAMESTATE->m_PlayMode )
-		{
-		case PLAY_MODE_ARCADE:
-		case PLAY_MODE_BATTLE:
-		case PLAY_MODE_RAVE:
-			SCREENMAN->SetNewScreen( "ScreenEvaluationStage" );
-			break;
-		case PLAY_MODE_NONSTOP:
-			SCREENMAN->SetNewScreen( "ScreenEvaluationNonstop" );
-			break;
-		case PLAY_MODE_ONI:
-			SCREENMAN->SetNewScreen( "ScreenEvaluationOni" );
-			break;
-		case PLAY_MODE_ENDLESS:
-			SCREENMAN->SetNewScreen( "ScreenEvaluationEndless" );
-			break;
-		default:
-			ASSERT(0);
-		}
+		SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
 		break;
 
 	case SM_BeginFailed:
 		m_DancingState = STATE_OUTRO;
 		m_soundMusic.StopPlaying();
+		TweenOffScreen();
 		m_Failed.StartTransitioning( SM_GoToScreenAfterFail );
 
 		// make the background invisible so we don't waste power drawing it
@@ -1505,7 +1490,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_Background.SetDiffuse( RageColor(1,1,1,0) );
 
 		// show the survive time if extra stage
-		// TODO:  Move this animation to a metric?
 		if( GAMESTATE->IsExtraStage()  ||  GAMESTATE->IsExtraStage2() )
 		{
 			float fMaxSurviveSeconds = 0;
@@ -1514,12 +1498,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 					fMaxSurviveSeconds = max( fMaxSurviveSeconds, GAMESTATE->m_CurStageStats.fAliveSeconds[p] );
 			ASSERT( fMaxSurviveSeconds > 0 );
 			m_textSurviveTime.SetText( "TIME: " + SecondsToTime(fMaxSurviveSeconds) );
-			m_textSurviveTime.BeginTweening( 0.3f );	// sleep
-			m_textSurviveTime.BeginTweening( 0.3f );	// fade in
-			m_textSurviveTime.SetDiffuse( RageColor(1,1,1,1) );
-			m_textSurviveTime.BeginTweening( 3.5f );	// sleep
-			m_textSurviveTime.BeginTweening( 0.5f );	// fade out
-			m_textSurviveTime.SetDiffuse( RageColor(1,1,1,0) );
+			SET_XY( m_textSurviveTime );
 		}
 
 		SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay failed") );
@@ -1566,58 +1545,38 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenGameplay::TweenOnScreen()
 {
-	unsigned i, p;
-
-	/* XXX: m_sprLifeFrame.GetChildren(apActorsInLifeFrame) */
-	vector<Actor*> apActorsInLifeFrame;
-	apActorsInLifeFrame.push_back( &m_sprLifeFrame );
-	for( p=0; p<NUM_PLAYERS; p++ )
-		apActorsInLifeFrame.push_back(	m_pLifeMeter[p] );
-	apActorsInLifeFrame.push_back( &m_sprStage );
-	for( p=0; p<NUM_PLAYERS; p++ )
-		apActorsInLifeFrame.push_back(	&m_textCourseSongNumber[p] );
-	for( i=0; i<apActorsInLifeFrame.size(); i++ )
-	{
-		float fOriginalY = apActorsInLifeFrame[i]->GetY();
-		apActorsInLifeFrame[i]->SetY( fOriginalY-100 );
-		apActorsInLifeFrame[i]->BeginTweening( 0.5f );	// sleep
-		apActorsInLifeFrame[i]->BeginTweening( 1 );
-		apActorsInLifeFrame[i]->SetY( fOriginalY );
-	}
-
-
-	vector<Actor*> apActorsInScoreFrame;
-	apActorsInScoreFrame.push_back( &m_sprScoreFrame );
-	for( p=0; p<NUM_PLAYERS; p++ )
+	ON_COMMAND( m_sprLifeFrame );
+	ON_COMMAND( m_sprStage );
+	ON_COMMAND( m_textSongOptions );
+	ON_COMMAND( m_sprScoreFrame );
+	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
-		apActorsInScoreFrame.push_back( m_pScoreDisplay[p] );
-		apActorsInScoreFrame.push_back( &m_textPlayerOptions[p] );
-	}
-	apActorsInScoreFrame.push_back( &m_textSongOptions );
-	for( i=0; i<apActorsInScoreFrame.size(); i++ )
-	{
-		float fOriginalY = apActorsInScoreFrame[i]->GetY();
-		apActorsInScoreFrame[i]->SetY( fOriginalY+100 );
-		apActorsInScoreFrame[i]->BeginTweening( 0.5f );	// sleep
-		apActorsInScoreFrame[i]->BeginTweening( 1 );
-		apActorsInScoreFrame[i]->SetY( fOriginalY );
-	}
-
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		float fOriginalX = m_DifficultyIcon[p].GetX();
-		m_DifficultyIcon[p].SetX( (p==PLAYER_1) ? fOriginalX-200 : fOriginalX+200 );
-		m_DifficultyIcon[p].BeginTweening( 0.5f );	// sleep
-		m_DifficultyIcon[p].BeginTweening( 1 );
-		m_DifficultyIcon[p].SetX( fOriginalX );
+		ON_COMMAND( *m_pLifeMeter[p] );
+		ON_COMMAND( m_textCourseSongNumber[p] );
+		ON_COMMAND( *m_pScoreDisplay[p] );
+		ON_COMMAND( m_textPlayerOptions[p] );
+		ON_COMMAND( m_DifficultyIcon[p] );
 	}
 }
 
 void ScreenGameplay::TweenOffScreen()
 {
-
+	OFF_COMMAND( m_sprLifeFrame );
+	OFF_COMMAND( m_sprStage );
+	OFF_COMMAND( m_textSongOptions );
+	OFF_COMMAND( m_sprScoreFrame );
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsPlayerEnabled(p) )
+			continue;
+		OFF_COMMAND( *m_pLifeMeter[p] );
+		OFF_COMMAND( m_textCourseSongNumber[p] );
+		OFF_COMMAND( *m_pScoreDisplay[p] );
+		OFF_COMMAND( m_textPlayerOptions[p] );
+		OFF_COMMAND( m_DifficultyIcon[p] );
+	}
 }
 
 void ScreenGameplay::ShowOniGameOver( PlayerNumber pn )
