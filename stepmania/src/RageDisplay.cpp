@@ -690,6 +690,9 @@ void RageDisplay::SetTexture( RageTexture* pTexture )
 	if( pOldD3DTexture != pNewD3DTexture )
 		FlushQueue();
 
+	if(pOldD3DTexture)
+		pOldD3DTexture->Release();
+	
 	m_pd3dDevice->SetTexture( 0, pNewD3DTexture );
 }
 void RageDisplay::SetColorTextureMultDiffuse()
