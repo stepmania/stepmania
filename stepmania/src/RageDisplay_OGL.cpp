@@ -538,8 +538,10 @@ void RageDisplay_OGL::ResolutionChanged()
 CString RageDisplay_OGL::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 {
 //	LOG->Trace( "RageDisplay_OGL::SetVideoMode( %d, %d, %d, %d, %d, %d )", windowed, width, height, bpp, rate, vsync );
-	if( !wind->TryVideoMode( p, bNewDeviceOut ) )
-		return "wind->TryVideoMode() failed";	// failed to set video mode XXX: error message
+	CString err;
+	err = wind->TryVideoMode( p, bNewDeviceOut );
+	if( err != "" )
+		return err;	// failed to set video mode
 
 	if( bNewDeviceOut )
 	{

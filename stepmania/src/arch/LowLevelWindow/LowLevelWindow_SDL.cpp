@@ -32,7 +32,7 @@ void *LowLevelWindow_SDL::GetProcAddress(CString s)
 	return SDL_GL_GetProcAddress(s);
 }
 
-bool LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &bNewDeviceOut )
+CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &bNewDeviceOut )
 {
 	CurrentParams = p;
 
@@ -115,7 +115,7 @@ bool LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &bNe
 	if(!screen)
 	{
 		LOG->Trace("SDL_SetVideoMode failed: %s", SDL_GetError());
-		return false;	// failed to set mode
+		return SDL_GetError();	// failed to set mode
 	}
 
 	bNewDeviceOut = true;	// always a new context because we're resetting SDL_Video
@@ -152,7 +152,7 @@ bool LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &bNe
 			colorbits, r, g, b, a, depth, stencil);
 	}
 
-	return true;	// we set the video mode successfully
+	return "";	// we set the video mode successfully
 }
 
 void LowLevelWindow_SDL::SwapBuffers()

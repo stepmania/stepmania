@@ -95,8 +95,7 @@ bool RageDisplay::SetVideoMode( VideoModeParams p )
 	if( this->TryVideoMode(p,bNeedReloadTextures) == "" )
 		return bNeedReloadTextures;
 
-	RageException::ThrowNonfatal( "SetVideoMode failed: %s.  Tried to fall back to other modes, but nothing worked.",
-			err.c_str() );
+	RageException::ThrowNonfatal( "SetVideoMode failed: %s", err.c_str() );
 }
 
 void RageDisplay::ProcessStatsOnFlip()
