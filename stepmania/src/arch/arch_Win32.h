@@ -14,7 +14,6 @@
 #include "Sound/RageSoundDriver_DSound_Software.h"
 #include "Sound/RageSoundDriver_WaveOut.h"
 
-#define SUPPORT_D3D
 #undef SUPPORT_SDL_INPUT
 
 #endif

@@ -14,12 +14,10 @@
  * For Xbox, let's leave this file alone, and special case stuff in arch_xbox.h.
  *
  * For LowLevelWindow, just undefine SUPPORT_OPENGL and don't link any LLW at
- * all.  (We'll still include the header here, but it'll never be used.)  We
- * can remove LowLevelWindow_Null, but I'll wait for you to confirm that there
- * aren't any strange problems with this before doing that.
+ * all.
 
  * For InputHandler, undef SUPPORT_SDL_INPUT and we won't create the SDL input
- * handler.
+ * handler.  (We'll still include the header here, but it'll never be used.)
  */
 
 /* We can have any number of input drivers.  By default, use SDL for keyboards
@@ -36,9 +34,10 @@
 #include "ErrorDialog/ErrorDialog_null.h"
 #include "ArchHooks/ArchHooks_none.h"
 #include "Sound/RageSoundDriver_Null.h"
-#include "LowLevelWindow/LowLevelWindow_SDL.h"
 
-#define SUPPORT_OPENGL
+#if defined(SUPPORT_OPENGL)
+#include "LowLevelWindow/LowLevelWindow_SDL.h"
+#endif
 
 #endif
 

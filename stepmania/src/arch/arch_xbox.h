@@ -11,8 +11,6 @@
 
 #include "Sound/RageSoundDriver_DSound.h"
 
-#define SUPPORT_D3D
-#undef SUPPORT_OPENGL
 /* Undef this if you need no SDL input. */
 // #undef SUPPORT_SDL_INPUT
 
