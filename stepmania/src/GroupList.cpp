@@ -109,9 +109,6 @@ void GroupList::AfterChange()
 	m_Frame.Command( SCROLL_TWEEN_COMMAND );
 	m_Frame.SetY( -m_iTop*SPACING_Y );
 
-	m_sprButtons[m_iSelection]->Command( GAIN_FOCUS_COMMAND );
-	m_textLabels[m_iSelection]->Command( GAIN_FOCUS_COMMAND );
-
 	for( int i=0; i < (int) m_asLabels.size(); i++ )
 	{
 		const bool IsHidden = !ItemIsOnScreen(i);
@@ -132,6 +129,8 @@ void GroupList::AfterChange()
 		m_bHidden[i] = IsHidden;
 	}
 
+	m_sprButtons[m_iSelection]->Command( GAIN_FOCUS_COMMAND );
+	m_textLabels[m_iSelection]->Command( GAIN_FOCUS_COMMAND );
 }
 
 void GroupList::Up()
