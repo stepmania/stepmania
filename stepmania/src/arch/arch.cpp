@@ -12,6 +12,12 @@
 
 LoadingWindow *MakeLoadingWindow()
 {
+#if defined(XBOX)
+	/* Using the SDL loading window without the SDLmain library causes the Xbox version
+	 * to crash, so we'll use the Null loading window until an Xbox loading window is written */
+	return new LoadingWindow_Null;
+#endif
+
 	if( !PREFSMAN->m_bShowLoadingWindow )
 		return new LoadingWindow_Null;
 
