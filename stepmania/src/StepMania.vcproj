@@ -1603,12 +1603,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageSoundReader_Resample.h">
 			</File>
 			<File
-				RelativePath="RageSoundReader_SDL_Sound.cpp">
-			</File>
-			<File
-				RelativePath="RageSoundReader_SDL_Sound.h">
-			</File>
-			<File
 				RelativePath="RageSoundReader_Vorbisfile.cpp">
 			</File>
 			<File

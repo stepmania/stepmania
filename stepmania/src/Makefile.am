@@ -11,24 +11,17 @@ AM_CXXFLAGS += -DLINUX -DDATADIR=\"$(datadir)\"
 endif
 
 AM_CXXFLAGS += -O2 
-AM_CXXFLAGS += -ISDL-1.2.5/include -ISDL_sound-1.0.0
+AM_CXXFLAGS += -ISDL-1.2.5/include
 AM_CFLAGS   += -O2
 
-# This is a little hacky; we use our own version of SDL and SDL_sound, and I don't
-# want to have to integrate their entire build systems.
+# This is a little hacky; we use our own version of SDL, and I don't
+# want to have to integrate the entire build system.
 
 SDL-1.2.5/src/.libs/libSDL.a:
 	cd SDL-1.2.5 && ./configure \
 		--disable-nasm --disable-arts --disable-esd --enable-static --disable-shared \
-		--enable-debug --disable-alsa --disable-oss 
+		--disable-debug --disable-alsa --disable-oss 
 	make -C SDL-1.2.5
-
-SDL_sound-1.0.0/.libs/libSDL_sound.a:
-	cd SDL_sound-1.0.0 && ./configure \
-		--enable-wav --enable-madlib --enable-ogg --enable-static --disable-shared
-	make -C SDL_sound-1.0.0
-
-#--enable-debug
 
 Screens = \
 Screen.cpp Screen.h ScreenAlbums.cpp ScreenAlbums.h ScreenAppearanceOptions.cpp ScreenAppearanceOptions.h \
@@ -124,7 +117,6 @@ Arch += arch/arch_linux.h
 endif
 
 RageSoundFileReaders = \
-RageSoundReader_SDL_Sound.cpp RageSoundReader_SDL_Sound.h \
 RageSoundReader_WAV.cpp RageSoundReader_WAV.h 
 
 if HAVE_VORBIS
@@ -204,7 +196,6 @@ stepmania_SOURCES = $(Screens) $(DataStructures) $(FileTypes) $(StepMania) $(Arc
 stepmania_LDADD = \
 		  $(GL_LIBS) \
 		  $(srcdir)/SDL-1.2.5/src/.libs/libSDL.a \
-		  $(srcdir)/SDL_sound-1.0.0/.libs/libSDL_sound.a \
 		  $(SDL_LIBS) -lSDL_image
 
 INCLUDES = $(SDL_CFLAGS)
