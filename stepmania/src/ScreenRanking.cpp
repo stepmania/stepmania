@@ -362,8 +362,6 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 		}
 	}
 
-	this->ClearMessageQueue( SM_BeginFadingOut );	// ignore ScreenAttract's SecsToShow
-
 	this->PostScreenMessage( SM_ShowNextPage, 0.5f );
 }
 

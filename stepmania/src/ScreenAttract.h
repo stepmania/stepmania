@@ -19,6 +19,8 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
+	virtual bool AutoBeginFadingOut() const { return true; }
+
 	Transition		m_In;
 	Transition		m_Out;
 };
