@@ -308,13 +308,10 @@ bool GameState::IsPlayable( const ModeChoice& mc )
 	// If the ModeChoice doesn't specify something, we'll take that
 	// value from the current game state
 	//
-	const PlayMode &rPlayMode = (mc.pm != PLAY_MODE_INVALID)
-			? mc.pm : m_PlayMode;
-	const Style &rStyle = (mc.style != STYLE_INVALID)
-			? mc.style : m_CurStyle;
+	const PlayMode &rPlayMode = mc.pm != PLAY_MODE_INVALID? mc.pm:m_PlayMode;
+	const Style &rStyle = mc.style != STYLE_INVALID? mc.style: m_CurStyle;
 	// ModeChoice code sets numSidesJoinedToPlay properly iff style is set
-	const int numSidesJoined = (mc.style != STYLE_INVALID)
-			? mc.numSidesJoinedToPlay : GAMESTATE->GetNumSidesJoined();
+	const int numSidesJoined = mc.style != STYLE_INVALID? mc.numSidesJoinedToPlay:GAMESTATE->GetNumSidesJoined();
 
 	if ( numSidesJoined != GAMESTATE->GetNumSidesJoined() )
 		return false;
