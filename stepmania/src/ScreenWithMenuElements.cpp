@@ -15,7 +15,9 @@
 #define TIMER_STEALTH			THEME->GetMetricB(m_sName,"TimerStealth")
 #define STYLE_ICON				THEME->GetMetricB(m_sName,"StyleIcon")
 #define MEMORY_CARD_ICONS		THEME->GetMetricB(m_sName,"MemoryCardIcons")
-#define FORCE_TIMER			THEME->GetMetricB(m_sName,"ForceTimer")
+#define FORCE_TIMER				THEME->GetMetricB(m_sName,"ForceTimer")
+#define PLAY_MUSIC				THEME->GetMetricB(m_sName,"PlayMusic")
+#define STOP_MUSIC_ON_BACK		THEME->GetMetricB(m_sName,"StopMusicOnBack")
 
 //REGISTER_SCREEN_CLASS( ScreenWithMenuElements );
 ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( sClassName )
@@ -109,8 +111,6 @@ void ScreenWithMenuElements::Init()
 	this->AddChild( &m_Back );
 
 	m_In.StartTransitioning();
-
-	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName) );
 }
 
 ScreenWithMenuElements::~ScreenWithMenuElements()
@@ -123,6 +123,15 @@ void ScreenWithMenuElements::Update( float fDeltaTime )
 {
 	if( m_bFirstUpdate )
 	{
+		/* Don't play sounds during the ctor, since derived classes havn't loaded yet.
+		 * Play sounds after so loading so we don't thrash while loading files. */
+		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName+" intro") );
+
+		/* Some screens should leave the music alone (eg. ScreenPlayerOptions music 
+		 * sample left over from ScreenSelectMusic). */
+		if( PLAY_MUSIC )
+			SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
+
 		/* Evaluate FirstUpdateCommand. */
 		this->RunCommands( m_FirstUpdateCommand );
 	}
@@ -182,6 +191,9 @@ void ScreenWithMenuElements::Back( ScreenMessage smSendWhenDone )
 {
 	if( m_Back.IsTransitioning() )
 		return;	// ignore
+
+	if( STOP_MUSIC_ON_BACK )
+		SOUND->StopMusic();
 
 	m_MenuTimer->Stop();
 	m_Back.StartTransitioning( smSendWhenDone );

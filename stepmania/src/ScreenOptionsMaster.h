@@ -11,10 +11,8 @@ public:
 	ScreenOptionsMaster( CString sName );
 	virtual void Init();
 	virtual ~ScreenOptionsMaster();
-	void Update( float fDelta );
 
 protected:
-
 	int m_iChangeMask;
 	CString m_sNextScreen;
 
@@ -31,8 +29,6 @@ protected:
 	virtual void GoToPrevScreen();
 
 	virtual void RefreshIcons( int row, PlayerNumber pn );
-
-	ThemeMetric<bool> PLAY_MUSIC;
 };
 
 #endif

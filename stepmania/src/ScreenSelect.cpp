@@ -109,13 +109,6 @@ ScreenSelect::~ScreenSelect()
 
 void ScreenSelect::Update( float fDelta )
 {
-	if(m_bFirstUpdate)
-	{
-		/* Don't play sounds during the ctor, since derived classes havn't loaded yet. */
-		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName+" intro") );
-		SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
-	}
-
 	if( !IsTransitioning() )
 	{
 		if( IDLE_COMMENT_SECONDS > 0 && m_timerIdleComment.PeekDeltaTime() >= IDLE_COMMENT_SECONDS )

@@ -26,8 +26,7 @@
 
 REGISTER_SCREEN_CLASS( ScreenOptionsMaster );
 ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
-	ScreenOptions( sClassName ),
-	PLAY_MUSIC( sClassName, "PlayMusic" )
+	ScreenOptions( sClassName )
 {
 	LOG->Trace("ScreenOptionsMaster::ScreenOptionsMaster(%s)", m_sName.c_str() );
 }
@@ -104,22 +103,6 @@ ScreenOptionsMaster::~ScreenOptionsMaster()
 	FOREACH( OptionRowHandler*, OptionRowHandlers, h )
 		SAFE_DELETE( *h );
 	OptionRowHandlers.clear();
-}
-
-void ScreenOptionsMaster::Update( float fDelta )
-{
-	if( m_bFirstUpdate )
-	{
-		/*
-		 * Don't play sounds during the ctor, since derived classes havn't loaded yet.
-		 * Leave the music alone (eg. ScreenPlayerOptions music sample
-		 * left over from ScreenSelectMusic).
-		 */
-		if( PLAY_MUSIC )
-			SOUND->PlayMusic( THEME->GetPathS( m_sName, "music" ) );
-	}
-
-	ScreenOptions::Update( fDelta );
 }
 
 void ScreenOptionsMaster::ImportOptions( int r, PlayerNumber pn )

@@ -23,9 +23,9 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void HandleMessage( const CString &sMessage );
-
-	virtual void MenuBack( PlayerNumber pn );
 	
+	virtual void MenuBack( PlayerNumber pn );
+
 protected:
 	virtual int GetSelectionIndex( PlayerNumber pn ) = 0;
 	virtual void UpdateSelectableChoices() = 0;		// derived screens must handle this
