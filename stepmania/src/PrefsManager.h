@@ -304,6 +304,9 @@ public:
 	static void Subscribe( IPreference *p );
 	static void Unsubscribe( IPreference *p );
 
+	// Lua
+	void PushSelf( lua_State *L );
+
 protected:
 	void ReadPrefsFromFile( CString sIni );
 
