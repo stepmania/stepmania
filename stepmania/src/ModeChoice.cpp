@@ -235,6 +235,9 @@ int GetSidesRequiredToPlayStyle( Style style )
 
 int GetCreditsRequiredToPlayStyle( Style style )
 {
+	if( PREFSMAN->m_Premium == PrefsManager::JOINT_PREMIUM )
+		return 1;
+
 	switch( GAMEMAN->GetStyleDefForStyle(style)->m_StyleType )
 	{
 	case StyleDef::ONE_PLAYER_ONE_CREDIT:
@@ -288,8 +291,13 @@ bool ModeChoice::IsPlayable( CString *why ) const
 		int iCredits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
 		int iNumSidesPlusCredits = iNumSidesJoined + iCredits;
 		CLAMP( iNumSidesPlusCredits, 0, NUM_PLAYERS );
-		if( PREFSMAN->m_iCoinMode != COIN_PAY )
+		
+		switch( PREFSMAN->m_iCoinMode )
+		{
+		case COIN_HOME:
+		case COIN_FREE:
 			iNumSidesPlusCredits = NUM_PLAYERS;
+		}
 
 		int iNumSidesRequired = GetSidesRequiredToPlayStyle(m_style);
 		int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_style);
@@ -381,6 +389,11 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 		// joined as a result of applying this option.
 		int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_style);
 		int iNumCreditsPaid = GAMESTATE->GetNumSidesJoined();
+		
+		// players other than the first joined for free
+		if( PREFSMAN->m_Premium == PrefsManager::JOINT_PREMIUM )
+			iNumCreditsPaid = 1;
+		
 		int iNumCreditsOwed = iNumCreditsRequired - iNumCreditsPaid;
 		GAMESTATE->m_iCoins -= iNumCreditsOwed * PREFSMAN->m_iCoinsPerCredit;
 
