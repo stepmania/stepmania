@@ -27,7 +27,9 @@ Banner::Banner()
 
 bool Banner::Load( RageTextureID ID )
 {
-	// note that the defaults are changes for faster loading
+	/* Song banners often have HOT PINK color keys. */
+	ID.bHotPinkColorKey = true;
+
 	return CroppedSprite::Load( ID );
 };
 
@@ -69,13 +71,7 @@ void Banner::LoadFromSong( Song* pSong )		// NULL means no song
 	Sprite::TurnShadowOff();
 
 	if( pSong == NULL )					LoadFallback();
-	else if( pSong->HasBanner() )
-	{
-		/* Song banners often have HOT PINK color keys. */
-		RageTextureID ID(pSong->GetBannerPath());
-		ID.bHotPinkColorKey = true;
-		Load( ID );
-	}
+	else if( pSong->HasBanner() )		Load( pSong->GetBannerPath() );
 	else if( PREFSMAN->m_bUseBGIfNoBanner  &&  pSong->HasBackground() )	Load( pSong->GetBackgroundPath() );
 	else								LoadFallback();
 }
