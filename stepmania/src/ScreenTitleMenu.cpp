@@ -50,7 +50,6 @@
 #define SECONDS_BETWEEN_COMMENTS	THEME->GetMetricF("ScreenTitleMenu","SecondsBetweenComments")
 #define SECONDS_BEFORE_ATTRACT		THEME->GetMetricF("ScreenTitleMenu","SecondsBeforeAttract")
 #define HELP_TEXT( coin_mode )		THEME->GetMetric("ScreenTitleMenu","HelpText"+Capitalize(CoinModeToString(coin_mode)))
-// #define NEXT_SCREEN					THEME->GetMetric("ScreenTitleMenu","NextScreen")
 #define MENU_ITEM_CREATE			THEME->GetMetric("ScreenTitleMenu","MenuCommandOnCreate")
 #define MENU_ITEM_SELECT_DELAY		THEME->GetMetricF("ScreenTitleMenu","MenuCommandSelectDelay")
 
@@ -63,6 +62,10 @@ ScreenTitleMenu::ScreenTitleMenu() : ScreenSelect("ScreenTitleMenu")
 {
 	LOG->Trace( "ScreenTitleMenu::ScreenTitleMenu()" );
 
+	/* XXX We really need two common calls: 1, something run when exiting from gameplay
+	 * (to do this reset), and 2, something run when entering gameplay, to apply default
+	 * options.  Having special cases in attract screens and the title menu to reset
+	 * things stinks ... */
 	GAMESTATE->Reset();
 	GAMESTATE->m_bPlayersCanJoin = true;
 
