@@ -83,6 +83,7 @@ SongOptions.cpp SongOptions.h SongUtil.cpp SongUtil.h StageStats.cpp StageStats.
 StepsUtil.cpp StepsUtil.h Style.cpp Style.h StyleUtil.cpp StyleUtil.h \
 SubscriptionManager.h \
 StyleInput.h TimingData.cpp TimingData.h \
+ThemeMetric.h \
 Trail.cpp Trail.h TrailUtil.cpp TrailUtil.h TitleSubstitution.cpp TitleSubstitution.h
 
 VirtualKeyboard = VirtualKeyboard.cpp VirtualKeyboard.h
