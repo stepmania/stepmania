@@ -128,12 +128,10 @@ DancingCharacters::DancingCharacters()
 		if( pChar->GetModelPath().empty() )
 			continue;
 		
-		if( GAMESTATE->GetNumPlayersEnabled()==2 ) {
+		if( GAMESTATE->GetNumPlayersEnabled()==2 )
 			m_Character[p].SetX( MODEL_X_TWO_PLAYERS[p] );
-		}
-		else {
+		else
 			m_Character[p].SetX( MODEL_X_ONE_PLAYER );
-		}
 
 		switch( GAMESTATE->m_PlayMode )
 		{
@@ -178,8 +176,8 @@ void DancingCharacters::Update( float fDelta )
 	if( GAMESTATE->m_bFreeze )
 	{
 		// spin the camera Matrix style
-		//m_CameraPanYStart += fDelta*40;
-		//m_CameraPanYEnd += fDelta*40;
+		m_CameraPanYStart += fDelta*40;
+		m_CameraPanYEnd += fDelta*40;
 	}
 	else
 	{
@@ -194,9 +192,8 @@ void DancingCharacters::Update( float fDelta )
 
 		FOREACH_PlayerNumber( p )
 		{
-			if( GAMESTATE->IsPlayerEnabled(p) ) {
+			if( GAMESTATE->IsPlayerEnabled(p) )
 				m_Character[p].Update( fDelta*fUpdateScale );
-			}
 		}
 	}
 
