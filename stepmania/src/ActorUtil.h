@@ -30,24 +30,24 @@ namespace ActorUtil
 
 
 
-	void SetXY( Actor& actor, const CString &sScreenName );
-	inline void SetXY( Actor* pActor, const CString &sScreenName ) { SetXY( *pActor, sScreenName ); }
+	void SetXY( Actor& actor, const CString &sType );
+	inline void SetXY( Actor* pActor, const CString &sType ) { SetXY( *pActor, sType ); }
 
-	void RunCommand( Actor& actor, const CString &sScreenName, const CString &sCommandName );
+	void RunCommand( Actor& actor, const CString &sType, const CString &sCommandName );
 
-	inline void OnCommand( Actor& actor, const CString &sScreenName ) { RunCommand( actor, sScreenName, "On" ); }
-	inline void OffCommand( Actor& actor, const CString &sScreenName ) { RunCommand( actor, sScreenName, "Off" ); }
-	inline void SetXYAndOnCommand( Actor& actor, const CString &sScreenName )
+	inline void OnCommand( Actor& actor, const CString &sType ) { RunCommand( actor, sType, "On" ); }
+	inline void OffCommand( Actor& actor, const CString &sType ) { RunCommand( actor, sType, "Off" ); }
+	inline void SetXYAndOnCommand( Actor& actor, const CString &sType )
 	{
-		SetXY( actor, sScreenName );
-		OnCommand( actor, sScreenName );
+		SetXY( actor, sType );
+		OnCommand( actor, sType );
 	}
 
 	/* convenience */
-	inline void RunCommand( Actor* pActor, const CString &sScreenName, const CString &sCommandName ) { if(pActor) RunCommand( *pActor, sScreenName, sCommandName ); }
-	inline void OnCommand( Actor* pActor, const CString &sScreenName ) { if(pActor) OnCommand( *pActor, sScreenName ); }
-	inline void OffCommand( Actor* pActor, const CString &sScreenName ) { if(pActor) OffCommand( *pActor, sScreenName ); }
-	inline void SetXYAndOnCommand( Actor* pActor, const CString &sScreenName ) { if(pActor) SetXYAndOnCommand( *pActor, sScreenName ); }
+	inline void RunCommand( Actor* pActor, const CString &sType, const CString &sCommandName ) { if(pActor) RunCommand( *pActor, sType, sCommandName ); }
+	inline void OnCommand( Actor* pActor, const CString &sType ) { if(pActor) OnCommand( *pActor, sType ); }
+	inline void OffCommand( Actor* pActor, const CString &sType ) { if(pActor) OffCommand( *pActor, sType ); }
+	inline void SetXYAndOnCommand( Actor* pActor, const CString &sType ) { if(pActor) SetXYAndOnCommand( *pActor, sType ); }
 
 	// Return a Sprite, BitmapText, or Model depending on the file type
 	Actor* LoadFromActorFile( const CString& sAniDir, const XNode* pNode );

@@ -325,13 +325,13 @@ Actor* ActorUtil::MakeActor( const RageTextureID &ID )
 	}
 }
 
-void ActorUtil::SetXY( Actor& actor, const CString &sScreenName )
+void ActorUtil::SetXY( Actor& actor, const CString &sType )
 {
 	ASSERT( !actor.GetID().empty() );
-	actor.SetXY( THEME->GetMetricF(sScreenName,actor.GetID()+"X"), THEME->GetMetricF(sScreenName,actor.GetID()+"Y") );
+	actor.SetXY( THEME->GetMetricF(sType,actor.GetID()+"X"), THEME->GetMetricF(sType,actor.GetID()+"Y") );
 }
 
-void ActorUtil::RunCommand( Actor& actor, const CString &sScreenName, const CString &sCommandName )
+void ActorUtil::RunCommand( Actor& actor, const CString &sType, const CString &sCommandName )
 {
 	actor.PlayCommand( sCommandName );
 
@@ -347,10 +347,10 @@ void ActorUtil::RunCommand( Actor& actor, const CString &sScreenName, const CStr
 	else
 	{
 		ASSERT_M( !actor.GetID().empty(), ssprintf("!actor.GetID().empty() ('%s', '%s')",
-												   sScreenName.c_str(), sCommandName.c_str()) );
+												   sType.c_str(), sCommandName.c_str()) );
 	}
 
-	actor.RunCommands( THEME->GetMetricA(sScreenName,actor.GetID()+sCommandName+"Command") );
+	actor.RunCommands( THEME->GetMetricA(sType,actor.GetID()+sCommandName+"Command") );
 }
 
 /*
