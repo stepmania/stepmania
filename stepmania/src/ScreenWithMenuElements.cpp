@@ -140,6 +140,7 @@ void ScreenWithMenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
 		ActorUtil::OffCommand( m_MemoryCardDisplay[p], m_sName );
 	ActorUtil::OffCommand( m_autoFooter, m_sName );
 	ActorUtil::OffCommand( m_textHelp, m_sName );
+	OFF_COMMAND( m_sprUnderlay );
 	OFF_COMMAND( m_sprOverlay );
 
 	SCREENMAN->PlaySharedBackgroundOffCommand();
