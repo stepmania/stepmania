@@ -658,6 +658,10 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 		cfg.MapRange("ascii", 0, 0, -1);
 	else if(cfg.CharToGlyphNo.empty() && NumFrames == 256)
 		cfg.MapRange("cp1252", 0, 0, -1);
+
+	/* If ' ' is set and nbsp is not, set nbsp. */
+	if( cfg.CharToGlyphNo.find(' ') != cfg.CharToGlyphNo.end() )
+		cfg.CharToGlyphNo[0x00A0] = cfg.CharToGlyphNo[' '];
 }
 
 CString FontPageSettings::MapRange(CString Mapping, int map_offset, int glyphno, int cnt)

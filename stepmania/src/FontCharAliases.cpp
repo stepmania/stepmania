@@ -257,6 +257,8 @@ static void InitCharAliases()
 		{ "kdot",	0x30FB }, /* ・ */
 		{ "kdash",	0x30FC }, /* ー */
 
+		{ "nbsp",	0x00a0 }, /* Non-breaking space */
+
 		/* Symbols: */
 		{ "omega",	0x03a9 }, /* Ω */
 		{ "whiteheart",	0x2661 }, /* ♡ */
