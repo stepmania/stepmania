@@ -1369,13 +1369,6 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 		PROFILEMAN->GetMachineProfile(),
 		bThisIsMachineProfile ? HTML_TYPE_MACHINE : HTML_TYPE_PLAYER
 		);
-	if( bThisIsMachineProfile )
-		SaveStatsWebPage( 
-			sDir+"temp/",
-			this,
-			PROFILEMAN->GetMachineProfile(),
-			HTML_TYPE_PLAYER
-			);
 }
 
 void Profile::SaveMachinePublicKeyToDir( CString sDir ) const
