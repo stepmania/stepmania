@@ -31,7 +31,7 @@
 
 const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed
 const int NUM_JUDGE_LINES =	9;	// marvelous, perfect, great, good, boo, miss, ok, max_combo, error
-const int NUM_SCORE_LINES = 2;	// score, time
+const int NUM_STATS_LINES =	4;	// jumps, holds, mines, hands
 
 // sound sequences for the evaluation screen
 struct EvalSoundSequence
@@ -108,8 +108,11 @@ protected:
 
 	// judgment area
 	Sprite				m_sprJudgeLabels[NUM_JUDGE_LINES];
-
 	BitmapText			m_textJudgeNumbers[NUM_JUDGE_LINES][NUM_PLAYERS];
+
+	// stats area
+	AutoActor			m_sprStatsLabel[NUM_STATS_LINES];
+	BitmapText			m_textStatsText[NUM_STATS_LINES][NUM_PLAYERS];
 
 	// score area
 	Sprite				m_sprScoreLabel;

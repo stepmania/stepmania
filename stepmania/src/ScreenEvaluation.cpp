@@ -40,12 +40,15 @@ const char* JUDGE_STRING[NUM_JUDGE_LINES] =
 {
 	"Marvelous", "Perfect", "Great", "Good", "Boo", "Miss", "OK", "MaxCombo", "TotalError"
 };
+const char* STATS_STRING[NUM_STATS_LINES] =
+{
+	"Jumps", "Holds", "Mines", "Hands"
+};
+
 #define SPIN_GRADES							THEME->GetMetricB("ScreenEvaluation","SpinGrades")
 #define CHEER_DELAY_SECONDS					THEME->GetMetricF("ScreenEvaluation","CheerDelaySeconds")
 #define BAR_ACTUAL_MAX_COMMAND				THEME->GetMetric ("ScreenEvaluation","BarActualMaxCommand")
 
-// #define JUDGE_SOUND_TIME( name )	THEME->GetMetricF( m_sName, ssprintf("JudgeSoundTime%s", name) );
-// #define SOUND_ON_FULL_ALPHA			THEME->GetMetricB( m_sName, "JudgeSoundIfJudgeGraphicsFullAlpha" )
 // metrics that are specific to classes derived from ScreenEvaluation
 #define FAILED_SCREEN						THEME->GetMetric (m_sName, "FailedScreen")
 #define NEXT_SCREEN							THEME->GetMetric (m_sName,"NextScreen")
@@ -57,6 +60,7 @@ const char* JUDGE_STRING[NUM_JUDGE_LINES] =
 #define SHOW_SURVIVED_AREA					THEME->GetMetricB(m_sName,"ShowSurvivedArea")
 #define SHOW_WIN_AREA						THEME->GetMetricB(m_sName,"ShowWinArea")
 #define SHOW_JUDGMENT( l )					THEME->GetMetricB(m_sName,ssprintf("Show%s",JUDGE_STRING[l]))
+#define SHOW_STAT( s )						THEME->GetMetricB(m_sName,ssprintf("Show%s",STATS_STRING[l]))
 #define SHOW_SCORE_AREA						THEME->GetMetricB(m_sName,"ShowScoreArea")
 #define SHOW_TIME_AREA						THEME->GetMetricB(m_sName,"ShowTimeArea")
 #define SHOW_GRAPH_AREA						THEME->GetMetricB(m_sName,"ShowGraphArea")
@@ -68,7 +72,7 @@ const char* JUDGE_STRING[NUM_JUDGE_LINES] =
 #define FAILED_SOUND_TIME					THEME->GetMetricF(m_sName,"FailedSoundTime")
 #define NUM_SEQUENCE_SOUNDS					THEME->GetMetricI(m_sName,"NumSequenceSounds")
 #define SOUNDSEQ_TIME( i )					THEME->GetMetricF(m_sName,ssprintf("SoundSeqTime%d", i+1))
-#define SOUNDSEQ_NAME( i )					THEME->GetMetric(m_sName,ssprintf("SoundSeqName%d", i+1))
+#define SOUNDSEQ_NAME( i )					THEME->GetMetric (m_sName,ssprintf("SoundSeqName%d", i+1))
 
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 
@@ -659,7 +663,6 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	int l;
 	for( l=0; l<NUM_JUDGE_LINES; l++ ) 
 	{
-//		m_TimeToPlayJudgeSound[l] = -1;
 		if( l == 0  && !GAMESTATE->ShowMarvelous() )
 			continue;	// skip
 
@@ -671,14 +674,6 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			m_sprJudgeLabels[l].SetName( ssprintf("%sLabel",JUDGE_STRING[l]) );
 			UtilSetXYAndOnCommand( m_sprJudgeLabels[l], "ScreenEvaluation" );
 			this->AddChild( &m_sprJudgeLabels[l] );
-
-#ifdef _XBOX
-			//shorten filenames for FATX
-	//		m_soundJudgeSound[l].Load( THEME->GetPathToS( ssprintf("ScreenEvaluation j %s", JUDGE_STRING[l]) ) );
-#else
-	//		m_soundJudgeSound[l].Load( THEME->GetPathToS( ssprintf("ScreenEvaluation JudgeSound %s", JUDGE_STRING[l]) ) );
-#endif
-	//		m_TimeToPlayJudgeSound[l] = JUDGE_SOUND_TIME( JUDGE_STRING[l] );
 
 			for( p=0; p<NUM_PLAYERS; p++ )
 			{
@@ -708,6 +703,41 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 				}
 				m_textJudgeNumbers[l][p].SetText( ssprintf("%4d",iValue) );
 			}
+		}
+	}
+
+	for( l=0; l<NUM_STATS_LINES; l++ ) 
+	{
+		if( !SHOW_STAT(l) )
+			continue;
+
+		m_sprStatsLabel[l].Load( THEME->GetPathToG( ssprintf("ScreenEvaluation label %s", STATS_STRING[l]) ) );
+		m_sprStatsLabel[l]->StopAnimating();
+		m_sprStatsLabel[l]->SetState( l );
+		m_sprStatsLabel[l]->SetName( ssprintf("%sLabel",STATS_STRING[l]) );
+		UtilSetXYAndOnCommand( m_sprStatsLabel[l], "ScreenEvaluation" );
+		this->AddChild( m_sprStatsLabel[l] );
+
+		for( p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
+				continue;	// skip
+
+			m_textStatsText[l][p].LoadFromFont( THEME->GetPathToF("ScreenEvaluation stats") );
+			m_textStatsText[l][p].SetDiffuse( PlayerToColor(p) );
+			m_textStatsText[l][p].SetName( ssprintf("%sTextP%d",STATS_STRING[l],p+1) );
+			UtilSetXYAndOnCommand( m_textStatsText[l][p], "ScreenEvaluation" );
+			this->AddChild( &m_textStatsText[l][p] );
+
+			const int indeces[NUM_STATS_LINES] =
+			{
+				RADAR_NUM_JUMPS, RADAR_NUM_HOLDS, RADAR_NUM_MINES, RADAR_NUM_HANDS
+			};
+			const int ind = indeces[l];
+			const int iActual = (int) roundf(stageStats.fRadarActual[p][ind]);
+			const int iPossible = (int) roundf(stageStats.fRadarPossible[p][ind]);
+
+			m_textStatsText[l][p].SetText( ssprintf("%i/%i",iActual, iPossible) );
 		}
 	}
 
@@ -1008,6 +1038,22 @@ void ScreenEvaluation::TweenOffScreen()
 		}
 	}
 
+	// stats area
+	for( l=0; l<NUM_STATS_LINES; l++ ) 
+	{
+		if( !SHOW_STAT(l) )
+			continue;
+
+		UtilOffCommand( m_sprStatsLabel[l], "ScreenEvaluation" );
+
+		for( p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAMESTATE->IsPlayerEnabled(p) )
+				continue;
+			UtilOffCommand( m_textStatsText[l][p], "ScreenEvaluation" );
+		}
+	}
+
 	// score area
 	if( SHOW_SCORE_AREA )
 	{
@@ -1107,29 +1153,6 @@ void ScreenEvaluation::Update( float fDeltaTime )
 		if( SHOW_SCORE_AREA )
 			m_textScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, GAMESTATE->m_CurStageStats.iScore[p]) );
 	}
-
-/*	for( int l=0; l<NUM_JUDGE_LINES; l++ ) 
-	{
-		if(!SHOW_JUDGMENT(l))
-			continue;
-
-		if(m_TimeToPlayJudgeSound[l] == -1)
-			continue;
-
-		if(RageTimer::GetTimeSinceStart() < m_fScreenCreateTime + m_TimeToPlayJudgeSound[l])
-			continue;
-
-		if(SOUND_ON_FULL_ALPHA)
-		{
-			if( m_sprJudgeLabels[l].GetDiffuse().a != 1.0f &&
-				m_textJudgeNumbers[l][PLAYER_1].GetDiffuse().a != 1.0f &&
-				m_textJudgeNumbers[l][PLAYER_2].GetDiffuse().a != 1.0f )
-				continue;
-		}
-
-		m_soundJudgeSound[l].Play();
-		m_TimeToPlayJudgeSound[l] = -1;
-	}*/
 }
 
 void ScreenEvaluation::DrawPrimitives()
