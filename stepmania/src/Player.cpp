@@ -1089,26 +1089,45 @@ void PlayerMinus::CrossedMineRow( int iNoteRow )
 
 void PlayerMinus::RandomiseNotes( int iNoteRow )
 {
-	const int NewNoteRow = (int)(iNoteRow + 50 / GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fScrollSpeed); // change the row to look ahead from based upon their speed mod
+	// change the row to look ahead from based upon their speed mod
+	/* This is incorrect: if m_fScrollSpeed is 0.5, we'll never change
+	 * any odd rows, and if it's 2, we'll shuffle each row twice. */
+	int iNewNoteRow = iNoteRow + ROWS_PER_BEAT*2;
+	iNewNoteRow = int( iNewNoteRow / GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fScrollSpeed );
 
-	bool UpdateNoteField = false;
 	int iNumOfTracks = GetNumTracks();
 	for( int t=0; t+1 < iNumOfTracks; t++ )
 	{
-		int iRandomTrackToSwapWith = RandomInt(0, iNumOfTracks-1);
-		const TapNote t1 = GetTapNote(t, NewNoteRow);
-		const TapNote t2 = GetTapNote(iRandomTrackToSwapWith, NewNoteRow);
+		const int iSwapWith = RandomInt( 0, iNumOfTracks-1 );
 
-		if( (t1.type == TapNote::tap || t1.type == TapNote::empty) && 
-			(t2.type == TapNote::tap || t2.type == TapNote::empty) )
+		/* Only swap a tap and an empty. */
+		const TapNote t1 = GetTapNote(t, iNewNoteRow);
+		if( t1.type != TapNote::tap )
+			continue;
+
+		const TapNote t2 = GetTapNote( iSwapWith, iNewNoteRow );
+		if( t2.type != TapNote::empty )
+			continue;
+
+		/* Make sure the destination row isn't in the middle of a hold. */
+		bool bSkip = false;
+		for( int i = 0; !bSkip && i < GetNumHoldNotes(); ++i )
 		{
-			SetTapNote(t, NewNoteRow, t2);
-			SetTapNote(iRandomTrackToSwapWith, NewNoteRow, t1);
-			UpdateNoteField = true;
+			const HoldNote &hn = GetHoldNote(i);
+			if( hn.iTrack == iSwapWith && hn.RowIsInRange(iNewNoteRow) )
+				bSkip = true;
 		}
+		if( bSkip )
+			continue;
+		
+		SetTapNote( t, iNewNoteRow, t2 );
+		SetTapNote( iSwapWith, iNewNoteRow, t1 );
+
+		const TapNote nft1 = m_pNoteField->GetTapNote( t, iNewNoteRow );
+		const TapNote nft2 = m_pNoteField->GetTapNote( iSwapWith, iNewNoteRow );
+		m_pNoteField->SetTapNote( t, iNewNoteRow, nft2 );
+		m_pNoteField->SetTapNote( iSwapWith, iNewNoteRow, nft1 );
 	}
-	if( UpdateNoteField )
-		m_pNoteField->CopyRange( this, NewNoteRow, NewNoteRow, NewNoteRow );
 }
 
 void PlayerMinus::HandleTapRowScore( unsigned row )
