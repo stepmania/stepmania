@@ -10,6 +10,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "BannerCache.h"
+#include "CroppedSprite.h"
 #include "PrefsManager.h"
 #include "SDL_utils.h"
 #include "SDL_dither.h"
@@ -304,7 +305,7 @@ void BannerCache::CacheBannerInternal( CString BannerPath )
 
 	bool WasRotatedBanner = false;
 
-	if( img->w == img->h )
+	if( CroppedSprite::IsDiagonalBanner(img->w , img->h) )
 	{
 		/* Ack.  It's a diagonal banner.  Problem: if we resize a diagonal banner, we
 		 * get ugly checker patterns.  We need to un-rotate it.

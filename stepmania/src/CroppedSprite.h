@@ -25,6 +25,8 @@ public:
 	void SetCroppedSize( float fWidth, float fHeight );
 	void SetWH(float fWidth, float fHeight);	
 
+	static bool IsDiagonalBanner( int iWidth, int iHeight );
+
 protected:
 	void CropToSize( float fWidth, float fHeight );
 

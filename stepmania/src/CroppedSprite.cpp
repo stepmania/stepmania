@@ -56,7 +56,7 @@ void CroppedSprite::CropToSize( float fWidth, float fHeight )
 	float fOriginalX = GetX();
 	float fOriginalY = GetY();
 
-	if( iSourceWidth == iSourceHeight )		// this is a SSR/DWI CroppedSprite
+	if( IsDiagonalBanner(iSourceWidth, iSourceHeight) )		// this is a SSR/DWI CroppedSprite
 	{
 		float fCustomImageCoords[8] = {
 			0.02f,	0.78f,	// top left
@@ -137,3 +137,10 @@ void CroppedSprite::CropToSize( float fWidth, float fHeight )
 	// restore original XY
 	SetXY( fOriginalX, fOriginalY );
 }
+
+bool CroppedSprite::IsDiagonalBanner( int iWidth, int iHeight )
+{
+	/* A diagonal banner is a square.  Give a couple pixels of leeway. */
+	return iWidth >= 100 && abs(iWidth - iHeight) < 2;
+}
+
