@@ -79,13 +79,13 @@ void Course::LoadFromCRSFile( CString sPath )
 	if( !msd.ReadFile(sPath) )
 		RageException::Throw( "Error opening CRS file '%s'.", sPath.c_str() );
 
-	const CString sFName = SetExtension( sPath, "" );
+	const CString sFName = SetExtension( m_sPath, "" );
 
 	CStringArray arrayPossibleBanners;
-	GetDirListing( sFName + ".png", arrayPossibleBanners, false, true );
-	GetDirListing( sFName + ".jpg", arrayPossibleBanners, false, true );
-	GetDirListing( sFName + ".bmp", arrayPossibleBanners, false, true );
-	GetDirListing( sFName + ".gif", arrayPossibleBanners, false, true );
+	GetDirListing( sFName + "*.png", arrayPossibleBanners, false, true );
+	GetDirListing( sFName + "*.jpg", arrayPossibleBanners, false, true );
+	GetDirListing( sFName + "*.bmp", arrayPossibleBanners, false, true );
+	GetDirListing( sFName + "*.gif", arrayPossibleBanners, false, true );
 	if( !arrayPossibleBanners.empty() )
 		m_sBannerPath = arrayPossibleBanners[0];
 
@@ -121,7 +121,7 @@ void Course::LoadFromCRSFile( CString sPath )
 				if( cd == DIFFICULTY_INVALID )
 				{
 					LOG->Warn( "Course file '%s' contains an invalid #METER string: \"%s\"",
-								m_sPath.c_str(), sParams[1].c_str() );
+								sPath.c_str(), sParams[1].c_str() );
 					continue;
 				}
 				m_iCustomMeter[cd] = atoi( sParams[2] );
@@ -196,14 +196,14 @@ void Course::LoadFromCRSFile( CString sPath )
 				else
 					LOG->Warn( "Course file '%s' contains a random_within_group entry '%s' that is invalid. "
 								"Song should be in the format '<group>/*'.",
-								m_sPath.c_str(), sSong.c_str());
+								sPath.c_str(), sSong.c_str());
 				if( !SONGMAN->DoesGroupExist(new_entry.group_name) )
 				{
 					/* XXX: We need a place to put "user warnings".  This is too loud for info.txt--
 				     * it obscures important warnings--and regular users never look there, anyway. */
 					LOG->Trace( "Course file '%s' random_within_group entry '%s' specifies a group that doesn't exist. "
 								"This entry will be ignored.",
-								m_sPath.c_str(), sSong.c_str());
+								sPath.c_str(), sSong.c_str());
 					continue;	// skip this #SONG
 				}
 			}
@@ -220,7 +220,7 @@ void Course::LoadFromCRSFile( CString sPath )
 				     * it obscures important warnings--and regular users never look there, anyway. */
 					LOG->Trace( "Course file '%s' contains a fixed song entry '%s' that does not exist. "
 								"This entry will be ignored.",
-								m_sPath.c_str(), sSong.c_str());
+								sPath.c_str(), sSong.c_str());
 					continue;	// skip this #SONG
 				}
 			}
@@ -234,7 +234,7 @@ void Course::LoadFromCRSFile( CString sPath )
 				else if( retval != 2 )
 				{
 					LOG->Warn("Course file '%s' contains an invalid difficulty setting: \"%s\", 3..6 used instead",
-						m_sPath.c_str(), sParams[2].c_str());
+						sPath.c_str(), sParams[2].c_str());
 					new_entry.low_meter = 3;
 					new_entry.high_meter = 6;
 				}
