@@ -16,7 +16,7 @@ make changes to pcre.in. */
 
 /* Win32 uses DLL by default */
 
-#ifdef _WIN32
+/* #ifdef _WIN32
 #  ifdef PCRE_DEFINITION
 #    ifdef DLL_EXPORT
 #      define PCRE_DATA_SCOPE __declspec(dllexport)
@@ -26,7 +26,7 @@ make changes to pcre.in. */
 #      define PCRE_DATA_SCOPE extern __declspec(dllimport)
 #    endif
 #  endif
-#endif
+#endif */
 #ifndef PCRE_DATA_SCOPE
 #  define PCRE_DATA_SCOPE     extern
 #endif
