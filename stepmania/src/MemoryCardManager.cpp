@@ -159,7 +159,7 @@ void MemoryCardManager::AssignUnassignedCards()
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			if( m_Device[p].IsBlank() )	// card not assigned to this player
+			if( m_Device[p].IsBlank() )	// no card assigned to this player
 				continue;
 
 			vector<UsbStorageDevice>::iterator it = find(vUnassignedDevices.begin(),vUnassignedDevices.end(),m_Device[p]);
@@ -176,7 +176,7 @@ void MemoryCardManager::AssignUnassignedCards()
 
 			if( !m_Device[p].IsBlank() )	// they already have an assigned card
 			{
-				LOG->Trace( "Already has a card" );
+				LOG->Trace( "Player %d already has a card: '%s'", p+1, m_Device[p].sOsMountDir.c_str() );
 				continue;	// skip
 			}
 
