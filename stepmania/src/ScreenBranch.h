@@ -12,6 +12,8 @@ public:
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
+	virtual bool UsesBackground() const { return false; }
+
 private:
 	CString m_sChoice;
 };

@@ -338,19 +338,21 @@ retry:
 
 
 	// Load shared BGAnimation
-	CString sNewBGA = THEME->GetPathToB(sScreenName+" background");
-	if( m_sLastLoadedBackground != sNewBGA )
+	if( pNewScreen->UsesBackground() )
 	{
-		// Create the new background before deleting the previous so that we keep
-		// any common textures loaded.
-		BGAnimation *pNewBGA = new BGAnimation;
-		pNewBGA->LoadFromAniDir( sNewBGA );
-		SAFE_DELETE( m_pSharedBGA );
-		m_pSharedBGA = pNewBGA;
+		CString sNewBGA = THEME->GetPathToB(sScreenName+" background");
+		if( m_sLastLoadedBackground != sNewBGA )
+		{
+			// Create the new background before deleting the previous so that we keep
+			// any common textures loaded.
+			BGAnimation *pNewBGA = new BGAnimation;
+			pNewBGA->LoadFromAniDir( sNewBGA );
+			SAFE_DELETE( m_pSharedBGA );
+			m_pSharedBGA = pNewBGA;
 
-		m_sLastLoadedBackground = sNewBGA;
-	}
-	
+			m_sLastLoadedBackground = sNewBGA;
+		}
+	}	
 
 	if( pOldTopScreen!=NULL  &&  m_ScreenStack.back()!=pOldTopScreen )
 	{
