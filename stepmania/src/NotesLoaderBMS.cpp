@@ -382,6 +382,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 		iTransformNewToOld[5] = BMS_P1_KEY6;
 		iTransformNewToOld[6] = BMS_P1_KEY7;
 		iTransformNewToOld[7] = BMS_P1_TURN;
+		break;
 	case STEPS_TYPE_BM_DOUBLE7:
 		iTransformNewToOld[0] = BMS_P1_KEY1;
 		iTransformNewToOld[1] = BMS_P1_KEY2;
@@ -399,6 +400,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 		iTransformNewToOld[13] = BMS_P2_KEY6;
 		iTransformNewToOld[14] = BMS_P2_KEY7;
 		iTransformNewToOld[15] = BMS_P2_TURN;
+		break;
 	default:
 		ASSERT(0);
 	}
