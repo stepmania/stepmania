@@ -145,6 +145,11 @@ void Steps::TidyUpData()
 		default:	ASSERT(0);
 		}
 	}
+
+	if( m_sDescription.empty() )
+	{
+		m_sDescription = Capitalize( DifficultyToString(m_Difficulty) );
+	}
 }
 
 void Steps::Decompress() const

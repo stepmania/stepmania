@@ -778,7 +778,9 @@ void Song::TidyUpData()
 	}
 
 	for( i=0; i<m_apNotes.size(); i++ )
+	{
 		m_apNotes[i]->Compress();
+	}
 }
 
 void Song::TranslateTitles()

@@ -208,6 +208,8 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 
 	out.SetNoteData(&notedata);
 
+	out.TidyUpData();
+
 	return true;
 }
 
