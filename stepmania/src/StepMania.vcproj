@@ -1887,6 +1887,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageFileDriverSlice.h">
 			</File>
 			<File
+				RelativePath="RageFileDriverTimeout.cpp">
+			</File>
+			<File
+				RelativePath="RageFileDriverTimeout.h">
+			</File>
+			<File
 				RelativePath="RageFileDriverZip.cpp">
 			</File>
 			<File

@@ -232,7 +232,8 @@ RageFile.cpp RageFile.h RageFileDriver.cpp RageFileDriver.h RageFileManager.cpp 
 RageFileDriverDirect.cpp RageFileDriverDirect.h RageFileDriverDirectHelpers.cpp RageFileDriverDirectHelpers.h \
 RageFileDriverMemory.cpp RageFileDriverMemory.h RageFileDriverZip.cpp RageFileDriverZip.h \
 RageFileDriverDeflate.cpp RageFileDriverDeflate.h \
-RageFileDriverSlice.cpp RageFileDriverSlice.h
+RageFileDriverSlice.cpp RageFileDriverSlice.h \
+RageFileDriverTimeout.cpp RageFileDriverTimeout.h
 
 Rage = $(PCRE) $(RageFile) $(RageSoundFileReaders) \
 RageBitmapTexture.cpp RageBitmapTexture.h RageDisplay.cpp RageDisplay.h RageDisplay_OGL.cpp RageDisplay_OGL.h \
