@@ -485,18 +485,13 @@ void ScreenOptionsMaster::ExportOptions()
 		const OptionRowHandler &hand = OptionRowHandlers[i];
 		const OptionRow &row = m_OptionRowAlloc[i];
 
-		if( row.bOneChoiceForAllPlayers )
+		for( int pn=0; pn<NUM_PLAYERS; pn++ )
 		{
-			ChangeMask |= ExportOption( row, hand, 0, m_iSelectedOption[0][i] );
-		}
-		else
-			for( int pn=0; pn<NUM_PLAYERS; pn++ )
-			{
-				if( !GAMESTATE->IsHumanPlayer(pn) )
-					continue;
+			if( !GAMESTATE->IsHumanPlayer(pn) )
+				continue;
 
-				ChangeMask |= ExportOption( row, hand, pn, m_iSelectedOption[pn][i] );
-			}
+			ChangeMask |= ExportOption( row, hand, pn, m_iSelectedOption[pn][i] );
+		}
 	}
 
 	/* If the selection is on a LIST, and the selected LIST option sets the screen,
