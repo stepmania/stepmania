@@ -153,22 +153,22 @@ ScreenHowToPlay::~ScreenHowToPlay()
 
 void ScreenHowToPlay::Step()
 {
-#define ST_LEFT		0x08
-#define ST_DOWN		0x04
-#define ST_UP		0x02
-#define ST_RIGHT	0x01
+#define ST_LEFT		0x01
+#define ST_DOWN		0x02
+#define ST_UP		0x04
+#define ST_RIGHT	0x08
 #define ST_JUMPLR	(ST_LEFT | ST_RIGHT)
 #define ST_JUMPUD	(ST_UP | ST_DOWN)
 
 	int iStep = 0;
-	int iNoteRow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat + 0.6f );
-	int iNumTracks = m_NoteData.GetNumTracks();
+	const int iNoteRow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat + 0.6f );
 	// if we want to miss from here on out, don't process steps.
 	if( m_iPerfects < m_iNumPerfects && m_NoteData.IsThereATapAtRow( iNoteRow ) )
 	{
+		const int iNumTracks = m_NoteData.GetNumTracks();
 		for( int k=0; k<iNumTracks; k++ )
 			if( m_NoteData.GetTapNote(k, iNoteRow ) == TAP_TAP )
-				iStep += 1 << (iNumTracks - (k + 1));
+				iStep |= 1 << k;
 
 		switch( iStep )
 		{
