@@ -416,21 +416,23 @@ void ScreenSelectCourse::AfterCourseChange()
 			{
 				const StepsType &st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 
-				int mc = PROFILE_SLOT_MACHINE;
+				Profile* pProfile;
 				if( PROFILEMAN->IsUsingProfile( (PlayerNumber)p ) )
-					mc = p;
+					pProfile = PROFILEMAN->GetProfile((PlayerNumber)p);
+				else
+					pProfile = PROFILEMAN->GetMachineProfile();
+
 
 				/* Courses are scored by survive time, dance points, 
 				 * percent, and normal score.  Every last mother will
 				 * have an opinion on which should be used here for
 				 * each of oni, endless, nonstop --
 				 * should this choice be an option or a metric? */
+				const HighScoreList& hsl = pProfile->GetCourseHighScoreList( pCourse, st );
 				if ( pCourse->IsOni() || pCourse->IsEndless() )
 				{
 					/* use survive time */
-					float fSurviveTime = 0.0f;
-					if( !pCourse->m_MemCardDatas[st][mc].vHighScores.empty() )
-						fSurviveTime = pCourse->m_MemCardDatas[st][mc].vHighScores[0].fSurviveTime;
+					float fSurviveTime = hsl.GetTopScore().fSurviveTime;
 					CString s = SecondsToTime(fSurviveTime);
 
 					/* dim the inital unsignificant digits */
@@ -452,10 +454,7 @@ void ScreenSelectCourse::AfterCourseChange()
 				else /* pCourse->IsNonStop() */
 				{
 					/* use score */
-					int iScore = 0;
-					if( !pCourse->m_MemCardDatas[st][mc].vHighScores.empty() )
-						iScore = pCourse->m_MemCardDatas[st][mc].vHighScores[0].iScore;
-
+					int iScore = hsl.GetTopScore().iScore;
 					m_HighScore[p].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
 				}
 

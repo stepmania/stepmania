@@ -439,23 +439,6 @@ void Course::AutogenNonstopFromGroup( CString sGroupName, vector<Song*> &apSongs
 		m_entries.pop_back();
 }
 
-void Course::MemCardData::AddHighScore( HighScore hs, int &iIndexOut )
-{
-	int i;
-	for( i=0; i<(int)vHighScores.size(); i++ )
-	{
-		if( hs >= vHighScores[i] )
-			break;
-	}
-	if( i < NUM_RANKING_LINES )
-	{
-		vHighScores.insert( vHighScores.begin()+i, hs );
-		iIndexOut = i;
-		if( vHighScores.size() > unsigned(NUM_RANKING_LINES) )
-			vHighScores.erase( vHighScores.begin()+NUM_RANKING_LINES, vHighScores.end() );
-	}
-}
-
 /*
  * Difficult courses do the following:
  *
@@ -1029,24 +1012,6 @@ bool Course::IsRanking() const
 	return false;
 }
 
-void Course::AddHighScore( StepsType st, PlayerNumber pn, MemCardData::HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
-{
-	hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
-	if( PROFILEMAN->IsUsingProfile(pn) )
-		m_MemCardDatas[st][pn].AddHighScore( hs, iPersonalIndexOut );
-	else
-		iPersonalIndexOut = -1;
-	m_MemCardDatas[st][PROFILE_SLOT_MACHINE].AddHighScore( hs, iMachineIndexOut );
-}
-
-int Course::GetNumTimesPlayed( ProfileSlot card ) const
-{
-	int iTotalNumTimesPlayed = 0;
-	for( unsigned i = 0; i < NUM_STEPS_TYPES; ++i )
-		iTotalNumTimesPlayed += GetNumTimesPlayed( (StepsType) i, card );
-	return iTotalNumTimesPlayed;
-}
-
 static map<const Course*, float> course_sort_val;
 
 bool CompareCoursePointersBySortValueAscending(const Course *pSong1, const Course *pSong2)
@@ -1077,18 +1042,15 @@ void SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCourses )
 }
  
 
-void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, ProfileSlot card )
+void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, ProfileSlot slot )
 {
+	Profile* pProfile = PROFILEMAN->GetProfile(slot);
+	if( pProfile == NULL )
+		return;	// nothing to do since we don't have data
+
 	for(unsigned i = 0; i < arrayCoursePointers.size(); ++i)
-		course_sort_val[arrayCoursePointers[i]] = (float) arrayCoursePointers[i]->GetNumTimesPlayed( card );
+		course_sort_val[arrayCoursePointers[i]] = (float) pProfile->GetCourseNumTimesPlayed(arrayCoursePointers[i]);
 	stable_sort( arrayCoursePointers.begin(), arrayCoursePointers.end(), CompareCoursePointersBySortValueDescending );
 	course_sort_val.clear();
 }
 
-bool Course::MemCardData::HighScore::operator>=( const HighScore& other ) const
-{
-	if( PREFSMAN->m_bPercentageScoring )
-		return fPercentDP >= other.fPercentDP;
-	else
-		return iScore >= other.iScore;
-}

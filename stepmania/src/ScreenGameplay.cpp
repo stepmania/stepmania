@@ -173,10 +173,9 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		const StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 		/* Increment the play count. */
 		if( !m_bDemonstration )
-		{
-			for( int mc = 0; mc < NUM_PROFILE_SLOTS; ++mc )
-				++GAMESTATE->m_pCurCourse->m_MemCardDatas[st][mc].iNumTimesPlayed;
-		}
+			for( p=0; p<NUM_PLAYERS; p++ )
+				if( GAMESTATE->IsPlayerEnabled(p) )
+					PROFILEMAN->IncrementCoursePlayCount( GAMESTATE->m_pCurCourse, st, (PlayerNumber)p );
 
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
@@ -872,11 +871,7 @@ void ScreenGameplay::LoadNextSong()
 		/* Increment the play count even if the player fails.  (It's still popular,
 		 * even if the people playing it aren't good at it.) */
 		if( !m_bDemonstration )
-		{
-			for( int mc = 0; mc < NUM_PROFILE_SLOTS; ++mc )
-				++GAMESTATE->m_pCurNotes[p]->m_MemCardDatas[mc].iNumTimesPlayed;
-		}
-
+			PROFILEMAN->IncrementStepsPlayCount( GAMESTATE->m_pCurNotes[p], (PlayerNumber)p );
 
 		m_textPlayerOptions[p].SetText( GAMESTATE->m_PlayerOptions[p].GetString() );
 

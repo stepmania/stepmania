@@ -34,6 +34,7 @@
 #include "RageFileManager.h"
 #include "NoteDataUtil.h"
 #include "SDL_utils.h"
+#include "ProfileManager.h"
 
 #include "NotesLoaderSM.h"
 #include "NotesLoaderDWI.h"
@@ -860,7 +861,8 @@ void Song::GetSteps( vector<Steps*>& arrayAddTo, StepsType nt, Difficulty dc, in
 		if( !Max )
 			break;
 
-		if( m_apNotes[i]->m_StepsType != nt ) continue;
+		if( nt != STEPS_TYPE_INVALID && m_apNotes[i]->m_StepsType != nt ) 
+			continue;
 		if( dc != DIFFICULTY_INVALID && dc != m_apNotes[i]->GetDifficulty() )
 			continue;
 		if( iMeterLow != -1 && iMeterLow > m_apNotes[i]->GetMeter() )
@@ -1114,28 +1116,6 @@ void Song::RemoveAutoGenNotes()
 	}
 }
 
-
-Steps::MemCardData::HighScore GetHighScoreForDifficulty( const Song *s, const StyleDef *st, ProfileSlot card, Difficulty dc )
-{
-	// return max grade of notes in difficulty class
-	vector<Steps*> aNotes;
-	s->GetSteps( aNotes, st->m_StepsType );
-	SortNotesArrayByDifficulty( aNotes );
-
-
-	Steps* pSteps = s->GetStepsByDifficulty( st->m_StepsType, dc );
-	if( pSteps )
-		return pSteps->GetTopScore(card);
-	else
-		return Steps::MemCardData::HighScore();
-}
-
-
-bool Song::IsNew() const
-{
-	return GetNumTimesPlayed(PROFILE_SLOT_MACHINE) == 0;
-}
-
 bool Song::IsEasy( StepsType nt ) const
 {
 	const Steps* pHardNotes = GetStepsByDifficulty( nt, DIFFICULTY_HARD );
@@ -1387,10 +1367,10 @@ bool CompareSongPointersBySortValueDescending(const Song *pSong1, const Song *pS
 	return song_sort_val[pSong1] > song_sort_val[pSong2];
 }
 
-void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers, ProfileSlot card )
+void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers, ProfileSlot slot )
 {
 	for(unsigned i = 0; i < arraySongPointers.size(); ++i)
-		song_sort_val[arraySongPointers[i]] = ssprintf("%9i", arraySongPointers[i]->GetNumTimesPlayed(card));
+		song_sort_val[arraySongPointers[i]] = ssprintf("%9i", PROFILEMAN->GetSongNumTimesPlayed(arraySongPointers[i],slot));
 	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortValueDescending );
 	song_sort_val.clear();
 }
@@ -1553,14 +1533,6 @@ bool Song::HasBackground() const 	{return m_sBackgroundFile != ""		&&  IsAFile(G
 bool Song::HasCDTitle() const 		{return m_sCDTitleFile != ""		&&  IsAFile(GetCDTitlePath()); }
 bool Song::HasBGChanges() const 	{return !m_BackgroundChanges.empty(); }
 
-int Song::GetNumTimesPlayed( ProfileSlot card ) const
-{
-	int iTotalNumTimesPlayed = 0;
-	for( unsigned i=0; i<m_apNotes.size(); i++ )
-		iTotalNumTimesPlayed += m_apNotes[i]->GetNumTimesPlayed( card );
-
-	return iTotalNumTimesPlayed;
-}
 
 /* Note that supplying a path relative to the top-level directory is only for compatibility
  * with DWI.  We prefer paths relative to the song directory. */
@@ -1673,7 +1645,7 @@ int	Song::GetNumNotesWithGrade( Grade g ) const
 	{
 		Steps* pSteps = vNotes[j];
 		
-		if( pSteps->GetTopScore(PROFILE_SLOT_MACHINE).grade == g )
+		if( PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSteps).GetTopScore().grade == g )
 			iCount++;
 	}
 	return iCount;

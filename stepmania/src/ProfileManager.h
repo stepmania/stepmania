@@ -17,6 +17,9 @@
 #include "Style.h"
 #include "Profile.h"
 
+class Song;
+class StyleDef;
+
 class ProfileManager
 {
 public:
@@ -38,7 +41,22 @@ public:
 	void SaveMachineProfile();
 
 	bool IsUsingProfile( PlayerNumber pn ) { return !m_sProfileDir[pn].empty(); }
+	bool IsUsingProfile( ProfileSlot slot )
+	{
+		switch( slot )
+		{
+		case PROFILE_SLOT_PLAYER_1:
+		case PROFILE_SLOT_PLAYER_2:
+			return !m_sProfileDir[slot].empty(); 
+		case PROFILE_SLOT_MACHINE:
+			return true;
+		default:
+			ASSERT(0);
+			return false;
+		}
+	}
 	Profile* GetProfile( PlayerNumber pn );
+	Profile* GetProfile( ProfileSlot slot );
 	CString GetProfileDir( ProfileSlot slot );
 
 	Profile* GetMachineProfile() { return &m_MachineProfile; }
@@ -53,36 +71,29 @@ public:
 	void InitMachineScoresFromDisk();
 	void SaveMachineScoresToDisk();
 
-	struct CategoryData
-	{
-		struct HighScore
-		{
-			CString	sName;
-			int iScore;
-			float fPercentDP;
+	//
+	// Song stats
+	//
+	int GetSongNumTimesPlayed( Song* pSong, ProfileSlot card ) const;
+	bool IsSongNew( Song* pSong ) const { return GetSongNumTimesPlayed(pSong,PROFILE_SLOT_MACHINE)==0; }
+	void AddStepsHighScore( const Steps* pSteps, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
+	void IncrementStepsPlayCount( const Steps* pSteps, PlayerNumber pn );
+	HighScore GetHighScoreForDifficulty( const Song *s, const StyleDef *st, ProfileSlot slot, Difficulty dc );
 
-			HighScore()
-			{
-				iScore = 0;
-				fPercentDP = 0;
-			}
+	//
+	// Course stats
+	//
+	void AddCourseHighScore( const Course* pCourse, StepsType st, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
+	void IncrementCoursePlayCount( const Course* pCourse, StepsType st, PlayerNumber pn );
 
-			bool operator>=( const HighScore& other ) const;
-		};
-		vector<HighScore> vHighScores;
+	//
+	// Category stats
+	//
+	void AddCategoryHighScore( StepsType nt, RankingCategory rc, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
+	void IncrementCategoryPlayCount( StepsType nt, RankingCategory rc, PlayerNumber pn );
 
-		void AddHighScore( HighScore hs, int &iIndexOut );
 
-	} m_CategoryDatas[NUM_PROFILE_SLOTS][NUM_STEPS_TYPES][NUM_RANKING_CATEGORIES];
-
-	void AddHighScore( StepsType nt, RankingCategory rc, PlayerNumber pn, CategoryData::HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
-	{
-		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
-		m_CategoryDatas[pn][nt][rc].AddHighScore( hs, iPersonalIndexOut );
-		m_CategoryDatas[PROFILE_SLOT_MACHINE][nt][rc].AddHighScore( hs, iMachineIndexOut );
-	}
-
-	void ReadSM300NoteScores();
+//	void ReadSM300NoteScores();
 	void ReadSongScoresFromDir( CString sDir, ProfileSlot slot );
 	void ReadCourseScoresFromDir( CString sDir, ProfileSlot slot );
 	void ReadCategoryScoresFromDir( CString sDir, ProfileSlot slot );

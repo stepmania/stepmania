@@ -671,12 +671,13 @@ float ScreenRanking::SetPage( PageToShow pts )
 
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
-				ProfileManager::CategoryData::HighScore hs;
+				HighScoreList& hsl = PROFILEMAN->GetMachineProfile()->GetCategoryHighScoreList(pts.nt,pts.category);
+				HighScore hs;
 				bool bRecentHighScore = false;
-				if( l < (int)PROFILEMAN->m_CategoryDatas[PROFILE_SLOT_MACHINE][pts.nt][pts.category].vHighScores.size() )
+				if( l < (int)hsl.vHighScores.size() )
 				{
-					hs = PROFILEMAN->m_CategoryDatas[PROFILE_SLOT_MACHINE][pts.nt][pts.category].vHighScores[l];
-					CString *psName = &PROFILEMAN->m_CategoryDatas[PROFILE_SLOT_MACHINE][pts.nt][pts.category].vHighScores[l].sName;
+					hs = hsl.vHighScores[l];
+					CString *psName = &hsl.vHighScores[l].sName;
 					bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 				}
 				else
@@ -710,20 +711,22 @@ float ScreenRanking::SetPage( PageToShow pts )
 			m_Banner.LoadFromCourse( pts.pCourse );
 			m_textStepsType.SetText( GameManager::NotesTypeToString(pts.nt) );
 
+			const HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList( pts.pCourse, pts.nt );
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
-				Course::MemCardData::HighScore hs;
+				HighScore hs;
 				bool bRecentHighScore = false;
-				if( l < (int)pts.pCourse->m_MemCardDatas[pts.nt][PROFILE_SLOT_MACHINE].vHighScores.size() )
+				if( l < (int)hsl.vHighScores.size() )
 				{
-					hs = pts.pCourse->m_MemCardDatas[pts.nt][PROFILE_SLOT_MACHINE].vHighScores[l];
-					CString *psName = &pts.pCourse->m_MemCardDatas[pts.nt][PROFILE_SLOT_MACHINE].vHighScores[l].sName;
+					hs = hsl.vHighScores[l];
+					const CString *psName = &hsl.vHighScores[l].sName;
 					bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 				}
 				else
 				{
 					hs.sName = NO_SCORE_NAME;				
 				}
+
 				if( hs.sName.empty() )
 					hs.sName = EMPTY_SCORE_NAME;
 				
@@ -778,12 +781,13 @@ float ScreenRanking::SetPage( PageToShow pts )
 					}
 					else
 					{
-						Steps::MemCardData::HighScore hs;
+						HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSteps);
+						HighScore hs = hsl.GetTopScore();
 						bool bRecentHighScore = false;
-						if( !pSteps->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores.empty() )
+						if( !hsl.vHighScores.empty() )
 						{
-							hs = pSteps->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores[0];
-							const CString *psName = &pSteps->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores[0].sName;
+							hs = hsl.GetTopScore();
+							const CString *psName = &hsl.GetTopScore().sName;
 							bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 						}
 						else
@@ -812,16 +816,20 @@ float ScreenRanking::SetPage( PageToShow pts )
 				const Course* pCourse = pCourseScoreRowItem->m_pCourse;
 
 				pCourseScoreRowItem->m_textSongTitle.SetText( pCourse->m_sName );
+				const HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList( pCourse, pts.nt );
 				for( int d=0; d<NUM_COURSE_DIFFICULTIES; d++ )
 				{
+					//
+					// FIXME: have separate high scores for each difficulty
+					//
 					BitmapText* pTextStepsScore = &pCourseScoreRowItem->m_textStepsScore[d];
 
-					Course::MemCardData::HighScore hs;
+					HighScore hs;
 					bool bRecentHighScore = false;
-					if( !pCourse->m_MemCardDatas[pts.nt][PROFILE_SLOT_MACHINE].vHighScores.empty() )
+					if( !hsl.vHighScores.empty() )
 					{
-						hs = pCourse->m_MemCardDatas[pts.nt][PROFILE_SLOT_MACHINE].vHighScores[0];
-						const CString *psName = &pCourse->m_MemCardDatas[pts.nt][PROFILE_SLOT_MACHINE].vHighScores[0].sName;
+						hs = hsl.vHighScores[0];
+						const CString *psName = &hsl.GetTopScore().sName;
 						bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 					}
 					else

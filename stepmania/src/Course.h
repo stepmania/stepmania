@@ -139,59 +139,6 @@ public:
 	void AutogenNonstopFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup );
 
 
-	struct MemCardData
-	{
-		MemCardData()
-		{
-			iNumTimesPlayed = 0;
-		}
-
-		int iNumTimesPlayed;
-
-		struct HighScore
-		{
-			CString	sName;
-			int iScore;
-			float fPercentDP;
-			float fSurviveTime;
-
-			HighScore()
-			{
-				iScore = 0;
-				fPercentDP = 0;
-				fSurviveTime = 0;
-			}
-
-			bool operator>=( const HighScore& other ) const;
-		};
-		vector<HighScore> vHighScores;
-
-		void AddHighScore( HighScore hs, int &iIndexOut );
-
-		HighScore GetTopScore()
-		{
-			if( vHighScores.empty() )
-				return HighScore();
-			else
-				return vHighScores[0];
-		}
-
-	} m_MemCardDatas[NUM_STEPS_TYPES][NUM_PROFILE_SLOTS];
-	
-	void AddHighScore( StepsType st, PlayerNumber pn, MemCardData::HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
-
-	MemCardData::HighScore GetTopScore( StepsType st, ProfileSlot slot )
-	{
-		return m_MemCardDatas[st][slot].GetTopScore();
-	}
-
-	int GetNumTimesPlayed( StepsType st, ProfileSlot slot ) const
-	{
-		return m_MemCardDatas[st][slot].iNumTimesPlayed;
-	}
-
-	int GetNumTimesPlayed( ProfileSlot slot ) const;
-
 	// sorting values
 	int		SortOrder_TotalDifficulty;
 	int		SortOrder_Ranking;

@@ -1008,7 +1008,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 	switch( m_MusicWheel.GetSelectedType() )
 	{
 	case TYPE_SONG: {
-		const bool bIsNew = m_MusicWheel.GetSelectedSong()->IsNew();
+		const bool bIsNew = PROFILEMAN->IsSongNew( m_MusicWheel.GetSelectedSong() );
 		bool bIsHard = false;
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
@@ -1133,27 +1133,21 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 	
 	m_iSelection[pn] = clamp( m_iSelection[pn], 0, int(m_arrayNotes.size()-1) );	// bounds clamping
 
-	Steps* pNotes = m_arrayNotes.empty()? NULL: m_arrayNotes[m_iSelection[pn]];
+	Steps* pSteps = m_arrayNotes.empty()? NULL: m_arrayNotes[m_iSelection[pn]];
 
-	GAMESTATE->m_pCurNotes[pn] = pNotes;
+	GAMESTATE->m_pCurNotes[pn] = pSteps;
 
 //	m_BPMDisplay.SetZoomY( 0 );
 //	m_BPMDisplay.BeginTweening( 0.2f );
 //	m_BPMDisplay.SetZoomY( 1.2f );
 
-	if( pNotes )
+	if( pSteps )
 	{
 		int iScore = 0;
 		if( PROFILEMAN->IsUsingProfile(pn) )
-		{
-			if( !pNotes->m_MemCardDatas[pn].vHighScores.empty() )
-				iScore = pNotes->m_MemCardDatas[pn].vHighScores[0].iScore;
-		}
+			iScore = PROFILEMAN->GetProfile(pn)->GetStepsHighScoreList(pSteps).GetTopScore().iScore;
 		else
-		{
-			if( !pNotes->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores.empty() )
-				iScore = pNotes->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores[0].iScore;
-		}
+			iScore = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSteps).GetTopScore().iScore;
 		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
 	}
 	else
@@ -1161,8 +1155,8 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, 0) );
 	}
 
-	m_DifficultyIcon[pn].SetFromNotes( pn, pNotes );
-	if( pNotes && pNotes->IsAutogen() )
+	m_DifficultyIcon[pn].SetFromNotes( pn, pSteps );
+	if( pSteps && pSteps->IsAutogen() )
 	{
 		m_AutoGenIcon[pn].SetEffectDiffuseShift();
 	}
@@ -1174,7 +1168,7 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 	m_DifficultyMeter[pn].SetFromGameState( pn );
 	if( SHOW_DIFFICULTY_LIST )
 		m_DifficultyList.SetFromGameState();
-	m_GrooveRadar.SetFromNotes( pn, pNotes );
+	m_GrooveRadar.SetFromNotes( pn, pSteps );
 	m_MusicWheel.NotesChanged( pn );
 	if( SHOW_PANES )
 		m_PaneDisplay[pn].SetFromGameState();

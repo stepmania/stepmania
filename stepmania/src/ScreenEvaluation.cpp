@@ -866,6 +866,14 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 		// depends on if this is a course or not ... it's handled
 		// below in the switch
 
+		HighScore hs;
+		hs.grade = stageStats.GetGrade( (PlayerNumber)p );
+		hs.iScore = stageStats.iScore[p];
+		hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
+		hs.fSurviveTime = stageStats.fAliveSeconds[p];
+
+		StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+
 		switch( m_Type )
 		{
 		case stage:
@@ -876,12 +884,8 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 
 				ASSERT( GAMESTATE->m_pCurNotes[p] );
 
-				Steps::MemCardData::HighScore hs;
-				hs.grade = stageStats.GetGrade( (PlayerNumber)p );
-				hs.iScore = stageStats.iScore[p] + stageStats.iBonus[p];
-				hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
 				if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
-					GAMESTATE->m_pCurNotes[p]->AddHighScore( (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
+					PROFILEMAN->AddStepsHighScore( GAMESTATE->m_pCurNotes[p], (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
 			}
 			break;
 
@@ -891,16 +895,11 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 				if( stageStats.bFailed[p] ) 
 					continue;
 
-				StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-
 				float fAverageMeter = stageStats.iMeter[p] / (float)PREFSMAN->m_iNumArcadeStages;
 				rc[p] = AverageMeterToRankingCategory( fAverageMeter );
 
-				ProfileManager::CategoryData::HighScore hs;
-				hs.iScore = stageStats.iScore[p];
-				hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
 				if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
-					PROFILEMAN->AddHighScore( nt, rc[p], (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
+					PROFILEMAN->AddCategoryHighScore( nt, rc[p], (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
 			}
 			break;
 
@@ -914,13 +913,8 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 					if( stageStats.bFailed[p] && pCourse->IsNonstop() )
 						continue;
 
-					StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-					Course::MemCardData::HighScore hs;
-					hs.iScore = stageStats.iScore[p];
-					hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
-					hs.fSurviveTime = stageStats.fAliveSeconds[p];
 					if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
-						pCourse->AddHighScore( nt, (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
+						PROFILEMAN->AddCourseHighScore( pCourse, nt, (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
 				}
 			}
 			break;

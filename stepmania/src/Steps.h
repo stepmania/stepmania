@@ -55,58 +55,6 @@ public:
 	void		SetSMNoteData( const CString &notes_comp, const CString &attacks_comp );
 	void		GetSMNoteData( CString &notes_comp_out, CString &attacks_comp_out ) const;
 
-
-	struct MemCardData
-	{
-		MemCardData() 
-		{
-			iNumTimesPlayed = 0;
-		}
-
-		int iNumTimesPlayed;
-
-		struct HighScore
-		{
-			CString sName;
-			Grade grade;
-			int iScore;
-			float fPercentDP;
-
-			HighScore()
-			{
-				grade = GRADE_NO_DATA;
-				iScore = 0;
-				fPercentDP = 0;
-			}
-
-			bool operator>=( const HighScore& other ) const;
-		};
-		vector<HighScore> vHighScores;
-
-		void AddHighScore( MemCardData::HighScore hs, int &iIndexOut );
-
-		HighScore GetTopScore()
-		{
-			if( vHighScores.empty() )
-				return HighScore();
-			else
-				return vHighScores[0];
-		}
-		
-	} m_MemCardDatas[NUM_PROFILE_SLOTS];
-
-	void AddHighScore( PlayerNumber pn, MemCardData::HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
-
-	MemCardData::HighScore GetTopScore( ProfileSlot slot )
-	{
-		return m_MemCardDatas[slot].GetTopScore();
-	}
-
-	int GetNumTimesPlayed( ProfileSlot slot )
-	{
-		return m_MemCardDatas[slot].iNumTimesPlayed;
-	}
-
 	void TidyUpData();
 
 protected:

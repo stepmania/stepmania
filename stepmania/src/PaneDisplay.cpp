@@ -170,6 +170,11 @@ void PaneDisplay::SetContent( PaneContents c )
 		}
 	}
 
+	const Song *pSong = GAMESTATE->m_pCurSong;
+	const Steps *pSteps = GAMESTATE->m_pCurNotes[m_PlayerNumber];
+	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+	const Course *pCourse = GAMESTATE->m_pCurCourse;
+
 	float val = 0;
 	CString str;
 	switch( c )
@@ -190,21 +195,21 @@ void PaneDisplay::SetContent( PaneContents c )
 	case SONG_DIFFICULTY_RADAR_FREEZE:	val = fRadarValues[RADAR_FREEZE]; break;
 	case SONG_DIFFICULTY_RADAR_CHAOS:	val = fRadarValues[RADAR_CHAOS]; break;
 	case SONG_PROFILE_HIGH_SCORE:
-		val = 100.0f * GAMESTATE->m_pCurNotes[m_PlayerNumber]->GetTopScore( PlayerMemCard(m_PlayerNumber) ).fPercentDP;
+		val = 100.0f * PROFILEMAN->GetProfile(m_PlayerNumber)->GetStepsHighScoreList(pSteps).GetTopScore().fPercentDP;
 		break;
 	case SONG_PROFILE_NUM_PLAYS:
-		val = (float) GAMESTATE->m_pCurNotes[m_PlayerNumber]->GetNumTimesPlayed( PlayerMemCard(m_PlayerNumber) );
+		val = (float) PROFILEMAN->GetProfile(m_PlayerNumber)->GetStepsNumTimesPlayed(pSteps);
 		break;
 
 	case SONG_MACHINE_HIGH_NAME: /* set val for color */
 	case SONG_MACHINE_HIGH_SCORE:
-		val = 100.0f * GAMESTATE->m_pCurNotes[m_PlayerNumber]->GetTopScore( PROFILE_SLOT_MACHINE ).fPercentDP;
+		val = 100.0f * PROFILEMAN->GetProfile(m_PlayerNumber)->GetStepsHighScoreList(pSteps).GetTopScore().fPercentDP;
 		break;
 
 	case SONG_MACHINE_RANK:
 		{
 		const vector<Song*> best = SONGMAN->GetBestSongs( PROFILE_SLOT_MACHINE );
-		val = (float) FindIndex( best.begin(), best.end(), GAMESTATE->m_pCurSong );
+		val = (float) FindIndex( best.begin(), best.end(), pSong );
 		val += 1;
 		break;
 		}
@@ -212,38 +217,38 @@ void PaneDisplay::SetContent( PaneContents c )
 	case SONG_PROFILE_RANK:
 		{
 		const vector<Song*> best = SONGMAN->GetBestSongs( PlayerMemCard(m_PlayerNumber) );
-		val = (float) FindIndex( best.begin(), best.end(), GAMESTATE->m_pCurSong );
+		val = (float) FindIndex( best.begin(), best.end(), pSong );
 		val += 1;
 		break;
 		}
 
 	case COURSE_MACHINE_HIGH_NAME: /* set val for color */
 	case COURSE_MACHINE_HIGH_SCORE:
-		val = 100.0f * GAMESTATE->m_pCurCourse->GetTopScore( GAMESTATE->GetCurrentStyleDef()->m_StepsType, PROFILE_SLOT_MACHINE ).fPercentDP;
+		val = 100.0f * PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,st).GetTopScore().fPercentDP;
 		break;
 
 	case COURSE_MACHINE_NUM_PLAYS:
-		val = (float) GAMESTATE->m_pCurCourse->GetNumTimesPlayed( PROFILE_SLOT_MACHINE );
+		val = (float) PROFILEMAN->GetMachineProfile()->GetCourseNumTimesPlayed( pCourse );
 		break;
 
 	case COURSE_MACHINE_RANK:
 		{
 		const vector<Course*> best = SONGMAN->GetBestCourses( PROFILE_SLOT_MACHINE );
-		val = (float) FindIndex( best.begin(), best.end(), GAMESTATE->m_pCurCourse );
+		val = (float) FindIndex( best.begin(), best.end(), pCourse );
 		val += 1;
 		}
 		break;
 
 	case COURSE_PROFILE_HIGH_SCORE:
-		val = 100.0f * GAMESTATE->m_pCurCourse->GetTopScore( GAMESTATE->GetCurrentStyleDef()->m_StepsType, PlayerMemCard(m_PlayerNumber) ).fPercentDP;
+		val = 100.0f * PROFILEMAN->GetProfile(m_PlayerNumber)->GetCourseHighScoreList(pCourse,st).GetTopScore().fPercentDP;
 		break;
 	case COURSE_PROFILE_NUM_PLAYS:
-		val = (float) GAMESTATE->m_pCurCourse->GetNumTimesPlayed( PlayerMemCard(m_PlayerNumber) );
+		val = (float) PROFILEMAN->GetProfile(m_PlayerNumber)->GetCourseNumTimesPlayed( pCourse );
 		break;
 
 	case COURSE_PROFILE_RANK:
 		const vector<Course*> best = SONGMAN->GetBestCourses( PlayerMemCard(m_PlayerNumber) );
-		val = (float) FindIndex( best.begin(), best.end(), GAMESTATE->m_pCurCourse );
+		val = (float) FindIndex( best.begin(), best.end(), pCourse );
 		val += 1;
 		break;
 	};
@@ -265,10 +270,10 @@ void PaneDisplay::SetContent( PaneContents c )
 	switch( c )
 	{
 	case SONG_MACHINE_HIGH_NAME:
-		str = GAMESTATE->m_pCurNotes[m_PlayerNumber]->GetTopScore( PROFILE_SLOT_MACHINE ).sName;
+		str = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSteps).GetTopScore().sName;
 		break;
 	case COURSE_MACHINE_HIGH_NAME:
-		str = GAMESTATE->m_pCurCourse->GetTopScore( GAMESTATE->GetCurrentStyleDef()->m_StepsType, PROFILE_SLOT_MACHINE ).sName;
+		str = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse, st).GetTopScore().sName;
 		break;
 
 	case SONG_MACHINE_HIGH_SCORE:

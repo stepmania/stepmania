@@ -1132,48 +1132,56 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 				Steps* pSteps = vSongAndSteps[i].pSteps;
 
 				// Find Machine Records
-				vector<Steps::MemCardData::HighScore> &vMachineHighScores = pSteps->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores;
-				for( j=0; j<vMachineHighScores.size(); j++ )
 				{
-					if( vMachineHighScores[j].sName != RANKING_TO_FILL_IN_MARKER[pn] )
-						continue;
+					HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSteps);
+					for( j=0; j<hsl.vHighScores.size(); j++ )
+					{
+						HighScore &hs = hsl.vHighScores[j];
 
-					RankingFeats feat;
-					feat.Type = RankingFeats::SONG;
-					feat.Feat = ssprintf("MR #%d in %s %s", j+1, pSong->GetTranslitMainTitle().c_str(), DifficultyToString(pSteps->GetDifficulty()).c_str() );
-					feat.pStringToFill = &vMachineHighScores[j].sName;
-					feat.grade = vMachineHighScores[j].grade;
-					feat.fPercentDP = vMachineHighScores[j].fPercentDP;
-					feat.iScore = vMachineHighScores[j].iScore;
+						if( hs.sName != RANKING_TO_FILL_IN_MARKER[pn] )
+							continue;
 
-					if( pSong->HasBanner() )
-						feat.Banner = pSong->GetBannerPath();
+						RankingFeats feat;
+						feat.Type = RankingFeats::SONG;
+						feat.Feat = ssprintf("MR #%d in %s %s", j+1, pSong->GetTranslitMainTitle().c_str(), DifficultyToString(pSteps->GetDifficulty()).c_str() );
+						feat.pStringToFill = &hs.sName;
+						feat.grade = hs.grade;
+						feat.fPercentDP = hs.fPercentDP;
+						feat.iScore = hs.iScore;
 
-					asFeatsOut.push_back( feat );
+						if( pSong->HasBanner() )
+							feat.Banner = pSong->GetBannerPath();
+
+						asFeatsOut.push_back( feat );
+					}
 				}
 		
 				// Find Personal Records
-				vector<Steps::MemCardData::HighScore> &vPersonalHighScores = pSteps->m_MemCardDatas[pn].vHighScores;
-				for( j=0; j<vPersonalHighScores.size(); j++ )
 				{
-					if( vPersonalHighScores[j].sName != RANKING_TO_FILL_IN_MARKER[pn] )
-						continue;
+					HighScoreList &hsl = PROFILEMAN->GetProfile(pn)->GetStepsHighScoreList(pSteps);
+					for( j=0; j<hsl.vHighScores.size(); j++ )
+					{
+						HighScore &hs = hsl.vHighScores[j];
 
-					RankingFeats feat;
-					feat.Type = RankingFeats::SONG;
-					feat.Feat = ssprintf("PR #%d in %s %s", j+1, pSong->GetTranslitMainTitle().c_str(), DifficultyToString(pSteps->GetDifficulty()).c_str() );
-					feat.pStringToFill = &vPersonalHighScores[j].sName;
-					feat.grade = vPersonalHighScores[j].grade;
-					feat.fPercentDP = vMachineHighScores[j].fPercentDP;
-					feat.iScore = vMachineHighScores[j].iScore;
+						if( hs.sName != RANKING_TO_FILL_IN_MARKER[pn] )
+							continue;
 
-					// XXX: temporary hack
-					if( pSong->HasBackground() )
-						feat.Banner = pSong->GetBackgroundPath();
-	//					if( pSong->HasBanner() )
-	//						feat.Banner = pSong->GetBannerPath();
+						RankingFeats feat;
+						feat.Type = RankingFeats::SONG;
+						feat.Feat = ssprintf("PR #%d in %s %s", j+1, pSong->GetTranslitMainTitle().c_str(), DifficultyToString(pSteps->GetDifficulty()).c_str() );
+						feat.pStringToFill = &hs.sName;
+						feat.grade = hs.grade;
+						feat.fPercentDP = hs.fPercentDP;
+						feat.iScore = hs.iScore;
 
-					asFeatsOut.push_back( feat );
+						// XXX: temporary hack
+						if( pSong->HasBackground() )
+							feat.Banner = pSong->GetBackgroundPath();
+		//					if( pSong->HasBanner() )
+		//						feat.Banner = pSong->GetBannerPath();
+
+						asFeatsOut.push_back( feat );
+					}
 				}
 			}
 
@@ -1183,42 +1191,46 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 			GetFinalEvalStatsAndSongs( stats, vSongs );
 
 
-			// Find Machine Records
+			// Find Machine Category Records
 			for( i=0; i<NUM_RANKING_CATEGORIES; i++ )
 			{
-				vector<ProfileManager::CategoryData::HighScore> &vHighScores = PROFILEMAN->m_CategoryDatas[PROFILE_SLOT_MACHINE][nt][i].vHighScores;
-				for( unsigned j=0; j<vHighScores.size(); j++ )
+				RankingCategory rc = (RankingCategory)i;
+				HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCategoryHighScoreList( nt, rc );
+				for( unsigned j=0; j<hsl.vHighScores.size(); j++ )
 				{
-					if( vHighScores[j].sName != RANKING_TO_FILL_IN_MARKER[pn] )
+					HighScore &hs = hsl.vHighScores[j];
+					if( hs.sName != RANKING_TO_FILL_IN_MARKER[pn] )
 						continue;
 
 					RankingFeats feat;
 					feat.Type = RankingFeats::CATEGORY;
 					feat.Feat = ssprintf("MR #%d in Type %c (%d)", j+1, 'A'+i, stats.iMeter[pn] );
-					feat.pStringToFill = &vHighScores[j].sName;
+					feat.pStringToFill = &hs.sName;
 					feat.grade = GRADE_NO_DATA;
-					feat.iScore = (int) vHighScores[j].iScore;
-					feat.fPercentDP = (float) vHighScores[j].fPercentDP;
+					feat.iScore = (int) hs.iScore;
+					feat.fPercentDP = (float) hs.fPercentDP;
 					asFeatsOut.push_back( feat );
 				}
 			}
 
-			// Find Personal Records
+			// Find Personal Category Records
 			for( i=0; i<NUM_RANKING_CATEGORIES; i++ )
 			{
-				vector<ProfileManager::CategoryData::HighScore> &vHighScores = PROFILEMAN->m_CategoryDatas[pn][nt][i].vHighScores;
-				for( unsigned j=0; j<vHighScores.size(); j++ )
+				RankingCategory rc = (RankingCategory)i;
+				HighScoreList &hsl = PROFILEMAN->GetProfile(pn)->GetCategoryHighScoreList( nt, rc );
+				for( unsigned j=0; j<hsl.vHighScores.size(); j++ )
 				{
-					if( vHighScores[j].sName != RANKING_TO_FILL_IN_MARKER[pn] )
+					HighScore &hs = hsl.vHighScores[j];
+					if( hs.sName != RANKING_TO_FILL_IN_MARKER[pn] )
 						continue;
 
 					RankingFeats feat;
 					feat.Type = RankingFeats::CATEGORY;
 					feat.Feat = ssprintf("PR #%d in Type %c (%d)", j+1, 'A'+i, stats.iMeter[pn] );
-					feat.pStringToFill = &vHighScores[j].sName;
+					feat.pStringToFill = &hs.sName;
 					feat.grade = GRADE_NO_DATA;
-					feat.iScore = (int) vHighScores[j].iScore;
-					feat.fPercentDP = (float) vHighScores[j].fPercentDP;
+					feat.iScore = (int) hs.iScore;
+					feat.fPercentDP = (float) hs.fPercentDP;
 					asFeatsOut.push_back( feat );
 				}
 			}
@@ -1238,19 +1250,21 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 
 			// Find Machine Records
 			{
-				vector<Course::MemCardData::HighScore> &vHighScores = pCourse->m_MemCardDatas[nt][PROFILE_SLOT_MACHINE].vHighScores;
-				for( unsigned i=0; i<vHighScores.size(); i++ )
+				Profile* pProfile = PROFILEMAN->GetMachineProfile();
+				HighScoreList &hsl = pProfile->GetCourseHighScoreList( pCourse, nt );
+				for( unsigned i=0; i<hsl.vHighScores.size(); i++ )
 				{
-					if( vHighScores[i].sName != RANKING_TO_FILL_IN_MARKER[pn] )
+					HighScore &hs = hsl.vHighScores[i];
+					if( hs.sName != RANKING_TO_FILL_IN_MARKER[pn] )
 							continue;
 
 					RankingFeats feat;
 					feat.Type = RankingFeats::COURSE;
 					feat.Feat = ssprintf("MR #%d in %s", i+1, pCourse->m_sName.c_str() );
-					feat.pStringToFill = &vHighScores[i].sName;
+					feat.pStringToFill = &hs.sName;
 					feat.grade = GRADE_NO_DATA;
-					feat.iScore = vHighScores[i].iScore;
-					feat.fPercentDP = vHighScores[i].fPercentDP;
+					feat.iScore = hs.iScore;
+					feat.fPercentDP = hs.fPercentDP;
 					if( pCourse->HasBanner() )
 						feat.Banner = pCourse->m_sBannerPath;
 					asFeatsOut.push_back( feat );
@@ -1258,20 +1272,23 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 			}
 
 			// Find Personal Records
-			vector<Course::MemCardData::HighScore> &vHighScores = pCourse->m_MemCardDatas[nt][pn].vHighScores;
+			if( PROFILEMAN->IsUsingProfile( pn ) )
 			{
-				for( unsigned i=0; i<vHighScores.size(); i++ )
+				Profile* pProfile = PROFILEMAN->GetProfile( pn );
+				HighScoreList &hsl = pProfile->GetCourseHighScoreList( pCourse, nt );
+				for( unsigned i=0; i<hsl.vHighScores.size(); i++ )
 				{
-					if( vHighScores[i].sName != RANKING_TO_FILL_IN_MARKER[pn] )
+					HighScore& hs = hsl.vHighScores[i];
+					if( hs.sName != RANKING_TO_FILL_IN_MARKER[pn] )
 							continue;
 
 					RankingFeats feat;
 					feat.Type = RankingFeats::COURSE;
 					feat.Feat = ssprintf("PR #%d in %s", i+1, pCourse->m_sName.c_str() );
-					feat.pStringToFill = &vHighScores[i].sName;
+					feat.pStringToFill = &hs.sName;
 					feat.grade = GRADE_NO_DATA;
-					feat.iScore = vHighScores[i].iScore;
-					feat.fPercentDP = vHighScores[i].fPercentDP;
+					feat.iScore = hs.iScore;
+					feat.fPercentDP = hs.fPercentDP;
 					if( pCourse->HasBanner() )
 						feat.Banner = pCourse->m_sBannerPath;
 					asFeatsOut.push_back( feat );

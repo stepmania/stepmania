@@ -327,10 +327,13 @@ bool CompareStepsPointersBySortValueDescending(const Steps *pSteps1, const Steps
 	return steps_sort_val[pSteps1] > steps_sort_val[pSteps2];
 }
 
-void SortStepsPointerArrayByMostPlayed( vector<Steps*> &vStepsPointers, ProfileSlot card )
+void SortStepsPointerArrayByMostPlayed( vector<Steps*> &vStepsPointers, ProfileSlot slot )
 {
+	Profile* pProfile = PROFILEMAN->GetProfile(slot);
+	ASSERT( pProfile );	// we shouldn't be requesting this sort unless there's a Profile in this slot
+
 	for(unsigned i = 0; i < vStepsPointers.size(); ++i)
-		steps_sort_val[vStepsPointers[i]] = ssprintf("%9i", vStepsPointers[i]->GetNumTimesPlayed(card));
+		steps_sort_val[vStepsPointers[i]] = ssprintf("%9i", pProfile->GetStepsNumTimesPlayed(vStepsPointers[i]));
 	stable_sort( vStepsPointers.begin(), vStepsPointers.end(), CompareStepsPointersBySortValueDescending );
 	steps_sort_val.clear();
 }
@@ -381,52 +384,4 @@ void SortStepsByTypeAndDifficulty( vector<Steps*> &arraySongPointers )
 	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareStepsPointersByTypeAndDifficulty );
 }
 
-
-bool Steps::MemCardData::HighScore::operator>=( const Steps::MemCardData::HighScore& other ) const
-{
-	if( PREFSMAN->m_bPercentageScoring )
-		return fPercentDP >= other.fPercentDP;
-	else
-		return iScore >= other.iScore;
-	/* Make sure we treat AAAA as higher than AAA, even though the score
-		* is the same. 
-		*
-		* XXX: Isn't it possible to beat the grade but not beat the score, since
-		* grading and scores are on completely different systems?  Should we be
-		* checking for these completely separately? */
-	//	if( vsScore > this->fScore )
-	//		return true;
-	//	if( vsScore < this->fScore )
-	//		return false;
-	//	return vsGrade > this->grade;
-}
-
-void Steps::MemCardData::AddHighScore( Steps::MemCardData::HighScore hs, int &iIndexOut )
-{
-	int i;
-
-	for( i=0; i<(int)vHighScores.size(); i++ )
-	{
-		if( hs >= vHighScores[i] )	// tie goes to new score
-			break;
-	}
-
-	if( i < NUM_RANKING_LINES )
-	{
-		vHighScores.insert( vHighScores.begin()+i, hs );
-		iIndexOut = i;
-		if( (int)vHighScores.size() > NUM_RANKING_LINES )
-			vHighScores.erase( vHighScores.begin()+NUM_RANKING_LINES, vHighScores.end() );
-	}
-}
-
-void Steps::AddHighScore( PlayerNumber pn, MemCardData::HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
-{
-	hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
-	if( PROFILEMAN->IsUsingProfile(pn) )
-		m_MemCardDatas[pn].AddHighScore( hs, iPersonalIndexOut );
-	else
-		iPersonalIndexOut = -1;
-	m_MemCardDatas[PROFILE_SLOT_MACHINE].AddHighScore( hs, iMachineIndexOut );
-}
 

@@ -14,6 +14,47 @@
 
 #include "GameConstantsAndTypes.h"
 #include "Style.h"
+#include "Grade.h"
+#include <map>
+
+class Steps;
+class Course;
+
+struct HighScore
+{
+	CString	sName;
+	Grade grade;
+	int iScore;
+	float fPercentDP;
+	float fSurviveTime;
+
+	HighScore()
+	{
+		grade = GRADE_NO_DATA;
+		iScore = 0;
+		fPercentDP = 0;
+		fSurviveTime = 0;
+	}
+
+	bool operator>=( const HighScore& other ) const;
+};
+
+struct HighScoreList
+{
+	int iNumTimesPlayed;
+	vector<HighScore> vHighScores;
+
+	
+	HighScoreList()
+	{
+		iNumTimesPlayed = 0;
+	}
+
+	void AddHighScore( HighScore hs, int &iIndexOut );
+
+	const HighScore& GetTopScore() const;
+};
+
 
 struct Profile
 {
@@ -62,6 +103,49 @@ struct Profile
 	int m_iNumSongsPlayedByStyle[NUM_STYLES];
 	int m_iNumSongsPlayedByDifficulty[NUM_DIFFICULTIES];
 	int m_iNumSongsPlayedByMeter[MAX_METER+1];
+
+
+	//
+	// Steps high scores
+	//
+	struct HighScoresForASteps
+	{
+		HighScoreList hs;
+	};
+	std::map<const Steps*,HighScoresForASteps>	m_StepsHighScores;
+
+	void AddStepsHighScore( const Steps* pSteps, HighScore hs, int &iIndexOut );
+	HighScoreList& GetStepsHighScoreList( const Steps* pSteps );
+	int GetStepsNumTimesPlayed( const Steps* pSteps ) const;
+	void IncrementStepsPlayCount( const Steps* pSteps );
+
+
+	//
+	// Course high scores
+	//
+	// struct was a typedef'd array of HighScores, but VC6 freaks out 
+	// in processing the templates for map::operator[].
+	struct HighScoresForACourse	
+	{
+		HighScoreList hs[NUM_STEPS_TYPES];
+	};
+	std::map<const Course*,HighScoresForACourse>	m_CourseHighScores;
+
+	void AddCourseHighScore( const Course* pCourse, StepsType st, HighScore hs, int &iIndexOut );
+	HighScoreList& GetCourseHighScoreList( const Course* pCourse, StepsType st );
+	int GetCourseNumTimesPlayed( const Course* pCourse ) const;
+	void IncrementCoursePlayCount( const Course* pCourse, StepsType st );
+
+
+	//
+	// Category high scores
+	//
+	HighScoreList m_CategoryHighScores[NUM_STEPS_TYPES][NUM_RANKING_CATEGORIES];
+
+	void AddCategoryHighScore( StepsType st, RankingCategory rc, HighScore hs, int &iIndexOut );
+	HighScoreList& GetCategoryHighScoreList( StepsType st, RankingCategory rc );
+	int GetCategoryNumTimesPlayed( RankingCategory rc ) const;
+	void IncrementCategoryPlayCount( StepsType st, RankingCategory rc );
 };
 
 
