@@ -22,6 +22,7 @@ public:
 
 	void Update( float fDeltaTime );
 	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
+	void WindowReset();
 };
 
 extern RageInput*			INPUTMAN;	// global and accessable from anywhere in our program

@@ -523,9 +523,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<File
 				RelativePath="ScreenUnlock.h">
 			</File>
-			<File
-				RelativePath="ScreenWarning.h">
-			</File>
 		</Filter>
 		<Filter
 			Name="Data Structures"
@@ -721,6 +718,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="RaveHelper.h">
+			</File>
+			<File
+				RelativePath="ScreenWarning.h">
 			</File>
 			<File
 				RelativePath=".\Song.cpp">
@@ -919,6 +919,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					</File>
 					<File
 						RelativePath="arch\InputHandler\InputHandler_DirectInput.h">
+					</File>
+					<File
+						RelativePath="arch\InputHandler\InputHandler_DirectInputHelper.cpp">
+					</File>
+					<File
+						RelativePath="arch\InputHandler\InputHandler_DirectInputHelper.h">
 					</File>
 					<File
 						RelativePath="arch\InputHandler\InputHandler_Win32_Pump.cpp">

@@ -30,6 +30,10 @@ public:
 	virtual void Update(float fDeltaTime) { }
 	virtual ~InputHandler() { }
 	virtual void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut) = 0;
+
+	/* In Windows, some devices need to be recreated if we recreate our main window.
+	 * Override this if you need to do that. */
+	virtual void WindowReset() { }
 };
 
 #endif

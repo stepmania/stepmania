@@ -123,6 +123,9 @@ void ApplyGraphicOptions()
 		PREFSMAN->m_iRefreshRate,
 		PREFSMAN->m_bVsync ? "Vsync" : "NoVsync",
 		PREFSMAN->m_bAntiAliasing? "AA" : "NoAA" ) );
+
+	/* Give the input handlers a chance to re-open devices as necessary. */
+	INPUTMAN->WindowReset();
 }
 
 void ExitGame()

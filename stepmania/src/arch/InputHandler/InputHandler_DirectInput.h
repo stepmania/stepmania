@@ -13,6 +13,7 @@ public:
 	~InputHandler_DInput();
 	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
 	void Update(float fDeltaTime);
+	void WindowReset();
 };
 
 #endif

@@ -49,3 +49,9 @@ void RageInput::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vect
 	for(unsigned i = 0; i < Devices.size(); ++i)
 		Devices[i]->GetDevicesAndDescriptions( vDevicesOut, vDescriptionsOut );	
 }
+
+void RageInput::WindowReset()
+{
+	for(unsigned i = 0; i < Devices.size(); ++i)
+		Devices[i]->WindowReset();
+}

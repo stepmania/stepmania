@@ -1523,6 +1523,23 @@ SOURCE=.\arch\InputHandler\InputHandler_DirectInput.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\arch\InputHandler\InputHandler_DirectInputHelper.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\InputHandler\InputHandler_DirectInputHelper.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\arch\InputHandler\InputHandler_Win32_Pump.cpp
 
 !IF  "$(CFG)" == "StepMania - Win32 Debug"
