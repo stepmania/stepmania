@@ -156,11 +156,12 @@ void ScreenGameplayMultiplayer::Init()
 		case PrefsManager::SCORING_MAX2:
 		case PrefsManager::SCORING_5TH:
 			m_pPrimaryScoreKeeper[p] = new ScoreKeeperMAX2( 
-				m_vpSongsQueue, 
-				m_vpStepsQueue, 
-				m_vModifiersQueue, 
 				&m_PlayerState[p],
 				&m_PlayerStageStats[p] );
+			m_pPrimaryScoreKeeper[p]->Load( 
+				m_vpSongsQueue, 
+				m_vpStepsQueue, 
+				m_vModifiersQueue );
 			break;
 		default: ASSERT(0);
 		}
