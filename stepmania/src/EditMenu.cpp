@@ -164,7 +164,7 @@ void EditMenu::RefreshAll()
 				}
 			}
 
-			for( int i=0; i<m_vpSteps.size(); i++ )
+			for( unsigned i=0; i<m_vpSteps.size(); i++ )
 			{
 				const Steps *pSteps = m_vpSteps[i];
 				if( pSteps == GAMESTATE->m_pCurSteps[PLAYER_1] )

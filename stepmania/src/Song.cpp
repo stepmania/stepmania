@@ -1425,7 +1425,6 @@ void Song::MakeUniqueEditDescription( StepsType st, CString &sPreferredDescripti
 	if( IsEditDescriptionUnique( m_vpSteps, st, sPreferredDescriptionInOut ) )
 		return;
 
-	int i=0;
 	CString sTemp;
 
 	for( int i=0; i<1000; i++ )
