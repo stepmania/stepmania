@@ -146,12 +146,14 @@ CLIENT to SERVER protocol:
 010:	User entered/exited Network Music Selection Screen
  Size:
     1		
-		If this value is 0 then the user exited the screen
-		If this value is 1 then the user entered the screen
-		*****If this value is 2 then the user exited the options screen  < Normall is not sent
-		If this value is 3 then the user entered options screen
-		If this value is 4 then the user exited the evaluation screen
-		If this value is 5 then the user entered evaluation screen
+		0: exited ScreenNetSelectMusic
+		1: entered ScreenNetSelectMusic
+		2: **Not Sent**
+		3: entered options screen
+		4: exited the evaluation screen
+		5: entered evaluation screen
+		6: exited ScreenNetRoom
+		7: entered ScreenNetRoom
 
 011:	User has changed player options
  Size:
