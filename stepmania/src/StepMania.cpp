@@ -333,7 +333,7 @@ static void HandleInputEvents(float fDeltaTime)
 			{
 				// pressed Alt+F4
 				SDL_Event *event;
-				event = (SDL_Event *) malloc(sizeof(event));
+				event = (SDL_Event *) malloc(sizeof(SDL_Event));
 				event->type = SDL_QUIT;
 				SDL_PushEvent(event);
 				continue;
