@@ -89,5 +89,10 @@ void LightsDriver_LinuxSerial::SetLight( Light light, bool bOn )
 
 void LightsDriver_LinuxSerial::Flush()
 {
-	WriteString( g_data, sizeof(g_data) );
+  // flip bits so that 0=on, 1=off.
+  char temp_data[2];
+  for( int i=0; i<2; i++ )
+    temp_data[i] = ~g_data[i];
+
+	WriteString( temp_data, sizeof(temp_data) );
 }
