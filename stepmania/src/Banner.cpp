@@ -105,7 +105,7 @@ void Banner::LoadFromCourse( Course* pCourse )		// NULL means no course
 
 void Banner::LoadFallback()
 {
-	Load( THEME->GetPathToG("Banner fallback") );
+	Load( THEME->GetPathToG("Common fallback banner") );
 }
 
 void Banner::LoadRoulette()
