@@ -295,7 +295,6 @@ void DifficultyList::SetFromGameState()
 				m_Lines[i].m_Description.SetText( GetDifficultyString(d) );
 				m_Lines[i].m_Description.SetDiffuseColor( SONGMAN->GetDifficultyColor(d) );
 
-				m_Lines[i].m_Number.SetZoomX(1);
 				m_Lines[i].m_Number.SetDiffuseColor( SONGMAN->GetDifficultyColor(d) );
 				m_Lines[i].m_Number.SetText( "?" );
 			}
@@ -329,7 +328,6 @@ void DifficultyList::SetFromGameState()
 				/* Don't mess with alpha; it might be fading on. */
 				m_Lines[i].m_Description.SetDiffuseColor( SONGMAN->GetDifficultyColor(row.m_dc) );
 				
-				m_Lines[i].m_Number.SetZoomX(1);
 				m_Lines[i].m_Number.SetDiffuseColor( SONGMAN->GetDifficultyColor(row.m_dc) );
 				m_Lines[i].m_Number.SetText( ssprintf("%d",row.m_Steps->GetMeter()) );
 			}
