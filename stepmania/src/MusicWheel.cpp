@@ -24,6 +24,8 @@
 #include "GameState.h"
 #include <math.h>
 #include "ThemeManager.h"
+#include "Song.h"
+#include "Course.h"
 
 
 #define NUM_WHEEL_ITEMS				min( MAX_WHEEL_ITEMS, THEME->GetMetricI("MusicWheel","NumWheelItems") )
@@ -179,7 +181,7 @@ MusicWheel::MusicWheel()
 	if(!selected) SetOpenGroup("");
 
 	// rebuild the WheelItems that appear on screen
-	RebuildWheelItemDisplays();
+	RebuildMusicWheelItems();
 }
 
 MusicWheel::~MusicWheel()
@@ -518,7 +520,7 @@ float MusicWheel::GetBannerX( float fPosOffsetsFromMiddle )
 	return roundf( fX );
 }
 
-void MusicWheel::RebuildWheelItemDisplays()
+void MusicWheel::RebuildMusicWheelItems()
 {
 	// rewind to first index that will be displayed;
 	int iIndex = m_iSelection;
@@ -535,7 +537,7 @@ void MusicWheel::RebuildWheelItemDisplays()
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
 		WheelItemData     *data   = m_CurWheelItemData[iIndex];
-		WheelItemDisplay& display = m_WheelItemDisplays[i];
+		MusicWheelItem& display = m_MusicWheelItems[i];
 
 		display.LoadFromWheelItemData( data );
 
@@ -551,7 +553,7 @@ void MusicWheel::NotesChanged( PlayerNumber pn )	// update grade graphics and to
 {
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
-		WheelItemDisplay& display = m_WheelItemDisplays[i];
+		MusicWheelItem& display = m_MusicWheelItems[i];
 		display.RefreshGrades();
 	}
 }
@@ -562,7 +564,7 @@ void MusicWheel::DrawPrimitives()
 {
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
-		WheelItemDisplay& display = m_WheelItemDisplays[i];
+		MusicWheelItem& display = m_MusicWheelItems[i];
 
 		switch( m_WheelState )
 		{
@@ -618,7 +620,7 @@ void MusicWheel::Update( float fDeltaTime )
 	unsigned i;
 	for( i=0; i<unsigned(NUM_WHEEL_ITEMS); i++ )
 	{
-		WheelItemDisplay& display = m_WheelItemDisplays[i];
+		MusicWheelItem& display = m_MusicWheelItems[i];
 
 		display.Update( fDeltaTime );
 	}
@@ -683,7 +685,7 @@ void MusicWheel::Update( float fDeltaTime )
 				}
 
 				SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
-				RebuildWheelItemDisplays();
+				RebuildMusicWheelItems();
 				TweenOnScreen(true);
 				m_WheelState = STATE_FLYING_ON_AFTER_NEXT_SORT;
 			}
@@ -850,7 +852,7 @@ void MusicWheel::ChangeMusic(int dist)
 	else if( m_iSelection > int(m_CurWheelItemData.size()-1) )
 		m_iSelection = 0;
 
-	RebuildWheelItemDisplays();
+	RebuildMusicWheelItems();
 
 	m_fPositionOffsetFromSelection += dist;
 
@@ -912,7 +914,7 @@ bool MusicWheel::Select()	// return true of a playable item was chosen
 		return false;
 	}
 
-	switch( m_CurWheelItemData[m_iSelection]->m_WheelItemType )
+	switch( m_CurWheelItemData[m_iSelection]->m_Type )
 	{
 	case TYPE_SECTION:
 		{
@@ -924,7 +926,7 @@ bool MusicWheel::Select()	// return true of a playable item was chosen
 
 		SetOpenGroup(m_sExpandedSectionName);
 	
-		RebuildWheelItemDisplays();
+		RebuildMusicWheelItems();
 
 
 		m_soundExpand.Play();
@@ -934,7 +936,7 @@ bool MusicWheel::Select()	// return true of a playable item was chosen
 		// find the section header and select it
 		for( unsigned  i=0; i<m_CurWheelItemData.size(); i++ )
 		{
-			if( m_CurWheelItemData[i]->m_WheelItemType == TYPE_SECTION  
+			if( m_CurWheelItemData[i]->m_Type == TYPE_SECTION  
 				&&  m_CurWheelItemData[i]->m_sSectionName == sThisItemSectionName )
 			{
 				m_iSelection = i;
@@ -983,7 +985,7 @@ void MusicWheel::StartRandom()
 	m_WheelState = STATE_RANDOM_SPINNING;
 
 	this->Select();
-	RebuildWheelItemDisplays();
+	RebuildMusicWheelItems();
 }
 
 void MusicWheel::SetOpenGroup(CString group, SongSortOrder so)
@@ -1002,8 +1004,8 @@ void MusicWheel::SetOpenGroup(CString group, SongSortOrder so)
 	unsigned i;
 	for(i = 0; i < from.size(); ++i)
 	{
-		if((from[i].m_WheelItemType == TYPE_SONG ||
-			from[i].m_WheelItemType == TYPE_COURSE) &&
+		if((from[i].m_Type == TYPE_SONG ||
+			from[i].m_Type == TYPE_COURSE) &&
 		     !from[i].m_sSectionName.empty() &&
 			 from[i].m_sSectionName != group)
 			 continue;
@@ -1018,7 +1020,7 @@ void MusicWheel::SetOpenGroup(CString group, SongSortOrder so)
 			m_iSelection=i;
 	}
 
-	RebuildWheelItemDisplays();
+	RebuildMusicWheelItems();
 }
 
 bool MusicWheel::IsRouletting() const
@@ -1062,7 +1064,7 @@ void MusicWheel::TweenOnScreen(bool changing_sort)
 
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
-		WheelItemDisplay& display = m_WheelItemDisplays[i];
+		MusicWheelItem& display = m_MusicWheelItems[i];
 		float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
 
 		float fX = GetBannerX(fThisBannerPositionOffsetFromSelection);
@@ -1105,7 +1107,7 @@ void MusicWheel::TweenOffScreen(bool changing_sort)
 
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
-		WheelItemDisplay& display = m_WheelItemDisplays[i];
+		MusicWheelItem& display = m_MusicWheelItems[i];
 		float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
 
 		float fX = GetBannerX(fThisBannerPositionOffsetFromSelection);

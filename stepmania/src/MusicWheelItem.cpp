@@ -12,7 +12,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "MusicWheel.h"
+#include "MusicWheelItem.h"
 #include "RageUtil.h"
 #include "SongManager.h"
 #include "GameManager.h"
@@ -25,25 +25,26 @@
 #include <math.h>
 #include "ThemeManager.h"
 #include "Notes.h"
+#include "Song.h"
 
 
 // WheelItem stuff
-#define ICON_X			THEME->GetMetricF("WheelItemDisplay","IconX")
-#define SONG_NAME_X		THEME->GetMetricF("WheelItemDisplay","SongNameX")
-#define SECTION_NAME_X	THEME->GetMetricF("WheelItemDisplay","SectionNameX")
-#define SECTION_ZOOM	THEME->GetMetricF("WheelItemDisplay","SectionZoom")
-#define ROULETTE_X		THEME->GetMetricF("WheelItemDisplay","RouletteX")
-#define ROULETTE_ZOOM	THEME->GetMetricF("WheelItemDisplay","RouletteZoom")
-#define COURSE_X		THEME->GetMetricF("WheelItemDisplay","CourseX")
-#define COURSE_ZOOM		THEME->GetMetricF("WheelItemDisplay","CourseZoom")
-#define GRADE_X( p )	THEME->GetMetricF("WheelItemDisplay",ssprintf("GradeP%dX",p+1))
+#define ICON_X			THEME->GetMetricF("MusicWheelItem","IconX")
+#define SONG_NAME_X		THEME->GetMetricF("MusicWheelItem","SongNameX")
+#define SECTION_NAME_X	THEME->GetMetricF("MusicWheelItem","SectionNameX")
+#define SECTION_ZOOM	THEME->GetMetricF("MusicWheelItem","SectionZoom")
+#define ROULETTE_X		THEME->GetMetricF("MusicWheelItem","RouletteX")
+#define ROULETTE_ZOOM	THEME->GetMetricF("MusicWheelItem","RouletteZoom")
+#define COURSE_X		THEME->GetMetricF("MusicWheelItem","CourseX")
+#define COURSE_ZOOM		THEME->GetMetricF("MusicWheelItem","CourseZoom")
+#define GRADE_X( p )	THEME->GetMetricF("MusicWheelItem",ssprintf("GradeP%dX",p+1))
 
 
 
 
-WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, const CString &sSectionName, Course* pCourse, const RageColor color )
+WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color )
 {
-	m_WheelItemType = wit;
+	m_Type = wit;
 	m_pSong = pSong;
 	m_sSectionName = sSectionName;
 	m_pCourse = pCourse;
@@ -52,7 +53,7 @@ WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, const CString &sSe
 }
 
 
-WheelItemDisplay::WheelItemDisplay()
+MusicWheelItem::MusicWheelItem()
 {
 	data = NULL;
 
@@ -96,7 +97,7 @@ WheelItemDisplay::WheelItemDisplay()
 }
 
 
-void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
+void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID )
 {
 	ASSERT( pWID != NULL );
 	
@@ -105,7 +106,7 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 	data = pWID;
 	/*
 	// copy all data items
-	this->m_WheelItemType	= pWID->m_WheelItemType;
+	this->m_Type	= pWID->m_Type;
 	this->m_sSectionName	= pWID->m_sSectionName;
 	this->m_pCourse			= pWID->m_pCourse;
 	this->m_pSong			= pWID->m_pSong;
@@ -114,14 +115,14 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 
 
 	// init type specific stuff
-	switch( pWID->m_WheelItemType )
+	switch( pWID->m_Type )
 	{
 	case TYPE_SECTION:
 	case TYPE_COURSE:
 		{
 			CString sDisplayName;
 			BitmapText *bt;
-			if(pWID->m_WheelItemType == TYPE_SECTION)
+			if(pWID->m_Type == TYPE_SECTION)
 			{
 				sDisplayName = SONGMAN->ShortenGroupName(data->m_sSectionName);
 				bt = &m_textSectionName;
@@ -163,7 +164,7 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 	}
 }
 
-void WheelItemDisplay::RefreshGrades()
+void MusicWheelItem::RefreshGrades()
 {
 	// Refresh Grades
 	for( int p=0; p<NUM_PLAYERS; p++ )
@@ -188,11 +189,11 @@ void WheelItemDisplay::RefreshGrades()
 }
 
 
-void WheelItemDisplay::Update( float fDeltaTime )
+void MusicWheelItem::Update( float fDeltaTime )
 {
 	Actor::Update( fDeltaTime );
 
-	switch( data->m_WheelItemType )
+	switch( data->m_Type )
 	{
 	case TYPE_SECTION:
 		m_sprSectionBar.Update( fDeltaTime );
@@ -221,10 +222,10 @@ void WheelItemDisplay::Update( float fDeltaTime )
 	}
 }
 
-void WheelItemDisplay::DrawPrimitives()
+void MusicWheelItem::DrawPrimitives()
 {
 	Sprite *bar = NULL;
-	switch( data->m_WheelItemType )
+	switch( data->m_Type )
 	{
 	case TYPE_SECTION: 
 	case TYPE_ROULETTE:
@@ -236,7 +237,7 @@ void WheelItemDisplay::DrawPrimitives()
 	
 	bar->Draw();
 
-	switch( data->m_WheelItemType )
+	switch( data->m_Type )
 	{
 	case TYPE_SECTION:
 		m_textSectionName.Draw();

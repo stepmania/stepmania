@@ -11,30 +11,20 @@
 -----------------------------------------------------------------------------
 */
 
+#include "ActorFrame.h"
 #include "GradeDisplay.h"
+#include "BitmapText.h"
+#include "WheelNotifyIcon.h"
+#include "TextBanner.h"
+class Course;
+class Song;
 
+struct WheelItemData;
 
-enum WheelItemType { TYPE_SECTION, TYPE_SONG, TYPE_ROULETTE, TYPE_RANDOM, TYPE_COURSE };
-
-struct WheelItemData
+class MusicWheelItem : public ActorFrame
 {
 public:
-	WheelItemData() {}
-	WheelItemData( WheelItemType wit, Song* pSong, const CString &sSectionName, Course* pCourse, const RageColor color );
-
-	WheelItemType	m_WheelItemType;
-	CString			m_sSectionName;
-	Course*			m_pCourse;
-	Song*			m_pSong;
-	RageColor		m_color;	// either text color or section background color
-	WheelNotifyIcon::Flags  m_Flags;
-};
-
-
-class WheelItemDisplay: public ActorFrame
-{
-public:
-	WheelItemDisplay();
+	MusicWheelItem();
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -60,6 +50,21 @@ public:
 
 	// for TYPE_COURSE
 	BitmapText			m_textCourse;
+};
+
+enum WheelItemType { TYPE_SECTION, TYPE_SONG, TYPE_ROULETTE, TYPE_RANDOM, TYPE_COURSE };
+
+struct WheelItemData
+{
+	WheelItemData() {}
+	WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color );
+
+	WheelItemType	m_Type;
+	CString			m_sSectionName;
+	Course*			m_pCourse;
+	Song*			m_pSong;
+	RageColor		m_color;	// either text color or section background color
+	WheelNotifyIcon::Flags  m_Flags;
 };
 
 #endif

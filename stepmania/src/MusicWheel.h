@@ -12,21 +12,17 @@
 */
 
 #include "Sprite.h"
-#include "song.h"
 #include "ActorFrame.h"
-#include "BitmapText.h"
-#include "Quad.h"
-#include "TextBanner.h"
 #include "RandomSample.h"
 #include "GameConstantsAndTypes.h"
 #include "MusicSortDisplay.h"
-#include "WheelNotifyIcon.h"
-#include "Screen.h"		// for ScreenMessage
+#include "ScreenMessage.h"
 #include "ScoreDisplayNormal.h"
 #include "ScrollBar.h"
-#include "Course.h"
 #include "RageTimer.h"
 #include "MusicWheelItem.h"
+class Course;
+class Song;
 
 
 const int MAX_WHEEL_ITEMS	=	15;
@@ -71,13 +67,13 @@ public:
 	float GetBannerY( float fPosOffsetsFromMiddle );
 
 	bool Select();	// return true if the selected item is a music, otherwise false
-	WheelItemType	GetSelectedType()	{ return m_CurWheelItemData[m_iSelection]->m_WheelItemType; };
+	WheelItemType	GetSelectedType()	{ return m_CurWheelItemData[m_iSelection]->m_Type; };
 	Song*			GetSelectedSong()	{ return m_CurWheelItemData[m_iSelection]->m_pSong; };
 	Course*			GetSelectedCourse()	{ return m_CurWheelItemData[m_iSelection]->m_pCourse; };
 	CString			GetSelectedSection(){ return m_CurWheelItemData[m_iSelection]->m_sSectionName; };
 
 	bool WheelIsLocked() { return (m_WheelState == STATE_LOCKED ? true : false); }
-	void RebuildWheelItemDisplays();
+	void RebuildMusicWheelItems();
 
 protected:
 	void GetSongList(vector<Song*> &arraySongs, bool bRoulette );
@@ -93,7 +89,7 @@ protected:
 	vector<WheelItemData> m_WheelItemDatas[NUM_SORT_ORDERS];
 	vector<WheelItemData *> m_CurWheelItemData;
 	
-	WheelItemDisplay	m_WheelItemDisplays[MAX_WHEEL_ITEMS];
+	MusicWheelItem	m_MusicWheelItems[MAX_WHEEL_ITEMS];
 	
 	int					m_iSelection;		// index into m_CurWheelItemData
 	CString				m_sExpandedSectionName;
