@@ -161,6 +161,7 @@ bool DWILoader::LoadFromDWITokens(
 
 	NoteData newNoteData;
 	newNoteData.SetNumTracks( g_mapDanceNoteToNoteDataColumn.size() );
+	newNoteData.ReserveRows( BeatToNoteRow(1000) );
 
 	for( int pad=0; pad<2; pad++ )		// foreach pad
 	{
