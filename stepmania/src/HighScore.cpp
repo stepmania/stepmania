@@ -50,10 +50,12 @@ XNode* HighScore::CreateNode() const
 	pNode->AppendChild( "ProductID",		iProductID );
 	XNode* pTapNoteScores = pNode->AppendChild( "TapNoteScores" );
 	FOREACH_TapNoteScore( tns )
-		pTapNoteScores->AppendChild( TapNoteScoreToString(tns), iTapNoteScores[tns] );
+		if( tns != TNS_NONE )	// HACK: don't save meaningless "none" count
+			pTapNoteScores->AppendChild( TapNoteScoreToString(tns), iTapNoteScores[tns] );
 	XNode* pHoldNoteScores = pNode->AppendChild( "HoldNoteScores" );
 	FOREACH_HoldNoteScore( hns )
-		pHoldNoteScores->AppendChild( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
+		if( hns != TNS_NONE )	// HACK: don't save meaningless "none" count
+			pHoldNoteScores->AppendChild( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
 	pNode->AppendChild( radarValues.CreateNode() );
 
 	return pNode;
