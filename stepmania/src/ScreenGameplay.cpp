@@ -760,7 +760,7 @@ void ScreenGameplay::LoadNextSong()
 		}
 
 		/* Hack: Course modifiers that are set to start immediately shouldn't tween on. */
-		for( int s=0; s < GameState::MAX_SIMULTANEOUS_ATTACKS; s++ )
+		for( unsigned s=0; s<GAMESTATE->m_ActiveAttacks[p].size(); s++ )
 		{
 			if( GAMESTATE->m_ActiveAttacks[p][s].fStartSecond == 0 )
 				GAMESTATE->m_ActiveAttacks[p][s].fStartSecond = -1;

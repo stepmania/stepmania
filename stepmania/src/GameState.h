@@ -163,8 +163,7 @@ public:
 	StageStats	m_CurStageStats;				// current stage (not necessarily passed if Extra Stage)
 
 	// used in PLAY_MODE_BATTLE and PLAY_MODE_RAVE
-	enum { MAX_SIMULTANEOUS_ATTACKS=16 };
-	Attack	m_ActiveAttacks[NUM_PLAYERS][MAX_SIMULTANEOUS_ATTACKS];
+	AttackArray	m_ActiveAttacks[NUM_PLAYERS];
 
 	vector<Attack>	m_ModsToApply[NUM_PLAYERS];
 

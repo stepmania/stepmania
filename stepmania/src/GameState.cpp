@@ -155,14 +155,14 @@ void GameState::Update( float fDelta )
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		int s;
+		unsigned s;
 
 		m_CurrentPlayerOptions[p].Approach( m_PlayerOptions[p], fDelta );
 
 		bool RebuildPlayerOptions = false;
 
 		/* See if any delayed attacks are starting. */
-		for( s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )
+		for( s=0; s<m_ActiveAttacks[p].size(); s++ )
 		{
 			if( m_ActiveAttacks[p][s].fStartSecond < 0 )
 				continue; /* already started */
@@ -177,7 +177,7 @@ void GameState::Update( float fDelta )
 		/* See if any attacks are ending. */
 		m_bAttackEndedThisUpdate[p] = false;
 
-		for( s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )
+		for( s=0; s<m_ActiveAttacks[p].size(); s++ )
 		{
 			if( m_ActiveAttacks[p][s].fStartSecond >= 0 )
 				continue; /* hasn't started yet */
@@ -191,8 +191,7 @@ void GameState::Update( float fDelta )
 				continue; /* continuing */
 
 			/* ending */
-			m_ActiveAttacks[p][s].fSecsRemaining = 0;
-			m_ActiveAttacks[p][s].sModifier = "";
+			m_ActiveAttacks[p].erase( m_ActiveAttacks[p].begin()+s, m_ActiveAttacks[p].begin()+s+1 );
 			m_bAttackEndedThisUpdate[p] = true;
 			RebuildPlayerOptions = true;
 		}
@@ -697,30 +696,19 @@ void GameState::LaunchAttack( PlayerNumber target, Attack a )
 
 	m_bAttackBeganThisUpdate[target] = true;
 
-	// search for an open slot
-	for( int s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )
-	{
-		if( m_ActiveAttacks[target][s].fSecsRemaining <= 0 )
-		{
-			m_ActiveAttacks[target][s] = a;
-			m_ModsToApply[target].push_back( a );
-			GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( target );
-			return;
-		}
-	}
-
-	LOG->Warn("Couldn't launch attack '%s' against p%i: no empty attack slots",
-		a.sModifier.c_str(), target );
+	m_ActiveAttacks[target].push_back( a );
+	m_ModsToApply[target].push_back( a );
+	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( target );
 }
 
 void GameState::RemoveActiveAttacksForPlayer( PlayerNumber pn, AttackLevel al )
 {
-	for( int s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )
+	for( unsigned s=0; s<m_ActiveAttacks[pn].size(); s++ )
 	{
 		if( al != NUM_ATTACK_LEVELS && al != m_ActiveAttacks[pn][s].level )
 			continue;
-		m_ActiveAttacks[pn][s].fSecsRemaining = 0;
-		m_ActiveAttacks[pn][s].sModifier = "";
+		m_ActiveAttacks[pn].erase( m_ActiveAttacks[pn].begin()+s, m_ActiveAttacks[pn].begin()+s+1 );
+		--s;
 	}
 	RebuildPlayerOptionsFromActiveAttacks( (PlayerNumber)pn );
 }
@@ -739,7 +727,7 @@ void GameState::RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn )
 {
 	// rebuild player options
 	PlayerOptions po = m_StoredPlayerOptions[pn];
-	for( int s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )
+	for( unsigned s=0; s<m_ActiveAttacks[pn].size(); s++ )
 	{
 		if( m_ActiveAttacks[pn][s].fStartSecond >= 0 )
 			continue; /* hasn't started yet */
@@ -752,7 +740,7 @@ int GameState::GetSumOfActiveAttackLevels( PlayerNumber pn )
 {
 	int iSum = 0;
 
-	for( int s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )
+	for( unsigned s=0; s<m_ActiveAttacks[pn].size(); s++ )
 		if( m_ActiveAttacks[pn][s].fSecsRemaining > 0 && m_ActiveAttacks[pn][s].level != NUM_ATTACK_LEVELS )
 			iSum += m_ActiveAttacks[pn][s].level;
 

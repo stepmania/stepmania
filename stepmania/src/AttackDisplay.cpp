@@ -28,14 +28,12 @@ void AttackDisplay::Update( float fDelta )
 {
 	ActorFrame::Update( fDelta );
 
-	// FIXME: Make GAMESTATE->m_ActiveAttacks a vector
 	if( GAMESTATE->m_bAttackBeganThisUpdate[m_PlayerNumber] )
 	{
 		// don't handle this again
 		GAMESTATE->m_bAttackBeganThisUpdate[m_PlayerNumber] = false;
 
-		int s;
-		for( s=0; s<GameState::MAX_SIMULTANEOUS_ATTACKS; s++ )
+		for( unsigned s=0; s<GAMESTATE->m_ActiveAttacks[m_PlayerNumber].size(); s++ )
 		{
 			if( GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].fStartSecond >= 0 )
 				continue; /* hasn't started yet */
@@ -46,13 +44,13 @@ void AttackDisplay::Update( float fDelta )
 			if( GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].IsBlank() )
 				continue;
 
+			CString sText = GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].sModifier;
+
+			m_textAttack.SetDiffuseAlpha( 1 );
+			m_textAttack.SetText( sText );
+			m_textAttack.Command( TEXT_ON_COMMAND(m_PlayerNumber) );
+
 			break;
 		}
-
-		CString sText = GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].sModifier;
-
-		m_textAttack.SetDiffuseAlpha( 1 );
-		m_textAttack.SetText( sText );
-		m_textAttack.Command( TEXT_ON_COMMAND(m_PlayerNumber) );
 	}
 }
