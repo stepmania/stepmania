@@ -149,8 +149,8 @@ void DancingCharacters::Update( float fDelta )
 		int iCurBeat = (int)GAMESTATE->m_fSongBeat;
 		iCurBeat -= iCurBeat%8;
 
-		m_fThisCameraStartBeat = iCurBeat;
-		m_fThisCameraEndBeat = iCurBeat + 8;
+		m_fThisCameraStartBeat = (float) iCurBeat;
+		m_fThisCameraEndBeat = float(iCurBeat + 8);
 	}
 }
 
@@ -163,7 +163,8 @@ void DancingCharacters::DrawPrimitives()
 	float fCameraHeight = SCALE( fPercentIntoSweep, 0.f, 1.f, m_fCameraHeightStart, m_fCameraHeightEnd );
 
 	RageVector3 m_CameraPoint( 0, fCameraHeight, -m_CameraDistance );
-	RageVec3TransformCoord( &m_CameraPoint, &m_CameraPoint, &RageMatrixRotationY(fCameraPanY) );
+	const RageMatrix CameraRot = RageMatrixRotationY(fCameraPanY);
+	RageVec3TransformCoord( &m_CameraPoint, &m_CameraPoint, &CameraRot );
 
 	RageVector3 m_LookAt( 0, m_fLookAtHeight, 0 );
 
