@@ -178,7 +178,7 @@ public:
 	bool SongHasNotesType( StepsType nt ) const;
 	bool SongHasNotesTypeAndDifficulty( StepsType nt, Difficulty dc ) const;
 	const vector<Steps*>& GetAllSteps() const { return m_apNotes; }
-	void GetSteps( vector<Steps*>& arrayAddTo, StepsType nt, Difficulty dc = DIFFICULTY_INVALID, int iMeterLow = -1, int iMeterHigh = -1, CString sDescription = "", bool bIncludeAutoGen = true ) const;
+	void GetSteps( vector<Steps*>& arrayAddTo, StepsType nt, Difficulty dc = DIFFICULTY_INVALID, int iMeterLow = -1, int iMeterHigh = -1, const CString &sDescription = "", bool bIncludeAutoGen = true, int Max = -1 ) const;
 	Steps* GetStepsByDifficulty( StepsType nt, Difficulty dc, bool bIncludeAutoGen = true ) const;
 	Steps* GetStepsByMeter( StepsType nt, int iMeterLow, int iMeterHigh, bool bIncludeAutoGen = true ) const;
 	Steps* GetStepsByDescription( StepsType nt, CString sDescription, bool bIncludeAutoGen = true ) const;
