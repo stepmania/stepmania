@@ -188,6 +188,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenAttract.h">
 			</File>
 			<File
+				RelativePath="ScreenAutogenOptions.cpp">
+			</File>
+			<File
+				RelativePath="ScreenAutogenOptions.h">
+			</File>
+			<File
 				RelativePath="ScreenCaution.cpp">
 			</File>
 			<File

@@ -1,5 +1,5 @@
 # Microsoft Developer Studio Project File - Name="StepMania" - Package Owner=<4>
-# Microsoft Developer Studio Generated Build File, Format Version 6.00
+# Microsoft Developer Studio Generated Build File, Format Version 60000
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
@@ -60,7 +60,7 @@ IntDir=.\../Release6
 TargetDir=\stepmania\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                       	cl                                                                                        /Zl                                                                                        /nologo                                                                                        /c                                                                                        verstub.cpp                                                                                        /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                        	cl                                                                                         /Zl                                                                                         /nologo                                                                                         /c                                                                                         verstub.cpp                                                                                         /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -95,7 +95,7 @@ IntDir=.\../Debug6
 TargetDir=\stepmania\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                       	cl                                                                                        /Zl                                                                                        /nologo                                                                                        /c                                                                                        verstub.cpp                                                                                        /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                        	cl                                                                                         /Zl                                                                                         /nologo                                                                                         /c                                                                                         verstub.cpp                                                                                         /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -1481,6 +1481,14 @@ SOURCE=.\ScreenAttract.cpp
 # Begin Source File
 
 SOURCE=.\ScreenAttract.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenAutogenOptions.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenAutogenOptions.h
 # End Source File
 # Begin Source File
 
