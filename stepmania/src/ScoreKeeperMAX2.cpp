@@ -207,7 +207,7 @@ static int GetScore(int p, int B, int S, int n)
 void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 {
 	int &iScore = m_pPlayerStageStats->iScore;
-	int &iMaxScoreToNow = m_pPlayerStageStats->iMaxScoreToNow;
+	int &iCurMaxScore = m_pPlayerStageStats->iCurMaxScore;
 /*
   http://www.aaroninjapan.com/ddr2.html
 
@@ -287,7 +287,7 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 	/* Subtract the maximum this step could have been worth from the bonus. */
 	m_iPointBonus -= GetScore(10, B, sum, m_iTapNotesHit);
 	/* And add the maximum this step could have been worth to the max score up to now. */
-	iMaxScoreToNow += GetScore(10, B, sum, m_iTapNotesHit);
+	iCurMaxScore += GetScore(10, B, sum, m_iTapNotesHit);
 
 	if ( m_iTapNotesHit == m_iNumTapsAndHolds && score >= TNS_PERFECT )
 	{
@@ -296,13 +296,13 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 		if ( m_bIsLastSongInCourse )
 		{
 			iScore += 100000000 - m_iMaxScoreSoFar;
-			iMaxScoreToNow += 100000000 - m_iMaxScoreSoFar;
+			iCurMaxScore += 100000000 - m_iMaxScoreSoFar;
 
 			/* If we're in Endless mode, we'll come around here again, so reset
 			 * the bonus counter. */
 			m_iMaxScoreSoFar = 0;
 		}
-		iMaxScoreToNow += m_iPointBonus;
+		iCurMaxScore += m_iPointBonus;
 	}
 
 	ASSERT( iScore >= 0 );
