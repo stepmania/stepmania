@@ -83,7 +83,7 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 		CString sDrive, sDir, sFName, sExt;
 		splitpath( false, ID.filename, sDrive, sDir, sFName, sExt );
 
-		if( sExt == "avi" )
+		if( sExt == "avi" || sExt == "mpg" || sExt == "mpeg" )
 			pTexture = new RageMovieTexture( ID );
 		else
 			pTexture = new RageBitmapTexture( ID );
