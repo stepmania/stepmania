@@ -108,11 +108,12 @@ int PixFmtMaskNo(GLenum fmt)
 static void GetResolutionFromFileName( CString sPath, int &Width, int &Height )
 {
 	/* Match:
-	 *  Foo [res 512x128].png
-	 * 
-	 * This leaves us room syntactically to do other things later, if we need to.
+	 *  Foo (res 512x128).png
+	 * Also allow, eg:
+	 *  Foo (dither, res 512x128).png
+	 *
 	 * Be careful that this doesn't get mixed up with frame dimensions. */
-	Regex re("\\[res ([0-9]+)x([0-9]+)\\]");
+	Regex re("\\([^\\)]*res ([0-9]+)x([0-9]+).*\\)");
 
 	vector<CString> matches;
 	if(!re.Compare(sPath, matches))
