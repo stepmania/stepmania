@@ -123,23 +123,18 @@ bool RageSound_DSound::stream::GetData(bool init)
 	 * fill anything in STOPPING; in that case, we just clear the audio buffer. */
 	if(state != STOPPING)
 	{
-		unsigned bytes_read = 0;
-		unsigned bytes_left = len;
+		int bytes_read = 0;
+		int bytes_left = len;
 
 		/* Does the sound have a start time? */
 		if( !start_time.IsZero() )
 		{
-			/* If the sound is supposed to start at a time past this buffer, fill with
-			 * silence. */
-			const float fSecondsBeforeStart = -start_time.Ago();
-
+			/* If the sound is supposed to start at a time past this buffer, insert silence. */
 			const int iFramesUntilThisBuffer = play_pos - cur_play_pos;
-			const float fSecondsUntilThisBuffer = float(iFramesUntilThisBuffer) / str_ds->GetSampleRate();
-
-			const float fSilentSecondsInThisBuffer = max( 0, fSecondsBeforeStart-fSecondsUntilThisBuffer );
-			const int iSilentFramesInThisBuffer = int( fSilentSecondsInThisBuffer * str_ds->GetSampleRate() );
-			const int iActualSilentFramesInThisBuffer = min( iSilentFramesInThisBuffer, (int) bytes_left/bytes_per_frame );
-			const int iSilentBytesInThisBuffer = iActualSilentFramesInThisBuffer * bytes_per_frame;
+			const float fSecondsBeforeStart = -start_time.Ago();
+			const int iFramesBeforeStart = int(fSecondsBeforeStart * str_ds->GetSampleRate());
+			const int iSilentFramesInThisBuffer = max( 0, iFramesBeforeStart-iFramesUntilThisBuffer );
+			const int iSilentBytesInThisBuffer = min( iSilentFramesInThisBuffer * bytes_per_frame, bytes_left );
 
 			memset( locked_buf, 0, iSilentBytesInThisBuffer );
 			bytes_read += iSilentBytesInThisBuffer;
@@ -149,10 +144,10 @@ bool RageSound_DSound::stream::GetData(bool init)
 				start_time.SetZero();
 		}
 
-		unsigned got = snd->GetPCM( locked_buf+bytes_read, len-bytes_read, play_pos + (bytes_read/bytes_per_frame));
+		int got = snd->GetPCM( locked_buf+bytes_read, len-bytes_read, play_pos + (bytes_read/bytes_per_frame));
 		bytes_read += got;
 
-		if( bytes_read < len )
+		if( bytes_read < (int) len )
 		{
 			/* Fill the remainder of the buffer with silence. */
 			memset( locked_buf+got, 0, len-bytes_read );
