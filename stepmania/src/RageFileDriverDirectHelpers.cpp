@@ -181,7 +181,6 @@ bool CreateDirectories( CString Path )
 		}
 #endif
 
-		if(LOG)LOG->Trace("mkdir %s", curpath.c_str());
 		if( DoMkdir(curpath, 0755) == 0 )
 			continue;
 
