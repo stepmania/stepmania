@@ -28,6 +28,8 @@ public:
 	void UpdateSongsList();
 	void UpdateTextInput();
 
+	void StartSelectedSong();
+
 	int	m_iSongNum;
 	int	m_iShowSongs;	//The number of songs to display to each side
 	int	m_iGroupNum;

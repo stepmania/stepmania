@@ -74,6 +74,14 @@ public:
 	//Used for chatting
 	void SendChat( CString message );
 	CString m_WaitingChat;
+
+	//Used for song checking/changing
+	CString m_sMainTitle;
+	CString m_sArtist;
+	CString m_sSubTitle;
+	int m_iSelectMode;
+	void SelectUserSong();
+
 private:
 #if !defined(WITHOUT_NETWORKING)
 

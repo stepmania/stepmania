@@ -18,6 +18,7 @@ void NetworkSyncManager::DisplayStartupStatus() { }
 void NetworkSyncManager::Update( float fDeltaTime ) { }
 bool NetworkSyncManager::ChangedScoreboard(int Column) { return false; }
 void NetworkSyncManager::SendChat( CString message ) { }
+void NetworkSyncManager::SelectUserSong() { }
 #else
 #include "ezsockets.h"
 #include "ProfileManager.h"
@@ -483,6 +484,14 @@ void NetworkSyncManager::ProcessInput()
 				m_WaitingChat = m_packet.ReadNT();
 				SCREENMAN->SendMessageToTopScreen( SM_AddToChat );
 			}
+		case 8: //Select Song/Play song
+			{
+				m_iSelectMode = m_packet.Read1();
+				m_sMainTitle = m_packet.ReadNT();
+				m_sArtist = m_packet.ReadNT();
+				m_sSubTitle = m_packet.ReadNT();
+				SCREENMAN->SendMessageToTopScreen( SM_ChangeSong );
+			}
 		}
 		m_packet.ClearPacket();
 	}
@@ -504,6 +513,19 @@ void NetworkSyncManager::SendChat( CString message )
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
 }
 
+void NetworkSyncManager::SelectUserSong()
+{
+	m_packet.ClearPacket();
+	m_packet.Write1( 8 );
+	m_packet.Write1( m_iSelectMode );
+	m_packet.WriteNT( m_sMainTitle );
+	m_packet.WriteNT( m_sArtist );
+	m_packet.WriteNT( m_sSubTitle );
+	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position);
+}
+
+
+//Packet functions
 
 uint8_t PacketFunctions::Read1()
 {

@@ -188,7 +188,6 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( CString sName ) : ScreenWithMenuElem
 	}
 	
 	//Make the last group the full list group.
-	//XXX:  what if someone has a group named [All Songs]?
 	//Must be last
 	m_vGroups.push_back( AllGroups );
 	m_iShowGroups = NUM_GROUPS_SHOW;
@@ -339,7 +338,48 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			break;
 		}
 	case SM_ChangeSong:
-		
+		{
+			//We always need to find the song
+			m_iGroupNum=m_vGroups.size()-1;	//Alphabetical
+
+			UpdateGroupsListPos();
+			UpdateSongsList();
+			
+			int i;
+
+			for ( i = 0; m_vSongs.size(); i++)
+				if ( ( m_vSongs[i]->GetTranslitArtist() == NSMAN->m_sArtist ) &&
+					 ( m_vSongs[i]->GetTranslitMainTitle() == NSMAN->m_sMainTitle ) &&
+					 ( m_vSongs[i]->GetTranslitSubTitle() == NSMAN->m_sSubTitle ) )
+					 break;
+			
+			bool haveSong = false;
+
+			if ( i != m_vSongs.size() )
+				haveSong = true;
+
+			switch (NSMAN->m_iSelectMode)
+			{
+			case 2: //We need to do cmd 1 as well here
+			case 1:	//Scroll to song as well
+				if (haveSong)
+				{
+					m_iSongNum = i + m_vSongs.size();
+					UpdateSongsListPos();
+				}
+				//don't break here
+			case 0:	//See if client has song
+				if (haveSong)
+					NSMAN->m_iSelectMode = 0;
+				else
+					NSMAN->m_iSelectMode = 1;
+				NSMAN->SelectUserSong();
+			}
+			//Play the song.
+			if ( ( NSMAN->m_iSelectMode == 2 ) && ( haveSong ) )
+				StartSelectedSong();
+
+		}
 		break;
 	}
 
@@ -439,18 +479,16 @@ void ScreenNetSelectMusic::MenuDown( PlayerNumber pn, const InputEventType type 
 
 void ScreenNetSelectMusic::MenuStart( PlayerNumber pn )
 {
-	Song * pSong = m_vSongs[m_iSongNum%m_vSongs.size()];
-	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType; //STEPS_TYPE_DANCE_SINGLE;
-	FOREACH_EnabledPlayer (pn)
+	if ( NSMAN->useSMserver )
 	{
-		GAMESTATE->m_PreferredDifficulty[pn] = m_DC[pn];
-		Steps * pSteps = pSong->GetStepsByDifficulty(st,m_DC[pn]);
-		GAMESTATE->m_pCurSteps[pn] = pSteps;
-	}
-	GAMESTATE->m_pCurSong = pSong;
-	
-	TweenOffScreen();
-	StartTransitioning( SM_GoToNextScreen );
+		int j = m_iSongNum % m_vSongs.size();
+		NSMAN->m_sArtist = m_vSongs[j]->GetTranslitArtist();
+		NSMAN->m_sMainTitle = m_vSongs[j]->GetTranslitMainTitle();
+		NSMAN->m_sSubTitle = m_vSongs[j]->GetTranslitSubTitle();
+		NSMAN->m_iSelectMode = 2; //Command for user selecting song
+		NSMAN->SelectUserSong ();
+	} else
+		StartSelectedSong();
 }
 
 void ScreenNetSelectMusic::MenuBack( PlayerNumber pn )
@@ -500,6 +538,22 @@ void ScreenNetSelectMusic::DrawPrimitives()
 void ScreenNetSelectMusic::UpdateTextInput()
 {
 	m_textChatInput.SetText( m_sTextInput );  
+}
+
+void ScreenNetSelectMusic::StartSelectedSong()
+{
+	Song * pSong = m_vSongs[m_iSongNum%m_vSongs.size()];
+	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType; //STEPS_TYPE_DANCE_SINGLE;
+	FOREACH_EnabledPlayer (pn)
+	{
+		GAMESTATE->m_PreferredDifficulty[pn] = m_DC[pn];
+		Steps * pSteps = pSong->GetStepsByDifficulty(st,m_DC[pn]);
+		GAMESTATE->m_pCurSteps[pn] = pSteps;
+	}
+	GAMESTATE->m_pCurSong = pSong;
+	
+	TweenOffScreen();
+	StartTransitioning( SM_GoToNextScreen );
 }
 
 void ScreenNetSelectMusic::UpdateSongsListPos()
