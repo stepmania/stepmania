@@ -270,12 +270,25 @@ static void FindAlphaRGB(const SDL_Surface *img, Uint8 &r, Uint8 &g, Uint8 &b, b
 		for(int x = 0; x < img->w; ++x)
 		{
 			Uint32 val = decodepixel(row, img->format->BytesPerPixel);
-			if((img->format->BitsPerPixel == 8 && val != img->format->colorkey) ||
-			   (img->format->BitsPerPixel != 8 && val & img->format->Amask))
+			if( img->format->BitsPerPixel == 8 )
 			{
-				/* This color isn't fully transparent, so grab it. */
-				SDL_GetRGB(val, img->format, &r, &g, &b);
-				return;
+				if( img->format->palette->colors[val].unused )
+				{
+					/* This color isn't fully transparent, so grab it. */
+					r = img->format->palette->colors[val].r;
+					g = img->format->palette->colors[val].g;
+					b = img->format->palette->colors[val].b;
+					return;
+				}
+			}
+			else
+			{
+				if( val & img->format->Amask )
+				{
+					/* This color isn't fully transparent, so grab it. */
+					SDL_GetRGB(val, img->format, &r, &g, &b);
+					return;
+				}
 			}
 
 			if( reverse )
@@ -821,8 +834,6 @@ static void blit_generic( SDL_Surface *src_surf, const SDL_Surface *dst_surf, in
 		while( x++ < width )
 		{
 			unsigned int pixel = decodepixel((Uint8 *) src, src_surf->format->BytesPerPixel);
-			ASSERT_M( (int) pixel < src_surf->format->palette->ncolors, ssprintf("%i %i",
-				pixel, src_surf->format->palette->ncolors) );
 
 			Uint8 colors[4];
 				/* Convert pixel to the destination RGBA. */
