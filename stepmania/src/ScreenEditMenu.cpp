@@ -39,7 +39,7 @@ ScreenEditMenu::ScreenEditMenu( CString sName ) : Screen( sName )
 {
 	LOG->Trace( "ScreenEditMenu::ScreenEditMenu()" );
 
-	GAMESTATE->m_CurStyle = STYLE_INVALID;
+//	GAMESTATE->m_CurStyle = STYLE_INVALID;
 
 	m_Selector.SetXY( 0, 0 );
 //	m_Selector.AllowNewNotes();
