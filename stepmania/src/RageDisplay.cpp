@@ -98,7 +98,7 @@ RageDisplay::RageDisplay( HWND hWnd )
 
 int RageDisplay::MaxRefresh(int iWidth, int iHeight) const
 {
-	int mx = D3DPRESENT_RATE_DEFAULT;
+	UINT mx = D3DPRESENT_RATE_DEFAULT;
 	for( UINT u=0; u<m_pd3d->GetAdapterModeCount(D3DADAPTER_DEFAULT); u++ )
 	{
 		D3DDISPLAYMODE mode;

@@ -693,6 +693,7 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 	}
 
 	m_Background.LoadFromSong( GAMESTATE->m_pCurSong );
+	m_Background.LoadFromSong( GAMESTATE->m_pCurSong );
 	m_Background.SetDiffuseColor( D3DXCOLOR(0.5f,0.5f,0.5f,1) );
 	m_Background.BeginTweeningQueued( 2 );
 	m_Background.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
@@ -922,13 +923,17 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 
 	if( GAMESTATE->m_bDemonstration )
 	{
-		if( MenuI.button == MENU_BUTTON_START  &&  !m_Fade.IsClosing() )
+		if( MenuI.button==MENU_BUTTON_START  &&  !m_Fade.IsClosing() )
 		{
 			m_soundMusic.Stop();
 			SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","insert coin") );
 			::Sleep( 1000 );	// do a little pause, like the arcade does
 			this->SendScreenMessage( SM_GoToTitleMenu, 0 );
 //			m_Fade.CloseWipingRight( SM_GoToTitleMenu );
+		}
+		else if( DeviceI.device==DEVICE_KEYBOARD  &&  DeviceI.button==DIK_ESCAPE  &&  !m_Fade.IsClosing() )
+		{
+			this->SendScreenMessage( SM_BeginFadingToTitleMenu, 0 );
 		}
 		return;	// don't fall through below
 	}
@@ -1410,12 +1415,12 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			ShowSavePrompt( SM_GoToScreenAfterFail );
 			break;
 		}
-		if( PREFSMAN->m_bEventMode )
+		if( GAMESTATE->m_PlayMode == PLAY_MODE_ONI  ||  GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS )
+			SCREENMAN->SetNewScreen( new ScreenEvaluation(false) );
+		else if( PREFSMAN->m_bEventMode )
 			this->SendScreenMessage( SM_GoToScreenAfterBack, 0 );
 		else if( GAMESTATE->IsExtraStage()  ||  GAMESTATE->IsExtraStage2() )
 			SCREENMAN->SetNewScreen( new ScreenEvaluation(true) );
-		else if( GAMESTATE->m_PlayMode == PLAY_MODE_ONI  ||  GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS )
-			SCREENMAN->SetNewScreen( new ScreenEvaluation(false) );
 		else
 			SCREENMAN->SetNewScreen( new ScreenGameOver );
 		break;

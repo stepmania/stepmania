@@ -131,6 +131,20 @@ void BitmapText::SetText( CString sText )
 
 }
 
+void BitmapText::CropToWidth( int iMaxWidthInSourcePixels )
+{
+	iMaxWidthInSourcePixels = max( 0, iMaxWidthInSourcePixels );
+
+	for( int l=0; l<m_iNumLines; l++ )	// for each line
+	{
+		while( m_iLineWidths[l] > iMaxWidthInSourcePixels )
+		{
+			m_iLineLengths[l]--;
+			m_iLineWidths[l] = m_pFont->GetLineWidthInSourcePixels( m_szTextLines[l], m_iLineLengths[l] );
+		}
+	}
+	
+}
 
 // draw text at x, y using colorTop blended down to colorBottom, with size multiplied by scale
 void BitmapText::DrawPrimitives()
@@ -158,9 +172,9 @@ void BitmapText::DrawPrimitives()
 	int iY;	//	 the center position of the first row of characters
 	switch( m_VertAlign )
 	{
-	case align_bottom:	iY = -(m_iNumLines-1) * iHeight;	break;
-	case align_middle:	iY = -(m_iNumLines-1) * iHeight/2;	break;
-	case align_top:		iY = 0;								break;
+	case align_bottom:	iY = -(m_iNumLines)	  * iHeight		+ iHeight/2;	break;
+	case align_middle:	iY = -(m_iNumLines-1) * iHeight/2;					break;
+	case align_top:		iY =								+ iHeight/2;	break;
 	default:		ASSERT( false );
 	}
 

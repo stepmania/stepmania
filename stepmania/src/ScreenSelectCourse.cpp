@@ -32,29 +32,53 @@
 #include "RageMusic.h"
 
 
-const float COURSE_INFO_FRAME_X	= 160;
-const float COURSE_INFO_FRAME_Y	= SCREEN_TOP+118;
+#define BANNER_FRAME_X		THEME->GetMetricF("SelectCourse","BannerFrameX")
+#define BANNER_FRAME_Y		THEME->GetMetricF("SelectCourse","BannerFrameY")
+#define BANNER_X			THEME->GetMetricF("SelectCourse","BannerX")
+#define BANNER_Y			THEME->GetMetricF("SelectCourse","BannerY")
+#define BANNER_WIDTH		THEME->GetMetricF("SelectCourse","BannerWidth")
+#define BANNER_HEIGHT		THEME->GetMetricF("SelectCourse","BannerHeight")
+#define STAGES_X			THEME->GetMetricF("SelectCourse","StagesX")
+#define STAGES_Y			THEME->GetMetricF("SelectCourse","StagesY")
+#define TIME_X				THEME->GetMetricF("SelectCourse","TimeX")
+#define TIME_Y				THEME->GetMetricF("SelectCourse","TimeY")
+#define CONTENTS_X			THEME->GetMetricF("SelectCourse","ContentsX")
+#define CONTENTS_Y			THEME->GetMetricF("SelectCourse","ContentsY")
+#define WHEEL_X				THEME->GetMetricF("SelectCourse","WheelX")
+#define WHEEL_Y				THEME->GetMetricF("SelectCourse","WheelY")
+#define SCORE_P1_X			THEME->GetMetricF("SelectCourse","ScoreP1X")
+#define SCORE_P1_Y			THEME->GetMetricF("SelectCourse","ScoreP1Y")
+#define SCORE_P2_X			THEME->GetMetricF("SelectCourse","ScoreP2X")
+#define SCORE_P2_Y			THEME->GetMetricF("SelectCourse","ScoreP2Y")
+#define HELP_TEXT			THEME->GetMetric("SelectCourse","HelpText")
+#define TIMER_SECONDS		THEME->GetMetricI("SelectCourse","TimerSeconds")
 
-const float COURSE_CONTENTS_FRAME_X	= 160;
-const float COURSE_CONTENTS_FRAME_Y	= CENTER_Y+70;
-
-const float WHEEL_X		= CENTER_X+160;
-const float WHEEL_Y		= CENTER_Y+8;
+float BEST_TIME_X( int p ) {
+	switch( p ) {
+		case PLAYER_1:	return SCORE_P1_X;
+		case PLAYER_2:	return SCORE_P2_X;
+		default:		ASSERT(0);	return 0;
+	}
+}
+float BEST_TIME_Y( int p ) {
+	switch( p ) {
+		case PLAYER_1:	return SCORE_P1_Y;
+		case PLAYER_2:	return SCORE_P2_Y;
+		default:		ASSERT(0);	return 0;
+	}
+}
 
 const float TWEEN_TIME		= 0.5f;
 
-
-
 const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User+2);
-const ScreenMessage SM_ConfirmChange		=	ScreenMessage(SM_User+3);
 
 
 
 ScreenSelectCourse::ScreenSelectCourse()
 {
 	LOG->Trace( "ScreenSelectCourse::ScreenSelectCourse()" );
-
+ 
 	if( !MUSIC->IsPlaying()  ||  MUSIC->GetLoadedFilePath() != THEME->GetPathTo("Sounds","select course music") )
 	{
 		MUSIC->Load( THEME->GetPathTo("Sounds","select course music") );
@@ -67,19 +91,48 @@ ScreenSelectCourse::ScreenSelectCourse()
 	m_Menu.Load(
 		THEME->GetPathTo("Graphics","select course background"), 
 		THEME->GetPathTo("Graphics","select course top edge"),
-		ssprintf("%c or %c change course    then press START", char(1), char(2)),
-		false, true, 60 
+		HELP_TEXT, false, true, TIMER_SECONDS 
 		);
 	this->AddSubActor( &m_Menu );
 
-	m_CourseInfoFrame.SetXY( COURSE_INFO_FRAME_X, COURSE_INFO_FRAME_Y );
-	this->AddSubActor( &m_CourseInfoFrame );
+	m_Banner.SetXY( BANNER_X, BANNER_Y );
+	m_Banner.SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
+	this->AddSubActor( &m_Banner );
 
-	m_CourseContentsFrame.SetXY( COURSE_CONTENTS_FRAME_X, COURSE_CONTENTS_FRAME_Y );
+	m_sprBannerFrame.Load( THEME->GetPathTo("Graphics","select course info frame") );
+	m_sprBannerFrame.SetXY( BANNER_FRAME_X, BANNER_FRAME_Y );
+	this->AddSubActor( &m_sprBannerFrame );
+
+	m_textNumStages.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
+	m_textNumStages.SetXY( STAGES_X, STAGES_Y );
+	this->AddSubActor( &m_textNumStages );
+
+	m_textTime.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
+	m_textTime.SetXY( TIME_X, TIME_Y );
+	this->AddSubActor( &m_textTime );
+
+	m_CourseContentsFrame.SetXY( CONTENTS_X, CONTENTS_Y );
 	this->AddSubActor( &m_CourseContentsFrame );
 
 	m_MusicWheel.SetXY( WHEEL_X, WHEEL_Y );
 	this->AddSubActor( &m_MusicWheel );
+
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
+			continue;	// skip
+
+		m_sprHighScoreFrame[p].Load( THEME->GetPathTo("Graphics","select music score frame") );
+		m_sprHighScoreFrame[p].StopAnimating();
+		m_sprHighScoreFrame[p].SetState( p );
+		m_sprHighScoreFrame[p].SetXY( BEST_TIME_X(p), BEST_TIME_Y(p) );
+		this->AddSubActor( &m_sprHighScoreFrame[p] );
+
+		m_HighScore[p].SetXY( BEST_TIME_X(p), BEST_TIME_Y(p) );
+		m_HighScore[p].SetZoom( 0.6f );
+		m_HighScore[p].SetDiffuseColor( PlayerToColor(p) );
+		this->AddSubActor( &m_HighScore[p] );
+	}	
 
 	m_textHoldForOptions.LoadFromFont( THEME->GetPathTo("Fonts","Stage") );
 	m_textHoldForOptions.SetXY( CENTER_X, CENTER_Y );
@@ -117,24 +170,55 @@ void ScreenSelectCourse::DrawPrimitives()
 
 void ScreenSelectCourse::TweenOnScreen()
 {
-	m_CourseInfoFrame.SetXY( COURSE_INFO_FRAME_X - 400, COURSE_INFO_FRAME_Y );
-	m_CourseInfoFrame.BeginTweening( TWEEN_TIME, Actor::TWEEN_BIAS_END );
-	m_CourseInfoFrame.SetTweenXY( COURSE_INFO_FRAME_X, COURSE_INFO_FRAME_Y );
+	Actor* pActorsInCourseInfoFrame[] = { &m_sprBannerFrame, &m_Banner, &m_textNumStages, &m_textTime };
+	const int iNumActorsInGroupInfoFrame = sizeof(pActorsInCourseInfoFrame) / sizeof(Actor*);
+	int i;
+	for( i=0; i<iNumActorsInGroupInfoFrame; i++ )
+	{
+		float fOriginalX = pActorsInCourseInfoFrame[i]->GetX();
+		pActorsInCourseInfoFrame[i]->SetX( fOriginalX-400 );
+		pActorsInCourseInfoFrame[i]->BeginTweening( TWEEN_TIME, TWEEN_BOUNCE_END );
+		pActorsInCourseInfoFrame[i]->SetTweenX( fOriginalX );
+	}
 
-	m_CourseContentsFrame.SetXY( COURSE_CONTENTS_FRAME_X - 400, COURSE_CONTENTS_FRAME_Y );
+	m_CourseContentsFrame.SetXY( CONTENTS_X - 400, CONTENTS_Y );
 	m_CourseContentsFrame.BeginTweeningQueued( TWEEN_TIME, Actor::TWEEN_BIAS_END );
-	m_CourseContentsFrame.SetTweenXY( COURSE_CONTENTS_FRAME_X, COURSE_CONTENTS_FRAME_Y );
+	m_CourseContentsFrame.SetTweenXY( CONTENTS_X, CONTENTS_Y );
+
+	Actor* pActorsInScore[] = { &m_sprHighScoreFrame[0], &m_sprHighScoreFrame[1], &m_HighScore[0], &m_HighScore[1] };
+	const int iNumActorsInScore = sizeof(pActorsInScore) / sizeof(Actor*);
+	for( i=0; i<iNumActorsInScore; i++ )
+	{
+		float fOriginalX = pActorsInScore[i]->GetX();
+		pActorsInScore[i]->SetX( fOriginalX+400 );
+		pActorsInScore[i]->BeginTweening( TWEEN_TIME, TWEEN_BIAS_END );
+		pActorsInScore[i]->SetTweenX( fOriginalX );
+	}
 
 	m_MusicWheel.TweenOnScreen();
 }
 
 void ScreenSelectCourse::TweenOffScreen()
 {
-	m_CourseInfoFrame.BeginTweeningQueued( TWEEN_TIME*1.5f, Actor::TWEEN_BOUNCE_BEGIN );
-	m_CourseInfoFrame.SetTweenXY( COURSE_INFO_FRAME_X - 400, COURSE_INFO_FRAME_Y );
+	Actor* pActorsInCourseInfoFrame[] = { &m_sprBannerFrame, &m_Banner, &m_textNumStages, &m_textTime };
+	const int iNumActorsInGroupInfoFrame = sizeof(pActorsInCourseInfoFrame) / sizeof(Actor*);
+	int i;
+	for( i=0; i<iNumActorsInGroupInfoFrame; i++ )
+	{
+		pActorsInCourseInfoFrame[i]->BeginTweeningQueued( TWEEN_TIME, TWEEN_BOUNCE_BEGIN );
+		pActorsInCourseInfoFrame[i]->SetTweenX( pActorsInCourseInfoFrame[i]->GetX()-400 );
+	}
 
 	m_CourseContentsFrame.BeginTweeningQueued( TWEEN_TIME, Actor::TWEEN_BOUNCE_BEGIN );
-	m_CourseContentsFrame.SetTweenXY( COURSE_CONTENTS_FRAME_X - 400, COURSE_CONTENTS_FRAME_Y );
+	m_CourseContentsFrame.SetTweenXY( CONTENTS_X - 400, CONTENTS_Y );
+
+	Actor* pActorsInScore[] = { &m_sprHighScoreFrame[0], &m_sprHighScoreFrame[1], &m_HighScore[0], &m_HighScore[1] };
+	const int iNumActorsInScore = sizeof(pActorsInScore) / sizeof(Actor*);
+	for( i=0; i<iNumActorsInScore; i++ )
+	{
+		pActorsInScore[i]->BeginTweening( TWEEN_TIME, TWEEN_BIAS_BEGIN );
+		pActorsInScore[i]->SetTweenX( pActorsInScore[i]->GetX()+400 );
+	}
 
 	m_MusicWheel.TweenOffScreen();
 }
@@ -252,6 +336,8 @@ void ScreenSelectCourse::MenuStart( const PlayerNumber p )
 			pCourse->GetPlayerOptions( &GAMESTATE->m_PlayerOptions[p] );
 		pCourse->GetSongOptions( &GAMESTATE->m_SongOptions );
 
+		m_Menu.StopTimer();
+
 		this->SendScreenMessage( SM_GoToNextState, 2.5f );
 		
 		break;
@@ -274,11 +360,19 @@ void ScreenSelectCourse::AfterCourseChange()
 	case TYPE_COURSE:
 		{
 			Course* pCourse = m_MusicWheel.GetSelectedCourse();
-			m_CourseInfoFrame.SetFromCourse( pCourse );
+
+			m_textNumStages.SetText( ssprintf("%d", pCourse->m_iStages) );
+			float fTotalSeconds = 0;
+			for( int i=0; i<pCourse->m_iStages; i++ )
+				fTotalSeconds += pCourse->m_apSongs[i]->m_fMusicLengthSeconds;
+			m_textTime.SetText( SecondsToTime(fTotalSeconds) );
+
+			m_Banner.SetFromCourse( pCourse );
+
 			m_CourseContentsFrame.SetFromCourse( pCourse );
 		}
 		break;
-	case TYPE_SECTION:	// this probably means "no courses"
+	case TYPE_SECTION:	// if we get here, there are no courses
 		break;
 	default:
 		ASSERT(0);

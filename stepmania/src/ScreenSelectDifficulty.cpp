@@ -484,6 +484,9 @@ void ScreenSelectDifficulty::TweenOffScreen()
 
 	for( p=0; p<NUM_PAGES; p++ )
 	{
+		if( p == 0  &&  SelectedSomethingOnPage2() )
+			continue;	// skip
+
 		m_sprExplanation[p].SetXY( EXPLANATION_X(p), EXPLANATION_Y(p) );
 		m_sprExplanation[p].BeginTweening( 0.5, Actor::TWEEN_BOUNCE_BEGIN );
 		m_sprExplanation[p].SetTweenXY( EXPLANATION_X(p)+700, EXPLANATION_Y(p) );

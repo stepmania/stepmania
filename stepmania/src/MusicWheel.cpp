@@ -111,7 +111,7 @@ WheelItemDisplay::WheelItemDisplay()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_GradeDisplay[p].Load( THEME->GetPathTo("Graphics","select music small grades 1x8") );
+		m_GradeDisplay[p].Load( THEME->GetPathTo("Graphics","select music small grades 2x8") );
 		m_GradeDisplay[p].SetZoom( 1.0f );
 		m_GradeDisplay[p].SetXY( p==PLAYER_1 ? GRADE_P1_X : GRADE_P2_X, 0 );
 	}
@@ -205,12 +205,12 @@ void WheelItemDisplay::RefreshGrades()
 		{
 			const DifficultyClass dc = GAMESTATE->m_PreferredDifficultyClass[p];
 			const Grade grade = m_pSong->GetGradeForDifficultyClass( GAMESTATE->GetCurrentStyleDef()->m_NotesType, dc );
-			m_GradeDisplay[p].SetGrade( grade );
-			m_GradeDisplay[p].SetDiffuseColor( PlayerToColor((PlayerNumber)p) );
+			m_GradeDisplay[p].SetGrade( (PlayerNumber)p, grade );
+			//m_GradeDisplay[p].SetDiffuseColor( PlayerToColor((PlayerNumber)p) );
 		}
 		else	// this is a section display
 		{
-			m_GradeDisplay[p].SetGrade( GRADE_NO_DATA );
+			m_GradeDisplay[p].SetGrade( (PlayerNumber)p, GRADE_NO_DATA );
 		}
 	}
 

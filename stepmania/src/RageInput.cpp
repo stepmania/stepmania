@@ -877,7 +877,7 @@ RageInput::pump_t::~pump_t()
 		CloseHandle(h);
 }
 
-RageInput::pump_t::init(int devno)
+void RageInput::pump_t::init(int devno)
 {
 	const int pump_usb_vid = 0x0d2f, pump_usb_pid = 0x0001;
 	h = USB::OpenUSB (pump_usb_vid, pump_usb_pid, devno);

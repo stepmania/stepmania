@@ -390,6 +390,8 @@ CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName )
 
 CString ThemeManager::GetPathTo( CString sAssetCategory, CString sFileName ) 
 {
+try_element_again:
+
 	sAssetCategory.MakeLower();
 	sFileName.MakeLower();
 
@@ -458,9 +460,13 @@ CString ThemeManager::GetPathTo( CString sAssetCategory, CString sFileName )
 	
 	if( asPossibleElementFilePaths.GetSize() == 0 )
 	{
-		ASSERT(0);
-		throw RageException( "Theme element '%s' could not be found in '%s' or '%s'.", 
-			sAssetCategory+"\\"+sFileName, 
+#ifdef _DEBUG
+		if( IDRETRY == AfxMessageBox( ssprintf("The theme element %s/%s is missing.  Correct this and click Retry, or Cancel to break.",sAssetCategory,sFileName), MB_RETRYCANCEL ) )
+			goto try_element_again;
+#endif
+		throw RageException( "Theme element '%s/%s' could not be found in '%s' or '%s'.", 
+			sAssetCategory,
+			sFileName, 
 			GetThemeDirFromName(m_sCurThemeName), 
 			GetThemeDirFromName(BASE_THEME_NAME) );
 	}
@@ -504,6 +510,7 @@ CString ThemeManager::GetMetricsPathFromName( CString sThemeName )
 
 CString ThemeManager::GetMetric( CString sScreenName, CString sValueName )
 {
+try_metric_again:
 	CString sCurMetricPath = GetMetricsPathFromName(m_sCurThemeName);
 	CString sDefaultMetricPath = GetMetricsPathFromName(BASE_THEME_NAME);
 
@@ -518,7 +525,11 @@ CString ThemeManager::GetMetric( CString sScreenName, CString sValueName )
 	if( m_pIniMetrics->GetValue(sScreenName,sValueName,sValue) )
 		return sValue;
 
-	ASSERT(0);
+#ifdef _DEBUG
+	if( IDRETRY == AfxMessageBox( ssprintf("The theme metric %s-%s is missing.  Correct this and click Retry, or Cancel to break.",sScreenName,sValueName), MB_RETRYCANCEL ) )
+		goto try_metric_again;
+#endif
+
 	throw RageException( "Theme metric '%s : %s' could not be found in '%s' or '%s'.", 
 		sScreenName,
 		sValueName,

@@ -26,13 +26,12 @@
 #include "AnnouncerManager.h"
 #include "GameState.h"
 
-#define STAGE_SCREEN_TYPE	THEME->GetMetricI("General","StageScreenType")
-
-enum StageScreenTypes // magic number nuker! for use with the metrics
+#define STAGE_TYPE		THEME->GetMetricI("General","StageType")
+enum StageType // for use with the metric above
 {
-	SCREENTYPE_DANCE,
-	SCREENTYPE_PUMP,
-	SCREENTYPE_EZ2
+	STAGE_TYPE_MAX = 0,
+	STAGE_TYPE_PUMP,
+	STAGE_TYPE_EZ2
 };
 
 const ScreenMessage SM_StartFadingOut	=	ScreenMessage(SM_User + 1);
@@ -40,14 +39,14 @@ const ScreenMessage SM_DoneFadingIn		=	ScreenMessage(SM_User + 2);
 const ScreenMessage SM_GoToNextState	=	ScreenMessage(SM_User + 3);
 
 
-enum StageType
+enum StageMode
 {
-	TYPE_NORMAL,
-	TYPE_FINAL,
-	TYPE_EXTRA1,
-	TYPE_EXTRA2,
-	TYPE_ONI,
-	TYPE_ENDLESS
+	MODE_NORMAL,
+	MODE_FINAL,
+	MODE_EXTRA1,
+	MODE_EXTRA2,
+	MODE_ONI,
+	MODE_ENDLESS
 };
 
 ScreenStage::ScreenStage()
@@ -76,18 +75,18 @@ ScreenStage::ScreenStage()
 	m_frameStage.SetTweenY( CENTER_Y );
 
 	
-	StageType		stage_type;
-	if( GAMESTATE->m_PlayMode == PLAY_MODE_ONI )			stage_type = TYPE_ONI;
-	else if( GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS )	stage_type = TYPE_ENDLESS;
-	else if( GAMESTATE->IsExtraStage() )					stage_type = TYPE_EXTRA1;
-	else if( GAMESTATE->IsExtraStage2() )					stage_type = TYPE_EXTRA2;
-	else if( GAMESTATE->IsFinalStage() )					stage_type = TYPE_FINAL;
-	else													stage_type = TYPE_NORMAL;
+	StageMode		stage_mode;
+	if( GAMESTATE->m_PlayMode == PLAY_MODE_ONI )			stage_mode = MODE_ONI;
+	else if( GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS )	stage_mode = MODE_ENDLESS;
+	else if( GAMESTATE->IsExtraStage() )					stage_mode = MODE_EXTRA1;
+	else if( GAMESTATE->IsExtraStage2() )					stage_mode = MODE_EXTRA2;
+	else if( GAMESTATE->IsFinalStage() )					stage_mode = MODE_FINAL;
+	else													stage_mode = MODE_NORMAL;
 
 
-	switch( stage_type )
+	switch( stage_mode )
 	{
-	case TYPE_NORMAL:
+	case MODE_NORMAL:
 		{
 			const int iStageNo = GAMESTATE->GetStageIndex()+1;
 			switch( iStageNo )
@@ -101,19 +100,19 @@ ScreenStage::ScreenStage()
 			}
 		}
 		break;
-	case TYPE_FINAL:
+	case MODE_FINAL:
 		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_FINAL) );
 		break;
-	case TYPE_EXTRA1:
+	case MODE_EXTRA1:
 		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_EXTRA1) );
 		break;
-	case TYPE_EXTRA2:
+	case MODE_EXTRA2:
 		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_EXTRA2) );
 		break;
-	case TYPE_ONI:
+	case MODE_ONI:
 		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_ONI) );
 		break;
-	case TYPE_ENDLESS:
+	case MODE_ENDLESS:
 		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_ENDLESS) );
 		break;
 	default:
@@ -126,7 +125,7 @@ ScreenStage::ScreenStage()
 	// the ez2Final is so that when we're in normal we can go and see if we're really
 	// FINAL or not. at the end of normal, if we WERE FINAL, we set it back to final
 	// hacky or what? =)
-	if ( STAGE_SCREEN_TYPE == SCREENTYPE_EZ2 && stage_type == TYPE_FINAL )
+	if( STAGE_TYPE == STAGE_TYPE_EZ2  &&  stage_mode == MODE_FINAL )
 	{
 		for( int i=0; i<4; i++ )
 		{
@@ -134,12 +133,12 @@ ScreenStage::ScreenStage()
 			m_sprNumbers[i].StopAnimating();
 		}
 		ez2Final=1;
-		stage_type = TYPE_NORMAL;
+		stage_mode = MODE_NORMAL;
 	}
 
-	switch( stage_type )
+	switch( stage_mode )
 	{
-	case TYPE_NORMAL:
+	case MODE_NORMAL:
 		{
 			const int iStageNo = GAMESTATE->GetStageIndex()+1;
 
@@ -187,7 +186,7 @@ ScreenStage::ScreenStage()
 			// EZ2 TYPE DEFINITION //
 			/////////////////////////
 
-			if ( STAGE_SCREEN_TYPE == SCREENTYPE_EZ2) // Initialize and manipulate existing graphics for Ez2dancer Screen Type
+			if ( STAGE_TYPE == STAGE_TYPE_EZ2) // Initialize and manipulate existing graphics for Ez2dancer Screen Type
 			{
 				for( i=0; i<iNumChars; i++ )
 				{
@@ -410,7 +409,7 @@ ScreenStage::ScreenStage()
 				{
 					m_stagename.SetDiffuseColor( D3DXCOLOR(1.0f/225.0f*227.0f,1.0f/225.0f*228.0f,1/225.0f*255.0f,1) );
 					m_stagename.SetText( "THE FINAL STAGE" );
-					stage_type = TYPE_FINAL; // set back to final again.
+					stage_mode = MODE_FINAL; // set back to final again.
 					ez2Final = 0;
 				}
 
@@ -437,23 +436,23 @@ ScreenStage::ScreenStage()
 			m_frameStage.AddSubActor( &m_sprStage );
 		}
 		break;
-	case TYPE_FINAL:
+	case MODE_FINAL:
 		m_sprStage.Load( THEME->GetPathTo("Graphics","stage final") );
 		m_frameStage.AddSubActor( &m_sprStage );
 		break;
-	case TYPE_EXTRA1:
+	case MODE_EXTRA1:
 		m_sprStage.Load( THEME->GetPathTo("Graphics","stage extra1") );
 		m_frameStage.AddSubActor( &m_sprStage );
 		break;
-	case TYPE_EXTRA2:
+	case MODE_EXTRA2:
 		m_sprStage.Load( THEME->GetPathTo("Graphics","stage extra2") );
 		m_frameStage.AddSubActor( &m_sprStage );
 		break;
-	case TYPE_ONI:
+	case MODE_ONI:
 		m_sprStage.Load( THEME->GetPathTo("Graphics","stage oni") );
 		m_frameStage.AddSubActor( &m_sprStage );
 		break;
-	case TYPE_ENDLESS:
+	case MODE_ENDLESS:
 		m_sprStage.Load( THEME->GetPathTo("Graphics","stage endless") );
 		m_frameStage.AddSubActor( &m_sprStage );
 		break;
@@ -482,7 +481,7 @@ void ScreenStage::DrawPrimitives()
 {
 	DISPLAY->EnableZBuffer();
 
-	if ( STAGE_SCREEN_TYPE == SCREENTYPE_DANCE) // only DANCE uses the quadmask
+	if ( STAGE_TYPE == STAGE_TYPE_MAX) // only DANCE uses the quadmask
 		m_quadMask.Draw();
 	m_frameStage.Draw();
 
@@ -490,7 +489,7 @@ void ScreenStage::DrawPrimitives()
 
 	m_Fade.Draw();
 
-	if ( STAGE_SCREEN_TYPE == SCREENTYPE_PUMP) // only PUMP uses the song background on the stage screen
+	if ( STAGE_TYPE == STAGE_TYPE_PUMP) // only PUMP uses the song background on the stage screen
 		m_sprSongBackground.Draw();
 }
 

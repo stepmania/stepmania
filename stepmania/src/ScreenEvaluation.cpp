@@ -33,11 +33,31 @@
 #define GRADE_P1_X				THEME->GetMetricF("Evaluation","GradeP1X")
 #define GRADE_P2_X				THEME->GetMetricF("Evaluation","GradeP2X")
 #define GRADE_Y					THEME->GetMetricF("Evaluation","GradeY")
+#define PERCENT_BASE_P1_X		THEME->GetMetricF("Evaluation","PercentBaseP1X")
+#define PERCENT_BASE_P2_X		THEME->GetMetricF("Evaluation","PercentBaseP2X")
+#define PERCENT_BASE_Y			THEME->GetMetricF("Evaluation","PercentBaseY")
 #define JUDGE_LABELS_X			THEME->GetMetricF("Evaluation","JudgeLabelsX")
-#define JUDGE_NUMBERS_P1_X		THEME->GetMetricF("Evaluation","JudgeNumbersP1X")
-#define JUDGE_NUMBERS_P2_X		THEME->GetMetricF("Evaluation","JudgeNumbersP2X")
-#define JUDGE_START_Y			THEME->GetMetricF("Evaluation","JudgeStartY")
-#define JUDGE_SPACING_Y			THEME->GetMetricF("Evaluation","JudgeSpacingY")
+#define PERFECT_P1_X			THEME->GetMetricF("Evaluation","PerfectP1X")
+#define PERFECT_P2_X			THEME->GetMetricF("Evaluation","PerfectP2X")
+#define PERFECT_Y				THEME->GetMetricF("Evaluation","PerfectY")
+#define GREAT_P1_X				THEME->GetMetricF("Evaluation","GreatP1X")
+#define GREAT_P2_X				THEME->GetMetricF("Evaluation","GreatP2X")
+#define GREAT_Y					THEME->GetMetricF("Evaluation","GreatY")
+#define GOOD_P1_X				THEME->GetMetricF("Evaluation","GoodP1X")
+#define GOOD_P2_X				THEME->GetMetricF("Evaluation","GoodP2X")
+#define GOOD_Y					THEME->GetMetricF("Evaluation","GoodY")
+#define BOO_P1_X				THEME->GetMetricF("Evaluation","BooP1X")
+#define BOO_P2_X				THEME->GetMetricF("Evaluation","BooP2X")
+#define BOO_Y					THEME->GetMetricF("Evaluation","BooY")
+#define MISS_P1_X				THEME->GetMetricF("Evaluation","MissP1X")
+#define MISS_P2_X				THEME->GetMetricF("Evaluation","MissP2X")
+#define MISS_Y					THEME->GetMetricF("Evaluation","MissY")
+#define OK_P1_X					THEME->GetMetricF("Evaluation","OKP1X")
+#define OK_P2_X					THEME->GetMetricF("Evaluation","OKP2X")
+#define OK_Y					THEME->GetMetricF("Evaluation","OKY")
+#define MAX_COMBO_P1_X			THEME->GetMetricF("Evaluation","MaxComboP1X")
+#define MAX_COMBO_P2_X			THEME->GetMetricF("Evaluation","MaxComboP2X")
+#define MAX_COMBO_Y				THEME->GetMetricF("Evaluation","MaxComboY")
 #define SCORE_LABELS_X			THEME->GetMetricF("Evaluation","ScoreLabelsX")
 #define SCORE_NUMBERS_P1_X		THEME->GetMetricF("Evaluation","ScoreNumbersP1X")
 #define SCORE_NUMBERS_P2_X		THEME->GetMetricF("Evaluation","ScoreNumbersP2X")
@@ -45,6 +65,17 @@
 #define BONUS_P1_X				THEME->GetMetricF("Evaluation","BonusP1X")
 #define BONUS_P2_X				THEME->GetMetricF("Evaluation","BonusP2X")
 #define BONUS_Y					THEME->GetMetricF("Evaluation","BonusY")
+#define BAR_P1_BASE_X			THEME->GetMetricF("Evaluation","BarP1BaseX")
+#define BAR_P2_BASE_X			THEME->GetMetricF("Evaluation","BarP2BaseX")
+#define BAR_P1_ROTATION			THEME->GetMetricF("Evaluation","BarP1Rotation")
+#define BAR_P2_ROTATION			THEME->GetMetricF("Evaluation","BarP2Rotation")
+#define BAR_START_Y				THEME->GetMetricF("Evaluation","BarStartY")
+#define BAR_SPACING_Y			THEME->GetMetricF("Evaluation","BarSpacingY")
+#define BAR_WIDTH				THEME->GetMetricF("Evaluation","BarWidth")
+#define BAR_HEIGHT				THEME->GetMetricF("Evaluation","BarHeight")
+#define SONGS_SURVIVED_P1_X		THEME->GetMetricF("Evaluation","SongsSurvivedP1X")
+#define SONGS_SURVIVED_P2_X		THEME->GetMetricF("Evaluation","SongsSurvivedP2X")
+#define SONGS_SURVIVED_Y		THEME->GetMetricF("Evaluation","SongsSurvivedY")
 #define NEW_RECORD_P1_X			THEME->GetMetricF("Evaluation","NewRecordP1X")
 #define NEW_RECORD_P2_X			THEME->GetMetricF("Evaluation","NewRecordP2X")
 #define NEW_RECORD_Y			THEME->GetMetricF("Evaluation","NewRecordY")
@@ -52,6 +83,7 @@
 #define TRY_EXTRA_STAGE_Y		THEME->GetMetricF("Evaluation","TryExtraStageY")
 #define HELP_TEXT				THEME->GetMetric("Evaluation","HelpText")
 #define TIMER_SECONDS			THEME->GetMetricI("Evaluation","TimerSeconds")
+#define SPIN_GRADES				THEME->GetMetricB("Evaluation","SpinGrades")
 
 float GRADE_X( int p ) {
 	switch( p ) {
@@ -60,11 +92,35 @@ float GRADE_X( int p ) {
 		default:		ASSERT(0);	return 0;
 	}
 }
-float JUDGE_NUMBERS_X( int p ) {
+float PERCENT_BASE_X( int p ) {
 	switch( p ) {
-		case PLAYER_1:	return JUDGE_NUMBERS_P1_X;
-		case PLAYER_2:	return JUDGE_NUMBERS_P2_X;
+		case PLAYER_1:	return PERCENT_BASE_P1_X;
+		case PLAYER_2:	return PERCENT_BASE_P2_X;
 		default:		ASSERT(0);	return 0;
+	}
+}
+float JUDGE_X( int p, int l ) {
+	switch( l ) {
+		case 0:		return p==PLAYER_1 ? PERFECT_P1_X	: PERFECT_P2_X;
+		case 1:		return p==PLAYER_1 ? GREAT_P1_X		: GREAT_P2_X;
+		case 2:		return p==PLAYER_1 ? GOOD_P1_X		: GOOD_P2_X;
+		case 3:		return p==PLAYER_1 ? BOO_P1_X		: BOO_P2_X;
+		case 4:		return p==PLAYER_1 ? MISS_P1_X		: MISS_P2_X;
+		case 5:		return p==PLAYER_1 ? OK_P1_X		: OK_P2_X;
+		case 6:		return p==PLAYER_1 ? MAX_COMBO_P1_X : MAX_COMBO_P2_X;
+		default:	ASSERT(0);	return 0;
+	}
+}
+float JUDGE_Y( int l ) {
+	switch( l ) {
+		case 0:		return PERFECT_Y;
+		case 1:		return GREAT_Y;
+		case 2:		return GOOD_Y;
+		case 3:		return BOO_Y;
+		case 4:		return MISS_Y;
+		case 5:		return OK_Y;
+		case 6:		return MAX_COMBO_Y;
+		default:	ASSERT(0);	return 0;
 	}
 }
 float SCORE_NUMBERS_X( int p ) {
@@ -78,6 +134,27 @@ float BONUS_X( int p ) {
 	switch( p ) {
 		case PLAYER_1:	return BONUS_P1_X;
 		case PLAYER_2:	return BONUS_P2_X;
+		default:		ASSERT(0);	return 0;
+	}
+}
+float BAR_BASE_X( int p ) {
+	switch( p ) {
+		case PLAYER_1:	return BAR_P1_BASE_X;
+		case PLAYER_2:	return BAR_P2_BASE_X;
+		default:		ASSERT(0);	return 0;
+	}
+}
+float BAR_ROTATION( int p ) {
+	switch( p ) {
+		case PLAYER_1:	return BAR_P1_ROTATION;
+		case PLAYER_2:	return BAR_P2_ROTATION;
+		default:		ASSERT(0);	return 0;
+	}
+}
+float SONGS_SURVIVED_X( int p ) {
+	switch( p ) {
+		case PLAYER_1:	return SONGS_SURVIVED_P1_X;
+		case PLAYER_2:	return SONGS_SURVIVED_P2_X;
 		default:		ASSERT(0);	return 0;
 	}
 }
@@ -117,7 +194,6 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	default:
 		ASSERT(0);
 	}
-
 
 	///////////////////////////
 	// Figure out which statistics we're going to display
@@ -177,57 +253,50 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	///////////////////////////
 	// Init the song banners depending on m_ResultMode
 	///////////////////////////
-	/* EZ2 should hide these things by placing them off screen with theme metrics
-	if( GAMESTATE->m_CurGame != GAME_EZ2 )
+	// EZ2 should hide these things by placing them off screen with theme metrics
+	switch( m_ResultMode )
 	{
-	*/
-		switch( m_ResultMode )
+	case RM_ARCADE_STAGE:
+		m_BannerWithFrame[0].LoadFromSongAndNotes( GAMESTATE->m_pCurSong, GAMESTATE->m_pCurNotes );
+		m_BannerWithFrame[0].SetXY( BANNER_X, BANNER_Y );
+		this->AddSubActor( &m_BannerWithFrame[0] );
+
+		m_textStage.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
+		m_textStage.TurnShadowOff();
+		m_textStage.SetXY( STAGE_X, STAGE_Y );
+		m_textStage.SetZoom( 0.5f );
+		m_textStage.SetText( GAMESTATE->GetStageText() + " Stage" );
+		this->AddSubActor( &m_textStage );
+
+		break;
+	case RM_ARCADE_SUMMARY:
 		{
-		case RM_ARCADE_STAGE:
-			m_BannerWithFrame[0].LoadFromSongAndNotes( GAMESTATE->m_pCurSong, GAMESTATE->m_pCurNotes );
-			m_BannerWithFrame[0].SetXY( BANNER_X, BANNER_Y );
-			this->AddSubActor( &m_BannerWithFrame[0] );
-
-			m_textStage.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
-			m_textStage.TurnShadowOff();
-			m_textStage.SetXY( STAGE_X, STAGE_Y );
-			m_textStage.SetZoom( 0.5f );
-			m_textStage.SetText( GAMESTATE->GetStageText() + " Stage" );
-			this->AddSubActor( &m_textStage );
-
-			break;
-		case RM_ARCADE_SUMMARY:
+			// crop down to 3
+			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
-				// crop down to 3
-				for( int p=0; p<NUM_PLAYERS; p++ )
-				{
-					if( GAMESTATE->m_apSongsPlayed.GetSize() > STAGES_TO_SHOW_IN_SUMMARY )
-						GAMESTATE->m_apSongsPlayed.RemoveAt( 0, GAMESTATE->m_apSongsPlayed.GetSize() - STAGES_TO_SHOW_IN_SUMMARY );
-				}
-
-				const int iSongsToShow = GAMESTATE->m_apSongsPlayed.GetSize();
-				ASSERT( iSongsToShow > 0 );
-
-				for( int i=0; i<iSongsToShow; i++ )
-				{
-					m_BannerWithFrame[i].LoadFromSong( GAMESTATE->m_apSongsPlayed[i] );
-					float fBannerOffset = i - (iSongsToShow-1)/2.0f;
-					m_BannerWithFrame[i].SetXY( BANNER_X + fBannerOffset*32, BANNER_Y + fBannerOffset*16 );
-					m_BannerWithFrame[i].SetZoom( 0.70f );
-					this->AddSubActor( &m_BannerWithFrame[i] );
-				}
+				if( GAMESTATE->m_apSongsPlayed.GetSize() > STAGES_TO_SHOW_IN_SUMMARY )
+					GAMESTATE->m_apSongsPlayed.RemoveAt( 0, GAMESTATE->m_apSongsPlayed.GetSize() - STAGES_TO_SHOW_IN_SUMMARY );
 			}
-			break;
-		case RM_ONI:
-			m_BannerWithFrame[0].LoadFromCourse( GAMESTATE->m_pCurCourse );
-			m_BannerWithFrame[0].SetXY( BANNER_X, BANNER_Y );
-			this->AddSubActor( &m_BannerWithFrame[0] );
-			break;
-		}
-	/*
-	}
-	*/
 
+			const int iSongsToShow = GAMESTATE->m_apSongsPlayed.GetSize();
+			ASSERT( iSongsToShow > 0 );
+
+			for( int i=0; i<iSongsToShow; i++ )
+			{
+				m_BannerWithFrame[i].LoadFromSong( GAMESTATE->m_apSongsPlayed[i] );
+				float fBannerOffset = i - (iSongsToShow-1)/2.0f;
+				m_BannerWithFrame[i].SetXY( BANNER_X + fBannerOffset*32, BANNER_Y + fBannerOffset*16 );
+				m_BannerWithFrame[i].SetZoom( 0.70f );
+				this->AddSubActor( &m_BannerWithFrame[i] );
+			}
+		}
+		break;
+	case RM_ONI:
+		m_BannerWithFrame[0].LoadFromCourse( GAMESTATE->m_pCurCourse );
+		m_BannerWithFrame[0].SetXY( BANNER_X, BANNER_Y );
+		this->AddSubActor( &m_BannerWithFrame[0] );
+		break;
+	}
 
 
 	//////////////////////////
@@ -242,82 +311,9 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	this->AddSubActor( &m_Menu );
 
 
-	for( l=0; l<NUM_JUDGE_LINES; l++ ) 
-	{
-		/* EZ2 should hide these things by placing them off screen with theme metrics
-		if (GAMESTATE->m_CurGame != GAME_EZ2)
-		{
-		*/
-			m_sprJudgeLabels[l].Load( THEME->GetPathTo("Graphics","evaluation judge labels") );
-			m_sprJudgeLabels[l].StopAnimating();
-			m_sprJudgeLabels[l].SetState( l );
-			m_sprJudgeLabels[l].SetXY( JUDGE_LABELS_X, JUDGE_START_Y + l*JUDGE_SPACING_Y );
-			m_sprJudgeLabels[l].SetZoom( 1.0f );
-			this->AddSubActor( &m_sprJudgeLabels[l] );
-		/*
-		}
-		*/
-
-		for( p=0; p<NUM_PLAYERS; p++ ) 
-		{
-			m_textJudgeNumbers[l][p].LoadFromFont( THEME->GetPathTo("Fonts","score numbers") );
-			m_textJudgeNumbers[l][p].TurnShadowOff();
-			m_textJudgeNumbers[l][p].SetXY( JUDGE_NUMBERS_X(p), JUDGE_START_Y + l*JUDGE_SPACING_Y );
-			m_textJudgeNumbers[l][p].SetZoom( 0.7f );
-			m_textJudgeNumbers[l][p].SetDiffuseColor( PlayerToColor(p) );
-
-/*
-			TODO:  This should somehow be accomodated with a switch in the theme metric file.
-
-			// RE-ARRANGE the scoreboard for EZ2Dancer Scoring
-
-			if (l == 0 && GAMESTATE->m_CurGame == GAME_EZ2) // Change Position For Ez2dancer
-			{
-				m_textJudgeNumbers[l][p].SetXY( JUDGE_NUMBERS_X_EZ2[p], JUDGE_EZ2_COOL_Y);
-			}
-			else if (l == 2 && GAMESTATE->m_CurGame == GAME_EZ2)
-			{
-				m_textJudgeNumbers[l][p].SetXY( JUDGE_NUMBERS_X_EZ2[p], JUDGE_EZ2_COOL_Y + 55);
-			}
-			else if (l == 4 && GAMESTATE->m_CurGame == GAME_EZ2)
-			{
-				m_textJudgeNumbers[l][p].SetXY( JUDGE_NUMBERS_X_EZ2[p], JUDGE_EZ2_COOL_Y + 120);
-			}
-			else if ((l == 1 || l == 3 ) && GAMESTATE->m_CurGame == GAME_EZ2)
-			{
-				m_textJudgeNumbers[l][p].SetZoomX(0); // Hide These Ones
-			}
-			else if (l == 5 && GAMESTATE->m_CurGame == GAME_EZ2 ) // sneakily use this one for the max combo.
-			{
-				if (p == PLAYER_1 )
-				{
-					m_textJudgeNumbers[l][p].SetXY( JUDGE_NUMBERS_X_EZ2[p]-40, JUDGE_EZ2_COOL_Y + 180);
-				}
-				else
-				{
-					m_textJudgeNumbers[l][p].SetXY( JUDGE_NUMBERS_X_EZ2[p]+40, JUDGE_EZ2_COOL_Y + 180);
-				}
-			}
-*/
-			this->AddSubActor( &m_textJudgeNumbers[l][p] );
-		}
-	}
-
-/*	if (GAMESTATE->m_CurGame != GAME_EZ2)
-	{
-*/
-		m_sprScoreLabel.Load( THEME->GetPathTo("Graphics","evaluation score labels") );
-		m_sprScoreLabel.SetState( m_ResultMode==RM_ONI ? 1 : 0 );
-		m_sprScoreLabel.StopAnimating();
-		m_sprScoreLabel.SetXY( SCORE_LABELS_X, SCORE_Y );
-		m_sprScoreLabel.SetZoom( 1.0f );
-		this->AddSubActor( &m_sprScoreLabel );
-/*	}
-*/
-
 	for( p=0; p<NUM_PLAYERS; p++ ) 
 	{
-		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )	// || GAMESTATE->m_CurGame == GAME_EZ2 )	// If EZ2 wants to hide this graphic, place it somewhere off screen using theme metrics
+		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )	// If EZ2 wants to hide this graphic, place it somewhere off screen using theme metrics
 			continue;	// skip
 
 		m_ScoreDisplay[p].SetXY( SCORE_NUMBERS_X(p), SCORE_Y );
@@ -364,50 +360,6 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	Grade max_grade = GRADE_NO_DATA;
 	for( p=0; p<NUM_PLAYERS; p++ )
 		max_grade = max( max_grade, grade[p] ); 
-
-
-	//////////////////////////
-	// Set Numbers 
-	//////////////////////////
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-			continue;	// skip
-
-		m_textJudgeNumbers[0][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_PERFECT]) );
-		m_textJudgeNumbers[1][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_GREAT]) );
-		m_textJudgeNumbers[2][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_GOOD]) );
-		m_textJudgeNumbers[3][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_BOO]) );
-		m_textJudgeNumbers[4][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_MISS]) );
-		m_textJudgeNumbers[5][p].SetText( ssprintf("%4d", iHoldNoteScores[p][HNS_OK]) );
-
-		if( m_ResultMode==RM_ONI )
-		{
-			const float fSurviveSeconds = GAMESTATE->GetPlayerSurviveTime( (PlayerNumber)p );
-			int iMinsDisplay = (int)fSurviveSeconds/60;
-			int iSecsDisplay = (int)fSurviveSeconds - iMinsDisplay*60;
-			int iLeftoverDisplay = int( (fSurviveSeconds - iMinsDisplay*60 - iSecsDisplay) * 100 );
-			m_ScoreDisplay[p].SetText( ssprintf( "%02d:%02d:%02d", iMinsDisplay, iSecsDisplay, iLeftoverDisplay ) );
-		}
-		else
-		{
-			m_ScoreDisplay[p].SetScore( fScore[p] );
-		}
-
-		/*
-		TODO:  Accomodate this with a theme metric
-
-		// SNEAKY! We take the max combo, and put it into element 5, because Ez2dancer 
-		// doesn't care for OK's and plus this text element is already nicely aligned =)
-		if (GAMESTATE->m_CurGame == GAME_EZ2)
-		{
-			m_textJudgeNumbers[5][p].SetText( ssprintf("%4d", iMaxCombo[p]) );
-		}
-		*/
-
-		m_BonusInfoFrame[p].SetBonusInfo( (PlayerNumber)p, fPossibleRadarValues[p], fActualRadarValues[p], iMaxCombo[p] );
-		m_StageBox[p].SetStageInfo( (PlayerNumber)p, GAMESTATE->m_iSongsBeforeFail[p] );
-	}
 
 
 	////////////////////////
@@ -462,91 +414,182 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		m_bTryExtraStage = false;
 
 
+	//////////////////////////
+	// Init non-ResultMode specific displays 
+	//////////////////////////
+	for( l=0; l<NUM_JUDGE_LINES; l++ ) 
+	{
+		// EZ2 should hide these things by placing them off screen with theme metrics
+		m_sprJudgeLabels[l].Load( THEME->GetPathTo("Graphics","evaluation judge labels") );
+		m_sprJudgeLabels[l].StopAnimating();
+		m_sprJudgeLabels[l].SetState( l );
+		m_sprJudgeLabels[l].SetXY( JUDGE_LABELS_X, JUDGE_Y(l) );
+		m_sprJudgeLabels[l].SetZoom( 1.0f );
+		this->AddSubActor( &m_sprJudgeLabels[l] );
+	}
+
+	m_sprScoreLabel.Load( THEME->GetPathTo("Graphics","evaluation score labels") );
+	m_sprScoreLabel.SetState( m_ResultMode==RM_ONI ? 1 : 0 );
+	m_sprScoreLabel.StopAnimating();
+	m_sprScoreLabel.SetXY( SCORE_LABELS_X, SCORE_Y );
+	m_sprScoreLabel.SetZoom( 1.0f );
+	this->AddSubActor( &m_sprScoreLabel );
+
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 			continue;	// skip
 
-/*		Chris:  If you don't want EZ2 to have a grade frame, then make a theme that has a 1x1 transparent graphic for the grade frame.
-
-		if ( GAMESTATE->m_CurGame != GAME_EZ2)
+		for( l=0; l<NUM_JUDGE_LINES; l++ ) 
 		{
-*/
-			m_sprGradeFrame[p].Load( THEME->GetPathTo("Graphics","evaluation grade frame") );
-			m_sprGradeFrame[p].StopAnimating();
-			m_sprGradeFrame[p].SetState( p );
-			m_sprGradeFrame[p].SetXY( GRADE_X(p), GRADE_Y );
-			this->AddSubActor( &m_sprGradeFrame[p] );
-/*		}
-*/
+			m_textJudgeNumbers[l][p].LoadFromFont( THEME->GetPathTo("Fonts","score numbers") );
+			m_textJudgeNumbers[l][p].TurnShadowOff();
+			m_textJudgeNumbers[l][p].SetXY( JUDGE_X(p,l), JUDGE_Y(l) );
+			m_textJudgeNumbers[l][p].SetZoom( 0.7f );
+			m_textJudgeNumbers[l][p].SetDiffuseColor( PlayerToColor(p) );
+			this->AddSubActor( &m_textJudgeNumbers[l][p] );
+		}
+
+		m_textJudgeNumbers[0][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_PERFECT]) );
+		m_textJudgeNumbers[1][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_GREAT]) );
+		m_textJudgeNumbers[2][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_GOOD]) );
+		m_textJudgeNumbers[3][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_BOO]) );
+		m_textJudgeNumbers[4][p].SetText( ssprintf("%4d", iTapNoteScores[p][TNS_MISS]) );
+		m_textJudgeNumbers[5][p].SetText( ssprintf("%4d", iHoldNoteScores[p][HNS_OK]) );
+		m_textJudgeNumbers[6][p].SetText( ssprintf("%4d", iMaxCombo[p]) );
+
+
+		if( m_ResultMode==RM_ONI )
+			m_ScoreDisplay[p].SetText( SecondsToTime(GAMESTATE->GetPlayerSurviveTime( (PlayerNumber)p )) );
+		else
+			m_ScoreDisplay[p].SetScore( fScore[p] );
+	}
+
+
+	/////////////////////////////////
+	// Init ResultMode-specific displays
+	/////////////////////////////////
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
+			continue;	// skip
+
+		// If EZ2 shouldn't have a grade frame, then make a theme that has a 1x1 transparent graphic for the grade frame.
+
 		switch( m_ResultMode )
 		{
 		case RM_ONI:
 			{
-				m_textOniPercent[p].LoadFromFont( THEME->GetPathTo("Fonts","header1") );
-				m_textOniPercent[p].SetXY( GRADE_X(p), GRADE_Y );
-				m_textOniPercent[p].SetShadowLength( 2 );
-				m_textOniPercent[p].SetZoomX( 1.3f );
-				m_textOniPercent[p].SetZoomY( 2.5f );
-				m_textOniPercent[p].SetEffectGlowing( 1.0f );
+				m_sprPercentFrame[p].Load( THEME->GetPathTo("Graphics","evaluation percent frame") );
+				m_sprPercentFrame[p].StopAnimating();
+				m_sprPercentFrame[p].SetState( p );
+				m_sprPercentFrame[p].SetXY( GRADE_X(p), GRADE_Y );
+				this->AddSubActor( &m_sprPercentFrame[p] );
 
+				m_textOniPercentLarge[p].LoadFromFont( THEME->GetPathTo("Fonts","oni percent numbers") );
+				m_textOniPercentLarge[p].TurnShadowOff();
+				m_textOniPercentLarge[p].SetXY( PERCENT_BASE_X(p), PERCENT_BASE_Y );
+				m_textOniPercentLarge[p].SetHorizAlign( Actor::align_right );
+				m_textOniPercentLarge[p].SetVertAlign( Actor::align_bottom );
+				m_textOniPercentLarge[p].SetEffectGlowing( 1.0f );
+				this->AddSubActor( &m_textOniPercentLarge[p] );
+
+				m_textOniPercentSmall[p].LoadFromFont( THEME->GetPathTo("Fonts","oni percent numbers") );
+				m_textOniPercentSmall[p].TurnShadowOff();
+				m_textOniPercentSmall[p].SetZoom( 0.5f );
+				m_textOniPercentSmall[p].SetXY( PERCENT_BASE_X(p), PERCENT_BASE_Y );
+				m_textOniPercentSmall[p].SetHorizAlign( Actor::align_left );
+				m_textOniPercentSmall[p].SetVertAlign( Actor::align_bottom );
+				m_textOniPercentSmall[p].SetEffectGlowing( 1.0f );
+				this->AddSubActor( &m_textOniPercentSmall[p] );
+
+				iPossibleDancePoints[p] = max( 1, iPossibleDancePoints[p] );
 				float fPercentDancePoints =  iActualDancePoints[p] / (float)iPossibleDancePoints[p] + 0.0001f;	// correct for rounding errors
-				fPercentDancePoints = max( 0, fPercentDancePoints );
-				m_textOniPercent[p].SetText( ssprintf("%.1f%%", fPercentDancePoints*100) );
-				this->AddSubActor( &m_textOniPercent[p] );
+				int iPercentDancePointsLarge = int(fPercentDancePoints*100);
+				int iPercentDancePointsSmall = int( (fPercentDancePoints*100 - int(fPercentDancePoints*100)) * 10 );
+				m_textOniPercentLarge[p].SetText( ssprintf("%02d%", iPercentDancePointsLarge) );
+				m_textOniPercentSmall[p].SetText( ssprintf(".%01d%%", iPercentDancePointsSmall) );
 
-				m_StageBox[p].SetXY( BONUS_X(p), BONUS_Y );
-				this->AddSubActor( &m_StageBox[p] );
+				// StageInfo stuff
+				m_sprCourseFrame[p].Load( THEME->GetPathTo("Graphics","evaluation stage frame 2x1") );
+				m_sprCourseFrame[p].StopAnimating();
+				m_sprCourseFrame[p].SetState( p );
+				m_sprCourseFrame[p].SetXY( BONUS_X(p), BONUS_Y );
+				this->AddSubActor( &m_sprCourseFrame[p] );
+		
+				m_textSongsSurvived[p].LoadFromFont( THEME->GetPathTo("Fonts","oni stage numbers") );
+				m_textSongsSurvived[p].TurnShadowOff();
+				m_textSongsSurvived[p].SetXY( SONGS_SURVIVED_X(p), SONGS_SURVIVED_Y );
+				m_textSongsSurvived[p].SetText( ssprintf("%02d", GAMESTATE->m_iSongsBeforeFail[p]) );
+				this->AddSubActor( &m_textSongsSurvived[p] );
 			}
 			break;
 		case RM_ARCADE_STAGE:
 		case RM_ARCADE_SUMMARY:
-			/*
-			Todo: Accomodate this in theme metrics
-
-			if (GAMESTATE->m_CurGame != GAME_EZ2 )
 			{
-			*/
+				m_sprGradeFrame[p].Load( THEME->GetPathTo("Graphics","evaluation grade frame") );
+				m_sprGradeFrame[p].StopAnimating();
+				m_sprGradeFrame[p].SetState( p );
+				m_sprGradeFrame[p].SetXY( GRADE_X(p), GRADE_Y );
+				this->AddSubActor( &m_sprGradeFrame[p] );
+
+				// Ez2dancer should control the grade tween using theme metrics
 				m_Grades[p].SetXY( GRADE_X(p), GRADE_Y );
 				m_Grades[p].SetZ( -2 );
 				m_Grades[p].SetZoom( 1.0f );
 				m_Grades[p].SetEffectGlowing( 1.0f );
-				m_Grades[p].SpinAndSettleOn( grade[p] );
+				if( SPIN_GRADES )
+					m_Grades[p].SpinAndSettleOn( grade[p] );
+				else
+					m_Grades[p].SetGrade( (PlayerNumber)p, grade[p] );
+				this->AddSubActor( &m_Grades[p] );
 
-				m_BonusInfoFrame[p].SetXY( BONUS_X(p), BONUS_Y );
-				this->AddSubActor( &m_BonusInfoFrame[p] );
-			/*
-			}
-			else // Ez2dancer Style Grade Display.
-			{
-				m_Grades[p].SetXY( GRADE_X[p], GRADE_Y + 150);
-				m_Grades[p].SetZ( -2 );
-				if (p == PLAYER_1 )
+				// Bonus info frame
+				m_sprBonusFrame[p].Load( THEME->GetPathTo("Graphics","evaluation bonus frame 2x1") );
+				m_sprBonusFrame[p].StopAnimating();
+				m_sprBonusFrame[p].SetState( p );
+				m_sprBonusFrame[p].SetXY( BONUS_X(p), BONUS_Y );
+				this->AddSubActor( &m_sprBonusFrame[p] );
+	
+				for( int l=0; l<NUM_RADAR_VALUES; l++ )	// foreach line
 				{
-					m_Grades[p].SetXY( GRADE_X[p]-10, GRADE_Y + 150);	
+					m_sprPossibleBar[p][l].Load( THEME->GetPathTo("Graphics","evaluation bars possible 1x2") );
+					m_sprPossibleBar[p][l].SetState( p );
+					m_sprPossibleBar[p][l].SetWidth( 1 );
+					m_sprPossibleBar[p][l].SetHeight( 1 );
+					m_sprPossibleBar[p][l].SetHorizAlign( Actor::align_left );
+					m_sprPossibleBar[p][l].SetX( BAR_BASE_X(p) );
+					m_sprPossibleBar[p][l].SetY( BAR_START_Y + BAR_SPACING_Y*l );
+					m_sprPossibleBar[p][l].SetRotation( BAR_ROTATION(p) );
+					m_sprPossibleBar[p][l].SetZoomX( 0 );
+					m_sprPossibleBar[p][l].SetZoomY( BAR_HEIGHT );
+					m_sprPossibleBar[p][l].BeginTweening( 0.5f );
+					m_sprPossibleBar[p][l].SetTweenZoomX( BAR_WIDTH*fPossibleRadarValues[p][l] );
+					this->AddSubActor( &m_sprPossibleBar[p][l] );
+
+					m_sprActualBar[p][l].Load( THEME->GetPathTo("Graphics","evaluation bars actual 1x2") );
+					m_sprActualBar[p][l].SetState( p );
+					m_sprActualBar[p][l].StopAnimating();
+					m_sprActualBar[p][l].SetWidth( 1 );
+					m_sprActualBar[p][l].SetHeight( 1 );
+					m_sprActualBar[p][l].SetHorizAlign( Actor::align_left );
+					m_sprActualBar[p][l].SetX( BAR_BASE_X(p) );
+					m_sprActualBar[p][l].SetY( BAR_START_Y + BAR_SPACING_Y*l );
+					m_sprActualBar[p][l].SetRotation( BAR_ROTATION(p) );
+					m_sprActualBar[p][l].SetZoomX( 0 );
+					m_sprActualBar[p][l].SetZoomY( BAR_HEIGHT );
+					m_sprActualBar[p][l].BeginTweening( 0.5f );
+					m_sprActualBar[p][l].SetTweenZoomX( BAR_WIDTH*fActualRadarValues[p][l] );
+					if( fActualRadarValues[p][l] == fPossibleRadarValues[p][l] )
+						m_sprActualBar[p][l].SetEffectGlowing();
+					this->AddSubActor( &m_sprActualBar[p][l] );
 				}
-				m_Grades[p].SetGrade( grade[p] );
-				m_Grades[p].SetRotation( D3DX_PI );
-				m_Grades[p].SetZoom( 8 );
-				m_Grades[p].BeginTweening( 0.6f );
-
-				m_Grades[p].SetTweenRotationZ( 0 );
-				m_Grades[p].SetTweenZoom( 2 );
-
+				break;
 			}
-			*/
-			this->AddSubActor( &m_Grades[p] );
-			break;
 		}
 
-/*	Chris:  If EZ2 wants to hide these things, place them off screen using theme metrics
-	
-		if ( GAMESTATE->m_CurGame == GAME_EZ2)
-			continue;
-*/
-		m_bNewRecord[p] = false;
-
+		//	Chris:  If EZ2 wants to hide these things, place them off screen using theme metrics
 		if( m_bNewRecord[p] )
 		{
 			m_textNewRecord[p].LoadFromFont( THEME->GetPathTo("Fonts","header1") );
@@ -565,9 +608,9 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		m_textTryExtraStage.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 		m_textTryExtraStage.SetXY( TRY_EXTRA_STAGE_X, TRY_EXTRA_STAGE_Y );
 		if( GAMESTATE->IsExtraStage() )
-			m_textTryExtraStage.SetText( "Try Another Extra Stage!" );
+			m_textTryExtraStage.SetText( "One More ExtraStage!!!" );
 		else
-			m_textTryExtraStage.SetText( "Try Extra Stage!" );
+			m_textTryExtraStage.SetText( "Try ExtraStage!!!" );
 		m_textTryExtraStage.SetZoom( 1 );
 		m_textTryExtraStage.SetEffectGlowing( 1.0f );
 		this->AddSubActor( &m_textTryExtraStage );
@@ -642,19 +685,11 @@ void ScreenEvaluation::TweenOnScreen()
 
 	for( i=0; i<NUM_JUDGE_LINES; i++ ) 
 	{
-		/*	TODO:  Accomodate this using theme metrics
-
-		if (GAMESTATE->m_CurGame != GAME_EZ2)
-		{
-		*/
-			fOriginalY = m_sprJudgeLabels[i].GetY();
-			m_sprJudgeLabels[i].SetY( fOriginalY + SCREEN_HEIGHT );
-			m_sprJudgeLabels[i].BeginTweeningQueued( 0.2f + 0.1f*i );
-			m_sprJudgeLabels[i].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
-			m_sprJudgeLabels[i].SetTweenY( fOriginalY );
-		/*
-		}
-		*/
+		fOriginalY = m_sprJudgeLabels[i].GetY();
+		m_sprJudgeLabels[i].SetY( fOriginalY + SCREEN_HEIGHT );
+		m_sprJudgeLabels[i].BeginTweeningQueued( 0.2f + 0.1f*i );
+		m_sprJudgeLabels[i].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+		m_sprJudgeLabels[i].SetTweenY( fOriginalY );
 
 		for( int p=0; p<NUM_PLAYERS; p++ ) 
 		{
@@ -666,58 +701,64 @@ void ScreenEvaluation::TweenOnScreen()
 		}
 	}
 
-	/*  Chris:  If EZ2 wants to hide these things, position them off screen using theme metrics
+	//  Chris:  If EZ2 wants to hide these things, position them off screen using theme metrics
 
-	if (GAMESTATE->m_CurGame != GAME_EZ2)
+	fOriginalY = m_sprScoreLabel.GetY();
+	m_sprScoreLabel.SetY( fOriginalY + SCREEN_HEIGHT );
+	m_sprScoreLabel.BeginTweeningQueued( 0.8f + 0.1f*i );
+	m_sprScoreLabel.BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+	m_sprScoreLabel.SetTweenY( fOriginalY );
+	
+	for( p=0; p<NUM_PLAYERS; p++ ) 
 	{
-	*/
-		fOriginalY = m_sprScoreLabel.GetY();
-		m_sprScoreLabel.SetY( fOriginalY + SCREEN_HEIGHT );
-		m_sprScoreLabel.BeginTweeningQueued( 0.8f + 0.1f*i );
-		m_sprScoreLabel.BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
-		m_sprScoreLabel.SetTweenY( fOriginalY );
-		
-		for( p=0; p<NUM_PLAYERS; p++ ) 
-		{
-			fOriginalX = m_ScoreDisplay[p].GetX();
-			m_ScoreDisplay[p].SetX( fOriginalX + SCREEN_WIDTH/2*(p==PLAYER_1 ? 1 : -1) );
-			m_ScoreDisplay[p].BeginTweeningQueued( 0.8f + 0.1f*i );
-			m_ScoreDisplay[p].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
-			m_ScoreDisplay[p].SetTweenX( fOriginalX );
-		}
-
-		for( p=0; p<NUM_PLAYERS; p++ )
-		{
-			fOriginalX = m_BonusInfoFrame[p].GetX();
-			m_BonusInfoFrame[p].SetX( fOriginalX + SCREEN_WIDTH/2*(p==PLAYER_1 ? 1 : -1) );
-			m_BonusInfoFrame[p].BeginTweeningQueued( 0.2f + 0.1f*i );
-			m_BonusInfoFrame[p].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
-			m_BonusInfoFrame[p].SetTweenX( fOriginalX );
-
-			fOriginalX = m_StageBox[p].GetX();
-			m_StageBox[p].SetX( fOriginalX + SCREEN_WIDTH/2*(p==PLAYER_1 ? 1 : -1) );
-			m_StageBox[p].BeginTweeningQueued( 0.2f + 0.1f*i );
-			m_StageBox[p].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
-			m_StageBox[p].SetTweenX( fOriginalX );
-
-			m_sprGradeFrame[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-			m_sprGradeFrame[p].SetTweenZoomY( 0 );
-
-			m_Grades[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-			m_Grades[p].SetTweenZoomY( 0 );
-
-			m_textOniPercent[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-			m_textOniPercent[p].SetTweenZoomY( 0 );
-
-			m_textNewRecord[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-			m_textNewRecord[p].SetTweenZoomY( 0 );
-		}
-		
-		m_textTryExtraStage.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_textTryExtraStage.SetTweenZoomY( 0 );
-	/*
+		fOriginalX = m_ScoreDisplay[p].GetX();
+		m_ScoreDisplay[p].SetX( fOriginalX + SCREEN_WIDTH/2*(p==PLAYER_1 ? 1 : -1) );
+		m_ScoreDisplay[p].BeginTweeningQueued( 0.8f + 0.1f*i );
+		m_ScoreDisplay[p].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+		m_ScoreDisplay[p].SetTweenX( fOriginalX );
 	}
-	*/
+
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		int i;
+
+		CArray<Actor*,Actor*> apActorsInBonusOrStageInfo;
+		apActorsInBonusOrStageInfo.Add( &m_sprBonusFrame[p] );
+		for( i=0; i<NUM_RADAR_VALUES; i++ )
+		{
+			apActorsInBonusOrStageInfo.Add( &m_sprPossibleBar[p][i] );
+			apActorsInBonusOrStageInfo.Add( &m_sprActualBar[p][i] );
+		}
+		apActorsInBonusOrStageInfo.Add( &m_sprCourseFrame[p] );
+		apActorsInBonusOrStageInfo.Add( &m_textTime[p] );
+		apActorsInBonusOrStageInfo.Add( &m_textSongsSurvived[p] );
+		for( i=0; i<apActorsInBonusOrStageInfo.GetSize(); i++ )
+		{
+			fOriginalX = apActorsInBonusOrStageInfo[i]->GetX();
+			apActorsInBonusOrStageInfo[i]->SetX( fOriginalX + SCREEN_WIDTH/2*(p==PLAYER_1 ? 1 : -1) );
+			apActorsInBonusOrStageInfo[i]->BeginTweeningQueued( 0.2f );
+			apActorsInBonusOrStageInfo[i]->BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+			apActorsInBonusOrStageInfo[i]->SetTweenX( fOriginalX );
+		}
+
+		m_sprGradeFrame[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+		m_sprGradeFrame[p].SetTweenZoomY( 0 );
+
+		m_Grades[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+		m_Grades[p].SetTweenZoomY( 0 );
+
+		m_textOniPercentLarge[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+		m_textOniPercentLarge[p].SetTweenZoomY( 0 );
+
+		m_textOniPercentSmall[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+		m_textOniPercentSmall[p].SetTweenZoomY( 0 );
+
+		m_textNewRecord[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+		m_textNewRecord[p].SetTweenZoomY( 0 );
+	}
+	
+	m_textTryExtraStage.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+	m_textTryExtraStage.SetTweenZoomY( 0 );
 }
 
 void ScreenEvaluation::TweenOffScreen()
@@ -735,15 +776,8 @@ void ScreenEvaluation::TweenOffScreen()
 
 	for( i=0; i<NUM_JUDGE_LINES; i++ ) 
 	{
-		/*  Chris:  If EZ2 wants to hide these things, position them off screen using theme metrics
-		if (GAMESTATE->m_CurGame != GAME_EZ2)
-		{
-		*/
-			m_sprJudgeLabels[i].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
-			m_sprJudgeLabels[i].SetTweenZoomY( 0 );
-		/*
-		}
-		*/
+		m_sprJudgeLabels[i].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
+		m_sprJudgeLabels[i].SetTweenZoomY( 0 );
 
 		for( int p=0; p<NUM_PLAYERS; p++ ) 
 		{
@@ -752,31 +786,37 @@ void ScreenEvaluation::TweenOffScreen()
 		}
 	}
 	
-	/*  Chris:  If EZ2 wants to hide these things, position them off screen using theme metrics
-	if (GAMESTATE->m_CurGame != GAME_EZ2)
+	m_sprScoreLabel.BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
+	m_sprScoreLabel.SetTweenZoomY( 0 );
+
+
+	for( p=0; p<NUM_PLAYERS; p++ ) 
 	{
-	*/
-		m_sprScoreLabel.BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
-		m_sprScoreLabel.SetTweenZoomY( 0 );
-
-
-		for( p=0; p<NUM_PLAYERS; p++ ) 
-		{
-			m_ScoreDisplay[p].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
-			m_ScoreDisplay[p].SetTweenZoomY( 0 );
-		}
-	/*
+		m_ScoreDisplay[p].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
+		m_ScoreDisplay[p].SetTweenZoomY( 0 );
 	}
-	*/
+
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
+		int i;
+
 		m_Grades[p].SettleImmediately();
 
-		m_BonusInfoFrame[p].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
-		m_BonusInfoFrame[p].SetTweenZoomY( 0 );
-
-		m_StageBox[p].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
-		m_StageBox[p].SetTweenZoomY( 0 );
+		CArray<Actor*,Actor*> apActorsInBonusOrStageInfo;
+		apActorsInBonusOrStageInfo.Add( &m_sprBonusFrame[p] );
+		for( i=0; i<NUM_RADAR_VALUES; i++ )
+		{
+			apActorsInBonusOrStageInfo.Add( &m_sprPossibleBar[p][i] );
+			apActorsInBonusOrStageInfo.Add( &m_sprActualBar[p][i] );
+		}
+		apActorsInBonusOrStageInfo.Add( &m_sprCourseFrame[p] );
+		apActorsInBonusOrStageInfo.Add( &m_textTime[p] );
+		apActorsInBonusOrStageInfo.Add( &m_textSongsSurvived[p] );
+		for( i=0; i<apActorsInBonusOrStageInfo.GetSize(); i++ )
+		{
+			apActorsInBonusOrStageInfo[i]->BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
+			apActorsInBonusOrStageInfo[i]->SetTweenZoomY( 0 );
+		}
 
 		m_sprGradeFrame[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
 		m_sprGradeFrame[p].SetTweenZoomY( 0 );
@@ -784,8 +824,11 @@ void ScreenEvaluation::TweenOffScreen()
 		m_Grades[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
 		m_Grades[p].SetTweenZoomY( 0 );
 
-		m_textOniPercent[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_textOniPercent[p].SetTweenZoomY( 0 );
+		m_textOniPercentLarge[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+		m_textOniPercentLarge[p].SetTweenZoomY( 0 );
+
+		m_textOniPercentSmall[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+		m_textOniPercentSmall[p].SetTweenZoomY( 0 );
 
 		m_textNewRecord[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
 		m_textNewRecord[p].SetTweenZoomY( 0 );

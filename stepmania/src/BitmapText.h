@@ -32,6 +32,7 @@ public:
 	void SetText( CString sText );
 
 	int GetWidestLineWidthInSourcePixels() { return m_iWidestLineWidth; };
+	void CropToWidth( int iWidthInSourcePixels );
 
 	virtual void DrawPrimitives();
 

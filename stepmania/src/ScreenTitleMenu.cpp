@@ -31,7 +31,8 @@
 #include "GameState.h"
 #include "GameManager.h"
 #include "ScreenGameplay.h"
-
+#include "ScreenSelectStyle5th.h"
+#include "ScreenEz2SelectStyle.h"
 
 const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
 	"GAME START",
@@ -61,7 +62,20 @@ const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
 #define SECONDS_BETWEEN_ATTRACT			THEME->GetMetricF("TitleMenu","SecondsBetweenAttract")
 #define HELP_TEXT						THEME->GetMetric("TitleMenu","HelpText")
 
-#define USE_CAUTION_OR_SELECT_PLAYER	THEME->GetMetricB("General","UseCautionOrSelectPlayer")
+#define CAUTION_TYPE					THEME->GetMetricI("General","CautionType")
+enum CautionType	// for use with the metric above
+{
+	CAUTION_TYPE_SKIP = 0,
+	CAUTION_TYPE_DDR,
+	CAUTION_TYPE_EZ2_SELECT_PLAYER,
+};
+#define SELECT_STYLE_TYPE		THEME->GetMetricI("General","SelectStyleType")
+enum SelectStyleType // for use with the metric above
+{
+	SELECT_STYLE_TYPE_MAX = 0,
+	SELECT_STYLE_TYPE_5TH,
+	SELECT_STYLE_TYPE_EZ2,
+};
 
 const ScreenMessage SM_PlayAttract			=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+12);
@@ -210,10 +224,33 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 		switch( m_TitleMenuChoice )
 		{
 		case CHOICE_GAME_START:
-			if( USE_CAUTION_OR_SELECT_PLAYER )
-				SCREENMAN->SetNewScreen( new ScreenEz2SelectPlayer );
-			else
+			switch( CAUTION_TYPE )
+			{
+			case CAUTION_TYPE_SKIP:
+				switch( SELECT_STYLE_TYPE )
+				{
+				case SELECT_STYLE_TYPE_MAX:
+					SCREENMAN->SetNewScreen( new ScreenSelectStyle );
+					break;
+				case SELECT_STYLE_TYPE_5TH:
+					SCREENMAN->SetNewScreen( new ScreenSelectStyle5th );
+					break;
+				case SELECT_STYLE_TYPE_EZ2:
+					SCREENMAN->SetNewScreen( new ScreenEz2SelectStyle );
+					break;
+				default:
+					ASSERT(0);
+				}
+				break;
+			case CAUTION_TYPE_DDR:
 				SCREENMAN->SetNewScreen( new ScreenCaution );
+				break;
+			case CAUTION_TYPE_EZ2_SELECT_PLAYER:
+				SCREENMAN->SetNewScreen( new ScreenEz2SelectPlayer );
+				break;
+			default:
+				ASSERT(0);
+			}
 			break;
 		case CHOICE_SELECT_GAME:
 			SCREENMAN->SetNewScreen( new ScreenSelectGame );

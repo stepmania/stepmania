@@ -35,7 +35,7 @@ public:
 	Background();
 	~Background();
 
-	virtual void LoadFromSong( Song *pSong, bool bDisableVisualizations = false );
+	virtual void LoadFromSong( Song *pSong );
 	virtual void Unload();	// call this on before calling load
 
 	virtual void Update( float fDeltaTime );

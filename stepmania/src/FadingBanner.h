@@ -12,7 +12,8 @@
 
 #include "Banner.h"
 #include "ActorFrame.h"
-
+class Song;
+class Course;
 
 class FadingBanner : public ActorFrame
 {
@@ -26,8 +27,7 @@ public:
 	void SetFromSong( Song* pSong );
 	void SetFromGroup( const CString &sGroupName );
 	void SetRoulette();
-	void SetFromCourse( Course *pCourse );
-	//void SetFromTexture( const CString &sTexturePath );
+	void SetFromCourse( Course* pCourse );
 
 protected:
 	void BeforeChange();

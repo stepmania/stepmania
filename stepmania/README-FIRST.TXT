@@ -45,6 +45,8 @@ Table of Contents
 21. Building StepMania from CVS Source
 22. Thanks
 
+See the file "NEWS" for version history.
+
 ************************************************************
 1. About StepMania
 ************************************************************

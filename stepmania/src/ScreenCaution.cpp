@@ -16,13 +16,20 @@
 #include "GameConstantsAndTypes.h"
 #include "ScreenSelectStyle.h"
 #include "ScreenEZ2SelectStyle.h"
+#include "ScreenSelectStyle5th.h"
 #include "RageTextureManager.h"
 #include "PrefsManager.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
 
 
-#define USE_NORMAL_OR_EZ2_SELECT_STYLE		THEME->GetMetricB("General","UseNormalOrEZ2SelectStyle")
+#define SELECT_STYLE_TYPE		THEME->GetMetricI("General","SelectStyleType")
+enum SelectStyleType // for use with the metric above
+{
+	SELECT_STYLE_TYPE_MAX = 0,
+	SELECT_STYLE_TYPE_5TH,
+	SELECT_STYLE_TYPE_EZ2,
+};
 
 
 const ScreenMessage SM_GoToPrevState	= ScreenMessage(SM_User-6);
@@ -73,10 +80,21 @@ void ScreenCaution::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 		break;
 	case SM_GoToSelectMusic:
-		if( USE_NORMAL_OR_EZ2_SELECT_STYLE )
-			SCREENMAN->SetNewScreen( new ScreenEz2SelectStyle );
-		else
+		switch( SELECT_STYLE_TYPE )
+		{
+		case SELECT_STYLE_TYPE_MAX:
 			SCREENMAN->SetNewScreen( new ScreenSelectStyle );
+			break;
+		case SELECT_STYLE_TYPE_5TH:
+			SCREENMAN->SetNewScreen( new ScreenSelectStyle5th );
+			break;
+		case SELECT_STYLE_TYPE_EZ2:
+			SCREENMAN->SetNewScreen( new ScreenEz2SelectStyle );
+			break;
+		default:
+			ASSERT(0);
+			break;
+		}
 		break;
 	}
 }

@@ -319,7 +319,10 @@ void ScreenSelectGroup::AfterChange()
 	m_textLabel[iSel].SetEffectGlowing();
 
 	for( int c=0; c<TITLES_COLUMNS; c++ )
+	{
 		m_textTitles[c].SetText( m_sContentsText[m_iSelection][c] );
+		m_textTitles[c].CropToWidth( int(TITLES_SPACING_X/m_textTitles[c].GetZoom()) );
+	}
 
 	CString sSelectedGroupName = m_asGroupNames[m_iSelection];
 

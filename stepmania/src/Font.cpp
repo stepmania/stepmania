@@ -78,7 +78,7 @@ Font::Font( const CString &sFontFilePath )
 		// sanity check
 		if( sCharacters.GetLength() != m_pTexture->GetNumFrames() )
 			throw RageException( "The characters in '%s' does not match the number of frames in the texture."
-						"The font has %d frames, and the texture has %d frames.",
+						"The font has %d characters, and the texture has %d frames.",
 						m_sFontFilePath, sCharacters.GetLength(), m_pTexture->GetNumFrames() );
 
 		// set the char to frame number map

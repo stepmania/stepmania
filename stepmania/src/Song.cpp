@@ -153,7 +153,7 @@ void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, fl
 
 	for( int i=0; i<m_BPMSegments.GetSize(); i++ ) // foreach BPMSegment
 	{
-		BPMSegment &this_seg = m_BPMSegments[i];
+		const BPMSegment &this_seg = m_BPMSegments[i];
 
 		float fStartBeatThisSegment = m_BPMSegments[i].m_fStartBeat;
 		bool bIsLastBPMSegment = i==m_BPMSegments.GetSize()-1;

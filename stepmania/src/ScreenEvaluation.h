@@ -18,12 +18,11 @@
 #include "MenuElements.h"
 #include "Banner.h"
 #include "ScoreDisplayNormal.h"
-#include "BonusInfoFrame.h"
 #include "StageBox.h"
 #include "BannerWithFrame.h"
 
 
-const int NUM_JUDGE_LINES =	6;	// perfect, great, good, boo, miss, ok
+const int NUM_JUDGE_LINES =	7;	// perfect, great, good, boo, miss, ok, max_combo
 const int STAGES_TO_SHOW_IN_SUMMARY = 3;	// only show the latest three stages in a summary
 
 class ScreenEvaluation : public Screen
@@ -49,12 +48,24 @@ protected:
 	BannerWithFrame		m_BannerWithFrame[STAGES_TO_SHOW_IN_SUMMARY];
 	BitmapText			m_textStage;
 
+	// used in arcade
 	Sprite				m_sprGradeFrame[NUM_PLAYERS];
 	GradeDisplay		m_Grades[NUM_PLAYERS];
-	BitmapText			m_textOniPercent[NUM_PLAYERS];
 
-	BonusInfoFrame		m_BonusInfoFrame[NUM_PLAYERS];	// used in arcade
-	StageBox			m_StageBox[NUM_PLAYERS];	// used in Oni
+	// used in Oni/Endless
+	Sprite				m_sprPercentFrame[NUM_PLAYERS];
+	BitmapText			m_textOniPercentLarge[NUM_PLAYERS];
+	BitmapText			m_textOniPercentSmall[NUM_PLAYERS];
+
+	// used in arcade
+	Sprite				m_sprBonusFrame[NUM_PLAYERS];
+	Sprite				m_sprPossibleBar[NUM_PLAYERS][NUM_RADAR_VALUES];
+	Sprite				m_sprActualBar[NUM_PLAYERS][NUM_RADAR_VALUES];
+
+	// used in Oni/Endless
+	Sprite				m_sprCourseFrame[NUM_PLAYERS];
+	BitmapText			m_textTime[NUM_PLAYERS];
+	BitmapText			m_textSongsSurvived[NUM_PLAYERS];
 
 	Sprite				m_sprJudgeLabels[NUM_JUDGE_LINES];
 	BitmapText			m_textJudgeNumbers[NUM_JUDGE_LINES][NUM_PLAYERS];

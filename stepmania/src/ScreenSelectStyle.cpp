@@ -41,7 +41,12 @@
 #define HELP_TEXT			THEME->GetMetric("SelectStyle","HelpText")
 #define TIMER_SECONDS		THEME->GetMetricI("SelectStyle","TimerSeconds")
 
-#define SKIP_SELECT_DIFFICULTY		THEME->GetMetricB("General","SkipSelectDifficulty")
+#define SELECT_DIFFICULTY_TYPE		THEME->GetMetricI("General","SelectDifficultyType")
+enum SelectDifficultyType // for use with the metric above
+{
+	SELECT_DIFFICULTY_TYPE_SKIP = 0,
+	SELECT_DIFFICULTY_TYPE_MAX,
+};
 
 const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User + 2);
@@ -152,10 +157,17 @@ void ScreenSelectStyle::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 		break;
 	case SM_GoToNextState:
-		if( SKIP_SELECT_DIFFICULTY )
+		switch( SELECT_DIFFICULTY_TYPE )
+		{
+		case SELECT_DIFFICULTY_TYPE_SKIP:
 			SCREENMAN->SetNewScreen( new ScreenSelectGroup );
-		else
+			break;
+		case SELECT_DIFFICULTY_TYPE_MAX:
 			SCREENMAN->SetNewScreen( new ScreenSelectDifficulty );
+			break;
+		default:
+			ASSERT(0);
+		}
 		break;
 	}
 }

@@ -30,7 +30,7 @@ GradeDisplay::GradeDisplay()
 	m_fTimeLeftInScroll = 0;
 	m_bDoScrolling = false;
 
-	SetGrade( GRADE_NO_DATA );
+	SetGrade( PLAYER_1, GRADE_NO_DATA );
 }
 
 void GradeDisplay::Update( float fDeltaTime )
@@ -65,7 +65,7 @@ void GradeDisplay::DrawPrimitives()
 	Sprite::DrawPrimitives();
 }
 
-void GradeDisplay::SetGrade( Grade g )
+void GradeDisplay::SetGrade( PlayerNumber p, Grade g )
 {
 	m_Grade = g;
 
@@ -74,18 +74,20 @@ void GradeDisplay::SetGrade( Grade g )
 
 	SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 
+	// Ugly...  This has to handle cases where the sprite has 7, 8, 14, or 16 states
+	int iNumCols = (this->GetNumStates()>8) ? 2 : 1;
 	switch( g )
 	{
-	case GRADE_AAA:		SetState(0);	break;
-	case GRADE_AA:		SetState(1);	break;
-	case GRADE_A:		SetState(2);	break;
-	case GRADE_B:		SetState(3);	break;
-	case GRADE_C:		SetState(4);	break;
-	case GRADE_D:		SetState(5);	break;
-	case GRADE_E:		SetState(6);	break;
+	case GRADE_AAA:		SetState( 0*iNumCols+p );	break;
+	case GRADE_AA:		SetState( 1*iNumCols+p );	break;
+	case GRADE_A:		SetState( 2*iNumCols+p );	break;
+	case GRADE_B:		SetState( 3*iNumCols+p );	break;
+	case GRADE_C:		SetState( 4*iNumCols+p );	break;
+	case GRADE_D:		SetState( 5*iNumCols+p );	break;
+	case GRADE_E:		SetState( 6*iNumCols+p );	break;
 	case GRADE_NO_DATA:	
-		if( this->GetNumStates() == 8 )
-			SetState(7);
+		if( this->GetNumStates()%8 == 0 )
+			SetState( 7*iNumCols+p );
 		else
 			SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// don't show anything
 		break;

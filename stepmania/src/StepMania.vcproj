@@ -303,6 +303,12 @@
 				RelativePath="ScreenSelectStyle.h">
 			</File>
 			<File
+				RelativePath="ScreenSelectStyle5th.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSelectStyle5th.h">
+			</File>
+			<File
 				RelativePath="ScreenSongOptions.cpp">
 			</File>
 			<File
@@ -424,6 +430,12 @@
 				RelativePath="Song.h">
 			</File>
 			<File
+				RelativePath="SongCacheIndex.cpp">
+			</File>
+			<File
+				RelativePath="SongCacheIndex.h">
+			</File>
+			<File
 				RelativePath="SongOptions.cpp">
 			</File>
 			<File
@@ -440,12 +452,6 @@
 			</File>
 			<File
 				RelativePath="StyleInput.h">
-			</File>
-			<File
-				RelativePath="SongCacheIndex.cpp">
-			</File>
-			<File
-				RelativePath="SongCacheIndex.h">
 			</File>
 		</Filter>
 		<Filter
@@ -575,22 +581,10 @@
 				RelativePath="BannerWithFrame.h">
 			</File>
 			<File
-				RelativePath="BonusInfoFrame.cpp">
-			</File>
-			<File
-				RelativePath="BonusInfoFrame.h">
-			</File>
-			<File
 				RelativePath="CourseContentsFrame.cpp">
 			</File>
 			<File
 				RelativePath="CourseContentsFrame.h">
-			</File>
-			<File
-				RelativePath="CourseInfoFrame.cpp">
-			</File>
-			<File
-				RelativePath="CourseInfoFrame.h">
 			</File>
 			<File
 				RelativePath="CroppedSprite.cpp">
@@ -683,16 +677,10 @@
 				RelativePath="SnapDisplay.h">
 			</File>
 			<File
-				RelativePath="SongInfoFrame.cpp">
+				RelativePath="SongSelector.cpp">
 			</File>
 			<File
-				RelativePath="SongInfoFrame.h">
-			</File>
-			<File
-				RelativePath="StageBox.cpp">
-			</File>
-			<File
-				RelativePath="StageBox.h">
+				RelativePath="SongSelector.h">
 			</File>
 			<File
 				RelativePath=".\TextBanner.cpp">
@@ -705,12 +693,6 @@
 			</File>
 			<File
 				RelativePath=".\TipDisplay.h">
-			</File>
-			<File
-				RelativePath="SongSelector.cpp">
-			</File>
-			<File
-				RelativePath="SongSelector.h">
 			</File>
 		</Filter>
 		<Filter

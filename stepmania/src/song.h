@@ -124,7 +124,7 @@ public:
 		fMinBPM = 100000;	// inf
 		for( int i=0; i<m_BPMSegments.GetSize(); i++ ) 
 		{
-			BPMSegment &seg = m_BPMSegments[i];
+			const BPMSegment &seg = m_BPMSegments[i];
 			fMaxBPM = max( seg.m_fBPM, fMaxBPM );
 			fMinBPM = min( seg.m_fBPM, fMinBPM );
 		}

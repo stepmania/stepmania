@@ -97,12 +97,12 @@ void Background::Unload()
 	m_BackgroundAnimations.RemoveAll();
 }
 
-void Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
+void Background::LoadFromSong( Song* pSong )
 {
 	/* Endless was crashing due to this; is there any reason not to
 	 * fix it this way? -glenn */
+	 /* Correct.  I added the same chage.    -Chris */
 	Unload();
-//	ASSERT( m_BackgroundAnimations.GetSize() == 0 );	// forgot to call Unload() after song end
 
 	//
 	// figure out what BackgroundMode to use

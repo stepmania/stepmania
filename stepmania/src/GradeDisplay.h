@@ -25,7 +25,7 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
-	void SetGrade( Grade g );
+	void SetGrade( PlayerNumber p, Grade g );
 	void SpinAndSettleOn( Grade g );
 	void SettleImmediately();
 

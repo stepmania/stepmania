@@ -30,7 +30,7 @@ Combo::Combo()
 	m_textComboNumber.LoadFromFont( THEME->GetPathTo("Fonts","combo numbers") );
 	m_textComboNumber.TurnShadowOn();
 	m_textComboNumber.SetHorizAlign( Actor::align_right );
-	m_textComboNumber.SetX( -0 );
+	m_textComboNumber.SetX( 0 );
 
 	m_textComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
 	m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
@@ -77,7 +77,7 @@ void Combo::ContinueCombo()
 		m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	// visible
 
 		m_textComboNumber.SetText( ssprintf("%d", m_iCurCombo) );
-		float fNewZoom = min( 0.5f + m_iCurCombo/800.0f, 1.1f );
+		float fNewZoom = min( 0.5f + m_iCurCombo/800.0f, 1.0f );
 		m_textComboNumber.SetZoom( fNewZoom ); 
 		
 		//this->SetZoom( 1.2f );

@@ -113,7 +113,12 @@ const float OPT_YP[NUM_EZ2P_GRAPHICS] = {
 }; // tells us the default Y position
 
 
-#define SKIP_SELECT_DIFFICULTY		THEME->GetMetricB("General","SkipSelectDifficulty")
+#define SELECT_DIFFICULTY_TYPE		THEME->GetMetricI("General","SelectDifficultyType")
+enum SelectDifficultyType // for use with the metric above
+{
+	SELECT_DIFFICULTY_TYPE_SKIP = 0,
+	SELECT_DIFFICULTY_TYPE_MAX,
+};
 
 
 float ez2p_lasttimercheck[2];
@@ -343,10 +348,17 @@ void ScreenEz2SelectStyle::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 		break;
 	case SM_GoToNextState:
-		if( SKIP_SELECT_DIFFICULTY )
+		switch( SELECT_DIFFICULTY_TYPE )
+		{
+		case SELECT_DIFFICULTY_TYPE_SKIP:
 			SCREENMAN->SetNewScreen( new ScreenSelectGroup );
-		else
+			break;
+		case SELECT_DIFFICULTY_TYPE_MAX:
 			SCREENMAN->SetNewScreen( new ScreenSelectDifficulty );
+			break;
+		default:
+			ASSERT(0);
+		}
 		break;
 	}
 }

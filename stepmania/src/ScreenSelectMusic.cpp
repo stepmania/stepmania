@@ -131,7 +131,6 @@ float PLAYER_OPTIONS_Y( int p ) {
 
 const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User+2);
-const ScreenMessage SM_ConfirmChange		=	ScreenMessage(SM_User+3);
 
 
 

@@ -564,14 +564,6 @@ SOURCE=.\BannerWithFrame.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\BonusInfoFrame.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\BonusInfoFrame.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\BPMDisplay.cpp
 # End Source File
 # Begin Source File
@@ -585,14 +577,6 @@ SOURCE=.\CourseContentsFrame.cpp
 # Begin Source File
 
 SOURCE=.\CourseContentsFrame.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\CourseInfoFrame.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\CourseInfoFrame.h
 # End Source File
 # Begin Source File
 
@@ -716,27 +700,11 @@ SOURCE=.\SnapDisplay.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\SongInfoFrame.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\SongInfoFrame.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\SongSelector.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\SongSelector.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\StageBox.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\StageBox.h
 # End Source File
 # Begin Source File
 

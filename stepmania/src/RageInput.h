@@ -141,7 +141,7 @@ private:
 
 		pump_t();
 		~pump_t();
-		init(int devno);
+		void init(int devno);		/* added a return type because it generates a warning in VC7  -Chris */
 		int GetPadEvent();
 	} *m_Pumps;
 

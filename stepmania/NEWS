@@ -1,4 +1,4 @@
-------------------------CVS after 3.00 beta 6----------------
+﻿------------------------CVS after 3.00 beta 6----------------
 NEW FEATURE:  Delayed escape/back key is now optional.
 CHANGE:  Slow-motion is now on ~ instead of shift, since we use shift
 	elsewhere now.
@@ -79,6 +79,7 @@ BUG FIX:  Timer expiration while in Roulette spinning now resets the timer to
 	force a selection.
 BUG FIX:  OnlyDedicatedMenuButtons option now correctly saves on exit.
 BUG FIX:  Announcer now says "danger comments" at the appropriate time.
+BUG FIX:  Song titles on the Select Group screen are now cropped.
 
 ------------------------CVS after 3.00 beta 5----------------
 OPTIMIZATION:  Much faster song loading.

@@ -26,13 +26,20 @@ Andrew Livy
 #include "GameState.h"
 #include "RageException.h"
 #include "RageTimer.h"
+#include "ScreenSelectStyle5th.h"
 
 /* Constants */
 
 const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User + 2);
 
-#define USE_NORMAL_OR_EZ2_SELECT_STYLE		THEME->GetMetricB("General","UseNormalOrEZ2SelectStyle")
+#define SELECT_STYLE_TYPE		THEME->GetMetricI("General","SelectStyleType")
+enum SelectStyleType // for use with the metric above
+{
+	SELECT_STYLE_TYPE_MAX = 0,
+	SELECT_STYLE_TYPE_5TH,
+	SELECT_STYLE_TYPE_EZ2,
+};
 
 const float TWEEN_TIME		= 0.35f;
 const D3DXCOLOR OPT_NOT_SELECTED = D3DXCOLOR(0.3f,0.3f,0.3f,1);
@@ -240,10 +247,21 @@ void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 		break;
 	case SM_GoToNextState:
-		if( USE_NORMAL_OR_EZ2_SELECT_STYLE )
-			SCREENMAN->SetNewScreen( new ScreenEz2SelectStyle );
-		else
+		switch( SELECT_STYLE_TYPE )
+		{
+		case SELECT_STYLE_TYPE_MAX:
 			SCREENMAN->SetNewScreen( new ScreenSelectStyle );
+			break;
+		case SELECT_STYLE_TYPE_5TH:
+			SCREENMAN->SetNewScreen( new ScreenSelectStyle5th );
+			break;
+		case SELECT_STYLE_TYPE_EZ2:
+			SCREENMAN->SetNewScreen( new ScreenEz2SelectStyle );
+			break;
+		default:
+			ASSERT(0);
+			break;
+		}
 		break;
 	}
 }

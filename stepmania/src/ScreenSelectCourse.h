@@ -15,9 +15,9 @@
 #include "RandomStream.h"
 #include "GameConstantsAndTypes.h"
 #include "MusicWheel.h"
-#include "CourseInfoFrame.h"
 #include "CourseContentsFrame.h"
 #include "MenuElements.h"
+#include "FadingBanner.h"
 
 
 class ScreenSelectCourse : public Screen
@@ -44,8 +44,13 @@ protected:
 
 	MenuElements		m_Menu;
 
-	CourseInfoFrame		m_CourseInfoFrame;
+	Sprite				m_sprBannerFrame;
+	FadingBanner		m_Banner;
+	BitmapText			m_textNumStages;
+	BitmapText			m_textTime;
 	CourseContentsFrame	m_CourseContentsFrame;
+	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
+	ScoreDisplayNormal	m_HighScore[NUM_PLAYERS];
 	MusicWheel			m_MusicWheel;
 
 	bool				m_bMadeChoice;
