@@ -123,8 +123,6 @@ InputHandler_X11::~InputHandler_X11()
 
 void InputHandler_X11::Update(float fDeltaTime)
 {
-	Display *display = X11Helper::Dpy();
-	Window window = X11Helper::Win();
 	XEvent event;
 
 	if (X11Helper::Win)
