@@ -47,7 +47,7 @@ int					NUM_EZ2_BUTTONS			= 8;
 const int DANCE_COL_SPACING = 64;
 const int DANCE_6PANEL_VERSUS_COL_SPACING = 54;
 const int PUMP_COL_SPACING = 60;
-const int EZ2_COL_SPACING = 60; // CHANGE THIS LATER (Actually don't know colspaces yet)
+const int EZ2_COL_SPACING = 30; // CHANGE THIS LATER (Actually don't know colspaces yet)
 
 GameDef g_GameDefs[NUM_GAMES] = 
 {
@@ -408,11 +408,11 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	INSTRUMENT_1,	EZ2_BUTTON_UPLEFT,		-EZ2_COL_SPACING*2 },   // CHANGE THESE WHEN WE CAN SEE THE
-				{ TRACK_2,	INSTRUMENT_1,	EZ2_BUTTON_UPLEFTHAND,	-EZ2_COL_SPACING*1 },  // NOTES IN-GAME !!!!!!!!!!
+				{ TRACK_1,	INSTRUMENT_1,	EZ2_BUTTON_UPLEFT,		-EZ2_COL_SPACING*1.5f },   // CHANGE THESE WHEN WE CAN SEE THE
+				{ TRACK_2,	INSTRUMENT_1,	EZ2_BUTTON_UPLEFTHAND,	-EZ2_COL_SPACING*0.5f },  // NOTES IN-GAME !!!!!!!!!!
 				{ TRACK_3,	INSTRUMENT_1,	EZ2_BUTTON_DOWN,		+EZ2_COL_SPACING*0 },
-				{ TRACK_4,	INSTRUMENT_1,	EZ2_BUTTON_UPRIGHTHAND,	+EZ2_COL_SPACING*1 },
-				{ TRACK_5,	INSTRUMENT_1,	EZ2_BUTTON_UPRIGHT,		+EZ2_COL_SPACING*2 },
+				{ TRACK_4,	INSTRUMENT_1,	EZ2_BUTTON_UPRIGHTHAND,	+EZ2_COL_SPACING*0.5f },
+				{ TRACK_5,	INSTRUMENT_1,	EZ2_BUTTON_UPRIGHT,		+EZ2_COL_SPACING*1.5f },
 			},
 			{	// PLAYER_2
 				{ TRACK_1,	INSTRUMENT_1,	EZ2_BUTTON_UPLEFT,		-EZ2_COL_SPACING*2 },   // CHANGE THESE WHEN WE CAN SEE THE
@@ -424,6 +424,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			2,0,4,1,3 // This should be from back to front: Down, UpLeft, UpRight, Upper Left Hand, Upper Right Hand 
+		    // 0,1,2,3,4
 		},
 	},
 	{	// EZ2_STYLE_DOUBLE

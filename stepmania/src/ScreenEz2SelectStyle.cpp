@@ -23,6 +23,7 @@ Andrew Livy
 #include "AnnouncerManager.h"
 #include "GameConstantsAndTypes.h"
 #include "Background.h"
+#include "ScreenSelectGroup.h"
 
 /* Constants */
 
@@ -30,14 +31,14 @@ const CString BG_ANIMS_DIR = "BGAnimations\\";
 
 const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User + 2);
-
+/*
 const CString DANCE_STYLES[] = {
 	"easy",
 	"hard",
 	"real",
 	"double",
 };
-
+*/
 enum DStyles {
 	DS_CLUB,
 	DS_EASY,
@@ -294,7 +295,7 @@ void ScreenEz2SelectStyle::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 		break;
 	case SM_GoToNextState:
-		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+		SCREENMAN->SetNewScreen( new ScreenSelectGroup );
 		break;
 	}
 }
@@ -625,6 +626,9 @@ void ScreenEz2SelectStyle::MenuStart( PlayerNumber p )
 		m_soundSelect.PlayRandom();
 	
 		this->ClearMessageQueue();
+
+		GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;		
+		PREFSMAN->m_PlayMode = PLAY_MODE_ARCADE;
 
 		m_Menu.TweenOffScreenToMenu( SM_GoToNextState );
 
