@@ -71,7 +71,7 @@ static void parent_write(int to_child, const void *p, size_t size)
 static void parent_process( int to_child, void **BacktracePointers, int SignalReceived )
 {
 	/* 1. Write the backtrace pointers. */
-	parent_write(to_child, BacktracePointers, sizeof(BacktracePointers));
+	parent_write(to_child, BacktracePointers, sizeof(void *)*BACKTRACE_MAX_SIZE);
 
 	/* 2. Write the signal. */
 	parent_write(to_child, &SignalReceived, sizeof(SignalReceived));
@@ -286,8 +286,7 @@ static void do_backtrace( void **buf, size_t size, bool ignore_before_sig = true
 		sigcontext sig;
 	};
 
-	struct StackFrame *frame;
-	asm("mov %%ebp, %%eax": "=a" (frame) );
+	StackFrame *frame = (StackFrame *) __builtin_frame_address(0);
 
 	unsigned i=0;
 	/* If ignore_before_sig is true, don't return stack frames before we find a signal trampoline. */
@@ -370,7 +369,7 @@ static void do_backtrace(void **buf, size_t size)
 void CrashSignalHandler( int signal )
 {
 	/* Don't dump a debug file if the user just hit ^C. */
-	if( signal == SIGINT )
+	if( signal == SIGINT || signal == SIGTERM )
 		return;
 
 	static bool received = false;

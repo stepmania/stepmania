@@ -169,7 +169,7 @@ static void child_process()
 	
 	/* 1. Read the backtrace pointers. */
 	void *BacktracePointers[BACKTRACE_MAX_SIZE];
-	ret = read(3, BacktracePointers, sizeof(BacktracePointers));
+	ret = read(3, BacktracePointers, sizeof(void *)*BACKTRACE_MAX_SIZE);
 
 	/* 2. Read the signal. */
 	int SignalReceived;
