@@ -308,6 +308,7 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenDownloadMachineStats.h"
 #include "ScreenSetTime.h"
 #include "ScreenTestLights.h"
+#include "ScreenClearMachineStats.h"
 
 Screen* Screen::Create( CString sClassName )
 {
@@ -373,6 +374,7 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenDownloadMachineStats );
 	IF_RETURN( ScreenSetTime );
 	IF_RETURN( ScreenTestLights );
+	IF_RETURN( ScreenClearMachineStats );
 
 	RageException::Throw( "Invalid Screen class name '%s'", sClassName.c_str() );
 }
