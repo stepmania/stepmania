@@ -412,7 +412,7 @@ void NoteField::DrawPrimitives()
 	iLastPixelToDraw = (int)(iLastPixelToDraw * fLastDrawScale * fDrawScale);
 
 
-	// probe for first and last notes on the screen
+	// Probe for first and last notes on the screen
 	float fFirstBeatToDraw = FindFirstDisplayedBeat( m_PlayerNumber, iFirstPixelToDraw );
 	float fLastBeatToDraw = FindLastDisplayedBeat( m_PlayerNumber, iLastPixelToDraw );
 
@@ -540,6 +540,18 @@ void NoteField::DrawPrimitives()
 				continue;	// skip
 			}
 
+			// TRICKY: If boomerang is on, then all notes in the range 
+			// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
+			// Test every note to make sure it's on screen before drawing
+			float fYStartOffset = ArrowGetYOffset( m_PlayerNumber, 0, NoteRowToBeat(hn.iStartRow) );
+			float fYEndOffset = ArrowGetYOffset( m_PlayerNumber, 0, NoteRowToBeat(hn.iEndRow) );
+			if( !( iFirstPixelToDraw <= fYEndOffset && fYEndOffset <= iLastPixelToDraw  ||
+				iFirstPixelToDraw <= fYStartOffset  && fYStartOffset <= iLastPixelToDraw  ||
+				fYStartOffset < iFirstPixelToDraw   && fYEndOffset > iLastPixelToDraw ) )
+			{
+				continue;	// skip
+			}
+
 			SearchForBeat( CurDisplay, NextDisplay, NoteRowToBeat(hn.iStartRow) );
 
 			bool bIsInSelectionRange = false;
@@ -570,6 +582,15 @@ void NoteField::DrawPrimitives()
 				continue;	// skip
 			
 			if( tn == TAP_HOLD_HEAD )	// this is a HoldNote begin marker.  Grade it, but don't draw
+				continue;	// skip
+
+			// TRICKY: If boomerang is on, then all notes in the range 
+			// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
+			// Test every note to make sure it's on screen before drawing
+			float fYOffset = ArrowGetYOffset( m_PlayerNumber, 0, NoteRowToBeat(i) );
+			if( fYOffset > iLastPixelToDraw )	// off screen
+				continue;	// skip
+			if( fYOffset < iFirstPixelToDraw )	// off screen
 				continue;	// skip
 
 			// See if there is a hold step that begins on this index.
