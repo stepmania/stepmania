@@ -555,25 +555,7 @@ void ScreenNameEntryTraditional::HandleScreenMessage( const ScreenMessage SM )
 		break;
 
 	case SM_GoToNextScreen:
-		{
-			/* Hack: go back to the select course screen in event mode. */
-			if( PREFSMAN->m_bEventMode && GAMESTATE->IsCourseMode() )
-			{
-				SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
-				break;
-			}
-
-			Grade max_grade = GRADE_FAILED;
-			vector<Song*> vSongs;
-			StageStats stats;
-			GAMESTATE->GetFinalEvalStatsAndSongs( stats, vSongs );
-
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsHumanPlayer(p) )
-					max_grade = min( max_grade, stats.GetGrade((PlayerNumber)p) );
-
-			SCREENMAN->SetNewScreen( NEXT_SCREEN );
-		}
+		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	}
 }
