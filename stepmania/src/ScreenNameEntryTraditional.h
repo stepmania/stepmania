@@ -12,6 +12,7 @@
 #include "DifficultyIcon.h"
 #include "PercentageDisplay.h"
 #include "BGAnimation.h"
+#include "ThemeMetric.h"
 
 
 class HighScoreWheelItem : public ActorFrame
@@ -59,6 +60,13 @@ private:
 	void UpdateSelectionText( int pn );
 	void ChangeDisplayedFeat();
 	void SelectChar( PlayerNumber pn, int c );
+
+	ThemeMetric<float> FOV;
+	ThemeMetric<float> ALPHABET_GAP_X;
+	ThemeMetric<int> NUM_ALPHABET_DISPLAYED;
+	ThemeMetric<int> MAX_RANKING_NAME_LENGTH;
+	ThemeMetric<float> FEAT_INTERVAL;
+	ThemeMetric<CString> KEYBOARD_LETTERS;
 
 	ActorFrame		m_Keyboard[NUM_PLAYERS];
 	Sprite			m_sprCursor[NUM_PLAYERS];

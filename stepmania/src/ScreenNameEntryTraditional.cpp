@@ -28,12 +28,6 @@
 //
 // Defines specific to ScreenNameEntryTraditional
 //
-#define FOV							THEME->GetMetricF(m_sName,"FOV")
-#define ALPHABET_GAP_X				THEME->GetMetricF(m_sName,"AlphabetGapX")
-#define NUM_ALPHABET_DISPLAYED		THEME->GetMetricI(m_sName,"NumAlphabetDisplayed")
-#define MAX_RANKING_NAME_LENGTH		THEME->GetMetricI(m_sName,"MaxRankingNameLength")
-#define FEAT_INTERVAL				THEME->GetMetricF(m_sName,"FeatInterval")
-#define KEYBOARD_LETTERS			THEME->GetMetric (m_sName,"KeyboardLetters")
 #define NEXT_SCREEN					THEME->GetMetric(m_sName,"NextScreen")
 
 #define COMMAND_OPTIONAL( actor, command_name ) \
@@ -173,6 +167,12 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 
 	}
 
+	FOV.Load( m_sName, "FOV" );
+	ALPHABET_GAP_X.Load( m_sName, "AlphabetGapX" );
+	NUM_ALPHABET_DISPLAYED.Load( m_sName, "NumAlphabetDisplayed" );
+	MAX_RANKING_NAME_LENGTH.Load( m_sName, "MaxRankingNameLength" );
+	FEAT_INTERVAL.Load( m_sName, "FeatInterval" );
+	KEYBOARD_LETTERS.Load( m_sName, "KeyboardLetters" );
 
 	// Find out if players deserve to enter their name
 	FOREACH_PlayerNumber( p )
