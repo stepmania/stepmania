@@ -37,7 +37,7 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 	GetDirListing( "Courses\\" + sFName + ".jpg", arrayPossibleBanners, false, true );
 	GetDirListing( "Courses\\" + sFName + ".bmp", arrayPossibleBanners, false, true );
 	GetDirListing( "Courses\\" + sFName + ".gif", arrayPossibleBanners, false, true );
-	if( arrayPossibleBanners.GetSize() > 0 )
+	if( !arrayPossibleBanners.empty() )
 		m_sBannerPath = arrayPossibleBanners[0];
 
 	for( int i=0; i<msd.m_iNumValues; i++ )
@@ -97,7 +97,7 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 			CStringArray split_SongDir;
 			split( sSongDir, "\\", split_SongDir, true );
 
-			if( split_SongDir.GetSize() > 2 )
+			if( split_SongDir.size() > 2 )
 			{
 			    LOG->Warn( "Course file \"%s\" path \"%s\" should contain "
 						   "at most one backslash; ignored.",
@@ -107,14 +107,14 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 
 			Song *pSong = NULL;
 			// foreach song
-			for( int i = 0; pSong == NULL && i < apSongs.GetSize(); i++ )
+			for( unsigned i = 0; pSong == NULL && i < apSongs.size(); i++ )
 			{
 				CStringArray splitted;
 				split( apSongs[i]->m_sSongDir, "\\", splitted, true );
 				bool matches = true;
 				
-				int split_no = splitted.GetSize()-1;
-				int SongDir_no = split_SongDir.GetSize()-1;
+				int split_no = splitted.size()-1;
+				int SongDir_no = split_SongDir.size()-1;
 
 				while( split_no >= 0 && SongDir_no >= 0 ) {
 				    if( stricmp(splitted[split_no--], split_SongDir[SongDir_no--] ) )
@@ -147,7 +147,7 @@ void Course::CreateEndlessCourseFromGroupAndDifficulty( CString sGroupName, Diff
 	GetDirListing( "Songs\\" + sGroupName + "\\banner.jpg", asPossibleBannerPaths, false, true );
 	GetDirListing( "Songs\\" + sGroupName + "\\banner.gif", asPossibleBannerPaths, false, true );
 	GetDirListing( "Songs\\" + sGroupName + "\\banner.bmp", asPossibleBannerPaths, false, true );
-	if( asPossibleBannerPaths.GetSize() > 0 )
+	if( !asPossibleBannerPaths.empty() )
 		m_sBannerPath = asPossibleBannerPaths[0];
 
 	CString sShortGroupName = SONGMAN->ShortenGroupName( sGroupName );	
@@ -160,7 +160,7 @@ void Course::CreateEndlessCourseFromGroupAndDifficulty( CString sGroupName, Diff
 	case DIFFICULTY_HARD:	m_sName += "Hard";		break;
 	}
 
-	for( int s=0; s<apSongsInGroup.GetSize(); s++ )
+	for( unsigned s=0; s<apSongsInGroup.size(); s++ )
 	{
 		Song* pSong = apSongsInGroup[s];
 		AddStage( pSong, DifficultyToString(dc), "" );
@@ -179,8 +179,9 @@ Notes* Course::GetNotesForStage( int iStage )
 {
 	Song* pSong = m_apSongs[iStage];
 	CString sDescription = m_asDescriptions[iStage];
-
-	for( int i=0; i<pSong->m_apNotes.GetSize(); i++ )
+	unsigned i;
+	
+	for( i=0; i<pSong->m_apNotes.size(); i++ )
 	{
 		Notes* pNotes = pSong->m_apNotes[i];
 		if( 0==stricmp(pNotes->m_sDescription, sDescription)  &&
@@ -192,7 +193,7 @@ Notes* Course::GetNotesForStage( int iStage )
 	// Didn't find a matching description.  Try to match the Difficulty instead.
 	Difficulty dc = Notes::DifficultyFromDescriptionAndMeter( sDescription, 5 );
 
-	for( i=0; i<pSong->m_apNotes.GetSize(); i++ )
+	for( i=0; i<pSong->m_apNotes.size(); i++ )
 	{
 		Notes* pNotes = pSong->m_apNotes[i];
 		if( pNotes->m_Difficulty == dc  &&

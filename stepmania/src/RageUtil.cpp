@@ -37,7 +37,7 @@ float TimeToSeconds( CString sHMS )
 	CStringArray arrayBits;
 	split( sHMS, ":", arrayBits, false );
 
-	while( arrayBits.GetSize() < 3 )
+	while( arrayBits.size() < 3 )
 		arrayBits.insert(arrayBits.begin(), "0" );	// pad missing bits
 
 	float fSeconds = 0;
@@ -96,13 +96,13 @@ CString vssprintf( const char *fmt, va_list argList)
 //-----------------------------------------------------------------------------
 CString join( const CString &Deliminator, const CStringArray& Source)
 {
-	if( Source.GetSize() == 0 )
+	if( Source.empty() )
 		return "";
 
 	CString csTmp;
 
 	// Loop through the Array and Append the Deliminator
-	for( int iNum = 0; iNum < Source.GetSize()-1; iNum++ ) {
+	for( unsigned iNum = 0; iNum < Source.size()-1; iNum++ ) {
 		csTmp += Source[iNum];
 		csTmp += Deliminator;
 	}
@@ -227,14 +227,14 @@ void splitrelpath( const CString &Path, CString& Dir, CString& FName, CString& E
 		FName = "";
 		Ext = "";
 	}
-	else if( sFNameAndExtBits.GetSize() == 1 )	// file doesn't have extension
+	else if( sFNameAndExtBits.size() == 1 )	// file doesn't have extension
 	{
 		FName = sFNameAndExtBits[0];
 		Ext = "";
 	}
-	else if( sFNameAndExtBits.GetSize() > 1 )	// file has extension and possibly multiple periods
+	else if( sFNameAndExtBits.size() > 1 )	// file has extension and possibly multiple periods
 	{
-		Ext = sFNameAndExtBits[ sFNameAndExtBits.GetSize()-1 ];
+		Ext = sFNameAndExtBits[ sFNameAndExtBits.size()-1 ];
 
 		// subtract the Ext and last period from FNameAndExt
 		FName = sFNameAndExt.Left( sFNameAndExt.GetLength()-Ext.GetLength()-1 );
@@ -249,7 +249,7 @@ bool CreateDirectories( CString Path )
 	Path.Replace("\\", "/");
 	split(Path, "/", parts);
 
-	for(int i = 0; i < parts.GetSize(); ++i)
+	for(unsigned i = 0; i < parts.size(); ++i)
 	{
 		curpath += parts[i] + "/";
 		if(CreateDirectory( curpath, NULL ))
@@ -340,7 +340,7 @@ private:
 
 void DirCache::FlushCache()
 {
-	for(int i = 0; i < directory_cache.GetSize(); ++i)
+	for(unsigned i = 0; i < directory_cache.size(); ++i)
 		delete directory_cache[i];
 	directory_cache.clear();
 }
@@ -389,11 +389,11 @@ DirCache::CacheEntry *DirCache::LoadDirCache( const CString &sPath )
 /* Return a CacheEntry object for a directory, reading it if necessary. */
 const DirCache::CacheEntry *DirCache::SearchDirCache( const CString &sPath )
 {
-	int i;
-	for(i = 0; i < directory_cache.GetSize(); ++i)
+	unsigned i;
+	for(i = 0; i < directory_cache.size(); ++i)
 		if(directory_cache[i]->dir == sPath) break;
 
-	if(i == directory_cache.GetSize())
+	if(i == directory_cache.size())
 		/* Didn't find it. */
 		return LoadDirCache( sPath );
 
@@ -436,7 +436,7 @@ bool GetExtDirListingV( const CString &sPath, CStringArray &AddTo, bool bOnlyDir
 	const DirCache::CacheEntry *cache = DirectoryCache.SearchDirCache(sDir);
 	if(!cache) return false;
 
-	for(int i = 0; i < cache->files.GetSize(); ++i)
+	for(unsigned i = 0; i < cache->files.size(); ++i)
 	{
 		if( bOnlyDirs && !(cache->Attributes[i] & FILE_ATTRIBUTE_DIRECTORY) )
 			continue;	// skip
@@ -630,7 +630,7 @@ unsigned int GetHashForDirectory( CString sDir )
 
 	CStringArray arrayFiles;
 	GetDirListing( sDir+"\\*.*", arrayFiles, false );
-	for( int i=0; i<arrayFiles.GetSize(); i++ )
+	for( unsigned i=0; i<arrayFiles.size(); i++ )
 	{
 		const CString sFilePath = sDir + arrayFiles[i];
 		hash += GetHashForFile( sFilePath );

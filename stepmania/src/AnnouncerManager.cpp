@@ -31,13 +31,13 @@ void AnnouncerManager::GetAnnouncerNames( CStringArray& AddTo )
 	GetDirListing( ANNOUNCERS_DIR+"*", AddTo, true );
 	
 	// strip out the folder called "CVS" and EMPTY_ANNOUNCER_NAME
-	for( int i=AddTo.GetSize()-1; i>=0; i-- )
-	{
-		if( 0 == stricmp( AddTo[i], "cvs" ) )
+	for( int i=AddTo.size()-1; i>=0; i-- )
+		if( !stricmp( AddTo[i], "cvs" ) )
 			AddTo.RemoveAt(i);
-		if( 0 == stricmp( AddTo[i], EMPTY_ANNOUNCER_NAME ) )
+
+	for( int i=AddTo.size()-1; i>=0; i-- )
+		if( !stricmp( AddTo[i], EMPTY_ANNOUNCER_NAME ) )
 			AddTo.RemoveAt(i);
-	}
 }
 
 bool AnnouncerManager::DoesAnnouncerExist( CString sAnnouncerName )
@@ -47,7 +47,7 @@ bool AnnouncerManager::DoesAnnouncerExist( CString sAnnouncerName )
 
 	CStringArray asAnnouncerNames;
 	GetAnnouncerNames( asAnnouncerNames );
-	for( int i=0; i<asAnnouncerNames.GetSize(); i++ )
+	for( unsigned i=0; i<asAnnouncerNames.size(); i++ )
 		if( 0==stricmp(sAnnouncerName, asAnnouncerNames[i]) )
 			return true;
 	return false;
@@ -94,5 +94,5 @@ bool AnnouncerManager::HasSoundsFor( CString sFolderName )
 {
 	CStringArray asFileNames;
 	GetDirListing( GetPathTo(sFolderName), asFileNames );
-	return asFileNames.GetSize() > 0;
+	return !asFileNames.empty();
 }

@@ -22,7 +22,7 @@ void ActorFrame::AddChild( Actor* pActor)
 void ActorFrame::DrawPrimitives()
 {
 	// draw all sub-ActorFrames while we're in the ActorFrame's local coordinate space
-	for( int i=0; i<m_SubActors.GetSize(); i++ ) {
+	for( unsigned i=0; i<m_SubActors.size(); i++ ) {
 		m_SubActors[i]->Draw();
 	}
 }
@@ -36,7 +36,7 @@ void ActorFrame::Update( float fDeltaTime )
 
 
 	// update all sub-Actors
-	for( int i=0; i<m_SubActors.GetSize(); i++ )
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->Update(fDeltaTime);
 }
 
@@ -46,6 +46,6 @@ void ActorFrame::SetDiffuse( RageColor c )
 	Actor::SetDiffuse( c );
 
 	// set all sub-Actors
-	for( int i=0; i<m_SubActors.GetSize(); i++ )
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->SetDiffuse(c );
 }
