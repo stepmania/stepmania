@@ -28,7 +28,7 @@
 !system "utils\upx SDL_image.dll" ignore
 
 Name "${PRODUCT_NAME}"
-OutFile "StepMania-CVS-20030422.exe"
+OutFile "StepMania-CVS-20030526.exe"
 ;OutFile "StepMania301.exe"
 
 ; Some default compiler settings (uncomment and change at will):
@@ -130,9 +130,9 @@ CreateDirectory "$INSTDIR\CDTitles"
 SetOutPath "$INSTDIR\CDTitles"
 File "CDTitles\instructions.txt"
 
-CreateDirectory "$INSTDIR\Characters"
-SetOutPath "$INSTDIR\Characters"
-File "Characters\instructions.txt"
+#CreateDirectory "$INSTDIR\Characters"
+#SetOutPath "$INSTDIR\Characters"
+#File "Characters\instructions.txt"
 
 CreateDirectory "$INSTDIR\Courses"
 SetOutPath "$INSTDIR\Courses"
@@ -269,8 +269,8 @@ RMDir "$INSTDIR\Cache"
 Delete "$INSTDIR\CDTitles\instructions.txt"
 RMDir "$INSTDIR\CDTitles"
 
-Delete "$INSTDIR\Characters\instructions.txt"
-RMDir "$INSTDIR\Characters"
+#Delete "$INSTDIR\Characters\instructions.txt"
+#RMDir "$INSTDIR\Characters"
 
 RMDir /r "$INSTDIR\Cache"
 
