@@ -66,7 +66,7 @@ public:
 		Err(const std::string &s) : Exception(IO_ERROR, s) {}
 	};
 	class OpenErr : public Err {public: OpenErr(const std::string &filename) : Err("FileSink: error opening file for writing: " + filename) {}};
-	class WriteErr : public Err {public: WriteErr() : Err("FileSink: error writing file") {}};
+	struct WriteErr : public Err { WriteErr(const RageFile &f) : Err("RageFileSink(" + f.GetPath() + "): write error: " + f.GetError()) {}};
 
 	RageFileSink() {}
 	RageFileSink(const char *filename, bool binary=true)

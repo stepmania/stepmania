@@ -134,9 +134,9 @@ bool RageFileSink::IsolatedFlush(bool hardFlush, bool blocking)
 	if (!m_file.IsOpen())
 		throw Err("FileSink: output stream not opened");
 	
-	m_file.Flush();
-	if( !m_file.IsGood() )
-		throw WriteErr();
+	
+	if( m_file.Flush() == -1 )
+		throw WriteErr( m_file );
 	
 	return false;
 }
@@ -146,13 +146,12 @@ unsigned int RageFileSink::Put2(const byte *inString, unsigned int length, int m
 	if (!m_file.IsOpen())
 		throw Err("FileSink: output stream not opened");
 	
-	m_file.Write((const char *)inString, length);
+	if( m_file.Write((const char *)inString, length) == -1 )
+		throw WriteErr( m_file );
 	
 	if (messageEnd)
-		m_file.Flush();
-	
-	if( !m_file.IsGood() )
-		throw WriteErr();
+		if( m_file.Flush() == -1 )
+			throw WriteErr( m_file );
 	
 	return 0;
 }
