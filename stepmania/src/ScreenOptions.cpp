@@ -1173,7 +1173,8 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 			if( GAMESTATE->IsHumanPlayer(p)  &&  m_Rows[m_iCurrentRow[p]]->Type != Row::ROW_EXIT )
 				bAllOnExit = false;
 
-		if( bAllOnExit  &&  type == IET_FIRST_PRESS )
+		/* Don't accept START to go to the next screen if we're still transitioning in. */
+		if( bAllOnExit  &&  type == IET_FIRST_PRESS && !IsTransitioning() )
 			StartGoToNextState();
 		return;
 	}
@@ -1232,7 +1233,8 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 			break;
 		case NAV_THREE_KEY_MENU:
 		case NAV_FIVE_KEY:
-			if( type == IET_FIRST_PRESS )	// m_SMOptionsNavigation
+			/* Don't accept START to go to the next screen if we're still transitioning in. */
+			if( type == IET_FIRST_PRESS && !IsTransitioning() )	// m_SMOptionsNavigation
 				StartGoToNextState();
 			break;
 		}
