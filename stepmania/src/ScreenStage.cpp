@@ -237,18 +237,6 @@ ScreenStage::ScreenStage()
 	//
 	if( g_StageType == STAGE_TYPE_EZ2 )
 	{
-		const int iStageNo = GAMESTATE->GetStageIndex()+1;	
-
-		if( stage_mode == MODE_FINAL )
-		{
-			for( int i=0; i<4; i++ )
-			{
-				m_sprNumbers[i].Load( THEME->GetPathTo("Graphics","stage numbers final") );
-				m_sprNumbers[i].StopAnimating();
-			}
-		}
-
-
 		/////////////////////////////////////////////////
 		// START moving the numbers how ez2 wants them //
 		/////////////////////////////////////////////////
@@ -256,28 +244,25 @@ ScreenStage::ScreenStage()
 		for( i=0; i<4; i++ )
 		{
 		//	float fOffsetX = SCALE(i, 0, iNumChars-1, -(iNumChars-1)/2.0f*fFrameWidth, (iNumChars-1)/2.0f*fFrameWidth);
-			m_sprNumbers[i].SetX( CENTER_X - 170 + (90 * i) );
-			m_sprNumbers[i].SetY( CENTER_Y );
-		}
-
-
-		for( i=0; i<4; i++ ) // redefine the size of the numbers
-		{
+			if( stage_mode == MODE_FINAL )
+			{
+				m_sprNumbers[i].Load( THEME->GetPathTo("Graphics","stage numbers final") );
+				m_sprNumbers[i].StopAnimating();
+			}
+			
+			m_sprNumbers[i].SetXY( CENTER_X - 170 + (90 * i), CENTER_Y );
+			m_sprNumbers[i].SetY(  );
 			m_sprNumbers[i].ZoomToWidth( 200.0f ); // make the numbers that appear really big
 			m_sprNumbers[i].ZoomToHeight( 200.0f); // so they can 'shrink' onto the screen
-		}
-	
-	//	m_frameStage.SetXY( CENTER_X, CENTER_Y );
-		
-		for( i=0; i<4; i++)
-		{
 			m_sprNumbers[i].SetZoom( 20.0f ); // make it really really big on-screen
 			m_sprNumbers[i].SetRotation( 10 ); // make this thing rotated
+
 			m_sprNumbers[i].BeginTweening(0.8f, Actor::TWEEN_BIAS_BEGIN );
 			m_sprNumbers[i].SetTweenZoom( 3.0f ); // shrink it down to it's proper size
 			m_sprNumbers[i].SetTweenRotationZ( 0 ); // make it rotate into place
 		}
 	
+	//	m_frameStage.SetXY( CENTER_X, CENTER_Y );
 
 		///////////////////////////
 		// Start Ez2 Backgrounds //
@@ -492,6 +477,7 @@ ScreenStage::ScreenStage()
 
 		m_stagename.SetXY( CENTER_X+400, CENTER_Y-30+element_y_offsets );  // set initial position			
 
+		const int iStageNo = GAMESTATE->GetStageIndex()+1;	
 		switch (iStageNo) // from the stage number figure out which text to use
 		{
 			case 0: m_stagename.SetText( "THE NEXT STAGE" ); break;
